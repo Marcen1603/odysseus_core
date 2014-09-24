@@ -130,10 +130,10 @@ public class CornerKickGlobalSportsQLParser implements ISportsQLParser {
 		expressions.add(OperatorBuildHelper.createExpressionParameter("y",
 				activeBall));
 		expressions.add(OperatorBuildHelper.createExpressionParameter(
-				"eif(y < " + SoccerDDCAccess.getGoalareaLeftY() + ", 1, 0)",
+				"eif(x < " + SoccerDDCAccess.getGoalareaLeftX() + ", 1, 0)",
 				"BallBehindGoalline1_left", activeBall));
 		expressions.add(OperatorBuildHelper.createExpressionParameter(
-				"eif(y > " + SoccerDDCAccess.getGoalareaRightY() + ", 1, 0)",
+				"eif(x > " + SoccerDDCAccess.getGoalareaRightX() + ", 1, 0)",
 				"BallBehindGoalline2_right", activeBall));
 
 		MapAO activeBallBehindGoalline = OperatorBuildHelper
@@ -167,14 +167,14 @@ public class CornerKickGlobalSportsQLParser implements ISportsQLParser {
 		ballExpressions.add(OperatorBuildHelper.createExpressionParameter("ts",
 				"spot_ball_ts", activeBall));
 		ballExpressions.add(OperatorBuildHelper.createExpressionParameter(
-				"eif((x <= (" + (xMin + CORNER_SPOT_TOLERANCE) + ") OR x >= ("
-						+ (xMax - CORNER_SPOT_TOLERANCE) + ")) AND y >= ("
-						+ (yMax - CORNER_SPOT_TOLERANCE) + ") , 1, 0)",
+				"eif((y <= (" + (yMin + CORNER_SPOT_TOLERANCE) + ") OR y >= ("
+						+ (yMax - CORNER_SPOT_TOLERANCE) + ")) AND x >= ("
+						+ (xMax - CORNER_SPOT_TOLERANCE) + ") , 1, 0)",
 				"BallOnCornerSpot1_bottom", activeBall));
 		ballExpressions.add(OperatorBuildHelper.createExpressionParameter(
-				"eif((x <= (" + (xMin + CORNER_SPOT_TOLERANCE) + ") OR x >= ("
-						+ (xMax - CORNER_SPOT_TOLERANCE) + ")) AND y <= ("
-						+ (yMin + CORNER_SPOT_TOLERANCE) + ") , 1, 0)",
+				"eif((y <= (" + (yMin + CORNER_SPOT_TOLERANCE) + ") OR y >= ("
+						+ (yMax - CORNER_SPOT_TOLERANCE) + ")) AND x <= ("
+						+ (xMin + CORNER_SPOT_TOLERANCE) + ") , 1, 0)",
 				"BallOnCornerSpot2_top", activeBall));
 		MapAO ballOnCornerSpot = OperatorBuildHelper.createMapAO(
 				ballExpressions, activeBall, 0, 0);

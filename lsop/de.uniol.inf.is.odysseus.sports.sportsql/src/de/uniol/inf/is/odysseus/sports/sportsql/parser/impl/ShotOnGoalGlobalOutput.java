@@ -464,7 +464,7 @@ public class ShotOnGoalGlobalOutput {
 
 		// 2. Route
 		List<String> goalDetectionPredicates = new ArrayList<String>();
-		goalDetectionPredicates.add("vy >= 0");
+		goalDetectionPredicates.add("vx >= 0");
 		RouteAO goalAreaDetection = OperatorBuildHelper.createRouteAO(
 				goalDetectionPredicates, goalAreaMap);
 
@@ -482,7 +482,7 @@ public class ShotOnGoalGlobalOutput {
 
 		// 1. Map
 		MapAO timeToGoalLine2MapAO = createGoalAreaMapAO(1, goalAreaDetection,
-				"(y + " + SoccerDDCAccess.getGoalareaLeftY() + " ) / vy");
+				"(x + " + SoccerDDCAccess.getGoalareaLeftX() + " ) / vx");
 
 		// 2. Select
 		SelectAO timeToGoal2SelectAO = createTimeToGoalSelectAO(
@@ -494,8 +494,8 @@ public class ShotOnGoalGlobalOutput {
 
 		// 4. Select
 		SelectAO foreCastSelectGoal2 = createForecastSelectAO(
-				SoccerDDCAccess.getGoalareaLeftXMin(),
-				SoccerDDCAccess.getGoalareaLeftXMax(),
+				SoccerDDCAccess.getGoalareaLeftYMin(),
+				SoccerDDCAccess.getGoalareaLeftYMax(),
 				SoccerDDCAccess.getGoalareaLeftZMax(), forecastMapGoal2);
 
 		// UPPER PART (in PQL): GOAL AREA 1
@@ -503,7 +503,7 @@ public class ShotOnGoalGlobalOutput {
 
 		// 1. Map
 		MapAO timeToGoalLine1MapAO = createGoalAreaMapAO(0, goalAreaDetection,
-				"(" + SoccerDDCAccess.getGoalareaLeftY() + " - y) / vy");
+				"(" + SoccerDDCAccess.getGoalareaLeftX() + " - x) / vx");
 
 		// 2. Select
 		SelectAO timeToGoal1SelectAO = createTimeToGoalSelectAO(
@@ -515,8 +515,8 @@ public class ShotOnGoalGlobalOutput {
 
 		// 4. Select
 		SelectAO foreCastSelectGoal1 = createForecastSelectAO(
-				SoccerDDCAccess.getGoalareaRightXMin(),
-				SoccerDDCAccess.getGoalareaRightXMax(),
+				SoccerDDCAccess.getGoalareaRightYMin(),
+				SoccerDDCAccess.getGoalareaRightYMax(),
 				SoccerDDCAccess.getGoalareaRightZMax(), forecastMapGoal1);
 
 		// MERGE BOTH PARTS
@@ -564,8 +564,8 @@ public class ShotOnGoalGlobalOutput {
 		SDFExpressionParameter mapParam7 = OperatorBuildHelper
 				.createExpressionParameter("team_id", source);
 		SDFExpressionParameter mapParam8 = OperatorBuildHelper
-				.createExpressionParameter("x + vx * timeToGoalline",
-						"forecast_x", source);
+				.createExpressionParameter("y + vy * timeToGoalline",
+						"forecast_y", source);
 		SDFExpressionParameter mapParam9 = OperatorBuildHelper
 				.createExpressionParameter("z + vz * timeToGoalline",
 						"forecast_z", source);
@@ -626,9 +626,9 @@ public class ShotOnGoalGlobalOutput {
 	private static SelectAO createForecastSelectAO(double goalArea1XMin, double xMax,
 			double zMax, ILogicalOperator source) {
 		IPredicate predicate1 = OperatorBuildHelper
-				.createRelationalPredicate("forecast_x > " + goalArea1XMin);
+				.createRelationalPredicate("forecast_y > " + goalArea1XMin);
 		IPredicate predicate2 = OperatorBuildHelper
-				.createRelationalPredicate("forecast_x < " + xMax);
+				.createRelationalPredicate("forecast_y < " + xMax);
 		IPredicate predicate3 = OperatorBuildHelper
 				.createRelationalPredicate("forecast_z < " + zMax);
 		List<IPredicate> predicates = new ArrayList<IPredicate>();
@@ -670,7 +670,7 @@ public class ShotOnGoalGlobalOutput {
 		SDFExpressionParameter goalAreaMapParam8 = OperatorBuildHelper
 				.createExpressionParameter("z", source);
 		SDFExpressionParameter goalAreaMapParam9 = OperatorBuildHelper
-				.createExpressionParameter("vx", source);
+				.createExpressionParameter("vy", source);
 		SDFExpressionParameter goalAreaMapParam10 = OperatorBuildHelper
 				.createExpressionParameter("vz", source);
 		SDFExpressionParameter goalAreaMapParam11 = OperatorBuildHelper

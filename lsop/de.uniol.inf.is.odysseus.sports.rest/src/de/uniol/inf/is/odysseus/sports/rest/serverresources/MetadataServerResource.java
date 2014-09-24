@@ -78,20 +78,19 @@ public class MetadataServerResource extends ServerResource implements IMetadataR
 		
 		try {
 			int position_left = 0;
-			double first_post_left = SoccerDDCAccess.getGoalareaLeftXMin();
-			double second_post_left = SoccerDDCAccess.getGoalareaLeftXMax();
-			double deep_left = SoccerDDCAccess.getGoalareaLeftY();
+			double first_post_left = SoccerDDCAccess.getGoalareaLeftYMin();
+			double second_post_left = SoccerDDCAccess.getGoalareaLeftYMax();
+			double deep_left = SoccerDDCAccess.getGoalareaLeftX();
 			double height_left = SoccerDDCAccess.getGoalareaLeftZMax();
 			
 			//add left goal to the list
 			goals.add(new GoalInfo(position_left, first_post_left, second_post_left, deep_left, height_left));
 			
 			int position_right =1;
-			double first_post_right = SoccerDDCAccess.getGoalareaRightXMin();
-			double second_post_right = SoccerDDCAccess.getGoalareaRightXMax();
-			double deep_right = SoccerDDCAccess.getGoalareaRightY();
-			double height_right = SoccerDDCAccess.getGoalareaRightZMax();
-			
+			double first_post_right = SoccerDDCAccess.getGoalareaLeftYMin();
+			double second_post_right = SoccerDDCAccess.getGoalareaLeftYMax();
+			double deep_right = SoccerDDCAccess.getGoalareaLeftX();
+			double height_right = SoccerDDCAccess.getGoalareaLeftZMax();			
 			//add the right goal to the list
 			goals.add(new GoalInfo(position_right, first_post_right, second_post_right, deep_right, height_right));
 			

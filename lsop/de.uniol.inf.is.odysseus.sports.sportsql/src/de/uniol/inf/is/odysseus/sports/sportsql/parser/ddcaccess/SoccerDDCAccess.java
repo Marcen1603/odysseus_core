@@ -25,20 +25,20 @@ public class SoccerDDCAccess extends AbstractSportsDDCAccess {
 	/**
 	 * The key for the lowest x coordinate of the left goalarea.
 	 */
-	private static final DDCKey KEY_GOALAREA_LEFT_XMIN = new DDCKey(
-			new String[] { SoccerDDCAccess.KEY_GOALAREA_PREFIX + "left", "xmin" });
+	private static final DDCKey KEY_GOALAREA_LEFT_YMIN = new DDCKey(
+			new String[] { SoccerDDCAccess.KEY_GOALAREA_PREFIX + "left", "ymin" });
 
 	/**
 	 * The key for the highest x coordinate of the left goalarea.
 	 */
-	private static final DDCKey KEY_GOALAREA_LEFT_XMAX = new DDCKey(
-			new String[] { SoccerDDCAccess.KEY_GOALAREA_PREFIX + "left", "xmax" });
+	private static final DDCKey KEY_GOALAREA_LEFT_YMAX = new DDCKey(
+			new String[] { SoccerDDCAccess.KEY_GOALAREA_PREFIX + "left", "ymax" });
 
 	/**
 	 * The key for the y coordinate of the left goalarea.
 	 */
-	private static final DDCKey KEY_GOALAREA_LEFT_Y = new DDCKey(new String[] {
-			SoccerDDCAccess.KEY_GOALAREA_PREFIX + "left", "y" });
+	private static final DDCKey KEY_GOALAREA_LEFT_X = new DDCKey(new String[] {
+			SoccerDDCAccess.KEY_GOALAREA_PREFIX + "left", "x" });
 
 	/**
 	 * The key for the highest z coordinate of the left goalarea.
@@ -49,22 +49,22 @@ public class SoccerDDCAccess extends AbstractSportsDDCAccess {
 	/**
 	 * The key for the lowest x coordinate of the right goalarea.
 	 */
-	private static final DDCKey KEY_GOALAREA_RIGHT_XMIN = new DDCKey(
+	private static final DDCKey KEY_GOALAREA_RIGHT_YMIN = new DDCKey(
 			new String[] { SoccerDDCAccess.KEY_GOALAREA_PREFIX + "right",
-					"xmin" });
+					"ymin" });
 
 	/**
 	 * The key for the highest x coordinate of the right goalarea.
 	 */
-	private static final DDCKey KEY_GOALAREA_RIGHT_XMAX = new DDCKey(
+	private static final DDCKey KEY_GOALAREA_RIGHT_YMAX = new DDCKey(
 			new String[] { SoccerDDCAccess.KEY_GOALAREA_PREFIX + "right",
-					"xmax" });
+					"ymax" });
 
 	/**
 	 * The key for the y coordinate of the right goalarea.
 	 */
-	private static final DDCKey KEY_GOALAREA_RIGHT_Y = new DDCKey(new String[] {
-			SoccerDDCAccess.KEY_GOALAREA_PREFIX + "right", "y" });
+	private static final DDCKey KEY_GOALAREA_RIGHT_X = new DDCKey(new String[] {
+			SoccerDDCAccess.KEY_GOALAREA_PREFIX + "right", "x" });
 
 	/**
 	 * The key for the highest z coordinate of the right goalarea.
@@ -74,41 +74,41 @@ public class SoccerDDCAccess extends AbstractSportsDDCAccess {
 					"zmax" });
 	
 	/**
-	 * The lowest x coordinate of the left goalarea.
-	 * @throws MissingDDCEntryException if "goalarea.left,xmin" is not a key of the DDC.
-	 * @throws NumberFormatException if the value of "goalarea.left,xmin" could no be cast to Double.
+	 * The lowest y coordinate of the left goalarea.
+	 * @throws MissingDDCEntryException if "goalarea.left,ymin" is not a key of the DDC.
+	 * @throws NumberFormatException if the value of "goalarea.left,ymin" could no be cast to Double.
 	 */
-	public static double getGoalareaLeftXMin() throws MissingDDCEntryException, NumberFormatException {
+	public static double getGoalareaLeftYMin() throws MissingDDCEntryException, NumberFormatException {
 		
 		Preconditions.checkNotNull(AbstractSportsDDCAccess.ddc, "No DDC bound!");
 		
-		return Double.valueOf(AbstractSportsDDCAccess.ddc.getValue(KEY_GOALAREA_LEFT_XMIN)).doubleValue();
+		return Double.valueOf(AbstractSportsDDCAccess.ddc.getValue(KEY_GOALAREA_LEFT_YMIN)).doubleValue();
 		
 	}
 	
 	/**
-	 * The highest x coordinate of the left goalarea.
-	 * @throws MissingDDCEntryException if "goalarea.left,xmax" is not a key of the DDC.
-	 * @throws NumberFormatException if the value of "goalarea.left,xmax" could no be cast to Double.
+	 * The highest y coordinate of the left goalarea.
+	 * @throws MissingDDCEntryException if "goalarea.left,ymax" is not a key of the DDC.
+	 * @throws NumberFormatException if the value of "goalarea.left,ymax" could no be cast to Double.
 	 */
-	public static double getGoalareaLeftXMax() throws MissingDDCEntryException, NumberFormatException {
+	public static double getGoalareaLeftYMax() throws MissingDDCEntryException, NumberFormatException {
 		
 		Preconditions.checkNotNull(AbstractSportsDDCAccess.ddc, "No DDC bound!");
 		
-		return Double.valueOf(AbstractSportsDDCAccess.ddc.getValue(KEY_GOALAREA_LEFT_XMAX)).doubleValue();
+		return Double.valueOf(AbstractSportsDDCAccess.ddc.getValue(KEY_GOALAREA_LEFT_YMAX)).doubleValue();
 		
 	}
 	
 	/**
-	 * The y coordinate of the left goalarea.
-	 * @throws MissingDDCEntryException if "goalarea.left,y" is not a key of the DDC.
-	 * @throws NumberFormatException if the value of "goalarea.left,y" could no be cast to Double.
+	 * The x coordinate of the left goalarea.
+	 * @throws MissingDDCEntryException if "goalarea.left,x" is not a key of the DDC.
+	 * @throws NumberFormatException if the value of "goalarea.left,x" could no be cast to Double.
 	 */
-	public static double getGoalareaLeftY() throws MissingDDCEntryException, NumberFormatException {
+	public static double getGoalareaLeftX() throws MissingDDCEntryException, NumberFormatException {
 		
 		Preconditions.checkNotNull(AbstractSportsDDCAccess.ddc, "No DDC bound!");
 		
-		return Double.valueOf(AbstractSportsDDCAccess.ddc.getValue(KEY_GOALAREA_LEFT_Y)).doubleValue();
+		return Double.valueOf(AbstractSportsDDCAccess.ddc.getValue(KEY_GOALAREA_LEFT_X)).doubleValue();
 		
 	}
 	
@@ -126,41 +126,41 @@ public class SoccerDDCAccess extends AbstractSportsDDCAccess {
 	}
 	
 	/**
-	 * The lowest x coordinate of the right goalarea.
-	 * @throws MissingDDCEntryException if "goalarea.right,xmin" is not a key of the DDC.
-	 * @throws NumberFormatException if the value of "goalarea.right,xmin" could no be cast to Double.
+	 * The lowest y coordinate of the right goalarea.
+	 * @throws MissingDDCEntryException if "goalarea.right,ymin" is not a key of the DDC.
+	 * @throws NumberFormatException if the value of "goalarea.right,ymin" could no be cast to Double.
 	 */
-	public static double getGoalareaRightXMin() throws MissingDDCEntryException, NumberFormatException {
+	public static double getGoalareaRightYMin() throws MissingDDCEntryException, NumberFormatException {
 		
 		Preconditions.checkNotNull(AbstractSportsDDCAccess.ddc, "No DDC bound!");
 		
-		return Double.valueOf(AbstractSportsDDCAccess.ddc.getValue(KEY_GOALAREA_RIGHT_XMIN)).doubleValue();
+		return Double.valueOf(AbstractSportsDDCAccess.ddc.getValue(KEY_GOALAREA_RIGHT_YMIN)).doubleValue();
 		
 	}
 	
 	/**
-	 * The highest x coordinate of the right goalarea.
-	 * @throws MissingDDCEntryException if "goalarea.right,xmax" is not a key of the DDC.
-	 * @throws NumberFormatException if the value of "goalarea.right,xmax" could no be cast to Double.
+	 * The highest y coordinate of the right goalarea.
+	 * @throws MissingDDCEntryException if "goalarea.right,ymax" is not a key of the DDC.
+	 * @throws NumberFormatException if the value of "goalarea.right,ymax" could no be cast to Double.
 	 */
-	public static double getGoalareaRightXMax() throws MissingDDCEntryException, NumberFormatException {
+	public static double getGoalareaRightYMax() throws MissingDDCEntryException, NumberFormatException {
 		
 		Preconditions.checkNotNull(AbstractSportsDDCAccess.ddc, "No DDC bound!");
 		
-		return Double.valueOf(AbstractSportsDDCAccess.ddc.getValue(KEY_GOALAREA_RIGHT_XMAX)).doubleValue();
+		return Double.valueOf(AbstractSportsDDCAccess.ddc.getValue(KEY_GOALAREA_RIGHT_YMAX)).doubleValue();
 		
 	}
 	
 	/**
-	 * The y coordinate of the right goalarea.
-	 * @throws MissingDDCEntryException if "goalarea.right,y" is not a key of the DDC.
-	 * @throws NumberFormatException if the value of "goalarea.right,y" could no be cast to Double.
+	 * The x coordinate of the right goalarea.
+	 * @throws MissingDDCEntryException if "goalarea.right,x" is not a key of the DDC.
+	 * @throws NumberFormatException if the value of "goalarea.right,x" could no be cast to Double.
 	 */
-	public static double getGoalareaRightY() throws MissingDDCEntryException, NumberFormatException {
+	public static double getGoalareaRightX() throws MissingDDCEntryException, NumberFormatException {
 		
 		Preconditions.checkNotNull(AbstractSportsDDCAccess.ddc, "No DDC bound!");
 		
-		return Double.valueOf(AbstractSportsDDCAccess.ddc.getValue(KEY_GOALAREA_RIGHT_Y)).doubleValue();
+		return Double.valueOf(AbstractSportsDDCAccess.ddc.getValue(KEY_GOALAREA_RIGHT_X)).doubleValue();
 		
 	}
 	

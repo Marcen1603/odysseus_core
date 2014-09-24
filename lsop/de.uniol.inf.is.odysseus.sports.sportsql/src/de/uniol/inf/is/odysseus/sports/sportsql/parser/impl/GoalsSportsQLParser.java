@@ -69,8 +69,8 @@ public class GoalsSportsQLParser implements ISportsQLParser {
 		predicates.clear();
 
 		// ball in game field
-		String predicate = " x > " + AbstractSportsDDCAccess.getFieldXMin() + " AND x < " + AbstractSportsDDCAccess.getFieldXMax() + " AND y > " + SoccerDDCAccess.getGoalareaLeftY()
-				+ " AND y < " + SoccerDDCAccess.getGoalareaRightY() + " ";
+		String predicate = " y > " + AbstractSportsDDCAccess.getFieldYMin() + " AND y < " + AbstractSportsDDCAccess.getFieldYMax() + " AND x > " + SoccerDDCAccess.getGoalareaLeftX()
+				+ " AND x < " + SoccerDDCAccess.getGoalareaRightX() + " ";
 		SelectAO ball_in_game_field = OperatorBuildHelper.createSelectAO(
 				predicate, ball);
 		allOperators.add(ball_in_game_field);
@@ -78,17 +78,17 @@ public class GoalsSportsQLParser implements ISportsQLParser {
 
 
 		// ball in goal or field stream	
-		String predicateGoalAndField = "(x > " + AbstractSportsDDCAccess.getFieldXMin() + " AND x < " + AbstractSportsDDCAccess.getFieldXMax() + " AND y > "
-				+ SoccerDDCAccess.getGoalareaLeftY() + " AND y < " + SoccerDDCAccess.getGoalareaRightY() + ")";
+		String predicateGoalAndField = "(y > " + AbstractSportsDDCAccess.getFieldYMin() + " AND y < " + AbstractSportsDDCAccess.getFieldYMax() + " AND x > "
+				+ SoccerDDCAccess.getGoalareaLeftX() + " AND x < " + SoccerDDCAccess.getGoalareaRightX() + ")";
 		
-		predicateGoalAndField +=  " OR (y < " + SoccerDDCAccess.getGoalareaLeftY()
-				+ " AND y > ((" + (SoccerDDCAccess.getGoalareaLeftY() - GOAL_DEPTH)
-				+ ")) AND x > " + SoccerDDCAccess.getGoalareaLeftXMin() + " AND x < "
-				+ SoccerDDCAccess.getGoalareaLeftXMax() + ")";
+		predicateGoalAndField +=  " OR (x < " + SoccerDDCAccess.getGoalareaLeftX()
+				+ " AND x > ((" + (SoccerDDCAccess.getGoalareaLeftX() - GOAL_DEPTH)
+				+ ")) AND y > " + SoccerDDCAccess.getGoalareaLeftYMin() + " AND y < "
+				+ SoccerDDCAccess.getGoalareaLeftYMax() + ")";
 		
-		predicateGoalAndField += " OR (y > " + SoccerDDCAccess.getGoalareaRightY() + " AND y < (("
-				+ (SoccerDDCAccess.getGoalareaRightY() + GOAL_DEPTH) + ")) AND x < "
-				+ SoccerDDCAccess.getGoalareaRightXMax() + " AND x > " + SoccerDDCAccess.getGoalareaRightXMin() + ")";
+		predicateGoalAndField += " OR (x > " + SoccerDDCAccess.getGoalareaRightX() + " AND x < (("
+				+ (SoccerDDCAccess.getGoalareaRightX() + GOAL_DEPTH) + ")) AND y < "
+				+ SoccerDDCAccess.getGoalareaRightYMax() + " AND y > " + SoccerDDCAccess.getGoalareaRightYMin() + ")";
 		
 		SelectAO ball_in_goal_or_field = OperatorBuildHelper.createSelectAO(
 				predicateGoalAndField, ball);
@@ -167,15 +167,15 @@ public class GoalsSportsQLParser implements ISportsQLParser {
 		SDFExpressionParameter ex4 = OperatorBuildHelper
 				.createExpressionParameter("z", "goal_z", source);
 		SDFExpressionParameter ex5 = OperatorBuildHelper
-				.createExpressionParameter("eif( y < " + SoccerDDCAccess.getGoalareaLeftY()
-						+ " AND y > " + (SoccerDDCAccess.getGoalareaLeftY() - GOAL_DEPTH)
-						+ " AND x > " + SoccerDDCAccess.getGoalareaLeftXMin()+ " AND x < "
-						+ SoccerDDCAccess.getGoalareaLeftXMax() + " , 1, 0)", "inGoal1", source);
+				.createExpressionParameter("eif( x < " + SoccerDDCAccess.getGoalareaLeftX()
+						+ " AND x > " + (SoccerDDCAccess.getGoalareaLeftX() - GOAL_DEPTH)
+						+ " AND y > " + SoccerDDCAccess.getGoalareaLeftYMin()+ " AND y < "
+						+ SoccerDDCAccess.getGoalareaLeftYMax() + " , 1, 0)", "inGoal1", source);
 		SDFExpressionParameter ex6 = OperatorBuildHelper
-				.createExpressionParameter("eif( y > " + SoccerDDCAccess.getGoalareaRightY()
-						+ " AND y < " + (SoccerDDCAccess.getGoalareaRightY() + GOAL_DEPTH)
-						+ " AND x < " + SoccerDDCAccess.getGoalareaRightXMax() + " AND x > "
-						+ SoccerDDCAccess.getGoalareaRightXMin() + " , 1, 0)", "inGoal2", source);
+				.createExpressionParameter("eif( x > " + SoccerDDCAccess.getGoalareaRightX()
+						+ " AND x < " + (SoccerDDCAccess.getGoalareaRightX() + GOAL_DEPTH)
+						+ " AND y < " + SoccerDDCAccess.getGoalareaRightYMax() + " AND y > "
+						+ SoccerDDCAccess.getGoalareaRightYMin() + " , 1, 0)", "inGoal2", source);
 		expressions.add(ex1);
 		expressions.add(ex2);
 		expressions.add(ex3);

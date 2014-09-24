@@ -53,15 +53,15 @@ public class CrossesGlobalSportsQLParser implements ISportsQLParser{
 	public ILogicalQuery parse(SportsQLQuery sportsQL)
 			throws SportsQLParseException, NumberFormatException, MissingDDCEntryException {
 		
-		final double CENTER_LINE = AbstractSportsDDCAccess.calculateCenterY();
+		final double CENTER_LINE = AbstractSportsDDCAccess.calculateCenterX();
 		
 		//Borders from where the cross has to be shot
-		final double CROSSINGZONE_RIGHT_SIDE = AbstractSportsDDCAccess.getSpace(SpaceType.top_fifth).getXMax();
-		final double CROSSINGZONE_LEFT_SIDE = AbstractSportsDDCAccess.getSpace(SpaceType.bottom_fifth).getXMin();
+		final double CROSSINGZONE_RIGHT_SIDE = AbstractSportsDDCAccess.getSpace(SpaceType.top_fifth).getYMax();
+		final double CROSSINGZONE_LEFT_SIDE = AbstractSportsDDCAccess.getSpace(SpaceType.bottom_fifth).getYMin();
 		
 		//Zone into which the ball has to fly
-		final double TARGETZONE_LEFT_HALF = AbstractSportsDDCAccess.getSpace(SpaceType.quarter_field_left).getYMax();
-		final double TARGETZONE_RIGHT_HALF = AbstractSportsDDCAccess.getSpace(SpaceType.quarter_field_right).getYMin();
+		final double TARGETZONE_LEFT_HALF = AbstractSportsDDCAccess.getSpace(SpaceType.quarter_field_left).getXMax();
+		final double TARGETZONE_RIGHT_HALF = AbstractSportsDDCAccess.getSpace(SpaceType.quarter_field_right).getXMin();
 		
 		List<ILogicalOperator> allOperators = new ArrayList<ILogicalOperator>();
 		ArrayList<String> predicates = new ArrayList<>();
@@ -90,13 +90,13 @@ public class CrossesGlobalSportsQLParser implements ISportsQLParser{
 		ArrayList<SDFExpressionParameter> expressions = new ArrayList<SDFExpressionParameter>();
 		expressions.add(OperatorBuildHelper.createExpressionParameter(SoccerGameAttributes.TS, "cts", selectBallInField));
 		expressions.add(OperatorBuildHelper
-				.createExpressionParameter("eif((y < " + CENTER_LINE
-						+ ") AND ((x < " + CROSSINGZONE_RIGHT_SIDE + ") OR (x > "
+				.createExpressionParameter("eif((x < " + CENTER_LINE
+						+ ") AND ((y < " + CROSSINGZONE_RIGHT_SIDE + ") OR (y > "
 						+ CROSSINGZONE_LEFT_SIDE + ")), 1, 0)", "in_crossing_zone_left", selectBallInField));
 		
 		expressions.add(OperatorBuildHelper
-				.createExpressionParameter("eif( (y > " + CENTER_LINE
-						+ ") AND ((x < " + CROSSINGZONE_RIGHT_SIDE + ") OR (x > "
+				.createExpressionParameter("eif( (x > " + CENTER_LINE
+						+ ") AND ((y < " + CROSSINGZONE_RIGHT_SIDE + ") OR (y > "
 						+ CROSSINGZONE_LEFT_SIDE + ")), 1, 0)", "in_crossing_zone_right", selectBallInField));
 
 		MapAO inCrossingZoneMap = OperatorBuildHelper.createMapAO(expressions, selectBallInField, 0, 0);
@@ -131,8 +131,8 @@ public class CrossesGlobalSportsQLParser implements ISportsQLParser{
 		expressions = new ArrayList<>();
 		expressions.add(OperatorBuildHelper.createExpressionParameter(SoccerGameAttributes.TS, "cross_ball_ts", selectBallInField));
 		
-		expressions.add(OperatorBuildHelper.createExpressionParameter("eif( (y <" + TARGETZONE_LEFT_HALF + ") AND ( x > " + CROSSINGZONE_RIGHT_SIDE +") AND (x <" + CROSSINGZONE_LEFT_SIDE +") AND (z >" + MIN_BALL_HEIGHT +"),1,0)","in_target_zone_left", selectBallInField));
-		expressions.add(OperatorBuildHelper.createExpressionParameter("eif( (y >" + TARGETZONE_RIGHT_HALF + ") AND ( x > " + CROSSINGZONE_RIGHT_SIDE +") AND (x <" + CROSSINGZONE_LEFT_SIDE +") AND (z >" + MIN_BALL_HEIGHT +"),1,0)","in_target_zone_right", selectBallInField));
+		expressions.add(OperatorBuildHelper.createExpressionParameter("eif( (x <" + TARGETZONE_LEFT_HALF + ") AND ( y > " + CROSSINGZONE_RIGHT_SIDE +") AND (y <" + CROSSINGZONE_LEFT_SIDE +") AND (z >" + MIN_BALL_HEIGHT +"),1,0)","in_target_zone_left", selectBallInField));
+		expressions.add(OperatorBuildHelper.createExpressionParameter("eif( (x >" + TARGETZONE_RIGHT_HALF + ") AND ( y > " + CROSSINGZONE_RIGHT_SIDE +") AND (y <" + CROSSINGZONE_LEFT_SIDE +") AND (z >" + MIN_BALL_HEIGHT +"),1,0)","in_target_zone_right", selectBallInField));
 		
 		MapAO inTargetZone = OperatorBuildHelper.createMapAO(expressions, selectBallInField, 0, 0);
 		allOperators.add(inTargetZone);

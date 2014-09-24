@@ -375,8 +375,10 @@ public class AbstractSportsDDCAccess {
 	 * @throws MissingDDCEntryException
 	 */
 	public static Space getSpace(SpaceType spaceType) throws NumberFormatException, MissingDDCEntryException{
-		int middleThirdLeftBorderY = (int) ((int)((getFieldYMax() + getFieldYMin()) / 3) + getFieldYMin());
-		int middleThirdRightBorderY = (int) ((int)((getFieldYMax() + getFieldYMin()) / 3) - getFieldYMax());;
+		int middleThirdLeftBorderX = (int) ((int)((getFieldXMax() + getFieldXMin()) / 3) + getFieldXMin());
+		int middleThirdRightBorderX = (int) ((int)((getFieldXMax() + getFieldXMin()) / 3) - getFieldXMax());;
+		
+		double fieldLength = Math.abs( getFieldXMax()-getFieldXMin() );
 		
 		switch(spaceType){
 		case all:
@@ -387,38 +389,36 @@ public class AbstractSportsDDCAccess {
 				getFieldXMax(), getFieldYMax());
 		case left_half:
 			return new Space(getFieldXMin(), getFieldYMin(), 
-				getFieldXMax(), calculateCenterY());
+					calculateCenterX(), getFieldYMax());
 		case right_half:
-			return new Space(getFieldXMin(), calculateCenterY(), 
+			return new Space(calculateCenterX(), getFieldYMin(), 
 				getFieldXMax(), getFieldYMax());
 		case left_third:
 			return new Space(getFieldXMin(),getFieldYMin(),
-					getFieldXMax(), middleThirdLeftBorderY);
+					middleThirdLeftBorderX, getFieldYMax());
 		case middle_third:
-			return new Space(getFieldXMin(),middleThirdLeftBorderY, 
-					getFieldXMax(), middleThirdRightBorderY);
+			return new Space(middleThirdLeftBorderX, getFieldYMin(), 
+					middleThirdRightBorderX, getFieldYMax());
 		case right_third:
-			return new Space(getFieldXMin(),middleThirdRightBorderY, 
+			return new Space(middleThirdRightBorderX, getFieldYMin(), 
 					getFieldXMax(), getFieldYMax());
 		case top_half:
 			return new Space(getFieldXMin(), getFieldYMin(), 
-					calculateCenterX(), getFieldYMax());
+					getFieldXMax(), calculateCenterY());
 		case bottom_half:
-			return new Space(calculateCenterX(), getFieldYMin(), 
+			return new Space(getFieldXMin(), calculateCenterY(), 
 					getFieldXMax(), getFieldYMax());
 		case top_fifth:
 			return new Space(getFieldXMin(), getFieldYMin(), 
-					getFieldXMax()/5, getFieldYMax());
+					getFieldXMax(), getFieldYMax()/5);
 		case bottom_fifth:
-			return new Space(getFieldXMax() - getFieldXMax()/5, 
-					getFieldYMin(), getFieldXMax(), getFieldYMax());
+			return new Space(getFieldXMin(), getFieldYMax() - getFieldYMax()/5, 
+					getFieldXMax(), getFieldYMax());
 		case quarter_field_left:
-			double fieldLength = getFieldYMax()-getFieldYMin();
 			return new Space(getFieldXMin(), getFieldYMin(),
-					getFieldXMax(),  fieldLength/4 + getFieldYMin());
+					fieldLength/4 + getFieldXMin(), getFieldYMax());
 		case quarter_field_right:
-			double fieldLength2 = getFieldYMax()-getFieldYMin();
-			return new Space(getFieldXMin(), getFieldYMax() - fieldLength2/4, 
+			return new Space(getFieldXMax() - fieldLength/4, getFieldYMin(), 
 					getFieldXMax(),  getFieldYMax());
 		default:
 			break;
