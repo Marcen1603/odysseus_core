@@ -24,6 +24,7 @@ import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.datahandler.DataHandlerRegistry;
 import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
 import de.uniol.inf.is.odysseus.core.infoservice.InfoService;
+import de.uniol.inf.is.odysseus.core.infoservice.InfoServiceFactory;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.ProtocolHandlerRegistry;
@@ -51,7 +52,8 @@ import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
  */
 public class TAccessAORule extends AbstractTransformationRule<AbstractAccessAO> {
 	static Logger LOG = LoggerFactory.getLogger(TAccessAORule.class);
-
+	static InfoService infoService = InfoServiceFactory.getInfoService(TAccessAORule.class);
+	
 	@Override
 	public int getPriority() {
 		return 0;
@@ -152,7 +154,7 @@ public class TAccessAORule extends AbstractTransformationRule<AbstractAccessAO> 
 		}else{
 			if (operator.getWrapper() != null){
 				//throw new TransformationException("Multiple definiton of source with name "+operator.getAccessAOName());
-				InfoService.warning("Potential problem? Multiple definition of source with name "+operator.getAccessAOName(), "Transformation");
+				infoService.warning("Potential problem? Multiple definition of source with name "+operator.getAccessAOName());
 			}
 		}
 		defaultExecute(operator, accessPO, config, true, true);

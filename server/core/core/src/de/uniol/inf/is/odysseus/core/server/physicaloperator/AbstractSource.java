@@ -36,6 +36,7 @@ import de.uniol.inf.is.odysseus.core.event.IEvent;
 import de.uniol.inf.is.odysseus.core.event.IEventListener;
 import de.uniol.inf.is.odysseus.core.event.IEventType;
 import de.uniol.inf.is.odysseus.core.infoservice.InfoService;
+import de.uniol.inf.is.odysseus.core.infoservice.InfoServiceFactory;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
@@ -102,6 +103,8 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 	public void setDebug(boolean debug) {
 		this.debug = debug;
 	}
+	
+	final InfoService infoService;
 
 	// ------------------------------------------------------------------
 	// Eventhandling
@@ -173,6 +176,7 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 
 	public AbstractSource() {
 		this.ownerHandler = new OwnerHandler();
+		infoService = InfoServiceFactory.getInfoService(AbstractSource.class.getName());
 	}
 
 	public AbstractSource(AbstractSource<T> source) {
@@ -182,6 +186,7 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 		this.name = source.name;
 		this.ownerHandler = new OwnerHandler(source.ownerHandler);
 		this.infos = new TreeMap<>(source.infos);
+		infoService = InfoServiceFactory.getInfoService(name);
 	}
 
 	@Override
@@ -955,15 +960,19 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 	//--------------------------------------------------------
 	// Information Management
 	// -------------------------------------------------------
-	public void sendError(String message, Throwable t){
-		InfoService.error(message, t, getName());
+	protected void sendError(String message, Throwable t){
+		infoService.error(message, t);
 	}
 	
-	public void sendWarning(String message){
-		InfoService.warning(message, getName());
+	protected void sendWarning(String message){
+		infoService.warning(message);
+	}
+
+	protected void sendWarning(String message, Throwable t){
+		infoService.warning(message);
 	}
 	
-	public void sendInfo(String message){
-		InfoService.info(message, getName());
+	protected void sendInfo(String message){
+		infoService.info(message);
 	}
 }

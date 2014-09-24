@@ -37,6 +37,7 @@ import de.uniol.inf.is.odysseus.core.connection.SelectorThread;
 import de.uniol.inf.is.odysseus.core.connection.TCPConnector;
 import de.uniol.inf.is.odysseus.core.connection.TCPConnectorListener;
 import de.uniol.inf.is.odysseus.core.infoservice.InfoService;
+import de.uniol.inf.is.odysseus.core.infoservice.InfoServiceFactory;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
 
@@ -123,6 +124,8 @@ public class NonBlockingTcpClientHandler extends AbstractTransportHandler
 	private int writeBufferSize;
 	private boolean autoconnect;
 	NioTcpConnection connection;
+	
+	static final InfoService infoService = InfoServiceFactory.getInfoService(NonBlockingTcpClientHandler.class.getName());
 
 	public NonBlockingTcpClientHandler() {
 		super();
@@ -159,8 +162,8 @@ public class NonBlockingTcpClientHandler extends AbstractTransportHandler
 	@Override
 	public void connectionFailed(final ConnectorSelectorHandler handler,
 			final Exception cause) {
-		InfoService.error("Could not connet to server " + host + " on port "
-				+ port, cause, "TcpClientHandler");
+		infoService.error("Could not connet to server " + host + " on port "
+				+ port, cause);
 		NonBlockingTcpClientHandler.LOG.error(cause.getMessage(), cause);
 	}
 
@@ -254,7 +257,7 @@ public class NonBlockingTcpClientHandler extends AbstractTransportHandler
 			this.connector.connect();
 		} catch (final IOException e) {
 			NonBlockingTcpClientHandler.LOG.error(e.getMessage(), e);
-			InfoService.error(e.getMessage(), e,"NonBlockingTPCClientHandler");
+			infoService.error(e.getMessage(), e);
 			throw new OpenFailedException(e);
 		}
 	}

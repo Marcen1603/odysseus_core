@@ -23,7 +23,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
-import de.uniol.inf.is.odysseus.core.infoservice.InfoService;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
@@ -160,8 +159,8 @@ public class RelationalMapPO<T extends IMetaAttribute> extends
 								+ " with expression " + expressions[i], e);
 						// Not needed. Value is null, if not set!
 						// outputVal.setAttribute(i, null);
-						InfoService.warning("Cannot calc result for " + object
-								+ " with expression " + expressions[i], e, "RelationalMap");
+						sendWarning("Cannot calc result for " + object
+								+ " with expression " + expressions[i], e);
 					}
 				}
 				if (this.expressions[i].getType().requiresDeepClone()) {

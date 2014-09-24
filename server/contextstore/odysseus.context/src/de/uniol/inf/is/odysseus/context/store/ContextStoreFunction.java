@@ -37,6 +37,7 @@ import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.infoservice.InfoService;
+import de.uniol.inf.is.odysseus.core.infoservice.InfoServiceFactory;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.mep.AbstractFunction;
@@ -50,6 +51,7 @@ public class ContextStoreFunction extends AbstractFunction<Tuple<?>> {
 	private static final long serialVersionUID = 8083562782642549093L;
 	private static Logger LOG = LoggerFactory
 			.getLogger(ContextStoreFunction.class);
+	private static InfoService infoService = InfoServiceFactory.getInfoService(ContextStoreFunction.class.getName());
 	static final SDFDatatype accTypes[][] = new SDFDatatype[][] { {
 			SDFDatatype.STRING}};
 
@@ -68,7 +70,7 @@ public class ContextStoreFunction extends AbstractFunction<Tuple<?>> {
             }
             if (values.size() > 1) {
                 LOG.warn("The context store delivered more than one context state, but a function can only handle one! Use enrich instead!");
-                InfoService.warning("The context store delivered more than one context state, but a function can only handle one! Use enrich instead!",getSymbol());
+                infoService.warning("The context store delivered more than one context state, but a function can only handle one! Use enrich instead!");
             }
             return values.get(0);
         }
