@@ -13,12 +13,17 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.core.infoservice.InfoService;
+import de.uniol.inf.is.odysseus.core.infoservice.InfoServiceFactory;
+
 /**
  * NIO Selector thread based on the work of Nuno Santos, nfsantos@sapo.pt
  */
 public class SelectorThread implements Runnable, UncaughtExceptionHandler {
 	private static final Logger LOG = LoggerFactory
 			.getLogger(SelectorThread.class);
+	static final InfoService INFO_SERVICE = InfoServiceFactory
+			.getInfoService(SelectorThread.class);
 	private static SelectorThread instance;
 	private final Selector selector;
 	private final Thread selectorThread;
@@ -181,15 +186,15 @@ public class SelectorThread implements Runnable, UncaughtExceptionHandler {
 		}
 
 		if (!channel.isOpen()) {
-	//		throw new IOException("Channel is not open.");
+			// throw new IOException("Channel is not open.");
 		}
 
 		try {
 			if (channel.isRegistered()) {
 				final SelectionKey sk = channel.keyFor(this.selector);
 				assert sk == null : "Channel is not registered with a selector";
-				//FIXME sk can only be null at this location (ckuka 10240713)
-				//sk.cancel();
+				// FIXME sk can only be null at this location (ckuka 10240713)
+				// sk.cancel();
 			}
 		} catch (final Exception e) {
 			final IOException ioe = new IOException(
@@ -272,8 +277,13 @@ public class SelectorThread implements Runnable, UncaughtExceptionHandler {
 						}
 					}
 				} catch (final Throwable t) {
-					LOG.error(t.getMessage(), t);
-					return;
+					// Should the thread be terminated in case of any
+					// error?? --> CancelledKeyException should be ignored?
+					if (!(t instanceof CancelledKeyException)) {
+						LOG.error(t.getMessage(), t);
+						INFO_SERVICE.warning(t.getMessage(), t);
+						return;
+					}
 				}
 			}
 		}
