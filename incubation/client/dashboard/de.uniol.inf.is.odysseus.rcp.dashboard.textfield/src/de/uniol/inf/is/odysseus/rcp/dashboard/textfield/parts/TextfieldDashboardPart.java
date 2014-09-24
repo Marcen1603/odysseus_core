@@ -18,8 +18,13 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.securitypunctuation.ISecurityPunctuation;
 import de.uniol.inf.is.odysseus.rcp.dashboard.AbstractDashboardPart;
 
+/**
+ * This is a DashboardPart which shows a specific value from the latest Tuple in a Datastream
+ * @author MarkMilster
+ *
+ */
 public class TextfieldDashboardPart extends AbstractDashboardPart {
-	
+
 	private String pendingElement = "";
 
 	private Text text;
@@ -33,20 +38,26 @@ public class TextfieldDashboardPart extends AbstractDashboardPart {
 	private int warningIndex = 1;
 
 	/**
-	 * @return the warningIndex
+	 * @return the warningIndex:
+	 * 			The warningIndex is the index of the Attribute which represents the boolean flag warning
 	 */
 	public int getWarningIndex() {
 		return warningIndex;
 	}
 
 	/**
-	 * @param warningIndex the warningIndex to set
+	 * The warningIndex is the index of the Attribute which represents the boolean flag warning
+	 * 
+	 * @param warningIndex
+	 *            the warningIndex to set
 	 */
 	public void setWarningIndex(int warningIndex) {
 		this.warningIndex = warningIndex;
 	}
 
 	/**
+	 * The errorIndex is the index of the Attribute which represents the boolean flag error
+	 * 
 	 * @return the errorIndex
 	 */
 	public int getErrorIndex() {
@@ -54,7 +65,10 @@ public class TextfieldDashboardPart extends AbstractDashboardPart {
 	}
 
 	/**
-	 * @param errorIndex the errorIndex to set
+	 * The errorIndex is the index of the Attribute which represents the boolean flag error
+	 * 
+	 * @param errorIndex
+	 *            the errorIndex to set
 	 */
 	public void setErrorIndex(int errorIndex) {
 		this.errorIndex = errorIndex;
@@ -66,7 +80,10 @@ public class TextfieldDashboardPart extends AbstractDashboardPart {
 	private boolean error;
 
 	private boolean showWarning = true;;
+
 	/**
+	 * If true and if there is the warningFlag set in the current tuple, the warning will be shown
+	 * 
 	 * @return the showWarning
 	 */
 	public boolean isShowWarning() {
@@ -74,7 +91,10 @@ public class TextfieldDashboardPart extends AbstractDashboardPart {
 	}
 
 	/**
-	 * @param showWarning the showWarning to set
+	 * If true and if there is the warningFlag set in the current tuple, the warning will be shown
+	 * 
+	 * @param showWarning
+	 *            the showWarning to set
 	 */
 	public void setShowWarning(boolean showWarning) {
 		this.showWarning = showWarning;
@@ -83,6 +103,8 @@ public class TextfieldDashboardPart extends AbstractDashboardPart {
 	private boolean showError = true;
 
 	/**
+	 * The index of the attribute which represents the value to show
+	 * 
 	 * @return the atributeToShow
 	 */
 	public int getAtributeToShow() {
@@ -90,7 +112,10 @@ public class TextfieldDashboardPart extends AbstractDashboardPart {
 	}
 
 	/**
-	 * @param atributeToShow the atributeToShow to set
+	 * The index of the attribute which represents the value to show
+	 * 
+	 * @param atributeToShow
+	 *            the atributeToShow to set
 	 */
 	public void setAtributeToShow(int atributeToShow) {
 		this.atributeToShow = atributeToShow;
@@ -129,13 +154,15 @@ public class TextfieldDashboardPart extends AbstractDashboardPart {
 	}
 
 	@Override
-	public void streamElementRecieved(IPhysicalOperator senderOperator, IStreamObject<?> element, int port) {
+	public void streamElementRecieved(IPhysicalOperator senderOperator,
+			IStreamObject<?> element, int port) {
 		synchronized (pendingElement) {
 			Tuple<?> elementTuple = (Tuple<?>) element;
-			int[] atr = {atributeToShow };
-			pendingElement = (elementTuple != null ? elementTuple.toString(atr) : "null");
+			int[] atr = { atributeToShow };
+			pendingElement = (elementTuple != null ? elementTuple.toString(atr)
+					: "null");
 			warning = elementTuple.getAttribute(warningIndex);
-			error =  elementTuple.getAttribute(errorIndex);
+			error = elementTuple.getAttribute(errorIndex);
 		}
 	}
 
@@ -147,11 +174,20 @@ public class TextfieldDashboardPart extends AbstractDashboardPart {
 		this.showHeartbeats = showHeartbeats;
 	}
 
-
+	/**
+	 * The updateInterval in ms represents the value how often the textfield is repaintet
+	 * 
+	 * @return the updateInterval
+	 */
 	public long getUpdateInterval() {
 		return updateInterval;
 	}
 
+	/**
+	 * The updateInterval in ms represents the value how often the textfield is repaintet
+	 * 
+	 * @param updateInterval
+	 */
 	public void setUpdateInterval(long updateInterval) {
 		this.updateInterval = updateInterval;
 	}
@@ -166,7 +202,7 @@ public class TextfieldDashboardPart extends AbstractDashboardPart {
 		errorIndex = Integer.valueOf(saved.get("ErrorIndex"));
 		warningIndex = Integer.valueOf(saved.get("WarningIndex"));
 	}
-	
+
 	@Override
 	public Map<String, String> onSave() {
 		Map<String, String> saveMap = Maps.newHashMap();
@@ -180,19 +216,25 @@ public class TextfieldDashboardPart extends AbstractDashboardPart {
 		return saveMap;
 	}
 
+	/**
+	 * This Method is called in the inteval of the updateInterval variable and repaints the textfield
+	 */
 	private void refreshText() {
 		synchronized (pendingElement) {
-			text.setBackground(text.getDisplay().getSystemColor(SWT.COLOR_WHITE));
+			text.setBackground(text.getDisplay()
+					.getSystemColor(SWT.COLOR_WHITE));
 			if (pendingElement != null) {
 				text.setText(pendingElement);
 			} else {
 				text.setText("");
 			}
 			if (showWarning && warning) {
-				text.setBackground(text.getDisplay().getSystemColor(SWT.COLOR_YELLOW));
+				text.setBackground(text.getDisplay().getSystemColor(
+						SWT.COLOR_YELLOW));
 			}
 			if (showError && error) {
-				text.setBackground(text.getDisplay().getSystemColor(SWT.COLOR_RED));
+				text.setBackground(text.getDisplay().getSystemColor(
+						SWT.COLOR_RED));
 			}
 		}
 	}
@@ -207,18 +249,16 @@ public class TextfieldDashboardPart extends AbstractDashboardPart {
 	@Override
 	public void punctuationElementRecieved(IPhysicalOperator senderOperator,
 			IPunctuation point, int port) {
-		// TODO Auto-generated method stub
-		
 	}
 
 	@Override
 	public void securityPunctuationElementRecieved(
 			IPhysicalOperator senderOperator, ISecurityPunctuation sp, int port) {
-		// TODO Auto-generated method stub
-		
 	}
 
 	/**
+	 * If true and if there is the errorFlag set in the current tuple, the error will be shown
+	 * 
 	 * @return the showError
 	 */
 	public boolean isShowError() {
@@ -226,7 +266,10 @@ public class TextfieldDashboardPart extends AbstractDashboardPart {
 	}
 
 	/**
-	 * @param showError the showError to set
+	 * If true and if there is the errorFlag set to in the current tuple, the error will be shown
+	 * 
+	 * @param showError
+	 *            the showError to set
 	 */
 	public void setShowError(boolean showError) {
 		this.showError = showError;
