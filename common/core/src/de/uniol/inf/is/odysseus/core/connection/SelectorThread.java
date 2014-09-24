@@ -277,12 +277,11 @@ public class SelectorThread implements Runnable, UncaughtExceptionHandler {
 						}
 					}
 				} catch (final Throwable t) {
-					// Should the thread be terminated in case of any
-					// error?? --> CancelledKeyException should be ignored?
 					if (!(t instanceof CancelledKeyException)) {
 						LOG.error(t.getMessage(), t);
 						INFO_SERVICE.warning(t.getMessage(), t);
-						return;
+						// Do not terminate this thread!
+						//return;
 					}
 				}
 			}
