@@ -1,18 +1,21 @@
 package windscadaanwendung.db;
 
-import java.sql.Statement;
-import java.sql.ResultSet;
+import java.sql.CallableStatement;
 import java.sql.Connection;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.Date;
 import java.util.Properties;
 
-import de.uniol.inf.is.odysseus.database.connection.DatabaseConnection;
-import de.uniol.inf.is.odysseus.database.connection.IDatabaseConnection;
-import de.uniol.inf.is.odysseus.database.connection.AbstractDatabaseConnectionFactory;
+import windscadaanwendung.ca.FarmList;
 import windscadaanwendung.ca.WKA;
 import windscadaanwendung.ca.WindFarm;
 import windscadaanwendung.hd.HitWKAData;
 import windscadaanwendung.hd.HitWindFarmData;
+import de.uniol.inf.is.odysseus.database.connection.AbstractDatabaseConnectionFactory;
+import de.uniol.inf.is.odysseus.database.connection.DatabaseConnection;
+import de.uniol.inf.is.odysseus.database.connection.IDatabaseConnection;
 
 public class DBConnectionHD extends AbstractDatabaseConnectionFactory {
 	
@@ -53,28 +56,40 @@ public class DBConnectionHD extends AbstractDatabaseConnectionFactory {
 		}
 	}
 	
-	public static void setHitWKAData(WKA wka) {
-
-		Statement stmt = null;
+	public static void refreshHitWKAData(Date timestamp) {
+		long Ltimestamp = timestamp.getTime();
 		ResultSet rs = null;
-
+		WKA wka = null;
 		
 			// load hitWKAData
 			
 		    try {
-				stmt = conn.createStatement();
-				rs = stmt.executeQuery("SELECT * FROM hit_values WHERE wka_id = " + wka.getID());
-
-				    HitWKAData data = new HitWKAData();
-				    // there is only one tuple
-				    if (rs.next()) {
+		    	CallableStatement cStmt = conn.prepareCall("{call hit_values_procedure(?)}");
+		    	// TODO
+		    	cStmt.setLong(1, Ltimestamp);
+		    
+		    	if (cStmt.execute()) {
+		    		rs = cStmt.getResultSet();
+		    		HitWKAData data = null;
+				    while (rs.next()) {
+				    	data = new HitWKAData();
 				    	data.setAvgWindSpeed(rs.getDouble("avg_wind_speed"));
 					    data.setAvgWindDirection(rs.getDouble("avg_wind_direction"));
 					    data.setAvgRotationalSpeed(rs.getDouble("avg_rotational_speed"));
 					    data.setAvgPerformance(rs.getDouble("avg_corrected_score"));
+					    data.setMaxPerformance(rs.getDouble("max_corrected_score"));
+					    data.setMaxRotationalSpeed(rs.getDouble("max_rotaional_speed"));
+					    data.setMaxWindSpeed(rs.getDouble("max_wind_speed"));
+					    data.setMinPerformance(rs.getDouble("min_corrected_score"));
+					    data.setMinRotationalSpeed(rs.getDouble("min_rotaional_speed"));
+					    data.setMinWindSpeed(rs.getDouble("min_wind_speed"));
+					    
+					    wka = FarmList.getWKA(rs.getInt("wka_id"));
 					    wka.setHitWKAData(data);
-				    } else {
-				    	System.out.println("No Hit Data Found for WKA " + wka.getID());
+				    } 
+		    	}
+				     else {
+				    	System.out.println("No Hit Data Found for WKA ");
 				    }
 			} catch (SQLException e) {
 				e.printStackTrace();
@@ -82,19 +97,13 @@ public class DBConnectionHD extends AbstractDatabaseConnectionFactory {
 		   
 
 		    try {
-	            rs.close();
+		    	if (rs != null) {
+		    		rs.close();
+		    	} 
 	        } catch (SQLException sqlEx) { // ignore 
 
 	        rs = null;
 	        }
-		    
-		    try {
-	            stmt.close();
-	        } catch (SQLException sqlEx) { // ignore 
-
-	        stmt = null;
-	        }	
-	
 	}
 	
 	public static void setHitFarmData(WindFarm farm) {

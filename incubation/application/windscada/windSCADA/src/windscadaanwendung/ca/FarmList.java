@@ -1,6 +1,9 @@
 package windscadaanwendung.ca;
 
+import java.util.Date;
 import java.util.List;
+
+import windscadaanwendung.db.DBConnectionHD;
 
 public class FarmList {
 	
@@ -18,6 +21,7 @@ public class FarmList {
 	 */
 	public static void setFarmList(List<WindFarm> farmList) {
 		FarmList.farmList = farmList;
+		DBConnectionHD.refreshHitWKAData(new Date(Long.MIN_VALUE));
 	}
 	
 	public static WKA getWKA(int id) {

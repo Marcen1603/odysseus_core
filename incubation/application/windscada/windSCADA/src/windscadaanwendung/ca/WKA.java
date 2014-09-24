@@ -1,8 +1,10 @@
 package windscadaanwendung.ca;
 
+import java.util.Observable;
+
 import windscadaanwendung.hd.HitWKAData;
 
-public class WKA {
+public class WKA extends Observable {
 	
 	private HitWKAData hitWKAData;
 	
@@ -59,7 +61,6 @@ public class WKA {
 	}
 
 	private double latitude, longtude;
-	//TODO: add Scripts and comment
 	
 	public WKA() {
 		
@@ -76,8 +77,9 @@ public class WKA {
 	 * @param hitWKAData the hitWKAData to set
 	 */
 	public void setHitWKAData(HitWKAData hitWKAData) {
-		
 		this.hitWKAData = hitWKAData;
+		setChanged(); 
+        notifyObservers(hitWKAData); 
 	}
 
 }

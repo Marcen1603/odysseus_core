@@ -1,5 +1,8 @@
 package windscadaanwendung.views;
 
+import java.util.Observable;
+import java.util.Observer;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
@@ -16,6 +19,7 @@ import org.eclipse.ui.part.ViewPart;
 import windscadaanwendung.ca.WKA;
 import windscadaanwendung.ca.WindFarm;
 import windscadaanwendung.db.DBConnectionHD;
+import windscadaanwendung.hd.HitWKAData;
 import windscadaanwendung.views.dashboard.CorrectedScoreTfPart;
 
 /**
@@ -23,18 +27,20 @@ import windscadaanwendung.views.dashboard.CorrectedScoreTfPart;
  * @author MarkMilster
  *
  */
-public class UebersichtView extends ViewPart {
+public class UebersichtView extends ViewPart implements Observer {
 	
 	public static final String ID = "windscadaanwendung.views.DetailView";
 	private static Text hitLeistung;
 	private static Text nameWindpark;
 	private static Composite wkaContainer;
+	private static WindFarm selectedWindpark;
 
 	public UebersichtView() {
 	}
 
 	@Override
 	public void createPartControl(Composite parent) {
+		ObserverHandler.addObserverToWKA(this);
 		parent.setLayout(new FillLayout(SWT.VERTICAL));
 		
 		Composite composite = new Composite(parent, SWT.NONE);
@@ -63,51 +69,51 @@ public class UebersichtView extends ViewPart {
 	}
 	
 	public static void setSelectedWindpark(WindFarm windFarm) {
-		nameWindpark.setText(String.valueOf(windFarm.getID()));
-		DBConnectionHD.setHitFarmData(windFarm);
-		if (windFarm.getHitWindFarmData() != null) {
-			hitLeistung.setText(String.valueOf(windFarm.getHitWindFarmData().getAvgPervormance()));
+		selectedWindpark = windFarm;
+		
+		nameWindpark.setText(String.valueOf(selectedWindpark.getID()));
+		//TODO Hit Farm Data on FarmList mit auslagern und wie bei WKA mit Observern behandeln und in mysql prozeduren schreiben
+		DBConnectionHD.setHitFarmData(selectedWindpark);
+		if (selectedWindpark.getHitWindFarmData() != null) {
+			hitLeistung.setText(String.valueOf(selectedWindpark.getHitWindFarmData().getAvgPervormance()));
 		}
 		
-		// clear container
+		redrawWKAContainer();
 		
-		for (Control c : wkaContainer.getChildren()) {
-	        c.dispose(); 
-	    }
-	    wkaContainer.layout();
-	    setDefaultWKAContainerLabels();
+	}
 
-//		Label lbl;
-		Button btn;
-		Text txtHit;
-		Composite comp;
-		CorrectedScoreTfPart tfP;
-		for (WKA wka: windFarm.getWkas()) {
-			DBConnectionHD.setHitWKAData(wka);
-			btn = new Button(wkaContainer, SWT.NONE);
-			btn.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, false, false, 1, 1));
-			btn.setText(String.valueOf(wka.getID()));
-			btn.addMouseListener(new WKABTNListener());
-//			lbl = new Label(wkaContainer, SWT.NONE);
-//			lbl.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, false, false, 1, 1));
-//			lbl.setText(String.valueOf(wka.getID()));
-			comp = new Composite(wkaContainer, SWT.NONE);
-			comp.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, false, false, 1, 1));
-			tfP = new CorrectedScoreTfPart();
-			tfP.createPartControl(comp, wka.getID());
-			
-			txtHit = new Text(wkaContainer, SWT.NONE);
-			txtHit.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, false, false, 1, 1));
-			if (wka.getHitWKAData() != null) {
-				txtHit.setText(String.valueOf(wka.getHitWKAData().getAvgPerformance()));
-			} else {
-				txtHit.setText("No Data");
-			}
-			//TODO: implementieren, dass nach x sekunden die historischen Daten aktualisiert wird
-			
-		}
-		wkaContainer.layout();
-		
+	private static void redrawWKAContainer() {
+		// clear container
+				for (Control c : wkaContainer.getChildren()) {
+			        c.dispose(); 
+			    }
+			    wkaContainer.layout();
+			    setDefaultWKAContainerLabels();
+				Button btn;
+				Text txtHit;
+				Composite comp;
+				CorrectedScoreTfPart tfP;
+				for (WKA wka: selectedWindpark.getWkas()) {
+					btn = new Button(wkaContainer, SWT.NONE);
+					btn.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, false, false, 1, 1));
+					btn.setText(String.valueOf(wka.getID()));
+					btn.addMouseListener(new WKABTNListener());
+					comp = new Composite(wkaContainer, SWT.NONE);
+					comp.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, false, false, 1, 1));
+					tfP = new CorrectedScoreTfPart();
+					tfP.createPartControl(comp, wka.getID());
+					
+					txtHit = new Text(wkaContainer, SWT.NONE);
+					txtHit.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, false, false, 1, 1));
+					if (wka.getHitWKAData() != null) {
+						txtHit.setText(String.valueOf(wka.getHitWKAData().getAvgPerformance()));
+					} else {
+						txtHit.setText("No Data");
+					}
+					//TODO: implementieren, dass nach x sekunden die historischen Daten aktualisiert wird
+					
+				}
+				wkaContainer.layout();
 	}
 
 	private static void setDefaultWKAContainerLabels() {
@@ -120,6 +126,18 @@ public class UebersichtView extends ViewPart {
 		Label lbl3 = new Label(wkaContainer, SWT.NONE);
 		lbl3.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, false, false, 1, 1));
 		lbl3.setText("Historischer Mittelwert Leistung");
+	}
+
+	@Override
+	public void update(Observable o, Object arg) {
+		if (o instanceof WKA && arg instanceof HitWKAData) {
+			// there are new HitWKAData in a WKA
+			WKA wka = (WKA) o;
+			if (selectedWindpark.getWkas().contains(wka)) {
+				// the changed wka is in the selected windfarm
+				redrawWKAContainer();
+			}
+		}
 	}
 
 }

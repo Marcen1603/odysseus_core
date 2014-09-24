@@ -9,7 +9,7 @@ import windscadaanwendung.ca.WKA;
 import windscadaanwendung.ca.WindFarm;
 
 /**
- * Nur für die DPVs die nicht in der uebersichtstabelle sind
+ * Handles the change of the WKA or Windfarm for the registered DashboardPartViews
  * 
  * @author MarkMilster
  *
@@ -18,6 +18,11 @@ public class DashboardPartViewObserver {
 	
 	static List<WindDashboardPartView> dpvList;
 	
+	/**
+	 * Register a new DashboardPartView to handle by this Observer
+	 * @param dpv
+	 * 			The DashboardPartView
+	 */
 	public static void addDashboardPartView(WindDashboardPartView dpv) {
 		if (dpvList == null) {
 			dpvList = new ArrayList<WindDashboardPartView>();
@@ -27,54 +32,62 @@ public class DashboardPartViewObserver {
 		}
 	}
 	
-	public static void setFileName(String fileName) {
-		for(WindDashboardPartView dpv: dpvList) {
-			dpv.loadDashboardPartFile(fileName);
-		}
-	}
-	
+	/**
+	 * set farm for every valueType which shows a wkaPart
+	 * @param wka
+	 */
 	public static void setWKA(final WKA wka) {
-		//FIXME: warum werden alle 2 mal aufgerufen?
 		for(final WindDashboardPartView dpv: dpvList) {
 			if (!dpv.isFarmPart()) {
-				// otherwise dpv is a part for a hole windfarm
-				// set wka for every valueType which shows a wkaPart
-				System.out.println("Setze :" + String.valueOf(wka.getID()) + dpv.valueType + dpv.getFileEnding());
-				// Funktioniert nicht -> vorher alle alten sachen vom dpv disposen und erzwingen dass es gejt auch wenn schon showing ist
-				// oder evtl. bei allen dpvs einfach createPartControl() aufrufen und dabei eine wka ID uebergeben?! wohl besser !?
-//				dpv.unshowDashboardPart();
-//				dpv.createPartControl(dpv.getParent());
-//				Composite p = dpv.getParent();
-//				dpv = new CorrectedScorePart();
-//				dpv.createPartControl(p);
-
 				Display.getDefault().asyncExec(new Runnable() {
 
 					@Override
 					public void run() {
-						dpv.unshowDashboardPart();
-						dpv.loadDashboardPartFile(String.valueOf(wka.getID()) + dpv.valueType + dpv.getFileEnding());
+						setFileName(dpv, String.valueOf(wka.getID()) + dpv.valueType + dpv.getFileEnding());
 					}
 					
 				});
-				
-//				dpv.unshowDashboardPart();
-//				dpv.loadDashboardPartFile(String.valueOf(wka.getID()) + dpv.valueType + dpv.getFileEnding());
-//				dpv.loadDashboardPartFile(String.valueOf(wka.getID()) + dpv.valueType + dpv.getFileEnding());
 			}
 		}
-		//TODO Fuer Farm und fuer null machen
-		  
-		 
 	}
 	
-	public static void setWindFarm(WindFarm farm) {
-		for(WindDashboardPartView dpv: dpvList) {
+	/**
+	 * set farm for every valueType which shows a farmPart
+	 * @param farm
+	 */
+	public static void setWindFarm(final WindFarm farm) {
+		for(final WindDashboardPartView dpv: dpvList) {
 			if (dpv.isFarmPart()) {
-				// dpv is a part for a hole windfarm
-				// set farm for every valueType which shows a farrmPart
+				Display.getDefault().asyncExec(new Runnable() {
+
+					@Override
+					public void run() {
+						setFileName(dpv, String.valueOf(farm.getID()) + dpv.valueType + dpv.getFileEnding());
+					}
+					
+				});
 			}
 		}
+	}
+	
+	/**
+	 * Loads a new XML-File which represents a DashboardPart in the DashboardPartView
+	 * @param dpv
+	 * 			The DashboardPartView
+	 * @param fileName
+	 * 			The path of the XML-File
+	 */
+	public static void setFileName(final WindDashboardPartView dpv, final String fileName) {
+		Display.getDefault().asyncExec(new Runnable() {
+
+			@Override
+			public void run() {
+				System.out.println(System.currentTimeMillis());
+				dpv.unshowDashboardPart();
+				dpv.loadDashboardPartFile(fileName);
+			}
+			
+		});
 	}
 
 }
