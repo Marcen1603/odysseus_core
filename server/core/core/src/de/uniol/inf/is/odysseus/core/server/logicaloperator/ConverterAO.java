@@ -90,7 +90,7 @@ public class ConverterAO extends UnaryLogicalOp {
 		return options;
 	}
 
-	@Parameter(name = "schema", type = CreateSDFAttributeParameter.class, isList = true, doc = "The output schema of this operator")
+    @Parameter(name = "schema", type = CreateSDFAttributeParameter.class, isList = true, optional = true, doc = "The output schema of this operator")
 	public void setOutputAttributes(List<SDFAttribute> outputSchema) {
 		this.outputAttributes = outputSchema;
 	}
