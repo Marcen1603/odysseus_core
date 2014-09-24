@@ -92,7 +92,7 @@ public class AbstractTransportHandlerDelegate<T> {
 							|| getExchangePattern().equals(
 									ITransportExchangePattern.InOptionalOut) || getExchangePattern()
 							.equals(ITransportExchangePattern.InOut))) {
-				if (direction == ITransportDirection.IN) {
+				if (direction == ITransportDirection.IN || direction == ITransportDirection.INOUT) {
 					callOnMe.processInOpen();
 				}
 			}
@@ -102,7 +102,7 @@ public class AbstractTransportHandlerDelegate<T> {
 							|| getExchangePattern().equals(
 									ITransportExchangePattern.OutOptionalIn) || getExchangePattern()
 							.equals(ITransportExchangePattern.InOut))) {
-				if (direction == ITransportDirection.OUT) {
+				if (direction == ITransportDirection.OUT || direction == ITransportDirection.INOUT) {
 					callOnMe.processOutOpen();
 				}
 
@@ -120,7 +120,9 @@ public class AbstractTransportHandlerDelegate<T> {
 							|| getExchangePattern().equals(
 									ITransportExchangePattern.InOptionalOut) || getExchangePattern()
 							.equals(ITransportExchangePattern.InOut))) {
-				callOnMe.processInClose();
+				if (direction == ITransportDirection.IN || direction == ITransportDirection.INOUT) {
+					callOnMe.processInClose();
+				}
 			}
 			if (getExchangePattern() != null
 					&& (getExchangePattern().equals(
@@ -128,6 +130,7 @@ public class AbstractTransportHandlerDelegate<T> {
 							|| getExchangePattern().equals(
 									ITransportExchangePattern.OutOptionalIn) || getExchangePattern()
 							.equals(ITransportExchangePattern.InOut))) {
+				if (direction == ITransportDirection.OUT || direction == ITransportDirection.INOUT);
 				callOnMe.processOutClose();
 			}
 		}
