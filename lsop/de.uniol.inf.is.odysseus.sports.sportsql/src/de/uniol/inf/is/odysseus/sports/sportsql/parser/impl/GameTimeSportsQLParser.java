@@ -73,9 +73,9 @@ public class GameTimeSportsQLParser implements ISportsQLParser {
 		}
 
 
-		// 2. Convert timestamp to decimal minutes
+		// 2. Convert timestamp(in microseconds) to decimal minutes
 		ArrayList<SDFExpressionParameter> newtsMapExpressions = new ArrayList<SDFExpressionParameter>();
-		newtsMapExpressions.add(OperatorBuildHelper.createExpressionParameter("(" + SoccerGameAttributes.TS + " - " + startts+ ") / 60000000000000.0", ATTRIBUTE_NEW_TS,gameTimeSelect));
+		newtsMapExpressions.add(OperatorBuildHelper.createExpressionParameter("(" + SoccerGameAttributes.TS + " - " + startts+ ") / 60000000.0", ATTRIBUTE_NEW_TS,gameTimeSelect));
 
 		MapAO newtsMap = OperatorBuildHelper.createMapAO(newtsMapExpressions,
 				gameTimeSelect, 0, 0);
