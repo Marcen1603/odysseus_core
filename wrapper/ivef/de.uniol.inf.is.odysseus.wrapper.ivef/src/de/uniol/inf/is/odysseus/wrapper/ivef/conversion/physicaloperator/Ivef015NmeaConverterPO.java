@@ -93,7 +93,6 @@ public class Ivef015NmeaConverterPO<T extends IStreamObject<IMetaAttribute>>
 	private PositionReport ownShipPosition = null;
 	@SuppressWarnings("unused")
 	private StaticAndVoyageData ownShipStaticData = null;
-
 	/**
 	 * Map between the ship MMSI and its frequency. It'll be used to ensure
 	 * generating Static&Voyage messages from time to time
@@ -142,55 +141,6 @@ public class Ivef015NmeaConverterPO<T extends IStreamObject<IMetaAttribute>>
 			break;
 		default:
 			break;
-		}	
-	}
-
-	@SuppressWarnings({ "unchecked", "unused" })
-	private void convertTLLtoIVEF(
-			KeyValueObject<? extends IMetaAttribute> received) {
-		/***************************************
-		 * Set the own ship (Ship ODYSSEUS)
-		 * *************************************/
-		KeyValueObject<? extends IMetaAttribute> sent = new KeyValueObject<>();
-		if (received.getMetadata("originalNMEA") != null) {
-			if (received.getMetadata("originalNMEA") instanceof AISSentence) {
-				AISSentence ais = (AISSentence) received
-						.getMetadata("originalNMEA");
-				if (ais.getSentenceId().toUpperCase().equals("VDO")) {
-					this.ownShip = ais;
-					this.aishandler.handleAISSentence(this.ownShip);
-					if (this.aishandler.getDecodedAISMessage() != null) {
-						if (this.aishandler.getDecodedAISMessage() instanceof PositionReport)
-							this.ownShipPosition = (PositionReport) this.aishandler
-									.getDecodedAISMessage();
-						else if (this.aishandler.getDecodedAISMessage() instanceof StaticAndVoyageData)
-							this.ownShipStaticData = (StaticAndVoyageData) this.aishandler
-									.getDecodedAISMessage();
-						else {
-							// Other decoded messages to be handled later if
-							// required.
-						}
-						this.aishandler.resetDecodedAISMessage();
-					}
-				}
-			}
-			/**************************************************************************
-			 * Data fusion: Convert the TTM message into IVEF using the OwnShip
-			 * message
-			 * ************************************************************************/
-			else if (received.getMetadata("originalNMEA") instanceof TLLSentence) {
-				// We can't generate IVEF before receiving the ownShipMessage
-				if (this.ownShipPosition == null)
-					return;
-				TLLSentence tll = (TLLSentence) received
-						.getMetadata("originalNMEA");
-				
-				
-				
-				this.ivef.fillMap(sent);
-				sent.setMetadata("object", this.ivef);
-				transfer((T) sent);
-			}
 		}
 	}
 
@@ -388,6 +338,38 @@ public class Ivef015NmeaConverterPO<T extends IStreamObject<IMetaAttribute>>
 		return voyage;
 	}
 
+	private PosReport preparePosReportFromTLL(TLLSentence tll) {
+		PosReport posReport = new PosReport();
+		posReport.setId(tll.getTargetNumber().getNumber());
+		posReport.setSourceId(0);
+		Calendar now = Calendar.getInstance();
+		posReport.setUpdateTime(now.getTime());
+		Pos pos = new Pos();
+		pos.setLat(tll.getLatitude());
+		pos.setLong(tll.getLongitude());
+		posReport.setPos(pos);
+		posReport.setLost("no");
+		posReport.setSOG(0.0);
+		posReport.setCOG(0.0);
+		return posReport;
+	}
+
+	private StaticData prepareStaticDataFromTLL(TLLSentence tll) {
+		StaticData staticData = new StaticData();
+		staticData.setId(String.valueOf(tll.getTargetNumber()));
+		staticData.setSourceName("ODYSSEUS");
+		staticData.setSource(3);// 3 = manual
+		return staticData;
+	}
+
+	private Voyage prepareVoyageFromTLL(TLLSentence tll) {
+		Voyage voyage = new Voyage();
+		voyage.setId(String.valueOf(tll.getTargetNumber()));
+		voyage.setSourceName("ODYSSEUS");
+		voyage.setSource(3);// 3 manual
+		return voyage;
+	}
+
 	private int getIdFromMMSIMap(Long mmsi) {
 		if (mmsiToId.containsKey(mmsi))
 			return mmsiToId.get(mmsi);
@@ -479,6 +461,41 @@ public class Ivef015NmeaConverterPO<T extends IStreamObject<IMetaAttribute>>
 				vesseData.addStaticData(staticData);
 				vesseData.addVoyage(voyage);
 				// Body
+				Body body = new Body();
+				body.addVesselData(vesseData);
+				((MSG_VesselData) this.ivef).setBody(body);
+				this.ivef.fillMap(sent);
+				sent.setMetadata("object", this.ivef);
+				transfer((T) sent);
+			}
+		}
+	}
+
+	@SuppressWarnings({ "unchecked" })
+	private void convertTLLtoIVEF(
+			KeyValueObject<? extends IMetaAttribute> received) {
+		KeyValueObject<? extends IMetaAttribute> sent = new KeyValueObject<>();
+		if (received.getMetadata("originalNMEA") != null) {
+			if (received.getMetadata("originalNMEA") instanceof TLLSentence) {
+				TLLSentence tll = (TLLSentence) received
+						.getMetadata("originalNMEA");
+				
+				this.ivef = new MSG_VesselData();
+				// Header
+				Header header = prepareHeader();
+				((MSG_VesselData) this.ivef).setHeader(header);
+				// PosReport
+				PosReport posReport = preparePosReportFromTLL(tll);
+				// StaticData
+				StaticData staticData = prepareStaticDataFromTLL(tll);
+				// Voyage
+				Voyage voyage = prepareVoyageFromTLL(tll);
+				// VesseData
+				VesselData vesseData = new VesselData();
+				vesseData.setPosReport(posReport);
+				vesseData.addStaticData(staticData);
+				vesseData.addVoyage(voyage);
+				
 				Body body = new Body();
 				body.addVesselData(vesseData);
 				((MSG_VesselData) this.ivef).setBody(body);

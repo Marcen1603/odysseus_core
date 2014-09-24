@@ -117,9 +117,9 @@ public class Ivef025NmeaConverterPO<T extends IStreamObject<IMetaAttribute>>
 	@Override
 	protected void process_next(T object, int port) {
 		KeyValueObject<? extends IMetaAttribute> received = (KeyValueObject<? extends IMetaAttribute>) object;
-		
+
 		updateOwnShip(received);
-	 
+
 		switch (this.conversionType) {
 		case TTM_IVEF:
 			convertTTMtoIVEF(received);
@@ -141,55 +141,6 @@ public class Ivef025NmeaConverterPO<T extends IStreamObject<IMetaAttribute>>
 		}
 	}
 
-	@SuppressWarnings({ "unchecked", "unused" })
-	private void convertTLLtoIVEF(
-			KeyValueObject<? extends IMetaAttribute> received) {
-		/***************************************
-		 * Set the own ship (Ship ODYSSEUS)
-		 * *************************************/
-		KeyValueObject<? extends IMetaAttribute> sent = new KeyValueObject<>();
-		if (received.getMetadata("originalNMEA") != null) {
-			if (received.getMetadata("originalNMEA") instanceof AISSentence) {
-				AISSentence ais = (AISSentence) received
-						.getMetadata("originalNMEA");
-				if (ais.getSentenceId().toUpperCase().equals("VDO")) {
-					this.ownShip = ais;
-					this.aishandler.handleAISSentence(this.ownShip);
-					if (this.aishandler.getDecodedAISMessage() != null) {
-						if (this.aishandler.getDecodedAISMessage() instanceof PositionReport)
-							this.ownShipPosition = (PositionReport) this.aishandler
-									.getDecodedAISMessage();
-						else if (this.aishandler.getDecodedAISMessage() instanceof StaticAndVoyageData)
-							this.ownShipStaticData = (StaticAndVoyageData) this.aishandler
-									.getDecodedAISMessage();
-						else {
-							// Other decoded messages to be handled later if
-							// required.
-						}
-						this.aishandler.resetDecodedAISMessage();
-					}
-				}
-			}
-			/**************************************************************************
-			 * Data fusion: Convert the TTM message into IVEF using the OwnShip
-			 * message
-			 * ************************************************************************/
-			else if (received.getMetadata("originalNMEA") instanceof TLLSentence) {
-				// We can't generate IVEF before receiving the ownShipMessage
-				if (this.ownShipPosition == null)
-					return;
-				TLLSentence tll = (TLLSentence) received
-						.getMetadata("originalNMEA");
-				
-				
-				
-				this.ivef.fillMap(sent);
-				sent.setMetadata("object", this.ivef);
-				transfer((T) sent);
-			}
-		}
-	}
-
 	private void updateOwnShip(KeyValueObject<? extends IMetaAttribute> received) {
 		// try to get the own position from NMEA VDO Messages
 		if (received.getMetadata("originalNMEA") != null) {
@@ -200,9 +151,9 @@ public class Ivef025NmeaConverterPO<T extends IStreamObject<IMetaAttribute>>
 					this.ownShip = ais;
 					this.aishandler.handleAISSentence(this.ownShip);
 					if (this.aishandler.getDecodedAISMessage() != null) {
-						if (this.aishandler.getDecodedAISMessage() instanceof PositionReport){
+						if (this.aishandler.getDecodedAISMessage() instanceof PositionReport) {
 							this.ownShipPosition = (PositionReport) this.aishandler
-									.getDecodedAISMessage();							
+									.getDecodedAISMessage();
 						}
 						this.aishandler.resetDecodedAISMessage();
 					}
@@ -211,6 +162,42 @@ public class Ivef025NmeaConverterPO<T extends IStreamObject<IMetaAttribute>>
 		}
 	}
 
+	@SuppressWarnings({ "unchecked" })
+	private void convertTLLtoIVEF(
+			KeyValueObject<? extends IMetaAttribute> received) {
+		KeyValueObject<? extends IMetaAttribute> sent = new KeyValueObject<>();
+		if (received.getMetadata("originalNMEA") != null) {
+			if (received.getMetadata("originalNMEA") instanceof TLLSentence) {
+				TLLSentence tll = (TLLSentence) received
+						.getMetadata("originalNMEA");
+				// create IVEF 0.2.5 Element
+				this.ivef = new MSG_IVEF();
+				Header header = prepareHeader();
+				((MSG_IVEF) this.ivef).setHeader(header);
+
+				TrackData trackData = prepareTrackDataFromTLL(tll);
+
+				VesselData vesselData = prepareVesselDataFromTLL(tll);
+
+				VoyageData voyageData = prepareVoyageDataFromTLL(tll);
+
+				ObjectDatas objectDatas = new ObjectDatas();
+				ObjectData objectData = new ObjectData();
+				objectData.setTrackData(trackData);
+				objectData.addVesselData(vesselData);
+				objectData.addVoyageData(voyageData);
+				objectDatas.addObjectData(objectData);
+
+				Body body = new Body();
+				body.setObjectDatas(objectDatas);
+				((MSG_IVEF) this.ivef).setBody(body);
+				this.ivef.fillMap(sent);
+				sent.setMetadata("object", this.ivef);
+				transfer((T) sent);
+			}
+		}
+	}
+	
 	@SuppressWarnings({ "unchecked" })
 	private void convertTTMtoIVEF(
 			KeyValueObject<? extends IMetaAttribute> received) {
@@ -291,6 +278,7 @@ public class Ivef025NmeaConverterPO<T extends IStreamObject<IMetaAttribute>>
 			e.printStackTrace();
 		}
 		voyageData.setSourceId("3");
+		voyageData.setSourceType(3);
 		voyageData.setSourceName("ODYSSEUS");
 		voyageData.setUpdateTime(new Date());
 		return voyageData;
@@ -323,6 +311,7 @@ public class Ivef025NmeaConverterPO<T extends IStreamObject<IMetaAttribute>>
 			trackData.setId(ttm.getTargetNumber().getNumber());
 		trackData.setSourceName("ODYSSEUS");
 		trackData.setSourceId("0");
+		trackData.setTrackStatus(1); // Updated
 		if (ttm.getTargetCourse() != null)
 			trackData.setCOG(ttm.getTargetCourse());
 		if (ttm.getTargetSpeed() != null)
@@ -334,6 +323,53 @@ public class Ivef025NmeaConverterPO<T extends IStreamObject<IMetaAttribute>>
 			pos.setLong(targetCoordinates.getLongitude());
 			trackData.addPos(pos);
 		}
+		return trackData;
+	}
+
+	private VoyageData prepareVoyageDataFromTLL(TLLSentence tll) {
+		VoyageData voyageData = new VoyageData();
+		voyageData.setId(tll.getTargetNumber().getNumber());
+		voyageData.setSourceId("3");
+		voyageData.setSourceName("ODYSSEUS");
+		voyageData.setSourceType(3);
+		voyageData.setUpdateTime(new Date());
+		return voyageData;
+	}
+
+	private VesselData prepareVesselDataFromTLL(TLLSentence tll) {
+		VesselData vesselData = new VesselData();
+		vesselData.setId(tll.getTargetNumber().getNumber());
+		vesselData.setSourceId("0");
+		vesselData.setSourceName("ODYSSEUS");
+		vesselData.setSourceType(3);
+		vesselData.setUpdateTime(new Date());
+
+		Construction construction = new Construction();
+		vesselData.setConstruction(construction);
+
+		Identifier identifier = new Identifier();
+		if (tll.getTargetNumber() != null)
+			identifier.setMMSI(tll.getTargetNumber().getNumber());
+		if (tll.getTargetLabel() != null)
+			identifier.setName(tll.getTargetLabel());
+		vesselData.setIdentifier(identifier);
+		return vesselData;
+	}
+
+	private TrackData prepareTrackDataFromTLL(TLLSentence tll) {
+		TrackData trackData = new TrackData();
+		if (tll.getTargetNumber() != null)
+			trackData.setId(tll.getTargetNumber().getNumber());
+		trackData.setSourceName("ODYSSEUS");
+		trackData.setSourceId("0");
+		trackData.setTrackStatus(1); // Updated
+		trackData.setUpdateTime(new Date());
+		Pos pos = new Pos();
+		pos.setLat(tll.getLatitude());
+		pos.setLong(tll.getLongitude());
+		trackData.addPos(pos);
+		trackData.setCOG(0.0);
+		trackData.setSOG(0.0);
 		return trackData;
 	}
 
@@ -366,8 +402,10 @@ public class Ivef025NmeaConverterPO<T extends IStreamObject<IMetaAttribute>>
 				 * ******************************************************************************************/
 				if (this.ownShipPosition == null)
 					return;
-				Double targetLat = objectData.getTrackData().getPosAt(0).getLat();
-				Double targetLong = objectData.getTrackData().getPosAt(0).getLong();
+				Double targetLat = objectData.getTrackData().getPosAt(0)
+						.getLat();
+				Double targetLong = objectData.getTrackData().getPosAt(0)
+						.getLong();
 				if (ownShipLat != null && ownShipLong != null
 						&& targetLat != null && targetLong != null) {
 					Double targetDistance = IvefConversionUtilities
@@ -561,6 +599,7 @@ public class Ivef025NmeaConverterPO<T extends IStreamObject<IMetaAttribute>>
 			trackData.setSOG(Double.parseDouble("0"));
 		trackData.setSourceId("0");
 		trackData.setUpdateTime(new Date());
+		trackData.setTrackStatus(1); // Updated
 		NavigationStatus navigationStatus = null;
 		if ((navigationStatus = (NavigationStatus) received
 				.getAttribute("navigationStatus")) != null) {
