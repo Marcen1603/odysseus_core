@@ -22,6 +22,7 @@ import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.p2p_new.IP2PNetworkManager;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.IP2PDictionary;
+import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryPeerFailureDetector;
 import de.uniol.inf.is.odysseus.peer.recovery.internal.RecoveryCommunicator;
 import de.uniol.inf.is.odysseus.peer.recovery.util.LocalBackupInformationAccess;
 import de.uniol.inf.is.odysseus.peer.recovery.util.RecoveryHelper;
@@ -42,6 +43,7 @@ public class RecoveryConsole implements CommandProvider {
 	 * Executor to get queries
 	 */
 	private static IServerExecutor executor;
+	private static IRecoveryPeerFailureDetector peerFailureDetector;
 
 	// called by OSGi-DS
 	public static void bindP2PNetworkManager(IP2PNetworkManager serv) {
@@ -56,14 +58,14 @@ public class RecoveryConsole implements CommandProvider {
 	}
 
 	// called by OSGi-DS
-	public static void bindP2PDictionary(IP2PDictionary serv) {
-		p2pDictionary = serv;
+	public static void bindRecoveryPeerFailureDetector(IRecoveryPeerFailureDetector serv) {
+		peerFailureDetector = serv;
 	}
 
 	// called by OSGi-DS
-	public static void unbindP2PDictionary(IP2PDictionary serv) {
-		if (p2pDictionary == serv) {
-			p2pDictionary = null;
+	public static void unbindRecoveryPeerFailureDetector(IRecoveryPeerFailureDetector serv) {
+		if (peerFailureDetector == serv) {
+			peerFailureDetector = null;
 		}
 	}
 
@@ -88,6 +90,18 @@ public class RecoveryConsole implements CommandProvider {
 			executor = null;
 		}
 	}
+	
+	// called by OSGi-DS
+	public static void bindP2PDictionary(IP2PDictionary serv) {
+		p2pDictionary = serv;
+	}
+
+	// called by OSGi-DS
+	public static void unbindP2PDictionary(IP2PDictionary serv) {
+		if (p2pDictionary == serv) {
+			p2pDictionary = null;
+		}
+	}
 
 	// called by OSGi-DS
 	public void activate() {
@@ -110,6 +124,8 @@ public class RecoveryConsole implements CommandProvider {
 		sb.append("	sendHoldOn <PeerName from receiver> <sharedQueryId> - Send a hold-on message to <PeerName from receiver>, so that this should stop sending the tuples from query <sharedQueryId> further.\n");
 		sb.append("	sendNewReceiver <PeerName from receiver> <sharedQueryId> - Send a newReceiver-message to <PeerName from receiver>, so that this should send the tuples from query <sharedQueryId> to a new receiver.\n");
 		sb.append("	sendAddQueriesFromPeer <PeerName from receiver> <PeerName from failed peer> - The <PeerName from receiver> will get a message that tells that the peer has to install all queries from <PeerName from failed peer>. \n");
+		sb.append(" startPeerFailureDetection - Starts detection of peer failures. \n");
+		sb.append(" stopPeerFailureDetection - Stops detection of peer failures. \n");
 		return sb.toString();
 	}
 
@@ -168,6 +184,22 @@ public class RecoveryConsole implements CommandProvider {
 		// ID sharedQueryId = getSharedQueryIdFromCi(ci);
 		//
 		//
+	}
+	
+	public void _startPeerFailureDetection(CommandInterpreter ci) {
+		Preconditions.checkNotNull(ci, "Command interpreter must be not null!");
+		
+		peerFailureDetector.startPeerFailureDetection();
+		
+
+	}
+	
+	public void _stopPeerFailureDetection(CommandInterpreter ci) {
+		Preconditions.checkNotNull(ci, "Command interpreter must be not null!");
+		
+		peerFailureDetector.stopPeerFailureDetection();
+		
+
 	}
 
 	public void _lsBackupStore(CommandInterpreter ci) {
