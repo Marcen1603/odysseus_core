@@ -10,6 +10,7 @@ import java.util.Observer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 // import org.eclipse.swt.widgets.Canvas;
@@ -17,6 +18,9 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.DateTime;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Table;
+import org.eclipse.swt.widgets.TableColumn;
+import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.part.ViewPart;
 
@@ -25,10 +29,6 @@ import windscadaanwendung.db.DBConnectionHD;
 import windscadaanwendung.hd.HitWKAData;
 import windscadaanwendung.views.dashboard.PhaseShiftPart;
 import windscadaanwendung.views.dashboard.PitchPart;
-import org.eclipse.swt.layout.FillLayout;
-import org.eclipse.swt.widgets.Table;
-import org.eclipse.swt.widgets.TableColumn;
-import org.eclipse.swt.widgets.TableItem;
 
 /**
  * @author MarkMilster
@@ -39,10 +39,6 @@ public class DetailView extends ViewPart implements Observer{
 	}
 
 	public static final String ID = "windscadaanwendung.views.DetailView";
-	private static Text hitWindRi;
-	private static Text hitLei;
-	private static Text hitDreh;
-	private static Text hitWindgeschw;
 	// private static Text aktPhas;
 	// private static Text aktPitch;
 	private Label lblWKA;
@@ -58,6 +54,10 @@ public class DetailView extends ViewPart implements Observer{
 	private Composite form;
 	private Composite tableContainer;
 	private Table table;
+	private static TableItem hitPerformance;
+	private static TableItem hitWindDirection;
+	private static TableItem hitWindSpeed;
+	private static TableItem hitRotationalSpeed;
 
 	/*
 	 * (non-Javadoc)
@@ -73,8 +73,6 @@ public class DetailView extends ViewPart implements Observer{
 
 		form = new Composite(parent, SWT.NONE);
 		form.setLayout(new GridLayout(2, false));
-		new Label(form, SWT.NONE);
-		new Label(form, SWT.NONE);
 		Label lblHistorischeDatenSeit = new Label(form, SWT.NONE);
 		lblHistorischeDatenSeit.setLayoutData(new GridData(SWT.RIGHT,
 				SWT.CENTER, false, false, 1, 1));
@@ -118,56 +116,20 @@ public class DetailView extends ViewPart implements Observer{
 		lblWKA.setText("Windkraftanlage:");
 		
 				nameWKA = new Text(form, SWT.BORDER);
-		Label lblHistorischerMittelwertDrehzahl = new Label(form, SWT.NONE);
-		lblHistorischerMittelwertDrehzahl.setLayoutData(new GridData(SWT.RIGHT,
-				SWT.CENTER, false, false, 1, 1));
-		lblHistorischerMittelwertDrehzahl
-				.setText("Mittelwert Drehzahl:");
 		
-				hitDreh = new Text(form, SWT.BORDER);
-		new Label(form, SWT.NONE);
-		new Label(form, SWT.NONE);
-
-		Label lblHistorischerMittelwertWindrichtung = new Label(form,
-				SWT.NONE);
-		lblHistorischerMittelwertWindrichtung.setLayoutData(new GridData(
-				SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
-		lblHistorischerMittelwertWindrichtung
-				.setText("Mittelwert Windrichtung:");
-
-		hitWindRi = new Text(form, SWT.BORDER);
-
-		Label lblHistorischerMittelwertLeistung = new Label(form, SWT.NONE);
-		lblHistorischerMittelwertLeistung.setLayoutData(new GridData(SWT.RIGHT,
-				SWT.CENTER, false, false, 1, 1));
-		lblHistorischerMittelwertLeistung
-				.setText("Mittelwert Leistung:");
-
-		hitLei = new Text(form, SWT.BORDER);
-
-		Label lblHistorischerMittelwertWindgeschwindigkeit = new Label(form,
-				SWT.NONE);
-		lblHistorischerMittelwertWindgeschwindigkeit
-				.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false,
+				Label lblPitchwinkel = new Label(form, SWT.NONE);
+				lblPitchwinkel.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false,
 						false, 1, 1));
-		lblHistorischerMittelwertWindgeschwindigkeit
-				.setText("Historischer Mittelwert Windgeschwindigkeit:");
-
-		hitWindgeschw = new Text(form, SWT.BORDER);
-
-		Label lblPitchwinkel = new Label(form, SWT.NONE);
-		lblPitchwinkel.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false,
-				false, 1, 1));
-		lblPitchwinkel.setText("Aktueller Pitchwinkel:");
-
-		pitchComp = new Composite(form, SWT.NONE);
-
-		Label lblPhasenverschiebung = new Label(form, SWT.NONE);
-		lblPhasenverschiebung.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER,
-				false, false, 1, 1));
-		lblPhasenverschiebung.setText("Aktuelle Phasenverschiebung:");
-
-		phaseComp = new Composite(form, SWT.NONE);
+				lblPitchwinkel.setText("Aktueller Pitchwinkel:");
+		
+				pitchComp = new Composite(form, SWT.NONE);
+		
+				Label lblPhasenverschiebung = new Label(form, SWT.NONE);
+				lblPhasenverschiebung.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER,
+						false, false, 1, 1));
+				lblPhasenverschiebung.setText("Aktuelle Phasenverschiebung:");
+		
+				phaseComp = new Composite(form, SWT.NONE);
 		
 		tableContainer = new Composite(parent, SWT.NONE);
 		tableContainer.setLayout(new FillLayout(SWT.HORIZONTAL));
@@ -191,16 +153,16 @@ public class DetailView extends ViewPart implements Observer{
 		tblclmnMaximum.setWidth(100);
 		tblclmnMaximum.setText("Maximum");
 		
-		TableItem hitWindDirection = new TableItem(table, SWT.NONE);
+		hitWindDirection = new TableItem(table, SWT.NONE);
 		hitWindDirection.setText(new String[] {"Windrichtung"});
 		
-		TableItem hitWindSpeed = new TableItem(table, SWT.NONE);
+		hitWindSpeed = new TableItem(table, SWT.NONE);
 		hitWindSpeed.setText(new String[] {"Windgeschwindigkeit"});
 		
-		TableItem hitRotationalSpeed = new TableItem(table, SWT.NONE);
+		hitRotationalSpeed = new TableItem(table, SWT.NONE);
 		hitRotationalSpeed.setText(new String[] {"Drehzahl"});
 		
-		TableItem hitPerformance = new TableItem(table, SWT.NONE);
+		hitPerformance = new TableItem(table, SWT.NONE);
 		hitPerformance.setText(new String[] {"Leistung"});
 		pitchPart = new PitchPart();
 		phaseShiftPart = new PhaseShiftPart();
@@ -274,14 +236,17 @@ public class DetailView extends ViewPart implements Observer{
 
 	private static void printHitWKAData() {
 		if (selectedWKA.getHitWKAData() != null) {
-			hitDreh.setText(String.valueOf(selectedWKA.getHitWKAData()
-					.getAvgRotationalSpeed()));
-			hitWindRi.setText(String.valueOf(selectedWKA.getHitWKAData()
-					.getAvgWindDirection()));
-			hitLei.setText(String.valueOf(selectedWKA.getHitWKAData()
-					.getAvgPerformance()));
-			hitWindgeschw.setText(String.valueOf(selectedWKA.getHitWKAData()
-					.getAvgWindSpeed()));
+			HitWKAData hitData = selectedWKA.getHitWKAData();
+			hitPerformance.setText(1, String.valueOf(hitData.getAvgPerformance()));
+			hitPerformance.setText(2, String.valueOf(hitData.getMinPerformance()));
+			hitPerformance.setText(3, String.valueOf(hitData.getMaxPerformance()));
+			hitWindDirection.setText(1, String.valueOf(hitData.getAvgWindDirection()));
+			hitWindSpeed.setText(1, String.valueOf(hitData.getAvgWindSpeed()));
+			hitWindSpeed.setText(2, String.valueOf(hitData.getMinWindSpeed()));
+			hitWindSpeed.setText(3, String.valueOf(hitData.getMaxWindSpeed()));
+			hitRotationalSpeed.setText(1, String.valueOf(hitData.getAvgRotationalSpeed()));
+			hitRotationalSpeed.setText(2, String.valueOf(hitData.getMinRotationalSpeed()));
+			hitRotationalSpeed.setText(3, String.valueOf(hitData.getMaxRotationalSpeed()));
 		} else {
 			// no historical Data Found
 		}

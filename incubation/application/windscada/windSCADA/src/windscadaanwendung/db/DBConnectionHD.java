@@ -78,10 +78,10 @@ public class DBConnectionHD extends AbstractDatabaseConnectionFactory {
 					    data.setAvgRotationalSpeed(rs.getDouble("avg_rotational_speed"));
 					    data.setAvgPerformance(rs.getDouble("avg_corrected_score"));
 					    data.setMaxPerformance(rs.getDouble("max_corrected_score"));
-					    data.setMaxRotationalSpeed(rs.getDouble("max_rotaional_speed"));
+					    data.setMaxRotationalSpeed(rs.getDouble("max_rotational_speed"));
 					    data.setMaxWindSpeed(rs.getDouble("max_wind_speed"));
 					    data.setMinPerformance(rs.getDouble("min_corrected_score"));
-					    data.setMinRotationalSpeed(rs.getDouble("min_rotaional_speed"));
+					    data.setMinRotationalSpeed(rs.getDouble("min_rotational_speed"));
 					    data.setMinWindSpeed(rs.getDouble("min_wind_speed"));
 					    
 					    wka = FarmList.getWKA(rs.getInt("wka_id"));
