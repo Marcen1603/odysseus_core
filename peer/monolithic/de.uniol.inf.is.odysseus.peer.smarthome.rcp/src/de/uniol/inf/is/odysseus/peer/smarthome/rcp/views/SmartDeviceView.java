@@ -175,7 +175,8 @@ public class SmartDeviceView extends ViewPart implements IP2PDictionaryListener 
 						//Open Configuration for PeerID:selectedPeer.intern()
 							//1. get the current configuration from the peer
 							//2. display the configuration
-							//3. on click on save button: send the new configuration to the peer
+							//3. click on save button: send the new configuration to the peer
+						
 			        }
 				}else{
 					//Configuration for more then one peer at the same time is not implemented.
