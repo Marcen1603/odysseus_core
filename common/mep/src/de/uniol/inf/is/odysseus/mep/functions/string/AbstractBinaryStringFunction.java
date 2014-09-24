@@ -22,7 +22,7 @@ abstract public class AbstractBinaryStringFunction<T> extends AbstractFunction<T
 
 	private static final long serialVersionUID = 5682688277582609459L;
 	public static SDFDatatype[][] accTypes = new SDFDatatype[][]{
-		{SDFDatatype.STRING},{SDFDatatype.STRING}};
+		{SDFDatatype.STRING, SDFDatatype.OBJECT},{SDFDatatype.STRING, SDFDatatype.OBJECT}};
 	
 	public AbstractBinaryStringFunction(String symbol, SDFDatatype datatype) {
 		super(symbol,2,accTypes, datatype);

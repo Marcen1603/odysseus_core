@@ -17,14 +17,17 @@ package de.uniol.inf.is.odysseus.mep;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 
-public abstract class AbstractBinaryNumberInputFunction<T> extends AbstractFunction<T> {
+public abstract class AbstractBinaryStringInputOperator<T> extends
+		AbstractBinaryOperator<T> {
 
-	private static final long serialVersionUID = 4163516033012192570L;
-	private static final SDFDatatype[][] accTypes = new SDFDatatype[][] { SDFDatatype.NUMBERS_OBJECT, SDFDatatype.NUMBERS_OBJECT};
-	
-	public AbstractBinaryNumberInputFunction(String symbol, SDFDatatype returnType) {
-		super(symbol,2,accTypes, returnType);
+	private static final long serialVersionUID = -195306610974958000L;
+	private static final SDFDatatype[][] accTypes = new SDFDatatype[][] {
+			new SDFDatatype[] { SDFDatatype.STRING, SDFDatatype.OBJECT },
+			new SDFDatatype[] { SDFDatatype.STRING, SDFDatatype.OBJECT } };
+
+	public AbstractBinaryStringInputOperator(String symbol,
+			SDFDatatype returnType) {
+		super(symbol, accTypes, returnType);
 	}
 
-	
 }

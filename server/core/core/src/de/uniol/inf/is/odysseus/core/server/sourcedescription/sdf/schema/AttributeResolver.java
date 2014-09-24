@@ -91,6 +91,9 @@ public class AttributeResolver implements IAttributeResolver {
 			throw new IllegalArgumentException("ambigiuous identifier: " + name);
 		}
 		this.sources.put(name, op);
+		// read attributes from sources!
+		SDFSchema schema = op.getOutputSchema();
+		addAttributes(schema);
 	}
 
 	public void addAttribute(SDFAttribute attribute) {
@@ -125,17 +128,17 @@ public class AttributeResolver implements IAttributeResolver {
 		String[] parts = name.split("\\.", 2);
 		SDFAttribute result = null;
 		if (parts.length == 1 || name.contains("(")) {
-			for (ILogicalOperator source : this.sources.values()) {
-				for (SDFAttribute curAttribute : source.getOutputSchema()) {
-					if (curAttribute.getAttributeName().equals(name)) {
-						if (result != null) {
-							throw new IllegalArgumentException(
-									"ambigiuous identifier: " + name);
-						}
-						result = curAttribute;
-					}
-				}
-			}
+//			for (ILogicalOperator source : this.sources.values()) {
+//				for (SDFAttribute curAttribute : source.getOutputSchema()) {
+//					if (curAttribute.getAttributeName().equals(name)) {
+//						if (result != null) {
+//							throw new IllegalArgumentException(
+//									"ambigiuous identifier: " + name);
+//						}
+//						result = curAttribute;
+//					}
+//				}
+//			}
 			for (SDFAttribute curAttribute : this.attributes) {
 				if (curAttribute.getAttributeName().equals(name)) {
 					if (result != null) {

@@ -16,31 +16,23 @@
 package de.uniol.inf.is.odysseus.mep.functions.compare;
 
 import de.uniol.inf.is.odysseus.core.IHasAlias;
-import de.uniol.inf.is.odysseus.core.mep.Constant;
-import de.uniol.inf.is.odysseus.core.mep.IExpression;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
-import de.uniol.inf.is.odysseus.mep.AbstractBinaryOperator;
+import de.uniol.inf.is.odysseus.mep.AbstractBinaryStringInputOperator;
 import de.uniol.inf.is.odysseus.mep.IOperator;
+import de.uniol.inf.is.odysseus.mep.IOperator.ASSOCIATIVITY;
 
-public class StringEqualsOperator extends AbstractBinaryOperator<Boolean> implements IHasAlias {
+public class StringEqualsOperator extends AbstractBinaryStringInputOperator<Boolean> implements IHasAlias {
 
 	private static final long serialVersionUID = 6011800156304578501L;
-	public static final SDFDatatype[][] accTypes =
-				new SDFDatatype[][]{new SDFDatatype[] {SDFDatatype.STRING},new SDFDatatype[] { SDFDatatype.STRING}};
 	
 	public StringEqualsOperator() {
 		this("=");
 	}
 
 	public StringEqualsOperator(String symbol){
-		super(symbol,accTypes, SDFDatatype.BOOLEAN);
+		super(symbol, SDFDatatype.BOOLEAN);
 	}
-	
-	public StringEqualsOperator(String symbol, SDFDatatype[][] accTypes){
-		super(symbol,accTypes, SDFDatatype.BOOLEAN);
-	}
-	
-	
+			
 	@Override
 	public int getPrecedence() {
 		return 9;

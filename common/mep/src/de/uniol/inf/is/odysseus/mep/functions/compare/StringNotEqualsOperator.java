@@ -17,14 +17,12 @@ package de.uniol.inf.is.odysseus.mep.functions.compare;
 
 import de.uniol.inf.is.odysseus.core.IHasAlias;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
-import de.uniol.inf.is.odysseus.mep.AbstractBinaryOperator;
+import de.uniol.inf.is.odysseus.mep.AbstractBinaryStringInputOperator;
 import de.uniol.inf.is.odysseus.mep.IOperator;
+import de.uniol.inf.is.odysseus.mep.IOperator.ASSOCIATIVITY;
 
-public class StringNotEqualsOperator extends AbstractBinaryOperator<Boolean> implements IHasAlias{
+public class StringNotEqualsOperator extends AbstractBinaryStringInputOperator<Boolean> implements IHasAlias{
 
-	public static final SDFDatatype[][] accTypes = new SDFDatatype[][] {
-			new SDFDatatype[] { SDFDatatype.STRING, SDFDatatype.OBJECT, SDFDatatype.TUPLE },
-			new SDFDatatype[] { SDFDatatype.STRING, SDFDatatype.OBJECT, SDFDatatype.TUPLE } };
 	private static final long serialVersionUID = -1508977830046773571L;
 
 	public StringNotEqualsOperator() {
@@ -32,7 +30,7 @@ public class StringNotEqualsOperator extends AbstractBinaryOperator<Boolean> imp
 	}
 
 	public StringNotEqualsOperator(String symbol) {
-		super(symbol, accTypes, SDFDatatype.BOOLEAN);
+		super(symbol, SDFDatatype.BOOLEAN);
 	}
 
 	@Override
