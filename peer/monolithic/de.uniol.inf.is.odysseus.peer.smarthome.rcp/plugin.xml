@@ -13,6 +13,14 @@
       </view>
       <view
             category="de.uniol.inf.is.odysseus.rcp.peer.smarthome.SmartHomeCategory"
+            class="de.uniol.inf.is.odysseus.peer.smarthome.rcp.views.SmartDeviceConfigurationView"
+            icon="icons/DeviceConfiguration.png"
+            id="de.uniol.inf.is.odysseus.rcp.peer.SmartDeviceConfigurationView"
+            name="Smart Device Configuration"
+            restorable="true">
+      </view>
+      <view
+            category="de.uniol.inf.is.odysseus.rcp.peer.smarthome.SmartHomeCategory"
             class="de.uniol.inf.is.odysseus.peer.smarthome.rcp.views.ContextView"
             icon="icons/Context.png"
             id="de.uniol.inf.is.odysseus.rcp.peer.ContextView"
@@ -53,6 +61,13 @@
          point="org.eclipse.ui.perspectiveExtensions">
       <perspectiveExtension
             targetID="de.uniol.inf.is.odysseus.rcp.peer.SmartHomePerspective">
+         <view
+               id="de.uniol.inf.is.odysseus.rcp.peer.SmartDeviceConfigurationView"
+               minimized="false"
+               relationship="top"
+               relative="org.eclipse.ui.views.ContentOutline"
+               visible="true">
+         </view>
          <view
                id="de.uniol.inf.is.odysseus.rcp.peer.SmartDeviceView"
                minimized="false"
