@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="de.uniol.inf.is.odysseus.peer.ddc.ReplacementProvider">
+   <implementation class="de.uniol.inf.is.odysseus.peer.ddc.internal.DDCReplacementProvider"/>
+   <service>
+      <provide interface="de.uniol.inf.is.odysseus.script.parser.IReplacementProvider"/>
+   </service>
+   <reference bind="bindDDC" cardinality="1..1" interface="de.uniol.inf.is.odysseus.peer.ddc.IDistributedDataContainer" name="IDistributedDataContainer" policy="dynamic" unbind="unbindDDC"/>
+</scr:component>
