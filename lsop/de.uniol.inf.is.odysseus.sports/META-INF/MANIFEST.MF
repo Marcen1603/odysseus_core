@@ -8,6 +8,11 @@ Require-Bundle: de.uniol.inf.is.odysseus.core,
  de.uniol.inf.is.odysseus.core.server,
  de.uniol.inf.is.odysseus.transform,
  de.uniol.inf.is.odysseus.ruleengine
-Import-Package: de.uniol.inf.is.odysseus.physicaloperator.relational,
+Import-Package: com.google.common.base,
+ de.uniol.inf.is.odysseus.mep,
+ de.uniol.inf.is.odysseus.peer.ddc,
+ de.uniol.inf.is.odysseus.physicaloperator.relational,
+ de.uniol.inf.is.odysseus.sports.sportsql.parser.ddcaccess,
  org.slf4j
-Service-Component: OSGI-INF/SportsRuleProvider.xml
+Service-Component: OSGI-INF/SportsRuleProvider.xml,OSGI-INF/AccessToDDCFunction.xml,
+ OSGI-INF/MepFunctionProvider.xml
