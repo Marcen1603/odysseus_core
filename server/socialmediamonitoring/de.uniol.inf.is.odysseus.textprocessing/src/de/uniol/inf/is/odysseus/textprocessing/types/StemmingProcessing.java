@@ -7,6 +7,7 @@ public class StemmingProcessing implements ITextProcessing {
 
 	String kpiType = "stemmingprocessing";
 	org.tartarus.snowball.SnowballStemmer stemmer;
+	private String stopWordFlag = "true";
 	
 	public StemmingProcessing(){}
 	
@@ -34,17 +35,37 @@ public class StemmingProcessing implements ITextProcessing {
 	public Vector<String> startTextProcessing(Vector<String> incomingText) {
 
 		Vector<String> tmpResult = new Vector<String>();
-		
 		Iterator<String> iter = incomingText.iterator();
 		
-		while(iter.hasNext())
-		{
-			this.stemmer.setCurrent(iter.next().toString());
-			
-			if(this.stemmer.stem())
-				tmpResult.add(this.stemmer.getCurrent());	
-		}
 		
+		if(this.stopWordFlag.equals("false"))
+		{
+			String[] tempText = iter.next().toString().split(" ");
+			StringBuilder stringBuild = new StringBuilder();
+			
+			for(int i = 0; i< tempText.length; i++)
+			{
+				this.stemmer.setCurrent(tempText[i]);
+				
+				if(this.stemmer.stem())
+					stringBuild.append(this.stemmer.getCurrent() + " ");
+				
+				System.out.println("Stemming-false:" + this.stemmer.getCurrent());
+			}
+			tmpResult.add(stringBuild.toString());
+		}
+		else
+		{
+			while(iter.hasNext())
+			{
+				this.stemmer.setCurrent(iter.next().toString());
+				
+				if(this.stemmer.stem())
+					tmpResult.add(this.stemmer.getCurrent());
+				
+				System.out.println("Stemming:" + this.stemmer.getCurrent());
+			}
+		}
 		return tmpResult;
 	}
 
@@ -57,5 +78,15 @@ public class StemmingProcessing implements ITextProcessing {
 			this.stemmer = new org.tartarus.snowball.ext.englishStemmer();
 		else
 			this.stemmer = new org.tartarus.snowball.ext.porterStemmer();
+		
+		this.stopWordFlag = "true";
+		
+		if((options[1].equals("false")))
+		{
+			this.stopWordFlag = "false";
+		}
+		
+		System.out.println("FLAG Stemming: " + this.stopWordFlag);
+		
 	}
 }

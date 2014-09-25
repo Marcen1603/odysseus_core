@@ -23,12 +23,14 @@ public class WebCrawler extends edu.uci.ics.crawler4j.crawler.WebCrawler {
 	public boolean shouldVisit(WebURL url) {
 		String href = url.getURL().toLowerCase();
 		
-	/*	System.out.println("URL:" + url.getURL());
+		
+		System.out.println("--------ANFANG---------------");
+	 	System.out.println("URL:" + url.getURL());
 		System.out.println("Depth:" + url.getDepth());
 		System.out.println("Domain:" + url.getDomain());
 		System.out.println("ParentURL:" + url.getParentUrl());
-		System.out.println("ParentURL:" + url.getPath());
-		*/
+		System.out.println("Path" + url.getPath());
+		System.out.println("--------ENDE---------------"); 
 		
 		return !FILTERS.matcher(href).matches() && href.startsWith(url.getURL());
 	}
@@ -48,10 +50,10 @@ public class WebCrawler extends edu.uci.ics.crawler4j.crawler.WebCrawler {
 			String html = htmlParseData.getHtml();
 			java.util.List<WebURL> links = htmlParseData.getOutgoingUrls();
 			
-		/*	System.out.println("Text: " + text);
+		//	System.out.println("Text: " + text);
 			System.out.println("Text length: " + text.length());
 			System.out.println("Html length: " + html.length());
-			System.out.println("Number of outgoing links: " + links.size());*/
+			System.out.println("Number of outgoing links: " + links.size());
 		}
 	}
 
@@ -63,6 +65,11 @@ public class WebCrawler extends edu.uci.ics.crawler4j.crawler.WebCrawler {
 	public ArrayList<String> getText()
 	{
 		return savedText;
+	}
+	
+	public void deleteText()
+	{
+		savedText.clear();
 	}
 	
 	@Override

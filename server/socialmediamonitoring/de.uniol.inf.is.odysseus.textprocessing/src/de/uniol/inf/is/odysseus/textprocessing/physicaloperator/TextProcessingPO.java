@@ -23,7 +23,7 @@ public class TextProcessingPO<M extends ITimeInterval, R extends Tuple<M>> exten
 	private int ngramSize;
 	private SDFAttribute inputText;
 	private int outputPort;
-	private boolean doNgram = true;
+	private boolean doNgram = false;
 	private boolean doStemming = true;
 	private boolean doRemoveStopwords = true;
 	private String language = "porter";
@@ -89,15 +89,31 @@ public class TextProcessingPO<M extends ITimeInterval, R extends Tuple<M>> exten
 			if(this.doStemming)
 			{
 				algo = TPRegistry.getTextProcessingTypeByName("stemmingprocessing");
-				System.out.println("LANGUAGE: " + this.language);
-				algo.setOptions(new String[]{this.language});
+				
+				if(!this.doNgram)
+				{
+					algo.setOptions(new String[]{this.language, "false"});
+				}
+				else
+				{
+					algo.setOptions(new String[]{this.language, "true"});
+				}
 				res = algo.startTextProcessing(res);
 			}
 			
 			if(this.doRemoveStopwords)
 			{
 				algo = TPRegistry.getTextProcessingTypeByName("stopwordprocessing");
-				algo.setOptions(null);
+				
+				if(!this.doNgram)
+				{
+					algo.setOptions(new String[]{"false"});
+				}
+				else
+				{
+					algo.setOptions(new String[]{""});
+				}
+				
 				res = algo.startTextProcessing(res);
 			}	
 			moveResultToOuputPort(object, res);
@@ -122,6 +138,9 @@ public class TextProcessingPO<M extends ITimeInterval, R extends Tuple<M>> exten
 		{
 			li.add(iter.next().toString());
 		}
+		
+		
+		System.out.println("Ergebnis:" + li);
 		
 		object.setAttribute(this.positionInputText, li);
 		transfer(object, 0);

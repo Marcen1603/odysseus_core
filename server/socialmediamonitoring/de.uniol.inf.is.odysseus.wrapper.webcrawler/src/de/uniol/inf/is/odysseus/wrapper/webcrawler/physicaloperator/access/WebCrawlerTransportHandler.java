@@ -102,11 +102,13 @@ public class WebCrawlerTransportHandler extends AbstractSimplePullTransportHandl
 		tuple.setAttribute(0, sites);
 		tuple.setAttribute(1,this.crawledText.toString());
 		
+		//this.crawledText.clear();
+		
 		return tuple;
 	}
 	
 	public void initializeCrawler()
-	{
+	{	
 		String crawlStorageFolder = System.getProperty("user.home");
         int numberOfCrawlers =1;
 
@@ -134,7 +136,7 @@ public class WebCrawlerTransportHandler extends AbstractSimplePullTransportHandl
 		
 		this.crawledText.clear();
 		this.crawledText = crawler.getText();
-
+		
 		trimCrawledText();
 		
 		this.controller.shutdown();
