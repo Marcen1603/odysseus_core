@@ -1,4 +1,4 @@
 #PARSER CQL
 #RUNQUERY
-DROP CONTEXT STORE kohonen§wkaid§ IF EXISTS
-CREATE CONTEXT STORE kohonen§wkaid§ (corrected_score DOUBLE) AS single
+DROP CONTEXT STORE kohonenxXxwkaidxXx IF EXISTS
+CREATE CONTEXT STORE kohonenxXxwkaidxXx (corrected_score DOUBLE) AS single

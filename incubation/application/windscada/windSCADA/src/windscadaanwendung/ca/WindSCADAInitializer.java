@@ -185,6 +185,9 @@ public class WindSCADAInitializer {
 		String query = unionStreams("AE");
 		storeFileInWorkspace("AE", "collectAllStreams.qry", query);
 		executeQuery(query);
+		query = loadFileContent("querypatterns/AE/archiveData.qry");
+		storeFileInWorkspace("AE", "archiveData.qry", query);
+		executeQuery(query);
 	}
 
 	/**
@@ -241,10 +244,10 @@ public class WindSCADAInitializer {
 	 * @return
 	 */
 	private static String adjustQuery(String query, int windfarm_id, int wka_id) {
-		String adjustedQuery = query.replace("§windfarmid§",
+		String adjustedQuery = query.replace("xXxwindfarmidxXx",
 				String.valueOf(windfarm_id));
 		adjustedQuery = adjustedQuery
-				.replace("§wkaid§", String.valueOf(wka_id));
+				.replace("xXxwkaidxXx", String.valueOf(wka_id));
 		return adjustedQuery;
 	}
 
@@ -254,15 +257,15 @@ public class WindSCADAInitializer {
 	 * @param query
 	 *            query which schould be adjusted with conneciton information
 	 * @param host
-	 *            host name to replace the substring §host§
+	 *            host name to replace the substring xXxhostxXx
 	 * @param port
-	 *            port to replace the substring §port§
+	 *            port to replace the substring xXxportxXx
 	 * @return
 	 */
 	private static String replaceConnectionInfo(String query, String host,
 			int port) {
-		String adjustedQuery = query.replace("§host§", host);
-		adjustedQuery = adjustedQuery.replace("§port§", String.valueOf(port));
+		String adjustedQuery = query.replace("xXxhostxXx", host);
+		adjustedQuery = adjustedQuery.replace("xXxportxXx", String.valueOf(port));
 		return adjustedQuery;
 	}
 
@@ -280,7 +283,7 @@ public class WindSCADAInitializer {
 
 	private static String unionStreams(String suffix) {
 		String query = "#PARSER PQL\n#RUNQUERY\n";
-		String unionString = suffix + " ::= UNION(";
+		String unionString = suffix + " ::= MERGE(";
 		for (WindFarm farm : FarmList.getFarmList()) {
 			for (WKA wka : farm.getWkas()) {
 				query += "Stream" + wka.getID() + " = Stream({SOURCE='System.P"

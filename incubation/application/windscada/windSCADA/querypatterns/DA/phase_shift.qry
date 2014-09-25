@@ -1,8 +1,8 @@
 #PARSER PQL
 #RUNQUERY
-Stream1 = Stream({SOURCE='System.P§windfarmid§:§wkaid§'})
+Stream1 = Stream({SOURCE='System.PxXxwindfarmidxXx:xXxwkaidxXx'})
 
-PROJECT2 = PROJECT({ATTRIBUTES=['P§windfarmid§:§wkaid§.phase_shift']}, 0:Stream1)
+PROJECT2 = PROJECT({ATTRIBUTES=['PxXxwindfarmidxXx:xXxwkaidxXx.phase_shift']}, 0:Stream1)
 
 TIMEWINDOW3 = TIMEWINDOW({SIZE=[5, 'SECONDS'], SLIDE=[5, 'SECONDS']}, 0:PROJECT2)
 
@@ -10,4 +10,4 @@ AGGREGATE4 = AGGREGATE({AGGREGATIONS=[['AVG','phase_shift','AVG_phase_shift','Do
 
 MAP5 = MAP({EXPRESSIONS=[['AVG_phase_shift', 'phase_shift'], ['abs(AVG_phase_shift) > 90', 'warning'], ['abs(AVG_phase_shift) > 120', 'error']]}, 0:AGGREGATE4)
 
-P§windfarmid§:§wkaid§:phase_shift ::= CACHE({MAXELEMENTS=100}, 0:MAP5)
+PxXxwindfarmidxXx:xXxwkaidxXx:phase_shift ::= CACHE({MAXELEMENTS=100}, 0:MAP5)

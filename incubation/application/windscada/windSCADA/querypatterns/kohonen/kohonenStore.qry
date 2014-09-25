@@ -1,6 +1,6 @@
 #PARSER PQL
 #RUNQUERY
-Stream1 = Stream({SOURCE='System.P§windfarmid§:§wkaid§'})
+Stream1 = Stream({SOURCE='System.PxXxwindfarmidxXx:xXxwkaidxXx'})
 /// TIMEWINDOW2 = TIMEWINDOW({SIZE=[10, 'SECONDS'], SLIDE=[10, 'SECONDS']}, 0:Stream1)
 AGGREGATE3 = AGGREGATE({DRAINATDONE='false', FASTGROUPING='false', DRAINATCLOSE='false', DRAIN='false', OUTPUTPA='false', AGGREGATIONS=[['AVG','corrected_score','corrected_score','Double']]}, 0:Stream1)
-STORE4 = STORE({STORE='kohonen§wkaid§'}, 0:AGGREGATE3)
+STORE4 = STORE({STORE='kohonenxXxwkaidxXx'}, 0:AGGREGATE3)

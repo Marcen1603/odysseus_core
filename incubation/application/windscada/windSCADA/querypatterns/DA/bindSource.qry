@@ -1,6 +1,6 @@
 #PARSER PQL
 #RUNQUERY
-P§windfarmid§:§wkaid§ := ACCESS({Source='P§windfarmid§:§wkaid§', Wrapper='GenericPush',
+PxXxwindfarmidxXx:xXxwkaidxXx := ACCESS({Source='PxXxwindfarmidxXx:xXxwkaidxXx', Wrapper='GenericPush',
         Schema=[['id','INTEGER'],
         		['timestamp ','Starttimestamp'],
                 ['wind_speed','DOUBLE'],
@@ -13,4 +13,4 @@ P§windfarmid§:§wkaid§ := ACCESS({Source='P§windfarmid§:§wkaid§', Wrapper='Generi
                 transport='NonBlockingTcp',
                 protocol='SizeByteBuffer',
                 dataHandler='Tuple',
-                Options=[['port','§port§'], ['host','§host§']]})
+                Options=[['port','xXxportxXx'], ['host','xXxhostxXx']]})

@@ -1,5 +1,5 @@
 #PARSER PQL
 #RUNQUERY
-Stream1 = Stream({SOURCE='System.P§windfarmid§:§wkaid§'})
+Stream1 = Stream({SOURCE='System.PxXxwindfarmidxXx:xXxwkaidxXx'})
 
-P§windfarmid§:§wkaid§:rotational_speed ::= MAP({EXPRESSIONS=[['rotational_speed', 'rotational_speed'], ['rotational_speed > 0.25', 'warning'], ['rotational_speed > 0.3', 'error']]}, 0:Stream1)
+PxXxwindfarmidxXx:xXxwkaidxXx:rotational_speed ::= MAP({EXPRESSIONS=[['rotational_speed', 'rotational_speed'], ['rotational_speed > 0.25', 'warning'], ['rotational_speed > 0.3', 'error']]}, 0:Stream1)
