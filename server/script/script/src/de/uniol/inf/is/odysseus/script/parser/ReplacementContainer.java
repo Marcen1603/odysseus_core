@@ -10,12 +10,16 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 import de.uniol.inf.is.odysseus.core.collection.Context;
+import de.uniol.inf.is.odysseus.core.infoservice.InfoService;
+import de.uniol.inf.is.odysseus.core.infoservice.InfoServiceFactory;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFExpression;
 import de.uniol.inf.is.odysseus.mep.MEP;
 
 public final class ReplacementContainer {
 
+	private static final InfoService INFO_SERVICE = InfoServiceFactory.getInfoService(ReplacementContainer.class);
+	
 	public static final String PARAMETER_KEY = "#";
 	public static final String REPLACEMENT_DEFINITION_KEY = "DEFINE";
 	private static final String UNDEF_KEY = "UNDEF";
@@ -26,12 +30,16 @@ public final class ReplacementContainer {
 
 	private static final Map<String, String> defaultReplacements = Maps.newHashMap();
 	private final Map<String, Serializable> replacements = Maps.newHashMap();
+	private final Map<String, IReplacementProvider> replacementProviders = Maps.newHashMap();
 
 	private Context currentContext;
 	private Context context;
 
-	public ReplacementContainer() {
+	public ReplacementContainer(Map<String, IReplacementProvider> providerMap) {
+		Preconditions.checkNotNull(providerMap, "Map of replacementProviders must not be null!");
+		
 		replacements.putAll(defaultReplacements);
+		replacementProviders.putAll(providerMap);
 	}
 
 	public void connect(Context context) {
@@ -71,7 +79,18 @@ public final class ReplacementContainer {
 			if (posEnd != -1 && posStart < posEnd) {
 
 				String key = lineToReplace.substring(posStart + REPLACEMENT_START_KEY.length(), posEnd);
+				
+				// direct replacements are prioritized
 				Serializable replacementSer = replacements.get(key.toUpperCase());
+				
+				if( replacementSer == null ) {
+					IReplacementProvider provider = replacementProviders.get(key.toUpperCase());
+					if( provider != null ) {
+						String replacement = provider.getReplacementValue(key.toUpperCase());
+						replacementSer = replacement != null ? replacement : "";
+					}
+				}
+				
 				if (replacementSer == null) {
 					throw new ReplacementException("Replacement key " + key + " not defined or has no value!");
 				}
@@ -171,6 +190,10 @@ public final class ReplacementContainer {
 	}
 
 	private void putImpl(String key, String value) {
+		if( replacementProviders.containsKey(key)) {
+			INFO_SERVICE.warning("Replacement '" + key + "' was previously provided by replacementProvider-service and its now overwritten!");
+		}
+		
 		replacements.put(key, value);
 		context.putOrReplace(key, value);
 	}
