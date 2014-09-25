@@ -20,6 +20,8 @@ import de.uniol.inf.is.odysseus.script.parser.IReplacementProvider;
  */
 public class DDCReplacementProvider implements IReplacementProvider {
 
+	private static final String DDC_SEPERATOR = ",";
+	
 	private static final Logger LOG = LoggerFactory.getLogger(DDCReplacementProvider.class);
 
 	private static IDistributedDataContainer ddc;
@@ -52,8 +54,17 @@ public class DDCReplacementProvider implements IReplacementProvider {
 
 	@Override
 	public String getReplacementValue(String key) {
+		key = key.toLowerCase();
+		
+		String[] keyDimensions = key.split(DDC_SEPERATOR);
+		
 		try {
-			return ddc.get(new DDCKey(key)).toString();
+			if(keyDimensions.length>1) {
+				return ddc.get(new DDCKey(keyDimensions)).getValue();
+			}
+			else {
+				return ddc.get(new DDCKey(key)).getValue();
+			}
 		} catch (MissingDDCEntryException e) {
 			LOG.error("Could not get key '{}' from DDC", key, e);
 			return "";
