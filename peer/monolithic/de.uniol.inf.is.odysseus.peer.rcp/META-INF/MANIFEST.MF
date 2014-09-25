@@ -28,4 +28,3 @@ Import-Package: de.uniol.inf.is.odysseus.peer.config,
  org.eclipse.ui.console,
  org.eclipse.ui.navigator.resources
 Service-Component: OSGI-INF/jxtaReceiverOperatorDetailProvider.xml,OSGI-INF/jxtaSenderOperatorDetailProvider.xml,OSGI-INF/p2pNetworkListener.xml,OSGI-INF/RCPP2PNewPlugIn.xml
-Export-Package: de.uniol.inf.is.odysseus.peer.rcp

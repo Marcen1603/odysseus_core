@@ -14,7 +14,9 @@ import org.eclipse.jface.viewers.CellLabelProvider;
 import org.eclipse.jface.viewers.ColumnWeightData;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
+import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
@@ -40,10 +42,10 @@ import de.uniol.inf.is.odysseus.p2p_new.dictionary.IP2PDictionary;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.IP2PDictionaryListener;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.SourceAdvertisement;
 import de.uniol.inf.is.odysseus.p2p_new.util.RepeatingJobThread;
-import de.uniol.inf.is.odysseus.peer.rcp.RCPP2PNewPlugIn;
 import de.uniol.inf.is.odysseus.peer.resource.IResourceUsage;
+import de.uniol.inf.is.odysseus.peer.smarthome.rcp.SmartHomeRCPActivator;
 
-public class SmartDeviceView extends ViewPart implements IP2PDictionaryListener {
+public class SmartDeviceView extends ViewPart implements IP2PDictionaryListener, ISelectionProvider {
 	private static final long REFRESH_INTERVAL_MILLIS = 5000;
 	
 	private static final Logger LOG = LoggerFactory.getLogger(SmartDeviceView.class);
@@ -58,8 +60,10 @@ public class SmartDeviceView extends ViewPart implements IP2PDictionaryListener 
 
 	@Override
 	public void createPartControl(Composite parent) {
-		p2pDictionary = RCPP2PNewPlugIn.getP2PDictionary();
+		p2pDictionary = SmartHomeRCPActivator.getP2PDictionary();
 		p2pDictionary.addListener(this);
+		
+		setPartName("Smart Devices");
 		
 		final Composite tableComposite = new Composite(parent, SWT.NONE);
 		final TableColumnLayout tableColumnLayout = new TableColumnLayout();
@@ -120,13 +124,13 @@ public class SmartDeviceView extends ViewPart implements IP2PDictionaryListener 
 			public void update(ViewerCell cell) {
 				if (isLocalID((PeerID) cell.getElement())) {
 					try {
-						cell.setText(InetAddress.getLocalHost().getHostAddress() + ":" + RCPP2PNewPlugIn.getP2PNetworkManager().getPort());
+						cell.setText(InetAddress.getLocalHost().getHostAddress() + ":" + SmartHomeRCPActivator.getP2PNetworkManager().getPort());
 					} catch (UnknownHostException e) {
 						cell.setText("<unknown>");
 					}
 					cell.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_GRAY));
 				} else {
-					Optional<String> optAddress = RCPP2PNewPlugIn.getP2PDictionary().getRemotePeerAddress((PeerID) cell.getElement());
+					Optional<String> optAddress = SmartHomeRCPActivator.getP2PDictionary().getRemotePeerAddress((PeerID) cell.getElement());
 					if (optAddress.isPresent()) {
 						cell.setText(optAddress.get());
 					} else {
@@ -193,13 +197,16 @@ public class SmartDeviceView extends ViewPart implements IP2PDictionaryListener 
 					Object firstElement = selection.getFirstElement();
 					
 					if (firstElement instanceof PeerID) {
+						@SuppressWarnings("unused")
 						PeerID selectedPeer = (PeerID)firstElement;
 						
-						System.out.println("selectionChanged to peerID:"+selectedPeer.intern());
+						//System.out.println("SmartDeviceView selectionChanged to peerID:"+selectedPeer.intern());
 					}
 				}
 			}
 		});
+		
+		getSite().setSelectionProvider(smartDevicesTable);
 	}
 
 	public void refresh() {
@@ -275,7 +282,7 @@ public class SmartDeviceView extends ViewPart implements IP2PDictionaryListener 
 							smartDevicesTable.refresh();
 
 							synchronized (foundPeerIDs) {
-								setPartName("Peers (" + foundPeerIDs.size() + ")");
+								setPartName("Smart Devices (" + foundPeerIDs.size() + ")");
 							}
 						}
 					}
@@ -285,8 +292,12 @@ public class SmartDeviceView extends ViewPart implements IP2PDictionaryListener 
 	}
 	
 	private String determinePeerName(PeerID id) {
-		if (isLocalID(id)) {
-			return "<local>";
+		try{
+			if (isLocalID(id)) {
+				return "<local>";
+			}
+		}catch(NullPointerException ex){
+			
 		}
 		return p2pDictionary.getRemotePeerName(id);
 	}
@@ -297,7 +308,17 @@ public class SmartDeviceView extends ViewPart implements IP2PDictionaryListener 
 	}
 	
 	private static boolean isLocalID(PeerID pid) {
-		return RCPP2PNewPlugIn.getP2PNetworkManager().getLocalPeerID().equals(pid);
+		boolean value = false;
+		try{
+			if(SmartHomeRCPActivator.getP2PNetworkManager()!=null 
+					&& SmartHomeRCPActivator.getP2PNetworkManager().getLocalPeerID()!=null 
+					&& pid!=null){
+				value = SmartHomeRCPActivator.getP2PNetworkManager().getLocalPeerID().equals(pid);
+			}
+		}catch(NullPointerException ex){
+			throw ex;
+		}
+		return value;
 	}
 	
 	private void hideSelectionIfNeeded(final TableViewer tableViewer) {
@@ -317,50 +338,69 @@ public class SmartDeviceView extends ViewPart implements IP2PDictionaryListener 
 	}
 
 	@Override
-	public void sourceAdded(IP2PDictionary sender,
-			SourceAdvertisement advertisement) {
+	public void sourceAdded(IP2PDictionary sender, SourceAdvertisement advertisement) {
 		// TODO Auto-generated method stub
 		LOG.debug("sourceAdded");
 		
 	}
 
 	@Override
-	public void sourceRemoved(IP2PDictionary sender,
-			SourceAdvertisement advertisement) {
+	public void sourceRemoved(IP2PDictionary sender, SourceAdvertisement advertisement) {
 		// TODO Auto-generated method stub
 		LOG.debug("sourceRemoved");
 		
 	}
 
 	@Override
-	public void sourceImported(IP2PDictionary sender,
-			SourceAdvertisement advertisement, String sourceName) {
+	public void sourceImported(IP2PDictionary sender, SourceAdvertisement advertisement, String sourceName) {
 		// TODO Auto-generated method stub
 		LOG.debug("sourceImported");
 		
 	}
 
 	@Override
-	public void sourceImportRemoved(IP2PDictionary sender,
-			SourceAdvertisement advertisement, String sourceName) {
+	public void sourceImportRemoved(IP2PDictionary sender, SourceAdvertisement advertisement, String sourceName) {
 		// TODO Auto-generated method stub
 		LOG.debug("sourceImportRemoved");
 		
 	}
 
 	@Override
-	public void sourceExported(IP2PDictionary sender,
-			SourceAdvertisement advertisement, String sourceName) {
+	public void sourceExported(IP2PDictionary sender, SourceAdvertisement advertisement, String sourceName) {
 		// TODO Auto-generated method stub
 		LOG.debug("sourceExported");
 		
 	}
 
 	@Override
-	public void sourceExportRemoved(IP2PDictionary sender,
-			SourceAdvertisement advertisement, String sourceName) {
+	public void sourceExportRemoved(IP2PDictionary sender, SourceAdvertisement advertisement, String sourceName) {
 		// TODO Auto-generated method stub
 		LOG.debug("sourceExportRemoved");
+		
+	}
+
+	@Override
+	public void addSelectionChangedListener(ISelectionChangedListener listener) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public ISelection getSelection() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void removeSelectionChangedListener(
+			ISelectionChangedListener listener) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void setSelection(ISelection selection) {
+		// TODO Auto-generated method stub
 		
 	}
 }

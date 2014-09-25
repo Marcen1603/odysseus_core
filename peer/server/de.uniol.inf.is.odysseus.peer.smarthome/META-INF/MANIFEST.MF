@@ -3,6 +3,8 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Odysseus Peer Smart Home
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.peer.smarthome
 Bundle-Version: 1.0.0.qualifier
-Bundle-Activator: de.uniol.inf.is.odysseus.peer.smarthome.Activator
+Bundle-Activator: de.uniol.inf.is.odysseus.peer.smarthome.SmartHomeActivator
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
-Import-Package: org.osgi.framework;version="1.3.0"
+Import-Package: de.uniol.inf.is.odysseus.p2p_new,
+ org.osgi.framework;version="1.3.0"
+Export-Package: de.uniol.inf.is.odysseus.peer.smarthome

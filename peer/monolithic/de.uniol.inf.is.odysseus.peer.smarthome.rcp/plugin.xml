@@ -65,7 +65,6 @@
                id="de.uniol.inf.is.odysseus.rcp.peer.SmartDeviceConfigurationView"
                minimized="false"
                relationship="top"
-               relative="org.eclipse.ui.views.ContentOutline"
                visible="true">
          </view>
          <view
