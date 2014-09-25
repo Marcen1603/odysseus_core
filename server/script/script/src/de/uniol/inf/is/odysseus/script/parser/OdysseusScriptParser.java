@@ -22,7 +22,6 @@ import java.io.Serializable;
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -36,12 +35,9 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
 import de.uniol.inf.is.odysseus.core.collection.Context;
-import de.uniol.inf.is.odysseus.core.infoservice.InfoService;
-import de.uniol.inf.is.odysseus.core.infoservice.InfoServiceFactory;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.procedure.StoredProcedure;
@@ -56,7 +52,6 @@ import de.uniol.inf.is.odysseus.script.parser.keyword.ResumeOnErrorPreParserKeyw
 public class OdysseusScriptParser implements IOdysseusScriptParser, IQueryParser {
 
 	private static final Logger LOG = LoggerFactory.getLogger(OdysseusScriptParser.class);
-	private static final InfoService INFO_SERVICE = InfoServiceFactory.getInfoService(OdysseusScriptParser.class);
 	
 	private static final PreParserKeywordRegistry KEYWORD_REGISTRY = new PreParserKeywordRegistry();
 	public static final String PARSER_NAME = "OdysseusScript";
@@ -82,9 +77,6 @@ public class OdysseusScriptParser implements IOdysseusScriptParser, IQueryParser
 	private int currentLine;
 	private int keyStartedAtLine;
 	
-	private final Collection<IReplacementProvider> providers = Lists.newArrayList();
-//	private final Map<String, IReplacementProvider> replacementProviderMap = Maps.newHashMap();
-
 	@Override
 	public String getParameterKey() {
 		return PARAMETER_KEY;
@@ -220,7 +212,7 @@ public class OdysseusScriptParser implements IOdysseusScriptParser, IQueryParser
 		List<PreParserStatement> statements = new LinkedList<PreParserStatement>();
 		try {
 			resetDefaultReplacements();
-			ReplacementContainer replacements = new ReplacementContainer(generateProviderMap(providers));
+			ReplacementContainer replacements = new ReplacementContainer(ReplacementProviderManager.generateProviderMap());
 			replacements.connect(context.copy());
 
 			InputStatementParser inputParser = new InputStatementParser(textToParse, replacements);
@@ -543,7 +535,7 @@ public class OdysseusScriptParser implements IOdysseusScriptParser, IQueryParser
 	}
 
 	private Map<String, Serializable> getReplacements(String[] text, Context context) throws OdysseusScriptException {
-		ReplacementContainer repl = new ReplacementContainer(generateProviderMap(providers));
+		ReplacementContainer repl = new ReplacementContainer(ReplacementProviderManager.generateProviderMap());
 		repl.connect(context);
 		boolean isInProcedure = false;
 
@@ -680,39 +672,6 @@ public class OdysseusScriptParser implements IOdysseusScriptParser, IQueryParser
 		}
 	}
 	
-	// called by OSGi-DS
-	public void bindReplacementProvider( IReplacementProvider provider ) {
-		providers.add(provider);
-	}
-
-	// called by OSGi-DS
-	public void unbindReplacementProvider( IReplacementProvider provider ) {
-		providers.remove(provider);
-	}
-	
-	private static Map<String, IReplacementProvider> generateProviderMap( Collection<IReplacementProvider> providers ) {
-		Map<String, IReplacementProvider> replacementProviderMap = Maps.newHashMap();
-		
-		for( IReplacementProvider provider : providers ) {
-			Collection<String> replacementKeys = provider.getReplacementKeys();
-			if( replacementKeys != null ) {
-				for( String replacementKey : replacementKeys ) {
-					String replacementKeyUpperCase = replacementKey.toUpperCase();
-					if( replacementProviderMap.containsKey(replacementKeyUpperCase)) {
-						IReplacementProvider prevProvider = replacementProviderMap.get(replacementKeyUpperCase);
-						
-						String warningMessage = "Replacementkey '" + replacementKeyUpperCase + "' is defined by multiple replacement providers: " + prevProvider + " and " + provider;
-						INFO_SERVICE.warning(warningMessage);
-						LOG.warn(warningMessage);
-					}
-					replacementProviderMap.put(replacementKeyUpperCase, provider);
-				}
-			}
-		}
-		
-		return replacementProviderMap;
-	}
-
 	@Override
 	public PreParserKeywordRegistry getPreParserKeywordRegistry() {
 		return KEYWORD_REGISTRY;

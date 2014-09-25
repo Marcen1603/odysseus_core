@@ -21,5 +21,4 @@
       <provide interface="de.uniol.inf.is.odysseus.script.parser.IOdysseusScriptParser"/>
       <provide interface="de.uniol.inf.is.odysseus.core.server.planmanagement.IQueryParser"/>
    </service>
-   <reference bind="bindReplacementProvider" cardinality="0..n" interface="de.uniol.inf.is.odysseus.script.parser.IReplacementProvider" name="IReplacementProvider" policy="dynamic" unbind="unbindReplacementProvider"/>
 </scr:component>
