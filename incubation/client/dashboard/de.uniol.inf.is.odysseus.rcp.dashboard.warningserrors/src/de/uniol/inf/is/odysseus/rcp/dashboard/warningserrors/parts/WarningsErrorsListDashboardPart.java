@@ -1,0 +1,405 @@
+package de.uniol.inf.is.odysseus.rcp.dashboard.warningserrors.parts;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.layout.FillLayout;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.ToolBar;
+import org.eclipse.ui.PlatformUI;
+
+import com.google.common.collect.Maps;
+
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
+import de.uniol.inf.is.odysseus.core.securitypunctuation.ISecurityPunctuation;
+import de.uniol.inf.is.odysseus.rcp.dashboard.AbstractDashboardPart;
+import de.uniol.inf.is.odysseus.rcp.dashboard.warningserrors.data.Entry;
+import de.uniol.inf.is.odysseus.rcp.dashboard.warningserrors.data.Error;
+import de.uniol.inf.is.odysseus.rcp.dashboard.warningserrors.data.Warning;
+
+/**
+ * 
+ * @author MarkMilster
+ *
+ */
+public class WarningsErrorsListDashboardPart extends AbstractDashboardPart {
+
+	private Composite container;
+	private long updateInterval = 100;
+	private boolean showWarning = true;
+	private boolean showError = true;
+
+	/**
+	 * @return the showWarning
+	 */
+	public boolean isShowWarning() {
+		return showWarning;
+	}
+
+	/**
+	 * @param showWarning the showWarning to set
+	 */
+	public void setShowWarning(boolean showWarning) {
+		this.showWarning = showWarning;
+	}
+
+	/**
+	 * @return the showError
+	 */
+	public boolean isShowError() {
+		return showError;
+	}
+
+	/**
+	 * @param showError the showError to set
+	 */
+	public void setShowError(boolean showError) {
+		this.showError = showError;
+	}
+
+	/**
+	 * @return the updateInterval
+	 */
+	public long getUpdateInterval() {
+		return updateInterval;
+	}
+
+	/**
+	 * @param updateInterval the updateInterval to set
+	 */
+	public void setUpdateInterval(long updateInterval) {
+		this.updateInterval = updateInterval;
+	}
+
+	private int maxElements = 200;
+
+	private List<Tuple<?>> tupleList = new ArrayList<Tuple<?>>();
+	private Composite parent;
+	private int warningIndex = 4;
+	private int errorIndex = 5;
+	private boolean showWarnings;
+	/**
+	 * @return the showWarnings
+	 */
+	public boolean isShowWarnings() {
+		return showWarnings;
+	}
+
+	/**
+	 * @param showWarnings the showWarnings to set
+	 */
+	public void setShowWarnings(boolean showWarnings) {
+		this.showWarnings = showWarnings;
+	}
+
+	/**
+	 * @return the showErrors
+	 */
+	public boolean isShowErrors() {
+		return showErrors;
+	}
+
+	/**
+	 * @param showErrors the showErrors to set
+	 */
+	public void setShowErrors(boolean showErrors) {
+		this.showErrors = showErrors;
+	}
+
+	private boolean showErrors;
+	//TODO timestamp einbauen
+	private int timestampIndex = 0;
+	private Thread updateThread;
+	private int wkaIdIndex = 0;
+	private int farmIdIndex = 1;
+	private int valueTypeIndex = 2;
+	
+
+	/**
+	 * @return the timestampIndex
+	 */
+	public int getTimestampIndex() {
+		return timestampIndex;
+	}
+
+	/**
+	 * @param timestampIndex the timestampIndex to set
+	 */
+	public void setTimestampIndex(int timestampIndex) {
+		this.timestampIndex = timestampIndex;
+	}
+
+	
+	@Override
+	public void createPartControl(final Composite parent, ToolBar toolbar) {
+		this.parent = parent;
+		this.parent.setLayout(new FillLayout());
+		this.container = new Composite(parent, SWT.NONE);
+		this.container.setLayout(new GridLayout(1, false));
+
+		
+		updateThread = new Thread(new Runnable() {
+
+			@Override
+			public void run() {
+				while (!parent.isDisposed()) {
+					final Display disp = PlatformUI.getWorkbench().getDisplay();
+					if (!disp.isDisposed()) {
+						disp.asyncExec(new Runnable() {
+							@Override
+							public void run() {
+								if (!container.isDisposed()) {
+									refreshContainer();
+								}
+							}
+
+							
+						});
+					}
+
+					waiting(updateInterval);
+				}
+			}
+
+		});
+
+		updateThread.setName("StreamList Updater");
+		updateThread.start();
+		
+	}
+	
+	private static void waiting(long length) {
+		try {
+			Thread.sleep(length);
+		} catch (final InterruptedException e) {
+		}
+	}
+	
+	private void refreshContainer() {
+		synchronized (tupleList) {
+			for (Tuple<?> tuple: tupleList) {
+				int wka_id = ((Long) tuple.getAttribute(wkaIdIndex )).intValue();
+				int farm_id = ((Long) tuple.getAttribute(farmIdIndex)).intValue();
+				String value_type = tuple.getAttribute(valueTypeIndex);
+				System.out.println("tuple ->  WKA: " + wka_id + "  Value_type: " + value_type);
+				Entry e = findEntry(wka_id, value_type);
+				if (e != null) {
+					System.out.println("e->  WKA: " + e.getWka_id() + "  Value_type: " + e.getValue_type());
+				}
+				
+				// if e == null -> new entry -> else a old one changes
+				if (tuple.getAttribute(warningIndex)) {
+					System.out.println("Warning flag ist TRUE");
+					if (e != null) {
+						// if this entry was a warning or a error earlyer the warning or error will be overwritten
+						//TODO: evtl. so aendern dass nicht das alte weg geht und das neue kommt sondern dass das alte sich aendert
+						e.dispose();
+						container.layout();
+						System.out.println("altes entfernt");
+					}
+					if (tuple.getAttribute(errorIndex))  {
+						// error
+						e = new Error(container, SWT.NONE);
+						System.out.println("New Error!");
+					} else {
+						//warning
+						e = new Warning(container, SWT.NONE);
+						System.out.println("New warning!");
+					}
+					e.setWka_id(wka_id);
+					e.setFarm_id(farm_id);
+					e.setValue_type(value_type);
+				} else {
+					// nothing -> no warning or error here anymore -> dispose entry
+					// it isnt allowed that you got error but no warning
+					System.out.println("Warning flag ist FALSE");
+					if (e != null) {
+						e.dispose();
+						System.out.println("altes entfernt");
+					} else {
+						System.out.println("Kein altes vorhanden obwohl 0,0 gesendet -> FEHLER");
+					}
+				}
+				container.layout();
+			}
+		}
+	}
+	
+
+	@Override
+	public void streamElementRecieved(IPhysicalOperator senderOperator,
+			IStreamObject<?> element, int port) {
+		synchronized (tupleList) {
+			Tuple<?> tuple = (Tuple<?>) element;
+//			System.out.println(tuple.getAttribute(wkaIdIndex).getClass());
+//			System.out.println(((Long) tuple.getAttribute(wkaIdIndex)).getClass());
+			
+			int t_wka_id = ((Long) tuple.getAttribute(wkaIdIndex)).intValue();
+			String t_value_type = tuple.getAttribute(valueTypeIndex);
+			Tuple<?> tupleOld = findTuple(t_wka_id, t_value_type);
+			if (tupleOld != null) {
+				// there is a warning or error or clear tuple of the same wkaid+valuetype
+				tupleList.remove(tupleOld);
+			}
+			tupleList.add(tuple);
+			
+		}
+	}
+	
+	private Tuple<?> findTuple(int wka_id, String type) {
+		for (Tuple<?> t: tupleList) {
+			int t_wka_id = ((Long) t.getAttribute(wkaIdIndex )).intValue();
+			String t_value_type = t.getAttribute(valueTypeIndex);
+			if (t_wka_id == wka_id && t_value_type.equals(type)) {
+				return t;
+			}
+		}
+		return null;
+		
+	}
+	
+	private Entry findEntry(int wka_id, String type) {
+		System.out.println("Beginne suche...");
+		for (Control c: container.getChildren()) {
+			System.out.println(c.toString());
+			if (c != null && c instanceof Entry) {
+				Entry e = (Entry) c;
+				if (e.getWka_id() == wka_id && e.getValue_type().equals(type)) {
+					return e;
+				}
+			}
+		}
+		System.out.println(wka_id + " " + type + " nicht gefunden!");
+		return null;
+	}
+
+	
+	@Override
+	public void punctuationElementRecieved(IPhysicalOperator senderOperator,
+			IPunctuation point, int port) {
+	}
+
+	@Override
+	public void securityPunctuationElementRecieved(IPhysicalOperator senderOperator, ISecurityPunctuation sp, int port) {
+		punctuationElementRecieved(senderOperator, sp, port);
+	}
+
+	public void setMaxElements(int maxElements) {
+		this.maxElements = maxElements;
+	}
+
+	public int getMaxElements() {
+		return this.maxElements;
+	}
+
+
+
+	
+	@Override
+	public void onLoad(Map<String, String> saved) {
+		updateInterval = Long.valueOf(saved.get("UpdateInterval"));
+		this.maxElements = Integer.valueOf(saved.get("MaxElements"));
+		this.showWarnings = Boolean.valueOf(saved.get("ShowWarnings"));
+        this.showErrors = Boolean.valueOf(saved.get("ShowErrors"));	
+        this.warningIndex = Integer.valueOf(saved.get("WarningIndex"));
+        this.errorIndex = Integer.valueOf(saved.get("ErrorIndex"));
+        this.timestampIndex = Integer.valueOf(saved.get("TimestampIndex"));
+        this.farmIdIndex = Integer.valueOf(saved.get("FarmIdIndex"));
+		this.valueTypeIndex = Integer.valueOf(saved.get("ValueTypeIndex"));
+		this.wkaIdIndex = Integer.valueOf(saved.get("WkaIdIndex"));
+	}
+	
+	@Override
+	public Map<String, String> onSave() {
+		Map<String, String> saveMap = Maps.newHashMap();
+		saveMap.put("UpdateInterval", String.valueOf(updateInterval));
+		saveMap.put("ShowWarnings", String.valueOf(showWarnings));
+		saveMap.put("ShowErrors", String.valueOf(showErrors));
+		saveMap.put("WarningIndex", String.valueOf(warningIndex));
+		saveMap.put("ErrorIndex", String.valueOf(errorIndex));
+		saveMap.put("TimestampIndex", String.valueOf(timestampIndex));
+		saveMap.put("FarmIdIndex", String.valueOf(farmIdIndex));
+		saveMap.put("ValueTypeIndex", String.valueOf(valueTypeIndex));
+		saveMap.put("WkaIdIndex", String.valueOf(wkaIdIndex));
+		return saveMap;
+	}
+
+	/**
+	 * @return the wkaIdIndex
+	 */
+	public int getWkaIdIndex() {
+		return wkaIdIndex;
+	}
+
+	/**
+	 * @param wkaIdIndex the wkaIdIndex to set
+	 */
+	public void setWkaIdIndex(int wkaIdIndex) {
+		this.wkaIdIndex = wkaIdIndex;
+	}
+
+	/**
+	 * @return the farmIdIndex
+	 */
+	public int getFarmIdIndex() {
+		return farmIdIndex;
+	}
+
+	/**
+	 * @param farmIdIndex the farmIdIndex to set
+	 */
+	public void setFarmIdIndex(int farmIdIndex) {
+		this.farmIdIndex = farmIdIndex;
+	}
+
+	/**
+	 * @return the valueTypeIndex
+	 */
+	public int getValueTypeIndex() {
+		return valueTypeIndex;
+	}
+
+	/**
+	 * @param valueTypeIndex the valueTypeIndex to set
+	 */
+	public void setValueTypeIndex(int valueTypeIndex) {
+		this.valueTypeIndex = valueTypeIndex;
+	}
+
+	/**
+	 * @return the warningIndex
+	 */
+	public int getWarningIndex() {
+		return warningIndex;
+	}
+
+	/**
+	 * @param warningIndex the warningIndex to set
+	 */
+	public void setWarningIndex(int warningIndex) {
+		this.warningIndex = warningIndex;
+	}
+
+	/**
+	 * @return the errorIndex
+	 */
+	public int getErrorIndex() {
+		return errorIndex;
+	}
+
+	/**
+	 * @param errorIndex the errorIndex to set
+	 */
+	public void setErrorIndex(int errorIndex) {
+		this.errorIndex = errorIndex;
+	}
+
+}

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="de.uniol.inf.is.odysseus.rcp.DashboardPart">
+      <dashboardPart
+            class="de.uniol.inf.is.odysseus.rcp.dashboard.warningserrors.parts.WarningsErrorsListDashboardPart"
+            configClass="de.uniol.inf.is.odysseus.rcp.dashboard.warningserrors.parts.WarningsErrorsListConfigurer"
+            name="Warnings and Errors List">
+      </dashboardPart>
+   </extension>
+
+</plugin>
