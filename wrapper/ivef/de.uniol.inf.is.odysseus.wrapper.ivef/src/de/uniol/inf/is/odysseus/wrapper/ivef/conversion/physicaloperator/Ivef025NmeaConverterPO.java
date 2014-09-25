@@ -154,7 +154,9 @@ public class Ivef025NmeaConverterPO<T extends IStreamObject<IMetaAttribute>>
 						if (this.aishandler.getDecodedAISMessage() instanceof PositionReport) {
 							this.ownShipPosition = (PositionReport) this.aishandler
 									.getDecodedAISMessage();
-						}
+						}else if (this.aishandler.getDecodedAISMessage() instanceof StaticAndVoyageData)
+							this.ownShipStaticData = (StaticAndVoyageData) this.aishandler
+							.getDecodedAISMessage();
 						this.aishandler.resetDecodedAISMessage();
 					}
 				}
@@ -599,6 +601,7 @@ public class Ivef025NmeaConverterPO<T extends IStreamObject<IMetaAttribute>>
 			trackData.setSOG(Double.parseDouble("0"));
 		trackData.setSourceId("0");
 		trackData.setUpdateTime(new Date());
+		trackData.setSourceName("ODYSSEUS");
 		trackData.setTrackStatus(1); // Updated
 		NavigationStatus navigationStatus = null;
 		if ((navigationStatus = (NavigationStatus) received

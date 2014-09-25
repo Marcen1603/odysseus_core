@@ -57,12 +57,11 @@ public class ToIVEF025ConverterHelper {
 		ObjectData objectData = new ObjectData();
 
 		VesselData vesselData = new VesselData();
-
 		vesselData.setId(id);
 
 		if (receivedRoute.getRoute_label() != null)
 			vesselData.setSourceName(receivedRoute.getRoute_label());
-		vesselData.setSourceType(0);
+		vesselData.setSourceType(3);
 		vesselData.setUpdateTime(new Date());
 		
 		Identifier identifier = new Identifier();
@@ -83,7 +82,7 @@ public class ToIVEF025ConverterHelper {
 
 		if (receivedRoute.getRoute_label() != null)
 			voyageData.setSourceName(receivedRoute.getRoute_label());
-		voyageData.setSourceType(0);
+		voyageData.setSourceType(3);
 		voyageData.setUpdateTime(new Date());
 		
 		if (staticAndVoyageData.getDraught() != null)
@@ -145,7 +144,7 @@ public class ToIVEF025ConverterHelper {
 
 		if (receivedMPlan.getMplan_label() != null)
 			vesselData.setSourceName(receivedMPlan.getMplan_label());
-		vesselData.setSourceType(0);
+		vesselData.setSourceType(3);
 		vesselData.setUpdateTime(new Date());
 		Identifier identifier = new Identifier();
 		if (staticAndVoyageData.getSourceMmsi() != null)
@@ -168,7 +167,7 @@ public class ToIVEF025ConverterHelper {
 
 		if (receivedMPlan.getMplan_label() != null)
 			voyageData.setSourceName(receivedMPlan.getMplan_label());
-		voyageData.setSourceType(0);
+		voyageData.setSourceType(3);
 		voyageData.setUpdateTime(new Date());
 		
 		if (staticAndVoyageData.getDraught() != null)
@@ -221,7 +220,7 @@ public class ToIVEF025ConverterHelper {
 
 		vesselData.setId(id);
 		vesselData.setSourceName("Prediction");
-		vesselData.setSourceType(0);
+		vesselData.setSourceType(3);
 		vesselData.setUpdateTime(new Date());
 		
 		Identifier identifier = new Identifier();
@@ -243,7 +242,7 @@ public class ToIVEF025ConverterHelper {
 		voyageData.setId(id);
 
 		voyageData.setSourceName("Prediction");
-		voyageData.setSourceType(0);
+		voyageData.setSourceType(3);
 		voyageData.setUpdateTime(new Date());
 		
 		if (staticAndVoyageData.getDraught() != null)
@@ -299,7 +298,7 @@ public class ToIVEF025ConverterHelper {
 		vesselData.setId(id);
 		if (iecRouteInfo.getRouteName() != null)
 			vesselData.setSourceName(iecRouteInfo.getRouteName());
-		vesselData.setSourceType(0);
+		vesselData.setSourceType(3);
 		vesselData.setUpdateTime(new Date());
 		
 		Identifier identifier = new Identifier();
@@ -331,7 +330,7 @@ public class ToIVEF025ConverterHelper {
 		voyageData.setId(id);
 		if (iecRouteInfo.getRouteName() != null)
 			voyageData.setSourceName(iecRouteInfo.getRouteName());
-		voyageData.setSourceType(0);
+		voyageData.setSourceType(3);
 		voyageData.setUpdateTime(new Date());
 		
 		if (staticAndVoyageData.getDraught() != null)
