@@ -5,6 +5,7 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.Timestamp;
 import java.util.Date;
 import java.util.Properties;
 
@@ -13,6 +14,10 @@ import windscadaanwendung.ca.WKA;
 import windscadaanwendung.ca.WindFarm;
 import windscadaanwendung.hd.HitWKAData;
 import windscadaanwendung.hd.HitWindFarmData;
+import windscadaanwendung.hd.ae.AEEntry;
+import windscadaanwendung.hd.ae.AEEntryComp;
+import windscadaanwendung.hd.ae.AEWarningComp;
+import windscadaanwendung.hd.ae.HitAEData;
 import de.uniol.inf.is.odysseus.database.connection.AbstractDatabaseConnectionFactory;
 import de.uniol.inf.is.odysseus.database.connection.DatabaseConnection;
 import de.uniol.inf.is.odysseus.database.connection.IDatabaseConnection;
@@ -145,6 +150,52 @@ public class DBConnectionHD extends AbstractDatabaseConnectionFactory {
 	        stmt = null;
 	        }	
 	
+	}
+	
+	public static void refreshHitAEData(Date utilTimestamp) {
+		Timestamp timestamp = new Timestamp(utilTimestamp.getTime());
+		ResultSet rs = null;
+		
+			HitAEData.clearEntryList();
+			
+		    try {
+		    	CallableStatement cStmt = conn.prepareCall("{call hit_ae_procedure(?)}");
+		    	// TODO
+		    	cStmt.setTimestamp(1, timestamp);
+		    
+		    	if (cStmt.execute()) {
+		    		rs = cStmt.getResultSet();
+		    		AEEntry aeEntry = null;
+		    		System.out.println("RS-Fetch: " + rs.getFetchSize());
+				    while (rs.next()) {
+				    	aeEntry = new AEEntry();
+				    	aeEntry.setWkaId(rs.getInt("wka_id"));
+				    	aeEntry.setFarmId(rs.getInt("wp_id"));
+				    	aeEntry.setValueType(rs.getString("type"));
+				    	aeEntry.setWarning(rs.getBoolean("warning"));
+				    	aeEntry.setError(rs.getBoolean("error"));
+				    	aeEntry.setConfirm(rs.getBoolean("confirmed"));
+				    	aeEntry.setTimestamp(rs.getString("starttime"));
+				    	aeEntry.setComment(rs.getString("comment"));
+				    	HitAEData.addAEEntry(aeEntry);
+				    } 
+		    	}
+				     else {
+				    	System.out.println("No Hit AE Data Found since the given timestamp");
+				    }
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		   
+
+		    try {
+		    	if (rs != null) {
+		    		rs.close();
+		    	} 
+	        } catch (SQLException sqlEx) { // ignore 
+
+	        rs = null;
+	        }
 	}
 	
 }

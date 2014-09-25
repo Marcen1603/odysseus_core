@@ -95,7 +95,7 @@ public class DetailView extends ViewPart implements Observer{
 							}
 
 						});
-						
+						//TODO default-wert setzen
 								swtTime = new DateTime(dateTimeContainer, SWT.BORDER | SWT.TIME);
 								swtTime.addSelectionListener(new SelectionListener() {
 
@@ -215,8 +215,8 @@ public class DetailView extends ViewPart implements Observer{
 	}
 
 	private void handleDateTimeEvent() {
-		System.out.println("Test:");
-		System.out.println(swtDate.toString() + swtTime.toString());
+//		System.out.println("Test:");
+//		System.out.println(swtDate.toString() + swtTime.toString());
 		GregorianCalendar cal = new GregorianCalendar();
 		cal.set(swtDate.getYear(),swtDate.getMonth(), swtDate.getDay(), swtTime.getHours(), swtTime.getMinutes(), swtTime.getSeconds());
 		System.out.println(cal.getTime().toString());

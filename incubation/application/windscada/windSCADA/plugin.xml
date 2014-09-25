@@ -115,6 +115,13 @@
             name="Warnings und Errors"
             restorable="true">
       </view>
+      <view
+            category="windscadaanwendung.category"
+            class="windscadaanwendung.views.HitAEView"
+            id="windscadaanwendung.views.HitAEView"
+            name="Historische Warnings und Errors"
+            restorable="true">
+      </view>
    </extension>
    <extension
          point="org.eclipse.ui.commands">
