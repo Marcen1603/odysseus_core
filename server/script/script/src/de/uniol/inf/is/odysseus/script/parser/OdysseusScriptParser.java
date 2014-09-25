@@ -82,7 +82,8 @@ public class OdysseusScriptParser implements IOdysseusScriptParser, IQueryParser
 	private int currentLine;
 	private int keyStartedAtLine;
 	
-	private final Map<String, IReplacementProvider> replacementProviderMap = Maps.newHashMap();
+	private final Collection<IReplacementProvider> providers = Lists.newArrayList();
+//	private final Map<String, IReplacementProvider> replacementProviderMap = Maps.newHashMap();
 
 	@Override
 	public String getParameterKey() {
@@ -219,7 +220,7 @@ public class OdysseusScriptParser implements IOdysseusScriptParser, IQueryParser
 		List<PreParserStatement> statements = new LinkedList<PreParserStatement>();
 		try {
 			resetDefaultReplacements();
-			ReplacementContainer replacements = new ReplacementContainer(replacementProviderMap);
+			ReplacementContainer replacements = new ReplacementContainer(generateProviderMap(providers));
 			replacements.connect(context.copy());
 
 			InputStatementParser inputParser = new InputStatementParser(textToParse, replacements);
@@ -542,7 +543,7 @@ public class OdysseusScriptParser implements IOdysseusScriptParser, IQueryParser
 	}
 
 	private Map<String, Serializable> getReplacements(String[] text, Context context) throws OdysseusScriptException {
-		ReplacementContainer repl = new ReplacementContainer(replacementProviderMap);
+		ReplacementContainer repl = new ReplacementContainer(generateProviderMap(providers));
 		repl.connect(context);
 		boolean isInProcedure = false;
 
@@ -681,34 +682,35 @@ public class OdysseusScriptParser implements IOdysseusScriptParser, IQueryParser
 	
 	// called by OSGi-DS
 	public void bindReplacementProvider( IReplacementProvider provider ) {
-		Collection<String> replacementKeys = provider.getReplacementKeys();
-		if( replacementKeys != null ) {
-			for( String replacementKey : replacementKeys ) {
-				String replacementKeyUpperCase = replacementKey.toUpperCase();
-				if( replacementProviderMap.containsKey(replacementKeyUpperCase)) {
-					IReplacementProvider prevProvider = replacementProviderMap.get(replacementKeyUpperCase);
-					
-					String warningMessage = "Replacementkey '" + replacementKeyUpperCase + "' is defined by multiple replacement providers: " + prevProvider + " and " + provider;
-					INFO_SERVICE.warning(warningMessage);
-					LOG.warn(warningMessage);
-				}
-				replacementProviderMap.put(replacementKeyUpperCase, provider);
-			}
-		}
+		providers.add(provider);
 	}
 
 	// called by OSGi-DS
 	public void unbindReplacementProvider( IReplacementProvider provider ) {
-		Collection<String> foundKeys = Lists.newArrayList();
-		for( String replacementKey : replacementProviderMap.keySet() ) {
-			if( replacementProviderMap.get(replacementKey) == provider ) {
-				foundKeys.add(replacementKey);
+		providers.remove(provider);
+	}
+	
+	private static Map<String, IReplacementProvider> generateProviderMap( Collection<IReplacementProvider> providers ) {
+		Map<String, IReplacementProvider> replacementProviderMap = Maps.newHashMap();
+		
+		for( IReplacementProvider provider : providers ) {
+			Collection<String> replacementKeys = provider.getReplacementKeys();
+			if( replacementKeys != null ) {
+				for( String replacementKey : replacementKeys ) {
+					String replacementKeyUpperCase = replacementKey.toUpperCase();
+					if( replacementProviderMap.containsKey(replacementKeyUpperCase)) {
+						IReplacementProvider prevProvider = replacementProviderMap.get(replacementKeyUpperCase);
+						
+						String warningMessage = "Replacementkey '" + replacementKeyUpperCase + "' is defined by multiple replacement providers: " + prevProvider + " and " + provider;
+						INFO_SERVICE.warning(warningMessage);
+						LOG.warn(warningMessage);
+					}
+					replacementProviderMap.put(replacementKeyUpperCase, provider);
+				}
 			}
 		}
 		
-		for( String foundKey : foundKeys ) {
-			replacementProviderMap.remove(foundKey);
-		}
+		return replacementProviderMap;
 	}
 
 	@Override
