@@ -16,12 +16,13 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableCollection;
 
 import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryBackupInformationStore;
+import de.uniol.inf.is.odysseus.peer.recovery.internal.SharedQuery;
 
 /**
  * A helper class to backup information about distributed queries within the
  * local {@link IRecoveryBackupInformationStore}.
  * 
- * @author Michael Brand
+ * @author Michael Brand, Tobias Brandt
  */
 public class LocalBackupInformationAccess {
 
@@ -130,6 +131,34 @@ public class LocalBackupInformationAccess {
 
 		return cInfoStore.get().getStoredPQLStatements(sharedQueryId, peerId);
 
+	}
+	
+	/**
+	 * Returns the stored PQL-Statements for a given PeerID.
+	 * @param peerId
+	 * @return
+	 */
+	public static List<SharedQuery> getStoredPQLStatements(PeerID peerId) {
+		if (!cInfoStore.isPresent()) {
+
+			LOG.error("No backup information store for recovery bound!");
+			return null;
+
+		}
+		
+		List<SharedQuery> sharedQueries = new ArrayList<SharedQuery>(); 
+		
+		List<ID> storedIds = getStoredSharedQueryIdsForPeer(peerId);
+		
+		for(ID id : storedIds) {
+			ImmutableCollection<String> pql = getStoredPQLStatements(id, peerId);
+			List<String> pqlForQuery = new ArrayList<String>();
+			pqlForQuery.addAll(pql);
+			SharedQuery query = new SharedQuery(id, pqlForQuery);
+			sharedQueries.add(query);
+		}
+		
+		return sharedQueries;
 	}
 
 	/**

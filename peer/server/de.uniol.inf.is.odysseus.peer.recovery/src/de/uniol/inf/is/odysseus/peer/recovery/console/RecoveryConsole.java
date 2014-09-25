@@ -58,12 +58,14 @@ public class RecoveryConsole implements CommandProvider {
 	}
 
 	// called by OSGi-DS
-	public static void bindRecoveryPeerFailureDetector(IRecoveryPeerFailureDetector serv) {
+	public static void bindRecoveryPeerFailureDetector(
+			IRecoveryPeerFailureDetector serv) {
 		peerFailureDetector = serv;
 	}
 
 	// called by OSGi-DS
-	public static void unbindRecoveryPeerFailureDetector(IRecoveryPeerFailureDetector serv) {
+	public static void unbindRecoveryPeerFailureDetector(
+			IRecoveryPeerFailureDetector serv) {
 		if (peerFailureDetector == serv) {
 			peerFailureDetector = null;
 		}
@@ -90,7 +92,7 @@ public class RecoveryConsole implements CommandProvider {
 			executor = null;
 		}
 	}
-	
+
 	// called by OSGi-DS
 	public static void bindP2PDictionary(IP2PDictionary serv) {
 		p2pDictionary = serv;
@@ -123,9 +125,9 @@ public class RecoveryConsole implements CommandProvider {
 		sb.append("	showPeerPQL <PeerName> - Shows the PQL that this peer knows from <PeerName>.\n");
 		sb.append("	sendHoldOn <PeerName from receiver> <sharedQueryId> - Send a hold-on message to <PeerName from receiver>, so that this should stop sending the tuples from query <sharedQueryId> further.\n");
 		sb.append("	sendNewReceiver <PeerName from receiver> <sharedQueryId> - Send a newReceiver-message to <PeerName from receiver>, so that this should send the tuples from query <sharedQueryId> to a new receiver.\n");
-		sb.append("	sendAddQueriesFromPeer <PeerName from receiver> <PeerName from failed peer> - The <PeerName from receiver> will get a message that tells that the peer has to install all queries from <PeerName from failed peer>. \n");
-		sb.append(" startPeerFailureDetection - Starts detection of peer failures. \n");
-		sb.append(" stopPeerFailureDetection - Stops detection of peer failures. \n");
+		sb.append("	sendAddQueriesFromPeer <PeerName from receiver> <PeerName from failed peer> - The <PeerName from receiver> will get a message which tells that the peer has to install all queries from <PeerName from failed peer>. \n");
+		sb.append("	startPeerFailureDetection - Starts detection of peer failures. \n");
+		sb.append("	stopPeerFailureDetection - Stops detection of peer failures. \n");
 		return sb.toString();
 	}
 
@@ -158,8 +160,14 @@ public class RecoveryConsole implements CommandProvider {
 	public void _sendAddQueriesFromPeer(CommandInterpreter ci) {
 		Preconditions.checkNotNull(ci, "Command interpreter must not be null!");
 
-//		PeerID installPeer = getPeerIdFromCi(ci);
+		String newPeerName = ci.nextArgument();
+		String failedPeerName = ci.nextArgument();
 
+		PeerID newPeer = RecoveryHelper.determinePeerID(newPeerName).get();
+		PeerID failedPeer = RecoveryHelper.determinePeerID(failedPeerName)
+				.get();
+
+		RecoveryCommunicator.installQueriesOnNewPeer(failedPeer, newPeer);
 	}
 
 	public void _sendHoldOn(CommandInterpreter ci) {
@@ -185,20 +193,18 @@ public class RecoveryConsole implements CommandProvider {
 		//
 		//
 	}
-	
+
 	public void _startPeerFailureDetection(CommandInterpreter ci) {
 		Preconditions.checkNotNull(ci, "Command interpreter must be not null!");
-		
+
 		peerFailureDetector.startPeerFailureDetection();
-		
 
 	}
-	
+
 	public void _stopPeerFailureDetection(CommandInterpreter ci) {
 		Preconditions.checkNotNull(ci, "Command interpreter must be not null!");
-		
+
 		peerFailureDetector.stopPeerFailureDetection();
-		
 
 	}
 

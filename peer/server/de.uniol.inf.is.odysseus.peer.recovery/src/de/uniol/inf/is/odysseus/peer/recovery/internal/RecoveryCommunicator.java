@@ -10,8 +10,6 @@ import net.jxta.peer.PeerID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.collect.ImmutableCollection;
-
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvider;
@@ -200,20 +198,18 @@ public class RecoveryCommunicator implements IRecoveryCommunicator,
 	public static RecoveryCommunicator getInstance() {
 		return instance;
 	}
-	
+
 	public static IP2PDictionary getP2pDictionary() {
 		return p2pDictionary;
 	}
-	
+
 	public static void setP2pDictionary(IP2PDictionary p2pDictionary) {
 		RecoveryCommunicator.p2pDictionary = p2pDictionary;
 	}
-	
 
 	// -----------------------------------------------------
 	// Code with recovery logic
 	// -----------------------------------------------------
-
 
 	@Override
 	public void recover(PeerID failedPeer) {
@@ -233,21 +229,24 @@ public class RecoveryCommunicator implements IRecoveryCommunicator,
 		}
 	}
 
-	public void installQueriesOnNewPeer(PeerID failedPeer, PeerID newPeer,
-			ID sharedQueryId) {
-		ImmutableCollection<String> pqlStatements = LocalBackupInformationAccess
-				.getStoredPQLStatements(sharedQueryId, failedPeer);
+	public static void installQueriesOnNewPeer(PeerID failedPeer, PeerID newPeer) {
 
-		for (String pql : pqlStatements) {
-			RecoveryInstructionMessage addQueryMessage = RecoveryInstructionMessage
-					.createAddQueryMessage(pql, sharedQueryId);
+		List<SharedQuery> sharedQueries = LocalBackupInformationAccess
+				.getStoredPQLStatements(failedPeer);
+
+		for (SharedQuery query : sharedQueries) {
 			try {
+				String pql = "";
+				for (String pqlPart : query.getPqlParts()) {
+					pql += " " + pqlPart;
+				}
+				RecoveryInstructionMessage addQueryMessage = RecoveryInstructionMessage
+						.createAddQueryMessage(pql, query.getSharedQueryID());
 				peerCommunicator.send(newPeer, addQueryMessage);
 			} catch (PeerCommunicationException e) {
 
 			}
 		}
-
 	}
 
 	public void sendNewReceiverMessage(PeerID senderPeer,
