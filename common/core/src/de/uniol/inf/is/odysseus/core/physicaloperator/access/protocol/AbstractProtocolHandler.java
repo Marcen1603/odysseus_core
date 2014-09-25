@@ -195,5 +195,10 @@ abstract public class AbstractProtocolHandler<T> implements IProtocolHandler<T> 
     	return isSemanticallyEqualImpl(other);
     }
     
+    @Override
+    public ProtocolHandlerAction getAction() {
+    	return null;
+    }
+    
     public abstract boolean isSemanticallyEqualImpl(IProtocolHandler<?> other);
 }

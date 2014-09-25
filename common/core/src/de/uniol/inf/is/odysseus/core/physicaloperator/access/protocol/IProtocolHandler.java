@@ -136,5 +136,8 @@ public interface IProtocolHandler<T> extends ITransportHandlerListener<T> {
      * @return
      */
 	public boolean isSemanticallyEqual(IProtocolHandler<?> other);
+	
+	
+	ProtocolHandlerAction getAction();
 
 }
