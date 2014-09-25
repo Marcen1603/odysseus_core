@@ -81,6 +81,7 @@ public class Ivef025NmeaConverterPO<T extends IStreamObject<IMetaAttribute>>
 	private static Map<Long, Integer> mmsiToCount = new HashMap<Long, Integer>();
 
 	private StaticAndVoyageData ownShipStaticData;
+	private Map<Integer, TTMSentence> cachedTTMSentences = new HashMap<Integer, TTMSentence>();
 
 	public Ivef025NmeaConverterPO(Ivef025NmeaConverterPO<T> anotherPO) {
 		super();
@@ -154,9 +155,9 @@ public class Ivef025NmeaConverterPO<T extends IStreamObject<IMetaAttribute>>
 						if (this.aishandler.getDecodedAISMessage() instanceof PositionReport) {
 							this.ownShipPosition = (PositionReport) this.aishandler
 									.getDecodedAISMessage();
-						}else if (this.aishandler.getDecodedAISMessage() instanceof StaticAndVoyageData)
+						} else if (this.aishandler.getDecodedAISMessage() instanceof StaticAndVoyageData)
 							this.ownShipStaticData = (StaticAndVoyageData) this.aishandler
-							.getDecodedAISMessage();
+									.getDecodedAISMessage();
 						this.aishandler.resetDecodedAISMessage();
 					}
 				}
@@ -169,15 +170,26 @@ public class Ivef025NmeaConverterPO<T extends IStreamObject<IMetaAttribute>>
 			KeyValueObject<? extends IMetaAttribute> received) {
 		KeyValueObject<? extends IMetaAttribute> sent = new KeyValueObject<>();
 		if (received.getMetadata("originalNMEA") != null) {
-			if (received.getMetadata("originalNMEA") instanceof TLLSentence) {
+			if (received.getMetadata("originalNMEA") instanceof TTMSentence) {
+				TTMSentence ttm = (TTMSentence) received
+						.getMetadata("originalNMEA");
+				Integer targetNumber = new Integer(ttm.getTargetNumber()
+						.getNumber());
+				cachedTTMSentences.put(targetNumber, ttm);
+			} else if (received.getMetadata("originalNMEA") instanceof TLLSentence) {
 				TLLSentence tll = (TLLSentence) received
 						.getMetadata("originalNMEA");
+				Integer targetNumber = new Integer(tll.getTargetNumber().getNumber());
+				TTMSentence ttm = cachedTTMSentences.get(targetNumber);
+				if (ttm == null){
+					return;
+				}
 				// create IVEF 0.2.5 Element
 				this.ivef = new MSG_IVEF();
 				Header header = prepareHeader();
 				((MSG_IVEF) this.ivef).setHeader(header);
 
-				TrackData trackData = prepareTrackDataFromTLL(tll);
+				TrackData trackData = prepareTrackDataFromTLL(tll, ttm);
 
 				VesselData vesselData = prepareVesselDataFromTLL(tll);
 
@@ -199,7 +211,7 @@ public class Ivef025NmeaConverterPO<T extends IStreamObject<IMetaAttribute>>
 			}
 		}
 	}
-	
+
 	@SuppressWarnings({ "unchecked" })
 	private void convertTTMtoIVEF(
 			KeyValueObject<? extends IMetaAttribute> received) {
@@ -358,7 +370,7 @@ public class Ivef025NmeaConverterPO<T extends IStreamObject<IMetaAttribute>>
 		return vesselData;
 	}
 
-	private TrackData prepareTrackDataFromTLL(TLLSentence tll) {
+	private TrackData prepareTrackDataFromTLL(TLLSentence tll, TTMSentence ttm) {
 		TrackData trackData = new TrackData();
 		if (tll.getTargetNumber() != null)
 			trackData.setId(tll.getTargetNumber().getNumber());
@@ -370,8 +382,8 @@ public class Ivef025NmeaConverterPO<T extends IStreamObject<IMetaAttribute>>
 		pos.setLat(tll.getLatitude());
 		pos.setLong(tll.getLongitude());
 		trackData.addPos(pos);
-		trackData.setCOG(0.0);
-		trackData.setSOG(0.0);
+		trackData.setCOG(ttm.getTargetCourse());
+		trackData.setSOG(ttm.getTargetSpeed());
 		return trackData;
 	}
 

@@ -93,6 +93,7 @@ public class Ivef015NmeaConverterPO<T extends IStreamObject<IMetaAttribute>>
 	private PositionReport ownShipPosition = null;
 	@SuppressWarnings("unused")
 	private StaticAndVoyageData ownShipStaticData = null;
+	private Map<Integer, TTMSentence>  cachedTTMSentences = new HashMap<Integer, TTMSentence>();
 	/**
 	 * Map between the ship MMSI and its frequency. It'll be used to ensure
 	 * generating Static&Voyage messages from time to time
@@ -338,7 +339,7 @@ public class Ivef015NmeaConverterPO<T extends IStreamObject<IMetaAttribute>>
 		return voyage;
 	}
 
-	private PosReport preparePosReportFromTLL(TLLSentence tll) {
+	private PosReport preparePosReportFromTLL(TLLSentence tll, TTMSentence ttm) {
 		PosReport posReport = new PosReport();
 		posReport.setId(tll.getTargetNumber().getNumber());
 		posReport.setSourceId(0);
@@ -349,8 +350,8 @@ public class Ivef015NmeaConverterPO<T extends IStreamObject<IMetaAttribute>>
 		pos.setLong(tll.getLongitude());
 		posReport.setPos(pos);
 		posReport.setLost("no");
-		posReport.setSOG(0.0);
-		posReport.setCOG(0.0);
+		posReport.setSOG(ttm.getTargetSpeed());
+		posReport.setCOG(ttm.getTargetCourse());
 		return posReport;
 	}
 
@@ -476,16 +477,26 @@ public class Ivef015NmeaConverterPO<T extends IStreamObject<IMetaAttribute>>
 			KeyValueObject<? extends IMetaAttribute> received) {
 		KeyValueObject<? extends IMetaAttribute> sent = new KeyValueObject<>();
 		if (received.getMetadata("originalNMEA") != null) {
-			if (received.getMetadata("originalNMEA") instanceof TLLSentence) {
+			if (received.getMetadata("originalNMEA") instanceof TTMSentence) {
+				TTMSentence ttm = (TTMSentence) received
+						.getMetadata("originalNMEA");
+				Integer targetNumber = new Integer(ttm.getTargetNumber().getNumber());
+				cachedTTMSentences.put(targetNumber, ttm);
+			} else if (received.getMetadata("originalNMEA") instanceof TLLSentence) {
 				TLLSentence tll = (TLLSentence) received
 						.getMetadata("originalNMEA");
+				Integer targetNumber = new Integer(tll.getTargetNumber().getNumber());
+				TTMSentence ttm = cachedTTMSentences.get(targetNumber);
+				if (ttm == null){
+					return;
+				}
 				
 				this.ivef = new MSG_VesselData();
 				// Header
 				Header header = prepareHeader();
 				((MSG_VesselData) this.ivef).setHeader(header);
 				// PosReport
-				PosReport posReport = preparePosReportFromTLL(tll);
+				PosReport posReport = preparePosReportFromTLL(tll, ttm);
 				// StaticData
 				StaticData staticData = prepareStaticDataFromTLL(tll);
 				// Voyage
