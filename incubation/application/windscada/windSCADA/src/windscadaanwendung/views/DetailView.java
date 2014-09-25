@@ -72,7 +72,7 @@ public class DetailView extends ViewPart implements Observer{
 		parent.setLayout(new FillLayout(SWT.VERTICAL));
 
 		form = new Composite(parent, SWT.NONE);
-		form.setLayout(new GridLayout(2, false));
+		form.setLayout(new GridLayout(4, false));
 		Label lblHistorischeDatenSeit = new Label(form, SWT.NONE);
 		lblHistorischeDatenSeit.setLayoutData(new GridData(SWT.RIGHT,
 				SWT.CENTER, false, false, 1, 1));
@@ -116,20 +116,20 @@ public class DetailView extends ViewPart implements Observer{
 		lblWKA.setText("Windkraftanlage:");
 		
 				nameWKA = new Text(form, SWT.BORDER);
-		
-				Label lblPitchwinkel = new Label(form, SWT.NONE);
-				lblPitchwinkel.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false,
-						false, 1, 1));
-				lblPitchwinkel.setText("Aktueller Pitchwinkel:");
-		
-				pitchComp = new Composite(form, SWT.NONE);
-		
-				Label lblPhasenverschiebung = new Label(form, SWT.NONE);
-				lblPhasenverschiebung.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER,
-						false, false, 1, 1));
-				lblPhasenverschiebung.setText("Aktuelle Phasenverschiebung:");
-		
-				phaseComp = new Composite(form, SWT.NONE);
+				
+						Label lblPitchwinkel = new Label(form, SWT.NONE);
+						lblPitchwinkel.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false,
+								false, 1, 1));
+						lblPitchwinkel.setText("Aktueller Pitchwinkel:");
+				
+						pitchComp = new Composite(form, SWT.NONE);
+				
+						Label lblPhasenverschiebung = new Label(form, SWT.NONE);
+						lblPhasenverschiebung.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER,
+								false, false, 1, 1));
+						lblPhasenverschiebung.setText("Aktuelle Phasenverschiebung:");
+				
+						phaseComp = new Composite(form, SWT.NONE);
 		
 		tableContainer = new Composite(parent, SWT.NONE);
 		tableContainer.setLayout(new FillLayout(SWT.HORIZONTAL));

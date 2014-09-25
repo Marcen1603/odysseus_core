@@ -96,13 +96,6 @@
       </view>
       <view
             category="windscadaanwendung.category"
-            class="windscadaanwendung.views.WarningsAndErrorsView"
-            id="windscadaanwendung.views.WarningsAndErrorsView"
-            name="Warnings und Errors"
-            restorable="true">
-      </view>
-      <view
-            category="windscadaanwendung.category"
             class="windscadaanwendung.views.dashboard.WindDirectionPart"
             id="windscadaanwendung.views.dashboard.WindDirectionPart"
             name="Windrichtung"
@@ -113,6 +106,13 @@
             class="windscadaanwendung.views.dashboard.GierAnglePart"
             id="windscadaanwendung.views.dashboard.GierAnglePart"
             name="Gierwinkel"
+            restorable="true">
+      </view>
+      <view
+            category="windscadaanwendung.category"
+            class="windscadaanwendung.views.dashboard.AEListPart"
+            id="windscadaanwendung.views.dashboard.AEListPart"
+            name="Warnings und Errors"
             restorable="true">
       </view>
    </extension>

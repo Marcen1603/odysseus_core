@@ -168,6 +168,8 @@ public class WindSCADAInitializer {
 				.getFarmList().size());
 		String fileContent = loadFileContent("querypatterns/HD/connectDatabase.qry");
 		executeQuery(fileContent);
+		String fileContentDBP = loadFileContent("fixDBP/AEList.prt");
+		storeFileInWorkspace("GUI", "AEList.prt", fileContentDBP);
 		for (WindFarm farm : FarmList.getFarmList()) {
 			SubMonitor subprogress = progress.newChild(1).setWorkRemaining(
 					farm.getWkas().size());
