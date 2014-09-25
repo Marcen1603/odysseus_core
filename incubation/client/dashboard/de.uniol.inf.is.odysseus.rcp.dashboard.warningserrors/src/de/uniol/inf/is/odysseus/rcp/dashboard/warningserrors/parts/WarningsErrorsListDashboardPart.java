@@ -10,6 +10,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.ui.PlatformUI;
 
@@ -121,6 +122,7 @@ public class WarningsErrorsListDashboardPart extends AbstractDashboardPart {
 	private int wkaIdIndex = 0;
 	private int farmIdIndex = 1;
 	private int valueTypeIndex = 2;
+	private Composite header;
 	
 
 	/**
@@ -144,6 +146,11 @@ public class WarningsErrorsListDashboardPart extends AbstractDashboardPart {
 		this.parent.setLayout(new FillLayout());
 		this.container = new Composite(parent, SWT.NONE);
 		this.container.setLayout(new GridLayout(1, false));
+		this.header = new Composite(container, SWT.NONE);
+		this.header.setLayout(new GridLayout(3, false));
+		(new Label(header, SWT.NONE)).setText("Farm");
+		(new Label(header, SWT.NONE)).setText("WKA");
+		(new Label(header, SWT.NONE)).setText("Value");
 
 		
 		updateThread = new Thread(new Runnable() {
@@ -306,7 +313,7 @@ public class WarningsErrorsListDashboardPart extends AbstractDashboardPart {
 	@Override
 	public void onLoad(Map<String, String> saved) {
 		updateInterval = Long.valueOf(saved.get("UpdateInterval"));
-		this.maxElements = Integer.valueOf(saved.get("MaxElements"));
+//		this.maxElements = Integer.valueOf(saved.get("MaxElements"));
 		this.showWarnings = Boolean.valueOf(saved.get("ShowWarnings"));
         this.showErrors = Boolean.valueOf(saved.get("ShowErrors"));	
         this.warningIndex = Integer.valueOf(saved.get("WarningIndex"));
