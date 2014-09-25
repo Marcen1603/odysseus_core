@@ -87,7 +87,12 @@ public final class ReplacementContainer {
 					IReplacementProvider provider = replacementProviders.get(key.toUpperCase());
 					if( provider != null ) {
 						String replacement = provider.getReplacementValue(key.toUpperCase());
-						replacementSer = replacement != null ? replacement : "";
+						if( replacement == null || replacement == "" ) {
+							INFO_SERVICE.warning("ReplacementKey '" + key.toUpperCase() + " is replaced to empty string!");
+							replacementSer = "";
+						} else {
+							replacementSer = replacement;
+						}
 					}
 				}
 				
