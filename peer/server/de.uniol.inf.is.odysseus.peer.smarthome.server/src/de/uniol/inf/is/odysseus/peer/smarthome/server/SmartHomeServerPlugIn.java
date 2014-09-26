@@ -9,7 +9,6 @@ import de.uniol.inf.is.odysseus.p2p_new.IMessage;
 import de.uniol.inf.is.odysseus.p2p_new.IP2PNetworkManager;
 import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicator;
 import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicatorListener;
-import de.uniol.inf.is.odysseus.p2p_new.PeerCommunicationException;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.IP2PDictionary;
 /*
 import de.uniol.inf.is.odysseus.peer.smarthome.SmartDeviceConfig;
@@ -26,6 +25,7 @@ public class SmartHomeServerPlugIn implements BundleActivator {
 	private static IP2PNetworkManager p2pNetworkManager;
 	private static IPeerCommunicator peerCommunicator;
 	private static IP2PDictionary p2pDictionary;
+	@SuppressWarnings("unused")
 	private static SmartDeviceConfigurationListener smartDeviceConfigurationListener;
 	
 	/*
