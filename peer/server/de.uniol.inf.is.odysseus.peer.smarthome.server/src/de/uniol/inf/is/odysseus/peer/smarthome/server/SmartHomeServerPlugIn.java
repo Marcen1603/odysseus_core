@@ -150,7 +150,6 @@ public class SmartHomeServerPlugIn implements BundleActivator {
 				SmartDeviceConfig smartDeviceConfig = configResponse.getSmartDeviceConfig();
 				
 				//save: smartDeviceConfig
-				
 			}
 			*/
 		}
