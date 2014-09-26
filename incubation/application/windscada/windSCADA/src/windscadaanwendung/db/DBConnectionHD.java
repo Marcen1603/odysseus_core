@@ -15,8 +15,6 @@ import windscadaanwendung.ca.WindFarm;
 import windscadaanwendung.hd.HitWKAData;
 import windscadaanwendung.hd.HitWindFarmData;
 import windscadaanwendung.hd.ae.AEEntry;
-import windscadaanwendung.hd.ae.AEEntryComp;
-import windscadaanwendung.hd.ae.AEWarningComp;
 import windscadaanwendung.hd.ae.HitAEData;
 import de.uniol.inf.is.odysseus.database.connection.AbstractDatabaseConnectionFactory;
 import de.uniol.inf.is.odysseus.database.connection.DatabaseConnection;
