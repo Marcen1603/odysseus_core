@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.wrapper.cameras.physicaloperator;
 
+import java.io.File;
 import java.io.IOException;
 
 import org.bytedeco.javacpp.opencv_core.IplImage;
@@ -11,13 +12,16 @@ import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
+import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
+import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
+import de.uniol.inf.is.odysseus.core.metadata.TimeInterval;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.AbstractSimplePullTransportHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandler;
 import de.uniol.inf.is.odysseus.image.common.datatype.Image;
 
 @SuppressWarnings("unused")
-public class VideoFileTransportHandler extends AbstractSimplePullTransportHandler<Tuple<?>> 
+public class VideoFileTransportHandler extends AbstractSimplePullTransportHandler<Tuple<IMetaAttribute>> 
 {
 //	@SuppressWarnings("unused")
 	private final Logger logger = LoggerFactory.getLogger(VideoFileTransportHandler.class);
@@ -28,7 +32,8 @@ public class VideoFileTransportHandler extends AbstractSimplePullTransportHandle
 	private double fps;
 	
 	private long startTime;
-	private String syncFileName;
+	private double currentTime; // Current timestamp in seconds
+	private String syncFileName = null;
 	
 	public VideoFileTransportHandler() 
 	{
@@ -39,18 +44,14 @@ public class VideoFileTransportHandler extends AbstractSimplePullTransportHandle
 	 * @param protocolHandler
 	 * @throws IOException 
 	 */
-	public VideoFileTransportHandler(final IProtocolHandler<?> protocolHandler, OptionMap options) throws IOException 
+	public VideoFileTransportHandler(final IProtocolHandler<?> protocolHandler, OptionMap options) 
 	{
 		super(protocolHandler, options);
 
-		videoUrl = options.get("videourl");
-		if (videoUrl == null) throw new IOException("Parameter not specified in Options: videoUrl");
+		options.checkRequiredException("videourl");
 		
+		videoUrl = options.get("videourl");
 		fps = options.getDouble("fps", 0.0);
-		if (fps == 0.0)
-		{
-			// Open video file and extract frame rate meta data
-		}
 		
 		String timeStampMode = options.get("timestampmode", "start");
 		
@@ -62,11 +63,14 @@ public class VideoFileTransportHandler extends AbstractSimplePullTransportHandle
 			startTime = options.getLong("startTime", 0);
 		}
 		else
-		if (timeStampMode.equals("metadata"))
+		if (timeStampMode.equals("filetime"))
 		{
-			// Frame timestamps will be extrapolated from beginning time stamp specified in video file meta data
+			// Frame timestamps will be extrapolated from the file last modified time stamp
 			// curTime = startTime + frameNum/fps
-			startTime = 0; // TODO
+			startTime = new File(videoUrl).lastModified();
+			
+			if (startTime == 0)
+				throw new IllegalArgumentException("Could not read file last modified timestamp");
 		}
 		else
 		if (timeStampMode.equals("syncfile"))
@@ -74,24 +78,19 @@ public class VideoFileTransportHandler extends AbstractSimplePullTransportHandle
 			// Frame timestamps will be read from synchronization file
 			syncFileName = options.get("syncfilename");
 		}
+		else
+			throw new IllegalArgumentException("timeStampMode has an invalid value: " + timeStampMode);
 	}
 	
 
 	@Override
 	public ITransportHandler createInstance(IProtocolHandler<?> protocolHandler, OptionMap options) 
 	{
-		try
-		{
-			return new VideoFileTransportHandler(protocolHandler, options);
-		}
-		catch (IOException e)
-		{
-			return null;
-		}
+		return new VideoFileTransportHandler(protocolHandler, options);
 	}
 
 
-	@Override public String getName() { return "IntegratedCamera"; }
+	@Override public String getName() { return "VideoFile"; }
 
 	@Override public void processInOpen() throws IOException 
 	{
@@ -107,6 +106,16 @@ public class VideoFileTransportHandler extends AbstractSimplePullTransportHandle
 				frameGrabber = null;
 				throw new IOException(e.getMessage());
 			}
+			
+			if (fps == 0.0)
+				fps = frameGrabber.getFrameRate();
+			
+			if (syncFileName != null)
+			{
+				// TODO: syncFile nutzen
+			}
+			
+			currentTime = startTime / 1000.0;
 		}
 	}
 	
@@ -133,20 +142,8 @@ public class VideoFileTransportHandler extends AbstractSimplePullTransportHandle
 		}
 	}
 	
-	@Override public Tuple<?> getNext() 
+	@Override public Tuple<IMetaAttribute> getNext() 
 	{
-		try 
-		{
-			int delay = 33;
-			if (delay  > 0) 
-				Thread.sleep(delay);
-		}
-		catch (InterruptedException e) 
-		{
-			// interrupting the delay might be correct
-			// e.printStackTrace();
-		}		
-		
 		IplImage iplImage = null;
 		try 
 		{
@@ -164,9 +161,24 @@ public class VideoFileTransportHandler extends AbstractSimplePullTransportHandle
 		
 		Image image = new Image(iplImage.getBufferedImage());
 		
-		@SuppressWarnings("rawtypes")
-		Tuple<?> tuple = new Tuple(1, false);
+		Tuple<IMetaAttribute> tuple = new Tuple<>(1, false);
         tuple.setAttribute(0, image);
+        
+        long longTimeStamp = (long) (currentTime * 1000.0);
+        
+        TimeInterval timeStamp = new TimeInterval(new PointInTime(longTimeStamp));
+        tuple.setMetadata(timeStamp);
+        
+        if (syncFileName != null)
+        {
+        	// TODO
+//        	currentTime = syncFileStream.readDouble();
+        }	
+        else
+        {
+        	currentTime += 1.0 / fps;
+        }
+        
         return tuple;		
 	}
     

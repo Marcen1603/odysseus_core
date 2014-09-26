@@ -11,12 +11,13 @@ import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
+import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.AbstractSimplePullTransportHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandler;
 import de.uniol.inf.is.odysseus.image.common.datatype.Image;
 
-public class IntegratedCameraTransportHandler extends AbstractSimplePullTransportHandler<Tuple<?>> 
+public class IntegratedCameraTransportHandler extends AbstractSimplePullTransportHandler<Tuple<IMetaAttribute>> 
 {
 	@SuppressWarnings("unused")
 	private final Logger logger = LoggerFactory.getLogger(IntegratedCameraTransportHandler.class);
@@ -33,29 +34,18 @@ public class IntegratedCameraTransportHandler extends AbstractSimplePullTranspor
 	/**
 	 * @param protocolHandler
 	 */
-	public IntegratedCameraTransportHandler(final IProtocolHandler<?> protocolHandler, OptionMap options) {
+	public IntegratedCameraTransportHandler(final IProtocolHandler<?> protocolHandler, OptionMap options) 
+	{
 		super(protocolHandler, options);
-	}
-	
+		
+		cameraId = options.getInt("cameraid", 0);
+	}	
 
 	@Override
 	public ITransportHandler createInstance(IProtocolHandler<?> protocolHandler, OptionMap options) 
 	{
-		final IntegratedCameraTransportHandler handler = new IntegratedCameraTransportHandler(protocolHandler, options);
-		handler.init(options);
-		return handler;
+		return new IntegratedCameraTransportHandler(protocolHandler, options);
 	}
-
-	private void init(final OptionMap options) 
-	{
-		System.out.println("init");
-		
-		if (options.containsKey("cameraid")) 
-			cameraId = Integer.parseInt(options.get("cameraid"));
-		else
-			cameraId = 0;
-	}
-
 
 	@Override public String getName() { return "IntegratedCamera"; }
 
@@ -101,7 +91,7 @@ public class IntegratedCameraTransportHandler extends AbstractSimplePullTranspor
 	
 	long lastTime=0;
 
-	@Override public Tuple<?> getNext() 
+	@Override public Tuple<IMetaAttribute> getNext() 
 	{
 		IplImage iplImage = null;
 		try 
@@ -128,8 +118,7 @@ public class IntegratedCameraTransportHandler extends AbstractSimplePullTranspor
 //		BaseImage image = new BaseImage(iplImage.getBufferedImage());
 		Image image = new Image(iplImage.getBufferedImage());
 		
-		@SuppressWarnings("rawtypes")
-		Tuple<?> tuple = new Tuple(1, false);
+		Tuple<IMetaAttribute> tuple = new Tuple<>(1, false);
         tuple.setAttribute(0, image);
         return tuple;		
 	}

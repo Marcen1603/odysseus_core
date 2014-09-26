@@ -35,10 +35,16 @@ public class LMSLoggerProtocolHandler extends LoggerProtocolHandler
 		super();
 	}
 
-	public LMSLoggerProtocolHandler(ITransportDirection direction, IAccessPattern access, IDataHandler<Tuple<?>> dataHandler, OptionMap options) throws IOException 
+	public LMSLoggerProtocolHandler(ITransportDirection direction, IAccessPattern access, IDataHandler<Tuple<?>> dataHandler, OptionMap options) 
 	{
 		super(direction, access, dataHandler, options);
 	}
+	
+	@Override
+	public IProtocolHandler<Tuple<?>> createInstance(ITransportDirection direction, IAccessPattern access, OptionMap options, IDataHandler<Tuple<?>> dataHandler) 
+	{
+		return new LMSLoggerProtocolHandler(direction, access, dataHandler, options);
+	}	
 	
 	@Override public void open() throws UnknownHostException, IOException 
 	{
@@ -105,22 +111,6 @@ public class LMSLoggerProtocolHandler extends LoggerProtocolHandler
 	public Tuple<?> getNext() throws IOException 
 	{
 		return null;
-	}
-
-	@Override
-	public IProtocolHandler<Tuple<?>> createInstance(ITransportDirection direction,
-													 IAccessPattern access, OptionMap options,
-													 IDataHandler<Tuple<?>> dataHandler) 
-	{
-		try 
-		{
-			return new LMSLoggerProtocolHandler(direction, access, dataHandler, options);
-		} 
-		catch (IOException e) 
-		{
-			e.printStackTrace();
-			return null;
-		}		
 	}
 
 	@Override

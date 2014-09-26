@@ -33,29 +33,18 @@ public class OptrisCameraTransportHandler extends AbstractSimplePullTransportHan
 	/**
 	 * @param protocolHandler
 	 */
-	public OptrisCameraTransportHandler(final IProtocolHandler<?> protocolHandler, OptionMap options) {
+	public OptrisCameraTransportHandler(final IProtocolHandler<?> protocolHandler, OptionMap options) 
+	{
 		super(protocolHandler, options);
+		
+		ethernetAddress = options.get("ethernetaddress", "");
 	}
 	
-
 	@Override
 	public ITransportHandler createInstance(IProtocolHandler<?> protocolHandler, OptionMap options) 
 	{
-		final OptrisCameraTransportHandler handler = new OptrisCameraTransportHandler(protocolHandler, options);
-		handler.init(options);
-		return handler;
+		return new OptrisCameraTransportHandler(protocolHandler, options);
 	}
-
-	private void init(final OptionMap options) 
-	{
-		System.out.println("init");
-		
-		if (options.containsKey("ethernetaddress")) 
-			ethernetAddress = options.get("ethernetaddress");
-		else
-			ethernetAddress = "";
-	}
-
 
 	@Override public String getName() { return "OptrisCamera"; }
 

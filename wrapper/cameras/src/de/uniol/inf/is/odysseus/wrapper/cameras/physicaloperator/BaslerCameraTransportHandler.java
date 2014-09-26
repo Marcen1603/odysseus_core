@@ -38,27 +38,18 @@ public class BaslerCameraTransportHandler extends AbstractSimplePullTransportHan
 	/**
 	 * @param protocolHandler
 	 */
-	public BaslerCameraTransportHandler(final IProtocolHandler<?> protocolHandler, OptionMap options) {
+	public BaslerCameraTransportHandler(final IProtocolHandler<?> protocolHandler, OptionMap options) 
+	{
 		super(protocolHandler, options);
+		
+		ethernetAddress = options.get("ethernetaddress", "");
 	}
 	
 
 	@Override
 	public ITransportHandler createInstance(IProtocolHandler<?> protocolHandler, OptionMap options) 
 	{
-		final BaslerCameraTransportHandler handler = new BaslerCameraTransportHandler(protocolHandler, options);
-		handler.init(options);
-		return handler;
-	}
-
-	private void init(final OptionMap options) 
-	{
-		System.out.println("init");
-		
-		if (options.containsKey("ethernetaddress")) 
-			ethernetAddress = options.get("ethernetaddress");
-		else
-			ethernetAddress = "";
+		return new BaslerCameraTransportHandler(protocolHandler, options);
 	}
 
 

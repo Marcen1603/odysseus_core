@@ -27,6 +27,7 @@ public class VideoStreamProtocolHandler extends AbstractProtocolHandler<Tuple<?>
 	static final Runtime RUNTIME = Runtime.getRuntime();
 
 	Logger LOG = LoggerFactory.getLogger(VideoStreamProtocolHandler.class);
+	private final Object processLock = new Object();
 
 	private FFmpegFrameRecorder	recorder;
 	private double				frameRate;
@@ -38,15 +39,21 @@ public class VideoStreamProtocolHandler extends AbstractProtocolHandler<Tuple<?>
 		super();
 	}
 
-	public VideoStreamProtocolHandler(ITransportDirection direction, IAccessPattern access, IDataHandler<Tuple<?>> dataHandler, OptionMap options) throws IOException 
+	public VideoStreamProtocolHandler(ITransportDirection direction, IAccessPattern access, IDataHandler<Tuple<?>> dataHandler, OptionMap options) 
 	{
 		super(direction, access, dataHandler, options);
 		
+		options.checkRequired("streamurl");
+		
 		frameRate = options.getDouble("framerate", 30.0);
 		streamUrl = options.get("streamurl");
-		
-		if (streamUrl == null) throw new IOException("Parameter not specified in Options: host");
 	}
+	
+	@Override
+	public IProtocolHandler<Tuple<?>> createInstance(ITransportDirection direction, IAccessPattern access, OptionMap options, IDataHandler<Tuple<?>> dataHandler)
+	{
+		return new VideoStreamProtocolHandler(direction, access, dataHandler, options);
+	}	
 	
 	@Override public void open() throws UnknownHostException, IOException 
 	{
@@ -58,8 +65,11 @@ public class VideoStreamProtocolHandler extends AbstractProtocolHandler<Tuple<?>
 	{
 		try 
 		{
-			recorder.stop();
-			recorder.release();
+			synchronized (processLock)
+			{
+				recorder.stop();
+				recorder.release();
+			}
 		} 
 		catch (FrameRecorder.Exception e) 
 		{
@@ -71,11 +81,12 @@ public class VideoStreamProtocolHandler extends AbstractProtocolHandler<Tuple<?>
 		}
 	}	
 	
-	void setUpStream(Image image) throws FrameRecorder.Exception
+	private void setUpStream(Image image) throws FrameRecorder.Exception
 	{
 		int w = image.getWidth();
 		int h = image.getHeight();
-		System.out.println("Start streaming server @ " + streamUrl + ", w = " + w + ", h = " + h);		
+		System.out.println("Start streaming server @ " + streamUrl + ", w = " + w + ", h = " + h);
+		
 		recorder = new FFmpegFrameRecorder(streamUrl, w, h);
 //		recorder.setVideoBitrate(716800);
 //		recorder.setPixelFormat(avutil.PIX_FMT_YUV420P16);
@@ -83,7 +94,7 @@ public class VideoStreamProtocolHandler extends AbstractProtocolHandler<Tuple<?>
 //		
 		recorder.setFrameRate(frameRate);
 		recorder.setFormat("h264");
-        recorder.start();		
+		recorder.start();
 			
         System.out.println("Streaming server is running");
 	}
@@ -93,25 +104,28 @@ public class VideoStreamProtocolHandler extends AbstractProtocolHandler<Tuple<?>
 	{
 		Image image = (Image) object.getAttribute(0);
 		
-		if (recorder == null)
+		synchronized (processLock)
 		{
+			if (recorder == null)
+			{
+				try
+				{
+					setUpStream(image);
+				}
+				catch (FrameRecorder.Exception e)
+				{
+					throw new IOException(e);
+				}
+			}
+			
 			try
 			{
-				setUpStream(image);
+				recorder.record(IplImage.createFrom(image.getImage()));
 			}
-			catch (FrameRecorder.Exception e)
+			catch (Exception e)
 			{
-				throw new IOException(e);
+				System.out.println("Error while recording frame: " + e.getMessage());
 			}
-		}
-		
-		try
-		{
-			recorder.record(IplImage.createFrom(image.getImage()));
-		}
-		catch (Exception e)
-		{
-			System.out.println("Error while recording frame: " + e.getMessage());
 		}
 	}
 	
@@ -125,22 +139,6 @@ public class VideoStreamProtocolHandler extends AbstractProtocolHandler<Tuple<?>
 	public Tuple<?> getNext() throws IOException 
 	{
 		return null;
-	}
-
-	@Override
-	public IProtocolHandler<Tuple<?>> createInstance(ITransportDirection direction,
-													 IAccessPattern access, OptionMap options,
-													 IDataHandler<Tuple<?>> dataHandler) 
-	{
-		try 
-		{
-			return new VideoStreamProtocolHandler(direction, access, dataHandler, options);
-		} 
-		catch (IOException e) 
-		{
-			e.printStackTrace();
-			return null;
-		}		
 	}
 
 	@Override

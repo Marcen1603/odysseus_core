@@ -32,19 +32,19 @@ public abstract class LoggerProtocolHandler extends AbstractProtocolHandler<Tupl
 		super();
 	}	
 	
-	public LoggerProtocolHandler(ITransportDirection direction, IAccessPattern access, IDataHandler<Tuple<?>> dataHandler, OptionMap options) throws IOException 
+	public LoggerProtocolHandler(ITransportDirection direction, IAccessPattern access, IDataHandler<Tuple<?>> dataHandler, OptionMap options) 
 	{
 		super(direction, access, dataHandler, options);
+		
+		options.checkRequiredException("sensorname");
+		options.checkRequiredException("sensorposition");
+		options.checkRequiredException("sensorethernetaddr");
+		options.checkRequiredException("sensortype");
 		
 		sensorName 			= options.get("sensorname");
 		sensorPosition 		= options.get("sensorposition");
 		sensorEthernetAddr	= options.get("sensorethernetaddr");
 		sensorType			= options.get("sensortype");		
-		
-		if (sensorName 			== null) throw new IOException("Parameter not specified in Options: sensorName");
-		if (sensorPosition 		== null) throw new IOException("Parameter not specified in Options: sensorPosition");
-		if (sensorEthernetAddr 	== null) throw new IOException("Parameter not specified in Options: sensorEthernetAddr");
-		if (sensorType 			== null) throw new IOException("Parameter not specified in Options: sensorType");
 		
 		filePath  			= options.get("filename", "");
 		logfileSizeLimit	= options.getLong("sizelimit", Long.MAX_VALUE);		

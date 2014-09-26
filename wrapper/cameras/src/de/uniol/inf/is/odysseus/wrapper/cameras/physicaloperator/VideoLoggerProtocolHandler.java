@@ -43,12 +43,18 @@ public class VideoLoggerProtocolHandler extends LoggerProtocolHandler
 		super();
 	}
 
-	public VideoLoggerProtocolHandler(ITransportDirection direction, IAccessPattern access, IDataHandler<Tuple<?>> dataHandler, OptionMap options) throws IOException 
+	public VideoLoggerProtocolHandler(ITransportDirection direction, IAccessPattern access, IDataHandler<Tuple<?>> dataHandler, OptionMap options) 
 	{
 		super(direction, access, dataHandler, options);
 		
 		frameRate = options.getDouble("framerate", 30.0);
 	}
+
+	@Override
+	public IProtocolHandler<Tuple<?>> createInstance(ITransportDirection direction, IAccessPattern access, OptionMap options, IDataHandler<Tuple<?>> dataHandler) 
+	{
+		return new VideoLoggerProtocolHandler(direction, access, dataHandler, options);
+	}	
 	
 	@Override public void open() throws UnknownHostException, IOException 
 	{
@@ -153,22 +159,6 @@ public class VideoLoggerProtocolHandler extends LoggerProtocolHandler
 	public Tuple<?> getNext() throws IOException 
 	{
 		return null;
-	}
-
-	@Override
-	public IProtocolHandler<Tuple<?>> createInstance(ITransportDirection direction,
-													 IAccessPattern access, OptionMap options,
-													 IDataHandler<Tuple<?>> dataHandler) 
-	{
-		try 
-		{
-			return new VideoLoggerProtocolHandler(direction, access, dataHandler, options);
-		} 
-		catch (IOException e) 
-		{
-			e.printStackTrace();
-			return null;
-		}		
 	}
 
 	@Override
