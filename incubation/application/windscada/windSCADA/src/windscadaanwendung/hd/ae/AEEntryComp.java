@@ -75,6 +75,7 @@ public class AEEntryComp extends Composite {
 			
 			@Override
 			public void keyReleased(KeyEvent e) {
+				aeEntry.setComment(comment.getText());
 				setChanged(true);
 			}
 			

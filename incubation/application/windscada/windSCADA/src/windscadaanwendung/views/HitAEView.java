@@ -139,8 +139,10 @@ public class HitAEView extends ViewPart implements AEObserver {
 		for (Control c: hitAEContainer.getChildren()) {
 			if (c instanceof AEEntryComp) {
 				AEEntryComp aeC = (AEEntryComp) c;
-				DBConnectionHD.updateAEEntry(aeC.getAeEntry());
-				aeC.setChanged(false);
+				if (aeC.isChanged()) {
+					DBConnectionHD.updateAEEntry(aeC.getAeEntry());
+					aeC.setChanged(false);
+				}
 			}
 		}
 	}
