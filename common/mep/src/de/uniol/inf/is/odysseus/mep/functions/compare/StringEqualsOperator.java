@@ -19,7 +19,6 @@ import de.uniol.inf.is.odysseus.core.IHasAlias;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.mep.AbstractBinaryStringInputOperator;
 import de.uniol.inf.is.odysseus.mep.IOperator;
-import de.uniol.inf.is.odysseus.mep.IOperator.ASSOCIATIVITY;
 
 public class StringEqualsOperator extends AbstractBinaryStringInputOperator<Boolean> implements IHasAlias {
 
