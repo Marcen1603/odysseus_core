@@ -1302,6 +1302,7 @@ public abstract class AbstractExecutor implements IServerExecutor,
 		loi.setMaxPorts(builder.getMaxInputOperatorCount());
 		loi.setMinPorts(builder.getMinInputOperatorCount());
 		loi.setDoc(builder.getDoc());
+        loi.setUrl(builder.getUrl());
 		loi.setCategories(builder.getCategories());
 
 		for (IParameter<?> param : builder.getParameters()) {

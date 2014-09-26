@@ -4,14 +4,21 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IMenuListener;
+import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.viewers.ColumnViewerToolTipSupport;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorInformation;
 import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
+import de.uniol.inf.is.odysseus.rcp.editor.text.pql.actions.OpenWikiAction;
 
 public class PQLOperatorView extends ViewPart {
 
@@ -31,6 +38,36 @@ public class PQLOperatorView extends ViewPart {
 		treeViewer.setLabelProvider(new PQLOperatorsLabelProvider());
 
 		treeViewer.setInput(sortInput(determineInput()));
+
+        // Contextmenu
+        final MenuManager menuManager = new MenuManager();
+        final Menu contextMenu = menuManager.createContextMenu(treeViewer.getControl());
+
+        menuManager.addMenuListener(new IMenuListener() {
+            @Override
+            public void menuAboutToShow(IMenuManager manager) {
+                if (treeViewer.getSelection().isEmpty()) {
+                    return;
+                }
+
+                if (treeViewer.getSelection() instanceof IStructuredSelection) {
+                    IStructuredSelection selection = (IStructuredSelection) treeViewer.getSelection();
+                    Object object = selection.getFirstElement();
+
+                    if (object instanceof LogicalOperatorInformation) {
+                        Action openWikiAction = new OpenWikiAction((LogicalOperatorInformation) object);
+                        openWikiAction.setText("Documentation");
+                        openWikiAction.setToolTipText("Opens the documentation in the Odysseus wiki");
+                        manager.add(openWikiAction);
+                    }
+                }
+            }
+        });
+        menuManager.setRemoveAllWhenShown(true);
+
+        // Set the MenuManager
+        treeViewer.getControl().setMenu(contextMenu);
+
 	}
 
 	@Override

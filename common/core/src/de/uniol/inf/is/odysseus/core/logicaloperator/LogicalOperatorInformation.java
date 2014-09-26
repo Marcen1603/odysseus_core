@@ -29,6 +29,7 @@ public class LogicalOperatorInformation {
 	
 	private String operatorName;
 	private String doc;
+    private String url;
 	private Map<String, LogicalParameterInformation> parameters = new HashMap<>();
 	private int maxPorts;
 	private int minPorts;
@@ -51,6 +52,21 @@ public class LogicalOperatorInformation {
 	public void setDoc(String doc) {
 		this.doc = doc;
 	}
+
+    /**
+     * @return the url
+     */
+    public String getUrl() {
+        return this.url;
+    }
+
+    /**
+     * @param url
+     *            the url to set
+     */
+    public void setUrl(String url) {
+        this.url = url;
+    }
 
 	public Collection<LogicalParameterInformation> getParameters() {
 		return Collections.unmodifiableCollection(parameters.values());
