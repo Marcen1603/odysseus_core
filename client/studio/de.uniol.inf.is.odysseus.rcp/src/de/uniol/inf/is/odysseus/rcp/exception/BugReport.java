@@ -70,7 +70,7 @@ import de.uniol.inf.is.odysseus.rcp.l10n.OdysseusNLS;
  */
 public class BugReport {
     private static final Logger LOG = LoggerFactory.getLogger(BugReport.class);
-    private static final String JIRA = "http://odysseus.informatik.uni-oldenburg.de:8081/rest/api/latest/issue/";
+    private static final String JIRA = "http://jira.odysseus.offis.uni-oldenburg.de/rest/api/latest/issue/";
     // Base64.encodeBase64((BugReport.LOGIN + ':' + BugReport.PW).getBytes())
     private static final String AUTH = "b2R5c3NldXNfc3R1ZGlvOmpoZjRoZGRzNjcz";
     private static final String AUTHORIZATION_HEADER = "Authorization";
