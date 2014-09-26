@@ -80,5 +80,11 @@ public class WindDashboardPartView extends DashboardPartView {
 			System.out.println("No project-file " + path);
 		}
 	}
+	
+	@Override
+	public void dispose() {
+		super.dispose();
+		DashboardPartViewObserver.removeDashboardPartView(this);
+	}
 
 }

@@ -1,6 +1,10 @@
 package windscadaanwendung.hd.ae;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.KeyAdapter;
+import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
@@ -15,8 +19,27 @@ public class AEEntryComp extends Composite {
 	private Button btnConfirm;
 	private Text comment;
 	private AEEntry aeEntry;
+	private boolean changed = false;
 
-	public AEEntryComp(Composite parent, int style, AEEntry aeEntry) {
+	/**
+	 * @return the changed
+	 */
+	public boolean isChanged() {
+		return changed;
+	}
+
+
+
+	/**
+	 * @param changed the changed to set
+	 */
+	public void setChanged(boolean changed) {
+		this.changed = changed;
+	}
+
+
+
+	public AEEntryComp(Composite parent, int style, final AEEntry aeEntry) {
 		super(parent, style);
 		setLayout(new GridLayout(6, false));
 		
@@ -36,10 +59,29 @@ public class AEEntryComp extends Composite {
 		
 		btnConfirm = new Button(this, SWT.CHECK);
 		btnConfirm.setSelection(aeEntry.isConfirm());
+		btnConfirm.addSelectionListener(new SelectionAdapter() {
+
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				aeEntry.setConfirm(btnConfirm.getSelection());
+				setChanged(true);
+			}
+			
+		});
 		
 		comment = new Text(this, SWT.NONE);
 		comment.setText(aeEntry.getComment());
+		comment.addKeyListener(new KeyAdapter() {
+			
+			@Override
+			public void keyReleased(KeyEvent e) {
+				setChanged(true);
+			}
+			
+		});
 	}
+
+	
 
 	/**
 	 * @return the aeEntry

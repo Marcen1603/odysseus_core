@@ -37,7 +37,7 @@ public class HitAEView extends ViewPart implements AEObserver {
 	}
 
 	@Override
-	public void createPartControl(Composite parent) {
+	public void createPartControl(final Composite parent) {
 		parent.setLayout(new GridLayout(1, false));
 		HitAEView.parent = parent;
 		
@@ -84,7 +84,6 @@ public class HitAEView extends ViewPart implements AEObserver {
 		btnAktualisieren.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				//TODO evtl automatisieren ?? 
 				//TODO datum aus GUI holen
 //				DBConnectionHD.refreshHitAEData(new Date(1411682370357L));
 				handleDateTimeEvent();
@@ -100,6 +99,12 @@ public class HitAEView extends ViewPart implements AEObserver {
 		Button btnSpeichern = new Button(toolsContainer, SWT.NONE);
 		btnSpeichern.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, false, false, 1, 1));
 		btnSpeichern.setText("Speichern");
+		btnSpeichern.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				saveChangedAEEntrys();
+			}
+		});
 		
 		//TODO hier und wo sonst noetig scrollable machen
 //		hitAEScroller = new ScrolledComposite(parent, SWT.V_SCROLL);
@@ -113,9 +118,31 @@ public class HitAEView extends ViewPart implements AEObserver {
 //		hitAEScroller.setContent(hitAEContainer);
 //		hitAEScroller.setMinSize(hitAEContainer.computeSize(SWT.DEFAULT, SWT.DEFAULT));
 		hitAEContainer.layout();
+//		hitAEScroller.layout();
 		HitAEView.parent.layout();
 		HitAEData.addAEObserver(this);
+		
 
+	}
+	
+	@Override
+	public void dispose() {
+		super.dispose();
+		HitAEData.removeAEListener(this);
+	}
+
+	protected void handleParentDispose() {
+		HitAEData.removeAEListener(this);
+	}
+
+	protected void saveChangedAEEntrys() {
+		for (Control c: hitAEContainer.getChildren()) {
+			if (c instanceof AEEntryComp) {
+				AEEntryComp aeC = (AEEntryComp) c;
+				DBConnectionHD.updateAEEntry(aeC.getAeEntry());
+				aeC.setChanged(false);
+			}
+		}
 	}
 
 	private void handleDateTimeEvent() {
@@ -143,8 +170,10 @@ public class HitAEView extends ViewPart implements AEObserver {
 				}
 			}
 			hitAEContainer.layout();
+//			hitAEScroller.layout();
 			HitAEView.parent.layout();
 		} else {
+			System.out.println("draw AEE: " + aeEntry.toString());
 			if (aeEntry.isWarning()) {
 				if (aeEntry.isError()) {
 					new AEErrorComp(hitAEContainer, SWT.NONE, aeEntry);
@@ -152,9 +181,10 @@ public class HitAEView extends ViewPart implements AEObserver {
 					new AEWarningComp(hitAEContainer, SWT.NONE, aeEntry);
 				}
 			} else {
-				// ignore this case because its only a flag that a AE is done
+				// ignore this case because its only a flag that a AE is done or there is error but no warning which is forbidden
 			}
 			hitAEContainer.layout();
+//			hitAEScroller.layout();
 			HitAEView.parent.layout();
 		}
 		

@@ -54,7 +54,7 @@ public class UebersichtView extends ViewPart implements Observer {
 		nameWindpark.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, true, false, 1, 1));
 		
 		Label lblHistorischeGesamtleistungIm = new Label(composite, SWT.NONE);
-		lblHistorischeGesamtleistungIm.setText("Historische Gesamtleistung im Durchschnitt:");
+		lblHistorischeGesamtleistungIm.setText("Mittelwer Gesamtleistung:");
 		
 		hitLeistung = new Text(composite, SWT.BORDER);
 		hitLeistung.setSize(297, 469);
@@ -125,7 +125,7 @@ public class UebersichtView extends ViewPart implements Observer {
 		lbl2.setText("Aktuelle Leistung");
 		Label lbl3 = new Label(wkaContainer, SWT.NONE);
 		lbl3.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, false, false, 1, 1));
-		lbl3.setText("Historischer Mittelwert Leistung");
+		lbl3.setText("Mittelwert Leistung:");
 	}
 
 	@Override
@@ -138,6 +138,12 @@ public class UebersichtView extends ViewPart implements Observer {
 				redrawWKAContainer();
 			}
 		}
+	}
+	
+	@Override
+	public void dispose() {
+		super.dispose();
+		ObserverHandler.removeObserverFromWKA(this);
 	}
 
 }

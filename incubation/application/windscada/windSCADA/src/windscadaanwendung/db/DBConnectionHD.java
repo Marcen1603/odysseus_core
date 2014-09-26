@@ -2,6 +2,7 @@ package windscadaanwendung.db;
 
 import java.sql.CallableStatement;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -167,6 +168,7 @@ public class DBConnectionHD extends AbstractDatabaseConnectionFactory {
 		    		System.out.println("RS-Fetch: " + rs.getFetchSize());
 				    while (rs.next()) {
 				    	aeEntry = new AEEntry();
+				    	aeEntry.setId(rs.getInt("id"));
 				    	aeEntry.setWkaId(rs.getInt("wka_id"));
 				    	aeEntry.setFarmId(rs.getInt("wp_id"));
 				    	aeEntry.setValueType(rs.getString("type"));
@@ -194,6 +196,27 @@ public class DBConnectionHD extends AbstractDatabaseConnectionFactory {
 
 	        rs = null;
 	        }
+	}
+	
+	public static void updateAEEntry(AEEntry aeEntry) {
+		PreparedStatement stmt = null;
+			
+		    try {
+//		    	conn.setAutoCommit(false);
+				stmt = conn.prepareStatement("update AEarchive set confirmed = ? , comment = ? where id = ?");
+				stmt.setInt(1, aeEntry.isConfirm() ? 1: 0);
+				stmt.setString(2, aeEntry.getComment());
+				stmt.setInt(3, aeEntry.getId());
+				stmt.executeUpdate();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		    
+		    try {
+	            stmt.close();
+	        } catch (SQLException sqlEx) { // ignore 
+	        stmt = null;
+	        }	
 	}
 	
 }

@@ -251,4 +251,10 @@ public class DetailView extends ViewPart implements Observer{
 			// no historical Data Found
 		}
 	}
+	
+	@Override
+	public void dispose() {
+		super.dispose();
+		ObserverHandler.removeObserverFromWKA(this);
+	}
 }

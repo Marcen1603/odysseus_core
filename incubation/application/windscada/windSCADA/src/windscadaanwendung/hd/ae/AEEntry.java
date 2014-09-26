@@ -10,6 +10,7 @@ public class AEEntry {
 	private String valueType = "";
 	private boolean confirm = false;
 	private String comment = "";
+	private int id;
 	
 	public AEEntry() {
 	}
@@ -109,6 +110,25 @@ public class AEEntry {
 	 */
 	public void setError(boolean error) {
 		this.error = error;
+	}
+
+	/**
+	 * @return the id
+	 */
+	public int getId() {
+		return id;
+	}
+
+	/**
+	 * @param id the id to set
+	 */
+	public void setId(int id) {
+		this.id = id;
+	}
+	
+	@Override
+	public String toString() {
+		return "AEEntry " + String.valueOf(getId()) + " " + "Warning: " + String.valueOf(isWarning()) + " Error: " + String.valueOf(isError());
 	}
 
 }

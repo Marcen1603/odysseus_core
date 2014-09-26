@@ -16,4 +16,12 @@ public class ObserverHandler {
 		}
 	}
 
+	public static void removeObserverFromWKA(Observer obs) {
+		for(WindFarm wf: FarmList.getFarmList()) {
+			for (WKA w: wf.getWkas()) {
+				w.deleteObserver(obs);
+			}
+		}
+	}
+
 }

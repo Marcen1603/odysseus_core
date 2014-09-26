@@ -4,6 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Observable;
 
+import org.eclipse.ui.part.ViewPart;
+
+import windscadaanwendung.views.HitAEView;
+
 public class HitAEData extends Observable {
 	
 	private static List<AEEntry> entryList = new ArrayList<AEEntry>();
@@ -11,6 +15,10 @@ public class HitAEData extends Observable {
 	
 	public static void addAEObserver(AEObserver obs) {
 		observers.add(obs);
+	}
+	
+	public static void removeAEListener(Object obs) {
+		System.out.println(observers.remove(obs));
 	}
 
 	/**

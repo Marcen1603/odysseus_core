@@ -33,6 +33,15 @@ public class DashboardPartViewObserver {
 	}
 	
 	/**
+	 * You have to call this if you dispose the WindDashboardPartView
+	 * @param dpv
+	 */
+	public static void removeDashboardPartView(WindDashboardPartView dpv) {
+		System.out.print("Remove dpv " + dpv.toString());
+		System.out.println(dpvList.remove(dpv));
+	}
+	
+	/**
 	 * set farm for every valueType which shows a wkaPart
 	 * @param wka
 	 */
