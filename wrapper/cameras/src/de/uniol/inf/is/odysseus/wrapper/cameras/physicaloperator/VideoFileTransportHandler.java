@@ -122,6 +122,9 @@ public class VideoFileTransportHandler extends AbstractSimplePullTransportHandle
 			if (fps == 0.0)
 				fps = frameGrabber.getFrameRate();
 			
+			if (startTime == 0)
+				startTime = System.currentTimeMillis();
+			
 			currentTime = startTime / 1000.0;
 		}
 	}
@@ -151,30 +154,29 @@ public class VideoFileTransportHandler extends AbstractSimplePullTransportHandle
 	
 	@Override public Tuple<IMetaAttribute> getNext() 
 	{
-		IplImage iplImage = null;
+		Image image = null;
 		try 
 		{
 			synchronized (processLock)
 			{
 				if (frameGrabber == null) return null;
-				iplImage = frameGrabber.grab();
+				IplImage iplImage = frameGrabber.grab();
+				if (iplImage == null || iplImage.isNull()) return null;
+				
+				image = new Image(iplImage.getBufferedImage());				
 			}
 		} 
 		catch (Exception e) 
 		{
 			e.printStackTrace();
 		}		
-		if (iplImage == null || iplImage.isNull()) return null;
+
+        long longTimeStamp = (long) (currentTime * 1000.0);        
+        TimeInterval timeStamp = new TimeInterval(new PointInTime(longTimeStamp));		
 		
-		Image image = new Image(iplImage.getBufferedImage());
-		
-		Tuple<IMetaAttribute> tuple = new Tuple<>(1, false);
-        tuple.setAttribute(0, image);
-        
-        long longTimeStamp = (long) (currentTime * 1000.0);
-        
-        TimeInterval timeStamp = new TimeInterval(new PointInTime(longTimeStamp));
-        tuple.setMetadata(timeStamp);
+		Tuple<IMetaAttribute> tuple = new Tuple<>(2, false);
+        tuple.setAttribute(0, longTimeStamp);
+        tuple.setAttribute(1, image);
         
         if (syncFileName != null)
         {

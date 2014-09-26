@@ -1,0 +1,22 @@
+#PARSER PQL
+#RUNQUERY
+///Reads a video file from disk and displays it
+///Tuple image timestamp will start at the date the video file has been modified last (timeStampMode parameter)
+
+video =  ACCESS({source='Video', 
+				 wrapper='GenericPull', 
+				 transport='VideoFile', 
+				 protocol='none', 
+				 datahandler='Tuple',
+				 options=[
+							['videoUrl', 'd:/videofile.mp4'],
+							['timeStampMode', 'filetime']
+					     ],					     
+				schema=	 [	
+							['timestamp', 	'STARTTIMESTAMP'],
+        					['image', 		'IMAGE']
+        				 ]})
+        				 
+video2 = PROJECT({ATTRIBUTES=['image']}, video)
+
+output = UDO({class='ShowImage', init='0'}, video2)
