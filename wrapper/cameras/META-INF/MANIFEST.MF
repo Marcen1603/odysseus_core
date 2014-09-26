@@ -10,13 +10,7 @@ Import-Package: de.uniol.inf.is.odysseus.image.common.datatype,
  org.slf4j
 Service-Component: OSGI-INF/*
 Require-Bundle: de.uniol.inf.is.odysseus.core;bundle-version="1.0.0",
- de.uniol.inf.is.odysseus.core.server;bundle-version="1.0.0"
+ de.uniol.inf.is.odysseus.core.server;bundle-version="1.0.0",
+ org.bytedeco.javacv;bundle-version="0.8.0"
 Bundle-NativeCode: lib/win/x64/CameraJava.dll ;  osname=win32; osname=Windows 8; osname=Windows8; osname=Win8; osname=Windows 8.1; processor=x86_64,
   *
-Bundle-ClassPath: lib/ffmpeg.jar,
- lib/ffmpeg-windows-x86_64.jar,
- lib/javacpp.jar,
- lib/javacv.jar,
- lib/opencv.jar,
- lib/opencv-windows-x86_64.jar,
- .
