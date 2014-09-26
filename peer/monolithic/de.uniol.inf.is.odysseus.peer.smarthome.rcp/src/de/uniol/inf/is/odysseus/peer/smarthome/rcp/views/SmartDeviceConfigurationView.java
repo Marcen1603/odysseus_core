@@ -192,7 +192,7 @@ public class SmartDeviceConfigurationView extends ViewPart implements IPeerCommu
 	@Override
 	public void setFocus() {
 		// TODO Auto-generated method stub
-
+		
 	}
 
 	@Override

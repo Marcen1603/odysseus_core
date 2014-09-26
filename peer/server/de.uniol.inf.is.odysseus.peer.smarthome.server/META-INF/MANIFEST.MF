@@ -12,5 +12,6 @@ Import-Package: de.uniol.inf.is.odysseus.p2p_new,
  net.jxta.peer,
  org.osgi.framework;version="1.3.0"
 Service-Component: OSGI-INF/SmartHomeServerPlugIn.xml
-Export-Package: de.uniol.inf.is.odysseus.peer.smarthome.server
-Require-Bundle: Jxta_2.6_Source
+Require-Bundle: Jxta_2.6_Source,
+ de.uniol.inf.is.odysseus.p2p_new;bundle-version="1.0.0"
+Bundle-ActivationPolicy: lazy

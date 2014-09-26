@@ -11,7 +11,12 @@ import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicator;
 import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicatorListener;
 import de.uniol.inf.is.odysseus.p2p_new.PeerCommunicationException;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.IP2PDictionary;
+/*
+import de.uniol.inf.is.odysseus.peer.smarthome.SmartDeviceConfig;
+import de.uniol.inf.is.odysseus.peer.smarthome.SmartDeviceConfigurationRequestMessage;
+import de.uniol.inf.is.odysseus.peer.smarthome.SmartDeviceConfigurationResponseMessage;
 import de.uniol.inf.is.odysseus.peer.smarthome.SmartDeviceMessage;
+*/
 
 public class SmartHomeServerPlugIn implements BundleActivator {
 
@@ -21,7 +26,7 @@ public class SmartHomeServerPlugIn implements BundleActivator {
 	private static IP2PNetworkManager p2pNetworkManager;
 	private static IPeerCommunicator peerCommunicator;
 	private static IP2PDictionary p2pDictionary;
-	private static SmartHomeServerP2PCommunicatorListener p2pCommunicatorListener;
+	private static SmartDeviceConfigurationListener smartDeviceConfigurationListener;
 	
 	/*
 	 * (non-Javadoc)
@@ -40,15 +45,19 @@ public class SmartHomeServerPlugIn implements BundleActivator {
 	// called by OSGi-DS
 	public static void bindPeerCommunicator(IPeerCommunicator serv) {
 		peerCommunicator = serv;
-		peerCommunicator.registerMessageType(SmartDeviceMessage.class);
-		p2pCommunicatorListener = new SmartHomeServerP2PCommunicatorListener();
-		peerCommunicator.addListener(p2pCommunicatorListener, SmartDeviceMessage.class);
+		//peerCommunicator.registerMessageType(SmartDeviceMessage.class);
+		//smartDeviceConfigurationListener = new SmartDeviceConfigurationListener();
+		/*
+		peerCommunicator.addListener(smartDeviceConfigurationListener, SmartDeviceMessage.class);
+		peerCommunicator.addListener(smartDeviceConfigurationListener, SmartDeviceConfigurationRequestMessage.class);
+		peerCommunicator.addListener(smartDeviceConfigurationListener, SmartDeviceConfigurationResponseMessage.class);
+		*/
 	}
 
 	// called by OSGi-DS
 	public static void unbindPeerCommunicator(IPeerCommunicator serv) {
 		if (peerCommunicator == serv) {
-			peerCommunicator.unregisterMessageType(SmartDeviceMessage.class);
+			//peerCommunicator.unregisterMessageType(SmartDeviceMessage.class);
 			peerCommunicator = null;
 		}
 	}
@@ -77,35 +86,74 @@ public class SmartHomeServerPlugIn implements BundleActivator {
 		return p2pDictionary;
 	}
 	
-	public static class SmartHomeServerP2PCommunicatorListener implements IPeerCommunicatorListener{
+	public static boolean isLocalPeer(PeerID peer)
+	{
+		if(SmartHomeServerPlugIn.getP2PNetworkManager()==null || SmartHomeServerPlugIn.getP2PNetworkManager().getLocalPeerName()==null
+				|| SmartHomeServerPlugIn.getP2PNetworkManager().getLocalPeerName().intern()==null){
+			return false;
+		}else if(peer==null || peer.intern()==null){
+			return false;
+		}
+		
+		String str1 = SmartHomeServerPlugIn.getP2PNetworkManager().getLocalPeerName().intern().toString();
+		String str2 = peer.intern().toString();
+		
+		if(str1==null || str2==null) return false;
+		return str1.equals(str2);
+	}
+	
+	public static class SmartDeviceConfigurationListener implements IPeerCommunicatorListener{
 		@Override
 		public void receivedMessage(IPeerCommunicator communicator, PeerID senderPeer, IMessage message) {
 			System.out.println("SmartHomeServerP2PCommunicatorListener receivedMessage!!");
 			
-			SmartDeviceMessage smessage = (SmartDeviceMessage)message;
-			
-			if(!isLocalPeer(senderPeer) && !smessage.getText().equals("Echo! from Server")){
+			/*
+			if(message instanceof SmartDeviceMessage){
+				SmartDeviceMessage smessage = (SmartDeviceMessage)message;
+				
+				if(!isLocalPeer(senderPeer) && !smessage.getText().equals("Echo! from Server")){
+					try {
+						SmartHomeServerPlugIn.getPeerCommunicator().send(senderPeer, new SmartDeviceMessage("Echo! from Server"));
+						
+						
+						
+					} catch (PeerCommunicationException e) {
+						e.printStackTrace();
+					}
+				}
+			}else if(message instanceof SmartDeviceConfigurationRequestMessage){
+				@SuppressWarnings("unused")
+				SmartDeviceConfigurationRequestMessage configRequest = (SmartDeviceConfigurationRequestMessage)message;
+				
+				//read what is requested in: configRequest
+				
+				
+				//load SmartDeviceConfig:
+				//load: smartDeviceConfig
+				SmartDeviceConfig smartDeviceConfig = new SmartDeviceConfig();
+				
+				
+				//load and send the smart device config to the requester (senderPeer):
+				SmartDeviceConfigurationResponseMessage configResponse = new SmartDeviceConfigurationResponseMessage();
+				configResponse.setSmartDeviceConfig(smartDeviceConfig);
+				
 				try {
-					SmartHomeServerPlugIn.getPeerCommunicator().send(senderPeer, new SmartDeviceMessage("Echo! from Server"));
+					SmartHomeServerPlugIn.getPeerCommunicator().send(senderPeer, configResponse);
 				} catch (PeerCommunicationException e) {
 					e.printStackTrace();
 				}
+			}else if(message instanceof SmartDeviceConfigurationResponseMessage){
+				SmartDeviceConfigurationResponseMessage configResponse = (SmartDeviceConfigurationResponseMessage)message;
+				
+				//Save the config response for this peer:
+				@SuppressWarnings("unused")
+				SmartDeviceConfig smartDeviceConfig = configResponse.getSmartDeviceConfig();
+				
+				//save: smartDeviceConfig
+				
 			}
+			*/
 		}
-		public static boolean isLocalPeer(PeerID peer)
-		{
-			if(SmartHomeServerPlugIn.getP2PNetworkManager()==null || SmartHomeServerPlugIn.getP2PNetworkManager().getLocalPeerName()==null
-					|| SmartHomeServerPlugIn.getP2PNetworkManager().getLocalPeerName().intern()==null){
-				return false;
-			}else if(peer==null || peer.intern()==null){
-				return false;
-			}
-			
-			String str1 = SmartHomeServerPlugIn.getP2PNetworkManager().getLocalPeerName().intern().toString();
-			String str2 = peer.intern().toString();
-			
-			if(str1==null || str2==null) return false;
-			return str1.equals(str2);
-		}
+		
 	}
 }
