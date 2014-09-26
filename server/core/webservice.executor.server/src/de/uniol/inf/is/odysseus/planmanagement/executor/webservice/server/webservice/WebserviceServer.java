@@ -76,6 +76,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IOperatorBui
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IOperatorBuilderFactory;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.ListParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.MapParameter;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSink;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.sink.ByteBufferSinkStreamHandlerBuilder;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.sink.NioByteBufferSinkStreamHandlerBuilder;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.sink.SocketSinkPO;
@@ -138,8 +139,7 @@ public class WebserviceServer {
 
 	private static final int SINK_MIN_PORT = 10000;
 	private static final int SINK_MAX_PORT = 20000;
-
-
+	
 
 	/**
 	 * Socket Management
@@ -149,8 +149,6 @@ public class WebserviceServer {
 	private Map<Integer, Map<Integer, Integer>> socketPortMap = new HashMap<>();
 	private Map<Integer, Map<Integer, SocketSinkPO>> socketSinkMap = new HashMap<>();
 	private InetAddress address;
-
-
 
 	protected IExecutor getExecutor() {
 		return ExecutorServiceBinding.getExecutor();
@@ -192,9 +190,9 @@ public class WebserviceServer {
 	public Response logout(
 			@WebParam(name = "securitytoken") String securityToken) {
 		ISession session = UserManagementProvider.getSessionmanagement().login(
-				securityToken);		
+				securityToken);
 		if (session != null) {
-			UserManagementProvider.getSessionmanagement().logout(session);			
+			UserManagementProvider.getSessionmanagement().logout(session);
 			for (Map<Integer, SocketSinkPO> entry : socketSinkMap.values()) {
 				for (SocketSinkPO po : entry.values()) {
 					po.removeAllowedSessionId(securityToken);
@@ -205,15 +203,16 @@ public class WebserviceServer {
 		return new Response(false);
 	}
 
-	public Response isValidSession(			
-			@WebParam(name = "securitytoken") String securityToken){
-		ISession session = UserManagementProvider.getSessionmanagement().login(securityToken);
-		if (session != null){
+	public Response isValidSession(
+			@WebParam(name = "securitytoken") String securityToken) {
+		ISession session = UserManagementProvider.getSessionmanagement().login(
+				securityToken);
+		if (session != null) {
 			return new Response(getExecutor().isValid(session));
 		}
 		return new Response(false);
 	}
-	
+
 	public IntegerCollectionResponse addQuery(
 			@WebParam(name = "securitytoken") String securityToken,
 			@WebParam(name = "parser") String parser,
@@ -261,15 +260,15 @@ public class WebserviceServer {
 		return response;
 
 	}
-	
-	public QueryState getQueryState(int queryID){
+
+	public QueryState getQueryState(int queryID) {
 		return ExecutorServiceBinding.getExecutor().getQueryState(queryID);
 	}
 
-	public ArrayList<QueryState> getQueryStates(ArrayList<Integer> queryIDs){
-		return new ArrayList<>(ExecutorServiceBinding.getExecutor().getQueryStates(queryIDs));
+	public ArrayList<QueryState> getQueryStates(ArrayList<Integer> queryIDs) {
+		return new ArrayList<>(ExecutorServiceBinding.getExecutor()
+				.getQueryStates(queryIDs));
 	}
-
 
 	protected ISession loginWithSecurityToken(String securityToken)
 			throws InvalidUserDataException {
@@ -326,7 +325,6 @@ public class WebserviceServer {
 
 	}
 
-	
 	public Response suspendQuery(
 			@WebParam(name = "securitytoken") String securityToken,
 			@WebParam(name = "queryID") int queryID)
@@ -340,7 +338,7 @@ public class WebserviceServer {
 		return new Response(true);
 
 	}
-	
+
 	public Response resumeQuery(
 			@WebParam(name = "securitytoken") String securityToken,
 			@WebParam(name = "queryID") int queryID)
@@ -494,8 +492,10 @@ public class WebserviceServer {
 		ILogicalOperator operator = logicalQuery.getLogicalPlan();
 		Map<Integer, GraphNode> visitedOperators = new HashMap<Integer, GraphNode>();
 		SimpleGraph graph = new SimpleGraph();
-		for (LogicalSubscription subscription : operator.getSubscribedToSource()) {
-			graph.addRootNode(this.createGraphNode(subscription,visitedOperators));
+		for (LogicalSubscription subscription : operator
+				.getSubscribedToSource()) {
+			graph.addRootNode(this.createGraphNode(subscription,
+					visitedOperators));
 		}
 		return graph;
 	}
@@ -506,26 +506,27 @@ public class WebserviceServer {
 		GraphNode newNode = new GraphNode();
 		newNode.setName(operator.getName());
 		newNode.setParameterInfos(operator.getParameterInfos());
-		newNode.setOutputSchema(this.createSDFSchemaInformation(operator.getOutputSchema()).getResponseValue());
+		newNode.setOutputSchema(this.createSDFSchemaInformation(
+				operator.getOutputSchema()).getResponseValue());
 		newNode.setClassName(operator.getClass().getSimpleName());
 		newNode.setHash(operator.hashCode());
 		newNode.setSource(operator.isSourceOperator());
 		newNode.setPipe(operator.isPipeOperator());
 		newNode.setSink(operator.isSinkOperator());
 
-		
 		if (operator instanceof StreamAO) {
 			newNode.setSource(true);
 			newNode.setPipe(false);
 			newNode.setSink(false);
-		} 
+		}
 
 		visitedOperators.put(operator.hashCode(), newNode);
 		for (LogicalSubscription subs : operator.getSubscribedToSource()) {
 			ILogicalOperator op = subs.getTarget();
 			GraphNode node = visitedOperators.get(op.hashCode());
 			if (node == null) {
-				newNode.addChild(this.createGraphNode(subs, visitedOperators),subs.getSourceOutPort());
+				newNode.addChild(this.createGraphNode(subs, visitedOperators),
+						subs.getSourceOutPort());
 			} else {
 				newNode.addChild(node, subs.getSinkInPort());
 			}
@@ -606,7 +607,7 @@ public class WebserviceServer {
 			roots.add(operator.getName());
 		}
 		return new QueryResponse(logicalQuery, queryById.getSession().getUser()
-				.getName(), queryById.getState(), roots,true);
+				.getName(), queryById.getState(), roots, true);
 	}
 
 	public QueryResponse getLogicalQueryByName(
@@ -622,8 +623,8 @@ public class WebserviceServer {
 		}
 		return new QueryResponse((LogicalQuery) ExecutorServiceBinding
 				.getExecutor().getLogicalQueryByName(name, session), queryById
-				.getSession().getUser().getName(), queryById.getState(),
-				roots, true);
+				.getSession().getUser().getName(), queryById.getState(), roots,
+				true);
 
 	}
 
@@ -634,7 +635,7 @@ public class WebserviceServer {
 		return new IntegerCollectionResponse(ExecutorServiceBinding
 				.getExecutor().getLogicalQueryIds(session), true);
 	}
-	
+
 	public ConnectionInformationResponse getConnectionInformationWithSSL(
 			@WebParam(name = "securitytoken") String securityToken,
 			@WebParam(name = "queryId") int queryId,
@@ -642,10 +643,11 @@ public class WebserviceServer {
 			@WebParam(name = "nullValues") boolean nullValues)
 			throws InvalidUserDataException {
 
-		return getConnectionInformationWithPorts(securityToken, queryId,0,
+		return getConnectionInformationWithPorts(securityToken, queryId, 0,
 				Integer.valueOf(OdysseusConfiguration.getInt("minSinkPort",
 						SINK_MIN_PORT)), Integer.valueOf(OdysseusConfiguration
-						.getInt("maxSinkPort", SINK_MAX_PORT)), nullValues, true, sslClientAuthentication);
+						.getInt("maxSinkPort", SINK_MAX_PORT)), nullValues,
+				true, sslClientAuthentication);
 	}
 
 	public ConnectionInformationResponse getConnectionInformation(
@@ -654,7 +656,7 @@ public class WebserviceServer {
 			@WebParam(name = "nullValues") boolean nullValues)
 			throws InvalidUserDataException {
 
-		return getConnectionInformationWithPorts(securityToken, queryId,0,
+		return getConnectionInformationWithPorts(securityToken, queryId, 0,
 				Integer.valueOf(OdysseusConfiguration.getInt("minSinkPort",
 						SINK_MIN_PORT)), Integer.valueOf(OdysseusConfiguration
 						.getInt("maxSinkPort", SINK_MAX_PORT)), nullValues);
@@ -668,35 +670,42 @@ public class WebserviceServer {
 			@WebParam(name = "maxPort") int maxPort,
 			@WebParam(name = "nullValues") boolean nullValues)
 			throws InvalidUserDataException {
-		return this.getConnectionInformationWithPorts(securityToken, queryId, rootPort, minPort, maxPort, nullValues, false, false);
+		return this.getConnectionInformationWithPorts(securityToken, queryId,
+				rootPort, minPort, maxPort, nullValues, false, false);
 	}
 
-	
-	private ConnectionInformationResponse getConnectionInformationWithPorts(String securityToken,int queryId, int rootPort,int minPort, int maxPort,boolean nullValues, boolean ssl, boolean sslClientAuthentication) throws InvalidUserDataException {
+	private ConnectionInformationResponse getConnectionInformationWithPorts(
+			String securityToken, int queryId, int rootPort, int minPort,
+			int maxPort, boolean nullValues, boolean ssl,
+			boolean sslClientAuthentication) throws InvalidUserDataException {
 		try {
 			loginWithSecurityToken(securityToken);
 			int port = 0;
 			SocketSinkPO po;
-			Map<Integer, Integer> socketPortMapEntry = socketPortMap.get(queryId);
-			Map<Integer, SocketSinkPO> socketSinkMapEntry = socketSinkMap.get(queryId);
-			
+			Map<Integer, Integer> socketPortMapEntry = socketPortMap
+					.get(queryId);
+			Map<Integer, SocketSinkPO> socketSinkMapEntry = socketSinkMap
+					.get(queryId);
+
 			if (socketSinkMapEntry != null) {
 				if (socketSinkMapEntry.get(rootPort) == null) {
 					port = getNextFreePort(minPort, maxPort);
-					po = addSocketSink(queryId,rootPort, port, nullValues, ssl, sslClientAuthentication);
+					po = addSocketSink(queryId, rootPort, port, nullValues,
+							ssl, sslClientAuthentication);
 					socketSinkMapEntry.put(rootPort, po);
-					socketPortMapEntry.put(rootPort, port);					
+					socketPortMapEntry.put(rootPort, port);
 				} else {
 					port = socketPortMapEntry.get(rootPort);
 					po = socketSinkMapEntry.get(rootPort);
 				}
 			} else {
 				socketSinkMapEntry = new HashMap<>();
-				socketPortMapEntry = new  HashMap<>();
+				socketPortMapEntry = new HashMap<>();
 				socketPortMap.put(queryId, socketPortMapEntry);
-				socketSinkMap.put(queryId, socketSinkMapEntry);			
+				socketSinkMap.put(queryId, socketSinkMapEntry);
 				port = getNextFreePort(minPort, maxPort);
-				po = addSocketSink(queryId,rootPort, port, nullValues, ssl, sslClientAuthentication);
+				po = addSocketSink(queryId, rootPort, port, nullValues, ssl,
+						sslClientAuthentication);
 				socketSinkMapEntry.put(rootPort, po);
 				socketPortMapEntry.put(rootPort, port);
 			}
@@ -719,7 +728,8 @@ public class WebserviceServer {
 				}
 			}
 
-			ConnectionInformation connectInfo = new ConnectionInformation(port,	InetAddress.getLocalHost().getHostAddress());
+			ConnectionInformation connectInfo = new ConnectionInformation(port,
+					InetAddress.getLocalHost().getHostAddress());
 			return new ConnectionInformationResponse(connectInfo, true);
 		} catch (SocketException e) {
 			e.printStackTrace();
@@ -729,9 +739,10 @@ public class WebserviceServer {
 			return new ConnectionInformationResponse(null, false);
 		}
 	}
-	
+
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	private SocketSinkPO addSocketSink(int queryId, int rootPort, int port, boolean nullValues, boolean ssl, boolean sslClientAuthentication) {
+	private SocketSinkPO addSocketSink(int queryId, int rootPort, int port,
+			boolean nullValues, boolean ssl, boolean sslClientAuthentication) {
 		IExecutionPlan plan = ExecutorServiceBinding.getExecutor()
 				.getExecutionPlan();
 		IPhysicalQuery query = plan.getQueryById(queryId);
@@ -740,31 +751,36 @@ public class WebserviceServer {
 		final ISource<?> rootAsSource = (ISource<?>) root;
 
 		IDataHandler<?> handler = null;
-		
+
 		if (nullValues) {
 			handler = new NullAwareTupleDataHandler(root.getOutputSchema());
 		} else {
-			handler = new TupleDataHandler().getInstance(root.getOutputSchema());
+			handler = new TupleDataHandler()
+					.getInstance(root.getOutputSchema());
 		}
 
 		ByteBufferHandler<Tuple<ITimeInterval>> objectHandler = new ByteBufferHandler<Tuple<ITimeInterval>>(
-				handler);	
-		
-		SocketSinkPO sink = null;		
+				handler);
+
+		SocketSinkPO sink = null;
+		boolean withMetadata = true;
 
 		if (ssl) {
-			sink = new SocketSinkPO(new SSLServerSocketProvider(port,sslClientAuthentication),new ByteBufferSinkStreamHandlerBuilder(), false,false, objectHandler);
+			sink = new SocketSinkPO(new SSLServerSocketProvider(port,
+					sslClientAuthentication),
+					new ByteBufferSinkStreamHandlerBuilder(), false, false,
+					objectHandler, withMetadata);
 		} else {
 			sink = new SocketSinkPO(port, "",
 					new NioByteBufferSinkStreamHandlerBuilder(), true, false,
-					false, objectHandler, false);
+					false, objectHandler, false, withMetadata);
 		}
 
-		rootAsSource.subscribeSink((ISink) sink, 0, 0,
-				root.getOutputSchema(), true, 0);
+		rootAsSource.subscribeSink((ISink) sink, 0, 0, root.getOutputSchema(),
+				true, 0);
 		sink.addOwner(query);
-		// rootAsSource.connectSink((ISink) sink, 0, 0,
-		// root.getOutputSchema());
+//		rootAsSource.connectSink((ISink) sink, 0, 0, root.getOutputSchema());
+//		sink.setInputPortCount(1);
 		sink.startListening();
 		return sink;
 	}
@@ -797,16 +813,19 @@ public class WebserviceServer {
 		return createSDFSchemaInformation(schema);
 
 	}
-	
+
 	public SDFSchemaResponse getOutputSchemaByQueryIdAndPort(
 			@WebParam(name = "securitytoken") String securityToken,
-			@WebParam(name = "queryId") int queryId,  @WebParam(name = "port")int port)
-			throws InvalidUserDataException, QueryNotExistsException {
+			@WebParam(name = "queryId") int queryId,
+			@WebParam(name = "port") int port) throws InvalidUserDataException,
+			QueryNotExistsException {
 		loginWithSecurityToken(securityToken);
 		SDFSchema schema;
 		try {
-			IPhysicalOperator operator = ExecutorServiceBinding.getExecutor().getExecutionPlan().getQueryById(queryId).getRoots().get(port);
-			schema = operator.getOutputSchema();			
+			IPhysicalOperator operator = ExecutorServiceBinding.getExecutor()
+					.getExecutionPlan().getQueryById(queryId).getRoots()
+					.get(port);
+			schema = operator.getOutputSchema();
 		} catch (Exception e) {
 			throw new QueryNotExistsException();
 		}
@@ -879,7 +898,8 @@ public class WebserviceServer {
 			info.setMinInputOperatorCount(builder.getMinInputOperatorCount());
 			info.setMaxInputOperatorCount(builder.getMaxInputOperatorCount());
 			info.setDoc(builder.getDoc());
-			info.setParameters(extractParameterInformation(builder.getParameters()));
+			info.setParameters(extractParameterInformation(builder
+					.getParameters()));
 			info.setCategories(builder.getCategories());
 			infos.add(info);
 		}
@@ -945,7 +965,6 @@ public class WebserviceServer {
 		return new StringListResponse(resp, true);
 	}
 
-
 	public SDFSchemaResponse determineOutputSchema(
 			@WebParam(name = "query") String query,
 			@WebParam(name = "parserID") String parserID,
@@ -955,7 +974,8 @@ public class WebserviceServer {
 			throws InvalidUserDataException, DetermineOutputSchemaException {
 		ISession caller = loginWithSecurityToken(securityToken);
 		try {
-			SDFSchema schema = getExecutor().determineOutputSchema(query, parserID, caller, port, context);
+			SDFSchema schema = getExecutor().determineOutputSchema(query,
+					parserID, caller, port, context);
 			return createSDFSchemaInformation(schema);
 		} catch (Throwable e) {
 			e.printStackTrace();
@@ -1160,32 +1180,42 @@ public class WebserviceServer {
 				.getOperatorInformation(name, user);
 		return new LogicalOperatorInformationResponse(result, true);
 	}
-	
-	public StringListResponse getProtocolValues(@WebParam(name = "securitytoken") String securityToken)throws InvalidUserDataException {
+
+	public StringListResponse getProtocolValues(
+			@WebParam(name = "securitytoken") String securityToken)
+			throws InvalidUserDataException {
 		loginWithSecurityToken(securityToken);
 		ImmutableList<String> names = ProtocolHandlerRegistry.getHandlerNames();
 		return new StringListResponse(names, true);
 	}
-	
-	public StringListResponse getDataHandlerValues(@WebParam(name = "securitytoken") String securityToken)throws InvalidUserDataException {
+
+	public StringListResponse getDataHandlerValues(
+			@WebParam(name = "securitytoken") String securityToken)
+			throws InvalidUserDataException {
 		loginWithSecurityToken(securityToken);
 		ImmutableList<String> names = DataHandlerRegistry.getHandlerNames();
 		return new StringListResponse(names, true);
 	}
-	
-	public StringListResponse getTransportValues(@WebParam(name = "securitytoken") String securityToken)throws InvalidUserDataException {
+
+	public StringListResponse getTransportValues(
+			@WebParam(name = "securitytoken") String securityToken)
+			throws InvalidUserDataException {
 		loginWithSecurityToken(securityToken);
-		ImmutableList<String> names = TransportHandlerRegistry.getHandlerNames();
+		ImmutableList<String> names = TransportHandlerRegistry
+				.getHandlerNames();
 		return new StringListResponse(names, true);
 	}
-	
-//	public StringListResponse getReplacementMethods(@WebParam(name = "securitytoken") String securityToken)throws InvalidUserDataException {
-//		loginWithSecurityToken(securityToken);
-//		List<String> names = ReplacementRegistry.getKeys();
-//		return new StringListResponse(names, true);
-//	}
-	
-	public StringListResponse getWindowTypes(@WebParam(name = "securitytoken") String securityToken)throws InvalidUserDataException {
+
+	// public StringListResponse getReplacementMethods(@WebParam(name =
+	// "securitytoken") String securityToken)throws InvalidUserDataException {
+	// loginWithSecurityToken(securityToken);
+	// List<String> names = ReplacementRegistry.getKeys();
+	// return new StringListResponse(names, true);
+	// }
+
+	public StringListResponse getWindowTypes(
+			@WebParam(name = "securitytoken") String securityToken)
+			throws InvalidUserDataException {
 		loginWithSecurityToken(securityToken);
 		List<String> names = WindowType.getValues();
 		return new StringListResponse(names, true);

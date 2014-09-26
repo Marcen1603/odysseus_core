@@ -40,8 +40,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -69,6 +71,8 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.IAccessPa
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportDirection;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.TransportHandlerRegistry;
+import de.uniol.inf.is.odysseus.core.planmanagement.IOperatorOwner;
+import de.uniol.inf.is.odysseus.core.planmanagement.IOwnedOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.SinkInformation;
 import de.uniol.inf.is.odysseus.core.planmanagement.ViewInformation;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IClientExecutor;
@@ -111,7 +115,7 @@ import de.uniol.inf.is.odysseus.webservice.client.WebserviceServerService;
  * @author Merlin Wasmann, Marco Grawunder
  * 
  */
-public class WsClient implements IExecutor, IClientExecutor {
+public class WsClient implements IExecutor, IClientExecutor, IOperatorOwner {
 
 	final Map<String, List<IUpdateEventListener>> updateEventListener = new HashMap<String, List<IUpdateEventListener>>();
 	final long UPDATEINTERVAL = 60000;
@@ -153,6 +157,8 @@ public class WsClient implements IExecutor, IClientExecutor {
 
 	@SuppressWarnings("rawtypes")
 	private Map<Integer, ClientReceiver> receivers = new HashMap<Integer, ClientReceiver>();
+	@SuppressWarnings("rawtypes")
+	private Map<ClientReceiver, Integer> opReceivers = new HashMap<>();
 
 	// manages the connection to the WebserviceServer
 	WebserviceServerService service;
@@ -631,10 +637,22 @@ public class WsClient implements IExecutor, IClientExecutor {
 		ClientReceiver receiver = new ClientReceiver(h);
 		receiver.setOutputSchema(outputSchema);
 		receiver.open(null, 0, 0, null, null);
+		receiver.addOwner(this);
 		receivers.put(queryId, receiver);
+		opReceivers.put(receiver,queryId);
+		
 		return Optional.of(receiver);
-
 	}
+	
+	@Override
+	public void done(IOwnedOperator op) {
+		Integer queryID = opReceivers.get(op);
+		if (queryID != null){
+			opReceivers.remove(op);
+			receivers.remove(queryID);
+		}
+	}
+
 
 	/**
 	 * Returns a SocketAddress object
@@ -1138,5 +1156,18 @@ public class WsClient implements IExecutor, IClientExecutor {
 		// TODO: Implement getUdfs for Web-Service
 		return null;
 	}
+
+	@Override
+	public int compareTo(IOperatorOwner o) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public int getID() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
 
 }

@@ -55,7 +55,7 @@ public class TSocketSinkAORule extends AbstractTransformationRule<SocketSinkAO> 
 				
 				socketSinkPO = new SocketSinkPO(operator.getSinkPort(), operator.getHost(),
 						streamHandler, false, false,
-						operator.isLoginNeeded(), null, operator.getConnectToServer());
+						operator.isLoginNeeded(), null, operator.getConnectToServer(), operator.isWithMetatdata());
 
 				socketSinkPO.setOutputSchema(operator.getOutputSchema());
 				getDataDictionary().putSinkplan(new Resource(getCaller().getUser(), operator

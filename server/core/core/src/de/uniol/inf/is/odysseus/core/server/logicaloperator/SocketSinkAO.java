@@ -31,7 +31,8 @@ public class SocketSinkAO extends AbstractLogicalOperator {
 	private String sinkType;
 	private String dataHandler;
 
-	private Boolean loginNeeded = false;
+	private boolean loginNeeded = false;
+	private boolean withMetadata = true;
 	private String sinkName;
 	
 	private String host = "localhost";	
@@ -97,6 +98,15 @@ public class SocketSinkAO extends AbstractLogicalOperator {
 	@Parameter(name="LOGINNEEDED", type = BooleanParameter.class, optional = true)
 	public void setLoginNeeded(boolean loginNeeded) {
 		this.loginNeeded = loginNeeded;
+	}
+	
+	@Parameter(name="withMetadata", type = BooleanParameter.class, optional = true)
+	public void setWithMetatdata(boolean withMetadata) {
+		this.withMetadata = withMetadata;
+	}
+	
+	public boolean isWithMetatdata() {
+		return withMetadata;
 	}
 	
 	public String getDataHandler() {

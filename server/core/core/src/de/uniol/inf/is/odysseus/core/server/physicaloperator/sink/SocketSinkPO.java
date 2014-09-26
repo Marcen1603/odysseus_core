@@ -16,108 +16,143 @@
 package de.uniol.inf.is.odysseus.core.server.physicaloperator.sink;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Objects;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.objecthandler.IObjectHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
+import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
+import de.uniol.inf.is.odysseus.core.physicaloperator.PhysicalSubscription;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSink;
 
 @SuppressWarnings({ "rawtypes", "unchecked" })
 public class SocketSinkPO extends AbstractSink<IStreamObject<?>> {
 
-	// static private Logger logger =
-	// LoggerFactory.getLogger(SocketSinkPO.class);
+	 static private Logger logger =	 LoggerFactory.getLogger(SocketSinkPO.class);
 
-//	private Map<Integer,ISinkStreamHandler> subscribe = new HashMap<>();
-	private List<ISinkStreamHandler> subscribe = new LinkedList<>();
-	private ISinkConnection listener;
+	final private Map<Integer, ISinkStreamHandler> subscribe = new HashMap<>();
+	// private List<ISinkStreamHandler> subscribe = new LinkedList<>();
+	final private ISinkConnection listener;
 	private boolean isStarted;
-	private IObjectHandler objectHandler = null;
-	// TODO: Move to constructor
-	private boolean withMetadata = true;
-	@SuppressWarnings("unused")
-	private int lastPort;
+	final private IObjectHandler objectHandler;
+	final private boolean withMetadata;
+	private PhysicalSubscription<ISource<? extends IStreamObject<?>>> subscription;
 
-	public SocketSinkPO(int serverPort, String host, ISinkStreamHandlerBuilder sinkStreamHandlerBuilder, boolean useNIO, boolean loginNeeded, boolean loginWithSessionId, IObjectHandler objectHandler, boolean push) {
+	public SocketSinkPO(int serverPort, String host,
+			ISinkStreamHandlerBuilder sinkStreamHandlerBuilder, boolean useNIO,
+			boolean loginNeeded, boolean loginWithSessionId,
+			IObjectHandler objectHandler, boolean push, boolean withMetadata) {
 		if (push) {
-			listener = new SinkConnectionConnector(serverPort, host, sinkStreamHandlerBuilder, this, useNIO, loginNeeded);
+			listener = new SinkConnectionConnector(serverPort, host,
+					sinkStreamHandlerBuilder, this, useNIO, loginNeeded);
 		} else {
-			listener = new SinkConnectionListener(serverPort, sinkStreamHandlerBuilder, this, useNIO, loginNeeded,loginWithSessionId);
+			listener = new SinkConnectionListener(serverPort,
+					sinkStreamHandlerBuilder, this, useNIO, loginNeeded,
+					loginWithSessionId);
 		}
 		if (objectHandler == null) {
 			throw new IllegalArgumentException("ObjectHandler cannot be null!");
 		}
 		this.objectHandler = objectHandler;
-	}
-	
-	public SocketSinkPO(int serverPort, String host, ISinkStreamHandlerBuilder sinkStreamHandlerBuilder, boolean useNIO, boolean loginNeeded, boolean loginWithSessionId, IObjectHandler objectHandler, boolean push, boolean withMetadata) {
-		this(serverPort,  host,  sinkStreamHandlerBuilder,  useNIO,  loginNeeded,  loginWithSessionId, objectHandler, push);
 		this.withMetadata = withMetadata;
 	}
-	
-	public SocketSinkPO(IServerSocketProvider serverSocketProvider,ISinkStreamHandlerBuilder sinkStreamHandlerBuilder, boolean loginNeeded, boolean loginWithSessionId, IObjectHandler objectHandler) {
+
+	public SocketSinkPO(IServerSocketProvider serverSocketProvider,
+			ISinkStreamHandlerBuilder sinkStreamHandlerBuilder,
+			boolean loginNeeded, boolean loginWithSessionId,
+			IObjectHandler objectHandler, boolean withMetadata) {
 		if (objectHandler == null) {
 			throw new IllegalArgumentException("ObjectHandler cannot be null!");
 		}
-		listener = new SinkConnectionListener(serverSocketProvider, sinkStreamHandlerBuilder, this, loginNeeded,loginWithSessionId);
+		listener = new SinkConnectionListener(serverSocketProvider,
+				sinkStreamHandlerBuilder, this, loginNeeded, loginWithSessionId);
 		this.objectHandler = objectHandler;
+		this.withMetadata = withMetadata;
 	}
 
 	public SocketSinkPO(SocketSinkPO socketSinkPO) {
 		throw new RuntimeException("Clone not supported");
 	}
-	
+
 	public void startListening() {
-		if( !isStarted ) {
+		if (!isStarted) {
 			listener.start();
 			isStarted = true;
-			lastPort = 0;
 		}
 	}
 
 	public void addSubscriber(ISinkStreamHandler temp) {
-		// TODO each input port another subscription
-//		if (lastPort == 0){
-//			List<PhysicalSubscription<ISource<? extends IStreamObject<?>>>> s = getSubscribedToSource();
-//			
-//		}else{
-//			
-//		}
-		subscribe.add(temp);
+		Integer port = reserverNextFreePort();
 		
+		if (subscription == null) {
+			List<PhysicalSubscription<ISource<? extends IStreamObject<?>>>> s = getSubscribedToSource();
+			if (s.size() != 1) {
+				logger.error("MORE THAN ONE SUBSCRIPTION");
+			}
+			subscription = s.get(0);
+		} else {
+			Objects.requireNonNull(subscription);
+			setInputPortCount(getMaxPort()+1);
+			subscription.getTarget().connectSink(this, port,
+					subscription.getSourceOutPort(), subscription.getSchema());
+		}
+		subscribe.put(port, temp);
+	}
+
+	private int reserverNextFreePort(){
+		for (int i=0;i<Integer.MAX_VALUE;i++){
+			if (!subscribe.containsKey(i)){
+				return i;
+			}
+		}
+		throw new RuntimeException("No more client connections possible!");
+	}
+	
+	private int getMaxPort(){
+		int max = 0;
+		for ( Entry<Integer, ISinkStreamHandler> s:subscribe.entrySet()){
+			if (s.getKey() > max){
+				max = s.getKey();
+			}
+		}
+		return max;
 	}
 	
 	@Override
 	protected void process_open() throws OpenFailedException {
 		startListening();
 	}
-		
+
 	@Override
-	protected void process_close() {	
+	protected void process_close() {
 		super.process_close();
 	}
 
 	@Override
 	protected void process_next(IStreamObject<?> object, int port) {
 		synchronized (subscribe) {
-			Object toTransfer = object;
-			if (objectHandler != null) {
-				objectHandler.put(object,withMetadata);
-				toTransfer = objectHandler.getByteBuffer();
-			}
-
-			Iterator<ISinkStreamHandler> iter = subscribe.iterator();
-			while (iter.hasNext()) {
-				ISinkStreamHandler sh = iter.next();
+			if (subscribe.size() > 0) {
+				Object toTransfer = object;
+				if (objectHandler != null) {
+					objectHandler.put(object, withMetadata);
+					toTransfer = objectHandler.getByteBuffer();
+				}
 				try {
-					sh.transfer(toTransfer);
+					subscribe.get(port).transfer(toTransfer);
 				} catch (IOException e) {
 					e.getMessage();
-					iter.remove();
+					logger.debug(e.getMessage());
+					subscription.getTarget().disconnectSink(this,port,subscription.getSourceOutPort(), subscription.getSchema());
+					subscribe.remove(port);
 				}
 			}
 		}
@@ -126,11 +161,11 @@ public class SocketSinkPO extends AbstractSink<IStreamObject<?>> {
 
 	protected void process_done() {
 		synchronized (subscribe) {
-			Iterator<ISinkStreamHandler> iter = subscribe.iterator();
+			Iterator<Entry<Integer, ISinkStreamHandler>> iter = subscribe.entrySet().iterator();
 			while (iter.hasNext()) {
-				ISinkStreamHandler sh = iter.next();
+				Entry<Integer, ISinkStreamHandler> sh = iter.next();
 				try {
-					sh.done();
+					sh.getValue().done();
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
@@ -154,17 +189,19 @@ public class SocketSinkPO extends AbstractSink<IStreamObject<?>> {
 
 	@Override
 	public String toString() {
-		return super.toString()+" "+listener.toString();
+		return super.toString() + " " + listener.toString();
 	}
 
 	public void addAllowedSessionId(String securityToken) {
 		listener.addSessionId(securityToken);
 	}
-	
+
 	public void removeAllowedSessionId(String securityToken) {
 		listener.removeSessionId(securityToken);
 	}
 
-
-	
+	@Override
+	public void setInputPortCount(int ports) {
+		super.setInputPortCount(ports);
+	}
 }

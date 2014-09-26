@@ -68,8 +68,9 @@ public class ClientReceiver<R, W> implements ISource<W>,
 	private IProtocolHandler<W> protocolHandler;
 	private boolean opened;
 
-	private AtomicBoolean open = new AtomicBoolean(false);
-
+	final private AtomicBoolean open = new AtomicBoolean(false);
+	final private AtomicBoolean done = new AtomicBoolean(false);
+	
 	private String name = null;
 	private Map<Integer, SDFSchema> outputSchema = new HashMap<Integer, SDFSchema>();
 
@@ -475,6 +476,19 @@ public class ClientReceiver<R, W> implements ISource<W>,
 		PhysicalSubscription<ISink<? super W>> sub = new PhysicalSubscription<ISink<? super W>>(
 				sink, sinkInPort, sourceOutPort, schema);
 		this.activeSinkSubscriptions.remove(sub);
+		if (activeSinkSubscriptions.size() == 0){
+			try {
+				this.protocolHandler.close();
+				this.done.set(true);
+				done();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+	
+    public boolean isDone(){
+		return done.get();
 	}
 
 //	@Override
@@ -540,6 +554,9 @@ public class ClientReceiver<R, W> implements ISource<W>,
 					sub.getTarget().done(sub.getSinkInPort());
 				}
 			}
+			for (IOperatorOwner owner:getOwner()){
+				owner.done(this);
+			}
 		}
 	}
 
@@ -592,6 +609,7 @@ public class ClientReceiver<R, W> implements ISource<W>,
 			processOpen();
 			// fire(openDoneEvent);
 			open.set(true);
+			done.set(false);
 		}
 	}
 	

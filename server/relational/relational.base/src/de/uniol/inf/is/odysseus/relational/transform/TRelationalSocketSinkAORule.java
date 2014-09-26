@@ -65,7 +65,7 @@ public class TRelationalSocketSinkAORule extends
 			socketSinkPO = new SocketSinkPO(operator.getSinkPort(),
 					operator.getHost(), getStreamHandler(operator), true,
 					operator.isLoginNeeded(), false, objectHandler,
-					operator.getConnectToServer());
+					operator.getConnectToServer(), operator.isWithMetatdata());
 
 			socketSinkPO.setOutputSchema(operator.getOutputSchema());
 			if (!config.isVirtualTransformation()) {
