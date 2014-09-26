@@ -23,14 +23,22 @@ import de.uniol.inf.is.odysseus.image.common.datatype.Image;
 @SuppressWarnings("unused")
 public class VideoFileTransportHandler extends AbstractSimplePullTransportHandler<Tuple<IMetaAttribute>> 
 {
+	private enum TimeStampMode
+	{
+		start,
+		fileTime,
+		syncFile
+	};
+	
 //	@SuppressWarnings("unused")
 	private final Logger logger = LoggerFactory.getLogger(VideoFileTransportHandler.class);
 	private final Object processLock = new Object();
 	
-	private FFmpegFrameGrabber 	frameGrabber;
 	private String videoUrl;
+	private TimeStampMode timeStampMode;
 	private double fps;
-	
+
+	private FFmpegFrameGrabber 	frameGrabber;
 	private long startTime;
 	private double currentTime; // Current timestamp in seconds
 	private String syncFileName = null;
@@ -53,33 +61,13 @@ public class VideoFileTransportHandler extends AbstractSimplePullTransportHandle
 		videoUrl = options.get("videourl");
 		fps = options.getDouble("fps", 0.0);
 		
-		String timeStampMode = options.get("timestampmode", "start");
+		String timeStampModeStr = options.get("timestampmode", "start");
 		
-		if (timeStampMode.equals("start"))
-		{
-			// Frame timestamps will be extrapolated from beginning time stamp specified in the options
-			// If no timestamp is given, system time will be used
-			// curTime = startTime + frameNum/fps
-			startTime = options.getLong("startTime", 0);
-		}
+			 if (timeStampModeStr.equals("start"))		timeStampMode = TimeStampMode.start;
+		else if (timeStampModeStr.equals("filetime"))	timeStampMode = TimeStampMode.fileTime;
+		else if (timeStampModeStr.equals("syncfile"))	timeStampMode = TimeStampMode.syncFile;
 		else
-		if (timeStampMode.equals("filetime"))
-		{
-			// Frame timestamps will be extrapolated from the file last modified time stamp
-			// curTime = startTime + frameNum/fps
-			startTime = new File(videoUrl).lastModified();
-			
-			if (startTime == 0)
-				throw new IllegalArgumentException("Could not read file last modified timestamp");
-		}
-		else
-		if (timeStampMode.equals("syncfile"))
-		{
-			// Frame timestamps will be read from synchronization file
-			syncFileName = options.get("syncfilename");
-		}
-		else
-			throw new IllegalArgumentException("timeStampMode has an invalid value: " + timeStampMode);
+			throw new IllegalArgumentException("timeStampMode has an invalid value: " + timeStampModeStr);
 	}
 	
 
@@ -89,11 +77,35 @@ public class VideoFileTransportHandler extends AbstractSimplePullTransportHandle
 		return new VideoFileTransportHandler(protocolHandler, options);
 	}
 
-
 	@Override public String getName() { return "VideoFile"; }
 
 	@Override public void processInOpen() throws IOException 
 	{
+		switch (timeStampMode)
+		{
+		case start:
+			// Frame timestamps will be extrapolated from beginning time stamp specified in the options
+			// If no timestamp is given, system time will be used
+			// curTime = startTime + frameNum/fps
+			startTime = getOptionsMap().getLong("startTime", 0);
+			break;
+			
+		case fileTime:
+			// Frame timestamps will be extrapolated from the file last modified time stamp
+			// curTime = startTime + frameNum/fps
+			startTime = new File(videoUrl).lastModified();
+			
+			if (startTime == 0)
+				throw new IOException("Could not read last modified timestamp from \"" + videoUrl + "\"");
+			break;
+
+		case syncFile:
+			// Frame timestamps will be read from synchronization file
+			syncFileName = getOptionsMap().get("syncfilename");
+			// TODO: Read first timestamp
+			break;
+		}
+		
 		synchronized (processLock)
 		{
 			frameGrabber = new FFmpegFrameGrabber(videoUrl);
@@ -109,11 +121,6 @@ public class VideoFileTransportHandler extends AbstractSimplePullTransportHandle
 			
 			if (fps == 0.0)
 				fps = frameGrabber.getFrameRate();
-			
-			if (syncFileName != null)
-			{
-				// TODO: syncFile nutzen
-			}
 			
 			currentTime = startTime / 1000.0;
 		}
