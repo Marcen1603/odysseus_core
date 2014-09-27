@@ -1,17 +1,21 @@
 package windscadaanwendung.views;
 
+import java.util.GregorianCalendar;
 import java.util.Observable;
 import java.util.Observer;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.DateTime;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.part.ViewPart;
@@ -20,6 +24,7 @@ import windscadaanwendung.ca.WKA;
 import windscadaanwendung.ca.WindFarm;
 import windscadaanwendung.db.DBConnectionHD;
 import windscadaanwendung.hd.HitWKAData;
+import windscadaanwendung.hd.HitWindFarmData;
 import windscadaanwendung.views.dashboard.CorrectedScoreTfPart;
 
 /**
@@ -34,6 +39,8 @@ public class UebersichtView extends ViewPart implements Observer {
 	private static Text nameWindpark;
 	private static Composite wkaContainer;
 	private static WindFarm selectedWindpark;
+	private static DateTime swtDateSince;
+	private static DateTime swtTimeSince;
 
 	public UebersichtView() {
 	}
@@ -41,27 +48,68 @@ public class UebersichtView extends ViewPart implements Observer {
 	@Override
 	public void createPartControl(Composite parent) {
 		ObserverHandler.addObserverToWKA(this);
+		ObserverHandler.addObserverToWindFarm(this);
 		parent.setLayout(new FillLayout(SWT.VERTICAL));
 		
 		Composite composite = new Composite(parent, SWT.NONE);
-		composite.setLayout(new GridLayout(2, false));
+		composite.setLayout(new GridLayout(3, false));
 		
 		Label lblwindpark = new Label(composite, SWT.NONE);
 		lblwindpark.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
 		lblwindpark.setText("Windpark:");
 		
 		nameWindpark = new Text(composite, SWT.BORDER);
-		nameWindpark.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, true, false, 1, 1));
+		new Label(composite, SWT.NONE);
+		
+		Label lblDateSince = new Label(composite, SWT.NONE);
+		lblDateSince.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
+		lblDateSince.setText("Daten seit:");
+		
+		swtDateSince = new DateTime(composite, SWT.BORDER | SWT.LONG);		
+		swtDateSince.addSelectionListener(new SelectionListener() {
+
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				prepareLoadNewHitData();
+			}
+
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) {
+				prepareLoadNewHitData();
+			}
+
+		});
+		swtTimeSince = new DateTime(composite, SWT.BORDER | SWT.TIME);
+		swtTimeSince.addSelectionListener(new SelectionListener() {
+
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				prepareLoadNewHitData();
+			}
+
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) {
+				prepareLoadNewHitData();
+			}
+
+		});
 		
 		Label lblHistorischeGesamtleistungIm = new Label(composite, SWT.NONE);
-		lblHistorischeGesamtleistungIm.setText("Mittelwer Gesamtleistung:");
+		lblHistorischeGesamtleistungIm.setText("Mittelwert Gesamtleistung:");
 		
 		hitLeistung = new Text(composite, SWT.BORDER);
 		hitLeistung.setSize(297, 469);
+		new Label(composite, SWT.NONE);
 		
 		wkaContainer = new Composite(parent, SWT.NONE);
 		wkaContainer.setLayout(new GridLayout(3, false));
 		setDefaultWKAContainerLabels();
+	}
+
+	private void prepareLoadNewHitData() {
+		GregorianCalendar calSince = new GregorianCalendar();
+		calSince.set(swtDateSince.getYear(),swtDateSince.getMonth(), swtDateSince.getDay(), swtTimeSince.getHours(), swtTimeSince.getMinutes(), swtTimeSince.getSeconds());
+		DBConnectionHD.refreshHitFarmData(calSince.getTime());
 	}
 
 	@Override
@@ -70,14 +118,8 @@ public class UebersichtView extends ViewPart implements Observer {
 	
 	public static void setSelectedWindpark(WindFarm windFarm) {
 		selectedWindpark = windFarm;
-		
 		nameWindpark.setText(String.valueOf(selectedWindpark.getID()));
-		//TODO Hit Farm Data on FarmList mit auslagern und wie bei WKA mit Observern behandeln und in mysql prozeduren schreiben
-		DBConnectionHD.setHitFarmData(selectedWindpark);
-		if (selectedWindpark.getHitWindFarmData() != null) {
-			hitLeistung.setText(String.valueOf(selectedWindpark.getHitWindFarmData().getAvgPervormance()));
-		}
-		
+		redrawHitWindFarmData();
 		redrawWKAContainer();
 		
 	}
@@ -110,7 +152,7 @@ public class UebersichtView extends ViewPart implements Observer {
 					} else {
 						txtHit.setText("No Data");
 					}
-					//TODO: implementieren, dass nach x sekunden die historischen Daten aktualisiert wird
+					//TODO: implementieren, dass nach x sekunden die historischen Daten aktualisiert werden?
 					
 				}
 				wkaContainer.layout();
@@ -138,12 +180,27 @@ public class UebersichtView extends ViewPart implements Observer {
 				redrawWKAContainer();
 			}
 		}
+		if (o instanceof WindFarm && arg instanceof HitWindFarmData) {
+			// there are new HitWindFarmData in a WindFarm
+			WindFarm farm = (WindFarm) o;
+			if (selectedWindpark.equals(farm)) {
+				// the changed wka is in the selected windfarm
+				redrawHitWindFarmData();
+			}
+		}
 	}
 	
+	private static void redrawHitWindFarmData() {
+		if (selectedWindpark.getHitWindFarmData() != null) {
+			hitLeistung.setText(String.valueOf(selectedWindpark.getHitWindFarmData().getAvgPervormance()));
+		}
+	}
+
 	@Override
 	public void dispose() {
 		super.dispose();
 		ObserverHandler.removeObserverFromWKA(this);
+		ObserverHandler.removeObserverFromWindFarm(this);
 	}
 
 }

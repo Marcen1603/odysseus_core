@@ -23,5 +23,17 @@ public class ObserverHandler {
 			}
 		}
 	}
+	
+	public static void addObserverToWindFarm(Observer obs) {
+		for(WindFarm wf: FarmList.getFarmList()) {
+			wf.addObserver(obs);
+		}
+	}
+	
+	public static void removeObserverFromWindFarm(Observer obs) {
+		for(WindFarm wf: FarmList.getFarmList()) {
+			wf.deleteObserver(obs);
+		}
+	}
 
 }

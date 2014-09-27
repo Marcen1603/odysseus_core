@@ -21,7 +21,8 @@ public class FarmList {
 	 */
 	public static void setFarmList(List<WindFarm> farmList) {
 		FarmList.farmList = farmList;
-		DBConnectionHD.refreshHitWKAData(new Date(Long.MIN_VALUE));
+		DBConnectionHD.refreshHitWKAData(new Date(0));
+		DBConnectionHD.refreshHitFarmData(new Date(0));
 	}
 	
 	public static WKA getWKA(int id) {

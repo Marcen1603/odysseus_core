@@ -2,10 +2,11 @@ package windscadaanwendung.ca;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Observable;
 
 import windscadaanwendung.hd.HitWindFarmData;
 
-public class WindFarm {
+public class WindFarm extends Observable {
 	
 	private HitWindFarmData hitWindFarmData;
 	private int id;
@@ -57,6 +58,8 @@ public class WindFarm {
 	 */
 	public void setHitWindFarmData(HitWindFarmData hitWindFarmData) {
 		this.hitWindFarmData = hitWindFarmData;
+		setChanged(); 
+        notifyObservers(hitWindFarmData); 
 	}
 
 }

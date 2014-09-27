@@ -5,7 +5,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.sql.Timestamp;
 import java.util.Date;
 import java.util.Properties;
@@ -69,7 +68,6 @@ public class DBConnectionHD extends AbstractDatabaseConnectionFactory {
 			
 		    try {
 		    	CallableStatement cStmt = conn.prepareCall("{call hit_values_procedure(?)}");
-		    	// TODO
 		    	cStmt.setLong(1, Ltimestamp);
 		    
 		    	if (cStmt.execute()) {
@@ -110,27 +108,31 @@ public class DBConnectionHD extends AbstractDatabaseConnectionFactory {
 	        }
 	}
 	
-	public static void setHitFarmData(WindFarm farm) {
-
-		Statement stmt = null;
+	public static void refreshHitFarmData(Date timestamp) {
+		long Ltimestamp = timestamp.getTime();
 		ResultSet rs = null;
-
+		WindFarm windFarm = null;
 		
 			// load hitWKAData
 			
 		    try {
-				stmt = conn.createStatement();
-				rs = stmt.executeQuery("SELECT * FROM hit_values_park WHERE wp_id = " + farm.getID());
-
-				    HitWindFarmData data = new HitWindFarmData();
-				    // there is only one tuple
-				    if (rs.next()) {
+		    	CallableStatement cStmt = conn.prepareCall("{call hit_values_farm_procedure(?)}");
+		    	cStmt.setLong(1, Ltimestamp);
+		    
+		    	if (cStmt.execute()) {
+		    		rs = cStmt.getResultSet();
+		    		HitWindFarmData data = null;
+				    while (rs.next()) {
+				    	data = new HitWindFarmData();
 				    	data.setAvgPervormance(rs.getDouble("avg_corrected_score"));
-					    farm.setHitWindFarmData(data);
-				    } else {
-				    	System.out.println("No Hit Data Found for WindFarm " + farm.getID());
-				    }
-			} catch (SQLException e) {
+				    	
+				    	windFarm = FarmList.getFarm(rs.getInt("wp_id"));
+					    windFarm.setHitWindFarmData(data);
+				    } 
+			} else {
+				System.out.println("No Hit WindFarm Data Found");
+			}
+		    }catch (SQLException e) {
 				e.printStackTrace();
 			}
 		   
@@ -142,13 +144,6 @@ public class DBConnectionHD extends AbstractDatabaseConnectionFactory {
 	        rs = null;
 	        }
 		    
-		    try {
-	            stmt.close();
-	        } catch (SQLException sqlEx) { // ignore 
-
-	        stmt = null;
-	        }	
-	
 	}
 	
 	public static void refreshHitAEData(Date sinceDate, Date untilDate, boolean showConfirmedBool) {
@@ -205,7 +200,6 @@ public class DBConnectionHD extends AbstractDatabaseConnectionFactory {
 		PreparedStatement stmt = null;
 			
 		    try {
-//		    	conn.setAutoCommit(false);
 				stmt = conn.prepareStatement("update AEarchive set confirmed = ? , comment = ? where id = ?");
 				stmt.setInt(1, aeEntry.isConfirm() ? 1: 0);
 				stmt.setString(2, aeEntry.getComment());
