@@ -116,7 +116,6 @@ public class WarningsErrorsListDashboardPart extends AbstractDashboardPart {
 	}
 
 	private boolean showErrors;
-	//TODO timestamp einbauen
 	private int timestampIndex = 0;
 	private Thread updateThread;
 	private int wkaIdIndex = 0;
@@ -196,30 +195,30 @@ public class WarningsErrorsListDashboardPart extends AbstractDashboardPart {
 				int wka_id = ((Long) tuple.getAttribute(wkaIdIndex )).intValue();
 				int farm_id = ((Long) tuple.getAttribute(farmIdIndex)).intValue();
 				String value_type = tuple.getAttribute(valueTypeIndex);
-				System.out.println("tuple ->  WKA: " + wka_id + "  Value_type: " + value_type);
+//				System.out.println("tuple ->  WKA: " + wka_id + "  Value_type: " + value_type);
 				Entry e = findEntry(wka_id, value_type);
 				if (e != null) {
-					System.out.println("e->  WKA: " + e.getWka_id() + "  Value_type: " + e.getValue_type());
+//					System.out.println("e->  WKA: " + e.getWka_id() + "  Value_type: " + e.getValue_type());
 				}
 				
 				// if e == null -> new entry -> else a old one changes
 				if (tuple.getAttribute(warningIndex)) {
-					System.out.println("Warning flag ist TRUE");
+//					System.out.println("Warning flag ist TRUE");
 					if (e != null) {
 						// if this entry was a warning or a error earlyer the warning or error will be overwritten
 						//TODO: evtl. so aendern dass nicht das alte weg geht und das neue kommt sondern dass das alte sich aendert
 						e.dispose();
 						container.layout();
-						System.out.println("altes entfernt");
+//						System.out.println("altes entfernt");
 					}
 					if (tuple.getAttribute(errorIndex))  {
 						// error
 						e = new Error(container, SWT.NONE);
-						System.out.println("New Error!");
+//						System.out.println("New Error!");
 					} else {
 						//warning
 						e = new Warning(container, SWT.NONE);
-						System.out.println("New warning!");
+//						System.out.println("New warning!");
 					}
 					e.setWka_id(wka_id);
 					e.setFarm_id(farm_id);
@@ -227,12 +226,12 @@ public class WarningsErrorsListDashboardPart extends AbstractDashboardPart {
 				} else {
 					// nothing -> no warning or error here anymore -> dispose entry
 					// it isnt allowed that you got error but no warning
-					System.out.println("Warning flag ist FALSE");
+//					System.out.println("Warning flag ist FALSE");
 					if (e != null) {
 						e.dispose();
-						System.out.println("altes entfernt");
+//						System.out.println("altes entfernt");
 					} else {
-						System.out.println("Kein altes vorhanden obwohl 0,0 gesendet -> FEHLER");
+//						System.out.println("Kein altes vorhanden obwohl 0,0 gesendet -> FEHLER");
 					}
 				}
 				container.layout();
@@ -274,9 +273,9 @@ public class WarningsErrorsListDashboardPart extends AbstractDashboardPart {
 	}
 	
 	private Entry findEntry(int wka_id, String type) {
-		System.out.println("Beginne suche...");
+//		System.out.println("Beginne suche...");
 		for (Control c: container.getChildren()) {
-			System.out.println(c.toString());
+//			System.out.println(c.toString());
 			if (c != null && c instanceof Entry) {
 				Entry e = (Entry) c;
 				if (e.getWka_id() == wka_id && e.getValue_type().equals(type)) {
@@ -284,7 +283,7 @@ public class WarningsErrorsListDashboardPart extends AbstractDashboardPart {
 				}
 			}
 		}
-		System.out.println(wka_id + " " + type + " nicht gefunden!");
+//		System.out.println(wka_id + " " + type + " nicht gefunden!");
 		return null;
 	}
 
