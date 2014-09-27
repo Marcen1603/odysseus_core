@@ -11,7 +11,7 @@ public interface IKeyPerformanceIndicators<M extends ITimeInterval> {
 	
 	void setKPIName(String kpiName);
 		
-	double manageKPICalculation(List<Tuple<M>> tuple, List<String> ownCompany, List<String>allCompanies, int positionOfInputText, int positionOfUserIDs);
+	double manageKPICalculation(List<Tuple<M>> tuple, List<String> ownCompany, List<String>allCompanies, int positionOfInputText, int positionOfUseNames);
 	
 	double manageKPICalculation(List<Tuple<M>> tuple, List<String> ownCompany, List<String>allCompanies, int positionOfInputText);
 	

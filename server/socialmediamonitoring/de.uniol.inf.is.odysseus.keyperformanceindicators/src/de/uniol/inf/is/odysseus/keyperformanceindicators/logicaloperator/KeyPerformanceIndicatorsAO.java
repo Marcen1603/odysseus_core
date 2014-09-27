@@ -26,7 +26,7 @@ public class KeyPerformanceIndicatorsAO extends UnaryLogicalOp
 	private List<String> subsetOfTerms = new ArrayList<String>();
 	private List<String> totalQuantityOfTerms = new ArrayList<String>();
 	private SDFAttribute incomingText;
-	private SDFAttribute userIDs;
+	private SDFAttribute userNames;
 
 	public KeyPerformanceIndicatorsAO()
 	{
@@ -42,7 +42,7 @@ public class KeyPerformanceIndicatorsAO extends UnaryLogicalOp
 		this.subsetOfTerms = keyPerformanceIndicatorsAO.subsetOfTerms;
 		this.totalQuantityOfTerms = keyPerformanceIndicatorsAO.totalQuantityOfTerms;
 		this.incomingText = keyPerformanceIndicatorsAO.incomingText;
-		this.userIDs = keyPerformanceIndicatorsAO.userIDs;
+		this.userNames = keyPerformanceIndicatorsAO.userNames;
 		this.totalInputPorts = keyPerformanceIndicatorsAO.totalInputPorts;
 	}
 	
@@ -78,9 +78,9 @@ public class KeyPerformanceIndicatorsAO extends UnaryLogicalOp
 		this.kpiName = kpiName;
 	}
 		
-	@Parameter(name="userIDs", type = ResolvedSDFAttributeParameter.class, optional = true)
-	public void setUserIDs(SDFAttribute userIDs) {
-		this.userIDs = userIDs;
+	@Parameter(name="userNames", type = ResolvedSDFAttributeParameter.class, optional = true)
+	public void setUserIDs(SDFAttribute userNames) {
+		this.userNames = userNames;
 	}
 	
 	@Parameter(name = "incomingText", type=ResolvedSDFAttributeParameter.class, optional= false, doc="")
@@ -118,8 +118,8 @@ public class KeyPerformanceIndicatorsAO extends UnaryLogicalOp
 		return this.incomingText;
 	}
 
-	public SDFAttribute getUserIDs() {
-		return this.userIDs;
+	public SDFAttribute getUserNames() {
+		return this.userNames;
 	}
 
 	@Override
@@ -129,7 +129,7 @@ public class KeyPerformanceIndicatorsAO extends UnaryLogicalOp
 
 	@Override
 	public boolean isValid(){
-		if(this.kpiName.equals("conversationreach") && this.userIDs == null){
+		if(this.kpiName.equals("conversationreach") && this.userNames == null){
 			System.out.println("Error. No user ids found!");
 			return false;
 		}

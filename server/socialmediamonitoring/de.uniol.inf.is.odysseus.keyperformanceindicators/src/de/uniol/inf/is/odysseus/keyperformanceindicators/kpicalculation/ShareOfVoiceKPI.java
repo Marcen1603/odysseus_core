@@ -43,6 +43,9 @@ public class ShareOfVoiceKPI<M extends ITimeInterval> extends AbstractKeyPerform
 			findAndCountGivenWordsInLists(currentInputText);				
 			calculateShareOfVoice();
 		}
+		
+
+		
 		return this.shareOfVoiceResult;
 	}
 
@@ -51,7 +54,7 @@ public class ShareOfVoiceKPI<M extends ITimeInterval> extends AbstractKeyPerform
 	 */
 	private void calculateShareOfVoice() {
 		if(this.counterConcreteElements + this.counterAllElements > 0)
-			this.shareOfVoiceResult = (this.counterConcreteElements / (this.counterConcreteElements + this.counterAllElements)) * 100;
+			this.shareOfVoiceResult = (this.counterConcreteElements / (/*this.counterConcreteElements +*/ this.counterAllElements)) * 100;
 		else
 			this.shareOfVoiceResult = 0;
 	}
@@ -61,13 +64,17 @@ public class ShareOfVoiceKPI<M extends ITimeInterval> extends AbstractKeyPerform
 		for(int i=0; i<this.concreteElements.size(); i++)
 		{
 			if(currentInputText.contains(this.concreteElements.get(i).toString().toLowerCase()))
+			{
 				this.counterConcreteElements++;
+			}
 		}
 		
 		for(int i=0; i<this.allElements.size(); i++)
 		{
 			if(currentInputText.contains(this.allElements.get(i).toString().toLowerCase()))
-				this.counterAllElements++;
+			{
+				this.counterAllElements++;	
+			}
 		}
 	}
 

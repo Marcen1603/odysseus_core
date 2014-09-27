@@ -15,8 +15,8 @@ public class ConversationReachKPI<M extends ITimeInterval> extends AbstractKeyPe
 	private double counterAllElements = 0;
 	private List<String> concreteElements = new ArrayList<>();
 	private List<String> allElements = new ArrayList<>();	
-	private Map<Integer, String> uniqueUserIDs = new HashMap<Integer, String>();
-	private Map<Integer, String> allUserIDs = new HashMap<Integer, String>();
+	private Map<Integer, String> uniqueUserNames = new HashMap<Integer, String>();
+	private Map<Integer, String> allUserNames = new HashMap<Integer, String>();
 	
 	public ConversationReachKPI() 
 	{}
@@ -27,51 +27,57 @@ public class ConversationReachKPI<M extends ITimeInterval> extends AbstractKeyPe
 	}
 
 	@Override
-	public double manageKPICalculation(List<Tuple<M>> incomingTuple, List<String> con, List<String>all, int positionOfInputText, int positionOfUserIDs)
+	public double manageKPICalculation(List<Tuple<M>> incomingTuple, List<String> con, List<String>all, int positionOfInputText, int positionOfUseNames)
 	{	
 		this.concreteElements = con;
 		this.allElements = all;
 		this.counterAllElements = 0;
 		 
-		this.uniqueUserIDs.clear();
-		this.allUserIDs.clear();
+		this.uniqueUserNames.clear();
+		this.allUserNames.clear();
 				
 		for(Tuple<M> tuple : incomingTuple)
 		{
 			String currentInputText = tuple.getAttribute(positionOfInputText).toString().toLowerCase();
-			String currentUserID = tuple.getAttribute(positionOfUserIDs).toString();
+			String currentUserName = tuple.getAttribute(positionOfUseNames).toString();
 			
-			findConcreteWordsAndSaveUserIDs(currentInputText, currentUserID);
+			findConcreteWordsAndSaveUserNames(currentInputText, currentUserName);
 				
-			findAllTopicsAndSaveAllUserIDs(currentInputText, currentUserID);
+			findAllTopicsAndSaveAllUserNames(currentInputText, currentUserName);
 		}
 		
 		//if(((double)this.values.size()) + this.counterAllTopics > 0)
 		//return this.conversationReachResult = (((double)this.values.size()) / this.counterAllTopics * 100);
 	
-		if(((double)this.uniqueUserIDs.size()) + ((double)this.allUserIDs.size()) > 0)
-			return this.setConversationReachResult((((double)this.uniqueUserIDs.size()) / ((double)this.allUserIDs.size()) * 100));
+		if(((double)this.uniqueUserNames.size()) + ((double)this.allUserNames.size()) > 0)
+			return this.setConversationReachResult((((double)this.uniqueUserNames.size()) / ((double)this.allUserNames.size()) * 100));
 		else
 			return this.setConversationReachResult(0);
 	}
 
-	private void findAllTopicsAndSaveAllUserIDs(String currentInputText, String currentUserID) 
+	private void findAllTopicsAndSaveAllUserNames(String currentInputText, String currentUserName) 
 	{
 		for(int i=0; i<this.allElements.size(); i++)
 			if(currentInputText.contains(this.allElements.get(i).toLowerCase().toString()))
 			{
-				if(!this.allUserIDs.containsValue(currentUserID))
-					this.allUserIDs.put(this.allUserIDs.size()+1, currentUserID);
-				this.counterAllElements++; //Kann eventuell entfernt werdenS
+				if(!this.allUserNames.containsValue(currentUserName))
+				{
+					this.allUserNames.put(this.allUserNames.size()+1, currentUserName);
+					System.out.println("User_Name in all:" + currentUserName);
+				}
+				this.counterAllElements++; 
 			}
 	}
 
-	private void findConcreteWordsAndSaveUserIDs(String currentInputText, String currentUserID) 
+	private void findConcreteWordsAndSaveUserNames(String currentInputText, String currentUserName) 
 	{
 		for(int i=0; i<this.concreteElements.size(); i++)
 			if(currentInputText.contains(this.concreteElements.get(i).toString().toLowerCase()))
-				if(!this.uniqueUserIDs.containsValue(currentUserID))
-					this.uniqueUserIDs.put(this.uniqueUserIDs.size()+1, currentUserID);
+				if(!this.uniqueUserNames.containsValue(currentUserName))
+				{
+					this.uniqueUserNames.put(this.uniqueUserNames.size()+1, currentUserName);
+					System.out.println("User_Name in concrete:" + currentUserName);
+				}
 	}	
 	
 	@Override

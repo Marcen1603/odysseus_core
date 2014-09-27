@@ -33,14 +33,14 @@ public class KeyPerformanceIndicatorsPO<M extends ITimeInterval> extends Abstrac
 	private List<String> subsetOfTerms = new ArrayList<String>();
 	private List<String> totalQuantityOfTerms = new ArrayList<String>();
 	private SDFAttribute incomingText;
-	private SDFAttribute userIDs;
+	private SDFAttribute userNames;
 	
 	private int outputPort = 0;
 	private int totalInputPorts = 1;
 	private int positionOfIncomingText = -1;
-	private int positionOfUserIDs = -1;
+	private int positionOfUserNames = -1;
 		
-	public KeyPerformanceIndicatorsPO(int outputPort, String kpiName, List<String> subsetOfTerms, List<String> totalQuantityOfTerms, SDFAttribute incomingText, double thresholdValue, SDFAttribute userIDs, int totalInputPorts, IMetadataMergeFunction<M> metaDataMerge,
+	public KeyPerformanceIndicatorsPO(int outputPort, String kpiName, List<String> subsetOfTerms, List<String> totalQuantityOfTerms, SDFAttribute incomingText, double thresholdValue, SDFAttribute userNames, int totalInputPorts, IMetadataMergeFunction<M> metaDataMerge,
 									  ITransferArea<Tuple<M>, Tuple<M>> transferFunction)
 	{
 		super();
@@ -50,7 +50,7 @@ public class KeyPerformanceIndicatorsPO<M extends ITimeInterval> extends Abstrac
 		this.totalQuantityOfTerms = totalQuantityOfTerms;
 		this.incomingText = incomingText;
 		this.thresholdValue = thresholdValue;
-		this.userIDs = userIDs;
+		this.userNames = userNames;
 		this.totalInputPorts = totalInputPorts;
 		this.metaDataMerge = metaDataMerge;
 		this.tranferFunction = transferFunction;
@@ -65,7 +65,7 @@ public class KeyPerformanceIndicatorsPO<M extends ITimeInterval> extends Abstrac
 		this.totalQuantityOfTerms = splitPO.totalQuantityOfTerms;
 		this.incomingText = splitPO.incomingText;
 		this.thresholdValue = splitPO.thresholdValue;
-		this.userIDs = splitPO.userIDs;
+		this.userNames = splitPO.userNames;
 		this.totalInputPorts = splitPO.totalInputPorts;
 		this.metaDataMerge = splitPO.metaDataMerge;
 		this.tranferFunction = splitPO.tranferFunction;
@@ -99,8 +99,8 @@ public class KeyPerformanceIndicatorsPO<M extends ITimeInterval> extends Abstrac
 	
 		this.positionOfIncomingText = dataSchema.indexOf(this.incomingText);
 		
-		if(this.userIDs != null){
-			this.positionOfUserIDs = dataSchema.indexOf(this.userIDs);
+		if(this.userNames != null){
+			this.positionOfUserNames = dataSchema.indexOf(this.userNames);
 		}
 		
 		algo = KPIRegistry.getKPIByName(this.kpiName.toLowerCase());
@@ -130,10 +130,12 @@ public class KeyPerformanceIndicatorsPO<M extends ITimeInterval> extends Abstrac
 	{	
 		double kpiResult = 0;
 		
-		if(this.positionOfUserIDs > -1 && this.kpiName.equals("conversationreach")){
-			kpiResult = this.algo.manageKPICalculation(tupleList, this.subsetOfTerms, this.totalQuantityOfTerms, this.positionOfIncomingText, this.positionOfUserIDs);
+		if(this.positionOfUserNames > -1 && this.kpiName.equals("conversationreach")){
+			kpiResult = this.algo.manageKPICalculation(tupleList, this.subsetOfTerms, this.totalQuantityOfTerms, this.positionOfIncomingText, this.positionOfUserNames);
+			System.out.println("conversationreach");
 		}
 		else{
+			System.out.println("was anderes");
 			kpiResult = this.algo.manageKPICalculation(tupleList, this.subsetOfTerms, this.totalQuantityOfTerms, this.positionOfIncomingText);
 		}
 		

@@ -10,7 +10,7 @@ public abstract class AbstractKeyPerformanceIndicators<M extends ITimeInterval> 
 	protected double valueToMonitor;
 	
 	@Override
-	public double manageKPICalculation(List<Tuple<M>> tuple, List<String> ownCompany, List<String>allCompanies, int positionOfInputText, int positionOfUserIDs){
+	public double manageKPICalculation(List<Tuple<M>> tuple, List<String> ownCompany, List<String>allCompanies, int positionOfInputText, int positionOfUseNames){
 		return 0;
 	}
 	

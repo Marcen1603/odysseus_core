@@ -29,7 +29,7 @@ public class KeyPerformanceIndicatorsRule extends AbstractTransformationRule<Key
 											   operator.getTotalQuantityOfTerms(),
 											   operator.getIncomingText(),
 											   operator.getThresholdValue(),
-											   operator.getUserIDs(),
+											   operator.getUserNames(),
 											   operator.getInputPorts(),
 											   metaDataMerge,
 											   transferFunction
