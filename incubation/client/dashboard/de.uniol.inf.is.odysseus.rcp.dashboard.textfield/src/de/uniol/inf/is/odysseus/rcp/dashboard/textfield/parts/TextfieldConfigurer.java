@@ -44,7 +44,7 @@ public class TextfieldConfigurer extends AbstractDashboardPartConfigurer<Textfie
 		comboWarnings.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				dashboardPart.setShowHeartbeats(comboWarnings.getSelectionIndex() == 0);
+				dashboardPart.setShowWarning(comboWarnings.getSelectionIndex() == 0);
 				fireListener();
 			}
 		});
@@ -53,7 +53,7 @@ public class TextfieldConfigurer extends AbstractDashboardPartConfigurer<Textfie
 		comboErrors.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				dashboardPart.setShowHeartbeats(comboErrors.getSelectionIndex() == 0);
+				dashboardPart.setShowError(comboErrors.getSelectionIndex() == 0);
 				fireListener();
 			}
 		});
