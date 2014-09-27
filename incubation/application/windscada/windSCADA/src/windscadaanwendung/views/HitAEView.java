@@ -29,8 +29,11 @@ public class HitAEView extends ViewPart implements AEObserver {
 	private static Composite hitAEHeader;
 	private static Composite parent;
 //	private static ScrolledComposite hitAEScroller;
-	private static DateTime swtDate;
-	private static DateTime swtTime;
+	private static DateTime swtDateSince;
+	private static DateTime swtTimeSince;
+	private static DateTime swtDateUntil;
+	private static DateTime swtTimeUntil;
+	private static Button btnZeigeGelesene;
 
 	public HitAEView() {
 		// TODO Auto-generated constructor stub
@@ -42,59 +45,93 @@ public class HitAEView extends ViewPart implements AEObserver {
 		HitAEView.parent = parent;
 		
 		Composite toolsContainer = new Composite(parent, SWT.NONE);
+		toolsContainer.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 		toolsContainer.setLayout(new GridLayout(3, false));
 		
 		Label lblDatenSeit = new Label(toolsContainer, SWT.NONE);
 		lblDatenSeit.setText("Daten seit:");
 		
-		Composite dateTimeContainer = new Composite(toolsContainer, SWT.NONE);
-		dateTimeContainer.setLayout(new GridLayout(2, false));
-		
-		swtDate = new DateTime(dateTimeContainer, SWT.BORDER | SWT.LONG);
-		swtDate.addSelectionListener(new SelectionListener() {
+		swtDateSince = new DateTime(toolsContainer, SWT.BORDER | SWT.LONG);
+		swtDateSince.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
+		swtDateSince.addSelectionListener(new SelectionListener() {
 
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				handleDateTimeEvent();
+				prepareLoadNewHitData();
 			}
 
 			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
-				handleDateTimeEvent();
+				prepareLoadNewHitData();
 			}
 
 		});
 		
-		swtTime = new DateTime(dateTimeContainer, SWT.BORDER | SWT.TIME);
-		//TODO default wert setzen
-		swtTime.addSelectionListener(new SelectionListener() {
+		swtTimeSince = new DateTime(toolsContainer, SWT.BORDER | SWT.TIME);
+		swtTimeSince.addSelectionListener(new SelectionListener() {
 
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				handleDateTimeEvent();
+				prepareLoadNewHitData();
 			}
 
 			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
-				handleDateTimeEvent();
+				prepareLoadNewHitData();
 			}
 		});
+		
+		Label lblDatenBis = new Label(toolsContainer, SWT.NONE);
+		lblDatenBis.setText("Daten bis:");
+		
+		swtDateUntil = new DateTime(toolsContainer, SWT.BORDER);
+		swtDateUntil.addSelectionListener(new SelectionListener() {
+
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				prepareLoadNewHitData();
+			}
+
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) {
+				prepareLoadNewHitData();
+			}
+
+		});
+		
+		swtTimeUntil = new DateTime(toolsContainer, SWT.BORDER | SWT.TIME);
+		swtTimeUntil.addSelectionListener(new SelectionListener() {
+
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				prepareLoadNewHitData();
+			}
+
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) {
+				prepareLoadNewHitData();
+			}
+
+		});
+		
+		btnZeigeGelesene = new Button(toolsContainer, SWT.CHECK);
+		btnZeigeGelesene.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				prepareLoadNewHitData();
+			}
+		});
+		btnZeigeGelesene.setText("zeige gelesene");
 		
 		Button btnAktualisieren = new Button(toolsContainer, SWT.NONE);
 		btnAktualisieren.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				//TODO datum aus GUI holen
-//				DBConnectionHD.refreshHitAEData(new Date(1411682370357L));
-				handleDateTimeEvent();
+				prepareLoadNewHitData();
 			}
 		});
 		btnAktualisieren.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, false, false, 1, 1));
 		btnAktualisieren.setText("Aktualisieren");
-		
-		Button btnZeigeGelesene = new Button(toolsContainer, SWT.CHECK);
-		btnZeigeGelesene.setText("zeige gelesene");
-		new Label(toolsContainer, SWT.NONE);
 		
 		Button btnSpeichern = new Button(toolsContainer, SWT.NONE);
 		btnSpeichern.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, false, false, 1, 1));
@@ -109,12 +146,28 @@ public class HitAEView extends ViewPart implements AEObserver {
 		//TODO hier und wo sonst noetig scrollable machen
 //		hitAEScroller = new ScrolledComposite(parent, SWT.V_SCROLL);
 		hitAEContainer = new Composite(parent, SWT.NONE);
+		hitAEContainer.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
 		hitAEContainer.setLayout(new GridLayout(1, false));
 		hitAEHeader = new Composite(hitAEContainer, SWT.NONE);
-		hitAEHeader.setLayout(new GridLayout(3, false));
-		(new Label(hitAEHeader, SWT.NONE)).setText("Farm");
-		(new Label(hitAEHeader, SWT.NONE)).setText("WKA");
-		(new Label(hitAEHeader, SWT.NONE)).setText("Value");
+		hitAEHeader.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
+		hitAEHeader.setLayout(new GridLayout(5, false));
+		Label label = new Label(hitAEHeader, SWT.NONE);
+		label.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, false, false, 1, 1));
+		label.setText("Farm");
+		Label label_1 = new Label(hitAEHeader, SWT.NONE);
+		label_1.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, false, false, 1, 1));
+		label_1.setText("WKA");
+		Label label_2 = new Label(hitAEHeader, SWT.NONE);
+		label_2.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, false, false, 1, 1));
+		label_2.setText("Value");
+		
+		Label lblCheck = new Label(hitAEHeader, SWT.NONE);
+		lblCheck.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, false, false, 1, 1));
+		lblCheck.setText("Check");
+		
+		Label lblComment = new Label(hitAEHeader, SWT.NONE);
+		lblComment.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, false, false, 1, 1));
+		lblComment.setText("Comment");
 //		hitAEScroller.setContent(hitAEContainer);
 //		hitAEScroller.setMinSize(hitAEContainer.computeSize(SWT.DEFAULT, SWT.DEFAULT));
 		hitAEContainer.layout();
@@ -147,13 +200,12 @@ public class HitAEView extends ViewPart implements AEObserver {
 		}
 	}
 
-	private void handleDateTimeEvent() {
-		GregorianCalendar cal = new GregorianCalendar();
-		System.out.println(System.currentTimeMillis());
-		//FIXME
-		cal.set(swtDate.getYear(),swtDate.getMonth(), swtDate.getDay(), swtTime.getHours(), swtTime.getMinutes(), swtTime.getSeconds());
-		System.out.println("TIMESTAMP ausgewaehlt: " + cal.getTime().toString());
-		DBConnectionHD.refreshHitAEData(cal.getTime());
+	private void prepareLoadNewHitData() {
+		GregorianCalendar calSince = new GregorianCalendar();
+		calSince.set(swtDateSince.getYear(),swtDateSince.getMonth(), swtDateSince.getDay(), swtTimeSince.getHours(), swtTimeSince.getMinutes(), swtTimeSince.getSeconds());
+		GregorianCalendar calUntil = new GregorianCalendar();
+		calUntil.set(swtDateUntil.getYear(),swtDateUntil.getMonth(), swtDateUntil.getDay(), swtTimeUntil.getHours(), swtTimeUntil.getMinutes(), swtTimeUntil.getSeconds());
+		DBConnectionHD.refreshHitAEData(calSince.getTime(), calUntil.getTime(), btnZeigeGelesene.getSelection());
 	}
 
 	@Override

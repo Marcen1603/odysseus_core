@@ -151,16 +151,19 @@ public class DBConnectionHD extends AbstractDatabaseConnectionFactory {
 	
 	}
 	
-	public static void refreshHitAEData(Date utilTimestamp) {
-		Timestamp timestamp = new Timestamp(utilTimestamp.getTime());
+	public static void refreshHitAEData(Date sinceDate, Date untilDate, boolean showConfirmedBool) {
+		Timestamp sinceTimestamp = new Timestamp(sinceDate.getTime());
+		Timestamp untilTimestamp = new Timestamp(untilDate.getTime());
+		int showConfirmed = showConfirmedBool ? 1: 0;
 		ResultSet rs = null;
 		
 			HitAEData.clearEntryList();
 			
 		    try {
-		    	CallableStatement cStmt = conn.prepareCall("{call hit_ae_procedure(?)}");
-		    	// TODO
-		    	cStmt.setTimestamp(1, timestamp);
+		    	CallableStatement cStmt = conn.prepareCall("{call hit_ae_procedure(?, ?, ?)}");
+		    	cStmt.setTimestamp(1, sinceTimestamp);
+		    	cStmt.setTimestamp(2, untilTimestamp);
+		    	cStmt.setInt(3, showConfirmed);
 		    
 		    	if (cStmt.execute()) {
 		    		rs = cStmt.getResultSet();
