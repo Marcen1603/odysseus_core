@@ -23,6 +23,7 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecu
 import de.uniol.inf.is.odysseus.p2p_new.IP2PNetworkManager;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.IP2PDictionary;
 import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryPeerFailureDetector;
+import de.uniol.inf.is.odysseus.peer.recovery.internal.JxtaInformation;
 import de.uniol.inf.is.odysseus.peer.recovery.internal.RecoveryCommunicator;
 import de.uniol.inf.is.odysseus.peer.recovery.util.LocalBackupInformationAccess;
 import de.uniol.inf.is.odysseus.peer.recovery.util.RecoveryHelper;
@@ -122,9 +123,10 @@ public class RecoveryConsole implements CommandProvider {
 		StringBuilder sb = new StringBuilder();
 		sb.append("---Recovery commands---\n");
 		sb.append("	lsBackupStore - Lists the stored sharedQueryIds with a list of peers which have parts of this sharedQuery. sharedQueryId: peer1, peer2, peer3\n");
+		sb.append("	lsJxtaBackup - Lists the stored Jxta-backup-info.\n");
 		sb.append("	showPeerPQL <PeerName> - Shows the PQL that this peer knows from <PeerName>.\n");
 		sb.append("	sendHoldOn <PeerName from receiver> <sharedQueryId> - Send a hold-on message to <PeerName from receiver>, so that this should stop sending the tuples from query <sharedQueryId> further.\n");
-		sb.append("	sendNewReceiver <PeerName from receiver> <sharedQueryId> - Send a newReceiver-message to <PeerName from receiver>, so that this should send the tuples from query <sharedQueryId> to a new receiver.\n");
+		sb.append("	sendNewReceiver <PeerName from receiver> <PeerName from new receiver> <sharedQueryId> - Send a newReceiver-message to <PeerName from receiver>, so that this should send the tuples from query <sharedQueryId> to the new receiver <PeerName from new receiver>.\n");
 		sb.append("	sendAddQueriesFromPeer <PeerName from receiver> <PeerName from failed peer> - The <PeerName from receiver> will get a message which tells that the peer has to install all queries from <PeerName from failed peer>. \n");
 		sb.append("	startPeerFailureDetection - Starts detection of peer failures. \n");
 		sb.append("	stopPeerFailureDetection - Stops detection of peer failures. \n");
@@ -236,6 +238,33 @@ public class RecoveryConsole implements CommandProvider {
 		}
 
 		System.out.println(sb.toString());
+	}
+
+	public void _lsJxtaBackup(CommandInterpreter ci) {
+		Preconditions.checkNotNull(ci, "Command interpreter must not be null!");
+
+		String peerName = ci.nextArgument();
+
+		Optional<PeerID> peer = RecoveryHelper.determinePeerID(peerName);
+
+		if(!peer.isPresent()) {
+			System.out.println("Don't know the peer " + peerName);
+			return;
+		}
+		
+		List<JxtaInformation> jxtaInfo = LocalBackupInformationAccess
+				.getJxtaInfoForPeer(peer.get());
+		if (jxtaInfo == null || jxtaInfo.isEmpty()) {
+			System.out.println("No jxta-information about the peer " + peerName
+					+ " (" + peer.get() + ")");
+			return;
+		}
+		for (JxtaInformation info : jxtaInfo) {
+			System.out.println("Jxta-information about the peer " + peerName
+					+ " (" + peer.get() + ")");
+			System.out.println("QueryID: " + info.getSharedQueryID());
+			System.out.println(info.getKey() + " : " + info.getValue());
+		}
 	}
 
 	/**

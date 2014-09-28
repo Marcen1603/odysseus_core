@@ -28,6 +28,8 @@ public interface IRecoveryCommunicator {
 	 */
 	public void sendBackupInformation(PeerID peerId, ID sharedQueryId,
 			Map<PeerID, Collection<String>> backupInformation);
+	
+	public void sendBackupJxtaInformation(PeerID peerId, ID sharedQueryId, String key, String value);
 
 	public void recover(PeerID failedPeer);
 

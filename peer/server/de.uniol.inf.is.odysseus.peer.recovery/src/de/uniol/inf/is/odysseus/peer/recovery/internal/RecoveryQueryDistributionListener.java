@@ -1,6 +1,7 @@
 package de.uniol.inf.is.odysseus.peer.recovery.internal;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 
 import net.jxta.id.ID;
@@ -14,8 +15,12 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
+import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
+import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.p2p_new.IP2PNetworkManager;
+import de.uniol.inf.is.odysseus.p2p_new.logicaloperator.JxtaReceiverAO;
+import de.uniol.inf.is.odysseus.p2p_new.logicaloperator.JxtaSenderAO;
 import de.uniol.inf.is.odysseus.peer.distribute.ILogicalQueryPart;
 import de.uniol.inf.is.odysseus.peer.distribute.listener.AbstractQueryDistributionListener;
 import de.uniol.inf.is.odysseus.peer.distribute.util.LogicalQueryHelper;
@@ -195,6 +200,41 @@ public class RecoveryQueryDistributionListener extends
 
 				}
 
+				// Save information about JXTA
+				// TODO Where can I access information about the JXTA-operators?
+
+				List<ILogicalOperator> operators = Lists
+						.newArrayList(subsequentPart.getOperators());
+				List<ILogicalOperator> visitedOperators = Lists.newArrayList();
+				while (!operators.isEmpty()) {
+					ILogicalOperator operator = operators.remove(0);
+
+					collectOperatorsWithSubscriptions(operator,
+							visitedOperators);
+				}
+
+				// Hopefully, we have now more in visitedOperators (including
+				// jxtaSender and receiver?)
+
+				String key = "";
+				String value = "";
+				for (ILogicalOperator logicalOp : visitedOperators) {
+					if (logicalOp instanceof JxtaSenderAO) {
+						JxtaSenderAO sender = (JxtaSenderAO) logicalOp;
+						value = sender.getPipeID();
+						key = RecoveryCommunicator.JXTA_KEY_SENDER_PIPE_ID;
+						cCommunicator.get().sendBackupJxtaInformation(peerID,
+								sharedQueryId, key, value);
+					} else if (logicalOp instanceof JxtaReceiverAO) {
+						JxtaReceiverAO receiver = (JxtaReceiverAO) logicalOp;
+						value = receiver.getPipeID();
+						key = RecoveryCommunicator.JXTA_KEY_RECEIVER_PIPE_ID;
+						cCommunicator.get().sendBackupJxtaInformation(peerID,
+								sharedQueryId, key, value);
+					}
+
+				}
+
 			}
 
 			if (subsequentPQLStatements.isEmpty()) {
@@ -215,6 +255,23 @@ public class RecoveryQueryDistributionListener extends
 
 		}
 
+	}
+
+	private static void collectOperatorsWithSubscriptions(
+			ILogicalOperator operator, List<ILogicalOperator> visitedOperators) {
+		if (!visitedOperators.contains(operator)) {
+			visitedOperators.add(operator);
+
+			for (LogicalSubscription sub : operator.getSubscribedToSource()) {
+				collectOperatorsWithSubscriptions(sub.getTarget(),
+						visitedOperators);
+			}
+
+			for (LogicalSubscription sub : operator.getSubscriptions()) {
+				collectOperatorsWithSubscriptions(sub.getTarget(),
+						visitedOperators);
+			}
+		}
 	}
 
 }

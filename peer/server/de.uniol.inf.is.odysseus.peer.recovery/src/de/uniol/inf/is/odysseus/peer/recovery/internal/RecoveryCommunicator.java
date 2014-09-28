@@ -22,6 +22,7 @@ import de.uniol.inf.is.odysseus.p2p_new.PeerCommunicationException;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.IP2PDictionary;
 import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryCommunicator;
 import de.uniol.inf.is.odysseus.peer.recovery.messages.BackupInformationMessage;
+import de.uniol.inf.is.odysseus.peer.recovery.messages.BackupJxtaInfoMessage;
 import de.uniol.inf.is.odysseus.peer.recovery.messages.RecoveryInstructionMessage;
 import de.uniol.inf.is.odysseus.peer.recovery.protocol.RecoveryInstructionHandler;
 import de.uniol.inf.is.odysseus.peer.recovery.util.LocalBackupInformationAccess;
@@ -63,6 +64,9 @@ public class RecoveryCommunicator implements IRecoveryCommunicator,
 	 * 
 	 */
 	// @formatter:on
+
+	public static final String JXTA_KEY_RECEIVER_PIPE_ID = "receiverPipeId";
+	public static final String JXTA_KEY_SENDER_PIPE_ID = "senderPipeId";
 
 	private static IP2PNetworkManager p2pNetworkManager;
 	private static IP2PDictionary p2pDictionary;
@@ -129,6 +133,8 @@ public class RecoveryCommunicator implements IRecoveryCommunicator,
 		peerCommunicator.addListener(this, RecoveryInstructionMessage.class);
 		peerCommunicator.registerMessageType(BackupInformationMessage.class);
 		peerCommunicator.addListener(this, BackupInformationMessage.class);
+		peerCommunicator.registerMessageType(BackupJxtaInfoMessage.class);
+		peerCommunicator.addListener(this, BackupJxtaInfoMessage.class);
 	}
 
 	/**
@@ -145,6 +151,9 @@ public class RecoveryCommunicator implements IRecoveryCommunicator,
 					RecoveryInstructionMessage.class);
 			peerCommunicator
 					.unregisterMessageType(RecoveryInstructionMessage.class);
+			peerCommunicator.removeListener(this,
+					BackupInformationMessage.class);
+			peerCommunicator.removeListener(this, BackupJxtaInfoMessage.class);
 			peerCommunicator = null;
 		}
 	}
@@ -275,6 +284,13 @@ public class RecoveryCommunicator implements IRecoveryCommunicator,
 					biMessage.getSharedQueryID(),
 					biMessage.geBackupInformation());
 
+		} else if (message instanceof BackupJxtaInfoMessage) {
+			BackupJxtaInfoMessage jxtaMessage = (BackupJxtaInfoMessage) message;
+
+			// Store the backup information
+			LocalBackupInformationAccess.storeLocalJxtaInfo(
+					jxtaMessage.getPeerId(), jxtaMessage.getSharedQueryId(),
+					jxtaMessage.getKey(), jxtaMessage.getValue());
 		}
 	}
 
@@ -297,6 +313,20 @@ public class RecoveryCommunicator implements IRecoveryCommunicator,
 
 		}
 
+	}
+
+	public void sendBackupJxtaInformation(PeerID peerId, ID sharedQueryId,
+			String key, String value) {
+		// Send info to all other peers
+		BackupJxtaInfoMessage message = new BackupJxtaInfoMessage(peerId,
+				sharedQueryId, key, value);
+		for (PeerID destinationPeer : p2pDictionary.getRemotePeerIDs())
+			try {
+				peerCommunicator.send(destinationPeer, message);
+			} catch (PeerCommunicationException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 	}
 
 }

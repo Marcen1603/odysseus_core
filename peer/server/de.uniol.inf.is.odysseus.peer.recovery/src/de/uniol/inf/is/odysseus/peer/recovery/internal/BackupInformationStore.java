@@ -1,6 +1,8 @@
 package de.uniol.inf.is.odysseus.peer.recovery.internal;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -40,6 +42,13 @@ public class BackupInformationStore implements IRecoveryBackupInformationStore {
 	 */
 	private final Map<ID, BackupInformation> mInfoMap = Maps.newHashMap();
 
+	/**
+	 * Map for additional information mapped to their shared query (it's id).
+	 * E.g. for pipe-Ids, etc.
+	 */
+	private final Map<PeerID, List<JxtaInformation>> mJxtaInfoMap = Maps
+			.newHashMap();
+
 	@Override
 	public boolean addSharedQuery(ID sharedQueryId,
 			Map<PeerID, Collection<String>> pqlStatementsMap) {
@@ -73,12 +82,6 @@ public class BackupInformationStore implements IRecoveryBackupInformationStore {
 	public boolean addPQLStatement(ID sharedQueryId, PeerID peerId,
 			String pqlStatement) {
 
-		Preconditions
-				.checkNotNull(sharedQueryId,
-						"The id of the shared query to store backup information must be not null!");
-		Preconditions
-				.checkNotNull(peerId,
-						"The id of the allocated peer to storebackup information must be not null!");
 		Preconditions.checkNotNull(pqlStatement,
 				"The pql statement to store must be not null!");
 
@@ -99,6 +102,35 @@ public class BackupInformationStore implements IRecoveryBackupInformationStore {
 
 		return true;
 
+	}
+
+	@Override
+	public boolean addJxtaInfo(PeerID peerId, ID sharedQueryId, String key,
+			String value) {
+
+		Preconditions
+				.checkNotNull(sharedQueryId,
+						"The id of the shared query to store backup information must be not null!");
+		Preconditions
+				.checkNotNull(peerId,
+						"The id of the allocated peer to storebackup information must be not null!");
+
+		if (!mJxtaInfoMap.containsKey(peerId)) {
+			// We don't have information about this peer -> add List
+			List<JxtaInformation> jxtaInfo = new ArrayList<JxtaInformation>();
+			mJxtaInfoMap.put(peerId, jxtaInfo);
+		}
+		JxtaInformation newInfo = new JxtaInformation(sharedQueryId, key, value);
+		mJxtaInfoMap.get(peerId).add(newInfo);
+
+		return true;
+	}
+	
+	public List<JxtaInformation> getJxtaInfoForPeer(PeerID peerId) {
+		if(!mJxtaInfoMap.containsKey(peerId)) {
+			return null;
+		}
+		return mJxtaInfoMap.get(peerId);
 	}
 
 	@Override

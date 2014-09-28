@@ -16,6 +16,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableCollection;
 
 import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryBackupInformationStore;
+import de.uniol.inf.is.odysseus.peer.recovery.internal.JxtaInformation;
 import de.uniol.inf.is.odysseus.peer.recovery.internal.SharedQuery;
 
 /**
@@ -112,6 +113,52 @@ public class LocalBackupInformationAccess {
 	}
 
 	/**
+	 * Stores a key-value pair for a certain shared query on a certain peer.
+	 * E.g. pipe-ids, etc.
+	 * 
+	 * @param peerId
+	 *            PeerID from the peer from which the info is (e.g. if you store
+	 *            the pipe-id for a jxtaReceiver, this is the peer where the
+	 *            jxtaReceiver is installed on)
+	 * @param sharedQueryId
+	 *            Id of the shared query for which this information is (e.g. if
+	 *            you store the pipe-id for a jxtaReceiver, this is the queryId
+	 *            from the certain jxtaReceiver)
+	 * @param key
+	 *            Key for the key-value-pair
+	 * @param value
+	 *            value for the key-value-pair, e.g. the pipe-id
+	 */
+	public static void storeLocalJxtaInfo(PeerID peerId, ID sharedQueryId,
+			String key, String value) {
+		if (!cInfoStore.isPresent()) {
+
+			LOG.error("No backup information store for recovery bound!");
+			return;
+
+		}
+		cInfoStore.get().addJxtaInfo(peerId, sharedQueryId, key, value);
+	}
+
+	/**
+	 * All jxta-information that is stored for a given peer
+	 * 
+	 * @param peerId
+	 *            The id of the peer you want to have the information about
+	 * @return A list of jxta-information about the given peer
+	 */
+	public static List<JxtaInformation> getJxtaInfoForPeer(PeerID peerId) {
+		if (!cInfoStore.isPresent()) {
+
+			LOG.error("No backup information store for recovery bound!");
+			return null;
+
+		}
+
+		return cInfoStore.get().getJxtaInfoForPeer(peerId);
+	}
+
+	/**
 	 * Returns the stored PQL-Statements for a given PeerID and sharedQueryID.
 	 * 
 	 * @param sharedQueryId
@@ -132,9 +179,10 @@ public class LocalBackupInformationAccess {
 		return cInfoStore.get().getStoredPQLStatements(sharedQueryId, peerId);
 
 	}
-	
+
 	/**
 	 * Returns the stored PQL-Statements for a given PeerID.
+	 * 
 	 * @param peerId
 	 * @return
 	 */
@@ -145,19 +193,19 @@ public class LocalBackupInformationAccess {
 			return null;
 
 		}
-		
-		List<SharedQuery> sharedQueries = new ArrayList<SharedQuery>(); 
-		
+
+		List<SharedQuery> sharedQueries = new ArrayList<SharedQuery>();
+
 		List<ID> storedIds = getStoredSharedQueryIdsForPeer(peerId);
-		
-		for(ID id : storedIds) {
+
+		for (ID id : storedIds) {
 			ImmutableCollection<String> pql = getStoredPQLStatements(id, peerId);
 			List<String> pqlForQuery = new ArrayList<String>();
 			pqlForQuery.addAll(pql);
 			SharedQuery query = new SharedQuery(id, pqlForQuery);
 			sharedQueries.add(query);
 		}
-		
+
 		return sharedQueries;
 	}
 
@@ -195,24 +243,26 @@ public class LocalBackupInformationAccess {
 
 	/**
 	 * Returns all shared query-ids which have a query part on the given peer
-	 * @param peerId Peer you want to have the sharedQueryIds from
+	 * 
+	 * @param peerId
+	 *            Peer you want to have the sharedQueryIds from
 	 * @return
 	 */
-	public static List<ID> getStoredSharedQueryIdsForPeer(
-			PeerID peerId) {
+	public static List<ID> getStoredSharedQueryIdsForPeer(PeerID peerId) {
 		if (!cInfoStore.isPresent()) {
 
 			LOG.error("No backup information store for recovery bound!");
 			return null;
 
 		}
-		
+
 		List<ID> sharedQueryIds = new ArrayList<ID>();
 
 		for (ID queryId : cInfoStore.get().getStoredSharedQueries()) {
 			for (PeerID peer : cInfoStore.get().getStoredPeers(queryId)) {
 				if (peer.equals(peerId)) {
-					// This is what we search: For this peer we have a sharedQueryId
+					// This is what we search: For this peer we have a
+					// sharedQueryId
 					sharedQueryIds.add(queryId);
 				}
 			}
