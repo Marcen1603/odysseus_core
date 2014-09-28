@@ -82,6 +82,7 @@ public class DetailView extends ViewPart implements Observer{
 				dateTimeContainer.setLayout(new GridLayout(2, false));
 				
 						swtDate = new DateTime(dateTimeContainer, SWT.BORDER | SWT.LONG);
+						swtDate.setDate(1970, 0, 1);
 						swtDate.addSelectionListener(new SelectionListener() {
 
 							@Override
@@ -95,8 +96,8 @@ public class DetailView extends ViewPart implements Observer{
 							}
 
 						});
-						//TODO default-wert setzen
 								swtTime = new DateTime(dateTimeContainer, SWT.BORDER | SWT.TIME);
+								swtTime.setTime(0, 0, 0);
 								swtTime.addSelectionListener(new SelectionListener() {
 
 									@Override
@@ -185,33 +186,32 @@ public class DetailView extends ViewPart implements Observer{
 	 *            In der ListView selektierte WKA
 	 */
 	public static void setSelectedWKA(WKA wka) {
-		
 		selectedWKA = wka;
-
 		if (selectedWKA == null) {
 			nameWKA.setText("");
-			// TODO: alle anderen Felder leeren
 		} else {
 			nameWKA.setText(String.valueOf(selectedWKA.getID()));
-			printHitWKAData();
-
-			for (Control c : pitchComp.getChildren()) {
-				c.dispose();
-			}
-			pitchComp.layout();
-			pitchPart = new PitchPart();
-			pitchPart.createPartControl(pitchComp, selectedWKA);
-			pitchComp.layout();
-
-			for (Control c : phaseComp.getChildren()) {
-				c.dispose();
-			}
-			phaseComp.layout();
-			phaseShiftPart = new PhaseShiftPart();
-			phaseShiftPart.createPartControl(phaseComp, selectedWKA);
-			phaseComp.layout();
+			setNewDPVs();
 		}
+		printHitWKAData();
+	}
+	
+	private static void setNewDPVs() {
+		for (Control c : pitchComp.getChildren()) {
+			c.dispose();
+		}
+		pitchComp.layout();
+		pitchPart = new PitchPart();
+		pitchPart.createPartControl(pitchComp, selectedWKA);
+		pitchComp.layout();
 
+		for (Control c : phaseComp.getChildren()) {
+			c.dispose();
+		}
+		phaseComp.layout();
+		phaseShiftPart = new PhaseShiftPart();
+		phaseShiftPart.createPartControl(phaseComp, selectedWKA);
+		phaseComp.layout();
 	}
 
 	private void handleDateTimeEvent() {
@@ -235,7 +235,7 @@ public class DetailView extends ViewPart implements Observer{
 	}
 
 	private static void printHitWKAData() {
-		if (selectedWKA.getHitWKAData() != null) {
+		if (selectedWKA != null && selectedWKA.getHitWKAData() != null) {
 			HitWKAData hitData = selectedWKA.getHitWKAData();
 			hitPerformance.setText(1, String.valueOf(hitData.getAvgPerformance()));
 			hitPerformance.setText(2, String.valueOf(hitData.getMinPerformance()));
@@ -248,7 +248,16 @@ public class DetailView extends ViewPart implements Observer{
 			hitRotationalSpeed.setText(2, String.valueOf(hitData.getMinRotationalSpeed()));
 			hitRotationalSpeed.setText(3, String.valueOf(hitData.getMaxRotationalSpeed()));
 		} else {
-			// no historical Data Found
+			hitPerformance.setText(1, "");
+			hitPerformance.setText(2, "");
+			hitPerformance.setText(3, "");
+			hitWindDirection.setText(1, "");
+			hitWindSpeed.setText(1, "");
+			hitWindSpeed.setText(2, "");
+			hitWindSpeed.setText(3, "");
+			hitRotationalSpeed.setText(1, "");
+			hitRotationalSpeed.setText(2, "");
+			hitRotationalSpeed.setText(3, "");
 		}
 	}
 	

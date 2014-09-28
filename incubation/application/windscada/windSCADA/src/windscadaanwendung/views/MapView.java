@@ -23,10 +23,6 @@ public class MapView extends ViewPart {
 	static String content;
 	static String addScript;
 
-	public MapView() {
-		// TODO Auto-generated constructor stub
-	}
-
 	@Override
 	public void createPartControl(Composite parent) {
 	    content = "";
@@ -78,7 +74,6 @@ public class MapView extends ViewPart {
 
 	@Override
 	public void setFocus() {
-		// TODO Auto-generated method stub
 	}
 
 }

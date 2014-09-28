@@ -7,7 +7,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.Date;
-import java.util.Properties;
+import java.util.Map;
 
 import windscadaanwendung.ca.FarmList;
 import windscadaanwendung.ca.WKA;
@@ -16,40 +16,19 @@ import windscadaanwendung.hd.HitWKAData;
 import windscadaanwendung.hd.HitWindFarmData;
 import windscadaanwendung.hd.ae.AEEntry;
 import windscadaanwendung.hd.ae.HitAEData;
-import de.uniol.inf.is.odysseus.database.connection.AbstractDatabaseConnectionFactory;
 import de.uniol.inf.is.odysseus.database.connection.DatabaseConnection;
-import de.uniol.inf.is.odysseus.database.connection.IDatabaseConnection;
+import de.uniol.inf.is.odysseus.database.drivers.MySQLConnectionFactory;
 
-public class DBConnectionHD extends AbstractDatabaseConnectionFactory {
-	
-	//TODO: evtl in GUI abfragen
-	public static String server = "duemmer.informatik.uni-oldenburg.de";
-	public static int port = 1426;
-	public static String database = "WindSCADAServer";
-	public static String user = "WindSCADAServer";
-	public static String password = "Wind0815serv";
+public class DBConnectionHD {
+
 	public static Connection conn = null;
-	
-	//TODO: evtl durch export des packages redundanten code verhindern
-	@Override
-	public IDatabaseConnection createConnection(String server, int port, String database, String user, String password) {
-		Properties connectionProps = getCredentials(user, password);
-		if(port==-1){
-			port = 3306;
-		}
-		if(server==null || server.isEmpty()){
-			server = "localhost";
-		}			
-		String connString = "jdbc:mysql://" + server + ":" + port + "/" + database;		
-		return new DatabaseConnection(connString, connectionProps);
-	}
-	
-	public DBConnectionHD() {
-	}
+	private static Map<String, String> credentials;
 	
 	public static void setNewConnection() {
 		if (conn == null) {
-			DatabaseConnection dbconn = (DatabaseConnection) (new DBConnectionHD()).createConnection(server, port, database, user, password);
+			credentials = DBConnectionCredentials.load("config/HDDBConnCredentials.txt");
+			credentials.get("server");
+			DatabaseConnection dbconn = (DatabaseConnection) (new MySQLConnectionFactory()).createConnection(credentials.get("server"), Integer.parseInt(credentials.get("port")), credentials.get("database"), credentials.get("user"), credentials.get("password"));
 			
 			try {
 				conn = dbconn.getConnection();

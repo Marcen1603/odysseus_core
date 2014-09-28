@@ -11,7 +11,6 @@ public class WindFarm extends Observable {
 	private HitWindFarmData hitWindFarmData;
 	private int id;
 	private List<WKA> wkas;
-	//TODO: add scripts;
 	
 	public List<WKA> getWkas() {
 		return wkas;

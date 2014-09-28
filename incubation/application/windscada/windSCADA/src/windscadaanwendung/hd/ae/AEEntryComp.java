@@ -18,7 +18,7 @@ public class AEEntryComp extends Composite {
 	private Text time;
 	private Button btnConfirm;
 	private Text comment;
-	private AEEntry aeEntry;
+	public AEEntry aeEntry;
 	private boolean changed = false;
 
 	/**
@@ -81,8 +81,6 @@ public class AEEntryComp extends Composite {
 			
 		});
 	}
-
-	
 
 	/**
 	 * @return the aeEntry

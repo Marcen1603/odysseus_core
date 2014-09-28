@@ -1,50 +1,29 @@
 package windscadaanwendung.db;
 
-import java.sql.Statement;
-import java.sql.ResultSet;
 import java.sql.Connection;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Properties;
+import java.util.Map;
 
-import de.uniol.inf.is.odysseus.database.connection.DatabaseConnection;
-import de.uniol.inf.is.odysseus.database.connection.IDatabaseConnection;
-import de.uniol.inf.is.odysseus.database.connection.AbstractDatabaseConnectionFactory;
 import windscadaanwendung.ca.WKA;
 import windscadaanwendung.ca.WindFarm;
+import de.uniol.inf.is.odysseus.database.connection.DatabaseConnection;
+import de.uniol.inf.is.odysseus.database.drivers.MySQLConnectionFactory;
 
-public class DBConnection extends AbstractDatabaseConnectionFactory {
-	
-	//TODO: evtl in GUI abfragen
-	public static String server = "duemmer.informatik.uni-oldenburg.de";
-	public static int port = 1426;
-	public static String database = "WindSCADAClient";
-	public static String user = "WindSCADAClient";
-	public static String password = "Wind0815clit";
+public class DBConnectionCA {
+
 	public static Connection conn = null;
-	
-	//TODO: evtl durch export des packages redundanten code verhindern
-	@Override
-	public IDatabaseConnection createConnection(String server, int port, String database, String user, String password) {
-		Properties connectionProps = getCredentials(user, password);
-		if(port==-1){
-			port = 3306;
-		}
-		if(server==null || server.isEmpty()){
-			server = "localhost";
-		}			
-		String connString = "jdbc:mysql://" + server + ":" + port + "/" + database;		
-		return new DatabaseConnection(connString, connectionProps);
-	}
-	
-	public DBConnection() {
-	}
+	private static Map<String, String> credentials;
 	
 	public static void setNewConnection() {
 		try {
 			if (conn == null || conn.isClosed()) {
-				DatabaseConnection dbconn = (DatabaseConnection) (new DBConnection()).createConnection(server, port, database, user, password);
+				credentials = DBConnectionCredentials.load("config/CADBConnCredentials.txt");
+				credentials.get("server");
+				DatabaseConnection dbconn = (DatabaseConnection) (new MySQLConnectionFactory()).createConnection(credentials.get("server"), Integer.parseInt(credentials.get("port")), credentials.get("database"), credentials.get("user"), credentials.get("password"));
 				conn = dbconn.getConnection();
 			}
 		} catch (SQLException e) {
@@ -96,7 +75,6 @@ public class DBConnection extends AbstractDatabaseConnectionFactory {
 		    	actWka.setPort(rs.getInt("PORT"));
 		    	actWka.setLatitude(rs.getDouble("LATITUDE"));
 		    	actWka.setLongtude(rs.getDouble("LONGTUDE"));
-		    	//TODO: Scripte einlesen (auch f��r windfarmen)
 		    	// search for the windFarm of this WKA
 		    	for (WindFarm farm: farms) {
 		    		if (farm.getID() == rs.getInt("FARM.ID")) {

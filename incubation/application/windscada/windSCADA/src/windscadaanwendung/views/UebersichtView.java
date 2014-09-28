@@ -65,7 +65,8 @@ public class UebersichtView extends ViewPart implements Observer {
 		lblDateSince.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
 		lblDateSince.setText("Daten seit:");
 		
-		swtDateSince = new DateTime(composite, SWT.BORDER | SWT.LONG);		
+		swtDateSince = new DateTime(composite, SWT.BORDER | SWT.LONG);
+		swtDateSince.setDate(1970, 0, 0);
 		swtDateSince.addSelectionListener(new SelectionListener() {
 
 			@Override
@@ -80,6 +81,7 @@ public class UebersichtView extends ViewPart implements Observer {
 
 		});
 		swtTimeSince = new DateTime(composite, SWT.BORDER | SWT.TIME);
+		swtTimeSince.setTime(0, 0, 0);
 		swtTimeSince.addSelectionListener(new SelectionListener() {
 
 			@Override
@@ -152,7 +154,6 @@ public class UebersichtView extends ViewPart implements Observer {
 					} else {
 						txtHit.setText("No Data");
 					}
-					//TODO: implementieren, dass nach x sekunden die historischen Daten aktualisiert werden?
 					
 				}
 				wkaContainer.layout();

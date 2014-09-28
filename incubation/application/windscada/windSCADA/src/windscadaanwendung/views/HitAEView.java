@@ -35,10 +35,6 @@ public class HitAEView extends ViewPart implements AEObserver {
 	private static DateTime swtTimeUntil;
 	private static Button btnZeigeGelesene;
 
-	public HitAEView() {
-		// TODO Auto-generated constructor stub
-	}
-
 	@Override
 	public void createPartControl(final Composite parent) {
 		parent.setLayout(new GridLayout(1, false));
@@ -210,8 +206,6 @@ public class HitAEView extends ViewPart implements AEObserver {
 
 	@Override
 	public void setFocus() {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
