@@ -1,0 +1,20 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Imagejcv
+Bundle-SymbolicName: de.uniol.inf.is.odysseus.imagejcv
+Bundle-Version: 1.0.0.qualifier
+Bundle-Activator: de.uniol.inf.is.odysseus.imagejcv.Activator
+Bundle-Vendor: Kristian Bruns
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Import-Package: com.google.common.base,
+ de.uniol.inf.is.odysseus.imagejcv.common.datatype,
+ de.uniol.inf.is.odysseus.imagejcv.common.sdf.schema,
+ de.uniol.inf.is.odysseus.mep,
+ org.osgi.framework;version="1.6.0",
+ org.slf4j
+Require-Bundle: de.uniol.inf.is.odysseus.core.server;bundle-version="1.0.0",
+ de.uniol.inf.is.odysseus.core;bundle-version="1.0.0",
+ org.bytedeco.javacv;bundle-version="0.8.0"
+Bundle-ActivationPolicy: lazy
+Bundle-ClassPath: .
+Service-Component: OSGI-INF/*
