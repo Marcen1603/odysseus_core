@@ -10,6 +10,11 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Text;
 
+/**
+ * This class is the GUI of a AEEntry. It extends a SWT-Composite.
+ * @author MarkMilster
+ *
+ */
 public class AEEntryComp extends Composite {
 
 	protected Text lblFarm_id;
@@ -22,6 +27,8 @@ public class AEEntryComp extends Composite {
 	private boolean changed = false;
 
 	/**
+	 * Flag if there where changes made in the GUI
+	 * 
 	 * @return the changed
 	 */
 	public boolean isChanged() {
@@ -31,14 +38,20 @@ public class AEEntryComp extends Composite {
 
 
 	/**
+	 * Set this if you change the GUI, e.g. insert something into the textfield.
+	 * 
 	 * @param changed the changed to set
 	 */
 	public void setChanged(boolean changed) {
 		this.changed = changed;
 	}
 
-
-
+	/**
+	 * 
+	 * @param parent The parent Composite
+	 * @param style The style
+	 * @param aeEntry	The AEEntry with the data which should be shown by this GUI
+	 */
 	public AEEntryComp(Composite parent, int style, final AEEntry aeEntry) {
 		super(parent, style);
 		setLayout(new GridLayout(6, false));
@@ -83,6 +96,8 @@ public class AEEntryComp extends Composite {
 	}
 
 	/**
+	 * The data which are shown by this GUI
+	 * 
 	 * @return the aeEntry
 	 */
 	public AEEntry getAeEntry() {

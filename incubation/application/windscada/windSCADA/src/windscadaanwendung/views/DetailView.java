@@ -1,6 +1,3 @@
-/**
- * 
- */
 package windscadaanwendung.views;
 
 import java.util.GregorianCalendar;

@@ -1,5 +1,11 @@
 package windscadaanwendung.hd.ae;
 
+/**
+ * This class represents the data of a historical event which was caused because of the measurements.
+ * 
+ * @author MarkMilster
+ *
+ */
 public class AEEntry {
 	
 	private boolean warning;
@@ -12,11 +18,8 @@ public class AEEntry {
 	private String comment = "";
 	private int id;
 	
-	public AEEntry() {
-	}
-	
 	/**
-	 * @return the timestamp
+	 * @return the timestamp when the event was caused
 	 */
 	public String getTimestamp() {
 		return timestamp;
@@ -28,7 +31,7 @@ public class AEEntry {
 		this.timestamp = timestamp;
 	}
 	/**
-	 * @return the farmId
+	 * @return the farmId in which this event was caused
 	 */
 	public int getFarmId() {
 		return farmId;
@@ -40,7 +43,7 @@ public class AEEntry {
 		this.farmId = farmId;
 	}
 	/**
-	 * @return the wkaId
+	 * @return the wkaId in which this event was caused
 	 */
 	public int getWkaId() {
 		return wkaId;
@@ -52,7 +55,7 @@ public class AEEntry {
 		this.wkaId = wkaId;
 	}
 	/**
-	 * @return the valueType
+	 * @return the valueType the valueTyp which caused this event (e.g. windSpeed)
 	 */
 	public String getValueType() {
 		return valueType;
@@ -64,6 +67,8 @@ public class AEEntry {
 		this.valueType = valueType;
 	}
 	/**
+	 * true if this was already confirmed
+	 * 
 	 * @return the confirm
 	 */
 	public boolean isConfirm() {
@@ -76,6 +81,8 @@ public class AEEntry {
 		this.confirm = confirm;
 	}
 	/**
+	 * A String which you can youse to comment this event. It can be stored in the database of historical values
+	 * 
 	 * @return the comment
 	 */
 	public String getComment() {
@@ -88,6 +95,7 @@ public class AEEntry {
 		this.comment = comment;
 	}
 	/**
+	 * True if this event is warning (low priority)
 	 * @return the warning
 	 */
 	public boolean isWarning() {
@@ -100,6 +108,8 @@ public class AEEntry {
 		this.warning = warning;
 	}
 	/**
+	 * True if this event is an error (high priority)
+	 * 
 	 * @return the error
 	 */
 	public boolean isError() {
@@ -113,6 +123,8 @@ public class AEEntry {
 	}
 
 	/**
+	 * An unique id of this event to identify it.
+	 * 
 	 * @return the id
 	 */
 	public int getId() {

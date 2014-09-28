@@ -13,11 +13,21 @@ import windscadaanwendung.ca.WindFarm;
 import de.uniol.inf.is.odysseus.database.connection.DatabaseConnection;
 import de.uniol.inf.is.odysseus.database.drivers.MySQLConnectionFactory;
 
+/**
+ * This class manages the Connection to the Config-Database which contains the data about the windFarms
+ * 
+ * @author MarkMilster
+ *
+ */
 public class DBConnectionCA {
 
 	public static Connection conn = null;
 	private static Map<String, String> credentials;
 	
+	/**
+	 * Sets a new Connection to a Database which is specified in config/CADBConnCredentials.txt in the windSCADA bundle, if there is no connection at this time.
+	 * It uses the MySQLConnectionFactory out of Odysseus.
+	 */
 	public static void setNewConnection() {
 		try {
 			if (conn == null || conn.isClosed()) {
@@ -31,6 +41,10 @@ public class DBConnectionCA {
 		}
 	}
 	
+	/**
+	 * Reads all the windFarms and the WKAs out of the Database and mathes them together.
+	 * @return a List of the windFarms
+	 */
 	public static List<WindFarm> getFarmList() {
 		Statement stmt = null;
 		ResultSet rs = null;

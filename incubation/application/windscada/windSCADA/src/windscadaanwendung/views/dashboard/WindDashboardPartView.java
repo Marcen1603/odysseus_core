@@ -11,13 +11,21 @@ import org.eclipse.swt.widgets.Composite;
 
 import de.uniol.inf.is.odysseus.rcp.dashboard.views.DashboardPartView;
 
+/**
+ * This class extends the DashboardPartView and provides special functions and variables for the DashboardPartViews out of the bundle windSCADA they should extend this class
+ * @author MarkMilster
+ *
+ */
 public class WindDashboardPartView extends DashboardPartView {
 
 	public IFile dashboardPartFile;
 	public IProject project;
 	protected String valueType;
 	private final String fileEnding = ".prt";
+	
 	/**
+	 * The fileending of the XML-Files which defines the Dashboardparts
+	 * 
 	 * @return the fileEnding
 	 */
 	public String getFileEnding() {
@@ -25,6 +33,8 @@ public class WindDashboardPartView extends DashboardPartView {
 	}
 
 	/**
+	 * The valuetype of a Dashboardpart (e.g. windspeed)
+	 * 
 	 * @return the valueType
 	 */
 	public String getValueType() {
@@ -32,6 +42,8 @@ public class WindDashboardPartView extends DashboardPartView {
 	}
 
 	/**
+	 * The valuetype of a Dashboardpart (e.g. windspeed)
+	 * 
 	 * @param valueType the valueType to set
 	 */
 	public void setValueType(String valueType) {
@@ -39,6 +51,9 @@ public class WindDashboardPartView extends DashboardPartView {
 	}
 
 	/**
+	 * True if this DashboardpartView shows measurements over a whole windfarm.
+	 * False if this DashboardpartView shows measurements over only one WKA.
+	 * 
 	 * @return the farmPart
 	 */
 	protected boolean isFarmPart() {
@@ -46,6 +61,9 @@ public class WindDashboardPartView extends DashboardPartView {
 	}
 
 	/**
+	 * True if this DashboardpartView shows measurements over a whole windfarm.
+	 * False if this DashboardpartView shows measurements over only one WKA.
+	 * 
 	 * @param farmPart the farmPart to set
 	 */
 	public void setFarmPart(boolean farmPart) {
@@ -57,6 +75,7 @@ public class WindDashboardPartView extends DashboardPartView {
 	@Override
 	public void createPartControl(Composite parent) {
 		super.createPartControl(parent);
+		// initiate the Project GUI in which the XML-Files of the Dashboardparts should be found
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();
 		IWorkspaceRoot workspaceRoot = workspace.getRoot();
 		project = workspaceRoot.getProject("GUI");
@@ -70,6 +89,12 @@ public class WindDashboardPartView extends DashboardPartView {
 		}
 	}
 	 
+	/**
+	 * Loads a dashboardPartFile out of the project GUI in the Odysseus-Workspace and shows the DashboardPart which is defined in this file.
+	 * 
+	 * @param path
+	 * 			The path of the file in the Odysseus-Project GUI
+	 */
 	public void loadDashboardPartFile(String path) {
 		dashboardPartFile = project.getFile(path);
 		

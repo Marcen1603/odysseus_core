@@ -28,6 +28,7 @@ import windscadaanwendung.hd.HitWindFarmData;
 import windscadaanwendung.views.dashboard.CorrectedScoreTfPart;
 
 /**
+ * This class is a View which shows the data of a whole windFarm
  * 
  * @author MarkMilster
  *
@@ -41,10 +42,7 @@ public class UebersichtView extends ViewPart implements Observer {
 	private static WindFarm selectedWindpark;
 	private static DateTime swtDateSince;
 	private static DateTime swtTimeSince;
-
-	public UebersichtView() {
-	}
-
+	
 	@Override
 	public void createPartControl(Composite parent) {
 		ObserverHandler.addObserverToWKA(this);
@@ -108,6 +106,9 @@ public class UebersichtView extends ViewPart implements Observer {
 		setDefaultWKAContainerLabels();
 	}
 
+	/**
+	 * This method builds a datetime out of the selected Date and Time in the swt-controls in this class and refreshs the historical Farm Data out of the open Database Connection.
+	 */
 	private void prepareLoadNewHitData() {
 		GregorianCalendar calSince = new GregorianCalendar();
 		calSince.set(swtDateSince.getYear(),swtDateSince.getMonth(), swtDateSince.getDay(), swtTimeSince.getHours(), swtTimeSince.getMinutes(), swtTimeSince.getSeconds());
@@ -118,6 +119,10 @@ public class UebersichtView extends ViewPart implements Observer {
 	public void setFocus() {
 	}
 	
+	/**
+	 * Sets the values and measurements of a new windFarm in this View. The old ones will be disposed.
+	 * @param windFarm The new windFarm to be set
+	 */
 	public static void setSelectedWindpark(WindFarm windFarm) {
 		selectedWindpark = windFarm;
 		nameWindpark.setText(String.valueOf(selectedWindpark.getID()));
@@ -126,6 +131,9 @@ public class UebersichtView extends ViewPart implements Observer {
 		
 	}
 
+	/**
+	 * Draws a table with some data of every WKA in the currently selected windFarm
+	 */
 	private static void redrawWKAContainer() {
 		// clear container
 				for (Control c : wkaContainer.getChildren()) {
@@ -159,6 +167,9 @@ public class UebersichtView extends ViewPart implements Observer {
 				wkaContainer.layout();
 	}
 
+	/**
+	 * Sets some Labels in the wkaContainer which will be shown default, independent which WKAs contained in this windFarm
+	 */
 	private static void setDefaultWKAContainerLabels() {
 		Label lbl = new Label(wkaContainer, SWT.NONE);
 		lbl.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, false, false, 1, 1));
@@ -191,6 +202,9 @@ public class UebersichtView extends ViewPart implements Observer {
 		}
 	}
 	
+	/**
+	 * Redraw  the historical windFarmData of the currently selected windFarm
+	 */
 	private static void redrawHitWindFarmData() {
 		if (selectedWindpark.getHitWindFarmData() != null) {
 			hitLeistung.setText(String.valueOf(selectedWindpark.getHitWindFarmData().getAvgPervormance()));
@@ -206,6 +220,11 @@ public class UebersichtView extends ViewPart implements Observer {
 
 }
 
+/**
+ * This class implements a MouseListener for Buttons which should load the data from a specific WKA
+ * @author MarkMilster
+ *
+ */
 class WKABTNListener implements MouseListener {
 
 	@Override

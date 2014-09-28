@@ -1,6 +1,10 @@
 package windscadaanwendung.hd;
 
-
+/**
+ * This class holds the historical data of a WKA. You have to set an instance of this class in an WKA instance
+ * @author MarkMilster
+ *
+ */
 public class HitWKAData {
 	
 	private double minWindSpeed;
@@ -154,9 +158,5 @@ public class HitWKAData {
 	private double avgWindDirection;
 	private double avgRotationalSpeed;
 	private double avgPerformance;
-	
-	public HitWKAData() {
-		
-	}
 
 }

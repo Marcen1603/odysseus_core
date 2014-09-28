@@ -1,5 +1,10 @@
 package windscadaanwendung.hd.ae;
 
+/**
+ * This interface is a special type of Observer for the instances that want to listen to historical AEData
+ * @author MarkMilster
+ *
+ */
 public interface AEObserver {
 	
 	/**

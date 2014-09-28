@@ -14,6 +14,8 @@ import windscadaanwendung.ca.WindFarm;
 import windscadaanwendung.views.dashboard.DashboardPartViewObserver;
 
 /**
+ * This class shows a lis of all windfarms and WKAs
+ * 
  * @author MarkMilster
  * 
  */
@@ -21,9 +23,6 @@ public class ListView extends ViewPart {
 
 	public static final String ID = "windscadaanwendung.views.ListView";
 	static Tree tree;
-
-	public ListView() {
-	}
 
 	@Override
 	public void createPartControl(Composite parent) {
@@ -55,13 +54,13 @@ public class ListView extends ViewPart {
 	}
 
 	/**
-	 * Creates a FarmList from the CA Database into the Specified tree
+	 * Fills a swt-tree with the data out of the static FarmList.
+	 * It will show all currently loaded windFarms and WKAs
 	 * 
 	 * @param tree
 	 *            The tree which will show the data
 	 */
 	private void createFarmList(Tree tree) {
-
 		for (WindFarm farm : FarmList.getFarmList()) {
 			TreeItem trtmFarm = new TreeItem(tree, SWT.NONE);
 			trtmFarm.setText(String.valueOf(farm.getID()));
@@ -76,6 +75,13 @@ public class ListView extends ViewPart {
 	public void setFocus() {
 	}
 
+	/**
+	 * Selects a WKA in the swt-tree in this view. Also this mehtods handles the selectionevent with the same consequences as a user will select the WKA in the swt-tree
+	 * @param id
+	 * 			The id of the WKA to select
+	 * @return true if the WKA exists in this static swt-tree
+	 * 			false if it does'nt exist
+	 */
 	public static boolean setSelectedWKAById(String id) {
 		for (TreeItem farm : tree.getItems()) {
 			for (TreeItem wka : farm.getItems()) {
@@ -89,7 +95,13 @@ public class ListView extends ViewPart {
 		return false;
 	}
 
+	/**
+	 * This method should be called if you select a WKA in the static swt-tree. It sets the WKA to the selected one in the DashboardPartViewObserver and the DetailView
+	 * 
+	 * @param wka a swt-TreeItem which is selected
+	 */
 	private static void handleSelectionWKA(TreeItem wka) {
+		// get the windFarm of the wka and set this as selected windFarm
 		WindFarm farm = FarmList.getFarm(Integer.parseInt(wka.getParentItem()
 				.getText()));
 		UebersichtView.setSelectedWindpark(farm);

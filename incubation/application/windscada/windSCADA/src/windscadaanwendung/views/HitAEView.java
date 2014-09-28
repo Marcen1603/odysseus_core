@@ -221,7 +221,6 @@ public class HitAEView extends ViewPart implements AEObserver {
 //			hitAEScroller.layout();
 			HitAEView.parent.layout();
 		} else {
-			System.out.println("draw AEE: " + aeEntry.toString());
 			if (aeEntry.isWarning()) {
 				if (aeEntry.isError()) {
 					new AEErrorComp(hitAEContainer, SWT.NONE, aeEntry);

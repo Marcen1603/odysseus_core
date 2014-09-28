@@ -14,8 +14,18 @@ import windscadaanwendung.Activator;
 
 import com.google.common.collect.Maps;
 
+/**
+ * This class manage the Login Credential files in the windSCADA bundle
+ * @author MarkMilster
+ *
+ */
 public class DBConnectionCredentials {
 
+	/**
+	 * This method reads a textfile with login credentials out of the bundle windSCADA on a specified path. The textfile has to contain a key and a value seperated by a "=" in each Line.
+	 * @param path the path in the bundle windscada
+	 * @return a Map<String, String> with the login credentials specified in the textfile
+	 */
 	public static  Map<String, String> load(String path) {
 		Map<String, String> credentials = Maps.newHashMap();
 		FileReader fileReader;
