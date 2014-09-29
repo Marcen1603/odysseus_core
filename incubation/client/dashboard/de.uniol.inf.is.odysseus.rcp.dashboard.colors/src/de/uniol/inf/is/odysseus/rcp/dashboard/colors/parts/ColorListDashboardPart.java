@@ -1,6 +1,7 @@
 package de.uniol.inf.is.odysseus.rcp.dashboard.colors.parts;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -128,7 +129,7 @@ public class ColorListDashboardPart extends AbstractDashboardPart {
 
 	private int colorHeight = 80;
 	private int lineSpace = 20;
-	private List<Double> timestampList = new ArrayList<Double>();
+	private List<Date> timestampList = new ArrayList<Date>();
 	private List<Boolean> warningList = new ArrayList<Boolean>();
 	private List<Boolean> errorList = new ArrayList<Boolean>();
 	private long movingTimestampDiffElements = 10; // in Elements
@@ -324,12 +325,7 @@ public class ColorListDashboardPart extends AbstractDashboardPart {
 		int xPos = 0;
 		double lastTimestamp = 0-fixedTimestampDiffMilliseconds;	
 		
-		System.out.println();
-		System.out.println("x: " + this.parent.getSize().x);
-		System.out.println("y: " + this.parent.getSize().y);
-		
 		this.setMaxElementsLine(this.parent.getSize().x / this.colorWidth);
-		System.out.println(this.getMaxElementsLine());
 		
 		gc.setFont(timestampFont);
 		//to clear everything
@@ -357,9 +353,9 @@ public class ColorListDashboardPart extends AbstractDashboardPart {
 
 			if (fixedTimestamps) {
 				// fixed Timestamps
-				if (timestampList.get(i) >= (lastTimestamp+fixedTimestampDiffMilliseconds)) {
+				if (timestampList.get(i).getTime() >= (lastTimestamp+fixedTimestampDiffMilliseconds)) {
 					gc.drawString(String.valueOf(timestampList.get(i)), xPos-(colorWidth),  (lineNumber*colorHeight)+(lineNumber*lineSpace)+colorHeight, true);
-					lastTimestamp = timestampList.get(i);
+					lastTimestamp = timestampList.get(i).getTime();
 				}
 			} else {
 				// moving Timestamps
@@ -411,9 +407,10 @@ public class ColorListDashboardPart extends AbstractDashboardPart {
 		return tuple.getAttribute(warningIndex);
 	}
 
-	private Double getTimestamp(IStreamObject<?> element) {
+	private Date getTimestamp(IStreamObject<?> element) {
 		Tuple<?> tuple = (Tuple<?>) element;
-		return tuple.getAttribute(timestampIndex);
+		long Ltimestamp = tuple.getAttribute(timestampIndex);
+		return new Date(Ltimestamp);
 	}
 
 	public Color elementToColor(IStreamObject<?> element) {
