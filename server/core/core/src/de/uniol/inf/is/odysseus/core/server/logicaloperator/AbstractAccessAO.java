@@ -80,6 +80,7 @@ abstract public class AbstractAccessAO extends AbstractLogicalOperator {
 			this.attributes = new ArrayList<>(po.attributes);
 		}
 		this.maxTimeToWaitForNewEventMS = po.maxTimeToWaitForNewEventMS;
+		this.dateFormat = po.dateFormat;
 	}
 
 	public AbstractAccessAO(Resource name, String wrapper,
