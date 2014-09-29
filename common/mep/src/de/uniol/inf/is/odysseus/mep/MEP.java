@@ -184,6 +184,7 @@ import de.uniol.inf.is.odysseus.mep.functions.transform.ToHexFromFloatingNumberF
 import de.uniol.inf.is.odysseus.mep.functions.transform.ToHexFromNumberFunction;
 import de.uniol.inf.is.odysseus.mep.functions.transform.ToHexFromStringFunction;
 import de.uniol.inf.is.odysseus.mep.functions.transform.ToIntegerFunction;
+import de.uniol.inf.is.odysseus.mep.functions.transform.ToListFunction;
 import de.uniol.inf.is.odysseus.mep.functions.transform.ToLongFunction;
 import de.uniol.inf.is.odysseus.mep.functions.transform.ToNumberFunction;
 import de.uniol.inf.is.odysseus.mep.functions.transform.ToShortFunction;
@@ -260,7 +261,7 @@ public class MEP implements IExpressionParser {
 		registerFunction(new BitAccessFunction());
 		registerFunction(new BitVectorToLong());
 		registerFunction(new BitSubsetFunction());
-		
+
 		/** Boolean Functions */
 		registerFunction(new AndOperator());
 		registerFunction(new OrOperator());
@@ -298,7 +299,7 @@ public class MEP implements IExpressionParser {
 		registerFunction(new DoubleToShortFunction());
 		registerFunction(new DoubleToByteFunction());
 		registerFunction(new DoubleToBooleanFunction());
-        registerFunction(new DoubleToCharFunction());
+		registerFunction(new DoubleToCharFunction());
 		registerFunction(new FloorFunction());
 		registerFunction(new IfFunction());
 		registerFunction(new SinusFunction());
@@ -318,15 +319,16 @@ public class MEP implements IExpressionParser {
 		registerFunction(new ToFloatFunction());
 		registerFunction(new ToDoubleFunction());
 		registerFunction(new ToLongFunction());
+		registerFunction(new ToListFunction());
 		registerFunction(new ToIntegerFunction());
-        registerFunction(new ToCharFunction());
+		registerFunction(new ToCharFunction());
 		registerFunction(new ToStringFunction());
-        registerFunction(new ToHexFromStringFunction());
-        registerFunction(new ToHexFromNumberFunction());
-        registerFunction(new ToHexFromFloatingNumberFunction());
-        registerFunction(new ToBinaryFromStringFunction());
-        registerFunction(new ToBinaryFromNumberFunction());
-        registerFunction(new ToBinaryFromFloatingNumberFunction());
+		registerFunction(new ToHexFromStringFunction());
+		registerFunction(new ToHexFromNumberFunction());
+		registerFunction(new ToHexFromFloatingNumberFunction());
+		registerFunction(new ToBinaryFromStringFunction());
+		registerFunction(new ToBinaryFromNumberFunction());
+		registerFunction(new ToBinaryFromFloatingNumberFunction());
 		registerFunction(new RandomFunction());
 		registerFunction(new RandomFunction2());
 		registerFunction(new RoundFunction());
@@ -334,13 +336,12 @@ public class MEP implements IExpressionParser {
 
 		registerFunction(new PIFunction());
 		registerFunction(new EFunction());
-        registerFunction(new NaNFunction());
-        registerFunction(new InfFunction());
+		registerFunction(new NaNFunction());
+		registerFunction(new InfFunction());
 
 		registerFunction(new ExpFunction());
 		registerFunction(new LogFunction());
-	    registerFunction(new Log10Function());
-
+		registerFunction(new Log10Function());
 
 		registerFunction(new ToRadians());
 		registerFunction(new ToDegrees());
@@ -426,11 +427,11 @@ public class MEP implements IExpressionParser {
 		registerFunction(new RSASignFunction());
 		registerFunction(new RSAVerifyFunction());
 
-        registerFunction(new UUIDFunction());
-        registerFunction(new CPULoadFunction());
-        registerFunction(new UptimeFunction());
-        registerFunction(new MemoryFunction());
-        registerFunction(new ReadFunction());
+		registerFunction(new UUIDFunction());
+		registerFunction(new CPULoadFunction());
+		registerFunction(new UptimeFunction());
+		registerFunction(new MemoryFunction());
+		registerFunction(new ReadFunction());
 		registerFunction(new EvalFunction());
 		registerFunction(new SMinFunction());
 		registerFunction(new SMaxFunction());
@@ -442,12 +443,12 @@ public class MEP implements IExpressionParser {
 		registerFunction(new StoredLineFunction());
 
 		registerFunction(new SplittFunction());
-		
+
 		// Array Functions
 		registerFunction(new ListArrayFunction());
-		
+
 		registerFunction(new TupleAccessFunction());
-		
+
 		registerFunction(new MatrixFunction());
 		registerFunction(new MatrixLine());
 	}
@@ -471,8 +472,8 @@ public class MEP implements IExpressionParser {
 		}
 	}
 
-	private synchronized static void registerFunctionWithName(IFunction<?> function,
-			String symbol) {
+	private synchronized static void registerFunctionWithName(
+			IFunction<?> function, String symbol) {
 		List<SDFDatatype[]> parameters = new ArrayList<SDFDatatype[]>();
 		int arity = function.getArity();
 		for (int i = 0; i < arity; i++) {
