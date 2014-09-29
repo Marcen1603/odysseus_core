@@ -15,6 +15,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalO
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IntegerParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.ResolvedSDFAttributeParameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.TimeParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.TimeValueItem;
 
@@ -111,6 +112,24 @@ public class ReduceLoadAO extends UnaryLogicalOp {
 	public void setGroupingAttributes(List<SDFAttribute> attributes) {
 		this.groupingAttributes = attributes;
 	}
+	
+	/***
+	 * Sets basetime Unit manually (needed if Odysseus fails to preserve parameter)
+	 * @param btuString BaseTimeUnit as String
+	 */
+	@Parameter(name = "ASSUMEBTU", optional = true, type=StringParameter.class)
+	public void setAssumedBaseTimeUnit(String btuString) {
+		TimeUnit btu = TimeUnit.valueOf(btuString);
+		if (btu != null){
+			this.baseTimeUnit = btu;
+		}
+		
+	}
+	
+	public String getAssumedBaseTimeUnit() {
+		return this.baseTimeUnit.toString();
+	}
+	
 	
 	/***
 	 * Returns group-by attributes
