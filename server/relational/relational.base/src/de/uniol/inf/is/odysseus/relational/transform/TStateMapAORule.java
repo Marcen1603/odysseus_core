@@ -1,18 +1,18 @@
 /********************************************************************************** 
-  * Copyright 2011 The Odysseus Team
-  *
-  * Licensed under the Apache License, Version 2.0 (the "License");
-  * you may not use this file except in compliance with the License.
-  * You may obtain a copy of the License at
-  *
-  *     http://www.apache.org/licenses/LICENSE-2.0
-  *
-  * Unless required by applicable law or agreed to in writing, software
-  * distributed under the License is distributed on an "AS IS" BASIS,
-  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  * See the License for the specific language governing permissions and
-  * limitations under the License.
-  */
+ * Copyright 2011 The Odysseus Team
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package de.uniol.inf.is.odysseus.relational.transform;
 
 import java.util.List;
@@ -36,30 +36,37 @@ import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 public class TStateMapAORule extends AbstractTransformationRule<StateMapAO> {
 
 	@Override
-	public int getPriority() {	
-		// Must be higher Prio than Map because MapRule fires before StateMap Rule
+	public int getPriority() {
+		// Must be higher Prio than Map because MapRule fires before StateMap
+		// Rule
 		return 10;
 	}
 
 	@Override
-	public void execute(StateMapAO mapAO, TransformationConfiguration transformConfig) throws RuleException {
+	public void execute(StateMapAO mapAO,
+			TransformationConfiguration transformConfig) throws RuleException {
 		List<SDFAttribute> gAttr = mapAO.getGroupingAttributes();
 		@SuppressWarnings("rawtypes")
 		IGroupProcessor gp = null;
-		if (gAttr != null){
-			gp = new RelationalGroupProcessor<>(mapAO.getInputSchema(), mapAO.getOutputSchema(), gAttr, null, false);
-		}else{
+		if (gAttr != null) {
+			gp = new RelationalGroupProcessor<>(mapAO.getInputSchema(),
+					mapAO.getOutputSchema(), gAttr, null, false);
+		} else {
 			gp = RelationalNoGroupProcessor.getInstance();
 		}
 		@SuppressWarnings("unchecked")
-		RelationalMapPO<?> mapPO = new RelationalStateMapPO<IMetaAttribute>(mapAO.getInputSchema(), mapAO.getExpressionList().toArray(new SDFExpression[0]), mapAO.isAllowNullInOutput(), gp);
+		RelationalMapPO<?> mapPO = new RelationalStateMapPO<IMetaAttribute>(
+				mapAO.getInputSchema(), mapAO.getExpressionList().toArray(
+						new SDFExpression[0]), mapAO.isAllowNullInOutput(), gp,
+				mapAO.isEvaluateOnPunctuation());
 		defaultExecute(mapAO, mapPO, transformConfig, true, true);
 	}
 
 	@Override
-	public boolean isExecutable(StateMapAO operator, TransformationConfiguration transformConfig) {
-		if(operator.getInputSchema().getType() == Tuple.class){
-			if(operator.getPhysSubscriptionTo()!=null){
+	public boolean isExecutable(StateMapAO operator,
+			TransformationConfiguration transformConfig) {
+		if (operator.getInputSchema().getType() == Tuple.class) {
+			if (operator.getPhysSubscriptionTo() != null) {
 				return true;
 			}
 		}
@@ -70,14 +77,14 @@ public class TStateMapAORule extends AbstractTransformationRule<StateMapAO> {
 	public String getName() {
 		return "StateMapAO -> RelationalMapPO";
 	}
-	
+
 	@Override
 	public IRuleFlowGroup getRuleFlowGroup() {
 		return TransformRuleFlowGroup.TRANSFORMATION;
 	}
-	
+
 	@Override
-	public Class<? super StateMapAO> getConditionClass() {	
+	public Class<? super StateMapAO> getConditionClass() {
 		return StateMapAO.class;
 	}
 

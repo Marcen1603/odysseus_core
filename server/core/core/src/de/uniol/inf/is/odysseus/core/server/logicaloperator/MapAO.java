@@ -28,6 +28,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFExpression;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.BooleanParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IntegerParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.NamedExpressionItem;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.SDFExpressionParameter;
@@ -43,6 +44,7 @@ public class MapAO extends UnaryLogicalOp {
 	private List<SDFExpression> expressions;
 	/** The number of threads used for processing the expressions. */
 	private int threads = 0;
+	private boolean evaluateOnPunctuation = false;
 
 	public MapAO() {
 		super();
@@ -52,6 +54,7 @@ public class MapAO extends UnaryLogicalOp {
 		super(ao);
 		this.setExpressions(ao.namedExpressions);
 		this.threads = ao.threads;
+		this.evaluateOnPunctuation = ao.evaluateOnPunctuation;
 	}
 
 	public List<SDFExpression> getExpressionList() {
@@ -159,14 +162,15 @@ public class MapAO extends UnaryLogicalOp {
 					// Special Handling if return type if tuple
 					if (mepExpression.getReturnType() == SDFDatatype.TUPLE) {
 						int card = mepExpression.getReturnTypeCard();
-						for (int i=0;i<card;i++){
-							String name = !"".equals(expr.name) ? expr.name : exprString;
-							attr = new SDFAttribute(null,
-									name+"_"+i,
-									mepExpression.getReturnType(i), null, null, null);
-							attrs.add(attr);							
+						for (int i = 0; i < card; i++) {
+							String name = !"".equals(expr.name) ? expr.name
+									: exprString;
+							attr = new SDFAttribute(null, name + "_" + i,
+									mepExpression.getReturnType(i), null, null,
+									null);
+							attrs.add(attr);
 						}
-						
+
 					} else {
 						attr = new SDFAttribute(null,
 								!"".equals(expr.name) ? expr.name : exprString,
@@ -193,7 +197,7 @@ public class MapAO extends UnaryLogicalOp {
 		}
 		setOutputSchema(null);
 	}
-	
+
 	public List<NamedExpressionItem> getExpressions() {
 		return this.namedExpressions;
 	}
@@ -220,6 +224,15 @@ public class MapAO extends UnaryLogicalOp {
 	 */
 	public int getThreads() {
 		return threads;
+	}
+
+	public boolean isEvaluateOnPunctuation() {
+		return evaluateOnPunctuation;
+	}
+
+	@Parameter(type = BooleanParameter.class, name = "evaluateOnPunctuation", optional = true, doc = "If set to true, map will also create an output (with the last read element) when it receives a punctuation.")
+	public void setEvaluateOnPunctuation(boolean evaluateOnPunctuation) {
+		this.evaluateOnPunctuation = evaluateOnPunctuation;
 	}
 
 	@Override

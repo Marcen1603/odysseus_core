@@ -24,7 +24,11 @@ import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
+import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
+import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
+import de.uniol.inf.is.odysseus.core.metadata.TimeInterval;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFExpression;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
@@ -44,16 +48,22 @@ public class RelationalMapPO<T extends IMetaAttribute> extends
 	private final SDFSchema inputSchema;
 	final private boolean allowNull;
 
+	final private boolean evaluateOnPunctuation;
+	private Tuple<T> lastTuple;
+
 	public RelationalMapPO(SDFSchema inputSchema, SDFExpression[] expressions,
-			boolean allowNullInOutput) {
+			boolean allowNullInOutput, boolean evaluateOnPunctuation) {
 		this.inputSchema = inputSchema;
 		this.allowNull = allowNullInOutput;
+		this.evaluateOnPunctuation = evaluateOnPunctuation;
 		init(inputSchema, expressions);
 	}
 
-	protected RelationalMapPO(SDFSchema inputSchema, boolean allowNullInOutput) {
+	protected RelationalMapPO(SDFSchema inputSchema, boolean allowNullInOutput,
+			boolean evaluateOnPunctuation) {
 		this.inputSchema = inputSchema;
 		this.allowNull = allowNullInOutput;
+		this.evaluateOnPunctuation = evaluateOnPunctuation;
 	}
 
 	protected void init(SDFSchema schema, SDFExpression[] expressions) {
@@ -83,9 +93,12 @@ public class RelationalMapPO<T extends IMetaAttribute> extends
 		return OutputMode.NEW_ELEMENT;
 	}
 
-	@SuppressWarnings({ "unchecked"})
+	@SuppressWarnings({ "unchecked" })
 	@Override
 	final protected void process_next(Tuple<T> object, int port) {
+		if (evaluateOnPunctuation) {
+			lastTuple = object;
+		}
 		boolean nullValueOccured = false;
 
 		LinkedList<Tuple<T>> preProcessResult = preProcess(object);
@@ -119,29 +132,29 @@ public class RelationalMapPO<T extends IMetaAttribute> extends
 							.getAdditionalContent());
 					this.expressions[i].bindVariables(meta, values);
 					Object expr = this.expressions[i].getValue();
-//					SDFDatatype retType = expressions[i].getMEPExpression()
-//							.getReturnType();
+					// SDFDatatype retType = expressions[i].getMEPExpression()
+					// .getReturnType();
 
 					outputVal.setAttribute(outAttrPos++, expr);
 					if (expr == null) {
 						nullValueOccured = true;
 					}
-					
-//					if (retType == SDFDatatype.TUPLE) {
-//						Tuple tuple = ((Tuple) expr);
-//						for (Object o : tuple.getAttributes()) {
-//							outputVal.setAttribute(outAttrPos++, o);
-//						}
-//					}else if (retType == SDFDatatype.LIST) {
-//						for (Object o : (List) expr) {
-//							outputVal.setAttribute(outAttrPos++, o);
-//						}
-//					} else {
-//						outputVal.setAttribute(outAttrPos++, expr);
-//						if (expr == null) {
-//							nullValueOccured = true;
-//					}
-//					}
+
+					// if (retType == SDFDatatype.TUPLE) {
+					// Tuple tuple = ((Tuple) expr);
+					// for (Object o : tuple.getAttributes()) {
+					// outputVal.setAttribute(outAttrPos++, o);
+					// }
+					// }else if (retType == SDFDatatype.LIST) {
+					// for (Object o : (List) expr) {
+					// outputVal.setAttribute(outAttrPos++, o);
+					// }
+					// } else {
+					// outputVal.setAttribute(outAttrPos++, expr);
+					// if (expr == null) {
+					// nullValueOccured = true;
+					// }
+					// }
 					// MG: 23.09.14: Added test for Tuple as return type, the
 					// former implementation
 					// did not make any sense ...
@@ -172,6 +185,25 @@ public class RelationalMapPO<T extends IMetaAttribute> extends
 			transfer(outputVal);
 		}
 
+	}
+
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@Override
+	public void processPunctuation(IPunctuation punctuation, int port) {
+		// TODO: By this, we make it implicit interval approach...
+		// Maybe we should move this to another bundle?
+		if (evaluateOnPunctuation) {
+			if (lastTuple == null) {
+				lastTuple = new Tuple(expressions.length, false);
+				lastTuple.setMetadata((T) new TimeInterval(punctuation
+						.getTime()));
+			} else {
+				((ITimeInterval) lastTuple.getMetadata()).setStartAndEnd(
+						punctuation.getTime(), PointInTime.getInfinityTime());
+			}
+			process_next(lastTuple, port);
+		}
+		super.processPunctuation(punctuation, port);
 	}
 
 	public Tuple<T> determineObjectForExpression(Tuple<T> object,
