@@ -201,7 +201,6 @@ public class RecoveryQueryDistributionListener extends
 				}
 
 				// Save information about JXTA
-				// TODO Where can I access information about the JXTA-operators?
 
 				List<ILogicalOperator> operators = Lists
 						.newArrayList(subsequentPart.getOperators());
@@ -213,9 +212,8 @@ public class RecoveryQueryDistributionListener extends
 							visitedOperators);
 				}
 
-				// Hopefully, we have now more in visitedOperators (including
-				// jxtaSender and receiver?)
 
+				// TODO Is PeerId still wrong or is allocatedPeer the right?
 				String key = "";
 				String value = "";
 				for (ILogicalOperator logicalOp : visitedOperators) {
@@ -223,14 +221,18 @@ public class RecoveryQueryDistributionListener extends
 						JxtaSenderAO sender = (JxtaSenderAO) logicalOp;
 						value = sender.getPipeID();
 						key = RecoveryCommunicator.JXTA_KEY_SENDER_PIPE_ID;
-						cCommunicator.get().sendBackupJxtaInformation(peerID,
+						// Send to others and store local
+						cCommunicator.get().sendBackupJxtaInformation(allocatedPeer,
 								sharedQueryId, key, value);
+						LocalBackupInformationAccess.storeLocalJxtaInfo(allocatedPeer, sharedQueryId, key, value);
 					} else if (logicalOp instanceof JxtaReceiverAO) {
 						JxtaReceiverAO receiver = (JxtaReceiverAO) logicalOp;
 						value = receiver.getPipeID();
 						key = RecoveryCommunicator.JXTA_KEY_RECEIVER_PIPE_ID;
-						cCommunicator.get().sendBackupJxtaInformation(peerID,
+						// Send to others and store local
+						cCommunicator.get().sendBackupJxtaInformation(allocatedPeer,
 								sharedQueryId, key, value);
+						LocalBackupInformationAccess.storeLocalJxtaInfo(allocatedPeer, sharedQueryId, key, value);
 					}
 
 				}
@@ -257,6 +259,11 @@ public class RecoveryQueryDistributionListener extends
 
 	}
 
+	/**
+	 * Copied from LogicalQueryHelper
+	 * @param operator
+	 * @param visitedOperators
+	 */
 	private static void collectOperatorsWithSubscriptions(
 			ILogicalOperator operator, List<ILogicalOperator> visitedOperators) {
 		if (!visitedOperators.contains(operator)) {

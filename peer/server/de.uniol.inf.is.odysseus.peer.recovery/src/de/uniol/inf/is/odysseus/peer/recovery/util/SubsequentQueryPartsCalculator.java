@@ -85,7 +85,7 @@ public class SubsequentQueryPartsCalculator {
 	 *            Must be not null.
 	 * @return A collection of all subsequent query parts for each peer. Only
 	 *         those subsequent query parts are considered, which are to be
-	 *         executed on a diffferent peer.
+	 *         executed on a different peer.
 	 */
 	public Map<PeerID, Collection<ILogicalQueryPart>> calcSubsequentParts(
 			ILogicalQuery query, Map<ILogicalQueryPart, PeerID> allocationMap) {

@@ -187,13 +187,20 @@ public class RecoveryConsole implements CommandProvider {
 	}
 
 	public void _sendNewReceiver(CommandInterpreter ci) {
-		System.out.println("For now I do nothing. :'(");
-		// Preconditions.checkNotNull(ci,
-		// "Command interpreter must not be null!");
-		// PeerID peerId = getPeerIdFromCi(ci);
-		// ID sharedQueryId = getSharedQueryIdFromCi(ci);
-		//
-		//
+		Preconditions.checkNotNull(ci, "Command interpreter must not be null!");
+
+		PeerID senderPeerId = getPeerIdFromCi(ci);
+		PeerID newReceiverPeerId = getPeerIdFromCi(ci);
+		ID sharedQueryId = getSharedQueryIdFromCi(ci);
+
+		if(newReceiverPeerId == null) {
+			System.out.println("Don't know new receiver peer. Take myself insead.");
+			newReceiverPeerId = RecoveryCommunicator.getP2pNetworkManager().getLocalPeerID();
+		}
+		
+		
+		RecoveryCommunicator.getInstance().sendNewReceiverMessage(senderPeerId,
+				newReceiverPeerId, sharedQueryId);
 	}
 
 	public void _startPeerFailureDetection(CommandInterpreter ci) {
@@ -243,28 +250,28 @@ public class RecoveryConsole implements CommandProvider {
 	public void _lsJxtaBackup(CommandInterpreter ci) {
 		Preconditions.checkNotNull(ci, "Command interpreter must not be null!");
 
-		String peerName = ci.nextArgument();
-
-		Optional<PeerID> peer = RecoveryHelper.determinePeerID(peerName);
-
-		if(!peer.isPresent()) {
-			System.out.println("Don't know the peer " + peerName);
+		
+		List<PeerID> peers = LocalBackupInformationAccess.getPeersFromJxtaInfoStore();
+		
+		if(peers.isEmpty()) {
+			System.out.println("No information saved");
 			return;
 		}
 		
-		List<JxtaInformation> jxtaInfo = LocalBackupInformationAccess
-				.getJxtaInfoForPeer(peer.get());
-		if (jxtaInfo == null || jxtaInfo.isEmpty()) {
-			System.out.println("No jxta-information about the peer " + peerName
-					+ " (" + peer.get() + ")");
-			return;
+		
+		for(PeerID peer : peers) {
+			List<JxtaInformation> jxtaInfo = LocalBackupInformationAccess
+					.getJxtaInfoForPeer(peer);
+			for (JxtaInformation info : jxtaInfo) {
+				String peerName = RecoveryHelper.determinePeerName(peer);
+				System.out.println("Jxta-information about the peer " + peerName
+						+ " (" + peer + ")");
+				System.out.println("QueryID: " + info.getSharedQueryID());
+				System.out.println(info.getKey() + " : " + info.getValue());
+			}
+			
 		}
-		for (JxtaInformation info : jxtaInfo) {
-			System.out.println("Jxta-information about the peer " + peerName
-					+ " (" + peer.get() + ")");
-			System.out.println("QueryID: " + info.getSharedQueryID());
-			System.out.println(info.getKey() + " : " + info.getValue());
-		}
+
 	}
 
 	/**

@@ -3,6 +3,7 @@ package de.uniol.inf.is.odysseus.peer.recovery;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import net.jxta.id.ID;
 import net.jxta.peer.PeerID;
@@ -114,6 +115,12 @@ public interface IRecoveryBackupInformationStore {
 	 */
 	public List<JxtaInformation> getJxtaInfoForPeer(PeerID peerId);
 
+	/**
+	 * 
+	 * @return All PeerIDs for which jxta-backup-information is stored
+	 */
+	public Set<PeerID> getPeersFromJxtaInfoStore();
+	
 	/**
 	 * Removes a backup information for a shared query.
 	 * 

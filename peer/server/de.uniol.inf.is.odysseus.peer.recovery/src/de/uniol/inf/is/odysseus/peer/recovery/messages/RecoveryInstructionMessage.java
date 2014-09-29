@@ -136,6 +136,15 @@ public class RecoveryInstructionMessage implements IMessage {
 		case NEW_SENDER:
 			break;
 		case NEW_RECEIVER:
+			int newReceiverLength = newReceiver.toString().getBytes().length;
+			int sharedQueryIdLength = sharedQueryId.toString().getBytes().length;
+			bbsize = 4 + 4 + newReceiverLength + 4 + sharedQueryIdLength;
+			bb = ByteBuffer.allocate(bbsize);
+			bb.putInt(messageType);
+			bb.putInt(sharedQueryIdLength);
+			bb.put(sharedQueryId.toString().getBytes());
+			bb.putInt(newReceiverLength);
+			bb.put(newReceiver.toString().getBytes());
 			break;
 		}
 
@@ -169,6 +178,18 @@ public class RecoveryInstructionMessage implements IMessage {
 			byte[] pqlAsByte = new byte[pqlLength];
 			bb.get(pqlAsByte);
 			pqlQuery = new String(pqlAsByte);
+			break;
+		case NEW_RECEIVER:
+			int newReceiverLength = bb.getInt();
+			byte[] newReceiverByte = new byte[newReceiverLength];
+			bb.get(newReceiverByte, 0, newReceiverLength);
+			String newReceiverString = new String(newReceiverByte);
+			try {
+				URI uri = new URI(newReceiverString);
+				newReceiver = PeerID.create(uri);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 			break;
 		}
 	}

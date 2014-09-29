@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import net.jxta.id.ID;
 import net.jxta.peer.PeerID;
@@ -156,6 +157,17 @@ public class LocalBackupInformationAccess {
 		}
 
 		return cInfoStore.get().getJxtaInfoForPeer(peerId);
+	}
+	
+	/**
+	 * 
+	 * @return All PeerIDs for which jxta-backup-information is stored
+	 */
+	public static List<PeerID> getPeersFromJxtaInfoStore() {
+		
+		Set<PeerID> peers = cInfoStore.get().getPeersFromJxtaInfoStore();
+		ArrayList<PeerID> peerArray = new ArrayList<PeerID>(peers);
+		return peerArray;
 	}
 
 	/**

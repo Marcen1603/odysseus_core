@@ -126,11 +126,17 @@ public class BackupInformationStore implements IRecoveryBackupInformationStore {
 		return true;
 	}
 	
+	@Override
 	public List<JxtaInformation> getJxtaInfoForPeer(PeerID peerId) {
 		if(!mJxtaInfoMap.containsKey(peerId)) {
 			return null;
 		}
 		return mJxtaInfoMap.get(peerId);
+	}
+	
+	@Override
+	public Set<PeerID> getPeersFromJxtaInfoStore() {
+		return mJxtaInfoMap.keySet();
 	}
 
 	@Override

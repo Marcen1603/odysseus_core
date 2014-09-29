@@ -216,6 +216,14 @@ public class RecoveryCommunicator implements IRecoveryCommunicator,
 		RecoveryCommunicator.p2pDictionary = p2pDictionary;
 	}
 
+	public static IP2PNetworkManager getP2pNetworkManager() {
+		return p2pNetworkManager;
+	}
+
+	public static void setP2pNetworkManager(IP2PNetworkManager p2pNetworkManager) {
+		RecoveryCommunicator.p2pNetworkManager = p2pNetworkManager;
+	}
+
 	// -----------------------------------------------------
 	// Code with recovery logic
 	// -----------------------------------------------------
@@ -258,6 +266,17 @@ public class RecoveryCommunicator implements IRecoveryCommunicator,
 		}
 	}
 
+	/**
+	 * 
+	 * @param senderPeer
+	 *            The peer which gets the message, so this is the peer who is
+	 *            the sender (A -> B; after the message A -> C; senderPeer is A)
+	 * @param newReceiverPeer
+	 *            The peer to which the tuples should be send
+	 * @param sharedQueryID
+	 *            The query id for which the tuples should be send to a new
+	 *            receiver
+	 */
 	public void sendNewReceiverMessage(PeerID senderPeer,
 			PeerID newReceiverPeer, ID sharedQueryID) {
 		RecoveryInstructionMessage message = RecoveryInstructionMessage

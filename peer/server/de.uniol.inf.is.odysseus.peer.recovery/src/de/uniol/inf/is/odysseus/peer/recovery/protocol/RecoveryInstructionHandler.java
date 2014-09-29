@@ -1,8 +1,20 @@
 package de.uniol.inf.is.odysseus.peer.recovery.protocol;
 
+import java.util.List;
+
 import net.jxta.id.ID;
 import net.jxta.peer.PeerID;
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
+import de.uniol.inf.is.odysseus.core.physicaloperator.PhysicalSubscription;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSource;
+import de.uniol.inf.is.odysseus.p2p_new.data.DataTransmissionException;
+import de.uniol.inf.is.odysseus.p2p_new.logicaloperator.JxtaSenderAO;
+import de.uniol.inf.is.odysseus.p2p_new.physicaloperator.JxtaSenderPO;
+import de.uniol.inf.is.odysseus.peer.recovery.internal.JxtaInformation;
+import de.uniol.inf.is.odysseus.peer.recovery.internal.RecoveryCommunicator;
 import de.uniol.inf.is.odysseus.peer.recovery.messages.RecoveryInstructionMessage;
+import de.uniol.inf.is.odysseus.peer.recovery.util.LocalBackupInformationAccess;
 import de.uniol.inf.is.odysseus.peer.recovery.util.RecoveryHelper;
 
 /**
@@ -22,8 +34,13 @@ public class RecoveryInstructionHandler {
 			addQuery(instructionMessage.getPqlQuery());
 			break;
 		case RecoveryInstructionMessage.NEW_RECEIVER:
-			newReceiver(instructionMessage.getNewReceiver(),
-					instructionMessage.getSharedQueryId());
+			try {
+				newReceiver(instructionMessage.getNewReceiver(),
+						instructionMessage.getSharedQueryId());
+			} catch (DataTransmissionException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			break;
 		}
 	}
@@ -52,19 +69,60 @@ public class RecoveryInstructionHandler {
 	 * 
 	 * @param newReceiver
 	 * @param queryId
+	 * @throws DataTransmissionException
 	 */
-	private static void newReceiver(PeerID newReceiver, ID sharedQueryId) {
-//		JxtaSenderAO newSenderAO = new JxtaSenderAO();
-//
-//		try {
-//			JxtaSenderPO<IStreamObject<?>> newSender = new JxtaSenderPO<IStreamObject<?>>(
-//					newSenderAO);
-//		} catch (DataTransmissionException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-//
-//		LocalBackupInformationAccess.getStoredPQLStatements(sharedQueryId, newReceiver);
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	private static void newReceiver(PeerID newReceiver, ID sharedQueryId)
+			throws DataTransmissionException {
+		// Get my own (old) sender for this sharedQueryId
+		PeerID myPeerId = RecoveryCommunicator.getP2pNetworkManager()
+				.getLocalPeerID();
+		String pipeId = "";
+		List<JxtaInformation> jxtaInfo = LocalBackupInformationAccess
+				.getJxtaInfoForPeer(myPeerId);
+		for (JxtaInformation info : jxtaInfo) {
+			if (info.getSharedQueryID().equals(sharedQueryId)
+					&& info.getKey().equals(
+							RecoveryCommunicator.JXTA_KEY_SENDER_PIPE_ID)) {
+				pipeId = info.getValue();
+			}
+		}
+
+		// New JxtaSender which should send to the new peer
+		JxtaSenderAO jxtaSenderAO = new JxtaSenderAO();
+		jxtaSenderAO.setPeerID(newReceiver.toString());
+		jxtaSenderAO.setPipeID(pipeId);
+
+		JxtaSenderPO jxtaSender = null;
+		jxtaSender = new JxtaSenderPO<IStreamObject<?>>(jxtaSenderAO);
+
+		// Now do the subscriptions
+		JxtaSenderPO originalSender = (JxtaSenderPO) RecoveryHelper
+				.getPhysicalJxtaOperator(true, pipeId);
+		jxtaSender.setOutputSchema(originalSender.getOutputSchema());
+		PhysicalSubscription subscription = originalSender
+				.getSubscribedToSource(0);
+
+		if (subscription.getTarget() instanceof AbstractPipe) {
+			((AbstractPipe) subscription.getTarget())
+					.subscribeSink(jxtaSender, 0,
+							subscription.getSourceOutPort(),
+							subscription.getSchema(), true,
+							subscription.getOpenCalls());
+			jxtaSender.subscribeToSource(subscription.getTarget(),
+					subscription.getSinkInPort(),
+					subscription.getSourceOutPort(), subscription.getSchema());
+		} else if (subscription.getTarget() instanceof AbstractSource) {
+			((AbstractSource) subscription.getTarget())
+					.subscribeSink(jxtaSender, 0,
+							subscription.getSourceOutPort(),
+							subscription.getSchema(), true,
+							subscription.getOpenCalls());
+			jxtaSender.subscribeToSource(subscription.getTarget(),
+					subscription.getSinkInPort(),
+					subscription.getSourceOutPort(), subscription.getSchema());
+		}
+
 	}
 
 }
