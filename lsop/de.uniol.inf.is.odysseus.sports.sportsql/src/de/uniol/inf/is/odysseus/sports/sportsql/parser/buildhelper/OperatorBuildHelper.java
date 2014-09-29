@@ -294,7 +294,7 @@ public class OperatorBuildHelper {
 			// Calculate meters from input stream
 			List<SDFExpressionParameter> meterExpressions = new ArrayList<SDFExpressionParameter>();
 			SDFExpressionParameter param1 = OperatorBuildHelper
-					.createExpressionParameter("sid", source);
+					.createExpressionParameter("entity_id", source);
 			SDFExpressionParameter param2 = OperatorBuildHelper
 					.createExpressionParameter("x / 1000 - " + AbstractSportsDDCAccess.getFieldXMin()
 							+ "/1000", "x_meter", source);
@@ -323,6 +323,10 @@ public class OperatorBuildHelper {
 //					.createExpressionParameter("ay", source);
 			SDFExpressionParameter param14 = OperatorBuildHelper
 					.createExpressionParameter("ts", source);
+			SDFExpressionParameter param15 = OperatorBuildHelper
+					.createExpressionParameter("team_id", source);
+			
+			
 			meterExpressions.add(param1);
 			meterExpressions.add(param2);
 			meterExpressions.add(param3);
@@ -337,6 +341,7 @@ public class OperatorBuildHelper {
 //			meterExpressions.add(param12);
 //			meterExpressions.add(param13);
 			meterExpressions.add(param14);
+			meterExpressions.add(param15);
 			MapAO metersMap = OperatorBuildHelper.createMapAO(meterExpressions,
 					source, 0, 0);
 
@@ -506,7 +511,7 @@ public class OperatorBuildHelper {
 		List<SDFExpressionParameter> expressions = new ArrayList<SDFExpressionParameter>();
 
 		SDFExpressionParameter ex1 = OperatorBuildHelper
-				.createExpressionParameter("sid", source);
+				.createExpressionParameter("entity_id", source);
 
 		SDFExpressionParameter ex2 = OperatorBuildHelper
 				.createExpressionParameter("minutes(toDate("
@@ -543,6 +548,8 @@ public class OperatorBuildHelper {
 //				.createExpressionParameter("ay", source);
 		SDFExpressionParameter ex14 = OperatorBuildHelper
 				.createExpressionParameter("ts", source);
+		SDFExpressionParameter ex15 = OperatorBuildHelper
+				.createExpressionParameter("team_id", source);
 
 		expressions.add(ex1);
 		expressions.add(ex2);
@@ -558,6 +565,7 @@ public class OperatorBuildHelper {
 //		expressions.add(ex12);
 //		expressions.add(ex13);
 		expressions.add(ex14);
+		expressions.add(ex15);
 
 		MapAO firstMap = OperatorBuildHelper.createMapAO(expressions, source,
 				0, 0);

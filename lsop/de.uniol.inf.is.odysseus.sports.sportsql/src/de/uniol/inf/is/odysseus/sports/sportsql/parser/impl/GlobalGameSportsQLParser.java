@@ -5,7 +5,6 @@ import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.EnrichAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.ProjectAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.SelectAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.StreamAO;
@@ -49,12 +48,6 @@ public class GlobalGameSportsQLParser implements ISportsQLParser {
 		// 1. Game-Stream
 		StreamAO soccerGameAccessAO = OperatorBuildHelper.createGameStreamAO();
 		allOperators.add(soccerGameAccessAO);
-	
-
-		// 2. Metadata-Stream
-		StreamAO metadataStreamAO = OperatorBuildHelper
-				.createMetadataStreamAO();
-		allOperators.add(metadataStreamAO);
 
 		// Time parameter
 		SelectAO timeSelect = OperatorBuildHelper.createTimeMapAndSelect(
@@ -79,22 +72,15 @@ public class GlobalGameSportsQLParser implements ISportsQLParser {
 		// Second part (Enrich and Project)
 		// --------------------------------
 
-		// 1. Enrich
-		EnrichAO enrichAO = OperatorBuildHelper.createEnrichAO(
-				"sensorid = sid", timeWindow, metadataStreamAO);
-		allOperators.add(enrichAO);
-
 		// 2. Project
 		List<String> attributes = new ArrayList<String>();
 		attributes.add("x");
 		attributes.add("y");
 		attributes.add("entity_id");
-		attributes.add("entity");
-		attributes.add("remark");
 		attributes.add("team_id");
 
 		ProjectAO projectAO = OperatorBuildHelper.createProjectAO(attributes,
-				enrichAO);
+				timeWindow);
 		allOperators.add(projectAO);
 		
 	
