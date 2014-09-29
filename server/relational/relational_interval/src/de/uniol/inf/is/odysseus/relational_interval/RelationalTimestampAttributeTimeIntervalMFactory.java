@@ -126,7 +126,8 @@ public class RelationalTimestampAttributeTimeIntervalMFactory extends
 
 			Calendar cal = Calendar.getInstance(this.timezone);
 			int year = inElem.getAttribute(startTimestampYearPos);
-			int month = inElem.getAttribute(startTimestampMonthPos);
+			int month = (Integer) (startTimestampMonthPos > 0 ? inElem
+					.getAttribute(startTimestampMonthPos) : 1);
 			int day = (Integer) (startTimestampDayPos > 0 ? inElem
 					.getAttribute(startTimestampDayPos) : 1);
 			int hour = (Integer) (startTimestampHourPos > 0 ? inElem
