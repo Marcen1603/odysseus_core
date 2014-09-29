@@ -1,29 +1,30 @@
 /********************************************************************************** 
-  * Copyright 2011 The Odysseus Team
-  *
-  * Licensed under the Apache License, Version 2.0 (the "License");
-  * you may not use this file except in compliance with the License.
-  * You may obtain a copy of the License at
-  *
-  *     http://www.apache.org/licenses/LICENSE-2.0
-  *
-  * Unless required by applicable law or agreed to in writing, software
-  * distributed under the License is distributed on an "AS IS" BASIS,
-  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  * See the License for the specific language governing permissions and
-  * limitations under the License.
-  */
+ * Copyright 2011 The Odysseus Team
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package de.uniol.inf.is.odysseus.benchmark.prio.physical;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
+import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFMetaAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFMetaAttributeList;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSource;
 import de.uniol.inf.is.odysseus.interval_latency_priority.IntervalLatencyPriority;
-import de.uniol.inf.is.odysseus.core.collection.Tuple;
 
 public class BatchProducer extends
 		AbstractSource<Tuple<IntervalLatencyPriority>> {
@@ -58,15 +59,18 @@ public class BatchProducer extends
 					} catch (InterruptedException e) {
 						e.printStackTrace();
 					}
-					IntervalLatencyPriority ilp = new IntervalLatencyPriority(System.nanoTime());
+					IntervalLatencyPriority ilp = new IntervalLatencyPriority(
+							System.nanoTime());
+					ilp.setStart(PointInTime.getZeroTime());
 					nonprio.setMetadata(ilp);
-					
+
 					IntervalLatencyPriority ilp2 = null;
 					ilp2 = ilp.clone();
 					ilp2.setPriority((byte) 1);
 					prio.setMetadata(ilp2);
 					for (int i = 0; i < count; ++i) {
-						transfer((jedeswievielteelementprio > 0 && i % jedeswievielteelementprio == 0 ? prio
+						transfer((jedeswievielteelementprio > 0
+								&& i % jedeswievielteelementprio == 0 ? prio
 								: nonprio).clone());
 					}
 				}
@@ -77,20 +81,22 @@ public class BatchProducer extends
 		t.setDaemon(true);
 		t.start();
 	}
-	
+
 	@Override
-	public BatchProducer clone()  {
+	public BatchProducer clone() {
 		throw new RuntimeException("Clone Not implemented yet");
 	}
 
-	
 	@Override
 	public SDFMetaAttributeList getMetaAttributeSchema() {
-		List<SDFMetaAttribute> metalist = new ArrayList<SDFMetaAttribute>(super.getMetaAttributeSchema().getAttributes());
-		SDFMetaAttribute mataAttribute = new SDFMetaAttribute(IntervalLatencyPriority.class);
-		if(!metalist.contains(mataAttribute)){
+		List<SDFMetaAttribute> metalist = new ArrayList<SDFMetaAttribute>(super
+				.getMetaAttributeSchema().getAttributes());
+		SDFMetaAttribute mataAttribute = new SDFMetaAttribute(
+				IntervalLatencyPriority.class);
+		if (!metalist.contains(mataAttribute)) {
 			metalist.add(mataAttribute);
 		}
-		return new SDFMetaAttributeList(super.getMetaAttributeSchema().getURI(),metalist);
-	}		
+		return new SDFMetaAttributeList(
+				super.getMetaAttributeSchema().getURI(), metalist);
+	}
 }
