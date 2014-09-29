@@ -23,9 +23,9 @@ import java.util.Locale;
 import java.util.TimeZone;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
+import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.server.metadata.AbstractMetadataUpdater;
-import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 
 /**
  * @author Jonas Jacobi, Marco Grawunder
@@ -37,7 +37,7 @@ public class RelationalTimestampAttributeTimeIntervalMFactory extends
 	final private int startAttrPos;
 	final private int endAttrPos;
 	final private SimpleDateFormat df;
-	
+
 	// Time is separated to different attributes
 	final private int startTimestampYearPos;
 	final private int startTimestampMonthPos;
@@ -63,7 +63,7 @@ public class RelationalTimestampAttributeTimeIntervalMFactory extends
 		} else {
 			this.timezone = TimeZone.getTimeZone("UTC");
 		}
-		
+
 		if (dateFormat != null) {
 			if (locale != null) {
 				df = new SimpleDateFormat(dateFormat, locale);
@@ -75,8 +75,6 @@ public class RelationalTimestampAttributeTimeIntervalMFactory extends
 			df = null;
 		}
 
-		
-		
 		startTimestampYearPos = -1;
 		startTimestampMonthPos = -1;
 		startTimestampDayPos = -1;
@@ -139,6 +137,8 @@ public class RelationalTimestampAttributeTimeIntervalMFactory extends
 					.getAttribute(startTimestampSecondPos) : 0);
 			cal.set(year, month - 1, day, hour, minute, second);
 			long ts = cal.getTimeInMillis();
+			// Round to millis because they cannot be set with cal.set
+			ts = (ts / 1000) * 1000;
 
 			if (startTimestampMillisecondPos > 0) {
 				ts = ts
@@ -148,8 +148,8 @@ public class RelationalTimestampAttributeTimeIntervalMFactory extends
 			if (factor > 0) {
 				ts *= factor;
 			}
-			
-			ts+=offset;
+
+			ts += offset;
 
 			PointInTime start = new PointInTime(ts);
 			inElem.getMetadata().setStart(start);
@@ -173,7 +173,7 @@ public class RelationalTimestampAttributeTimeIntervalMFactory extends
 		if (df != null) {
 			String timeString = (String) inElem.getAttribute(attrPos);
 			try {
-				timeN = df.parse(timeString).getTime();				
+				timeN = df.parse(timeString).getTime();
 			} catch (Exception e) {
 				e.printStackTrace();
 				throw new RuntimeException("Date cannot be parsed! "
@@ -182,13 +182,13 @@ public class RelationalTimestampAttributeTimeIntervalMFactory extends
 		} else {
 			timeN = (Number) inElem.getAttribute(attrPos);
 		}
-		if (factor != 0){
+		if (factor != 0) {
 			timeN = timeN.longValue() * factor;
 		}
-		if (offset > 0){
-			timeN= timeN.longValue() + offset;
+		if (offset > 0) {
+			timeN = timeN.longValue() + offset;
 		}
-		
+
 		PointInTime time = null;
 		if (timeN == null || timeN.longValue() == -1) {
 			time = PointInTime.getInfinityTime();
