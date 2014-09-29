@@ -1,6 +1,10 @@
 package de.uniol.inf.is.odysseus.keyperformanceindicators.kpicalculation;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -18,12 +22,30 @@ public class ConversationReachKPI<M extends ITimeInterval> extends AbstractKeyPe
 	private Map<Integer, String> uniqueUserNames = new HashMap<Integer, String>();
 	private Map<Integer, String> allUserNames = new HashMap<Integer, String>();
 	
+	File file;
+	FileWriter writer;
+	
 	public ConversationReachKPI() 
-	{}
+	{
+		try {
+			writer = new FileWriter("C:\\Users\\Rick\\workspace2\\Projekt2\\kpiwithtimestamps.txt");
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	}
 
 	public ConversationReachKPI(String kpiName) 
 	{
 		this.kpiType = kpiName;
+		
+		try {
+			writer = new FileWriter("C:\\Users\\Rick\\workspace2\\Projekt2\\kpiwithtimestamps.txt");
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	@Override
@@ -48,7 +70,29 @@ public class ConversationReachKPI<M extends ITimeInterval> extends AbstractKeyPe
 		
 		//if(((double)this.values.size()) + this.counterAllTopics > 0)
 		//return this.conversationReachResult = (((double)this.values.size()) / this.counterAllTopics * 100);
-	
+		
+			try {
+				writer.write("----------------Start--------------");
+				
+				for(Tuple<M> tuple : incomingTuple)
+				{
+					Date datstart = new Date(Long.parseLong(tuple.getMetadata().getStart().toString()));
+					Date datend = new Date(Long.parseLong(tuple.getMetadata().getEnd().toString()));	
+					writer.write("Tuple: " + tuple.getAttribute(positionOfInputText).toString() + " --- Start: " + datstart + " ---End: " + datend);
+				}
+				
+				writer.write("KPI : " + String.valueOf((((double)this.uniqueUserNames.size()) / ((double)this.allUserNames.size()) * 100)) + "\n");
+			
+				writer.write("----------------Ende--------------");
+				
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+			
+		
+		
 		if(((double)this.uniqueUserNames.size()) + ((double)this.allUserNames.size()) > 0)
 			return this.setConversationReachResult((((double)this.uniqueUserNames.size()) / ((double)this.allUserNames.size()) * 100));
 		else

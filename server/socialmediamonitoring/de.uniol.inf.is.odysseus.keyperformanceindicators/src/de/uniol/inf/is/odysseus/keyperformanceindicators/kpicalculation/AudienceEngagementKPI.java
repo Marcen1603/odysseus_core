@@ -2,6 +2,9 @@ package de.uniol.inf.is.odysseus.keyperformanceindicators.kpicalculation;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
@@ -14,6 +17,8 @@ public class AudienceEngagementKPI<M extends ITimeInterval> extends AbstractKeyP
 	private String[] urlsToValidate = new String[]{"http://", "https://"};
 	private double audienceEngagementResult = 0;
 	private double countOfConcreteElements = 0;
+	private double countoflinks =0;
+	private static int i =0 ;
 		
 	public AudienceEngagementKPI(){}
 	
@@ -34,26 +39,57 @@ public class AudienceEngagementKPI<M extends ITimeInterval> extends AbstractKeyP
 		this.concreteElements = con;
 		this.allElements = all;
 		this.countOfConcreteElements = 0;
-		
+				
 		for(Tuple<M> tuple : incomingTuple)
 		{
 			String currentInputText = tuple.getAttribute(positionOfInputText).toString().toLowerCase();					
 			findAndCountGivenWordsInLists(currentInputText);
 			calculateAudienceEngagement();
 		}
+			
 		return this.audienceEngagementResult;
 	}
 		
 	private void findAndCountGivenWordsInLists(String currentInputText) 
 	{
 		for(int i=0; i<this.concreteElements.size(); i++)
-		{			
-			if(currentInputText.contains(this.concreteElements.get(i).toString().toLowerCase()))
+		{
+			int lastIndex = currentInputText.indexOf(this.concreteElements.get(i).toString());
+		
+			if(lastIndex == -1)
+			{
+				lastIndex = currentInputText.indexOf(this.concreteElements.get(i).toString().toLowerCase());
+			}
+						
+			while(lastIndex != -1)
 			{
 				this.countOfConcreteElements++;
-				findAndCountLinksToTheConcreteTopic(currentInputText);
+				lastIndex = currentInputText.indexOf(this.concreteElements.get(i).toString().toLowerCase(), lastIndex + this.concreteElements.get(i).toString().length());
 			}
+						
+//			if(currentInputText.contains(this.concreteElements.get(i).toString().toLowerCase()) || currentInputText.contains(this.concreteElements.get(i).toString()))
+//			{
+//				this.countOfConcreteElements++;
+//				findAndCountLinksToTheConcreteTopic(currentInputText);	
+//			}
 		}
+		
+		int secondIndex = currentInputText.indexOf(urlsToValidate[0]);
+		
+		if(secondIndex == -1)
+		{
+			secondIndex = currentInputText.indexOf(urlsToValidate[0].toLowerCase());
+			//System.out.println("Link: " + secondIndex + " String: " + currentInputText);
+		}
+		
+		while(secondIndex != -1)
+		{
+			this.countOfConcreteElements++;
+			//System.out.println("Index-Link: " + secondIndex + " -- " + this.countOfConcreteElements);
+			secondIndex = currentInputText.indexOf(urlsToValidate[0], secondIndex + urlsToValidate[0].length());
+			
+		}
+		
 	}
 	
 	private void findAndCountLinksToTheConcreteTopic(String text)

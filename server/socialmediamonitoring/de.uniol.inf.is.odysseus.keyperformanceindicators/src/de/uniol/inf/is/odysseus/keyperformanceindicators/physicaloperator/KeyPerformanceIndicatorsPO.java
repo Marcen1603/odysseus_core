@@ -132,10 +132,8 @@ public class KeyPerformanceIndicatorsPO<M extends ITimeInterval> extends Abstrac
 		
 		if(this.positionOfUserNames > -1 && this.kpiName.equals("conversationreach")){
 			kpiResult = this.algo.manageKPICalculation(tupleList, this.subsetOfTerms, this.totalQuantityOfTerms, this.positionOfIncomingText, this.positionOfUserNames);
-			System.out.println("conversationreach");
 		}
 		else{
-			System.out.println("was anderes");
 			kpiResult = this.algo.manageKPICalculation(tupleList, this.subsetOfTerms, this.totalQuantityOfTerms, this.positionOfIncomingText);
 		}
 		
