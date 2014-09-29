@@ -40,10 +40,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -339,7 +337,7 @@ public class WsClient implements IExecutor, IClientExecutor, IOperatorOwner {
 		}
 		fireUpdateEvent(IUpdateEventListener.QUERY);
 	}
-	
+
 	@Override
 	public void partialQuery(int queryID, int sheddingFactor, ISession caller)
 			throws PlanManagementException {
@@ -546,9 +544,10 @@ public class WsClient implements IExecutor, IClientExecutor, IOperatorOwner {
 	@Override
 	public ILogicalQuery getLogicalQueryByName(String name, ISession caller) {
 		try {
-			QueryResponse resp = getWebserviceServer()
-					.getLogicalQueryByName(caller.getToken(), name);
-			return createLogicalQueryFromInfo(resp.getResponseValue(), resp.getQueryState(), caller);
+			QueryResponse resp = getWebserviceServer().getLogicalQueryByName(
+					caller.getToken(), name);
+			return createLogicalQueryFromInfo(resp.getResponseValue(),
+					resp.getQueryState(), caller);
 		} catch (InvalidUserDataException_Exception e) {
 			throw new PlanManagementException(e);
 		}
@@ -639,20 +638,19 @@ public class WsClient implements IExecutor, IClientExecutor, IOperatorOwner {
 		receiver.open(null, 0, 0, null, null);
 		receiver.addOwner(this);
 		receivers.put(queryId, receiver);
-		opReceivers.put(receiver,queryId);
-		
+		opReceivers.put(receiver, queryId);
+
 		return Optional.of(receiver);
 	}
-	
+
 	@Override
 	public void done(IOwnedOperator op) {
 		Integer queryID = opReceivers.get(op);
-		if (queryID != null){
+		if (queryID != null) {
 			opReceivers.remove(op);
 			receivers.remove(queryID);
 		}
 	}
-
 
 	/**
 	 * Returns a SocketAddress object
@@ -666,7 +664,8 @@ public class WsClient implements IExecutor, IClientExecutor, IOperatorOwner {
 		if (getWebserviceServer() != null) {
 			try {
 				ConnectionInformationResponse infoResponse = getWebserviceServer()
-						.getConnectionInformation(caller.getToken(), queryId, false);
+						.getConnectionInformation(caller.getToken(), queryId,
+								false);
 
 				if (infoResponse != null) {
 					ConnectionInformation info = infoResponse
@@ -1168,6 +1167,5 @@ public class WsClient implements IExecutor, IClientExecutor, IOperatorOwner {
 		// TODO Auto-generated method stub
 		return 0;
 	}
-
 
 }

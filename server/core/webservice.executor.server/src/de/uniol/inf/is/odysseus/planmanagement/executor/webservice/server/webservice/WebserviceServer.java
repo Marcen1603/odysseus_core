@@ -76,7 +76,6 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IOperatorBui
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IOperatorBuilderFactory;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.ListParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.MapParameter;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSink;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.sink.ByteBufferSinkStreamHandlerBuilder;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.sink.NioByteBufferSinkStreamHandlerBuilder;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.sink.SocketSinkPO;
@@ -139,7 +138,6 @@ public class WebserviceServer {
 
 	private static final int SINK_MIN_PORT = 10000;
 	private static final int SINK_MAX_PORT = 20000;
-	
 
 	/**
 	 * Socket Management
@@ -779,8 +777,8 @@ public class WebserviceServer {
 		rootAsSource.subscribeSink((ISink) sink, 0, 0, root.getOutputSchema(),
 				true, 0);
 		sink.addOwner(query);
-//		rootAsSource.connectSink((ISink) sink, 0, 0, root.getOutputSchema());
-//		sink.setInputPortCount(1);
+		// rootAsSource.connectSink((ISink) sink, 0, 0, root.getOutputSchema());
+		// sink.setInputPortCount(1);
 		sink.startListening();
 		return sink;
 	}
