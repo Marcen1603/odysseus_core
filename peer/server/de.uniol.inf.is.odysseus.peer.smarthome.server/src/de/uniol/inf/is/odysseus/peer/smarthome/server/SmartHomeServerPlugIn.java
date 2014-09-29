@@ -9,13 +9,13 @@ import de.uniol.inf.is.odysseus.p2p_new.IMessage;
 import de.uniol.inf.is.odysseus.p2p_new.IP2PNetworkManager;
 import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicator;
 import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicatorListener;
+import de.uniol.inf.is.odysseus.p2p_new.PeerCommunicationException;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.IP2PDictionary;
-/*
 import de.uniol.inf.is.odysseus.peer.smarthome.SmartDeviceConfig;
 import de.uniol.inf.is.odysseus.peer.smarthome.SmartDeviceConfigurationRequestMessage;
 import de.uniol.inf.is.odysseus.peer.smarthome.SmartDeviceConfigurationResponseMessage;
 import de.uniol.inf.is.odysseus.peer.smarthome.SmartDeviceMessage;
-*/
+
 
 public class SmartHomeServerPlugIn implements BundleActivator {
 
@@ -25,7 +25,6 @@ public class SmartHomeServerPlugIn implements BundleActivator {
 	private static IP2PNetworkManager p2pNetworkManager;
 	private static IPeerCommunicator peerCommunicator;
 	private static IP2PDictionary p2pDictionary;
-	@SuppressWarnings("unused")
 	private static SmartDeviceConfigurationListener smartDeviceConfigurationListener;
 	
 	/*
@@ -45,13 +44,14 @@ public class SmartHomeServerPlugIn implements BundleActivator {
 	// called by OSGi-DS
 	public static void bindPeerCommunicator(IPeerCommunicator serv) {
 		peerCommunicator = serv;
-		//peerCommunicator.registerMessageType(SmartDeviceMessage.class);
-		//smartDeviceConfigurationListener = new SmartDeviceConfigurationListener();
-		/*
+		peerCommunicator.registerMessageType(SmartDeviceMessage.class);
+		peerCommunicator.registerMessageType(SmartDeviceConfigurationRequestMessage.class);
+		peerCommunicator.registerMessageType(SmartDeviceConfigurationResponseMessage.class);
+		
+		smartDeviceConfigurationListener = new SmartDeviceConfigurationListener();
 		peerCommunicator.addListener(smartDeviceConfigurationListener, SmartDeviceMessage.class);
 		peerCommunicator.addListener(smartDeviceConfigurationListener, SmartDeviceConfigurationRequestMessage.class);
 		peerCommunicator.addListener(smartDeviceConfigurationListener, SmartDeviceConfigurationResponseMessage.class);
-		*/
 	}
 
 	// called by OSGi-DS
@@ -107,7 +107,7 @@ public class SmartHomeServerPlugIn implements BundleActivator {
 		public void receivedMessage(IPeerCommunicator communicator, PeerID senderPeer, IMessage message) {
 			System.out.println("SmartHomeServerP2PCommunicatorListener receivedMessage!!");
 			
-			/*
+			
 			if(message instanceof SmartDeviceMessage){
 				SmartDeviceMessage smessage = (SmartDeviceMessage)message;
 				
@@ -127,6 +127,7 @@ public class SmartHomeServerPlugIn implements BundleActivator {
 				
 				//read what is requested in: configRequest
 				
+				System.out.println("load smartDeviceConfig and send to the requester");
 				
 				//load SmartDeviceConfig:
 				//load: smartDeviceConfig
@@ -134,7 +135,7 @@ public class SmartHomeServerPlugIn implements BundleActivator {
 				
 				
 				//load and send the smart device config to the requester (senderPeer):
-				SmartDeviceConfigurationResponseMessage configResponse = new SmartDeviceConfigurationResponseMessage();
+				SmartDeviceConfigurationResponseMessage configResponse = new SmartDeviceConfigurationResponseMessage("Test config");
 				configResponse.setSmartDeviceConfig(smartDeviceConfig);
 				
 				try {
@@ -150,8 +151,20 @@ public class SmartHomeServerPlugIn implements BundleActivator {
 				SmartDeviceConfig smartDeviceConfig = configResponse.getSmartDeviceConfig();
 				
 				//save: smartDeviceConfig
+				
+				
+				
+				if(!isLocalPeer(senderPeer)){
+					System.out.println("save smartDeviceConfig, if peerID in the obtained device config is the local peer id.");
+					
+					//In der übermittelten config überprüfen ob es sich um die eigene PeerID handelt.
+					//if(smartDeviceConfig.peerID = localPeer.PeerID) {
+					//    
+					//}
+				}
+			}else{
+				System.out.println("unknown type");
 			}
-			*/
 		}
 		
 	}

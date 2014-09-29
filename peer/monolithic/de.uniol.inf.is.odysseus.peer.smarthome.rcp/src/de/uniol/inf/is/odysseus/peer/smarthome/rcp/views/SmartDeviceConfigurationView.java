@@ -24,6 +24,8 @@ import de.uniol.inf.is.odysseus.p2p_new.IMessage;
 import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicator;
 import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicatorListener;
 import de.uniol.inf.is.odysseus.p2p_new.PeerCommunicationException;
+import de.uniol.inf.is.odysseus.peer.smarthome.SmartDeviceConfigurationRequestMessage;
+import de.uniol.inf.is.odysseus.peer.smarthome.SmartDeviceConfigurationResponseMessage;
 import de.uniol.inf.is.odysseus.peer.smarthome.SmartDeviceMessage;
 import de.uniol.inf.is.odysseus.peer.smarthome.rcp.SmartHomeRCPActivator;
 
@@ -159,6 +161,11 @@ public class SmartDeviceConfigurationView extends ViewPart implements IPeerCommu
 					try {
 						SmartDeviceMessage chat = new SmartDeviceMessage("Load configuration");
 						SmartHomeRCPActivator.getPeerCommunicator().send(selectedPeer, chat);
+						
+						
+						SmartDeviceConfigurationRequestMessage confRequest = new SmartDeviceConfigurationRequestMessage("Configuration");
+						SmartHomeRCPActivator.getPeerCommunicator().send(selectedPeer, confRequest);
+						
 					} catch (PeerCommunicationException ex) {
 						LOG.error("Cannot send message", ex);
 					}
@@ -184,6 +191,9 @@ public class SmartDeviceConfigurationView extends ViewPart implements IPeerCommu
 		try{
 			SmartHomeRCPActivator.getPeerCommunicator().registerMessageType(SmartDeviceMessage.class);
 			SmartHomeRCPActivator.getPeerCommunicator().addListener(this, SmartDeviceMessage.class);
+			
+			SmartHomeRCPActivator.getPeerCommunicator().registerMessageType(SmartDeviceConfigurationResponseMessage.class);
+			SmartHomeRCPActivator.getPeerCommunicator().addListener(this, SmartDeviceConfigurationResponseMessage.class);
 		}catch(NullPointerException ex){
 			ex.printStackTrace();
 		}
@@ -205,8 +215,15 @@ public class SmartDeviceConfigurationView extends ViewPart implements IPeerCommu
 		if(message instanceof SmartDeviceMessage){
 			SmartDeviceMessage sdmsg = (SmartDeviceMessage)message;
 			System.out.println("message: "+sdmsg.getText());
-		}else{
 			
+		}else if(message instanceof SmartDeviceConfigurationResponseMessage){
+			SmartDeviceConfigurationResponseMessage sdmsg = (SmartDeviceConfigurationResponseMessage)message;
+			System.out.println("show config: "+sdmsg.getText());
+			
+			
+			
+		}else{
+			System.out.println("unknown type");
 		}
 	}
 }
