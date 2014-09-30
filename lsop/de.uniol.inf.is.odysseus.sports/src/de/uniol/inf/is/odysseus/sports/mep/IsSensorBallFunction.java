@@ -108,7 +108,7 @@ public class IsSensorBallFunction extends AbstractFunction<Boolean>{
 	public Boolean getValue() {
 		
 		Integer id =  getInputValue(0);
-		String type =  getInputValue(0).toString();
+		String type =  getInputValue(1).toString();
 		
 		if(type.equals("sid")){
 			if(ballSensorIDList.contains(id)){
