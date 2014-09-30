@@ -1,5 +1,8 @@
 package de.uniol.inf.is.odysseus.sports.mep;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -11,7 +14,7 @@ import de.uniol.inf.is.odysseus.peer.ddc.DDCKey;
 import de.uniol.inf.is.odysseus.peer.ddc.IDistributedDataContainer;
 import de.uniol.inf.is.odysseus.peer.ddc.MissingDDCEntryException;
 
-public class GetAllBallSensorIDFunction extends AbstractFunction<String>{
+public class IsSensorBallFunction extends AbstractFunction<Boolean>{
 	
 	private static final long serialVersionUID = -1421280112062480906L;
 
@@ -19,15 +22,17 @@ public class GetAllBallSensorIDFunction extends AbstractFunction<String>{
 	 * The logger for this class.
 	 */
 	private static final Logger LOG = LoggerFactory
-			.getLogger(GetAllBallSensorIDFunction.class);
+			.getLogger(IsSensorBallFunction.class);
 	
 	protected static IDistributedDataContainer ddc;
 
+	private static List<Integer> ballEntityIDList = new ArrayList<Integer>();
+	private static List<Integer> ballSensorIDList = new ArrayList<Integer>();
 	
-	public static final SDFDatatype[][] accTypes = new SDFDatatype[][] {{ SDFDatatype.STRING } };
+	public static final SDFDatatype[][] accTypes = new SDFDatatype[][] {{ SDFDatatype.INTEGER}, { SDFDatatype.STRING } };
 
-	public GetAllBallSensorIDFunction() {
-	        super("getBallSensorIDs", 1, accTypes, SDFDatatype.INTEGER);
+	public IsSensorBallFunction() {
+	        super("isSensorBall", 2, accTypes, SDFDatatype.BOOLEAN);
 	    }
 	
 	
@@ -42,10 +47,12 @@ public class GetAllBallSensorIDFunction extends AbstractFunction<String>{
 	public static void bindDDC(IDistributedDataContainer ddc) {
 
 		Preconditions.checkNotNull(ddc, "The DDC to bind must be not null!");
-		GetAllBallSensorIDFunction.ddc = ddc;
-		GetAllBallSensorIDFunction.LOG.debug("Bound {} as a DDC", ddc.getClass()
+		IsSensorBallFunction.ddc = ddc;
+		IsSensorBallFunction.LOG.debug("Bound {} as a DDC", ddc.getClass()
 				.getSimpleName());
 
+		setUpBallList();
+	
 	}
 
 	/**
@@ -59,22 +66,17 @@ public class GetAllBallSensorIDFunction extends AbstractFunction<String>{
 	public static void unbindDDC(IDistributedDataContainer ddc) {
 
 		Preconditions.checkNotNull(ddc, "The DDC to bind must be not null!");
-		if (GetAllBallSensorIDFunction.ddc == ddc) {
-			GetAllBallSensorIDFunction.ddc = null;
-			GetAllBallSensorIDFunction.LOG.debug("Unbound {} as a DDC", ddc.getClass()
+		if (IsSensorBallFunction.ddc == ddc) {
+			IsSensorBallFunction.ddc = null;
+			IsSensorBallFunction.LOG.debug("Unbound {} as a DDC", ddc.getClass()
 					.getSimpleName());
 
 		}
 
 	}
 
-	@Override
-	public String getValue() {
-		String ballSensorIDs = "";
-		
-		String outputType =  getInputValue(0).toString();
-		
 	
+	private static void setUpBallList(){
 		try {
 			String[] sensorList =AccessToDCCFunction.ddc.getValue(new DDCKey("sensoridlist")).split(",");
 			
@@ -82,39 +84,48 @@ public class GetAllBallSensorIDFunction extends AbstractFunction<String>{
 			String[] searchKey = new String[2];
 			searchKey[0]="sensorid."+sensorList[i];
 			searchKey[1]="team_id";
-			Integer team_id = Integer.valueOf(GetAllBallSensorIDFunction.ddc.getValue(new DDCKey(searchKey)));
+	
+			Integer team_id = Integer.valueOf(IsSensorBallFunction.ddc.getValue(new DDCKey(searchKey)));
 			
-			
-			if(outputType.equals("entity_id")){
+			if(team_id == -1){
 				searchKey[1]="entity_id";
-				Integer entity_id = Integer.valueOf(GetAllBallSensorIDFunction.ddc.getValue(new DDCKey(searchKey)));
-				
-				if(team_id == -1){
-					if(ballSensorIDs.length() == 0){
-						ballSensorIDs = "entity_id = "+entity_id;
-					}else{
-						ballSensorIDs += " || "+ "entity_id = "+entity_id;
-					}
-				}
-			}else if(outputType.equals("sid")){
-				if(team_id == -1){
-					if(ballSensorIDs.length() == 0){
-						ballSensorIDs = "sid = "+sensorList[i];
-					}else{
-						ballSensorIDs += " || "+ "sid = "+sensorList[i];
-					}
-				}
+				int entity_id = Integer.valueOf(IsSensorBallFunction.ddc.getValue(new DDCKey(searchKey)));
+					
+				ballEntityIDList.add(entity_id);
+				ballSensorIDList.add(Integer.valueOf(sensorList[i]));
 			}
-			
-			
 		
+			
 		 }	
+				
+
 		} catch (MissingDDCEntryException e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}		
+	}
+
+	@Override
+	public Boolean getValue() {
 		
+		Integer id =  getInputValue(0);
+		String type =  getInputValue(0).toString();
 		
-		return ballSensorIDs;
+		if(type.equals("sid")){
+			if(ballSensorIDList.contains(id)){
+				return true;
+			}else{
+				return false;
+			}
+		}
+		
+		if(type.equals("entity_id")){
+			if(ballEntityIDList.contains(id)){
+				return true;
+			}else{
+				return false;
+			}
+		}
+		
+		return false;
 	}
 }

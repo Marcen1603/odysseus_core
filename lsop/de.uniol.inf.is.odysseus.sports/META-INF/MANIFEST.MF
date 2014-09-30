@@ -15,4 +15,4 @@ Import-Package: com.google.common.base,
  de.uniol.inf.is.odysseus.sports.sportsql.parser.ddcaccess,
  org.slf4j
 Service-Component: OSGI-INF/SportsRuleProvider.xml,OSGI-INF/AccessToDDCFunction.xml,OSGI-INF/MepFunctionProvider.xml,
- OSGI-INF/GetAllBallSensorIDFunction.xml
+ OSGI-INF/IsSensorBallFunction.xml
