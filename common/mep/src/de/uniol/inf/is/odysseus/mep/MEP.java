@@ -59,6 +59,7 @@ import de.uniol.inf.is.odysseus.mep.functions.bool.AndOperator;
 import de.uniol.inf.is.odysseus.mep.functions.bool.NotOperator;
 import de.uniol.inf.is.odysseus.mep.functions.bool.OrOperator;
 import de.uniol.inf.is.odysseus.mep.functions.bool.XorOperator;
+import de.uniol.inf.is.odysseus.mep.functions.compare.BooleanEqualsOperator;
 import de.uniol.inf.is.odysseus.mep.functions.compare.EqualsOperator;
 import de.uniol.inf.is.odysseus.mep.functions.compare.GreaterEqualsOperator;
 import de.uniol.inf.is.odysseus.mep.functions.compare.GreaterThanOperator;
@@ -269,6 +270,7 @@ public class MEP implements IExpressionParser {
 		registerFunction(new XorOperator());
 
 		registerFunction(new EqualsOperator());
+		registerFunction(new BooleanEqualsOperator());
 		registerFunction(new StringEqualsOperator());
 		registerFunction(new NotEqualsOperator());
 		registerFunction(new StringNotEqualsOperator());
