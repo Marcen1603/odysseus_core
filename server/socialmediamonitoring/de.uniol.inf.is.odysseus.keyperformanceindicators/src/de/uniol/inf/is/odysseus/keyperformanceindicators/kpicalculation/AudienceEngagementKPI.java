@@ -2,9 +2,6 @@ package de.uniol.inf.is.odysseus.keyperformanceindicators.kpicalculation;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
@@ -17,8 +14,6 @@ public class AudienceEngagementKPI<M extends ITimeInterval> extends AbstractKeyP
 	private String[] urlsToValidate = new String[]{"http://", "https://"};
 	private double audienceEngagementResult = 0;
 	private double countOfConcreteElements = 0;
-	private double countoflinks =0;
-	private static int i =0 ;
 		
 	public AudienceEngagementKPI(){}
 	
@@ -74,11 +69,17 @@ public class AudienceEngagementKPI<M extends ITimeInterval> extends AbstractKeyP
 //			}
 		}
 		
-		int secondIndex = currentInputText.indexOf(urlsToValidate[0]);
+		findAndCountLinksToTheConcreteTopic(currentInputText);
+	}
+	
+	private void findAndCountLinksToTheConcreteTopic(String text)
+	{	
+		
+		int secondIndex = text.indexOf(urlsToValidate[0]);
 		
 		if(secondIndex == -1)
 		{
-			secondIndex = currentInputText.indexOf(urlsToValidate[0].toLowerCase());
+			secondIndex = text.indexOf(urlsToValidate[0].toLowerCase());
 			//System.out.println("Link: " + secondIndex + " String: " + currentInputText);
 		}
 		
@@ -86,19 +87,18 @@ public class AudienceEngagementKPI<M extends ITimeInterval> extends AbstractKeyP
 		{
 			this.countOfConcreteElements++;
 			//System.out.println("Index-Link: " + secondIndex + " -- " + this.countOfConcreteElements);
-			secondIndex = currentInputText.indexOf(urlsToValidate[0], secondIndex + urlsToValidate[0].length());
+			secondIndex = text.indexOf(urlsToValidate[0], secondIndex + urlsToValidate[0].length());
 			
 		}
 		
-	}
-	
-	private void findAndCountLinksToTheConcreteTopic(String text)
-	{		
-		for(String urlValidator : this.urlsToValidate)
-		{
-			if(text.contains(urlValidator))
-				this.countOfConcreteElements++;
-		}
+		
+		
+		
+//		for(String urlValidator : this.urlsToValidate)
+//		{
+//			if(text.contains(urlValidator))
+//				this.countOfConcreteElements++;
+//		}
 	}
 	
 	private void calculateAudienceEngagement() 
