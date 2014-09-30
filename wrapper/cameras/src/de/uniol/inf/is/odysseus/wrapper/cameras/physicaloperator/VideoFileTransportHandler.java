@@ -175,7 +175,7 @@ public class VideoFileTransportHandler extends AbstractSimplePullTransportHandle
 			synchronized (processLock)
 			{
 				if (frameGrabber == null) return null;
-				IplImage iplImage = frameGrabber.grab();
+				IplImage iplImage = frameGrabber.grab().clone();
 				if (iplImage == null || iplImage.isNull()) return null;
 				
 				image = new ImageJCV(iplImage);				

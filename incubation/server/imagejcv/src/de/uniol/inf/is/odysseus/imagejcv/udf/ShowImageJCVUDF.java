@@ -29,9 +29,6 @@ public class ShowImageJCVUDF extends CanvasFrame implements IUserDefinedFunction
 	public ShowImageJCVUDF() 
 	{		 
 		super("Frame", 1.0);
-		
-		double defGamma = CanvasFrame.getDefaultGamma();
-		System.out.println("defGamma = " + defGamma);
 	}
 	
 	
@@ -41,12 +38,15 @@ public class ShowImageJCVUDF extends CanvasFrame implements IUserDefinedFunction
 	@Override
 	public void init(String initString) 
 	{
-		if (initString != null) {
-			try {
+		if (initString != null)
+			try 
+			{
 				this.pos = Integer.parseInt(initString);
-			} catch (java.lang.Exception e) {
+			} 
+			catch (java.lang.Exception e) 
+			{
 			}
-		}
+		
 		
 		addWindowListener(new WindowListener()
 			{
@@ -62,30 +62,23 @@ public class ShowImageJCVUDF extends CanvasFrame implements IUserDefinedFunction
 					synchronized (syncObj)
 					{
 						pause.set(true);
-//						CanvasFrame.this.d
 					}					
 				}
 			});
 						
 		
-		this.addKeyListener(new KeyListener() {
-			@Override
-			public void keyPressed(final KeyEvent event) {
-				if (event.getKeyCode() == KeyEvent.VK_SPACE) {
-					ShowImageJCVUDF.this.pause.set(!ShowImageJCVUDF.this.pause.get());
+		this.addKeyListener(new KeyListener() 
+			{
+				@Override public void keyPressed(final KeyEvent event) 
+				{
+					if (event.getKeyCode() == KeyEvent.VK_SPACE)
+						ShowImageJCVUDF.this.pause.set(!ShowImageJCVUDF.this.pause.get());
 				}
-			}
 			
-			@Override
-            public void keyReleased(final KeyEvent event) {
+				@Override public void keyReleased(final KeyEvent event) {}
 
-            }
-
-            @Override
-            public void keyTyped(final KeyEvent event) {
-
-            }
-		});
+				@Override public void keyTyped(final KeyEvent event) {}
+			});
 		this.setSize(700, 700);
 		this.setVisible(true);
 	}
@@ -93,22 +86,19 @@ public class ShowImageJCVUDF extends CanvasFrame implements IUserDefinedFunction
 	/**
 	 * {@inheritDoc}
 	 */
-	@Override
-	public Tuple<? extends IMetaAttribute> process(Tuple<? extends IMetaAttribute> in, int port) 
+	@Override public Tuple<? extends IMetaAttribute> process(Tuple<? extends IMetaAttribute> in, int port) 
 	{
 		ImageJCV image = (ImageJCV) in.getAttribute(this.pos);
-		if (this.canvas.isVisible() && !pause.get()) 
+		synchronized (syncObj) 
 		{
-			synchronized (syncObj ) 
-			{
-				this.showImage(image.getImage());
-			}
+			showImage(image.getImage());
+			repaint();
 		}
 		return in;
 	}
 	
-	@Override
-    public OutputMode getOutputMode() {
+	@Override public OutputMode getOutputMode() 
+	{
         return OutputMode.INPUT;
     }
 }
