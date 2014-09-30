@@ -4,6 +4,8 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Observable;
+import java.util.Observer;
 
 import net.jxta.id.ID;
 import net.jxta.peer.PeerID;
@@ -38,7 +40,7 @@ import de.uniol.inf.is.odysseus.peer.recovery.util.LocalBackupInformationAccess;
  *
  */
 public class RecoveryCommunicator implements IRecoveryCommunicator,
-		IPeerCommunicatorListener {
+		IPeerCommunicatorListener, Observer {
 
 	/**
 	 * The logger instance for this class.
@@ -231,7 +233,10 @@ public class RecoveryCommunicator implements IRecoveryCommunicator,
 
 	@Override
 	public void recover(PeerID failedPeer) {
-		// 1. Search for another peer who can take the parts from the failed
+
+		// 1. Check, if there was something on the failed peer
+
+		// 2. Search for another peer who can take the parts from the failed
 		// peer
 
 		// For now, take a random peer. Here we have to create an interface for
@@ -254,7 +259,7 @@ public class RecoveryCommunicator implements IRecoveryCommunicator,
 			peers.next();
 		}
 
-		// 2. Tell the new peer to install the parts from the failed peer
+		// 3. Tell the new peer to install the parts from the failed peer
 		// If the peer if null, we don't know any other peer so we have to
 		// install it on ourself
 		if (peer == null)
@@ -376,6 +381,19 @@ public class RecoveryCommunicator implements IRecoveryCommunicator,
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
+	}
+
+	@Override
+	public void update(Observable observable, Object notification) {
+		if (notification instanceof P2PNetworkNotification) {
+			P2PNetworkNotification p2pNotification = (P2PNetworkNotification) notification;
+			if (p2pNotification.getType().equals(
+					P2PNetworkNotification.LOST_PEER)) {
+				// Start recovery
+				recover(p2pNotification.getPeer());
+			}
+		}
+
 	}
 
 }

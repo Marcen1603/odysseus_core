@@ -1,6 +1,7 @@
 package de.uniol.inf.is.odysseus.peer.recovery.internal;
 
 import java.util.Collection;
+import java.util.Observable;
 
 import net.jxta.peer.PeerID;
 
@@ -8,7 +9,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.IP2PDictionary;
-import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryCommunicator;
 import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryPeerFailureDetector;
 
 /**
@@ -16,22 +16,24 @@ import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryPeerFailureDetector;
  * {@link IRecoveryPeerFailureDetector}. It detects if a peer leaves the network
  * and initiates the recovery accordingly.
  * 
- * @author Simon Kuespert
+ * @author Simon Kuespert & Tobias Brandt
  * 
  */
-public class PeerFailureDetector implements IRecoveryPeerFailureDetector {
+public class P2PNetworkListener extends Observable implements
+		IRecoveryPeerFailureDetector {
 
 	/**
 	 * The logger instance for this class.
 	 */
 	private static final Logger LOG = LoggerFactory
-			.getLogger(PeerFailureDetector.class);
+			.getLogger(P2PNetworkListener.class);
 
 	private static IP2PDictionary p2pDictionary;
-	private static IRecoveryCommunicator recoveryCommunicator;
 
 	private Collection<PeerID> savedPeerIDs;
 	private volatile boolean detectionStarted = false;
+	
+	private static P2PNetworkListener instance;
 
 	// called by OSGi-DS
 	public static void bindP2PDictionary(IP2PDictionary serv) {
@@ -45,21 +47,11 @@ public class PeerFailureDetector implements IRecoveryPeerFailureDetector {
 		}
 	}
 
-	// called by OSGi-DS
-	public static void bindRecoveryCommunicator(IRecoveryCommunicator serv) {
-		recoveryCommunicator = serv;
-	}
-
-	// called by OSGi-DS
-	public static void unbindRecoveryCommunicator(IRecoveryCommunicator serv) {
-		if (recoveryCommunicator == serv)
-			recoveryCommunicator = null;
-	}
-
 	/**
 	 * Called by OSGi on Bundle activation.
 	 */
 	public void activate() {
+		instance = this;
 		LOG.debug("PeerFailureDetector activated");
 	}
 
@@ -67,7 +59,12 @@ public class PeerFailureDetector implements IRecoveryPeerFailureDetector {
 	 * Called by OSGi on Bundle deactivation.
 	 */
 	public void deactivate() {
+		instance = null;
 		LOG.debug("PeerFailureDetector deactivated");
+	}
+	
+	public static P2PNetworkListener getInstance() {
+		return instance;
 	}
 
 	@Override
@@ -83,15 +80,34 @@ public class PeerFailureDetector implements IRecoveryPeerFailureDetector {
 					if (savedPeerIDs == null) {
 						savedPeerIDs = peerIDs;
 					} else {
+						// Check, if we lost a peer
 						for (PeerID pid : savedPeerIDs) {
 							if (!peerIDs.contains(pid)) {
 								LOG.debug("Peer is not in list anymore");
 								// Start recovery
-								recoveryCommunicator.recover(pid);
+								// recoveryCommunicator.recover(pid);
+								P2PNetworkNotification notification = new P2PNetworkNotification(
+										P2PNetworkNotification.LOST_PEER, pid);
+								setChanged();
+								notifyObservers(notification);
+
 							}
 						}
+
+						// Check, if there is a new peer
+						for (PeerID pid : peerIDs) {
+							if (!savedPeerIDs.contains(pid)) {
+								// We found a new peer
+								P2PNetworkNotification notification = new P2PNetworkNotification(
+										P2PNetworkNotification.FOUND_PEER, pid);
+								setChanged();
+								notifyObservers(notification);
+							}
+						}
+
 						savedPeerIDs = peerIDs;
 					}
+
 					synchronized (this) {
 						try {
 							this.wait(1000);
