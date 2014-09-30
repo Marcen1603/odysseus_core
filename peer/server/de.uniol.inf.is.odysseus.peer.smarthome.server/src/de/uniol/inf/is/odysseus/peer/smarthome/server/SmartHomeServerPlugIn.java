@@ -110,6 +110,7 @@ public class SmartHomeServerPlugIn implements BundleActivator {
 				
 				String testMessage = "Echo! from Server";
 				
+				
 				if(!isLocalPeer(senderPeer) && !smessage.getText().equals(testMessage)){
 					try {
 						SmartHomeServerPlugIn.getPeerCommunicator().send(senderPeer, new SmartDeviceMessage(testMessage));
