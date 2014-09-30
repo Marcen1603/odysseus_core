@@ -193,12 +193,20 @@ public class RecoveryConsole implements CommandProvider {
 		PeerID newReceiverPeerId = getPeerIdFromCi(ci);
 		ID sharedQueryId = getSharedQueryIdFromCi(ci);
 
-		if(newReceiverPeerId == null) {
-			System.out.println("Don't know new receiver peer. Take myself insead.");
-			newReceiverPeerId = RecoveryCommunicator.getP2pNetworkManager().getLocalPeerID();
+		if (senderPeerId == null) {
+			System.out
+					.println("Don't know new sender peer. Take myself insead.");
+			senderPeerId = RecoveryCommunicator.getP2pNetworkManager()
+					.getLocalPeerID();
 		}
-		
-		
+
+		if (newReceiverPeerId == null) {
+			System.out
+					.println("Don't know new receiver peer. Take myself insead.");
+			newReceiverPeerId = RecoveryCommunicator.getP2pNetworkManager()
+					.getLocalPeerID();
+		}
+
 		RecoveryCommunicator.getInstance().sendNewReceiverMessage(senderPeerId,
 				newReceiverPeerId, sharedQueryId);
 	}
@@ -250,26 +258,25 @@ public class RecoveryConsole implements CommandProvider {
 	public void _lsJxtaBackup(CommandInterpreter ci) {
 		Preconditions.checkNotNull(ci, "Command interpreter must not be null!");
 
-		
-		List<PeerID> peers = LocalBackupInformationAccess.getPeersFromJxtaInfoStore();
-		
-		if(peers.isEmpty()) {
+		List<PeerID> peers = LocalBackupInformationAccess
+				.getPeersFromJxtaInfoStore();
+
+		if (peers.isEmpty()) {
 			System.out.println("No information saved");
 			return;
 		}
-		
-		
-		for(PeerID peer : peers) {
+
+		for (PeerID peer : peers) {
 			List<JxtaInformation> jxtaInfo = LocalBackupInformationAccess
 					.getJxtaInfoForPeer(peer);
 			for (JxtaInformation info : jxtaInfo) {
 				String peerName = RecoveryHelper.determinePeerName(peer);
-				System.out.println("Jxta-information about the peer " + peerName
-						+ " (" + peer + ")");
+				System.out.println("Jxta-information about the peer "
+						+ peerName + " (" + peer + ")");
 				System.out.println("QueryID: " + info.getSharedQueryID());
 				System.out.println(info.getKey() + " : " + info.getValue());
 			}
-			
+
 		}
 
 	}

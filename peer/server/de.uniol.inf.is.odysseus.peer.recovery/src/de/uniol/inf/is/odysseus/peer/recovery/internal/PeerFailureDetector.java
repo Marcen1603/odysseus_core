@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.IP2PDictionary;
+import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryCommunicator;
 import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryPeerFailureDetector;
 
 /**
@@ -27,6 +28,7 @@ public class PeerFailureDetector implements IRecoveryPeerFailureDetector {
 			.getLogger(PeerFailureDetector.class);
 
 	private static IP2PDictionary p2pDictionary;
+	private static IRecoveryCommunicator recoveryCommunicator;
 
 	private Collection<PeerID> savedPeerIDs;
 	private volatile boolean detectionStarted = false;
@@ -41,6 +43,17 @@ public class PeerFailureDetector implements IRecoveryPeerFailureDetector {
 		if (p2pDictionary == serv) {
 			p2pDictionary = null;
 		}
+	}
+
+	// called by OSGi-DS
+	public static void bindRecoveryCommunicator(IRecoveryCommunicator serv) {
+		recoveryCommunicator = serv;
+	}
+
+	// called by OSGi-DS
+	public static void unbindRecoveryCommunicator(IRecoveryCommunicator serv) {
+		if (recoveryCommunicator == serv)
+			recoveryCommunicator = null;
 	}
 
 	/**
@@ -73,7 +86,8 @@ public class PeerFailureDetector implements IRecoveryPeerFailureDetector {
 						for (PeerID pid : savedPeerIDs) {
 							if (!peerIDs.contains(pid)) {
 								LOG.debug("Peer is not in list anymore");
-								//TODO do something like send a message
+								// Start recovery
+								recoveryCommunicator.recover(pid);
 							}
 						}
 						savedPeerIDs = peerIDs;

@@ -1,6 +1,7 @@
 package de.uniol.inf.is.odysseus.peer.recovery.internal;
 
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -230,7 +231,36 @@ public class RecoveryCommunicator implements IRecoveryCommunicator,
 
 	@Override
 	public void recover(PeerID failedPeer) {
-		// TODO Auto-generated method stub
+		// 1. Search for another peer who can take the parts from the failed
+		// peer
+
+		// For now, take a random peer. Here we have to create an interface for
+		// allocation strategies
+
+		int numOfPeers = p2pDictionary.getRemotePeerIDs().size();
+		int peerWeTake = (int) (Math.random() * numOfPeers);
+
+		Iterator<PeerID> peers = p2pDictionary.getRemotePeerIDs().iterator();
+		PeerID peer = null;
+
+		int counter = 0;
+		while (peers.hasNext()) {
+
+			if (counter == peerWeTake) {
+				peer = peers.next();
+				break;
+			}
+			counter++;
+			peers.next();
+		}
+
+		// 2. Tell the new peer to install the parts from the failed peer
+		// If the peer if null, we don't know any other peer so we have to
+		// install it on ourself
+		if (peer == null)
+			peer = p2pNetworkManager.getLocalPeerID();
+
+		installQueriesOnNewPeer(failedPeer, peer);
 
 	}
 

@@ -2,6 +2,7 @@ package de.uniol.inf.is.odysseus.peer.recovery.util;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.Collection;
 
 import net.jxta.peer.PeerID;
@@ -10,12 +11,19 @@ import net.jxta.pipe.PipeID;
 import com.google.common.base.Optional;
 
 import de.uniol.inf.is.odysseus.core.collection.Context;
+import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
+import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.RestructHelper;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
+import de.uniol.inf.is.odysseus.p2p_new.logicaloperator.JxtaReceiverAO;
+import de.uniol.inf.is.odysseus.p2p_new.logicaloperator.JxtaSenderAO;
 import de.uniol.inf.is.odysseus.p2p_new.physicaloperator.JxtaReceiverPO;
 import de.uniol.inf.is.odysseus.p2p_new.physicaloperator.JxtaSenderPO;
+import de.uniol.inf.is.odysseus.peer.distribute.ILogicalQueryPart;
+import de.uniol.inf.is.odysseus.peer.distribute.LogicalQueryPart;
 import de.uniol.inf.is.odysseus.peer.recovery.internal.RecoveryCommunicator;
 
 public class RecoveryHelper {
@@ -104,6 +112,7 @@ public class RecoveryHelper {
 		return null;
 	}
 
+	
 	public static PipeID getReceiverPipeId(String pql) {
 		String pipeSearch = "JXTARECEIVER({PIPE='";
 		int pipeIdLength = 80;
@@ -126,6 +135,68 @@ public class RecoveryHelper {
 		}
 
 		return null;
+	}
+
+	/**
+	 * Get Logical JxtaOperator (Sender or Receiver) by PipeID.
+	 * Copied from LoadBalancingHelper
+	 * 
+	 * @param lookForSender
+	 *            true if we look for a sender, false if we look for receiver.
+	 * @param pipeID
+	 *            Pipe id of Sender we look for.
+	 * @return Operator (if found) or null.
+	 */
+	public static ILogicalOperator getLogicalJxtaOperator(boolean lookForSender,
+			String pipeID) {
+		
+		for (ILogicalQueryPart part : getInstalledQueryParts()) {
+			for (ILogicalOperator operator : part.getOperators()) {
+				if (lookForSender) {
+					if (operator instanceof JxtaSenderAO) {
+						JxtaSenderAO sender = (JxtaSenderAO) operator;
+						if (sender.getPipeID().equals(pipeID)) {
+							return sender;
+						}
+
+					}
+				} else {
+					if (operator instanceof JxtaReceiverAO) {
+						JxtaReceiverAO receiver = (JxtaReceiverAO) operator;
+						if (receiver.getPipeID().equals(pipeID)) {
+							return receiver;
+						}
+
+					}
+				}
+
+			}
+		}
+		return null;
+	}
+	
+	/**
+	 * Get all currently Installed Queries as Query Parts.
+	 * Copied from LoadBalancingHelper
+	 * 
+	 * @return List of installed LogicalQueryParts.
+	 */
+	public static Collection<ILogicalQueryPart> getInstalledQueryParts() {
+		
+
+		IServerExecutor executor = RecoveryCommunicator.getExecutor();
+		ISession session = RecoveryCommunicator.getActiveSession();
+		
+		ArrayList<ILogicalQueryPart> parts = new ArrayList<ILogicalQueryPart>();
+		for (int queryId : executor.getLogicalQueryIds(session)) {
+			ILogicalQuery query = executor
+					.getLogicalQueryById(queryId, session);
+
+			ArrayList<ILogicalOperator> operators = new ArrayList<ILogicalOperator>();
+			RestructHelper.collectOperators(query.getLogicalPlan(), operators);
+			parts.add(new LogicalQueryPart(operators));
+		}
+		return parts;
 	}
 
 }
