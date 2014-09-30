@@ -67,7 +67,7 @@ public class VideoFileTransportHandler extends AbstractSimplePullTransportHandle
 			 if (timeStampModeStr.equals("start"))		timeStampMode = TimeStampMode.start;
 		else if (timeStampModeStr.equals("filetime"))	timeStampMode = TimeStampMode.fileTime;
 		else if (timeStampModeStr.equals("syncfile"))	timeStampMode = TimeStampMode.syncFile;
-		else if (timeStampModeStr.equals("none"))		timeStampMode = TimeStampMode.none; // TODO: Timestampmode none erstellen
+		else if (timeStampModeStr.equals("none"))		timeStampMode = TimeStampMode.none;
 		else
 			throw new IllegalArgumentException("timeStampMode has an invalid value: " + timeStampModeStr);
 	}
@@ -105,6 +105,11 @@ public class VideoFileTransportHandler extends AbstractSimplePullTransportHandle
 			// Frame timestamps will be read from synchronization file
 			syncFileName = getOptionsMap().get("syncfilename");
 			// TODO: Read first timestamp
+			break;
+			
+		case none:
+			break;
+		default:
 			break;
 		}
 		
@@ -186,23 +191,28 @@ public class VideoFileTransportHandler extends AbstractSimplePullTransportHandle
 			e.printStackTrace();
 		}		
 
-        long longTimeStamp = (long) (currentTime * 1000.0);        
-        TimeInterval timeStamp = new TimeInterval(new PointInTime(longTimeStamp));		
-		
-		Tuple<IMetaAttribute> tuple = new Tuple<>(2, false);
-        tuple.setAttribute(0, longTimeStamp);
-        tuple.setAttribute(1, image);
-        
-        if (syncFileName != null)
-        {
-        	// TODO
-//        	currentTime = syncFileStream.readDouble();
-        }	
-        else
-        {
-        	currentTime += 1.0 / fps;
-        }
-        
+		Tuple<IMetaAttribute> tuple = new Tuple<>(2, false);        
+
+		if (timeStampMode != TimeStampMode.none)
+		{		
+	        long longTimeStamp = (long) (currentTime * 1000.0);        		
+			
+	        tuple.setAttribute(0, longTimeStamp);
+	        tuple.setAttribute(1, image);
+	        
+	        if (syncFileName != null)
+	        {
+	        	// TODO
+	//        	currentTime = syncFileStream.readDouble();
+	        }	
+	        else
+	        {
+	        	currentTime += 1.0 / fps;
+	        }
+		}
+		else
+	        tuple.setAttribute(0, image);
+
         return tuple;		
 	}
     
