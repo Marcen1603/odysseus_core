@@ -409,8 +409,8 @@ public class ColorListDashboardPart extends AbstractDashboardPart {
 
 	private Date getTimestamp(IStreamObject<?> element) {
 		Tuple<?> tuple = (Tuple<?>) element;
-		long Ltimestamp = tuple.getAttribute(timestampIndex);
-		return new Date(Ltimestamp);
+		Date timestamp = tuple.getAttribute(timestampIndex);
+		return timestamp;
 	}
 
 	public Color elementToColor(IStreamObject<?> element) {
