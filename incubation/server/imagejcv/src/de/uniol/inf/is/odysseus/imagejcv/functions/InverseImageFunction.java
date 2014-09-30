@@ -34,9 +34,13 @@ public class InverseImageFunction extends AbstractFunction<ImageJCV> {
 		for (int i=0; i < iplImage.width(); i++) {
 			for (int j=0; j < iplImage.height(); j++) {
 				int index = j * iplImage.widthStep() + i * iplImage.nChannels();
+				
+				// TODO: There seems to be an error here, this line crashes on the last pixel.
+				// The cause might be reading a 4 byte int, when each pixel is only 3 bytes and thus reading one byte over the end
 				int value = buffer.getInt(index);
 				buffer.putInt(index, 255 - value);
 			}
+			
 		}
 		image.setImage(iplImage);
 		return image;
