@@ -1,7 +1,6 @@
 package de.uniol.inf.is.odysseus.peer.smarthome;
 
-// implements IMessage
-// extends SmartDeviceConfigurationMessage
+
 public class SmartDeviceConfigurationRequestMessage extends SmartDeviceConfigurationMessage {
 
 	private String text;
@@ -17,7 +16,6 @@ public class SmartDeviceConfigurationRequestMessage extends SmartDeviceConfigura
 		return text;
 	}
 	
-	@Override
 	public byte[] toBytes() {
 		byte[] textBytes = text.getBytes();
 		byte[] data = new byte[1 + textBytes.length];
@@ -25,7 +23,6 @@ public class SmartDeviceConfigurationRequestMessage extends SmartDeviceConfigura
 		return data;
 	}
 
-	@Override
 	public void fromBytes(byte[] data) {
 		byte[] textBytes = new byte[data.length - 1];
 		System.arraycopy(data, 1, textBytes, 0, textBytes.length);

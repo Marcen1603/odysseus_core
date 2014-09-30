@@ -10,6 +10,7 @@ import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.layout.FormLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.part.ViewPart;
@@ -24,6 +25,7 @@ import de.uniol.inf.is.odysseus.p2p_new.IMessage;
 import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicator;
 import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicatorListener;
 import de.uniol.inf.is.odysseus.p2p_new.PeerCommunicationException;
+import de.uniol.inf.is.odysseus.peer.smarthome.SmartDeviceConfig;
 import de.uniol.inf.is.odysseus.peer.smarthome.SmartDeviceConfigurationRequestMessage;
 import de.uniol.inf.is.odysseus.peer.smarthome.SmartDeviceConfigurationResponseMessage;
 import de.uniol.inf.is.odysseus.peer.smarthome.SmartDeviceMessage;
@@ -35,65 +37,44 @@ public class SmartDeviceConfigurationView extends ViewPart implements IPeerCommu
 
 	public SmartDeviceConfigurationView() {
 	}
-
-	// the listener we register with the selection service 
-		private ISelectionListener listener = new ISelectionListener() {
-			public void selectionChanged(IWorkbenchPart sourcepart, ISelection selection) {
+	
+	private ISelectionListener listener = new ISelectionListener() {
+		public void selectionChanged(IWorkbenchPart sourcepart, ISelection selection) {
+			
+			if(sourcepart instanceof SmartDeviceView){
+				//System.out.println("SmartDeviceView!!!!!");
 				
-				if(sourcepart instanceof SmartDeviceView){
-					//System.out.println("SmartDeviceView!!!!!");
-					
-					if (selection instanceof IStructuredSelection) {
-						IStructuredSelection ss = (IStructuredSelection) selection;
-						
-						if(ss.size()==1){
-							Object firstElement = ss.getFirstElement();
-							
-							if (firstElement instanceof PeerID) {
-								PeerID selectedPeer = (PeerID)firstElement;
-								
-								SmartDeviceConfigurationView.this.selectedPeer = selectedPeer;
-								
-								SmartDeviceConfigurationView.this.peerIDText.setText(selectedPeer.intern().toString());
-								SmartDeviceConfigurationView.this.peerIDText.setEditable(false);
-								
-								//Open Configuration for PeerID:selectedPeer.intern()
-								//1. get the current configuration from the peer
-								//2. display the configuration
-								//3. click on save button: send the new configuration to the peer
-								
-								
-								
-								
-							}
-						}else{
-							SmartDeviceConfigurationView.this.peerIDText.setText("");
-						}
-					}
-				}
-				
-				//System.out.println("SmartDeviceConfigurationView selectionChanged:");
-				
-				/*
 				if (selection instanceof IStructuredSelection) {
 					IStructuredSelection ss = (IStructuredSelection) selection;
-					showItems(ss.toArray());
+					
+					if(ss.size()==1){
+						Object firstElement = ss.getFirstElement();
+						
+						if (firstElement instanceof PeerID) {
+							PeerID selectedPeer = (PeerID)firstElement;
+							
+							SmartDeviceConfigurationView.this.selectedPeer = selectedPeer;
+							
+							SmartDeviceConfigurationView.this.peerIDText.setText(selectedPeer.intern().toString());
+							SmartDeviceConfigurationView.this.peerIDText.setEditable(false);
+							
+							loadConfiguration();
+						}
+					}else{
+						clearSelection();
+					}
 				}
-				if (selection instanceof ITextSelection) {
-					ITextSelection ts  = (ITextSelection) selection;
-					showText(ts.getText());
-				}
-				if (selection instanceof IMarkSelection) {
-					IMarkSelection ms = (IMarkSelection) selection;
-					try {
-					    showText(ms.getDocument().get(ms.getOffset(), ms.getLength()));
-					} catch (BadLocationException ble) { }
-				}
-				*/
 			}
-		};
-		private Text peerIDText;
-		private Text peerContextNameText;
+		}
+	};
+	private Text peerIDText;
+	private Text peerContextNameText;
+	
+	private void clearSelection() {
+		SmartDeviceConfigurationView.this.selectedPeer = null;
+		SmartDeviceConfigurationView.this.peerIDText.setText("");
+		SmartDeviceConfigurationView.this.peerContextNameText.setText("");
+	}
 	
 	@Override
 	public void createPartControl(Composite parent) {
@@ -135,16 +116,7 @@ public class SmartDeviceConfigurationView extends ViewPart implements IPeerCommu
 		btnSave.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				System.out.println("Save configuration");
-				
-				if(selectedPeer!=null){
-					try {
-						SmartDeviceMessage chat = new SmartDeviceMessage("Save configuration");
-						SmartHomeRCPActivator.getPeerCommunicator().send(selectedPeer, chat);
-					} catch (PeerCommunicationException ex) {
-						LOG.error("Cannot send message", ex);
-					}
-				}
+				saveConfiguration();
 			}
 		});
 		FormData fd_btnSave = new FormData();
@@ -156,19 +128,8 @@ public class SmartDeviceConfigurationView extends ViewPart implements IPeerCommu
 		btnLoadConfiguration.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				System.out.println("Load configuration");
 				if(selectedPeer!=null){
-					try {
-						SmartDeviceMessage chat = new SmartDeviceMessage("Load configuration");
-						SmartHomeRCPActivator.getPeerCommunicator().send(selectedPeer, chat);
-						
-						
-						SmartDeviceConfigurationRequestMessage confRequest = new SmartDeviceConfigurationRequestMessage("Configuration");
-						SmartHomeRCPActivator.getPeerCommunicator().send(selectedPeer, confRequest);
-						
-					} catch (PeerCommunicationException ex) {
-						LOG.error("Cannot send message", ex);
-					}
+					loadConfiguration();
 				}
 			}
 		});
@@ -186,12 +147,7 @@ public class SmartDeviceConfigurationView extends ViewPart implements IPeerCommu
 		getSite().getWorkbenchWindow().getSelectionService().addSelectionListener(listener);
 		
 		
-		//RCPP2PNewPlugIn.getPeerCommunicator().registerMessageType(SmartDeviceMessage.class);
-		//RCPP2PNewPlugIn.getPeerCommunicator().addListener(this, SmartDeviceMessage.class);
 		try{
-			SmartHomeRCPActivator.getPeerCommunicator().registerMessageType(SmartDeviceMessage.class);
-			SmartHomeRCPActivator.getPeerCommunicator().addListener(this, SmartDeviceMessage.class);
-			
 			SmartHomeRCPActivator.getPeerCommunicator().registerMessageType(SmartDeviceConfigurationResponseMessage.class);
 			SmartHomeRCPActivator.getPeerCommunicator().addListener(this, SmartDeviceConfigurationResponseMessage.class);
 		}catch(NullPointerException ex){
@@ -205,25 +161,67 @@ public class SmartDeviceConfigurationView extends ViewPart implements IPeerCommu
 		
 	}
 
+	private void loadConfiguration() {
+		try {
+			SmartDeviceConfigurationRequestMessage confRequest = new SmartDeviceConfigurationRequestMessage("Configuration");
+			SmartHomeRCPActivator.getPeerCommunicator().send(selectedPeer, confRequest);
+			
+		} catch (PeerCommunicationException ex) {
+			LOG.error("Cannot load configuration", ex);
+		}
+	}
+	
+	private void saveConfiguration() {
+		if(selectedPeer!=null){
+			try {
+				SmartDeviceConfig config = new SmartDeviceConfig();
+				config.setContextname(SmartDeviceConfigurationView.this.peerContextNameText.getText());
+				
+				SmartDeviceConfigurationResponseMessage smartDeviceConfigResponse = new SmartDeviceConfigurationResponseMessage();
+				smartDeviceConfigResponse.setSmartDeviceConfig(config);
+				
+				SmartHomeRCPActivator.getPeerCommunicator().send(selectedPeer, smartDeviceConfigResponse);
+			} catch (PeerCommunicationException ex) {
+				LOG.error("Cannot send message", ex);
+			}
+		}
+	}
+	
 	@Override
 	public void receivedMessage(IPeerCommunicator communicator, PeerID senderPeer, IMessage message) {
-		System.out.println("SmartDeviceConfiguration receivedMessage:");
-		System.out.println("senderPeer:"+senderPeer.intern());
-		//System.out.println("message:"+message.toString());
-		//System.out.println("message:"+message.fromBytes());
-		
 		if(message instanceof SmartDeviceMessage){
-			SmartDeviceMessage sdmsg = (SmartDeviceMessage)message;
-			System.out.println("message: "+sdmsg.getText());
+			// SmartDeviceMessage sdmsg = (SmartDeviceMessage)message;
 			
 		}else if(message instanceof SmartDeviceConfigurationResponseMessage){
-			SmartDeviceConfigurationResponseMessage sdmsg = (SmartDeviceConfigurationResponseMessage)message;
-			System.out.println("show config: "+sdmsg.getText());
+			SmartDeviceConfigurationResponseMessage responseMessage = (SmartDeviceConfigurationResponseMessage)message;
+			SmartDeviceConfig responseDeviceConfig = responseMessage.getSmartDeviceConfig();
 			
-			
-			
-		}else{
-			System.out.println("unknown type");
+			setPeerContextName(senderPeer, responseDeviceConfig.getContextname());
 		}
+	}
+	
+	public void setPeerContextName(final PeerID senderPeer, final String contextName){
+		Display.getDefault().syncExec(new Runnable() {
+		    public void run() {
+		    	if(isSelectedPeer(senderPeer)){
+		    		SmartDeviceConfigurationView.this.peerContextNameText.setText(contextName);
+		    	}
+		    }
+		});
+	}
+	
+	public boolean isSelectedPeer(PeerID peer)
+	{
+		if(SmartDeviceConfigurationView.this.selectedPeer==null || SmartDeviceConfigurationView.this.selectedPeer.intern()==null){
+			return false;
+		}else if(peer==null || peer.intern()==null){
+			return false;
+		}
+		
+		String str1 = SmartDeviceConfigurationView.this.selectedPeer.intern().toString();
+		String str2 = peer.intern().toString();
+		
+		if(str1==null || str2==null) return false;
+		return str1.equals(str2);
 	}
 }

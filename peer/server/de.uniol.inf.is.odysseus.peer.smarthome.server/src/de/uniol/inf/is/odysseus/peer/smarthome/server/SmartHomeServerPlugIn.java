@@ -105,67 +105,51 @@ public class SmartHomeServerPlugIn implements BundleActivator {
 	public static class SmartDeviceConfigurationListener implements IPeerCommunicatorListener{
 		@Override
 		public void receivedMessage(IPeerCommunicator communicator, PeerID senderPeer, IMessage message) {
-			System.out.println("SmartHomeServerP2PCommunicatorListener receivedMessage!!");
-			
-			
 			if(message instanceof SmartDeviceMessage){
 				SmartDeviceMessage smessage = (SmartDeviceMessage)message;
 				
-				if(!isLocalPeer(senderPeer) && !smessage.getText().equals("Echo! from Server")){
+				String testMessage = "Echo! from Server";
+				
+				if(!isLocalPeer(senderPeer) && !smessage.getText().equals(testMessage)){
 					try {
-						SmartHomeServerPlugIn.getPeerCommunicator().send(senderPeer, new SmartDeviceMessage("Echo! from Server"));
-						
-						
-						
+						SmartHomeServerPlugIn.getPeerCommunicator().send(senderPeer, new SmartDeviceMessage(testMessage));
 					} catch (PeerCommunicationException e) {
 						e.printStackTrace();
 					}
 				}
 			}else if(message instanceof SmartDeviceConfigurationRequestMessage){
-				@SuppressWarnings("unused")
-				SmartDeviceConfigurationRequestMessage configRequest = (SmartDeviceConfigurationRequestMessage)message;
+				try{
+					String smartDeviceContextName = SmartDeviceConfiguration.get(SmartDeviceConfiguration.SMART_DEVICE_KEY_CONTEXT_NAME, "");
 				
-				//read what is requested in: configRequest
-				
-				System.out.println("load smartDeviceConfig and send to the requester");
-				
-				//load SmartDeviceConfig:
-				//load: smartDeviceConfig
-				SmartDeviceConfig smartDeviceConfig = new SmartDeviceConfig();
-				
-				
-				//load and send the smart device config to the requester (senderPeer):
-				SmartDeviceConfigurationResponseMessage configResponse = new SmartDeviceConfigurationResponseMessage("Test config");
-				configResponse.setSmartDeviceConfig(smartDeviceConfig);
-				
-				try {
-					SmartHomeServerPlugIn.getPeerCommunicator().send(senderPeer, configResponse);
-				} catch (PeerCommunicationException e) {
-					e.printStackTrace();
+					SmartDeviceConfig smartDeviceConfig = new SmartDeviceConfig();
+					smartDeviceConfig.setContextname(smartDeviceContextName);
+					
+					SmartDeviceConfigurationResponseMessage configResponse = new SmartDeviceConfigurationResponseMessage("Test config");
+					configResponse.setSmartDeviceConfig(smartDeviceConfig);
+					
+					try {
+						SmartHomeServerPlugIn.getPeerCommunicator().send(senderPeer, configResponse);
+					} catch (PeerCommunicationException e) {
+						e.printStackTrace();
+					}
+				}catch(Exception ex){
+					ex.printStackTrace();
 				}
 			}else if(message instanceof SmartDeviceConfigurationResponseMessage){
 				SmartDeviceConfigurationResponseMessage configResponse = (SmartDeviceConfigurationResponseMessage)message;
 				
-				//Save the config response for this peer:
-				@SuppressWarnings("unused")
 				SmartDeviceConfig smartDeviceConfig = configResponse.getSmartDeviceConfig();
 				
-				//save: smartDeviceConfig
-				
-				
-				
 				if(!isLocalPeer(senderPeer)){
-					System.out.println("save smartDeviceConfig, if peerID in the obtained device config is the local peer id.");
-					
-					//In der übermittelten config überprüfen ob es sich um die eigene PeerID handelt.
-					//if(smartDeviceConfig.peerID = localPeer.PeerID) {
-					//    
-					//}
+					if(smartDeviceConfig.getContextname()!=null){
+						try{
+							SmartDeviceConfiguration.set(SmartDeviceConfiguration.SMART_DEVICE_KEY_CONTEXT_NAME, smartDeviceConfig.getContextname());
+						}catch(Exception ex){
+							ex.printStackTrace();
+						}
+					}
 				}
-			}else{
-				System.out.println("unknown type");
 			}
 		}
-		
 	}
 }
