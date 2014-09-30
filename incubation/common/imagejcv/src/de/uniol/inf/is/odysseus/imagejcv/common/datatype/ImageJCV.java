@@ -44,6 +44,10 @@ public class ImageJCV implements IClone, Cloneable {
 		}
 	}
 	
+	public double[][] getMatrix() {
+		throw new UnsupportedOperationException("Currenlty not implemented");
+	}
+	
 	public IplImage getImage() {
 		return image;
 	}

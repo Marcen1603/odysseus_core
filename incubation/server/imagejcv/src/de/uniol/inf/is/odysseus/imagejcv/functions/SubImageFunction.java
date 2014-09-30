@@ -1,0 +1,68 @@
+package de.uniol.inf.is.odysseus.imagejcv.functions;
+
+import java.util.Objects;
+
+import org.bytedeco.javacpp.opencv_core.IplImage;
+import static org.bytedeco.javacpp.opencv_core.*;
+import com.google.common.base.Preconditions;
+
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
+import de.uniol.inf.is.odysseus.imagejcv.common.datatype.ImageJCV;
+import de.uniol.inf.is.odysseus.imagejcv.common.sdf.schema.SDFImageJCVDatatype;
+import de.uniol.inf.is.odysseus.mep.AbstractFunction;
+
+/**
+ * @author Kristian Bruns
+ */
+public class SubImageFunction extends AbstractFunction<ImageJCV> {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -4629416274635140999L;
+	private static final SDFDatatype[][] ACC_TYPES = new SDFDatatype[][] {
+		{SDFImageJCVDatatype.IMAGEJCV},
+		SDFDatatype.NUMBERS,
+		SDFDatatype.NUMBERS,
+		SDFDatatype.NUMBERS,
+		SDFDatatype.NUMBERS
+	};
+	
+	public SubImageFunction() {
+		super("subCV", 5, SubImageFunction.ACC_TYPES, SDFImageJCVDatatype.IMAGEJCV);
+	}
+	
+	@Override
+	public ImageJCV getValue() {
+		final ImageJCV image = (ImageJCV) this.getInputValue(0);
+		final int x = this.getNumericalInputValue(1).intValue();
+		final int y = this.getNumericalInputValue(2).intValue();
+		final int width = this.getNumericalInputValue(3).intValue();
+		final int height = this.getNumericalInputValue(4).intValue();
+		
+		Objects.requireNonNull(image);
+		
+		Preconditions.checkArgument(x >= 0 && width > 0 && (x + width) <= image.getWidth(),
+									"Invalid Dimension");
+		Preconditions.checkArgument(y >= 0 && height > 0 && (y + height) <= image.getHeight(), 
+				                    "Invalid Dimension");
+		
+		final IplImage iplImage = image.getImage();
+		
+		final CvRect roi = new CvRect();
+		roi.x(x);
+		roi.y(y);
+		roi.width(width);
+		roi.height(height);
+		
+		cvSetImageROI(iplImage, roi);
+		
+		IplImage subImg = cvCreateImage(cvGetSize(iplImage), iplImage.depth(), iplImage.nChannels());
+		
+		cvCopy(iplImage, subImg, null);
+		
+		cvResetImageROI(iplImage);
+		
+		return image;
+	}
+	
+}
