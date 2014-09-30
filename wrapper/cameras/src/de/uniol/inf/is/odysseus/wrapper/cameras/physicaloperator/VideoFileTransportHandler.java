@@ -37,6 +37,7 @@ public class VideoFileTransportHandler extends AbstractSimplePullTransportHandle
 	private String videoUrl;
 	private TimeStampMode timeStampMode;
 	private double fps;
+	private boolean useDelay;
 
 	private FFmpegFrameGrabber 	frameGrabber;
 	private long startTime;
@@ -60,6 +61,7 @@ public class VideoFileTransportHandler extends AbstractSimplePullTransportHandle
 		
 		videoUrl = options.get("videourl");
 		fps = options.getDouble("fps", 0.0);
+		useDelay = options.getBoolean("usedelay",  false);
 		
 		String timeStampModeStr = options.get("timestampmode", "start");
 		
@@ -154,6 +156,17 @@ public class VideoFileTransportHandler extends AbstractSimplePullTransportHandle
 	
 	@Override public Tuple<IMetaAttribute> getNext() 
 	{
+		if (useDelay)
+			try 
+			{
+				Thread.sleep((long)(1000.0 / fps));
+			} 
+			catch (InterruptedException e) 
+			{
+				e.printStackTrace();
+				Thread.currentThread().interrupt();
+			}
+		
 		Image image = null;
 		try 
 		{
