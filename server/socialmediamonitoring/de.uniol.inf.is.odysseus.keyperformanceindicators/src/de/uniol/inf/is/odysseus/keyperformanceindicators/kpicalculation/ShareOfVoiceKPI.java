@@ -43,9 +43,7 @@ public class ShareOfVoiceKPI<M extends ITimeInterval> extends AbstractKeyPerform
 			findAndCountGivenWordsInLists(currentInputText);				
 			calculateShareOfVoice();
 		}
-		
-
-		
+			
 		return this.shareOfVoiceResult;
 	}
 
@@ -63,18 +61,45 @@ public class ShareOfVoiceKPI<M extends ITimeInterval> extends AbstractKeyPerform
 	{
 		for(int i=0; i<this.concreteElements.size(); i++)
 		{
-			if(currentInputText.contains(this.concreteElements.get(i).toString().toLowerCase()))
+			int lastIndex = currentInputText.indexOf(this.concreteElements.get(i).toString());
+			
+			if(lastIndex == -1)
+			{
+				lastIndex = currentInputText.indexOf(this.concreteElements.get(i).toString().toLowerCase());
+			}
+						
+			while(lastIndex != -1)
 			{
 				this.counterConcreteElements++;
+				lastIndex = currentInputText.indexOf(this.concreteElements.get(i).toString().toLowerCase(), lastIndex + this.concreteElements.get(i).toString().length());
 			}
+			
+//			if((currentInputText.contains(this.concreteElements.get(i).toString().toLowerCase())) || (currentInputText.contains(this.concreteElements.get(i).toString())))
+//			{
+//				this.counterConcreteElements++;
+//			}
 		}
 		
 		for(int i=0; i<this.allElements.size(); i++)
 		{
-			if(currentInputText.contains(this.allElements.get(i).toString().toLowerCase()))
+			
+			int lastIndex = currentInputText.indexOf(this.allElements.get(i).toString());
+			
+			if(lastIndex == -1)
 			{
-				this.counterAllElements++;	
+				lastIndex = currentInputText.indexOf(this.allElements.get(i).toString().toLowerCase());
 			}
+						
+			while(lastIndex != -1)
+			{
+				this.counterAllElements++;
+				lastIndex = currentInputText.indexOf(this.allElements.get(i).toString().toLowerCase(), lastIndex + this.allElements.get(i).toString().length());
+			}
+						
+//			if(currentInputText.contains(this.allElements.get(i).toString().toLowerCase()))
+//			{
+//				this.counterAllElements++;	
+//			}
 		}
 	}
 
