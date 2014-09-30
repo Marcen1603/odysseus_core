@@ -67,7 +67,7 @@ public class SelectAllFromSource extends AbstractHandler implements IHandler {
 	}
 
 	private static Collection<Integer> createQueryToSelectAllDataFromSource(Resource sourceName, ISession caller) {
-		return OdysseusRCPPlugIn.getExecutor().addQuery(sourceName + "_out = STREAM({source = '" + sourceName + "'})", "PQL", caller, "Standard", Context.empty());
+		return OdysseusRCPPlugIn.getExecutor().addQuery(sourceName + "_out = "+ sourceName , "PQL", caller, "Standard", Context.empty());
 	}
 
 	private static void startQueries(Collection<Integer> queryIDs, ISession caller) {
