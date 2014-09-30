@@ -47,6 +47,8 @@ import de.uniol.inf.is.odysseus.mining.weka.mapping.WekaConverter;
 @SuppressWarnings({ "deprecation" })
 public class SentimentAnalysisPO<M extends ITimeInterval> extends AbstractPipe<Tuple<M>, Tuple<M>> {
 	
+	private boolean isTrained = false;
+	private boolean isEvaluated = false;
 	DefaultTISweepArea<Tuple<M>> sweepArea = new DefaultTISweepArea<Tuple<M>>();
 	
 	IClassificationLearner<ITimeInterval> learner;
@@ -176,8 +178,10 @@ public class SentimentAnalysisPO<M extends ITimeInterval> extends AbstractPipe<T
 		Evaluation evaluation = new Evaluation(this.trainData);		
 		evaluation.crossValidateModel(this.classifier, this.trainData, this.maxTrainSize, new Random(1));
 		
-	System.out.println("===========EVALUATION:\n " + evaluation.toSummaryString());
+	    System.out.println("===========EVALUATION:\n " + evaluation.toSummaryString());
 		System.out.println("===========EVALUATION-DETAILS:\n " + evaluation.toClassDetailsString());
+		
+		isEvaluated = true;
 	}
 
 	private void learnClassifier()
@@ -192,6 +196,8 @@ public class SentimentAnalysisPO<M extends ITimeInterval> extends AbstractPipe<T
 				this.classifier.buildClassifier(this.trainData);
 				
 				System.out.println("=========== Training data successfully ===========");
+				
+				this.isTrained = true;
 		} 
 		catch (Exception e) 
 		{
@@ -258,16 +264,19 @@ public class SentimentAnalysisPO<M extends ITimeInterval> extends AbstractPipe<T
 						this.instance = WekaConverter.convertToNominalInstance(obj, this.resolver);
 						instances.add(this.instance);
 					}
-				
+						
 					//this.instance = WekaConverter.convertToNominalInstance(object, this.resolver);
 					//instances.add(this.instance);
+				
+					if(this.trainData == null)
+						this.trainData = new Instances(this.instances);
 					
-					if(!(this.instances.size() < this.maxTrainSize)) 
+					if((this.instances.size() >= this.maxTrainSize)) 
 					{
 						this.trainData = this.instances;
 					}
-					
-					if(this.trainData != null && !(this.trainData.size() < this.maxTrainSize))
+			
+					if((this.trainData != null) && (this.trainData.size() >= this.maxTrainSize))
 					{
 						evaluateClassifier();
 						learnClassifier();
@@ -279,9 +288,10 @@ public class SentimentAnalysisPO<M extends ITimeInterval> extends AbstractPipe<T
 				}
 		}
 		//else if(port == 0 && !(this.trainData.size() < this.maxTrainSize))
-		else if(port == 0 && (this.trainData != null))
-		{
-			if(!(this.trainData.size() < this.maxTrainSize))
+		else if((port == 0) && (this.trainData != null))
+		{			
+			//if(this.trainData.size() >= this.maxTrainSize)
+			if(isTrained && isEvaluated)
 			{
 				try 
 				{
@@ -363,4 +373,16 @@ public class SentimentAnalysisPO<M extends ITimeInterval> extends AbstractPipe<T
 	public void setTotalInputports(int totalInputports) {
 		this.totalInputports = totalInputports;
 	}
+
+	@Override
+	protected void process_close() {
+		super.process_close();
+		
+		isTrained = false;
+		isEvaluated = false;
+		this.trainData.clear();
+		this.instances.clear();
+	}
+	
+	
 }
