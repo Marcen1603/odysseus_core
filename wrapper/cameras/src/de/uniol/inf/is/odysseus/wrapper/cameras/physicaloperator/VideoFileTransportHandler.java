@@ -26,9 +26,7 @@ public class VideoFileTransportHandler extends AbstractSimplePullTransportHandle
 {
 	private enum TimeStampMode
 	{
-		start,
-		fileTime,
-		syncFile
+		start, fileTime, syncFile, none
 	};
 	
 //	@SuppressWarnings("unused")
@@ -69,6 +67,7 @@ public class VideoFileTransportHandler extends AbstractSimplePullTransportHandle
 			 if (timeStampModeStr.equals("start"))		timeStampMode = TimeStampMode.start;
 		else if (timeStampModeStr.equals("filetime"))	timeStampMode = TimeStampMode.fileTime;
 		else if (timeStampModeStr.equals("syncfile"))	timeStampMode = TimeStampMode.syncFile;
+		else if (timeStampModeStr.equals("none"))		timeStampMode = TimeStampMode.none; // TODO: Timestampmode none erstellen
 		else
 			throw new IllegalArgumentException("timeStampMode has an invalid value: " + timeStampModeStr);
 	}

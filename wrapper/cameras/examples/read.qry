@@ -10,13 +10,14 @@ video =  ACCESS({source='Video',
 				 datahandler='Tuple',
 				 options=[
 							['videoUrl', 'd:/videofile.mp4'],
-							['timeStampMode', 'filetime']
+							['timeStampMode', 'filetime'],
+							['useDelay', 'true']
 					     ],					     
 				schema=	 [	
 							['timestamp', 	'STARTTIMESTAMP'],
-        					['image', 		'IMAGE']
+        					['image', 		'IMAGEJCV']
         				 ]})
         				 
 video2 = PROJECT({ATTRIBUTES=['image']}, video)
 
-output = UDO({class='ShowImage', init='0'}, video2)
+output = UDO({class='ShowImageJCV', init='0'}, video2)
