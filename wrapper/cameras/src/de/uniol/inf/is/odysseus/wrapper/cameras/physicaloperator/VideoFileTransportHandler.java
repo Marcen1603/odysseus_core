@@ -19,6 +19,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolH
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.AbstractSimplePullTransportHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandler;
 import de.uniol.inf.is.odysseus.image.common.datatype.Image;
+import de.uniol.inf.is.odysseus.imagejcv.common.datatype.ImageJCV;
 
 @SuppressWarnings("unused")
 public class VideoFileTransportHandler extends AbstractSimplePullTransportHandler<Tuple<IMetaAttribute>> 
@@ -114,6 +115,8 @@ public class VideoFileTransportHandler extends AbstractSimplePullTransportHandle
 			try 
 			{
 				frameGrabber.start();
+				double gamma = frameGrabber.getGamma();
+				System.out.println("Gamma = " + gamma);
 			} 
 			catch (FrameGrabber.Exception e) 
 			{
@@ -167,7 +170,7 @@ public class VideoFileTransportHandler extends AbstractSimplePullTransportHandle
 				Thread.currentThread().interrupt();
 			}
 		
-		Image image = null;
+		ImageJCV image = null;
 		try 
 		{
 			synchronized (processLock)
@@ -176,7 +179,7 @@ public class VideoFileTransportHandler extends AbstractSimplePullTransportHandle
 				IplImage iplImage = frameGrabber.grab();
 				if (iplImage == null || iplImage.isNull()) return null;
 				
-				image = new Image(iplImage.getBufferedImage());				
+				image = new ImageJCV(iplImage);				
 			}
 		} 
 		catch (Exception e) 
