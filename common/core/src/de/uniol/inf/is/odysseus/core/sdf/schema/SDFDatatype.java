@@ -161,6 +161,8 @@ public class SDFDatatype extends SDFElement implements Serializable {
 
     public static final SDFDatatype[] LONG_NUMBERS = new SDFDatatype[] { LONG, START_TIMESTAMP, END_TIMESTAMP, TIMESTAMP };
 
+    public static final SDFDatatype[] SIMPLE_TYPES = new SDFDatatype[] {OBJECT, BYTE, SHORT, INTEGER, LONG, FLOAT, DOUBLE, START_TIMESTAMP, END_TIMESTAMP, TIMESTAMP, STRING};
+    
 	private static final long serialVersionUID = 8585322290347489841L;
 
 	private final KindOfDatatype type;

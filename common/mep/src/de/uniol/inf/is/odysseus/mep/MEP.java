@@ -80,6 +80,7 @@ import de.uniol.inf.is.odysseus.mep.functions.crypt.SHA244Function;
 import de.uniol.inf.is.odysseus.mep.functions.crypt.SHA256Function;
 import de.uniol.inf.is.odysseus.mep.functions.crypt.SHA384Function;
 import de.uniol.inf.is.odysseus.mep.functions.crypt.SHA512Function;
+import de.uniol.inf.is.odysseus.mep.functions.list.ListContainsFunction;
 import de.uniol.inf.is.odysseus.mep.functions.math.AbsoluteFunction;
 import de.uniol.inf.is.odysseus.mep.functions.math.ArcCosinusFunction;
 import de.uniol.inf.is.odysseus.mep.functions.math.ArcSinusFunction;
@@ -113,7 +114,7 @@ import de.uniol.inf.is.odysseus.mep.functions.math.ToDegrees;
 import de.uniol.inf.is.odysseus.mep.functions.math.ToRadians;
 import de.uniol.inf.is.odysseus.mep.functions.math.UnaryMinusOperator;
 import de.uniol.inf.is.odysseus.mep.functions.string.ConcatFunction;
-import de.uniol.inf.is.odysseus.mep.functions.string.ContainsFunction;
+import de.uniol.inf.is.odysseus.mep.functions.string.StringContainsFunction;
 import de.uniol.inf.is.odysseus.mep.functions.string.LengthFunction;
 import de.uniol.inf.is.odysseus.mep.functions.string.LowerFunction;
 import de.uniol.inf.is.odysseus.mep.functions.string.StringDivisionOperator;
@@ -352,7 +353,7 @@ public class MEP implements IExpressionParser {
 
 		/** String Functions */
 		registerFunction(new LikeFunction());
-		registerFunction(new ContainsFunction());
+		registerFunction(new StringContainsFunction());
 		registerFunction(new StringPlusOperator());
 		registerFunction(new StringMinusOperator());
 		registerFunction(new StringMultiplicationOperator());
@@ -446,6 +447,9 @@ public class MEP implements IExpressionParser {
 
 		// Array Functions
 		registerFunction(new ListArrayFunction());
+		
+		// List Functions
+		registerFunction(new ListContainsFunction());
 
 		registerFunction(new TupleAccessFunction());
 

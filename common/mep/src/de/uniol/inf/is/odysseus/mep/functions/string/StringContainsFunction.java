@@ -18,11 +18,11 @@ package de.uniol.inf.is.odysseus.mep.functions.string;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 
 
-public class ContainsFunction extends AbstractBinaryStringFunction<Boolean> {
+public class StringContainsFunction extends AbstractBinaryStringFunction<Boolean> {
 
 	private static final long serialVersionUID = -2241632788238873550L;
 
-	public ContainsFunction() {
+	public StringContainsFunction() {
 		super("strcontains", SDFDatatype.BOOLEAN);
 	}
 	
