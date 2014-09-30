@@ -16,6 +16,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolH
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.AbstractSimplePullTransportHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandler;
 import de.uniol.inf.is.odysseus.image.common.datatype.Image;
+import de.uniol.inf.is.odysseus.imagejcv.common.datatype.ImageJCV;
 
 public class IntegratedCameraTransportHandler extends AbstractSimplePullTransportHandler<Tuple<IMetaAttribute>> 
 {
@@ -89,34 +90,24 @@ public class IntegratedCameraTransportHandler extends AbstractSimplePullTranspor
 		}
 	}
 	
-	long lastTime=0;
-
 	@Override public Tuple<IMetaAttribute> getNext() 
 	{
-		IplImage iplImage = null;
+		ImageJCV image = null;
 		try 
 		{
 			synchronized (processLock)
 			{
 				if (cameraCapture == null) return null;
-				iplImage = cameraCapture.grab();
+				IplImage iplImage = cameraCapture.grab().clone();
+				
+				if (iplImage == null || iplImage.isNull()) return null;
+				image = new ImageJCV(iplImage);
 			}
 		} 
 		catch (Exception e) 
 		{
 			e.printStackTrace();
 		}		
-		if (iplImage == null || iplImage.isNull()) return null;
-
-		if (lastTime > 0)
-		{
-//			System.out.println("getNext dt = " + (System.nanoTime() - lastTime) / 1.0e6 + "ms");
-		}
-		
-		lastTime = System.nanoTime();
-		
-//		BaseImage image = new BaseImage(iplImage.getBufferedImage());
-		Image image = new Image(iplImage.getBufferedImage());
 		
 		Tuple<IMetaAttribute> tuple = new Tuple<>(1, false);
         tuple.setAttribute(0, image);

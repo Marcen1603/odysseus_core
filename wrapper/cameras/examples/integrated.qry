@@ -12,4 +12,4 @@ video  = ACCESS({source='Video',
 							['id', '0']
 					     ]})
 					     
-output = UDO({class='ShowImage', init='0'}, video)
+output = UDO({class='ShowImageJCV', init='0'}, video)
