@@ -1,0 +1,6 @@
+#PARSER PQL
+#RUNQUERY
+xYxStreamxXxwkaidxXx = Stream({SOURCE='System.PxXxwindfarmidxXx:xXxwkaidxXx:corrected_score'})yYy
+COMBINE1 = COMBINE({BUFFERNEWINPUTELEMENTS='true', WAITFORALLCHANGED='true'}, xZx0:StreamxXxwkaidxXxyZy)
+MAP1 = MAP({EXPRESSIONS=[['xAxPxXxwindfarmidxXx:xXxwkaidxXx:corrected_score.PortxXxcounterxXx_corrected_scoreyAy', 'corrected_score_sum']], EVALUATEONPUNCTUATION='false'}, 0:COMBINE1)
+PxXxwindfarmidxXx:corrected_score_sum ::= CACHE({MAXELEMENTS=100},0:MAP1)
