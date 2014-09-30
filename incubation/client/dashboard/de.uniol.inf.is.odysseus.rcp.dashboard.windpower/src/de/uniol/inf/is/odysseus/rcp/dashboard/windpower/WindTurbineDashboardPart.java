@@ -88,6 +88,8 @@ public class WindTurbineDashboardPart extends AbstractDashboardPart implements
 	// Position of the Rotor in degrees
 	private double currentRotation;
 	private long lastDraw;
+	private boolean isError;
+	private boolean isWarning;
 
 	@Override
 	public void createPartControl(Composite parent, ToolBar toolbar) {
@@ -128,36 +130,9 @@ public class WindTurbineDashboardPart extends AbstractDashboardPart implements
 			IStreamObject<?> element, int port) {
 		Tuple<?> tuple = (Tuple<?>) element;
 		this.currentRotationalSpeed = tuple.getAttribute(0);
-		boolean isError = tuple.getAttribute(2);
-		boolean isWarning = tuple.getAttribute(1);
-		if (showError && isError) {
-			this.windTurbineCanvas.getDisplay().asyncExec(new Runnable() {
-
-				@Override
-				public void run() {
-					windTurbineCanvas.setBackground(windTurbineCanvas
-							.getDisplay().getSystemColor(SWT.COLOR_RED));
-				}
-			});
-		} else if (showWarning && isWarning) {
-			this.windTurbineCanvas.getDisplay().asyncExec(new Runnable() {
-
-				@Override
-				public void run() {
-					windTurbineCanvas.setBackground(windTurbineCanvas
-							.getDisplay().getSystemColor(SWT.COLOR_YELLOW));
-				}
-			});
-		} else {
-			this.windTurbineCanvas.getDisplay().asyncExec(new Runnable() {
-
-				@Override
-				public void run() {
-					windTurbineCanvas.setBackground(windTurbineCanvas
-							.getDisplay().getSystemColor(SWT.COLOR_WHITE));
-				}
-			});
-		}
+		isError = tuple.getAttribute(2);
+		isWarning = tuple.getAttribute(1);
+		
 	}
 
 	@Override
@@ -223,6 +198,17 @@ public class WindTurbineDashboardPart extends AbstractDashboardPart implements
 		long now = new Date().getTime();
 		float time = (now - lastDraw) / 1000f;
 		currentRotation = ((currentRotation + (currentRotationalSpeed * 360 * time)) % 360);
+		//paint error or warning
+		if (showError && isError) {
+					windTurbineCanvas.setBackground(windTurbineCanvas
+							.getDisplay().getSystemColor(SWT.COLOR_RED));
+		} else if (showWarning && isWarning) {
+					windTurbineCanvas.setBackground(windTurbineCanvas
+							.getDisplay().getSystemColor(SWT.COLOR_YELLOW));
+		} else {
+					windTurbineCanvas.setBackground(windTurbineCanvas
+							.getDisplay().getSystemColor(SWT.COLOR_WHITE));
+		}
 		transform.translate(x + (width * ratio) / 2, y + (height * ratio) / 2);
 		transform.rotate((float) currentRotation);
 		transform
