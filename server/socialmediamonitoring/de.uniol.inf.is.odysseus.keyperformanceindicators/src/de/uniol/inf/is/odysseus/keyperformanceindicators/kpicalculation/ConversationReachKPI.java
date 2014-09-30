@@ -2,9 +2,7 @@ package de.uniol.inf.is.odysseus.keyperformanceindicators.kpicalculation;
 
 import java.io.File;
 import java.io.FileWriter;
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -27,12 +25,12 @@ public class ConversationReachKPI<M extends ITimeInterval> extends AbstractKeyPe
 	
 	public ConversationReachKPI() 
 	{
-		try {
-			writer = new FileWriter("C:\\Users\\Rick\\workspace2\\Projekt2\\kpiwithtimestamps.txt");
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+//		try {
+//			writer = new FileWriter("C:\\Users\\Rick\\workspace2\\Projekt2\\kpiwithtimestamps.txt");
+//		} catch (IOException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
 		
 	}
 
@@ -40,12 +38,12 @@ public class ConversationReachKPI<M extends ITimeInterval> extends AbstractKeyPe
 	{
 		this.kpiType = kpiName;
 		
-		try {
-			writer = new FileWriter("C:\\Users\\Rick\\workspace2\\Projekt2\\kpiwithtimestamps.txt");
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+//		try {
+//			writer = new FileWriter("C:\\Users\\Rick\\workspace2\\Projekt2\\kpiwithtimestamps.txt");
+//		} catch (IOException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
 	}
 
 	@Override
@@ -71,28 +69,25 @@ public class ConversationReachKPI<M extends ITimeInterval> extends AbstractKeyPe
 		//if(((double)this.values.size()) + this.counterAllTopics > 0)
 		//return this.conversationReachResult = (((double)this.values.size()) / this.counterAllTopics * 100);
 		
-			try {
-				writer.write("----------------Start--------------");
-				
-				for(Tuple<M> tuple : incomingTuple)
-				{
-					Date datstart = new Date(Long.parseLong(tuple.getMetadata().getStart().toString()));
-					Date datend = new Date(Long.parseLong(tuple.getMetadata().getEnd().toString()));	
-					writer.write("Tuple: " + tuple.getAttribute(positionOfInputText).toString() + " --- Start: " + datstart + " ---End: " + datend);
-				}
-				
-				writer.write("KPI : " + String.valueOf((((double)this.uniqueUserNames.size()) / ((double)this.allUserNames.size()) * 100)) + "\n");
-			
-				writer.write("----------------Ende--------------");
-				
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			
-			
-		
-		
+//			try {
+//				writer.write("----------------Start--------------");
+//				
+//				for(Tuple<M> tuple : incomingTuple)
+//				{
+////					Date datstart = new Date(Long.parseLong(tuple.getMetadata().getStart().toString()));
+////					Date datend = new Date(Long.parseLong(tuple.getMetadata().getEnd().toString()));	
+////					writer.write("Tuple: " + tuple.getAttribute(positionOfInputText).toString() + " --- Start: " + datstart + " ---End: " + datend);
+//				}
+//				
+//				writer.write("KPI : " + String.valueOf((((double)this.uniqueUserNames.size()) / ((double)this.allUserNames.size()) * 100)) + "\n");
+//			
+//				writer.write("----------------Ende--------------");
+//				
+//			} catch (IOException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
+
 		if(((double)this.uniqueUserNames.size()) + ((double)this.allUserNames.size()) > 0)
 			return this.setConversationReachResult((((double)this.uniqueUserNames.size()) / ((double)this.allUserNames.size()) * 100));
 		else
@@ -102,26 +97,62 @@ public class ConversationReachKPI<M extends ITimeInterval> extends AbstractKeyPe
 	private void findAllTopicsAndSaveAllUserNames(String currentInputText, String currentUserName) 
 	{
 		for(int i=0; i<this.allElements.size(); i++)
-			if(currentInputText.contains(this.allElements.get(i).toLowerCase().toString()))
+		{	
+			int lastIndex = currentInputText.indexOf(this.allElements.get(i).toString());
+			
+			if(lastIndex == -1)
 			{
+				lastIndex = currentInputText.indexOf(this.allElements.get(i).toString().toLowerCase());
+			}
+						
+			while(lastIndex != -1)
+			{	
 				if(!this.allUserNames.containsValue(currentUserName))
 				{
 					this.allUserNames.put(this.allUserNames.size()+1, currentUserName);
-					System.out.println("User_Name in all:" + currentUserName);
 				}
-				this.counterAllElements++; 
+				this.counterAllElements++;
+				lastIndex = currentInputText.indexOf(this.allElements.get(i).toString().toLowerCase(), lastIndex + this.allElements.get(i).toString().length());
 			}
+			
+//			if(currentInputText.contains(this.allElements.get(i).toLowerCase().toString()))
+//			{
+//				if(!this.allUserNames.containsValue(currentUserName))
+//				{
+//					this.allUserNames.put(this.allUserNames.size()+1, currentUserName);
+//					System.out.println("User_Name in all:" + currentUserName);
+//				}
+//				this.counterAllElements++; 
+//			}
+		}
 	}
 
 	private void findConcreteWordsAndSaveUserNames(String currentInputText, String currentUserName) 
 	{
 		for(int i=0; i<this.concreteElements.size(); i++)
-			if(currentInputText.contains(this.concreteElements.get(i).toString().toLowerCase()))
+		{
+			int lastIndex = currentInputText.indexOf(this.concreteElements.get(i).toString());
+			
+			if(lastIndex == -1)
+			{
+				lastIndex = currentInputText.indexOf(this.concreteElements.get(i).toString().toLowerCase());
+			}
+						
+			while(lastIndex != -1)
+			{
 				if(!this.uniqueUserNames.containsValue(currentUserName))
 				{
 					this.uniqueUserNames.put(this.uniqueUserNames.size()+1, currentUserName);
-					System.out.println("User_Name in concrete:" + currentUserName);
 				}
+				lastIndex = currentInputText.indexOf(this.concreteElements.get(i).toString().toLowerCase(), lastIndex + this.concreteElements.get(i).toString().length());
+			}
+		}
+//			if(currentInputText.contains(this.concreteElements.get(i).toString().toLowerCase()))
+//				if(!this.uniqueUserNames.containsValue(currentUserName))
+//				{
+//					this.uniqueUserNames.put(this.uniqueUserNames.size()+1, currentUserName);
+//					System.out.println("User_Name in concrete:" + currentUserName);
+//				}
 	}	
 	
 	@Override
