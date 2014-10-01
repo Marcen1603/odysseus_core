@@ -17,7 +17,9 @@ package de.uniol.inf.is.odysseus.core.physicaloperator.access.transport;
 
 import static java.nio.file.StandardWatchEventKinds.OVERFLOW;
 
+import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.DirectoryIteratorException;
 import java.nio.file.DirectoryStream;
@@ -104,6 +106,11 @@ public class DirectoryWatcherTransportHandler extends AbstractPushTransportHandl
         return "Directory";
     }
 
+    protected void onChangeDetected(File file) throws FileNotFoundException
+    {
+    	fireProcess(new FileInputStream(file));
+    }
+    
     /**
      * {@inheritDoc}
      */
@@ -118,8 +125,9 @@ public class DirectoryWatcherTransportHandler extends AbstractPushTransportHandl
                 try {
                     try (DirectoryStream<Path> stream = Files.newDirectoryStream(DirectoryWatcherTransportHandler.this.directory)) {
                         for (Path child : stream) {
-                            if ((DirectoryWatcherTransportHandler.this.filter == null) || (DirectoryWatcherTransportHandler.this.filter.matcher(child.toString()).find())) {
-                                fireProcess(new FileInputStream(child.toFile()));
+                            if ((DirectoryWatcherTransportHandler.this.filter == null) || (DirectoryWatcherTransportHandler.this.filter.matcher(child.toString()).find())) 
+                            {
+                            	onChangeDetected(child.toFile());                                
                             }
                         }
                     }
@@ -148,7 +156,7 @@ public class DirectoryWatcherTransportHandler extends AbstractPushTransportHandl
                             try {
                                 Path child = DirectoryWatcherTransportHandler.this.directory.resolve(filename);
                                 if ((DirectoryWatcherTransportHandler.this.filter == null) || (DirectoryWatcherTransportHandler.this.filter.matcher(child.toString()).find())) {
-                                    fireProcess(new FileInputStream(child.toFile()));
+                                	onChangeDetected(child.toFile());                                    
                                 }
                             }
                             catch (IOException e) {
