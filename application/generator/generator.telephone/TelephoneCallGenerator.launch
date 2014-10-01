@@ -11,6 +11,7 @@
 <booleanAttribute key="default_auto_start" value="true"/>
 <intAttribute key="default_start_level" value="4"/>
 <booleanAttribute key="includeOptional" value="false"/>
+<stringAttribute key="org.eclipse.jdt.launching.JRE_CONTAINER" value="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7"/>
 <stringAttribute key="org.eclipse.jdt.launching.PROGRAM_ARGUMENTS" value="-os ${target.os} -ws ${target.ws} -arch ${target.arch} -nl ${target.nl} -consoleLog -console"/>
 <stringAttribute key="org.eclipse.jdt.launching.SOURCE_PATH_PROVIDER" value="org.eclipse.pde.ui.workbenchClasspathProvider"/>
 <stringAttribute key="org.eclipse.jdt.launching.VM_ARGUMENTS" value="-Declipse.ignoreApp=true -Dosgi.noShutdown=true -DnewGeneratorEachConnection=false"/>
@@ -20,5 +21,5 @@
 <booleanAttribute key="tracing" value="false"/>
 <booleanAttribute key="useCustomFeatures" value="false"/>
 <booleanAttribute key="useDefaultConfigArea" value="true"/>
-<stringAttribute key="workspace_bundles" value="com.google.guava@default:default,com.rits.cloning@default:default,de.uniol.inf.is.odysseus.core@default:default,de.uniol.inf.is.odysseus.generator.telephone@default:default,de.uniol.inf.is.odysseus.generator@default:default,de.uniol.inf.is.odysseus.slf4j@default:default,io.netty@default:default,jna@default:default,org.apache.commons.math3@default:default,org.objenesis@default:default"/>
+<stringAttribute key="workspace_bundles" value="com.google.guava@default:default,com.rits.cloning@default:default,de.uniol.inf.is.odysseus.core@default:default,de.uniol.inf.is.odysseus.generator.telephone@default:default,de.uniol.inf.is.odysseus.generator@default:default,de.uniol.inf.is.odysseus.slf4j@default:default,io.netty@default:default,jna@default:default,org.apache.commons.lang3@default:default,org.apache.commons.math3@default:default,org.objenesis@default:default"/>
 </launchConfiguration>
