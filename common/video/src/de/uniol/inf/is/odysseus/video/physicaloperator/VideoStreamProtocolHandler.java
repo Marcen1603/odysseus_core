@@ -1,10 +1,9 @@
 
-package de.uniol.inf.is.odysseus.wrapper.cameras.physicaloperator;
+package de.uniol.inf.is.odysseus.video.physicaloperator;
 
 import java.io.IOException;
 import java.net.UnknownHostException;
 
-import org.bytedeco.javacpp.opencv_core.IplImage;
 import org.bytedeco.javacv.FFmpegFrameRecorder;
 import org.bytedeco.javacv.FrameRecorder;
 import org.slf4j.Logger;
@@ -19,7 +18,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.IAccessPa
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportDirection;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportExchangePattern;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandler;
-import de.uniol.inf.is.odysseus.image.common.datatype.Image;
+import de.uniol.inf.is.odysseus.imagejcv.common.datatype.ImageJCV;
 
 public class VideoStreamProtocolHandler extends AbstractProtocolHandler<Tuple<?>> 
 {
@@ -81,7 +80,7 @@ public class VideoStreamProtocolHandler extends AbstractProtocolHandler<Tuple<?>
 		}
 	}	
 	
-	private void setUpStream(Image image) throws FrameRecorder.Exception
+	private void setUpStream(ImageJCV image) throws FrameRecorder.Exception
 	{
 		int w = image.getWidth();
 		int h = image.getHeight();
@@ -102,7 +101,7 @@ public class VideoStreamProtocolHandler extends AbstractProtocolHandler<Tuple<?>
 	@Override
 	public void write(Tuple<?> object) throws IOException 
 	{
-		Image image = (Image) object.getAttribute(0);
+		ImageJCV image = (ImageJCV) object.getAttribute(0);
 		
 		synchronized (processLock)
 		{
@@ -120,7 +119,7 @@ public class VideoStreamProtocolHandler extends AbstractProtocolHandler<Tuple<?>
 			
 			try
 			{
-				recorder.record(IplImage.createFrom(image.getImage()));
+				recorder.record(image.getImage());
 			}
 			catch (Exception e)
 			{

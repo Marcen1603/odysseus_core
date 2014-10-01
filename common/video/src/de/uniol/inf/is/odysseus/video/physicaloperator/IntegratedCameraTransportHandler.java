@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.wrapper.cameras.physicaloperator;
+package de.uniol.inf.is.odysseus.video.physicaloperator;
 
 import java.io.IOException;
 

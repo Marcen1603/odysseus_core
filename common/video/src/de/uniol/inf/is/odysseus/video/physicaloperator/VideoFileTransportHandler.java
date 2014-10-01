@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.wrapper.cameras.physicaloperator;
+package de.uniol.inf.is.odysseus.video.physicaloperator;
 
 import java.io.File;
 import java.io.IOException;
@@ -18,7 +18,6 @@ import de.uniol.inf.is.odysseus.core.metadata.TimeInterval;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.AbstractSimplePullTransportHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandler;
-import de.uniol.inf.is.odysseus.image.common.datatype.Image;
 import de.uniol.inf.is.odysseus.imagejcv.common.datatype.ImageJCV;
 
 @SuppressWarnings("unused")

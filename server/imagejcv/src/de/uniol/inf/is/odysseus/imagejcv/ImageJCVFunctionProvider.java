@@ -25,7 +25,7 @@ public class ImageJCVFunctionProvider implements IFunctionProvider {
 		functions.add(new CountFacesFunction());
 		functions.add(new FillImageFunction());
 		functions.add(new GetAmountOfBlackFunction());
-		functions.add(new GetCircleFunction());
+//		functions.add(new GetCircleFunction());
 		functions.add(new GetImageFunction());
 		functions.add(new InverseImageFunction());
 		functions.add(new ResizeImageFunction());
