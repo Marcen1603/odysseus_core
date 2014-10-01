@@ -85,7 +85,7 @@ public class OperatorBuildHelper {
 	/**
 	 * Conversion variables
 	 */
-	public static final long TS_TO_MS_FACTOR = 1000000000;
+	public static final long TS_TO_MS_FACTOR = 1000;
 	
 	// start ts for ETW
 	public static final String TS_GAME_START = "0.0";
@@ -102,6 +102,13 @@ public class OperatorBuildHelper {
 	 */
 	public static final int START_MINUTE = 0;
 	public static final int END_MINUTE = 90;
+	
+	/***
+	 * Some Conversion Constants
+	 */
+	public static final int CONVERSION_DIVIDEND_POSITION_TO_METERS = 1000;
+	
+	
 
 	/**
 	 * Creates a MapAP with a list of expressions. To create such expressions,
@@ -297,10 +304,10 @@ public class OperatorBuildHelper {
 					.createExpressionParameter("entity_id", source);
 			SDFExpressionParameter param2 = OperatorBuildHelper
 					.createExpressionParameter("x / 1000 - " + AbstractSportsDDCAccess.getFieldXMin()
-							+ "/1000", "x_meter", source);
+							+ "/" + CONVERSION_DIVIDEND_POSITION_TO_METERS, "x_meter", source);
 			SDFExpressionParameter param3 = OperatorBuildHelper
 					.createExpressionParameter("y / 1000 - " + AbstractSportsDDCAccess.getFieldYMin()
-							+ "/1000", "y_meter", source);
+							+ "/" + CONVERSION_DIVIDEND_POSITION_TO_METERS, "y_meter", source);
 			SDFExpressionParameter param4 = OperatorBuildHelper
 					.createExpressionParameter("x", source);
 			SDFExpressionParameter param5 = OperatorBuildHelper
@@ -311,16 +318,6 @@ public class OperatorBuildHelper {
 					.createExpressionParameter("v", source);
 			SDFExpressionParameter param8 = OperatorBuildHelper
 					.createExpressionParameter("a", source);
-//			SDFExpressionParameter param9 = OperatorBuildHelper
-//					.createExpressionParameter("vx", source);
-//			SDFExpressionParameter param10 = OperatorBuildHelper
-//					.createExpressionParameter("vy", source);
-//			SDFExpressionParameter param11 = OperatorBuildHelper
-//					.createExpressionParameter("vz", source);
-//			SDFExpressionParameter param12 = OperatorBuildHelper
-//					.createExpressionParameter("ax", source);
-//			SDFExpressionParameter param13 = OperatorBuildHelper
-//					.createExpressionParameter("ay", source);
 			SDFExpressionParameter param14 = OperatorBuildHelper
 					.createExpressionParameter("ts", source);
 			SDFExpressionParameter param15 = OperatorBuildHelper
@@ -335,11 +332,6 @@ public class OperatorBuildHelper {
 			meterExpressions.add(param6);
 			meterExpressions.add(param7);
 			meterExpressions.add(param8);
-//			meterExpressions.add(param9);
-//			meterExpressions.add(param10);
-//			meterExpressions.add(param11);
-//			meterExpressions.add(param12);
-//			meterExpressions.add(param13);
 			meterExpressions.add(param14);
 			meterExpressions.add(param15);
 			MapAO metersMap = OperatorBuildHelper.createMapAO(meterExpressions,
@@ -536,16 +528,6 @@ public class OperatorBuildHelper {
 				.createExpressionParameter("v", source);
 		SDFExpressionParameter ex8 = OperatorBuildHelper
 				.createExpressionParameter("a", source);
-//		SDFExpressionParameter ex9 = OperatorBuildHelper
-//				.createExpressionParameter("vx", source);
-//		SDFExpressionParameter ex10 = OperatorBuildHelper
-//				.createExpressionParameter("vy", source);
-//		SDFExpressionParameter ex11 = OperatorBuildHelper
-//				.createExpressionParameter("vz", source);
-//		SDFExpressionParameter ex12 = OperatorBuildHelper
-//				.createExpressionParameter("ax", source);
-//		SDFExpressionParameter ex13 = OperatorBuildHelper
-//				.createExpressionParameter("ay", source);
 		SDFExpressionParameter ex14 = OperatorBuildHelper
 				.createExpressionParameter("ts", source);
 		SDFExpressionParameter ex15 = OperatorBuildHelper
@@ -559,11 +541,6 @@ public class OperatorBuildHelper {
 		expressions.add(ex6);
 		expressions.add(ex7);
 		expressions.add(ex8);
-//		expressions.add(ex9);
-//		expressions.add(ex10);
-//		expressions.add(ex11);
-//		expressions.add(ex12);
-//		expressions.add(ex13);
 		expressions.add(ex14);
 		expressions.add(ex15);
 
