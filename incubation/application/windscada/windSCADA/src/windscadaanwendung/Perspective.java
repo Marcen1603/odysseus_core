@@ -14,7 +14,9 @@ public class Perspective implements IPerspectiveFactory {
 		layout.addView("windscadaanwendung.views.dashboard.WindDirectionPart", IPageLayout.BOTTOM, 0.59f, "windscadaanwendung.views.dashboard.CorrectedScoreWindSpeedPart");
 		layout.addView("windscadaanwendung.views.dashboard.GierAnglePart", IPageLayout.RIGHT, 0.5f, "windscadaanwendung.views.dashboard.WindDirectionPart");
 		layout.addView("windscadaanwendung.views.UebersichtView", IPageLayout.LEFT, 0.76f, "windacadaanwendung.ListView");
-		layout.addView("windscadaanwendung.views.HitAEView", IPageLayout.BOTTOM, 0.5f, "windscadaanwendung.views.UebersichtView");
+		layout.addView("windscadaanwendung.views.HitAEView", IPageLayout.BOTTOM, 0.58f, "windscadaanwendung.views.UebersichtView");
+		layout.addView("windscadaanwendung.views.dashboard.ParkSumCorrectedScorePart", IPageLayout.BOTTOM, 0.5f, "windscadaanwendung.views.UebersichtView");
+		layout.addView("windscadaanwendung.views.dashboard.ParkColorListPart", IPageLayout.BOTTOM, 0.5f, "windscadaanwendung.views.UebersichtView");
 		layout.addView("windscadaanwendung.views.dashboard.RotationalSpeedPart", IPageLayout.BOTTOM, 0.75f, "windacadaanwendung.ListView");
 		layout.addView("windscadaanwendung.views.dashboard.AEListPart", IPageLayout.BOTTOM, 0.45f, "windacadaanwendung.ListView");
 	}

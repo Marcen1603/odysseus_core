@@ -122,6 +122,20 @@
             name="Historische Warnings und Errors"
             restorable="true">
       </view>
+      <view
+            category="windscadaanwendung.category"
+            class="windscadaanwendung.views.dashboard.ParkSumCorrectedScorePart"
+            id="windscadaanwendung.views.dashboard.ParkSumCorrectedScorePart"
+            name="Gesamtleistung"
+            restorable="true">
+      </view>
+      <view
+            category="windscadaanwendung.category"
+            class="windscadaanwendung.views.dashboard.ParkColorListPart"
+            id="windscadaanwendung.views.dashboard.ParkColorListPart"
+            name="Farbliste"
+            restorable="true">
+      </view>
    </extension>
    <extension
          point="org.eclipse.ui.commands">

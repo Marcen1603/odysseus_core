@@ -38,12 +38,16 @@ public class ListView extends ViewPart {
 					// selected ist oberste Ebene, also ein Windpark
 					WindFarm selectedFarm = FarmList.getFarm(Integer
 							.parseInt(selected.getText()));
-					UebersichtView.setSelectedWindpark(selectedFarm);
-					DetailView.setSelectedWKA(null);
-					// MapView.setSelectedFarm(selectedFarm);
+					handleSelectionWindFarm(selectedFarm);
 				} else {
 					// selected is a WKA
-					handleSelectionWKA(selected);
+					// get the windFarm of the wka and set this as selected windFarm
+					WindFarm farm = FarmList.getFarm(Integer.parseInt(selected.getParentItem()
+							.getText()));
+					handleSelectionWindFarm(farm);
+					// the TreeItemText has to be eaqual to the ID of the WKA
+					WKA selectedWKA = FarmList.getWKA(Integer.parseInt(selected.getText()));
+					handleSelectionWKA(selectedWKA);
 				}
 			}
 
@@ -87,7 +91,7 @@ public class ListView extends ViewPart {
 			for (TreeItem wka : farm.getItems()) {
 				if (wka.getText().equals(id)) {
 					tree.setSelection(wka);
-					handleSelectionWKA(wka);
+					handleSelectionWKA(FarmList.getWKA(Integer.parseInt(id)));
 					return true;
 				}
 			}
@@ -96,19 +100,24 @@ public class ListView extends ViewPart {
 	}
 
 	/**
-	 * This method should be called if you select a WKA in the static swt-tree. It sets the WKA to the selected one in the DashboardPartViewObserver and the DetailView
+	 * This method sets the WKA to the selected one in the DashboardPartViewObserver and the DetailView
 	 * 
-	 * @param wka a swt-TreeItem which is selected
+	 * @param wka the wka which data should be shown
 	 */
-	private static void handleSelectionWKA(TreeItem wka) {
-		// get the windFarm of the wka and set this as selected windFarm
-		WindFarm farm = FarmList.getFarm(Integer.parseInt(wka.getParentItem()
-				.getText()));
-		UebersichtView.setSelectedWindpark(farm);
-		// the TreeItemText has to be eaqual to the ID of the WKA
-		WKA selectedWKA = FarmList.getWKA(Integer.parseInt(wka.getText()));
+	private static void handleSelectionWKA(WKA selectedWKA) {
 		DetailView.setSelectedWKA(selectedWKA);
 		DashboardPartViewObserver.setWKA(selectedWKA);
+	}
+	
+	/**
+	 * This method sets the selectedFarm in windSCADA to show the data from in the Views
+	 * @param selectedFarm the windFarm which data should be shown
+	 */
+	private static void handleSelectionWindFarm(WindFarm selectedFarm) {
+		UebersichtView.setSelectedWindpark(selectedFarm);
+		DetailView.setSelectedWKA(null);
+		DashboardPartViewObserver.setWindFarm(selectedFarm);
+		// MapView.setSelectedFarm(selectedFarm);
 	}
 
 }
