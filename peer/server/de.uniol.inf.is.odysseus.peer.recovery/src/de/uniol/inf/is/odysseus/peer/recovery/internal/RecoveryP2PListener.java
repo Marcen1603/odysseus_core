@@ -9,31 +9,31 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.IP2PDictionary;
-import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryPeerFailureDetector;
+import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryP2PListener;
 
 /**
  * The RecoveryPeerFailureDetector implements
- * {@link IRecoveryPeerFailureDetector}. It detects if a peer leaves the network
+ * {@link IRecoveryP2PListener}. It detects if a peer leaves the network
  * and initiates the recovery accordingly.
  * 
  * @author Simon Kuespert & Tobias Brandt
  * 
  */
-public class P2PNetworkListener extends Observable implements
-		IRecoveryPeerFailureDetector {
+public class RecoveryP2PListener extends Observable implements
+		IRecoveryP2PListener {
 
 	/**
 	 * The logger instance for this class.
 	 */
 	private static final Logger LOG = LoggerFactory
-			.getLogger(P2PNetworkListener.class);
+			.getLogger(RecoveryP2PListener.class);
 
 	private static IP2PDictionary p2pDictionary;
 
 	private Collection<PeerID> savedPeerIDs;
 	private volatile boolean detectionStarted = false;
 	
-	private static P2PNetworkListener instance;
+	private static RecoveryP2PListener instance;
 
 	// called by OSGi-DS
 	public static void bindP2PDictionary(IP2PDictionary serv) {
@@ -63,7 +63,7 @@ public class P2PNetworkListener extends Observable implements
 		LOG.debug("PeerFailureDetector deactivated");
 	}
 	
-	public static P2PNetworkListener getInstance() {
+	public static RecoveryP2PListener getInstance() {
 		return instance;
 	}
 

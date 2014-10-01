@@ -22,7 +22,7 @@ import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.p2p_new.IP2PNetworkManager;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.IP2PDictionary;
-import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryPeerFailureDetector;
+import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryP2PListener;
 import de.uniol.inf.is.odysseus.peer.recovery.internal.JxtaInformation;
 import de.uniol.inf.is.odysseus.peer.recovery.internal.RecoveryCommunicator;
 import de.uniol.inf.is.odysseus.peer.recovery.util.LocalBackupInformationAccess;
@@ -44,7 +44,7 @@ public class RecoveryConsole implements CommandProvider {
 	 * Executor to get queries
 	 */
 	private static IServerExecutor executor;
-	private static IRecoveryPeerFailureDetector peerFailureDetector;
+	private static IRecoveryP2PListener peerFailureDetector;
 
 	// called by OSGi-DS
 	public static void bindP2PNetworkManager(IP2PNetworkManager serv) {
@@ -59,14 +59,14 @@ public class RecoveryConsole implements CommandProvider {
 	}
 
 	// called by OSGi-DS
-	public static void bindRecoveryPeerFailureDetector(
-			IRecoveryPeerFailureDetector serv) {
+	public static void bindRecoveryP2PListener(
+			IRecoveryP2PListener serv) {
 		peerFailureDetector = serv;
 	}
 
 	// called by OSGi-DS
-	public static void unbindRecoveryPeerFailureDetector(
-			IRecoveryPeerFailureDetector serv) {
+	public static void unbindRecoveryP2PListener(
+			IRecoveryP2PListener serv) {
 		if (peerFailureDetector == serv) {
 			peerFailureDetector = null;
 		}

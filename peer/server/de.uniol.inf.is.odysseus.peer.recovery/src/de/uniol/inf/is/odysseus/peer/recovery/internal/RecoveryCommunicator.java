@@ -24,6 +24,7 @@ import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicatorListener;
 import de.uniol.inf.is.odysseus.p2p_new.PeerCommunicationException;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.IP2PDictionary;
 import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryCommunicator;
+import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryP2PListener;
 import de.uniol.inf.is.odysseus.peer.recovery.messages.BackupInformationMessage;
 import de.uniol.inf.is.odysseus.peer.recovery.messages.BackupJxtaInfoMessage;
 import de.uniol.inf.is.odysseus.peer.recovery.messages.RecoveryInstructionMessage;
@@ -74,6 +75,7 @@ public class RecoveryCommunicator implements IRecoveryCommunicator,
 	private static IP2PNetworkManager p2pNetworkManager;
 	private static IP2PDictionary p2pDictionary;
 	private static IPeerCommunicator peerCommunicator;
+	private static IRecoveryP2PListener recoveryP2PListener;
 	/**
 	 * Executor to get queries
 	 */
@@ -90,6 +92,8 @@ public class RecoveryCommunicator implements IRecoveryCommunicator,
 	 */
 	public void activate() {
 		instance = this;
+		if(recoveryP2PListener != null)
+			recoveryP2PListener.addObserver(this);
 	}
 
 	/**
@@ -181,6 +185,17 @@ public class RecoveryCommunicator implements IRecoveryCommunicator,
 		if (executor == exe) {
 			executor = null;
 		}
+	}
+
+	// called by OSGi-DS
+	public static void bindRecoveryP2PListener(IRecoveryP2PListener serv) {
+		recoveryP2PListener = serv;
+	}
+
+	// called by OSGi-DS
+	public static void unbindRecoveryP2PListener(IRecoveryP2PListener serv) {
+		if (recoveryP2PListener == serv)
+			recoveryP2PListener = null;
 	}
 
 	/**
