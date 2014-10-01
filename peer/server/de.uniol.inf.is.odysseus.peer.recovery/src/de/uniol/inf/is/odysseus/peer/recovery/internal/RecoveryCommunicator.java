@@ -37,7 +37,7 @@ import de.uniol.inf.is.odysseus.peer.recovery.util.LocalBackupInformationAccess;
  * 
  * Attention: Under construction
  * 
- * @author Tobias Brandt & Michael Brand
+ * @author Tobias Brandt & Michael Brand & Simon Kuespert
  *
  */
 public class RecoveryCommunicator implements IRecoveryCommunicator,
@@ -250,7 +250,12 @@ public class RecoveryCommunicator implements IRecoveryCommunicator,
 	public void recover(PeerID failedPeer) {
 
 		// 1. Check, if there was something on the failed peer
+		// Return if there is no backup information stored for the given peer
 
+		if(LocalBackupInformationAccess.getStoredSharedQueryIdsForPeer(failedPeer) == null){
+			return;
+		};
+		
 		// 2. Search for another peer who can take the parts from the failed
 		// peer
 
