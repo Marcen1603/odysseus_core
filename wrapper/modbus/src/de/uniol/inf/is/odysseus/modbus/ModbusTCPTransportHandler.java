@@ -11,8 +11,10 @@ import org.slf4j.LoggerFactory;
 
 import com.ghgande.j2mod.modbus.ModbusException;
 import com.ghgande.j2mod.modbus.io.ModbusTCPTransaction;
+import com.ghgande.j2mod.modbus.msg.ModbusRequest;
 import com.ghgande.j2mod.modbus.msg.ReadInputDiscretesRequest;
 import com.ghgande.j2mod.modbus.msg.ReadInputDiscretesResponse;
+import com.ghgande.j2mod.modbus.msg.ReadInputRegistersRequest;
 import com.ghgande.j2mod.modbus.net.TCPMasterConnection;
 
 import de.uniol.inf.is.odysseus.core.collection.BitVector;
@@ -27,7 +29,7 @@ public class ModbusTCPTransportHandler extends
 		AbstractSimplePullTransportHandler<Tuple<IMetaAttribute>> {
 
 	Logger logger = LoggerFactory.getLogger(ModbusTCPTransportHandler.class);
-	
+
 	private static final int DEFAULT_PORT = 0;
 	public static final String NAME = "ModbusTCP";
 
@@ -35,6 +37,7 @@ public class ModbusTCPTransportHandler extends
 	public static final String SLAVE = "slave";
 	public static final String REF = "ref";
 	public static final String COUNT = "count";
+	public static final String FUNCTION_CODE = "FUNCTION_CODE".toLowerCase();
 
 	private int port;
 	private InetAddress slave;
@@ -43,7 +46,9 @@ public class ModbusTCPTransportHandler extends
 
 	private TCPMasterConnection con;
 	private ModbusTCPTransaction trans;
-	private ReadInputDiscretesRequest req;
+	private ModbusRequest req;
+
+	private int functionCode;
 
 	public ModbusTCPTransportHandler() {
 	}
@@ -55,32 +60,24 @@ public class ModbusTCPTransportHandler extends
 	}
 
 	private void init(OptionMap options) {
-		port = DEFAULT_PORT;
+		options.checkRequiredException(SLAVE, REF, COUNT);
+
+		port = options.getInt(PORT, DEFAULT_PORT);
 		String slaveStr;
-		if (options.containsKey(PORT)) {
-			port = Integer.parseInt(options.get(PORT));
-		}
-		if (options.containsKey(SLAVE)) {
-			slaveStr = options.get(SLAVE);
-		} else {
-			throw new IllegalArgumentException(SLAVE + " option must be set");
-		}
+
+		slaveStr = options.get(SLAVE);
+
 		try {
 			slave = InetAddress.getByName(slaveStr);
 		} catch (UnknownHostException e) {
 			e.printStackTrace();
 		}
-		if (options.containsKey(REF)) {
-			ref = Integer.parseInt(options.get(REF));
-		} else {
-			throw new IllegalArgumentException(REF + " option must be set");
-		}
-		if (options.containsKey(COUNT)) {
-			count = Integer.parseInt(options.get(COUNT));
-		} else {
-			throw new IllegalArgumentException(COUNT + " option must be set");
-		}
-		logger.debug("initialized with port="+port+" slave="+slave+" ref="+ref+" count="+count);
+		ref = Integer.parseInt(options.get(REF));
+		count = Integer.parseInt(options.get(COUNT));
+		functionCode = options.getInt(REF, 2);
+		logger.debug("initialized with port=" + port + " slave=" + slave
+				+ " ref=" + ref + " count=" + count + " for function "
+				+ FUNCTION_CODE);
 	}
 
 	@Override
@@ -96,7 +93,7 @@ public class ModbusTCPTransportHandler extends
 
 	@Override
 	public void processInOpen() throws IOException {
-		logger.debug("Opening connection to slave "+slave);
+		logger.debug("Opening connection to slave " + slave);
 		// 2. Open the connection
 		con = new TCPMasterConnection(slave);
 		con.setPort(port);
@@ -108,7 +105,20 @@ public class ModbusTCPTransportHandler extends
 		// TODO: This seems to read one value --> List of ref and count!
 		logger.debug("Creating new read request");
 		// 3. Prepare the request
-		req = new ReadInputDiscretesRequest(ref, count);
+
+		// req = new ReadInputDiscretesRequest(ref, count);
+		switch (functionCode) {
+		case 2:
+			req = new ReadInputDiscretesRequest(ref, count);
+			break;
+
+		case 4:
+			req = new ReadInputRegistersRequest(ref, count);
+			break;
+		default:
+			throw new IllegalArgumentException("FUNCTION_CODE " + functionCode
+					+ " not know");
+		}
 
 		logger.debug("Creating new Transaction");
 		trans = new ModbusTCPTransaction(con);
@@ -157,7 +167,7 @@ public class ModbusTCPTransportHandler extends
 
 	@Override
 	public Tuple<IMetaAttribute> getNext() {
-		logger.debug("Retieving values from slave "+slave);
+		logger.debug("Retieving values from slave " + slave);
 		try {
 			trans.execute();
 		} catch (NullPointerException np) {
@@ -176,7 +186,7 @@ public class ModbusTCPTransportHandler extends
 		// + res.getDiscretes().toString());
 
 		if (res != null) {
-			logger.debug("Creating output from result "+ res.getDiscretes());
+			logger.debug("Creating output from result " + res.getDiscretes());
 			BitVector out = res.getDiscretes().createOdysseusBitVector();
 
 			t.setAttribute(0, out);
