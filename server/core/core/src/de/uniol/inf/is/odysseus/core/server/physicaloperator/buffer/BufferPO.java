@@ -67,7 +67,9 @@ public class BufferPO<T extends IStreamObject<?>> extends
 
 	}
 
-	public void setBufferName(String buffername) {
+	@Override
+	public void setName(String buffername) {
+		super.setName(buffername);
 		this.buffername = buffername;
 	}
 

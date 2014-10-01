@@ -18,6 +18,7 @@ package de.uniol.inf.is.odysseus.core.server.logicaloperator;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.BooleanParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.LongParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
 
@@ -38,6 +39,11 @@ public class BufferAO extends UnaryLogicalOp {
 	private String buffername="";
 
 	/**
+	 * Allow a buffer to schedule it self
+	 */
+	private boolean threaded = false;
+	
+	/**
 	 * Limit the number of elements for a buffer.
 	 */
 	private long maxBufferSize = -1;
@@ -45,6 +51,7 @@ public class BufferAO extends UnaryLogicalOp {
 	public BufferAO(BufferAO ao) {
 		super(ao);
 		this.type = ao.type;
+		this.threaded = ao.threaded;
 	}
 
 	public BufferAO() {
@@ -82,5 +89,14 @@ public class BufferAO extends UnaryLogicalOp {
 		return maxBufferSize;
 	}
 	
+	@Parameter(type = BooleanParameter.class, optional= true, doc ="If set to true, this buffer will not be scheduled by the scheduler, but uses an own thread. Handle with care!")
+	public void setThreaded(boolean threaded) {
+		this.threaded = threaded;
+	}
 
+	public boolean isThreaded() {
+		return threaded;
+	}
+		
+	
 }
