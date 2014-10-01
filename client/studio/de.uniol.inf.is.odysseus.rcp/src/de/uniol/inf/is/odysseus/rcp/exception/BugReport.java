@@ -115,7 +115,9 @@ public class BugReport {
                 }
                 final BugReportEditor editor = new BugReportEditor(shell);
                 editor.open();
-                editor.setReport(BugReport.this.getReport());
+                editor.setUserReport(BugReport.this.getUserReport());
+                editor.setGeneratedReport(BugReport.this.getGeneratedReport());
+
             }
 
         });
@@ -123,14 +125,26 @@ public class BugReport {
 
     public String getReport() {
         final StringBuilder report = new StringBuilder();
+        report.append(getUserReport()).append("\n");
+        report.append(getGeneratedReport());
+        return report.toString();
+
+    }
+
+    String getUserReport() {
+        final StringBuilder report = new StringBuilder();
         report.append("*** Odysseus Bug Report *** \n\n");
-        report.append("*** Reporter, please consider answering these questions, where appropriate ***\n\n");
-        report.append("* If you want a reply please enter a valid e-mail adress:\n\n");
-        report.append("* What led up to the situation?\n\n");
-        report.append("* What exactly did you do (or not do) that was effective (or ineffective)?\n\n");
-        report.append("* What was the outcome of this action?\n\n");
-        report.append("* What outcome did you expect instead?\n\n");
+        report.append("* If you want a reply please enter a valid e-mail adress:\n\n\n");
+        report.append("* What led up to the situation?\n\n\n");
+        report.append("* What exactly did you do (or not do) that was effective (or ineffective)?\n\n\n");
+        report.append("* What was the outcome of this action?\n\n\n");
+        report.append("* What outcome did you expect instead?\n\n\n\n");
         report.append("Please be aware that this report may contain private or other confidential information\n");
+        return report.toString();
+    }
+
+    String getGeneratedReport() {
+        final StringBuilder report = new StringBuilder();
         if (this.exception != null) {
             final StringBuilder stackStrace = BugReport.getStackTraceReport(this.exception);
             report.append("\n## Stack Trace:\n");

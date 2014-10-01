@@ -17,10 +17,16 @@
 package de.uniol.inf.is.odysseus.rcp.exception;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.LineStyleEvent;
+import org.eclipse.swt.custom.LineStyleListener;
+import org.eclipse.swt.custom.StyleRange;
+import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Point;
@@ -31,7 +37,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.Text;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,7 +49,8 @@ import de.uniol.inf.is.odysseus.rcp.l10n.OdysseusNLS;
 public class BugReportEditor extends Window {
     private static final Logger LOG = LoggerFactory.getLogger(BugReportEditor.class);
 
-    Text textArea;
+    StyledText generatedTextArea;
+    StyledText userTextArea;
 
     /**
      * Class constructor.
@@ -104,7 +110,7 @@ public class BugReportEditor extends Window {
             public void widgetSelected(final SelectionEvent event) {
                 sendButton.setText(OdysseusNLS.Sending);
                 try {
-                    boolean result = BugReport.send(BugReportEditor.this.textArea.getText());
+                    boolean result = BugReport.send(BugReportEditor.this.userTextArea.getText() + "\n" + BugReportEditor.this.generatedTextArea.getText());
                     if (result) {
                         BugReportEditor.this.setReturnCode(Window.OK);
                     }
@@ -137,16 +143,40 @@ public class BugReportEditor extends Window {
     }
 
     protected void createTextArea(final Composite parent) {
-        this.textArea = new Text(parent, SWT.BORDER | SWT.V_SCROLL | SWT.MULTI);
-        this.textArea.setEditable(true);
-        final GridData data = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
+        Label userLabel = new Label(parent, SWT.NONE);
+        userLabel.setText("Reporter, please consider answering these questions, where appropriate");
+        GridData data = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
+        data.widthHint = 600;
+        userLabel.setLayoutData(data);
+
+        this.userTextArea = new StyledText(parent, SWT.BORDER | SWT.V_SCROLL | SWT.MULTI);
+        this.userTextArea.setEditable(true);
+        this.userTextArea.addLineStyleListener(new SegmentLineStyleListener());
+        data = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
         data.widthHint = 600;
         data.heightHint = 300;
-        this.textArea.setLayoutData(data);
+        this.userTextArea.setLayoutData(data);
+
+        Label generatedLabel = new Label(parent, SWT.NONE);
+        generatedLabel.setText("\nDebug Information:");
+        data = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
+        data.widthHint = 600;
+        generatedLabel.setLayoutData(data);
+
+        this.generatedTextArea = new StyledText(parent, SWT.BORDER | SWT.V_SCROLL | SWT.MULTI);
+        this.generatedTextArea.setEditable(true);
+        data = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
+        data.widthHint = 600;
+        data.heightHint = 200;
+        this.generatedTextArea.setLayoutData(data);
     }
 
-    public void setReport(final String report) {
-        this.textArea.setText(report);
+    public void setGeneratedReport(final String report) {
+        this.generatedTextArea.setText(report);
+    }
+
+    public void setUserReport(final String report) {
+        this.userTextArea.setText(report);
     }
 
     @Override
@@ -165,4 +195,28 @@ public class BugReportEditor extends Window {
         return composite;
     }
 
+    public class SegmentLineStyleListener implements LineStyleListener {
+
+        public SegmentLineStyleListener() {
+            super();
+        }
+
+        @Override
+        public void lineGetStyle(LineStyleEvent event) {
+            List<StyleRange> styles = new ArrayList<>();
+            int start = 0;
+            int length = event.lineText.length();
+            System.out.println("current line length:" + event.lineText.length());
+            if (event.lineText.startsWith("* ")) {
+                StyleRange style = new StyleRange();
+                style.start = event.lineOffset;
+                style.length = length;
+                style.fontStyle = SWT.BOLD;
+                styles.add(style);
+            }
+
+            event.styles = styles.toArray(new StyleRange[0]);
+        }
+
+    }
 }
