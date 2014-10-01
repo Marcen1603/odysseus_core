@@ -1,0 +1,24 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Raspberry Pi GPIO TransportHandler
+Bundle-SymbolicName: de.uniol.inf.is.odysseus.wrapper.rpi.gpio
+Bundle-Version: 1.0.0.qualifier
+Bundle-Activator: de.uniol.inf.is.odysseus.wrapper.rpi.gpio.Activator
+Bundle-Vendor: Andrej Albrecht
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Import-Package: de.uniol.inf.is.odysseus.core.physicaloperator.access.transport,
+ org.osgi.framework;version="1.3.0"
+Require-Bundle: de.uniol.inf.is.odysseus.core;bundle-version="1.0.0",
+ de.uniol.inf.is.odysseus.core.server;bundle-version="1.0.0"
+Service-Component: OSGI-INF/RPiGPIOTransportHandler.xml
+Bundle-NativeCode: lib/native/linux/libpi4j.so ;
+  osname=linux;  processor=x86_64,
+  lib/native/linux/libpi4j.so ;
+  osname=linux;  processor=x86,
+  *
+Bundle-ClassPath: .,
+ lib/pi4j-core.jar,
+ lib/pi4j-device.jar,
+ lib/pi4j-example.jar,
+ lib/pi4j-gpio-extension.jar,
+ lib/pi4j-service.jar
