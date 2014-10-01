@@ -41,6 +41,8 @@ public class RPiGPIOTransportHandler extends AbstractSimplePullTransportHandler<
 			ex.printStackTrace();
 		}catch(Exception ex){
 			ex.printStackTrace();
+		}catch (UnsatisfiedLinkError ex) {
+			ex.printStackTrace();
 		}
 		
 		return tHandler;
@@ -73,26 +75,37 @@ public class RPiGPIOTransportHandler extends AbstractSimplePullTransportHandler<
 	@Override
 	public Tuple<?> getNext() {
 		@SuppressWarnings("rawtypes")
-		Tuple<?> tuple = new Tuple(1, false);
+		Tuple<?> tuple = new Tuple(2, false);
 		
-        try{	
-        	// provision gpio pin #02 as an input pin with its internal pull down resistor enabled
-            // (configure pin edge to both rising and falling to get notified for HIGH and LOW state
-            // changes)
-            GpioPinDigitalInput myButton = gpioController.provisionDigitalInputPin(RaspiPin.GPIO_11,             // PIN NUMBER
-                                                                         "MyButton",                   // PIN FRIENDLY NAME (optional)
-                                                                         PinPullResistance.PULL_DOWN); // PIN RESISTANCE (optional)
-            //PinState ps = myButton.getState();
-            boolean buttonPressed = myButton.isHigh();
-        	
-        	
-            
-        	tuple.setAttribute(0, pin);
-        	tuple.setAttribute(1, buttonPressed ? "1" : "0");
-		}catch(Exception ex){
-			tuple.setAttribute(0, "error");
-        	tuple.setAttribute(1, "error");
+		boolean value=false;
+		
+		if(gpioController!=null){
+			try{	
+	        	// provision gpio pin #02 as an input pin with its internal pull down resistor enabled
+	            // (configure pin edge to both rising and falling to get notified for HIGH and LOW state
+	            // changes)
+	            GpioPinDigitalInput myButton = gpioController.provisionDigitalInputPin(RaspiPin.GPIO_04,             // PIN NUMBER
+	                                                                         "MyButton",                   // PIN FRIENDLY NAME (optional)
+	                                                                         PinPullResistance.PULL_DOWN); // PIN RESISTANCE (optional)
+	            //PinState ps = myButton.getState();
+	            boolean buttonPressed = myButton.isHigh();
+	        	
+	        	
+	            
+	        	tuple.setAttribute(0, pin);
+	        	tuple.setAttribute(1, buttonPressed ? "1" : "0");
+	        	value=true;
+			}catch(Exception ex){
+				tuple.setAttribute(0, "error");
+	        	tuple.setAttribute(1, "error");
+	        	value=true;
+			}
 		}
+        
+        if(!value){
+        	tuple.setAttribute(0, "error2");
+        	tuple.setAttribute(1, "error2");
+        }
         
 		return tuple;
 	}
