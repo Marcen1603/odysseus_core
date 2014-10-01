@@ -26,6 +26,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map.Entry;
 import java.util.Scanner;
 import java.util.Set;
 
@@ -370,6 +371,14 @@ public class BugReport {
         report.append("\t* CPUs: ").append(cpu).append("\n");
         report.append("\t* Memory: ").append(mem).append("\n");
         report.append("\t* Locale: ").append(locale).append("\n");
+        report.append("\t* System Properties: ").append("\n");
+        for (Entry<Object, Object> property : System.getProperties().entrySet()) {
+            report.append("\t\t- ").append(property.getKey()).append(": ").append(property.getValue()).append("\n");
+        }
+        report.append("\t* System Environment: ").append("\n");
+        for (Entry<String, String> property : System.getenv().entrySet()) {
+            report.append("\t\t- ").append(property.getKey()).append(": ").append(property.getValue()).append("\n");
+        }
         return report;
     }
 
