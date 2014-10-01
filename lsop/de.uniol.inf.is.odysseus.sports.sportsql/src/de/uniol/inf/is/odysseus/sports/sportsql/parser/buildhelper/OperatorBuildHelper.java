@@ -86,10 +86,6 @@ public class OperatorBuildHelper {
 	 * Conversion variables
 	 */
 	public static final long TS_TO_MS_FACTOR = 1000;
-	
-	// start ts for ETW
-	public static final String TS_GAME_START = "0.0";
-	public static final String TS_GAME_END = "14879639146403495.0";
 
 	/**
 	 * Team Ids
@@ -108,6 +104,9 @@ public class OperatorBuildHelper {
 	 */
 	public static final int CONVERSION_DIVIDEND_POSITION_TO_METERS = 1000;
 	
+	public static final String ATTRIBUTE_MINUTE = "minute";
+	public static final String ATTRIBUTE_SECOND = "second";
+	public static final String ATTRIBUTE_MILLISECOND = "milliseconds";
 	
 
 	/**
@@ -499,59 +498,57 @@ public class OperatorBuildHelper {
 	 */
 	public static SelectAO createTimeMapAndSelect(
 			SportsQLTimeParameter timeParameter, ILogicalOperator source) {
+		return createTimeSelect(timeParameter, createTimeMap(source));
 
+	}
+
+	public static MapAO createTimeMap(ILogicalOperator source) {
 		List<SDFExpressionParameter> expressions = new ArrayList<SDFExpressionParameter>();
 
 		SDFExpressionParameter ex1 = OperatorBuildHelper
-				.createExpressionParameter("entity_id", source);
-
+				.createExpressionParameter("entity_id", source);		
+		
 		SDFExpressionParameter ex2 = OperatorBuildHelper
-				.createExpressionParameter("minutes(toDate("
-						+ OperatorBuildHelper.TS_GAME_START + "/"
-						+ OperatorBuildHelper.TS_TO_MS_FACTOR + "), toDate(ts/"
-						+ OperatorBuildHelper.TS_TO_MS_FACTOR + "))", "minute",
-						source);
+				.createExpressionParameter("DoubleToInteger(ts/60000000.0)", ATTRIBUTE_MINUTE, source);
 		SDFExpressionParameter ex3 = OperatorBuildHelper
-				.createExpressionParameter("seconds(toDate("
-						+ OperatorBuildHelper.TS_GAME_START + "/"
-						+ OperatorBuildHelper.TS_TO_MS_FACTOR + "), toDate(ts/"
-						+ OperatorBuildHelper.TS_TO_MS_FACTOR + "))", "second",
-						source);
+				.createExpressionParameter("DoubleToInteger((ts/1000000) % 60)", ATTRIBUTE_SECOND, source);
+		
 
-		SDFExpressionParameter ex4 = OperatorBuildHelper
-				.createExpressionParameter("x", source);
 		SDFExpressionParameter ex5 = OperatorBuildHelper
-				.createExpressionParameter("y", source);
+				.createExpressionParameter("x", source);
 		SDFExpressionParameter ex6 = OperatorBuildHelper
-				.createExpressionParameter("z", source);
+				.createExpressionParameter("y", source);
 		SDFExpressionParameter ex7 = OperatorBuildHelper
-				.createExpressionParameter("v", source);
+				.createExpressionParameter("z", source);
 		SDFExpressionParameter ex8 = OperatorBuildHelper
+				.createExpressionParameter("v", source);
+		SDFExpressionParameter ex9 = OperatorBuildHelper
 				.createExpressionParameter("a", source);
-		SDFExpressionParameter ex14 = OperatorBuildHelper
+		SDFExpressionParameter ex10 = OperatorBuildHelper
 				.createExpressionParameter("ts", source);
-		SDFExpressionParameter ex15 = OperatorBuildHelper
+		SDFExpressionParameter ex11 = OperatorBuildHelper
 				.createExpressionParameter("team_id", source);
 
 		expressions.add(ex1);
 		expressions.add(ex2);
 		expressions.add(ex3);
-		expressions.add(ex4);
 		expressions.add(ex5);
 		expressions.add(ex6);
 		expressions.add(ex7);
 		expressions.add(ex8);
-		expressions.add(ex14);
-		expressions.add(ex15);
+		expressions.add(ex9);
+		expressions.add(ex10);
+		expressions.add(ex11);
 
 		MapAO firstMap = OperatorBuildHelper.createMapAO(expressions, source,
 				0, 0);
 		
 		firstMap.initialize();
-
-		return createTimeSelect(timeParameter, firstMap);
-
+		
+		return firstMap;
 	}
+	
+	
 
 	/**
 	 * Creates a Select Operator to filter Entity by Id.

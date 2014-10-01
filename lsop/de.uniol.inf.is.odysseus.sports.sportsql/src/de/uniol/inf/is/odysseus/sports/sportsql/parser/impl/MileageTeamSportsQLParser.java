@@ -50,9 +50,7 @@ public class MileageTeamSportsQLParser implements ISportsQLParser {
 		// ---------------------------------------
 
 		// 1. MAP
-		MapAO firstMap = OperatorBuildHelper.createMapAO(
-				getExpressionsForFirstMap(soccerGameStreamAO),
-				soccerGameStreamAO, 0, 0);
+		MapAO firstMap = OperatorBuildHelper.createTimeMap(soccerGameStreamAO);
 		allOperators.add(firstMap);
 
 		// 2. Correct selection for the time
@@ -149,65 +147,63 @@ public class MileageTeamSportsQLParser implements ISportsQLParser {
 		return OperatorBuildHelper.finishQuery(finalSumAggregate, allOperators, sportsQL.getName());
 	}
 
-	private List<SDFExpressionParameter> getExpressionsForFirstMap(
-			ILogicalOperator source) {
-		List<SDFExpressionParameter> expressions = new ArrayList<SDFExpressionParameter>();
-
-		SDFExpressionParameter ex1 = OperatorBuildHelper
-				.createExpressionParameter("sid", source);
-
-		SDFExpressionParameter ex2 = OperatorBuildHelper
-				.createExpressionParameter("minutes(toDate("
-						+ OperatorBuildHelper.TS_GAME_START + "/"
-						+ OperatorBuildHelper.TS_TO_MS_FACTOR + "), toDate(ts/"
-						+ OperatorBuildHelper.TS_TO_MS_FACTOR + "))", "minute",
-						source);
-		SDFExpressionParameter ex3 = OperatorBuildHelper
-				.createExpressionParameter("seconds(toDate("
-						+ OperatorBuildHelper.TS_GAME_START + "/"
-						+ OperatorBuildHelper.TS_TO_MS_FACTOR + "), toDate(ts/"
-						+ OperatorBuildHelper.TS_TO_MS_FACTOR + "))", "second",
-						source);
-
-		SDFExpressionParameter ex4 = OperatorBuildHelper
-				.createExpressionParameter("x", source);
-		SDFExpressionParameter ex5 = OperatorBuildHelper
-				.createExpressionParameter("y", source);
-		SDFExpressionParameter ex6 = OperatorBuildHelper
-				.createExpressionParameter("z", source);
-		SDFExpressionParameter ex7 = OperatorBuildHelper
-				.createExpressionParameter("v", source);
-		SDFExpressionParameter ex8 = OperatorBuildHelper
-				.createExpressionParameter("a", source);
-		SDFExpressionParameter ex9 = OperatorBuildHelper
-				.createExpressionParameter("vx", source);
-		SDFExpressionParameter ex10 = OperatorBuildHelper
-				.createExpressionParameter("vy", source);
-		SDFExpressionParameter ex11 = OperatorBuildHelper
-				.createExpressionParameter("vz", source);
-		SDFExpressionParameter ex12 = OperatorBuildHelper
-				.createExpressionParameter("ax", source);
-		SDFExpressionParameter ex13 = OperatorBuildHelper
-				.createExpressionParameter("ay", source);
-		SDFExpressionParameter ex14 = OperatorBuildHelper
-				.createExpressionParameter("ts", source);
-
-		expressions.add(ex1);
-		expressions.add(ex2);
-		expressions.add(ex3);
-		expressions.add(ex4);
-		expressions.add(ex5);
-		expressions.add(ex6);
-		expressions.add(ex7);
-		expressions.add(ex8);
-		expressions.add(ex9);
-		expressions.add(ex10);
-		expressions.add(ex11);
-		expressions.add(ex12);
-		expressions.add(ex13);
-		expressions.add(ex14);
-
-		return expressions;
-	}
+//	private List<SDFExpressionParameter> getExpressionsForFirstMap(
+//			ILogicalOperator source) {
+//		List<SDFExpressionParameter> expressions = new ArrayList<SDFExpressionParameter>();
+//
+//		SDFExpressionParameter ex1 = OperatorBuildHelper
+//				.createExpressionParameter("sid", source);
+//
+//		SDFExpressionParameter ex2 = OperatorBuildHelper
+//				.createExpressionParameter("minutes(toDate(10753295594424116.0/"
+//						+ OperatorBuildHelper.TS_TO_MS_FACTOR + "), toDate(ts/"
+//						+ OperatorBuildHelper.TS_TO_MS_FACTOR + "))", "minute",
+//						source);
+//		SDFExpressionParameter ex3 = OperatorBuildHelper
+//				.createExpressionParameter("seconds(toDate(10753295594424116.0/"
+//						+ OperatorBuildHelper.TS_TO_MS_FACTOR + "), toDate(ts/"
+//						+ OperatorBuildHelper.TS_TO_MS_FACTOR + "))", "second",
+//						source);
+//
+//		SDFExpressionParameter ex4 = OperatorBuildHelper
+//				.createExpressionParameter("x", source);
+//		SDFExpressionParameter ex5 = OperatorBuildHelper
+//				.createExpressionParameter("y", source);
+//		SDFExpressionParameter ex6 = OperatorBuildHelper
+//				.createExpressionParameter("z", source);
+//		SDFExpressionParameter ex7 = OperatorBuildHelper
+//				.createExpressionParameter("v", source);
+//		SDFExpressionParameter ex8 = OperatorBuildHelper
+//				.createExpressionParameter("a", source);
+//		SDFExpressionParameter ex9 = OperatorBuildHelper
+//				.createExpressionParameter("vx", source);
+//		SDFExpressionParameter ex10 = OperatorBuildHelper
+//				.createExpressionParameter("vy", source);
+//		SDFExpressionParameter ex11 = OperatorBuildHelper
+//				.createExpressionParameter("vz", source);
+//		SDFExpressionParameter ex12 = OperatorBuildHelper
+//				.createExpressionParameter("ax", source);
+//		SDFExpressionParameter ex13 = OperatorBuildHelper
+//				.createExpressionParameter("ay", source);
+//		SDFExpressionParameter ex14 = OperatorBuildHelper
+//				.createExpressionParameter("ts", source);
+//
+//		expressions.add(ex1);
+//		expressions.add(ex2);
+//		expressions.add(ex3);
+//		expressions.add(ex4);
+//		expressions.add(ex5);
+//		expressions.add(ex6);
+//		expressions.add(ex7);
+//		expressions.add(ex8);
+//		expressions.add(ex9);
+//		expressions.add(ex10);
+//		expressions.add(ex11);
+//		expressions.add(ex12);
+//		expressions.add(ex13);
+//		expressions.add(ex14);
+//
+//		return expressions;
+//	}
 
 }

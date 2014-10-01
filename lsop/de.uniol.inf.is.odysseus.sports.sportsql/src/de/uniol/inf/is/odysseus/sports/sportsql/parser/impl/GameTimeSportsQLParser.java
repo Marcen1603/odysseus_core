@@ -41,8 +41,8 @@ import de.uniol.inf.is.odysseus.sports.sportsql.parser.parameter.SportsQLLongPar
 		@SportsQLParameter(name = "selectDataBetweenTimestamps", parameterClass = SportsQLBooleanParameter.class, mandatory = false),})
 public class GameTimeSportsQLParser implements ISportsQLParser {
 
-	private static final String ATTRIBUTE_NEW_TS = "newts";
-	private static final String ATTRIBUTE_MILLISECOND = "milliseconds";
+//	private static final String ATTRIBUTE_NEW_TS = "newts";
+//	private static final String ATTRIBUTE_MILLISECOND = "milliseconds";
 
 	@Override
 	public ILogicalQuery parse(SportsQLQuery sportsQL)
@@ -52,16 +52,13 @@ public class GameTimeSportsQLParser implements ISportsQLParser {
 
 		StreamAO soccerGameStreamAO = OperatorBuildHelper.createGameStreamAO();
 
-		// Default starttimestamp and endtimestamp are used if no parameters
-		// were set
-		String startts = getStartTimestamp(sportsQL);
-		String endts = getEndTimestamp(sportsQL);
-
-
 		// 1. Only data stream elements between starttimestamp and endtimestamp
 		ILogicalOperator gameTimeSelect = null;
 		
 		if (isSelectDataBetweenTimestampsEnabled(sportsQL)) {
+			String startts = getStartTimestamp(sportsQL);
+			String endts = getEndTimestamp(sportsQL);
+			
 			List<String> gameTimeSelectPredicates = new ArrayList<String>();
 			gameTimeSelectPredicates.add(SoccerGameAttributes.TS + ">= " + startts);
 			gameTimeSelectPredicates.add(SoccerGameAttributes.TS + "<= " + endts);
@@ -73,40 +70,27 @@ public class GameTimeSportsQLParser implements ISportsQLParser {
 		}
 
 
-		// 2. Convert timestamp(in microseconds) to decimal minutes
-		ArrayList<SDFExpressionParameter> newtsMapExpressions = new ArrayList<SDFExpressionParameter>();
-		newtsMapExpressions.add(OperatorBuildHelper.createExpressionParameter("(" + SoccerGameAttributes.TS + " - " + startts+ ") / 60000000.0", ATTRIBUTE_NEW_TS,gameTimeSelect));
-
-		MapAO newtsMap = OperatorBuildHelper.createMapAO(newtsMapExpressions,
-				gameTimeSelect, 0, 0);
-		allOperators.add(newtsMap);
-
 		// 3. Convert decimal minutes to minute, second and millisecond
-		ArrayList<SDFExpressionParameter> gameTimeMapExpressions = new ArrayList<SDFExpressionParameter>();
-		gameTimeMapExpressions.add(OperatorBuildHelper.createExpressionParameter("ToLong(" + ATTRIBUTE_NEW_TS + ")","minute", newtsMap));
-		gameTimeMapExpressions.add(OperatorBuildHelper
-				.createExpressionParameter("ToLong((" + ATTRIBUTE_NEW_TS
-						+ " - ToLong(" + ATTRIBUTE_NEW_TS + ")) * 60)",
-						"second", newtsMap));
-		gameTimeMapExpressions.add(OperatorBuildHelper
-				.createExpressionParameter("ToLong((((" + ATTRIBUTE_NEW_TS
-						+ " - ToLong(" + ATTRIBUTE_NEW_TS
-						+ ")) * 60) - ToLong((" + ATTRIBUTE_NEW_TS
-						+ " - ToLong(" + ATTRIBUTE_NEW_TS + ")) * 60))*1000)",
-						ATTRIBUTE_MILLISECOND, newtsMap));
-
-		MapAO gameTimeMap = OperatorBuildHelper.createMapAO(
-				gameTimeMapExpressions, newtsMap, 0, 0);
-		allOperators.add(gameTimeMap);
+		List<SDFExpressionParameter> expressions = new ArrayList<SDFExpressionParameter>();
+		expressions.add(OperatorBuildHelper
+				.createExpressionParameter("DoubleToInteger(ts/60000000.0)", OperatorBuildHelper.ATTRIBUTE_MINUTE, gameTimeSelect));
+		expressions.add(OperatorBuildHelper
+				.createExpressionParameter("DoubleToInteger((ts/1000000) % 60)", OperatorBuildHelper.ATTRIBUTE_SECOND, gameTimeSelect));
+		expressions.add(OperatorBuildHelper.
+				createExpressionParameter("DoubleToInteger((ts/1000) % 1000)", OperatorBuildHelper.ATTRIBUTE_MILLISECOND, gameTimeSelect));
+		MapAO timeMap = OperatorBuildHelper.createMapAO(expressions, gameTimeSelect,
+				0, 0);
+		timeMap.initialize();
+		allOperators.add(timeMap);
 
 		// 4. Remove duplicate data stream elements
 		ArrayList<String> gameTimeChangeDetectAttributes = new ArrayList<String>();
-		gameTimeChangeDetectAttributes.add(ATTRIBUTE_MILLISECOND);
+		gameTimeChangeDetectAttributes.add(OperatorBuildHelper.ATTRIBUTE_MILLISECOND);
 
 		ChangeDetectAO gameTimeChangeDetect = OperatorBuildHelper
 				.createChangeDetectAO(OperatorBuildHelper.createAttributeList(
-						gameTimeChangeDetectAttributes, gameTimeMap), 0,
-						gameTimeMap);
+						gameTimeChangeDetectAttributes, timeMap), 0,
+						timeMap);
 		allOperators.add(gameTimeChangeDetect);
 
 		// 5. Finish
@@ -117,21 +101,13 @@ public class GameTimeSportsQLParser implements ISportsQLParser {
 	private String getStartTimestamp(SportsQLQuery sportsQL) {
 		ISportsQLParameter starttsParameter = sportsQL.getParameters().get(
 				"startts");
-		if (starttsParameter != null) {
-			return ((SportsQLLongParameter) starttsParameter).getValue() + ".0";
-		} else {
-			return OperatorBuildHelper.TS_GAME_START;
-		}
+		return ((SportsQLLongParameter) starttsParameter).getValue() + ".0";
 	}
 
 	private String getEndTimestamp(SportsQLQuery sportsQL) {
 		ISportsQLParameter starttsParameter = sportsQL.getParameters().get(
 				"endts");
-		if (starttsParameter != null) {
-			return ((SportsQLLongParameter) starttsParameter).getValue() + ".0";
-		} else {
-			return OperatorBuildHelper.TS_GAME_END;
-		}
+		return ((SportsQLLongParameter) starttsParameter).getValue() + ".0";
 	}
 	
 	private boolean isSelectDataBetweenTimestampsEnabled(SportsQLQuery sportsQL) {

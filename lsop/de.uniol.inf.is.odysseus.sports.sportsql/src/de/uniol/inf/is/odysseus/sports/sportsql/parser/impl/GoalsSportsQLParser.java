@@ -19,6 +19,7 @@ import de.uniol.inf.is.odysseus.sports.sportsql.parser.SportsQLParseException;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.SportsQLQuery;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.annotations.SportsQL;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.buildhelper.OperatorBuildHelper;
+import de.uniol.inf.is.odysseus.sports.sportsql.parser.buildhelper.SoccerGameAttributes;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.ddcaccess.AbstractSportsDDCAccess;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.ddcaccess.SoccerDDCAccess;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.enums.GameType;
@@ -29,7 +30,7 @@ public class GoalsSportsQLParser implements ISportsQLParser {
 
 	// / time (seconds) between goal and kickoff
 	private static final int T_GOAL_KICKOFF = 30;
-	private static final String ONE_SECOND = "1000000000000";
+	private static final String ONE_SECOND = "1000000";
 	private static final int GOAL_DEPTH = 2400;
 	
 	// TODO:
@@ -49,22 +50,15 @@ public class GoalsSportsQLParser implements ISportsQLParser {
 
 		StreamAO soccerGameStreamAO = OperatorBuildHelper.createGameStreamAO();
 
-		// count goals with the beginning of the game
-		predicates.add("ts >= " + OperatorBuildHelper.TS_GAME_START);
-		SelectAO soccergame_after_start = OperatorBuildHelper.createSelectAO(
-				predicates, soccerGameStreamAO);
-		allOperators.add(soccergame_after_start);
-		predicates.clear();
-
 		// get only ball	
 		List<IPredicate> ballPredicates = new ArrayList<IPredicate>();
 		for(int sensorId : AbstractSportsDDCAccess.getBallSensorIds()) {
-			IPredicate ballPredicate = OperatorBuildHelper.createRelationalPredicate("sid = " + sensorId);
+			IPredicate ballPredicate = OperatorBuildHelper.createRelationalPredicate(SoccerGameAttributes.ENTITY_ID + " = " + sensorId);
 			ballPredicates.add(ballPredicate);
 		}		
 		
 		SelectAO ball = OperatorBuildHelper.createSelectAO(OperatorBuildHelper.createOrPredicate(ballPredicates),
-				soccergame_after_start);
+				soccerGameStreamAO);
 		allOperators.add(ball);
 		predicates.clear();
 

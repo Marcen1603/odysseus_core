@@ -57,8 +57,6 @@ public class CornerKickGlobalSportsQLParser implements ISportsQLParser {
 		double yMin = AbstractSportsDDCAccess.getFieldYMin();
 		double yMax = AbstractSportsDDCAccess.getFieldYMax();
 
-		String startTS = OperatorBuildHelper.TS_GAME_START;
-
 		ArrayList<ILogicalOperator> operatorList = new ArrayList<ILogicalOperator>();
 
 		StreamAO source = OperatorBuildHelper.createGameStreamAO();
@@ -256,8 +254,7 @@ public class CornerKickGlobalSportsQLParser implements ISportsQLParser {
 				.add(OperatorBuildHelper.createExpressionParameter(
 						"BallBehindGoalline2_right", corners));
 		cornersTimeExpressions.add(OperatorBuildHelper
-				.createExpressionParameter("((spot_ball_ts - " + startTS
-						+ ") / " + FACTOR_TS_GAMETIME + ")", "timeInMinutes",
+				.createExpressionParameter("((spot_ball_ts) / " + FACTOR_TS_GAMETIME + ")", "timeInMinutes",
 						corners));
 		cornersTimeExpressions
 				.add(OperatorBuildHelper.createExpressionParameter(
