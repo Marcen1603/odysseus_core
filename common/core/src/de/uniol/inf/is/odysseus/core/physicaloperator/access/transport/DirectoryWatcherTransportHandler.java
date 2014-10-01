@@ -46,8 +46,8 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolH
 public class DirectoryWatcherTransportHandler extends AbstractPushTransportHandler {
     /** Logger. */
     static final Logger LOG = LoggerFactory.getLogger(DirectoryWatcherTransportHandler.class);
-    private static final String DIRECTORY = "directory";
-    private static final String FILTER = "filter";
+    protected static final String DIRECTORY = "directory";
+    protected static final String FILTER = "filter";
     Path directory;
     Pattern filter;
     WatchService watcher;
@@ -106,7 +106,7 @@ public class DirectoryWatcherTransportHandler extends AbstractPushTransportHandl
         return "Directory";
     }
 
-    protected void onChangeDetected(File file) throws FileNotFoundException
+    protected void onChangeDetected(File file) throws IOException
     {
     	fireProcess(new FileInputStream(file));
     }
