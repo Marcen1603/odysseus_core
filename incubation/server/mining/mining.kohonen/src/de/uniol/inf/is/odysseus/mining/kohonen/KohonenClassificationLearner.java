@@ -46,7 +46,7 @@ public class KohonenClassificationLearner<M extends ITimeInterval> implements
 	double[] maxWeight;
 	int dimensions;
 
-	int iterations;
+	int iterations = 100;
 
 	TopologyModel topology;
 	NetworkModel network;
@@ -138,6 +138,10 @@ public class KohonenClassificationLearner<M extends ITimeInterval> implements
 		if (options.containsKey("radius")) {
 			int radius = Integer.parseInt(options.get("radius"));
 			this.radius = radius;
+		}
+		if (options.containsKey("iterations")) {
+			int iterations = Integer.parseInt(options.get("iterations"));
+			this.iterations = iterations;
 		}
 		if (options.containsKey("topology")) {
 			switch (options.get("topology")) {
