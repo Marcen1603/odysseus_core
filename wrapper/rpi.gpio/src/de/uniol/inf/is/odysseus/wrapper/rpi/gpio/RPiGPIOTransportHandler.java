@@ -89,22 +89,27 @@ public class RPiGPIOTransportHandler extends AbstractSimplePullTransportHandler<
 	                                                                         PinPullResistance.PULL_DOWN); // PIN RESISTANCE (optional)
 	            //PinState ps = myButton.getState();
 	            boolean buttonPressed = myButton.isHigh();
-	        	
-	        	
+	            
+	        	String buttonState = "";
+	            if(buttonPressed){
+	            	buttonState = "1";
+	            }else{
+	            	buttonState = "0";
+	            }
 	            
 	        	tuple.setAttribute(0, pin);
-	        	tuple.setAttribute(1, buttonPressed ? "1" : "0");
+	        	tuple.setAttribute(1, buttonState);
 	        	value=true;
 			}catch(Exception ex){
 				tuple.setAttribute(0, "error");
-	        	tuple.setAttribute(1, "error");
+	        	tuple.setAttribute(1, "On Raspberry? pi4j installed?");
 	        	value=true;
 			}
 		}
         
         if(!value){
         	tuple.setAttribute(0, "error2");
-        	tuple.setAttribute(1, "error2");
+        	tuple.setAttribute(1, "On Raspberry? pi4j installed?");
         }
         
 		return tuple;
