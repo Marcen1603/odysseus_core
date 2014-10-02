@@ -153,7 +153,9 @@ public class BugReport {
         final StringBuilder report = new StringBuilder();
         if (this.exception != null) {
             final StringBuilder stackStrace = BugReport.getStackTraceReport(this.exception);
-            report.append("\n## Stack Trace:\n");
+            report.append("\n\n##########################################################################################\n");
+            report.append("## Stack Trace:\n");
+            report.append("##########################################################################################\n");
             report.append(stackStrace);
         }
         final StringBuilder queryReport = BugReport.getQueryReport();
@@ -161,15 +163,25 @@ public class BugReport {
         final StringBuilder systemReport = BugReport.getSystemReport();
         final StringBuilder bundlesReport = BugReport.getBundlesReport();
         final StringBuilder servicesReport = BugReport.getServicesReport();
-        report.append("\n## Console Information:\n");
+        report.append("\n\n##########################################################################################\n");
+        report.append("## Console Information:\n");
+        report.append("##########################################################################################\n");
         report.append(consoleReport);
-        report.append("\n## Odysseus Information:\n");
+        report.append("\n\n##########################################################################################\n");
+        report.append("## Odysseus Information:\n");
+        report.append("##########################################################################################\n");
         report.append(queryReport);
-        report.append("\n## System Information:\n");
-        report.append(systemReport);
-        report.append("\n## Bundles Information:\n");
-        report.append(bundlesReport);
-        report.append("\n## Services Information:\n");
+        report.append("\n\n##########################################################################################\n");
+       report.append("## System Information:\n");
+       report.append("##########################################################################################\n");
+       report.append(systemReport);
+       report.append("\n\n##########################################################################################");
+        report.append("## Bundles Information:\n");
+        report.append("##########################################################################################\n");
+       report.append(bundlesReport);
+       report.append("\n\n##########################################################################################");
+       report.append("## Services Information:\n");
+       report.append("##########################################################################################\n\n");
         report.append(servicesReport);
         return report.toString();
     }
