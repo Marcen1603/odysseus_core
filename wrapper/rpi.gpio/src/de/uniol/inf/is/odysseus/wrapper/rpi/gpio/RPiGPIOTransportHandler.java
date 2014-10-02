@@ -33,15 +33,7 @@ public class RPiGPIOTransportHandler extends AbstractSimplePullTransportHandler<
 		protocolHandler.setTransportHandler(tHandler);
 		this.init(options);
 		
-		try{
-			gpioController = GpioFactory.getInstance();
-		}catch(NullPointerException ex){
-			ex.printStackTrace();
-		}catch(Exception ex){
-			ex.printStackTrace();
-		}catch (UnsatisfiedLinkError ex) {
-			ex.printStackTrace();
-		}
+		initGPIO();
 		
 		return tHandler;
 	}
@@ -77,12 +69,12 @@ public class RPiGPIOTransportHandler extends AbstractSimplePullTransportHandler<
 		
 		boolean value=false;
 		
-		if(gpioController!=null){
+		if(this.gpioController!=null){
 			try{	
 	        	// provision gpio pin #02 as an input pin with its internal pull down resistor enabled
 	            // (configure pin edge to both rising and falling to get notified for HIGH and LOW state
 	            // changes)
-	            GpioPinDigitalInput myButton = gpioController.provisionDigitalInputPin(RaspiPin.GPIO_04,             // PIN NUMBER
+	            GpioPinDigitalInput myButton = this.gpioController.provisionDigitalInputPin(RaspiPin.GPIO_07,             // PIN NUMBER
 	                                                                         "MyButton",                   // PIN FRIENDLY NAME (optional)
 	                                                                         PinPullResistance.PULL_DOWN); // PIN RESISTANCE (optional)
 	            //PinState ps = myButton.getState();
@@ -103,6 +95,8 @@ public class RPiGPIOTransportHandler extends AbstractSimplePullTransportHandler<
 	        	tuple.setAttribute(1, "On Raspberry? pi4j installed? pin:"+pin+" mode:"+mode+" pullState:"+pullState);
 	        	value=true;
 			}
+		}else{
+			//initGPIO();
 		}
         
         if(!value){
@@ -113,6 +107,20 @@ public class RPiGPIOTransportHandler extends AbstractSimplePullTransportHandler<
 		return tuple;
 	}
 	
+	private void initGPIO() {
+		if(this.gpioController==null){
+			try{
+				this.gpioController = GpioFactory.getInstance();
+			}catch(NullPointerException ex){
+				ex.printStackTrace();
+			}catch(Exception ex){
+				ex.printStackTrace();
+			}catch (UnsatisfiedLinkError ex) {
+				ex.printStackTrace();
+			}
+		}
+	}
+
 	@Override
 	public boolean isSemanticallyEqualImpl(ITransportHandler other) {
 		return false;

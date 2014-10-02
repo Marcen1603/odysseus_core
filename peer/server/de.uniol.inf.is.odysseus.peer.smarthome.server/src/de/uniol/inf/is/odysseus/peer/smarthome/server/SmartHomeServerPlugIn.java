@@ -1,10 +1,14 @@
 package de.uniol.inf.is.odysseus.peer.smarthome.server;
 
+import net.jxta.document.Advertisement;
+import net.jxta.document.AdvertisementFactory;
 import net.jxta.peer.PeerID;
 
+import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 
+import de.uniol.inf.is.odysseus.p2p_new.IAdvertisementDiscovererListener;
 import de.uniol.inf.is.odysseus.p2p_new.IMessage;
 import de.uniol.inf.is.odysseus.p2p_new.IP2PNetworkManager;
 import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicator;
@@ -19,6 +23,8 @@ import de.uniol.inf.is.odysseus.peer.smarthome.SmartDeviceMessage;
 
 public class SmartHomeServerPlugIn implements BundleActivator {
 
+	private static Bundle bundle;
+	
 	public static final String NO_P2P_CONNECTION_TEXT = "<no p2p connection>";
 
 	//private static ISession activeSession;
@@ -26,12 +32,16 @@ public class SmartHomeServerPlugIn implements BundleActivator {
 	private static IPeerCommunicator peerCommunicator;
 	private static IP2PDictionary p2pDictionary;
 	private static SmartDeviceConfigurationListener smartDeviceConfigurationListener;
+	private static SmartDeviceAdvertisementListener smartDeviceAdvertisementListener;
 	
 	/*
 	 * (non-Javadoc)
 	 * @see org.osgi.framework.BundleActivator#start(org.osgi.framework.BundleContext)
 	 */
-	public void start(BundleContext context) throws Exception {
+	public void start(BundleContext bundleContext) throws Exception {
+		registerAdvertisementTypes();
+		
+		bundle = bundleContext.getBundle();
 	}
 	
 	/*
@@ -39,6 +49,32 @@ public class SmartHomeServerPlugIn implements BundleActivator {
 	 * @see org.osgi.framework.BundleActivator#stop(org.osgi.framework.BundleContext)
 	 */
 	public void stop(BundleContext context) throws Exception {
+		bundle = null;
+	}
+	
+	public static Bundle getBundle() {
+		return bundle;
+	}
+	
+	private static void registerAdvertisementTypes() {
+		AdvertisementFactory.registerAdvertisementInstance(SmartDeviceAdvertisement.getAdvertisementType(), new SmartDeviceAdvertisementInstantiator());
+		//AdvertisementFactory.registerAdvertisementInstance(SmartDeviceContextAwarenessAdvertisement.getAdvertisementType(), new SmartDeviceContextAwarenessAdvertisementInstantiator());
+		
+	}
+	
+	// called by OSGi-DS
+	public static void bindP2PNetworkManager(IP2PNetworkManager serv) {
+		p2pNetworkManager = serv;
+		
+		smartDeviceAdvertisementListener = new SmartDeviceAdvertisementListener();
+		p2pNetworkManager.addAdvertisementListener(smartDeviceAdvertisementListener);
+	}
+
+	// called by OSGi-DS
+	public static void unbindP2PNetworkManager(IP2PNetworkManager serv) {
+		if (p2pNetworkManager == serv) {
+			p2pNetworkManager = null;
+		}
 	}
 	
 	// called by OSGi-DS
@@ -52,6 +88,9 @@ public class SmartHomeServerPlugIn implements BundleActivator {
 		peerCommunicator.addListener(smartDeviceConfigurationListener, SmartDeviceMessage.class);
 		peerCommunicator.addListener(smartDeviceConfigurationListener, SmartDeviceConfigurationRequestMessage.class);
 		peerCommunicator.addListener(smartDeviceConfigurationListener, SmartDeviceConfigurationResponseMessage.class);
+		
+		
+		
 	}
 
 	// called by OSGi-DS
@@ -151,6 +190,23 @@ public class SmartHomeServerPlugIn implements BundleActivator {
 					}
 				}
 			}
+		}
+	}
+	
+	public static class SmartDeviceAdvertisementListener implements IAdvertisementDiscovererListener {
+		@Override
+		public void advertisementDiscovered(Advertisement advertisement) {
+			System.out.println("SmartHomeServerPlugIn advertisementDiscovered Type:"+advertisement.getAdvType());
+			
+			if(advertisement.getAdvType().equals(SmartDeviceAdvertisement.getAdvertisementType())){
+				System.out.println("SmartDeviceAdvertisement received!!!");
+			}
+		}
+		
+		@Override
+		public void updateAdvertisements() {
+			//System.out.println("SmartHomeServerPlugIn updateAdvertisements");
+			
 		}
 	}
 }
