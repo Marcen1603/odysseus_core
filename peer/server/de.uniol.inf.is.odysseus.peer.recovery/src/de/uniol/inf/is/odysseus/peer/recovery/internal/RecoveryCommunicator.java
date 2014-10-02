@@ -258,7 +258,6 @@ public class RecoveryCommunicator implements IRecoveryCommunicator,
 				.getStoredSharedQueryIdsForPeer(failedPeer) == null) {
 			return;
 		}
-		;
 
 		// 2. Search for another peer who can take the parts from the failed
 		// peer
@@ -288,21 +287,9 @@ public class RecoveryCommunicator implements IRecoveryCommunicator,
 		if (peer == null)
 			peer = p2pNetworkManager.getLocalPeerID();
 
-		// So now we have all the information to do the recovery. Agree with
-		// others who maybe want to do the recovery, too, who will do the
-		// recovery
-		RecoveryAgreementMessage message = RecoveryAgreementMessage
-				.createRecoveryAgreementMessage(failedPeer);
-		try {
-			peerCommunicator.send(failedPeer, message);
-		} catch (PeerCommunicationException e) {
-			e.printStackTrace();
-		}
-
-		// TODO Wait a few seconds if someone else wants to do the recovery
+		// TODO Use RecoveryAgreementHandler
 
 		// 3. Tell the new peer to install the parts from the failed peer
-		installQueriesOnNewPeer(failedPeer, peer);
 
 	}
 
@@ -420,6 +407,18 @@ public class RecoveryCommunicator implements IRecoveryCommunicator,
 				peerCommunicator.send(destinationPeer, message);
 			} catch (PeerCommunicationException e) {
 				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+	}
+
+	public void sendRecoveryAgreementMessage(PeerID failedPeer) {
+		// Send this to all other peers we know
+		RecoveryAgreementMessage message = RecoveryAgreementMessage
+				.createRecoveryAgreementMessage(failedPeer);
+		for (PeerID destinationPeer : p2pDictionary.getRemotePeerIDs())
+			try {
+				peerCommunicator.send(destinationPeer, message);
+			} catch (PeerCommunicationException e) {
 				e.printStackTrace();
 			}
 	}
