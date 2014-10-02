@@ -36,7 +36,7 @@ public class WekaClassificationLearner<M extends ITimeInterval> implements IClas
 	private SDFAttribute classAttribute;
 	private SDFSchema recognizedSchema;
 
-	public static String[] MODELS = { "J48", "NAIVEBAYES", "DECISIONTABLE", "LINEAR-REGRESSION", "LOGISTIC", "GAUSSIAN-PROCESSES", "SMO", "MULTILAYER-PERCEPTRON", "SIMPLE-LOGISTIC", "SIMPLE_LINEAR-REGRESSION", "SMO-REGRESSION", "NAIVE-BAYES-TEXT" };
+	public static String[] MODELS = { "J48", "NAIVEBAYES", "DECISIONTABLE", "LINEAR-REGRESSION", "LOGISTIC", "GAUSSIAN-PROCESSES", "SMO", "MULTILAYER-PERCEPTRON", "SIMPLE-LOGISTIC", "SIMPLE_LINEAR-REGRESSION", "SMO-REGRESSION", "NAIVE-BAYES-TEXT", "LIB-SVM" };
 	
 	@Override
 	public void setOptions(Map<String, String> options) {
