@@ -20,10 +20,8 @@ public class RPiGPIOTransportHandler extends AbstractSimplePullTransportHandler<
 	private final static String MODE = "mode"; // Tranport mode: in or out
 	private final static String PULL_STATE = "pull"; // Pull: down or up (high or low)
 
-	private String pin;
-	@SuppressWarnings("unused")
+	private String pin = "";
 	private String mode = "in";
-	@SuppressWarnings("unused")
 	private String pullState = "low";
 
 	private GpioController gpioController;
@@ -102,14 +100,14 @@ public class RPiGPIOTransportHandler extends AbstractSimplePullTransportHandler<
 	        	value=true;
 			}catch(Exception ex){
 				tuple.setAttribute(0, "error");
-	        	tuple.setAttribute(1, "On Raspberry? pi4j installed?");
+	        	tuple.setAttribute(1, "On Raspberry? pi4j installed? pin:"+pin+" mode:"+mode+" pullState:"+pullState);
 	        	value=true;
 			}
 		}
         
         if(!value){
         	tuple.setAttribute(0, "error2");
-        	tuple.setAttribute(1, "On Raspberry? pi4j installed?");
+        	tuple.setAttribute(1, "On Raspberry? pi4j installed? pin:"+pin+" mode:"+mode+" pullState:"+pullState);
         }
         
 		return tuple;
