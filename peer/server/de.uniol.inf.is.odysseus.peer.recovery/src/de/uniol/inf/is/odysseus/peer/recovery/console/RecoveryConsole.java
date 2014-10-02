@@ -169,7 +169,7 @@ public class RecoveryConsole implements CommandProvider {
 		PeerID failedPeer = RecoveryHelper.determinePeerID(failedPeerName)
 				.get();
 
-		RecoveryCommunicator.installQueriesOnNewPeer(failedPeer, newPeer);
+		RecoveryCommunicator.getInstance().installQueriesOnNewPeer(failedPeer, newPeer);
 	}
 
 	public void _sendHoldOn(CommandInterpreter ci) {

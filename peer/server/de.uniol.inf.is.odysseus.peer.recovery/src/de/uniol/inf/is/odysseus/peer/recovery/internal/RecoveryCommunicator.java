@@ -27,7 +27,9 @@ import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryCommunicator;
 import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryP2PListener;
 import de.uniol.inf.is.odysseus.peer.recovery.messages.BackupInformationMessage;
 import de.uniol.inf.is.odysseus.peer.recovery.messages.BackupJxtaInfoMessage;
+import de.uniol.inf.is.odysseus.peer.recovery.messages.RecoveryAgreementMessage;
 import de.uniol.inf.is.odysseus.peer.recovery.messages.RecoveryInstructionMessage;
+import de.uniol.inf.is.odysseus.peer.recovery.protocol.RecoveryAgreementHandler;
 import de.uniol.inf.is.odysseus.peer.recovery.protocol.RecoveryInstructionHandler;
 import de.uniol.inf.is.odysseus.peer.recovery.util.LocalBackupInformationAccess;
 
@@ -92,7 +94,7 @@ public class RecoveryCommunicator implements IRecoveryCommunicator,
 	 */
 	public void activate() {
 		instance = this;
-		if(recoveryP2PListener != null)
+		if (recoveryP2PListener != null)
 			recoveryP2PListener.addObserver(this);
 	}
 
@@ -252,10 +254,12 @@ public class RecoveryCommunicator implements IRecoveryCommunicator,
 		// 1. Check, if there was something on the failed peer
 		// Return if there is no backup information stored for the given peer
 
-		if(LocalBackupInformationAccess.getStoredSharedQueryIdsForPeer(failedPeer) == null){
+		if (LocalBackupInformationAccess
+				.getStoredSharedQueryIdsForPeer(failedPeer) == null) {
 			return;
-		};
-		
+		}
+		;
+
 		// 2. Search for another peer who can take the parts from the failed
 		// peer
 
@@ -279,12 +283,25 @@ public class RecoveryCommunicator implements IRecoveryCommunicator,
 			peers.next();
 		}
 
-		// 3. Tell the new peer to install the parts from the failed peer
 		// If the peer if null, we don't know any other peer so we have to
 		// install it on ourself
 		if (peer == null)
 			peer = p2pNetworkManager.getLocalPeerID();
 
+		// So now we have all the information to do the recovery. Agree with
+		// others who maybe want to do the recovery, too, who will do the
+		// recovery
+		RecoveryAgreementMessage message = RecoveryAgreementMessage
+				.createRecoveryAgreementMessage(failedPeer);
+		try {
+			peerCommunicator.send(failedPeer, message);
+		} catch (PeerCommunicationException e) {
+			e.printStackTrace();
+		}
+
+		// TODO Wait a few seconds if someone else wants to do the recovery
+
+		// 3. Tell the new peer to install the parts from the failed peer
 		installQueriesOnNewPeer(failedPeer, peer);
 
 	}
@@ -301,7 +318,7 @@ public class RecoveryCommunicator implements IRecoveryCommunicator,
 		}
 	}
 
-	public static void installQueriesOnNewPeer(PeerID failedPeer, PeerID newPeer) {
+	public void installQueriesOnNewPeer(PeerID failedPeer, PeerID newPeer) {
 
 		List<SharedQuery> sharedQueries = LocalBackupInformationAccess
 				.getStoredPQLStatements(failedPeer);
@@ -365,6 +382,10 @@ public class RecoveryCommunicator implements IRecoveryCommunicator,
 			LocalBackupInformationAccess.storeLocalJxtaInfo(
 					jxtaMessage.getPeerId(), jxtaMessage.getSharedQueryId(),
 					jxtaMessage.getKey(), jxtaMessage.getValue());
+		} else if (message instanceof RecoveryAgreementMessage) {
+			RecoveryAgreementMessage agreementMessage = (RecoveryAgreementMessage) message;
+			RecoveryAgreementHandler.handleAgreementMessage(senderPeer,
+					agreementMessage);
 		}
 	}
 
