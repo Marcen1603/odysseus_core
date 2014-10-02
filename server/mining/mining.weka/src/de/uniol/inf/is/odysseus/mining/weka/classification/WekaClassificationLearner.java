@@ -8,6 +8,7 @@ import weka.classifiers.AbstractClassifier;
 import weka.classifiers.bayes.NaiveBayes;
 import weka.classifiers.bayes.NaiveBayesMultinomialText;
 import weka.classifiers.functions.GaussianProcesses;
+import weka.classifiers.functions.LibSVM;
 import weka.classifiers.functions.LinearRegression;
 import weka.classifiers.functions.Logistic;
 import weka.classifiers.functions.MultilayerPerceptron;
@@ -116,6 +117,8 @@ public class WekaClassificationLearner<M extends ITimeInterval> implements IClas
 			case "NAIVE-BAYES-TEXT":
 				wekaLearner = new NaiveBayesMultinomialText();
 				break;
+			case "LIB-SVM":
+				wekaLearner = new LibSVM();
 			default:
 				throw new IllegalArgumentException("There is no classifier model called " + algorithm + "!");
 			}

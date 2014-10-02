@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
+	<classpathentry exported="true" kind="lib" path="lib/libsvm.jar"/>
+	<classpathentry exported="true" kind="lib" path="LibSVM.jar"/>
 	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
 	<classpathentry exported="true" kind="lib" path="weka-3-7-6-source-jar.jar"/>
 	<classpathentry kind="lib" path="java-cup.jar"/>
