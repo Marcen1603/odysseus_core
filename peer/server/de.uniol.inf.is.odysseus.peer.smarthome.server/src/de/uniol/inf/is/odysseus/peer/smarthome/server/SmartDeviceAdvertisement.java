@@ -49,6 +49,7 @@ public class SmartDeviceAdvertisement extends Advertisement implements
 		final Enumeration<?> elements = doc.getChildren();
 		while (elements.hasMoreElements()) {
 			//TODO: 
+			@SuppressWarnings("unused")
 			final TextElement<?> elem = (TextElement<?>) elements.nextElement();
 			//handleElement(elem);
 		}
