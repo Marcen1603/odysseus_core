@@ -74,7 +74,7 @@ public class ModbusTCPTransportHandler extends
 		}
 		ref = Integer.parseInt(options.get(REF));
 		count = Integer.parseInt(options.get(COUNT));
-		functionCode = options.getInt(REF, 2);
+		functionCode = options.getInt(FUNCTION_CODE, 2);
 		logger.debug("initialized with port=" + port + " slave=" + slave
 				+ " ref=" + ref + " count=" + count + " for function "
 				+ FUNCTION_CODE);
