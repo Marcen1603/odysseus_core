@@ -1,5 +1,5 @@
 /********************************************************************************** 
-  * Copyright 2011 The Odysseus Team
+ * Copyright 2011 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,6 +33,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.IAttributeResolver;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.IParameter;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationException;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 
 /**
@@ -43,9 +44,9 @@ public abstract class AbstractOperatorBuilder implements IOperatorBuilder {
 	private static final long serialVersionUID = 5166465410911961680L;
 
 	private static final String DEFAULT_DOC_TEXT = "No documentation available";
-    private static final String DEFAULT_URL = "http://odysseus.informatik.uni-oldenburg.de:8090/pages/viewpage.action?pageId=4587829";
+	private static final String DEFAULT_URL = "http://odysseus.informatik.uni-oldenburg.de:8090/pages/viewpage.action?pageId=4587829";
 
-    private Set<IParameter<?>> parameters;
+	private Set<IParameter<?>> parameters;
 	private List<Exception> errors;
 	private List<Exception> warnings;
 	private int minPortCount;
@@ -63,27 +64,30 @@ public abstract class AbstractOperatorBuilder implements IOperatorBuilder {
 
 	private String name;
 	private String doc;
-    private String url;
-	
-	public AbstractOperatorBuilder( String name, int minPortCount, int maxPortCount ) {
-        this(name, minPortCount, maxPortCount, null, null, null);
+	private String url;
+
+	public AbstractOperatorBuilder(String name, int minPortCount,
+			int maxPortCount) {
+		this(name, minPortCount, maxPortCount, null, null, null);
 	}
 
-	public AbstractOperatorBuilder(String name, int minPortCount, int maxPortCount, String doc, String[] categories) {
-        this(name, minPortCount, maxPortCount, doc, null, categories);
-    }
+	public AbstractOperatorBuilder(String name, int minPortCount,
+			int maxPortCount, String doc, String[] categories) {
+		this(name, minPortCount, maxPortCount, doc, null, categories);
+	}
 
-    public AbstractOperatorBuilder(String name, int minPortCount, int maxPortCount, String doc, String url, String[] categories) {
+	public AbstractOperatorBuilder(String name, int minPortCount,
+			int maxPortCount, String doc, String url, String[] categories) {
 
 		this.name = name;
 		this.doc = doc;
-		if( Strings.isNullOrEmpty(this.doc)) {
+		if (Strings.isNullOrEmpty(this.doc)) {
 			this.doc = DEFAULT_DOC_TEXT;
 		}
-        this.url = url;
-        if (Strings.isNullOrEmpty(this.url)) {
-            this.url = DEFAULT_URL;
-        }
+		this.url = url;
+		if (Strings.isNullOrEmpty(this.url)) {
+			this.url = DEFAULT_URL;
+		}
 		if (minPortCount > maxPortCount) {
 			throw new IllegalArgumentException(
 					"minimum number of ports may not be higher than maximum number");
@@ -109,24 +113,24 @@ public abstract class AbstractOperatorBuilder implements IOperatorBuilder {
 	}
 
 	@Override
-	public String getName(){
+	public String getName() {
 		return this.name;
 	}
-	
+
 	@Override
 	public String getDoc() {
 		return this.doc;
 	}
-	
-    @Override
-    public String getUrl() {
-        return this.url;
-    }
+
+	@Override
+	public String getUrl() {
+		return this.url;
+	}
 
 	protected void addError(Exception e) {
 		this.errors.add(e);
 	}
-	
+
 	protected void addErrors(List<Exception> errors) {
 		this.errors.addAll(errors);
 	}
@@ -137,10 +141,10 @@ public abstract class AbstractOperatorBuilder implements IOperatorBuilder {
 	}
 
 	@Override
-	public List<Exception> getWarnings(){
+	public List<Exception> getWarnings() {
 		return this.warnings;
 	}
-	
+
 	@Override
 	public int getMaxInputOperatorCount() {
 		return maxPortCount;
@@ -168,12 +172,12 @@ public abstract class AbstractOperatorBuilder implements IOperatorBuilder {
 	public IDataDictionary getDataDictionary() {
 		return dataDictionary;
 	}
-	
+
 	@Override
 	public void setContext(Context context) {
 		this.context = context;
 	}
-	
+
 	public Context getContext() {
 		return context;
 	}
@@ -200,7 +204,7 @@ public abstract class AbstractOperatorBuilder implements IOperatorBuilder {
 		}
 		IAttributeResolver attributeResolver = new DirectAttributeResolver(
 				inputSchema);
-		
+
 		// check parameters
 		for (IParameter<?> parameter : getParameters()) {
 
@@ -212,8 +216,9 @@ public abstract class AbstractOperatorBuilder implements IOperatorBuilder {
 				isValid = false;
 				this.errors.addAll(parameter.getErrors());
 			}
-			if (parameter.hasValue() && parameter.isDeprecated()){
-				this.warnings.add(new DeprecatedParameterWarning("Parameter "+parameter.getName()+" is deprecated!"));
+			if (parameter.hasValue() && parameter.isDeprecated()) {
+				this.warnings.add(new DeprecatedParameterWarning("Parameter "
+						+ parameter.getName() + " is deprecated!"));
 			}
 		}
 
@@ -240,14 +245,14 @@ public abstract class AbstractOperatorBuilder implements IOperatorBuilder {
 
 	@Override
 	final public ILogicalOperator createOperator() {
-//		String newline = System.getProperty("line.separator");
+		// String newline = System.getProperty("line.separator");
 
 		if (!validate()) {
-//			StringBuffer messages = new StringBuffer();
-//			for (Exception e2:getErrors()){
-//				messages.append(e2.getMessage()).append(newline);
-//			}
-//			System.err.println("Validation Error "+messages.toString());
+			// StringBuffer messages = new StringBuffer();
+			// for (Exception e2:getErrors()){
+			// messages.append(e2.getMessage()).append(newline);
+			// }
+			// System.err.println("Validation Error "+messages.toString());
 			throw new RuntimeException("Validation Error ");
 		}
 
@@ -256,9 +261,17 @@ public abstract class AbstractOperatorBuilder implements IOperatorBuilder {
 				.entrySet()) {
 			InputOperatorItem curInputOperatorItem = curEntry.getValue();
 			ILogicalOperator curInputOperator = curInputOperatorItem.operator;
-			op.subscribeToSource(curInputOperator, curEntry.getKey(),
-					curInputOperatorItem.outputPort,
-					curInputOperator.getOutputSchema(curInputOperatorItem.outputPort));
+			// Check if curInputOperator is a source
+			if (curInputOperator.isSourceOperator()) {
+				op.subscribeToSource(
+						curInputOperator,
+						curEntry.getKey(),
+						curInputOperatorItem.outputPort,
+						curInputOperator
+								.getOutputSchema(curInputOperatorItem.outputPort));
+			}else{
+				throw new TransformationException(curInputOperator+" is not a source! Cannot connect to sink "+op);
+			}
 		}
 		insertParameterInfos(op);
 		return op;
@@ -268,8 +281,8 @@ public abstract class AbstractOperatorBuilder implements IOperatorBuilder {
 	protected void insertParameterInfos(ILogicalOperator op) {
 		// set all parameters as infos
 		// Caution: Used in PQL-Generator to get parameter values
-		for(IParameter<?> p : this.parameters){
-			if(p.hasValue()){
+		for (IParameter<?> p : this.parameters) {
+			if (p.hasValue()) {
 				op.addParameterInfo(p.getName().toUpperCase(), p.getPQLString());
 			}
 		}
@@ -277,31 +290,32 @@ public abstract class AbstractOperatorBuilder implements IOperatorBuilder {
 
 	abstract protected ILogicalOperator createOperatorInternal();
 
-//	protected void initOperatorCreation(Map<String, Object> parameters2,
-//			List<ILogicalOperator> inputOps) {
-//		IAttributeResolver attributeResolver = buildAttributeResolver(inputOps);
-//		for (IParameter<?> parameter : parameters) {
-//			parameter.setAttributeResolver(attributeResolver);
-//			parameter.setDataDictionary(dataDictionary);
-//		}
-//	}
+	// protected void initOperatorCreation(Map<String, Object> parameters2,
+	// List<ILogicalOperator> inputOps) {
+	// IAttributeResolver attributeResolver = buildAttributeResolver(inputOps);
+	// for (IParameter<?> parameter : parameters) {
+	// parameter.setAttributeResolver(attributeResolver);
+	// parameter.setDataDictionary(dataDictionary);
+	// }
+	// }
 
-//	private static IAttributeResolver buildAttributeResolver(
-//			List<ILogicalOperator> inputOps) {
-//		List<SDFAttribute> attributes = new ArrayList<SDFAttribute>();
-//		for (ILogicalOperator op : inputOps) {
-//			attributes.addAll(op.getOutputSchema().getAttributes());
-//		}
-//		SDFSchema schema = new SDFSchema("", attributes);
-//		return new DirectAttributeResolver(schema);
-//	}
+	// private static IAttributeResolver buildAttributeResolver(
+	// List<ILogicalOperator> inputOps) {
+	// List<SDFAttribute> attributes = new ArrayList<SDFAttribute>();
+	// for (ILogicalOperator op : inputOps) {
+	// attributes.addAll(op.getOutputSchema().getAttributes());
+	// }
+	// SDFSchema schema = new SDFSchema("", attributes);
+	// return new DirectAttributeResolver(schema);
+	// }
 
 	@Override
 	public void setInputOperator(int inputPort, ILogicalOperator operator,
 			int outputPort) {
 		if (this.maxPortCount <= inputPort) {
 			throw new IllegalArgumentException("illegal input port: "
-					+ inputPort+" for operator "+name+". Tried to connect operator "+operator.getName());
+					+ inputPort + " for operator " + name
+					+ ". Tried to connect operator " + operator.getName());
 		}
 		if (operator != null) {
 			this.inputOperators.put(inputPort, new InputOperatorItem(operator,
@@ -326,9 +340,13 @@ public abstract class AbstractOperatorBuilder implements IOperatorBuilder {
 	public int getInputOperatorCount() {
 		return this.inputOperators.size();
 	}
-	
-	/* (non-Javadoc)
-	 * @see de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IOperatorBuilder#getCategories()
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IOperatorBuilder
+	 * #getCategories()
 	 */
 	@Override
 	public String[] getCategories() {
