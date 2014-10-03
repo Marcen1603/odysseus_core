@@ -1,6 +1,7 @@
 package de.uniol.inf.is.odysseus.peer.recovery;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 
 import net.jxta.id.ID;
@@ -29,8 +30,22 @@ public interface IRecoveryCommunicator {
 	public void sendBackupInformation(PeerID peerId, ID sharedQueryId,
 			Map<PeerID, Collection<String>> backupInformation);
 	
-	public void sendBackupJxtaInformation(PeerID peerId, ID sharedQueryId, String key, String value);
+	// TODO javaDoc M.B.
+	public void takeOver(ID sharedQueryId, String pqlStatement, PeerID peerId);
+	
+	// TODO should be changed. See comments within implementation M.B.
+	public void installQueriesOnNewPeer(PeerID failedPeer, PeerID newPeer);
+
+	public void sendBackupJxtaInformation(PeerID peerId, ID sharedQueryId,
+			String key, String value);
 
 	public void recover(PeerID failedPeer);
+	
+	public void sendHoldOnMessages(List<PeerID> peers, List<ID> queryIds);
+	
+	public void sendNewReceiverMessage(PeerID senderPeer,
+			PeerID newReceiverPeer, ID sharedQueryID);
+	
+	public void sendRecoveryAgreementMessage(PeerID failedPeer);
 
 }

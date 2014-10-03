@@ -22,6 +22,7 @@ import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.p2p_new.IP2PNetworkManager;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.IP2PDictionary;
+import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryCommunicator;
 import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryP2PListener;
 import de.uniol.inf.is.odysseus.peer.recovery.internal.JxtaInformation;
 import de.uniol.inf.is.odysseus.peer.recovery.internal.RecoveryCommunicator;
@@ -105,6 +106,53 @@ public class RecoveryConsole implements CommandProvider {
 			p2pDictionary = null;
 		}
 	}
+	
+	/**
+	 * The recovery communicator, if there is one bound.
+	 */
+	private static Optional<IRecoveryCommunicator> cCommunicator = Optional
+			.absent();
+
+	/**
+	 * Binds a recovery communicator. <br />
+	 * Called by OSGI-DS.
+	 * 
+	 * @param communicator
+	 *            The recovery communicator to bind. <br />
+	 *            Must be not null.
+	 */
+	public static void bindCommunicator(IRecoveryCommunicator communicator) {
+
+		Preconditions.checkNotNull(communicator,
+				"The recovery communicator to bind must be not null!");
+		cCommunicator = Optional.of(communicator);
+		LOG.debug("Bound {} as a recovery communicator.", communicator
+				.getClass().getSimpleName());
+
+	}
+
+	/**
+	 * Unbinds a recovery communicator. <br />
+	 * Called by OSGI-DS.
+	 * 
+	 * @param communicator
+	 *            The recovery communicator to unbind. <br />
+	 *            Must be not null.
+	 */
+	public static void unbindCommunicator(IRecoveryCommunicator communicator) {
+
+		Preconditions.checkNotNull(communicator,
+				"The recovery communicator to unbind must be not null!");
+		if (cCommunicator.isPresent()
+				&& cCommunicator.get().equals(communicator)) {
+
+			cCommunicator = Optional.absent();
+			LOG.debug("Unbound {} as a recovery communicator.", communicator
+					.getClass().getSimpleName());
+
+		}
+
+	}
 
 	// called by OSGi-DS
 	public void activate() {
@@ -161,6 +209,13 @@ public class RecoveryConsole implements CommandProvider {
 
 	public void _sendAddQueriesFromPeer(CommandInterpreter ci) {
 		Preconditions.checkNotNull(ci, "Command interpreter must not be null!");
+		
+		if (!cCommunicator.isPresent()) {
+
+			LOG.error("No recovery communicator bound!");
+			return;
+
+		}
 
 		String newPeerName = ci.nextArgument();
 		String failedPeerName = ci.nextArgument();
@@ -169,11 +224,18 @@ public class RecoveryConsole implements CommandProvider {
 		PeerID failedPeer = RecoveryHelper.determinePeerID(failedPeerName)
 				.get();
 
-		RecoveryCommunicator.getInstance().installQueriesOnNewPeer(failedPeer, newPeer);
+		cCommunicator.get().installQueriesOnNewPeer(failedPeer, newPeer);
 	}
 
 	public void _sendHoldOn(CommandInterpreter ci) {
 		Preconditions.checkNotNull(ci, "Command interpreter must not be null!");
+		
+		if (!cCommunicator.isPresent()) {
+
+			LOG.error("No recovery communicator bound!");
+			return;
+
+		}
 
 		PeerID peerId = getPeerIdFromCi(ci);
 		ID sharedQueryId = getSharedQueryIdFromCi(ci);
@@ -183,11 +245,18 @@ public class RecoveryConsole implements CommandProvider {
 
 		List<ID> queryIds = new ArrayList<ID>();
 		queryIds.add(sharedQueryId);
-		RecoveryCommunicator.getInstance().sendHoldOnMessages(peers, queryIds);
+		cCommunicator.get().sendHoldOnMessages(peers, queryIds);
 	}
 
 	public void _sendNewReceiver(CommandInterpreter ci) {
 		Preconditions.checkNotNull(ci, "Command interpreter must not be null!");
+		
+		if (!cCommunicator.isPresent()) {
+
+			LOG.error("No recovery communicator bound!");
+			return;
+
+		}
 
 		PeerID senderPeerId = getPeerIdFromCi(ci);
 		PeerID newReceiverPeerId = getPeerIdFromCi(ci);
@@ -207,7 +276,7 @@ public class RecoveryConsole implements CommandProvider {
 					.getLocalPeerID();
 		}
 
-		RecoveryCommunicator.getInstance().sendNewReceiverMessage(senderPeerId,
+		cCommunicator.get().sendNewReceiverMessage(senderPeerId,
 				newReceiverPeerId, sharedQueryId);
 	}
 

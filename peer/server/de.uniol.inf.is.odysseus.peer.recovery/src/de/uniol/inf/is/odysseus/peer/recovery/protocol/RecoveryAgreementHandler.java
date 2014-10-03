@@ -5,10 +5,71 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import net.jxta.peer.PeerID;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.google.common.base.Optional;
+import com.google.common.base.Preconditions;
+
+import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryCommunicator;
 import de.uniol.inf.is.odysseus.peer.recovery.internal.RecoveryCommunicator;
 import de.uniol.inf.is.odysseus.peer.recovery.messages.RecoveryAgreementMessage;
 
 public class RecoveryAgreementHandler {
+	
+	/**
+	 * The logger instance for this class.
+	 */
+	private static final Logger LOG = LoggerFactory
+			.getLogger(RecoveryAgreementHandler.class);
+	
+	/**
+	 * The recovery communicator, if there is one bound.
+	 */
+	private static Optional<IRecoveryCommunicator> cCommunicator = Optional
+			.absent();
+
+	/**
+	 * Binds a recovery communicator. <br />
+	 * Called by OSGI-DS.
+	 * 
+	 * @param communicator
+	 *            The recovery communicator to bind. <br />
+	 *            Must be not null.
+	 */
+	public static void bindCommunicator(IRecoveryCommunicator communicator) {
+
+		Preconditions.checkNotNull(communicator,
+				"The recovery communicator to bind must be not null!");
+		cCommunicator = Optional.of(communicator);
+		LOG.debug("Bound {} as a recovery communicator.", communicator
+				.getClass().getSimpleName());
+
+	}
+
+	/**
+	 * Unbinds a recovery communicator. <br />
+	 * Called by OSGI-DS.
+	 * 
+	 * @param communicator
+	 *            The recovery communicator to unbind. <br />
+	 *            Must be not null.
+	 */
+	public static void unbindCommunicator(IRecoveryCommunicator communicator) {
+
+		Preconditions.checkNotNull(communicator,
+				"The recovery communicator to unbind must be not null!");
+		if (cCommunicator.isPresent()
+				&& cCommunicator.get().equals(communicator)) {
+
+			cCommunicator = Optional.absent();
+			LOG.debug("Unbound {} as a recovery communicator.", communicator
+					.getClass().getSimpleName());
+
+		}
+
+	}
 
 	/**
 	 * Seconds we wait until we will just do the recovery
@@ -47,12 +108,19 @@ public class RecoveryAgreementHandler {
 
 	public static void waitForAndDoRecovery(final PeerID failedPeer,
 			final PeerID newPeer) {
+		
+		if (!cCommunicator.isPresent()) {
+
+			LOG.error("No recovery communicator bound!");
+			return;
+
+		}
 
 		// 1. Save that we want to do the recovery for that failed peer
 		recoveryPeers.add(failedPeer);
 
 		// 2. Send to all other peers that we want to do the recovery
-		RecoveryCommunicator.getInstance().sendRecoveryAgreementMessage(
+		cCommunicator.get().sendRecoveryAgreementMessage(
 				failedPeer);
 
 		// 3. Wait a few seconds until we just do the recovery
@@ -66,7 +134,7 @@ public class RecoveryAgreementHandler {
 				// Do the recovery
 				if (recoveryPeers.contains(failedPeer)) {
 					// We still want to do recovery
-					RecoveryCommunicator.getInstance().installQueriesOnNewPeer(
+					cCommunicator.get().installQueriesOnNewPeer(
 							failedPeer, newPeer);
 				}
 			}

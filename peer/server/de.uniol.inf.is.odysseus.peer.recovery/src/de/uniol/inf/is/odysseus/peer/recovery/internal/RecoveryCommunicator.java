@@ -87,6 +87,7 @@ public class RecoveryCommunicator implements IRecoveryCommunicator,
 	 */
 	private static ISession activeSession;
 
+	@Deprecated
 	private static RecoveryCommunicator instance;
 
 	/**
@@ -160,9 +161,11 @@ public class RecoveryCommunicator implements IRecoveryCommunicator,
 					RecoveryInstructionMessage.class);
 			peerCommunicator
 					.unregisterMessageType(RecoveryInstructionMessage.class);
+			peerCommunicator.removeListener(this, BackupInformationMessage.class);
+			peerCommunicator.unregisterMessageType(BackupInformationMessage.class);
 			peerCommunicator.removeListener(this,
-					BackupInformationMessage.class);
-			peerCommunicator.removeListener(this, BackupJxtaInfoMessage.class);
+					BackupJxtaInfoMessage.class);
+			peerCommunicator.unregisterMessageType(BackupJxtaInfoMessage.class);
 			peerCommunicator = null;
 		}
 	}
@@ -224,6 +227,8 @@ public class RecoveryCommunicator implements IRecoveryCommunicator,
 		return executor;
 	}
 
+	// Note: Do not use as singleton. It's an OSGi-Service. M.B.
+	@Deprecated
 	public static RecoveryCommunicator getInstance() {
 		return instance;
 	}
@@ -304,24 +309,49 @@ public class RecoveryCommunicator implements IRecoveryCommunicator,
 
 		}
 	}
+	
+	@Override
+	public void takeOver(ID sharedQueryId, String pqlStatement, PeerID peerId) {
+		
+		// TODO preconditions M.B.
+		
+		// Send the add query message
+		RecoveryInstructionMessage takeOverMessage = RecoveryInstructionMessage.createAddQueryMessage(pqlStatement, sharedQueryId);
+		try {
 
+			peerCommunicator.send(peerId, takeOverMessage);
+
+		} catch (Throwable e) {
+
+			LOG.error(
+					"Could not send add query message to peer "
+							+ peerId.toString(), e);
+
+		}
+		
+		// TODO Update backup information
+		// 1. Determine, which backup information have to be send to the new peer
+		// 2. Send these information
+		// 3. Update the local backup information due to the take over
+		
+	}
+
+	@Override
 	public void installQueriesOnNewPeer(PeerID failedPeer, PeerID newPeer) {
+		
+		// TODO: not a good idea to have all information on every peer. Tell the new peer directly, which query to install.
+		// And do it for every query to take over. Not good to take over a bundle of queries. Allocate each query new. M.B.
 
 		List<SharedQuery> sharedQueries = LocalBackupInformationAccess
 				.getStoredPQLStatements(failedPeer);
 
 		for (SharedQuery query : sharedQueries) {
-			try {
-				String pql = "";
-				for (String pqlPart : query.getPqlParts()) {
-					pql += " " + pqlPart;
-				}
-				RecoveryInstructionMessage addQueryMessage = RecoveryInstructionMessage
-						.createAddQueryMessage(pql, query.getSharedQueryID());
-				peerCommunicator.send(newPeer, addQueryMessage);
-			} catch (PeerCommunicationException e) {
-
+			
+			String pql = "";
+			for (String pqlPart : query.getPqlParts()) {
+				pql += " " + pqlPart;
 			}
+			this.takeOver(query.getSharedQueryID(), pql, newPeer);
 		}
 	}
 
