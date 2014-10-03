@@ -16,9 +16,4 @@ Bundle-NativeCode: lib/native/linux/libpi4j.so ;
   lib/native/linux/libpi4j.so ;
   osname=linux;  processor=x86,
   *
-Bundle-ClassPath: .,
- lib/pi4j-core.jar,
- lib/pi4j-device.jar,
- lib/pi4j-example.jar,
- lib/pi4j-gpio-extension.jar,
- lib/pi4j-service.jar
+Bundle-ClassPath: .

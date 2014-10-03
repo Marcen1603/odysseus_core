@@ -1,10 +1,12 @@
 package de.uniol.inf.is.odysseus.wrapper.rpi.gpio;
 
+/*
 import com.pi4j.io.gpio.GpioController;
 import com.pi4j.io.gpio.GpioFactory;
 import com.pi4j.io.gpio.GpioPinDigitalInput;
 import com.pi4j.io.gpio.PinPullResistance;
 import com.pi4j.io.gpio.RaspiPin;
+*/
 
 import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
@@ -24,7 +26,7 @@ public class RPiGPIOTransportHandler extends AbstractSimplePullTransportHandler<
 	private String mode = "in";
 	private String pullState = "low";
 
-	private GpioController gpioController;
+	//private GpioController gpioController;
 	
 	@Override
 	public ITransportHandler createInstance(
@@ -68,7 +70,7 @@ public class RPiGPIOTransportHandler extends AbstractSimplePullTransportHandler<
 		Tuple<?> tuple = new Tuple(2, false);
 		
 		boolean value=false;
-		
+		/*
 		if(this.gpioController!=null){
 			try{	
 	        	// provision gpio pin #02 as an input pin with its internal pull down resistor enabled
@@ -98,6 +100,7 @@ public class RPiGPIOTransportHandler extends AbstractSimplePullTransportHandler<
 		}else{
 			//initGPIO();
 		}
+        */
         
         if(!value){
         	tuple.setAttribute(0, "error2");
@@ -108,6 +111,7 @@ public class RPiGPIOTransportHandler extends AbstractSimplePullTransportHandler<
 	}
 	
 	private void initGPIO() {
+		/*
 		if(this.gpioController==null){
 			try{
 				this.gpioController = GpioFactory.getInstance();
@@ -119,6 +123,7 @@ public class RPiGPIOTransportHandler extends AbstractSimplePullTransportHandler<
 				ex.printStackTrace();
 			}
 		}
+		*/
 	}
 
 	@Override

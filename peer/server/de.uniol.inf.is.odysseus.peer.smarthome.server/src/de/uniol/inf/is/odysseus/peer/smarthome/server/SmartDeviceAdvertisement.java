@@ -35,7 +35,7 @@ public class SmartDeviceAdvertisement extends Advertisement implements
 	private static final String CONTEXT_NAME = "contextName";
 	
 
-	private static final String[] INDEX_FIELDS = new String[] { ID_TAG, NAME_TAG, PEER_ID_TAG };
+	private static final String[] INDEX_FIELDS = new String[] { ID_TAG, NAME_TAG, PEER_ID_TAG, CONTEXT_NAME };
 
 	private ID id;
 	private String name;
