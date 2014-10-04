@@ -119,6 +119,7 @@ public class WekaClassificationLearner<M extends ITimeInterval> implements IClas
 				break;
 			case "LIB-SVM":
 				wekaLearner = new LibSVM();
+				break;
 			default:
 				throw new IllegalArgumentException("There is no classifier model called " + algorithm + "!");
 			}

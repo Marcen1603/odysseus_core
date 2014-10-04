@@ -40,8 +40,8 @@ public class TClassificationLearnAORule extends AbstractTransformationRule<Class
 	@Override
 	public void execute(ClassificationLearnAO operator, TransformationConfiguration config) throws RuleException {
 		IClassificationLearner<ITimeInterval> learner = MiningAlgorithmRegistry.getInstance().createClassificationLearner(operator.getLearner());		
-		learner.setOptions(operator.getOptionsMap());		
 		learner.init(operator.getAlgorithm(), operator.getInputSchema(0), operator.getClassAttribute(), operator.getNominals());
+		learner.setOptions(operator.getOptionsMap());
 		ClassificationLearnPO<ITimeInterval> po = new ClassificationLearnPO<>(learner);
 		defaultExecute(operator, po, config, true, false);
 	}
