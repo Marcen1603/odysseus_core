@@ -17,13 +17,13 @@ import de.uniol.inf.is.odysseus.peer.recovery.internal.RecoveryCommunicator;
 import de.uniol.inf.is.odysseus.peer.recovery.messages.RecoveryAgreementMessage;
 
 public class RecoveryAgreementHandler {
-	
+
 	/**
 	 * The logger instance for this class.
 	 */
 	private static final Logger LOG = LoggerFactory
 			.getLogger(RecoveryAgreementHandler.class);
-	
+
 	/**
 	 * The recovery communicator, if there is one bound.
 	 */
@@ -86,12 +86,13 @@ public class RecoveryAgreementHandler {
 	public static void handleAgreementMessage(PeerID senderPeer,
 			RecoveryAgreementMessage message) {
 
-		// Question: What if we get a message, but we will detect a bit later,
+		// Question to think about later: What if we get a message, but we will
+		// detect a bit later,
 		// that this peer failed -> then we shouldn't do recovery if the other
 		// peer has had a higher number
 
 		// See, if we wanted to do recovery for this peer
-		if(!recoveryPeers.contains(message.getFailedPeer())) {
+		if (!recoveryPeers.contains(message.getFailedPeer())) {
 			// No, we don't want to do recovery for this failed peer
 			// Do nothing, so the other peer can handle this recovery
 			return;
@@ -99,29 +100,31 @@ public class RecoveryAgreementHandler {
 
 		// Calculate, who has the higher "number" from the peerId
 		if (calculateNumberForPeer(senderPeer) > calculateNumberForMe()) {
-
+			// The other one has a higher number. We won't do recovery for this
+			// failed peer
+			recoveryPeers.remove(message.getFailedPeer());
+			return;
 		}
 
-		// If the other one has a higher number -> Delete the failed peer from
-		// the list we want to recover
+		// Okay, we still want to do the recovery, so do nothing (the failed
+		// peer
+		// will remain in the list and we will do the recovery after the time is
+		// over)
 	}
 
 	public static void waitForAndDoRecovery(final PeerID failedPeer,
 			final PeerID newPeer) {
-		
-		if (!cCommunicator.isPresent()) {
 
+		if (!cCommunicator.isPresent()) {
 			LOG.error("No recovery communicator bound!");
 			return;
-
 		}
 
 		// 1. Save that we want to do the recovery for that failed peer
 		recoveryPeers.add(failedPeer);
 
 		// 2. Send to all other peers that we want to do the recovery
-		cCommunicator.get().sendRecoveryAgreementMessage(
-				failedPeer);
+		cCommunicator.get().sendRecoveryAgreementMessage(failedPeer);
 
 		// 3. Wait a few seconds until we just do the recovery
 		Timer timer = new Timer();
@@ -134,8 +137,8 @@ public class RecoveryAgreementHandler {
 				// Do the recovery
 				if (recoveryPeers.contains(failedPeer)) {
 					// We still want to do recovery
-					cCommunicator.get().installQueriesOnNewPeer(
-							failedPeer, newPeer);
+					cCommunicator.get().installQueriesOnNewPeer(failedPeer,
+							newPeer);
 				}
 			}
 		}, WAIT_MS);
