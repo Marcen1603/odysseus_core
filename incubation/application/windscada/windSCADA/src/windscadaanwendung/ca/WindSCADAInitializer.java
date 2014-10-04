@@ -50,18 +50,18 @@ public class WindSCADAInitializer {
 
 	private final static String[] DAFileNames = { "corrected_score.qry",
 			"phase_shift.qry", "pitch_angle.qry", "rotational_speed.qry",
-			"wind_speed.qry", "corrected_score_wind_speed.qry",
+			"corrected_score_wind_speed.qry", "wind_speed.qry",
 			"gier_angle.qry", "wind_direction.qry" };
 	private final static String[] GUIDashboardPartFileNames = {
 			"corrected_score_tf.prt", "corrected_score.prt", "phase_shift.prt",
 			"pitch_angle.prt", "rotational_speed.prt", "wind_speed.prt",
 			"corrected_score_wind_speed.prt", "wind_direction.prt",
-			"gier_angle.prt" };
+			"gier_angle.prt", "svr.prt" };
 	private static final String[] GUIQueriesFileNames = {
 			"corrected_score.qry", "phase_shift.qry", "pitch_angle.qry",
 			"rotational_speed.qry", "wind_speed.qry",
 			"corrected_score_wind_speed.qry", "wind_direction.qry",
-			"gier_angle.qry" };
+			"gier_angle.qry", "svr.qry" };
 	private static final String[] AEQueriesFileNames = { "collectAlarms.qry" };
 
 	/**
@@ -171,18 +171,21 @@ public class WindSCADAInitializer {
 		// Start Queries which are created per wind turbine
 		for (WindFarm farm : FarmList.getFarmList()) {
 			SubMonitor subprogress = progress.newChild(1).setWorkRemaining(
-					farm.getWkas().size());
+					farm.getWkas().size() * 2);
 			for (WKA wka : farm.getWkas()) {
 				subprogress.subTask("Initializing wind turbine " + wka.getID());
 				initDA(farm, wka);
 				initHD(farm, wka);
 				initAE(farm, wka);
+				subprogress.worked(1);
+			}
+			for (WKA wka : farm.getWkas()) {
 				initPrediction(farm, wka);
 				initGUI(farm, wka);
 				subprogress.worked(1);
 			}
 			// Start queries which are created per wind farm
-			initKohonen(farm);
+			// initKohonen(farm);
 			initFarm(farm);
 		}
 		// Start queries which combine all inputs
@@ -402,11 +405,57 @@ public class WindSCADAInitializer {
 		}
 	}
 
-	private static void initPrediction(WindFarm farm, WKA wka) {
+	private static void initPrediction(WindFarm farm, WKA wkaToPredict) {
 		// TODO Auto-generated method stub
+		String query = loadFileContent("querypatterns/svr/svr.qry");
+		// insert necessary operators for each wind turbine, marked by the
+		// surrounding 'xYx'
+		Joiner joiner = Joiner.on("\n").skipNulls();
+		while (query.indexOf("xYx") >= 0) {
+			String composite = null;
+			String pattern = query
+					.substring(query.indexOf("xYx") + "xYx".length(),
+							query.indexOf("yYy"));
+			for (WKA wka : farm.getWkas()) {
+				composite = joiner.join(composite,
+						adjustQuery(pattern, farm.getID(), wka.getID()));
 
+				Bundle bundle = Activator.getDefault().getBundle();
+				URL url = bundle.getResource("/data/2004/" + wka.getID()
+						+ ".csv");
+				try {
+					String fileName = FileLocator.toFileURL(url).getPath();
+					composite = composite.replace("xXxfilepathxXx", fileName);
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+			query = query.replace("xYx" + pattern + "yYy", composite);
+		}
+		// insert operatorlist, one entry with surrounding 'xZx' must exist
+		joiner = Joiner.on(",").skipNulls();
+		while (query.indexOf("xZx") >= 0) {
+			String composite = null;
+			String pattern = query
+					.substring(query.indexOf("xZx") + "xZx".length(),
+							query.indexOf("yZy"));
+			for (int i = 0; i < farm.getWkas().size(); i++) {
+				composite = joiner.join(
+						composite,
+						adjustQuery(pattern, farm.getID(), farm.getWkas()
+								.get(i).getID()));
+				composite = composite.replaceAll("xXxcounterxXx",
+						String.valueOf(i));
+			}
+			query = query.replace("xZx" + pattern + "yZy", composite);
+		}
+		query = adjustQuery(query, farm.getID(), wkaToPredict.getID());
+		query = query.replaceAll("xXxwkaposxXx",
+				String.valueOf(farm.getWkas().indexOf(wkaToPredict)));
+		storeFileInWorkspace("svr", wkaToPredict.getID() + "svr.qry", query);
+		executeQuery(query);
 	}
-	
+
 	private static void initFarm(WindFarm farm) {
 		String query = loadFileContent("querypatterns/DA/corrected_score_sum.qry");
 		Joiner joiner = Joiner.on("\n").skipNulls();
@@ -455,15 +504,18 @@ public class WindSCADAInitializer {
 			query = query.replace("xAx" + pattern + "yAy", composite);
 		}
 		query = adjustQuery(query, farm.getID(), farm.getWkas().get(0).getID());
-		storeFileInWorkspace("DA", farm.getID() + "corrected_score_sum.qry", query);
+		storeFileInWorkspace("DA", farm.getID() + "corrected_score_sum.qry",
+				query);
 		executeQuery(query);
 		query = loadFileContent("querypatterns/GUI/corrected_score_sum.qry");
 		query = adjustQuery(query, farm.getID(), 0);
-		storeFileInWorkspace("GUI", farm.getID() + "corrected_score_sum.qry", query);
+		storeFileInWorkspace("GUI", farm.getID() + "corrected_score_sum.qry",
+				query);
 		executeQuery(query);
 		query = loadFileContent("querypatterns/GUI/corrected_score_sum.prt");
 		query = adjustQuery(query, farm.getID(), 0);
-		storeFileInWorkspace("GUI", farm.getID() + "corrected_score_sum.prt", query);
+		storeFileInWorkspace("GUI", farm.getID() + "corrected_score_sum.prt",
+				query);
 	}
 
 	private static void initKohonen(WindFarm farm) {
