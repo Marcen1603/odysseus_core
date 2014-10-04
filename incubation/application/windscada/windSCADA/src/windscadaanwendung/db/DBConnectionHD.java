@@ -35,16 +35,17 @@ public class DBConnectionHD {
 	 * It uses the MySQLConnectionFactory out of Odysseus.
 	 */
 	public static void setNewConnection() {
-		if (conn == null) {
-			credentials = DBConnectionCredentials.load("config/HDDBConnCredentials.txt");
-			credentials.get("server");
-			DatabaseConnection dbconn = (DatabaseConnection) (new MySQLConnectionFactory()).createConnection(credentials.get("server"), Integer.parseInt(credentials.get("port")), credentials.get("database"), credentials.get("user"), credentials.get("password"));
-			
-			try {
+		try {
+//			if (conn == null || conn.isClosed()) {
+				credentials = DBConnectionCredentials.load("config/HDDBConnCredentials.txt");
+				credentials.get("server");
+				DatabaseConnection dbconn = (DatabaseConnection) (new MySQLConnectionFactory()).createConnection(credentials.get("server"), Integer.parseInt(credentials.get("port")), credentials.get("database"), credentials.get("user"), credentials.get("password"));
 				conn = dbconn.getConnection();
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
+//			}
+		} catch (NumberFormatException e) {
+			e.printStackTrace();
+		} catch (SQLException e) {
+			e.printStackTrace();
 		}
 	}
 	

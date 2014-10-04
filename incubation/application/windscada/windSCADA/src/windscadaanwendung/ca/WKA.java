@@ -51,15 +51,9 @@ public class WKA extends Observable {
 	 * @param id
 	 *            has to be unique overall wkas to identify a wka independent of
 	 *            the windFarm
-	 * @return true if the id was set, false if the id was'nt set, because it
-	 *         already exists
 	 */
-	public boolean setID(int id) {
-		if (FarmList.getWKA(id) == null) {
+	public void setID(int id) {
 			this.id = id;
-			return true;
-		}
-		return false;
 	}
 
 	/**

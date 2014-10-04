@@ -36,6 +36,7 @@ import com.google.common.collect.ImmutableList;
 
 import windscadaanwendung.Activator;
 import windscadaanwendung.db.DBConnectionCA;
+import windscadaanwendung.db.DBConnectionHD;
 import de.uniol.inf.is.odysseus.core.collection.Context;
 import de.uniol.inf.is.odysseus.core.collection.Resource;
 import de.uniol.inf.is.odysseus.core.planmanagement.ViewInformation;
@@ -203,6 +204,7 @@ public class WindSCADAInitializer {
 	 */
 	private static void loadConfig() {
 		DBConnectionCA.setNewConnection();
+		DBConnectionHD.setNewConnection();
 		FarmList.setFarmList(DBConnectionCA.getFarmList());
 		try {
 			DBConnectionCA.conn.close();

@@ -3,8 +3,6 @@ package windscadaanwendung;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
-import windscadaanwendung.db.DBConnectionHD;
-
 /**
  * The activator class controls the plug-in life cycle
  */
@@ -30,9 +28,6 @@ public class Activator extends AbstractUIPlugin {
 	public void start(final BundleContext context) throws Exception {
 		super.start(context);
 		plugin = this;
-
-		
-		DBConnectionHD.setNewConnection();
 	}
 
 	/*

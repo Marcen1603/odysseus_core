@@ -30,12 +30,12 @@ public class DBConnectionCA {
 	 */
 	public static void setNewConnection() {
 		try {
-			if (conn == null || conn.isClosed()) {
+//			if (conn == null || conn.isClosed()) {
 				credentials = DBConnectionCredentials.load("config/CADBConnCredentials.txt");
 				credentials.get("server");
 				DatabaseConnection dbconn = (DatabaseConnection) (new MySQLConnectionFactory()).createConnection(credentials.get("server"), Integer.parseInt(credentials.get("port")), credentials.get("database"), credentials.get("user"), credentials.get("password"));
 				conn = dbconn.getConnection();
-			}
+//			}
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
