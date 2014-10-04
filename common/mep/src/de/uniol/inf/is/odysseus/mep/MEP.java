@@ -115,9 +115,9 @@ import de.uniol.inf.is.odysseus.mep.functions.math.ToDegrees;
 import de.uniol.inf.is.odysseus.mep.functions.math.ToRadians;
 import de.uniol.inf.is.odysseus.mep.functions.math.UnaryMinusOperator;
 import de.uniol.inf.is.odysseus.mep.functions.string.ConcatFunction;
-import de.uniol.inf.is.odysseus.mep.functions.string.StringContainsFunction;
 import de.uniol.inf.is.odysseus.mep.functions.string.LengthFunction;
 import de.uniol.inf.is.odysseus.mep.functions.string.LowerFunction;
+import de.uniol.inf.is.odysseus.mep.functions.string.StringContainsFunction;
 import de.uniol.inf.is.odysseus.mep.functions.string.StringDivisionOperator;
 import de.uniol.inf.is.odysseus.mep.functions.string.StringMinusOperator;
 import de.uniol.inf.is.odysseus.mep.functions.string.StringMultiplicationOperator;
@@ -127,6 +127,7 @@ import de.uniol.inf.is.odysseus.mep.functions.string.SubStringFunction2;
 import de.uniol.inf.is.odysseus.mep.functions.string.UpperFunction;
 import de.uniol.inf.is.odysseus.mep.functions.time.BusinessDaysFunction;
 import de.uniol.inf.is.odysseus.mep.functions.time.CurDateFunction;
+import de.uniol.inf.is.odysseus.mep.functions.time.DateInMillis;
 import de.uniol.inf.is.odysseus.mep.functions.time.DateMinusNumberOperator;
 import de.uniol.inf.is.odysseus.mep.functions.time.DateMinusOperator;
 import de.uniol.inf.is.odysseus.mep.functions.time.DatePlusNumberOperator;
@@ -410,6 +411,7 @@ public class MEP implements IExpressionParser {
 		registerFunction(new MilliTimeFunction());
 		registerFunction(new CurDateFunction());
 		registerFunction(new NanoTimeFunction());
+		registerFunction(new DateInMillis());
 
 		registerFunction(new SysDateFunction());
 		registerFunction(new StreamDateFunction());
@@ -449,7 +451,7 @@ public class MEP implements IExpressionParser {
 
 		// Array Functions
 		registerFunction(new ListArrayFunction());
-		
+
 		// List Functions
 		registerFunction(new ListContainsFunction());
 
