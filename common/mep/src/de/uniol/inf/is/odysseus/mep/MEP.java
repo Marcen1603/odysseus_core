@@ -140,6 +140,9 @@ import de.uniol.inf.is.odysseus.mep.functions.time.DaysFunction;
 import de.uniol.inf.is.odysseus.mep.functions.time.HourFunction;
 import de.uniol.inf.is.odysseus.mep.functions.time.HourStringFunction;
 import de.uniol.inf.is.odysseus.mep.functions.time.HoursFunction;
+import de.uniol.inf.is.odysseus.mep.functions.time.MilliSecondFunction;
+import de.uniol.inf.is.odysseus.mep.functions.time.MilliSecondStringFunction;
+import de.uniol.inf.is.odysseus.mep.functions.time.MilliSecondsFunction;
 import de.uniol.inf.is.odysseus.mep.functions.time.MilliTimeFunction;
 import de.uniol.inf.is.odysseus.mep.functions.time.MinuteFunction;
 import de.uniol.inf.is.odysseus.mep.functions.time.MinuteOfDayFunction;
@@ -379,6 +382,7 @@ public class MEP implements IExpressionParser {
 		registerFunction(new DateMinusOperator());
 		registerFunction(new DateMinusNumberOperator());
 
+        registerFunction(new MilliSecondFunction());
 		registerFunction(new SecondFunction());
 		registerFunction(new MinuteFunction());
 		registerFunction(new MinuteOfDayFunction());
@@ -390,6 +394,7 @@ public class MEP implements IExpressionParser {
 		registerFunction(new MonthFunction());
 		registerFunction(new YearFunction());
 
+        registerFunction(new MilliSecondStringFunction());
 		registerFunction(new SecondStringFunction());
 		registerFunction(new MinuteStringFunction());
 		registerFunction(new HourStringFunction());
@@ -400,6 +405,7 @@ public class MEP implements IExpressionParser {
 		registerFunction(new MonthStringFunction());
 		registerFunction(new YearStringFunction());
 
+        registerFunction(new MilliSecondsFunction());
 		registerFunction(new SecondsFunction());
 		registerFunction(new MinutesFunction());
 		registerFunction(new HoursFunction());
