@@ -61,13 +61,6 @@
       </view>
       <view
             category="windscadaanwendung.category"
-            class="windscadaanwendung.views.dashboard.Farben"
-            id="windscadaanwendung.views.dashboard.Farben"
-            name="Farben"
-            restorable="true">
-      </view>
-      <view
-            category="windscadaanwendung.category"
             class="windscadaanwendung.views.dashboard.CorrectedScorePart"
             id="windscadaanwendung.views.dashboard.CorrectedScorePart"
             name="Leistung"

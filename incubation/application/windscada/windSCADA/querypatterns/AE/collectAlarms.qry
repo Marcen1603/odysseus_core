@@ -13,6 +13,5 @@ MAP10 = MAP({EXPRESSIONS=[['"rotational_speed"', 'type'], ['PxXxwindfarmidxXx:xX
 MAP11 = MAP({EXPRESSIONS=[['"corrected_score"', 'type'], ['PxXxwindfarmidxXx:xXxwkaidxXx:corrected_score.corrected_score', 'value'], ['PxXxwindfarmidxXx:xXxwkaidxXx:corrected_score.warning', 'warning'], ['PxXxwindfarmidxXx:xXxwkaidxXx:corrected_score.error', 'error']]}, 0:CHANGEDETECT7)
 MAP12 = MAP({EXPRESSIONS=[['"pitch_angle"', 'type'], ['PxXxwindfarmidxXx:xXxwkaidxXx:pitch_angle.pitch_angle', 'value'], ['PxXxwindfarmidxXx:xXxwkaidxXx:pitch_angle.warning', 'warning'], ['PxXxwindfarmidxXx:xXxwkaidxXx:pitch_angle.error', 'error']]}, 0:CHANGEDETECT8)
 MERGE13 = MERGE(0:MAP9, 0:MAP10, 0:MAP11, 0:MAP12)
-RENAME14 = RENAME({ALIASES=['type', 'value', 'warning', 'error']}, 0:MERGE13)
-MAP15 = MAP({EXPRESSIONS=[['xXxwkaidxXx', 'wka_id'], ['0', 'farm_id'], ['type', ''], ['value', ''], ['warning', ''], ['error', '']]}, 0:RENAME14)
-PxXxwindfarmidxXx:xXxwkaidxXx:AE ::= TIMESTAMPTOPAYLOAD(0:MAP15)
+MAP14 = MAP({EXPRESSIONS=[['xXxwkaidxXx', 'wka_id'], ['0', 'farm_id'], ['type', ''], ['value', ''], ['warning', ''], ['error', '']]}, 0:MERGE13)
+PxXxwindfarmidxXx:xXxwkaidxXx:AE ::= TIMESTAMPTOPAYLOAD(0:MAP14)
