@@ -40,7 +40,7 @@ public class ThreadedBufferPO<R extends IStreamObject<? extends IMetaAttribute>>
 	protected void process_open() throws OpenFailedException {
 		buffer.clear();
 		// Create new thread and start
-		runner = new Thread(){
+		runner = new Thread("ThreadedBuffer "+getName()){
 			public void run() {
 				while (isOpen()){
 					while(!buffer.isEmpty()){
@@ -56,6 +56,7 @@ public class ThreadedBufferPO<R extends IStreamObject<? extends IMetaAttribute>>
 				}
 			};
 		};
+		runner.setDaemon(true);
 		
 	}
 	
@@ -93,6 +94,7 @@ public class ThreadedBufferPO<R extends IStreamObject<? extends IMetaAttribute>>
 	@Override
 	protected void process_close() {
 		drainBuffer();
+		
 	}
 	
 	@Override
