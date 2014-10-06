@@ -168,8 +168,7 @@ public class RecoveryAgreementHandler {
 			@Override
 			public void run() {
 				// 5. If the time is over and we still think we should do the
-				// recovery:
-				// Do the recovery
+				// recovery: Do the recovery
 				if (recoveryPeers.containsKey(failedPeer)
 						&& recoveryPeers.get(failedPeer)
 								.contains(sharedQueryId)) {

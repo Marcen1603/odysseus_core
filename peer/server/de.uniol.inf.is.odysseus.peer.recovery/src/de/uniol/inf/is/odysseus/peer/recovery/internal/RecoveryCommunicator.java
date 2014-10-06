@@ -16,7 +16,6 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.ImmutableCollection;
 
-import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
@@ -171,8 +170,10 @@ public class RecoveryCommunicator implements IRecoveryCommunicator,
 					.unregisterMessageType(BackupInformationMessage.class);
 			peerCommunicator.removeListener(this, BackupJxtaInfoMessage.class);
 			peerCommunicator.unregisterMessageType(BackupJxtaInfoMessage.class);
-			peerCommunicator.removeListener(this, RecoveryAgreementMessage.class);
-			peerCommunicator.unregisterMessageType(RecoveryAgreementMessage.class);
+			peerCommunicator.removeListener(this,
+					RecoveryAgreementMessage.class);
+			peerCommunicator
+					.unregisterMessageType(RecoveryAgreementMessage.class);
 			peerCommunicator = null;
 		}
 	}
@@ -264,7 +265,7 @@ public class RecoveryCommunicator implements IRecoveryCommunicator,
 
 		List<ID> sharedQueryIdsForPeer = LocalBackupInformationAccess
 				.getStoredSharedQueryIdsForPeer(failedPeer);
-		if (sharedQueryIdsForPeer == null) {
+		if (sharedQueryIdsForPeer == null || sharedQueryIdsForPeer.isEmpty()) {
 			// We don't have any information about that failed peer
 			return;
 		}
@@ -316,8 +317,7 @@ public class RecoveryCommunicator implements IRecoveryCommunicator,
 		// peer
 
 		// TODO For now, take a random peer. Here we have to create an interface
-		// for
-		// allocation strategies
+		// for allocation strategies
 
 		int numOfPeers = p2pDictionary.getRemotePeerIDs().size();
 		int peerWeTake = (int) (Math.random() * numOfPeers);
