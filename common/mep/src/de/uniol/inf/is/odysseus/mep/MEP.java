@@ -46,12 +46,12 @@ import de.uniol.inf.is.odysseus.mep.functions.ReadFunction;
 import de.uniol.inf.is.odysseus.mep.functions.SMaxFunction;
 import de.uniol.inf.is.odysseus.mep.functions.SMinFunction;
 import de.uniol.inf.is.odysseus.mep.functions.SleepFunction;
-import de.uniol.inf.is.odysseus.mep.functions.SplittFunction;
+import de.uniol.inf.is.odysseus.mep.functions.SplitFunction;
 import de.uniol.inf.is.odysseus.mep.functions.StoredLineFunction;
 import de.uniol.inf.is.odysseus.mep.functions.StoredValueFunction;
 import de.uniol.inf.is.odysseus.mep.functions.UUIDFunction;
 import de.uniol.inf.is.odysseus.mep.functions.UptimeFunction;
-import de.uniol.inf.is.odysseus.mep.functions.array.ListArrayFunction;
+import de.uniol.inf.is.odysseus.mep.functions.array.ListElementAtFunction;
 import de.uniol.inf.is.odysseus.mep.functions.bitvector.BitAccessFunction;
 import de.uniol.inf.is.odysseus.mep.functions.bitvector.BitSubsetFunction;
 import de.uniol.inf.is.odysseus.mep.functions.bitvector.BitVectorToLong;
@@ -453,10 +453,10 @@ public class MEP implements IExpressionParser {
 		registerFunction(new StoredValueFunction());
 		registerFunction(new StoredLineFunction());
 
-		registerFunction(new SplittFunction());
+		registerFunction(new SplitFunction());
 
 		// Array Functions
-		registerFunction(new ListArrayFunction());
+		registerFunction(new ListElementAtFunction());
 
 		// List Functions
 		registerFunction(new ListContainsFunction());

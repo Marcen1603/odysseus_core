@@ -28,7 +28,7 @@ public class SubStringFunction2 extends AbstractFunction<String> {
 	private static final long serialVersionUID = 3177285577975351278L;
 
 	private static final SDFDatatype[][] accTypes = new SDFDatatype[][] {
-			{ SDFDatatype.STRING }, SDFDatatype.NUMBERS };
+			{ SDFDatatype.STRING, SDFDatatype.OBJECT }, SDFDatatype.NUMBERS };
 
 	public SubStringFunction2() {
 		super("substring", 2, accTypes, SDFDatatype.STRING);

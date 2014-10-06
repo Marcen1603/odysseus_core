@@ -107,7 +107,9 @@ public class SDFDatatype extends SDFElement implements Serializable {
             SDFDatatype.KindOfDatatype.LIST, SDFDatatype.BOOLEAN);
     public static final SDFDatatype LIST_SHORT = new SDFDatatype("List_Short",
             SDFDatatype.KindOfDatatype.LIST, SDFDatatype.SHORT);
-    
+    public static final SDFDatatype[] LISTS = new SDFDatatype[]{
+    	LIST, LIST_STRING, LIST_LONG, LIST_INTEGER, LIST_BYTE, LIST_CHAR, LIST_FLOAT, LIST_DOUBLE, LIST_DATE, LIST_BOOLEAN,LIST_SHORT 
+    };
     
     
     

@@ -21,6 +21,7 @@ import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
 import de.uniol.inf.is.odysseus.core.mep.IExpression;
+import de.uniol.inf.is.odysseus.core.mep.IFunction;
 import de.uniol.inf.is.odysseus.core.sdf.SDFElement;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
@@ -172,9 +173,19 @@ public class MapAO extends UnaryLogicalOp {
 						}
 
 					} else {
+						SDFDatatype retType = mepExpression.getReturnType();
+						if (retType == SDFDatatype.OBJECT && mepExpression.determineTypeFromFirstInput()) {
+							if (mepExpression.isFunction()) {
+								IFunction<?> func = (IFunction<?>) mepExpression;
+								retType = func
+										.getReturnType(func.getArgument(0).getReturnType());
+
+							}
+						}
+
 						attr = new SDFAttribute(null,
 								!"".equals(expr.name) ? expr.name : exprString,
-								mepExpression.getReturnType(), null, null, null);
+								retType, null, null, null);
 						attrs.add(attr);
 					}
 				} else {

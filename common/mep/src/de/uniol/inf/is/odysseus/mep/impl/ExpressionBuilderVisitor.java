@@ -127,7 +127,8 @@ public class ExpressionBuilderVisitor implements MEPImplVisitor {
 								.jjtAccept(this, function.getAcceptedTypes(i));
 					}
 					for (int i = 0; i < arity; ++i) {
-						parameters.add(expressions[i].getReturnType());
+						SDFDatatype rt = expressions[i].getReturnType();
+						parameters.add(rt);
 					}
 					selectedFunction = MEP.getFunction(symbol, parameters);
 					if (selectedFunction != null) {
@@ -140,7 +141,15 @@ public class ExpressionBuilderVisitor implements MEPImplVisitor {
 			if (selectedFunction == null) {
 				selectedFunction = functions.get(0);
 				//InfoService.error("No function symbol for current Parameters found", null, "ExpressionParser");
-				throw new IllegalArgumentException("no function " + symbol + " for input parameter found!"); 
+				StringBuffer params = new StringBuffer();
+				StringBuffer exprStr = new StringBuffer();
+				for (int i=0;i<node.children.length;i++){
+//					params.append(((IExpression<?>)n).getReturnType());
+					exprStr.append((IExpression<?>) node.jjtGetChild(i)
+							.jjtAccept(this, null));
+				}
+				
+				throw new IllegalArgumentException("no function " + symbol + " for input parameter "+params+" in "+exprStr+" found !"); 
 //				for (int i = 0; i < arity; ++i) {
 //					expressions[i] = (IExpression<?>) node.jjtGetChild(i)
 //							.jjtAccept(this,

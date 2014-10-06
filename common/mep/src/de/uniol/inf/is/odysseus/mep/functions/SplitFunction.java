@@ -7,7 +7,7 @@ import de.uniol.inf.is.odysseus.core.conversion.CSVParser;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.mep.AbstractFunction;
 
-public class SplittFunction extends AbstractFunction<List<String>> {
+public class SplitFunction extends AbstractFunction<List<String>> {
 
 	/**
 	 * 
@@ -21,8 +21,8 @@ public class SplittFunction extends AbstractFunction<List<String>> {
 	private static final SDFDatatype[] returnTypes = new SDFDatatype[] {
 			SDFDatatype.STRING};
 
-	public SplittFunction() {
-		super("Split",3,accTypes,SDFDatatype.TUPLE);
+	public SplitFunction() {
+		super("Split",3,accTypes,SDFDatatype.LIST_STRING);
 	}
 	
 

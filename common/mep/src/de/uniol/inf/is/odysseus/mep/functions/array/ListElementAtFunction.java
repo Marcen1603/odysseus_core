@@ -6,13 +6,13 @@ import de.uniol.inf.is.odysseus.core.IHasAlias;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.mep.AbstractFunction;
 
-public class ListArrayFunction extends AbstractFunction<Object> implements IHasAlias{
+public class ListElementAtFunction extends AbstractFunction<Object> implements IHasAlias{
 
 	private static final long serialVersionUID = -3282877303737235603L;
 
-	private static final SDFDatatype[][] accTypes = new SDFDatatype[][] { new SDFDatatype[]{SDFDatatype.LIST}, SDFDatatype.NUMBERS};
+	private static final SDFDatatype[][] accTypes = new SDFDatatype[][] { SDFDatatype.LISTS, SDFDatatype.NUMBERS};
 
-	public ListArrayFunction() {
+	public ListElementAtFunction() {
 		super("[]", 2, accTypes, SDFDatatype.OBJECT, false);
 	}
 
@@ -29,5 +29,11 @@ public class ListArrayFunction extends AbstractFunction<Object> implements IHasA
 		return "elementAt";
 		//return "listElementAt";
 	}
+	
+	@Override
+	public boolean determineTypeFromFirstInput() {
+		return true;
+	}
+
 	
 }

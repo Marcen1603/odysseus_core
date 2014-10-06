@@ -95,6 +95,11 @@ public class Constant<T> implements IExpression<T> {
 	public SDFDatatype getReturnType(int pos) {
 		return getReturnType();
 	}
+	
+	@Override
+	public SDFDatatype getReturnType(SDFDatatype inputType) {
+		return inputType.getSubType();
+	}
 
 	@Override
 	public Variable getVariable(String name) {
@@ -129,5 +134,10 @@ public class Constant<T> implements IExpression<T> {
 	@Override
 	public Constant<T> toConstant() {
 		return this;
+	}
+	
+	@Override
+	public boolean determineTypeFromFirstInput() {
+		return false;
 	}
 }

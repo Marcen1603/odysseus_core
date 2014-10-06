@@ -158,6 +158,11 @@ public class Variable implements IExpression<Object> {
 	}
 
 	@Override
+	public SDFDatatype getReturnType(SDFDatatype inputType) {
+		return inputType.getSubType();
+	}
+	
+	@Override
 	public boolean isVariable() {
 		return true;
 	}
@@ -246,6 +251,11 @@ public class Variable implements IExpression<Object> {
 		this.acceptedTypes = acceptedTypesNew;
 	}
 
+	@Override
+	public boolean determineTypeFromFirstInput() {
+		return false;
+	}
+	
 //	public Integer getArrayIndex() {
 //		return arrayIndex;
 //	}

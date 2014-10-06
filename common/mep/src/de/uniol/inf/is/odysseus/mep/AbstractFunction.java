@@ -150,8 +150,16 @@ public abstract class AbstractFunction<T> implements IFunction<T> {
 	@Override
 	final public SDFDatatype getReturnType() {
 		return returnType;
-	}
+	}	
 
+	@Override
+	final public SDFDatatype getReturnType(SDFDatatype inputType){
+		if (inputType.isListValue()){
+			return inputType.getSubType();
+		}
+		return null;
+	}
+	
 	@Override
 	final public boolean optimizeConstantParameter() {
 		return optimizeConstantParameter;
@@ -350,6 +358,11 @@ public abstract class AbstractFunction<T> implements IFunction<T> {
 	@Override
 	public SDFDatatype getReturnType(int pos) {
 		return getReturnType();
+	}
+
+	@Override
+	public boolean determineTypeFromFirstInput() {
+		return false;
 	}
 
 }
