@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.peer.recovery.internal;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
@@ -28,6 +29,7 @@ import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicator;
 import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicatorListener;
 import de.uniol.inf.is.odysseus.p2p_new.PeerCommunicationException;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.IP2PDictionary;
+import de.uniol.inf.is.odysseus.p2p_new.physicaloperator.JxtaSenderPO;
 import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryCommunicator;
 import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryP2PListener;
 import de.uniol.inf.is.odysseus.peer.recovery.messages.BackupInformationMessage;
@@ -145,6 +147,8 @@ public class RecoveryCommunicator implements IRecoveryCommunicator,
 		peerCommunicator.addListener(this, BackupInformationMessage.class);
 		peerCommunicator.registerMessageType(BackupJxtaInfoMessage.class);
 		peerCommunicator.addListener(this, BackupJxtaInfoMessage.class);
+		peerCommunicator.registerMessageType(RecoveryAgreementMessage.class);
+		peerCommunicator.addListener(this, RecoveryAgreementMessage.class);
 	}
 
 	/**
@@ -167,6 +171,8 @@ public class RecoveryCommunicator implements IRecoveryCommunicator,
 					.unregisterMessageType(BackupInformationMessage.class);
 			peerCommunicator.removeListener(this, BackupJxtaInfoMessage.class);
 			peerCommunicator.unregisterMessageType(BackupJxtaInfoMessage.class);
+			peerCommunicator.removeListener(this, RecoveryAgreementMessage.class);
+			peerCommunicator.unregisterMessageType(RecoveryAgreementMessage.class);
 			peerCommunicator = null;
 		}
 	}
@@ -248,6 +254,7 @@ public class RecoveryCommunicator implements IRecoveryCommunicator,
 	// Code with recovery logic
 	// -----------------------------------------------------
 
+	@SuppressWarnings("rawtypes")
 	@Override
 	public void recover(PeerID failedPeer) {
 
@@ -262,19 +269,54 @@ public class RecoveryCommunicator implements IRecoveryCommunicator,
 			return;
 		}
 
-		// 2. TODO Check, if we were a direct sender to that failed peer
+		// 2. Check, if we were a direct sender to that failed peer
+
+		// We maybe have backup-information about queries for that peer where we
+		// are not the direct sender, so we have to save for which queries we
+		// are the direct sender
+		List<ID> sharedQueryIdsForRecovery = new ArrayList<ID>();
+
 		Iterator<IPhysicalQuery> queryIterator = executor.getExecutionPlan()
 				.getQueries().iterator();
+		// Iterate through all queries we have installed
 		while (queryIterator.hasNext()) {
 			IPhysicalQuery query = queryIterator.next();
-			Collection<IPhysicalOperator> subscriptions = query.getRoots();
-			System.out.println("lala");
+			List<IPhysicalOperator> roots = query.getRoots();
+
+			// Get the roots for each installed query (there we can find the
+			// JxtaSenders)
+			for (IPhysicalOperator root : roots) {
+				if (root instanceof JxtaSenderPO) {
+					JxtaSenderPO sender = (JxtaSenderPO) root;
+					if (sender.getPeerIDString().equals(failedPeer.toString())) {
+						// We were a direct sender to the failed peer
+
+						// Determine for which shared query id we are the direct
+						// sender: Search in the saved backup information for
+						// that pipe id and look, which shared query id belongs
+						// to the operator which has this pipeId
+						List<SharedQuery> pqls = LocalBackupInformationAccess
+								.getStoredPQLStatements(failedPeer);
+						for (SharedQuery sharedQuery : pqls) {
+							List<String> pqlParts = sharedQuery.getPqlParts();
+							for (String pql : pqlParts) {
+								if (pql.contains(sender.getPipeIDString())) {
+									// This is the shared query id we search for
+									sharedQueryIdsForRecovery.add(sharedQuery
+											.getSharedQueryID());
+								}
+							}
+						}
+					}
+				}
+			}
 		}
 
 		// 3. Search for another peer who can take the parts from the failed
 		// peer
 
-		// TODO For now, take a random peer. Here we have to create an interface for
+		// TODO For now, take a random peer. Here we have to create an interface
+		// for
 		// allocation strategies
 
 		int numOfPeers = p2pDictionary.getRemotePeerIDs().size();
@@ -300,7 +342,7 @@ public class RecoveryCommunicator implements IRecoveryCommunicator,
 			peer = p2pNetworkManager.getLocalPeerID();
 
 		// 4. Tell the new peer to install the parts from the failed peer
-		for (ID sharedQueryId : sharedQueryIdsForPeer) {
+		for (ID sharedQueryId : sharedQueryIdsForRecovery) {
 			RecoveryAgreementHandler.waitForAndDoRecovery(failedPeer,
 					sharedQueryId, peer);
 		}
