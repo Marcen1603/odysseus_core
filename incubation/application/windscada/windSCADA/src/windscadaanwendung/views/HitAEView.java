@@ -3,6 +3,7 @@ package windscadaanwendung.views;
 import java.util.GregorianCalendar;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
@@ -28,7 +29,7 @@ public class HitAEView extends ViewPart implements AEObserver {
 	private static Composite hitAEContainer;
 	private static Composite hitAEHeader;
 	private static Composite parent;
-//	private static ScrolledComposite hitAEScroller;
+	private static ScrolledComposite hitAEScroller;
 	private static DateTime swtDateSince;
 	private static DateTime swtTimeSince;
 	private static DateTime swtDateUntil;
@@ -140,10 +141,12 @@ public class HitAEView extends ViewPart implements AEObserver {
 		});
 		
 		//TODO hier und wo sonst noetig scrollable machen
-//		hitAEScroller = new ScrolledComposite(parent, SWT.V_SCROLL);
-		hitAEContainer = new Composite(parent, SWT.NONE);
+		hitAEScroller = new ScrolledComposite(parent, SWT.V_SCROLL);
+		hitAEContainer = new Composite(hitAEScroller, SWT.NONE);
 		hitAEContainer.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
 		hitAEContainer.setLayout(new GridLayout(1, false));
+		//TODO
+		hitAEContainer.setSize(300, 1000);
 		hitAEHeader = new Composite(hitAEContainer, SWT.NONE);
 		hitAEHeader.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
 		hitAEHeader.setLayout(new GridLayout(5, false));
@@ -164,10 +167,12 @@ public class HitAEView extends ViewPart implements AEObserver {
 		Label lblComment = new Label(hitAEHeader, SWT.NONE);
 		lblComment.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, false, false, 1, 1));
 		lblComment.setText("Comment");
-//		hitAEScroller.setContent(hitAEContainer);
-//		hitAEScroller.setMinSize(hitAEContainer.computeSize(SWT.DEFAULT, SWT.DEFAULT));
+		hitAEScroller.setContent(hitAEContainer);
+		hitAEScroller.setExpandHorizontal(true);
+		hitAEScroller.setExpandVertical(true);
+		hitAEScroller.setMinSize(hitAEContainer.computeSize(SWT.DEFAULT, SWT.DEFAULT));
 		hitAEContainer.layout();
-//		hitAEScroller.layout();
+		hitAEScroller.layout();
 		HitAEView.parent.layout();
 		HitAEData.addAEObserver(this);
 		
@@ -218,7 +223,7 @@ public class HitAEView extends ViewPart implements AEObserver {
 				}
 			}
 			hitAEContainer.layout();
-//			hitAEScroller.layout();
+			hitAEScroller.layout();
 			HitAEView.parent.layout();
 		} else {
 			if (aeEntry.isWarning()) {
@@ -231,7 +236,7 @@ public class HitAEView extends ViewPart implements AEObserver {
 				// ignore this case because its only a flag that a AE is done or there is error but no warning which is forbidden
 			}
 			hitAEContainer.layout();
-//			hitAEScroller.layout();
+			hitAEScroller.layout();
 			HitAEView.parent.layout();
 		}
 		

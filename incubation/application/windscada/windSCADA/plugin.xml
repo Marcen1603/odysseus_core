@@ -54,8 +54,8 @@
       </view>
       <view
             category="windscadaanwendung.category"
-            class="windscadaanwendung.views.MapView"
-            id="windscadaanwendung.views.MapView"
+            class="windscadaanwendung.views.NebulaMapView"
+            id="windscadaanwendung.views.NebulaMapView"
             name="Karte"
             restorable="true">
       </view>
@@ -127,6 +127,13 @@
             class="windscadaanwendung.views.dashboard.ParkColorListPart"
             id="windscadaanwendung.views.dashboard.ParkColorListPart"
             name="Farbliste"
+            restorable="true">
+      </view>
+      <view
+            category="windscadaanwendung.category"
+            class="windscadaanwendung.views.dashboard.SVRPart"
+            id="windscadaanwendung.views.dashboard.SVRPart"
+            name="Vorhersage"
             restorable="true">
       </view>
    </extension>
