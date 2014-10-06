@@ -8,13 +8,13 @@ import net.jxta.peer.PeerID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.p2p_new.IP2PNetworkManager;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.IP2PDictionary;
 import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryP2PListener;
 
 /**
- * The RecoveryPeerFailureDetector implements
- * {@link IRecoveryP2PListener}. It detects if a peer leaves the network
- * and initiates the recovery accordingly.
+ * The RecoveryPeerFailureDetector implements {@link IRecoveryP2PListener}. It
+ * detects if a peer leaves the network and initiates the recovery accordingly.
  * 
  * @author Simon Kuespert & Tobias Brandt
  * 
@@ -29,10 +29,11 @@ public class RecoveryP2PListener extends Observable implements
 			.getLogger(RecoveryP2PListener.class);
 
 	private static IP2PDictionary p2pDictionary;
+	private static IP2PNetworkManager p2pNetworkManager;
 
 	private Collection<PeerID> savedPeerIDs;
 	private volatile boolean detectionStarted = false;
-	
+
 	private static RecoveryP2PListener instance;
 
 	// called by OSGi-DS
@@ -44,6 +45,18 @@ public class RecoveryP2PListener extends Observable implements
 	public static void unbindP2PDictionary(IP2PDictionary serv) {
 		if (p2pDictionary == serv) {
 			p2pDictionary = null;
+		}
+	}
+
+	// called by OSGi-DS
+	public static void bindP2PNetworkManager(IP2PNetworkManager serv) {
+		p2pNetworkManager = serv;
+	}
+
+	// called by OSGi-DS
+	public static void unbindP2PNetworkManager(IP2PNetworkManager serv) {
+		if (p2pNetworkManager == serv) {
+			p2pNetworkManager = null;
 		}
 	}
 
@@ -62,7 +75,7 @@ public class RecoveryP2PListener extends Observable implements
 		instance = null;
 		LOG.debug("PeerFailureDetector deactivated");
 	}
-	
+
 	public static RecoveryP2PListener getInstance() {
 		return instance;
 	}
@@ -84,8 +97,7 @@ public class RecoveryP2PListener extends Observable implements
 						for (PeerID pid : savedPeerIDs) {
 							if (!peerIDs.contains(pid)) {
 								LOG.debug("Peer is not in list anymore");
-								// Start recovery
-								// recoveryCommunicator.recover(pid);
+								// We lost a peer, start recovery
 								P2PNetworkNotification notification = new P2PNetworkNotification(
 										P2PNetworkNotification.LOST_PEER, pid);
 								setChanged();
@@ -119,9 +131,16 @@ public class RecoveryP2PListener extends Observable implements
 			}
 
 		});
-		thread.setName("PeerFailureDetection");
-		thread.setDaemon(true);
-		thread.start();
+
+		if (p2pNetworkManager != null) {
+			LOG.debug("No P2PNetworkmanager bound.");
+			thread.setName("PeerFailureDetection_"
+					+ p2pNetworkManager.getLocalPeerName() + "_"
+					+ p2pNetworkManager.getLocalPeerID().toString());
+			thread.setDaemon(true);
+			thread.start();
+		}
+
 	}
 
 	@Override
