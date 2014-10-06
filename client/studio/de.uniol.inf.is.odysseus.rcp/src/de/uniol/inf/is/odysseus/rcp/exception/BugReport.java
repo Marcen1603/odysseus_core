@@ -488,21 +488,21 @@ public class BugReport {
             }
         }
 
-        String localRootLocation = ResourcesPlugin.getWorkspace().getRoot().getLocation().toOSString();
-        Path path = FileSystems.getDefault().getPath(localRootLocation, ".metadata", ".log");
-        if (Files.exists(path)) {
-            try (BufferedReader reader = Files.newBufferedReader(path, StandardCharsets.UTF_8)) {
-                report.append("\t* Info Service Log:\n");
-                String line = "";
-                while ((line = reader.readLine()) != null) {
-                    report.append(line).append("\n");
-                }
-                report.append("\n");
-            }
-            catch (IOException e) {
-                LOG.error(e.getMessage(), e);
-            }
-        }
+//        String localRootLocation = ResourcesPlugin.getWorkspace().getRoot().getLocation().toOSString();
+//        Path path = FileSystems.getDefault().getPath(localRootLocation, ".metadata", ".log");
+//        if (Files.exists(path)) {
+//            try (BufferedReader reader = Files.newBufferedReader(path, StandardCharsets.UTF_8)) {
+//                report.append("\t* Info Service Log:\n");
+//                String line = "";
+//                while ((line = reader.readLine()) != null) {
+//                    report.append(line).append("\n");
+//                }
+//                report.append("\n");
+//            }
+//            catch (IOException e) {
+//                LOG.error(e.getMessage(), e);
+//            }
+//        }
         return report;
     }
 
