@@ -174,15 +174,6 @@ public class MapAO extends UnaryLogicalOp {
 
 					} else {
 						SDFDatatype retType = mepExpression.getReturnType();
-						if (retType == SDFDatatype.OBJECT && mepExpression.determineTypeFromFirstInput()) {
-							if (mepExpression.isFunction()) {
-								IFunction<?> func = (IFunction<?>) mepExpression;
-								retType = func
-										.getReturnType(func.getArgument(0).getReturnType());
-
-							}
-						}
-
 						attr = new SDFAttribute(null,
 								!"".equals(expr.name) ? expr.name : exprString,
 								retType, null, null, null);

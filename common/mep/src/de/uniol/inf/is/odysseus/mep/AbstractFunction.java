@@ -149,16 +149,13 @@ public abstract class AbstractFunction<T> implements IFunction<T> {
 
 	@Override
 	final public SDFDatatype getReturnType() {
+		if (determineTypeFromInput()){
+			if (arguments != null){
+				return determineType(arguments);
+			}
+		}
 		return returnType;
 	}	
-
-	@Override
-	final public SDFDatatype getReturnType(SDFDatatype inputType){
-		if (inputType.isListValue()){
-			return inputType.getSubType();
-		}
-		return null;
-	}
 	
 	@Override
 	final public boolean optimizeConstantParameter() {
@@ -361,8 +358,13 @@ public abstract class AbstractFunction<T> implements IFunction<T> {
 	}
 
 	@Override
-	public boolean determineTypeFromFirstInput() {
+	public boolean determineTypeFromInput() {
 		return false;
 	}
-
+	
+	@Override
+	public SDFDatatype determineType(IExpression<?>[] args) {
+		throw new RuntimeException("Function "+this+" must implement determineType function");
+	}
+	
 }

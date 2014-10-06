@@ -76,12 +76,12 @@ public interface IExpression<T> extends Serializable{
 	 */
 	public SDFDatatype getReturnType(int pos);
 
-	/**
-	 * For some type (e.g. LIST) the may be sub types
-	 * @param inputType the input type
-	 * @return the subtype
-	 */
-	SDFDatatype getReturnType(SDFDatatype inputType);
+//	/**
+//	 * For some type (e.g. LIST) the may be sub types
+//	 * @param inputType the input type
+//	 * @return the subtype
+//	 */
+//	SDFDatatype getReturnType(SDFDatatype inputType);
 
 	
 	/**
@@ -120,7 +120,9 @@ public interface IExpression<T> extends Serializable{
 	 */
 	public Constant<T> toConstant();
 
-	public boolean determineTypeFromFirstInput();
+	public boolean determineTypeFromInput();
+	
+	public SDFDatatype determineType(IExpression<?>[] args);
 
 
 

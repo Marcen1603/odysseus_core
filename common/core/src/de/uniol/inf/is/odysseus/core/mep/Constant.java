@@ -68,8 +68,9 @@ public class Constant<T> implements IExpression<T> {
 		// NumberFormat f = new DecimalFormat("#");
 		// return f.format(value);
 		// }
-		if (type == SDFDatatype.STRING || type == SDFDatatype.START_TIMESTAMP_STRING) {
-			return "\""+value.toString()+"\"";
+		if (type == SDFDatatype.STRING
+				|| type == SDFDatatype.START_TIMESTAMP_STRING) {
+			return "\"" + value.toString() + "\"";
 		} else {
 			return value.toString();
 		}
@@ -94,11 +95,6 @@ public class Constant<T> implements IExpression<T> {
 	@Override
 	public SDFDatatype getReturnType(int pos) {
 		return getReturnType();
-	}
-	
-	@Override
-	public SDFDatatype getReturnType(SDFDatatype inputType) {
-		return inputType.getSubType();
 	}
 
 	@Override
@@ -135,9 +131,16 @@ public class Constant<T> implements IExpression<T> {
 	public Constant<T> toConstant() {
 		return this;
 	}
+
+	@Override
+	public SDFDatatype determineType(IExpression<?>[] args) {
+		throw new RuntimeException("cannot determine type");
+	}
 	
 	@Override
-	public boolean determineTypeFromFirstInput() {
+	public boolean determineTypeFromInput() {
 		return false;
 	}
+
+
 }

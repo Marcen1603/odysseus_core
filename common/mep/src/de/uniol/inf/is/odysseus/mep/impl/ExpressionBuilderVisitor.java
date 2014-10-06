@@ -168,6 +168,7 @@ public class ExpressionBuilderVisitor implements MEPImplVisitor {
 					selectedFunction.setBasetimeUnit((TimeUnit) c.getValue());
 			}
 		}
+		
 		return selectedFunction;
 	}
 
