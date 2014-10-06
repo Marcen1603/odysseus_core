@@ -11,3 +11,4 @@ Require-Bundle: de.uniol.inf.is.odysseus.core,
  de.uniol.inf.is.odysseus.imagejcv.common,
  de.uniol.inf.is.odysseus.slf4j,
  org.bytedeco.javacv
+Export-Package: de.uniol.inf.is.odysseus.video.physicaloperator

@@ -10,7 +10,9 @@ import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.AbstractSimplePullTransportHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandler;
+import de.uniol.inf.is.odysseus.imagejcv.common.datatype.ImageJCV;
 import de.uniol.inf.is.odysseus.wrapper.cameras.swig.OptrisCamera;
+import de.uniol.inf.is.odysseus.wrapper.cameras.swig.intArray;
 
 public class OptrisCameraTransportHandler extends AbstractSimplePullTransportHandler<Tuple<?>> 
 {
@@ -21,9 +23,7 @@ public class OptrisCameraTransportHandler extends AbstractSimplePullTransportHan
 	private String 			ethernetAddress;
 	private OptrisCamera 	cameraCapture;
 	
-/*	private intArray 		imageData;	
-	private BufferedImage 	bufferedImage;
-	private int[] 			bufferedImagePixels;*/
+	private intArray 		imageData; 	
 	
 	public OptrisCameraTransportHandler() 
 	{
@@ -48,9 +48,9 @@ public class OptrisCameraTransportHandler extends AbstractSimplePullTransportHan
 
 	@Override public String getName() { return "OptrisCamera"; }
 
-//	private int getImageWidth() { return cameraCapture.getImageWidth(); }
-//	private int getImageHeight() { return cameraCapture.getImageHeight(); }
-//	private int getImageNumPixels() { return getImageWidth() * getImageHeight(); }	
+	public int getImageWidth() { return cameraCapture.getImageWidth(); }
+	public int getImageHeight() { return cameraCapture.getImageHeight(); }
+	public int getImageNumPixels() { return getImageWidth() * getImageHeight(); }	
 	
 	@Override public void processInOpen() throws IOException 
 	{
@@ -67,11 +67,7 @@ public class OptrisCameraTransportHandler extends AbstractSimplePullTransportHan
 				throw new IOException(e.getMessage());
 			}
 			
-/*	        imageData = new intArray(getImageNumPixels());
-	        
-	        bufferedImage = new BufferedImage(getImageWidth(), getImageHeight(), BufferedImage.TYPE_INT_BGR);                                
-	        WritableRaster raster = bufferedImage.getRaster();
-	        bufferedImagePixels = ( (DataBufferInt) raster.getDataBuffer()).getData();*/
+	        imageData = new intArray(getImageNumPixels());
 	        
 	        System.out.println("processInOpen");
 		}
@@ -86,54 +82,32 @@ public class OptrisCameraTransportHandler extends AbstractSimplePullTransportHan
 			cameraCapture.stop();
 			cameraCapture = null;
 			
-/*			imageData = null;
-			bufferedImage = null;
-			bufferedImagePixels = null;*/			
+			imageData = null;
 		}
 	}
 
-//	private long lastTime = 0;
-	
 	@Override public Tuple<?> getNext() 
+	{
+		ImageJCV image = BaslerCameraTransportHandler.createFromBuffer(imageData, getImageWidth(), getImageHeight());
+			
+		Tuple<?> tuple = new Tuple(1, false);
+        tuple.setAttribute(0, image);
+        return tuple;					
+	}
+    
+	@Override public boolean hasNext() 
 	{
 		synchronized (processLock)
 		{
-/*			if (cameraCapture == null) return null;		
-			boolean success = cameraCapture.grabRGB8(1000);		
-			if (!success)
-			{
-				// TODO: If an error occurs, the last image will be returned. Do something else here
-				System.out.println("success == false!");//, return null!");
-//				return null;
-			}
-			else
-			{
-				cameraCapture.getImageData(imageData.cast());
-				
-				long now = System.nanoTime();
-				double dt = (now - lastTime) / 1.0e9;
-				System.out.println("getNext " + now / 1.0e9 + ", dt = " + dt + " = " + 1.0/dt + " FPS");
-	
-				lastTime = now;
-				
-				int num = getImageNumPixels();
-		        for (int i = 0; i < num; i++) 
-		        {
-		        	bufferedImagePixels[i] = imageData.getitem(i);
-		        }
-			}
-	        
-			BaseImage image = BaseImage.createNewFrom(bufferedImage);
+			if (cameraCapture == null) return false;		
+			boolean success = true;/*cameraCapture.grabRGB8(1000);		
 			
-			Tuple<?> tuple = new Tuple(1, false);
-	        tuple.setAttribute(0, image);
-	        return tuple;*/					
+			if (success)
+				cameraCapture.getImageData(imageData.cast());*/
+			
+			return success;
 		}
-		
-		return null;
 	}
-    
-	@Override public boolean hasNext() { return true; }
 		
     @Override
     public boolean isSemanticallyEqualImpl(ITransportHandler o) {

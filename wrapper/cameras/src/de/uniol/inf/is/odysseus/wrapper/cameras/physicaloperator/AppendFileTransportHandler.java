@@ -15,78 +15,179 @@
  ******************************************************************************/
 package de.uniol.inf.is.odysseus.wrapper.cameras.physicaloperator;
 
-import java.io.File;
+import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.attribute.BasicFileAttributes;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.collection.OptionMap;
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
+import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
-import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.DirectoryWatcherTransportHandler;
+import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.AbstractSimplePullTransportHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandler;
 
-public class AppendFileTransportHandler extends DirectoryWatcherTransportHandler 
+public class AppendFileTransportHandler extends AbstractSimplePullTransportHandler<Tuple<IMetaAttribute>> 
 {
+//	@SuppressWarnings("unused")
+	private final Logger logger = LoggerFactory.getLogger(AppendFileTransportHandler.class);
+	
 	public static final String NAME = "AppendFile";
 
 	public String fileName;
+	public long 	checkDelay;
+	public double 	lineDelay;
 	
-	FileInputStream currentStream = null;
+	private BufferedReader currentStream = null;
+	private String currentLine = null;
+
+	private double currentTimeStamp; // All timestamps in ms
 	
-	public AppendFileTransportHandler() {
+	
+	public AppendFileTransportHandler() 
+	{
 		super();
 	}
 
-	static public String getFilenameExtension(String fileName)
-	{
-		int i = fileName.lastIndexOf('.');
-		int p = Math.max(fileName.lastIndexOf('/'), fileName.lastIndexOf('\\'));
-
-		if (i > p) 
-			return fileName.substring(i+1);
-		else 
-			return "";
-	}
-	
-	static private OptionMap updateOptionMap(OptionMap options)
-	{
-		options.checkRequired("filename");
-		
-		String fileName = options.get("filename");
-		options.setOption(DIRECTORY, new File(fileName).getParent());
-		options.setOption(FILTER,  	 getFilenameExtension(fileName) + "$");
-		
-		return options;
-	}
-	
 	public AppendFileTransportHandler(IProtocolHandler<?> protocolHandler, OptionMap options) 
 	{
-		super(protocolHandler, updateOptionMap(options));
+		super(protocolHandler, options);
 		
 		fileName = options.get("filename");
+		
+		checkDelay = options.getLong("checkdelay", 250);
+		
+		double delay = options.getDouble("linedelay", 0.0);
+		double freq  = options.getDouble("linefreq", 0.0);
+		
+		if (delay == 0.0 && freq == 0.0) throw new IllegalArgumentException("Neither lineFreq nor lineDelay specified in options");
+		if (delay != 0.0 && freq != 0.0) throw new IllegalArgumentException("Cannot specify both lineFreq and lineDelay in options");
+		
+		lineDelay = (delay != 0.0) ? (delay) : (1000.0 / freq);
 	}
 
-	@Override protected void onChangeDetected(File file) throws IOException
-	{
-		String s = file.getAbsolutePath();
-		
-		if (!s.equals(fileName)) return;
-		
-		if (currentStream == null)
-			currentStream = new FileInputStream(file);
-		else
-		{
-			if (currentStream.read() == '\r')
-				currentStream.read();
-		}
-		
-		fireProcess(currentStream);
-	}
 
 	@Override
 	public ITransportHandler createInstance(IProtocolHandler<?> protocolHandler, OptionMap options) 
 	{
 		return new AppendFileTransportHandler(protocolHandler, options);
+	}	
+	
+    @Override
+    public void processInOpen() throws IOException 
+    {
+    	currentLine = null;
+    }
+
+    @Override
+    public void processOutOpen() throws IOException {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void processInClose() throws IOException 
+    {
+    	currentLine = null;
+    	
+    	if (currentStream != null)
+    	{
+    		try
+    		{
+    			currentStream.close();    			
+    		}
+    		catch (IOException e)
+    		{
+    			e.printStackTrace();
+    		}
+    		
+    		currentStream = null;
+    	}
+    }
+
+    @Override
+    public void processOutClose() throws IOException 
+    {
+        throw new UnsupportedOperationException();
+    }
+		
+	@Override public Tuple<IMetaAttribute> getNext() 
+	{
+		if (currentLine == null)
+			return null;
+				
+//		System.out.println("\"" + currentLine + "\" @ " + currentTimeStamp);		
+		
+		String[] parts = currentLine.split(" ");
+		
+		Tuple<IMetaAttribute> tuple = new Tuple<>(parts.length+1, false);		
+		tuple.setAttribute(0, (long)(currentTimeStamp));
+		
+		for (int i=0;i<parts.length;i++)
+		{
+			tuple.setAttribute(i+1, Double.parseDouble(parts[i]));
+		}
+		
+		currentTimeStamp += lineDelay;
+		
+        return tuple;		
 	}
+    
+	private boolean checkNext()
+	{
+   		if (currentStream == null)
+   		{
+   			try 
+   			{
+				currentStream = new BufferedReader(new InputStreamReader(new FileInputStream(fileName)));
+				BasicFileAttributes attr = Files.readAttributes(Paths.get(fileName), BasicFileAttributes.class);
+
+				System.out.println("creationTime: " + attr.creationTime());				
+								
+				currentTimeStamp = attr.creationTime().toMillis();
+			} 
+   			catch (IOException e) 
+   			{
+   				return false;
+			}
+   		}
+
+        try
+        {
+    		currentLine = currentStream.readLine();    	
+    		return currentLine != null && !currentLine.equals("");
+    	}
+    	catch (Exception e)
+    	{
+    		logger.error("Error while reading file", e);
+    		return false;
+    	}
+		
+	}
+	
+	@Override public boolean hasNext() 
+	{
+   		if (checkNext())
+   			return true;
+   		else
+   		{
+	    	try 
+	    	{
+				Thread.sleep(checkDelay);
+			} 
+	    	catch (InterruptedException e) 
+	    	{
+	    		Thread.currentThread().interrupt();
+			}	         
+	    	
+	    	return false;
+   		}
+	}	
 
 	@Override
 	public String getName() { return NAME; }
@@ -98,9 +199,18 @@ public class AppendFileTransportHandler extends DirectoryWatcherTransportHandler
     		return false;
     	
     	AppendFileTransportHandler other = (AppendFileTransportHandler)o;
-    	if(!this.fileName.equals(other.fileName)) 
+    	if(!fileName.equals(other.fileName)) 
+    		return false;
+    	if(checkDelay != other.checkDelay) 
+    		return false;
+    	if(lineDelay != other.lineDelay) 
     		return false;
     	    	
     	return true;
     }
+    
+    @Override public void send(final byte[] message) throws IOException 
+    {
+        throw new UnsupportedOperationException();
+    }	
 }

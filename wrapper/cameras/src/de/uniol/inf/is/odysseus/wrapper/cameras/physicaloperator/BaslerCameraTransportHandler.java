@@ -1,19 +1,21 @@
 package de.uniol.inf.is.odysseus.wrapper.cameras.physicaloperator;
 
-import java.awt.image.BufferedImage;
-import java.awt.image.DataBufferInt;
-import java.awt.image.WritableRaster;
-import java.io.IOException;
+import static org.bytedeco.javacpp.opencv_core.*;
 
+import java.io.IOException;
+import java.nio.ByteBuffer;
+
+import org.bytedeco.javacpp.BytePointer;
+import org.bytedeco.javacpp.opencv_core.IplImage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
-import de.uniol.inf.is.odysseus.image.common.datatype.Image;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.AbstractSimplePullTransportHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandler;
+import de.uniol.inf.is.odysseus.imagejcv.common.datatype.ImageJCV;
 import de.uniol.inf.is.odysseus.wrapper.cameras.swig.BaslerCamera;
 import de.uniol.inf.is.odysseus.wrapper.cameras.swig.intArray;
 
@@ -27,8 +29,6 @@ public class BaslerCameraTransportHandler extends AbstractSimplePullTransportHan
 	private BaslerCamera cameraCapture;
 	
 	private intArray 		imageData;	
-	private BufferedImage 	bufferedImage;
-	private int[] 			bufferedImagePixels;
 	
 	public BaslerCameraTransportHandler() 
 	{
@@ -81,10 +81,6 @@ public class BaslerCameraTransportHandler extends AbstractSimplePullTransportHan
 			
 	        imageData = new intArray(getImageNumPixels());
 	        
-	        bufferedImage = new BufferedImage(getImageWidth(), getImageHeight(), BufferedImage.TYPE_INT_BGR);                                
-	        WritableRaster raster = bufferedImage.getRaster();
-	        bufferedImagePixels = ( (DataBufferInt) raster.getDataBuffer()).getData();
-	        
 	        System.out.println("processInOpen");
 		}
 	}
@@ -99,8 +95,6 @@ public class BaslerCameraTransportHandler extends AbstractSimplePullTransportHan
 			cameraCapture = null;
 			
 			imageData = null;
-			bufferedImage = null;
-			bufferedImagePixels = null;	
 			
 //			instanceCount--;
 //			if (instanceCount == 0)
@@ -108,47 +102,63 @@ public class BaslerCameraTransportHandler extends AbstractSimplePullTransportHan
 		}
 	}
 
+	public static ImageJCV createFromBuffer(intArray buffer, int width, int height)
+	{
+		int channels = 4;
+		
+		IplImage img = cvCreateImage(cvSize(width, height), IPL_DEPTH_8U, channels);
+		ByteBuffer buf = img.getByteBuffer();
+		
+		int wfill = img.widthStep() - width*channels;
+		
+		int src=0;
+		int dst=0;
+		for(int y=0; y<height; y++)
+		{
+            for(int x=0; x<width; x++)
+            {
+            	int data = buffer.getitem(src++) | 0xFF000000;  
+            	buf.putInt(dst, Integer.reverseBytes(data));            	
+            	dst += channels;
+            }
+            
+            dst += wfill;
+		}		
+				
+		return new ImageJCV(img);		
+	}	
+	
 	private long lastTime = 0;
 	
 	@Override public Tuple<?> getNext() 
 	{
-		synchronized (processLock)
-		{
-			if (cameraCapture == null) return null;		
-			boolean success = cameraCapture.grabRGB8(1000);		
-			if (!success)
-			{
-				// TODO: If an error occurs, the last image will be returned. Do something else here
-				System.out.println("success == false!");//, return null!");
-//				return null;
-			}
-			else
-			{
-				cameraCapture.getImageData(imageData.cast());
-				
-				long now = System.nanoTime();
-				double dt = (now - lastTime) / 1.0e9;
-				System.out.println("getNext " + now / 1.0e9 + ", dt = " + dt + " = " + 1.0/dt + " FPS");
+		long now = System.nanoTime();
+		double dt = (now - lastTime) / 1.0e9;
+		System.out.println("getNext " + now / 1.0e9 + ", dt = " + dt + " = " + 1.0/dt + " FPS");
 	
-				lastTime = now;
-				
-				int num = getImageNumPixels();
-		        for (int i = 0; i < num; i++) 
-		        {
-		        	bufferedImagePixels[i] = imageData.getitem(i);
-		        }
-			}
-	        
-			Image image = new Image(Image.deepCopy(bufferedImage));
+		lastTime = now;
+		
+		ImageJCV image = createFromBuffer(imageData, getImageWidth(), getImageHeight());
 			
-			@SuppressWarnings("rawtypes")
-			Tuple<?> tuple = new Tuple(1, false);
-	        tuple.setAttribute(0, image);
-	        return tuple;					
-		}
+		@SuppressWarnings("rawtypes")
+		Tuple<?> tuple = new Tuple(1, false);
+        tuple.setAttribute(0, image);
+        return tuple;					
 	}
     
-	@Override public boolean hasNext() { return true; }
+	@Override public boolean hasNext() 
+	{
+		synchronized (processLock)
+		{
+			if (cameraCapture == null) return false;		
+			boolean success = cameraCapture.grabRGB8(1000);		
+			
+			if (success)
+				cameraCapture.getImageData(imageData.cast());
+			
+			return success;
+		}
+	}
 		
     @Override
     public boolean isSemanticallyEqualImpl(ITransportHandler o) {
