@@ -185,7 +185,7 @@ public class WindSCADAInitializer {
 				subprogress.worked(1);
 			}
 			// Start queries which are created per wind farm
-			// initKohonen(farm);
+			initKohonen(farm);
 			initFarm(farm);
 		}
 		// Start queries which combine all inputs

@@ -5,8 +5,10 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.net.URL;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
@@ -22,18 +24,17 @@ import de.uniol.inf.is.odysseus.generator.IDataGenerator;
 import de.uniol.inf.is.odysseus.generator.error.NoError;
 import de.uniol.inf.is.odysseus.generator.valuegenerator.ConstantValueGenerator;
 import de.uniol.inf.is.odysseus.generator.valuegenerator.ISingleValueGenerator;
-import de.uniol.inf.is.odysseus.generator.valuegenerator.TimeGenerator;
 import de.uniol.inf.is.odysseus.generator.valuegenerator.evolve.AlternatingGenerator;
 import de.uniol.inf.is.winddatagenerator.ConsoleInputReader.State;
 
 public class WindTurbineDataProvider extends AbstractDataGenerator implements
 		Observer {
 
-	private final int SLEEP = 200;
+	private final int SLEEP = 5000;
 	private BufferedReader reader;
+	private DateFormat dateFormat;
 
 	private int id;
-	private ISingleValueGenerator time;
 	private ISingleValueGenerator direction;
 	private ISingleValueGenerator rotationalSpeed;
 	private ISingleValueGenerator phase;
@@ -66,7 +67,12 @@ public class WindTurbineDataProvider extends AbstractDataGenerator implements
 		// wka_id
 		tuple.addInteger(id);
 		// timestamp
-		tuple.addLong(Calendar.getInstance().getTimeInMillis());
+		try {
+			tuple.addLong(this.dateFormat.parse(parts[0]).getTime());
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		switch (this.state) {
 		case ON:
 			// wind_speed
@@ -143,8 +149,7 @@ public class WindTurbineDataProvider extends AbstractDataGenerator implements
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		time = new TimeGenerator(new NoError());
-		time.init();
+		this.dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		direction = new AlternatingGenerator(new NoError(), 0, 0.2, 0, 359);
 		direction.init();
 		phase = new AlternatingGenerator(new NoError(), 0, 10, -90, 90);
