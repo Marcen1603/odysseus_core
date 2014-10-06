@@ -13,8 +13,13 @@ import net.jxta.peer.PeerID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.collect.ImmutableCollection;
+
+import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvider;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.p2p_new.IMessage;
@@ -246,18 +251,30 @@ public class RecoveryCommunicator implements IRecoveryCommunicator,
 	@Override
 	public void recover(PeerID failedPeer) {
 
-		// 1. Check, if there was something on the failed peer
+		// 1. Check, if we have backup information for the failed peer and for
+		// which shared-query-ids
 		// Return if there is no backup information stored for the given peer
 
-		if (LocalBackupInformationAccess
-				.getStoredSharedQueryIdsForPeer(failedPeer) == null) {
+		List<ID> sharedQueryIdsForPeer = LocalBackupInformationAccess
+				.getStoredSharedQueryIdsForPeer(failedPeer);
+		if (sharedQueryIdsForPeer == null) {
+			// We don't have any information about that failed peer
 			return;
 		}
 
-		// 2. Search for another peer who can take the parts from the failed
+		// 2. TODO Check, if we were a direct sender to that failed peer
+		Iterator<IPhysicalQuery> queryIterator = executor.getExecutionPlan()
+				.getQueries().iterator();
+		while (queryIterator.hasNext()) {
+			IPhysicalQuery query = queryIterator.next();
+			Collection<IPhysicalOperator> subscriptions = query.getRoots();
+			System.out.println("lala");
+		}
+
+		// 3. Search for another peer who can take the parts from the failed
 		// peer
 
-		// For now, take a random peer. Here we have to create an interface for
+		// TODO For now, take a random peer. Here we have to create an interface for
 		// allocation strategies
 
 		int numOfPeers = p2pDictionary.getRemotePeerIDs().size();
@@ -277,14 +294,16 @@ public class RecoveryCommunicator implements IRecoveryCommunicator,
 			peers.next();
 		}
 
-		// If the peer if null, we don't know any other peer so we have to
+		// If the peer is null, we don't know any other peer so we have to
 		// install it on ourself
 		if (peer == null)
 			peer = p2pNetworkManager.getLocalPeerID();
 
-		// TODO Use RecoveryAgreementHandler
-
-		// 3. Tell the new peer to install the parts from the failed peer
+		// 4. Tell the new peer to install the parts from the failed peer
+		for (ID sharedQueryId : sharedQueryIdsForPeer) {
+			RecoveryAgreementHandler.waitForAndDoRecovery(failedPeer,
+					sharedQueryId, peer);
+		}
 
 	}
 
@@ -301,7 +320,8 @@ public class RecoveryCommunicator implements IRecoveryCommunicator,
 	}
 
 	@Override
-	public void takeOver(ID sharedQueryId, String pqlStatement, PeerID peerId) {
+	public void sendTakeOver(ID sharedQueryId, String pqlStatement,
+			PeerID peerId) {
 
 		// TODO preconditions M.B.
 
@@ -309,15 +329,11 @@ public class RecoveryCommunicator implements IRecoveryCommunicator,
 		RecoveryInstructionMessage takeOverMessage = RecoveryInstructionMessage
 				.createAddQueryMessage(pqlStatement, sharedQueryId);
 		try {
-
 			peerCommunicator.send(peerId, takeOverMessage);
-
 		} catch (Throwable e) {
-
 			LOG.error(
 					"Could not send add query message to peer "
 							+ peerId.toString(), e);
-
 		}
 
 		// TODO Update backup information
@@ -329,24 +345,23 @@ public class RecoveryCommunicator implements IRecoveryCommunicator,
 	}
 
 	@Override
-	public void installQueriesOnNewPeer(PeerID failedPeer, PeerID newPeer) {
+	public void installQueriesOnNewPeer(PeerID failedPeer, PeerID newPeer,
+			ID sharedQueryId) {
 
 		// TODO: not a good idea to have all information on every peer. Tell the
 		// new peer directly, which query to install.
 		// And do it for every query to take over. Not good to take over a
 		// bundle of queries. Allocate each query new. M.B.
 
-		List<SharedQuery> sharedQueries = LocalBackupInformationAccess
-				.getStoredPQLStatements(failedPeer);
+		ImmutableCollection<String> pqlParts = LocalBackupInformationAccess
+				.getStoredPQLStatements(sharedQueryId, failedPeer);
 
-		for (SharedQuery query : sharedQueries) {
-
-			String pql = "";
-			for (String pqlPart : query.getPqlParts()) {
-				pql += " " + pqlPart;
-			}
-			this.takeOver(query.getSharedQueryID(), pql, newPeer);
+		String pql = "";
+		for (String pqlPart : pqlParts) {
+			pql += " " + pqlPart;
 		}
+
+		this.sendTakeOver(sharedQueryId, pql, newPeer);
 	}
 
 	/**
@@ -435,10 +450,10 @@ public class RecoveryCommunicator implements IRecoveryCommunicator,
 			}
 	}
 
-	public void sendRecoveryAgreementMessage(PeerID failedPeer) {
+	public void sendRecoveryAgreementMessage(PeerID failedPeer, ID sharedQueryId) {
 		// Send this to all other peers we know
 		RecoveryAgreementMessage message = RecoveryAgreementMessage
-				.createRecoveryAgreementMessage(failedPeer);
+				.createRecoveryAgreementMessage(failedPeer, sharedQueryId);
 		for (PeerID destinationPeer : p2pDictionary.getRemotePeerIDs())
 			try {
 				peerCommunicator.send(destinationPeer, message);

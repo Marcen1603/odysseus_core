@@ -29,23 +29,23 @@ public interface IRecoveryCommunicator {
 	 */
 	public void sendBackupInformation(PeerID peerId, ID sharedQueryId,
 			Map<PeerID, Collection<String>> backupInformation);
-	
+
 	// TODO javaDoc M.B.
-	public void takeOver(ID sharedQueryId, String pqlStatement, PeerID peerId);
-	
+	public void sendTakeOver(ID sharedQueryId, String pqlStatement, PeerID peerId);
+
 	// TODO should be changed. See comments within implementation M.B.
-	public void installQueriesOnNewPeer(PeerID failedPeer, PeerID newPeer);
+	public void installQueriesOnNewPeer(PeerID failedPeer, PeerID newPeer, ID sharedQueryId);
 
 	public void sendBackupJxtaInformation(PeerID peerId, ID sharedQueryId,
 			String key, String value);
 
 	public void recover(PeerID failedPeer);
-	
+
 	public void sendHoldOnMessages(List<PeerID> peers, List<ID> queryIds);
-	
+
 	public void sendNewReceiverMessage(PeerID senderPeer,
 			PeerID newReceiverPeer, ID sharedQueryID);
-	
-	public void sendRecoveryAgreementMessage(PeerID failedPeer);
+
+	public void sendRecoveryAgreementMessage(PeerID failedPeer, ID sharedQueryId);
 
 }

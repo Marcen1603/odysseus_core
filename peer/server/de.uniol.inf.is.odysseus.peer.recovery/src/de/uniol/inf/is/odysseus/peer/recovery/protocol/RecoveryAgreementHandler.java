@@ -1,9 +1,13 @@
 package de.uniol.inf.is.odysseus.peer.recovery.protocol;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import net.jxta.id.ID;
 import net.jxta.peer.PeerID;
 
 import org.slf4j.Logger;
@@ -79,9 +83,10 @@ public class RecoveryAgreementHandler {
 	private final static int WAIT_MS = WAIT_SECONDS * 1000;
 
 	/**
-	 * Peer for which we want to do the recovery
+	 * Peers and the (maybe multiple) shared queries we want to do the recovery
+	 * for
 	 */
-	private static List<PeerID> recoveryPeers;
+	private static Map<PeerID, List<ID>> recoveryPeers = new HashMap<PeerID, List<ID>>();
 
 	public static void handleAgreementMessage(PeerID senderPeer,
 			RecoveryAgreementMessage message) {
@@ -91,72 +96,125 @@ public class RecoveryAgreementHandler {
 		// that this peer failed -> then we shouldn't do recovery if the other
 		// peer has had a higher number
 
-		// See, if we wanted to do recovery for this peer
-		if (!recoveryPeers.contains(message.getFailedPeer())) {
+		// See, if we wanted to do recovery for this peer and this sharedQuery
+		if (!recoveryPeers.containsKey(message.getFailedPeer())) {
 			// No, we don't want to do recovery for this failed peer
 			// Do nothing, so the other peer can handle this recovery
 			return;
+		} else {
+			// See, if we want to do the recovery for this query
+			List<ID> queries = recoveryPeers.get(message.getFailedPeer());
+			if (!queries.contains(message.getSharedQueryId())) {
+				// We don't want to do recovery for this query
+				return;
+			}
 		}
 
 		// Calculate, who has the higher "number" from the peerId
-		if (calculateNumberForPeer(senderPeer) > calculateNumberForMe()) {
+		if (!thisPeerHasHigherNumber(senderPeer)) {
 			// The other one has a higher number. We won't do recovery for this
-			// failed peer
-			recoveryPeers.remove(message.getFailedPeer());
+			// failed peer for this query
+
+			// Remove that we want to do recovery for this query on this peer
+			removeBackupQueueEntry(message.getFailedPeer(),
+					message.getSharedQueryId());
+
 			return;
 		}
 
 		// Okay, we still want to do the recovery, so do nothing (the failed
-		// peer
-		// will remain in the list and we will do the recovery after the time is
-		// over)
+		// peer will remain in the list and we will do the recovery after the
+		// time is over)
 	}
 
+	/**
+	 * Saves, that we want to do recovery for the given query on the given peer,
+	 * tells the other peers that we want to do this, waits and finally (if no
+	 * other one wants to do the recovery), does the recovery
+	 * 
+	 * @param failedPeer
+	 * @param sharedQueryId
+	 * @param newPeer
+	 *            The peer where we want to install the parts of the query from
+	 *            the failed peer
+	 */
 	public static void waitForAndDoRecovery(final PeerID failedPeer,
-			final PeerID newPeer) {
+			final ID sharedQueryId, final PeerID newPeer) {
 
 		if (!cCommunicator.isPresent()) {
 			LOG.error("No recovery communicator bound!");
 			return;
 		}
 
-		// 1. Save that we want to do the recovery for that failed peer
-		recoveryPeers.add(failedPeer);
+		// 1. Check, if we already want to do recovery for another query for
+		// that failed peer
+		List<ID> queriesForPeer = new ArrayList<ID>();
+		if (recoveryPeers.containsKey(failedPeer)) {
+			queriesForPeer = recoveryPeers.get(failedPeer);
+		}
 
-		// 2. Send to all other peers that we want to do the recovery
-		cCommunicator.get().sendRecoveryAgreementMessage(failedPeer);
+		// 2. Save that we want to do the recovery for that failed peer
+		queriesForPeer.add(sharedQueryId);
+		recoveryPeers.put(failedPeer, queriesForPeer);
 
-		// 3. Wait a few seconds until we just do the recovery
+		// 3. Send to all other peers that we want to do the recovery
+		cCommunicator.get().sendRecoveryAgreementMessage(failedPeer,
+				sharedQueryId);
+
+		// 4. Wait a few seconds until we just do the recovery
 		Timer timer = new Timer();
 		timer.schedule(new TimerTask() {
 
 			@Override
 			public void run() {
-				// 4. If the time is over and we still think we should do the
+				// 5. If the time is over and we still think we should do the
 				// recovery:
 				// Do the recovery
-				if (recoveryPeers.contains(failedPeer)) {
-					// We still want to do recovery
+				if (recoveryPeers.containsKey(failedPeer)
+						&& recoveryPeers.get(failedPeer)
+								.contains(sharedQueryId)) {
+					// We still want to do recovery for that peer for that query
+					// id
 					cCommunicator.get().installQueriesOnNewPeer(failedPeer,
-							newPeer);
+							newPeer, sharedQueryId);
+
+					// Now we did this, so remove that we want to do this
+					// recovery
+					removeBackupQueueEntry(failedPeer, sharedQueryId);
 				}
 			}
 		}, WAIT_MS);
 
 	}
 
-	private static int calculateNumberForPeer(PeerID peer) {
-		byte[] idBytes = peer.toString().getBytes();
-		int number = 0;
-		for (int i = 0; i < idBytes.length; i++) {
-			number += idBytes[i];
-		}
-		return number;
+	/**
+	 * To compare two peerIds.
+	 * 
+	 * @param peer
+	 *            Peer to compare with this peer
+	 * @return true, if we have the "higher number", false, if the other one has
+	 */
+	private static boolean thisPeerHasHigherNumber(PeerID peer) {
+		return RecoveryCommunicator.getP2pNetworkManager().getLocalPeerID()
+				.toString().compareTo(peer.toString()) >= 0;
 	}
 
-	private static int calculateNumberForMe() {
-		return calculateNumberForPeer(RecoveryCommunicator
-				.getP2pNetworkManager().getLocalPeerID());
+	/**
+	 * Removes an entry that we want (or have to do) this recovery
+	 * 
+	 * @param failedPeer
+	 * @param sharedQueryId
+	 */
+	private static void removeBackupQueueEntry(PeerID failedPeer,
+			ID sharedQueryId) {
+		List<ID> queries = recoveryPeers.get(failedPeer);
+		queries.remove(sharedQueryId);
+
+		if (queries.size() <= 0) {
+			// If we don't have any queries left we want to recovery for a
+			// failed peer, delete the peer
+			recoveryPeers.remove(failedPeer);
+		}
 	}
 
 }

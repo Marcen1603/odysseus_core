@@ -60,14 +60,12 @@ public class RecoveryConsole implements CommandProvider {
 	}
 
 	// called by OSGi-DS
-	public static void bindRecoveryP2PListener(
-			IRecoveryP2PListener serv) {
+	public static void bindRecoveryP2PListener(IRecoveryP2PListener serv) {
 		peerFailureDetector = serv;
 	}
 
 	// called by OSGi-DS
-	public static void unbindRecoveryP2PListener(
-			IRecoveryP2PListener serv) {
+	public static void unbindRecoveryP2PListener(IRecoveryP2PListener serv) {
 		if (peerFailureDetector == serv) {
 			peerFailureDetector = null;
 		}
@@ -106,7 +104,7 @@ public class RecoveryConsole implements CommandProvider {
 			p2pDictionary = null;
 		}
 	}
-	
+
 	/**
 	 * The recovery communicator, if there is one bound.
 	 */
@@ -175,7 +173,7 @@ public class RecoveryConsole implements CommandProvider {
 		sb.append("	showPeerPQL <PeerName> - Shows the PQL that this peer knows from <PeerName>.\n");
 		sb.append("	sendHoldOn <PeerName from receiver> <sharedQueryId> - Send a hold-on message to <PeerName from receiver>, so that this should stop sending the tuples from query <sharedQueryId> further.\n");
 		sb.append("	sendNewReceiver <PeerName from receiver> <PeerName from new receiver> <sharedQueryId> - Send a newReceiver-message to <PeerName from receiver>, so that this should send the tuples from query <sharedQueryId> to the new receiver <PeerName from new receiver>.\n");
-		sb.append("	sendAddQueriesFromPeer <PeerName from receiver> <PeerName from failed peer> - The <PeerName from receiver> will get a message which tells that the peer has to install all queries from <PeerName from failed peer>. \n");
+		sb.append("	sendAddQueriesFromPeer <PeerName from receiver> <PeerName from failed peer> <sharedQueryId> - The <PeerName from receiver> will get a message which tells that the peer has to install the query <sharedQueryId> from <PeerName from failed peer>. \n");
 		sb.append("	startPeerFailureDetection - Starts detection of peer failures. \n");
 		sb.append("	stopPeerFailureDetection - Stops detection of peer failures. \n");
 		return sb.toString();
@@ -209,7 +207,7 @@ public class RecoveryConsole implements CommandProvider {
 
 	public void _sendAddQueriesFromPeer(CommandInterpreter ci) {
 		Preconditions.checkNotNull(ci, "Command interpreter must not be null!");
-		
+
 		if (!cCommunicator.isPresent()) {
 
 			LOG.error("No recovery communicator bound!");
@@ -219,17 +217,26 @@ public class RecoveryConsole implements CommandProvider {
 
 		String newPeerName = ci.nextArgument();
 		String failedPeerName = ci.nextArgument();
+		String queryId = ci.nextArgument();
 
 		PeerID newPeer = RecoveryHelper.determinePeerID(newPeerName).get();
 		PeerID failedPeer = RecoveryHelper.determinePeerID(failedPeerName)
 				.get();
 
-		cCommunicator.get().installQueriesOnNewPeer(failedPeer, newPeer);
+		URI queryUri;
+		try {
+			queryUri = new URI(queryId);
+			ID sharedQueryId = ID.create(queryUri);
+			cCommunicator.get().installQueriesOnNewPeer(failedPeer, newPeer,
+					sharedQueryId);
+		} catch (URISyntaxException e) {
+			System.out.println("Can't parse the queryId.");
+		}
 	}
 
 	public void _sendHoldOn(CommandInterpreter ci) {
 		Preconditions.checkNotNull(ci, "Command interpreter must not be null!");
-		
+
 		if (!cCommunicator.isPresent()) {
 
 			LOG.error("No recovery communicator bound!");
@@ -250,7 +257,7 @@ public class RecoveryConsole implements CommandProvider {
 
 	public void _sendNewReceiver(CommandInterpreter ci) {
 		Preconditions.checkNotNull(ci, "Command interpreter must not be null!");
-		
+
 		if (!cCommunicator.isPresent()) {
 
 			LOG.error("No recovery communicator bound!");
@@ -285,6 +292,7 @@ public class RecoveryConsole implements CommandProvider {
 
 		peerFailureDetector.startPeerFailureDetection();
 
+		System.out.println("Peer failure detection is now switched on on this peer.");
 	}
 
 	public void _stopPeerFailureDetection(CommandInterpreter ci) {
@@ -292,6 +300,7 @@ public class RecoveryConsole implements CommandProvider {
 
 		peerFailureDetector.stopPeerFailureDetection();
 
+		System.out.println("Peer failure detection is now switched off on this peer.");
 	}
 
 	public void _lsBackupStore(CommandInterpreter ci) {
