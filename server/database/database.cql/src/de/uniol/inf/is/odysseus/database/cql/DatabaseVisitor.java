@@ -239,7 +239,7 @@ public class DatabaseVisitor extends CQLParser {
 				DatabaseConnectionDictionary.getInstance().addConnection(connectionName, connection);
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			throw new QueryParseException("Error creating connection",e);
 		}
 		
 		// is check option used?
