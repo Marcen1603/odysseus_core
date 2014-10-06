@@ -2,11 +2,14 @@ package de.uniol.inf.is.odysseus.peer.smarthome.server;
 
 import net.jxta.document.Advertisement;
 import net.jxta.document.AdvertisementFactory;
+import net.jxta.id.IDFactory;
 import net.jxta.peer.PeerID;
 
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.p2p_new.IAdvertisementDiscovererListener;
 import de.uniol.inf.is.odysseus.p2p_new.IMessage;
@@ -14,6 +17,7 @@ import de.uniol.inf.is.odysseus.p2p_new.IP2PNetworkManager;
 import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicator;
 import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicatorListener;
 import de.uniol.inf.is.odysseus.p2p_new.PeerCommunicationException;
+import de.uniol.inf.is.odysseus.p2p_new.PeerException;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.IP2PDictionary;
 import de.uniol.inf.is.odysseus.peer.smarthome.SmartDeviceConfig;
 import de.uniol.inf.is.odysseus.peer.smarthome.SmartDeviceConfigurationRequestMessage;
@@ -23,6 +27,8 @@ import de.uniol.inf.is.odysseus.peer.smarthome.SmartDeviceMessage;
 
 public class SmartHomeServerPlugIn implements BundleActivator {
 
+	private static final Logger LOG = LoggerFactory.getLogger(SmartHomeServerPlugIn.class);
+	
 	private static Bundle bundle;
 	
 	public static final String NO_P2P_CONNECTION_TEXT = "<no p2p connection>";
@@ -33,6 +39,7 @@ public class SmartHomeServerPlugIn implements BundleActivator {
 	private static IP2PDictionary p2pDictionary;
 	private static SmartDeviceConfigurationListener smartDeviceConfigurationListener;
 	private static SmartDeviceAdvertisementListener smartDeviceAdvertisementListener;
+	private static SmartDeviceAdvertisementCollector smartDeviceAdvCollector = new SmartDeviceAdvertisementCollector();
 	
 	/*
 	 * (non-Javadoc)
@@ -52,12 +59,45 @@ public class SmartHomeServerPlugIn implements BundleActivator {
 		bundle = null;
 	}
 	
+	// called by OSGi-DS
+	public void activate() {
+		smartDeviceAdvCollector.start();
+		
+		/*
+		SmartDeviceAdvertisement adv = new SmartDeviceAdvertisement();
+		adv.setContextName("TestContextName");
+		adv.setPeerName("PeerName blub");
+		adv.setID(IDFactory.newPipeID(p2pNetworkManager.getLocalPeerGroupID()));
+		adv.setPeerID(p2pNetworkManager.getLocalPeerID());
+		
+		smartDeviceAdvCollector.add(adv);
+		*/
+	}
+	
+	// called by OSGi-DS
+	public void deactivate() {
+		smartDeviceAdvCollector.stopRunning();
+	}
+	
+	public SmartDeviceAdvertisement exportSmartDevice() throws PeerException {
+		SmartDeviceAdvertisement adv = new SmartDeviceAdvertisement();
+		adv.setContextName("TestContextName");
+		adv.setPeerName("PeerName blub");
+		
+		smartDeviceAdvCollector.add(adv);
+
+		return adv;
+	}
+	
 	public static Bundle getBundle() {
 		return bundle;
 	}
 	
 	private static void registerAdvertisementTypes() {
-		AdvertisementFactory.registerAdvertisementInstance(SmartDeviceAdvertisement.getAdvertisementType(), new SmartDeviceAdvertisementInstantiator());
+		if(!AdvertisementFactory.registerAdvertisementInstance(SmartDeviceAdvertisement.getAdvertisementType(), new SmartDeviceAdvertisementInstantiator())){
+			LOG.error("Couldn't register advertisement type: " + SmartDeviceAdvertisement.getAdvertisementType());
+		}
+		
 		//AdvertisementFactory.registerAdvertisementInstance(SmartDeviceContextAwarenessAdvertisement.getAdvertisementType(), new SmartDeviceContextAwarenessAdvertisementInstantiator());
 		
 	}
@@ -68,6 +108,17 @@ public class SmartHomeServerPlugIn implements BundleActivator {
 		
 		smartDeviceAdvertisementListener = new SmartDeviceAdvertisementListener();
 		p2pNetworkManager.addAdvertisementListener(smartDeviceAdvertisementListener);
+		
+		
+		
+		////
+		SmartDeviceAdvertisement adv = new SmartDeviceAdvertisement();
+		adv.setContextName("TestContextName");
+		adv.setPeerName("PeerName blub");
+		adv.setID(IDFactory.newPipeID(p2pNetworkManager.getLocalPeerGroupID()));
+		adv.setPeerID(p2pNetworkManager.getLocalPeerID());
+		
+		smartDeviceAdvCollector.add(adv);
 	}
 
 	// called by OSGi-DS

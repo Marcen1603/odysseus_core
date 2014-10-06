@@ -100,7 +100,7 @@ public class RPiGPIOTransportHandler extends AbstractSimplePullTransportHandler<
 	        	value=true;
 			}catch(Exception ex){
 				tuple.setAttribute(0, "error");
-	        	tuple.setAttribute(1, "On Raspberry? pi4j installed? pin:"+pin+" mode:"+mode+" pullState:"+pullState);
+	        	tuple.setAttribute(1, "On Raspberry Pi? pi4j installed? pin:"+pin+" mode:"+mode+" pullState:"+pullState);
 	        	value=true;
 			}
 		}else{
