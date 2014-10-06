@@ -30,7 +30,7 @@ public class QualityFunction extends AbstractFunction<Short> {
      * 
      */
     private static final long serialVersionUID = 3116695310866684684L;
-    private static final SDFDatatype[][] accTypes = new SDFDatatype[][] { { SDFOPCDADatatype.OPCVALUE } };
+    private static final SDFDatatype[][] accTypes = new SDFDatatype[][] { SDFOPCDADatatype.types };
 
     public QualityFunction() {
         super("Quality", 1, accTypes, SDFDatatype.SHORT);

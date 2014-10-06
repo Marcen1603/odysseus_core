@@ -15,6 +15,7 @@
  ******************************************************************************/
 package de.uniol.inf.is.odysseus.wrapper.opcda.function;
 
+import de.uniol.inf.is.odysseus.core.mep.IExpression;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.mep.AbstractFunction;
 import de.uniol.inf.is.odysseus.wrapper.opcda.datatype.OPCValue;
@@ -24,22 +25,35 @@ import de.uniol.inf.is.odysseus.wrapper.opcda.sdf.schema.SDFOPCDADatatype;
  * @author Christian Kuka <christian@kuka.cc>
  *
  */
-public class ValueFunction extends AbstractFunction<Double> {
+public class ValueFunction<T> extends AbstractFunction<T> {
 
-    /**
+	/**
      * 
      */
-    private static final long serialVersionUID = 7339930598819433187L;
-    private static final SDFDatatype[][] accTypes = new SDFDatatype[][] { { SDFOPCDADatatype.OPCVALUE } };
+	private static final long serialVersionUID = 7339930598819433187L;
+	private static final SDFDatatype[][] accTypes = new SDFDatatype[][] { SDFOPCDADatatype.types };
 
-    public ValueFunction() {
-        super("Value", 1, accTypes, SDFDatatype.DOUBLE);
-    }
+	public ValueFunction() {
+		super("Value", 1, accTypes, SDFDatatype.DOUBLE);
+	}
 
-    @Override
-    public Double getValue() {
-        OPCValue<Double> value = getInputValue(0);
-        return value.getValue();
-    }
+	@Override
+	public T getValue() {
+		OPCValue<T> value = getInputValue(0);
+		return value.getValue();
+	}
+
+	@Override
+	public boolean determineTypeFromInput() {
+		return true;
+	}
+
+	@Override
+	public SDFDatatype determineType(IExpression<?>[] args) {
+		if (args.length == 1) {
+			return args[0].getReturnType().getSubType();
+		}
+		return null;
+	}
 
 }

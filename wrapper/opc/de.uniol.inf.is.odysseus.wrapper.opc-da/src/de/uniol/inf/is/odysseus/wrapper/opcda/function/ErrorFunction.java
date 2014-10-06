@@ -30,7 +30,7 @@ public class ErrorFunction extends AbstractFunction<Integer> {
      * 
      */
     private static final long serialVersionUID = 1381227821374591747L;
-    private static final SDFDatatype[][] accTypes = new SDFDatatype[][] { { SDFOPCDADatatype.OPCVALUE } };
+    private static final SDFDatatype[][] accTypes = new SDFDatatype[][] { SDFOPCDADatatype.types };
 
     public ErrorFunction() {
         super("Error", 1, accTypes, SDFDatatype.INTEGER);

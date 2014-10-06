@@ -33,7 +33,7 @@ public class ToOPCValueFunction extends AbstractFunction<OPCValue<Double>> {
     private static final SDFDatatype[][] accTypes = new SDFDatatype[][] { SDFDatatype.NUMBERS, SDFDatatype.NUMBERS, SDFDatatype.NUMBERS, SDFDatatype.NUMBERS };
 
     public ToOPCValueFunction() {
-        super("ToOPCValue", 4, accTypes, SDFOPCDADatatype.OPCVALUE);
+        super("ToOPCValue", 4, accTypes, SDFOPCDADatatype.OPCVALUE_NUMERIC);
     }
 
     @Override

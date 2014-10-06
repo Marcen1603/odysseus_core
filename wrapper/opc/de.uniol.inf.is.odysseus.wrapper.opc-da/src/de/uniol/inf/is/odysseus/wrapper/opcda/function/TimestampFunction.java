@@ -30,7 +30,7 @@ public class TimestampFunction extends AbstractFunction<Long> {
      * 
      */
     private static final long serialVersionUID = -5185599623923941982L;
-    private static final SDFDatatype[][] accTypes = new SDFDatatype[][] { { SDFOPCDADatatype.OPCVALUE } };
+    private static final SDFDatatype[][] accTypes = new SDFDatatype[][] { SDFOPCDADatatype.types };
 
     public TimestampFunction() {
         super("Timestamp", 1, accTypes, SDFDatatype.TIMESTAMP);

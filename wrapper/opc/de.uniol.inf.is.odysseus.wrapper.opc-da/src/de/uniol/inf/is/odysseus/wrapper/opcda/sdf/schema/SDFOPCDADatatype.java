@@ -24,75 +24,86 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
  */
 public class SDFOPCDADatatype extends SDFDatatype {
 
-    /**
+	/**
      * 
      */
-    private static final long serialVersionUID = 7850101896218344675L;
-    public static final SDFDatatype OPCVALUE = new SDFOPCDADatatype("OPCValue");
+	private static final long serialVersionUID = 7850101896218344675L;
+	public static final SDFDatatype OPCVALUE = new SDFOPCDADatatype("OPCValue");
+	public static final SDFDatatype OPCVALUE_STRING = new SDFOPCDADatatype("OPCValue",
+			SDFDatatype.KindOfDatatype.GENERIC, SDFDatatype.STRING);
+	public static final SDFDatatype OPCVALUE_NUMERIC = new SDFOPCDADatatype(
+			"OPCValue", SDFDatatype.KindOfDatatype.GENERIC, SDFDatatype.DOUBLE);
+	public static final SDFDatatype OPCVALUE_FLOAT = new SDFOPCDADatatype("OPCValue",
+			SDFDatatype.KindOfDatatype.GENERIC, SDFDatatype.FLOAT);
+	
+	public static final SDFDatatype[] types = new SDFDatatype[] { OPCVALUE,
+			OPCVALUE_FLOAT, OPCVALUE_STRING, OPCVALUE_NUMERIC };
 
-    /**
-     * 
-     * Class constructor.
-     *
-     * @param URI
-     */
-    public SDFOPCDADatatype(final String URI) {
-        super(URI, true);
-    }
+	/**
+	 * 
+	 * Class constructor.
+	 *
+	 * @param URI
+	 */
+	public SDFOPCDADatatype(final String URI) {
+		super(URI, true);
+	}
 
-    /**
-     * 
-     * Class constructor.
-     *
-     * @param sdfDatatype
-     */
-    public SDFOPCDADatatype(final SDFDatatype sdfDatatype) {
-        super(sdfDatatype);
-    }
+	/**
+	 * 
+	 * Class constructor.
+	 *
+	 * @param sdfDatatype
+	 */
+	public SDFOPCDADatatype(final SDFDatatype sdfDatatype) {
+		super(sdfDatatype);
+	}
 
-    /**
-     * 
-     * Class constructor.
-     *
-     * @param datatypeName
-     * @param type
-     * @param schema
-     */
-    public SDFOPCDADatatype(final String datatypeName, final KindOfDatatype type, final SDFSchema schema) {
-        super(datatypeName, type, schema, true);
-    }
+	/**
+	 * 
+	 * Class constructor.
+	 *
+	 * @param datatypeName
+	 * @param type
+	 * @param schema
+	 */
+	public SDFOPCDADatatype(final String datatypeName,
+			final KindOfDatatype type, final SDFSchema schema) {
+		super(datatypeName, type, schema, true);
+	}
 
-    /**
-     * 
-     * Class constructor.
-     *
-     * @param datatypeName
-     * @param type
-     * @param subType
-     */
-    public SDFOPCDADatatype(final String datatypeName, final KindOfDatatype type, final SDFDatatype subType) {
-        super(datatypeName, type, subType, true);
-    }
+	/**
+	 * 
+	 * Class constructor.
+	 *
+	 * @param datatypeName
+	 * @param type
+	 * @param subType
+	 */
+	public SDFOPCDADatatype(final String datatypeName,
+			final KindOfDatatype type, final SDFDatatype subType) {
+		super(datatypeName, type, subType, true);
+	}
 
-    /**
-     * 
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean isNumeric() {
-        return false;
-    }
+	/**
+	 * 
+	 * {@inheritDoc}
+	 */
+	@Override
+	public boolean isNumeric() {
+		return false;
+	}
 
-    /**
-     * 
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean compatibleTo(final SDFDatatype other) {
-        if (other instanceof SDFOPCDADatatype) {
-            return true;
-        }
-        return super.compatibleTo(other);
-    }
+	/**
+	 * 
+	 * {@inheritDoc}
+	 */
+	@Override
+	public boolean compatibleTo(final SDFDatatype other) {
+		if (other instanceof SDFOPCDADatatype) {
+			return true;
+		}
+		return super.compatibleTo(other);
+	}
 
 }

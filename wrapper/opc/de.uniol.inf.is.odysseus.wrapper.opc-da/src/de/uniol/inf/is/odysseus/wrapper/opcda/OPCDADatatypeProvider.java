@@ -27,15 +27,17 @@ import de.uniol.inf.is.odysseus.wrapper.opcda.sdf.schema.SDFOPCDADatatype;
  *
  */
 public class OPCDADatatypeProvider implements IDatatypeProvider {
-    /**
-     *
-     * {@inheritDoc}
-     */
-    @Override
-    public List<SDFDatatype> getDatatypes() {
-        final List<SDFDatatype> ret = new ArrayList<>();
-        ret.add(SDFOPCDADatatype.OPCVALUE);
-        return ret;
-    }
+	/**
+	 *
+	 * {@inheritDoc}
+	 */
+	@Override
+	public List<SDFDatatype> getDatatypes() {
+		final List<SDFDatatype> ret = new ArrayList<>();
+		for (SDFDatatype dt : SDFOPCDADatatype.types) {
+			ret.add(dt);
+		}
+		return ret;
+	}
 
 }
