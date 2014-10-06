@@ -66,9 +66,11 @@ public class SDFDatatype extends SDFElement implements Serializable {
 	public static final SDFDatatype BOOLEAN = new SDFDatatype("Boolean");
 	public static final SDFDatatype SHORT = new SDFDatatype("Short");
 	public static final SDFDatatype BITVECTOR = new SDFDatatype("BitVector");
-	
-	public static final SDFDatatype KEYVALUEOBJECT = new SDFDatatype("KeyValueObject");
-	public static final SDFDatatype NESTEDKEYVALUEOBJECT = new SDFDatatype("NestedKeyValueObject");
+
+	public static final SDFDatatype KEYVALUEOBJECT = new SDFDatatype(
+			"KeyValueObject");
+	public static final SDFDatatype NESTEDKEYVALUEOBJECT = new SDFDatatype(
+			"NestedKeyValueObject");
 
 	public static final SDFDatatype START_TIMESTAMP = new SDFDatatype(
 			"StartTimestamp");
@@ -84,35 +86,35 @@ public class SDFDatatype extends SDFElement implements Serializable {
 			"PointInTime");
 
 	private static final SDFDatatype MV = new SDFDatatype("MV");
-    public static final SDFDatatype LIST = new SDFDatatype("List",
-            SDFDatatype.KindOfDatatype.BASE, SDFDatatype.OBJECT);
-    
-    public static final SDFDatatype LIST_STRING = new SDFDatatype("List_String",
-            SDFDatatype.KindOfDatatype.LIST, SDFDatatype.STRING);
-    public static final SDFDatatype LIST_LONG = new SDFDatatype("List_Long",
-            SDFDatatype.KindOfDatatype.LIST, SDFDatatype.LONG);
-    public static final SDFDatatype LIST_INTEGER = new SDFDatatype("List_Integer",
-            SDFDatatype.KindOfDatatype.LIST, SDFDatatype.INTEGER);
-    public static final SDFDatatype LIST_BYTE = new SDFDatatype("List_Byte",
-            SDFDatatype.KindOfDatatype.LIST, SDFDatatype.BYTE);
-    public static final SDFDatatype LIST_CHAR = new SDFDatatype("List_Char",
-            SDFDatatype.KindOfDatatype.LIST, SDFDatatype.CHAR);
-    public static final SDFDatatype LIST_FLOAT = new SDFDatatype("List_Float",
-            SDFDatatype.KindOfDatatype.LIST, SDFDatatype.FLOAT);
-    public static final SDFDatatype LIST_DOUBLE = new SDFDatatype("List_Double",
-            SDFDatatype.KindOfDatatype.LIST, SDFDatatype.DOUBLE);
-    public static final SDFDatatype LIST_DATE = new SDFDatatype("List_Date",
-            SDFDatatype.KindOfDatatype.LIST, SDFDatatype.DATE);
-    public static final SDFDatatype LIST_BOOLEAN = new SDFDatatype("List_Boolean",
-            SDFDatatype.KindOfDatatype.LIST, SDFDatatype.BOOLEAN);
-    public static final SDFDatatype LIST_SHORT = new SDFDatatype("List_Short",
-            SDFDatatype.KindOfDatatype.LIST, SDFDatatype.SHORT);
-    public static final SDFDatatype[] LISTS = new SDFDatatype[]{
-    	LIST, LIST_STRING, LIST_LONG, LIST_INTEGER, LIST_BYTE, LIST_CHAR, LIST_FLOAT, LIST_DOUBLE, LIST_DATE, LIST_BOOLEAN,LIST_SHORT 
-    };
-    
-    
-    
+	public static final SDFDatatype LIST = new SDFDatatype("List",
+			SDFDatatype.KindOfDatatype.BASE, SDFDatatype.OBJECT);
+
+	public static final SDFDatatype LIST_STRING = new SDFDatatype(
+			"List_String", SDFDatatype.KindOfDatatype.LIST, SDFDatatype.STRING);
+	public static final SDFDatatype LIST_LONG = new SDFDatatype("List_Long",
+			SDFDatatype.KindOfDatatype.LIST, SDFDatatype.LONG);
+	public static final SDFDatatype LIST_INTEGER = new SDFDatatype(
+			"List_Integer", SDFDatatype.KindOfDatatype.LIST,
+			SDFDatatype.INTEGER);
+	public static final SDFDatatype LIST_BYTE = new SDFDatatype("List_Byte",
+			SDFDatatype.KindOfDatatype.LIST, SDFDatatype.BYTE);
+	public static final SDFDatatype LIST_CHAR = new SDFDatatype("List_Char",
+			SDFDatatype.KindOfDatatype.LIST, SDFDatatype.CHAR);
+	public static final SDFDatatype LIST_FLOAT = new SDFDatatype("List_Float",
+			SDFDatatype.KindOfDatatype.LIST, SDFDatatype.FLOAT);
+	public static final SDFDatatype LIST_DOUBLE = new SDFDatatype(
+			"List_Double", SDFDatatype.KindOfDatatype.LIST, SDFDatatype.DOUBLE);
+	public static final SDFDatatype LIST_DATE = new SDFDatatype("List_Date",
+			SDFDatatype.KindOfDatatype.LIST, SDFDatatype.DATE);
+	public static final SDFDatatype LIST_BOOLEAN = new SDFDatatype(
+			"List_Boolean", SDFDatatype.KindOfDatatype.LIST,
+			SDFDatatype.BOOLEAN);
+	public static final SDFDatatype LIST_SHORT = new SDFDatatype("List_Short",
+			SDFDatatype.KindOfDatatype.LIST, SDFDatatype.SHORT);
+	public static final SDFDatatype[] LISTS = new SDFDatatype[] { LIST,
+			LIST_STRING, LIST_LONG, LIST_INTEGER, LIST_BYTE, LIST_CHAR,
+			LIST_FLOAT, LIST_DOUBLE, LIST_DATE, LIST_BOOLEAN, LIST_SHORT };
+
 	public static final SDFDatatype MATRIX_DOUBLE = new SDFDatatype("Matrix",
 			SDFDatatype.KindOfDatatype.BASE, SDFDatatype.DOUBLE);
 	public static final SDFDatatype MATRIX_FLOAT = new SDFDatatype(
@@ -123,8 +125,8 @@ public class SDFDatatype extends SDFElement implements Serializable {
 			"MatrixBoolean", SDFDatatype.KindOfDatatype.BASE,
 			SDFDatatype.BOOLEAN);
 	public static final SDFDatatype[] MATRIXS = new SDFDatatype[] {
-		SDFDatatype.MATRIX_BOOLEAN, SDFDatatype.MATRIX_BYTE,
-		SDFDatatype.MATRIX_FLOAT, SDFDatatype.MATRIX_DOUBLE };
+			SDFDatatype.MATRIX_BOOLEAN, SDFDatatype.MATRIX_BYTE,
+			SDFDatatype.MATRIX_FLOAT, SDFDatatype.MATRIX_DOUBLE };
 
 	public static final SDFDatatype VECTOR_DOUBLE = new SDFDatatype("Vector",
 			SDFDatatype.KindOfDatatype.BASE, SDFDatatype.DOUBLE);
@@ -135,10 +137,10 @@ public class SDFDatatype extends SDFElement implements Serializable {
 	public static final SDFDatatype VECTOR_BOOLEAN = new SDFDatatype(
 			"VectorBoolean", SDFDatatype.KindOfDatatype.BASE,
 			SDFDatatype.BOOLEAN);
-    public static final SDFDatatype[] VECTORS = new SDFDatatype[] {
-        SDFDatatype.VECTOR_BOOLEAN, SDFDatatype.VECTOR_BYTE,
-        SDFDatatype.VECTOR_FLOAT, SDFDatatype.VECTOR_DOUBLE };
-    
+	public static final SDFDatatype[] VECTORS = new SDFDatatype[] {
+			SDFDatatype.VECTOR_BOOLEAN, SDFDatatype.VECTOR_BYTE,
+			SDFDatatype.VECTOR_FLOAT, SDFDatatype.VECTOR_DOUBLE };
+
 	/**
 	 * Datatypes for aggregations (partial aggregates
 	 */
@@ -152,19 +154,31 @@ public class SDFDatatype extends SDFElement implements Serializable {
 			"RelationalElementPartialAggregate");
 	public static final SDFDatatype LIST_PARTIAL_AGGREGATE = new SDFDatatype(
 			"ListPartialAggregate");
-    public static final SDFDatatype MEDIAN_PARTIAL_AGGREGATE = new SDFDatatype("MedianPartialAggregate");
-    public static final SDFDatatype STDDEV_PARTIAL_AGGREGATE = new SDFDatatype("StdDevPartialAggregate");
-    public static final SDFDatatype CORR_PARTIAL_AGGREGATE = new SDFDatatype("CorrPartialAggregate");
-    public static final SDFDatatype COV_PARTIAL_AGGREGATE = new SDFDatatype("CovPartialAggregate");
-    public static final SDFDatatype VAR_PARTIAL_AGGREGATE = new SDFDatatype("VarPartialAggregate");
+	public static final SDFDatatype MEDIAN_PARTIAL_AGGREGATE = new SDFDatatype(
+			"MedianPartialAggregate");
+	public static final SDFDatatype STDDEV_PARTIAL_AGGREGATE = new SDFDatatype(
+			"StdDevPartialAggregate");
+	public static final SDFDatatype CORR_PARTIAL_AGGREGATE = new SDFDatatype(
+			"CorrPartialAggregate");
+	public static final SDFDatatype COV_PARTIAL_AGGREGATE = new SDFDatatype(
+			"CovPartialAggregate");
+	public static final SDFDatatype VAR_PARTIAL_AGGREGATE = new SDFDatatype(
+			"VarPartialAggregate");
 
-    public static final SDFDatatype[] NUMBERS = new SDFDatatype[] { BYTE, SHORT, INTEGER, LONG, FLOAT, DOUBLE, START_TIMESTAMP, END_TIMESTAMP, TIMESTAMP };
-    public static final SDFDatatype[] NUMBERS_OBJECT = new SDFDatatype[] {OBJECT, BYTE, SHORT, INTEGER, LONG, FLOAT, DOUBLE, START_TIMESTAMP, END_TIMESTAMP, TIMESTAMP };
+	public static final SDFDatatype[] NUMBERS = new SDFDatatype[] { BYTE,
+			SHORT, INTEGER, LONG, FLOAT, DOUBLE, START_TIMESTAMP,
+			END_TIMESTAMP, TIMESTAMP };
+	public static final SDFDatatype[] NUMBERS_OBJECT = new SDFDatatype[] {
+			OBJECT, BYTE, SHORT, INTEGER, LONG, FLOAT, DOUBLE, START_TIMESTAMP,
+			END_TIMESTAMP, TIMESTAMP };
 
-    public static final SDFDatatype[] LONG_NUMBERS = new SDFDatatype[] { LONG, START_TIMESTAMP, END_TIMESTAMP, TIMESTAMP };
+	public static final SDFDatatype[] LONG_NUMBERS = new SDFDatatype[] { LONG,
+			START_TIMESTAMP, END_TIMESTAMP, TIMESTAMP };
 
-    public static final SDFDatatype[] SIMPLE_TYPES = new SDFDatatype[] {OBJECT, BYTE, SHORT, INTEGER, LONG, FLOAT, DOUBLE, START_TIMESTAMP, END_TIMESTAMP, TIMESTAMP, STRING};
-    
+	public static final SDFDatatype[] SIMPLE_TYPES = new SDFDatatype[] {
+			OBJECT, BYTE, SHORT, INTEGER, LONG, FLOAT, DOUBLE, START_TIMESTAMP,
+			END_TIMESTAMP, TIMESTAMP, STRING };
+
 	private static final long serialVersionUID = 8585322290347489841L;
 
 	private final KindOfDatatype type;
@@ -269,7 +283,7 @@ public class SDFDatatype extends SDFElement implements Serializable {
 		types.add(SDFDatatype.CHAR);
 		types.add(SDFDatatype.BYTE);
 		types.add(SDFDatatype.BITVECTOR);
-		
+
 		types.add(SDFDatatype.LIST);
 		types.add(SDFDatatype.LIST_STRING);
 
@@ -282,16 +296,16 @@ public class SDFDatatype extends SDFElement implements Serializable {
 		types.add(SDFDatatype.LIST_DATE);
 		types.add(SDFDatatype.LIST_BOOLEAN);
 		types.add(SDFDatatype.LIST_SHORT);
-		
+
 		types.add(SDFDatatype.STRING);
 		types.add(SDFDatatype.DOCUMENT);
 		types.add(SDFDatatype.MV);
 		types.add(SDFDatatype.TIMESTAMP);
 		types.add(SDFDatatype.BOOLEAN);
 
-        types.add(SDFDatatype.VECTOR_DOUBLE);
-        types.add(SDFDatatype.MATRIX_DOUBLE);
-	      
+		types.add(SDFDatatype.VECTOR_DOUBLE);
+		types.add(SDFDatatype.MATRIX_DOUBLE);
+
 		types.add(SDFDatatype.PARTIAL_AGGREGATE);
 		types.add(SDFDatatype.AVG_SUM_PARTIAL_AGGREGATE);
 		types.add(SDFDatatype.COUNT_PARTIAL_AGGREGATE);
@@ -527,6 +541,15 @@ public class SDFDatatype extends SDFElement implements Serializable {
 			return true;
 		}
 		return false;
+	}
+
+	@Override
+	public String toString() {
+		if (type == KindOfDatatype.GENERIC) {
+			return super.toString()+"<"+getSubType()+">";
+		}else{
+			return super.toString();
+		}
 	}
 
 }

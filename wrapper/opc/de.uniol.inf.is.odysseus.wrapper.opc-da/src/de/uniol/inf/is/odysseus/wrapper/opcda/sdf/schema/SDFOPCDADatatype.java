@@ -29,11 +29,11 @@ public class SDFOPCDADatatype extends SDFDatatype {
      */
 	private static final long serialVersionUID = 7850101896218344675L;
 	public static final SDFDatatype OPCVALUE = new SDFOPCDADatatype("OPCValue");
-	public static final SDFDatatype OPCVALUE_STRING = new SDFOPCDADatatype("OPCValue",
+	public static final SDFDatatype OPCVALUE_STRING = new SDFOPCDADatatype("OPCValue_String",
 			SDFDatatype.KindOfDatatype.GENERIC, SDFDatatype.STRING);
 	public static final SDFDatatype OPCVALUE_NUMERIC = new SDFOPCDADatatype(
-			"OPCValue", SDFDatatype.KindOfDatatype.GENERIC, SDFDatatype.DOUBLE);
-	public static final SDFDatatype OPCVALUE_FLOAT = new SDFOPCDADatatype("OPCValue",
+			"OPCValue_Double", SDFDatatype.KindOfDatatype.GENERIC, SDFDatatype.DOUBLE);
+	public static final SDFDatatype OPCVALUE_FLOAT = new SDFOPCDADatatype("OPCValue_Float",
 			SDFDatatype.KindOfDatatype.GENERIC, SDFDatatype.FLOAT);
 	
 	public static final SDFDatatype[] types = new SDFDatatype[] { OPCVALUE,

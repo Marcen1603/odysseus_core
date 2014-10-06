@@ -98,7 +98,7 @@ public class OPCDASource extends AbstractAccessAO {
 			addError(new IllegalParameterException("number of elements in path must be the same as in output schema"));
 		}
 		for (SDFAttribute a: getOutputSchema()){
-			if (!a.getDatatype().getURI().equalsIgnoreCase(SDFOPCDADatatype.OPCVALUE.getURI())){
+			if (a.getDatatype() != SDFOPCDADatatype.OPCVALUE){
 				valid = false;
 				addError(new IllegalParameterException("Attribute "+a.getURI()+" must be of type OPCValue"));
 			}
