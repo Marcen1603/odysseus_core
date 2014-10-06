@@ -73,7 +73,7 @@ public class GameTimeSportsQLParser implements ISportsQLParser {
 		// 3. Convert decimal minutes to minute, second and millisecond
 		List<SDFExpressionParameter> expressions = new ArrayList<SDFExpressionParameter>();
 		expressions.add(OperatorBuildHelper
-				.createExpressionParameter("DoubleToInteger(ts/60000000.0)", OperatorBuildHelper.ATTRIBUTE_MINUTE, gameTimeSelect));
+				.createExpressionParameter("DoubleToInteger(ts/60000000)", OperatorBuildHelper.ATTRIBUTE_MINUTE, gameTimeSelect));
 		expressions.add(OperatorBuildHelper
 				.createExpressionParameter("DoubleToInteger((ts/1000000) % 60)", OperatorBuildHelper.ATTRIBUTE_SECOND, gameTimeSelect));
 		expressions.add(OperatorBuildHelper.
