@@ -2,6 +2,7 @@ package de.uniol.inf.is.odysseus.admission.status;
 
 import java.util.Collection;
 
+import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 
 import de.uniol.inf.is.odysseus.admission.IAdmissionStatusComponent;
@@ -46,6 +47,20 @@ public class ExecutorAdmissionStatusComponent implements IAdmissionStatusCompone
 		return getQueryIDsOfState(QueryState.INACTIVE);
 	}
 	
+	public Collection<Integer> selectQueries( IPhysicalQuerySelector selector ) {
+		Preconditions.checkNotNull(selector, "selector must not be null!");
+		
+		Collection<Integer> selected = Lists.newArrayList();
+		
+		for( IPhysicalQuery query : AdmissionStatusPlugIn.getServerExecutor().getExecutionPlan().getQueries()) {
+			if( selector.isSelected(query)) {
+				selected.add(query.getID());
+			}
+		}
+		
+		return selected;
+	}
+	
 	public boolean hasRunningQueries() {
 		return hasQueriesOfState(QueryState.RUNNING);
 	}
@@ -63,8 +78,16 @@ public class ExecutorAdmissionStatusComponent implements IAdmissionStatusCompone
 	}
 	
 	public long getQueryStateTimeMillis( int queryID ) {
-		long ts = AdmissionStatusPlugIn.getServerExecutor().getExecutionPlan().getQueryById(queryID).getLastQueryStateChangeTS();
+		long ts = getQuery(queryID).getLastQueryStateChangeTS();
 		return System.currentTimeMillis() - ts;
+	}
+	
+	public int getQueryPriority( int queryID ) {
+		return getQuery(queryID).getPriority();
+	}
+	
+	private static IPhysicalQuery getQuery(int queryID) {
+		return AdmissionStatusPlugIn.getServerExecutor().getExecutionPlan().getQueryById(queryID);
 	}
 	
 	private static Collection<Integer> getQueryIDsOfState(QueryState state) {
