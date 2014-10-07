@@ -49,6 +49,7 @@ Export-Package:
  de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command,
  de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.dd,
  de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.misc,
+ de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.query,
  de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.user,
  de.uniol.inf.is.odysseus.core.server.planmanagement.executor.configuration,
  de.uniol.inf.is.odysseus.core.server.planmanagement.executor.configuration.setting,

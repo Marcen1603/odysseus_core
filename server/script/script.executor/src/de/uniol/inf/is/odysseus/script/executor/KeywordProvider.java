@@ -32,16 +32,23 @@ import de.uniol.inf.is.odysseus.script.keyword.FragmentationTypePreParserKeyword
 import de.uniol.inf.is.odysseus.script.keyword.LoginUserPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.keyword.LogoutUserPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.keyword.ParserPreParserKeyword;
+import de.uniol.inf.is.odysseus.script.keyword.PartialQueryPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.keyword.PlanGenerationMethodPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.keyword.PreTransformationHandlerPreParserKeyword;
+import de.uniol.inf.is.odysseus.script.keyword.RemoveQueryPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.keyword.RequiredFeaturePreParserKeyword;
+import de.uniol.inf.is.odysseus.script.keyword.ResumeQueryPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.keyword.SchedulerPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.keyword.SleepPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.keyword.StartAllClosedQueriesPreParserKeyword;
+import de.uniol.inf.is.odysseus.script.keyword.StartQueryPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.keyword.StartSchedulerPreParserKeyword;
+import de.uniol.inf.is.odysseus.script.keyword.StopQueryPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.keyword.StopSchedulerPreParserKeyword;
+import de.uniol.inf.is.odysseus.script.keyword.SuspendQueryPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.keyword.TransCfgPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.keyword.UpdateFeaturePreParserKeyword;
+import de.uniol.inf.is.odysseus.script.keyword.WaitForQueryPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.parser.IPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.parser.IPreParserKeywordProvider;
 
@@ -77,7 +84,13 @@ public class KeywordProvider implements IPreParserKeywordProvider {
 		keywords.put(ActivateRewriteRulePreParserKeyword.ACTIVATEREWRITERULE, ActivateRewriteRulePreParserKeyword.class);
 		keywords.put(DeActivateRewriteRulePreParserKeyword.DEACTIVATEREWRITERULE, DeActivateRewriteRulePreParserKeyword.class);
 		keywords.put(SleepPreParserKeyword.NAME, SleepPreParserKeyword.class);
-return keywords;
+		keywords.put(PartialQueryPreParserKeyword.NAME, PartialQueryPreParserKeyword.class);
+		keywords.put(ResumeQueryPreParserKeyword.NAME,ResumeQueryPreParserKeyword.class);
+		keywords.put(StartQueryPreParserKeyword.NAME,StartQueryPreParserKeyword.class);
+		keywords.put(StopQueryPreParserKeyword.NAME, StopQueryPreParserKeyword.class);
+		keywords.put(SuspendQueryPreParserKeyword.NAME, SuspendQueryPreParserKeyword.class);
+		keywords.put(RemoveQueryPreParserKeyword.NAME, RemoveQueryPreParserKeyword.class);
+		keywords.put(WaitForQueryPreParserKeyword.NAME, WaitForQueryPreParserKeyword.class);
+		return keywords;
 	}
-
 }

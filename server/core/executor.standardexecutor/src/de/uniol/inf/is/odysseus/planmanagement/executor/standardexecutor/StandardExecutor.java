@@ -897,13 +897,33 @@ public class StandardExecutor extends AbstractExecutor implements IQueryStarter 
 
 	// -------------------------------------------------------------------------------------------------
 	// -------------------------------------------------------------------------------------------------
-
 	@Override
 	public void removeQuery(int queryID, ISession caller)
 			throws PlanManagementException {
 		LOG.info("Start remove a query (ID: " + queryID + ").");
-
 		IPhysicalQuery queryToRemove = this.executionPlan.getQueryById(queryID);
+		if (queryToRemove != null) {
+			removeQuery(caller, queryToRemove);
+		} else {
+			LOG.warn("Query with id " + queryID + " could not be found");
+		}
+	}
+
+	@Override
+	public void removeQuery(String queryName, ISession caller)
+			throws PlanManagementException {
+		LOG.info("Start remove a query (Name: " + queryName + ").");
+		IPhysicalQuery queryToRemove = this.executionPlan
+				.getQueryByName(queryName);
+		if (queryToRemove != null) {
+			removeQuery(caller, queryToRemove);
+		} else {
+			LOG.warn("Query with name " + queryName + " could not be found");
+		}
+
+	}
+
+	private void removeQuery(ISession caller, IPhysicalQuery queryToRemove) {
 		if (queryToRemove != null && getOptimizer() != null) {
 			validateUserRight(queryToRemove, caller,
 					ExecutorPermission.REMOVE_QUERY);
@@ -978,7 +998,7 @@ public class StandardExecutor extends AbstractExecutor implements IQueryStarter 
 				}
 			} catch (Exception e) {
 				LOG.warn("Query not removed. An Error while removing occurd (ID: "
-						+ queryID + ").");
+						+ queryToRemove.getID() + ").");
 				throw new PlanManagementException(e);
 			} finally {
 				executionPlanLock.unlock();
@@ -1013,15 +1033,35 @@ public class StandardExecutor extends AbstractExecutor implements IQueryStarter 
 	@Override
 	public void startQuery(int queryID, ISession caller) {
 		IPhysicalQuery queryToStart = this.executionPlan.getQueryById(queryID);
+		if (queryToStart != null) {
+			startQuery(caller, queryToStart);
+		} else {
+			LOG.error("Query with ID " + queryID + " could not be found");
+		}
+	}
+
+	@Override
+	public void startQuery(String queryName, ISession caller) {
+		IPhysicalQuery queryToStart = this.executionPlan
+				.getQueryByName(queryName);
+		if (queryToStart != null) {
+			startQuery(caller, queryToStart);
+		} else {
+			LOG.error("Query with name " + queryName + " could not be found");
+		}
+	}
+
+	private void startQuery(ISession caller, IPhysicalQuery queryToStart) {
 		synchronized (queryToStart) {
 			validateUserRight(queryToStart, caller,
 					ExecutorPermission.START_QUERY);
 			if (queryToStart.isOpened() || queryToStart.isStarting()) {
-				LOG.info("Query (ID: " + queryID + ") is already started.");
+				LOG.info("Query (ID: " + queryToStart.getID()
+						+ ") is already started.");
 				return;
 			}
 
-			LOG.info("Starting query (ID: " + queryID + ")...");
+			LOG.info("Starting query (ID: " + queryToStart.getID() + ")...");
 
 			try {
 				this.executionPlanLock.lock();
@@ -1030,16 +1070,17 @@ public class StandardExecutor extends AbstractExecutor implements IQueryStarter 
 				executionPlanChanged(PlanModificationEventType.QUERY_START,
 						queryToStart);
 				queryToStart.start(this);
-				LOG.info("Query " + queryID + " started.");
+				LOG.info("Query " + queryToStart.getID() + " started.");
 				firePlanModificationEvent(new QueryPlanModificationEvent(this,
 						PlanModificationEventType.QUERY_START, queryToStart));
 			} catch (Exception e) {
 				LOG.warn(
 						"Query not started. An Error during optimizing occurd (ID: "
-								+ queryID + ").", e);
+								+ queryToStart.getID() + ").", e);
 				throw new RuntimeException(
 						"Query not started. An Error during optimizing occurd (ID: "
-								+ queryID + "). " + e.getMessage(), e);
+								+ queryToStart.getID() + "). " + e.getMessage(),
+						e);
 			} finally {
 				this.executionPlanLock.unlock();
 			}
@@ -1114,6 +1155,15 @@ public class StandardExecutor extends AbstractExecutor implements IQueryStarter 
 		stopQuery(queryToStop);
 	}
 
+	public void stopQuery(String queryID, ISession caller) {
+
+		LOG.info("Stopping query (ID: " + queryID + ")....");
+
+		IPhysicalQuery queryToStop = this.executionPlan.getQueryByName(queryID);
+		validateUserRight(queryToStop, caller, ExecutorPermission.STOP_QUERY);
+		stopQuery(queryToStop);
+	}
+
 	// for internal stopping
 	void stopQuery(int queryID) {
 		IPhysicalQuery queryToStop = this.executionPlan.getQueryById(queryID);
@@ -1164,6 +1214,20 @@ public class StandardExecutor extends AbstractExecutor implements IQueryStarter 
 
 		IPhysicalQuery queryToSuspend = this.executionPlan
 				.getQueryById(queryID);
+		suspendQuery(caller, queryToSuspend);
+	}
+
+	@Override
+	public void suspendQuery(String queryID, ISession caller)
+			throws PlanManagementException {
+		LOG.info("Suspending query (ID: " + queryID + ")....");
+
+		IPhysicalQuery queryToSuspend = this.executionPlan
+				.getQueryByName(queryID);
+		suspendQuery(caller, queryToSuspend);
+	}
+
+	private void suspendQuery(ISession caller, IPhysicalQuery queryToSuspend) {
 		try {
 			QueryState.next(queryToSuspend.getState(), QueryFunction.SUSPEND);
 			validateUserRight(queryToSuspend, caller,
@@ -1191,6 +1255,20 @@ public class StandardExecutor extends AbstractExecutor implements IQueryStarter 
 		LOG.info("Resuming query (ID: " + queryID + ")....");
 
 		IPhysicalQuery queryToResume = this.executionPlan.getQueryById(queryID);
+		resumeQuery(caller, queryToResume);
+	}
+
+	@Override
+	public void resumeQuery(String queryID, ISession caller)
+			throws PlanManagementException {
+		LOG.info("Resuming query (ID: " + queryID + ")....");
+
+		IPhysicalQuery queryToResume = this.executionPlan
+				.getQueryByName(queryID);
+		resumeQuery(caller, queryToResume);
+	}
+
+	private void resumeQuery(ISession caller, IPhysicalQuery queryToResume) {
 		try {
 			QueryState.next(queryToResume.getState(), QueryFunction.RESUME);
 			validateUserRight(queryToResume, caller,
@@ -1219,13 +1297,27 @@ public class StandardExecutor extends AbstractExecutor implements IQueryStarter 
 
 		IPhysicalQuery queryToPartial = this.executionPlan
 				.getQueryById(queryID);
+		partialQuery(sheddingFactor, caller, queryToPartial);
+	}
+
+	@Override
+	public void partialQuery(String queryID, int sheddingFactor, ISession caller)
+			throws PlanManagementException {
+		LOG.info("Set query (ID: " + queryID + ") to patial....");
+
+		IPhysicalQuery queryToPartial = this.executionPlan
+				.getQueryByName(queryID);
+		partialQuery(sheddingFactor, caller, queryToPartial);
+	}
+
+	private void partialQuery(int sheddingFactor, ISession caller,
+			IPhysicalQuery queryToPartial) {
 		try {
 			if (sheddingFactor > 0) {
 				QueryState.next(queryToPartial.getState(),
 						QueryFunction.PARTIAL);
 			} else {
-				QueryState.next(queryToPartial.getState(),
-						QueryFunction.FULL);
+				QueryState.next(queryToPartial.getState(), QueryFunction.FULL);
 			}
 			validateUserRight(queryToPartial, caller,
 					ExecutorPermission.PARTIAL_QUERY);

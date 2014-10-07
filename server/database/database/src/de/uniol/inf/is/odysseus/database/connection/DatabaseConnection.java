@@ -61,7 +61,8 @@ public class DatabaseConnection implements IDatabaseConnection {
 
 	private static Logger logger = LoggerFactory
 			.getLogger(DatabaseConnection.class);
-	private static InfoService infoService = InfoServiceFactory.getInfoService(DatabaseConnection.class);
+	private static InfoService infoService = InfoServiceFactory
+			.getInfoService(DatabaseConnection.class);
 
 	private boolean connected = false;
 	// do NOT change this to protected or public!!
@@ -329,7 +330,8 @@ public class DatabaseConnection implements IDatabaseConnection {
 				this.connected = true;
 			}
 		} catch (Exception e) {
-			infoService.error("Error connecting to database "+e.getMessage(), e);
+			infoService.error("Error connecting to database " + e.getMessage(),
+					e);
 		}
 
 	}

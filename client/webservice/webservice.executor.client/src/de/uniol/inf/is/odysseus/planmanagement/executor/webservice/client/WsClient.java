@@ -283,6 +283,12 @@ public class WsClient implements IExecutor, IClientExecutor, IOperatorOwner {
 	}
 
 	@Override
+	public void removeQuery(String queryName, ISession caller)
+			throws PlanManagementException {
+		throw new PlanManagementException("Currently not implemented");
+	}
+
+	@Override
 	public void startQuery(int queryID, ISession caller)
 			throws PlanManagementException {
 		if (getWebserviceServer() != null) {
@@ -294,6 +300,12 @@ public class WsClient implements IExecutor, IClientExecutor, IOperatorOwner {
 			}
 		}
 		fireUpdateEvent(IUpdateEventListener.QUERY);
+	}
+
+	@Override
+	public void startQuery(String queryName, ISession caller)
+			throws PlanManagementException {
+		throw new PlanManagementException("Currently not implemented");
 	}
 
 	@Override
@@ -311,6 +323,12 @@ public class WsClient implements IExecutor, IClientExecutor, IOperatorOwner {
 	}
 
 	@Override
+	public void stopQuery(String queryName, ISession caller)
+			throws PlanManagementException {
+		throw new PlanManagementException("Currently not implemented");
+	}
+
+	@Override
 	public void suspendQuery(int queryID, ISession caller)
 			throws PlanManagementException {
 		if (getWebserviceServer() != null) {
@@ -322,6 +340,12 @@ public class WsClient implements IExecutor, IClientExecutor, IOperatorOwner {
 			}
 		}
 		fireUpdateEvent(IUpdateEventListener.QUERY);
+	}
+
+	@Override
+	public void suspendQuery(String queryName, ISession caller)
+			throws PlanManagementException {
+		throw new PlanManagementException("Currently not implemented");
 	}
 
 	@Override
@@ -339,14 +363,31 @@ public class WsClient implements IExecutor, IClientExecutor, IOperatorOwner {
 	}
 
 	@Override
+	public void resumeQuery(String queryName, ISession caller)
+			throws PlanManagementException {
+		throw new PlanManagementException("Currently not implemented");
+	}
+
+	@Override
 	public void partialQuery(int queryID, int sheddingFactor, ISession caller)
 			throws PlanManagementException {
 		throw new PlanManagementException("Currently not implemented");
 	}
 
 	@Override
+	public void partialQuery(String queryName, int sheddingFactor,
+			ISession caller) throws PlanManagementException {
+		throw new PlanManagementException("Currently not implemented");
+	}
+
+	@Override
 	public QueryState getQueryState(int queryID) {
 		return getWebserviceServer().getQueryState(queryID);
+	}
+
+	@Override
+	public QueryState getQueryState(String queryName) {
+		throw new PlanManagementException("Currently not implemented");
 	}
 
 	@Override

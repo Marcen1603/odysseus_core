@@ -798,6 +798,16 @@ public abstract class AbstractExecutor implements IServerExecutor,
 	@Override
 	public QueryState getQueryState(int queryID) {
 		IPhysicalQuery pq = executionPlan.getQueryById(queryID);
+		return getQueryState(pq);
+	}
+
+	@Override
+	public QueryState getQueryState(String queryID) {
+		IPhysicalQuery pq = executionPlan.getQueryByName(queryID);
+		return getQueryState(pq);
+	}
+
+	private QueryState getQueryState(IPhysicalQuery pq) {
 		if (pq != null){
 			return pq.getState();
 		}else{

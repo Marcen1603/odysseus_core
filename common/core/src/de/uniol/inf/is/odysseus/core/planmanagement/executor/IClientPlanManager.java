@@ -19,22 +19,27 @@ import de.uniol.inf.is.odysseus.core.planmanagement.executor.exception.PlanManag
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 
 /**
- * IPlanManager bildet mit IPlanScheduling die Grundlage für die
- * Ausführungumgebung von Odysseus. Diese Schnittstelle bietet die Möglichkeit
- * Informationen über registrierte Anfragen abzufragen bzw. zu bearbeiten.
  * 
  * @author wolf
+ * @author Marco Grawunder
  * 
  */
 public interface IClientPlanManager{
 	/**
-	 * removeQuery entfernt eine Anfrage aus Odysseus.
+	 * remove query from system
 	 * 
-	 * @param queryID
-	 *            ID der Anfrage
+	 * @param queryID the id of the query to remove
 	 * @throws PlanManagementException
 	 */
 	public void removeQuery(int queryID, ISession caller) throws PlanManagementException;
+
+	/**
+	 * remove query from system
+	 * 
+	 * @param queryName of the query to remove
+	 * @throws PlanManagementException
+	 */
+	public void removeQuery(String queryName, ISession caller) throws PlanManagementException;
 
 	/**
 	 * startQuery startet eine Anfrage.
@@ -44,6 +49,7 @@ public interface IClientPlanManager{
 	 * @throws PlanManagementException
 	 */
 	public void startQuery(int queryID, ISession caller) throws PlanManagementException;
+	public void startQuery(String queryName, ISession caller) throws PlanManagementException;
 
 	/**
 	 * stopQuery stoppt eine Anfrage und entfernt sie
@@ -52,6 +58,7 @@ public interface IClientPlanManager{
 	 * @throws PlanManagementException
 	 */
 	public void stopQuery(int queryID, ISession caller) throws PlanManagementException;
+	public void stopQuery(String queryName, ISession caller) throws PlanManagementException;
 	
 	/**
 	 * suspend query (i.e. query execution is paused and can be resumed. element will be buffered!)
@@ -60,6 +67,7 @@ public interface IClientPlanManager{
 	 * @throws PlanManagementException
 	 */
 	public void suspendQuery(int queryID, ISession caller) throws PlanManagementException;
+	public void suspendQuery(String queryName, ISession caller) throws PlanManagementException;
 	
 	/**
 	 * resume a suspended query (first all buffered elements are send)
@@ -69,6 +77,7 @@ public interface IClientPlanManager{
 	 */
 	
 	public void resumeQuery(int queryID, ISession caller) throws PlanManagementException;
+	public void resumeQuery(String queryName, ISession caller) throws PlanManagementException;
 
 	/**
 	 * Set a query to query sharing mode
@@ -78,6 +87,8 @@ public interface IClientPlanManager{
 	 * @throws PlanManagementException
 	 */
 	void partialQuery(int queryID, int sheddingFactor, ISession caller)
+			throws PlanManagementException;
+	void partialQuery(String queryName, int sheddingFactor, ISession caller)
 			throws PlanManagementException;
 
 }

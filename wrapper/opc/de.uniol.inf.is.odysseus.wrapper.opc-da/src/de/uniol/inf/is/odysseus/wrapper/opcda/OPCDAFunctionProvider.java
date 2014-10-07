@@ -44,7 +44,8 @@ public class OPCDAFunctionProvider implements IFunctionProvider {
      *
      * {@inheritDoc}
      */
-    @Override
+    @SuppressWarnings("rawtypes")
+	@Override
     public List<IFunction<?>> getFunctions() {
 
         final List<IFunction<?>> functions = new ArrayList<>();
