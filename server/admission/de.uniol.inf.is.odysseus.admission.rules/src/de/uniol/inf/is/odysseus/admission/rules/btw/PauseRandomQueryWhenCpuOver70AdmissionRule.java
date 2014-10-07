@@ -10,7 +10,9 @@ import de.uniol.inf.is.odysseus.admission.IAdmissionStatus;
 import de.uniol.inf.is.odysseus.admission.action.ExecutorAdmissionActionComponent;
 import de.uniol.inf.is.odysseus.admission.event.TimingAdmissionEvent;
 import de.uniol.inf.is.odysseus.admission.status.ExecutorAdmissionStatusComponent;
-import de.uniol.inf.is.odysseus.admission.status.SystemLoadAdmissionStatusComponent;
+import de.uniol.inf.is.odysseus.admission.status.IPhysicalQuerySelector;
+import de.uniol.inf.is.odysseus.core.planmanagement.query.QueryState;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 
 public class PauseRandomQueryWhenCpuOver70AdmissionRule implements IAdmissionRule<TimingAdmissionEvent> {
 
@@ -33,11 +35,11 @@ public class PauseRandomQueryWhenCpuOver70AdmissionRule implements IAdmissionRul
 
 	@Override
 	public boolean isExecutable(TimingAdmissionEvent event, IAdmissionStatus status) {
-		SystemLoadAdmissionStatusComponent systemLoadStatus = status.getStatusComponent(SystemLoadAdmissionStatusComponent.class);
+//		SystemLoadAdmissionStatusComponent systemLoadStatus = status.getStatusComponent(SystemLoadAdmissionStatusComponent.class);
 		ExecutorAdmissionStatusComponent executorStatus = status.getStatusComponent(ExecutorAdmissionStatusComponent.class);
 
-//		return executorStatus.getRunningQueryCount() >= 7;
-		return systemLoadStatus.getCpuLoadPercentage() >= 70 && ( executorStatus.hasRunningQueries() );
+		return executorStatus.getRunningQueryCount() >= 7;
+//		return systemLoadStatus.getCpuLoadPercentage() >= 70 && ( executorStatus.hasRunningQueries() );
 	}
 
 	@Override
@@ -45,7 +47,19 @@ public class PauseRandomQueryWhenCpuOver70AdmissionRule implements IAdmissionRul
 		ExecutorAdmissionActionComponent actionComponent = actions.getAdmissionActionComponent(ExecutorAdmissionActionComponent.class);
 		ExecutorAdmissionStatusComponent executorStatus = status.getStatusComponent(ExecutorAdmissionStatusComponent.class);
 
-		int queryID = selectRandomQuery(executorStatus.getRunningQueryIDs());
+		Collection<Integer> queries = executorStatus.selectQueries(new IPhysicalQuerySelector() {
+			@Override
+			public boolean isSelected(IPhysicalQuery query) {
+				return query.getPriority() < 10 && query.getState() == QueryState.RUNNING;
+			}
+		});
+		
+		if( queries.isEmpty() ) {
+			queries = executorStatus.getRunningQueryIDs();
+		}
+		
+		int queryID = selectRandomQuery(queries);
+		
 		actionComponent.suspendQuery(queryID);
 	}
 

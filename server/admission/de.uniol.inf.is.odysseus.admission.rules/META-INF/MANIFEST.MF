@@ -12,3 +12,5 @@ Require-Bundle: de.uniol.inf.is.odysseus.admission;bundle-version="1.0.0",
  de.uniol.inf.is.odysseus.admission.status;bundle-version="1.0.0"
 Service-Component: OSGI-INF/defaultAdmissionRuleProvider.xml,
  OSGI-INF/btwAdmissionRuleProvider.xml
+Import-Package: de.uniol.inf.is.odysseus.core.planmanagement.query,
+ de.uniol.inf.is.odysseus.core.server.planmanagement.query

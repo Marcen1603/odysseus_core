@@ -12,9 +12,14 @@ import de.uniol.inf.is.odysseus.admission.IAdmissionStatus;
 import de.uniol.inf.is.odysseus.admission.action.ExecutorAdmissionActionComponent;
 import de.uniol.inf.is.odysseus.admission.event.TimingAdmissionEvent;
 import de.uniol.inf.is.odysseus.admission.status.ExecutorAdmissionStatusComponent;
+import de.uniol.inf.is.odysseus.admission.status.IPhysicalQuerySelector;
+import de.uniol.inf.is.odysseus.core.planmanagement.query.QueryState;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 
 public class ActivateLongestPausedQueryAdmissionRule implements IAdmissionRule<TimingAdmissionEvent> {
 
+	private static final long MIN_SUSPEND_TIME_MILLIS = 1 * 1000;
+	
 //	private static final int EVENT_COUNT_TO_REACT = 2;
 //	
 //	private int eventCounter = 0;
@@ -50,20 +55,32 @@ public class ActivateLongestPausedQueryAdmissionRule implements IAdmissionRule<T
 	public void execute(TimingAdmissionEvent event, IAdmissionStatus status, IAdmissionActions actions) {
 		ExecutorAdmissionStatusComponent executorStatus = status.getStatusComponent(ExecutorAdmissionStatusComponent.class);
 		ExecutorAdmissionActionComponent actionComponent = actions.getAdmissionActionComponent(ExecutorAdmissionActionComponent.class);
+
+		Collection<Integer> suspendedQueries = executorStatus.selectQueries(new IPhysicalQuerySelector() {
+			@Override
+			public boolean isSelected(IPhysicalQuery query) {
+				return query.getPriority() >= 10 && query.getState() == QueryState.SUSPENDED;
+			}
+		});
 		
-		Collection<Integer> queryIDs = executorStatus.getSuspendedQueryIDs();
-		Map<Integer, Long> suspendTimeMap = createSuspendTimeMap(queryIDs, executorStatus);
+		if( suspendedQueries.isEmpty() ) {
+			suspendedQueries = executorStatus.getSuspendedQueryIDs();
+		}
+		
+		Map<Integer, Long> suspendTimeMap = createSuspendTimeMap(suspendedQueries, executorStatus);
 		Integer longestSuspendedQueryID = selectedLongestSuspendTime(suspendTimeMap);
 		
-		actionComponent.resumeQuery(longestSuspendedQueryID);
+		if( longestSuspendedQueryID != null ) {
+			actionComponent.resumeQuery(longestSuspendedQueryID);
+		}
 	}
 	
 	private static Integer selectedLongestSuspendTime(Map<Integer, Long> suspendTimeMap) {
 		long longestTime = Long.MIN_VALUE;
-		int longestQueryID = -1;
+		Integer longestQueryID = null;
 		for( Integer id : suspendTimeMap.keySet() ) {
 			long time = suspendTimeMap.get(id);
-			if( time > longestTime ) {
+			if( time > longestTime && time > MIN_SUSPEND_TIME_MILLIS) {
 				longestQueryID = id;
 				longestTime = time;
 			}
