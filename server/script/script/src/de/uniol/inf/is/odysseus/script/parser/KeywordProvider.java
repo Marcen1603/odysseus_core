@@ -23,6 +23,7 @@ import de.uniol.inf.is.odysseus.script.parser.keyword.IncludePreParserKeyword;
 import de.uniol.inf.is.odysseus.script.parser.keyword.MetadataPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.parser.keyword.OdysseusDefaultsPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.parser.keyword.QueryNamePreParserKeyword;
+import de.uniol.inf.is.odysseus.script.parser.keyword.QueryPriorityPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.parser.keyword.ReloadFromLogPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.parser.keyword.ResumeOnErrorPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.parser.keyword.TrafoOptionPreParserKeyword;
@@ -51,6 +52,7 @@ public class KeywordProvider implements IPreParserKeywordProvider {
 		keywords.put(IncludePreParserKeyword.KEYWORD, IncludePreParserKeyword.class);
 		keywords.put(MetadataPreParserKeyword.METADATA, MetadataPreParserKeyword.class);
 		keywords.put(TrafoOptionPreParserKeyword.TRAFOOPTION, TrafoOptionPreParserKeyword.class);
+		keywords.put(QueryPriorityPreParserKeyword.NAME, QueryPriorityPreParserKeyword.class);
 		return keywords;
 	}
 

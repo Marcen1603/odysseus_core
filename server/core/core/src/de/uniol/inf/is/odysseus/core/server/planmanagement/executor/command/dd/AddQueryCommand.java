@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.dd;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -28,7 +29,7 @@ public class AddQueryCommand extends AbstractExecutorCommand {
 		this.parserID = parserID;
 		this.transCfgName = transCfgName;
 		this.context = context;
-		this.addSettings = addSettings;
+		this.addSettings = new ArrayList<>(addSettings);
 		this.startQueries = startQueries;
 	}
 

@@ -31,17 +31,21 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.IExe
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.dd.AddQueryCommand;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.ParameterQueryName;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.IQueryBuildSetting;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.ParameterPriority;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.script.executor.ExecutorHandler;
 import de.uniol.inf.is.odysseus.script.parser.AbstractPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptException;
 import de.uniol.inf.is.odysseus.script.parser.keyword.QueryNamePreParserKeyword;
+import de.uniol.inf.is.odysseus.script.parser.keyword.QueryPriorityPreParserKeyword;
 
 @SuppressWarnings("deprecation")
-public abstract class AbstractQueryPreParserKeyword extends AbstractPreParserExecutorKeyword {
+public abstract class AbstractQueryPreParserKeyword extends
+		AbstractPreParserExecutorKeyword {
 
 	@Override
-	public void validate(Map<String, Object> variables, String parameter, ISession caller, Context context) throws OdysseusScriptException {
+	public void validate(Map<String, Object> variables, String parameter,
+			ISession caller, Context context) throws OdysseusScriptException {
 		try {
 			IExecutor executor = ExecutorHandler.getServerExecutor();
 			if (executor == null) {
@@ -52,12 +56,14 @@ public abstract class AbstractQueryPreParserKeyword extends AbstractPreParserExe
 				throw new OdysseusScriptException("Encountered empty query");
 			}
 
-			String parserID = (String) variables.get(ParserPreParserKeyword.PARSER);
+			String parserID = (String) variables
+					.get(ParserPreParserKeyword.PARSER);
 			if (parserID == null) {
 				throw new OdysseusScriptException("Parser not set");
 			}
 
-			String transCfg = (String) variables.get(TransCfgPreParserKeyword.TRANSCFG);
+			String transCfg = (String) variables
+					.get(TransCfgPreParserKeyword.TRANSCFG);
 			if (transCfg == null) {
 				variables.put(TransCfgPreParserKeyword.TRANSCFG, "Standard");
 				// throw new
@@ -65,27 +71,49 @@ public abstract class AbstractQueryPreParserKeyword extends AbstractPreParserExe
 			}
 
 		} catch (Exception ex) {
-			throw new OdysseusScriptException("Exception in query validation ", ex);
+			throw new OdysseusScriptException("Exception in query validation ",
+					ex);
 		}
 	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
-	public List<IExecutorCommand> execute(Map<String, Object> variables, String parameter, ISession caller, Context context) throws OdysseusScriptException {
+	public List<IExecutorCommand> execute(Map<String, Object> variables,
+			String parameter, ISession caller, Context context)
+			throws OdysseusScriptException {
 		String parserID = (String) variables.get(ParserPreParserKeyword.PARSER);
-		String transCfgName = (String) variables.get(TransCfgPreParserKeyword.TRANSCFG);
+		String transCfgName = (String) variables
+				.get(TransCfgPreParserKeyword.TRANSCFG);
 		if (transCfgName == null) {
 			transCfgName = "Standard";
 		}
-		List<IQueryBuildSetting<?>> addSettings = (List<IQueryBuildSetting<?>>) variables.get(AbstractPreParserKeyword.ADD_TRANS_PARAMS);
+		List<IQueryBuildSetting<?>> addSettings = (List<IQueryBuildSetting<?>>) variables
+				.get(AbstractPreParserKeyword.ADD_TRANS_PARAMS);
 
 		ISession queryCaller = (ISession) variables.get("USER");
-		String queryName = (String) variables.get(QueryNamePreParserKeyword.QNAME);
+		String queryName = (String) variables
+				.get(QueryNamePreParserKeyword.QNAME);
+		if (addSettings == null) {
+			addSettings = new ArrayList<>();
+		}
 		if (queryName != null && queryName.trim().length() > 0) {
-			if (addSettings == null) {
-				addSettings = new ArrayList<>();
-			}
 			addSettings.add(new ParameterQueryName(queryName));
+			// Only for this query
+			variables.remove(QueryNamePreParserKeyword.QNAME);
+		}
+		if (variables.containsKey(QueryPriorityPreParserKeyword.NAME)) {
+			try {
+				int priority = Integer.parseInt((String) variables
+						.get(QueryPriorityPreParserKeyword.NAME));
+
+				addSettings.add(new ParameterPriority(priority));
+			} catch (Exception e) {
+				throw new OdysseusScriptException("Error reading priority "+variables
+						.get(QueryPriorityPreParserKeyword.NAME));
+			}
+			// Only for this query
+			variables.remove(QueryPriorityPreParserKeyword.NAME);
+
 		}
 		if (queryCaller == null) {
 			queryCaller = caller;
@@ -101,51 +129,74 @@ public abstract class AbstractQueryPreParserKeyword extends AbstractPreParserExe
 			List<IExecutorCommand> commands = new LinkedList<>();
 
 			// Add rules to use to context
-			if (variables.containsKey(ActivateRewriteRulePreParserKeyword.ACTIVATEREWRITERULE)) {
-				context.put(ActivateRewriteRulePreParserKeyword.ACTIVATEREWRITERULE, new ArrayList<String>((ArrayList<String>) variables.get(ActivateRewriteRulePreParserKeyword.ACTIVATEREWRITERULE)));
+			if (variables
+					.containsKey(ActivateRewriteRulePreParserKeyword.ACTIVATEREWRITERULE)) {
+				context.put(
+						ActivateRewriteRulePreParserKeyword.ACTIVATEREWRITERULE,
+						new ArrayList<String>(
+								(ArrayList<String>) variables
+										.get(ActivateRewriteRulePreParserKeyword.ACTIVATEREWRITERULE)));
 			}
-			if (variables.containsKey(DeActivateRewriteRulePreParserKeyword.DEACTIVATEREWRITERULE)) {
-				context.put(DeActivateRewriteRulePreParserKeyword.DEACTIVATEREWRITERULE, new ArrayList<String>((ArrayList<String>) variables.get(DeActivateRewriteRulePreParserKeyword.DEACTIVATEREWRITERULE)));
-			}			
-			
+			if (variables
+					.containsKey(DeActivateRewriteRulePreParserKeyword.DEACTIVATEREWRITERULE)) {
+				context.put(
+						DeActivateRewriteRulePreParserKeyword.DEACTIVATEREWRITERULE,
+						new ArrayList<String>(
+								(ArrayList<String>) variables
+										.get(DeActivateRewriteRulePreParserKeyword.DEACTIVATEREWRITERULE)));
+			}
+
 			if (addSettings != null) {
 				if (!(executor instanceof IServerExecutor)) {
-					throw new QueryParseException("Additional transformation parameter currently not supported on clients");
+					throw new QueryParseException(
+							"Additional transformation parameter currently not supported on clients");
 				}
-			}	
-			AddQueryCommand cmd = new AddQueryCommand(queryText, parserID, queryCaller, transCfgName, context, addSettings, startQuery());
+			}
+			AddQueryCommand cmd = new AddQueryCommand(queryText, parserID,
+					queryCaller, transCfgName, context, addSettings,
+					startQuery());
 			commands.add(cmd);
 
-			ISink defaultSink = variables.containsKey("_defaultSink") ? (ISink) variables.get("_defaultSink") : null;
-			
+			ISink defaultSink = variables.containsKey("_defaultSink") ? (ISink) variables
+					.get("_defaultSink") : null;
+
 			if (defaultSink != null && executor instanceof IPlanManager) {
-				throw new IllegalArgumentException("_Default Sink currently not supported!");
-				//appendSinkToQueries(defaultSink, queriesToStart, (IPlanManager) executor);
-			}		
-	
+				throw new IllegalArgumentException(
+						"_Default Sink currently not supported!");
+				// appendSinkToQueries(defaultSink, queriesToStart,
+				// (IPlanManager) executor);
+			}
+
 			return commands;
-			
+
 		} catch (QueryParseException ex) {
 			throw new OdysseusScriptException("Query could not be parsed!", ex);
 		} catch (PlanManagementException ex) {
 			throw new OdysseusScriptException("Adding new query failed!", ex);
 		} catch (Exception ex) {
-			throw new OdysseusScriptException("Error while executing Odysseus script during executing a query!", ex);
+			throw new OdysseusScriptException(
+					"Error while executing Odysseus script during executing a query!",
+					ex);
 		}
 	}
 
-//	@SuppressWarnings({ "rawtypes", "unchecked" })
-//	private static void appendSinkToQueries(ISink<?> defaultSink, Iterable<Integer> queriesToStart, IPlanManager planManager) throws PlanManagementException {
-//		List<IPhysicalOperator> roots = Lists.<IPhysicalOperator> newArrayList(defaultSink);
-//
-//		for (Integer queryId : queriesToStart) {
-//			IPhysicalQuery physicalQuery = planManager.getExecutionPlan().getQueryById(queryId);
-//			for (IPhysicalOperator operator : physicalQuery.getRoots()) {
-//				((ISource) operator).subscribeSink(defaultSink, 0, 0, operator.getOutputSchema());
-//			}
-//			physicalQuery.setRoots(roots);
-//		}
-//	}
+	// @SuppressWarnings({ "rawtypes", "unchecked" })
+	// private static void appendSinkToQueries(ISink<?> defaultSink,
+	// Iterable<Integer> queriesToStart, IPlanManager planManager) throws
+	// PlanManagementException {
+	// List<IPhysicalOperator> roots = Lists.<IPhysicalOperator>
+	// newArrayList(defaultSink);
+	//
+	// for (Integer queryId : queriesToStart) {
+	// IPhysicalQuery physicalQuery =
+	// planManager.getExecutionPlan().getQueryById(queryId);
+	// for (IPhysicalOperator operator : physicalQuery.getRoots()) {
+	// ((ISource) operator).subscribeSink(defaultSink, 0, 0,
+	// operator.getOutputSchema());
+	// }
+	// physicalQuery.setRoots(roots);
+	// }
+	// }
 
 	protected abstract boolean startQuery();
 

@@ -347,6 +347,11 @@ public class StandardExecutor extends AbstractExecutor implements IQueryStarter 
 
 				query.setUser(user);
 				query.setParameter(SLA.class.getName(), sla);
+				
+				if (parameters.getPriority()>0){
+					query.setPriority(parameters.getPriority());
+				}
+					
 				// // this executor processes reoptimize requests
 				// if (query instanceof IPhysicalQuery) {
 				// ((IPhysicalQuery) query).addReoptimizeListener(this);
