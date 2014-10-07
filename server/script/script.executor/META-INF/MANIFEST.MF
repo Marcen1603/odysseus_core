@@ -14,7 +14,6 @@ Import-Package: com.google.common.collect,
  de.uniol.inf.is.odysseus.core.server.planmanagement.query,
  de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter,
  de.uniol.inf.is.odysseus.core.server.usermanagement,
- de.uniol.inf.is.odysseus.rcp.commands,
  de.uniol.inf.is.odysseus.script.parser,
  de.uniol.inf.is.odysseus.script.parser.keyword,
  org.slf4j
