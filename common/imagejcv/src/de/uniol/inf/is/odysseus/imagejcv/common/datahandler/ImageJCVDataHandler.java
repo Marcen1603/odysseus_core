@@ -80,6 +80,7 @@ public class ImageJCVDataHandler extends AbstractDataHandler<ImageJCV> {
 	@Override
 	public int memSize(final Object attribute) {
 		final ImageJCV image = (ImageJCV) attribute;
+		// TODO: Has this been updates since the change to IplImage?
 		return (2* Integer.SIZE + image.getWidth() * image.getHeight() * Double.SIZE) / 8;
 	}
 	
