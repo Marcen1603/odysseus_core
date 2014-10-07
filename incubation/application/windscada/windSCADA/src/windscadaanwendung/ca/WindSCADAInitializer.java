@@ -56,18 +56,20 @@ public class WindSCADAInitializer {
 			"corrected_score_tf.prt", "corrected_score.prt", "phase_shift.prt",
 			"pitch_angle.prt", "rotational_speed.prt", "wind_speed.prt",
 			"corrected_score_wind_speed.prt", "wind_direction.prt",
-			"gier_angle.prt", "svr.prt" };
+			"gier_angle.prt" };
 	private static final String[] GUIQueriesFileNames = {
 			"corrected_score.qry", "phase_shift.qry", "pitch_angle.qry",
 			"rotational_speed.qry", "wind_speed.qry",
 			"corrected_score_wind_speed.qry", "wind_direction.qry",
-			"gier_angle.qry", "svr.qry" };
+			"gier_angle.qry" };
 	private static final String[] AEQueriesFileNames = { "collectAlarms.qry" };
 
 	/**
 	 * Creates new Job that executes initialization of WindSCADA
+	 * 
+	 * @param initML
 	 */
-	public static void init() {
+	public static void init(final boolean initML) {
 		Job job = new Job("Init WindSCADA") {
 
 			@Override
@@ -81,7 +83,7 @@ public class WindSCADAInitializer {
 					progress.subTask("Loading Configuration");
 					loadConfig();
 					progress.worked(1);
-					initScripts(progress.newChild(7));
+					initScripts(initML, progress.newChild(7));
 					progress.subTask("Opening perspective");
 					openPerspetive("windscadaanwendung.perspective");
 					progress.worked(1);
@@ -157,13 +159,15 @@ public class WindSCADAInitializer {
 	 * Loads Scripts for DA, HD, AE and GUI component of WindSCADA for every
 	 * wind turbine that is loaded by CA
 	 * 
+	 * @param initML
+	 * 
 	 * @param monitor
 	 *            the progress monitor to use for reporting progress to the
 	 *            user. It is the caller's responsibility to call done() on the
 	 *            given monitor. Accepts null, indicating that no progress
 	 *            should be reported and that the operation cannot be cancelled.
 	 */
-	private static void initScripts(IProgressMonitor monitor) {
+	private static void initScripts(boolean initML, IProgressMonitor monitor) {
 		SubMonitor progress = SubMonitor.convert(monitor, FarmList
 				.getFarmList().size());
 		String fileContent = loadFileContent("querypatterns/HD/connectDatabase.qry");
@@ -180,12 +184,16 @@ public class WindSCADAInitializer {
 				subprogress.worked(1);
 			}
 			for (WKA wka : farm.getWkas()) {
-				initPrediction(farm, wka);
+				if (initML) {
+					initPrediction(farm, wka);
+				}
 				initGUI(farm, wka);
 				subprogress.worked(1);
 			}
 			// Start queries which are created per wind farm
-			initKohonen(farm);
+			if (initML) {
+				initKohonen(farm);
+			}
 			initFarm(farm);
 		}
 		// Start queries which combine all inputs
@@ -454,6 +462,15 @@ public class WindSCADAInitializer {
 				String.valueOf(farm.getWkas().indexOf(wkaToPredict)));
 		storeFileInWorkspace("svr", wkaToPredict.getID() + "svr.qry", query);
 		executeQuery(query);
+		query = loadFileContent("querypatterns/GUI/svr.qry");
+		query = adjustQuery(query, farm.getID(), wkaToPredict.getID());
+		storeFileInWorkspace("GUI", wkaToPredict.getID() + "svr.qry",
+				query);
+		executeQuery(query);
+		query = loadFileContent("querypatterns/GUI/svr.prt");
+		query = adjustQuery(query, farm.getID(), wkaToPredict.getID());
+		storeFileInWorkspace("GUI", wkaToPredict.getID() + "svr.prt",
+				query);
 	}
 
 	private static void initFarm(WindFarm farm) {

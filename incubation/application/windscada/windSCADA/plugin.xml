@@ -149,6 +149,12 @@
             id="windscadaanwendung.commands"
             name="WindSCADA">
       </category>
+      <command
+            categoryId="windscadaanwendung.commands"
+            defaultHandler="windscadaanwendung.rcp.InitWindSCADAHandlerWithML"
+            id="windscadaanwendung.initML"
+            name="WindSCADA Initialization">
+      </command>
    </extension>
    <extension
          point="org.eclipse.ui.menus">
@@ -160,6 +166,18 @@
             <command
                   commandId="windscadaanwendung.init"
                   label="Init WindSCADA"
+                  style="push">
+            </command>
+         </toolbar>
+      </menuContribution>
+      <menuContribution
+            allPopups="false"
+            locationURI="toolbar:org.eclipse.ui.main.toolbar">
+         <toolbar
+               id="de.uniol.inf.is.odysseus.rcp.odysseus.views">
+            <command
+                  commandId="windscadaanwendung.initML"
+                  label="Init WindSCADA with ML"
                   style="push">
             </command>
          </toolbar>

@@ -20,10 +20,6 @@
          id="de.uniol.inf.is.odysseus.rcp.dashboard.colors.feature"
          version="0.0.0"/>
 
-   <includes
-         id="de.uniol.inf.is.odysseus.context.feature"
-         version="0.0.0"/>
-
    <requires>
       <import plugin="de.uniol.inf.is.odysseus.database"/>
       <import plugin="org.eclipse.ui.workbench"/>
@@ -94,13 +90,6 @@
 
    <plugin
          id="de.uniol.inf.is.odysseus.rcp.dashboard.textfield"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="de.uniol.inf.is.odysseus.context.rcp"
          download-size="0"
          install-size="0"
          version="0.0.0"
