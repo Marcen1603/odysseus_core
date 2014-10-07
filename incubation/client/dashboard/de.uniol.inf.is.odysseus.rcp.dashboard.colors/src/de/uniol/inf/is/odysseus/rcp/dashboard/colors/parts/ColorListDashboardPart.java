@@ -5,10 +5,14 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.jface.window.DefaultToolTip;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.MouseMoveListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.GC;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
@@ -245,6 +249,8 @@ public class ColorListDashboardPart extends AbstractDashboardPart {
 
 	private int greenIndex = 2;
 	private int blueIndex = 3;
+	
+	private List<Boolean> timestampFlags = new ArrayList<Boolean>();
 
 	/**
 	 * @return the timestampIndex
@@ -273,7 +279,10 @@ public class ColorListDashboardPart extends AbstractDashboardPart {
 	public void setFixedTimestamps(boolean fixedTimestamps) {
 		this.fixedTimestamps = fixedTimestamps;
 	}
-
+	
+	private DefaultToolTip tt;
+	private List<Point> colorPoints = new ArrayList<Point>();;
+	
 	@Override
 	public void createPartControl(final Composite parent, ToolBar toolbar) {
 		this.parent = parent;
@@ -282,7 +291,33 @@ public class ColorListDashboardPart extends AbstractDashboardPart {
 		this.canvas.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_WHITE));
 		this.gc = new GC(canvas);
 		this.timestampFont = new Font(Display.getCurrent(), "Tahoma", timestampTextSize , SWT.NORMAL);
-		
+		tt = new DefaultToolTip(canvas, SWT.NONE, false);
+		canvas.addMouseMoveListener(new MouseMoveListener() {
+
+			@Override
+			public void mouseMove(MouseEvent e) {
+				// search for the color with the colorpoint at the mouse position
+				search:
+				for (int i=0;  i < colorPoints.size(); i++) {
+					Point p = colorPoints.get(i);
+					if (p.x <= e.x && (p.x + colorWidth) >= e.x) {
+						// mouse is in x-axis in the color-field of p
+						if (p.y <= e.y && (p.y + colorHeight) >= e.y) {
+							// mouse is in the color-field of p
+							if (timestampList.get(i) != null) {
+								tt.setText(timestampList.get(i).toString());
+							} else {
+								tt.setText("No Timestamp Found");
+							}
+							tt.show(p);
+							break search;
+						}
+					}
+				}
+				
+			}
+			
+		});
 		
 		
 		updateThread = new Thread(new Runnable() {
@@ -323,6 +358,7 @@ public class ColorListDashboardPart extends AbstractDashboardPart {
 		int lineNumber = 0;
 		int elementsInLine = 0;
 		int xPos = 0;
+		int yPos = 0;
 		double lastTimestamp = 0-fixedTimestampDiffMilliseconds;	
 		
 		this.setMaxElementsLine(this.parent.getSize().x / this.colorWidth);
@@ -331,6 +367,7 @@ public class ColorListDashboardPart extends AbstractDashboardPart {
 		//to clear everything
 		gc.setBackground(new Color(Display.getCurrent(), 255, 255, 255));
 		gc.fillRectangle(0, 0, canvas.getSize().x, canvas.getSize().y);
+		colorPoints.clear();
 		for (int i=0; i < colorList.size(); i++) {
 			gc.setBackground(colorList.get(i));
 			if (elementsInLine >= maxElementsLine) {
@@ -338,7 +375,10 @@ public class ColorListDashboardPart extends AbstractDashboardPart {
 				elementsInLine = 0;
 				xPos = 0;
 			}
-			gc.fillRectangle(xPos, (lineNumber*colorHeight)+(lineNumber*lineSpace), colorWidth, colorHeight );
+			yPos = (lineNumber*colorHeight)+(lineNumber*lineSpace);
+			gc.fillRectangle(xPos, yPos, colorWidth, colorHeight );
+			colorPoints.add(new Point(xPos, yPos));
+			
 			if (showWarnings) {
 				gc.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_YELLOW));
 				gc.fillRectangle(xPos, (lineNumber*colorHeight)+(lineNumber*lineSpace) - colorWidth, colorWidth, colorWidth);
@@ -353,33 +393,32 @@ public class ColorListDashboardPart extends AbstractDashboardPart {
 
 			if (fixedTimestamps) {
 				// fixed Timestamps
-				if (timestampList.get(i).getTime() >= (lastTimestamp+fixedTimestampDiffMilliseconds)) {
+				if (timestampList.get(i).getTime() >= (lastTimestamp+fixedTimestampDiffMilliseconds) && timestampList.get(i) != null) {
 					gc.drawString(String.valueOf(timestampList.get(i)), xPos-(colorWidth),  (lineNumber*colorHeight)+(lineNumber*lineSpace)+colorHeight, true);
 					lastTimestamp = timestampList.get(i).getTime();
 				}
 			} else {
 				// moving Timestamps
-				if (timestampList.get(i) != null) {
+				if (timestampFlags.get(i) && timestampList.get(i) != null) {
 					gc.drawString(String.valueOf(timestampList.get(i)), xPos-(colorWidth),  (lineNumber*colorHeight)+(lineNumber*lineSpace)+colorHeight, true);
 				}
 			}
 		}
 	}
-
+	
 	@Override
 	public void streamElementRecieved(IPhysicalOperator senderOperator,
 			IStreamObject<?> element, int port) {
 		synchronized (colorList) {
-			if (fixedTimestamps) {
-				timestampList.add(getTimestamp(element));
-			} else {
+			timestampList.add(getTimestamp(element));
+			if (!fixedTimestamps) {
 				// moving Timestamps
 				counter ++;
 				if (counter == movingTimestampDiffElements) {
 					counter = 0;
-					timestampList.add(getTimestamp(element));
+					timestampFlags.add(true);
 				} else {
-					timestampList.add(null);
+					timestampFlags.add(false);
 				}
 			}
 			
