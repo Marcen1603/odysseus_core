@@ -133,7 +133,6 @@ public class RecoveryP2PListener extends Observable implements
 		});
 
 		if (p2pNetworkManager != null) {
-			LOG.debug("No P2PNetworkmanager bound.");
 			thread.setName("PeerFailureDetection_"
 					+ p2pNetworkManager.getLocalPeerName() + "_"
 					+ p2pNetworkManager.getLocalPeerID().toString());

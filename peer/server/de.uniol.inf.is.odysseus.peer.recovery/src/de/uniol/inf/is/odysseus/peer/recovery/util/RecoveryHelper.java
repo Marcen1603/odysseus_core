@@ -4,7 +4,10 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
 
+import net.jxta.id.ID;
 import net.jxta.peer.PeerID;
 import net.jxta.pipe.PipeID;
 
@@ -24,6 +27,7 @@ import de.uniol.inf.is.odysseus.p2p_new.physicaloperator.JxtaReceiverPO;
 import de.uniol.inf.is.odysseus.p2p_new.physicaloperator.JxtaSenderPO;
 import de.uniol.inf.is.odysseus.peer.distribute.ILogicalQueryPart;
 import de.uniol.inf.is.odysseus.peer.distribute.LogicalQueryPart;
+import de.uniol.inf.is.odysseus.peer.recovery.internal.JxtaInformation;
 import de.uniol.inf.is.odysseus.peer.recovery.internal.RecoveryCommunicator;
 
 public class RecoveryHelper {
@@ -112,7 +116,6 @@ public class RecoveryHelper {
 		return null;
 	}
 
-	
 	public static PipeID getReceiverPipeId(String pql) {
 		String pipeSearch = "JXTARECEIVER({PIPE='";
 		int pipeIdLength = 80;
@@ -123,7 +126,8 @@ public class RecoveryHelper {
 		int index = pql.indexOf(pipeSearch);
 		int beginIndex = index + pipeSearch.length();
 
-		String pipeIdString = pql.substring(beginIndex, beginIndex + pipeIdLength);
+		String pipeIdString = pql.substring(beginIndex, beginIndex
+				+ pipeIdLength);
 
 		try {
 			URI pipeUri = new URI(pipeIdString);
@@ -138,8 +142,8 @@ public class RecoveryHelper {
 	}
 
 	/**
-	 * Get Logical JxtaOperator (Sender or Receiver) by PipeID.
-	 * Copied from LoadBalancingHelper
+	 * Get Logical JxtaOperator (Sender or Receiver) by PipeID. Copied from
+	 * LoadBalancingHelper
 	 * 
 	 * @param lookForSender
 	 *            true if we look for a sender, false if we look for receiver.
@@ -147,9 +151,9 @@ public class RecoveryHelper {
 	 *            Pipe id of Sender we look for.
 	 * @return Operator (if found) or null.
 	 */
-	public static ILogicalOperator getLogicalJxtaOperator(boolean lookForSender,
-			String pipeID) {
-		
+	public static ILogicalOperator getLogicalJxtaOperator(
+			boolean lookForSender, String pipeID) {
+
 		for (ILogicalQueryPart part : getInstalledQueryParts()) {
 			for (ILogicalOperator operator : part.getOperators()) {
 				if (lookForSender) {
@@ -174,19 +178,18 @@ public class RecoveryHelper {
 		}
 		return null;
 	}
-	
+
 	/**
-	 * Get all currently Installed Queries as Query Parts.
-	 * Copied from LoadBalancingHelper
+	 * Get all currently Installed Queries as Query Parts. Copied from
+	 * LoadBalancingHelper
 	 * 
 	 * @return List of installed LogicalQueryParts.
 	 */
 	public static Collection<ILogicalQueryPart> getInstalledQueryParts() {
-		
 
 		IServerExecutor executor = RecoveryCommunicator.getExecutor();
 		ISession session = RecoveryCommunicator.getActiveSession();
-		
+
 		ArrayList<ILogicalQueryPart> parts = new ArrayList<ILogicalQueryPart>();
 		for (int queryId : executor.getLogicalQueryIds(session)) {
 			ILogicalQuery query = executor
@@ -197,6 +200,64 @@ public class RecoveryHelper {
 			parts.add(new LogicalQueryPart(operators));
 		}
 		return parts;
+	}
+
+	/**
+	 * 
+	 * @return All JxtaSenderPOs which can be found in the execution plan on
+	 *         this peer
+	 */
+	@SuppressWarnings("rawtypes")
+	public static List<JxtaSenderPO> getJxtaSenders() {
+		List<JxtaSenderPO> senders = new ArrayList<JxtaSenderPO>();
+
+		Iterator<IPhysicalQuery> queryIterator = RecoveryCommunicator
+				.getExecutor().getExecutionPlan().getQueries().iterator();
+		// Iterate through all queries we have installed
+		while (queryIterator.hasNext()) {
+			IPhysicalQuery query = queryIterator.next();
+			List<IPhysicalOperator> roots = query.getRoots();
+
+			// Get the roots for each installed query (there we can find the
+			// JxtaSenders)
+			for (IPhysicalOperator root : roots) {
+				if (root instanceof JxtaSenderPO) {
+					JxtaSenderPO sender = (JxtaSenderPO) root;
+					senders.add(sender);
+				}
+			}
+		}
+
+		return senders;
+
+	}
+
+	/**
+	 * Updates the sender so that this peer knows, that there is a new receiver
+	 * (if you don't do this, the tuples will arrive anyway, cause the same
+	 * PipeID is used, but stopping the query would not stop the query on the
+	 * new peer)
+	 * 
+	 * @param sharedQueryID
+	 * @param previousReceiver
+	 *            Probably the failed peer
+	 * @param newReceiver
+	 */
+	public static void updatePeerInSender(ID sharedQueryID,
+			PeerID previousReceiver, PeerID newReceiver) {
+		List<JxtaSenderPO> senders = getJxtaSenders();
+
+		List<JxtaInformation> jxtaInfo = LocalBackupInformationAccess
+				.getJxtaInfoForPeer(RecoveryCommunicator.getP2pNetworkManager()
+						.getLocalPeerID());
+		
+		
+
+		for (JxtaSenderPO sender : senders) {
+			if (sender.getPeerIDString().equals(previousReceiver)) {
+
+			}
+		}
 	}
 
 }

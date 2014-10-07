@@ -2,7 +2,6 @@ package de.uniol.inf.is.odysseus.peer.recovery.internal;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Observable;
@@ -17,9 +16,11 @@ import org.slf4j.LoggerFactory;
 import com.google.common.collect.ImmutableCollection;
 
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
+import de.uniol.inf.is.odysseus.core.physicaloperator.PhysicalSubscription;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSource;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
-import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvider;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.p2p_new.IMessage;
@@ -27,7 +28,9 @@ import de.uniol.inf.is.odysseus.p2p_new.IP2PNetworkManager;
 import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicator;
 import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicatorListener;
 import de.uniol.inf.is.odysseus.p2p_new.PeerCommunicationException;
+import de.uniol.inf.is.odysseus.p2p_new.data.DataTransmissionException;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.IP2PDictionary;
+import de.uniol.inf.is.odysseus.p2p_new.logicaloperator.JxtaSenderAO;
 import de.uniol.inf.is.odysseus.p2p_new.physicaloperator.JxtaSenderPO;
 import de.uniol.inf.is.odysseus.peer.distribute.QueryPartAllocationException;
 import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryAllocator;
@@ -40,6 +43,7 @@ import de.uniol.inf.is.odysseus.peer.recovery.messages.RecoveryInstructionMessag
 import de.uniol.inf.is.odysseus.peer.recovery.protocol.RecoveryAgreementHandler;
 import de.uniol.inf.is.odysseus.peer.recovery.protocol.RecoveryInstructionHandler;
 import de.uniol.inf.is.odysseus.peer.recovery.util.LocalBackupInformationAccess;
+import de.uniol.inf.is.odysseus.peer.recovery.util.RecoveryHelper;
 
 /**
  * A recovery communicator handles the communication between peers for recovery
@@ -86,8 +90,8 @@ public class RecoveryCommunicator implements IRecoveryCommunicator,
 	private static IP2PDictionary p2pDictionary;
 	private static IPeerCommunicator peerCommunicator;
 	private static IRecoveryP2PListener recoveryP2PListener;
-	
-	private IRecoveryAllocator recoveryAllocator; 
+
+	private IRecoveryAllocator recoveryAllocator;
 	/**
 	 * Executor to get queries
 	 */
@@ -259,7 +263,7 @@ public class RecoveryCommunicator implements IRecoveryCommunicator,
 	// Code with recovery logic
 	// -----------------------------------------------------
 
-	@SuppressWarnings("rawtypes")
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	public void recover(PeerID failedPeer) {
 
@@ -281,85 +285,121 @@ public class RecoveryCommunicator implements IRecoveryCommunicator,
 		// are the direct sender
 		List<ID> sharedQueryIdsForRecovery = new ArrayList<ID>();
 
-		Iterator<IPhysicalQuery> queryIterator = executor.getExecutionPlan()
-				.getQueries().iterator();
-		// Iterate through all queries we have installed
-		while (queryIterator.hasNext()) {
-			IPhysicalQuery query = queryIterator.next();
-			List<IPhysicalOperator> roots = query.getRoots();
+		List<JxtaSenderPO> senders = RecoveryHelper.getJxtaSenders();
+		List<JxtaSenderPO> affectedSenders = new ArrayList<JxtaSenderPO>();
 
-			// Get the roots for each installed query (there we can find the
-			// JxtaSenders)
-			for (IPhysicalOperator root : roots) {
-				if (root instanceof JxtaSenderPO) {
-					JxtaSenderPO sender = (JxtaSenderPO) root;
-					if (sender.getPeerIDString().equals(failedPeer.toString())) {
-						// We were a direct sender to the failed peer
+		for (JxtaSenderPO sender : senders) {
+			if (sender.getPeerIDString().equals(failedPeer.toString())) {
+				// We were a direct sender to the failed peer
 
-						// Determine for which shared query id we are the direct
-						// sender: Search in the saved backup information for
-						// that pipe id and look, which shared query id belongs
-						// to the operator which has this pipeId
-						List<SharedQuery> pqls = LocalBackupInformationAccess
-								.getStoredPQLStatements(failedPeer);
-						for (SharedQuery sharedQuery : pqls) {
-							List<String> pqlParts = sharedQuery.getPqlParts();
-							for (String pql : pqlParts) {
-								if (pql.contains(sender.getPipeIDString())) {
-									// This is the shared query id we search for
-									sharedQueryIdsForRecovery.add(sharedQuery
-											.getSharedQueryID());
-								}
-							}
+				// Determine for which shared query id we are the direct
+				// sender: Search in the saved backup information for
+				// that pipe id and look, which shared query id belongs
+				// to the operator which has this pipeId
+				List<SharedQuery> pqls = LocalBackupInformationAccess
+						.getStoredPQLStatements(failedPeer);
+				for (SharedQuery sharedQuery : pqls) {
+					List<String> pqlParts = sharedQuery.getPqlParts();
+					for (String pql : pqlParts) {
+						if (pql.contains(sender.getPipeIDString())) {
+							// This is the shared query id we search for
+							sharedQueryIdsForRecovery.add(sharedQuery
+									.getSharedQueryID());
+
+							// Save, that this sender if affected
+							affectedSenders.add(sender);
 						}
 					}
 				}
 			}
 		}
 
-		// 3. Search for another peer who can take the parts from the failed
-		// peer
-		
-		// TODO find a good place for reallocate if the peer doesn't accept the
-		// query or is unable to install it
-		
-		PeerID peer = null;
+		// TEST
+		int i = 0;
 
-		try {
-			peer = recoveryAllocator.allocate(p2pDictionary.getRemotePeerIDs(), p2pNetworkManager.getLocalPeerID());
-			LOG.debug("Peer ID for recovery allocation found.");
-		} catch (QueryPartAllocationException e) {
-			LOG.error("Peer ID search for recovery allocation failed.");
-			e.printStackTrace();
-		}
-
-		// TODO delete code if allocate interface is proved to be working
-//		int numOfPeers = p2pDictionary.getRemotePeerIDs().size();
-//		int peerWeTake = (int) (Math.random() * numOfPeers);
-//
-//		Iterator<PeerID> peers = p2pDictionary.getRemotePeerIDs().iterator();
-//		PeerID peer = null;
-//
-//		int counter = 0;
-//		while (peers.hasNext()) {
-//
-//			if (counter == peerWeTake) {
-//				peer = peers.next();
-//				break;
-//			}
-//			counter++;
-//			peers.next();
-//		}
-
-		// If the peer is null, we don't know any other peer so we have to
-		// install it on ourself
-		if (peer == null)
-			peer = p2pNetworkManager.getLocalPeerID();
-
-		// 4. Tell the new peer to install the parts from the failed peer
+		// Reallocate each query to another peer
 		for (ID sharedQueryId : sharedQueryIdsForRecovery) {
+			// 3. Search for another peer who can take the parts from the failed
+			// peer
+
+			// TODO find a good place for reallocate if the peer doesn't accept
+			// the
+			// query or is unable to install it
+
+			PeerID peer = null;
+
+			try {
+				peer = recoveryAllocator.allocate(
+						p2pDictionary.getRemotePeerIDs(),
+						p2pNetworkManager.getLocalPeerID());
+				LOG.debug("Peer ID for recovery allocation found.");
+			} catch (QueryPartAllocationException e) {
+				LOG.error("Peer ID search for recovery allocation failed.");
+				e.printStackTrace();
+			}
+
+			// If the peer is null, we don't know any other peer so we have to
+			// install it on ourself
+			if (peer == null)
+				peer = p2pNetworkManager.getLocalPeerID();
+
+			// 4. Tell the new peer to install the parts from the failed peer
+
 			RecoveryAgreementHandler.waitForAndDoRecovery(failedPeer,
 					sharedQueryId, peer);
+
+			// TEST Update sender
+			// Goal: install a new sender which officially sends to the new
+			// receiver so that if we stop a query, it will stop on the new
+			// peer, too
+			JxtaSenderPO originalSender = affectedSenders.get(i);
+			i++;
+
+			// New JxtaSender which should send to the new peer
+			JxtaSenderAO originalSenderAO = (JxtaSenderAO) RecoveryHelper
+					.getLogicalJxtaOperator(true,
+							originalSender.getPipeIDString());
+			JxtaSenderAO jxtaSenderAO = (JxtaSenderAO) originalSenderAO.clone();
+			jxtaSenderAO.setPeerID(peer.toString());
+
+			JxtaSenderPO jxtaSender = null;
+			try {
+				jxtaSender = new JxtaSenderPO(jxtaSenderAO);
+			} catch (DataTransmissionException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
+			// Now do the subscriptions
+			jxtaSender.setOutputSchema(originalSender.getOutputSchema());
+			PhysicalSubscription subscription = originalSender
+					.getSubscribedToSource(0);
+
+			if (subscription.getTarget() instanceof AbstractPipe) {
+				((AbstractPipe) subscription.getTarget()).subscribeSink(
+						jxtaSender, 0, subscription.getSourceOutPort(),
+						subscription.getSchema(), true,
+						subscription.getOpenCalls());
+
+				jxtaSender.subscribeToSource(subscription.getTarget(),
+						subscription.getSinkInPort(),
+						subscription.getSourceOutPort(),
+						subscription.getSchema());
+			} else if (subscription.getTarget() instanceof AbstractSource) {
+				((AbstractSource) subscription.getTarget()).subscribeSink(
+						jxtaSender, 0, subscription.getSourceOutPort(),
+						subscription.getSchema(), true,
+						subscription.getOpenCalls());
+
+				jxtaSender.subscribeToSource(subscription.getTarget(),
+						subscription.getSinkInPort(),
+						subscription.getSourceOutPort(),
+						subscription.getSchema());
+			}
+
+			List<IPhysicalOperator> plan = new ArrayList<IPhysicalOperator>();
+			plan.add(jxtaSender);
+			executor.addQuery(plan, getActiveSession(), "Standard");
 		}
 
 	}
