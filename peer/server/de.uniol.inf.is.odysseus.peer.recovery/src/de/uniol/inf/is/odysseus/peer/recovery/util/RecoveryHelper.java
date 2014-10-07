@@ -231,33 +231,4 @@ public class RecoveryHelper {
 		return senders;
 
 	}
-
-	/**
-	 * Updates the sender so that this peer knows, that there is a new receiver
-	 * (if you don't do this, the tuples will arrive anyway, cause the same
-	 * PipeID is used, but stopping the query would not stop the query on the
-	 * new peer)
-	 * 
-	 * @param sharedQueryID
-	 * @param previousReceiver
-	 *            Probably the failed peer
-	 * @param newReceiver
-	 */
-	public static void updatePeerInSender(ID sharedQueryID,
-			PeerID previousReceiver, PeerID newReceiver) {
-		List<JxtaSenderPO> senders = getJxtaSenders();
-
-		List<JxtaInformation> jxtaInfo = LocalBackupInformationAccess
-				.getJxtaInfoForPeer(RecoveryCommunicator.getP2pNetworkManager()
-						.getLocalPeerID());
-		
-		
-
-		for (JxtaSenderPO sender : senders) {
-			if (sender.getPeerIDString().equals(previousReceiver)) {
-
-			}
-		}
-	}
-
 }
