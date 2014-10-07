@@ -1,16 +1,19 @@
 package de.uniol.inf.is.odysseus.keyvalue.physicaloperator;
 
+import java.util.List;
+
 import de.uniol.inf.is.odysseus.core.collection.KeyValueObject;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
+import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
+import de.uniol.inf.is.odysseus.core.datahandler.TupleDataHandler;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 
 /**
  * This operator transforms a KeyValueObject to a Tuple
  * 
- * @author Marco Grawunder
+ * @author Marco Grawunder, Jan Sören Schwarz
  * 
  * @param <M>
  */
@@ -18,16 +21,20 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 public class KeyValueToTuplePO<M extends IMetaAttribute> extends
 		AbstractPipe<KeyValueObject<M>, Tuple<M>> {
 
+	private IDataHandler<Tuple<?>> tHandler = new TupleDataHandler();
+	
 	boolean keepInputObject;
 
 	public KeyValueToTuplePO(boolean keepInputObject, SDFSchema outputSchema) {
 		this.keepInputObject = keepInputObject;
+		this.tHandler = tHandler.createInstance(outputSchema);
 		setOutputSchema(outputSchema);
 	}
 
 	public KeyValueToTuplePO(KeyValueToTuplePO<M> keyValueToTuplePO) {
 		super(keyValueToTuplePO);
 		this.keepInputObject = keyValueToTuplePO.keepInputObject;
+		this.tHandler = keyValueToTuplePO.tHandler;
 	}
 
 	@Override
@@ -46,21 +53,26 @@ public class KeyValueToTuplePO<M extends IMetaAttribute> extends
 	@SuppressWarnings({ "unchecked" })
     @Override
 	protected void process_next(KeyValueObject<M> input, int port) {
-		SDFSchema outputSchema = getOutputSchema();
-		Tuple<M> output = new Tuple<M>(outputSchema.size(), false);
+		String[] data = new String[getOutputSchema().size()];
+		for(int i = 0; i < getOutputSchema().size(); i++) {
+			data[i] = "";
+			String attributeName = getOutputSchema().getAttribute(i).getAttributeName();
+			if(input.getAttributes().containsKey(attributeName)) {
+				Object attribute = input.getAttribute(attributeName);
+				if(attribute instanceof List) {
+					for(Object object:(List<Object>) attribute) {
+						data[i] += object.toString() + "\n";
+					}
+				} else {
+					data[i] = attribute.toString();
+				}
+			}
+		}
+		Tuple<M> output = (Tuple<M>) tHandler.readData(data);
         output.setMetadata((M) input.getMetadata().clone());
+        
 		if (keepInputObject) {
 			output.setAdditionalContent("base",input.clone());
-		}
-		int pos = 0;
-		for (SDFAttribute attr : outputSchema.getAttributes()) {
-			Object inputAttribute = input.getAttribute(attr.getAttributeName());
-//			if((inputAttribute instanceof List)) {	
-//				// Was soll hier passieren?
-//				output.setAttribute(pos++, ((List) inputAttribute).get(0));
-//			} else {
-				output.setAttribute(pos++, inputAttribute);
-//			}
 		}
 		transfer(output);
 	}
