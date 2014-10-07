@@ -27,9 +27,16 @@ public class WaitForQueryPreParserKeyword extends AbstractPreParserKeyword {
 			throws OdysseusScriptException {
 		String[] para = getSimpleParameters(parameter);
 		String name = para[0];
-		long testPeriod = Long.parseLong(para[1]);
+		long testPeriod = 1000;
+		if (para.length > 1){
+			testPeriod = Long.parseLong(para[1]);
+		}
+		long maxWaitingTime = -1;
+		if (para.length > 2){
+			maxWaitingTime = Long.parseLong(para[2]);
+		}
 		List<IExecutorCommand> ret = new LinkedList<>();
-		ret.add(new WaitForQueryCommand(caller, name, testPeriod));
+		ret.add(new WaitForQueryCommand(caller, name, testPeriod,maxWaitingTime));
 		return ret;
 	}
 

@@ -11,18 +11,22 @@ public class WaitForQueryCommand extends AbstractExecutorCommand {
 
 	private String queryName;
 	private long testPeriod;
+	private long maxWaitingTime;
 
-	public WaitForQueryCommand(ISession caller, String queryName, long testPeriod) {
+	public WaitForQueryCommand(ISession caller, String queryName, long testPeriod, long maxWaitingTime) {
 		super(caller);
 		this.queryName = queryName;
 		this.testPeriod = testPeriod;
+		this.maxWaitingTime = maxWaitingTime;
 	}
 
 	@Override
 	public synchronized void execute(IDataDictionaryWritable dd, IUserManagementWritable um,
 			IServerExecutor executor) {
 		try {
-			while (executor.getQueryState(queryName) != QueryState.INACTIVE && executor.getQueryState(queryName) != QueryState.UNDEF) {
+			long start = System.currentTimeMillis();
+			while ((executor.getQueryState(queryName) != QueryState.INACTIVE && executor.getQueryState(queryName) != QueryState.UNDEF)
+					|| (maxWaitingTime > 0 && System.currentTimeMillis()>start+maxWaitingTime)) {
 				this.wait(testPeriod);
 			}
 		} catch (Exception e) {
