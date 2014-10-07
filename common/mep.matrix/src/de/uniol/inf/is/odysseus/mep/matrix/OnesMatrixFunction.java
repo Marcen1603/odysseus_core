@@ -40,7 +40,7 @@ public class OnesMatrixFunction extends AbstractFunction<double[][]> {
     @Override
     public double[][] getValue() {
         int width = getNumericalInputValue(0).intValue();
-        int height = getNumericalInputValue(0).intValue();
+        int height = getNumericalInputValue(1).intValue();
         return getValueInternal(width, height);
     }
 
