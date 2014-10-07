@@ -10,7 +10,7 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecu
 
 public class AdmissionEventPlugIn implements BundleActivator {
 
-	private static final long TIMING_INTERVAL_MILLIS = 10000;
+	private static final long TIMING_INTERVAL_MILLIS = 5 * 1000;
 	private static final ExecutorAdmissionEventGenerator EXECUTOR_EVENT_GENERATOR = new ExecutorAdmissionEventGenerator();
 	private static final TimingAdmissionEventGenerator TIMING_EVENT_GENERATOR = new TimingAdmissionEventGenerator(TIMING_INTERVAL_MILLIS);
 	
