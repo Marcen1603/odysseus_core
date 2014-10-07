@@ -185,6 +185,7 @@ public class ExecutionPlan implements IExecutionPlan {
 	@Override
 	public synchronized IPhysicalQuery removeQuery(int queryID) {
 		IPhysicalQuery removed = this.queries.remove(queryID);
+		namedQueries.remove(removed.getName());
 		updateLeafSources();
 		return removed;
 	}
