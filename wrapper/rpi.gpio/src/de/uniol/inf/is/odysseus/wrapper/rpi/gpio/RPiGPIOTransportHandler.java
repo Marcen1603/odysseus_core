@@ -147,7 +147,7 @@ public class RPiGPIOTransportHandler extends AbstractSimplePullTransportHandler<
 		//System.out.println("firstInitRun:" +firstInitRun+ " lastInitTime:"+lastInitTime+" initFailed:"+initFailed);
 		
 		if(!firstInitRun && lastInitTime>=1000 && this.gpioController==null && !initFailed){
-			System.out.println("init called and run. lastInitTime:"+lastInitTime+" ");
+			LOG.debug("init called and run. lastInitTime:"+lastInitTime+" ");
 			
 			try{
 				this.gpioController = GpioFactory.getInstance();

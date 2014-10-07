@@ -16,7 +16,6 @@ import de.uniol.inf.is.odysseus.p2p_new.IP2PNetworkManager;
 import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicator;
 import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicatorListener;
 import de.uniol.inf.is.odysseus.p2p_new.PeerCommunicationException;
-import de.uniol.inf.is.odysseus.p2p_new.PeerException;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.IP2PDictionary;
 import de.uniol.inf.is.odysseus.peer.smarthome.SmartDeviceConfig;
 import de.uniol.inf.is.odysseus.peer.smarthome.SmartDeviceConfigurationRequestMessage;
@@ -60,32 +59,28 @@ public class SmartHomeServerPlugIn implements BundleActivator {
 	
 	// called by OSGi-DS
 	public void activate() {
-		smartDeviceAdvCollector.start();
-		
-		/*
-		SmartDeviceAdvertisement adv = new SmartDeviceAdvertisement();
-		adv.setContextName("TestContextName");
-		adv.setPeerName("PeerName blub");
-		adv.setID(IDFactory.newPipeID(p2pNetworkManager.getLocalPeerGroupID()));
-		adv.setPeerID(p2pNetworkManager.getLocalPeerID());
-		
-		smartDeviceAdvCollector.add(adv);
-		*/
+		try{
+			smartDeviceAdvCollector.start();
+			
+			
+			SmartDeviceAdvertisement adv = new SmartDeviceAdvertisement();
+			adv.setContextName("TestContextName");
+			adv.setPeerName("PeerName blub");
+			//adv.setID(IDFactory.newPipeID(p2pNetworkManager.getLocalPeerGroupID()));
+			adv.setPeerID(p2pNetworkManager.getLocalPeerID());
+			//adv.setPipeID(IDFactory.newPipeID(p2pNetworkManager.getLocalPeerGroupID()));
+			
+			
+			smartDeviceAdvCollector.add(adv);
+			
+		}catch(Exception ex){
+			ex.printStackTrace();
+		}
 	}
 	
 	// called by OSGi-DS
 	public void deactivate() {
 		smartDeviceAdvCollector.stopRunning();
-	}
-	
-	public SmartDeviceAdvertisement exportSmartDevice() throws PeerException {
-		SmartDeviceAdvertisement adv = new SmartDeviceAdvertisement();
-		adv.setContextName("TestContextName");
-		adv.setPeerName("PeerName blub");
-		
-		smartDeviceAdvCollector.add(adv);
-
-		return adv;
 	}
 	
 	public static Bundle getBundle() {
@@ -116,6 +111,19 @@ public class SmartHomeServerPlugIn implements BundleActivator {
 		adv.setPeerName("PeerName blub");
 		adv.setID(IDFactory.newPipeID(p2pNetworkManager.getLocalPeerGroupID()));
 		adv.setPeerID(p2pNetworkManager.getLocalPeerID());
+		
+		smartDeviceAdvCollector.add(adv);
+		*/
+		
+		
+		/*
+		SmartDeviceAdvertisement adv = new SmartDeviceAdvertisement();
+		adv.setContextName("TestContextName");
+		adv.setPeerName("PeerName blub");
+		//adv.setID(IDFactory.newPipeID(p2pNetworkManager.getLocalPeerGroupID()));
+		adv.setPeerID(p2pNetworkManager.getLocalPeerID());
+		adv.setPipeID(IDFactory.newPipeID(p2pNetworkManager.getLocalPeerGroupID()));
+		
 		
 		smartDeviceAdvCollector.add(adv);
 		*/
@@ -247,7 +255,7 @@ public class SmartHomeServerPlugIn implements BundleActivator {
 	public static class SmartDeviceAdvertisementListener implements IAdvertisementDiscovererListener {
 		@Override
 		public void advertisementDiscovered(Advertisement advertisement) {
-			System.out.println("SmartHomeServerPlugIn advertisementDiscovered Type:"+advertisement.getAdvType());
+			//System.out.println("SmartHomeServerPlugIn advertisementDiscovered Type:"+advertisement.getAdvType());
 			
 			if(advertisement.getAdvType().equals(SmartDeviceAdvertisement.getAdvertisementType())){
 				System.out.println("SmartDeviceAdvertisement received!!!");

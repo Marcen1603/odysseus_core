@@ -38,14 +38,14 @@ public class SmartDeviceAdvertisement extends Advertisement implements
 	private static final String CONTEXT_NAME = "contextName";
 	
 
-	private static final String[] INDEX_FIELDS = new String[] { ID_TAG, NAME_TAG, PEER_ID_TAG, CONTEXT_NAME };
+	private static final String[] INDEX_FIELDS = new String[] { ID_TAG, NAME_TAG, CONTEXT_NAME }; //PEER_ID_TAG, 
 
 	private ID id;
-	private String name;
+	private String name = "";
 	private PipeID pipeID;
 	private PeerID peerID;
-	private String peerName;
-	private String contextName;
+	private String peerName = "";
+	private String contextName = "";
 	
 	public SmartDeviceAdvertisement(Element<?> root) {
 		LOG.debug("SmartDeviceAdvertisement(Element<?> root)");
@@ -106,8 +106,8 @@ public class SmartDeviceAdvertisement extends Advertisement implements
 	void appendTo( Element<?> doc ) {
 		appendElement(doc, ID_TAG, this.id.toString());
 		appendElement(doc, NAME_TAG, this.name);
-		appendElement(doc, PEER_ID_TAG, this.peerID.toString());
-		appendElement(doc, PIPE_ID_TAG, pipeID.toString());
+		//appendElement(doc, PEER_ID_TAG, this.peerID.toString());
+		//appendElement(doc, PIPE_ID_TAG, pipeID.toString());
 		appendElement(doc, CONTEXT_NAME, this.contextName);
 	}
 	
