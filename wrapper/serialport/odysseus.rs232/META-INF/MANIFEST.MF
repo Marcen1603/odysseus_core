@@ -18,9 +18,9 @@ Bundle-NativeCode: lib/linux/x64/librxtxSerial.so ;
   lib/linux/x86/librxtxSerial.so ; lib/linux/x86/librxtxParallel.so ;
   osname=linux;  processor=x86,
   lib/win/x86/rxtxSerial.dll ; lib/win/x86/rxtxParallel.dll ;
-  osname=win32; processor=x86;osname=Windows8;osname=Windows 8;osname=Win8,
+  osname=win32; processor=x86;osname=Windows8;osname=Windows 8;osname=Windows 8.1;osname=Win8,
   lib/win/x64/rxtxSerial.dll ; lib/win/x64/rxtxParallel.dll ;
-  osname=win32; processor=x86_64;osname=Windows8;osname=Windows 8;osname=Win8,
+  osname=win32; processor=x86_64;osname=Windows8;osname=Windows 8;osname=Windows 8.1;osname=Win8,
   lib/macos/x64/librxtxSerial.jnilib;
   osname=macosx; processor=x86,
   *
