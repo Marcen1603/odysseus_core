@@ -19,6 +19,10 @@ public abstract class AbstractQueryAdmissionEvent implements IAdmissionEvent {
 		return query.getID();
 	}
 	
+	public int getPriority() {
+		return query.getPriority();
+	}
+	
 	public IPhysicalQuery getQuery() {
 		return query;
 	}
