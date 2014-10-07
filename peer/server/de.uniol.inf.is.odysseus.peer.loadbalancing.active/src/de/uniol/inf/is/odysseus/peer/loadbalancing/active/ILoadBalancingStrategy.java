@@ -2,7 +2,6 @@ package de.uniol.inf.is.odysseus.peer.loadbalancing.active;
 
 import de.uniol.inf.is.odysseus.peer.distribute.ILogicalQueryPart;
 import de.uniol.inf.is.odysseus.peer.distribute.util.INamedInterface;
-import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.ILoadBalancingCommunicator;
 
 /**
  * The {@link ILoadBalancingStrategy} interface provides methods to start monitoring the current load and enabling the load balancing 

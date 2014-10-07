@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.messages;
+package de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.paralleltrack.messages;
 
 import java.nio.ByteBuffer;
 
@@ -11,10 +11,15 @@ import de.uniol.inf.is.odysseus.p2p_new.IMessage;
  */
 public class LoadBalancingCopyStatefulOperatorMessage implements IMessage {
 	
-	public static final int INITALIZE_STATE_COPY = 0;
-	public static final int ACK_INITIALIZE_STATE_COPY = 1;
-	public static final int STATE_COPY_FINISHED = 2;
-	public static final int ACK_STATE_COPY_FINISHED = 3;
+	public static final int INSTALL_BUFFER = 0;
+	public static final int INSTALL_BUFFERS_FINISHED = 1;
+	
+	public static final int INITALIZE_STATE_COPY = 2;
+	public static final int ACK_INITIALIZE_STATE_COPY = 3;
+	
+	public static final int STATE_COPY_FINISHED = 4;
+	public static final int ACK_STATE_COPY_FINISHED = 5;
+	
 	
 	private int loadBalancingProcessId;
 	private int msgType;
@@ -22,6 +27,7 @@ public class LoadBalancingCopyStatefulOperatorMessage implements IMessage {
 	private int port;
 	private String ipAddress;
 	private String operatorName;
+	private String pipeID;
 	
 	
 	public static LoadBalancingCopyStatefulOperatorMessage createInitializeStateCopyMessage(int lbProcessId, String ipAddress, int port, String operatorName) {
@@ -55,6 +61,14 @@ public class LoadBalancingCopyStatefulOperatorMessage implements IMessage {
 		return message;
 	}
 	
+	public static LoadBalancingCopyStatefulOperatorMessage createInstallBuffersMessage(int lbProcessId, String pipeID) {
+		LoadBalancingCopyStatefulOperatorMessage message = new LoadBalancingCopyStatefulOperatorMessage();
+		message.loadBalancingProcessId = lbProcessId;
+		message.msgType = INSTALL_BUFFER;
+		message.pipeID = pipeID;
+		return message;
+	}
+	
 	public LoadBalancingCopyStatefulOperatorMessage() {
 		
 	}
@@ -68,6 +82,24 @@ public class LoadBalancingCopyStatefulOperatorMessage implements IMessage {
 		
 		switch(msgType) {
 			
+			case INSTALL_BUFFER:
+			case INSTALL_BUFFERS_FINISHED:
+				byte[] pipeIDBytes = pipeID.getBytes();
+				/***
+				 * 4 Bytes msgType
+				 * 4 Bytes lbProcessId
+				 * 4 Bytes pipeID Length
+				 * {pipeID}
+				 */
+				
+				bbsize = 4+4+4+pipeIDBytes.length;
+				bb = ByteBuffer.allocate(bbsize);
+				bb.putInt(msgType);
+				bb.putInt(loadBalancingProcessId);
+				bb.putInt(pipeIDBytes.length);
+				bb.put(pipeIDBytes);
+				break;
+		
 			case ACK_INITIALIZE_STATE_COPY:
 				byte[] ipAddressBytes = ipAddress.getBytes();
 				byte[] operatorNameBytes = operatorName.getBytes();
@@ -113,6 +145,15 @@ public class LoadBalancingCopyStatefulOperatorMessage implements IMessage {
 		msgType = bb.getInt();
 		loadBalancingProcessId = bb.getInt();
 		switch(msgType) {
+		
+		case INSTALL_BUFFER:
+		case INSTALL_BUFFERS_FINISHED:
+			int pipeIDLength = bb.getInt();
+			byte[] pipeIDBytes = new byte[pipeIDLength];
+			bb.get(pipeIDBytes);
+			this.pipeID = new String(pipeIDBytes);
+			break;
+		
 		case ACK_INITIALIZE_STATE_COPY:
 			int ipAddressLength = bb.getInt();
 			byte[] ipAddressBytes = new byte[ipAddressLength];

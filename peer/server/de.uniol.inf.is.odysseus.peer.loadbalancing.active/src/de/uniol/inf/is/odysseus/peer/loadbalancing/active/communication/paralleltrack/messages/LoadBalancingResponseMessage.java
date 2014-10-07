@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.messages;
+package de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.paralleltrack.messages;
 
 import java.nio.ByteBuffer;
 

@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication;
+package de.uniol.inf.is.odysseus.peer.loadbalancing.active;
 
 import net.jxta.peer.PeerID;
 

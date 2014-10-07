@@ -1,11 +1,11 @@
-package de.uniol.inf.is.odysseus.peer.loadbalancing.active.status;
+package de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.paralleltrack.status;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 
 import net.jxta.peer.PeerID;
 import de.uniol.inf.is.odysseus.peer.distribute.ILogicalQueryPart;
-import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.LoadBalancingMessageDispatcher;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.paralleltrack.communicator.LoadBalancingMessageDispatcher;
 
 /**
  * Preserves a loadBalancing Status in the initiating Peer to control LoadBalancing.

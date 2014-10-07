@@ -1,9 +1,9 @@
-package de.uniol.inf.is.odysseus.peer.loadbalancing.active.status;
+package de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.paralleltrack.status;
 
 import java.util.Collection;
 import java.util.concurrent.ConcurrentHashMap;
 
-import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.LoadBalancingMessageDispatcher;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.paralleltrack.communicator.LoadBalancingMessageDispatcher;
 import net.jxta.peer.PeerID;
 
 public class LoadBalancingSlaveStatus {

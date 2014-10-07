@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.peer.loadbalancing.active.status;
+package de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.paralleltrack.status;
 
 import java.util.concurrent.ConcurrentHashMap;
 
