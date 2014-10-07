@@ -21,6 +21,6 @@ Import-Package: de.uniol.inf.is.odysseus.core.server.logicaloperator,
  de.uniol.inf.is.odysseus.core.server.usermanagement,
  de.uniol.inf.is.odysseus.p2p_new,
  de.uniol.inf.is.odysseus.p2p_new.dictionary,
- de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication,
+ de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.paralleltrack.communicator,
  de.uniol.inf.is.odysseus.peer.resource,
  org.eclipse.osgi.framework.console;version="1.1.0"
