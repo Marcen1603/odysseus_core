@@ -38,6 +38,7 @@ public class SystemLoadPrinter extends Thread {
 			System.err.print((int)systemLoadStatus.getCpuLoadPercentage() + ",");
 			System.err.print(executorStatus.getRunningQueryCount() + ",");
 			System.err.print(executorStatus.getPartialQueryCount() + ",");
+			System.err.print(executorStatus.getSuspendedQueryCount() + ",");
 			System.err.print(executorStatus.getStoppedQueryCount() + ",");
 			System.err.println(LatencyValuesContainer.popAverage());
 
