@@ -2,7 +2,6 @@ package de.uniol.inf.is.odysseus.peer.smarthome.server;
 
 import net.jxta.document.Advertisement;
 import net.jxta.document.AdvertisementFactory;
-import net.jxta.id.IDFactory;
 import net.jxta.peer.PeerID;
 
 import org.osgi.framework.Bundle;
@@ -110,7 +109,7 @@ public class SmartHomeServerPlugIn implements BundleActivator {
 		p2pNetworkManager.addAdvertisementListener(smartDeviceAdvertisementListener);
 		
 		
-		
+		/*
 		////
 		SmartDeviceAdvertisement adv = new SmartDeviceAdvertisement();
 		adv.setContextName("TestContextName");
@@ -119,6 +118,7 @@ public class SmartHomeServerPlugIn implements BundleActivator {
 		adv.setPeerID(p2pNetworkManager.getLocalPeerID());
 		
 		smartDeviceAdvCollector.add(adv);
+		*/
 	}
 
 	// called by OSGi-DS

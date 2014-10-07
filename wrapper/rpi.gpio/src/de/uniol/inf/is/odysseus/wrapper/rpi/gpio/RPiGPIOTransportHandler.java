@@ -64,14 +64,23 @@ public class RPiGPIOTransportHandler extends AbstractSimplePullTransportHandler<
 	
 	@Override
 	public boolean hasNext() {
-		if(!errorPi4J){
+		return true;
+		/*
+		if(!errorPi4J && !initFailed){
 			return true;
 		}else{
 			return false;
 		}
+		*/
 	}
 	
 	private boolean errorPi4J = false;
+
+	private long initStartTime = 0;
+
+	private boolean initFailed = false;
+
+	private boolean firstInitRun = true;
 	
 	@Override
 	public Tuple<?> getNext() {
@@ -104,7 +113,7 @@ public class RPiGPIOTransportHandler extends AbstractSimplePullTransportHandler<
 	        	value=true;
 			}
 		}else{
-			//initGPIO();
+			initGPIO();
 		}
         
         if(!value && !errorPi4J){
@@ -112,23 +121,49 @@ public class RPiGPIOTransportHandler extends AbstractSimplePullTransportHandler<
         		LOG.error("RPi GPIO TransportHandler runs on Raspberry Pi only. Are you installed pi4j?");
         		errorPi4J = true;
         	}
-        	return null;
+        	//return null;
         }
         
+        tuple.setAttribute(0, "error");
+    	tuple.setAttribute(1, "On Raspberry Pi? pi4j installed?");
+		
 		return tuple;
 	}
 	
 	private void initGPIO() {
-		if(this.gpioController==null){
+		if(initFailed){
+			return;
+		}
+		
+		long lastInitTime = 0;
+		
+		if(firstInitRun){
+			initStartTime = System.currentTimeMillis();
+			firstInitRun = false;
+		}else{
+			lastInitTime = System.currentTimeMillis() - initStartTime;
+		}
+		
+		//System.out.println("firstInitRun:" +firstInitRun+ " lastInitTime:"+lastInitTime+" initFailed:"+initFailed);
+		
+		if(!firstInitRun && lastInitTime>=1000 && this.gpioController==null && !initFailed){
+			System.out.println("init called and run. lastInitTime:"+lastInitTime+" ");
+			
 			try{
 				this.gpioController = GpioFactory.getInstance();
+				initFailed =false;
 			}catch(NullPointerException ex){
 				ex.printStackTrace();
+				initFailed=true;
 			}catch(Exception ex){
 				ex.printStackTrace();
+				initFailed=true;
 			}catch (UnsatisfiedLinkError ex) {
 				ex.printStackTrace();
+				initFailed=true;
 			}
+		}else{
+			//System.out.println("init called and NOT run. lastInitTime:"+lastInitTime+" ");
 		}
 	}
 	
@@ -136,5 +171,4 @@ public class RPiGPIOTransportHandler extends AbstractSimplePullTransportHandler<
 	public boolean isSemanticallyEqualImpl(ITransportHandler other) {
 		return false;
 	}
-
 }
