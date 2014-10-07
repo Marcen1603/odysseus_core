@@ -3,6 +3,7 @@ package de.uniol.inf.is.odysseus.peer.recovery.console;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import net.jxta.id.ID;
@@ -17,11 +18,14 @@ import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableCollection;
+import com.google.common.collect.Lists;
 
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.p2p_new.IP2PNetworkManager;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.IP2PDictionary;
+import de.uniol.inf.is.odysseus.peer.distribute.QueryPartAllocationException;
+import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryAllocator;
 import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryCommunicator;
 import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryP2PListener;
 import de.uniol.inf.is.odysseus.peer.recovery.internal.JxtaInformation;
@@ -31,7 +35,7 @@ import de.uniol.inf.is.odysseus.peer.recovery.util.RecoveryHelper;
 
 /**
  * 
- * @author Tobias Brandt
+ * @author Tobias Brandt, Simon Kuespert
  *
  */
 public class RecoveryConsole implements CommandProvider {
@@ -41,6 +45,7 @@ public class RecoveryConsole implements CommandProvider {
 
 	private static IP2PNetworkManager p2pNetworkManager;
 	private static IP2PDictionary p2pDictionary;
+	private static Collection<IRecoveryAllocator> recoveryAllocators = Lists.newArrayList();
 	/**
 	 * Executor to get queries
 	 */
@@ -151,6 +156,24 @@ public class RecoveryConsole implements CommandProvider {
 		}
 
 	}
+	
+	// called by OSGi-DS
+	public static void bindRecoveryAllocator(IRecoveryAllocator allocator) {
+		
+		RecoveryConsole.recoveryAllocators.add(allocator);
+		
+	}
+
+	// called by OSGi-DS
+	public static void unbindRecoveryAllocator(IRecoveryAllocator allocator) {
+		
+		if(allocator != null) {
+		
+			RecoveryConsole.recoveryAllocators.remove(allocator);
+			
+		}
+		
+	}
 
 	// called by OSGi-DS
 	public void activate() {
@@ -170,11 +193,13 @@ public class RecoveryConsole implements CommandProvider {
 		sb.append("---Recovery commands---\n");
 		sb.append("	lsBackupStore - Lists the stored sharedQueryIds with a list of peers which have parts of this sharedQuery. sharedQueryId: peer1, peer2, peer3\n");
 		sb.append("	lsJxtaBackup - Lists the stored Jxta-backup-info.\n");
+		sb.append("	lsRecoveryAllocators - Lists the available recovery allocators.\n");	
 		sb.append("	showPeerPQL <PeerName> - Shows the PQL that this peer knows from <PeerName>.\n");
 		sb.append("	sendHoldOn <PeerName from receiver> <sharedQueryId> - Send a hold-on message to <PeerName from receiver>, so that this should stop sending the tuples from query <sharedQueryId> further.\n");
 		sb.append("	sendNewReceiver <PeerName from receiver> <PeerName from new receiver> <sharedQueryId> - Send a newReceiver-message to <PeerName from receiver>, so that this should send the tuples from query <sharedQueryId> to the new receiver <PeerName from new receiver>.\n");
 		sb.append("	sendAddQueriesFromPeer <PeerName from receiver> <PeerName from failed peer> <sharedQueryId> - The <PeerName from receiver> will get a message which tells that the peer has to install the query <sharedQueryId> from <PeerName from failed peer>. \n");
-		sb.append("	startPeerFailureDetection - Starts detection of peer failures. \n");
+		sb.append("	recoveryAllocation <AllocatorName> - Gets the id and name of a peer to allocate to (for testing) \n");
+		sb.append("	startPeerFailureDetection <AllocatorName> - Starts detection of peer failures with the given allocator. \n");
 		sb.append("	stopPeerFailureDetection - Stops detection of peer failures. \n");
 		return sb.toString();
 	}
@@ -289,10 +314,34 @@ public class RecoveryConsole implements CommandProvider {
 
 	public void _startPeerFailureDetection(CommandInterpreter ci) {
 		Preconditions.checkNotNull(ci, "Command interpreter must be not null!");
+		
+		String allocatorName = ci.nextArgument();
+		if(Strings.isNullOrEmpty(allocatorName)) {
+			
+			System.out.println("usage: startPeerFailureDetection <AllocatorName>");
+			return;
+			
+		}
+		
+		Optional<IRecoveryAllocator> optAllocator = RecoveryConsole.determineAllocator(allocatorName);
+		if(!optAllocator.isPresent()) {
+			
+			System.out.println("No recovery allocator found with the name " + allocatorName);
+			return;
+			
+		}
+		IRecoveryAllocator allocator = optAllocator.get();
+		
+		if(cCommunicator.isPresent()){
+			cCommunicator.get().setRecoveryAllocator(allocator);
+		} else {
+			System.out.println("No Communicator found.");
+			return;
+		}
 
 		peerFailureDetector.startPeerFailureDetection();
 
-		System.out.println("Peer failure detection is now switched on on this peer.");
+		System.out.println("Peer failure detection is now switched on on this peer with usage of " + allocator.getName() + " allocator.");
 	}
 
 	public void _stopPeerFailureDetection(CommandInterpreter ci) {
@@ -358,6 +407,55 @@ public class RecoveryConsole implements CommandProvider {
 		}
 
 	}
+	
+	/**
+	 * Lists all available {@link IRecoveryAllocator}s bound via OSGI-DS.
+	 * @param ci The {@link CommandInterpreter} instance.
+	 */
+	public void _lsRecoveryAllocators(CommandInterpreter ci) {
+
+		System.out.println("Available recovery allocators:");
+		for(IRecoveryAllocator allocator : RecoveryConsole.recoveryAllocators) {
+			
+			System.out.println(allocator.getName());
+			
+		}
+		
+	}
+	
+	/**
+	 * Console command to test allocation.
+	 * @param ci The {@link CommandInterpreter} instance.
+	 */
+	public void _recoveryAllocation(CommandInterpreter ci) {
+
+		String allocatorName = ci.nextArgument();
+		if(Strings.isNullOrEmpty(allocatorName)) {
+			
+			System.out.println("usage: recoveryAllocation <AllocatorName>");
+			return;
+			
+		}
+		
+		Optional<IRecoveryAllocator> optAllocator = RecoveryConsole.determineAllocator(allocatorName);
+		if(!optAllocator.isPresent()) {
+			
+			System.out.println("No recovery allocator found with the name " + allocatorName);
+			return;
+			
+		}
+		IRecoveryAllocator allocator = optAllocator.get();
+		
+		PeerID peer = null;
+		try {
+			peer = allocator.allocate(p2pDictionary.getRemotePeerIDs(), p2pNetworkManager.getLocalPeerID());
+			System.out.println("Allocator has chosen " + p2pDictionary.getRemotePeerName(peer) + " as target");
+		} catch (QueryPartAllocationException e) {
+			e.printStackTrace();
+		}
+		
+		
+	}
 
 	/**
 	 * If your next argument should be the PeerID, you can get it with this
@@ -398,6 +496,30 @@ public class RecoveryConsole implements CommandProvider {
 			}
 		}
 		return sharedQueryId;
+	}
+	
+	/**
+	 * Determines the {@link IRecoveryAllocator} by name.
+	 * @param allocatorName The name of the allocator.
+	 * @return An {@link IRecoveryAllocator}, if there is one bound with <code>allocatorName</code> as name.
+	 */
+	private static Optional<IRecoveryAllocator> determineAllocator(
+			String allocatorName) {
+		
+		Preconditions.checkNotNull(allocatorName, "The name of the recovery allocator must be not null!");
+		
+		for(IRecoveryAllocator allocator : RecoveryConsole.recoveryAllocators) {
+			
+			if(allocator.getName().equals(allocatorName)) {
+				
+				return Optional.of(allocator);
+				
+			}
+			
+		}
+		
+		return Optional.absent();		
+		
 	}
 
 }

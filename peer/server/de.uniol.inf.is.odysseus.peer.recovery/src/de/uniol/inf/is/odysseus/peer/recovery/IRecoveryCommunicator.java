@@ -47,5 +47,9 @@ public interface IRecoveryCommunicator {
 			PeerID newReceiverPeer, ID sharedQueryID);
 
 	public void sendRecoveryAgreementMessage(PeerID failedPeer, ID sharedQueryId);
+	
+	public IRecoveryAllocator getRecoveryAllocator();
+
+	public void setRecoveryAllocator(IRecoveryAllocator recoveryAllocator);
 
 }

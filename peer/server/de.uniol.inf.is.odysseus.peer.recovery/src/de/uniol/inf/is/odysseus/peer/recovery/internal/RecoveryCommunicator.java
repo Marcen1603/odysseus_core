@@ -29,6 +29,8 @@ import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicatorListener;
 import de.uniol.inf.is.odysseus.p2p_new.PeerCommunicationException;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.IP2PDictionary;
 import de.uniol.inf.is.odysseus.p2p_new.physicaloperator.JxtaSenderPO;
+import de.uniol.inf.is.odysseus.peer.distribute.QueryPartAllocationException;
+import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryAllocator;
 import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryCommunicator;
 import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryP2PListener;
 import de.uniol.inf.is.odysseus.peer.recovery.messages.BackupInformationMessage;
@@ -84,6 +86,8 @@ public class RecoveryCommunicator implements IRecoveryCommunicator,
 	private static IP2PDictionary p2pDictionary;
 	private static IPeerCommunicator peerCommunicator;
 	private static IRecoveryP2PListener recoveryP2PListener;
+	
+	private IRecoveryAllocator recoveryAllocator; 
 	/**
 	 * Executor to get queries
 	 */
@@ -315,26 +319,37 @@ public class RecoveryCommunicator implements IRecoveryCommunicator,
 
 		// 3. Search for another peer who can take the parts from the failed
 		// peer
-
-		// TODO For now, take a random peer. Here we have to create an interface
-		// for allocation strategies
-
-		int numOfPeers = p2pDictionary.getRemotePeerIDs().size();
-		int peerWeTake = (int) (Math.random() * numOfPeers);
-
-		Iterator<PeerID> peers = p2pDictionary.getRemotePeerIDs().iterator();
+		
+		// TODO find a good place for reallocate if the peer doesn't accept the
+		// query or is unable to install it
+		
 		PeerID peer = null;
 
-		int counter = 0;
-		while (peers.hasNext()) {
-
-			if (counter == peerWeTake) {
-				peer = peers.next();
-				break;
-			}
-			counter++;
-			peers.next();
+		try {
+			peer = recoveryAllocator.allocate(p2pDictionary.getRemotePeerIDs(), p2pNetworkManager.getLocalPeerID());
+			LOG.debug("Peer ID for recovery allocation found.");
+		} catch (QueryPartAllocationException e) {
+			LOG.error("Peer ID search for recovery allocation failed.");
+			e.printStackTrace();
 		}
+
+		// TODO delete code if allocate interface is proved to be working
+//		int numOfPeers = p2pDictionary.getRemotePeerIDs().size();
+//		int peerWeTake = (int) (Math.random() * numOfPeers);
+//
+//		Iterator<PeerID> peers = p2pDictionary.getRemotePeerIDs().iterator();
+//		PeerID peer = null;
+//
+//		int counter = 0;
+//		while (peers.hasNext()) {
+//
+//			if (counter == peerWeTake) {
+//				peer = peers.next();
+//				break;
+//			}
+//			counter++;
+//			peers.next();
+//		}
 
 		// If the peer is null, we don't know any other peer so we have to
 		// install it on ourself
@@ -515,6 +530,16 @@ public class RecoveryCommunicator implements IRecoveryCommunicator,
 			}
 		}
 
+	}
+
+	@Override
+	public IRecoveryAllocator getRecoveryAllocator() {
+		return recoveryAllocator;
+	}
+
+	@Override
+	public void setRecoveryAllocator(IRecoveryAllocator recoveryAllocator) {
+		this.recoveryAllocator = recoveryAllocator;
 	}
 
 }
