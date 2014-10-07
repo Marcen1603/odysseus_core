@@ -18,6 +18,7 @@ package de.uniol.inf.is.odysseus.mep.functions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.core.mep.IExpression;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.mep.AbstractFunction;
 
@@ -36,19 +37,24 @@ public class IfFunction extends AbstractFunction<Object> {
 
 	@Override
 	public Object getValue() {
-		return ((boolean) getInputValue(0)) ? getInputValue(1) : getInputValue(2);
+		return ((boolean) getInputValue(0)) ? getInputValue(1)
+				: getInputValue(2);
 	}
 
+	@Override
+	public boolean determineTypeFromInput() {
+		return true;
+	}
 
 	@Override
-	protected SDFDatatype determineReturnType() {
+	public SDFDatatype determineType(IExpression<?>[] args) {
 		// if then and else arguments have the same type, we are sure to return
 		// a value of that type
-		if (getArguments() != null && getArguments().length == 2) {
-			SDFDatatype type1 = getArguments()[1].getReturnType();
-			SDFDatatype type2 = getArguments()[2].getReturnType();
+		if (args != null && args.length == 2) {
+			SDFDatatype type1 = args[1].getReturnType();
+			SDFDatatype type2 = args[2].getReturnType();
 			if (type1 == type2) {
-				return getArguments()[1].getReturnType();
+				return args[1].getReturnType();
 			}
 
 			if (type1.compatibleTo(type2)) {
@@ -59,7 +65,7 @@ public class IfFunction extends AbstractFunction<Object> {
 				LOG.warn("Incompatible return types in if-Function");
 				return SDFDatatype.OBJECT;
 			}
-		}else{
+		} else {
 			return SDFDatatype.OBJECT;
 		}
 	}
