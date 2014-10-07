@@ -160,6 +160,7 @@ public class PhysicalQuery implements IPhysicalQuery {
 	// */
 	// private boolean opened = false;
 	private QueryState queryState = QueryState.INACTIVE;
+	private long queryStateChangeTS = System.currentTimeMillis(); // INACTIVE is also a state change...
 
 	/**
 	 * Who has send the query
@@ -518,7 +519,7 @@ public class PhysicalQuery implements IPhysicalQuery {
 					// "Open cannot be called on a source");
 				}
 			}
-			queryState = nextState;
+			setState(nextState);
 			this.isStarting = false;
 		} catch (IllegalStateException e) {
 			e.printStackTrace();
@@ -539,7 +540,7 @@ public class PhysicalQuery implements IPhysicalQuery {
 				}
 
 			}
-			queryState = nextState;
+			setState(nextState);
 		} catch (IllegalStateException e) {
 			e.printStackTrace();
 		}
@@ -558,7 +559,7 @@ public class PhysicalQuery implements IPhysicalQuery {
 					((ISink<?>) curRoot).resume(this);
 				}
 			}
-			queryState = nextState;
+			setState(nextState);
 		} catch (IllegalStateException e) {
 			e.printStackTrace();
 		}
@@ -576,7 +577,7 @@ public class PhysicalQuery implements IPhysicalQuery {
 			for (IPhysicalOperator leaf : getDeepestNonSharedOperators()) {
 				((ISink<?>) leaf).partial(this, sheddingFactor);
 			}
-			queryState = nextState;
+			setState(nextState);
 		} catch (IllegalStateException e) {
 			e.printStackTrace();
 		}
@@ -601,7 +602,7 @@ public class PhysicalQuery implements IPhysicalQuery {
 					// "Close cannot be called on a a source");
 				}
 			}
-			queryState = nextState;
+			setState(nextState);
 		} catch (IllegalStateException e) {
 			e.printStackTrace();
 		}
@@ -631,6 +632,17 @@ public class PhysicalQuery implements IPhysicalQuery {
 	@Override
 	public QueryState getState() {
 		return queryState;
+	}
+	
+	protected final void setState( QueryState state ) {
+		queryState = state;
+		
+		queryStateChangeTS = System.currentTimeMillis();
+	}
+	
+	@Override
+	public final long getLastQueryStateChangeTS() {
+		return queryStateChangeTS;
 	}
 
 	/*

@@ -193,10 +193,12 @@ IReoptimizeRequester<AbstractQueryReoptimizeRule>, IOperatorOwner, IHasRoots, IQ
 	void resume();
 
 	QueryState getState();
+	long getLastQueryStateChangeTS();
 
 	/**
 	 * Set query load shedding. Value must be between 0 and 100
 	 * @param sheddingFactor
 	 */
 	void partial(int sheddingFactor);
+
 }
