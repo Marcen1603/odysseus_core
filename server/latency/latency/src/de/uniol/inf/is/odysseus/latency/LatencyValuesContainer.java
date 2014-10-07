@@ -9,6 +9,7 @@ public class LatencyValuesContainer {
 
 	private static Map<CalcLatencyPO<?>, Long> sumMap = new HashMap<CalcLatencyPO<?>, Long>();
 	private static Map<CalcLatencyPO<?>, Long> countMap = new HashMap<CalcLatencyPO<?>, Long>();
+	private static long countSum;
 	
 	public synchronized static void add( long value, CalcLatencyPO<?> op ) {
 		if( !sumMap.containsKey(op)) {
@@ -18,6 +19,13 @@ public class LatencyValuesContainer {
 			sumMap.put(op, sumMap.get(op) + value);
 			countMap.put(op, countMap.get(op) + 1);
 		}
+		countSum++;
+	}
+	
+	public synchronized static long popCount() {
+		long ret = countSum;
+		countSum = 0;
+		return ret;
 	}
 	
 	public synchronized static long popAverage() {
