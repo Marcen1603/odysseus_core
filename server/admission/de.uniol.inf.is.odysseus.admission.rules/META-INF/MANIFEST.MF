@@ -10,4 +10,5 @@ Require-Bundle: de.uniol.inf.is.odysseus.admission;bundle-version="1.0.0",
  de.uniol.inf.is.odysseus.admission.action;bundle-version="1.0.0",
  com.google.guava;bundle-version="14.0.0",
  de.uniol.inf.is.odysseus.admission.status;bundle-version="1.0.0"
-Service-Component: OSGI-INF/defaultAdmissionRuleProvider.xml
+Service-Component: OSGI-INF/defaultAdmissionRuleProvider.xml,
+ OSGI-INF/btwAdmissionRuleProvider.xml

@@ -13,8 +13,8 @@ public class DefaultAdmissionRuleProvider implements IAdmissionRuleProvider {
 	public Collection<IAdmissionRule<?>> getRules() {
 		Collection<IAdmissionRule<?>> rules = Lists.newArrayList();
 		
-		rules.add(new CPU60TimingPartialQueryAdmissionRule());
-		rules.add(new CPU60PartialQueryAdmissionRule());
+//		rules.add(new CPU60TimingPartialQueryAdmissionRule());
+//		rules.add(new CPU60PartialQueryAdmissionRule());
 		
 //		rules.add(new CPUMax70QueryAdmissionRule());
 //		rules.add(new CPUMax70TimingAdmissionRule());
