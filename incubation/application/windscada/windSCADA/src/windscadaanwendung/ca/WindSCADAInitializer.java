@@ -63,6 +63,8 @@ public class WindSCADAInitializer {
 			"corrected_score_wind_speed.qry", "wind_direction.qry",
 			"gier_angle.qry" };
 	private static final String[] AEQueriesFileNames = { "collectAlarms.qry" };
+	private static final String PERSPECTIVE_ID_WITH_ML = "windscadaanwendung.perspective";
+	private static final String PERSPECTIVE_ID_WITHOUT_ML = "windscadaanwendung.perspectiveWithoutML";
 
 	/**
 	 * Creates new Job that executes initialization of WindSCADA
@@ -85,7 +87,12 @@ public class WindSCADAInitializer {
 					progress.worked(1);
 					initScripts(initML, progress.newChild(7));
 					progress.subTask("Opening perspective");
-					openPerspetive("windscadaanwendung.perspective");
+					if (initML) {
+						openPerspetive(PERSPECTIVE_ID_WITH_ML);
+					} else {
+						openPerspetive(PERSPECTIVE_ID_WITHOUT_ML);
+					}
+					
 					progress.worked(1);
 				} finally {
 					monitor.done();
@@ -115,8 +122,13 @@ public class WindSCADAInitializer {
 				IPerspectiveDescriptor pers = PlatformUI
 						.getWorkbench()
 						.getPerspectiveRegistry()
-						.findPerspectiveWithId("windscadaanwendung.perspective");
+						.findPerspectiveWithId(PERSPECTIVE_ID_WITH_ML);
+				IPerspectiveDescriptor pers2 = PlatformUI
+						.getWorkbench()
+						.getPerspectiveRegistry()
+						.findPerspectiveWithId(PERSPECTIVE_ID_WITHOUT_ML);
 				page.closePerspective(pers, false, true);
+				page.closePerspective(pers2, false, true);
 			}
 		});
 	}

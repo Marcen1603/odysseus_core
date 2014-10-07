@@ -9,6 +9,11 @@
             class="windscadaanwendung.Perspective"
             id="windscadaanwendung.perspective">
       </perspective>
+      <perspective
+            class="windscadaanwendung.PerspectiveWithoutMachineLearning"
+            id="windscadaanwendung.perspectiveWithoutML"
+            name="windSCADAwithoutML">
+      </perspective>
    </extension>
    <extension
          id="windSCADA"
