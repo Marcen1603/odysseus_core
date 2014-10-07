@@ -5,7 +5,6 @@ import static org.bytedeco.javacpp.opencv_core.*;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 
-import org.bytedeco.javacpp.BytePointer;
 import org.bytedeco.javacpp.opencv_core.IplImage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -117,8 +116,7 @@ public class BaslerCameraTransportHandler extends AbstractSimplePullTransportHan
 		{
             for(int x=0; x<width; x++)
             {
-            	int data = buffer.getitem(src++) | 0xFF000000;  
-            	buf.putInt(dst, Integer.reverseBytes(data));            	
+            	buf.putInt(dst, buffer.getitem(src++));            	
             	dst += channels;
             }
             

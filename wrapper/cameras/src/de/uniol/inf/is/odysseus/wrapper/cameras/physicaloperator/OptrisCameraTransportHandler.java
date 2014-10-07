@@ -90,6 +90,7 @@ public class OptrisCameraTransportHandler extends AbstractSimplePullTransportHan
 	{
 		ImageJCV image = BaslerCameraTransportHandler.createFromBuffer(imageData, getImageWidth(), getImageHeight());
 			
+		@SuppressWarnings("rawtypes")
 		Tuple<?> tuple = new Tuple(1, false);
         tuple.setAttribute(0, image);
         return tuple;					
