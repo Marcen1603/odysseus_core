@@ -110,9 +110,6 @@ public class SmartHomeServerPlugIn implements BundleActivator {
 		
 		smartDeviceAdvertisementListener = new SmartDeviceAdvertisementListener();
 		p2pNetworkManager.addAdvertisementListener(smartDeviceAdvertisementListener);
-		
-		
-		publishTESTAdvertisementAsync();
 	}
 
 	// called by OSGi-DS
@@ -164,10 +161,7 @@ public class SmartHomeServerPlugIn implements BundleActivator {
 	}
 
 	private static void publishTESTAdvertisementAsync() {
-		//&& getP2PNetworkManager().isStarted()
-		//mit sleep warten
 		Thread thread = new Thread( new Runnable() {
-
 			@Override
 			public void run() {
 				waitForP2PNetworkManager();				
@@ -212,7 +206,7 @@ public class SmartHomeServerPlugIn implements BundleActivator {
 				}
 			}
 			
-		});	
+		});
 		thread.setName("SmartHome TESTAdv Thread");
 		thread.setDaemon(true);
 		thread.start();
