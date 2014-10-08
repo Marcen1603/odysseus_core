@@ -2,10 +2,10 @@ package de.uniol.inf.is.odysseus.imagejcv.functions;
 
 import org.bytedeco.javacpp.opencv_core.IplImage;
 
-import java.nio.ByteBuffer;
 import java.util.Objects;
 
 import static org.bytedeco.javacpp.opencv_imgproc.*;
+import static org.bytedeco.javacpp.opencv_core.*;
 
 import de.uniol.inf.is.odysseus.imagejcv.common.datatype.ImageJCV;
 import de.uniol.inf.is.odysseus.mep.AbstractFunction;
@@ -35,35 +35,63 @@ public class ThresholdFunction extends AbstractFunction<ImageJCV> {
 		
 		Objects.requireNonNull(image);
 		
-		IplImage iplImage = image.getImage();
+		IplImage iplImage = cvCreateImage(cvGetSize( image.getImage()), IPL_DEPTH_8U, 1);
+		IplImage iplResult = cvCreateImage(cvGetSize(image.getImage()), IPL_DEPTH_8U, 1);
 		
-		cvCvtColor(iplImage, iplImage, CV_BGR2GRAY);
+		iplImage = image.getImage();
+		
+		if (iplImage.nChannels() > 1) {
+			cvCvtColor(iplImage, iplResult, CV_BGR2GRAY);
+		} else {
+			iplResult = iplImage.clone();
+		}
 		
 		if (threshold < 1) {
-			threshold = this.getThreshold(iplImage, dark);
+			threshold = this.getThreshold(iplResult, dark);
 		}
+		
+		System.out.println("Threshold: " + threshold);
 		
 		if (dark == true) {
-			cvThreshold(iplImage, iplImage, threshold, 255, THRESH_BINARY_INV);
+			cvThreshold(iplResult, iplResult, threshold, 255, THRESH_BINARY);
 		} else {
-			cvThreshold(iplImage, iplImage, threshold, 255, THRESH_BINARY);
+			cvThreshold(iplResult, iplResult, threshold, 255, THRESH_BINARY_INV);
 		}
 		
-		image.setImage(iplImage);
+		image.setImage(iplResult);
 		
 		return image;
 	}
 	
 	protected double getThreshold(IplImage image, boolean dark) {
 		int[] values = new int[256];
-		int value = 0;
-		ByteBuffer buffer = image.getByteBuffer();
+		int[] temp_values = new int[256];
+		double value;
+		CvMat matImage = new CvMat();
+		cvGetMat(image, matImage);
 		for (int i=0; i < image.width(); i++) {
+			boolean in = false;
 			for (int j=0; j < image.height(); j++) {
-				int index = j * image.widthStep() + i * image.nChannels();
-				value = buffer.getInt(index);
-				values[value] ++;
+				value = matImage.get(i, j);
+				temp_values[(int) value] ++;
+				if ((int) value == 125 && in == false) {
+					in = true;
+				} else if ((int) value == 125 && in == true) {
+					in = false;
+				}
+				
+				if (in == true) {
+					values[(int) value] ++;
+				}
 			}
+		}
+		
+		for (int x=0; x < values.length; x++) {
+			System.out.println("Index: " + x + " Value:" + values[x]);
+		}
+		
+		if (temp_values[125] == 0) {
+			values = temp_values;
 		}
 		
 		int maxLeft = 0;

@@ -1,16 +1,18 @@
 package de.uniol.inf.is.odysseus.imagejcv.functions;
 
-import java.nio.ByteBuffer;
 import java.util.Objects;
 
 import org.bytedeco.javacpp.opencv_core.IplImage;
+
+
+import static org.bytedeco.javacpp.opencv_core.*;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.imagejcv.common.datatype.ImageJCV;
 import de.uniol.inf.is.odysseus.imagejcv.common.sdf.schema.SDFImageJCVDatatype;
 import de.uniol.inf.is.odysseus.mep.AbstractFunction;
 
-public class GetAmountOfBlackFunction extends AbstractFunction<Double> {
+public class GetAmountOfBlackFunction extends AbstractFunction<ImageJCV> {
 	/**
 	 * 
 	 */
@@ -25,7 +27,7 @@ public class GetAmountOfBlackFunction extends AbstractFunction<Double> {
 	}
 	
 	@Override
-	public Double getValue() {
+	public ImageJCV getValue() {
 		final ImageJCV image = (ImageJCV) this.getInputValue(0);
 		final boolean border = (boolean) this.getInputValue(1);
 		
@@ -36,14 +38,16 @@ public class GetAmountOfBlackFunction extends AbstractFunction<Double> {
 		int schwarz = 0;
 		int gesamt = 0;
 		boolean in = true;
-		ByteBuffer buffer = iplImage.getByteBuffer();
+		
+		CvMat matImage = new CvMat();
+		cvGetMat(iplImage, matImage);
+		
 		for (int i=0; i < iplImage.width(); i++) {
 			if (border == true) {
 				in = false;
 			}
 			for (int j=0; j < iplImage.height(); j++) {
-				int index = j * iplImage.widthStep() + i * iplImage.nChannels();
-				int value = buffer.get(index) & 0xFF;
+				int value = (int) matImage.get(i, j);
 				
 				if (in == true) {
 					gesamt ++;
@@ -61,6 +65,8 @@ public class GetAmountOfBlackFunction extends AbstractFunction<Double> {
 			}
 		}
 		
-		return ((double) schwarz / (double) gesamt);
+		System.out.println((double) schwarz / (double) gesamt);
+		
+		return image;
 	}
 }

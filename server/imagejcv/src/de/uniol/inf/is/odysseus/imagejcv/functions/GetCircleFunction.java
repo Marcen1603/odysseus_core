@@ -23,7 +23,7 @@ public class GetCircleFunction extends AbstractFunction<ImageJCV> {
 	};
 	
 	public GetCircleFunction() {
-		super("circleCV", 2, GetCircleFunction.ACC_TYPES, SDFImageJCVDatatype.IMAGEJCV);
+		super("circleCV", 1, GetCircleFunction.ACC_TYPES, SDFImageJCVDatatype.IMAGEJCV);
 	}
 	
 	@Override
@@ -32,12 +32,19 @@ public class GetCircleFunction extends AbstractFunction<ImageJCV> {
 		
 		Objects.requireNonNull(image);
 		
-		final IplImage iplImage = image.getImage();
-		CvSeq circles = new CvSeq();
 		
-		cvCvtColor(iplImage, iplImage, CV_BGR2GRAY);
+		IplImage iplImage  = image.getImage();
+		IplImage iplResult = cvCreateImage(cvGetSize(iplImage), IPL_DEPTH_8U, 1);
 		
-		cvHoughCircles(iplImage, circles, CV_HOUGH_GRADIENT, 3d, (iplImage.width() * iplImage.height()));
+		CvMemStorage mem = CvMemStorage.create();
+		
+		if (iplImage.nChannels() > 1) {
+			cvCvtColor(iplImage, iplResult, CV_BGR2GRAY);
+		} else {
+			iplResult = iplImage.clone();
+		}
+		
+		CvSeq circles = cvHoughCircles(iplResult, mem, CV_HOUGH_GRADIENT, 3d, (iplResult.width() * iplResult.height()));
 		
 		for (int x=0; x < circles.total(); x++) {
 			CvPoint3D32f circle = new CvPoint3D32f(cvGetSeqElem(circles, x));
@@ -46,10 +53,10 @@ public class GetCircleFunction extends AbstractFunction<ImageJCV> {
 			point.y(circle.y());
 			CvPoint center = cvPointFrom32f(point);
 			int radius = Math.round(circle.z());
-			cvCircle(iplImage, center, radius, CvScalar.RED, 3, 8, 0);
+			cvCircle(iplResult, center, radius, CV_RGB(125, 125, 125), 1, 8, 0);
 		}
 		
-		image.setImage(iplImage);
+		image.setImage(iplResult);
 		return image;
 	}
 	
