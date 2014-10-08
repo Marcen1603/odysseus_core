@@ -158,13 +158,13 @@ public class LocalBackupInformationAccess {
 
 		return cInfoStore.get().getJxtaInfoForPeer(peerId);
 	}
-	
+
 	/**
 	 * 
 	 * @return All PeerIDs for which jxta-backup-information is stored
 	 */
 	public static List<PeerID> getPeersFromJxtaInfoStore() {
-		
+
 		Set<PeerID> peers = cInfoStore.get().getPeersFromJxtaInfoStore();
 		ArrayList<PeerID> peerArray = new ArrayList<PeerID>(peers);
 		return peerArray;
@@ -281,6 +281,39 @@ public class LocalBackupInformationAccess {
 		}
 
 		return sharedQueryIds;
+	}
+
+	/**
+	 * Adds a peer to the list of peers for which we are a buddy.
+	 * 
+	 * @param peerId
+	 *            The PeerID from the peer which wants that we are the buddy
+	 * @param sharedQueryId
+	 *            The id of the shared query which we are responsible for if the
+	 *            given peer fails
+	 */
+	public static void addBuddy(PeerID peerId, ID sharedQueryId) {
+		if (!cInfoStore.isPresent()) {
+			LOG.error("No backup information store for recovery bound!");
+			return;
+		}
+
+		cInfoStore.get().addBuddy(peerId, sharedQueryId);
+	}
+
+	/**
+	 * Gives you the map of peers you are the buddy for and the id's of the
+	 * shared queries you have to handle if the peer fails
+	 * 
+	 * @return The Map of peers you are the buddy for
+	 */
+	public static Map<PeerID, List<ID>> getBuddyList() {
+		if (!cInfoStore.isPresent()) {
+			LOG.error("No backup information store for recovery bound!");
+			return null;
+		}
+		
+		return cInfoStore.get().getBuddyList();
 	}
 
 }

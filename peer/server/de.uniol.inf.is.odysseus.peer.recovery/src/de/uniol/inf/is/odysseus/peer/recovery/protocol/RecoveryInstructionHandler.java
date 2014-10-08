@@ -23,7 +23,11 @@ import de.uniol.inf.is.odysseus.peer.recovery.util.RecoveryHelper;
  */
 public class RecoveryInstructionHandler {
 
-	public static void handleInstruction(
+	/**
+	 * Handles an incoming instruction-message
+	 * @param instructionMessage The incoming message
+	 */
+	public static void handleInstruction(PeerID sender,
 			RecoveryInstructionMessage instructionMessage) {
 		switch (instructionMessage.getMessageType()) {
 		case RecoveryInstructionMessage.HOLD_ON:
@@ -41,15 +45,17 @@ public class RecoveryInstructionHandler {
 				e.printStackTrace();
 			}
 			break;
+		case RecoveryInstructionMessage.BE_BUDDY:
+			beBuddy(sender, instructionMessage.getSharedQueryId());
+			break;
 		}
 	}
 
 	private static void holdOn(ID queryId) {
 		// Here we want to store the tuples
-//		 RecoveryTupleStorePO<IStreamObject<? extends ITimeInterval>> store =
-//		 new RecoveryTupleStorePO<IStreamObject<? extends ITimeInterval>>();
+		// RecoveryTupleStorePO<IStreamObject<? extends ITimeInterval>> store =
+		// new RecoveryTupleStorePO<IStreamObject<? extends ITimeInterval>>();
 
-		
 	}
 
 	private static void addQuery(String pql) {
@@ -57,8 +63,8 @@ public class RecoveryInstructionHandler {
 	}
 
 	/**
-	 * The peer which receives this message should send the results for the
-	 * given queryId to another receiving peer
+	 * Experimental: The peer which receives this message should send the
+	 * results for the given queryId to another receiving peer
 	 * 
 	 * @param newReceiver
 	 * @param queryId
@@ -82,7 +88,8 @@ public class RecoveryInstructionHandler {
 		}
 
 		// New JxtaSender which should send to the new peer
-		JxtaSenderAO originalSenderAO = (JxtaSenderAO) RecoveryHelper.getLogicalJxtaOperator(true, pipeId);
+		JxtaSenderAO originalSenderAO = (JxtaSenderAO) RecoveryHelper
+				.getLogicalJxtaOperator(true, pipeId);
 		JxtaSenderAO jxtaSenderAO = (JxtaSenderAO) originalSenderAO.clone();
 		jxtaSenderAO.setPeerID(newReceiver.toString());
 		jxtaSenderAO.setPipeID(pipeId);
@@ -103,7 +110,7 @@ public class RecoveryInstructionHandler {
 							subscription.getSourceOutPort(),
 							subscription.getSchema(), true,
 							subscription.getOpenCalls());
-			
+
 			jxtaSender.subscribeToSource(subscription.getTarget(),
 					subscription.getSinkInPort(),
 					subscription.getSourceOutPort(), subscription.getSchema());
@@ -113,12 +120,16 @@ public class RecoveryInstructionHandler {
 							subscription.getSourceOutPort(),
 							subscription.getSchema(), true,
 							subscription.getOpenCalls());
-			
+
 			jxtaSender.subscribeToSource(subscription.getTarget(),
 					subscription.getSinkInPort(),
 					subscription.getSourceOutPort(), subscription.getSchema());
 		}
 
+	}
+
+	private static void beBuddy(PeerID sender, ID sharedQueryId) {
+		LocalBackupInformationAccess.addBuddy(sender, sharedQueryId);
 	}
 
 }

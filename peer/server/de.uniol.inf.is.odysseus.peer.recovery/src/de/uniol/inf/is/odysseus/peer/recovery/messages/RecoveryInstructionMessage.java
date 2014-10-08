@@ -21,11 +21,21 @@ public class RecoveryInstructionMessage implements IMessage {
 	 */
 	public static final int HOLD_ON = 0;
 
+	/**
+	 * The peer has to install the attached queries
+	 */
 	public static final int ADD_QUERY = 1;
 
 	public static final int NEW_SENDER = 2;
 
 	public static final int NEW_RECEIVER = 3;
+
+	/**
+	 * The peer which receives this message is the buddy of the sender, so the
+	 * receiving peer is (also) responsible for recovery if the sender peer
+	 * fails
+	 */
+	public static final int BE_BUDDY = 4;
 
 	private String pqlQuery;
 	private int messageType;
@@ -101,6 +111,23 @@ public class RecoveryInstructionMessage implements IMessage {
 	}
 
 	/**
+	 * Tells the receiver of this message, that it is a buddy of the sender
+	 * peer. That means, that this peer is (also) responsible for the recovery
+	 * if the sender peer fails. The sender peer has to send his
+	 * backup-information to this peer.
+	 * 
+	 * @return A message which tells the receiver that he is a buddy of the
+	 *         sender
+	 */
+	public static RecoveryInstructionMessage createBeBuddyMessage(
+			ID sharedQueryId) {
+		RecoveryInstructionMessage beBuddyMessage = new RecoveryInstructionMessage();
+		beBuddyMessage.setMessageType(BE_BUDDY);
+		beBuddyMessage.setSharedQueryId(sharedQueryId);
+		return beBuddyMessage;
+	}
+
+	/**
 	 * Puts the message into a byte-array. The message-type is always at the
 	 * beginning with an integer-value in the first 4 bytes.
 	 */
@@ -110,6 +137,8 @@ public class RecoveryInstructionMessage implements IMessage {
 
 		ByteBuffer bb = null;
 		int bbsize;
+
+		int sharedQueryIdLength = sharedQueryId.toString().getBytes().length;
 
 		switch (messageType) {
 		case HOLD_ON:
@@ -124,8 +153,7 @@ public class RecoveryInstructionMessage implements IMessage {
 			break;
 		case ADD_QUERY:
 			byte[] pqlAsBytes = pqlQuery.getBytes();
-			bbsize = 4 + 4 + sharedQueryId.toString().getBytes().length + 4
-					+ pqlAsBytes.length;
+			bbsize = 4 + 4 + sharedQueryIdLength + 4 + pqlAsBytes.length;
 			bb = ByteBuffer.allocate(bbsize);
 			bb.putInt(messageType);
 			bb.putInt(sharedQueryId.toString().getBytes().length);
@@ -137,7 +165,6 @@ public class RecoveryInstructionMessage implements IMessage {
 			break;
 		case NEW_RECEIVER:
 			int newReceiverLength = newReceiver.toString().getBytes().length;
-			int sharedQueryIdLength = sharedQueryId.toString().getBytes().length;
 			bbsize = 4 + 4 + newReceiverLength + 4 + sharedQueryIdLength;
 			bb = ByteBuffer.allocate(bbsize);
 			bb.putInt(messageType);
@@ -145,6 +172,13 @@ public class RecoveryInstructionMessage implements IMessage {
 			bb.put(sharedQueryId.toString().getBytes());
 			bb.putInt(newReceiverLength);
 			bb.put(newReceiver.toString().getBytes());
+			break;
+		case BE_BUDDY:
+			bbsize = 4 + 4 + sharedQueryIdLength;
+			bb = ByteBuffer.allocate(bbsize);
+			bb.putInt(messageType);
+			bb.putInt(sharedQueryIdLength);
+			bb.put(sharedQueryId.toString().getBytes());
 			break;
 		}
 

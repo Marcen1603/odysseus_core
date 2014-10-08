@@ -107,10 +107,12 @@ public interface IRecoveryBackupInformationStore {
 	 */
 	public ImmutableCollection<String> getStoredPQLStatements(ID sharedQueryId,
 			PeerID peerId);
-	
+
 	/**
 	 * All jxta-information that is stored for a given peer
-	 * @param peerId The id of the peer you want to have the information about
+	 * 
+	 * @param peerId
+	 *            The id of the peer you want to have the information about
 	 * @return A list of jxta-information about the given peer
 	 */
 	public List<JxtaInformation> getJxtaInfoForPeer(PeerID peerId);
@@ -120,7 +122,7 @@ public interface IRecoveryBackupInformationStore {
 	 * @return All PeerIDs for which jxta-backup-information is stored
 	 */
 	public Set<PeerID> getPeersFromJxtaInfoStore();
-	
+
 	/**
 	 * Removes a backup information for a shared query.
 	 * 
@@ -150,5 +152,24 @@ public interface IRecoveryBackupInformationStore {
 	 */
 	public boolean removePQLStatement(ID sharedQueryId, PeerID peerId,
 			String pqlStatement);
+
+	/**
+	 * Adds a peer to the list of peers for which we are a buddy.
+	 * 
+	 * @param peerId
+	 *            The PeerID from the peer which wants that we are the buddy
+	 * @param sharedQueryId
+	 *            The id of the shared query which we are responsible for if the
+	 *            given peer fails
+	 */
+	public void addBuddy(PeerID peerId, ID sharedQueryId);
+
+	/**
+	 * Gives you the map of peers you are the buddy for and the id's of the
+	 * shared queries you have to handle if the peer fails
+	 * 
+	 * @return The Map of peers you are the buddy for
+	 */
+	public Map<PeerID, List<ID>> getBuddyList();
 
 }

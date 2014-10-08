@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableCollection;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -41,6 +42,12 @@ public class BackupInformationStore implements IRecoveryBackupInformationStore {
 	 * The stored information mapped to their shared query (it's id).
 	 */
 	private final Map<ID, BackupInformation> mInfoMap = Maps.newHashMap();
+
+	/**
+	 * The stored information, for which peers and which shared query (it's id)
+	 * we are the buddy
+	 */
+	private final Map<PeerID, List<ID>> mBuddyMap = Maps.newHashMap();
 
 	/**
 	 * Map for additional information mapped to their shared query (it's id).
@@ -125,15 +132,15 @@ public class BackupInformationStore implements IRecoveryBackupInformationStore {
 
 		return true;
 	}
-	
+
 	@Override
 	public List<JxtaInformation> getJxtaInfoForPeer(PeerID peerId) {
-		if(!mJxtaInfoMap.containsKey(peerId)) {
+		if (!mJxtaInfoMap.containsKey(peerId)) {
 			return null;
 		}
 		return mJxtaInfoMap.get(peerId);
 	}
-	
+
 	@Override
 	public Set<PeerID> getPeersFromJxtaInfoStore() {
 		return mJxtaInfoMap.keySet();
@@ -228,6 +235,25 @@ public class BackupInformationStore implements IRecoveryBackupInformationStore {
 		return this.mInfoMap.get(sharedQueryId).get(peerId)
 				.remove(pqlStatement);
 
+	}
+
+	@Override
+	public void addBuddy(PeerID peerId, ID sharedQueryId) {
+		List<ID> queryList = null;
+		if (!mBuddyMap.containsKey(peerId)) {
+			queryList = new ArrayList<ID>();
+		} else {
+			queryList = mBuddyMap.get(peerId);
+		}
+
+		queryList.add(sharedQueryId);
+		mBuddyMap.put(peerId, queryList);
+	}
+
+	@Override
+	public Map<PeerID, List<ID>> getBuddyList() {
+		ImmutableMap<PeerID, List<ID>> copyMap = ImmutableMap.copyOf(mBuddyMap);
+		return copyMap;
 	}
 
 }

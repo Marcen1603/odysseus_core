@@ -252,7 +252,8 @@ public class RecoveryCommunicator implements IRecoveryCommunicator,
 			return;
 		}
 
-		// 2. Check, if we were a direct sender to that failed peer
+		// 2. Check, if we were a direct sender to that failed peer or if we are
+		// a buddy
 
 		// We maybe have backup-information about queries for that peer where we
 		// are not the direct sender, so we have to save for which queries we
@@ -280,7 +281,7 @@ public class RecoveryCommunicator implements IRecoveryCommunicator,
 							sharedQueryIdsForRecovery.add(sharedQuery
 									.getSharedQueryID());
 
-							// Save, that this sender if affected
+							// Save that this sender if affected
 							affectedSenders.add(sender);
 						}
 					}
@@ -288,13 +289,27 @@ public class RecoveryCommunicator implements IRecoveryCommunicator,
 			}
 		}
 
+		// 3. Check, if we are the buddy of that peer
+		Map<PeerID, List<ID>> buddyMap = LocalBackupInformationAccess
+				.getBuddyList();
+		if (buddyMap.containsKey(failedPeer)) {
+			// We are a buddy for that peer
+			sharedQueryIdsForRecovery.addAll(buddyMap.get(failedPeer));
+
+			// TODO What are the affected senders? Maybe no sender is affected
+			// cause it's a totally different peer. Maybe we have to tell other
+			// peers to install new receivers or sth. like that
+		}
+
+		// Counter for updating the affected senders
 		int i = 0;
+
 		// Reallocate each query to another peer
 		for (ID sharedQueryId : sharedQueryIdsForRecovery) {
-			// 3. Search for another peer who can take the parts from the failed
+			// 4. Search for another peer who can take the parts from the failed
 			// peer
 
-			// TODO find a good place for reallocate if the peer doesn't accept
+			// TODO find a good place to reallocate if the peer doesn't accept
 			// the query or is unable to install it
 
 			PeerID peer = null;
@@ -314,14 +329,15 @@ public class RecoveryCommunicator implements IRecoveryCommunicator,
 			if (peer == null)
 				peer = p2pNetworkManager.getLocalPeerID();
 
-			// 4. Tell the new peer to install the parts from the failed peer
-
+			// 5. Tell the new peer to install the parts from the failed peer
 			RecoveryAgreementHandler.waitForAndDoRecovery(failedPeer,
 					sharedQueryId, peer);
 
-			// 5. Experimental: Add new sender, so that we "officially" send to
+			// 6. Experimental: Add new sender, so that we "officially" send to
 			// the new peer
-			RecoveryHelper.addNewSender(affectedSenders.get(i), peer);
+			if (affectedSenders.size() < i) {
+				RecoveryHelper.addNewSender(affectedSenders.get(i), peer);
+			}
 			i++;
 		}
 
@@ -389,7 +405,8 @@ public class RecoveryCommunicator implements IRecoveryCommunicator,
 			PeerID senderPeer, IMessage message) {
 		if (message instanceof RecoveryInstructionMessage) {
 			RecoveryInstructionMessage instruction = (RecoveryInstructionMessage) message;
-			RecoveryInstructionHandler.handleInstruction(instruction);
+			RecoveryInstructionHandler.handleInstruction(senderPeer,
+					instruction);
 		} else if (message instanceof BackupInformationMessage) {
 
 			BackupInformationMessage biMessage = (BackupInformationMessage) message;
