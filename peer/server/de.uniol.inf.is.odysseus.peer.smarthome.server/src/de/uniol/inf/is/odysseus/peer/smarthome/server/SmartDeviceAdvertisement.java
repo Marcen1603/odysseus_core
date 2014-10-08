@@ -106,8 +106,8 @@ public class SmartDeviceAdvertisement extends Advertisement implements
 	void appendTo( Element<?> doc ) {
 		appendElement(doc, ID_TAG, this.id.toString());
 		appendElement(doc, NAME_TAG, this.name);
-		//appendElement(doc, PEER_ID_TAG, this.peerID.toString());
-		//appendElement(doc, PIPE_ID_TAG, pipeID.toString());
+		appendElement(doc, PEER_ID_TAG, this.peerID.toString());
+		appendElement(doc, PIPE_ID_TAG, pipeID.toString());
 		appendElement(doc, CONTEXT_NAME, this.contextName);
 	}
 	

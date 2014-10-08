@@ -1,7 +1,11 @@
 package de.uniol.inf.is.odysseus.peer.smarthome.server;
 
+import java.io.IOException;
+
 import net.jxta.document.Advertisement;
 import net.jxta.document.AdvertisementFactory;
+import net.jxta.id.IDFactory;
+//import net.jxta.id.IDFactory;
 import net.jxta.peer.PeerID;
 
 import org.osgi.framework.Bundle;
@@ -11,6 +15,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.p2p_new.IAdvertisementDiscovererListener;
+import de.uniol.inf.is.odysseus.p2p_new.IJxtaServicesProvider;
 import de.uniol.inf.is.odysseus.p2p_new.IMessage;
 import de.uniol.inf.is.odysseus.p2p_new.IP2PNetworkManager;
 import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicator;
@@ -37,7 +42,8 @@ public class SmartHomeServerPlugIn implements BundleActivator {
 	private static IP2PDictionary p2pDictionary;
 	private static SmartDeviceConfigurationListener smartDeviceConfigurationListener;
 	private static SmartDeviceAdvertisementListener smartDeviceAdvertisementListener;
-	private static SmartDeviceAdvertisementCollector smartDeviceAdvCollector = new SmartDeviceAdvertisementCollector();
+	//private static SmartDeviceAdvertisementCollector smartDeviceAdvCollector = new SmartDeviceAdvertisementCollector();
+	private static IJxtaServicesProvider jxtaServicesProvider;
 	
 	/*
 	 * (non-Javadoc)
@@ -59,6 +65,7 @@ public class SmartHomeServerPlugIn implements BundleActivator {
 	
 	// called by OSGi-DS
 	public void activate() {
+		/*
 		try{
 			smartDeviceAdvCollector.start();
 			
@@ -76,11 +83,12 @@ public class SmartHomeServerPlugIn implements BundleActivator {
 		}catch(Exception ex){
 			ex.printStackTrace();
 		}
+		*/
 	}
 	
 	// called by OSGi-DS
 	public void deactivate() {
-		smartDeviceAdvCollector.stopRunning();
+		//smartDeviceAdvCollector.stopRunning();
 	}
 	
 	public static Bundle getBundle() {
@@ -104,29 +112,7 @@ public class SmartHomeServerPlugIn implements BundleActivator {
 		p2pNetworkManager.addAdvertisementListener(smartDeviceAdvertisementListener);
 		
 		
-		/*
-		////
-		SmartDeviceAdvertisement adv = new SmartDeviceAdvertisement();
-		adv.setContextName("TestContextName");
-		adv.setPeerName("PeerName blub");
-		adv.setID(IDFactory.newPipeID(p2pNetworkManager.getLocalPeerGroupID()));
-		adv.setPeerID(p2pNetworkManager.getLocalPeerID());
-		
-		smartDeviceAdvCollector.add(adv);
-		*/
-		
-		
-		/*
-		SmartDeviceAdvertisement adv = new SmartDeviceAdvertisement();
-		adv.setContextName("TestContextName");
-		adv.setPeerName("PeerName blub");
-		//adv.setID(IDFactory.newPipeID(p2pNetworkManager.getLocalPeerGroupID()));
-		adv.setPeerID(p2pNetworkManager.getLocalPeerID());
-		adv.setPipeID(IDFactory.newPipeID(p2pNetworkManager.getLocalPeerGroupID()));
-		
-		
-		smartDeviceAdvCollector.add(adv);
-		*/
+		publishTESTAdvertisementAsync();
 	}
 
 	// called by OSGi-DS
@@ -147,9 +133,6 @@ public class SmartHomeServerPlugIn implements BundleActivator {
 		peerCommunicator.addListener(smartDeviceConfigurationListener, SmartDeviceMessage.class);
 		peerCommunicator.addListener(smartDeviceConfigurationListener, SmartDeviceConfigurationRequestMessage.class);
 		peerCommunicator.addListener(smartDeviceConfigurationListener, SmartDeviceConfigurationResponseMessage.class);
-		
-		
-		
 	}
 
 	// called by OSGi-DS
@@ -170,6 +153,90 @@ public class SmartHomeServerPlugIn implements BundleActivator {
 		if (p2pDictionary == serv) {
 			p2pDictionary = null;
 		}
+	}
+	
+	// called by OSGi-DS
+	public static void bindJxtaServicesProvider(IJxtaServicesProvider serv) {
+		LOG.debug("bindJxtaServicesProvider");
+		jxtaServicesProvider = serv;
+		
+		publishTESTAdvertisementAsync();
+	}
+
+	private static void publishTESTAdvertisementAsync() {
+		//&& getP2PNetworkManager().isStarted()
+		//mit sleep warten
+		Thread thread = new Thread( new Runnable() {
+
+			@Override
+			public void run() {
+				waitForP2PNetworkManager();				
+				waitForJxtaServicesProvider();
+						
+				if(getP2PNetworkManager()!=null  && getJxtaServicesProvider()!=null){
+					LOG.debug("publishTESTAdvertisement()");
+					
+					try {
+						SmartDeviceAdvertisement adv = (SmartDeviceAdvertisement)AdvertisementFactory.newAdvertisement(SmartDeviceAdvertisement.getAdvertisementType());
+						
+						adv.setID(IDFactory.newPipeID(getP2PNetworkManager().getLocalPeerGroupID()));
+						adv.setPeerID(p2pNetworkManager.getLocalPeerID());
+						
+						
+						/*
+						//SmartDeviceAdvertisement adv = new SmartDeviceAdvertisement();
+						adv.setContextName("TestContextName");
+						adv.setPeerName("PeerName blub");
+						////adv.setID(IDFactory.newPipeID(p2pNetworkManager.getLocalPeerGroupID()));
+						adv.setPeerID(p2pNetworkManager.getLocalPeerID());
+						
+						////smartDeviceAdvCollector.add(adv);
+						*/
+						
+						getJxtaServicesProvider().publish(adv);
+						getJxtaServicesProvider().remotePublish(adv);
+						//jxtaServicesProvider.publishInfinite(adv);
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+				}
+				
+			}
+
+			private void waitForJxtaServicesProvider() {
+				while( getJxtaServicesProvider() == null || !getJxtaServicesProvider().isActive()) {
+					try {
+						Thread.sleep(100);
+					} catch (InterruptedException e) {
+					}
+				}
+			}
+			
+		});	
+		thread.setName("SmartHome TESTAdv Thread");
+		thread.setDaemon(true);
+		thread.start();
+	}
+
+	private static void waitForP2PNetworkManager() {
+		while( getP2PNetworkManager() == null || !getP2PNetworkManager().isStarted()) {
+			try {
+				Thread.sleep(100);
+			} catch (InterruptedException e) {
+			}
+		}
+	}
+
+	// called by OSGi-DS
+	public static void unbindJxtaServicesProvider(IJxtaServicesProvider serv) {
+		LOG.debug("unbindJxtaServicesProvider");
+		if (jxtaServicesProvider == serv) {
+			jxtaServicesProvider = null;
+		}
+	}
+	
+	public static IJxtaServicesProvider getJxtaServicesProvider() {
+		return jxtaServicesProvider;
 	}
 	
 	public static IP2PNetworkManager getP2PNetworkManager() {
@@ -259,6 +326,7 @@ public class SmartHomeServerPlugIn implements BundleActivator {
 			
 			if(advertisement.getAdvType().equals(SmartDeviceAdvertisement.getAdvertisementType())){
 				System.out.println("SmartDeviceAdvertisement received!!!");
+				
 			}
 		}
 		
