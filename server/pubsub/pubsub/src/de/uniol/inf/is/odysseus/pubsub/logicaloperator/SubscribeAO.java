@@ -33,7 +33,6 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Paramete
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.BooleanParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.CreateSDFAttributeParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IPredicateBuilder;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IllegalParameterException;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.OperatorBuilderFactory;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IHasPredicates;
@@ -87,15 +86,15 @@ public class SubscribeAO extends UnaryLogicalOp implements IHasPredicates {
 	public boolean isValid() {
 		// If predicates and topics are empty, subscription doesn't make sense
 		if (predicateStrings.isEmpty() && topics.isEmpty()) {
-			addError(new IllegalParameterException(
-					"Empty subscription not allowed. Please add Topics or Predicates or both."));
+			addError(
+					"Empty subscription not allowed. Please add Topics or Predicates or both.");
 			return false;
 		}
 		// TODO: Why not using predicate parameter directly?
 
 		if (!predicateStrings.isEmpty() && predicateType == null) {
-			addError(new IllegalParameterException(
-					"Predicates needs a predicateType."));
+			addError(
+					"Predicates needs a predicateType.");
 			return false;
 		}
 

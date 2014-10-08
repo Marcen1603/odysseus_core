@@ -84,13 +84,13 @@ public class PrioIdJoinAO extends AbstractLogicalOperator {
 		boolean isValid = true;
 		if (leftPos == -1) {
 			isValid = false;
-			addError(new IllegalArgumentException(
-					"invalid attribute in first input"));
+			addError(
+					"invalid attribute in first input");
 		}
 		if (rightPos == -1) {
 			isValid = false;
-			addError(new IllegalArgumentException(
-					"invalid attribute in second input"));
+			addError(
+					"invalid attribute in second input");
 		}
 		return isValid;
 	}

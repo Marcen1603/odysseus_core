@@ -291,7 +291,7 @@ public class OperatorNode extends Observable implements Observer {
 		if (result instanceof ValidationException) {
 			ValidationException vex = (ValidationException) result;
 			if (vex.getExceptions().size() > 0) {
-				return vex.getExceptions().get(vex.getExceptions().size() - 1).getMessage();
+				return vex.getExceptions().get(vex.getExceptions().size() - 1);
 			}
 		}
 		if (result.getMessage() == null) {

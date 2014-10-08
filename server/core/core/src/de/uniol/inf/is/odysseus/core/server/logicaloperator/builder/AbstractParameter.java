@@ -19,7 +19,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.collection.Context;
+import de.uniol.inf.is.odysseus.core.logicaloperator.ValidationException;
 import de.uniol.inf.is.odysseus.core.sdf.schema.IAttributeResolver;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFExpressionParseException;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.IParameter;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
@@ -43,8 +45,8 @@ public abstract class AbstractParameter<T> implements IParameter<T> {
 	private IDataDictionary dd;
 	private ISession caller;
 	private Context context;
-	private final List<Exception> errors;
-	private final List<Exception> warnings;
+	private final List<String> errors;
+	private final List<String> warnings;
 	protected Object inputValue;
 
 	private String possibleValueMethod = "";
@@ -63,8 +65,8 @@ public abstract class AbstractParameter<T> implements IParameter<T> {
 		this.requirement = requirement;
 		this.usage = usage;
 		value = null;
-		this.errors = new ArrayList<Exception>(1);
-		this.warnings = new ArrayList<Exception>(1);
+		this.errors = new ArrayList<String>(1);
+		this.warnings = new ArrayList<String>(1);
 	}
 
 	public AbstractParameter(String name, REQUIREMENT requirement) {
@@ -73,8 +75,8 @@ public abstract class AbstractParameter<T> implements IParameter<T> {
 
 	public AbstractParameter() {
 		this.value = null;
-		this.errors = new ArrayList<Exception>(1);
-		this.warnings = new ArrayList<Exception>(1);
+		this.errors = new ArrayList<String>(1);
+		this.warnings = new ArrayList<String>(1);
 	}
 
 	@Override
@@ -132,7 +134,7 @@ public abstract class AbstractParameter<T> implements IParameter<T> {
 	}
 
 	@Override
-	public List<Exception> getErrors() {
+	public List<String> getErrors() {
 		return this.errors;
 	}
 
@@ -141,11 +143,11 @@ public abstract class AbstractParameter<T> implements IParameter<T> {
 		this.errors.clear();
 		this.warnings.clear();
 		if (this.requirement == REQUIREMENT.MANDATORY && inputValue == null) {
-			this.errors.add(new MissingParameterException(this.getName()));
+			this.errors.add("Required Parameter "+this.getName()+" is missing");
 			return false;
 		}
 		if (isDeprecated()) {
-			this.warnings.add(new DeprecatedParameterWarning(this.getName()));
+			this.warnings.add(this.getName()+" is deprecated!");
 		}
 		try {
 			if (inputValue != null) {
@@ -155,8 +157,17 @@ public abstract class AbstractParameter<T> implements IParameter<T> {
 					return false;
 				}
 			}
-		} catch (Exception e) {
-			this.errors.add(new IllegalParameterException("illegal value for parameter " + getName(), e));
+		}catch (ValidationException e){
+			this.errors.add("Validation error for parameter " + getName());
+			this.errors.add(e.getMessage());
+			return false;
+		}catch(SDFExpressionParseException e){
+			this.errors.add("Could not parse parameter value " + getName());
+			this.errors.add(e.getMessage());
+			return false;			
+		}catch (Exception e) {
+			this.errors.add("illegal value for parameter " + getName());
+			this.errors.add(e.getMessage());
 			return false;
 		}
 		return true;

@@ -24,7 +24,6 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOpera
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnaryLogicalOp;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IllegalParameterException;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
 import de.uniol.inf.is.odysseus.pubsub.broker.routing.RoutingBrokerRegistry;
 import de.uniol.inf.is.odysseus.pubsub.broker.topology.BrokerTopologyRegistry;
@@ -61,21 +60,21 @@ public class PublishAO extends UnaryLogicalOp{
 		// Check if Topology type is valid
 		List<String> validTypes = BrokerTopologyRegistry.getValidTopologyTypes();
 		if (!validTypes.contains(topologyType.toLowerCase())){
-			addError(new IllegalParameterException(
-					"Topology Type: '"+ topologyType +"' is not valid. Available Types are: "+validTypes.toString()));
+			addError(
+					"Topology Type: '"+ topologyType +"' is not valid. Available Types are: "+validTypes.toString());
 			return false;
 		} else {
 			// Check if topology needs routing
 			if (BrokerTopologyRegistry.needsTopologyRouting(topologyType)){
 				if (routing == null){
-					addError(new IllegalParameterException("Topology: '"+topologyType+"' needs a routing rule."));
+					addError("Topology: '"+topologyType+"' needs a routing rule.");
 					return false;					
 				} else {
 					// Check if routing type is valid (only if needed)
 					List<String> routingTypes = RoutingBrokerRegistry.getValidRoutingTypes();
 					if (!routingTypes.contains(routing.toLowerCase())){
-						addError(new IllegalParameterException(
-								"Routing Type: '"+ routing +"' is not valid. Available Types are: "+routingTypes.toString()));
+						addError(
+								"Routing Type: '"+ routing +"' is not valid. Available Types are: "+routingTypes.toString());
 						return false;
 					}
 				}
@@ -83,8 +82,8 @@ public class PublishAO extends UnaryLogicalOp{
 		}
 		// Check if combination of type and domain is valid
 		if (!BrokerTopologyRegistry.isDomainTypeCombinationValid(topologyType, domain)){
-			addError(new IllegalParameterException(
-					"Domain: '"+ domain +"' already exists with a different topology type. It's not possible to register a Topology with the same domain and a different topologyType."));
+			addError(
+					"Domain: '"+ domain +"' already exists with a different topology type. It's not possible to register a Topology with the same domain and a different topologyType.");
 			return false;
 		}
 		

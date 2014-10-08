@@ -7,7 +7,8 @@ import de.uniol.inf.is.odysseus.core.conversion.CSVParser;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.mep.AbstractFunction;
 
-public class SplitFunction extends AbstractFunction<List<String>> {
+@Deprecated
+public class SplitFunctionOld extends AbstractFunction<List<String>> {
 
 	/**
 	 * 
@@ -15,13 +16,14 @@ public class SplitFunction extends AbstractFunction<List<String>> {
 	private static final long serialVersionUID = 5795445731857931414L;
 	private static final SDFDatatype[][] accTypes = new SDFDatatype[][] {
 			new SDFDatatype[] { SDFDatatype.STRING }, // Variable
-			new SDFDatatype[] { SDFDatatype.STRING } // OUTPUT COUNT
+			new SDFDatatype[] { SDFDatatype.STRING }, // Delimiter
+			new SDFDatatype[] { SDFDatatype.LONG } // OUTPUT COUNT
 			};
 	private static final SDFDatatype[] returnTypes = new SDFDatatype[] {
 			SDFDatatype.STRING};
 
-	public SplitFunction() {
-		super("Split",2,accTypes,SDFDatatype.LIST_STRING);
+	public SplitFunctionOld() {
+		super("Split",3,accTypes,SDFDatatype.LIST_STRING);
 	}
 	
 

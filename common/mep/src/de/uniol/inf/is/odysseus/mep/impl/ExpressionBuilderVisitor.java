@@ -55,7 +55,7 @@ public class ExpressionBuilderVisitor implements MEPImplVisitor {
 	public Object visit(ASTFunction node, Object data) {
 		String symbol = node.getSymbol();
 		if (!MEP.containsFunction(symbol)) {
-			throw new IllegalArgumentException("no such function: " + symbol);
+			throw new IllegalArgumentException("Function  \"" + symbol+ "\" cannot be found.");
 		}
 		List<IFunction<?>> functions = MEP.getFunctions(symbol);
 		IFunction<?> selectedFunction = null;

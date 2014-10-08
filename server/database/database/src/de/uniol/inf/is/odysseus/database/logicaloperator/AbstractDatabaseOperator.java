@@ -25,7 +25,6 @@ import org.slf4j.LoggerFactory;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.BooleanParameter;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IllegalParameterException;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IntegerParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
 import de.uniol.inf.is.odysseus.database.connection.DatabaseConnection;
@@ -218,7 +217,7 @@ public abstract class AbstractDatabaseOperator extends AbstractLogicalOperator {
 					logger.warn("Password is ignored when existing connection is used!");
 				}								
 			} else {
-				addError(new IllegalParameterException("Database connection with name \"" + connectionName + "\" not found!"));
+				addError("Database connection with name \"" + connectionName + "\" not found!");
 				isValid = false;
 			}
 		} else {
@@ -239,17 +238,17 @@ public abstract class AbstractDatabaseOperator extends AbstractLogicalOperator {
 				// do we have everything for building a connection?
 				if (this.type.isEmpty()) {
 					isValid = false;
-					addError(new IllegalParameterException("type must be set"));
+					addError("type must be set");
 				} else {
 					Set<String> names = DatabaseConnectionDictionary.getInstance().getConnectionFactoryNames();
 					if (!names.contains(this.type)) {
 						isValid = false;
-						addError(new IllegalParameterException("type must be a valid value, one of: " + names));
+						addError("type must be a valid value, one of: " + names);
 					}
 				}
 				if (this.db.isEmpty()) {
 					isValid = false;
-					addError(new IllegalParameterException("db (the database where you want to connect to) must be set"));
+					addError("db (the database where you want to connect to) must be set");
 				}
 				if ((!this.password.isEmpty()) && this.user.isEmpty()) {
 					logger.warn("there is a password but no user, root is used!");
@@ -261,7 +260,7 @@ public abstract class AbstractDatabaseOperator extends AbstractLogicalOperator {
 				try {
 					connection.checkProperties();
 				} catch (SQLException e) {
-					addError(e);
+					addError(e.getMessage());
 					isValid = false;
 				}
 			}			

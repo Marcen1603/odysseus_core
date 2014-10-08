@@ -371,7 +371,7 @@ public class PatternMatchingAO extends AbstractLogicalOperator {
 				}				
 			}
 			if (!help) {
-				addError(new IllegalArgumentException("one or more elements from eventTypes don't exist as sources."));
+				addError("one or more elements from eventTypes don't exist as sources.");
 				break;
 			}
 		}
@@ -379,32 +379,32 @@ public class PatternMatchingAO extends AbstractLogicalOperator {
 		if (time != null) {
 			if (time <= 0) {
 				help = false;
-				addError(new IllegalArgumentException("time has to be a positive numeric value."));
+				addError("time has to be a positive numeric value.");
 			}
 		}
 		// check value of size
 		if (size != null) {
 			if (size <= 0) {
 				help = false;
-				addError(new IllegalArgumentException("size has to be a positive numeric value."));
+				addError("size has to be a positive numeric value.");
 			}
 		}
 		// check value of count
 		if (count != null) {
 			if (count <= 0) {
 				help = false;
-				addError(new IllegalArgumentException("count has to be a positive numeric value."));
+				addError("count has to be a positive numeric value.");
 			}
 		}
 		// check value of inputPort
 		if (inputPort < 0 || inputPort > inputTypeNames.size() - 1) {
 			help = false;
-			addError(new IllegalArgumentException("inputPort has to be a positive numeric value and the input port must exit."));
+			addError("inputPort has to be a positive numeric value and the input port must exit.");
 		}
 		// check value of timeUnit
 		if (timeUnit == TimeUnit.NANOSECONDS || timeUnit == TimeUnit.MICROSECONDS) {
 			help = false;
-			addError(new IllegalArgumentException("timeUnit doesn't accept the values MICROSECONDS and NANOSECONDS."));
+			addError("timeUnit doesn't accept the values MICROSECONDS and NANOSECONDS.");
 		}
 		// check value of attribute
 		if (attribute != null) {
@@ -413,8 +413,8 @@ public class PatternMatchingAO extends AbstractLogicalOperator {
 				if (schema.findAttribute(attribute) == null) {
 					// no attribute found
 					help = false;
-					addError(new IllegalArgumentException("the schema " + schema.getURIWithoutQualName()
-							+ " doesn't contain the attribute."));
+					addError("the schema " + schema.getURIWithoutQualName()
+							+ " doesn't contain the attribute.");
 				}				
 			}
 		}
@@ -423,21 +423,21 @@ public class PatternMatchingAO extends AbstractLogicalOperator {
 		if (patternList.contains(type)) {
 			if (attribute == null || count == null || (time == null && size == null)) {
 				help = false;
-				addError(new IllegalArgumentException("some for this pattern required attributes are missing."));
+				addError("some for this pattern required attributes are missing.");
 			}
 		}
 		patternList = Arrays.asList(ALWAYS, SOMETIMES);
 		if (patternList.contains(type)) {
 			if (time == null && size == null) {
 				help = false;
-				addError(new IllegalArgumentException("some for this pattern required attributes are missing."));
+				addError("some for this pattern required attributes are missing.");
 			}
 		}
 		patternList = Arrays.asList(FIRST_N, LAST_N);
 		if (patternList.contains(type)) {
 			if (count == null || (time == null && size == null)) {
 				help = false;
-				addError(new IllegalArgumentException("some for this pattern required attributes are missing."));
+				addError("some for this pattern required attributes are missing.");
 			}
 		}
 		patternList = Arrays.asList(INCREASING, DECREASING, STABLE,
@@ -445,7 +445,7 @@ public class PatternMatchingAO extends AbstractLogicalOperator {
 		if (patternList.contains(type)) {
 			if (attribute == null || (time == null && size == null)) {
 				help = false;
-				addError(new IllegalArgumentException("some for this pattern required attributes are missing."));
+				addError("some for this pattern required attributes are missing.");
 			}
 		}
 		return help;

@@ -109,7 +109,7 @@ public class ParameterInfoHelper {
 														// assignment
 						LOG.error("Parameter '{}' in operator {} is not valid for value '{}'", new Object[] { parameterName, operatorClass.getName(), parameterValue });
 						LOG.error("Following errors occured during validation:");
-						for (Exception e : parameter.getErrors()) {
+						for (String e : parameter.getErrors()) {
 							LOG.error("", e);
 						}
 						continue;
@@ -131,8 +131,8 @@ public class ParameterInfoHelper {
 					if (!parameter.validate()) { // invokes internal assignment
 						LOG.error("Parameter '{}' in operator {} is not valid for value '{}'", new Object[] { parameterName, operatorClass.getName(), parameterValue });
 						LOG.error("Following errors occured during validation:");
-						for (Exception e : parameter.getErrors()) {
-							LOG.error("", e);
+						for (String e : parameter.getErrors()) {
+							LOG.error(e);
 						}
 						continue;
 					}

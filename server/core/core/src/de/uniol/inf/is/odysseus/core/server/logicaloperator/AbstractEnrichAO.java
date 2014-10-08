@@ -4,7 +4,6 @@ import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.BooleanParameter;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IllegalParameterException;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IntegerParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.LongParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
@@ -210,11 +209,11 @@ abstract public class AbstractEnrichAO extends UnaryLogicalOp {
 		boolean valid = true;
 		
 		if (getExpirationTime() < 0) {
-			addError(new IllegalParameterException("ExpirationTime must be > 0"));
+			addError("ExpirationTime must be > 0");
 			valid = false;
 		}
 		if (getCacheSize() <= 0) {
-			addError(new IllegalParameterException("cacheSize must be > 0"));
+			addError("cacheSize must be > 0");
 			valid = false;
 		}
 		

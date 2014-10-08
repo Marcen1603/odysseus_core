@@ -27,7 +27,6 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFConstraint;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IllegalParameterException;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.TimeParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.TimeValueItem;
@@ -90,7 +89,7 @@ abstract public class AbstractWindowAO extends UnaryLogicalOp implements
 	public void setWindowSize(TimeValueItem windowSize) {
 		this.windowSize = windowSize;
 	}
-	
+
 	public void setWindowSizeString(TimeValueItem size) {
 		this.windowSize = size;
 	}
@@ -192,7 +191,7 @@ abstract public class AbstractWindowAO extends UnaryLogicalOp implements
 	public void setUnit(String unit) {
 		this.timeUnit = TimeUnit.valueOf(unit);
 	}
-	
+
 	public String getUnit() {
 		return timeUnit != null ? timeUnit.toString() : null;
 	}
@@ -251,20 +250,17 @@ abstract public class AbstractWindowAO extends UnaryLogicalOp implements
 		switch (windowType) {
 		case TIME:
 			if (this.partitionedBy != null) {
-				addError(new IllegalParameterException(
-						"can't use partition in time window"));
+				addError("can't use partition in time window");
 				return false;
 			}
 			if (this.windowSlide != null && this.windowAdvance != null) {
-				addError(new IllegalParameterException(
-						"can't use slide and advance at the same time"));
+				addError("can't use slide and advance at the same time");
 				return false;
 			}
 			return checkTimeUnit();
 		case TUPLE:
 			if (this.windowSlide != null && this.windowAdvance != null) {
-				addError(new IllegalParameterException(
-						"can't use slide and advance at the same time"));
+				addError("can't use slide and advance at the same time");
 				return false;
 			}
 			return checkTimeUnit();
@@ -272,23 +268,19 @@ abstract public class AbstractWindowAO extends UnaryLogicalOp implements
 			boolean isValid = true;
 			if (this.windowSize != null) {
 				isValid = false;
-				addError(new IllegalParameterException(
-						"can't use size in unbounded window"));
+				addError("can't use size in unbounded window");
 			}
 			if (this.windowAdvance != null) {
 				isValid = false;
-				addError(new IllegalParameterException(
-						"can't use advance in unbounded window"));
+				addError("can't use advance in unbounded window");
 			}
 			if (this.partitionedBy != null) {
 				isValid = false;
-				addError(new IllegalParameterException(
-						"can't use partition in unbounded window"));
+				addError("can't use partition in unbounded window");
 			}
 			if (this.windowSlide != null) {
 				isValid = false;
-				addError(new IllegalParameterException(
-						"can't use slide in unbounded window"));
+				addError("can't use slide in unbounded window");
 			}
 			isValid = checkTimeUnit();
 			return isValid;
@@ -310,24 +302,21 @@ abstract public class AbstractWindowAO extends UnaryLogicalOp implements
 			if (windowSize != null) {
 				if (windowSize.getUnit() != null
 						&& !timeUnit.equals(windowSize.getUnit())) {
-					addError(new IllegalParameterException(
-							"window size unit must be equals to unit (remark: unit is deprecated)!"));
+					addError("window size unit must be equals to unit (remark: unit is deprecated)!");
 					return false;
 				}
 			}
 			if (windowAdvance != null) {
 				if (windowAdvance.getUnit() != null
 						&& !timeUnit.equals(windowAdvance.getUnit())) {
-					addError(new IllegalParameterException(
-							"window advance unit must be equals to unit (remark: unit is deprecated)!"));
+					addError("window advance unit must be equals to unit (remark: unit is deprecated)!");
 					return false;
 				}
 			}
 			if (windowSlide != null) {
 				if (windowSlide.getUnit() != null
 						&& !timeUnit.equals(windowSlide.getUnit())) {
-					addError(new IllegalParameterException(
-							"window slide unit must be equals to unit (remark: unit is deprecated)!"));
+					addError("window slide unit must be equals to unit (remark: unit is deprecated)!");
 					return false;
 				}
 			}

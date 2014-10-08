@@ -47,8 +47,8 @@ public abstract class AbstractOperatorBuilder implements IOperatorBuilder {
 	private static final String DEFAULT_URL = "http://odysseus.informatik.uni-oldenburg.de:8090/pages/viewpage.action?pageId=4587829";
 
 	private Set<IParameter<?>> parameters;
-	private List<Exception> errors;
-	private List<Exception> warnings;
+	private List<String> errors;
+	private List<String> warnings;
 	private int minPortCount;
 	private int maxPortCount;
 	private Map<Integer, InputOperatorItem> inputOperators;
@@ -95,8 +95,8 @@ public abstract class AbstractOperatorBuilder implements IOperatorBuilder {
 		this.minPortCount = minPortCount;
 		this.maxPortCount = maxPortCount;
 		this.parameters = new HashSet<IParameter<?>>();
-		this.errors = new ArrayList<Exception>();
-		this.warnings = new ArrayList<Exception>();
+		this.errors = new ArrayList<String>();
+		this.warnings = new ArrayList<String>();
 		this.inputOperators = new TreeMap<Integer, InputOperatorItem>();
 		this.categories = categories;
 	}
@@ -127,21 +127,21 @@ public abstract class AbstractOperatorBuilder implements IOperatorBuilder {
 		return this.url;
 	}
 
-	protected void addError(Exception e) {
+	protected void addError(String e) {
 		this.errors.add(e);
 	}
 
-	protected void addErrors(List<Exception> errors) {
+	protected void addErrors(List<String> errors) {
 		this.errors.addAll(errors);
 	}
 
 	@Override
-	public List<Exception> getErrors() {
+	public List<String> getErrors() {
 		return this.errors;
 	}
 
 	@Override
-	public List<Exception> getWarnings() {
+	public List<String> getWarnings() {
 		return this.warnings;
 	}
 
@@ -191,7 +191,7 @@ public abstract class AbstractOperatorBuilder implements IOperatorBuilder {
 		int inputOperatorCount = this.inputOperators.size();
 		if (inputOperatorCount < minPortCount) {
 			isValid = false;
-			this.errors.add(new MissingInputsException(this.minPortCount));
+			this.errors.add("need at least " + minPortCount + " input operators");
 		}
 		// > maxPortCount cannot occur, as this is checked in setInputOperator
 		// TODO do input operators have to be contiguous with regard to
@@ -217,8 +217,8 @@ public abstract class AbstractOperatorBuilder implements IOperatorBuilder {
 				this.errors.addAll(parameter.getErrors());
 			}
 			if (parameter.hasValue() && parameter.isDeprecated()) {
-				this.warnings.add(new DeprecatedParameterWarning("Parameter "
-						+ parameter.getName() + " is deprecated!"));
+				this.warnings.add("Parameter "
+						+ parameter.getName() + " is deprecated!");
 			}
 		}
 

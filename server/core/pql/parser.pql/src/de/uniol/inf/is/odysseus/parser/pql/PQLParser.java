@@ -109,7 +109,9 @@ public class PQLParser implements IQueryParser {
 			qpe.setColumn(column);
 			qpe.setLine(line);
 			throw qpe;
-		}	
+		}catch(QueryParseException ex){
+			throw ex;
+		}
 		catch (Exception e) {						
 			throw new QueryParseException(e);
 		}

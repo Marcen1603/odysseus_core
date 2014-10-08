@@ -5,6 +5,17 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 public class CSVParser {
+	
+	static public char determineDelimiter(String v) {
+		char ret;
+		if (v.equals("\\t")) {
+			ret = '\t';
+		} else {
+			ret = v.toCharArray()[0];
+		}
+		return ret;
+	}
+
 
 	static public List<String> parseCSV(final String line, final char textDelimiter, final char delimiter, final boolean trim) {
 		List<String> ret = new LinkedList<String>();

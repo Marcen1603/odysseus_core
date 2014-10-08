@@ -16,7 +16,6 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalO
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.BooleanParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.CreateSDFAttributeParameter;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IllegalParameterException;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.Option;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.OptionParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
@@ -398,8 +397,8 @@ public class WSEnrichAO extends AbstractEnrichAO {
 		ImmutableList<String> requestHandlers = RequestBuilderRegistry
 				.getHandlerNames();
 		if (!requestHandlers.contains(method.toLowerCase())) {
-			addError(new IllegalParameterException(
-					"Method must be \"GET\" or \"POST_ARGUMENTS\" or \"POST_DOCUMENT\""));
+			addError(
+					"Method must be \"GET\" or \"POST_ARGUMENTS\" or \"POST_DOCUMENT\"");
 			valid = false;
 		}
 		// Walk through the registered Handlers of IRequestBuilder and check if
@@ -407,9 +406,9 @@ public class WSEnrichAO extends AbstractEnrichAO {
 		ImmutableList<String> parserHandlers = KeyFinderRegistry
 				.getHandlerNames();
 		if (!parserHandlers.contains(parsingMethod.toLowerCase())) {
-			addError(new IllegalParameterException(
+			addError(
 					"You have to declare the Parsing Method to parse the webservice-response. This can be XMLEXPERIMENTAL  "
-							+ "or XPATH for XML-Documents or JSONEXPERIMENTAL or JSONPATH for JSON Documents."));
+							+ "or XPATH for XML-Documents or JSONEXPERIMENTAL or JSONPATH for JSON Documents.");
 			valid = false;
 		}
 
@@ -417,8 +416,8 @@ public class WSEnrichAO extends AbstractEnrichAO {
 		// SoapMessageCeatorRegistry because "REST" is not registered there
 		if (!(serviceMethod.equals(SERVICE_METHOD_REST) || serviceMethod
 				.equals(SERVICE_METHOD_SOAP))) {
-			addError(new IllegalParameterException(
-					"The serviceMethod must be \"REST\" or \"SOAP\""));
+			addError(
+					"The serviceMethod must be \"REST\" or \"SOAP\"");
 			valid = false;
 		}
 
@@ -427,34 +426,34 @@ public class WSEnrichAO extends AbstractEnrichAO {
 		 */
 
 		if ((operation != null && serviceMethod.equals(SERVICE_METHOD_REST))) {
-			addError(new IllegalParameterException(
-					"If you want to receive Data from a REST-Service you don´t have to define a operation!"));
+			addError(
+					"If you want to receive Data from a REST-Service you don´t have to define a operation!");
 			valid = false;
 		}
 		if ((operation == null && serviceMethod.equals(SERVICE_METHOD_SOAP))) {
-			addError(new IllegalParameterException(
-					"If you want to receive Data from a SOAP-Servie you have to define a operation!"));
+			addError(
+					"If you want to receive Data from a SOAP-Servie you have to define a operation!");
 			valid = false;
 		}
 		if ((wsdlLocation == null || wsdlLocation.equals(""))
 				&& serviceMethod.equals(SERVICE_METHOD_SOAP)) {
-			addError(new IllegalParameterException(
-					"If you want to receive Data from a SOAP-Service you have to define the location to the wsdl file of this webservice"));
+			addError(
+					"If you want to receive Data from a SOAP-Service you have to define the location to the wsdl file of this webservice");
 			valid = false;
 		}
 		if (getMultiTupleOutput() && !parsingMethod.equals(PARSING_XML_XPATH)) {
-			addError(new IllegalParameterException(
-					"MultiTupleOutput currently only works with the XPATH-Parser. You have to declare the parameter 'paringMethod' with 'XPATH'"));
+			addError(
+					"MultiTupleOutput currently only works with the XPATH-Parser. You have to declare the parameter 'paringMethod' with 'XPATH'");
 			valid = false;
 		}
 		if (arguments == null) {
-			addError(new IllegalParameterException(
-					"Missing Parameter 'arguments'. You have to declare min 1 Datafield you wand to submit to the webservice."));
+			addError(
+					"Missing Parameter 'arguments'. You have to declare min 1 Datafield you wand to submit to the webservice.");
 			valid = false;
 		}
 		if (receivedData == null) {
-			addError(new IllegalParameterException(
-					"Missing Parameter 'datafields'. You have to declare min 1 Datafield of the webservice for the Outputschema."));
+			addError(
+					"Missing Parameter 'datafields'. You have to declare min 1 Datafield of the webservice for the Outputschema.");
 			valid = false;
 		}
 

@@ -21,31 +21,30 @@ import java.util.List;
 public class ValidationException extends RuntimeException {
 
 	private static final long serialVersionUID = -1602573291200567065L;
-	private final ArrayList<Exception> exceptions;
+	private final ArrayList<String> exceptions;
 
-	public ValidationException(String operator, List<Exception> e) {
+	public ValidationException(String operator, List<String> e) {
 		super(getString(operator, e));
-		this.exceptions = new ArrayList<Exception>(e);
+		this.exceptions = new ArrayList<String>(e);
 	}
 
-	public ArrayList<Exception> getExceptions() {
+	public ArrayList<String> getExceptions() {
 		return exceptions;
 	}
 
-	private static void appendCause(StringBuilder builder, Throwable e) {
-		if (e != null && e.getCause() != null) {
-			builder.append("\nCaused by:").append(e.getCause());
-			appendCause(builder, e.getCause());
-		}
-	}
+//	private static void appendCause(StringBuilder builder, Throwable e) {
+//		if (e != null && e.getCause() != null) {
+//			builder.append("\nCaused by:").append(e.getCause());
+//			appendCause(builder, e.getCause());
+//		}
+//	}
 
-	private static String getString(String operator, List<Exception> exceptions) {
+	private static String getString(String operator, List<String> exceptions) {
 		final StringBuilder builder = new StringBuilder();
 		builder.append("validation error in ").append(operator).append(":");
-		for (final Exception e : exceptions) {
+		for (final String e : exceptions) {
 			builder.append('\n');
 			builder.append(e);
-			appendCause(builder, e);
 		}
 		return builder.toString();
 	}

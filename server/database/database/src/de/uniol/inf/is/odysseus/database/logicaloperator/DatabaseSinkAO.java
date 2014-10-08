@@ -38,7 +38,6 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOpera
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.BooleanParameter;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IllegalParameterException;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IntegerParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.LongParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
@@ -151,8 +150,7 @@ public class DatabaseSinkAO extends AbstractDatabaseOperator {
 		boolean isValid = super.isValid();
 		if (tableSchema != null
 				&& tableSchema.size() != getOutputSchema().size()) {
-			addError(new IllegalParameterException(
-					"TableSchema must have the same size as the output schema!"));
+			addError("TableSchema must have the same size as the output schema!");
 			isValid = false;
 
 		}

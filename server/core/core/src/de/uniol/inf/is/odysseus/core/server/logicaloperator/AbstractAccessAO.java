@@ -268,21 +268,21 @@ abstract public class AbstractAccessAO extends AbstractLogicalOperator {
 	public boolean isValid() {
 
 		if (accessAOResource.isMarked() && this.attributes != null){
-			addError(new IllegalArgumentException("Source "+accessAOResource+" already defined!"));
+			addError("Source "+accessAOResource+" already defined!");
 			return false;
 		}
 		
 		if (this.inputSchema != null) {
 			if (this.attributes.size() != this.inputSchema.size()) {
-				addError(new IllegalArgumentException(
-						"For each attribute there must be at least one reader in the input schema"));
+				addError(
+						"For each attribute there must be at least one reader in the input schema");
 				return false;
 			}
 		}
 
 		if (!WrapperRegistry.containsWrapper(this.wrapper)) {
-			addError(new IllegalParameterException("Wrapper " + this.wrapper
-					+ " is unknown"));
+			addError("Wrapper " + this.wrapper
+					+ " is unknown");
 			return false;
 		}
 

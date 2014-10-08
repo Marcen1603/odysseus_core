@@ -42,7 +42,6 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalO
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.BooleanParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.CreateSDFAttributeParameter;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IllegalParameterException;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.LongParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
 import de.uniol.inf.is.odysseus.database.connection.IDatabaseConnection;
@@ -100,12 +99,12 @@ public class DatabaseSourceAO extends AbstractDatabaseOperator {
 	public boolean isEscapeNames() {
 		return escapeNames;
 	}
-	
+
 	@Parameter(type = BooleanParameter.class, name = "Use_Datatype_Mappings", optional = true)
 	public void setUseDatatypeMappings(boolean useDatatypeMappings) {
 		this.useDatatypeMappings = useDatatypeMappings;
 	}
-	
+
 	public boolean isUseDatatypeMappings() {
 		return useDatatypeMappings;
 	}
@@ -136,8 +135,7 @@ public class DatabaseSourceAO extends AbstractDatabaseOperator {
 	public boolean isValid() {
 		boolean valid = super.isValid();
 		if (this.givenSchema == null && this.fetchAttributes == false) {
-			addError(new IllegalParameterException(
-					"You have to either use ATTRIBUTES to define a schema or to use FETCH_ATTRIBUTES to invoke fetching the schema from the database"));
+			addError("You have to either use ATTRIBUTES to define a schema or to use FETCH_ATTRIBUTES to invoke fetching the schema from the database");
 			valid = false;
 		}
 		return valid;
@@ -158,8 +156,9 @@ public class DatabaseSourceAO extends AbstractDatabaseOperator {
 								"Error reading schema. Does table " + tablename
 										+ " exist?");
 					}
-				}else{
-					throw new SQLException("No connection to "+getConnectionName()+"!");
+				} else {
+					throw new SQLException("No connection to "
+							+ getConnectionName() + "!");
 				}
 			} catch (SQLException e) {
 				e.printStackTrace();

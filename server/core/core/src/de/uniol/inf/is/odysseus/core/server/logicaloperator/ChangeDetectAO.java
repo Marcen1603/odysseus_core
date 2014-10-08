@@ -26,7 +26,6 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalO
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.BooleanParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.DoubleParameter;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IllegalParameterException;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IntegerParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.ResolvedSDFAttributeParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
@@ -171,8 +170,7 @@ public class ChangeDetectAO extends UnaryLogicalOp {
 			int[] comPos = getComparePositions();
 			for (int c : comPos) {
 				if (c == -1) {
-					addError(new IllegalParameterException(
-							"Not all attributes in input found!"));
+					addError("Not all attributes in input found!");
 					isValid = false;
 				}
 			}

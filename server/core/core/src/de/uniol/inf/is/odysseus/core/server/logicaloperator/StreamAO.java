@@ -12,7 +12,6 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.CreateSDFAttributeParameter;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IllegalParameterException;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.ResourceParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.SourceParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
@@ -153,30 +152,30 @@ public class StreamAO extends AbstractLogicalOperator {
 		if (schema != null) {
 			if (type != null) {
 				isValid = false;
-				addError(new IllegalParameterException(
-						"Stream cannot be combined with DataHandler"));
+				addError(
+						"Stream cannot be combined with DataHandler");
 			}
 			if (attributes != null) {
 				isValid = false;
-				addError(new IllegalParameterException(
-						"Stream cannot be combined with schema"));
+				addError(
+						"Stream cannot be combined with schema");
 			}
 		}
 		if (schema == null) {
 			if (type == null) {
 				isValid = false;
-				addError(new IllegalParameterException(
-						"DataHandler _or_ stream must be given"));
+				addError(
+						"DataHandler _or_ stream must be given");
 			}
 			if (attributes == null) {
 				isValid = false;
-				addError(new IllegalParameterException(
-						"Schema _or_ stream must be given"));
+				addError(
+						"Schema _or_ stream must be given");
 			}
 			if (streamname == null) {
 				isValid = false;
-				addError(new IllegalParameterException(
-						"Streamname _or_ stream must be given"));
+				addError(
+						"Streamname _or_ stream must be given");
 			}
 		}
 

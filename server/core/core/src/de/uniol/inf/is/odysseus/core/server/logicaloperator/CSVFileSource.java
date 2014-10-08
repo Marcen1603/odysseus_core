@@ -11,7 +11,6 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalO
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.BooleanParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.FileNameParameter;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IllegalParameterException;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
 import de.uniol.inf.is.odysseus.core.server.util.Constants;
 
@@ -97,7 +96,7 @@ public class CSVFileSource extends AbstractAccessAO {
 	@Override
 	public boolean isValid() {
 		if (getAttributes() == null || getAttributes().size() == 0){
-			addError(new IllegalParameterException("Schema must be set!"));
+			addError("Schema must be set!");
 			return false;
 		}
 		

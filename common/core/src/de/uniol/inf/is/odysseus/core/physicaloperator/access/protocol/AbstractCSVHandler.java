@@ -6,6 +6,7 @@ import java.nio.CharBuffer;
 import java.text.DecimalFormat;
 
 import de.uniol.inf.is.odysseus.core.collection.OptionMap;
+import de.uniol.inf.is.odysseus.core.conversion.CSVParser;
 import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.IAccessPattern;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportDirection;
@@ -44,9 +45,9 @@ abstract public class AbstractCSVHandler<T> extends LineProtocolHandler<T> {
 	private void init_internal() {
 		OptionMap options = optionsMap;
 		if (options.containsKey(DELIMITER)) {
-			delimiter = determineDelimiter(options.get(DELIMITER));
+			delimiter = CSVParser.determineDelimiter(options.get(DELIMITER));
 		} else if (options.containsKey(CSV_DELIMITER)) {
-			delimiter = determineDelimiter(options.get(CSV_DELIMITER));
+			delimiter = CSVParser.determineDelimiter(options.get(CSV_DELIMITER));
 		} else {
 			delimiter = ',';
 		}
@@ -72,17 +73,7 @@ abstract public class AbstractCSVHandler<T> extends LineProtocolHandler<T> {
 		}
 
 	}
-
-	public char determineDelimiter(String v) {
-		char ret;
-		if (v.equals("\\t")) {
-			ret = '\t';
-		} else {
-			ret = v.toCharArray()[0];
-		}
-		return ret;
-	}
-
+	
 	@Override
 	public void onConnect(ITransportHandler caller) {
 		// TODO Auto-generated method stub

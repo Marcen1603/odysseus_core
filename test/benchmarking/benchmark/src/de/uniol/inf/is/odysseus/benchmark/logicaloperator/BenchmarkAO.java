@@ -20,7 +20,6 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOpera
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.DoubleParameter;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IllegalParameterException;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IntegerParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.LongParameter;
 
@@ -97,17 +96,16 @@ public class BenchmarkAO extends AbstractLogicalOperator {
 	public boolean isValid() {
 		boolean isValid = true;
 		if (selectivity < 0) {
-			addError(new IllegalParameterException(
-					"selectivity has to be greater than 0"));
+			addError("selectivity has to be greater than 0");
 			isValid = false;
 		}
 		if (processingTimeInns < 0) {
-			addError(new IllegalParameterException(
-					"time has to be greater than 0"));
+			addError(
+					"time has to be greater than 0");
 			isValid = false;
 		}
 		if( memoryUsageBytes < 0 ) {
-			addError(new IllegalParameterException("memoryUsage has to be greater than zero"));
+			addError("memoryUsage has to be greater than zero");
 			isValid = false;
 		}
 		return isValid;

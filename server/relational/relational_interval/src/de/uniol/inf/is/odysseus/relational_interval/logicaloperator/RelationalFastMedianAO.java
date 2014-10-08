@@ -11,7 +11,6 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalO
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.BooleanParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.DoubleParameter;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IllegalParameterException;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.LongParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.ResolvedSDFAttributeParameter;
 
@@ -154,18 +153,18 @@ public class RelationalFastMedianAO extends AbstractLogicalOperator {
 	public boolean isValid() {
 		boolean isValid = true;
 		if (roundingFactor > 0 && !useHistogram) {
-			addError(new IllegalParameterException(
-					"RoundingFactor can only be used in histogram version"));
+			addError(
+					"RoundingFactor can only be used in histogram version");
 			isValid = false;
 		}
 		if (numericalMedian && percentiles != null) {
-			addError(new IllegalParameterException(
-					"You can only use percentiles or numerical median!"));
+			addError(
+					"You can only use percentiles or numerical median!");
 			isValid = false;
 		}
 		if (!useHistogram && percentiles != null){
-			addError(new IllegalParameterException(
-					"Percentiles only allowed for histogram version!"));
+			addError(
+					"Percentiles only allowed for histogram version!");
 			isValid = false;			
 		}
 		return isValid && super.isValid();

@@ -69,7 +69,7 @@ public abstract class AbstractLogicalOperator implements Serializable, ILogicalO
 	private boolean recalcAllPhyInputSet = true;
 	private boolean cachedAllPhysicalInputSet = false;
 
-	transient private List<Exception> errors = new ArrayList<Exception>();
+	transient private List<String> errors = new ArrayList<String>();
 
 	private Map<String, String> infos = Maps.newTreeMap();
 
@@ -647,15 +647,20 @@ public abstract class AbstractLogicalOperator implements Serializable, ILogicalO
 		return true;
 	}
 
-	protected void addError(Exception e) {
+	protected void addError(String e) {
 		this.errors.add(e);
+	}
+	
+	@Deprecated
+	protected void addError(Exception e){
+		addError(e.getMessage());
 	}
 
 	protected void clearErrors() {
 		this.errors.clear();
 	}
 
-	public List<Exception> getErrors() {
+	public List<String> getErrors() {
 		return Collections.unmodifiableList(this.errors);
 	}
 

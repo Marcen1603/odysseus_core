@@ -18,6 +18,7 @@ package de.uniol.inf.is.odysseus.core.server.logicaloperator.builder;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.uniol.inf.is.odysseus.core.logicaloperator.ValidationException;
 import de.uniol.inf.is.odysseus.core.sdf.schema.IAttributeResolver;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.IParameter;
 
@@ -50,7 +51,7 @@ public class ListParameter<T> extends AbstractParameter<List<T>> {
 				singleParameter.setAttributeResolver(getAttributeResolver());
 				singleParameter.setDataDictionary(getDataDictionary());
 				if (!singleParameter.validate()) {
-					throw new RuntimeException(singleParameter.getErrors().get(0));
+					throw new ValidationException("", singleParameter.getErrors());
 				}
 				list.add(singleParameter.getValue());
 			}

@@ -8,7 +8,6 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnaryLogicalOp;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.DoubleParameter;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IllegalParameterException;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
 
 @LogicalOperator(maxInputPorts=1, minInputPorts=1, name="SyncWithSystemTime", doc="This operator tries to delay elements so that they are not faster than realtime.", category = {LogicalOperatorCategory.PROCESSING})
@@ -64,13 +63,13 @@ public class SyncWithSystemTimeAO extends UnaryLogicalOp {
 			factor = 1.0;
 		}
 		if (factor < 0){
-			addError(new IllegalParameterException(
-					"ApplicationTimeFactor must be greater 0")); 
+			addError(
+					"ApplicationTimeFactor must be greater 0"); 
 			return false;			
 		}
 		if (factor != -1 && timeUnit != null){
-			addError(new IllegalParameterException(
-					"can't use ApplicationTimeFactor and ApplicationTimeUnit at same time")); 
+			addError(
+					"can't use ApplicationTimeFactor and ApplicationTimeUnit at same time"); 
 			return false;
 		}
 		

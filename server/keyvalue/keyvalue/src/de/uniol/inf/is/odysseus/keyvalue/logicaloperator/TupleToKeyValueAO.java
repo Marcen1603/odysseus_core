@@ -24,7 +24,6 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnaryLogicalOp;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.GetParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IllegalParameterException;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
 
 @LogicalOperator(maxInputPorts=1, minInputPorts=1, name="TupleToKeyValue", doc="Converts a tuple to a key-value/JSON object", category={LogicalOperatorCategory.TRANSFORM})
@@ -67,7 +66,7 @@ public class TupleToKeyValueAO extends UnaryLogicalOp {
 		if(this.type != null &&	KeyValueObject.class.isAssignableFrom(this.type)) {
 			return true;
 		}
-		addError(new IllegalParameterException("TupleToKeyValue operator has a wrong type."));
+		addError("TupleToKeyValue operator has a wrong type.");
 		return false;
 	}
 

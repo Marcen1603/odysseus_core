@@ -8,7 +8,6 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.BooleanParameter;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IllegalParameterException;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IntegerParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.LongParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.PredicateParameter;
@@ -56,14 +55,12 @@ public class CoalesceAO extends AggregateAO implements IHasPredicate{
 	@Override
 	public boolean isValid() {
 		if (getGroupingAttributes().size() > 0 && getPredicate() != null){
-			addError(new IllegalParameterException(
-					"can't use attributes and predicate at the same time!"));
+			addError("can't use attributes and predicate at the same time!");
 			return false;
 		}
 		
 		if (getPredicate() != null && isCreateOnHeartbeat()){
-			addError(new IllegalParameterException(
-					"can't use predicate with createOnHeartbeat!"));
+			addError("can't use predicate with createOnHeartbeat!");
 			return false;			
 		}
 			

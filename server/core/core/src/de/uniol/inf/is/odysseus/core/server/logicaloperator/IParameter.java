@@ -58,7 +58,7 @@ public interface IParameter<T> extends Serializable {
 
 	boolean validate();
 
-	List<Exception> getErrors();
+	List<String> getErrors();
 
 	T getValue();
 

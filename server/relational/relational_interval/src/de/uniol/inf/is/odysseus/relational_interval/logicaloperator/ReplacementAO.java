@@ -7,7 +7,6 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IllegalParameterException;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.LongParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.ResolvedSDFAttributeParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
@@ -94,8 +93,8 @@ public class ReplacementAO extends AbstractLogicalOperator {
 		boolean isValid = true;
 		if (interval <= 0){
 			isValid = false;
-			addError(new IllegalParameterException(
-					"Interval must be greater zero!"));		
+			addError(
+					"Interval must be greater zero!");		
 		}
 		
 		// TODO Check for different methods the different required parameters

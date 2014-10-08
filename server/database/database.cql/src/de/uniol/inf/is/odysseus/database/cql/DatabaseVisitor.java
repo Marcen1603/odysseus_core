@@ -104,7 +104,7 @@ public class DatabaseVisitor extends CQLParser {
 		source.setWaitInMillis(waitMillis);		
 		if(!source.isValid()){			
 			if(source.getErrors().size()>0){
-				throw new QueryParseException("Source not correctly set", source.getErrors().get(0));
+				throw new QueryParseException("Source not correctly set"+source.getErrors().get(0));
 			}else{
 				throw new QueryParseException("Source not correctly set. Check connection and parameters!");
 			}
@@ -149,7 +149,7 @@ public class DatabaseVisitor extends CQLParser {
 		sinkAO.setTruncate(truncate);	
 		if(!sinkAO.isValid()){			
 			if(sinkAO.getErrors().size()>0){
-				throw new QueryParseException("Source not correctly set", sinkAO.getErrors().get(0));
+				throw new QueryParseException("Source not correctly set" + sinkAO.getErrors().get(0));
 			}else{
 				throw new QueryParseException("Source not correctly set. Check connection and parameters!");
 			}

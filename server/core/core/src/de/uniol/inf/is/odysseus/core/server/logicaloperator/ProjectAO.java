@@ -29,7 +29,6 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.GetParam
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.CreateSDFAttributeParameter;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IllegalParameterException;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.ResolvedSDFAttributeParameter;
 
 /**
@@ -110,7 +109,7 @@ public class ProjectAO extends UnaryLogicalOp {
 		if (this.attributes.isEmpty() != this.paths.isEmpty()) {
 			return true;
 		} else {
-			addError(new IllegalParameterException("either attributes xor paths parameter have to be set"));
+			addError("either attributes xor paths parameter have to be set");
 			return false;
 		}
 	}

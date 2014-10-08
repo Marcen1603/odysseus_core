@@ -266,8 +266,8 @@ abstract public class AbstractSenderAO extends AbstractLogicalOperator {
 	@Override
 	public boolean isValid() {
 		if (!WrapperRegistry.containsWrapper(this.wrapper)) {
-			this.addError(new IllegalArgumentException("Wrapper "
-					+ this.wrapper + " unknown"));
+			this.addError("Wrapper "
+					+ this.wrapper + " unknown");
 			return false;
 		}
 

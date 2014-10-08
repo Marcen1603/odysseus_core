@@ -13,7 +13,6 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOpera
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.BinaryLogicalOp;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IllegalParameterException;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IntegerParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.ResolvedSDFAttributeParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
@@ -292,8 +291,8 @@ public class SentimentDetectionAO extends BinaryLogicalOp{
 		List<String> validLanguage = StopWordsRegistry.getValidLanguage();
 		
 		if(!validClassifier.contains(classifier.toLowerCase())){
-			addError(new IllegalParameterException(
-			"The classifier "+ classifier.toLowerCase()+" could not found."));	
+			addError(
+			"The classifier "+ classifier.toLowerCase()+" could not found.");	
 			return false;
 		}
 		
@@ -314,8 +313,8 @@ public class SentimentDetectionAO extends BinaryLogicalOp{
 			SDFSchema toClassifierSchema = this.getInputSchema(2);
 			
 			if(toClassifierSchema == null && attributeTextToBeClassified != null ){
-				addError(new IllegalParameterException(
-						"Please define all inputports"));
+				addError(
+						"Please define all inputports");
 				return false;
 			}
 			
@@ -342,8 +341,8 @@ public class SentimentDetectionAO extends BinaryLogicalOp{
 		
 		
 		if(!validLanguage.contains(language.toLowerCase())){
-			addError(new IllegalParameterException(
-					"Language: "+ language +" for stopwords not found!"));
+			addError(
+					"Language: "+ language +" for stopwords not found!");
 			return false;
 			
 		}

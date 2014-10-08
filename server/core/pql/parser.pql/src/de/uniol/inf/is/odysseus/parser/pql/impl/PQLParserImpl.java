@@ -20,6 +20,8 @@ import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.DataDictionaryException;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.QueryParseException;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
+import de.uniol.inf.is.odysseus.core.infoservice.InfoService;
+import de.uniol.inf.is.odysseus.core.infoservice.InfoServiceFactory;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AppendToPhysicalAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TopAO;
@@ -43,6 +45,7 @@ import de.uniol.inf.is.odysseus.core.collection.Context;
 
 @SuppressWarnings("all")
 public class PQLParserImpl implements PQLParserImplConstants {
+        static final private InfoService infoService = InfoServiceFactory.getInfoService("PQLParser");
   static private ILogicalOperator createOperator(String identifier, Map < String, Object > parameters, List < InputOperatorItem > inputOps)
   {
     IOperatorBuilder builder = OperatorBuilderFactory.createOperatorBuilder(identifier.toUpperCase(), getUser(), getDataDictionary(), getContext());
@@ -56,10 +59,9 @@ public class PQLParserImpl implements PQLParserImplConstants {
     {
       throw new ValidationException(identifier, builder.getErrors());
     }
-    for (Exception e : builder.getWarnings())
+    for (String e : builder.getWarnings())
     {
-      // TODO: How to transport this to the gui?
-      System.err.println("WARNING " + e.getMessage());
+      infoService.warning(e);
     }
     ILogicalOperator operator = builder.createOperator();
     return operator;
@@ -389,7 +391,7 @@ public class PQLParserImpl implements PQLParserImplConstants {
         }
         catch (DataDictionaryException e)
         {
-          {if (true) throw new QueryParseException("no such operator: " + identifier.image);}
+          {if (true) throw new QueryParseException("The input source \u005c"" + identifier.image +"\u005c" is not registered.");}
         }
       }
       {if (true) return op;}
@@ -637,18 +639,6 @@ public class PQLParserImpl implements PQLParserImplConstants {
     finally { jj_save(1, xla); }
   }
 
-  static private boolean jj_3R_16() {
-    if (jj_scan_token(IDENTIFIER)) return true;
-    if (jj_scan_token(24)) return true;
-    if (jj_scan_token(CHAR_LITERAL)) return true;
-    return false;
-  }
-
-  static private boolean jj_3_2() {
-    if (jj_3R_6()) return true;
-    return false;
-  }
-
   static private boolean jj_3R_18() {
     if (jj_3R_8()) return true;
     if (jj_scan_token(20)) return true;
@@ -747,6 +737,18 @@ public class PQLParserImpl implements PQLParserImplConstants {
   static private boolean jj_3R_9() {
     if (jj_scan_token(25)) return true;
     if (jj_3R_8()) return true;
+    return false;
+  }
+
+  static private boolean jj_3R_16() {
+    if (jj_scan_token(IDENTIFIER)) return true;
+    if (jj_scan_token(24)) return true;
+    if (jj_scan_token(CHAR_LITERAL)) return true;
+    return false;
+  }
+
+  static private boolean jj_3_2() {
+    if (jj_3R_6()) return true;
     return false;
   }
 

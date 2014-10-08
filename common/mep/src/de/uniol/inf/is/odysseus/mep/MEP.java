@@ -47,6 +47,7 @@ import de.uniol.inf.is.odysseus.mep.functions.SMaxFunction;
 import de.uniol.inf.is.odysseus.mep.functions.SMinFunction;
 import de.uniol.inf.is.odysseus.mep.functions.SleepFunction;
 import de.uniol.inf.is.odysseus.mep.functions.SplitFunction;
+import de.uniol.inf.is.odysseus.mep.functions.SplitFunctionOld;
 import de.uniol.inf.is.odysseus.mep.functions.StoredLineFunction;
 import de.uniol.inf.is.odysseus.mep.functions.StoredValueFunction;
 import de.uniol.inf.is.odysseus.mep.functions.UUIDFunction;
@@ -117,6 +118,7 @@ import de.uniol.inf.is.odysseus.mep.functions.math.UnaryMinusOperator;
 import de.uniol.inf.is.odysseus.mep.functions.string.ConcatFunction;
 import de.uniol.inf.is.odysseus.mep.functions.string.LengthFunction;
 import de.uniol.inf.is.odysseus.mep.functions.string.LowerFunction;
+import de.uniol.inf.is.odysseus.mep.functions.string.StartsWithFunction;
 import de.uniol.inf.is.odysseus.mep.functions.string.StringContainsFunction;
 import de.uniol.inf.is.odysseus.mep.functions.string.StringDivisionOperator;
 import de.uniol.inf.is.odysseus.mep.functions.string.StringMinusOperator;
@@ -202,6 +204,7 @@ import de.uniol.inf.is.odysseus.mep.impl.MatrixFunction;
 import de.uniol.inf.is.odysseus.mep.impl.MatrixLine;
 import de.uniol.inf.is.odysseus.mep.impl.SimpleNode;
 
+@SuppressWarnings("deprecation")
 public class MEP implements IExpressionParser {
 
 	volatile protected static Logger _logger = null;
@@ -367,6 +370,7 @@ public class MEP implements IExpressionParser {
 		registerFunction(new ConcatFunction());
 		registerFunction(new SubStringFunction());
 		registerFunction(new SubStringFunction2());
+		registerFunction(new StartsWithFunction());
 		registerFunction(new LengthFunction());
 		registerFunction(new UpperFunction());
 		registerFunction(new LowerFunction());
@@ -454,6 +458,7 @@ public class MEP implements IExpressionParser {
 		registerFunction(new StoredLineFunction());
 
 		registerFunction(new SplitFunction());
+		registerFunction(new SplitFunctionOld());
 
 		// Array Functions
 		registerFunction(new ListElementAtFunction());

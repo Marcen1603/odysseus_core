@@ -37,8 +37,8 @@ public interface IOperatorBuilder extends Serializable {
 
 	public boolean validate();
 
-	public List<Exception> getErrors();
-	public List<Exception> getWarnings();
+	public List<String> getErrors();
+	public List<String> getWarnings();
 
 	public void setInputOperator(int inputPort, ILogicalOperator operator,
 			int outputPort);

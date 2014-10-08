@@ -25,7 +25,6 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractAccessAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IllegalParameterException;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
 import de.uniol.inf.is.odysseus.core.server.util.Constants;
 import de.uniol.inf.is.odysseus.wrapper.opcda.physicaloperator.access.OPCDATransportHandler;
@@ -95,12 +94,12 @@ public class OPCDASource extends AbstractAccessAO {
 		boolean valid = super.isValid();
 		if (paths.size() != getOutputSchema().size()){
 			valid = false;
-			addError(new IllegalParameterException("number of elements in path must be the same as in output schema"));
+			addError("number of elements in path must be the same as in output schema");
 		}
 		for (SDFAttribute a: getOutputSchema()){
 			if (a.getDatatype() != SDFOPCDADatatype.OPCVALUE){
 				valid = false;
-				addError(new IllegalParameterException("Attribute "+a.getURI()+" must be of type OPCValue"));
+				addError("Attribute "+a.getURI()+" must be of type OPCValue");
 			}
 		}
 		return valid;
