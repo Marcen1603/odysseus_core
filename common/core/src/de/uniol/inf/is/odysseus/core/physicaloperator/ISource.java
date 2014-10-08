@@ -118,5 +118,4 @@ public interface ISource<T> extends IPhysicalOperator,
 			List<PhysicalSubscription<ISink<?>>> callPath,
 			List<IOperatorOwner> forOwners);
 
-
 }

@@ -280,6 +280,19 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 	public boolean isOpen() {
 		return open.get();
 	}
+	
+	@Override
+	synchronized public void open(IOperatorOwner owner) throws OpenFailedException {
+		if (!isOpen()) {
+			fire(openInitEvent);
+			process_open();
+			fire(openDoneEvent);
+		}
+		
+		open.set(true);
+
+		reconnectSinks();
+	}
 
 	@Override
 	public void open(ISink<? super T> caller, int sourcePort, int sinkPort,

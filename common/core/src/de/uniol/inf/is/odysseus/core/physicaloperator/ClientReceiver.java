@@ -583,6 +583,11 @@ public class ClientReceiver<R, W> implements ISource<W>,
 	}
 
 	@Override
+	synchronized public void open(IOperatorOwner owner) throws OpenFailedException {
+		// do nothing
+	}
+	
+	@Override
 	public void open(ISink<? super W> caller, int sourcePort, int sinkPort,
 			List<PhysicalSubscription<ISink<?>>> callPath, List<IOperatorOwner> forOwners)
 			throws OpenFailedException {

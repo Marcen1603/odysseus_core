@@ -61,11 +61,6 @@ public interface ISink<T extends IStreamObject<?>> extends IPhysicalOperator, IS
 	
 	
 	/**
-	 * Call open for a distinct owner 
-	 */
-	void open(IOperatorOwner id);
-	
-	/**
 	 * Shared Sink can be opened for different owners (queries)
 	 * @param owner
 	 * @return

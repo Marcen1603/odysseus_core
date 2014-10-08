@@ -512,12 +512,7 @@ public class PhysicalQuery implements IPhysicalQuery {
 				// this also works for cyclic plans,
 				// since if an operator is already open, the
 				// following sources will not be called any more.
-				if (curRoot.isSink()) {
-					((ISink<?>) curRoot).open(this);
-				} else {
-					// throw new IllegalArgumentException(
-					// "Open cannot be called on a source");
-				}
+				curRoot.open(this);
 			}
 			setState(nextState);
 			this.isStarting = false;

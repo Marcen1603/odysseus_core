@@ -73,6 +73,10 @@ public interface IPhysicalOperator extends IOwnedOperator,
 	public void setOutputSchema(SDFSchema outputSchema);
 	public void setOutputSchema(SDFSchema outputSchema, int port);
 	
+	/**
+	 * Call open for a distinct owner 
+	 */
+	void open(IOperatorOwner id);
 	public boolean isOpen();
 
 	void addUniqueId(IOperatorOwner owner, Resource id);

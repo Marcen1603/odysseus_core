@@ -157,14 +157,13 @@ public abstract class AbstractPipe<R extends IStreamObject<?>, W extends IStream
 	// ------------------------------------------------------------------------
 	// OPEN
 	// ------------------------------------------------------------------------
-
-
+	
 	@Override
 	final synchronized public void open(IOperatorOwner owner) throws OpenFailedException {
 		reconnectSinks();
 		this.delegateSink.open(owner);
 	}
-
+	
 	@Override
 	final synchronized public void open(ISink<? super W> caller, int sourcePort,
 			int sinkPort, List<PhysicalSubscription<ISink<?>>> callPath,
