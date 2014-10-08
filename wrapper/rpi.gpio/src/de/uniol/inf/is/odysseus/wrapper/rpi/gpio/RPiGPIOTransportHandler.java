@@ -108,7 +108,7 @@ public class RPiGPIOTransportHandler extends AbstractSimplePullTransportHandler<
         
         if(!value && !errorPi4J){
         	if(!errorPi4J){
-        		LOG.error("RPi GPIO TransportHandler runs on Raspberry Pi only. Are you installed pi4j?");
+        		LOG.error("RPi GPIO TransportHandler runs on Raspberry Pi only. Do you installed pi4j?");
         		errorPi4J = true;
         	}
         	//return null;
@@ -123,17 +123,17 @@ public class RPiGPIOTransportHandler extends AbstractSimplePullTransportHandler<
 		try{
 			this.gpioController = GpioFactory.getInstance();
 		}catch(NullPointerException ex){
-			if(initNullPointerException ){
+			if(!initNullPointerException){
 				ex.printStackTrace();
 				initNullPointerException=true;
 			}
 		}catch(Exception ex){
-			if(initException){
+			if(!initException){
 				ex.printStackTrace();
 				initException=true;
 			}
 		}catch (UnsatisfiedLinkError ex) {
-			if(initUnsatisfiedLinkError){
+			if(!initUnsatisfiedLinkError){
 				ex.printStackTrace();
 				initUnsatisfiedLinkError=true;
 			}
