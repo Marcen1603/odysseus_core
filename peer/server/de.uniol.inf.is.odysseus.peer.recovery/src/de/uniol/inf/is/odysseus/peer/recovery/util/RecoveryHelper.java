@@ -1,33 +1,32 @@
 package de.uniol.inf.is.odysseus.peer.recovery.util;
 
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
-import net.jxta.id.ID;
 import net.jxta.peer.PeerID;
-import net.jxta.pipe.PipeID;
 
 import com.google.common.base.Optional;
 
 import de.uniol.inf.is.odysseus.core.collection.Context;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
+import de.uniol.inf.is.odysseus.core.physicaloperator.PhysicalSubscription;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.RestructHelper;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSource;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
+import de.uniol.inf.is.odysseus.p2p_new.data.DataTransmissionException;
 import de.uniol.inf.is.odysseus.p2p_new.logicaloperator.JxtaReceiverAO;
 import de.uniol.inf.is.odysseus.p2p_new.logicaloperator.JxtaSenderAO;
 import de.uniol.inf.is.odysseus.p2p_new.physicaloperator.JxtaReceiverPO;
 import de.uniol.inf.is.odysseus.p2p_new.physicaloperator.JxtaSenderPO;
 import de.uniol.inf.is.odysseus.peer.distribute.ILogicalQueryPart;
 import de.uniol.inf.is.odysseus.peer.distribute.LogicalQueryPart;
-import de.uniol.inf.is.odysseus.peer.recovery.internal.JxtaInformation;
 import de.uniol.inf.is.odysseus.peer.recovery.internal.RecoveryCommunicator;
 
 public class RecoveryHelper {
@@ -113,31 +112,6 @@ public class RecoveryHelper {
 				}
 			}
 		}
-		return null;
-	}
-
-	public static PipeID getReceiverPipeId(String pql) {
-		String pipeSearch = "JXTARECEIVER({PIPE='";
-		int pipeIdLength = 80;
-
-		if (!pql.contains(pipeSearch))
-			return null;
-
-		int index = pql.indexOf(pipeSearch);
-		int beginIndex = index + pipeSearch.length();
-
-		String pipeIdString = pql.substring(beginIndex, beginIndex
-				+ pipeIdLength);
-
-		try {
-			URI pipeUri = new URI(pipeIdString);
-			PipeID pipeId = PipeID.create(pipeUri);
-			return pipeId;
-		} catch (URISyntaxException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
 		return null;
 	}
 
@@ -229,6 +203,60 @@ public class RecoveryHelper {
 		}
 
 		return senders;
+	}
+
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	public static void addNewSender(JxtaSenderPO originalSender, PeerID newPeer) {
+		// TEST Update sender
+		// Goal: install a new sender which officially sends to the new
+		// receiver so that if we stop a query, it will stop on the new
+		// peer, too
+
+		// New JxtaSender which should send to the new peer
+		JxtaSenderAO originalSenderAO = (JxtaSenderAO) RecoveryHelper
+				.getLogicalJxtaOperator(true, originalSender.getPipeIDString());
+		JxtaSenderAO jxtaSenderAO = (JxtaSenderAO) originalSenderAO.clone();
+		jxtaSenderAO.setPeerID(newPeer.toString());
+
+		JxtaSenderPO jxtaSender = null;
+		try {
+			jxtaSender = new JxtaSenderPO(jxtaSenderAO);
+		} catch (DataTransmissionException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		// Now do the subscriptions
+		jxtaSender.setOutputSchema(originalSender.getOutputSchema());
+		PhysicalSubscription subscription = originalSender
+				.getSubscribedToSource(0);
+
+		if (subscription.getTarget() instanceof AbstractPipe) {
+			((AbstractPipe) subscription.getTarget())
+					.subscribeSink(jxtaSender, 0,
+							subscription.getSourceOutPort(),
+							subscription.getSchema(), true,
+							subscription.getOpenCalls());
+
+			jxtaSender.subscribeToSource(subscription.getTarget(),
+					subscription.getSinkInPort(),
+					subscription.getSourceOutPort(), subscription.getSchema());
+		} else if (subscription.getTarget() instanceof AbstractSource) {
+			((AbstractSource) subscription.getTarget())
+					.subscribeSink(jxtaSender, 0,
+							subscription.getSourceOutPort(),
+							subscription.getSchema(), true,
+							subscription.getOpenCalls());
+
+			jxtaSender.subscribeToSource(subscription.getTarget(),
+					subscription.getSinkInPort(),
+					subscription.getSourceOutPort(), subscription.getSchema());
+		}
+
+		List<IPhysicalOperator> plan = new ArrayList<IPhysicalOperator>();
+		plan.add(jxtaSender);
+		RecoveryCommunicator.getExecutor().addQuery(plan,
+				RecoveryCommunicator.getActiveSession(), "Standard");
 
 	}
 }

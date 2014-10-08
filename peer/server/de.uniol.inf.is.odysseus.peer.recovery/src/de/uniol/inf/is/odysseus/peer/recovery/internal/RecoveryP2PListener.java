@@ -27,6 +27,8 @@ public class RecoveryP2PListener extends Observable implements
 	 */
 	private static final Logger LOG = LoggerFactory
 			.getLogger(RecoveryP2PListener.class);
+	
+	private final static int WAIT_TIME_MS = 1000;
 
 	private static IP2PDictionary p2pDictionary;
 	private static IP2PNetworkManager p2pNetworkManager;
@@ -122,7 +124,7 @@ public class RecoveryP2PListener extends Observable implements
 
 					synchronized (this) {
 						try {
-							this.wait(1000);
+							this.wait(WAIT_TIME_MS);
 						} catch (InterruptedException e) {
 							e.printStackTrace();
 						}

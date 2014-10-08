@@ -15,11 +15,7 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.ImmutableCollection;
 
-import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
-import de.uniol.inf.is.odysseus.core.physicaloperator.PhysicalSubscription;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSource;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvider;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
@@ -28,9 +24,7 @@ import de.uniol.inf.is.odysseus.p2p_new.IP2PNetworkManager;
 import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicator;
 import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicatorListener;
 import de.uniol.inf.is.odysseus.p2p_new.PeerCommunicationException;
-import de.uniol.inf.is.odysseus.p2p_new.data.DataTransmissionException;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.IP2PDictionary;
-import de.uniol.inf.is.odysseus.p2p_new.logicaloperator.JxtaSenderAO;
 import de.uniol.inf.is.odysseus.p2p_new.physicaloperator.JxtaSenderPO;
 import de.uniol.inf.is.odysseus.peer.distribute.QueryPartAllocationException;
 import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryAllocator;
@@ -62,26 +56,6 @@ public class RecoveryCommunicator implements IRecoveryCommunicator,
 	 */
 	private static final Logger LOG = LoggerFactory
 			.getLogger(RecoveryCommunicator.class);
-
-	// @formatter:off
-	/**
-	 * Plan (try to find some ideas) 1. Someone (who?) tells us that a peer
-	 * failed and which query this peer had (this should be part of LSOP-213) 2.
-	 * We search for another peer who can install this query 3. A new peer is
-	 * found, we just take the first for now 4. We tell this peer to install the
-	 * query 5. We connect the peers so that the new peer is known by the right
-	 * peers
-	 * 
-	 * When we have this we add the second part (right side of diagram) 1. Tell
-	 * the peers which are before the failed peer that the peer failed 2. Save
-	 * the tuples there 3. When the new peer is there -> direct saved tuples to
-	 * the new peer
-	 * 
-	 * And when we have this we add a third part 1. Add an error-protocol to
-	 * handle errors during the recovery? (maybe like loadBalancing?)
-	 * 
-	 */
-	// @formatter:on
 
 	public static final String JXTA_KEY_RECEIVER_PIPE_ID = "receiverPipeId";
 	public static final String JXTA_KEY_SENDER_PIPE_ID = "senderPipeId";
@@ -263,7 +237,7 @@ public class RecoveryCommunicator implements IRecoveryCommunicator,
 	// Code with recovery logic
 	// -----------------------------------------------------
 
-	@SuppressWarnings({ "rawtypes", "unchecked" })
+	@SuppressWarnings({ "rawtypes" })
 	@Override
 	public void recover(PeerID failedPeer) {
 
@@ -314,17 +288,14 @@ public class RecoveryCommunicator implements IRecoveryCommunicator,
 			}
 		}
 
-		// TEST
 		int i = 0;
-
 		// Reallocate each query to another peer
 		for (ID sharedQueryId : sharedQueryIdsForRecovery) {
 			// 3. Search for another peer who can take the parts from the failed
 			// peer
 
 			// TODO find a good place for reallocate if the peer doesn't accept
-			// the
-			// query or is unable to install it
+			// the query or is unable to install it
 
 			PeerID peer = null;
 
@@ -348,62 +319,15 @@ public class RecoveryCommunicator implements IRecoveryCommunicator,
 			RecoveryAgreementHandler.waitForAndDoRecovery(failedPeer,
 					sharedQueryId, peer);
 
-			// TEST Update sender
-			// Goal: install a new sender which officially sends to the new
-			// receiver so that if we stop a query, it will stop on the new
-			// peer, too
-			JxtaSenderPO originalSender = affectedSenders.get(i);
+			// 5. Experimental: Add new sender, so that we "officially" send to
+			// the new peer
+			RecoveryHelper.addNewSender(affectedSenders.get(i), peer);
 			i++;
-
-			// New JxtaSender which should send to the new peer
-			JxtaSenderAO originalSenderAO = (JxtaSenderAO) RecoveryHelper
-					.getLogicalJxtaOperator(true,
-							originalSender.getPipeIDString());
-			JxtaSenderAO jxtaSenderAO = (JxtaSenderAO) originalSenderAO.clone();
-			jxtaSenderAO.setPeerID(peer.toString());
-
-			JxtaSenderPO jxtaSender = null;
-			try {
-				jxtaSender = new JxtaSenderPO(jxtaSenderAO);
-			} catch (DataTransmissionException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-
-			// Now do the subscriptions
-			jxtaSender.setOutputSchema(originalSender.getOutputSchema());
-			PhysicalSubscription subscription = originalSender
-					.getSubscribedToSource(0);
-
-			if (subscription.getTarget() instanceof AbstractPipe) {
-				((AbstractPipe) subscription.getTarget()).subscribeSink(
-						jxtaSender, 0, subscription.getSourceOutPort(),
-						subscription.getSchema(), true,
-						subscription.getOpenCalls());
-
-				jxtaSender.subscribeToSource(subscription.getTarget(),
-						subscription.getSinkInPort(),
-						subscription.getSourceOutPort(),
-						subscription.getSchema());
-			} else if (subscription.getTarget() instanceof AbstractSource) {
-				((AbstractSource) subscription.getTarget()).subscribeSink(
-						jxtaSender, 0, subscription.getSourceOutPort(),
-						subscription.getSchema(), true,
-						subscription.getOpenCalls());
-
-				jxtaSender.subscribeToSource(subscription.getTarget(),
-						subscription.getSinkInPort(),
-						subscription.getSourceOutPort(),
-						subscription.getSchema());
-			}
-
-			List<IPhysicalOperator> plan = new ArrayList<IPhysicalOperator>();
-			plan.add(jxtaSender);
-			executor.addQuery(plan, getActiveSession(), "Standard");
 		}
 
 	}
 
+	@Override
 	public void sendHoldOnMessages(List<PeerID> peers, List<ID> queryIds) {
 		try {
 			for (int i = 0; i < peers.size(); i++) {
@@ -417,38 +341,8 @@ public class RecoveryCommunicator implements IRecoveryCommunicator,
 	}
 
 	@Override
-	public void sendTakeOver(ID sharedQueryId, String pqlStatement,
-			PeerID peerId) {
-
-		// TODO preconditions M.B.
-
-		// Send the add query message
-		RecoveryInstructionMessage takeOverMessage = RecoveryInstructionMessage
-				.createAddQueryMessage(pqlStatement, sharedQueryId);
-		try {
-			peerCommunicator.send(peerId, takeOverMessage);
-		} catch (Throwable e) {
-			LOG.error(
-					"Could not send add query message to peer "
-							+ peerId.toString(), e);
-		}
-
-		// TODO Update backup information
-		// 1. Determine, which backup information have to be send to the new
-		// peer
-		// 2. Send these information
-		// 3. Update the local backup information due to the take over
-
-	}
-
-	@Override
 	public void installQueriesOnNewPeer(PeerID failedPeer, PeerID newPeer,
 			ID sharedQueryId) {
-
-		// TODO: not a good idea to have all information on every peer. Tell the
-		// new peer directly, which query to install.
-		// And do it for every query to take over. Not good to take over a
-		// bundle of queries. Allocate each query new. M.B.
 
 		ImmutableCollection<String> pqlParts = LocalBackupInformationAccess
 				.getStoredPQLStatements(sharedQueryId, failedPeer);
@@ -458,20 +352,27 @@ public class RecoveryCommunicator implements IRecoveryCommunicator,
 			pql += " " + pqlPart;
 		}
 
-		this.sendTakeOver(sharedQueryId, pql, newPeer);
+		// TODO preconditions M.B.
+
+		// Send the add query message
+		RecoveryInstructionMessage takeOverMessage = RecoveryInstructionMessage
+				.createAddQueryMessage(pql, sharedQueryId);
+		try {
+			peerCommunicator.send(newPeer, takeOverMessage);
+		} catch (Throwable e) {
+			LOG.error(
+					"Could not send add query message to peer "
+							+ newPeer.toString(), e);
+		}
+
+		// TODO Update backup information
+		// 1. Determine, which backup information have to be send to the new
+		// peer
+		// 2. Send these information
+		// 3. Update the local backup information due to the take over
 	}
 
-	/**
-	 * 
-	 * @param senderPeer
-	 *            The peer which gets the message, so this is the peer who is
-	 *            the sender (A -> B; after the message A -> C; senderPeer is A)
-	 * @param newReceiverPeer
-	 *            The peer to which the tuples should be send
-	 * @param sharedQueryID
-	 *            The query id for which the tuples should be send to a new
-	 *            receiver
-	 */
+	@Override
 	public void sendNewReceiverMessage(PeerID senderPeer,
 			PeerID newReceiverPeer, ID sharedQueryID) {
 		RecoveryInstructionMessage message = RecoveryInstructionMessage
