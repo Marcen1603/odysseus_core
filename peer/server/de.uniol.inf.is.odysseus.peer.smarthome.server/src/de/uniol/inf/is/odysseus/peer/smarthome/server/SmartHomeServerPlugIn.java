@@ -164,7 +164,7 @@ public class SmartHomeServerPlugIn implements BundleActivator {
 		Thread thread = new Thread( new Runnable() {
 			@Override
 			public void run() {
-				waitForP2PNetworkManager();				
+				waitForP2PNetworkManager();
 				waitForJxtaServicesProvider();
 						
 				if(getP2PNetworkManager()!=null  && getJxtaServicesProvider()!=null){

@@ -65,22 +65,12 @@ public class RPiGPIOTransportHandler extends AbstractSimplePullTransportHandler<
 	@Override
 	public boolean hasNext() {
 		return true;
-		/*
-		if(!errorPi4J && !initFailed){
-			return true;
-		}else{
-			return false;
-		}
-		*/
 	}
 	
 	private boolean errorPi4J = false;
-
-	private long initStartTime = 0;
-
-	private boolean initFailed = false;
-
-	private boolean firstInitRun = true;
+	private boolean initNullPointerException = false;
+	private boolean initException = false;
+	private boolean initUnsatisfiedLinkError = false;
 	
 	@Override
 	public Tuple<?> getNext() {
@@ -122,7 +112,7 @@ public class RPiGPIOTransportHandler extends AbstractSimplePullTransportHandler<
         		errorPi4J = true;
         	}
         	//return null;
-        	tuple.setAttribute(0, "error");
+        	tuple.setAttribute(0, "error3");
         	tuple.setAttribute(1, "On Raspberry Pi? pi4j installed?");
         }
         
@@ -130,39 +120,23 @@ public class RPiGPIOTransportHandler extends AbstractSimplePullTransportHandler<
 	}
 	
 	private void initGPIO() {
-		if(initFailed){
-			return;
-		}
-		
-		long lastInitTime = 0;
-		
-		if(firstInitRun){
-			initStartTime = System.currentTimeMillis();
-			firstInitRun = false;
-		}else{
-			lastInitTime = System.currentTimeMillis() - initStartTime;
-		}
-		
-		//System.out.println("firstInitRun:" +firstInitRun+ " lastInitTime:"+lastInitTime+" initFailed:"+initFailed);
-		
-		if(!firstInitRun && lastInitTime>=1000 && this.gpioController==null && !initFailed){
-			LOG.debug("init called and run. lastInitTime:"+lastInitTime+" ");
-			
-			try{
-				this.gpioController = GpioFactory.getInstance();
-				initFailed =false;
-			}catch(NullPointerException ex){
+		try{
+			this.gpioController = GpioFactory.getInstance();
+		}catch(NullPointerException ex){
+			if(initNullPointerException ){
 				ex.printStackTrace();
-				initFailed=true;
-			}catch(Exception ex){
-				ex.printStackTrace();
-				initFailed=true;
-			}catch (UnsatisfiedLinkError ex) {
-				ex.printStackTrace();
-				initFailed=true;
+				initNullPointerException=true;
 			}
-		}else{
-			//System.out.println("init called and NOT run. lastInitTime:"+lastInitTime+" ");
+		}catch(Exception ex){
+			if(initException){
+				ex.printStackTrace();
+				initException=true;
+			}
+		}catch (UnsatisfiedLinkError ex) {
+			if(initUnsatisfiedLinkError){
+				ex.printStackTrace();
+				initUnsatisfiedLinkError=true;
+			}
 		}
 	}
 	
