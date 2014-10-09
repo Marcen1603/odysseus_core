@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 import com.pi4j.io.gpio.GpioController;
 import com.pi4j.io.gpio.GpioFactory;
 import com.pi4j.io.gpio.GpioPinDigitalInput;
+import com.pi4j.io.gpio.Pin;
 import com.pi4j.io.gpio.RaspiPin;
 
 import de.uniol.inf.is.odysseus.core.collection.OptionMap;
@@ -25,7 +26,7 @@ public class RPiGPIOTransportHandler extends AbstractSimplePullTransportHandler<
 	private final static String MODE = "mode"; // Tranport mode: in or out
 	private final static String PULL_STATE = "pull"; // Pull: down or up (high or low)
 
-	private String pin = "";
+	//private String pin = "";
 	private String mode = "in";
 	private String pullState = "low";
 
@@ -45,7 +46,7 @@ public class RPiGPIOTransportHandler extends AbstractSimplePullTransportHandler<
 	
 	protected void init(final OptionMap options) {
 		if (options.containsKey(RPiGPIOTransportHandler.PIN)) {
-            this.pin = options.get(RPiGPIOTransportHandler.PIN);
+            //this.pin = options.get(RPiGPIOTransportHandler.PIN);
         }
 		
 		if (options.containsKey(RPiGPIOTransportHandler.MODE)) {
@@ -82,8 +83,10 @@ public class RPiGPIOTransportHandler extends AbstractSimplePullTransportHandler<
 		boolean value=false;
 		
 		if(this.gpioController!=null){
+			Pin _pin = RaspiPin.GPIO_07;
+			
 			try{
-	            GpioPinDigitalInput myButton = this.gpioController.provisionDigitalInputPin(RaspiPin.GPIO_07,
+	            GpioPinDigitalInput myButton = this.gpioController.provisionDigitalInputPin(_pin,
 	                                                                         "MyButton");
 	            //PinState ps = myButton.getState();
 	            boolean buttonPressed = myButton.isHigh();
@@ -95,7 +98,7 @@ public class RPiGPIOTransportHandler extends AbstractSimplePullTransportHandler<
 	            	buttonState = "0";
 	            }
 	            
-	        	tuple.setAttribute(0, pin);
+	        	tuple.setAttribute(0, _pin);
 	        	tuple.setAttribute(1, buttonState);
 	        	
 	        	value=true;
@@ -106,7 +109,7 @@ public class RPiGPIOTransportHandler extends AbstractSimplePullTransportHandler<
 				}
 				
 				tuple.setAttribute(0, "error");
-	        	tuple.setAttribute(1, "On Raspberry Pi? pi4j installed? pin:"+pin+" mode:"+mode+" pullState:"+pullState);
+	        	tuple.setAttribute(1, "On Raspberry Pi? pi4j installed? pin:"+_pin.toString()+" mode:"+mode+" pullState:"+pullState);
 	        	value=true;
 			}
 		}else{
