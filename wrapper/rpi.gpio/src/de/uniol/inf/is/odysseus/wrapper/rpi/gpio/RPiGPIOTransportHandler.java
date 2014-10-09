@@ -90,7 +90,7 @@ public class RPiGPIOTransportHandler extends AbstractSimplePullTransportHandler<
 		
 		boolean value=false;
 		
-		if(this.gpioController!=null){
+		if(this.gpioController!=null && this.myButton!=null){
 			
 			
 			try{
@@ -170,14 +170,10 @@ public class RPiGPIOTransportHandler extends AbstractSimplePullTransportHandler<
 		LOG.debug("initGPIO() is called.");
 		
 		try{
-			if(this.gpioController==null){
-				this.gpioController = GpioFactory.getInstance();
-			}
+			initGPIOController();
 			
-			if(this.gpioController!=null && this.myButton==null){
-				this.myButton = this.gpioController.provisionDigitalInputPin(_pin,
-                    "MyButton");
-			}
+			initGPIOPin();
+			
 		}catch(NullPointerException ex){
 			if(!initNullPointerException){
 				ex.printStackTrace();
@@ -196,6 +192,19 @@ public class RPiGPIOTransportHandler extends AbstractSimplePullTransportHandler<
 				LOG.error("", ex);
 				initUnsatisfiedLinkError=true;
 			}
+		}
+	}
+
+	private void initGPIOPin() {
+		if(this.myButton==null){
+			this.myButton = this.gpioController.provisionDigitalInputPin(_pin,
+		        "MyButton");
+		}
+	}
+
+	private void initGPIOController() {
+		if(this.gpioController==null){
+			this.gpioController = GpioFactory.getInstance();
 		}
 	}
 	
