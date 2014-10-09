@@ -3,6 +3,7 @@ package de.uniol.inf.is.odysseus.peer.recovery.util;
 import java.util.Collection;
 import java.util.Map;
 
+import net.jxta.id.ID;
 import net.jxta.peer.PeerID;
 
 import org.slf4j.Logger;
@@ -14,9 +15,11 @@ import com.google.common.collect.Maps;
 
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.peer.distribute.ILogicalQueryPart;
+import de.uniol.inf.is.odysseus.peer.distribute.util.LogicalQueryHelper;
 import de.uniol.inf.is.odysseus.peer.distribute.util.graph.QueryPartGraph;
 import de.uniol.inf.is.odysseus.peer.distribute.util.graph.QueryPartGraphConnection;
 import de.uniol.inf.is.odysseus.peer.distribute.util.graph.QueryPartGraphNode;
+import de.uniol.inf.is.odysseus.peer.recovery.messages.BackupInformation;
 
 /**
  * A helper class to determine all subsequent query parts for a given query
@@ -72,24 +75,21 @@ public class SubsequentQueryPartsCalculator {
 	}
 
 	/**
-	 * Calculates the subsequent query parts mapped to peers.
+	 * Determines the backup information for a given query.
 	 * 
+	 * @param sharedQueryId
+	 *            The ID of the distributed query.
 	 * @param query
-	 *            The original query. <br />
-	 *            Must be not null and
-	 *            {@link #calcQueryPartGraph(ILogicalQuery, Map)} must be called
-	 *            with <code>query</code> before.
+	 *            The query to distribute.
 	 * @param allocationMap
-	 *            The allocated peers (their ids) to the parts of
-	 *            <code>query</code>. <br />
-	 *            Must be not null.
-	 * @return A collection of all subsequent query parts for each peer. Only
-	 *         those subsequent query parts are considered, which are to be
-	 *         executed on a different peer.
+	 *            The allocation map.
 	 */
-	public Map<PeerID, Collection<ILogicalQueryPart>> calcSubsequentParts(
-			ILogicalQuery query, Map<ILogicalQueryPart, PeerID> allocationMap) {
+	public Collection<BackupInformation> calcBackupInformation(
+			ID sharedQueryId, ILogicalQuery query,
+			Map<ILogicalQueryPart, PeerID> allocationMap) {
 
+		Preconditions.checkNotNull(sharedQueryId,
+				"The shared query ID must be not null!");
 		Preconditions
 				.checkNotNull(query,
 						"The query, for which a query part graph shall be read, must be not null!");
@@ -101,8 +101,7 @@ public class SubsequentQueryPartsCalculator {
 				.checkNotNull(allocationMap,
 						"The allocation map to calcuate subsequent query parts, must be not null!");
 
-		Map<PeerID, Collection<ILogicalQueryPart>> subsequentPartsToPeerMap = Maps
-				.newHashMap();
+		Collection<BackupInformation> backupInformation = Lists.newArrayList();
 		QueryPartGraph graph = this.mGraphToQueryMap.get(query);
 		Collection<QueryPartGraphNode> nodes = graph.getGraphNodes();
 
@@ -115,25 +114,29 @@ public class SubsequentQueryPartsCalculator {
 				continue;
 
 			}
-			PeerID peerId = allocationMap.get(part);
-			Collection<ILogicalQueryPart> subsequentParts = calcSubsequentParts(node);
-			Collection<ILogicalQueryPart> newSubsequentPartsCollection = Lists
-					.newArrayList();
-			if (subsequentPartsToPeerMap.containsKey(peerId)) {
+			String pqlStatement = LogicalQueryHelper
+					.generatePQLStatementFromQueryPart(part);
+			BackupInformation info = new BackupInformation(sharedQueryId,
+					pqlStatement);
 
-				newSubsequentPartsCollection = subsequentPartsToPeerMap
-						.get(peerId);
+			PeerID peerId = allocationMap.get(part);
+			info.setPeer(peerId);
+
+			Collection<ILogicalQueryPart> subsequentParts = calcSubsequentParts(node);
+			for (ILogicalQueryPart subsequentPart : subsequentParts) {
+
+				info.addSubsequentPart(LogicalQueryHelper
+						.generatePQLStatementFromQueryPart(subsequentPart),
+						allocationMap.get(subsequentPart));
 
 			}
 
-			addSubsequentPartsWithoutDuplicates(newSubsequentPartsCollection,
-					subsequentParts, peerId, allocationMap);
-			subsequentPartsToPeerMap.put(peerId, newSubsequentPartsCollection);
+			backupInformation.add(info);
 
 		}
 
 		this.mGraphToQueryMap.remove(query);
-		return subsequentPartsToPeerMap;
+		return backupInformation;
 
 	}
 
@@ -195,57 +198,6 @@ public class SubsequentQueryPartsCalculator {
 				subsequentParts.add(endPart);
 				calcSubsequentPartsRecursive(outConnection.getEndNode(),
 						subsequentParts);
-
-			}
-
-		}
-
-	}
-
-	/**
-	 * Adds a collection of subsequent query parts to another. <br />
-	 * Duplicates will be eliminated and only those query parts will be added,
-	 * which are to be executed on a different peer than <code>peerId</code>.
-	 * 
-	 * @param toBeExtended
-	 *            The collection of subsequent query parts to be extended. <br />
-	 *            Must be not null.
-	 * @param toAdd
-	 *            The collection of subsequent query parts to add. <br />
-	 *            Must be not null.
-	 * @param peerId
-	 *            The peerId, of the query part, for which the subsequent query
-	 *            parts are calculated. <br />
-	 *            Must be not null.
-	 * @param allocationMap
-	 *            The allocated peers (their ids) to the parts of
-	 *            <code>query</code>. <br />
-	 *            Must be not null.
-	 */
-	private void addSubsequentPartsWithoutDuplicates(
-			Collection<ILogicalQueryPart> toBeExtended,
-			Collection<ILogicalQueryPart> toAdd, PeerID peerId,
-			Map<ILogicalQueryPart, PeerID> allocationMap) {
-
-		Preconditions.checkNotNull(toBeExtended,
-				"The collection of subsequent parts must be not null!");
-		Preconditions.checkNotNull(toAdd,
-				"The collection of subsequent parts must be not null!");
-		Preconditions
-				.checkNotNull(peerId,
-						"The peerId to calcuate subsequent query parts, must be not null!");
-		Preconditions
-				.checkNotNull(allocationMap,
-						"The allocation map to calcuate subsequent query parts, must be not null!");
-
-		for (ILogicalQueryPart part : toAdd) {
-
-			// Consider only subsequent parts, which are to be executed on
-			// another, and consider them once
-			if (!allocationMap.get(part).equals(peerId)
-					&& !toBeExtended.contains(part)) {
-
-				toBeExtended.add(part);
 
 			}
 

@@ -15,7 +15,8 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableCollection;
-import com.google.common.collect.Maps;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Lists;
 
 import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryBackupInformationStore;
 import de.uniol.inf.is.odysseus.peer.recovery.internal.JxtaInformation;
@@ -82,17 +83,26 @@ public class LocalBackupInformationAccess {
 	}
 
 	/**
-	 * Calls {@link IRecoveryBackupInformationStore#addSharedQuery(ID, Map)} of
-	 * the local backup information store.
+	 * Calls
+	 * {@link IRecoveryBackupInformationStore#add(ID, String, PeerID, Map)}.
 	 * 
 	 * @param sharedQueryId
-	 *            The shared query id of the distributed query.
-	 * @param pqlStatementsMap
-	 *            A mapping of query parts (their pql statements) to the
-	 *            allocated peers.
+	 *            The ID of the distributed query. <br />
+	 *            Must be not null!
+	 * @param pqlStatement
+	 *            The PQL statement to store. <br />
+	 *            Must be not null.
+	 * @param peer
+	 *            The ID of the peer, where the PQL statement is installed. <br />
+	 *            Must be not null.
+	 * @param subsequentParts
+	 *            The subsequent parts of the PQL statement as a mapping of the
+	 *            PQL statements of the subsequent parts and the IDs of the
+	 *            peers, where the subsequent PQL statements are installed. <br />
+	 *            Must be not null.
 	 */
-	public static void storeLocal(ID sharedQueryId,
-			Map<PeerID, Collection<String>> pqlStatementsMap) {
+	public static void store(ID sharedQueryId, String pqlStatement,
+			PeerID peer, Map<String, PeerID> subsequentParts) {
 
 		if (!cInfoStore.isPresent()) {
 
@@ -101,13 +111,13 @@ public class LocalBackupInformationAccess {
 
 		}
 
-		boolean success = cInfoStore.get().addSharedQuery(sharedQueryId,
-				pqlStatementsMap);
+		boolean success = cInfoStore.get().add(sharedQueryId, pqlStatement,
+				peer, subsequentParts);
 		if (!success) {
 
 			LOG.error(
-					"Backup information for shared query id '{}' were already stored!",
-					sharedQueryId);
+					"Backup information for PQL statement '{}' were already stored!",
+					pqlStatement);
 			return;
 
 		}
@@ -172,16 +182,15 @@ public class LocalBackupInformationAccess {
 	}
 
 	/**
-	 * Returns the stored PQL-Statements for a given PeerID and sharedQueryID.
+	 * Calls {@link IRecoveryBackupInformationStore#getStoredPQLStatements(ID)}
 	 * 
 	 * @param sharedQueryId
-	 *            shared queryId of the PQL you want to have
-	 * @param peerId
-	 *            PeerID of the peer where the PQL is installed
-	 * @return
+	 *            The ID of the distributed query. <br />
+	 *            Must be not null!
 	 */
 	public static ImmutableCollection<String> getStoredPQLStatements(
-			ID sharedQueryId, PeerID peerId) {
+			ID sharedQueryId) {
+
 		if (!cInfoStore.isPresent()) {
 
 			LOG.error("No backup information store for recovery bound!");
@@ -189,7 +198,7 @@ public class LocalBackupInformationAccess {
 
 		}
 
-		return cInfoStore.get().getStoredPQLStatements(sharedQueryId, peerId);
+		return cInfoStore.get().getStoredPQLStatements(sharedQueryId);
 
 	}
 
@@ -212,7 +221,7 @@ public class LocalBackupInformationAccess {
 		List<ID> storedIds = getStoredSharedQueryIdsForPeer(peerId);
 
 		for (ID id : storedIds) {
-			ImmutableCollection<String> pql = getStoredPQLStatements(id, peerId);
+			ImmutableCollection<String> pql = getStoredPQLStatements(id);
 			List<String> pqlForQuery = new ArrayList<String>();
 			pqlForQuery.addAll(pql);
 			SharedQuery query = new SharedQuery(id, pqlForQuery);
@@ -220,6 +229,27 @@ public class LocalBackupInformationAccess {
 		}
 
 		return sharedQueries;
+	}
+
+	public static ImmutableCollection<String> getStoredPQLStatements(
+			ID sharedQueryId, PeerID failedPeer) {
+
+		Collection<String> results = Lists.newArrayList();
+		ImmutableCollection<String> results1 = getStoredPQLStatements(sharedQueryId);
+		ImmutableCollection<String> results2 = getStoredPQLStatements(sharedQueryId);
+
+		for (String pqlStatement : results1) {
+
+			if (results2.contains(pqlStatement)) {
+
+				results.add(pqlStatement);
+
+			}
+
+		}
+
+		return ImmutableSet.copyOf(results);
+
 	}
 
 	/**
@@ -251,7 +281,22 @@ public class LocalBackupInformationAccess {
 			return null;
 
 		}
-		return cInfoStore.get().getStoredPeers(sharedQueryId);
+
+		Collection<PeerID> peers = Lists.newArrayList();
+		for (String pqlStatement : cInfoStore.get().getStoredPQLStatements(
+				sharedQueryId)) {
+
+			Optional<PeerID> peer = cInfoStore.get().getStoredPeerID(
+					sharedQueryId, pqlStatement);
+			if (peer.isPresent() && !peers.contains(peer.get())) {
+
+				peers.add(peer.get());
+
+			}
+
+		}
+
+		return ImmutableSet.copyOf(peers);
 	}
 
 	/**
@@ -272,8 +317,11 @@ public class LocalBackupInformationAccess {
 		List<ID> sharedQueryIds = new ArrayList<ID>();
 
 		for (ID queryId : cInfoStore.get().getStoredSharedQueries()) {
-			for (PeerID peer : cInfoStore.get().getStoredPeers(queryId)) {
-				if (peer.equals(peerId)) {
+			for (String pqlStatement : cInfoStore.get().getStoredPQLStatements(
+					queryId)) {
+				Optional<PeerID> peer = cInfoStore.get().getStoredPeerID(
+						queryId, pqlStatement);
+				if (peer.isPresent() && peer.get().equals(peerId)) {
 					// This is what we search: For this peer we have a
 					// sharedQueryId
 					sharedQueryIds.add(queryId);
@@ -315,78 +363,6 @@ public class LocalBackupInformationAccess {
 		}
 
 		return cInfoStore.get().getBuddyList();
-	}
-
-	/**
-	 * All backup information about a distributed query stored in the local
-	 * backup information store.
-	 * 
-	 * @param sharedQueryId
-	 *            The ID of the distributed query. <br />
-	 *            Must be not null!
-	 * @return A mapping of pql statement to peers, where the statements are
-	 *         executed.
-	 */
-	public static Map<PeerID, Collection<String>> getBackupInformation(
-			ID sharedQueryId) {
-
-		Preconditions.checkNotNull(sharedQueryId,
-				"The ID of the distributed query must be not null!");
-
-		if (!cInfoStore.isPresent()) {
-			LOG.error("No backup information store for recovery bound!");
-			return null;
-		}
-
-		Map<PeerID, Collection<String>> backupInfo = Maps.newHashMap();
-		for (PeerID peer : cInfoStore.get().getStoredPeers(sharedQueryId)) {
-
-			backupInfo.put(peer,
-					cInfoStore.get()
-							.getStoredPQLStatements(sharedQueryId, peer));
-
-		}
-
-		return backupInfo;
-
-	}
-
-	/**
-	 * Removes given backup information about a distributed query stored in the
-	 * local backup information store.
-	 * 
-	 * @param sharedQueryId
-	 *            The ID of the distributed query. <br />
-	 *            Must be not null!
-	 * @param backupInformation
-	 *            A mapping of pql statements (to remove) to peers, where the
-	 *            statements are executed.
-	 */
-	public static void removeLocal(ID sharedQueryId,
-			Map<PeerID, Collection<String>> backupInformation) {
-
-		Preconditions.checkNotNull(sharedQueryId,
-				"The ID of the distributed query must be not null!");
-
-		Preconditions.checkNotNull(backupInformation,
-				"The backup information must be not null!");
-
-		if (!cInfoStore.isPresent()) {
-			LOG.error("No backup information store for recovery bound!");
-			return;
-		}
-
-		for (PeerID peer : backupInformation.keySet()) {
-
-			for (String pqlStatement : backupInformation.get(peer)) {
-
-				cInfoStore.get().removePQLStatement(sharedQueryId, peer,
-						pqlStatement);
-
-			}
-
-		}
-
 	}
 
 }

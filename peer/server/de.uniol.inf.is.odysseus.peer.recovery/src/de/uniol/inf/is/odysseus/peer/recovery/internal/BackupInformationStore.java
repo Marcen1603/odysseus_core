@@ -2,9 +2,12 @@ package de.uniol.inf.is.odysseus.peer.recovery.internal;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import net.jxta.id.ID;
 import net.jxta.peer.PeerID;
@@ -12,6 +15,7 @@ import net.jxta.peer.PeerID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableMap;
@@ -21,11 +25,12 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
 import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryBackupInformationStore;
+import de.uniol.inf.is.odysseus.peer.recovery.messages.BackupInformation;
 
 /**
- * A backup information store can be used to store backup information for
- * recovery techniques. For a shared (distributed) query, it stores the query
- * parts (their pql statements) and the allocated peers.
+ * The backup information store for recovery. <br />
+ * It stores for distributed queries information about local executed (partial)
+ * queries and subsequent partial queries.
  * 
  * @author Michael Brand
  *
@@ -39,10 +44,10 @@ public class BackupInformationStore implements IRecoveryBackupInformationStore {
 			.getLogger(BackupInformationStore.class);
 
 	/**
-	 * The stored information mapped to their shared query (it's id).
+	 * The stored backup information.
 	 */
-	private final Map<ID, Map<PeerID, Collection<String>>> mInfoMap = Maps
-			.newHashMap();
+	private final Collection<BackupInformation> mBackupInfos = Collections
+			.synchronizedCollection(new CopyOnWriteArrayList<BackupInformation>());
 
 	/**
 	 * The stored information, for which peers and which shared query (it's id)
@@ -58,56 +63,189 @@ public class BackupInformationStore implements IRecoveryBackupInformationStore {
 			.newHashMap();
 
 	@Override
-	public boolean addSharedQuery(ID sharedQueryId,
-			Map<PeerID, Collection<String>> pqlStatementsMap) {
+	public boolean add(ID sharedQueryId, String pqlStatement, PeerID peer,
+			Map<String, PeerID> subsequentParts) {
 
-		Preconditions.checkNotNull(sharedQueryId,
-				"The id of the shared query to store must be not null!");
-		Preconditions
-				.checkNotNull(pqlStatementsMap,
-						"The mapping of pql statements to their allocated peers must be not null!");
-		Preconditions
-				.checkArgument(
-						!pqlStatementsMap.isEmpty(),
-						"The mapping of pql statements to their allocated peers must contain at least one entry!");
-
-		if (this.mInfoMap.containsKey(sharedQueryId)) {
+		if (this.containsInfo(sharedQueryId, pqlStatement)) {
 
 			// already stored
 			return false;
 
 		}
 
-		this.mInfoMap.put(sharedQueryId, pqlStatementsMap);
-		LOG.debug("Stored backup information about '{}': {}", sharedQueryId,
-				pqlStatementsMap);
+		BackupInformation info = new BackupInformation(sharedQueryId,
+				pqlStatement);
+		info.setPeer(peer);
+		for (String subsequentPart : subsequentParts.keySet()) {
+
+			info.addSubsequentPart(subsequentPart,
+					subsequentParts.get(subsequentPart));
+
+		}
+
+		synchronized (this.mBackupInfos) {
+
+			this.mBackupInfos.add(info);
+
+		}
+
+		LOG.debug("Stored new backup information: {}", info);
 		return true;
 
 	}
 
 	@Override
-	public boolean addPQLStatement(ID sharedQueryId, PeerID peerId,
-			String pqlStatement) {
+	public boolean remove(ID sharedQueryId, String pqlStatement) {
 
-		Preconditions.checkNotNull(pqlStatement,
-				"The pql statement to store must be not null!");
+		for (BackupInformation info : this.findInfos(sharedQueryId)) {
 
-		if (!this.mInfoMap.containsKey(sharedQueryId)) {
+			if (info.getPQLStatement().equals(pqlStatement)) {
 
-			return false;
+				synchronized (this.mBackupInfos) {
 
-		} else if (!this.mInfoMap.get(sharedQueryId).containsKey(peerId)) {
+					this.mBackupInfos.remove(info);
 
-			Collection<String> pqlStatements = Lists.newArrayList(pqlStatement);
-			this.mInfoMap.get(sharedQueryId).put(peerId, pqlStatements);
+				}
 
-		} else {
+				LOG.debug("Removed backup information: {}", info);
+				return true;
 
-			this.mInfoMap.get(sharedQueryId).get(peerId).add(pqlStatement);
+			}
 
 		}
 
-		return true;
+		return false;
+
+	}
+
+	/**
+	 * Checks, if there are information stored about a given PQL statement.
+	 * sharedQueryId The ID of the distributed query. <br />
+	 * Must be not null!
+	 * 
+	 * @param pqlStatement
+	 *            The PQL statement to store. <br />
+	 *            Must be not null.
+	 * @return True, if there are information stored; false, if not.
+	 */
+	private boolean containsInfo(ID sharedQueryId, String pqlStatement) {
+
+		Preconditions.checkNotNull(sharedQueryId,
+				"The shared query ID must be not null!");
+
+		Preconditions.checkNotNull(pqlStatement,
+				"The pql statement must be not null!");
+
+		for (BackupInformation info : this.mBackupInfos) {
+
+			if (info.getSharedQueryID().equals(sharedQueryId)
+					&& info.getPQLStatement().equals(pqlStatement)) {
+
+				return true;
+
+			}
+
+		}
+
+		return false;
+
+	}
+
+	@Override
+	public ImmutableCollection<ID> getStoredSharedQueries() {
+
+		Set<ID> ids = Sets.newHashSet();
+
+		for (BackupInformation info : this.mBackupInfos) {
+
+			if (!ids.contains(info.getSharedQueryID())) {
+
+				ids.add(info.getSharedQueryID());
+
+			}
+
+		}
+
+		return ImmutableSet.copyOf(ids);
+
+	}
+
+	@Override
+	public ImmutableCollection<String> getStoredPQLStatements(ID sharedQueryId) {
+
+		Collection<String> statements = Lists.newArrayList();
+
+		for (BackupInformation info : this.findInfos(sharedQueryId)) {
+
+			statements.add(info.getPQLStatement());
+
+		}
+
+		return ImmutableSet.copyOf(statements);
+
+	}
+
+	/**
+	 * Gets all backup information about a distributed query.
+	 * 
+	 * @param sharedQueryId
+	 *            The ID of the distributed query. <br />
+	 *            Must be not null!
+	 */
+	private Collection<BackupInformation> findInfos(ID sharedQueryId) {
+
+		Preconditions.checkNotNull(sharedQueryId,
+				"The shared query ID must be not null!");
+
+		Collection<BackupInformation> infos = Lists.newArrayList();
+
+		for (BackupInformation info : this.mBackupInfos) {
+
+			if (info.getSharedQueryID().equals(sharedQueryId)) {
+
+				infos.add(info);
+
+			}
+
+		}
+
+		return infos;
+
+	}
+
+	@Override
+	public Optional<PeerID> getStoredPeerID(ID sharedQueryId,
+			String pqlStatement) {
+
+		for (BackupInformation info : this.findInfos(sharedQueryId)) {
+
+			if (info.getPQLStatement().equals(pqlStatement)) {
+
+				return Optional.of(info.getPeer());
+
+			}
+
+		}
+
+		return Optional.absent();
+
+	}
+
+	@Override
+	public ImmutableMap<String, PeerID> getStoredSubsequentQueryParts(
+			ID sharedQueryId, String pqlStatement) {
+
+		for (BackupInformation info : this.findInfos(sharedQueryId)) {
+
+			if (info.getPQLStatement().equals(pqlStatement)) {
+
+				return info.getSubsequentParts();
+
+			}
+
+		}
+
+		return ImmutableMap.copyOf(new HashMap<String, PeerID>());
 
 	}
 
@@ -144,97 +282,6 @@ public class BackupInformationStore implements IRecoveryBackupInformationStore {
 	@Override
 	public Set<PeerID> getPeersFromJxtaInfoStore() {
 		return mJxtaInfoMap.keySet();
-	}
-
-	@Override
-	public ImmutableCollection<ID> getStoredSharedQueries() {
-
-		return ImmutableSet.copyOf(this.mInfoMap.keySet());
-
-	}
-
-	@Override
-	public ImmutableCollection<PeerID> getStoredPeers(ID sharedQueryId) {
-
-		Preconditions
-				.checkNotNull(
-						sharedQueryId,
-						"The id of the shared query to retrieve stored backup information must be not null!");
-
-		if (!this.mInfoMap.containsKey(sharedQueryId)) {
-
-			Set<PeerID> peers = Sets.newHashSet();
-			return ImmutableSet.copyOf(peers);
-
-		}
-
-		return ImmutableSet.copyOf(this.mInfoMap.get(sharedQueryId).keySet());
-
-	}
-
-	@Override
-	public ImmutableCollection<String> getStoredPQLStatements(ID sharedQueryId,
-			PeerID peerId) {
-
-		Preconditions
-				.checkNotNull(
-						sharedQueryId,
-						"The id of the shared query to retrieve stored backup information must be not null!");
-		Preconditions
-				.checkNotNull(
-						peerId,
-						"The id of the allocated peer to retrieve stored backup information must be not null!");
-
-		if (!this.mInfoMap.containsKey(sharedQueryId)
-				|| !this.mInfoMap.get(sharedQueryId).containsKey(peerId)) {
-
-			Set<String> pqlStatements = Sets.newHashSet();
-			return ImmutableSet.copyOf(pqlStatements);
-
-		}
-
-		return ImmutableSet
-				.copyOf(this.mInfoMap.get(sharedQueryId).get(peerId));
-
-	}
-
-	@Override
-	public boolean removeStoredSharedQuery(ID sharedQueryId) {
-
-		Preconditions.checkNotNull(sharedQueryId,
-				"The id of the shared query to store must be not null!");
-
-		if (this.mInfoMap.remove(sharedQueryId) != null) {
-			LOG.debug("Removed backup information about '{}'.", sharedQueryId);
-
-		}
-		return true;
-
-	}
-
-	@Override
-	public boolean removePQLStatement(ID sharedQueryId, PeerID peerId,
-			String pqlStatement) {
-
-		Preconditions
-				.checkNotNull(sharedQueryId,
-						"The id of the shared query to remove backup information must be not null!");
-		Preconditions
-				.checkNotNull(peerId,
-						"The id of the allocated peer to remove backup information must be not null!");
-		Preconditions.checkNotNull(pqlStatement,
-				"The pql statement to remove must be not null!");
-
-		if (!this.mInfoMap.containsKey(sharedQueryId)
-				|| !this.mInfoMap.get(sharedQueryId).containsKey(peerId)) {
-
-			return false;
-
-		}
-
-		return this.mInfoMap.get(sharedQueryId).get(peerId)
-				.remove(pqlStatement);
-
 	}
 
 	@Override

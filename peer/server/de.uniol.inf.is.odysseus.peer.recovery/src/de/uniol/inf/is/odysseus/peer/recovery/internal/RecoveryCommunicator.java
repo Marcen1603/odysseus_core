@@ -31,7 +31,7 @@ import de.uniol.inf.is.odysseus.peer.distribute.QueryPartAllocationException;
 import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryAllocator;
 import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryCommunicator;
 import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryP2PListener;
-import de.uniol.inf.is.odysseus.peer.recovery.messages.BackupInformationMessage;
+import de.uniol.inf.is.odysseus.peer.recovery.messages.BackupInformation;
 import de.uniol.inf.is.odysseus.peer.recovery.messages.BackupJxtaInfoMessage;
 import de.uniol.inf.is.odysseus.peer.recovery.messages.RecoveryAgreementMessage;
 import de.uniol.inf.is.odysseus.peer.recovery.messages.RecoveryInstructionMessage;
@@ -125,8 +125,8 @@ public class RecoveryCommunicator implements IRecoveryCommunicator,
 		peerCommunicator = serv;
 		peerCommunicator.registerMessageType(RecoveryInstructionMessage.class);
 		peerCommunicator.addListener(this, RecoveryInstructionMessage.class);
-		peerCommunicator.registerMessageType(BackupInformationMessage.class);
-		peerCommunicator.addListener(this, BackupInformationMessage.class);
+		peerCommunicator.registerMessageType(BackupInformation.class);
+		peerCommunicator.addListener(this, BackupInformation.class);
 		peerCommunicator.registerMessageType(BackupJxtaInfoMessage.class);
 		peerCommunicator.addListener(this, BackupJxtaInfoMessage.class);
 		peerCommunicator.registerMessageType(RecoveryAgreementMessage.class);
@@ -147,10 +147,8 @@ public class RecoveryCommunicator implements IRecoveryCommunicator,
 					RecoveryInstructionMessage.class);
 			peerCommunicator
 					.unregisterMessageType(RecoveryInstructionMessage.class);
-			peerCommunicator.removeListener(this,
-					BackupInformationMessage.class);
-			peerCommunicator
-					.unregisterMessageType(BackupInformationMessage.class);
+			peerCommunicator.removeListener(this, BackupInformation.class);
+			peerCommunicator.unregisterMessageType(BackupInformation.class);
 			peerCommunicator.removeListener(this, BackupJxtaInfoMessage.class);
 			peerCommunicator.unregisterMessageType(BackupJxtaInfoMessage.class);
 			peerCommunicator.removeListener(this,
@@ -360,8 +358,6 @@ public class RecoveryCommunicator implements IRecoveryCommunicator,
 	public void installQueriesOnNewPeer(PeerID failedPeer, PeerID newPeer,
 			ID sharedQueryId) {
 
-		Map<PeerID, Collection<String>> oldBackupInformation = LocalBackupInformationAccess
-				.getBackupInformation(sharedQueryId);
 		ImmutableCollection<String> pqlParts = LocalBackupInformationAccess
 				.getStoredPQLStatements(sharedQueryId, failedPeer);
 
@@ -381,23 +377,25 @@ public class RecoveryCommunicator implements IRecoveryCommunicator,
 							+ newPeer.toString(), e);
 		}
 
+		// TODO M.B.
 		// Determine, which backup information have to be sent to the new
 		// peer
-		Map<PeerID, Collection<String>> newBackupInformation = determineBackupInformation(
-				sharedQueryId, pqlParts);
+		// Map<PeerID, Collection<String>> newBackupInformation = determineBackupInformation(
+		// 		sharedQueryId, pqlParts);
 
 		// Send these information
-		this.sendBackupInformation(newPeer, sharedQueryId, newBackupInformation);
+		// this.sendBackupInformation(newPeer, sharedQueryId, newBackupInformation);
 
 		// Update the local backup information due to the take over
-		LocalBackupInformationAccess.removeLocal(sharedQueryId,
-				oldBackupInformation);
-		LocalBackupInformationAccess.storeLocal(sharedQueryId,
-				newBackupInformation);
+		// LocalBackupInformationAccess.removeLocal(sharedQueryId,
+		// oldBackupInformation);
+		// LocalBackupInformationAccess.storeLocal(sharedQueryId,
+		// newBackupInformation);
 
 	}
 
 	// TODO javaDoc
+	@SuppressWarnings("unused")
 	private static Map<PeerID, Collection<String>> determineBackupInformation(
 			ID sharedQueryId, Collection<String> pqlStatements) {
 
@@ -420,14 +418,14 @@ public class RecoveryCommunicator implements IRecoveryCommunicator,
 			RecoveryInstructionMessage instruction = (RecoveryInstructionMessage) message;
 			RecoveryInstructionHandler.handleInstruction(senderPeer,
 					instruction);
-		} else if (message instanceof BackupInformationMessage) {
+		} else if (message instanceof BackupInformation) {
 
-			BackupInformationMessage biMessage = (BackupInformationMessage) message;
+			BackupInformation info = (BackupInformation) message;
 
 			// Store the backup information
-			LocalBackupInformationAccess.storeLocal(
-					biMessage.getSharedQueryID(),
-					biMessage.geBackupInformation());
+			LocalBackupInformationAccess.store(info.getSharedQueryID(),
+					info.getPQLStatement(), info.getPeer(),
+					info.getSubsequentParts());
 
 		} else if (message instanceof BackupJxtaInfoMessage) {
 			BackupJxtaInfoMessage jxtaMessage = (BackupJxtaInfoMessage) message;
@@ -444,15 +442,22 @@ public class RecoveryCommunicator implements IRecoveryCommunicator,
 	}
 
 	@Override
-	public void sendBackupInformation(PeerID peerId, ID sharedQueryId,
-			Map<PeerID, Collection<String>> backupInformation) {
+	public void sendBackupInformation(ID sharedQueryId, String pqlStatement,
+			PeerID peerId, Map<String, PeerID> subsequentParts) {
 
-		BackupInformationMessage message = new BackupInformationMessage(
-				sharedQueryId, backupInformation);
+		BackupInformation info = new BackupInformation(sharedQueryId,
+				pqlStatement);
+		info.setPeer(peerId);
+		for (String subsequentPart : subsequentParts.keySet()) {
+
+			info.addSubsequentPart(subsequentPart,
+					subsequentParts.get(subsequentPart));
+
+		}
 
 		try {
 
-			peerCommunicator.send(peerId, message);
+			peerCommunicator.send(peerId, info);
 
 		} catch (Throwable e) {
 
