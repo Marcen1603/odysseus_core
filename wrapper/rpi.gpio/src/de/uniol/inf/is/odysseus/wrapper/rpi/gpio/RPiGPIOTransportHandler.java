@@ -144,11 +144,11 @@ public class RPiGPIOTransportHandler extends AbstractSimplePullTransportHandler<
 		LOG.debug("initGPIO() was called.");
 		
 		try{
-			if(this.gpioController!=null){
+			if(this.gpioController==null){
 				this.gpioController = GpioFactory.getInstance();
 			}
 			
-			if(this.gpioController!=null){
+			if(this.gpioController!=null && this.myButton==null){
 				this.myButton = this.gpioController.provisionDigitalInputPin(_pin,
                     "MyButton");
 			}
