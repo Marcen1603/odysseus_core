@@ -80,6 +80,8 @@ public class RPiGPIOTransportHandler extends AbstractSimplePullTransportHandler<
 	private boolean getStateException = false;
 
 	private GpioPinDigitalInput myButton;
+
+	private boolean initMustCalled = false;
 	
 	@Override
 	public Tuple<?> getNext() {
@@ -88,7 +90,7 @@ public class RPiGPIOTransportHandler extends AbstractSimplePullTransportHandler<
 		
 		boolean value=false;
 		
-		if(this.gpioController!=null && this.myButton!=null){
+		if(this.gpioController!=null){
 			
 			
 			try{
@@ -115,6 +117,20 @@ public class RPiGPIOTransportHandler extends AbstractSimplePullTransportHandler<
 					
 					getStateException=true;
 				}
+				LOG.debug("rpi gpio getNext error: ", ex);
+				
+				LOG.debug("Stack trace: ");
+				ex.printStackTrace();
+				
+				
+				System.out.println("--------------");
+				System.out.println("exception: "+ex);
+				System.out.println("exception message: "+ex.getMessage());
+				
+				System.out.println("exception stacktrace: ");
+				for(int i=ex.getStackTrace().length;i<ex.getStackTrace().length;i++){
+					System.out.println(""+ex.getStackTrace()[i]);
+				}
 				
 				tuple.setAttribute(0, "error");
 	        	tuple.setAttribute(1, "On Raspberry Pi? pi4j installed? pin:"+_pin.toString()+" mode:"+mode+" pullState:"+pullState + " message:"+ex.getMessage()+ " stacktrace:"+ex.getStackTrace().toString());
@@ -122,10 +138,17 @@ public class RPiGPIOTransportHandler extends AbstractSimplePullTransportHandler<
 	        	value=true;
 			}
 		}else{
-			initGPIO();
 			
 			tuple.setAttribute(0, "errorINIT");
         	tuple.setAttribute(1, "initGPIO must called");
+        	
+        	if(!initMustCalled){
+        		LOG.error("initGPIO must called");
+        		initMustCalled=true;
+        	}
+        	
+        	initGPIO();
+			
         	
         	return tuple;
 		}
@@ -144,7 +167,7 @@ public class RPiGPIOTransportHandler extends AbstractSimplePullTransportHandler<
 	}
 	
 	private void initGPIO() {
-		LOG.debug("initGPIO() was called.");
+		LOG.debug("initGPIO() is called.");
 		
 		try{
 			if(this.gpioController==null){
@@ -158,16 +181,19 @@ public class RPiGPIOTransportHandler extends AbstractSimplePullTransportHandler<
 		}catch(NullPointerException ex){
 			if(!initNullPointerException){
 				ex.printStackTrace();
+				LOG.error("", ex);
 				initNullPointerException=true;
 			}
 		}catch(Exception ex){
 			if(!initException){
 				ex.printStackTrace();
+				LOG.error("", ex);
 				initException=true;
 			}
 		}catch (UnsatisfiedLinkError ex) {
 			if(!initUnsatisfiedLinkError){
 				ex.printStackTrace();
+				LOG.error("", ex);
 				initUnsatisfiedLinkError=true;
 			}
 		}
