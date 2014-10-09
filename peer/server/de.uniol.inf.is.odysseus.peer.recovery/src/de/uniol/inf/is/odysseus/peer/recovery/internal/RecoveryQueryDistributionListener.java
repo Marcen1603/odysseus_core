@@ -212,8 +212,6 @@ public class RecoveryQueryDistributionListener extends
 							visitedOperators);
 				}
 
-
-				// TODO Is PeerId still wrong or is allocatedPeer the right?
 				String key = "";
 				String value = "";
 				for (ILogicalOperator logicalOp : visitedOperators) {

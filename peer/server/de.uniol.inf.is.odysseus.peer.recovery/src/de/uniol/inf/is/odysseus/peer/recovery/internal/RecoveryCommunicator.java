@@ -301,9 +301,9 @@ public class RecoveryCommunicator implements IRecoveryCommunicator,
 			// peers to install new receivers or sth. like that
 		}
 
-		// Counter for updating the affected senders
+		// To update the affected senders
 		int i = 0;
-
+		
 		// Reallocate each query to another peer
 		for (ID sharedQueryId : sharedQueryIdsForRecovery) {
 			// 4. Search for another peer who can take the parts from the failed
@@ -332,13 +332,12 @@ public class RecoveryCommunicator implements IRecoveryCommunicator,
 			// 5. Tell the new peer to install the parts from the failed peer
 			RecoveryAgreementHandler.waitForAndDoRecovery(failedPeer,
 					sharedQueryId, peer);
-
-			// 6. Experimental: Add new sender, so that we "officially" send to
-			// the new peer
-			if (affectedSenders.size() < i) {
-				RecoveryHelper.addNewSender(affectedSenders.get(i), peer);
+			
+			// 6. Update our sender so it knows the new peerId
+			if(i < affectedSenders.size()) {
+				affectedSenders.get(i).setPeerIDString(peer.toString());
 			}
-			i++;
+			
 		}
 
 	}

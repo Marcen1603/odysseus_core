@@ -34,35 +34,37 @@ import de.uniol.inf.is.odysseus.p2p_new.service.SessionManagementService;
 import de.uniol.inf.is.odysseus.p2p_new.util.ObjectByteConverter;
 import de.uniol.inf.is.odysseus.systemload.ISystemLoad;
 
-public class JxtaSenderPO<T extends IStreamObject<?>> extends AbstractSink<T> implements ITransmissionSenderListener {
+public class JxtaSenderPO<T extends IStreamObject<?>> extends AbstractSink<T>
+		implements ITransmissionSenderListener {
 
-	private static final Logger LOG = LoggerFactory.getLogger(JxtaSenderPO.class);
+	private static final Logger LOG = LoggerFactory
+			.getLogger(JxtaSenderPO.class);
 
 	private final ITransmissionSender transmission;
 	private final String pipeIDString;
-	private final String peerIDString;
+	private String peerIDString;
 	private final boolean writeResourceUsage;
 	private final PeerID localPeerID;
 	private final String localPeerName;
-	
+
 	private NullAwareTupleDataHandler dataHandler;
 
 	private long totalSendByteCount;
-	
+
 	private double uploadRateBytesPerSecond;
 	private long uploadRateTimestamp;
 	private long uploadRateCurrentByteCount;
-
 
 	public JxtaSenderPO(JxtaSenderAO ao) throws DataTransmissionException {
 		pipeIDString = ao.getPipeID();
 		peerIDString = ao.getPeerID();
 		writeResourceUsage = ao.isWriteResourceUsage();
-		
+
 		localPeerID = P2PNetworkManager.getInstance().getLocalPeerID();
 		localPeerName = P2PNetworkManager.getInstance().getLocalPeerName();
 
-		this.transmission = DataTransmissionManager.getInstance().registerTransmissionSender(peerIDString, pipeIDString);
+		this.transmission = DataTransmissionManager.getInstance()
+				.registerTransmissionSender(peerIDString, pipeIDString);
 		this.transmission.addListener(this);
 		this.transmission.open();
 	}
@@ -77,13 +79,13 @@ public class JxtaSenderPO<T extends IStreamObject<?>> extends AbstractSink<T> im
 		this.writeResourceUsage = po.writeResourceUsage;
 		this.localPeerID = po.localPeerID;
 		this.localPeerName = po.localPeerName;
-		
+
 		this.totalSendByteCount = po.totalSendByteCount;
 		this.uploadRateBytesPerSecond = po.uploadRateBytesPerSecond;
 		this.uploadRateCurrentByteCount = po.uploadRateCurrentByteCount;
 		this.uploadRateTimestamp = po.uploadRateTimestamp;
 	}
-	
+
 	@Override
 	public AbstractSink<T> clone() {
 		return new JxtaSenderPO<T>(this);
@@ -113,27 +115,30 @@ public class JxtaSenderPO<T extends IStreamObject<?>> extends AbstractSink<T> im
 	protected void process_next(T object, int port) {
 		createDataHandlerIfNeeded();
 
-		ByteBuffer buffer = ByteBuffer.allocate(P2PNewPlugIn.TRANSPORT_BUFFER_SIZE);
+		ByteBuffer buffer = ByteBuffer
+				.allocate(P2PNewPlugIn.TRANSPORT_BUFFER_SIZE);
 		dataHandler.writeData(buffer, object);
-		
+
 		Object metadata = object.getMetadata();
 		if (metadata != null) {
-			if( metadata instanceof ISystemLoad ) {
-				((ISystemLoad)metadata).addSystemLoad(localPeerName);
+			if (metadata instanceof ISystemLoad) {
+				((ISystemLoad) metadata).addSystemLoad(localPeerName);
 			}
-			
-			byte[] metadataBytes = ObjectByteConverter.objectToBytes(object.getMetadata());
+
+			byte[] metadataBytes = ObjectByteConverter.objectToBytes(object
+					.getMetadata());
 			buffer.putInt(metadataBytes.length);
 			buffer.put(metadataBytes);
 		}
-		
+
 		Map<String, Object> metadataMap = object.getMetadataMap();
-		if( !metadataMap.isEmpty() ) {
-			byte[] metadataMapBytes = ObjectByteConverter.objectToBytes(metadataMap);
+		if (!metadataMap.isEmpty()) {
+			byte[] metadataMapBytes = ObjectByteConverter
+					.objectToBytes(metadataMap);
 			buffer.putInt(metadataMapBytes.length);
 			buffer.put(metadataMapBytes);
 		}
-		
+
 		buffer.flip();
 
 		int messageSizeBytes = buffer.remaining();
@@ -146,12 +151,12 @@ public class JxtaSenderPO<T extends IStreamObject<?>> extends AbstractSink<T> im
 
 		totalSendByteCount += rawBytes.length;
 		uploadRateCurrentByteCount += rawBytes.length;
-		if( System.currentTimeMillis() - uploadRateTimestamp > 10 * 1000 ) {
-			uploadRateBytesPerSecond = ( uploadRateCurrentByteCount / 10.0);
+		if (System.currentTimeMillis() - uploadRateTimestamp > 10 * 1000) {
+			uploadRateBytesPerSecond = (uploadRateCurrentByteCount / 10.0);
 			uploadRateCurrentByteCount = 0;
 			uploadRateTimestamp = System.currentTimeMillis();
 		}
-		
+
 		try {
 			transmission.sendData(rawBytes);
 		} catch (DataTransmissionException e) {
@@ -162,7 +167,8 @@ public class JxtaSenderPO<T extends IStreamObject<?>> extends AbstractSink<T> im
 
 	private void createDataHandlerIfNeeded() {
 		if (dataHandler == null) {
-			dataHandler = (NullAwareTupleDataHandler) new NullAwareTupleDataHandler().createInstance(getOutputSchema());
+			dataHandler = (NullAwareTupleDataHandler) new NullAwareTupleDataHandler()
+					.createInstance(getOutputSchema());
 			LOG.debug("{} : Data Handler created", getName());
 		}
 	}
@@ -170,12 +176,13 @@ public class JxtaSenderPO<T extends IStreamObject<?>> extends AbstractSink<T> im
 	@Override
 	public void onReceiveOpen(ITransmissionSender sender) {
 		uploadRateTimestamp = System.currentTimeMillis();
-		
+
 		Optional<Integer> optQueryID = determineQueryID(getOwner());
 		if (optQueryID.isPresent()) {
 			int queryID = optQueryID.get();
 			LOG.debug("{} : Starting query {}", getName(), queryID);
-			ServerExecutorService.getServerExecutor().startQuery(queryID, SessionManagementService.getActiveSession());
+			ServerExecutorService.getServerExecutor().startQuery(queryID,
+					SessionManagementService.getActiveSession());
 		}
 	}
 
@@ -185,7 +192,8 @@ public class JxtaSenderPO<T extends IStreamObject<?>> extends AbstractSink<T> im
 		if (optQueryID.isPresent()) {
 			int queryID = optQueryID.get();
 			LOG.debug("{} : Stopping query {}", getName(), queryID);
-			ServerExecutorService.getServerExecutor().stopQuery(queryID, SessionManagementService.getActiveSession());
+			ServerExecutorService.getServerExecutor().stopQuery(queryID,
+					SessionManagementService.getActiveSession());
 		}
 	}
 
@@ -204,38 +212,51 @@ public class JxtaSenderPO<T extends IStreamObject<?>> extends AbstractSink<T> im
 			LOG.error("Could not send done message", e);
 		}
 	}
-	
+
 	public final ITransmissionSender getTransmission() {
 		return transmission;
 	}
-	
+
 	public String getPeerIDString() {
 		return peerIDString;
 	}
-	
+
+	/**
+	 * Updates the peerId from this sender, if there is a new peer which has the
+	 * receiver to this sender. E.g. when there is a new peer due to recovery
+	 * 
+	 * @param peerId
+	 *            The new peerId
+	 */
+	public void setPeerIDString(String peerId) {
+		this.peerIDString = peerId;
+	}
+
 	public String getPipeIDString() {
 		return pipeIDString;
 	}
-	
+
 	public double getUploadRateBytesPerSecond() {
 		return uploadRateBytesPerSecond;
 	}
-	
+
 	public long getTotalSendByteCount() {
 		return totalSendByteCount;
 	}
-	
+
 	@Override
 	public String getName() {
 		return super.getName() + determineDestinationPeerName();
 	}
-	
+
 	private String determineDestinationPeerName() {
-		if( Strings.isNullOrEmpty(peerIDString)) {
+		if (Strings.isNullOrEmpty(peerIDString)) {
 			return "";
 		}
-		
-		return " [" + P2PDictionary.getInstance().getRemotePeerName(toPeerID(peerIDString)) + "]";
+
+		return " ["
+				+ P2PDictionary.getInstance().getRemotePeerName(
+						toPeerID(peerIDString)) + "]";
 	}
 
 	protected static PeerID toPeerID(String peerIDString) {
