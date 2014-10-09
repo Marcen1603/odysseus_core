@@ -14,8 +14,8 @@ import de.uniol.inf.is.odysseus.peer.ddc.DDCKey;
 import de.uniol.inf.is.odysseus.peer.ddc.IDistributedDataContainer;
 import de.uniol.inf.is.odysseus.peer.ddc.MissingDDCEntryException;
 
-public class IsSensorBallFunction extends AbstractFunction<Boolean>{
-	
+public class IsSensorBallFunction extends AbstractFunction<Boolean> {
+
 	private static final long serialVersionUID = -1421280112062480906L;
 
 	/**
@@ -23,19 +23,21 @@ public class IsSensorBallFunction extends AbstractFunction<Boolean>{
 	 */
 	private static final Logger LOG = LoggerFactory
 			.getLogger(IsSensorBallFunction.class);
-	
+
+	private static boolean hasBeenSetUp = false;
+
 	protected static IDistributedDataContainer ddc;
 
 	private static List<Integer> ballEntityIDList = new ArrayList<Integer>();
 	private static List<Integer> ballSensorIDList = new ArrayList<Integer>();
-	
-	public static final SDFDatatype[][] accTypes = new SDFDatatype[][] {{ SDFDatatype.INTEGER}, { SDFDatatype.STRING } };
+
+	public static final SDFDatatype[][] accTypes = new SDFDatatype[][] {
+			{ SDFDatatype.INTEGER }, { SDFDatatype.STRING } };
 
 	public IsSensorBallFunction() {
-	        super("isSensorBall", 2, accTypes, SDFDatatype.BOOLEAN);
-	    }
-	
-	
+		super("isSensorBall", 2, accTypes, SDFDatatype.BOOLEAN);
+	}
+
 	/**
 	 * Binds a DDC. <br />
 	 * Called by OSGi-DS.
@@ -51,8 +53,6 @@ public class IsSensorBallFunction extends AbstractFunction<Boolean>{
 		IsSensorBallFunction.LOG.debug("Bound {} as a DDC", ddc.getClass()
 				.getSimpleName());
 
-		setUpBallList();
-	
 	}
 
 	/**
@@ -68,64 +68,72 @@ public class IsSensorBallFunction extends AbstractFunction<Boolean>{
 		Preconditions.checkNotNull(ddc, "The DDC to bind must be not null!");
 		if (IsSensorBallFunction.ddc == ddc) {
 			IsSensorBallFunction.ddc = null;
-			IsSensorBallFunction.LOG.debug("Unbound {} as a DDC", ddc.getClass()
-					.getSimpleName());
+			IsSensorBallFunction.LOG.debug("Unbound {} as a DDC", ddc
+					.getClass().getSimpleName());
 
 		}
 
 	}
 
-	
-	private static void setUpBallList(){
+	private static void setUpBallList() {
 		try {
-			String[] sensorList =AccessToDCCFunction.ddc.getValue(new DDCKey("sensoridlist")).split(",");
-			
-		 for (int i = 0; i < sensorList.length; i++) {
-			String[] searchKey = new String[2];
-			searchKey[0]="sensorid."+sensorList[i];
-			searchKey[1]="team_id";
-	
-			Integer team_id = Integer.valueOf(IsSensorBallFunction.ddc.getValue(new DDCKey(searchKey)));
-			
-			if(team_id == -1){
-				searchKey[1]="entity_id";
-				int entity_id = Integer.valueOf(IsSensorBallFunction.ddc.getValue(new DDCKey(searchKey)));
-					
-				ballEntityIDList.add(entity_id);
-				ballSensorIDList.add(Integer.valueOf(sensorList[i]));
+			String[] sensorList = AccessToDCCFunction.ddc.getValue(
+					new DDCKey("sensoridlist")).split(",");
+
+			for (int i = 0; i < sensorList.length; i++) {
+				String[] searchKey = new String[2];
+				searchKey[0] = "sensorid." + sensorList[i];
+				searchKey[1] = "team_id";
+
+				Integer team_id = Integer.valueOf(IsSensorBallFunction.ddc
+						.getValue(new DDCKey(searchKey)));
+
+				if (team_id == -1) {
+					searchKey[1] = "entity_id";
+					int entity_id = Integer.valueOf(IsSensorBallFunction.ddc
+							.getValue(new DDCKey(searchKey)));
+
+					ballEntityIDList.add(entity_id);
+					ballSensorIDList.add(Integer.valueOf(sensorList[i]));
+				}
+
 			}
-		
-			
-		 }	
-				
+
+			hasBeenSetUp = true;
 
 		} catch (MissingDDCEntryException e1) {
 			e1.printStackTrace();
-		}		
+		}
 	}
 
 	@Override
 	public Boolean getValue() {
-		
-		Integer id =  getInputValue(0);
-		String type =  getInputValue(1).toString();
-		
-		if(type.equals("sid")){
-			if(ballSensorIDList.contains(id)){
+
+		if (!hasBeenSetUp) {
+
+			setUpBallList();
+
+		}
+
+		Integer id = getInputValue(0);
+		String type = getInputValue(1).toString();
+
+		if (type.equals("sid")) {
+			if (ballSensorIDList.contains(id)) {
 				return true;
-			}else{
+			} else {
 				return false;
 			}
 		}
-		
-		if(type.equals("entity_id")){
-			if(ballEntityIDList.contains(id)){
+
+		if (type.equals("entity_id")) {
+			if (ballEntityIDList.contains(id)) {
 				return true;
-			}else{
+			} else {
 				return false;
 			}
 		}
-		
+
 		return false;
 	}
 }
