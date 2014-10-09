@@ -41,6 +41,8 @@ public class RPiGPIOTransportHandler extends AbstractSimplePullTransportHandler<
 		protocolHandler.setTransportHandler(tHandler);
 		this.init(options);
 		
+		LOG.debug("RPiGPIOTransportHandler createInstance");
+		
 		initGPIO();
 		
 		return tHandler;
@@ -120,7 +122,9 @@ public class RPiGPIOTransportHandler extends AbstractSimplePullTransportHandler<
 	        	value=true;
 			}
 		}else{
-			initGPIO();
+			//initGPIO();
+			tuple.setAttribute(0, "errorINIT");
+        	tuple.setAttribute(1, "initGPIO must called");
 		}
         
         if(!value && !errorPi4J){
