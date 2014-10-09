@@ -106,12 +106,17 @@ public class RPiGPIOTransportHandler extends AbstractSimplePullTransportHandler<
 	        	value=true;
 			}catch(Exception ex){
 				if(!getStateException){
+					LOG.debug("rpi gpio getNext error: ", ex);
+					
+					LOG.debug("Stack trace: ");
 					ex.printStackTrace();
+					
 					getStateException=true;
 				}
 				
 				tuple.setAttribute(0, "error");
-	        	tuple.setAttribute(1, "On Raspberry Pi? pi4j installed? pin:"+_pin.toString()+" mode:"+mode+" pullState:"+pullState);
+	        	tuple.setAttribute(1, "On Raspberry Pi? pi4j installed? pin:"+_pin.toString()+" mode:"+mode+" pullState:"+pullState + " message:"+ex.getMessage()+ " stacktrace:"+ex.getStackTrace().toString());
+	        	
 	        	value=true;
 			}
 		}else{
@@ -132,13 +137,17 @@ public class RPiGPIOTransportHandler extends AbstractSimplePullTransportHandler<
 	}
 	
 	private void initGPIO() {
+		LOG.debug("initGPIO() was called.");
 		
 		try{
-			this.gpioController = GpioFactory.getInstance();
+			if(this.gpioController!=null){
+				this.gpioController = GpioFactory.getInstance();
+			}
 			
-			this.myButton = this.gpioController.provisionDigitalInputPin(_pin,
+			if(this.gpioController!=null){
+				this.myButton = this.gpioController.provisionDigitalInputPin(_pin,
                     "MyButton");
-			
+			}
 		}catch(NullPointerException ex){
 			if(!initNullPointerException){
 				ex.printStackTrace();
