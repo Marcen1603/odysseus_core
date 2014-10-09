@@ -88,7 +88,7 @@ public class RPiGPIOTransportHandler extends AbstractSimplePullTransportHandler<
 		
 		boolean value=false;
 		
-		if(this.gpioController!=null){
+		if(this.gpioController!=null && this.myButton!=null){
 			
 			
 			try{
@@ -122,9 +122,12 @@ public class RPiGPIOTransportHandler extends AbstractSimplePullTransportHandler<
 	        	value=true;
 			}
 		}else{
-			//initGPIO();
+			initGPIO();
+			
 			tuple.setAttribute(0, "errorINIT");
         	tuple.setAttribute(1, "initGPIO must called");
+        	
+        	return tuple;
 		}
         
         if(!value && !errorPi4J){
