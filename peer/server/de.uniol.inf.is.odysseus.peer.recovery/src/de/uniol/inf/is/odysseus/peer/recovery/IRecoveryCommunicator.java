@@ -6,6 +6,7 @@ import java.util.Map;
 
 import net.jxta.id.ID;
 import net.jxta.peer.PeerID;
+import net.jxta.pipe.PipeID;
 
 /**
  * A recovery communicator handles the communication between peers for recovery
@@ -86,20 +87,20 @@ public interface IRecoveryCommunicator {
 	public void sendHoldOnMessages(List<PeerID> peers, List<ID> queryIds);
 
 	/**
-	 * Sends a message to "senderPeer", that this peer should send the results
-	 * of the shared query with the given id to a new peer (newReceiverPeer)
+	 * Sends a message to the receiverPeer, that this peer has to update it's
+	 * JxtaReceiverPO with the given pipeId, so that this peer get the tuples
+	 * from newSenderPeer
 	 * 
-	 * @param senderPeer
-	 *            The peer which gets the message, so this is the peer who is
-	 *            the sender (A -> B; after the message A -> C; senderPeer is A)
-	 * @param newReceiverPeer
-	 *            The peer to which the tuples should be send
-	 * @param sharedQueryID
-	 *            The query id for which the tuples should be send to a new
-	 *            receiver
+	 * @param receiverPeer
+	 *            The peer on which the receiver is installed which has to be
+	 *            updated
+	 * @param newSenderPeer
+	 *            The peer with the new sender
+	 * @param pipeId
+	 *            The pipeId which is affected
 	 */
-	public void sendNewReceiverMessage(PeerID senderPeer,
-			PeerID newReceiverPeer, ID sharedQueryID);
+	public void sendUpdateReceiverMessage(PeerID receiverPeer,
+			PeerID newSenderPeer, PipeID pipeId);
 
 	/**
 	 * Sends a recovery-agreement message to all known peers. This message tells

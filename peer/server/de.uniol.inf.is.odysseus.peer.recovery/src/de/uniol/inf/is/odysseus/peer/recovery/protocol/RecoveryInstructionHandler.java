@@ -1,31 +1,66 @@
 package de.uniol.inf.is.odysseus.peer.recovery.protocol;
 
-import java.util.List;
+import java.net.URI;
+import java.util.Collection;
 
 import net.jxta.id.ID;
 import net.jxta.peer.PeerID;
-import de.uniol.inf.is.odysseus.core.physicaloperator.PhysicalSubscription;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSource;
+import net.jxta.pipe.PipeID;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
+import de.uniol.inf.is.odysseus.p2p_new.IP2PNetworkManager;
 import de.uniol.inf.is.odysseus.p2p_new.data.DataTransmissionException;
-import de.uniol.inf.is.odysseus.p2p_new.logicaloperator.JxtaSenderAO;
+import de.uniol.inf.is.odysseus.p2p_new.physicaloperator.JxtaReceiverPO;
 import de.uniol.inf.is.odysseus.p2p_new.physicaloperator.JxtaSenderPO;
-import de.uniol.inf.is.odysseus.peer.recovery.internal.JxtaInformation;
+import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryCommunicator;
 import de.uniol.inf.is.odysseus.peer.recovery.internal.RecoveryCommunicator;
 import de.uniol.inf.is.odysseus.peer.recovery.messages.RecoveryInstructionMessage;
 import de.uniol.inf.is.odysseus.peer.recovery.util.LocalBackupInformationAccess;
 import de.uniol.inf.is.odysseus.peer.recovery.util.RecoveryHelper;
 
 /**
+ * This class handles incoming RecoveryInstructionMessages, e.g., to install a
+ * new query for recovery.
  * 
  * @author Tobias Brandt
  *
  */
 public class RecoveryInstructionHandler {
 
+	private static IRecoveryCommunicator recoveryCommunicator;
+	private static IP2PNetworkManager p2pNetworkManager;
+
+	// called by OSGi-DS
+	public static void bindRecoveryCommunicator(
+			IRecoveryCommunicator communicator) {
+		recoveryCommunicator = communicator;
+	}
+
+	// called by OSGi-DS
+	public static void unbindRecoveryCommunicator(
+			IRecoveryCommunicator communicator) {
+		if (recoveryCommunicator == communicator)
+			recoveryCommunicator = null;
+	}
+
+	// called by OSGi-DS
+	public static void bindP2PNetworkManager(IP2PNetworkManager serv) {
+		p2pNetworkManager = serv;
+	}
+
+	// called by OSGi-DS
+	public static void unbindP2PNetworkManager(IP2PNetworkManager serv) {
+		if (p2pNetworkManager == serv) {
+			p2pNetworkManager = null;
+		}
+	}
+
 	/**
 	 * Handles an incoming instruction-message
-	 * @param instructionMessage The incoming message
+	 * 
+	 * @param instructionMessage
+	 *            The incoming message
 	 */
 	public static void handleInstruction(PeerID sender,
 			RecoveryInstructionMessage instructionMessage) {
@@ -36,14 +71,8 @@ public class RecoveryInstructionHandler {
 		case RecoveryInstructionMessage.ADD_QUERY:
 			addQuery(instructionMessage.getPqlQuery());
 			break;
-		case RecoveryInstructionMessage.NEW_RECEIVER:
-			try {
-				newReceiver(instructionMessage.getNewReceiver(),
-						instructionMessage.getSharedQueryId());
-			} catch (DataTransmissionException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+		case RecoveryInstructionMessage.UPDATE_RECEIVER:
+			updateReceiver(instructionMessage.getNewSender(), instructionMessage.getPipeId());
 			break;
 		case RecoveryInstructionMessage.BE_BUDDY:
 			beBuddy(sender, instructionMessage.getSharedQueryId());
@@ -58,74 +87,69 @@ public class RecoveryInstructionHandler {
 
 	}
 
+	@SuppressWarnings("rawtypes")
 	private static void addQuery(String pql) {
-		RecoveryHelper.installAndRunQueryPartFromPql(pql);
-	}
+		Collection<Integer> installedQueries = RecoveryHelper
+				.installAndRunQueryPartFromPql(pql);
 
-	/**
-	 * Experimental: The peer which receives this message should send the
-	 * results for the given queryId to another receiving peer
-	 * 
-	 * @param newReceiver
-	 * @param queryId
-	 * @throws DataTransmissionException
-	 */
-	@SuppressWarnings({ "rawtypes", "unchecked" })
-	private static void newReceiver(PeerID newReceiver, ID sharedQueryId)
-			throws DataTransmissionException {
-		// Get my own (old) sender for this sharedQueryId
-		PeerID myPeerId = RecoveryCommunicator.getP2pNetworkManager()
-				.getLocalPeerID();
-		String pipeId = "";
-		List<JxtaInformation> jxtaInfo = LocalBackupInformationAccess
-				.getJxtaInfoForPeer(myPeerId);
-		for (JxtaInformation info : jxtaInfo) {
-			if (info.getSharedQueryID().equals(sharedQueryId)
-					&& info.getKey().equals(
-							RecoveryCommunicator.JXTA_KEY_SENDER_PIPE_ID)) {
-				pipeId = info.getValue();
+		// TODO Call "receiveFromNewPeer" on the subsequent receiver
+		IServerExecutor executor = RecoveryCommunicator.getExecutor();
+
+		for (IPhysicalQuery query : executor.getExecutionPlan().getQueries()) {
+			if (installedQueries.contains(query.getID())) {
+				for (IPhysicalOperator operator : query.getAllOperators()) {
+					if (operator instanceof JxtaSenderPO) {
+						JxtaSenderPO sender = (JxtaSenderPO) operator;
+						// For this sender we want to get the peer to which it
+						// sends
+
+						try {
+							String peerIdString = sender.getPeerIDString();
+							URI peerUri = new URI(peerIdString);
+							PeerID peer = PeerID.create(peerUri);
+							// To this peer we have to send an "UPDATE_RECEIVER"
+							// message
+							String pipeIdString = sender.getPipeIDString();
+							URI pipeUri = new URI(pipeIdString);
+							PipeID pipe = PipeID.create(pipeUri);
+
+							PeerID ownPeerId = p2pNetworkManager
+									.getLocalPeerID();
+
+							recoveryCommunicator.sendUpdateReceiverMessage(
+									peer, ownPeerId, pipe);
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+
+					}
+
+				}
 			}
 		}
+	}
 
-		// New JxtaSender which should send to the new peer
-		JxtaSenderAO originalSenderAO = (JxtaSenderAO) RecoveryHelper
-				.getLogicalJxtaOperator(true, pipeId);
-		JxtaSenderAO jxtaSenderAO = (JxtaSenderAO) originalSenderAO.clone();
-		jxtaSenderAO.setPeerID(newReceiver.toString());
-		jxtaSenderAO.setPipeID(pipeId);
-
-		JxtaSenderPO jxtaSender = null;
-		jxtaSender = new JxtaSenderPO(jxtaSenderAO);
-
-		// Now do the subscriptions
-		JxtaSenderPO originalSender = (JxtaSenderPO) RecoveryHelper
-				.getPhysicalJxtaOperator(true, pipeId);
-		jxtaSender.setOutputSchema(originalSender.getOutputSchema());
-		PhysicalSubscription subscription = originalSender
-				.getSubscribedToSource(0);
-
-		if (subscription.getTarget() instanceof AbstractPipe) {
-			((AbstractPipe) subscription.getTarget())
-					.subscribeSink(jxtaSender, 0,
-							subscription.getSourceOutPort(),
-							subscription.getSchema(), true,
-							subscription.getOpenCalls());
-
-			jxtaSender.subscribeToSource(subscription.getTarget(),
-					subscription.getSinkInPort(),
-					subscription.getSourceOutPort(), subscription.getSchema());
-		} else if (subscription.getTarget() instanceof AbstractSource) {
-			((AbstractSource) subscription.getTarget())
-					.subscribeSink(jxtaSender, 0,
-							subscription.getSourceOutPort(),
-							subscription.getSchema(), true,
-							subscription.getOpenCalls());
-
-			jxtaSender.subscribeToSource(subscription.getTarget(),
-					subscription.getSinkInPort(),
-					subscription.getSourceOutPort(), subscription.getSchema());
+	@SuppressWarnings("rawtypes")
+	private static void updateReceiver(PeerID newSender, PipeID pipeId) {
+		// 1. Get the receiver, which we have to update
+		Collection<IPhysicalQuery> queries = RecoveryCommunicator.getExecutor()
+				.getExecutionPlan().getQueries();
+		for (IPhysicalQuery query : queries) {
+			for (IPhysicalOperator op : query.getAllOperators()) {
+				if (op instanceof JxtaReceiverPO) {
+					JxtaReceiverPO receiver = (JxtaReceiverPO) op;
+					if (receiver.getPipeIDString().equals(pipeId.toString())) {
+						// This should be the receiver we have to update
+						try {
+							receiver.receiveFromNewPeer(newSender.toString());
+						} catch (DataTransmissionException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+					}
+				}
+			}
 		}
-
 	}
 
 	private static void beBuddy(PeerID sender, ID sharedQueryId) {

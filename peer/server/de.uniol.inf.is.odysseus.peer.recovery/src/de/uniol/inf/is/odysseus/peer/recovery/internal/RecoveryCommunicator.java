@@ -9,6 +9,7 @@ import java.util.Observer;
 
 import net.jxta.id.ID;
 import net.jxta.peer.PeerID;
+import net.jxta.pipe.PipeID;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -303,7 +304,7 @@ public class RecoveryCommunicator implements IRecoveryCommunicator,
 
 		// To update the affected senders
 		int i = 0;
-		
+
 		// Reallocate each query to another peer
 		for (ID sharedQueryId : sharedQueryIdsForRecovery) {
 			// 4. Search for another peer who can take the parts from the failed
@@ -332,12 +333,12 @@ public class RecoveryCommunicator implements IRecoveryCommunicator,
 			// 5. Tell the new peer to install the parts from the failed peer
 			RecoveryAgreementHandler.waitForAndDoRecovery(failedPeer,
 					sharedQueryId, peer);
-			
+
 			// 6. Update our sender so it knows the new peerId
-			if(i < affectedSenders.size()) {
+			if (i < affectedSenders.size()) {
 				affectedSenders.get(i).setPeerIDString(peer.toString());
 			}
-			
+
 		}
 
 	}
@@ -410,18 +411,6 @@ public class RecoveryCommunicator implements IRecoveryCommunicator,
 
 		// TODO Auto-generated method stub
 		return null;
-	}
-
-	@Override
-	public void sendNewReceiverMessage(PeerID senderPeer,
-			PeerID newReceiverPeer, ID sharedQueryID) {
-		RecoveryInstructionMessage message = RecoveryInstructionMessage
-				.createNewReceiverMessage(newReceiverPeer, sharedQueryID);
-		try {
-			peerCommunicator.send(senderPeer, message);
-		} catch (Exception e) {
-
-		}
 	}
 
 	@Override
@@ -511,7 +500,18 @@ public class RecoveryCommunicator implements IRecoveryCommunicator,
 				recover(p2pNotification.getPeer());
 			}
 		}
+	}
 
+	@Override
+	public void sendUpdateReceiverMessage(PeerID receiverPeer,
+			PeerID newSenderPeer, PipeID pipeId) {
+		RecoveryInstructionMessage message = RecoveryInstructionMessage
+				.createUpdateReceiverMessage(newSenderPeer, pipeId);
+		try {
+			peerCommunicator.send(receiverPeer, message);
+		} catch (PeerCommunicationException e) {
+			e.printStackTrace();
+		}
 	}
 
 	@Override

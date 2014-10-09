@@ -8,6 +8,7 @@ import java.util.List;
 
 import net.jxta.id.ID;
 import net.jxta.peer.PeerID;
+import net.jxta.pipe.PipeID;
 
 import org.eclipse.osgi.framework.console.CommandInterpreter;
 import org.eclipse.osgi.framework.console.CommandProvider;
@@ -198,7 +199,7 @@ public class RecoveryConsole implements CommandProvider {
 		sb.append("	lsRecoveryAllocators - Lists the available recovery allocators.\n");
 		sb.append("	showPeerPQL <PeerName> - Shows the PQL that this peer knows from <PeerName>.\n");
 		sb.append("	sendHoldOn <PeerName from receiver> <sharedQueryId> - Send a hold-on message to <PeerName from receiver>, so that this should stop sending the tuples from query <sharedQueryId> further.\n");
-		sb.append("	sendNewReceiver <PeerName from receiver> <PeerName from new receiver> <sharedQueryId> - Send a newReceiver-message to <PeerName from receiver>, so that this should send the tuples from query <sharedQueryId> to the new receiver <PeerName from new receiver>.\n");
+		sb.append("	sendUpdateReceiver <PeerName from receiver> <PeerName from new sender> <pipeId> - Send an updateReceiver-message to <PeerName from receiver>, so that this should receive the tuples fir pipe <pipeId> from the new sender <PeerName from new sender>.\n");
 		sb.append("	sendAddQueriesFromPeer <PeerName from receiver> <PeerName from failed peer> <sharedQueryId> - The <PeerName from receiver> will get a message which tells that the peer has to install the query <sharedQueryId> from <PeerName from failed peer>. \n");
 		sb.append("	recoveryAllocation <AllocatorName> - Gets the id and name of a peer to allocate to (for testing) \n");
 		sb.append("	startPeerFailureDetection <AllocatorName> - Starts detection of peer failures with the given allocator. \n");
@@ -303,7 +304,7 @@ public class RecoveryConsole implements CommandProvider {
 		cCommunicator.get().sendHoldOnMessages(peers, queryIds);
 	}
 
-	public void _sendNewReceiver(CommandInterpreter ci) {
+	public void _sendUpdateReceiver(CommandInterpreter ci) {
 		Preconditions.checkNotNull(ci, "Command interpreter must not be null!");
 
 		if (!cCommunicator.isPresent()) {
@@ -313,26 +314,26 @@ public class RecoveryConsole implements CommandProvider {
 
 		}
 
-		PeerID senderPeerId = getPeerIdFromCi(ci);
-		PeerID newReceiverPeerId = getPeerIdFromCi(ci);
-		ID sharedQueryId = getSharedQueryIdFromCi(ci);
+		PeerID receiverPeerId = getPeerIdFromCi(ci);
+		PeerID newSendrePeerId = getPeerIdFromCi(ci);
+		PipeID pipeId = getPipeIDFromCi(ci);
 
-		if (senderPeerId == null) {
-			System.out
-					.println("Don't know new sender peer. Take myself insead.");
-			senderPeerId = RecoveryCommunicator.getP2pNetworkManager()
-					.getLocalPeerID();
-		}
-
-		if (newReceiverPeerId == null) {
+		if (receiverPeerId == null) {
 			System.out
 					.println("Don't know new receiver peer. Take myself insead.");
-			newReceiverPeerId = RecoveryCommunicator.getP2pNetworkManager()
+			receiverPeerId = RecoveryCommunicator.getP2pNetworkManager()
 					.getLocalPeerID();
 		}
 
-		cCommunicator.get().sendNewReceiverMessage(senderPeerId,
-				newReceiverPeerId, sharedQueryId);
+		if (newSendrePeerId == null) {
+			System.out
+					.println("Don't know new sender peer. Take myself insead.");
+			newSendrePeerId = RecoveryCommunicator.getP2pNetworkManager()
+					.getLocalPeerID();
+		}
+
+		cCommunicator.get().sendUpdateReceiverMessage(receiverPeerId,
+				newSendrePeerId, pipeId);
 	}
 
 	public void _startPeerFailureDetection(CommandInterpreter ci) {
@@ -509,6 +510,28 @@ public class RecoveryConsole implements CommandProvider {
 		}
 
 		return peerId;
+	}
+
+	/**
+	 * If your next argument should be the PipeId, you can get the PipeId with
+	 * this method
+	 * 
+	 * @param ci
+	 * @return
+	 */
+	private PipeID getPipeIDFromCi(CommandInterpreter ci) {
+		String pipeIdString = ci.nextArgument();
+		PipeID pipeId = null;
+		if (!Strings.isNullOrEmpty(pipeIdString)) {
+			URI pipeIdURI;
+			try {
+				pipeIdURI = new URI(pipeIdString);
+				pipeId = PipeID.create(pipeIdURI);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		return pipeId;
 	}
 
 	/**

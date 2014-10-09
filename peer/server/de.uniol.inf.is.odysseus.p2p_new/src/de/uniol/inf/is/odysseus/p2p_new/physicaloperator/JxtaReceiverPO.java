@@ -37,9 +37,9 @@ public class JxtaReceiverPO<T extends IStreamObject> extends AbstractSource<T> i
 	private static final Logger LOG = LoggerFactory.getLogger(JxtaReceiverPO.class);
 
 	private final NullAwareTupleDataHandler dataHandler;
-	private final ITransmissionReceiver transmission;
+	private ITransmissionReceiver transmission;
 	private final String pipeIDString;
-	private final String peerIDString;
+	private String peerIDString;
 	
 	private final String localPeerName;
 	
@@ -189,5 +189,19 @@ public class JxtaReceiverPO<T extends IStreamObject> extends AbstractSource<T> i
 			LOG.error("Could not get id from peerIDString {}", peerIDString, ex);
 			return null;
 		}
+	}
+	
+	public void receiveFromNewPeer(String peerId) throws DataTransmissionException {
+		this.peerIDString = peerId;
+		
+		// Update transmission
+		transmission.close();
+		transmission.removeListener(this);
+		
+		transmission = DataTransmissionManager.getInstance().registerTransmissionReceiver(peerIDString, pipeIDString);
+		transmission.addListener(this);
+		transmission.open();
+		
+		process_open();
 	}
 }
