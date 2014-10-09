@@ -15,6 +15,7 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableCollection;
+import com.google.common.collect.Maps;
 
 import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryBackupInformationStore;
 import de.uniol.inf.is.odysseus.peer.recovery.internal.JxtaInformation;
@@ -312,8 +313,80 @@ public class LocalBackupInformationAccess {
 			LOG.error("No backup information store for recovery bound!");
 			return null;
 		}
-		
+
 		return cInfoStore.get().getBuddyList();
+	}
+
+	/**
+	 * All backup information about a distributed query stored in the local
+	 * backup information store.
+	 * 
+	 * @param sharedQueryId
+	 *            The ID of the distributed query. <br />
+	 *            Must be not null!
+	 * @return A mapping of pql statement to peers, where the statements are
+	 *         executed.
+	 */
+	public static Map<PeerID, Collection<String>> getBackupInformation(
+			ID sharedQueryId) {
+
+		Preconditions.checkNotNull(sharedQueryId,
+				"The ID of the distributed query must be not null!");
+
+		if (!cInfoStore.isPresent()) {
+			LOG.error("No backup information store for recovery bound!");
+			return null;
+		}
+
+		Map<PeerID, Collection<String>> backupInfo = Maps.newHashMap();
+		for (PeerID peer : cInfoStore.get().getStoredPeers(sharedQueryId)) {
+
+			backupInfo.put(peer,
+					cInfoStore.get()
+							.getStoredPQLStatements(sharedQueryId, peer));
+
+		}
+
+		return backupInfo;
+
+	}
+
+	/**
+	 * Removes given backup information about a distributed query stored in the
+	 * local backup information store.
+	 * 
+	 * @param sharedQueryId
+	 *            The ID of the distributed query. <br />
+	 *            Must be not null!
+	 * @param backupInformation
+	 *            A mapping of pql statements (to remove) to peers, where the
+	 *            statements are executed.
+	 */
+	public static void removeLocal(ID sharedQueryId,
+			Map<PeerID, Collection<String>> backupInformation) {
+
+		Preconditions.checkNotNull(sharedQueryId,
+				"The ID of the distributed query must be not null!");
+
+		Preconditions.checkNotNull(backupInformation,
+				"The backup information must be not null!");
+
+		if (!cInfoStore.isPresent()) {
+			LOG.error("No backup information store for recovery bound!");
+			return;
+		}
+
+		for (PeerID peer : backupInformation.keySet()) {
+
+			for (String pqlStatement : backupInformation.get(peer)) {
+
+				cInfoStore.get().removePQLStatement(sharedQueryId, peer,
+						pqlStatement);
+
+			}
+
+		}
+
 	}
 
 }

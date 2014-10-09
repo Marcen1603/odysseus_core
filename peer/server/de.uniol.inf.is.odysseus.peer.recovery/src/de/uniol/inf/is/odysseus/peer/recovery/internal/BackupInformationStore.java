@@ -41,7 +41,8 @@ public class BackupInformationStore implements IRecoveryBackupInformationStore {
 	/**
 	 * The stored information mapped to their shared query (it's id).
 	 */
-	private final Map<ID, BackupInformation> mInfoMap = Maps.newHashMap();
+	private final Map<ID, Map<PeerID, Collection<String>>> mInfoMap = Maps
+			.newHashMap();
 
 	/**
 	 * The stored information, for which peers and which shared query (it's id)
@@ -77,8 +78,7 @@ public class BackupInformationStore implements IRecoveryBackupInformationStore {
 
 		}
 
-		this.mInfoMap.put(sharedQueryId,
-				new BackupInformation(pqlStatementsMap));
+		this.mInfoMap.put(sharedQueryId, pqlStatementsMap);
 		LOG.debug("Stored backup information about '{}': {}", sharedQueryId,
 				pqlStatementsMap);
 		return true;

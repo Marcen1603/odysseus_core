@@ -359,6 +359,8 @@ public class RecoveryCommunicator implements IRecoveryCommunicator,
 	public void installQueriesOnNewPeer(PeerID failedPeer, PeerID newPeer,
 			ID sharedQueryId) {
 
+		Map<PeerID, Collection<String>> oldBackupInformation = LocalBackupInformationAccess
+				.getBackupInformation(sharedQueryId);
 		ImmutableCollection<String> pqlParts = LocalBackupInformationAccess
 				.getStoredPQLStatements(sharedQueryId, failedPeer);
 
@@ -366,8 +368,6 @@ public class RecoveryCommunicator implements IRecoveryCommunicator,
 		for (String pqlPart : pqlParts) {
 			pql += " " + pqlPart;
 		}
-
-		// TODO preconditions M.B.
 
 		// Send the add query message
 		RecoveryInstructionMessage takeOverMessage = RecoveryInstructionMessage
@@ -380,11 +380,36 @@ public class RecoveryCommunicator implements IRecoveryCommunicator,
 							+ newPeer.toString(), e);
 		}
 
-		// TODO Update backup information
-		// 1. Determine, which backup information have to be send to the new
+		// Determine, which backup information have to be sent to the new
 		// peer
-		// 2. Send these information
-		// 3. Update the local backup information due to the take over
+		Map<PeerID, Collection<String>> newBackupInformation = determineBackupInformation(
+				sharedQueryId, pqlParts);
+
+		// Send these information
+		this.sendBackupInformation(newPeer, sharedQueryId, newBackupInformation);
+
+		// Update the local backup information due to the take over
+		LocalBackupInformationAccess.removeLocal(sharedQueryId,
+				oldBackupInformation);
+		LocalBackupInformationAccess.storeLocal(sharedQueryId,
+				newBackupInformation);
+
+	}
+
+	// TODO javaDoc
+	private static Map<PeerID, Collection<String>> determineBackupInformation(
+			ID sharedQueryId, Collection<String> pqlStatements) {
+
+		// TODO Determine the backup information for the new peer
+
+		// Problem: The information is not stored as a tree, so there is no way
+		// to determine subsequent query parts (their pql statements) directly.
+		// One way would be to parse the statements into operator graphs, build
+		// a query part graph and determine the subsequent parts (again).
+		// Don't like it. M.B.
+
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	@Override
