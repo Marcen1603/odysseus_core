@@ -9,7 +9,6 @@ import com.pi4j.io.gpio.GpioFactory;
 import com.pi4j.io.gpio.GpioPinDigitalInput;
 import com.pi4j.io.gpio.Pin;
 import com.pi4j.io.gpio.RaspiPin;
-import com.pi4j.io.gpio.exception.GpioPinExistsException;
 
 import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
@@ -80,7 +79,7 @@ public class RPiGPIOTransportHandler extends AbstractSimplePullTransportHandler<
 
 	private boolean getStateException = false;
 
-	private GpioPinDigitalInput myButton;
+	private GpioPinDigitalInput myButton = null;
 
 	private boolean initMustCalled = false;
 	
@@ -148,33 +147,6 @@ public class RPiGPIOTransportHandler extends AbstractSimplePullTransportHandler<
         	myinitGPIO();
 			
         	
-        	try{
-    			initGPIOController();
-    			
-    			initGPIOPin();
-    			
-    		}catch(NullPointerException ex){
-    			if(!initNullPointerException){
-    				ex.printStackTrace();
-    				LOG.error("", ex);
-    				initNullPointerException=true;
-    			}
-    		}catch(Exception ex){
-    			if(!initException){
-    				ex.printStackTrace();
-    				LOG.error("", ex);
-    				initException=true;
-    			}
-    		}catch (UnsatisfiedLinkError ex) {
-    			if(!initUnsatisfiedLinkError){
-    				ex.printStackTrace();
-    				LOG.error("", ex);
-    				initUnsatisfiedLinkError=true;
-    			}
-    		}
-        	
-        	
-        	
         	return tuple;
 		}
         
@@ -196,8 +168,12 @@ public class RPiGPIOTransportHandler extends AbstractSimplePullTransportHandler<
 		
 		try{
 			initGPIOController();
+			LOG.error("initGPIOController() without exception :-)");
+			
 			
 			initGPIOPin();
+			LOG.error("initGPIOPin() without exception :-)");
+			
 			
 		}catch(NullPointerException ex){
 			if(!initNullPointerException){
@@ -221,14 +197,8 @@ public class RPiGPIOTransportHandler extends AbstractSimplePullTransportHandler<
 	}
 
 	private void initGPIOPin() {
-		if(this.myButton==null){
-			try{
-			this.myButton = this.gpioController.provisionDigitalInputPin(_pin,
-		        "MyButton");
-			}catch(GpioPinExistsException ex){
-				LOG.error("GpioPinExistsException: ", ex);
-				
-			}
+		if(this.myButton==null && this.gpioController!=null){
+			this.myButton = this.gpioController.provisionDigitalInputPin(_pin,"MyButton");
 		}
 	}
 
