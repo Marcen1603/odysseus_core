@@ -71,6 +71,8 @@ public class RPiGPIOTransportHandler extends AbstractSimplePullTransportHandler<
 	private boolean initNullPointerException = false;
 	private boolean initException = false;
 	private boolean initUnsatisfiedLinkError = false;
+
+	private boolean getStateException = false;
 	
 	@Override
 	public Tuple<?> getNext() {
@@ -98,6 +100,11 @@ public class RPiGPIOTransportHandler extends AbstractSimplePullTransportHandler<
 	        	
 	        	value=true;
 			}catch(Exception ex){
+				if(!getStateException){
+					ex.printStackTrace();
+					getStateException=true;
+				}
+				
 				tuple.setAttribute(0, "error");
 	        	tuple.setAttribute(1, "On Raspberry Pi? pi4j installed? pin:"+pin+" mode:"+mode+" pullState:"+pullState);
 	        	value=true;
