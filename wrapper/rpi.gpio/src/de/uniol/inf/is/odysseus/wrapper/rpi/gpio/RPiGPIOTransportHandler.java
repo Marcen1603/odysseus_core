@@ -41,7 +41,7 @@ public class RPiGPIOTransportHandler extends AbstractSimplePullTransportHandler<
 		protocolHandler.setTransportHandler(tHandler);
 		this.init(options);
 		
-		LOG.debug("RPiGPIOTransportHandler createInstance");
+		LOG.error("RPiGPIOTransportHandler createInstance");
 		
 		myinitGPIO();
 		
@@ -79,7 +79,7 @@ public class RPiGPIOTransportHandler extends AbstractSimplePullTransportHandler<
 
 	private boolean getStateException = false;
 
-	private GpioPinDigitalInput myButton = null;
+	private GpioPinDigitalInput myButton;
 
 	private boolean initMustCalled = false;
 	
@@ -90,7 +90,30 @@ public class RPiGPIOTransportHandler extends AbstractSimplePullTransportHandler<
 		
 		boolean value=false;
 		
-		if(this.gpioController!=null && this.myButton!=null){
+		if(this.gpioController==null || this.myButton==null){
+			tuple.setAttribute(0, "errorINIT");
+        	tuple.setAttribute(1, "initGPIO must called");
+        	
+        	if(!initMustCalled){
+        		LOG.error("initGPIO must called");
+        		initMustCalled=true;
+        	}
+        	
+        	if(this.gpioController==null){
+        		//LOG.error("this.gpioController==null");
+        	}
+        	
+        	if(this.myButton==null){
+        		//LOG.error("this.myButton==null");
+        	}
+        	
+        	myinitGPIO();
+        	
+        	LOG.error("this.gpioController: "+this.gpioController);
+        	LOG.error("this.myButton: "+this.myButton);
+        	
+        	return tuple;
+		}else{
 			try{
 	            boolean buttonPressed = this.myButton.isHigh();
 	            
@@ -134,22 +157,8 @@ public class RPiGPIOTransportHandler extends AbstractSimplePullTransportHandler<
 	        	
 	        	value=true;
 			}
-		}else{
-			
-			tuple.setAttribute(0, "errorINIT");
-        	tuple.setAttribute(1, "initGPIO must called");
-        	
-        	if(!initMustCalled){
-        		LOG.error("initGPIO must called");
-        		initMustCalled=true;
-        	}
-        	
-        	myinitGPIO();
-			
-        	
-        	return tuple;
 		}
-        
+		
         if(!value && !errorPi4J){
         	if(!errorPi4J){
         		LOG.error("RPi GPIO TransportHandler runs on Raspberry Pi only. Do you installed pi4j?");
@@ -167,12 +176,20 @@ public class RPiGPIOTransportHandler extends AbstractSimplePullTransportHandler<
 		LOG.error("initGPIO() is called.");
 		
 		try{
-			initGPIOController();
-			LOG.error("initGPIOController() without exception :-)");
+			if(this.gpioController==null){
+				this.gpioController = GpioFactory.getInstance();
+				LOG.error("initGPIOController() without exception :-)");
+			}else{
+				LOG.error("initGPIOController() ELSE already instantiated!?");
+			}
 			
 			
-			initGPIOPin();
-			LOG.error("initGPIOPin() without exception :-)");
+			if(this.myButton==null && this.gpioController!=null){
+				this.myButton = this.gpioController.provisionDigitalInputPin(_pin,"MyButton");
+				LOG.error("initGPIOPin() without exception :-)");
+			}else{
+				LOG.error("initGPIOPin() ELSE already instantiated!?");
+			}
 			
 			
 		}catch(NullPointerException ex){
@@ -193,18 +210,6 @@ public class RPiGPIOTransportHandler extends AbstractSimplePullTransportHandler<
 				LOG.error("", ex);
 				initUnsatisfiedLinkError=true;
 			}
-		}
-	}
-
-	private void initGPIOPin() {
-		if(this.myButton==null && this.gpioController!=null){
-			this.myButton = this.gpioController.provisionDigitalInputPin(_pin,"MyButton");
-		}
-	}
-
-	private void initGPIOController() {
-		if(this.gpioController==null){
-			this.gpioController = GpioFactory.getInstance();
 		}
 	}
 	
