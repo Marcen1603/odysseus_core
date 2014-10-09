@@ -4,6 +4,7 @@ import java.io.IOException;
 
 import net.jxta.document.Advertisement;
 import net.jxta.document.AdvertisementFactory;
+import net.jxta.document.MimeMediaType;
 import net.jxta.id.IDFactory;
 //import net.jxta.id.IDFactory;
 import net.jxta.peer.PeerID;
@@ -320,6 +321,16 @@ public class SmartHomeServerPlugIn implements BundleActivator {
 			
 			if(advertisement.getAdvType().equals(SmartDeviceAdvertisement.getAdvertisementType())){
 				System.out.println("SmartDeviceAdvertisement received!!!");
+				
+				System.out.println("getIndexFields: ");
+				
+				for(int i=advertisement.getIndexFields().length;i<advertisement.getIndexFields().length;i++){
+					System.out.println("Field["+i+"]: "+advertisement.getIndexFields()[i]);
+				}
+				
+				System.out.println("getDocument: "+advertisement.getDocument(MimeMediaType.TEXTUTF8));
+				System.out.println("getID: "+advertisement.getID());
+				
 				
 			}
 		}

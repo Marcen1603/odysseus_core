@@ -27,7 +27,7 @@ public class SmartDeviceAdvertisement extends Advertisement implements
 		Serializable {
 
 	private static final long serialVersionUID = 1253246425406629535L;
-	private static final String ADVERTISEMENT_TYPE = "jxta:"+SmartDeviceAdvertisement.class;
+	private static final String ADVERTISEMENT_TYPE = "jxta:SmartDeviceAdvertisement";
 	
 	private static final Logger LOG = LoggerFactory.getLogger(SmartDeviceAdvertisement.class);
 	
@@ -77,6 +77,7 @@ public class SmartDeviceAdvertisement extends Advertisement implements
 	
 	public SmartDeviceAdvertisement(SmartDeviceAdvertisement viewAdvertisement) {
 		LOG.debug("SmartDeviceAdvertisement(SmartDeviceAdvertisement viewAdvertisement)");
+		
 		Preconditions.checkNotNull(viewAdvertisement, "Advertisement to copy must not be null!");
 
 		id = viewAdvertisement.id;
@@ -104,11 +105,14 @@ public class SmartDeviceAdvertisement extends Advertisement implements
 	}
 	
 	void appendTo( Element<?> doc ) {
+		/*
 		appendElement(doc, ID_TAG, this.id.toString());
 		appendElement(doc, NAME_TAG, this.name);
-		appendElement(doc, PEER_ID_TAG, this.peerID.toString());
-		appendElement(doc, PIPE_ID_TAG, pipeID.toString());
+		//appendElement(doc, PEER_ID_TAG, this.peerID.toString());
+		//appendElement(doc, PIPE_ID_TAG, pipeID.toString());
+		if(this.contextName!=null)
 		appendElement(doc, CONTEXT_NAME, this.contextName);
+		*/
 	}
 	
 	@SuppressWarnings({ "rawtypes", "unchecked" })

@@ -31,6 +31,8 @@ public class RPiGPIOTransportHandler extends AbstractSimplePullTransportHandler<
 	private String pullState = "low";
 
 	private GpioController gpioController;
+	private Pin _pin = RaspiPin.GPIO_07;
+	
 	
 	@Override
 	public ITransportHandler createInstance(
@@ -74,6 +76,8 @@ public class RPiGPIOTransportHandler extends AbstractSimplePullTransportHandler<
 	private boolean initUnsatisfiedLinkError = false;
 
 	private boolean getStateException = false;
+
+	private GpioPinDigitalInput myButton;
 	
 	@Override
 	public Tuple<?> getNext() {
@@ -83,12 +87,10 @@ public class RPiGPIOTransportHandler extends AbstractSimplePullTransportHandler<
 		boolean value=false;
 		
 		if(this.gpioController!=null){
-			Pin _pin = RaspiPin.GPIO_07;
+			
 			
 			try{
-	            GpioPinDigitalInput myButton = this.gpioController.provisionDigitalInputPin(_pin,
-	                                                                         "MyButton");
-	            //PinState ps = myButton.getState();
+	            
 	            boolean buttonPressed = myButton.isHigh();
 	            
 	        	String buttonState = "";
@@ -130,8 +132,13 @@ public class RPiGPIOTransportHandler extends AbstractSimplePullTransportHandler<
 	}
 	
 	private void initGPIO() {
+		
 		try{
 			this.gpioController = GpioFactory.getInstance();
+			
+			this.myButton = this.gpioController.provisionDigitalInputPin(_pin,
+                    "MyButton");
+			
 		}catch(NullPointerException ex){
 			if(!initNullPointerException){
 				ex.printStackTrace();
