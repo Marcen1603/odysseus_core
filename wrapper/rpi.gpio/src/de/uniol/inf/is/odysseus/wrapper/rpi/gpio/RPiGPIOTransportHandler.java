@@ -9,6 +9,7 @@ import com.pi4j.io.gpio.GpioFactory;
 import com.pi4j.io.gpio.GpioPinDigitalInput;
 import com.pi4j.io.gpio.Pin;
 import com.pi4j.io.gpio.RaspiPin;
+import com.pi4j.io.gpio.exception.GpioPinExistsException;
 
 import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
@@ -94,8 +95,7 @@ public class RPiGPIOTransportHandler extends AbstractSimplePullTransportHandler<
 			
 			
 			try{
-	            
-	            boolean buttonPressed = myButton.isHigh();
+	            boolean buttonPressed = this.myButton.isHigh();
 	            
 	        	String buttonState = "";
 	            if(buttonPressed){
@@ -104,7 +104,7 @@ public class RPiGPIOTransportHandler extends AbstractSimplePullTransportHandler<
 	            	buttonState = "0";
 	            }
 	            
-	        	tuple.setAttribute(0, _pin);
+	        	tuple.setAttribute(0, _pin.getName());
 	        	tuple.setAttribute(1, buttonState);
 	        	
 	        	value=true;
@@ -167,7 +167,7 @@ public class RPiGPIOTransportHandler extends AbstractSimplePullTransportHandler<
 	}
 	
 	private void initGPIO() {
-		LOG.debug("initGPIO() is called.");
+		LOG.error("initGPIO() is called.");
 		
 		try{
 			initGPIOController();
@@ -197,8 +197,13 @@ public class RPiGPIOTransportHandler extends AbstractSimplePullTransportHandler<
 
 	private void initGPIOPin() {
 		if(this.myButton==null){
+			try{
 			this.myButton = this.gpioController.provisionDigitalInputPin(_pin,
 		        "MyButton");
+			}catch(GpioPinExistsException ex){
+				LOG.error("GpioPinExistsException: ", ex);
+				
+			}
 		}
 	}
 

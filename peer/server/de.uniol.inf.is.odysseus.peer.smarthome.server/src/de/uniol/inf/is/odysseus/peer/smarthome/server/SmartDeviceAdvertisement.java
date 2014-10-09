@@ -41,6 +41,7 @@ public class SmartDeviceAdvertisement extends Advertisement implements
 	private static final String[] INDEX_FIELDS = new String[] { ID_TAG, NAME_TAG, CONTEXT_NAME }; //PEER_ID_TAG, 
 
 	private ID id;
+	@SuppressWarnings("unused")
 	private String name = "";
 	private PipeID pipeID;
 	private PeerID peerID;
@@ -115,7 +116,7 @@ public class SmartDeviceAdvertisement extends Advertisement implements
 		*/
 	}
 	
-	@SuppressWarnings({ "rawtypes", "unchecked" })
+	@SuppressWarnings({ "rawtypes", "unchecked", "unused" })
 	private static Element appendElement(Element appendTo, String tag, String value) {
 		final Element ele = appendTo.getRoot().createElement(tag, value);
 		appendTo.appendChild(ele);
