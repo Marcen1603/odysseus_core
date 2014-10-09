@@ -27,13 +27,11 @@ public class RPiGPIOTransportHandler extends AbstractSimplePullTransportHandler<
 	private final static String PULL_STATE = "pull"; // Pull: down or up (high or low)
 
 	//private String pin = "";
-	private String mode = "in";
-	private String pullState = "low";
+	//private String mode = "in";
+	//private String pullState = "low";
 
 	private static GpioController gpioController;
 	private Pin _pin = RaspiPin.GPIO_07;
-
-	private long lastErrorTime = 0;
 	
 	static{
 		myinitGPIO();
@@ -55,11 +53,11 @@ public class RPiGPIOTransportHandler extends AbstractSimplePullTransportHandler<
         }
 		
 		if (options.containsKey(RPiGPIOTransportHandler.MODE)) {
-            this.mode = options.get(RPiGPIOTransportHandler.MODE);
+            //this.mode = options.get(RPiGPIOTransportHandler.MODE);
         }
 		
 		if (options.containsKey(RPiGPIOTransportHandler.PULL_STATE)) {
-            this.pullState = options.get(RPiGPIOTransportHandler.PULL_STATE);
+            //this.pullState = options.get(RPiGPIOTransportHandler.PULL_STATE);
         }
     }
 	
@@ -90,46 +88,22 @@ public class RPiGPIOTransportHandler extends AbstractSimplePullTransportHandler<
             	buttonState = "0";
             }
             
-        	tuple.setAttribute(0, "");
+        	tuple.setAttribute(0, _pin.getAddress());
         	tuple.setAttribute(1, buttonState);
         	
 		}catch(Exception ex){
-			long deltaErrorTime = System.currentTimeMillis() - lastErrorTime;
-			
-			if(deltaErrorTime>1000 || lastErrorTime==0){
-				LOG.debug("rpi gpio getNext error: ", ex);
-				
-				LOG.debug("Stack trace: ");
-				ex.printStackTrace();
-				lastErrorTime=System.currentTimeMillis();
-			}
-			
-			tuple.setAttribute(0, "error");
-        	tuple.setAttribute(1, "On Raspberry Pi? pi4j installed? pin:"+_pin.toString()+" mode:"+mode+" pullState:"+pullState + " message:"+ex.getMessage()+ " stacktrace:"+ex.getStackTrace().toString());
+			LOG.error("On Raspberry Pi? pi4j installed?");
 		}
 		
 		return tuple;
 	}
 	
 	private static void myinitGPIO() {
-		LOG.error("initGPIO() is called.");
+		LOG.debug("myinitGPIO() is called.");
 		
 		try{
-			if(gpioController==null){
-				gpioController = GpioFactory.getInstance();
-				LOG.error("initGPIOController() without exception :-)");
-			}else{
-				LOG.error("initGPIOController() ELSE already instantiated!?");
-			}
-			
-			
-			if(myButton==null && gpioController!=null){
-				myButton = gpioController.provisionDigitalInputPin(RaspiPin.GPIO_07,"MyButton");
-				LOG.error("initGPIOPin() without exception :-)");
-			}else{
-				LOG.error("initGPIOPin() ELSE already instantiated!?");
-			}
-			
+			gpioController = GpioFactory.getInstance();
+			myButton = gpioController.provisionDigitalInputPin(RaspiPin.GPIO_07,"MyButton");
 		}catch(NullPointerException ex){
 			ex.printStackTrace();
 		}catch(Exception ex){
