@@ -1,14 +1,11 @@
 package de.uniol.inf.is.odysseus.sports.logicaloperator;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFConstraint;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnaryLogicalOp;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
@@ -153,34 +150,9 @@ public class ReduceLoadAO extends UnaryLogicalOp {
 	 * @return
 	 */
 	public TimeUnit getBaseTimeUnit() {
-		if (baseTimeUnit == null) {
+		baseTimeUnit = getInputSchema().determineTimeUnit();
+		if(baseTimeUnit==null) {
 			baseTimeUnit = TimeUnit.MILLISECONDS;
-
-			SDFConstraint c = getInputSchema().getConstraint(
-					SDFConstraint.BASE_TIME_UNIT);
-			if (c != null) {
-				baseTimeUnit = (TimeUnit) c.getValue();
-			} else {
-
-				// Find input schema attribute with type start timestamp
-				// It provides the correct base unit
-				// if not given use MILLISECONDS as default
-				Collection<SDFAttribute> attrs = getInputSchema()
-						.getSDFDatatypeAttributes(SDFDatatype.START_TIMESTAMP);
-				if (attrs.isEmpty()) {
-					attrs = getInputSchema().getSDFDatatypeAttributes(
-							SDFDatatype.START_TIMESTAMP_STRING);
-				}
-				if (attrs.size() > 0) {
-					SDFAttribute attr = attrs.iterator().next();
-					SDFConstraint constr = attr
-							.getDtConstraint(SDFConstraint.BASE_TIME_UNIT);
-					if (constr != null) {
-						baseTimeUnit = (TimeUnit) constr.getValue();
-					}
-				}
-			}
-
 		}
 		return this.baseTimeUnit;
 		
