@@ -135,6 +135,7 @@ public class PhysicalSubscription<K> extends Subscription<K> {
 
 		for (IStreamObject o : suspendBuffer) {
 			((ISink) getTarget()).process(o, getSinkInPort());
+			//TODO: Thread.yield();
 		}
 		suspendBuffer.clear();
 	}
