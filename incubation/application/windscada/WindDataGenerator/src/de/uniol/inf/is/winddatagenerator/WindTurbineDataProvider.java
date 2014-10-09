@@ -35,11 +35,11 @@ public class WindTurbineDataProvider extends AbstractDataGenerator implements
 	private DateFormat dateFormat;
 
 	private int id;
-	private ISingleValueGenerator direction;
+	private ISingleValueGenerator windDirection;
 	private ISingleValueGenerator rotationalSpeed;
-	private ISingleValueGenerator phase;
-	private ISingleValueGenerator pitch;
-	private ISingleValueGenerator gear;
+	private ISingleValueGenerator phaseShift;
+	private ISingleValueGenerator pitchAngle;
+	private ISingleValueGenerator gierAngle;
 
 	private ISingleValueGenerator zeroGenerator;
 	private State state;
@@ -80,15 +80,15 @@ public class WindTurbineDataProvider extends AbstractDataGenerator implements
 			// corrected_score
 			tuple.addDouble(parts[4]);
 			// wind_direction
-			tuple.addDouble(direction.nextValue());
+			tuple.addDouble(windDirection.nextValue());
+			// gier_angle
+			tuple.addDouble(gierAngle.nextValue());
 			// rotational_speed
 			tuple.addDouble(Double.valueOf(parts[4]) / 100);
 			// phase_shift
-			tuple.addDouble(phase.nextValue());
+			tuple.addDouble(phaseShift.nextValue());
 			// pitch_angle
-			tuple.addDouble(pitch.nextValue());
-			// gear_angle
-			tuple.addDouble(gear.nextValue());
+			tuple.addDouble(pitchAngle.nextValue());
 			break;
 		case OFF:
 			// wind_speed
@@ -97,13 +97,13 @@ public class WindTurbineDataProvider extends AbstractDataGenerator implements
 			tuple.addDouble(0);
 			// wind_direction
 			tuple.addDouble(0);
+			// gier_angle
+			tuple.addDouble(0);
 			// rotational_speed
 			tuple.addDouble(0);
 			// phase_shift
 			tuple.addDouble(0);
 			// pitch_angle
-			tuple.addDouble(0);
-			// gear_angle
 			tuple.addDouble(0);
 			break;
 		}
@@ -150,17 +150,17 @@ public class WindTurbineDataProvider extends AbstractDataGenerator implements
 			e.printStackTrace();
 		}
 		this.dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-		direction = new AlternatingGenerator(new NoError(), 0, 0.2, 0, 359);
-		direction.init();
-		phase = new AlternatingGenerator(new NoError(), 0, 10, -90, 90);
-		phase.init();
+		windDirection = new AlternatingGenerator(new NoError(), 0, 5, 0, 359);
+		windDirection.init();
+		phaseShift = new AlternatingGenerator(new NoError(), 0, 10, -90, 90);
+		phaseShift.init();
 		rotationalSpeed = new AlternatingGenerator(new NoError(), 0, 0.005, 0,
 				0.3);
 		rotationalSpeed.init();
-		pitch = new AlternatingGenerator(new NoError(), 0, 1, 0, 90);
-		pitch.init();
-		gear = new AlternatingGenerator(new NoError(), 2, 0.2, 0, 359);
-		gear.init();
+		pitchAngle = new AlternatingGenerator(new NoError(), 0, 1, 0, 90);
+		pitchAngle.init();
+		gierAngle = new AlternatingGenerator(new NoError(), 2, 5, 0, 359);
+		gierAngle.init();
 		zeroGenerator = new ConstantValueGenerator(new NoError(), 0);
 		zeroGenerator.init();
 		this.state = ConsoleInputReader.getInstance().getState();

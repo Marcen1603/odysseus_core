@@ -9,7 +9,7 @@
             thread="main"
             visible="true">
          <run
-               class="de.uniol.inf.is.windgenerator.WDGApplication">
+               class="de.uniol.inf.is.winddatagenerator.WDGApplication">
          </run>
       </application>
    </extension>

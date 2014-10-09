@@ -1,4 +1,4 @@
-package de.uniol.inf.is.windgenerator;
+package de.uniol.inf.is.winddatagenerator;
 
 import org.eclipse.equinox.app.IApplication;
 import org.eclipse.equinox.app.IApplicationContext;
