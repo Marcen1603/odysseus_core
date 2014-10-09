@@ -44,7 +44,7 @@ public class RPiGPIOTransportHandler extends AbstractSimplePullTransportHandler<
 		
 		LOG.debug("RPiGPIOTransportHandler createInstance");
 		
-		initGPIO();
+		myinitGPIO();
 		
 		return tHandler;
 	}
@@ -92,8 +92,6 @@ public class RPiGPIOTransportHandler extends AbstractSimplePullTransportHandler<
 		boolean value=false;
 		
 		if(this.gpioController!=null && this.myButton!=null){
-			
-			
 			try{
 	            boolean buttonPressed = this.myButton.isHigh();
 	            
@@ -147,8 +145,35 @@ public class RPiGPIOTransportHandler extends AbstractSimplePullTransportHandler<
         		initMustCalled=true;
         	}
         	
-        	initGPIO();
+        	myinitGPIO();
 			
+        	
+        	try{
+    			initGPIOController();
+    			
+    			initGPIOPin();
+    			
+    		}catch(NullPointerException ex){
+    			if(!initNullPointerException){
+    				ex.printStackTrace();
+    				LOG.error("", ex);
+    				initNullPointerException=true;
+    			}
+    		}catch(Exception ex){
+    			if(!initException){
+    				ex.printStackTrace();
+    				LOG.error("", ex);
+    				initException=true;
+    			}
+    		}catch (UnsatisfiedLinkError ex) {
+    			if(!initUnsatisfiedLinkError){
+    				ex.printStackTrace();
+    				LOG.error("", ex);
+    				initUnsatisfiedLinkError=true;
+    			}
+    		}
+        	
+        	
         	
         	return tuple;
 		}
@@ -166,7 +191,7 @@ public class RPiGPIOTransportHandler extends AbstractSimplePullTransportHandler<
 		return tuple;
 	}
 	
-	private void initGPIO() {
+	private void myinitGPIO() {
 		LOG.error("initGPIO() is called.");
 		
 		try{
