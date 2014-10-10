@@ -125,12 +125,13 @@ public class AppendFileTransportHandler extends AbstractSimplePullTransportHandl
 		
 		String[] parts = currentLine.split(" ");
 		
-		Tuple<IMetaAttribute> tuple = new Tuple<>(parts.length+1, false);		
+		Tuple<IMetaAttribute> tuple = new Tuple<>(parts.length+2, false);		
 		tuple.setAttribute(0, (long)(currentTimeStamp));
+		tuple.setAttribute(1, (long)(currentTimeStamp+lineDelay));
 		
 		for (int i=0;i<parts.length;i++)
 		{
-			tuple.setAttribute(i+1, Double.parseDouble(parts[i]));
+			tuple.setAttribute(i+2, Double.parseDouble(parts[i]));
 		}
 		
 		currentTimeStamp += lineDelay;
