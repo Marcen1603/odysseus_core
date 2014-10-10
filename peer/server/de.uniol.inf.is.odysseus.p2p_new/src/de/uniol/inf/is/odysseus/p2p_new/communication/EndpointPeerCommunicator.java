@@ -173,36 +173,41 @@ public class EndpointPeerCommunicator extends P2PDictionaryAdapter implements IP
 
 	@Override
 	public void processIncomingMessage(Message message, EndpointAddress srcAddr, EndpointAddress dstAddr) {
-		PeerID pid = (PeerID) toID("urn:jxta:" + srcAddr.getProtocolAddress());
-
-		ByteArrayMessageElement messageElement = (ByteArrayMessageElement) message.getMessageElement("bytes");
-		byte[] data = messageElement.getBytes();
-
-		if (data != null && data.length >= 4) {
-			int msgId = byteArrayToInt(data, 0);
-			Collection<IPeerCommunicatorListener> listeners = PeerCommunicatorListenerRegistry.getInstance().getListeners(messageIDMap.get(msgId));
-			if (!listeners.isEmpty()) {
-
-				Optional<IMessage> optMsg = createNewMessageInstance(msgId);
-				if (optMsg.isPresent()) {
-
-					byte[] msgBytes = new byte[data.length - 4];
-					System.arraycopy(data, 4, msgBytes, 0, msgBytes.length);
-
-					IMessage msg = optMsg.get();
-					msg.fromBytes(msgBytes);
-
-					for (IPeerCommunicatorListener listener : listeners) {
-						try {
-							listener.receivedMessage(this, pid, msg);
-						} catch (Throwable t) {
-							LOG.error("Exception in peer communicator listener", t);
+		try {
+			PeerID pid = (PeerID) toID("urn:jxta:" + srcAddr.getProtocolAddress());
+	
+			ByteArrayMessageElement messageElement = (ByteArrayMessageElement) message.getMessageElement("bytes");
+			byte[] data = messageElement.getBytes();
+	
+			if (data != null && data.length >= 4) {
+				int msgId = byteArrayToInt(data, 0);
+				Collection<IPeerCommunicatorListener> listeners = PeerCommunicatorListenerRegistry.getInstance().getListeners(messageIDMap.get(msgId));
+				if (!listeners.isEmpty()) {
+	
+					Optional<IMessage> optMsg = createNewMessageInstance(msgId);
+					if (optMsg.isPresent()) {
+	
+						byte[] msgBytes = new byte[data.length - 4];
+						System.arraycopy(data, 4, msgBytes, 0, msgBytes.length);
+	
+						IMessage msg = optMsg.get();
+						msg.fromBytes(msgBytes);
+	
+						for (IPeerCommunicatorListener listener : listeners) {
+							try {
+								listener.receivedMessage(this, pid, msg);
+							} catch (Throwable t) {
+								LOG.error("Exception in peer communicator listener", t);
+							}
 						}
 					}
 				}
+			} else {
+				LOG.warn("Got message with too few bytes from " + p2pDictionary.getRemotePeerName(pid));
 			}
-		} else {
-			LOG.warn("Got message with too few bytes from " + p2pDictionary.getRemotePeerName(pid));
+		} catch( Throwable t ) {
+			LOG.error("Exception during processing incoming message", t);
+			throw t;
 		}
 	}
 
