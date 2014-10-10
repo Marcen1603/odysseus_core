@@ -12,33 +12,25 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 
+import de.uniol.inf.is.odysseus.core.collection.Pair;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.peer.distribute.ILogicalQueryPart;
 import de.uniol.inf.is.odysseus.peer.distribute.util.LogicalQueryHelper;
 import de.uniol.inf.is.odysseus.peer.distribute.util.graph.QueryPartGraph;
 import de.uniol.inf.is.odysseus.peer.distribute.util.graph.QueryPartGraphConnection;
 import de.uniol.inf.is.odysseus.peer.distribute.util.graph.QueryPartGraphNode;
-import de.uniol.inf.is.odysseus.peer.recovery.messages.BackupInformation;
+import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryBackupInformation;
+import de.uniol.inf.is.odysseus.peer.recovery.internal.BackupInformation;
 
-/**
- * A helper class to determine all subsequent query parts for a given query
- * part. <br />
- * This class uses {@link QueryPartGraph} and subsequent query parts mean not
- * only direct subsequent ones but only indirect subsequent ones (having other
- * query parts in between). Furthermore, a subsequent query part will only be
- * considered, if it's executed on a different peer.
- * 
- * @author Michael Brand
- *
- */
-public class SubsequentQueryPartsCalculator {
+public class BackupInformationCalculator {
 
 	/**
 	 * The logger instance for this class.
 	 */
 	private static final Logger LOG = LoggerFactory
-			.getLogger(SubsequentQueryPartsCalculator.class);
+			.getLogger(BackupInformationCalculator.class);
 
 	/**
 	 * The calculated query part graphs mapped to the original queries.
@@ -46,18 +38,6 @@ public class SubsequentQueryPartsCalculator {
 	private Map<ILogicalQuery, QueryPartGraph> mGraphToQueryMap = Maps
 			.newHashMap();
 
-	/**
-	 * Calculates the {@link QueryPartGraph} for a given query (to be
-	 * distributed).
-	 * 
-	 * @param query
-	 *            The original query. <br />
-	 *            Must be not null.
-	 * @param allocationMap
-	 *            The allocated peers (their ids) to the parts of
-	 *            <code>query</code>. <br />
-	 *            Must be not null.
-	 */
 	public void calcQueryPartGraph(ILogicalQuery query,
 			Map<ILogicalQueryPart, PeerID> allocationMap) {
 
@@ -74,17 +54,7 @@ public class SubsequentQueryPartsCalculator {
 
 	}
 
-	/**
-	 * Determines the backup information for a given query.
-	 * 
-	 * @param sharedQueryId
-	 *            The ID of the distributed query.
-	 * @param query
-	 *            The query to distribute.
-	 * @param allocationMap
-	 *            The allocation map.
-	 */
-	public Collection<BackupInformation> calcBackupInformation(
+	public Map<PeerID, Collection<IRecoveryBackupInformation>> calcBackupInformation(
 			ID sharedQueryId, ILogicalQuery query,
 			Map<ILogicalQueryPart, PeerID> allocationMap) {
 
@@ -101,11 +71,15 @@ public class SubsequentQueryPartsCalculator {
 				.checkNotNull(allocationMap,
 						"The allocation map to calcuate subsequent query parts, must be not null!");
 
-		Collection<BackupInformation> backupInformation = Lists.newArrayList();
+		Map<PeerID, Collection<IRecoveryBackupInformation>> infoMap = Maps
+				.newHashMap();
 		QueryPartGraph graph = this.mGraphToQueryMap.get(query);
 		Collection<QueryPartGraphNode> nodes = graph.getGraphNodes();
 
 		for (QueryPartGraphNode node : nodes) {
+
+			IRecoveryBackupInformation info = new BackupInformation();
+			info.setSharedQuery(sharedQueryId);
 
 			ILogicalQueryPart part = node.getQueryPart();
 			if (!allocationMap.containsKey(part)) {
@@ -114,10 +88,10 @@ public class SubsequentQueryPartsCalculator {
 				continue;
 
 			}
+
 			String pqlStatement = LogicalQueryHelper
 					.generatePQLStatementFromQueryPart(part);
-			BackupInformation info = new BackupInformation(sharedQueryId,
-					pqlStatement);
+			info.setPQL(pqlStatement);
 
 			PeerID peerId = allocationMap.get(part);
 			info.setPeer(peerId);
@@ -125,29 +99,32 @@ public class SubsequentQueryPartsCalculator {
 			Collection<ILogicalQueryPart> subsequentParts = calcSubsequentParts(node);
 			for (ILogicalQueryPart subsequentPart : subsequentParts) {
 
-				info.addSubsequentPart(LogicalQueryHelper
-						.generatePQLStatementFromQueryPart(subsequentPart),
-						allocationMap.get(subsequentPart));
+				info.addSubsequentPartsInformation(new Pair<String, PeerID>(
+						LogicalQueryHelper
+								.generatePQLStatementFromQueryPart(subsequentPart),
+						allocationMap.get(subsequentPart)));
 
 			}
 
-			backupInformation.add(info);
+			if (infoMap.containsKey(peerId)) {
+
+				infoMap.get(peerId).add(info);
+
+			} else {
+
+				Collection<IRecoveryBackupInformation> infos = Sets
+						.newHashSet(info);
+				infoMap.put(peerId, infos);
+
+			}
 
 		}
 
 		this.mGraphToQueryMap.remove(query);
-		return backupInformation;
+		return infoMap;
 
 	}
 
-	/**
-	 * Calculates the subsequent query parts for a given query part (node).
-	 * 
-	 * @param node
-	 *            The given query part node. <br />
-	 *            Must be not null.
-	 * @return A collection of all subsequent query parts for that part (node).
-	 */
 	private static Collection<ILogicalQueryPart> calcSubsequentParts(
 			QueryPartGraphNode node) {
 
@@ -164,19 +141,6 @@ public class SubsequentQueryPartsCalculator {
 
 	}
 
-	/**
-	 * Calculates recursively the subsequent query parts for a given query part
-	 * (node).
-	 * 
-	 * @param node
-	 *            The given query part node. <br />
-	 *            Must be not null.
-	 * @param subsequentParts
-	 *            A collection of all already calculated subsequent parts for
-	 *            <code>node</code>. <br />
-	 *            Must be not null.
-	 * @return A collection of all subsequent query parts for that part (node).
-	 */
 	private static final void calcSubsequentPartsRecursive(
 			QueryPartGraphNode node,
 			Collection<ILogicalQueryPart> subsequentParts) {

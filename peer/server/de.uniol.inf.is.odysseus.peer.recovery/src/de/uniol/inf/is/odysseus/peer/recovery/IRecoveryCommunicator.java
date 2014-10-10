@@ -1,7 +1,6 @@
 package de.uniol.inf.is.odysseus.peer.recovery;
 
 import java.util.List;
-import java.util.Map;
 
 import net.jxta.id.ID;
 import net.jxta.peer.PeerID;
@@ -17,8 +16,7 @@ import net.jxta.pipe.PipeID;
 public interface IRecoveryCommunicator {
 
 	// TODO javaDoc
-	public void sendBackupInformation(ID sharedQueryId, String pqlStatement,
-			PeerID peerId, Map<String, PeerID> subsequentParts);
+	public void sendBackupInformation(PeerID destination, IRecoveryBackupInformation info);
 
 	/**
 	 * Sends a message to the new peer. The message contains the PQL from the

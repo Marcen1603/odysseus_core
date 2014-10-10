@@ -17,7 +17,9 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 
+import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryBackupInformation;
 import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryBackupInformationStore;
 import de.uniol.inf.is.odysseus.peer.recovery.internal.JxtaInformation;
 import de.uniol.inf.is.odysseus.peer.recovery.internal.SharedQuery;
@@ -83,48 +85,6 @@ public class LocalBackupInformationAccess {
 	}
 
 	/**
-	 * Calls
-	 * {@link IRecoveryBackupInformationStore#add(ID, String, PeerID, Map)}.
-	 * 
-	 * @param sharedQueryId
-	 *            The ID of the distributed query. <br />
-	 *            Must be not null!
-	 * @param pqlStatement
-	 *            The PQL statement to store. <br />
-	 *            Must be not null.
-	 * @param peer
-	 *            The ID of the peer, where the PQL statement is installed. <br />
-	 *            Must be not null.
-	 * @param subsequentParts
-	 *            The subsequent parts of the PQL statement as a mapping of the
-	 *            PQL statements of the subsequent parts and the IDs of the
-	 *            peers, where the subsequent PQL statements are installed. <br />
-	 *            Must be not null.
-	 */
-	public static void store(ID sharedQueryId, String pqlStatement,
-			PeerID peer, Map<String, PeerID> subsequentParts) {
-
-		if (!cInfoStore.isPresent()) {
-
-			LOG.error("No backup information store for recovery bound!");
-			return;
-
-		}
-
-		boolean success = cInfoStore.get().add(sharedQueryId, pqlStatement,
-				peer, subsequentParts);
-		if (!success) {
-
-			LOG.error(
-					"Backup information for PQL statement '{}' were already stored!",
-					pqlStatement);
-			return;
-
-		}
-
-	}
-
-	/**
 	 * Stores a key-value pair for a certain shared query on a certain peer.
 	 * E.g. pipe-ids, etc.
 	 * 
@@ -181,6 +141,19 @@ public class LocalBackupInformationAccess {
 		return peerArray;
 	}
 
+	public static IRecoveryBackupInformationStore getStore() {
+
+		if (!cInfoStore.isPresent()) {
+
+			LOG.error("No backup information store for recovery bound!");
+			return null;
+
+		}
+
+		return cInfoStore.get();
+
+	}
+
 	/**
 	 * Calls {@link IRecoveryBackupInformationStore#getStoredPQLStatements(ID)}
 	 * 
@@ -191,6 +164,8 @@ public class LocalBackupInformationAccess {
 	public static ImmutableCollection<String> getStoredPQLStatements(
 			ID sharedQueryId) {
 
+		Preconditions.checkNotNull(sharedQueryId);
+
 		if (!cInfoStore.isPresent()) {
 
 			LOG.error("No backup information store for recovery bound!");
@@ -198,7 +173,16 @@ public class LocalBackupInformationAccess {
 
 		}
 
-		return cInfoStore.get().getStoredPQLStatements(sharedQueryId);
+		Collection<String> pqls = Sets.newHashSet();
+
+		for (IRecoveryBackupInformation info : cInfoStore.get().get(
+				sharedQueryId)) {
+
+			pqls.add(info.getPQL());
+
+		}
+
+		return ImmutableSet.copyOf(pqls);
 
 	}
 
@@ -264,7 +248,7 @@ public class LocalBackupInformationAccess {
 			return null;
 
 		}
-		return cInfoStore.get().getStoredSharedQueries();
+		return cInfoStore.get().getAll().keySet();
 	}
 
 	/**
@@ -283,14 +267,12 @@ public class LocalBackupInformationAccess {
 		}
 
 		Collection<PeerID> peers = Lists.newArrayList();
-		for (String pqlStatement : cInfoStore.get().getStoredPQLStatements(
+		for (IRecoveryBackupInformation info : cInfoStore.get().get(
 				sharedQueryId)) {
 
-			Optional<PeerID> peer = cInfoStore.get().getStoredPeerID(
-					sharedQueryId, pqlStatement);
-			if (peer.isPresent() && !peers.contains(peer.get())) {
+			if (!peers.contains(info.getPeer())) {
 
-				peers.add(peer.get());
+				peers.add(info.getPeer());
 
 			}
 
@@ -316,15 +298,13 @@ public class LocalBackupInformationAccess {
 
 		List<ID> sharedQueryIds = new ArrayList<ID>();
 
-		for (ID queryId : cInfoStore.get().getStoredSharedQueries()) {
-			for (String pqlStatement : cInfoStore.get().getStoredPQLStatements(
-					queryId)) {
-				Optional<PeerID> peer = cInfoStore.get().getStoredPeerID(
-						queryId, pqlStatement);
-				if (peer.isPresent() && peer.get().equals(peerId)) {
+		for (ID queryId : cInfoStore.get().getAll().keySet()) {
+			for (IRecoveryBackupInformation info : cInfoStore.get().get(queryId)) {
+				if (info.getPeer().equals(peerId)) {
 					// This is what we search: For this peer we have a
 					// sharedQueryId
 					sharedQueryIds.add(queryId);
+					break;
 				}
 			}
 		}

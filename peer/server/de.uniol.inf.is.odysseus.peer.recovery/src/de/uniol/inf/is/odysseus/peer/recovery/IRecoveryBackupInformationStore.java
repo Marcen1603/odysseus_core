@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.peer.recovery;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -13,94 +14,21 @@ import com.google.common.collect.ImmutableMap;
 
 import de.uniol.inf.is.odysseus.peer.recovery.internal.JxtaInformation;
 
-/**
- * The backup information store for recovery. <br />
- * It stores for distributed queries information about local executed (partial)
- * queries and subsequent partial queries.
- * 
- * @author Michael Brand
- *
- */
 public interface IRecoveryBackupInformationStore {
 
-	/**
-	 * Adds new backup information.
-	 *
-	 * @param sharedQueryId
-	 *            The ID of the distributed query. <br />
-	 *            Must be not null!
-	 * @param pqlStatement
-	 *            The PQL statement to store. <br />
-	 *            Must be not null.
-	 * @param peer
-	 *            The ID of the peer, where the PQL statement is installed. <br />
-	 *            Must be not null.
-	 * @param subsequentParts
-	 *            The subsequent parts of the PQL statement as a mapping of the
-	 *            PQL statements of the subsequent parts and the IDs of the
-	 *            peers, where the subsequent PQL statements are installed. <br />
-	 *            Must be not null.
-	 * @return <code>True</code>, if the backup information has been stored. <br />
-	 *         <code>False</code> if there are backup information about that
-	 *         query already stored.
-	 */
-	public boolean add(ID sharedQueryId, String pqlStatement, PeerID peer,
-			Map<String, PeerID> subsequentParts);
+	public void add(IRecoveryBackupInformation info);
 
-	/**
-	 * Removes backup information about a given PQL statement.
-	 * 
-	 * @param sharedQueryId
-	 *            The ID of the distributed query. <br />
-	 *            Must be not null!
-	 * @param pqlStatement
-	 *            The PQL statement to remove. <br />
-	 *            Must be not null.
-	 * @return <code>True</code>, if the backup information has been removed. <br />
-	 *         <code>False</code> if there are no backup information about that
-	 *         query stored.
-	 */
-	public boolean remove(ID sharedQueryId, String pqlStatement);
+	public ImmutableMap<ID, Collection<IRecoveryBackupInformation>> getAll();
 
-	/**
-	 * All shared queries, for which backup information is stored.
-	 */
-	public ImmutableCollection<ID> getStoredSharedQueries();
+	public ImmutableCollection<IRecoveryBackupInformation> get(ID sharedQuery);
 
-	/**
-	 * All PQL statements of a distributed query.
-	 * 
-	 * @param sharedQueryId
-	 *            The ID of the distributed query. <br />
-	 *            Must be not null!
-	 */
-	public ImmutableCollection<String> getStoredPQLStatements(ID sharedQueryId);
+	public Optional<IRecoveryBackupInformation> get(String pql);
 
-	/**
-	 * The peer executing a given statement.
-	 * 
-	 * @param sharedQueryId
-	 *            The ID of the distributed query. <br />
-	 *            Must be not null!
-	 * @param pqlStatement
-	 *            The PQL statement to store. <br />
-	 *            Must be not null.
-	 */
-	public Optional<PeerID> getStoredPeerID(ID sharedQueryId,
-			String pqlStatement);
+	public void remove(ID sharedQuery);
 
-	/**
-	 * The subsequent parts of a given PQL statement.
-	 * 
-	 * @param sharedQueryId
-	 *            The ID of the distributed query. <br />
-	 *            Must be not null!
-	 * @param pqlStatement
-	 *            The PQL statement to store. <br />
-	 *            Must be not null.
-	 */
-	public ImmutableMap<String, PeerID> getStoredSubsequentQueryParts(
-			ID sharedQueryId, String pqlStatement);
+	public void remove(IRecoveryBackupInformation info);
+
+	public void remove(String pql);
 
 	/**
 	 * Adds a new entry for the jxta-backup information. E.g. pipe-ids

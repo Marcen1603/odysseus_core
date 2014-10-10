@@ -19,11 +19,11 @@ import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.p2p_new.IP2PNetworkManager;
 import de.uniol.inf.is.odysseus.peer.distribute.ILogicalQueryPart;
 import de.uniol.inf.is.odysseus.peer.distribute.listener.AbstractQueryDistributionListener;
+import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryBackupInformation;
 import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryBackupInformationStore;
 import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryCommunicator;
-import de.uniol.inf.is.odysseus.peer.recovery.messages.BackupInformation;
+import de.uniol.inf.is.odysseus.peer.recovery.util.BackupInformationCalculator;
 import de.uniol.inf.is.odysseus.peer.recovery.util.LocalBackupInformationAccess;
-import de.uniol.inf.is.odysseus.peer.recovery.util.SubsequentQueryPartsCalculator;
 
 /**
  * The query distribution listener for recovery processes. <br />
@@ -136,9 +136,9 @@ public class RecoveryQueryDistributionListener extends
 	}
 
 	/**
-	 * The helper instance to calculate subsequent query parts.
+	 * The helper instance to calculate backup information.
 	 */
-	private SubsequentQueryPartsCalculator mSubsequentPartsCalculator = new SubsequentQueryPartsCalculator();
+	private BackupInformationCalculator mBackupInfoCalculator = new BackupInformationCalculator();
 
 	@Override
 	public void afterPostProcessing(ILogicalQuery query,
@@ -146,8 +146,7 @@ public class RecoveryQueryDistributionListener extends
 
 		// Keep allocation map for that query in mind, because after
 		// transmission, all query parts will be disconnected.
-		this.mSubsequentPartsCalculator
-				.calcQueryPartGraph(query, allocationMap);
+		this.mBackupInfoCalculator.calcQueryPartGraph(query, allocationMap);
 
 	}
 
@@ -155,8 +154,8 @@ public class RecoveryQueryDistributionListener extends
 	public void afterTransmission(ILogicalQuery query,
 			Map<ILogicalQueryPart, PeerID> allocationMap, ID sharedQueryId) {
 
-		// Calculate subsequent query parts
-		Collection<BackupInformation> backupInformation = this.mSubsequentPartsCalculator
+		// Calculate backup information
+		Map<PeerID, Collection<IRecoveryBackupInformation>> infoMap = this.mBackupInfoCalculator
 				.calcBackupInformation(sharedQueryId, query, allocationMap);
 
 		if (!cNetworkManager.isPresent()) {
@@ -172,68 +171,70 @@ public class RecoveryQueryDistributionListener extends
 		}
 
 		// Distribute backup information
-		for (BackupInformation info : backupInformation) {
+		for (PeerID peer : infoMap.keySet()) {
 
-			if (info.getPeer().equals(cNetworkManager.get().getLocalPeerID())) {
+			for (IRecoveryBackupInformation info : infoMap.get(peer)) {
 
-				LocalBackupInformationAccess.store(info.getSharedQueryID(),
-						info.getPQLStatement(), info.getPeer(),
-						info.getSubsequentParts());
+				if (peer.equals(cNetworkManager.get().getLocalPeerID())) {
 
-			} else {
+					LocalBackupInformationAccess.getStore().add(info);
 
-				cCommunicator.get().sendBackupInformation(
-						info.getSharedQueryID(), info.getPQLStatement(),
-						info.getPeer(), info.getSubsequentParts());
+				} else {
+
+					cCommunicator.get().sendBackupInformation(peer, info);
+
+				}
+
+				// Save information about JXTA
+
+				// TODO Won't work, because there are no operators but only PQL
+				// Map<PeerID, Collection<String>> subsequentPQLStatements =
+				// Maps
+				// .newHashMap();
+				// for (ILogicalQueryPart subsequentPart : subsequentPartsToPeer
+				// .get(peerID)) {
+				//
+				// PeerID allocatedPeer = allocationMap.get(subsequentPart);
+				//
+				// List<ILogicalOperator> operators = Lists
+				// .newArrayList(subsequentPart.getOperators());
+				// List<ILogicalOperator> visitedOperators =
+				// Lists.newArrayList();
+				// while (!operators.isEmpty()) {
+				// ILogicalOperator operator = operators.remove(0);
+				//
+				// collectOperatorsWithSubscriptions(operator,
+				// visitedOperators);
+				// }
+				//
+				// String key = "";
+				// String value = "";
+				// for (ILogicalOperator logicalOp : visitedOperators) {
+				// if (logicalOp instanceof JxtaSenderAO) {
+				// JxtaSenderAO sender = (JxtaSenderAO) logicalOp;
+				// value = sender.getPipeID();
+				// key = RecoveryCommunicator.JXTA_KEY_SENDER_PIPE_ID;
+				// // Send to others and store local
+				// cCommunicator.get().sendBackupJxtaInformation(
+				// allocatedPeer, sharedQueryId, key, value);
+				// LocalBackupInformationAccess.storeLocalJxtaInfo(
+				// allocatedPeer, sharedQueryId, key, value);
+				// } else if (logicalOp instanceof JxtaReceiverAO) {
+				// JxtaReceiverAO receiver = (JxtaReceiverAO) logicalOp;
+				// value = receiver.getPipeID();
+				// key = RecoveryCommunicator.JXTA_KEY_RECEIVER_PIPE_ID;
+				// // Send to others and store local
+				// cCommunicator.get().sendBackupJxtaInformation(
+				// allocatedPeer, sharedQueryId, key, value);
+				// LocalBackupInformationAccess.storeLocalJxtaInfo(
+				// allocatedPeer, sharedQueryId, key, value);
+				// }
+				//
+				// }
+				//
+				// }
 
 			}
-
-			// Save information about JXTA
-			
-			// TODO Won't work, because there are no operators but only PQL
-			// Map<PeerID, Collection<String>> subsequentPQLStatements = Maps
-			// .newHashMap();
-			// for (ILogicalQueryPart subsequentPart : subsequentPartsToPeer
-			// .get(peerID)) {
-			//
-			// PeerID allocatedPeer = allocationMap.get(subsequentPart);
-			//
-			// List<ILogicalOperator> operators = Lists
-			// .newArrayList(subsequentPart.getOperators());
-			// List<ILogicalOperator> visitedOperators = Lists.newArrayList();
-			// while (!operators.isEmpty()) {
-			// ILogicalOperator operator = operators.remove(0);
-			//
-			// collectOperatorsWithSubscriptions(operator,
-			// visitedOperators);
-			// }
-			//
-			// String key = "";
-			// String value = "";
-			// for (ILogicalOperator logicalOp : visitedOperators) {
-			// if (logicalOp instanceof JxtaSenderAO) {
-			// JxtaSenderAO sender = (JxtaSenderAO) logicalOp;
-			// value = sender.getPipeID();
-			// key = RecoveryCommunicator.JXTA_KEY_SENDER_PIPE_ID;
-			// // Send to others and store local
-			// cCommunicator.get().sendBackupJxtaInformation(
-			// allocatedPeer, sharedQueryId, key, value);
-			// LocalBackupInformationAccess.storeLocalJxtaInfo(
-			// allocatedPeer, sharedQueryId, key, value);
-			// } else if (logicalOp instanceof JxtaReceiverAO) {
-			// JxtaReceiverAO receiver = (JxtaReceiverAO) logicalOp;
-			// value = receiver.getPipeID();
-			// key = RecoveryCommunicator.JXTA_KEY_RECEIVER_PIPE_ID;
-			// // Send to others and store local
-			// cCommunicator.get().sendBackupJxtaInformation(
-			// allocatedPeer, sharedQueryId, key, value);
-			// LocalBackupInformationAccess.storeLocalJxtaInfo(
-			// allocatedPeer, sharedQueryId, key, value);
-			// }
-			//
-			// }
-			//
-			// }
 
 		}
 
