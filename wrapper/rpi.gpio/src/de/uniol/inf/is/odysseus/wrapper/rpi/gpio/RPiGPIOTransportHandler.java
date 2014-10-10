@@ -20,7 +20,7 @@ public class RPiGPIOTransportHandler extends AbstractSimplePullTransportHandler<
 
 	private static final Logger LOG = LoggerFactory.getLogger(RPiGPIOTransportHandler.class);
 	
-	private static final String NAME = "RPiGPIO";
+	public static final String NAME = "RPiGPIO";
 	
 	private final static String PIN = "pin"; // Pull: down or up
 	private final static String MODE = "mode"; // Tranport mode: in or out
@@ -32,6 +32,8 @@ public class RPiGPIOTransportHandler extends AbstractSimplePullTransportHandler<
 
 	private static GpioController gpioController;
 	private Pin _pin = RaspiPin.GPIO_07;
+
+	private boolean flagExceptionThrown = false;//Exception was not thrown at this point.
 	
 	static{
 		myinitGPIO();
@@ -92,7 +94,10 @@ public class RPiGPIOTransportHandler extends AbstractSimplePullTransportHandler<
         	tuple.setAttribute(1, buttonState);
         	
 		}catch(Exception ex){
-			LOG.error("On Raspberry Pi? pi4j installed?");
+			if(!flagExceptionThrown){
+				LOG.error("On Raspberry Pi? pi4j installed?");
+				flagExceptionThrown=true;
+			}
 		}
 		
 		return tuple;

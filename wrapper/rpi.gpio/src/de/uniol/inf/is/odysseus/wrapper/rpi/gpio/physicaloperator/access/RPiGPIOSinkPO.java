@@ -1,0 +1,139 @@
+package de.uniol.inf.is.odysseus.wrapper.rpi.gpio.physicaloperator.access;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.pi4j.io.gpio.GpioController;
+import com.pi4j.io.gpio.GpioFactory;
+import com.pi4j.io.gpio.GpioPinDigitalOutput;
+import com.pi4j.io.gpio.PinState;
+import com.pi4j.io.gpio.RaspiPin;
+
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSink;
+import de.uniol.inf.is.odysseus.wrapper.rpi.gpio.logicaloperator.RPiGPIOSinkAO;
+
+public class RPiGPIOSinkPO extends AbstractSink<Tuple<?>> {
+	private static final Logger LOG = LoggerFactory.getLogger(RPiGPIOSinkPO.class);
+	private Integer pin;
+	@SuppressWarnings("unused")
+	private SDFSchema schema;
+	private GpioController gpioController;
+	private GpioPinDigitalOutput myLED;
+	private boolean flagExceptionProcessNext = false;
+	
+	public RPiGPIOSinkPO(SDFSchema s) {
+		initGPIOController();
+		this.schema = s;
+	}
+
+	public RPiGPIOSinkPO(RPiGPIOSinkAO operator) {
+		initGPIOController();
+		
+		this.pin = operator.getPin();
+		
+		initGPIOPins();
+	}
+	
+	public RPiGPIOSinkPO(RPiGPIOSinkPO rPiGPIOSinkPO) {
+		super(rPiGPIOSinkPO);
+		
+		initGPIOController();
+		
+		this.pin = rPiGPIOSinkPO.pin;
+		
+		initGPIOPins();
+	}
+	
+	private void initGPIOController() {
+		LOG.debug("RPiGPIOSinkPO init()");
+		
+		try{
+			gpioController = GpioFactory.getInstance();
+		}catch(UnsatisfiedLinkError ex){
+			LOG.error(ex.getMessage(), ex);
+		}
+	}
+	
+	private void initGPIOPins() {
+		try{
+			myLED = gpioController.provisionDigitalOutputPin(RaspiPin.GPIO_11, "MyLED", PinState.HIGH);
+		}catch(Exception ex){
+			LOG.error(ex.getMessage(), ex);
+		}
+	}
+
+	@Override
+	protected void process_next(Tuple<?> tuple, int port) {
+		if(tuple==null){
+			LOG.error("tuple is null!");
+			return;
+		}
+		
+		try{
+			@SuppressWarnings("unused")
+			String w = "";
+			
+			if(tuple!=null){
+				w += "tuple.size:"+tuple.size();
+				if(tuple.size()>0){
+					w+=" Att1:"+tuple.getAttribute(0);
+				}
+				if(tuple.size()>1){
+					w+=" Att2:"+tuple.getAttribute(1);
+					
+					//LOG.error("Att:"+tuple.getAttribute(1));
+					
+					String value = tuple.getAttribute(1).toString();
+					String compareValue = (String)"1";
+					
+					if(value.equals(compareValue)){
+						myLED.high();
+					}else{
+						myLED.low();
+					}
+				}
+				if(tuple.size()>2){
+					w+=" Att3:"+tuple.getAttribute(2);
+				}
+			}
+			
+			//LOG.error("process_next port:"+port+" w:"+w);
+
+			
+			//String pin = tuple.getAttribute(0);
+			//String pinState = tuple.getAttribute(1);
+			
+			
+			//LOG.debug("pin:"+pin+" pinState:"+pinState);
+			
+			//System.out.println("pin:"+pin+" pinState:"+pinState);
+			
+			
+			
+		}catch(Exception ex){
+			if(!flagExceptionProcessNext){
+				LOG.error("Method: process_next(Tuple<?> tuple, int port) ExceptionMessage:"+ex.getMessage(), ex);
+				flagExceptionProcessNext=true;
+			}
+		}
+	}
+
+	@Override
+	public void processPunctuation(IPunctuation punctuation, int port) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void setPin(Integer pin) {
+		this.pin = pin;
+	}
+
+	@Override
+	public AbstractSink<Tuple<?>> clone() {
+		return new RPiGPIOSinkPO(this);
+	}
+	
+}
