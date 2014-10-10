@@ -42,11 +42,11 @@ public class GetAmountOfBlackFunction extends AbstractFunction<ImageJCV> {
 		CvMat matImage = new CvMat();
 		cvGetMat(iplImage, matImage);
 		
-		for (int i=0; i < iplImage.width(); i++) {
+		for (int i=0; i < iplImage.height(); i++) {
 			if (border == true) {
 				in = false;
 			}
-			for (int j=0; j < iplImage.height(); j++) {
+			for (int j=0; j < iplImage.width(); j++) {
 				int value = (int) matImage.get(i, j);
 				
 				if (in == true) {

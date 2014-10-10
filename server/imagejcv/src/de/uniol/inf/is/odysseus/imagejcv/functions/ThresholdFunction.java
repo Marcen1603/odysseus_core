@@ -69,9 +69,9 @@ public class ThresholdFunction extends AbstractFunction<ImageJCV> {
 		double value;
 		CvMat matImage = new CvMat();
 		cvGetMat(image, matImage);
-		for (int i=0; i < image.width(); i++) {
+		for (int i=0; i < image.height(); i++) {
 			boolean in = false;
-			for (int j=0; j < image.height(); j++) {
+			for (int j=0; j < image.width(); j++) {
 				value = matImage.get(i, j);
 				temp_values[(int) value] ++;
 				if ((int) value == 125 && in == false) {
@@ -84,10 +84,6 @@ public class ThresholdFunction extends AbstractFunction<ImageJCV> {
 					values[(int) value] ++;
 				}
 			}
-		}
-		
-		for (int x=0; x < values.length; x++) {
-			System.out.println("Index: " + x + " Value:" + values[x]);
 		}
 		
 		if (temp_values[125] == 0) {
