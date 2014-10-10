@@ -52,8 +52,9 @@ import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
  */
 public class TAccessAORule extends AbstractTransformationRule<AbstractAccessAO> {
 	static Logger LOG = LoggerFactory.getLogger(TAccessAORule.class);
-	static InfoService infoService = InfoServiceFactory.getInfoService(TAccessAORule.class);
-	
+	static InfoService infoService = InfoServiceFactory
+			.getInfoService(TAccessAORule.class);
+
 	@Override
 	public int getPriority() {
 		return 0;
@@ -78,7 +79,7 @@ public class TAccessAORule extends AbstractTransformationRule<AbstractAccessAO> 
 		if (accessPO == null) {
 
 			OptionMap options = new OptionMap(operator.getOptionsMap());
-			
+
 			if (operator.getTransportHandler() != null) {
 				IDataHandler<?> dataHandler = getDataHandler(operator);
 				if (dataHandler == null) {
@@ -105,16 +106,16 @@ public class TAccessAORule extends AbstractTransformationRule<AbstractAccessAO> 
 					throw new TransformationException("No transport handler "
 							+ operator.getTransportHandler() + " found.");
 				}
-				
-			
+
 				// In some cases the transport handler needs to know the schema
-				if (dataHandler != null){
+				if (dataHandler != null) {
 					transportHandler.setSchema(dataHandler.getSchema());
 				}
 
 				if (Constants.GENERIC_PULL.equalsIgnoreCase(operator
 						.getWrapper())) {
-					accessPO = new AccessPO(protocolHandler, operator.getMaxTimeToWaitForNewEventMS());
+					accessPO = new AccessPO(protocolHandler,
+							operator.getMaxTimeToWaitForNewEventMS());
 				} else {
 					accessPO = new ReceiverPO(protocolHandler);
 				}
@@ -149,12 +150,18 @@ public class TAccessAORule extends AbstractTransformationRule<AbstractAccessAO> 
 						accessPO);
 			}
 			List<String> unusedOptions = options.getUnreadOptions();
-			LOG.warn("The following options where not used in translation "+unusedOptions);
+			if (unusedOptions.size() > 0) {
+				LOG.warn("The following options where not used in translation "
+						+ unusedOptions);
+			}
 
-		}else{
-			if (operator.getWrapper() != null){
-				//throw new TransformationException("Multiple definiton of source with name "+operator.getAccessAOName());
-				infoService.warning("Potential problem? Multiple definition of source with name "+operator.getAccessAOName());
+		} else {
+			if (operator.getWrapper() != null) {
+				// throw new
+				// TransformationException("Multiple definiton of source with name "+operator.getAccessAOName());
+				infoService
+						.warning("Potential problem? Multiple definition of source with name "
+								+ operator.getAccessAOName());
 			}
 		}
 		defaultExecute(operator, accessPO, config, true, true);
@@ -194,8 +201,7 @@ public class TAccessAORule extends AbstractTransformationRule<AbstractAccessAO> 
 		ITransportHandler transportHandler = null;
 		if (operator.getTransportHandler() != null) {
 			transportHandler = TransportHandlerRegistry.getInstance(
-					operator.getTransportHandler(), protocolHandler,
-					options);
+					operator.getTransportHandler(), protocolHandler, options);
 		}
 		return transportHandler;
 	}
@@ -207,13 +213,11 @@ public class TAccessAORule extends AbstractTransformationRule<AbstractAccessAO> 
 			if (Constants.GENERIC_PULL.equalsIgnoreCase(operator.getWrapper())) {
 				protocolHandler = ProtocolHandlerRegistry.getInstance(
 						operator.getProtocolHandler(), ITransportDirection.IN,
-						IAccessPattern.PULL, options,
-						dataHandler);
+						IAccessPattern.PULL, options, dataHandler);
 			} else {
 				protocolHandler = ProtocolHandlerRegistry.getInstance(
 						operator.getProtocolHandler(), ITransportDirection.IN,
-						IAccessPattern.PUSH, options,
-						dataHandler);
+						IAccessPattern.PUSH, options, dataHandler);
 			}
 		}
 		return protocolHandler;
