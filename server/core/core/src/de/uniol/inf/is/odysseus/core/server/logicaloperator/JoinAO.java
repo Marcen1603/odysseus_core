@@ -61,6 +61,7 @@ public class JoinAO extends BinaryLogicalOp implements IHasPredicate {
 		if (joinAO.predicate != null) {
 			this.predicate = joinAO.predicate;
 		}
+		this.assureOrder = joinAO.assureOrder;
 	}
 
 	@Parameter(type = EnumParameter.class, optional = true, doc = "Type of input streams. For optimization purposes: ONE_ONE, ONE_MANY, MANY_ONE, MANY_MANY")
