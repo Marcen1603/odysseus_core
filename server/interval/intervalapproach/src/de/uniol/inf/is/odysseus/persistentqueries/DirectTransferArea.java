@@ -28,12 +28,11 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.ITransfer;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ITransferArea;
 
 /**
- * This area is for persistent data. It directly transfers all elements, since
- * in persistent data temporal order is not important.
+ * This area does not tread order. It directly transfers all elements
  * 
  * @author Andre Bolles
  */
-public class PersistentTransferArea<R extends IStreamObject<? extends ITimeInterval>, W extends IStreamObject<? extends ITimeInterval>>
+public class DirectTransferArea<R extends IStreamObject<? extends ITimeInterval>, W extends IStreamObject<? extends ITimeInterval>>
 		implements ITransferArea<R, W> {
 
 	protected PointInTime[] minTs;
@@ -41,13 +40,12 @@ public class PersistentTransferArea<R extends IStreamObject<? extends ITimeInter
 	protected PriorityQueue<W> outputQueue = new PriorityQueue<W>(11,
 			new MetadataComparator<ITimeInterval>());
 
-	boolean inOrder = true; 
-	
-	public PersistentTransferArea() {
+	boolean inOrder = true;
+
+	public DirectTransferArea() {
 	}
 
-	public PersistentTransferArea(
-			PersistentTransferArea<R, W> tiTransferFunction) {
+	public DirectTransferArea(DirectTransferArea<R, W> tiTransferFunction) {
 		minTs = new PointInTime[tiTransferFunction.minTs.length];
 		for (int i = 0; i < minTs.length; i++) {
 			minTs[i] = tiTransferFunction.minTs[i] != null ? tiTransferFunction.minTs[i]
@@ -60,14 +58,14 @@ public class PersistentTransferArea<R extends IStreamObject<? extends ITimeInter
 	public PointInTime getMinTs(int inPort) {
 		return minTs[inPort];
 	}
-	
+
 	@Override
 	public void addNewInput(int port) {
 		// TODO Auto-generated method stub
 		throw new IllegalArgumentException(
 				"Adding of inputs currently not implemented");
 	}
-	
+
 	@Override
 	public void removeInput(int port) {
 		throw new IllegalArgumentException(
@@ -103,7 +101,7 @@ public class PersistentTransferArea<R extends IStreamObject<? extends ITimeInter
 	public void sendPunctuation(IPunctuation punctuation, int toPort) {
 		po.sendPunctuation(punctuation, toPort);
 	}
-	
+
 	@Override
 	public void transfer(W object) {
 		this.po.transfer(object);
@@ -111,12 +109,12 @@ public class PersistentTransferArea<R extends IStreamObject<? extends ITimeInter
 		// outputQueue.add(object);
 		// }
 	}
-	
+
 	@Override
 	public void transfer(W object, int toPort) {
 		this.po.transfer(object, toPort);
 	}
-	
+
 	@Override
 	public void done(int port) {
 		// Nothing to do here
@@ -128,8 +126,8 @@ public class PersistentTransferArea<R extends IStreamObject<? extends ITimeInter
 	}
 
 	@Override
-	public PersistentTransferArea<R, W> clone() {
-		return new PersistentTransferArea<R, W>(this);
+	public DirectTransferArea<R, W> clone() {
+		return new DirectTransferArea<R, W>(this);
 	}
 
 	@Override
@@ -178,16 +176,15 @@ public class PersistentTransferArea<R extends IStreamObject<? extends ITimeInter
 	public boolean isInOrder() {
 		return inOrder;
 	}
-	
+
 	@Override
 	public void setInOrder(boolean isInOrder) {
 		this.inOrder = isInOrder;
 	}
-	
+
 	@Override
 	public void dump() {
 		// nothing to do, no state
 	}
-	
-	
+
 }

@@ -27,6 +27,7 @@ import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.BooleanParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.EnumParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.PredicateParameter;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IHasPredicate;
@@ -41,6 +42,7 @@ public class JoinAO extends BinaryLogicalOp implements IHasPredicate {
 	private static final long serialVersionUID = 3710951139395164614L;
 
 	Cardinalities card = null;
+	private boolean assureOrder = true;
 
 	private IPredicate<?> predicate;
 
@@ -56,7 +58,7 @@ public class JoinAO extends BinaryLogicalOp implements IHasPredicate {
 	public JoinAO(JoinAO joinAO) {
 		super(joinAO);
 		this.card = joinAO.card;
-		if (joinAO.predicate != null){
+		if (joinAO.predicate != null) {
 			this.predicate = joinAO.predicate;
 		}
 	}
@@ -68,6 +70,15 @@ public class JoinAO extends BinaryLogicalOp implements IHasPredicate {
 
 	public Cardinalities getCard() {
 		return card;
+	}
+
+	public boolean isAssureOrder() {
+		return assureOrder;
+	}
+
+	@Parameter(type = BooleanParameter.class, optional = true, doc = "If set to false, the operator will not garantee order in output. Default is true")
+	public void setAssureOrder(boolean assureOrder) {
+		this.assureOrder = assureOrder;
 	}
 
 	@Parameter(type = PredicateParameter.class, optional = true, doc = "Predicate to filter combinations")
