@@ -90,9 +90,10 @@ public class RPiGPIOTransportHandler extends AbstractSimplePullTransportHandler<
             	buttonState = "0";
             }
             
-        	tuple.setAttribute(0, _pin.toString());
+        	tuple.setAttribute(0, "pinNumber");
         	tuple.setAttribute(1, buttonState);
-        	
+		}catch(ClassCastException ex){
+			LOG.error(ex.getMessage(), ex);
 		}catch(Exception ex){
 			if(!flagExceptionThrown){
 				LOG.error("On Raspberry Pi? pi4j installed?");
