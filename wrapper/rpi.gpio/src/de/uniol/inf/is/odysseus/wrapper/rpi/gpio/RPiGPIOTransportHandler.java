@@ -36,7 +36,7 @@ public class RPiGPIOTransportHandler extends AbstractSimplePullTransportHandler<
 	private boolean flagExceptionThrown = false;//Exception was not thrown at this point.
 	
 	static{
-		myinitGPIO();
+		//myinitGPIO();
 	}
 	
 	@Override
@@ -45,7 +45,7 @@ public class RPiGPIOTransportHandler extends AbstractSimplePullTransportHandler<
 		RPiGPIOTransportHandler tHandler = new RPiGPIOTransportHandler();
 		protocolHandler.setTransportHandler(tHandler);
 		this.init(options);
-		
+		tHandler.myinitGPIO();
 		return tHandler;
 	}
 	
@@ -90,7 +90,7 @@ public class RPiGPIOTransportHandler extends AbstractSimplePullTransportHandler<
             	buttonState = "0";
             }
             
-        	tuple.setAttribute(0, _pin.getAddress());
+        	tuple.setAttribute(0, _pin.toString());
         	tuple.setAttribute(1, buttonState);
         	
 		}catch(Exception ex){
@@ -103,12 +103,15 @@ public class RPiGPIOTransportHandler extends AbstractSimplePullTransportHandler<
 		return tuple;
 	}
 	
-	private static void myinitGPIO() {
+	private void myinitGPIO() {
 		LOG.debug("myinitGPIO() is called.");
 		
 		try{
-			gpioController = GpioFactory.getInstance();
-			myButton = gpioController.provisionDigitalInputPin(RaspiPin.GPIO_07,"MyButton");
+			if(gpioController==null)
+				gpioController = GpioFactory.getInstance();
+			
+			if(myButton==null)
+				myButton = gpioController.provisionDigitalInputPin(RaspiPin.GPIO_07,"MyButton");
 		}catch(NullPointerException ex){
 			ex.printStackTrace();
 		}catch(Exception ex){
