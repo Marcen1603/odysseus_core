@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.paralleltrack.communicator;
+package de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.common;
 
 /**
  * Exception used in LoadBalancing

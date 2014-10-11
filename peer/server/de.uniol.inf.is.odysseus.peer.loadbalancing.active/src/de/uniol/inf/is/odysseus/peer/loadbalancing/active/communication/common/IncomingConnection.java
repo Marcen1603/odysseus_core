@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.paralleltrack.communicator;
+package de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.common;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
@@ -8,7 +8,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
  * @author Carsten Cordes
  *
  */
-public class ConnectionToOperator {
+public class IncomingConnection {
 
 	/**
 	 * Constructor
@@ -24,7 +24,7 @@ public class ConnectionToOperator {
 	 * @param schema
 	 *            connection schema
 	 */
-	ConnectionToOperator(ILogicalOperator operator, String remotePeerID,
+	public IncomingConnection(ILogicalOperator operator, String remotePeerID,
 			String oldPipeID, int port, SDFSchema schema) {
 		this.localOperator = operator;
 		this.remotePeerID = remotePeerID;

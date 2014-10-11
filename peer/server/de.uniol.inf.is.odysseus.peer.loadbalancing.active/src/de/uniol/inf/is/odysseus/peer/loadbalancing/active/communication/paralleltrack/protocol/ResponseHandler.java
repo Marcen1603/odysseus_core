@@ -10,9 +10,10 @@ import de.uniol.inf.is.odysseus.p2p_new.logicaloperator.JxtaReceiverAO;
 import de.uniol.inf.is.odysseus.p2p_new.logicaloperator.JxtaSenderAO;
 import de.uniol.inf.is.odysseus.peer.distribute.ILogicalQueryPart;
 import de.uniol.inf.is.odysseus.peer.distribute.util.LogicalQueryHelper;
-import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.paralleltrack.communicator.LoadBalancingCommunicationListener;
-import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.paralleltrack.communicator.LoadBalancingHelper;
-import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.paralleltrack.communicator.LoadBalancingMessageDispatcher;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.common.LoadBalancingHelper;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.paralleltrack.communicator.ParallelTrackCommunicatorImpl;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.paralleltrack.communicator.ParallelTrackHelper;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.paralleltrack.communicator.ParallelTrackMessageDispatcher;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.paralleltrack.messages.LoadBalancingResponseMessage;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.paralleltrack.status.LoadBalancingMasterStatus;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.paralleltrack.status.LoadBalancingStatusCache;
@@ -47,14 +48,14 @@ public class ResponseHandler {
 		LoadBalancingMasterStatus status = LoadBalancingStatusCache
 				.getInstance().getStatusForLocalProcess(loadBalancingProcessId);
 		
-		LoadBalancingCommunicationListener communicationListener = LoadBalancingCommunicationListener.getInstance();
+		ParallelTrackCommunicatorImpl communicationListener = ParallelTrackCommunicatorImpl.getInstance();
 
 		// LoadBalancing Process is no longer active -> ignore!
 		if (status == null) {
 			return;
 		}
 
-		LoadBalancingMessageDispatcher dispatcher = status
+		ParallelTrackMessageDispatcher dispatcher = status
 				.getMessageDispatcher();
 
 		switch (response.getMsgType()) {
@@ -69,7 +70,7 @@ public class ResponseHandler {
 
 				ILogicalQueryPart modifiedQueryPart = LoadBalancingHelper
 						.getCopyOfQueryPart(status.getOriginalPart());
-				LoadBalancingHelper
+				ParallelTrackHelper
 						.relinkQueryPart(modifiedQueryPart,status);
 
 				String pqlFromQueryPart = LogicalQueryHelper
@@ -90,7 +91,7 @@ public class ResponseHandler {
 				dispatcher.stopRunningJob();
 				status.setPhase(LoadBalancingMasterStatus.LB_PHASES.RELINKING_SENDERS);
 				LOG.debug("Relinking Senders.");
-				LoadBalancingHelper.notifyOutgoingPeers(status);
+				ParallelTrackHelper.notifyOutgoingPeers(status);
 			}
 			break;
 
@@ -109,7 +110,7 @@ public class ResponseHandler {
 				if (dispatcher.getNumberOfRunningJobs() == 0) {
 					// All success messages received. Yay!
 					status.setPhase(LB_PHASES.RELINKING_RECEIVERS);
-					LoadBalancingHelper.notifyIncomingPeers(status);
+					ParallelTrackHelper.notifyIncomingPeers(status);
 					LOG.debug("Status: Relinking Receivers.");
 				}
 			}
@@ -204,8 +205,8 @@ public class ResponseHandler {
 	 * Decides what to do when error occurs.
 	 * @param status
 	 */
-	public static void handleError(LoadBalancingMasterStatus status,LoadBalancingCommunicationListener communicationListener) {
-		LoadBalancingMessageDispatcher dispatcher = status.getMessageDispatcher();
+	public static void handleError(LoadBalancingMasterStatus status,ParallelTrackCommunicatorImpl communicationListener) {
+		ParallelTrackMessageDispatcher dispatcher = status.getMessageDispatcher();
 		
 		// Handle error depending on current LoadBalancing phase.
 		switch (status.getPhase()) {
@@ -219,7 +220,7 @@ public class ResponseHandler {
 		case RELINKING_SENDERS:
 			// Send Abort to all Peers involved
 			dispatcher.stopAllMessages();
-			LoadBalancingHelper.notifyInvolvedPeers(status);
+			ParallelTrackHelper.notifyInvolvedPeers(status);
 			break;
 		case SYNCHRONIZING:
 		case DELETING:
@@ -240,7 +241,7 @@ public class ResponseHandler {
 	public static void loadBalancingSuccessfullyFinished(LoadBalancingMasterStatus status) {
 		LOG.info("LoadBalancing successfully finished.");
 		LoadBalancingStatusCache.getInstance().deleteLocalStatus(status.getProcessId());
-		LoadBalancingCommunicationListener.getInstance().notifyFinished();
+		ParallelTrackCommunicatorImpl.getInstance().notifyFinished();
 		
 	}
 	

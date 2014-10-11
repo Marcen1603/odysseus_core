@@ -3,7 +3,7 @@ package de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.paralle
 import java.util.Collection;
 import java.util.concurrent.ConcurrentHashMap;
 
-import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.paralleltrack.communicator.LoadBalancingMessageDispatcher;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.paralleltrack.communicator.ParallelTrackMessageDispatcher;
 import net.jxta.peer.PeerID;
 
 public class LoadBalancingSlaveStatus {
@@ -30,7 +30,7 @@ public class LoadBalancingSlaveStatus {
 	private ConcurrentHashMap<String,String> replacedPipes;
 	
 
-	private final LoadBalancingMessageDispatcher messageDispatcher;
+	private final ParallelTrackMessageDispatcher messageDispatcher;
 	
 	
 	
@@ -58,7 +58,7 @@ public class LoadBalancingSlaveStatus {
 		return replacedPipes;
 	}
 
-	public LoadBalancingSlaveStatus(INVOLVEMENT_TYPES involvementType, LB_PHASES phase, PeerID initiatingPeer, int lbProcessId, LoadBalancingMessageDispatcher messageDispatcher) {
+	public LoadBalancingSlaveStatus(INVOLVEMENT_TYPES involvementType, LB_PHASES phase, PeerID initiatingPeer, int lbProcessId, ParallelTrackMessageDispatcher messageDispatcher) {
 		this.phase = phase;
 		this.involvementType = involvementType;
 		this.initiatingPeer = initiatingPeer;
@@ -90,7 +90,7 @@ public class LoadBalancingSlaveStatus {
 		return initiatingPeer;
 	}
 	
-	public LoadBalancingMessageDispatcher getMessageDispatcher() {
+	public ParallelTrackMessageDispatcher getMessageDispatcher() {
 		return messageDispatcher;
 	}
 

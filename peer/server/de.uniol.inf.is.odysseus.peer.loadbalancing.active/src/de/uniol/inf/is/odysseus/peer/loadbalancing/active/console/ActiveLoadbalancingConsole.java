@@ -50,7 +50,7 @@ public class ActiveLoadbalancingConsole implements CommandProvider {
 	private static IServerExecutor executor;
 	private static Collection<ILoadBalancingStrategy> loadBalancingStrategies = Lists.newArrayList();
 	private static Collection<ILoadBalancingAllocator> loadBalancingAllocators = Lists.newArrayList();
-	private static Optional<ILoadBalancingCommunicator> loadBalancingCommunicator;
+	private static Collection<ILoadBalancingCommunicator> loadBalancingCommunicators = Lists.newArrayList();
 
 	// called by OSGi-DS
 	public static void bindP2PDictionary(IP2PDictionary serv) {
@@ -138,17 +138,16 @@ public class ActiveLoadbalancingConsole implements CommandProvider {
 	
 	// called by OSGi-DS
 	public static void bindLoadBalancingCommunicator(ILoadBalancingCommunicator communicator) {
-		
-		ActiveLoadbalancingConsole.loadBalancingCommunicator = Optional.of(communicator);
+		ActiveLoadbalancingConsole.loadBalancingCommunicators.add(communicator);
 		
 	}
 
 	// called by OSGi-DS
 	public static void unbindLoadBalancingCommunicator(ILoadBalancingCommunicator communicator) {
 		
-		if(communicator != null && communicator.equals(ActiveLoadbalancingConsole.loadBalancingCommunicator)) {
+		if(communicator != null) {
 		
-			ActiveLoadbalancingConsole.loadBalancingCommunicator = Optional.absent();
+			ActiveLoadbalancingConsole.loadBalancingCommunicators.remove(communicator);
 			
 		}
 		
@@ -179,6 +178,7 @@ public class ActiveLoadbalancingConsole implements CommandProvider {
 		sb.append("    lsParts		              		- Lists all queryParts installed on peer with ids\n");
 		sb.append("    lsLBStrategies	              		- Lists all available load balancing strategies\n");
 		sb.append("    lsLBAllocators	              		- Lists all available load balancing allocators\n");
+		sb.append("    lsLBCommunicators                    - Lists all available load balancing communicators\n");
 		sb.append("    initLB <strategyname> <allocatorname>	- Initiate Loadbalancing with load balancing strategy <strategyname> and load balancing allocator <allocatorname>\n");
 		sb.append("    stopLB                            - Stops the Load Balancing\n");
 		sb.append("    cpJxtaSender <oldPipeId> <newPipeId> <newPeername> - Tries to copy and install a Sender\n");
@@ -199,7 +199,7 @@ public class ActiveLoadbalancingConsole implements CommandProvider {
 		final String ERROR_USAGE = "usage: initLB <peername> <strategyname> <allocatorname>";
 		final String ERROR_STRATEGY = "No load balancing strategy found with the name ";
 		final String ERROR_ALLOCATOR = "No load balancing allocator found with the name ";
-		final String ERROR_COMMUNICATOR = "No load balancing communicator available";
+		final String ERROR_COMMUNICATOR = "No load balancing communicator found with name ";
 		
 		if(this.mRunningStrategy.isPresent()) {
 			
@@ -242,13 +242,16 @@ public class ActiveLoadbalancingConsole implements CommandProvider {
 		}
 		ILoadBalancingAllocator allocator = optAllocator.get();
 		
-		if(!ActiveLoadbalancingConsole.loadBalancingCommunicator.isPresent()) {
+		//TODO still hardcoded.
+		Optional<ILoadBalancingCommunicator> optCommunicator = ActiveLoadbalancingConsole.determineCommunicator("ParallelTrack");
+		if(!optCommunicator.isPresent()) {
 			
-			System.out.println(ERROR_COMMUNICATOR);
+			System.out.println(ERROR_COMMUNICATOR + allocatorName);
 			return;
 			
 		}
-		ILoadBalancingCommunicator communicator = ActiveLoadbalancingConsole.loadBalancingCommunicator.get();
+		
+		ILoadBalancingCommunicator communicator = optCommunicator.get();
 		
 		strategy.setAllocator(allocator);
 		strategy.setCommunicator(communicator);
@@ -329,6 +332,17 @@ public class ActiveLoadbalancingConsole implements CommandProvider {
 	}
 	
 	/**
+	 * Lists all available {@link ILoadBalancingCommunicator} implementations bound via OSGI-DS
+	 * @param ci The {@link CommandInterpreter} instance
+	 */
+	public void _lsLBCommunicators(CommandInterpreter ci) {
+		System.out.println("Available load balancing Communicators:");
+		for(ILoadBalancingCommunicator communicator : ActiveLoadbalancingConsole.loadBalancingCommunicators) {
+			System.out.println(communicator.getName());
+		}
+	}
+	
+	/**
 	 * Determines the {@link ILoadBalancingStrategy} by name.
 	 * @param strategyName The name of the strategy.
 	 * @return An {@link ILoadBalancingStrategy}, if there is one bound with <code>strategyName</code> as name.
@@ -367,6 +381,30 @@ public class ActiveLoadbalancingConsole implements CommandProvider {
 			if(allocator.getName().equals(allocatorName)) {
 				
 				return Optional.of(allocator);
+				
+			}
+			
+		}
+		
+		return Optional.absent();		
+		
+	}
+	
+	/**
+	 * Determines the {@link ILoadBalancingCommunicator} by name.
+	 * @param communicatorName The name of the allocator.
+	 * @return An {@link ILoadBalancingCommunicator}, if there is one bound with <code>communicatorName</code> as name.
+	 */
+	private static Optional<ILoadBalancingCommunicator> determineCommunicator(
+			String communicatorName) {
+		
+		Preconditions.checkNotNull(communicatorName, "The name of the load balancing allocator must be not null!");
+		
+		for(ILoadBalancingCommunicator communicator : ActiveLoadbalancingConsole.loadBalancingCommunicators) {
+			
+			if(communicator.getName().equals(communicatorName)) {
+				
+				return Optional.of(communicator);
 				
 			}
 			

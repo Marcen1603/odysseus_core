@@ -7,18 +7,14 @@ import net.jxta.peer.PeerID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
-import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
-import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvider;
-import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.p2p_new.IMessage;
-import de.uniol.inf.is.odysseus.p2p_new.IP2PNetworkManager;
 import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicator;
 import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicatorListener;
 import de.uniol.inf.is.odysseus.peer.distribute.ILogicalQueryPart;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.ILoadBalancingCommunicator;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.ILoadBalancingListener;
-import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.paralleltrack.messages.IMessageDeliveryFailedListener;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.common.IMessageDeliveryFailedListener;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.common.LoadBalancingHelper;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.paralleltrack.messages.LoadBalancingAbortMessage;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.paralleltrack.messages.LoadBalancingInstructionMessage;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.paralleltrack.messages.LoadBalancingResponseMessage;
@@ -26,10 +22,10 @@ import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.parallel
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.paralleltrack.protocol.InstructionHandler;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.paralleltrack.protocol.ResponseHandler;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.paralleltrack.status.LoadBalancingMasterStatus;
-import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.paralleltrack.status.LoadBalancingStatusCache;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.paralleltrack.status.LoadBalancingMasterStatus.LB_PHASES;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.paralleltrack.status.LoadBalancingStatusCache;
 
-public class LoadBalancingCommunicationListener implements
+public class ParallelTrackCommunicatorImpl implements
 		IPeerCommunicatorListener, ILoadBalancingCommunicator, IMessageDeliveryFailedListener{
 
 	/**
@@ -38,59 +34,44 @@ public class LoadBalancingCommunicationListener implements
 	 *         on another Peer.
 	 * 
 	 */
-
+	
+	/**
+	 * Name of the Communicator
+	 */
+	private final String COMMUNICATOR_NAME = "ParallelTrack";
+	
 	/**
 	 * The logger instance for this class.
 	 */
 	private static final Logger LOG = LoggerFactory
-			.getLogger(LoadBalancingCommunicationListener.class);
+			.getLogger(ParallelTrackCommunicatorImpl.class);
 
-	/**
-	 * List of registered Listeners.
-	 */
-	private ArrayList<ILoadBalancingListener> listeners = new ArrayList<ILoadBalancingListener>();
-
-	/**
-	 * Executor to get queries
-	 */
-	private static IServerExecutor executor;
 
 	/**
 	 * Peer Communicator
 	 */
 	private static IPeerCommunicator peerCommunicator;
-
+	
 	/**
-	 * Network Manager (needed to get GroupID, etc.)
+	 * List of registered Listeners.
 	 */
-	private static IP2PNetworkManager p2pNetworkManager;
+	private ArrayList<ILoadBalancingListener> listeners = new ArrayList<ILoadBalancingListener>();
 
+	
 	/**
 	 * Instance of Communication Listener.
 	 */
-	private static LoadBalancingCommunicationListener instance;
-
-	/**
-	 * Active Session. Use getActiveSession() to avoid null pointers.
-	 */
-	private static ISession activeSession;
+	private static ParallelTrackCommunicatorImpl instance;
 
 	/**
 	 * Get Instance of Communication Listener
 	 * 
 	 * @return this.
 	 */
-	public static LoadBalancingCommunicationListener getInstance() {
+	public static ParallelTrackCommunicatorImpl getInstance() {
 		return instance;
 	}
 	
-	/**
-	 * Getter for Executor
-	 * @return
-	 */
-	public static IServerExecutor getExecutor() {
-		return executor;
-	}
 
 	/**
 	 * Getter for PeerCommunicator
@@ -99,94 +80,7 @@ public class LoadBalancingCommunicationListener implements
 	public static IPeerCommunicator getPeerCommunicator() {
 		return peerCommunicator;
 	}
-
-	/**
-	 * Getter for NetworkManager
-	 * @return
-	 */
-	public static IP2PNetworkManager getP2pNetworkManager() {
-		return p2pNetworkManager;
-	}
-
 	
-
-	/**
-	 * Called by OSGi on Bundle activation.
-	 */
-	public void activate() {
-		instance = this;
-	}
-
-	/**
-	 * Called by OSGi on Bundle deactivation.
-	 */
-	public void deactivate() {
-		instance = null;
-	}
-
-	/**
-	 * called by OSGi-DS to bind Executor
-	 * 
-	 * @param exe
-	 *            Executor to bind.
-	 */
-	public static void bindExecutor(IExecutor exe) {
-		LOG.debug("Bound Executor.");
-		executor = (IServerExecutor) exe;
-	}
-
-	/**
-	 * called by OSGi-DS to unbind Executor
-	 * 
-	 * @param exe
-	 *            Executor to unbind.
-	 */
-	public static void unbindExecutor(IExecutor exe) {
-		LOG.debug("Unbound Executor.");
-		if (executor == exe) {
-			executor = null;
-		}
-	}
-
-	/**
-	 * called by OSGi-DS to bind Network Manager
-	 * 
-	 * @param serv
-	 *            Networkmanager to bind.
-	 */
-	public static void bindP2PNetworkManager(IP2PNetworkManager serv) {
-		LOG.debug("Bound network Manager");
-		p2pNetworkManager = serv;
-	}
-
-	/**
-	 * called by OSGi-DS to unbind Network Manager
-	 * 
-	 * @param serv
-	 *            Networkmanager to unbind.
-	 */
-	public static void unbindP2PNetworkManager(IP2PNetworkManager serv) {
-		LOG.debug("Unbound NetworkMananger");
-		if (p2pNetworkManager == serv) {
-			p2pNetworkManager = null;
-		}
-	}
-
-	/**
-	 * Gets currently active Session.
-	 * 
-	 * @return active Session
-	 */
-	public static ISession getActiveSession() {
-		if (activeSession == null || !activeSession.isValid()) {
-			activeSession = UserManagementProvider
-					.getSessionmanagement()
-					.loginSuperUser(null,
-							UserManagementProvider.getDefaultTenant().getName());
-		}
-		return activeSession;
-	}
-
 	/**
 	 * called by OSGi-DS to bind Peer Communicator (registers all Messages and
 	 * adds Listeners)
@@ -239,6 +133,22 @@ public class LoadBalancingCommunicationListener implements
 			peerCommunicator = null;
 		}
 	}
+	
+	
+
+	/**
+	 * Called by OSGi on Bundle activation.
+	 */
+	public void activate() {
+		instance = this;
+	}
+
+	/**
+	 * Called by OSGi on Bundle deactivation.
+	 */
+	public void deactivate() {
+		instance = null;
+	}
 
 	@Override
 	/**
@@ -288,8 +198,7 @@ public class LoadBalancingCommunicationListener implements
 				.getInstance().getStatusForLocalProcess(lbProcessIdentifier);
 		LOG.debug("New LoadBalancing Status created. LoadBalancing Process Id " + lbProcessIdentifier);
 		status.setLogicalQuery(queryId);
-		status.setMessageDispatcher(new LoadBalancingMessageDispatcher(
-				peerCommunicator, getActiveSession(), lbProcessIdentifier));
+		status.setMessageDispatcher(new ParallelTrackMessageDispatcher(peerCommunicator, lbProcessIdentifier));
 		status.getMessageDispatcher().sendInitiate(otherPeer,this);
 	}
 
@@ -309,6 +218,11 @@ public class LoadBalancingCommunicationListener implements
 	public void removeLoadBalancingListener(ILoadBalancingListener listener) {
 		if (listeners.contains(listener))
 			listeners.remove(listener);
+	}
+	
+	@Override
+	public String getName() {
+		return COMMUNICATOR_NAME;
 	}
 	
 

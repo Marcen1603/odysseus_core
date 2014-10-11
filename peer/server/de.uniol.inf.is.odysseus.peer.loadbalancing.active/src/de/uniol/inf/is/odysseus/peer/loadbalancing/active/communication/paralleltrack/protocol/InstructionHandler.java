@@ -8,11 +8,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.collection.Context;
-import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicator;
-import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.paralleltrack.communicator.LoadBalancingCommunicationListener;
-import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.paralleltrack.communicator.LoadBalancingHelper;
-import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.paralleltrack.communicator.LoadBalancingMessageDispatcher;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.common.LoadBalancingHelper;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.paralleltrack.communicator.ParallelTrackCommunicatorImpl;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.paralleltrack.communicator.ParallelTrackHelper;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.paralleltrack.communicator.ParallelTrackMessageDispatcher;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.paralleltrack.messages.LoadBalancingInstructionMessage;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.paralleltrack.status.LoadBalancingSlaveStatus;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.paralleltrack.status.LoadBalancingStatusCache;
@@ -37,16 +37,14 @@ public class InstructionHandler {
 		LOG.debug("Got Instruction for Process:" + instruction.getLoadBalancingProcessId());
 		
 		int lbProcessId = instruction.getLoadBalancingProcessId();
-		LoadBalancingMessageDispatcher dispatcher = null;
+		ParallelTrackMessageDispatcher dispatcher = null;
 		
 		LoadBalancingSlaveStatus status = LoadBalancingStatusCache
 				.getInstance().getSlaveStatus(senderPeer, lbProcessId);
 		
 
-		IPeerCommunicator peerCommunicator = LoadBalancingCommunicationListener.getPeerCommunicator();
-		ISession session = LoadBalancingCommunicationListener.getActiveSession();
+		IPeerCommunicator peerCommunicator = ParallelTrackCommunicatorImpl.getPeerCommunicator();
 		
-
 		
 		boolean isSender = true;
 
@@ -65,8 +63,7 @@ public class InstructionHandler {
 						LoadBalancingSlaveStatus.INVOLVEMENT_TYPES.VOLUNTEERING_PEER,
 						LoadBalancingSlaveStatus.LB_PHASES.WAITING_FOR_ADD,
 						senderPeer, lbProcessId,
-						new LoadBalancingMessageDispatcher(peerCommunicator,
-								session, lbProcessId));
+						new ParallelTrackMessageDispatcher(peerCommunicator, lbProcessId));
 				
 				
 				
@@ -122,8 +119,7 @@ public class InstructionHandler {
 						LoadBalancingSlaveStatus.INVOLVEMENT_TYPES.PEER_WITH_SENDER_OR_RECEIVER,
 						LoadBalancingSlaveStatus.LB_PHASES.WAITING_FOR_SYNC,
 						senderPeer, lbProcessId,
-						new LoadBalancingMessageDispatcher(peerCommunicator,
-								session, lbProcessId));
+						new ParallelTrackMessageDispatcher(peerCommunicator,lbProcessId));
 				LoadBalancingStatusCache.getInstance().storeSlaveStatus(
 						senderPeer, lbProcessId, status);
 			}
@@ -139,7 +135,7 @@ public class InstructionHandler {
 						instruction.getOldPipeId());
 				dispatcher = status.getMessageDispatcher();
 				try {
-					LoadBalancingHelper.findAndCopyLocalJxtaOperator(status,isSender,
+					ParallelTrackHelper.findAndCopyLocalJxtaOperator(status,isSender,
 							instruction.getNewPeerId(),
 							instruction.getOldPipeId(),
 							instruction.getNewPipeId());

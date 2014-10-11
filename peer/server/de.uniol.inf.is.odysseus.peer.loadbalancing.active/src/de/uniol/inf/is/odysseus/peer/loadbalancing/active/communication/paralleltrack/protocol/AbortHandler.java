@@ -9,11 +9,10 @@ import net.jxta.peer.PeerID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicator;
-import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.paralleltrack.communicator.LoadBalancingCommunicationListener;
-import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.paralleltrack.communicator.LoadBalancingHelper;
-import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.paralleltrack.communicator.LoadBalancingMessageDispatcher;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.common.LoadBalancingHelper;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.paralleltrack.communicator.ParallelTrackCommunicatorImpl;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.paralleltrack.communicator.ParallelTrackMessageDispatcher;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.paralleltrack.messages.LoadBalancingAbortMessage;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.paralleltrack.status.LoadBalancingMasterStatus;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.paralleltrack.status.LoadBalancingSlaveStatus;
@@ -69,14 +68,13 @@ public class AbortHandler {
 		//Only send Ack. if status no longer active.
 		if(status==null) {
 			LOG.debug("Status already null. Sending ABORT_RESPONSE on improvised Message Dispatcher.");
-			IPeerCommunicator peerCommunicator = LoadBalancingCommunicationListener.getPeerCommunicator();
-			ISession session = LoadBalancingCommunicationListener.getActiveSession();
-			LoadBalancingMessageDispatcher improvisedDispatcher = new LoadBalancingMessageDispatcher(peerCommunicator,session,abortMessage.getLoadBalancingProcessId());
+			IPeerCommunicator peerCommunicator = ParallelTrackCommunicatorImpl.getPeerCommunicator();
+			ParallelTrackMessageDispatcher improvisedDispatcher = new ParallelTrackMessageDispatcher(peerCommunicator,abortMessage.getLoadBalancingProcessId());
 			improvisedDispatcher.sendAbortResponse(senderPeer);
 			return;
 		}
 		
-		LoadBalancingMessageDispatcher dispatcher = status.getMessageDispatcher();
+		ParallelTrackMessageDispatcher dispatcher = status.getMessageDispatcher();
 		
 		//Ignore Message if already aborting.
 		if(!(status.getPhase()==LoadBalancingSlaveStatus.LB_PHASES.ABORT)) {
@@ -125,7 +123,7 @@ public class AbortHandler {
 		if(status!=null) {
 			LOG.info("LoadBalancing failed.");
 			LoadBalancingStatusCache.getInstance().deleteLocalStatus(status.getProcessId());
-			LoadBalancingCommunicationListener.getInstance().notifyFinished();
+			ParallelTrackCommunicatorImpl.getInstance().notifyFinished();
 		}
 	}
 	
@@ -139,7 +137,7 @@ public class AbortHandler {
 		
 		if(status!=null) {
 			LOG.debug("Stop Sending Abort to " + senderPeer);
-			LoadBalancingMessageDispatcher dispatcher = status.getMessageDispatcher();
+			ParallelTrackMessageDispatcher dispatcher = status.getMessageDispatcher();
 			dispatcher.stopRunningJob(senderPeer.toString());
 			
 			if(dispatcher.getNumberOfRunningJobs()==0) {

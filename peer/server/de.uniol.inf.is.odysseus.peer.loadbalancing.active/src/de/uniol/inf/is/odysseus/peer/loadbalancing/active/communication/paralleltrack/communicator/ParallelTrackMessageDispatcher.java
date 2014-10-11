@@ -10,8 +10,10 @@ import org.slf4j.LoggerFactory;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicator;
 import de.uniol.inf.is.odysseus.p2p_new.PeerCommunicationException;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.active.ActiveLoadBalancingActivator;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.common.IMessageDeliveryFailedListener;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.common.LoadBalancingHelper;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.common.RepeatingMessageSend;
-import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.paralleltrack.messages.IMessageDeliveryFailedListener;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.paralleltrack.messages.LoadBalancingAbortMessage;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.paralleltrack.messages.LoadBalancingInstructionMessage;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.paralleltrack.messages.LoadBalancingResponseMessage;
@@ -21,10 +23,10 @@ import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.parallel
  * @author badagent
  *
  */
-public class LoadBalancingMessageDispatcher {
+public class ParallelTrackMessageDispatcher {
 	
 	private static final Logger LOG = LoggerFactory
-			.getLogger(LoadBalancingMessageDispatcher.class);
+			.getLogger(ParallelTrackMessageDispatcher.class);
 	
 	/**
 	 * Peer Communicator
@@ -59,9 +61,9 @@ public class LoadBalancingMessageDispatcher {
 	 * @param session
 	 * @param lbProcessId
 	 */
-	public LoadBalancingMessageDispatcher(IPeerCommunicator peerCommunicator, ISession session, int lbProcessId) {
+	public ParallelTrackMessageDispatcher(IPeerCommunicator peerCommunicator, int lbProcessId) {
 		this.peerCommunicator = peerCommunicator;
-		this.session = session;
+		this.session = ActiveLoadBalancingActivator.getActiveSession();
 		this.lbProcessId = lbProcessId;
 	}
 	

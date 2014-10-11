@@ -26,4 +26,10 @@ public interface ILoadBalancingCommunicator {
 	 * @param listener Listener to remove.
 	 */
 	public void removeLoadBalancingListener(ILoadBalancingListener listener);
+	
+	/**
+	 * Returns name of specific Communicator
+	 * @return Name of Communcator
+	 */
+	public String getName();
 }

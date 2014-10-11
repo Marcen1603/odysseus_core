@@ -5,7 +5,7 @@ import java.util.HashMap;
 
 import net.jxta.peer.PeerID;
 import de.uniol.inf.is.odysseus.peer.distribute.ILogicalQueryPart;
-import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.paralleltrack.communicator.LoadBalancingMessageDispatcher;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.paralleltrack.communicator.ParallelTrackMessageDispatcher;
 
 /**
  * Preserves a loadBalancing Status in the initiating Peer to control LoadBalancing.
@@ -18,13 +18,13 @@ public class LoadBalancingMasterStatus {
 		INITIATING,COPYING,RELINKING_SENDERS,RELINKING_RECEIVERS,SYNCHRONIZING,DELETING,FAILURE
 	}
 	
-	private LoadBalancingMessageDispatcher messageDispatcher;
+	private ParallelTrackMessageDispatcher messageDispatcher;
 	
-	public LoadBalancingMessageDispatcher getMessageDispatcher() {
+	public ParallelTrackMessageDispatcher getMessageDispatcher() {
 		return messageDispatcher;
 	}
 	public void setMessageDispatcher(
-			LoadBalancingMessageDispatcher messageDispatcher) {
+			ParallelTrackMessageDispatcher messageDispatcher) {
 		this.messageDispatcher = messageDispatcher;
 	}
 

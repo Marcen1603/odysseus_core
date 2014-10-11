@@ -13,13 +13,13 @@ import net.jxta.peer.PeerID;
 public class LoadBalancingFinishedListener implements Observer {
 	private final PeerID initiatingPeer;
 	private final String pipeId;
-	private final LoadBalancingMessageDispatcher dispatcher;
+	private final ParallelTrackMessageDispatcher dispatcher;
 	
 	/**
 	 * Constructor
 	 * @param peerId Peer to inform (initiating Peer)
 	 */
-	LoadBalancingFinishedListener(LoadBalancingMessageDispatcher dispatcher, PeerID peerId, String pipeId) {
+	LoadBalancingFinishedListener(ParallelTrackMessageDispatcher dispatcher, PeerID peerId, String pipeId) {
 		this.initiatingPeer = peerId;
 		this.dispatcher = dispatcher;
 		this.pipeId = pipeId;
