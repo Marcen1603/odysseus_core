@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.paralleltrack.protocol;
+package de.uniol.inf.is.odysseus.peer.loadbalancing.active.movingstate.protocol;
 
 import java.util.Collection;
 
@@ -11,11 +11,11 @@ import de.uniol.inf.is.odysseus.core.collection.Context;
 import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicator;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.common.LoadBalancingHelper;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.common.LoadBalancingStatusCache;
-import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.paralleltrack.communicator.ParallelTrackCommunicatorImpl;
-import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.paralleltrack.communicator.ParallelTrackHelper;
-import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.paralleltrack.communicator.ParallelTrackMessageDispatcher;
-import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.paralleltrack.messages.LoadBalancingInstructionMessage;
-import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.paralleltrack.status.ParallelTrackSlaveStatus;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.active.movingstate.communicator.MovingStateCommunicatorImpl;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.active.movingstate.communicator.MovingStateHelper;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.active.movingstate.communicator.MovingStateMessageDispatcher;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.active.movingstate.messages.LoadBalancingInstructionMessage;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.active.movingstate.status.MovingStateSlaveStatus;
 
 /**
  * Handles Instruction messages, sent from initiation Master Peer to Slave Peers.
@@ -37,13 +37,13 @@ public class InstructionHandler {
 		LOG.debug("Got Instruction for Process:" + instruction.getLoadBalancingProcessId());
 		
 		int lbProcessId = instruction.getLoadBalancingProcessId();
-		ParallelTrackMessageDispatcher dispatcher = null;
+		MovingStateMessageDispatcher dispatcher = null;
 		
-		ParallelTrackSlaveStatus status = (ParallelTrackSlaveStatus)LoadBalancingStatusCache
+		MovingStateSlaveStatus status = (MovingStateSlaveStatus)LoadBalancingStatusCache
 				.getInstance().getSlaveStatus(senderPeer, lbProcessId);
 		
 
-		IPeerCommunicator peerCommunicator = ParallelTrackCommunicatorImpl.getPeerCommunicator();
+		IPeerCommunicator peerCommunicator = MovingStateCommunicatorImpl.getPeerCommunicator();
 		
 		
 		boolean isSender = true;
@@ -59,11 +59,11 @@ public class InstructionHandler {
 			LOG.debug("Got INITIATE_LOADBALANCING");
 			
 			if (status == null) {
-				status = new ParallelTrackSlaveStatus(
-						ParallelTrackSlaveStatus.INVOLVEMENT_TYPES.VOLUNTEERING_PEER,
-						ParallelTrackSlaveStatus.LB_PHASES.WAITING_FOR_ADD,
+				status = new MovingStateSlaveStatus(
+						MovingStateSlaveStatus.INVOLVEMENT_TYPES.VOLUNTEERING_PEER,
+						MovingStateSlaveStatus.LB_PHASES.WAITING_FOR_ADD,
 						senderPeer, lbProcessId,
-						new ParallelTrackMessageDispatcher(peerCommunicator, lbProcessId));
+						new MovingStateMessageDispatcher(peerCommunicator, lbProcessId));
 				
 				
 				
@@ -87,12 +87,12 @@ public class InstructionHandler {
 			}
 			
 			if (status.getPhase().equals(
-					ParallelTrackSlaveStatus.LB_PHASES.WAITING_FOR_ADD)) {
+					MovingStateSlaveStatus.LB_PHASES.WAITING_FOR_ADD)) {
 				
 				LOG.debug("PQL received:");
 				LOG.debug(instruction.getPQLQuery());
 				
-				status.setPhase(ParallelTrackSlaveStatus.LB_PHASES.WAITING_FOR_SYNC);
+				status.setPhase(MovingStateSlaveStatus.LB_PHASES.WAITING_FOR_SYNC);
 				dispatcher = status.getMessageDispatcher();
 				dispatcher.stopRunningJob();
 				try {
@@ -115,17 +115,17 @@ public class InstructionHandler {
 			LOG.debug("Got COPY_RECEIVER or COPY_SENDER");
 			// Create Status if none exist
 			if (status == null) {
-				status = new ParallelTrackSlaveStatus(
-						ParallelTrackSlaveStatus.INVOLVEMENT_TYPES.PEER_WITH_SENDER_OR_RECEIVER,
-						ParallelTrackSlaveStatus.LB_PHASES.WAITING_FOR_SYNC,
+				status = new MovingStateSlaveStatus(
+						MovingStateSlaveStatus.INVOLVEMENT_TYPES.PEER_WITH_SENDER_OR_RECEIVER,
+						MovingStateSlaveStatus.LB_PHASES.WAITING_FOR_SYNC,
 						senderPeer, lbProcessId,
-						new ParallelTrackMessageDispatcher(peerCommunicator,lbProcessId));
+						new MovingStateMessageDispatcher(peerCommunicator,lbProcessId));
 				LoadBalancingStatusCache.getInstance().storeSlaveStatus(
 						senderPeer, lbProcessId, status);
 			}
 			// Process Pipe only if not already processed:
 			if (status.getPhase().equals(
-					ParallelTrackSlaveStatus.LB_PHASES.WAITING_FOR_SYNC)
+					MovingStateSlaveStatus.LB_PHASES.WAITING_FOR_SYNC)
 					&& !status.isPipeKnown(instruction.getNewPipeId())) {
 				
 				
@@ -135,7 +135,7 @@ public class InstructionHandler {
 						instruction.getOldPipeId());
 				dispatcher = status.getMessageDispatcher();
 				try {
-					ParallelTrackHelper.findAndCopyLocalJxtaOperator(status,isSender,
+					MovingStateHelper.findAndCopyLocalJxtaOperator(status,isSender,
 							instruction.getNewPeerId(),
 							instruction.getOldPipeId(),
 							instruction.getNewPipeId());

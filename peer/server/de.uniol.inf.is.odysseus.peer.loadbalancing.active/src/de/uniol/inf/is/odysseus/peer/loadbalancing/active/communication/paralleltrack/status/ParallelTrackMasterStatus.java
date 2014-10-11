@@ -5,6 +5,7 @@ import java.util.HashMap;
 
 import net.jxta.peer.PeerID;
 import de.uniol.inf.is.odysseus.peer.distribute.ILogicalQueryPart;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.common.ILoadBalancingMasterStatus;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.paralleltrack.communicator.ParallelTrackMessageDispatcher;
 
 /**
@@ -12,7 +13,11 @@ import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.parallel
  * @author Carsten Cordes
  *
  */
-public class LoadBalancingMasterStatus {
+public class ParallelTrackMasterStatus implements ILoadBalancingMasterStatus {
+	
+	private final String COMMUNICATOR_NAME = "ParallelTrack";
+	
+	
 	
 	public enum LB_PHASES {
 		INITIATING,COPYING,RELINKING_SENDERS,RELINKING_RECEIVERS,SYNCHRONIZING,DELETING,FAILURE
@@ -105,6 +110,10 @@ public class LoadBalancingMasterStatus {
 	}
 	public void setReplacedPipes(HashMap<String, String> replacedPipes) {
 		this.replacedPipes = replacedPipes;
+	}
+	@Override
+	public String getCommunicationStrategy() {
+		return COMMUNICATOR_NAME;
 	}
 	
 	

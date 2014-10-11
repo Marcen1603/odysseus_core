@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.paralleltrack.protocol;
+package de.uniol.inf.is.odysseus.peer.loadbalancing.active.movingstate.protocol;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -11,12 +11,12 @@ import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicator;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.common.LoadBalancingHelper;
-import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.paralleltrack.communicator.ParallelTrackCommunicatorImpl;
-import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.paralleltrack.communicator.ParallelTrackMessageDispatcher;
-import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.paralleltrack.messages.LoadBalancingAbortMessage;
-import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.paralleltrack.status.ParallelTrackMasterStatus;
-import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.paralleltrack.status.ParallelTrackSlaveStatus;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.common.LoadBalancingStatusCache;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.active.movingstate.communicator.MovingStateCommunicatorImpl;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.active.movingstate.communicator.MovingStateMessageDispatcher;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.active.movingstate.messages.LoadBalancingAbortMessage;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.active.movingstate.status.MovingStateMasterStatus;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.active.movingstate.status.MovingStateSlaveStatus;
 
 /**
  * Message Handler for Abort Messages. If AbortInstruction -> SlavePeer handles it, if AbortResponse -> Master Peer stops sending Messages to according slave Peer.
@@ -62,25 +62,25 @@ public class AbortHandler {
 		
 		
 		int lbProcessId = abortMessage.getLoadBalancingProcessId();
-		ParallelTrackSlaveStatus status = (ParallelTrackSlaveStatus)LoadBalancingStatusCache
+		MovingStateSlaveStatus status = (MovingStateSlaveStatus)LoadBalancingStatusCache
 				.getInstance().getSlaveStatus(senderPeer, lbProcessId);
 		
 		//Only send Ack. if status no longer active.
 		if(status==null) {
 			LOG.debug("Status already null. Sending ABORT_RESPONSE on improvised Message Dispatcher.");
-			IPeerCommunicator peerCommunicator = ParallelTrackCommunicatorImpl.getPeerCommunicator();
-			ParallelTrackMessageDispatcher improvisedDispatcher = new ParallelTrackMessageDispatcher(peerCommunicator,abortMessage.getLoadBalancingProcessId());
+			IPeerCommunicator peerCommunicator = MovingStateCommunicatorImpl.getPeerCommunicator();
+			MovingStateMessageDispatcher improvisedDispatcher = new MovingStateMessageDispatcher(peerCommunicator,abortMessage.getLoadBalancingProcessId());
 			improvisedDispatcher.sendAbortResponse(senderPeer);
 			return;
 		}
 		
-		ParallelTrackMessageDispatcher dispatcher = status.getMessageDispatcher();
+		MovingStateMessageDispatcher dispatcher = status.getMessageDispatcher();
 		
 		//Ignore Message if already aborting.
-		if(!(status.getPhase()==ParallelTrackSlaveStatus.LB_PHASES.ABORT)) {
+		if(!(status.getPhase()==MovingStateSlaveStatus.LB_PHASES.ABORT)) {
 			LOG.error("Received Abort.");
 			dispatcher.stopAllMessages();
-			status.setPhase(ParallelTrackSlaveStatus.LB_PHASES.ABORT);
+			status.setPhase(MovingStateSlaveStatus.LB_PHASES.ABORT);
 			dispatcher.sendAbortResponse(senderPeer);
 			switch (status.getInvolvementType()) {
 	
@@ -119,25 +119,25 @@ public class AbortHandler {
 	 */
 	private static void finishAbort(int lbProcessId) {
 		
-		ParallelTrackMasterStatus status = (ParallelTrackMasterStatus)LoadBalancingStatusCache.getInstance().getStatusForLocalProcess(lbProcessId);
+		MovingStateMasterStatus status = (MovingStateMasterStatus)LoadBalancingStatusCache.getInstance().getStatusForLocalProcess(lbProcessId);
 		if(status!=null) {
 			LOG.info("LoadBalancing failed.");
 			LoadBalancingStatusCache.getInstance().deleteLocalStatus(status.getProcessId());
-			ParallelTrackCommunicatorImpl.getInstance().notifyFinished();
+			MovingStateCommunicatorImpl.getInstance().notifyFinished();
 		}
 	}
 	
 
 	public static void stopSendingAbort(LoadBalancingAbortMessage abortMessage,
 			PeerID senderPeer) {
-		ParallelTrackMasterStatus status = (ParallelTrackMasterStatus)LoadBalancingStatusCache.getInstance().getStatusForLocalProcess(abortMessage.getLoadBalancingProcessId());
+		MovingStateMasterStatus status = (MovingStateMasterStatus)LoadBalancingStatusCache.getInstance().getStatusForLocalProcess(abortMessage.getLoadBalancingProcessId());
 		
 		LOG.debug("Stop Sending Abort called.");
 		
 		
 		if(status!=null) {
 			LOG.debug("Stop Sending Abort to " + senderPeer);
-			ParallelTrackMessageDispatcher dispatcher = status.getMessageDispatcher();
+			MovingStateMessageDispatcher dispatcher = status.getMessageDispatcher();
 			dispatcher.stopRunningJob(senderPeer.toString());
 			
 			if(dispatcher.getNumberOfRunningJobs()==0) {

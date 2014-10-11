@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.paralleltrack.communicator;
+package de.uniol.inf.is.odysseus.peer.loadbalancing.active.movingstate.communicator;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -35,27 +35,27 @@ import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.common.I
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.common.LoadBalancingException;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.common.LoadBalancingHelper;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.common.OutgoingConnection;
-import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.paralleltrack.status.ParallelTrackMasterStatus;
-import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.paralleltrack.status.ParallelTrackSlaveStatus;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.active.movingstate.status.MovingStateMasterStatus;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.active.movingstate.status.MovingStateSlaveStatus;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.physicaloperator.LoadBalancingSynchronizerPO;
 
-public class ParallelTrackHelper {
+public class MovingStateHelper {
 	
 
 	private static final Logger LOG = LoggerFactory
-			.getLogger(ParallelTrackHelper.class);
+			.getLogger(MovingStateHelper.class);
 	
 	/**
 	 * Sends abort Message to all Peers involved in LoadBalancing Process
 	 * 
 	 * @param status
 	 */
-	public static void notifyInvolvedPeers(ParallelTrackMasterStatus status) {
+	public static void notifyInvolvedPeers(MovingStateMasterStatus status) {
 
-		IMessageDeliveryFailedListener deliveryFailedListener = ParallelTrackCommunicatorImpl
+		IMessageDeliveryFailedListener deliveryFailedListener = MovingStateCommunicatorImpl
 				.getInstance();
 
-		status.setPhase(ParallelTrackMasterStatus.LB_PHASES.FAILURE);
+		status.setPhase(MovingStateMasterStatus.LB_PHASES.FAILURE);
 		// Get Distinct List of involved Peers:
 		ArrayList<PeerID> involvedPeers = new ArrayList<PeerID>(
 				new HashSet<PeerID>(status.getPeersForPipe().values()));
@@ -73,14 +73,14 @@ public class ParallelTrackHelper {
 	 * @param status
 	 *            Status
 	 */
-	public static void notifyOutgoingPeers(ParallelTrackMasterStatus status) {
+	public static void notifyOutgoingPeers(MovingStateMasterStatus status) {
 
-		IMessageDeliveryFailedListener deliveryFailedListener = ParallelTrackCommunicatorImpl.getInstance();
+		IMessageDeliveryFailedListener deliveryFailedListener = MovingStateCommunicatorImpl.getInstance();
 		
 		String volunteeringPeer = status.getVolunteeringPeer().toString();
 		ILogicalQueryPart modifiedQueryPart = status.getModifiedPart();
 		HashMap<String, String> replacedPipes = status.getReplacedPipes();
-		ParallelTrackMessageDispatcher dispatcher = status
+		MovingStateMessageDispatcher dispatcher = status
 				.getMessageDispatcher();
 
 		HashMap<String,PeerID> peersForPipe = new HashMap<String,PeerID>();
@@ -110,14 +110,14 @@ public class ParallelTrackHelper {
 	 * @param status
 	 *            Status
 	 */
-	public static void notifyIncomingPeers(ParallelTrackMasterStatus status) {
+	public static void notifyIncomingPeers(MovingStateMasterStatus status) {
 
-		IMessageDeliveryFailedListener deliveryFailedListener = ParallelTrackCommunicatorImpl.getInstance();
+		IMessageDeliveryFailedListener deliveryFailedListener = MovingStateCommunicatorImpl.getInstance();
 		
 		String volunteeringPeer = status.getVolunteeringPeer().toString();
 		ILogicalQueryPart modifiedQueryPart = status.getModifiedPart();
 		HashMap<String, String> replacedPipes = status.getReplacedPipes();
-		ParallelTrackMessageDispatcher dispatcher = status
+		MovingStateMessageDispatcher dispatcher = status
 				.getMessageDispatcher();
 
 		HashMap<String,PeerID> peersForPipe = status.getPeersForPipe();
@@ -156,11 +156,11 @@ public class ParallelTrackHelper {
 	 * @Param lbProcessId LoadBalancingProcessId.
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public static void findAndCopyLocalJxtaOperator(ParallelTrackSlaveStatus status,
+	public static void findAndCopyLocalJxtaOperator(MovingStateSlaveStatus status,
 			boolean isSender, String newPeerId, String oldPipeId,
 			String newPipeId) throws DataTransmissionException, LoadBalancingException{
 		
-		ParallelTrackMessageDispatcher dispatcher = status.getMessageDispatcher();
+		MovingStateMessageDispatcher dispatcher = status.getMessageDispatcher();
 		
 		ILogicalOperator operator = LoadBalancingHelper.getLogicalJxtaOperator(isSender, oldPipeId);
 		
@@ -276,7 +276,7 @@ public class ParallelTrackHelper {
 	 * @param status
 	 * @return
 	 */
-	public static HashMap<String, String> relinkQueryPart(ILogicalQueryPart modifiedPart,ParallelTrackMasterStatus status) {
+	public static HashMap<String, String> relinkQueryPart(ILogicalQueryPart modifiedPart,MovingStateMasterStatus status) {
 		
 		IP2PNetworkManager p2pNetworkManager = ActiveLoadBalancingActivator.getP2pNetworkManager();
 		

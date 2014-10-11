@@ -30,6 +30,8 @@ import de.uniol.inf.is.odysseus.peer.loadbalancing.active.ILoadBalancingStrategy
  *
  */
 public class ActiveLoadbalancingConsole implements CommandProvider {
+	
+	private static String communicator = "ParallelTrack";
 
 	/**
 	 * Logger.
@@ -183,6 +185,7 @@ public class ActiveLoadbalancingConsole implements CommandProvider {
 		sb.append("    stopLB                            - Stops the Load Balancing\n");
 		sb.append("    cpJxtaSender <oldPipeId> <newPipeId> <newPeername> - Tries to copy and install a Sender\n");
 		sb.append("    cpJxtaReceiver <oldPipeId> <newPipeId> <newPeername> - Tries to copy and install a Receiver\n");
+		sb.append("    setLBCommunicator <communicatorName>                 - Sets LoadBalancing Communicator to use\n");
 		return sb.toString();
 	}
 	
@@ -242,8 +245,7 @@ public class ActiveLoadbalancingConsole implements CommandProvider {
 		}
 		ILoadBalancingAllocator allocator = optAllocator.get();
 		
-		//TODO still hardcoded.
-		Optional<ILoadBalancingCommunicator> optCommunicator = ActiveLoadbalancingConsole.determineCommunicator("ParallelTrack");
+		Optional<ILoadBalancingCommunicator> optCommunicator = ActiveLoadbalancingConsole.determineCommunicator(communicator);
 		if(!optCommunicator.isPresent()) {
 			
 			System.out.println(ERROR_COMMUNICATOR + allocatorName);
@@ -265,6 +267,31 @@ public class ActiveLoadbalancingConsole implements CommandProvider {
 			
 			System.out.println("An error occured: " + e.getMessage());
 			
+		}
+		
+	}
+	
+	
+	public void _setLBCommunicator(CommandInterpreter ci) {
+		final String ERROR_USAGE = "Usage: setLBCommunicator <communicatorName>";
+		final String ERROR_NOTFOUND = "Error: No communicator found with name ";
+		
+		String communicatorName = ci.nextArgument();
+		if(Strings.isNullOrEmpty(communicatorName)) {
+			
+			System.out.println(ERROR_USAGE);
+			return;	
+		}
+		Optional<ILoadBalancingCommunicator> optCommunicator = determineCommunicator(communicatorName);
+		if(optCommunicator.isPresent()) {
+			communicator = optCommunicator.get().getName();
+		}
+		else {
+			System.out.println(ERROR_NOTFOUND + communicatorName);
+			System.out.println("Available Communicators are: ");
+			for(ILoadBalancingCommunicator communicator : loadBalancingCommunicators) {
+				System.out.println(communicator.getName());
+			}
 		}
 		
 	}

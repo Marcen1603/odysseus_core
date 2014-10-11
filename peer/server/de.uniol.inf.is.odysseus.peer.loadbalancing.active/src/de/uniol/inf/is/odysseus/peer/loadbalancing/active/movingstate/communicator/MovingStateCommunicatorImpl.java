@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.paralleltrack.communicator;
+package de.uniol.inf.is.odysseus.peer.loadbalancing.active.movingstate.communicator;
 
 import java.util.ArrayList;
 
@@ -16,16 +16,16 @@ import de.uniol.inf.is.odysseus.peer.loadbalancing.active.ILoadBalancingListener
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.common.IMessageDeliveryFailedListener;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.common.LoadBalancingHelper;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.common.LoadBalancingStatusCache;
-import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.paralleltrack.messages.LoadBalancingAbortMessage;
-import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.paralleltrack.messages.LoadBalancingInstructionMessage;
-import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.paralleltrack.messages.LoadBalancingResponseMessage;
-import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.paralleltrack.protocol.AbortHandler;
-import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.paralleltrack.protocol.InstructionHandler;
-import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.paralleltrack.protocol.ResponseHandler;
-import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.paralleltrack.status.ParallelTrackMasterStatus;
-import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.paralleltrack.status.ParallelTrackMasterStatus.LB_PHASES;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.active.movingstate.messages.LoadBalancingAbortMessage;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.active.movingstate.messages.LoadBalancingInstructionMessage;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.active.movingstate.messages.LoadBalancingResponseMessage;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.active.movingstate.protocol.AbortHandler;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.active.movingstate.protocol.InstructionHandler;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.active.movingstate.protocol.ResponseHandler;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.active.movingstate.status.MovingStateMasterStatus;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.active.movingstate.status.MovingStateMasterStatus.LB_PHASES;
 
-public class ParallelTrackCommunicatorImpl implements
+public class MovingStateCommunicatorImpl implements
 		IPeerCommunicatorListener, ILoadBalancingCommunicator, IMessageDeliveryFailedListener{
 
 	/**
@@ -38,13 +38,13 @@ public class ParallelTrackCommunicatorImpl implements
 	/**
 	 * Name of the Communicator
 	 */
-	private final String COMMUNICATOR_NAME = "ParallelTrack";
+	private final String COMMUNICATOR_NAME = "MovingState";
 	
 	/**
 	 * The logger instance for this class.
 	 */
 	private static final Logger LOG = LoggerFactory
-			.getLogger(ParallelTrackCommunicatorImpl.class);
+			.getLogger(MovingStateCommunicatorImpl.class);
 
 
 	/**
@@ -61,14 +61,14 @@ public class ParallelTrackCommunicatorImpl implements
 	/**
 	 * Instance of Communication Listener.
 	 */
-	private static ParallelTrackCommunicatorImpl instance;
+	private static MovingStateCommunicatorImpl instance;
 
 	/**
 	 * Get Instance of Communication Listener
 	 * 
 	 * @return this.
 	 */
-	public static ParallelTrackCommunicatorImpl getInstance() {
+	public static MovingStateCommunicatorImpl getInstance() {
 		return instance;
 	}
 	
@@ -192,12 +192,16 @@ public class ParallelTrackCommunicatorImpl implements
 	public void initiateLoadBalancing(PeerID otherPeer, int queryId) {
 		ILogicalQueryPart partToCopy = LoadBalancingHelper
 				.getInstalledQueryPart(queryId);
-		ParallelTrackMasterStatus status = new ParallelTrackMasterStatus();
+		
+		MovingStateMasterStatus status = new MovingStateMasterStatus();
 		status.setOriginalPart(partToCopy);
-		int lbProcessIdentifier = LoadBalancingStatusCache.getInstance().storeLocalProcess(status);
+		
+		int lbProcessIdentifier = LoadBalancingStatusCache.getInstance()
+				.storeLocalProcess(status);
+		
 		LOG.debug("New LoadBalancing Status created. LoadBalancing Process Id " + lbProcessIdentifier);
 		status.setLogicalQuery(queryId);
-		status.setMessageDispatcher(new ParallelTrackMessageDispatcher(peerCommunicator, lbProcessIdentifier));
+		status.setMessageDispatcher(new MovingStateMessageDispatcher(peerCommunicator, lbProcessIdentifier));
 		status.getMessageDispatcher().sendInitiate(otherPeer,this);
 	}
 
@@ -264,7 +268,7 @@ public class ParallelTrackCommunicatorImpl implements
 		;
 		
 		int lbProcessId = instruction.getLoadBalancingProcessId();
-		ParallelTrackMasterStatus status = (ParallelTrackMasterStatus)LoadBalancingStatusCache.getInstance().getStatusForLocalProcess(lbProcessId);
+		MovingStateMasterStatus status = (MovingStateMasterStatus)LoadBalancingStatusCache.getInstance().getStatusForLocalProcess(lbProcessId);
 		
 		if(status==null) {
 			LOG.debug("Timeout or Failure occured. Current status: null");

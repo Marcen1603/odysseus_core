@@ -1,9 +1,8 @@
-package de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.paralleltrack.status;
+package de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.common;
 
 import java.util.concurrent.ConcurrentHashMap;
 
 import net.jxta.peer.PeerID;
-import de.uniol.inf.is.odysseus.peer.distribute.ILogicalQueryPart;
 
 
 
@@ -18,9 +17,9 @@ public class LoadBalancingStatusCache {
 	/**
 	 * HashMap used to store the QueryParts with a particular id.
 	 */
-	private ConcurrentHashMap<Integer,LoadBalancingMasterStatus> masterStati;
+	private ConcurrentHashMap<Integer,ILoadBalancingMasterStatus> masterStati;
 	
-	private ConcurrentHashMap<PeerID,ConcurrentHashMap<Integer,LoadBalancingSlaveStatus>> slaveStati;
+	private ConcurrentHashMap<PeerID,ConcurrentHashMap<Integer,ILoadBalancingSlaveStatus>> slaveStati;
 
 	/**
 	 * Instance variable
@@ -39,8 +38,8 @@ public class LoadBalancingStatusCache {
 	public static LoadBalancingStatusCache getInstance() {
 		if(instance==null) {
 			instance = new LoadBalancingStatusCache();
-			instance.masterStati = new ConcurrentHashMap<Integer,LoadBalancingMasterStatus>();
-			instance.slaveStati = new ConcurrentHashMap<PeerID,ConcurrentHashMap<Integer,LoadBalancingSlaveStatus>>();
+			instance.masterStati = new ConcurrentHashMap<Integer,ILoadBalancingMasterStatus>();
+			instance.slaveStati = new ConcurrentHashMap<PeerID,ConcurrentHashMap<Integer,ILoadBalancingSlaveStatus>>();
 			instance.counter = 0;
 		}
 		return instance;
@@ -51,16 +50,15 @@ public class LoadBalancingStatusCache {
 	 */
 	private LoadBalancingStatusCache() {
 	}
-
+	
+	
+	
 	/**
-	 * Adds new Status for QueryPart and generates new Id.
-	 * @param part QueryPart to add.
+	 * Adds new Status and generates new Id.
+	 * @param status Status to add.
 	 * @return LoadBalancingProcessId.
 	 */
-	public int createNewLocalProcess(ILogicalQueryPart part) {
-		
-		LoadBalancingMasterStatus status = new LoadBalancingMasterStatus();
-		status.setOriginalPart(part);
+	public int storeLocalProcess(ILoadBalancingMasterStatus status) {
 		status.setProcessId(counter);
 		masterStati.put(counter, status);
 		int loadBalancingProcessId = counter;
@@ -68,7 +66,7 @@ public class LoadBalancingStatusCache {
 		return loadBalancingProcessId;
 	}
 	
-	public  LoadBalancingMasterStatus getStatusForLocalProcess(int loadBalancingProcessId) {
+	public  ILoadBalancingMasterStatus getStatusForLocalProcess(int loadBalancingProcessId) {
 		return masterStati.get(loadBalancingProcessId);
 	}
 	
@@ -77,9 +75,9 @@ public class LoadBalancingStatusCache {
 			masterStati.remove(loadBalancingProcessId);
 	}
 	
-	public LoadBalancingSlaveStatus getSlaveStatus(PeerID peer, int lbProcessId) {
+	public ILoadBalancingSlaveStatus getSlaveStatus(PeerID peer, int lbProcessId) {
 		if(slaveStati.containsKey(peer)) {
-			ConcurrentHashMap<Integer,LoadBalancingSlaveStatus> statiForPeer = slaveStati.get(peer);
+			ConcurrentHashMap<Integer,ILoadBalancingSlaveStatus> statiForPeer = slaveStati.get(peer);
 			if(statiForPeer.containsKey(lbProcessId)) {
 				return statiForPeer.get(lbProcessId);
 			}
@@ -87,11 +85,11 @@ public class LoadBalancingStatusCache {
 		return null;
 	}
 	
-	public boolean storeSlaveStatus(PeerID peer, int lbProcessId, LoadBalancingSlaveStatus status) {
+	public boolean storeSlaveStatus(PeerID peer, int lbProcessId, ILoadBalancingSlaveStatus status) {
 		if(!slaveStati.contains(peer)) {
-			slaveStati.put(peer, new ConcurrentHashMap<Integer,LoadBalancingSlaveStatus>());
+			slaveStati.put(peer, new ConcurrentHashMap<Integer,ILoadBalancingSlaveStatus>());
 		}
-		ConcurrentHashMap<Integer,LoadBalancingSlaveStatus> statiForPeer = slaveStati.get(peer);
+		ConcurrentHashMap<Integer,ILoadBalancingSlaveStatus> statiForPeer = slaveStati.get(peer);
 		if(!statiForPeer.contains(lbProcessId)) {
 			statiForPeer.put(lbProcessId, status);
 			return true;
@@ -101,7 +99,7 @@ public class LoadBalancingStatusCache {
 	
 	public void deleteSlaveStatus(PeerID peer, int lbProcessID) {
 		if(slaveStati.contains(peer)) {
-			ConcurrentHashMap<Integer,LoadBalancingSlaveStatus> statiForPeer = slaveStati.get(peer);
+			ConcurrentHashMap<Integer,ILoadBalancingSlaveStatus> statiForPeer = slaveStati.get(peer);
 			if(statiForPeer.contains(lbProcessID)) {
 				statiForPeer.remove(lbProcessID);
 			}

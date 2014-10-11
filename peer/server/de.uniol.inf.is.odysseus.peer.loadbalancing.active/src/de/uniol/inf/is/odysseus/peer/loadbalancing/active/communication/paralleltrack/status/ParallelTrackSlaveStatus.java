@@ -3,12 +3,13 @@ package de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.paralle
 import java.util.Collection;
 import java.util.concurrent.ConcurrentHashMap;
 
+import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.common.ILoadBalancingSlaveStatus;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.paralleltrack.communicator.ParallelTrackMessageDispatcher;
 import net.jxta.peer.PeerID;
 
-public class LoadBalancingSlaveStatus {
+public class ParallelTrackSlaveStatus implements ILoadBalancingSlaveStatus{
 	
-	
+	private final String COMMUNICATOR_NAME = "ParallelTrack";
 	
 	public enum INVOLVEMENT_TYPES {
 		VOLUNTEERING_PEER,PEER_WITH_SENDER_OR_RECEIVER
@@ -58,7 +59,7 @@ public class LoadBalancingSlaveStatus {
 		return replacedPipes;
 	}
 
-	public LoadBalancingSlaveStatus(INVOLVEMENT_TYPES involvementType, LB_PHASES phase, PeerID initiatingPeer, int lbProcessId, ParallelTrackMessageDispatcher messageDispatcher) {
+	public ParallelTrackSlaveStatus(INVOLVEMENT_TYPES involvementType, LB_PHASES phase, PeerID initiatingPeer, int lbProcessId, ParallelTrackMessageDispatcher messageDispatcher) {
 		this.phase = phase;
 		this.involvementType = involvementType;
 		this.initiatingPeer = initiatingPeer;
@@ -68,13 +69,12 @@ public class LoadBalancingSlaveStatus {
 	}
 
 
-	public LB_PHASES getPhase() {
-		return phase;
-	}
-
-
 	public void setPhase(LB_PHASES phase) {
 		this.phase = phase;
+	}
+	
+	public LB_PHASES getPhase() {
+		return phase;
 	}
 
 
@@ -85,13 +85,20 @@ public class LoadBalancingSlaveStatus {
 	public int getLbProcessId() {
 		return lbProcessId;
 	}
+	
 
-	public PeerID getInitiatingPeer() {
+	public PeerID getMasterPeer() {
 		return initiatingPeer;
 	}
 	
 	public ParallelTrackMessageDispatcher getMessageDispatcher() {
 		return messageDispatcher;
+	}
+
+
+	@Override
+	public String getCommunicatorName() {
+		return COMMUNICATOR_NAME;
 	}
 
 }

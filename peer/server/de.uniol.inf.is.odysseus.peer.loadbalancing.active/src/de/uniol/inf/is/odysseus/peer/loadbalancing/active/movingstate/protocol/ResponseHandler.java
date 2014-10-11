@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.paralleltrack.protocol;
+package de.uniol.inf.is.odysseus.peer.loadbalancing.active.movingstate.protocol;
 
 import net.jxta.peer.PeerID;
 
@@ -12,12 +12,12 @@ import de.uniol.inf.is.odysseus.peer.distribute.ILogicalQueryPart;
 import de.uniol.inf.is.odysseus.peer.distribute.util.LogicalQueryHelper;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.common.LoadBalancingHelper;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.common.LoadBalancingStatusCache;
-import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.paralleltrack.communicator.ParallelTrackCommunicatorImpl;
-import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.paralleltrack.communicator.ParallelTrackHelper;
-import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.paralleltrack.communicator.ParallelTrackMessageDispatcher;
-import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.paralleltrack.messages.LoadBalancingResponseMessage;
-import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.paralleltrack.status.ParallelTrackMasterStatus;
-import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.paralleltrack.status.ParallelTrackMasterStatus.LB_PHASES;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.active.movingstate.communicator.MovingStateCommunicatorImpl;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.active.movingstate.communicator.MovingStateHelper;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.active.movingstate.communicator.MovingStateMessageDispatcher;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.active.movingstate.messages.LoadBalancingResponseMessage;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.active.movingstate.status.MovingStateMasterStatus;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.active.movingstate.status.MovingStateMasterStatus.LB_PHASES;
 
 /**
  * Handles Responses sent by Peers when they finish or fail instructions.
@@ -45,32 +45,32 @@ public class ResponseHandler {
 		LOG.debug("Got response for lbProcess Id " + response.getLoadBalancingProcessId());
 		
 		int loadBalancingProcessId = response.getLoadBalancingProcessId();
-		ParallelTrackMasterStatus status = (ParallelTrackMasterStatus)LoadBalancingStatusCache
+		MovingStateMasterStatus status = (MovingStateMasterStatus)LoadBalancingStatusCache
 				.getInstance().getStatusForLocalProcess(loadBalancingProcessId);
 		
-		ParallelTrackCommunicatorImpl communicationListener = ParallelTrackCommunicatorImpl.getInstance();
+		MovingStateCommunicatorImpl communicationListener = MovingStateCommunicatorImpl.getInstance();
 
 		// LoadBalancing Process is no longer active -> ignore!
 		if (status == null) {
 			return;
 		}
 
-		ParallelTrackMessageDispatcher dispatcher = status
+		MovingStateMessageDispatcher dispatcher = status
 				.getMessageDispatcher();
 
 		switch (response.getMsgType()) {
 		case LoadBalancingResponseMessage.ACK_LOADBALANCING:
 			LOG.debug("Got ACK_LOADBALANCING");
 			if (status.getPhase().equals(
-					ParallelTrackMasterStatus.LB_PHASES.INITIATING)) {
+					MovingStateMasterStatus.LB_PHASES.INITIATING)) {
 				
 				status.setVolunteeringPeer(senderPeer);
-				status.setPhase(ParallelTrackMasterStatus.LB_PHASES.COPYING);
+				status.setPhase(MovingStateMasterStatus.LB_PHASES.COPYING);
 				dispatcher.stopRunningJob();
 
 				ILogicalQueryPart modifiedQueryPart = LoadBalancingHelper
 						.getCopyOfQueryPart(status.getOriginalPart());
-				ParallelTrackHelper
+				MovingStateHelper
 						.relinkQueryPart(modifiedQueryPart,status);
 
 				String pqlFromQueryPart = LogicalQueryHelper
@@ -86,12 +86,12 @@ public class ResponseHandler {
 			// When in Phase copying, the success Message says that Installing
 			// the Query Part on the other Peer was successful.
 			if (status.getPhase().equals(
-					ParallelTrackMasterStatus.LB_PHASES.COPYING)) {
+					MovingStateMasterStatus.LB_PHASES.COPYING)) {
 				dispatcher.sendMsgReceived(senderPeer);
 				dispatcher.stopRunningJob();
-				status.setPhase(ParallelTrackMasterStatus.LB_PHASES.RELINKING_SENDERS);
+				status.setPhase(MovingStateMasterStatus.LB_PHASES.RELINKING_SENDERS);
 				LOG.debug("Relinking Senders.");
-				ParallelTrackHelper.notifyOutgoingPeers(status);
+				MovingStateHelper.notifyOutgoingPeers(status);
 			}
 			break;
 
@@ -100,7 +100,7 @@ public class ResponseHandler {
 			
 			
 			if (status.getPhase().equals(
-					ParallelTrackMasterStatus.LB_PHASES.RELINKING_SENDERS)) {
+					MovingStateMasterStatus.LB_PHASES.RELINKING_SENDERS)) {
 				LOG.debug("Got SUCCESS_DUPLICATE for RECEIVER");
 				dispatcher.sendPipeSuccessReceivedMsg(senderPeer, response.getPipeID());
 				dispatcher.stopRunningJob(response.getPipeID());
@@ -110,13 +110,13 @@ public class ResponseHandler {
 				if (dispatcher.getNumberOfRunningJobs() == 0) {
 					// All success messages received. Yay!
 					status.setPhase(LB_PHASES.RELINKING_RECEIVERS);
-					ParallelTrackHelper.notifyIncomingPeers(status);
+					MovingStateHelper.notifyIncomingPeers(status);
 					LOG.debug("Status: Relinking Receivers.");
 				}
 			}
 			
 			if (status.getPhase().equals(
-					ParallelTrackMasterStatus.LB_PHASES.RELINKING_RECEIVERS)) {
+					LB_PHASES.RELINKING_RECEIVERS)) {
 				LOG.debug("Got SUCCESS_DUPLICATE for SENDER");
 				dispatcher.sendPipeSuccessReceivedMsg(senderPeer, response.getPipeID());
 				dispatcher.stopRunningJob(response.getPipeID());
@@ -205,8 +205,8 @@ public class ResponseHandler {
 	 * Decides what to do when error occurs.
 	 * @param status
 	 */
-	public static void handleError(ParallelTrackMasterStatus status,ParallelTrackCommunicatorImpl communicationListener) {
-		ParallelTrackMessageDispatcher dispatcher = status.getMessageDispatcher();
+	public static void handleError(MovingStateMasterStatus status,MovingStateCommunicatorImpl communicationListener) {
+		MovingStateMessageDispatcher dispatcher = status.getMessageDispatcher();
 		
 		// Handle error depending on current LoadBalancing phase.
 		switch (status.getPhase()) {
@@ -220,7 +220,7 @@ public class ResponseHandler {
 		case RELINKING_SENDERS:
 			// Send Abort to all Peers involved
 			dispatcher.stopAllMessages();
-			ParallelTrackHelper.notifyInvolvedPeers(status);
+			MovingStateHelper.notifyInvolvedPeers(status);
 			break;
 		case SYNCHRONIZING:
 		case DELETING:
@@ -238,10 +238,10 @@ public class ResponseHandler {
 	 * Called after LoadBalancing was finished successfully.
 	 * @param status LoadBalancing Status
 	 */
-	public static void loadBalancingSuccessfullyFinished(ParallelTrackMasterStatus status) {
+	public static void loadBalancingSuccessfullyFinished(MovingStateMasterStatus status) {
 		LOG.info("LoadBalancing successfully finished.");
 		LoadBalancingStatusCache.getInstance().deleteLocalStatus(status.getProcessId());
-		ParallelTrackCommunicatorImpl.getInstance().notifyFinished();
+		MovingStateCommunicatorImpl.getInstance().notifyFinished();
 		
 	}
 	
