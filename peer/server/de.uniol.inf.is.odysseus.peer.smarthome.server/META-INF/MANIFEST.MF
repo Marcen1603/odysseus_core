@@ -8,14 +8,27 @@ Bundle-Vendor: Andrej Albrecht
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Import-Package: com.google.common.base,
  com.google.common.collect,
+ de.uniol.inf.is.odysseus.core.collection,
+ de.uniol.inf.is.odysseus.core.logicaloperator,
+ de.uniol.inf.is.odysseus.core.planmanagement.executor,
+ de.uniol.inf.is.odysseus.core.planmanagement.query,
  de.uniol.inf.is.odysseus.core.server,
+ de.uniol.inf.is.odysseus.core.server.datadictionary,
+ de.uniol.inf.is.odysseus.core.server.planmanagement.executor,
+ de.uniol.inf.is.odysseus.core.server.planmanagement.plan,
+ de.uniol.inf.is.odysseus.core.server.planmanagement.query,
+ de.uniol.inf.is.odysseus.core.server.usermanagement,
+ de.uniol.inf.is.odysseus.core.usermanagement,
  de.uniol.inf.is.odysseus.p2p_new,
  de.uniol.inf.is.odysseus.p2p_new.dictionary,
+ de.uniol.inf.is.odysseus.parser.pql,
+ de.uniol.inf.is.odysseus.parser.pql.generator,
  de.uniol.inf.is.odysseus.peer.smarthome,
  net.jxta.peer,
  org.apache.log4j.spi,
  org.osgi.framework;version="1.3.0",
  org.slf4j
-Service-Component: OSGI-INF/SmartHomeServerPlugIn.xml
-Require-Bundle: Jxta_2.6_Source
+Service-Component: OSGI-INF/SmartHomeServerPlugIn.xml,OSGI-INF/ServerExecutor.xml
+Require-Bundle: Jxta_2.6_Source,
+ de.uniol.inf.is.odysseus.wrapper.rpi.gpio;bundle-version="1.0.0"
 Bundle-ActivationPolicy: lazy

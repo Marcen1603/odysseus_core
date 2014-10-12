@@ -1,6 +1,7 @@
 package de.uniol.inf.is.odysseus.peer.smarthome.server;
 
 import java.io.IOException;
+import java.util.Collection;
 
 import net.jxta.document.Advertisement;
 import net.jxta.document.AdvertisementFactory;
@@ -13,6 +14,10 @@ import org.osgi.framework.BundleContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.collect.UnmodifiableIterator;
+
+import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.p2p_new.IAdvertisementDiscovererListener;
 import de.uniol.inf.is.odysseus.p2p_new.IJxtaServicesProvider;
 import de.uniol.inf.is.odysseus.p2p_new.IMessage;
@@ -23,11 +28,14 @@ import de.uniol.inf.is.odysseus.p2p_new.PeerCommunicationException;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.IP2PDictionary;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.IP2PDictionaryListener;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.SourceAdvertisement;
+import de.uniol.inf.is.odysseus.parser.pql.generator.IPQLGenerator;
 import de.uniol.inf.is.odysseus.peer.smarthome.SmartDeviceConfig;
 import de.uniol.inf.is.odysseus.peer.smarthome.SmartDeviceConfigurationRequestMessage;
 import de.uniol.inf.is.odysseus.peer.smarthome.SmartDeviceConfigurationResponseMessage;
 import de.uniol.inf.is.odysseus.peer.smarthome.SmartDeviceMessage;
-
+import de.uniol.inf.is.odysseus.peer.smarthome.server.service.ServerExecutorService;
+import de.uniol.inf.is.odysseus.peer.smarthome.server.service.SessionManagementService;
+import de.uniol.inf.is.odysseus.core.collection.Context;
 
 public class SmartHomeServerPlugIn implements BundleActivator {
 
@@ -41,6 +49,7 @@ public class SmartHomeServerPlugIn implements BundleActivator {
 	private static SmartDeviceAdvertisementListener smartDeviceAdvertisementListener;
 	private static IJxtaServicesProvider jxtaServicesProvider;
 	private static P2PDictionaryListener p2pDictionaryListener;
+	private static IPQLGenerator pqlGenerator;
 	
 	/*
 	 * (non-Javadoc)
@@ -124,8 +133,11 @@ public class SmartHomeServerPlugIn implements BundleActivator {
 	public static void bindP2PDictionary(IP2PDictionary serv) {
 		p2pDictionary = serv;
 		
-		//p2pDictionaryListener = new P2PDictionaryListener();
-		//p2pDictionary.addListener(p2pDictionaryListener);
+		
+		
+		
+		
+		showActualImportedSourcesAsync();
 		
 		
 		/*
@@ -156,6 +168,30 @@ public class SmartHomeServerPlugIn implements BundleActivator {
 		setAutoimport.setDaemon(true);
 		setAutoimport.start();
 		*/
+	}
+
+	private static void showActualImportedSourcesAsync() {
+		Thread thread = new Thread( new Runnable() {
+			@Override
+			public void run() {
+				waitForP2PNetworkManager();
+				waitForP2PDictionary();
+				waitForPQLGenerator();
+				
+				p2pDictionaryListener = new P2PDictionaryListener();
+				p2pDictionary.addListener(p2pDictionaryListener);
+				
+				UnmodifiableIterator<SourceAdvertisement> iteratorSources = p2pDictionary.getImportedSources().iterator();
+				while(iteratorSources.hasNext()){
+					SourceAdvertisement sourceAdv = iteratorSources.next();
+					
+					LOG.debug("SourceAdv actual imported: "+sourceAdv.getName());
+				}
+			}
+		});
+		thread.setName("SmartHome showActualImportedSourcesAsync Thread");
+		thread.setDaemon(true);
+		thread.start();
 	}
 	
 	// called by OSGi-DS
@@ -221,6 +257,24 @@ public class SmartHomeServerPlugIn implements BundleActivator {
 			}
 		}
 	}
+	
+	private static void waitForP2PDictionary() {
+		while(getP2PDictionary()==null){
+			try{
+				Thread.sleep(100);
+			}catch(InterruptedException e){
+			}
+		}
+	}
+	
+	private static void waitForPQLGenerator() {
+		while(getPQLGenerator()==null){
+			try{
+				Thread.sleep(100);
+			}catch(InterruptedException e){
+			}
+		}
+	}
 
 	// called by OSGi-DS
 	public static void unbindJxtaServicesProvider(IJxtaServicesProvider serv) {
@@ -228,6 +282,22 @@ public class SmartHomeServerPlugIn implements BundleActivator {
 		if (jxtaServicesProvider == serv) {
 			jxtaServicesProvider = null;
 		}
+	}
+	
+	// called by OSGi-DS
+	public static void bindPQLGenerator(IPQLGenerator serv) {
+		pqlGenerator = serv;
+	}
+
+	// called by OSGi-DS
+	public static void unbindPQLGenerator(IPQLGenerator serv) {
+		if (pqlGenerator == serv) {
+			pqlGenerator = null;
+		}
+	}
+	
+	public static IPQLGenerator getPQLGenerator(){
+		return pqlGenerator;
 	}
 	
 	public static IJxtaServicesProvider getJxtaServicesProvider() {
@@ -321,7 +391,7 @@ public class SmartHomeServerPlugIn implements BundleActivator {
 			//System.out.println("SmartHomeServerPlugIn advertisementDiscovered Type:"+advertisement.getAdvType());
 			
 			if(advertisement.getAdvType().equals(SmartDeviceAdvertisement.getAdvertisementType())){
-				LOG.debug("SmartDeviceAdvertisement received!!!");
+				//LOG.debug("SmartDeviceAdvertisement received!!!");
 				
 				/*
 				System.out.println("getIndexFields: ");
@@ -346,6 +416,10 @@ public class SmartHomeServerPlugIn implements BundleActivator {
 	
 	public static class P2PDictionaryListener implements IP2PDictionaryListener
 	{
+		P2PDictionaryListener(){
+			LOG.debug("P2PDictionaryListener()");
+		}
+		
 		@Override
 		public void sourceAdded(IP2PDictionary sender,
 				SourceAdvertisement advertisement) {
@@ -371,8 +445,40 @@ public class SmartHomeServerPlugIn implements BundleActivator {
 			
 			
 			if(sourceName.equals("rpigpiosrc")){
+				//IPQLGenerator
+				//getPQLGenerator().generatePQLStatement();
+				
+				//RPiGPIOSinkAO rpiGPIOSinkAO = new RPiGPIOSinkAO();
+				//rpiGPIOSinkAO.set
+				
+				//ILogicalOperator test = new ILogicalOperator();
+				
+				String viewName = "rpiTest";
+				
+				StringBuilder sb = new StringBuilder();
+				sb.append("#PARSER PQL\n");
+				//sb.append("#ADDQUERY\n");
+				//sb.append("#QNAME Exporting " + viewName + "\n");
+				sb.append("#RUNQUERY\n");
+				sb.append("testSinkOutput = RPIGPIOSINK({sink='rpigpiosink', pin=7},rpigpiosrc)\n");
+				//sb.append(pqlGenerator.generatePQLStatement(rpiGPIOSinkAO));
+				sb.append("\n");
+				String scriptText = sb.toString();
+				
+				Collection<Integer> queryIDs = ServerExecutorService.getServerExecutor().addQuery(scriptText, "OdysseusScript", SessionManagementService.getActiveSession(), "Standard", Context.empty());
+				Integer queryID = queryIDs.iterator().next();
+				
+				IPhysicalQuery physicalQuery = ServerExecutorService.getServerExecutor().getExecutionPlan().getQueryById(queryID);
+				ILogicalQuery logicalQuery = physicalQuery.getLogicalQuery();
+				logicalQuery.setName(viewName);
+				logicalQuery.setParserId("P2P");
+				logicalQuery.setUser(SessionManagementService.getActiveSession());
+				logicalQuery.setQueryText("Exporting " + viewName);
+				
 				
 			}else if(sourceName.equals("raspberrygpiosrc")){
+				
+			}else if(sourceName.equals("bananagpiosrc")){
 				
 			}
 		}
@@ -387,6 +493,8 @@ public class SmartHomeServerPlugIn implements BundleActivator {
 			if(sourceName.equals("rpigpiosrc")){
 				
 			}else if(sourceName.equals("raspberrygpiosrc")){
+				
+			}else if(sourceName.equals("bananagpiosrc")){
 				
 			}
 		}

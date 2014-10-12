@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.wrapper.rpi.gpio.logicaloperator;
 
+
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractSenderAO;
