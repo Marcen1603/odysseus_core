@@ -5,7 +5,6 @@ import java.io.IOException;
 import net.jxta.document.Advertisement;
 import net.jxta.document.AdvertisementFactory;
 import net.jxta.id.IDFactory;
-//import net.jxta.id.IDFactory;
 import net.jxta.peer.PeerID;
 
 import org.osgi.framework.Bundle;
@@ -22,6 +21,8 @@ import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicator;
 import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicatorListener;
 import de.uniol.inf.is.odysseus.p2p_new.PeerCommunicationException;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.IP2PDictionary;
+import de.uniol.inf.is.odysseus.p2p_new.dictionary.IP2PDictionaryListener;
+import de.uniol.inf.is.odysseus.p2p_new.dictionary.SourceAdvertisement;
 import de.uniol.inf.is.odysseus.peer.smarthome.SmartDeviceConfig;
 import de.uniol.inf.is.odysseus.peer.smarthome.SmartDeviceConfigurationRequestMessage;
 import de.uniol.inf.is.odysseus.peer.smarthome.SmartDeviceConfigurationResponseMessage;
@@ -31,19 +32,15 @@ import de.uniol.inf.is.odysseus.peer.smarthome.SmartDeviceMessage;
 public class SmartHomeServerPlugIn implements BundleActivator {
 
 	private static final Logger LOG = LoggerFactory.getLogger(SmartHomeServerPlugIn.class);
-	
 	private static Bundle bundle;
-	
 	public static final String NO_P2P_CONNECTION_TEXT = "<no p2p connection>";
-
-	//private static ISession activeSession;
 	private static IP2PNetworkManager p2pNetworkManager;
 	private static IPeerCommunicator peerCommunicator;
 	private static IP2PDictionary p2pDictionary;
 	private static SmartDeviceConfigurationListener smartDeviceConfigurationListener;
 	private static SmartDeviceAdvertisementListener smartDeviceAdvertisementListener;
-	//private static SmartDeviceAdvertisementCollector smartDeviceAdvCollector = new SmartDeviceAdvertisementCollector();
 	private static IJxtaServicesProvider jxtaServicesProvider;
+	private static P2PDictionaryListener p2pDictionaryListener;
 	
 	/*
 	 * (non-Javadoc)
@@ -65,30 +62,10 @@ public class SmartHomeServerPlugIn implements BundleActivator {
 	
 	// called by OSGi-DS
 	public void activate() {
-		/*
-		try{
-			smartDeviceAdvCollector.start();
-			
-			
-			SmartDeviceAdvertisement adv = new SmartDeviceAdvertisement();
-			adv.setContextName("TestContextName");
-			adv.setPeerName("PeerName blub");
-			//adv.setID(IDFactory.newPipeID(p2pNetworkManager.getLocalPeerGroupID()));
-			adv.setPeerID(p2pNetworkManager.getLocalPeerID());
-			//adv.setPipeID(IDFactory.newPipeID(p2pNetworkManager.getLocalPeerGroupID()));
-			
-			
-			smartDeviceAdvCollector.add(adv);
-			
-		}catch(Exception ex){
-			ex.printStackTrace();
-		}
-		*/
 	}
 	
 	// called by OSGi-DS
 	public void deactivate() {
-		//smartDeviceAdvCollector.stopRunning();
 	}
 	
 	public static Bundle getBundle() {
@@ -99,9 +76,6 @@ public class SmartHomeServerPlugIn implements BundleActivator {
 		if(!AdvertisementFactory.registerAdvertisementInstance(SmartDeviceAdvertisement.getAdvertisementType(), new SmartDeviceAdvertisementInstantiator())){
 			LOG.error("Couldn't register advertisement type: " + SmartDeviceAdvertisement.getAdvertisementType());
 		}
-		
-		//AdvertisementFactory.registerAdvertisementInstance(SmartDeviceContextAwarenessAdvertisement.getAdvertisementType(), new SmartDeviceContextAwarenessAdvertisementInstantiator());
-		
 	}
 	
 	// called by OSGi-DS
@@ -115,6 +89,7 @@ public class SmartHomeServerPlugIn implements BundleActivator {
 	// called by OSGi-DS
 	public static void unbindP2PNetworkManager(IP2PNetworkManager serv) {
 		if (p2pNetworkManager == serv) {
+			p2pNetworkManager.removeAdvertisementListener(smartDeviceAdvertisementListener);
 			p2pNetworkManager = null;
 		}
 	}
@@ -135,7 +110,12 @@ public class SmartHomeServerPlugIn implements BundleActivator {
 	// called by OSGi-DS
 	public static void unbindPeerCommunicator(IPeerCommunicator serv) {
 		if (peerCommunicator == serv) {
-			//peerCommunicator.unregisterMessageType(SmartDeviceMessage.class);
+			peerCommunicator.removeListener(smartDeviceConfigurationListener, SmartDeviceConfigurationResponseMessage.class);
+			peerCommunicator.removeListener(smartDeviceConfigurationListener, SmartDeviceConfigurationRequestMessage.class);
+			peerCommunicator.removeListener(smartDeviceConfigurationListener, SmartDeviceMessage.class);
+			peerCommunicator.unregisterMessageType(SmartDeviceConfigurationResponseMessage.class);
+			peerCommunicator.unregisterMessageType(SmartDeviceConfigurationRequestMessage.class);
+			peerCommunicator.unregisterMessageType(SmartDeviceMessage.class);
 			peerCommunicator = null;
 		}
 	}
@@ -143,18 +123,51 @@ public class SmartHomeServerPlugIn implements BundleActivator {
 	// called by OSGi-DS
 	public static void bindP2PDictionary(IP2PDictionary serv) {
 		p2pDictionary = serv;
+		
+		//p2pDictionaryListener = new P2PDictionaryListener();
+		//p2pDictionary.addListener(p2pDictionaryListener);
+		
+		
+		/*
+		LOG.debug("setAutoimport thread started.");
+		
+		//TODO: only for development!
+		Thread setAutoimport = new Thread(new Runnable() {
+			int timeOver = 0;
+			@Override
+			public void run() {
+				while( timeOver <= 1000*120 ) {
+					if( timeOver % 1000 == 0){
+						LOG.debug("set autoimport in:"+ (1000*120 - timeOver));
+					}
+					try {
+						Thread.sleep(100);
+						timeOver += 100;
+					} catch (InterruptedException e) {
+					}
+				}
+				
+				LOG.debug("set autoimport to true");
+				
+				System.setProperty("peer.autoimport", "true");//TODO: only for development! Autoimport after adding the listener.
+			}
+		});
+		setAutoimport.setName("Set autoimport to true in 10sec.");
+		setAutoimport.setDaemon(true);
+		setAutoimport.start();
+		*/
 	}
 	
 	// called by OSGi-DS
 	public static void unbindP2PDictionary(IP2PDictionary serv) {
 		if (p2pDictionary == serv) {
+			p2pDictionary.removeListener(p2pDictionaryListener);
 			p2pDictionary = null;
 		}
 	}
 	
 	// called by OSGi-DS
 	public static void bindJxtaServicesProvider(IJxtaServicesProvider serv) {
-		LOG.debug("bindJxtaServicesProvider");
 		jxtaServicesProvider = serv;
 		
 		publishTESTAdvertisementAsync();
@@ -168,7 +181,7 @@ public class SmartHomeServerPlugIn implements BundleActivator {
 				waitForJxtaServicesProvider();
 						
 				if(getP2PNetworkManager()!=null  && getJxtaServicesProvider()!=null){
-					LOG.debug("publishTESTAdvertisement()");
+					LOG.debug("publishTESTAdvertisement():");
 					
 					try {
 						SmartDeviceAdvertisement adv = (SmartDeviceAdvertisement)AdvertisementFactory.newAdvertisement(SmartDeviceAdvertisement.getAdvertisementType());
@@ -177,24 +190,12 @@ public class SmartHomeServerPlugIn implements BundleActivator {
 						adv.setPeerID(p2pNetworkManager.getLocalPeerID());
 						
 						
-						/*
-						//SmartDeviceAdvertisement adv = new SmartDeviceAdvertisement();
-						adv.setContextName("TestContextName");
-						adv.setPeerName("PeerName blub");
-						////adv.setID(IDFactory.newPipeID(p2pNetworkManager.getLocalPeerGroupID()));
-						adv.setPeerID(p2pNetworkManager.getLocalPeerID());
-						
-						////smartDeviceAdvCollector.add(adv);
-						*/
-						
 						getJxtaServicesProvider().publish(adv);
 						getJxtaServicesProvider().remotePublish(adv);
-						//jxtaServicesProvider.publishInfinite(adv);
 					} catch (IOException e) {
 						e.printStackTrace();
 					}
 				}
-				
 			}
 
 			private void waitForJxtaServicesProvider() {
@@ -266,6 +267,7 @@ public class SmartHomeServerPlugIn implements BundleActivator {
 		public void receivedMessage(IPeerCommunicator communicator, PeerID senderPeer, IMessage message) {
 			if(message instanceof SmartDeviceMessage){
 				SmartDeviceMessage smessage = (SmartDeviceMessage)message;
+				
 				
 				String testMessage = "Echo! from Server";
 				
@@ -339,6 +341,66 @@ public class SmartHomeServerPlugIn implements BundleActivator {
 		public void updateAdvertisements() {
 			//System.out.println("SmartHomeServerPlugIn updateAdvertisements");
 			
+		}
+	}
+	
+	public static class P2PDictionaryListener implements IP2PDictionaryListener
+	{
+		@Override
+		public void sourceAdded(IP2PDictionary sender,
+				SourceAdvertisement advertisement) {
+			LOG.debug("sourceAdded");
+		}
+
+		@Override
+		public void sourceRemoved(IP2PDictionary sender,
+				SourceAdvertisement advertisement) {
+			LOG.debug("sourceRemoved");
+		}
+
+		@Override
+		public void sourceImported(IP2PDictionary sender,
+				SourceAdvertisement advertisement, String sourceName) {
+			LOG.debug("sourceImported sourceName:"+sourceName);
+			
+			//Wenn der Name der Quelle "rpigpiosrc" lautet, dann starte Anfrage:
+			//#PARSER PQL
+			//#RUNQUERY         
+			//testSinkOutput = RPIGPIOSINK({sink='rpigpiosink', pin=7},rpigpiosrc)
+			
+			
+			
+			if(sourceName.equals("rpigpiosrc")){
+				
+			}else if(sourceName.equals("raspberrygpiosrc")){
+				
+			}
+		}
+
+		@Override
+		public void sourceImportRemoved(IP2PDictionary sender,
+				SourceAdvertisement advertisement, String sourceName) {
+			LOG.debug("sourceImportRemoved sourceName:"+sourceName);
+			
+			//Anfragen wieder entfernen:
+			
+			if(sourceName.equals("rpigpiosrc")){
+				
+			}else if(sourceName.equals("raspberrygpiosrc")){
+				
+			}
+		}
+
+		@Override
+		public void sourceExported(IP2PDictionary sender,
+				SourceAdvertisement advertisement, String sourceName) {
+			LOG.debug("sourceExported");
+		}
+
+		@Override
+		public void sourceExportRemoved(IP2PDictionary sender,
+				SourceAdvertisement advertisement, String sourceName) {
+			LOG.debug("sourceExportRemoved");
 		}
 	}
 }

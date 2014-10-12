@@ -31,6 +31,7 @@ public class RPiGPIOTransportHandler extends AbstractSimplePullTransportHandler<
 	//private String pullState = "low";
 
 	private static GpioController gpioController;
+	@SuppressWarnings("unused")
 	private Pin _pin = RaspiPin.GPIO_07;
 
 	private boolean flagExceptionThrown = false;//Exception was not thrown at this point.
