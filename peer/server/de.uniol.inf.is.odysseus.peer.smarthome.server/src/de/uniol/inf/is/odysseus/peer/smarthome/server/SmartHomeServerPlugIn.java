@@ -133,8 +133,8 @@ public class SmartHomeServerPlugIn implements BundleActivator {
 	public static void bindP2PDictionary(IP2PDictionary serv) {
 		p2pDictionary = serv;
 		
-		
-		
+		p2pDictionaryListener = new P2PDictionaryListener();
+		p2pDictionary.addListener(p2pDictionaryListener);
 		
 		
 		showActualImportedSourcesAsync();
@@ -178,8 +178,7 @@ public class SmartHomeServerPlugIn implements BundleActivator {
 				waitForP2PDictionary();
 				waitForPQLGenerator();
 				
-				p2pDictionaryListener = new P2PDictionaryListener();
-				p2pDictionary.addListener(p2pDictionaryListener);
+				
 				
 				UnmodifiableIterator<SourceAdvertisement> iteratorSources = p2pDictionary.getImportedSources().iterator();
 				while(iteratorSources.hasNext()){
@@ -449,6 +448,8 @@ public class SmartHomeServerPlugIn implements BundleActivator {
 				
 				
 			}else if(sourceName.equals("raspberrygpiosrc")){
+				//LOG.debug("raspberrygpiosrc");
+				
 				//IPQLGenerator
 				//getPQLGenerator().generatePQLStatement();
 				
@@ -464,7 +465,7 @@ public class SmartHomeServerPlugIn implements BundleActivator {
 				//sb.append("#ADDQUERY\n");
 				//sb.append("#QNAME Exporting " + viewName + "\n");
 				sb.append("#RUNQUERY\n");
-				sb.append("rpigpiosinkoutput = RPIGPIOSINK({sink='rpigpiosinkoutput', pin=7},raspberrygpiosrc)\n");
+				sb.append("rpigpiosinkoutput = RPIGPIOSINK({sink='rpigpiosink', pin=7},raspberrygpiosrc)\n");
 				//sb.append(pqlGenerator.generatePQLStatement(rpiGPIOSinkAO));
 				sb.append("\n");
 				String scriptText = sb.toString();
@@ -478,6 +479,8 @@ public class SmartHomeServerPlugIn implements BundleActivator {
 				logicalQuery.setParserId("P2P");
 				logicalQuery.setUser(SessionManagementService.getActiveSession());
 				logicalQuery.setQueryText("Exporting " + viewName);
+				
+				
 				
 			}else if(sourceName.equals("bananagpiosrc")){
 				
