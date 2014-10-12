@@ -464,7 +464,7 @@ public class SmartHomeServerPlugIn implements BundleActivator {
 				//sb.append("#ADDQUERY\n");
 				//sb.append("#QNAME Exporting " + viewName + "\n");
 				sb.append("#RUNQUERY\n");
-				sb.append("testSinkOutput = RPIGPIOSINK({sink='rpigpiosink', pin=7},rpigpiosrc)\n");
+				sb.append("rpigpiosinkoutput = RPIGPIOSINK({sink='rpigpiosinkoutput', pin=7},raspberrygpiosrc)\n");
 				//sb.append(pqlGenerator.generatePQLStatement(rpiGPIOSinkAO));
 				sb.append("\n");
 				String scriptText = sb.toString();
