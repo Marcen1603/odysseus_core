@@ -445,6 +445,10 @@ public class SmartHomeServerPlugIn implements BundleActivator {
 			
 			
 			if(sourceName.equals("rpigpiosrc")){
+				
+				
+				
+			}else if(sourceName.equals("raspberrygpiosrc")){
 				//IPQLGenerator
 				//getPQLGenerator().generatePQLStatement();
 				
@@ -474,9 +478,6 @@ public class SmartHomeServerPlugIn implements BundleActivator {
 				logicalQuery.setParserId("P2P");
 				logicalQuery.setUser(SessionManagementService.getActiveSession());
 				logicalQuery.setQueryText("Exporting " + viewName);
-				
-				
-			}else if(sourceName.equals("raspberrygpiosrc")){
 				
 			}else if(sourceName.equals("bananagpiosrc")){
 				
