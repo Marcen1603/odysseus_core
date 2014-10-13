@@ -415,6 +415,8 @@ public class SmartHomeServerPlugIn implements BundleActivator {
 	
 	public static class P2PDictionaryListener implements IP2PDictionaryListener
 	{
+		private Integer forwardButtonStateToLEDQueryID;
+
 		P2PDictionaryListener(){
 			LOG.debug("P2PDictionaryListener()");
 		}
@@ -445,11 +447,12 @@ public class SmartHomeServerPlugIn implements BundleActivator {
 			
 			if(sourceName.equals("rpigpiosrc")){
 				
-				
-				
 			}else if(sourceName.equals("raspberrygpiosrc")){
 				//LOG.debug("raspberrygpiosrc");
 				
+			}else if(sourceName.equals("bananagpiosrc")){
+				
+			}else if(sourceName.equals("rpigpiosrcbuttonautoexport")){
 				//IPQLGenerator
 				//getPQLGenerator().generatePQLStatement();
 				
@@ -465,25 +468,20 @@ public class SmartHomeServerPlugIn implements BundleActivator {
 				//sb.append("#ADDQUERY\n");
 				//sb.append("#QNAME Exporting " + viewName + "\n");
 				sb.append("#RUNQUERY\n");
-				sb.append("rpigpiosinkoutput = RPIGPIOSINK({sink='rpigpiosink', pin=7},raspberrygpiosrc)\n");
+				sb.append("rpigpiosinkoutput = RPIGPIOSINK({sink='rpigpiosink', pin=7},rpigpiosrcbuttonautoexport)\n");
 				//sb.append(pqlGenerator.generatePQLStatement(rpiGPIOSinkAO));
 				sb.append("\n");
 				String scriptText = sb.toString();
 				
 				Collection<Integer> queryIDs = ServerExecutorService.getServerExecutor().addQuery(scriptText, "OdysseusScript", SessionManagementService.getActiveSession(), "Standard", Context.empty());
-				Integer queryID = queryIDs.iterator().next();
+				forwardButtonStateToLEDQueryID = queryIDs.iterator().next();
 				
-				IPhysicalQuery physicalQuery = ServerExecutorService.getServerExecutor().getExecutionPlan().getQueryById(queryID);
+				IPhysicalQuery physicalQuery = ServerExecutorService.getServerExecutor().getExecutionPlan().getQueryById(forwardButtonStateToLEDQueryID);
 				ILogicalQuery logicalQuery = physicalQuery.getLogicalQuery();
 				logicalQuery.setName(viewName);
 				logicalQuery.setParserId("P2P");
 				logicalQuery.setUser(SessionManagementService.getActiveSession());
 				logicalQuery.setQueryText("Exporting " + viewName);
-				
-				
-				
-			}else if(sourceName.equals("bananagpiosrc")){
-				
 			}
 		}
 
@@ -500,6 +498,10 @@ public class SmartHomeServerPlugIn implements BundleActivator {
 				
 			}else if(sourceName.equals("bananagpiosrc")){
 				
+			}else if(sourceName.equals("rpigpiosrcbuttonautoexport")){
+				if(forwardButtonStateToLEDQueryID!=null){
+					ServerExecutorService.getServerExecutor().removeQuery(forwardButtonStateToLEDQueryID, SessionManagementService.getActiveSession());
+				}
 			}
 		}
 
