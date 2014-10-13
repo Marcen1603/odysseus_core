@@ -149,6 +149,8 @@ public class SmartDeviceConfigurationView extends ViewPart implements IPeerCommu
 		
 		try{
 			SmartHomeRCPActivator.getPeerCommunicator().registerMessageType(SmartDeviceConfigurationResponseMessage.class);
+			SmartHomeRCPActivator.getPeerCommunicator().registerMessageType(SmartDeviceConfigurationRequestMessage.class);
+			
 			SmartHomeRCPActivator.getPeerCommunicator().addListener(this, SmartDeviceConfigurationResponseMessage.class);
 		}catch(NullPointerException ex){
 			ex.printStackTrace();

@@ -443,12 +443,15 @@ public class SmartHomeServerPlugIn implements BundleActivator {
 			//#RUNQUERY         
 			//testSinkOutput = RPIGPIOSINK({sink='rpigpiosink', pin=7},rpigpiosrc)
 			
-			
+			if(advertisement.isLocal()){
+				LOG.debug("advertisement.isLocal()");
+				return;
+			}
 			
 			if(sourceName.equals("rpigpiosrc")){
 				
 			}else if(sourceName.equals("raspberrygpiosrc")){
-				//LOG.debug("raspberrygpiosrc");
+				LOG.debug("raspberrygpiosrc");
 				
 			}else if(sourceName.equals("bananagpiosrc")){
 				
