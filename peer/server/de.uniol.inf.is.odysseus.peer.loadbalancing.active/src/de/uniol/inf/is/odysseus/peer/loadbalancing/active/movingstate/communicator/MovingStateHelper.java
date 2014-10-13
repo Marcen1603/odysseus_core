@@ -37,6 +37,7 @@ import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.common.L
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.common.OutgoingConnection;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.movingstate.status.MovingStateMasterStatus;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.movingstate.status.MovingStateSlaveStatus;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.active.physicaloperator.LoadBalancingBufferPO;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.physicaloperator.LoadBalancingSynchronizerPO;
 
 public class MovingStateHelper {
@@ -64,6 +65,22 @@ public class MovingStateHelper {
 			status.getMessageDispatcher().sendAbortInstruction(peer,
 					deliveryFailedListener);
 		}
+	}
+	
+	
+	
+	@SuppressWarnings("rawtypes")
+	public static void insertBuffer(String pipeID) {
+		IPhysicalOperator operator = LoadBalancingHelper.getPhysicalJxtaOperator(true, pipeID);
+		if(operator==null) {
+			LOG.error("No Sender with PipeID " + pipeID+ " found.");
+			//TODO Error
+			return;
+		}
+		JxtaSenderPO sender = (JxtaSenderPO)operator;
+		
+		LoadBalancingBufferPO<IStreamObject<ITimeInterval>> buffer = new LoadBalancingBufferPO<IStreamObject<ITimeInterval>>();
+		LoadBalancingHelper.insertOperatorBeforeSink(sender, buffer);
 	}
 	
 	/**

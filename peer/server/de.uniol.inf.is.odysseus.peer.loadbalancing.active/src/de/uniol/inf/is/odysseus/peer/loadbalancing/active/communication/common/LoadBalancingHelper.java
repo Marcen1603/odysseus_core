@@ -24,6 +24,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.PhysicalSubscription;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.RestructHelper;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TopAO;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
@@ -39,14 +40,15 @@ import de.uniol.inf.is.odysseus.peer.loadbalancing.active.physicaloperator.LoadB
 
 /**
  * Encapsulates Methods needed for processing the active LoadBalancing.
+ * 
  * @author Carsten Cordes
- *
+ * 
  */
 public class LoadBalancingHelper {
 
 	private static final Logger LOG = LoggerFactory
 			.getLogger(LoadBalancingHelper.class);
-	
+
 	/**
 	 * Converts a String to a peer ID.
 	 * 
@@ -62,8 +64,6 @@ public class LoadBalancingHelper {
 			return null;
 		}
 	}
-	
-	
 
 	/**
 	 * Removes a query from current Peer.
@@ -71,38 +71,40 @@ public class LoadBalancingHelper {
 	 * @param queryId
 	 */
 	public static void deleteQuery(int queryId) {
-		
+
 		ISession session = ActiveLoadBalancingActivator.getActiveSession();
 		IServerExecutor executor = ActiveLoadBalancingActivator.getExecutor();
 		executor.removeQuery(queryId, session);
 	}
 
 	/**
-	 * Takes a QueryPart and cut's all receivers from it.
-	 * Used so that, when deleting a Query the other Parts won't be influenced (e.g. stopped) by the executor.
+	 * Takes a QueryPart and cut's all receivers from it. Used so that, when
+	 * deleting a Query the other Parts won't be influenced (e.g. stopped) by
+	 * the executor.
+	 * 
 	 * @param queryID
 	 */
-	@SuppressWarnings({ "rawtypes"})
+	@SuppressWarnings({ "rawtypes" })
 	public static void cutQuery(int queryID) {
-		
+
 		IServerExecutor executor = ActiveLoadBalancingActivator.getExecutor();
-		IPhysicalQuery query = executor.getExecutionPlan().getQueryById(queryID);
-		
-		for(IPhysicalOperator operator : query.getAllOperators()) {
-			
-			if(operator instanceof JxtaReceiverPO) {
+		IPhysicalQuery query = executor.getExecutionPlan()
+				.getQueryById(queryID);
+
+		for (IPhysicalOperator operator : query.getAllOperators()) {
+
+			if (operator instanceof JxtaReceiverPO) {
 				JxtaReceiverPO receiver = (JxtaReceiverPO) operator;
 				receiver.unsubscribeFromAllSinks();
 			}
 		}
-		
+
 	}
-	
 
 	public static JxtaReceiverAO createReceiverAO(
 			IncomingConnection connection, String pipeID) {
 		JxtaReceiverAO receiver = new JxtaReceiverAO();
-		//TODO more than 1 outgoing connection from Receiver!
+		// TODO more than 1 outgoing connection from Receiver!
 
 		receiver.setPipeID(pipeID);
 		receiver.setPeerID(connection.remotePeerID);
@@ -113,32 +115,44 @@ public class LoadBalancingHelper {
 		return receiver;
 	}
 
-
-
 	public static JxtaSenderAO createSenderAO(OutgoingConnection connection,
 			String pipeID) {
 		JxtaSenderAO sender = new JxtaSenderAO();
 		sender.setPeerID(connection.remotePeerID);
 		sender.setPipeID(pipeID);
 		sender.setOutputSchema(connection.schema);
-		connection.localOperator.connectSink(sender, 0,
-				connection.port,
+		connection.localOperator.connectSink(sender, 0, connection.port,
 				connection.localOperator.getOutputSchema());
 		return sender;
 	}
-	
+
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	public static void insertOperatorBeforeSink(ISink sink,
+			AbstractPipe operatorToInsert) {
+		Collection<PhysicalSubscription> subscriptions = sink.getSubscribedToSource();
+		ArrayList<IPhysicalOperator> emptyCallPath = new ArrayList<IPhysicalOperator>();
+		for (PhysicalSubscription subscription : subscriptions) {
+			sink.unsubscribeFromSource(subscription);
+			operatorToInsert.subscribeToSource(subscription.getTarget(), subscription.getSinkInPort(), subscription.getSourceOutPort(), subscription.getSchema());
+			operatorToInsert.subscribeSink(sink, subscription.getSinkInPort(), subscription.getSinkInPort(), subscription.getSchema(), true, subscription.getOpenCalls());
+			operatorToInsert.open(sink, subscription.getSinkInPort(), subscription.getSinkInPort(), emptyCallPath, sink.getOwner());
+			
+		}
+		//TODO Fix callpath.
+		//TODO does this already work?
+	}
 
 	/**
-	 * Removes a duplicate Jxta Receiver or sender used in LoadBalancing.
-	 * Called during abort and after sync.
+	 * Removes a duplicate Jxta Receiver or sender used in LoadBalancing. Called
+	 * during abort and after sync.
+	 * 
 	 * @param pipeID
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public static void removeDuplicateJxtaOperator(String pipeID) {
 		LOG.debug("Removing Operator with pipe ID " + pipeID);
-		
-		IPhysicalOperator operator = getPhysicalJxtaOperator(false,
-				pipeID);
+
+		IPhysicalOperator operator = getPhysicalJxtaOperator(false, pipeID);
 
 		if (operator instanceof JxtaSenderPO) {
 			JxtaSenderPO sender = (JxtaSenderPO) operator;
@@ -173,8 +187,11 @@ public class LoadBalancingHelper {
 							subscription.getSourceOutPort(),
 							subscription.getSchema(), true,
 							subscription.getOpenCalls());
-					
-					subscription.getTarget().subscribeToSource(otherReceiver, subscription.getSinkInPort(), subscription.getSourceOutPort(), subscription.getSchema());
+
+					subscription.getTarget().subscribeToSource(otherReceiver,
+							subscription.getSinkInPort(),
+							subscription.getSourceOutPort(),
+							subscription.getSchema());
 				}
 
 			}
@@ -189,10 +206,11 @@ public class LoadBalancingHelper {
 	 * @param pipeID Pipe id of Sender we look for.
 	 * @return Operator (if found) or null.
 	 */
-	public static IPhysicalOperator getPhysicalJxtaOperator(boolean lookForSender, String pipeID) {
-		
+	public static IPhysicalOperator getPhysicalJxtaOperator(
+			boolean lookForSender, String pipeID) {
+
 		IServerExecutor executor = ActiveLoadBalancingActivator.getExecutor();
-		
+
 		for (IPhysicalQuery query : executor.getExecutionPlan().getQueries()) {
 			for (IPhysicalOperator operator : query.getAllOperators()) {
 				if (lookForSender) {
@@ -224,9 +242,9 @@ public class LoadBalancingHelper {
 	 *            Pipe id of Sender we look for.
 	 * @return Operator (if found) or null.
 	 */
-	public static ILogicalOperator getLogicalJxtaOperator(boolean lookForSender,
-			String pipeID) {
-		
+	public static ILogicalOperator getLogicalJxtaOperator(
+			boolean lookForSender, String pipeID) {
+
 		for (ILogicalQueryPart part : getInstalledQueryParts()) {
 			for (ILogicalOperator operator : part.getOperators()) {
 				if (lookForSender) {
@@ -258,12 +276,12 @@ public class LoadBalancingHelper {
 	 * @param pql
 	 *            PQL to execute.
 	 */
-	public static Collection<Integer> installAndRunQueryPartFromPql(Context context,
-			String pql) {
-		
+	public static Collection<Integer> installAndRunQueryPartFromPql(
+			Context context, String pql) {
+
 		IServerExecutor executor = ActiveLoadBalancingActivator.getExecutor();
 		ISession session = ActiveLoadBalancingActivator.getActiveSession();
-		
+
 		Collection<Integer> installedQueries = executor.addQuery(pql, "PQL",
 				session, "Standard", context);
 		for (int query : installedQueries) {
@@ -351,7 +369,7 @@ public class LoadBalancingHelper {
 	public static Map<ILogicalOperator, Collection<IncomingConnection>> stripJxtaReceivers(
 			ILogicalQueryPart part) {
 
-		//TODO More than 1 out Port!
+		// TODO More than 1 out Port!
 		HashMap<ILogicalOperator, Collection<IncomingConnection>> result = new HashMap<ILogicalOperator, Collection<IncomingConnection>>();
 
 		ArrayList<ILogicalOperator> toRemove = new ArrayList<ILogicalOperator>();
@@ -412,11 +430,10 @@ public class LoadBalancingHelper {
 	 * @return List of installed LogicalQueryParts.
 	 */
 	public static Collection<ILogicalQueryPart> getInstalledQueryParts() {
-		
 
 		IServerExecutor executor = ActiveLoadBalancingActivator.getExecutor();
 		ISession session = ActiveLoadBalancingActivator.getActiveSession();
-		
+
 		ArrayList<ILogicalQueryPart> parts = new ArrayList<ILogicalQueryPart>();
 		for (int queryId : executor.getLogicalQueryIds(session)) {
 			ILogicalQuery query = executor
@@ -438,17 +455,14 @@ public class LoadBalancingHelper {
 	 * @return
 	 */
 	public static ILogicalQueryPart getInstalledQueryPart(int queryId) {
-		
 
 		IServerExecutor executor = ActiveLoadBalancingActivator.getExecutor();
 		ISession session = ActiveLoadBalancingActivator.getActiveSession();
-		
+
 		ILogicalQuery query = executor.getLogicalQueryById(queryId, session);
 		ArrayList<ILogicalOperator> operators = new ArrayList<ILogicalOperator>();
 		RestructHelper.collectOperators(query.getLogicalPlan(), operators);
 		return new LogicalQueryPart(operators);
 	}
-
-	
 
 }

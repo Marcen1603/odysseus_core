@@ -47,7 +47,7 @@ public class LoadBalancingBufferPO<T extends IStreamObject<? extends ITimeInterv
 			tupleStore.saveTuple(object);
 		}
 		else {
-			super.process(object, port);
+			transfer(object,port);
 		}
 	}
 	

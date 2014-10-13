@@ -23,6 +23,7 @@ import de.uniol.inf.is.odysseus.peer.loadbalancing.active.ILoadBalancingAllocato
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.ILoadBalancingCommunicator;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.ILoadBalancingStrategy;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.ILoadBalancingStrategy.LoadBalancingException;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.active.movingstate.communicator.MovingStateHelper;
 
 /**
  * Console with debug commands for active LoadBalancing.
@@ -138,6 +139,18 @@ public class ActiveLoadbalancingConsole implements CommandProvider {
 		
 	}
 	
+	public static void _insertBuffer(CommandInterpreter ci) {
+		
+		final String USAGE_ERROR = "Usage: insertBuffer <pipeID>";
+		
+		String pipe = ci.nextArgument();
+		if(Strings.isNullOrEmpty(pipe)) {
+			System.out.println(USAGE_ERROR);
+			return;
+		}
+		MovingStateHelper.insertBuffer(pipe);
+	}
+	
 	// called by OSGi-DS
 	public static void bindLoadBalancingCommunicator(ILoadBalancingCommunicator communicator) {
 		ActiveLoadbalancingConsole.loadBalancingCommunicators.add(communicator);
@@ -186,6 +199,7 @@ public class ActiveLoadbalancingConsole implements CommandProvider {
 		sb.append("    cpJxtaSender <oldPipeId> <newPipeId> <newPeername> - Tries to copy and install a Sender\n");
 		sb.append("    cpJxtaReceiver <oldPipeId> <newPipeId> <newPeername> - Tries to copy and install a Receiver\n");
 		sb.append("    setLBCommunicator <communicatorName>                 - Sets LoadBalancing Communicator to use\n");
+		sb.append("    insertBuffer <pipeID>                                - Inserts Buffer before Sender with pipeID\n");
 		return sb.toString();
 	}
 	
