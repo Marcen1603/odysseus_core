@@ -215,8 +215,20 @@ public class LocalBackupInformationAccess {
 		return sharedQueries;
 	}
 
+	/**
+	 * Gets stored PQL statements.
+	 * 
+	 * @param sharedQueryId
+	 *            The distributed query, of which the PQL statements are part
+	 *            of.
+	 * @param peer
+	 *            The peer, on which the PQL statements are executed.
+	 * @return All PQL statements which are part of a distributed query with the
+	 *         id <code>sharedQueryId</code> and which are executed on
+	 *         <code>peer</code>.
+	 */
 	public static ImmutableCollection<String> getStoredPQLStatements(
-			ID sharedQueryId, PeerID failedPeer) {
+			ID sharedQueryId, PeerID peer) {
 
 		Collection<String> results = Lists.newArrayList();
 		ImmutableCollection<String> results1 = getStoredPQLStatements(sharedQueryId);
@@ -299,7 +311,8 @@ public class LocalBackupInformationAccess {
 		List<ID> sharedQueryIds = new ArrayList<ID>();
 
 		for (ID queryId : cInfoStore.get().getAll().keySet()) {
-			for (IRecoveryBackupInformation info : cInfoStore.get().get(queryId)) {
+			for (IRecoveryBackupInformation info : cInfoStore.get()
+					.get(queryId)) {
 				if (info.getPeer().equals(peerId)) {
 					// This is what we search: For this peer we have a
 					// sharedQueryId

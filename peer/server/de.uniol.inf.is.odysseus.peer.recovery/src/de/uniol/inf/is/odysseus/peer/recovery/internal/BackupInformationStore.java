@@ -30,6 +30,9 @@ import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryBackupInformationStore;
  */
 public class BackupInformationStore implements IRecoveryBackupInformationStore {
 
+	/**
+	 * The mapping of backup information to shared queries.
+	 */
 	private final Map<ID, Collection<IRecoveryBackupInformation>> mInfos = Maps
 			.newHashMap();
 

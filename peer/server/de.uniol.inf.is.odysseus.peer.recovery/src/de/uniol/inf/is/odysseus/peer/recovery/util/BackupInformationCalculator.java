@@ -77,45 +77,49 @@ public class BackupInformationCalculator {
 		Collection<QueryPartGraphNode> nodes = graph.getGraphNodes();
 
 		for (QueryPartGraphNode node : nodes) {
+			
+			PeerID peerId = allocationMap.get(node.getQueryPart());
+			
+			for(QueryPartGraphConnection outConnection : node.getConnectionsAsStart()) {
 
-			IRecoveryBackupInformation info = new BackupInformation();
-			info.setSharedQuery(sharedQueryId);
-
-			ILogicalQueryPart part = node.getQueryPart();
-			if (!allocationMap.containsKey(part)) {
-
-				LOG.error("Missing query part in allocation map: {}", part);
-				continue;
-
-			}
-
-			String pqlStatement = LogicalQueryHelper
-					.generatePQLStatementFromQueryPart(part);
-			info.setPQL(pqlStatement);
-
-			PeerID peerId = allocationMap.get(part);
-			info.setPeer(peerId);
-
-			Collection<ILogicalQueryPart> subsequentParts = calcSubsequentParts(node);
-			for (ILogicalQueryPart subsequentPart : subsequentParts) {
-
-				info.addSubsequentPartsInformation(new Pair<String, PeerID>(
-						LogicalQueryHelper
-								.generatePQLStatementFromQueryPart(subsequentPart),
-						allocationMap.get(subsequentPart)));
-
-			}
-
-			if (infoMap.containsKey(peerId)) {
-
-				infoMap.get(peerId).add(info);
-
-			} else {
-
-				Collection<IRecoveryBackupInformation> infos = Sets
-						.newHashSet(info);
-				infoMap.put(peerId, infos);
-
+				IRecoveryBackupInformation info = new BackupInformation();
+				info.setSharedQuery(sharedQueryId);
+	
+				ILogicalQueryPart part = outConnection.getEndNode().getQueryPart();
+				if (!allocationMap.containsKey(part)) {
+	
+					LOG.error("Missing query part in allocation map: {}", part);
+					continue;
+	
+				}
+				info.setPeer(allocationMap.get(part));
+	
+				String pqlStatement = LogicalQueryHelper
+						.generatePQLStatementFromQueryPart(part);
+				info.setPQL(pqlStatement);
+	
+				Collection<ILogicalQueryPart> subsequentParts = calcSubsequentParts(outConnection.getEndNode());
+				for (ILogicalQueryPart subsequentPart : subsequentParts) {
+	
+					info.addSubsequentPartsInformation(new Pair<String, PeerID>(
+							LogicalQueryHelper
+									.generatePQLStatementFromQueryPart(subsequentPart),
+							allocationMap.get(subsequentPart)));
+	
+				}
+	
+				if (infoMap.containsKey(peerId)) {
+	
+					infoMap.get(peerId).add(info);
+	
+				} else {
+	
+					Collection<IRecoveryBackupInformation> infos = Sets
+							.newHashSet(info);
+					infoMap.put(peerId, infos);
+	
+				}
+				
 			}
 
 		}

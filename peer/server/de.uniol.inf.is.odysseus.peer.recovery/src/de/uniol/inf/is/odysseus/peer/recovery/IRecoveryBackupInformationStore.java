@@ -14,6 +14,14 @@ import com.google.common.collect.ImmutableMap;
 
 import de.uniol.inf.is.odysseus.peer.recovery.internal.JxtaInformation;
 
+/**
+ * The backup information store for recovery. <br />
+ * It stores for distributed queries information about local executed (partial)
+ * queries and subsequent partial queries.
+ * 
+ * @author Michael Brand
+ *
+ */
 public interface IRecoveryBackupInformationStore {
 
 	public void add(IRecoveryBackupInformation info);

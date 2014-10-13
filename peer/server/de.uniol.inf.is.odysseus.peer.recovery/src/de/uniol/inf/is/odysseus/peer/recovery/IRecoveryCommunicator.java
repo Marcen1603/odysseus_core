@@ -15,7 +15,11 @@ import net.jxta.pipe.PipeID;
  */
 public interface IRecoveryCommunicator {
 
-	// TODO javaDoc
+	/**
+	 * Sends a message with backup information to another peer.
+	 * @param destination The peer for which the backup information are.
+	 * @param info The backup information to send.
+	 */
 	public void sendBackupInformation(PeerID destination, IRecoveryBackupInformation info);
 
 	/**
