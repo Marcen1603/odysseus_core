@@ -13,8 +13,23 @@ import com.google.common.collect.Sets;
 import de.uniol.inf.is.odysseus.core.collection.IPair;
 import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryBackupInformation;
 
+/**
+ * A backup information is for query parts, which are executed on another peer. <br />
+ * An information consists of the following:<br />
+ * - id of the distributed query <br />
+ * - the PQL code of the query part <br />
+ * - the id of the peer, where the query part is executed <br />
+ * - information about subsequent parts (relative to the query part): PQL code
+ * and peer, where it is executed.
+ * 
+ * @author Michael Brand
+ *
+ */
 public class BackupInformation implements IRecoveryBackupInformation {
 
+	/**
+	 * The id of the distributed query.
+	 */
 	private ID mSharedQuery;
 
 	@Override
@@ -32,6 +47,9 @@ public class BackupInformation implements IRecoveryBackupInformation {
 
 	}
 
+	/**
+	 * The PQL code of the query part.
+	 */
 	private String m_PQL;
 
 	@Override
@@ -49,6 +67,9 @@ public class BackupInformation implements IRecoveryBackupInformation {
 
 	}
 
+	/**
+	 * The id of the peer, where the query part is executed.
+	 */
 	private PeerID mPeer;
 
 	@Override
@@ -66,6 +87,10 @@ public class BackupInformation implements IRecoveryBackupInformation {
 
 	}
 
+	/**
+	 * The information about subsequent parts (relative to the query part): PQL
+	 * code and peer, where it is executed.
+	 */
 	private Collection<IPair<String, PeerID>> mSubsequentPartsInformation = Sets
 			.newHashSet();
 
