@@ -20,11 +20,14 @@ import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
+import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.core.physicaloperator.PhysicalSubscription;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.RestructHelper;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TopAO;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSink;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSource;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
@@ -98,8 +101,8 @@ public class LoadBalancingHelper {
 				receiver.unsubscribeFromAllSinks();
 			}
 		}
-
 	}
+	
 
 	public static JxtaReceiverAO createReceiverAO(
 			IncomingConnection connection, String pipeID) {
@@ -126,20 +129,70 @@ public class LoadBalancingHelper {
 		return sender;
 	}
 
+	/**
+	 * Inserts an operator between a sink and its sources on a specific port
+	 * @param sink Operator after operator to insert
+	 * @param operatorToInsert Operator to insert before sink
+	 * @param port input port of sink
+	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public static void insertOperatorBeforeSink(ISink sink,
-			AbstractPipe operatorToInsert) {
-		Collection<PhysicalSubscription> subscriptions = sink.getSubscribedToSource();
+	public static void insertOperatorBefore(ISink sink,
+			AbstractPipe operatorToInsert,int port) {
+		
+		PhysicalSubscription subscription = (PhysicalSubscription) sink.getSubscribedToSource(port);
 		ArrayList<IPhysicalOperator> emptyCallPath = new ArrayList<IPhysicalOperator>();
-		for (PhysicalSubscription subscription : subscriptions) {
-			sink.unsubscribeFromSource(subscription);
-			operatorToInsert.subscribeToSource(subscription.getTarget(), subscription.getSinkInPort(), subscription.getSourceOutPort(), subscription.getSchema());
-			operatorToInsert.subscribeSink(sink, subscription.getSinkInPort(), subscription.getSinkInPort(), subscription.getSchema(), true, subscription.getOpenCalls());
-			operatorToInsert.open(sink, subscription.getSinkInPort(), subscription.getSinkInPort(), emptyCallPath, sink.getOwner());
-			
+		
+		sink.unsubscribeFromSource(subscription);
+		operatorToInsert.subscribeToSource(subscription.getTarget(), subscription.getSinkInPort(), subscription.getSourceOutPort(), subscription.getSchema());
+		operatorToInsert.subscribeSink(sink, subscription.getSinkInPort(), subscription.getSinkInPort(), subscription.getSchema(), true, subscription.getOpenCalls());
+		operatorToInsert.open(sink, subscription.getSinkInPort(), subscription.getSinkInPort(), emptyCallPath, sink.getOwner());
+		
+	}
+	
+	/***
+	 * Removes an Operator (which has to have only one incoming or one outgoing subscription!)
+	 * @param sink
+	 */
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	public static void removeOperatorFromStream(AbstractPipe operator) {
+		Collection<PhysicalSubscription> sourceSubscriptions = operator.getSubscribedToSource();
+		Collection<PhysicalSubscription> sinkSubscriptions = operator.getSubscriptions();
+		
+		//At least one of the sides of the operator can not be more than 1 subscription or else we can not remove Operator without conflicts.
+		if(sourceSubscriptions.size()!=1 && sinkSubscriptions.size()!=1) {
+			LOG.error("To much incoming and outgoing subscriptions for safe removal.");
+			return;
 		}
-		//TODO Fix callpath.
-		//TODO does this already work?
+		
+		operator.unsubscribeFromAllSources();
+		operator.unsubscribeFromAllSinks();
+		
+		//Source->Operator is the side with 1 subscription. Hence we can remove this subscription without substituting it.
+		if(sourceSubscriptions.size()==1) {
+			PhysicalSubscription sourceSubscription = sourceSubscriptions.iterator().next();
+			AbstractSource source = (AbstractSource) sourceSubscription.getTarget();
+			for(PhysicalSubscription subscription : sinkSubscriptions) {
+				ArrayList<IPhysicalOperator> emptyCallPath = new ArrayList<IPhysicalOperator>();
+				ISink sink = (ISink)subscription.getTarget();
+				source.subscribeSink(subscription.getTarget(), subscription.getSinkInPort(), subscription.getSourceOutPort(), subscription.getSchema());
+				source.open(sink, subscription.getSourceOutPort(), subscription.getSinkInPort(), emptyCallPath,sink.getOwner());
+			}
+			return;
+		}
+		
+		//Operator->Sink is the side with 1 subscription. Hence we can remove this subscription without substituting it.
+		if(sinkSubscriptions.size()==1) {
+			PhysicalSubscription sinkSubscription = sinkSubscriptions.iterator().next();
+			AbstractSink sink = (AbstractSink) sinkSubscription.getTarget();
+			for(PhysicalSubscription subscription : sourceSubscriptions) {
+				ArrayList<IPhysicalOperator> emptyCallPath = new ArrayList<IPhysicalOperator>();
+				ISource source = (ISource)subscription.getTarget();
+				source.subscribeSink(sink, subscription.getSinkInPort(), subscription.getSourceOutPort(), subscription.getSchema());
+				source.open(sink, subscription.getSourceOutPort(), subscription.getSinkInPort(), emptyCallPath,sink.getOwner());
+			}
+			return;
+		}
+		
 	}
 
 	/**

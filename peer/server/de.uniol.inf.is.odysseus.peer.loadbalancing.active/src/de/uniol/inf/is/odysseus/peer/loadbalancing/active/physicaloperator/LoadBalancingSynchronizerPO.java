@@ -126,6 +126,11 @@ public class LoadBalancingSynchronizerPO<T extends IStreamObject<? extends ITime
 		this.threshold = syncAO.getThreshold();
 
 	}
+	
+	@Override
+	public String getName() {
+		return "Synchronizer";
+	}
 
 	/**
 	 * Creates a new {@link LoadBalancingSynchronizerPO} as a copy of an

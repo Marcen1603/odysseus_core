@@ -35,6 +35,11 @@ public class LoadBalancingBufferPO<T extends IStreamObject<? extends ITimeInterv
 		super();
 		tupleStore = new ArrayDequeLoadBalancingBuffer();
 	}
+	
+	@Override
+	public String getName() {
+		return "Buffer";
+	}
 
 	@Override
 	public de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe.OutputMode getOutputMode() {

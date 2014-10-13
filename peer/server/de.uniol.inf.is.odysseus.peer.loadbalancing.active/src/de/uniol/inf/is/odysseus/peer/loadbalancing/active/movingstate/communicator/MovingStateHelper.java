@@ -68,20 +68,39 @@ public class MovingStateHelper {
 	}
 	
 	
-	
+	/***
+	 * Adds a buffer for each incoming port of a jxta Sender
+	 * @param pipeID PipeID of JxtaSender
+	 * @return List of added Buffers.
+	 */
 	@SuppressWarnings("rawtypes")
-	public static void insertBuffer(String pipeID) {
+	public static List<LoadBalancingBufferPO> insertBuffer(String pipeID) {
 		IPhysicalOperator operator = LoadBalancingHelper.getPhysicalJxtaOperator(true, pipeID);
 		if(operator==null) {
 			LOG.error("No Sender with PipeID " + pipeID+ " found.");
 			//TODO Error
-			return;
+			return null;
 		}
 		JxtaSenderPO sender = (JxtaSenderPO)operator;
 		
-		LoadBalancingBufferPO<IStreamObject<ITimeInterval>> buffer = new LoadBalancingBufferPO<IStreamObject<ITimeInterval>>();
-		LoadBalancingHelper.insertOperatorBeforeSink(sender, buffer);
+		ArrayList<LoadBalancingBufferPO> addedBuffers = new ArrayList<LoadBalancingBufferPO>();
+		
+		for(int i=0;i<sender.getInputPortCount();i++) {
+			LoadBalancingBufferPO<IStreamObject<ITimeInterval>> buffer = new LoadBalancingBufferPO<IStreamObject<ITimeInterval>>();
+			LoadBalancingHelper.insertOperatorBefore(sender, buffer,i);
+			addedBuffers.add(buffer);
+		}
+		
+		return addedBuffers;
+		
 	}
+	
+	@SuppressWarnings("rawtypes")
+	public static void removeBuffer(LoadBalancingBufferPO buffer) {
+		LoadBalancingHelper.removeOperatorFromStream(buffer);
+	}
+	
+	
 	
 	/**
 	 * Send Message to all incoming Peers to add a duplicate
