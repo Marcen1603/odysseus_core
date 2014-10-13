@@ -18,6 +18,7 @@ package de.uniol.inf.is.odysseus.core.server.physicaloperator;
 import de.uniol.inf.is.odysseus.core.IClone;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.server.metadata.IMetadataUpdater;
 
 /**
@@ -46,6 +47,11 @@ public class MetadataUpdatePO<M extends IClone, T extends IStreamObject<? extend
 	protected void process_next(T object, int port) {
 		this.metadataFactory.updateMetadata(object);
 		transfer(object);
+	}
+	
+	@Override
+	public void processPunctuation(IPunctuation punctuation, int port) {
+		// Punctuations cannot be send, update PO may change timestamps
 	}
 	
 	@Override
