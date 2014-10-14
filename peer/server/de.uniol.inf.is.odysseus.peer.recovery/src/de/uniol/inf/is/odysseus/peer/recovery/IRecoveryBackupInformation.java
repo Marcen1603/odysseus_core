@@ -7,8 +7,6 @@ import net.jxta.peer.PeerID;
 
 import com.google.common.collect.ImmutableCollection;
 
-import de.uniol.inf.is.odysseus.core.collection.IPair;
-
 /**
  * A backup information is for query parts, which are executed on another peer. <br />
  * An information consists of the following:<br />
@@ -74,40 +72,37 @@ public interface IRecoveryBackupInformation {
 	/**
 	 * Gets the information about subsequent parts.
 	 * 
-	 * @return The information about subsequent parts (relative to the query
-	 *         part): PQL code and peer, where it is executed.
+	 * @return The information about subsequent part.
 	 */
-	public ImmutableCollection<IPair<String, PeerID>> getSubsequentPartsInformation();
+	public ImmutableCollection<IRecoveryBackupInformation> getSubsequentPartsInformation();
 
 	/**
 	 * Sets the information about subsequent parts.
 	 * 
 	 * @param info
-	 *            The information about subsequent parts (relative to the query
-	 *            part): PQL code and peer, where it is executed. <br />
+	 *            The information about subsequent parts. <br />
 	 *            Must be not null.
 	 */
 	public void setSubsequentPartsInformation(
-			Collection<IPair<String, PeerID>> info);
+			Collection<IRecoveryBackupInformation> info);
 
 	/**
 	 * Removes the information about a subsequent part.
 	 * 
 	 * @param info
-	 *            The information about a subsequent part (relative to the query
-	 *            part): PQL code and peer, where it is executed. <br />
+	 *            The information about a subsequent part. <br />
 	 *            Must be not null.
 	 */
-	public void removeSubsequentPartsInformation(IPair<String, PeerID> info);
+	public void removeSubsequentPartsInformation(IRecoveryBackupInformation info);
 
 	/**
 	 * Adds the information about a subsequent part.
 	 * 
 	 * @param info
 	 *            The information about a subsequent part (relative to the query
-	 *            part): PQL code and peer, where it is executed. <br />
+	 *            part). <br />
 	 *            Must be not null.
 	 */
-	public void addSubsequentPartsInformation(IPair<String, PeerID> info);
+	public void addSubsequentPartsInformation(IRecoveryBackupInformation info);
 
 }

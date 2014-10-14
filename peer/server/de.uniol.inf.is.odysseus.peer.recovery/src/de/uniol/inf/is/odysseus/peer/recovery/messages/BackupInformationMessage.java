@@ -16,8 +16,6 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Sets;
 
-import de.uniol.inf.is.odysseus.core.collection.IPair;
-import de.uniol.inf.is.odysseus.core.collection.Pair;
 import de.uniol.inf.is.odysseus.p2p_new.IMessage;
 import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryBackupInformation;
 import de.uniol.inf.is.odysseus.peer.recovery.internal.BackupInformation;
@@ -94,16 +92,12 @@ public class BackupInformationMessage implements IMessage {
 		byte[] peerBytes = this.determinePeerBytes();
 		bufferSize += 4 + peerBytes.length;
 
-		byte[][][] subsequentPartsInfoBytes = this
+		byte[][] subsequentPartsInfoBytes = this
 				.determineSubsequentPartsInfoBytes();
 		bufferSize += 4;
 		for (int i = 0; i < subsequentPartsInfoBytes.length; i++) {
 
-			for (int j = 0; j < subsequentPartsInfoBytes[i].length; j++) {
-
-				bufferSize += 4 + subsequentPartsInfoBytes[i][j].length;
-
-			}
+			bufferSize += 4 + subsequentPartsInfoBytes[i].length;
 
 		}
 
@@ -121,12 +115,8 @@ public class BackupInformationMessage implements IMessage {
 		buffer.putInt(subsequentPartsInfoBytes.length);
 		for (int i = 0; i < subsequentPartsInfoBytes.length; i++) {
 
-			for (int j = 0; j < subsequentPartsInfoBytes[i].length; j++) {
-
-				buffer.putInt(subsequentPartsInfoBytes[i][j].length);
-				buffer.put(subsequentPartsInfoBytes[i][j]);
-
-			}
+			buffer.putInt(subsequentPartsInfoBytes[i].length);
+			buffer.put(subsequentPartsInfoBytes[i]);
 
 		}
 
@@ -164,23 +154,21 @@ public class BackupInformationMessage implements IMessage {
 	 * 
 	 * @return The bytes of
 	 *         {@link IRecoveryBackupInformation#getSubsequentPartsInformation()}
-	 *         as a multidimensional array.
+	 *         as an array.
 	 */
-	private byte[][][] determineSubsequentPartsInfoBytes() {
+	private byte[][] determineSubsequentPartsInfoBytes() {
 
 		Preconditions.checkNotNull(this.mInfo);
-		byte[][][] subsequentPartsInfoBytes = new byte[this.mInfo
-				.getSubsequentPartsInformation().size()][][];
+		byte[][] subsequentPartsInfoBytes = new byte[this.mInfo
+				.getSubsequentPartsInformation().size()][];
 
 		int i = 0;
-		Iterator<IPair<String, PeerID>> iter = this.mInfo
+		Iterator<IRecoveryBackupInformation> iter = this.mInfo
 				.getSubsequentPartsInformation().iterator();
 		while (iter.hasNext()) {
 
-			IPair<String, PeerID> pair = iter.next();
-			subsequentPartsInfoBytes[i] = new byte[2][];
-			subsequentPartsInfoBytes[i][0] = pair.getE1().getBytes();
-			subsequentPartsInfoBytes[i][1] = pair.getE2().toString().getBytes();
+			subsequentPartsInfoBytes[i] = new BackupInformationMessage(
+					iter.next()).toBytes();
 			i++;
 
 		}
@@ -263,18 +251,17 @@ public class BackupInformationMessage implements IMessage {
 		Preconditions.checkArgument(this.mInfo.getSubsequentPartsInformation()
 				.isEmpty());
 		Preconditions.checkNotNull(buffer);
-		Collection<IPair<String, PeerID>> info = Sets.newHashSet();
+		Collection<IRecoveryBackupInformation> info = Sets.newHashSet();
 		int numInfo = buffer.getInt();
 
 		for (int i = 0; i < numInfo; i++) {
 
-			byte[] pqlBytes = new byte[buffer.getInt()];
-			buffer.get(pqlBytes);
-			byte[] peerBytes = new byte[buffer.getInt()];
-			buffer.get(peerBytes);
+			byte[] bytes = new byte[buffer.getInt()];
+			buffer.get(bytes);
 
-			info.add(new Pair<String, PeerID>(new String(pqlBytes),
-					toPeerID(new String(peerBytes))));
+			BackupInformationMessage message = new BackupInformationMessage();
+			message.fromBytes(bytes);
+			info.add(message.getInfo());
 
 		}
 

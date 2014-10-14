@@ -2,6 +2,7 @@ package de.uniol.inf.is.odysseus.peer.recovery.util;
 
 import java.util.Collection;
 import java.util.Map;
+import java.util.Set;
 
 import net.jxta.id.ID;
 import net.jxta.peer.PeerID;
@@ -10,11 +11,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Preconditions;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
-import de.uniol.inf.is.odysseus.core.collection.Pair;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.peer.distribute.ILogicalQueryPart;
 import de.uniol.inf.is.odysseus.peer.distribute.util.LogicalQueryHelper;
@@ -119,14 +118,12 @@ public class BackupInformationCalculator {
 						.generatePQLStatementFromQueryPart(part);
 				info.setPQL(pqlStatement);
 
-				Collection<ILogicalQueryPart> subsequentParts = calcSubsequentParts(outConnection
-						.getEndNode());
-				for (ILogicalQueryPart subsequentPart : subsequentParts) {
+				Collection<IRecoveryBackupInformation> subsequentParts = calcSubsequentParts(
+						outConnection.getEndNode(), sharedQueryId,
+						allocationMap);
+				for (IRecoveryBackupInformation subsequentPart : subsequentParts) {
 
-					info.addSubsequentPartsInformation(new Pair<String, PeerID>(
-							LogicalQueryHelper
-									.generatePQLStatementFromQueryPart(subsequentPart),
-							allocationMap.get(subsequentPart)));
+					info.addSubsequentPartsInformation(subsequentPart);
 
 				}
 
@@ -152,59 +149,100 @@ public class BackupInformationCalculator {
 	}
 
 	/**
-	 * Calculates all subsequent parts for a given query part node.
+	 * Calculates all backup information about subsequent query parts of a given
+	 * query part.
 	 * 
 	 * @param node
-	 *            The given node. <br />
+	 *            The node representing the given query part. <br />
 	 *            Must be not null.
-	 * @return A collection of all nodes, which can be accessed by outgoing
-	 *         query part connections direct or via other subsequent parts.
+	 * @param sharedQueryID
+	 *            The id of the distributed query. <br />
+	 *            Must be not null.
+	 * @param allocationMap
+	 *            The allocation map defined by the distribution process. <br />
+	 *            Must be not null.
+	 * @return All backup information about subsequent query parts of the given
+	 *         query part.
 	 */
-	private static Collection<ILogicalQueryPart> calcSubsequentParts(
-			QueryPartGraphNode node) {
+	private static Set<IRecoveryBackupInformation> calcSubsequentParts(
+			QueryPartGraphNode node, ID sharedQueryID,
+			Map<ILogicalQueryPart, PeerID> allocationMap) {
 
 		Preconditions.checkNotNull(node);
+		Preconditions.checkNotNull(sharedQueryID);
+		Preconditions.checkNotNull(allocationMap);
 
-		Collection<ILogicalQueryPart> subsequentParts = Lists.newArrayList();
+		Set<IRecoveryBackupInformation> subsequentParts = Sets.newHashSet();
 
-		calcSubsequentPartsRecursive(node, subsequentParts);
+		calcSubsequentPartsRecursive(node, sharedQueryID, allocationMap,
+				subsequentParts);
 
 		return subsequentParts;
 
 	}
 
 	/**
-	 * Calculates recursively all subsequent parts for a given query part node.
+	 * Calculates recursively all backup information about subsequent query
+	 * parts of a given query part.
 	 * 
 	 * @param node
-	 *            The given node. <br />
+	 *            The node representing the given query part. <br />
+	 *            Must be not null.
+	 * @param sharedQueryID
+	 *            The id of the distributed query. <br />
+	 *            Must be not null.
+	 * @param allocationMap
+	 *            The allocation map defined by the distribution process. <br />
 	 *            Must be not null.
 	 * @param subsequentParts
-	 *            All already collected nodes, which can be accessed by outgoing
-	 *            query part connections direct or via other subsequent parts. <br />
-	 *            Will be enhanced with every recursion step.
+	 *            All already collected backup information about subsequent
+	 *            query parts. <br />
+	 *            Must be not null and will be muted.
 	 */
 	private static final void calcSubsequentPartsRecursive(
-			QueryPartGraphNode node,
-			Collection<ILogicalQueryPart> subsequentParts) {
+			QueryPartGraphNode node, ID sharedQueryID,
+			Map<ILogicalQueryPart, PeerID> allocationMap,
+			Collection<IRecoveryBackupInformation> subsequentParts) {
 
-		Preconditions
-				.checkNotNull(
-						node,
-						"The node, for which subsequent query parts shall be calculated, must be not null!");
-		Preconditions.checkNotNull(subsequentParts,
-				"The collection of subsequent parts must be not null!");
+		Preconditions.checkNotNull(node);
+		Preconditions.checkNotNull(sharedQueryID);
+		Preconditions.checkNotNull(allocationMap);
+		Preconditions.checkNotNull(subsequentParts);
 
 		for (QueryPartGraphConnection outConnection : node
 				.getConnectionsAsStart()) {
 
 			QueryPartGraphNode endNode = outConnection.getEndNode();
 			ILogicalQueryPart endPart = endNode.getQueryPart();
-			if (!subsequentParts.contains(endPart)) {
+			String endPartPQL = LogicalQueryHelper
+					.generatePQLStatementFromQueryPart(endPart);
+			PeerID endPartPeer = allocationMap.get(endPart);
 
-				subsequentParts.add(endPart);
+			IRecoveryBackupInformation endPartInfo = new BackupInformation();
+			endPartInfo.setSharedQuery(sharedQueryID);
+			endPartInfo.setPeer(endPartPeer);
+			endPartInfo.setPQL(endPartPQL);
+
+			for (IRecoveryBackupInformation info : subsequentParts) {
+
+				if (info.getPQL().equals(
+						LogicalQueryHelper
+								.generatePQLStatementFromQueryPart(node
+										.getQueryPart()))
+						&& !info.getSubsequentPartsInformation().contains(
+								endPartInfo)) {
+
+					info.addSubsequentPartsInformation(endPartInfo);
+
+				}
+
+			}
+
+			if (!subsequentParts.contains(endPartInfo)) {
+
+				subsequentParts.add(endPartInfo);
 				calcSubsequentPartsRecursive(outConnection.getEndNode(),
-						subsequentParts);
+						sharedQueryID, allocationMap, subsequentParts);
 
 			}
 

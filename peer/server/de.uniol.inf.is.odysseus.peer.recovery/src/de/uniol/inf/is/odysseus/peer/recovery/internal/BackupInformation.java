@@ -10,7 +10,6 @@ import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 
-import de.uniol.inf.is.odysseus.core.collection.IPair;
 import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryBackupInformation;
 
 /**
@@ -88,14 +87,13 @@ public class BackupInformation implements IRecoveryBackupInformation {
 	}
 
 	/**
-	 * The information about subsequent parts (relative to the query part): PQL
-	 * code and peer, where it is executed.
+	 * The information about subsequent parts.
 	 */
-	private Collection<IPair<String, PeerID>> mSubsequentPartsInformation = Sets
+	private Collection<IRecoveryBackupInformation> mSubsequentPartsInformation = Sets
 			.newHashSet();
 
 	@Override
-	public ImmutableCollection<IPair<String, PeerID>> getSubsequentPartsInformation() {
+	public ImmutableCollection<IRecoveryBackupInformation> getSubsequentPartsInformation() {
 
 		return ImmutableSet.copyOf(this.mSubsequentPartsInformation);
 
@@ -103,7 +101,7 @@ public class BackupInformation implements IRecoveryBackupInformation {
 
 	@Override
 	public void setSubsequentPartsInformation(
-			Collection<IPair<String, PeerID>> info) {
+			Collection<IRecoveryBackupInformation> info) {
 
 		Preconditions.checkNotNull(info);
 		this.mSubsequentPartsInformation = info;
@@ -111,7 +109,7 @@ public class BackupInformation implements IRecoveryBackupInformation {
 	}
 
 	@Override
-	public void removeSubsequentPartsInformation(IPair<String, PeerID> info) {
+	public void removeSubsequentPartsInformation(IRecoveryBackupInformation info) {
 
 		Preconditions.checkNotNull(info);
 		Preconditions.checkArgument(this.mSubsequentPartsInformation
@@ -121,7 +119,7 @@ public class BackupInformation implements IRecoveryBackupInformation {
 	}
 
 	@Override
-	public void addSubsequentPartsInformation(IPair<String, PeerID> info) {
+	public void addSubsequentPartsInformation(IRecoveryBackupInformation info) {
 
 		Preconditions.checkNotNull(info);
 		Preconditions.checkArgument(!this.mSubsequentPartsInformation

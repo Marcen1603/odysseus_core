@@ -15,8 +15,11 @@ import net.jxta.pipe.PipeID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableCollection;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Sets;
 
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
@@ -160,6 +163,7 @@ public class RecoveryCommunicator implements IRecoveryCommunicator,
 					RecoveryAgreementMessage.class);
 			peerCommunicator
 					.unregisterMessageType(RecoveryAgreementMessage.class);
+			peerCommunicator.removeListener(this, RemoveQueryMessage.class);
 			peerCommunicator = null;
 		}
 	}
@@ -249,7 +253,6 @@ public class RecoveryCommunicator implements IRecoveryCommunicator,
 		// which shared-query-ids
 		// Return if there is no backup information stored for the given peer
 
-		// TODO Something's wrong here. Returns an empty collection.
 		Collection<ID> sharedQueryIdsForPeer = LocalBackupInformationAccess
 				.getStoredSharedQueryIdsForPeer(failedPeer);
 		if (sharedQueryIdsForPeer == null || sharedQueryIdsForPeer.isEmpty()) {
@@ -388,40 +391,61 @@ public class RecoveryCommunicator implements IRecoveryCommunicator,
 							+ newPeer.toString(), e);
 		}
 
-		// TODO M.B.
-		// Determine, which backup information have to be sent to the new
-		// peer
-		// Map<PeerID, Collection<String>> newBackupInformation =
-		// determineBackupInformation(
-		// sharedQueryId, pqlParts);
+		// The affected backup information
+		Set<IRecoveryBackupInformation> affectedInfos = Sets.newHashSet();
+		for (String affectedPQL : pqlParts) {
+
+			Optional<IRecoveryBackupInformation> affectedInfo = LocalBackupInformationAccess
+					.getStore().get(affectedPQL);
+			if (affectedInfo.isPresent()) {
+
+				affectedInfos.add(affectedInfo.get());
+
+			}
+
+		}
+
+		// Determine, which backup information have to be sent to the new peer
+		Set<IRecoveryBackupInformation> subsequentInfos = determineSubsequentBackupInformation(affectedInfos);
 
 		// Send these information
-		// this.sendBackupInformation(newPeer, sharedQueryId,
-		// newBackupInformation);
+		for (IRecoveryBackupInformation info : subsequentInfos) {
+
+			this.sendBackupInformation(newPeer, info);
+
+		}
 
 		// Update the local backup information due to the take over
-		// LocalBackupInformationAccess.removeLocal(sharedQueryId,
-		// oldBackupInformation);
-		// LocalBackupInformationAccess.storeLocal(sharedQueryId,
-		// newBackupInformation);
+		for (IRecoveryBackupInformation info : affectedInfos) {
+
+			LocalBackupInformationAccess.getStore().remove(info);
+
+		}
 
 	}
 
-	// TODO javaDoc
-	@SuppressWarnings("unused")
-	private static Map<PeerID, Collection<String>> determineBackupInformation(
-			ID sharedQueryId, Collection<String> pqlStatements) {
+	/**
+	 * Determines all subsequent backup information of given information.
+	 * 
+	 * @param infos
+	 *            The given info. <br />
+	 *            Must be not null.
+	 * @return All subsequent backup information of the given information.
+	 */
+	private ImmutableSet<IRecoveryBackupInformation> determineSubsequentBackupInformation(
+			Set<IRecoveryBackupInformation> infos) {
 
-		// TODO Determine the backup information for the new peer
+		Preconditions.checkNotNull(infos);
+		Set<IRecoveryBackupInformation> out = Sets.newHashSet();
 
-		// Problem: The information is not stored as a tree, so there is no way
-		// to determine subsequent query parts (their pql statements) directly.
-		// One way would be to parse the statements into operator graphs, build
-		// a query part graph and determine the subsequent parts (again).
-		// Don't like it. M.B.
+		for (IRecoveryBackupInformation info : infos) {
 
-		// TODO Auto-generated method stub
-		return null;
+			out.addAll(info.getSubsequentPartsInformation());
+
+		}
+
+		return ImmutableSet.copyOf(out);
+
 	}
 
 	@Override
