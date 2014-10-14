@@ -42,6 +42,8 @@ public class VideoFileTransportHandler extends AbstractSimplePullTransportHandle
 	private double currentTime; // Current timestamp in seconds
 	private String syncFileName = null;
 	
+	private ImageJCV currentImage = null;
+	
 	public VideoFileTransportHandler() 
 	{
 		super();
@@ -111,6 +113,11 @@ public class VideoFileTransportHandler extends AbstractSimplePullTransportHandle
 		default:
 			break;
 		}
+
+		if (startTime == 0)
+			startTime = System.currentTimeMillis();
+		
+		currentTime = startTime / 1000.0;
 		
 		synchronized (processLock)
 		{
@@ -129,11 +136,6 @@ public class VideoFileTransportHandler extends AbstractSimplePullTransportHandle
 			
 			if (fps == 0.0)
 				fps = frameGrabber.getFrameRate();
-			
-			if (startTime == 0)
-				startTime = System.currentTimeMillis();
-			
-			currentTime = startTime / 1000.0;
 		}
 	}
 	
@@ -162,6 +164,47 @@ public class VideoFileTransportHandler extends AbstractSimplePullTransportHandle
 	
 	@Override public Tuple<IMetaAttribute> getNext() 
 	{
+		synchronized (processLock)
+		{
+			if (currentImage == null) return null;
+			
+			Tuple<IMetaAttribute> tuple;        
+	
+			if (timeStampMode != TimeStampMode.none)
+			{		
+		        long startTimeStamp = (long) (currentTime * 1000.0);        		
+					        	        
+		        if (syncFileName != null)
+		        {
+		        	// TODO
+		//        	currentTime = syncFileStream.readDouble();
+		        }	
+		        else
+		        {
+		        	currentTime += 1.0 / fps;
+		        }
+		        
+		        long endTimeStamp = (long) (currentTime * 1000.0);
+		        
+		        tuple = new Tuple<>(3, false);
+		        tuple.setAttribute(0, currentImage);
+		        tuple.setAttribute(1, startTimeStamp);
+		        tuple.setAttribute(2, endTimeStamp);	        
+			}
+			else
+			{
+				tuple = new Tuple<>(1, false);
+				tuple.setAttribute(0, currentImage);
+			}
+			
+			currentImage = null;
+	
+	        return tuple;
+		}
+	}
+    
+	@Override public boolean hasNext() 
+	{
 		if (useDelay)
 			try 
 			{
@@ -172,57 +215,25 @@ public class VideoFileTransportHandler extends AbstractSimplePullTransportHandle
 				e.printStackTrace();
 				Thread.currentThread().interrupt();
 			}
-		
-		ImageJCV image = null;
-		try 
-		{
-			synchronized (processLock)
-			{
-				if (frameGrabber == null) return null;
-				IplImage iplImage = frameGrabber.grab().clone();
-				if (iplImage == null || iplImage.isNull()) return null;
-				
-				image = new ImageJCV(iplImage);				
-			}
-		} 
-		catch (Exception e) 
-		{
-			e.printStackTrace();
-		}		
-
-		Tuple<IMetaAttribute> tuple;        
-
-		if (timeStampMode != TimeStampMode.none)
+			
+		synchronized (processLock)
 		{		
-	        long startTimeStamp = (long) (currentTime * 1000.0);        		
-				        	        
-	        if (syncFileName != null)
-	        {
-	        	// TODO
-	//        	currentTime = syncFileStream.readDouble();
-	        }	
-	        else
-	        {
-	        	currentTime += 1.0 / fps;
-	        }
-	        
-	        long endTimeStamp = (long) (currentTime * 1000.0);
-	        
-	        tuple = new Tuple<>(3, false);
-	        tuple.setAttribute(0, image);
-	        tuple.setAttribute(1, startTimeStamp);
-	        tuple.setAttribute(2, endTimeStamp);	        
-		}
-		else
-		{
-			tuple = new Tuple<>(1, false);
-			tuple.setAttribute(0, image);
-		}
-
-        return tuple;		
+			try 
+			{
+				if (frameGrabber == null) return false;
+				IplImage iplImage = frameGrabber.grab().clone();
+				if (iplImage == null || iplImage.isNull()) return false;
+				
+				currentImage = new ImageJCV(iplImage);
+				return true;
+			} 
+			catch (Exception e) 
+			{
+				e.printStackTrace();
+				return false;
+			}		
+		}		
 	}
-    
-	@Override public boolean hasNext() { return frameGrabber != null; }
 		
     @Override
     public boolean isSemanticallyEqualImpl(ITransportHandler o) {

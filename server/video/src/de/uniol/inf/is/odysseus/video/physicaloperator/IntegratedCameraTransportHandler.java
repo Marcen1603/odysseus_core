@@ -26,6 +26,8 @@ public class IntegratedCameraTransportHandler extends AbstractSimplePullTranspor
 	private int 				cameraId;
 	private OpenCVFrameGrabber 	cameraCapture;
 	
+	private ImageJCV currentImage = null;
+	
 	public IntegratedCameraTransportHandler() 
 	{
 		super();
@@ -87,33 +89,41 @@ public class IntegratedCameraTransportHandler extends AbstractSimplePullTranspor
 				}
 			}
 		}
-	}
+	}	
 	
 	@Override public Tuple<IMetaAttribute> getNext() 
 	{
-		ImageJCV image = null;
-		try 
+		synchronized (processLock)
 		{
-			synchronized (processLock)
-			{
-				if (cameraCapture == null) return null;
-				IplImage iplImage = cameraCapture.grab().clone();
-				
-				if (iplImage == null || iplImage.isNull()) return null;
-				image = new ImageJCV(iplImage);
-			}
-		} 
-		catch (Exception e) 
-		{
-			e.printStackTrace();
-		}		
+			if (currentImage == null) return null;
 		
-		Tuple<IMetaAttribute> tuple = new Tuple<>(1, false);
-        tuple.setAttribute(0, image);
-        return tuple;		
+			Tuple<IMetaAttribute> tuple = new Tuple<>(1, false);
+	        tuple.setAttribute(0, currentImage);
+	        currentImage = null;
+	        return tuple;
+		}
 	}
     
-	@Override public boolean hasNext() { return cameraCapture != null; }
+	@Override public boolean hasNext()
+	{
+		synchronized (processLock)
+		{
+			try 
+			{				
+				if (cameraCapture == null) return false;
+				IplImage iplImage = cameraCapture.grab().clone();
+				
+				if (iplImage == null || iplImage.isNull()) return false;
+				currentImage = new ImageJCV(iplImage);
+				return true;
+			}
+			catch (Exception e) 
+			{
+				e.printStackTrace();
+				return false;
+			}
+		}
+	}
 		
     @Override
     public boolean isSemanticallyEqualImpl(ITransportHandler o) {
