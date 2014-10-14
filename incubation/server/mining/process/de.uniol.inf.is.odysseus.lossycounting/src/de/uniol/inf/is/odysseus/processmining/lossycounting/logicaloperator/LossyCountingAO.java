@@ -1,6 +1,12 @@
 package de.uniol.inf.is.odysseus.processmining.lossycounting.logicaloperator;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnaryLogicalOp;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
@@ -41,6 +47,15 @@ public class LossyCountingAO extends UnaryLogicalOp{
 
 	public int getError() {
 		return error;
+	}
+	
+	@Override
+	protected SDFSchema getOutputSchemaIntern(int pos) {
+		List<SDFAttribute> attributes = new ArrayList<SDFAttribute>();
+		SDFAttribute attributeMap = new SDFAttribute(null, "Relation Map", SDFDatatype.INTEGER, null, null, null);
+		attributes.add(attributeMap);
+		SDFSchema outSchema = new SDFSchema(getInputSchema(0), attributes);
+		return outSchema;
 	}
 
 }

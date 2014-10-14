@@ -2,7 +2,10 @@ package de.uniol.inf.is.odysseus.processmining.lossycounting.physicaloperator;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
+
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
@@ -68,7 +71,12 @@ public class LossyCountingPO <T extends IMetaAttribute> extends AbstractPipe<Tup
 
 				dataCleansing();
 				iterations++;
-				System.out.println("Iterationen: "+iterations);
+				
+				if(iterations%20 == 0){
+					Tuple mapTransfer = new Tuple<>(1,true);
+					mapTransfer.setAttribute(0, this.relations);
+					transfer(mapTransfer);
+				}
 			}
 		}
 		
@@ -87,6 +95,8 @@ public class LossyCountingPO <T extends IMetaAttribute> extends AbstractPipe<Tup
 				incrementAndReplaceCaseData(caseId,newActivityName,cases);
 				//updates the frequenz counter of the relations Tuples
 				updateData(relationKeyName, relations);
+				
+				
 				
 				//Test Output
 				System.out.println("++++++++++++++ Relationen ++++++++++++++");

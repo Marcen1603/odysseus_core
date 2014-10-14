@@ -4,8 +4,5 @@
 	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/org.eclipse.swt"/>
-	<classpathentry kind="lib" path="/home/phil/Documents/Masterarbeit/GEF/plugins/org.eclipse.zest.core_1.5.100.201408150207.jar"/>
-	<classpathentry kind="lib" path="/home/phil/Documents/Masterarbeit/GEF/plugins/org.eclipse.zest.layouts_1.1.100.201408150207.jar"/>
-	<classpathentry kind="lib" path="/home/phil/Documents/Masterarbeit/GEF/plugins/org.eclipse.draw2d_3.9.101.201408150207.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
