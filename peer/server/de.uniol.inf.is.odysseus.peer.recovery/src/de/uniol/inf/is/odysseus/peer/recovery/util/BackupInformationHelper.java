@@ -12,8 +12,10 @@ import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Sets;
 
-import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.planexecution.IPlanExecutionListener;
-import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.planexecution.event.AbstractPlanExecutionEvent;
+import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.planmodification.IPlanModificationListener;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.planmodification.event.AbstractPlanModificationEvent;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.planmodification.event.PlanModificationEventType;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.peer.distribute.IQueryPartController;
@@ -26,7 +28,7 @@ import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryCommunicator;
  * @author Michael Brand
  *
  */
-public class BackupInformationHelper implements IPlanExecutionListener {
+public class BackupInformationHelper implements IPlanModificationListener {
 
 	/**
 	 * The logger instance for this class.
@@ -128,6 +130,54 @@ public class BackupInformationHelper implements IPlanExecutionListener {
 	}
 
 	/**
+	 * The executor, if there is one bound.
+	 */
+	private static Optional<IServerExecutor> cExecutor = Optional.absent();
+
+	/**
+	 * Binds an executor. <br />
+	 * Called by OSGI-DS.
+	 * 
+	 * @param executor
+	 *            The executor to bind. <br />
+	 *            Must be not null.
+	 */
+	public void bindExecutor(IExecutor executor) {
+
+		Preconditions.checkNotNull(executor,
+				"The executor to bind must be not null!");
+		IServerExecutor serverExecutor = (IServerExecutor) executor;
+		serverExecutor.addPlanModificationListener(this);
+		cExecutor = Optional.of(serverExecutor);
+		LOG.debug("Bound {} as an executor.", executor.getClass()
+				.getSimpleName());
+
+	}
+
+	/**
+	 * Unbinds an executor. <br />
+	 * Called by OSGI-DS.
+	 * 
+	 * @param executor
+	 *            The executor to unbind. <br />
+	 *            Must be not null.
+	 */
+	public void unbindExecutor(IExecutor executor) {
+
+		Preconditions.checkNotNull(executor,
+				"The executor to unbind must be not null!");
+		if (cExecutor.isPresent() && cExecutor.get().equals(executor)) {
+
+			((IServerExecutor) executor).removePlanModificationListener(this);
+			cExecutor = Optional.absent();
+			LOG.debug("Unbound {} as an executor.", executor.getClass()
+					.getSimpleName());
+
+		}
+
+	}
+
+	/**
 	 * Updates the backup information store (of this and other affected peers)
 	 * after a take over.
 	 * 
@@ -191,7 +241,7 @@ public class BackupInformationHelper implements IPlanExecutionListener {
 	}
 
 	@Override
-	public void planExecutionEvent(AbstractPlanExecutionEvent<?> eventArgs) {
+	public void planModificationEvent(AbstractPlanModificationEvent<?> eventArgs) {
 
 		if (!cController.isPresent()) {
 
