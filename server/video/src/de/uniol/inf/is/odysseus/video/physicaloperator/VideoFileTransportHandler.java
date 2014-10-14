@@ -42,7 +42,9 @@ public class VideoFileTransportHandler extends AbstractSimplePullTransportHandle
 	private double currentTime; // Current timestamp in seconds
 	private String syncFileName = null;
 	
-	private ImageJCV currentImage = null;
+	private ImageJCV 	currentImage;
+	private Thread 		startupThread;
+	protected Exception startupException;
 	
 	public VideoFileTransportHandler() 
 	{
@@ -118,31 +120,57 @@ public class VideoFileTransportHandler extends AbstractSimplePullTransportHandle
 			startTime = System.currentTimeMillis();
 		
 		currentTime = startTime / 1000.0;
+
+		currentImage = null;
+		startupException = null;
+		frameGrabber = null;
 		
-		synchronized (processLock)
+		startupThread = new Thread()
 		{
-			frameGrabber = new FFmpegFrameGrabber(videoUrl);
-			try 
+			@Override public void run()
 			{
-				frameGrabber.start();
-				double gamma = frameGrabber.getGamma();
-				System.out.println("Gamma = " + gamma);
-			} 
-			catch (FrameGrabber.Exception e) 
-			{
-				frameGrabber = null;
-				throw new IOException(e.getMessage());
+				synchronized (processLock)
+				{
+					FFmpegFrameGrabber newFrameGrabber = new FFmpegFrameGrabber(videoUrl);
+					try 
+					{
+						newFrameGrabber.start();
+						if (fps == 0.0)
+							fps = newFrameGrabber.getFrameRate();
+						VideoFileTransportHandler.this.frameGrabber = newFrameGrabber;
+					} 
+					catch (FrameGrabber.Exception e) 
+					{
+						startupException = e;
+					}
+				}				
+				
+				startupThread = null;
 			}
-			
-			if (fps == 0.0)
-				fps = frameGrabber.getFrameRate();
-		}
+		};
+		startupThread.start();
 	}
 	
+	@SuppressWarnings("deprecation")
 	@Override public void processInClose() throws IOException 
 	{
 		synchronized (processLock)
 		{
+			if (startupThread != null)
+			{
+				try 
+				{
+					startupThread.join(1000);
+				} 
+				catch (InterruptedException e) 
+				{
+					Thread.currentThread().interrupt();
+				}
+
+				startupThread.stop();
+				startupThread = null;
+			}
+			
 			if (frameGrabber != null)
 			{
 				try 
@@ -220,7 +248,14 @@ public class VideoFileTransportHandler extends AbstractSimplePullTransportHandle
 		{		
 			try 
 			{
-				if (frameGrabber == null) return false;
+				if (frameGrabber == null)
+				{
+					if (startupException == null)
+						return false;
+					else
+						throw new RuntimeException(startupException);
+				}
+				
 				IplImage iplImage = frameGrabber.grab().clone();
 				if (iplImage == null || iplImage.isNull()) return false;
 				
@@ -229,8 +264,7 @@ public class VideoFileTransportHandler extends AbstractSimplePullTransportHandle
 			} 
 			catch (Exception e) 
 			{
-				e.printStackTrace();
-				return false;
+				throw new RuntimeException(e);
 			}		
 		}		
 	}

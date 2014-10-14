@@ -141,9 +141,9 @@ public class AppendFileTransportHandler extends AbstractSimplePullTransportHandl
     
 	private boolean checkNext()
 	{
-   		if (currentStream == null)
-   		{
-   			try 
+		try 
+		{
+			if (currentStream == null)
    			{
 				currentStream = new BufferedReader(new InputStreamReader(new FileInputStream(fileName)));
 				BasicFileAttributes attr = Files.readAttributes(Paths.get(fileName), BasicFileAttributes.class);
@@ -152,23 +152,14 @@ public class AppendFileTransportHandler extends AbstractSimplePullTransportHandl
 								
 				currentTimeStamp = attr.creationTime().toMillis();
 			} 
-   			catch (IOException e) 
-   			{
-   				return false;
-			}
-   		}
 
-        try
-        {
     		currentLine = currentStream.readLine();    	
     		return currentLine != null && !currentLine.equals("");
     	}
     	catch (Exception e)
     	{
-    		logger.error("Error while reading file", e);
-    		return false;
-    	}
-		
+   			throw new RuntimeException(e);
+    	}		
 	}
 	
 	@Override public boolean hasNext() 
