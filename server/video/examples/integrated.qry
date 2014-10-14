@@ -1,6 +1,6 @@
 #PARSER PQL
 #RUNQUERY
-///Grabs and displays the image of a camera attached to the PC (e.g. webcam)
+///Grabs and displays the image of a camera attached to the PC (f.ex. webcam)
 ///Device can be selected by the "id" parameter
 
 video  = ACCESS({source='Video', 
