@@ -12,6 +12,11 @@ import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Sets;
 
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.planexecution.IPlanExecutionListener;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.planexecution.event.AbstractPlanExecutionEvent;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.planmodification.event.PlanModificationEventType;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
+import de.uniol.inf.is.odysseus.peer.distribute.IQueryPartController;
 import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryBackupInformation;
 import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryCommunicator;
 
@@ -21,7 +26,7 @@ import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryCommunicator;
  * @author Michael Brand
  *
  */
-public class BackupInformationHelper {
+public class BackupInformationHelper implements IPlanExecutionListener {
 
 	/**
 	 * The logger instance for this class.
@@ -70,6 +75,52 @@ public class BackupInformationHelper {
 
 			cCommunicator = Optional.absent();
 			LOG.debug("Unbound {} as a recovery communicator.", communicator
+					.getClass().getSimpleName());
+
+		}
+
+	}
+
+	/**
+	 * The query part controller, if there is one bound.
+	 */
+	private static Optional<IQueryPartController> cController = Optional
+			.absent();
+
+	/**
+	 * Binds a query part controller. <br />
+	 * Called by OSGI-DS.
+	 * 
+	 * @param controller
+	 *            The query part controller to bind. <br />
+	 *            Must be not null.
+	 */
+	public static void bindController(IQueryPartController controller) {
+
+		Preconditions.checkNotNull(controller,
+				"The query part controller to bind must be not null!");
+		cController = Optional.of(controller);
+		LOG.debug("Bound {} as a query part controller.", controller.getClass()
+				.getSimpleName());
+
+	}
+
+	/**
+	 * Unbinds a query part controller. <br />
+	 * Called by OSGI-DS.
+	 * 
+	 * @param controller
+	 *            The query part controller to unbind. <br />
+	 *            Must be not null.
+	 */
+	public static void unbindController(IQueryPartController controller) {
+
+		Preconditions.checkNotNull(controller,
+				"The query part controller to unbind must be not null!");
+		if (cController.isPresent() && cCommunicator.get().equals(controller)) {
+
+			cController = Optional.absent();
+			LOG.debug("Unbound {} as a query part controller.", controller
 					.getClass().getSimpleName());
 
 		}
@@ -139,4 +190,29 @@ public class BackupInformationHelper {
 
 	}
 
+	@Override
+	public void planExecutionEvent(AbstractPlanExecutionEvent<?> eventArgs) {
+
+		if (!cController.isPresent()) {
+
+			LOG.error("No query part controller bound!");
+			return;
+
+		}
+
+		if (PlanModificationEventType.QUERY_REMOVE.equals(eventArgs
+				.getEventType())) {
+
+			int queryID = ((IPhysicalQuery) eventArgs.getValue()).getID();
+			ID sharedQueryID = cController.get().getSharedQueryID(queryID);
+			if (sharedQueryID == null) {
+				return; // query was not shared
+			}
+
+			// Remove backup information
+			LocalBackupInformationAccess.getStore().remove(sharedQueryID);
+
+		}
+
+	}
 }
