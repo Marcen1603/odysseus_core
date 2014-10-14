@@ -235,6 +235,13 @@ public class QueryPartController implements IPlanModificationListener, IPeerComm
 			sharedQueryIDMap.put(id, sharedQueryID);
 		}
 	}
+	
+	public ID getSharedQueryID(int queryId) {
+		
+		Preconditions.checkNotNull(queryId);
+		return this.sharedQueryIDMap.get(queryId);
+		
+	}
 
 	public static QueryPartController getInstance() {
 		return instance;
