@@ -88,7 +88,7 @@ public class VideoFileTransportHandler extends AbstractSimplePullTransportHandle
 			// Frame timestamps will be extrapolated from beginning time stamp specified in the options
 			// If no timestamp is given, system time will be used
 			// curTime = startTime + frameNum/fps
-			startTime = getOptionsMap().getLong("startTime", 0);
+			startTime = getOptionsMap().getLong("starttime", 0);
 			break;
 			
 		case fileTime:
@@ -190,15 +190,12 @@ public class VideoFileTransportHandler extends AbstractSimplePullTransportHandle
 			e.printStackTrace();
 		}		
 
-		Tuple<IMetaAttribute> tuple = new Tuple<>(2, false);        
+		Tuple<IMetaAttribute> tuple;        
 
 		if (timeStampMode != TimeStampMode.none)
 		{		
-	        long longTimeStamp = (long) (currentTime * 1000.0);        		
-			
-	        tuple.setAttribute(0, longTimeStamp);
-	        tuple.setAttribute(1, image);
-	        
+	        long startTimeStamp = (long) (currentTime * 1000.0);        		
+				        	        
 	        if (syncFileName != null)
 	        {
 	        	// TODO
@@ -208,9 +205,19 @@ public class VideoFileTransportHandler extends AbstractSimplePullTransportHandle
 	        {
 	        	currentTime += 1.0 / fps;
 	        }
+	        
+	        long endTimeStamp = (long) (currentTime * 1000.0);
+	        
+	        tuple = new Tuple<>(3, false);
+	        tuple.setAttribute(0, image);
+	        tuple.setAttribute(1, startTimeStamp);
+	        tuple.setAttribute(2, endTimeStamp);	        
 		}
 		else
-	        tuple.setAttribute(0, image);
+		{
+			tuple = new Tuple<>(1, false);
+			tuple.setAttribute(0, image);
+		}
 
         return tuple;		
 	}

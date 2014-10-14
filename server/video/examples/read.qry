@@ -9,13 +9,14 @@ video =  ACCESS({source='Video',
 				 protocol='none', 
 				 datahandler='Tuple',
 				 options=[
-							['videoUrl', 'd:/stream.m4e'],
+							['videoUrl', 'd:/fla4FE9.flv'],
 							['timeStampMode', 'filetime'],
 							['useDelay', 'true']
 					     ],					     
-				schema=	 [	
-							['timestamp', 	'STARTTIMESTAMP'],
-        					['image', 		'IMAGEJCV']
+				schema=	 [								
+        					['image', 			'IMAGEJCV'],
+        					['starttimestamp', 	'STARTTIMESTAMP'],
+        					['endtimestamp', 	'ENDTIMESTAMP']
         				 ]})
 					     
 video2 = MAP({
