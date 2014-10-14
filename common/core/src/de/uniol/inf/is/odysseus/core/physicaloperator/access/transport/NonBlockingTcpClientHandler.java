@@ -220,6 +220,7 @@ public class NonBlockingTcpClientHandler extends AbstractTransportHandler
 	@Override
 	public void notify(final IConnection con,
 			final ConnectionMessageReason reason) {
+		infoService.warning("Connection information "+con+" --> "+reason);
 		switch (reason) {
 		case ConnectionAbort:
 			super.fireOnDisconnect();

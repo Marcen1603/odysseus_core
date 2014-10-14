@@ -6,10 +6,16 @@ import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 
 public class AbstractTransportHandlerDelegate<T> {
+	
+	private final static Logger LOG = LoggerFactory.getLogger(AbstractTransportHandlerDelegate.class);
 
 	private final List<ITransportHandlerListener<T>> transportHandlerListener = new ArrayList<ITransportHandlerListener<T>>();
 	private int openCounter = 0;
@@ -85,6 +91,7 @@ public class AbstractTransportHandlerDelegate<T> {
 
 	final synchronized public void open() throws UnknownHostException,
 			IOException {
+		LOG.debug("Calling open with "+this.getExchangePattern()+" for "+direction);
 		if (openCounter == 0) {
 			if (getExchangePattern() != null
 					&& (getExchangePattern().equals(

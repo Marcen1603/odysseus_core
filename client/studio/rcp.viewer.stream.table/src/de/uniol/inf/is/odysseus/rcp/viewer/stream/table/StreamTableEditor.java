@@ -125,6 +125,8 @@ public class StreamTableEditor implements IStreamEditorType {
 									if (!getTableViewer().getTable().isDisposed()) {
 										getTableViewer().refresh();
 									}
+								}catch(Exception e){
+									// ignore
 								} finally {
 									isRefreshing = false;
 								}
@@ -281,7 +283,11 @@ public class StreamTableEditor implements IStreamEditorType {
 			protected int doCompare(Viewer viewer, Tuple<?> e1, Tuple<?> e2) {
 				Object attr1 = e1.getAttribute(attributeIndex);
 				Object attr2 = e2.getAttribute(attributeIndex);
-				return Objects.compare(attr1, attr2, new ObjectComparator());
+				if (attr1 != null && attr2 != null){
+					return Objects.compare(attr1, attr2, new ObjectComparator());
+				}else{
+					return 0;
+				}
 			}
 		};
 		sorter.setSorter(sorter, TupleColumnViewerSorter.NONE);
