@@ -15,11 +15,8 @@ import net.jxta.pipe.PipeID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableCollection;
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Sets;
 
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
@@ -44,6 +41,7 @@ import de.uniol.inf.is.odysseus.peer.recovery.messages.RecoveryAgreementMessage;
 import de.uniol.inf.is.odysseus.peer.recovery.messages.RecoveryInstructionMessage;
 import de.uniol.inf.is.odysseus.peer.recovery.protocol.RecoveryAgreementHandler;
 import de.uniol.inf.is.odysseus.peer.recovery.protocol.RecoveryInstructionHandler;
+import de.uniol.inf.is.odysseus.peer.recovery.util.BackupInformationHelper;
 import de.uniol.inf.is.odysseus.peer.recovery.util.LocalBackupInformationAccess;
 import de.uniol.inf.is.odysseus.peer.recovery.util.RecoveryHelper;
 
@@ -391,60 +389,12 @@ public class RecoveryCommunicator implements IRecoveryCommunicator,
 							+ newPeer.toString(), e);
 		}
 
-		// The affected backup information
-		Set<IRecoveryBackupInformation> affectedInfos = Sets.newHashSet();
-		for (String affectedPQL : pqlParts) {
+		for (String pqlCode : pqlParts) {
 
-			Optional<IRecoveryBackupInformation> affectedInfo = LocalBackupInformationAccess
-					.getStore().get(affectedPQL);
-			if (affectedInfo.isPresent()) {
-
-				affectedInfos.add(affectedInfo.get());
-
-			}
+			BackupInformationHelper.updateInfoStores(failedPeer, newPeer,
+					sharedQueryId, pqlCode);
 
 		}
-
-		// Determine, which backup information have to be sent to the new peer
-		Set<IRecoveryBackupInformation> subsequentInfos = determineSubsequentBackupInformation(affectedInfos);
-
-		// Send these information
-		for (IRecoveryBackupInformation info : subsequentInfos) {
-
-			this.sendBackupInformation(newPeer, info);
-
-		}
-
-		// Update the local backup information due to the take over
-		for (IRecoveryBackupInformation info : affectedInfos) {
-
-			LocalBackupInformationAccess.getStore().remove(info);
-
-		}
-
-	}
-
-	/**
-	 * Determines all subsequent backup information of given information.
-	 * 
-	 * @param infos
-	 *            The given info. <br />
-	 *            Must be not null.
-	 * @return All subsequent backup information of the given information.
-	 */
-	private ImmutableSet<IRecoveryBackupInformation> determineSubsequentBackupInformation(
-			Set<IRecoveryBackupInformation> infos) {
-
-		Preconditions.checkNotNull(infos);
-		Set<IRecoveryBackupInformation> out = Sets.newHashSet();
-
-		for (IRecoveryBackupInformation info : infos) {
-
-			out.addAll(info.getSubsequentPartsInformation());
-
-		}
-
-		return ImmutableSet.copyOf(out);
 
 	}
 
