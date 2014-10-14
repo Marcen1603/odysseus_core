@@ -1,7 +1,6 @@
 package de.uniol.inf.is.odysseus.peer.recovery.util;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -16,7 +15,6 @@ import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
 import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryBackupInformation;
@@ -25,8 +23,9 @@ import de.uniol.inf.is.odysseus.peer.recovery.internal.JxtaInformation;
 import de.uniol.inf.is.odysseus.peer.recovery.internal.SharedQuery;
 
 /**
- * A helper class to backup information about distributed queries within the
- * local {@link IRecoveryBackupInformationStore}.
+ * A helper class to get access to the local backup information store.
+ * 
+ * @see IRecoveryBackupInformationStore
  * 
  * @author Michael Brand, Tobias Brandt
  */
@@ -54,8 +53,7 @@ public class LocalBackupInformationAccess {
 	 */
 	public static void bindStore(IRecoveryBackupInformationStore store) {
 
-		Preconditions.checkNotNull(store,
-				"The backup information store to bind must be not null!");
+		Preconditions.checkNotNull(store);
 		cInfoStore = Optional.of(store);
 		LOG.debug("Bound {} as a backup information store for recovery.", store
 				.getClass().getSimpleName());
@@ -72,8 +70,7 @@ public class LocalBackupInformationAccess {
 	 */
 	public static void unbindStore(IRecoveryBackupInformationStore store) {
 
-		Preconditions.checkNotNull(store,
-				"The backup information store to unbind must be not null!");
+		Preconditions.checkNotNull(store);
 		if (cInfoStore.isPresent() && cInfoStore.get().equals(store)) {
 
 			cInfoStore = Optional.absent();
@@ -83,6 +80,246 @@ public class LocalBackupInformationAccess {
 		}
 
 	}
+
+	/**
+	 * Gets the local backup information store.
+	 * 
+	 * @return The store instance bound by OSGI-DS.
+	 */
+	public static IRecoveryBackupInformationStore getStore() {
+
+		if (!cInfoStore.isPresent()) {
+
+			LOG.error("No backup information store for recovery bound!");
+			return null;
+
+		}
+
+		return cInfoStore.get();
+
+	}
+
+	/**
+	 * Gets all query parts of a given distributed query for which backup
+	 * information are stored.
+	 * 
+	 * @param sharedQueryId
+	 *            The ID of the distributed query. <br />
+	 *            Must be not null!
+	 * @return The PQL codes of all query parts of the given distributed query
+	 *         for which backup information are stored.
+	 */
+	public static ImmutableSet<String> getStoredPQLStatements(ID sharedQueryId) {
+
+		Preconditions.checkNotNull(sharedQueryId);
+
+		if (!cInfoStore.isPresent()) {
+
+			LOG.error("No backup information store for recovery bound!");
+			return null;
+
+		}
+
+		Set<String> pqls = Sets.newHashSet();
+
+		for (IRecoveryBackupInformation info : cInfoStore.get().get(
+				sharedQueryId)) {
+
+			pqls.add(info.getPQL());
+
+		}
+
+		return ImmutableSet.copyOf(pqls);
+
+	}
+
+	/**
+	 * Gets all distributed queries for which backup information are stored and
+	 * which have a given peer allocated to a query part of them.
+	 * 
+	 * @param peerId
+	 *            The ID of the peer. <br />
+	 *            Must be not null!
+	 * @return The helper class instances, each representing a distributed
+	 *         query, of all distributed queries for which backup information
+	 *         are stored and which have the given peer allocated to a query
+	 *         part of them.
+	 */
+	public static ImmutableSet<SharedQuery> getStoredPQLStatements(PeerID peerId) {
+
+		Preconditions.checkNotNull(peerId);
+
+		if (!cInfoStore.isPresent()) {
+
+			LOG.error("No backup information store for recovery bound!");
+			return null;
+
+		}
+
+		Set<SharedQuery> sharedQueries = Sets.newHashSet();
+
+		Set<ID> storedIds = getStoredSharedQueryIdsForPeer(peerId);
+
+		for (ID id : storedIds) {
+
+			ImmutableCollection<String> pql = getStoredPQLStatements(id);
+			List<String> pqlForQuery = new ArrayList<String>();
+			pqlForQuery.addAll(pql);
+			SharedQuery query = new SharedQuery(id, pqlForQuery);
+			sharedQueries.add(query);
+
+		}
+
+		return ImmutableSet.copyOf(sharedQueries);
+	}
+
+	/**
+	 * Gets all query parts of a given distributed query for which backup
+	 * information are stored and which are allocated to a given peer.
+	 * 
+	 * @param sharedQueryId
+	 *            The ID of the distributed query. <br />
+	 *            Must be not null!
+	 * @param peerId
+	 *            The ID of the peer. <br />
+	 *            Must be not null!
+	 * @return The PQL codes of all query parts of the given distributed query
+	 *         for which backup information are stored and which are allocated
+	 *         to the given peer.
+	 */
+	public static ImmutableSet<String> getStoredPQLStatements(ID sharedQueryId,
+			PeerID peerId) {
+
+		Preconditions.checkNotNull(sharedQueryId);
+		Preconditions.checkNotNull(peerId);
+
+		if (!cInfoStore.isPresent()) {
+
+			LOG.error("No backup information store for recovery bound!");
+			return null;
+
+		}
+
+		Set<String> pqlStatements = getStoredPQLStatements(sharedQueryId);
+		Set<String> out = Sets.newHashSet();
+
+		for (String pql : pqlStatements) {
+
+			Optional<IRecoveryBackupInformation> info = cInfoStore.get().get(
+					pql);
+			Preconditions.checkArgument(info.isPresent());
+
+			if (info.get().getPeer().equals(peerId)) {
+
+				out.add(pql);
+			}
+
+		}
+
+		return ImmutableSet.copyOf(out);
+
+	}
+
+	/**
+	 * Gets all distributed queries for which backup information are stored.
+	 * 
+	 * @return The ids of all distributed queries for which backup information
+	 *         are stored.
+	 */
+	public static ImmutableSet<ID> getStoredIDs() {
+
+		if (!cInfoStore.isPresent()) {
+
+			LOG.error("No backup information store for recovery bound!");
+			return null;
+
+		}
+
+		return cInfoStore.get().getAll().keySet();
+
+	}
+
+	/**
+	 * Gets all peers, which are allocated to query parts of a given distributed
+	 * query and for which backup information are stored.
+	 * 
+	 * @param sharedQueryId
+	 *            The ID of the distributed query. <br />
+	 *            Must be not null!
+	 * @return The ids of all peers, which are allocated to query parts of the
+	 *         given distributed query and for which backup information are
+	 *         stored.
+	 */
+	public static ImmutableSet<PeerID> getStoredPeersForSharedQueryId(
+			ID sharedQueryId) {
+
+		Preconditions.checkNotNull(sharedQueryId);
+
+		if (!cInfoStore.isPresent()) {
+
+			LOG.error("No backup information store for recovery bound!");
+			return null;
+
+		}
+
+		Set<PeerID> peers = Sets.newHashSet();
+		for (IRecoveryBackupInformation info : cInfoStore.get().get(
+				sharedQueryId)) {
+
+			if (!peers.contains(info.getPeer())) {
+
+				peers.add(info.getPeer());
+
+			}
+
+		}
+
+		return ImmutableSet.copyOf(peers);
+
+	}
+
+	/**
+	 * Gets all distributed queries, which contain query parts allocated to a
+	 * given peer and for which backup information are stored.
+	 * 
+	 * @param peerId
+	 *            The id of the peer. <br />
+	 *            Must be not null!
+	 * @return The ids of all distributed queries, which contain query parts
+	 *         allocated to the given peer and for which backup information are
+	 *         stored.
+	 */
+	public static ImmutableSet<ID> getStoredSharedQueryIdsForPeer(PeerID peerId) {
+
+		Preconditions.checkNotNull(peerId);
+
+		if (!cInfoStore.isPresent()) {
+
+			LOG.error("No backup information store for recovery bound!");
+			return null;
+
+		}
+
+		Set<ID> sharedQueryIds = Sets.newHashSet();
+
+		for (ID queryId : cInfoStore.get().getAll().keySet()) {
+			for (IRecoveryBackupInformation info : cInfoStore.get()
+					.get(queryId)) {
+				if (info.getPeer().equals(peerId)) {
+					// This is what we search: For this peer we have a
+					// sharedQueryId
+					sharedQueryIds.add(queryId);
+					break;
+				}
+			}
+		}
+
+		return ImmutableSet.copyOf(sharedQueryIds);
+	}
+
+	/*
+	 * TODO Jxta information. Not clear atm. if they are needed.
+	 */
 
 	/**
 	 * Stores a key-value pair for a certain shared query on a certain peer.
@@ -141,189 +378,9 @@ public class LocalBackupInformationAccess {
 		return peerArray;
 	}
 
-	public static IRecoveryBackupInformationStore getStore() {
-
-		if (!cInfoStore.isPresent()) {
-
-			LOG.error("No backup information store for recovery bound!");
-			return null;
-
-		}
-
-		return cInfoStore.get();
-
-	}
-
-	/**
-	 * Calls {@link IRecoveryBackupInformationStore#getStoredPQLStatements(ID)}
-	 * 
-	 * @param sharedQueryId
-	 *            The ID of the distributed query. <br />
-	 *            Must be not null!
+	/*
+	 * TODO Buddy information. Not clear atm. if they are needed.
 	 */
-	public static ImmutableCollection<String> getStoredPQLStatements(
-			ID sharedQueryId) {
-
-		Preconditions.checkNotNull(sharedQueryId);
-
-		if (!cInfoStore.isPresent()) {
-
-			LOG.error("No backup information store for recovery bound!");
-			return null;
-
-		}
-
-		Collection<String> pqls = Sets.newHashSet();
-
-		for (IRecoveryBackupInformation info : cInfoStore.get().get(
-				sharedQueryId)) {
-
-			pqls.add(info.getPQL());
-
-		}
-
-		return ImmutableSet.copyOf(pqls);
-
-	}
-
-	/**
-	 * Returns the stored PQL-Statements for a given PeerID.
-	 * 
-	 * @param peerId
-	 * @return
-	 */
-	public static List<SharedQuery> getStoredPQLStatements(PeerID peerId) {
-		if (!cInfoStore.isPresent()) {
-
-			LOG.error("No backup information store for recovery bound!");
-			return null;
-
-		}
-
-		List<SharedQuery> sharedQueries = new ArrayList<SharedQuery>();
-
-		List<ID> storedIds = getStoredSharedQueryIdsForPeer(peerId);
-
-		for (ID id : storedIds) {
-			ImmutableCollection<String> pql = getStoredPQLStatements(id);
-			List<String> pqlForQuery = new ArrayList<String>();
-			pqlForQuery.addAll(pql);
-			SharedQuery query = new SharedQuery(id, pqlForQuery);
-			sharedQueries.add(query);
-		}
-
-		return sharedQueries;
-	}
-
-	/**
-	 * Gets stored PQL statements.
-	 * 
-	 * @param sharedQueryId
-	 *            The distributed query, of which the PQL statements are part
-	 *            of.
-	 * @param peer
-	 *            The peer, on which the PQL statements are executed.
-	 * @return All PQL statements which are part of a distributed query with the
-	 *         id <code>sharedQueryId</code> and which are executed on
-	 *         <code>peer</code>.
-	 */
-	public static ImmutableCollection<String> getStoredPQLStatements(
-			ID sharedQueryId, PeerID peer) {
-
-		Collection<String> results = Lists.newArrayList();
-		ImmutableCollection<String> results1 = getStoredPQLStatements(sharedQueryId);
-		ImmutableCollection<String> results2 = getStoredPQLStatements(sharedQueryId);
-
-		for (String pqlStatement : results1) {
-
-			if (results2.contains(pqlStatement)) {
-
-				results.add(pqlStatement);
-
-			}
-
-		}
-
-		return ImmutableSet.copyOf(results);
-
-	}
-
-	/**
-	 * 
-	 * @return All stored sharedQueryIDs in the backup-store of this peer
-	 *         (hence, the ids can (and probably will) be from many peers
-	 */
-	public static ImmutableCollection<ID> getStoredIDs() {
-		if (!cInfoStore.isPresent()) {
-
-			LOG.error("No backup information store for recovery bound!");
-			return null;
-
-		}
-		return cInfoStore.get().getAll().keySet();
-	}
-
-	/**
-	 * 
-	 * @param sharedQueryId
-	 * @return All stored peerIds which are known to have a part of the query
-	 *         with the given sharedQueryId
-	 */
-	public static ImmutableCollection<PeerID> getStoredPeersForSharedQueryId(
-			ID sharedQueryId) {
-		if (!cInfoStore.isPresent()) {
-
-			LOG.error("No backup information store for recovery bound!");
-			return null;
-
-		}
-
-		Collection<PeerID> peers = Lists.newArrayList();
-		for (IRecoveryBackupInformation info : cInfoStore.get().get(
-				sharedQueryId)) {
-
-			if (!peers.contains(info.getPeer())) {
-
-				peers.add(info.getPeer());
-
-			}
-
-		}
-
-		return ImmutableSet.copyOf(peers);
-	}
-
-	/**
-	 * Returns all shared query-ids which have a query part on the given peer
-	 * 
-	 * @param peerId
-	 *            Peer you want to have the sharedQueryIds from
-	 * @return
-	 */
-	public static List<ID> getStoredSharedQueryIdsForPeer(PeerID peerId) {
-		if (!cInfoStore.isPresent()) {
-
-			LOG.error("No backup information store for recovery bound!");
-			return null;
-
-		}
-
-		List<ID> sharedQueryIds = new ArrayList<ID>();
-
-		for (ID queryId : cInfoStore.get().getAll().keySet()) {
-			for (IRecoveryBackupInformation info : cInfoStore.get()
-					.get(queryId)) {
-				if (info.getPeer().equals(peerId)) {
-					// This is what we search: For this peer we have a
-					// sharedQueryId
-					sharedQueryIds.add(queryId);
-					break;
-				}
-			}
-		}
-
-		return sharedQueryIds;
-	}
 
 	/**
 	 * Adds a peer to the list of peers for which we are a buddy.

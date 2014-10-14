@@ -14,47 +14,7 @@ import net.jxta.pipe.PipeID;
  *
  */
 public interface IRecoveryCommunicator {
-
-	/**
-	 * Sends a message with backup information to another peer.
-	 * @param destination The peer for which the backup information are.
-	 * @param info The backup information to send.
-	 */
-	public void sendBackupInformation(PeerID destination, IRecoveryBackupInformation info);
-
-	/**
-	 * Sends a message to the new peer. The message contains the PQL from the
-	 * failed peer for the given sharedQueryId. The newPeer, which receives the
-	 * message, will (try to) install the queries.
-	 * 
-	 * @param failedPeer
-	 *            The failed peer
-	 * @param newPeer
-	 *            The new peer to take over a part of the work of the failed
-	 *            peer
-	 * @param sharedQueryId
-	 *            The id of the shared query which the new peer should recover
-	 *            from the failed peer
-	 */
-	public void installQueriesOnNewPeer(PeerID failedPeer, PeerID newPeer,
-			ID sharedQueryId);
-
-	/**
-	 * Experimental: Sends this kind of backup-information to every peer. Used
-	 * for extra-information about JXTA, such as Pipe-ids
-	 * 
-	 * @param peerId
-	 *            PeerID about which this information is
-	 * @param sharedQueryId
-	 *            Id of the shared query, about which this information is
-	 * @param key
-	 *            Key of this information
-	 * @param value
-	 *            Value of this information (e.g. a pipe-id)
-	 */
-	public void sendBackupJxtaInformation(PeerID peerId, ID sharedQueryId,
-			String key, String value);
-
+	
 	/**
 	 * Does the recovery for the failed peer (and checks, if this peer can and
 	 * should to this). This is the method you should call if you notice that a
@@ -106,8 +66,56 @@ public interface IRecoveryCommunicator {
 	 */
 	public void sendRecoveryAgreementMessage(PeerID failedPeer, ID sharedQueryId);
 
+	// TODO javaDoc
 	public IRecoveryAllocator getRecoveryAllocator();
 
+	// TODO javaDoc
 	public void setRecoveryAllocator(IRecoveryAllocator recoveryAllocator);
+
+	/**
+	 * Sends a message with backup information to another peer.
+	 * @param destination The peer for which the backup information are. <br />
+	 * Must be not null.
+	 * @param info The backup information to send. <br />
+	 * Must be not null.
+	 */
+	public void sendBackupInformation(PeerID destination, IRecoveryBackupInformation info);
+
+	/**
+	 * Sends a message to the new peer. The message contains the PQL from the
+	 * failed peer for the given sharedQueryId. The newPeer, which receives the
+	 * message, will (try to) install the queries.
+	 * 
+	 * @param failedPeer
+	 *            The failed peer
+	 * @param newPeer
+	 *            The new peer to take over a part of the work of the failed
+	 *            peer
+	 * @param sharedQueryId
+	 *            The id of the shared query which the new peer should recover
+	 *            from the failed peer
+	 */
+	// TODO Better way: allocate each single query part new. M.B.
+	public void installQueriesOnNewPeer(PeerID failedPeer, PeerID newPeer,
+			ID sharedQueryId);
+	
+	/*
+	 * TODO Jxta information. Not clear atm. if they are needed.
+	 */
+	/**
+	 * Experimental: Sends this kind of backup-information to every peer. Used
+	 * for extra-information about JXTA, such as Pipe-ids
+	 * 
+	 * @param peerId
+	 *            PeerID about which this information is
+	 * @param sharedQueryId
+	 *            Id of the shared query, about which this information is
+	 * @param key
+	 *            Key of this information
+	 * @param value
+	 *            Value of this information (e.g. a pipe-id)
+	 */
+	public void sendBackupJxtaInformation(PeerID peerId, ID sharedQueryId,
+			String key, String value);
 
 }

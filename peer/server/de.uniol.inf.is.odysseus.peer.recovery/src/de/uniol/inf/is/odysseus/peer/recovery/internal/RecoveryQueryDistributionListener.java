@@ -146,7 +146,7 @@ public class RecoveryQueryDistributionListener extends
 
 		// Keep allocation map for that query in mind, because after
 		// transmission, all query parts will be disconnected.
-		this.mBackupInfoCalculator.calcQueryPartGraph(query, allocationMap);
+		this.mBackupInfoCalculator.calcQueryPartGraph(query, allocationMap.keySet());
 
 	}
 
@@ -184,10 +184,14 @@ public class RecoveryQueryDistributionListener extends
 					cCommunicator.get().sendBackupInformation(peer, info);
 
 				}
+				
+				/*
+				 * TODO Jxta information. Not clear atm. if they are needed.
+				 */
 
 				// Save information about JXTA
-
-				// TODO Won't work, because there are no operators but only PQL
+				// Won't work, because there are no operators but only PQL.
+				
 				// Map<PeerID, Collection<String>> subsequentPQLStatements =
 				// Maps
 				// .newHashMap();
@@ -240,6 +244,9 @@ public class RecoveryQueryDistributionListener extends
 
 	}
 
+	/*
+	 * TODO Jxta information. Not clear atm. if they are needed.
+	 */
 	/**
 	 * Copied from LogicalQueryHelper
 	 * 

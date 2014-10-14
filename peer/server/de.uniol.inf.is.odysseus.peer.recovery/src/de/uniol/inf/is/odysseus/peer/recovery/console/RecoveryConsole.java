@@ -5,6 +5,7 @@ import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 import net.jxta.id.ID;
 import net.jxta.peer.PeerID;
@@ -235,7 +236,7 @@ public class RecoveryConsole implements CommandProvider {
 		Optional<PeerID> peerId = RecoveryHelper.determinePeerID(peerName);
 
 		if (peerId.isPresent()) {
-			List<ID> queryIds = LocalBackupInformationAccess
+			Set<ID> queryIds = LocalBackupInformationAccess
 					.getStoredSharedQueryIdsForPeer(peerId.get());
 			System.out.println("PQL-Queries for peer with peerId "
 					+ peerId.get());

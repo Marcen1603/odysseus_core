@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
+import java.util.Set;
 
 import net.jxta.id.ID;
 import net.jxta.peer.PeerID;
@@ -14,6 +15,7 @@ import net.jxta.pipe.PipeID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableCollection;
 
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
@@ -44,8 +46,6 @@ import de.uniol.inf.is.odysseus.peer.recovery.util.RecoveryHelper;
 /**
  * A recovery communicator handles the communication between peers for recovery
  * mechanisms.
- * 
- * Attention: Under construction
  * 
  * @author Tobias Brandt & Michael Brand & Simon Kuespert
  *
@@ -148,8 +148,10 @@ public class RecoveryCommunicator implements IRecoveryCommunicator,
 					RecoveryInstructionMessage.class);
 			peerCommunicator
 					.unregisterMessageType(RecoveryInstructionMessage.class);
-			peerCommunicator.removeListener(this, BackupInformationMessage.class);
-			peerCommunicator.unregisterMessageType(BackupInformationMessage.class);
+			peerCommunicator.removeListener(this,
+					BackupInformationMessage.class);
+			peerCommunicator
+					.unregisterMessageType(BackupInformationMessage.class);
 			peerCommunicator.removeListener(this, BackupJxtaInfoMessage.class);
 			peerCommunicator.unregisterMessageType(BackupJxtaInfoMessage.class);
 			peerCommunicator.removeListener(this,
@@ -272,7 +274,7 @@ public class RecoveryCommunicator implements IRecoveryCommunicator,
 				// sender: Search in the saved backup information for
 				// that pipe id and look, which shared query id belongs
 				// to the operator which has this pipeId
-				List<SharedQuery> pqls = LocalBackupInformationAccess
+				Set<SharedQuery> pqls = LocalBackupInformationAccess
 						.getStoredPQLStatements(failedPeer);
 				for (SharedQuery sharedQuery : pqls) {
 					List<String> pqlParts = sharedQuery.getPqlParts();
@@ -356,9 +358,14 @@ public class RecoveryCommunicator implements IRecoveryCommunicator,
 		}
 	}
 
+	// TODO Better way: allocate each single query part new. M.B.
 	@Override
 	public void installQueriesOnNewPeer(PeerID failedPeer, PeerID newPeer,
 			ID sharedQueryId) {
+
+		Preconditions.checkNotNull(failedPeer);
+		Preconditions.checkNotNull(newPeer);
+		Preconditions.checkNotNull(sharedQueryId);
 
 		ImmutableCollection<String> pqlParts = LocalBackupInformationAccess
 				.getStoredPQLStatements(sharedQueryId, failedPeer);
@@ -425,7 +432,8 @@ public class RecoveryCommunicator implements IRecoveryCommunicator,
 		} else if (message instanceof BackupInformationMessage) {
 
 			// Store the backup information
-			LocalBackupInformationAccess.getStore().add(((BackupInformationMessage) message).getInfo());
+			LocalBackupInformationAccess.getStore().add(
+					((BackupInformationMessage) message).getInfo());
 
 		} else if (message instanceof BackupJxtaInfoMessage) {
 			BackupJxtaInfoMessage jxtaMessage = (BackupJxtaInfoMessage) message;
@@ -445,6 +453,8 @@ public class RecoveryCommunicator implements IRecoveryCommunicator,
 	public void sendBackupInformation(PeerID destination,
 			IRecoveryBackupInformation info) {
 
+		Preconditions.checkNotNull(destination);
+		Preconditions.checkNotNull(info);
 		BackupInformationMessage message = new BackupInformationMessage(info);
 
 		try {
@@ -460,6 +470,9 @@ public class RecoveryCommunicator implements IRecoveryCommunicator,
 
 	}
 
+	/*
+	 * TODO Jxta information. Not clear atm. if they are needed.
+	 */
 	public void sendBackupJxtaInformation(PeerID peerId, ID sharedQueryId,
 			String key, String value) {
 		// Send info to all other peers

@@ -22,19 +22,42 @@ import de.uniol.inf.is.odysseus.p2p_new.IMessage;
 import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryBackupInformation;
 import de.uniol.inf.is.odysseus.peer.recovery.internal.BackupInformation;
 
+/**
+ * The message to send backup information from one peer to another.
+ * 
+ * @see IRecoveryBackupInformation
+ * @author Michael Brand
+ *
+ */
 public class BackupInformationMessage implements IMessage {
 
+	/**
+	 * The logger instance for this class.
+	 */
 	private static final Logger LOG = LoggerFactory
 			.getLogger(BackupInformationMessage.class);
 
-	private IRecoveryBackupInformation mInfo;
+	/**
+	 * The backup information, which has to be sent or which has received.
+	 */
+	private IRecoveryBackupInformation mInfo = new BackupInformation();
 
+	/**
+	 * Empty default constructor.
+	 */
 	public BackupInformationMessage() {
 
-		this.mInfo = new BackupInformation();
+		// Empty default constructor.
 
 	}
 
+	/**
+	 * Creates a new backup information message.
+	 * 
+	 * @param info
+	 *            The information to send. <br />
+	 *            Must be not null.
+	 */
 	public BackupInformationMessage(IRecoveryBackupInformation info) {
 
 		Preconditions.checkNotNull(info);
@@ -42,8 +65,15 @@ public class BackupInformationMessage implements IMessage {
 
 	}
 
+	/**
+	 * Gets the backup information, which has to be sent or which has received.
+	 * 
+	 * @return The backup information, which has to be sent or which has
+	 *         received.
+	 */
 	public IRecoveryBackupInformation getInfo() {
 
+		Preconditions.checkNotNull(this.mInfo);
 		return this.mInfo;
 
 	}
@@ -105,20 +135,40 @@ public class BackupInformationMessage implements IMessage {
 
 	}
 
+	/**
+	 * Encodes the peer id.
+	 * 
+	 * @return The bytes of {@link IRecoveryBackupInformation#getPeer()}.
+	 */
 	private byte[] determinePeerBytes() {
 
+		Preconditions.checkNotNull(this.mInfo);
 		return this.mInfo.getPeer().toString().getBytes();
 
 	}
 
+	/**
+	 * Encodes the PQL code.
+	 * 
+	 * @return The bytes of {@link IRecoveryBackupInformation#getPQL()}.
+	 */
 	private byte[] determinePQLBytes() {
 
+		Preconditions.checkNotNull(this.mInfo);
 		return this.mInfo.getPQL().getBytes();
 
 	}
 
+	/**
+	 * Encodes the information about subsequent parts.
+	 * 
+	 * @return The bytes of
+	 *         {@link IRecoveryBackupInformation#getSubsequentPartsInformation()}
+	 *         as a multidimensional array.
+	 */
 	private byte[][][] determineSubsequentPartsInfoBytes() {
 
+		Preconditions.checkNotNull(this.mInfo);
 		byte[][][] subsequentPartsInfoBytes = new byte[this.mInfo
 				.getSubsequentPartsInformation().size()][][];
 
@@ -139,8 +189,14 @@ public class BackupInformationMessage implements IMessage {
 
 	}
 
+	/**
+	 * Encodes the shared query id.
+	 * 
+	 * @return The bytes of {@link IRecoveryBackupInformation#getSharedQuery()}.
+	 */
 	private byte[] determineSharedQueryBytes() {
 
+		Preconditions.checkNotNull(this.mInfo);
 		return this.mInfo.getSharedQuery().toString().getBytes();
 
 	}
@@ -148,6 +204,7 @@ public class BackupInformationMessage implements IMessage {
 	@Override
 	public void fromBytes(byte[] data) {
 
+		Preconditions.checkNotNull(data);
 		ByteBuffer buffer = ByteBuffer.wrap(data);
 
 		this.sharedQueryFromBytes(buffer);
@@ -157,24 +214,55 @@ public class BackupInformationMessage implements IMessage {
 
 	}
 
+	/**
+	 * Decodes the peer from bytes.
+	 * 
+	 * @param buffer
+	 *            The current byte buffer, where the information about the peer
+	 *            are next. <br />
+	 *            Must be not null.
+	 */
 	private void peerFromBytes(ByteBuffer buffer) {
 
+		Preconditions.checkArgument(this.mInfo.getPeer() == null);
+		Preconditions.checkNotNull(buffer);
 		byte[] peerBytes = new byte[buffer.getInt()];
 		buffer.get(peerBytes);
 		this.mInfo.setPeer(toPeerID(new String(peerBytes)));
 
 	}
 
+	/**
+	 * Decodes the PQL code from bytes.
+	 * 
+	 * @param buffer
+	 *            The current byte buffer, where the information about the PQL
+	 *            code are next. <br />
+	 *            Must be not null.
+	 */
 	private void pqlFromBytes(ByteBuffer buffer) {
 
+		Preconditions.checkArgument(this.mInfo.getPQL() == null);
+		Preconditions.checkNotNull(buffer);
 		byte[] pqlBytes = new byte[buffer.getInt()];
 		buffer.get(pqlBytes);
 		this.mInfo.setPQL(new String(pqlBytes));
 
 	}
 
+	/**
+	 * Decodes the information about subsequent parts from bytes.
+	 * 
+	 * @param buffer
+	 *            The current byte buffer, where the information about
+	 *            subsequent parts are next. <br />
+	 *            Must be not null.
+	 */
 	private void subsequentPartsInfoFromBytes(ByteBuffer buffer) {
 
+		Preconditions.checkArgument(this.mInfo.getSubsequentPartsInformation()
+				.isEmpty());
+		Preconditions.checkNotNull(buffer);
 		Collection<IPair<String, PeerID>> info = Sets.newHashSet();
 		int numInfo = buffer.getInt();
 
@@ -194,8 +282,18 @@ public class BackupInformationMessage implements IMessage {
 
 	}
 
+	/**
+	 * Decodes the shared query id from bytes.
+	 * 
+	 * @param buffer
+	 *            The current byte buffer, where the information about the
+	 *            shared query id are next. <br />
+	 *            Must be not null.
+	 */
 	private void sharedQueryFromBytes(ByteBuffer buffer) {
 
+		Preconditions.checkArgument(this.mInfo.getSharedQuery() == null);
+		Preconditions.checkNotNull(buffer);
 		byte[] idBytes = new byte[buffer.getInt()];
 		buffer.get(idBytes);
 		this.mInfo.setSharedQuery(toID(new String(idBytes)));
@@ -211,6 +309,8 @@ public class BackupInformationMessage implements IMessage {
 	 *         occurs.
 	 */
 	private static ID toID(String text) {
+
+		Preconditions.checkNotNull(text);
 
 		try {
 
@@ -235,6 +335,8 @@ public class BackupInformationMessage implements IMessage {
 	 *         occurs.
 	 */
 	private static PeerID toPeerID(String text) {
+
+		Preconditions.checkNotNull(text);
 
 		try {
 

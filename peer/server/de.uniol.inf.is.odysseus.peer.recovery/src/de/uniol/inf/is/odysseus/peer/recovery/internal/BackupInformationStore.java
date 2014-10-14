@@ -22,8 +22,18 @@ import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryBackupInformationStore;
 
 /**
  * The backup information store for recovery. <br />
- * It stores for distributed queries information about local executed (partial)
- * queries and subsequent partial queries.
+ * It stores multiple backup information.
+ * 
+ * A backup information is for query parts, which are executed on another peer. <br />
+ * An information consists of the following:<br />
+ * - id of the distributed query <br />
+ * - the PQL code of the query part <br />
+ * - the id of the peer, where the query part is executed <br />
+ * - information about subsequent parts (relative to the query part): PQL code
+ * and peer, where it is executed.
+ * 
+ * The stored information are about query parts, which are subsequent to query
+ * parts executed on the local peer.
  * 
  * @author Michael Brand
  *
@@ -138,13 +148,11 @@ public class BackupInformationStore implements IRecoveryBackupInformationStore {
 		}
 
 	}
-
-	/**
-	 * The stored information, for which peers and which shared query (it's id)
-	 * we are the buddy
+	
+	/*
+	 * TODO Jxta information. Not clear atm. if they are needed.
 	 */
-	private final Map<PeerID, List<ID>> mBuddyMap = Maps.newHashMap();
-
+	
 	/**
 	 * Map for additional information mapped to their shared query (it's id).
 	 * E.g. for pipe-Ids, etc.
@@ -186,6 +194,16 @@ public class BackupInformationStore implements IRecoveryBackupInformationStore {
 	public Set<PeerID> getPeersFromJxtaInfoStore() {
 		return mJxtaInfoMap.keySet();
 	}
+	
+	/*
+	 * TODO Buddy information. Not clear atm. if they are needed.
+	 */
+
+	/**
+	 * The stored information, for which peers and which shared query (it's id)
+	 * we are the buddy
+	 */
+	private final Map<PeerID, List<ID>> mBuddyMap = Maps.newHashMap();
 
 	@Override
 	public void addBuddy(PeerID peerId, ID sharedQueryId) {

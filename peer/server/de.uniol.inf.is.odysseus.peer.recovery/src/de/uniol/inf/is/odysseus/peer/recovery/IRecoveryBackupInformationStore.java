@@ -99,6 +99,10 @@ public interface IRecoveryBackupInformationStore {
 	 */
 	public void remove(String pql);
 
+	/*
+	 * TODO Jxta information. Not clear atm. if they are needed.
+	 */
+
 	/**
 	 * Adds a new entry for the jxta-backup information. E.g. pipe-ids
 	 * 
@@ -132,6 +136,10 @@ public interface IRecoveryBackupInformationStore {
 	 * @return All PeerIDs for which jxta-backup-information is stored
 	 */
 	public Set<PeerID> getPeersFromJxtaInfoStore();
+
+	/*
+	 * TODO Buddy information. Not clear atm. if they are needed.
+	 */
 
 	/**
 	 * Adds a peer to the list of peers for which we are a buddy.

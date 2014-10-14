@@ -50,20 +50,20 @@ public class BackupInformation implements IRecoveryBackupInformation {
 	/**
 	 * The PQL code of the query part.
 	 */
-	private String m_PQL;
+	private String mPQL;
 
 	@Override
 	public void setPQL(String pql) {
 
 		Preconditions.checkNotNull(pql);
-		this.m_PQL = pql;
+		this.mPQL = pql;
 
 	}
 
 	@Override
 	public String getPQL() {
 
-		return this.m_PQL;
+		return this.mPQL;
 
 	}
 
