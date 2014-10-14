@@ -33,12 +33,13 @@ import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicator;
 import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicatorListener;
 import de.uniol.inf.is.odysseus.p2p_new.PeerCommunicationException;
 import de.uniol.inf.is.odysseus.p2p_new.RepeatingMessageSend;
+import de.uniol.inf.is.odysseus.peer.distribute.IQueryPartController;
 import de.uniol.inf.is.odysseus.peer.distribute.PeerDistributePlugIn;
 import de.uniol.inf.is.odysseus.peer.distribute.message.RemoveQueryAckMessage;
 import de.uniol.inf.is.odysseus.peer.distribute.message.RemoveQueryMessage;
 
 // TODO javaDoc M.B.
-public class QueryPartController implements IPlanModificationListener, IPeerCommunicatorListener {
+public class QueryPartController implements IPlanModificationListener, IPeerCommunicatorListener, IQueryPartController {
 
 	private static final Logger LOG = LoggerFactory.getLogger(QueryPartController.class);
 
