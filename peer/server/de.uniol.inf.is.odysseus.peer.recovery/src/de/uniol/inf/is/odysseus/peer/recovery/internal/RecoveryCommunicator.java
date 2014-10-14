@@ -30,6 +30,7 @@ import de.uniol.inf.is.odysseus.p2p_new.PeerCommunicationException;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.IP2PDictionary;
 import de.uniol.inf.is.odysseus.p2p_new.physicaloperator.JxtaSenderPO;
 import de.uniol.inf.is.odysseus.peer.distribute.QueryPartAllocationException;
+import de.uniol.inf.is.odysseus.peer.distribute.message.RemoveQueryMessage;
 import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryAllocator;
 import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryBackupInformation;
 import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryCommunicator;
@@ -132,6 +133,7 @@ public class RecoveryCommunicator implements IRecoveryCommunicator,
 		peerCommunicator.addListener(this, BackupJxtaInfoMessage.class);
 		peerCommunicator.registerMessageType(RecoveryAgreementMessage.class);
 		peerCommunicator.addListener(this, RecoveryAgreementMessage.class);
+		peerCommunicator.addListener(this, RemoveQueryMessage.class);
 	}
 
 	/**
@@ -434,6 +436,12 @@ public class RecoveryCommunicator implements IRecoveryCommunicator,
 			// Store the backup information
 			LocalBackupInformationAccess.getStore().add(
 					((BackupInformationMessage) message).getInfo());
+
+		} else if (message instanceof RemoveQueryMessage) {
+
+			// Remove stored backup information
+			LocalBackupInformationAccess.getStore().remove(
+					((RemoveQueryMessage) message).getSharedQueryID());
 
 		} else if (message instanceof BackupJxtaInfoMessage) {
 			BackupJxtaInfoMessage jxtaMessage = (BackupJxtaInfoMessage) message;
