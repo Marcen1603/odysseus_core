@@ -10,19 +10,26 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 
 /**
- * This is a special version of the buffer operator, where the buffer will not be scheduled
- * but has an own thread for processing
+ * This is a special version of the buffer operator, where the buffer will not
+ * be scheduled but has an own thread for processing
  * 
  * @author Marco Grawunder
  *
  * @param <R>
  */
-public class ThreadedBufferPO<R extends IStreamObject<? extends IMetaAttribute>> extends AbstractPipe<R, R> {
+public class ThreadedBufferPO<R extends IStreamObject<? extends IMetaAttribute>>
+		extends AbstractPipe<R, R> {
 
 	protected LinkedList<IStreamable> buffer = new LinkedList<>();
 
 	Thread runner;
-	
+
+	private long limit;
+
+	public ThreadedBufferPO(long l) {
+		this.limit = l;
+	}
+
 	@Override
 	public OutputMode getOutputMode() {
 		return OutputMode.INPUT;
@@ -31,22 +38,30 @@ public class ThreadedBufferPO<R extends IStreamObject<? extends IMetaAttribute>>
 	@Override
 	protected void process_next(R object, int port) {
 		synchronized (this) {
+			if (limit > 0) {
+				while (buffer.size() > limit) {
+					try {
+						wait(1000);
+					} catch (InterruptedException e) {
+					}
+				}
+			}
 			buffer.add(object);
 			notifyAll();
 		}
 	}
-	
+
 	@Override
 	protected void process_open() throws OpenFailedException {
 		buffer.clear();
 		// Create new thread and start
-		runner = new Thread("ThreadedBuffer "+getName()){
+		runner = new Thread("ThreadedBuffer " + getName()) {
 			public void run() {
-				while (isOpen()){
-					while(!buffer.isEmpty()){
+				while (isOpen()) {
+					while (!buffer.isEmpty()) {
 						transferNext();
 					}
-					synchronized(this){
+					synchronized (this) {
 						try {
 							wait(1000);
 						} catch (InterruptedException e) {
@@ -57,12 +72,12 @@ public class ThreadedBufferPO<R extends IStreamObject<? extends IMetaAttribute>>
 			};
 		};
 		runner.setDaemon(true);
-		
+
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	private void transferNext() {
-		// Copy from BufferPO ... 
+		// Copy from BufferPO ...
 		if (!this.buffer.isEmpty()) {
 			// the transfer might take some time, so pop element first and
 			// release lock on buffer instead of transfer(buffer.pop())
@@ -75,6 +90,11 @@ public class ThreadedBufferPO<R extends IStreamObject<? extends IMetaAttribute>>
 				sendPunctuation((IPunctuation) element);
 			} else {
 				transfer((R) element);
+				if (limit > 0) {
+					synchronized (this) {
+						notifyAll();
+					}
+				}
 			}
 
 			// the top element of a buffer must always be
@@ -90,13 +110,13 @@ public class ThreadedBufferPO<R extends IStreamObject<? extends IMetaAttribute>>
 			}
 		}
 	}
-	
+
 	@Override
 	protected void process_close() {
 		drainBuffer();
-		
+
 	}
-	
+
 	@Override
 	protected void process_done(int port) {
 		drainBuffer();
@@ -104,12 +124,10 @@ public class ThreadedBufferPO<R extends IStreamObject<? extends IMetaAttribute>>
 
 	private void drainBuffer() {
 		synchronized (buffer) {
-			while(!buffer.isEmpty()){
+			while (!buffer.isEmpty()) {
 				transferNext();
-			}	
+			}
 		}
 	}
-	
-	
-	
+
 }

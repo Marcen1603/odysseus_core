@@ -43,19 +43,15 @@ public class TBufferAORule extends AbstractTransformationRule<BufferAO> {
 	public void execute(BufferAO algebraOp, TransformationConfiguration trafo)
 			throws RuleException {
 		IPhysicalOperator po = null;
-		if (algebraOp.getMaxBufferSize() > 0) {
-			if (algebraOp.isThreaded()) {
-				infoService
-						.warning("Threaded is currently not supported for limitted buffers! Will use scheduler instead.");
-			}
+
+		if (algebraOp.isThreaded()) {
+			po = new ThreadedBufferPO(algebraOp.getMaxBufferSize());
+		} else if (algebraOp.getMaxBufferSize() > 0) {
 			po = new BlockingBufferPO(algebraOp.getMaxBufferSize());
 		} else {
-			if (algebraOp.isThreaded()){
-				po = new ThreadedBufferPO();
-			}else{
-				po = new BufferPO();
-			}
+			po = new BufferPO();
 		}
+		
 		po.setName(algebraOp.getBuffername());
 		defaultExecute(algebraOp, po, trafo, true, true);
 	}
@@ -83,4 +79,3 @@ public class TBufferAORule extends AbstractTransformationRule<BufferAO> {
 	}
 
 }
-	

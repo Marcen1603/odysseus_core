@@ -14,18 +14,20 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.PredicatePar
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.ResolvedSDFAttributeParameter;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IHasPredicate;
 
-@LogicalOperator(name = "COALESCE", minInputPorts = 1, maxInputPorts = 1, doc="This Operator can be used to combine sequent elements, e.g. by a set of grouping attributes or with a predicates. In the attributes case, the elements are merged with also given aggregations functions, as long as the grouping attributes (e.g. a sensorid) are the same. When a new group is opened (e.g. a measurement from a new sensor) the old aggregates values and the grouping attributes are created as a result. In the predicate case, the elements are merged as long as the predicates evaluates to false, i.e. a new tuple is created when the predicates evaluates to true.", category={LogicalOperatorCategory.ADVANCED})
-public class CoalesceAO extends AggregateAO implements IHasPredicate{
+@LogicalOperator(name = "COALESCE", minInputPorts = 1, maxInputPorts = 1, doc = "This Operator can be used to combine sequent elements, e.g. by a set of grouping attributes or with a predicates. In the attributes case, the elements are merged with also given aggregations functions, as long as the grouping attributes (e.g. a sensorid) are the same. When a new group is opened (e.g. a measurement from a new sensor) the old aggregates values and the grouping attributes are created as a result. In the predicate case, the elements are merged as long as the predicates evaluates to false, i.e. a new tuple is created when the predicates evaluates to true.", category = { LogicalOperatorCategory.ADVANCED })
+public class CoalesceAO extends AggregateAO implements IHasPredicate {
 
 	private static final long serialVersionUID = 6314887685476173038L;
 	private int maxElementsPerGroup = -1;
 	private boolean createOnHeartbeat = false;
 	private long heartbeatrate = -1;
 	private IPredicate<?> predicate;
+	private IPredicate<?> startPredicate;
+	private IPredicate<?> endPredicate;
 
 	public CoalesceAO() {
 	}
-	
+
 	public CoalesceAO(CoalesceAO coalesceAO) {
 		super(coalesceAO);
 		maxElementsPerGroup = coalesceAO.maxElementsPerGroup;
@@ -40,33 +42,75 @@ public class CoalesceAO extends AggregateAO implements IHasPredicate{
 			addGroupingAttribute(a);
 		}
 	}
-	
+
 	@SuppressWarnings("rawtypes")
-	@Parameter(type=PredicateParameter.class, optional = true)
+	@Parameter(type = PredicateParameter.class, optional = true)
 	public void setPredicate(IPredicate predicate) {
-			this.predicate = predicate;
+		this.predicate = predicate;
 	}
-	
+
+	@SuppressWarnings("rawtypes")
+	@Parameter(type = PredicateParameter.class, optional = true)
+	public void setStartPredicate(IPredicate predicate) {
+		this.startPredicate = predicate;
+	}
+
+	@SuppressWarnings("rawtypes")
+	@Parameter(type = PredicateParameter.class, optional = true)
+	public void setEndPredicate(IPredicate predicate) {
+		this.endPredicate = predicate;
+	}
+
 	@Override
 	public IPredicate<?> getPredicate() {
 		return predicate;
 	}
-	
+
+	public IPredicate<?> getStartPredicate() {
+		return startPredicate;
+	}
+
+	public IPredicate<?> getEndPredicate() {
+		return endPredicate;
+	}
+
 	@Override
 	public boolean isValid() {
-		if (getGroupingAttributes().size() > 0 && getPredicate() != null){
-			addError("can't use attributes and predicate at the same time!");
-			return false;
+		boolean valid = super.isValid();
+
+		if (getGroupingAttributes().size() > 0) {
+			if (getPredicate() != null) {
+				addError("can't use attributes and predicates at the same time!");
+				valid = false;
+			}
 		}
-		
-		if (getPredicate() != null && isCreateOnHeartbeat()){
-			addError("can't use predicate with createOnHeartbeat!");
-			return false;			
+
+		if (getPredicate() != null) {
+
+			if (isCreateOnHeartbeat()) {
+				addError("can't use predicate with createOnHeartbeat!");
+				valid = false;
+			}
+
+			if (getStartPredicate() != null) {
+				addError("can't use predicate with startPredicate!");
+				valid = false;
+			}
+
+			if (getEndPredicate() != null) {
+				addError("can't use predicate with endPredicate!");
+				valid = false;
+			}
 		}
-			
-		return super.isValid();
+
+		if ((getStartPredicate() != null && getEndPredicate() == null)
+				|| (getStartPredicate() == null && getEndPredicate() != null)) {
+			addError("Need both: Start and end predicate");
+		}
+
+		return valid;
 	}
-	
+
 	@Override
 	public CoalesceAO clone() {
 		return new CoalesceAO(this);
@@ -76,16 +120,16 @@ public class CoalesceAO extends AggregateAO implements IHasPredicate{
 	public void setMaxElementsPerGroup(int maxElementsPerGroup) {
 		this.maxElementsPerGroup = maxElementsPerGroup;
 	}
-	
+
 	public int getMaxElementsPerGroup() {
-		return maxElementsPerGroup ;
+		return maxElementsPerGroup;
 	}
-	
+
 	@Parameter(name = "CreateOnHeartbeat", optional = true, type = BooleanParameter.class)
 	public void setCreateOnHeartbeat(boolean createOnHeartbeat) {
 		this.createOnHeartbeat = createOnHeartbeat;
 	}
-	
+
 	public boolean isCreateOnHeartbeat() {
 		return createOnHeartbeat;
 	}
@@ -94,7 +138,7 @@ public class CoalesceAO extends AggregateAO implements IHasPredicate{
 		return heartbeatrate;
 	}
 
-	@Parameter(name="heartbeatrate", optional = true, type = LongParameter.class)
+	@Parameter(name = "heartbeatrate", optional = true, type = LongParameter.class)
 	public void setHeartbeatrate(long heartbeatrate) {
 		this.heartbeatrate = heartbeatrate;
 	}
