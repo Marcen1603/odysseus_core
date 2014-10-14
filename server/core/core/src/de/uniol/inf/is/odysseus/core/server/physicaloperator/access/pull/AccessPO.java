@@ -18,6 +18,8 @@ package de.uniol.inf.is.odysseus.core.server.physicaloperator.access.pull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.core.infoservice.InfoService;
+import de.uniol.inf.is.odysseus.core.infoservice.InfoServiceFactory;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
@@ -38,7 +40,7 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSource;
 public class AccessPO<R, W> extends AbstractIterableSource<W> {
 
 	private static final Logger LOG = LoggerFactory.getLogger(AccessPO.class);
-
+	
 	private boolean isDone = false;
 	private final long maxTimeToWaitForNewEventMS;
 	private long lastTransfer = 0;
@@ -75,6 +77,7 @@ public class AccessPO<R, W> extends AbstractIterableSource<W> {
 			}
 		} catch (Exception e) {
 			LOG.error("Exception during input", e);
+			sendError("Ececotion reading input",e);
 		}
 
 		// TODO: We should think about propagate done ... maybe its better
@@ -94,6 +97,7 @@ public class AccessPO<R, W> extends AbstractIterableSource<W> {
 			propagateDone();
 		} catch (Throwable throwable) {
 			LOG.error("Exception during propagating done", throwable);
+			sendError("Exception during propagating done", throwable);
 		}
 	}
 
@@ -114,6 +118,7 @@ public class AccessPO<R, W> extends AbstractIterableSource<W> {
 				}
 			} catch (Exception e) {
 				LOG.error("Error Reading from input", e);
+				sendError("Error Reading from input", e);
 			}
 		}
 	}
