@@ -134,7 +134,9 @@ public class RecoveryCommunicator implements IRecoveryCommunicator,
 		peerCommunicator.addListener(this, BackupJxtaInfoMessage.class);
 		peerCommunicator.registerMessageType(RecoveryAgreementMessage.class);
 		peerCommunicator.addListener(this, RecoveryAgreementMessage.class);
+		peerCommunicator.registerMessageType(RemoveQueryMessage.class);
 		peerCommunicator.addListener(this, RemoveQueryMessage.class);
+		
 	}
 
 	/**
