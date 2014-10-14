@@ -13,6 +13,8 @@ import de.uniol.inf.is.odysseus.p2p_new.IP2PNetworkManager;
 
 public class ActiveLoadBalancingActivator implements BundleActivator{
 	
+	public static final int TRANSPORT_BUFFER_SIZE = 640*480*3+(1+4);
+	
 	private static final Logger LOG = LoggerFactory
 			.getLogger(ActiveLoadBalancingActivator.class);
 
