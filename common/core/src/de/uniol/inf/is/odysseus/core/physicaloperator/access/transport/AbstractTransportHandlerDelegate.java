@@ -11,11 +11,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.collection.OptionMap;
+import de.uniol.inf.is.odysseus.core.infoservice.InfoService;
+import de.uniol.inf.is.odysseus.core.infoservice.InfoServiceFactory;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 
 public class AbstractTransportHandlerDelegate<T> {
-	
-	private final static Logger LOG = LoggerFactory.getLogger(AbstractTransportHandlerDelegate.class);
+
+	private final static Logger LOG = LoggerFactory
+			.getLogger(AbstractTransportHandlerDelegate.class);
+	private final static InfoService INFO = InfoServiceFactory.getInfoService(AbstractTransportHandlerDelegate.class);
 
 	private final List<ITransportHandlerListener<T>> transportHandlerListener = new ArrayList<ITransportHandlerListener<T>>();
 	private int openCounter = 0;
@@ -45,13 +49,18 @@ public class AbstractTransportHandlerDelegate<T> {
 	}
 
 	public void fireProcess(ByteBuffer message) {
-		for (ITransportHandlerListener<T> l : transportHandlerListener) {
-			// TODO: flip() erases the contents of the message if
-			// it was already flipped or just created...
-			// In other words: This method expects that the byte buffer
-			// is not fully prepared
-			message.flip();
-			l.process(message);
+		try {
+			for (ITransportHandlerListener<T> l : transportHandlerListener) {
+				// TODO: flip() erases the contents of the message if
+				// it was already flipped or just created...
+				// In other words: This method expects that the byte buffer
+				// is not fully prepared
+				message.flip();
+				l.process(message);
+			}
+		} catch (Exception e) {
+			INFO.warning("Error processing message",e);
+			throw e;
 		}
 	}
 
@@ -91,7 +100,8 @@ public class AbstractTransportHandlerDelegate<T> {
 
 	final synchronized public void open() throws UnknownHostException,
 			IOException {
-		LOG.debug("Calling open with "+this.getExchangePattern()+" for "+direction);
+		LOG.debug("Calling open with " + this.getExchangePattern() + " for "
+				+ direction);
 		if (openCounter == 0) {
 			if (getExchangePattern() != null
 					&& (getExchangePattern().equals(
@@ -99,7 +109,8 @@ public class AbstractTransportHandlerDelegate<T> {
 							|| getExchangePattern().equals(
 									ITransportExchangePattern.InOptionalOut) || getExchangePattern()
 							.equals(ITransportExchangePattern.InOut))) {
-				if (direction == ITransportDirection.IN || direction == ITransportDirection.INOUT) {
+				if (direction == ITransportDirection.IN
+						|| direction == ITransportDirection.INOUT) {
 					callOnMe.processInOpen();
 				}
 			}
@@ -109,7 +120,8 @@ public class AbstractTransportHandlerDelegate<T> {
 							|| getExchangePattern().equals(
 									ITransportExchangePattern.OutOptionalIn) || getExchangePattern()
 							.equals(ITransportExchangePattern.InOut))) {
-				if (direction == ITransportDirection.OUT || direction == ITransportDirection.INOUT) {
+				if (direction == ITransportDirection.OUT
+						|| direction == ITransportDirection.INOUT) {
 					callOnMe.processOutOpen();
 				}
 
@@ -127,7 +139,8 @@ public class AbstractTransportHandlerDelegate<T> {
 							|| getExchangePattern().equals(
 									ITransportExchangePattern.InOptionalOut) || getExchangePattern()
 							.equals(ITransportExchangePattern.InOut))) {
-				if (direction == ITransportDirection.IN || direction == ITransportDirection.INOUT) {
+				if (direction == ITransportDirection.IN
+						|| direction == ITransportDirection.INOUT) {
 					callOnMe.processInClose();
 				}
 			}
@@ -137,7 +150,9 @@ public class AbstractTransportHandlerDelegate<T> {
 							|| getExchangePattern().equals(
 									ITransportExchangePattern.OutOptionalIn) || getExchangePattern()
 							.equals(ITransportExchangePattern.InOut))) {
-				if (direction == ITransportDirection.OUT || direction == ITransportDirection.INOUT);
+				if (direction == ITransportDirection.OUT
+						|| direction == ITransportDirection.INOUT)
+					;
 				callOnMe.processOutClose();
 			}
 		}

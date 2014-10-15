@@ -32,6 +32,8 @@ import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
+import de.uniol.inf.is.odysseus.core.infoservice.InfoService;
+import de.uniol.inf.is.odysseus.core.infoservice.InfoServiceFactory;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.IAccessPattern;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportDirection;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportExchangePattern;
@@ -45,6 +47,7 @@ public class LineProtocolHandler<T> extends AbstractProtocolHandler<T> {
 	static final Runtime RUNTIME = Runtime.getRuntime();
 
 	Logger LOG = LoggerFactory.getLogger(LineProtocolHandler.class);
+	InfoService INFOSERVICE = InfoServiceFactory.getInfoService(LineProtocolHandler.class);
 
 	protected BufferedReader reader;
 	protected BufferedWriter writer;
@@ -72,7 +75,7 @@ public class LineProtocolHandler<T> extends AbstractProtocolHandler<T> {
 
 	private String lastRunRemaining = "";
 
-	//private Map<String, String> optionsMap;
+	// private Map<String, String> optionsMap;
 
 	public static final String DELAY = "delay";
 	public static final String NANODELAY = "delay";
@@ -92,13 +95,14 @@ public class LineProtocolHandler<T> extends AbstractProtocolHandler<T> {
 	}
 
 	public LineProtocolHandler(ITransportDirection direction,
-			IAccessPattern access, IDataHandler<T> dataHandler, OptionMap optionsMap) {
+			IAccessPattern access, IDataHandler<T> dataHandler,
+			OptionMap optionsMap) {
 		super(direction, access, dataHandler, optionsMap);
 		init_internal();
 	}
 
 	private void init_internal() {
-		OptionMap options = optionsMap; 
+		OptionMap options = optionsMap;
 		if (options.get(DELAY) != null) {
 			setDelay(Long.parseLong(options.get(DELAY)));
 		}
@@ -201,8 +205,8 @@ public class LineProtocolHandler<T> extends AbstractProtocolHandler<T> {
 	public boolean hasNext() throws IOException {
 		return hasNext(reader);
 	}
-	
-	private boolean hasNext( BufferedReader reader ) {
+
+	private boolean hasNext(BufferedReader reader) {
 		try {
 			if (reader.ready() == false) {
 				isDone = true;
@@ -355,8 +359,12 @@ public class LineProtocolHandler<T> extends AbstractProtocolHandler<T> {
 	}
 
 	protected void process(String token) {
-		T retValue = getDataHandler().readData(token);
-		getTransfer().transfer(retValue);
+		try {
+			T retValue = getDataHandler().readData(token);
+			getTransfer().transfer(retValue);
+		} catch (Exception e) {
+			INFOSERVICE.warning("Cannot read line "+token,e);
+		}
 	}
 
 	@Override

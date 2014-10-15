@@ -20,6 +20,9 @@ import java.nio.ByteBuffer;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.SocketChannel;
 
+import de.uniol.inf.is.odysseus.core.infoservice.InfoService;
+import de.uniol.inf.is.odysseus.core.infoservice.InfoServiceFactory;
+
 /**
  * Generic TCP *connection* allowing to send and receive packets to/from an
  * address
@@ -27,7 +30,10 @@ import java.nio.channels.SocketChannel;
  * @author Christian Kuka <christian.kuka@offis.de>
  */
 public class NioTcpConnection implements IConnection, ReadWriteSelectorHandler {
-    private ByteBuffer writeBuffer = null;
+   
+	InfoService infoService = InfoServiceFactory.getInfoService(NioTcpConnection.class);
+	
+	private ByteBuffer writeBuffer = null;
     private final ByteBuffer readBuffer;
     protected final SelectorThread selector;
     private final SocketChannel channel;
@@ -62,7 +68,8 @@ public class NioTcpConnection implements IConnection, ReadWriteSelectorHandler {
             }
             this.processInBuffer();
         } catch (IOException | ClassNotFoundException ex) {
-            this.listener.socketException(ex);
+            infoService.error(ex.getMessage(), ex);
+        	this.listener.socketException(ex);
             this.close();
         }
 
@@ -82,6 +89,7 @@ public class NioTcpConnection implements IConnection, ReadWriteSelectorHandler {
                 }
             }
         } catch (IOException | ClassNotFoundException e) {
+        	infoService.error(e.getMessage(), e);
             this.close();
             this.listener.socketException(e);
         }
@@ -127,7 +135,8 @@ public class NioTcpConnection implements IConnection, ReadWriteSelectorHandler {
             });
             this.channel.close();
         } catch (final IOException e) {
-            this.listener.socketException(e);
+        	infoService.error(e.getMessage(), e);
+        	this.listener.socketException(e);
         }
     }
 
