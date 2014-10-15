@@ -204,7 +204,8 @@ public class BugReportEditor extends Window {
         @Override
         public void lineGetStyle(LineStyleEvent event) {
             List<StyleRange> styles = new ArrayList<>();
-            int start = 0;
+            @SuppressWarnings("unused")
+			int start = 0;
             int length = event.lineText.length();
             System.out.println("current line length:" + event.lineText.length());
             if (event.lineText.startsWith("* ")) {

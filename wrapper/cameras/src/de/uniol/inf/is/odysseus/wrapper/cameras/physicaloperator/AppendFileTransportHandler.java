@@ -35,7 +35,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITranspor
 
 public class AppendFileTransportHandler extends AbstractSimplePullTransportHandler<Tuple<IMetaAttribute>> 
 {
-//	@SuppressWarnings("unused")
+	@SuppressWarnings("unused")
 	private final Logger logger = LoggerFactory.getLogger(AppendFileTransportHandler.class);
 	
 	public static final String NAME = "AppendFile";

@@ -23,16 +23,18 @@ import java.sql.SQLException;
  * @author Stephan Jansen
  *
  */
-public class BooleanDataTypeMappingHandler extends AbstractDatatypeMappingHandler<Boolean> {
-	
+public class BooleanDataTypeMappingHandler extends
+		AbstractDatatypeMappingHandler<Boolean> {
+
 	@Override
-	public void setValue(PreparedStatement preparedStatement, int position, Object value) throws SQLException {
+	public void setValue(PreparedStatement preparedStatement, int position,
+			Object value) throws SQLException {
 		preparedStatement.setBoolean(position, (Boolean) value);
 	}
 
 	@Override
 	public Boolean getValue(ResultSet result, int position) throws SQLException {
-		return result.getBoolean(position);		
+		return result.getBoolean(position);
 	}
-	
+
 }

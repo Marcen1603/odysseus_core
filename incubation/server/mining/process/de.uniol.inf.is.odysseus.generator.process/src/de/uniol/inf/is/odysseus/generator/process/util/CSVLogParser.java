@@ -12,6 +12,7 @@ import com.google.common.collect.Lists;
 public class CSVLogParser {
 	static private BufferedReader br = null;
 	static private String line = "";
+	@SuppressWarnings("unused")
 	static private String delimiter = ",";
 	static private String csvFile = "/home/phil/running-example-non-conforming.csv";
 	static private List<String> csvLines = Lists.newArrayList();
