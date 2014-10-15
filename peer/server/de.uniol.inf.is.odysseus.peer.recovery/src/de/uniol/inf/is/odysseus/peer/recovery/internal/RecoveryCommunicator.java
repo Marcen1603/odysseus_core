@@ -260,8 +260,7 @@ public class RecoveryCommunicator implements IRecoveryCommunicator,
 			return;
 		}
 
-		// 2. Check, if we were a direct sender to that failed peer or if we are
-		// a buddy
+		// 2. Check, if we were a direct sender to that failed peer
 
 		// We maybe have backup-information about queries for that peer where we
 		// are not the direct sender, so we have to save for which queries we

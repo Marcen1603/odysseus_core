@@ -219,7 +219,7 @@ public class ActiveLoadbalancingConsole implements CommandProvider {
 		sb.append("    installStateSender <peerID>                          - Installs new MovingStateSender to PeerID\n");
 		sb.append("    installStateReceiver <peerID> <pipeID>               - Installs new MovingStateReceiver with peer and pipeID\n");
 		sb.append("    sendData <pipeID>                                    - Sends Data to MovingStateSender with pipeID\n");
-		sb.append("    testLog                                              - Outputs different log levels.");
+		sb.append("    testLog                                              - Outputs different log levels.\n");
 		return sb.toString();
 	}
 

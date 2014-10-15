@@ -64,10 +64,12 @@ public class RecoveryAgreementMessage implements IMessage {
 		
 		int peerIdLength = bb.getInt();
 		byte[] peerIdByte = new byte[peerIdLength];
+		bb.get(peerIdByte, 0, peerIdLength);
 		String peerIdString = new String(peerIdByte);
 		
 		int sharedQueryIdLength = bb.getInt();
 		byte[] sharedQueryIdByte = new byte[sharedQueryIdLength];
+		bb.get(sharedQueryIdByte, 0, sharedQueryIdLength);
 		String sharedQueryIdString = new String(sharedQueryIdByte);
 		
 		try {

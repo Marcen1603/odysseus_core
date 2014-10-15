@@ -211,21 +211,13 @@ public class RecoveryConsole implements CommandProvider {
 	public void _recover(CommandInterpreter ci) {
 		Preconditions.checkNotNull(ci, "Command interpreter must not be null!");
 
-		String failedPeerString = ci.nextArgument();
-		if (failedPeerString == null || failedPeerString.isEmpty()) {
+		PeerID failedPeer = getPeerIdFromCi(ci);
+		if (failedPeer == null) {
 			System.out.println("Don't know this peer id");
 			return;
 		}
-
-		URI failedPeerUri;
-		try {
-			failedPeerUri = new URI(failedPeerString);
-			PeerID failedPeer = PeerID.create(failedPeerUri);
-			cCommunicator.get().recover(failedPeer);
-			System.out.println("Startet recovery for " + failedPeer);
-		} catch (URISyntaxException e) {
-			System.out.println("Not able to parse peerId");
-		}
+		
+		cCommunicator.get().recover(failedPeer);
 
 	}
 
@@ -269,9 +261,23 @@ public class RecoveryConsole implements CommandProvider {
 		String failedPeerName = ci.nextArgument();
 		String queryId = ci.nextArgument();
 
-		PeerID newPeer = RecoveryHelper.determinePeerID(newPeerName).get();
-		PeerID failedPeer = RecoveryHelper.determinePeerID(failedPeerName)
-				.get();
+		Optional<PeerID> optNewPeer = RecoveryHelper.determinePeerID(newPeerName);
+		PeerID newPeer;
+		if(!optNewPeer.isPresent()) {
+			System.out.println("Don't know new peer. Take myself instead.");
+			newPeer = p2pNetworkManager.getLocalPeerID();
+		} else {
+			newPeer = optNewPeer.get();
+		}
+		
+		Optional<PeerID> optFailedPeer = RecoveryHelper.determinePeerID(failedPeerName);
+		PeerID failedPeer;
+		if(!optFailedPeer.isPresent()) {
+			System.out.println("Don't know failed peer. Take myself instead.");
+			failedPeer = p2pNetworkManager.getLocalPeerID();
+		} else {
+			failedPeer = optFailedPeer.get();
+		}
 
 		URI queryUri;
 		try {

@@ -72,7 +72,8 @@ public class RecoveryInstructionHandler {
 			addQuery(instructionMessage.getPqlQuery());
 			break;
 		case RecoveryInstructionMessage.UPDATE_RECEIVER:
-			updateReceiver(instructionMessage.getNewSender(), instructionMessage.getPipeId());
+			updateReceiver(instructionMessage.getNewSender(),
+					instructionMessage.getPipeId());
 			break;
 		case RecoveryInstructionMessage.BE_BUDDY:
 			beBuddy(sender, instructionMessage.getSharedQueryId());
@@ -92,7 +93,8 @@ public class RecoveryInstructionHandler {
 		Collection<Integer> installedQueries = RecoveryHelper
 				.installAndRunQueryPartFromPql(pql);
 
-		// TODO Call "receiveFromNewPeer" on the subsequent receiver
+		// Call "receiveFromNewPeer" on the subsequent receiver so that that
+		// peer creates a socket-connection to us
 		IServerExecutor executor = RecoveryCommunicator.getExecutor();
 
 		for (IPhysicalQuery query : executor.getExecutionPlan().getQueries()) {
@@ -100,8 +102,10 @@ public class RecoveryInstructionHandler {
 				for (IPhysicalOperator operator : query.getAllOperators()) {
 					if (operator instanceof JxtaSenderPO) {
 						JxtaSenderPO sender = (JxtaSenderPO) operator;
-						// For this sender we want to get the peer to which it
-						// sends
+
+						// For this sender we want to get the peer to which
+						// it
+						// sends to update the receiver on the other peer
 
 						try {
 							String peerIdString = sender.getPeerIDString();
@@ -123,7 +127,6 @@ public class RecoveryInstructionHandler {
 						}
 
 					}
-
 				}
 			}
 		}
