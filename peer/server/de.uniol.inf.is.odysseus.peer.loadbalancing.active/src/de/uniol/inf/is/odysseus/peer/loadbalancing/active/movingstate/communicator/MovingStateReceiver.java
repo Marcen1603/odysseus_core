@@ -1,5 +1,10 @@
 package de.uniol.inf.is.odysseus.peer.loadbalancing.active.movingstate.communicator;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.ObjectInput;
+import java.io.ObjectInputStream;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,6 +21,8 @@ public class MovingStateReceiver implements ITransmissionReceiverListener {
 	
 	private final ITransmissionReceiver transmission;
 	
+	private Object receivedState;
+	
 	
 	
 	public MovingStateReceiver(String peerID, String pipeID) throws DataTransmissionException {
@@ -28,9 +35,33 @@ public class MovingStateReceiver implements ITransmissionReceiverListener {
 
 	@Override
 	public void onReceiveData(ITransmissionReceiver receiver, byte[] data) {
-		String receivedString = new String(data);
-		LOG.debug("Received String: ");
-		LOG.debug(receivedString);
+		ByteArrayInputStream bis = new ByteArrayInputStream(data);
+		ObjectInput in = null;
+		try {
+		  in = new ObjectInputStream(bis);
+		  receivedState = in.readObject(); 
+		  LOG.debug("Received: ");
+		  LOG.debug(receivedState.toString());
+		} catch (IOException e) {
+			LOG.error("Error while deserializing bytes.");
+			e.printStackTrace();
+		} catch (ClassNotFoundException e) {
+			LOG.error("Class not found.");
+			e.printStackTrace();
+		} finally {
+		  try {
+		    bis.close();
+		  } catch (IOException ex) {
+		    // ignore close exception
+		  }
+		  try {
+		    if (in != null) {
+		      in.close();
+		    }
+		  } catch (IOException ex) {
+		    // ignore close exception
+		  }
+		} 
 	}
 
 	@Override

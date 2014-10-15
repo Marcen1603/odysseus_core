@@ -1,5 +1,11 @@
 package de.uniol.inf.is.odysseus.peer.loadbalancing.active.movingstate.communicator;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectOutput;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,14 +27,33 @@ public class MovingStateSender {
 		this.transmission.open();
 	}
 
-	public void sendData(String stringToSend) {
-		byte[] rawBytes = stringToSend.getBytes();
+	public void sendData(Serializable toSend) {
+		
+		ByteArrayOutputStream bos = new ByteArrayOutputStream();
+		ObjectOutput out = null;
 		try {
-			transmission.sendData(rawBytes);
+		  out = new ObjectOutputStream(bos);   
+		  out.writeObject(toSend);
+		  byte[] rawBytes = bos.toByteArray();
+		  transmission.sendData(rawBytes);
 		} catch (DataTransmissionException e) {
-			LOG.error("Could not send data", e);
-			// TODO: proper error handling
+			LOG.error("Could not send Data.");
+			e.printStackTrace();
+		} catch (IOException e) {
+			LOG.error("Could not serialize Data to Bytes.");
+			e.printStackTrace();
+		} 
+		finally {
+		  try {
+		    if (out != null) {
+		      out.close();
+		    }
+		    bos.close();
+		  } catch (IOException ex) {
+		    // ignore close exception
+		  }
 		}
+		
 	}
 	
 	
