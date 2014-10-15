@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
@@ -21,7 +22,7 @@ public class StartStopPredicateCoalescePO<M extends ITimeInterval> extends
 
 	final static int START = 0;
 	final static int END = 1;
-	
+
 	@SuppressWarnings("rawtypes")
 	final private List<IPredicate> predicates = new LinkedList<IPredicate>();
 	final private Map<Long, PairMap<SDFSchema, AggregateFunction, IPartialAggregate<IStreamObject<? extends M>>, M>> currentPAs = new HashMap<>();
@@ -37,14 +38,11 @@ public class StartStopPredicateCoalescePO<M extends ITimeInterval> extends
 		predicates.add(endPredicate);
 	}
 
-
 	@Override
 	public de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe.OutputMode getOutputMode() {
 		return OutputMode.NEW_ELEMENT;
 	}
 
-	
-	
 	@Override
 	protected void process_open() throws OpenFailedException {
 		getGroupProcessor().init();
@@ -62,16 +60,17 @@ public class StartStopPredicateCoalescePO<M extends ITimeInterval> extends
 				.get(groupID);
 		// when calcuation is running
 		if (pas != null) {
-			if (predicates.get(END).evaluate(object)){
-				PairMap<SDFSchema, AggregateFunction, IStreamObject<M>, ?> result = calcEval(pas, false);
+			if (predicates.get(END).evaluate(object)) {
+				PairMap<SDFSchema, AggregateFunction, IStreamObject<M>, ?> result = calcEval(
+						pas, false);
 				IStreamObject<M> out = getGroupProcessor().createOutputElement(
 						groupID, result);
 				out.setMetadata(pas.getMetadata());
 				transfer(out);
-				
+
 				// Clear partial Aggregates
 				currentPAs.remove(groupID);
-			}else{
+			} else {
 				// merge
 				PairMap<SDFSchema, AggregateFunction, IPartialAggregate<IStreamObject<? extends M>>, M> newP = calcMerge(
 						pas, object, true);
@@ -84,16 +83,40 @@ public class StartStopPredicateCoalescePO<M extends ITimeInterval> extends
 
 				// TODO: createHeartbeat(newMeta.getStart());
 
-			}			
-		}else{
-			if (predicates.get(START).evaluate(object)){
+			}
+		} else {
+			if (predicates.get(START).evaluate(object)) {
 				pas = calcInit(object);
-				pas.setMetadata((M) object.getMetadata()
-						.clone());
+				pas.setMetadata((M) object.getMetadata().clone());
 				currentPAs.put(groupID, pas);
 			}
 		}
 
 	}
 
+	@Override
+	protected void process_close() {
+		dumpGroups();
+	}
+
+	@Override
+	protected void process_done(int port) {
+		dumpGroups();
+	}
+
+	private void dumpGroups() {
+		synchronized (currentPAs) {
+			for (Entry<Long, PairMap<SDFSchema, AggregateFunction, IPartialAggregate<IStreamObject<? extends M>>, M>> e : currentPAs
+					.entrySet()) {
+				PairMap<SDFSchema, AggregateFunction, IPartialAggregate<IStreamObject<? extends M>>, M> currentPartialAggregates = e
+						.getValue();
+				PairMap<SDFSchema, AggregateFunction, IStreamObject<M>, ?> result = calcEval(
+						currentPartialAggregates, false);
+				IStreamObject<M> out = getGroupProcessor().createOutputElement(
+						e.getKey(), result);
+				transfer(out);
+			}
+			currentPAs.clear();
+		}
+	}
 }
