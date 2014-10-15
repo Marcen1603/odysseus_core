@@ -4,7 +4,6 @@ import java.util.List;
 
 import metrics.MetricModel;
 import network.NetworkModel;
-import kohonen.ClassRetriever;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;

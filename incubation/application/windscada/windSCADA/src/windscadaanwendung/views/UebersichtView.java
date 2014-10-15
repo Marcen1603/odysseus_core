@@ -20,6 +20,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.part.ViewPart;
 
+import windscadaanwendung.ca.FarmList;
 import windscadaanwendung.ca.WKA;
 import windscadaanwendung.ca.WindFarm;
 import windscadaanwendung.db.DBConnectionHD;
@@ -47,6 +48,7 @@ public class UebersichtView extends ViewPart implements Observer {
 	public void createPartControl(Composite parent) {
 		ObserverHandler.addObserverToWKA(this);
 		ObserverHandler.addObserverToWindFarm(this);
+		FarmList.timer.addObserver(this);
 		parent.setLayout(new FillLayout(SWT.VERTICAL));
 		
 		Composite composite = new Composite(parent, SWT.NONE);
@@ -200,6 +202,9 @@ public class UebersichtView extends ViewPart implements Observer {
 				redrawHitWindFarmData();
 			}
 		}
+		if(o instanceof Timer) {
+			prepareLoadNewHitData();
+		}
 	}
 	
 	/**
@@ -216,6 +221,7 @@ public class UebersichtView extends ViewPart implements Observer {
 		super.dispose();
 		ObserverHandler.removeObserverFromWKA(this);
 		ObserverHandler.removeObserverFromWindFarm(this);
+		FarmList.timer.deleteObserver(this);
 	}
 
 }

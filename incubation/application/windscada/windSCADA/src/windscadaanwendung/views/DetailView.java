@@ -10,7 +10,6 @@ import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-// import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.DateTime;
@@ -21,6 +20,7 @@ import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.part.ViewPart;
 
+import windscadaanwendung.ca.FarmList;
 import windscadaanwendung.ca.WKA;
 import windscadaanwendung.db.DBConnectionHD;
 import windscadaanwendung.hd.HitWKAData;
@@ -32,17 +32,16 @@ import windscadaanwendung.views.dashboard.PitchPart;
  * 
  */
 public class DetailView extends ViewPart implements Observer{
+	
+	
 	public DetailView() {
 	}
 
 	public static final String ID = "windscadaanwendung.views.DetailView";
-	// private static Text aktPhas;
-	// private static Text aktPitch;
 	private Label lblWKA;
 	private DateTime swtDate;
 	private DateTime swtTime;
 	private static Text nameWKA;
-	// private Canvas canvas;
 	private static Composite pitchComp;
 	private static PitchPart pitchPart;
 	private static Composite phaseComp;
@@ -66,6 +65,7 @@ public class DetailView extends ViewPart implements Observer{
 	@Override
 	public void createPartControl(Composite parent) {
 		ObserverHandler.addObserverToWKA(this);
+		FarmList.timer.addObserver(this);
 		parent.setLayout(new FillLayout(SWT.VERTICAL));
 
 		form = new Composite(parent, SWT.NONE);
@@ -164,7 +164,7 @@ public class DetailView extends ViewPart implements Observer{
 		hitPerformance.setText(new String[] {"Leistung"});
 		pitchPart = new PitchPart();
 		phaseShiftPart = new PhaseShiftPart();
-
+	
 	}
 
 	/*
@@ -216,7 +216,7 @@ public class DetailView extends ViewPart implements Observer{
 //		System.out.println(swtDate.toString() + swtTime.toString());
 		GregorianCalendar cal = new GregorianCalendar();
 		cal.set(swtDate.getYear(),swtDate.getMonth(), swtDate.getDay(), swtTime.getHours(), swtTime.getMinutes(), swtTime.getSeconds());
-		System.out.println(cal.getTime().toString());
+//		System.out.println(cal.getTime().toString());
 		DBConnectionHD.refreshHitWKAData(cal.getTime());
 	}
 
@@ -228,6 +228,8 @@ public class DetailView extends ViewPart implements Observer{
 			if (wka.equals(selectedWKA)) {
 				printHitWKAData();
 			}
+		} else if (o instanceof Timer) {
+			this.handleDateTimeEvent();
 		}
 	}
 
@@ -262,5 +264,6 @@ public class DetailView extends ViewPart implements Observer{
 	public void dispose() {
 		super.dispose();
 		ObserverHandler.removeObserverFromWKA(this);
+		FarmList.timer.deleteObserver(this);
 	}
 }

@@ -1,4 +1,4 @@
-package kohonen;
+package de.uniol.inf.is.odysseus.mining.kohonen;
 
 import java.util.ArrayList;
 import java.util.List;
