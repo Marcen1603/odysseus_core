@@ -237,10 +237,30 @@ public class QueryPartController implements IPlanModificationListener, IPeerComm
 		}
 	}
 	
+	@Override
 	public ID getSharedQueryID(int queryId) {
 		
 		Preconditions.checkNotNull(queryId);
 		return this.sharedQueryIDMap.get(queryId);
+		
+	}
+	
+	@Override
+	public Collection<Integer> getLocalIds(ID sharedQueryId) {
+		
+		Preconditions.checkNotNull(sharedQueryId);
+		Collection<Integer> out = Lists.newArrayList();
+		for(int id : this.sharedQueryIDMap.keySet()) {
+			
+			if(this.sharedQueryIDMap.get(id).equals(sharedQueryId)) {
+				
+				out.add(id);
+				
+			}
+			
+		}
+		
+		return out;
 		
 	}
 
