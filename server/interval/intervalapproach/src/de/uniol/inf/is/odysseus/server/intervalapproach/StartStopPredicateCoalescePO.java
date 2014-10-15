@@ -1,6 +1,7 @@
 package de.uniol.inf.is.odysseus.server.intervalapproach;
 
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -22,8 +23,8 @@ public class StartStopPredicateCoalescePO<M extends ITimeInterval> extends
 	final static int END = 1;
 	
 	@SuppressWarnings("rawtypes")
-	private List<IPredicate> predicates;
-	private Map<Long, PairMap<SDFSchema, AggregateFunction, IPartialAggregate<IStreamObject<? extends M>>, M>> currentPAs = new HashMap<>();
+	final private List<IPredicate> predicates = new LinkedList<IPredicate>();
+	final private Map<Long, PairMap<SDFSchema, AggregateFunction, IPartialAggregate<IStreamObject<? extends M>>, M>> currentPAs = new HashMap<>();
 
 	public StartStopPredicateCoalescePO(SDFSchema inputSchema,
 			SDFSchema outputSchema, List<SDFAttribute> groupingAttributes,
@@ -50,6 +51,7 @@ public class StartStopPredicateCoalescePO<M extends ITimeInterval> extends
 		for (IPredicate<?> p : predicates) {
 			p.init();
 		}
+		currentPAs.clear();
 	}
 
 	@Override
