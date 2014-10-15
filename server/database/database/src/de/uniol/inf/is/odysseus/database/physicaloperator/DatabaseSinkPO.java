@@ -35,6 +35,7 @@ import java.awt.event.ActionListener;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.sql.Types;
 import java.util.List;
 
 import javax.swing.Timer;
@@ -203,8 +204,12 @@ public class DatabaseSinkPO extends AbstractSink<Tuple<ITimeInterval>>
 
 				for (int i = 0; i < this.getOutputSchema().size(); i++) {
 					Object attributeValue = tuple.getAttribute(i);
-					dtMappings[i + 1].setValue(this.preparedStatement, i + 1,
-							attributeValue);
+					if (attributeValue != null) {
+						dtMappings[i + 1].setValue(this.preparedStatement,
+								i + 1, attributeValue);
+					} else {
+						preparedStatement.setNull(i + 1, Types.NULL);
+					}
 				}
 				// for (SDFAttribute attribute : this.getOutputSchema()) {
 				// SDFDatatype datatype = attribute.getDatatype();
