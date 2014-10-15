@@ -45,15 +45,19 @@ public abstract class AbstractTransformationRule<T> extends
 		AbstractRule<T, TransformationConfiguration> implements
 		ITransformationRule {
 
+	final static Logger LOG = LoggerFactory
+			.getLogger(AbstractTransformationRule.class);
+
 	protected ISession getCaller() {
-		return ((TransformationWorkingMemory)this.getCurrentWorkingMemory()).getCaller();
+		return ((TransformationWorkingMemory) this.getCurrentWorkingMemory())
+				.getCaller();
 	}
 
 	protected IDataDictionaryWritable getDataDictionary() {
-		return (IDataDictionaryWritable) ((TransformationWorkingMemory)this.getCurrentWorkingMemory())
-				.getDataDictionary();
+		return (IDataDictionaryWritable) ((TransformationWorkingMemory) this
+				.getCurrentWorkingMemory()).getDataDictionary();
 	}
-	
+
 	static Logger logger = LoggerFactory
 			.getLogger(AbstractTransformationRule.class);
 
@@ -66,11 +70,13 @@ public abstract class AbstractTransformationRule<T> extends
 		return false;
 	}
 
-	
 	protected void defaultExecute(ILogicalOperator logical,
 			IPhysicalOperator physical, TransformationConfiguration config,
 			boolean retract, boolean insert, boolean ignoreSinkInput,
 			boolean rename) {
+		if (LOG.isTraceEnabled()) {
+			LOG.trace("Replacing " + logical + " with " + physical);
+		}
 		// Check if operator has an id and if this id is not already defined
 		// Attention, id can be null
 		handleOperatorID(logical, physical, config);
@@ -221,7 +227,7 @@ public abstract class AbstractTransformationRule<T> extends
 	public int getPriority() {
 		return 0;
 	}
-	
+
 	@Override
 	public String getName() {
 		return this.getClass().getSimpleName();

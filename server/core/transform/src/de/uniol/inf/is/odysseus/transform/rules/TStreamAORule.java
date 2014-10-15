@@ -17,6 +17,9 @@ package de.uniol.inf.is.odysseus.transform.rules;
 
 import java.util.ArrayList;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.uniol.inf.is.odysseus.core.collection.Resource;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
@@ -33,6 +36,8 @@ import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
 public class TStreamAORule extends AbstractTransformationRule<StreamAO> {
 
+	static final Logger LOG = LoggerFactory.getLogger(TSampleAORule.class);
+ 	
 	@Override
 	public int getPriority() {
 		return 1;
@@ -40,8 +45,9 @@ public class TStreamAORule extends AbstractTransformationRule<StreamAO> {
 
 	@Override
 	public void execute(StreamAO operator, TransformationConfiguration transformConfig) throws RuleException {
-
+		
 		Resource name = operator.getStreamname();
+		LOG.trace("Trying to find view or stream "+name);
 		if (!getDataDictionary().containsViewOrStream(name, getCaller())) {
 			throw new TransformationException("Stream or view " + name + " does not exist");
 		}
@@ -49,15 +55,22 @@ public class TStreamAORule extends AbstractTransformationRule<StreamAO> {
 		ISource<?> source = null;
 		// check, if this stream is not transformed yet into a physical or not
 		if (getDataDictionary().getAccessPlan(operator.getStreamname()) == null) {
+			LOG.trace("No access plan found --> Create a new one");
 			// ok, we have to transform the stream operator!
 			ILogicalOperator logicalPlan = getDataDictionary().getStreamForTransformation(operator.getStreamname(), getCaller());
+			LOG.trace("No stream found. Trying to find view");
 			if (logicalPlan == null){
 				logicalPlan = getDataDictionary().getView(operator.getStreamname(), getCaller());
 			}
+			if (logicalPlan == null){
+				throw new TransformationException("Could not find a logical plan for "+name);
+			}
 			// start a new sub-transformation
 			ITransformation transformation = new TransformationExecutor();
+			LOG.trace("Translation of "+name);
 			ArrayList<IPhysicalOperator> roots = transformation.transform(logicalPlan, transformConfig, getCaller(), getDataDictionary());
 			// we don't need the subscriptions anymore
+			LOG.trace("Clear physical subscriptions");
 			logicalPlan.clearPhysicalSubscriptions();
 			// get the first root, since this is the physical operator for the
 			// passed plan
@@ -68,6 +81,7 @@ public class TStreamAORule extends AbstractTransformationRule<StreamAO> {
 				insert(source);
 				// and add this to the accessplan
 				if (!transformConfig.isVirtualTransformation()) {
+					LOG.trace("Put access plan to data dictionary");
 					getDataDictionary().putAccessPlan(operator.getStreamname(), source);
 				}
 			} else {
