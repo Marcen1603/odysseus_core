@@ -41,6 +41,7 @@ import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicatorListener;
 import de.uniol.inf.is.odysseus.p2p_new.PeerCommunicationException;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.IP2PDictionary;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.SourceAdvertisement;
+import de.uniol.inf.is.odysseus.peer.distribute.IQueryPartController;
 import de.uniol.inf.is.odysseus.peer.distribute.PeerDistributePlugIn;
 import de.uniol.inf.is.odysseus.peer.distribute.message.AbortQueryPartAddAckMessage;
 import de.uniol.inf.is.odysseus.peer.distribute.message.AbortQueryPartAddMessage;
@@ -59,6 +60,7 @@ public class QueryPartReceiver implements IPeerCommunicatorListener {
 	private static IP2PNetworkManager p2pNetworkManager;
 	private static IPeerCommunicator peerCommunicator;
 	private static IP2PDictionary p2pDictionary;
+	private static IQueryPartController controller;
 
 	private static Collection<Integer> ackedQueryPartIDs = Lists.newLinkedList();
 	private static Map<Integer, String> failedQueryPartIDs = Maps.newConcurrentMap();
@@ -144,6 +146,18 @@ public class QueryPartReceiver implements IPeerCommunicatorListener {
 			p2pDictionary = null;
 		}
 	}
+	
+	// called by OSGi-DS
+	public static void bindQueryPartController(IQueryPartController serv) {
+		controller = serv;
+	}
+
+	// called by OSGi-DS
+	public static void unbindQueryPartController(IQueryPartController serv) {
+		if (controller == serv) {
+			controller = null;
+		}
+	}
 
 	@Override
 	public void receivedMessage(IPeerCommunicator communicator, PeerID senderPeer, IMessage message) {
@@ -178,7 +192,7 @@ public class QueryPartReceiver implements IPeerCommunicatorListener {
 		} else if (message instanceof AbortQueryPartAddMessage) {
 			AbortQueryPartAddMessage abortMessage = (AbortQueryPartAddMessage) message;
 
-			QueryPartController.getInstance().removeSharedQuery(abortMessage.getSharedQueryID());
+			((QueryPartController)controller).removeSharedQuery(abortMessage.getSharedQueryID());
 
 			sendAbortAck(senderPeer, abortMessage.getSharedQueryID());
 		}
@@ -285,7 +299,7 @@ public class QueryPartReceiver implements IPeerCommunicatorListener {
 
 		Collection<Integer> ids = executor.addQuery(message.getPqlStatement(), "PQL", PeerDistributePlugIn.getActiveSession(), message.getTransCfgName(), Context.empty(), configuration);
 
-		QueryPartController.getInstance().registerAsSlave(ids, message.getSharedQueryID());
+		((QueryPartController)controller).registerAsSlave(ids, message.getSharedQueryID());
 	}
 
 	private static Optional<ParameterTransformationConfiguration> getParameterTransformationConfiguration(List<IQueryBuildSetting<?>> settings) {
