@@ -115,9 +115,12 @@ public class SizeByteBufferHandler<T> extends AbstractByteBufferHandler<T> {
 		int offset = 0;
 		while (input.available() > 0) {
 			size = input.read();
-			input.read(objectHandler.getByteBuffer().array(), offset, size);
+			input.read(objectHandler.getByteBuffer().array(), offset, size);			
 			offset += size;
 		}
+		
+		objectHandler.getByteBuffer().position(offset);
+		
 		try {
 			return objectHandler.create();
 		} catch (ClassNotFoundException | BufferUnderflowException e) {
