@@ -1,8 +1,12 @@
 package de.uniol.inf.is.odysseus.wrapper.temper1.physicaloperator.access;
 
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -38,6 +42,8 @@ public class Temper1TransportHandler extends
 	public static final String METHOD_HID_MANAGER = "hidmanager";
 	public static final String METHOD_RPI_TEMPER = "rpitemper";
 
+	private static final String RPI_TEMPER_BIN = "/rpitemper.bin";
+
 	static {
 		ClassPathLibraryLoader.loadNativeHIDLibrary();
 	}
@@ -50,17 +56,70 @@ public class Temper1TransportHandler extends
 
 	private static String methodToGetTemperature;
 
-	public Temper1TransportHandler() {
-		// TODO Auto-generated constructor stub
+	private static String rpiTemper1TempPath;
 
-		// UnsatisfiedLinkError
+	private static boolean initRPiTemperBinRunSeccessfull=false;
+	
+
+	public static String getMethodToGetTemperature() {
+		return methodToGetTemperature;
+	}
+
+	public static void setMethodToGetTemperature(String methodToGetTemperature) {
+		Temper1TransportHandler.methodToGetTemperature = methodToGetTemperature;
+	}
+
+	private static void initRPiTemperBin() {
+		try {
+			String path = RPI_TEMPER_BIN;
+			InputStream in = ClassPathLibraryLoader.class
+					.getResourceAsStream(path);
+			if (in != null) {
+				try {
+					// always write to different location
+					String tempName = path.substring(path.lastIndexOf('/') + 1);
+					File fileOut = File.createTempFile(tempName.substring(0,
+							tempName.lastIndexOf('.')), tempName.substring(
+							tempName.lastIndexOf('.'), tempName.length()));
+					fileOut.deleteOnExit();
+
+					OutputStream out = new FileOutputStream(fileOut);
+					byte[] buf = new byte[1024];
+					int len;
+					while ((len = in.read(buf)) > 0) {
+						out.write(buf, 0, len);
+					}
+
+					out.close();
+					// Runtime.getRuntime().load(fileOut.toString());
+
+					// rpiTemperPath = tempName;
+					setRpiTemperPath(fileOut.getAbsolutePath());
+
+					System.out.println("rpitemper path:" + tempName);
+					System.out.println("rpitemper path2:"
+							+ fileOut.getAbsolutePath());
+
+				} finally {
+					in.close();
+					setInitRPiTemperBinRunSeccessfull(true);
+				}
+			}
+		} catch (IOException ex) {
+			ex.printStackTrace();
+		}
+	}
+
+	public Temper1TransportHandler() {
 		try {
 			setHidManager(HIDManager.getInstance());
 
 			methodToGetTemperature = METHOD_HID_MANAGER;
 		} catch (UnsatisfiedLinkError ex) {
 			LOG.error(ex.getMessage(), ex);
-
+			
+			initRPiTemperBin();
+			
 			methodToGetTemperature = METHOD_RPI_TEMPER;
 		} catch (IOException ex) {
 			LOG.error(ex.getMessage(), ex);
@@ -134,7 +193,7 @@ public class Temper1TransportHandler extends
 	private static float getTemperatureFromRPiTemperBinary(int deviceNumber)
 			throws Exception {
 		try {
-			final Process p = Runtime.getRuntime().exec("lib/pcsensor");
+			final Process p = Runtime.getRuntime().exec(getRpiTemper1TempPath());
 
 			/*
 			 * new Thread(new Runnable() { public void run() { BufferedReader
@@ -339,5 +398,26 @@ public class Temper1TransportHandler extends
 
 	public void setHidManager(HIDManager hidManager) {
 		this.hidManager = hidManager;
+	}
+
+	public static String getRpiTemper1TempPath() {
+		if(!isInitRPiTemperBinRunSeccessfull()){
+			initRPiTemperBin();
+		}
+		
+		return rpiTemper1TempPath;
+	}
+
+	public static void setRpiTemperPath(String rpiTemper1TempPath) {
+		Temper1TransportHandler.rpiTemper1TempPath = rpiTemper1TempPath;
+	}
+
+	public static boolean isInitRPiTemperBinRunSeccessfull() {
+		return initRPiTemperBinRunSeccessfull;
+	}
+
+	public static void setInitRPiTemperBinRunSeccessfull(
+			boolean initRPiTemperBinRunSeccessfull) {
+		Temper1TransportHandler.initRPiTemperBinRunSeccessfull = initRPiTemperBinRunSeccessfull;
 	}
 }
