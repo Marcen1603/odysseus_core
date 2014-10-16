@@ -48,7 +48,7 @@ public class Temper1TransportHandler extends
 
 	private HIDManager hidManager;
 
-	private String methodToGetTemperature;
+	private static String methodToGetTemperature;
 
 	public Temper1TransportHandler() {
 		// TODO Auto-generated constructor stub
@@ -68,8 +68,7 @@ public class Temper1TransportHandler extends
 	}
 
 	public Temper1TransportHandler(Temper1TransportHandler other) {
-		// TODO Auto-generated constructor stub
-
+		
 	}
 
 	@Override
@@ -89,6 +88,10 @@ public class Temper1TransportHandler extends
 	}
 
 	private void updateConnectedTemperatureSensors() {
+		if(!methodToGetTemperature.equals(METHOD_HID_MANAGER)){
+			return;
+		}
+		
 		long delta = System.currentTimeMillis()
 				- lastUpdateConnectedTemperatureSensorsTime;
 
@@ -127,36 +130,30 @@ public class Temper1TransportHandler extends
 		}
 	}
 
-	private static float getTemperatureFromRPiTemperBinary(int deviceNumber) throws Exception {
+	//This method is a fallback for some raspberry pi models
+	private static float getTemperatureFromRPiTemperBinary(int deviceNumber)
+			throws Exception {
 		try {
 			final Process p = Runtime.getRuntime().exec("lib/pcsensor");
 
 			/*
-			new Thread(new Runnable() {
-				public void run() {
-					BufferedReader input = new BufferedReader(
-							new InputStreamReader(p.getInputStream()));
-					String line = null;
+			 * new Thread(new Runnable() { public void run() { BufferedReader
+			 * input = new BufferedReader( new
+			 * InputStreamReader(p.getInputStream())); String line = null;
+			 * 
+			 * try { while ((line = input.readLine()) != null) { return
+			 * parseTemperature(line); } } catch (IOException e) {
+			 * e.printStackTrace(); } } }).start();
+			 */
 
-					try {
-						while ((line = input.readLine()) != null) {
-							return parseTemperature(line);
-						}
-					} catch (IOException e) {
-						e.printStackTrace();
-					}
-				}
-			}).start();
-			*/
-			
-			BufferedReader input = new BufferedReader(
-					new InputStreamReader(p.getInputStream()));
+			BufferedReader input = new BufferedReader(new InputStreamReader(
+					p.getInputStream()));
 			String line = null;
 
 			try {
 				int lineNumber = 0;
 				while ((line = input.readLine()) != null) {
-					if(lineNumber==deviceNumber){
+					if (lineNumber == deviceNumber) {
 						String temperature = parseTemperature(line);
 						Float temperatureFloat = Float.parseFloat(temperature);
 						return temperatureFloat.floatValue();
@@ -177,17 +174,17 @@ public class Temper1TransportHandler extends
 		}
 		throw new Exception("No temperature value available.");
 	}
-	
+
 	private static String parseTemperature(String line) {
 		// Example: 2014/10/16 17:23:41 Temperature 71.71F 22.06C
 		Pattern pattern = Pattern.compile(".*([0-9]{2}\\.[0-9]{2})[C]$");
 
-        Matcher matcher = pattern.matcher(line);
-        if(matcher.matches()) {
-        	return matcher.group(1);
-        }else{
-        	throw new IllegalStateException("No match found");
-        }
+		Matcher matcher = pattern.matcher(line);
+		if (matcher.matches()) {
+			return matcher.group(1);
+		} else {
+			throw new IllegalStateException("No match found");
+		}
 	}
 
 	private void setTempNumber(String tempNumber) {
@@ -285,17 +282,8 @@ public class Temper1TransportHandler extends
 				: 0;
 
 		try {
-			switch (this.methodToGetTemperature) {
-			case METHOD_HID_MANAGER:
-				tuple.setAttribute(0, getTemperatureFromHIDManager(deviceNumber));
-				break;
-			case METHOD_RPI_TEMPER:
-				tuple.setAttribute(0, getTemperatureFromRPiTemperBinary(deviceNumber));
-				break;
-			default:
-				break;
-			}
-			
+			tuple.setAttribute(0, getTemperature(deviceNumber));
+
 			// readDevice(temperaturSensors.get(deviceNumber)));
 
 			/*
@@ -315,13 +303,12 @@ public class Temper1TransportHandler extends
 		return tuple;
 	}
 
-	private float getTemperatureFromHIDManager(int deviceNumber) throws IOException {
-		switch (this.methodToGetTemperature) {
+	private float getTemperature(int deviceNumber) throws Exception {
+		switch (methodToGetTemperature) {
 		case METHOD_HID_MANAGER:
 			return readDevice(temperaturSensors.get(deviceNumber));
 		case METHOD_RPI_TEMPER:
-			
-			break;
+			return getTemperatureFromRPiTemperBinary(deviceNumber);
 		}
 		throw new IOException("No temperature sensor available.");
 	}
@@ -330,7 +317,7 @@ public class Temper1TransportHandler extends
 		Calendar calendar = Calendar.getInstance();
 		calendar.setTime(new Date(System.currentTimeMillis()));
 		float seconds = calendar.get(Calendar.SECOND);
-
+		
 		float y = 0;
 		if (seconds >= 30) {
 			y = ((seconds * -1) + 60) / 60; // 30...0
