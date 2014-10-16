@@ -24,10 +24,7 @@ public class RPiGPIOSourcePO extends AbstractSource<Tuple<?>> {
 	
 	@Override
 	protected void process_open() throws OpenFailedException {
-		// TODO Auto-generated method stub
-		LOG.error("process_open");
-		
-		
+		LOG.debug("process_open");
 		
 	}
 	

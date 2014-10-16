@@ -12,8 +12,6 @@ public class Temper1AccessPO extends AbstractSource<Tuple<?>> {
 	public Temper1AccessPO(Temper1AccessAO operator) {
 		this.tempNumber = operator.getTempNumber();
 		//addParameterInfo(Temper1TransportHandler.TEMPNUMBER, this.tempNumber);
-		
-		
 	}
 
 	public Temper1AccessPO(Temper1AccessPO other) {

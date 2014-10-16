@@ -1,7 +1,9 @@
 package de.uniol.inf.is.odysseus.wrapper.temper1.physicaloperator.access;
 
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -91,6 +93,8 @@ public class Temper1TransportHandler extends AbstractSimplePullTransportHandler<
 				LOG.debug("try to load other lib for rpi...");
 				
 				
+				echoTest();
+				
 				
 	        } catch (Exception ex) {
 	            //ex.printStackTrace();
@@ -101,9 +105,37 @@ public class Temper1TransportHandler extends AbstractSimplePullTransportHandler<
 		}
 	}
 
+	private static void echoTest() {
+		try {
+			final Process p = Runtime.getRuntime().exec("lib/pcsensor");
+			
+			new Thread(new Runnable() {
+			    public void run() {
+			        BufferedReader input = new BufferedReader(new InputStreamReader(p.getInputStream()));
+			        String line = null; 
+			        
+			        try {
+			            while ((line = input.readLine()) != null) {
+			                System.out.println(line);
+			            }
+			        } catch (IOException e) {
+			            e.printStackTrace();
+			        }
+			    }
+			}).start();
+			
+			p.waitFor();
+			
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		} catch(Exception e2){
+			e2.printStackTrace();
+		}
+	}
+	
 	private void setTempNumber(String tempNumber) {
-		System.out.println("setTempNumber: "+tempNumber);
-		
 		Integer tempNumberInteger = Integer.parseInt(tempNumber);
 		
 		this.currentTempNumber = tempNumberInteger.intValue();
