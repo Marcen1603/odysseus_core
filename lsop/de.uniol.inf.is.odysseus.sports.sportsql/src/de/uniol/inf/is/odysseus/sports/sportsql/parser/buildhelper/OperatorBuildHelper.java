@@ -1454,6 +1454,7 @@ public class OperatorBuildHelper {
 		IDataDictionary dataDict = OperatorBuildHelper.getDataDictionary();
 
 		SourceParameter source = new SourceParameter();
+		source.setName("Source");
 		source.setInputValue(sourcename);
 		source.setDataDictionary(dataDict);
 
