@@ -1,8 +1,10 @@
 package de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.BufferUnderflowException;
 import java.nio.ByteBuffer;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -82,6 +84,35 @@ public class SimpleByteBufferHandler<T> extends AbstractByteBufferHandler<T> {
 			LOG.error ("Empty object");
 		}
 	}
+	
+	@Override
+	public boolean hasNext() throws IOException 
+	{
+		if (getTransportHandler().getInputStream() != null) 
+			return getTransportHandler().getInputStream().available() > 0;
+		else 
+			return false;
+	}
+
+	@Override
+	public T getNext() throws IOException 
+	{
+		InputStream input = getTransportHandler().getInputStream();
+		int size = input.available();
+		input.read(objectHandler.getByteBuffer().array(), 0, size);			
+		
+		objectHandler.getByteBuffer().position(size);
+		
+		try 
+		{
+			return objectHandler.create();
+		} 
+		catch (ClassNotFoundException | BufferUnderflowException e) 
+		{
+			LOG.error(e.getMessage(), e);
+			return null;
+		}
+	}	
 
 	@Override
 	public boolean isSemanticallyEqualImpl(IProtocolHandler<?> other) {
