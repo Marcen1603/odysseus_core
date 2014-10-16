@@ -182,9 +182,23 @@ public abstract class AbstractParameter<T> implements IParameter<T> {
 	@Override
 	public final T getValue() {
 		if (!validate()) {
-			throw new RuntimeException("parameter could not be validated");
+			throw new RuntimeException("Parameter could not be validated due to following errors:\n" + toErrorString(getErrors()));
 		}
 		return value;
+	}
+
+	private static String toErrorString(List<String> errors) {
+		if( errors == null || errors.isEmpty() ) {
+			return "[No error message available]";
+		}
+		
+		StringBuilder sb = new StringBuilder();
+		
+		for( String error : errors) {
+			sb.append("\t").append(error).append("\n");
+		}
+		
+		return sb.toString();
 	}
 
 	@Override
