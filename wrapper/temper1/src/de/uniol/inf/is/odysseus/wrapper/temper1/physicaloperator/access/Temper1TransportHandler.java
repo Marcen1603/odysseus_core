@@ -6,6 +6,9 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.codeminders.hidapi.ClassPathLibraryLoader;
 import com.codeminders.hidapi.HIDDevice;
 import com.codeminders.hidapi.HIDDeviceInfo;
@@ -20,7 +23,8 @@ import de.uniol.inf.is.odysseus.core.sdf.unit.SDFTimeUnit;
 
 
 public class Temper1TransportHandler extends AbstractSimplePullTransportHandler<Tuple<?>>{
-
+	private static Logger LOG = LoggerFactory.getLogger(Temper1TransportHandler.class);
+	
 	public static final String NAME = "Temper1";
 	private static final int VENDOR_ID = 3141;
     private static final int PRODUCT_ID = 29697;
@@ -80,8 +84,17 @@ public class Temper1TransportHandler extends AbstractSimplePullTransportHandler<
 	            }
 	            
 	            //System.out.println("size:"+temperaturSensors.size());
+			}catch(IOException ex){
+				//ex.printStackTrace();
+				LOG.error(ex.getMessage(), ex);
+				
+				LOG.debug("try to load other lib for rpi...");
+				
+				
+				
 	        } catch (Exception ex) {
-	            ex.printStackTrace();
+	            //ex.printStackTrace();
+	            LOG.error(ex.getMessage(), ex);
 	        }
 			
 			lastUpdateConnectedTemperatureSensorsTime = System.currentTimeMillis();

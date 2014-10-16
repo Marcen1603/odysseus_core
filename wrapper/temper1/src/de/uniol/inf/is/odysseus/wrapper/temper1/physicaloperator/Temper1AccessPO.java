@@ -4,7 +4,6 @@ import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSource;
 import de.uniol.inf.is.odysseus.wrapper.temper1.logicaloperator.Temper1AccessAO;
-import de.uniol.inf.is.odysseus.wrapper.temper1.physicaloperator.access.Temper1TransportHandler;
 
 public class Temper1AccessPO extends AbstractSource<Tuple<?>> {
 	
