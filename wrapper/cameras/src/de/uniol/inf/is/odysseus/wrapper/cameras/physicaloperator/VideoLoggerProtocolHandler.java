@@ -21,7 +21,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.IAccessPa
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportDirection;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportExchangePattern;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandler;
-import de.uniol.inf.is.odysseus.image.common.datatype.Image;
+import de.uniol.inf.is.odysseus.imagejcv.common.datatype.ImageJCV;
 import de.uniol.inf.is.odysseus.wrapper.cameras.KeyValueFile;
 
 public class VideoLoggerProtocolHandler extends LoggerProtocolHandler 
@@ -72,7 +72,7 @@ public class VideoLoggerProtocolHandler extends LoggerProtocolHandler
 		logConfigFile.set("VideoFile", 	new File(videoFileName).getName());
 		logConfigFile.set("SyncFile", 	new File(syncFileName).getName());		
 		
-		Image image = (Image) object.getAttribute(0);
+		ImageJCV image = (ImageJCV) object.getAttribute(0);
 		
 		try
 		{
@@ -125,11 +125,11 @@ public class VideoLoggerProtocolHandler extends LoggerProtocolHandler
 
 	@Override protected long writeInternal(Tuple<?> object, long timeStamp) throws IOException 
 	{
-		Image image = (Image) object.getAttribute(0);
+		ImageJCV image = (ImageJCV) object.getAttribute(0);
 
 		try
 		{		
-			recorder.record(IplImage.createFrom(image.getImage()));
+			recorder.record(image.getImage());
 			syncFileStream.writeDouble(timeStamp / 1000.0);			
 		}		
 		catch (Exception e)

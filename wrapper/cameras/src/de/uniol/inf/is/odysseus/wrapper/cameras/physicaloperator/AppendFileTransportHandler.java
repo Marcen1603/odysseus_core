@@ -118,6 +118,8 @@ public class AppendFileTransportHandler extends AbstractSimplePullTransportHandl
 		
 	@Override public Tuple<IMetaAttribute> getNext() 
 	{
+		System.out.println("Call getNext");
+		
 		if (currentLine == null)
 			return null;
 				
@@ -141,10 +143,10 @@ public class AppendFileTransportHandler extends AbstractSimplePullTransportHandl
     
 	private boolean checkNext()
 	{
-		try 
+		if (currentStream == null)
 		{
-			if (currentStream == null)
-   			{
+			try 
+			{
 				currentStream = new BufferedReader(new InputStreamReader(new FileInputStream(fileName)));
 				BasicFileAttributes attr = Files.readAttributes(Paths.get(fileName), BasicFileAttributes.class);
 
@@ -152,7 +154,14 @@ public class AppendFileTransportHandler extends AbstractSimplePullTransportHandl
 								
 				currentTimeStamp = attr.creationTime().toMillis();
 			} 
-
+	    	catch (Exception e)
+	    	{
+	    		return false;
+	    	}
+		}
+			
+		try
+		{
     		currentLine = currentStream.readLine();    	
     		return currentLine != null && !currentLine.equals("");
     	}
@@ -164,8 +173,13 @@ public class AppendFileTransportHandler extends AbstractSimplePullTransportHandl
 	
 	@Override public boolean hasNext() 
 	{
+		System.out.println("Call hasNext");
+		
    		if (checkNext())
+   		{
+   			System.out.println("Call hasNext returned true");
    			return true;
+   		}
    		else
    		{
 	    	try 
@@ -177,6 +191,7 @@ public class AppendFileTransportHandler extends AbstractSimplePullTransportHandl
 	    		Thread.currentThread().interrupt();
 			}	         
 	    	
+	    	System.out.println("Call hasNext returned false");
 	    	return false;
    		}
 	}	
