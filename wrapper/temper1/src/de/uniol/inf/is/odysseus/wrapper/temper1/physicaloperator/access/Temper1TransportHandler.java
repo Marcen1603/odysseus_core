@@ -44,6 +44,8 @@ public class Temper1TransportHandler extends
 
 	private static final String RPI_TEMPER_BIN = "/rpitemper.bin";
 
+	private static final long DELTA_THROWEXCEPTIONS = 5000;
+
 	static {
 		ClassPathLibraryLoader.loadNativeHIDLibrary();
 	}
@@ -59,6 +61,10 @@ public class Temper1TransportHandler extends
 	private static String rpiTemper1TempPath;
 
 	private static boolean initRPiTemperBinRunSeccessfull=false;
+
+	private static boolean exceptionWasThrownInitRPiTemperBin=false;
+
+	private static long exceptionThrownInitRPiTemperBinLastTime;
 	
 
 	public static String getMethodToGetTemperature() {
@@ -105,8 +111,16 @@ public class Temper1TransportHandler extends
 					setInitRPiTemperBinRunSeccessfull(true);
 				}
 			}
+			if(exceptionWasThrownInitRPiTemperBin){
+				exceptionWasThrownInitRPiTemperBin=false;
+			}
 		} catch (IOException ex) {
-			ex.printStackTrace();
+			long delta = System.currentTimeMillis() - exceptionThrownInitRPiTemperBinLastTime;
+			if(!exceptionWasThrownInitRPiTemperBin && delta >= DELTA_THROWEXCEPTIONS){
+				ex.printStackTrace();
+				exceptionThrownInitRPiTemperBinLastTime = System.currentTimeMillis();
+				exceptionWasThrownInitRPiTemperBin=true;
+			}
 		}
 	}
 
