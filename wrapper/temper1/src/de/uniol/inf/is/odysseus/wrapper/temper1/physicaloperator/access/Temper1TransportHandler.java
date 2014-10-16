@@ -88,7 +88,7 @@ public class Temper1TransportHandler extends
 	}
 
 	private void updateConnectedTemperatureSensors() {
-		if(!methodToGetTemperature.equals(METHOD_HID_MANAGER)){
+		if(methodToGetTemperature==null || getHidManager()==null || methodToGetTemperature.isEmpty() || !methodToGetTemperature.equals(METHOD_HID_MANAGER) ){
 			return;
 		}
 		
