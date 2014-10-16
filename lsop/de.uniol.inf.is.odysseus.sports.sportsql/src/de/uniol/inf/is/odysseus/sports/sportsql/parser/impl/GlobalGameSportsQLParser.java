@@ -56,7 +56,7 @@ public class GlobalGameSportsQLParser implements ISportsQLParser {
 
 		// Space parameter
 		SelectAO spaceSelect = OperatorBuildHelper.createSpaceSelect(
-				SportsQLParameterHelper.getSpaceParameter(sportsQL), true,
+				SportsQLParameterHelper.getSpaceParameter(sportsQL), false,
 				timeSelect);
 
 		// -----------------------
