@@ -101,7 +101,7 @@ public abstract class AbstractParameter<T> implements IParameter<T> {
 
 	@Override
 	public String getName() {
-		return this.name;
+		return this.name == null ? getClass().getName() : this.name;
 	}
 
 	@Override
