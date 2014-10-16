@@ -64,6 +64,8 @@ public class Temper1TransportHandler extends
 	private static boolean exceptionWasThrownInitRPiTemperBin=false;
 
 	private static long exceptionThrownInitRPiTemperBinLastTime;
+
+	private static long lastExceptionThrown;
 	
 
 	public static String getMethodToGetTemperature() {
@@ -425,8 +427,25 @@ public class Temper1TransportHandler extends
 
 	public static void setRpiTemperPath(String rpiTemper1TempPath) {
 		Temper1TransportHandler.rpiTemper1TempPath = rpiTemper1TempPath;
+		
+		chmod("777", rpiTemper1TempPath, true);
 	}
 
+	private static void chmod(String mod, String rpiTemper1TempPath, boolean wait) {
+		try {
+			Process p1 = Runtime.getRuntime().exec("chmod "+mod+" "+rpiTemper1TempPath);
+			if(wait){
+				p1.waitFor();
+			}
+		} catch (IOException | InterruptedException e) {
+			long delta = System.currentTimeMillis() - lastExceptionThrown;
+			if(delta >= DELTA_THROWEXCEPTIONS){
+				e.printStackTrace();
+				lastExceptionThrown = System.currentTimeMillis();
+			}
+		}
+	}
+	
 	public static boolean isInitRPiTemperBinRunSeccessfull() {
 		return initRPiTemperBinRunSeccessfull;
 	}
