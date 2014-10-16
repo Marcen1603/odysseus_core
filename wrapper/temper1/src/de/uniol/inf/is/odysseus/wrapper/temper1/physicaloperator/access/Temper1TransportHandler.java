@@ -365,16 +365,15 @@ public class Temper1TransportHandler extends
 							}
 						}
 					} catch (IOException e) {
-						System.out.println("11111");
+						LOG.debug("IOException 111110000");
 						LOG.error(e.getMessage(), e);
-					} catch(IllegalStateException e){
-						
-					}
+					} 
 					p.waitFor();
 					
 					
 					valueReturned=true;
 				} catch(IllegalStateException e){
+					//LOG.debug("0000");
 					// no temperature value could be parsed. try again in a loop
 					long delta = System.currentTimeMillis() - firstFailureTime;
 					if(!couldNotParseTemperature){
@@ -388,13 +387,13 @@ public class Temper1TransportHandler extends
 				}
 			}	
 		} catch (IOException e) {
-			System.out.println("22222");
+			LOG.debug("22222");
 			LOG.error(e.getMessage(), e);
 		} catch (InterruptedException e) {
-			System.out.println("33333");
+			LOG.debug("33333");
 			LOG.error(e.getMessage(), e);
 		} catch (Exception e) {
-			System.out.println("44444");
+			LOG.debug("44444");
 			LOG.error(e.getMessage(), e);
 		}
 		throw new Exception("No temperature value available.");
