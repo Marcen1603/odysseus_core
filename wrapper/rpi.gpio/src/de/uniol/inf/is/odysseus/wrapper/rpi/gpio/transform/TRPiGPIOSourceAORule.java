@@ -21,8 +21,8 @@ public class TRPiGPIOSourceAORule extends AbstractTransformationRule<RPiGPIOSour
 		try {
 			defaultExecute(operator, new RPiGPIOSourcePO(operator), config, true, true);
 		} catch (Exception e) {
-			LOG.error("Exception in TRPiGPIOSinkAORule");
-			//throw new RuleException("Could not create RPiGPIOSinkPO", e);
+			LOG.error("Exception in TRPiGPIOSourceAORule");
+			throw new RuleException("Could not create RPiGPIOSourcePO", e);
 		}
 	}
 

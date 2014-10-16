@@ -6,8 +6,8 @@ import org.slf4j.LoggerFactory;
 import com.pi4j.io.gpio.GpioController;
 import com.pi4j.io.gpio.GpioFactory;
 import com.pi4j.io.gpio.GpioPinDigitalOutput;
+import com.pi4j.io.gpio.Pin;
 import com.pi4j.io.gpio.PinState;
-import com.pi4j.io.gpio.RaspiPin;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
@@ -17,12 +17,13 @@ import de.uniol.inf.is.odysseus.wrapper.rpi.gpio.logicaloperator.RPiGPIOSinkAO;
 
 public class RPiGPIOSinkPO extends AbstractSink<Tuple<?>> {
 	private static final Logger LOG = LoggerFactory.getLogger(RPiGPIOSinkPO.class);
-	private Integer pin;
+	private Pin pin;
 	@SuppressWarnings("unused")
 	private SDFSchema schema;
 	private GpioController gpioController;
 	private GpioPinDigitalOutput myLED;
 	private boolean flagExceptionProcessNext = false;
+	private PinState pinState;
 	
 	public RPiGPIOSinkPO(SDFSchema s) {
 		initGPIOController();
@@ -32,21 +33,27 @@ public class RPiGPIOSinkPO extends AbstractSink<Tuple<?>> {
 	public RPiGPIOSinkPO(RPiGPIOSinkAO operator) {
 		initGPIOController();
 		
-		this.pin = operator.getPin();
+		this.pin = operator.getPin2();
+		this.pinState = operator.getPinStatePinState();
 		
 		initGPIOPins();
 	}
 	
-	public RPiGPIOSinkPO(RPiGPIOSinkPO rPiGPIOSinkPO) {
-		super(rPiGPIOSinkPO);
+	public RPiGPIOSinkPO(RPiGPIOSinkPO other) {
+		super(other);
 		
 		initGPIOController();
 		
-		this.pin = rPiGPIOSinkPO.pin;
+		setPin(other.pin);
+		setPinState(other.pinState);
 		
 		initGPIOPins();
 	}
 	
+	private void setPinState(PinState pinState) {
+		this.pinState = pinState;
+	}
+
 	private void initGPIOController() {
 		LOG.debug("RPiGPIOSinkPO init()");
 		
@@ -59,7 +66,9 @@ public class RPiGPIOSinkPO extends AbstractSink<Tuple<?>> {
 	
 	private void initGPIOPins() {
 		try{
-			myLED = gpioController.provisionDigitalOutputPin(RaspiPin.GPIO_11, "MyLED", PinState.HIGH);
+			LOG.error("\n\r ---- pinState:"+pinState.toString()+"\n\r ------");
+			
+			myLED = gpioController.provisionDigitalOutputPin(pin, pin.getName(), pinState);
 		}catch(Exception ex){
 			LOG.error(ex.getMessage(), ex);
 		}
@@ -127,7 +136,7 @@ public class RPiGPIOSinkPO extends AbstractSink<Tuple<?>> {
 		
 	}
 
-	public void setPin(Integer pin) {
+	public void setPin(Pin pin) {
 		this.pin = pin;
 	}
 
