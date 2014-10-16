@@ -367,7 +367,9 @@ public class Temper1TransportHandler extends
 					} catch (IOException e) {
 						LOG.debug("IOException 111110000");
 						LOG.error(e.getMessage(), e);
-					} 
+					} catch (IllegalStateException e) {
+						throw e;
+					}
 					p.waitFor();
 					
 					
