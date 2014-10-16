@@ -142,6 +142,7 @@ public class ExceptionWindow {
 			}
 		});
 
+		acceptButton.setFocus();
 		shell.pack();
 		shell.open();
 	}
