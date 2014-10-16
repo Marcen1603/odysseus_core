@@ -377,6 +377,7 @@ public class Temper1TransportHandler extends
 					// no temperature value could be parsed. try again in a loop
 					long delta = System.currentTimeMillis() - firstFailureTime;
 					if(!couldNotParseTemperature){
+						LOG.error(e.getMessage(), e);
 						firstFailureTime=System.currentTimeMillis();
 						couldNotParseTemperature=true;
 					}else if(couldNotParseTemperature && delta >= DELTA_THROWEXCEPTIONS){
