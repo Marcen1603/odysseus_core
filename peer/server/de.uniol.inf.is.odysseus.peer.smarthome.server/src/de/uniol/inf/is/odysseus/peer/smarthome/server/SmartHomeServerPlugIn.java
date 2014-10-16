@@ -390,7 +390,7 @@ public class SmartHomeServerPlugIn implements BundleActivator {
 			//System.out.println("SmartHomeServerPlugIn advertisementDiscovered Type:"+advertisement.getAdvType());
 			
 			if(advertisement.getAdvType().equals(SmartDeviceAdvertisement.getAdvertisementType())){
-				//LOG.debug("SmartDeviceAdvertisement received!!!");
+				LOG.debug("SmartDeviceAdvertisement received!!!");
 				
 				/*
 				System.out.println("getIndexFields: ");
