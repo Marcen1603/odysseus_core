@@ -51,11 +51,14 @@ public class TransformationExecutor implements ITransformation {
 	}
 
 	@Override
-	public ArrayList<IPhysicalOperator> transform(ILogicalOperator logicalOp, TransformationConfiguration config, ISession caller, IDataDictionary dd) throws TransformationException {
+	public ArrayList<IPhysicalOperator> transform(ILogicalOperator logicalOp,
+			TransformationConfiguration config, ISession caller,
+			IDataDictionary dd) throws TransformationException {
 		LOGGER.info("Starting transformation of " + logicalOp + "...");
 		if (LOGGER.isDebugEnabled()) {
 			SimplePlanPrinter<ILogicalOperator> planPrinter = new SimplePlanPrinter<ILogicalOperator>();
-			LOGGER.debug("Before transformation: \n" + planPrinter.createString(logicalOp));
+			LOGGER.debug("Before transformation: \n"
+					+ planPrinter.createString(logicalOp));
 		}
 		ArrayList<IPhysicalOperator> resultPlan = new ArrayList<IPhysicalOperator>();
 		TopAO top = null;
@@ -66,18 +69,24 @@ public class TransformationExecutor implements ITransformation {
 			logicalOp.subscribeSink(top, 0, 0, logicalOp.getOutputSchema());
 		}
 		/**
-		 * creating a new transformation environment changes of inventory aren't considered! Otherwise a rule is able to work on different WM. therefore: cloning instance by copy constructor! that means: Singleton = global state concrete instance = local state for this instance
+		 * creating a new transformation environment changes of inventory aren't
+		 * considered! Otherwise a rule is able to work on different WM.
+		 * therefore: cloning instance by copy constructor! that means:
+		 * Singleton = global state concrete instance = local state for this
+		 * instance
 		 */
-		TransformationInventory concreteTransformInvent = new TransformationInventory(TransformationInventory.getInstance());
-		TransformationEnvironment env = new TransformationEnvironment(config, concreteTransformInvent, caller, dd);
+		TransformationInventory concreteTransformInvent = new TransformationInventory(
+				TransformationInventory.getInstance());
+		TransformationEnvironment env = new TransformationEnvironment(config,
+				concreteTransformInvent, caller, dd);
 
 		addLogicalOperator(top, new HashSet<ILogicalOperator>(), env);
 		LOGGER.trace("Processing rules...");
 		// start transformation
-		try{
+		try {
 			env.processEnvironment();
-		}catch(RuleException e){
-			throw new TransformationException("Error in Transformation: ",e);
+		} catch (RuleException e) {
+			throw new TransformationException("Error in Transformation: ", e);
 		}
 		LOGGER.trace("Processing rules done.");
 
@@ -86,12 +95,28 @@ public class TransformationExecutor implements ITransformation {
 			LOGGER.error("PhysicalInput of TopAO is null!");
 			LOGGER.error("Current working memory:");
 			LOGGER.error(env.getWorkingMemory().getCurrentContent().toString());
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.debug("Further information: \n" + env.getWorkingMemory().getDebugTrace());
-                SimplePlanPrinter<ILogicalOperator> planPrinter = new SimplePlanPrinter<>();
-                LOGGER.debug("Current plan: \n" + planPrinter.createString(top));
-            }
-            throw new TransformationException("Error during transformation of " + logicalOp);
+			if (LOGGER.isDebugEnabled()) {
+				LOGGER.debug("Further information: \n"
+						+ env.getWorkingMemory().getDebugTrace());
+				SimplePlanPrinter<ILogicalOperator> planPrinter = new SimplePlanPrinter<>();
+				LOGGER.debug("Current plan: \n" + planPrinter.createString(top));
+			}
+			// Determine logical operators still remaing in working memory,
+			// could be a hint
+			// that rules where not found
+			StringBuffer logStillRemain = new StringBuffer();
+			for (Object o : env.getWorkingMemory().getCurrentContent()) {
+				if (o instanceof ILogicalOperator && !(o instanceof TopAO)) {
+					if (!((ILogicalOperator) o).getPhysInputPOs().isEmpty()) {
+						logStillRemain.append(
+								"\"" + ((ILogicalOperator) o).getName())
+								.append("\" ");
+					}
+				}
+			}
+			throw new TransformationException("Error during transformation.\n"
+					+ "Potential problem operator: " + logStillRemain
+					+ "\nAre metadata types (#METADATA) set correctly?");
 		}
 
 		// FIX: Now done by an explicit RenanePO
@@ -123,10 +148,12 @@ public class TransformationExecutor implements ITransformation {
 				LOGGER.warn("Plan is empty! If transformation was successful, it is possible that there are no root-operators!");
 			}
 			SimplePlanPrinter<IPhysicalOperator> physicalPlanPrinter = new SimplePlanPrinter<IPhysicalOperator>();
-			LOGGER.trace("After transformation: \n" + physicalPlanPrinter.createString(physicalPO));
+			LOGGER.trace("After transformation: \n"
+					+ physicalPlanPrinter.createString(physicalPO));
 
 			if (logicalOp != top) {
-				logicalOp.unsubscribeSink(top, 0, 0, logicalOp.getOutputSchema());
+				logicalOp.unsubscribeSink(top, 0, 0,
+						logicalOp.getOutputSchema());
 			}
 		}
 		LOGGER.info("Transformation of " + logicalOp + " finished");
@@ -134,7 +161,8 @@ public class TransformationExecutor implements ITransformation {
 		return resultPlan;
 	}
 
-	private void addLogicalOperator(ILogicalOperator op, Collection<ILogicalOperator> inserted, TransformationEnvironment env) {
+	private void addLogicalOperator(ILogicalOperator op,
+			Collection<ILogicalOperator> inserted, TransformationEnvironment env) {
 		if (op == null) {
 			return;
 		}

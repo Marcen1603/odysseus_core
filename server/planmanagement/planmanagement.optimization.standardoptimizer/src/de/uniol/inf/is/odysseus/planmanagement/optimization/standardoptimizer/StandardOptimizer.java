@@ -28,7 +28,6 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecu
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.AbstractOptimizer;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.OptimizationConfiguration;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.ParameterDoPlanAdaption;
-import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.exception.QueryOptimizationException;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.querysharing.IQuerySharingOptimizer;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.plan.IExecutionPlan;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
@@ -50,7 +49,7 @@ public class StandardOptimizer extends AbstractOptimizer {
 	@Override
 	public List<IPhysicalQuery> optimize(IServerExecutor executor, IExecutionPlan currentExecPlan,  List<ILogicalQuery> queries,
 			OptimizationConfiguration parameter, IDataDictionaryWritable dd)
-			throws QueryOptimizationException {
+			{
 		List<IPhysicalQuery> optimizedQueries = new ArrayList<IPhysicalQuery>();		
 		if (!queries.isEmpty()) {
 			ParameterDoPlanAdaption adaption = parameter.getParameterDoPlanAdaption();
@@ -82,7 +81,7 @@ public class StandardOptimizer extends AbstractOptimizer {
 	@Override
 	public void beforeQueryRemove(IPhysicalQuery removedQuery,
 			IExecutionPlan executionPlan, OptimizationConfiguration parameter,
-			IDataDictionary dd) throws QueryOptimizationException {
+			IDataDictionary dd)  {
 	}
 
 	@Override

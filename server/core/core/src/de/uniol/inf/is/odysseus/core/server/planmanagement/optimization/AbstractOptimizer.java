@@ -29,7 +29,6 @@ import de.uniol.inf.is.odysseus.core.server.event.error.IErrorEventListener;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.IBufferPlacementStrategy;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.configuration.AppEnv;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.OptimizationConfiguration;
-import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.exception.QueryOptimizationException;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.query.IQueryOptimizer;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.querysharing.IQuerySharingOptimizer;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.plan.IExecutionPlan;
@@ -249,8 +248,7 @@ public abstract class AbstractOptimizer implements IOptimizer {
 	 */
 	@Override
 	public void beforeQueryStart(IPhysicalQuery queryToStart,
-			IExecutionPlan executionPlan)
-			throws QueryOptimizationException {
+			IExecutionPlan executionPlan) {
 	}
 
 	
@@ -266,8 +264,7 @@ public abstract class AbstractOptimizer implements IOptimizer {
 	 */
 	@Override
 	public void reoptimize(IPhysicalQuery query,
-			IExecutionPlan executionPlan)
-			throws QueryOptimizationException {
+			IExecutionPlan executionPlan) {
 		
 	}
 
@@ -275,8 +272,7 @@ public abstract class AbstractOptimizer implements IOptimizer {
 	 * @see de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.IOptimizer#reoptimize(de.uniol.inf.is.odysseus.core.server.planmanagement.plan.IPlan, de.uniol.inf.is.odysseus.core.server.physicaloperator.plan.IExecutionPlan)
 	 */
 	@Override
-	public void reoptimize(IExecutionPlan executionPlan)
-			throws QueryOptimizationException {
+	public void reoptimize(IExecutionPlan executionPlan) {
 	}
 
 	/* (non-Javadoc)
@@ -284,7 +280,7 @@ public abstract class AbstractOptimizer implements IOptimizer {
 	 */
 	@Override
 	public void beforeQueryStop(IPhysicalQuery queryToStop,
-			IExecutionPlan execPlan) throws QueryOptimizationException {
+			IExecutionPlan execPlan)  {
 	}
 
 	/* (non-Javadoc)

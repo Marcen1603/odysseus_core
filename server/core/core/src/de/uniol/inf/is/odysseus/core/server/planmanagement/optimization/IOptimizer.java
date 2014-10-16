@@ -26,7 +26,6 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.IBufferPlacementStrat
 import de.uniol.inf.is.odysseus.core.server.planmanagement.IInfoProvider;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.OptimizationConfiguration;
-import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.exception.QueryOptimizationException;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.querysharing.IQuerySharingOptimizer;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.plan.IExecutionPlan;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
@@ -57,8 +56,7 @@ public interface IOptimizer extends IInfoProvider, IErrorEventHandler {
 	 * @throws QueryOptimizationException
 	 *             An exception occurred during optimization.
 	 */
-	public List<IPhysicalQuery> optimize(IServerExecutor compiler, IExecutionPlan executionPlan, List<ILogicalQuery> newQueries, OptimizationConfiguration parameter, IDataDictionaryWritable dd)
-			throws QueryOptimizationException;
+	public List<IPhysicalQuery> optimize(IServerExecutor compiler, IExecutionPlan executionPlan, List<ILogicalQuery> newQueries, OptimizationConfiguration parameter, IDataDictionaryWritable dd);
 	
 	/**
 	 * Initializes an optimization if a query requests a reoptimization.
@@ -71,8 +69,7 @@ public interface IOptimizer extends IInfoProvider, IErrorEventHandler {
 	 * @throws QueryOptimizationException
 	 *             An exception occurred during optimization.
 	 */
-	public void reoptimize(IPhysicalQuery query,IExecutionPlan executionPlan)
-			throws QueryOptimizationException;
+	public void reoptimize(IPhysicalQuery query,IExecutionPlan executionPlan);
 
 	/**
 	 * Initializes an optimization if a plan requests a reoptimization.
@@ -83,8 +80,7 @@ public interface IOptimizer extends IInfoProvider, IErrorEventHandler {
 	 * @throws QueryOptimizationException
 	 *             An exception occurred during optimization.
 	 */
-	public void reoptimize(IExecutionPlan executionPlan)
-			throws QueryOptimizationException;
+	public void reoptimize(IExecutionPlan executionPlan);
 	
 	
 	// ======================================================================
@@ -129,7 +125,7 @@ public interface IOptimizer extends IInfoProvider, IErrorEventHandler {
 	 *             An exception occurred during optimization.
 	 */
 	public void beforeQueryStart(IPhysicalQuery queryToStart,
-			IExecutionPlan execPlan) throws QueryOptimizationException;
+			IExecutionPlan execPlan);
 
 	/**
 	 * Initializes an optimization if a query should be stopped.
@@ -143,7 +139,7 @@ public interface IOptimizer extends IInfoProvider, IErrorEventHandler {
 	 *             An exception occurred during optimization.
 	 */
 	public void beforeQueryStop(IPhysicalQuery queryToStop,
-			IExecutionPlan execPlan) throws QueryOptimizationException;
+			IExecutionPlan execPlan);
 
 
 
@@ -166,8 +162,7 @@ public interface IOptimizer extends IInfoProvider, IErrorEventHandler {
 	 *             An exception occurred during optimization.
 	 */
 	public void beforeQueryRemove(IPhysicalQuery removedQuery,
-			IExecutionPlan executionPlan, OptimizationConfiguration parameter, IDataDictionary dd)
-			throws QueryOptimizationException;
+			IExecutionPlan executionPlan, OptimizationConfiguration parameter, IDataDictionary dd);
 	
 	IQuerySharingOptimizer getQuerySharingOptimizer();
 

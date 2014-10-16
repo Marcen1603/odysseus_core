@@ -26,7 +26,7 @@ package de.uniol.inf.is.odysseus.core.server.scheduler.exception;
  * @author Wolf Bauer
  *
  */
-public class NoSchedulerLoadedException extends Exception {
+public class NoSchedulerLoadedException extends RuntimeException {
 
 	/**
 	 * 

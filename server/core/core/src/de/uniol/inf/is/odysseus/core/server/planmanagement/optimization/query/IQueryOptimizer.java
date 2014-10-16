@@ -21,7 +21,6 @@ import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.IBufferPlacementStrategy;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.OptimizationConfiguration;
-import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.exception.QueryOptimizationException;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 
 /**
@@ -43,7 +42,7 @@ public interface IQueryOptimizer {
 	 *             An exception occurred during the optimization.
 	 */
 	public IPhysicalQuery optimizeQuery(IServerExecutor executor, ILogicalQuery query,
-			OptimizationConfiguration parameters, IDataDictionary dd) throws QueryOptimizationException;
+			OptimizationConfiguration parameters, IDataDictionary dd);
 	
 	/**
 	 * Adds buffers corresponding to the query's
@@ -61,6 +60,6 @@ public interface IQueryOptimizer {
 	 * @throws OpenFailedException
 	 *             An exception during plan initializing.
 	 */
-	public void postTransformationInit(IPhysicalQuery query) throws QueryOptimizationException,
+	public void postTransformationInit(IPhysicalQuery query) throws
 			OpenFailedException;
 }

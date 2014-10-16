@@ -75,7 +75,6 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configur
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.ParameterQueryName;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.PreTransformationHandlerParameter;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.RewriteConfiguration;
-import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.exception.QueryOptimizationException;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.plan.ExecutionPlan;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.plan.IExecutionPlan;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
@@ -396,8 +395,7 @@ public class StandardExecutor extends AbstractExecutor implements IQueryStarter 
 	 */
 	private Collection<IPhysicalQuery> addQueries(
 			List<IExecutorCommand> newCommands, OptimizationConfiguration conf,
-			ISession session) throws NoOptimizerLoadedException,
-			QueryOptimizationException {
+			ISession session) throws NoOptimizerLoadedException {
 		LOG.debug("Starting Optimization of logical queries...");
 		Collection<IPhysicalQuery> optimizedQueries = new ArrayList<IPhysicalQuery>();
 
@@ -466,7 +464,7 @@ public class StandardExecutor extends AbstractExecutor implements IQueryStarter 
 
 		} catch (Exception e) {
 			LOG.error("ERROR IN ADD QUERY ", e);
-			throw new QueryOptimizationException(e);
+			throw e;
 		} finally {
 			// end synchronize of the process
 			this.executionPlanLock.unlock();
@@ -637,8 +635,7 @@ public class StandardExecutor extends AbstractExecutor implements IQueryStarter 
 			LOG.info("Adding textual query using " + parserID + " for user "
 					+ user.getUser().getName() + " done.");
 			return Lists.newArrayList();
-		} catch (QueryParseException | QueryOptimizationException
-				| OpenFailedException e) {
+		} catch (Exception e) {
 			LOG.error("Could not add query '" + query + "'", e);
 			throw e;
 		}

@@ -73,7 +73,7 @@ public class StandardQueryOptimizer implements IQueryOptimizer {
 	@Override
 	public IPhysicalQuery optimizeQuery(IServerExecutor executor,
 			ILogicalQuery query, OptimizationConfiguration parameters,
-			IDataDictionary dd) throws QueryOptimizationException {
+			IDataDictionary dd)  {
 
 		ICompiler compiler = executor.getCompiler();
 		QueryBuildConfiguration cb = executor.getBuildConfigForQuery(query);
@@ -164,8 +164,7 @@ public class StandardQueryOptimizer implements IQueryOptimizer {
 			postTransformationInit(physicalQuery);
 			buildConfig.remove(physicalQuery);
 		} catch (Throwable e) {
-			throw new QueryOptimizationException(
-					"Exeception while initialize query.", e);
+			throw e;
 		}
 
 		return physicalQuery;
@@ -173,7 +172,7 @@ public class StandardQueryOptimizer implements IQueryOptimizer {
 
 	@Override
 	public void postTransformationInit(IPhysicalQuery query)
-			throws QueryOptimizationException, OpenFailedException {
+			throws  OpenFailedException {
 		QueryBuildConfiguration bc = buildConfig.get(query);
 		IBufferPlacementStrategy strat = bc.getBufferPlacementStrategy();
 		if (strat != null) {
@@ -183,7 +182,7 @@ public class StandardQueryOptimizer implements IQueryOptimizer {
 
 	private static void addBuffers(IPhysicalQuery query,
 			IBufferPlacementStrategy bufferPlacementStrategy)
-			throws QueryOptimizationException {
+		 {
 
 		// add Buffer
 		if (bufferPlacementStrategy != null) {
