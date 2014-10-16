@@ -59,6 +59,8 @@ public class Temper1TransportHandler extends
 	private static boolean exceptionWasThrownInitRPiTemperBin = false;
 	private static long exceptionThrownInitRPiTemperBinLastTime;
 	private static long lastExceptionThrown;
+	private static long firstFailureTime;
+	private static boolean couldNotParseTemperature=false;
 
 	public Temper1TransportHandler() {
 		try {
@@ -343,36 +345,48 @@ public class Temper1TransportHandler extends
 	private static synchronized float getTemperatureFromRPiTemperBinary(
 			int deviceNumber) throws Exception {
 		try {
-			final Process p = Runtime.getRuntime()
-					.exec(getRpiTemper1TempPath());
-			/*
-			 * new Thread(new Runnable() { public void run() { BufferedReader
-			 * input = new BufferedReader( new
-			 * InputStreamReader(p.getInputStream())); String line = null;
-			 * 
-			 * try { while ((line = input.readLine()) != null) { return
-			 * parseTemperature(line); } } catch (IOException e) {
-			 * e.printStackTrace(); } } }).start();
-			 */
+			boolean valueReturned=false;
+			while(!valueReturned){
+				try{
+					final Process p = Runtime.getRuntime()
+							.exec(getRpiTemper1TempPath());
+					
+					BufferedReader input = new BufferedReader(new InputStreamReader(
+							p.getInputStream()));
+					String line = null;
 
-			BufferedReader input = new BufferedReader(new InputStreamReader(
-					p.getInputStream()));
-			String line = null;
-
-			try {
-				int lineNumber = 0;
-				while ((line = input.readLine()) != null) {
-					if (lineNumber == deviceNumber) {
-						String temperature = parseTemperature(line);
-						Float temperatureFloat = Float.parseFloat(temperature);
-						return temperatureFloat.floatValue();
+					try {
+						int lineNumber = 0;
+						while ((line = input.readLine()) != null) {
+							if (lineNumber == deviceNumber) {
+								String temperature = parseTemperature(line);
+								Float temperatureFloat = Float.parseFloat(temperature);
+								return temperatureFloat.floatValue();
+							}
+						}
+					} catch (IOException e) {
+						System.out.println("11111");
+						LOG.error(e.getMessage(), e);
+					} catch(IllegalStateException e){
+						
+					}
+					p.waitFor();
+					
+					
+					valueReturned=true;
+				} catch(IllegalStateException e){
+					// no temperature value could be parsed. try again in a loop
+					long delta = System.currentTimeMillis() - firstFailureTime;
+					if(!couldNotParseTemperature){
+						firstFailureTime=System.currentTimeMillis();
+						couldNotParseTemperature=true;
+					}else if(couldNotParseTemperature && delta >= DELTA_THROWEXCEPTIONS){
+						couldNotParseTemperature=false;
+						firstFailureTime=System.currentTimeMillis();
+						throw new Exception("No temperature value available.");
 					}
 				}
-			} catch (IOException e) {
-				System.out.println("11111");
-				LOG.error(e.getMessage(), e);
-			}
-			p.waitFor();
+			}	
 		} catch (IOException e) {
 			System.out.println("22222");
 			LOG.error(e.getMessage(), e);
