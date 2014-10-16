@@ -21,6 +21,7 @@ import java.util.Collection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.core.ISubscribable;
 import de.uniol.inf.is.odysseus.core.collection.Resource;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
@@ -70,6 +71,7 @@ public abstract class AbstractTransformationRule<T> extends
 		return false;
 	}
 
+	@SuppressWarnings("rawtypes")
 	protected void defaultExecute(ILogicalOperator logical,
 			IPhysicalOperator physical, TransformationConfiguration config,
 			boolean retract, boolean insert, boolean ignoreSinkInput,
@@ -84,6 +86,13 @@ public abstract class AbstractTransformationRule<T> extends
 		updatePhysicalOperator(logical, physical, rename);
 
 		replace(logical, physical, config, ignoreSinkInput);
+
+		if (LOG.isTraceEnabled()) {
+			if (physical instanceof ISubscribable) {
+				LOG.trace("Subscriptions of phyiscal " + ((ISubscribable) physical).getSubscriptions());
+			}
+
+		}
 
 		if (retract) {
 			retract(logical);
