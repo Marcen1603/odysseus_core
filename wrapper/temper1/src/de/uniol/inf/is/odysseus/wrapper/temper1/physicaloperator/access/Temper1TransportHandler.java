@@ -26,7 +26,6 @@ import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.AbstractSimplePullTransportHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandler;
-import de.uniol.inf.is.odysseus.core.sdf.unit.SDFTimeUnit;
 
 public class Temper1TransportHandler extends
 		AbstractSimplePullTransportHandler<Tuple<?>> {
@@ -356,7 +355,7 @@ public class Temper1TransportHandler extends
 
 		try {
 			tuple.setAttribute(0, getTemperature(deviceNumber));
-
+			tuple.setAttribute(1, getTemperature(deviceNumber));
 			// readDevice(temperaturSensors.get(deviceNumber)));
 
 			/*
@@ -365,13 +364,15 @@ public class Temper1TransportHandler extends
 			 */
 		} catch (IOException e) {
 			tuple.setAttribute(0, getSimulatedTemperature());
+			tuple.setAttribute(1, getSimulatedTemperature());
 			updateConnectedTemperatureSensors();
 		} catch (Exception e) {
 			tuple.setAttribute(0, getSimulatedTemperature());
+			tuple.setAttribute(1, getSimulatedTemperature());
 			updateConnectedTemperatureSensors();
 		}
 
-		tuple.setAttribute(1, new SDFTimeUnit("YYYY-MM-dd HH-mm-ss"));
+		//tuple.setAttribute(1, new SDFTimeUnit("YYYY-MM-dd HH-mm-ss"));
 
 		return tuple;
 	}
