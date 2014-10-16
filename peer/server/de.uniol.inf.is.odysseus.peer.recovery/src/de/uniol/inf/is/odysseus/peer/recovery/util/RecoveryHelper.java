@@ -45,7 +45,8 @@ public class RecoveryHelper {
 		Collection<Integer> installedQueries = executor.addQuery(pql, "PQL",
 				session, "Standard", Context.empty());
 		for (int query : installedQueries) {
-			executor.startQuery(query, session);
+			// TODO Activate again?
+			//executor.startQuery(query, session);
 		}
 		return installedQueries;
 	}

@@ -32,49 +32,53 @@ import de.uniol.inf.is.odysseus.systemload.ISystemLoad;
 
 @SuppressWarnings("rawtypes")
 @NoSampling
-public class JxtaReceiverPO<T extends IStreamObject> extends AbstractSource<T> implements ITransmissionReceiverListener {
+public class JxtaReceiverPO<T extends IStreamObject> extends AbstractSource<T>
+		implements ITransmissionReceiverListener {
 
-	private static final Logger LOG = LoggerFactory.getLogger(JxtaReceiverPO.class);
+	private static final Logger LOG = LoggerFactory
+			.getLogger(JxtaReceiverPO.class);
 
 	private final NullAwareTupleDataHandler dataHandler;
 	private ITransmissionReceiver transmission;
 	private final String pipeIDString;
 	private String peerIDString;
-	
+
 	private final String localPeerName;
-	
+
 	private long totalReceivedByteCount;
-	
+
 	private double downloadRateBytesPerSecond;
 	private long downloadRateTimestamp;
 	private long downloadRateCurrentByteCount;
-	
+
 	public JxtaReceiverPO(JxtaReceiverAO ao) throws DataTransmissionException {
 		SDFSchema schema = ao.getOutputSchema().clone();
 		setOutputSchema(schema);
-		dataHandler = (NullAwareTupleDataHandler) new NullAwareTupleDataHandler().createInstance(schema);
-		
+		dataHandler = (NullAwareTupleDataHandler) new NullAwareTupleDataHandler()
+				.createInstance(schema);
+
 		pipeIDString = ao.getPipeID();
 		peerIDString = ao.getPeerID();
-		
+
 		localPeerName = P2PNetworkManager.getInstance().getLocalPeerName();
-		
-		transmission = DataTransmissionManager.getInstance().registerTransmissionReceiver(peerIDString, pipeIDString);
+
+		transmission = DataTransmissionManager.getInstance()
+				.registerTransmissionReceiver(peerIDString, pipeIDString);
 		transmission.addListener(this);
 		transmission.open();
 	}
-	
+
 	public JxtaReceiverPO(JxtaReceiverPO<T> po) {
 		super(po);
 		setOutputSchema(po.getOutputSchema().clone());
-		
+
 		this.dataHandler = po.dataHandler;
 		this.transmission = po.transmission;
 		this.pipeIDString = po.pipeIDString;
 		this.peerIDString = po.peerIDString;
-		
+
 		this.localPeerName = po.localPeerName;
-		
+
 		this.totalReceivedByteCount = po.totalReceivedByteCount;
 		this.downloadRateBytesPerSecond = po.downloadRateBytesPerSecond;
 		this.downloadRateCurrentByteCount = po.downloadRateCurrentByteCount;
@@ -98,7 +102,7 @@ public class JxtaReceiverPO<T extends IStreamObject> extends AbstractSource<T> i
 	@Override
 	protected void process_open() throws OpenFailedException {
 		downloadRateTimestamp = System.currentTimeMillis();
-		
+
 		try {
 			transmission.sendOpen();
 		} catch (DataTransmissionException e) {
@@ -108,7 +112,7 @@ public class JxtaReceiverPO<T extends IStreamObject> extends AbstractSource<T> i
 
 	@Override
 	public boolean process_isSemanticallyEqual(IPhysicalOperator ipo) {
-		if( ipo == this ) {
+		if (ipo == this) {
 			return true;
 		}
 		return false;
@@ -118,67 +122,71 @@ public class JxtaReceiverPO<T extends IStreamObject> extends AbstractSource<T> i
 	public void onReceiveData(ITransmissionReceiver receiver, byte[] data) {
 		totalReceivedByteCount += data.length;
 		downloadRateCurrentByteCount += data.length;
-		if( System.currentTimeMillis() - downloadRateTimestamp > 10 * 1000 ) {
-			downloadRateBytesPerSecond = ( downloadRateCurrentByteCount / 10.0);
+		if (System.currentTimeMillis() - downloadRateTimestamp > 10 * 1000) {
+			downloadRateBytesPerSecond = (downloadRateCurrentByteCount / 10.0);
 			downloadRateCurrentByteCount = 0;
 			downloadRateTimestamp = System.currentTimeMillis();
 		}
-		
+
 		@SuppressWarnings("unchecked")
-		T streamObject = (T) ByteBufferUtil.createStreamObject(ByteBuffer.wrap(data), dataHandler);
-		
+		T streamObject = (T) ByteBufferUtil.createStreamObject(
+				ByteBuffer.wrap(data), dataHandler);
+
 		Object metadata = streamObject.getMetadata();
-		if( metadata instanceof ISystemLoad ) {
-			ISystemLoad systemLoad = (ISystemLoad)metadata;
+		if (metadata instanceof ISystemLoad) {
+			ISystemLoad systemLoad = (ISystemLoad) metadata;
 			systemLoad.addSystemLoad(localPeerName);
 		}
 
-		if( streamObject != null ) {
+		if (streamObject != null) {
 			transfer(streamObject);
 		}
 	}
-	
+
 	@Override
-	public void onReceivePunctuation(ITransmissionReceiver receiver, IPunctuation punc) {
+	public void onReceivePunctuation(ITransmissionReceiver receiver,
+			IPunctuation punc) {
 		sendPunctuation(punc);
 	}
-	
+
 	@Override
 	public void onReceiveDone(ITransmissionReceiver receiver) {
 		process_done();
 	}
-	
+
 	public final ITransmissionReceiver getTransmission() {
 		return transmission;
 	}
-	
+
 	public String getPipeIDString() {
 		return pipeIDString;
 	}
-	
+
 	public String getPeerIDString() {
 		return peerIDString;
 	}
-	
+
 	public long getTotalReceivedByteCount() {
 		return totalReceivedByteCount;
 	}
-	
+
 	public double getDownloadRateBytesPerSecond() {
 		return downloadRateBytesPerSecond;
 	}
-	
+
 	@Override
 	public String getName() {
 		return super.getName() + determineDestinationPeerName();
 	}
-	
+
 	private String determineDestinationPeerName() {
-		if( Strings.isNullOrEmpty(peerIDString)) {
+		if (Strings.isNullOrEmpty(peerIDString)) {
 			return "";
 		}
-		
-		return " [" + P2PDictionary.getInstance().getRemotePeerName(toPeerID(peerIDString)) + "]";
+
+		return " ["
+				+ P2PDictionary.getInstance().getRemotePeerName(
+						toPeerID(peerIDString)) + "]";
 	}
 
 	protected static PeerID toPeerID(String peerIDString) {
@@ -190,18 +198,31 @@ public class JxtaReceiverPO<T extends IStreamObject> extends AbstractSource<T> i
 			return null;
 		}
 	}
-	
-	public void receiveFromNewPeer(String peerId) throws DataTransmissionException {
+
+	/**
+	 * Updates the receiver so that is receives the data from a new peer
+	 * 
+	 * @param peerId
+	 *            From the new peer from which this receiver should receive the
+	 *            data
+	 * @throws DataTransmissionException
+	 */
+	public void receiveFromNewPeer(String peerId)
+			throws DataTransmissionException {
 		this.peerIDString = peerId;
-		
+
 		// Update transmission
+		// transmission.sendClose();
 		transmission.close();
 		transmission.removeListener(this);
-		
-		transmission = DataTransmissionManager.getInstance().registerTransmissionReceiver(peerIDString, pipeIDString);
+		transmission = null;
+
+		// This should be the point where we build a new socket connection
+		transmission = DataTransmissionManager.getInstance()
+				.registerTransmissionReceiver(peerIDString, pipeIDString);
 		transmission.addListener(this);
 		transmission.open();
-		
+
 		process_open();
 	}
 }
