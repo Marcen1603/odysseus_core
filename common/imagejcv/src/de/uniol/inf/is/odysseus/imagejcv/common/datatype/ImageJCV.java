@@ -44,6 +44,16 @@ public class ImageJCV implements IClone, Cloneable {
 		}
 	}
 	
+	public int getNumChannels()
+	{
+		return image.nChannels();
+	}
+	
+	public int getChannelDepth()
+	{
+		return image.depth();
+	}
+	
 	public double[][] getMatrix() {
 		throw new UnsupportedOperationException("Currenlty not implemented");
 	}
