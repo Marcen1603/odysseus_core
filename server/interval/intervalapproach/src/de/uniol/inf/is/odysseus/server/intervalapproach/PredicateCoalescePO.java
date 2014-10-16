@@ -42,12 +42,14 @@ public class PredicateCoalescePO<M extends ITimeInterval> extends
 
 	@Override
 	protected void process_done(int port) {
-		PairMap<SDFSchema, AggregateFunction, IStreamObject<M>, ?> result = calcEval(
-				currentPartialAggregates, false);
-		IStreamObject<M> out = getGroupProcessor().createOutputElement(0L,
-				result);
-		transfer(out);
-		currentPartialAggregates = null;
+		if (currentPartialAggregates != null) {
+			PairMap<SDFSchema, AggregateFunction, IStreamObject<M>, ?> result = calcEval(
+					currentPartialAggregates, false);
+			IStreamObject<M> out = getGroupProcessor().createOutputElement(0L,
+					result);
+			transfer(out);
+			currentPartialAggregates = null;
+		}
 	}
 
 	@SuppressWarnings("unchecked")
