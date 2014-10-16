@@ -116,7 +116,7 @@ public class Temper1TransportHandler extends
 			}
 		} catch (IOException ex) {
 			long delta = System.currentTimeMillis() - exceptionThrownInitRPiTemperBinLastTime;
-			if(!exceptionWasThrownInitRPiTemperBin && delta >= DELTA_THROWEXCEPTIONS){
+			if(!exceptionWasThrownInitRPiTemperBin || delta >= DELTA_THROWEXCEPTIONS){
 				ex.printStackTrace();
 				exceptionThrownInitRPiTemperBinLastTime = System.currentTimeMillis();
 				exceptionWasThrownInitRPiTemperBin=true;
