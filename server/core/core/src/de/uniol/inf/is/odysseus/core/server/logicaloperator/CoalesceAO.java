@@ -54,13 +54,13 @@ public class CoalesceAO extends AggregateAO implements IHasPredicates {
 	}
 
 	@SuppressWarnings("rawtypes")
-	@Parameter(type = PredicateParameter.class, optional = true)
+	@Parameter(name="Predicate", type = PredicateParameter.class, optional = true)
 	public void setPredicate(IPredicate predicate) {
 		this.predicate = predicate;
 	}
 
 	@SuppressWarnings("rawtypes")
-	@Parameter(type = PredicateParameter.class, optional = true)
+	@Parameter(name="StartPredicate", type = PredicateParameter.class, optional = true)
 	public void setStartPredicate(IPredicate predicate) {
 		this.startPredicate = predicate;
 	}
