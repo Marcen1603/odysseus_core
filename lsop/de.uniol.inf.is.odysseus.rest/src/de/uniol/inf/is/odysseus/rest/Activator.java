@@ -3,6 +3,8 @@ package de.uniol.inf.is.odysseus.rest;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 
+import de.uniol.inf.is.odysseus.rest.service.RestService;
+
 
 public class Activator implements BundleActivator {
 	
@@ -19,7 +21,7 @@ public class Activator implements BundleActivator {
 	@Override
 	public void start(BundleContext bundleContext) throws Exception {
 		Activator.context = bundleContext;
-		RestProviderServiceBinding.start();
+		RestService.start();
 	}
 
 	/*
@@ -29,7 +31,7 @@ public class Activator implements BundleActivator {
 	@Override
 	public void stop(BundleContext bundleContext) throws Exception {
 		Activator.context = null;
-		RestProviderServiceBinding.stop();
+		RestService.stop();
 	}
 
 }

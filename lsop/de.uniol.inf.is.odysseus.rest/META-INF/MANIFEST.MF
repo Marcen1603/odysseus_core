@@ -10,5 +10,6 @@ Import-Package: de.uniol.inf.is.odysseus.core.server,
  org.osgi.framework;version="1.6.0"
 Require-Bundle: restlet-osgi-2.2.1;bundle-version="1.0.0",
  de.uniol.inf.is.odysseus.slf4j;bundle-version="1.0.0"
-Service-Component: OSGI-INF/RestProviderService.xml
-Export-Package: de.uniol.inf.is.odysseus.rest.provider
+Service-Component: OSGI-INF/RestService.xml
+Export-Package: de.uniol.inf.is.odysseus.rest.provider,
+ de.uniol.inf.is.odysseus.rest.service

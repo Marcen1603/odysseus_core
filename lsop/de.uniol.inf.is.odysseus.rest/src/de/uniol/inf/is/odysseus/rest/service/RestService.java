@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.rest;
+package de.uniol.inf.is.odysseus.rest.service;
 
 import org.restlet.Component;
 import org.restlet.Restlet;
@@ -19,12 +19,14 @@ import de.uniol.inf.is.odysseus.rest.provider.IRestProvider;
  * @author Thore Stratmann
  *
  */
-public class RestProviderServiceBinding {
+public class RestService {
 	
 	public static Component component = new Component();
 	
 	
-	private static final Logger LOGGER = LoggerFactory.getLogger(RestProviderServiceBinding.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(RestService.class);
+	
+	private static int port;
 	
 
 	public void bindRestProvider(IRestProvider provider) {
@@ -36,19 +38,20 @@ public class RestProviderServiceBinding {
 	}
 	
 	public static void start() throws Exception {
-		int port = Integer.parseInt(OdysseusConfiguration.get("WebService.Port"))+10;
+		int webServicePort = Integer.parseInt(OdysseusConfiguration.get("WebService.Port"))+10;
 		int maxPort = Integer.parseInt(OdysseusConfiguration.get("WebService.MaxPort"));
-		while (port <= maxPort ){
+		while (webServicePort <= maxPort ){
 			try {
 				component.getServers().clear();
-				component.getServers().add(Protocol.HTTP, port);
+				component.getServers().add(Protocol.HTTP, webServicePort);
 				component.start();
-				LOGGER.info("Restservice published at " + port);
+				port = webServicePort;
+				LOGGER.info("Restservice published at " + webServicePort);
 				break;
 			} catch (Exception e) {
 
 			}
-			port++;
+			webServicePort++;
 		}
 	}
 	
@@ -56,6 +59,10 @@ public class RestProviderServiceBinding {
 		component.stop();
 	}
 	
+	
+	public static int getPort() {
+		return port;
+	}
 	
 
 }
