@@ -54,7 +54,7 @@ public class Temper1TransportHandler extends
 	private long DELTATIME_FOR_DEVICE_UPDATE_MS = 10000;
 	private HIDManager hidManager;
 
-	private long simulatedValueReturnedLastTime;
+	private long simulatedValueReturnedLastTime=0;
 	private static String methodToGetTemperature;
 	private static String rpiTemper1TempPath;
 	private static boolean initRPiTemperBinRunSuccessfull = false;
@@ -71,7 +71,7 @@ public class Temper1TransportHandler extends
 
 			methodToGetTemperature = METHOD_HID_MANAGER;
 		} catch (UnsatisfiedLinkError ex) {
-			LOG.error(ex.getMessage(), ex);
+			LOG.debug(ex.getMessage(), ex);
 
 			// use the fallback program:
 			methodToGetTemperature = METHOD_RPI_TEMPER;
@@ -148,7 +148,7 @@ public class Temper1TransportHandler extends
 	private void messageBecauseSimulatedTemperatureValue() {
 		long delta = System.currentTimeMillis() - simulatedValueReturnedLastTime;
 		if(delta >= DELTA_TIME_FOR_SAME_MESSAGES){
-			LOG.error("A simulated value was returned!");
+			LOG.debug("A simulated value was returned!");
 			simulatedValueReturnedLastTime=System.currentTimeMillis();
 		}
 	}
@@ -307,6 +307,7 @@ public class Temper1TransportHandler extends
 	// note: in some cases the temper1 is not working
 	/*****************************************************************/
 	private static void initRPiTemperBin() {
+		LOG.debug("initialize "+RPI_TEMPER_BIN+" starting");
 		try {
 			String path = RPI_TEMPER_BIN;
 			InputStream in = ClassPathLibraryLoader.class
