@@ -418,7 +418,7 @@ public class SmartHomeServerPlugIn implements BundleActivator {
 		private Integer forwardButtonStateToLEDQueryID;
 
 		P2PDictionaryListener(){
-			LOG.debug("P2PDictionaryListener()");
+			///LOG.debug("P2PDictionaryListener()");
 		}
 		
 		@Override

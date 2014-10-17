@@ -10,6 +10,7 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -40,21 +41,14 @@ public class Temper1TransportHandler extends
 	public static final String TEMPNUMBER = "tempnumber";
 	public static final String METHOD_HID_MANAGER = "hidmanager";
 	public static final String METHOD_RPI_TEMPER = "rpitemper";
-
+	private static final String METHOD_SIMULATED_TEMPER = "simulated";
 	private static final String RPI_TEMPER_BIN = "/rpitemper.bin";
-
 	private static final long DELTA_TIME_FOR_SAME_MESSAGES = 5000;
-
-	static {
-		ClassPathLibraryLoader.loadNativeHIDLibrary();
-	}
-
 	private int currentTempNumber;
 	private long lastUpdateConnectedTemperatureSensorsTime;
 	private long DELTATIME_FOR_DEVICE_UPDATE_MS = 10000;
 	private HIDManager hidManager;
-
-	private long simulatedValueReturnedLastTime=0;
+	private static long simulatedValueReturnedLastTime = 0;
 	private static String methodToGetTemperature;
 	private static String rpiTemper1TempPath;
 	private static boolean initRPiTemperBinRunSuccessfull = false;
@@ -62,10 +56,30 @@ public class Temper1TransportHandler extends
 	private static long exceptionThrownInitRPiTemperBinLastTime;
 	private static long lastExceptionThrown;
 	private static long firstFailureTime;
-	private static boolean couldNotParseTemperature=false;
-	private static boolean exceptionWasThrownNoMatchFound=false;
-	
+	private static boolean couldNotParseTemperature = false;
+	private static boolean exceptionWasThrownNoMatchFound = false;
+
+	static {
+		ClassPathLibraryLoader.loadNativeHIDLibrary();
+	}
+
 	public Temper1TransportHandler() {
+		String OS = System.getProperty("os.name", "generic").toLowerCase(
+				Locale.ENGLISH);
+		if ((OS.indexOf("mac") >= 0) || (OS.indexOf("darwin") >= 0)) {
+
+		} else if (OS.indexOf("win") >= 0) {
+			//TODO: get it working on windows!
+			
+			methodToGetTemperature = METHOD_SIMULATED_TEMPER;
+			LOG.error("Currently the temper1 is not working on windows. The temperature values are simulated!");
+			return;
+		} else if (OS.indexOf("nux") >= 0) {
+
+		} else {
+
+		}
+
 		try {
 			setHidManager(HIDManager.getInstance());
 
@@ -122,35 +136,19 @@ public class Temper1TransportHandler extends
 		try {
 			tuple.setAttribute(0, getTemperature(deviceNumber));
 			tuple.setAttribute(1, getTemperature(deviceNumber));
-			// readDevice(temperaturSensors.get(deviceNumber)));
-
-			/*
-			 * tuple.setAttribute(0, readDevice(temperaturSensors.get(--i)));
-			 * if(i==0){ i=temperaturSensors.size(); }
-			 */
 		} catch (IOException e) {
-			tuple.setAttribute(0, getSimulatedTemperature());
-			tuple.setAttribute(1, getSimulatedTemperature());
-			messageBecauseSimulatedTemperatureValue();
+			tuple.setAttribute(0, getSimulatedTemperature(deviceNumber));
+			tuple.setAttribute(1, getSimulatedTemperature(deviceNumber));
+
 			updateConnectedTemperatureSensors();
 		} catch (Exception e) {
-			tuple.setAttribute(0, getSimulatedTemperature());
-			tuple.setAttribute(1, getSimulatedTemperature());
-			messageBecauseSimulatedTemperatureValue();
+			tuple.setAttribute(0, getSimulatedTemperature(deviceNumber));
+			tuple.setAttribute(1, getSimulatedTemperature(deviceNumber));
+
 			updateConnectedTemperatureSensors();
 		}
 
-		// tuple.setAttribute(1, new SDFTimeUnit("YYYY-MM-dd HH-mm-ss"));
-
 		return tuple;
-	}
-
-	private void messageBecauseSimulatedTemperatureValue() {
-		long delta = System.currentTimeMillis() - simulatedValueReturnedLastTime;
-		if(delta >= DELTA_TIME_FOR_SAME_MESSAGES){
-			LOG.debug("A simulated value was returned!");
-			simulatedValueReturnedLastTime=System.currentTimeMillis();
-		}
 	}
 
 	@Override
@@ -179,6 +177,8 @@ public class Temper1TransportHandler extends
 					.get(deviceNumber));
 		case METHOD_RPI_TEMPER:
 			return getTemperatureFromRPiTemperBinary(deviceNumber);
+		case METHOD_SIMULATED_TEMPER:
+			return getSimulatedTemperature(deviceNumber);
 		}
 		throw new IOException("No temperature sensor available.");
 	}
@@ -282,6 +282,10 @@ public class Temper1TransportHandler extends
 				// com.codeminders.hidapi.ClassPathLibraryLoader.loadNativeHIDLibrary();
 				HIDDeviceInfo[] infos = HIDManager.getInstance().listDevices();
 
+				if (infos == null) {
+					return;
+				}
+
 				for (HIDDeviceInfo info : infos) {
 					if (info.getVendor_id() == VENDOR_ID
 							&& info.getProduct_id() == PRODUCT_ID
@@ -307,7 +311,7 @@ public class Temper1TransportHandler extends
 	// note: in some cases the temper1 is not working
 	/*****************************************************************/
 	private static void initRPiTemperBin() {
-		LOG.debug("initialize "+RPI_TEMPER_BIN+" starting");
+		LOG.debug("initialize " + RPI_TEMPER_BIN + " starting");
 		try {
 			String path = RPI_TEMPER_BIN;
 			InputStream in = ClassPathLibraryLoader.class
@@ -329,11 +333,8 @@ public class Temper1TransportHandler extends
 					}
 
 					out.close();
-					// Runtime.getRuntime().load(fileOut.toString());
 
-					// rpiTemperPath = tempName;
 					setRpiTemperPath(fileOut.getAbsolutePath());
-
 				} finally {
 					in.close();
 					setInitRPiTemperBinRunSuccessfull(true);
@@ -359,15 +360,15 @@ public class Temper1TransportHandler extends
 	private static synchronized float getTemperatureFromRPiTemperBinary(
 			int deviceNumber) throws Exception {
 		try {
-			boolean valueReturned=false;
-			int tries=0;
-			while(!valueReturned){
-				try{
-					final Process p = Runtime.getRuntime()
-							.exec(getRpiTemper1TempPath());
-					
-					BufferedReader input = new BufferedReader(new InputStreamReader(
-							p.getInputStream()));
+			boolean valueReturned = false;
+			int tries = 0;
+			while (!valueReturned) {
+				try {
+					final Process p = Runtime.getRuntime().exec(
+							getRpiTemper1TempPath());
+
+					BufferedReader input = new BufferedReader(
+							new InputStreamReader(p.getInputStream()));
 					String line = null;
 
 					try {
@@ -375,50 +376,49 @@ public class Temper1TransportHandler extends
 						while ((line = input.readLine()) != null) {
 							if (lineNumber == deviceNumber) {
 								String temperature = parseTemperature(line);
-								Float temperatureFloat = Float.parseFloat(temperature);
+								Float temperatureFloat = Float
+										.parseFloat(temperature);
 								return temperatureFloat.floatValue();
 							}
 						}
 					} catch (IOException e) {
-						LOG.debug("IOException 111110000");
-						LOG.error(e.getMessage(), e);
+						LOG.error(e.getMessage() + " ErrorNr.0a", e);
 					} catch (IllegalStateException e) {
 						throw e;
 					}
 					p.waitFor();
-					
-					
-					valueReturned=true;
-					couldNotParseTemperature=false;
-					tries=0;
-				} catch(IllegalStateException e){
+
+					valueReturned = true;
+					couldNotParseTemperature = false;
+					tries = 0;
+				} catch (IllegalStateException e) {
 					tries++;
-					//LOG.debug("0000");
+					// LOG.debug("0000");
 					// no temperature value could be parsed. try again in a loop
 					long delta = System.currentTimeMillis() - firstFailureTime;
-					if(!couldNotParseTemperature){
-						if(!exceptionWasThrownNoMatchFound){
-							LOG.debug(e.getMessage(), e);
-							exceptionWasThrownNoMatchFound=true;
+					if (!couldNotParseTemperature) {
+						if (!exceptionWasThrownNoMatchFound) {
+							LOG.debug(e.getMessage() + " ErrorNr.1a", e);
+							exceptionWasThrownNoMatchFound = true;
 						}
-						firstFailureTime=System.currentTimeMillis();
-						couldNotParseTemperature=true;
-					}else if(couldNotParseTemperature && delta >= DELTA_TIME_FOR_SAME_MESSAGES){
-						couldNotParseTemperature=false;
-						firstFailureTime=System.currentTimeMillis();
-						throw new Exception("No temperature value available. (trys to get temp:"+tries+" in:"+delta+" sec.)");
+						firstFailureTime = System.currentTimeMillis();
+						couldNotParseTemperature = true;
+					} else if (couldNotParseTemperature
+							&& delta >= DELTA_TIME_FOR_SAME_MESSAGES) {
+						couldNotParseTemperature = false;
+						firstFailureTime = System.currentTimeMillis();
+						throw new Exception(
+								"No temperature value available. (trys to get temp:"
+										+ tries + " in:" + delta + " sec.)");
 					}
 				}
-			}	
+			}
 		} catch (IOException e) {
-			LOG.debug("22222");
-			LOG.error(e.getMessage(), e);
+			LOG.error(e.getMessage() + " ErrorNr.2", e);
 		} catch (InterruptedException e) {
-			LOG.debug("33333");
-			LOG.error(e.getMessage(), e);
+			LOG.error(e.getMessage() + " ErrorNr.3", e);
 		} catch (Exception e) {
-			LOG.debug("44444");
-			LOG.error(e.getMessage(), e);
+			LOG.error(e.getMessage() + " ErrorNr.4", e);
 		}
 		throw new Exception("No temperature value available.");
 	}
@@ -477,9 +477,12 @@ public class Temper1TransportHandler extends
 	}
 
 	/*****************************************************************/
-	// get simulated temperature values
-	/*****************************************************************/
-	private static float getSimulatedTemperature() {
+	/**
+	 * get simulated temperature values
+	 *****************************************************************/
+	private static float getSimulatedTemperature(int deviceNumber) {
+		// TODO: Extend method for multiple devices.
+
 		Calendar calendar = Calendar.getInstance();
 		calendar.setTime(new Date(System.currentTimeMillis()));
 		float seconds = calendar.get(Calendar.SECOND);
@@ -490,7 +493,16 @@ public class Temper1TransportHandler extends
 		} else {
 			y = seconds / 60;// 0...30
 		}
-
+		messageBecauseSimulatedTemperatureValue();
 		return 10 + y * 30; // 10..15..20..25..20..15..10
+	}
+
+	private static void messageBecauseSimulatedTemperatureValue() {
+		long delta = System.currentTimeMillis()
+				- simulatedValueReturnedLastTime;
+		if (delta >= DELTA_TIME_FOR_SAME_MESSAGES) {
+			LOG.debug("Because of problems, the temperature values are simulated!");
+			simulatedValueReturnedLastTime = System.currentTimeMillis();
+		}
 	}
 }
