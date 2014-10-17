@@ -43,7 +43,7 @@ public class Temper1TransportHandler extends
 
 	private static final String RPI_TEMPER_BIN = "/rpitemper.bin";
 
-	private static final long DELTA_THROWEXCEPTIONS = 5000;
+	private static final long DELTA_TIME_FOR_SAME_MESSAGES = 5000;
 
 	static {
 		ClassPathLibraryLoader.loadNativeHIDLibrary();
@@ -53,6 +53,8 @@ public class Temper1TransportHandler extends
 	private long lastUpdateConnectedTemperatureSensorsTime;
 	private long DELTATIME_FOR_DEVICE_UPDATE_MS = 10000;
 	private HIDManager hidManager;
+
+	private long simulatedValueReturnedLastTime;
 	private static String methodToGetTemperature;
 	private static String rpiTemper1TempPath;
 	private static boolean initRPiTemperBinRunSuccessfull = false;
@@ -61,6 +63,7 @@ public class Temper1TransportHandler extends
 	private static long lastExceptionThrown;
 	private static long firstFailureTime;
 	private static boolean couldNotParseTemperature=false;
+	private static boolean exceptionWasThrownNoMatchFound=false;
 	
 	public Temper1TransportHandler() {
 		try {
@@ -128,16 +131,26 @@ public class Temper1TransportHandler extends
 		} catch (IOException e) {
 			tuple.setAttribute(0, getSimulatedTemperature());
 			tuple.setAttribute(1, getSimulatedTemperature());
+			messageBecauseSimulatedTemperatureValue();
 			updateConnectedTemperatureSensors();
 		} catch (Exception e) {
 			tuple.setAttribute(0, getSimulatedTemperature());
 			tuple.setAttribute(1, getSimulatedTemperature());
+			messageBecauseSimulatedTemperatureValue();
 			updateConnectedTemperatureSensors();
 		}
 
 		// tuple.setAttribute(1, new SDFTimeUnit("YYYY-MM-dd HH-mm-ss"));
 
 		return tuple;
+	}
+
+	private void messageBecauseSimulatedTemperatureValue() {
+		long delta = System.currentTimeMillis() - simulatedValueReturnedLastTime;
+		if(delta >= DELTA_TIME_FOR_SAME_MESSAGES){
+			LOG.error("A simulated value was returned!");
+			simulatedValueReturnedLastTime=System.currentTimeMillis();
+		}
 	}
 
 	@Override
@@ -332,7 +345,7 @@ public class Temper1TransportHandler extends
 			long delta = System.currentTimeMillis()
 					- exceptionThrownInitRPiTemperBinLastTime;
 			if (!exceptionWasThrownInitRPiTemperBin
-					|| delta >= DELTA_THROWEXCEPTIONS) {
+					|| delta >= DELTA_TIME_FOR_SAME_MESSAGES) {
 				ex.printStackTrace();
 				exceptionThrownInitRPiTemperBinLastTime = System
 						.currentTimeMillis();
@@ -383,10 +396,13 @@ public class Temper1TransportHandler extends
 					// no temperature value could be parsed. try again in a loop
 					long delta = System.currentTimeMillis() - firstFailureTime;
 					if(!couldNotParseTemperature){
-						LOG.debug(e.getMessage(), e);
+						if(!exceptionWasThrownNoMatchFound){
+							LOG.debug(e.getMessage(), e);
+							exceptionWasThrownNoMatchFound=true;
+						}
 						firstFailureTime=System.currentTimeMillis();
 						couldNotParseTemperature=true;
-					}else if(couldNotParseTemperature && delta >= DELTA_THROWEXCEPTIONS){
+					}else if(couldNotParseTemperature && delta >= DELTA_TIME_FOR_SAME_MESSAGES){
 						couldNotParseTemperature=false;
 						firstFailureTime=System.currentTimeMillis();
 						throw new Exception("No temperature value available. (trys to get temp:"+tries+" in:"+delta+" sec.)");
@@ -443,7 +459,7 @@ public class Temper1TransportHandler extends
 			}
 		} catch (IOException | InterruptedException e) {
 			long delta = System.currentTimeMillis() - lastExceptionThrown;
-			if (delta >= DELTA_THROWEXCEPTIONS) {
+			if (delta >= DELTA_TIME_FOR_SAME_MESSAGES) {
 				e.printStackTrace();
 				lastExceptionThrown = System.currentTimeMillis();
 			}
