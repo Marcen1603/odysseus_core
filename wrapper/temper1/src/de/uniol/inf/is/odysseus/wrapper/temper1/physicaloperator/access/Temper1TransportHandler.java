@@ -51,6 +51,10 @@ public class Temper1TransportHandler extends
 	private long DELTATIME_FOR_DEVICE_UPDATE_MS = 10000;
 	private HIDManager hidManager;
 
+	private Float savedTemperature;
+
+	private long savedTemperatureTime_MS;
+
 	private static Float lastTemperature = null;
 	private static long simulatedValueReturnedLastTime = 0;
 	private static String methodToGetTemperature;
@@ -181,21 +185,35 @@ public class Temper1TransportHandler extends
 		case METHOD_HID_MANAGER:
 			lastTemperature = new Float(getTemperatureFromHIDManager(temperaturSensors
 					.get(deviceNumber)));
+			saveTemperature(lastTemperature);
 			return lastTemperature;
 		case METHOD_RPI_TEMPER:
 			lastTemperature = new Float(getTemperatureFromRPiTemperBinary(deviceNumber));
+			saveTemperature(lastTemperature);
 			return lastTemperature;
 		case METHOD_SIMULATED_TEMPER:
 			lastTemperature = null;
+			saveTemperature(null);
 			return getSimulatedTemperature(deviceNumber);
 		}
+		
+		Float r=null;
+		try{
+			r = getSavedTemperature(deviceNumber);
+			if(r!=null){
+				return r.floatValue();
+			}
+		}catch(Exception e){
+			
+		}
+		
 		throw new IOException("No temperature sensor available.");
 	}
 
 	/*****************************************************************/
 	// Temper1 get temperature with the HID-API
 	/*****************************************************************/
-
+	
 	/**
 	 * Nach Quelle:
 	 * http://www.igorkromin.net/index.php/2013/02/16/using-java-hidapi
@@ -387,6 +405,7 @@ public class Temper1TransportHandler extends
 								String temperature = parseTemperature(line);
 								Float temperatureFloat = Float
 										.parseFloat(temperature);
+								firstErrorTime = 0;
 								return temperatureFloat.floatValue();
 							}
 						}
@@ -416,6 +435,11 @@ public class Temper1TransportHandler extends
 					long delta = System.currentTimeMillis() - firstFailureTime;
 					if (!couldNotParseTemperature) {
 						if (!exceptionWasThrownNoMatchFound) {
+							if(firstErrorTime==0 || delta <= DELTA_TIME_RETURN_SAVED_TEMPERATURE_WHILE_ERROR_MS){
+								LOG.debug("saved temp returned.");
+								return lastTemperature.floatValue();
+							}
+							
 							LOG.debug(e.getMessage() + " ErrorNr.1a", e);
 							exceptionWasThrownNoMatchFound = true;
 						}
@@ -521,6 +545,29 @@ public class Temper1TransportHandler extends
 		if (delta >= DELTA_TIME_FOR_SAME_MESSAGES) {
 			LOG.debug("Because of problems, the temperature values are simulated!");
 			simulatedValueReturnedLastTime = System.currentTimeMillis();
+		}
+	}
+	
+	
+	/*****************************************************************/
+	/**
+	 * get saved temperature values
+	 *****************************************************************/
+	private Float getSavedTemperature(int deviceNumber) {
+		long delta = System.currentTimeMillis() - savedTemperatureTime_MS;
+		if(savedTemperature!=null && delta <= DELTA_TIME_RETURN_SAVED_TEMPERATURE_WHILE_ERROR_MS){
+			LOG.debug("A saved temperature value was returned. deltatime:"+delta);
+			return savedTemperature;
+		}
+		return null;
+	}
+	
+	private void saveTemperature(Float temp){
+		savedTemperature = temp;
+		if(temp!=null){
+			savedTemperatureTime_MS = System.currentTimeMillis();
+		}else{
+			savedTemperatureTime_MS = 0;
 		}
 	}
 }
