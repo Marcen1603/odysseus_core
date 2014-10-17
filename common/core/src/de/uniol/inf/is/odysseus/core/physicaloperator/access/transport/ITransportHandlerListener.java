@@ -18,6 +18,8 @@ package de.uniol.inf.is.odysseus.core.physicaloperator.access.transport;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
 
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
+
 
 public interface ITransportHandlerListener<T> {
 	
@@ -49,6 +51,13 @@ public interface ITransportHandlerListener<T> {
 	 * @param message as String Array
 	 */
 	void process(String[] message);
+
+
+	/**
+	 * Implement this method to process the message
+	 * @param message as T
+	 */
+	void process(IStreamObject<?> m);
 
 	/**
 	 * Implement this method to process the message

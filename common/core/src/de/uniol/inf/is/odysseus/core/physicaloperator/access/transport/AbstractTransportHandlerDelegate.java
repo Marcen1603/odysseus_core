@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory;
 import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.infoservice.InfoService;
 import de.uniol.inf.is.odysseus.core.infoservice.InfoServiceFactory;
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 
 public class AbstractTransportHandlerDelegate<T> {
@@ -76,6 +77,12 @@ public class AbstractTransportHandlerDelegate<T> {
 		}
 	}
 
+	public void fireProcess(IStreamObject<?> m) {
+		for (ITransportHandlerListener<T> l : transportHandlerListener) {
+			l.process(m);
+		}
+	}
+	
 	public void fireProcess(String[] message) {
 		for (ITransportHandlerListener<T> l : transportHandlerListener) {
 			l.process(message);

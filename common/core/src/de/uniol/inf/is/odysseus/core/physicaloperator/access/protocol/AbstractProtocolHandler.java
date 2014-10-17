@@ -22,12 +22,14 @@ import java.nio.ByteBuffer;
 
 import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ITransferHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.IAccessPattern;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportDirection;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportExchangePattern;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandler;
+
 
 abstract public class AbstractProtocolHandler<T> implements IProtocolHandler<T> {
 	private final ITransportDirection direction;
@@ -115,7 +117,13 @@ abstract public class AbstractProtocolHandler<T> implements IProtocolHandler<T> 
 	public void process(ByteBuffer message) {
 		getTransfer().transfer(getDataHandler().readData(message));
 	}
-	
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public void process(IStreamObject<?> message) {
+		getTransfer().transfer((T)message);
+	}
+
 	@Override
 	public void process(T m) {
 		getTransfer().transfer(getDataHandler().readData(m));		

@@ -19,7 +19,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
+
 import de.uniol.inf.is.odysseus.core.collection.OptionMap;
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 
@@ -106,6 +108,10 @@ abstract public class AbstractTransportHandler implements ITransportHandler{
 	}
 	
 	final public void fireProcess(String[] message) {
+		delegate.fireProcess(message);
+	}
+	
+	final public void fireProcess(IStreamObject<?> message){
 		delegate.fireProcess(message);
 	}
 
