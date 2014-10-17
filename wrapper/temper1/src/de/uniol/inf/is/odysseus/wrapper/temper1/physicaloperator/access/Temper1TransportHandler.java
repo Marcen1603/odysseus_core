@@ -44,10 +44,14 @@ public class Temper1TransportHandler extends
 	private static final String METHOD_SIMULATED_TEMPER = "simulated";
 	private static final String RPI_TEMPER_BIN = "/rpitemper.bin";
 	private static final long DELTA_TIME_FOR_SAME_MESSAGES = 5000;
+
+	private static final long DELTA_TIME_RETURN_SAVED_TEMPERATURE_WHILE_ERROR_MS = 5000;
 	private int currentTempNumber;
 	private long lastUpdateConnectedTemperatureSensorsTime;
 	private long DELTATIME_FOR_DEVICE_UPDATE_MS = 10000;
 	private HIDManager hidManager;
+
+	private static Float lastTemperature = null;
 	private static long simulatedValueReturnedLastTime = 0;
 	private static String methodToGetTemperature;
 	private static String rpiTemper1TempPath;
@@ -58,6 +62,8 @@ public class Temper1TransportHandler extends
 	private static long firstFailureTime;
 	private static boolean couldNotParseTemperature = false;
 	private static boolean exceptionWasThrownNoMatchFound = false;
+
+	private static long firstErrorTime;
 
 	static {
 		ClassPathLibraryLoader.loadNativeHIDLibrary();
@@ -173,11 +179,14 @@ public class Temper1TransportHandler extends
 	private float getTemperature(int deviceNumber) throws Exception {
 		switch (methodToGetTemperature) {
 		case METHOD_HID_MANAGER:
-			return getTemperatureFromHIDManager(temperaturSensors
-					.get(deviceNumber));
+			lastTemperature = new Float(getTemperatureFromHIDManager(temperaturSensors
+					.get(deviceNumber)));
+			return lastTemperature;
 		case METHOD_RPI_TEMPER:
-			return getTemperatureFromRPiTemperBinary(deviceNumber);
+			lastTemperature = new Float(getTemperatureFromRPiTemperBinary(deviceNumber));
+			return lastTemperature;
 		case METHOD_SIMULATED_TEMPER:
+			lastTemperature = null;
 			return getSimulatedTemperature(deviceNumber);
 		}
 		throw new IOException("No temperature sensor available.");
@@ -384,6 +393,15 @@ public class Temper1TransportHandler extends
 					} catch (IOException e) {
 						LOG.error(e.getMessage() + " ErrorNr.0a", e);
 					} catch (IllegalStateException e) {
+						long delta = System.currentTimeMillis() - firstErrorTime;
+						if(firstErrorTime==0 || delta <= DELTA_TIME_RETURN_SAVED_TEMPERATURE_WHILE_ERROR_MS){
+							if(firstErrorTime==0){
+								firstErrorTime = System.currentTimeMillis();
+							}
+							LOG.debug("saved temp returned.");
+							return lastTemperature.floatValue();
+						}
+						
 						throw e;
 					}
 					p.waitFor();
