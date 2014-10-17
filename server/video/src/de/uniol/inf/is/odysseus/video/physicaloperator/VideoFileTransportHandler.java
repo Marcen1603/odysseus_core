@@ -129,21 +129,18 @@ public class VideoFileTransportHandler extends AbstractSimplePullTransportHandle
 		{
 			@Override public void run()
 			{
-				synchronized (processLock)
+				FFmpegFrameGrabber newFrameGrabber = new FFmpegFrameGrabber(videoUrl);
+				try 
 				{
-					FFmpegFrameGrabber newFrameGrabber = new FFmpegFrameGrabber(videoUrl);
-					try 
-					{
-						newFrameGrabber.start();
-						if (fps == 0.0)
-							fps = newFrameGrabber.getFrameRate();
-						VideoFileTransportHandler.this.frameGrabber = newFrameGrabber;
-					} 
-					catch (FrameGrabber.Exception e) 
-					{
-						startupException = e;
-					}
-				}				
+					newFrameGrabber.start();
+					if (fps == 0.0)
+						fps = newFrameGrabber.getFrameRate();
+					VideoFileTransportHandler.this.frameGrabber = newFrameGrabber;
+				} 
+				catch (FrameGrabber.Exception e) 
+				{
+					startupException = e;
+				}
 				
 				startupThread = null;
 			}
@@ -192,43 +189,40 @@ public class VideoFileTransportHandler extends AbstractSimplePullTransportHandle
 	
 	@Override public Tuple<IMetaAttribute> getNext() 
 	{
-		synchronized (processLock)
-		{
-			if (currentImage == null) return null;
-			
-			Tuple<IMetaAttribute> tuple;        
+		if (currentImage == null) return null;		
+		
+		Tuple<IMetaAttribute> tuple;        
 	
-			if (timeStampMode != TimeStampMode.none)
-			{		
-		        long startTimeStamp = (long) (currentTime * 1000.0);        		
+		if (timeStampMode != TimeStampMode.none)
+		{		
+	        long startTimeStamp = (long) (currentTime * 1000.0);        		
 					        	        
-		        if (syncFileName != null)
-		        {
+	        if (syncFileName != null)
+	        {
 		        	// TODO
-		//        	currentTime = syncFileStream.readDouble();
-		        }	
-		        else
-		        {
-		        	currentTime += 1.0 / fps;
-		        }
+	//        	currentTime = syncFileStream.readDouble();
+	        }	
+	        else
+	        {
+	        	currentTime += 1.0 / fps;
+	        }
 		        
-		        long endTimeStamp = (long) (currentTime * 1000.0);
+	        long endTimeStamp = (long) (currentTime * 1000.0);
 		        
-		        tuple = new Tuple<>(3, false);
-		        tuple.setAttribute(0, currentImage);
-		        tuple.setAttribute(1, startTimeStamp);
-		        tuple.setAttribute(2, endTimeStamp);	        
-			}
-			else
-			{
-				tuple = new Tuple<>(1, false);
-				tuple.setAttribute(0, currentImage);
-			}
-			
-			currentImage = null;
-	
-	        return tuple;
+	        tuple = new Tuple<>(3, false);
+	        tuple.setAttribute(0, currentImage);
+	        tuple.setAttribute(1, startTimeStamp);
+	        tuple.setAttribute(2, endTimeStamp);	        
 		}
+		else
+		{
+			tuple = new Tuple<>(1, false);
+			tuple.setAttribute(0, currentImage);
+		}
+			
+		currentImage = null;
+	
+	     return tuple;
 	}
     
 	@Override public boolean hasNext() 
