@@ -406,6 +406,7 @@ public class Temper1TransportHandler extends
 								Float temperatureFloat = Float
 										.parseFloat(temperature);
 								firstErrorTime = 0;
+								firstFailureTime = 0;
 								return temperatureFloat.floatValue();
 							}
 						}
@@ -563,8 +564,8 @@ public class Temper1TransportHandler extends
 	}
 	
 	private void saveTemperature(Float temp){
-		savedTemperature = temp;
 		if(temp!=null){
+			savedTemperature = temp;
 			savedTemperatureTime_MS = System.currentTimeMillis();
 		}else{
 			savedTemperatureTime_MS = 0;
