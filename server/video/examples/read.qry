@@ -9,7 +9,7 @@ video =  ACCESS({source='Video',
 				 protocol='none', 
 				 datahandler='Tuple',
 				 options=[
-							['videoUrl', 'd:/fla4FE9.flv'],
+							['videoUrl', 'd:/file.avi'],
 							['timeStampMode', 'filetime'],
 							['useDelay', 'true']
 					     ],					     
