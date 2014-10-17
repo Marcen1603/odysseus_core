@@ -61,7 +61,7 @@ public class Temper1TransportHandler extends
 	private static long lastExceptionThrown;
 	private static long firstFailureTime;
 	private static boolean couldNotParseTemperature=false;
-
+	
 	public Temper1TransportHandler() {
 		try {
 			setHidManager(HIDManager.getInstance());
@@ -346,6 +346,7 @@ public class Temper1TransportHandler extends
 			int deviceNumber) throws Exception {
 		try {
 			boolean valueReturned=false;
+			int tries=0;
 			while(!valueReturned){
 				try{
 					final Process p = Runtime.getRuntime()
@@ -374,18 +375,21 @@ public class Temper1TransportHandler extends
 					
 					
 					valueReturned=true;
+					couldNotParseTemperature=false;
+					tries=0;
 				} catch(IllegalStateException e){
+					tries++;
 					//LOG.debug("0000");
 					// no temperature value could be parsed. try again in a loop
 					long delta = System.currentTimeMillis() - firstFailureTime;
 					if(!couldNotParseTemperature){
-						LOG.error(e.getMessage(), e);
+						LOG.debug(e.getMessage(), e);
 						firstFailureTime=System.currentTimeMillis();
 						couldNotParseTemperature=true;
 					}else if(couldNotParseTemperature && delta >= DELTA_THROWEXCEPTIONS){
 						couldNotParseTemperature=false;
 						firstFailureTime=System.currentTimeMillis();
-						throw new Exception("No temperature value available.");
+						throw new Exception("No temperature value available. (trys to get temp:"+tries+" in:"+delta+" sec.)");
 					}
 				}
 			}	
