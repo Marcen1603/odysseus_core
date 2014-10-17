@@ -509,7 +509,7 @@ public class OperatorBuildHelper {
 				.createExpressionParameter("entity_id", source);		
 		
 		SDFExpressionParameter ex2 = OperatorBuildHelper
-				.createExpressionParameter("DoubleToInteger(ts/60000000.0)", ATTRIBUTE_MINUTE, source);
+				.createExpressionParameter("DoubleToInteger(ts/60000000)", ATTRIBUTE_MINUTE, source);
 		SDFExpressionParameter ex3 = OperatorBuildHelper
 				.createExpressionParameter("DoubleToInteger((ts/1000000) % 60)", ATTRIBUTE_SECOND, source);
 		
