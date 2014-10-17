@@ -45,7 +45,7 @@ public class Temper1TransportHandler extends
 	private static final String RPI_TEMPER_BIN = "/rpitemper.bin";
 	private static final long DELTA_TIME_FOR_SAME_MESSAGES = 5000;
 
-	private static final long DELTA_TIME_RETURN_SAVED_TEMPERATURE_WHILE_ERROR_MS = 5000;
+	private static final long DELTA_TIME_RETURN_SAVED_TEMPERATURE_WHILE_ERROR_MS = 10000;
 	private int currentTempNumber;
 	private long lastUpdateConnectedTemperatureSensorsTime;
 	private long DELTATIME_FOR_DEVICE_UPDATE_MS = 10000;
