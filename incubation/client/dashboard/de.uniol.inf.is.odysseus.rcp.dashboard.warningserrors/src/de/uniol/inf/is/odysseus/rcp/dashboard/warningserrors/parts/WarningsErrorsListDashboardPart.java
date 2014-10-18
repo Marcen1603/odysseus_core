@@ -4,8 +4,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.jface.layout.GridDataFactory;
+import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.layout.FillLayout;
+import org.eclipse.swt.custom.ScrolledComposite;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -29,11 +32,12 @@ import de.uniol.inf.is.odysseus.rcp.dashboard.warningserrors.data.Warning;
 /**
  * 
  * @author MarkMilster
- *
+ * 
  */
 public class WarningsErrorsListDashboardPart extends AbstractDashboardPart {
 
 	private Composite container;
+	private ScrolledComposite sc;
 	private long updateInterval = 100;
 	private boolean showWarning = true;
 	private boolean showError = true;
@@ -46,7 +50,8 @@ public class WarningsErrorsListDashboardPart extends AbstractDashboardPart {
 	}
 
 	/**
-	 * @param showWarning the showWarning to set
+	 * @param showWarning
+	 *            the showWarning to set
 	 */
 	public void setShowWarning(boolean showWarning) {
 		this.showWarning = showWarning;
@@ -60,7 +65,8 @@ public class WarningsErrorsListDashboardPart extends AbstractDashboardPart {
 	}
 
 	/**
-	 * @param showError the showError to set
+	 * @param showError
+	 *            the showError to set
 	 */
 	public void setShowError(boolean showError) {
 		this.showError = showError;
@@ -74,7 +80,8 @@ public class WarningsErrorsListDashboardPart extends AbstractDashboardPart {
 	}
 
 	/**
-	 * @param updateInterval the updateInterval to set
+	 * @param updateInterval
+	 *            the updateInterval to set
 	 */
 	public void setUpdateInterval(long updateInterval) {
 		this.updateInterval = updateInterval;
@@ -87,6 +94,7 @@ public class WarningsErrorsListDashboardPart extends AbstractDashboardPart {
 	private int warningIndex = 4;
 	private int errorIndex = 5;
 	private boolean showWarnings;
+
 	/**
 	 * @return the showWarnings
 	 */
@@ -95,7 +103,8 @@ public class WarningsErrorsListDashboardPart extends AbstractDashboardPart {
 	}
 
 	/**
-	 * @param showWarnings the showWarnings to set
+	 * @param showWarnings
+	 *            the showWarnings to set
 	 */
 	public void setShowWarnings(boolean showWarnings) {
 		this.showWarnings = showWarnings;
@@ -109,7 +118,8 @@ public class WarningsErrorsListDashboardPart extends AbstractDashboardPart {
 	}
 
 	/**
-	 * @param showErrors the showErrors to set
+	 * @param showErrors
+	 *            the showErrors to set
 	 */
 	public void setShowErrors(boolean showErrors) {
 		this.showErrors = showErrors;
@@ -122,7 +132,6 @@ public class WarningsErrorsListDashboardPart extends AbstractDashboardPart {
 	private int farmIdIndex = 1;
 	private int valueTypeIndex = 2;
 	private Composite header;
-	
 
 	/**
 	 * @return the timestampIndex
@@ -132,26 +141,33 @@ public class WarningsErrorsListDashboardPart extends AbstractDashboardPart {
 	}
 
 	/**
-	 * @param timestampIndex the timestampIndex to set
+	 * @param timestampIndex
+	 *            the timestampIndex to set
 	 */
 	public void setTimestampIndex(int timestampIndex) {
 		this.timestampIndex = timestampIndex;
 	}
 
-	
 	@Override
 	public void createPartControl(final Composite parent, ToolBar toolbar) {
 		this.parent = parent;
-		this.parent.setLayout(new FillLayout());
-		this.container = new Composite(parent, SWT.NONE);
-		this.container.setLayout(new GridLayout(1, false));
+		this.parent.setLayout(GridLayoutFactory.fillDefaults().create());
+		sc = new ScrolledComposite(parent, SWT.V_SCROLL);
+		sc.setLayoutData(GridDataFactory.fillDefaults().grab(true, true)
+				.hint(SWT.DEFAULT, 200).create());
+		sc.setExpandHorizontal(true);
+		sc.setExpandVertical(true);
+		this.container = new Composite(sc, SWT.NONE);
+		this.container.setLayout(GridLayoutFactory.swtDefaults().numColumns(1)
+				.create());
 		this.header = new Composite(container, SWT.NONE);
 		this.header.setLayout(new GridLayout(3, false));
 		(new Label(header, SWT.NONE)).setText("Farm");
 		(new Label(header, SWT.NONE)).setText("WKA");
 		(new Label(header, SWT.NONE)).setText("Value");
+		sc.setContent(container);
+		sc.setMinSize(container.computeSize(SWT.DEFAULT, SWT.DEFAULT));
 
-		
 		updateThread = new Thread(new Runnable() {
 
 			@Override
@@ -159,7 +175,7 @@ public class WarningsErrorsListDashboardPart extends AbstractDashboardPart {
 				while (!parent.isDisposed()) {
 					final Display disp = PlatformUI.getWorkbench().getDisplay();
 					if (!disp.isDisposed()) {
-						disp.asyncExec(new Runnable() {
+						disp.syncExec(new Runnable() {
 							@Override
 							public void run() {
 								if (!container.isDisposed()) {
@@ -167,7 +183,6 @@ public class WarningsErrorsListDashboardPart extends AbstractDashboardPart {
 								}
 							}
 
-							
 						});
 					}
 
@@ -179,103 +194,102 @@ public class WarningsErrorsListDashboardPart extends AbstractDashboardPart {
 
 		updateThread.setName("StreamList Updater");
 		updateThread.start();
-		
+
 	}
-	
+
 	private static void waiting(long length) {
 		try {
 			Thread.sleep(length);
 		} catch (final InterruptedException e) {
 		}
 	}
-	
+
 	private void refreshContainer() {
 		synchronized (tupleList) {
-			for (Tuple<?> tuple: tupleList) {
-				int wka_id = ((Long) tuple.getAttribute(wkaIdIndex )).intValue();
-				int farm_id = ((Long) tuple.getAttribute(farmIdIndex)).intValue();
+			// Saving position of the scrollbar
+			Point scrollPosition = sc.getOrigin();
+			for (int i = 0; i < tupleList.size(); i++) {
+				Tuple<?> tuple = tupleList.get(i);
+				int wka_id = ((Long) tuple.getAttribute(wkaIdIndex)).intValue();
+				int farm_id = ((Long) tuple.getAttribute(farmIdIndex))
+						.intValue();
 				String value_type = tuple.getAttribute(valueTypeIndex);
-//				System.out.println("tuple ->  WKA: " + wka_id + "  Value_type: " + value_type);
+				// System.out.println("tuple ->  WKA: " + wka_id +
+				// "  Value_type: " + value_type);
 				Entry e = findEntry(wka_id, value_type);
-				if (e != null) {
-//					System.out.println("e->  WKA: " + e.getWka_id() + "  Value_type: " + e.getValue_type());
-				}
-				
 				// if e == null -> new entry -> else a old one changes
-				if (tuple.getAttribute(warningIndex)) {
-//					System.out.println("Warning flag ist TRUE");
+				if ((boolean) tuple.getAttribute(warningIndex)) {
+					// System.out.println("Warning flag ist TRUE");
 					if (e != null) {
-						// if this entry was a warning or a error earlyer the warning or error will be overwritten
-						//TODO: evtl. so aendern dass nicht das alte weg geht und das neue kommt sondern dass das alte sich aendert
+						// if this entry was a warning or a error earlyer the
+						// warning or error will be overwritten
+						// TODO: evtl. so aendern dass nicht das alte weg geht
+						// und das neue kommt sondern dass das alte sich aendert
 						e.dispose();
-						container.layout();
-//						System.out.println("altes entfernt");
+						// System.out.println("altes entfernt");
 					}
-					if (tuple.getAttribute(errorIndex))  {
+					if ((boolean) tuple.getAttribute(errorIndex)) {
 						// error
 						e = new Error(container, SWT.NONE);
-//						System.out.println("New Error!");
+						// System.out.println("New Error!");
 					} else {
-						//warning
+						// warning
 						e = new Warning(container, SWT.NONE);
-//						System.out.println("New warning!");
+						// System.out.println("New warning!");
 					}
 					e.setWka_id(wka_id);
 					e.setFarm_id(farm_id);
 					e.setValue_type(value_type);
 				} else {
-					// nothing -> no warning or error here anymore -> dispose entry
+					// nothing -> no warning or error here anymore -> dispose
+					// entry
 					// it isnt allowed that you got error but no warning
-//					System.out.println("Warning flag ist FALSE");
+					// System.out.println("Warning flag ist FALSE");
 					if (e != null) {
 						e.dispose();
-//						System.out.println("altes entfernt");
+						// System.out.println("altes entfernt");
 					} else {
-//						System.out.println("Kein altes vorhanden obwohl 0,0 gesendet -> FEHLER");
+						// System.out.println("Kein altes vorhanden obwohl 0,0 gesendet -> FEHLER");
 					}
 				}
-				container.layout();
 			}
+			sc.setMinSize(container.computeSize(SWT.DEFAULT, SWT.DEFAULT));
+			container.layout();
+			sc.setOrigin(scrollPosition);
 		}
 	}
-	
 
 	@Override
 	public void streamElementRecieved(IPhysicalOperator senderOperator,
 			IStreamObject<?> element, int port) {
+		Tuple<?> tuple = (Tuple<?>) element;
+		int t_wka_id = ((Long) tuple.getAttribute(wkaIdIndex)).intValue();
+		String t_value_type = tuple.getAttribute(valueTypeIndex);
 		synchronized (tupleList) {
-			Tuple<?> tuple = (Tuple<?>) element;
-//			System.out.println(tuple.getAttribute(wkaIdIndex).getClass());
-//			System.out.println(((Long) tuple.getAttribute(wkaIdIndex)).getClass());
-			
-			int t_wka_id = ((Long) tuple.getAttribute(wkaIdIndex)).intValue();
-			String t_value_type = tuple.getAttribute(valueTypeIndex);
 			Tuple<?> tupleOld = findTuple(t_wka_id, t_value_type);
-			if (tupleOld != null) {
-				// there is a warning or error or clear tuple of the same wkaid+valuetype
+			if (tupleOld == null) {
 				tupleList.remove(tupleOld);
 			}
 			tupleList.add(tuple);
-			
 		}
 	}
-	
+
 	private Tuple<?> findTuple(int wka_id, String type) {
-		for (Tuple<?> t: tupleList) {
-			int t_wka_id = ((Long) t.getAttribute(wkaIdIndex )).intValue();
+		for (Tuple<?> t : tupleList) {
+			int t_wka_id = ((Long) t.getAttribute(wkaIdIndex)).intValue();
 			String t_value_type = t.getAttribute(valueTypeIndex);
 			if (t_wka_id == wka_id && t_value_type.equals(type)) {
 				return t;
 			}
 		}
 		return null;
-		
+
 	}
-	
+
 	private Entry findEntry(int wka_id, String type) {
-//		System.out.println("Beginne suche...");
-		for (Control c: container.getChildren()) {
-//			System.out.println(c.toString());
+		// System.out.println("Beginne suche...");
+		for (Control c : container.getChildren()) {
+			// System.out.println(c.toString());
 			if (c != null && c instanceof Entry) {
 				Entry e = (Entry) c;
 				if (e.getWka_id() == wka_id && e.getValue_type().equals(type)) {
@@ -283,18 +297,18 @@ public class WarningsErrorsListDashboardPart extends AbstractDashboardPart {
 				}
 			}
 		}
-//		System.out.println(wka_id + " " + type + " nicht gefunden!");
+		// System.out.println(wka_id + " " + type + " nicht gefunden!");
 		return null;
 	}
 
-	
 	@Override
 	public void punctuationElementRecieved(IPhysicalOperator senderOperator,
 			IPunctuation point, int port) {
 	}
 
 	@Override
-	public void securityPunctuationElementRecieved(IPhysicalOperator senderOperator, ISecurityPunctuation sp, int port) {
+	public void securityPunctuationElementRecieved(
+			IPhysicalOperator senderOperator, ISecurityPunctuation sp, int port) {
 		punctuationElementRecieved(senderOperator, sp, port);
 	}
 
@@ -306,23 +320,20 @@ public class WarningsErrorsListDashboardPart extends AbstractDashboardPart {
 		return this.maxElements;
 	}
 
-
-
-	
 	@Override
 	public void onLoad(Map<String, String> saved) {
 		updateInterval = Long.valueOf(saved.get("UpdateInterval"));
-//		this.maxElements = Integer.valueOf(saved.get("MaxElements"));
+		// this.maxElements = Integer.valueOf(saved.get("MaxElements"));
 		this.showWarnings = Boolean.valueOf(saved.get("ShowWarnings"));
-        this.showErrors = Boolean.valueOf(saved.get("ShowErrors"));	
-        this.warningIndex = Integer.valueOf(saved.get("WarningIndex"));
-        this.errorIndex = Integer.valueOf(saved.get("ErrorIndex"));
-        this.timestampIndex = Integer.valueOf(saved.get("TimestampIndex"));
-        this.farmIdIndex = Integer.valueOf(saved.get("FarmIdIndex"));
+		this.showErrors = Boolean.valueOf(saved.get("ShowErrors"));
+		this.warningIndex = Integer.valueOf(saved.get("WarningIndex"));
+		this.errorIndex = Integer.valueOf(saved.get("ErrorIndex"));
+		this.timestampIndex = Integer.valueOf(saved.get("TimestampIndex"));
+		this.farmIdIndex = Integer.valueOf(saved.get("FarmIdIndex"));
 		this.valueTypeIndex = Integer.valueOf(saved.get("ValueTypeIndex"));
 		this.wkaIdIndex = Integer.valueOf(saved.get("WkaIdIndex"));
 	}
-	
+
 	@Override
 	public Map<String, String> onSave() {
 		Map<String, String> saveMap = Maps.newHashMap();
@@ -346,7 +357,8 @@ public class WarningsErrorsListDashboardPart extends AbstractDashboardPart {
 	}
 
 	/**
-	 * @param wkaIdIndex the wkaIdIndex to set
+	 * @param wkaIdIndex
+	 *            the wkaIdIndex to set
 	 */
 	public void setWkaIdIndex(int wkaIdIndex) {
 		this.wkaIdIndex = wkaIdIndex;
@@ -360,7 +372,8 @@ public class WarningsErrorsListDashboardPart extends AbstractDashboardPart {
 	}
 
 	/**
-	 * @param farmIdIndex the farmIdIndex to set
+	 * @param farmIdIndex
+	 *            the farmIdIndex to set
 	 */
 	public void setFarmIdIndex(int farmIdIndex) {
 		this.farmIdIndex = farmIdIndex;
@@ -374,7 +387,8 @@ public class WarningsErrorsListDashboardPart extends AbstractDashboardPart {
 	}
 
 	/**
-	 * @param valueTypeIndex the valueTypeIndex to set
+	 * @param valueTypeIndex
+	 *            the valueTypeIndex to set
 	 */
 	public void setValueTypeIndex(int valueTypeIndex) {
 		this.valueTypeIndex = valueTypeIndex;
@@ -388,7 +402,8 @@ public class WarningsErrorsListDashboardPart extends AbstractDashboardPart {
 	}
 
 	/**
-	 * @param warningIndex the warningIndex to set
+	 * @param warningIndex
+	 *            the warningIndex to set
 	 */
 	public void setWarningIndex(int warningIndex) {
 		this.warningIndex = warningIndex;
@@ -402,7 +417,8 @@ public class WarningsErrorsListDashboardPart extends AbstractDashboardPart {
 	}
 
 	/**
-	 * @param errorIndex the errorIndex to set
+	 * @param errorIndex
+	 *            the errorIndex to set
 	 */
 	public void setErrorIndex(int errorIndex) {
 		this.errorIndex = errorIndex;
