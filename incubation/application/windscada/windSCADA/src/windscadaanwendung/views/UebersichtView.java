@@ -71,7 +71,7 @@ public class UebersichtView extends ViewPart implements Observer {
 				false, 1, 1));
 		lblDateSince.setText("Daten seit:");
 
-		swtDateSince = new DateTime(composite, SWT.BORDER | SWT.LONG);
+		swtDateSince = new DateTime(composite, SWT.BORDER);
 		swtDateSince.setDate(1970, 0, 0);
 		swtDateSince.addSelectionListener(new SelectionListener() {
 

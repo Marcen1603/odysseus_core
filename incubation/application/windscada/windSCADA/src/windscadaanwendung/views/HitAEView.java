@@ -50,7 +50,7 @@ public class HitAEView extends ViewPart implements AEObserver {
 		Label lblDatenSeit = new Label(toolsContainer, SWT.NONE);
 		lblDatenSeit.setText("Daten seit:");
 
-		swtDateSince = new DateTime(toolsContainer, SWT.BORDER | SWT.LONG);
+		swtDateSince = new DateTime(toolsContainer, SWT.BORDER);
 		swtDateSince.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false,
 				false, 1, 1));
 

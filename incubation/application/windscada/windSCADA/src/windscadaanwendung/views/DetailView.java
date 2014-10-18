@@ -31,9 +31,8 @@ import windscadaanwendung.views.dashboard.PitchPart;
  * @author MarkMilster
  * 
  */
-public class DetailView extends ViewPart implements Observer{
-	
-	
+public class DetailView extends ViewPart implements Observer {
+
 	public DetailView() {
 	}
 
@@ -74,97 +73,97 @@ public class DetailView extends ViewPart implements Observer{
 		lblHistorischeDatenSeit.setLayoutData(new GridData(SWT.RIGHT,
 				SWT.CENTER, false, false, 1, 1));
 		lblHistorischeDatenSeit.setText("Historische Daten seit:");
-		
-				Composite dateTimeContainer = new Composite(form, SWT.NONE);
-				dateTimeContainer.setLayout(new GridLayout(2, false));
-				
-						swtDate = new DateTime(dateTimeContainer, SWT.BORDER | SWT.LONG);
-						swtDate.setDate(1970, 0, 1);
-						swtDate.addSelectionListener(new SelectionListener() {
 
-							@Override
-							public void widgetSelected(SelectionEvent e) {
-								handleDateTimeEvent();
-							}
+		Composite dateTimeContainer = new Composite(form, SWT.NONE);
+		dateTimeContainer.setLayout(new GridLayout(2, false));
 
-							@Override
-							public void widgetDefaultSelected(SelectionEvent e) {
-								handleDateTimeEvent();
-							}
+		swtDate = new DateTime(dateTimeContainer, SWT.BORDER);
+		swtDate.setDate(1970, 0, 1);
+		swtDate.addSelectionListener(new SelectionListener() {
 
-						});
-								swtTime = new DateTime(dateTimeContainer, SWT.BORDER | SWT.TIME);
-								swtTime.setTime(0, 0, 0);
-								swtTime.addSelectionListener(new SelectionListener() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				handleDateTimeEvent();
+			}
 
-									@Override
-									public void widgetSelected(SelectionEvent e) {
-										handleDateTimeEvent();
-									}
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) {
+				handleDateTimeEvent();
+			}
 
-									@Override
-									public void widgetDefaultSelected(SelectionEvent e) {
-										handleDateTimeEvent();
-									}
+		});
+		swtTime = new DateTime(dateTimeContainer, SWT.BORDER | SWT.TIME);
+		swtTime.setTime(0, 0, 0);
+		swtTime.addSelectionListener(new SelectionListener() {
 
-								});
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				handleDateTimeEvent();
+			}
+
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) {
+				handleDateTimeEvent();
+			}
+
+		});
 		lblWKA = new Label(form, SWT.NONE);
 		lblWKA.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false,
 				1, 1));
 		lblWKA.setText("Windkraftanlage:");
-		
-				nameWKA = new Text(form, SWT.BORDER);
-				
-						Label lblPitchwinkel = new Label(form, SWT.NONE);
-						lblPitchwinkel.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false,
-								false, 1, 1));
-						lblPitchwinkel.setText("Aktueller Pitchwinkel:");
-				
-						pitchComp = new Composite(form, SWT.NONE);
-				
-						Label lblPhasenverschiebung = new Label(form, SWT.NONE);
-						lblPhasenverschiebung.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER,
-								false, false, 1, 1));
-						lblPhasenverschiebung.setText("Aktuelle Phasenverschiebung:");
-				
-						phaseComp = new Composite(form, SWT.NONE);
-		
+
+		nameWKA = new Text(form, SWT.BORDER);
+
+		Label lblPitchwinkel = new Label(form, SWT.NONE);
+		lblPitchwinkel.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false,
+				false, 1, 1));
+		lblPitchwinkel.setText("Aktueller Pitchwinkel:");
+
+		pitchComp = new Composite(form, SWT.NONE);
+
+		Label lblPhasenverschiebung = new Label(form, SWT.NONE);
+		lblPhasenverschiebung.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER,
+				false, false, 1, 1));
+		lblPhasenverschiebung.setText("Aktuelle Phasenverschiebung:");
+
+		phaseComp = new Composite(form, SWT.NONE);
+
 		tableContainer = new Composite(parent, SWT.NONE);
 		tableContainer.setLayout(new FillLayout(SWT.HORIZONTAL));
-		
+
 		table = new Table(tableContainer, SWT.BORDER | SWT.FULL_SELECTION);
 		table.setHeaderVisible(true);
 		table.setLinesVisible(true);
-		
+
 		TableColumn tblclmnMesswert = new TableColumn(table, SWT.NONE);
 		tblclmnMesswert.setWidth(100);
-		
+
 		TableColumn tblclmnMittelwert = new TableColumn(table, SWT.NONE);
 		tblclmnMittelwert.setWidth(100);
 		tblclmnMittelwert.setText("Mittelwert");
-		
+
 		TableColumn tblclmnMinimum = new TableColumn(table, SWT.NONE);
 		tblclmnMinimum.setWidth(100);
 		tblclmnMinimum.setText("Minimum");
-		
+
 		TableColumn tblclmnMaximum = new TableColumn(table, SWT.NONE);
 		tblclmnMaximum.setWidth(100);
 		tblclmnMaximum.setText("Maximum");
-		
+
 		hitWindDirection = new TableItem(table, SWT.NONE);
-		hitWindDirection.setText(new String[] {"Windrichtung"});
-		
+		hitWindDirection.setText(new String[] { "Windrichtung" });
+
 		hitWindSpeed = new TableItem(table, SWT.NONE);
-		hitWindSpeed.setText(new String[] {"Windgeschwindigkeit"});
-		
+		hitWindSpeed.setText(new String[] { "Windgeschwindigkeit" });
+
 		hitRotationalSpeed = new TableItem(table, SWT.NONE);
-		hitRotationalSpeed.setText(new String[] {"Drehzahl"});
-		
+		hitRotationalSpeed.setText(new String[] { "Drehzahl" });
+
 		hitPerformance = new TableItem(table, SWT.NONE);
-		hitPerformance.setText(new String[] {"Leistung"});
+		hitPerformance.setText(new String[] { "Leistung" });
 		pitchPart = new PitchPart();
 		phaseShiftPart = new PhaseShiftPart();
-	
+
 	}
 
 	/*
@@ -177,7 +176,8 @@ public class DetailView extends ViewPart implements Observer{
 	}
 
 	/**
-	 * Diese Methode l������dt die Werte der entsprechenden WKA in diese View.
+	 * Diese Methode l������dt die Werte der entsprechenden WKA in
+	 * diese View.
 	 * 
 	 * @param selected
 	 *            In der ListView selektierte WKA
@@ -192,7 +192,7 @@ public class DetailView extends ViewPart implements Observer{
 		}
 		printHitWKAData();
 	}
-	
+
 	private static void setNewDPVs() {
 		for (Control c : pitchComp.getChildren()) {
 			c.dispose();
@@ -212,11 +212,12 @@ public class DetailView extends ViewPart implements Observer{
 	}
 
 	private void handleDateTimeEvent() {
-//		System.out.println("Test:");
-//		System.out.println(swtDate.toString() + swtTime.toString());
+		// System.out.println("Test:");
+		// System.out.println(swtDate.toString() + swtTime.toString());
 		GregorianCalendar cal = new GregorianCalendar();
-		cal.set(swtDate.getYear(),swtDate.getMonth(), swtDate.getDay(), swtTime.getHours(), swtTime.getMinutes(), swtTime.getSeconds());
-//		System.out.println(cal.getTime().toString());
+		cal.set(swtDate.getYear(), swtDate.getMonth(), swtDate.getDay(),
+				swtTime.getHours(), swtTime.getMinutes(), swtTime.getSeconds());
+		// System.out.println(cal.getTime().toString());
 		DBConnectionHD.refreshHitWKAData(cal.getTime());
 	}
 
@@ -236,16 +237,23 @@ public class DetailView extends ViewPart implements Observer{
 	private static void printHitWKAData() {
 		if (selectedWKA != null && selectedWKA.getHitWKAData() != null) {
 			HitWKAData hitData = selectedWKA.getHitWKAData();
-			hitPerformance.setText(1, String.valueOf(hitData.getAvgPerformance()));
-			hitPerformance.setText(2, String.valueOf(hitData.getMinPerformance()));
-			hitPerformance.setText(3, String.valueOf(hitData.getMaxPerformance()));
-			hitWindDirection.setText(1, String.valueOf(hitData.getAvgWindDirection()));
+			hitPerformance.setText(1,
+					String.valueOf(hitData.getAvgPerformance()));
+			hitPerformance.setText(2,
+					String.valueOf(hitData.getMinPerformance()));
+			hitPerformance.setText(3,
+					String.valueOf(hitData.getMaxPerformance()));
+			hitWindDirection.setText(1,
+					String.valueOf(hitData.getAvgWindDirection()));
 			hitWindSpeed.setText(1, String.valueOf(hitData.getAvgWindSpeed()));
 			hitWindSpeed.setText(2, String.valueOf(hitData.getMinWindSpeed()));
 			hitWindSpeed.setText(3, String.valueOf(hitData.getMaxWindSpeed()));
-			hitRotationalSpeed.setText(1, String.valueOf(hitData.getAvgRotationalSpeed()));
-			hitRotationalSpeed.setText(2, String.valueOf(hitData.getMinRotationalSpeed()));
-			hitRotationalSpeed.setText(3, String.valueOf(hitData.getMaxRotationalSpeed()));
+			hitRotationalSpeed.setText(1,
+					String.valueOf(hitData.getAvgRotationalSpeed()));
+			hitRotationalSpeed.setText(2,
+					String.valueOf(hitData.getMinRotationalSpeed()));
+			hitRotationalSpeed.setText(3,
+					String.valueOf(hitData.getMaxRotationalSpeed()));
 		} else {
 			hitPerformance.setText(1, "");
 			hitPerformance.setText(2, "");
@@ -259,7 +267,7 @@ public class DetailView extends ViewPart implements Observer{
 			hitRotationalSpeed.setText(3, "");
 		}
 	}
-	
+
 	@Override
 	public void dispose() {
 		super.dispose();
