@@ -7,6 +7,7 @@ import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.ChangeDetectAO;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.ElementWindowAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.JoinAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.MapAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.ProjectAO;
@@ -120,30 +121,29 @@ public class GoalsSportsQLParser implements ISportsQLParser {
 		allOperators.add(onCentreSpot_filter);
 		attributes.clear();
 		
+		// window for goals and spot
+		ElementWindowAO goalWindow = OperatorBuildHelper.createElementWindowAO(1, 1, inGoal_filter);
+		ElementWindowAO spotWindow = OperatorBuildHelper.createElementWindowAO(1, 1, onCentreSpot_filter);
+		
+		
 		// join goals of last x seconds with centre spot stream
 		String joinPredicate = "goal_ts > (spot_ball_ts - (" + T_GOAL_KICKOFF + " * "
 				+ ONE_SECOND + ")) AND (inGoal1 = 1 OR inGoal2 = 1)";
 		JoinAO goals_join = OperatorBuildHelper.createJoinAO(joinPredicate, "MANY_MANY",
-				inGoal_filter, onCentreSpot_filter);
+				goalWindow, spotWindow);
 		allOperators.add(goals_join);
 		predicates.clear();
 
-		// remove duplicates of detected goals
-		attributes.add("goal_ts");
-		ChangeDetectAO goals = OperatorBuildHelper
-				.createChangeDetectAO(OperatorBuildHelper.createAttributeList(
-						attributes, goals_join), 0.0, goals_join);
-		goals.setDeliverFirstElement(true);
-		allOperators.add(goals);
-		attributes.clear();
-
+		// project on goals
 		attributes.add("goal_ts");
 		attributes.add("inGoal1");
 		attributes.add("inGoal2");
 		ProjectAO goals_project = OperatorBuildHelper.createProjectAO(
-				attributes, goals);
+				attributes, goals_join);
 		allOperators.add(goals_project);
 		attributes.clear();
+		
+		// TODO: aggregate left and right goals
 
 		return OperatorBuildHelper.finishQuery(goals_project, allOperators,
 				sportsQL.getName());
@@ -153,7 +153,7 @@ public class GoalsSportsQLParser implements ISportsQLParser {
 			ILogicalOperator source) throws NumberFormatException, MissingDDCEntryException {
 		List<SDFExpressionParameter> expressions = new ArrayList<SDFExpressionParameter>();
 		SDFExpressionParameter ex1 = OperatorBuildHelper
-				.createExpressionParameter("ts", "goal_ts", source);
+				.createExpressionParameter("toInteger(ts)", "goal_ts", source);
 		SDFExpressionParameter ex2 = OperatorBuildHelper
 				.createExpressionParameter("x", "goal_x", source);
 		SDFExpressionParameter ex3 = OperatorBuildHelper
@@ -161,15 +161,15 @@ public class GoalsSportsQLParser implements ISportsQLParser {
 		SDFExpressionParameter ex4 = OperatorBuildHelper
 				.createExpressionParameter("z", "goal_z", source);
 		SDFExpressionParameter ex5 = OperatorBuildHelper
-				.createExpressionParameter("eif( x < " + SoccerDDCAccess.getGoalareaLeftX()
+				.createExpressionParameter("toInteger(eif( x < " + SoccerDDCAccess.getGoalareaLeftX()
 						+ " AND x > " + (SoccerDDCAccess.getGoalareaLeftX() - GOAL_DEPTH)
 						+ " AND y > " + SoccerDDCAccess.getGoalareaLeftYMin()+ " AND y < "
-						+ SoccerDDCAccess.getGoalareaLeftYMax() + " , 1, 0)", "inGoal1", source);
+						+ SoccerDDCAccess.getGoalareaLeftYMax() + " , 1, 0))", "inGoal1", source);
 		SDFExpressionParameter ex6 = OperatorBuildHelper
-				.createExpressionParameter("eif( x > " + SoccerDDCAccess.getGoalareaRightX()
+				.createExpressionParameter("toInteger(eif( x > " + SoccerDDCAccess.getGoalareaRightX()
 						+ " AND x < " + (SoccerDDCAccess.getGoalareaRightX() + GOAL_DEPTH)
 						+ " AND y < " + SoccerDDCAccess.getGoalareaRightYMax() + " AND y > "
-						+ SoccerDDCAccess.getGoalareaRightYMin() + " , 1, 0)", "inGoal2", source);
+						+ SoccerDDCAccess.getGoalareaRightYMin() + " , 1, 0))", "inGoal2", source);
 		expressions.add(ex1);
 		expressions.add(ex2);
 		expressions.add(ex3);
