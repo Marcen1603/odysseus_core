@@ -60,6 +60,8 @@ public class HitAEView extends ViewPart implements AEObserver {
 		lblDatenBis.setText("Daten bis:");
 
 		swtDateUntil = new DateTime(toolsContainer, SWT.BORDER);
+		swtDateUntil.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false,
+				false, 1, 1));
 
 		swtTimeUntil = new DateTime(toolsContainer, SWT.BORDER | SWT.TIME);
 
