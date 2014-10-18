@@ -6,7 +6,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
@@ -54,66 +53,15 @@ public class HitAEView extends ViewPart implements AEObserver {
 		swtDateSince = new DateTime(toolsContainer, SWT.BORDER | SWT.LONG);
 		swtDateSince.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false,
 				false, 1, 1));
-		swtDateSince.addSelectionListener(new SelectionListener() {
-
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				prepareLoadNewHitData();
-			}
-
-			@Override
-			public void widgetDefaultSelected(SelectionEvent e) {
-				prepareLoadNewHitData();
-			}
-
-		});
 
 		swtTimeSince = new DateTime(toolsContainer, SWT.BORDER | SWT.TIME);
-		swtTimeSince.addSelectionListener(new SelectionListener() {
-
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				prepareLoadNewHitData();
-			}
-
-			@Override
-			public void widgetDefaultSelected(SelectionEvent e) {
-				prepareLoadNewHitData();
-			}
-		});
 
 		Label lblDatenBis = new Label(toolsContainer, SWT.NONE);
 		lblDatenBis.setText("Daten bis:");
 
 		swtDateUntil = new DateTime(toolsContainer, SWT.BORDER);
-		swtDateUntil.addSelectionListener(new SelectionListener() {
-
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				prepareLoadNewHitData();
-			}
-
-			@Override
-			public void widgetDefaultSelected(SelectionEvent e) {
-				prepareLoadNewHitData();
-			}
-
-		});
 
 		swtTimeUntil = new DateTime(toolsContainer, SWT.BORDER | SWT.TIME);
-		swtTimeUntil.addSelectionListener(new SelectionListener() {
-
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				prepareLoadNewHitData();
-			}
-
-			@Override
-			public void widgetDefaultSelected(SelectionEvent e) {
-				prepareLoadNewHitData();
-			}
-
-		});
 
 		btnZeigeGelesene = new Button(toolsContainer, SWT.CHECK);
 		btnZeigeGelesene.addSelectionListener(new SelectionAdapter() {
