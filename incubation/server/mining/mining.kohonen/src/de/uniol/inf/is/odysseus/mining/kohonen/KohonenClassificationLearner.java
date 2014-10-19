@@ -30,6 +30,9 @@ import de.uniol.inf.is.odysseus.mining.classification.IClassificationLearner;
 import de.uniol.inf.is.odysseus.mining.classification.IClassifier;
 
 /**
+ * Implements a ClassificationLearer that uses the Java Kohonen Neural Network
+ * Library (JKNNL) to build a classifier.
+ * 
  * @author Dennis Nowak
  * 
  */
@@ -37,24 +40,24 @@ public class KohonenClassificationLearner<M extends ITimeInterval> implements
 		IClassificationLearner<M> {
 
 	public static String[] METHODS = { "WTA", "WTM" };
-	String algorithm;
+	private String algorithm;
 
-	int cols = 10;
-	int rows = 10;
-	int radius = 10;
+	private int cols = 10;
+	private int rows = 10;
+	private int radius = 10;
 
-	double[] maxWeight;
-	int dimensions;
+	private double[] maxWeight;
+	private int dimensions;
 
-	int iterations = 100;
+	private int iterations = 100;
 
-	TopologyModel topology;
-	NetworkModel network;
-	MetricModel metric;
-	DataInput<M> learningData;
-	LearningFactorFunctionalModel function;
-	NeighbourhoodFunctionModel neighboorModel;
-	LearningFunctionModel learningFunction;
+	private TopologyModel topology;
+	private NetworkModel network;
+	private MetricModel metric;
+	private DataInput<M> learningData;
+	private LearningFactorFunctionalModel function;
+	private NeighbourhoodFunctionModel neighboorModel;
+	private LearningFunctionModel learningFunction;
 
 	/*
 	 * (non-Javadoc)
@@ -114,7 +117,8 @@ public class KohonenClassificationLearner<M extends ITimeInterval> implements
 					"There is no classifier model called " + algorithm + "!");
 		}
 		learningFunction.learn();
-		KohonenClassifier<M> classifier = new KohonenClassifier<>(network, metric);
+		KohonenClassifier<M> classifier = new KohonenClassifier<>(network,
+				metric);
 		return classifier;
 	}
 

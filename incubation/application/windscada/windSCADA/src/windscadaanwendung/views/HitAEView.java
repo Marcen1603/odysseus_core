@@ -95,14 +95,11 @@ public class HitAEView extends ViewPart implements AEObserver {
 				saveChangedAEEntrys();
 			}
 		});
-
-		// TODO hier und wo sonst noetig scrollable machen
 		sc = new ScrolledComposite(parent, SWT.V_SCROLL);
 		hitAEContainer = new Composite(sc, SWT.NONE);
 		hitAEContainer.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false,
 				false, 1, 1));
 		hitAEContainer.setLayout(new GridLayout(1, false));
-		// TODO
 		hitAEHeader = new Composite(hitAEContainer, SWT.NONE);
 		hitAEHeader.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false,
 				false, 1, 1));

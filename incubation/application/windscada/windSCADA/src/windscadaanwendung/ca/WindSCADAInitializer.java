@@ -46,6 +46,13 @@ import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.core.usermanagement.PermissionException;
 import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
 
+/**
+ * Initializes windSCADA. Resets Odysseus first, then starts necessary queries
+ * and opens the windSCADA perspective
+ * 
+ * @author Dennis Nowak
+ * 
+ */
 public class WindSCADAInitializer {
 
 	private final static String[] DAFileNames = { "corrected_score.qry",
@@ -70,6 +77,8 @@ public class WindSCADAInitializer {
 	 * Creates new Job that executes initialization of WindSCADA
 	 * 
 	 * @param initML
+	 *            if true, the algorithms where machine learning algorithms are
+	 *            nedded, are loaded, too.
 	 */
 	public static void init(final boolean initML) {
 		Job job = new Job("Init WindSCADA") {
@@ -92,7 +101,7 @@ public class WindSCADAInitializer {
 					} else {
 						openPerspetive(PERSPECTIVE_ID_WITHOUT_ML);
 					}
-					
+
 					progress.worked(1);
 				} finally {
 					monitor.done();
@@ -119,12 +128,10 @@ public class WindSCADAInitializer {
 			public void run() {
 				IWorkbenchPage page = PlatformUI.getWorkbench()
 						.getActiveWorkbenchWindow().getActivePage();
-				IPerspectiveDescriptor pers = PlatformUI
-						.getWorkbench()
+				IPerspectiveDescriptor pers = PlatformUI.getWorkbench()
 						.getPerspectiveRegistry()
 						.findPerspectiveWithId(PERSPECTIVE_ID_WITH_ML);
-				IPerspectiveDescriptor pers2 = PlatformUI
-						.getWorkbench()
+				IPerspectiveDescriptor pers2 = PlatformUI.getWorkbench()
 						.getPerspectiveRegistry()
 						.findPerspectiveWithId(PERSPECTIVE_ID_WITHOUT_ML);
 				page.closePerspective(pers, false, true);
@@ -172,6 +179,8 @@ public class WindSCADAInitializer {
 	 * wind turbine that is loaded by CA
 	 * 
 	 * @param initML
+	 *            if true, the algorithms where machine learning algorithms are
+	 *            nedded, are loaded, too.
 	 * 
 	 * @param monitor
 	 *            the progress monitor to use for reporting progress to the
@@ -223,7 +232,7 @@ public class WindSCADAInitializer {
 	}
 
 	/**
-	 * Invokes Farmlist to receive CA information form configurtation database
+	 * Invokes Farmlist to receive CA information form configuration database
 	 */
 	private static void loadConfig() {
 		DBConnectionCA.setNewConnection();
@@ -315,6 +324,13 @@ public class WindSCADAInitializer {
 				Context.empty());
 	}
 
+	/**
+	 * Method that builds a query for merging datastreams for AE Component
+	 * 
+	 * @param suffix
+	 *            name of the measurement to collect all streams of
+	 * @return the query
+	 */
 	private static String unionStreams(String suffix) {
 		String query = "#PARSER PQL\n#RUNQUERY\n";
 		String unionString = suffix + " ::= MERGE(";
@@ -425,8 +441,16 @@ public class WindSCADAInitializer {
 		}
 	}
 
+	/**
+	 * Loads and starts queries that are neccessary to predict the corrected
+	 * score of one wind turbine.
+	 * 
+	 * @param farm
+	 *            windfarm
+	 * @param wkaToPredict
+	 *            wka the prediction should be calculated for
+	 */
 	private static void initPrediction(WindFarm farm, WKA wkaToPredict) {
-		// TODO Auto-generated method stub
 		String query = loadFileContent("querypatterns/svr/svr.qry");
 		// insert necessary operators for each wind turbine, marked by the
 		// surrounding 'xYx'
@@ -476,15 +500,20 @@ public class WindSCADAInitializer {
 		executeQuery(query);
 		query = loadFileContent("querypatterns/GUI/svr.qry");
 		query = adjustQuery(query, farm.getID(), wkaToPredict.getID());
-		storeFileInWorkspace("GUI", wkaToPredict.getID() + "svr.qry",
-				query);
+		storeFileInWorkspace("GUI", wkaToPredict.getID() + "svr.qry", query);
 		executeQuery(query);
 		query = loadFileContent("querypatterns/GUI/svr.prt");
 		query = adjustQuery(query, farm.getID(), wkaToPredict.getID());
-		storeFileInWorkspace("GUI", wkaToPredict.getID() + "svr.prt",
-				query);
+		storeFileInWorkspace("GUI", wkaToPredict.getID() + "svr.prt", query);
 	}
 
+	/**
+	 * Loads and starts query which calculates the sum of the corrected scores
+	 * of a windfarm
+	 * 
+	 * @param farm
+	 *            windfarm
+	 */
 	private static void initFarm(WindFarm farm) {
 		String query = loadFileContent("querypatterns/DA/corrected_score_sum.qry");
 		Joiner joiner = Joiner.on("\n").skipNulls();
@@ -547,6 +576,13 @@ public class WindSCADAInitializer {
 				query);
 	}
 
+	/**
+	 * Loads and starts scripts that are necessary to visualize the corrected
+	 * score of a whole windpark
+	 * 
+	 * @param farm
+	 *            windfarm
+	 */
 	private static void initKohonen(WindFarm farm) {
 		String query = loadFileContent("querypatterns/kohonen/computeKohonenMap.qry");
 		// insert necessary operators for each wind turbine, marked by the
@@ -653,6 +689,13 @@ public class WindSCADAInitializer {
 		});
 	}
 
+	/**
+	 * Extracts names of sources
+	 * 
+	 * @param sources
+	 *            list of sources
+	 * @return a list of the names of sources
+	 */
 	private static ImmutableList<Resource> determineSourceIds(
 			List<ViewInformation> sources) {
 		if (sources == null || sources.isEmpty()) {

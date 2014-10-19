@@ -22,11 +22,18 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.rcp.dashboard.AbstractDashboardPartConfigurer;
 import de.uniol.inf.is.odysseus.rcp.dashboard.DashboardPartUtil;
 
-public class WindTurbineConfigurer extends AbstractDashboardPartConfigurer<WindTurbineDashboardPart> {
+/**
+ * Configurer of the WindTurbineDashBoardPart
+ * 
+ * @author Dennis Nowak
+ * 
+ */
+public class WindTurbineConfigurer extends
+		AbstractDashboardPartConfigurer<WindTurbineDashboardPart> {
 
 	private WindTurbineDashboardPart dashboardPart;
 	private List<String> attributeNames;
-	
+
 	@Override
 	public void init(WindTurbineDashboardPart dashboardPartToConfigure,
 			Collection<IPhysicalOperator> roots) {
@@ -34,7 +41,8 @@ public class WindTurbineConfigurer extends AbstractDashboardPartConfigurer<WindT
 		attributeNames = determineAttributes(roots);
 	}
 
-	private static List<String> determineAttributes(Collection<IPhysicalOperator> roots) {
+	private static List<String> determineAttributes(
+			Collection<IPhysicalOperator> roots) {
 		List<String> attributeNames = Lists.newArrayList();
 
 		IPhysicalOperator firstRoot = roots.iterator().next();
@@ -52,22 +60,23 @@ public class WindTurbineConfigurer extends AbstractDashboardPartConfigurer<WindT
 		Composite topComposite = new Composite(parent, SWT.NONE);
 		topComposite.setLayout(new GridLayout(2, false));
 		topComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
-		
+
 		createUpdateIntervalControls(topComposite);
 		createShowTextControls(topComposite);
-		if(attributeNames.contains("warning")) {
+		if (attributeNames.contains("warning")) {
 			createShowWarningsControls(topComposite);
 		}
-		if(attributeNames.contains("error")) {
+		if (attributeNames.contains("error")) {
 			createShowErrorsControls(topComposite);
 		}
 		createSetRotorImageControls(topComposite);
-		
+
 	}
 
 	private void createSetRotorImageControls(Composite topComposite) {
 		DashboardPartUtil.createLabel(topComposite, "Path to rotor Image");
-		final Text attributesInput = DashboardPartUtil.createText(topComposite, String.valueOf(dashboardPart.getRotorImagePath()));
+		final Text attributesInput = DashboardPartUtil.createText(topComposite,
+				String.valueOf(dashboardPart.getRotorImagePath()));
 		attributesInput.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		attributesInput.addModifyListener(new ModifyListener() {
 			@Override
@@ -80,7 +89,8 @@ public class WindTurbineConfigurer extends AbstractDashboardPartConfigurer<WindT
 
 	private void createShowErrorsControls(Composite topComposite) {
 		DashboardPartUtil.createLabel(topComposite, "Show Errors");
-		final Combo comboLocked = createBooleanComboDropDown(topComposite, dashboardPart.isShowError());
+		final Combo comboLocked = createBooleanComboDropDown(topComposite,
+				dashboardPart.isShowError());
 		comboLocked.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -92,7 +102,8 @@ public class WindTurbineConfigurer extends AbstractDashboardPartConfigurer<WindT
 
 	private void createShowWarningsControls(Composite topComposite) {
 		DashboardPartUtil.createLabel(topComposite, "Show Warnings");
-		final Combo comboLocked = createBooleanComboDropDown(topComposite, dashboardPart.isShowWarning());
+		final Combo comboLocked = createBooleanComboDropDown(topComposite,
+				dashboardPart.isShowWarning());
 		comboLocked.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -101,10 +112,11 @@ public class WindTurbineConfigurer extends AbstractDashboardPartConfigurer<WindT
 			}
 		});
 	}
-	
+
 	private void createShowTextControls(Composite topComposite) {
 		DashboardPartUtil.createLabel(topComposite, "Print measurement");
-		final Combo comboLocked = createBooleanComboDropDown(topComposite, dashboardPart.isShowText());
+		final Combo comboLocked = createBooleanComboDropDown(topComposite,
+				dashboardPart.isShowText());
 		comboLocked.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -116,19 +128,23 @@ public class WindTurbineConfigurer extends AbstractDashboardPartConfigurer<WindT
 
 	private void createUpdateIntervalControls(Composite topComposite) {
 		DashboardPartUtil.createLabel(topComposite, "Update interval (ms)");
-		final Text attributesInput = DashboardPartUtil.createText(topComposite, String.valueOf(dashboardPart.getUpdateInterval()));
+		final Text attributesInput = DashboardPartUtil.createText(topComposite,
+				String.valueOf(dashboardPart.getUpdateInterval()));
 		attributesInput.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		attributesInput.addModifyListener(new ModifyListener() {
 			@Override
 			public void modifyText(ModifyEvent e) {
-				dashboardPart.setUpdateInterval(Integer.valueOf(attributesInput.getText()));
+				dashboardPart.setUpdateInterval(Integer.valueOf(attributesInput
+						.getText()));
 				fireListener();
 			}
 		});
 	}
-	
-	private static Combo createBooleanComboDropDown(Composite tableComposite, boolean isSetToTrue) {
-		Combo comboDropDown = new Combo(tableComposite, SWT.DROP_DOWN | SWT.BORDER | SWT.READ_ONLY);
+
+	private static Combo createBooleanComboDropDown(Composite tableComposite,
+			boolean isSetToTrue) {
+		Combo comboDropDown = new Combo(tableComposite, SWT.DROP_DOWN
+				| SWT.BORDER | SWT.READ_ONLY);
 		comboDropDown.add("true");
 		comboDropDown.add("false");
 		comboDropDown.select(isSetToTrue ? 0 : 1);
@@ -138,7 +154,7 @@ public class WindTurbineConfigurer extends AbstractDashboardPartConfigurer<WindT
 
 	@Override
 	public void dispose() {
-		
+
 	}
 
 }

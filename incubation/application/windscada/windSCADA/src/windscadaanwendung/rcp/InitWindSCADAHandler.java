@@ -6,6 +6,13 @@ import org.eclipse.core.commands.ExecutionException;
 
 import windscadaanwendung.ca.WindSCADAInitializer;
 
+/**
+ * Command that lets the WindSCADAInitializer initialize windSCADA without
+ * mashine learning algorithms
+ * 
+ * @author Dennis Nowak
+ * 
+ */
 public class InitWindSCADAHandler extends AbstractHandler {
 
 	@Override
@@ -13,7 +20,5 @@ public class InitWindSCADAHandler extends AbstractHandler {
 		WindSCADAInitializer.init(false);
 		return null;
 	}
-
-
 
 }

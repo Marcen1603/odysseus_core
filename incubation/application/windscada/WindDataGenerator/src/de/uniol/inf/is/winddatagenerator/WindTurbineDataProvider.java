@@ -27,6 +27,26 @@ import de.uniol.inf.is.odysseus.generator.valuegenerator.ISingleValueGenerator;
 import de.uniol.inf.is.odysseus.generator.valuegenerator.evolve.AlternatingGenerator;
 import de.uniol.inf.is.winddatagenerator.ConsoleInputReader.State;
 
+/**
+ * Generates data that can be produced by a wind turbine. Each tuple contains
+ * the data from measurements of the NREL western wind dataset.
+ * http://www.nrel.gov/electricity/transmission/western_wind_methodology.html
+ * 
+ * and additional attributes that <br>
+ * 
+ * wka_id : The id of the wind turbine from NREL<br>
+ * timestamp : The timestamp <br>
+ * wind_speed : The wind speed in m/s<br>
+ * corrected_score : The output of the wind turbine in MW <br>
+ * wind_direction : Alternating between 0 degrees and 359 degrees<br>
+ * yaw_angle : Alternating between 0 degrees and 359 degrees<br>
+ * rotational_speed : Depends on corrected_score<br>
+ * phase_shift : Alternating between -90 degrees and +90 degrees<br>
+ * pitch_angle : Alternating between 0 degrees and +90 degrees
+ * 
+ * @author Dennis Nowak
+ * 
+ */
 public class WindTurbineDataProvider extends AbstractDataGenerator implements
 		Observer {
 
@@ -39,13 +59,19 @@ public class WindTurbineDataProvider extends AbstractDataGenerator implements
 	private ISingleValueGenerator rotationalSpeed;
 	private ISingleValueGenerator phaseShift;
 	private ISingleValueGenerator pitchAngle;
-	private ISingleValueGenerator gierAngle;
+	private ISingleValueGenerator yawAngle;
 
 	private ISingleValueGenerator zeroGenerator;
 	private State state;
 
-	public WindTurbineDataProvider(int id2) {
-		this.id = id2;
+	/**
+	 * Constructor of class WindTurbineDataProvider
+	 * 
+	 * @param wkaid
+	 *            the id of the wind turbine in the NREL dataset
+	 */
+	public WindTurbineDataProvider(int wkaid) {
+		this.id = wkaid;
 	}
 
 	/*
@@ -70,7 +96,6 @@ public class WindTurbineDataProvider extends AbstractDataGenerator implements
 		try {
 			tuple.addLong(this.dateFormat.parse(parts[0]).getTime());
 		} catch (ParseException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		switch (this.state) {
@@ -81,8 +106,8 @@ public class WindTurbineDataProvider extends AbstractDataGenerator implements
 			tuple.addDouble(parts[4]);
 			// wind_direction
 			tuple.addDouble(windDirection.nextValue());
-			// gier_angle
-			tuple.addDouble(gierAngle.nextValue());
+			// yaw_angle
+			tuple.addDouble(yawAngle.nextValue());
 			// rotational_speed
 			tuple.addDouble(Double.valueOf(parts[4]) / 100);
 			// phase_shift
@@ -97,7 +122,7 @@ public class WindTurbineDataProvider extends AbstractDataGenerator implements
 			tuple.addDouble(0);
 			// wind_direction
 			tuple.addDouble(0);
-			// gier_angle
+			// yaw_angle
 			tuple.addDouble(0);
 			// rotational_speed
 			tuple.addDouble(0);
@@ -123,7 +148,6 @@ public class WindTurbineDataProvider extends AbstractDataGenerator implements
 		try {
 			reader.close();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
@@ -146,7 +170,6 @@ public class WindTurbineDataProvider extends AbstractDataGenerator implements
 			reader = new BufferedReader(fileReader);
 			reader.readLine();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		this.dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -159,8 +182,8 @@ public class WindTurbineDataProvider extends AbstractDataGenerator implements
 		rotationalSpeed.init();
 		pitchAngle = new AlternatingGenerator(new NoError(), 0, 1, 0, 90);
 		pitchAngle.init();
-		gierAngle = new AlternatingGenerator(new NoError(), 2, 5, 0, 359);
-		gierAngle.init();
+		yawAngle = new AlternatingGenerator(new NoError(), 2, 5, 0, 359);
+		yawAngle.init();
 		zeroGenerator = new ConstantValueGenerator(new NoError(), 0);
 		zeroGenerator.init();
 		this.state = ConsoleInputReader.getInstance().getState();

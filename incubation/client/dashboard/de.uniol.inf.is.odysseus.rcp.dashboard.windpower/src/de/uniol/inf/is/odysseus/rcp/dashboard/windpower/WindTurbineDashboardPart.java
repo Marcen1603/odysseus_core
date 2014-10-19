@@ -30,13 +30,20 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.securitypunctuation.ISecurityPunctuation;
 import de.uniol.inf.is.odysseus.rcp.dashboard.AbstractDashboardPart;
 
+/**
+ * The WindTurbineDashboardPart is a DashboardPart that can visualize a rotating
+ * rotor. Incoming stream elements must contain the current rotational speed.
+ * 
+ * @author Dennis Nowak
+ * 
+ */
 public class WindTurbineDashboardPart extends AbstractDashboardPart implements
 		PaintListener {
 
 	private int updateIntervalMilis = 100;
 	private boolean showWarning = true;
 	private boolean showError = true;
-	private boolean showText = true ;
+	private boolean showText = true;
 	private String rotorImagePath = "/resource/rotor.png";
 
 	public boolean isShowText() {
@@ -132,7 +139,7 @@ public class WindTurbineDashboardPart extends AbstractDashboardPart implements
 		this.currentRotationalSpeed = tuple.getAttribute(0);
 		isError = tuple.getAttribute(2);
 		isWarning = tuple.getAttribute(1);
-		
+
 	}
 
 	@Override
@@ -198,16 +205,16 @@ public class WindTurbineDashboardPart extends AbstractDashboardPart implements
 		long now = new Date().getTime();
 		float time = (now - lastDraw) / 1000f;
 		currentRotation = ((currentRotation + (currentRotationalSpeed * 360 * time)) % 360);
-		//paint error or warning
+		// paint error or warning
 		if (showError && isError) {
-					windTurbineCanvas.setBackground(windTurbineCanvas
-							.getDisplay().getSystemColor(SWT.COLOR_RED));
+			windTurbineCanvas.setBackground(windTurbineCanvas.getDisplay()
+					.getSystemColor(SWT.COLOR_RED));
 		} else if (showWarning && isWarning) {
-					windTurbineCanvas.setBackground(windTurbineCanvas
-							.getDisplay().getSystemColor(SWT.COLOR_YELLOW));
+			windTurbineCanvas.setBackground(windTurbineCanvas.getDisplay()
+					.getSystemColor(SWT.COLOR_YELLOW));
 		} else {
-					windTurbineCanvas.setBackground(windTurbineCanvas
-							.getDisplay().getSystemColor(SWT.COLOR_WHITE));
+			windTurbineCanvas.setBackground(windTurbineCanvas.getDisplay()
+					.getSystemColor(SWT.COLOR_WHITE));
 		}
 		transform.translate(x + (width * ratio) / 2, y + (height * ratio) / 2);
 		transform.rotate((float) currentRotation);
@@ -238,12 +245,17 @@ public class WindTurbineDashboardPart extends AbstractDashboardPart implements
 		String showText = saved.get("showText");
 		String rotorImagePath = saved.get("rotorImagePath");
 		String updateInterval = saved.get("updateInterval");
-		
-		this.showError = Strings.isNullOrEmpty(showError) ? true : Boolean.parseBoolean(showError);
-		this.showWarning = Strings.isNullOrEmpty(showWarning) ? true : Boolean.parseBoolean(showWarning);
-		this.showText = Strings.isNullOrEmpty(showText) ? true : Boolean.parseBoolean(showText);
-		this.rotorImagePath = Strings.isNullOrEmpty(rotorImagePath) ? "/resource/rotor.png" : rotorImagePath;
-		this.updateIntervalMilis = Strings.isNullOrEmpty(updateInterval) ? 100 : Integer.parseInt(updateInterval);
+
+		this.showError = Strings.isNullOrEmpty(showError) ? true : Boolean
+				.parseBoolean(showError);
+		this.showWarning = Strings.isNullOrEmpty(showWarning) ? true : Boolean
+				.parseBoolean(showWarning);
+		this.showText = Strings.isNullOrEmpty(showText) ? true : Boolean
+				.parseBoolean(showText);
+		this.rotorImagePath = Strings.isNullOrEmpty(rotorImagePath) ? "/resource/rotor.png"
+				: rotorImagePath;
+		this.updateIntervalMilis = Strings.isNullOrEmpty(updateInterval) ? 100
+				: Integer.parseInt(updateInterval);
 	}
 
 }

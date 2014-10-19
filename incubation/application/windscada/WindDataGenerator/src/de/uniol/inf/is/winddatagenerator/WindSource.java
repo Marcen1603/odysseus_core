@@ -10,8 +10,15 @@ import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.Platform;
 import org.osgi.framework.Bundle;
 
+/**
+ * Reads file /data/rank.txt in Bundle that contains the order of iwnd turbine
+ * ids which should be simulated by a WindTurbineDataProvider
+ * 
+ * @author Dennis Nowak
+ * 
+ */
 public class WindSource {
-	
+
 	private static WindSource INSTANCE;
 	private BufferedReader reader;
 
@@ -28,7 +35,12 @@ public class WindSource {
 		}
 		reader = new BufferedReader(fileReader);
 	}
-	
+
+	/**
+	 * Returns the id of the wind turbine that should be simulated next
+	 * 
+	 * @return next wind turbine id to create a data generator for
+	 */
 	public int getWindSourceID() {
 		String ids = null;
 		try {
@@ -40,8 +52,13 @@ public class WindSource {
 		int id = Integer.parseInt(ids);
 		return id;
 	}
-	
-	public static WindSource getInstance(){
+
+	/**
+	 * Returns an single instance of WindSource
+	 * 
+	 * @return an instance of WindSource
+	 */
+	public static WindSource getInstance() {
 		if (INSTANCE == null) {
 			INSTANCE = new WindSource();
 		}
