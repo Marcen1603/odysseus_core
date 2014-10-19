@@ -14,6 +14,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
 
 import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
@@ -44,8 +45,7 @@ public class UdfsView extends ViewPart {
         tableViewer.setContentProvider(ArrayContentProvider.getInstance());
 
         createColumns(tableViewer, tableColumnLayout);
-        insertTableContent(tableViewer);
-
+        refresh();
     }
 
     @Override
@@ -54,13 +54,16 @@ public class UdfsView extends ViewPart {
     }
 
     public void refresh() {
-        insertTableContent(tableViewer);
-        tableViewer.refresh();
-    }
+        if (!PlatformUI.getWorkbench().getDisplay().isDisposed()) {
+            PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
 
-    private static void insertTableContent(TableViewer tableViewer) {
-    	tableViewer.setInput(OdysseusRCPPlugIn.getExecutor().getUdfs());
-    	
+                @Override
+                public void run() {
+                    tableViewer.setInput(OdysseusRCPPlugIn.getExecutor().getUdfs());
+                    tableViewer.refresh();
+                }
+            });
+        }
     }
 
     private static void createColumns(TableViewer tableViewer, TableColumnLayout tableColumnLayout) {

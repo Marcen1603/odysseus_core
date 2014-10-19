@@ -25,6 +25,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
 
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.ProtocolHandlerRegistry;
@@ -36,7 +37,7 @@ import de.uniol.inf.is.odysseus.rcp.l10n.OdysseusNLS;
  */
 public class ProtocolsView extends ViewPart {
 
-    private TableViewer tableViewer;
+    TableViewer tableViewer;
 
     @Override
     public void createPartControl(final Composite parent) {
@@ -60,7 +61,7 @@ public class ProtocolsView extends ViewPart {
             }
         });
         this.createColumns(this.tableViewer, tableColumnLayout);
-        ProtocolsView.insertTableContent(this.tableViewer);
+        refresh();
     }
 
     @Override
@@ -69,14 +70,18 @@ public class ProtocolsView extends ViewPart {
     }
 
     public void refresh() {
-        ProtocolsView.insertTableContent(this.tableViewer);
-        this.tableViewer.refresh();
-    }
+        if (!PlatformUI.getWorkbench().getDisplay().isDisposed()) {
+            PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
 
-    private static void insertTableContent(final TableViewer tableViewer) {
-        final List<String> protocols = new ArrayList<String>(ProtocolHandlerRegistry.getHandlerNames());
-        Collections.sort(protocols);
-        tableViewer.setInput(protocols);
+                @Override
+                public void run() {
+                    final List<String> protocols = new ArrayList<>(ProtocolHandlerRegistry.getHandlerNames());
+                    Collections.sort(protocols);
+                    ProtocolsView.this.tableViewer.setInput(protocols);
+                    ProtocolsView.this.tableViewer.refresh();
+                }
+            });
+        }
     }
 
     private void createColumns(final TableViewer tableViewer, final TableColumnLayout tableColumnLayout) {

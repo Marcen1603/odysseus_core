@@ -25,6 +25,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
 
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.TransportHandlerRegistry;
@@ -36,7 +37,7 @@ import de.uniol.inf.is.odysseus.rcp.l10n.OdysseusNLS;
  */
 public class TransportsView extends ViewPart {
 
-    private TableViewer tableViewer;
+    TableViewer tableViewer;
 
     @Override
     public void createPartControl(final Composite parent) {
@@ -60,8 +61,7 @@ public class TransportsView extends ViewPart {
             }
         });
         this.createColumns(this.tableViewer, tableColumnLayout);
-        TransportsView.insertTableContent(this.tableViewer);
-
+        refresh();
     }
 
     @Override
@@ -70,15 +70,20 @@ public class TransportsView extends ViewPart {
     }
 
     public void refresh() {
-        TransportsView.insertTableContent(this.tableViewer);
-        this.tableViewer.refresh();
+        if (!PlatformUI.getWorkbench().getDisplay().isDisposed()) {
+            PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
+
+                @Override
+                public void run() {
+                    final List<String> transports = new ArrayList<>(TransportHandlerRegistry.getHandlerNames());
+                    Collections.sort(transports);
+                    TransportsView.this.tableViewer.setInput(transports);
+                    TransportsView.this.tableViewer.refresh();
+                }
+            });
+        }
     }
 
-    private static void insertTableContent(final TableViewer tableViewer) {
-        final List<String> transports = new ArrayList<String>(TransportHandlerRegistry.getHandlerNames());
-        Collections.sort(transports);
-        tableViewer.setInput(transports);
-    }
 
     private void createColumns(final TableViewer tableViewer, final TableColumnLayout tableColumnLayout) {
         final TableViewerColumn symbolColumn = TransportsView.createColumn(tableViewer, tableColumnLayout, OdysseusNLS.Symbol, new CellLabelProvider() {

@@ -36,6 +36,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
 
 import com.google.common.base.Strings;
@@ -47,8 +48,8 @@ import de.uniol.inf.is.odysseus.rcp.l10n.OdysseusNLS;
 
 public class MEPFunctionsView extends ViewPart {
 
-    private TableViewer tableViewer;
-    private Text filterText;
+    TableViewer tableViewer;
+    Text filterText;
 
     @Override
     public void createPartControl(Composite parent) {
@@ -64,19 +65,19 @@ public class MEPFunctionsView extends ViewPart {
         TableColumnLayout tableColumnLayout = new TableColumnLayout();
         tableComposite.setLayout(tableColumnLayout);
 
-        tableViewer = new TableViewer(tableComposite);
-        tableViewer.getTable().setHeaderVisible(true);
-        tableViewer.getTable().setLinesVisible(true);
-        tableViewer.setContentProvider(ArrayContentProvider.getInstance());
+        this.tableViewer = new TableViewer(tableComposite);
+        this.tableViewer.getTable().setHeaderVisible(true);
+        this.tableViewer.getTable().setLinesVisible(true);
+        this.tableViewer.setContentProvider(ArrayContentProvider.getInstance());
 
-        createColumns(tableViewer, tableColumnLayout);
-        insertTableContent(tableViewer, "");
-        filterText.addModifyListener(new ModifyListener() {
+        createColumns(this.tableViewer, tableColumnLayout);
+        refresh("");
+        this.filterText.addModifyListener(new ModifyListener() {
 
             @Override
             public void modifyText(ModifyEvent e) {
                 try {
-                    insertTableContent(tableViewer, MEPFunctionsView.this.filterText.getText());
+                    refresh(MEPFunctionsView.this.filterText.getText());
                 }
                 catch (final Exception ex) {
                     MessageDialog.openWarning(e.display.getActiveShell(), "Error", ex.getMessage());
@@ -88,40 +89,49 @@ public class MEPFunctionsView extends ViewPart {
 
     @Override
     public void setFocus() {
-        tableViewer.getTable().setFocus();
+        this.tableViewer.getTable().setFocus();
     }
-
     public void refresh() {
-        insertTableContent(tableViewer, "");
-        tableViewer.refresh();
+        this.refresh("");
     }
 
-    private static void insertTableContent(TableViewer tableViewer, String filter) {
-        Set<FunctionSignature> functionSymbols = MEP.getFunctions();
-        List<MEPFunctionInfo> functionInfos;
-        if (Strings.isNullOrEmpty(filter)) {
-            functionInfos = determineFunctionInfos(functionSymbols);
-        }
-        else {
-            String regexFilter = wildcardToRegexPattern(filter.toLowerCase());
-            HashSet<FunctionSignature> filteredSymbols = new HashSet<>();
-            Iterator<FunctionSignature> functionsIter = functionSymbols.iterator();
-            while (functionsIter.hasNext()) {
-                FunctionSignature function = functionsIter.next();
-                MEPFunctionInfo funtionInfo = MEPFunctionInfo.fromMEPFunction(MEP.getFunction(function));
-                try {
-                    if (funtionInfo.getSymbol().toLowerCase().matches(regexFilter)) {
-                        filteredSymbols.add(function);
+    public void refresh(final String filter) {
+        if (!PlatformUI.getWorkbench().getDisplay().isDisposed()) {
+            PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
+
+                @Override
+                public void run() {
+                    Set<FunctionSignature> functionSymbols = MEP.getFunctions();
+                    List<MEPFunctionInfo> functionInfos;
+                    if (Strings.isNullOrEmpty(filter)) {
+                        functionInfos = determineFunctionInfos(functionSymbols);
                     }
+                    else {
+                        String regexFilter = wildcardToRegexPattern(filter.toLowerCase());
+                        HashSet<FunctionSignature> filteredSymbols = new HashSet<>();
+                        Iterator<FunctionSignature> functionsIter = functionSymbols.iterator();
+                        while (functionsIter.hasNext()) {
+                            FunctionSignature function = functionsIter.next();
+                            MEPFunctionInfo funtionInfo = MEPFunctionInfo.fromMEPFunction(MEP.getFunction(function));
+                            try {
+                                if (funtionInfo.getSymbol().toLowerCase().matches(regexFilter)) {
+                                    filteredSymbols.add(function);
+                                }
+                            }
+                            catch (Exception e) {
+                                // Add function to list in case of RegEx
+                                // exception
+                                filteredSymbols.add(function);
+                            }
+                        }
+                        functionInfos = determineFunctionInfos(filteredSymbols);
+                    }
+                    MEPFunctionsView.this.tableViewer.setInput(functionInfos);
+                    MEPFunctionsView.this.tableViewer.refresh();
                 }
-                catch (Exception e) {
-                    // Add function to list in case of RegEx exception
-                    filteredSymbols.add(function);
-                }
-            }
-            functionInfos = determineFunctionInfos(filteredSymbols);
+            });
         }
-        tableViewer.setInput(functionInfos);
+
     }
 
     private static void createColumns(TableViewer tableViewer, TableColumnLayout tableColumnLayout) {
@@ -145,7 +155,7 @@ public class MEPFunctionsView extends ViewPart {
                 cell.setText(((MEPFunctionInfo) cell.getElement()).getResultType());
             }
         }, 5);
-        new ColumnViewerSorter(tableViewer, returnTypeColumn) {
+        sorter = new ColumnViewerSorter(tableViewer, returnTypeColumn) {
             @Override
             protected int doCompare(Viewer viewer, Object e1, Object e2) {
                 return ((MEPFunctionInfo) e1).getResultType().compareToIgnoreCase(((MEPFunctionInfo) e2).getResultType());
@@ -158,7 +168,7 @@ public class MEPFunctionsView extends ViewPart {
                 cell.setText(String.valueOf(((MEPFunctionInfo) cell.getElement()).getArity()));
             }
         }, 1);
-        new ColumnViewerSorter(tableViewer, arityColumn) {
+        sorter = new ColumnViewerSorter(tableViewer, arityColumn) {
             @Override
             protected int doCompare(Viewer viewer, Object e1, Object e2) {
                 int a1 = ((MEPFunctionInfo) e1).getArity();
@@ -181,7 +191,7 @@ public class MEPFunctionsView extends ViewPart {
                 cell.setText(((MEPFunctionInfo) cell.getElement()).getArgTypes().toString());
             }
         }, 20);
-        new ColumnViewerSorter(tableViewer, argTypesColumn) {
+        sorter = new ColumnViewerSorter(tableViewer, argTypesColumn) {
             @Override
             protected int doCompare(Viewer viewer, Object e1, Object e2) {
                 return ((MEPFunctionInfo) e1).getArgTypes().toString().compareToIgnoreCase(((MEPFunctionInfo) e2).getArgTypes().toString());
@@ -189,7 +199,7 @@ public class MEPFunctionsView extends ViewPart {
         };
     }
 
-    private static List<MEPFunctionInfo> determineFunctionInfos(Set<FunctionSignature> functionSignatures) {
+    static List<MEPFunctionInfo> determineFunctionInfos(Set<FunctionSignature> functionSignatures) {
         List<MEPFunctionInfo> functionInfos = Lists.newArrayList();
         for (FunctionSignature functionSignature : functionSignatures) {
             functionInfos.add(MEPFunctionInfo.fromMEPFunction(MEP.getFunction(functionSignature)));
@@ -205,7 +215,7 @@ public class MEPFunctionsView extends ViewPart {
         return column;
     }
     
-	private static String wildcardToRegexPattern(String wildcard) {
+    static String wildcardToRegexPattern(String wildcard) {
 		String regex = wildcard;
 		regex = regex.replace(".", "\\.");
 		regex = regex.replace("*", ".*");

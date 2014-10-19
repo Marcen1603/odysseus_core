@@ -33,27 +33,28 @@ public class UserView extends ViewPart implements IUpdateEventListener{
 	
 	private TreeViewer viewer;
 
-	public void refresh() {
-		PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
+    public void refresh() {
+        if (!PlatformUI.getWorkbench().getDisplay().isDisposed()) {
+            PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
 
-			@Override
-			public void run() {
-				List<Object> l = new ArrayList<Object>();
-				try {
-					List<? extends IUser> users = OdysseusRCPPlugIn.getExecutor()
-					.getUsers(
-							OdysseusRCPPlugIn.getActiveSession());
-					l.addAll(users);
-				} catch (PermissionException e) {
-					// If user has no rights to view all users, only the
-					// current user is shown
-					l.add(OdysseusRCPPlugIn.getActiveSession());
-				}
-				viewer.setInput(l);
-			}
+                @Override
+                public void run() {
+                    List<Object> l = new ArrayList<>();
+                    try {
+                        List<? extends IUser> users = OdysseusRCPPlugIn.getExecutor().getUsers(OdysseusRCPPlugIn.getActiveSession());
+                        l.addAll(users);
+                    }
+                    catch (PermissionException e) {
+                        // If user has no rights to view all users, only the
+                        // current user is shown
+                        l.add(OdysseusRCPPlugIn.getActiveSession());
+                    }
+                    viewer.setInput(l);
+                }
 
-		});
-	}
+            });
+        }
+    }
 
 	@Override
 	public void createPartControl(Composite parent) {

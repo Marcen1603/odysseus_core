@@ -25,6 +25,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
 
 import de.uniol.inf.is.odysseus.core.datahandler.DataHandlerRegistry;
@@ -36,7 +37,7 @@ import de.uniol.inf.is.odysseus.rcp.l10n.OdysseusNLS;
  */
 public class DatasView extends ViewPart {
 
-    private TableViewer tableViewer;
+    TableViewer tableViewer;
 
     @Override
     public void createPartControl(final Composite parent) {
@@ -60,8 +61,7 @@ public class DatasView extends ViewPart {
             }
         });
         this.createColumns(this.tableViewer, tableColumnLayout);
-        DatasView.insertTableContent(this.tableViewer);
-
+        refresh();
     }
 
     @Override
@@ -70,14 +70,18 @@ public class DatasView extends ViewPart {
     }
 
     public void refresh() {
-        DatasView.insertTableContent(this.tableViewer);
-        this.tableViewer.refresh();
-    }
+        if (!PlatformUI.getWorkbench().getDisplay().isDisposed()) {
+            PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
 
-    private static void insertTableContent(final TableViewer tableViewer) {
-        final List<String> datas = new ArrayList<String>(DataHandlerRegistry.getHandlerNames());
-        Collections.sort(datas);
-        tableViewer.setInput(datas);
+                @Override
+                public void run() {
+                    final List<String> datas = new ArrayList<>(DataHandlerRegistry.getHandlerNames());
+                    Collections.sort(datas);
+                    DatasView.this.tableViewer.setInput(datas);
+                    DatasView.this.tableViewer.refresh();
+                }
+            });
+        }
     }
 
     private void createColumns(final TableViewer tableViewer, final TableColumnLayout tableColumnLayout) {

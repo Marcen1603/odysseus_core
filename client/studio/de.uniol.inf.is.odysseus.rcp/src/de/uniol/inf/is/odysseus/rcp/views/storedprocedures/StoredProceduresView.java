@@ -72,26 +72,23 @@ public class StoredProceduresView extends ViewPart implements
 		return viewer;
 	}
 
-	public void refresh() {
-		PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
+    public void refresh() {
+        if (!PlatformUI.getWorkbench().getDisplay().isDisposed()) {
+            PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
 
-			@Override
-			public void run() {
-				try {
-					getTreeViewer().setInput(
-							OdysseusRCPPlugIn.getExecutor()
-									.getStoredProcedures(
-											OdysseusRCPPlugIn
-													.getActiveSession()));
-				} catch (Exception e) {
-					LOG.error(
-							"Exception during setting input for treeViewer in stored procedures view",
-							e);
-				}
-			}
+                @Override
+                public void run() {
+                    try {
+                        getTreeViewer().setInput(OdysseusRCPPlugIn.getExecutor().getStoredProcedures(OdysseusRCPPlugIn.getActiveSession()));
+                    }
+                    catch (Exception e) {
+                        LOG.error("Exception during setting input for treeViewer in stored procedures view", e);
+                    }
+                }
 
-		});
-	}
+            });
+        }
+    }
 
 	protected void setTreeViewer(TreeViewer viewer) {
 		this.viewer = viewer;
