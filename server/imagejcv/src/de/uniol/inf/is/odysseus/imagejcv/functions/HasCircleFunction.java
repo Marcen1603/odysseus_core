@@ -11,14 +11,12 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.imagejcv.common.sdf.schema.SDFImageJCVDatatype;
 
 /**
+ *  ODYSSEUS Function that identifies circles in an image.
  * 
  * @author Kristian Bruns
- *
  */
 public class HasCircleFunction extends AbstractFunction<Boolean> {
-	/**
-	 * 
-	 */
+
 	private static final long serialVersionUID = -8225840218354217604L;
 	private static final SDFDatatype[][] ACC_TYPES = new SDFDatatype[][] {
 		{SDFImageJCVDatatype.IMAGEJCV},
@@ -28,6 +26,13 @@ public class HasCircleFunction extends AbstractFunction<Boolean> {
 		super("hasCircleCV", 1, HasCircleFunction.ACC_TYPES, SDFImageJCVDatatype.IMAGEJCV);
 	}
 	
+	/**
+	 * If a circle exists in the image from input value 0 return true, else return false.
+	 * 
+	 * @author Kristian Bruns
+	 * 
+	 * @return Boolean Image has circles or not?
+	 */
 	@Override
 	public Boolean getValue() {
 		final ImageJCV image = (ImageJCV) this.getInputValue(0);

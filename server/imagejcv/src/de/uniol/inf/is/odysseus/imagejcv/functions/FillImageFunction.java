@@ -8,6 +8,8 @@ import de.uniol.inf.is.odysseus.imagejcv.common.sdf.schema.SDFImageJCVDatatype;
 import de.uniol.inf.is.odysseus.mep.AbstractFunction;
 
 /**
+ * ODYSSEUS Function for filling all pixels of an image with the same color.
+ * 
  * @author Kristian Bruns
  */
 public class FillImageFunction extends AbstractFunction<ImageJCV> {
@@ -21,6 +23,13 @@ public class FillImageFunction extends AbstractFunction<ImageJCV> {
 		super("fillCV", 2, FillImageFunction.ACC_TYPES, SDFImageJCVDatatype.IMAGEJCV);
 	}
 	
+	/**
+	 * Fills all pixels of an image with the color from input Value 1.
+	 * 
+	 * @author Kristian Bruns
+	 * 
+	 * @return ImageJCV Image filled with color from input Value 1.
+	 */
 	@Override
 	public ImageJCV getValue() {
 		final ImageJCV image = (ImageJCV) this.getInputValue(0);

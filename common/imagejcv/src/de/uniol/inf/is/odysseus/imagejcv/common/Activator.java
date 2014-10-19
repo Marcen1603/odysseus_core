@@ -3,6 +3,12 @@ package de.uniol.inf.is.odysseus.imagejcv.common;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 
+/**
+ * Activator class for bundle imagejcv.common.
+ * 
+ * @author Kristian Bruns
+ *
+ */
 public class Activator implements BundleActivator {
 
 	private static BundleContext context;

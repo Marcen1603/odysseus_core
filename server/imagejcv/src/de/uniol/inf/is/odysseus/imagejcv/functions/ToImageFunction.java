@@ -8,6 +8,8 @@ import de.uniol.inf.is.odysseus.imagejcv.common.sdf.schema.SDFImageJCVDatatype;
 import de.uniol.inf.is.odysseus.mep.AbstractFunction;
 
 /**
+ * ODYSSEUS function for creating an image.
+ * 
  * @author Kristian Bruns
  */
 public class ToImageFunction extends AbstractFunction<ImageJCV> {
@@ -21,6 +23,13 @@ public class ToImageFunction extends AbstractFunction<ImageJCV> {
 		super("toImageCV", 2, ToImageFunction.ACC_TYPES, SDFImageJCVDatatype.IMAGEJCV);
 	}
 	
+	/**
+	 * Creates an image with width and height given by the input values 0 and 1.
+	 * 
+	 * @author Kristian Bruns
+	 * 
+	 * @return ImageJCV Created image.
+	 */
 	@Override
 	public ImageJCV getValue() {
 		final int width = this.getNumericalInputValue(0).intValue();

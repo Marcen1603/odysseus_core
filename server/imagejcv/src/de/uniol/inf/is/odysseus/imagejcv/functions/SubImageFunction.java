@@ -12,6 +12,8 @@ import de.uniol.inf.is.odysseus.imagejcv.common.sdf.schema.SDFImageJCVDatatype;
 import de.uniol.inf.is.odysseus.mep.AbstractFunction;
 
 /**
+ * ODYSSEUS function that creates an ROI of an image.
+ * 
  * @author Kristian Bruns
  */
 public class SubImageFunction extends AbstractFunction<ImageJCV> {
@@ -31,6 +33,13 @@ public class SubImageFunction extends AbstractFunction<ImageJCV> {
 		super("subCV", 5, SubImageFunction.ACC_TYPES, SDFImageJCVDatatype.IMAGEJCV);
 	}
 	
+	/**
+	 * Creates an region of interest in the given image from input value 0.
+	 * 
+	 * @author Kristian Bruns
+	 * 
+	 * @return ImageJCV Computed sub image.
+	 */
 	@Override
 	public ImageJCV getValue() {
 		final ImageJCV image = (ImageJCV) this.getInputValue(0);

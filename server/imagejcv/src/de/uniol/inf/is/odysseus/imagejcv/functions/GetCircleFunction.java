@@ -11,6 +11,8 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.imagejcv.common.sdf.schema.SDFImageJCVDatatype;
 
 /**
+ * ODYSSEUS Function for getting circles inside an image.
+ * 
  * @author Kristian Bruns
  */
 public class GetCircleFunction extends AbstractFunction<ImageJCV> {
@@ -26,6 +28,13 @@ public class GetCircleFunction extends AbstractFunction<ImageJCV> {
 		super("circleCV", 1, GetCircleFunction.ACC_TYPES, SDFImageJCVDatatype.IMAGEJCV);
 	}
 	
+	/**
+	 * Finds circles in an image, draw them onto the image and returns the image afterwards.
+	 * 
+	 * @author Kristian Bruns
+	 * 
+	 * @return ImageJCV Image with circles drawed on it.
+	 */
 	@Override
 	public ImageJCV getValue() {
 		final ImageJCV image = (ImageJCV) this.getInputValue(0);

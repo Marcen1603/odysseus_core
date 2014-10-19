@@ -1,9 +1,11 @@
 package de.uniol.inf.is.odysseus.imagejcv.functions;
 
-import java.nio.ByteBuffer;
 import java.util.Objects;
 
 import org.bytedeco.javacpp.opencv_core.IplImage;
+import org.bytedeco.javacpp.opencv_core.CvMat;
+
+import static org.bytedeco.javacpp.opencv_core.*;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.imagejcv.common.datatype.ImageJCV;
@@ -11,6 +13,8 @@ import de.uniol.inf.is.odysseus.imagejcv.common.sdf.schema.SDFImageJCVDatatype;
 import de.uniol.inf.is.odysseus.mep.AbstractFunction;
 
 /**
+ * ODYSSEUS Function that inverses an image.
+ * 
  * @author Kristian Bruns
  */
 public class InverseImageFunction extends AbstractFunction<ImageJCV> {
@@ -24,24 +28,34 @@ public class InverseImageFunction extends AbstractFunction<ImageJCV> {
 		super("invCV", 1, InverseImageFunction.ACC_TYPES, SDFImageJCVDatatype.IMAGEJCV);
 	}
 	
+	/**
+	 * Inverses each pixel of an image by subtracting it from 255.
+	 * 
+	 * @author Kristian Bruns
+	 * 
+	 * @return ImageJCV Inversed image.
+	 */
 	@Override
 	public ImageJCV getValue() {
 		final ImageJCV image = (ImageJCV) this.getInputValue(0);
 		Objects.requireNonNull(image);
 		
 		final IplImage iplImage = image.getImage();
-		ByteBuffer buffer = iplImage.getByteBuffer();
+		
+		CvMat matImage = new CvMat();
+		cvGetMat(iplImage, matImage);
+		
+		double value;
 		for (int i=0; i < iplImage.width(); i++) {
 			for (int j=0; j < iplImage.height(); j++) {
-				int index = j * iplImage.widthStep() + i * iplImage.nChannels();
-				
-				// TODO: There seems to be an error here, this line crashes on the last pixel.
-				// The cause might be reading a 4 byte int, when each pixel is only 3 bytes and thus reading one byte over the end
-				int value = buffer.getInt(index);
-				buffer.putInt(index, 255 - value);
+				value = matImage.get(i, j);
+				matImage.put(i, j, 255 - value);
 			}
 			
 		}
+		
+		cvGetImage(matImage, iplImage);
+		
 		image.setImage(iplImage);
 		return image;
 	}

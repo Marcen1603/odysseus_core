@@ -18,6 +18,8 @@ import de.uniol.inf.is.odysseus.imagejcv.common.sdf.schema.SDFImageJCVDatatype;
 import org.bytedeco.javacpp.opencv_core.IplImage;
 
 /**
+ * DataHandler for Datatype ImageJCV.
+ * 
  * @author Kristian Bruns
  */
 public class ImageJCVDataHandler extends AbstractDataHandler<ImageJCV> {
@@ -26,6 +28,13 @@ public class ImageJCVDataHandler extends AbstractDataHandler<ImageJCV> {
 		ImageJCVDataHandler.types.add(SDFImageJCVDatatype.IMAGEJCV.getURI());
 	}
 	
+	/**
+	 * Creates an Instance of ImageJCVDataHandler.
+	 * 
+	 * @author Kristian Bruns
+	 * 
+	 * @return IDataHandler<ImageJCV> Instance of ImageJCVDataHandler.
+	 */
 	@Override
 	public IDataHandler<ImageJCV> getInstance(final SDFSchema schema) {
 		return new ImageJCVDataHandler();
@@ -35,6 +44,13 @@ public class ImageJCVDataHandler extends AbstractDataHandler<ImageJCV> {
 		super();
 	}
 	
+	/**
+	 * Reads data from ObjectInputStream.
+	 * 
+	 * @author Kristian Bruns
+	 * 
+	 * @return ImageJCV Readed image.
+	 */
 	@Override
 	public ImageJCV readData(final ObjectInputStream inputStream) throws IOException {
 		IplImage image = null;
@@ -50,33 +66,75 @@ public class ImageJCVDataHandler extends AbstractDataHandler<ImageJCV> {
 		}
 	}
 	
+	/**
+	 * Reads data from String.
+	 * 
+	 * @author Kristian Bruns
+	 * 
+	 * @return ImageJCV Readed Image.
+	 */
 	@Override
 	public ImageJCV readData(final String string) {
 		return this.readData(ByteBuffer.wrap(string.getBytes()));
 	}
 	
+	/**
+	 * Reads data from InputStream. 
+	 * 
+	 * @author Kristian Bruns
+	 * 
+	 * @return ImageJCV Readed Image.
+	 */
 	@Override
 	public ImageJCV readData(InputStream inputStream) throws IOException {
 		IplImage image = IplImage.createFrom(ImageIO.read(inputStream));
 		return new ImageJCV(image);
 	}
 	
+	/**
+	 * Reads data from ByteBuffer.
+	 * 
+	 * @author Kristian Bruns
+	 * 
+	 * @return ImageJCV Readed Image.
+	 */
 	@Override
 	public ImageJCV readData(final ByteBuffer buffer) {
 		return new ImageJCV(buffer);
 	}
 	
+	/**
+	 * Writes data to image.
+	 * 
+	 * @author Kristian Bruns
+	 * 
+	 * @return void
+	 */
 	@Override
 	public void writeData(final ByteBuffer buffer, final Object data) {
 		ImageJCV image = (ImageJCV) data;
 		image.writeData(buffer);
 	}
 	
+	/**
+	 * Returns supported data types.
+	 * 
+	 * @author Kristian Bruns
+	 * 
+	 * @return List<String> Supported data types.
+	 */
 	@Override
 	final public List<String> getSupportedDataTypes() {
 		return ImageJCVDataHandler.types;
 	}
 	
+	/**
+	 * Returns memory size of an image.
+	 * 
+	 * @author Kristian Bruns
+	 * 
+	 * @return int Memory Size.
+	 */
 	@Override
 	public int memSize(final Object attribute) {
 		final ImageJCV image = (ImageJCV) attribute;
@@ -84,6 +142,13 @@ public class ImageJCVDataHandler extends AbstractDataHandler<ImageJCV> {
 		return (2* Integer.SIZE + image.getWidth() * image.getHeight() * Double.SIZE) / 8;
 	}
 	
+	/**
+	 * Creates type ImageJCV.
+	 * 
+	 * @author Kristian Bruns
+	 * 
+	 * @return Class<?> ImageJCV.
+	 */
 	@Override
 	public Class<?> createsType() {
 		return ImageJCV.class;

@@ -11,6 +11,8 @@ import de.uniol.inf.is.odysseus.mep.IFunctionProvider;
 import de.uniol.inf.is.odysseus.imagejcv.functions.*;
 
 /**
+ * Functions that registrates imagejcv functions in ODYSSEUS.
+ * 
  * @author Kristian Bruns
  */
 public class ImageJCVFunctionProvider implements IFunctionProvider {
@@ -19,6 +21,13 @@ public class ImageJCVFunctionProvider implements IFunctionProvider {
 	public ImageJCVFunctionProvider() {
 	}
 	
+	/**
+	 * Returns all Functions are available for bundle imagejcv.
+	 * 
+	 * @author Kristian Bruns
+	 * 
+	 * @return List<IFunction<?>> List of available functions.
+	 */
 	@Override
 	public List<IFunction<?>> getFunctions() {
 		final List<IFunction<?>> functions = new ArrayList<IFunction<?>>();

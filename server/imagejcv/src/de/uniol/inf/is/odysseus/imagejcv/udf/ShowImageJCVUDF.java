@@ -16,6 +16,8 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.IUserDefinedFunctio
 import de.uniol.inf.is.odysseus.imagejcv.common.datatype.ImageJCV;
 
 /**
+ * Function for showing an image from type ImageJCV.
+ * 
  * @author Kristian Bruns
  */
 @UserDefinedFunction(name = "ShowImageJCV")
@@ -97,6 +99,13 @@ public class ShowImageJCVUDF extends CanvasFrame implements IUserDefinedFunction
 		return in;
 	}
 	
+	/**
+	 * Returns output mode of this class.
+	 * 
+	 * @author Kristian Bruns
+	 * 
+	 * @return OutputMode Output mode.
+	 */
 	@Override public OutputMode getOutputMode() 
 	{
         return OutputMode.INPUT;

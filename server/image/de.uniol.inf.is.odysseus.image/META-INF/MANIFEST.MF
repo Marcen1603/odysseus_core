@@ -10,7 +10,7 @@ Import-Package: com.google.common.base,
  de.uniol.inf.is.odysseus.image.common.datatype,
  de.uniol.inf.is.odysseus.image.common.sdf.schema,
  de.uniol.inf.is.odysseus.mep,
- org.osgi.framework,
+ org.osgi.framework;version="1.6.0",
  org.slf4j
 Export-Package: org.opencv.calib3d,
  org.opencv.contrib,

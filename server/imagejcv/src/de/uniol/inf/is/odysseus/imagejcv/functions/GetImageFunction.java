@@ -10,6 +10,8 @@ import de.uniol.inf.is.odysseus.imagejcv.common.sdf.schema.SDFImageJCVDatatype;
 import de.uniol.inf.is.odysseus.mep.AbstractFunction;
 
 /**
+ * ODYSSEUS Function that returns a pixel value.
+ * 
  * @author Kristian Bruns
  */
 public class GetImageFunction extends AbstractFunction<Double> {
@@ -25,6 +27,13 @@ public class GetImageFunction extends AbstractFunction<Double> {
 		super("getCV", 3, GetImageFunction.ACC_TYPES, SDFDatatype.DOUBLE);
 	}
 	
+	/**
+	 * Returns pixel value located on coordinates x and y from input Value 1 and 2.
+	 * 
+	 * @author Kristian Bruns
+	 * 
+	 * @return Double Pixel value.
+	 */
 	@Override
 	public Double getValue() {
 		final ImageJCV image = (ImageJCV) this.getInputValue(0);

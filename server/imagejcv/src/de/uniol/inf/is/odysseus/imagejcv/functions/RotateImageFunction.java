@@ -11,10 +11,14 @@ import de.uniol.inf.is.odysseus.imagejcv.common.datatype.ImageJCV;
 import de.uniol.inf.is.odysseus.imagejcv.common.sdf.schema.SDFImageJCVDatatype;
 import de.uniol.inf.is.odysseus.mep.AbstractFunction;
 
+/**
+ * ODYSSEUS Function for rotating an image.
+ * 
+ * @author Kristian Bruns
+ *
+ */
 public class RotateImageFunction extends AbstractFunction<ImageJCV> {
-	/**
-	 * 
-	 */
+
 	private static final long serialVersionUID = -5180144587236353923L;
 	private static final SDFDatatype[][] ACC_TYPES = new SDFDatatype[][] {
 		{SDFImageJCVDatatype.IMAGEJCV}, SDFDatatype.NUMBERS
@@ -24,6 +28,13 @@ public class RotateImageFunction extends AbstractFunction<ImageJCV> {
 		super("rotateCV", 2, RotateImageFunction.ACC_TYPES, SDFImageJCVDatatype.IMAGEJCV);
 	}
 	
+	/**
+	 * Rotates an image by given angle from input value 1.
+	 * 
+	 * @author Kristian Bruns
+	 * 
+	 * @return ImageJCV Rotated image.
+	 */
 	@Override
 	public ImageJCV getValue() {
 		final ImageJCV image = (ImageJCV) this.getInputValue(0);

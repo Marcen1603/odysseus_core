@@ -12,7 +12,12 @@ import de.uniol.inf.is.odysseus.imagejcv.common.datatype.ImageJCV;
 import de.uniol.inf.is.odysseus.imagejcv.common.sdf.schema.SDFImageJCVDatatype;
 import de.uniol.inf.is.odysseus.mep.AbstractFunction;
 
-public class GetAmountOfBlackFunction extends AbstractFunction<ImageJCV> {
+/**
+ * ODYSSEUS Function that gets amount of Black pixels in an image.
+ * 
+ * @author Kristian
+ */
+public class GetAmountOfBlackFunction extends AbstractFunction<Double> {
 	/**
 	 * 
 	 */
@@ -26,8 +31,16 @@ public class GetAmountOfBlackFunction extends AbstractFunction<ImageJCV> {
 		super("getBlackCV", 2, GetAmountOfBlackFunction.ACC_TYPES, SDFImageJCVDatatype.IMAGEJCV);
 	}
 	
+	/**
+	 * Gets percentage of black pixels in the image. 
+	 * If a border exists in the image, only the percentage inside the border will be computed.
+	 * 
+	 * @author Kristian Bruns
+	 * 
+	 * @return Double Percentage of black pixels in the image.
+	 */
 	@Override
-	public ImageJCV getValue() {
+	public Double getValue() {
 		final ImageJCV image = (ImageJCV) this.getInputValue(0);
 		final boolean border = (boolean) this.getInputValue(1);
 		
@@ -65,8 +78,6 @@ public class GetAmountOfBlackFunction extends AbstractFunction<ImageJCV> {
 			}
 		}
 		
-		System.out.println((double) schwarz / (double) gesamt);
-		
-		return image;
+		return ((double) schwarz / (double) gesamt) * 100;
 	}
 }

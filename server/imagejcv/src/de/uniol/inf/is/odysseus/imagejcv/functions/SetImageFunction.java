@@ -10,12 +10,12 @@ import de.uniol.inf.is.odysseus.imagejcv.common.sdf.schema.SDFImageJCVDatatype;
 import de.uniol.inf.is.odysseus.mep.AbstractFunction;
 
 /**
+ * ODYSSEUS function for setting one pixel value in an image.
+ * 
  * @author Kristian Bruns
  */
 public class SetImageFunction extends AbstractFunction<ImageJCV> {
-	/**
-	 * 
-	 */
+
 	private static final long serialVersionUID = 5617318633630685561L;
 	private static final SDFDatatype[][] ACC_TYPES = new SDFDatatype[][] {
 		{SDFImageJCVDatatype.IMAGEJCV},
@@ -27,7 +27,14 @@ public class SetImageFunction extends AbstractFunction<ImageJCV> {
 	public SetImageFunction() {
 		super("setCV", 4, SetImageFunction.ACC_TYPES, SDFImageJCVDatatype.IMAGEJCV);
 	}
-	
+
+	/**
+	 * Sets pixel value of one pixel in the image given by input value 0.
+	 * 
+	 * @author Kristian Bruns
+	 * 
+	 * @return ImageJCV Image with setted pixel value.
+	 */
 	@Override
 	public ImageJCV getValue() {
 		final ImageJCV image = (ImageJCV) this.getInputValue(0);

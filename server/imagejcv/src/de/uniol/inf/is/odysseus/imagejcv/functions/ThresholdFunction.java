@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.imagejcv.functions;
+ package de.uniol.inf.is.odysseus.imagejcv.functions;
 
 import org.bytedeco.javacpp.opencv_core.IplImage;
 
@@ -12,6 +12,11 @@ import de.uniol.inf.is.odysseus.mep.AbstractFunction;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.imagejcv.common.sdf.schema.SDFImageJCVDatatype;
 
+/**
+ * ODYSSEUS Threshold function.
+ * 
+ * @author Kristian Bruns
+ */
 public class ThresholdFunction extends AbstractFunction<ImageJCV> {
 	/**
 	 * 
@@ -27,6 +32,15 @@ public class ThresholdFunction extends AbstractFunction<ImageJCV> {
 		super("thresholdCV", 3, ThresholdFunction.ACC_TYPES, SDFImageJCVDatatype.IMAGEJCV);
 	}
 	
+	/**
+	 * Executes simple threshold for image with threshold value given from input value 1.
+	 * If threshold value is smaller than 1 threshold value has to be computed.
+	 * In this case boolean value given from input value 2 gets relevance.
+	 * 
+	 * @author Kristian Bruns
+	 * 
+	 * @return ImageJCV Image after computing threshold function.
+	 */
 	@Override
 	public ImageJCV getValue() {
 		final ImageJCV image = (ImageJCV) this.getInputValue(0);
