@@ -32,7 +32,9 @@ import de.uniol.inf.is.odysseus.server.intervalapproach.JoinTISweepArea;
 
 public class BatchEMTISweepArea extends JoinTISweepArea<ProbabilisticTuple<? extends ITimeInterval>> implements Cloneable {
 
-    /** The logger. */
+  private static final long serialVersionUID = 6462670566933763191L;
+  
+	/** The logger. */
     private static final Logger LOG = LoggerFactory.getLogger(BatchEMTISweepArea.class);
     /** The number of Gaussian mixtures. */
     private final int mixtures;

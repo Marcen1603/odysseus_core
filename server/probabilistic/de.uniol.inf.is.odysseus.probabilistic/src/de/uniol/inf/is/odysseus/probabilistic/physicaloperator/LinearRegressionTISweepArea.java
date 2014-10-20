@@ -42,7 +42,10 @@ import de.uniol.inf.is.odysseus.server.intervalapproach.JoinTISweepArea;
  * 
  */
 public class LinearRegressionTISweepArea extends JoinTISweepArea<ProbabilisticTuple<? extends ITimeInterval>> implements Cloneable {
-    /** Logger. */
+  
+	private static final long serialVersionUID = 7930617361084149456L;
+	
+	/** Logger. */
     @SuppressWarnings("unused")
     private static final Logger LOG = LoggerFactory.getLogger(LinearRegressionTISweepArea.class);
     /** The dependent attribute positions. */

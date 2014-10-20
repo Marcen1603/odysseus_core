@@ -36,7 +36,10 @@ import de.uniol.inf.is.odysseus.server.intervalapproach.JoinTISweepArea;
  * @param <T>
  */
 public class ProbabilisticDiscreteJoinTISweepArea<K extends IProbabilisticTimeInterval, T extends Tuple<K>> extends JoinTISweepArea<T> implements Cloneable {
-    /** The positions of the probabilistic attributes in the left stream. */
+   
+	private static final long serialVersionUID = 7233937981370968188L;
+	
+	/** The positions of the probabilistic attributes in the left stream. */
     private final int[] leftProbabilisticAttributePos;
     /** The positions of the probabilistic attributes in the right stream. */
     private final int[] rightProbabilisticAttributePos;

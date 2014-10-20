@@ -14,6 +14,8 @@ import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 public abstract class AbstractTimeIntervalSweepArea<T extends IStreamObject<? extends ITimeInterval>> extends
 		AbstractSweepArea<T> implements ITimeIntervalSweepArea<T>{
 		
+	private static final long serialVersionUID = -2093058769784619137L;
+
 	private static final Logger LOG = LoggerFactory.getLogger(AbstractTimeIntervalSweepArea.class);
 	
 	protected T lastInserted = null;

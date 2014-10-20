@@ -23,6 +23,8 @@ import de.uniol.inf.is.odysseus.core.metadata.MetadataComparator;
 
 public class ExistenceSweepArea<T extends IStreamObject<? extends ITimeInterval>> extends JoinTISweepArea<T>{
 
+	private static final long serialVersionUID = -9093153099994338083L;
+
 	@Override
 	public void insert(T object){
 		synchronized(this.getElements()){

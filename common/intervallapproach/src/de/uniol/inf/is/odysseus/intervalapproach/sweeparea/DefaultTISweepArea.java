@@ -44,7 +44,9 @@ public class DefaultTISweepArea<T extends IStreamObject<? extends ITimeInterval>
 		extends AbstractTimeIntervalSweepArea<T> implements
 		Comparable<DefaultTISweepArea<T>>, ITimeIntervalSweepArea<T> {
 
-	Comparator<T> purgeComparator = new Comparator<T>() {
+	private static final long serialVersionUID = 3380347798012193584L;
+	
+	transient Comparator<T> purgeComparator = new Comparator<T>() {
 
 		@Override
 		public int compare(T o1, T o2) {

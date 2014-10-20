@@ -15,6 +15,7 @@
  */
 package de.uniol.inf.is.odysseus.sweeparea;
 
+import java.io.Serializable;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
@@ -31,7 +32,10 @@ import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
  * @author Jonas Jacobi
  */
 public abstract class AbstractSweepArea<T extends IStreamObject<?>> implements
-		ITemporalSweepArea<T> {
+		ITemporalSweepArea<T>, Serializable {
+	
+	private static final long serialVersionUID = 1054820871977159904L;
+
 	// elements get stored in a linked list instead of a priority queue
 	// because we need ordered traversal via iterator
 	// while insertion is in O(N), it is not that bad in reality, because

@@ -29,6 +29,8 @@ import de.uniol.inf.is.odysseus.sweeparea.IFastList;
 public class JoinTISweepArea<T extends IStreamObject<? extends ITimeInterval>>
 		extends DefaultTISweepArea<T> {
 
+	private static final long serialVersionUID = -2596467130143190355L;
+
 	public JoinTISweepArea() {
 		super(new FastArrayList<T>());
 	}

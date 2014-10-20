@@ -21,7 +21,9 @@ import de.uniol.inf.is.odysseus.sweeparea.IFastList;
  */
 public class ProbabilisticJoinTISweepArea<T extends ProbabilisticTuple<? extends IProbabilisticTimeInterval>> extends DefaultTISweepArea<T> {
 
-    public ProbabilisticJoinTISweepArea() {
+	private static final long serialVersionUID = -7508914945473227317L;
+
+	public ProbabilisticJoinTISweepArea() {
         super(new FastArrayList<T>());
     }
 
