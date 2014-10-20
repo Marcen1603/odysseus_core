@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.peer.smarthome.server;
+package de.uniol.inf.is.odysseus.peer.smarthome.server.advertisement;
 
 import net.jxta.document.Advertisement;
 import net.jxta.document.Document;

@@ -33,6 +33,8 @@ import de.uniol.inf.is.odysseus.peer.smarthome.SmartDeviceConfig;
 import de.uniol.inf.is.odysseus.peer.smarthome.SmartDeviceConfigurationRequestMessage;
 import de.uniol.inf.is.odysseus.peer.smarthome.SmartDeviceConfigurationResponseMessage;
 import de.uniol.inf.is.odysseus.peer.smarthome.SmartDeviceMessage;
+import de.uniol.inf.is.odysseus.peer.smarthome.server.advertisement.SmartDeviceAdvertisement;
+import de.uniol.inf.is.odysseus.peer.smarthome.server.advertisement.SmartDeviceAdvertisementInstantiator;
 import de.uniol.inf.is.odysseus.peer.smarthome.server.service.ServerExecutorService;
 import de.uniol.inf.is.odysseus.peer.smarthome.server.service.SessionManagementService;
 import de.uniol.inf.is.odysseus.core.collection.Context;
@@ -223,7 +225,7 @@ public class SmartHomeServerPlugIn implements BundleActivator {
 						
 						adv.setID(IDFactory.newPipeID(getP2PNetworkManager().getLocalPeerGroupID()));
 						adv.setPeerID(p2pNetworkManager.getLocalPeerID());
-						
+						adv.setContextName("Arbeitszimmer");
 						
 						getJxtaServicesProvider().publish(adv);
 						getJxtaServicesProvider().remotePublish(adv);
@@ -389,8 +391,14 @@ public class SmartHomeServerPlugIn implements BundleActivator {
 		public void advertisementDiscovered(Advertisement advertisement) {
 			//System.out.println("SmartHomeServerPlugIn advertisementDiscovered Type:"+advertisement.getAdvType());
 			
-			if(advertisement.getAdvType().equals(SmartDeviceAdvertisement.getAdvertisementType())){
+			if(advertisement!=null && advertisement instanceof SmartDeviceAdvertisement &&
+					advertisement.getAdvType().equals(SmartDeviceAdvertisement.getAdvertisementType())){
+				SmartDeviceAdvertisement adv = (SmartDeviceAdvertisement)advertisement;
 				LOG.debug("SmartDeviceAdvertisement received!!!");
+				
+				LOG.debug("ContextName:"+adv.getContextName());
+				
+				
 				
 				/*
 				System.out.println("getIndexFields: ");
@@ -402,7 +410,6 @@ public class SmartHomeServerPlugIn implements BundleActivator {
 				System.out.println("getDocument: "+advertisement.getDocument(MimeMediaType.TEXTUTF8));
 				System.out.println("getID: "+advertisement.getID());
 				*/
-				
 			}
 		}
 		

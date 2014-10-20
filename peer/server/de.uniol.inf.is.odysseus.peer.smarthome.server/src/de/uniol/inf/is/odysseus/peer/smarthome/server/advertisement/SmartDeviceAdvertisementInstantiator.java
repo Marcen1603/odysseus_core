@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.peer.smarthome.server;
+package de.uniol.inf.is.odysseus.peer.smarthome.server.advertisement;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

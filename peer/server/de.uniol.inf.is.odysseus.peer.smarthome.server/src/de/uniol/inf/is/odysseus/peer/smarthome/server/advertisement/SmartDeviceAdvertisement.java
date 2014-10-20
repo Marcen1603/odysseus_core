@@ -1,15 +1,18 @@
-package de.uniol.inf.is.odysseus.peer.smarthome.server;
+package de.uniol.inf.is.odysseus.peer.smarthome.server.advertisement;
 
 import java.io.Serializable;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Preconditions;
 
+import de.uniol.inf.is.odysseus.peer.smarthome.fielddevice.FieldDevice;
 import net.jxta.document.Advertisement;
 import net.jxta.document.Attributable;
 import net.jxta.document.Document;
@@ -47,9 +50,9 @@ public class SmartDeviceAdvertisement extends Advertisement implements
 	private PeerID peerID;
 	private String peerName = "";
 	private String contextName = "";
+	private List<FieldDevice> connectedFieldDevices = new ArrayList<FieldDevice>();
 	
 	public SmartDeviceAdvertisement(Element<?> root) {
-		LOG.debug("SmartDeviceAdvertisement(Element<?> root)");
 		final TextElement<?> doc = (TextElement<?>) Preconditions.checkNotNull(root, "Root element must not be null!");
 
 		final Enumeration<?> elements = doc.getChildren();
@@ -152,6 +155,10 @@ public class SmartDeviceAdvertisement extends Advertisement implements
 		this.contextName = contextName;
 	}
 	
+	public String getContextName(){
+		return this.contextName;
+	}
+	
 	public void setPeerID(PeerID peerID) {
 		this.peerID = peerID;
 	}
@@ -188,5 +195,17 @@ public class SmartDeviceAdvertisement extends Advertisement implements
 			LOG.error("Could not set id", ex);
 			return null;
 		}
+	}
+
+	public List<FieldDevice> getConnectedFieldDevices() {
+		return connectedFieldDevices;
+	}
+
+	public void setConnectedFieldDevices(List<FieldDevice> connectedFieldDevices) {
+		this.connectedFieldDevices = connectedFieldDevices;
+	}
+	
+	public void addConnectedFieldDevice(FieldDevice fieldDevice){
+		this.connectedFieldDevices.add(fieldDevice);
 	}
 }
