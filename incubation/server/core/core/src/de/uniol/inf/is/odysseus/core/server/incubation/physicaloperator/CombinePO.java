@@ -9,6 +9,13 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 
+/**
+ * Physical implementation of the combine operator
+ * 
+ * @author Dennis Nowak
+ *
+ * @param <M>
+ */
 public class CombinePO<M extends ITimeInterval> extends
 		AbstractPipe<Tuple<M>, Tuple<M>> {
 
@@ -21,6 +28,13 @@ public class CombinePO<M extends ITimeInterval> extends
 	private boolean[] changed;
 	private Deque<Tuple<M>>[] queues;
 
+	/**
+	 * Creates a new instance of CombinePO
+	 * @param waitForEachChanged if true, output is only transfered after each input port received at least one tuple
+	 * @param ports number of input ports
+	 * @param tupleSize number of input tuple size
+	 * @param bufferIncoming if true, input will be buffered
+	 */
 	public CombinePO(boolean waitForEachChanged, int ports, int tupleSize,
 			boolean bufferIncoming) {
 		this.waitForEachChanged = waitForEachChanged;
@@ -29,6 +43,10 @@ public class CombinePO<M extends ITimeInterval> extends
 		this.bufferIncoming = bufferIncoming;
 	}
 
+	/**
+	 * Copy constructor of Class CombinePO
+	 * @param cpo the CombinePO to copy
+	 */
 	public CombinePO(CombinePO<M> cpo) {
 		this.waitForEachChanged = cpo.waitForEachChanged;
 		this.ports = cpo.ports;
@@ -83,6 +101,11 @@ public class CombinePO<M extends ITimeInterval> extends
 		}
 	}
 
+	/**
+	 * Returns true if all parts of the given array equal true
+	 * @param array the array to check
+	 * @return true, if all elemets of the array equal true
+	 */
 	private boolean allTrue(boolean[] array) {
 		for (boolean bool : array) {
 			if (bool == false)
@@ -134,7 +157,7 @@ public class CombinePO<M extends ITimeInterval> extends
 	 */
 	@Override
 	public void processPunctuation(IPunctuation punctuation, int port) {
-		// TODO Auto-generated method stub
+		// TODO clean up queues
 		super.processPunctuation(punctuation, port);
 	}
 

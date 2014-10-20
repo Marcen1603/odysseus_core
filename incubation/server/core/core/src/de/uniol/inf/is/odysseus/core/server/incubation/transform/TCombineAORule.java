@@ -12,6 +12,8 @@ import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
 /**
+ * Transformation Rule for creating a physical instance of the combine operator
+ * 
  * @author Dennis Nowak
  *
  */
@@ -21,7 +23,7 @@ public class TCombineAORule extends AbstractTransformationRule<CombineAO> {
 	public String getName() {
 		return "CombineAO -> CombinePO";
 	}
-	
+
 	@SuppressWarnings("rawtypes")
 	@Override
 	public void execute(CombineAO combineAO, TransformationConfiguration config)

@@ -2,12 +2,12 @@ package windscadaanwendung.views;
 
 import java.util.GregorianCalendar;
 
+import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -27,21 +27,22 @@ import windscadaanwendung.hd.ae.HitAEData;
 
 public class HitAEView extends ViewPart implements AEObserver {
 
-	private static Composite hitAEContainer;
-	private static Composite hitAEHeader;
-	private static Composite parent;
-	private static DateTime swtDateSince;
-	private static DateTime swtTimeSince;
-	private static DateTime swtDateUntil;
-	private static DateTime swtTimeUntil;
-	private static Button btnZeigeGelesene;
-	private static ScrolledComposite sc;
+	private Composite hitAEContainer;
+	private Composite hitAEHeader;
+	private Composite parent;
+	private DateTime swtDateSince;
+	private DateTime swtTimeSince;
+	private DateTime swtDateUntil;
+	private DateTime swtTimeUntil;
+	private Button btnZeigeGelesene;
+	private ScrolledComposite sc;
 
 	@Override
 	public void createPartControl(final Composite parent) {
-		parent.setLayout(new FillLayout(SWT.VERTICAL));
-		HitAEView.parent = parent;
-
+		this.parent = parent;
+		parent.setLayout(GridLayoutFactory.fillDefaults().create());
+		parent.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true,
+				true, 1, 1));
 		Composite toolsContainer = new Composite(parent, SWT.NONE);
 		toolsContainer.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true,
 				false, 1, 1));
@@ -97,8 +98,8 @@ public class HitAEView extends ViewPart implements AEObserver {
 		});
 		sc = new ScrolledComposite(parent, SWT.V_SCROLL);
 		hitAEContainer = new Composite(sc, SWT.NONE);
-		hitAEContainer.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false,
-				false, 1, 1));
+		sc.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true,
+				true, 1, 1));
 		hitAEContainer.setLayout(new GridLayout(1, false));
 		hitAEHeader = new Composite(hitAEContainer, SWT.NONE);
 		hitAEHeader.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false,
@@ -126,14 +127,13 @@ public class HitAEView extends ViewPart implements AEObserver {
 		lblComment.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, false,
 				false, 1, 1));
 		lblComment.setText("Comment");
-		hitAEContainer.layout();
-		HitAEView.parent.layout();
 		HitAEData.addAEObserver(this);
 
 		sc.setContent(hitAEContainer);
 		sc.setExpandHorizontal(true);
 		sc.setExpandVertical(true);
 		sc.setMinSize(hitAEContainer.computeSize(SWT.DEFAULT, SWT.DEFAULT));
+		hitAEContainer.layout();
 	}
 
 	@Override
@@ -199,7 +199,7 @@ public class HitAEView extends ViewPart implements AEObserver {
 		}
 		sc.setMinSize(hitAEContainer.computeSize(SWT.DEFAULT, SWT.DEFAULT));
 		hitAEContainer.layout();
-		HitAEView.parent.layout();
+		parent.layout();
 		sc.setOrigin(scrollPosition);
 	}
 

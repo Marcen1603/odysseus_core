@@ -12,21 +12,30 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalO
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.BooleanParameter;
 
+/**
+ * Logical combine operator implementation
+ * @author Dennis Nowak
+ *
+ */
 @LogicalOperator(name = "COMBINE", minInputPorts = 2, doc = "Takes values of attributes from the input operators and combines them in one tuple", category = { LogicalOperatorCategory.PROCESSING }, maxInputPorts = Integer.MAX_VALUE)
 public class CombineAO extends AbstractLogicalOperator {
 
 	private boolean waitForAllChanged;
 	private boolean bufferNewInputElements;
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 4265752462231737808L;
 
+	/**
+	 * Creates new instance of CombineAO
+	 */
 	public CombineAO() {
 		super();
 	}
 
+	/**
+	 * Copy constructor for CombineAO
+	 * @param combineAO
+	 */
 	public CombineAO(CombineAO combineAO) {
 		super(combineAO);
 		this.waitForAllChanged = combineAO.getWaitForAllChanged();
