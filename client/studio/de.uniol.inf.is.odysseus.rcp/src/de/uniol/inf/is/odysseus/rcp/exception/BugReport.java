@@ -180,10 +180,15 @@ public class BugReport {
         final StringBuilder systemReport = BugReport.getSystemReport();
         final StringBuilder bundlesReport = BugReport.getBundlesReport();
         final StringBuilder servicesReport = BugReport.getServicesReport();
+        final StringBuilder reloadLog = BugReport.getReloadLogReport();
         report.append("\n\n##########################################################################################\n");
         report.append("## Console Information:\n");
         report.append("##########################################################################################\n");
         report.append(consoleReport);
+        report.append("\n\n##########################################################################################\n");
+        report.append("## Reload Log:\n");
+        report.append("##########################################################################################\n");
+        report.append(reloadLog);        
         report.append("\n\n##########################################################################################\n");
         report.append("## Odysseus Information:\n");
         report.append("##########################################################################################\n");
@@ -302,7 +307,7 @@ public class BugReport {
         }
         return false;
     }
-
+    
     private static StringBuilder getQueryReport() {
         final StringBuilder report = new StringBuilder();
         IExecutor executor = OdysseusRCPPlugIn.getExecutor();
@@ -520,9 +525,16 @@ public class BugReport {
 
         String localRootLocation = ResourcesPlugin.getWorkspace().getRoot().getLocation().toOSString();
         Path path = FileSystems.getDefault().getPath(localRootLocation, ".metadata", ".log");
+        loadFromFile(report, path, "Info Service Log");
+        return report;
+    }
+
+	public static void loadFromFile(final StringBuilder report,
+			Path path, String title) {
+		
         if (Files.exists(path)) {
             try (BufferedReader reader = Files.newBufferedReader(path, StandardCharsets.UTF_8)) {
-                report.append("\t* Info Service Log:\n");
+                report.append("\t* "+title+":\n");
                 String line = "";
                 while ((line = reader.readLine()) != null) {
                     report.append(line).append("\n");
@@ -533,7 +545,14 @@ public class BugReport {
                 LOG.error(e.getMessage(), e);
             }
         }
+	}
+
+    private static StringBuilder getReloadLogReport(){
+        final StringBuilder report = new StringBuilder();
+        Path path = FileSystems.getDefault().getPath(OdysseusRCPConfiguration.ODYSSEUS_HOME_DIR, "reloadlog.store");
+        loadFromFile(report, path, "Reload Log");
         return report;
     }
 
+    
 }
