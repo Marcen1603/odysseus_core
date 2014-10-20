@@ -653,7 +653,7 @@ abstract public class AbstractUserManagement<USER extends IUser, ROLE extends IR
 	public void initDefaultUsers(ITenant t) {
 		if (getUserDAO(t).findByName("System") == null) {
 			try {
-				logger.debug("Creating new user database for Tenant "+t.getName());
+				logger.trace("Creating new user database for Tenant "+t.getName());
 				createSuperUser(t);
 				createDSUserRole(t);
 			} catch (Exception e) {

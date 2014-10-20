@@ -39,7 +39,7 @@ public class MetadataRegistry {
 
 	public static void addMetadataType(IMetaAttribute type){
 		
-		logger.debug("New Metadatatype registered "+type.getClass());
+		logger.trace("New Metadatatype registered "+type.getClass());
 		
 		byName.put(type.getName(), type.getClass());
 		

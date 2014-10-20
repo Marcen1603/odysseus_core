@@ -33,14 +33,14 @@ public class ProtobufTypeRegistry {
 	
 	static void registerMessageType(String name,
 			GeneratedMessage message) {
-		logger.debug("Register Messagetype " + message.getClass()
+		logger.trace("Register Messagetype " + message.getClass()
 				+ " for Datatypes with name " + name);
 		typeRegistry.put(name.toLowerCase(), message);
 	}
 
 	static void deregisterMessageType(String name,
 			GeneratedMessage message) {
-		logger.debug("Deregister Messagetype " + message.getClass()
+		logger.trace("Deregister Messagetype " + message.getClass()
 				+ " for Datatypes with name " + name);
 		typeRegistry.remove(name.toLowerCase());
 	}

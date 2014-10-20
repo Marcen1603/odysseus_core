@@ -60,7 +60,7 @@ public class ImageFunctionProvider implements IFunctionProvider {
         functions.add(new SetImageFunction());
         functions.add(new GetImageFunction());
         functions.add(new CountFacesFunction());
-        ImageFunctionProvider.LOG.info(String.format("Register functions: %s", functions));
+        ImageFunctionProvider.LOG.trace(String.format("Register functions: %s", functions));
         return functions;
     }
 

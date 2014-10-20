@@ -41,7 +41,7 @@ public class TenantDAO extends AbstractStoreDAO<ITenant> {
 				}else{
 					if (logger.isDebugEnabled()){
 						List<ITenant> all = dao.findAll();
-						logger.debug("Tenants loaded "+all);
+						logger.trace("Tenants loaded "+all);
 					}
 				}
 			} catch (IOException e) {

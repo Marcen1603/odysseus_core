@@ -279,7 +279,7 @@ public abstract class AbstractExecutor implements IServerExecutor,
 	public void bindOptimizer(IOptimizer optimizer) {
 		this.optimizer = optimizer;
 		this.optimizer.addErrorEventListener(this);
-		LOG.debug("Optimizer bound " + optimizer);
+		LOG.trace("Optimizer bound " + optimizer);
 	}
 
 	/**
@@ -291,7 +291,7 @@ public abstract class AbstractExecutor implements IServerExecutor,
 	public void unbindOptimizer(IOptimizer optimizer) {
 		if (this.optimizer == optimizer) {
 			this.optimizer = null;
-			LOG.debug("Optimizer unbound " + optimizer);
+			LOG.trace("Optimizer unbound " + optimizer);
 		}
 
 	}
@@ -314,7 +314,7 @@ public abstract class AbstractExecutor implements IServerExecutor,
 			e.printStackTrace();
 		}
 
-		LOG.debug("Schedulermanager bound " + schedulerManager);
+		LOG.trace("Schedulermanager bound " + schedulerManager);
 	}
 
 	/**
@@ -326,7 +326,7 @@ public abstract class AbstractExecutor implements IServerExecutor,
 	public void unbindSchedulerManager(ISchedulerManager schedulerManager) {
 		if (this.schedulerManager == schedulerManager) {
 			this.schedulerManager = null;
-			LOG.debug("Schedulermanager unbound " + schedulerManager);
+			LOG.trace("Schedulermanager unbound " + schedulerManager);
 		}
 	}
 
@@ -355,7 +355,7 @@ public abstract class AbstractExecutor implements IServerExecutor,
 		Preconditions.checkArgument(!preTransformationHandlerMap.containsKey(serv.getName().toUpperCase()), "There is already a preTransformationHandler called '%s'", serv.getName().toUpperCase());
 		Preconditions.checkArgument(canCreateInstance(serv.getClass()), "Could not create instance of IPreTransformationHandler-class '%s'", serv.getClass());
 		
-		LOG.debug("Bound preTransformationHandler called '{}': {}", serv.getName().toUpperCase(), serv.getClass());
+		LOG.trace("Bound preTransformationHandler called '{}': {}", serv.getName().toUpperCase(), serv.getClass());
 		preTransformationHandlerMap.put(serv.getName().toUpperCase(), serv.getClass());
 	}
 
@@ -364,7 +364,7 @@ public abstract class AbstractExecutor implements IServerExecutor,
 		if( preTransformationHandlerMap.containsKey(serv.getName().toUpperCase())) {
 			preTransformationHandlerMap.remove(serv.getName().toUpperCase());
 			
-			LOG.debug("Unbound preTransformationHandler called '{}' : {}", serv.getName().toUpperCase(), serv.getClass());
+			LOG.trace("Unbound preTransformationHandler called '{}' : {}", serv.getName().toUpperCase(), serv.getClass());
 		}
 	}
 	
@@ -418,7 +418,7 @@ public abstract class AbstractExecutor implements IServerExecutor,
 	public final void bindDataFragmentation(IDataFragmentation dfStrategy) {
 
 		dataFragmentationStrategies.put(dfStrategy.getName(), dfStrategy);
-		LOG.debug("Data fragmentation strategy bound '{}'",
+		LOG.trace("Data fragmentation strategy bound '{}'",
 				dfStrategy.getName());
 
 	}
@@ -439,7 +439,7 @@ public abstract class AbstractExecutor implements IServerExecutor,
 		if (dataFragmentationStrategies.containsKey(strategyName)) {
 
 			dataFragmentationStrategies.remove(strategyName);
-			LOG.debug("Data fragmentation strategy unbound '{}'", strategyName);
+			LOG.trace("Data fragmentation strategy unbound '{}'", strategyName);
 
 		}
 
@@ -470,7 +470,7 @@ public abstract class AbstractExecutor implements IServerExecutor,
 		for (ICompilerListener l : compilerListener) {
 			compiler.addCompilerListener(l);
 		}
-		LOG.debug("Compiler bound " + compiler);
+		LOG.trace("Compiler bound " + compiler);
 	}
 
 	/**
@@ -485,7 +485,7 @@ public abstract class AbstractExecutor implements IServerExecutor,
 		}
 		if (this.compiler == compiler) {
 			this.compiler = null;
-			LOG.debug("Compiler unbound " + compiler);
+			LOG.trace("Compiler unbound " + compiler);
 		}
 	}
 
@@ -497,7 +497,7 @@ public abstract class AbstractExecutor implements IServerExecutor,
 	public void bindQueryBuildConfiguration(
 			IQueryBuildConfigurationTemplate config) {
 		queryBuildConfigs.put(config.getName(), config);
-		LOG.debug("Query Build Configuration " + config + " bound");
+		LOG.trace("Query Build Configuration " + config + " bound");
 	}
 
 	/**

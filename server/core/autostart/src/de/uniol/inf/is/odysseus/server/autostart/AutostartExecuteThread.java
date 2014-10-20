@@ -30,13 +30,13 @@ public class AutostartExecuteThread extends Thread {
 
 	@Override
 	public void run() {
-		LOG.debug("Begin autostart execution...");
+		LOG.trace("Begin autostart execution...");
 		int tries = 0;
 
 		while (true) {
 			try {
 				executor.addQuery(queryText, "OdysseusScript", user, "Standard", Context.empty());
-				LOG.debug("Autostart script executed");
+				LOG.trace("Autostart script executed");
 				break;
 			} catch (Throwable t) {
 				tries++;

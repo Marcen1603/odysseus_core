@@ -83,7 +83,7 @@ public class FileStore<IDType extends Serializable & Comparable<? extends IDType
 		} catch (Exception e) {
 		}
 		initialzed = true;
-		logger.debug("Loaded from " + path + " " + cache.entrySet().size()
+		logger.trace("Loaded from " + path + " " + cache.entrySet().size()
 				+ " values");
 
 	}

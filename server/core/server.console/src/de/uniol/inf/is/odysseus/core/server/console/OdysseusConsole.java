@@ -255,7 +255,7 @@ public class OdysseusConsole implements CommandProvider,
 	}
 
 	public void bindExecutor(IExecutor executor) {
-		logger.debug("executor gebunden");
+		logger.trace("executor gebunden");
 
 		this.executor = (IServerExecutor) executor;
 

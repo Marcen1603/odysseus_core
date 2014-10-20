@@ -34,7 +34,7 @@ public class TransportHandlerRegistry {
 	static private Map<String, ITransportHandler> handlers = new HashMap<String, ITransportHandler>();
 
 	static public void register(ITransportHandler handler) {
-		logger.debug("Register new Handler " + handler.getName());
+		logger.trace("Register new Handler " + handler.getName());
 		String name = handler.getName().toLowerCase();
 		register(handler, name);
 		if (handler instanceof IHasAlias){
@@ -53,7 +53,7 @@ public class TransportHandlerRegistry {
 	}
 	
 	static public void remove(ITransportHandler handler){
-		logger.debug("Remove handler "+handler.getName());
+		logger.trace("Remove handler "+handler.getName());
 		handlers.remove(handler.getName().toLowerCase());
 		if (handler instanceof IHasAlias){
 			handlers.remove(((IHasAlias)handler).getAliasName().toLowerCase());

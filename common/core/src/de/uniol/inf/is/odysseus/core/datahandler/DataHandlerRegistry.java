@@ -36,7 +36,7 @@ public class DataHandlerRegistry {
 	static Logger logger = LoggerFactory.getLogger(DataHandlerRegistry.class);
 
 	public DataHandlerRegistry() {
-		logger.debug("Created new DataHandler registry");
+		logger.trace("Created new DataHandler registry");
 	}
 
 	/**
@@ -46,7 +46,7 @@ public class DataHandlerRegistry {
 
 	public static void registerDataHandler(IDataHandler<?> handler) {
 		String errMsg = "";
-		logger.debug("Register DataHandler " + handler + " for Datatypes "
+		logger.trace("Register DataHandler " + handler + " for Datatypes "
 				+ handler.getSupportedDataTypes());
 		for (String type : handler.getSupportedDataTypes()) {
 			if (dataHandlers.containsKey(type.toLowerCase())) {

@@ -37,7 +37,7 @@ public class ProtocolHandlerRegistry implements IProtocolHandlerRegistry {
 
 	static public void register(IProtocolHandler<?> handler) {
 		try {
-			logger.debug("Register new Handler " + handler.getName());
+			logger.trace("Register new Handler " + handler.getName());
 			if (!handlers.containsKey(handler.getName().toLowerCase())) {
 				handlers.put(handler.getName().toLowerCase(), handler);
 			} else {
@@ -50,7 +50,7 @@ public class ProtocolHandlerRegistry implements IProtocolHandlerRegistry {
 	}
 
 	static public void remove(IProtocolHandler<?> handler) {
-		logger.debug("Remove handler " + handler.getName());
+		logger.trace("Remove handler " + handler.getName());
 		handlers.remove(handler.getName().toLowerCase());
 	}
 

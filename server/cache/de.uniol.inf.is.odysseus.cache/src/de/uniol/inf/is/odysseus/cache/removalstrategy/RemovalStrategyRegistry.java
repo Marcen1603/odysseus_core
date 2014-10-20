@@ -15,7 +15,7 @@ public class RemovalStrategyRegistry {
 	static private Map<String, IRemovalStrategy> strategies = new HashMap<String, IRemovalStrategy>();
 
 	static public void register(IRemovalStrategy strategy) {
-		logger.debug("Register new RemovalStrategy " + strategy.getName());
+		logger.trace("Register new RemovalStrategy " + strategy.getName());
 		if (!strategies.containsKey(strategy.getName().toLowerCase())) {
 			strategies.put(strategy.getName().toLowerCase(), strategy);
 		} else {
@@ -25,7 +25,7 @@ public class RemovalStrategyRegistry {
 	}
 
 	static public void remove(IRemovalStrategy strategy) {
-		logger.debug("Remove strategy " + strategy.getName());
+		logger.trace("Remove strategy " + strategy.getName());
 		strategies.remove(strategy.getName().toLowerCase());
 	}
 
