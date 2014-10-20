@@ -55,7 +55,9 @@ public class OPCDAFunctionProvider implements IFunctionProvider {
             functions.add(new ValueFunction());
             functions.add(new TimestampFunction());
 
-            functions.add(new ToOPCValueFunction());
+            // Needs some work, currently only creates OpcValue<Double>
+            // removed
+            //functions.add(new ToOPCValueFunction());
         }
         catch (final Exception e) {
             OPCDAFunctionProvider.LOG.error(e.getMessage(), e);

@@ -22,12 +22,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.datahandler.AbstractDataHandler;
-import de.uniol.inf.is.odysseus.core.datahandler.DoubleHandler;
+import de.uniol.inf.is.odysseus.core.datahandler.DataHandlerRegistry;
 import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
 import de.uniol.inf.is.odysseus.core.datahandler.IntegerHandler;
 import de.uniol.inf.is.odysseus.core.datahandler.LongHandler;
 import de.uniol.inf.is.odysseus.core.datahandler.ShortDataHandler;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.wrapper.opcda.datatype.OPCValue;
 import de.uniol.inf.is.odysseus.wrapper.opcda.sdf.schema.SDFOPCDADatatype;
@@ -37,16 +36,16 @@ import de.uniol.inf.is.odysseus.wrapper.opcda.sdf.schema.SDFOPCDADatatype;
  * @author Marco Grawunder
  *
  */
-// TODO: Change to more than double
-public class OPCDADataHandler extends AbstractDataHandler<OPCValue<Double>> {
+public class OPCDADataHandler<T> extends AbstractDataHandler<OPCValue<T>> {
     static protected List<String> types = new ArrayList<>();
     static {
         OPCDADataHandler.types.add(SDFOPCDADatatype.OPCVALUE.getURI());
     }
-    private final IDataHandler<Double> doubleHandler = new DoubleHandler();
     private final IDataHandler<Long> longHandler = new LongHandler();
     private final IDataHandler<Short> shortHandler = new ShortDataHandler();
     private final IDataHandler<Integer> intHandler = new IntegerHandler();
+	private SDFSchema subType;
+	private IDataHandler<?> valueHandler;
 
     /**
      * 
@@ -58,13 +57,23 @@ public class OPCDADataHandler extends AbstractDataHandler<OPCValue<Double>> {
 
     }
 
+	public OPCDADataHandler(SDFSchema subType){
+		this.subType = subType;
+		this.valueHandler = DataHandlerRegistry.getDataHandler(this.subType.getAttribute(0).getAttributeName(), this.subType);
+
+		//Is needed for handling of KeyValueObject
+		if(this.valueHandler == null && subType.getAttribute(0).getDatatype().getSubType() != null) {
+			this.valueHandler = DataHandlerRegistry.getDataHandler(this.subType.getAttribute(0).getDatatype().getSubType().toString(), this.subType);
+		}
+	}
+    
     /**
      *
      * {@inheritDoc}
      */
     @Override
-    public IDataHandler<OPCValue<Double>> getInstance(final SDFSchema schema) {
-        return new OPCDADataHandler();
+    public IDataHandler<OPCValue<T>> getInstance(final SDFSchema schema) {
+        return new OPCDADataHandler<T>(schema);
     }
 
     /**
@@ -72,13 +81,15 @@ public class OPCDADataHandler extends AbstractDataHandler<OPCValue<Double>> {
      * {@inheritDoc}
      */
     @Override
-    public OPCValue<Double> readData(final ObjectInputStream inputStream) throws IOException {
+    public OPCValue<T> readData(final ObjectInputStream inputStream) throws IOException {
         long timestamp = this.longHandler.readData(inputStream).longValue();
-        double value = this.doubleHandler.readData(inputStream).doubleValue();
         short quality = this.shortHandler.readData(inputStream).shortValue();
         int error = this.intHandler.readData(inputStream).intValue();
-
-        return new OPCValue<Double>(timestamp, value, quality, error,SDFDatatype.DOUBLE);
+        
+        @SuppressWarnings("unchecked")
+		T value = (T) this.valueHandler.readData(inputStream);
+        
+        return new OPCValue<T>(timestamp, value, quality, error);
     }
 
     /**
@@ -86,13 +97,16 @@ public class OPCDADataHandler extends AbstractDataHandler<OPCValue<Double>> {
      * {@inheritDoc}
      */
     @Override
-    public OPCValue<Double> readData(final String string) {
+    public OPCValue<T> readData(final String string) {
         if (string != null && string.length() > 0) {
             long timestamp = this.longHandler.readData(string).longValue();
-            double value = this.doubleHandler.readData(string).doubleValue();
             short quality = this.shortHandler.readData(string).shortValue();
             int error = this.intHandler.readData(string).intValue();
-            return new OPCValue<Double>(timestamp, value, quality, error,SDFDatatype.DOUBLE);
+
+            @SuppressWarnings("unchecked")
+			T value = (T) this.valueHandler.readData(string);
+
+            return new OPCValue<T>(timestamp, value, quality, error);
         }
         return null;
 
@@ -103,36 +117,46 @@ public class OPCDADataHandler extends AbstractDataHandler<OPCValue<Double>> {
      * {@inheritDoc}
      */
     @Override
-    public OPCValue<Double> readData(final ByteBuffer buffer) {
+    public OPCValue<T> readData(final ByteBuffer buffer) {
         long timestamp = this.longHandler.readData(buffer).longValue();
-        double value = this.doubleHandler.readData(buffer).doubleValue();
         short quality = this.shortHandler.readData(buffer).shortValue();
         int error = this.intHandler.readData(buffer).intValue();
-        return new OPCValue<Double>(timestamp, value, quality, error,SDFDatatype.DOUBLE);
+
+        @SuppressWarnings("unchecked")
+		T value = (T) this.valueHandler.readData(buffer);
+
+        
+        return new OPCValue<T>(timestamp, value, quality, error);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public OPCValue<Double> readData(List<String> input) {
+    public OPCValue<T> readData(List<String> input) {
         long timestamp = this.longHandler.readData(input.get(0)).longValue();
-        double value = this.doubleHandler.readData(input.get(1)).doubleValue();
-        short quality = this.shortHandler.readData(input.get(2)).shortValue();
-        int error = this.intHandler.readData(input.get(3)).intValue();
-        return new OPCValue<Double>(timestamp, value, quality, error,SDFDatatype.DOUBLE);
+        short quality = this.shortHandler.readData(input.get(1)).shortValue();
+        int error = this.intHandler.readData(input.get(2)).intValue();
+
+        @SuppressWarnings("unchecked")
+		T value = (T) this.valueHandler.readData(input.get(3));
+
+        return new OPCValue<T>(timestamp, value, quality, error);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public OPCValue<Double> readData(String[] input) {
+    public OPCValue<T> readData(String[] input) {
         long timestamp = this.longHandler.readData(input[0]).longValue();
-        double value = this.doubleHandler.readData(input[1]).doubleValue();
-        short quality = this.shortHandler.readData(input[2]).shortValue();
-        int error = this.intHandler.readData(input[3]).intValue();
-        return new OPCValue<Double>(timestamp, value, quality, error,SDFDatatype.DOUBLE);
+        short quality = this.shortHandler.readData(input[1]).shortValue();
+        int error = this.intHandler.readData(input[2]).intValue();
+  
+        @SuppressWarnings("unchecked")
+		T value = (T) this.valueHandler.readData(input[3]);
+
+        return new OPCValue<T>(timestamp, value, quality, error);
     }
 
     /**
@@ -142,11 +166,11 @@ public class OPCDADataHandler extends AbstractDataHandler<OPCValue<Double>> {
     @Override
     public void writeData(final ByteBuffer buffer, final Object data) {
         @SuppressWarnings("unchecked")
-		final OPCValue<Double> value = (OPCValue<Double>) data;
-        this.longHandler.writeData(buffer, new Long(value.getTimestamp()));
-        this.doubleHandler.writeData(buffer, new Double(value.getValue()));
+		final OPCValue<T> value = (OPCValue<T>) data;
+        this.longHandler.writeData(buffer, new Long(value.getTimestamp()));        
         this.shortHandler.writeData(buffer, new Short(value.getQuality()));
         this.intHandler.writeData(buffer, new Integer(value.getError()));
+        this.valueHandler.writeData(buffer, value.getValue());
     }
 
     /**

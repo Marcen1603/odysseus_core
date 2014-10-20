@@ -18,7 +18,6 @@ package de.uniol.inf.is.odysseus.wrapper.opcda.physicaloperator.access;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.nio.ByteBuffer;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -54,7 +53,6 @@ import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.AbstractTransportHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandler;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.wrapper.opcda.datatype.OPCValue;
 
 /**
@@ -235,48 +233,36 @@ public class OPCDATransportHandler<T> extends AbstractTransportHandler {
 							final Object type = typeMapping.get(state
 									.getValue().getType());
 							JIVariant v = state.getValue();
-							SDFDatatype sdfType;
 							if (type == Integer.class) {
 								value = new Integer(v.getObjectAsInt());
-								sdfType = SDFDatatype.INTEGER;
 							} else if (type == JIUnsignedInteger.class
 									|| type == JIUnsignedShort.class
 									|| type == JIUnsignedByte.class) {
 								value = new Integer(v.getObjectAsUnsigned()
 										.getValue().intValue());
-								sdfType = SDFDatatype.INTEGER;
 							} else if (type == Float.class) {
 								value = new Float(v.getObjectAsFloat());
-								sdfType = SDFDatatype.FLOAT;
 							} else if (type == Double.class) {
 								value = new Double(v.getObjectAsDouble());
-								sdfType = SDFDatatype.DOUBLE;
 							} else if (type == Date.class) {
 								value = v.getObjectAsDate();
-								sdfType = SDFDatatype.DATE;
 							} else if (type == Boolean.class) {
 								value = new Boolean(v.getObjectAsBoolean());
-								sdfType = SDFDatatype.BOOLEAN;
 							} else if (type == Short.class) {
 								value = new Short(v.getObjectAsShort());
-								sdfType = SDFDatatype.SHORT;
 							} else if (type == Character.class) {
 								value = new Character(v.getObjectAsChar());
-								sdfType = SDFDatatype.CHAR;
 							} else if (type == JIString.class) {
 								value = new String(v.getObjectAsString2());
-								sdfType = SDFDatatype.STRING;
 							} else if (type == Long.class) {
 								value = new Long(v.getObjectAsLong());
-								sdfType = SDFDatatype.LONG;
 							} else {
 								value = state.getValue().getObject();
-								sdfType = SDFDatatype.OBJECT;
 							}
 							OPCValue<Object> data = new OPCValue<>(state
 									.getTimestamp().getTimeInMillis(), value,
 									state.getQuality().shortValue(), state
-											.getErrorCode(), sdfType);
+											.getErrorCode());
 
 							OPCDATransportHandler.this.process(position, data);
 

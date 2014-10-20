@@ -15,7 +15,6 @@
  ******************************************************************************/
 package de.uniol.inf.is.odysseus.wrapper.opcda.datatype;
 
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 
 /**
  * @author Christian Kuka <christian@kuka.cc>
@@ -35,7 +34,7 @@ public class OPCValue<T> {
      * @param quality
      * @param error
      */
-    public OPCValue(long timestamp, T value, short quality, int error, SDFDatatype type) {
+    public OPCValue(long timestamp, T value, short quality, int error) {
         super();
         this.timestamp = timestamp;
         this.value = value;
