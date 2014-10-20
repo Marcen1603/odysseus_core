@@ -115,7 +115,6 @@ public class OdysseusConsole implements CommandProvider,
 	private Map<String, List<Command>> macros = new HashMap<String, List<Command>>();
 	private String currentMacro = null;
 
-
 	private static class DelegateCommandInterpreter implements
 			CommandInterpreter {
 		final private CommandInterpreter ci;
@@ -245,11 +244,11 @@ public class OdysseusConsole implements CommandProvider,
 		throw new IllegalArgumentException("can't convert '" + string
 				+ "' to boolean value");
 	}
-	
+
 	// -----------------------------------------------------------------------------------------------
 	// Executor
 	// -----------------------------------------------------------------------------------------------
-	
+
 	@Help(description = "show internal information about the executor")
 	public void _ExecutorInfo(CommandInterpreter ci) {
 		System.out.print(this.executor.getInfos());
@@ -275,7 +274,7 @@ public class OdysseusConsole implements CommandProvider,
 	// -----------------------------------------------------------------------------------------------
 	// Bounding events
 	// -----------------------------------------------------------------------------------------------
-	
+
 	@Override
 	public void rewriteBound() {
 		System.out.println("Rewrite bound");
@@ -291,7 +290,6 @@ public class OdysseusConsole implements CommandProvider,
 		System.out.println("PlanGeneration bound");
 	}
 
-	
 	// -----------------------------------------------------------------------------------------------
 	// User Management
 	// -----------------------------------------------------------------------------------------------
@@ -350,7 +348,6 @@ public class OdysseusConsole implements CommandProvider,
 		throw new Exception("No parser found");
 	}
 
-	
 	@Help(description = "show available parser")
 	public void _lsparser(CommandInterpreter ci) {
 		Set<String> parserList = null;
@@ -396,15 +393,14 @@ public class OdysseusConsole implements CommandProvider,
 			ci.println("No query argument.");
 		}
 	}
-	
+
 	@Override
 	public void parserBound(String parserID) {
 		System.out.println("Parser " + parserID + " bound");
 	}
 
-
 	// -----------------------------------------------------------------------------------------------
-	// Buffer placement 
+	// Buffer placement
 	// -----------------------------------------------------------------------------------------------
 
 	@Help(description = "show available buffer placement strategies")
@@ -412,9 +408,13 @@ public class OdysseusConsole implements CommandProvider,
 		Set<String> bufferList = this.executor
 				.getRegisteredBufferPlacementStrategiesIDs(currentUser);
 		if (bufferList != null) {
-			String current = this.executor.getConfiguration(currentUser)
-					.get(ParameterBufferPlacementStrategy.class).getValue()
-					.getName();
+			ParameterBufferPlacementStrategy p = this.executor
+					.getConfiguration(currentUser).get(
+							ParameterBufferPlacementStrategy.class);
+			String current = null;
+			if (p != null) {
+				current = p.getValue().getName();
+			}
 			ci.println("Available bufferplacement strategies:");
 			if (current == null) {
 				System.out.print("no strategy - SELECTED");
@@ -432,7 +432,7 @@ public class OdysseusConsole implements CommandProvider,
 
 		}
 	}
-	
+
 	@Help(parameter = "<buffer placement strategy id>", description = "set the buffer placement strategy")
 	public void _buffer(CommandInterpreter ci) {
 		String[] args = support.getArgs(ci);
@@ -467,7 +467,7 @@ public class OdysseusConsole implements CommandProvider,
 			ci.println("No query argument.");
 		}
 	}
-	
+
 	// -----------------------------------------------------------------------------------------------
 	// Scheduling
 	// -----------------------------------------------------------------------------------------------
@@ -524,7 +524,7 @@ public class OdysseusConsole implements CommandProvider,
 			ci.println("No query argument.");
 		}
 	}
-	
+
 	@Help(description = "start scheduler")
 	public void _schedule(CommandInterpreter ci) {
 		addCommand();
@@ -575,7 +575,7 @@ public class OdysseusConsole implements CommandProvider,
 			ci.println(help.description());
 		}
 	}
-	
+
 	// -----------------------------------------------------------------------------------------------
 	// Plan-"Visualization"
 	// -----------------------------------------------------------------------------------------------
@@ -709,7 +709,6 @@ public class OdysseusConsole implements CommandProvider,
 	// Execute queries
 	// -----------------------------------------------------------------------------------------------
 
-	
 	@Help(parameter = "<filename>", description = "Set a filename for result dump. Each result is dumped to this file. Call without parameter to unset.")
 	public void _setOutputFilename(CommandInterpreter ci) {
 		String[] args = support.getArgs(ci);
@@ -797,34 +796,33 @@ public class OdysseusConsole implements CommandProvider,
 
 	private String readQuery(CommandInterpreter ci, String filename) {
 		String queries = "";
-			BufferedReader br = null;
+		BufferedReader br = null;
 
-			File file = null;
-			try {
-				file = new File(this.path != null ? this.path + filename
-						: filename);
-				br = new BufferedReader(new FileReader(file));
-			} catch (IOException e) {
-				ci.println("File not found: " + file.getAbsolutePath());
-				return "";
-			}
+		File file = null;
+		try {
+			file = new File(this.path != null ? this.path + filename : filename);
+			br = new BufferedReader(new FileReader(file));
+		} catch (IOException e) {
+			ci.println("File not found: " + file.getAbsolutePath());
+			return "";
+		}
 
-			try {
-				String line = null;
-				while ((line = br.readLine()) != null) {
-					queries += line + "\n";
-				}
-			} catch (IOException e) {
-				ci.printStackTrace(e);
-				return "";
+		try {
+			String line = null;
+			while ((line = br.readLine()) != null) {
+				queries += line + "\n";
 			}
-			
-			try {
-				br.close();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		
+		} catch (IOException e) {
+			ci.printStackTrace(e);
+			return "";
+		}
+
+		try {
+			br.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
 		return queries;
 	}
 
@@ -953,8 +951,6 @@ public class OdysseusConsole implements CommandProvider,
 		}
 	}
 
-
-
 	// @Help(description = "removes all registered sources")
 	// public void _clearsources(CommandInterpreter ci) {
 	// WrapperPlanFactory.clearSources();
@@ -992,10 +988,6 @@ public class OdysseusConsole implements CommandProvider,
 			ci.println("No query argument.");
 		}
 	}
-
-
-
-
 
 	private void addCommand(String... args) {
 		synchronized (isRecordingMacro) {
@@ -1116,7 +1108,6 @@ public class OdysseusConsole implements CommandProvider,
 	// Update
 	// -----------------------------------------------------------------------------------------------
 
-
 	@Help(parameter = "", description = "tries to update odysseus")
 	public void _updateFeatures(CommandInterpreter ci) {
 		FeatureUpdateUtility.checkForAndInstallUpdates(this.currentUser);
@@ -1135,17 +1126,15 @@ public class OdysseusConsole implements CommandProvider,
 		String version = FeatureUpdateUtility.getVersionNumber(currentUser);
 		ci.println(version);
 	}
-	
-	// -----------------------------------------------------------------------------------------------
-	// -----------------------------------------------------------------------------------------------
 
+	// -----------------------------------------------------------------------------------------------
+	// -----------------------------------------------------------------------------------------------
 
 	@Help(parameter = "", description = "restarts odysseus")
 	public void _restart(CommandInterpreter ci) {
 		FeatureUpdateUtility.restart(this.currentUser);
 	}
 
-	
 	// -----------------------------------------------------------------------------------------------
 	// Install
 	// -----------------------------------------------------------------------------------------------
@@ -1179,10 +1168,9 @@ public class OdysseusConsole implements CommandProvider,
 			ci.println("You have to provide an id of a feature!");
 		}
 	}
-	
-	// -----------------------------------------------------------------------------------------------
-	// -----------------------------------------------------------------------------------------------
 
+	// -----------------------------------------------------------------------------------------------
+	// -----------------------------------------------------------------------------------------------
 
 	@Override
 	public String getHelp() {
@@ -1214,8 +1202,6 @@ public class OdysseusConsole implements CommandProvider,
 		}
 	}
 
-
-
 	public void unbindPreferences(PreferencesService preferences) {
 		preferencesLock.lock();
 		try {
@@ -1246,12 +1232,10 @@ public class OdysseusConsole implements CommandProvider,
 
 	}
 
-	
 	// -----------------------------------------------------------------------------------------------
 	// Makro Stuff
 	// -----------------------------------------------------------------------------------------------
 
-	
 	@Help(description = "show all available macros")
 	public void _lsmacros(CommandInterpreter ci) {
 		ci.println("Macros:");
@@ -1293,6 +1277,7 @@ public class OdysseusConsole implements CommandProvider,
 			ci.println();
 		}
 	}
+
 	@Help(parameter = "<macro name>", description = "remove macro")
 	public void _removemacro(CommandInterpreter ci) {
 		String name = ci.nextArgument();
@@ -1348,7 +1333,7 @@ public class OdysseusConsole implements CommandProvider,
 			this.preferencesLock.unlock();
 		}
 	}
-	
+
 	private void restoreMacros() {
 		Preferences macrosNode = this.preferences.getSystemPreferences().node(
 				MACROS_NODE);
@@ -1374,8 +1359,7 @@ public class OdysseusConsole implements CommandProvider,
 			this.preferences = null;
 		}
 	}
-	
-	
+
 	/**
 	 * Reads a file from the current working directory and executes each line as
 	 * if it comes from the console
@@ -1451,7 +1435,7 @@ public class OdysseusConsole implements CommandProvider,
 			ci.printStackTrace(e);
 		}
 	}
-	
+
 	@Help(parameter = "<macro name>", description = "begin macro recording")
 	public void _startrecord(CommandInterpreter ci) {
 		synchronized (isRecordingMacro) {
@@ -1524,97 +1508,99 @@ public class OdysseusConsole implements CommandProvider,
 			}
 		}
 	}
-	
-	// Removed stuff from priority 
-	
-	//	@Help(description = "<on|off> - Adds or removes punctuation support inside every available PriorityPO.")
-//	public void _addPunctuations(CommandInterpreter ci) {
-//	boolean usePunctuations = false;
-//	String[] args = support.getArgs(ci);
-//	addCommand(args);
-//	try {
-//		if (args != null && args.length >= 1) {
-//
-//			usePunctuations = toBoolean(args[0]);
-//
-//			if (usePunctuations) {
-//				trafoConfigParam.getValue().setOption("usePunctuations",
-//						true);
-//			} else {
-//				if (trafoConfigParam.getValue()
-//						.getOption("usePunctuations") != null) {
-//					trafoConfigParam.getValue().setOption(
-//							"usePunctuations", null);
-//				}
-//			}
-//
-//		}
-//	} catch (Exception e) {
-//		ci.println(e.getMessage());
-//	}
-//	ci.println("punctuations are "
-//			+ (usePunctuations ? "activated" : "deactivated"));
-//
-//}
-//
-//@Help(description = "<on|off> - Adds or removes load shedding support.")
-//public void _addLoadShedding(CommandInterpreter ci) {
-//	boolean useLoadShedding = false;
-//	String[] args = support.getArgs(ci);
-//	addCommand(args);
-//	try {
-//		if (args != null && args.length >= 1) {
-//
-//			useLoadShedding = toBoolean(args[0]);
-//
-//			if (useLoadShedding) {
-//				trafoConfigParam.getValue().setOption("useLoadShedding",
-//						true);
-//			} else {
-//				if (trafoConfigParam.getValue()
-//						.getOption("useLoadShedding") != null) {
-//					trafoConfigParam.getValue().setOption(
-//							"useLoadShedding", null);
-//				}
-//			}
-//
-//		}
-//	} catch (Exception e) {
-//		ci.println(e.getMessage());
-//	}
-//	ci.println("Load shedding is "
-//			+ (useLoadShedding ? "activated" : "deactivated"));
-//
-//}
-//
-//@Help(description = "<on|off> - Adds or removes optimized post priorsation functionality.")
-//public void _addExtendedPostPriorisation(CommandInterpreter ci) {
-//	boolean useExtPostPriorisation = false;
-//	String[] args = support.getArgs(ci);
-//	addCommand(args);
-//	try {
-//		if (args != null && args.length >= 1) {
-//
-//			useExtPostPriorisation = toBoolean(args[0]);
-//
-//			if (useExtPostPriorisation) {
-//				trafoConfigParam.getValue().setOption(
-//						"useExtendedPostPriorisation", true);
-//			} else {
-//				if (trafoConfigParam.getValue().getOption(
-//						"useExtendedPostPriorisation") != null) {
-//					trafoConfigParam.getValue().setOption(
-//							"useExtendedPostPriorisation", null);
-//				}
-//			}
-//
-//		}
-//	} catch (Exception e) {
-//		ci.println(e.getMessage());
-//	}
-//	ci.println("Extended Post Priorisation is "
-//			+ (useExtPostPriorisation ? "activated" : "deactivated"));
-//
-//}
-	
+
+	// Removed stuff from priority
+
+	// @Help(description =
+	// "<on|off> - Adds or removes punctuation support inside every available PriorityPO.")
+	// public void _addPunctuations(CommandInterpreter ci) {
+	// boolean usePunctuations = false;
+	// String[] args = support.getArgs(ci);
+	// addCommand(args);
+	// try {
+	// if (args != null && args.length >= 1) {
+	//
+	// usePunctuations = toBoolean(args[0]);
+	//
+	// if (usePunctuations) {
+	// trafoConfigParam.getValue().setOption("usePunctuations",
+	// true);
+	// } else {
+	// if (trafoConfigParam.getValue()
+	// .getOption("usePunctuations") != null) {
+	// trafoConfigParam.getValue().setOption(
+	// "usePunctuations", null);
+	// }
+	// }
+	//
+	// }
+	// } catch (Exception e) {
+	// ci.println(e.getMessage());
+	// }
+	// ci.println("punctuations are "
+	// + (usePunctuations ? "activated" : "deactivated"));
+	//
+	// }
+	//
+	// @Help(description = "<on|off> - Adds or removes load shedding support.")
+	// public void _addLoadShedding(CommandInterpreter ci) {
+	// boolean useLoadShedding = false;
+	// String[] args = support.getArgs(ci);
+	// addCommand(args);
+	// try {
+	// if (args != null && args.length >= 1) {
+	//
+	// useLoadShedding = toBoolean(args[0]);
+	//
+	// if (useLoadShedding) {
+	// trafoConfigParam.getValue().setOption("useLoadShedding",
+	// true);
+	// } else {
+	// if (trafoConfigParam.getValue()
+	// .getOption("useLoadShedding") != null) {
+	// trafoConfigParam.getValue().setOption(
+	// "useLoadShedding", null);
+	// }
+	// }
+	//
+	// }
+	// } catch (Exception e) {
+	// ci.println(e.getMessage());
+	// }
+	// ci.println("Load shedding is "
+	// + (useLoadShedding ? "activated" : "deactivated"));
+	//
+	// }
+	//
+	// @Help(description =
+	// "<on|off> - Adds or removes optimized post priorsation functionality.")
+	// public void _addExtendedPostPriorisation(CommandInterpreter ci) {
+	// boolean useExtPostPriorisation = false;
+	// String[] args = support.getArgs(ci);
+	// addCommand(args);
+	// try {
+	// if (args != null && args.length >= 1) {
+	//
+	// useExtPostPriorisation = toBoolean(args[0]);
+	//
+	// if (useExtPostPriorisation) {
+	// trafoConfigParam.getValue().setOption(
+	// "useExtendedPostPriorisation", true);
+	// } else {
+	// if (trafoConfigParam.getValue().getOption(
+	// "useExtendedPostPriorisation") != null) {
+	// trafoConfigParam.getValue().setOption(
+	// "useExtendedPostPriorisation", null);
+	// }
+	// }
+	//
+	// }
+	// } catch (Exception e) {
+	// ci.println(e.getMessage());
+	// }
+	// ci.println("Extended Post Priorisation is "
+	// + (useExtPostPriorisation ? "activated" : "deactivated"));
+	//
+	// }
+
 }
