@@ -20,11 +20,13 @@ import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
 import de.uniol.inf.is.odysseus.core.collection.Context;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
+import de.uniol.inf.is.odysseus.core.server.event.error.ParameterException;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.IParameter;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.IQueryParser;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.QueryParseException;
@@ -161,14 +163,14 @@ public class PQLParser implements IQueryParser {
 			Map<String, Object> parameterValues) {
 		Map<String, Object> tmpParameters = new HashMap<String, Object>(
 				parameterValues);
+		List<String> errors = new LinkedList<String>();
 		for (IParameter<?> parameter : parameterObjects) {
 			String parameterName = parameter.getName();
 			boolean hasParameter = tmpParameters.containsKey(parameterName);
 			if (!hasParameter) {
 				parameter.setInputValue(null);
 				if (parameter.isMandatory()) {
-					throw new IllegalArgumentException(
-							"missing mandatory parameter: " + parameterName+" for "+operatorName);
+					errors.add("missing mandatory parameter: " + parameterName+" for "+operatorName);
 				}
 			} else {
 				Object value = parameterValues.get(parameterName);
@@ -177,8 +179,15 @@ public class PQLParser implements IQueryParser {
 			}
 		}
 		if (!tmpParameters.isEmpty()) {
-			throw new IllegalArgumentException("unsupported parameters: "
+			errors.add("unsupported parameters: "
 					+ tmpParameters.keySet());
+		}
+		if (!errors.isEmpty()){
+			StringBuffer eText = new StringBuffer();
+			for (String e:errors){
+				eText.append(e).append("\n");
+			}
+			throw new ParameterException("Parameter error "+eText);
 		}
 	}
 
