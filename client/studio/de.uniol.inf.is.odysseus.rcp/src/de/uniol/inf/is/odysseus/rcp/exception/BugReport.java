@@ -84,7 +84,7 @@ import de.uniol.inf.is.odysseus.rcp.l10n.OdysseusNLS;
  */
 public class BugReport {
     private static final Logger LOG = LoggerFactory.getLogger(BugReport.class);
-    private static final String JIRA = "http://jira.odysseus.offis.uni-oldenburg.de/rest/api/latest/issue/";
+    private static final String JIRA_API = "rest/api/latest/issue/";
 //    private static final String AUTH = "b2R5c3NldXNfc3R1ZGlvOmpoZjRoZGRzNjcz";
     private static final String AUTHORIZATION_HEADER = "Authorization";
     private static final String COMPONENT_ID = "10023"; // Other
@@ -110,6 +110,10 @@ public class BugReport {
         String PW = OdysseusRCPConfiguration.get("bugreport.password", "jhf4hdds673");
         String AUTH = new String(Base64.encodeBase64((LOGIN + ':' + PW).getBytes()));
     	return AUTH;
+    }
+    
+    static private String getJira(){
+    	return OdysseusRCPConfiguration.get("bugreport.baseurl", "http://jira.odysseus.offis.uni-oldenburg.de/");
     }
     
     /**
@@ -213,7 +217,7 @@ public class BugReport {
     }
 
     private static boolean sendReport(final String description, final String log) throws IOException, URISyntaxException, JSONException {
-        final URI uri = new URI(BugReport.JIRA);
+        final URI uri = new URI(getJira()+BugReport.JIRA_API);
         HttpClient client = new HttpClient();
         client.getHostConfiguration().setHost(uri.getHost(), uri.getPort(), Protocol.getProtocol(uri.getScheme()));
 
