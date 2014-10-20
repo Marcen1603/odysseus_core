@@ -61,19 +61,19 @@ public class Autostart implements BundleActivator {
 				
 				Bundle bundle = context.getBundle();
 				for (String path : AUTOSTARTFILE) {
-					LOG.debug("Trying to start " + path);
+					LOG.trace("Trying to start " + path);
 					URL fileURL = bundle.getEntry(path);
 					InputStream inputStream = null;
 
 					if (fileURL != null) {
-						LOG.debug("Running autostartfile with URLConnection: {}", fileURL);
+						LOG.trace("Running autostartfile with URLConnection: {}", fileURL);
 
 						Optional<InputStream> optInputStream = getInputStream(fileURL);
 						inputStream = optInputStream.isPresent() ? optInputStream.get() : null;
 					}
 
 					if (inputStream == null) {
-						LOG.debug("Running autostartfile with FileInputStream: {} ", path);
+						LOG.trace("Running autostartfile with FileInputStream: {} ", path);
 						try {
 							inputStream = new FileInputStream(path);
 						} catch (Exception e) {
@@ -88,7 +88,7 @@ public class Autostart implements BundleActivator {
 							t.start();
 						}
 					} else {
-						LOG.debug("Autostartfile {} not found or failed to load", path);
+						LOG.trace("Autostartfile {} not found or failed to load", path);
 					}
 				}
 			}
@@ -100,7 +100,7 @@ public class Autostart implements BundleActivator {
 			URLConnection con = fileURL.openConnection();
 			return Optional.of(con.getInputStream());
 		} catch (IOException e) {
-			LOG.debug("Could not open URLConnection to {}", fileURL);
+			LOG.trace("Could not open URLConnection to {}", fileURL);
 		}
 		return Optional.absent();
 	}
