@@ -87,6 +87,7 @@ public class OdysseusConfiguration {
 			}
 		}
 		in.close();
+		getLogger().info("Read config file from "+odysseusHome + filename);
 		// Save always because there could be new properties ... do only if
 		// there are new defaults?
 		savePropertyFile(odysseusHome);
