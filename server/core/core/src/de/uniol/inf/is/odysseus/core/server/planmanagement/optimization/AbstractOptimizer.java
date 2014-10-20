@@ -102,7 +102,7 @@ public abstract class AbstractOptimizer implements IOptimizer {
 	public void bindBufferPlacementStrategy(
 			IBufferPlacementStrategy bufferPlacementStrategy) {
 		String bpN = bufferPlacementStrategy.getName();
-		getLogger().debug("bindBufferPlacementStrategy "+bpN);
+		getLogger().trace("bindBufferPlacementStrategy "+bpN);
 		synchronized (this.bufferPlacementStrategies) {
 			this.bufferPlacementStrategies.put(bpN, bufferPlacementStrategy);
 		}
@@ -123,7 +123,7 @@ public abstract class AbstractOptimizer implements IOptimizer {
 
 	public void bindPostOptimizationAction(
 			IPostOptimizationAction postOptimizationAction) {
-		getLogger().debug("bindPostOptimazationAction "+postOptimizationAction);
+		getLogger().trace("bindPostOptimazationAction "+postOptimizationAction);
 		synchronized (this.postOptimizationActions) {
 			this.postOptimizationActions.add(postOptimizationAction);
 		}
@@ -131,7 +131,7 @@ public abstract class AbstractOptimizer implements IOptimizer {
 	
 	public void unbindPostOptimizationAction(
 			IPostOptimizationAction postOptimizationAction) {
-		getLogger().debug("unbindPostOptimizationAction "+postOptimizationAction);
+		getLogger().trace("unbindPostOptimizationAction "+postOptimizationAction);
 		synchronized (this.postOptimizationActions) {
 			this.postOptimizationActions.remove(postOptimizationAction);
 		}
@@ -165,7 +165,7 @@ public abstract class AbstractOptimizer implements IOptimizer {
 	 */
 	public void bindQuerySharingOptimizer(IQuerySharingOptimizer querySharingOptimizer) {
 		this.querySharingOptimizer = querySharingOptimizer;
-		getLogger().debug("QuerysharingOptimizer bound " + querySharingOptimizer);
+		getLogger().trace("QuerysharingOptimizer bound " + querySharingOptimizer);
 	}
 	
 	/**
@@ -177,7 +177,7 @@ public abstract class AbstractOptimizer implements IOptimizer {
 	public void unbindQuerySharingOptimizer(IQuerySharingOptimizer querySharingOptimizer) {
 		if (this.querySharingOptimizer == querySharingOptimizer) {
 			this.querySharingOptimizer = null;
-			getLogger().debug("QuerysharingOptimizer unbound " + querySharingOptimizer);
+			getLogger().trace("QuerysharingOptimizer unbound " + querySharingOptimizer);
 		}
 	}
 	
@@ -254,7 +254,7 @@ public abstract class AbstractOptimizer implements IOptimizer {
 	
 	protected void doPostOptimizationActions(IPhysicalQuery query, OptimizationConfiguration parameter, IExecutionPlan currentExecPlan) {
 		for (IPostOptimizationAction action: postOptimizationActions){
-			getLogger().debug("Do PostOptimizationAction "+action);
+			getLogger().trace("Do PostOptimizationAction "+action);
 			action.run(query, parameter, currentExecPlan);
 		}
 	}

@@ -207,6 +207,7 @@ public class OdysseusConfiguration {
 		// TODO: find a way to hide this?!
 		props.setProperty("security.default.password", "ithaka");
 		props.setProperty("systemLoadInterval", "3000");
+		
 	}
 
 	private static void savePropertyFile(String odysseusHome) {

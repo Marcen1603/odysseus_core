@@ -15,6 +15,7 @@
  */
 package de.uniol.inf.is.odysseus.rcp.exception;
 
+
 import java.awt.Desktop;
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -35,6 +36,7 @@ import java.util.Map.Entry;
 import java.util.Scanner;
 import java.util.Set;
 
+import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpMethod;
 import org.apache.commons.httpclient.HttpStatus;
@@ -73,6 +75,7 @@ import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
+import de.uniol.inf.is.odysseus.rcp.config.OdysseusRCPConfiguration;
 import de.uniol.inf.is.odysseus.rcp.l10n.OdysseusNLS;
 
 /**
@@ -82,8 +85,7 @@ import de.uniol.inf.is.odysseus.rcp.l10n.OdysseusNLS;
 public class BugReport {
     private static final Logger LOG = LoggerFactory.getLogger(BugReport.class);
     private static final String JIRA = "http://jira.odysseus.offis.uni-oldenburg.de/rest/api/latest/issue/";
-    // Base64.encodeBase64((BugReport.LOGIN + ':' + BugReport.PW).getBytes())
-    private static final String AUTH = "b2R5c3NldXNfc3R1ZGlvOmpoZjRoZGRzNjcz";
+//    private static final String AUTH = "b2R5c3NldXNfc3R1ZGlvOmpoZjRoZGRzNjcz";
     private static final String AUTHORIZATION_HEADER = "Authorization";
     private static final String COMPONENT_ID = "10023"; // Other
     private static final String PROJECT_KEY = "ODY";
@@ -103,6 +105,13 @@ public class BugReport {
         this.exception = exception;
     }
 
+    static private String getAuth(){
+        String LOGIN = OdysseusRCPConfiguration.get("bugreport.user", "odysseus_studio");
+        String PW = OdysseusRCPConfiguration.get("bugreport.password", "jhf4hdds673");
+        String AUTH = new String(Base64.encodeBase64((LOGIN + ':' + PW).getBytes()));
+    	return AUTH;
+    }
+    
     /**
      * Class constructor.
      *
@@ -235,7 +244,7 @@ public class BugReport {
         request.put("fields", fields);
         HttpMethod method = new PostMethod(uri.toString());
         ((PostMethod) method).setRequestEntity(new StringRequestEntity(request.toString(), "application/json", null));
-        method.setRequestHeader(BugReport.AUTHORIZATION_HEADER, "Basic " + AUTH);
+        method.setRequestHeader(BugReport.AUTHORIZATION_HEADER, "Basic " + getAuth());
         client.executeMethod(method);
 
         if (method.getStatusLine().getStatusCode() == HttpStatus.SC_CREATED) {
@@ -245,7 +254,7 @@ public class BugReport {
             Part[] parts = new Part[] { new FilePart("file", new ByteArrayPartSource("system.log", log.getBytes())) };
             MultipartRequestEntity attachment = new MultipartRequestEntity(parts, method.getParams());
             ((PostMethod) method).setRequestEntity(attachment);
-            method.setRequestHeader(BugReport.AUTHORIZATION_HEADER, "Basic " + AUTH);
+            method.setRequestHeader(BugReport.AUTHORIZATION_HEADER, "Basic " + getAuth());
             method.setRequestHeader("X-Atlassian-Token", "nocheck");
             client.executeMethod(method);
             if (method.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {

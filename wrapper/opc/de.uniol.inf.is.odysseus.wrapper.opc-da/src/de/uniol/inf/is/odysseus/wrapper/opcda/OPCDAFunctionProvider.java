@@ -26,7 +26,6 @@ import de.uniol.inf.is.odysseus.mep.IFunctionProvider;
 import de.uniol.inf.is.odysseus.wrapper.opcda.function.ErrorFunction;
 import de.uniol.inf.is.odysseus.wrapper.opcda.function.QualityFunction;
 import de.uniol.inf.is.odysseus.wrapper.opcda.function.TimestampFunction;
-import de.uniol.inf.is.odysseus.wrapper.opcda.function.ToOPCValueFunction;
 import de.uniol.inf.is.odysseus.wrapper.opcda.function.ValueFunction;
 
 /**

@@ -21,25 +21,26 @@ abstract public class AbstractFileHandler extends AbstractTransportHandler {
 		super();
 	}
 
-	public AbstractFileHandler(IProtocolHandler<?> protocolHandler, OptionMap options) {
+	public AbstractFileHandler(IProtocolHandler<?> protocolHandler,
+			OptionMap options) {
 		super(protocolHandler, options);
 		options.checkRequiredException(FILENAME);
-		if (options.containsKey(FILENAME)){
+		if (options.containsKey(FILENAME)) {
 			filename = options.get(FILENAME);
 			filename = convertForOS(filename);
-		}else{
-			throw new IllegalArgumentException("No filename given!");			
+		} else {
+			throw new IllegalArgumentException("No filename given!");
 		}
-		
-		append = (options.containsKey(APPEND)) ? Boolean
-				.parseBoolean(options.get(APPEND)) : false;		
+
+		append = (options.containsKey(APPEND)) ? Boolean.parseBoolean(options
+				.get(APPEND)) : false;
 	}
-	
+
 	protected String convertForOS(String filename) {
 		char thisos = File.separatorChar;
-		if(thisos=='/'){
+		if (thisos == '/') {
 			filename = filename.replace('\\', thisos);
-		}else{
+		} else {
 			filename = filename.replace('/', thisos);
 		}
 		return filename;

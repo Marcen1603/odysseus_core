@@ -685,16 +685,16 @@ public abstract class AbstractExecutor implements IServerExecutor,
 	@Override
 	public void startExecution() throws SchedulerException {
 		if (isRunning()) {
-			LOG.debug("Scheduler already running.");
+			LOG.trace("Scheduler already running.");
 			return;
 		}
-		LOG.info("Start Scheduler.");
+		LOG.trace("Start Scheduler.");
 		try {
 			getSchedulerManager().startScheduling();
 		} catch (Exception e) {
 			throw new SchedulerException(e);
 		}
-		LOG.info("Scheduler started.");
+		LOG.trace("Scheduler started.");
 
 		fireGenericEvent(IUpdateEventListener.SCHEDULING);
 		
@@ -711,10 +711,10 @@ public abstract class AbstractExecutor implements IServerExecutor,
 	@Override
 	public void stopExecution() throws SchedulerException {
 		if (!isRunning()) {
-			LOG.debug("Scheduler not running.");
+			LOG.trace("Scheduler not running.");
 			return;
 		}
-		LOG.info("Stop Scheduler.");
+		LOG.trace("Stop Scheduler.");
 		try {
 			getSchedulerManager().stopScheduling();
 			// Stopp only if it has an instance
@@ -724,7 +724,7 @@ public abstract class AbstractExecutor implements IServerExecutor,
 		} catch (Exception e) {
 			throw new SchedulerException(e);
 		}
-		LOG.info("Scheduler stopped.");
+		LOG.trace("Scheduler stopped.");
 
 		firePlanExecutionEvent(new PlanExecutionEvent(this,
 				PlanExecutionEventType.EXECUTION_STOPPED));

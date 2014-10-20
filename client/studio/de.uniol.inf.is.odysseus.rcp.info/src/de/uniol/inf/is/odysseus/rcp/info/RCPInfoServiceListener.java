@@ -7,7 +7,7 @@ import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.infoservice.IInfoServiceListener;
 import de.uniol.inf.is.odysseus.core.infoservice.InfoType;
-import de.uniol.inf.is.odysseus.rcp.exception.ExceptionWindow;
+import de.uniol.inf.is.odysseus.rcp.exception.ExceptionErrorDialog;
 
 public class RCPInfoServiceListener implements IInfoServiceListener {
 
@@ -21,7 +21,9 @@ public class RCPInfoServiceListener implements IInfoServiceListener {
 			IStatus status = createStatus(infoType, message, throwable, source);
 
 			if (infoType == InfoType.ERROR) {
-				new ExceptionWindow(message, throwable);
+				ExceptionErrorDialog
+						.open(createStatus(infoType, message, throwable, source), throwable);
+				//new ExceptionWindow(message, throwable);
 			}
 
 			Activator.getInstance().getLog().log(status);

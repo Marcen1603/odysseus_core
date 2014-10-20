@@ -244,7 +244,7 @@ class EventDispatcher extends Thread {
 						}
 					}
 					if (isInterrupted()) {
-						logger.debug("INTERRUPTED " + getName());
+						logger.trace("INTERRUPTED " + getName());
 						continue;
 					}
 					eventToFire = eventQueue.removeFirst();
@@ -288,7 +288,7 @@ class EventDispatcher extends Thread {
 				}
 			}
 		} finally {
-			logger.debug("Event Dispatcher terminated: " + getName());
+			logger.trace("Event Dispatcher terminated: " + getName());
 		}
 	}
 
