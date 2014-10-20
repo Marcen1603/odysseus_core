@@ -110,7 +110,7 @@ public class BugReportEditor extends Window {
             public void widgetSelected(final SelectionEvent event) {
                 sendButton.setText(OdysseusNLS.Sending);
                 try {
-                    boolean result = BugReport.send(BugReportEditor.this.userTextArea.getText() + "\n" + BugReportEditor.this.generatedTextArea.getText());
+                    boolean result = BugReport.send(BugReportEditor.this.userTextArea.getText(), BugReportEditor.this.generatedTextArea.getText());
                     if (result) {
                         BugReportEditor.this.setReturnCode(Window.OK);
                     }
