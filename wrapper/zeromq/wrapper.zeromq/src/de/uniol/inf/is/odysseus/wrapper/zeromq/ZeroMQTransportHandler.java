@@ -5,6 +5,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,7 +15,6 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.AbstractT
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandler;
 import de.uniol.inf.is.odysseus.wrapper.zeromq.communication.AZMQConnector;
 import de.uniol.inf.is.odysseus.wrapper.zeromq.communication.ZMQContextProvider;
-import de.uniol.inf.is.odysseus.wrapper.zeromq.communication.ZMQPull;
 import de.uniol.inf.is.odysseus.wrapper.zeromq.communication.ZMQPullConsumer;
 import de.uniol.inf.is.odysseus.wrapper.zeromq.communication.ZMQPullPublisher;
 import de.uniol.inf.is.odysseus.wrapper.zeromq.communication.ZMQPushConsumer;
@@ -39,6 +39,7 @@ public class ZeroMQTransportHandler extends AbstractTransportHandler {
 	public static final String NAME = "ZeroMQ";
 	public static final String PARAMS = "params";
 	public static final String TIMEOUT = "timeout";
+	public static final String SUBSCRIPTIONFILTER = "subscriptionFilter";
 	public static final String MOSAIK = "mosaik";
 
 	private String host;
@@ -47,8 +48,8 @@ public class ZeroMQTransportHandler extends AbstractTransportHandler {
 	private int delayOfMsg;
 	private int communicationThreads;
 	private int timeout;
+	private String subscriptionFilter;
 	private String[] params;
-	private boolean isMosaik;
 	
 	private int delayedMsgCounter = 1;
 	private String delayedMsgs = "";
@@ -107,10 +108,10 @@ public class ZeroMQTransportHandler extends AbstractTransportHandler {
 		} else {
 			timeout = 10;
 		}
-		if(options.containsKey(MOSAIK)) {
-			isMosaik = Boolean.parseBoolean(options.get(MOSAIK));
+		if(options.containsKey(SUBSCRIPTIONFILTER)) {
+			subscriptionFilter = options.get(SUBSCRIPTIONFILTER);
 		} else {
-			isMosaik = false;
+			subscriptionFilter = "";
 		}
 		createContext();
 	}
@@ -206,11 +207,7 @@ public class ZeroMQTransportHandler extends AbstractTransportHandler {
 			input = new ByteArrayInputStream(new byte[0]);
 		}
 		if(consumer == null){
-			if(isMosaik) {
-				consumer = new ZMQPull(this);
-			} else {
-				consumer = new ZMQPushConsumer(this);			
-			}
+			consumer = new ZMQPushConsumer(this);	
 			consumer.start();
 		}
 	}
@@ -322,6 +319,14 @@ public class ZeroMQTransportHandler extends AbstractTransportHandler {
 
 	public void setTimeout(int frequency) {
 		this.timeout = frequency;
+	}
+
+	public String getSubscriptionFilter() {
+		return subscriptionFilter;
+	}
+
+	public void setSubscriptionFilter(String subscription) {
+		this.subscriptionFilter = subscription;
 	}
 
 	public InputStream getInput() {

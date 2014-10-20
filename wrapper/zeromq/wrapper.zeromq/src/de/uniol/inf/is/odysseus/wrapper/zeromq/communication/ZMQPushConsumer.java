@@ -20,8 +20,9 @@ public class ZMQPushConsumer extends AZMQConnector {
 		socket = ZMQTH.getContext().getContext().socket(ZMQ.SUB);
 		socket.setReceiveBufferSize(500); // !!! Set higher if stops working after a few transmissions
 		if (ZMQTH.getHost() != null && ZMQTH.getReadPort() > 0) {
-			socket.bind("tcp://" + ZMQTH.getHost() + ":" + ZMQTH.getReadPort());
-			LOG.debug("ZeroMQ consumer created listening on tcp://" + ZMQTH.getHost() + ":" + ZMQTH.getReadPort());
+			socket.connect("tcp://" + ZMQTH.getHost() + ":" + ZMQTH.getReadPort());
+			socket.subscribe(transh.getSubscriptionFilter().getBytes());
+			LOG.debug("ZeroMQ consumer created listening on tcp://" + ZMQTH.getHost() + ":" + ZMQTH.getReadPort() + " with subscription-filter: " + transh.getSubscriptionFilter());
 		}
 	}
 	
