@@ -647,6 +647,12 @@ public abstract class AbstractLogicalOperator implements Serializable, ILogicalO
 		return true;
 	}
 
+    protected void addError(boolean condition, String e) {
+        if (condition) {
+            this.addError(e);
+        }
+    }
+
 	protected void addError(String e) {
 		this.errors.add(e);
 	}
@@ -663,6 +669,10 @@ public abstract class AbstractLogicalOperator implements Serializable, ILogicalO
 	public List<String> getErrors() {
 		return Collections.unmodifiableList(this.errors);
 	}
+
+    public boolean hasErrors() {
+        return !this.errors.isEmpty();
+    }
 
 	// ---------------------------------------------------------------------------------------
 	// Serialization
