@@ -42,6 +42,6 @@ public class ToOPCValueFunction extends AbstractFunction<OPCValue<Double>> {
         double value = getNumericalInputValue(1).doubleValue();
         short quality = getNumericalInputValue(2).shortValue();
         int error = getNumericalInputValue(3).intValue();
-        return new OPCValue<Double>(timestamp, value, quality, error);
+        return new OPCValue<Double>(timestamp, value, quality, error, SDFDatatype.DOUBLE);
     }
 }

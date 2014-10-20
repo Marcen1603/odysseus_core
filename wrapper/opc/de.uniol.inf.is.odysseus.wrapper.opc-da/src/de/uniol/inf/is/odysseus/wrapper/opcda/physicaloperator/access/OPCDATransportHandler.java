@@ -19,9 +19,19 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.ByteBuffer;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.Executors;
 
 import org.jinterop.dcom.common.JIException;
+import org.jinterop.dcom.core.IJIComObject;
+import org.jinterop.dcom.core.JIArray;
+import org.jinterop.dcom.core.JICurrency;
+import org.jinterop.dcom.core.JIString;
+import org.jinterop.dcom.core.JIUnsignedByte;
+import org.jinterop.dcom.core.JIUnsignedInteger;
+import org.jinterop.dcom.core.JIUnsignedShort;
 import org.jinterop.dcom.core.JIVariant;
 import org.openscada.opc.lib.common.ConnectionInformation;
 import org.openscada.opc.lib.common.NotConnectedException;
@@ -44,11 +54,12 @@ import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.AbstractTransportHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandler;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.wrapper.opcda.datatype.OPCValue;
 
 /**
  * OPC transport handler
- *
+ * 
  * @author Christian Kuka <christian@kuka.cc>
  */
 public class OPCDATransportHandler<T> extends AbstractTransportHandler {
@@ -66,6 +77,34 @@ public class OPCDATransportHandler<T> extends AbstractTransportHandler {
 	public final static String CLS_ID = "clsid";
 	public final static String PERIOD = "period";
 	public static final String PATH = "path";
+
+	public static final int INTEGER = 1;
+	public static final int DOUBLE = 2;
+	public static final int BOOLEAN = 3;
+	public static final int STRING = 4;
+	public static final Map<Integer, Object> typeMapping = new HashMap<>();
+	static {
+		typeMapping.put(new Integer(JIVariant.VT_DATE), Date.class);
+		typeMapping.put(new Integer(JIVariant.VT_CY), JICurrency.class);
+		typeMapping.put(new Integer(JIVariant.VT_VARIANT), JIVariant.class);
+		typeMapping.put(new Integer(JIVariant.VT_I4), Integer.class);
+		typeMapping.put(new Integer(JIVariant.VT_INT), Integer.class);
+		typeMapping.put(new Integer(JIVariant.VT_UI4), JIUnsignedInteger.class);
+		typeMapping
+				.put(new Integer(JIVariant.VT_UINT), JIUnsignedInteger.class);
+		typeMapping.put(new Integer(JIVariant.VT_R4), Float.class);
+		typeMapping.put(new Integer(JIVariant.VT_BOOL), Boolean.class);
+		typeMapping.put(new Integer(JIVariant.VT_R8), Double.class);
+		typeMapping.put(new Integer(JIVariant.VT_I2), Short.class);
+		typeMapping.put(new Integer(JIVariant.VT_UI2), JIUnsignedShort.class);
+		typeMapping.put(new Integer(JIVariant.VT_I1), Character.class);
+		typeMapping.put(new Integer(JIVariant.VT_UI1), JIUnsignedByte.class);
+		typeMapping.put(new Integer(JIVariant.VT_BSTR), JIString.class);
+		typeMapping.put(new Integer(JIVariant.VT_ARRAY), JIArray.class);
+		typeMapping.put(new Integer(JIVariant.VT_UNKNOWN), IJIComObject.class);
+		typeMapping.put(new Integer(JIVariant.VT_DISPATCH), IJIComObject.class);
+		typeMapping.put(new Integer(JIVariant.VT_I8), Long.class);
+	}
 
 	private String host;
 	private String domain;
@@ -193,29 +232,53 @@ public class OPCDATransportHandler<T> extends AbstractTransportHandler {
 					public void changed(final Item item, final ItemState state) {
 						try {
 							final Object value;
-							if ((state.getValue().getType() == JIVariant.VT_UI1)
-									|| (state.getValue().getType() == JIVariant.VT_UI2)
-									|| (state.getValue().getType() == JIVariant.VT_UI4)
-									|| (state.getValue().getType() == JIVariant.VT_UINT)) {
-								value = new Integer(state.getValue()
-										.getObjectAsUnsigned().getValue()
-										.intValue());
-							} else if ((state.getValue().getType() == JIVariant.VT_I1)
-									|| (state.getValue().getType() == JIVariant.VT_I2)
-									|| (state.getValue().getType() == JIVariant.VT_I4)
-									|| (state.getValue().getType() == JIVariant.VT_I8)
-									|| (state.getValue().getType() == JIVariant.VT_INT)) {
-								value = new Integer(state.getValue()
-										.getObjectAsUnsigned().getValue()
-										.intValue());
+							final Object type = typeMapping.get(state
+									.getValue().getType());
+							JIVariant v = state.getValue();
+							SDFDatatype sdfType;
+							if (type == Integer.class) {
+								value = new Integer(v.getObjectAsInt());
+								sdfType = SDFDatatype.INTEGER;
+							} else if (type == JIUnsignedInteger.class
+									|| type == JIUnsignedShort.class
+									|| type == JIUnsignedByte.class) {
+								value = new Integer(v.getObjectAsUnsigned()
+										.getValue().intValue());
+								sdfType = SDFDatatype.INTEGER;
+							} else if (type == Float.class) {
+								value = new Float(v.getObjectAsFloat());
+								sdfType = SDFDatatype.FLOAT;
+							} else if (type == Double.class) {
+								value = new Double(v.getObjectAsDouble());
+								sdfType = SDFDatatype.DOUBLE;
+							} else if (type == Date.class) {
+								value = v.getObjectAsDate();
+								sdfType = SDFDatatype.DATE;
+							} else if (type == Boolean.class) {
+								value = new Boolean(v.getObjectAsBoolean());
+								sdfType = SDFDatatype.BOOLEAN;
+							} else if (type == Short.class) {
+								value = new Short(v.getObjectAsShort());
+								sdfType = SDFDatatype.SHORT;
+							} else if (type == Character.class) {
+								value = new Character(v.getObjectAsChar());
+								sdfType = SDFDatatype.CHAR;
+							} else if (type == JIString.class) {
+								value = new String(v.getObjectAsString2());
+								sdfType = SDFDatatype.STRING;
+							} else if (type == Long.class) {
+								value = new Long(v.getObjectAsLong());
+								sdfType = SDFDatatype.LONG;
 							} else {
 								value = state.getValue().getObject();
+								sdfType = SDFDatatype.OBJECT;
 							}
 							OPCValue<Object> data = new OPCValue<>(state
-									.getTimestamp().getTimeInMillis(),
-									value, state.getQuality().shortValue(), state.getErrorCode());
-							
-							OPCDATransportHandler.this.process(position,data);
+									.getTimestamp().getTimeInMillis(), value,
+									state.getQuality().shortValue(), state
+											.getErrorCode(), sdfType);
+
+							OPCDATransportHandler.this.process(position, data);
 
 						} catch (final JIException e) {
 							this.log.error(e.getMessage(), e);
@@ -243,10 +306,10 @@ public class OPCDATransportHandler<T> extends AbstractTransportHandler {
 				new Integer(pos), data));
 		synchronized (this.read) {
 			this.read.setAttribute(pos, data);
-			ByteBuffer buffer = ByteBuffer.allocate(this.dataHandler
-					.memSize(this.read));
-			this.dataHandler.writeData(buffer, this.read);
-			fireProcess(buffer);
+//			ByteBuffer buffer = ByteBuffer.allocate(this.dataHandler
+//					.memSize(this.read));
+//			this.dataHandler.writeData(buffer, this.read);
+			fireProcess(read.clone());
 		}
 	}
 
@@ -313,7 +376,7 @@ public class OPCDATransportHandler<T> extends AbstractTransportHandler {
 	}
 
 	/**
-	 *
+	 * 
 	 * @return the progId
 	 */
 	public String getProgId() {

@@ -27,14 +27,17 @@ import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
 import de.uniol.inf.is.odysseus.core.datahandler.IntegerHandler;
 import de.uniol.inf.is.odysseus.core.datahandler.LongHandler;
 import de.uniol.inf.is.odysseus.core.datahandler.ShortDataHandler;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.wrapper.opcda.datatype.OPCValue;
 import de.uniol.inf.is.odysseus.wrapper.opcda.sdf.schema.SDFOPCDADatatype;
 
 /**
  * @author Christian Kuka <christian@kuka.cc>
+ * @author Marco Grawunder
  *
  */
+// TODO: Change to more than double
 public class OPCDADataHandler extends AbstractDataHandler<OPCValue<Double>> {
     static protected List<String> types = new ArrayList<>();
     static {
@@ -75,7 +78,7 @@ public class OPCDADataHandler extends AbstractDataHandler<OPCValue<Double>> {
         short quality = this.shortHandler.readData(inputStream).shortValue();
         int error = this.intHandler.readData(inputStream).intValue();
 
-        return new OPCValue<Double>(timestamp, value, quality, error);
+        return new OPCValue<Double>(timestamp, value, quality, error,SDFDatatype.DOUBLE);
     }
 
     /**
@@ -89,7 +92,7 @@ public class OPCDADataHandler extends AbstractDataHandler<OPCValue<Double>> {
             double value = this.doubleHandler.readData(string).doubleValue();
             short quality = this.shortHandler.readData(string).shortValue();
             int error = this.intHandler.readData(string).intValue();
-            return new OPCValue<Double>(timestamp, value, quality, error);
+            return new OPCValue<Double>(timestamp, value, quality, error,SDFDatatype.DOUBLE);
         }
         return null;
 
@@ -105,7 +108,7 @@ public class OPCDADataHandler extends AbstractDataHandler<OPCValue<Double>> {
         double value = this.doubleHandler.readData(buffer).doubleValue();
         short quality = this.shortHandler.readData(buffer).shortValue();
         int error = this.intHandler.readData(buffer).intValue();
-        return new OPCValue<Double>(timestamp, value, quality, error);
+        return new OPCValue<Double>(timestamp, value, quality, error,SDFDatatype.DOUBLE);
     }
 
     /**
@@ -117,7 +120,7 @@ public class OPCDADataHandler extends AbstractDataHandler<OPCValue<Double>> {
         double value = this.doubleHandler.readData(input.get(1)).doubleValue();
         short quality = this.shortHandler.readData(input.get(2)).shortValue();
         int error = this.intHandler.readData(input.get(3)).intValue();
-        return new OPCValue<Double>(timestamp, value, quality, error);
+        return new OPCValue<Double>(timestamp, value, quality, error,SDFDatatype.DOUBLE);
     }
 
     /**
@@ -129,7 +132,7 @@ public class OPCDADataHandler extends AbstractDataHandler<OPCValue<Double>> {
         double value = this.doubleHandler.readData(input[1]).doubleValue();
         short quality = this.shortHandler.readData(input[2]).shortValue();
         int error = this.intHandler.readData(input[3]).intValue();
-        return new OPCValue<Double>(timestamp, value, quality, error);
+        return new OPCValue<Double>(timestamp, value, quality, error,SDFDatatype.DOUBLE);
     }
 
     /**
