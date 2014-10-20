@@ -56,7 +56,7 @@ public class AccessAO extends AbstractAccessAO {
 	}
 	
 	@Override
-	@Parameter(type = StringParameter.class, name = "protocol", optional = false, possibleValues="getProtocolValues", doc = "The name of the protocol handler to use, e.g. Csv or SizeByteBuffer.")
+	@Parameter(type = StringParameter.class, name = "protocol", optional = true, possibleValues="getProtocolValues", doc = "The name of the protocol handler to use, e.g. Csv or SizeByteBuffer.")
 	public void setProtocolHandler(String protocolHandler) {
 		super.setProtocolHandler(protocolHandler);
 	}

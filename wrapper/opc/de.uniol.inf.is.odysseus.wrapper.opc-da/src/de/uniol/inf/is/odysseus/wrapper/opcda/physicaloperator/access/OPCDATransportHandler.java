@@ -49,6 +49,8 @@ import org.slf4j.LoggerFactory;
 import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.datahandler.TupleDataHandler;
+import de.uniol.inf.is.odysseus.core.infoservice.InfoService;
+import de.uniol.inf.is.odysseus.core.infoservice.InfoServiceFactory;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.AbstractTransportHandler;
@@ -59,12 +61,15 @@ import de.uniol.inf.is.odysseus.wrapper.opcda.datatype.OPCValue;
  * OPC transport handler
  * 
  * @author Christian Kuka <christian@kuka.cc>
+ * @author Marco Grawunder
  */
 public class OPCDATransportHandler<T> extends AbstractTransportHandler {
 
 	/** Logger */
 	private final static Logger LOG = LoggerFactory
 			.getLogger(OPCDATransportHandler.class);
+	private final static InfoService INFO_SERVICE = InfoServiceFactory
+			.getInfoService(OPCDATransportHandler.class);
 
 	public static final String NAME = "OPC-DA";
 	public final static String HOST = "host";
@@ -235,8 +240,7 @@ public class OPCDATransportHandler<T> extends AbstractTransportHandler {
 							JIVariant v = state.getValue();
 							if (type == Integer.class) {
 								value = new Integer(v.getObjectAsInt());
-							} else if (type == JIUnsignedInteger.class
-									|| type == JIUnsignedShort.class
+							} else if (type == JIUnsignedShort.class
 									|| type == JIUnsignedByte.class) {
 								value = new Integer(v.getObjectAsUnsigned()
 										.getValue().intValue());
@@ -254,7 +258,7 @@ public class OPCDATransportHandler<T> extends AbstractTransportHandler {
 								value = new Character(v.getObjectAsChar());
 							} else if (type == JIString.class) {
 								value = new String(v.getObjectAsString2());
-							} else if (type == Long.class) {
+							} else if (type == Long.class || type == JIUnsignedInteger.class) {
 								value = new Long(v.getObjectAsLong());
 							} else {
 								value = state.getValue().getObject();
@@ -268,6 +272,7 @@ public class OPCDATransportHandler<T> extends AbstractTransportHandler {
 
 						} catch (final JIException e) {
 							this.log.error(e.getMessage(), e);
+							INFO_SERVICE.error(e.getMessage(), e);
 						}
 					}
 				});
@@ -288,14 +293,18 @@ public class OPCDATransportHandler<T> extends AbstractTransportHandler {
 	}
 
 	void process(final int pos, OPCValue<Object> data) {
-		OPCDATransportHandler.LOG.debug(String.format("%d: %s",
-				new Integer(pos), data));
+		if (LOG.isTraceEnabled()) {
+			OPCDATransportHandler.LOG.trace(String.format("%d: %s",
+					new Integer(pos), data));
+		}
 		synchronized (this.read) {
 			this.read.setAttribute(pos, data);
-//			ByteBuffer buffer = ByteBuffer.allocate(this.dataHandler
-//					.memSize(this.read));
-//			this.dataHandler.writeData(buffer, this.read);
-			fireProcess(read.clone());
+			// No need to wrap into an buffer anymore --> just send the tuple
+			// ByteBuffer buffer = ByteBuffer.allocate(this.dataHandler
+			// .memSize(this.read));
+			// this.dataHandler.writeData(buffer, this.read);
+			Tuple<?> toSend = read.clone();
+			fireProcess(toSend);
 		}
 	}
 

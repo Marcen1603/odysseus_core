@@ -25,6 +25,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractAccessAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.CreateSDFAttributeParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
 import de.uniol.inf.is.odysseus.core.server.util.Constants;
 import de.uniol.inf.is.odysseus.wrapper.opcda.physicaloperator.access.OPCDATransportHandler;
@@ -89,6 +90,11 @@ public class OPCDASource extends AbstractAccessAO {
 		this.paths = paths;
 	}
 	
+	@Parameter(type = CreateSDFAttributeParameter.class, name = "Schema", isList = true, optional = false, doc = "The output schema.")
+	public void setAttributes(List<SDFAttribute> attributes) {
+		super.setAttributes(attributes);
+	}
+	
 	@Override
 	public boolean isValid() {
 		boolean valid = super.isValid();
@@ -97,7 +103,7 @@ public class OPCDASource extends AbstractAccessAO {
 			addError("number of elements in path must be the same as in output schema");
 		}
 		for (SDFAttribute a: getOutputSchema()){
-			if (a.getDatatype() != SDFOPCDADatatype.OPCVALUE){
+			if (!SDFOPCDADatatype.isOPCType(a.getDatatype())){
 				valid = false;
 				addError("Attribute "+a.getURI()+" must be of type OPCValue");
 			}

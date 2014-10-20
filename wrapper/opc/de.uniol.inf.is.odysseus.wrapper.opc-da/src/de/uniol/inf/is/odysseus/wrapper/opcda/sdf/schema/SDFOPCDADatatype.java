@@ -110,4 +110,8 @@ public class SDFOPCDADatatype extends SDFDatatype {
 		return super.compatibleTo(other);
 	}
 
+	public static boolean isOPCType(SDFDatatype datatype) {
+		return datatype.getURIWithoutQualName().toLowerCase().startsWith("opcvalue");
+	}
+
 }

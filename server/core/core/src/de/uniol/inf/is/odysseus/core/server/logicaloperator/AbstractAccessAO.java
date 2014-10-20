@@ -48,7 +48,7 @@ abstract public class AbstractAccessAO extends AbstractLogicalOperator {
 	private Resource accessAOResource;
 	private String wrapper;
 	private String dataHandler;
-	private String protocolHandler;
+	private String protocolHandler = "none";
 	private String transportHandler;
 	
 	private final Map<String, String> optionsMap = new HashMap<>();
