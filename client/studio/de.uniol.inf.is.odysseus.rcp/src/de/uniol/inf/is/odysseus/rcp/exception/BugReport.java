@@ -15,7 +15,6 @@
  */
 package de.uniol.inf.is.odysseus.rcp.exception;
 
-
 import java.awt.Desktop;
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -40,6 +39,7 @@ import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpMethod;
 import org.apache.commons.httpclient.HttpStatus;
+import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.httpclient.methods.StringRequestEntity;
 import org.apache.commons.httpclient.methods.multipart.ByteArrayPartSource;
@@ -84,8 +84,9 @@ import de.uniol.inf.is.odysseus.rcp.l10n.OdysseusNLS;
  */
 public class BugReport {
     private static final Logger LOG = LoggerFactory.getLogger(BugReport.class);
-    private static final String JIRA_API = "rest/api/latest/issue/";
-//    private static final String AUTH = "b2R5c3NldXNfc3R1ZGlvOmpoZjRoZGRzNjcz";
+    private static final String JIRA_API = "rest/api/latest/";
+    // private static final String AUTH =
+    // "b2R5c3NldXNfc3R1ZGlvOmpoZjRoZGRzNjcz";
     private static final String AUTHORIZATION_HEADER = "Authorization";
     private static final String COMPONENT_ID = "10023"; // Other
     private static final String PROJECT_KEY = "ODY";
@@ -104,28 +105,42 @@ public class BugReport {
     public BugReport(final Throwable exception) {
         this.exception = exception;
     }
-    
-    static private String getUser(){
-        return OdysseusRCPConfiguration.get("bugreport.user", "odysseus_studio");    	
+
+    static private String getUser() {
+        return OdysseusRCPConfiguration.get("bugreport.user", "odysseus_studio");
     }
-    
-    static private String getPassword(){
-        return OdysseusRCPConfiguration.get("bugreport.password", "jhf4hdds673");    	
+
+    static private String getPassword() {
+        return OdysseusRCPConfiguration.get("bugreport.password", "jhf4hdds673");
     }
-    
-    static private String getAuth(String login, String password){
-    	return new String(Base64.encodeBase64((login+ ':' + password).getBytes()));    	
+
+    static private String getAuth(String login, String password) {
+        return new String(Base64.encodeBase64((login + ':' + password).getBytes()));
     }
-    
-    static public boolean checkLogin(String login, String password){
-    	// TODO: Check Login
-    	return true;
+
+    static public boolean checkLogin(String username, String password) {
+        try {
+            final URI uri = new URI(getJira() + BugReport.JIRA_API + "myself/");
+            HttpClient client = new HttpClient();
+            client.getHostConfiguration().setHost(uri.getHost(), uri.getPort(), Protocol.getProtocol(uri.getScheme()));
+
+            HttpMethod method = new GetMethod(uri.toString());
+            method.setRequestHeader(BugReport.AUTHORIZATION_HEADER, "Basic " + getAuth(username, password));
+            client.executeMethod(method);
+            if (method.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
+                return true;
+            }
+        }
+        catch (URISyntaxException | IOException e) {
+            BugReport.LOG.debug(e.getMessage(), e);
+        }
+        return false;
     }
-    
-    static private String getJira(){
-    	return OdysseusRCPConfiguration.get("bugreport.baseurl", "http://jira.odysseus.offis.uni-oldenburg.de/");
+
+    static private String getJira() {
+        return OdysseusRCPConfiguration.get("bugreport.baseurl", "http://jira.odysseus.offis.uni-oldenburg.de/");
     }
-    
+
     /**
      * Class constructor.
      *
@@ -150,7 +165,6 @@ public class BugReport {
                 editor.open();
                 editor.setUserReport(BugReport.this.getUserReport());
                 editor.setGeneratedReport(BugReport.this.getGeneratedReport());
-
             }
 
         });
@@ -198,7 +212,7 @@ public class BugReport {
         report.append("\n\n##########################################################################################\n");
         report.append("## Reload Log:\n");
         report.append("##########################################################################################\n");
-        report.append(reloadLog);        
+        report.append(reloadLog);
         report.append("\n\n##########################################################################################\n");
         report.append("## Odysseus Information:\n");
         report.append("##########################################################################################\n");
@@ -232,7 +246,7 @@ public class BugReport {
     }
 
     private static boolean sendReport(final String description, final String log) throws IOException, URISyntaxException, JSONException {
-        final URI uri = new URI(getJira()+BugReport.JIRA_API);
+        final URI uri = new URI(getJira() + BugReport.JIRA_API + "issue/");
         HttpClient client = new HttpClient();
         client.getHostConfiguration().setHost(uri.getHost(), uri.getPort(), Protocol.getProtocol(uri.getScheme()));
 
@@ -317,7 +331,7 @@ public class BugReport {
         }
         return false;
     }
-    
+
     private static StringBuilder getQueryReport() {
         final StringBuilder report = new StringBuilder();
         IExecutor executor = OdysseusRCPPlugIn.getExecutor();
@@ -539,12 +553,11 @@ public class BugReport {
         return report;
     }
 
-	public static void loadFromFile(final StringBuilder report,
-			Path path, String title) {
-		
+    public static void loadFromFile(final StringBuilder report, Path path, String title) {
+
         if (Files.exists(path)) {
             try (BufferedReader reader = Files.newBufferedReader(path, StandardCharsets.UTF_8)) {
-                report.append("\t* "+title+":\n");
+                report.append("\t* " + title + ":\n");
                 String line = "";
                 while ((line = reader.readLine()) != null) {
                     report.append(line).append("\n");
@@ -555,14 +568,13 @@ public class BugReport {
                 LOG.error(e.getMessage(), e);
             }
         }
-	}
+    }
 
-    private static StringBuilder getReloadLogReport(){
+    private static StringBuilder getReloadLogReport() {
         final StringBuilder report = new StringBuilder();
         Path path = FileSystems.getDefault().getPath(OdysseusRCPConfiguration.ODYSSEUS_HOME_DIR, "reloadlog.store");
         loadFromFile(report, path, "Reload Log");
         return report;
     }
 
-    
 }
