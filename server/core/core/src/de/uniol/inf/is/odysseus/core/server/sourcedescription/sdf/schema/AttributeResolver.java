@@ -42,7 +42,9 @@ import java.util.Set;
 import de.uniol.inf.is.odysseus.core.collection.Resource;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
+import de.uniol.inf.is.odysseus.core.sdf.schema.AmbiguousAttributeException;
 import de.uniol.inf.is.odysseus.core.sdf.schema.IAttributeResolver;
+import de.uniol.inf.is.odysseus.core.sdf.schema.NoSuchAttributeException;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 
@@ -88,7 +90,7 @@ public class AttributeResolver implements IAttributeResolver {
 
 	public void addSource(String name, ILogicalOperator op) {
 		if (this.sources.containsKey(name)) {
-			throw new IllegalArgumentException("ambigiuous identifier: " + name);
+			throw new AmbiguousAttributeException("ambigiuous identifier: " + name);
 		}
 		this.sources.put(name, op);
 		// read attributes from sources!
@@ -98,7 +100,7 @@ public class AttributeResolver implements IAttributeResolver {
 
 	public void addAttribute(SDFAttribute attribute) {
 		if (this.attributes.contains(attribute)) {
-			throw new IllegalArgumentException("ambigiuous identifier: "
+			throw new AmbiguousAttributeException("ambigiuous identifier: "
 					+ attribute);
 		}
 		this.attributes.add(attribute);
@@ -142,7 +144,7 @@ public class AttributeResolver implements IAttributeResolver {
 			for (SDFAttribute curAttribute : this.attributes) {
 				if (curAttribute.getAttributeName().equals(name)) {
 					if (result != null) {
-						throw new IllegalArgumentException(
+						throw new AmbiguousAttributeException(
 								"ambigiuous identifier: " + name);
 					}
 					result = curAttribute;
@@ -153,7 +155,7 @@ public class AttributeResolver implements IAttributeResolver {
 			Exception e2 = null;
 			try {
 				result = getAttribute(parts[0], parts[1]);
-			} catch (IllegalArgumentException exp) {
+			} catch (NoSuchAttributeException exp) {
 				e1 = exp;
 			}
 
@@ -196,7 +198,7 @@ public class AttributeResolver implements IAttributeResolver {
 		if (attribute != null)
 			return attribute;
 
-		throw new IllegalArgumentException("no such attribute: " + sourceName
+		throw new NoSuchAttributeException("no such attribute: " + sourceName
 				+ "." + attributeName);
 	}
 
@@ -240,7 +242,7 @@ public class AttributeResolver implements IAttributeResolver {
 				return curAttribute;
 			}
 		}
-		throw new IllegalArgumentException("no such attribute: "
+		throw new NoSuchAttributeException("no such attribute: "
 				+ attributeName + " " + aggregateName);
 	}
 

@@ -55,7 +55,8 @@ public class ExpressionBuilderVisitor implements MEPImplVisitor {
 	public Object visit(ASTFunction node, Object data) {
 		String symbol = node.getSymbol();
 		if (!MEP.containsFunction(symbol)) {
-			throw new IllegalArgumentException("Function  \"" + symbol+ "\" cannot be found.");
+			throw new IllegalArgumentException("Function  \"" + symbol
+					+ "\" cannot be found.");
 		}
 		List<IFunction<?>> functions = MEP.getFunctions(symbol);
 		IFunction<?> selectedFunction = null;
@@ -140,21 +141,25 @@ public class ExpressionBuilderVisitor implements MEPImplVisitor {
 			// function
 			if (selectedFunction == null) {
 				selectedFunction = functions.get(0);
-				//InfoService.error("No function symbol for current Parameters found", null, "ExpressionParser");
+				// InfoService.error("No function symbol for current Parameters found",
+				// null, "ExpressionParser");
 				StringBuffer params = new StringBuffer();
 				StringBuffer exprStr = new StringBuffer();
-				for (int i=0;i<node.children.length;i++){
-//					params.append(((IExpression<?>)n).getReturnType());
-					exprStr.append((IExpression<?>) node.jjtGetChild(i)
-							.jjtAccept(this, null));
+				for (int i = 0; i < node.children.length; i++) {
+					// params.append(((IExpression<?>)n).getReturnType());
+					IExpression<?> expr = (IExpression<?>) node.jjtGetChild(i)
+							.jjtAccept(this, null);
+					exprStr.append(expr+"("+expr.getReturnType()+") ");
 				}
-				
-				throw new IllegalArgumentException("no function " + symbol + " for input parameter "+params+" in "+exprStr+" found !"); 
-//				for (int i = 0; i < arity; ++i) {
-//					expressions[i] = (IExpression<?>) node.jjtGetChild(i)
-//							.jjtAccept(this,
-//									selectedFunction.getAcceptedTypes(i));
-//				}
+
+				throw new IllegalArgumentException("no function " + symbol
+						+ " for input parameter " + params + " in " + exprStr
+						+ " found !");
+				// for (int i = 0; i < arity; ++i) {
+				// expressions[i] = (IExpression<?>) node.jjtGetChild(i)
+				// .jjtAccept(this,
+				// selectedFunction.getAcceptedTypes(i));
+				// }
 			}
 
 			selectedFunction.setArguments(expressions);
@@ -168,7 +173,7 @@ public class ExpressionBuilderVisitor implements MEPImplVisitor {
 					selectedFunction.setBasetimeUnit((TimeUnit) c.getValue());
 			}
 		}
-		
+
 		return selectedFunction;
 	}
 
@@ -177,19 +182,19 @@ public class ExpressionBuilderVisitor implements MEPImplVisitor {
 		SDFDatatype type = SDFDatatype.OBJECT;
 		if (node.getValue() instanceof Double) {
 			type = SDFDatatype.DOUBLE;
-		}else if (node.getValue() instanceof Float) {
+		} else if (node.getValue() instanceof Float) {
 			type = SDFDatatype.FLOAT;
-		}else if (node.getValue() instanceof Short) {
+		} else if (node.getValue() instanceof Short) {
 			type = SDFDatatype.SHORT;
-		}else if (node.getValue() instanceof Byte) {
+		} else if (node.getValue() instanceof Byte) {
 			type = SDFDatatype.BYTE;
-		}else if (node.getValue() instanceof Integer) {
+		} else if (node.getValue() instanceof Integer) {
 			type = SDFDatatype.INTEGER;
-		}else if (node.getValue() instanceof Boolean) {
+		} else if (node.getValue() instanceof Boolean) {
 			type = SDFDatatype.BOOLEAN;
-		}else if (node.getValue() instanceof Long) {
+		} else if (node.getValue() instanceof Long) {
 			type = SDFDatatype.LONG;
-		}else if (node.getValue() instanceof String) {
+		} else if (node.getValue() instanceof String) {
 			type = SDFDatatype.STRING;
 		}
 		return new Constant<Object>(node.getValue(), type);
@@ -222,11 +227,12 @@ public class ExpressionBuilderVisitor implements MEPImplVisitor {
 		}
 		variable.setAcceptedTypes((SDFDatatype[]) data);
 		symbolTable.put(identifier, variable);
-		
-		//Check for Array
-//		if(node.jjtGetNumChildren() == 1) {
-//			variable.setArrayIndex((Integer) node.jjtGetChild(0).jjtAccept(this, data));
-//		}
+
+		// Check for Array
+		// if(node.jjtGetNumChildren() == 1) {
+		// variable.setArrayIndex((Integer) node.jjtGetChild(0).jjtAccept(this,
+		// data));
+		// }
 		return variable;
 	}
 

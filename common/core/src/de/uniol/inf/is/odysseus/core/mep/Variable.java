@@ -228,13 +228,15 @@ public class Variable implements IExpression<Object> {
 		int countOfRemovedTypes = 0;
 		for (int i = 0; i < this.acceptedTypes.length; i++) {
 			boolean foundCompatible = false;
-			for (int u = 0; u < restrictTypes.length; u++) {
-				if ((acceptedTypes[i] != null)
-						&& (this.acceptedTypes[i]
-								.compatibleTo(restrictTypes[u]))) {
-					this.acceptedTypes[i] = SDFDatatype.min(
-							this.acceptedTypes[i], restrictTypes[u]);
-					foundCompatible = true;
+			if (restrictTypes != null) {
+				for (int u = 0; u < restrictTypes.length; u++) {
+					if ((acceptedTypes[i] != null)
+							&& (this.acceptedTypes[i]
+									.compatibleTo(restrictTypes[u]))) {
+						this.acceptedTypes[i] = SDFDatatype.min(
+								this.acceptedTypes[i], restrictTypes[u]);
+						foundCompatible = true;
+					}
 				}
 			}
 			if (!foundCompatible) {
@@ -264,12 +266,12 @@ public class Variable implements IExpression<Object> {
 	public SDFDatatype determineType(IExpression<?>[] args) {
 		throw new RuntimeException("cannot determine type");
 	}
-	
+
 	@Override
 	public boolean determineTypeFromInput() {
 		return false;
 	}
-	
+
 	// public Integer getArrayIndex() {
 	// return arrayIndex;
 	// }

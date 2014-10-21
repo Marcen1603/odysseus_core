@@ -68,7 +68,7 @@ public class DirectAttributeResolver implements IAttributeResolver, IClone {
 				return attribute;
 			}
 		}
-		throw new IllegalArgumentException("no such attribute: " + name);
+		throw new NoSuchAttributeException("no such attribute: " + name);
 	}
 
 	@Override

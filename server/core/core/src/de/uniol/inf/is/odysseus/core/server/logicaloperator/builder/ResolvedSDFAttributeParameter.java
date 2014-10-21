@@ -17,6 +17,7 @@ package de.uniol.inf.is.odysseus.core.server.logicaloperator.builder;
 
 import com.google.common.base.Strings;
 
+import de.uniol.inf.is.odysseus.core.sdf.schema.NoSuchAttributeException;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 
 public class ResolvedSDFAttributeParameter extends
@@ -51,6 +52,8 @@ public class ResolvedSDFAttributeParameter extends
 					(String) this.inputValue);
 
 			setValue(attribute);
+		}catch(NoSuchAttributeException e){
+			throw new RuntimeException("Unable to find attribute "+inputValue+" in input.", e);
 		} catch (Exception ex) {
 			throw new RuntimeException("cannot assign attribute value", ex);
 		}

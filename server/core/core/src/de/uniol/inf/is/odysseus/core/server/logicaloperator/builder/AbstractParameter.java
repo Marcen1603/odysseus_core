@@ -164,6 +164,7 @@ public abstract class AbstractParameter<T> implements IParameter<T> {
 		}catch(SDFExpressionParseException e){
 			this.errors.add("Could not parse parameter value " + getName());
 			this.errors.add(e.getMessage());
+			//e.printStackTrace();
 			return false;			
 		}catch (Exception e) {
 			this.errors.add("illegal value for parameter " + getName());
