@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
@@ -40,6 +41,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.rcp.config.OdysseusRCPConfiguration;
 import de.uniol.inf.is.odysseus.rcp.l10n.OdysseusNLS;
 
 /**
@@ -47,7 +49,8 @@ import de.uniol.inf.is.odysseus.rcp.l10n.OdysseusNLS;
  *
  */
 public class BugReportEditor extends Window {
-    private static final Logger LOG = LoggerFactory.getLogger(BugReportEditor.class);
+	
+	private static final Logger LOG = LoggerFactory.getLogger(BugReportEditor.class);
 
     StyledText generatedTextArea;
     StyledText userTextArea;
@@ -66,7 +69,7 @@ public class BugReportEditor extends Window {
     protected Control createButtonBar(final Composite parent) {
         final Composite composite = new Composite(parent, SWT.NONE);
         final GridLayout layout = new GridLayout();
-        layout.numColumns = 4;
+        layout.numColumns = 5;
         layout.makeColumnsEqualWidth = true;
         composite.setLayout(layout);
         final GridData data = new GridData(GridData.HORIZONTAL_ALIGN_END | GridData.VERTICAL_ALIGN_CENTER);
@@ -77,9 +80,32 @@ public class BugReportEditor extends Window {
     }
 
     private void createButtonsForButtonBar(final Composite parent) {
+        
+        final Button jiraButton = new Button(parent, SWT.PUSH);
+        jiraButton.setText("Set JIRA account...");
+        jiraButton.setFont(JFaceResources.getDialogFont());
+        GridData data = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
+        Point minSize = jiraButton.computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
+        data.widthHint = minSize.x;
+        jiraButton.setLayoutData(data);
+        jiraButton.addSelectionListener(new SelectionAdapter() {
+        	@Override
+        	public void widgetSelected(SelectionEvent e) {
+        		String savedUsername = OdysseusRCPConfiguration.get(BugReport.BUGREPORT_USER, "");
+        		String savedPassword = OdysseusRCPConfiguration.get(BugReport.BUGREPORT_PASSWORD, "");
+        		
+        		UsernameAndPasswordDialog dlg = new UsernameAndPasswordDialog(getParentShell(), savedUsername, savedPassword);
+        		if( dlg.open() == Dialog.OK ) {
+        			OdysseusRCPConfiguration.set(BugReport.BUGREPORT_USER, dlg.getUsername());
+        			OdysseusRCPConfiguration.set(BugReport.BUGREPORT_PASSWORD, dlg.getPassword());
+        			OdysseusRCPConfiguration.save();
+        		}
+        	}
+        });
+
         final Label errorLabel = new Label(parent, SWT.NONE);
         errorLabel.setText("");
-        GridData data = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
+        data = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
         data.horizontalSpan = 2;
         errorLabel.setLayoutData(data);
 
@@ -87,7 +113,7 @@ public class BugReportEditor extends Window {
         cancelButton.setText(OdysseusNLS.Cancel);
         cancelButton.setFont(JFaceResources.getDialogFont());
         data = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
-        Point minSize = cancelButton.computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
+        minSize = cancelButton.computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
         data.widthHint = minSize.x;
         cancelButton.setLayoutData(data);
         cancelButton.addSelectionListener(new SelectionAdapter() {
@@ -207,7 +233,7 @@ public class BugReportEditor extends Window {
             @SuppressWarnings("unused")
 			int start = 0;
             int length = event.lineText.length();
-            System.out.println("current line length:" + event.lineText.length());
+//            System.out.println("current line length:" + event.lineText.length());
             if (event.lineText.startsWith("* ")) {
                 StyleRange style = new StyleRange();
                 style.start = event.lineOffset;
