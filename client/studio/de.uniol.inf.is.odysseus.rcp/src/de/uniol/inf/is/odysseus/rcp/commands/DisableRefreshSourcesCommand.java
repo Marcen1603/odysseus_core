@@ -34,6 +34,7 @@ public class DisableRefreshSourcesCommand extends AbstractHandler implements IHa
 				viewer.setRefreshEnabled(false);
 			}else{
 				viewer.setRefreshEnabled(true);
+				viewer.refresh();
 			}
 		else
 			return false;
