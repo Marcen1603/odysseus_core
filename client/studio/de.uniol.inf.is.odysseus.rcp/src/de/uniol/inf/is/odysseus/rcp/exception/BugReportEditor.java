@@ -17,16 +17,11 @@
 package de.uniol.inf.is.odysseus.rcp.exception;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.LineStyleEvent;
-import org.eclipse.swt.custom.LineStyleListener;
-import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -50,44 +45,58 @@ import de.uniol.inf.is.odysseus.rcp.l10n.OdysseusNLS;
  */
 public class BugReportEditor extends Window {
 	
+	private static final String DIALOG_TITLE = "Send bug report";
 	private static final Logger LOG = LoggerFactory.getLogger(BugReportEditor.class);
 
-    StyledText generatedTextArea;
-    StyledText userTextArea;
+    private StyledText generatedTextArea;
+    private StyledText userTextArea;
 
-    /**
-     * Class constructor.
-     *
-     * @param parentShell
-     * @param bugReport
-     */
     protected BugReportEditor(final Shell parentShell) {
         super(parentShell);
         this.setShellStyle(SWT.DIALOG_TRIM | SWT.APPLICATION_MODAL | Window.getDefaultOrientation());
     }
+    
+    @Override
+    protected void configureShell(Shell newShell) {
+    	newShell.setText(DIALOG_TITLE);
+    	
+    	super.configureShell(newShell);
+    }
 
-    protected Control createButtonBar(final Composite parent) {
-        final Composite composite = new Composite(parent, SWT.NONE);
-        final GridLayout layout = new GridLayout();
+    @Override
+    protected Control createContents(final Composite parent) {
+        Composite composite = new Composite(parent, 0);
+        GridLayout layout = new GridLayout();
+        layout.marginHeight = 0;
+        layout.marginWidth = 0;
+        layout.verticalSpacing = 0;
+
+        composite.setLayout(layout);
+        composite.setLayoutData(new GridData(GridData.FILL_BOTH));
+        createDialogArea(composite);
+        createButtonBar(composite);
+
+        return composite;
+    }
+    
+    private Control createButtonBar(final Composite parent) {
+        Composite composite = new Composite(parent, SWT.NONE);
+        GridLayout layout = new GridLayout();
         layout.numColumns = 5;
         layout.makeColumnsEqualWidth = true;
         composite.setLayout(layout);
-        final GridData data = new GridData(GridData.HORIZONTAL_ALIGN_END | GridData.VERTICAL_ALIGN_CENTER);
-        composite.setLayoutData(data);
         composite.setFont(parent.getFont());
-        this.createButtonsForButtonBar(composite);
+        
+        GridData data = new GridData(GridData.HORIZONTAL_ALIGN_END | GridData.VERTICAL_ALIGN_CENTER);
+        composite.setLayoutData(data);
+        
+        createButtonsForButtonBar(composite);
+        
         return composite;
     }
 
     private void createButtonsForButtonBar(final Composite parent) {
-        
-        final Button jiraButton = new Button(parent, SWT.PUSH);
-        jiraButton.setText("Set JIRA account...");
-        jiraButton.setFont(JFaceResources.getDialogFont());
-        GridData data = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
-        Point minSize = jiraButton.computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
-        data.widthHint = minSize.x;
-        jiraButton.setLayoutData(data);
+		Button jiraButton = createButton(parent, "Set JIRA account...");
         jiraButton.addSelectionListener(new SelectionAdapter() {
         	@Override
         	public void widgetSelected(SelectionEvent e) {
@@ -103,147 +112,112 @@ public class BugReportEditor extends Window {
         	}
         });
 
-        final Label errorLabel = new Label(parent, SWT.NONE);
-        errorLabel.setText("");
-        data = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
-        data.horizontalSpan = 2;
-        errorLabel.setLayoutData(data);
+        final Label errorLabel = createEmptyLabel(parent);
 
-        final Button cancelButton = new Button(parent, SWT.PUSH);
-        cancelButton.setText(OdysseusNLS.Cancel);
-        cancelButton.setFont(JFaceResources.getDialogFont());
-        data = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
-        minSize = cancelButton.computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
-        data.widthHint = minSize.x;
-        cancelButton.setLayoutData(data);
+        Button cancelButton = createButton(parent, OdysseusNLS.Cancel);
         cancelButton.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(final SelectionEvent event) {
-                BugReportEditor.this.setReturnCode(Window.CANCEL);
-                BugReportEditor.this.close();
+                setReturnCode(Window.CANCEL);
+                close();
             }
         });
 
-        final Button sendButton = new Button(parent, SWT.PUSH);
-        sendButton.setText(OdysseusNLS.SendBugReport);
-        sendButton.setFont(JFaceResources.getDialogFont());
-        data = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
-        minSize = cancelButton.computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
-        data.widthHint = minSize.x;
-        cancelButton.setLayoutData(data);
+        Button sendButton = createButton(parent, OdysseusNLS.SendBugReport);
         sendButton.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(final SelectionEvent event) {
-                sendButton.setText(OdysseusNLS.Sending);
+            	Button button = (Button)event.getSource();
+				button.setText(OdysseusNLS.Sending);
                 try {
                     boolean result = BugReport.send(BugReportEditor.this.userTextArea.getText(), BugReportEditor.this.generatedTextArea.getText());
-                    if (result) {
-                        BugReportEditor.this.setReturnCode(Window.OK);
-                    }
-                    else {
-                        BugReportEditor.this.setReturnCode(Window.CANCEL);
-                    }
-                    BugReportEditor.this.close();
-                }
-                catch (IOException e) {
+                    setReturnCode( result ? Window.OK : Window.CANCEL);
+                    close();
+                } catch (IOException e) {
                     errorLabel.setText(e.getMessage());
                     LOG.error(e.getMessage(), e);
-                    sendButton.setText(OdysseusNLS.SendBugReport);
-                }
-
+                    button.setText(OdysseusNLS.SendBugReport);
+                } 
             }
         });
-        final Shell shell = parent.getShell();
+        
+        Shell shell = parent.getShell();
         if (shell != null) {
             shell.setDefaultButton(sendButton);
         }
     }
 
-    protected Control createDialogArea(final Composite parent) {
-        final Composite composite = new Composite(parent, SWT.NONE);
-        final GridLayout layout = new GridLayout();
+	private static Label createEmptyLabel(final Composite parent) {
+		Label label = new Label(parent, SWT.NONE);
+        label.setText("");
+        GridData errorLabelData = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
+        errorLabelData.horizontalSpan = 2;
+        label.setLayoutData(errorLabelData);
+		return label;
+	}
+
+	private static Button createButton(Composite parent, String title) {
+		Button button = new Button(parent, SWT.PUSH);
+        button.setText(title);
+        button.setFont(JFaceResources.getDialogFont());
+        GridData data = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
+        Point minSize = button.computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
+        data.widthHint = minSize.x;
+        button.setLayoutData(data);
+		return button;
+	}
+
+    private Control createDialogArea(final Composite parent) {
+        Composite composite = new Composite(parent, SWT.NONE);
+        
+        GridLayout layout = new GridLayout();
         composite.setLayout(layout);
         composite.setLayoutData(new GridData(GridData.FILL_BOTH));
-        this.createTextArea(parent);
+        
+        createTextArea(parent);
+        
         return composite;
     }
 
-    protected void createTextArea(final Composite parent) {
-        Label userLabel = new Label(parent, SWT.NONE);
-        userLabel.setText("Reporter, please consider answering these questions, where appropriate");
+    private void createTextArea(final Composite parent) {
+        createStyledLabel(parent, "Reporter, please consider answering these questions, where appropriate");
+
+        userTextArea = createStyledText(parent);
+        userTextArea.addLineStyleListener(new SegmentLineStyleListener());
+
+        createStyledLabel(parent, "\nDebug Information:");
+
+        generatedTextArea = createStyledText(parent);
+    }
+    
+    private static StyledText createStyledText( Composite parent ) {
+        StyledText styledText = new StyledText(parent, SWT.BORDER | SWT.V_SCROLL | SWT.MULTI);
+        styledText.setEditable(true);
+        
         GridData data = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
         data.widthHint = 600;
-        userLabel.setLayoutData(data);
-
-        this.userTextArea = new StyledText(parent, SWT.BORDER | SWT.V_SCROLL | SWT.MULTI);
-        this.userTextArea.setEditable(true);
-        this.userTextArea.addLineStyleListener(new SegmentLineStyleListener());
-        data = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
-        data.widthHint = 600;
         data.heightHint = 300;
-        this.userTextArea.setLayoutData(data);
+        styledText.setLayoutData(data);
+        
+        return styledText;
+    }
 
-        Label generatedLabel = new Label(parent, SWT.NONE);
-        generatedLabel.setText("\nDebug Information:");
-        data = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
+	private static Label createStyledLabel(Composite parent, String text) {
+		Label label = new Label(parent, SWT.NONE);
+        label.setText(text);
+
+        GridData data = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
         data.widthHint = 600;
-        generatedLabel.setLayoutData(data);
+        label.setLayoutData(data);
+        
+		return label;
+	}
 
-        this.generatedTextArea = new StyledText(parent, SWT.BORDER | SWT.V_SCROLL | SWT.MULTI);
-        this.generatedTextArea.setEditable(true);
-        data = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
-        data.widthHint = 600;
-        data.heightHint = 200;
-        this.generatedTextArea.setLayoutData(data);
+    public final void setGeneratedReport(final String report) {
+        generatedTextArea.setText(report);
     }
 
-    public void setGeneratedReport(final String report) {
-        this.generatedTextArea.setText(report);
-    }
-
-    public void setUserReport(final String report) {
-        this.userTextArea.setText(report);
-    }
-
-    @Override
-    protected Control createContents(final Composite parent) {
-        final Composite composite = new Composite(parent, 0);
-        final GridLayout layout = new GridLayout();
-        layout.marginHeight = 0;
-        layout.marginWidth = 0;
-        layout.verticalSpacing = 0;
-
-        composite.setLayout(layout);
-        composite.setLayoutData(new GridData(GridData.FILL_BOTH));
-        this.createDialogArea(composite);
-        this.createButtonBar(composite);
-
-        return composite;
-    }
-
-    public class SegmentLineStyleListener implements LineStyleListener {
-
-        public SegmentLineStyleListener() {
-            super();
-        }
-
-        @Override
-        public void lineGetStyle(LineStyleEvent event) {
-            List<StyleRange> styles = new ArrayList<>();
-            @SuppressWarnings("unused")
-			int start = 0;
-            int length = event.lineText.length();
-//            System.out.println("current line length:" + event.lineText.length());
-            if (event.lineText.startsWith("* ")) {
-                StyleRange style = new StyleRange();
-                style.start = event.lineOffset;
-                style.length = length;
-                style.fontStyle = SWT.BOLD;
-                styles.add(style);
-            }
-
-            event.styles = styles.toArray(new StyleRange[0]);
-        }
-
+    public final void setUserReport(final String report) {
+        userTextArea.setText(report);
     }
 }
