@@ -104,12 +104,22 @@ public class BugReport {
     public BugReport(final Throwable exception) {
         this.exception = exception;
     }
-
-    static private String getAuth(){
-        String LOGIN = OdysseusRCPConfiguration.get("bugreport.user", "odysseus_studio");
-        String PW = OdysseusRCPConfiguration.get("bugreport.password", "jhf4hdds673");
-        String AUTH = new String(Base64.encodeBase64((LOGIN + ':' + PW).getBytes()));
-    	return AUTH;
+    
+    static private String getUser(){
+        return OdysseusRCPConfiguration.get("bugreport.user", "odysseus_studio");    	
+    }
+    
+    static private String getPassword(){
+        return OdysseusRCPConfiguration.get("bugreport.password", "jhf4hdds673");    	
+    }
+    
+    static private String getAuth(String login, String password){
+    	return new String(Base64.encodeBase64((login+ ':' + password).getBytes()));    	
+    }
+    
+    static public boolean checkLogin(String login, String password){
+    	// TODO: Check Login
+    	return true;
     }
     
     static private String getJira(){
@@ -253,7 +263,7 @@ public class BugReport {
         request.put("fields", fields);
         HttpMethod method = new PostMethod(uri.toString());
         ((PostMethod) method).setRequestEntity(new StringRequestEntity(request.toString(), "application/json", null));
-        method.setRequestHeader(BugReport.AUTHORIZATION_HEADER, "Basic " + getAuth());
+        method.setRequestHeader(BugReport.AUTHORIZATION_HEADER, "Basic " + getAuth(getUser(), getPassword()));
         client.executeMethod(method);
 
         if (method.getStatusLine().getStatusCode() == HttpStatus.SC_CREATED) {
@@ -263,7 +273,7 @@ public class BugReport {
             Part[] parts = new Part[] { new FilePart("file", new ByteArrayPartSource("system.log", log.getBytes())) };
             MultipartRequestEntity attachment = new MultipartRequestEntity(parts, method.getParams());
             ((PostMethod) method).setRequestEntity(attachment);
-            method.setRequestHeader(BugReport.AUTHORIZATION_HEADER, "Basic " + getAuth());
+            method.setRequestHeader(BugReport.AUTHORIZATION_HEADER, "Basic " + getAuth(getUser(), getPassword()));
             method.setRequestHeader("X-Atlassian-Token", "nocheck");
             client.executeMethod(method);
             if (method.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
