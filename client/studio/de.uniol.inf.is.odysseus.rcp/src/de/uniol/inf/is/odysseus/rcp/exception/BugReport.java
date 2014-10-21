@@ -270,6 +270,8 @@ public class BugReport {
 		project.put("key", BugReport.PROJECT_KEY);
 		final JSONObject issuetype = new JSONObject();
 		issuetype.put("name", BugReport.ISSUE_TYPE);
+		final JSONArray labels = new JSONArray();
+		labels.put("BugReport");
 		fields.put("project", project);
 		String summary = "";
 		try (Scanner scanner = new Scanner(description)) {
@@ -285,6 +287,7 @@ public class BugReport {
 		fields.put("description", description);
 		fields.put("issuetype", issuetype);
 		fields.put("components", component);
+		fields.put("labels", labels);
 		request.put("fields", fields);
 		HttpMethod method = new PostMethod(uri.toString());
 		((PostMethod) method).setRequestEntity(new StringRequestEntity(request
