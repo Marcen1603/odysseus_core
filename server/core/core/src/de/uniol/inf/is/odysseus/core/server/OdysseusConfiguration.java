@@ -264,6 +264,11 @@ public class OdysseusConfiguration {
 		return val != null ? Long.parseLong(val) : defaultValue;
 	}
 
+    public static double getDouble(String key, double defaultValue) {
+        String val = props.getProperty(key);
+        return val != null ? Double.parseDouble(val) : defaultValue;
+    }
+
 	public static int getInt(String key, int defaultValue) {
 		String val = props.getProperty(key);
 		try {
