@@ -3,7 +3,6 @@ package de.uniol.inf.is.odysseus.processmining.lossycounting.physicaloperator;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
@@ -73,7 +72,7 @@ public class LossyCountingPO <T extends IMetaAttribute> extends AbstractPipe<Tup
 				iterations++;
 				
 				if(iterations%20 == 0){
-					Tuple mapTransfer = new Tuple<>(1,true);
+					Tuple<T> mapTransfer = new Tuple<T>(1,true);
 					mapTransfer.setAttribute(0, this.relations);
 					transfer(mapTransfer);
 				}

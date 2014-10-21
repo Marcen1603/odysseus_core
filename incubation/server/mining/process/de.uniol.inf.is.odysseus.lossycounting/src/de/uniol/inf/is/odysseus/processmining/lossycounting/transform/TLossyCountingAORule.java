@@ -10,6 +10,7 @@ import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
 public class TLossyCountingAORule extends AbstractTransformationRule<LossyCountingAO>{
 	
+	@SuppressWarnings("rawtypes")
 	@Override
 	public void execute(LossyCountingAO logicalOp, TransformationConfiguration transformConfig)
 			throws RuleException {

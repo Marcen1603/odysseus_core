@@ -31,6 +31,9 @@ import de.uniol.inf.is.odysseus.priority.IPriority;
 //should be K extends IPriority & ITimeInterval, but suns compiler (1.6) is buggy and doens't accept it:(
 public class PriorityTISweepArea<K extends ITimeInterval, T extends IStreamObject<K>>
 		extends DefaultTISweepArea<T> {
+
+	private static final long serialVersionUID = -7061083657732137083L;
+
 	public PriorityTISweepArea() {
 		super();
 		setRemovePredicate(TotallyAfterPredicate.getInstance());

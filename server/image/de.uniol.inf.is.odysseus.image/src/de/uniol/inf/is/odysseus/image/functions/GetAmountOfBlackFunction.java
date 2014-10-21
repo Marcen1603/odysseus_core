@@ -2,17 +2,13 @@ package de.uniol.inf.is.odysseus.image.functions;
 
 import java.util.Objects;
 
+import org.opencv.core.Mat;
+
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.image.common.datatype.Image;
 import de.uniol.inf.is.odysseus.image.common.sdf.schema.SDFImageDatatype;
 import de.uniol.inf.is.odysseus.image.util.OpenCVUtil;
 import de.uniol.inf.is.odysseus.mep.AbstractFunction;
-
-import org.opencv.core.Mat;
-import org.opencv.core.Point;
-import org.opencv.core.Scalar;
-import org.opencv.imgproc.Imgproc;
-import org.opencv.core.Core;
 
 /**
  * @author Kristian Bruns
