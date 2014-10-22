@@ -118,20 +118,17 @@ public class BugReport {
 	}
 
 	static private String getAuth(String login, String password) {
-		return new String(Base64.encodeBase64((login + ':' + password)
-				.getBytes()));
+		return new String(Base64.encodeBase64((login + ':' + password).getBytes()));
 	}
 
 	static public boolean checkLogin(String username, String password) {
 		try {
 			final URI uri = new URI(getJira() + BugReport.JIRA_API + "myself/");
 			HttpClient client = new HttpClient();
-			client.getHostConfiguration().setHost(uri.getHost(), uri.getPort(),
-					Protocol.getProtocol(uri.getScheme()));
+			client.getHostConfiguration().setHost(uri.getHost(), uri.getPort(), Protocol.getProtocol(uri.getScheme()));
 
 			HttpMethod method = new GetMethod(uri.toString());
-			method.setRequestHeader(BugReport.AUTHORIZATION_HEADER, "Basic "
-					+ getAuth(username, password));
+			method.setRequestHeader(BugReport.AUTHORIZATION_HEADER, "Basic " + getAuth(username, password));
 			client.executeMethod(method);
 			if (method.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
 				return true;
@@ -143,8 +140,7 @@ public class BugReport {
 	}
 
 	static private String getJira() {
-		return OdysseusRCPConfiguration.get(BUGREPORT_BASEURL,
-				"http://jira.odysseus.offis.uni-oldenburg.de/");
+		return OdysseusRCPConfiguration.get(BUGREPORT_BASEURL, "http://jira.odysseus.offis.uni-oldenburg.de/");
 	}
 
 	/**
@@ -161,17 +157,13 @@ public class BugReport {
 			@Override
 			public void run() {
 				final Shell shell;
-				if (PlatformUI.getWorkbench().getActiveWorkbenchWindow()
-						.getShell() != null) {
-					shell = new Shell(PlatformUI.getWorkbench()
-							.getActiveWorkbenchWindow().getShell());
+				if (PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell() != null) {
+					shell = new Shell(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell());
 				} else {
 					shell = new Shell();
 				}
-				final BugReportEditor editor = new BugReportEditor(shell);
+				BugReportEditor editor = new BugReportEditor(shell, getGeneratedReport());
 				editor.open();
-				editor.setUserReport(BugReport.this.getUserReport());
-				editor.setGeneratedReport(BugReport.this.getGeneratedReport());
 			}
 
 		});
@@ -200,8 +192,7 @@ public class BugReport {
 	String getGeneratedReport() {
 		final StringBuilder report = new StringBuilder();
 		if (this.exception != null) {
-			final StringBuilder stackStrace = BugReport
-					.getStackTraceReport(this.exception);
+			final StringBuilder stackStrace = BugReport.getStackTraceReport(this.exception);
 			report.append("\n\n##########################################################################################\n");
 			report.append("## Stack Trace:\n");
 			report.append("##########################################################################################\n");
@@ -240,8 +231,7 @@ public class BugReport {
 		return report.toString();
 	}
 
-	public static boolean send(final String description, final String log)
-			throws IOException {
+	public static boolean send(final String description, final String log) throws IOException {
 		try {
 			// Report Bugs using email clients (does not work on Windows)
 			// BugReport.sendReport(RECIPIENTS, description + "\n" + log);
@@ -253,12 +243,10 @@ public class BugReport {
 		}
 	}
 
-	private static boolean sendReport(final String description, final String log)
-			throws IOException, URISyntaxException, JSONException {
+	private static boolean sendReport(final String description, final String log) throws IOException, URISyntaxException, JSONException {
 		final URI uri = new URI(getJira() + BugReport.JIRA_API + "issue/");
 		HttpClient client = new HttpClient();
-		client.getHostConfiguration().setHost(uri.getHost(), uri.getPort(),
-				Protocol.getProtocol(uri.getScheme()));
+		client.getHostConfiguration().setHost(uri.getHost(), uri.getPort(), Protocol.getProtocol(uri.getScheme()));
 
 		final JSONObject request = new JSONObject();
 		final JSONObject fields = new JSONObject();
@@ -275,8 +263,7 @@ public class BugReport {
 		fields.put("project", project);
 		String summary = "";
 		try (Scanner scanner = new Scanner(description)) {
-			while ((scanner.hasNextLine())
-					&& ((summary == null) || ("".equals(summary)))) {
+			while ((scanner.hasNextLine()) && ((summary == null) || ("".equals(summary)))) {
 				summary = scanner.nextLine();
 			}
 		}
@@ -290,24 +277,18 @@ public class BugReport {
 		fields.put("labels", labels);
 		request.put("fields", fields);
 		HttpMethod method = new PostMethod(uri.toString());
-		((PostMethod) method).setRequestEntity(new StringRequestEntity(request
-				.toString(), "application/json", null));
-		method.setRequestHeader(BugReport.AUTHORIZATION_HEADER, "Basic "
-				+ getAuth(getUser(), getPassword()));
+		((PostMethod) method).setRequestEntity(new StringRequestEntity(request.toString(), "application/json", null));
+		method.setRequestHeader(BugReport.AUTHORIZATION_HEADER, "Basic " + getAuth(getUser(), getPassword()));
 		client.executeMethod(method);
 
 		if (method.getStatusLine().getStatusCode() == HttpStatus.SC_CREATED) {
-			final JSONObject response = new JSONObject(
-					method.getResponseBodyAsString());
+			final JSONObject response = new JSONObject(method.getResponseBodyAsString());
 			String key = response.getString("key");
 			method = new PostMethod(uri.toString() + key + "/attachments");
-			Part[] parts = new Part[] { new FilePart("file",
-					new ByteArrayPartSource("system.log", log.getBytes())) };
-			MultipartRequestEntity attachment = new MultipartRequestEntity(
-					parts, method.getParams());
+			Part[] parts = new Part[] { new FilePart("file", new ByteArrayPartSource("system.log", log.getBytes())) };
+			MultipartRequestEntity attachment = new MultipartRequestEntity(parts, method.getParams());
 			((PostMethod) method).setRequestEntity(attachment);
-			method.setRequestHeader(BugReport.AUTHORIZATION_HEADER, "Basic "
-					+ getAuth(getUser(), getPassword()));
+			method.setRequestHeader(BugReport.AUTHORIZATION_HEADER, "Basic " + getAuth(getUser(), getPassword()));
 			method.setRequestHeader("X-Atlassian-Token", "nocheck");
 			client.executeMethod(method);
 			if (method.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
@@ -317,8 +298,7 @@ public class BugReport {
 		}
 		LOG.error(method.getStatusLine().toString());
 		System.err.println("Unable to send bug report");
-		System.out.println("Please send the following bug report to: "
-				+ RECIPIENTS.toString());
+		System.out.println("Please send the following bug report to: " + RECIPIENTS.toString());
 		System.out.println(description.toString());
 		System.out.println(log.toString());
 		throw new IOException(method.getStatusLine().toString());
@@ -326,10 +306,8 @@ public class BugReport {
 	}
 
 	@SuppressWarnings("unused")
-	private static boolean sendReport(final List<String> recipients,
-			final String report) throws IOException, URISyntaxException {
-		final URI mailto = BugReport.format(recipients, BugReport.SUBJECT,
-				report);
+	private static boolean sendReport(final List<String> recipients, final String report) throws IOException, URISyntaxException {
+		final URI mailto = BugReport.format(recipients, BugReport.SUBJECT, report);
 		try {
 			if (Desktop.isDesktopSupported()) {
 				final Desktop desktop = Desktop.getDesktop();
@@ -341,14 +319,12 @@ public class BugReport {
 					return true;
 				}
 			} else {
-				Runtime.getRuntime().exec(
-						new String[] { "open ", mailto.toString() });
+				Runtime.getRuntime().exec(new String[] { "open ", mailto.toString() });
 				return true;
 			}
 		} catch (final Exception e) {
 			System.err.println("Unable to send bug report");
-			System.out.println("Please send the following bug report to: "
-					+ recipients.toString());
+			System.out.println("Please send the following bug report to: " + recipients.toString());
 			System.out.println(report.toString());
 		}
 		return false;
@@ -360,33 +336,23 @@ public class BugReport {
 		ISession session = OdysseusRCPPlugIn.getActiveSession();
 		if (executor != null) {
 			report.append("\n### Queries:\n");
-			Collection<Integer> logicalQueries = executor
-					.getLogicalQueryIds(session);
+			Collection<Integer> logicalQueries = executor.getLogicalQueryIds(session);
 			for (Integer id : logicalQueries) {
-				ILogicalQuery logicalQuery = executor.getLogicalQueryById(
-						id.intValue(), session);
-				report.append("\t* ")
-						.append(logicalQuery.getID())
-						.append("\t")
-						.append(logicalQuery.getQueryText().replace('\n', ' ')
-								.replace('\r', ' ')).append("\n");
+				ILogicalQuery logicalQuery = executor.getLogicalQueryById(id.intValue(), session);
+				report.append("\t* ").append(logicalQuery.getID()).append("\t").append(logicalQuery.getQueryText().replace('\n', ' ').replace('\r', ' ')).append("\n");
 			}
 			report.append("\n### Sinks:\n");
 			List<SinkInformation> sinks = executor.getSinks(session);
 			for (SinkInformation sink : sinks) {
-				report.append("\t* ").append(sink.getName()).append(" (")
-						.append(sink.getOutputSchema()).append(")\n");
+				report.append("\t* ").append(sink.getName()).append(" (").append(sink.getOutputSchema()).append(")\n");
 			}
 			report.append("\n### Streams and Views:\n");
-			List<ViewInformation> streams = executor
-					.getStreamsAndViewsInformation(session);
+			List<ViewInformation> streams = executor.getStreamsAndViewsInformation(session);
 			for (ViewInformation stream : streams) {
-				report.append("\t* ").append(stream.getName()).append(" (")
-						.append(stream.getOutputSchema()).append(")\n");
+				report.append("\t* ").append(stream.getName()).append(" (").append(stream.getOutputSchema()).append(")\n");
 			}
 			report.append("\n### Datatypes:\n");
-			Set<SDFDatatype> datatypes = executor
-					.getRegisteredDatatypes(session);
+			Set<SDFDatatype> datatypes = executor.getRegisteredDatatypes(session);
 			for (SDFDatatype datatype : datatypes) {
 				report.append("\t* ").append(datatype).append("\n");
 			}
@@ -401,8 +367,7 @@ public class BugReport {
 				report.append("\t* ").append(scheduler).append("\n");
 			}
 			report.append("\n### Scheduling Strategies:\n");
-			Set<String> schedulingStrategies = executor
-					.getRegisteredSchedulingStrategies(session);
+			Set<String> schedulingStrategies = executor.getRegisteredSchedulingStrategies(session);
 			for (String schedulingStrategy : schedulingStrategies) {
 				report.append("\t* ").append(schedulingStrategy).append("\n");
 			}
@@ -441,37 +406,28 @@ public class BugReport {
 			}
 			final int framesInCommon = trace.length - 1 - m;
 
-			report.append(OdysseusNLS.CausedBy).append(": ")
-					.append(throwable.getClass().getSimpleName()).append(" - ")
-					.append(throwable.getMessage());
+			report.append(OdysseusNLS.CausedBy).append(": ").append(throwable.getClass().getSimpleName()).append(" - ").append(throwable.getMessage());
 			report.append("\n\n");
 			for (int i = 0; i <= m; i++) {
 				report.append("\tat ").append(trace[i]).append("\n");
 			}
 			if (framesInCommon != 0) {
-				report.append("\t... ").append(framesInCommon)
-						.append(" more\n");
+				report.append("\t... ").append(framesInCommon).append(" more\n");
 			}
 			throwable = throwable.getCause();
 		}
 		return report;
 	}
 
-	private static URI format(final List<String> recipients,
-			final String subject, final String body)
-			throws UnsupportedEncodingException, URISyntaxException {
-		return new URI(String.format("mailto:%s?subject=%s&body=%s",
-				BugReport.join(",", recipients), BugReport.urlEncode(subject),
-				BugReport.urlEncode(body)));
+	private static URI format(final List<String> recipients, final String subject, final String body) throws UnsupportedEncodingException, URISyntaxException {
+		return new URI(String.format("mailto:%s?subject=%s&body=%s", BugReport.join(",", recipients), BugReport.urlEncode(subject), BugReport.urlEncode(body)));
 	}
 
-	private final static String urlEncode(final String str)
-			throws UnsupportedEncodingException {
+	private final static String urlEncode(final String str) throws UnsupportedEncodingException {
 		return URLEncoder.encode(str, "UTF-8").replace("+", "%20");
 	}
 
-	private final static String join(final String seperator,
-			final Iterable<?> recipients) {
+	private final static String join(final String seperator, final Iterable<?> recipients) {
 		final StringBuilder sb = new StringBuilder();
 		for (final Object recipient : recipients) {
 			if (sb.length() > 0) {
@@ -498,23 +454,19 @@ public class BugReport {
 		final Version version = bundle.getVersion();
 		final String productVersion = version.toString();
 		final String locale = Locale.getDefault().toString();
-		report.append("\t* Operating System: ").append(osName).append(" ")
-				.append(osVersion).append(" (").append(osArch).append(")\n");
-		report.append("\t* Java VM: ").append(vmName).append(" ")
-				.append(vmVersion).append(" (").append(vmVendor).append(")\n");
+		report.append("\t* Operating System: ").append(osName).append(" ").append(osVersion).append(" (").append(osArch).append(")\n");
+		report.append("\t* Java VM: ").append(vmName).append(" ").append(vmVersion).append(" (").append(vmVendor).append(")\n");
 		report.append("\t* Product: ").append(productVersion).append("\n");
 		report.append("\t* CPUs: ").append(cpu).append("\n");
 		report.append("\t* Memory: ").append(mem).append("\n");
 		report.append("\t* Locale: ").append(locale).append("\n");
 		report.append("\t* System Properties: ").append("\n");
 		for (Entry<Object, Object> property : System.getProperties().entrySet()) {
-			report.append("\t\t- ").append(property.getKey()).append(": ")
-					.append(property.getValue()).append("\n");
+			report.append("\t\t- ").append(property.getKey()).append(": ").append(property.getValue()).append("\n");
 		}
 		report.append("\t* System Environment: ").append("\n");
 		for (Entry<String, String> property : System.getenv().entrySet()) {
-			report.append("\t\t- ").append(property.getKey()).append(": ")
-					.append(property.getValue()).append("\n");
+			report.append("\t\t- ").append(property.getKey()).append(": ").append(property.getValue()).append("\n");
 		}
 		return report;
 	}
@@ -522,8 +474,7 @@ public class BugReport {
 	private static StringBuilder getBundlesReport() {
 		final StringBuilder report = new StringBuilder();
 		final Bundle[] bundles = Activator.getBundleContext().getBundles();
-		report.append("| Id").append("\t| ").append("State").append("\t| ")
-				.append("Name").append("\t| ").append("Bundle").append(" |\n");
+		report.append("| Id").append("\t| ").append("State").append("\t| ").append("Name").append("\t| ").append("Bundle").append(" |\n");
 
 		for (final Bundle bundle : bundles) {
 			final int state = bundle.getState();
@@ -541,10 +492,7 @@ public class BugReport {
 			} else if (state == Bundle.UNINSTALLED) {
 				stateString = "UNINSTALLED";
 			}
-			report.append("| ").append(bundle.getBundleId()).append("\t| ")
-					.append(stateString).append("\t| ")
-					.append(bundle.getSymbolicName()).append("\t| ")
-					.append(bundle.toString()).append(" |\n");
+			report.append("| ").append(bundle.getBundleId()).append("\t| ").append(stateString).append("\t| ").append(bundle.getSymbolicName()).append("\t| ").append(bundle.toString()).append(" |\n");
 		}
 		return report;
 	}
@@ -553,30 +501,22 @@ public class BugReport {
 		final StringBuilder report = new StringBuilder();
 		final Bundle[] bundles = Activator.getBundleContext().getBundles();
 		for (final Bundle bundle : bundles) {
-			final ServiceReference<?>[] services = bundle
-					.getRegisteredServices();
+			final ServiceReference<?>[] services = bundle.getRegisteredServices();
 			if (services != null) {
 				for (final ServiceReference<?> service : services) {
-					final Object serviceId = service
-							.getProperty(Constants.SERVICE_ID);
-					final Object[] clazzes = (Object[]) service
-							.getProperty(Constants.OBJECTCLASS);
+					final Object serviceId = service.getProperty(Constants.SERVICE_ID);
+					final Object[] clazzes = (Object[]) service.getProperty(Constants.OBJECTCLASS);
 
-					report.append("* ").append(serviceId).append(" ")
-							.append(Arrays.toString(clazzes)).append("\n");
+					report.append("* ").append(serviceId).append(" ").append(Arrays.toString(clazzes)).append("\n");
 					for (final String propertyKey : service.getPropertyKeys()) {
 						if (!propertyKey.equals(Constants.OBJECTCLASS)) {
-							report.append("\t+ ").append(propertyKey)
-									.append(": ")
-									.append(service.getProperty(propertyKey))
-									.append("\n");
+							report.append("\t+ ").append(propertyKey).append(": ").append(service.getProperty(propertyKey)).append("\n");
 						}
 					}
 					if (service.getUsingBundles() != null) {
 						report.append("\tUsed by:\n");
 						for (final Bundle b : service.getUsingBundles()) {
-							report.append("\t\t- ").append(b.toString())
-									.append("\n");
+							report.append("\t\t- ").append(b.toString()).append("\n");
 						}
 					}
 
@@ -600,20 +540,16 @@ public class BugReport {
 			}
 		}
 
-		String localRootLocation = ResourcesPlugin.getWorkspace().getRoot()
-				.getLocation().toOSString();
-		Path path = FileSystems.getDefault().getPath(localRootLocation,
-				".metadata", ".log");
+		String localRootLocation = ResourcesPlugin.getWorkspace().getRoot().getLocation().toOSString();
+		Path path = FileSystems.getDefault().getPath(localRootLocation, ".metadata", ".log");
 		loadFromFile(report, path, "Info Service Log");
 		return report;
 	}
 
-	public static void loadFromFile(final StringBuilder report, Path path,
-			String title) {
+	public static void loadFromFile(final StringBuilder report, Path path, String title) {
 
 		if (Files.exists(path)) {
-			try (BufferedReader reader = Files.newBufferedReader(path,
-					StandardCharsets.UTF_8)) {
+			try (BufferedReader reader = Files.newBufferedReader(path, StandardCharsets.UTF_8)) {
 				report.append("\t* " + title + ":\n");
 				String line = "";
 				while ((line = reader.readLine()) != null) {
@@ -628,8 +564,7 @@ public class BugReport {
 
 	private static StringBuilder getReloadLogReport() {
 		final StringBuilder report = new StringBuilder();
-		Path path = FileSystems.getDefault().getPath(
-				OdysseusRCPConfiguration.ODYSSEUS_HOME_DIR, "reloadlog.store");
+		Path path = FileSystems.getDefault().getPath(OdysseusRCPConfiguration.ODYSSEUS_HOME_DIR, "reloadlog.store");
 		loadFromFile(report, path, "Reload Log");
 		return report;
 	}
