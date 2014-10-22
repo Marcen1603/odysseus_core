@@ -15,6 +15,7 @@
  */
 package de.uniol.inf.is.odysseus.server.intervalapproach;
 
+import java.io.Serializable;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -33,6 +34,7 @@ import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.metadata.TimeInterval;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IStatefulOperator;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IStatefulPO;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ITransferArea;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.physicaloperator.interval.TITransferArea;
@@ -48,12 +50,12 @@ import de.uniol.inf.is.odysseus.intervalapproach.sweeparea.DefaultTISweepArea;
 
 public class AggregateTIPO<Q extends ITimeInterval, R extends IStreamObject<Q>, W extends IStreamObject<Q>>
 		extends AggregatePO<Q, R, W> implements IHasMetadataMergeFunction<Q>,
-		IStatefulOperator {
+		IStatefulOperator, IStatefulPO {
 
 	private IMetadataMergeFunction<Q> metadataMerge;
 	
-	final private ITransferArea<W, W> transferArea;
-	private final Map<Long, DefaultTISweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>>> groups = new HashMap<>();
+	private ITransferArea<W, W> transferArea;
+	private Map<Long, DefaultTISweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>>> groups = new HashMap<>();
 	private int dumpAtValueCount = -1;
 	private long createOutputCounter = 0;
 	private boolean outputPA = false;
@@ -678,6 +680,51 @@ public class AggregateTIPO<Q extends ITimeInterval, R extends IStreamObject<Q>, 
 		// System.out.println("SA Insert "+elem+" "+t);
 		elem.setMetadata(t);
 		sa.insert(elem);
+	}
+
+	@Override
+	public Serializable getState() {
+		
+		AggregateTIPOState state = new AggregateTIPOState();
+		state.transferArea = this.transferArea;
+		state.groups = this.groups;
+		return state;
+		
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public void setState(Serializable s) {
+		
+		try {
+			
+			AggregateTIPOState state = (AggregateTIPOState) s;
+			this.transferArea = state.transferArea;
+			this.groups = state.groups;
+			
+		} catch(Throwable T) {
+		
+			logger.error("The serializable state to set for the AggregateTIPO is not a valid AggregateTIPOState!");
+			
+		}
+		
+	}
+	
+	/**
+	 * The current state of an {@link AggregateTIPO} is defined by 
+	 * its transfer area and its groups.
+	 * 
+	 * @author Michael Brand
+	 *
+	 */
+	private class AggregateTIPOState implements Serializable {
+		
+		private static final long serialVersionUID = 9088231287860150949L;
+
+		ITransferArea<W,W> transferArea;
+		
+		Map<Long, DefaultTISweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>>> groups;
+		
 	}
 
 }
