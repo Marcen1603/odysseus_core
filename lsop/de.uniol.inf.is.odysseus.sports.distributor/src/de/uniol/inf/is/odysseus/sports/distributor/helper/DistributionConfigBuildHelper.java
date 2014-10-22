@@ -1,26 +1,23 @@
 package de.uniol.inf.is.odysseus.sports.distributor.helper;
 
+import de.uniol.inf.is.odysseus.sports.distributor.helper.enums.Allocate;
+import de.uniol.inf.is.odysseus.sports.distributor.helper.enums.Parser;
+import de.uniol.inf.is.odysseus.sports.distributor.helper.enums.Partition;
+import de.uniol.inf.is.odysseus.sports.distributor.helper.enums.Postprocessor;
+
+
+/**
+ * Class with static methods which help you to create a DistributionConfig for a
+ * Distributor
+ * 
+ * @author Marc Preuschaft
+ * @since 22.10.2014
+ *
+ */
+
 public class DistributionConfigBuildHelper {
 	
-	
-	//TODO enum über OSGI 
-	public static enum PARTITION
-	{
-		OPERATORCLOUD, OPERATORSETCLOUD, QUERYCLOUD, USER
-	}
-	
-	public static enum ALLOCATE
-	{
-		ROUNDROBIN, LOADBALANCING, DIRECT, ROUNDROBINWITHLOCAL, ROUNDROBINWITHUSER, SURVEY, USER
-	}
-	
-	
-	public static enum PARSER
-	{
-		SportsQL
-	}
 		
-	
 	public static String createDistribute(){
 		return "#CONFIG DISTRIBUTE true\n";
 	}
@@ -29,15 +26,40 @@ public class DistributionConfigBuildHelper {
 		return "#ADDQUERY\n";
 	}
 	
-	public static String createParser(PARSER parser){
+	/**
+	 * 
+	 * @param parser
+	 * @return
+	 */
+	public static String createParser(Parser parser){
 		return "#PARSER "+parser.toString()+"\n";
 	}
 	
-	public  static String createPeerPartition(PARTITION partition){
+	/**
+	 * 
+	 * @param partition
+	 * @return
+	 */
+	public  static String createPeerPartition(Partition partition){
 		return "#PEER_PARTITION "+partition.toString()+"\n";
 	}
 	
-	public static String createPeerAllocate(ALLOCATE allocate){
+	/**
+	 * 
+	 * @param allocate
+	 * @return
+	 */
+	public static String createPeerAllocate(Allocate allocate){
 		return "#PEER_ALLOCATE "+allocate.toString()+"\n";
 	}
+	
+	/**
+	 * 
+	 * @param postprocessor
+	 * @return
+	 */
+	public static String createPeerPostProcessor(Postprocessor postprocessor){
+	 return "#PEER_POSTPROCESSOR "+postprocessor.toString()+"\n";
+	}
+	
 }

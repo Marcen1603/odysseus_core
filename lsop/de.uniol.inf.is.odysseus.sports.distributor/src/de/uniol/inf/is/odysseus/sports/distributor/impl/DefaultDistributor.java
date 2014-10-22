@@ -1,12 +1,11 @@
 package de.uniol.inf.is.odysseus.sports.distributor.impl;
 
-
 import de.uniol.inf.is.odysseus.sports.distributor.helper.DistributionConfigBuildHelper;
-import de.uniol.inf.is.odysseus.sports.distributor.helper.DistributionConfigBuildHelper.ALLOCATE;
-import de.uniol.inf.is.odysseus.sports.distributor.helper.DistributionConfigBuildHelper.PARTITION;
+import de.uniol.inf.is.odysseus.sports.distributor.helper.enums.Allocate;
+import de.uniol.inf.is.odysseus.sports.distributor.helper.enums.Partition;
 
-public class DefaultDistributor implements ISportsQLDistributor{
-	
+public class DefaultDistributor implements ISportsQLDistributor {
+
 	private final String distributorName = "default";
 
 	@Override
@@ -18,13 +17,11 @@ public class DefaultDistributor implements ISportsQLDistributor{
 	public String getDistributionConfig() {
 
 		StringBuilder distributionConfig = new StringBuilder();
-		distributionConfig.append(DistributionConfigBuildHelper.createPeerPartition(PARTITION.OPERATORCLOUD));
-		distributionConfig.append(DistributionConfigBuildHelper.createPeerAllocate(ALLOCATE.ROUNDROBINWITHLOCAL));
+		distributionConfig.append(DistributionConfigBuildHelper
+				.createPeerPartition(Partition.OPERATORCLOUD));
+		distributionConfig.append(DistributionConfigBuildHelper
+				.createPeerAllocate(Allocate.SURVEY));
 		return distributionConfig.toString();
 	}
-	
-	
-	
-	
 
 }

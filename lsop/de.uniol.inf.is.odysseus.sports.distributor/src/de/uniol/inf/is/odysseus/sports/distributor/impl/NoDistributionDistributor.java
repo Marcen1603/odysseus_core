@@ -11,6 +11,9 @@ public class NoDistributionDistributor implements ISportsQLDistributor{
 
 	@Override
 	public String getDistributionConfig() {
+		/*
+		 * return a empty distribution config to deactivate the distribution
+		 */
 		return "";
 	}
 
