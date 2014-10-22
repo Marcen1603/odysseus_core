@@ -1,6 +1,8 @@
 package de.uniol.inf.is.odysseus.core.metadata;
 
-public interface IStreamable {
+import java.io.Serializable;
+
+public interface IStreamable extends Serializable {
 	
 	boolean isPunctuation();
 
