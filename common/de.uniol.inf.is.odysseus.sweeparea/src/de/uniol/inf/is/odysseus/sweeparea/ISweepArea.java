@@ -15,13 +15,14 @@
  */
 package de.uniol.inf.is.odysseus.sweeparea;
 
+import java.io.Serializable;
 import java.util.Iterator;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.Order;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 
-public interface ISweepArea<T> extends Iterable<T> {
+public interface ISweepArea<T> extends Iterable<T>, Serializable {
 
 	/**
 	 * Initializes this sweep area. All elements are removed

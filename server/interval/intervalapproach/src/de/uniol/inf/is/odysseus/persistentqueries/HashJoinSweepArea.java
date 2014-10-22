@@ -40,6 +40,8 @@ import de.uniol.inf.is.odysseus.sweeparea.ITimeIntervalSweepArea;
 @SuppressWarnings({"unchecked","rawtypes"})
 public class HashJoinSweepArea implements ITimeIntervalSweepArea<Tuple<? extends ITimeInterval>> {
 
+	private static final long serialVersionUID = -8331551296317426445L;
+	
 	private LinkedHashMultimap<Tuple<? extends ITimeInterval>, Pair<Tuple<? extends ITimeInterval>, Tuple<? extends ITimeInterval>>> elements;
 	/**
 	 * This list is used for

@@ -32,6 +32,8 @@ import de.uniol.inf.is.odysseus.sweeparea.ITimeIntervalSweepArea;
 public class PriorityIdHashSweepArea<K extends ITimeIntervalPriority, T extends Tuple<K>>
 		implements ITimeIntervalSweepArea<T> {
 
+	private static final long serialVersionUID = 7057369128980848365L;
+	
 	private LinkedHashMultimap<Long, T> elements = LinkedHashMultimap.create();
 	final private int storedIdPosition;
 	final private int externalIdPosition;
