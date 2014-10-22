@@ -1,7 +1,6 @@
 package de.uniol.inf.is.odysseus.peer.recovery.internal;
 
 import java.util.Collection;
-import java.util.List;
 import java.util.Map;
 
 import net.jxta.id.ID;
@@ -13,8 +12,6 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 
-import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
-import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.p2p_new.IP2PNetworkManager;
 import de.uniol.inf.is.odysseus.peer.distribute.ILogicalQueryPart;
@@ -184,91 +181,10 @@ public class RecoveryQueryDistributionListener extends
 					cCommunicator.get().sendBackupInformation(peer, info);
 
 				}
-				
-				/*
-				 * TODO Jxta information. Not clear atm. if they are needed.
-				 */
-
-				// Save information about JXTA
-				// Won't work, because there are no operators but only PQL.
-				
-				// Map<PeerID, Collection<String>> subsequentPQLStatements =
-				// Maps
-				// .newHashMap();
-				// for (ILogicalQueryPart subsequentPart : subsequentPartsToPeer
-				// .get(peerID)) {
-				//
-				// PeerID allocatedPeer = allocationMap.get(subsequentPart);
-				//
-				// List<ILogicalOperator> operators = Lists
-				// .newArrayList(subsequentPart.getOperators());
-				// List<ILogicalOperator> visitedOperators =
-				// Lists.newArrayList();
-				// while (!operators.isEmpty()) {
-				// ILogicalOperator operator = operators.remove(0);
-				//
-				// collectOperatorsWithSubscriptions(operator,
-				// visitedOperators);
-				// }
-				//
-				// String key = "";
-				// String value = "";
-				// for (ILogicalOperator logicalOp : visitedOperators) {
-				// if (logicalOp instanceof JxtaSenderAO) {
-				// JxtaSenderAO sender = (JxtaSenderAO) logicalOp;
-				// value = sender.getPipeID();
-				// key = RecoveryCommunicator.JXTA_KEY_SENDER_PIPE_ID;
-				// // Send to others and store local
-				// cCommunicator.get().sendBackupJxtaInformation(
-				// allocatedPeer, sharedQueryId, key, value);
-				// LocalBackupInformationAccess.storeLocalJxtaInfo(
-				// allocatedPeer, sharedQueryId, key, value);
-				// } else if (logicalOp instanceof JxtaReceiverAO) {
-				// JxtaReceiverAO receiver = (JxtaReceiverAO) logicalOp;
-				// value = receiver.getPipeID();
-				// key = RecoveryCommunicator.JXTA_KEY_RECEIVER_PIPE_ID;
-				// // Send to others and store local
-				// cCommunicator.get().sendBackupJxtaInformation(
-				// allocatedPeer, sharedQueryId, key, value);
-				// LocalBackupInformationAccess.storeLocalJxtaInfo(
-				// allocatedPeer, sharedQueryId, key, value);
-				// }
-				//
-				// }
-				//
-				// }
 
 			}
 
 		}
 
 	}
-
-	/*
-	 * TODO Jxta information. Not clear atm. if they are needed.
-	 */
-	/**
-	 * Copied from LogicalQueryHelper
-	 * 
-	 * @param operator
-	 * @param visitedOperators
-	 */
-	@SuppressWarnings("unused")
-	private static void collectOperatorsWithSubscriptions(
-			ILogicalOperator operator, List<ILogicalOperator> visitedOperators) {
-		if (!visitedOperators.contains(operator)) {
-			visitedOperators.add(operator);
-
-			for (LogicalSubscription sub : operator.getSubscribedToSource()) {
-				collectOperatorsWithSubscriptions(sub.getTarget(),
-						visitedOperators);
-			}
-
-			for (LogicalSubscription sub : operator.getSubscriptions()) {
-				collectOperatorsWithSubscriptions(sub.getTarget(),
-						visitedOperators);
-			}
-		}
-	}
-
 }

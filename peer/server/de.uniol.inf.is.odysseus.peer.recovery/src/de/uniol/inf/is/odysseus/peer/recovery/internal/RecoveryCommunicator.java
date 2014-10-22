@@ -402,6 +402,7 @@ public class RecoveryCommunicator implements IRecoveryCommunicator, IPeerCommuni
 		if (message instanceof RecoveryInstructionMessage) {
 			RecoveryInstructionMessage instruction = (RecoveryInstructionMessage) message;
 			RecoveryInstructionHandler.handleInstruction(senderPeer, instruction);
+			
 		} else if (message instanceof BackupInformationMessage) {
 
 			// Store the backup information
@@ -417,6 +418,7 @@ public class RecoveryCommunicator implements IRecoveryCommunicator, IPeerCommuni
 		} else if (message instanceof RecoveryAgreementMessage) {
 			RecoveryAgreementMessage agreementMessage = (RecoveryAgreementMessage) message;
 			RecoveryAgreementHandler.handleAgreementMessage(senderPeer, agreementMessage);
+			
 		}
 	}
 
@@ -472,6 +474,24 @@ public class RecoveryCommunicator implements IRecoveryCommunicator, IPeerCommuni
 			e.printStackTrace();
 		}
 	}
+	
+	@Override
+	public void chooseBuddyForQuery(ID sharedQueryId) {
+		// TODO Use a buddy-allocator? For now, we just choose the first peer we know
+		PeerID buddy = p2pDictionary.getRemotePeerIDs().iterator().next();
+		
+		// 1. Send that this peer is my buddy
+		RecoveryInstructionMessage buddyMessage = RecoveryInstructionMessage.createBeBuddyMessage(sharedQueryId);
+		try {
+			peerCommunicator.send(buddy, buddyMessage);
+		} catch (PeerCommunicationException e) {
+			e.printStackTrace();
+		}
+		
+		// 2. Give the necessary backup-information to this peer
+		
+		
+	}
 
 	public static IRecoveryAllocator getRecoveryAllocator() {
 		return recoveryAllocator;
@@ -480,5 +500,4 @@ public class RecoveryCommunicator implements IRecoveryCommunicator, IPeerCommuni
 	public static void setRecoveryAllocator(IRecoveryAllocator recoveryAllocator) {
 		RecoveryCommunicator.recoveryAllocator = recoveryAllocator;
 	}
-
 }

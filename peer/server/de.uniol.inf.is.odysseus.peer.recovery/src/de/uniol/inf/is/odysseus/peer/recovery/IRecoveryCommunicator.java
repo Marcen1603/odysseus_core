@@ -14,7 +14,7 @@ import net.jxta.pipe.PipeID;
  *
  */
 public interface IRecoveryCommunicator {
-	
+
 	/**
 	 * Does the recovery for the failed peer (and checks, if this peer can and
 	 * should to this). This is the method you should call if you notice that a
@@ -50,8 +50,7 @@ public interface IRecoveryCommunicator {
 	 * @param pipeId
 	 *            The pipeId which is affected
 	 */
-	public void sendUpdateReceiverMessage(PeerID receiverPeer,
-			PeerID newSenderPeer, PipeID pipeId);
+	public void sendUpdateReceiverMessage(PeerID receiverPeer, PeerID newSenderPeer, PipeID pipeId);
 
 	/**
 	 * Sends a recovery-agreement message to all known peers. This message tells
@@ -68,10 +67,13 @@ public interface IRecoveryCommunicator {
 
 	/**
 	 * Sends a message with backup information to another peer.
-	 * @param destination The peer for which the backup information are. <br />
-	 * Must be not null.
-	 * @param info The backup information to send. <br />
-	 * Must be not null.
+	 * 
+	 * @param destination
+	 *            The peer for which the backup information are. <br />
+	 *            Must be not null.
+	 * @param info
+	 *            The backup information to send. <br />
+	 *            Must be not null.
 	 */
 	public void sendBackupInformation(PeerID destination, IRecoveryBackupInformation info);
 
@@ -90,7 +92,17 @@ public interface IRecoveryCommunicator {
 	 *            from the failed peer
 	 */
 	// TODO Better way: allocate each single query part new. M.B.
-	public void installQueriesOnNewPeer(PeerID failedPeer, PeerID newPeer,
-			ID sharedQueryId);
+	public void installQueriesOnNewPeer(PeerID failedPeer, PeerID newPeer, ID sharedQueryId);
+
+	/**
+	 * The RecoveryCommunicator will search for a buddy peer which will save
+	 * that it's the buddy for this peer for this specific shared query. It will
+	 * also send the necessary backup-information to this peer
+	 * 
+	 * @param sharedQueryId
+	 *            The id of the shared query for which the other peer will be
+	 *            the buddy (and thus will do the recovery if this peer fails)
+	 */
+	public void chooseBuddyForQuery(ID sharedQueryId);
 
 }
