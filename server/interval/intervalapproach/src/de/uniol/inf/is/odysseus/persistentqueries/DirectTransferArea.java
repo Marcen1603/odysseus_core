@@ -35,6 +35,8 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.ITransferArea;
 public class DirectTransferArea<R extends IStreamObject<? extends ITimeInterval>, W extends IStreamObject<? extends ITimeInterval>>
 		implements ITransferArea<R, W> {
 
+	private static final long serialVersionUID = 2207860250465543159L;
+	
 	protected PointInTime[] minTs;
 	protected ITransfer<W> po;
 	protected PriorityQueue<W> outputQueue = new PriorityQueue<W>(11,

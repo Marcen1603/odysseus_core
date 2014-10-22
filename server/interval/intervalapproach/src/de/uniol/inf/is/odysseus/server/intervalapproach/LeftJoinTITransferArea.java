@@ -22,6 +22,8 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.interval.TITransferArea;
 public class LeftJoinTITransferArea<R extends IStreamObject<? extends ITimeInterval>, W extends IStreamObject<? extends ITimeInterval>>
 		extends TITransferArea<R, W> {
 
+	private static final long serialVersionUID = -5062501604386658648L;
+
 //	/**
 //	 * removes all elements whose start timestamp is before heartbeat
 //	 */

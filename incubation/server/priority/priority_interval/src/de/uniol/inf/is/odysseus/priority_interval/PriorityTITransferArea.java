@@ -27,6 +27,8 @@ import de.uniol.inf.is.odysseus.priority.IPriority;
 public class PriorityTITransferArea<K extends ITimeInterval, R extends IStreamObject<K>, W extends IStreamObject<K>>
 		extends TITransferArea<R, W> {
 
+	private static final long serialVersionUID = -4574154259721461598L;
+
 	@Override
 	public void transfer(W object) {
 		if (((IPriority) object.getMetadata()).getPriority() > 0) {

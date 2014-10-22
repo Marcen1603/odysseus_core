@@ -15,6 +15,7 @@
  */
 package de.uniol.inf.is.odysseus.core.physicaloperator.interval;
 
+import java.io.Serializable;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -25,6 +26,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.collection.Pair;
+import de.uniol.inf.is.odysseus.core.collection.SerializablePair;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamable;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
@@ -38,6 +40,25 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.ITransferArea;
  */
 public class TITransferArea<R extends IStreamObject<? extends ITimeInterval>, W extends IStreamObject<? extends ITimeInterval>>
 		implements ITransferArea<R, W> {
+	
+	private static final long serialVersionUID = -2968616402073295957L;
+
+	private class OutputQueueComparator implements Comparator<SerializablePair<IStreamable, Integer>>, Serializable {
+
+		private static final long serialVersionUID = 5321893137959979782L;
+
+		@SuppressWarnings("unchecked")
+		@Override
+		public int compare(SerializablePair<IStreamable, Integer> left, SerializablePair<IStreamable, Integer> right) {
+			PointInTime l = left.getE1().isPunctuation() ? ((IPunctuation) left.getE1())
+					.getTime() : ((W) left.getE1()).getMetadata().getStart();
+			PointInTime r = right.getE1().isPunctuation() ? ((IPunctuation) right.getE1())
+					.getTime() : ((W) right.getE1()).getMetadata().getStart();
+
+			return l.compareTo(r);
+		}		
+		
+	}
 
 	static final Logger logger = LoggerFactory.getLogger(TITransferArea.class);
 
@@ -50,19 +71,8 @@ public class TITransferArea<R extends IStreamObject<? extends ITimeInterval>, W 
 	// the operator that uses this sink
 	protected ITransfer<W> po;
 	// Store to reorder elements
-	protected PriorityQueue<Pair<IStreamable, Integer>> outputQueue = new PriorityQueue<>(
-			11, new Comparator<Pair<IStreamable, Integer>>() {
-				@SuppressWarnings("unchecked")
-				@Override
-				public int compare(Pair<IStreamable, Integer> left, Pair<IStreamable, Integer> right) {
-					PointInTime l = left.getE1().isPunctuation() ? ((IPunctuation) left.getE1())
-							.getTime() : ((W) left.getE1()).getMetadata().getStart();
-					PointInTime r = right.getE1().isPunctuation() ? ((IPunctuation) right.getE1())
-							.getTime() : ((W) right.getE1()).getMetadata().getStart();
-
-					return l.compareTo(r);
-				}
-			});
+	protected PriorityQueue<SerializablePair<IStreamable, Integer>> outputQueue = new PriorityQueue<>(
+			11, new OutputQueueComparator());
 	// to which port the data should be send
 	private int outputPort = 0;
 
@@ -143,7 +153,7 @@ public class TITransferArea<R extends IStreamObject<? extends ITimeInterval>, W 
 						&& object.getMetadata().getStart().equals(watermark)) {
 					// ignore puncutations that do not change the watermark!
 				} else {
-					outputQueue.add(new Pair<IStreamable, Integer>(object, toPort));
+					outputQueue.add(new SerializablePair<IStreamable, Integer>(object, toPort));
 					sendData();
 				}
 			}else {
@@ -168,7 +178,7 @@ public class TITransferArea<R extends IStreamObject<? extends ITimeInterval>, W 
 			// else treat only objects that are at least from time watermark
 			if (watermark == null
 					|| punctuation.getTime().afterOrEquals(watermark)) {
-				outputQueue.add(new Pair<IStreamable, Integer>(punctuation,toPort));
+				outputQueue.add(new SerializablePair<IStreamable, Integer>(punctuation,toPort));
 				sendData();
 			}
 		}
@@ -347,7 +357,7 @@ public class TITransferArea<R extends IStreamObject<? extends ITimeInterval>, W 
 	@Override
 	public void dump() {
 		System.out.println("Elements in Queue (could be out of order!)");
-		Iterator<Pair<IStreamable, Integer>> iter = outputQueue.iterator();
+		Iterator<SerializablePair<IStreamable, Integer>> iter = outputQueue.iterator();
 		while (iter.hasNext()){
 			System.out.println(iter.next());
 		}

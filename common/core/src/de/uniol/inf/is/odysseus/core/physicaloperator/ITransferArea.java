@@ -15,6 +15,8 @@
   */
 package de.uniol.inf.is.odysseus.core.physicaloperator;
 
+import java.io.Serializable;
+
 import de.uniol.inf.is.odysseus.core.IClone;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamable;
@@ -27,7 +29,7 @@ import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
  *
  * @param <R> Datentyp der Elemente, die Verarbeitet werden sollen.
  */
-public interface ITransferArea<R extends IStreamObject<?>, W extends IStreamObject<?>> extends IClone {
+public interface ITransferArea<R extends IStreamObject<?>, W extends IStreamObject<?>> extends IClone, Serializable {
 	
 	/**
 	 * Anhand eines neuen Elementes, welches typischerweise aktuell aus dem
