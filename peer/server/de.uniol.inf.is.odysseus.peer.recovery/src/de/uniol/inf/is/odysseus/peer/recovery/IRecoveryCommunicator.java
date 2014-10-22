@@ -66,12 +66,6 @@ public interface IRecoveryCommunicator {
 	 */
 	public void sendRecoveryAgreementMessage(PeerID failedPeer, ID sharedQueryId);
 
-	// TODO javaDoc
-	public IRecoveryAllocator getRecoveryAllocator();
-
-	// TODO javaDoc
-	public void setRecoveryAllocator(IRecoveryAllocator recoveryAllocator);
-
 	/**
 	 * Sends a message with backup information to another peer.
 	 * @param destination The peer for which the backup information are. <br />

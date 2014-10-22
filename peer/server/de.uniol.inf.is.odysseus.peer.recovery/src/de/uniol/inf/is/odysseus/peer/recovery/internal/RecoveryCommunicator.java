@@ -51,14 +51,13 @@ import de.uniol.inf.is.odysseus.peer.recovery.util.RecoveryHelper;
  * @author Tobias Brandt & Michael Brand & Simon Kuespert
  *
  */
-public class RecoveryCommunicator implements IRecoveryCommunicator,
-		IPeerCommunicatorListener, Observer {
+public class RecoveryCommunicator implements IRecoveryCommunicator, IPeerCommunicatorListener,
+		Observer {
 
 	/**
 	 * The logger instance for this class.
 	 */
-	private static final Logger LOG = LoggerFactory
-			.getLogger(RecoveryCommunicator.class);
+	private static final Logger LOG = LoggerFactory.getLogger(RecoveryCommunicator.class);
 
 	public static final String JXTA_KEY_RECEIVER_PIPE_ID = "receiverPipeId";
 	public static final String JXTA_KEY_SENDER_PIPE_ID = "senderPipeId";
@@ -67,8 +66,8 @@ public class RecoveryCommunicator implements IRecoveryCommunicator,
 	private static IP2PDictionary p2pDictionary;
 	private static IPeerCommunicator peerCommunicator;
 	private static IRecoveryP2PListener recoveryP2PListener;
+	private static IRecoveryAllocator recoveryAllocator;
 
-	private IRecoveryAllocator recoveryAllocator;
 	/**
 	 * Executor to get queries
 	 */
@@ -82,8 +81,13 @@ public class RecoveryCommunicator implements IRecoveryCommunicator,
 	 * Called by OSGi on Bundle activation.
 	 */
 	public void activate() {
-		if (recoveryP2PListener != null)
+		if (recoveryP2PListener != null) {
 			recoveryP2PListener.addObserver(this);
+			if (recoveryAllocator != null) {
+				recoveryP2PListener.startPeerFailureDetection();
+			}
+		}
+
 	}
 
 	/**
@@ -133,7 +137,7 @@ public class RecoveryCommunicator implements IRecoveryCommunicator,
 		peerCommunicator.addListener(this, RecoveryAgreementMessage.class);
 		peerCommunicator.registerMessageType(RemoveQueryMessage.class);
 		peerCommunicator.addListener(this, RemoveQueryMessage.class);
-		
+
 	}
 
 	/**
@@ -146,18 +150,12 @@ public class RecoveryCommunicator implements IRecoveryCommunicator,
 	 */
 	public void unbindPeerCommunicator(IPeerCommunicator serv) {
 		if (peerCommunicator == serv) {
-			peerCommunicator.removeListener(this,
-					RecoveryInstructionMessage.class);
-			peerCommunicator
-					.unregisterMessageType(RecoveryInstructionMessage.class);
-			peerCommunicator.removeListener(this,
-					BackupInformationMessage.class);
-			peerCommunicator
-					.unregisterMessageType(BackupInformationMessage.class);
-			peerCommunicator.removeListener(this,
-					RecoveryAgreementMessage.class);
-			peerCommunicator
-					.unregisterMessageType(RecoveryAgreementMessage.class);
+			peerCommunicator.removeListener(this, RecoveryInstructionMessage.class);
+			peerCommunicator.unregisterMessageType(RecoveryInstructionMessage.class);
+			peerCommunicator.removeListener(this, BackupInformationMessage.class);
+			peerCommunicator.unregisterMessageType(BackupInformationMessage.class);
+			peerCommunicator.removeListener(this, RecoveryAgreementMessage.class);
+			peerCommunicator.unregisterMessageType(RecoveryAgreementMessage.class);
 			peerCommunicator.removeListener(this, RemoveQueryMessage.class);
 			peerCommunicator = null;
 		}
@@ -196,6 +194,17 @@ public class RecoveryCommunicator implements IRecoveryCommunicator,
 			recoveryP2PListener = null;
 	}
 
+	// called by OSGi-DS
+	public static void bindRecoveryAllocator(IRecoveryAllocator allocator) {
+		recoveryAllocator = allocator;
+	}
+
+	// called by OSGi-DS
+	public static void unbindRecoveryAllocator(IRecoveryAllocator allocator) {
+		if (recoveryAllocator == allocator)
+			recoveryAllocator = null;
+	}
+
 	/**
 	 * Gets currently active Session.
 	 * 
@@ -203,10 +212,8 @@ public class RecoveryCommunicator implements IRecoveryCommunicator,
 	 */
 	public static ISession getActiveSession() {
 		if (activeSession == null || !activeSession.isValid()) {
-			activeSession = UserManagementProvider
-					.getSessionmanagement()
-					.loginSuperUser(null,
-							UserManagementProvider.getDefaultTenant().getName());
+			activeSession = UserManagementProvider.getSessionmanagement().loginSuperUser(null,
+					UserManagementProvider.getDefaultTenant().getName());
 		}
 		return activeSession;
 	}
@@ -280,8 +287,7 @@ public class RecoveryCommunicator implements IRecoveryCommunicator,
 					for (String pql : pqlParts) {
 						if (pql.contains(sender.getPipeIDString())) {
 							// This is the shared query id we search for
-							sharedQueryIdsForRecovery.add(sharedQuery
-									.getSharedQueryID());
+							sharedQueryIdsForRecovery.add(sharedQuery.getSharedQueryID());
 
 							// Save that this sender if affected
 							affectedSenders.add(sender);
@@ -292,8 +298,7 @@ public class RecoveryCommunicator implements IRecoveryCommunicator,
 		}
 
 		// 3. Check, if we are the buddy of that peer
-		Map<PeerID, List<ID>> buddyMap = LocalBackupInformationAccess
-				.getBuddyList();
+		Map<PeerID, List<ID>> buddyMap = LocalBackupInformationAccess.getBuddyList();
 		if (buddyMap.containsKey(failedPeer)) {
 			// We are a buddy for that peer
 			sharedQueryIdsForRecovery.addAll(buddyMap.get(failedPeer));
@@ -317,8 +322,7 @@ public class RecoveryCommunicator implements IRecoveryCommunicator,
 			PeerID peer = null;
 
 			try {
-				peer = recoveryAllocator.allocate(
-						p2pDictionary.getRemotePeerIDs(),
+				peer = recoveryAllocator.allocate(p2pDictionary.getRemotePeerIDs(),
 						p2pNetworkManager.getLocalPeerID());
 				LOG.debug("Peer ID for recovery allocation found.");
 			} catch (QueryPartAllocationException e) {
@@ -332,8 +336,7 @@ public class RecoveryCommunicator implements IRecoveryCommunicator,
 				peer = p2pNetworkManager.getLocalPeerID();
 
 			// 5. Tell the new peer to install the parts from the failed peer
-			RecoveryAgreementHandler.waitForAndDoRecovery(failedPeer,
-					sharedQueryId, peer);
+			RecoveryAgreementHandler.waitForAndDoRecovery(failedPeer, sharedQueryId, peer);
 
 			// 6. Update our sender so it knows the new peerId
 			if (i < affectedSenders.size()) {
@@ -359,15 +362,14 @@ public class RecoveryCommunicator implements IRecoveryCommunicator,
 
 	// TODO Better way: allocate each single query part new. M.B.
 	@Override
-	public void installQueriesOnNewPeer(PeerID failedPeer, PeerID newPeer,
-			ID sharedQueryId) {
+	public void installQueriesOnNewPeer(PeerID failedPeer, PeerID newPeer, ID sharedQueryId) {
 
 		Preconditions.checkNotNull(failedPeer);
 		Preconditions.checkNotNull(newPeer);
 		Preconditions.checkNotNull(sharedQueryId);
 
-		ImmutableCollection<String> pqlParts = LocalBackupInformationAccess
-				.getStoredPQLStatements(sharedQueryId, failedPeer);
+		ImmutableCollection<String> pqlParts = LocalBackupInformationAccess.getStoredPQLStatements(
+				sharedQueryId, failedPeer);
 
 		String pql = "";
 		for (String pqlPart : pqlParts) {
@@ -380,27 +382,22 @@ public class RecoveryCommunicator implements IRecoveryCommunicator,
 		try {
 			peerCommunicator.send(newPeer, takeOverMessage);
 		} catch (Throwable e) {
-			LOG.error(
-					"Could not send add query message to peer "
-							+ newPeer.toString(), e);
+			LOG.error("Could not send add query message to peer " + newPeer.toString(), e);
 		}
 
 		for (String pqlCode : pqlParts) {
 
-			BackupInformationHelper.updateInfoStores(failedPeer, newPeer,
-					sharedQueryId, pqlCode);
+			BackupInformationHelper.updateInfoStores(failedPeer, newPeer, sharedQueryId, pqlCode);
 
 		}
 
 	}
 
 	@Override
-	public void receivedMessage(IPeerCommunicator communicator,
-			PeerID senderPeer, IMessage message) {
+	public void receivedMessage(IPeerCommunicator communicator, PeerID senderPeer, IMessage message) {
 		if (message instanceof RecoveryInstructionMessage) {
 			RecoveryInstructionMessage instruction = (RecoveryInstructionMessage) message;
-			RecoveryInstructionHandler.handleInstruction(senderPeer,
-					instruction);
+			RecoveryInstructionHandler.handleInstruction(senderPeer, instruction);
 		} else if (message instanceof BackupInformationMessage) {
 
 			// Store the backup information
@@ -415,14 +412,12 @@ public class RecoveryCommunicator implements IRecoveryCommunicator,
 
 		} else if (message instanceof RecoveryAgreementMessage) {
 			RecoveryAgreementMessage agreementMessage = (RecoveryAgreementMessage) message;
-			RecoveryAgreementHandler.handleAgreementMessage(senderPeer,
-					agreementMessage);
+			RecoveryAgreementHandler.handleAgreementMessage(senderPeer, agreementMessage);
 		}
 	}
 
 	@Override
-	public void sendBackupInformation(PeerID destination,
-			IRecoveryBackupInformation info) {
+	public void sendBackupInformation(PeerID destination, IRecoveryBackupInformation info) {
 
 		Preconditions.checkNotNull(destination);
 		Preconditions.checkNotNull(info);
@@ -434,8 +429,7 @@ public class RecoveryCommunicator implements IRecoveryCommunicator,
 
 		} catch (Throwable e) {
 
-			LOG.error("Could not send backup information to peer "
-					+ destination.toString(), e);
+			LOG.error("Could not send backup information to peer " + destination.toString(), e);
 
 		}
 
@@ -443,8 +437,8 @@ public class RecoveryCommunicator implements IRecoveryCommunicator,
 
 	public void sendRecoveryAgreementMessage(PeerID failedPeer, ID sharedQueryId) {
 		// Send this to all other peers we know
-		RecoveryAgreementMessage message = RecoveryAgreementMessage
-				.createRecoveryAgreementMessage(failedPeer, sharedQueryId);
+		RecoveryAgreementMessage message = RecoveryAgreementMessage.createRecoveryAgreementMessage(
+				failedPeer, sharedQueryId);
 		for (PeerID destinationPeer : p2pDictionary.getRemotePeerIDs())
 			try {
 				peerCommunicator.send(destinationPeer, message);
@@ -457,8 +451,7 @@ public class RecoveryCommunicator implements IRecoveryCommunicator,
 	public void update(Observable observable, Object notification) {
 		if (notification instanceof P2PNetworkNotification) {
 			P2PNetworkNotification p2pNotification = (P2PNetworkNotification) notification;
-			if (p2pNotification.getType().equals(
-					P2PNetworkNotification.LOST_PEER)) {
+			if (p2pNotification.getType().equals(P2PNetworkNotification.LOST_PEER)) {
 				// Start recovery
 				recover(p2pNotification.getPeer());
 			}
@@ -466,8 +459,7 @@ public class RecoveryCommunicator implements IRecoveryCommunicator,
 	}
 
 	@Override
-	public void sendUpdateReceiverMessage(PeerID receiverPeer,
-			PeerID newSenderPeer, PipeID pipeId) {
+	public void sendUpdateReceiverMessage(PeerID receiverPeer, PeerID newSenderPeer, PipeID pipeId) {
 		RecoveryInstructionMessage message = RecoveryInstructionMessage
 				.createUpdateReceiverMessage(newSenderPeer, pipeId);
 		try {
@@ -477,14 +469,12 @@ public class RecoveryCommunicator implements IRecoveryCommunicator,
 		}
 	}
 
-	@Override
-	public IRecoveryAllocator getRecoveryAllocator() {
+	public static IRecoveryAllocator getRecoveryAllocator() {
 		return recoveryAllocator;
 	}
 
-	@Override
-	public void setRecoveryAllocator(IRecoveryAllocator recoveryAllocator) {
-		this.recoveryAllocator = recoveryAllocator;
+	public static void setRecoveryAllocator(IRecoveryAllocator recoveryAllocator) {
+		RecoveryCommunicator.recoveryAllocator = recoveryAllocator;
 	}
 
 }

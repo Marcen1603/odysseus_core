@@ -364,12 +364,7 @@ public class RecoveryConsole implements CommandProvider {
 		}
 		IRecoveryAllocator allocator = optAllocator.get();
 
-		if (cCommunicator.isPresent()) {
-			cCommunicator.get().setRecoveryAllocator(allocator);
-		} else {
-			System.out.println("No Communicator found.");
-			return;
-		}
+		RecoveryCommunicator.setRecoveryAllocator(allocator);
 
 		peerFailureDetector.startPeerFailureDetection();
 

@@ -36,8 +36,6 @@ public class RecoveryP2PListener extends Observable implements
 	private Collection<PeerID> savedPeerIDs;
 	private volatile boolean detectionStarted = false;
 
-	private static RecoveryP2PListener instance;
-
 	// called by OSGi-DS
 	public static void bindP2PDictionary(IP2PDictionary serv) {
 		p2pDictionary = serv;
@@ -66,7 +64,6 @@ public class RecoveryP2PListener extends Observable implements
 	 * Called by OSGi on Bundle activation.
 	 */
 	public void activate() {
-		instance = this;
 		LOG.debug("PeerFailureDetector activated");
 	}
 
@@ -74,12 +71,7 @@ public class RecoveryP2PListener extends Observable implements
 	 * Called by OSGi on Bundle deactivation.
 	 */
 	public void deactivate() {
-		instance = null;
 		LOG.debug("PeerFailureDetector deactivated");
-	}
-
-	public static RecoveryP2PListener getInstance() {
-		return instance;
 	}
 
 	@Override
