@@ -96,6 +96,12 @@ public class AbstractSportsDDCAccess {
 	private static final String KEY_SENSOR_PREFIX = "sensorid.";
 
 	/**
+	 * The key for the BaseTimeUnit.
+	 */
+	private static final DDCKey KEY_SENSORS_BASETIMEUNIT = new DDCKey(new String[] {
+			"sensors", "basetimeunit" });
+	
+	/**
 	 * The key for the entity_id for a given sensor_id.
 	 * 
 	 * @param sensor_id
@@ -297,6 +303,17 @@ public class AbstractSportsDDCAccess {
 		
 		return AbstractSportsDDCAccess.ddc.getValue(AbstractSportsDDCAccess.buildKeyEntity(sensor_id));
 		
+	}
+	
+	/**
+	 * The sensors BaseTimeUnit.
+	 * @throws MissingDDCEntryException if "sensors,basetimeunit" is not a key of the DDC.
+	 */
+	public static String getBasetimeunit() throws MissingDDCEntryException {
+		
+		//Preconditions.checkNotNull(AbstractSportsDDCAccess.ddc, "No DDC bound!");
+				
+		return AbstractSportsDDCAccess.ddc.getValue(KEY_SENSORS_BASETIMEUNIT);
 	}
 	
 	/**
