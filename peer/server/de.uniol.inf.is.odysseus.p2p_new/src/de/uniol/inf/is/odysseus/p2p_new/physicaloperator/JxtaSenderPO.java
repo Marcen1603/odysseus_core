@@ -40,7 +40,7 @@ public class JxtaSenderPO<T extends IStreamObject<?>> extends AbstractSink<T>
 	private static final Logger LOG = LoggerFactory
 			.getLogger(JxtaSenderPO.class);
 
-	private final ITransmissionSender transmission;
+	private ITransmissionSender transmission;
 	private final String pipeIDString;
 	private String peerIDString;
 	private final boolean writeResourceUsage;
@@ -267,5 +267,23 @@ public class JxtaSenderPO<T extends IStreamObject<?>> extends AbstractSink<T>
 			LOG.error("Could not get id from peerIDString {}", peerIDString, ex);
 			return null;
 		}
+	}
+
+	/**
+	 * To send the data to a new peer (e.g. in case of recovery) use this method.
+	 * @param peerId The id of the new receiver peer
+	 * @throws DataTransmissionException
+	 */
+	public void sendToNewPeer(String peerId) throws DataTransmissionException {
+		this.peerIDString = peerId;
+
+		// Update transmission
+		transmission.close();
+		transmission.removeListener(this);
+
+		this.transmission = DataTransmissionManager.getInstance()
+				.registerTransmissionSender(peerIDString, pipeIDString);
+		this.transmission.addListener(this);
+		this.transmission.open();
 	}
 }

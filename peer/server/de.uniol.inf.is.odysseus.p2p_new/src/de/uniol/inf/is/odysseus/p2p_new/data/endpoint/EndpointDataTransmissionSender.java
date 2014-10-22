@@ -20,6 +20,7 @@ import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicatorListener;
 import de.uniol.inf.is.odysseus.p2p_new.PeerCommunicationException;
 import de.uniol.inf.is.odysseus.p2p_new.data.AbstractTransmissionSender;
 import de.uniol.inf.is.odysseus.p2p_new.data.DataTransmissionException;
+import de.uniol.inf.is.odysseus.p2p_new.data.socket.PortAckMessage;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.impl.P2PDictionary;
 
 public class EndpointDataTransmissionSender extends AbstractTransmissionSender implements IPeerCommunicatorListener {
@@ -44,12 +45,14 @@ public class EndpointDataTransmissionSender extends AbstractTransmissionSender i
 	public void open() {
 		this.communicator.addListener(this, OpenMessage.class);
 		this.communicator.addListener(this, CloseMessage.class);
+		this.communicator.addListener(this, PortAckMessage.class);
 	}
 
 	@Override
 	public void close() {
 		this.communicator.removeListener(this, OpenMessage.class);
 		this.communicator.removeListener(this, CloseMessage.class);
+		this.communicator.removeListener(this, PortAckMessage.class);
 	}
 
 	@Override
@@ -94,7 +97,7 @@ public class EndpointDataTransmissionSender extends AbstractTransmissionSender i
 			if (closeMessage.getIdHash() == idHash) {
 				processCloseMessage(senderPeer, closeMessage);
 			}
-		}
+		} 
 	}
 
 	protected void processOpenMessage(PeerID senderPeer, OpenMessage message) {

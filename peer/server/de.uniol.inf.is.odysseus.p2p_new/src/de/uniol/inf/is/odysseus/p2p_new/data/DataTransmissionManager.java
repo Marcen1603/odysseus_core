@@ -8,6 +8,7 @@ import de.uniol.inf.is.odysseus.p2p_new.data.endpoint.DoneMessage;
 import de.uniol.inf.is.odysseus.p2p_new.data.endpoint.OpenAckMessage;
 import de.uniol.inf.is.odysseus.p2p_new.data.endpoint.OpenMessage;
 import de.uniol.inf.is.odysseus.p2p_new.data.endpoint.PunctuationMessage;
+import de.uniol.inf.is.odysseus.p2p_new.data.socket.PortAckMessage;
 import de.uniol.inf.is.odysseus.p2p_new.data.socket.PortMessage;
 import de.uniol.inf.is.odysseus.p2p_new.data.socket.SocketDataTransmissionReceiver;
 import de.uniol.inf.is.odysseus.p2p_new.data.socket.SocketDataTransmissionSender;
@@ -29,6 +30,7 @@ public class DataTransmissionManager {
 		peerCommunicator.registerMessageType(DoneMessage.class);
 		peerCommunicator.registerMessageType(PortMessage.class);
 		peerCommunicator.registerMessageType(PunctuationMessage.class);
+		peerCommunicator.registerMessageType(PortAckMessage.class);
 	}
 	
 	// called by OSGi-DS
@@ -42,6 +44,7 @@ public class DataTransmissionManager {
 			peerCommunicator.unregisterMessageType(DoneMessage.class);
 			peerCommunicator.unregisterMessageType(PortMessage.class);
 			peerCommunicator.unregisterMessageType(PunctuationMessage.class);
+			peerCommunicator.unregisterMessageType(PortAckMessage.class);
 			
 			peerCommunicator = null;
 		}

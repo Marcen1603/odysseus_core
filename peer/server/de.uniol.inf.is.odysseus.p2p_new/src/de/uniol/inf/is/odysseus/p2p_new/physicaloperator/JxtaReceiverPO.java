@@ -50,6 +50,9 @@ public class JxtaReceiverPO<T extends IStreamObject> extends AbstractSource<T>
 	private double downloadRateBytesPerSecond;
 	private long downloadRateTimestamp;
 	private long downloadRateCurrentByteCount;
+	
+	// So we know if the query was running when we do recovery
+	private boolean isRunning;
 
 	public JxtaReceiverPO(JxtaReceiverAO ao) throws DataTransmissionException {
 		SDFSchema schema = ao.getOutputSchema().clone();
@@ -66,6 +69,8 @@ public class JxtaReceiverPO<T extends IStreamObject> extends AbstractSource<T>
 				.registerTransmissionReceiver(peerIDString, pipeIDString);
 		transmission.addListener(this);
 		transmission.open();
+		
+		isRunning = false;
 	}
 
 	public JxtaReceiverPO(JxtaReceiverPO<T> po) {
@@ -83,6 +88,8 @@ public class JxtaReceiverPO<T extends IStreamObject> extends AbstractSource<T>
 		this.downloadRateBytesPerSecond = po.downloadRateBytesPerSecond;
 		this.downloadRateCurrentByteCount = po.downloadRateCurrentByteCount;
 		this.downloadRateTimestamp = po.downloadRateTimestamp;
+		
+		isRunning = false;
 	}
 
 	@Override
@@ -94,6 +101,7 @@ public class JxtaReceiverPO<T extends IStreamObject> extends AbstractSource<T>
 	protected void process_close() {
 		try {
 			transmission.sendClose();
+			isRunning = false;
 		} catch (DataTransmissionException e) {
 			LOG.error("Could not send close message", e);
 		}
@@ -105,6 +113,7 @@ public class JxtaReceiverPO<T extends IStreamObject> extends AbstractSource<T>
 
 		try {
 			transmission.sendOpen();
+			isRunning = true;
 		} catch (DataTransmissionException e) {
 			throw new OpenFailedException(e);
 		}
@@ -211,18 +220,12 @@ public class JxtaReceiverPO<T extends IStreamObject> extends AbstractSource<T>
 			throws DataTransmissionException {
 		this.peerIDString = peerId;
 
-		// Update transmission
-		// transmission.sendClose();
+		// Update transmission		
 		transmission.close();
-		transmission.removeListener(this);
-		transmission = null;
-
-		// This should be the point where we build a new socket connection
-		transmission = DataTransmissionManager.getInstance()
-				.registerTransmissionReceiver(peerIDString, pipeIDString);
-		transmission.addListener(this);
+		transmission.setPeerId(toPeerID(peerId));
 		transmission.open();
 
-		process_open();
+		if(isRunning)
+			process_open();
 	}
 }

@@ -22,7 +22,7 @@ public class EndpointDataTransmissionReceiver extends AbstractTransmissionReceiv
 	private static final Logger LOG = LoggerFactory.getLogger(EndpointDataTransmissionSender.class);
 
 	private final IPeerCommunicator peerCommunicator;
-	private final PeerID pid;
+	private PeerID pid;
 	private final int idHash;
 
 	private RepeatingMessageSend openRepeater;
@@ -124,5 +124,10 @@ public class EndpointDataTransmissionReceiver extends AbstractTransmissionReceiv
 	
 	protected final int getId() {
 		return idHash;
+	}
+	
+	@Override
+	public void setPeerId(PeerID peerId) {
+		this.pid = peerId;
 	}
 }

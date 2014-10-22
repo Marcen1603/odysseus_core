@@ -15,12 +15,14 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
+import de.uniol.inf.is.odysseus.p2p_new.IMessage;
 import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicator;
-import de.uniol.inf.is.odysseus.p2p_new.PeerCommunicationException;
+import de.uniol.inf.is.odysseus.p2p_new.RepeatingMessageSend;
 import de.uniol.inf.is.odysseus.p2p_new.data.DataTransmissionException;
 import de.uniol.inf.is.odysseus.p2p_new.data.endpoint.CloseMessage;
 import de.uniol.inf.is.odysseus.p2p_new.data.endpoint.EndpointDataTransmissionSender;
 import de.uniol.inf.is.odysseus.p2p_new.data.endpoint.OpenMessage;
+import de.uniol.inf.is.odysseus.p2p_new.dictionary.impl.P2PDictionary;
 import de.uniol.inf.is.odysseus.p2p_new.util.ObjectByteConverter;
 
 public class SocketDataTransmissionSender extends EndpointDataTransmissionSender {
@@ -32,6 +34,8 @@ public class SocketDataTransmissionSender extends EndpointDataTransmissionSender
 	private final Map<PeerID, ServerSocket> serverSocketMap = Maps.newConcurrentMap();
 	private final Map<PeerID, Socket> clientSocketMap = Maps.newConcurrentMap();
 	private final Collection<PeerID> toRemoveList = Lists.newArrayList();
+
+	private RepeatingMessageSend portMessageRepeater;
 
 	public SocketDataTransmissionSender(IPeerCommunicator communicator, String peerID, String id) {
 		super(communicator, peerID, id);
@@ -50,8 +54,14 @@ public class SocketDataTransmissionSender extends EndpointDataTransmissionSender
 					ServerSocket serverSocket = new ServerSocket(0);
 					serverSocketMap.put(senderPeer, serverSocket);
 
+					LOG.debug("Opened (unaccepted) server socket for {} on port {}.", P2PDictionary
+							.getInstance().getRemotePeerName(senderPeer), serverSocket
+							.getLocalPort());
 					sendPortMessage(serverSocket.getLocalPort(), senderPeer);
 					Socket clientSocket = serverSocket.accept();
+					LOG.debug("Server socket on port {} was accepted from peer {}", serverSocket
+							.getLocalPort(),
+							P2PDictionary.getInstance().getRemotePeerName(senderPeer));
 					clientSocketMap.put(senderPeer, clientSocket);
 
 				} catch (IOException e) {
@@ -66,10 +76,26 @@ public class SocketDataTransmissionSender extends EndpointDataTransmissionSender
 
 	private void sendPortMessage(int localPort, PeerID senderPeer) {
 		PortMessage msg = new PortMessage(localPort, getId());
-		try {
-			peerCommunicator.send(senderPeer, msg);
-		} catch (PeerCommunicationException e) {
-			LOG.error("Could not send port message", e);
+
+		// Repeat this message until we get an PortAckMessage
+		portMessageRepeater = new RepeatingMessageSend(peerCommunicator, msg, senderPeer);
+		portMessageRepeater.start();
+		LOG.debug("Startet to send port-messages for port " + msg.getPort() + " to {}",
+				P2PDictionary.getInstance().getRemotePeerName(senderPeer));
+	}
+
+	@Override
+	public void receivedMessage(IPeerCommunicator communicator, PeerID senderPeer, IMessage message) {
+		if (message instanceof PortAckMessage) {
+			PortAckMessage portAckMessage = (PortAckMessage) message;
+			if (portAckMessage.getId() == getId() && portMessageRepeater != null) {
+				LOG.debug("Received portAckMessage for port " + portAckMessage.getPort()
+						+ "  from {}", P2PDictionary.getInstance().getRemotePeerName(senderPeer));
+				portMessageRepeater.stopRunning();
+				portMessageRepeater = null;
+			}
+		} else {
+			super.receivedMessage(communicator, senderPeer, message);
 		}
 	}
 
