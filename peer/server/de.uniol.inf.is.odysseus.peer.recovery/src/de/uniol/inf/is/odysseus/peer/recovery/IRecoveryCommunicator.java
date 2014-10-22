@@ -98,24 +98,5 @@ public interface IRecoveryCommunicator {
 	// TODO Better way: allocate each single query part new. M.B.
 	public void installQueriesOnNewPeer(PeerID failedPeer, PeerID newPeer,
 			ID sharedQueryId);
-	
-	/*
-	 * TODO Jxta information. Not clear atm. if they are needed.
-	 */
-	/**
-	 * Experimental: Sends this kind of backup-information to every peer. Used
-	 * for extra-information about JXTA, such as Pipe-ids
-	 * 
-	 * @param peerId
-	 *            PeerID about which this information is
-	 * @param sharedQueryId
-	 *            Id of the shared query, about which this information is
-	 * @param key
-	 *            Key of this information
-	 * @param value
-	 *            Value of this information (e.g. a pipe-id)
-	 */
-	public void sendBackupJxtaInformation(PeerID peerId, ID sharedQueryId,
-			String key, String value);
 
 }

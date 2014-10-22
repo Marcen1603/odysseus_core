@@ -19,7 +19,6 @@ import com.google.common.collect.Sets;
 
 import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryBackupInformation;
 import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryBackupInformationStore;
-import de.uniol.inf.is.odysseus.peer.recovery.internal.JxtaInformation;
 import de.uniol.inf.is.odysseus.peer.recovery.internal.SharedQuery;
 
 /**
@@ -316,68 +315,7 @@ public class LocalBackupInformationAccess {
 
 		return ImmutableSet.copyOf(sharedQueryIds);
 	}
-
-	/*
-	 * TODO Jxta information. Not clear atm. if they are needed.
-	 */
-
-	/**
-	 * Stores a key-value pair for a certain shared query on a certain peer.
-	 * E.g. pipe-ids, etc.
-	 * 
-	 * @param peerId
-	 *            PeerID from the peer from which the info is (e.g. if you store
-	 *            the pipe-id for a jxtaReceiver, this is the peer where the
-	 *            jxtaReceiver is installed on)
-	 * @param sharedQueryId
-	 *            Id of the shared query for which this information is (e.g. if
-	 *            you store the pipe-id for a jxtaReceiver, this is the queryId
-	 *            from the certain jxtaReceiver)
-	 * @param key
-	 *            Key for the key-value-pair
-	 * @param value
-	 *            value for the key-value-pair, e.g. the pipe-id
-	 */
-	public static void storeLocalJxtaInfo(PeerID peerId, ID sharedQueryId,
-			String key, String value) {
-		if (!cInfoStore.isPresent()) {
-
-			LOG.error("No backup information store for recovery bound!");
-			return;
-
-		}
-		cInfoStore.get().addJxtaInfo(peerId, sharedQueryId, key, value);
-	}
-
-	/**
-	 * All jxta-information that is stored for a given peer
-	 * 
-	 * @param peerId
-	 *            The id of the peer you want to have the information about
-	 * @return A list of jxta-information about the given peer
-	 */
-	public static List<JxtaInformation> getJxtaInfoForPeer(PeerID peerId) {
-		if (!cInfoStore.isPresent()) {
-
-			LOG.error("No backup information store for recovery bound!");
-			return null;
-
-		}
-
-		return cInfoStore.get().getJxtaInfoForPeer(peerId);
-	}
-
-	/**
-	 * 
-	 * @return All PeerIDs for which jxta-backup-information is stored
-	 */
-	public static List<PeerID> getPeersFromJxtaInfoStore() {
-
-		Set<PeerID> peers = cInfoStore.get().getPeersFromJxtaInfoStore();
-		ArrayList<PeerID> peerArray = new ArrayList<PeerID>(peers);
-		return peerArray;
-	}
-
+	
 	/*
 	 * TODO Buddy information. Not clear atm. if they are needed.
 	 */

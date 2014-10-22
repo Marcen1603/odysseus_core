@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import net.jxta.id.ID;
 import net.jxta.peer.PeerID;
@@ -148,53 +147,7 @@ public class BackupInformationStore implements IRecoveryBackupInformationStore {
 		}
 
 	}
-	
-	/*
-	 * TODO Jxta information. Not clear atm. if they are needed.
-	 */
-	
-	/**
-	 * Map for additional information mapped to their shared query (it's id).
-	 * E.g. for pipe-Ids, etc.
-	 */
-	private final Map<PeerID, List<JxtaInformation>> mJxtaInfoMap = Maps
-			.newHashMap();
 
-	@Override
-	public boolean addJxtaInfo(PeerID peerId, ID sharedQueryId, String key,
-			String value) {
-
-		Preconditions
-				.checkNotNull(sharedQueryId,
-						"The id of the shared query to store backup information must be not null!");
-		Preconditions
-				.checkNotNull(peerId,
-						"The id of the allocated peer to storebackup information must be not null!");
-
-		if (!mJxtaInfoMap.containsKey(peerId)) {
-			// We don't have information about this peer -> add List
-			List<JxtaInformation> jxtaInfo = new ArrayList<JxtaInformation>();
-			mJxtaInfoMap.put(peerId, jxtaInfo);
-		}
-		JxtaInformation newInfo = new JxtaInformation(sharedQueryId, key, value);
-		mJxtaInfoMap.get(peerId).add(newInfo);
-
-		return true;
-	}
-
-	@Override
-	public List<JxtaInformation> getJxtaInfoForPeer(PeerID peerId) {
-		if (!mJxtaInfoMap.containsKey(peerId)) {
-			return null;
-		}
-		return mJxtaInfoMap.get(peerId);
-	}
-
-	@Override
-	public Set<PeerID> getPeersFromJxtaInfoStore() {
-		return mJxtaInfoMap.keySet();
-	}
-	
 	/*
 	 * TODO Buddy information. Not clear atm. if they are needed.
 	 */

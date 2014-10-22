@@ -36,7 +36,6 @@ import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryBackupInformation;
 import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryCommunicator;
 import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryP2PListener;
 import de.uniol.inf.is.odysseus.peer.recovery.messages.BackupInformationMessage;
-import de.uniol.inf.is.odysseus.peer.recovery.messages.BackupJxtaInfoMessage;
 import de.uniol.inf.is.odysseus.peer.recovery.messages.RecoveryAgreementMessage;
 import de.uniol.inf.is.odysseus.peer.recovery.messages.RecoveryInstructionMessage;
 import de.uniol.inf.is.odysseus.peer.recovery.protocol.RecoveryAgreementHandler;
@@ -130,8 +129,6 @@ public class RecoveryCommunicator implements IRecoveryCommunicator,
 		peerCommunicator.addListener(this, RecoveryInstructionMessage.class);
 		peerCommunicator.registerMessageType(BackupInformationMessage.class);
 		peerCommunicator.addListener(this, BackupInformationMessage.class);
-		peerCommunicator.registerMessageType(BackupJxtaInfoMessage.class);
-		peerCommunicator.addListener(this, BackupJxtaInfoMessage.class);
 		peerCommunicator.registerMessageType(RecoveryAgreementMessage.class);
 		peerCommunicator.addListener(this, RecoveryAgreementMessage.class);
 		peerCommunicator.registerMessageType(RemoveQueryMessage.class);
@@ -157,8 +154,6 @@ public class RecoveryCommunicator implements IRecoveryCommunicator,
 					BackupInformationMessage.class);
 			peerCommunicator
 					.unregisterMessageType(BackupInformationMessage.class);
-			peerCommunicator.removeListener(this, BackupJxtaInfoMessage.class);
-			peerCommunicator.unregisterMessageType(BackupJxtaInfoMessage.class);
 			peerCommunicator.removeListener(this,
 					RecoveryAgreementMessage.class);
 			peerCommunicator
@@ -418,13 +413,6 @@ public class RecoveryCommunicator implements IRecoveryCommunicator,
 			LocalBackupInformationAccess.getStore().remove(
 					((RemoveQueryMessage) message).getSharedQueryID());
 
-		} else if (message instanceof BackupJxtaInfoMessage) {
-			BackupJxtaInfoMessage jxtaMessage = (BackupJxtaInfoMessage) message;
-
-			// Store the backup information
-			LocalBackupInformationAccess.storeLocalJxtaInfo(
-					jxtaMessage.getPeerId(), jxtaMessage.getSharedQueryId(),
-					jxtaMessage.getKey(), jxtaMessage.getValue());
 		} else if (message instanceof RecoveryAgreementMessage) {
 			RecoveryAgreementMessage agreementMessage = (RecoveryAgreementMessage) message;
 			RecoveryAgreementHandler.handleAgreementMessage(senderPeer,
@@ -451,23 +439,6 @@ public class RecoveryCommunicator implements IRecoveryCommunicator,
 
 		}
 
-	}
-
-	/*
-	 * TODO Jxta information. Not clear atm. if they are needed.
-	 */
-	public void sendBackupJxtaInformation(PeerID peerId, ID sharedQueryId,
-			String key, String value) {
-		// Send info to all other peers
-		BackupJxtaInfoMessage message = new BackupJxtaInfoMessage(peerId,
-				sharedQueryId, key, value);
-		for (PeerID destinationPeer : p2pDictionary.getRemotePeerIDs())
-			try {
-				peerCommunicator.send(destinationPeer, message);
-			} catch (PeerCommunicationException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
 	}
 
 	public void sendRecoveryAgreementMessage(PeerID failedPeer, ID sharedQueryId) {

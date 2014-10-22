@@ -30,7 +30,6 @@ import de.uniol.inf.is.odysseus.peer.distribute.QueryPartAllocationException;
 import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryAllocator;
 import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryCommunicator;
 import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryP2PListener;
-import de.uniol.inf.is.odysseus.peer.recovery.internal.JxtaInformation;
 import de.uniol.inf.is.odysseus.peer.recovery.internal.RecoveryCommunicator;
 import de.uniol.inf.is.odysseus.peer.recovery.util.LocalBackupInformationAccess;
 import de.uniol.inf.is.odysseus.peer.recovery.util.RecoveryHelper;
@@ -196,7 +195,6 @@ public class RecoveryConsole implements CommandProvider {
 		sb.append("---Recovery commands---\n");
 		sb.append("	recover <PeerID from failed peer> - Starts recovery for the peer <PeerID from failed peer>\n");
 		sb.append("	lsBackupStore - Lists the stored sharedQueryIds with a list of peers which have parts of this sharedQuery. sharedQueryId: peer1, peer2, peer3\n");
-		sb.append("	lsJxtaBackup - Lists the stored Jxta-backup-info.\n");
 		sb.append("	lsRecoveryAllocators - Lists the available recovery allocators.\n");
 		sb.append("	showPeerPQL <PeerName> - Shows the PQL that this peer knows from <PeerName>.\n");
 		sb.append("	sendHoldOn <PeerName from receiver> <sharedQueryId> - Send a hold-on message to <PeerName from receiver>, so that this should stop sending the tuples from query <sharedQueryId> further.\n");
@@ -417,32 +415,6 @@ public class RecoveryConsole implements CommandProvider {
 		}
 
 		System.out.println(sb.toString());
-	}
-
-	public void _lsJxtaBackup(CommandInterpreter ci) {
-		Preconditions.checkNotNull(ci, "Command interpreter must not be null!");
-
-		List<PeerID> peers = LocalBackupInformationAccess
-				.getPeersFromJxtaInfoStore();
-
-		if (peers.isEmpty()) {
-			System.out.println("No information saved");
-			return;
-		}
-
-		for (PeerID peer : peers) {
-			List<JxtaInformation> jxtaInfo = LocalBackupInformationAccess
-					.getJxtaInfoForPeer(peer);
-			for (JxtaInformation info : jxtaInfo) {
-				String peerName = RecoveryHelper.determinePeerName(peer);
-				System.out.println("Jxta-information about the peer "
-						+ peerName + " (" + peer + ")");
-				System.out.println("QueryID: " + info.getSharedQueryID());
-				System.out.println(info.getKey() + " : " + info.getValue());
-			}
-
-		}
-
 	}
 
 	/**
