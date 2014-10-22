@@ -31,6 +31,11 @@ import de.uniol.inf.is.odysseus.peer.distribute.listener.AbstractQueryDistributi
 import de.uniol.inf.is.odysseus.peer.distribute.util.QueryDistributionNotifier;
 import de.uniol.inf.is.odysseus.rest.service.RestService;
 
+/**
+ * Helper class to get information to a distributed query
+ * @author Thore Stratmann
+ *
+ */
 public class DistributedQueryHelper {
 	private static IP2PDictionary p2pDictionary;
 	private static IQueryPartController queryPartController;
@@ -41,12 +46,41 @@ public class DistributedQueryHelper {
 	private static WebserviceAdvertisementListener webserviceAdvListener = new WebserviceAdvertisementListener();
 	private static WebserviceAdvertisementSender webserviceAdvSender = new WebserviceAdvertisementSender();
 
-	private static final Logger LOG = LoggerFactory
-			.getLogger(DistributedQueryHelper.class);
+	private static final Logger LOG = LoggerFactory.getLogger(DistributedQueryHelper.class);
 
+	
+	/**
+	 * Executes the given query and returns information about distribution to the executed query (sharedQueryId, ip and port of top operator)
+	 * @param sportsQL
+	 * @param activeSession
+	 * @param queryBuildConfigurationName
+	 * @return null if query distribution was not successful
+	 */
+	public static DistributedQueryInfo executeQuery(String query,
+			ISession activeSession, String queryBuildConfigurationName) {
+		QueryDistributionListener listener = QueryDistributionListener.newInstance();
+		QueryDistributionNotifier.bindListener(listener);
+		serverExecutor.addQuery(query, "OdysseusScript", activeSession, queryBuildConfigurationName, Context.empty());
+		int loops = 10;
+		while (listener.getDistributedQueryInfo() == null && loops > 0) {
+			loops--;
+			try {
+				Thread.sleep(1000);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
+		QueryDistributionNotifier.unbindListener(listener);
+		return listener.getDistributedQueryInfo();
+	}
 
-	public static ILogicalQuery getLocalQueryWithTopOperator(
-			String sharedQueryId, ISession session) {
+	/**
+	 * Returns the local query to the given sharedQueryId that has not an JxtaSenderAO-Operator as a sink
+	 * @param sharedQueryId
+	 * @param session
+	 * @return
+	 */
+	public static ILogicalQuery getLocalQueryWithTopOperator(String sharedQueryId, ISession session) {
 		ID qid = null;
 		try {
 			qid = IDFactory.fromURI(new URI(sharedQueryId));
@@ -54,11 +88,9 @@ public class DistributedQueryHelper {
 			LOG.error("Could not convert string {} to id", sharedQueryId, ex);
 			return null;
 		}
-		Collection<Integer> localQueryIds = queryPartController
-				.getLocalIds(qid);
+		Collection<Integer> localQueryIds = queryPartController.getLocalIds(qid);
 		for (Integer localQueryId : localQueryIds) {
-			ILogicalQuery query = serverExecutor.getLogicalQueryById(
-					localQueryId, session);
+			ILogicalQuery query = serverExecutor.getLogicalQueryById(localQueryId, session);
 			ILogicalOperator topOp = query.getLogicalPlan();
 			for (LogicalSubscription subs : topOp.getSubscribedToSource()) {
 				ILogicalOperator op = subs.getTarget();
@@ -69,58 +101,6 @@ public class DistributedQueryHelper {
 		}
 		return null;
 
-	}
-
-	public static DistributedQueryInfo executeQuery(String sportsQL,
-			ISession activeSession, String queryBuildConfigurationName) {
-		final DistributedQueryInfo info = new DistributedQueryInfo();
-		QueryDistributionNotifier
-				.bindListener(new AbstractQueryDistributionListener() {
-					@Override
-					public void afterTransmission(ILogicalQuery query,Map<ILogicalQueryPart, PeerID> allocationMap,	ID sharedQueryId) {
-						for (Entry<ILogicalQueryPart, PeerID> entry : allocationMap.entrySet()) {
-							for (ILogicalOperator op : entry.getKey().getOperators()) {
-								if (op.isSinkOperator()	&& !(op instanceof JxtaSenderAO)) {
-									String address = p2pDictionary.getRemotePeerAddress(entry.getValue()).orNull();
-									String ip = removePort(address);
-									String sharedQueryIdString = sharedQueryId.toURI().toString();
-									Integer port = webserviceAdvListener.getRestPort(entry.getValue());
-									if (port != null) {
-										info.setTopOperatorPeerWebservicePort(port);
-									} else {
-										info.setTopOperatorPeerWebservicePort(RestService.getPort());
-									}
-									info.setSharedQueryId(sharedQueryIdString);
-									info.setTopOperatorIP(ip);
-									info.setQueryDistributed(true);
-									// QueryDistributionNotifier.unbindListener(this);
-									return;
-								}
-							}
-						}
-					}
-				});
-		serverExecutor.addQuery(sportsQL, "OdysseusScript", activeSession, queryBuildConfigurationName, Context.empty());
-		int loops = 10;
-		while (!info.isQueryDistributed() && loops > 0) {
-			loops--;
-			try {
-				Thread.sleep(1000);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-		}
-		return info;
-	}
-
-	private static String removePort(String address) {
-		return address.substring(0, address.indexOf(':'));
-	}
-
-	private static void registerAdvertisementTypes() {
-		AdvertisementFactory.registerAdvertisementInstance(
-				WebserviceAdvertisement.getAdvertisementType(),
-				new WebserviceAdvertisementInstantiator());
 	}
 
 	
@@ -189,6 +169,12 @@ public class DistributedQueryHelper {
 			p2pNetworkManager.addAdvertisementListener(webserviceAdvListener);
 			webserviceAdvSender.publishWebserviceAdvertisement(jxtaServicesProvider, p2pNetworkManager.getLocalPeerID());
 		}
+		
+		private void registerAdvertisementTypes() {
+			AdvertisementFactory.registerAdvertisementInstance(
+					WebserviceAdvertisement.getAdvertisementType(),
+					new WebserviceAdvertisementInstantiator());
+		}
 
 		@Override
 		public void networkStopped(IP2PNetworkManager p2pNetworkManager) {
@@ -196,5 +182,47 @@ public class DistributedQueryHelper {
 		}
 		
 	}
+	
+	private static class QueryDistributionListener extends AbstractQueryDistributionListener {
+		private DistributedQueryInfo info;
+		
+		public static QueryDistributionListener newInstance() {
+			return new QueryDistributionListener();
+		}
+		
+		@Override
+		public void afterTransmission(ILogicalQuery query,Map<ILogicalQueryPart, PeerID> allocationMap,	ID sharedQueryId) {
+			for (Entry<ILogicalQueryPart, PeerID> entry : allocationMap.entrySet()) {
+				for (ILogicalOperator op : entry.getKey().getOperators()) {
+					if (op.isSinkOperator()	&& !(op instanceof JxtaSenderAO)) {
+						DistributedQueryInfo info = new DistributedQueryInfo();
+						String address = p2pDictionary.getRemotePeerAddress(entry.getValue()).orNull();
+						String ip = removePort(address);
+						String sharedQueryIdString = sharedQueryId.toURI().toString();
+						Integer port = webserviceAdvListener.getRestPort(entry.getValue());
+						if (port != null) {
+							info.setTopOperatorPeerRestPort(port);
+						} else {
+							info.setTopOperatorPeerRestPort(RestService.getPort());
+						}
+						info.setSharedQueryId(sharedQueryIdString);
+						info.setTopOperatorPeerIP(ip);
+						this.info = info;
+						return;
+					}
+				}
+			}
+		}
+		
+		private String removePort(String address) {
+			return address.substring(0, address.indexOf(':'));
+		}
+		
+		public DistributedQueryInfo getDistributedQueryInfo() {
+			return this.info;
+		}
+	}
+	
+	
 
 }

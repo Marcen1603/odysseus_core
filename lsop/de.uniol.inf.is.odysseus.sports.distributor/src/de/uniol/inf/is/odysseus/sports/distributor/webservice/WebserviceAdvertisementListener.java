@@ -12,6 +12,11 @@ import net.jxta.peer.PeerID;
 import de.uniol.inf.is.odysseus.p2p_new.IAdvertisementDiscovererListener;
 
 
+/**
+ * Listener for WebserviceAdvertisement
+ * @author Thore Stratmann
+ *
+ */
 public class WebserviceAdvertisementListener implements IAdvertisementDiscovererListener {
 
 	private Map<String, Integer> restPorts = new HashMap<String, Integer>();

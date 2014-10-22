@@ -26,6 +26,11 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Preconditions;
 
 
+/**
+ * Advertisement with information to the rest service (e.g. port)
+ * @author Thore Stratmann
+ *
+ */
 public class WebserviceAdvertisement extends Advertisement implements Serializable {
 	
 	private static final String ADVERTISEMENT_TYPE = "jxta:WebserviceAdvertisement";

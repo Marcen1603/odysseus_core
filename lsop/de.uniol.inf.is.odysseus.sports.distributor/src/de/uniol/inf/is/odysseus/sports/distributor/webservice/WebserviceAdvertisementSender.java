@@ -16,6 +16,11 @@ import de.uniol.inf.is.odysseus.p2p_new.IJxtaServicesProvider;
 import de.uniol.inf.is.odysseus.rest.service.RestService;
 
 
+/**
+ * Helper class to publish advertisements with information to the rest service
+ * @author Thore Stratmann
+ *
+ */
 public class WebserviceAdvertisementSender {
 
 	private static final Logger LOG = LoggerFactory
@@ -25,6 +30,11 @@ public class WebserviceAdvertisementSender {
 
 
 
+	/**
+	 * Publishes an advertisement with information to the rest service
+	 * @param provider
+	 * @param peerId
+	 */
 	public void publishWebserviceAdvertisement(IJxtaServicesProvider provider, PeerID peerId) {
 		WebserviceAdvertisement adv = new WebserviceAdvertisement();
 		adv.setRestPort(RestService.getPort());

@@ -6,6 +6,11 @@ import net.jxta.document.Element;
 
 
 
+/**
+ * Instantiator for WebserviceAdvertisement
+ * @author Thore Stratmann
+ *
+ */
 public class WebserviceAdvertisementInstantiator implements AdvertisementFactory.Instantiator {
 
 	@Override

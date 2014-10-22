@@ -1,10 +1,15 @@
 package de.uniol.inf.is.odysseus.sports.distributor.webservice;
 
+
+/**
+ * This class contains information to a distributed query (sharedQueryId, IP and port of peer with top operator)
+ * @author Thore Stratmann
+ *
+ */
 public class DistributedQueryInfo {
 	private String sharedQueryId;
-	private String topOperatorIP;
-	private boolean queryDistributed;
-	private int topOperatorPeerWebservicePort;
+	private String topOperatorPeerIP;
+	private int topOperatorPeerRestPort;
 	
 	public DistributedQueryInfo() {
 		
@@ -18,28 +23,21 @@ public class DistributedQueryInfo {
 		this.sharedQueryId = sharedQueryId;
 	}
 
-	public String getTopOperatorIP() {
-		return topOperatorIP;
+	public String getTopOperatorPeerIP() {
+		return topOperatorPeerIP;
 	}
 
-	public void setTopOperatorIP(String topOperatorIP) {
-		this.topOperatorIP = topOperatorIP;
+	public void setTopOperatorPeerIP(String topOperatorPeerIP) {
+		this.topOperatorPeerIP = topOperatorPeerIP;
 	}
 
-	public boolean isQueryDistributed() {
-		return queryDistributed;
+	
+	public int getTopOperatorPeerRestPort() {
+		return topOperatorPeerRestPort;
 	}
 
-	public void setQueryDistributed(boolean queryDistributed) {
-		this.queryDistributed = queryDistributed;
-	}
-
-	public int getTopOperatorPeerWebservicePort() {
-		return topOperatorPeerWebservicePort;
-	}
-
-	public void setTopOperatorPeerWebservicePort(int topOperatorPeerWebservicePort) {
-		this.topOperatorPeerWebservicePort = topOperatorPeerWebservicePort;
+	public void setTopOperatorPeerRestPort(int topOperatorPeerRestPort) {
+		this.topOperatorPeerRestPort = topOperatorPeerRestPort;
 	}
 
 	
