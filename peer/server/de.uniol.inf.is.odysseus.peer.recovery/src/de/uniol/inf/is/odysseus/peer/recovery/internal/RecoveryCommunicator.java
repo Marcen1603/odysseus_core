@@ -94,6 +94,10 @@ public class RecoveryCommunicator implements IRecoveryCommunicator, IPeerCommuni
 	 * Called by OSGi on Bundle deactivation.
 	 */
 	public void deactivate() {
+		if (recoveryAllocator != null) {
+			recoveryP2PListener.stopPeerFailureDetection();
+		}
+
 	}
 
 	// called by OSGi-DS

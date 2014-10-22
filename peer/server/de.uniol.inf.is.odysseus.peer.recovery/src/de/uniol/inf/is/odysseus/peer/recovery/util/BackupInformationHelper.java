@@ -234,8 +234,11 @@ public class BackupInformationHelper implements IPlanModificationListener {
 		if (affectedInfo.isPresent()) {
 
 			// Update the local backup information due to the take over
+			
+			// 1. Remove info that we saved about the failed peer
 			LocalBackupInformationAccess.getStore().remove(affectedInfo.get());
 
+			
 		}
 
 	}
