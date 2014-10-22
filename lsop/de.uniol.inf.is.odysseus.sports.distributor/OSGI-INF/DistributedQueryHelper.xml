@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="de.uniol.inf.is.odysseus.sports.distributor.helper.DistributedQueryHelper">
-   <implementation class="de.uniol.inf.is.odysseus.sports.distributor.helper.DistributedQueryHelper"/>
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="de.uniol.inf.is.odysseus.sports.distributor.webservice.DistributedQueryHelper">
+   <implementation class="de.uniol.inf.is.odysseus.sports.distributor.webservice.DistributedQueryHelper"/>
    <reference bind="bindExecutor" cardinality="1..1" interface="de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor" name="IExecutor" policy="static" unbind="unbindExecutor"/>
    <reference bind="bindP2PDictionary" cardinality="1..1" interface="de.uniol.inf.is.odysseus.p2p_new.dictionary.IP2PDictionary" name="IP2PDictionary" policy="static" unbind="unbindP2PDictionary"/>
    <reference bind="bindQueryPartController" cardinality="1..1" interface="de.uniol.inf.is.odysseus.peer.distribute.IQueryPartController" name="IQueryPartController" policy="static" unbind="unbindQueryPartController"/>
+   <reference bind="bindJxtaServicesProvider" cardinality="1..1" interface="de.uniol.inf.is.odysseus.p2p_new.IJxtaServicesProvider" name="IJxtaServicesProvider" policy="static" unbind="unbindJxtaServicesProvider"/>
+   <reference bind="bindP2PNetworkManager" cardinality="1..1" interface="de.uniol.inf.is.odysseus.p2p_new.IP2PNetworkManager" name="IP2PNetworkManager" policy="static" unbind="unbindP2PNetworkManager"/>
 </scr:component>

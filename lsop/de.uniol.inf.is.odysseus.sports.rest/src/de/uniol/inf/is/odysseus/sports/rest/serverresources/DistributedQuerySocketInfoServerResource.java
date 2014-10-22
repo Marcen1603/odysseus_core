@@ -13,7 +13,7 @@ import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
-import de.uniol.inf.is.odysseus.sports.distributor.helper.DistributedQueryHelper;
+import de.uniol.inf.is.odysseus.sports.distributor.webservice.DistributedQueryHelper;
 import de.uniol.inf.is.odysseus.sports.rest.dto.AttributeInformation;
 import de.uniol.inf.is.odysseus.sports.rest.dto.DataTransferObject;
 import de.uniol.inf.is.odysseus.sports.rest.dto.DistributedQuerySocketInfo;

@@ -13,8 +13,11 @@ Require-Bundle: de.uniol.inf.is.odysseus.core;bundle-version="1.0.0",
  com.google.guava,
  restlet-osgi-2.2.1,
  Jxta_2.6_Source,
- de.uniol.inf.is.odysseus.peer.distribute
+ de.uniol.inf.is.odysseus.peer.distribute,
+ de.uniol.inf.is.odysseus.peer.logging,
+ de.uniol.inf.is.odysseus.rest
 Export-Package: de.uniol.inf.is.odysseus.sports.distributor.helper,
- de.uniol.inf.is.odysseus.sports.distributor.registry
+ de.uniol.inf.is.odysseus.sports.distributor.registry,
+ de.uniol.inf.is.odysseus.sports.distributor.webservice
 Service-Component: OSGI-INF/SportsQLDistributorRegistry.xml, OSGI-INF/SportsQLDefaultDistributor.xml,OSGI-INF/DistributionConfigBuildHelper.xml,OSGI-INF/SportsQLNoDistributionDistributor.xml,
  OSGI-INF/DistributedQueryHelper.xml

@@ -9,9 +9,12 @@ import org.restlet.resource.ServerResource;
 
 
 
+
+
+
 import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
-import de.uniol.inf.is.odysseus.sports.distributor.helper.DistributedQueryHelper;
-import de.uniol.inf.is.odysseus.sports.distributor.helper.DistributedQueryInfo;
+import de.uniol.inf.is.odysseus.sports.distributor.webservice.DistributedQueryHelper;
+import de.uniol.inf.is.odysseus.sports.distributor.webservice.DistributedQueryInfo;
 import de.uniol.inf.is.odysseus.sports.rest.dto.DataTransferObject;
 import de.uniol.inf.is.odysseus.sports.rest.dto.QueryInfoRequest;
 import de.uniol.inf.is.odysseus.sports.rest.resources.IDistributedQueryResource;
