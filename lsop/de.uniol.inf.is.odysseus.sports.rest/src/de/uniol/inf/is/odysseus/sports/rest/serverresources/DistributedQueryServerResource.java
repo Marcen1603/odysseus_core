@@ -12,7 +12,9 @@ import org.restlet.resource.ServerResource;
 
 
 
+
 import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
+import de.uniol.inf.is.odysseus.sports.distributor.registry.SportsQLDistributorRegistry;
 import de.uniol.inf.is.odysseus.sports.distributor.webservice.DistributedQueryHelper;
 import de.uniol.inf.is.odysseus.sports.distributor.webservice.DistributedQueryInfo;
 import de.uniol.inf.is.odysseus.sports.rest.dto.DataTransferObject;
@@ -26,22 +28,21 @@ public class DistributedQueryServerResource extends ServerResource implements
 	@Override
 	public void getDistributedQueryInfo(QueryInfoRequest request) {
 		Response r = getResponse();
-		try {			
-			
-		/* TODO activate distribution for querys
+		try {
 			String sportsQL = SportsQLDistributorRegistry.addSportsQLDistributorConfig(request.getQuery());	
-			Collection<Integer> queryIDs = ExecutorServiceBinding.getExecutor().addQuery(sportsQL, "OdysseusScript", OdysseusRCPPlugIn.getActiveSession(), request.getQueryBuildConfigurationName(), Context.empty());		
-		*/
-			
-			String sportsQL = request.getQuery();
-			
-			DistributedQueryInfo info = DistributedQueryHelper.executeQuery(sportsQL, OdysseusRCPPlugIn.getActiveSession(), request.getQueryBuildConfigurationName());
-			
+			DistributedQueryInfo info = null;
+			if (sportsQL != null) {
+				info = DistributedQueryHelper.executeQuery(sportsQL, OdysseusRCPPlugIn.getActiveSession(), request.getQueryBuildConfigurationName());
+			} 
+			if (info != null) {
+				info = new DistributedQueryInfo();
+				info.setQueryDistributed(false);
+			}			
 			DataTransferObject dto = new DataTransferObject("DistributedQueryInfo",info);
 			r.setEntity(new JacksonRepresentation<DataTransferObject>(dto));
-			r.setStatus(Status.SUCCESS_OK);
-		} catch (Exception e) {
-			e.printStackTrace();
+			r.setStatus(Status.SUCCESS_OK);			
+		} catch (Exception e1) {
+			e1.printStackTrace();
 			r.setStatus(Status.SERVER_ERROR_INTERNAL);
 		}			
 	}

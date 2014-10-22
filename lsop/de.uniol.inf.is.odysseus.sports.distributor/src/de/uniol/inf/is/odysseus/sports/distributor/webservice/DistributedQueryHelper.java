@@ -194,7 +194,7 @@ public class DistributedQueryHelper {
 		public void afterTransmission(ILogicalQuery query,Map<ILogicalQueryPart, PeerID> allocationMap,	ID sharedQueryId) {
 			for (Entry<ILogicalQueryPart, PeerID> entry : allocationMap.entrySet()) {
 				for (ILogicalOperator op : entry.getKey().getOperators()) {
-					if (op.isSinkOperator()	&& !(op instanceof JxtaSenderAO)) {
+					if (op.getSubscriptions().size() == 0 && !(op instanceof JxtaSenderAO)) {
 						DistributedQueryInfo info = new DistributedQueryInfo();
 						String address = p2pDictionary.getRemotePeerAddress(entry.getValue()).orNull();
 						String ip = removePort(address);
@@ -207,6 +207,7 @@ public class DistributedQueryHelper {
 						}
 						info.setSharedQueryId(sharedQueryIdString);
 						info.setTopOperatorPeerIP(ip);
+						info.setQueryDistributed(true);
 						this.info = info;
 						return;
 					}
