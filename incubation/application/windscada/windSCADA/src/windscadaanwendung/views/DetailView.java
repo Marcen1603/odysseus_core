@@ -28,13 +28,13 @@ import windscadaanwendung.views.dashboard.PhaseShiftPart;
 import windscadaanwendung.views.dashboard.PitchPart;
 
 /**
+ * This class will show the data of a WKA (wind turbine), which are not shown by
+ * separate Dashboard-Parts in their own Views
+ * 
  * @author MarkMilster
  * 
  */
 public class DetailView extends ViewPart implements Observer {
-
-	public DetailView() {
-	}
 
 	public static final String ID = "windscadaanwendung.views.DetailView";
 	private Label lblWKA;
@@ -63,8 +63,16 @@ public class DetailView extends ViewPart implements Observer {
 	 */
 	@Override
 	public void createPartControl(Composite parent) {
+
+		// add this to Observables to be informed, if there are new historical
+		// WKA data to show
 		ObserverHandler.addObserverToWKA(this);
+
+		// add this to Observable to be informed, if it is time to load new
+		// historical data.
+		// The time interval will be specified by this timer
 		FarmList.timer.addObserver(this);
+
 		parent.setLayout(new FillLayout(SWT.VERTICAL));
 
 		form = new Composite(parent, SWT.NONE);
@@ -176,11 +184,11 @@ public class DetailView extends ViewPart implements Observer {
 	}
 
 	/**
-	 * Diese Methode l������dt die Werte der entsprechenden WKA in
-	 * diese View.
+	 * This method draws the values (current and historical) of the selected WKA
+	 * (wind turbine) in this view
 	 * 
 	 * @param selected
-	 *            In der ListView selektierte WKA
+	 *            WKA to show
 	 */
 	public static void setSelectedWKA(WKA wka) {
 		selectedWKA = wka;
@@ -193,6 +201,11 @@ public class DetailView extends ViewPart implements Observer {
 		printHitWKAData();
 	}
 
+	/**
+	 * This method creats new Dashboard-Part-Views in this View to show new
+	 * Textfield-Dashboard-Parts, which will show the current values by the
+	 * selected WKA
+	 */
 	private static void setNewDPVs() {
 		for (Control c : pitchComp.getChildren()) {
 			c.dispose();
@@ -211,13 +224,16 @@ public class DetailView extends ViewPart implements Observer {
 		phaseComp.layout();
 	}
 
+	/**
+	 * This method is called if you change the selected Date or Time in the
+	 * swt-DateTime in this View. This method will call the Database to refresh
+	 * the historical data by the selected WKA to the historical data since the
+	 * selected DateTime.
+	 */
 	private void handleDateTimeEvent() {
-		// System.out.println("Test:");
-		// System.out.println(swtDate.toString() + swtTime.toString());
 		GregorianCalendar cal = new GregorianCalendar();
 		cal.set(swtDate.getYear(), swtDate.getMonth(), swtDate.getDay(),
 				swtTime.getHours(), swtTime.getMinutes(), swtTime.getSeconds());
-		// System.out.println(cal.getTime().toString());
 		DBConnectionHD.refreshHitWKAData(cal.getTime());
 	}
 
@@ -230,10 +246,15 @@ public class DetailView extends ViewPart implements Observer {
 				printHitWKAData();
 			}
 		} else if (o instanceof Timer) {
+			// its time to refresh the historical data, because the time
+			// specified by the time has expired
 			this.handleDateTimeEvent();
 		}
 	}
 
+	/**
+	 * This method draws the historical data by the selected WKA
+	 */
 	private static void printHitWKAData() {
 		if (selectedWKA != null && selectedWKA.getHitWKAData() != null) {
 			HitWKAData hitData = selectedWKA.getHitWKAData();

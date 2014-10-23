@@ -19,9 +19,11 @@ import de.uniol.inf.is.odysseus.core.securitypunctuation.ISecurityPunctuation;
 import de.uniol.inf.is.odysseus.rcp.dashboard.AbstractDashboardPart;
 
 /**
- * This is a DashboardPart which shows a specific value from the latest Tuple in a Datastream
+ * This is a DashboardPart which shows a specific value from the latest Tuple in
+ * a Datastream it can be used in any purpose
+ * 
  * @author MarkMilster
- *
+ * 
  */
 public class TextfieldDashboardPart extends AbstractDashboardPart {
 
@@ -38,15 +40,16 @@ public class TextfieldDashboardPart extends AbstractDashboardPart {
 	private int warningIndex = 1;
 
 	/**
-	 * @return the warningIndex:
-	 * 			The warningIndex is the index of the Attribute which represents the boolean flag warning
+	 * @return the warningIndex: The warningIndex is the index of the Attribute
+	 *         which represents the boolean flag warning
 	 */
 	public int getWarningIndex() {
 		return warningIndex;
 	}
 
 	/**
-	 * The warningIndex is the index of the Attribute which represents the boolean flag warning
+	 * The warningIndex is the index of the Attribute which represents the
+	 * boolean flag warning
 	 * 
 	 * @param warningIndex
 	 *            the warningIndex to set
@@ -56,7 +59,8 @@ public class TextfieldDashboardPart extends AbstractDashboardPart {
 	}
 
 	/**
-	 * The errorIndex is the index of the Attribute which represents the boolean flag error
+	 * The errorIndex is the index of the Attribute which represents the boolean
+	 * flag error
 	 * 
 	 * @return the errorIndex
 	 */
@@ -65,7 +69,8 @@ public class TextfieldDashboardPart extends AbstractDashboardPart {
 	}
 
 	/**
-	 * The errorIndex is the index of the Attribute which represents the boolean flag error
+	 * The errorIndex is the index of the Attribute which represents the boolean
+	 * flag error
 	 * 
 	 * @param errorIndex
 	 *            the errorIndex to set
@@ -82,7 +87,8 @@ public class TextfieldDashboardPart extends AbstractDashboardPart {
 	private boolean showWarning = true;;
 
 	/**
-	 * If true and if there is the warningFlag set in the current tuple, the warning will be shown
+	 * If true and if there is the warningFlag set in the current tuple, the
+	 * warning will be shown
 	 * 
 	 * @return the showWarning
 	 */
@@ -91,7 +97,8 @@ public class TextfieldDashboardPart extends AbstractDashboardPart {
 	}
 
 	/**
-	 * If true and if there is the warningFlag set in the current tuple, the warning will be shown
+	 * If true and if there is the warningFlag set in the current tuple, the
+	 * warning will be shown
 	 * 
 	 * @param showWarning
 	 *            the showWarning to set
@@ -166,16 +173,25 @@ public class TextfieldDashboardPart extends AbstractDashboardPart {
 		}
 	}
 
+	/**
+	 * 
+	 * @return true if this Dashboard-Part is showing Heartbeats
+	 */
 	public boolean isShowHeartbeats() {
 		return showHeartbeats;
 	}
 
+	/**
+	 * 
+	 * @param showHeartbeats
+	 */
 	public void setShowHeartbeats(boolean showHeartbeats) {
 		this.showHeartbeats = showHeartbeats;
 	}
 
 	/**
-	 * The updateInterval in ms represents the value how often the textfield is repaintet
+	 * The updateInterval in ms represents the value how often the textfield is
+	 * repaintet
 	 * 
 	 * @return the updateInterval
 	 */
@@ -184,7 +200,8 @@ public class TextfieldDashboardPart extends AbstractDashboardPart {
 	}
 
 	/**
-	 * The updateInterval in ms represents the value how often the textfield is repaintet
+	 * The updateInterval in ms represents the value how often the textfield is
+	 * repaintet
 	 * 
 	 * @param updateInterval
 	 */
@@ -217,7 +234,8 @@ public class TextfieldDashboardPart extends AbstractDashboardPart {
 	}
 
 	/**
-	 * This Method is called in the inteval of the updateInterval variable and repaints the textfield
+	 * This Method is called in the inteval of the updateInterval variable and
+	 * repaints the textfield
 	 */
 	private void refreshText() {
 		synchronized (pendingElement) {
@@ -239,6 +257,12 @@ public class TextfieldDashboardPart extends AbstractDashboardPart {
 		}
 	}
 
+	/**
+	 * This method let the updateThread sleep
+	 * 
+	 * @param length
+	 *            Time to sleep
+	 */
 	private static void waiting(long length) {
 		try {
 			Thread.sleep(length);
@@ -257,7 +281,8 @@ public class TextfieldDashboardPart extends AbstractDashboardPart {
 	}
 
 	/**
-	 * If true and if there is the errorFlag set in the current tuple, the error will be shown
+	 * If true and if there is the errorFlag set in the current tuple, the error
+	 * will be shown
 	 * 
 	 * @return the showError
 	 */
@@ -266,7 +291,8 @@ public class TextfieldDashboardPart extends AbstractDashboardPart {
 	}
 
 	/**
-	 * If true and if there is the errorFlag set to in the current tuple, the error will be shown
+	 * If true and if there is the errorFlag set to in the current tuple, the
+	 * error will be shown
 	 * 
 	 * @param showError
 	 *            the showError to set

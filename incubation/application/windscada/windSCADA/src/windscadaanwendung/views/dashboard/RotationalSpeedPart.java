@@ -3,10 +3,11 @@ package windscadaanwendung.views.dashboard;
 import org.eclipse.swt.widgets.Composite;
 
 /**
- * This class should be used as a view of the Dashboardpart which shows the rotationalSpeed of a single WKA
+ * This class should be used as a view of the Dashboardpart which shows the
+ * rotationalSpeed of a single WKA
  * 
  * @author MarkMilster
- *
+ * 
  */
 public class RotationalSpeedPart extends WindDashboardPartView {
 

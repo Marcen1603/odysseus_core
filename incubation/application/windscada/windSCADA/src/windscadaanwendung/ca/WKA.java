@@ -5,7 +5,9 @@ import java.util.Observable;
 import windscadaanwendung.hd.HitWKAData;
 
 /**
- * This class holds the data for a WKA (wind turbine). This class extends the Observable to inform the Observers about changes on the data, e.g. the historical data.
+ * This class holds the data for a WKA (wind turbine). This class extends the
+ * Observable to inform the Observers about changes on the data, e.g. the
+ * historical data.
  * 
  * @author MarkMilster
  * 
@@ -53,7 +55,7 @@ public class WKA extends Observable {
 	 *            the windFarm
 	 */
 	public void setID(int id) {
-			this.id = id;
+		this.id = id;
 	}
 
 	/**
@@ -128,8 +130,8 @@ public class WKA extends Observable {
 	}
 
 	/**
-	 * sets the port on which the also stored host will deliver the
-	 * datastream with the current measurements of this wka
+	 * sets the port on which the also stored host will deliver the datastream
+	 * with the current measurements of this wka
 	 * 
 	 * @return the port of the host
 	 */
@@ -156,7 +158,9 @@ public class WKA extends Observable {
 	}
 
 	/**
-	 * sets the historical data of this wka. This mehtod also calls all the observers for this wka and delivers the new historical data to them to show it
+	 * sets the historical data of this wka. This mehtod also calls all the
+	 * observers for this wka and delivers the new historical data to them to
+	 * show it
 	 * 
 	 * @param hitWKAData
 	 *            the hitWKAData to set

@@ -20,7 +20,7 @@ public class FarmList {
 	public static Timer timer;
 
 	/**
-	 * 
+	 * List of all loaded Windfarms, which holds also their wind turbines
 	 * 
 	 * @return the farmList
 	 */
@@ -43,7 +43,7 @@ public class FarmList {
 		Thread updateThread = new Thread(timer);
 		updateThread.start();
 	}
-	
+
 	/**
 	 * Returns a WKA with the specified id, no matter in which windFarm the wka
 	 * appears.

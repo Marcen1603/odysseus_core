@@ -12,8 +12,9 @@ import org.eclipse.swt.widgets.Text;
 
 /**
  * This class is the GUI of a AEEntry. It extends a SWT-Composite.
+ * 
  * @author MarkMilster
- *
+ * 
  */
 public class AEEntryComp extends Composite {
 
@@ -35,12 +36,11 @@ public class AEEntryComp extends Composite {
 		return changed;
 	}
 
-
-
 	/**
 	 * Set this if you change the GUI, e.g. insert something into the textfield.
 	 * 
-	 * @param changed the changed to set
+	 * @param changed
+	 *            the changed to set
 	 */
 	public void setChanged(boolean changed) {
 		this.changed = changed;
@@ -48,28 +48,31 @@ public class AEEntryComp extends Composite {
 
 	/**
 	 * 
-	 * @param parent The parent Composite
-	 * @param style The style
-	 * @param aeEntry	The AEEntry with the data which should be shown by this GUI
+	 * @param parent
+	 *            The parent Composite
+	 * @param style
+	 *            The style
+	 * @param aeEntry
+	 *            The AEEntry with the data which should be shown by this GUI
 	 */
 	public AEEntryComp(Composite parent, int style, final AEEntry aeEntry) {
 		super(parent, style);
 		setLayout(new GridLayout(6, false));
-		
+
 		this.aeEntry = aeEntry;
-		
+
 		time = new Text(this, SWT.NONE);
 		time.setText(aeEntry.getTimestamp());
-		
+
 		lblFarm_id = new Text(this, SWT.NONE);
 		lblFarm_id.setText(String.valueOf(aeEntry.getFarmId()));
-		
+
 		lblWka_id = new Text(this, SWT.NONE);
 		lblWka_id.setText(String.valueOf(aeEntry.getWkaId()));
-		
+
 		lblValueType = new Text(this, SWT.NONE);
 		lblValueType.setText(aeEntry.getValueType());
-		
+
 		btnConfirm = new Button(this, SWT.CHECK);
 		btnConfirm.setSelection(aeEntry.isConfirm());
 		btnConfirm.addSelectionListener(new SelectionAdapter() {
@@ -79,19 +82,19 @@ public class AEEntryComp extends Composite {
 				aeEntry.setConfirm(btnConfirm.getSelection());
 				setChanged(true);
 			}
-			
+
 		});
-		
+
 		comment = new Text(this, SWT.NONE);
 		comment.setText(aeEntry.getComment());
 		comment.addKeyListener(new KeyAdapter() {
-			
+
 			@Override
 			public void keyReleased(KeyEvent e) {
 				aeEntry.setComment(comment.getText());
 				setChanged(true);
 			}
-			
+
 		});
 	}
 
@@ -103,5 +106,5 @@ public class AEEntryComp extends Composite {
 	public AEEntry getAeEntry() {
 		return aeEntry;
 	}
-	
+
 }

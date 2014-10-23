@@ -5,9 +5,9 @@ import org.eclipse.swt.widgets.Composite;
 
 /**
  * This class extends the AEEntryComp with special settings for the type error
- *
+ * 
  * @author MarkMilster
- *
+ * 
  */
 public class AEErrorComp extends AEEntryComp {
 

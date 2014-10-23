@@ -1,19 +1,21 @@
 package windscadaanwendung.hd;
 
 /**
- * This class holds the historical data of a WKA. You have to set an instance of this class in an WKA instance
+ * This class holds the historical data of a WKA. You have to set an instance of
+ * this class in an WKA instance
+ * 
  * @author MarkMilster
- *
+ * 
  */
 public class HitWKAData {
-	
+
 	private double minWindSpeed;
 	private double maxWindSpeed;
 	private double minRotationalSpeed;
 	private double maxRotationalSpeed;
 	private double minPerformance;
 	private double maxPerformance;
-	
+
 	/**
 	 * @return the minWindSpeed
 	 */
@@ -22,7 +24,8 @@ public class HitWKAData {
 	}
 
 	/**
-	 * @param minWindSpeed the minWindSpeed to set
+	 * @param minWindSpeed
+	 *            the minWindSpeed to set
 	 */
 	public void setMinWindSpeed(double minWindSpeed) {
 		this.minWindSpeed = minWindSpeed;
@@ -36,7 +39,8 @@ public class HitWKAData {
 	}
 
 	/**
-	 * @param maxWindSpeed the maxWindSpeed to set
+	 * @param maxWindSpeed
+	 *            the maxWindSpeed to set
 	 */
 	public void setMaxWindSpeed(double maxWindSpeed) {
 		this.maxWindSpeed = maxWindSpeed;
@@ -50,7 +54,8 @@ public class HitWKAData {
 	}
 
 	/**
-	 * @param minRotationalSpeed the minRotationalSpeed to set
+	 * @param minRotationalSpeed
+	 *            the minRotationalSpeed to set
 	 */
 	public void setMinRotationalSpeed(double minRotationalSpeed) {
 		this.minRotationalSpeed = minRotationalSpeed;
@@ -64,7 +69,8 @@ public class HitWKAData {
 	}
 
 	/**
-	 * @param maxRotationalSpeed the maxRotationalSpeed to set
+	 * @param maxRotationalSpeed
+	 *            the maxRotationalSpeed to set
 	 */
 	public void setMaxRotationalSpeed(double maxRotationalSpeed) {
 		this.maxRotationalSpeed = maxRotationalSpeed;
@@ -78,7 +84,8 @@ public class HitWKAData {
 	}
 
 	/**
-	 * @param minPerformance the minPerformance to set
+	 * @param minPerformance
+	 *            the minPerformance to set
 	 */
 	public void setMinPerformance(double minPerformance) {
 		this.minPerformance = minPerformance;
@@ -92,13 +99,15 @@ public class HitWKAData {
 	}
 
 	/**
-	 * @param maxPerformance the maxPerformance to set
+	 * @param maxPerformance
+	 *            the maxPerformance to set
 	 */
 	public void setMaxPerformance(double maxPerformance) {
 		this.maxPerformance = maxPerformance;
 	}
 
 	private double avgWindSpeed;
+
 	/**
 	 * @return the avgWindSpeed
 	 */
@@ -107,7 +116,8 @@ public class HitWKAData {
 	}
 
 	/**
-	 * @param avgWindSpeed the avgWindSpeed to set
+	 * @param avgWindSpeed
+	 *            the avgWindSpeed to set
 	 */
 	public void setAvgWindSpeed(double avgWindSpeed) {
 		this.avgWindSpeed = avgWindSpeed;
@@ -121,7 +131,8 @@ public class HitWKAData {
 	}
 
 	/**
-	 * @param avgWindDirection the avgWindDirection to set
+	 * @param avgWindDirection
+	 *            the avgWindDirection to set
 	 */
 	public void setAvgWindDirection(double avgWindDirection) {
 		this.avgWindDirection = avgWindDirection;
@@ -135,7 +146,8 @@ public class HitWKAData {
 	}
 
 	/**
-	 * @param avgRotationalSpeed the avgRotationalSpeed to set
+	 * @param avgRotationalSpeed
+	 *            the avgRotationalSpeed to set
 	 */
 	public void setAvgRotationalSpeed(double avgRotationalSpeed) {
 		this.avgRotationalSpeed = avgRotationalSpeed;
@@ -149,7 +161,8 @@ public class HitWKAData {
 	}
 
 	/**
-	 * @param avgPerformance the avgPerformance to set
+	 * @param avgPerformance
+	 *            the avgPerformance to set
 	 */
 	public void setAvgPerformance(double avgPerformance) {
 		this.avgPerformance = avgPerformance;

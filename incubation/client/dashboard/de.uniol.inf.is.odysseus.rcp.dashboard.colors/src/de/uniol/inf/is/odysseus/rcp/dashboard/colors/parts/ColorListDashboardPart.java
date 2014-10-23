@@ -30,9 +30,10 @@ import de.uniol.inf.is.odysseus.core.securitypunctuation.ISecurityPunctuation;
 import de.uniol.inf.is.odysseus.rcp.dashboard.AbstractDashboardPart;
 
 /**
+ * This Dashboard-Part shows a List of Color-Values marked with Timestamps
  * 
  * @author MarkMilster
- *
+ * 
  */
 public class ColorListDashboardPart extends AbstractDashboardPart {
 
@@ -41,6 +42,7 @@ public class ColorListDashboardPart extends AbstractDashboardPart {
 	private Thread updateThread;
 	private long updateInterval = 100;
 	private boolean showHeartbeats = false;
+
 	/**
 	 * @return the updateInterval
 	 */
@@ -49,7 +51,8 @@ public class ColorListDashboardPart extends AbstractDashboardPart {
 	}
 
 	/**
-	 * @param updateInterval the updateInterval to set
+	 * @param updateInterval
+	 *            the updateInterval to set
 	 */
 	public void setUpdateInterval(long updateInterval) {
 		this.updateInterval = updateInterval;
@@ -57,7 +60,10 @@ public class ColorListDashboardPart extends AbstractDashboardPart {
 
 	private int maxElements = 200;
 	private int maxElementsLine = 100;
+
 	/**
+	 * max Elements per Line will be set by the width of this Dashboard-Part
+	 * 
 	 * @return the maxElementsLine
 	 */
 	public int getMaxElementsLine() {
@@ -65,7 +71,8 @@ public class ColorListDashboardPart extends AbstractDashboardPart {
 	}
 
 	/**
-	 * @param maxElementsLine the maxElementsLine to set
+	 * @param maxElementsLine
+	 *            the maxElementsLine to set
 	 */
 	public void setMaxElementsLine(int maxElementsLine) {
 		this.maxElementsLine = maxElementsLine;
@@ -74,6 +81,7 @@ public class ColorListDashboardPart extends AbstractDashboardPart {
 	private GC gc;
 	private int colorWidth = 20;
 	private Font timestampFont;
+
 	/**
 	 * @return the timestampTextSize
 	 */
@@ -82,14 +90,18 @@ public class ColorListDashboardPart extends AbstractDashboardPart {
 	}
 
 	/**
-	 * @param timestampTextSize the timestampTextSize to set
+	 * @param timestampTextSize
+	 *            the timestampTextSize to set
 	 */
 	public void setTimestampTextSize(int timestampTextSize) {
 		this.timestampTextSize = timestampTextSize;
-		this.timestampFont = new Font(Display.getCurrent(), "Tahoma", timestampTextSize , SWT.NORMAL);
+		this.timestampFont = new Font(Display.getCurrent(), "Tahoma",
+				timestampTextSize, SWT.NORMAL);
 	}
 
 	/**
+	 * The width of the color-fields
+	 * 
 	 * @return the colorWidth
 	 */
 	public int getColorWidth() {
@@ -97,13 +109,18 @@ public class ColorListDashboardPart extends AbstractDashboardPart {
 	}
 
 	/**
-	 * @param colorWidth the colorWidth to set
+	 * The width of the color-fields
+	 * 
+	 * @param colorWidth
+	 *            the colorWidth to set
 	 */
 	public void setColorWidth(int colorWidth) {
 		this.colorWidth = colorWidth;
 	}
 
 	/**
+	 * The height of the color-fields
+	 * 
 	 * @return the colorHeight
 	 */
 	public int getColorHeight() {
@@ -111,13 +128,18 @@ public class ColorListDashboardPart extends AbstractDashboardPart {
 	}
 
 	/**
-	 * @param colorHeight the colorHeight to set
+	 * The height of the color-fields
+	 * 
+	 * @param colorHeight
+	 *            the colorHeight to set
 	 */
 	public void setColorHeight(int colorHeight) {
 		this.colorHeight = colorHeight;
 	}
 
 	/**
+	 * The Space between two lines of color-fields
+	 * 
 	 * @return the lineSpace
 	 */
 	public int getLineSpace() {
@@ -125,7 +147,10 @@ public class ColorListDashboardPart extends AbstractDashboardPart {
 	}
 
 	/**
-	 * @param lineSpace the lineSpace to set
+	 * The Space between two lines of color-fields
+	 * 
+	 * @param lineSpace
+	 *            the lineSpace to set
 	 */
 	public void setLineSpace(int lineSpace) {
 		this.lineSpace = lineSpace;
@@ -137,29 +162,44 @@ public class ColorListDashboardPart extends AbstractDashboardPart {
 	private List<Boolean> warningList = new ArrayList<Boolean>();
 	private List<Boolean> errorList = new ArrayList<Boolean>();
 	private long movingTimestampDiffElements = 10; // in Elements
+
 	/**
-	 * @return the movingTimestampDiffElements
+	 * The distance between two drawn Timestamps, if they are mooving
+	 * 
+	 * @return the movingTimestampDiffElements In the number of Color-Fields
 	 */
 	public long getMovingTimestampDiffElements() {
 		return movingTimestampDiffElements;
 	}
 
 	/**
-	 * @param movingTimestampDiffElements the movingTimestampDiffElements to set
+	 * The distance between two drawn Timestamps, if they are mooving
+	 * 
+	 * @param movingTimestampDiffElements
+	 *            the movingTimestampDiffElements to set In the number of
+	 *            Color-Fields
 	 */
 	public void setMovingTimestampDiffElements(long movingTimestampDiffElements) {
 		this.movingTimestampDiffElements = movingTimestampDiffElements;
 	}
 
 	/**
-	 * @return the fixedTimestampDiffMilliseconds
+	 * The distance between two drawn Timestamps, if they are fixed in the
+	 * position
+	 * 
+	 * @return the fixedTimestampDiffMilliseconds In number of milliseconds
 	 */
 	public long getFixedTimestampDiffMilliseconds() {
 		return fixedTimestampDiffMilliseconds;
 	}
 
 	/**
-	 * @param fixedTimestampDiffMilliseconds the fixedTimestampDiffMilliseconds to set
+	 * The distance between two drawn Timestamps, if they are fixed in the
+	 * position
+	 * 
+	 * @param fixedTimestampDiffMilliseconds
+	 *            the fixedTimestampDiffMilliseconds to set In number of
+	 *            milliseconds
 	 */
 	public void setFixedTimestampDiffMilliseconds(
 			long fixedTimestampDiffMilliseconds) {
@@ -174,7 +214,10 @@ public class ColorListDashboardPart extends AbstractDashboardPart {
 	private int warningIndex = 4;
 	private int errorIndex = 5;
 	private boolean showWarnings;
+
 	/**
+	 * If true warnings will be marked
+	 * 
 	 * @return the showWarnings
 	 */
 	public boolean isShowWarnings() {
@@ -182,13 +225,18 @@ public class ColorListDashboardPart extends AbstractDashboardPart {
 	}
 
 	/**
-	 * @param showWarnings the showWarnings to set
+	 * If true warnings will be marked
+	 * 
+	 * @param showWarnings
+	 *            the showWarnings to set
 	 */
 	public void setShowWarnings(boolean showWarnings) {
 		this.showWarnings = showWarnings;
 	}
 
 	/**
+	 * If true errors will be marked
+	 * 
 	 * @return the showErrors
 	 */
 	public boolean isShowErrors() {
@@ -196,7 +244,10 @@ public class ColorListDashboardPart extends AbstractDashboardPart {
 	}
 
 	/**
-	 * @param showErrors the showErrors to set
+	 * If true errors will be marked
+	 * 
+	 * @param showErrors
+	 *            the showErrors to set
 	 */
 	public void setShowErrors(boolean showErrors) {
 		this.showErrors = showErrors;
@@ -205,7 +256,10 @@ public class ColorListDashboardPart extends AbstractDashboardPart {
 	private boolean showErrors;
 	private int timestampIndex = 0;
 	private int redIndex = 1;
+
 	/**
+	 * Index of the red-value in the tuples of the data-stream
+	 * 
 	 * @return the redIndex
 	 */
 	public int getRedIndex() {
@@ -213,13 +267,18 @@ public class ColorListDashboardPart extends AbstractDashboardPart {
 	}
 
 	/**
-	 * @param redIndex the redIndex to set
+	 * Index of the red-value in the tuples of the data-stream
+	 * 
+	 * @param redIndex
+	 *            the redIndex to set
 	 */
 	public void setRedIndex(int redIndex) {
 		this.redIndex = redIndex;
 	}
 
 	/**
+	 * Index of the green-value in the tuples of the data-stream
+	 * 
 	 * @return the greenIndex
 	 */
 	public int getGreenIndex() {
@@ -227,13 +286,18 @@ public class ColorListDashboardPart extends AbstractDashboardPart {
 	}
 
 	/**
-	 * @param greenIndex the greenIndex to set
+	 * Index of the green-value in the tuples of the data-stream
+	 * 
+	 * @param greenIndex
+	 *            the greenIndex to set
 	 */
 	public void setGreenIndex(int greenIndex) {
 		this.greenIndex = greenIndex;
 	}
 
 	/**
+	 * Index of the blue-value in the tuples of the data-stream
+	 * 
 	 * @return the blueIndex
 	 */
 	public int getBlueIndex() {
@@ -241,7 +305,10 @@ public class ColorListDashboardPart extends AbstractDashboardPart {
 	}
 
 	/**
-	 * @param blueIndex the blueIndex to set
+	 * Index of the blue-value in the tuples of the data-stream
+	 * 
+	 * @param blueIndex
+	 *            the blueIndex to set
 	 */
 	public void setBlueIndex(int blueIndex) {
 		this.blueIndex = blueIndex;
@@ -249,10 +316,12 @@ public class ColorListDashboardPart extends AbstractDashboardPart {
 
 	private int greenIndex = 2;
 	private int blueIndex = 3;
-	
+
 	private List<Boolean> timestampFlags = new ArrayList<Boolean>();
 
 	/**
+	 * Index of the timestamp in the tuples of the data-stream
+	 * 
 	 * @return the timestampIndex
 	 */
 	public int getTimestampIndex() {
@@ -260,13 +329,19 @@ public class ColorListDashboardPart extends AbstractDashboardPart {
 	}
 
 	/**
-	 * @param timestampIndex the timestampIndex to set
+	 * Index of the timestamp in the tuples of the data-stream
+	 * 
+	 * @param timestampIndex
+	 *            the timestampIndex to set
 	 */
 	public void setTimestampIndex(int timestampIndex) {
 		this.timestampIndex = timestampIndex;
 	}
 
 	/**
+	 * If true the timestamps will be fixed and will change their value, if a
+	 * new color-block will appear at their position on canvas
+	 * 
 	 * @return the fixedTimestamps
 	 */
 	public boolean isFixedTimestamps() {
@@ -274,31 +349,42 @@ public class ColorListDashboardPart extends AbstractDashboardPart {
 	}
 
 	/**
-	 * @param fixedTimestamps the fixedTimestamps to set
+	 * If true the timestamps will be fixed and will change their value, if a
+	 * new color-block will appear at their position on canvas
+	 * 
+	 * @param fixedTimestamps
+	 *            the fixedTimestamps to set
 	 */
 	public void setFixedTimestamps(boolean fixedTimestamps) {
 		this.fixedTimestamps = fixedTimestamps;
 	}
-	
+
 	private DefaultToolTip tt;
+
+	/**
+	 * color Points are the upper left position of the color-blocks on canvas
+	 */
 	private List<Point> colorPoints = new ArrayList<Point>();;
-	
+
 	@Override
 	public void createPartControl(final Composite parent, ToolBar toolbar) {
 		this.parent = parent;
 		this.parent.setLayout(new FillLayout());
 		this.canvas = new Canvas(parent, 0);
-		this.canvas.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_WHITE));
+		this.canvas.setBackground(Display.getCurrent().getSystemColor(
+				SWT.COLOR_WHITE));
 		this.gc = new GC(canvas);
-		this.timestampFont = new Font(Display.getCurrent(), "Tahoma", timestampTextSize , SWT.NORMAL);
+		this.timestampFont = new Font(Display.getCurrent(), "Tahoma",
+				timestampTextSize, SWT.NORMAL);
 		tt = new DefaultToolTip(canvas, SWT.NONE, false);
+
+		// create MouseMoveListener to handle various tooltips on canvas
 		canvas.addMouseMoveListener(new MouseMoveListener() {
 
 			@Override
 			public void mouseMove(MouseEvent e) {
-				// search for the color with the colorpoint at the mouse position
-				search:
-				for (int i=0;  i < colorPoints.size(); i++) {
+				// search for the color which is pointed by the mouse
+				search: for (int i = 0; i < colorPoints.size(); i++) {
 					Point p = colorPoints.get(i);
 					if (p.x <= e.x && (p.x + colorWidth) >= e.x) {
 						// mouse is in x-axis in the color-field of p
@@ -314,12 +400,11 @@ public class ColorListDashboardPart extends AbstractDashboardPart {
 						}
 					}
 				}
-				
+
 			}
-			
+
 		});
-		
-		
+
 		updateThread = new Thread(new Runnable() {
 
 			@Override
@@ -337,7 +422,7 @@ public class ColorListDashboardPart extends AbstractDashboardPart {
 						});
 					}
 
-					waiting(updateInterval );
+					waiting(updateInterval);
 				}
 			}
 
@@ -346,66 +431,87 @@ public class ColorListDashboardPart extends AbstractDashboardPart {
 		updateThread.setName("StreamList Updater");
 		updateThread.start();
 	}
-	
+
+	/**
+	 * This method let the updateThread sleep
+	 * 
+	 * @param length
+	 *            Time to sleep
+	 */
 	private static void waiting(long length) {
 		try {
 			Thread.sleep(length);
 		} catch (final InterruptedException e) {
+			// ignore
 		}
 	}
-	
+
+	/**
+	 * Refreshs the canvas and draw every color-field new
+	 */
 	private void refreshCanvas() {
 		int lineNumber = 0;
 		int elementsInLine = 0;
 		int xPos = 0;
 		int yPos = 0;
-		double lastTimestamp = 0-fixedTimestampDiffMilliseconds;	
-		
+		double lastTimestamp = 0 - fixedTimestampDiffMilliseconds;
+
 		this.setMaxElementsLine(this.parent.getSize().x / this.colorWidth);
-		
+
 		gc.setFont(timestampFont);
-		//to clear everything
+		// to clear everything
 		gc.setBackground(new Color(Display.getCurrent(), 255, 255, 255));
 		gc.fillRectangle(0, 0, canvas.getSize().x, canvas.getSize().y);
 		colorPoints.clear();
-		for (int i=0; i < colorList.size(); i++) {
+		for (int i = 0; i < colorList.size(); i++) {
 			gc.setBackground(colorList.get(i));
 			if (elementsInLine >= maxElementsLine) {
-				lineNumber ++;
+				lineNumber++;
 				elementsInLine = 0;
 				xPos = 0;
 			}
-			yPos = (lineNumber*colorHeight)+(lineNumber*lineSpace);
-			gc.fillRectangle(xPos, yPos, colorWidth, colorHeight );
+			yPos = (lineNumber * colorHeight) + (lineNumber * lineSpace);
+			gc.fillRectangle(xPos, yPos, colorWidth, colorHeight);
 			colorPoints.add(new Point(xPos, yPos));
-			
+
 			if (showWarnings) {
-				gc.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_YELLOW));
-				gc.fillRectangle(xPos, (lineNumber*colorHeight)+(lineNumber*lineSpace) - colorWidth, colorWidth, colorWidth);
+				gc.setBackground(Display.getCurrent().getSystemColor(
+						SWT.COLOR_YELLOW));
+				gc.fillRectangle(xPos, (lineNumber * colorHeight)
+						+ (lineNumber * lineSpace) - colorWidth, colorWidth,
+						colorWidth);
 			}
 			if (showErrors) {
-				gc.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_RED));
-				gc.fillRectangle(xPos, (lineNumber*colorHeight)+(lineNumber*lineSpace) - colorWidth, colorWidth, colorWidth);
+				gc.setBackground(Display.getCurrent().getSystemColor(
+						SWT.COLOR_RED));
+				gc.fillRectangle(xPos, (lineNumber * colorHeight)
+						+ (lineNumber * lineSpace) - colorWidth, colorWidth,
+						colorWidth);
 			}
-			
-			elementsInLine ++;
+
+			elementsInLine++;
 			xPos += colorWidth;
 
 			if (fixedTimestamps) {
 				// fixed Timestamps
-				if (timestampList.get(i).getTime() >= (lastTimestamp+fixedTimestampDiffMilliseconds) && timestampList.get(i) != null) {
-					gc.drawString(String.valueOf(timestampList.get(i)), xPos-(colorWidth),  (lineNumber*colorHeight)+(lineNumber*lineSpace)+colorHeight, true);
+				if (timestampList.get(i).getTime() >= (lastTimestamp + fixedTimestampDiffMilliseconds)
+						&& timestampList.get(i) != null) {
+					gc.drawString(String.valueOf(timestampList.get(i)), xPos
+							- (colorWidth), (lineNumber * colorHeight)
+							+ (lineNumber * lineSpace) + colorHeight, true);
 					lastTimestamp = timestampList.get(i).getTime();
 				}
 			} else {
 				// moving Timestamps
 				if (timestampFlags.get(i) && timestampList.get(i) != null) {
-					gc.drawString(String.valueOf(timestampList.get(i)), xPos-(colorWidth),  (lineNumber*colorHeight)+(lineNumber*lineSpace)+colorHeight, true);
+					gc.drawString(String.valueOf(timestampList.get(i)), xPos
+							- (colorWidth), (lineNumber * colorHeight)
+							+ (lineNumber * lineSpace) + colorHeight, true);
 				}
 			}
 		}
 	}
-	
+
 	@Override
 	public void streamElementRecieved(IPhysicalOperator senderOperator,
 			IStreamObject<?> element, int port) {
@@ -413,7 +519,7 @@ public class ColorListDashboardPart extends AbstractDashboardPart {
 			timestampList.add(getTimestamp(element));
 			if (!fixedTimestamps) {
 				// moving Timestamps
-				counter ++;
+				counter++;
 				if (counter == movingTimestampDiffElements) {
 					counter = 0;
 					timestampFlags.add(true);
@@ -421,13 +527,13 @@ public class ColorListDashboardPart extends AbstractDashboardPart {
 					timestampFlags.add(false);
 				}
 			}
-			
+
 			warningList.add(getWarning(element));
 			errorList.add(getError(element));
 			colorList.add(elementToColor(element));
-			
+
 			if (!isInfinite() && colorList.size() > maxElements) {
-				// colorList.size() equals timestampList.size() 
+				// colorList.size() equals timestampList.size()
 				colorList.remove(0);
 				timestampList.remove(0);
 				warningList.remove(0);
@@ -435,26 +541,61 @@ public class ColorListDashboardPart extends AbstractDashboardPart {
 			}
 		}
 	}
-	
+
+	/**
+	 * Returns the Boolean, which is set at the errorIndex of specified tuple.
+	 * So it will check, if this tuple is a error
+	 * 
+	 * @param element
+	 *            the tuple which should be testet
+	 * @return True if this is a Error, false otherwise
+	 */
 	private Boolean getError(IStreamObject<?> element) {
 		Tuple<?> tuple = (Tuple<?>) element;
 		return tuple.getAttribute(errorIndex);
 	}
-	
+
+	/**
+	 * Returns the Boolean, which is set at the warningIndex of specified tuple.
+	 * So it will check, if this tuple is a warning
+	 * 
+	 * @param element
+	 *            the tuple which should be testet
+	 * @return True if this is a Error, false otherwise
+	 */
 	private Boolean getWarning(IStreamObject<?> element) {
 		Tuple<?> tuple = (Tuple<?>) element;
 		return tuple.getAttribute(warningIndex);
 	}
 
+	/**
+	 * Returns the Timestamp, which is set at the timestampIndex of specified
+	 * tuple.
+	 * 
+	 * @param element
+	 *            the tuple
+	 * @return the timestamp
+	 */
 	private Date getTimestamp(IStreamObject<?> element) {
 		Tuple<?> tuple = (Tuple<?>) element;
 		Date timestamp = tuple.getAttribute(timestampIndex);
 		return timestamp;
 	}
 
+	/**
+	 * Converts a tuple to a swt.Color. The red-value, green-value and
+	 * blue-value has to be set on the position, given by the redIndex,
+	 * greenIndex and blueIndex by the instance of ColorListDashboardPart
+	 * 
+	 * @param element
+	 * @return
+	 */
 	public Color elementToColor(IStreamObject<?> element) {
 		Tuple<?> tuple = (Tuple<?>) element;
-		Color color = new Color(Display.getCurrent(), (int) tuple.getAttribute(redIndex), (int) tuple.getAttribute(greenIndex),  (int) tuple.getAttribute(blueIndex));
+		Color color = new Color(Display.getCurrent(),
+				(int) tuple.getAttribute(redIndex),
+				(int) tuple.getAttribute(greenIndex),
+				(int) tuple.getAttribute(blueIndex));
 		return color;
 	}
 
@@ -469,20 +610,36 @@ public class ColorListDashboardPart extends AbstractDashboardPart {
 			}
 		}
 	}
-	
+
+	/**
+	 * 
+	 * @return true, if you can show an unlimited amount of Color-Values
+	 */
 	private boolean isInfinite() {
 		return maxElements < 0;
 	}
 
 	@Override
-	public void securityPunctuationElementRecieved(IPhysicalOperator senderOperator, ISecurityPunctuation sp, int port) {
+	public void securityPunctuationElementRecieved(
+			IPhysicalOperator senderOperator, ISecurityPunctuation sp, int port) {
 		punctuationElementRecieved(senderOperator, sp, port);
 	}
 
+	/**
+	 * sets the max number of color-values, which will be shown by this
+	 * dashboard-part
+	 * 
+	 * @param maxElements
+	 */
 	public void setMaxElements(int maxElements) {
 		this.maxElements = maxElements;
 	}
 
+	/**
+	 * 
+	 * @return the max number of color-values, which will be shown by this
+	 *         dashboard-part
+	 */
 	public int getMaxElements() {
 		return this.maxElements;
 	}
@@ -495,34 +652,38 @@ public class ColorListDashboardPart extends AbstractDashboardPart {
 	}
 
 	/**
-	 * @param showHeartbeats the showHeartbeats to set
+	 * @param showHeartbeats
+	 *            the showHeartbeats to set
 	 */
 	public void setShowHeartbeats(boolean showHeartbeats) {
 		this.showHeartbeats = showHeartbeats;
 	}
-	
+
 	@Override
 	public void onLoad(Map<String, String> saved) {
 		showHeartbeats = Boolean.valueOf(saved.get("ShowHeartbeats"));
 		updateInterval = Long.valueOf(saved.get("UpdateInterval"));
 		this.colorHeight = Integer.valueOf(saved.get("ColorHeight"));
 		this.colorWidth = Integer.valueOf(saved.get("ColorWidth"));
-		this.fixedTimestampDiffMilliseconds = Long.valueOf(saved.get("FixedTimestampDiffMilliseconds"));
+		this.fixedTimestampDiffMilliseconds = Long.valueOf(saved
+				.get("FixedTimestampDiffMilliseconds"));
 		this.fixedTimestamps = Boolean.valueOf(saved.get("FixedTimestamps"));
 		this.lineSpace = Integer.valueOf(saved.get("LineSpace"));
 		this.maxElements = Integer.valueOf(saved.get("MaxElements"));
-		this.movingTimestampDiffElements = Long.valueOf(saved.get("MovingTimestampDiffElements"));
-		this.timestampTextSize = Integer.valueOf(saved.get("TimestampTextSize"));
+		this.movingTimestampDiffElements = Long.valueOf(saved
+				.get("MovingTimestampDiffElements"));
+		this.timestampTextSize = Integer
+				.valueOf(saved.get("TimestampTextSize"));
 		this.showWarnings = Boolean.valueOf(saved.get("ShowWarnings"));
-        this.showErrors = Boolean.valueOf(saved.get("ShowErrors"));	
-        this.warningIndex = Integer.valueOf(saved.get("WarningIndex"));
-        this.errorIndex = Integer.valueOf(saved.get("ErrorIndex"));
-        this.timestampIndex = Integer.valueOf(saved.get("TimestampIndex"));
-        this.redIndex = Integer.valueOf(saved.get("RedIndex"));
-        this.blueIndex = Integer.valueOf(saved.get("BlueIndex"));
-        this.greenIndex = Integer.valueOf(saved.get("GreenIndex"));
+		this.showErrors = Boolean.valueOf(saved.get("ShowErrors"));
+		this.warningIndex = Integer.valueOf(saved.get("WarningIndex"));
+		this.errorIndex = Integer.valueOf(saved.get("ErrorIndex"));
+		this.timestampIndex = Integer.valueOf(saved.get("TimestampIndex"));
+		this.redIndex = Integer.valueOf(saved.get("RedIndex"));
+		this.blueIndex = Integer.valueOf(saved.get("BlueIndex"));
+		this.greenIndex = Integer.valueOf(saved.get("GreenIndex"));
 	}
-	
+
 	@Override
 	public Map<String, String> onSave() {
 		Map<String, String> saveMap = Maps.newHashMap();
@@ -530,11 +691,13 @@ public class ColorListDashboardPart extends AbstractDashboardPart {
 		saveMap.put("UpdateInterval", String.valueOf(updateInterval));
 		saveMap.put("ColorHeight", String.valueOf(colorHeight));
 		saveMap.put("ColorWidth", String.valueOf(colorWidth));
-		saveMap.put("FixedTimestampDiffMilliseconds", String.valueOf(fixedTimestampDiffMilliseconds));
+		saveMap.put("FixedTimestampDiffMilliseconds",
+				String.valueOf(fixedTimestampDiffMilliseconds));
 		saveMap.put("FixedTimestamps", String.valueOf(fixedTimestamps));
 		saveMap.put("LineSpace", String.valueOf(lineSpace));
 		saveMap.put("MaxElements", String.valueOf(maxElements));
-		saveMap.put("MovingTimestampDiffElements", String.valueOf(movingTimestampDiffElements));
+		saveMap.put("MovingTimestampDiffElements",
+				String.valueOf(movingTimestampDiffElements));
 		saveMap.put("TimestampTextSize", String.valueOf(timestampTextSize));
 		saveMap.put("ShowWarnings", String.valueOf(showWarnings));
 		saveMap.put("ShowErrors", String.valueOf(showErrors));
@@ -548,6 +711,8 @@ public class ColorListDashboardPart extends AbstractDashboardPart {
 	}
 
 	/**
+	 * The position on the tuples, which represent the warning-flag
+	 * 
 	 * @return the warningIndex
 	 */
 	public int getWarningIndex() {
@@ -555,13 +720,18 @@ public class ColorListDashboardPart extends AbstractDashboardPart {
 	}
 
 	/**
-	 * @param warningIndex the warningIndex to set
+	 * The position on the tuples, which represent the warning-flag
+	 * 
+	 * @param warningIndex
+	 *            the warningIndex to set
 	 */
 	public void setWarningIndex(int warningIndex) {
 		this.warningIndex = warningIndex;
 	}
 
 	/**
+	 * The position on the tuples, which represent the error-flag
+	 * 
 	 * @return the errorIndex
 	 */
 	public int getErrorIndex() {
@@ -569,7 +739,10 @@ public class ColorListDashboardPart extends AbstractDashboardPart {
 	}
 
 	/**
-	 * @param errorIndex the errorIndex to set
+	 * The position on the tuples, which represent the error-flag
+	 * 
+	 * @param errorIndex
+	 *            the errorIndex to set
 	 */
 	public void setErrorIndex(int errorIndex) {
 		this.errorIndex = errorIndex;

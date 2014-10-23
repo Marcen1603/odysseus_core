@@ -9,11 +9,9 @@ import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.ui.PlatformUI;
 
@@ -30,6 +28,11 @@ import de.uniol.inf.is.odysseus.rcp.dashboard.warningserrors.data.Error;
 import de.uniol.inf.is.odysseus.rcp.dashboard.warningserrors.data.Warning;
 
 /**
+ * This Dashboard-Part can be used to show a List of current Messages with
+ * different prioritys. The expired messages will be deleted automatically. Also
+ * if there are messages from the same type, but with a differenr priority, the
+ * old prioryty will be replaced, because a message can only exist in one
+ * priority each time.
  * 
  * @author MarkMilster
  * 
@@ -39,40 +42,10 @@ public class WarningsErrorsListDashboardPart extends AbstractDashboardPart {
 	private Composite container;
 	private ScrolledComposite sc;
 	private long updateInterval = 100;
-	private boolean showWarning = true;
-	private boolean showError = true;
 
 	/**
-	 * @return the showWarning
-	 */
-	public boolean isShowWarning() {
-		return showWarning;
-	}
-
-	/**
-	 * @param showWarning
-	 *            the showWarning to set
-	 */
-	public void setShowWarning(boolean showWarning) {
-		this.showWarning = showWarning;
-	}
-
-	/**
-	 * @return the showError
-	 */
-	public boolean isShowError() {
-		return showError;
-	}
-
-	/**
-	 * @param showError
-	 *            the showError to set
-	 */
-	public void setShowError(boolean showError) {
-		this.showError = showError;
-	}
-
-	/**
+	 * In the updateInterval the List will be redrawn.
+	 * 
 	 * @return the updateInterval
 	 */
 	public long getUpdateInterval() {
@@ -80,6 +53,8 @@ public class WarningsErrorsListDashboardPart extends AbstractDashboardPart {
 	}
 
 	/**
+	 * In the updateInterval the List will be redrawn.
+	 * 
 	 * @param updateInterval
 	 *            the updateInterval to set
 	 */
@@ -96,6 +71,8 @@ public class WarningsErrorsListDashboardPart extends AbstractDashboardPart {
 	private boolean showWarnings;
 
 	/**
+	 * If true, this List will show the Messages, which represent a warning.
+	 * 
 	 * @return the showWarnings
 	 */
 	public boolean isShowWarnings() {
@@ -103,6 +80,8 @@ public class WarningsErrorsListDashboardPart extends AbstractDashboardPart {
 	}
 
 	/**
+	 * If true, this List will show the Messages, which represent a warning.
+	 * 
 	 * @param showWarnings
 	 *            the showWarnings to set
 	 */
@@ -111,6 +90,8 @@ public class WarningsErrorsListDashboardPart extends AbstractDashboardPart {
 	}
 
 	/**
+	 * If true, this List will show the Messages, which represent an error.
+	 * 
 	 * @return the showErrors
 	 */
 	public boolean isShowErrors() {
@@ -118,6 +99,8 @@ public class WarningsErrorsListDashboardPart extends AbstractDashboardPart {
 	}
 
 	/**
+	 * If true, this List will show the Messages, which represent an error.
+	 * 
 	 * @param showErrors
 	 *            the showErrors to set
 	 */
@@ -131,9 +114,10 @@ public class WarningsErrorsListDashboardPart extends AbstractDashboardPart {
 	private int wkaIdIndex = 0;
 	private int farmIdIndex = 1;
 	private int valueTypeIndex = 2;
-	private Composite header;
 
 	/**
+	 * Index of the timestamp in the tuples of the data-stream
+	 * 
 	 * @return the timestampIndex
 	 */
 	public int getTimestampIndex() {
@@ -141,6 +125,8 @@ public class WarningsErrorsListDashboardPart extends AbstractDashboardPart {
 	}
 
 	/**
+	 * Index of the timestamp in the tuples of the data-stream
+	 * 
 	 * @param timestampIndex
 	 *            the timestampIndex to set
 	 */
@@ -160,11 +146,6 @@ public class WarningsErrorsListDashboardPart extends AbstractDashboardPart {
 		this.container = new Composite(sc, SWT.NONE);
 		this.container.setLayout(GridLayoutFactory.swtDefaults().numColumns(1)
 				.create());
-		this.header = new Composite(container, SWT.NONE);
-		this.header.setLayout(new GridLayout(3, false));
-		(new Label(header, SWT.NONE)).setText("Farm");
-		(new Label(header, SWT.NONE)).setText("WKA");
-		(new Label(header, SWT.NONE)).setText("Value");
 		sc.setContent(container);
 		sc.setMinSize(container.computeSize(SWT.DEFAULT, SWT.DEFAULT));
 
@@ -197,6 +178,12 @@ public class WarningsErrorsListDashboardPart extends AbstractDashboardPart {
 
 	}
 
+	/**
+	 * This method let the updateThread sleep
+	 * 
+	 * @param length
+	 *            Time to sleep
+	 */
 	private static void waiting(long length) {
 		try {
 			Thread.sleep(length);
@@ -204,6 +191,10 @@ public class WarningsErrorsListDashboardPart extends AbstractDashboardPart {
 		}
 	}
 
+	/**
+	 * This method refreshs the Container, which draws alle the Entrys. So the
+	 * actual given List of Messages will be shown
+	 */
 	private void refreshContainer() {
 		synchronized (tupleList) {
 			// Saving position of the scrollbar
@@ -214,28 +205,24 @@ public class WarningsErrorsListDashboardPart extends AbstractDashboardPart {
 				int farm_id = ((Long) tuple.getAttribute(farmIdIndex))
 						.intValue();
 				String value_type = tuple.getAttribute(valueTypeIndex);
-				// System.out.println("tuple ->  WKA: " + wka_id +
-				// "  Value_type: " + value_type);
+				// Entry e will be null, of this message wasnt there befor in a
+				// other priority, otherwise there where the same message in a
+				// other priority befor, so the new message will replace the old
+				// one
 				Entry e = findEntry(wka_id, value_type);
-				// if e == null -> new entry -> else a old one changes
 				if ((boolean) tuple.getAttribute(warningIndex)) {
-					// System.out.println("Warning flag ist TRUE");
+					// tuple is a warning
 					if (e != null) {
 						// if this entry was a warning or a error earlyer the
-						// warning or error will be overwritten
-						// TODO: evtl. so aendern dass nicht das alte weg geht
-						// und das neue kommt sondern dass das alte sich aendert
+						// warning or error will be r
 						e.dispose();
-						// System.out.println("altes entfernt");
 					}
 					if ((boolean) tuple.getAttribute(errorIndex)) {
 						// error
 						e = new Error(container, SWT.NONE);
-						// System.out.println("New Error!");
 					} else {
 						// warning
 						e = new Warning(container, SWT.NONE);
-						// System.out.println("New warning!");
 					}
 					e.setWka_id(wka_id);
 					e.setFarm_id(farm_id);
@@ -244,12 +231,12 @@ public class WarningsErrorsListDashboardPart extends AbstractDashboardPart {
 					// nothing -> no warning or error here anymore -> dispose
 					// entry
 					// it isnt allowed that you got error but no warning
-					// System.out.println("Warning flag ist FALSE");
+					// so this case represents the fact, that the message is
+					// expired
 					if (e != null) {
 						e.dispose();
-						// System.out.println("altes entfernt");
 					} else {
-						// System.out.println("Kein altes vorhanden obwohl 0,0 gesendet -> FEHLER");
+						// ignore
 					}
 				}
 			}
@@ -267,13 +254,25 @@ public class WarningsErrorsListDashboardPart extends AbstractDashboardPart {
 		String t_value_type = tuple.getAttribute(valueTypeIndex);
 		synchronized (tupleList) {
 			Tuple<?> tupleOld = findTuple(t_wka_id, t_value_type);
-			if (tupleOld == null) {
+			// this will remove the expired messages
+			if (tupleOld != null) {
 				tupleList.remove(tupleOld);
 			}
 			tupleList.add(tuple);
 		}
 	}
 
+	/**
+	 * This method searches in the stored tuples for a message by the specified
+	 * wka with the specified value_type
+	 * 
+	 * @param wka_id
+	 *            The wka_id to search for
+	 * @param type
+	 *            The value_type to search for
+	 * @return The Message, represented by his tuple out of the datastream or
+	 *         null, if it does'nt exist
+	 */
 	private Tuple<?> findTuple(int wka_id, String type) {
 		for (Tuple<?> t : tupleList) {
 			int t_wka_id = ((Long) t.getAttribute(wkaIdIndex)).intValue();
@@ -286,10 +285,19 @@ public class WarningsErrorsListDashboardPart extends AbstractDashboardPart {
 
 	}
 
+	/**
+	 * This method searches in the drawn entrys for a message by the specified
+	 * wka with the specified value_type
+	 * 
+	 * @param wka_id
+	 *            The wka_id to search for
+	 * @param type
+	 *            The value_type to search for
+	 * @return The Message, represented by his Entry-Composite or null, if it
+	 *         does'nt exist
+	 */
 	private Entry findEntry(int wka_id, String type) {
-		// System.out.println("Beginne suche...");
 		for (Control c : container.getChildren()) {
-			// System.out.println(c.toString());
 			if (c != null && c instanceof Entry) {
 				Entry e = (Entry) c;
 				if (e.getWka_id() == wka_id && e.getValue_type().equals(type)) {
@@ -297,7 +305,6 @@ public class WarningsErrorsListDashboardPart extends AbstractDashboardPart {
 				}
 			}
 		}
-		// System.out.println(wka_id + " " + type + " nicht gefunden!");
 		return null;
 	}
 
@@ -312,10 +319,20 @@ public class WarningsErrorsListDashboardPart extends AbstractDashboardPart {
 		punctuationElementRecieved(senderOperator, sp, port);
 	}
 
+	/**
+	 * The max number of messages shown by this list
+	 * 
+	 * @param maxElements
+	 */
 	public void setMaxElements(int maxElements) {
 		this.maxElements = maxElements;
 	}
 
+	/**
+	 * The max number of messages shown by this list
+	 * 
+	 * @return the max number if messages as int
+	 */
 	public int getMaxElements() {
 		return this.maxElements;
 	}
@@ -350,6 +367,8 @@ public class WarningsErrorsListDashboardPart extends AbstractDashboardPart {
 	}
 
 	/**
+	 * The position on the tuples, which represent the wka-ID
+	 * 
 	 * @return the wkaIdIndex
 	 */
 	public int getWkaIdIndex() {
@@ -357,6 +376,8 @@ public class WarningsErrorsListDashboardPart extends AbstractDashboardPart {
 	}
 
 	/**
+	 * The position on the tuples, which represent the wka-ID
+	 * 
 	 * @param wkaIdIndex
 	 *            the wkaIdIndex to set
 	 */
@@ -365,6 +386,8 @@ public class WarningsErrorsListDashboardPart extends AbstractDashboardPart {
 	}
 
 	/**
+	 * The position on the tuples, which represent the farm-ID
+	 * 
 	 * @return the farmIdIndex
 	 */
 	public int getFarmIdIndex() {
@@ -372,6 +395,8 @@ public class WarningsErrorsListDashboardPart extends AbstractDashboardPart {
 	}
 
 	/**
+	 * The position on the tuples, which represent the farm-ID
+	 * 
 	 * @param farmIdIndex
 	 *            the farmIdIndex to set
 	 */
@@ -380,6 +405,8 @@ public class WarningsErrorsListDashboardPart extends AbstractDashboardPart {
 	}
 
 	/**
+	 * The position on the tuples, which represent the valueType
+	 * 
 	 * @return the valueTypeIndex
 	 */
 	public int getValueTypeIndex() {
@@ -387,6 +414,8 @@ public class WarningsErrorsListDashboardPart extends AbstractDashboardPart {
 	}
 
 	/**
+	 * The position on the tuples, which represent the valueType
+	 * 
 	 * @param valueTypeIndex
 	 *            the valueTypeIndex to set
 	 */
@@ -395,6 +424,8 @@ public class WarningsErrorsListDashboardPart extends AbstractDashboardPart {
 	}
 
 	/**
+	 * The position on the tuples, which represent the warningFlag
+	 * 
 	 * @return the warningIndex
 	 */
 	public int getWarningIndex() {
@@ -402,6 +433,8 @@ public class WarningsErrorsListDashboardPart extends AbstractDashboardPart {
 	}
 
 	/**
+	 * The position on the tuples, which represent the warningFlag
+	 * 
 	 * @param warningIndex
 	 *            the warningIndex to set
 	 */
@@ -410,6 +443,8 @@ public class WarningsErrorsListDashboardPart extends AbstractDashboardPart {
 	}
 
 	/**
+	 * The position on the tuples, which represent the errorFlag
+	 * 
 	 * @return the errorIndex
 	 */
 	public int getErrorIndex() {
@@ -417,6 +452,8 @@ public class WarningsErrorsListDashboardPart extends AbstractDashboardPart {
 	}
 
 	/**
+	 * The position on the tuples, which represent the errorFlag
+	 * 
 	 * @param errorIndex
 	 *            the errorIndex to set
 	 */

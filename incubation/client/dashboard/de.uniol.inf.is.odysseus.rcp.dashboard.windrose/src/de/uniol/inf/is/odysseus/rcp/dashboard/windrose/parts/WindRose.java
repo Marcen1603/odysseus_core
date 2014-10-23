@@ -28,21 +28,27 @@ import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.settings.ChartSetting;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.settings.ChartSetting.Type;
 
 /**
+ * This method is a raw prototype of a Windrose. Actually it uses the code of
+ * the DialChart with some changed variables to create the look of a windrose.
+ * in Future there is the possibility to adjust this class, so it will be look
+ * more like a Windrose or to show two or more Pointers, to show multiple values
+ * per time
  * 
- * @author Mark Milster
+ * @author Mark Milster, but the code is mostly equal to the
+ *         de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.charts.DialChart
  */
 public class WindRose extends DialChart {
 
 	private DefaultValueDataset dataset = new DefaultValueDataset();
 	private int selectedValue = 0;
-	
+
 	private double lowerBound = 0;
 	private double upperBound = 360;
 	private double startAngle = 90;
 	private double extent = -360;
 	private double majorTickIncrement = 10.0;
 	private int minorTickCount = 4;
-	
+
 	@Override
 	public void reloadChart() {
 		DialPlot plot = (DialPlot) getChart().getPlot();
@@ -54,7 +60,7 @@ public class WindRose extends DialChart {
 		scale.setMajorTickIncrement(majorTickIncrement);
 		scale.setMinorTickCount(minorTickCount);
 	}
-	
+
 	@Override
 	public String isValidSelection(
 			Map<Integer, Set<IViewableAttribute>> selectAttributes) {
@@ -62,7 +68,8 @@ public class WindRose extends DialChart {
 	}
 
 	@Override
-	protected void processElement(final List<Double> tuple, IMetaAttribute metadata, int port) {
+	protected void processElement(final List<Double> tuple,
+			IMetaAttribute metadata, int port) {
 		PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
 
 			@Override
@@ -95,11 +102,14 @@ public class WindRose extends DialChart {
 		dialFrame.setForegroundPaint(Color.BLACK);
 		plot.setDialFrame(dialFrame);
 		plot.setBackgroundPaint(DEFAULT_BACKGROUND);
-		GradientPaint gp = new GradientPaint(new Point(), new Color(255, 255, 255), new Point(), new Color(170, 170, 220));
+		GradientPaint gp = new GradientPaint(new Point(), new Color(255, 255,
+				255), new Point(), new Color(170, 170, 220));
 		DialBackground db = new DialBackground(gp);
-		db.setGradientPaintTransformer(new StandardGradientPaintTransformer(GradientPaintTransformType.VERTICAL));
+		db.setGradientPaintTransformer(new StandardGradientPaintTransformer(
+				GradientPaintTransformType.VERTICAL));
 		plot.setBackground(db);
-		StandardDialScale scale = new StandardDialScale(lowerBound, upperBound, startAngle, extent, majorTickIncrement, minorTickCount);
+		StandardDialScale scale = new StandardDialScale(lowerBound, upperBound,
+				startAngle, extent, majorTickIncrement, minorTickCount);
 
 		scale.setTickRadius(0.88);
 		scale.setTickLabelOffset(0.15);
@@ -108,7 +118,7 @@ public class WindRose extends DialChart {
 
 		DialPointer needle = new DialPointer.Pointer();
 		plot.addLayer(needle);
-		
+
 		DialPointer needle2 = new DialPointer.Pointer();
 		plot.addLayer(needle2);
 

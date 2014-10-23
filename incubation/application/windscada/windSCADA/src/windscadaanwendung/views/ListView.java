@@ -41,12 +41,14 @@ public class ListView extends ViewPart {
 					handleSelectionWindFarm(selectedFarm);
 				} else {
 					// selected is a WKA
-					// get the windFarm of the wka and set this as selected windFarm
-					WindFarm farm = FarmList.getFarm(Integer.parseInt(selected.getParentItem()
-							.getText()));
+					// get the windFarm of the wka and set this as selected
+					// windFarm
+					WindFarm farm = FarmList.getFarm(Integer.parseInt(selected
+							.getParentItem().getText()));
 					handleSelectionWindFarm(farm);
 					// the TreeItemText has to be eaqual to the ID of the WKA
-					WKA selectedWKA = FarmList.getWKA(Integer.parseInt(selected.getText()));
+					WKA selectedWKA = FarmList.getWKA(Integer.parseInt(selected
+							.getText()));
 					handleSelectionWKA(selectedWKA);
 				}
 			}
@@ -58,8 +60,8 @@ public class ListView extends ViewPart {
 	}
 
 	/**
-	 * Fills a swt-tree with the data out of the static FarmList.
-	 * It will show all currently loaded windFarms and WKAs
+	 * Fills a swt-tree with the data out of the static FarmList. It will show
+	 * all currently loaded windFarms and WKAs
 	 * 
 	 * @param tree
 	 *            The tree which will show the data
@@ -80,11 +82,14 @@ public class ListView extends ViewPart {
 	}
 
 	/**
-	 * Selects a WKA in the swt-tree in this view. Also this mehtods handles the selectionevent with the same consequences as a user will select the WKA in the swt-tree
+	 * Selects a WKA in the swt-tree in this view. Also this mehtods handles the
+	 * selectionevent with the same consequences as a user will select the WKA
+	 * in the swt-tree
+	 * 
 	 * @param id
-	 * 			The id of the WKA to select
-	 * @return true if the WKA exists in this static swt-tree
-	 * 			false if it does'nt exist
+	 *            The id of the WKA to select
+	 * @return true if the WKA exists in this static swt-tree false if it
+	 *         does'nt exist
 	 */
 	public static boolean setSelectedWKAById(String id) {
 		for (TreeItem farm : tree.getItems()) {
@@ -100,18 +105,23 @@ public class ListView extends ViewPart {
 	}
 
 	/**
-	 * This method sets the WKA to the selected one in the DashboardPartViewObserver and the DetailView
+	 * This method sets the WKA to the selected one in the
+	 * DashboardPartViewObserver and the DetailView
 	 * 
-	 * @param wka the wka which data should be shown
+	 * @param wka
+	 *            the wka which data should be shown
 	 */
 	private static void handleSelectionWKA(WKA selectedWKA) {
 		DetailView.setSelectedWKA(selectedWKA);
 		DashboardPartViewObserver.setWKA(selectedWKA);
 	}
-	
+
 	/**
-	 * This method sets the selectedFarm in windSCADA to show the data from in the Views
-	 * @param selectedFarm the windFarm which data should be shown
+	 * This method sets the selectedFarm in windSCADA to show the data from in
+	 * the Views
+	 * 
+	 * @param selectedFarm
+	 *            the windFarm which data should be shown
 	 */
 	private static void handleSelectionWindFarm(WindFarm selectedFarm) {
 		UebersichtView.setSelectedWindpark(selectedFarm);

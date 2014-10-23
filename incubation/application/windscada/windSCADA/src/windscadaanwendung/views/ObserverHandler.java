@@ -12,7 +12,7 @@ import windscadaanwendung.ca.WindFarm;
  *
  */
 public class ObserverHandler {
-	
+
 	/**
 	 * Adds a Observer to every WKA loaded in the FarmList
 	 * @param obs	The Observer to add

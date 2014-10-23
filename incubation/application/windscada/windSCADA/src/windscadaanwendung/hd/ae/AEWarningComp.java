@@ -5,9 +5,9 @@ import org.eclipse.swt.widgets.Composite;
 
 /**
  * This class extends the AEEntryComp with special settings for the type warning
- *
+ * 
  * @author MarkMilster
- *
+ * 
  */
 public class AEWarningComp extends AEEntryComp {
 

@@ -25,24 +25,30 @@ import windscadaanwendung.hd.ae.AEObserver;
 import windscadaanwendung.hd.ae.AEWarningComp;
 import windscadaanwendung.hd.ae.HitAEData;
 
+/**
+ * This class shows the data of the historical Alarms and Events / Messages and
+ * builds the GUI to store additional information about them into the database.
+ * 
+ * @author MarkMilster
+ * 
+ */
 public class HitAEView extends ViewPart implements AEObserver {
 
-	private Composite hitAEContainer;
-	private Composite hitAEHeader;
-	private Composite parent;
-	private DateTime swtDateSince;
-	private DateTime swtTimeSince;
-	private DateTime swtDateUntil;
-	private DateTime swtTimeUntil;
-	private Button btnZeigeGelesene;
-	private ScrolledComposite sc;
+	private static Composite hitAEContainer;
+	private static Composite parent;
+	private static DateTime swtDateSince;
+	private static DateTime swtTimeSince;
+	private static DateTime swtDateUntil;
+	private static DateTime swtTimeUntil;
+	private static Button btnZeigeGelesene;
+	private static ScrolledComposite sc;
 
 	@Override
 	public void createPartControl(final Composite parent) {
-		this.parent = parent;
+		this.setParent(parent);
 		parent.setLayout(GridLayoutFactory.fillDefaults().create());
-		parent.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true,
-				true, 1, 1));
+		parent.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, true, 1,
+				1));
 		Composite toolsContainer = new Composite(parent, SWT.NONE);
 		toolsContainer.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true,
 				false, 1, 1));
@@ -98,35 +104,11 @@ public class HitAEView extends ViewPart implements AEObserver {
 		});
 		sc = new ScrolledComposite(parent, SWT.V_SCROLL);
 		hitAEContainer = new Composite(sc, SWT.NONE);
-		sc.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true,
-				true, 1, 1));
+		sc.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, true, 1, 1));
 		hitAEContainer.setLayout(new GridLayout(1, false));
-		hitAEHeader = new Composite(hitAEContainer, SWT.NONE);
-		hitAEHeader.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false,
-				false, 1, 1));
-		hitAEHeader.setLayout(new GridLayout(5, false));
-		Label label = new Label(hitAEHeader, SWT.NONE);
-		label.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, false, false,
-				1, 1));
-		label.setText("Farm");
-		Label label_1 = new Label(hitAEHeader, SWT.NONE);
-		label_1.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, false,
-				false, 1, 1));
-		label_1.setText("WKA");
-		Label label_2 = new Label(hitAEHeader, SWT.NONE);
-		label_2.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, false,
-				false, 1, 1));
-		label_2.setText("Value");
 
-		Label lblCheck = new Label(hitAEHeader, SWT.NONE);
-		lblCheck.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, false,
-				false, 1, 1));
-		lblCheck.setText("Check");
-
-		Label lblComment = new Label(hitAEHeader, SWT.NONE);
-		lblComment.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, false,
-				false, 1, 1));
-		lblComment.setText("Comment");
+		// added to Observable to be informed, if there are new historical data
+		// to show
 		HitAEData.addAEObserver(this);
 
 		sc.setContent(hitAEContainer);
@@ -142,10 +124,11 @@ public class HitAEView extends ViewPart implements AEObserver {
 		HitAEData.removeAEListener(this);
 	}
 
-	protected void handleParentDispose() {
-		HitAEData.removeAEListener(this);
-	}
-
+	/**
+	 * This method stores the historical data, which has be modified by the user
+	 * into the database. To check if they are modified there is a flag changed
+	 * in the entry
+	 */
 	protected void saveChangedAEEntrys() {
 		for (Control c : hitAEContainer.getChildren()) {
 			if (c instanceof AEEntryComp) {
@@ -158,6 +141,12 @@ public class HitAEView extends ViewPart implements AEObserver {
 		}
 	}
 
+	/**
+	 * This method will call the Database to refresh the historical data to the
+	 * historical data since the selected DateTime and until the selected
+	 * datetime. Also if the data, which is already checked, will be shown,
+	 * depends on the selection of the checkbox in this gui
+	 */
 	private void prepareLoadNewHitData() {
 		GregorianCalendar calSince = new GregorianCalendar();
 		calSince.set(swtDateSince.getYear(), swtDateSince.getMonth(),
@@ -188,8 +177,10 @@ public class HitAEView extends ViewPart implements AEObserver {
 		} else {
 			if (aeEntry.isWarning()) {
 				if (aeEntry.isError()) {
+					// this is an Error
 					new AEErrorComp(hitAEContainer, SWT.NONE, aeEntry);
 				} else {
+					// this is a Warning
 					new AEWarningComp(hitAEContainer, SWT.NONE, aeEntry);
 				}
 			} else {
@@ -199,8 +190,23 @@ public class HitAEView extends ViewPart implements AEObserver {
 		}
 		sc.setMinSize(hitAEContainer.computeSize(SWT.DEFAULT, SWT.DEFAULT));
 		hitAEContainer.layout();
-		parent.layout();
+		getParent().layout();
 		sc.setOrigin(scrollPosition);
+	}
+
+	/**
+	 * @return the parent Composite
+	 */
+	public static Composite getParent() {
+		return parent;
+	}
+
+	/**
+	 * @param parent
+	 *            the parent Composite to set
+	 */
+	public void setParent(Composite parent) {
+		HitAEView.parent = parent;
 	}
 
 }
