@@ -49,13 +49,13 @@ public class SmartHomeRCPActivator implements BundleActivator {
 	// called by OSGi-DS
 	public static void bindPeerCommunicator(IPeerCommunicator serv) {
 		peerCommunicator = serv;
-		peerCommunicator.registerMessageType(SmartDeviceMessage.class);
+		//peerCommunicator.registerMessageType(SmartDeviceMessage.class);
 	}
 	
 	// called by OSGi-DS
 	public static void unbindPeerCommunicator(IPeerCommunicator serv) {
 		if (peerCommunicator == serv) {
-			peerCommunicator.unregisterMessageType(SmartDeviceMessage.class);
+			//peerCommunicator.unregisterMessageType(SmartDeviceMessage.class);
 			peerCommunicator = null;
 		}
 	}

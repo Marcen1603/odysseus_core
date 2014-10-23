@@ -1,34 +1,34 @@
 package de.uniol.inf.is.odysseus.peer.smarthome;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+
 import de.uniol.inf.is.odysseus.p2p_new.IMessage;
 
-public class SmartDeviceMessage implements IMessage {
-
-	private String text;
-	
-	public SmartDeviceMessage() {
-	}
-	
-	public SmartDeviceMessage(String text) {
-		this.text = text;
-	}
-	
-	public String getText() {
-		return text;
-	}
-	
-	public byte[] toBytes() {
-		byte[] textBytes = text.getBytes();
-		byte[] data = new byte[1 + textBytes.length];
-		System.arraycopy(textBytes, 0, data, 1, textBytes.length);
-		return data;
-	}
-	
-	public void fromBytes(byte[] data) {
-		byte[] textBytes = new byte[data.length - 1];
-		System.arraycopy(data, 1, textBytes, 0, textBytes.length);
-		
-		text = new String(textBytes);
+public abstract class SmartDeviceMessage implements IMessage {
+	protected static byte[] serialize(Object obj) throws IOException {
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		ObjectOutputStream oos = new ObjectOutputStream(baos);
+		oos.writeObject(obj);
+		byte[] buffer = baos.toByteArray();
+		oos.close();
+		baos.close();
+		return buffer;
 	}
 
+	protected static Object deserialize(byte[] buffer) throws IOException,
+			ClassNotFoundException {
+		ByteArrayInputStream bais = new ByteArrayInputStream(buffer);
+
+		// We use LookAheadObjectInputStream instead of InputStream
+		ObjectInputStream ois = new LookAheadObjectInputStream(bais);
+
+		Object obj = ois.readObject();
+		ois.close();
+		bais.close();
+		return obj;
+	}
 }

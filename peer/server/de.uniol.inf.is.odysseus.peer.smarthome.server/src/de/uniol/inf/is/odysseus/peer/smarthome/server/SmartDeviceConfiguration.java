@@ -19,31 +19,34 @@ import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 
 import de.uniol.inf.is.odysseus.core.server.OdysseusConfiguration;
-
+import de.uniol.inf.is.odysseus.peer.smarthome.SmartDeviceConfig;
 
 public class SmartDeviceConfiguration {
-private static final Logger LOG = LoggerFactory.getLogger(SmartDeviceConfiguration.class);
-	
+	private static final Logger LOG = LoggerFactory
+			.getLogger(SmartDeviceConfiguration.class);
+
 	private static final String ODYSSEUS_HOME_ENV = "ODYSSEUS_HOME";
 	public static final String ODYSSEUS_DEFAULT_HOME_DIR = determineOdysseusDefaultHome();
 	public static final String ODYSSEUS_HOME_DIR = determineOdysseusHome();
-	public static final String ODYSSEUS_RCP_CONFIGURATION_FILE = ODYSSEUS_HOME_DIR + "odysseusSmartDevice.conf";
+	public static String SMART_HOME_CONFIG_FILE = "odysseusSmartDevice.conf";
+	public static String ODYSSEUS_RCP_CONFIGURATION_FILE = ODYSSEUS_HOME_DIR
+			+ SMART_HOME_CONFIG_FILE;
 
 	private static final Properties properties = new Properties();
 	private static boolean isFirstLoaded = false;
-	
+
 	public static final String SMART_DEVICE_KEY_CONTEXT_NAME = "smartdevice.contextname";
-	
-	
 
 	private SmartDeviceConfiguration() {
 		// no instance allowed
 	}
-	
+
 	private static String determineOdysseusDefaultHome() {
-		return String.format("%s" + File.separator + "%sodysseus" + File.separator, System.getProperty("user.home"), getDot(System.getProperty("os.name")));
+		return String.format("%s" + File.separator + "%sodysseus"
+				+ File.separator, System.getProperty("user.home"),
+				getDot(System.getProperty("os.name")));
 	}
-	
+
 	private static String getDot(String os) {
 		os = os.toLowerCase();
 		if ((os.indexOf("win") >= 0)) {
@@ -72,7 +75,7 @@ private static final Logger LOG = LoggerFactory.getLogger(SmartDeviceConfigurati
 	private static void loadConfiguration() {
 		try {
 			File confFile = openOrCreateFile(ODYSSEUS_RCP_CONFIGURATION_FILE);
-			
+
 			FileInputStream in = new FileInputStream(confFile);
 			try {
 				setDefaultValues(properties);
@@ -81,22 +84,24 @@ private static final Logger LOG = LoggerFactory.getLogger(SmartDeviceConfigurati
 			} finally {
 				in.close();
 			}
-		} catch( InvalidPropertiesFormatException ex ) {
-			LOG.warn("Could not load configuration file '" + ODYSSEUS_RCP_CONFIGURATION_FILE + "'", ex);
+		} catch (InvalidPropertiesFormatException ex) {
+			LOG.warn("Could not load configuration file '"
+					+ ODYSSEUS_RCP_CONFIGURATION_FILE + "'", ex);
 		} catch (IOException ex) {
-			LOG.warn("Could not load configuration file '" + ODYSSEUS_RCP_CONFIGURATION_FILE + "'", ex);
-		} 
+			LOG.warn("Could not load configuration file '"
+					+ ODYSSEUS_RCP_CONFIGURATION_FILE + "'", ex);
+		}
 	}
 
-	private static void setDefaultValues(Hashtable<Object,Object> props) {
+	private static void setDefaultValues(Hashtable<Object, Object> props) {
 		setDefaultValue(SMART_DEVICE_KEY_CONTEXT_NAME, "");
-		
+
 	}
-	
+
 	private static void setDefaultValue(String key, String defaultValue) {
-		if( OdysseusConfiguration.exists(key)) {
+		if (OdysseusConfiguration.exists(key)) {
 			String valueFromOdysseusConfig = OdysseusConfiguration.get(key);
-			if( !Strings.isNullOrEmpty(valueFromOdysseusConfig)) {
+			if (!Strings.isNullOrEmpty(valueFromOdysseusConfig)) {
 				properties.put(key, valueFromOdysseusConfig);
 			} else {
 				properties.put(key, defaultValue);
@@ -108,21 +113,25 @@ private static final Logger LOG = LoggerFactory.getLogger(SmartDeviceConfigurati
 
 	public static void save() {
 		try {
-			FileOutputStream out = new FileOutputStream(ODYSSEUS_RCP_CONFIGURATION_FILE);
+			FileOutputStream out = new FileOutputStream(
+					ODYSSEUS_RCP_CONFIGURATION_FILE);
 			try {
-				properties.storeToXML(out, "Odysseus Property File edit only if you know what you are doing");
+				properties
+						.storeToXML(out,
+								"Odysseus Property File edit only if you know what you are doing");
 			} finally {
 				try {
 					out.close();
 				} catch (IOException ex) {
 				}
 			}
-			
+
 		} catch (IOException ex) {
-			LOG.error("Could not save configuration file '" + ODYSSEUS_RCP_CONFIGURATION_FILE + "'", ex);
-		} 
+			LOG.error("Could not save configuration file '"
+					+ ODYSSEUS_RCP_CONFIGURATION_FILE + "'", ex);
+		}
 	}
-	
+
 	private static File openOrCreateFile(String path) throws IOException {
 		File f = new File(path);
 		boolean success = false;
@@ -142,11 +151,12 @@ private static final Logger LOG = LoggerFactory.getLogger(SmartDeviceConfigurati
 	}
 
 	public static void set(String key, String value) {
-		Preconditions.checkArgument(!Strings.isNullOrEmpty(key), "SettingKey must not be null or empty!");
+		Preconditions.checkArgument(!Strings.isNullOrEmpty(key),
+				"SettingKey must not be null or empty!");
 
 		firstLoadIfNeeded();
-		
-		String oldValue = (String)properties.get(key);
+
+		String oldValue = (String) properties.get(key);
 		if (oldValue == null || !oldValue.equals(value)) {
 			properties.put(key, value);
 			save();
@@ -155,22 +165,22 @@ private static final Logger LOG = LoggerFactory.getLogger(SmartDeviceConfigurati
 
 	public static Optional<String> get(String key) {
 		firstLoadIfNeeded();
-		
+
 		Object value = properties.get(key);
-		if( value == null ) {
+		if (value == null) {
 			// backwards compatible
 			value = OdysseusConfiguration.get(key);
-			
-			if( value != null ) {
-				set(key, (String)value);
+
+			if (value != null) {
+				set(key, (String) value);
 			}
 		}
-		
-		return Optional.fromNullable((String)value);
+
+		return Optional.fromNullable((String) value);
 	}
 
 	private static void firstLoadIfNeeded() {
-		if( !isFirstLoaded ) {
+		if (!isFirstLoaded) {
 			loadConfiguration();
 			isFirstLoaded = true;
 		}
@@ -186,13 +196,31 @@ private static final Logger LOG = LoggerFactory.getLogger(SmartDeviceConfigurati
 
 		return properties.containsKey(key);
 	}
-	
+
 	public static Collection<String> getKeys() {
 		firstLoadIfNeeded();
 		List<String> keys = Lists.newArrayList();
-		for( Object key : properties.keySet() ) {
+		for (Object key : properties.keySet()) {
 			keys.add(key.toString());
 		}
 		return keys;
+	}
+
+	public static void setSmartDeviceConfig(String configFile,
+			SmartDeviceConfig smartDeviceConfig) {
+		SMART_HOME_CONFIG_FILE = configFile;
+		set(SMART_DEVICE_KEY_CONTEXT_NAME, smartDeviceConfig.getContextname());
+		// ...
+
+	}
+
+	public static SmartDeviceConfig getSmartDeviceConfig(String configFile) {
+		SMART_HOME_CONFIG_FILE = configFile;
+
+		SmartDeviceConfig sdConfig = new SmartDeviceConfig();
+		sdConfig.setContextname(get(SMART_DEVICE_KEY_CONTEXT_NAME, ""));
+		// ...
+
+		return sdConfig;
 	}
 }

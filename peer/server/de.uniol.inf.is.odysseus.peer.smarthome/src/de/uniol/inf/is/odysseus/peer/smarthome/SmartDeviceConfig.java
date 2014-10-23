@@ -13,5 +13,11 @@ public class SmartDeviceConfig implements Serializable  {
 	public void setContextname(String contextname) {
 		this.contextname = contextname;
 	}
+
+	public void overwriteWith(SmartDeviceConfig other) {
+		if(other.getContextname()!=null){
+			setContextname(other.getContextname());
+		}
+	}
 	
 }

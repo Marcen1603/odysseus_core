@@ -194,6 +194,8 @@ public class SmartDeviceConfigurationView extends ViewPart implements IPeerCommu
 		if(message instanceof SmartDeviceMessage){
 			// SmartDeviceMessage sdmsg = (SmartDeviceMessage)message;
 			
+			
+			
 		}else if(message instanceof SmartDeviceConfigurationResponseMessage){
 			SmartDeviceConfigurationResponseMessage responseMessage = (SmartDeviceConfigurationResponseMessage)message;
 			SmartDeviceConfig responseDeviceConfig = responseMessage.getSmartDeviceConfig();

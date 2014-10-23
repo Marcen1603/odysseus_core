@@ -70,7 +70,10 @@ public class Temper1TransportHandler extends
 	private static long firstErrorTime;
 
 	static {
+		// TODO:Enabling components of bundle
+		// de.uniol.inf.is.odysseus.wrapper.temper1 did not complete in 30000 ms
 		ClassPathLibraryLoader.loadNativeHIDLibrary();
+		//LOG.debug("//ClassPathLibraryLoader.loadNativeHIDLibrary();");
 	}
 
 	public Temper1TransportHandler() {
@@ -79,8 +82,8 @@ public class Temper1TransportHandler extends
 		if ((OS.indexOf("mac") >= 0) || (OS.indexOf("darwin") >= 0)) {
 
 		} else if (OS.indexOf("win") >= 0) {
-			//TODO: get it working on windows!
-			
+			// TODO: get it working on windows!
+
 			methodToGetTemperature = METHOD_SIMULATED_TEMPER;
 			LOG.error("Currently the temper1 is not working on windows. The temperature values are simulated!");
 			return;
@@ -183,12 +186,14 @@ public class Temper1TransportHandler extends
 	private float getTemperature(int deviceNumber) throws Exception {
 		switch (methodToGetTemperature) {
 		case METHOD_HID_MANAGER:
-			lastTemperature = new Float(getTemperatureFromHIDManager(temperaturSensors
-					.get(deviceNumber)));
+			lastTemperature = new Float(
+					getTemperatureFromHIDManager(temperaturSensors
+							.get(deviceNumber)));
 			saveTemperature(lastTemperature);
 			return lastTemperature;
 		case METHOD_RPI_TEMPER:
-			lastTemperature = new Float(getTemperatureFromRPiTemperBinary(deviceNumber));
+			lastTemperature = new Float(
+					getTemperatureFromRPiTemperBinary(deviceNumber));
 			saveTemperature(lastTemperature);
 			return lastTemperature;
 		case METHOD_SIMULATED_TEMPER:
@@ -196,24 +201,24 @@ public class Temper1TransportHandler extends
 			saveTemperature(null);
 			return getSimulatedTemperature(deviceNumber);
 		}
-		
-		Float r=null;
-		try{
+
+		Float r = null;
+		try {
 			r = getSavedTemperature(deviceNumber);
-			if(r!=null){
+			if (r != null) {
 				return r.floatValue();
 			}
-		}catch(Exception e){
-			
+		} catch (Exception e) {
+
 		}
-		
+
 		throw new IOException("No temperature sensor available.");
 	}
 
 	/*****************************************************************/
 	// Temper1 get temperature with the HID-API
 	/*****************************************************************/
-	
+
 	/**
 	 * Nach Quelle:
 	 * http://www.igorkromin.net/index.php/2013/02/16/using-java-hidapi
@@ -413,15 +418,17 @@ public class Temper1TransportHandler extends
 					} catch (IOException e) {
 						LOG.error(e.getMessage() + " ErrorNr.0a", e);
 					} catch (IllegalStateException e) {
-						long delta = System.currentTimeMillis() - firstErrorTime;
-						if(firstErrorTime==0 || delta <= DELTA_TIME_RETURN_SAVED_TEMPERATURE_WHILE_ERROR_MS){
-							if(firstErrorTime==0){
+						long delta = System.currentTimeMillis()
+								- firstErrorTime;
+						if (firstErrorTime == 0
+								|| delta <= DELTA_TIME_RETURN_SAVED_TEMPERATURE_WHILE_ERROR_MS) {
+							if (firstErrorTime == 0) {
 								firstErrorTime = System.currentTimeMillis();
 							}
 							LOG.debug("saved temp returned.");
 							return lastTemperature.floatValue();
 						}
-						
+
 						throw e;
 					}
 					p.waitFor();
@@ -436,11 +443,12 @@ public class Temper1TransportHandler extends
 					long delta = System.currentTimeMillis() - firstFailureTime;
 					if (!couldNotParseTemperature) {
 						if (!exceptionWasThrownNoMatchFound) {
-							if(firstErrorTime==0 || delta <= DELTA_TIME_RETURN_SAVED_TEMPERATURE_WHILE_ERROR_MS){
+							if (firstErrorTime == 0
+									|| delta <= DELTA_TIME_RETURN_SAVED_TEMPERATURE_WHILE_ERROR_MS) {
 								LOG.debug("saved temp returned.");
 								return lastTemperature.floatValue();
 							}
-							
+
 							LOG.debug(e.getMessage() + " ErrorNr.1a", e);
 							exceptionWasThrownNoMatchFound = true;
 						}
@@ -548,26 +556,27 @@ public class Temper1TransportHandler extends
 			simulatedValueReturnedLastTime = System.currentTimeMillis();
 		}
 	}
-	
-	
+
 	/*****************************************************************/
 	/**
 	 * get saved temperature values
 	 *****************************************************************/
 	private Float getSavedTemperature(int deviceNumber) {
 		long delta = System.currentTimeMillis() - savedTemperatureTime_MS;
-		if(savedTemperature!=null && delta <= DELTA_TIME_RETURN_SAVED_TEMPERATURE_WHILE_ERROR_MS){
-			LOG.debug("A saved temperature value was returned. deltatime:"+delta);
+		if (savedTemperature != null
+				&& delta <= DELTA_TIME_RETURN_SAVED_TEMPERATURE_WHILE_ERROR_MS) {
+			LOG.debug("A saved temperature value was returned. deltatime:"
+					+ delta);
 			return savedTemperature;
 		}
 		return null;
 	}
-	
-	private void saveTemperature(Float temp){
-		if(temp!=null){
+
+	private void saveTemperature(Float temp) {
+		if (temp != null) {
 			savedTemperature = temp;
 			savedTemperatureTime_MS = System.currentTimeMillis();
-		}else{
+		} else {
 			savedTemperatureTime_MS = 0;
 		}
 	}
