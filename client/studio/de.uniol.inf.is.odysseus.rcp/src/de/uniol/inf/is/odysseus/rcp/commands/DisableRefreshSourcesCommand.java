@@ -29,15 +29,11 @@ public class DisableRefreshSourcesCommand extends AbstractHandler implements IHa
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		SourcesView viewer = ViewHelper.getView(OdysseusRCPPlugIn.SOURCES_VIEW_ID, event);
-		if( viewer != null )
-			if(viewer.isRefreshEnabled()){
-				viewer.setRefreshEnabled(false);
-			}else{
-				viewer.setRefreshEnabled(true);
-				viewer.refresh();
-			}
-		else
+		if( viewer != null ){
+			viewer.switchRefreshEnabled();
+		}else{
 			return false;
+		}
 		return true;
 	}
 	

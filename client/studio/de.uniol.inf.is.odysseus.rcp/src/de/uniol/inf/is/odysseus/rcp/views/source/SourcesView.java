@@ -33,6 +33,8 @@ import org.eclipse.ui.part.ViewPart;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.core.infoservice.InfoService;
+import de.uniol.inf.is.odysseus.core.infoservice.InfoServiceFactory;
 import de.uniol.inf.is.odysseus.core.planmanagement.ViewInformation;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IUpdateEventListener;
 import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
@@ -43,7 +45,8 @@ import de.uniol.inf.is.odysseus.rcp.views.ResourceInformationLabelProvider;
 public class SourcesView extends ViewPart implements IUpdateEventListener {
 
 	private static final Logger LOG = LoggerFactory.getLogger(SourcesView.class);
-
+	private static final InfoService INFO = InfoServiceFactory.getInfoService(SourcesView.class);
+	
 	private Composite parent;
 	private TreeViewer viewer;
 	private StackLayout stackLayout;
@@ -150,6 +153,7 @@ public class SourcesView extends ViewPart implements IUpdateEventListener {
 						}
 					} catch (Exception e) {
 						LOG.error("Exception during setting input for treeViewer in sourcesView", e);
+						INFO.error("Exception during setting input for treeViewer in sourcesView", e);
 					}
 				}
 
@@ -172,6 +176,11 @@ public class SourcesView extends ViewPart implements IUpdateEventListener {
 
 	public void setRefreshEnabled(boolean refreshEnabled) {
 		this.refreshEnabled = refreshEnabled;
+	}
+	
+	public void switchRefreshEnabled(){
+		refreshEnabled = !refreshEnabled;
+		refresh();
 	}
 
 }
