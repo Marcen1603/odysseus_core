@@ -1,8 +1,6 @@
 package de.uniol.inf.is.odysseus.peer.loadbalancing.active.movingstate.protocol;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 
 import net.jxta.peer.PeerID;
 
@@ -14,7 +12,7 @@ import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.common.L
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.common.LoadBalancingStatusCache;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.movingstate.communicator.MovingStateCommunicatorImpl;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.movingstate.communicator.MovingStateMessageDispatcher;
-import de.uniol.inf.is.odysseus.peer.loadbalancing.active.movingstate.messages.LoadBalancingAbortMessage;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.active.movingstate.messages.MovingStateAbortMessage;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.movingstate.status.MovingStateMasterStatus;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.movingstate.status.MovingStateSlaveStatus;
 
@@ -32,17 +30,17 @@ public class AbortHandler {
 	 * @param abortMessage
 	 * @param senderPeer
 	 */
-	public static void handleAbort(LoadBalancingAbortMessage abortMessage,
+	public static void handleAbort(MovingStateAbortMessage abortMessage,
 			PeerID senderPeer) {
 		
 		
 		
 		switch (abortMessage.getMsgType()) {
-		case LoadBalancingAbortMessage.ABORT_INSTRUCTION:
+		case MovingStateAbortMessage.ABORT_INSTRUCTION:
 			LOG.debug("Received ABORT_INSTRUCTION");
 			undoLoadBalancing(abortMessage, senderPeer);
 			break;
-		case LoadBalancingAbortMessage.ABORT_RESPONSE:
+		case MovingStateAbortMessage.ABORT_RESPONSE:
 			LOG.debug("Received ABORT_RESPONSE");
 			stopSendingAbort(abortMessage, senderPeer);
 			break;
@@ -56,7 +54,7 @@ public class AbortHandler {
 	 * @param abortMessage
 	 * @param senderPeer
 	 */
-	private static void undoLoadBalancing(LoadBalancingAbortMessage abortMessage,
+	private static void undoLoadBalancing(MovingStateAbortMessage abortMessage,
 			PeerID senderPeer) {
 		
 		
@@ -85,7 +83,8 @@ public class AbortHandler {
 			switch (status.getInvolvementType()) {
 	
 			case PEER_WITH_SENDER_OR_RECEIVER:
-	
+				//TODO
+				/*
 				if(status.getReplacedPipes()!=null) {
 					ArrayList<String> installedPipes = Collections.list(status
 							.getReplacedPipes().keys());
@@ -94,6 +93,7 @@ public class AbortHandler {
 						LoadBalancingHelper.removeDuplicateJxtaOperator(pipe);
 					}
 				} 
+				*/
 				// NO break, since Peer could in theory also be the volunteering
 				// peer
 				//$FALL-THROUGH$ 
@@ -128,7 +128,7 @@ public class AbortHandler {
 	}
 	
 
-	public static void stopSendingAbort(LoadBalancingAbortMessage abortMessage,
+	public static void stopSendingAbort(MovingStateAbortMessage abortMessage,
 			PeerID senderPeer) {
 		MovingStateMasterStatus status = (MovingStateMasterStatus)LoadBalancingStatusCache.getInstance().getStatusForLocalProcess(abortMessage.getLoadBalancingProcessId());
 		

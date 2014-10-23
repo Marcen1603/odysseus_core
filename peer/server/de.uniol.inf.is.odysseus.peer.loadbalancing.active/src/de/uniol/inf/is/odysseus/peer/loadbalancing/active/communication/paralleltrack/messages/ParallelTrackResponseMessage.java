@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.peer.loadbalancing.active.movingstate.messages;
+package de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.paralleltrack.messages;
 
 import java.nio.ByteBuffer;
 
@@ -9,7 +9,7 @@ import de.uniol.inf.is.odysseus.p2p_new.IMessage;
  * @author Carsten Cordes
  *
  */
-public class LoadBalancingResponseMessage implements IMessage {
+public class ParallelTrackResponseMessage implements IMessage {
 	
 	public static final int ACK_LOADBALANCING = 0;
 	
@@ -40,56 +40,56 @@ public class LoadBalancingResponseMessage implements IMessage {
 	/**
 	 * Default Constructor
 	 */
-	public LoadBalancingResponseMessage() {
+	public ParallelTrackResponseMessage() {
 	}
 	
-	public static LoadBalancingResponseMessage createAckLoadbalancingMessage(int loadBalancingProcessId) {
-		LoadBalancingResponseMessage message = new LoadBalancingResponseMessage();
+	public static ParallelTrackResponseMessage createAckLoadbalancingMessage(int loadBalancingProcessId) {
+		ParallelTrackResponseMessage message = new ParallelTrackResponseMessage();
 		message.setLoadBalancingProcessId(loadBalancingProcessId);
 		message.setMsgType(ACK_LOADBALANCING);
 		return message;
 	}
 	
-	public static LoadBalancingResponseMessage createInstallSuccessMessage(int loadBalancingProcessId) {
-		LoadBalancingResponseMessage message = new LoadBalancingResponseMessage();
+	public static ParallelTrackResponseMessage createInstallSuccessMessage(int loadBalancingProcessId) {
+		ParallelTrackResponseMessage message = new ParallelTrackResponseMessage();
 		message.setLoadBalancingProcessId(loadBalancingProcessId);
 		message.setMsgType(SUCCESS_INSTALL_QUERY);
 		return message;
 	}
 	
-	public static LoadBalancingResponseMessage createDeleteFinishedMessage(int loadBalancingProcessId, String pipeID) {
-		LoadBalancingResponseMessage message = new LoadBalancingResponseMessage();
+	public static ParallelTrackResponseMessage createDeleteFinishedMessage(int loadBalancingProcessId, String pipeID) {
+		ParallelTrackResponseMessage message = new ParallelTrackResponseMessage();
 		message.setLoadBalancingProcessId(loadBalancingProcessId);
 		message.setPipeID(pipeID);
 		message.setMsgType(DELETE_FINISHED);
 		return message;
 	}
 	
-	public static LoadBalancingResponseMessage createDuplicateSuccessMessage(int loadBalancingProcessId, String pipeID) {
-		LoadBalancingResponseMessage message = new LoadBalancingResponseMessage();
+	public static ParallelTrackResponseMessage createDuplicateSuccessMessage(int loadBalancingProcessId, String pipeID) {
+		ParallelTrackResponseMessage message = new ParallelTrackResponseMessage();
 		message.setLoadBalancingProcessId(loadBalancingProcessId);
 		message.setPipeID(pipeID);
 		message.setMsgType(SUCCESS_DUPLICATE);
 		return message;
 	}
 	
-	public static LoadBalancingResponseMessage createDuplicateFailureMessage(int loadBalancingProcessId) {
-		LoadBalancingResponseMessage message = new LoadBalancingResponseMessage();
+	public static ParallelTrackResponseMessage createDuplicateFailureMessage(int loadBalancingProcessId) {
+		ParallelTrackResponseMessage message = new ParallelTrackResponseMessage();
 		message.setLoadBalancingProcessId(loadBalancingProcessId);
 		message.setMsgType(FAILURE_DUPLICATE_RECEIVER);
 		return message;
 	}
 	
 	
-	public static LoadBalancingResponseMessage createInstallFailureMessage(int loadBalancingProcessId) {
-		LoadBalancingResponseMessage message = new LoadBalancingResponseMessage();
+	public static ParallelTrackResponseMessage createInstallFailureMessage(int loadBalancingProcessId) {
+		ParallelTrackResponseMessage message = new ParallelTrackResponseMessage();
 		message.setLoadBalancingProcessId(loadBalancingProcessId);
 		message.setMsgType(FAILURE_INSTALL_QUERY);
 		return message;
 	}
 
-	public static LoadBalancingResponseMessage createSyncFinishedMsg(int lbProcessId, String pipeID) {
-		LoadBalancingResponseMessage message = new LoadBalancingResponseMessage();
+	public static ParallelTrackResponseMessage createSyncFinishedMsg(int lbProcessId, String pipeID) {
+		ParallelTrackResponseMessage message = new ParallelTrackResponseMessage();
 		message.setMsgType(SYNC_FINISHED);
 		message.setLoadBalancingProcessId(lbProcessId);
 		message.setPipeID(pipeID);

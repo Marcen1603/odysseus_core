@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.peer.loadbalancing.active.movingstate.messages;
+package de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.paralleltrack.messages;
 
 import java.nio.ByteBuffer;
 
@@ -9,7 +9,7 @@ import de.uniol.inf.is.odysseus.p2p_new.IMessage;
  * @author Carsten Cordes
  *
  */
-public class LoadBalancingAbortMessage implements IMessage {
+public class ParallelTrackAbortMessage implements IMessage {
 	
 	public static final int ABORT_INSTRUCTION = 0;
 	public static final int ABORT_RESPONSE = 1;
@@ -29,18 +29,18 @@ public class LoadBalancingAbortMessage implements IMessage {
 		this.msgType = msgType;
 	}
 
-	public static LoadBalancingAbortMessage createAbortInstructionMsg(int lbProcessId){
+	public static ParallelTrackAbortMessage createAbortInstructionMsg(int lbProcessId){
 		
-		LoadBalancingAbortMessage message = new LoadBalancingAbortMessage();
+		ParallelTrackAbortMessage message = new ParallelTrackAbortMessage();
 		
 		message.setMsgType(ABORT_INSTRUCTION);
 		message.setLoadBalancingProcessId(lbProcessId);
 		return message;
 	}
 	
-public static LoadBalancingAbortMessage createAbortResponseMsg(int lbProcessId){
+public static ParallelTrackAbortMessage createAbortResponseMsg(int lbProcessId){
 		
-		LoadBalancingAbortMessage message = new LoadBalancingAbortMessage();
+		ParallelTrackAbortMessage message = new ParallelTrackAbortMessage();
 		
 		message.setMsgType(ABORT_RESPONSE);
 		message.setLoadBalancingProcessId(lbProcessId);
@@ -50,7 +50,7 @@ public static LoadBalancingAbortMessage createAbortResponseMsg(int lbProcessId){
 	/**
 	 * Default Constructor
 	 */
-	public LoadBalancingAbortMessage() {
+	public ParallelTrackAbortMessage() {
 	}
 	
 

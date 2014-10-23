@@ -16,9 +16,9 @@ import de.uniol.inf.is.odysseus.peer.loadbalancing.active.ILoadBalancingListener
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.common.IMessageDeliveryFailedListener;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.common.LoadBalancingHelper;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.common.LoadBalancingStatusCache;
-import de.uniol.inf.is.odysseus.peer.loadbalancing.active.movingstate.messages.LoadBalancingAbortMessage;
-import de.uniol.inf.is.odysseus.peer.loadbalancing.active.movingstate.messages.LoadBalancingInstructionMessage;
-import de.uniol.inf.is.odysseus.peer.loadbalancing.active.movingstate.messages.LoadBalancingResponseMessage;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.active.movingstate.messages.MovingStateAbortMessage;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.active.movingstate.messages.MovingStateInstructionMessage;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.active.movingstate.messages.MovingStateResponseMessage;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.movingstate.protocol.AbortHandler;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.movingstate.protocol.InstructionHandler;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.movingstate.protocol.ResponseHandler;
@@ -91,17 +91,17 @@ public class MovingStateCommunicatorImpl implements
 	public void bindPeerCommunicator(IPeerCommunicator serv) {
 		LOG.debug("Bound Peer Communicator.");
 		peerCommunicator = serv;
-		peerCommunicator.registerMessageType(LoadBalancingAbortMessage.class);
-		peerCommunicator.addListener(this, LoadBalancingAbortMessage.class);
+		peerCommunicator.registerMessageType(MovingStateAbortMessage.class);
+		peerCommunicator.addListener(this, MovingStateAbortMessage.class);
 
 		peerCommunicator
-				.registerMessageType(LoadBalancingInstructionMessage.class);
+				.registerMessageType(MovingStateInstructionMessage.class);
 		peerCommunicator.addListener(this,
-				LoadBalancingInstructionMessage.class);
+				MovingStateInstructionMessage.class);
 
 		peerCommunicator
-				.registerMessageType(LoadBalancingResponseMessage.class);
-		peerCommunicator.addListener(this, LoadBalancingResponseMessage.class);
+				.registerMessageType(MovingStateResponseMessage.class);
+		peerCommunicator.addListener(this, MovingStateResponseMessage.class);
 
 	}
 
@@ -117,18 +117,18 @@ public class MovingStateCommunicatorImpl implements
 		LOG.debug("Unbound Peer Communicator.");
 		if (peerCommunicator == serv) {
 			peerCommunicator.removeListener(this,
-					LoadBalancingAbortMessage.class);
+					MovingStateAbortMessage.class);
 			peerCommunicator.removeListener(this,
-					LoadBalancingInstructionMessage.class);
+					MovingStateInstructionMessage.class);
 			peerCommunicator.removeListener(this,
-					LoadBalancingResponseMessage.class);
+					MovingStateResponseMessage.class);
 
 			peerCommunicator
-					.unregisterMessageType(LoadBalancingAbortMessage.class);
+					.unregisterMessageType(MovingStateAbortMessage.class);
 			peerCommunicator
-					.unregisterMessageType(LoadBalancingInstructionMessage.class);
+					.unregisterMessageType(MovingStateInstructionMessage.class);
 			peerCommunicator
-					.unregisterMessageType(LoadBalancingResponseMessage.class);
+					.unregisterMessageType(MovingStateResponseMessage.class);
 
 			peerCommunicator = null;
 		}
@@ -161,18 +161,18 @@ public class MovingStateCommunicatorImpl implements
 	public void receivedMessage(IPeerCommunicator communicator,
 			PeerID senderPeer, IMessage message) {
 
-		if (message instanceof LoadBalancingResponseMessage) {
-			LoadBalancingResponseMessage response = (LoadBalancingResponseMessage) message;
+		if (message instanceof MovingStateResponseMessage) {
+			MovingStateResponseMessage response = (MovingStateResponseMessage) message;
 			ResponseHandler.handlePeerResonse(response, senderPeer);
 		}
 
-		if (message instanceof LoadBalancingInstructionMessage) {
-			LoadBalancingInstructionMessage instruction = (LoadBalancingInstructionMessage) message;
+		if (message instanceof MovingStateInstructionMessage) {
+			MovingStateInstructionMessage instruction = (MovingStateInstructionMessage) message;
 			InstructionHandler.handleInstruction(instruction, senderPeer);
 		}
 
-		if (message instanceof LoadBalancingAbortMessage) {
-			LoadBalancingAbortMessage abortMessage = (LoadBalancingAbortMessage) message;
+		if (message instanceof MovingStateAbortMessage) {
+			MovingStateAbortMessage abortMessage = (MovingStateAbortMessage) message;
 			AbortHandler.handleAbort(abortMessage, senderPeer);
 		}
 
@@ -241,15 +241,15 @@ public class MovingStateCommunicatorImpl implements
 	 */
 	@Override
 	public void update(IMessage message, PeerID peerId) {
-		if(message instanceof LoadBalancingInstructionMessage) {
-			LoadBalancingInstructionMessage instruction = (LoadBalancingInstructionMessage)message;
+		if(message instanceof MovingStateInstructionMessage) {
+			MovingStateInstructionMessage instruction = (MovingStateInstructionMessage)message;
 			handleTimeoutOnMasterPeer(instruction);
 		}
 		
-		if(message instanceof LoadBalancingAbortMessage) {
-			LoadBalancingAbortMessage abortMsg = (LoadBalancingAbortMessage) message;
+		if(message instanceof MovingStateAbortMessage) {
+			MovingStateAbortMessage abortMsg = (MovingStateAbortMessage) message;
 			//If Abort Instruction could not be delivered... Bad luck. Stop Sending it and try finishing up.
-			if(abortMsg.getMsgType()==LoadBalancingAbortMessage.ABORT_INSTRUCTION) {
+			if(abortMsg.getMsgType()==MovingStateAbortMessage.ABORT_INSTRUCTION) {
 				AbortHandler.stopSendingAbort(abortMsg, peerId);
 			}
 		}
@@ -264,7 +264,7 @@ public class MovingStateCommunicatorImpl implements
 	 * @param instruction
 	 */
 	private void handleTimeoutOnMasterPeer(
-			LoadBalancingInstructionMessage instruction) {
+			MovingStateInstructionMessage instruction) {
 		;
 		
 		int lbProcessId = instruction.getLoadBalancingProcessId();
@@ -279,32 +279,35 @@ public class MovingStateCommunicatorImpl implements
 		
 		
 		switch(instruction.getMsgType()){
-			case LoadBalancingInstructionMessage.INITIATE_LOADBALANCING:
+			case MovingStateInstructionMessage.INITIATE_LOADBALANCING:
 				if(status.getPhase().equals(LB_PHASES.INITIATING)) {
 					ResponseHandler.handleError(status,this);
 				}
 				break;
-			case LoadBalancingInstructionMessage.ADD_QUERY:
-				if(status.getPhase().equals(LB_PHASES.COPYING)) {
+			case MovingStateInstructionMessage.ADD_QUERY:
+				if(status.getPhase().equals(LB_PHASES.COPYING_QUERY)) {
 					ResponseHandler.handleError(status,this);
 				}
 				break;
-			case LoadBalancingInstructionMessage.COPY_RECEIVER:
+			case MovingStateInstructionMessage.REPLACE_RECEIVER:
 				if(status.getPhase().equals(LB_PHASES.RELINKING_RECEIVERS)) {
 					ResponseHandler.handleError(status,this);
 				}
 				break;
-			case LoadBalancingInstructionMessage.COPY_SENDER:
+				//TODO Redo this for Moving State Strategy.
+				/**
+			case MovingStateInstructionMessage.COPY_SENDER:
 				if(status.getPhase().equals(LB_PHASES.RELINKING_SENDERS)) {
 					ResponseHandler.handleError(status,this);
 				}
 				break;
-			case LoadBalancingInstructionMessage.DELETE_RECEIVER:
-			case LoadBalancingInstructionMessage.DELETE_SENDER:
+			case MovingStateInstructionMessage.DELETE_RECEIVER:
+			case MovingStateInstructionMessage.DELETE_SENDER:
 				if(status.getPhase().equals(LB_PHASES.INITIATING)) {
 					ResponseHandler.handleError(status,this);
 				}
 				break;
+				*/
 		}
 		
 	}

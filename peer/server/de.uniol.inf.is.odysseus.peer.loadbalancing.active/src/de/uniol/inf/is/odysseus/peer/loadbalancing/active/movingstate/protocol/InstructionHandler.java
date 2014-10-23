@@ -13,86 +13,87 @@ import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.common.L
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.common.LoadBalancingStatusCache;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.movingstate.communicator.MovingStateCommunicatorImpl;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.movingstate.communicator.MovingStateHelper;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.active.movingstate.communicator.MovingStateManager;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.movingstate.communicator.MovingStateMessageDispatcher;
-import de.uniol.inf.is.odysseus.peer.loadbalancing.active.movingstate.messages.LoadBalancingInstructionMessage;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.active.movingstate.messages.MovingStateInstructionMessage;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.movingstate.status.MovingStateSlaveStatus;
 
 /**
- * Handles Instruction messages, sent from initiation Master Peer to Slave Peers.
+ * Handles Instruction messages, sent from initiation Master Peer to Slave
+ * Peers.
  */
 public class InstructionHandler {
 
 	private static final Logger LOG = LoggerFactory
 			.getLogger(InstructionHandler.class);
-	
-	
-	/**
-	 * Handles Instruction messages, sent from initiation Master Peer to Slave Peers.
-	 * @param instruction Instruction received by Peer.
-	 * @param senderPeer Peer that sent Message (in this case: Master Peer).
-	 */
-	public static void handleInstruction(LoadBalancingInstructionMessage instruction,
-			PeerID senderPeer) {
 
-		LOG.debug("Got Instruction for Process:" + instruction.getLoadBalancingProcessId());
-		
+	/**
+	 * Handles Instruction messages, sent from initiation Master Peer to Slave
+	 * Peers.
+	 * 
+	 * @param instruction
+	 *            Instruction received by Peer.
+	 * @param senderPeer
+	 *            Peer that sent Message (in this case: Master Peer).
+	 */
+	public static void handleInstruction(
+			MovingStateInstructionMessage instruction, PeerID senderPeer) {
+		// TODO normal sources
+		LOG.debug("Got Instruction for Process:"
+				+ instruction.getLoadBalancingProcessId());
+
 		int lbProcessId = instruction.getLoadBalancingProcessId();
 		MovingStateMessageDispatcher dispatcher = null;
-		
-		MovingStateSlaveStatus status = (MovingStateSlaveStatus)LoadBalancingStatusCache
+
+		MovingStateSlaveStatus status = (MovingStateSlaveStatus) LoadBalancingStatusCache
 				.getInstance().getSlaveStatus(senderPeer, lbProcessId);
-		
 
-		IPeerCommunicator peerCommunicator = MovingStateCommunicatorImpl.getPeerCommunicator();
-		
-		
-		boolean isSender = true;
+		IPeerCommunicator peerCommunicator = MovingStateCommunicatorImpl
+				.getPeerCommunicator();
 
-		
-		//Decide which message we received.
+		// Decide which message we received.
 		switch (instruction.getMsgType()) {
 
-		case LoadBalancingInstructionMessage.INITIATE_LOADBALANCING:
+		case MovingStateInstructionMessage.INITIATE_LOADBALANCING:
 			// Only react to first INITIATE_LOADBALANCING Message, even if sent
 			// more often.
-			
+
 			LOG.debug("Got INITIATE_LOADBALANCING");
-			
+
 			if (status == null) {
 				status = new MovingStateSlaveStatus(
 						MovingStateSlaveStatus.INVOLVEMENT_TYPES.VOLUNTEERING_PEER,
 						MovingStateSlaveStatus.LB_PHASES.WAITING_FOR_ADD,
 						senderPeer, lbProcessId,
-						new MovingStateMessageDispatcher(peerCommunicator, lbProcessId));
-				
-				
-				
-				if(!LoadBalancingStatusCache.getInstance().storeSlaveStatus(
+						new MovingStateMessageDispatcher(peerCommunicator,
+								lbProcessId));
+
+				if (!LoadBalancingStatusCache.getInstance().storeSlaveStatus(
 						senderPeer, lbProcessId, status)) {
 					LOG.error("Adding Status to Cache failed.");
 				}
 				status.getMessageDispatcher().sendAckInit(senderPeer);
-				
+
 			}
 			break;
 
-		case LoadBalancingInstructionMessage.ADD_QUERY:
+		case MovingStateInstructionMessage.ADD_QUERY:
 			// Only react if status is not set yet.
-			
+
 			LOG.debug("Got ADD_QUERY");
-			
-			if(status==null) {
+
+			if (status == null) {
 				LOG.error("Status on Slave Peer is null.");
 				return;
 			}
-			
+
 			if (status.getPhase().equals(
 					MovingStateSlaveStatus.LB_PHASES.WAITING_FOR_ADD)) {
-				
+
 				LOG.debug("PQL received:");
 				LOG.debug(instruction.getPQLQuery());
-				
-				status.setPhase(MovingStateSlaveStatus.LB_PHASES.WAITING_FOR_SYNC);
+
+				status.setPhase(MovingStateSlaveStatus.LB_PHASES.WAITING_FOR_COPY);
 				dispatcher = status.getMessageDispatcher();
 				dispatcher.stopRunningJob();
 				try {
@@ -107,35 +108,67 @@ public class InstructionHandler {
 			}
 			break;
 
-		case LoadBalancingInstructionMessage.COPY_RECEIVER:
-			
-			isSender=false;
-			//NO BREAK!
-		case LoadBalancingInstructionMessage.COPY_SENDER:
-			LOG.debug("Got COPY_RECEIVER or COPY_SENDER");
+		case MovingStateInstructionMessage.INSTALL_BUFFER_AND_REPLACE_SENDER:
+			LOG.debug("Got INSTALL_BUFFER_AND_COPY_SENDER.");
 			// Create Status if none exist
 			if (status == null) {
 				status = new MovingStateSlaveStatus(
 						MovingStateSlaveStatus.INVOLVEMENT_TYPES.PEER_WITH_SENDER_OR_RECEIVER,
-						MovingStateSlaveStatus.LB_PHASES.WAITING_FOR_SYNC,
+						MovingStateSlaveStatus.LB_PHASES.WAITING_FOR_FINISH,
 						senderPeer, lbProcessId,
-						new MovingStateMessageDispatcher(peerCommunicator,lbProcessId));
+						new MovingStateMessageDispatcher(peerCommunicator,
+								lbProcessId));
 				LoadBalancingStatusCache.getInstance().storeSlaveStatus(
 						senderPeer, lbProcessId, status);
 			}
 			// Process Pipe only if not already processed:
-			if (status.getPhase().equals(
-					MovingStateSlaveStatus.LB_PHASES.WAITING_FOR_SYNC)
+			if ((status.getPhase()
+					.equals(MovingStateSlaveStatus.LB_PHASES.WAITING_FOR_FINISH))
+					|| (status.getPhase()
+							.equals(MovingStateSlaveStatus.LB_PHASES.WAITING_FOR_COPY))
 					&& !status.isPipeKnown(instruction.getNewPipeId())) {
-				
-				
-				LOG.debug("Installing pipe " + instruction.getNewPipeId());
-				
-				status.addReplacedPipe(instruction.getNewPipeId(),
-						instruction.getOldPipeId());
+
 				dispatcher = status.getMessageDispatcher();
 				try {
-					MovingStateHelper.findAndCopyLocalJxtaOperator(status,isSender,
+					MovingStateHelper.addBufferAndCopySender(status,
+							instruction.getNewPeerId(),
+							instruction.getOldPipeId(),
+							instruction.getNewPipeId());
+					dispatcher.sendDuplicateSuccess(senderPeer,
+							instruction.getNewPipeId());
+				} catch (Exception e) {
+					LOG.error("Error while copying JxtaSender:");
+					LOG.error(e.getMessage());
+					dispatcher.sendDuplicateFailure(senderPeer);
+				}
+			}
+			break;
+
+		case MovingStateInstructionMessage.REPLACE_RECEIVER:
+			LOG.debug("Got COPY_RECEIVER");
+			// Create Status if none exist
+			if (status == null) {
+				status = new MovingStateSlaveStatus(
+						MovingStateSlaveStatus.INVOLVEMENT_TYPES.PEER_WITH_SENDER_OR_RECEIVER,
+						MovingStateSlaveStatus.LB_PHASES.WAITING_FOR_FINISH,
+						senderPeer, lbProcessId,
+						new MovingStateMessageDispatcher(peerCommunicator,
+								lbProcessId));
+				LoadBalancingStatusCache.getInstance().storeSlaveStatus(
+						senderPeer, lbProcessId, status);
+			}
+			// Process Pipe only if not already processed:
+			if ((status.getPhase()
+					.equals(MovingStateSlaveStatus.LB_PHASES.WAITING_FOR_FINISH))
+					|| (status.getPhase()
+							.equals(MovingStateSlaveStatus.LB_PHASES.WAITING_FOR_COPY))
+					&& !status.isPipeKnown(instruction.getNewPipeId())) {
+
+				LOG.debug("Installing pipe " + instruction.getNewPipeId());
+
+				dispatcher = status.getMessageDispatcher();
+				try {
+					MovingStateHelper.findAndReplaceReceiver(status,
 							instruction.getNewPeerId(),
 							instruction.getOldPipeId(),
 							instruction.getNewPipeId());
@@ -149,45 +182,53 @@ public class InstructionHandler {
 			}
 			break;
 
-		case LoadBalancingInstructionMessage.PIPE_SUCCCESS_RECEIVED:
+		case MovingStateInstructionMessage.PIPE_SUCCCESS_RECEIVED:
 			LOG.debug("Got PIPE_SUCCESS");
-			if(status==null) {
+			if (status == null) {
 				LOG.error("Status on Slave Peer is null.");
 				return;
 			}
-			status.getMessageDispatcher().stopRunningJob(instruction.getOldPipeId());
-			break;
-			
-		case LoadBalancingInstructionMessage.DELETE_RECEIVER:
-		case LoadBalancingInstructionMessage.DELETE_SENDER:
-			LOG.debug("Got DELETE_SENDER or DELETE_RECEIVER");
-			if(status==null) {
-				return;
-			}
-			//Sync is finished (or we would not be here). So we can stop spamming SYNC_FINISHED Messages now.
-			status.getMessageDispatcher().stopAllMessages();
-			status.getMessageDispatcher().sendDeleteFinished(senderPeer,instruction.getOldPipeId());
-			LoadBalancingHelper.removeDuplicateJxtaOperator(instruction.getOldPipeId());
-			status.getReplacedPipes().remove(instruction.getOldPipeId());
-			
+			status.getMessageDispatcher().stopRunningJob(
+					instruction.getOldPipeId());
 			break;
 
-				
-		case LoadBalancingInstructionMessage.MESSAGE_RECEIVED:
+		case MovingStateInstructionMessage.INITIATE_STATE_COPY:
+
+			LOG.debug("Got INITITATE_STATE_COPY");
+			if (status == null) {
+				LOG.error("Status on Slave Peer is null.");
+				return;
+			}
+			if (status.getPhase().equals(
+					MovingStateSlaveStatus.LB_PHASES.WAITING_FOR_COPY)) {
+				MovingStateManager.getInstance().addReceiver(
+						senderPeer.toString(), instruction.getNewPipeId());
+				// TODO inject status into operator
+				// TODO Send Ack
+			}
+			break;
+
+		case MovingStateInstructionMessage.STOP_BUFFERING:
+			LOG.debug("Got STOP_BUFFERING");
+			if (status == null) {
+				return;
+			}
+			if (status.getPhase().equals(
+					MovingStateSlaveStatus.LB_PHASES.WAITING_FOR_FINISH)) {
+				MovingStateHelper.stopBuffering(status);
+			}
+
+			break;
+
+		case MovingStateInstructionMessage.MESSAGE_RECEIVED:
 			LOG.debug("Got MESSAGE_RECEIVED");
-			if(status==null) {
+			if (status == null) {
 				LOG.error("Status on Slave Peer is null.");
 				return;
 			}
 			status.getMessageDispatcher().stopAllMessages();
 			break;
 		}
-		
-		
-		
-		
-		
-		
 
 	}
 }

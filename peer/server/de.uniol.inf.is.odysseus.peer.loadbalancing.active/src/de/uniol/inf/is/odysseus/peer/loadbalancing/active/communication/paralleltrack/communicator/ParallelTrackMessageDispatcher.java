@@ -14,9 +14,9 @@ import de.uniol.inf.is.odysseus.peer.loadbalancing.active.ActiveLoadBalancingAct
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.common.IMessageDeliveryFailedListener;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.common.LoadBalancingHelper;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.common.RepeatingMessageSend;
-import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.paralleltrack.messages.LoadBalancingAbortMessage;
-import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.paralleltrack.messages.LoadBalancingInstructionMessage;
-import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.paralleltrack.messages.LoadBalancingResponseMessage;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.paralleltrack.messages.ParallelTrackAbortMessage;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.paralleltrack.messages.ParallelTrackInstructionMessage;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.paralleltrack.messages.ParallelTrackResponseMessage;
 
 /**
  * Used to send Messages in LoadBalancing.
@@ -72,7 +72,7 @@ public class ParallelTrackMessageDispatcher {
 	 * @param destination
 	 */
 	public void sendMsgReceived(PeerID destination) {
-		LoadBalancingInstructionMessage message = LoadBalancingInstructionMessage.createMessageReceivedMsg(lbProcessId);
+		ParallelTrackInstructionMessage message = ParallelTrackInstructionMessage.createMessageReceivedMsg(lbProcessId);
 		try {
 			LOG.debug("Send MessageReceived");
 			peerCommunicator.send(destination, message);
@@ -88,7 +88,7 @@ public class ParallelTrackMessageDispatcher {
 	 */
 	public void sendInstallSuccess(PeerID destination) {
 			LOG.debug("Send Install Success");
-			LoadBalancingResponseMessage message = LoadBalancingResponseMessage.createInstallSuccessMessage(lbProcessId);
+			ParallelTrackResponseMessage message = ParallelTrackResponseMessage.createInstallSuccessMessage(lbProcessId);
 			this.currentJob = new RepeatingMessageSend(peerCommunicator,message,destination);
 			currentJob.start();
 	}
@@ -106,7 +106,7 @@ public class ParallelTrackMessageDispatcher {
 		}
 		if(!this.currentJobs.containsKey(pipeID)) {
 			LOG.debug("Send DuplicateSuccess");
-			LoadBalancingResponseMessage message = LoadBalancingResponseMessage.createDuplicateSuccessMessage(lbProcessId,pipeID);
+			ParallelTrackResponseMessage message = ParallelTrackResponseMessage.createDuplicateSuccessMessage(lbProcessId,pipeID);
 			RepeatingMessageSend job = new RepeatingMessageSend(peerCommunicator,message,destination);
 			this.currentJobs.put(pipeID, job);
 			job.start();
@@ -119,7 +119,7 @@ public class ParallelTrackMessageDispatcher {
 	 * @param pipeID
 	 */
 	public void sendPipeSuccessReceivedMsg(PeerID destination, String pipeID) {
-		LoadBalancingInstructionMessage message = LoadBalancingInstructionMessage.createPipeReceivedMsg(lbProcessId, pipeID);
+		ParallelTrackInstructionMessage message = ParallelTrackInstructionMessage.createPipeReceivedMsg(lbProcessId, pipeID);
 		try {
 			LOG.debug("Send SuccessReceived");
 			peerCommunicator.send(destination, message);
@@ -139,7 +139,7 @@ public class ParallelTrackMessageDispatcher {
 	public void sendAckInit(PeerID destinationPeerId) {
 
 		LOG.debug("Send AckInit");
-		this.currentJob = new RepeatingMessageSend(peerCommunicator,LoadBalancingResponseMessage.createAckLoadbalancingMessage(lbProcessId),destinationPeerId);
+		this.currentJob = new RepeatingMessageSend(peerCommunicator,ParallelTrackResponseMessage.createAckLoadbalancingMessage(lbProcessId),destinationPeerId);
 		currentJob.start();
 	}
 
@@ -152,7 +152,7 @@ public class ParallelTrackMessageDispatcher {
 	 */
 	public void sendDeleteOperator(boolean isSender, String peerId,
 			String pipeId,IMessageDeliveryFailedListener listener) {
-		LoadBalancingInstructionMessage message = LoadBalancingInstructionMessage.createDeleteOperatorMsg(isSender, lbProcessId, pipeId);
+		ParallelTrackInstructionMessage message = ParallelTrackInstructionMessage.createDeleteOperatorMsg(isSender, lbProcessId, pipeId);
 		if(this.currentJobs==null) {
 			this.currentJobs = new ConcurrentHashMap<String,RepeatingMessageSend>();
 		}
@@ -175,7 +175,7 @@ public class ParallelTrackMessageDispatcher {
 	public void sendAddQuery(PeerID destinationPeer, String queryPartPql,IMessageDeliveryFailedListener listener) {
 
 		LOG.debug("Send AddQuery");
-		LoadBalancingInstructionMessage message = LoadBalancingInstructionMessage.createAddQueryMsg(lbProcessId, queryPartPql);
+		ParallelTrackInstructionMessage message = ParallelTrackInstructionMessage.createAddQueryMsg(lbProcessId, queryPartPql);
 		this.currentJob = new RepeatingMessageSend(peerCommunicator,message,destinationPeer);
 		currentJob.addListener(listener);
 		currentJob.start();
@@ -189,7 +189,7 @@ public class ParallelTrackMessageDispatcher {
 	public void sendInstallFailure(PeerID initiatingPeer) {
 
 			LOG.debug("Send InstallFailure");
-			LoadBalancingResponseMessage message = LoadBalancingResponseMessage.createInstallFailureMessage(lbProcessId);
+			ParallelTrackResponseMessage message = ParallelTrackResponseMessage.createInstallFailureMessage(lbProcessId);
 			this.currentJob = new RepeatingMessageSend(peerCommunicator,message,initiatingPeer);
 			currentJob.start();
 	}
@@ -202,7 +202,7 @@ public class ParallelTrackMessageDispatcher {
 	public void sendDuplicateFailure(PeerID initiatingPeer) {
 
 		LOG.debug("Send DuplicateFailure to initiating Peer " + initiatingPeer + " for lbProcessId " + lbProcessId);
-		LoadBalancingResponseMessage message = LoadBalancingResponseMessage.createDuplicateFailureMessage(lbProcessId);
+		ParallelTrackResponseMessage message = ParallelTrackResponseMessage.createDuplicateFailureMessage(lbProcessId);
 		this.currentJob = new RepeatingMessageSend(peerCommunicator,message,initiatingPeer);
 		currentJob.start();
 	}
@@ -225,7 +225,7 @@ public class ParallelTrackMessageDispatcher {
 		if(!this.currentJobs.containsKey(newPipeId)) {
 
 			LOG.debug("Send CopyOperator (isSender:" + isSender + ")");
-			LoadBalancingInstructionMessage message = LoadBalancingInstructionMessage.createCopyOperatorMsg(lbProcessId,isSender, newPeerId, oldPipeId, newPipeId);
+			ParallelTrackInstructionMessage message = ParallelTrackInstructionMessage.createCopyOperatorMsg(lbProcessId,isSender, newPeerId, oldPipeId, newPipeId);
 			RepeatingMessageSend job = new RepeatingMessageSend(peerCommunicator,message,destinationPeer);
 			this.currentJobs.put(newPipeId, job);
 			job.addListener(listener);
@@ -250,7 +250,7 @@ public class ParallelTrackMessageDispatcher {
 	public void sendInitiate(PeerID volunteeringPeer,IMessageDeliveryFailedListener listener) {
 		
 			LOG.debug("Send InitiateLB");
-			this.currentJob = new RepeatingMessageSend(peerCommunicator,LoadBalancingInstructionMessage.createInitiateMsg(lbProcessId),volunteeringPeer);
+			this.currentJob = new RepeatingMessageSend(peerCommunicator,ParallelTrackInstructionMessage.createInitiateMsg(lbProcessId),volunteeringPeer);
 			currentJob.addListener(listener);
 			currentJob.start();
 	}
@@ -309,7 +309,7 @@ public class ParallelTrackMessageDispatcher {
 	public void sendSyncFinished(PeerID initiatingPeer, String pipeId) {
 
 		LOG.debug("Send SyncFinished for pipeID " + pipeId);
-		LoadBalancingResponseMessage message = LoadBalancingResponseMessage.createSyncFinishedMsg(lbProcessId, pipeId);
+		ParallelTrackResponseMessage message = ParallelTrackResponseMessage.createSyncFinishedMsg(lbProcessId, pipeId);
 		if(this.currentJobs==null) {
 			this.currentJobs = new ConcurrentHashMap<String,RepeatingMessageSend>();
 		}
@@ -329,7 +329,7 @@ public class ParallelTrackMessageDispatcher {
 	public void sendAbortInstruction(PeerID peerID,IMessageDeliveryFailedListener listener) {
 
 		
-		LoadBalancingAbortMessage message = LoadBalancingAbortMessage.createAbortInstructionMsg(lbProcessId);
+		ParallelTrackAbortMessage message = ParallelTrackAbortMessage.createAbortInstructionMsg(lbProcessId);
 		if(this.currentJobs==null) {
 			this.currentJobs = new ConcurrentHashMap<String,RepeatingMessageSend>();
 		}
@@ -348,7 +348,7 @@ public class ParallelTrackMessageDispatcher {
 	 * @param peerID
 	 */
 	public void sendAbortResponse(PeerID peerID) {
-		LoadBalancingAbortMessage message = LoadBalancingAbortMessage.createAbortResponseMsg(lbProcessId);
+		ParallelTrackAbortMessage message = ParallelTrackAbortMessage.createAbortResponseMsg(lbProcessId);
 		try {
 			LOG.debug("Send AbortResponse");
 			peerCommunicator.send(peerID, message);
@@ -359,7 +359,7 @@ public class ParallelTrackMessageDispatcher {
 	}
 
 	public void sendDeleteFinished(PeerID peerID, String oldPipeId) {
-		LoadBalancingResponseMessage response = LoadBalancingResponseMessage.createDeleteFinishedMessage(lbProcessId, oldPipeId);
+		ParallelTrackResponseMessage response = ParallelTrackResponseMessage.createDeleteFinishedMessage(lbProcessId, oldPipeId);
 		try {
 			LOG.debug("Send DELETE_FINISHED Response");
 			peerCommunicator.send(peerID, response);

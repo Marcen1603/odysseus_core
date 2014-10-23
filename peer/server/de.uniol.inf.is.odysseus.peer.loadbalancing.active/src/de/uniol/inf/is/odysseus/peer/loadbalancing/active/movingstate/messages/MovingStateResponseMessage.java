@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.paralleltrack.messages;
+package de.uniol.inf.is.odysseus.peer.loadbalancing.active.movingstate.messages;
 
 import java.nio.ByteBuffer;
 
@@ -9,7 +9,7 @@ import de.uniol.inf.is.odysseus.p2p_new.IMessage;
  * @author Carsten Cordes
  *
  */
-public class LoadBalancingResponseMessage implements IMessage {
+public class MovingStateResponseMessage implements IMessage {
 	
 	public static final int ACK_LOADBALANCING = 0;
 	
@@ -40,56 +40,56 @@ public class LoadBalancingResponseMessage implements IMessage {
 	/**
 	 * Default Constructor
 	 */
-	public LoadBalancingResponseMessage() {
+	public MovingStateResponseMessage() {
 	}
 	
-	public static LoadBalancingResponseMessage createAckLoadbalancingMessage(int loadBalancingProcessId) {
-		LoadBalancingResponseMessage message = new LoadBalancingResponseMessage();
+	public static MovingStateResponseMessage createAckLoadbalancingMessage(int loadBalancingProcessId) {
+		MovingStateResponseMessage message = new MovingStateResponseMessage();
 		message.setLoadBalancingProcessId(loadBalancingProcessId);
 		message.setMsgType(ACK_LOADBALANCING);
 		return message;
 	}
 	
-	public static LoadBalancingResponseMessage createInstallSuccessMessage(int loadBalancingProcessId) {
-		LoadBalancingResponseMessage message = new LoadBalancingResponseMessage();
+	public static MovingStateResponseMessage createInstallSuccessMessage(int loadBalancingProcessId) {
+		MovingStateResponseMessage message = new MovingStateResponseMessage();
 		message.setLoadBalancingProcessId(loadBalancingProcessId);
 		message.setMsgType(SUCCESS_INSTALL_QUERY);
 		return message;
 	}
 	
-	public static LoadBalancingResponseMessage createDeleteFinishedMessage(int loadBalancingProcessId, String pipeID) {
-		LoadBalancingResponseMessage message = new LoadBalancingResponseMessage();
+	public static MovingStateResponseMessage createDeleteFinishedMessage(int loadBalancingProcessId, String pipeID) {
+		MovingStateResponseMessage message = new MovingStateResponseMessage();
 		message.setLoadBalancingProcessId(loadBalancingProcessId);
 		message.setPipeID(pipeID);
 		message.setMsgType(DELETE_FINISHED);
 		return message;
 	}
 	
-	public static LoadBalancingResponseMessage createDuplicateSuccessMessage(int loadBalancingProcessId, String pipeID) {
-		LoadBalancingResponseMessage message = new LoadBalancingResponseMessage();
+	public static MovingStateResponseMessage createDuplicateSuccessMessage(int loadBalancingProcessId, String pipeID) {
+		MovingStateResponseMessage message = new MovingStateResponseMessage();
 		message.setLoadBalancingProcessId(loadBalancingProcessId);
 		message.setPipeID(pipeID);
 		message.setMsgType(SUCCESS_DUPLICATE);
 		return message;
 	}
 	
-	public static LoadBalancingResponseMessage createDuplicateFailureMessage(int loadBalancingProcessId) {
-		LoadBalancingResponseMessage message = new LoadBalancingResponseMessage();
+	public static MovingStateResponseMessage createDuplicateFailureMessage(int loadBalancingProcessId) {
+		MovingStateResponseMessage message = new MovingStateResponseMessage();
 		message.setLoadBalancingProcessId(loadBalancingProcessId);
 		message.setMsgType(FAILURE_DUPLICATE_RECEIVER);
 		return message;
 	}
 	
 	
-	public static LoadBalancingResponseMessage createInstallFailureMessage(int loadBalancingProcessId) {
-		LoadBalancingResponseMessage message = new LoadBalancingResponseMessage();
+	public static MovingStateResponseMessage createInstallFailureMessage(int loadBalancingProcessId) {
+		MovingStateResponseMessage message = new MovingStateResponseMessage();
 		message.setLoadBalancingProcessId(loadBalancingProcessId);
 		message.setMsgType(FAILURE_INSTALL_QUERY);
 		return message;
 	}
 
-	public static LoadBalancingResponseMessage createSyncFinishedMsg(int lbProcessId, String pipeID) {
-		LoadBalancingResponseMessage message = new LoadBalancingResponseMessage();
+	public static MovingStateResponseMessage createSyncFinishedMsg(int lbProcessId, String pipeID) {
+		MovingStateResponseMessage message = new MovingStateResponseMessage();
 		message.setMsgType(SYNC_FINISHED);
 		message.setLoadBalancingProcessId(lbProcessId);
 		message.setPipeID(pipeID);

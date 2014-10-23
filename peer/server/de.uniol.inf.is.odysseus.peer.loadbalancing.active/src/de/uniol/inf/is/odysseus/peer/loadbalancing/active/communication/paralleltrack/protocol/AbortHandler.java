@@ -13,7 +13,7 @@ import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicator;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.common.LoadBalancingHelper;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.paralleltrack.communicator.ParallelTrackCommunicatorImpl;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.paralleltrack.communicator.ParallelTrackMessageDispatcher;
-import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.paralleltrack.messages.LoadBalancingAbortMessage;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.paralleltrack.messages.ParallelTrackAbortMessage;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.paralleltrack.status.ParallelTrackMasterStatus;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.paralleltrack.status.ParallelTrackSlaveStatus;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.common.LoadBalancingStatusCache;
@@ -32,17 +32,17 @@ public class AbortHandler {
 	 * @param abortMessage
 	 * @param senderPeer
 	 */
-	public static void handleAbort(LoadBalancingAbortMessage abortMessage,
+	public static void handleAbort(ParallelTrackAbortMessage abortMessage,
 			PeerID senderPeer) {
 		
 		
 		
 		switch (abortMessage.getMsgType()) {
-		case LoadBalancingAbortMessage.ABORT_INSTRUCTION:
+		case ParallelTrackAbortMessage.ABORT_INSTRUCTION:
 			LOG.debug("Received ABORT_INSTRUCTION");
 			undoLoadBalancing(abortMessage, senderPeer);
 			break;
-		case LoadBalancingAbortMessage.ABORT_RESPONSE:
+		case ParallelTrackAbortMessage.ABORT_RESPONSE:
 			LOG.debug("Received ABORT_RESPONSE");
 			stopSendingAbort(abortMessage, senderPeer);
 			break;
@@ -56,7 +56,7 @@ public class AbortHandler {
 	 * @param abortMessage
 	 * @param senderPeer
 	 */
-	private static void undoLoadBalancing(LoadBalancingAbortMessage abortMessage,
+	private static void undoLoadBalancing(ParallelTrackAbortMessage abortMessage,
 			PeerID senderPeer) {
 		
 		
@@ -128,7 +128,7 @@ public class AbortHandler {
 	}
 	
 
-	public static void stopSendingAbort(LoadBalancingAbortMessage abortMessage,
+	public static void stopSendingAbort(ParallelTrackAbortMessage abortMessage,
 			PeerID senderPeer) {
 		ParallelTrackMasterStatus status = (ParallelTrackMasterStatus)LoadBalancingStatusCache.getInstance().getStatusForLocalProcess(abortMessage.getLoadBalancingProcessId());
 		

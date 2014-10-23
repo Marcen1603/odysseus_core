@@ -14,7 +14,7 @@ import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.common.L
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.paralleltrack.communicator.ParallelTrackCommunicatorImpl;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.paralleltrack.communicator.ParallelTrackHelper;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.paralleltrack.communicator.ParallelTrackMessageDispatcher;
-import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.paralleltrack.messages.LoadBalancingInstructionMessage;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.paralleltrack.messages.ParallelTrackInstructionMessage;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.paralleltrack.status.ParallelTrackSlaveStatus;
 
 /**
@@ -31,7 +31,7 @@ public class InstructionHandler {
 	 * @param instruction Instruction received by Peer.
 	 * @param senderPeer Peer that sent Message (in this case: Master Peer).
 	 */
-	public static void handleInstruction(LoadBalancingInstructionMessage instruction,
+	public static void handleInstruction(ParallelTrackInstructionMessage instruction,
 			PeerID senderPeer) {
 
 		LOG.debug("Got Instruction for Process:" + instruction.getLoadBalancingProcessId());
@@ -52,7 +52,7 @@ public class InstructionHandler {
 		//Decide which message we received.
 		switch (instruction.getMsgType()) {
 
-		case LoadBalancingInstructionMessage.INITIATE_LOADBALANCING:
+		case ParallelTrackInstructionMessage.INITIATE_LOADBALANCING:
 			// Only react to first INITIATE_LOADBALANCING Message, even if sent
 			// more often.
 			
@@ -76,7 +76,7 @@ public class InstructionHandler {
 			}
 			break;
 
-		case LoadBalancingInstructionMessage.ADD_QUERY:
+		case ParallelTrackInstructionMessage.ADD_QUERY:
 			// Only react if status is not set yet.
 			
 			LOG.debug("Got ADD_QUERY");
@@ -107,11 +107,11 @@ public class InstructionHandler {
 			}
 			break;
 
-		case LoadBalancingInstructionMessage.COPY_RECEIVER:
+		case ParallelTrackInstructionMessage.COPY_RECEIVER:
 			
 			isSender=false;
 			//NO BREAK!
-		case LoadBalancingInstructionMessage.COPY_SENDER:
+		case ParallelTrackInstructionMessage.COPY_SENDER:
 			LOG.debug("Got COPY_RECEIVER or COPY_SENDER");
 			// Create Status if none exist
 			if (status == null) {
@@ -149,7 +149,7 @@ public class InstructionHandler {
 			}
 			break;
 
-		case LoadBalancingInstructionMessage.PIPE_SUCCCESS_RECEIVED:
+		case ParallelTrackInstructionMessage.PIPE_SUCCCESS_RECEIVED:
 			LOG.debug("Got PIPE_SUCCESS");
 			if(status==null) {
 				LOG.error("Status on Slave Peer is null.");
@@ -158,8 +158,8 @@ public class InstructionHandler {
 			status.getMessageDispatcher().stopRunningJob(instruction.getOldPipeId());
 			break;
 			
-		case LoadBalancingInstructionMessage.DELETE_RECEIVER:
-		case LoadBalancingInstructionMessage.DELETE_SENDER:
+		case ParallelTrackInstructionMessage.DELETE_RECEIVER:
+		case ParallelTrackInstructionMessage.DELETE_SENDER:
 			LOG.debug("Got DELETE_SENDER or DELETE_RECEIVER");
 			if(status==null) {
 				return;
@@ -173,7 +173,7 @@ public class InstructionHandler {
 			break;
 
 				
-		case LoadBalancingInstructionMessage.MESSAGE_RECEIVED:
+		case ParallelTrackInstructionMessage.MESSAGE_RECEIVED:
 			LOG.debug("Got MESSAGE_RECEIVED");
 			if(status==null) {
 				LOG.error("Status on Slave Peer is null.");

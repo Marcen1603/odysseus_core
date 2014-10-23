@@ -15,7 +15,7 @@ import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.common.L
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.paralleltrack.communicator.ParallelTrackCommunicatorImpl;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.paralleltrack.communicator.ParallelTrackHelper;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.paralleltrack.communicator.ParallelTrackMessageDispatcher;
-import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.paralleltrack.messages.LoadBalancingResponseMessage;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.paralleltrack.messages.ParallelTrackResponseMessage;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.paralleltrack.status.ParallelTrackMasterStatus;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.paralleltrack.status.ParallelTrackMasterStatus.LB_PHASES;
 
@@ -39,7 +39,7 @@ public class ResponseHandler {
 	 * @param response
 	 * @param senderPeer
 	 */
-	public static void handlePeerResonse(LoadBalancingResponseMessage response,
+	public static void handlePeerResonse(ParallelTrackResponseMessage response,
 			PeerID senderPeer) {
 		
 		LOG.debug("Got response for lbProcess Id " + response.getLoadBalancingProcessId());
@@ -59,7 +59,7 @@ public class ResponseHandler {
 				.getMessageDispatcher();
 
 		switch (response.getMsgType()) {
-		case LoadBalancingResponseMessage.ACK_LOADBALANCING:
+		case ParallelTrackResponseMessage.ACK_LOADBALANCING:
 			LOG.debug("Got ACK_LOADBALANCING");
 			if (status.getPhase().equals(
 					ParallelTrackMasterStatus.LB_PHASES.INITIATING)) {
@@ -81,7 +81,7 @@ public class ResponseHandler {
 			}
 			break;
 
-		case LoadBalancingResponseMessage.SUCCESS_INSTALL_QUERY:
+		case ParallelTrackResponseMessage.SUCCESS_INSTALL_QUERY:
 			LOG.debug("Got SUCCESS_INSTALL_QUERY");
 			// When in Phase copying, the success Message says that Installing
 			// the Query Part on the other Peer was successful.
@@ -95,7 +95,7 @@ public class ResponseHandler {
 			}
 			break;
 
-		case LoadBalancingResponseMessage.SUCCESS_DUPLICATE:
+		case ParallelTrackResponseMessage.SUCCESS_DUPLICATE:
 			
 			
 			
@@ -132,7 +132,7 @@ public class ResponseHandler {
 			
 			break;
 
-		case LoadBalancingResponseMessage.SYNC_FINISHED:
+		case ParallelTrackResponseMessage.SYNC_FINISHED:
 			LOG.debug("Got SYNC_FINISHED");
 			if (status.getPhase().equals(LB_PHASES.SYNCHRONIZING)) {
 				
@@ -169,7 +169,7 @@ public class ResponseHandler {
 			}
 			break;
 
-		case LoadBalancingResponseMessage.FAILURE_INSTALL_QUERY:
+		case ParallelTrackResponseMessage.FAILURE_INSTALL_QUERY:
 			LOG.debug("Got FAILURE_INSTALL_QUERY");
 			if(status.getPhase().equals(LB_PHASES.COPYING)) {
 				dispatcher.sendMsgReceived(senderPeer);
@@ -179,7 +179,7 @@ public class ResponseHandler {
 			break;
 			
 
-		case LoadBalancingResponseMessage.FAILURE_DUPLICATE_RECEIVER:
+		case ParallelTrackResponseMessage.FAILURE_DUPLICATE_RECEIVER:
 			LOG.debug("Got FAILURE_DUPLICATE_RECEIVER");
 			if(status.getPhase().equals(LB_PHASES.RELINKING_RECEIVERS) || status.getPhase().equals(LB_PHASES.RELINKING_SENDERS) ) {
 				dispatcher.sendMsgReceived(senderPeer);
@@ -188,7 +188,7 @@ public class ResponseHandler {
 			}
 			break;
 		
-		case LoadBalancingResponseMessage.DELETE_FINISHED:
+		case ParallelTrackResponseMessage.DELETE_FINISHED:
 			if(status.getPhase().equals(LB_PHASES.DELETING)) {
 				LOG.debug("Deleting finished for pipe " + response.getPipeID());
 				dispatcher.stopRunningJob(response.getPipeID());

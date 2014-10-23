@@ -18,7 +18,7 @@ public class MovingStateMasterStatus implements ILoadBalancingMasterStatus{
 	private final String COMMUNCIATOR_NAME = "MovingState";
 	
 	public enum LB_PHASES {
-		INITIATING,COPYING,RELINKING_SENDERS,RELINKING_RECEIVERS,SYNCHRONIZING,DELETING,FAILURE
+		INITIATING,COPYING_QUERY,RELINKING_SENDERS,RELINKING_RECEIVERS,COPYING_STATES,DELETING,FAILURE
 	}
 	
 	private MovingStateMessageDispatcher messageDispatcher;

@@ -16,9 +16,9 @@ import de.uniol.inf.is.odysseus.peer.loadbalancing.active.ILoadBalancingListener
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.common.IMessageDeliveryFailedListener;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.common.LoadBalancingHelper;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.common.LoadBalancingStatusCache;
-import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.paralleltrack.messages.LoadBalancingAbortMessage;
-import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.paralleltrack.messages.LoadBalancingInstructionMessage;
-import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.paralleltrack.messages.LoadBalancingResponseMessage;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.paralleltrack.messages.ParallelTrackAbortMessage;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.paralleltrack.messages.ParallelTrackInstructionMessage;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.paralleltrack.messages.ParallelTrackResponseMessage;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.paralleltrack.protocol.AbortHandler;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.paralleltrack.protocol.InstructionHandler;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.paralleltrack.protocol.ResponseHandler;
@@ -91,17 +91,17 @@ public class ParallelTrackCommunicatorImpl implements
 	public void bindPeerCommunicator(IPeerCommunicator serv) {
 		LOG.debug("Bound Peer Communicator.");
 		peerCommunicator = serv;
-		peerCommunicator.registerMessageType(LoadBalancingAbortMessage.class);
-		peerCommunicator.addListener(this, LoadBalancingAbortMessage.class);
+		peerCommunicator.registerMessageType(ParallelTrackAbortMessage.class);
+		peerCommunicator.addListener(this, ParallelTrackAbortMessage.class);
 
 		peerCommunicator
-				.registerMessageType(LoadBalancingInstructionMessage.class);
+				.registerMessageType(ParallelTrackInstructionMessage.class);
 		peerCommunicator.addListener(this,
-				LoadBalancingInstructionMessage.class);
+				ParallelTrackInstructionMessage.class);
 
 		peerCommunicator
-				.registerMessageType(LoadBalancingResponseMessage.class);
-		peerCommunicator.addListener(this, LoadBalancingResponseMessage.class);
+				.registerMessageType(ParallelTrackResponseMessage.class);
+		peerCommunicator.addListener(this, ParallelTrackResponseMessage.class);
 
 	}
 
@@ -117,18 +117,18 @@ public class ParallelTrackCommunicatorImpl implements
 		LOG.debug("Unbound Peer Communicator.");
 		if (peerCommunicator == serv) {
 			peerCommunicator.removeListener(this,
-					LoadBalancingAbortMessage.class);
+					ParallelTrackAbortMessage.class);
 			peerCommunicator.removeListener(this,
-					LoadBalancingInstructionMessage.class);
+					ParallelTrackInstructionMessage.class);
 			peerCommunicator.removeListener(this,
-					LoadBalancingResponseMessage.class);
+					ParallelTrackResponseMessage.class);
 
 			peerCommunicator
-					.unregisterMessageType(LoadBalancingAbortMessage.class);
+					.unregisterMessageType(ParallelTrackAbortMessage.class);
 			peerCommunicator
-					.unregisterMessageType(LoadBalancingInstructionMessage.class);
+					.unregisterMessageType(ParallelTrackInstructionMessage.class);
 			peerCommunicator
-					.unregisterMessageType(LoadBalancingResponseMessage.class);
+					.unregisterMessageType(ParallelTrackResponseMessage.class);
 
 			peerCommunicator = null;
 		}
@@ -161,18 +161,18 @@ public class ParallelTrackCommunicatorImpl implements
 	public void receivedMessage(IPeerCommunicator communicator,
 			PeerID senderPeer, IMessage message) {
 
-		if (message instanceof LoadBalancingResponseMessage) {
-			LoadBalancingResponseMessage response = (LoadBalancingResponseMessage) message;
+		if (message instanceof ParallelTrackResponseMessage) {
+			ParallelTrackResponseMessage response = (ParallelTrackResponseMessage) message;
 			ResponseHandler.handlePeerResonse(response, senderPeer);
 		}
 
-		if (message instanceof LoadBalancingInstructionMessage) {
-			LoadBalancingInstructionMessage instruction = (LoadBalancingInstructionMessage) message;
+		if (message instanceof ParallelTrackInstructionMessage) {
+			ParallelTrackInstructionMessage instruction = (ParallelTrackInstructionMessage) message;
 			InstructionHandler.handleInstruction(instruction, senderPeer);
 		}
 
-		if (message instanceof LoadBalancingAbortMessage) {
-			LoadBalancingAbortMessage abortMessage = (LoadBalancingAbortMessage) message;
+		if (message instanceof ParallelTrackAbortMessage) {
+			ParallelTrackAbortMessage abortMessage = (ParallelTrackAbortMessage) message;
 			AbortHandler.handleAbort(abortMessage, senderPeer);
 		}
 
@@ -237,15 +237,15 @@ public class ParallelTrackCommunicatorImpl implements
 	 */
 	@Override
 	public void update(IMessage message, PeerID peerId) {
-		if(message instanceof LoadBalancingInstructionMessage) {
-			LoadBalancingInstructionMessage instruction = (LoadBalancingInstructionMessage)message;
+		if(message instanceof ParallelTrackInstructionMessage) {
+			ParallelTrackInstructionMessage instruction = (ParallelTrackInstructionMessage)message;
 			handleTimeoutOnMasterPeer(instruction);
 		}
 		
-		if(message instanceof LoadBalancingAbortMessage) {
-			LoadBalancingAbortMessage abortMsg = (LoadBalancingAbortMessage) message;
+		if(message instanceof ParallelTrackAbortMessage) {
+			ParallelTrackAbortMessage abortMsg = (ParallelTrackAbortMessage) message;
 			//If Abort Instruction could not be delivered... Bad luck. Stop Sending it and try finishing up.
-			if(abortMsg.getMsgType()==LoadBalancingAbortMessage.ABORT_INSTRUCTION) {
+			if(abortMsg.getMsgType()==ParallelTrackAbortMessage.ABORT_INSTRUCTION) {
 				AbortHandler.stopSendingAbort(abortMsg, peerId);
 			}
 		}
@@ -260,7 +260,7 @@ public class ParallelTrackCommunicatorImpl implements
 	 * @param instruction
 	 */
 	private void handleTimeoutOnMasterPeer(
-			LoadBalancingInstructionMessage instruction) {
+			ParallelTrackInstructionMessage instruction) {
 		;
 		
 		int lbProcessId = instruction.getLoadBalancingProcessId();
@@ -275,28 +275,28 @@ public class ParallelTrackCommunicatorImpl implements
 		
 		
 		switch(instruction.getMsgType()){
-			case LoadBalancingInstructionMessage.INITIATE_LOADBALANCING:
+			case ParallelTrackInstructionMessage.INITIATE_LOADBALANCING:
 				if(status.getPhase().equals(LB_PHASES.INITIATING)) {
 					ResponseHandler.handleError(status,this);
 				}
 				break;
-			case LoadBalancingInstructionMessage.ADD_QUERY:
+			case ParallelTrackInstructionMessage.ADD_QUERY:
 				if(status.getPhase().equals(LB_PHASES.COPYING)) {
 					ResponseHandler.handleError(status,this);
 				}
 				break;
-			case LoadBalancingInstructionMessage.COPY_RECEIVER:
+			case ParallelTrackInstructionMessage.COPY_RECEIVER:
 				if(status.getPhase().equals(LB_PHASES.RELINKING_RECEIVERS)) {
 					ResponseHandler.handleError(status,this);
 				}
 				break;
-			case LoadBalancingInstructionMessage.COPY_SENDER:
+			case ParallelTrackInstructionMessage.COPY_SENDER:
 				if(status.getPhase().equals(LB_PHASES.RELINKING_SENDERS)) {
 					ResponseHandler.handleError(status,this);
 				}
 				break;
-			case LoadBalancingInstructionMessage.DELETE_RECEIVER:
-			case LoadBalancingInstructionMessage.DELETE_SENDER:
+			case ParallelTrackInstructionMessage.DELETE_RECEIVER:
+			case ParallelTrackInstructionMessage.DELETE_SENDER:
 				if(status.getPhase().equals(LB_PHASES.INITIATING)) {
 					ResponseHandler.handleError(status,this);
 				}

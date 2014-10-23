@@ -9,7 +9,7 @@ import de.uniol.inf.is.odysseus.p2p_new.IMessage;
  * @author Carsten Cordes
  *
  */
-public class LoadBalancingInstructionMessage implements IMessage {
+public class ParallelTrackInstructionMessage implements IMessage {
 
 	public static final int INITIATE_LOADBALANCING = 0;
 	public static final int ADD_QUERY = 1;
@@ -34,27 +34,27 @@ public class LoadBalancingInstructionMessage implements IMessage {
 	/**
 	 * Default constructor.
 	 */
-	public LoadBalancingInstructionMessage() {
+	public ParallelTrackInstructionMessage() {
 	}
 	
-	public static LoadBalancingInstructionMessage createInitiateMsg(int lbProcessId) {
-		LoadBalancingInstructionMessage message = new LoadBalancingInstructionMessage();
+	public static ParallelTrackInstructionMessage createInitiateMsg(int lbProcessId) {
+		ParallelTrackInstructionMessage message = new ParallelTrackInstructionMessage();
 		message.loadBalancingProcessId = lbProcessId;
 		message.msgType = INITIATE_LOADBALANCING;
 		return message;
 	}
 	
 
-	public static LoadBalancingInstructionMessage createMessageReceivedMsg(
+	public static ParallelTrackInstructionMessage createMessageReceivedMsg(
 			int lbProcessId) {
-		LoadBalancingInstructionMessage message = new LoadBalancingInstructionMessage();
+		ParallelTrackInstructionMessage message = new ParallelTrackInstructionMessage();
 		message.loadBalancingProcessId = lbProcessId;
 		message.msgType = MESSAGE_RECEIVED;
 		return message;
 	}
 	
-	public static LoadBalancingInstructionMessage createAddQueryMsg(int lbProcessId,String PQLQuery) {
-		LoadBalancingInstructionMessage message = new LoadBalancingInstructionMessage();
+	public static ParallelTrackInstructionMessage createAddQueryMsg(int lbProcessId,String PQLQuery) {
+		ParallelTrackInstructionMessage message = new ParallelTrackInstructionMessage();
 		message.loadBalancingProcessId = lbProcessId;
 		message.PQLQuery = PQLQuery;
 		message.msgType = ADD_QUERY;
@@ -62,9 +62,9 @@ public class LoadBalancingInstructionMessage implements IMessage {
 	}
 	
 
-	public static LoadBalancingInstructionMessage createPipeReceivedMsg(
+	public static ParallelTrackInstructionMessage createPipeReceivedMsg(
 			int lbProcessId, String pipeID) {
-		LoadBalancingInstructionMessage message = new LoadBalancingInstructionMessage();
+		ParallelTrackInstructionMessage message = new ParallelTrackInstructionMessage();
 		message.loadBalancingProcessId = lbProcessId;
 		message.setOldPipeId(pipeID);
 		message.msgType = PIPE_SUCCCESS_RECEIVED;
@@ -72,8 +72,8 @@ public class LoadBalancingInstructionMessage implements IMessage {
 	}
 
 	
-	public static LoadBalancingInstructionMessage createCopyOperatorMsg(int lbProcessId, boolean isSender, String newPeerId, String oldPipeId, String newPipeId) {
-		LoadBalancingInstructionMessage message = new LoadBalancingInstructionMessage();
+	public static ParallelTrackInstructionMessage createCopyOperatorMsg(int lbProcessId, boolean isSender, String newPeerId, String oldPipeId, String newPipeId) {
+		ParallelTrackInstructionMessage message = new ParallelTrackInstructionMessage();
 		message.loadBalancingProcessId = lbProcessId;
 		message.oldPipeId = oldPipeId;
 		message.newPipeId = newPipeId;
@@ -86,8 +86,8 @@ public class LoadBalancingInstructionMessage implements IMessage {
 		return message;
 	}
 
-	public static LoadBalancingInstructionMessage createDeleteOperatorMsg(boolean isSender, int lbProcessId, String pipeId) {
-		LoadBalancingInstructionMessage message = new LoadBalancingInstructionMessage();
+	public static ParallelTrackInstructionMessage createDeleteOperatorMsg(boolean isSender, int lbProcessId, String pipeId) {
+		ParallelTrackInstructionMessage message = new ParallelTrackInstructionMessage();
 		message.oldPipeId = pipeId;
 		if(isSender) {
 			message.msgType = DELETE_SENDER;
