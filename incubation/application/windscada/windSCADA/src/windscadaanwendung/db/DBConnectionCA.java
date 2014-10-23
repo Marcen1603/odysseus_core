@@ -33,7 +33,6 @@ public class DBConnectionCA {
 	 */
 	public static void setNewConnection() {
 		try {
-			// if (conn == null || conn.isClosed()) {
 			credentials = DBConnectionCredentials
 					.load("config/CADBConnCredentials.txt");
 			credentials.get("server");
@@ -44,7 +43,6 @@ public class DBConnectionCA {
 							credentials.get("user"),
 							credentials.get("password"));
 			conn = dbconn.getConnection();
-			// }
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}

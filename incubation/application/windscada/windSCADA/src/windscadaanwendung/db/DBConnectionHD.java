@@ -39,7 +39,6 @@ public class DBConnectionHD {
 	 */
 	public static void setNewConnection() {
 		try {
-			// if (conn == null || conn.isClosed()) {
 			credentials = DBConnectionCredentials
 					.load("config/HDDBConnCredentials.txt");
 			credentials.get("server");
@@ -50,7 +49,6 @@ public class DBConnectionHD {
 							credentials.get("user"),
 							credentials.get("password"));
 			conn = dbconn.getConnection();
-			// }
 		} catch (NumberFormatException e) {
 			e.printStackTrace();
 		} catch (SQLException e) {
