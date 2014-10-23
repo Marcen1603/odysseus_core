@@ -14,8 +14,12 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.BooleanParam
 
 /**
  * Logical combine operator implementation
+ * 
+ * The combine operator combines attibutes of incoming tuples. Tuples on output
+ * port n will contain the nth attributes of incoming tuples.
+ * 
  * @author Dennis Nowak
- *
+ * 
  */
 @LogicalOperator(name = "COMBINE", minInputPorts = 2, doc = "Takes values of attributes from the input operators and combines them in one tuple", category = { LogicalOperatorCategory.PROCESSING }, maxInputPorts = Integer.MAX_VALUE)
 public class CombineAO extends AbstractLogicalOperator {
@@ -34,6 +38,7 @@ public class CombineAO extends AbstractLogicalOperator {
 
 	/**
 	 * Copy constructor for CombineAO
+	 * 
 	 * @param combineAO
 	 */
 	public CombineAO(CombineAO combineAO) {
@@ -64,20 +69,36 @@ public class CombineAO extends AbstractLogicalOperator {
 		return out;
 	}
 
+	/**
+	 * Setter for parameter WaitForAllChanged
+	 * @param wait if true, the operator will wait for input on all ports before transfering the output tuples
+	 */
 	@Parameter(name = "WaitForAllChanged", optional = true, type = BooleanParameter.class, doc = "If true, there is only output when there has been input on all ports")
 	public void setWaitForAllChanged(boolean wait) {
 		this.waitForAllChanged = wait;
 	}
 
+	/**
+	 * Getter for parameter WaitForAllChanged
+	 * @return parameter WaitForAllChanged
+	 */
 	public boolean getWaitForAllChanged() {
 		return this.waitForAllChanged;
 	}
 
+	/**
+	 * Setter for parameter BufferNewInputElements
+	 * @param buffer if true, new input is buffered if there has been input before that has not been transfered to output.
+	 */
 	@Parameter(name = "BufferNewInputElements", optional = true, type = BooleanParameter.class, doc = "If WaitForAllChanged is set, specifies, if new Input should be buffered or overrides older Input that hast not been transfered yet")
 	public void setBufferNewInputElements(boolean buffer) {
 		this.bufferNewInputElements = buffer;
 	}
 
+	/**
+	 * Getter for parameter BufferNewInputElements
+	 * @return parameter BufferNewInputElements
+	 */
 	public boolean getBufferNewInputElements() {
 		return this.bufferNewInputElements;
 	}
@@ -93,10 +114,18 @@ public class CombineAO extends AbstractLogicalOperator {
 
 	}
 
+	/**
+	 * Returns number of ports for output needed
+	 * @return umber if ports for output needed
+	 */
 	public int getOutputPorts() {
 		return this.getInputSchema(0).size();
 	}
 
+	/**
+	 * Returns number of attributes in output tuples
+	 * @return number of attributes in output tuples
+	 */
 	public int getOutputTupleSize() {
 		return this.getNumberOfInputs();
 	}

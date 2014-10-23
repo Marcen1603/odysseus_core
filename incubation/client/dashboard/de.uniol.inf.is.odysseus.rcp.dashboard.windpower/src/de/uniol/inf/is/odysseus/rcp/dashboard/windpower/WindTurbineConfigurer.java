@@ -23,7 +23,7 @@ import de.uniol.inf.is.odysseus.rcp.dashboard.AbstractDashboardPartConfigurer;
 import de.uniol.inf.is.odysseus.rcp.dashboard.DashboardPartUtil;
 
 /**
- * Configurer of the WindTurbineDashBoardPart
+ * Configurer for the WindTurbineDashboardPart
  * 
  * @author Dennis Nowak
  * 
@@ -41,6 +41,13 @@ public class WindTurbineConfigurer extends
 		attributeNames = determineAttributes(roots);
 	}
 
+	/**
+	 * Returns list of attribute names from first input operator
+	 * 
+	 * @param roots
+	 *            operator collection
+	 * @return list of attribute names input
+	 */
 	private static List<String> determineAttributes(
 			Collection<IPhysicalOperator> roots) {
 		List<String> attributeNames = Lists.newArrayList();
@@ -73,6 +80,12 @@ public class WindTurbineConfigurer extends
 
 	}
 
+	/**
+	 * Places control for setting the rotor image path on topComposite
+	 * 
+	 * @param topComposite
+	 *            the Composite to place the control in
+	 */
 	private void createSetRotorImageControls(Composite topComposite) {
 		DashboardPartUtil.createLabel(topComposite, "Path to rotor Image");
 		final Text attributesInput = DashboardPartUtil.createText(topComposite,
@@ -87,6 +100,13 @@ public class WindTurbineConfigurer extends
 		});
 	}
 
+	/**
+	 * Places control for choosing if errors should be visualized on
+	 * topComposite
+	 * 
+	 * @param topComposite
+	 *            the Composite to place the control in
+	 */
 	private void createShowErrorsControls(Composite topComposite) {
 		DashboardPartUtil.createLabel(topComposite, "Show Errors");
 		final Combo comboLocked = createBooleanComboDropDown(topComposite,
@@ -100,6 +120,13 @@ public class WindTurbineConfigurer extends
 		});
 	}
 
+	/**
+	 * Places control for choosing if warnings should be visualized on
+	 * topComposite
+	 * 
+	 * @param topComposite
+	 *            the Composite to place the control in
+	 */
 	private void createShowWarningsControls(Composite topComposite) {
 		DashboardPartUtil.createLabel(topComposite, "Show Warnings");
 		final Combo comboLocked = createBooleanComboDropDown(topComposite,
@@ -113,6 +140,13 @@ public class WindTurbineConfigurer extends
 		});
 	}
 
+	/**
+	 * Places control for choosing if the measurement should be visualized on
+	 * topComposite
+	 * 
+	 * @param topComposite
+	 *            the Composite to place the control in
+	 */
 	private void createShowTextControls(Composite topComposite) {
 		DashboardPartUtil.createLabel(topComposite, "Print measurement");
 		final Combo comboLocked = createBooleanComboDropDown(topComposite,
@@ -126,6 +160,12 @@ public class WindTurbineConfigurer extends
 		});
 	}
 
+	/**
+	 * Places control for choosing canvas udate interval on topComposite
+	 * 
+	 * @param topComposite
+	 *            the Composite to place the control in
+	 */
 	private void createUpdateIntervalControls(Composite topComposite) {
 		DashboardPartUtil.createLabel(topComposite, "Update interval (ms)");
 		final Text attributesInput = DashboardPartUtil.createText(topComposite,
@@ -141,6 +181,15 @@ public class WindTurbineConfigurer extends
 		});
 	}
 
+	/**
+	 * Places BooleanComboDropDown on tableComposite
+	 * 
+	 * @param tableComposite
+	 *            the composite to place the BooleanComboDropDown
+	 * @param isSetToTrue
+	 *            defines state on creation
+	 * @return
+	 */
 	private static Combo createBooleanComboDropDown(Composite tableComposite,
 			boolean isSetToTrue) {
 		Combo comboDropDown = new Combo(tableComposite, SWT.DROP_DOWN

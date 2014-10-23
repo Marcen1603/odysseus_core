@@ -170,7 +170,7 @@
                id="de.uniol.inf.is.odysseus.rcp.odysseus.views">
             <command
                   commandId="windscadaanwendung.init"
-                  label="Init WindSCADA"
+                  label="Init windSCADA"
                   style="push">
             </command>
          </toolbar>
@@ -182,7 +182,7 @@
                id="de.uniol.inf.is.odysseus.rcp.odysseus.views">
             <command
                   commandId="windscadaanwendung.initML"
-                  label="Init WindSCADA with ML"
+                  label="Init windSCADA with ML"
                   style="push">
             </command>
          </toolbar>

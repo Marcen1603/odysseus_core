@@ -10,6 +10,7 @@ import java.net.URL;
 import java.sql.SQLException;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -36,6 +37,7 @@ import com.google.common.collect.ImmutableList;
 
 import windscadaanwendung.Activator;
 import windscadaanwendung.db.DBConnectionCA;
+import windscadaanwendung.db.DBConnectionCredentials;
 import windscadaanwendung.db.DBConnectionHD;
 import de.uniol.inf.is.odysseus.core.collection.Context;
 import de.uniol.inf.is.odysseus.core.collection.Resource;
@@ -81,13 +83,13 @@ public class WindSCADAInitializer {
 	 *            nedded, are loaded, too.
 	 */
 	public static void init(final boolean initML) {
-		Job job = new Job("Init WindSCADA") {
+		Job job = new Job("Init windSCADA") {
 
 			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				try {
 					SubMonitor progress = SubMonitor.convert(monitor,
-							"Initializing WindSCADA", 10);
+							"Initializing windSCADA", 10);
 					progress.subTask("Resetting Odysseus");
 					clearOdysseus();
 					progress.worked(1);
@@ -192,6 +194,14 @@ public class WindSCADAInitializer {
 		SubMonitor progress = SubMonitor.convert(monitor, FarmList
 				.getFarmList().size());
 		String fileContent = loadFileContent("querypatterns/HD/connectDatabase.qry");
+		Map<String, String> databaseConfig = DBConnectionCredentials
+				.load("config/HDDBConnCredentials.txt");
+		fileContent = replaceConnectionInfo(fileContent,
+				databaseConfig.get("server"),
+				Integer.parseInt(databaseConfig.get("port")));
+		fileContent = replaceCredentialsInfo(fileContent,
+				databaseConfig.get("user"), databaseConfig.get("password"),
+				databaseConfig.get("database"));
 		executeQuery(fileContent);
 		// Start Queries which are created per wind turbine
 		for (WindFarm farm : FarmList.getFarmList()) {
@@ -309,6 +319,29 @@ public class WindSCADAInitializer {
 		String adjustedQuery = query.replace("xXxhostxXx", host);
 		adjustedQuery = adjustedQuery.replace("xXxportxXx",
 				String.valueOf(port));
+		return adjustedQuery;
+	}
+
+	/**
+	 * Replacing credenial information username, password, database in a given
+	 * String
+	 * 
+	 * @param query
+	 *            query which schould be adjusted with conneciton information
+	 * @param username
+	 *            username to replace the substring xXxusernamexXx
+	 * @param password
+	 *            password to replace the substring xXxpasswordxXx
+	 * @param databaseName
+	 *            database name to replace the substring xXxdatabasexXx
+	 * @return
+	 */
+	private static String replaceCredentialsInfo(String query, String username,
+			String password, String databaseName) {
+		String adjustedQuery = query.replace("xXxusernamexXx", username);
+		adjustedQuery = adjustedQuery.replace("xXxpasswordxXx", password);
+		adjustedQuery = adjustedQuery
+				.replaceAll("xXxdatabasexXx", databaseName);
 		return adjustedQuery;
 	}
 
