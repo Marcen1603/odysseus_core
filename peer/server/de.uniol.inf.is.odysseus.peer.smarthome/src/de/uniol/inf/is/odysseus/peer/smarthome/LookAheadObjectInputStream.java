@@ -2,12 +2,8 @@ package de.uniol.inf.is.odysseus.peer.smarthome;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InvalidClassException;
 import java.io.ObjectInputStream;
 import java.io.ObjectStreamClass;
-import java.util.ArrayList;
-
-import de.uniol.inf.is.odysseus.peer.smarthome.fielddevice.SmartDevice;
 
 public class LookAheadObjectInputStream extends ObjectInputStream {
 

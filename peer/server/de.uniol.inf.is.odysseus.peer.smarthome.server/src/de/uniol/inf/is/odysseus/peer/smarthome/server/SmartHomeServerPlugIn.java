@@ -92,9 +92,12 @@ public class SmartHomeServerPlugIn implements BundleActivator,
 	}
 
 	private static void initSmartDevice() {
+		String peerIdString = p2pNetworkManager.getLocalPeerID().intern().toString();
+		String cleanPeerID = peerIdString.replaceAll("[-+.^:,]","");
+		
 		Sensor temper0 = new Temper1Sensor("Temper0", "temper0source");
 		Sensor temper1 = new Temper1Sensor("Temper1", "temper1source");
-		RPiGPIOSensor gpioTaste11 = new RPiGPIOSensor("RPiGPIOTaster", "rpigpiotastersource");
+		RPiGPIOSensor gpioTaste11 = new RPiGPIOSensor("RPiGPIOTaster", "rpigpiotastersource_"+cleanPeerID);
 		//TODO:...
 		gpioTaste11.addPossibleActivityName("Tasterbetaetigt");
 		gpioTaste11.setPin("11");
@@ -741,7 +744,7 @@ public class SmartHomeServerPlugIn implements BundleActivator,
 						// same rule can run for different peers/sensors
 						
 						if(runningRule1){
-							return;
+							//return;
 						}else{
 							runningRule1 = true;
 						}
