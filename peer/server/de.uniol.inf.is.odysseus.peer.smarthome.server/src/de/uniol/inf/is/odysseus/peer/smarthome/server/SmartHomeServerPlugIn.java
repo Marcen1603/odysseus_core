@@ -486,6 +486,11 @@ public class SmartHomeServerPlugIn implements BundleActivator,
 		private void getSmartDeviceInformations(SmartDeviceAdvertisement adv) {
 			// LOG.debug("getSmartDeviceInformations advPeerID:"+adv.getPeerID().intern().toString());
 
+			if(adv==null){
+				LOG.debug("getSmartDeviceInformations adv==null");
+				return;
+			}
+			
 			try {
 				SmartDeviceRequestMessage smartDevRequest = new SmartDeviceRequestMessage(
 						"request");
