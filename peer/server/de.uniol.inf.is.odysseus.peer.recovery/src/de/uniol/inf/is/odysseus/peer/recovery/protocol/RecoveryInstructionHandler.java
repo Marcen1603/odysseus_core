@@ -32,14 +32,12 @@ public class RecoveryInstructionHandler {
 	private static IP2PNetworkManager p2pNetworkManager;
 
 	// called by OSGi-DS
-	public static void bindRecoveryCommunicator(
-			IRecoveryCommunicator communicator) {
+	public static void bindRecoveryCommunicator(IRecoveryCommunicator communicator) {
 		recoveryCommunicator = communicator;
 	}
 
 	// called by OSGi-DS
-	public static void unbindRecoveryCommunicator(
-			IRecoveryCommunicator communicator) {
+	public static void unbindRecoveryCommunicator(IRecoveryCommunicator communicator) {
 		if (recoveryCommunicator == communicator)
 			recoveryCommunicator = null;
 	}
@@ -72,8 +70,7 @@ public class RecoveryInstructionHandler {
 			addQuery(instructionMessage.getPqlQuery());
 			break;
 		case RecoveryInstructionMessage.UPDATE_RECEIVER:
-			updateReceiver(instructionMessage.getNewSender(),
-					instructionMessage.getPipeId());
+			updateReceiver(instructionMessage.getNewSender(), instructionMessage.getPipeId());
 			break;
 		case RecoveryInstructionMessage.BE_BUDDY:
 			beBuddy(sender, instructionMessage.getSharedQueryId());
@@ -82,16 +79,13 @@ public class RecoveryInstructionHandler {
 	}
 
 	private static void holdOn(ID queryId) {
-		// Here we want to store the tuples
-		// RecoveryTupleStorePO<IStreamObject<? extends ITimeInterval>> store =
-		// new RecoveryTupleStorePO<IStreamObject<? extends ITimeInterval>>();
-
+		// TODO Here we want to store the tuples. determine pipeid
+		RecoveryHelper.insertBuffer(null);
 	}
 
 	@SuppressWarnings("rawtypes")
 	private static void addQuery(String pql) {
-		Collection<Integer> installedQueries = RecoveryHelper
-				.installAndRunQueryPartFromPql(pql);
+		Collection<Integer> installedQueries = RecoveryHelper.installAndRunQueryPartFromPql(pql);
 
 		// Call "receiveFromNewPeer" on the subsequent receiver so that that
 		// peer creates a socket-connection to us
@@ -117,11 +111,9 @@ public class RecoveryInstructionHandler {
 							URI pipeUri = new URI(pipeIdString);
 							PipeID pipe = PipeID.create(pipeUri);
 
-							PeerID ownPeerId = p2pNetworkManager
-									.getLocalPeerID();
+							PeerID ownPeerId = p2pNetworkManager.getLocalPeerID();
 
-							recoveryCommunicator.sendUpdateReceiverMessage(
-									peer, ownPeerId, pipe);
+							recoveryCommunicator.sendUpdateReceiverMessage(peer, ownPeerId, pipe);
 						} catch (Exception e) {
 							e.printStackTrace();
 						}
@@ -135,8 +127,8 @@ public class RecoveryInstructionHandler {
 	@SuppressWarnings("rawtypes")
 	private static void updateReceiver(PeerID newSender, PipeID pipeId) {
 		// 1. Get the receiver, which we have to update
-		Collection<IPhysicalQuery> queries = RecoveryCommunicator.getExecutor()
-				.getExecutionPlan().getQueries();
+		Collection<IPhysicalQuery> queries = RecoveryCommunicator.getExecutor().getExecutionPlan()
+				.getQueries();
 		for (IPhysicalQuery query : queries) {
 			for (IPhysicalOperator op : query.getAllOperators()) {
 				if (op instanceof JxtaReceiverPO) {
