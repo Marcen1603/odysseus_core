@@ -17,6 +17,7 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
 
+import de.uniol.inf.is.odysseus.client.common.ClientSessionStore;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
@@ -162,12 +163,14 @@ public class UsernameLoginContribution implements ILoginContribution {
 			ISession session = Strings.isNullOrEmpty(tenant) ? executor.login(
 					username, password.getBytes()) : executor.login(username,
 					password.getBytes(), tenant);
-
+					
 			if (session == null) {
 				return false;
 			}
-
+	
+			session.setConnectionName("");
 			OdysseusRCPPlugIn.setActiveSession(session);
+			ClientSessionStore.addSession(session.getConnectionName(), session);
 			StringBuffer message = new StringBuffer(OdysseusNLS.LoggedInAs)
 					.append(" ").append(username);
 			if (tenant.length() > 0) {

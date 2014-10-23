@@ -52,6 +52,7 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Optional;
 
+import de.uniol.inf.is.odysseus.client.common.ClientSessionStore;
 import de.uniol.inf.is.odysseus.core.collection.Context;
 import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.collection.Resource;
@@ -115,6 +116,11 @@ import de.uniol.inf.is.odysseus.webservice.client.WebserviceServerService;
  */
 public class WsClient implements IExecutor, IClientExecutor, IOperatorOwner {
 
+	// TODO: Combine login with connection where to login and store into server
+	private static final String REMOVEME = "";
+	// TODO: When connecting to multiple servers ... query id is not unique
+	// anymore --> need server in gui
+
 	final Map<String, List<IUpdateEventListener>> updateEventListener = new HashMap<String, List<IUpdateEventListener>>();
 	final long UPDATEINTERVAL = 60000;
 
@@ -154,14 +160,11 @@ public class WsClient implements IExecutor, IClientExecutor, IOperatorOwner {
 	}
 
 	@SuppressWarnings("rawtypes")
-	private Map<Integer, ClientReceiver> receivers = new HashMap<Integer, ClientReceiver>();
+	private Map<String, Map<Integer, ClientReceiver>> receivers = new HashMap<>();
 	@SuppressWarnings("rawtypes")
 	private Map<ClientReceiver, Integer> opReceivers = new HashMap<>();
 
-	// manages the connection to the WebserviceServer
-	WebserviceServerService service;
-	// create handle for WebserviceServer
-	WebserviceServer server;
+	private Map<String, WebserviceServer> server = new HashMap<String, WebserviceServer>();
 
 	@Override
 	public synchronized void addUpdateEventListener(
@@ -226,37 +229,37 @@ public class WsClient implements IExecutor, IClientExecutor, IOperatorOwner {
 	 * @param wsdlLocation
 	 * @param service
 	 */
-	public void startClient(URL wsdlLocation, QName service) {
-		this.service = new WebserviceServerService(wsdlLocation, service);
-		this.server = this.service.getWebserviceServerPort();
+	private void startClient(URL wsdlLocation, QName serviceName) {
+		WebserviceServerService service = new WebserviceServerService(
+				wsdlLocation, serviceName);
+		// TODO keep realname;
+		this.server.put(REMOVEME, service.getWebserviceServerPort());
 		generateEvents.start();
 	}
 
-	public WebserviceServerService getWebserviceServerService() {
-		return this.service;
-	}
-
-	public WebserviceServer getWebserviceServer() {
-		return this.server;
+	public WebserviceServer getWebserviceServer(String name) {
+		return this.server.get(name);
 	}
 
 	@Override
 	public ISession login(String username, byte[] password, String tenant) {
-		String securitytoken = getWebserviceServer().login(username,
+		// TODO: use real names
+		String securitytoken = getWebserviceServer(REMOVEME).login(username,
 				new String(password), tenant).getResponseValue();
 		IUser user = new WsClientUser(username, password, true);
-		WsClientSession session = new WsClientSession(user, null);
+		WsClientSession session = new WsClientSession(user, null, REMOVEME);
 		session.setToken(securitytoken);
+		ClientSessionStore.addSession(REMOVEME, session);
 		fireUpdateEvent(IUpdateEventListener.SESSION);
 		return session;
 	}
 
 	@Override
 	public ISession login(String username, byte[] password) {
-		String securitytoken = getWebserviceServer().login2(username,
+		String securitytoken = getWebserviceServer(REMOVEME).login2(username,
 				new String(password)).getResponseValue();
 		IUser user = new WsClientUser(username, password, true);
-		WsClientSession session = new WsClientSession(user, null);
+		WsClientSession session = new WsClientSession(user, null, REMOVEME);
 		session.setToken(securitytoken);
 		fireUpdateEvent(IUpdateEventListener.SESSION);
 		return session;
@@ -264,16 +267,18 @@ public class WsClient implements IExecutor, IClientExecutor, IOperatorOwner {
 
 	@Override
 	public boolean isValid(ISession session) {
-		Response r = getWebserviceServer().isValidSession(session.getToken());
+		Response r = getWebserviceServer(session.getConnectionName())
+				.isValidSession(session.getToken());
 		return r.isSuccessful();
 	}
 
 	@Override
 	public void removeQuery(int queryID, ISession caller)
 			throws PlanManagementException {
-		if (getWebserviceServer() != null) {
+		if (getWebserviceServer(caller.getConnectionName()) != null) {
 			try {
-				getWebserviceServer().removeQuery(caller.getToken(), queryID);
+				getWebserviceServer(caller.getConnectionName()).removeQuery(
+						caller.getToken(), queryID);
 			} catch (QueryNotExistsException_Exception
 					| InvalidUserDataException_Exception e) {
 				throw new PlanManagementException(e);
@@ -291,9 +296,10 @@ public class WsClient implements IExecutor, IClientExecutor, IOperatorOwner {
 	@Override
 	public void startQuery(int queryID, ISession caller)
 			throws PlanManagementException {
-		if (getWebserviceServer() != null) {
+		if (getWebserviceServer(caller.getConnectionName()) != null) {
 			try {
-				getWebserviceServer().startQuery(caller.getToken(), queryID);
+				getWebserviceServer(caller.getConnectionName()).startQuery(
+						caller.getToken(), queryID);
 			} catch (QueryNotExistsException_Exception
 					| InvalidUserDataException_Exception e) {
 				throw new PlanManagementException(e);
@@ -311,9 +317,10 @@ public class WsClient implements IExecutor, IClientExecutor, IOperatorOwner {
 	@Override
 	public void stopQuery(int queryID, ISession caller)
 			throws PlanManagementException {
-		if (getWebserviceServer() != null) {
+		if (getWebserviceServer(caller.getConnectionName()) != null) {
 			try {
-				getWebserviceServer().stopQuery(caller.getToken(), queryID);
+				getWebserviceServer(caller.getConnectionName()).stopQuery(
+						caller.getToken(), queryID);
 			} catch (QueryNotExistsException_Exception
 					| InvalidUserDataException_Exception e) {
 				throw new PlanManagementException(e);
@@ -331,9 +338,10 @@ public class WsClient implements IExecutor, IClientExecutor, IOperatorOwner {
 	@Override
 	public void suspendQuery(int queryID, ISession caller)
 			throws PlanManagementException {
-		if (getWebserviceServer() != null) {
+		if (getWebserviceServer(caller.getConnectionName()) != null) {
 			try {
-				getWebserviceServer().suspendQuery(caller.getToken(), queryID);
+				getWebserviceServer(caller.getConnectionName()).suspendQuery(
+						caller.getToken(), queryID);
 			} catch (QueryNotExistsException_Exception
 					| InvalidUserDataException_Exception e) {
 				throw new PlanManagementException(e);
@@ -351,9 +359,10 @@ public class WsClient implements IExecutor, IClientExecutor, IOperatorOwner {
 	@Override
 	public void resumeQuery(int queryID, ISession caller)
 			throws PlanManagementException {
-		if (getWebserviceServer() != null) {
+		if (getWebserviceServer(caller.getConnectionName()) != null) {
 			try {
-				getWebserviceServer().resumeQuery(caller.getToken(), queryID);
+				getWebserviceServer(caller.getConnectionName()).resumeQuery(
+						caller.getToken(), queryID);
 			} catch (QueryNotExistsException_Exception
 					| InvalidUserDataException_Exception e) {
 				throw new PlanManagementException(e);
@@ -382,7 +391,7 @@ public class WsClient implements IExecutor, IClientExecutor, IOperatorOwner {
 
 	@Override
 	public QueryState getQueryState(int queryID) {
-		return getWebserviceServer().getQueryState(queryID);
+		return getWebserviceServer(REMOVEME).getQueryState(queryID);
 	}
 
 	@Override
@@ -392,15 +401,16 @@ public class WsClient implements IExecutor, IClientExecutor, IOperatorOwner {
 
 	@Override
 	public List<QueryState> getQueryStates(List<Integer> queryID) {
-		return getWebserviceServer().getQueryStates(queryID);
+		return getWebserviceServer(REMOVEME).getQueryStates(queryID);
 	}
 
 	@Override
 	public Collection<String> getQueryBuildConfigurationNames(ISession caller) {
-		if (getWebserviceServer() != null) {
+		if (getWebserviceServer(caller.getConnectionName()) != null) {
 			try {
-				return getWebserviceServer().getQueryBuildConfigurationNames(
-						caller.getToken()).getResponseValue();
+				return getWebserviceServer(caller.getConnectionName())
+						.getQueryBuildConfigurationNames(caller.getToken())
+						.getResponseValue();
 			} catch (InvalidUserDataException_Exception e) {
 				throw new PlanManagementException(e);
 			}
@@ -411,11 +421,11 @@ public class WsClient implements IExecutor, IClientExecutor, IOperatorOwner {
 	@Override
 	public Set<String> getSupportedQueryParsers(ISession caller)
 			throws PlanManagementException {
-		if (getWebserviceServer() != null) {
+		if (getWebserviceServer(caller.getConnectionName()) != null) {
 			try {
-				List<String> parsers = getWebserviceServer()
-						.getSupportedQueryParsers(caller.getToken())
-						.getResponseValue();
+				List<String> parsers = getWebserviceServer(
+						caller.getConnectionName()).getSupportedQueryParsers(
+						caller.getToken()).getResponseValue();
 				Set<String> parserSet = new HashSet<String>();
 				for (String parser : parsers) {
 					parserSet.add(parser);
@@ -430,10 +440,11 @@ public class WsClient implements IExecutor, IClientExecutor, IOperatorOwner {
 
 	@Override
 	public List<Integer> startAllClosedQueries(ISession user) {
-		if (getWebserviceServer() != null) {
+		if (getWebserviceServer(user.getConnectionName()) != null) {
 			// this is always null
 			try {
-				getWebserviceServer().startAllClosedQueries(user.getToken());
+				getWebserviceServer(user.getConnectionName())
+						.startAllClosedQueries(user.getToken());
 			} catch (InvalidUserDataException_Exception e) {
 				e.printStackTrace();
 			}
@@ -444,9 +455,10 @@ public class WsClient implements IExecutor, IClientExecutor, IOperatorOwner {
 
 	@Override
 	public Set<String> getRegisteredBufferPlacementStrategiesIDs(ISession caller) {
-		if (getWebserviceServer() != null) {
+		if (getWebserviceServer(caller.getConnectionName()) != null) {
 			try {
-				List<String> ids = getWebserviceServer()
+				List<String> ids = getWebserviceServer(
+						caller.getConnectionName())
 						.getRegisteredBufferPlacementStrategiesIDs(
 								caller.getToken()).getResponseValue();
 				Set<String> idSet = new HashSet<String>();
@@ -463,9 +475,10 @@ public class WsClient implements IExecutor, IClientExecutor, IOperatorOwner {
 
 	@Override
 	public Set<String> getRegisteredSchedulingStrategies(ISession caller) {
-		if (getWebserviceServer() != null) {
+		if (getWebserviceServer(caller.getConnectionName()) != null) {
 			try {
-				List<String> strats = getWebserviceServer()
+				List<String> strats = getWebserviceServer(
+						caller.getConnectionName())
 						.getRegisteredSchedulingStrategies(caller.getToken())
 						.getResponseValue();
 				Set<String> stratSet = new HashSet<String>();
@@ -482,9 +495,10 @@ public class WsClient implements IExecutor, IClientExecutor, IOperatorOwner {
 
 	@Override
 	public Set<String> getRegisteredSchedulers(ISession caller) {
-		if (getWebserviceServer() != null) {
+		if (getWebserviceServer(caller.getConnectionName()) != null) {
 			try {
-				List<String> scheds = getWebserviceServer()
+				List<String> scheds = getWebserviceServer(
+						caller.getConnectionName())
 						.getRegisteredSchedulingStrategies(caller.getToken())
 						.getResponseValue();
 				Set<String> schedSet = new HashSet<String>();
@@ -502,10 +516,10 @@ public class WsClient implements IExecutor, IClientExecutor, IOperatorOwner {
 	@Override
 	public void setScheduler(String scheduler, String schedulerStrategy,
 			ISession caller) {
-		if (getWebserviceServer() != null) {
+		if (getWebserviceServer(caller.getConnectionName()) != null) {
 			try {
-				getWebserviceServer().setScheduler(caller.getToken(),
-						scheduler, schedulerStrategy);
+				getWebserviceServer(caller.getConnectionName()).setScheduler(
+						caller.getToken(), scheduler, schedulerStrategy);
 			} catch (InvalidUserDataException_Exception e) {
 				throw new PlanManagementException(e);
 			}
@@ -515,10 +529,11 @@ public class WsClient implements IExecutor, IClientExecutor, IOperatorOwner {
 
 	@Override
 	public String getCurrentSchedulerID(ISession caller) {
-		if (getWebserviceServer() != null) {
+		if (getWebserviceServer(caller.getConnectionName()) != null) {
 			try {
-				StringResponse response = getWebserviceServer()
-						.getCurrentSchedulerID(caller.getToken());
+				StringResponse response = getWebserviceServer(
+						caller.getConnectionName()).getCurrentSchedulerID(
+						caller.getToken());
 				if (response != null) {
 					return response.getResponseValue();
 				}
@@ -531,10 +546,11 @@ public class WsClient implements IExecutor, IClientExecutor, IOperatorOwner {
 
 	@Override
 	public String getCurrentSchedulingStrategyID(ISession caller) {
-		if (getWebserviceServer() != null) {
+		if (getWebserviceServer(caller.getConnectionName()) != null) {
 			try {
-				return getWebserviceServer().getCurrentSchedulingStrategyID(
-						caller.getToken()).getResponseValue();
+				return getWebserviceServer(caller.getConnectionName())
+						.getCurrentSchedulingStrategyID(caller.getToken())
+						.getResponseValue();
 			} catch (InvalidUserDataException_Exception e) {
 				throw new PlanManagementException(e);
 			}
@@ -544,9 +560,6 @@ public class WsClient implements IExecutor, IClientExecutor, IOperatorOwner {
 
 	@Override
 	public String getName() {
-		if (getWebserviceServer() != null) {
-			return getWebserviceServer().getName().getResponseValue();
-		}
 		return "WebServiceExecutor";
 	}
 
@@ -555,9 +568,10 @@ public class WsClient implements IExecutor, IClientExecutor, IOperatorOwner {
 			ISession user, String queryBuildConfigurationName, Context context)
 			throws PlanManagementException { //
 		try {
-			Collection<Integer> response = getWebserviceServer().addQuery(
-					user.getToken(), parserID, query,
-					queryBuildConfigurationName, context).getResponseValue();
+			Collection<Integer> response = getWebserviceServer(
+					user.getConnectionName()).addQuery(user.getToken(),
+					parserID, query, queryBuildConfigurationName, context)
+					.getResponseValue();
 			fireUpdateEvent(IUpdateEventListener.QUERY);
 			// Query could create schema information ... fire events
 			fireUpdateEvent(IUpdateEventListener.DATADICTIONARY);
@@ -572,8 +586,9 @@ public class WsClient implements IExecutor, IClientExecutor, IOperatorOwner {
 	@Override
 	public ILogicalQuery getLogicalQueryById(int id, ISession caller) {
 		try {
-			QueryResponse resp = getWebserviceServer().getLogicalQueryById(
-					caller.getToken(), Integer.toString(id));
+			QueryResponse resp = getWebserviceServer(caller.getConnectionName())
+					.getLogicalQueryById(caller.getToken(),
+							Integer.toString(id));
 			return createLogicalQueryFromInfo(resp.getResponseValue(),
 					resp.getQueryState(), caller);
 		} catch (InvalidUserDataException_Exception
@@ -585,8 +600,8 @@ public class WsClient implements IExecutor, IClientExecutor, IOperatorOwner {
 	@Override
 	public ILogicalQuery getLogicalQueryByName(String name, ISession caller) {
 		try {
-			QueryResponse resp = getWebserviceServer().getLogicalQueryByName(
-					caller.getToken(), name);
+			QueryResponse resp = getWebserviceServer(caller.getConnectionName())
+					.getLogicalQueryByName(caller.getToken(), name);
 			return createLogicalQueryFromInfo(resp.getResponseValue(),
 					resp.getQueryState(), caller);
 		} catch (InvalidUserDataException_Exception e) {
@@ -618,16 +633,19 @@ public class WsClient implements IExecutor, IClientExecutor, IOperatorOwner {
 
 	@Override
 	public void logout(ISession caller) {
-		getWebserviceServer().logout(caller.getToken());
+		getWebserviceServer(caller.getConnectionName()).logout(
+				caller.getToken());
+		ClientSessionStore.removeSession(caller.getConnectionName());
 		fireUpdateEvent(IUpdateEventListener.SESSION);
 	}
 
 	@Override
 	public Collection<Integer> getLogicalQueryIds(ISession caller) {
-		if (getWebserviceServer() != null) {
+		if (getWebserviceServer(caller.getConnectionName()) != null) {
 			try {
-				return getWebserviceServer().getLogicalQueryIds(
-						caller.getToken()).getResponseValue();
+				return getWebserviceServer(caller.getConnectionName())
+						.getLogicalQueryIds(caller.getToken())
+						.getResponseValue();
 			} catch (InvalidUserDataException_Exception e) {
 				throw new PlanManagementException(e);
 			}
@@ -652,7 +670,8 @@ public class WsClient implements IExecutor, IClientExecutor, IOperatorOwner {
 			int queryId, ISession caller) {
 
 		if (receivers.containsKey(queryId)) {
-			return Optional.of(receivers.get(queryId));
+			return Optional.of(receivers.get(caller.getConnectionName()).get(
+					queryId));
 		}
 
 		SDFSchema outputSchema = exec.getOutputSchema(queryId, caller);
@@ -661,7 +680,7 @@ public class WsClient implements IExecutor, IClientExecutor, IOperatorOwner {
 		InetSocketAddress adr = (InetSocketAddress) ((IClientExecutor) exec)
 				.getSocketConnectionInformation(queryId, caller);
 		OptionMap options = new OptionMap();
-		options.setOption("port", "" + adr.getPort());
+		options.setOption("port", REMOVEME + adr.getPort());
 		options.setOption("host", adr.getHostName());
 		// TODO: Send logininfo to server
 		options.setOption("logininfo", caller.getToken() + "\n");
@@ -678,7 +697,14 @@ public class WsClient implements IExecutor, IClientExecutor, IOperatorOwner {
 		receiver.setOutputSchema(outputSchema);
 		receiver.open(null, 0, 0, null, null);
 		receiver.addOwner(this);
-		receivers.put(queryId, receiver);
+		Map<Integer, ClientReceiver> r = receivers.get(caller
+				.getConnectionName());
+		if (r == null) {
+			r = new HashMap<Integer, ClientReceiver>();
+			receivers.put(caller.getConnectionName(), r);
+		}
+		r.put(queryId, receiver);
+		// TODO: FIXME for multiple server version
 		opReceivers.put(receiver, queryId);
 
 		return Optional.of(receiver);
@@ -702,11 +728,11 @@ public class WsClient implements IExecutor, IClientExecutor, IOperatorOwner {
 	@Override
 	public SocketAddress getSocketConnectionInformation(int queryId,
 			ISession caller) {
-		if (getWebserviceServer() != null) {
+		if (getWebserviceServer(caller.getConnectionName()) != null) {
 			try {
-				ConnectionInformationResponse infoResponse = getWebserviceServer()
-						.getConnectionInformation(caller.getToken(), queryId,
-								false);
+				ConnectionInformationResponse infoResponse = getWebserviceServer(
+						caller.getConnectionName()).getConnectionInformation(
+						caller.getToken(), queryId, false);
 
 				if (infoResponse != null) {
 					ConnectionInformation info = infoResponse
@@ -723,11 +749,11 @@ public class WsClient implements IExecutor, IClientExecutor, IOperatorOwner {
 
 	@Override
 	public SDFSchema getOutputSchema(int queryId, ISession caller) {
-		if (getWebserviceServer() != null) {
+		if (getWebserviceServer(caller.getConnectionName()) != null) {
 			try {
-				return createSchemaFromInformation(getWebserviceServer()
-						.getOutputSchemaByQueryId(caller.getToken(), queryId)
-						.getResponseValue());
+				return createSchemaFromInformation(getWebserviceServer(
+						caller.getConnectionName()).getOutputSchemaByQueryId(
+						caller.getToken(), queryId).getResponseValue());
 			} catch (InvalidUserDataException_Exception
 					| QueryNotExistsException_Exception e) {
 				throw new PlanManagementException(e);
@@ -763,11 +789,11 @@ public class WsClient implements IExecutor, IClientExecutor, IOperatorOwner {
 
 	@Override
 	public ILogicalOperator removeSink(String name, ISession caller) {
-		if (getWebserviceServer() != null) {
+		if (getWebserviceServer(caller.getConnectionName()) != null) {
 			try {
-				ILogicalOperator result = (ILogicalOperator) getWebserviceServer()
-						.removeSinkByName(name, caller.getToken())
-						.getResponseValue();
+				ILogicalOperator result = (ILogicalOperator) getWebserviceServer(
+						caller.getConnectionName()).removeSinkByName(name,
+						caller.getToken()).getResponseValue();
 				fireUpdateEvent(IUpdateEventListener.DATADICTIONARY);
 				return result;
 			} catch (InvalidUserDataException_Exception e) {
@@ -779,12 +805,12 @@ public class WsClient implements IExecutor, IClientExecutor, IOperatorOwner {
 
 	@Override
 	public ILogicalOperator removeSink(Resource name, ISession caller) {
-		if (getWebserviceServer() != null) {
+		if (getWebserviceServer(caller.getConnectionName()) != null) {
 			try {
 				ResourceInformation ri = toResourceInformation(name);
-				ILogicalOperator result = (ILogicalOperator) getWebserviceServer()
-						.removeSinkByResource(ri, caller.getToken())
-						.getResponseValue();
+				ILogicalOperator result = (ILogicalOperator) getWebserviceServer(
+						caller.getConnectionName()).removeSinkByResource(ri,
+						caller.getToken()).getResponseValue();
 				fireUpdateEvent(IUpdateEventListener.DATADICTIONARY);
 				return result;
 			} catch (InvalidUserDataException_Exception e) {
@@ -796,10 +822,10 @@ public class WsClient implements IExecutor, IClientExecutor, IOperatorOwner {
 
 	@Override
 	public void removeViewOrStream(String name, ISession caller) {
-		if (getWebserviceServer() != null) {
+		if (getWebserviceServer(caller.getConnectionName()) != null) {
 			try {
-				getWebserviceServer().removeViewOrStreamByName(name,
-						caller.getToken());
+				getWebserviceServer(caller.getConnectionName())
+						.removeViewOrStreamByName(name, caller.getToken());
 				fireUpdateEvent(IUpdateEventListener.DATADICTIONARY);
 			} catch (InvalidUserDataException_Exception e) {
 				throw new PlanManagementException(e);
@@ -809,11 +835,11 @@ public class WsClient implements IExecutor, IClientExecutor, IOperatorOwner {
 
 	@Override
 	public void removeViewOrStream(Resource name, ISession caller) {
-		if (getWebserviceServer() != null) {
+		if (getWebserviceServer(caller.getConnectionName()) != null) {
 			try {
 				ResourceInformation ri = toResourceInformation(name);
-				getWebserviceServer().removeViewOrStreamByResource(ri,
-						caller.getToken());
+				getWebserviceServer(caller.getConnectionName())
+						.removeViewOrStreamByResource(ri, caller.getToken());
 				fireUpdateEvent(IUpdateEventListener.DATADICTIONARY);
 			} catch (InvalidUserDataException_Exception e) {
 				throw new PlanManagementException(e);
@@ -824,11 +850,12 @@ public class WsClient implements IExecutor, IClientExecutor, IOperatorOwner {
 
 	@Override
 	public List<ViewInformation> getStreamsAndViewsInformation(ISession caller) {
-		if (getWebserviceServer() != null) {
+		if (getWebserviceServer(caller.getConnectionName()) != null) {
 			try {
 				List<ViewInformation> result = new ArrayList<>();
-				List<ViewInformationWS> l = getWebserviceServer()
-						.getStreamsAndViews(caller.getToken());
+				List<ViewInformationWS> l = getWebserviceServer(
+						caller.getConnectionName()).getStreamsAndViews(
+						caller.getToken());
 				for (ViewInformationWS viws : l) {
 					ViewInformation vi = new ViewInformation();
 					vi.setName(toResource(viws.getName()));
@@ -846,10 +873,10 @@ public class WsClient implements IExecutor, IClientExecutor, IOperatorOwner {
 
 	@Override
 	public List<SinkInformation> getSinks(ISession caller) {
-		if (getWebserviceServer() != null) {
+		if (getWebserviceServer(caller.getConnectionName()) != null) {
 			try {
-				List<SinkInformationWS> l = getWebserviceServer().getSinks(
-						caller.getToken());
+				List<SinkInformationWS> l = getWebserviceServer(
+						caller.getConnectionName()).getSinks(caller.getToken());
 				List<SinkInformation> result = new ArrayList<>();
 				for (SinkInformationWS viws : l) {
 					SinkInformation vi = new SinkInformation();
@@ -868,9 +895,10 @@ public class WsClient implements IExecutor, IClientExecutor, IOperatorOwner {
 
 	@Override
 	public void reloadStoredQueries(ISession caller) {
-		if (getWebserviceServer() != null) {
+		if (getWebserviceServer(caller.getConnectionName()) != null) {
 			try {
-				getWebserviceServer().reloadStoredQueries(caller.getToken());
+				getWebserviceServer(caller.getConnectionName())
+						.reloadStoredQueries(caller.getToken());
 			} catch (InvalidUserDataException_Exception e) {
 				throw new PlanManagementException(e);
 			}
@@ -880,11 +908,12 @@ public class WsClient implements IExecutor, IClientExecutor, IOperatorOwner {
 
 	@Override
 	public boolean containsViewOrStream(Resource name, ISession caller) {
-		if (getWebserviceServer() != null) {
+		if (getWebserviceServer(caller.getConnectionName()) != null) {
 			try {
 				ResourceInformation ri = toResourceInformation(name);
-				return getWebserviceServer().containsViewOrStreamByResource(ri,
-						caller.getToken()).isResponseValue();
+				return getWebserviceServer(caller.getConnectionName())
+						.containsViewOrStreamByResource(ri, caller.getToken())
+						.isResponseValue();
 			} catch (InvalidUserDataException_Exception e) {
 				throw new PlanManagementException(e);
 			}
@@ -906,10 +935,11 @@ public class WsClient implements IExecutor, IClientExecutor, IOperatorOwner {
 
 	@Override
 	public boolean containsViewOrStream(String name, ISession caller) {
-		if (getWebserviceServer() != null) {
+		if (getWebserviceServer(caller.getConnectionName()) != null) {
 			try {
-				return getWebserviceServer().containsViewOrStreamByName(name,
-						caller.getToken()).isResponseValue();
+				return getWebserviceServer(caller.getConnectionName())
+						.containsViewOrStreamByName(name, caller.getToken())
+						.isResponseValue();
 			} catch (InvalidUserDataException_Exception e) {
 				throw new PlanManagementException(e);
 			}
@@ -920,10 +950,10 @@ public class WsClient implements IExecutor, IClientExecutor, IOperatorOwner {
 	@Override
 	public void addStoredProcedure(String name, StoredProcedure sp,
 			ISession caller) {
-		if (getWebserviceServer() != null) {
+		if (getWebserviceServer(caller.getConnectionName()) != null) {
 			try {
-				getWebserviceServer().addStoredProcedure(name, sp,
-						caller.getToken());
+				getWebserviceServer(caller.getConnectionName())
+						.addStoredProcedure(name, sp, caller.getToken());
 				fireUpdateEvent(IUpdateEventListener.DATADICTIONARY);
 			} catch (InvalidUserDataException_Exception e) {
 				throw new PlanManagementException(e);
@@ -933,11 +963,11 @@ public class WsClient implements IExecutor, IClientExecutor, IOperatorOwner {
 
 	@Override
 	public StoredProcedure getStoredProcedure(String name, ISession caller) {
-		if (getWebserviceServer() != null) {
+		if (getWebserviceServer(caller.getConnectionName()) != null) {
 			try {
-				StoredProcedure result = getWebserviceServer()
-						.getStoredProcedure(name, caller.getToken())
-						.getResponseValue();
+				StoredProcedure result = getWebserviceServer(
+						caller.getConnectionName()).getStoredProcedure(name,
+						caller.getToken()).getResponseValue();
 				fireUpdateEvent(IUpdateEventListener.DATADICTIONARY);
 				return result;
 			} catch (InvalidUserDataException_Exception e) {
@@ -949,10 +979,10 @@ public class WsClient implements IExecutor, IClientExecutor, IOperatorOwner {
 
 	@Override
 	public void removeStoredProcedure(String name, ISession caller) {
-		if (getWebserviceServer() != null) {
+		if (getWebserviceServer(caller.getConnectionName()) != null) {
 			try {
-				getWebserviceServer().removeStoredProcedure(name,
-						caller.getToken());
+				getWebserviceServer(caller.getConnectionName())
+						.removeStoredProcedure(name, caller.getToken());
 				fireUpdateEvent(IUpdateEventListener.DATADICTIONARY);
 			} catch (InvalidUserDataException_Exception e) {
 				throw new PlanManagementException(e);
@@ -962,11 +992,12 @@ public class WsClient implements IExecutor, IClientExecutor, IOperatorOwner {
 
 	@Override
 	public List<StoredProcedure> getStoredProcedures(ISession caller) {
-		if (getWebserviceServer() != null) {
+		if (getWebserviceServer(caller.getConnectionName()) != null) {
 			try {
 
-				return getWebserviceServer().getStoredProcedures(
-						caller.getToken()).getResponseValue();
+				return getWebserviceServer(caller.getConnectionName())
+						.getStoredProcedures(caller.getToken())
+						.getResponseValue();
 			} catch (InvalidUserDataException_Exception e) {
 				throw new PlanManagementException(e);
 			}
@@ -976,10 +1007,11 @@ public class WsClient implements IExecutor, IClientExecutor, IOperatorOwner {
 
 	@Override
 	public boolean containsStoredProcedures(String name, ISession caller) {
-		if (getWebserviceServer() != null) {
+		if (getWebserviceServer(caller.getConnectionName()) != null) {
 			try {
-				return getWebserviceServer().containsStoredProcedures(name,
-						caller.getToken()).isResponseValue();
+				return getWebserviceServer(caller.getConnectionName())
+						.containsStoredProcedures(name, caller.getToken())
+						.isResponseValue();
 			} catch (InvalidUserDataException_Exception e) {
 				throw new PlanManagementException(e);
 			}
@@ -995,12 +1027,15 @@ public class WsClient implements IExecutor, IClientExecutor, IOperatorOwner {
 	 */
 	@Override
 	public List<String> getOperatorNames(ISession caller) {
-		if (getWebserviceServer() != null) {
-			try {
-				return getWebserviceServer()
-						.getOperatorNames(caller.getToken()).getResponseValue();
-			} catch (InvalidUserDataException_Exception e) {
-				throw new PlanManagementException(e);
+		if (caller != null) {
+			if (getWebserviceServer(caller.getConnectionName()) != null) {
+				try {
+					return getWebserviceServer(caller.getConnectionName())
+							.getOperatorNames(caller.getToken())
+							.getResponseValue();
+				} catch (InvalidUserDataException_Exception e) {
+					throw new PlanManagementException(e);
+				}
 			}
 		}
 		return new ArrayList<>();
@@ -1016,10 +1051,11 @@ public class WsClient implements IExecutor, IClientExecutor, IOperatorOwner {
 	@Override
 	public List<LogicalOperatorInformation> getOperatorInformations(
 			ISession caller) {
-		if (getWebserviceServer() != null) {
+		if (getWebserviceServer(caller.getConnectionName()) != null) {
 			try {
-				return getWebserviceServer().getOperatorInformations(
-						caller.getToken()).getResponseValue();
+				return getWebserviceServer(caller.getConnectionName())
+						.getOperatorInformations(caller.getToken())
+						.getResponseValue();
 			} catch (InvalidUserDataException_Exception e) {
 				throw new PlanManagementException(e);
 			}
@@ -1037,10 +1073,11 @@ public class WsClient implements IExecutor, IClientExecutor, IOperatorOwner {
 	@Override
 	public LogicalOperatorInformation getOperatorInformation(String name,
 			ISession caller) {
-		if (getWebserviceServer() != null) {
+		if (getWebserviceServer(caller.getConnectionName()) != null) {
 			try {
-				return getWebserviceServer().getOperatorInformation(name,
-						caller.getToken()).getResponseValue();
+				return getWebserviceServer(caller.getConnectionName())
+						.getOperatorInformation(name, caller.getToken())
+						.getResponseValue();
 			} catch (InvalidUserDataException_Exception e) {
 				throw new PlanManagementException(e);
 			}
@@ -1051,11 +1088,11 @@ public class WsClient implements IExecutor, IClientExecutor, IOperatorOwner {
 	@Override
 	public SDFSchema determineOutputSchema(String query, String parserID,
 			ISession user, int port, Context context) {
-		if (getWebserviceServer() != null) {
+		if (getWebserviceServer(user.getConnectionName()) != null) {
 			try {
-				SdfSchemaInformation si = getWebserviceServer()
-						.determineOutputSchema(query, parserID,
-								user.getToken(), port, context)
+				SdfSchemaInformation si = getWebserviceServer(
+						user.getConnectionName()).determineOutputSchema(query,
+						parserID, user.getToken(), port, context)
 						.getResponseValue();
 				SDFSchema schema = toSDFSchema(si);
 				return schema;
@@ -1093,12 +1130,12 @@ public class WsClient implements IExecutor, IClientExecutor, IOperatorOwner {
 	 */
 	@Override
 	public Set<SDFDatatype> getRegisteredDatatypes(ISession caller) {
-		if (getWebserviceServer() != null) {
+		if (getWebserviceServer(caller.getConnectionName()) != null) {
 			try {
 				HashSet<SDFDatatype> set = new HashSet<>();
-				List<SdfDatatypeInformation> dts = getWebserviceServer()
-						.getRegisteredDatatypes(caller.getToken())
-						.getResponseValue();
+				List<SdfDatatypeInformation> dts = getWebserviceServer(
+						caller.getConnectionName()).getRegisteredDatatypes(
+						caller.getToken()).getResponseValue();
 				for (SdfDatatypeInformation dt : dts) {
 					set.add(new SDFDatatype(dt.getUri()));
 				}
@@ -1121,10 +1158,10 @@ public class WsClient implements IExecutor, IClientExecutor, IOperatorOwner {
 	public Set<String> getRegisteredAggregateFunctions(
 			@SuppressWarnings("rawtypes") Class<? extends IStreamObject> datamodel,
 			ISession caller) {
-		if (getWebserviceServer() != null) {
+		if (getWebserviceServer(caller.getConnectionName()) != null) {
 			try {
 				HashSet<String> set = new HashSet<>();
-				set.addAll(getWebserviceServer()
+				set.addAll(getWebserviceServer(caller.getConnectionName())
 						.getRegisteredAggregateFunctions(datamodel.getName(),
 								caller.getToken()).getResponseValue());
 				return set;
@@ -1137,11 +1174,12 @@ public class WsClient implements IExecutor, IClientExecutor, IOperatorOwner {
 
 	@Override
 	public Set<String> getRegisteredWrapperNames(ISession caller) {
-		if (getWebserviceServer() != null) {
+		if (getWebserviceServer(caller.getConnectionName()) != null) {
 			try {
 				HashSet<String> set = new HashSet<>();
-				set.addAll(getWebserviceServer().getRegisteredWrapperNames(
-						caller.getToken()).getResponseValue());
+				set.addAll(getWebserviceServer(caller.getConnectionName())
+						.getRegisteredWrapperNames(caller.getToken())
+						.getResponseValue());
 				return set;
 			} catch (InvalidUserDataException_Exception e) {
 				throw new PlanManagementException(e);
@@ -1154,11 +1192,11 @@ public class WsClient implements IExecutor, IClientExecutor, IOperatorOwner {
 	public Map<String, List<String>> getQueryParserTokens(String queryParser,
 			ISession user) {
 		HashMap<String, List<String>> result = new HashMap<>();
-		if (getWebserviceServer() != null) {
+		if (getWebserviceServer(user.getConnectionName()) != null) {
 			try {
-				List<StringMapListEntry> entries = getWebserviceServer()
-						.getQueryParserTokens(queryParser, user.getToken())
-						.getResponseValue();
+				List<StringMapListEntry> entries = getWebserviceServer(
+						user.getConnectionName()).getQueryParserTokens(
+						queryParser, user.getToken()).getResponseValue();
 				for (StringMapListEntry e : entries) {
 					result.put(e.getKey(), e.getValue());
 				}
@@ -1172,11 +1210,11 @@ public class WsClient implements IExecutor, IClientExecutor, IOperatorOwner {
 	@Override
 	public List<String> getQueryParserSuggestions(String queryParser,
 			String hint, ISession caller) {
-		if (getWebserviceServer() != null) {
+		if (getWebserviceServer(caller.getConnectionName()) != null) {
 			try {
-				return getWebserviceServer().getQueryParserSuggestions(
-						queryParser, hint, caller.getToken())
-						.getResponseValue();
+				return getWebserviceServer(caller.getConnectionName())
+						.getQueryParserSuggestions(queryParser, hint,
+								caller.getToken()).getResponseValue();
 
 			} catch (InvalidUserDataException_Exception e) {
 				throw new PlanManagementException(e);

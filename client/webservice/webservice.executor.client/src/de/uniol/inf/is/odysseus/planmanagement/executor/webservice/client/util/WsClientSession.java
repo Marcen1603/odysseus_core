@@ -15,83 +15,35 @@
  */
 package de.uniol.inf.is.odysseus.planmanagement.executor.webservice.client.util;
 
-import java.math.BigInteger;
-import java.security.SecureRandom;
-import java.util.UUID;
-
+import de.uniol.inf.is.odysseus.core.usermanagement.AbstractSession;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.core.usermanagement.ITenant;
 import de.uniol.inf.is.odysseus.core.usermanagement.IUser;
 
 /**
  * 
- * @author Merlin Wasmann
+ * @author Marco Grawunder
  *
- * copied from de.uniol.inf.is.odysseus.core.server.usermanagement.Session by Christian Kuka
  */
 
-public class WsClientSession implements ISession {
+public class WsClientSession  extends AbstractSession implements ISession {
 
 
-	private static final long serialVersionUID = 1701204665340985896L;
-	private final static long SESSION_TIMEOUT = 10 * 60000;
-	private final String id = UUID.randomUUID().toString();
-	private final IUser user;
-	private final ITenant tenant;
-	private final long start;
-	private long end;
-	private String token = "";
-	
-	public WsClientSession(final IUser user, final ITenant tenant) {
-		this.user = user;
-		this.tenant = tenant;
-		start = System.currentTimeMillis();
-		end = start + SESSION_TIMEOUT;
-	}
-	
-	@Override
-	public String getId() {
-		return this.id;
+	private static final long serialVersionUID = 3523363132440028382L;
+
+	public WsClientSession(final IUser user, final ITenant tenant, final String connection) {
+		super(user, tenant);
+		setConnectionName(connection);
 	}
 
 	@Override
-	public IUser getUser() {
-		return this.user;
+	protected long getSessionTimeout() {
+		// Is not relevant on client side		
+		return 0;
+	}
+
+	public void setToken(String securitytoken) {
+		super.setToken(securitytoken);
 	}
 	
-	@Override
-	public ITenant getTenant() {
-		return tenant;
-	}
-
-	@Override
-	public boolean isValid() {
-		long ts = System.currentTimeMillis();
-		return ts >= start && ts <= end;
-	}
-
-	@Override
-	public void updateSession() {
-		if(isValid()) {
-			this.end = System.currentTimeMillis() + SESSION_TIMEOUT;
-		}
-	}
-	
-	public void setToken(String tk) {
-		this.token = tk;
-	}
-
-	@Override
-	public String getToken() {
-		if(token.isEmpty()) {
-			token = createToken();
-		}
-		return token;
-	}
-	
-	private static String createToken() {
-		SecureRandom random = new SecureRandom();
-		return new BigInteger(130, random).toString(32);
-	}
-
 }

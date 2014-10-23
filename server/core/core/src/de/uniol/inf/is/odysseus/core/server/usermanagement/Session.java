@@ -15,11 +15,8 @@
  */
 package de.uniol.inf.is.odysseus.core.server.usermanagement;
 
-import java.math.BigInteger;
-import java.security.SecureRandom;
-import java.util.UUID;
-
 import de.uniol.inf.is.odysseus.core.server.OdysseusConfiguration;
+import de.uniol.inf.is.odysseus.core.usermanagement.AbstractSession;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.core.usermanagement.ITenant;
 import de.uniol.inf.is.odysseus.core.usermanagement.IUser;
@@ -27,93 +24,24 @@ import de.uniol.inf.is.odysseus.core.usermanagement.IUser;
 /**
  * @author Christian Kuka <christian@kuka.cc>
  */
-public class Session implements ISession {
+public class Session extends AbstractSession implements ISession {
 
-	private static final long serialVersionUID = -509478572220332340L;
+	private static final long serialVersionUID = -3066873062845084076L;
+
+
+	public Session(IUser user, ITenant tenant) {
+		super(user, tenant);
+	}
+
+
 	private final static long SESSION_TIMEOUT = OdysseusConfiguration.getLong(
 			"sessionTimeout", 10 * 60000);
-	private final String id = UUID.randomUUID().toString();
-	private final IUser user;
-	private final ITenant tenant;
-	private final long start;
-	private long end;
-	private String token = "";
-
-	public Session(final IUser user, final ITenant tenant) {
-		this.user = user;
-		this.tenant = tenant;
-		start = System.currentTimeMillis();
-		end = start + SESSION_TIMEOUT;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * de.uniol.inf.is.odysseus.core.server.usermanagement.domain.Session#getId
-	 * ()
-	 */
+	
+	
+	
 	@Override
-	public String getId() {
-		return this.id;
+	protected long getSessionTimeout() {
+		return SESSION_TIMEOUT;
 	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * de.uniol.inf.is.odysseus.core.server.usermanagement.domain.Session#getUser
-	 * ()
-	 */
-	@Override
-	public IUser getUser() {
-		return this.user;
-	}
-
-	@Override
-	public ITenant getTenant() {
-		return this.tenant;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * de.uniol.inf.is.odysseus.core.server.usermanagement.domain.Session#isValid
-	 * ()
-	 */
-	@Override
-	public boolean isValid() {
-		if (SESSION_TIMEOUT > 0) {
-			long timestamp = System.currentTimeMillis();
-			return timestamp >= start && timestamp <= end;
-		} else {
-			return true;
-		}
-	}
-
-	@Override
-	public void updateSession() {
-		if (isValid()) {
-			this.end = System.currentTimeMillis() + SESSION_TIMEOUT;
-		}
-	}
-
-	@Override
-	public String getToken() {
-		if (token.isEmpty()) {
-			token = createToken();
-		}
-		return token;
-	}
-
-	private static String createToken() {
-		SecureRandom random = new SecureRandom();
-		return new BigInteger(130, random).toString(32);
-	}
-
-	@Override
-	public String toString() {
-		return tenant + " " + user + " " + end;
-	}
+	
 }

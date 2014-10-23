@@ -50,5 +50,9 @@ public interface ISession extends Serializable{
 	void updateSession();
 	
 	String getToken();
+	
+	String getConnectionName();
+	
+	void setConnectionName(String connectionName);
 
 }

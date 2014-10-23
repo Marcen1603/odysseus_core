@@ -6,7 +6,8 @@ Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn
 Bundle-Vendor: University of Oldenburg
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
-Import-Package: de.uniol.inf.is.odysseus.mep,
+Import-Package: de.uniol.inf.is.odysseus.client.common,
+ de.uniol.inf.is.odysseus.mep,
  de.uniol.inf.is.odysseus.rcp.config,
  org.apache.commons.httpclient,
  org.apache.commons.httpclient.cookie,
