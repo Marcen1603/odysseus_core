@@ -325,14 +325,19 @@ public class RecoveryCommunicator implements IRecoveryCommunicator, IPeerCommuni
 
 			PeerID peer = null;
 
-			try {
-				peer = recoveryAllocator.allocate(p2pDictionary.getRemotePeerIDs(),
-						p2pNetworkManager.getLocalPeerID());
-				LOG.debug("Peer ID for recovery allocation found.");
-			} catch (QueryPartAllocationException e) {
-				LOG.error("Peer ID search for recovery allocation failed.");
-				e.printStackTrace();
-			}
+			if(recoveryAllocator == null){
+				LOG.error("No allocator for recovery allocation set.");
+			} else {
+				try {
+					peer = recoveryAllocator.allocate(
+							p2pDictionary.getRemotePeerIDs(),
+							p2pNetworkManager.getLocalPeerID());
+					LOG.debug("Peer ID for recovery allocation found.");
+				} catch (QueryPartAllocationException e) {
+					LOG.error("Peer ID search for recovery allocation failed.");
+					e.printStackTrace();
+				}
+			}	
 
 			// If the peer is null, we don't know any other peer so we have to
 			// install it on ourself

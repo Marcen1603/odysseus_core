@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.peer.recovery.allocation.roundrobin;
+package de.uniol.inf.is.odysseus.peer.recovery.allocate.roundrobin;
 
 import java.util.Collection;
 import java.util.List;
@@ -9,7 +9,9 @@ import com.google.common.collect.Lists;
 
 /**
  * The round robin allocator, which includes the local peer.
- * Adaption of {@link de.uniol.inf.is.odysseus.peer.loadbalancing.active.allocate.roundrobin.RoundRobinWithLocalAllocator}
+ * 
+ * Copied from Load-Balancing de.uniol.inf.is.odysseus.peer.loadbalancing.active.allocate.roundrobin
+ * 
  * @author Simon Kuespert
  */
 public class RoundRobinWithLocalAllocator extends AbstractRoundRobinAllocator {

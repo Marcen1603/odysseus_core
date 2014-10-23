@@ -44,6 +44,9 @@ public class RecoveryHelper {
 
 		Collection<Integer> installedQueries = executor.addQuery(pql, "PQL",
 				session, "Standard", Context.empty());
+		
+		// TODO send success message
+		
 		return installedQueries;
 	}
 
