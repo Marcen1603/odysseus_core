@@ -12,7 +12,7 @@ import de.uniol.inf.is.odysseus.costmodel.physical.IPhysicalCostModel;
 public class AdmissionStatusPlugIn implements BundleActivator {
 
 	private static final SystemLoadPrinter SYSTEM_LOAD_PRINTER = new SystemLoadPrinter();
-	private static final boolean USE_SYSTEM_LOAD_PRINTER = true;
+	private static final boolean USE_SYSTEM_LOAD_PRINTER = false;
 	
 	private static IServerExecutor executor;
 	private static IPhysicalCostModel physicalCostModel;
