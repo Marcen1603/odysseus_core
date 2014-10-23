@@ -5,8 +5,9 @@ import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AggregateAO;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.EnrichAO;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.ChangeDetectAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.SelectAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.StateMapAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.StreamAO;
@@ -63,20 +64,12 @@ public class MileagePlayerSportsQLParser implements ISportsQLParser {
 		// -------------------------------------------------------
 		// Second part of the query (Select for questioned entity)
 		// -------------------------------------------------------
-		StreamAO metaDataStreamAO = OperatorBuildHelper.createMetadataStreamAO();
 
-		SelectAO entitySelect = OperatorBuildHelper.createEntityIDSelect(
-				sportsQL.getEntityId(), metaDataStreamAO);
-		allOperators.add(entitySelect);
+		SelectAO teamSelect = OperatorBuildHelper.createBothTeamSelectAO(spaceSelectAO);
 
 		// -----------------------
 		// Third part of the query
 		// -----------------------
-
-		// 1. Enrich
-		EnrichAO enrichAO = OperatorBuildHelper.createEnrichAO(
-				"sensorid = sid", spaceSelectAO, entitySelect);
-		allOperators.add(enrichAO);
 
 		// 2. StateMap
 		List<SDFExpressionParameter> expressions = new ArrayList<SDFExpressionParameter>();
@@ -84,27 +77,27 @@ public class MileagePlayerSportsQLParser implements ISportsQLParser {
 		// See StateMap documentation.
 		SDFExpressionParameter param = OperatorBuildHelper
 				.createExpressionParameter(
-						"(sqrt(((x-__last_1.x)^2 + (y-__last_1.y)^2))/1000)",
-						"mileage", enrichAO);
+						"(sqrt((x_meter-__last_1.x_meter)^2 + (y_meter-__last_1.y_meter)^2))/1000",
+						"mileage", teamSelect);
 		SDFExpressionParameter param2 = OperatorBuildHelper
-				.createExpressionParameter("sensorid", enrichAO);
+				.createExpressionParameter("entity_id", teamSelect);
 		expressions.add(param);
 		expressions.add(param2);
+		
 		StateMapAO statemapAO = OperatorBuildHelper.createStateMapAO(
-				expressions, "sensorid", enrichAO);
+				expressions, "entity_id", teamSelect);
 		allOperators.add(statemapAO);
 
 		// 3. Aggregate
 		AggregateAO sumAggregateAO = OperatorBuildHelper.createAggregateAO(
-				"SUM", "sensorid", "mileage", "mileage", null, statemapAO);
+				"SUM", "entity_id", "mileage", "mileage", null, statemapAO);
 		allOperators.add(sumAggregateAO);
-
-		// 4. Aggregate
-		AggregateAO maxAggregateAO = OperatorBuildHelper.createAggregateAO(
-				"MAX", "mileage", "mileage", sumAggregateAO);
-		allOperators.add(maxAggregateAO);
-
-		return OperatorBuildHelper.finishQuery(maxAggregateAO, allOperators,
+		
+		List<SDFAttribute> attr = OperatorBuildHelper.createAttributeList("mileage", sumAggregateAO);
+		List<SDFAttribute> groupBy = OperatorBuildHelper.createAttributeList("entity_id", sumAggregateAO);
+		ChangeDetectAO checkDifference = OperatorBuildHelper.createChangeDetectAO(attr, 0.1, true, groupBy, sumAggregateAO);
+		
+		return OperatorBuildHelper.finishQuery(checkDifference, allOperators,
 				sportsQL.getName());
 	}
 }

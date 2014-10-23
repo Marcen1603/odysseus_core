@@ -407,6 +407,29 @@ public class OperatorBuildHelper {
 
 		return teamSelectAO;
 	}
+	
+	/**
+	 * Creates a SelectAO which selects both teams
+	 * 
+	 * @param source
+	 *            source with team_id
+	 * @return SelectAO which filters for the teams
+	 */
+	public static SelectAO createBothTeamSelectAO(ILogicalOperator source) {
+		SelectAO teamSelectAO = new SelectAO();
+		
+		String predicateString = "(team_id = 1) OR (team_id = 2)";
+		SDFExpression predicateExpression = new SDFExpression(predicateString,
+				MEP.getInstance());
+		
+		RelationalPredicate predicate = new RelationalPredicate(
+				predicateExpression);
+		teamSelectAO.setPredicate(predicate);
+		
+		teamSelectAO.subscribeTo(source, source.getOutputSchema());
+		
+		return teamSelectAO;
+	}
 
 	/**
 	 * Creates a SelectAO with given timeParameter. Automatically build a
@@ -989,8 +1012,9 @@ public class OperatorBuildHelper {
 	public static ChangeDetectAO createChangeDetectAO(
 			List<SDFAttribute> attributes, double tolerance,
 			ILogicalOperator source) {
-		return createChangeDetectAO(attributes, tolerance, false, 0,  source);
+		return createChangeDetectAO(attributes, tolerance, false, 0, source);
 	}
+	
 	
 	/**
 	 * Returns changeDetectAO with a list of Attributes and an absolute
@@ -1035,6 +1059,35 @@ public class OperatorBuildHelper {
 		cAO.setTolerance(tolerance);
 		cAO.setDeliverFirstElement(deliverFirstElement);
 		cAO.subscribeTo(source, source.getOutputSchema());
+		return cAO;
+	}
+	
+	/**
+	 * Returns changeDetectAO with a list of Attributes and an absolute
+	 * tolerance
+	 * 
+	 * @param attributes
+	 *            List of Attributes where changes should occur
+	 * @param tolerance
+	 *            (Absolute) Tolerance applied to changeDetection.
+	 * @param deliverFirstElement
+	 *            If you want to deliver the first element
+	 * @param groupBy
+	 * 			  List of Attributes to group by
+	 * @param source
+	 *            Source to link to.
+	 * @return
+	 */
+	public static ChangeDetectAO createChangeDetectAO(
+			List<SDFAttribute> attributes, double tolerance,
+			boolean deliverFirstElement, List<SDFAttribute> groupBy, ILogicalOperator source) {
+		ChangeDetectAO cAO = new ChangeDetectAO();
+
+		cAO.setAttr(attributes);
+		cAO.setTolerance(tolerance);
+		cAO.setDeliverFirstElement(deliverFirstElement);
+		cAO.subscribeTo(source, source.getOutputSchema());
+		cAO.setGroupingAttributes(groupBy);
 		return cAO;
 	}
 	
