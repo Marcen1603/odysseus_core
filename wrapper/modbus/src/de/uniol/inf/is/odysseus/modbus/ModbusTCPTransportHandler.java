@@ -38,7 +38,8 @@ public class ModbusTCPTransportHandler extends
 	public static final String REF = "ref";
 	public static final String COUNT = "count";
 	public static final String FUNCTION_CODE = "FUNCTION_CODE".toLowerCase();
-
+	public static final String UNIT_ID= "unitid";
+	
 	private int port;
 	private InetAddress slave;
 	private int ref;
@@ -49,6 +50,8 @@ public class ModbusTCPTransportHandler extends
 	private ModbusRequest req;
 
 	private int functionCode;
+
+	private int unitID;
 
 	public ModbusTCPTransportHandler() {
 	}
@@ -78,6 +81,7 @@ public class ModbusTCPTransportHandler extends
 		logger.debug("initialized with port=" + port + " slave=" + slave
 				+ " ref=" + ref + " count=" + count + " for function "
 				+ FUNCTION_CODE);
+		unitID = options.getInt(UNIT_ID, -1);
 	}
 
 	@Override
@@ -120,6 +124,10 @@ public class ModbusTCPTransportHandler extends
 					+ " not know");
 		}
 
+		if (unitID >= 0){
+			req.setUnitID(unitID);
+		}
+		
 		logger.debug("Creating new Transaction");
 		trans = new ModbusTCPTransaction(con);
 		trans.setRequest(req);
