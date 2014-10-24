@@ -142,7 +142,7 @@ public class IfController {
 			if (optionalIfNDef.isPresent()) {
 				LOG.trace("Found #IFNDEF: Line {}: {}", this.currentLine, currentLine);
 
-				Boolean value = defined.contains(optionalIfDef.get());
+				Boolean value = defined.contains(optionalIfNDef.get());
 				inIfClause.push(!value);
 				LOG.trace("Stack: {}", inIfClause);
 
