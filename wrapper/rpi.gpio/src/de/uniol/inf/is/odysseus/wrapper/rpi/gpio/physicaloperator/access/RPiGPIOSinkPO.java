@@ -53,7 +53,7 @@ public class RPiGPIOSinkPO extends AbstractSink<Tuple<?>> {
 	private void setPinState(PinState pinState) {
 		this.pinState = pinState;
 	}
-
+	
 	private void initGPIOController() {
 		LOG.debug("RPiGPIOSinkPO init()");
 		
@@ -65,6 +65,7 @@ public class RPiGPIOSinkPO extends AbstractSink<Tuple<?>> {
 	}
 	
 	private void initGPIOPins() {
+		LOG.debug("initGPIOPins()");
 		try{
 			//LOG.error("\n\r ---- pinState:"+pinState.toString()+"\n\r ------");
 			if(pinState!=null){
