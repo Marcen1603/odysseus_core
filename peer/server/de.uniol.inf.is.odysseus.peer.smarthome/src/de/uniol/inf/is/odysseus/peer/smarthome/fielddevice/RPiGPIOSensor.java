@@ -28,7 +28,7 @@ public class RPiGPIOSensor extends Sensor {
 		sBuilder.append("#PARSER PQL\n");
 		sBuilder.append("#RUNQUERY\n");
 		sBuilder.append(getRawSourceName()+" := RPIGPIOSOURCE({SOURCE = '"+getRawSourceName()+"', PIN = "+pin+"})"); //, PINSTATE = '"+getPinState()+"'
-		//rpigpiopin11src := RPIGPIOSOURCE({SOURCE = 'rpigpiopin11src', PIN = 11})
+		//rpigpiopin11src := RPIGPIOSOURCE({SOURCE = 'rpigpiopin7src', PIN = 7})
 		setQueryForRawValues(sBuilder.toString());
 	}
 

@@ -95,10 +95,10 @@ public class SmartHomeServerPlugIn implements BundleActivator,
 		
 		//Sensor temper0 = new Temper1Sensor("Temper0", "temper0source");
 		//Sensor temper1 = new Temper1Sensor("Temper1", "temper1source");
-		RPiGPIOSensor gpioTaste11 = new RPiGPIOSensor("RPiGPIOTaster", "rpigpiotastersource_"+cleanPeerID);
+		RPiGPIOSensor gpioTaste7 = new RPiGPIOSensor("RPiGPIOTaster", "rpigpiotastersource_"+cleanPeerID);
 		//TODO:...
-		gpioTaste11.addPossibleActivityName("Tasterbetaetigt");
-		gpioTaste11.setPin("11");
+		gpioTaste7.addPossibleActivityName("Tasterbetaetigt");
+		gpioTaste7.setPin("7");
 		//gpioTaste11.setPinState("high");
 		
 		smartDevice = new SmartDevice();
@@ -107,12 +107,12 @@ public class SmartHomeServerPlugIn implements BundleActivator,
 		smartDevice.setSmartDevice(getSmartDeviceConfig());
 		//smartDevice.addConnectedFieldDevice(temper0);
 		//smartDevice.addConnectedFieldDevice(temper1);
-		smartDevice.addConnectedFieldDevice(gpioTaste11);
+		smartDevice.addConnectedFieldDevice(gpioTaste7);
 
 		//executeQueryAsync(temper0.getRawSourceName(),temper0.getQueryForRawValues());
 		//executeQueryAsync(temper1.getRawSourceName(),temper1.getQueryForRawValues());
 		
-		executeQueryAsync(gpioTaste11.getRawSourceName(), gpioTaste11.getQueryForRawValues());
+		executeQueryAsync(gpioTaste7.getRawSourceName(), gpioTaste7.getQueryForRawValues());
 	}
 
 	private void initSmartDeviceDictionary() {
@@ -765,7 +765,7 @@ public class SmartHomeServerPlugIn implements BundleActivator,
 						// sb.append("#ADDQUERY\n");
 						// sb.append("#QNAME Exporting " + viewName + "\n");
 						sb.append("#RUNQUERY\n");
-						sb.append("rpigpiosinkoutput = RPIGPIOSINK({sink='rpigpiosink', pin=7, pinstate='low'},"+rawSourceName+")\n");
+						sb.append("rpigpiosinkoutput = RPIGPIOSINK({sink='rpigpiosink', pin=11, pinstate='low'},"+rawSourceName+")\n");
 						// sb.append(pqlGenerator.generatePQLStatement(rpiGPIOSinkAO));
 						sb.append("\n");
 						String scriptText = sb.toString();
