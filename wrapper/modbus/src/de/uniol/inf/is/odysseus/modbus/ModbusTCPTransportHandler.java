@@ -5,6 +5,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,12 +14,14 @@ import org.slf4j.LoggerFactory;
 import com.ghgande.j2mod.modbus.ModbusException;
 import com.ghgande.j2mod.modbus.io.ModbusTCPTransaction;
 import com.ghgande.j2mod.modbus.msg.ModbusRequest;
+import com.ghgande.j2mod.modbus.msg.ModbusResponse;
 import com.ghgande.j2mod.modbus.msg.ReadInputDiscretesRequest;
 import com.ghgande.j2mod.modbus.msg.ReadInputDiscretesResponse;
 import com.ghgande.j2mod.modbus.msg.ReadInputRegistersRequest;
+import com.ghgande.j2mod.modbus.msg.ReadInputRegistersResponse;
 import com.ghgande.j2mod.modbus.net.TCPMasterConnection;
+import com.ghgande.j2mod.modbus.procimg.InputRegister;
 
-import de.uniol.inf.is.odysseus.core.collection.BitVector;
 import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
@@ -38,8 +42,8 @@ public class ModbusTCPTransportHandler extends
 	public static final String REF = "ref";
 	public static final String COUNT = "count";
 	public static final String FUNCTION_CODE = "FUNCTION_CODE".toLowerCase();
-	public static final String UNIT_ID= "unitid";
-	
+	public static final String UNIT_ID = "unitid";
+
 	private int port;
 	private InetAddress slave;
 	private int ref;
@@ -124,10 +128,10 @@ public class ModbusTCPTransportHandler extends
 					+ " not know");
 		}
 
-		if (unitID >= 0){
+		if (unitID >= 0) {
 			req.setUnitID(unitID);
 		}
-		
+
 		logger.debug("Creating new Transaction");
 		trans = new ModbusTCPTransaction(con);
 		trans.setRequest(req);
@@ -184,22 +188,32 @@ public class ModbusTCPTransportHandler extends
 			e.printStackTrace();
 		}
 		logger.debug("Read response");
-		ReadInputDiscretesResponse res = (ReadInputDiscretesResponse) trans
-				.getResponse();
-		if (res == null) {
-			logger.error("Slave did not deliver any values ");
-		}
 		Tuple<IMetaAttribute> t = new Tuple<>(1, false);
-		// System.out.println("Digital Inputs Status="
-		// + res.getDiscretes().toString());
 
-		if (res != null) {
-			logger.debug("Creating output from result " + res.getDiscretes());
-			BitVector out = res.getDiscretes().createOdysseusBitVector();
-
-			t.setAttribute(0, out);
+		ModbusResponse response = trans.getResponse();
+		if (response == null) {
+			logger.error("Slave did not deliver any values ");
+		} else {
+			int fCode = response.getFunctionCode();
+			switch (fCode) {
+			case 2:
+				ReadInputRegistersResponse res = (ReadInputRegistersResponse) response;
+				List<Integer> resList = new ArrayList<>();
+				for (InputRegister r:res.getRegisters()){
+					resList.add(r.getValue());
+				}
+				t.setAttribute(0, resList);
+				break;
+			case 4:
+				com.ghgande.j2mod.modbus.util.BitVector discretes = ((ReadInputDiscretesResponse) response)
+						.getDiscretes();
+				t.setAttribute(0, discretes.createOdysseusBitVector());
+				break;
+			default:
+				t.setAttribute(0, response.getHexMessage());
+			}
 		}
+		
 		return t;
 	}
-
 }
