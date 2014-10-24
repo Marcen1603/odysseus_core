@@ -40,9 +40,7 @@ import de.uniol.inf.is.odysseus.peer.smarthome.SmartDeviceRequestMessage;
 import de.uniol.inf.is.odysseus.peer.smarthome.SmartDeviceResponseMessage;
 import de.uniol.inf.is.odysseus.peer.smarthome.fielddevice.FieldDevice;
 import de.uniol.inf.is.odysseus.peer.smarthome.fielddevice.RPiGPIOSensor;
-import de.uniol.inf.is.odysseus.peer.smarthome.fielddevice.Sensor;
 import de.uniol.inf.is.odysseus.peer.smarthome.fielddevice.SmartDevice;
-import de.uniol.inf.is.odysseus.peer.smarthome.fielddevice.Temper1Sensor;
 import de.uniol.inf.is.odysseus.peer.smarthome.server.advertisement.SmartDeviceAdvertisement;
 import de.uniol.inf.is.odysseus.peer.smarthome.server.advertisement.SmartDeviceAdvertisementInstantiator;
 import de.uniol.inf.is.odysseus.peer.smarthome.server.service.ServerExecutorService;
@@ -95,8 +93,8 @@ public class SmartHomeServerPlugIn implements BundleActivator,
 		String peerIdString = p2pNetworkManager.getLocalPeerID().intern().toString();
 		String cleanPeerID = peerIdString.replaceAll("[-+.^:,]","");
 		
-		Sensor temper0 = new Temper1Sensor("Temper0", "temper0source");
-		Sensor temper1 = new Temper1Sensor("Temper1", "temper1source");
+		//Sensor temper0 = new Temper1Sensor("Temper0", "temper0source");
+		//Sensor temper1 = new Temper1Sensor("Temper1", "temper1source");
 		RPiGPIOSensor gpioTaste11 = new RPiGPIOSensor("RPiGPIOTaster", "rpigpiotastersource_"+cleanPeerID);
 		//TODO:...
 		gpioTaste11.addPossibleActivityName("Tasterbetaetigt");
@@ -107,14 +105,12 @@ public class SmartHomeServerPlugIn implements BundleActivator,
 		smartDevice.setPeerID(p2pNetworkManager.getLocalPeerID().intern()
 				.toString());
 		smartDevice.setSmartDevice(getSmartDeviceConfig());
-		smartDevice.addConnectedFieldDevice(temper0);
-		smartDevice.addConnectedFieldDevice(temper1);
+		//smartDevice.addConnectedFieldDevice(temper0);
+		//smartDevice.addConnectedFieldDevice(temper1);
 		smartDevice.addConnectedFieldDevice(gpioTaste11);
 
-		executeQueryAsync(temper0.getRawSourceName(),
-				temper0.getQueryForRawValues());
-		executeQueryAsync(temper1.getRawSourceName(),
-				temper1.getQueryForRawValues());
+		//executeQueryAsync(temper0.getRawSourceName(),temper0.getQueryForRawValues());
+		//executeQueryAsync(temper1.getRawSourceName(),temper1.getQueryForRawValues());
 		
 		executeQueryAsync(gpioTaste11.getRawSourceName(), gpioTaste11.getQueryForRawValues());
 	}
@@ -625,32 +621,11 @@ public class SmartHomeServerPlugIn implements BundleActivator,
 			public void run() {
 				waitForServerExecutorService();
 				waitForPQLGenerator();
-
+				waitForP2PNetworkManager();
+				waitForP2PDictionary();
+				
 				synchronized (onlyOneExecution) {
 					executeQuery(viewName, query);
-				}
-			}
-
-			private void executeQuery(String viewName, String query) {
-				Collection<Integer> queryIDs = ServerExecutorService
-						.getServerExecutor().addQuery(query, "OdysseusScript",
-								SessionManagementService.getActiveSession(),
-								"Standard", Context.empty());
-				Integer queryId;
-				try {
-					queryId = queryIDs.iterator().next();
-					IPhysicalQuery physicalQuery = ServerExecutorService
-							.getServerExecutor().getExecutionPlan()
-							.getQueryById(queryId);
-					ILogicalQuery logicalQuery = physicalQuery
-							.getLogicalQuery();
-					logicalQuery.setName(viewName);
-					logicalQuery.setParserId("P2P");
-					logicalQuery.setUser(SessionManagementService
-							.getActiveSession());
-					logicalQuery.setQueryText("Exporting " + viewName);
-				} catch (NoSuchElementException ex) {
-					LOG.error(ex.getMessage(), ex);
 				}
 			}
 		});
@@ -658,6 +633,29 @@ public class SmartHomeServerPlugIn implements BundleActivator,
 		t.setDaemon(true);
 		t.start();
 
+	}
+	
+	private static void executeQuery(String viewName, String query) {
+		Collection<Integer> queryIDs = ServerExecutorService
+				.getServerExecutor().addQuery(query, "OdysseusScript",
+						SessionManagementService.getActiveSession(),
+						"Standard", Context.empty());
+		Integer queryId;
+		try {
+			queryId = queryIDs.iterator().next();
+			IPhysicalQuery physicalQuery = ServerExecutorService
+					.getServerExecutor().getExecutionPlan()
+					.getQueryById(queryId);
+			ILogicalQuery logicalQuery = physicalQuery
+					.getLogicalQuery();
+			logicalQuery.setName(viewName);
+			logicalQuery.setParserId("P2P");
+			logicalQuery.setUser(SessionManagementService
+					.getActiveSession());
+			logicalQuery.setQueryText("Exporting " + viewName);
+		} catch (NoSuchElementException ex) {
+			LOG.error(ex.getMessage(), ex);
+		}
 	}
 
 	public static void saveSmartDeviceConfig() {
@@ -762,10 +760,13 @@ public class SmartHomeServerPlugIn implements BundleActivator,
 						// sb.append(pqlGenerator.generatePQLStatement(rpiGPIOSinkAO));
 						sb.append("\n");
 						String scriptText = sb.toString();
-
-						executeQueryAsync(viewName, scriptText);
 						
-						
+						if(p2pDictionary!=null && p2pDictionary.isImported(rawSourceName)){
+							LOG.debug("sourceIsImported run the actor logic script now:");
+							executeQueryAsync(viewName, scriptText);
+						}else{
+							LOG.debug("source is not imported, the actor logic script is not running!");
+						}
 					}
 					
 					//Rule2:
