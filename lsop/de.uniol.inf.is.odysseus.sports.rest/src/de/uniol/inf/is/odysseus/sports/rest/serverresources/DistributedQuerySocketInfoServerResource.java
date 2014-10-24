@@ -9,7 +9,7 @@ import org.restlet.data.Status;
 import org.restlet.ext.jackson.JacksonRepresentation;
 import org.restlet.resource.ServerResource;
 
-import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
@@ -33,15 +33,17 @@ public class DistributedQuerySocketInfoServerResource extends ServerResource imp
 			ISession session = SocketService.getInstance().login();
 			
 			//get SocketInformation
-			ILogicalQuery query = DistributedQueryHelper.getLocalQueryWithTopOperator(sharedQueryId, session);
+			Integer queryId = DistributedQueryHelper.getQueryIdWithTopOperator(sharedQueryId, session);
+			IPhysicalOperator operator = DistributedQueryHelper.getTopOperatorOfQuery(queryId, session);
 			
-			SocketInfo peerSocket = SocketService.getInstance().getConnectionInformation(session.getToken(), query.getID());
+			
+			SocketInfo peerSocket = SocketService.getInstance().getConnectionInformation(session.getToken(),queryId, operator);
 						
 			if(peerSocket != null){
 				DistributedQuerySocketInfo info = new DistributedQuerySocketInfo();
 				info.setIp(peerSocket.getIp());
 				info.setPort(peerSocket.getPort());
-				info.setAttributeList(this.getAttributeInformationList(query));
+				info.setAttributeList(this.getAttributeInformationList(operator));
 				DataTransferObject dto = new DataTransferObject("DistributedQuerySocketInfo", info);
 				
 				r.setEntity(new JacksonRepresentation<DataTransferObject>(dto));
@@ -57,8 +59,8 @@ public class DistributedQuerySocketInfoServerResource extends ServerResource imp
 		
 	}
 	
-	private List<AttributeInformation> getAttributeInformationList(ILogicalQuery query){
-		SDFSchema outputSchema = query.getLogicalPlan().getOutputSchema();
+	private List<AttributeInformation> getAttributeInformationList(IPhysicalOperator operator){
+		SDFSchema outputSchema = operator.getOutputSchema();
 		
 		List<SDFAttribute> attibuteList = outputSchema.getAttributes();
 		

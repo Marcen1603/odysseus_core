@@ -30,11 +30,12 @@ public class DistributedQueryServerResource extends ServerResource implements
 		Response r = getResponse();
 		try {
 			String sportsQL = SportsQLDistributorRegistry.addSportsQLDistributorConfig(request.getQuery());	
+			//sportsQL = "#PARSER SportsQL \n #CONFIG DISTRIBUTE true \n #PEER_PARTITION OPERATORCLOUD \n #PEER_ALLOCATE ROUNDROBINWITHLOCAL \n #ADDQUERY \n {\"statisticType\": \"global\",\"gameType\": \"soccer\",\"name\": \"gametime\"}";
 			DistributedQueryInfo info = null;
 			if (sportsQL != null) {
 				info = DistributedQueryHelper.executeQuery(sportsQL, OdysseusRCPPlugIn.getActiveSession(), request.getQueryBuildConfigurationName());
 			} 
-			if (info != null) {
+			if (info == null) {
 				info = new DistributedQueryInfo();
 				info.setQueryDistributed(false);
 			}			

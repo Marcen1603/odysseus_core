@@ -6,7 +6,6 @@ import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.util.Enumeration;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
@@ -30,8 +29,9 @@ import de.uniol.inf.is.odysseus.sports.rest.exception.InvalidUserDataException;
 
 public class SocketService {
 
-	private Map<Integer, Map<Integer, Integer>> socketPortMap = new HashMap<>();
-	private Map<Integer, Map<Integer, SocketSinkPO>> socketSinkMap = new HashMap<>();
+	private Map<Integer, SocketSinkPO> socketSinkMap = new HashMap<>();
+	private Map<Integer, Integer> socketPortMap = new HashMap<>();
+
 	private InetAddress address;
 
 	private static final int SINK_MIN_PORT = 10000;
@@ -49,47 +49,37 @@ public class SocketService {
 		return SocketService.instance;
 	}
 
-	public SocketInfo getConnectionInformation(String securityToken, int queryId)
+	public SocketInfo getConnectionInformation(String securityToken, int queryId, int rootPort)
 			throws InvalidUserDataException {
-
-		return getConnectionInformationWithPorts(securityToken, queryId, 0,
-				Integer.valueOf(OdysseusConfiguration.getInt("minSinkPort",
-						SINK_MIN_PORT)), Integer.valueOf(OdysseusConfiguration
-						.getInt("maxSinkPort", SINK_MAX_PORT)));
+		int minPort = Integer.valueOf(OdysseusConfiguration.getInt("minSinkPort",SINK_MIN_PORT));
+		int maxPort = Integer.valueOf(OdysseusConfiguration.getInt("maxSinkPort", SINK_MAX_PORT));
+		IPhysicalOperator rootOperator = getRootOperator(queryId, rootPort);
+		return getConnectionInformationWithPorts(securityToken, queryId,minPort, maxPort, rootOperator);
+	}
+	
+	public SocketInfo getConnectionInformation(String securityToken, int queryId, IPhysicalOperator operator) throws InvalidUserDataException {
+		int minPort = Integer.valueOf(OdysseusConfiguration.getInt("minSinkPort",SINK_MIN_PORT));
+		int maxPort = Integer.valueOf(OdysseusConfiguration.getInt("maxSinkPort", SINK_MAX_PORT));
+		return getConnectionInformationWithPorts(securityToken, queryId,minPort, maxPort, operator);
 	}
 
-	public SocketInfo getConnectionInformationWithPorts(String securityToken,
-			int queryId, int rootPort, int minPort, int maxPort)
+
+	public SocketInfo getConnectionInformationWithPorts(String securityToken,int queryId, int minPort, int maxPort, IPhysicalOperator operator)
 			throws InvalidUserDataException {
 		try {
 			loginWithSecurityToken(securityToken);
 			int port = 0;
-			SocketSinkPO po;
-			Map<Integer, Integer> socketPortMapEntry = socketPortMap
-					.get(queryId);
-			Map<Integer, SocketSinkPO> socketSinkMapEntry = socketSinkMap
-					.get(queryId);
-
-			if (socketSinkMapEntry != null) {
-				if (socketSinkMapEntry.get(rootPort) == null) {
-					port = getNextFreePort(minPort, maxPort);
-					po = addSocketSink(queryId, rootPort, port);
-					socketSinkMapEntry.put(rootPort, po);
-					socketPortMapEntry.put(rootPort, port);
-				} else {
-					port = socketPortMapEntry.get(rootPort);
-					po = socketSinkMapEntry.get(rootPort);
-				}
-			} else {
-				socketSinkMapEntry = new HashMap<>();
-				socketPortMapEntry = new HashMap<>();
-				socketPortMap.put(queryId, socketPortMapEntry);
-				socketSinkMap.put(queryId, socketSinkMapEntry);
+			SocketSinkPO po = socketSinkMap.get(queryId);
+			if (po == null) {
 				port = getNextFreePort(minPort, maxPort);
-				po = addSocketSink(queryId, rootPort, port);
-				socketSinkMapEntry.put(rootPort, po);
-				socketPortMapEntry.put(rootPort, port);
+				po = addSocketSink(queryId, port, operator);
+				socketSinkMap.put(queryId,  po);
+				socketPortMap.put(queryId, port);
+			} else {
+				port = socketPortMap.get(queryId);
+				po = socketSinkMap.get(queryId);
 			}
+			
 			po.addAllowedSessionId(securityToken);
 			if (this.address == null) {
 
@@ -130,14 +120,18 @@ public class SocketService {
 		} while (socketPortMap.containsKey(port));
 		return port;
 	}
+	
+	private IPhysicalOperator getRootOperator(int queryId, int rootPort) {
+		IExecutionPlan plan = ExecutorServiceBinding.getExecutor().getExecutionPlan();
+		IPhysicalQuery query = plan.getQueryById(queryId);
+		return query.getRoots().get(rootPort);
+	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	private SocketSinkPO addSocketSink(int queryId, int rootPort, int port) {
-		IExecutionPlan plan = ExecutorServiceBinding.getExecutor()
-				.getExecutionPlan();
+	private SocketSinkPO addSocketSink(int queryId, int port, IPhysicalOperator root) {
+		IExecutionPlan plan = ExecutorServiceBinding.getExecutor().getExecutionPlan();
 		IPhysicalQuery query = plan.getQueryById(queryId);
-		List<IPhysicalOperator> roots = query.getRoots();
-		IPhysicalOperator root = roots.get(rootPort);
+		
 
 		final ISource<?> rootAsSource = (ISource<?>) root;
 
@@ -181,4 +175,5 @@ public class SocketService {
 		return session;
 	}
 
+	
 }

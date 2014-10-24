@@ -27,12 +27,7 @@ public class QueryServerResource extends ServerResource implements
 	@Override
 	public void getQueryInfo(QueryInfoRequest request) {
 		Response r = getResponse();
-		try {			
-			
-		/*  TODO activate distribution for querys 
-			String sportsQL = SportsQLDistributorRegistry.addSportsQLDistributorConfig(request.getQuery());	
-			Collection<Integer> queryIDs = ExecutorServiceBinding.getExecutor().addQuery(sportsQL, "OdysseusScript", OdysseusRCPPlugIn.getActiveSession(), request.getQueryBuildConfigurationName(), Context.empty());		
-		*/
+		try {				
 			
 			String sportsQL = request.getQuery();
 			Collection<Integer> queryIDs = ExecutorServiceBinding.getExecutor().addQuery(sportsQL, request.getParser(), OdysseusRCPPlugIn.getActiveSession(), request.getQueryBuildConfigurationName(), Context.empty());

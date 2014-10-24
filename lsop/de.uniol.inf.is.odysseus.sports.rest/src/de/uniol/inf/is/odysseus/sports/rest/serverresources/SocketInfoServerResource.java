@@ -24,7 +24,7 @@ public class SocketInfoServerResource extends ServerResource implements ISocketI
 			ISession session = SocketService.getInstance().login();
 			
 			//get SocketInformation
-			SocketInfo peerSocket = SocketService.getInstance().getConnectionInformation(session.getToken(), queryId);
+			SocketInfo peerSocket = SocketService.getInstance().getConnectionInformation(session.getToken(), queryId,0);
 		
 			if(peerSocket != null){
 				DataTransferObject dto = new DataTransferObject("SocketInfo", peerSocket);
