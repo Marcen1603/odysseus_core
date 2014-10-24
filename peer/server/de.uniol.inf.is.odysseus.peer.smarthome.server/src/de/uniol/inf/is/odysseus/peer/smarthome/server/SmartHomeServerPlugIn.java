@@ -278,18 +278,26 @@ public class SmartHomeServerPlugIn implements BundleActivator,
 		Thread thread = new Thread(new Runnable() {
 			@Override
 			public void run() {
+				
 				waitForP2PNetworkManager();
 				waitForJxtaServicesProvider();
 				waitForServerExecutorService();
-
+				
+				LOG.error("publishSmartDeviceAdvertisementAsync started and will be executing in 60 sec.");
+				
+				try {
+					Thread.sleep(60000);
+				} catch (InterruptedException e1) {
+					e1.printStackTrace();
+				}
+				
 				if (getP2PNetworkManager() != null
 						&& getJxtaServicesProvider() != null) {
-					LOG.debug("publishSmartDeviceAdvertisementAsync():");
-
+					LOG.error("publishSmartDeviceAdvertisementAsync():");
+					
 					try {
-
 						initSmartDevice();
-
+						
 						SmartDeviceAdvertisement adv = (SmartDeviceAdvertisement) AdvertisementFactory
 								.newAdvertisement(SmartDeviceAdvertisement
 										.getAdvertisementType());
@@ -297,7 +305,7 @@ public class SmartHomeServerPlugIn implements BundleActivator,
 								.getLocalPeerGroupID()));
 						adv.setPeerID(p2pNetworkManager.getLocalPeerID());
 						// adv.setSmartDevice(smartDevice);
-
+						
 						getJxtaServicesProvider().publish(adv);
 						getJxtaServicesProvider().remotePublish(adv);
 					} catch (IOException e) {
@@ -737,6 +745,7 @@ public class SmartHomeServerPlugIn implements BundleActivator,
 					
 					
 					//Rule 1:
+					// run async?
 					if(possibleActivityName.equals("Tasterbetaetigt")){
 						//Check for peerID...
 						// same rule can run for different peers/sensors
