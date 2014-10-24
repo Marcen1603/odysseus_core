@@ -49,7 +49,7 @@ public class KeywordProvider implements IPreParserKeywordProvider {
 		keywords.put(QueryNamePreParserKeyword.QNAME, QueryNamePreParserKeyword.class);
 		keywords.put(ResumeOnErrorPreParserKeyword.KEYWORD, ResumeOnErrorPreParserKeyword.class);
 		keywords.put(ConfigPreParserKeyword.KEYWORD, ConfigPreParserKeyword.class);
-		keywords.put(IncludePreParserKeyword.KEYWORD, IncludePreParserKeyword.class);
+		//keywords.put(IncludePreParserKeyword.KEYWORD, IncludePreParserKeyword.class);
 		keywords.put(MetadataPreParserKeyword.METADATA, MetadataPreParserKeyword.class);
 		keywords.put(TrafoOptionPreParserKeyword.TRAFOOPTION, TrafoOptionPreParserKeyword.class);
 		keywords.put(QueryPriorityPreParserKeyword.NAME, QueryPriorityPreParserKeyword.class);

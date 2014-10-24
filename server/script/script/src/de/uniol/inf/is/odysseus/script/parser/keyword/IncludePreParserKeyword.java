@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -16,6 +17,7 @@ import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.script.parser.AbstractPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptException;
 
+@Deprecated
 public class IncludePreParserKeyword extends AbstractPreParserKeyword {
 
 	public static final String KEYWORD = "INCLUDE";
@@ -70,12 +72,17 @@ public class IncludePreParserKeyword extends AbstractPreParserKeyword {
 			String[] lines = readTextLinesFromFile(new File(parameter));
 			
 			ISink<?> defaultSink = variables.containsKey("_defaultSink") ? (ISink<?>) variables.get("_defaultSink") : null;
-			getParser().parseAndExecute(lines, caller, defaultSink, context);
 			
+			List<?> ret = getParser().parseAndExecute(lines, caller, defaultSink, context);
+			List<IExecutorCommand> commands = new ArrayList<IExecutorCommand>();
+			for (Object o:ret){
+				if (o instanceof IExecutorCommand){
+					commands.add((IExecutorCommand)o);
+				}
+			}
+			return commands;
 		} catch (IOException ex) {
 			throw new OdysseusScriptException("Could not read including file '" + parameter + "' for execution", ex );
-		}
-		
-		return null;
+		}		
 	}
 }
