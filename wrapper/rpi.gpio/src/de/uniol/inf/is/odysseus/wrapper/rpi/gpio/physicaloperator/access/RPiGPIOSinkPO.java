@@ -66,9 +66,13 @@ public class RPiGPIOSinkPO extends AbstractSink<Tuple<?>> {
 	
 	private void initGPIOPins() {
 		try{
-			LOG.error("\n\r ---- pinState:"+pinState.toString()+"\n\r ------");
-			
-			myLED = gpioController.provisionDigitalOutputPin(pin, pin.getName(), pinState);
+			//LOG.error("\n\r ---- pinState:"+pinState.toString()+"\n\r ------");
+			if(pinState!=null){
+				myLED = gpioController.provisionDigitalOutputPin(pin, pin.getName(), pinState);
+			}else{
+				myLED = gpioController.provisionDigitalOutputPin(pin, pin.getName(), PinState.LOW);
+				LOG.debug("pinState==null");
+			}
 		}catch(Exception ex){
 			LOG.error(ex.getMessage(), ex);
 		}
