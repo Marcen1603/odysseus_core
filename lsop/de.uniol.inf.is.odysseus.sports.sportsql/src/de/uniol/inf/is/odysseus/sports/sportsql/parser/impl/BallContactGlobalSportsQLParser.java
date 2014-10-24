@@ -151,7 +151,7 @@ public class BallContactGlobalSportsQLParser implements ISportsQLParser {
 
 		// get only ball sensors
 		List<IPredicate> ballPredicates = new ArrayList<IPredicate>();
-		for(int sensorId : AbstractSportsDDCAccess.getBallSensorIds()) {
+		for(int sensorId : AbstractSportsDDCAccess.getBallEntityIds()) {
 			IPredicate ballPredicate = OperatorBuildHelper.createRelationalPredicate("sid = " + sensorId);
 			ballPredicates.add(ballPredicate);
 		}		

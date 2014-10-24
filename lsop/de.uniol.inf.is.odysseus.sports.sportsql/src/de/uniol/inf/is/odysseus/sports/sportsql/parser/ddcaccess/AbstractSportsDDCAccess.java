@@ -444,22 +444,22 @@ public class AbstractSportsDDCAccess {
 	}
 
 	/**
-	 * Returns a list of all Ball sensor IDs
+	 * Returns a list of all Ball entity IDs
 	 * @return
 	 * @throws NumberFormatException
 	 * @throws MissingDDCEntryException
 	 */
-	public static ImmutableCollection<Integer> getBallSensorIds() throws NumberFormatException, MissingDDCEntryException {
+	public static ImmutableCollection<Integer> getBallEntityIds() throws NumberFormatException, MissingDDCEntryException {
 		ImmutableCollection<Integer> sensorids = getSensorIds();
-		Collection<Integer> ballSensorIds = Lists.newArrayList();
+		Collection<Integer> ballEntityIds = Lists.newArrayList();
 		
 		for(int sensorId : sensorids) {
 			if(getEntity(sensorId).equals(ENTITY_BALL)) {
-				ballSensorIds.add(sensorId);
+				ballEntityIds.add(getEntityId(sensorId));
 			}
 		}
 		
-		return ImmutableList.copyOf(ballSensorIds);
+		return ImmutableList.copyOf(ballEntityIds);
 	}
 	
 }

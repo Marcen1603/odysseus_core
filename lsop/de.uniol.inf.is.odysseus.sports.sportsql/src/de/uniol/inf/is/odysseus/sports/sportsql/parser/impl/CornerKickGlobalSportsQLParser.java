@@ -88,7 +88,7 @@ public class CornerKickGlobalSportsQLParser implements ISportsQLParser {
 		
 		// build ball sensor IDs predicate
 		String predicate = "(";
-		Iterator<Integer> ballSensorIterator = AbstractSportsDDCAccess.getBallSensorIds().iterator();
+		Iterator<Integer> ballSensorIterator = AbstractSportsDDCAccess.getBallEntityIds().iterator();
 		while(ballSensorIterator.hasNext()) {
 			int sensorId = ballSensorIterator.next();
 			predicate += "sid = " + sensorId;

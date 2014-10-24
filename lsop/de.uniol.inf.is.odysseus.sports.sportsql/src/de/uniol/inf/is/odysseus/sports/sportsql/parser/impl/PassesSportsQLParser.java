@@ -531,7 +531,7 @@ public class PassesSportsQLParser implements ISportsQLParser {
 	private RouteAO createSplitSoccerDataRouteAO(ILogicalOperator source) throws NumberFormatException, MissingDDCEntryException {				
 		StringBuilder predicateSb = new StringBuilder();
 		
-		Iterator<Integer> ballSensorIterator = AbstractSportsDDCAccess.getBallSensorIds().iterator();
+		Iterator<Integer> ballSensorIterator = AbstractSportsDDCAccess.getBallEntityIds().iterator();
 		while(ballSensorIterator.hasNext()) {
 			int sensorId = ballSensorIterator.next();
 			predicateSb.append("sid = " + sensorId);

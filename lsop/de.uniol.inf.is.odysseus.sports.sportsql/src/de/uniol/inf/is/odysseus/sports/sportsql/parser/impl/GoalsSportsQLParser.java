@@ -6,13 +6,13 @@ import java.util.List;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.AggregateAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.ChangeDetectAO;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.ElementWindowAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.JoinAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.MapAO;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.ProjectAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.SelectAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.StreamAO;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.TimeWindowAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.SDFExpressionParameter;
 import de.uniol.inf.is.odysseus.peer.ddc.MissingDDCEntryException;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.ISportsQLParser;
@@ -30,8 +30,6 @@ import de.uniol.inf.is.odysseus.sports.sportsql.parser.enums.StatisticType;
 public class GoalsSportsQLParser implements ISportsQLParser {
 
 	// / time (seconds) between goal and kickoff
-	private static final int T_GOAL_KICKOFF = 30;
-	private static final String ONE_SECOND = "1000000";
 	private static final int GOAL_DEPTH = 2400;
 	
 	// TODO:
@@ -51,15 +49,16 @@ public class GoalsSportsQLParser implements ISportsQLParser {
 
 		StreamAO soccerGameStreamAO = OperatorBuildHelper.createGameStreamAO();
 
-		// get only ball	
+		// get only ball
 		List<IPredicate> ballPredicates = new ArrayList<IPredicate>();
-		for(int sensorId : AbstractSportsDDCAccess.getBallSensorIds()) {
-			IPredicate ballPredicate = OperatorBuildHelper.createRelationalPredicate(SoccerGameAttributes.ENTITY_ID + " = " + sensorId);
+		for(int entityId : AbstractSportsDDCAccess.getBallEntityIds()) {
+			IPredicate ballPredicate = OperatorBuildHelper.createRelationalPredicate(SoccerGameAttributes.ENTITY_ID + " = " + entityId);
 			ballPredicates.add(ballPredicate);
 		}		
 		
 		SelectAO ball = OperatorBuildHelper.createSelectAO(OperatorBuildHelper.createOrPredicate(ballPredicates),
 				soccerGameStreamAO);
+		ball.setHeartbeatRate(10);
 		allOperators.add(ball);
 		predicates.clear();
 
@@ -75,12 +74,10 @@ public class GoalsSportsQLParser implements ISportsQLParser {
 		// ball in goal or field stream	
 		String predicateGoalAndField = "(y > " + AbstractSportsDDCAccess.getFieldYMin() + " AND y < " + AbstractSportsDDCAccess.getFieldYMax() + " AND x > "
 				+ SoccerDDCAccess.getGoalareaLeftX() + " AND x < " + SoccerDDCAccess.getGoalareaRightX() + ")";
-		
 		predicateGoalAndField +=  " OR (x < " + SoccerDDCAccess.getGoalareaLeftX()
 				+ " AND x > ((" + (SoccerDDCAccess.getGoalareaLeftX() - GOAL_DEPTH)
 				+ ")) AND y > " + SoccerDDCAccess.getGoalareaLeftYMin() + " AND y < "
 				+ SoccerDDCAccess.getGoalareaLeftYMax() + ")";
-		
 		predicateGoalAndField += " OR (x > " + SoccerDDCAccess.getGoalareaRightX() + " AND x < (("
 				+ (SoccerDDCAccess.getGoalareaRightX() + GOAL_DEPTH) + ")) AND y < "
 				+ SoccerDDCAccess.getGoalareaRightYMax() + " AND y > " + SoccerDDCAccess.getGoalareaRightYMin() + ")";
@@ -121,32 +118,62 @@ public class GoalsSportsQLParser implements ISportsQLParser {
 		allOperators.add(onCentreSpot_filter);
 		attributes.clear();
 		
+		// 
+		SelectAO inGoalSelect = OperatorBuildHelper.createSelectAO("inGoal1 = 1 OR inGoal2 = 1", inGoal_filter);
+		allOperators.add(inGoalSelect);
+
+		SelectAO onSpotSelect = OperatorBuildHelper.createSelectAO("onCentreSpot = 1", onCentreSpot_filter);
+		allOperators.add(onSpotSelect);
+		
 		// window for goals and spot
-		ElementWindowAO goalWindow = OperatorBuildHelper.createElementWindowAO(1, 1, inGoal_filter);
-		ElementWindowAO spotWindow = OperatorBuildHelper.createElementWindowAO(1, 1, onCentreSpot_filter);
+		TimeWindowAO goalWindow = OperatorBuildHelper.createTimeWindowAO(30, "SECONDS", inGoalSelect);
+		allOperators.add(goalWindow);
+		
+		TimeWindowAO spotWindow = OperatorBuildHelper.createTimeWindowAO(5, "SECONDS", onSpotSelect);
+		allOperators.add(spotWindow);
 		
 		
 		// join goals of last x seconds with centre spot stream
-		String joinPredicate = "goal_ts > (spot_ball_ts - (" + T_GOAL_KICKOFF + " * "
-				+ ONE_SECOND + ")) AND (inGoal1 = 1 OR inGoal2 = 1)";
-		JoinAO goals_join = OperatorBuildHelper.createJoinAO(joinPredicate, "MANY_MANY",
-				goalWindow, spotWindow);
+		JoinAO goals_join = OperatorBuildHelper.createJoinAO("true", "MANY_MANY", goalWindow, spotWindow);
 		allOperators.add(goals_join);
-		predicates.clear();
-
-		// project on goals
+		
+		
 		attributes.add("goal_ts");
-		attributes.add("inGoal1");
-		attributes.add("inGoal2");
-		ProjectAO goals_project = OperatorBuildHelper.createProjectAO(
-				attributes, goals_join);
-		allOperators.add(goals_project);
+		ChangeDetectAO goal_changedetect = OperatorBuildHelper
+				.createChangeDetectAO(OperatorBuildHelper.createAttributeList(
+						attributes, goals_join), 0.0, 100, goals_join);
+		goal_changedetect.setDeliverFirstElement(true);
+		allOperators.add(goal_changedetect);
 		attributes.clear();
 		
-		// TODO: aggregate left and right goals
-
-		return OperatorBuildHelper.finishQuery(goals_project, allOperators,
+		// aggregate goals
+		AggregateAO goals_aggregate = createGoalsAggregate(goal_changedetect);
+		allOperators.add(goals_aggregate);
+		
+		return OperatorBuildHelper.finishQuery(goals_aggregate, allOperators,
 				sportsQL.getName());
+	}
+	
+	private AggregateAO createGoalsAggregate(ILogicalOperator input) {
+		List<String> functions3 = new ArrayList<String>();
+		functions3.add("SUM");
+		functions3.add("SUM");
+
+		List<String> inputAttributeNames3 = new ArrayList<String>();
+		inputAttributeNames3.add("inGoal1");
+		inputAttributeNames3.add("inGoal2");
+
+		List<String> outputAttributeNames3 = new ArrayList<String>();
+		outputAttributeNames3.add("sum_inGoal1");
+		outputAttributeNames3.add("sum_inGoal2");
+		
+		List<String> outputTypes = new ArrayList<String>();
+		outputTypes.add("Integer");
+		outputTypes.add("Integer");
+
+		return OperatorBuildHelper.createAggregateAO(
+				functions3, null, inputAttributeNames3, outputAttributeNames3,
+				outputTypes, input);
 	}
 
 	private List<SDFExpressionParameter> getExpressionForInGoal(
@@ -199,8 +226,11 @@ public class GoalsSportsQLParser implements ISportsQLParser {
 						+ " AND x <= " + spotBottomX + " AND y >= "
 						+ spotTopY + " AND y <= " + spotBottomY
 						+ " , 1, 0)", "onCentreSpot", source);
+		SDFExpressionParameter ex3 = OperatorBuildHelper
+				.createExpressionParameter("toInteger(ts - 30000000)", "n_ts", source);	
 		expressions.add(ex1);
 		expressions.add(ex2);
+		expressions.add(ex3);
 
 		return expressions;
 	}
