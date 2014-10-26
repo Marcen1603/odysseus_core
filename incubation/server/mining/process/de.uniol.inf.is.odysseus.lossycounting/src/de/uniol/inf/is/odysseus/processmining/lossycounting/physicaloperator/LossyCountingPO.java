@@ -1,8 +1,11 @@
 package de.uniol.inf.is.odysseus.processmining.lossycounting.physicaloperator;
 
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
@@ -21,7 +24,7 @@ public class LossyCountingPO <T extends IMetaAttribute> extends AbstractPipe<Tup
 		private HashMap<Object,Tuple<T>> relations = Maps.newHashMap();
 		private int iterations = 0; // corresponds to N
 		private int currentBucket = 1;
-		private Integer caseId;
+		private String caseId;
 		private String activityName;
 		
 		
@@ -59,13 +62,12 @@ public class LossyCountingPO <T extends IMetaAttribute> extends AbstractPipe<Tup
 		@Override
 		protected void process_next(Tuple<T> object, int port) {
 			if(object instanceof Tuple){
-				System.out.println("--------- CurrentBucket: "+currentBucket+" ---------");
 				Object[] attributes = object.getAttributes();
-				caseId = (Integer) attributes[0];
+				caseId = (String) attributes[0];
 				activityName = (String)attributes[1];
-				
+				System.out.println(caseId+";"+activityName);
 				updateData(activityName,activities); // Updates the activity map
-				printInfo(activityName);
+				//printInfo(activityName);
 				updateCases(caseId, activityName);
 
 				dataCleansing();
@@ -88,21 +90,18 @@ public class LossyCountingPO <T extends IMetaAttribute> extends AbstractPipe<Tup
 			}
 		}
 		
-		private void updateCases(Integer caseId, String newActivityName){
+		private void updateCases(String caseId, String newActivityName){
 			if(cases.containsKey(caseId)){
-				String relationKeyName = (String)cases.get(caseId).getAttribute(TUPLE_NAME_POS)+ "->" +newActivityName;
+				//Erzeuge Relationsschlüssel
+				String relationKeyName = (String)cases.get(caseId).getAttribute(TUPLE_NAME_POS)+ "" +newActivityName;
+				if(relationKeyName.equals("ha")){
+					System.out.println("ha: "+caseId);
+				}
 				incrementAndReplaceCaseData(caseId,newActivityName,cases);
 				//updates the frequenz counter of the relations Tuples
 				updateData(relationKeyName, relations);
 				
-				
-				
-				//Test Output
-				System.out.println("++++++++++++++ Relationen ++++++++++++++");
-				for(Map.Entry<Object,Tuple<T>> entry : relations.entrySet()){
-					System.out.println(entry.getKey() + "; Anzahl: " + entry.getValue().getAttribute(0) +" Bucket: "+ entry.getValue().getAttribute(1));
-				}
-				System.out.println("++++++++++++++ Relationen ++++++++++++++");
+			
 			} else {
 				addCaseToMap(caseId,newActivityName,cases);
 			}
@@ -151,12 +150,10 @@ public class LossyCountingPO <T extends IMetaAttribute> extends AbstractPipe<Tup
 		
 		private void dataCleansing(){
 			if((iterations%error) == 0){
-				System.out.println("++++++++++++++ CLEAN START++++++++++++++");
 				activities = cleanMap(activities);
 				cases = cleanMap(cases);
 				relations = cleanMap(relations);
 				currentBucket++;
-				System.out.println("++++++++++++++ CLEAN DONE ++++++++++++++");
 			}
 		}
 		
@@ -164,16 +161,17 @@ public class LossyCountingPO <T extends IMetaAttribute> extends AbstractPipe<Tup
 			HashMap<Object,Tuple<T>> newMap = Maps.newHashMap();
 			for(Map.Entry<Object,Tuple<T>> entry : map.entrySet()){
 				int actualFrequenz = ((Integer)entry.getValue().getAttribute(TUPLE_FREQ_POS)).intValue();
-				if(!(actualFrequenz+currentBucket <= currentBucket)){
+				int actualBucket = ((Integer)entry.getValue().getAttribute(TUPLE_BUCKET_POS)).intValue();
+				if(!(actualFrequenz+actualBucket <= currentBucket)){
 					newMap.put(entry.getKey(), entry.getValue());
 				} else {
-					System.out.println("DELETED: " + entry.getKey() +";Anzahl: "+entry.getValue().getAttribute(TUPLE_FREQ_POS)+"<="+currentBucket );
+				//	System.out.println("DELETED: " + entry.getKey() +";Anzahl: "+entry.getValue().getAttribute(TUPLE_FREQ_POS)+"<="+currentBucket );
 				}
 			}
 			return newMap;
 		}
 		
-		private void printInfo(String name){
+		private void printActivities(String name){
 			System.out.println("++++++++++++++ Activities ++++++++++++++");
 			System.out.println("Actual Activity: "+ name);
 			System.out.println("Map after Update: ");
@@ -181,5 +179,20 @@ public class LossyCountingPO <T extends IMetaAttribute> extends AbstractPipe<Tup
 				System.out.println(entry.getKey() + "; Anzahl: " + entry.getValue().getAttribute(0) +" Bucket: "+ entry.getValue().getAttribute(1));
 			}
 			System.out.println("++++++++++++++ Activities ++++++++++++++");
+		}
+		
+		public void printRelations(){
+			//Test Output
+			System.out.println("++++++++++++++ Relationen wos++++++++++++++");
+			List<String> sortedList = Lists.newArrayList();
+			for(Map.Entry<Object,Tuple<T>> entry : relations.entrySet()){
+				//System.out.println(entry.getKey() + "; Anzahl: " + entry.getValue().getAttribute(0) +" Bucket: "+ entry.getValue().getAttribute(1));
+				sortedList.add((String) entry.getKey());
+			}
+			Collections.sort(sortedList);
+			for(String str : sortedList){
+				System.out.println(str+ ":" +relations.get(str));	
+			}
+			System.out.println("++++++++++++++ Relationen wos ++++++++++++++");
 		}
 }
