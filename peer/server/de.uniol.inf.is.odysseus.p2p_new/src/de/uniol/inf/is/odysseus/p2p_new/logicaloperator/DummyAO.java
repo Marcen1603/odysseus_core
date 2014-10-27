@@ -74,7 +74,7 @@ public class DummyAO extends AbstractLogicalOperator {
 	}
 	
 	public List<SDFAttribute> getSchema() {
-		return assignedSchema.getAttributes();
+		return assignedSchema != null ? assignedSchema.getAttributes() : null;
 	}
 	
 	@Override
