@@ -11,6 +11,7 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.ghgande.j2mod.modbus.Modbus;
 import com.ghgande.j2mod.modbus.ModbusException;
 import com.ghgande.j2mod.modbus.io.ModbusTCPTransaction;
 import com.ghgande.j2mod.modbus.msg.ModbusRequest;
@@ -116,11 +117,11 @@ public class ModbusTCPTransportHandler extends
 
 		// req = new ReadInputDiscretesRequest(ref, count);
 		switch (functionCode) {
-		case 2:
+		case Modbus.READ_INPUT_DISCRETES:
 			req = new ReadInputDiscretesRequest(ref, count);
 			break;
 
-		case 4:
+		case Modbus.READ_INPUT_REGISTERS:
 			req = new ReadInputRegistersRequest(ref, count);
 			break;
 		default:
@@ -196,7 +197,7 @@ public class ModbusTCPTransportHandler extends
 		} else {
 			int fCode = response.getFunctionCode();
 			switch (fCode) {
-			case 2:
+			case Modbus.READ_INPUT_REGISTERS:
 				ReadInputRegistersResponse res = (ReadInputRegistersResponse) response;
 				List<Integer> resList = new ArrayList<>();
 				for (InputRegister r:res.getRegisters()){
@@ -204,7 +205,7 @@ public class ModbusTCPTransportHandler extends
 				}
 				t.setAttribute(0, resList);
 				break;
-			case 4:
+			case Modbus.READ_INPUT_DISCRETES:
 				com.ghgande.j2mod.modbus.util.BitVector discretes = ((ReadInputDiscretesResponse) response)
 						.getDiscretes();
 				t.setAttribute(0, discretes.createOdysseusBitVector());
