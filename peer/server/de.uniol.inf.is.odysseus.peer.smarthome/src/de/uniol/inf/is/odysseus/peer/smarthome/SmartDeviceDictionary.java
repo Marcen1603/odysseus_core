@@ -24,7 +24,7 @@ public class SmartDeviceDictionary {
 	private long lastGarbageCollectorTime=0;
 
 	public SmartDeviceDictionary() {
-		//cleanupAsync();
+		cleanupAsync();
 	}
 
 	protected void cleanupAsync() {
@@ -49,11 +49,12 @@ public class SmartDeviceDictionary {
 	}
 
 	private void cleanup() {
+		LOG.debug("cleanup()");
+		
 		try {
 			long deltaGarbage = System.currentTimeMillis() - lastGarbageCollectorTime;
 			
-			if (deltaGarbage > GARBAGE_COLLECTOR_REPEAT_TIME_MS && getSmartDevicesHeartBeat() != null
-					&& !getSmartDevicesHeartBeat().isEmpty()) {
+			if (deltaGarbage > GARBAGE_COLLECTOR_REPEAT_TIME_MS) {
 				lastGarbageCollectorTime = System.currentTimeMillis();
 				
 				LOG.debug("cleanup() run");
@@ -71,7 +72,8 @@ public class SmartDeviceDictionary {
 						}
 					}
 				}
-				
+			}else if(lastGarbageCollectorTime==0){
+				lastGarbageCollectorTime = System.currentTimeMillis();
 			}
 		} catch (Exception ex) {
 			LOG.error(ex.getMessage(), ex);
@@ -105,6 +107,7 @@ public class SmartDeviceDictionary {
 	}
 
 	private synchronized void removeSmartDevice(String smartDevicePeerID) {
+		LOG.debug("removeSmartDevice");
 		SmartDevice smartDeviceToRemove = getSmartDevices().get(
 				smartDevicePeerID);
 
@@ -151,6 +154,7 @@ public class SmartDeviceDictionary {
 		synchronized (listeners) {
 			for (ISmartDeviceDictionaryListener listener : listeners) {
 				try {
+					LOG.debug("fireSmartDeviceRemovedEvent");
 					listener.smartDeviceRemoved(this, smartDevice);
 				} catch (Throwable t) {
 					LOG.error(
