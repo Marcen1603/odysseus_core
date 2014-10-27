@@ -225,8 +225,8 @@ public class ActiveLoadbalancingConsole implements CommandProvider {
 		sb.append("    installStateReceiver <peerID> <pipeID>               - Installs new MovingStateReceiver with peer and pipeID\n");
 		sb.append("    sendData <pipeID>                                    - Sends Data to MovingStateSender with pipeID\n");
 		sb.append("    testLog                                              - Outputs different log levels.\n");
-		sb.append("    testSendState <pipeID> <LocalQueryId>              - Sends state of first StatefulPO in Query to pipe");
-		sb.append("    testInjectState <pipeID> <LocalQueryId>              - Injects received state from pipe to first statefol Operator in query.");
+		sb.append("    testSendState <pipeID> <LocalQueryId>              - Sends state of first StatefulPO in Query to pipe\n");
+		sb.append("    testInjectState <pipeID> <LocalQueryId>              - Injects received state from pipe to first statefol Operator in query.\n");
 		return sb.toString();
 	}
 
