@@ -50,7 +50,7 @@ public class TWSEnrichAORule extends AbstractTransformationRule<WSEnrichAO> {
 		IMessageManipulator soapMessageManipulator;
 		
 		if(logical.getServiceMethod().equals(WSEnrichAO.SERVICE_METHOD_SOAP)) {
-			soapMessageCreator = SoapMessageCreatorRegistry.getInstance(logical.getServiceMethod(), logical.getWsdlLocation(), logical.getOpeation());
+			soapMessageCreator = SoapMessageCreatorRegistry.getInstance(logical.getServiceMethod(), logical.getWsdlLocation(), logical.getOperation());
 			soapMessageManipulator = MessageManipulatorRegistry.getInstance(logical.getServiceMethod());
 		} else {
 			soapMessageCreator = null;
@@ -76,7 +76,7 @@ public class TWSEnrichAORule extends AbstractTransformationRule<WSEnrichAO> {
 			logical.getUrl(),
 			logical.getUrlSuffix(),
 			logical.getArguments(),
-			logical.getOpeation(),
+			logical.getOperation(),
 			logical.getReceivedData(),
 			logical.getCharset(),
 			logical.getParsingMethod(),

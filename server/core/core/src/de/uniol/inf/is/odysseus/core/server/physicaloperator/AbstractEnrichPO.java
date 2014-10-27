@@ -59,7 +59,7 @@ abstract public class AbstractEnrichPO<T extends IStreamObject<M>, M extends IMe
 	protected void process_next(T object, int port) {
 		List<IStreamObject<?>> result = null;
 		Object key = null;
-		
+
 		if (cache != null) {
 			if (uniqueKeys != null) {
 				key = object.restrictedHashCode(uniqueKeys);
@@ -74,18 +74,23 @@ abstract public class AbstractEnrichPO<T extends IStreamObject<M>, M extends IMe
 			result = internal_process(object);
 		}
 
-		// Store into cache
-		if (cache != null) {
-			cache.put(key, result);
-		}
+		if (result != null) {
+			// Store into cache
+			if (cache != null) {
+				cache.put(key, result);
+			}
 
-		// Enrich and transfer
-		for (int i = 0; i < result.size(); i++) {
-			T output = dataMergeFunction.merge(object, (T) result.get(i),
-					metaMergeFunction, Order.LeftRight);
-			output.setMetadata((M) object.getMetadata().clone());
-			transfer(output);
+			// Enrich and transfer
+			for (int i = 0; i < result.size(); i++) {
+				T output = dataMergeFunction.merge(object, (T) result.get(i),
+						metaMergeFunction, Order.LeftRight);
+				output.setMetadata((M) object.getMetadata().clone());
+				transfer(output);
+			}
+		}else{
+			logger.warn("Web Service returns empty result for input "+object);
 		}
+		
 	}
 
 	@Override
@@ -117,7 +122,7 @@ abstract public class AbstractEnrichPO<T extends IStreamObject<M>, M extends IMe
 		if (!Arrays.equals(uniqueKeys, other.uniqueKeys)) {
 			return false;
 		}
-		
+
 		return true;
 	}
 

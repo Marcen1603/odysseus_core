@@ -268,7 +268,7 @@ public class WSEnrichAO extends AbstractEnrichAO {
 	 * @return The name of the Operation used to call a SOAP-Webservice (only
 	 *         needed for Soap-Webservices)
 	 */
-	public String getOpeation() {
+	public String getOperation() {
 		return this.operation;
 	}
 
