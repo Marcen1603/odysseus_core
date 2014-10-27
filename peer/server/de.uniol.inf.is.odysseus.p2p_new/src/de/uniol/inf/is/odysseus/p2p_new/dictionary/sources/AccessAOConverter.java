@@ -43,10 +43,10 @@ public final class AccessAOConverter {
 	private static final String OUTPUTSCHEMA_TYPE_TAG = "___type___";
 
 	public static AbstractAccessAO toAccessAO(TextElement<?> root) {
-		final Enumeration<?> elements = root.getChildren();
-		final AccessAO accessOperator = new AccessAO();
+		Enumeration<?> elements = root.getChildren();
+		AccessAO accessOperator = new AccessAO();
 		while (elements.hasMoreElements()) {
-			final TextElement<?> elem = (TextElement<?>) elements.nextElement();
+			TextElement<?> elem = (TextElement<?>) elements.nextElement();
 			handleElement(accessOperator, elem);
 		}
 
