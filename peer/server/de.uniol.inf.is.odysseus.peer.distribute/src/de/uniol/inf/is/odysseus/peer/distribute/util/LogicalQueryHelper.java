@@ -162,8 +162,8 @@ public final class LogicalQueryHelper {
 			Collection<ILogicalOperator> operators) {
 		Preconditions.checkNotNull(operators);
 
-		final List<ILogicalOperator> operatorsToRemove = Lists.newArrayList();
-		final List<ILogicalOperator> operatorsToAdd = Lists.newArrayList();
+		List<ILogicalOperator> operatorsToRemove = Lists.newArrayList();
+		List<ILogicalOperator> operatorsToAdd = Lists.newArrayList();
 
 		for (ILogicalOperator operator : operators) {
 
