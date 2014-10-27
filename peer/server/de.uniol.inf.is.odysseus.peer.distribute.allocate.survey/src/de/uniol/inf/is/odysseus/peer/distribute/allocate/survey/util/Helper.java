@@ -105,6 +105,7 @@ public class Helper {
 		QueryBuildConfiguration config = new QueryBuildConfiguration(newSettings.toArray(new IQueryBuildSetting<?>[0]), transCfgName);
 		config.getTransformationConfiguration().setVirtualTransformation(true);
 
+		LogicalQueryHelper.replaceStreamAOs(LogicalQueryHelper.getAllOperators(query));
 		return executor.getCompiler().transform(query, config.getTransformationConfiguration(), getActiveSession(), DataDictionaryProvider.getDataDictionary(getActiveSession().getTenant()));
 	}
 
@@ -142,6 +143,7 @@ public class Helper {
 			for (ILogicalOperator source : sources) {
 				String sourceName = session.getUser().getName() + "." + source.getName();
 				if (!DataDictionaryProvider.getDataDictionary(session.getTenant()).containsViewOrStream(sourceName, session)) {
+					LOG.error("Source '{}' is not available here.", sourceName);
 					sourcesAvailable = false;
 					break;
 				}
