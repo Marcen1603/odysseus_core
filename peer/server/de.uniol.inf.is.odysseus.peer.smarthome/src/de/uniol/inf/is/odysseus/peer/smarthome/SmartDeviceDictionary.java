@@ -24,7 +24,7 @@ public class SmartDeviceDictionary {
 	private long lastGarbageCollectorTime=0;
 
 	public SmartDeviceDictionary() {
-		cleanupAsync();
+		//cleanupAsync();
 	}
 
 	protected void cleanupAsync() {
@@ -36,12 +36,10 @@ public class SmartDeviceDictionary {
 						Thread.sleep(GARBAGE_COLLECTOR_REPEAT_TIME_MS);
 					} catch (InterruptedException e) {
 					}
-
+					
 					cleanup();
 				}
 			}
-
-			
 		});
 		t.setName("SmartDeviceDictionary cleanup thread");
 		t.setDaemon(true);
@@ -50,7 +48,7 @@ public class SmartDeviceDictionary {
 
 	private void cleanup() {
 		LOG.debug("cleanup()");
-		
+		//TODO: bug fix
 		try {
 			long deltaGarbage = System.currentTimeMillis() - lastGarbageCollectorTime;
 			
