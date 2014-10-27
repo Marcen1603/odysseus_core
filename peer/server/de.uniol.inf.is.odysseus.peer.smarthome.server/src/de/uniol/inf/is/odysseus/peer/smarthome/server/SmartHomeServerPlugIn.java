@@ -125,7 +125,7 @@ public class SmartHomeServerPlugIn implements BundleActivator,
 		executeQueryAsync(gpioTaste7.getRawSourceName(),
 				gpioTaste7.getQueryForRawValues());
 		// getQueryForParticipatingActivities
-
+		executeQueryAsync(gpioTaste7.getActivitySourceName(), gpioTaste7.getQueryForActivityInterpreter());
 	}
 
 	private void initSmartDeviceDictionary() {
@@ -873,33 +873,38 @@ public class SmartHomeServerPlugIn implements BundleActivator,
 			}
 		}
 
-		if(foundPeerIDsCopy!=null){
-		for (final PeerID remotePeerID : foundPeerIDsCopy) {
-			synchronized (refreshing) {
-				if (refreshing.contains(remotePeerID)) {
-					continue;
-				}
+		if (foundPeerIDsCopy != null) {
+			for (final PeerID remotePeerID : foundPeerIDsCopy) {
+				synchronized (refreshing) {
+					if (refreshing.contains(remotePeerID)) {
+						continue;
+					}
 
-				refreshing.add(remotePeerID);
+					refreshing.add(remotePeerID);
+				}
 			}
-		}
 		}
 
 		printFoundPeerIDs(foundPeerIDsCopy);
-		
+
 	}
 
 	// @SuppressWarnings("unused")
 	private static void printFoundPeerIDs(Collection<PeerID> foundPeerIDsCopy) {
-		if(foundPeerIDsCopy!=null){
-		LOG.debug("foundPeerIDs size:" + foundPeerIDsCopy.size());
-		for (PeerID peerID : foundPeerIDsCopy) {
-			LOG.debug("peerID: " + peerID.intern().toString());
-		}
-		}else{
+		if (foundPeerIDsCopy != null) {
+			LOG.debug("foundPeerIDs size:" + foundPeerIDsCopy.size());
+			for (PeerID peerID : foundPeerIDsCopy) {
+				LOG.debug("peerID: " + peerID.intern().toString());
+			}
+		} else {
 			LOG.debug("foundPeerIDsCopy==null");
 		}
 	}
+
+	/*
+	 * private static boolean isFound(PeerID peerID){ return
+	 * refreshing.contains(peerID); }
+	 */
 
 	public static class SourceAdvertisementListener implements
 			IAdvertisementDiscovererListener {
