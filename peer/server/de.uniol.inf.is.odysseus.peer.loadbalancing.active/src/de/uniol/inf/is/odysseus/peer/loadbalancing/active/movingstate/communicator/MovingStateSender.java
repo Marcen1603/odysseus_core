@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import de.uniol.inf.is.odysseus.p2p_new.data.DataTransmissionException;
 import de.uniol.inf.is.odysseus.p2p_new.data.DataTransmissionManager;
 import de.uniol.inf.is.odysseus.p2p_new.data.ITransmissionSender;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.common.LoadBalancingException;
 
 public class MovingStateSender {
 	
@@ -27,7 +28,7 @@ public class MovingStateSender {
 		this.transmission.open();
 	}
 
-	public void sendData(Serializable toSend) {
+	public void sendData(Serializable toSend) throws LoadBalancingException {
 		
 		ByteArrayOutputStream bos = new ByteArrayOutputStream();
 		ObjectOutput out = null;
@@ -39,9 +40,11 @@ public class MovingStateSender {
 		} catch (DataTransmissionException e) {
 			LOG.error("Could not send Data.");
 			e.printStackTrace();
+			throw new LoadBalancingException("Could not send Data.");
 		} catch (IOException e) {
 			LOG.error("Could not serialize Data to Bytes.");
 			e.printStackTrace();
+			throw new LoadBalancingException("Could not serialize Data.");
 		} 
 		finally {
 		  try {

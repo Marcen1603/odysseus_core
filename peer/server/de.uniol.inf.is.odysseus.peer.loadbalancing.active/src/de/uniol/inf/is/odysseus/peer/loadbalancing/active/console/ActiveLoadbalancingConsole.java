@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.peer.loadbalancing.active.console;
 
+import java.io.Serializable;
 import java.util.Collection;
 
 import net.jxta.peer.PeerID;
@@ -14,8 +15,11 @@ import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IStatefulPO;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvider;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.p2p_new.IP2PNetworkManager;
@@ -27,6 +31,7 @@ import de.uniol.inf.is.odysseus.peer.loadbalancing.active.ILoadBalancingStrategy
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.ILoadBalancingStrategy.LoadBalancingException;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.movingstate.communicator.MovingStateHelper;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.movingstate.communicator.MovingStateManager;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.active.movingstate.communicator.MovingStateReceiver;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.movingstate.communicator.MovingStateSender;
 
 /**
@@ -220,6 +225,8 @@ public class ActiveLoadbalancingConsole implements CommandProvider {
 		sb.append("    installStateReceiver <peerID> <pipeID>               - Installs new MovingStateReceiver with peer and pipeID\n");
 		sb.append("    sendData <pipeID>                                    - Sends Data to MovingStateSender with pipeID\n");
 		sb.append("    testLog                                              - Outputs different log levels.\n");
+		sb.append("    testSendState <pipeID> <LocalQueryId>              - Sends state of first StatefulPO in Query to pipe");
+		sb.append("    testInjectState <pipeID> <LocalQueryId>              - Injects received state from pipe to first statefol Operator in query.");
 		return sb.toString();
 	}
 
@@ -372,7 +379,66 @@ public class ActiveLoadbalancingConsole implements CommandProvider {
 			}
 		}
 		System.out.println(ERROR_NOTFOUND + peerName);
+	}
+	
+	public void _testSendState(CommandInterpreter ci) {
+		final String ERROR_USAGE = "Usage: testSendStatus <pipeID> <LocalQueryId>";
+		final String ERROR_LOCALOP = "ERROR: Local Query does not contain stateful Operator.";
+		final String ERROR_NOTFOUND = "ERROR: No Sender found for pipe:";
+		
+		String pipeId = ci.nextArgument();
+		if (Strings.isNullOrEmpty(pipeId)) {
 
+			System.out.println(ERROR_USAGE);
+			return;
+		}
+		
+		String localQueryIdString = ci.nextArgument();
+		if (Strings.isNullOrEmpty(localQueryIdString)) {
+
+			System.out.println(ERROR_USAGE);
+			return;
+		}
+		
+		int localQueryId;
+		
+		try {
+			localQueryId = Integer.parseInt(localQueryIdString);
+		}
+		catch(NumberFormatException e) {
+			System.out.println(ERROR_USAGE);
+			return;
+		}
+		
+		IStatefulPO statefulOp=null;
+		
+		IPhysicalQuery localQuery = executor.getExecutionPlan().getQueryById(localQueryId);
+		for(IPhysicalOperator operator : localQuery.getAllOperators()) {
+			if(operator instanceof IStatefulPO) {
+				statefulOp = (IStatefulPO)operator;
+				break;
+			}
+		}
+		
+		if(statefulOp==null) {
+			System.out.println(ERROR_LOCALOP);
+			return;
+		}
+		Serializable state = statefulOp.getState();
+		
+		MovingStateSender sender = MovingStateManager.getInstance().getSender(pipeId);
+		if(sender==null) {
+			System.out.println(ERROR_NOTFOUND + pipeId);
+			return;
+		}
+		try {
+			sender.sendData(state);
+		} catch (de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.common.LoadBalancingException e) {
+			System.out.println("ERROR:" + e.getMessage());
+			return;
+		}
+		System.out.println("Data sent.");
+		
 	}
 	
 	public void _installStateReceiver(CommandInterpreter ci) {
@@ -432,8 +498,73 @@ public class ActiveLoadbalancingConsole implements CommandProvider {
 			System.out.println(ERROR_NOTFOUND + pipeID);
 			return;
 		}
-		sender.sendData(message);
+		try {
+			sender.sendData(message);
+		} catch (de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.common.LoadBalancingException e) {
+			System.out.println("ERROR:" + e.getMessage());
+			return;
+		}
 		System.out.println("Sent: " + message);
+	}
+	
+	public void _testInjectState(CommandInterpreter ci) {
+		final String ERROR_USAGE = "Usage: testInjectState <pipeID> <LocalQueryId>";
+		final String ERROR_LOCALOP = "ERROR: Local Query does not contain stateful Operator.";
+		final String ERROR_NOTFOUND = "ERROR: No Sender found for pipe:";
+		final String ERROR_NOTHING_RECEIVED ="ERROR: No status received. Try sending a status first.";
+		
+		String pipeId = ci.nextArgument();
+		if (Strings.isNullOrEmpty(pipeId)) {
+
+			System.out.println(ERROR_USAGE);
+			return;
+		}
+		
+		String localQueryIdString = ci.nextArgument();
+		if (Strings.isNullOrEmpty(localQueryIdString)) {
+
+			System.out.println(ERROR_USAGE);
+			return;
+		}
+		
+		int localQueryId;
+		
+		try {
+			localQueryId = Integer.parseInt(localQueryIdString);
+		}
+		catch(NumberFormatException e) {
+			System.out.println(ERROR_USAGE);
+			return;
+		}
+		
+		IStatefulPO statefulOp=null;
+		
+		IPhysicalQuery localQuery = executor.getExecutionPlan().getQueryById(localQueryId);
+		for(IPhysicalOperator operator : localQuery.getAllOperators()) {
+			if(operator instanceof IStatefulPO) {
+				statefulOp = (IStatefulPO)operator;
+				break;
+			}
+		}
+		
+		if(statefulOp==null) {
+			System.out.println(ERROR_LOCALOP);
+			return;
+		}
+		MovingStateReceiver receiver = MovingStateManager.getInstance().getReceiver(pipeId);
+		if(receiver==null) {
+			System.out.println(ERROR_NOTFOUND + pipeId);
+			return;
+		}
+		
+		try {
+			receiver.injectState(statefulOp);
+		} catch (de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.common.LoadBalancingException e) {
+			System.out.println(ERROR_NOTHING_RECEIVED);
+			return;
+		}
+		System.out.println("Injected State.");
+		
 	}
 
 	/**

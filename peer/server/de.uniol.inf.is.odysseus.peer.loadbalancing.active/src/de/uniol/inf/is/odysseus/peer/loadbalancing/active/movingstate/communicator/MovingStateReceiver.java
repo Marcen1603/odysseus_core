@@ -4,15 +4,18 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectInputStream;
+import java.io.Serializable;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IStatefulPO;
 import de.uniol.inf.is.odysseus.p2p_new.data.DataTransmissionException;
 import de.uniol.inf.is.odysseus.p2p_new.data.DataTransmissionManager;
 import de.uniol.inf.is.odysseus.p2p_new.data.ITransmissionReceiver;
 import de.uniol.inf.is.odysseus.p2p_new.data.ITransmissionReceiverListener;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.common.LoadBalancingException;
 
 public class MovingStateReceiver implements ITransmissionReceiverListener {
 	
@@ -21,7 +24,7 @@ public class MovingStateReceiver implements ITransmissionReceiverListener {
 	
 	private final ITransmissionReceiver transmission;
 	
-	private Object receivedState;
+	private Serializable receivedState;
 	
 	
 	
@@ -39,7 +42,7 @@ public class MovingStateReceiver implements ITransmissionReceiverListener {
 		ObjectInput in = null;
 		try {
 		  in = new ObjectInputStream(bis);
-		  receivedState = in.readObject(); 
+		  receivedState = (Serializable)in.readObject(); 
 		  LOG.debug("Received: ");
 		  LOG.debug(receivedState.toString());
 		} catch (IOException e) {
@@ -74,6 +77,14 @@ public class MovingStateReceiver implements ITransmissionReceiverListener {
 	@Override
 	public void onReceiveDone(ITransmissionReceiver receiver) {
 		//ignore as we are not an operator
+		
+	}
+	
+	public void injectState(IStatefulPO operator) throws LoadBalancingException {
+		if(receivedState==null) {
+			throw new LoadBalancingException("Tried injecting State without having state received.");
+		}
+		operator.setState(receivedState);
 		
 	}
 }

@@ -62,4 +62,8 @@ public class MovingStateManager {
 	public MovingStateSender getSender(String pipeID) {
 		return senderMap.get(pipeID);
 	}
+
+	public MovingStateReceiver getReceiver(String pipeId) {
+		return receiverMap.get(pipeId);
+	}
 }
