@@ -103,7 +103,6 @@ public class Helper {
 		IQueryBuildConfigurationTemplate settings = executor.getQueryBuildConfiguration(transCfgName);
 		ArrayList<IQueryBuildSetting<?>> newSettings = new ArrayList<IQueryBuildSetting<?>>(settings.getConfiguration());
 		QueryBuildConfiguration config = new QueryBuildConfiguration(newSettings.toArray(new IQueryBuildSetting<?>[0]), transCfgName);
-		config.getTransformationConfiguration().setVirtualTransformation(true);
 
 		LogicalQueryHelper.replaceStreamAOs(LogicalQueryHelper.getAllOperators(query));
 		return executor.getCompiler().transform(query, config.getTransformationConfiguration(), getActiveSession(), DataDictionaryProvider.getDataDictionary(getActiveSession().getTenant()));
