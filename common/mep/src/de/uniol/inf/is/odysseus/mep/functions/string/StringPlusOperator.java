@@ -35,12 +35,12 @@ public class StringPlusOperator extends AbstractBinaryOperator<String> {
 
 	@Override
 	public boolean isCommutative() {
-		return true;
+		return false;
 	}
 
 	@Override
 	public boolean isAssociative() {
-		return true;
+		return false;
 	}
 
 	@Override
