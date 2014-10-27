@@ -20,8 +20,11 @@ import com.ghgande.j2mod.modbus.msg.ReadInputDiscretesRequest;
 import com.ghgande.j2mod.modbus.msg.ReadInputDiscretesResponse;
 import com.ghgande.j2mod.modbus.msg.ReadInputRegistersRequest;
 import com.ghgande.j2mod.modbus.msg.ReadInputRegistersResponse;
+import com.ghgande.j2mod.modbus.msg.ReadMultipleRegistersRequest;
+import com.ghgande.j2mod.modbus.msg.ReadMultipleRegistersResponse;
 import com.ghgande.j2mod.modbus.net.TCPMasterConnection;
 import com.ghgande.j2mod.modbus.procimg.InputRegister;
+import com.ghgande.j2mod.modbus.procimg.Register;
 
 import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
@@ -120,9 +123,11 @@ public class ModbusTCPTransportHandler extends
 		case Modbus.READ_INPUT_DISCRETES:
 			req = new ReadInputDiscretesRequest(ref, count);
 			break;
-
 		case Modbus.READ_INPUT_REGISTERS:
 			req = new ReadInputRegistersRequest(ref, count);
+			break;
+		case Modbus.READ_MULTIPLE_REGISTERS:
+			req = new ReadMultipleRegistersRequest(ref, count);
 			break;
 		default:
 			throw new IllegalArgumentException("FUNCTION_CODE " + functionCode
@@ -200,10 +205,18 @@ public class ModbusTCPTransportHandler extends
 			case Modbus.READ_INPUT_REGISTERS:
 				ReadInputRegistersResponse res = (ReadInputRegistersResponse) response;
 				List<Integer> resList = new ArrayList<>();
-				for (InputRegister r:res.getRegisters()){
+				for (InputRegister r : res.getRegisters()) {
 					resList.add(r.getValue());
 				}
 				t.setAttribute(0, resList);
+				break;
+			case Modbus.READ_MULTIPLE_REGISTERS:
+				ReadMultipleRegistersResponse resp = (ReadMultipleRegistersResponse) response;
+				List<Integer> resList2 = new ArrayList<>();
+				for (Register r : resp.getRegisters()) {
+					resList2.add(r.getValue());
+				}
+				t.setAttribute(0, resList2);
 				break;
 			case Modbus.READ_INPUT_DISCRETES:
 				com.ghgande.j2mod.modbus.util.BitVector discretes = ((ReadInputDiscretesResponse) response)
@@ -214,7 +227,7 @@ public class ModbusTCPTransportHandler extends
 				t.setAttribute(0, response.getHexMessage());
 			}
 		}
-		
+
 		return t;
 	}
 }
