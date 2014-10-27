@@ -40,6 +40,7 @@ public class PredicateCoalescePO<M extends ITimeInterval> extends
 		getGroupProcessor().init();
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	protected void process_done(int port) {
 		if (currentPartialAggregates != null) {
@@ -47,6 +48,7 @@ public class PredicateCoalescePO<M extends ITimeInterval> extends
 					currentPartialAggregates, false);
 			IStreamObject<M> out = getGroupProcessor().createOutputElement(0L,
 					result);
+			out.setMetadata((M) currentPartialAggregates.getMetadata().clone());
 			transfer(out);
 			currentPartialAggregates = null;
 		}
