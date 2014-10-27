@@ -46,6 +46,9 @@ public class RecoveryBufferPO<T extends IStreamObject<? extends ITimeInterval>> 
 		this.bufferState = BUFFER_STATES.BUFFERING;
 	}
 
+	/**
+	 * Stops the buffering and starts to send the saved tuples to the next operator(s)
+	 */
 	@SuppressWarnings("unchecked")
 	public void stopBuffering() {
 		if (bufferState == BUFFER_STATES.BUFFERING) {
@@ -58,6 +61,11 @@ public class RecoveryBufferPO<T extends IStreamObject<? extends ITimeInterval>> 
 			}
 			this.bufferState = BUFFER_STATES.NOT_BUFFERING;
 		}
+	}
+
+	@Override
+	public String getName() {
+		return "RecoveryBufferPO";
 	}
 
 }

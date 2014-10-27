@@ -64,7 +64,7 @@ public class RecoveryInstructionHandler {
 			RecoveryInstructionMessage instructionMessage) {
 		switch (instructionMessage.getMessageType()) {
 		case RecoveryInstructionMessage.HOLD_ON:
-			holdOn(instructionMessage.getSharedQueryId());
+			holdOn(instructionMessage.getPipeId());
 			break;
 		case RecoveryInstructionMessage.ADD_QUERY:
 			addQuery(instructionMessage.getPqlQuery());
@@ -78,13 +78,16 @@ public class RecoveryInstructionHandler {
 		}
 	}
 
-	private static void holdOn(ID queryId) {
-		// TODO Here we want to store the tuples. determine pipeid
-		RecoveryHelper.insertBuffer(null);
+	private static void holdOn(PipeID pipeId) {
+		// Here we want to store the tuples.
+		// TODO Start buffering - and when to stop?
+		//RecoveryHelper.insertBuffer(pipeId.toString());
+		
 	}
 
 	@SuppressWarnings("rawtypes")
 	private static void addQuery(String pql) {
+				
 		Collection<Integer> installedQueries = RecoveryHelper.installAndRunQueryPartFromPql(pql);
 
 		// Call "receiveFromNewPeer" on the subsequent receiver so that that

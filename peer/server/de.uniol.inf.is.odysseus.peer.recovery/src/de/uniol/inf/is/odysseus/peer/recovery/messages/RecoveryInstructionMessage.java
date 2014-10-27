@@ -54,11 +54,10 @@ public class RecoveryInstructionMessage implements IMessage {
 	 *            ID of the query which has to hold on.
 	 * @return A message which tells this.
 	 */
-	public static RecoveryInstructionMessage createHoldOnMessage(
-			ID sharedQueryId) {
+	public static RecoveryInstructionMessage createHoldOnMessage(PipeID pipeId) {
 		RecoveryInstructionMessage holdOnMessage = new RecoveryInstructionMessage();
 		holdOnMessage.setMessageType(HOLD_ON);
-		holdOnMessage.setSharedQueryId(sharedQueryId);
+		holdOnMessage.setPipeId(pipeId);
 		return holdOnMessage;
 	}
 
@@ -73,8 +72,7 @@ public class RecoveryInstructionMessage implements IMessage {
 	 *            parts from different peers belong together
 	 * @return A message which tells the receiving peer to install this query.
 	 */
-	public static RecoveryInstructionMessage createAddQueryMessage(
-			String pqlQuery, ID sharedQueryId) {
+	public static RecoveryInstructionMessage createAddQueryMessage(String pqlQuery, ID sharedQueryId) {
 		RecoveryInstructionMessage addQueryMessage = new RecoveryInstructionMessage();
 		addQueryMessage.setMessageType(ADD_QUERY);
 		addQueryMessage.setPqlQuery(pqlQuery);
@@ -82,8 +80,8 @@ public class RecoveryInstructionMessage implements IMessage {
 		return addQueryMessage;
 	}
 
-	public static RecoveryInstructionMessage createUpdateSenderMessage(
-			PeerID newSender, ID sharedQueryId) {
+	public static RecoveryInstructionMessage createUpdateSenderMessage(PeerID newSender,
+			ID sharedQueryId) {
 		RecoveryInstructionMessage newSenderMessage = new RecoveryInstructionMessage();
 		newSenderMessage.setMessageType(UPDATE_SENDER);
 		newSenderMessage.setNewSender(newSender);
@@ -103,8 +101,8 @@ public class RecoveryInstructionMessage implements IMessage {
 	 *            peers belong together
 	 * @return A message which tells to receive the tuples from a new peer
 	 */
-	public static RecoveryInstructionMessage createUpdateReceiverMessage(
-			PeerID newSender, PipeID pipeId) {
+	public static RecoveryInstructionMessage createUpdateReceiverMessage(PeerID newSender,
+			PipeID pipeId) {
 		RecoveryInstructionMessage upateReceiverMessage = new RecoveryInstructionMessage();
 		upateReceiverMessage.setMessageType(UPDATE_RECEIVER);
 		upateReceiverMessage.setNewSender(newSender);
@@ -121,8 +119,7 @@ public class RecoveryInstructionMessage implements IMessage {
 	 * @return A message which tells the receiver that he is a buddy of the
 	 *         sender
 	 */
-	public static RecoveryInstructionMessage createBeBuddyMessage(
-			ID sharedQueryId) {
+	public static RecoveryInstructionMessage createBeBuddyMessage(ID sharedQueryId) {
 		RecoveryInstructionMessage beBuddyMessage = new RecoveryInstructionMessage();
 		beBuddyMessage.setMessageType(BE_BUDDY);
 		beBuddyMessage.setSharedQueryId(sharedQueryId);
@@ -141,18 +138,19 @@ public class RecoveryInstructionMessage implements IMessage {
 		int bbsize;
 
 		int sharedQueryIdLength = 0;
+		int pipeIdLength = 0;
 
 		switch (messageType) {
 		case HOLD_ON:
-			sharedQueryIdLength = sharedQueryId.toString().getBytes().length;
+			pipeIdLength = pipeId.toString().getBytes().length;
 			bbsize = 4 + 4 + sharedQueryId.toString().getBytes().length;
 			bb = ByteBuffer.allocate(bbsize);
 			// 1. MessageType
 			bb.putInt(messageType);
-			// 2. Length of the sharedQueryId
-			bb.putInt(sharedQueryId.toString().getBytes().length);
+			// 2. Length of the pipeId
+			bb.putInt(pipeIdLength);
 			// 3. SharedQueryId
-			bb.put(sharedQueryId.toString().getBytes());
+			bb.put(pipeId.toString().getBytes());
 			break;
 		case ADD_QUERY:
 			sharedQueryIdLength = sharedQueryId.toString().getBytes().length;
@@ -169,7 +167,7 @@ public class RecoveryInstructionMessage implements IMessage {
 			break;
 		case UPDATE_RECEIVER:
 			int newSenderLength = newSender.toString().getBytes().length;
-			int pipeIdLength = pipeId.toString().getBytes().length;
+			pipeIdLength = pipeId.toString().getBytes().length;
 			bbsize = 4 + 4 + newSenderLength + 4 + pipeIdLength;
 			bb = ByteBuffer.allocate(bbsize);
 			bb.putInt(messageType);
@@ -199,8 +197,24 @@ public class RecoveryInstructionMessage implements IMessage {
 		// TODO Not finished yet
 		ByteBuffer bb = ByteBuffer.wrap(data);
 		messageType = bb.getInt();
-
+		
+		int pipeIdLength = 0;
+		byte[] pipeIdByte;
+		String pipeIdString;
+		
 		switch (messageType) {
+		case HOLD_ON:
+			pipeIdLength = bb.getInt();
+			pipeIdByte = new byte[pipeIdLength];
+			bb.get(pipeIdByte, 0, pipeIdLength);
+			pipeIdString = new String(pipeIdByte);
+			try {
+				URI uri = new URI(pipeIdString);
+				this.pipeId = PipeID.create(uri);
+			} catch (URISyntaxException e) {
+				e.printStackTrace();
+			}
+			break;
 		case ADD_QUERY:
 			int sharedQueryIdLength = bb.getInt();
 			byte[] sharedQueryIdByte = new byte[sharedQueryIdLength];
@@ -231,10 +245,10 @@ public class RecoveryInstructionMessage implements IMessage {
 				e.printStackTrace();
 			}
 
-			int pipeIdLength = bb.getInt();
-			byte[] pipeIdByte = new byte[pipeIdLength];
+			pipeIdLength = bb.getInt();
+			pipeIdByte = new byte[pipeIdLength];
 			bb.get(pipeIdByte, 0, pipeIdLength);
-			String pipeIdString = new String(pipeIdByte);
+			pipeIdString = new String(pipeIdByte);
 			try {
 				URI uri = new URI(pipeIdString);
 				pipeId = PipeID.create(uri);

@@ -2,9 +2,7 @@ package de.uniol.inf.is.odysseus.peer.recovery.console;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 import java.util.Set;
 
 import net.jxta.id.ID;
@@ -298,15 +296,7 @@ public class RecoveryConsole implements CommandProvider {
 
 		}
 
-		PeerID peerId = getPeerIdFromCi(ci);
-		ID sharedQueryId = getSharedQueryIdFromCi(ci);
-
-		List<PeerID> peers = new ArrayList<PeerID>();
-		peers.add(peerId);
-
-		List<ID> queryIds = new ArrayList<ID>();
-		queryIds.add(sharedQueryId);
-		cCommunicator.get().sendHoldOnMessages(peers, queryIds);
+		System.out.println("I do nothing for now.");
 	}
 
 	public void _sendUpdateReceiver(CommandInterpreter ci) {
@@ -515,21 +505,21 @@ public class RecoveryConsole implements CommandProvider {
 	 * @param ci
 	 * @return SharedQueryId which is made from the next argument from the ci
 	 */
-	private ID getSharedQueryIdFromCi(CommandInterpreter ci) {
-		String sharedQueryIdString = ci.nextArgument();
-		ID sharedQueryId = null;
-		if (!Strings.isNullOrEmpty(sharedQueryIdString)) {
-			URI sharedIdUri;
-			try {
-				sharedIdUri = new URI(sharedQueryIdString);
-				sharedQueryId = ID.create(sharedIdUri);
-			} catch (URISyntaxException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-		return sharedQueryId;
-	}
+//	private ID getSharedQueryIdFromCi(CommandInterpreter ci) {
+//		String sharedQueryIdString = ci.nextArgument();
+//		ID sharedQueryId = null;
+//		if (!Strings.isNullOrEmpty(sharedQueryIdString)) {
+//			URI sharedIdUri;
+//			try {
+//				sharedIdUri = new URI(sharedQueryIdString);
+//				sharedQueryId = ID.create(sharedIdUri);
+//			} catch (URISyntaxException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
+//		}
+//		return sharedQueryId;
+//	}
 
 	/**
 	 * Determines the {@link IRecoveryAllocator} by name.

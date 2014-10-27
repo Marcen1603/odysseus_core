@@ -51,8 +51,7 @@ public class RecoveryHelper {
 		IServerExecutor executor = RecoveryCommunicator.getExecutor();
 		ISession session = RecoveryCommunicator.getActiveSession();
 
-		Collection<Integer> installedQueries = executor.addQuery(pql, "PQL", session, "Standard",
-				Context.empty());
+		Collection<Integer> installedQueries = executor.addQuery(pql, "PQL", session, "Standard", Context.empty());
 
 		// TODO send success message
 
@@ -188,8 +187,8 @@ public class RecoveryHelper {
 	public static List<JxtaSenderPO> getJxtaSenders() {
 		List<JxtaSenderPO> senders = new ArrayList<JxtaSenderPO>();
 
-		Iterator<IPhysicalQuery> queryIterator = RecoveryCommunicator.getExecutor()
-				.getExecutionPlan().getQueries().iterator();
+		Iterator<IPhysicalQuery> queryIterator = RecoveryCommunicator.getExecutor().getExecutionPlan().getQueries()
+				.iterator();
 		// Iterate through all queries we have installed
 		while (queryIterator.hasNext()) {
 			IPhysicalQuery query = queryIterator.next();
@@ -234,16 +233,14 @@ public class RecoveryHelper {
 		PhysicalSubscription subscription = originalSender.getSubscribedToSource(0);
 
 		if (subscription.getTarget() instanceof AbstractPipe) {
-			((AbstractPipe) subscription.getTarget()).subscribeSink(jxtaSender, 0,
-					subscription.getSourceOutPort(), subscription.getSchema(), true,
-					subscription.getOpenCalls());
+			((AbstractPipe) subscription.getTarget()).subscribeSink(jxtaSender, 0, subscription.getSourceOutPort(),
+					subscription.getSchema(), true, subscription.getOpenCalls());
 
 			jxtaSender.subscribeToSource(subscription.getTarget(), subscription.getSinkInPort(),
 					subscription.getSourceOutPort(), subscription.getSchema());
 		} else if (subscription.getTarget() instanceof AbstractSource) {
-			((AbstractSource) subscription.getTarget()).subscribeSink(jxtaSender, 0,
-					subscription.getSourceOutPort(), subscription.getSchema(), true,
-					subscription.getOpenCalls());
+			((AbstractSource) subscription.getTarget()).subscribeSink(jxtaSender, 0, subscription.getSourceOutPort(),
+					subscription.getSchema(), true, subscription.getOpenCalls());
 
 			jxtaSender.subscribeToSource(subscription.getTarget(), subscription.getSinkInPort(),
 					subscription.getSourceOutPort(), subscription.getSchema());
@@ -251,8 +248,7 @@ public class RecoveryHelper {
 
 		List<IPhysicalOperator> plan = new ArrayList<IPhysicalOperator>();
 		plan.add(jxtaSender);
-		RecoveryCommunicator.getExecutor().addQuery(plan, RecoveryCommunicator.getActiveSession(),
-				"Standard");
+		RecoveryCommunicator.getExecutor().addQuery(plan, RecoveryCommunicator.getActiveSession(), "Standard");
 
 	}
 
@@ -271,16 +267,13 @@ public class RecoveryHelper {
 	public static void insertOperatorBefore(ISink sink, AbstractPipe operatorToInsert, int port) {
 
 		PhysicalSubscription subscription = (PhysicalSubscription) sink.getSubscribedToSource(port);
-		ArrayList<IPhysicalOperator> emptyCallPath = new ArrayList<IPhysicalOperator>();
 
 		sink.unsubscribeFromSource(subscription);
 		operatorToInsert.subscribeToSource(subscription.getTarget(), subscription.getSinkInPort(),
 				subscription.getSourceOutPort(), subscription.getSchema());
-		operatorToInsert.subscribeSink(sink, subscription.getSinkInPort(),
-				subscription.getSinkInPort(), subscription.getSchema(), true,
-				subscription.getOpenCalls());
-		operatorToInsert.open(sink, subscription.getSinkInPort(), subscription.getSinkInPort(),
-				emptyCallPath, sink.getOwner());
+		operatorToInsert.subscribeSink(sink, subscription.getSinkInPort(), subscription.getSinkInPort(),
+				subscription.getSchema(), true, subscription.getOpenCalls());
+		operatorToInsert.addOwner(sink.getOwner());
 
 	}
 

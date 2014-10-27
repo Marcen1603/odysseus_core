@@ -1,5 +1,7 @@
 package de.uniol.inf.is.odysseus.peer.recovery.internal;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -17,9 +19,15 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableCollection;
+import com.google.common.collect.ImmutableSet;
 
+import de.uniol.inf.is.odysseus.core.collection.Context;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
+import de.uniol.inf.is.odysseus.core.server.datadictionary.DataDictionaryProvider;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvider;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.p2p_new.IMessage;
@@ -28,6 +36,7 @@ import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicator;
 import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicatorListener;
 import de.uniol.inf.is.odysseus.p2p_new.PeerCommunicationException;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.IP2PDictionary;
+import de.uniol.inf.is.odysseus.p2p_new.physicaloperator.JxtaReceiverPO;
 import de.uniol.inf.is.odysseus.p2p_new.physicaloperator.JxtaSenderPO;
 import de.uniol.inf.is.odysseus.peer.distribute.QueryPartAllocationException;
 import de.uniol.inf.is.odysseus.peer.distribute.message.RemoveQueryMessage;
@@ -255,6 +264,8 @@ public class RecoveryCommunicator implements IRecoveryCommunicator, IPeerCommuni
 	@Override
 	public void recover(PeerID failedPeer) {
 
+		LOG.debug("Startet recovery for {}", p2pDictionary.getRemotePeerName(failedPeer));
+
 		// 1. Check, if we have backup information for the failed peer and for
 		// which shared-query-ids
 		// Return if there is no backup information stored for the given peer
@@ -325,24 +336,25 @@ public class RecoveryCommunicator implements IRecoveryCommunicator, IPeerCommuni
 
 			PeerID peer = null;
 
-			if(recoveryAllocator == null){
+			if (recoveryAllocator == null) {
 				LOG.error("No allocator for recovery allocation set.");
 			} else {
 				try {
-					peer = recoveryAllocator.allocate(
-							p2pDictionary.getRemotePeerIDs(),
+					peer = recoveryAllocator.allocate(p2pDictionary.getRemotePeerIDs(),
 							p2pNetworkManager.getLocalPeerID());
 					LOG.debug("Peer ID for recovery allocation found.");
 				} catch (QueryPartAllocationException e) {
 					LOG.error("Peer ID search for recovery allocation failed.");
 					e.printStackTrace();
 				}
-			}	
+			}
 
 			// If the peer is null, we don't know any other peer so we have to
 			// install it on ourself
 			if (peer == null)
 				peer = p2pNetworkManager.getLocalPeerID();
+
+			determineAndSendHoldOnMessages(sharedQueryId, failedPeer);
 
 			// 5. Tell the new peer to install the parts from the failed peer
 			RecoveryAgreementHandler.waitForAndDoRecovery(failedPeer, sharedQueryId, peer);
@@ -356,14 +368,59 @@ public class RecoveryCommunicator implements IRecoveryCommunicator, IPeerCommuni
 
 	}
 
-	@Override
-	public void sendHoldOnMessages(List<PeerID> peers, List<ID> queryIds) {
-		try {
-			for (int i = 0; i < peers.size(); i++) {
-				RecoveryInstructionMessage holdOnMessage = RecoveryInstructionMessage
-						.createHoldOnMessage(queryIds.get(i));
-				peerCommunicator.send(peers.get(i), holdOnMessage);
+	@SuppressWarnings("rawtypes")
+	private void determineAndSendHoldOnMessages(ID sharedQueryId, PeerID failedPeer) {
+		// Test: Tell the peers which sent tuples to the failed peer that
+		// they have to hold on
+		TransformationConfiguration trafoConfig = new TransformationConfiguration("relational");
+		ImmutableSet<String> backupPQL = LocalBackupInformationAccess.getStoredPQLStatements(
+				sharedQueryId, failedPeer);
+		for (String pql : backupPQL) {
+			List<IPhysicalQuery> physicalQueries = executor.getCompiler()
+					.translateAndTransformQuery(
+							pql,
+							"PQL",
+							getActiveSession(),
+							DataDictionaryProvider
+									.getDataDictionary(getActiveSession().getTenant()),
+							trafoConfig, Context.empty());
+			// Search for the receiver
+			for (IPhysicalQuery query : physicalQueries) {
+				for (IPhysicalOperator op : query.getAllOperators()) {
+					if (op instanceof JxtaReceiverPO) {
+						JxtaReceiverPO receiver = (JxtaReceiverPO) op;
+						// This is the information about the peer from which
+						// we get the data
+						// This peer has to hold on
+						String peerId = receiver.getPeerIDString();
+						String pipeId = receiver.getPipeIDString();
+
+						try {
+							URI uri = new URI(pipeId);
+							PipeID pipe = PipeID.create(uri);
+							RecoveryInstructionMessage holdOnMessage = RecoveryInstructionMessage
+									.createHoldOnMessage(pipe);
+							uri = new URI(peerId);
+							PeerID peerToHoldOn = PeerID.create(uri);
+							if (!peerToHoldOn.equals(p2pNetworkManager.getLocalPeerID())) {
+								sendHoldOnMessage(peerToHoldOn, holdOnMessage);
+							} else {
+								// We are the peer
+								receivedMessage(peerCommunicator, peerToHoldOn, holdOnMessage);
+							}
+						} catch (URISyntaxException e) {
+							e.printStackTrace();
+						}
+					}
+				}
 			}
+		}
+	}
+
+	@Override
+	public void sendHoldOnMessage(PeerID peerToHoldOn, RecoveryInstructionMessage holdOnMessage) {
+		try {
+			peerCommunicator.send(peerToHoldOn, holdOnMessage);
 		} catch (Exception e) {
 
 		}
@@ -407,7 +464,7 @@ public class RecoveryCommunicator implements IRecoveryCommunicator, IPeerCommuni
 		if (message instanceof RecoveryInstructionMessage) {
 			RecoveryInstructionMessage instruction = (RecoveryInstructionMessage) message;
 			RecoveryInstructionHandler.handleInstruction(senderPeer, instruction);
-			
+
 		} else if (message instanceof BackupInformationMessage) {
 
 			// Store the backup information
@@ -423,7 +480,7 @@ public class RecoveryCommunicator implements IRecoveryCommunicator, IPeerCommuni
 		} else if (message instanceof RecoveryAgreementMessage) {
 			RecoveryAgreementMessage agreementMessage = (RecoveryAgreementMessage) message;
 			RecoveryAgreementHandler.handleAgreementMessage(senderPeer, agreementMessage);
-			
+
 		}
 	}
 
@@ -479,23 +536,24 @@ public class RecoveryCommunicator implements IRecoveryCommunicator, IPeerCommuni
 			e.printStackTrace();
 		}
 	}
-	
+
 	@Override
 	public void chooseBuddyForQuery(ID sharedQueryId) {
-		// TODO Use a buddy-allocator? For now, we just choose the first peer we know
+		// TODO Use a buddy-allocator? For now, we just choose the first peer we
+		// know
 		PeerID buddy = p2pDictionary.getRemotePeerIDs().iterator().next();
-		
+
 		// 1. Send that this peer is my buddy
-		RecoveryInstructionMessage buddyMessage = RecoveryInstructionMessage.createBeBuddyMessage(sharedQueryId);
+		RecoveryInstructionMessage buddyMessage = RecoveryInstructionMessage
+				.createBeBuddyMessage(sharedQueryId);
 		try {
 			peerCommunicator.send(buddy, buddyMessage);
 		} catch (PeerCommunicationException e) {
 			e.printStackTrace();
 		}
-		
+
 		// 2. Give the necessary backup-information to this peer
-		
-		
+
 	}
 
 	public static IRecoveryAllocator getRecoveryAllocator() {

@@ -1,10 +1,9 @@
 package de.uniol.inf.is.odysseus.peer.recovery;
 
-import java.util.List;
-
 import net.jxta.id.ID;
 import net.jxta.peer.PeerID;
 import net.jxta.pipe.PipeID;
+import de.uniol.inf.is.odysseus.peer.recovery.messages.RecoveryInstructionMessage;
 
 /**
  * A recovery communicator handles the communication between peers for recovery
@@ -35,7 +34,7 @@ public interface IRecoveryCommunicator {
 	 * @param queryIds
 	 *            List of query-ids for which the respective peer should hold on
 	 */
-	public void sendHoldOnMessages(List<PeerID> peers, List<ID> queryIds);
+	public void sendHoldOnMessage(PeerID peerToHoldOn, RecoveryInstructionMessage holdOnMessage);
 
 	/**
 	 * Sends a message to the receiverPeer, that this peer has to update it's
