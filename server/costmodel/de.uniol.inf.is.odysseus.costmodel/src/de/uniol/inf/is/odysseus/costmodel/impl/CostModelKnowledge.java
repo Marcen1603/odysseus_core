@@ -132,6 +132,10 @@ public class CostModelKnowledge implements ICostModelKnowledge, IPlanModificatio
 
 	private static Optional<IHistogram> createEqualWidthHistogram(SDFAttribute attribute, ISampling sampler) {
 		List<Double> values = sampler.getSampledValues();
+		if( values.isEmpty() ) {
+			return Optional.absent();
+		}
+		
 		int intervalCount = new FreedmanDiaconisRule().estimateIntervalCount(values);
 
 		double min = values.get(0);
