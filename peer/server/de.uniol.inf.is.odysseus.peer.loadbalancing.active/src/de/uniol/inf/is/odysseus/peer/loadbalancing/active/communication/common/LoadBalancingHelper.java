@@ -49,8 +49,7 @@ import de.uniol.inf.is.odysseus.peer.loadbalancing.active.physicaloperator.LoadB
  */
 public class LoadBalancingHelper {
 
-	private static final Logger LOG = LoggerFactory
-			.getLogger(LoadBalancingHelper.class);
+	private static final Logger LOG = LoggerFactory.getLogger(LoadBalancingHelper.class);
 
 	/**
 	 * Converts a String to a peer ID.
@@ -91,8 +90,7 @@ public class LoadBalancingHelper {
 	public static void cutQuery(int queryID) {
 
 		IServerExecutor executor = ActiveLoadBalancingActivator.getExecutor();
-		IPhysicalQuery query = executor.getExecutionPlan()
-				.getQueryById(queryID);
+		IPhysicalQuery query = executor.getExecutionPlan().getQueryById(queryID);
 
 		for (IPhysicalOperator operator : query.getAllOperators()) {
 
@@ -102,10 +100,8 @@ public class LoadBalancingHelper {
 			}
 		}
 	}
-	
 
-	public static JxtaReceiverAO createReceiverAO(
-			IncomingConnection connection, String pipeID) {
+	public static JxtaReceiverAO createReceiverAO(IncomingConnection connection, String pipeID) {
 		JxtaReceiverAO receiver = new JxtaReceiverAO();
 		// TODO more than 1 outgoing connection from Receiver!
 
@@ -113,13 +109,11 @@ public class LoadBalancingHelper {
 		receiver.setPeerID(connection.remotePeerID);
 		receiver.setSchema(connection.schema.getAttributes());
 		receiver.setSchemaName(connection.schema.getURI());
-		receiver.connectSink(connection.localOperator, connection.port, 0,
-				connection.schema);
+		receiver.connectSink(connection.localOperator, connection.port, 0, connection.schema);
 		return receiver;
 	}
 
-	public static JxtaSenderAO createSenderAO(OutgoingConnection connection,
-			String pipeID) {
+	public static JxtaSenderAO createSenderAO(OutgoingConnection connection, String pipeID) {
 		JxtaSenderAO sender = new JxtaSenderAO();
 		sender.setPeerID(connection.remotePeerID);
 		sender.setPipeID(pipeID);
@@ -131,68 +125,85 @@ public class LoadBalancingHelper {
 
 	/**
 	 * Inserts an operator between a sink and its sources on a specific port
-	 * @param sink Operator after operator to insert
-	 * @param operatorToInsert Operator to insert before sink
-	 * @param port input port of sink
+	 * 
+	 * @param sink
+	 *            Operator after operator to insert
+	 * @param operatorToInsert
+	 *            Operator to insert before sink
+	 * @param port
+	 *            input port of sink
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public static void insertOperatorBefore(ISink sink,
-			AbstractPipe operatorToInsert,int port) {
-		
+	public static void insertOperatorBefore(ISink sink, AbstractPipe operatorToInsert, int port) {
+
 		PhysicalSubscription subscription = (PhysicalSubscription) sink.getSubscribedToSource(port);
 		ArrayList<IPhysicalOperator> emptyCallPath = new ArrayList<IPhysicalOperator>();
-		
+
 		sink.unsubscribeFromSource(subscription);
-		operatorToInsert.subscribeToSource(subscription.getTarget(), subscription.getSinkInPort(), subscription.getSourceOutPort(), subscription.getSchema());
-		operatorToInsert.subscribeSink(sink, subscription.getSinkInPort(), subscription.getSinkInPort(), subscription.getSchema(), true, subscription.getOpenCalls());
-		operatorToInsert.open(sink, subscription.getSinkInPort(), subscription.getSinkInPort(), emptyCallPath, sink.getOwner());
-		
+		operatorToInsert.subscribeToSource(subscription.getTarget(), subscription.getSinkInPort(),
+				subscription.getSourceOutPort(), subscription.getSchema());
+		operatorToInsert.subscribeSink(sink, subscription.getSinkInPort(),
+				subscription.getSinkInPort(), subscription.getSchema(), true,
+				subscription.getOpenCalls());
+		operatorToInsert.open(sink, subscription.getSinkInPort(), subscription.getSinkInPort(),
+				emptyCallPath, sink.getOwner());
+		operatorToInsert.addOwner(sink.getOwner());
+
 	}
-	
+
 	/***
-	 * Removes an Operator (which has to have only one incoming or one outgoing subscription!)
+	 * Removes an Operator (which has to have only one incoming or one outgoing
+	 * subscription!)
+	 * 
 	 * @param sink
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public static void removeOperatorFromStream(AbstractPipe operator) {
 		Collection<PhysicalSubscription> sourceSubscriptions = operator.getSubscribedToSource();
 		Collection<PhysicalSubscription> sinkSubscriptions = operator.getSubscriptions();
-		
-		//At least one of the sides of the operator can not be more than 1 subscription or else we can not remove Operator without conflicts.
-		if(sourceSubscriptions.size()!=1 && sinkSubscriptions.size()!=1) {
+
+		// At least one of the sides of the operator can not be more than 1
+		// subscription or else we can not remove Operator without conflicts.
+		if (sourceSubscriptions.size() != 1 && sinkSubscriptions.size() != 1) {
 			LOG.error("To much incoming and outgoing subscriptions for safe removal.");
 			return;
 		}
-		
+
 		operator.unsubscribeFromAllSources();
 		operator.unsubscribeFromAllSinks();
-		
-		//Source->Operator is the side with 1 subscription. Hence we can remove this subscription without substituting it.
-		if(sourceSubscriptions.size()==1) {
+
+		// Source->Operator is the side with 1 subscription. Hence we can remove
+		// this subscription without substituting it.
+		if (sourceSubscriptions.size() == 1) {
 			PhysicalSubscription sourceSubscription = sourceSubscriptions.iterator().next();
 			AbstractSource source = (AbstractSource) sourceSubscription.getTarget();
-			for(PhysicalSubscription subscription : sinkSubscriptions) {
+			for (PhysicalSubscription subscription : sinkSubscriptions) {
 				ArrayList<IPhysicalOperator> emptyCallPath = new ArrayList<IPhysicalOperator>();
-				ISink sink = (ISink)subscription.getTarget();
-				source.subscribeSink(subscription.getTarget(), subscription.getSinkInPort(), subscription.getSourceOutPort(), subscription.getSchema());
-				source.open(sink, subscription.getSourceOutPort(), subscription.getSinkInPort(), emptyCallPath,sink.getOwner());
+				ISink sink = (ISink) subscription.getTarget();
+				source.subscribeSink(subscription.getTarget(), subscription.getSinkInPort(),
+						subscription.getSourceOutPort(), subscription.getSchema());
+				source.open(sink, subscription.getSourceOutPort(), subscription.getSinkInPort(),
+						emptyCallPath, sink.getOwner());
 			}
 			return;
 		}
-		
-		//Operator->Sink is the side with 1 subscription. Hence we can remove this subscription without substituting it.
-		if(sinkSubscriptions.size()==1) {
+
+		// Operator->Sink is the side with 1 subscription. Hence we can remove
+		// this subscription without substituting it.
+		if (sinkSubscriptions.size() == 1) {
 			PhysicalSubscription sinkSubscription = sinkSubscriptions.iterator().next();
 			AbstractSink sink = (AbstractSink) sinkSubscription.getTarget();
-			for(PhysicalSubscription subscription : sourceSubscriptions) {
+			for (PhysicalSubscription subscription : sourceSubscriptions) {
 				ArrayList<IPhysicalOperator> emptyCallPath = new ArrayList<IPhysicalOperator>();
-				ISource source = (ISource)subscription.getTarget();
-				source.subscribeSink(sink, subscription.getSinkInPort(), subscription.getSourceOutPort(), subscription.getSchema());
-				source.open(sink, subscription.getSourceOutPort(), subscription.getSinkInPort(), emptyCallPath,sink.getOwner());
+				ISource source = (ISource) subscription.getTarget();
+				source.subscribeSink(sink, subscription.getSinkInPort(),
+						subscription.getSourceOutPort(), subscription.getSchema());
+				source.open(sink, subscription.getSourceOutPort(), subscription.getSinkInPort(),
+						emptyCallPath, sink.getOwner());
 			}
 			return;
 		}
-		
+
 	}
 
 	/**
@@ -223,8 +234,8 @@ public class LoadBalancingHelper {
 				int port = receiverSubscription.getSinkInPort();
 				int otherPort = (port + 1) % 2;
 
-				JxtaReceiverPO otherReceiver = (JxtaReceiverPO) sync
-						.getSubscribedToSource(otherPort).getTarget();
+				JxtaReceiverPO otherReceiver = (JxtaReceiverPO) sync.getSubscribedToSource(
+						otherPort).getTarget();
 				otherReceiver.unsubscribeFromAllSinks();
 				receiver.unsubscribeFromAllSinks();
 
@@ -236,14 +247,11 @@ public class LoadBalancingHelper {
 					sync.unsubscribeSink(subscription);
 
 					otherReceiver.subscribeSink(subscription.getTarget(),
-							subscription.getSinkInPort(),
-							subscription.getSourceOutPort(),
-							subscription.getSchema(), true,
-							subscription.getOpenCalls());
+							subscription.getSinkInPort(), subscription.getSourceOutPort(),
+							subscription.getSchema(), true, subscription.getOpenCalls());
 
 					subscription.getTarget().subscribeToSource(otherReceiver,
-							subscription.getSinkInPort(),
-							subscription.getSourceOutPort(),
+							subscription.getSinkInPort(), subscription.getSourceOutPort(),
 							subscription.getSchema());
 				}
 
@@ -259,8 +267,7 @@ public class LoadBalancingHelper {
 	 * @param pipeID Pipe id of Sender we look for.
 	 * @return Operator (if found) or null.
 	 */
-	public static IPhysicalOperator getPhysicalJxtaOperator(
-			boolean lookForSender, String pipeID) {
+	public static IPhysicalOperator getPhysicalJxtaOperator(boolean lookForSender, String pipeID) {
 
 		IServerExecutor executor = ActiveLoadBalancingActivator.getExecutor();
 
@@ -295,8 +302,7 @@ public class LoadBalancingHelper {
 	 *            Pipe id of Sender we look for.
 	 * @return Operator (if found) or null.
 	 */
-	public static ILogicalOperator getLogicalJxtaOperator(
-			boolean lookForSender, String pipeID) {
+	public static ILogicalOperator getLogicalJxtaOperator(boolean lookForSender, String pipeID) {
 
 		for (ILogicalQueryPart part : getInstalledQueryParts()) {
 			for (ILogicalOperator operator : part.getOperators()) {
@@ -329,14 +335,13 @@ public class LoadBalancingHelper {
 	 * @param pql
 	 *            PQL to execute.
 	 */
-	public static Collection<Integer> installAndRunQueryPartFromPql(
-			Context context, String pql) {
+	public static Collection<Integer> installAndRunQueryPartFromPql(Context context, String pql) {
 
 		IServerExecutor executor = ActiveLoadBalancingActivator.getExecutor();
 		ISession session = ActiveLoadBalancingActivator.getActiveSession();
 
-		Collection<Integer> installedQueries = executor.addQuery(pql, "PQL",
-				session, "Standard", context);
+		Collection<Integer> installedQueries = executor.addQuery(pql, "PQL", session, "Standard",
+				context);
 		for (int query : installedQueries) {
 			executor.startQuery(query, session);
 		}
@@ -360,8 +365,7 @@ public class LoadBalancingHelper {
 		Map<ILogicalQueryPart, ILogicalQueryPart> copies = LogicalQueryHelper
 				.copyQueryPartsDeep(partsList);
 
-		for (Map.Entry<ILogicalQueryPart, ILogicalQueryPart> entry : copies
-				.entrySet()) {
+		for (Map.Entry<ILogicalQueryPart, ILogicalQueryPart> entry : copies.entrySet()) {
 			result = entry.getKey();
 		}
 
@@ -383,21 +387,17 @@ public class LoadBalancingHelper {
 		for (ILogicalOperator operator : part.getOperators()) {
 			if (operator instanceof JxtaSenderAO) {
 				JxtaSenderAO sender = (JxtaSenderAO) operator;
-				for (LogicalSubscription subscription : sender
-						.getSubscribedToSource()) {
+				for (LogicalSubscription subscription : sender.getSubscribedToSource()) {
 
-					ILogicalOperator incomingOperator = subscription
-							.getTarget();
+					ILogicalOperator incomingOperator = subscription.getTarget();
 
 					if (!result.containsKey(incomingOperator)) {
-						result.put(incomingOperator,
-								new ArrayList<OutgoingConnection>());
+						result.put(incomingOperator, new ArrayList<OutgoingConnection>());
 					}
 					result.get(incomingOperator).add(
-							new OutgoingConnection(incomingOperator, sender
-									.getPeerID(), sender.getPipeID(),
-									subscription.getSourceOutPort(),
-									subscription.getSchema()));
+							new OutgoingConnection(incomingOperator, sender.getPeerID(), sender
+									.getPipeID(), subscription.getSourceOutPort(), subscription
+									.getSchema()));
 
 				}
 				toRemove.add(sender);
@@ -430,19 +430,16 @@ public class LoadBalancingHelper {
 		for (ILogicalOperator operator : part.getOperators()) {
 			if (operator instanceof JxtaReceiverAO) {
 				JxtaReceiverAO receiver = (JxtaReceiverAO) operator;
-				for (LogicalSubscription subscription : receiver
-						.getSubscriptions()) {
+				for (LogicalSubscription subscription : receiver.getSubscriptions()) {
 
 					ILogicalOperator targetOperator = subscription.getTarget();
 					if (!result.containsKey(targetOperator)) {
-						result.put(targetOperator,
-								new ArrayList<IncomingConnection>());
+						result.put(targetOperator, new ArrayList<IncomingConnection>());
 					}
 					result.get(targetOperator).add(
-							new IncomingConnection(targetOperator, receiver
-									.getPeerID(), receiver.getPipeID(),
-									subscription.getSinkInPort(), subscription
-											.getSchema()));
+							new IncomingConnection(targetOperator, receiver.getPeerID(), receiver
+									.getPipeID(), subscription.getSinkInPort(), subscription
+									.getSchema()));
 
 				}
 				toRemove.add(receiver);
@@ -489,8 +486,7 @@ public class LoadBalancingHelper {
 
 		ArrayList<ILogicalQueryPart> parts = new ArrayList<ILogicalQueryPart>();
 		for (int queryId : executor.getLogicalQueryIds(session)) {
-			ILogicalQuery query = executor
-					.getLogicalQueryById(queryId, session);
+			ILogicalQuery query = executor.getLogicalQueryById(queryId, session);
 
 			ArrayList<ILogicalOperator> operators = new ArrayList<ILogicalOperator>();
 			RestructHelper.collectOperators(query.getLogicalPlan(), operators);
