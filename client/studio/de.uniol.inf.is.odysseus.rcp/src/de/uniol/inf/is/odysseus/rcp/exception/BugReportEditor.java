@@ -27,7 +27,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -61,7 +60,6 @@ public class BugReportEditor extends Window {
 	private static final String NO_EXCEPTION_TEXT = "<no exception>";
 	
 	private static final String DIALOG_TITLE = "Send bug report";
-	private static final int DEBUG_INFO_TEXT_HEIGHT_PIXELS = 150;
 
 	private static final String[] QUESTIONS = new String[] { 
 		"Title of your report",
@@ -72,7 +70,7 @@ public class BugReportEditor extends Window {
 		"What outcome did you expect instead?" 
 	};
 
-	private static final int[] ANSWER_TEXT_HEIGHTS = new int[] { 20, 20, 75, 75, 75, 75 }; // in pixels
+	private static final boolean[] ANSWER_TEXT_IS_ONE_LINE = new boolean[] { true, true, false, false, false, false }; 
 
 	private final IReport baseReport;
 	private final List<StyledText> reportTextList = Lists.newArrayList();
@@ -83,7 +81,7 @@ public class BugReportEditor extends Window {
 		super(parentShell);
 		Preconditions.checkNotNull(report, "Report must not be null!");
 		
-		setShellStyle(SWT.DIALOG_TRIM | SWT.APPLICATION_MODAL | Window.getDefaultOrientation());
+//		setShellStyle(SWT.DIALOG_TRIM | Window.getDefaultOrientation());
 
 		baseReport = report;
 	}
@@ -91,61 +89,75 @@ public class BugReportEditor extends Window {
 	@Override
 	protected void configureShell(Shell newShell) {
 		newShell.setText(DIALOG_TITLE);
-
+		
 		super.configureShell(newShell);
 	}
 
 	@Override
 	protected Control createContents(final Composite parent) {
 		Composite composite = new Composite(parent, 0);
-		GridLayout layout = new GridLayout();
-		layout.marginHeight = 0;
-		layout.marginWidth = 0;
-		layout.verticalSpacing = 0;
-
-		composite.setLayout(layout);
+		composite.setLayout(new GridLayout());
 		composite.setLayoutData(new GridData(GridData.FILL_BOTH));
 
 		createDialogArea(composite);
 		createButtonBar(composite);
-
+		
 		return composite;
 	}
 
-	private Control createDialogArea(final Composite parent) {
+	private Control createDialogArea(Composite parent) {
 		Composite composite = new Composite(parent, SWT.NONE);
 
 		GridLayout layout = new GridLayout();
 		composite.setLayout(layout);
 		composite.setLayoutData(new GridData(GridData.FILL_BOTH));
 
-		createTextArea(parent);
+		createTextArea(composite);
 
 		return composite;
 	}
 
 	private void createTextArea(Composite parent) {
-		createStyledLabel(parent, "Reporter, please consider answering these questions, where appropriate");
+		TabFolder tabFolder = new TabFolder(parent, SWT.NONE);
+		tabFolder.setLayoutData(new GridData(GridData.FILL_BOTH));
+		tabFolder.setLayout(new GridLayout());
+		
+		TabItem questionsTab = new TabItem(tabFolder, SWT.NONE);
+		Composite questionsComposite = new Composite(tabFolder, SWT.NONE);
+		questionsTab.setControl(questionsComposite);
+		questionsTab.setText("Detail Information");
+		questionsComposite.setLayout(new GridLayout());
+		questionsComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
+		createQuestionsTab(questionsComposite);
 
+		TabItem reportTab = new TabItem(tabFolder, SWT.NONE);
+		Composite reportComposite = new Composite(tabFolder, SWT.NONE);
+		reportComposite.setLayout(new GridLayout());
+		reportTab.setControl(reportComposite);
+		reportTab.setText("Report Information");
+		createReportOverviewTab(reportComposite);
+	}
+
+	private void createQuestionsTab(Composite questionsComposite) {
 		questionTexts = new StyledText[QUESTIONS.length];
 		for (int i = 0; i < QUESTIONS.length; i++) {
-			createStyledLabel(parent, QUESTIONS[i]);
-			questionTexts[i] = createStyledText(parent, ANSWER_TEXT_HEIGHTS[i]);
+			createStyledLabel(questionsComposite, QUESTIONS[i]);
+			questionTexts[i] = createStyledText(questionsComposite, ANSWER_TEXT_IS_ONE_LINE[i]);
 		}
+	}
 
-		createStyledLabel(parent, "Report (can be modified, if needed):");
-		Label label = createStyledLabel(parent, "Caution: Please be aware that this report may contain private or other confidential information! Change details if necessary!");
+	private void createReportOverviewTab(Composite reportComposite) {
+		Label label = createStyledLabel(reportComposite, "Caution: Please be aware that this report may contain private or other confidential information! Change details if necessary!");
 		label.setForeground(Display.getCurrent().getSystemColor(SWT.COLOR_RED));
 		
-		reportTextList.addAll(createReportTabs(parent, baseReport));
+		reportTextList.addAll(createReportTabs(reportComposite, baseReport));
 	}
 
 	private static List<StyledText> createReportTabs(Composite parent, IReport report) {
 		List<StyledText> texts = Lists.newArrayList();
 		
 		TabFolder tabFolder = new TabFolder(parent, SWT.BORDER);
-		GridData data = new GridData(GridData.FILL_HORIZONTAL);
-		tabFolder.setLayoutData(data);
+		tabFolder.setLayoutData(new GridData(GridData.FILL_BOTH));
 		
 		Optional<Throwable> optException = report.getException();
 		texts.add(createReportTab(tabFolder, "Exception", optException.isPresent() ? getStackTraceReport(optException.get()) : NO_EXCEPTION_TEXT));
@@ -205,19 +217,17 @@ public class BugReportEditor extends Window {
 		tabComposite.setLayout(new GridLayout(1, false));
 		tabComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
 		
-		StyledText text = createStyledText(tabComposite, DEBUG_INFO_TEXT_HEIGHT_PIXELS);
+		StyledText text = createStyledText(tabComposite, false);
 		text.setText(reportText);
 		
 		return text;
 	}
 
-	private static StyledText createStyledText(Composite parent, int heightHint) {
+	private static StyledText createStyledText(Composite parent,  boolean isLine) {
 		StyledText styledText = new StyledText(parent, SWT.BORDER | SWT.V_SCROLL | SWT.MULTI);
 		styledText.setEditable(true);
 
-		GridData data = new GridData(GridData.FILL_HORIZONTAL);
-		data.heightHint = heightHint;
-		data.widthHint = 600;
+		GridData data = new GridData(!isLine ? GridData.FILL_BOTH : GridData.FILL_HORIZONTAL);
 		styledText.setLayoutData(data);
 
 		return styledText;
@@ -228,7 +238,6 @@ public class BugReportEditor extends Window {
 		label.setText(text);
 
 		GridData data = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
-		data.widthHint = 600;
 		label.setLayoutData(data);
 
 		return label;
@@ -337,8 +346,6 @@ public class BugReportEditor extends Window {
 		button.setText(title);
 		button.setFont(JFaceResources.getDialogFont());
 		GridData data = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
-		Point minSize = button.computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
-		data.widthHint = minSize.x;
 		button.setLayoutData(data);
 		return button;
 	}
