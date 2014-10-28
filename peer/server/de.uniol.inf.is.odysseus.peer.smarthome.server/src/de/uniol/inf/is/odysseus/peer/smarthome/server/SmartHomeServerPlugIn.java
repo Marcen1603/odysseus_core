@@ -321,8 +321,6 @@ public class SmartHomeServerPlugIn implements BundleActivator,
 				waitForJxtaServicesProvider();
 				waitForServerExecutorService();
 
-				
-
 				LOG.error("publishSmartDeviceAdvertisementAsync started and will be executing in 30 sec.");
 
 				// wait for SmartDevice
@@ -332,7 +330,7 @@ public class SmartHomeServerPlugIn implements BundleActivator,
 					} catch (InterruptedException e) {
 					}
 				}
-				
+
 				try {
 					Thread.sleep(30000);
 				} catch (InterruptedException e1) {
@@ -352,10 +350,12 @@ public class SmartHomeServerPlugIn implements BundleActivator,
 						adv.setID(IDFactory.newPipeID(getP2PNetworkManager()
 								.getLocalPeerGroupID()));
 						adv.setPeerID(p2pNetworkManager.getLocalPeerID());
-						//TODO: check SmartDevice serialization
-						adv.setSmartDevice(smartDevice);
-						
-						
+						// TODO: check SmartDevice serialization
+						// adv.setSmartDevice(smartDevice);
+						// SmartDevice Informationen werden über IMessage
+						// objekte abgefragt!
+						// Nicht mehr über ein Advertisement!
+
 						getJxtaServicesProvider().publish(adv);
 						getJxtaServicesProvider().remotePublish(adv);
 					} catch (IOException e) {
@@ -530,8 +530,8 @@ public class SmartHomeServerPlugIn implements BundleActivator,
 			IAdvertisementDiscovererListener {
 		@Override
 		public void advertisementDiscovered(Advertisement advertisement) {
-			// LOG.debug("advertisementDiscovered AdvType:"+
-			// advertisement.getAdvType());
+			LOG.debug("advertisementDiscovered AdvType:"
+					+ advertisement.getAdvType());
 
 			if (advertisement != null
 					&& advertisement instanceof SmartDeviceAdvertisement
@@ -544,7 +544,7 @@ public class SmartHomeServerPlugIn implements BundleActivator,
 		}
 
 		private void getSmartDeviceInformations(SmartDeviceAdvertisement adv) {
-			// LOG.debug("getSmartDeviceInformations advPeerID:"+adv.getPeerID().intern().toString());
+			LOG.debug("getSmartDeviceInformations advPeerID:"+adv.getPeerID().intern().toString());
 
 			if (adv == null || adv.getPeerID() == null) {
 				LOG.debug("getSmartDeviceInformations adv==null");
@@ -555,6 +555,7 @@ public class SmartHomeServerPlugIn implements BundleActivator,
 					|| smartDevice.getPeerID() == null
 					|| !foundPeerIDs.contains(smartDevice.getPeerID())) {
 				LOG.debug("!foundPeerIDs.contains(smartDevice.getPeerID())");
+
 				return;
 			}
 
