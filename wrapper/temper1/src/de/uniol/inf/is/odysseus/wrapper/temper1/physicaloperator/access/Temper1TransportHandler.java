@@ -30,6 +30,8 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITranspor
 
 public class Temper1TransportHandler extends
 		AbstractSimplePullTransportHandler<Tuple<?>> {
+	private static final String ENTITY_NAME = "temper";
+
 	private static Logger LOG = LoggerFactory
 			.getLogger(Temper1TransportHandler.class);
 
@@ -147,15 +149,15 @@ public class Temper1TransportHandler extends
 				: 0;
 
 		try {
-			tuple.setAttribute(0, getTemperature(deviceNumber));
+			tuple.setAttribute(0, ENTITY_NAME);
 			tuple.setAttribute(1, getTemperature(deviceNumber));
 		} catch (IOException e) {
-			tuple.setAttribute(0, getSimulatedTemperature(deviceNumber));
+			tuple.setAttribute(0, ENTITY_NAME);
 			tuple.setAttribute(1, getSimulatedTemperature(deviceNumber));
 
 			updateConnectedTemperatureSensors();
 		} catch (Exception e) {
-			tuple.setAttribute(0, getSimulatedTemperature(deviceNumber));
+			tuple.setAttribute(0, ENTITY_NAME);
 			tuple.setAttribute(1, getSimulatedTemperature(deviceNumber));
 
 			updateConnectedTemperatureSensors();

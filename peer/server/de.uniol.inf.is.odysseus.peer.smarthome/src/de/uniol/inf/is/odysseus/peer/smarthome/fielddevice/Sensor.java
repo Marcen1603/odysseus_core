@@ -11,13 +11,21 @@ public abstract class Sensor implements FieldDevice, Serializable {
 	private static final long serialVersionUID = 1L;
 	private String name;
 	private String sourceName;
+	private String activitySourceName;
 	private String queryForRawValues;
 	private List<String> listPossibleActivityNames;
 	private Map<String, ActivityInterpreter> activityInterpreters = Maps.newHashMap();
+	private String queryForActivityInterpreter;
+	private String sourceNamePostfix;
 	
-	public Sensor(String name, String rawSourceName) {
+	public Sensor(String name, String sourceName, String sourceNamePostfix) {
 		this.setName(name);
-		this.setRawSourceName(rawSourceName);
+		this.setRawSourceName(sourceName+""+sourceNamePostfix);
+		this.setActivitySourceName(sourceName+"Activity"+sourceNamePostfix);
+		this.setSourceNamePostfix(sourceNamePostfix);
+	}
+	protected void setActivitySourceName(String name) {
+		this.activitySourceName = name;
 	}
 	public abstract List<Object> possibleValueArea();
 
@@ -34,7 +42,7 @@ public abstract class Sensor implements FieldDevice, Serializable {
 		this.sourceName = sourceName;
 	}
 	
-	public void setQueryForRawValues(String query){
+	protected void setQueryForRawValues(String query){
 		this.queryForRawValues = query;
 	}
 	
@@ -43,7 +51,7 @@ public abstract class Sensor implements FieldDevice, Serializable {
 	}
 	
 	public String getActivitySourceName(){
-		return getName()+"Activities";
+		return this.activitySourceName;
 	}
 	
 	@Override
@@ -66,5 +74,19 @@ public abstract class Sensor implements FieldDevice, Serializable {
 	}
 	public void addActivityInterpreter(String activity,ActivityInterpreter activityInterpreter){
 		this.activityInterpreters.put(activity, activityInterpreter);
+	}
+	
+	protected void setQueryForActivityInterpreter(String query) {
+		this.queryForActivityInterpreter = query;
+	}
+	
+	public String getQueryForActivityInterpreter() {
+		return this.queryForActivityInterpreter;
+	}
+	public String getSourceNamePostfix() {
+		return sourceNamePostfix;
+	}
+	public void setSourceNamePostfix(String sourceNamePostfix) {
+		this.sourceNamePostfix = sourceNamePostfix;
 	}
 }

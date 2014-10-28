@@ -92,7 +92,7 @@ public class RPiGPIOTransportHandler extends AbstractSimplePullTransportHandler<
             }
             
         	tuple.setAttribute(0, "pinNumber");
-        	tuple.setAttribute(1, buttonState);
+        	tuple.setAttribute(1, Long.parseLong(buttonState));
 		}catch(ClassCastException ex){
 			LOG.error(ex.getMessage(), ex);
 		}catch(Exception ex){

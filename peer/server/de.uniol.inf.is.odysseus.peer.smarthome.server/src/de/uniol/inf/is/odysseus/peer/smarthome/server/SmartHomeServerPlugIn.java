@@ -43,6 +43,7 @@ import de.uniol.inf.is.odysseus.peer.smarthome.SmartDeviceResponseMessage;
 import de.uniol.inf.is.odysseus.peer.smarthome.fielddevice.FieldDevice;
 import de.uniol.inf.is.odysseus.peer.smarthome.fielddevice.RPiGPIOSensor;
 import de.uniol.inf.is.odysseus.peer.smarthome.fielddevice.SmartDevice;
+import de.uniol.inf.is.odysseus.peer.smarthome.fielddevice.Temper1Sensor;
 import de.uniol.inf.is.odysseus.peer.smarthome.server.advertisement.SmartDeviceAdvertisement;
 import de.uniol.inf.is.odysseus.peer.smarthome.server.advertisement.SmartDeviceAdvertisementInstantiator;
 import de.uniol.inf.is.odysseus.peer.smarthome.server.service.ServerExecutorService;
@@ -103,30 +104,51 @@ public class SmartHomeServerPlugIn implements BundleActivator,
 				.toString();
 		String cleanPeerID = peerIdString.replaceAll("[-+.^:,]", "");
 
-		// Sensor temper0 = new Temper1Sensor("Temper0", "temper0source");
+		// Temper
+		Temper1Sensor temper0 = new Temper1Sensor("Temper0", "temper0",
+				cleanPeerID);
+		temper0.addPossibleActivityName("hot");
+
 		// Sensor temper1 = new Temper1Sensor("Temper1", "temper1source");
+
+		// GPIO_07
 		RPiGPIOSensor gpioTaste7 = new RPiGPIOSensor("RPiGPIOTaster",
-				"rpigpiotastersource_" + cleanPeerID);
+				"rpigpiotaster", cleanPeerID);
 		gpioTaste7.addPossibleActivityName("Tasterbetaetigt");
-		gpioTaste7.setPin("7");
+		gpioTaste7.setInputPin("7");
 		// gpioTaste11.setPinState("high");
 
 		smartDevice = new SmartDevice();
 		smartDevice.setPeerID(p2pNetworkManager.getLocalPeerID().intern()
 				.toString());
 		smartDevice.setSmartDevice(getSmartDeviceConfig());
-		// smartDevice.addConnectedFieldDevice(temper0);
+		smartDevice.addConnectedFieldDevice(temper0);
 		// smartDevice.addConnectedFieldDevice(temper1);
 		smartDevice.addConnectedFieldDevice(gpioTaste7);
 
-		// executeQueryAsync(temper0.getRawSourceName(),temper0.getQueryForRawValues());
+		// Temp0:
+		executeQuery(temper0.getRawSourceName(), temper0.getQueryForRawValues());
+		executeQuery(temper0.getActivitySourceName(),
+				temper0.getQueryForActivityInterpreter());
+
+		// Temp1:
 		// executeQueryAsync(temper1.getRawSourceName(),temper1.getQueryForRawValues());
 
-		executeQueryAsync(gpioTaste7.getRawSourceName(),
+		// GPIO_7:
+		executeQuery(gpioTaste7.getRawSourceName(),
 				gpioTaste7.getQueryForRawValues());
-		// getQueryForParticipatingActivities
-		executeQueryAsync(gpioTaste7.getActivitySourceName(),
+		executeQuery(gpioTaste7.getActivitySourceName(),
 				gpioTaste7.getQueryForActivityInterpreter());
+
+		String smartDeviceActivitiesViewName = "SmartDeviceActivities"
+				+ cleanPeerID;
+		StringBuilder smartDeviceActivities = new StringBuilder();
+		smartDeviceActivities.append("#PARSER PQL\n");
+		smartDeviceActivities.append("#RUNQUERY\n");
+		smartDeviceActivities.append(smartDeviceActivitiesViewName + " := UNION("+ temper0.getActivitySourceName() + ","+gpioTaste7.getActivitySourceName()+")\n");
+		// Union if more then one sensors
+
+		executeQuery("SmartDeviceActivities", smartDeviceActivities.toString());
 	}
 
 	private void initSmartDeviceDictionary() {
@@ -299,10 +321,10 @@ public class SmartHomeServerPlugIn implements BundleActivator,
 				waitForJxtaServicesProvider();
 				waitForServerExecutorService();
 
-				LOG.error("publishSmartDeviceAdvertisementAsync started and will be executing in 60 sec.");
+				LOG.error("publishSmartDeviceAdvertisementAsync started and will be executing in 30 sec.");
 
 				try {
-					Thread.sleep(60000);
+					Thread.sleep(30000);
 				} catch (InterruptedException e1) {
 					e1.printStackTrace();
 				}
@@ -788,7 +810,7 @@ public class SmartHomeServerPlugIn implements BundleActivator,
 							runningRule1 = true;
 						}
 
-						LOG.debug("Rule1 wurde erfüllt und wird nun ausgeführt.");
+						LOG.debug("Rule for activity:Tasterbetaetigt wurde erfüllt und wird nun ausgeführt.");
 
 						// ActivitySource muss abgefragt werden,
 						// wenn die Entität an der Aktivität teilnimmt
@@ -819,6 +841,9 @@ public class SmartHomeServerPlugIn implements BundleActivator,
 
 							LOG.debug("source is not imported or the peerID was not found, the actor logic script is not running!");
 						}
+					} else if (possibleActivityName.equals("hot")) {
+						LOG.debug("Rule for activity:hot wurde erfüllt und wird nun ausgeführt.");
+
 					}
 
 					// Rule2:
