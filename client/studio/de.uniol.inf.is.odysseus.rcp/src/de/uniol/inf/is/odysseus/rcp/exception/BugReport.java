@@ -206,10 +206,10 @@ public class BugReport {
 			if ((summary == null) || ("".equals(summary))) {
 				summary = "Bug Report";
 			}
-		}else{
+		} else {
 			summary = title;
 		}
-		
+
 		fields.put("summary", summary);
 		fields.put("description", description);
 		fields.put("issuetype", issuetype);
@@ -227,19 +227,21 @@ public class BugReport {
 			final JSONObject response = new JSONObject(
 					method.getResponseBodyAsString());
 			String key = response.getString("key");
+			Part[] parts = new Part[logMap.size()];
+			int count = 0;
 			for (Entry<String, String> log : logMap.entrySet()) {
 				method = new PostMethod(uri.toString() + key + "/attachments");
-				Part[] parts = new Part[] { new FilePart("file",
-						new ByteArrayPartSource(log.getKey() + ".log", log
-								.getValue().getBytes())) };
-				MultipartRequestEntity attachment = new MultipartRequestEntity(
-						parts, method.getParams());
-				((PostMethod) method).setRequestEntity(attachment);
-				method.setRequestHeader(AUTHORIZATION_HEADER, "Basic "
-						+ getAuth(getUser(), getPassword()));
-				method.setRequestHeader("X-Atlassian-Token", "nocheck");
-				client.executeMethod(method);
+				parts[count++] = new FilePart("file", new ByteArrayPartSource(
+						log.getKey() + ".log", log.getValue().getBytes()));
 			}
+			MultipartRequestEntity attachment = new MultipartRequestEntity(
+					parts, method.getParams());
+			((PostMethod) method).setRequestEntity(attachment);
+			method.setRequestHeader(AUTHORIZATION_HEADER,
+					"Basic " + getAuth(getUser(), getPassword()));
+			method.setRequestHeader("X-Atlassian-Token", "nocheck");
+			client.executeMethod(method);
+
 			if (method.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
 				return true;
 			}
