@@ -42,5 +42,6 @@ Import-Package: com.google.common.base,
  org.slf4j
 Service-Component: OSGI-INF/SmartHomeServerPlugIn.xml,OSGI-INF/ServerExecutor.xml,OSGI-INF/ActivityConfigurationTransportHandler.xml
 Require-Bundle: Jxta_2.6_Source,
- de.uniol.inf.is.odysseus.wrapper.rpi.gpio;bundle-version="1.0.0"
-Bundle-ActivationPolicy: lazy
+ de.uniol.inf.is.odysseus.wrapper.rpi.gpio;bundle-version="1.0.0",
+ de.uniol.inf.is.odysseus.core;bundle-version="1.0.0",
+ de.uniol.inf.is.odysseus.core.server;bundle-version="1.0.0"

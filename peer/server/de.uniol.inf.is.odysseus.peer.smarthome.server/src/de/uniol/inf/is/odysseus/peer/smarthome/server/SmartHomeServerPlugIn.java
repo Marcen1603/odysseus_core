@@ -125,7 +125,8 @@ public class SmartHomeServerPlugIn implements BundleActivator,
 		executeQueryAsync(gpioTaste7.getRawSourceName(),
 				gpioTaste7.getQueryForRawValues());
 		// getQueryForParticipatingActivities
-		executeQueryAsync(gpioTaste7.getActivitySourceName(), gpioTaste7.getQueryForActivityInterpreter());
+		executeQueryAsync(gpioTaste7.getActivitySourceName(),
+				gpioTaste7.getQueryForActivityInterpreter());
 	}
 
 	private void initSmartDeviceDictionary() {
@@ -853,8 +854,11 @@ public class SmartHomeServerPlugIn implements BundleActivator,
 						Thread.sleep(5000);
 					} catch (InterruptedException e) {
 					}
-
-					refresh();
+					try {
+						refresh();
+					} catch (Exception ex) {
+						LOG.error(ex.getMessage(), ex);
+					}
 				}
 			}
 		});
@@ -865,8 +869,8 @@ public class SmartHomeServerPlugIn implements BundleActivator,
 
 	public static void refresh() {
 		Collection<PeerID> foundPeerIDsCopy = null;
-		synchronized (foundPeerIDs) {
-			if (foundPeerIDs != null) {
+		if (foundPeerIDs != null) {
+			synchronized (foundPeerIDs) {
 				foundPeerIDs.clear();
 				foundPeerIDs.addAll(p2pDictionary.getRemotePeerIDs());
 				foundPeerIDsCopy = Lists.newArrayList(foundPeerIDs);

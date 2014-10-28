@@ -48,7 +48,7 @@ public class RPiGPIOSensor extends Sensor {
 		sBuilder.append("    wrapper = 'GenericPull',\n");
 		sBuilder.append("    protocol='none',\n");
 		sBuilder.append("    options=[\n");
-		sBuilder.append("      ['entity', 'Taster1'],\n");
+		sBuilder.append("      ['entity', 'pinNumber'],\n");
 		sBuilder.append("      ['activity', 'Tastebetaetigt']\n");
 		sBuilder.append("    ],\n");
 		sBuilder.append("    schema=[\n");
