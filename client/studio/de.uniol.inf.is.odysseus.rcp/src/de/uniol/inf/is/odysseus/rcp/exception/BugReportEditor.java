@@ -51,6 +51,8 @@ import de.uniol.inf.is.odysseus.report.IReport;
 
 public class BugReportEditor extends TitleAreaDialog {
 
+	private static final String BUGREPORT_MAILADDRESS_CFGKEY = "bugreport.mailaddress";
+
 	private static final String ODYSSEUS_BUG_REPORT_DEFAULT_TITLE = "Odysseus Bug Report";
 
 	private static final Logger LOG = LoggerFactory.getLogger(BugReportEditor.class);
@@ -68,6 +70,7 @@ public class BugReportEditor extends TitleAreaDialog {
 		"What was the outcome of this action?", 
 		"What outcome did you expect instead?" 
 	};
+	private static final int MAIL_QUESTION_INDEX = 1; // special behaviour: saving mail address in rcp-config
 
 	private static final boolean[] ANSWER_TEXT_IS_ONE_LINE = new boolean[] { true, true, false, false, false, false }; 
 	private static final String[] DEFAULT_ANSWERS = new String[] {
@@ -128,7 +131,12 @@ public class BugReportEditor extends TitleAreaDialog {
 		for (int i = 0; i < QUESTIONS.length; i++) {
 			createStyledLabel(questionsComposite, QUESTIONS[i]);
 			questionTexts[i] = createStyledText(questionsComposite, ANSWER_TEXT_IS_ONE_LINE[i]);
-			questionTexts[i].setText(DEFAULT_ANSWERS[i]);
+			
+			if( i == MAIL_QUESTION_INDEX ) {
+				questionTexts[i].setText(OdysseusRCPConfiguration.get(BUGREPORT_MAILADDRESS_CFGKEY, DEFAULT_ANSWERS[i]));
+			} else {
+				questionTexts[i].setText(DEFAULT_ANSWERS[i]);
+			}
 		}
 	}
 
@@ -266,6 +274,10 @@ public class BugReportEditor extends TitleAreaDialog {
 			boolean result = BugReport.send(title, questionsText, reportMap);
 			
 			setReturnCode(result ? Dialog.OK : Dialog.CANCEL);
+			
+			OdysseusRCPConfiguration.set(BUGREPORT_MAILADDRESS_CFGKEY, questionTexts[MAIL_QUESTION_INDEX].getText());
+			OdysseusRCPConfiguration.save();
+			
 			close();
 		} catch (IOException e) {
 			setErrorMessage("Could not send the bug report");
