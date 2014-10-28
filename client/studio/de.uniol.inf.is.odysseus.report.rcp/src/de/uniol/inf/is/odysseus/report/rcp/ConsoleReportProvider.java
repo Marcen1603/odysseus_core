@@ -1,9 +1,5 @@
 package de.uniol.inf.is.odysseus.report.rcp;
 
-import java.nio.file.FileSystems;
-import java.nio.file.Path;
-
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.ui.console.ConsolePlugin;
 import org.eclipse.ui.console.IConsole;

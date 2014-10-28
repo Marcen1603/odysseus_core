@@ -28,6 +28,8 @@ import org.eclipse.ui.console.IConsoleManager;
 import org.eclipse.ui.console.MessageConsole;
 import org.eclipse.ui.console.MessageConsoleStream;
 
+import de.uniol.inf.is.odysseus.rcp.config.OdysseusRCPConfiguration;
+
 /**
  * @author Dennis Geesen
  * 
@@ -46,8 +48,14 @@ public class OdysseusConsole extends AppenderSkeleton {
 	public void createConsole() {
 		MessageConsole myConsole = findConsole(CONSOLE_NAME);
 		outStream = myConsole.newMessageStream();
-		System.setOut(new PrintStream(outStream));
-		System.setErr(new PrintStream(outStream));
+		if (Boolean.parseBoolean(OdysseusRCPConfiguration.get("redirectSysOut",
+				"true"))) {
+			System.setOut(new PrintStream(outStream));
+		}
+		if (Boolean.parseBoolean(OdysseusRCPConfiguration.get("redirectSysErr",
+				"true"))) {
+			System.setErr(new PrintStream(outStream));
+		}
 		this.layout = new PatternLayout("%-4r %-5p %c{1} %x - %m - %l %n");
 	}
 
