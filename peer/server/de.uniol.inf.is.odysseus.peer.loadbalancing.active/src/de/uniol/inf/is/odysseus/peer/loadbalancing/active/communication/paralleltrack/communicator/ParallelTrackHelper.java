@@ -183,6 +183,9 @@ public class ParallelTrackHelper {
 						.getPhysicalJxtaOperator(isSender, oldPipeId);
 				physicalCopy
 						.setOutputSchema(physicalOriginal.getOutputSchema());
+				physicalCopy.setName(physicalOriginal.getName());
+				physicalCopy.addOwner(physicalOriginal.getOwner());
+				
 
 				PhysicalSubscription subscription = physicalOriginal
 						.getSubscribedToSource(0);
@@ -221,9 +224,13 @@ public class ParallelTrackHelper {
 				
 				physicalCopy
 						.setOutputSchema(physicalOriginal.getOutputSchema());
-
+				physicalCopy.setName(physicalOriginal.getName());
+				physicalCopy.addOwner(physicalOriginal.getOwner());
+				
 				LoadBalancingSynchronizerPO<IStreamObject<ITimeInterval>> synchronizer = new LoadBalancingSynchronizerPO<IStreamObject<ITimeInterval>>();
 
+				physicalCopy.addOwner(physicalOriginal.getOwner());
+				
 				LoadBalancingFinishedListener listener = new LoadBalancingFinishedListener(
 						dispatcher,
 						LoadBalancingHelper.toPeerID(physicalOriginal.getPeerIDString()), oldPipeId);
@@ -256,6 +263,7 @@ public class ParallelTrackHelper {
 						physicalCopy.getOutputSchema());
 				physicalCopy.open(synchronizer, 0, 1, emptyCallPath,
 						physicalCopy.getOwner());
+				
 
 				physicalOriginal.unblock();
 				synchronizer.startSynchronizing();

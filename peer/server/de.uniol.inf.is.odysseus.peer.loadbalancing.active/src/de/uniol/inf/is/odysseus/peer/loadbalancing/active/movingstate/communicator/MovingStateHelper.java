@@ -18,7 +18,11 @@ import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
+import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IStatefulPO;
 import de.uniol.inf.is.odysseus.core.physicaloperator.PhysicalSubscription;
+import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.IPipe;
 import de.uniol.inf.is.odysseus.p2p_new.IP2PNetworkManager;
 import de.uniol.inf.is.odysseus.p2p_new.data.DataTransmissionException;
 import de.uniol.inf.is.odysseus.p2p_new.logicaloperator.JxtaReceiverAO;
@@ -42,6 +46,46 @@ public class MovingStateHelper {
 
 	private static final Logger LOG = LoggerFactory
 			.getLogger(MovingStateHelper.class);
+	
+	
+	public static List<IStatefulPO> getStatefulOperatorList(int queryId) {
+		IExecutor executor = ActiveLoadBalancingActivator.getExecutor();
+		List<IPhysicalOperator> roots = executor.getPhysicalRoots(queryId, ActiveLoadBalancingActivator.getActiveSession());
+		List<IStatefulPO> statefulPOs = new ArrayList<IStatefulPO>();
+		for(IPhysicalOperator root : roots) {
+			LOG.debug(("Found root for Query " + queryId +": " + root.getName()));
+			statefulPOs = traverseGraphAndFindStatefulOperators(root, statefulPOs);
+		}
+		return statefulPOs;
+	}
+	
+	
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	private static List<IStatefulPO> traverseGraphAndFindStatefulOperators(IPhysicalOperator root, List<IStatefulPO> knownOperators) {
+		
+		if(root instanceof IStatefulPO && !knownOperators.contains(root)) {
+			LOG.debug((" + Found stateful Op: " +  root.getName()));
+			knownOperators.add((IStatefulPO)root);
+		}
+		if(root instanceof ISink) {
+			return knownOperators;
+		}
+		if(root instanceof ISource) {
+			ISource rootAsSource = (ISource) root;
+			for (PhysicalSubscription subscription : (Collection<PhysicalSubscription>)rootAsSource.getSubscriptions()) {
+				knownOperators = traverseGraphAndFindStatefulOperators((IPhysicalOperator)subscription.getTarget(),knownOperators);
+			}
+			return knownOperators;
+		}
+		if(root instanceof IPipe) {
+			IPipe rootAsSource = (IPipe) root;
+			for (PhysicalSubscription subscription : (Collection<PhysicalSubscription>)rootAsSource.getSubscriptions()) {
+				knownOperators = traverseGraphAndFindStatefulOperators((IPhysicalOperator)subscription.getTarget(),knownOperators);
+			}
+			return knownOperators;
+		}
+		return knownOperators;
+	}
 	
 	/**
 	 * Sends abort Message to all Peers involved in LoadBalancing Process

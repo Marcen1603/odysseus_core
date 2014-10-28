@@ -2,6 +2,7 @@ package de.uniol.inf.is.odysseus.peer.loadbalancing.active.console;
 
 import java.io.Serializable;
 import java.util.Collection;
+import java.util.List;
 
 import net.jxta.peer.PeerID;
 
@@ -162,7 +163,7 @@ public class ActiveLoadbalancingConsole implements CommandProvider {
 
 		String pipe = ci.nextArgument();
 		if (Strings.isNullOrEmpty(pipe)) {
-			System.out.println(USAGE_ERROR);
+			ci.println(USAGE_ERROR);
 			return;
 		}
 		MovingStateHelper.insertBuffer(pipe);
@@ -227,7 +228,38 @@ public class ActiveLoadbalancingConsole implements CommandProvider {
 		sb.append("    testLog                                              - Outputs different log levels.\n");
 		sb.append("    testSendState <pipeID> <LocalQueryId>              - Sends state of first StatefulPO in Query to pipe\n");
 		sb.append("    testInjectState <pipeID> <LocalQueryId>              - Injects received state from pipe to first statefol Operator in query.\n");
+		sb.append("    listStatefolOperators <queryID>                      - Lists all statefol Operators in a query (useful to determine order)\n");
 		return sb.toString();
+	}
+	
+	void _listStatefulOperators(CommandInterpreter ci) {
+		final String ERROR_USAGE = "Usage: listStatefulOperators <queryID>";
+		ci.println("Looking for stateful OPs");
+		
+		
+		String localQueryIdString = ci.nextArgument();
+		if (Strings.isNullOrEmpty(localQueryIdString)) {
+
+			ci.println(ERROR_USAGE);
+			return;
+		}
+		
+		int localQueryId;
+		
+		try {
+			localQueryId = Integer.parseInt(localQueryIdString);
+		}
+		catch(NumberFormatException e) {
+			ci.println(ERROR_USAGE);
+			return;
+		}
+		
+		List<IStatefulPO> statefulList = MovingStateHelper.getStatefulOperatorList(localQueryId);
+		int i=0;
+		for(IStatefulPO statefulOp : statefulList) {
+			IPhysicalOperator operator = (IPhysicalOperator) statefulOp;
+			ci.println("["+i+"] " + operator.getName());
+		}
 	}
 
 	/**
@@ -250,7 +282,7 @@ public class ActiveLoadbalancingConsole implements CommandProvider {
 
 		if (this.mRunningStrategy.isPresent()) {
 
-			System.out.println(ERROR_ALREADY_RUNNING);
+			ci.println(ERROR_ALREADY_RUNNING);
 			return;
 
 		}
@@ -258,7 +290,7 @@ public class ActiveLoadbalancingConsole implements CommandProvider {
 		String strategyName = ci.nextArgument();
 		if (Strings.isNullOrEmpty(strategyName)) {
 
-			System.out.println(ERROR_USAGE);
+			ci.println(ERROR_USAGE);
 			return;
 
 		}
@@ -267,7 +299,7 @@ public class ActiveLoadbalancingConsole implements CommandProvider {
 				.determineStrategy(strategyName);
 		if (!optStrategy.isPresent()) {
 
-			System.out.println(ERROR_STRATEGY + strategyName);
+			ci.println(ERROR_STRATEGY + strategyName);
 			return;
 
 		}
@@ -276,7 +308,7 @@ public class ActiveLoadbalancingConsole implements CommandProvider {
 		String allocatorName = ci.nextArgument();
 		if (Strings.isNullOrEmpty(allocatorName)) {
 
-			System.out.println(ERROR_USAGE);
+			ci.println(ERROR_USAGE);
 			return;
 
 		}
@@ -285,7 +317,7 @@ public class ActiveLoadbalancingConsole implements CommandProvider {
 				.determineAllocator(allocatorName);
 		if (!optAllocator.isPresent()) {
 
-			System.out.println(ERROR_ALLOCATOR + allocatorName);
+			ci.println(ERROR_ALLOCATOR + allocatorName);
 			return;
 
 		}
@@ -295,7 +327,7 @@ public class ActiveLoadbalancingConsole implements CommandProvider {
 				.determineCommunicator(communicator);
 		if (!optCommunicator.isPresent()) {
 
-			System.out.println(ERROR_COMMUNICATOR + allocatorName);
+			ci.println(ERROR_COMMUNICATOR + allocatorName);
 			return;
 
 		}
@@ -312,7 +344,7 @@ public class ActiveLoadbalancingConsole implements CommandProvider {
 
 		} catch (LoadBalancingException e) {
 
-			System.out.println("An error occured: " + e.getMessage());
+			ci.println("An error occured: " + e.getMessage());
 
 		}
 
@@ -325,17 +357,17 @@ public class ActiveLoadbalancingConsole implements CommandProvider {
 		String communicatorName = ci.nextArgument();
 		if (Strings.isNullOrEmpty(communicatorName)) {
 
-			System.out.println(ERROR_USAGE);
+			ci.println(ERROR_USAGE);
 			return;
 		}
 		Optional<ILoadBalancingCommunicator> optCommunicator = determineCommunicator(communicatorName);
 		if (optCommunicator.isPresent()) {
 			communicator = optCommunicator.get().getName();
 		} else {
-			System.out.println(ERROR_NOTFOUND + communicatorName);
-			System.out.println("Available Communicators are: ");
+			ci.println(ERROR_NOTFOUND + communicatorName);
+			ci.println("Available Communicators are: ");
 			for (ILoadBalancingCommunicator communicator : loadBalancingCommunicators) {
-				System.out.println(communicator.getName());
+				ci.println(communicator.getName());
 			}
 		}
 
@@ -347,7 +379,7 @@ public class ActiveLoadbalancingConsole implements CommandProvider {
 
 		if (!this.mRunningStrategy.isPresent()) {
 
-			System.out.println(ERROR_NOT_RUNNING);
+			ci.println(ERROR_NOT_RUNNING);
 			return;
 
 		}
@@ -365,7 +397,7 @@ public class ActiveLoadbalancingConsole implements CommandProvider {
 		String peerName = ci.nextArgument();
 		if (Strings.isNullOrEmpty(peerName)) {
 
-			System.out.println(ERROR_USAGE);
+			ci.println(ERROR_USAGE);
 			return;
 		}
 
@@ -373,12 +405,12 @@ public class ActiveLoadbalancingConsole implements CommandProvider {
 		for (PeerID peer : peerIDs) {
 			if (p2pDictionary.getRemotePeerName(peer).equals(peerName)) {
 				String newPipe = MovingStateManager.getInstance().addSender(peer.toString());
-				System.out.println("Pipe installed:");
-				System.out.println(newPipe);
+				ci.println("Pipe installed:");
+				ci.println(newPipe);
 				return;
 			}
 		}
-		System.out.println(ERROR_NOTFOUND + peerName);
+		ci.println(ERROR_NOTFOUND + peerName);
 	}
 	
 	public void _testSendState(CommandInterpreter ci) {
@@ -389,14 +421,14 @@ public class ActiveLoadbalancingConsole implements CommandProvider {
 		String pipeId = ci.nextArgument();
 		if (Strings.isNullOrEmpty(pipeId)) {
 
-			System.out.println(ERROR_USAGE);
+			ci.println(ERROR_USAGE);
 			return;
 		}
 		
 		String localQueryIdString = ci.nextArgument();
 		if (Strings.isNullOrEmpty(localQueryIdString)) {
 
-			System.out.println(ERROR_USAGE);
+			ci.println(ERROR_USAGE);
 			return;
 		}
 		
@@ -406,7 +438,7 @@ public class ActiveLoadbalancingConsole implements CommandProvider {
 			localQueryId = Integer.parseInt(localQueryIdString);
 		}
 		catch(NumberFormatException e) {
-			System.out.println(ERROR_USAGE);
+			ci.println(ERROR_USAGE);
 			return;
 		}
 		
@@ -421,23 +453,23 @@ public class ActiveLoadbalancingConsole implements CommandProvider {
 		}
 		
 		if(statefulOp==null) {
-			System.out.println(ERROR_LOCALOP);
+			ci.println(ERROR_LOCALOP);
 			return;
 		}
 		Serializable state = statefulOp.getState();
 		
 		MovingStateSender sender = MovingStateManager.getInstance().getSender(pipeId);
 		if(sender==null) {
-			System.out.println(ERROR_NOTFOUND + pipeId);
+			ci.println(ERROR_NOTFOUND + pipeId);
 			return;
 		}
 		try {
 			sender.sendData(state);
 		} catch (de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.common.LoadBalancingException e) {
-			System.out.println("ERROR:" + e.getMessage());
+			ci.println("ERROR:" + e.getMessage());
 			return;
 		}
-		System.out.println("Data sent.");
+		ci.println("Data sent.");
 		
 	}
 	
@@ -448,13 +480,13 @@ public class ActiveLoadbalancingConsole implements CommandProvider {
 		String peerName = ci.nextArgument();
 		if (Strings.isNullOrEmpty(peerName)) {
 
-			System.out.println(ERROR_USAGE);
+			ci.println(ERROR_USAGE);
 			return;
 		}
 		
 		String pipeID = ci.nextArgument();
 		if(Strings.isNullOrEmpty(pipeID)) {
-			System.out.println(ERROR_USAGE);
+			ci.println(ERROR_USAGE);
 			return;
 		}
 
@@ -462,11 +494,11 @@ public class ActiveLoadbalancingConsole implements CommandProvider {
 		for (PeerID peer : peerIDs) {
 			if (p2pDictionary.getRemotePeerName(peer).equals(peerName)) {
 				MovingStateManager.getInstance().addReceiver(peer.toString(), pipeID);
-				System.out.println("Receiver installed");
+				ci.println("Receiver installed");
 				return;
 			}
 		}
-		System.out.println(ERROR_NOTFOUND + peerName);
+		ci.println(ERROR_NOTFOUND + peerName);
 	}
 	
 	public void _sendData(CommandInterpreter ci) {
@@ -475,14 +507,14 @@ public class ActiveLoadbalancingConsole implements CommandProvider {
 		String pipeID = ci.nextArgument();
 		if (Strings.isNullOrEmpty(pipeID)) {
 
-			System.out.println(ERROR_USAGE);
+			ci.println(ERROR_USAGE);
 			return;
 		}
 		
 		String nextWord = ci.nextArgument();
 		if (Strings.isNullOrEmpty(nextWord)) {
 
-			System.out.println(ERROR_USAGE);
+			ci.println(ERROR_USAGE);
 			return;
 		}
 		StringBuilder sb = new StringBuilder();
@@ -495,16 +527,16 @@ public class ActiveLoadbalancingConsole implements CommandProvider {
 
 		MovingStateSender sender = MovingStateManager.getInstance().getSender(pipeID);
 		if(sender==null) {
-			System.out.println(ERROR_NOTFOUND + pipeID);
+			ci.println(ERROR_NOTFOUND + pipeID);
 			return;
 		}
 		try {
 			sender.sendData(message);
 		} catch (de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.common.LoadBalancingException e) {
-			System.out.println("ERROR:" + e.getMessage());
+			ci.println("ERROR:" + e.getMessage());
 			return;
 		}
-		System.out.println("Sent: " + message);
+		ci.println("Sent: " + message);
 	}
 	
 	public void _testInjectState(CommandInterpreter ci) {
@@ -516,14 +548,14 @@ public class ActiveLoadbalancingConsole implements CommandProvider {
 		String pipeId = ci.nextArgument();
 		if (Strings.isNullOrEmpty(pipeId)) {
 
-			System.out.println(ERROR_USAGE);
+			ci.println(ERROR_USAGE);
 			return;
 		}
 		
 		String localQueryIdString = ci.nextArgument();
 		if (Strings.isNullOrEmpty(localQueryIdString)) {
 
-			System.out.println(ERROR_USAGE);
+			ci.println(ERROR_USAGE);
 			return;
 		}
 		
@@ -533,7 +565,7 @@ public class ActiveLoadbalancingConsole implements CommandProvider {
 			localQueryId = Integer.parseInt(localQueryIdString);
 		}
 		catch(NumberFormatException e) {
-			System.out.println(ERROR_USAGE);
+			ci.println(ERROR_USAGE);
 			return;
 		}
 		
@@ -548,22 +580,22 @@ public class ActiveLoadbalancingConsole implements CommandProvider {
 		}
 		
 		if(statefulOp==null) {
-			System.out.println(ERROR_LOCALOP);
+			ci.println(ERROR_LOCALOP);
 			return;
 		}
 		MovingStateReceiver receiver = MovingStateManager.getInstance().getReceiver(pipeId);
 		if(receiver==null) {
-			System.out.println(ERROR_NOTFOUND + pipeId);
+			ci.println(ERROR_NOTFOUND + pipeId);
 			return;
 		}
 		
 		try {
 			receiver.injectState(statefulOp);
 		} catch (de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.common.LoadBalancingException e) {
-			System.out.println(ERROR_NOTHING_RECEIVED);
+			ci.println(ERROR_NOTHING_RECEIVED);
 			return;
 		}
-		System.out.println("Injected State.");
+		ci.println("Injected State.");
 		
 	}
 
@@ -574,9 +606,9 @@ public class ActiveLoadbalancingConsole implements CommandProvider {
 	 */
 	public void _lsParts(CommandInterpreter ci) {
 
-		System.out.println("Query Parts on current Peer:");
+		ci.println("Query Parts on current Peer:");
 		for (int queryID : executor.getLogicalQueryIds(getActiveSession())) {
-			System.out.println("["
+			ci.println("["
 					+ queryID
 					+ "] "
 					+ executor.getLogicalQueryById(queryID, getActiveSession())
@@ -592,10 +624,10 @@ public class ActiveLoadbalancingConsole implements CommandProvider {
 	 */
 	public void _lsLBStrategies(CommandInterpreter ci) {
 
-		System.out.println("Available load balancing strategies:");
+		ci.println("Available load balancing strategies:");
 		for (ILoadBalancingStrategy strategy : ActiveLoadbalancingConsole.loadBalancingStrategies) {
 
-			System.out.println(strategy.getName());
+			ci.println(strategy.getName());
 
 		}
 
@@ -609,10 +641,10 @@ public class ActiveLoadbalancingConsole implements CommandProvider {
 	 */
 	public void _lsLBAllocators(CommandInterpreter ci) {
 
-		System.out.println("Available load balancing allocators:");
+		ci.println("Available load balancing allocators:");
 		for (ILoadBalancingAllocator allocator : ActiveLoadbalancingConsole.loadBalancingAllocators) {
 
-			System.out.println(allocator.getName());
+			ci.println(allocator.getName());
 
 		}
 
@@ -626,9 +658,9 @@ public class ActiveLoadbalancingConsole implements CommandProvider {
 	 *            The {@link CommandInterpreter} instance
 	 */
 	public void _lsLBCommunicators(CommandInterpreter ci) {
-		System.out.println("Available load balancing Communicators:");
+		ci.println("Available load balancing Communicators:");
 		for (ILoadBalancingCommunicator communicator : ActiveLoadbalancingConsole.loadBalancingCommunicators) {
-			System.out.println(communicator.getName());
+			ci.println(communicator.getName());
 		}
 	}
 

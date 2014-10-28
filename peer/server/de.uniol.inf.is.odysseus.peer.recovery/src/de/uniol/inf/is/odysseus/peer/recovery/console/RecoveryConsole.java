@@ -209,7 +209,7 @@ public class RecoveryConsole implements CommandProvider {
 
 		PeerID failedPeer = getPeerIdFromCi(ci);
 		if (failedPeer == null) {
-			System.out.println("Don't know this peer id");
+			ci.println("Don't know this peer id");
 			return;
 		}
 		
@@ -226,17 +226,17 @@ public class RecoveryConsole implements CommandProvider {
 		if (peerId.isPresent()) {
 			Set<ID> queryIds = LocalBackupInformationAccess
 					.getStoredSharedQueryIdsForPeer(peerId.get());
-			System.out.println("PQL-Queries for peer with peerId "
+			ci.println("PQL-Queries for peer with peerId "
 					+ peerId.get());
 			for (ID queryId : queryIds) {
-				System.out.println("Shared Query ID: " + queryId);
+				ci.println("Shared Query ID: " + queryId);
 				ImmutableCollection<String> pqls = LocalBackupInformationAccess
 						.getStoredPQLStatements(queryId, peerId.get());
 
 				for (String pql : pqls) {
-					System.out.println("Query: ");
-					System.out.println("-------");
-					System.out.println(pql);
+					ci.println("Query: ");
+					ci.println("-------");
+					ci.println(pql);
 				}
 			}
 		}
@@ -260,7 +260,7 @@ public class RecoveryConsole implements CommandProvider {
 		Optional<PeerID> optNewPeer = RecoveryHelper.determinePeerID(newPeerName);
 		PeerID newPeer;
 		if(!optNewPeer.isPresent()) {
-			System.out.println("Don't know new peer. Take myself instead.");
+			ci.println("Don't know new peer. Take myself instead.");
 			newPeer = p2pNetworkManager.getLocalPeerID();
 		} else {
 			newPeer = optNewPeer.get();
@@ -269,7 +269,7 @@ public class RecoveryConsole implements CommandProvider {
 		Optional<PeerID> optFailedPeer = RecoveryHelper.determinePeerID(failedPeerName);
 		PeerID failedPeer;
 		if(!optFailedPeer.isPresent()) {
-			System.out.println("Don't know failed peer. Take myself instead.");
+			ci.println("Don't know failed peer. Take myself instead.");
 			failedPeer = p2pNetworkManager.getLocalPeerID();
 		} else {
 			failedPeer = optFailedPeer.get();
@@ -282,7 +282,7 @@ public class RecoveryConsole implements CommandProvider {
 			cCommunicator.get().installQueriesOnNewPeer(failedPeer, newPeer,
 					sharedQueryId);
 		} catch (URISyntaxException e) {
-			System.out.println("Can't parse the queryId.");
+			ci.println("Can't parse the queryId.");
 		}
 	}
 
@@ -296,7 +296,7 @@ public class RecoveryConsole implements CommandProvider {
 
 		}
 
-		System.out.println("I do nothing for now.");
+		ci.println("I do nothing for now.");
 	}
 
 	public void _sendUpdateReceiver(CommandInterpreter ci) {
@@ -347,7 +347,7 @@ public class RecoveryConsole implements CommandProvider {
 				.determineAllocator(allocatorName);
 		if (!optAllocator.isPresent()) {
 
-			System.out.println("No recovery allocator found with the name "
+			ci.println("No recovery allocator found with the name "
 					+ allocatorName);
 			return;
 
@@ -379,7 +379,7 @@ public class RecoveryConsole implements CommandProvider {
 				.getStoredIDs();
 
 		if (storedIds.isEmpty()) {
-			System.out.println("No shared query ids stored.");
+			ci.println("No shared query ids stored.");
 			return;
 		}
 
@@ -399,7 +399,7 @@ public class RecoveryConsole implements CommandProvider {
 			sb.append("\n");
 		}
 
-		System.out.println(sb.toString());
+		ci.println(sb.toString());
 	}
 
 	/**
@@ -410,10 +410,10 @@ public class RecoveryConsole implements CommandProvider {
 	 */
 	public void _lsRecoveryAllocators(CommandInterpreter ci) {
 
-		System.out.println("Available recovery allocators:");
+		ci.println("Available recovery allocators:");
 		for (IRecoveryAllocator allocator : RecoveryConsole.recoveryAllocators) {
 
-			System.out.println(allocator.getName());
+			ci.println(allocator.getName());
 
 		}
 
@@ -430,7 +430,7 @@ public class RecoveryConsole implements CommandProvider {
 		String allocatorName = ci.nextArgument();
 		if (Strings.isNullOrEmpty(allocatorName)) {
 
-			System.out.println("usage: recoveryAllocation <AllocatorName>");
+			ci.println("usage: recoveryAllocation <AllocatorName>");
 			return;
 
 		}
@@ -439,7 +439,7 @@ public class RecoveryConsole implements CommandProvider {
 				.determineAllocator(allocatorName);
 		if (!optAllocator.isPresent()) {
 
-			System.out.println("No recovery allocator found with the name "
+			ci.println("No recovery allocator found with the name "
 					+ allocatorName);
 			return;
 
@@ -450,7 +450,7 @@ public class RecoveryConsole implements CommandProvider {
 		try {
 			peer = allocator.allocate(p2pDictionary.getRemotePeerIDs(),
 					p2pNetworkManager.getLocalPeerID());
-			System.out.println("Allocator has chosen "
+			ci.println("Allocator has chosen "
 					+ p2pDictionary.getRemotePeerName(peer) + " as target");
 		} catch (QueryPartAllocationException e) {
 			e.printStackTrace();
