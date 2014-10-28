@@ -109,8 +109,6 @@ public class SmartHomeServerPlugIn implements BundleActivator,
 				cleanPeerID);
 		temper0.addPossibleActivityName("hot");
 
-		// Sensor temper1 = new Temper1Sensor("Temper1", "temper1source");
-
 		// GPIO_07
 		RPiGPIOSensor gpioTaste7 = new RPiGPIOSensor("RPiGPIOTaster",
 				"rpigpiotaster", cleanPeerID);
@@ -123,7 +121,6 @@ public class SmartHomeServerPlugIn implements BundleActivator,
 				.toString());
 		smartDevice.setSmartDevice(getSmartDeviceConfig());
 		smartDevice.addConnectedFieldDevice(temper0);
-		// smartDevice.addConnectedFieldDevice(temper1);
 		smartDevice.addConnectedFieldDevice(gpioTaste7);
 
 		// Temp0:
@@ -140,15 +137,18 @@ public class SmartHomeServerPlugIn implements BundleActivator,
 		executeQuery(gpioTaste7.getActivitySourceName(),
 				gpioTaste7.getQueryForActivityInterpreter());
 
-		String smartDeviceActivitiesViewName = "SmartDeviceActivities"
-				+ cleanPeerID;
-		StringBuilder smartDeviceActivities = new StringBuilder();
-		smartDeviceActivities.append("#PARSER PQL\n");
-		smartDeviceActivities.append("#RUNQUERY\n");
-		smartDeviceActivities.append(smartDeviceActivitiesViewName + " := UNION("+ temper0.getActivitySourceName() + ","+gpioTaste7.getActivitySourceName()+")\n");
-		// Union if more then one sensors
-
-		executeQuery("SmartDeviceActivities", smartDeviceActivities.toString());
+		smartDevice.setReady(true);
+		/*
+		 * String smartDeviceActivitiesViewName = "SmartDeviceActivities" +
+		 * cleanPeerID; StringBuilder smartDeviceActivities = new
+		 * StringBuilder(); smartDeviceActivities.append("#PARSER PQL\n");
+		 * smartDeviceActivities.append("#RUNQUERY\n");
+		 * smartDeviceActivities.append(smartDeviceActivitiesViewName +
+		 * " := UNION("+ temper0.getActivitySourceName() +
+		 * ","+gpioTaste7.getActivitySourceName()+")\n"); // Union if more then
+		 * one sensor //executeQuery("SmartDeviceActivities",
+		 * smartDeviceActivities.toString());
+		 */
 	}
 
 	private void initSmartDeviceDictionary() {
@@ -321,8 +321,18 @@ public class SmartHomeServerPlugIn implements BundleActivator,
 				waitForJxtaServicesProvider();
 				waitForServerExecutorService();
 
+				
+
 				LOG.error("publishSmartDeviceAdvertisementAsync started and will be executing in 30 sec.");
 
+				// wait for SmartDevice
+				while (smartDevice == null || !smartDevice.isReady()) {
+					try {
+						Thread.sleep(200);
+					} catch (InterruptedException e) {
+					}
+				}
+				
 				try {
 					Thread.sleep(30000);
 				} catch (InterruptedException e1) {
@@ -331,7 +341,7 @@ public class SmartHomeServerPlugIn implements BundleActivator,
 
 				if (getP2PNetworkManager() != null
 						&& getJxtaServicesProvider() != null) {
-					LOG.error("publishSmartDeviceAdvertisementAsync():");
+					LOG.error("publishSmartDeviceAdvertisementAsync() now:");
 
 					try {
 						initSmartDevice();
@@ -342,8 +352,10 @@ public class SmartHomeServerPlugIn implements BundleActivator,
 						adv.setID(IDFactory.newPipeID(getP2PNetworkManager()
 								.getLocalPeerGroupID()));
 						adv.setPeerID(p2pNetworkManager.getLocalPeerID());
-						// adv.setSmartDevice(smartDevice);
-
+						//TODO: check SmartDevice serialization
+						adv.setSmartDevice(smartDevice);
+						
+						
 						getJxtaServicesProvider().publish(adv);
 						getJxtaServicesProvider().remotePublish(adv);
 					} catch (IOException e) {
@@ -794,9 +806,8 @@ public class SmartHomeServerPlugIn implements BundleActivator,
 				@SuppressWarnings("unused")
 				String activitySourceName = fieldDevice.getActivitySourceName();
 
-				for (String activityName : fieldDevice
+				for (String possibleActivityName : fieldDevice
 						.getPossibleActivityNames()) {
-					String possibleActivityName = activityName;
 
 					// Rule 1:
 					// run async?
@@ -843,6 +854,11 @@ public class SmartHomeServerPlugIn implements BundleActivator,
 						}
 					} else if (possibleActivityName.equals("hot")) {
 						LOG.debug("Rule for activity:hot wurde erfüllt und wird nun ausgeführt.");
+						LOG.debug("FieldDevice name:" + fieldDevice.getName());
+						LOG.debug("FieldDevice rawSourceName:"
+								+ fieldDevice.getRawSourceName());
+						LOG.debug("FieldDevice activitySourceName:"
+								+ fieldDevice.getActivitySourceName());
 
 					}
 

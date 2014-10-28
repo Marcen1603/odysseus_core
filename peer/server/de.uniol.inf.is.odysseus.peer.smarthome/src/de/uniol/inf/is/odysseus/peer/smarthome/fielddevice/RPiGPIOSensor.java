@@ -30,7 +30,7 @@ public class RPiGPIOSensor extends Sensor {
 		sBuilder.append("#RUNQUERY\n");
 
 		// ActivityConfiguration:
-		String activityConfiguration = "Taster1ActivityConfiguration"
+		String activityConfiguration = "Taster1ActivityConfiguration_"
 				+ getSourceNamePostfix();
 		sBuilder.append("" + activityConfiguration + " := ACCESS({\n");
 		sBuilder.append("    transport = 'activityconfiguration',\n");

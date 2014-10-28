@@ -20,8 +20,8 @@ public abstract class Sensor implements FieldDevice, Serializable {
 	
 	public Sensor(String name, String sourceName, String sourceNamePostfix) {
 		this.setName(name);
-		this.setRawSourceName(sourceName+""+sourceNamePostfix);
-		this.setActivitySourceName(sourceName+"Activity"+sourceNamePostfix);
+		this.setRawSourceName(sourceName+"_"+sourceNamePostfix);
+		this.setActivitySourceName(sourceName+"Activity_"+sourceNamePostfix);
 		this.setSourceNamePostfix(sourceNamePostfix);
 	}
 	protected void setActivitySourceName(String name) {

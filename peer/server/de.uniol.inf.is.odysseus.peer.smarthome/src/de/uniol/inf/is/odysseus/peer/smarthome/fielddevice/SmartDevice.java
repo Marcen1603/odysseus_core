@@ -12,6 +12,7 @@ public class SmartDevice implements Serializable {
 	private String smartDevicePeerID;
 	private String contextName;
 	private List<FieldDevice> connectedFieldDevices = new ArrayList<FieldDevice>();
+	private boolean state=false;
 	
 	public List<FieldDevice> getConnectedFieldDevices() {
 		return connectedFieldDevices;
@@ -79,5 +80,13 @@ public class SmartDevice implements Serializable {
 		if(smartDevice.getConnectedFieldDevices()!=null){
 			this.setConnectedFieldDevices(smartDevice.getConnectedFieldDevices());
 		}
+	}
+
+	public boolean isReady() {
+		return this.state;
+	}
+	
+	public void setReady(boolean state){
+		this.state = state;
 	}
 }

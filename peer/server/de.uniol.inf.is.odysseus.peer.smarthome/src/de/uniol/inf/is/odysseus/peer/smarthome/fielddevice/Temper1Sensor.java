@@ -28,7 +28,7 @@ public class Temper1Sensor extends Sensor {
 		
 		//Activity: hot
 		//Configuration:
-		String activityConfiguration = "Temper1ActivityConfiguration"+getSourceNamePostfix();
+		String activityConfiguration = "Temper1ActivityConfiguration_"+getSourceNamePostfix();
 		sBuilder.append("#RUNQUERY\n");
 		sBuilder.append("    "+activityConfiguration+" := ACCESS({\n");
 		sBuilder.append("    transport = 'activityconfiguration',\n");
