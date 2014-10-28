@@ -285,9 +285,8 @@ public class StreamTableEditor implements IStreamEditorType {
 				Object attr2 = e2.getAttribute(attributeIndex);
 				if (attr1 != null && attr2 != null){
 					return Objects.compare(attr1, attr2, new ObjectComparator());
-				}else{
-					return 0;
 				}
+				return 0;
 			}
 		};
 		sorter.setSorter(sorter, TupleColumnViewerSorter.NONE);
