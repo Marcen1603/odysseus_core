@@ -15,6 +15,9 @@
  */
 package de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.functions;
 
+import java.util.List;
+
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.AbstractAggregateFunction;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.IPartialAggregate;
 
@@ -81,4 +84,9 @@ abstract public class Count<R, W> extends AbstractAggregateFunction<R, W> {
 		return pa;
 	}
 
+	@Override
+	public SDFDatatype getReturnType(List<SDFDatatype> inputTypes) {
+		return SDFDatatype.LONG;
+	}
+	
 }

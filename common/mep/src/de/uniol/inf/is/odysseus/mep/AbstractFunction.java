@@ -219,7 +219,12 @@ public abstract class AbstractFunction<T> implements IFunction<T> {
     }
 	   
 	final protected Double getNumericalInputValue(int argumentPos) {
-		return ((Number) arguments[argumentPos].getValue()).doubleValue();
+		try{
+			double val = ((Number) arguments[argumentPos].getValue()).doubleValue();
+			return val;
+		}catch(ClassCastException e){
+			throw new IllegalArgumentException("Input \""+arguments[argumentPos].getValue()+"\" is not a number!");
+		}
 	}
 	
 	@Override

@@ -16,6 +16,9 @@
 package de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions;
 
 import java.io.Serializable;
+import java.util.List;
+
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 
 public interface IAggregateFunction<R,W> extends IInitializer<R>, IMerger<R>,
 		IEvaluator<R,W>, Serializable{
@@ -24,4 +27,6 @@ public interface IAggregateFunction<R,W> extends IInitializer<R>, IMerger<R>,
 	public int hashCode();
 	@Override
 	public boolean equals(Object obj);	
+
+	public SDFDatatype getReturnType(List<SDFDatatype> inputTypes);
 }
