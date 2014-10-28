@@ -214,7 +214,7 @@ public class BugReportEditor extends TitleAreaDialog {
 		StyledText text = createStyledText(tabComposite, false);
 		text.setText(reportText);
 		
-		return null;
+		return text;
 	}
 
 	private static StyledText createStyledText(Composite parent,  boolean isLine) {
