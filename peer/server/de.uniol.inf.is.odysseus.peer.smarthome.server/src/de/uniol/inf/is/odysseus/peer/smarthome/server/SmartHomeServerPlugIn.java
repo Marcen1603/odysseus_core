@@ -869,28 +869,28 @@ public class SmartHomeServerPlugIn implements BundleActivator,
 
 	public static void refresh() {
 		Collection<PeerID> foundPeerIDsCopy = null;
-		if (foundPeerIDs != null) {
+		if (foundPeerIDs != null && p2pDictionary != null
+				&& p2pDictionary.getRemotePeerIDs() != null) {
 			synchronized (foundPeerIDs) {
 				foundPeerIDs.clear();
 				foundPeerIDs.addAll(p2pDictionary.getRemotePeerIDs());
 				foundPeerIDsCopy = Lists.newArrayList(foundPeerIDs);
 			}
-		}
 
-		if (foundPeerIDsCopy != null) {
-			for (final PeerID remotePeerID : foundPeerIDsCopy) {
-				synchronized (refreshing) {
-					if (refreshing.contains(remotePeerID)) {
-						continue;
+			if (foundPeerIDsCopy != null) {
+				for (final PeerID remotePeerID : foundPeerIDsCopy) {
+					synchronized (refreshing) {
+						if (refreshing.contains(remotePeerID)) {
+							continue;
+						}
+
+						refreshing.add(remotePeerID);
 					}
-
-					refreshing.add(remotePeerID);
 				}
 			}
 		}
 
 		printFoundPeerIDs(foundPeerIDsCopy);
-
 	}
 
 	// @SuppressWarnings("unused")

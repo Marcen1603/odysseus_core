@@ -70,7 +70,7 @@ public class RPiGPIOSensor extends Sensor {
 		sBuilder.append("                        predicate='PinState = 1'\n");
 		sBuilder.append("                      },\n");
 		sBuilder.append("                      JOIN({\n");
-		sBuilder.append("                          predicate = '"+getRawSourceName()+".EntityName = Taster1ActivityConfiguration.EntityName'\n");                                                                                                                                                   
+		sBuilder.append("                          predicate = '"+getRawSourceName()+".PinNumber = Taster1ActivityConfiguration.EntityName'\n");                                                                                                                                                   
 		sBuilder.append("                        },\n");
 		sBuilder.append("                        "+getRawSourceName()+",\n");
 		sBuilder.append("                        Taster1ActivityConfiguration\n");
