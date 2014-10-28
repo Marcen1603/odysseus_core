@@ -3,6 +3,7 @@
  */
 package de.uniol.inf.is.odysseus.core.server.logicaloperator;
 
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 
@@ -44,10 +45,10 @@ public class AssociativeStorageAO extends AbstractLogicalOperator {
      * @param associativeStorage
      */
     public AssociativeStorageAO(AssociativeStorageAO operator) {
-        this.hierarchyAttributes = operator.hierarchyAttributes;
-        this.indexAttributes = operator.indexAttributes;
+        this.hierarchyAttributes = new LinkedList<>(operator.hierarchyAttributes);
+        this.indexAttributes = new LinkedList<>(operator.indexAttributes);
         this.valueAttribute = operator.valueAttribute;
-        this.sizes = operator.sizes;
+        this.sizes = new LinkedList<>(operator.sizes);
         this.storageName = operator.storageName;
     }
 
