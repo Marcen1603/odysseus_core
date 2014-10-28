@@ -8,10 +8,17 @@ public class ResourceParameter extends AbstractParameter<Resource> {
 
 	@Override
 	protected void internalAssignment() {
-		if (inputValue instanceof String){
-			setValue( new Resource(getCaller().getUser(),(String) inputValue));
-		} else if( inputValue instanceof Resource ) {
-			setValue ((Resource)inputValue);
+		if (inputValue instanceof String) {
+			int pos = ((String) inputValue).indexOf(".");
+			if (pos > 0) {
+				setValue(new Resource(((String) inputValue).substring(0, pos),
+						((String) inputValue).substring(pos + 1)));
+			} else {
+				setValue(new Resource(getCaller().getUser(),
+						(String) inputValue));
+			}
+		} else if (inputValue instanceof Resource) {
+			setValue((Resource) inputValue);
 		}
 	}
 
@@ -19,5 +26,5 @@ public class ResourceParameter extends AbstractParameter<Resource> {
 	protected String getPQLStringInternal() {
 		return "'" + inputValue + "'";
 	}
-
+	
 }
