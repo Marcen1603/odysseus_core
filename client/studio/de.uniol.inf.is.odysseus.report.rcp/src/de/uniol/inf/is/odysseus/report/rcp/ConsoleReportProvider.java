@@ -22,7 +22,7 @@ public class ConsoleReportProvider implements IReportProvider {
 
 	@Override
 	public String getTitle() {
-		return "Error log";
+		return "Console";
 	}
 
 	@Override
@@ -41,11 +41,6 @@ public class ConsoleReportProvider implements IReportProvider {
 			}
 		}
 
-		String localRootLocation = ResourcesPlugin.getWorkspace().getRoot().getLocation().toOSString();
-		Path path = FileSystems.getDefault().getPath(localRootLocation, ".metadata", ".log");
-		
-		Util.loadFromFile(sb, path, "Info Service Log");
-		
 		return sb.toString();
 	}
 }
