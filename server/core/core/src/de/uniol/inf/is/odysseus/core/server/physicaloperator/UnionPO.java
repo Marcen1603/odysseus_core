@@ -15,6 +15,8 @@
  */
 package de.uniol.inf.is.odysseus.core.server.physicaloperator;
 
+import java.io.Serializable;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -23,17 +25,18 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IStatefulOperator;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IStatefulPO;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ITransferArea;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.physicaloperator.PhysicalSubscription;
 
 public class UnionPO<R extends IStreamObject<?>> extends AbstractPipe<R, R>
-		implements IStatefulOperator {
-	
+		implements IStatefulOperator, IStatefulPO {
+
 	Logger logger = LoggerFactory.getLogger(UnionPO.class);
 
 	private boolean useInputPortAsOutputPort = false;
-	
+
 	protected ITransferArea<R, R> transferArea;
 
 	public UnionPO(ITransferArea<R, R> transferFunction) {
@@ -54,7 +57,7 @@ public class UnionPO<R extends IStreamObject<?>> extends AbstractPipe<R, R>
 	public OutputMode getOutputMode() {
 		return OutputMode.INPUT;
 	}
-	
+
 	public void setUseInputPortAsOutputPort(boolean useInputPortAsOutputPort) {
 		this.useInputPortAsOutputPort = useInputPortAsOutputPort;
 	}
@@ -78,9 +81,9 @@ public class UnionPO<R extends IStreamObject<?>> extends AbstractPipe<R, R>
 
 	@Override
 	protected void process_next(R object, int port) {
-		if (useInputPortAsOutputPort){
+		if (useInputPortAsOutputPort) {
 			transferArea.transfer(object, port);
-		}else{
+		} else {
 			transferArea.transfer(object);
 		}
 		transferArea.newElement(object, port);
@@ -88,22 +91,22 @@ public class UnionPO<R extends IStreamObject<?>> extends AbstractPipe<R, R>
 
 	@Override
 	protected void process_close() {
-		for (int i=0;i<getSubscribedToSource().size();i++){
+		for (int i = 0; i < getSubscribedToSource().size(); i++) {
 			transferArea.done(i);
 		}
 	}
-	
+
 	@Override
 	protected void process_done(int port) {
 		transferArea.done(port);
-		logger.debug("Done on "+port);
+		logger.debug("Done on " + port);
 	}
-		
+
 	@Override
 	public void processPunctuation(IPunctuation punctuation, int port) {
-		if (useInputPortAsOutputPort){
+		if (useInputPortAsOutputPort) {
 			transferArea.sendPunctuation(punctuation, port);
-		}else{
+		} else {
 			transferArea.sendPunctuation(punctuation);
 		}
 		transferArea.newElement(punctuation, port);
@@ -122,5 +125,38 @@ public class UnionPO<R extends IStreamObject<?>> extends AbstractPipe<R, R>
 	@Override
 	public long getElementsStored1() {
 		return transferArea.size();
+	}
+
+	@Override
+	public Serializable getState() {
+		UnionPOState state = new UnionPOState();
+		state.transferArea = this.transferArea;
+		return state;
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public void setState(Serializable s) {
+		try {
+			UnionPOState state = (UnionPOState) s;
+			this.transferArea = state.transferArea;
+			this.transferArea.setTransfer(this);
+		} catch (Throwable T) {
+			logger.error("The serializable state to set for the UnionPO is not a valid UnionPOState!");
+		}
+	}
+
+	/**
+	 * The current state of an {@link UnionPO} is defined by its transfer area
+	 * and its groups.
+	 * 
+	 * @author Chris Tönjes-Deye
+	 * 
+	 */
+	private class UnionPOState implements Serializable {
+
+		private static final long serialVersionUID = 9088231287860150949L;
+
+		ITransferArea<R, R> transferArea;
 	}
 }

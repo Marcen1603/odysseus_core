@@ -38,7 +38,7 @@ public class DirectTransferArea<R extends IStreamObject<? extends ITimeInterval>
 	private static final long serialVersionUID = 2207860250465543159L;
 	
 	protected PointInTime[] minTs;
-	protected ITransfer<W> po;
+	protected transient ITransfer<W> po;
 	protected PriorityQueue<W> outputQueue = new PriorityQueue<W>(11,
 			new MetadataComparator<ITimeInterval>());
 

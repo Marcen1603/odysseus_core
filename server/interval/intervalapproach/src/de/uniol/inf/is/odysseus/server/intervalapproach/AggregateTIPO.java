@@ -688,8 +688,7 @@ public class AggregateTIPO<Q extends ITimeInterval, R extends IStreamObject<Q>, 
 		AggregateTIPOState state = new AggregateTIPOState();
 		state.transferArea = this.transferArea;
 		state.groups = this.groups;
-		return state;
-		
+		return state;	
 	}
 
 	@SuppressWarnings("unchecked")
@@ -700,6 +699,7 @@ public class AggregateTIPO<Q extends ITimeInterval, R extends IStreamObject<Q>, 
 			
 			AggregateTIPOState state = (AggregateTIPOState) s;
 			this.transferArea = state.transferArea;
+			this.transferArea.setTransfer(this);
 			this.groups = state.groups;
 			
 		} catch(Throwable T) {

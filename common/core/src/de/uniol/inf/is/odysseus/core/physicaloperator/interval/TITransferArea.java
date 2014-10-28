@@ -69,7 +69,7 @@ public class TITransferArea<R extends IStreamObject<? extends ITimeInterval>, W 
 	// states the time stamp of the last send object
 	private PointInTime watermark = null;
 	// the operator that uses this sink
-	protected ITransfer<W> po;
+	protected transient ITransfer<W> po;
 	// Store to reorder elements
 	protected PriorityQueue<SerializablePair<IStreamable, Integer>> outputQueue = new PriorityQueue<>(
 			11, new OutputQueueComparator());

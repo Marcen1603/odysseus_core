@@ -236,11 +236,11 @@ public class DDCConsole implements CommandProvider {
 	 * @param array
 	 *            The given String array.
 	 */
-	private static void printStringArray(String[] array) {
+	private static void printStringArray(CommandInterpreter ci, String[] array) {
 
 		for (String str : array) {
 
-			System.out.println(str);
+			ci.println(str);
 
 		}
 
@@ -266,7 +266,7 @@ public class DDCConsole implements CommandProvider {
 		Optional<String> optKey = Optional.fromNullable(ci.nextArgument());
 		if (!optKey.isPresent()) {
 
-			DDCConsole.printStringArray(DDCConsole.USAGE_ADD);
+			DDCConsole.printStringArray(ci, DDCConsole.USAGE_ADD);
 			return;
 
 		}
@@ -276,7 +276,7 @@ public class DDCConsole implements CommandProvider {
 		Optional<String> optValue = Optional.fromNullable(ci.nextArgument());
 		if (!optValue.isPresent()) {
 
-			DDCConsole.printStringArray(DDCConsole.USAGE_ADD);
+			DDCConsole.printStringArray(ci, DDCConsole.USAGE_ADD);
 			return;
 
 		}
@@ -294,7 +294,7 @@ public class DDCConsole implements CommandProvider {
 
 			} catch (NumberFormatException e) {
 
-				System.err.println("The given timestamp " + optTS_string.get()
+				ci.println("The given timestamp " + optTS_string.get()
 						+ " is no valid timestamp");
 				return;
 
@@ -309,7 +309,7 @@ public class DDCConsole implements CommandProvider {
 		// No more arguments allowed
 		if (ci.nextArgument() != null) {
 
-			DDCConsole.printStringArray(DDCConsole.USAGE_ADD);
+			DDCConsole.printStringArray(ci, DDCConsole.USAGE_ADD);
 			return;
 
 		}
@@ -317,11 +317,11 @@ public class DDCConsole implements CommandProvider {
 		// Add to DDC
 		if (DDCConsole.ddc.add(new DDCEntry(key, value, ts))) {
 
-			System.out.println("Added entry to DDC");
+			ci.println("Added entry to DDC");
 
 		} else {
 
-			System.out.println("Could not add entry");
+			ci.println("Could not add entry");
 
 		}
 
@@ -345,7 +345,7 @@ public class DDCConsole implements CommandProvider {
 		Optional<String> optKey = Optional.fromNullable(ci.nextArgument());
 		if (!optKey.isPresent()) {
 
-			DDCConsole.printStringArray(DDCConsole.USAGE_GET_ENTRY);
+			DDCConsole.printStringArray(ci, DDCConsole.USAGE_GET_ENTRY);
 			return;
 
 		}
@@ -354,7 +354,7 @@ public class DDCConsole implements CommandProvider {
 		// No more arguments allowed
 		if (ci.nextArgument() != null) {
 
-			DDCConsole.printStringArray(DDCConsole.USAGE_GET_ENTRY);
+			DDCConsole.printStringArray(ci, DDCConsole.USAGE_GET_ENTRY);
 			return;
 
 		}
@@ -362,11 +362,11 @@ public class DDCConsole implements CommandProvider {
 		// Get from DDC
 		try {
 
-			System.out.println(DDCConsole.ddc.get(key));
+			ci.println(DDCConsole.ddc.get(key));
 
 		} catch (MissingDDCEntryException e) {
 
-			System.out.println(e.getMessage());
+			ci.println(e.getMessage());
 
 		}
 
@@ -390,7 +390,7 @@ public class DDCConsole implements CommandProvider {
 		Optional<String> optKey = Optional.fromNullable(ci.nextArgument());
 		if (!optKey.isPresent()) {
 
-			DDCConsole.printStringArray(DDCConsole.USAGE_GET_VALUE);
+			DDCConsole.printStringArray(ci, DDCConsole.USAGE_GET_VALUE);
 			return;
 
 		}
@@ -399,7 +399,7 @@ public class DDCConsole implements CommandProvider {
 		// No more arguments allowed
 		if (ci.nextArgument() != null) {
 
-			DDCConsole.printStringArray(DDCConsole.USAGE_GET_VALUE);
+			DDCConsole.printStringArray(ci, DDCConsole.USAGE_GET_VALUE);
 			return;
 
 		}
@@ -407,11 +407,11 @@ public class DDCConsole implements CommandProvider {
 		// Get from DDC
 		try {
 
-			System.out.println(DDCConsole.ddc.getValue(key));
+			ci.println(DDCConsole.ddc.getValue(key));
 
 		} catch (MissingDDCEntryException e) {
 
-			System.out.println(e.getMessage());
+			ci.println(e.getMessage());
 
 		}
 
@@ -435,7 +435,7 @@ public class DDCConsole implements CommandProvider {
 		Optional<String> optKey = Optional.fromNullable(ci.nextArgument());
 		if (!optKey.isPresent()) {
 
-			DDCConsole.printStringArray(DDCConsole.USAGE_GET_TIMESTAMP);
+			DDCConsole.printStringArray(ci, DDCConsole.USAGE_GET_TIMESTAMP);
 			return;
 
 		}
@@ -444,7 +444,7 @@ public class DDCConsole implements CommandProvider {
 		// No more arguments allowed
 		if (ci.nextArgument() != null) {
 
-			DDCConsole.printStringArray(DDCConsole.USAGE_GET_TIMESTAMP);
+			DDCConsole.printStringArray(ci, DDCConsole.USAGE_GET_TIMESTAMP);
 			return;
 
 		}
@@ -452,11 +452,11 @@ public class DDCConsole implements CommandProvider {
 		// Get from DDC
 		try {
 
-			System.out.println(DDCConsole.ddc.getTimeStamp(key));
+			ci.println(DDCConsole.ddc.getTimeStamp(key));
 
 		} catch (MissingDDCEntryException e) {
 
-			System.out.println(e.getMessage());
+			ci.println(e.getMessage());
 
 		}
 
@@ -477,7 +477,7 @@ public class DDCConsole implements CommandProvider {
 		// No arguments allowed
 		if (ci.nextArgument() != null) {
 
-			System.err.println(DDCConsole.USAGE_GET_KEYS);
+			ci.println(DDCConsole.USAGE_GET_KEYS);
 			return;
 
 		}
@@ -486,14 +486,14 @@ public class DDCConsole implements CommandProvider {
 		List<DDCKey> keys = DDCConsole.ddc.getSortedKeys();
 		if (keys.isEmpty()) {
 
-			System.out.println(DDCConsole.EMPTY_DDC);
+			ci.println(DDCConsole.EMPTY_DDC);
 			return;
 
 		}
 
 		for (DDCKey key : keys) {
 
-			System.out.println(key);
+			ci.println(key);
 
 		}
 
@@ -514,7 +514,7 @@ public class DDCConsole implements CommandProvider {
 		// No arguments allowed
 		if (ci.nextArgument() != null) {
 
-			System.err.println(DDCConsole.USAGE_GET_VALUES);
+			ci.println(DDCConsole.USAGE_GET_VALUES);
 			return;
 
 		}
@@ -523,14 +523,14 @@ public class DDCConsole implements CommandProvider {
 		Set<String> values = DDCConsole.ddc.getValues();
 		if (values.isEmpty()) {
 
-			System.out.println(DDCConsole.EMPTY_DDC);
+			ci.println(DDCConsole.EMPTY_DDC);
 			return;
 
 		}
 
 		for (String value : values) {
 
-			System.out.println(value);
+			ci.println(value);
 
 		}
 
@@ -554,7 +554,7 @@ public class DDCConsole implements CommandProvider {
 		Optional<String> optKey = Optional.fromNullable(ci.nextArgument());
 		if (!optKey.isPresent()) {
 
-			DDCConsole.printStringArray(DDCConsole.USAGE_CONTAINS_KEY);
+			DDCConsole.printStringArray(ci, DDCConsole.USAGE_CONTAINS_KEY);
 			return;
 
 		}
@@ -563,12 +563,12 @@ public class DDCConsole implements CommandProvider {
 		// No more arguments allowed
 		if (ci.nextArgument() != null) {
 
-			DDCConsole.printStringArray(DDCConsole.USAGE_CONTAINS_KEY);
+			DDCConsole.printStringArray(ci, DDCConsole.USAGE_CONTAINS_KEY);
 			return;
 
 		}
 
-		System.out.println(String.valueOf(DDCConsole.ddc.containsKey(key)));
+		ci.println(String.valueOf(DDCConsole.ddc.containsKey(key)));
 
 	}
 
@@ -590,7 +590,7 @@ public class DDCConsole implements CommandProvider {
 		Optional<String> optKey = Optional.fromNullable(ci.nextArgument());
 		if (!optKey.isPresent()) {
 
-			DDCConsole.printStringArray(DDCConsole.USAGE_REMOVE);
+			DDCConsole.printStringArray(ci, DDCConsole.USAGE_REMOVE);
 			return;
 
 		}
@@ -599,18 +599,18 @@ public class DDCConsole implements CommandProvider {
 		// No more arguments allowed
 		if (ci.nextArgument() != null) {
 
-			DDCConsole.printStringArray(DDCConsole.USAGE_REMOVE);
+			DDCConsole.printStringArray(ci, DDCConsole.USAGE_REMOVE);
 			return;
 
 		}
 
 		if (DDCConsole.ddc.remove(key)) {
 
-			System.out.println("Removed entry from DDC");
+			ci.println("Removed entry from DDC");
 
 		} else {
 
-			System.out.println("No entry found");
+			ci.println("No entry found");
 
 		}
 
@@ -631,12 +631,12 @@ public class DDCConsole implements CommandProvider {
 		// No arguments allowed
 		if (ci.nextArgument() != null) {
 
-			System.err.println(DDCConsole.USAGE_GET_ALL_ENTRIES);
+			ci.println(DDCConsole.USAGE_GET_ALL_ENTRIES);
 			return;
 
 		}
 
-		System.out.println(DDCConsole.ddc.toString());
+		ci.println(DDCConsole.ddc.toString());
 
 	}
 
@@ -656,7 +656,7 @@ public class DDCConsole implements CommandProvider {
 		// No arguments allowed
 		if (ci.nextArgument() != null) {
 
-			System.err.println(DDCConsole.USAGE_DISTRIBUTE[0]);
+			ci.println(DDCConsole.USAGE_DISTRIBUTE[0]);
 			return;
 
 		}
@@ -665,7 +665,7 @@ public class DDCConsole implements CommandProvider {
 				.getInstance().generate();
 		DistributedDataContainerAdvertisementSender.getInstance()
 				.publishDDCAdvertisement(ddcAdvertisement);
-		System.out.println("Initial distribution started");
+		ci.println("Initial distribution started");
 
 	}
 
@@ -685,7 +685,7 @@ public class DDCConsole implements CommandProvider {
 		// No arguments allowed
 		if (ci.nextArgument() != null) {
 
-			System.err.println(DDCConsole.USAGE_DISTRIBUTE[0]);
+			ci.println(DDCConsole.USAGE_DISTRIBUTE[0]);
 			return;
 
 		}
@@ -694,7 +694,7 @@ public class DDCConsole implements CommandProvider {
 				.getInstance().generateChanges();
 		DistributedDataContainerAdvertisementSender.getInstance()
 				.publishDDCAdvertisement(ddcAdvertisement);
-		System.out.println("Change distribution started");
+		ci.println("Change distribution started");
 
 	}
 }
