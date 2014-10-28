@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
@@ -64,7 +65,8 @@ public class DateHandler extends AbstractDataHandler<Long> {
 	@Override
 	public void writeData(ByteBuffer buffer, Object data) {
 		//System.out.println("write Long Data "+((Number)data).longValue());
-		buffer.putLong(((Number)data).longValue());
+		buffer.putLong(((Date)data).getTime());
+		//buffer.putLong(((Number)data).longValue());
 	}
 
 	
