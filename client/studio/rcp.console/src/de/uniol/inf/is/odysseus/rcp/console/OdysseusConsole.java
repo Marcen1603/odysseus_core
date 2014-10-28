@@ -15,6 +15,8 @@
  */
 package de.uniol.inf.is.odysseus.rcp.console;
 
+import java.io.PrintStream;
+
 import org.apache.log4j.AppenderSkeleton;
 import org.apache.log4j.PatternLayout;
 import org.apache.log4j.spi.LoggingEvent;
@@ -44,6 +46,8 @@ public class OdysseusConsole extends AppenderSkeleton {
 	public void createConsole() {
 		MessageConsole myConsole = findConsole(CONSOLE_NAME);
 		outStream = myConsole.newMessageStream();
+		System.setOut(new PrintStream(outStream));
+		System.setErr(new PrintStream(outStream));
 		this.layout = new PatternLayout("%-4r %-5p %c{1} %x - %m - %l %n");
 	}
 
