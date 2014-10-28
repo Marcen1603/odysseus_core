@@ -83,6 +83,11 @@ public class DirectTransferArea<R extends IStreamObject<? extends ITimeInterval>
 		}
 		this.outputQueue.clear();
 	}
+	
+	@Override
+	public void setTransfer(ITransfer<W> po) {
+		this.po = po;
+	}
 
 	@SuppressWarnings("unchecked")
 	@Override

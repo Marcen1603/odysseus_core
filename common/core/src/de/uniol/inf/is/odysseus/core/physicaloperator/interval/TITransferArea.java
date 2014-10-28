@@ -107,6 +107,11 @@ public class TITransferArea<R extends IStreamObject<? extends ITimeInterval>, W 
 			this.outputQueue.clear();
 		}
 	}
+	
+	@Override
+	public void setTransfer(ITransfer<W> po){
+		this.po = po;
+	}
 
 	@Override
 	public void addNewInput(int port) {

@@ -67,6 +67,8 @@ public interface ITransferArea<R extends IStreamObject<?>, W extends IStreamObje
 	public void done(int port);
 
 	public void init(ITransfer<W> sendTo,  int inputPortCount);
+	void setTransfer(ITransfer<W> po);
+
 	
 	public void addNewInput(int port);
 	public void removeInput(int port);
@@ -87,6 +89,7 @@ public interface ITransferArea<R extends IStreamObject<?>, W extends IStreamObje
 	 * Debug
 	 */
 	public void dump();
+
 	
 		
 }
