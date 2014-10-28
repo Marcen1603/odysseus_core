@@ -181,4 +181,9 @@ public class StreamAO extends AbstractLogicalOperator {
 
 		return isValid;
 	}
+	
+	@Override
+	public boolean isSinkOperator() {
+		return false;
+	}
 }
