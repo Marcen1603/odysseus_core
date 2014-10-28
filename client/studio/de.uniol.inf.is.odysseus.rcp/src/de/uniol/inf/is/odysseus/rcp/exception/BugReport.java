@@ -229,8 +229,8 @@ public class BugReport {
 			String key = response.getString("key");
 			Part[] parts = new Part[logMap.size()];
 			int count = 0;
+			method = new PostMethod(uri.toString() + key + "/attachments");
 			for (Entry<String, String> log : logMap.entrySet()) {
-				method = new PostMethod(uri.toString() + key + "/attachments");
 				parts[count++] = new FilePart("file", new ByteArrayPartSource(
 						log.getKey() + ".log", log.getValue().getBytes()));
 			}
