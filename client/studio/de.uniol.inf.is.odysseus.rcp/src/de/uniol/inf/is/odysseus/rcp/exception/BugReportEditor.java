@@ -21,8 +21,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.resource.JFaceResources;
-import org.eclipse.jface.window.Window;
+import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -50,7 +49,7 @@ import de.uniol.inf.is.odysseus.rcp.config.OdysseusRCPConfiguration;
 import de.uniol.inf.is.odysseus.rcp.l10n.OdysseusNLS;
 import de.uniol.inf.is.odysseus.report.IReport;
 
-public class BugReportEditor extends Window {
+public class BugReportEditor extends TitleAreaDialog {
 
 	private static final String ODYSSEUS_BUG_REPORT_DEFAULT_TITLE = "Odysseus Bug Report";
 
@@ -71,6 +70,14 @@ public class BugReportEditor extends Window {
 	};
 
 	private static final boolean[] ANSWER_TEXT_IS_ONE_LINE = new boolean[] { true, true, false, false, false, false }; 
+	private static final String[] DEFAULT_ANSWERS = new String[] {
+		ODYSSEUS_BUG_REPORT_DEFAULT_TITLE,
+		"", 
+		"", 
+		"", 
+		"", 
+		"" 		
+	};
 
 	private final IReport baseReport;
 	private final List<StyledText> reportTextList = Lists.newArrayList();
@@ -80,44 +87,15 @@ public class BugReportEditor extends Window {
 	protected BugReportEditor(Shell parentShell, IReport report) {
 		super(parentShell);
 		Preconditions.checkNotNull(report, "Report must not be null!");
-		
-//		setShellStyle(SWT.DIALOG_TRIM | Window.getDefaultOrientation());
 
 		baseReport = report;
 	}
 
 	@Override
-	protected void configureShell(Shell newShell) {
-		newShell.setText(DIALOG_TITLE);
-		
-		super.configureShell(newShell);
-	}
-
-	@Override
-	protected Control createContents(final Composite parent) {
-		Composite composite = new Composite(parent, 0);
-		composite.setLayout(new GridLayout());
-		composite.setLayoutData(new GridData(GridData.FILL_BOTH));
-
-		createDialogArea(composite);
-		createButtonBar(composite);
-		
-		return composite;
-	}
-
-	private Control createDialogArea(Composite parent) {
-		Composite composite = new Composite(parent, SWT.NONE);
-
+	public Control createDialogArea(Composite parent) {
 		GridLayout layout = new GridLayout();
-		composite.setLayout(layout);
-		composite.setLayoutData(new GridData(GridData.FILL_BOTH));
+		parent.setLayout(layout);
 
-		createTextArea(composite);
-
-		return composite;
-	}
-
-	private void createTextArea(Composite parent) {
 		TabFolder tabFolder = new TabFolder(parent, SWT.NONE);
 		tabFolder.setLayoutData(new GridData(GridData.FILL_BOTH));
 		tabFolder.setLayout(new GridLayout());
@@ -136,6 +114,13 @@ public class BugReportEditor extends Window {
 		reportTab.setControl(reportComposite);
 		reportTab.setText("Report Information");
 		createReportOverviewTab(reportComposite);
+
+		setMessage("Please answer the questions and look through the generated report before sending the bug report.\n" +
+				   "The more information you can provide, the more we can improve Odysseus.");
+		setTitle("Odysseus Bug Report");
+		getShell().setText(DIALOG_TITLE);
+
+		return parent;
 	}
 
 	private void createQuestionsTab(Composite questionsComposite) {
@@ -143,6 +128,7 @@ public class BugReportEditor extends Window {
 		for (int i = 0; i < QUESTIONS.length; i++) {
 			createStyledLabel(questionsComposite, QUESTIONS[i]);
 			questionTexts[i] = createStyledText(questionsComposite, ANSWER_TEXT_IS_ONE_LINE[i]);
+			questionTexts[i].setText(DEFAULT_ANSWERS[i]);
 		}
 	}
 
@@ -214,20 +200,21 @@ public class BugReportEditor extends Window {
 		Composite tabComposite = new Composite(tabFolder, SWT.NONE);
 		tabItem.setControl(tabComposite);
 		
-		tabComposite.setLayout(new GridLayout(1, false));
+		tabComposite.setLayout(new GridLayout());
 		tabComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
 		
 		StyledText text = createStyledText(tabComposite, false);
 		text.setText(reportText);
 		
-		return text;
+		return null;
 	}
 
 	private static StyledText createStyledText(Composite parent,  boolean isLine) {
-		StyledText styledText = new StyledText(parent, SWT.BORDER | SWT.V_SCROLL | SWT.MULTI);
+		StyledText styledText = new StyledText(parent, SWT.BORDER | (!isLine ? SWT.V_SCROLL : SWT.NONE));
 		styledText.setEditable(true);
 
 		GridData data = new GridData(!isLine ? GridData.FILL_BOTH : GridData.FILL_HORIZONTAL);
+		data.widthHint = 600;
 		styledText.setLayoutData(data);
 
 		return styledText;
@@ -243,24 +230,9 @@ public class BugReportEditor extends Window {
 		return label;
 	}
 
-	private Control createButtonBar(final Composite parent) {
-		Composite composite = new Composite(parent, SWT.NONE);
-		GridLayout layout = new GridLayout();
-		layout.numColumns = 5;
-		layout.makeColumnsEqualWidth = true;
-		composite.setLayout(layout);
-		composite.setFont(parent.getFont());
-
-		GridData data = new GridData(GridData.HORIZONTAL_ALIGN_END | GridData.VERTICAL_ALIGN_CENTER);
-		composite.setLayoutData(data);
-
-		createButtonsForButtonBar(composite);
-
-		return composite;
-	}
-
-	private void createButtonsForButtonBar(Composite parent) {
-		Button jiraButton = createButton(parent, "Set JIRA account...");
+	@Override
+	public void createButtonsForButtonBar(Composite parent) {
+		Button jiraButton = createButton(parent, 999, "Set JIRA account...", false);
 		jiraButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -275,45 +247,31 @@ public class BugReportEditor extends Window {
 				}
 			}
 		});
+		
+		super.createButtonsForButtonBar(parent); // creates OK and Cancel
 
-		final Label errorLabel = createEmptyLabel(parent);
+		Button sendButton = getButton(OK);
+		sendButton.setText(OdysseusNLS.SendBugReport); // replace "OK" with "Send"
+	}
+	
+	@Override
+	protected void okPressed() {
+		Button button = getButton(OK);
+		button.setText(OdysseusNLS.Sending);
+		try {
+			String title = determineTitle();
+			String questionsText = createQuestionsText();
 
-		Button cancelButton = createButton(parent, OdysseusNLS.Cancel);
-		cancelButton.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(final SelectionEvent event) {
-				setReturnCode(Window.CANCEL);
-				close();
-			}
-		});
-
-		Button sendButton = createButton(parent, OdysseusNLS.SendBugReport);
-		sendButton.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(final SelectionEvent event) {
-				Button button = (Button) event.getSource();
-				button.setText(OdysseusNLS.Sending);
-				try {
-					String title = determineTitle();
-					String questionsText = createQuestionsText();
-
-					Map<String, String> reportMap = createReportMap();
-					boolean result = BugReport.send(title, questionsText, reportMap);
-					
-					setReturnCode(result ? Window.OK : Window.CANCEL);
-					close();
-				} catch (IOException e) {
-					errorLabel.setText(e.getMessage());
-					LOG.error(e.getMessage(), e);
-					button.setText(OdysseusNLS.SendBugReport);
-				}
-			}
-
-		});
-
-		Shell shell = parent.getShell();
-		if (shell != null) {
-			shell.setDefaultButton(sendButton);
+			Map<String, String> reportMap = createReportMap();
+			boolean result = BugReport.send(title, questionsText, reportMap);
+			
+			setReturnCode(result ? Dialog.OK : Dialog.CANCEL);
+			close();
+		} catch (IOException e) {
+			setErrorMessage("Could not send the bug report");
+			LOG.error(e.getMessage(), e);
+			
+			button.setText(OdysseusNLS.SendBugReport);
 		}
 	}
 	
@@ -329,25 +287,6 @@ public class BugReportEditor extends Window {
 		}
 		
 		return result;
-	}
-
-
-	private static Label createEmptyLabel(final Composite parent) {
-		Label label = new Label(parent, SWT.NONE);
-		label.setText("");
-		GridData errorLabelData = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
-		errorLabelData.horizontalSpan = 2;
-		label.setLayoutData(errorLabelData);
-		return label;
-	}
-
-	private static Button createButton(Composite parent, String title) {
-		Button button = new Button(parent, SWT.PUSH);
-		button.setText(title);
-		button.setFont(JFaceResources.getDialogFont());
-		GridData data = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
-		button.setLayoutData(data);
-		return button;
 	}
 	
 	public String getQuestionsAndAnswersText() {
