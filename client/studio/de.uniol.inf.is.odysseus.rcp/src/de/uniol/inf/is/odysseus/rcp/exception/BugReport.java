@@ -21,8 +21,6 @@ import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URLEncoder;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -48,6 +46,8 @@ import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.collect.Lists;
+
 import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
 import de.uniol.inf.is.odysseus.rcp.config.OdysseusRCPConfiguration;
 import de.uniol.inf.is.odysseus.report.IReportGenerator;
@@ -70,13 +70,9 @@ public class BugReport {
 	private static final String PROJECT_KEY = "ODY";
 	private static final String ISSUE_TYPE = "Bug";
 	private static final String SUBJECT = "[ODY] I found a bug";
-	private static final List<String> RECIPIENTS = new ArrayList<>();
+	private static final List<String> RECIPIENTS = Lists.newArrayList("odysseus@lists.offis.de");
 
 	private static IReportGenerator reportGenerator;
-
-	static {
-		RECIPIENTS.add("odysseus@lists.offis.de");
-	}
 
 	private final Throwable exception;
 
@@ -92,10 +88,14 @@ public class BugReport {
 		}
 	}
 
-	public BugReport(final Throwable exception) {
+	public BugReport(Throwable exception) {
 		this.exception = exception;
 	}
 
+	public BugReport() {
+		this.exception = null;
+	}
+	
 	static private String getUser() {
 		return OdysseusRCPConfiguration.get(BUGREPORT_USER, "odysseus_studio");
 	}
@@ -105,20 +105,17 @@ public class BugReport {
 	}
 
 	static private String getAuth(String login, String password) {
-		return new String(Base64.encodeBase64((login + ':' + password)
-				.getBytes()));
+		return new String(Base64.encodeBase64((login + ':' + password).getBytes()));
 	}
 
 	static public boolean checkLogin(String username, String password) {
 		try {
 			final URI uri = new URI(getJira() + JIRA_API + "myself/");
 			HttpClient client = new HttpClient();
-			client.getHostConfiguration().setHost(uri.getHost(), uri.getPort(),
-					Protocol.getProtocol(uri.getScheme()));
+			client.getHostConfiguration().setHost(uri.getHost(), uri.getPort(), Protocol.getProtocol(uri.getScheme()));
 
 			HttpMethod method = new GetMethod(uri.toString());
-			method.setRequestHeader(AUTHORIZATION_HEADER,
-					"Basic " + getAuth(username, password));
+			method.setRequestHeader(AUTHORIZATION_HEADER, "Basic " + getAuth(username, password));
 			client.executeMethod(method);
 			if (method.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
 				return true;
@@ -130,17 +127,9 @@ public class BugReport {
 	}
 
 	static private String getJira() {
-		return OdysseusRCPConfiguration.get(BUGREPORT_BASEURL,
-				"http://jira.odysseus.offis.uni-oldenburg.de/");
+		return OdysseusRCPConfiguration.get(BUGREPORT_BASEURL, "http://jira.odysseus.offis.uni-oldenburg.de/");
 	}
 
-	/**
-	 * Class constructor.
-	 *
-	 */
-	public BugReport() {
-		this.exception = null;
-	}
 
 	public void openEditor() {
 		PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
@@ -148,97 +137,53 @@ public class BugReport {
 			@Override
 			public void run() {
 				final Shell shell;
-				if (PlatformUI.getWorkbench().getActiveWorkbenchWindow()
-						.getShell() != null) {
-					shell = new Shell(PlatformUI.getWorkbench()
-							.getActiveWorkbenchWindow().getShell());
+				if (PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell() != null) {
+					shell = new Shell(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell());
 				} else {
 					shell = new Shell();
 				}
-				BugReportEditor editor = new BugReportEditor(
-						shell,
-						reportGenerator.generateReport(
-								OdysseusRCPPlugIn.getActiveSession(), exception));
+				BugReportEditor editor = new BugReportEditor(shell, reportGenerator.generateReport(OdysseusRCPPlugIn.getActiveSession(), exception));
 				editor.open();
 			}
 
 		});
 	}
 
-	String getUserReport() {
-		final StringBuilder report = new StringBuilder();
-		report.append("*** Odysseus Bug Report *** \n\n");
-		report.append("* If you want a reply please enter a valid e-mail adress:\n\n\n");
-		report.append("* What led up to the situation?\n\n\n");
-		report.append("* What exactly did you do (or not do) that was effective (or ineffective)?\n\n\n");
-		report.append("* What was the outcome of this action?\n\n\n");
-		report.append("* What outcome did you expect instead?\n\n\n\n");
-		report.append("Please be aware that this report may contain private or other confidential information\n");
-		return report.toString();
-	}
-
-	/**
-	 * 
-	 * @param description
-	 * @param log
-	 * @return
-	 * @throws IOException
-	 * @Deprecated use other send-Method
-	 */
-	@Deprecated
-	public static boolean send(final String description, final String log)
-			throws IOException {
+	public static boolean send(String title, String description, Map<String, String> log) throws IOException {
 		try {
 			// Report Bugs using email clients (does not work on Windows)
 			// sendReport(RECIPIENTS, description + "\n" + log);
 			// Report Bugs using JIRA
-			Map<String, String> logMap = new HashMap<String, String>();
-			logMap.put("system", log);
-			return sendReport(description, logMap);
+			return sendReport(title, description, log);
 		} catch (URISyntaxException | JSONException e) {
 			LOG.debug(e.getMessage(), e);
 			throw new IOException(e);
 		}
 	}
 
-	public static boolean send(final String description,
-			final Map<String, String> log) throws IOException {
-		try {
-			// Report Bugs using email clients (does not work on Windows)
-			// sendReport(RECIPIENTS, description + "\n" + log);
-			// Report Bugs using JIRA
-			return sendReport(description, log);
-		} catch (URISyntaxException | JSONException e) {
-			LOG.debug(e.getMessage(), e);
-			throw new IOException(e);
-		}
-	}
-
-	private static boolean sendReport(final String description,
-			final Map<String, String> logMap) throws IOException,
-			URISyntaxException, JSONException {
-		final URI uri = new URI(getJira() + JIRA_API + "issue/");
+	private static boolean sendReport(String title, String description, Map<String, String> logMap) throws IOException, URISyntaxException, JSONException {
+		// TODO: consider title
+		
+		URI uri = new URI(getJira() + JIRA_API + "issue/");
 		HttpClient client = new HttpClient();
-		client.getHostConfiguration().setHost(uri.getHost(), uri.getPort(),
-				Protocol.getProtocol(uri.getScheme()));
+		client.getHostConfiguration().setHost(uri.getHost(), uri.getPort(), Protocol.getProtocol(uri.getScheme()));
 
-		final JSONObject request = new JSONObject();
-		final JSONObject fields = new JSONObject();
-		final JSONArray component = new JSONArray();
-		final JSONObject components = new JSONObject();
+		JSONObject request = new JSONObject();
+		JSONObject fields = new JSONObject();
+		JSONArray component = new JSONArray();
+		JSONObject components = new JSONObject();
 		components.put("id", COMPONENT_ID);
 		component.put(components);
-		final JSONObject project = new JSONObject();
+		JSONObject project = new JSONObject();
 		project.put("key", PROJECT_KEY);
-		final JSONObject issuetype = new JSONObject();
+		JSONObject issuetype = new JSONObject();
 		issuetype.put("name", ISSUE_TYPE);
-		final JSONArray labels = new JSONArray();
+		JSONArray labels = new JSONArray();
 		labels.put("BugReport");
 		fields.put("project", project);
 		String summary = "";
 		try (Scanner scanner = new Scanner(description)) {
-			while ((scanner.hasNextLine())
-					&& ((summary == null) || ("".equals(summary)))) {
+			while ((scanner.hasNextLine()) && ((summary == null) || ("".equals(summary)))) {
 				summary = scanner.nextLine();
 			}
 		}
@@ -252,25 +197,19 @@ public class BugReport {
 		fields.put("labels", labels);
 		request.put("fields", fields);
 		HttpMethod method = new PostMethod(uri.toString());
-		((PostMethod) method).setRequestEntity(new StringRequestEntity(request
-				.toString(), "application/json", null));
-		method.setRequestHeader(AUTHORIZATION_HEADER,
-				"Basic " + getAuth(getUser(), getPassword()));
+		((PostMethod) method).setRequestEntity(new StringRequestEntity(request.toString(), "application/json", null));
+		method.setRequestHeader(AUTHORIZATION_HEADER, "Basic " + getAuth(getUser(), getPassword()));
 		client.executeMethod(method);
 
 		if (method.getStatusLine().getStatusCode() == HttpStatus.SC_CREATED) {
-			final JSONObject response = new JSONObject(
-					method.getResponseBodyAsString());
+			final JSONObject response = new JSONObject(method.getResponseBodyAsString());
 			String key = response.getString("key");
 			for (Entry<String, String> log : logMap.entrySet()) {
 				method = new PostMethod(uri.toString() + key + "/attachments");
-				Part[] parts = new Part[] { new FilePart("file",
-						new ByteArrayPartSource(log.getKey()+".log", log.getValue().getBytes())) };
-				MultipartRequestEntity attachment = new MultipartRequestEntity(
-						parts, method.getParams());
+				Part[] parts = new Part[] { new FilePart("file", new ByteArrayPartSource(log.getKey() + ".log", log.getValue().getBytes())) };
+				MultipartRequestEntity attachment = new MultipartRequestEntity(parts, method.getParams());
 				((PostMethod) method).setRequestEntity(attachment);
-				method.setRequestHeader(AUTHORIZATION_HEADER, "Basic "
-						+ getAuth(getUser(), getPassword()));
+				method.setRequestHeader(AUTHORIZATION_HEADER, "Basic " + getAuth(getUser(), getPassword()));
 				method.setRequestHeader("X-Atlassian-Token", "nocheck");
 				client.executeMethod(method);
 			}
@@ -281,10 +220,9 @@ public class BugReport {
 		}
 		LOG.error(method.getStatusLine().toString());
 		System.err.println("Unable to send bug report");
-		System.out.println("Please send the following bug report to: "
-				+ RECIPIENTS.toString());
+		System.out.println("Please send the following bug report to: " + RECIPIENTS.toString());
 		System.out.println(description.toString());
-		for (Entry<String, String> log : logMap.entrySet()){
+		for (Entry<String, String> log : logMap.entrySet()) {
 			System.out.println(log.getKey());
 			System.out.println(log.getValue());
 		}
@@ -293,8 +231,7 @@ public class BugReport {
 	}
 
 	@SuppressWarnings("unused")
-	private static boolean sendReport(final List<String> recipients,
-			final String report) throws IOException, URISyntaxException {
+	private static boolean sendReport(final List<String> recipients, final String report) throws IOException, URISyntaxException {
 		final URI mailto = format(recipients, SUBJECT, report);
 		try {
 			if (Desktop.isDesktopSupported()) {
@@ -307,33 +244,26 @@ public class BugReport {
 					return true;
 				}
 			} else {
-				Runtime.getRuntime().exec(
-						new String[] { "open ", mailto.toString() });
+				Runtime.getRuntime().exec(new String[] { "open ", mailto.toString() });
 				return true;
 			}
 		} catch (final Exception e) {
 			System.err.println("Unable to send bug report");
-			System.out.println("Please send the following bug report to: "
-					+ recipients.toString());
+			System.out.println("Please send the following bug report to: " + recipients.toString());
 			System.out.println(report.toString());
 		}
 		return false;
 	}
 
-	private static URI format(final List<String> recipients,
-			final String subject, final String body)
-			throws UnsupportedEncodingException, URISyntaxException {
-		return new URI(String.format("mailto:%s?subject=%s&body=%s",
-				join(",", recipients), urlEncode(subject), urlEncode(body)));
+	private static URI format(final List<String> recipients, final String subject, final String body) throws UnsupportedEncodingException, URISyntaxException {
+		return new URI(String.format("mailto:%s?subject=%s&body=%s", join(",", recipients), urlEncode(subject), urlEncode(body)));
 	}
 
-	private final static String urlEncode(final String str)
-			throws UnsupportedEncodingException {
+	private final static String urlEncode(final String str) throws UnsupportedEncodingException {
 		return URLEncoder.encode(str, "UTF-8").replace("+", "%20");
 	}
 
-	private final static String join(final String seperator,
-			final Iterable<?> recipients) {
+	private final static String join(final String seperator, final Iterable<?> recipients) {
 		final StringBuilder sb = new StringBuilder();
 		for (final Object recipient : recipients) {
 			if (sb.length() > 0) {

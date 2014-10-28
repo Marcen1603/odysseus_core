@@ -3,12 +3,16 @@ package de.uniol.inf.is.odysseus.report.console;
 import org.eclipse.osgi.framework.console.CommandInterpreter;
 import org.eclipse.osgi.framework.console.CommandProvider;
 
+import com.google.common.base.Optional;
+
 import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvider;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
+import de.uniol.inf.is.odysseus.report.IReport;
 import de.uniol.inf.is.odysseus.report.IReportGenerator;
 
 public class ReportConsole implements CommandProvider {
 
+	private static final String NO_REPORT_TEXT = "<no report>";
 	private static IReportGenerator reportGenerator;
 	private static ISession currentSession;
 
@@ -41,6 +45,20 @@ public class ReportConsole implements CommandProvider {
 	}
 
 	public void _report( CommandInterpreter ci ) {
-		System.out.println(reportGenerator.generateReport(getActiveSession()));
+		IReport report = reportGenerator.generateReport(getActiveSession());
+		
+		for( String reportTitle : report.getTitles() ) {
+			System.out.println(getLine());
+			System.out.println("## " + reportTitle);
+			System.out.println(getLine());
+			System.out.println();
+			Optional<String> optReportText = report.getReportText(reportTitle);
+			System.out.println(optReportText.isPresent() ? optReportText.get() : NO_REPORT_TEXT);
+			System.out.println();
+		}
+	}
+	
+	private static String getLine() {
+		return "##########################################################################################";
 	}
 }
