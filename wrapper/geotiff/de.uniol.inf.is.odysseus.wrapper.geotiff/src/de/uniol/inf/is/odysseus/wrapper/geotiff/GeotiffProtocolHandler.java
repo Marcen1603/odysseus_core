@@ -2,6 +2,9 @@
  * This is a protocol handler for processing Geotiff images.
  * It depends on libraries from Geotools framework:
  * http://docs.geotools.org/stable/userguide/library/coverage/geotiff.html
+ * 
+ *  The GeoTools library is made available under the LGPL license:
+ *  http://www.gnu.org/licenses/lgpl-2.1.html
  *  
  */
 package de.uniol.inf.is.odysseus.wrapper.geotiff;
