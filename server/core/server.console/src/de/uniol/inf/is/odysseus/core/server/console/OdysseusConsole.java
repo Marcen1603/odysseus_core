@@ -251,7 +251,7 @@ public class OdysseusConsole implements CommandProvider,
 
 	@Help(description = "show internal information about the executor")
 	public void _ExecutorInfo(CommandInterpreter ci) {
-		System.out.print(this.executor.getInfos());
+		ci.print(this.executor.getInfos());
 	}
 
 	public void bindExecutor(IExecutor executor) {
@@ -277,17 +277,14 @@ public class OdysseusConsole implements CommandProvider,
 
 	@Override
 	public void rewriteBound() {
-		System.out.println("Rewrite bound");
 	}
 
 	@Override
 	public void transformationBound() {
-		System.out.println("Transformation bound");
 	}
 
 	@Override
 	public void planGeneratorBound() {
-		System.out.println("PlanGeneration bound");
 	}
 
 	// -----------------------------------------------------------------------------------------------
@@ -363,10 +360,10 @@ public class OdysseusConsole implements CommandProvider,
 		if (parserList != null) {
 			ci.println("Available parser:");
 			for (String par : parserList) {
-				System.out.print(par);
+				ci.print(par);
 
 				if (par.equals(this.parser)) {
-					System.out.print(" - Selected");
+					ci.print(" - Selected");
 				}
 				ci.println("");
 			}
@@ -396,7 +393,6 @@ public class OdysseusConsole implements CommandProvider,
 
 	@Override
 	public void parserBound(String parserID) {
-		System.out.println("Parser " + parserID + " bound");
 	}
 
 	// -----------------------------------------------------------------------------------------------
@@ -417,15 +413,15 @@ public class OdysseusConsole implements CommandProvider,
 			}
 			ci.println("Available bufferplacement strategies:");
 			if (current == null) {
-				System.out.print("no strategy - SELECTED");
+				ci.print("no strategy - SELECTED");
 			} else {
-				System.out.print("no strategy");
+				ci.print("no strategy");
 			}
 			ci.println("");
 			for (String iBufferPlacementStrategy : bufferList) {
-				System.out.print(iBufferPlacementStrategy);
+				ci.print(iBufferPlacementStrategy);
 				if (current != null && iBufferPlacementStrategy.equals(current)) {
-					System.out.print(" - SELECTED");
+					ci.print(" - SELECTED");
 				}
 				ci.println("");
 			}
@@ -483,13 +479,13 @@ public class OdysseusConsole implements CommandProvider,
 
 			ci.println("");
 			for (String iStrategy : list) {
-				System.out.print(iStrategy.toString());
+				ci.print(iStrategy.toString());
 				if (current != null && iStrategy.equals(current)) {
-					System.out.print(" - SELECTED");
+					ci.print(" - SELECTED");
 				}
 				ci.println("");
 			}
-			System.out.print("no strategy");
+			ci.print("no strategy");
 		}
 	}
 
@@ -501,13 +497,13 @@ public class OdysseusConsole implements CommandProvider,
 			ci.println("Available Schedulers:");
 
 			// if (current == null) {
-			// System.out.print(" - SELECTED");
+			// ci.print(" - SELECTED");
 			// }
 			ci.println("");
 			for (String iStrategy : list) {
-				System.out.print(iStrategy.toString());
+				ci.print(iStrategy.toString());
 				if (current != null && iStrategy.equals(current)) {
-					System.out.print(" - SELECTED");
+					ci.print(" - SELECTED");
 				}
 				ci.println("");
 			}
@@ -688,7 +684,7 @@ public class OdysseusConsole implements CommandProvider,
 					for (int i = 0; i < query.getRoots().size(); i++) {
 						IPhysicalOperator curRoot = query.getRoots().get(i);
 						if (curRoot.isSink()) {
-							System.out.println("Root No: " + i);
+							ci.println("Root No: " + i);
 							support.printPlanMetadata((ISink) curRoot);
 
 						} else {
@@ -915,7 +911,7 @@ public class OdysseusConsole implements CommandProvider,
 	public void _lsqueries(CommandInterpreter ci) {
 		addCommand();
 		try {
-			System.out.println("Current registered queries (ID | STATE):");
+			ci.println("Current registered queries (ID | STATE):");
 			for (IPhysicalQuery query : this.executor.getExecutionPlan()
 					.getQueries()) {
 				ci.println(query.getID() + " | " + query.getState().name());
@@ -928,7 +924,7 @@ public class OdysseusConsole implements CommandProvider,
 	@Help(description = "show registered sources")
 	public void _lssources(CommandInterpreter ci) {
 		addCommand();
-		System.out.println("Current registered sources");
+		ci.println("Current registered sources");
 		for (ViewInformation e : this.executor
 				.getStreamsAndViewsInformation(currentUser)) {
 			ci.println(e.getName() + " | " + e.getOutputSchema());
@@ -1032,7 +1028,7 @@ public class OdysseusConsole implements CommandProvider,
 			String line = null;
 			while ((line = br.readLine()) != null) {
 				String commandString = line;
-				System.out.println("Command: " + commandString);
+				ci.println("Command: " + commandString);
 
 				StringTokenizer tokens = new StringTokenizer(commandString,
 						" \n\t'", true);
