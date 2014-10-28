@@ -29,16 +29,19 @@ public class DistributedQueryServerResource extends ServerResource implements
 	public void getDistributedQueryInfo(QueryInfoRequest request) {
 		Response r = getResponse();
 		try {
-			String sportsQL = SportsQLDistributorRegistry.addSportsQLDistributorConfig(request.getQuery());	
-			//sportsQL = "#PARSER SportsQL \n #CONFIG DISTRIBUTE true \n #PEER_PARTITION OPERATORCLOUD \n #PEER_ALLOCATE ROUNDROBINWITHLOCAL \n #ADDQUERY \n {\"statisticType\": \"global\",\"gameType\": \"soccer\",\"name\": \"gametime\"}";
 			DistributedQueryInfo info = null;
-			if (sportsQL != null) {
+			if (DistributedQueryHelper.isDistributionPossible()) {
+				String sportsQL = SportsQLDistributorRegistry.addSportsQLDistributorConfig(request.getQuery());	
+				System.out.println(sportsQL);
 				info = DistributedQueryHelper.executeQuery(sportsQL, OdysseusRCPPlugIn.getActiveSession(), request.getQueryBuildConfigurationName());
-			} 
-			if (info == null) {
+				if (info == null) {
+					info = new DistributedQueryInfo();
+					info.setQueryDistributed(false);
+				}
+			} else {
 				info = new DistributedQueryInfo();
 				info.setQueryDistributed(false);
-			}			
+			}					
 			DataTransferObject dto = new DataTransferObject("DistributedQueryInfo",info);
 			r.setEntity(new JacksonRepresentation<DataTransferObject>(dto));
 			r.setStatus(Status.SUCCESS_OK);			

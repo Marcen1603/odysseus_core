@@ -73,7 +73,7 @@ public class SportsQLDistributorRegistry {
 			outputConfig += DistributionConfigBuildHelper.createDistribute();
 		}
 		outputConfig += distributor.getDistributionConfig();
-		outputConfig += DistributionConfigBuildHelper.createAddQuery();
+		outputConfig += DistributionConfigBuildHelper.createRunQuery();
 		outputConfig += sportsQL;
 
 		return outputConfig;

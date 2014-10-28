@@ -26,6 +26,10 @@ public class DistributionConfigBuildHelper {
 		return "#ADDQUERY\n";
 	}
 	
+	public static String createRunQuery(){
+		return "#RUNQUERY\n";
+	}
+	
 	/**
 	 * 
 	 * @param parser

@@ -247,6 +247,10 @@ public class DistributedQueryHelper {
 			return this.info;
 		}
 	}
+
+	public static boolean isDistributionPossible() {
+		return p2pDictionary.getRemotePeerIDs().size()>0;
+	}
 	
 	
 
