@@ -17,7 +17,7 @@ public class KeyFinderRegistry {
 	static private Map<String, IKeyFinder> keyFinders = new HashMap<String, IKeyFinder>();
 
 	static public void register(IKeyFinder keyFinder) {
-		logger.debug("Register new Handler " + keyFinder.getName());
+		logger.trace("Register new Handler " + keyFinder.getName());
 		if (!keyFinders.containsKey(keyFinder.getName().toLowerCase())) {
 			keyFinders.put(keyFinder.getName().toLowerCase(), keyFinder);
 		} else {
@@ -27,7 +27,7 @@ public class KeyFinderRegistry {
 	}
 	
 	static public void remove(IKeyFinder keyFinder){
-		logger.debug("Remove handler "+keyFinder.getName());
+		logger.trace("Remove handler "+keyFinder.getName());
 		keyFinders.remove(keyFinder.getName().toLowerCase());
 	}
 	

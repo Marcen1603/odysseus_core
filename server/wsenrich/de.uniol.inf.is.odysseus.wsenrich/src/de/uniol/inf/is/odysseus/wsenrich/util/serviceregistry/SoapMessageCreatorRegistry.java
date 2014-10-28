@@ -17,7 +17,7 @@ public class SoapMessageCreatorRegistry {
 	static private Map<String, ISoapMessageCreator> messageCreators = new HashMap<String, ISoapMessageCreator>();
 
 	static public void register(ISoapMessageCreator messageCreator) {
-		logger.debug("Register new Handler " + messageCreator.getName());
+		logger.trace("Register new Handler " + messageCreator.getName());
 		if (!messageCreators.containsKey(messageCreator.getName().toLowerCase())) {
 			messageCreators.put(messageCreator.getName().toLowerCase(), messageCreator);
 		} else {
@@ -27,7 +27,7 @@ public class SoapMessageCreatorRegistry {
 	}
 	
 	static public void remove(ISoapMessageCreator messageCreator){
-		logger.debug("Remove handler "+messageCreator.getName());
+		logger.trace("Remove handler "+messageCreator.getName());
 		messageCreators.remove(messageCreator.getName().toLowerCase());
 	}
 	

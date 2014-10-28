@@ -19,7 +19,7 @@ public class ConnectionForWebservicesRegistry {
 	static private Map<String, IConnectionForWebservices> connections = new HashMap<String, IConnectionForWebservices>();
 
 	static public void register(IConnectionForWebservices connection) {
-		logger.debug("Register new Handler " + connection.getName());
+		logger.trace("Register new Handler " + connection.getName());
 		if (!connections.containsKey(connection.getName().toLowerCase())) {
 			connections.put(connection.getName().toLowerCase(), connection);
 		} else {
@@ -29,7 +29,7 @@ public class ConnectionForWebservicesRegistry {
 	}
 	
 	static public void remove(IConnectionForWebservices connection){
-		logger.debug("Remove handler "+connection.getName());
+		logger.trace("Remove handler "+connection.getName());
 		connections.remove(connection.getName().toLowerCase());
 	}
 	

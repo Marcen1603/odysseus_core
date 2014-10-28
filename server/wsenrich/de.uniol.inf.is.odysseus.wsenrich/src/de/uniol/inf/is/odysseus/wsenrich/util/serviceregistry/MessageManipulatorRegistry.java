@@ -17,7 +17,7 @@ public class MessageManipulatorRegistry {
 	static private Map<String, IMessageManipulator> messageManipulators = new HashMap<String, IMessageManipulator>();
 
 	static public void register(IMessageManipulator messageManipulator) {
-		logger.debug("Register new Handler " + messageManipulator.getName());
+		logger.trace("Register new Handler " + messageManipulator.getName());
 		if (!messageManipulators.containsKey(messageManipulator.getName().toLowerCase())) {
 			messageManipulators.put(messageManipulator.getName().toLowerCase(), messageManipulator);
 		} else {
@@ -27,7 +27,7 @@ public class MessageManipulatorRegistry {
 	}
 	
 	static public void remove(IMessageManipulator messageManipulator){
-		logger.debug("Remove handler "+messageManipulator.getName());
+		logger.trace("Remove handler "+messageManipulator.getName());
 		messageManipulators.remove(messageManipulator.getName().toLowerCase());
 	}
 	

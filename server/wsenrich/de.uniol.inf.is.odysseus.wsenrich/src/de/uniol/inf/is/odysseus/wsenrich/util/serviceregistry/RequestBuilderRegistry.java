@@ -19,7 +19,7 @@ public class RequestBuilderRegistry {
 		static private Map<String, IRequestBuilder> builders = new HashMap<String, IRequestBuilder>();
 
 		static public void register(IRequestBuilder builder) {
-			logger.debug("Register new Handler " + builder.getName());
+			logger.trace("Register new Handler " + builder.getName());
 			if (!builders.containsKey(builder.getName().toLowerCase())) {
 				builders.put(builder.getName().toLowerCase(), builder);
 			} else {
@@ -29,7 +29,7 @@ public class RequestBuilderRegistry {
 		}
 		
 		static public void remove(IRequestBuilder builder){
-			logger.debug("Remove handler "+builder.getName());
+			logger.trace("Remove handler "+builder.getName());
 			builders.remove(builder.getName().toLowerCase());
 		}
 		
