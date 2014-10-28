@@ -22,7 +22,7 @@ public class ConsoleReportProvider implements IReportProvider {
 
 	@Override
 	public String getTitle() {
-		return "Console information";
+		return "Error log";
 	}
 
 	@Override
