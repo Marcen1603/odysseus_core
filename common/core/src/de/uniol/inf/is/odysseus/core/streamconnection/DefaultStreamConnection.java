@@ -32,6 +32,7 @@ import com.google.common.collect.Maps;
 import de.uniol.inf.is.odysseus.core.ISubscription;
 import de.uniol.inf.is.odysseus.core.collection.Resource;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
+import de.uniol.inf.is.odysseus.core.physicaloperator.ControllablePhysicalSubscription;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
@@ -39,7 +40,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ITransfer;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ITransferArea;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
-import de.uniol.inf.is.odysseus.core.physicaloperator.PhysicalSubscription;
+import de.uniol.inf.is.odysseus.core.physicaloperator.AbstractPhysicalSubscription;
 import de.uniol.inf.is.odysseus.core.planmanagement.IOperatorOwner;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.securitypunctuation.ISecurityPunctuation;
@@ -474,7 +475,7 @@ public class DefaultStreamConnection<In extends IStreamObject<?>> extends
 			ISink<?> sink = (ISink<?>) operator;
 			Collection<?> subsToSource = sink.getSubscribedToSource();
 			for (Object sourceSub : subsToSource) {
-				PhysicalSubscription<ISource<In>> physSourceSub = (PhysicalSubscription<ISource<In>>) sourceSub;
+				AbstractPhysicalSubscription<ISource<In>> physSourceSub = (AbstractPhysicalSubscription<ISource<In>>) sourceSub;
 
 				ISource<In> source = physSourceSub.getTarget();
 				int sourceOutPort = determineSourceOutPort(source, operator);
@@ -490,9 +491,9 @@ public class DefaultStreamConnection<In extends IStreamObject<?>> extends
 
 	private int determineSourceOutPort(ISource<In> sourceOperator,
 			IPhysicalOperator targetOperator) {
-		Collection<PhysicalSubscription<ISink<? super In>>> subsToSinks = sourceOperator
+		Collection<AbstractPhysicalSubscription<ISink<? super In>>> subsToSinks = sourceOperator
 				.getSubscriptions();
-		for (PhysicalSubscription<ISink<? super In>> sinkSub : subsToSinks) {
+		for (AbstractPhysicalSubscription<ISink<? super In>> sinkSub : subsToSinks) {
 			if (sinkSub.getTarget().equals(targetOperator)) {
 				return sinkSub.getSourceOutPort();
 			}
@@ -511,7 +512,7 @@ public class DefaultStreamConnection<In extends IStreamObject<?>> extends
 			Collection<?> subsToSource = sink.getSubscribedToSource();
 
 			for (Object sourceSub : subsToSource) {
-				PhysicalSubscription<ISource<In>> physSourceSub = (PhysicalSubscription<ISource<In>>) sourceSub;
+				AbstractPhysicalSubscription<ISource<In>> physSourceSub = (AbstractPhysicalSubscription<ISource<In>>) sourceSub;
 
 				ISource<In> source = physSourceSub.getTarget();
 				int sourceOutPort = determineSourceOutPort(source, operator);
@@ -566,15 +567,15 @@ public class DefaultStreamConnection<In extends IStreamObject<?>> extends
 		List<ISubscription<? extends ISource<In>>> subs = Lists.newLinkedList();
 
 		if (operator.isSource()) {
-			subs.add((ISubscription<? extends ISource<In>>) new PhysicalSubscription<ISource<?>>(
+			subs.add((ISubscription<? extends ISource<In>>) new ControllablePhysicalSubscription<ISource<?>>(
 					(ISource<?>) operator, 0, 0, operator.getOutputSchema()));
 		} else {
 			Collection<?> subscriptions = ((ISink<?>) operator)
 					.getSubscribedToSource();
 
 			for (Object subscription : subscriptions) {
-				PhysicalSubscription<ISource<?>> sub = (PhysicalSubscription<ISource<?>>) subscription;
-				subs.add((ISubscription<? extends ISource<In>>) new PhysicalSubscription<ISource<?>>(
+				AbstractPhysicalSubscription<ISource<?>> sub = (AbstractPhysicalSubscription<ISource<?>>) subscription;
+				subs.add((ISubscription<? extends ISource<In>>) new ControllablePhysicalSubscription<ISource<?>>(
 						sub.getTarget(), sub.getSinkInPort(), sub
 								.getSourceOutPort(), sub.getSchema()));
 			}

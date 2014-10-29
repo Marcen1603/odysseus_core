@@ -15,7 +15,7 @@ import com.google.common.collect.Maps;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
-import de.uniol.inf.is.odysseus.core.physicaloperator.PhysicalSubscription;
+import de.uniol.inf.is.odysseus.core.physicaloperator.AbstractPhysicalSubscription;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.costmodel.DetailCost;
 import de.uniol.inf.is.odysseus.costmodel.EstimatorHelper;
@@ -65,7 +65,7 @@ public class PhysicalCostModel implements IPhysicalCostModel {
 
 			if (visitingOperator instanceof ISource) {
 				ISource<?> opAsSource = (ISource<?>) visitingOperator;
-				for (PhysicalSubscription<? extends ISink<?>> physSub : opAsSource.getSubscriptions()) {
+				for (AbstractPhysicalSubscription<? extends ISink<?>> physSub : opAsSource.getSubscriptions()) {
 					ISink<?> target = physSub.getTarget();
 
 					if (!resultMap.containsKey(target) && areAllSourcesVisited(resultMap, target)) {
@@ -176,7 +176,7 @@ public class PhysicalCostModel implements IPhysicalCostModel {
 	}
 
 	private static boolean areAllSourcesVisited(Map<IPhysicalOperator, DetailCost> resultMap, ISink<?> target) {
-		for (PhysicalSubscription<? extends ISource<?>> physSubToSource : target.getSubscribedToSource()) {
+		for (AbstractPhysicalSubscription<? extends ISource<?>> physSubToSource : target.getSubscribedToSource()) {
 			ISource<?> toSourceTarget = physSubToSource.getTarget();
 			if (!resultMap.containsKey(toSourceTarget)) {
 				return false;
@@ -190,7 +190,7 @@ public class PhysicalCostModel implements IPhysicalCostModel {
 
 		if (visitingOperator.isSink()) {
 			ISink<?> asSink = (ISink<?>) visitingOperator;
-			for (PhysicalSubscription<?> physSub : asSink.getSubscribedToSource()) {
+			for (AbstractPhysicalSubscription<?> physSub : asSink.getSubscribedToSource()) {
 				IPhysicalOperator target = (IPhysicalOperator) physSub.getTarget();
 				DetailCost prevDetailCost = resultMap.get(target);
 				if (prevDetailCost == null) {

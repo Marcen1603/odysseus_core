@@ -78,9 +78,9 @@ public class ClientReceiver<R, W> implements ISource<W>,
 
 	private AtomicBoolean blocked = new AtomicBoolean(false);
 
-	final private List<PhysicalSubscription<ISink<? super W>>> sinkSubscriptions = new CopyOnWriteArrayList<PhysicalSubscription<ISink<? super W>>>();
+	final private List<AbstractPhysicalSubscription<ISink<? super W>>> sinkSubscriptions = new CopyOnWriteArrayList<AbstractPhysicalSubscription<ISink<? super W>>>();
 	// Only active subscription are served on transfer
-	final private List<PhysicalSubscription<ISink<? super W>>> activeSinkSubscriptions = new CopyOnWriteArrayList<PhysicalSubscription<ISink<? super W>>>();
+	final private List<AbstractPhysicalSubscription<ISink<? super W>>> activeSinkSubscriptions = new CopyOnWriteArrayList<AbstractPhysicalSubscription<ISink<? super W>>>();
 
 	private Map<String, String> infos = new TreeMap<String, String>();
 	
@@ -342,7 +342,7 @@ public class ClientReceiver<R, W> implements ISource<W>,
 
 	@Override
 	public void transfer(W object, int sourceOutPort) {
-		for (PhysicalSubscription<ISink<? super W>> sink : this.activeSinkSubscriptions) {
+		for (AbstractPhysicalSubscription<ISink<? super W>> sink : this.activeSinkSubscriptions) {
 			if (sink.getSourceOutPort() == sourceOutPort) {
 				try {
 					sink.getTarget().process(object, sink.getSinkInPort());
@@ -367,7 +367,7 @@ public class ClientReceiver<R, W> implements ISource<W>,
 
 	@Override
 	public void sendPunctuation(IPunctuation punctuation) {
-		for (PhysicalSubscription<? extends ISink<?>> sub : this.activeSinkSubscriptions) {
+		for (AbstractPhysicalSubscription<? extends ISink<?>> sub : this.activeSinkSubscriptions) {
 			sub.getTarget()
 					.processPunctuation(punctuation, sub.getSinkInPort());
 		}
@@ -375,7 +375,7 @@ public class ClientReceiver<R, W> implements ISource<W>,
 
 	@Override
 	public void sendPunctuation(IPunctuation punctuation, int outPort) {
-		for (PhysicalSubscription<? extends ISink<?>> sub : this.activeSinkSubscriptions) {
+		for (AbstractPhysicalSubscription<? extends ISink<?>> sub : this.activeSinkSubscriptions) {
 			if (sub.getSourceOutPort() == outPort) {
 				sub.getTarget().processPunctuation(punctuation,
 						sub.getSinkInPort());
@@ -413,7 +413,7 @@ public class ClientReceiver<R, W> implements ISource<W>,
 	@Override
 	public void subscribeSink(ISink<? super W> sink, int sinkInPort,
 			int sourceOutPort, SDFSchema schema, boolean asActive, int openCount) {
-		PhysicalSubscription<ISink<? super W>> sub = new PhysicalSubscription<ISink<? super W>>(
+		AbstractPhysicalSubscription<ISink<? super W>> sub = new ControllablePhysicalSubscription<ISink<? super W>>(
 				sink, sinkInPort, sourceOutPort, schema);
 		sub.setOpenCalls(openCount);
 		if (!this.sinkSubscriptions.contains(sub)) {
@@ -439,13 +439,13 @@ public class ClientReceiver<R, W> implements ISource<W>,
 	@Override
 	public void unsubscribeSink(ISink<? super W> sink, int sinkInPort,
 			int sourceOutPort, SDFSchema schema) {
-		unsubscribeSink(new PhysicalSubscription<ISink<? super W>>(sink,
+		unsubscribeSink(new ControllablePhysicalSubscription<ISink<? super W>>(sink,
 				sinkInPort, sourceOutPort, schema));
 	}
 
 	@Override
 	public void unsubscribeSink(
-			PhysicalSubscription<ISink<? super W>> subscription) {
+			AbstractPhysicalSubscription<ISink<? super W>> subscription) {
 		getLogger().debug("Unsubscribe from Sink " + subscription.getTarget());
 		boolean subContained = this.sinkSubscriptions.remove(subscription);
 		if (subContained) {
@@ -456,7 +456,7 @@ public class ClientReceiver<R, W> implements ISource<W>,
 	}
 
 	@Override
-	public Collection<PhysicalSubscription<ISink<? super W>>> getSubscriptions() {
+	public Collection<AbstractPhysicalSubscription<ISink<? super W>>> getSubscriptions() {
 		return Collections.unmodifiableList(this.sinkSubscriptions);
 	}
 
@@ -464,7 +464,7 @@ public class ClientReceiver<R, W> implements ISource<W>,
 	public void connectSink(ISink<? super W> sink, int sinkInPort,
 			int sourceOutPort, SDFSchema schema) {
 		subscribeSink(sink, sinkInPort, sourceOutPort, schema);
-		PhysicalSubscription<ISink<? super W>> sub = new PhysicalSubscription<ISink<? super W>>(
+		AbstractPhysicalSubscription<ISink<? super W>> sub = new ControllablePhysicalSubscription<ISink<? super W>>(
 				sink, sinkInPort, sourceOutPort, schema);
 		this.activeSinkSubscriptions.add(sub);
 	}
@@ -473,7 +473,7 @@ public class ClientReceiver<R, W> implements ISource<W>,
 	public void disconnectSink(ISink<? super W> sink, int sinkInPort,
 			int sourceOutPort, SDFSchema schema) {
 		unsubscribeSink(sink, sinkInPort, sourceOutPort, schema);
-		PhysicalSubscription<ISink<? super W>> sub = new PhysicalSubscription<ISink<? super W>>(
+		AbstractPhysicalSubscription<ISink<? super W>> sub = new ControllablePhysicalSubscription<ISink<? super W>>(
 				sink, sinkInPort, sourceOutPort, schema);
 		this.activeSinkSubscriptions.remove(sub);
 		if (activeSinkSubscriptions.size() == 0){
@@ -521,9 +521,9 @@ public class ClientReceiver<R, W> implements ISource<W>,
 	}
 	
 
-	private PhysicalSubscription<ISink<? super W>> findSinkInSubscription(
+	private AbstractPhysicalSubscription<ISink<? super W>> findSinkInSubscription(
 			IPhysicalOperator o, int sourcePort, int sinkPort) {
-		for (PhysicalSubscription<ISink<? super W>> sub : this.sinkSubscriptions) {
+		for (AbstractPhysicalSubscription<ISink<? super W>> sub : this.sinkSubscriptions) {
 			if (sub.getTarget() == o && sub.getSourceOutPort() == sourcePort
 					&& sub.getSinkInPort() == sinkPort) {
 				return sub;
@@ -549,7 +549,7 @@ public class ClientReceiver<R, W> implements ISource<W>,
 		if (isOpen()) {
 			// fire(this.doneEvent);
 			this.process_done();
-			for (PhysicalSubscription<ISink<? super W>> sub : sinkSubscriptions) {
+			for (AbstractPhysicalSubscription<ISink<? super W>> sub : sinkSubscriptions) {
 				if (!sub.isDone()) {
 					sub.getTarget().done(sub.getSinkInPort());
 				}
@@ -589,7 +589,7 @@ public class ClientReceiver<R, W> implements ISource<W>,
 	
 	@Override
 	public void open(ISink<? super W> caller, int sourcePort, int sinkPort,
-			List<PhysicalSubscription<ISink<?>>> callPath, List<IOperatorOwner> forOwners)
+			List<AbstractPhysicalSubscription<ISink<?>>> callPath, List<IOperatorOwner> forOwners)
 			throws OpenFailedException {
 		// Hint: ignore callPath on sources because the source does not call any
 		// subscription
@@ -597,7 +597,7 @@ public class ClientReceiver<R, W> implements ISource<W>,
 		// o can be null, if operator is top operator
 		// otherwise top operator cannot be opened
 		if (caller != null) {
-			PhysicalSubscription<ISink<? super W>> sub = findSinkInSubscription(
+			AbstractPhysicalSubscription<ISink<? super W>> sub = findSinkInSubscription(
 					caller, sourcePort, sinkPort);
 			if (sub == null) {
 				throw new OpenFailedException(
@@ -637,8 +637,8 @@ public class ClientReceiver<R, W> implements ISource<W>,
 
 	@Override
 	public void close(ISink<? super W> caller, int sourcePort, int sinkPort,
-			List<PhysicalSubscription<ISink<?>>> callPath,  List<IOperatorOwner> forOwners) {
-		PhysicalSubscription<ISink<? super W>> sub = findSinkInSubscription(
+			List<AbstractPhysicalSubscription<ISink<?>>> callPath,  List<IOperatorOwner> forOwners) {
+		AbstractPhysicalSubscription<ISink<? super W>> sub = findSinkInSubscription(
 				caller, sourcePort, sinkPort);
 		getLogger().trace("CLOSE "+getName());
 		if (sub == null) {
@@ -760,7 +760,7 @@ public class ClientReceiver<R, W> implements ISource<W>,
 
 	@Override
 	public void suspend(ISink<? super W> caller, int sourcePort, int sinkPort,
-			List<PhysicalSubscription<ISink<?>>> callPath,
+			List<AbstractPhysicalSubscription<ISink<?>>> callPath,
 			List<IOperatorOwner> forOwners) {
 		// TODO Auto-generated method stub
 		
@@ -768,7 +768,7 @@ public class ClientReceiver<R, W> implements ISource<W>,
 
 	@Override
 	public void resume(ISink<? super W> caller, int sourcePort, int sinkPort,
-			List<PhysicalSubscription<ISink<?>>> callPath,
+			List<AbstractPhysicalSubscription<ISink<?>>> callPath,
 			List<IOperatorOwner> forOwners) {
 		// TODO Auto-generated method stub
 		

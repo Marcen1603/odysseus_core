@@ -26,7 +26,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
-import de.uniol.inf.is.odysseus.core.physicaloperator.PhysicalSubscription;
+import de.uniol.inf.is.odysseus.core.physicaloperator.AbstractPhysicalSubscription;
 import de.uniol.inf.is.odysseus.core.server.metadata.ILatency;
 import de.uniol.inf.is.odysseus.core.server.monitoring.physicaloperator.MonitoringDataTypes;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
@@ -200,9 +200,9 @@ public class UpdateRateSinkSingleConformance<R extends IStreamObject<?>, W exten
 		if (operator.isSink()) {
 			@SuppressWarnings("unchecked")
 			ISink<R> sink = (ISink<R>) operator;
-			Collection<PhysicalSubscription<ISource<? extends R>>> sources = sink
+			Collection<AbstractPhysicalSubscription<ISource<? extends R>>> sources = sink
 					.getSubscribedToSource();
-			for (PhysicalSubscription<ISource<? extends R>> sub : sources) {
+			for (AbstractPhysicalSubscription<ISource<? extends R>> sub : sources) {
 				if (sub.getTarget().isSink()) {
 					if (getSelectivityMetadata(sub.getTarget()) == 0.0) {
 						isSelectivityNull = true;

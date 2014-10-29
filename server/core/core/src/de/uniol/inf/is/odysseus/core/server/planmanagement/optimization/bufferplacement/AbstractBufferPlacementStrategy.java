@@ -25,7 +25,7 @@ import org.slf4j.LoggerFactory;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
-import de.uniol.inf.is.odysseus.core.physicaloperator.PhysicalSubscription;
+import de.uniol.inf.is.odysseus.core.physicaloperator.AbstractPhysicalSubscription;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.buffer.IBuffer;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.IBufferPlacementStrategy;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
@@ -60,7 +60,7 @@ public abstract class AbstractBufferPlacementStrategy implements
 			return;
 		}
 		if (plan.isSink() && !plan.isSource()) {
-			for (PhysicalSubscription<? extends ISource<?>> s : ((ISink<?>) plan)
+			for (AbstractPhysicalSubscription<? extends ISource<?>> s : ((ISink<?>) plan)
 					.getSubscribedToSource()) {
 				addBuffers(s.getTarget());
 			}
@@ -72,7 +72,7 @@ public abstract class AbstractBufferPlacementStrategy implements
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	protected void placeBuffer(IBuffer buffer, ISink<?> sink,
-			PhysicalSubscription<? extends ISource<?>> s) {
+			AbstractPhysicalSubscription<? extends ISource<?>> s) {
 		getLogger().debug("Place Buffer "+buffer+" sink "+sink );
 		s.getTarget().unsubscribeSink((ISink) sink, s.getSinkInPort(),
 				s.getSourceOutPort(), s.getSchema());
@@ -98,15 +98,15 @@ public abstract class AbstractBufferPlacementStrategy implements
 
 		while (!sinks.isEmpty()) {
 			ISink<?> sink = sinks.pop();
-			Collection<? extends PhysicalSubscription<? extends ISource<?>>> subscriptionsOriginal = sink
+			Collection<? extends AbstractPhysicalSubscription<? extends ISource<?>>> subscriptionsOriginal = sink
 					.getSubscribedToSource();
-			Collection<PhysicalSubscription<? extends ISource<?>>> subscriptions = new ArrayList<PhysicalSubscription<? extends ISource<?>>>();
+			Collection<AbstractPhysicalSubscription<? extends ISource<?>>> subscriptions = new ArrayList<AbstractPhysicalSubscription<? extends ISource<?>>>();
 
-			for (PhysicalSubscription<? extends ISource<?>> s : subscriptionsOriginal) {
+			for (AbstractPhysicalSubscription<? extends ISource<?>> s : subscriptionsOriginal) {
 				subscriptions.add(s);
 			}
 
-			for (PhysicalSubscription<? extends ISource<?>> s : subscriptions) {
+			for (AbstractPhysicalSubscription<? extends ISource<?>> s : subscriptions) {
 				if (s.getTarget().isSink()) {
 					if (s.getTarget() instanceof IBuffer) {
 						// if there are already buffers in the subplan
@@ -135,7 +135,7 @@ public abstract class AbstractBufferPlacementStrategy implements
 	abstract protected IBuffer<?> createNewBuffer();
 
 	abstract protected boolean bufferNeeded(
-			Collection<? extends PhysicalSubscription<? extends ISource<?>>> subscriptions,
+			Collection<? extends AbstractPhysicalSubscription<? extends ISource<?>>> subscriptions,
 			ISink<?> childSink, ISink<?> sink);
 
 }

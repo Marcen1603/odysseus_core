@@ -28,7 +28,7 @@ import de.uniol.inf.is.odysseus.core.mep.IExpression;
 import de.uniol.inf.is.odysseus.core.mep.Variable;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
-import de.uniol.inf.is.odysseus.core.physicaloperator.PhysicalSubscription;
+import de.uniol.inf.is.odysseus.core.physicaloperator.AbstractPhysicalSubscription;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.sdf.schema.IAttributeResolver;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
@@ -65,8 +65,8 @@ public class JoinTransformationHelper {
 			// temporal sweep area in our
 			// join.
 			ISink opAsSink = (ISink)operator;
-			Collection<PhysicalSubscription> subs = opAsSink.getSubscribedToSource();
-			for(PhysicalSubscription s: subs){
+			Collection<AbstractPhysicalSubscription> subs = opAsSink.getSubscribedToSource();
+			for(AbstractPhysicalSubscription s: subs){
 				if(!checkPhysicalPath(s.getTarget())){
 					return false;
 				}

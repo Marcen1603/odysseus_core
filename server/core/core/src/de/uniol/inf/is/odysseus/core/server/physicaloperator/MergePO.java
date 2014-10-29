@@ -16,10 +16,10 @@
 package de.uniol.inf.is.odysseus.core.server.physicaloperator;
 
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
+import de.uniol.inf.is.odysseus.core.physicaloperator.ControllablePhysicalSubscription;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
-import de.uniol.inf.is.odysseus.core.physicaloperator.PhysicalSubscription;
+import de.uniol.inf.is.odysseus.core.physicaloperator.AbstractPhysicalSubscription;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 
 @SuppressWarnings({ "unchecked", "rawtypes" })
 public class MergePO extends AbstractPipe<IStreamObject<?>,IStreamObject<?>> {
@@ -44,7 +44,7 @@ public class MergePO extends AbstractPipe<IStreamObject<?>,IStreamObject<?>> {
 	@Override
 	public void subscribeToSource(ISource source, int sinkInPort,
 			int sourceOutPort, SDFSchema schema) {
-		PhysicalSubscription<ISource> sub = new PhysicalSubscription<ISource>(
+		AbstractPhysicalSubscription<ISource> sub = new ControllablePhysicalSubscription<ISource>(
 				source, curPort - 1, sourceOutPort, schema);
 		if (!getSubscribedToSource().contains(sub)) {
 			super.subscribeToSource(source, curPort++, sourceOutPort, schema);

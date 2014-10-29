@@ -3,13 +3,13 @@ package de.uniol.inf.is.odysseus.rcp.viewer.model.graph.impl;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
-import de.uniol.inf.is.odysseus.core.physicaloperator.PhysicalSubscription;
+import de.uniol.inf.is.odysseus.core.physicaloperator.AbstractPhysicalSubscription;
 import de.uniol.inf.is.odysseus.rcp.viewer.model.graph.INodeModel;
 
 public class OdysseusConnectionModel extends DefaultConnectionModel<IPhysicalOperator> {
 
-	private final PhysicalSubscription<?> sourceSubscription;
-	private final PhysicalSubscription<?> sinkSubscription;
+	private final AbstractPhysicalSubscription<?> sourceSubscription;
+	private final AbstractPhysicalSubscription<?> sinkSubscription;
 	
 	public OdysseusConnectionModel(INodeModel<IPhysicalOperator> startNode, INodeModel<IPhysicalOperator> endNode) {
 		super(startNode, endNode);
@@ -18,11 +18,11 @@ public class OdysseusConnectionModel extends DefaultConnectionModel<IPhysicalOpe
 		this.sinkSubscription = determineSinkSubscription();
 	}
 
-	private PhysicalSubscription<?> determineSourceSubscription() {
+	private AbstractPhysicalSubscription<?> determineSourceSubscription() {
 		ISource<?> startOperator = (ISource<?>)getStartNode().getContent();
 		ISink<?> endOperator = (ISink<?>)getEndNode().getContent();
 		
-		for( PhysicalSubscription<?> sub : endOperator.getSubscribedToSource()) {
+		for( AbstractPhysicalSubscription<?> sub : endOperator.getSubscribedToSource()) {
 			if( sub.getTarget() == startOperator ) {
 				return sub;
 			}
@@ -32,11 +32,11 @@ public class OdysseusConnectionModel extends DefaultConnectionModel<IPhysicalOpe
 		throw new RuntimeException("Could not find the subscription from source to sink");
 	}
 
-	private PhysicalSubscription<?> determineSinkSubscription() {
+	private AbstractPhysicalSubscription<?> determineSinkSubscription() {
 		ISource<?> startOperator = (ISource<?>)getStartNode().getContent();
 		ISink<?> endOperator = (ISink<?>)getEndNode().getContent();
 		
-		for( PhysicalSubscription<?> sub : startOperator.getSubscriptions()) {
+		for( AbstractPhysicalSubscription<?> sub : startOperator.getSubscriptions()) {
 			if( sub.getTarget() == endOperator ) {
 				return sub;
 			}
@@ -59,11 +59,11 @@ public class OdysseusConnectionModel extends DefaultConnectionModel<IPhysicalOpe
 		return other.getStartNode().equals(getStartNode()) && other.getEndNode().equals(getEndNode()) && other.sourceSubscription.equals(sourceSubscription);
 	}
 	
-	public PhysicalSubscription<?> getSubscriptionToSink() {		
+	public AbstractPhysicalSubscription<?> getSubscriptionToSink() {		
 		return sinkSubscription;
 	}
 	
-	public PhysicalSubscription<?> getSubscriptionToSource() {
+	public AbstractPhysicalSubscription<?> getSubscriptionToSource() {
 		return sourceSubscription;
 	}
 }

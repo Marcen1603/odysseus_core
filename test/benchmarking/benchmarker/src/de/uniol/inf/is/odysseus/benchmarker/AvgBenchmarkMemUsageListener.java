@@ -24,7 +24,7 @@ import java.util.Map;
 import de.uniol.inf.is.odysseus.core.event.IEvent;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
-import de.uniol.inf.is.odysseus.core.physicaloperator.PhysicalSubscription;
+import de.uniol.inf.is.odysseus.core.physicaloperator.AbstractPhysicalSubscription;
 import de.uniol.inf.is.odysseus.core.physicaloperator.event.IPOEventListener;
 import de.uniol.inf.is.odysseus.core.physicaloperator.event.POEventType;
 import de.uniol.inf.is.odysseus.core.server.monitoring.DescriptiveStatistics;
@@ -90,7 +90,7 @@ public class AvgBenchmarkMemUsageListener implements IPlanExecutionListener,
 			hash.put(op.hashCode(), op);
 		}
 		if (op.isSink()) {
-			for (PhysicalSubscription<?> sub : ((ISink<?>) op)
+			for (AbstractPhysicalSubscription<?> sub : ((ISink<?>) op)
 					.getSubscribedToSource()) {
 				addMemListeners((IPhysicalOperator) sub.getTarget());
 			}

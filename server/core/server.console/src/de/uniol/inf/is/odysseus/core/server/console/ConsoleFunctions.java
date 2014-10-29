@@ -23,7 +23,7 @@ import org.eclipse.osgi.framework.console.CommandInterpreter;
 
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
-import de.uniol.inf.is.odysseus.core.physicaloperator.PhysicalSubscription;
+import de.uniol.inf.is.odysseus.core.physicaloperator.AbstractPhysicalSubscription;
 import de.uniol.inf.is.odysseus.core.planmanagement.IOperatorOwner;
 
 public class ConsoleFunctions {
@@ -56,7 +56,7 @@ public class ConsoleFunctions {
 		b.append(mySink.getSubscribedToSource());
 		b.append(")\n");
 
-		for (PhysicalSubscription<? extends ISource<?>> source : mySink
+		for (AbstractPhysicalSubscription<? extends ISource<?>> source : mySink
 				.getSubscribedToSource()) {
 			dumpPlan(source.getTarget(), depth + 1, b);
 		}
@@ -87,8 +87,8 @@ public class ConsoleFunctions {
 					+ sink.getMonitoringData(type).getValue());
 		}
 
-		Collection<PhysicalSubscription<ISource>> subscriptions = sink.getSubscribedToSource();
-		for (PhysicalSubscription<ISource> sub :  subscriptions) {
+		Collection<AbstractPhysicalSubscription<ISource>> subscriptions = sink.getSubscribedToSource();
+		for (AbstractPhysicalSubscription<ISource> sub :  subscriptions) {
 			if (sub.getTarget().isSink()) {
 				printPlanMetadata((ISink) sub.getTarget());
 			}

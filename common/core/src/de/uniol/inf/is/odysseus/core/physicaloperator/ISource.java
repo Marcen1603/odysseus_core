@@ -32,7 +32,7 @@ import de.uniol.inf.is.odysseus.core.planmanagement.IOperatorOwner;
  * @author Jonas Jacobi, Tobias Witt
  */
 public interface ISource<T> extends IPhysicalOperator,
-		ISubscribable<ISink<? super T>, PhysicalSubscription<ISink<? super T>>>, IHasMetaAttribute, ITransfer<T> {
+		ISubscribable<ISink<? super T>, AbstractPhysicalSubscription<ISink<? super T>>>, IHasMetaAttribute, ITransfer<T> {
 	/**
 	 * Gets called initially once from every subscribed sink. Setup work should
 	 * be done in here.
@@ -45,12 +45,12 @@ public interface ISource<T> extends IPhysicalOperator,
 	 *             if the source can't be initialised e.g. because some needed
 	 *             resources like socket connections can't be allocated.
 	 */
-	public void open(ISink<? super T> caller, int sourcePort, int sinkPort, List<PhysicalSubscription<ISink<?>>> callPath, List<IOperatorOwner> forOwners) throws OpenFailedException;
+	public void open(ISink<? super T> caller, int sourcePort, int sinkPort, List<AbstractPhysicalSubscription<ISink<?>>> callPath, List<IOperatorOwner> forOwners) throws OpenFailedException;
 
 	/**
 	 * Close down the connection/do not read any more data
 	 */
-	public void close(ISink<? super T> caller, int sourcePort, int sinkPort, List<PhysicalSubscription<ISink<?>>> callPath,  List<IOperatorOwner> forOwners);
+	public void close(ISink<? super T> caller, int sourcePort, int sinkPort, List<AbstractPhysicalSubscription<ISink<?>>> callPath,  List<IOperatorOwner> forOwners);
 
 //	/**
 //	 * Removes several subscriptions in remove list to this source and
@@ -107,7 +107,7 @@ public interface ISource<T> extends IPhysicalOperator,
 	 */
 
 	void suspend(ISink<? super T> caller, int sourcePort, int sinkPort,
-			List<PhysicalSubscription<ISink<?>>> callPath,
+			List<AbstractPhysicalSubscription<ISink<?>>> callPath,
 			List<IOperatorOwner> forOwners);
 
 	/**
@@ -115,7 +115,7 @@ public interface ISource<T> extends IPhysicalOperator,
 	 * @param owner
 	 */
 	void resume(ISink<? super T> caller, int sourcePort, int sinkPort,
-			List<PhysicalSubscription<ISink<?>>> callPath,
+			List<AbstractPhysicalSubscription<ISink<?>>> callPath,
 			List<IOperatorOwner> forOwners);
 
 }

@@ -31,7 +31,7 @@ import de.uniol.inf.is.odysseus.core.planmanagement.IOperatorOwner;
  * 
  * @author Jonas Jacobi, Marco Grawunder
  */
-public interface ISink<T extends IStreamObject<?>> extends IPhysicalOperator, ISubscriber<ISource<? extends T>, PhysicalSubscription<ISource<? extends T>>> {
+public interface ISink<T extends IStreamObject<?>> extends IPhysicalOperator, ISubscriber<ISource<? extends T>, AbstractPhysicalSubscription<ISource<? extends T>>> {
 	
 	/**
 	 * Process an element.

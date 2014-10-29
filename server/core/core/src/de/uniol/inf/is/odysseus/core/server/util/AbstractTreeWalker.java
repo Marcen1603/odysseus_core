@@ -20,7 +20,7 @@ import de.uniol.inf.is.odysseus.core.ISubscriber;
 import de.uniol.inf.is.odysseus.core.ISubscription;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
-import de.uniol.inf.is.odysseus.core.physicaloperator.PhysicalSubscription;
+import de.uniol.inf.is.odysseus.core.physicaloperator.AbstractPhysicalSubscription;
 
 /**
  * Should only be used on graphs
@@ -47,7 +47,7 @@ public class AbstractTreeWalker {
 		if (!node.isSink()) {
 			return null;
 		}
-		for (PhysicalSubscription<?> s : ((ISink<?>)node).getSubscribedToSource()){
+		for (AbstractPhysicalSubscription<?> s : ((ISink<?>)node).getSubscribedToSource()){
 			IPhysicalOperator t = (IPhysicalOperator) s.getTarget();
 			visitor.descendAction(t);
 			prefixWalk2(t, visitor);

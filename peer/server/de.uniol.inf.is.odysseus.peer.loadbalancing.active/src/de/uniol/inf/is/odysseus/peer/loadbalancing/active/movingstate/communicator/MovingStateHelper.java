@@ -20,7 +20,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IStatefulPO;
-import de.uniol.inf.is.odysseus.core.physicaloperator.PhysicalSubscription;
+import de.uniol.inf.is.odysseus.core.physicaloperator.AbstractPhysicalSubscription;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IPipe;
 import de.uniol.inf.is.odysseus.p2p_new.IP2PNetworkManager;
@@ -72,14 +72,14 @@ public class MovingStateHelper {
 		}
 		if(root instanceof ISource) {
 			ISource rootAsSource = (ISource) root;
-			for (PhysicalSubscription subscription : (Collection<PhysicalSubscription>)rootAsSource.getSubscriptions()) {
+			for (AbstractPhysicalSubscription subscription : (Collection<AbstractPhysicalSubscription>)rootAsSource.getSubscriptions()) {
 				knownOperators = traverseGraphAndFindStatefulOperators((IPhysicalOperator)subscription.getTarget(),knownOperators);
 			}
 			return knownOperators;
 		}
 		if(root instanceof IPipe) {
 			IPipe rootAsSource = (IPipe) root;
-			for (PhysicalSubscription subscription : (Collection<PhysicalSubscription>)rootAsSource.getSubscriptions()) {
+			for (AbstractPhysicalSubscription subscription : (Collection<AbstractPhysicalSubscription>)rootAsSource.getSubscriptions()) {
 				knownOperators = traverseGraphAndFindStatefulOperators((IPhysicalOperator)subscription.getTarget(),knownOperators);
 			}
 			return knownOperators;
@@ -301,10 +301,10 @@ public class MovingStateHelper {
 		physicalCopy
 		.setOutputSchema(physicalOriginal.getOutputSchema());
 
-		List<PhysicalSubscription<ISink<? super IStreamObject>>> subscriptionList = physicalOriginal
+		List<AbstractPhysicalSubscription<ISink<? super IStreamObject>>> subscriptionList = physicalOriginal
 						.getSubscriptions();
 
-				for (PhysicalSubscription<ISink<? super IStreamObject>> subscription : subscriptionList) {
+				for (AbstractPhysicalSubscription<ISink<? super IStreamObject>> subscription : subscriptionList) {
 
 					physicalOriginal.unsubscribeSink(subscription);
 					physicalCopy.subscribeSink(subscription.getTarget(),

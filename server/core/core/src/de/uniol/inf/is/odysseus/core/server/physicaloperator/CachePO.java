@@ -9,7 +9,7 @@ import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
-import de.uniol.inf.is.odysseus.core.physicaloperator.PhysicalSubscription;
+import de.uniol.inf.is.odysseus.core.physicaloperator.AbstractPhysicalSubscription;
 
 public class CachePO<R extends IStreamObject<IMetaAttribute>> extends AbstractPipe<R, R> {
 
@@ -31,7 +31,7 @@ public class CachePO<R extends IStreamObject<IMetaAttribute>> extends AbstractPi
 	}
 
 	@Override
-	protected void newReceiver(PhysicalSubscription<ISink<? super R>> sink){
+	protected void newReceiver(AbstractPhysicalSubscription<ISink<? super R>> sink){
 		synchronized(cache){
 			ListIterator<R> iter = cache.listIterator();
 			while (iter.hasNext()){

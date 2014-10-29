@@ -18,7 +18,7 @@ import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
-import de.uniol.inf.is.odysseus.core.physicaloperator.PhysicalSubscription;
+import de.uniol.inf.is.odysseus.core.physicaloperator.AbstractPhysicalSubscription;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSource;
 import de.uniol.inf.is.odysseus.p2p_new.IP2PNetworkManager;
@@ -187,7 +187,7 @@ public class ParallelTrackHelper {
 				physicalCopy.addOwner(physicalOriginal.getOwner());
 				
 
-				PhysicalSubscription subscription = physicalOriginal
+				AbstractPhysicalSubscription subscription = physicalOriginal
 						.getSubscribedToSource(0);
 				
 				if (subscription.getTarget() instanceof AbstractPipe) {
@@ -238,10 +238,10 @@ public class ParallelTrackHelper {
 
 				physicalOriginal.block();
 
-				List<PhysicalSubscription<ISink<? super IStreamObject>>> subscriptionList = physicalOriginal
+				List<AbstractPhysicalSubscription<ISink<? super IStreamObject>>> subscriptionList = physicalOriginal
 						.getSubscriptions();
 
-				for (PhysicalSubscription<ISink<? super IStreamObject>> subscription : subscriptionList) {
+				for (AbstractPhysicalSubscription<ISink<? super IStreamObject>> subscription : subscriptionList) {
 
 					physicalOriginal.unsubscribeSink(subscription);
 					synchronizer.subscribeSink(subscription.getTarget(),

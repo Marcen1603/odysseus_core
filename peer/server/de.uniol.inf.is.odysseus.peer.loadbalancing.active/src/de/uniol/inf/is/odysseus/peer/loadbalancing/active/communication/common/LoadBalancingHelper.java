@@ -21,7 +21,7 @@ import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
-import de.uniol.inf.is.odysseus.core.physicaloperator.PhysicalSubscription;
+import de.uniol.inf.is.odysseus.core.physicaloperator.AbstractPhysicalSubscription;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.RestructHelper;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TopAO;
@@ -136,7 +136,7 @@ public class LoadBalancingHelper {
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public static void insertOperatorBefore(ISink sink, AbstractPipe operatorToInsert, int port) {
 
-		PhysicalSubscription subscription = (PhysicalSubscription) sink.getSubscribedToSource(port);
+		AbstractPhysicalSubscription subscription = (AbstractPhysicalSubscription) sink.getSubscribedToSource(port);
 		ArrayList<IPhysicalOperator> emptyCallPath = new ArrayList<IPhysicalOperator>();
 
 		sink.unsubscribeFromSource(subscription);
@@ -159,8 +159,8 @@ public class LoadBalancingHelper {
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public static void removeOperatorFromStream(AbstractPipe operator) {
-		Collection<PhysicalSubscription> sourceSubscriptions = operator.getSubscribedToSource();
-		Collection<PhysicalSubscription> sinkSubscriptions = operator.getSubscriptions();
+		Collection<AbstractPhysicalSubscription> sourceSubscriptions = operator.getSubscribedToSource();
+		Collection<AbstractPhysicalSubscription> sinkSubscriptions = operator.getSubscriptions();
 
 		// At least one of the sides of the operator can not be more than 1
 		// subscription or else we can not remove Operator without conflicts.
@@ -175,9 +175,9 @@ public class LoadBalancingHelper {
 		// Source->Operator is the side with 1 subscription. Hence we can remove
 		// this subscription without substituting it.
 		if (sourceSubscriptions.size() == 1) {
-			PhysicalSubscription sourceSubscription = sourceSubscriptions.iterator().next();
+			AbstractPhysicalSubscription sourceSubscription = sourceSubscriptions.iterator().next();
 			AbstractSource source = (AbstractSource) sourceSubscription.getTarget();
-			for (PhysicalSubscription subscription : sinkSubscriptions) {
+			for (AbstractPhysicalSubscription subscription : sinkSubscriptions) {
 				ArrayList<IPhysicalOperator> emptyCallPath = new ArrayList<IPhysicalOperator>();
 				ISink sink = (ISink) subscription.getTarget();
 				source.subscribeSink(subscription.getTarget(), subscription.getSinkInPort(),
@@ -191,9 +191,9 @@ public class LoadBalancingHelper {
 		// Operator->Sink is the side with 1 subscription. Hence we can remove
 		// this subscription without substituting it.
 		if (sinkSubscriptions.size() == 1) {
-			PhysicalSubscription sinkSubscription = sinkSubscriptions.iterator().next();
+			AbstractPhysicalSubscription sinkSubscription = sinkSubscriptions.iterator().next();
 			AbstractSink sink = (AbstractSink) sinkSubscription.getTarget();
-			for (PhysicalSubscription subscription : sourceSubscriptions) {
+			for (AbstractPhysicalSubscription subscription : sourceSubscriptions) {
 				ArrayList<IPhysicalOperator> emptyCallPath = new ArrayList<IPhysicalOperator>();
 				ISource source = (ISource) subscription.getTarget();
 				source.subscribeSink(sink, subscription.getSinkInPort(),
@@ -225,7 +225,7 @@ public class LoadBalancingHelper {
 
 		if (operator instanceof JxtaReceiverPO) {
 			JxtaReceiverPO receiver = (JxtaReceiverPO) operator;
-			PhysicalSubscription<?> receiverSubscription = (PhysicalSubscription) receiver
+			AbstractPhysicalSubscription<?> receiverSubscription = (AbstractPhysicalSubscription) receiver
 					.getSubscriptions().get(0);
 
 			if (receiverSubscription.getTarget() instanceof LoadBalancingSynchronizerPO) {
@@ -239,10 +239,10 @@ public class LoadBalancingHelper {
 				otherReceiver.unsubscribeFromAllSinks();
 				receiver.unsubscribeFromAllSinks();
 
-				List<PhysicalSubscription<ISink<? super IStreamObject>>> subscriptionList = sync
+				List<AbstractPhysicalSubscription<ISink<? super IStreamObject>>> subscriptionList = sync
 						.getSubscriptions();
 
-				for (PhysicalSubscription<ISink<? super IStreamObject>> subscription : subscriptionList) {
+				for (AbstractPhysicalSubscription<ISink<? super IStreamObject>> subscription : subscriptionList) {
 
 					sync.unsubscribeSink(subscription);
 

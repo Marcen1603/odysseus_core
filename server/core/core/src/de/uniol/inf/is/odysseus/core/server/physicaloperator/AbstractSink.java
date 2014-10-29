@@ -35,12 +35,13 @@ import de.uniol.inf.is.odysseus.core.event.IEvent;
 import de.uniol.inf.is.odysseus.core.event.IEventListener;
 import de.uniol.inf.is.odysseus.core.event.IEventType;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
+import de.uniol.inf.is.odysseus.core.physicaloperator.ControllablePhysicalSubscription;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
-import de.uniol.inf.is.odysseus.core.physicaloperator.PhysicalSubscription;
+import de.uniol.inf.is.odysseus.core.physicaloperator.AbstractPhysicalSubscription;
 import de.uniol.inf.is.odysseus.core.physicaloperator.event.POEvent;
 import de.uniol.inf.is.odysseus.core.physicaloperator.event.POEventType;
 import de.uniol.inf.is.odysseus.core.physicaloperator.event.POPortEvent;
@@ -56,7 +57,7 @@ import de.uniol.inf.is.odysseus.core.server.monitoring.AbstractMonitoringDataPro
 public abstract class AbstractSink<R extends IStreamObject<?>> extends
 		AbstractMonitoringDataProvider implements ISink<R> {
 
-	final private List<PhysicalSubscription<ISource<? extends R>>> subscribedToSource = new CopyOnWriteArrayList<PhysicalSubscription<ISource<? extends R>>>();
+	final private List<AbstractPhysicalSubscription<ISource<? extends R>>> subscribedToSource = new CopyOnWriteArrayList<AbstractPhysicalSubscription<ISource<? extends R>>>();
 
 	protected int noInputPorts = -1;
 	private ReentrantLock openCloseLock = new ReentrantLock();
@@ -75,9 +76,9 @@ public abstract class AbstractSink<R extends IStreamObject<?>> extends
 	// Logging
 	// --------------------------------------------------------------------
 	private static Logger logger = LoggerFactory.getLogger(AbstractSink.class);
-	
+
 	protected boolean debug = false;
-	
+
 	@Override
 	public void setDebug(boolean debug) {
 		this.debug = debug;
@@ -197,7 +198,6 @@ public abstract class AbstractSink<R extends IStreamObject<?>> extends
 	// OPEN
 	// ------------------------------------------------------------------------
 
-
 	@Override
 	public void open(IOperatorOwner owner) throws OpenFailedException {
 		// allInputsDone = false;
@@ -208,20 +208,20 @@ public abstract class AbstractSink<R extends IStreamObject<?>> extends
 		} else {
 			forOwners = getOwner();
 		}
-		open(new ArrayList<PhysicalSubscription<ISink<?>>>(), forOwners);
+		open(new ArrayList<AbstractPhysicalSubscription<ISink<?>>>(), forOwners);
 	}
 
-	protected void open(List<PhysicalSubscription<ISink<?>>> callPath,
+	protected void open(List<AbstractPhysicalSubscription<ISink<?>>> callPath,
 			List<IOperatorOwner> forOwners) throws OpenFailedException {
 
 		openCloseLock.lock();
 		try {
-			for (IOperatorOwner o: forOwners){
+			for (IOperatorOwner o : forOwners) {
 				Integer count = openFor.get(o);
-				if (count == null){
-					openFor.put(o , 1);
-				}else{
-					openFor.put(o, count+1);
+				if (count == null) {
+					openFor.put(o, 1);
+				} else {
+					openFor.put(o, count + 1);
 				}
 			}
 			// allInputsDone = false;
@@ -240,12 +240,12 @@ public abstract class AbstractSink<R extends IStreamObject<?>> extends
 			this.sinkOpen.set(true);
 
 			// Call open on all registered sources0
-			for (PhysicalSubscription<ISource<? extends R>> sub : this.subscribedToSource) {
+			for (AbstractPhysicalSubscription<ISource<? extends R>> sub : this.subscribedToSource) {
 				// Check if callPath contains this call already to avoid cycles
 				if (!containsSubscription(callPath, getInstance(),
 						sub.getSourceOutPort(), sub.getSinkInPort())) {
 					sub.setDone(false);
-					callPath.add(new PhysicalSubscription<ISink<?>>(
+					callPath.add(new ControllablePhysicalSubscription<ISink<?>>(
 							getInstance(), sub.getSinkInPort(), sub
 									.getSourceOutPort(), null));
 					if (sub.getTarget().isOwnedByAny(forOwners)) {
@@ -264,9 +264,9 @@ public abstract class AbstractSink<R extends IStreamObject<?>> extends
 
 	@SuppressWarnings("static-method")
 	private boolean containsSubscription(
-			List<PhysicalSubscription<ISink<?>>> callPath,
+			List<AbstractPhysicalSubscription<ISink<?>>> callPath,
 			ISink<? super R> sink, int sourcePort, int sinkPort) {
-		for (PhysicalSubscription<ISink<?>> sub : callPath) {
+		for (AbstractPhysicalSubscription<ISink<?>> sub : callPath) {
 			if (sub.getTarget() == sink && sub.getSinkInPort() == sinkPort
 					&& sub.getSourceOutPort() == sourcePort) {
 				// getLogger().trace(
@@ -287,7 +287,7 @@ public abstract class AbstractSink<R extends IStreamObject<?>> extends
 	public boolean isOpen() {
 		return this.sinkOpen.get();
 	}
-	
+
 	@Override
 	public boolean isOpenFor(IOperatorOwner owner) {
 		return openFor.containsKey(owner);
@@ -304,12 +304,12 @@ public abstract class AbstractSink<R extends IStreamObject<?>> extends
 		fire(processDoneEvent[port]);
 	}
 
-//	@Override
-//	public void process(Collection<? extends R> object, int port) {
-//		for (R cur : object) {
-//			process(cur, port);
-//		}
-//	}
+	// @Override
+	// public void process(Collection<? extends R> object, int port) {
+	// for (R cur : object) {
+	// process(cur, port);
+	// }
+	// }
 
 	protected abstract void process_next(R object, int port);
 
@@ -329,30 +329,31 @@ public abstract class AbstractSink<R extends IStreamObject<?>> extends
 		} else {
 			owner = getOwner();
 		}
-		close(new ArrayList<PhysicalSubscription<ISink<?>>>(), owner);
+		close(new ArrayList<AbstractPhysicalSubscription<ISink<?>>>(), owner);
 	}
 
-	public void close(List<PhysicalSubscription<ISink<?>>> callPath,
+	public void close(List<AbstractPhysicalSubscription<ISink<?>>> callPath,
 			List<IOperatorOwner> forOwners) {
 		logger.trace("Closing for " + forOwners);
 		internal_close(callPath, forOwners, true);
 	}
 
 	protected void internal_close(
-			List<PhysicalSubscription<ISink<?>>> callPath,
+			List<AbstractPhysicalSubscription<ISink<?>>> callPath,
 			List<IOperatorOwner> forOwners, boolean doProcessClose) {
 
 		openCloseLock.lock();
 		try {
-			for (IOperatorOwner o: forOwners){
+			for (IOperatorOwner o : forOwners) {
 				Integer count = openFor.get(o);
-				if (count == null){
-					throw new IllegalArgumentException("Call from not opened sink");
-				}else{
-					if (count == 1){
+				if (count == null) {
+					throw new IllegalArgumentException(
+							"Call from not opened sink");
+				} else {
+					if (count == 1) {
 						openFor.remove(o);
-					}else{
-						openFor.put(o, count-1);
+					} else {
+						openFor.put(o, count - 1);
 					}
 				}
 			}
@@ -381,13 +382,13 @@ public abstract class AbstractSink<R extends IStreamObject<?>> extends
 	}
 
 	protected void callCloseOnChildren(
-			List<PhysicalSubscription<ISink<?>>> callPath,
+			List<AbstractPhysicalSubscription<ISink<?>>> callPath,
 			List<IOperatorOwner> forOwners) {
 		openCloseLock.lock();
-		for (PhysicalSubscription<ISource<? extends R>> sub : this.subscribedToSource) {
+		for (AbstractPhysicalSubscription<ISource<? extends R>> sub : this.subscribedToSource) {
 			if (!containsSubscription(callPath, getInstance(),
 					sub.getSourceOutPort(), sub.getSinkInPort())) {
-				callPath.add(new PhysicalSubscription<ISink<?>>(getInstance(),
+				callPath.add(new ControllablePhysicalSubscription<ISink<?>>(getInstance(),
 						sub.getSinkInPort(), sub.getSourceOutPort(), null));
 				try {
 					if (sub.getTarget().isOwnedByAny(forOwners)) {
@@ -421,7 +422,7 @@ public abstract class AbstractSink<R extends IStreamObject<?>> extends
 	final synchronized public void done(int port) {
 		process_done(port);
 
-		for (PhysicalSubscription<ISource<? extends R>> sub : this.subscribedToSource) {
+		for (AbstractPhysicalSubscription<ISource<? extends R>> sub : this.subscribedToSource) {
 			if (sub.getSinkInPort() == port) {
 				sub.setDone(true);
 			}
@@ -436,7 +437,7 @@ public abstract class AbstractSink<R extends IStreamObject<?>> extends
 
 	final synchronized public boolean isDone() {
 		boolean done = true;
-		for (PhysicalSubscription<ISource<? extends R>> sub : this.subscribedToSource) {
+		for (AbstractPhysicalSubscription<ISource<? extends R>> sub : this.subscribedToSource) {
 			if (!sub.isDone()) {
 				done = false;
 				break;
@@ -445,11 +446,11 @@ public abstract class AbstractSink<R extends IStreamObject<?>> extends
 		return done;
 
 	}
-	
+
 	// ------------------------------------------------------------------------
 	// Suspend and Resume
 	// ------------------------------------------------------------------------
-	
+
 	@Override
 	public void suspend(IOperatorOwner id) {
 		List<IOperatorOwner> forOwners = null;
@@ -459,21 +460,21 @@ public abstract class AbstractSink<R extends IStreamObject<?>> extends
 		} else {
 			forOwners = getOwner();
 		}
-		suspend(new ArrayList<PhysicalSubscription<ISink<?>>>(), forOwners);		
+		suspend(new ArrayList<AbstractPhysicalSubscription<ISink<?>>>(), forOwners);
 	}
-	
-	final protected void suspend(List<PhysicalSubscription<ISink<?>>> callPath,
+
+	final protected void suspend(List<AbstractPhysicalSubscription<ISink<?>>> callPath,
 			List<IOperatorOwner> forOwners) {
 
 		openCloseLock.lock();
 		try {
 
 			// Call open on all registered sources0
-			for (PhysicalSubscription<ISource<? extends R>> sub : this.subscribedToSource) {
+			for (AbstractPhysicalSubscription<ISource<? extends R>> sub : this.subscribedToSource) {
 				// Check if callPath contains this call already to avoid cycles
 				if (!containsSubscription(callPath, getInstance(),
 						sub.getSourceOutPort(), sub.getSinkInPort())) {
-					callPath.add(new PhysicalSubscription<ISink<?>>(
+					callPath.add(new ControllablePhysicalSubscription<ISink<?>>(
 							getInstance(), sub.getSinkInPort(), sub
 									.getSourceOutPort(), null));
 					if (sub.getTarget().isOwnedByAny(forOwners)) {
@@ -489,7 +490,7 @@ public abstract class AbstractSink<R extends IStreamObject<?>> extends
 			openCloseLock.unlock();
 		}
 	}
-	
+
 	@Override
 	public void resume(IOperatorOwner id) {
 		List<IOperatorOwner> forOwners = null;
@@ -499,21 +500,21 @@ public abstract class AbstractSink<R extends IStreamObject<?>> extends
 		} else {
 			forOwners = getOwner();
 		}
-		resume(new ArrayList<PhysicalSubscription<ISink<?>>>(), forOwners);				
+		resume(new ArrayList<AbstractPhysicalSubscription<ISink<?>>>(), forOwners);
 	}
-	
-	final void resume(List<PhysicalSubscription<ISink<?>>> callPath,
+
+	final void resume(List<AbstractPhysicalSubscription<ISink<?>>> callPath,
 			List<IOperatorOwner> forOwners) {
 
 		openCloseLock.lock();
 		try {
 
 			// Call open on all registered sources0
-			for (PhysicalSubscription<ISource<? extends R>> sub : this.subscribedToSource) {
+			for (AbstractPhysicalSubscription<ISource<? extends R>> sub : this.subscribedToSource) {
 				// Check if callPath contains this call already to avoid cycles
 				if (!containsSubscription(callPath, getInstance(),
 						sub.getSourceOutPort(), sub.getSinkInPort())) {
-					callPath.add(new PhysicalSubscription<ISink<?>>(
+					callPath.add(new ControllablePhysicalSubscription<ISink<?>>(
 							getInstance(), sub.getSinkInPort(), sub
 									.getSourceOutPort(), null));
 					if (sub.getTarget().isOwnedByAny(forOwners)) {
@@ -529,28 +530,31 @@ public abstract class AbstractSink<R extends IStreamObject<?>> extends
 			openCloseLock.unlock();
 		}
 	}
-	
+
 	// ------------------------------------------------------------------------
 	// Partial
 	// ------------------------------------------------------------------------
 	@Override
 	public void partial(IOperatorOwner id, int sheddingFactor) {
-		partial(id, sheddingFactor,this);
+		partial(id, sheddingFactor, this);
 	}
-	
 
-	public void partial(IOperatorOwner id, int sheddingFactor, Object tgt){
-		for (PhysicalSubscription<ISource<? extends R>> sub : this.subscribedToSource) {
+	public void partial(IOperatorOwner id, int sheddingFactor, Object tgt) {
+		for (AbstractPhysicalSubscription<ISource<? extends R>> sub : this.subscribedToSource) {
 			ISource<? extends R> target = sub.getTarget();
-			
-			for( PhysicalSubscription<?> subFromTarget : target.getSubscriptions()) {
-				if( subFromTarget.getTarget() == tgt ) {
-					subFromTarget.setSheddingFactor(sheddingFactor);
+
+			for (AbstractPhysicalSubscription<?> subFromTarget : target
+					.getSubscriptions()) {
+				if (subFromTarget.getTarget() == tgt) {
+					if (subFromTarget instanceof ControllablePhysicalSubscription) {
+						((ControllablePhysicalSubscription<?>) subFromTarget)
+								.setSheddingFactor(sheddingFactor);
+					}
 				}
 			}
 		}
 	}
-	
+
 	// ------------------------------------------------------------------------
 	// Getter and Setter
 	// ------------------------------------------------------------------------
@@ -705,7 +709,7 @@ public abstract class AbstractSink<R extends IStreamObject<?>> extends
 			setInputPortCount(sinkInPort + 1);
 		}
 
-		PhysicalSubscription<ISource<? extends R>> sub = new PhysicalSubscription<ISource<? extends R>>(
+		AbstractPhysicalSubscription<ISource<? extends R>> sub = new ControllablePhysicalSubscription<ISource<? extends R>>(
 				source, sinkInPort, sourceOutPort, schema);
 		if (!this.subscribedToSource.contains(sub)) {
 			if (!sinkInPortFree(sinkInPort)) {
@@ -724,13 +728,13 @@ public abstract class AbstractSink<R extends IStreamObject<?>> extends
 	}
 
 	protected void newSourceSubscribed(
-			PhysicalSubscription<ISource<? extends R>> sub) {
+			AbstractPhysicalSubscription<ISource<? extends R>> sub) {
 		// Implement this method if need to react to new source subscription
 	}
 
 	private int getNextFreeSinkInPort() {
 		int sinkInPort = -1;
-		for (PhysicalSubscription<ISource<? extends R>> sub : this.subscribedToSource) {
+		for (AbstractPhysicalSubscription<ISource<? extends R>> sub : this.subscribedToSource) {
 			if (sub.getSinkInPort() > sinkInPort) {
 				sinkInPort = sub.getSinkInPort();
 			}
@@ -741,7 +745,7 @@ public abstract class AbstractSink<R extends IStreamObject<?>> extends
 	}
 
 	private boolean sinkInPortFree(int sinkInPort) {
-		for (PhysicalSubscription<ISource<? extends R>> sub : this.subscribedToSource) {
+		for (AbstractPhysicalSubscription<ISource<? extends R>> sub : this.subscribedToSource) {
 			if (sub.getSinkInPort() == sinkInPort) {
 				logger.error("SinkInPort " + sinkInPort + " already bound to "
 						+ sub);
@@ -752,13 +756,13 @@ public abstract class AbstractSink<R extends IStreamObject<?>> extends
 	}
 
 	@Override
-	final public List<PhysicalSubscription<ISource<? extends R>>> getSubscribedToSource() {
+	final public List<AbstractPhysicalSubscription<ISource<? extends R>>> getSubscribedToSource() {
 		return Collections.unmodifiableList(this.subscribedToSource);
 	}
 
 	@Override
 	public void unsubscribeFromSource(
-			PhysicalSubscription<ISource<? extends R>> subscription) {
+			AbstractPhysicalSubscription<ISource<? extends R>> subscription) {
 		logger.trace("Unsubscribe from Source " + subscription.getTarget());
 		if (this.subscribedToSource.remove(subscription)) {
 			subscription.getTarget().unsubscribeSink(this.getInstance(),
@@ -769,21 +773,21 @@ public abstract class AbstractSink<R extends IStreamObject<?>> extends
 	}
 
 	protected void sourceUnsubscribed(
-			PhysicalSubscription<ISource<? extends R>> subscription) {
+			AbstractPhysicalSubscription<ISource<? extends R>> subscription) {
 		// Implement this method if need to react to source unsubscription
 	}
 
 	@Override
 	public void unsubscribeFromSource(ISource<? extends R> source,
 			int sinkInPort, int sourceOutPort, SDFSchema schema) {
-		unsubscribeFromSource(new PhysicalSubscription<ISource<? extends R>>(
+		unsubscribeFromSource(new ControllablePhysicalSubscription<ISource<? extends R>>(
 				source, sinkInPort, sourceOutPort, schema));
 	}
 
 	@Override
 	public void unsubscribeFromAllSources() {
 		while (!subscribedToSource.isEmpty()) {
-			PhysicalSubscription<ISource<? extends R>> subscription = subscribedToSource
+			AbstractPhysicalSubscription<ISource<? extends R>> subscription = subscribedToSource
 					.remove(0);
 			logger.trace("Unsubscribe from Source " + subscription.getTarget());
 			subscription.getTarget().unsubscribeSink(this.getInstance(),
@@ -796,7 +800,7 @@ public abstract class AbstractSink<R extends IStreamObject<?>> extends
 	}
 
 	@Override
-	final public PhysicalSubscription<ISource<? extends R>> getSubscribedToSource(
+	final public AbstractPhysicalSubscription<ISource<? extends R>> getSubscribedToSource(
 			int port) {
 		return this.subscribedToSource.get(port);
 	}

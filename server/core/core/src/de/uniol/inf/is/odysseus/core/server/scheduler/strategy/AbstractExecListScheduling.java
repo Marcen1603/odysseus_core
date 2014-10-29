@@ -25,7 +25,7 @@ import java.util.Map;
 import de.uniol.inf.is.odysseus.core.monitoring.IMonitoringData;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
-import de.uniol.inf.is.odysseus.core.physicaloperator.PhysicalSubscription;
+import de.uniol.inf.is.odysseus.core.physicaloperator.AbstractPhysicalSubscription;
 import de.uniol.inf.is.odysseus.core.server.monitoring.physicaloperator.MonitoringDataTypes;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IIterableSource;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
@@ -153,7 +153,7 @@ abstract public class AbstractExecListScheduling extends
 				}
 			}
 		}
-		for (PhysicalSubscription<? extends ISink<?>> sub: s.getSubscriptions() ){
+		for (AbstractPhysicalSubscription<? extends ISink<?>> sub: s.getSubscriptions() ){
 			if (sub.getTarget().isSource()){
 				getPathToRoot((ISource<?>)sub.getTarget(), schedulableOps, allOps, virtualOps);
 			}
@@ -185,7 +185,7 @@ abstract public class AbstractExecListScheduling extends
 				|| sink.getSubscribedToSource().size() == 0) {
 			leafs.add((ISource<?>) sink);
 		} else {
-			for (PhysicalSubscription<? extends ISource<?>> sub : sink.getSubscribedToSource()) {
+			for (AbstractPhysicalSubscription<? extends ISource<?>> sub : sink.getSubscribedToSource()) {
 				if (sub.getTarget().isSink()) {
 					findLeafs((ISink<?>) sub.getTarget(), leafs);
 				} else {

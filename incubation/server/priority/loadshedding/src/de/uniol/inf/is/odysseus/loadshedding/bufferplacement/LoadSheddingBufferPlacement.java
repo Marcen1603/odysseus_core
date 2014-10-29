@@ -19,7 +19,7 @@ import java.util.Collection;
 
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
-import de.uniol.inf.is.odysseus.core.physicaloperator.PhysicalSubscription;
+import de.uniol.inf.is.odysseus.core.physicaloperator.AbstractPhysicalSubscription;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.buffer.IBuffer;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.bufferplacement.AbstractBufferPlacementStrategy;
 import de.uniol.inf.is.odysseus.loadshedding.DirectLoadSheddingBufferPO;
@@ -35,7 +35,7 @@ public class LoadSheddingBufferPlacement extends
 
 	@Override
 	protected boolean bufferNeeded(
-			Collection<? extends PhysicalSubscription<? extends ISource<?>>> subscriptions,
+			Collection<? extends AbstractPhysicalSubscription<? extends ISource<?>>> subscriptions,
 			ISink<?> childSink, ISink<?> sink) {
 
 		if (childSink instanceof PriorityPO) {

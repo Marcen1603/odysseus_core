@@ -22,7 +22,7 @@ import java.util.List;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
-import de.uniol.inf.is.odysseus.core.physicaloperator.PhysicalSubscription;
+import de.uniol.inf.is.odysseus.core.physicaloperator.AbstractPhysicalSubscription;
 
 /**
  * Hilfsklasse, um einen physischen Operatorplan
@@ -78,7 +78,7 @@ public class PhysicalGraphWalker {
 				Collection<?> subscriptions = operatorAsSource.getSubscriptions();
 				
 				for( Object subscriptionAsObject : subscriptions ) {
-					PhysicalSubscription<ISink<?>> subscription = (PhysicalSubscription<ISink<?>>)subscriptionAsObject;
+					AbstractPhysicalSubscription<ISink<?>> subscription = (AbstractPhysicalSubscription<ISink<?>>)subscriptionAsObject;
 					ISink<?> sink = subscription.getTarget();
 					if( !operatorsToVisit.contains(sink) && !operatorsVisited.contains(sink) && operators.contains(sink)) {
 						
@@ -86,7 +86,7 @@ public class PhysicalGraphWalker {
 						if( sink.getSubscribedToSource().size() > 1 ) {
 							
 							boolean ok = true;
-							for( PhysicalSubscription<?> sourceSubscription : sink.getSubscribedToSource() ) {
+							for( AbstractPhysicalSubscription<?> sourceSubscription : sink.getSubscribedToSource() ) {
 								ISource<?> source = (ISource<?>)sourceSubscription.getTarget();
 								if( !operatorsVisited.contains(source)) {
 									ok = false;

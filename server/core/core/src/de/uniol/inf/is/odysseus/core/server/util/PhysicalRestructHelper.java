@@ -22,7 +22,7 @@ import java.util.Set;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
-import de.uniol.inf.is.odysseus.core.physicaloperator.PhysicalSubscription;
+import de.uniol.inf.is.odysseus.core.physicaloperator.AbstractPhysicalSubscription;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSource;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IPipe;
 
@@ -67,10 +67,10 @@ public class PhysicalRestructHelper {
 	 * @param child
 	 * @return Subscription parent -> child
 	 */
-	public static PhysicalSubscription<?> removeSubscription(IPhysicalOperator parent, IPhysicalOperator child) {
-		for (PhysicalSubscription<?> sub : ((ISink<?>)parent).getSubscribedToSource()) {
+	public static AbstractPhysicalSubscription<?> removeSubscription(IPhysicalOperator parent, IPhysicalOperator child) {
+		for (AbstractPhysicalSubscription<?> sub : ((ISink<?>)parent).getSubscribedToSource()) {
 			if (sub.getTarget().equals(child)) {
-				((ISink<?>)parent).unsubscribeFromSource((PhysicalSubscription)sub);
+				((ISink<?>)parent).unsubscribeFromSource((AbstractPhysicalSubscription)sub);
 				return sub;
 			}
 		}
@@ -103,9 +103,9 @@ public class PhysicalRestructHelper {
 					sourceOutPort, source.getOutputSchema());
 		}
 		
-		Set<PhysicalSubscription<?>> toSinks = new HashSet<PhysicalSubscription<?>>();
-		Set<PhysicalSubscription<?>> toBuffer = new HashSet<PhysicalSubscription<?>>();
-		for(PhysicalSubscription<?> sub : ((ISource<?>)source).getSubscriptions()) {
+		Set<AbstractPhysicalSubscription<?>> toSinks = new HashSet<AbstractPhysicalSubscription<?>>();
+		Set<AbstractPhysicalSubscription<?>> toBuffer = new HashSet<AbstractPhysicalSubscription<?>>();
+		for(AbstractPhysicalSubscription<?> sub : ((ISource<?>)source).getSubscriptions()) {
 			if(sub.getTarget().equals(buffer)) {
 				toBuffer.add(sub);
 				continue;
@@ -120,7 +120,7 @@ public class PhysicalRestructHelper {
 	}
 	
 	public static void replaceChild(IPhysicalOperator parent, IPhysicalOperator child, IPhysicalOperator newChild) {
-		PhysicalSubscription<?> sub = removeSubscription(parent, child);
+		AbstractPhysicalSubscription<?> sub = removeSubscription(parent, child);
 		((ISink<?>)parent).subscribeToSource((ISource)newChild, sub.getSinkInPort(), sub.getSourceOutPort(),
 				newChild.getOutputSchema());
 	}

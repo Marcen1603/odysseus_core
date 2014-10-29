@@ -30,7 +30,7 @@ import de.uniol.inf.is.odysseus.core.monitoring.IPeriodicalMonitoringData;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
-import de.uniol.inf.is.odysseus.core.physicaloperator.PhysicalSubscription;
+import de.uniol.inf.is.odysseus.core.physicaloperator.AbstractPhysicalSubscription;
 import de.uniol.inf.is.odysseus.core.planmanagement.OwnerHandler;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 
@@ -147,7 +147,7 @@ public abstract class ListenerSink<In extends IStreamObject<?>> extends OwnerHan
 	}
 
 	@Override
-	public void unsubscribeFromSource(PhysicalSubscription<ISource<? extends In>> subscription) {
+	public void unsubscribeFromSource(AbstractPhysicalSubscription<ISource<? extends In>> subscription) {
 	}
 
 	@Override
@@ -159,12 +159,12 @@ public abstract class ListenerSink<In extends IStreamObject<?>> extends OwnerHan
 	}
 
 	@Override
-	public Collection<PhysicalSubscription<ISource<? extends In>>> getSubscribedToSource() {
+	public Collection<AbstractPhysicalSubscription<ISource<? extends In>>> getSubscribedToSource() {
 		return Lists.newArrayList();
 	}
 
 	@Override
-	public PhysicalSubscription<ISource<? extends In>> getSubscribedToSource(int i) {
+	public AbstractPhysicalSubscription<ISource<? extends In>> getSubscribedToSource(int i) {
 		return null;
 	}
 	

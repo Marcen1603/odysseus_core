@@ -38,12 +38,13 @@ import de.uniol.inf.is.odysseus.core.event.IEventType;
 import de.uniol.inf.is.odysseus.core.infoservice.InfoService;
 import de.uniol.inf.is.odysseus.core.infoservice.InfoServiceFactory;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
+import de.uniol.inf.is.odysseus.core.physicaloperator.ControllablePhysicalSubscription;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
-import de.uniol.inf.is.odysseus.core.physicaloperator.PhysicalSubscription;
+import de.uniol.inf.is.odysseus.core.physicaloperator.AbstractPhysicalSubscription;
 import de.uniol.inf.is.odysseus.core.physicaloperator.event.POEvent;
 import de.uniol.inf.is.odysseus.core.physicaloperator.event.POEventType;
 import de.uniol.inf.is.odysseus.core.planmanagement.IOperatorOwner;
@@ -67,10 +68,10 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 	private IMyLock locker = new NonLockingLock();
 	private ReentrantLock openCloseLock = new ReentrantLock();
 
-	final private List<PhysicalSubscription<ISink<? super T>>> sinkSubscriptions = new CopyOnWriteArrayList<PhysicalSubscription<ISink<? super T>>>();
+	final private List<AbstractPhysicalSubscription<ISink<? super T>>> sinkSubscriptions = new CopyOnWriteArrayList<AbstractPhysicalSubscription<ISink<? super T>>>();
 	// Only active subscription are served on transfer
-	final private List<PhysicalSubscription<ISink<? super T>>> activeSinkSubscriptions = new CopyOnWriteArrayList<PhysicalSubscription<ISink<? super T>>>();
-	final private List<PhysicalSubscription<ISink<? super T>>> connectedSinks = new CopyOnWriteArrayList<PhysicalSubscription<ISink<? super T>>>();
+	final private List<AbstractPhysicalSubscription<ISink<? super T>>> activeSinkSubscriptions = new CopyOnWriteArrayList<AbstractPhysicalSubscription<ISink<? super T>>>();
+	final private List<AbstractPhysicalSubscription<ISink<? super T>>> connectedSinks = new CopyOnWriteArrayList<AbstractPhysicalSubscription<ISink<? super T>>>();
 	private boolean readdedConnectedSinks = false;
 	final private Map<Integer, Integer> consumerCount = new HashMap<>();
 
@@ -103,7 +104,7 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 	public void setDebug(boolean debug) {
 		this.debug = debug;
 	}
-	
+
 	final InfoService infoService;
 
 	// ------------------------------------------------------------------
@@ -176,7 +177,8 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 
 	public AbstractSource() {
 		this.ownerHandler = new OwnerHandler();
-		infoService = InfoServiceFactory.getInfoService(AbstractSource.class.getName());
+		infoService = InfoServiceFactory.getInfoService(AbstractSource.class
+				.getName());
 	}
 
 	public AbstractSource(AbstractSource<T> source) {
@@ -280,15 +282,16 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 	public boolean isOpen() {
 		return open.get();
 	}
-	
+
 	@Override
-	synchronized public void open(IOperatorOwner owner) throws OpenFailedException {
+	synchronized public void open(IOperatorOwner owner)
+			throws OpenFailedException {
 		if (!isOpen()) {
 			fire(openInitEvent);
 			process_open();
 			fire(openDoneEvent);
 		}
-		
+
 		open.set(true);
 
 		reconnectSinks();
@@ -296,7 +299,7 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 
 	@Override
 	public void open(ISink<? super T> caller, int sourcePort, int sinkPort,
-			List<PhysicalSubscription<ISink<?>>> callPath,
+			List<AbstractPhysicalSubscription<ISink<?>>> callPath,
 			List<IOperatorOwner> forOwners) throws OpenFailedException {
 
 		openCloseLock.lock();
@@ -310,7 +313,7 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 			// otherwise top operator cannot be opened
 			if (caller != null) {
 				// Find subscription for caller
-				PhysicalSubscription<ISink<? super T>> sub = findSinkInSubscription(
+				AbstractPhysicalSubscription<ISink<? super T>> sub = findSinkInSubscription(
 						caller, sourcePort, sinkPort);
 				if (sub == null) {
 					throw new OpenFailedException(
@@ -358,7 +361,7 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 	protected void reconnectSinks() {
 		if (connectedSinks.size() > 0 && !readdedConnectedSinks) {
 			// re-add all connected sinks
-			for (PhysicalSubscription<ISink<? super T>> s : connectedSinks) {
+			for (AbstractPhysicalSubscription<ISink<? super T>> s : connectedSinks) {
 				if (!activeSinkSubscriptions.contains(s)) {
 					activeSinkSubscriptions.add(s);
 				}
@@ -368,7 +371,7 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 	}
 
 	private void addActiveSubscription(
-			PhysicalSubscription<ISink<? super T>> sub) {
+			AbstractPhysicalSubscription<ISink<? super T>> sub) {
 		// Handle multiple open calls{
 		if (!activeSinkSubscriptions.contains(sub)) {
 			this.activeSinkSubscriptions.add(sub);
@@ -381,12 +384,12 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 		}
 	}
 
-	protected void newReceiver(PhysicalSubscription<ISink<? super T>> sink) {
+	protected void newReceiver(AbstractPhysicalSubscription<ISink<? super T>> sink) {
 		// can be overwritten if needed
 	}
 
 	private void removeActiveSubscription(
-			PhysicalSubscription<ISink<? super T>> sub) {
+			AbstractPhysicalSubscription<ISink<? super T>> sub) {
 		if (activeSinkSubscriptions.contains(sub)) {
 			consumerCount.put(sub.getSourceOutPort(),
 					consumerCount.get(sub.getSourceOutPort()) - 1);
@@ -395,8 +398,8 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 	}
 
 	public void replaceActiveSubscription(
-			PhysicalSubscription<ISink<? super T>> oldSub,
-			PhysicalSubscription<ISink<? super T>> newSub) {
+			AbstractPhysicalSubscription<ISink<? super T>> oldSub,
+			AbstractPhysicalSubscription<ISink<? super T>> newSub) {
 		// necessary to not lose tuples here
 		locker.lock();
 		removeActiveSubscription(oldSub);
@@ -405,13 +408,13 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 	}
 
 	public void replaceActiveSubscriptions(
-			Set<PhysicalSubscription<ISink<? super T>>> oldSubs,
-			Set<PhysicalSubscription<ISink<? super T>>> newSubs) {
+			Set<AbstractPhysicalSubscription<ISink<? super T>>> oldSubs,
+			Set<AbstractPhysicalSubscription<ISink<? super T>>> newSubs) {
 		locker.lock();
-		for (PhysicalSubscription<ISink<? super T>> oldSub : oldSubs) {
+		for (AbstractPhysicalSubscription<ISink<? super T>> oldSub : oldSubs) {
 			removeActiveSubscription(oldSub);
 		}
-		for (PhysicalSubscription<ISink<? super T>> newSub : newSubs) {
+		for (AbstractPhysicalSubscription<ISink<? super T>> newSub : newSubs) {
 			addActiveSubscription(newSub);
 		}
 		locker.unlock();
@@ -425,7 +428,7 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 
 	@Override
 	public void sendPunctuation(IPunctuation punctuation) {
-		for (PhysicalSubscription<? extends ISink<?>> sub : this.activeSinkSubscriptions) {
+		for (AbstractPhysicalSubscription<? extends ISink<?>> sub : this.activeSinkSubscriptions) {
 			sub.getTarget()
 					.processPunctuation(punctuation, sub.getSinkInPort());
 		}
@@ -433,7 +436,7 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 
 	@Override
 	public void sendPunctuation(IPunctuation punctuation, int outPort) {
-		for (PhysicalSubscription<? extends ISink<?>> sub : this.activeSinkSubscriptions) {
+		for (AbstractPhysicalSubscription<? extends ISink<?>> sub : this.activeSinkSubscriptions) {
 			if (sub.getSourceOutPort() == outPort) {
 				sub.getTarget().processPunctuation(punctuation,
 						sub.getSinkInPort());
@@ -450,7 +453,7 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 		fire(this.pushInitEvent);
 		// necessary to not lose tuples in a plan migration
 		locker.lock();
-		for (PhysicalSubscription<ISink<? super T>> sink : this.activeSinkSubscriptions) {
+		for (AbstractPhysicalSubscription<ISink<? super T>> sink : this.activeSinkSubscriptions) {
 			transfer(object, sourceOutPort, sink);
 		}
 		locker.unlock();
@@ -459,7 +462,7 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 
 	@SuppressWarnings("rawtypes")
 	final protected void transfer(T object, int sourceOutPort,
-			PhysicalSubscription<ISink<? super T>> sink) {
+			AbstractPhysicalSubscription<ISink<? super T>> sink) {
 		if (sink.getSourceOutPort() == sourceOutPort) {
 			try {
 				sink.process((IStreamObject) cloneIfNessessary(object,
@@ -527,13 +530,13 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 
 	@Override
 	public void close(ISink<? super T> caller, int sourcePort, int sinkPort,
-			List<PhysicalSubscription<ISink<?>>> callPath,
+			List<AbstractPhysicalSubscription<ISink<?>>> callPath,
 			List<IOperatorOwner> forOwners) {
 		try {
 			openCloseLock.lock();
 
 			getLogger().trace("CLOSE " + getName());
-			PhysicalSubscription<ISink<? super T>> sub = findSinkInSubscription(
+			AbstractPhysicalSubscription<ISink<? super T>> sub = findSinkInSubscription(
 					caller, sourcePort, sinkPort);
 			if (sub == null) {
 				throw new RuntimeException(
@@ -551,7 +554,7 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 			// if this subscription has no more callers, remove it from
 			// the set of activeSubscriptions
 			if (sub.getOpenCalls() == 0) {
-				
+
 				// The are some sink, that are not connected by open (because
 				// they
 				// will never
@@ -602,7 +605,7 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 		if (isOpen()) {
 			fire(this.doneEvent);
 			this.process_done();
-			for (PhysicalSubscription<ISink<? super T>> sub : activeSinkSubscriptions) {
+			for (AbstractPhysicalSubscription<ISink<? super T>> sub : activeSinkSubscriptions) {
 				if (!sub.isDone()) {
 					sub.getTarget().done(sub.getSinkInPort());
 				}
@@ -656,23 +659,36 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 	// ------------------------------------------------------------------------
 	@Override
 	public void suspend(ISink<? super T> caller, int sourcePort, int sinkPort,
-			List<PhysicalSubscription<ISink<?>>> callPath,
+			List<AbstractPhysicalSubscription<ISink<?>>> callPath,
 			List<IOperatorOwner> forOwners) {
 		if (isOpen()) {
-			PhysicalSubscription<ISink<? super T>> sub = findSinkInSubscription(
+			AbstractPhysicalSubscription<ISink<? super T>> sub = findSinkInSubscription(
 					caller, sourcePort, sinkPort);
-			sub.suspend();
+			if (sub instanceof ControllablePhysicalSubscription) {
+				((ControllablePhysicalSubscription<ISink<? super T>>) sub)
+						.suspend();
+			} else {
+				sendError("This query cannot be suspended",
+						new RuntimeException(
+								"Query is not in controllable mode!"));
+			}
 		}
 	}
 
 	@Override
 	public void resume(ISink<? super T> caller, int sourcePort, int sinkPort,
-			List<PhysicalSubscription<ISink<?>>> callPath,
+			List<AbstractPhysicalSubscription<ISink<?>>> callPath,
 			List<IOperatorOwner> forOwners) {
-		PhysicalSubscription<ISink<? super T>> sub = findSinkInSubscription(
+		AbstractPhysicalSubscription<ISink<? super T>> sub = findSinkInSubscription(
 				caller, sourcePort, sinkPort);
-		if (sub.isSuspended()) {
-			sub.resume();
+		if (sub instanceof ControllablePhysicalSubscription) {
+			ControllablePhysicalSubscription<ISink<? super T>> csub = (ControllablePhysicalSubscription<ISink<? super T>>) sub;
+			if (csub.isSuspended()) {
+				csub.resume();
+			}
+		} else {
+			sendError("This query cannot be resumed", new RuntimeException(
+					"Query is not in controllable mode!"));
 		}
 	}
 
@@ -680,9 +696,9 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 	// Subscription management
 	// ------------------------------------------------------------------------
 
-	private PhysicalSubscription<ISink<? super T>> findSinkInSubscription(
+	private AbstractPhysicalSubscription<ISink<? super T>> findSinkInSubscription(
 			IPhysicalOperator o, int sourcePort, int sinkPort) {
-		for (PhysicalSubscription<ISink<? super T>> sub : this.sinkSubscriptions) {
+		for (AbstractPhysicalSubscription<ISink<? super T>> sub : this.sinkSubscriptions) {
 			if (sub.getTarget() == o && sub.getSourceOutPort() == sourcePort
 					&& sub.getSinkInPort() == sinkPort) {
 				return sub;
@@ -694,7 +710,8 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 	@Override
 	final public void subscribeSink(ISink<? super T> sink, int sinkInPort,
 			int sourceOutPort, SDFSchema schema, boolean asActive, int openCount) {
-		PhysicalSubscription<ISink<? super T>> sub = new PhysicalSubscription<ISink<? super T>>(
+		// TODO: Make configurable
+		AbstractPhysicalSubscription<ISink<? super T>> sub = new ControllablePhysicalSubscription<ISink<? super T>>(
 				sink, sinkInPort, sourceOutPort, schema);
 		sub.setOpenCalls(openCount);
 		if (!this.sinkSubscriptions.contains(sub)) {
@@ -719,7 +736,7 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 	public void connectSink(ISink<? super T> sink, int sinkInPort,
 			int sourceOutPort, SDFSchema schema) {
 		// subscribeSink(sink, sinkInPort, sourceOutPort, schema);
-		PhysicalSubscription<ISink<? super T>> sub = new PhysicalSubscription<ISink<? super T>>(
+		AbstractPhysicalSubscription<ISink<? super T>> sub = new ControllablePhysicalSubscription<ISink<? super T>>(
 				sink, sinkInPort, sourceOutPort, schema);
 		sink.addOwner(this.getOwner());
 		addActiveSubscription(sub);
@@ -729,7 +746,7 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 	@Override
 	final public void unsubscribeSink(ISink<? super T> sink, int sinkInPort,
 			int sourceOutPort, SDFSchema schema) {
-		unsubscribeSink(new PhysicalSubscription<ISink<? super T>>(sink,
+		unsubscribeSink(new ControllablePhysicalSubscription<ISink<? super T>>(sink,
 				sinkInPort, sourceOutPort, schema));
 	}
 
@@ -737,7 +754,7 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 	public void disconnectSink(ISink<? super T> sink, int sinkInPort,
 			int sourceOutPort, SDFSchema schema) {
 		// unsubscribeSink(sink, sinkInPort, sourceOutPort, schema);
-		PhysicalSubscription<ISink<? super T>> sub = new PhysicalSubscription<ISink<? super T>>(
+		AbstractPhysicalSubscription<ISink<? super T>> sub = new ControllablePhysicalSubscription<ISink<? super T>>(
 				sink, sinkInPort, sourceOutPort, schema);
 		removeActiveSubscription(sub);
 		connectedSinks.remove(sub);
@@ -754,13 +771,13 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 		activeSinkSubscriptions.clear();
 	}
 
-	public boolean isActive(PhysicalSubscription<ISink<? super T>> subscription) {
+	public boolean isActive(AbstractPhysicalSubscription<ISink<? super T>> subscription) {
 		return this.activeSinkSubscriptions.contains(subscription);
 	}
 
 	@Override
 	public void unsubscribeSink(
-			PhysicalSubscription<ISink<? super T>> subscription) {
+			AbstractPhysicalSubscription<ISink<? super T>> subscription) {
 		getLogger().trace("Unsubscribe from Sink " + subscription.getTarget());
 		boolean subContained = this.sinkSubscriptions.remove(subscription);
 		removeActiveSubscription(subscription);
@@ -802,7 +819,7 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 	// }
 
 	@Override
-	final public List<PhysicalSubscription<ISink<? super T>>> getSubscriptions() {
+	final public List<AbstractPhysicalSubscription<ISink<? super T>>> getSubscriptions() {
 		return Collections.unmodifiableList(this.sinkSubscriptions);
 	}
 
@@ -814,7 +831,7 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 
 	@Override
 	public void unsubscribeFromAllSinks() {
-		for (PhysicalSubscription<ISink<? super T>> s : this.sinkSubscriptions) {
+		for (AbstractPhysicalSubscription<ISink<? super T>> s : this.sinkSubscriptions) {
 			unsubscribeSink(s);
 		}
 		sinkSubscriptions.clear();
@@ -969,23 +986,23 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 	public boolean hasInput() {
 		return false;
 	}
-	
-	//--------------------------------------------------------
+
+	// --------------------------------------------------------
 	// Information Management
 	// -------------------------------------------------------
-	protected void sendError(String message, Throwable t){
+	protected void sendError(String message, Throwable t) {
 		infoService.error(message, t);
 	}
-	
-	protected void sendWarning(String message){
+
+	protected void sendWarning(String message) {
 		infoService.warning(message);
 	}
 
-	protected void sendWarning(String message, Throwable t){
+	protected void sendWarning(String message, Throwable t) {
 		infoService.warning(message);
 	}
-	
-	protected void sendInfo(String message){
+
+	protected void sendInfo(String message) {
 		infoService.info(message);
 	}
 }

@@ -21,7 +21,7 @@ import java.util.List;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
-import de.uniol.inf.is.odysseus.core.physicaloperator.PhysicalSubscription;
+import de.uniol.inf.is.odysseus.core.physicaloperator.AbstractPhysicalSubscription;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IIterableSource;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.core.server.scheduler.strategy.AbstractExecListScheduling;
@@ -51,7 +51,7 @@ public class AuroraMinCost extends AbstractExecListScheduling {
 	}
 
 	private void postOrderAdd(ISink<?> sink, List<IIterableSource<?>> execList) {
-		for (PhysicalSubscription<? extends ISource<?>> sub : sink.getSubscribedToSource()) {
+		for (AbstractPhysicalSubscription<? extends ISource<?>> sub : sink.getSubscribedToSource()) {
 			if (execList.contains(sub.getTarget())) {
 				continue;
 			}

@@ -26,7 +26,7 @@ import de.uniol.inf.is.odysseus.core.collection.Resource;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
-import de.uniol.inf.is.odysseus.core.physicaloperator.PhysicalSubscription;
+import de.uniol.inf.is.odysseus.core.physicaloperator.AbstractPhysicalSubscription;
 import de.uniol.inf.is.odysseus.core.planmanagement.IOperatorOwner;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionaryWritable;
@@ -232,8 +232,8 @@ public class StandardQuerySharingOptimizer implements IQuerySharingOptimizer {
 			int sourceOutPort = sub.getSourceOutPort();
 
 			boolean isActive = ((AbstractSource) toReplace)
-					.isActive((PhysicalSubscription) sub);
-			int oc = ((PhysicalSubscription)sub).getOpenCalls();
+					.isActive((AbstractPhysicalSubscription) sub);
+			int oc = ((AbstractPhysicalSubscription)sub).getOpenCalls();
 			// Subscription l�schen
 			((IPipe) toReplace).unsubscribeSink(sub);
 

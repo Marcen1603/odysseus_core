@@ -25,7 +25,7 @@ import org.eclipse.ui.PlatformUI;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
-import de.uniol.inf.is.odysseus.core.physicaloperator.PhysicalSubscription;
+import de.uniol.inf.is.odysseus.core.physicaloperator.AbstractPhysicalSubscription;
 
 public class OperatorBreak implements IBufferedPipeListener {
 
@@ -56,7 +56,7 @@ public class OperatorBreak implements IBufferedPipeListener {
 			buffer.addListener(this);
 
 			// Subscription erhalten, welchen wir ersetzen wollen
-			PhysicalSubscription subscription = operator.getSubscriptions().iterator().next();
+			AbstractPhysicalSubscription subscription = operator.getSubscriptions().iterator().next();
 			sink = (ISink) subscription.getTarget();
 			sourceOutPort = subscription.getSourceOutPort();
 			sinkInPort = subscription.getSinkInPort();

@@ -10,7 +10,7 @@ import com.google.common.collect.Lists;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
-import de.uniol.inf.is.odysseus.core.physicaloperator.PhysicalSubscription;
+import de.uniol.inf.is.odysseus.core.physicaloperator.AbstractPhysicalSubscription;
 
 public class CostModelUtil {
 
@@ -36,14 +36,14 @@ public class CostModelUtil {
 			
 			if( currentOperator instanceof ISink ) {
 				ISink<?> opAsSink = (ISink<?>)currentOperator;
-				for( PhysicalSubscription<?> physSub : opAsSink.getSubscribedToSource() ) {
+				for( AbstractPhysicalSubscription<?> physSub : opAsSink.getSubscribedToSource() ) {
 					collectPhysicalOperators((IPhysicalOperator)physSub.getTarget(), collectedOperators);
 				}
 			}
 			
 			if( currentOperator instanceof ISource ) {
 				ISource<?> opAsSource = (ISource<?>)currentOperator;
-				for( PhysicalSubscription<?> physSub : opAsSource.getSubscriptions() ) {
+				for( AbstractPhysicalSubscription<?> physSub : opAsSource.getSubscriptions() ) {
 					collectPhysicalOperators((IPhysicalOperator)physSub.getTarget(), collectedOperators);
 				}
 			}

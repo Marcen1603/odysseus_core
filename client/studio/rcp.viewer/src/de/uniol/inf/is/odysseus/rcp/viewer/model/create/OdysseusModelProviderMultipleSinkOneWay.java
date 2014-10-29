@@ -27,7 +27,7 @@ import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
-import de.uniol.inf.is.odysseus.core.physicaloperator.PhysicalSubscription;
+import de.uniol.inf.is.odysseus.core.physicaloperator.AbstractPhysicalSubscription;
 import de.uniol.inf.is.odysseus.rcp.viewer.model.graph.IConnectionModel;
 import de.uniol.inf.is.odysseus.rcp.viewer.model.graph.IGraphModel;
 import de.uniol.inf.is.odysseus.rcp.viewer.model.graph.INodeModel;
@@ -127,8 +127,8 @@ public final class OdysseusModelProviderMultipleSinkOneWay implements IModelProv
 		if( operator.isSink() ) {
 			@SuppressWarnings("unchecked")
 			ISink<T> sink = (ISink<T>)operator;
-			Collection< PhysicalSubscription< ISource<? extends T> >> sources = sink.getSubscribedToSource();
-			for( PhysicalSubscription< ISource<? extends T> > sub : sources ) {
+			Collection< AbstractPhysicalSubscription< ISource<? extends T> >> sources = sink.getSubscribedToSource();
+			for( AbstractPhysicalSubscription< ISource<? extends T> > sub : sources ) {
 				if( sub.getTarget().isSink() ) {
 					parse( (ISink<?>)sub.getTarget(), graphModel, node);
 				} else {

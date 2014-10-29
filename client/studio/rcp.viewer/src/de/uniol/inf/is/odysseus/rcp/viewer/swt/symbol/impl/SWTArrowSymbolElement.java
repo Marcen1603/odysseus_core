@@ -23,7 +23,7 @@ import org.eclipse.swt.widgets.Display;
 
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
-import de.uniol.inf.is.odysseus.core.physicaloperator.PhysicalSubscription;
+import de.uniol.inf.is.odysseus.core.physicaloperator.AbstractPhysicalSubscription;
 import de.uniol.inf.is.odysseus.rcp.viewer.swt.symbol.SWTConnectionSymbolElement;
 import de.uniol.inf.is.odysseus.rcp.viewer.view.IConnectionView;
 import de.uniol.inf.is.odysseus.rcp.viewer.view.INodeView;
@@ -156,7 +156,7 @@ public class SWTArrowSymbolElement<C> extends SWTConnectionSymbolElement<C> {
 		}
 
 		ISource<?> source = (ISource<?>) startObject;
-		for (PhysicalSubscription<?> subscription : source.getSubscriptions()) {
+		for (AbstractPhysicalSubscription<?> subscription : source.getSubscriptions()) {
 			if (subscription.getTarget() == endObject) {
 				return subscription.getSourceOutPort();
 			}
@@ -170,7 +170,7 @@ public class SWTArrowSymbolElement<C> extends SWTConnectionSymbolElement<C> {
 		Object endObject = view.getModelConnection().getEndNode().getContent();
 
 		ISink<?> sink = (ISink<?>) endObject;
-		for (PhysicalSubscription<?> subscription : sink.getSubscribedToSource()) {
+		for (AbstractPhysicalSubscription<?> subscription : sink.getSubscribedToSource()) {
 			if (subscription.getTarget() == startObject) {
 				return subscription.getSinkInPort();
 			}

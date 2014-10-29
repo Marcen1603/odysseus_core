@@ -23,7 +23,7 @@ import org.slf4j.LoggerFactory;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
-import de.uniol.inf.is.odysseus.core.physicaloperator.PhysicalSubscription;
+import de.uniol.inf.is.odysseus.core.physicaloperator.AbstractPhysicalSubscription;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.MetadataUpdatePO;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.buffer.BufferPO;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.buffer.IBuffer;
@@ -50,8 +50,8 @@ public class QueryBufferPlacement implements IBufferPlacementStrategy{
 	@SuppressWarnings({"rawtypes","unchecked"})
 	protected void placeBuffer(IBuffer buffer, ISource<?> source) {
 		getLogger().debug("Place Buffer "+buffer+" sink "+source );
-		Collection<? extends PhysicalSubscription<? extends ISink<?>>> subscriptions = source.getSubscriptions();
-		for (PhysicalSubscription<? extends ISink<?>> sub: subscriptions){
+		Collection<? extends AbstractPhysicalSubscription<? extends ISink<?>>> subscriptions = source.getSubscriptions();
+		for (AbstractPhysicalSubscription<? extends ISink<?>> sub: subscriptions){
 		// Place only if not already buffer there
 		if (!(sub.getTarget() instanceof IBuffer)){
 			sub.getTarget().unsubscribeFromSource((ISource) source, sub.getSinkInPort(),
@@ -73,10 +73,10 @@ public class QueryBufferPlacement implements IBufferPlacementStrategy{
 		}else{
 			if (plan.isSink()){
 				ISink sink = (ISink)plan;
-				Collection<? extends PhysicalSubscription<? extends ISource<?>>> subscription = sink
+				Collection<? extends AbstractPhysicalSubscription<? extends ISource<?>>> subscription = sink
 						.getSubscribedToSource();
 
-				for (PhysicalSubscription<? extends ISource<?>> sub:subscription){
+				for (AbstractPhysicalSubscription<? extends ISource<?>> sub:subscription){
 					addBuffers(sub.getTarget());
 				}
 			}

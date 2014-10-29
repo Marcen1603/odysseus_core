@@ -28,7 +28,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.IStatefulOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IStatefulPO;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ITransferArea;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
-import de.uniol.inf.is.odysseus.core.physicaloperator.PhysicalSubscription;
+import de.uniol.inf.is.odysseus.core.physicaloperator.AbstractPhysicalSubscription;
 
 public class UnionPO<R extends IStreamObject<?>> extends AbstractPipe<R, R>
 		implements IStatefulOperator, IStatefulPO {
@@ -64,13 +64,13 @@ public class UnionPO<R extends IStreamObject<?>> extends AbstractPipe<R, R>
 
 	@Override
 	protected void newSourceSubscribed(
-			PhysicalSubscription<ISource<? extends R>> sub) {
+			AbstractPhysicalSubscription<ISource<? extends R>> sub) {
 		transferArea.addNewInput(sub.getSinkInPort());
 	}
 
 	@Override
 	protected void sourceUnsubscribed(
-			PhysicalSubscription<ISource<? extends R>> sub) {
+			AbstractPhysicalSubscription<ISource<? extends R>> sub) {
 		transferArea.removeInput(sub.getSinkInPort());
 	}
 

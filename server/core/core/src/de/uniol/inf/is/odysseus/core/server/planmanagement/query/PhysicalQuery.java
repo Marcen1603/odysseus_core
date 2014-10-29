@@ -36,7 +36,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
-import de.uniol.inf.is.odysseus.core.physicaloperator.PhysicalSubscription;
+import de.uniol.inf.is.odysseus.core.physicaloperator.AbstractPhysicalSubscription;
 import de.uniol.inf.is.odysseus.core.physicaloperator.event.IPOEventListener;
 import de.uniol.inf.is.odysseus.core.planmanagement.IOperatorOwner;
 import de.uniol.inf.is.odysseus.core.planmanagement.IOwnedOperator;
@@ -353,9 +353,9 @@ public class PhysicalQuery implements IPhysicalQuery {
 			visitedOps.add(curOp);
 			if (curOp.isSink()) {
 				@SuppressWarnings("rawtypes")
-				Collection<PhysicalSubscription<ISource<?>>> subsriptions = ((ISink) curOp)
+				Collection<AbstractPhysicalSubscription<ISource<?>>> subsriptions = ((ISink) curOp)
 						.getSubscribedToSource();
-				for (PhysicalSubscription<ISource<?>> subscription : subsriptions) {
+				for (AbstractPhysicalSubscription<ISource<?>> subscription : subsriptions) {
 					ISource<?> target = subscription.getTarget();
 					if (!visitedOps.contains(target)) {
 						operators.push(target);
@@ -382,7 +382,7 @@ public class PhysicalQuery implements IPhysicalQuery {
 		if (s.getOwner().size() == 1 && s.isSink()) {
 			pos.add(s);
 		} else {
-			for (PhysicalSubscription<IPhysicalOperator> father : ((ISubscribable<IPhysicalOperator, PhysicalSubscription<IPhysicalOperator>>) s)
+			for (AbstractPhysicalSubscription<IPhysicalOperator> father : ((ISubscribable<IPhysicalOperator, AbstractPhysicalSubscription<IPhysicalOperator>>) s)
 					.getSubscriptions()) {
 				pos.addAll(getNonSharedFathers(father.getTarget()));
 			}

@@ -31,7 +31,7 @@ import de.uniol.inf.is.odysseus.core.objecthandler.IObjectHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
-import de.uniol.inf.is.odysseus.core.physicaloperator.PhysicalSubscription;
+import de.uniol.inf.is.odysseus.core.physicaloperator.AbstractPhysicalSubscription;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSink;
 
 @SuppressWarnings({ "rawtypes", "unchecked" })
@@ -45,7 +45,7 @@ public class SocketSinkPO extends AbstractSink<IStreamObject<?>> {
 	private boolean isStarted;
 	final private IObjectHandler objectHandler;
 	final private boolean withMetadata;
-	private PhysicalSubscription<ISource<? extends IStreamObject<?>>> subscription;
+	private AbstractPhysicalSubscription<ISource<? extends IStreamObject<?>>> subscription;
 
 	public SocketSinkPO(int serverPort, String host,
 			ISinkStreamHandlerBuilder sinkStreamHandlerBuilder, boolean useNIO,
@@ -94,7 +94,7 @@ public class SocketSinkPO extends AbstractSink<IStreamObject<?>> {
 		Integer port = reserverNextFreePort();
 		
 		if (subscription == null) {
-			List<PhysicalSubscription<ISource<? extends IStreamObject<?>>>> s = getSubscribedToSource();
+			List<AbstractPhysicalSubscription<ISource<? extends IStreamObject<?>>>> s = getSubscribedToSource();
 			if (s.size() != 1) {
 				logger.error("MORE THAN ONE SUBSCRIPTION");
 			}

@@ -22,7 +22,7 @@ import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
-import de.uniol.inf.is.odysseus.core.physicaloperator.PhysicalSubscription;
+import de.uniol.inf.is.odysseus.core.physicaloperator.AbstractPhysicalSubscription;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.MetadataCreationPO;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.buffer.BufferPO;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.buffer.IBuffer;
@@ -48,7 +48,7 @@ public class StandardBufferPlacementStrategy
 	
 	@Override
 	protected boolean bufferNeeded(
-			Collection<? extends PhysicalSubscription<? extends ISource<?>>> subscriptions,
+			Collection<? extends AbstractPhysicalSubscription<? extends ISource<?>>> subscriptions,
 			ISink<?> childSink, ISink<?> sink) {
 		return !(sink instanceof MetadataCreationPO);
 	}

@@ -18,7 +18,7 @@ import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
-import de.uniol.inf.is.odysseus.core.physicaloperator.PhysicalSubscription;
+import de.uniol.inf.is.odysseus.core.physicaloperator.AbstractPhysicalSubscription;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.RestructHelper;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
@@ -230,7 +230,7 @@ public class RecoveryHelper {
 
 		// Now do the subscriptions
 		jxtaSender.setOutputSchema(originalSender.getOutputSchema());
-		PhysicalSubscription subscription = originalSender.getSubscribedToSource(0);
+		AbstractPhysicalSubscription subscription = originalSender.getSubscribedToSource(0);
 
 		if (subscription.getTarget() instanceof AbstractPipe) {
 			((AbstractPipe) subscription.getTarget()).subscribeSink(jxtaSender, 0, subscription.getSourceOutPort(),
@@ -266,7 +266,7 @@ public class RecoveryHelper {
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public static void insertOperatorBefore(ISink sink, AbstractPipe operatorToInsert, int port) {
 
-		PhysicalSubscription subscription = (PhysicalSubscription) sink.getSubscribedToSource(port);
+		AbstractPhysicalSubscription subscription = (AbstractPhysicalSubscription) sink.getSubscribedToSource(port);
 
 		sink.unsubscribeFromSource(subscription);
 		operatorToInsert.subscribeToSource(subscription.getTarget(), subscription.getSinkInPort(),

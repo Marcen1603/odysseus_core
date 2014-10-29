@@ -24,7 +24,7 @@ import java.util.Map;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
-import de.uniol.inf.is.odysseus.core.physicaloperator.PhysicalSubscription;
+import de.uniol.inf.is.odysseus.core.physicaloperator.AbstractPhysicalSubscription;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.buffer.IBuffer;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.planmodification.IPlanModificationListener;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.planmodification.event.AbstractPlanModificationEvent;
@@ -238,7 +238,7 @@ public class SLARegistry implements IPlanModificationListener {
 			
 			for (Object obj : subscriptions) {
 				@SuppressWarnings("unchecked")
-				PhysicalSubscription<ISink<?>> subscription = (PhysicalSubscription<ISink<?>>) obj;
+				AbstractPhysicalSubscription<ISink<?>> subscription = (AbstractPhysicalSubscription<ISink<?>>) obj;
 				ISink<?> target = subscription.getTarget();
 				
 				List<IPhysicalOperator> newPath = null; 

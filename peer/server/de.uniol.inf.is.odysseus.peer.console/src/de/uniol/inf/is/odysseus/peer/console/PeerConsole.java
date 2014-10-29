@@ -28,7 +28,7 @@ import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
-import de.uniol.inf.is.odysseus.core.physicaloperator.PhysicalSubscription;
+import de.uniol.inf.is.odysseus.core.physicaloperator.AbstractPhysicalSubscription;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.server.console.OdysseusConsole;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
@@ -1200,7 +1200,7 @@ public class PeerConsole implements CommandProvider, IPeerCommunicatorListener {
 		b.append("(").append(sink.hashCode()).append(")");
 		b.append("[").append(sink.getName()).append("]\n");
 
-		for (PhysicalSubscription<? extends ISource<?>> source : sink.getSubscribedToSource()) {
+		for (AbstractPhysicalSubscription<? extends ISource<?>> source : sink.getSubscribedToSource()) {
 			dumpPlan(source.getTarget(), depth + 1, b);
 		}
 	}

@@ -28,7 +28,7 @@ import com.google.common.base.Strings;
 import de.uniol.inf.is.odysseus.core.ISubscription;
 import de.uniol.inf.is.odysseus.core.monitoring.IMonitoringData;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
-import de.uniol.inf.is.odysseus.core.physicaloperator.PhysicalSubscription;
+import de.uniol.inf.is.odysseus.core.physicaloperator.AbstractPhysicalSubscription;
 import de.uniol.inf.is.odysseus.core.planmanagement.IOperatorOwner;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
@@ -145,7 +145,7 @@ public class GraphOutlineLabelProvider extends StyledCellLabelProvider {
 			styledString.append(" In("+s.getSinkInPort()).append(") out ("+s.getSourceOutPort()).append(")");
 			
 			if (s.getTarget() instanceof IPhysicalOperator){
-				int open = ((PhysicalSubscription<?>) s).getOpenCalls();
+				int open = ((AbstractPhysicalSubscription<?>) s).getOpenCalls();
 				if (open > 0){
 					styledString.append(" #Open: "+open);
 				}

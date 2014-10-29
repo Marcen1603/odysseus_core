@@ -28,7 +28,7 @@ import de.uniol.inf.is.odysseus.benchmark.result.IBenchmarkResultFactory;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
-import de.uniol.inf.is.odysseus.core.physicaloperator.PhysicalSubscription;
+import de.uniol.inf.is.odysseus.core.physicaloperator.AbstractPhysicalSubscription;
 import de.uniol.inf.is.odysseus.core.server.metadata.ILatency;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 
@@ -116,7 +116,7 @@ public class BenchmarkResultPO<M extends ILatency> extends
 	@Override
 	protected void process_open() throws OpenFailedException {
 		result.clear();
-		for (PhysicalSubscription<?> s : getSubscribedToSource()) {
+		for (AbstractPhysicalSubscription<?> s : getSubscribedToSource()) {
 			IBenchmarkResult<M> r = resultFactory.createBenchmarkResult();
 			r.setStartTime(System.nanoTime());
 			result.put(s.getSinkInPort(), r);

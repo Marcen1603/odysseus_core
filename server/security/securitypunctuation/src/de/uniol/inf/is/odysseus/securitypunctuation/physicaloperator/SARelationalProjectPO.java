@@ -26,7 +26,7 @@ import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
-import de.uniol.inf.is.odysseus.core.physicaloperator.PhysicalSubscription;
+import de.uniol.inf.is.odysseus.core.physicaloperator.AbstractPhysicalSubscription;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.securitypunctuation.ISecurityPunctuation;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
@@ -123,7 +123,7 @@ public class SARelationalProjectPO<T extends IStreamObject<? extends ITimeInterv
 			return true;
 		}
 		
-		for(PhysicalSubscription<ISource<? extends T>> subscribedTo:this.getSubscribedToSource()) {
+		for(AbstractPhysicalSubscription<ISource<? extends T>> subscribedTo:this.getSubscribedToSource()) {
 			tupleSchema = subscribedTo.getSchema();
 			
 			for(String spAttribute:spAttributes) {

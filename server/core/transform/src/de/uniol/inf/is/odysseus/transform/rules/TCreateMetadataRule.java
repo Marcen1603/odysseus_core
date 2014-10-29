@@ -23,7 +23,7 @@ import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
-import de.uniol.inf.is.odysseus.core.physicaloperator.PhysicalSubscription;
+import de.uniol.inf.is.odysseus.core.physicaloperator.AbstractPhysicalSubscription;
 import de.uniol.inf.is.odysseus.core.server.metadata.MetadataRegistry;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.MetadataCreationPO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
@@ -43,7 +43,7 @@ public class TCreateMetadataRule extends AbstractTransformationRule<ISource<?>> 
 	public void execute(ISource source, TransformationConfiguration transformConfig) {
 		Class type = MetadataRegistry.getMetadataType(transformConfig.getMetaTypes());
 		MetadataCreationPO po = null;
-		for(PhysicalSubscription<ISink> sub : (Collection<PhysicalSubscription<ISink>>)source.getSubscriptions()){
+		for(AbstractPhysicalSubscription<ISink> sub : (Collection<AbstractPhysicalSubscription<ISink>>)source.getSubscriptions()){
 			if ((sub.getTarget() instanceof MetadataCreationPO) && ((MetadataCreationPO)sub.getTarget()).getType() == type) {
 				po = (MetadataCreationPO)sub.getTarget();
 				break;

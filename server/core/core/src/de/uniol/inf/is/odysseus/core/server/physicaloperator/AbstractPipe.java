@@ -30,7 +30,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
-import de.uniol.inf.is.odysseus.core.physicaloperator.PhysicalSubscription;
+import de.uniol.inf.is.odysseus.core.physicaloperator.AbstractPhysicalSubscription;
 import de.uniol.inf.is.odysseus.core.physicaloperator.event.POEventType;
 import de.uniol.inf.is.odysseus.core.planmanagement.IOperatorOwner;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFMetaAttributeList;
@@ -81,7 +81,7 @@ public abstract class AbstractPipe<R extends IStreamObject<?>, W extends IStream
 		}
 
 		@Override
-		public void close(List<PhysicalSubscription<ISink<?>>> callPath,
+		public void close(List<AbstractPhysicalSubscription<ISink<?>>> callPath,
 				List<IOperatorOwner> forOwners) {
 			logger.trace("Closing "+getName()+" for "+forOwners);
 			internal_close(callPath, forOwners, false);
@@ -108,7 +108,7 @@ public abstract class AbstractPipe<R extends IStreamObject<?>, W extends IStream
 
 		@Override
 		protected void sourceUnsubscribed(
-				PhysicalSubscription<ISource<? extends R>> subscription) {
+				AbstractPhysicalSubscription<ISource<? extends R>> subscription) {
 			AbstractPipe.this.sourceUnsubscribed(subscription);
 		}
 		
@@ -166,7 +166,7 @@ public abstract class AbstractPipe<R extends IStreamObject<?>, W extends IStream
 	
 	@Override
 	final synchronized public void open(ISink<? super W> caller, int sourcePort,
-			int sinkPort, List<PhysicalSubscription<ISink<?>>> callPath,
+			int sinkPort, List<AbstractPhysicalSubscription<ISink<?>>> callPath,
 			List<IOperatorOwner> forOwners) throws OpenFailedException {
 		// First: Call open for the source part. Activate subscribers and call
 		// process_open
@@ -178,7 +178,7 @@ public abstract class AbstractPipe<R extends IStreamObject<?>, W extends IStream
 	
 	@Override
 	final public void suspend(ISink<? super W> caller, int sourcePort, int sinkPort,
-			List<PhysicalSubscription<ISink<?>>> callPath,
+			List<AbstractPhysicalSubscription<ISink<?>>> callPath,
 			List<IOperatorOwner> forOwners) {
 		super.suspend(caller, sourcePort, sinkPort, callPath, forOwners);
 		this.delegateSink.suspend(callPath, forOwners);
@@ -186,7 +186,7 @@ public abstract class AbstractPipe<R extends IStreamObject<?>, W extends IStream
 
 	@Override
 	final public void resume(ISink<? super W> caller, int sourcePort, int sinkPort,
-			List<PhysicalSubscription<ISink<?>>> callPath,
+			List<AbstractPhysicalSubscription<ISink<?>>> callPath,
 			List<IOperatorOwner> forOwners) {
 		super.resume(caller, sourcePort, sinkPort, callPath, forOwners);
 		this.delegateSink.resume(callPath, forOwners);
@@ -240,7 +240,7 @@ public abstract class AbstractPipe<R extends IStreamObject<?>, W extends IStream
 
 	@Override
 	final public void close(ISink<? super W> caller, int sourcePort,
-			int sinkPort, List<PhysicalSubscription<ISink<?>>> callPath,
+			int sinkPort, List<AbstractPhysicalSubscription<ISink<?>>> callPath,
 			List<IOperatorOwner> forOwners) {
 		// logger.trace("CLOSE "+getName());
 		this.delegateSink.close(callPath, forOwners);
@@ -344,29 +344,29 @@ public abstract class AbstractPipe<R extends IStreamObject<?>, W extends IStream
 	}
 
 	protected void newSourceSubscribed(
-			PhysicalSubscription<ISource<? extends R>> sub) {
+			AbstractPhysicalSubscription<ISource<? extends R>> sub) {
 		// Override if needed
 	}
 
 	@Override
 	public void unsubscribeFromSource(
-			PhysicalSubscription<ISource<? extends R>> subscription) {
+			AbstractPhysicalSubscription<ISource<? extends R>> subscription) {
 		this.delegateSink.unsubscribeFromSource(subscription);
 		// Override if needed
 	}
 
 	protected void sourceUnsubscribed(
-			PhysicalSubscription<ISource<? extends R>> sub) {
+			AbstractPhysicalSubscription<ISource<? extends R>> sub) {
 	}
 
 	@Override
-	public PhysicalSubscription<ISource<? extends R>> getSubscribedToSource(
+	public AbstractPhysicalSubscription<ISource<? extends R>> getSubscribedToSource(
 			int port) {
 		return this.delegateSink.getSubscribedToSource(port);
 	}
 
 	@Override
-	final public List<PhysicalSubscription<ISource<? extends R>>> getSubscribedToSource() {
+	final public List<AbstractPhysicalSubscription<ISource<? extends R>>> getSubscribedToSource() {
 		return Collections.unmodifiableList(delegateSink
 				.getSubscribedToSource());
 	}
@@ -444,9 +444,9 @@ public abstract class AbstractPipe<R extends IStreamObject<?>, W extends IStream
 		@SuppressWarnings("unchecked")
 		AbstractPipe<R, W> other = (AbstractPipe<R, W>) o;
 
-		Collection<PhysicalSubscription<ISource<? extends R>>> thisSubs = this
+		Collection<AbstractPhysicalSubscription<ISource<? extends R>>> thisSubs = this
 				.getSubscribedToSource();
-		Collection<PhysicalSubscription<ISource<? extends R>>> otherSubs = other
+		Collection<AbstractPhysicalSubscription<ISource<? extends R>>> otherSubs = other
 				.getSubscribedToSource();
 
 		// Unterschiedlich viele Quellen
@@ -455,9 +455,9 @@ public abstract class AbstractPipe<R extends IStreamObject<?>, W extends IStream
 		}
 
 		// Iteration �ber die Subscriptions zu Quellen
-		for (PhysicalSubscription<?> s1 : thisSubs) {
+		for (AbstractPhysicalSubscription<?> s1 : thisSubs) {
 			boolean foundmatch = false;
-			for (PhysicalSubscription<?> s2 : otherSubs) {
+			for (AbstractPhysicalSubscription<?> s2 : otherSubs) {
 				if (s1.equals(s2)) {
 
 					// // Subscription enth�lt gleiche Quelle und gleiche
@@ -487,7 +487,7 @@ public abstract class AbstractPipe<R extends IStreamObject<?>, W extends IStream
 	@Override
 	public SDFMetaAttributeList getMetaAttributeSchema() {
 		if (!this.metadataCalculated) {
-			for (PhysicalSubscription<ISource<? extends R>> sub : this
+			for (AbstractPhysicalSubscription<ISource<? extends R>> sub : this
 					.getSubscribedToSource()) {
 				this.metadataAttributeSchema = SDFMetaAttributeList.union(
 						this.metadataAttributeSchema, sub.getTarget()

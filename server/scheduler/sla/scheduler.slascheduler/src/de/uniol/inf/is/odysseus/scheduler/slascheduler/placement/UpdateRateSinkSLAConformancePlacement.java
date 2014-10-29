@@ -25,7 +25,7 @@ import de.uniol.inf.is.odysseus.core.ISubscribable;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
-import de.uniol.inf.is.odysseus.core.physicaloperator.PhysicalSubscription;
+import de.uniol.inf.is.odysseus.core.physicaloperator.AbstractPhysicalSubscription;
 import de.uniol.inf.is.odysseus.core.planmanagement.IOwnedOperator;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.scheduler.slascheduler.ISLAConformance;
@@ -59,14 +59,14 @@ public class UpdateRateSinkSLAConformancePlacement implements
 		if (root.isSource()) { // Source or Pipe
 			op = root;
 		} else if (root.isSink() && !root.isSource()) { // Sink
-			PhysicalSubscription<? extends ISource<?>> s = ((ISink<?>) root).getSubscribedToSource().iterator().next();
+			AbstractPhysicalSubscription<? extends ISource<?>> s = ((ISink<?>) root).getSubscribedToSource().iterator().next();
 			op = s.getTarget();
 		} else
 			throw new RuntimeException("Cannot connect SLA conformance operator to query root: " + root);
 		
 		// TODO: Find another solution
 		if (op.getClass().getName().endsWith("BenchmarkResultPO")) {
-			PhysicalSubscription<? extends ISource<?>> s = ((ISink<?>) op).getSubscribedToSource().iterator().next();
+			AbstractPhysicalSubscription<? extends ISource<?>> s = ((ISink<?>) op).getSubscribedToSource().iterator().next();
 			op = s.getTarget();
 		}
 		

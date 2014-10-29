@@ -15,7 +15,7 @@ import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
-import de.uniol.inf.is.odysseus.core.physicaloperator.PhysicalSubscription;
+import de.uniol.inf.is.odysseus.core.physicaloperator.AbstractPhysicalSubscription;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.TimeValueItem;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.logicaloperator.LoadBalancingSynchronizerAO;
@@ -238,7 +238,7 @@ public class LoadBalancingSynchronizerPO<T extends IStreamObject<? extends ITime
 	/**
 	 * Finishes the synchronization by doing the following steps: <br />
 	 * - switch {@link #transferPort} - call
-	 * {@link PhysicalSubscription#setDone(boolean)} - call
+	 * {@link AbstractPhysicalSubscription#setDone(boolean)} - call
 	 * {@link #fireFinishEvent(int)}
 	 */
 	private void finishSynchroization() {
