@@ -35,6 +35,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.SelectAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.StateMapAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.StreamAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TimeWindowAO;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.TimestampAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TopAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TupleAggregateAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.WindowAO;
@@ -505,6 +506,15 @@ public class OperatorBuildHelper {
 		selectAO.subscribeTo(source, source.getOutputSchema());
 		return selectAO;
 	}
+	
+	public static TimestampAO clearEndTimestamp(ILogicalOperator source){
+		TimestampAO timeStampAO = new TimestampAO();
+		timeStampAO.setClearEnd(true);
+		
+		timeStampAO.subscribeTo(source, source.getOutputSchema());
+		
+		return timeStampAO;
+	}
 
 	/**
 	 * Creates a SelectAO with given timeParameter. Automatically build a
@@ -723,7 +733,7 @@ public class OperatorBuildHelper {
 		List<String> groupingAttributes = new ArrayList<String>();
 		groupingAttributes.add(groupBy);
 		return createAggregateAO(aggregationFunction, groupingAttributes,
-				inputAttributeName, outputAttributeName, outputType, source);
+				inputAttributeName, outputAttributeName, outputType, source, -1);
 	}
 
 	/**
@@ -747,7 +757,7 @@ public class OperatorBuildHelper {
 	public static AggregateAO createAggregateAO(String aggregationFunction,
 			List<String> groupBy, String inputAttributeName,
 			String outputAttributeName, String outputType,
-			ILogicalOperator source) {
+			ILogicalOperator source, int dumpAtValueCount) {
 		
 		List<String> aggregationFunctions = new ArrayList<String>();
 		aggregationFunctions.add(aggregationFunction);
@@ -758,8 +768,10 @@ public class OperatorBuildHelper {
 		List<String> outputTypes = new ArrayList<String>();
 		outputTypes.add(outputType);
 		return createAggregateAO(aggregationFunctions, groupBy,
-				inputAttributeNames, outputAttributeNames, outputTypes, source);
+				inputAttributeNames, outputAttributeNames, outputTypes, source, dumpAtValueCount);
 	}
+	
+	
 	
 	/**
 	 * Creates an AggregateAO with the specified output type
@@ -782,8 +794,12 @@ public class OperatorBuildHelper {
 	public static AggregateAO createAggregateAO(List<String> aggregationFunctions,
 			List<String> groupBys, List<String> inputAttributeNames,
 			List<String> outputAttributeNames, List<String> outputTypes,
-			ILogicalOperator source) {
+			ILogicalOperator source, int dumpAtValueCount) {
 		AggregateAO aggregateAO = new AggregateAO();
+		
+		if(dumpAtValueCount != -1){
+			aggregateAO.setDumpAtValueCount(dumpAtValueCount);
+		}
 		
 		
 		List<AggregateItem> aggregateItems = new ArrayList<AggregateItem>();
@@ -1875,4 +1891,7 @@ public class OperatorBuildHelper {
 				predicateExpression);
 		return finishedPredicate;
 	}
+	
+	
+
 }

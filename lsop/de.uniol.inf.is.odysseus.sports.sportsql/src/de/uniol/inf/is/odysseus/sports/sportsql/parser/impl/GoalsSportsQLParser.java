@@ -173,7 +173,7 @@ public class GoalsSportsQLParser implements ISportsQLParser {
 
 		return OperatorBuildHelper.createAggregateAO(
 				functions3, null, inputAttributeNames3, outputAttributeNames3,
-				outputTypes, input);
+				outputTypes, input, -1);
 	}
 
 	private List<SDFExpressionParameter> getExpressionForInGoal(

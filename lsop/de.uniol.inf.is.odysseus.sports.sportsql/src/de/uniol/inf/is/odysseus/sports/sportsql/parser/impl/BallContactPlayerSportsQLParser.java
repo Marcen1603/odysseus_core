@@ -64,13 +64,10 @@ public class BallContactPlayerSportsQLParser implements ISportsQLParser {
 		
 		StreamAO gameStream = OperatorBuildHelper.createGameStreamAO();
 		allOperators.add(gameStream);
-		
-		StreamAO metaStream = OperatorBuildHelper.createMetadataStreamAO();
-		allOperators.add(metaStream);
-		
+	
 		//Get all ball contacts of every player by using the global parser
 		BallContactGlobalSportsQLParser ballcontactsGlobal = new BallContactGlobalSportsQLParser();	
-		ILogicalOperator globalOutput = ballcontactsGlobal.getOutputOperator(gameStream, metaStream, sportsQL, allOperators);
+		ILogicalOperator globalOutput = ballcontactsGlobal.getOutputOperator(gameStream, sportsQL, allOperators);
 		
 		//Select player
 		SelectAO singlePlayer = OperatorBuildHelper.createEntityIDSelect(sportsQL.getEntityId(), globalOutput);

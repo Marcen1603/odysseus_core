@@ -43,7 +43,8 @@ public class BallContactGlobalSportsQLParser implements ISportsQLParser {
 	/**
 	 * Percentage change of velocity
 	 */
-	private final double velocityChange = 0.15;
+	//private final double velocityChange = 0.15;
+	private final double velocityChange = 0.05;
 
 	/**
 	 * Boolean which describes the relative tolerance
@@ -63,8 +64,7 @@ public class BallContactGlobalSportsQLParser implements ISportsQLParser {
 		ArrayList<ILogicalOperator> allOperators = new ArrayList<ILogicalOperator>();
 
 		ILogicalOperator output = getOutputOperator(
-				OperatorBuildHelper.createGameStreamAO(),
-				OperatorBuildHelper.createMetadataStreamAO(), sportsQL,
+				OperatorBuildHelper.createGameStreamAO(), sportsQL,
 				allOperators);
 
 		return OperatorBuildHelper.finishQuery(output, allOperators,
@@ -100,10 +100,14 @@ public class BallContactGlobalSportsQLParser implements ISportsQLParser {
 				.createExpressionParameter("ToPoint(x,y,z)", "player_pos",
 						source);
 		SDFExpressionParameter ex2 = OperatorBuildHelper
-				.createExpressionParameter("sid", "sid", source);
+				.createExpressionParameter("entity_id", "entity_id", source);
+		
+		SDFExpressionParameter ex3 = OperatorBuildHelper
+				.createExpressionParameter("team_id", "team_id", source);
 
 		expressions.add(ex1);
 		expressions.add(ex2);
+		expressions.add(ex3);
 		return expressions;
 	}
 
@@ -122,8 +126,7 @@ public class BallContactGlobalSportsQLParser implements ISportsQLParser {
 	 */
 	@SuppressWarnings("rawtypes")
 	public ILogicalOperator getOutputOperator(
-			ILogicalOperator soccerGameStreamAO,
-			ILogicalOperator metadataStreamAO, SportsQLQuery sportsQL,
+			ILogicalOperator soccerGameStreamAO, SportsQLQuery sportsQL,
 			List<ILogicalOperator> allOperators) throws NumberFormatException, MissingDDCEntryException {
 
 		// List of predicates to use in single operators
@@ -146,13 +149,13 @@ public class BallContactGlobalSportsQLParser implements ISportsQLParser {
 		allOperators.add(game_after_start);
 
 		ILogicalOperator game_space = OperatorBuildHelper.createSpaceSelect(
-				spaceParameter, true, game_after_start);
+				spaceParameter, false, game_after_start);
 		allOperators.add(game_space);
 
 		// get only ball sensors
 		List<IPredicate> ballPredicates = new ArrayList<IPredicate>();
 		for(int sensorId : AbstractSportsDDCAccess.getBallEntityIds()) {
-			IPredicate ballPredicate = OperatorBuildHelper.createRelationalPredicate("sid = " + sensorId);
+			IPredicate ballPredicate = OperatorBuildHelper.createRelationalPredicate("entity_id = " + sensorId);
 			ballPredicates.add(ballPredicate);
 		}		
 		List<IPredicate<?>> predicatesBall = new ArrayList<IPredicate<?>>();
@@ -163,13 +166,9 @@ public class BallContactGlobalSportsQLParser implements ISportsQLParser {
 		allOperators.add(split_balls);
 		predicates.clear();
 
-		// Detect changes of the velocity of the ball
-		attributes.add("vx");
-		attributes.add("vy");
-		attributes.add("vz");
-
+		attributes.add("v");		
 		ArrayList<String> groupBy = new ArrayList<String>();
-		groupBy.add("sid");
+		groupBy.add("entity_id");
 
 		ILogicalOperator ball_velocity_changes = OperatorBuildHelper
 				.createChangeDetectAO(attributes, OperatorBuildHelper
@@ -185,9 +184,10 @@ public class BallContactGlobalSportsQLParser implements ISportsQLParser {
 		allOperators.add(ball_position_map);
 
 		// window size = 1, advance = 1
-		ILogicalOperator ball_window = OperatorBuildHelper.createElementWindowAO(
-				1, 1, ball_position_map);
-		allOperators.add(ball_window);
+	//	ILogicalOperator ball_window = OperatorBuildHelper.createElementWindowAO(
+	//			1, 1, ball_position_map);
+//		allOperators.add(ball_window);
+		
 
 		// Get position of players in game
 		ILogicalOperator players_position_map = OperatorBuildHelper
@@ -203,32 +203,38 @@ public class BallContactGlobalSportsQLParser implements ISportsQLParser {
 		// Join the sources and show only values if ball is near to a player
 		predicates.add("SpatialDistance(ball_pos,player_pos)<" + radius);
 		ILogicalOperator proximity_join = OperatorBuildHelper.createJoinAO(
-				predicates, players_window, ball_window);
+	//			predicates, players_window, ball_window);
+				predicates, players_window, ball_position_map);
+				
 		allOperators.add(proximity_join);
 		predicates.clear();
 
 		// Delete duplicates
-		attributes.add("sid");
+		attributes.add("entity_id");
 		ILogicalOperator delete_duplicates = OperatorBuildHelper
 				.createChangeDetectAO(OperatorBuildHelper.createAttributeList(
 						attributes, proximity_join), 0.0, proximity_join);
 		allOperators.add(delete_duplicates);
 		attributes.clear();
 
-		// enrich data
-		ILogicalOperator enriched_proximity = OperatorBuildHelper
-				.createEnrichAO("sid=sensorid", delete_duplicates,
-						metadataStreamAO);
-		allOperators.add(enriched_proximity);
-
 		// Detect changes in entity_id if another player hits the ball
 		attributes.add("entity_id");
-		ILogicalOperator output = OperatorBuildHelper.createChangeDetectAO(
+		ILogicalOperator ballContactDetected = OperatorBuildHelper.createChangeDetectAO(
 				OperatorBuildHelper.createAttributeList(attributes,
-						enriched_proximity), 0.0, enriched_proximity);
-		allOperators.add(output);
+						delete_duplicates), 0.0, delete_duplicates);
+		allOperators.add(ballContactDetected);
 		attributes.clear();
+		
+		ILogicalOperator clearEndTimestamp = OperatorBuildHelper.clearEndTimestamp(ballContactDetected);
+		allOperators.add(clearEndTimestamp);	
 
-		return output;
+		List<String> groupCount = new ArrayList<String>();
+		groupCount.add("entity_id");
+		groupCount.add("team_id");
+		
+		ILogicalOperator countOutput = OperatorBuildHelper.createAggregateAO("count", groupCount, "entity_id", "ballContactCount", "Integer", clearEndTimestamp, 1);
+		allOperators.add(countOutput);
+	
+		return countOutput;
 	}
 }

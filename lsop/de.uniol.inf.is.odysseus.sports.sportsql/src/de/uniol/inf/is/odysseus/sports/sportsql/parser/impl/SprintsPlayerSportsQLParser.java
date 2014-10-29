@@ -167,7 +167,7 @@ public class SprintsPlayerSportsQLParser implements ISportsQLParser {
 
 		AggregateAO aggregate = OperatorBuildHelper.createAggregateAO(
 				functions, null, inputAttributeNames, outputAttributeNames,
-				null, timeWindow);
+				null, timeWindow,-1);
 		allOperators.add(aggregate);
 
 		// 8. MAP
@@ -619,7 +619,7 @@ public class SprintsPlayerSportsQLParser implements ISportsQLParser {
 
 		AggregateAO aggregate2 = OperatorBuildHelper.createAggregateAO(
 				functions2, null, inputAttributeNames2, outputAttributeNames2,
-				null, timeWindow2);
+				null, timeWindow2, -1);
 
 		allOperators.add(aggregate2);
 
@@ -736,7 +736,7 @@ public class SprintsPlayerSportsQLParser implements ISportsQLParser {
 
 		AggregateAO aggregate3 = OperatorBuildHelper.createAggregateAO(
 				functions3, null, inputAttributeNames3, outputAttributeNames3,
-				null, timeWindow3);
+				null, timeWindow3, -1);
 
 		allOperators.add(aggregate3);
 
