@@ -13,8 +13,8 @@ public class RPiGPIOSensor extends Sensor {
 	private String pin;
 
 	public RPiGPIOSensor(String name, String rawSourceName,
-			String sourceNamePostfix) {
-		super(name, rawSourceName, sourceNamePostfix);
+			String sourceNamePrefix, String sourceNamePostfix) {
+		super(name, rawSourceName, sourceNamePrefix, sourceNamePostfix);
 
 		init();
 	}

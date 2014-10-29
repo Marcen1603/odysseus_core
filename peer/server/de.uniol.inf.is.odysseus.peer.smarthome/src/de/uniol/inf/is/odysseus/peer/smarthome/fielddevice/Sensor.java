@@ -17,12 +17,14 @@ public abstract class Sensor implements FieldDevice, Serializable {
 	private Map<String, ActivityInterpreter> activityInterpreters = Maps.newHashMap();
 	private String queryForActivityInterpreter;
 	private String sourceNamePostfix;
+	private String sourceNamePrefix;
 	
-	public Sensor(String name, String sourceName, String sourceNamePostfix) {
+	public Sensor(String name, String sourceName, String sourceNamePrefix, String sourceNamePostfix) {
 		this.setName(name);
-		this.setRawSourceName(sourceName+"_"+sourceNamePostfix);
-		this.setActivitySourceName(sourceName+"Activity_"+sourceNamePostfix);
+		this.setRawSourceName(sourceNamePrefix+"_"+sourceName+"_Raw_"+sourceNamePostfix);
+		this.setActivitySourceName(sourceNamePrefix+"_"+sourceName+"_Activity_"+sourceNamePostfix);
 		this.setSourceNamePostfix(sourceNamePostfix);
+		this.setSourceNamePrefix(sourceNamePrefix);
 	}
 	protected void setActivitySourceName(String name) {
 		this.activitySourceName = name;
@@ -88,5 +90,11 @@ public abstract class Sensor implements FieldDevice, Serializable {
 	}
 	public void setSourceNamePostfix(String sourceNamePostfix) {
 		this.sourceNamePostfix = sourceNamePostfix;
+	}
+	public String getSourceNamePrefix() {
+		return sourceNamePrefix;
+	}
+	public void setSourceNamePrefix(String sourceNamePrefix) {
+		this.sourceNamePrefix = sourceNamePrefix;
 	}
 }

@@ -13,18 +13,21 @@ import org.slf4j.LoggerFactory;
 import de.uniol.inf.is.odysseus.peer.smarthome.fielddevice.SmartDevice;
 
 public class SmartDeviceDictionary {
+
+	private long GARBAGE_COLLECTOR_REPEAT_TIME_MS = 30000;
+	private long SMART_DEVICE_AVAILABLE_AFTER_LAST_HEARTBEAT_MS = 30000;
+
 	private static final Logger LOG = LoggerFactory
 			.getLogger(SmartDeviceDictionary.class);
 	private Map<String, SmartDevice> smartDevices = Maps.newHashMap();
 	private Map<String, Long> smartDevicesHeartBeat = Maps.newHashMap();
 	private final List<ISmartDeviceDictionaryListener> listeners = Lists
 			.newArrayList();
-	private long GARBAGE_COLLECTOR_REPEAT_TIME_MS = 30000;
-	private long SMART_DEVICE_AVAILABLE_AFTER_LAST_HEARTBEAT_MS = 60000;
-	private long lastGarbageCollectorTime=0;
+
+	private long lastGarbageCollectorTime = 0;
 
 	public SmartDeviceDictionary() {
-		//cleanupAsync();
+		cleanupAsync();
 	}
 
 	protected void cleanupAsync() {
@@ -36,7 +39,7 @@ public class SmartDeviceDictionary {
 						Thread.sleep(GARBAGE_COLLECTOR_REPEAT_TIME_MS);
 					} catch (InterruptedException e) {
 					}
-					
+
 					cleanup();
 				}
 			}
@@ -47,16 +50,13 @@ public class SmartDeviceDictionary {
 	}
 
 	private void cleanup() {
-		LOG.debug("cleanup()");
-		//TODO: bug fix
 		try {
-			long deltaGarbage = System.currentTimeMillis() - lastGarbageCollectorTime;
-			
+			long deltaGarbage = System.currentTimeMillis()
+					- lastGarbageCollectorTime;
+
 			if (deltaGarbage > GARBAGE_COLLECTOR_REPEAT_TIME_MS) {
 				lastGarbageCollectorTime = System.currentTimeMillis();
-				
-				LOG.debug("cleanup() run");
-				
+
 				synchronized (getSmartDevicesHeartBeat()) {
 					for (Entry<String, Long> smartDeviceEntry : getSmartDevicesHeartBeat()
 							.entrySet()) {
@@ -65,47 +65,58 @@ public class SmartDeviceDictionary {
 
 						long delta = System.currentTimeMillis()
 								- SMART_DEVICE_AVAILABLE_AFTER_LAST_HEARTBEAT_MS;
-						if (heartBeat > delta) {
+
+						LOG.debug("cleanup() heartBeat:" + heartBeat
+								+ " delta:" + delta);
+
+						if (heartBeat < delta) {
 							removeSmartDevice(peerId);
 						}
 					}
 				}
-			}else if(lastGarbageCollectorTime==0){
+			} else if (lastGarbageCollectorTime == 0) {
 				lastGarbageCollectorTime = System.currentTimeMillis();
 			}
 		} catch (Exception ex) {
 			LOG.error(ex.getMessage(), ex);
 		}
 	}
-	
-	public void addSmartDevice(SmartDevice smartDevice) {
-		if (!getSmartDevices().containsKey(smartDevice.getPeerIDString())) {
-			String value;
+
+	public void addSmartDevice(SmartDevice newSmartDevice) {
+		if (!getSmartDevices().containsKey(newSmartDevice.getPeerIDString())) {
+			// Add new SmartDevice
 			try {
-				value = smartDevice.getPeerID().intern().toString();
-				if (!value.equals("")) {
+				String smartDevicePeerID = newSmartDevice.getPeerID().intern()
+						.toString();
+				if (smartDevicePeerID != null && !smartDevicePeerID.equals("")) {
 					synchronized (getSmartDevices()) {
-						getSmartDevices().put(value != null ? value : "",
-								smartDevice);
+						getSmartDevices()
+								.put(smartDevicePeerID, newSmartDevice);
+						refreshHeartBeat(newSmartDevice);
 					}
-					refreshHeartBeat(smartDevice.getPeerIDString());
-					fireSmartDeviceAddEvent(smartDevice);
+					fireSmartDeviceAddEvent(newSmartDevice);
+				} else {
+
 				}
 			} catch (Exception e) {
 				LOG.debug(e.getMessage(), e);
 			}
 		} else {
+			// Update existing SmartDevice
 			SmartDevice existingSmartDevice = getSmartDevices().get(
-					smartDevice.getPeerIDString());
+					newSmartDevice.getPeerIDString());
 
-			existingSmartDevice.overwriteWith(smartDevice);
-			refreshHeartBeat(existingSmartDevice.getPeerIDString());
+			synchronized (getSmartDevices()) {
+				existingSmartDevice.overwriteWith(newSmartDevice);
+				refreshHeartBeat(existingSmartDevice);
+			}
 			fireSmartDeviceUpdatedEvent(existingSmartDevice);
 		}
 	}
 
 	private synchronized void removeSmartDevice(String smartDevicePeerID) {
-		LOG.debug("removeSmartDevice");
+		LOG.debug("removeSmartDevice peerID:" + smartDevicePeerID);
+
 		SmartDevice smartDeviceToRemove = getSmartDevices().get(
 				smartDevicePeerID);
 
@@ -115,7 +126,8 @@ public class SmartDeviceDictionary {
 		fireSmartDeviceRemovedEvent(smartDeviceToRemove);
 	}
 
-	private synchronized void refreshHeartBeat(String smartDevicePeerID) {
+	private synchronized void refreshHeartBeat(SmartDevice smartDevice) {
+		String smartDevicePeerID = smartDevice.getPeerIDString();
 		synchronized (this.smartDevicesHeartBeat) {
 			Long currentTime = new Long(System.currentTimeMillis());
 			getSmartDevicesHeartBeat().put(smartDevicePeerID, currentTime);
@@ -178,8 +190,7 @@ public class SmartDeviceDictionary {
 	}
 
 	public Map<String, SmartDevice> getSmartDevices() {
-		//cleanup();
-		
+		// cleanup();
 		return smartDevices;
 	}
 

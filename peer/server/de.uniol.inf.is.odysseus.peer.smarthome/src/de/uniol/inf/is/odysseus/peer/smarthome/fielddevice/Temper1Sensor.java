@@ -9,8 +9,8 @@ public class Temper1Sensor extends Sensor {
 
 	// private String queryForRawValues;
 
-	public Temper1Sensor(String name, String sourceName, String sourceNamePostfix) {
-		super(name, sourceName, sourceNamePostfix);
+	public Temper1Sensor(String name, String sourceName, String sourceNamePrefix, String sourceNamePostfix) {
+		super(name, sourceName, sourceNamePrefix, sourceNamePostfix);
 
 		init();
 	}
@@ -28,7 +28,7 @@ public class Temper1Sensor extends Sensor {
 		
 		//Activity: hot
 		//Configuration:
-		String activityConfiguration = "Temper1ActivityConfiguration_"+getSourceNamePostfix();
+		String activityConfiguration = getSourceNamePrefix()+"_"+getName()+"_ActivityConfiguration_"+getSourceNamePostfix();
 		sBuilder.append("#RUNQUERY\n");
 		sBuilder.append("    "+activityConfiguration+" := ACCESS({\n");
 		sBuilder.append("    transport = 'activityconfiguration',\n");
