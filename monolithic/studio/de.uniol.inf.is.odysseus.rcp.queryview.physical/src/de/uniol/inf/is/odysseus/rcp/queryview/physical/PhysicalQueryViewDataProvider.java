@@ -95,6 +95,7 @@ public class PhysicalQueryViewDataProvider implements IQueryViewDataProvider,
 				PhysicalQueryViewData data = (PhysicalQueryViewData) optData
 						.get();
 				data.setStatus(query.getState().name());
+				data.setStartTS(query.getQueryStartTS());
 				view.refreshData(queryID);
 			}
 		}
@@ -189,6 +190,6 @@ public class PhysicalQueryViewDataProvider implements IQueryViewDataProvider,
 		return new PhysicalQueryViewData(query.getID(),
 				query.getState().name(), query.getPriority(), query
 						.getLogicalQuery().getParserId(), getQueryUser(query),
-				query.getLogicalQuery().getQueryText(), query.getName());
+				query.getLogicalQuery().getQueryText(), query.getName(), query.getQueryStartTS());
 	}
 }

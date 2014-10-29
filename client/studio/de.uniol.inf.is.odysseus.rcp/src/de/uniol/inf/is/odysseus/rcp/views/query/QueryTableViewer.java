@@ -15,7 +15,9 @@
  ******************************************************************************/
 package de.uniol.inf.is.odysseus.rcp.views.query;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -42,6 +44,8 @@ public class QueryTableViewer extends TableViewer {
 			.put(OdysseusNLS.Active.toLowerCase(), 2)
 			.put(OdysseusNLS.Inactive.toLowerCase(), 1)
 			.build();
+	
+	private static final SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm:ss:SSSS yyyy-MM-dd");
 
 	public QueryTableViewer(Composite parent, int style) {
 		super(parent, style);
@@ -190,6 +194,37 @@ public class QueryTableViewer extends TableViewer {
 			}
 		};
 
+		/************* Query Start ***************/
+		TableViewerColumn queryStartColumn = new TableViewerColumn(this, SWT.NONE);
+		queryStartColumn.getColumn().setText(OdysseusNLS.QueryStart);
+		// queryTextColumn.getColumn().setWidth(400);
+		queryStartColumn.setLabelProvider(new CellLabelProvider() {
+			@Override
+			public void update(ViewerCell cell) {
+				IQueryViewData query = (IQueryViewData) cell.getElement();
+				long start = query.getStartTS();
+				final String text;
+				if (start > 0){
+					text = dateFormat.format(new Date(start));
+				}else{
+					text = "--";
+				}
+				cell.setText(text);
+			}
+		});
+		tableColumnLayout.setColumnData(queryStartColumn.getColumn(), new ColumnWeightData(5, 25, true));
+		new ColumnViewerSorter(this, queryStartColumn) {
+			@Override
+			protected int doCompare(Viewer viewer, Object e1, Object e2) {
+				IQueryViewData q1 = (IQueryViewData) e1;
+				IQueryViewData q2 = (IQueryViewData) e2;
+				Long s1 = q1.getStartTS();
+				Long s2 = q2.getStartTS();
+
+				return s1.compareTo(s2);
+			}
+		};
+		
 		/************* Query Text ****************/
 		TableViewerColumn queryTextColumn = new TableViewerColumn(this, SWT.NONE);
 		queryTextColumn.getColumn().setText(OdysseusNLS.QueryText);

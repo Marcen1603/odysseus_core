@@ -192,7 +192,12 @@ IReoptimizeRequester<AbstractQueryReoptimizeRule>, IOperatorOwner, IHasRoots, IQ
 
 	void resume();
 
+	/**
+	 * 
+	 * @return 
+	 */
 	QueryState getState();
+	
 	long getLastQueryStateChangeTS();
 
 	/**
@@ -200,5 +205,11 @@ IReoptimizeRequester<AbstractQueryReoptimizeRule>, IOperatorOwner, IHasRoots, IQ
 	 * @param sheddingFactor
 	 */
 	void partial(int sheddingFactor);
+
+	/**
+	 * System time that the query was started the last time (if stopped)
+	 * @return
+	 */
+	long getQueryStartTS();
 
 }

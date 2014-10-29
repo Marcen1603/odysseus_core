@@ -20,6 +20,7 @@ public interface IQueryViewData {
     public int getId();
     public String getName();
     public String getStatus();
+    public long getStartTS();
     public int getPriority();
     public String getParserId();
     public String getUserName();

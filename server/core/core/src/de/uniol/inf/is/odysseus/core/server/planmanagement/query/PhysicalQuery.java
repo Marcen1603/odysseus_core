@@ -161,6 +161,7 @@ public class PhysicalQuery implements IPhysicalQuery {
 	// private boolean opened = false;
 	private QueryState queryState = QueryState.INACTIVE;
 	private long queryStateChangeTS = System.currentTimeMillis(); // INACTIVE is also a state change...
+	private long queryStartedTS = -1;
 
 	/**
 	 * Who has send the query
@@ -515,6 +516,7 @@ public class PhysicalQuery implements IPhysicalQuery {
 				curRoot.open(this);
 			}
 			setState(nextState);
+			queryStartedTS = System.currentTimeMillis();
 			this.isStarting = false;
 		} catch (IllegalStateException e) {
 			e.printStackTrace();
@@ -640,6 +642,11 @@ public class PhysicalQuery implements IPhysicalQuery {
 		return queryStateChangeTS;
 	}
 
+	@Override
+	public final long getQueryStartTS(){
+		return queryStartedTS;
+	}
+	
 	/*
 	 * (non-Javadoc)
 	 * 

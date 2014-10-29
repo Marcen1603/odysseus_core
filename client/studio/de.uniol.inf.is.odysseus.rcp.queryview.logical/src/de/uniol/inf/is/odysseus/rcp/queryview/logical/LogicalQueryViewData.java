@@ -85,5 +85,10 @@ public class LogicalQueryViewData implements IQueryViewData {
 	public String getName() {
 		return queryName;
 	}
+	
+	@Override
+	public long getStartTS() {
+		return -1;
+	}
 
 }

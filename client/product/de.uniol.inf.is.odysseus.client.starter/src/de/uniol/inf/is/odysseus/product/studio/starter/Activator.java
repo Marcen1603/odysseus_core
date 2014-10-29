@@ -45,6 +45,10 @@ public class Activator extends AbstractUIPlugin {
 					if (bundle != context.getBundle() && !isFragment && bundle.getState() == Bundle.RESOLVED) {
 						try {
 							bundle.start();
+						}catch (IllegalStateException e){
+							if (!e.getMessage().startsWith("Workbench has not been created")){
+								e.printStackTrace();
+							}
 						} catch (Exception e) {
 							e.printStackTrace();
 						}

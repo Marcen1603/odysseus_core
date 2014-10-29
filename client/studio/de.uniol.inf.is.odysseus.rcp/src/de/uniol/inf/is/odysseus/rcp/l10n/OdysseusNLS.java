@@ -42,6 +42,7 @@ public class OdysseusNLS extends NLS {
 	public static String Parser;
 	public static String Priority;
 	public static String QueryText;
+	public static String QueryStart;
 	public static String Running;
 	public static String Stopped;
 	public static String Active;

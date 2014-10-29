@@ -84,15 +84,22 @@ public class OdysseusConsole extends AppenderSkeleton {
 
 	@Override
 	protected void append(LoggingEvent event) {
-		if (PlatformUI.isWorkbenchRunning()) {
-			String message = this.layout.format(event);
-			String trace[];
-			outStream.print(message);
-			if ((trace = event.getThrowableStrRep()) != null) {
-				for (int i = 0; i < trace.length; i++) {
-					outStream.println(trace[i]);
+		try {
+			if (PlatformUI.isWorkbenchRunning()) {
+				if (outStream != null && outStream.isClosed()) {
+					createConsole();
+				}
+				String message = this.layout.format(event);
+				String trace[];
+				outStream.print(message);
+				if ((trace = event.getThrowableStrRep()) != null) {
+					for (int i = 0; i < trace.length; i++) {
+						outStream.println(trace[i]);
+					}
 				}
 			}
+		} catch (Exception e) {
+			// ignore
 		}
 	}
 
