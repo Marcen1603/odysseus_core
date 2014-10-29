@@ -18,6 +18,8 @@ package de.uniol.inf.is.odysseus.core.server.logicaloperator.builder;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.google.common.collect.Lists;
+
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.DataDictionaryException;
@@ -32,8 +34,7 @@ public class AggregateItemParameter extends AbstractParameter<AggregateItem> {
 		super();
 	}
 
-	public AggregateItemParameter(String name, REQUIREMENT requirement,
-			USAGE usage) {
+	public AggregateItemParameter(String name, REQUIREMENT requirement, USAGE usage) {
 		super(name, requirement, usage);
 	}
 
@@ -43,64 +44,87 @@ public class AggregateItemParameter extends AbstractParameter<AggregateItem> {
 
 	@SuppressWarnings({ "unchecked", "cast" })
 	@Override
-    protected void internalAssignment() {
-		if( inputValue instanceof AggregateItem ) {
-			setValue((AggregateItem)inputValue);
+	protected void internalAssignment() {
+		if (inputValue instanceof AggregateItem) {
+			setValue((AggregateItem) inputValue);
 			return;
 		}
-		
-        List<String> value = (List<String>) inputValue;
-        if ((value.size() < 3) || (value.size() > 4)) {
-            throw new IllegalParameterException("illegal value for aggregation");
-        }
 
-        String funcStr = value.get(0);
-        List<SDFAttribute> attributes = new ArrayList<>();
-        if (((Object) value.get(1)) instanceof List) {
-            List<String> attributeList = (List<String>) ((Object) value.get(1));
-            for (String attr : attributeList) {
-                attributes.add(getAttributeResolver().getAttribute(attr));
-            }
-        }
-        else {
-            String attributeStr = value.get(1);
-            attributes.add(getAttributeResolver().getAttribute(attributeStr));
-        }
-        String outputName = value.get(2);
-        SDFAttribute outAttr = null;
+		List<String> value = (List<String>) inputValue;
+		if ((value.size() < 3) || (value.size() > 4)) {
+			throw new IllegalParameterException("illegal value for aggregation");
+		}
 
-        try {
-            if (value.size() == 4) {
-                IDataDictionary dd = getDataDictionary();
-                SDFDatatype type;
+		String funcStr = value.get(0);
+		List<SDFAttribute> attributes = new ArrayList<>();
+		if (((Object) value.get(1)) instanceof List) {
+			List<String> attributeList = (List<String>) ((Object) value.get(1));
+			for (String attr : attributeList) {
+				attributes.add(getAttributeResolver().getAttribute(attr));
+			}
+		} else {
+			String attributeStr = value.get(1);
+			attributes.add(getAttributeResolver().getAttribute(attributeStr));
+		}
+		String outputName = value.get(2);
+		SDFAttribute outAttr = null;
 
-                type = dd.getDatatype(value.get(3));
+		try {
+			if (value.size() == 4) {
+				IDataDictionary dd = getDataDictionary();
+				SDFDatatype type;
 
-                outAttr = new SDFAttribute(null, outputName, type, null, null, null);
-            }
-            else {
-                // Fallback to old DOUBLE value for aggregation results
-                IDataDictionary dd = getDataDictionary();
-                SDFDatatype type = dd.getDatatype("double");
-                outAttr = new SDFAttribute(null, outputName, type, null, null, null);
-            }
-        }
-        catch (DataDictionaryException e) {
-            throw new QueryParseException(e.getMessage());
-        }
-        setValue(new AggregateItem(funcStr, attributes, outAttr));
-    }
+				type = dd.getDatatype(value.get(3));
+
+				outAttr = new SDFAttribute(null, outputName, type, null, null, null);
+			} else {
+				// Fallback to old DOUBLE value for aggregation results
+				IDataDictionary dd = getDataDictionary();
+				SDFDatatype type = dd.getDatatype("double");
+				outAttr = new SDFAttribute(null, outputName, type, null, null, null);
+			}
+		} catch (DataDictionaryException e) {
+			throw new QueryParseException(e.getMessage());
+		}
+		setValue(new AggregateItem(funcStr, attributes, outAttr));
+	}
 
 	@SuppressWarnings("unchecked")
 	@Override
 	protected String getPQLStringInternal() {
+		if (inputValue instanceof AggregateItem) {
+
+			AggregateItem a = (AggregateItem) inputValue;
+			StringBuffer pql = new StringBuffer();
+			
+			List<String> value = Lists.newArrayList(a.aggregateFunction.getName());
+			if (a.inAttributes.size() == 1) {
+				value.add(a.inAttributes.get(0).getURI());
+				
+			} else { 
+				String attributes = "[";
+				for (SDFAttribute inAttribute : a.inAttributes) {
+					attributes += "'" + inAttribute.getURI() + "',";
+				}
+				attributes = attributes.substring(0, attributes.length() - 1);
+				attributes += "]";
+
+				value.add(attributes);
+			}
+			value.add(a.outAttribute.getURI());
+
+			pql.append(AggregateItemParameter.getPQLString(value));
+			pql.append(",");
+
+			return pql.substring(0, pql.length() - 1);
+		}
 		return getPQLString((List<String>) inputValue);
 	}
 
 	static public String getPQLString(List<String> value) {
 		StringBuilder sb = new StringBuilder();
 		sb.append("[");
-        sb.append("'").append(value.get(0)).append("','").append((Object) value.get(1)).append("','").append(value.get(2)).append("'");
+		sb.append("'").append(value.get(0)).append("','").append((Object) value.get(1)).append("','").append(value.get(2)).append("'");
 		if (value.size() == 4) {
 			sb.append(",'").append(value.get(3)).append("'");
 		}

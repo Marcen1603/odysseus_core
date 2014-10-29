@@ -22,6 +22,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import com.google.common.collect.Lists;
+
 import de.uniol.inf.is.odysseus.core.collection.Pair;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
@@ -80,6 +82,7 @@ public class AggregateAO extends UnaryLogicalOp {
 		this.drainAtDone = op.drainAtDone;
 		this.fastGrouping  = op.fastGrouping;
 		this.drainAtClose = op.drainAtClose;
+		this.aggregationItems = op.aggregationItems != null ? Lists.newArrayList(op.aggregationItems) : null;
 	}
 
 	public void addAggregation(SDFAttribute attribute,
@@ -165,7 +168,7 @@ public class AggregateAO extends UnaryLogicalOp {
 		}
 		aggregationItems = aggregations;
 	}
-
+	
 	public List<AggregateItem> getAggregationItems() {
 		return aggregationItems;
 	}
