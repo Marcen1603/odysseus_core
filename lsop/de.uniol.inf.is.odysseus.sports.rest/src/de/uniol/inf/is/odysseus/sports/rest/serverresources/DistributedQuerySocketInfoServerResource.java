@@ -13,7 +13,9 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
+import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
 import de.uniol.inf.is.odysseus.sports.distributor.webservice.DistributedQueryHelper;
+import de.uniol.inf.is.odysseus.sports.rest.ExecutorServiceBinding;
 import de.uniol.inf.is.odysseus.sports.rest.dto.AttributeInformation;
 import de.uniol.inf.is.odysseus.sports.rest.dto.DataTransferObject;
 import de.uniol.inf.is.odysseus.sports.rest.dto.DistributedQuerySocketInfo;
@@ -34,6 +36,8 @@ public class DistributedQuerySocketInfoServerResource extends ServerResource imp
 			
 			//get SocketInformation
 			Integer queryId = DistributedQueryHelper.getQueryIdWithTopOperator(sharedQueryId, session);
+			ExecutorServiceBinding.getExecutor().startQuery(queryId, OdysseusRCPPlugIn.getActiveSession());
+			
 			IPhysicalOperator operator = DistributedQueryHelper.getTopOperatorOfQuery(queryId, session);
 			
 			
