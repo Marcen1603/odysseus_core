@@ -2,7 +2,10 @@ package de.uniol.inf.is.odysseus.sports.distributor.webservice;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -49,7 +52,9 @@ public class DistributedQueryHelper {
 	
 	private static WebserviceAdvertisementListener webserviceAdvListener = new WebserviceAdvertisementListener();
 	private static WebserviceAdvertisementSender webserviceAdvSender = new WebserviceAdvertisementSender();
+	private static QueryDistributionListener queryDistributionListener = new QueryDistributionListener();
 
+	
 	private static final Logger LOG = LoggerFactory.getLogger(DistributedQueryHelper.class);
 
 	
@@ -62,20 +67,8 @@ public class DistributedQueryHelper {
 	 */
 	public static DistributedQueryInfo executeQuery(String query,
 			ISession activeSession, String queryBuildConfigurationName) {
-		QueryDistributionListener listener = QueryDistributionListener.newInstance();
-		QueryDistributionNotifier.bindListener(listener);
 		serverExecutor.addQuery(query, "OdysseusScript", activeSession, queryBuildConfigurationName, Context.empty());
-		int loops = 10;
-		while (listener.getDistributedQueryInfo() == null && loops > 0) {
-			loops--;
-			try {
-				Thread.sleep(1000);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-		}
-		QueryDistributionNotifier.unbindListener(listener);
-		return listener.getDistributedQueryInfo();
+		return queryDistributionListener.getNextDistributedQueryInfo();
 	}
 
 	/**
@@ -188,6 +181,7 @@ public class DistributedQueryHelper {
 			registerAdvertisementTypes();
 			p2pNetworkManager.addAdvertisementListener(webserviceAdvListener);
 			webserviceAdvSender.publishWebserviceAdvertisement(jxtaServicesProvider, p2pNetworkManager.getLocalPeerID());
+			QueryDistributionNotifier.bindListener(queryDistributionListener);
 		}
 		
 		private void registerAdvertisementTypes() {
@@ -198,17 +192,13 @@ public class DistributedQueryHelper {
 
 		@Override
 		public void networkStopped(IP2PNetworkManager p2pNetworkManager) {
-			
+			QueryDistributionNotifier.unbindListener(queryDistributionListener);
 		}
 		
 	}
 	
 	private static class QueryDistributionListener extends AbstractQueryDistributionListener {
-		private DistributedQueryInfo info;
-		
-		public static QueryDistributionListener newInstance() {
-			return new QueryDistributionListener();
-		}
+		private List<DistributedQueryInfo> distributedQueryInfoList = Collections.synchronizedList(new ArrayList<DistributedQueryInfo>());
 		
 		@Override
 		public void afterTransmission(ILogicalQuery query,Map<ILogicalQueryPart, PeerID> allocationMap,	ID sharedQueryId) {
@@ -228,7 +218,7 @@ public class DistributedQueryHelper {
 						info.setSharedQueryId(sharedQueryIdString);
 						info.setTopOperatorPeerIP(ip);
 						info.setQueryDistributed(true);
-						this.info = info;
+						distributedQueryInfoList.add(info);
 						return;
 					}
 				}
@@ -243,8 +233,21 @@ public class DistributedQueryHelper {
 			}
 		}
 		
-		public DistributedQueryInfo getDistributedQueryInfo() {
-			return this.info;
+		public synchronized DistributedQueryInfo getNextDistributedQueryInfo() {			
+			int loops = 10;
+			while (distributedQueryInfoList.size() == 0 && loops > 0) {
+				loops--;
+				try {
+					Thread.sleep(500);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+			}
+			if (distributedQueryInfoList.size()>0) {
+				return distributedQueryInfoList.remove(0);
+			} else {
+				return null;
+			}
 		}
 	}
 

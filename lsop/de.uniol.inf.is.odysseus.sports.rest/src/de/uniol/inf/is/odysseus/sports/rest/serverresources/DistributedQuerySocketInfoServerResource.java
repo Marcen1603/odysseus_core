@@ -27,7 +27,7 @@ public class DistributedQuerySocketInfoServerResource extends ServerResource imp
 
 	@Override
 	public void getSocketInfoOfQuery(String sharedQueryId) {
-
+		sharedQueryId = sharedQueryId.replace("\"", "");
 		Response r = getResponse();
 		try {
 			
