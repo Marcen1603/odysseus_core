@@ -107,7 +107,6 @@ public class BackupInformationStore implements IRecoveryBackupInformationStore {
 	public void remove(ID sharedQuery) {
 
 		Preconditions.checkNotNull(sharedQuery);
-		Preconditions.checkArgument(this.mInfos.containsKey(sharedQuery));
 		this.mInfos.remove(sharedQuery);
 
 	}
