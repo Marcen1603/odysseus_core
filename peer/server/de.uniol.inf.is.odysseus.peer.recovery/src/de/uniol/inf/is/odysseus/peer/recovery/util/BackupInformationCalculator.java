@@ -173,9 +173,10 @@ public class BackupInformationCalculator {
 		Preconditions.checkNotNull(allocationMap);
 
 		Set<IRecoveryBackupInformation> subsequentParts = Sets.newHashSet();
+		Set<QueryPartGraphConnection> visitedConnections = Sets.newHashSet();
 
 		calcSubsequentPartsRecursive(node, sharedQueryID, allocationMap,
-				subsequentParts);
+				subsequentParts, visitedConnections);
 
 		return subsequentParts;
 
@@ -198,19 +199,35 @@ public class BackupInformationCalculator {
 	 *            All already collected backup information about subsequent
 	 *            query parts. <br />
 	 *            Must be not null and will be muted.
+	 * @param visitedConnections
+	 *            All already visited connections between graph nodes. Needed to
+	 *            avoid endless loops, if the graph contains cycles.
 	 */
 	private static final void calcSubsequentPartsRecursive(
 			QueryPartGraphNode node, ID sharedQueryID,
 			Map<ILogicalQueryPart, PeerID> allocationMap,
-			Collection<IRecoveryBackupInformation> subsequentParts) {
+			Collection<IRecoveryBackupInformation> subsequentParts,
+			Collection<QueryPartGraphConnection> visitedConnections) {
 
 		Preconditions.checkNotNull(node);
 		Preconditions.checkNotNull(sharedQueryID);
 		Preconditions.checkNotNull(allocationMap);
 		Preconditions.checkNotNull(subsequentParts);
+		Preconditions.checkNotNull(visitedConnections);
 
 		for (QueryPartGraphConnection outConnection : node
 				.getConnectionsAsStart()) {
+
+			if (visitedConnections.contains(outConnection)) {
+
+				// avoid endless loops
+				continue;
+
+			} else {
+
+				visitedConnections.add(outConnection);
+
+			}
 
 			QueryPartGraphNode endNode = outConnection.getEndNode();
 			ILogicalQueryPart endPart = endNode.getQueryPart();
@@ -242,7 +259,8 @@ public class BackupInformationCalculator {
 
 				subsequentParts.add(endPartInfo);
 				calcSubsequentPartsRecursive(outConnection.getEndNode(),
-						sharedQueryID, allocationMap, subsequentParts);
+						sharedQueryID, allocationMap, subsequentParts,
+						visitedConnections);
 
 			}
 
