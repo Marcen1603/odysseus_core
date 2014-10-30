@@ -25,8 +25,10 @@ public class CollectOperatorLogicalGraphVisitor<T extends ILogicalOperator> impl
 	
 	@Override
 	public void nodeAction(T node) {
-		if(this.operatorClasses.contains(node.getClass())) {
-			operators.add(node);
+		for (Class<? extends T> operator:operatorClasses){
+			if (operator.isAssignableFrom(node.getClass())){
+				operators.add(node);	
+			}
 		}
 	}
 
