@@ -43,15 +43,15 @@ public class CostModelConsole implements CommandProvider {
 	public void _histogram(CommandInterpreter ci ) {
 		String attributeName = ci.nextArgument();
 		if( Strings.isNullOrEmpty(attributeName)) {
-			System.out.println("usage: histogram <attributeName>");
+			ci.println("usage: histogram <attributeName>");
 			return;
 		}
 		
 		Optional<IHistogram> optHistogram = costModelKnowledge.getHistogram(attributeName);
 		if( optHistogram.isPresent() ) {
-			System.out.println(optHistogram.get());
+			ci.println(optHistogram.get());
 		} else {
-			System.out.println("Could not find histogram for attribute '" + attributeName + "'");
+			ci.println("Could not find histogram for attribute '" + attributeName + "'");
 		}
 	}
 	
@@ -67,19 +67,19 @@ public class CostModelConsole implements CommandProvider {
 			}
 		}
 		
-		System.out.println("Following attributes are currently sampled for histograms");
-		sortAndPrintList(output);
+		ci.println("Following attributes are currently sampled for histograms");
+		sortAndPrintList(ci, output);
 	}
 	
 	public void _lsHistogramAttributes( CommandInterpreter ci ) {
 		_listHistogramAttributes(ci);
 	}
 	
-	private static void sortAndPrintList(List<String> list) {
+	private static void sortAndPrintList(CommandInterpreter ci, List<String> list) {
 		if (list != null && !list.isEmpty()) {
 			Collections.sort(list);
 			for (String line : list) {
-				System.out.println("\t" + line);
+				ci.println("\t" + line);
 			}
 		}
 	}
@@ -92,7 +92,7 @@ public class CostModelConsole implements CommandProvider {
 			output.add(clazz + ": " + format(costModelKnowledge.getCpuTime(clazz).get() / 1000000000));
 		}
 		
-		sortAndPrintList(output);
+		sortAndPrintList(ci, output);
 	}
 	
 	public void _lsCpuTimes(CommandInterpreter ci ) {
@@ -107,7 +107,7 @@ public class CostModelConsole implements CommandProvider {
 			output.add(sourceName + ": " + format(costModelKnowledge.getDatarate(sourceName).get()));
 		}
 		
-		sortAndPrintList(output);
+		sortAndPrintList(ci, output);
 	}
 	
 	public void _lsDatarates( CommandInterpreter ci ) {
