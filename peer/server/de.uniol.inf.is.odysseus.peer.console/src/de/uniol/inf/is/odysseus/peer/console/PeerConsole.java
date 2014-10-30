@@ -245,7 +245,7 @@ public class PeerConsole implements CommandProvider, IPeerCommunicatorListener {
 		sb.append("    jxtaLogDestinations           		- Lists all peers to send log messages to\n");
 		sb.append("    listSystemProperties/ls...     		- Lists all set system properties. Filter possible\n");
 		sb.append("    setSystemProperty <name> <value>		- Sets system property.\n");
-		sb.append("    listThreads/ls... <filter>     		- Lists all currently running thread. Filter possible\n");
+		sb.append("    listThreads/ls... <filter>     		- Lists all currently running threads. Filter possible\n");
 		sb.append("\n");
 		sb.append("    dumpPlan <queryid>                   - Prints the physical plan of the specified query.\n");
 		sb.append("    dumpStream <hashOfPhysicalOperator | nameOfOperator> <timeInMillis> - Prints the current stream of the specified operator.\n");
@@ -254,14 +254,14 @@ public class PeerConsole implements CommandProvider, IPeerCommunicatorListener {
 
 	public void _listPeers(CommandInterpreter ci) {
 		Collection<PeerID> remotePeerIDs = p2pDictionary.getRemotePeerIDs();
-		System.out.println("Remote peers known: " + remotePeerIDs.size());
+		ci.println("Remote peers known: " + remotePeerIDs.size());
 
 		List<String> output = Lists.newLinkedList();
 		for (PeerID remotePeerID : remotePeerIDs) {
 			output.add(p2pDictionary.getRemotePeerName(remotePeerID) + " = " + remotePeerID);
 		}
 
-		sortAndPrintList(output);
+		sortAndPrintList(ci, output);
 	}
 
 	public void _lsPeers(CommandInterpreter ci) {
@@ -271,14 +271,14 @@ public class PeerConsole implements CommandProvider, IPeerCommunicatorListener {
 	public void _resourceStatus(CommandInterpreter ci) {
 		IResourceUsage u = peerResourceUsageManager.getLocalResourceUsage();
 
-		System.out.println("Version " + toVersionString(u.getVersion()));
-		System.out.println("MEM: " + u.getMemFreeBytes() + " of " + u.getMemMaxBytes() + " Bytes free ( " + (((double) u.getMemFreeBytes() / u.getMemMaxBytes()) * 100.0) + " %)");
-		System.out.println("CPU: " + u.getCpuFree() + " of " + u.getCpuMax() + " free ( " + ((u.getCpuFree() / u.getCpuMax()) * 100.0) + " %)");
-		System.out.println("NET: Max   = " + u.getNetBandwidthMax());
-		System.out.println("NET: Input = " + u.getNetInputRate());
-		System.out.println("NET: Output= " + u.getNetOutputRate());
-		System.out.println(u.getStoppedQueriesCount() + " queries stopped");
-		System.out.println(u.getRunningQueriesCount() + " queries running");
+		ci.println("Version " + toVersionString(u.getVersion()));
+		ci.println("MEM: " + u.getMemFreeBytes() + " of " + u.getMemMaxBytes() + " Bytes free ( " + (((double) u.getMemFreeBytes() / u.getMemMaxBytes()) * 100.0) + " %)");
+		ci.println("CPU: " + u.getCpuFree() + " of " + u.getCpuMax() + " free ( " + ((u.getCpuFree() / u.getCpuMax()) * 100.0) + " %)");
+		ci.println("NET: Max   = " + u.getNetBandwidthMax());
+		ci.println("NET: Input = " + u.getNetInputRate());
+		ci.println("NET: Output= " + u.getNetOutputRate());
+		ci.println(u.getStoppedQueriesCount() + " queries stopped");
+		ci.println(u.getRunningQueriesCount() + " queries running");
 	}
 
 	private static String toVersionString(int[] version) {
@@ -287,7 +287,7 @@ public class PeerConsole implements CommandProvider, IPeerCommunicatorListener {
 
 	public void _ping(CommandInterpreter ci) {
 		Collection<PeerID> remotePeerIDs = p2pDictionary.getRemotePeerIDs();
-		System.out.println("Current known ping(s):");
+		ci.println("Current known ping(s):");
 
 		List<String> output = Lists.newLinkedList();
 		for (PeerID remotePeerID : remotePeerIDs) {
@@ -299,12 +299,12 @@ public class PeerConsole implements CommandProvider, IPeerCommunicatorListener {
 			}
 		}
 
-		sortAndPrintList(output);
+		sortAndPrintList(ci, output);
 	}
 	
 	public void _lsPingPositions( CommandInterpreter ci ) {
 		Collection<PeerID> remotePeerIDs = p2pDictionary.getRemotePeerIDs();
-		System.out.println("Current known ping position(s):");
+		ci.println("Current known ping position(s):");
 		
 		List<String> output = Lists.newLinkedList();
 		for (PeerID remotePeerID : remotePeerIDs) {
@@ -316,7 +316,7 @@ public class PeerConsole implements CommandProvider, IPeerCommunicatorListener {
 			}
 		}		
 		
-		sortAndPrintList(output);
+		sortAndPrintList(ci, output);
 	}
 	
 	public void _listPingPositions( CommandInterpreter ci ) {
@@ -328,27 +328,27 @@ public class PeerConsole implements CommandProvider, IPeerCommunicatorListener {
 	}
 
 	public void _peerStatus(CommandInterpreter ci) {
-		System.out.println("Peername: " + p2pNetworkManager.getLocalPeerName());
-		System.out.println("PeerID: " + p2pNetworkManager.getLocalPeerID());
-		System.out.println("Peergroup: " + p2pNetworkManager.getLocalPeerGroupName());
-		System.out.println("PeergroupID: " + p2pNetworkManager.getLocalPeerGroupID());
+		ci.println("Peername: " + p2pNetworkManager.getLocalPeerName());
+		ci.println("PeerID: " + p2pNetworkManager.getLocalPeerID());
+		ci.println("Peergroup: " + p2pNetworkManager.getLocalPeerGroupName());
+		ci.println("PeergroupID: " + p2pNetworkManager.getLocalPeerGroupID());
 		try {
-			System.out.println("Address: " + InetAddress.getLocalHost().getHostAddress());
+			ci.println("Address: " + InetAddress.getLocalHost().getHostAddress());
 		} catch (UnknownHostException e) {
 		}
-		System.out.println("Port: " + p2pNetworkManager.getPort());
+		ci.println("Port: " + p2pNetworkManager.getPort());
 	}
 
 	public void _log(CommandInterpreter ci) {
 		String logLevel = ci.nextArgument();
 		if (Strings.isNullOrEmpty(logLevel)) {
-			System.out.println("usage: log <logLevel> <message>");
+			ci.println("usage: log <logLevel> <message>");
 			return;
 		}
 
 		String text = ci.nextArgument();
 		if (Strings.isNullOrEmpty(text)) {
-			System.out.println("usage: log <loglevel> <message>");
+			ci.println("usage: log <loglevel> <message>");
 			return;
 		}
 
@@ -363,52 +363,52 @@ public class PeerConsole implements CommandProvider, IPeerCommunicatorListener {
 		} else if (logLevel.equalsIgnoreCase("info")) {
 			LOG.trace(text);
 		} else {
-			System.out.println("Unknown loglevel! Valid: trace, info, debug, warn, error");
+			ci.println("Unknown loglevel! Valid: trace, info, debug, warn, error");
 		}
 	}
 
 	public void _setLogger(CommandInterpreter ci) {
 		String loggerName = ci.nextArgument();
 		if (Strings.isNullOrEmpty(loggerName)) {
-			System.out.println("usage: setlog <loggerName> <logLevel>");
+			ci.println("usage: setlog <loggerName> <logLevel>");
 			return;
 		}
 
 		String logLevel = ci.nextArgument();
 		if (Strings.isNullOrEmpty(logLevel)) {
-			System.out.println("usage: setlog <loggerName> <logLevel>");
+			ci.println("usage: setlog <loggerName> <logLevel>");
 			return;
 		}
 
 		final int duration = tryToInt(ci.nextArgument());
 
-		setLoggerImpl(loggerName, logLevel, duration);
+		setLoggerImpl(ci, loggerName, logLevel, duration);
 	}
 
 	public void _setLoggerOdysseus(CommandInterpreter ci) {
 		String loggerName = ci.nextArgument();
 		if (Strings.isNullOrEmpty(loggerName)) {
-			System.out.println("usage: setlog <loggerName> <logLevel>");
+			ci.println("usage: setlog <loggerName> <logLevel>");
 			return;
 		}
 
 		String logLevel = ci.nextArgument();
 		if (Strings.isNullOrEmpty(logLevel)) {
-			System.out.println("usage: setlog <loggerName> <logLevel>");
+			ci.println("usage: setlog <loggerName> <logLevel>");
 			return;
 		}
 
 		final int duration = tryToInt(ci.nextArgument());
 
-		setLoggerImpl("de.uniol.inf.is.odysseus." + loggerName, logLevel, duration);
+		setLoggerImpl(ci, "de.uniol.inf.is.odysseus." + loggerName, logLevel, duration);
 	}
 
-	private static void setLoggerImpl(String loggerName, String logLevel, final int duration) {
+	private static void setLoggerImpl(final CommandInterpreter ci, String loggerName, String logLevel, final int duration) {
 		org.apache.log4j.Level level = null;
 		try {
 			level = org.apache.log4j.Level.toLevel(logLevel.toUpperCase());
 		} catch (Throwable t) {
-			System.out.println("Level '" + logLevel + "' is invalid.");
+			ci.println("Level '" + logLevel + "' is invalid.");
 			return;
 		}
 
@@ -416,10 +416,10 @@ public class PeerConsole implements CommandProvider, IPeerCommunicatorListener {
 		final org.apache.log4j.Level prevLevel = logger.getLevel();
 		logger.setLevel(level);
 
-		System.out.println("Set level of logger '" + loggerName + "' to '" + level.toString() + "'");
+		ci.println("Set level of logger '" + loggerName + "' to '" + level.toString() + "'");
 
 		if (duration > 0) {
-			System.out.println("Level will be set back after " + duration + " ms");
+			ci.println("Level will be set back after " + duration + " ms");
 
 			Thread t = new Thread(new Runnable() {
 				@Override
@@ -430,7 +430,7 @@ public class PeerConsole implements CommandProvider, IPeerCommunicatorListener {
 					}
 
 					logger.setLevel(prevLevel);
-					System.out.println("Set level of logger '" + logger.getName() + "' back");
+					ci.println("Set level of logger '" + logger.getName() + "' back");
 				}
 			});
 			t.setDaemon(true);
@@ -466,7 +466,7 @@ public class PeerConsole implements CommandProvider, IPeerCommunicatorListener {
 			}
 		}
 
-		sortAndPrintList(output);
+		sortAndPrintList(ci, output);
 	}
 
 	public void _lsLoggers(CommandInterpreter ci) {
@@ -475,7 +475,7 @@ public class PeerConsole implements CommandProvider, IPeerCommunicatorListener {
 
 	public void _jxtaLogDestinations(CommandInterpreter ci) {
 		if (JXTALoggingPlugIn.isLogging()) {
-			System.out.println("Local peer receives log messages.");
+			ci.println("Local peer receives log messages.");
 		}
 		Collection<PeerID> destinations = JxtaLoggingDestinations.getDestinations();
 
@@ -485,29 +485,29 @@ public class PeerConsole implements CommandProvider, IPeerCommunicatorListener {
 				output.add(p2pDictionary.getRemotePeerName(destination));
 			}
 
-			sortAndPrintList(output);
+			sortAndPrintList(ci, output);
 		} else {
-			System.out.println("No destination set.");
+			ci.println("No destination set.");
 		}
 	}
 
 	public void _listEndpointConnections(CommandInterpreter ci) {
 		Collection<PeerID> connectedPeers = p2pDictionary.getRemotePeerIDs();
 
-		System.out.println("Connected peers count: " + connectedPeers.size());
+		ci.println("Connected peers count: " + connectedPeers.size());
 		List<String> output = Lists.newLinkedList();
 		for (PeerID remotePeerID : connectedPeers) {
 			output.add(p2pDictionary.getRemotePeerName(remotePeerID) + " = " + remotePeerID);
 		}
 
-		sortAndPrintList(output);
+		sortAndPrintList(ci, output);
 	}
 
-	private static void sortAndPrintList(List<String> list) {
+	private static void sortAndPrintList(CommandInterpreter ci, List<String> list) {
 		if (list != null && !list.isEmpty()) {
 			Collections.sort(list);
 			for (String line : list) {
-				System.out.println("\t" + line);
+				ci.println("\t" + line);
 			}
 		}
 	}
@@ -524,7 +524,7 @@ public class PeerConsole implements CommandProvider, IPeerCommunicatorListener {
 			output.add(exportedSource.getName() + " " + sourceTypeString(exportedSource));
 		}
 
-		sortAndPrintList(output);
+		sortAndPrintList(ci, output);
 	}
 
 	private static String sourceTypeString(SourceAdvertisement adv) {
@@ -546,7 +546,7 @@ public class PeerConsole implements CommandProvider, IPeerCommunicatorListener {
 			output.add(importedSource.getName() + " " + sourceTypeString(importedSource) + " (from " + p2pDictionary.getRemotePeerName(importedSource.getPeerID()) + ")");
 		}
 
-		sortAndPrintList(output);
+		sortAndPrintList(ci, output);
 	}
 
 	public void _listImportedSources(CommandInterpreter ci) {
@@ -556,62 +556,62 @@ public class PeerConsole implements CommandProvider, IPeerCommunicatorListener {
 	public void _exportSource(CommandInterpreter ci) {
 		String sourceName = ci.nextArgument();
 		if (Strings.isNullOrEmpty(sourceName)) {
-			System.out.println("usage: exportSource <sourceName>");
+			ci.println("usage: exportSource <sourceName>");
 			return;
 		}
 
 		try {
 			SourceAdvertisement adv = p2pDictionary.exportSource(sourceName);
-			System.out.println("Source '" + sourceName + "' exported as " + sourceTypeString(adv));
+			ci.println("Source '" + sourceName + "' exported as " + sourceTypeString(adv));
 		} catch (PeerException e) {
-			System.out.println("Export failed: " + e.getMessage());
+			ci.println("Export failed: " + e.getMessage());
 		}
 	}
 
 	public void _importSource(CommandInterpreter ci) {
 		String sourceName = ci.nextArgument();
 		if (Strings.isNullOrEmpty(sourceName)) {
-			System.out.println("usage: importSource <availableSourceName>");
+			ci.println("usage: importSource <availableSourceName>");
 			return;
 		}
 
 		try {
 			Collection<SourceAdvertisement> sources = p2pDictionary.getSources(sourceName);
 			if (sources.size() > 1) {
-				System.out.println("Source '" + sourceName + "' is ambiguous. Currently not supported.");
+				ci.println("Source '" + sourceName + "' is ambiguous. Currently not supported.");
 				return;
 			}
 			if (sources.isEmpty()) {
-				System.out.println("No such source '" + sourceName + "' available");
+				ci.println("No such source '" + sourceName + "' available");
 				return;
 			}
 			SourceAdvertisement adv = sources.iterator().next();
 			p2pDictionary.importSource(adv, sourceName);
-			System.out.println("Source '" + sourceName + "' imported as " + sourceTypeString(adv));
+			ci.println("Source '" + sourceName + "' imported as " + sourceTypeString(adv));
 		} catch (InvalidP2PSource | PeerException e) {
-			System.out.println("Could not import source '" + sourceName + "': " + e.getMessage());
+			ci.println("Could not import source '" + sourceName + "': " + e.getMessage());
 		}
 	}
 
 	public void _unexportSource(CommandInterpreter ci) {
 		String sourceName = ci.nextArgument();
 		if (Strings.isNullOrEmpty(sourceName)) {
-			System.out.println("usage: unexportSource <sourceName>");
+			ci.println("usage: unexportSource <sourceName>");
 			return;
 		}
 
 		if (p2pDictionary.isExported(sourceName)) {
 			p2pDictionary.removeSourceExport(sourceName);
-			System.out.println("Source '" + sourceName + "' not exported now.");
+			ci.println("Source '" + sourceName + "' not exported now.");
 		} else {
-			System.out.println("Source '" + sourceName + "' is currently not exported");
+			ci.println("Source '" + sourceName + "' is currently not exported");
 		}
 	}
 
 	public void _unimportSource(CommandInterpreter ci) {
 		String sourceName = ci.nextArgument();
 		if (Strings.isNullOrEmpty(sourceName)) {
-			System.out.println("usage: unimportSource <sourceName>");
+			ci.println("usage: unimportSource <sourceName>");
 			return;
 		}
 
@@ -620,10 +620,10 @@ public class PeerConsole implements CommandProvider, IPeerCommunicatorListener {
 
 			if (!adv.isEmpty()) {
 				p2pDictionary.removeSourceImport(adv.iterator().next());
-				System.out.println("Source '" + sourceName + "' not imported now.");
+				ci.println("Source '" + sourceName + "' not imported now.");
 			}
 		} else {
-			System.out.println("Source '" + sourceName + "' is currently not imported");
+			ci.println("Source '" + sourceName + "' is currently not imported");
 		}
 	}
 
@@ -642,7 +642,7 @@ public class PeerConsole implements CommandProvider, IPeerCommunicatorListener {
 			}
 		}
 
-		sortAndPrintList(output);
+		sortAndPrintList(ci, output);
 	}
 
 	public void _listAvailableSources(CommandInterpreter ci) {
@@ -652,13 +652,13 @@ public class PeerConsole implements CommandProvider, IPeerCommunicatorListener {
 	public void _remoteUpdateAll(CommandInterpreter ci) {
 		PeerUpdatePlugIn.sendUpdateMessageToRemotePeers();
 
-		System.out.println("Send update message to remote peers");
+		ci.println("Send update message to remote peers");
 	}
 	
 	public void _remoteRestartAll( CommandInterpreter ci ) {
 		PeerUpdatePlugIn.sendRestartMessageToRemotePeers();
 		
-		System.out.println("Send restart message to remote peers");
+		ci.println("Send restart message to remote peers");
 	}
 
 	public void _lsSystemProperties(CommandInterpreter ci) {
@@ -675,7 +675,7 @@ public class PeerConsole implements CommandProvider, IPeerCommunicatorListener {
 			}
 		}
 
-		sortAndPrintList(output);
+		sortAndPrintList(ci, output);
 	}
 
 	public void _listSystemProperties(CommandInterpreter ci) {
@@ -685,18 +685,18 @@ public class PeerConsole implements CommandProvider, IPeerCommunicatorListener {
 	public void _setSystemProperty(CommandInterpreter ci) {
 		String propName = ci.nextArgument();
 		if (Strings.isNullOrEmpty(propName)) {
-			System.out.println("usage: setSystemProperty <propName> <value>");
+			ci.println("usage: setSystemProperty <propName> <value>");
 			return;
 		}
 
 		String value = ci.nextArgument();
 		if (Strings.isNullOrEmpty(value)) {
-			System.out.println("usage: setSystemProperty <propName> <value>");
+			ci.println("usage: setSystemProperty <propName> <value>");
 			return;
 		}
 
 		System.setProperty(propName, value);
-		System.out.println("SystemProperty '" + propName + "' set to '" + value + "'");
+		ci.println("SystemProperty '" + propName + "' set to '" + value + "'");
 	}
 
 	public void _lsThreads(CommandInterpreter ci) {
@@ -714,8 +714,8 @@ public class PeerConsole implements CommandProvider, IPeerCommunicatorListener {
 			}
 		}
 
-		System.out.println("Thread count: " + threadCount);
-		sortAndPrintList(output);
+		ci.println("Thread count: " + threadCount);
+		sortAndPrintList(ci, output);
 	}
 
 	public void _listThreads(CommandInterpreter ci) {
@@ -724,7 +724,7 @@ public class PeerConsole implements CommandProvider, IPeerCommunicatorListener {
 
 	public void _listPeerAddresses(CommandInterpreter ci) {
 		Collection<PeerID> remotePeerIDs = p2pDictionary.getRemotePeerIDs();
-		System.out.println("Remote peers known: " + remotePeerIDs.size());
+		ci.println("Remote peers known: " + remotePeerIDs.size());
 
 		List<String> output = Lists.newLinkedList();
 		for (PeerID remotePeerID : remotePeerIDs) {
@@ -732,7 +732,7 @@ public class PeerConsole implements CommandProvider, IPeerCommunicatorListener {
 			output.add(p2pDictionary.getRemotePeerName(remotePeerID) + " : " + (optAddress.isPresent() ? optAddress.get() : "<unknown>"));
 		}
 
-		sortAndPrintList(output);
+		sortAndPrintList(ci, output);
 	}
 
 	public void _lsPeerAddresses(CommandInterpreter ci) {
@@ -753,7 +753,7 @@ public class PeerConsole implements CommandProvider, IPeerCommunicatorListener {
 			}
 		}
 
-		sortAndPrintList(output);
+		sortAndPrintList(ci, output);
 	}
 
 	public void _listAdvertisements(CommandInterpreter ci) {
@@ -762,25 +762,25 @@ public class PeerConsole implements CommandProvider, IPeerCommunicatorListener {
 
 	public void _refreshAdvertisements(CommandInterpreter ci) {
 		jxtaServicesProvider.getRemoteAdvertisements();
-		System.out.println("Refresh done.");
+		ci.println("Refresh done.");
 	}
 
 	public void _loginPeer(CommandInterpreter ci) {
 		String peername = ci.nextArgument();
 		if (Strings.isNullOrEmpty(peername)) {
-			System.out.println("usage: login <peername> <username> <password>");
+			ci.println("usage: login <peername> <username> <password>");
 			return;
 		}
 
 		String username = ci.nextArgument();
 		if (Strings.isNullOrEmpty(username)) {
-			System.out.println("usage: login <peername> <username> <password>");
+			ci.println("usage: login <peername> <username> <password>");
 			return;
 		}
 
 		String password = ci.nextArgument();
 		if (Strings.isNullOrEmpty(password)) {
-			System.out.println("usage: login <peername> <username> <password>");
+			ci.println("usage: login <peername> <username> <password>");
 			return;
 		}
 
@@ -790,19 +790,19 @@ public class PeerConsole implements CommandProvider, IPeerCommunicatorListener {
 		if (optPeerID.isPresent()) {
 			try {
 				peerCommunicator.send(optPeerID.get(), loginMsg);
-				System.out.println("Send login to peer '" + peername + "'");
+				ci.println("Send login to peer '" + peername + "'");
 			} catch (PeerCommunicationException e) {
-				System.out.println("Could not send login to peer '" + peername + "': " + e.getMessage());
+				ci.println("Could not send login to peer '" + peername + "': " + e.getMessage());
 			}
 		} else {
-			System.out.println("Peer '" + peername + "' not known.");
+			ci.println("Peer '" + peername + "' not known.");
 		}
 	}
 
 	public void _logoutPeer(CommandInterpreter ci) {
 		String peerName = ci.nextArgument();
 		if (Strings.isNullOrEmpty(peerName)) {
-			System.out.println("usage: logout <peername>");
+			ci.println("usage: logout <peername>");
 			return;
 		}
 
@@ -812,7 +812,7 @@ public class PeerConsole implements CommandProvider, IPeerCommunicatorListener {
 			if (loggedToPeers.contains(pid)) {
 				sendLogoutMessage(pid, peerName);
 			} else {
-				System.out.println("Not logged in peer '" + peerName + "'");
+				ci.println("Not logged in peer '" + peerName + "'");
 			}
 		}
 	}
@@ -822,20 +822,20 @@ public class PeerConsole implements CommandProvider, IPeerCommunicatorListener {
 		try {
 			peerCommunicator.send(pid, msg);
 		} catch (PeerCommunicationException e) {
-			System.out.println("Could not send logout to peer '" + peername + "': " + e.getMessage());
+			LOG.error("Could not send logout to peer '" + peername + "': " + e.getMessage());
 		}
 	}
 
 	public void _executeCommand(CommandInterpreter ci) {
 		String peerName = ci.nextArgument();
 		if (Strings.isNullOrEmpty(peerName)) {
-			System.out.println("usage: executeCommand <peername> <command>");
+			ci.println("usage: executeCommand <peername> <command>");
 			return;
 		}
 
 		String command = ci.nextArgument();
 		if (Strings.isNullOrEmpty(command)) {
-			System.out.println("usage: executeCommand <peername> <command>");
+			ci.println("usage: executeCommand <peername> <command>");
 			return;
 		}
 
@@ -843,22 +843,22 @@ public class PeerConsole implements CommandProvider, IPeerCommunicatorListener {
 		if (optPID.isPresent()) {
 			PeerID pid = optPID.get();
 			if (loggedToPeers.contains(pid)) {
-				sendCommandMessage(peerName, pid, command);
+				sendCommandMessage(ci, peerName, pid, command);
 			} else {
-				System.out.println("Not logged in peer '" + peerName + "'");
+				ci.println("Not logged in peer '" + peerName + "'");
 			}
 		} else {
-			System.out.println("Peername '" + peerName + "' not known.");
+			ci.println("Peername '" + peerName + "' not known.");
 		}
 	}
 
-	private static void sendCommandMessage(String peerName, PeerID pid, String command) {
+	private static void sendCommandMessage(CommandInterpreter ci, String peerName, PeerID pid, String command) {
 		CommandMessage cmd = new CommandMessage(command);
 		try {
 			peerCommunicator.send(pid, cmd);
-			System.out.println("Command send to '" + peerName + "'");
+			ci.println("Command send to '" + peerName + "'");
 		} catch (PeerCommunicationException e) {
-			System.out.println("Could not send command to peer named '" + peerName + "': " + e.getMessage());
+			ci.println("Could not send command to peer named '" + peerName + "': " + e.getMessage());
 		}
 	}
 
@@ -893,7 +893,7 @@ public class PeerConsole implements CommandProvider, IPeerCommunicatorListener {
 			processLoginMessage(senderPeer, message);
 		} else if (message instanceof LoginOKMessage) {
 			loggedToPeers.add(senderPeer);
-			System.out.println("Login to peer '" + p2pDictionary.getRemotePeerName(senderPeer) + "' ok");
+			LOG.error("Login to peer '" + p2pDictionary.getRemotePeerName(senderPeer) + "' ok");
 		} else if (message instanceof LogoutMessage) {
 			loggedInPeers.remove(senderPeer);
 			LOG.debug("Peer '{}' logged out", p2pDictionary.getRemotePeerName(senderPeer));
@@ -901,7 +901,7 @@ public class PeerConsole implements CommandProvider, IPeerCommunicatorListener {
 			sendLogoutOKMessage(senderPeer);
 		} else if (message instanceof LogoutOKMessage) {
 			loggedToPeers.remove(senderPeer);
-			System.out.println("Logout from peer '" + p2pDictionary.getRemotePeerName(senderPeer) + "' ok");
+			LOG.error("Logout from peer '" + p2pDictionary.getRemotePeerName(senderPeer) + "' ok");
 		}
 	}
 
@@ -976,8 +976,8 @@ public class PeerConsole implements CommandProvider, IPeerCommunicatorListener {
 	}
 
 	private void processCommandOutputMessage(IPeerCommunicator communicator, PeerID senderPeer, CommandOutputMessage cmd) {
-		System.out.println("Output from '" + p2pDictionary.getRemotePeerName(senderPeer) + "':");
-		System.out.println(cmd.getOutput());
+		LOG.error("Output from '" + p2pDictionary.getRemotePeerName(senderPeer) + "':");
+		LOG.error(cmd.getOutput());
 	}
 
 	public void _execCommand(CommandInterpreter ci) {
@@ -994,8 +994,8 @@ public class PeerConsole implements CommandProvider, IPeerCommunicatorListener {
 			output.add(p2pDictionary.getRemotePeerName(loggedInPeer));
 		}
 
-		System.out.println("Following remote peers are logged in here:");
-		sortAndPrintList(output);
+		ci.println("Following remote peers are logged in here:");
+		sortAndPrintList(ci, output);
 	}
 
 	public void _listLoggedInPeers(CommandInterpreter ci) {
@@ -1008,8 +1008,8 @@ public class PeerConsole implements CommandProvider, IPeerCommunicatorListener {
 			output.add(p2pDictionary.getRemotePeerName(loggedInPeer));
 		}
 
-		System.out.println("Following remote peers we are logged in:");
-		sortAndPrintList(output);
+		ci.println("Following remote peers we are logged in:");
+		sortAndPrintList(ci, output);
 	}
 
 	public void _listLoggedToPeers(CommandInterpreter ci) {
@@ -1019,7 +1019,7 @@ public class PeerConsole implements CommandProvider, IPeerCommunicatorListener {
 	public void _revokeLogin(CommandInterpreter ci) {
 		String peername = ci.nextArgument();
 		if (Strings.isNullOrEmpty(peername)) {
-			System.out.println("usage: revokeLogin <peername>");
+			ci.println("usage: revokeLogin <peername>");
 			return;
 		}
 
@@ -1029,19 +1029,19 @@ public class PeerConsole implements CommandProvider, IPeerCommunicatorListener {
 			if (loggedInPeers.contains(pid)) {
 				loggedInPeers.remove(pid);
 				sendLogoutOKMessage(pid);
-				System.out.println("Login of peer '" + peername + "' revoked");
+				ci.println("Login of peer '" + peername + "' revoked");
 			} else {
-				System.out.println("Peer '" + peername + "' is not logged in here");
+				ci.println("Peer '" + peername + "' is not logged in here");
 			}
 		} else {
-			System.out.println("Peer '" + peername + "' not known");
+			ci.println("Peer '" + peername + "' not known");
 		}
 	}
 
-	public void _dumpStream(CommandInterpreter ci) {
+	public void _dumpStream(final CommandInterpreter ci) {
 		String operatorHashString = ci.nextArgument();
 		if (Strings.isNullOrEmpty(operatorHashString)) {
-			System.out.println("usage: dumpStream <hashOfPhysicalOperator | nameOfOperator> <timeInMillis>");
+			ci.println("usage: dumpStream <hashOfPhysicalOperator | nameOfOperator> <timeInMillis>");
 			return;
 		}
 
@@ -1055,7 +1055,7 @@ public class PeerConsole implements CommandProvider, IPeerCommunicatorListener {
 
 		String timeMillisString = ci.nextArgument();
 		if (Strings.isNullOrEmpty(timeMillisString)) {
-			System.out.println("usage: dumpStream <hashOfPhysicalOperator | nameOfOperator> <timeInMillis>");
+			ci.println("usage: dumpStream <hashOfPhysicalOperator | nameOfOperator> <timeInMillis>");
 			return;
 		}
 
@@ -1063,23 +1063,23 @@ public class PeerConsole implements CommandProvider, IPeerCommunicatorListener {
 		try {
 			timeMillis = Integer.valueOf(timeMillisString);
 		} catch (Throwable t) {
-			System.out.println("usage: dumpStream <hashOfPhysicalOperator | nameOfOperator> <timeInMillis>");
+			ci.println("usage: dumpStream <hashOfPhysicalOperator | nameOfOperator> <timeInMillis>");
 			return;
 		}
 
 		Optional<IPhysicalOperator> optOperator = findOperatorByHash(operatorHash);
 		if( !optOperator.isPresent() ) {
-			optOperator = findOperatorByName(operatorName);
+			optOperator = findOperatorByName(ci, operatorName);
 		}
 		
 		if (optOperator.isPresent()) {
 			final IPhysicalOperator operator = optOperator.get();
-			System.out.println("Connecting to physical operator " + operator);
+			ci.println("Connecting to physical operator " + operator);
 
 			final DefaultStreamConnection<IStreamObject<?>> conn = new DefaultStreamConnection<IStreamObject<?>>(operator) {
 				@Override
 				public void process(IStreamObject<?> element, int port) {
-					System.out.println(element);
+					ci.println(element);
 				}
 			};
 			conn.connect();
@@ -1094,18 +1094,18 @@ public class PeerConsole implements CommandProvider, IPeerCommunicatorListener {
 					}
 
 					conn.disconnect();
-					System.out.println("Disconnect from physical operator " + operator);
+					ci.println("Disconnect from physical operator " + operator);
 				}
 			});
 			t.setDaemon(true);
 			t.setName("Operatorconnection disconnect waiting");
 			t.start();
 		} else {
-			System.out.println("No physical operator with hash or name '" + operatorHash + "' found");
+			ci.println("No physical operator with hash or name '" + operatorHash + "' found");
 		}
 	}
 
-	private static Optional<IPhysicalOperator> findOperatorByName(String operatorName) {
+	private static Optional<IPhysicalOperator> findOperatorByName(CommandInterpreter ci, String operatorName) {
 		int queryID = -1;
 		
 		int splitPos = operatorName.indexOf(":");
@@ -1133,8 +1133,8 @@ public class PeerConsole implements CommandProvider, IPeerCommunicatorListener {
 		if( foundOperators.size() == 1 ) {
 			return Optional.of(foundOperators.iterator().next());
 		} else if ( !foundOperators.isEmpty() ) { 
-			System.out.println("Warning: Found multiple operators with name '" + operatorName + "': " + foundOperators);
-			System.out.println("Selecting first one");
+			ci.println("Warning: Found multiple operators with name '" + operatorName + "': " + foundOperators);
+			ci.println("Selecting first one");
 			return Optional.of(foundOperators.iterator().next());
 		} 
 		
@@ -1158,7 +1158,7 @@ public class PeerConsole implements CommandProvider, IPeerCommunicatorListener {
 	public void _dumpPlan(CommandInterpreter ci) {
 		String queryIDString = ci.nextArgument();
 		if (Strings.isNullOrEmpty(queryIDString)) {
-			System.out.println("usage: dumpPlan <queryid>");
+			ci.println("usage: dumpPlan <queryid>");
 			return;
 		}
 
@@ -1166,7 +1166,7 @@ public class PeerConsole implements CommandProvider, IPeerCommunicatorListener {
 		try {
 			queryID = Integer.valueOf(queryIDString);
 		} catch (Throwable t) {
-			System.out.println("usage: dumpPlan <queryid>");
+			ci.println("usage: dumpPlan <queryid>");
 		}
 
 		IPhysicalQuery query = executor.getExecutionPlan().getQueryById(queryID);
@@ -1180,11 +1180,11 @@ public class PeerConsole implements CommandProvider, IPeerCommunicatorListener {
 				} else {
 					dumpPlan((ISource<?>) curRoot, 0, sb);
 				}
-				System.out.println("Physical plan of query: " + queryID);
-				System.out.println(sb.toString());
+				ci.println("Physical plan of query: " + queryID);
+				ci.println(sb.toString());
 			}
 		} else {
-			System.out.println("Query not found.");
+			ci.println("Query not found.");
 		}
 	}
 
