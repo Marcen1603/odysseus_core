@@ -29,9 +29,9 @@ public class ActivityConfigurationAccessAO extends AbstractAccessAO {
 		setProtocolHandler("none");
 
 		List<SDFAttribute> schema = new LinkedList<>();
-		schema.add(new SDFAttribute(null, "EntityName", SDFDatatype.STRING,
+		schema.add(new SDFAttribute(null, "ConfigEntityName", SDFDatatype.STRING,
 				null));
-		schema.add(new SDFAttribute(null, "ActivityName", SDFDatatype.STRING,
+		schema.add(new SDFAttribute(null, "ConfigActivityName", SDFDatatype.STRING,
 				null));
 		setAttributes(schema);
 	}

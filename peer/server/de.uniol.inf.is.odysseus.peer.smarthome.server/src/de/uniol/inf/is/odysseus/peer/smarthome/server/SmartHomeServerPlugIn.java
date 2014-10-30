@@ -603,13 +603,13 @@ public class SmartHomeServerPlugIn implements BundleActivator {
 		@Override
 		public void sourceExported(IP2PDictionary sender,
 				SourceAdvertisement advertisement, String sourceName) {
-			LOG.debug("sourceExported");
+			LOG.debug("sourceExported: "+sourceName);
 		}
 
 		@Override
 		public void sourceExportRemoved(IP2PDictionary sender,
 				SourceAdvertisement advertisement, String sourceName) {
-			LOG.debug("sourceExportRemoved");
+			LOG.debug("sourceExportRemoved: "+sourceName);
 		}
 	}
 
@@ -1004,8 +1004,8 @@ public class SmartHomeServerPlugIn implements BundleActivator {
 			sbConfig.append("      ['activity', 'hot']\n");
 			sbConfig.append("    ],\n");
 			sbConfig.append("    schema=[\n");
-			sbConfig.append("      ['State', 'String'],\n");
-			sbConfig.append("      ['ActivityName', 'String']\n");
+			sbConfig.append("      ['ConfigEntityName', 'String'],\n");
+			sbConfig.append("      ['ConfigActivityName', 'String']\n");
 			sbConfig.append("    ]\n");
 			sbConfig.append("  }\n");
 			sbConfig.append(")\n");
@@ -1021,10 +1021,10 @@ public class SmartHomeServerPlugIn implements BundleActivator {
 			sbSetConfig.append("        aliases = ['PinNumber', 'PinState']\n");                                                             
 			sbSetConfig.append("    },\n");
 			sbSetConfig.append("    PROJECT({\n");
-			sbSetConfig.append("        attributes = ['EntityName', 'State']\n");                                                                                       
+			sbSetConfig.append("        attributes = ['ActivityName', 'ConfigEntityName']\n");                                                                                       
 			sbSetConfig.append("    },\n");
 			sbSetConfig.append("        JOIN({\n");
-			sbSetConfig.append("            predicate = '"+activityImportedName+".ActivityName = "+actorConfigIfParticipateActivity+".ActivityName'\n");                                                                                                                                                                                        
+			sbSetConfig.append("            predicate = '"+activityImportedName+".ActivityName = "+actorConfigIfParticipateActivity+".ConfigActivityName'\n");                                                                                                                                                                                        
 			sbSetConfig.append("        },\n");
 			sbSetConfig.append("        "+activityImportedName+",\n");
 			sbSetConfig.append("        "+actorConfigIfParticipateActivity+"\n");
