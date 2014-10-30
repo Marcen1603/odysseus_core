@@ -32,23 +32,23 @@ public class AdmissionConsole implements CommandProvider {
 	public void _lsAdmissionRules(CommandInterpreter ci) {
 		
 		for( AdmissionRuleGroup group : AdmissionRuleGroup.values() ) {
-			System.out.println("AdmissionRuleGroup: " + group.toString());
+			ci.println("AdmissionRuleGroup: " + group.toString());
 			
 			Collection<Class<? extends IAdmissionEvent>> eventTypesOfGroup = AdmissionPlugIn.getAdmissionRuleRegistry().getAdmissionEventTypes(group);
 			if( !eventTypesOfGroup.isEmpty() ) {
 				for( Class<? extends IAdmissionEvent> eventType : eventTypesOfGroup ) {
-					System.out.println("\t" + eventType.getName());
+					ci.println("\t" + eventType.getName());
 					
 					List<? extends IAdmissionRule<?>> rules = AdmissionPlugIn.getAdmissionRuleRegistry().getAdmissionRules(group, eventType);
 					for( IAdmissionRule<?> rule : rules ) {
-						System.out.println("\t\t" + rule.getClass().getName());
+						ci.println("\t\t" + rule.getClass().getName());
 					}
 				}
 			} else {
-				System.out.println("\t<none>");
+				ci.println("\t<none>");
 			}
 			
-			System.out.println();
+			ci.println();
 		}
 	}
 	
@@ -79,10 +79,10 @@ public class AdmissionConsole implements CommandProvider {
 		Collection<Class<? extends IAdmissionActionComponent>> components = registry.getAllAdmissionActionComponentClasses();
 		if( !components.isEmpty() ) {
 			for( Class<? extends IAdmissionActionComponent> component : components ) {
-				System.out.println("\t" + component.getName());
+				ci.println("\t" + component.getName());
 			}
 		} else {
-			System.out.println("\t<none>");
+			ci.println("\t<none>");
 		}
 	}
 	
