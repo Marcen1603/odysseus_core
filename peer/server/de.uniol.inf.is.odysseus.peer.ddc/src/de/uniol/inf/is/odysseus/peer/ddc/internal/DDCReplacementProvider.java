@@ -62,9 +62,7 @@ public class DDCReplacementProvider implements IReplacementProvider {
 			if(keyDimensions.length>1) {
 				return ddc.get(new DDCKey(keyDimensions)).getValue();
 			}
-			else {
-				return ddc.get(new DDCKey(key)).getValue();
-			}
+			return ddc.get(new DDCKey(key)).getValue();
 		} catch (MissingDDCEntryException e) {
 			LOG.error("Could not get key '{}' from DDC", key, e);
 			return "";
