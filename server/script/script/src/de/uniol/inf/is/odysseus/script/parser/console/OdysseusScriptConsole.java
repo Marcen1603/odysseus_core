@@ -31,7 +31,7 @@ public class OdysseusScriptConsole implements CommandProvider {
 		Map<String, IReplacementProvider> keyMap = ReplacementProviderManager.generateProviderMap();
 		
 		List<String> output = createKeyMappingOutput(keyMap, filter);
-		sortAndPrintList(output);
+		sortAndPrintList(ci, output);
 	}
 
 	private static List<String> createKeyMappingOutput(Map<String, IReplacementProvider> keyMap, String filter) {
@@ -54,11 +54,11 @@ public class OdysseusScriptConsole implements CommandProvider {
 		return !(Strings.isNullOrEmpty(filter) || text.contains(filter));
 	}
 	
-	private static void sortAndPrintList(List<String> list) {
+	private static void sortAndPrintList(CommandInterpreter ci, List<String> list) {
 		if (list != null && !list.isEmpty()) {
 			Collections.sort(list);
 			for (String line : list) {
-				System.out.println("\t" + line);
+				ci.println("\t" + line);
 			}
 		}
 	}
