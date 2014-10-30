@@ -14,7 +14,8 @@ import com.google.common.collect.ImmutableCollection;
  * - the PQL code of the query part <br />
  * - the id of the peer, where the query part is executed <br />
  * - information about subsequent parts (relative to the query part): PQL code
- * and peer, where it is executed.
+ * and peer, where it is executed <br />
+ * - the PQL code of the local part for which the backup information are.
  * 
  * @author Michael Brand
  *
@@ -104,5 +105,23 @@ public interface IRecoveryBackupInformation {
 	 *            Must be not null.
 	 */
 	public void addSubsequentPartsInformation(IRecoveryBackupInformation info);
+
+	/**
+	 * Sets the local PQL code.
+	 * 
+	 * @param pql
+	 *            The PQL code of the local part for which the backup
+	 *            information are. <br />
+	 *            Must be not null.
+	 */
+	public void setLocalPQL(String pql);
+
+	/**
+	 * Gets the local PQL code.
+	 * 
+	 * @return The PQL code of the local part for which the backup information
+	 *         are.
+	 */
+	public String getLocalPQL();
 
 }

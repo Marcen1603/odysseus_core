@@ -19,7 +19,8 @@ import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryBackupInformation;
  * - the PQL code of the query part <br />
  * - the id of the peer, where the query part is executed <br />
  * - information about subsequent parts (relative to the query part): PQL code
- * and peer, where it is executed.
+ * and peer, where it is executed <br />
+ * - the PQL code of the local part for which the backup information are.
  * 
  * @author Michael Brand
  *
@@ -126,6 +127,26 @@ public class BackupInformation implements IRecoveryBackupInformation {
 				.contains(info));
 		this.mSubsequentPartsInformation.add(info);
 
+	}
+
+	/**
+	 * The PQL code of the local part for which the backup information are.
+	 */
+	private String mLocalPQL;
+
+	@Override
+	public void setLocalPQL(String pql) {
+		
+		Preconditions.checkNotNull(pql);
+		this.mLocalPQL = pql;
+
+	}
+
+	@Override
+	public String getLocalPQL() {
+		
+		return this.mLocalPQL;
+		
 	}
 
 }

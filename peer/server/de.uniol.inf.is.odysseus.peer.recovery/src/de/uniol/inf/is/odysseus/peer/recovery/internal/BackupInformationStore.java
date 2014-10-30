@@ -29,7 +29,8 @@ import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryBackupInformationStore;
  * - the PQL code of the query part <br />
  * - the id of the peer, where the query part is executed <br />
  * - information about subsequent parts (relative to the query part): PQL code
- * and peer, where it is executed.
+ * and peer, where it is executed <br />
+ * - the PQL code of the local part for which the backup information are.
  * 
  * The stored information are about query parts, which are subsequent to query
  * parts executed on the local peer.

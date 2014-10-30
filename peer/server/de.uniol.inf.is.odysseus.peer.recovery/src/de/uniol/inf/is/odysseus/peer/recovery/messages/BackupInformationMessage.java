@@ -100,6 +100,9 @@ public class BackupInformationMessage implements IMessage {
 			bufferSize += 4 + subsequentPartsInfoBytes[i].length;
 
 		}
+		
+		byte[] localPqlBytes = this.determineLocalPQLBytes();
+		bufferSize += 4 + localPqlBytes.length;
 
 		ByteBuffer buffer = ByteBuffer.allocate(bufferSize);
 
@@ -119,10 +122,25 @@ public class BackupInformationMessage implements IMessage {
 			buffer.put(subsequentPartsInfoBytes[i]);
 
 		}
+		
+		buffer.putInt(localPqlBytes.length);
+		buffer.put(localPqlBytes);
 
 		buffer.flip();
 		return buffer.array();
 
+	}
+
+	/**
+	 * Encodes the local PQL code.
+	 * 
+	 * @return The bytes of {@link IRecoveryBackupInformation#getLocalPQL()}.
+	 */
+	private byte[] determineLocalPQLBytes() {
+		
+		Preconditions.checkNotNull(this.mInfo);
+		return this.mInfo.getLocalPQL().getBytes();
+		
 	}
 
 	/**
@@ -199,6 +217,7 @@ public class BackupInformationMessage implements IMessage {
 		this.pqlFromBytes(buffer);
 		this.peerFromBytes(buffer);
 		this.subsequentPartsInfoFromBytes(buffer);
+		this.localPqlFromBytes(buffer);
 
 	}
 
@@ -235,6 +254,24 @@ public class BackupInformationMessage implements IMessage {
 		byte[] pqlBytes = new byte[buffer.getInt()];
 		buffer.get(pqlBytes);
 		this.mInfo.setPQL(new String(pqlBytes));
+
+	}
+	
+	/**
+	 * Decodes the local PQL code from bytes.
+	 * 
+	 * @param buffer
+	 *            The current byte buffer, where the information about the local PQL
+	 *            code are next. <br />
+	 *            Must be not null.
+	 */
+	private void localPqlFromBytes(ByteBuffer buffer) {
+
+		Preconditions.checkArgument(this.mInfo.getLocalPQL() == null);
+		Preconditions.checkNotNull(buffer);
+		byte[] pqlBytes = new byte[buffer.getInt()];
+		buffer.get(pqlBytes);
+		this.mInfo.setLocalPQL(new String(pqlBytes));
 
 	}
 

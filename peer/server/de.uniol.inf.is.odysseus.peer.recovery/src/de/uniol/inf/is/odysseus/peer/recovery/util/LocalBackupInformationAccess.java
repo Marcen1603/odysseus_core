@@ -316,6 +316,40 @@ public class LocalBackupInformationAccess {
 		return ImmutableSet.copyOf(sharedQueryIds);
 	}
 	
+	/**
+	 * Gets all local query parts of a given distributed query for which backup
+	 * information are stored.
+	 * 
+	 * @param sharedQueryId
+	 *            The ID of the distributed query. <br />
+	 *            Must be not null!
+	 * @return The local PQL codes of all query parts of the given distributed query
+	 *         for which backup information are stored.
+	 */
+	public ImmutableCollection<String> getLocalPQL(ID sharedQueryId) {
+		
+		Preconditions.checkNotNull(sharedQueryId);
+
+		if (!cInfoStore.isPresent()) {
+
+			LOG.error("No backup information store for recovery bound!");
+			return null;
+
+		}
+
+		Set<String> pqls = Sets.newHashSet();
+
+		for (IRecoveryBackupInformation info : cInfoStore.get().get(
+				sharedQueryId)) {
+
+			pqls.add(info.getLocalPQL());
+
+		}
+
+		return ImmutableSet.copyOf(pqls);
+		
+	}
+	
 	/*
 	 * TODO Buddy information. Not clear atm. if they are needed.
 	 */
