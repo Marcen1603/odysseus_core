@@ -12,7 +12,7 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.IUserDefinedFunctio
  * @author Henrik Surm
  */
 
-class Filter
+class Filter2
 {
 	// Order = 6, Sampling rate = 6.??Hz, Cutoff Freq = 0.08Hz
 	private final int 	 NZEROS = 6;
@@ -36,6 +36,31 @@ class Filter
 	}	
 }
 
+class Filter
+{
+	// Order = 6, Sampling rate = 20.83Hz, Cutoff Freq = 0.08Hz
+	private final int 	 NZEROS = 6;
+	private final int 	 NPOLES = 6;
+	private final double GAIN   = 3.394859675e+11;
+
+	private final double[] xv = new double[NZEROS+1];
+	private final double[] yv = new double[NPOLES+1];
+
+	public double doFilter(double input)
+	{ 
+		xv[0] = xv[1]; xv[1] = xv[2]; xv[2] = xv[3]; xv[3] = xv[4]; xv[4] = xv[5]; xv[5] = xv[6]; 
+        xv[6] = input / GAIN;
+        yv[0] = yv[1]; yv[1] = yv[2]; yv[2] = yv[3]; yv[3] = yv[4]; yv[4] = yv[5]; yv[5] = yv[6]; 
+        yv[6] =   (xv[0] + xv[6]) + 6 * (xv[1] + xv[5]) + 15 * (xv[2] + xv[4])
+                     + 20 * xv[3]
+                     + ( -0.9109757297 * yv[0]) + (  5.5507898485 * yv[1])
+                     + (-14.0932818570 * yv[2]) + ( 19.0848614060 * yv[3])
+                     + (-14.5381579570 * yv[4]) + (  5.9067642887 * yv[5]);
+	    return yv[6];
+	}	
+}
+
+
 @UserDefinedFunction(name = "DigitalFilter")
 public class DigitalFilterUDF implements IUserDefinedFunction<Tuple<? extends IMetaAttribute>, Tuple<? extends IMetaAttribute>> 
 {
@@ -58,29 +83,6 @@ public class DigitalFilterUDF implements IUserDefinedFunction<Tuple<? extends IM
 		for (int i=0;i<numFilters;i++)
 			filters[i] = new Filter();
 	}
-	
-	// Order = 4, Sampling rate = 100Hz, Cutoff Freq = 10Hz
-/*	private final int 	 NZEROS = 8;
-	private final int 	 NPOLES = 8;
-	private final double GAIN   = 4.173684699e+04;
-
-	private final double[] xv = new double[NZEROS+1];
-	private final double[] yv = new double[NPOLES+1];
-
-	private double doFilter(double input)
-	{ 
-		xv[0] = xv[1]; xv[1] = xv[2]; xv[2] = xv[3]; xv[3] = xv[4]; xv[4] = xv[5]; xv[5] = xv[6]; xv[6] = xv[7]; xv[7] = xv[8]; 
-        xv[8] = input / GAIN;
-        yv[0] = yv[1]; yv[1] = yv[2]; yv[2] = yv[3]; yv[3] = yv[4]; yv[4] = yv[5]; yv[5] = yv[6]; yv[6] = yv[7]; yv[7] = yv[8]; 
-        yv[8] =   (xv[0] + xv[8]) + 8 * (xv[1] + xv[7]) + 28 * (xv[2] + xv[6])
-                     + 56 * (xv[3] + xv[5]) + 70 * xv[4]
-                     + ( -0.0372001007 * yv[0]) + (  0.4172171570 * yv[1])
-                     + ( -2.0792738030 * yv[2]) + (  6.0252603973 * yv[3])
-                     + (-11.1293310390 * yv[4]) + ( 13.4577198900 * yv[5])
-                     + (-10.4450410660 * yv[6]) + (  4.7845148950 * yv[7]);
-        return yv[8];
-	}*/	
-
 	
 	/**
 	 * {@inheritDoc}
