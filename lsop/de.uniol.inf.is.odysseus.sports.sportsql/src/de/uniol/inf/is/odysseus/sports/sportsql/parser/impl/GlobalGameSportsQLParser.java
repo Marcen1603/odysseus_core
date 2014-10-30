@@ -8,7 +8,6 @@ import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.ProjectAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.SelectAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.StreamAO;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.TimeWindowAO;
 import de.uniol.inf.is.odysseus.peer.ddc.MissingDDCEntryException;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.ISportsQLParser;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.SportsQLParseException;
@@ -59,20 +58,6 @@ public class GlobalGameSportsQLParser implements ISportsQLParser {
 				SportsQLParameterHelper.getSpaceParameter(sportsQL), false,
 				timeSelect);
 
-		// -----------------------
-		// First part (TimeWindow)
-		// -----------------------
-
-		// 1. TimeWindow
-		TimeWindowAO timeWindow = OperatorBuildHelper.createTimeWindowAO(1,
-				"MILLISECONDS", spaceSelect);
-		allOperators.add(timeWindow);
-
-		// --------------------------------
-		// Second part (Enrich and Project)
-		// --------------------------------
-
-		// 2. Project
 		List<String> attributes = new ArrayList<String>();
 		attributes.add("x");
 		attributes.add("y");
@@ -80,7 +65,7 @@ public class GlobalGameSportsQLParser implements ISportsQLParser {
 		attributes.add("team_id");
 
 		ProjectAO projectAO = OperatorBuildHelper.createProjectAO(attributes,
-				timeWindow);
+				spaceSelect);
 		allOperators.add(projectAO);
 		
 	
