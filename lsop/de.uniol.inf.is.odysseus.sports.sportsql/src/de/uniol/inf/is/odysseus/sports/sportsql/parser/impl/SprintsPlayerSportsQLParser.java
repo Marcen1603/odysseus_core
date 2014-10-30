@@ -108,7 +108,7 @@ public class SprintsPlayerSportsQLParser implements ISportsQLParser {
 
 		// 2. GameStream: Project
 		List<String> streamAttributes = new ArrayList<String>();
-		streamAttributes.add(SoccerGameAttributes.SID);
+		streamAttributes.add(SoccerGameAttributes.ENTITY_ID);
 		streamAttributes.add(ATTRIBUTE_second);
 		streamAttributes.add(SoccerGameAttributes.X);
 		streamAttributes.add(SoccerGameAttributes.Y);
@@ -125,7 +125,7 @@ public class SprintsPlayerSportsQLParser implements ISportsQLParser {
 
 		// 4. Enrich
 		EnrichAO dataStreamEnrichAO = OperatorBuildHelper.createEnrichAO(
-				SoccerGameAttributes.SID + "=" + MetadataAttributes.SENSOR_ID,
+				SoccerGameAttributes.ENTITY_ID + "=" + MetadataAttributes.SENSOR_ID,
 				streamProject, metadataSelect);
 		allOperators.add(dataStreamEnrichAO);
 
@@ -643,7 +643,7 @@ public class SprintsPlayerSportsQLParser implements ISportsQLParser {
 		speedClassificationChangeDetectAttributes.add("Sprint_Time");
 
 		List<String> ballVelocityChangeDetectGroupByAttributes = new ArrayList<String>();
-		ballVelocityChangeDetectGroupByAttributes.add(SoccerGameAttributes.SID);
+		ballVelocityChangeDetectGroupByAttributes.add(SoccerGameAttributes.ENTITY_ID);
 
 		ChangeDetectAO speedClassificationChangeDetect = OperatorBuildHelper
 				.createChangeDetectAO(
