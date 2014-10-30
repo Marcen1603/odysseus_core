@@ -9,7 +9,6 @@ import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.ChangeDetectAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.ElementWindowAO;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.EnrichAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.JoinAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.MapAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.ProjectAO;
@@ -24,7 +23,6 @@ import de.uniol.inf.is.odysseus.sports.sportsql.parser.SportsQLParseException;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.SportsQLQuery;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.annotations.SportsQL;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.annotations.SportsQLParameter;
-import de.uniol.inf.is.odysseus.sports.sportsql.parser.buildhelper.MetadataAttributes;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.buildhelper.OperatorBuildHelper;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.buildhelper.SoccerGameAttributes;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.buildhelper.SportsQLParameterHelper;
@@ -32,6 +30,7 @@ import de.uniol.inf.is.odysseus.sports.sportsql.parser.ddcaccess.AbstractSportsD
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.enums.GameType;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.enums.StatisticType;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.helper.SpaceUnitHelper;
+import de.uniol.inf.is.odysseus.sports.sportsql.parser.helper.TimeUnitHelper;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.model.Space;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.parameter.ISportsQLParameter;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.parameter.SportsQLArrayParameter;
@@ -40,6 +39,7 @@ import de.uniol.inf.is.odysseus.sports.sportsql.parser.parameter.SportsQLDistanc
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.parameter.SportsQLSpaceParameter;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.parameter.SportsQLSpaceParameter.SpaceType;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.parameter.SportsQLSpaceParameter.SpaceUnit;
+import de.uniol.inf.is.odysseus.sports.sportsql.parser.parameter.SportsQLTimeParameter.TimeUnit;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.parameter.SportsQLTimeParameter;
 
 
@@ -121,10 +121,10 @@ public class PassesSportsQLParser implements ISportsQLParser {
 	private static String ATTRIBUTE_P2_TEAM_ID = "p2_team_id";
 	private static String ATTRIBUTE_P1_ENTITY_ID = "p1_entity_id";
 	private static String ATTRIBUTE_P2_ENTITY_ID = "p2_entity_id";
-	private static String ATTRIBUTE_P1_ENTITY = "p1_entitiy";
-	private static String ATTRIBUTE_P2_ENTITY = "p2_entity";
-	private static String ATTRIBUTE_P1_REMARK = "p1_remark";
-	private static String ATTRIBUTE_P2_REMARK = "p2_remark";	
+	//private static String ATTRIBUTE_P1_ENTITY = "p1_entity";
+	//private static String ATTRIBUTE_P2_ENTITY = "p2_entity";
+	//private static String ATTRIBUTE_P1_REMARK = "p1_remark";
+	//private static String ATTRIBUTE_P2_REMARK = "p2_remark";	
 	private static String ATTRIBUTE_P1_BALL_POS_X = "p1_x";
 	private static String ATTRIBUTE_P1_BALL_POS_Y = "p1_y";
 	private static String ATTRIBUTE_P1_BALL_POS_Z = "p1_z";	
@@ -141,6 +141,10 @@ public class PassesSportsQLParser implements ISportsQLParser {
 	private static String ATTRIBUTE_DIRECT_PASS= "direct_pass";
 	private static String ATTRIBUTE_DOUBLE_PASS= "double_pass";
 	
+	private static String ATTRIBUTE_VX= "vx";
+	private static String ATTRIBUTE_VY= "vy";
+	private static String ATTRIBUTE_VZ= "vz";
+	
 	
 
 	@Override
@@ -149,7 +153,7 @@ public class PassesSportsQLParser implements ISportsQLParser {
 		List<ILogicalOperator> allOperators = new ArrayList<ILogicalOperator>();
 		
 		StreamAO soccerGameStreamAO = OperatorBuildHelper.createGameStreamAO();
-		StreamAO metadataStreamAO = OperatorBuildHelper.createMetadataStreamAO();
+		//StreamAO metadataStreamAO = OperatorBuildHelper.createMetadataStreamAO();
 		
 		// 1. Time Parameter
 		SportsQLTimeParameter timeParameter = SportsQLParameterHelper.getTimeParameter(sportsQL);
@@ -161,17 +165,54 @@ public class PassesSportsQLParser implements ISportsQLParser {
 		RouteAO splitSoccerDataRoute = createSplitSoccerDataRouteAO(gameTimeSelect);
 		allOperators.add(splitSoccerDataRoute);
 
+		// 2.1 Statemap to add the following attributes: vx, vy and vz
+		List<SDFExpressionParameter> statemapExpressions = new ArrayList<SDFExpressionParameter>();
+		statemapExpressions.add(OperatorBuildHelper.createExpressionParameter(
+				SoccerGameAttributes.ENTITY_ID, splitSoccerDataRoute));
+		statemapExpressions.add(OperatorBuildHelper.createExpressionParameter(
+				OperatorBuildHelper.ATTRIBUTE_MINUTE, splitSoccerDataRoute));
+		statemapExpressions.add(OperatorBuildHelper.createExpressionParameter(
+				OperatorBuildHelper.ATTRIBUTE_SECOND, splitSoccerDataRoute));
+		statemapExpressions.add(OperatorBuildHelper.createExpressionParameter(
+				SoccerGameAttributes.X, splitSoccerDataRoute));
+		statemapExpressions.add(OperatorBuildHelper.createExpressionParameter(
+				SoccerGameAttributes.Y, splitSoccerDataRoute));
+		statemapExpressions.add(OperatorBuildHelper.createExpressionParameter(
+				SoccerGameAttributes.Z, splitSoccerDataRoute));
+		statemapExpressions.add(OperatorBuildHelper.createExpressionParameter(
+				SoccerGameAttributes.V, splitSoccerDataRoute));
+		statemapExpressions.add(OperatorBuildHelper.createExpressionParameter(
+				SoccerGameAttributes.A, splitSoccerDataRoute));
+		statemapExpressions.add(OperatorBuildHelper.createExpressionParameter(
+				SoccerGameAttributes.TS, splitSoccerDataRoute));
+		statemapExpressions.add(OperatorBuildHelper.createExpressionParameter(
+				SoccerGameAttributes.TEAM_ID, splitSoccerDataRoute));
+		
+		// new attributes
+		statemapExpressions.add(OperatorBuildHelper.createExpressionParameter(
+				"(" + SoccerGameAttributes.X + "/1000) / ((" + SoccerGameAttributes.TS + "- __last_1." + SoccerGameAttributes.TS + ")/" + TimeUnitHelper.getBTUtoSecondsFactor(TimeUnit.valueOf(AbstractSportsDDCAccess.getBasetimeunit().toLowerCase())) + ")",
+				ATTRIBUTE_VX, splitSoccerDataRoute));
+		statemapExpressions.add(OperatorBuildHelper.createExpressionParameter(
+				"(" + SoccerGameAttributes.Y + "/1000) / ((" + SoccerGameAttributes.TS + "- __last_1." + SoccerGameAttributes.TS + ")/" + TimeUnitHelper.getBTUtoSecondsFactor(TimeUnit.valueOf(AbstractSportsDDCAccess.getBasetimeunit().toLowerCase())) + ")",
+				ATTRIBUTE_VY, splitSoccerDataRoute));
+		statemapExpressions.add(OperatorBuildHelper.createExpressionParameter(
+				"(" + SoccerGameAttributes.Z + "/1000) / ((" + SoccerGameAttributes.TS + "- __last_1." + SoccerGameAttributes.TS + ")/" + TimeUnitHelper.getBTUtoSecondsFactor(TimeUnit.valueOf(AbstractSportsDDCAccess.getBasetimeunit().toLowerCase())) + ")",
+				ATTRIBUTE_VZ, splitSoccerDataRoute));
+		
+		StateMapAO addAttributesStateMapAO = OperatorBuildHelper
+				.createStateMapAO(statemapExpressions, SoccerGameAttributes.ENTITY_ID, splitSoccerDataRoute);
+		allOperators.add(addAttributesStateMapAO);
 		
 		// 3. Check if velocity of the balls has changed
 		List<String> ballVelocityChangeDetectAttributes = new ArrayList<String>();
-		ballVelocityChangeDetectAttributes.add(SoccerGameAttributes.VX);
-		ballVelocityChangeDetectAttributes.add(SoccerGameAttributes.VY);
-		ballVelocityChangeDetectAttributes.add(SoccerGameAttributes.VZ);			
+		ballVelocityChangeDetectAttributes.add(ATTRIBUTE_VX);
+		ballVelocityChangeDetectAttributes.add(ATTRIBUTE_VY);
+		ballVelocityChangeDetectAttributes.add(ATTRIBUTE_VZ);	
 		
 		List<String> ballVelocityChangeDetectGroupByAttributes = new ArrayList<String>();
-		ballVelocityChangeDetectGroupByAttributes.add(SoccerGameAttributes.SID);	
+		ballVelocityChangeDetectGroupByAttributes.add(SoccerGameAttributes.ENTITY_ID);	
 		
-		ChangeDetectAO ballVelocityChangeDetect = OperatorBuildHelper.createChangeDetectAO(ballVelocityChangeDetectAttributes, OperatorBuildHelper.createAttributeList(ballVelocityChangeDetectGroupByAttributes, splitSoccerDataRoute), true, BALL_VELOCITY_CHANGE_IN_PERCENT, splitSoccerDataRoute,-1);
+		ChangeDetectAO ballVelocityChangeDetect = OperatorBuildHelper.createChangeDetectAO(ballVelocityChangeDetectAttributes, OperatorBuildHelper.createAttributeList(ballVelocityChangeDetectGroupByAttributes, addAttributesStateMapAO), true, BALL_VELOCITY_CHANGE_IN_PERCENT, addAttributesStateMapAO, -1);
 		allOperators.add(ballVelocityChangeDetect);		
 
 		
@@ -195,7 +236,8 @@ public class PassesSportsQLParser implements ISportsQLParser {
 		playerPosExpressions.add(OperatorBuildHelper.createExpressionParameter(SoccerGameAttributes.Y, ATTRIBUTE_PLAYER_POS_Y, splitSoccerDataRoute));
 		playerPosExpressions.add(OperatorBuildHelper.createExpressionParameter(SoccerGameAttributes.Z, ATTRIBUTE_PLAYER_POS_Z, splitSoccerDataRoute));
 
-		playerPosExpressions.add(OperatorBuildHelper.createExpressionParameter(SoccerGameAttributes.SID,ATTRIBUTE_PLAYER_SID, splitSoccerDataRoute));
+		playerPosExpressions.add(OperatorBuildHelper.createExpressionParameter(SoccerGameAttributes.ENTITY_ID,ATTRIBUTE_PLAYER_SID, splitSoccerDataRoute));
+		playerPosExpressions.add(OperatorBuildHelper.createExpressionParameter(SoccerGameAttributes.TEAM_ID, splitSoccerDataRoute));
 		
 		MapAO playerPosMap = OperatorBuildHelper.createMapAO(playerPosExpressions, splitSoccerDataRoute, 0, 1, false);
 		allOperators.add(playerPosMap);
@@ -212,29 +254,57 @@ public class PassesSportsQLParser implements ISportsQLParser {
 		allOperators.add(ballContactJoin);
 				
 		// 9. Get meta data for the player sids
-		EnrichAO playerDataEnrichAO = OperatorBuildHelper.createEnrichAO(ATTRIBUTE_PLAYER_SID+"="+MetadataAttributes.SENSOR_ID, ballContactJoin, metadataStreamAO);
-		allOperators.add(playerDataEnrichAO);
+		//EnrichAO playerDataEnrichAO = OperatorBuildHelper.createEnrichAO(ATTRIBUTE_PLAYER_SID+"="+MetadataAttributes.SENSOR_ID, ballContactJoin, metadataStreamAO);
+		//allOperators.add(playerDataEnrichAO);
+		ArrayList<SDFExpressionParameter> mapExpressions = new ArrayList<SDFExpressionParameter>();
+		mapExpressions.add(OperatorBuildHelper.createExpressionParameter(
+				SoccerGameAttributes.TS, ballContactJoin));
+		mapExpressions.add(OperatorBuildHelper.createExpressionParameter(
+				ATTRIBUTE_BALL_POS_X, ballContactJoin));
+		mapExpressions.add(OperatorBuildHelper.createExpressionParameter(
+				ATTRIBUTE_BALL_POS_Y, ballContactJoin));
+		mapExpressions.add(OperatorBuildHelper.createExpressionParameter(
+				ATTRIBUTE_BALL_POS_Z, ballContactJoin));
+		mapExpressions.add(OperatorBuildHelper.createExpressionParameter(
+				ATTRIBUTE_PLAYER_POS_X, ballContactJoin));
+		mapExpressions.add(OperatorBuildHelper.createExpressionParameter(
+				ATTRIBUTE_PLAYER_POS_Y, ballContactJoin));
+		mapExpressions.add(OperatorBuildHelper.createExpressionParameter(
+				ATTRIBUTE_PLAYER_POS_Z, ballContactJoin));
+		mapExpressions.add(OperatorBuildHelper.createExpressionParameter(
+				ATTRIBUTE_PLAYER_SID, ballContactJoin));
+		mapExpressions.add(OperatorBuildHelper.createExpressionParameter(
+				SoccerGameAttributes.TEAM_ID, ballContactJoin));
+		
+		//mapExpressions.add(OperatorBuildHelper.createExpressionParameter("toInteger(fromDDC(concat(concat(\"sensorid.\"," + ATTRIBUTE_PLAYER_SID + "),\",remark\")))", SoccerGameAttributes.REMARK, ballContactJoin));
+		//mapExpressions.add(OperatorBuildHelper.createExpressionParameter("toInteger(fromDDC(concat(concat(\"sensorid.\"," + ATTRIBUTE_PLAYER_SID + "),\",entity\")))", SoccerGameAttributes.ENTITY, ballContactJoin));
+		//mapExpressions.add(OperatorBuildHelper.createExpressionParameter("toInteger(fromDDC(concat(concat(\"sensorid.\"," + ATTRIBUTE_PLAYER_SID + "),\",team_id\")))", SoccerGameAttributes.TEAM_ID, ballContactJoin));
+
+		
+		MapAO enrich = OperatorBuildHelper.createMapAO(mapExpressions,
+				ballContactJoin, 0, 0, false);
+		allOperators.add(enrich);
 		
 		// 10. Two following ball contacts as one tuple
 		List<SDFExpressionParameter> ballContactsStateMapAOExpressions = new ArrayList<SDFExpressionParameter>();
-		ballContactsStateMapAOExpressions.add(OperatorBuildHelper.createExpressionParameter("__last_1."+MetadataAttributes.ENTITY_ID, ATTRIBUTE_P1_ENTITY_ID, playerDataEnrichAO));
-		ballContactsStateMapAOExpressions.add(OperatorBuildHelper.createExpressionParameter(MetadataAttributes.ENTITY_ID, ATTRIBUTE_P2_ENTITY_ID, playerDataEnrichAO));
-		ballContactsStateMapAOExpressions.add(OperatorBuildHelper.createExpressionParameter("__last_1."+MetadataAttributes.ENTITY, ATTRIBUTE_P1_ENTITY, playerDataEnrichAO));
-		ballContactsStateMapAOExpressions.add(OperatorBuildHelper.createExpressionParameter(MetadataAttributes.ENTITY, ATTRIBUTE_P2_ENTITY, playerDataEnrichAO));
-		ballContactsStateMapAOExpressions.add(OperatorBuildHelper.createExpressionParameter("__last_1."+MetadataAttributes.REMARK, ATTRIBUTE_P1_REMARK, playerDataEnrichAO));
-		ballContactsStateMapAOExpressions.add(OperatorBuildHelper.createExpressionParameter(MetadataAttributes.REMARK,ATTRIBUTE_P2_REMARK, playerDataEnrichAO));
-		ballContactsStateMapAOExpressions.add(OperatorBuildHelper.createExpressionParameter("__last_1."+MetadataAttributes.TEAM_ID, ATTRIBUTE_P1_TEAM_ID, playerDataEnrichAO));
-		ballContactsStateMapAOExpressions.add(OperatorBuildHelper.createExpressionParameter(MetadataAttributes.TEAM_ID, ATTRIBUTE_P2_TEAM_ID, playerDataEnrichAO));
-		ballContactsStateMapAOExpressions.add(OperatorBuildHelper.createExpressionParameter("__last_1."+ATTRIBUTE_BALL_POS_X, ATTRIBUTE_P1_BALL_POS_X, playerDataEnrichAO));
-		ballContactsStateMapAOExpressions.add(OperatorBuildHelper.createExpressionParameter(ATTRIBUTE_BALL_POS_X, ATTRIBUTE_P2_BALL_POS_X, playerDataEnrichAO));
-		ballContactsStateMapAOExpressions.add(OperatorBuildHelper.createExpressionParameter("__last_1."+ATTRIBUTE_BALL_POS_Y, ATTRIBUTE_P1_BALL_POS_Y, playerDataEnrichAO));
-		ballContactsStateMapAOExpressions.add(OperatorBuildHelper.createExpressionParameter(ATTRIBUTE_BALL_POS_Y, ATTRIBUTE_P2_BALL_POS_Y, playerDataEnrichAO));
-		ballContactsStateMapAOExpressions.add(OperatorBuildHelper.createExpressionParameter("__last_1."+ATTRIBUTE_BALL_POS_Z, ATTRIBUTE_P1_BALL_POS_Z, playerDataEnrichAO));
-		ballContactsStateMapAOExpressions.add(OperatorBuildHelper.createExpressionParameter(ATTRIBUTE_BALL_POS_Z, ATTRIBUTE_P2_BALL_POS_Z, playerDataEnrichAO));
-		ballContactsStateMapAOExpressions.add(OperatorBuildHelper.createExpressionParameter("__last_1."+SoccerGameAttributes.TS, ATTRIBUTE_PASS_START_TS, playerDataEnrichAO));
-		ballContactsStateMapAOExpressions.add(OperatorBuildHelper.createExpressionParameter(SoccerGameAttributes.TS, ATTRIBUTE_PASS_END_TS, playerDataEnrichAO));
+		ballContactsStateMapAOExpressions.add(OperatorBuildHelper.createExpressionParameter("__last_1."+ATTRIBUTE_PLAYER_SID, ATTRIBUTE_P1_ENTITY_ID, enrich));
+		ballContactsStateMapAOExpressions.add(OperatorBuildHelper.createExpressionParameter(ATTRIBUTE_PLAYER_SID, ATTRIBUTE_P2_ENTITY_ID, enrich));
+//		ballContactsStateMapAOExpressions.add(OperatorBuildHelper.createExpressionParameter("__last_1."+SoccerGameAttributes.ENTITY, ATTRIBUTE_P1_ENTITY, enrich));
+//		ballContactsStateMapAOExpressions.add(OperatorBuildHelper.createExpressionParameter(SoccerGameAttributes.ENTITY, ATTRIBUTE_P2_ENTITY, enrich));
+//		ballContactsStateMapAOExpressions.add(OperatorBuildHelper.createExpressionParameter("__last_1."+SoccerGameAttributes.REMARK, ATTRIBUTE_P1_REMARK, enrich));
+//		ballContactsStateMapAOExpressions.add(OperatorBuildHelper.createExpressionParameter(SoccerGameAttributes.REMARK,ATTRIBUTE_P2_REMARK, enrich));
+		ballContactsStateMapAOExpressions.add(OperatorBuildHelper.createExpressionParameter("__last_1."+SoccerGameAttributes.TEAM_ID, ATTRIBUTE_P1_TEAM_ID, enrich));
+		ballContactsStateMapAOExpressions.add(OperatorBuildHelper.createExpressionParameter(SoccerGameAttributes.TEAM_ID, ATTRIBUTE_P2_TEAM_ID, enrich));
+		ballContactsStateMapAOExpressions.add(OperatorBuildHelper.createExpressionParameter("__last_1."+ATTRIBUTE_BALL_POS_X, ATTRIBUTE_P1_BALL_POS_X, enrich));
+		ballContactsStateMapAOExpressions.add(OperatorBuildHelper.createExpressionParameter(ATTRIBUTE_BALL_POS_X, ATTRIBUTE_P2_BALL_POS_X, enrich));
+		ballContactsStateMapAOExpressions.add(OperatorBuildHelper.createExpressionParameter("__last_1."+ATTRIBUTE_BALL_POS_Y, ATTRIBUTE_P1_BALL_POS_Y, enrich));
+		ballContactsStateMapAOExpressions.add(OperatorBuildHelper.createExpressionParameter(ATTRIBUTE_BALL_POS_Y, ATTRIBUTE_P2_BALL_POS_Y, enrich));
+		ballContactsStateMapAOExpressions.add(OperatorBuildHelper.createExpressionParameter("__last_1."+ATTRIBUTE_BALL_POS_Z, ATTRIBUTE_P1_BALL_POS_Z, enrich));
+		ballContactsStateMapAOExpressions.add(OperatorBuildHelper.createExpressionParameter(ATTRIBUTE_BALL_POS_Z, ATTRIBUTE_P2_BALL_POS_Z, enrich));
+		ballContactsStateMapAOExpressions.add(OperatorBuildHelper.createExpressionParameter("__last_1."+SoccerGameAttributes.TS, ATTRIBUTE_PASS_START_TS, enrich));
+		ballContactsStateMapAOExpressions.add(OperatorBuildHelper.createExpressionParameter(SoccerGameAttributes.TS, ATTRIBUTE_PASS_END_TS, enrich));
 		
-		StateMapAO ballContactsStateMapAO = OperatorBuildHelper.createStateMapAO(ballContactsStateMapAOExpressions, "", playerDataEnrichAO);
+		StateMapAO ballContactsStateMapAO = OperatorBuildHelper.createStateMapAO(ballContactsStateMapAOExpressions, "", enrich);
 		allOperators.add(ballContactsStateMapAO);	
 		
 		
@@ -250,10 +320,10 @@ public class PassesSportsQLParser implements ISportsQLParser {
 
 		passesStateMapAOExpressions.add(OperatorBuildHelper.createExpressionParameter(ATTRIBUTE_P1_ENTITY_ID, passesSelect));
 		passesStateMapAOExpressions.add(OperatorBuildHelper.createExpressionParameter(ATTRIBUTE_P2_ENTITY_ID, passesSelect));
-		passesStateMapAOExpressions.add(OperatorBuildHelper.createExpressionParameter(ATTRIBUTE_P1_ENTITY, passesSelect));
-		passesStateMapAOExpressions.add(OperatorBuildHelper.createExpressionParameter(ATTRIBUTE_P2_ENTITY, passesSelect));
-		passesStateMapAOExpressions.add(OperatorBuildHelper.createExpressionParameter(ATTRIBUTE_P1_REMARK, passesSelect));
-		passesStateMapAOExpressions.add(OperatorBuildHelper.createExpressionParameter(ATTRIBUTE_P2_REMARK, passesSelect));
+//		passesStateMapAOExpressions.add(OperatorBuildHelper.createExpressionParameter(ATTRIBUTE_P1_ENTITY, passesSelect));
+//		passesStateMapAOExpressions.add(OperatorBuildHelper.createExpressionParameter(ATTRIBUTE_P2_ENTITY, passesSelect));
+//		passesStateMapAOExpressions.add(OperatorBuildHelper.createExpressionParameter(ATTRIBUTE_P1_REMARK, passesSelect));
+//		passesStateMapAOExpressions.add(OperatorBuildHelper.createExpressionParameter(ATTRIBUTE_P2_REMARK, passesSelect));
 		passesStateMapAOExpressions.add(OperatorBuildHelper.createExpressionParameter(ATTRIBUTE_P1_TEAM_ID, passesSelect));
 		passesStateMapAOExpressions.add(OperatorBuildHelper.createExpressionParameter(ATTRIBUTE_P2_TEAM_ID, passesSelect));		
 		passesStateMapAOExpressions.add(OperatorBuildHelper.createExpressionParameter(ATTRIBUTE_P1_BALL_POS_X, passesSelect));
@@ -285,10 +355,10 @@ public class PassesSportsQLParser implements ISportsQLParser {
 
 		passesResultStateMapAOExpressions.add(OperatorBuildHelper.createExpressionParameter(ATTRIBUTE_P1_ENTITY_ID, passesWithMinDistanceSelect));
 		passesResultStateMapAOExpressions.add(OperatorBuildHelper.createExpressionParameter(ATTRIBUTE_P2_ENTITY_ID, passesWithMinDistanceSelect));
-		passesResultStateMapAOExpressions.add(OperatorBuildHelper.createExpressionParameter(ATTRIBUTE_P1_ENTITY, passesWithMinDistanceSelect));
-		passesResultStateMapAOExpressions.add(OperatorBuildHelper.createExpressionParameter(ATTRIBUTE_P2_ENTITY, passesWithMinDistanceSelect));
-		passesResultStateMapAOExpressions.add(OperatorBuildHelper.createExpressionParameter(ATTRIBUTE_P1_REMARK, passesWithMinDistanceSelect));
-		passesResultStateMapAOExpressions.add(OperatorBuildHelper.createExpressionParameter(ATTRIBUTE_P2_REMARK, passesWithMinDistanceSelect));
+//		passesResultStateMapAOExpressions.add(OperatorBuildHelper.createExpressionParameter(ATTRIBUTE_P1_ENTITY, passesWithMinDistanceSelect));
+//		passesResultStateMapAOExpressions.add(OperatorBuildHelper.createExpressionParameter(ATTRIBUTE_P2_ENTITY, passesWithMinDistanceSelect));
+//		passesResultStateMapAOExpressions.add(OperatorBuildHelper.createExpressionParameter(ATTRIBUTE_P1_REMARK, passesWithMinDistanceSelect));
+//		passesResultStateMapAOExpressions.add(OperatorBuildHelper.createExpressionParameter(ATTRIBUTE_P2_REMARK, passesWithMinDistanceSelect));
 		passesResultStateMapAOExpressions.add(OperatorBuildHelper.createExpressionParameter(ATTRIBUTE_P1_TEAM_ID, passesWithMinDistanceSelect));
 		passesResultStateMapAOExpressions.add(OperatorBuildHelper.createExpressionParameter(ATTRIBUTE_P2_TEAM_ID, passesWithMinDistanceSelect));		
 		passesResultStateMapAOExpressions.add(OperatorBuildHelper.createExpressionParameter(ATTRIBUTE_P1_BALL_POS_X, passesWithMinDistanceSelect));
@@ -379,10 +449,10 @@ public class PassesSportsQLParser implements ISportsQLParser {
 		
 		//22. Project for result stream
 		List<String> resultStreamAttributes = new ArrayList<String>();
-		resultStreamAttributes.add(ATTRIBUTE_P1_ENTITY);
-		resultStreamAttributes.add(ATTRIBUTE_P2_ENTITY);
-		resultStreamAttributes.add(ATTRIBUTE_P1_REMARK);
-		resultStreamAttributes.add(ATTRIBUTE_P2_REMARK);
+		resultStreamAttributes.add(ATTRIBUTE_P1_ENTITY_ID);
+		resultStreamAttributes.add(ATTRIBUTE_P2_ENTITY_ID);
+//		resultStreamAttributes.add(ATTRIBUTE_P1_REMARK);
+//		resultStreamAttributes.add(ATTRIBUTE_P2_REMARK);
 		resultStreamAttributes.add(ATTRIBUTE_P1_TEAM_ID);
 		resultStreamAttributes.add(ATTRIBUTE_P2_TEAM_ID);
 		resultStreamAttributes.add(ATTRIBUTE_PASS_LENGTH);
@@ -534,7 +604,7 @@ public class PassesSportsQLParser implements ISportsQLParser {
 		Iterator<Integer> ballSensorIterator = AbstractSportsDDCAccess.getBallEntityIds().iterator();
 		while(ballSensorIterator.hasNext()) {
 			int sensorId = ballSensorIterator.next();
-			predicateSb.append("sid = " + sensorId);
+			predicateSb.append(SoccerGameAttributes.ENTITY_ID + " = " + sensorId);
 			if(ballSensorIterator.hasNext()) {
 				predicateSb.append(" OR ");
 			}
