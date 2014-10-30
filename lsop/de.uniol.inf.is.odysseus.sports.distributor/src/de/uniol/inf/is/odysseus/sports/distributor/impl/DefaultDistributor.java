@@ -24,6 +24,9 @@ public class DefaultDistributor implements ISportsQLDistributor {
 				.createPeerAllocate(Allocate.ROUNDROBIN));
 		distributionConfig.append(DistributionConfigBuildHelper
 				.createPeerPostProcessor(Postprocessor.MERGE));
+		distributionConfig.append(DistributionConfigBuildHelper
+				.createPeerPostProcessor(Postprocessor.FORCELOCALSOURCES));
+		
 		return distributionConfig.toString();
 	}
 
