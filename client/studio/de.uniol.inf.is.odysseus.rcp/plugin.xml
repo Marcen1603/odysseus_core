@@ -89,6 +89,14 @@
             name="Stored Procedures"
             restorable="true">
       </view>
+      <view
+            category="Odysseus"
+            class="de.uniol.inf.is.odysseus.rcp.views.ConsoleCommandView"
+            icon="icons/gear.png"
+            id="de.uniol.inf.is.odysseus.rcp.views.ConsoleCommandView"
+            name="Console Command View"
+            restorable="true">
+      </view>
      </extension>
    <extension
          point="org.eclipse.ui.perspectives">
