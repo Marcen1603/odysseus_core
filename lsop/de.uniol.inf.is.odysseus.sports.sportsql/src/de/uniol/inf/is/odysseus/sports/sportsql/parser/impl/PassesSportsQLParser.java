@@ -171,7 +171,7 @@ public class PassesSportsQLParser implements ISportsQLParser {
 		List<String> ballVelocityChangeDetectGroupByAttributes = new ArrayList<String>();
 		ballVelocityChangeDetectGroupByAttributes.add(SoccerGameAttributes.SID);	
 		
-		ChangeDetectAO ballVelocityChangeDetect = OperatorBuildHelper.createChangeDetectAO(ballVelocityChangeDetectAttributes, OperatorBuildHelper.createAttributeList(ballVelocityChangeDetectGroupByAttributes, splitSoccerDataRoute), true, BALL_VELOCITY_CHANGE_IN_PERCENT, splitSoccerDataRoute);
+		ChangeDetectAO ballVelocityChangeDetect = OperatorBuildHelper.createChangeDetectAO(ballVelocityChangeDetectAttributes, OperatorBuildHelper.createAttributeList(ballVelocityChangeDetectGroupByAttributes, splitSoccerDataRoute), true, BALL_VELOCITY_CHANGE_IN_PERCENT, splitSoccerDataRoute,-1);
 		allOperators.add(ballVelocityChangeDetect);		
 
 		
@@ -182,7 +182,7 @@ public class PassesSportsQLParser implements ISportsQLParser {
 		ballPosExpressions.add(OperatorBuildHelper.createExpressionParameter(SoccerGameAttributes.Y, ATTRIBUTE_BALL_POS_Y, ballVelocityChangeDetect));
 		ballPosExpressions.add(OperatorBuildHelper.createExpressionParameter(SoccerGameAttributes.Z, ATTRIBUTE_BALL_POS_Z, ballVelocityChangeDetect));
 
-		MapAO ballPosMap = OperatorBuildHelper.createMapAO(ballPosExpressions, ballVelocityChangeDetect, 0, 0);
+		MapAO ballPosMap = OperatorBuildHelper.createMapAO(ballPosExpressions, ballVelocityChangeDetect, 0, 0, false);
 		allOperators.add(ballPosMap);
 
 		// 5. ElementWindow with tuple size 1 for the ball data stream
@@ -197,7 +197,7 @@ public class PassesSportsQLParser implements ISportsQLParser {
 
 		playerPosExpressions.add(OperatorBuildHelper.createExpressionParameter(SoccerGameAttributes.SID,ATTRIBUTE_PLAYER_SID, splitSoccerDataRoute));
 		
-		MapAO playerPosMap = OperatorBuildHelper.createMapAO(playerPosExpressions, splitSoccerDataRoute, 0, 1);
+		MapAO playerPosMap = OperatorBuildHelper.createMapAO(playerPosExpressions, splitSoccerDataRoute, 0, 1, false);
 		allOperators.add(playerPosMap);
 
 		// 7. ElementWindow with tuple size 1 for the player data stream

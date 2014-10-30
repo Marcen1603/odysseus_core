@@ -44,7 +44,7 @@ public class BallContactGlobalSportsQLParser implements ISportsQLParser {
 	 * Percentage change of velocity
 	 */
 	//private final double velocityChange = 0.15;
-	private final double velocityChange = 0.05;
+	private final double velocityChange = 0.10;
 
 	/**
 	 * Boolean which describes the relative tolerance
@@ -173,26 +173,26 @@ public class BallContactGlobalSportsQLParser implements ISportsQLParser {
 		ILogicalOperator ball_velocity_changes = OperatorBuildHelper
 				.createChangeDetectAO(attributes, OperatorBuildHelper
 						.createAttributeList(groupBy, split_balls),
-						relativeTolerance, velocityChange, split_balls);
+						relativeTolerance, velocityChange, split_balls, 100);
 		allOperators.add(ball_velocity_changes);
 		attributes.clear();
 
 		// Get position of active ball in game
 		ILogicalOperator ball_position_map = OperatorBuildHelper.createMapAO(
 				getMapExpressionForBallPosition(ball_velocity_changes),
-				ball_velocity_changes, 0, 0);
+				ball_velocity_changes, 0, 0, true);
 		allOperators.add(ball_position_map);
 
 		// window size = 1, advance = 1
-	//	ILogicalOperator ball_window = OperatorBuildHelper.createElementWindowAO(
-	//			1, 1, ball_position_map);
-//		allOperators.add(ball_window);
+		ILogicalOperator ball_window = OperatorBuildHelper.createElementWindowAO(
+			1, 1, ball_position_map);
+	allOperators.add(ball_window);
 		
 
 		// Get position of players in game
 		ILogicalOperator players_position_map = OperatorBuildHelper
 				.createMapAO(getMapExpressionForPlayerPosition(split_balls),
-						split_balls, 0, 1);
+						split_balls, 0, 1, false);
 		allOperators.add(players_position_map);
 
 		// window size = 1, advance = 1
@@ -203,8 +203,8 @@ public class BallContactGlobalSportsQLParser implements ISportsQLParser {
 		// Join the sources and show only values if ball is near to a player
 		predicates.add("SpatialDistance(ball_pos,player_pos)<" + radius);
 		ILogicalOperator proximity_join = OperatorBuildHelper.createJoinAO(
-	//			predicates, players_window, ball_window);
-				predicates, players_window, ball_position_map);
+			predicates, players_window, ball_window);
+	//			predicates, players_window, ball_position_map);
 				
 		allOperators.add(proximity_join);
 		predicates.clear();

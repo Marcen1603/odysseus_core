@@ -125,13 +125,15 @@ public class OperatorBuildHelper {
 	 * @return A MapAO with the given expressions
 	 */
 	public static MapAO createMapAO(List<SDFExpressionParameter> expressions,
-			ILogicalOperator source, int sinkInPort, int sourceOutPort) {
+			ILogicalOperator source, int sinkInPort, int sourceOutPort, boolean evaluateOnPunctuation) {
 		MapAO mapAO = new MapAO();
 
 		List<NamedExpressionItem> expressionItems = new ArrayList<NamedExpressionItem>();
 		for (SDFExpressionParameter param : expressions) {
 			expressionItems.add(param.getValue());
 		}
+		
+		mapAO.setEvaluateOnPunctuation(evaluateOnPunctuation);
 
 		mapAO.setExpressions(expressionItems);
 		mapAO.subscribeToSource(source, sinkInPort, sourceOutPort,
@@ -335,7 +337,7 @@ public class OperatorBuildHelper {
 			meterExpressions.add(param14);
 			meterExpressions.add(param15);
 			MapAO metersMap = OperatorBuildHelper.createMapAO(meterExpressions,
-					source, 0, 0);
+					source, 0, 0, false);
 
 			firstPredicateString = "x_meter >= " + startX;
 			secondPredicateString = "x_meter <= " + endX;
@@ -574,7 +576,7 @@ public class OperatorBuildHelper {
 		expressions.add(ex11);
 
 		MapAO firstMap = OperatorBuildHelper.createMapAO(expressions, source,
-				0, 0);
+				0, 0, false);
 		
 		firstMap.initialize();
 		
@@ -973,7 +975,7 @@ public class OperatorBuildHelper {
 	 */
 	public static ChangeDetectAO createChangeDetectAO(List<String> attributes,
 			List<SDFAttribute> groupBy, boolean relativeTolerance,
-			double tolerance, ILogicalOperator source) {
+			double tolerance, ILogicalOperator source, int heartbeatRate) {
 
 		ArrayList<ILogicalOperator> sources = new ArrayList<ILogicalOperator>();
 		sources.add(source);
@@ -985,7 +987,11 @@ public class OperatorBuildHelper {
 		cAO.setGroupingAttributes(groupBy);
 		cAO.setRelativeTolerance(relativeTolerance);
 		cAO.setTolerance(tolerance);
-
+	
+		if(heartbeatRate != -1){
+			cAO.setHeartbeatRate(heartbeatRate);
+		}
+		
 		// cAO.subscribeToSource(source, 0, 1, inputSchema);
 		cAO.subscribeTo(source, source.getOutputSchema());
 		

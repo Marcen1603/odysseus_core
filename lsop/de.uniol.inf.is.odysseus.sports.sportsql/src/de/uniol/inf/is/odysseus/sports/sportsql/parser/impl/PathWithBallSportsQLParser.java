@@ -139,7 +139,7 @@ public class PathWithBallSportsQLParser implements ISportsQLParser {
 						ballsFiltered);
 		parameterList.add(toPointParameter);
 		ILogicalOperator ballpos = OperatorBuildHelper.createMapAO(
-				parameterList, ballsFiltered, 0, 0);
+				parameterList, ballsFiltered, 0, 0, false);
 		allOperators.add(ballpos);
 
 		// player_stream = SELECT({predicate='entity_id = ${entity_id}'},
@@ -191,7 +191,7 @@ public class PathWithBallSportsQLParser implements ISportsQLParser {
 		positionParameterList.add(playerPosParameter);
 
 		ILogicalOperator playerPosition = OperatorBuildHelper.createMapAO(
-				positionParameterList, playerStreamChanges, 0, 0);
+				positionParameterList, playerStreamChanges, 0, 0, false);
 		allOperators.add(playerPosition);
 
 		// /player_window = WINDOW({SIZE = 1, TYPE = 'TUPLE',ADVANCE = 1},

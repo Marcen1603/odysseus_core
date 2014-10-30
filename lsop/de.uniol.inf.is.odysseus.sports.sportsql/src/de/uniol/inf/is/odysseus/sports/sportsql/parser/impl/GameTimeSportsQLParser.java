@@ -88,7 +88,7 @@ public class GameTimeSportsQLParser implements ISportsQLParser {
 					createExpressionParameter("DoubleToInteger((ts/"+TimeUnitHelper.getBTUtoMillisecondsFactor(TimeUnit.valueOf(AbstractSportsDDCAccess.getBasetimeunit().toLowerCase()))+") % 1000)", OperatorBuildHelper.ATTRIBUTE_MILLISECOND, gameTimeSelect));
 		}
 			MapAO timeMap = OperatorBuildHelper.createMapAO(expressions, gameTimeSelect,
-				0, 0);
+				0, 0, false);
 		timeMap.initialize();
 		allOperators.add(timeMap);
 

@@ -135,7 +135,7 @@ public class CornerKickGlobalSportsQLParser implements ISportsQLParser {
 				"BallBehindGoalline2_right", activeBall));
 
 		MapAO activeBallBehindGoalline = OperatorBuildHelper
-				.createMapAO(expressions, activeBall, 0, 0);
+				.createMapAO(expressions, activeBall, 0, 0, false);
 		operatorList.add(activeBallBehindGoalline);
 
 		//
@@ -175,7 +175,7 @@ public class CornerKickGlobalSportsQLParser implements ISportsQLParser {
 						+ (xMin + CORNER_SPOT_TOLERANCE) + ") , 1, 0)",
 				"BallOnCornerSpot2_top", activeBall));
 		MapAO ballOnCornerSpot = OperatorBuildHelper.createMapAO(
-				ballExpressions, activeBall, 0, 0);
+				ballExpressions, activeBall, 0, 0, false);
 		operatorList.add(ballOnCornerSpot);
 		//
 		// BallOnCornerSpot_change = CHANGEDETECT({
@@ -263,7 +263,7 @@ public class CornerKickGlobalSportsQLParser implements ISportsQLParser {
 				.createExpressionParameter("BallOnCornerSpot2_top", corners));
 
 		MapAO cornersTime = OperatorBuildHelper.createMapAO(
-				cornersTimeExpressions, corners, 0, 0);
+				cornersTimeExpressions, corners, 0, 0, false);
 		operatorList.add(cornersTime);
 
 		return OperatorBuildHelper.finishQuery(cornersTime, operatorList,

@@ -90,7 +90,7 @@ public class GoalsSportsQLParser implements ISportsQLParser {
 		// add inGoal1 / inGoal2
 		MapAO inGoal = OperatorBuildHelper.createMapAO(
 				getExpressionForInGoal(ball_in_goal_or_field),
-				ball_in_goal_or_field, 0, 0);
+				ball_in_goal_or_field, 0, 0, false);
 		allOperators.add(inGoal);
 
 		// inGoal filter: remove duplicates
@@ -106,7 +106,7 @@ public class GoalsSportsQLParser implements ISportsQLParser {
 		// onCentreSpot: Ball inside centre spot region
 		MapAO onCentreSpot = OperatorBuildHelper.createMapAO(
 				getExpressionForOnCentreSpot(ball_in_game_field),
-				ball_in_game_field, 0, 0);
+				ball_in_game_field, 0, 0, false);
 		allOperators.add(onCentreSpot);
 
 		// onCentreSpot_filter: filter duplicates

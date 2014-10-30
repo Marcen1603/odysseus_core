@@ -182,7 +182,7 @@ public class SprintsPlayerSportsQLParser implements ISportsQLParser {
 				SoccerGameAttributes.Y, aggregate));
 
 		MapAO toKmhMap = OperatorBuildHelper.createMapAO(mapExpressions,
-				aggregate, 0, 0);
+				aggregate, 0, 0, false);
 		allOperators.add(toKmhMap);
 
 		// 9. Statemap

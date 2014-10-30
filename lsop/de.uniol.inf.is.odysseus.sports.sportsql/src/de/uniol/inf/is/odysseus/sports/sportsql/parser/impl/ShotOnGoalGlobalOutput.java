@@ -159,7 +159,7 @@ public class ShotOnGoalGlobalOutput {
 		mapExpressions.add(mapParam4);
 		mapExpressions.add(mapParam5);
 		MapAO accelerationMap = OperatorBuildHelper.createMapAO(mapExpressions,
-				activeBall, 0, 0);
+				activeBall, 0, 0, false);
 
 		// 2. ChangeDetect
 		List<String> attr = new ArrayList<String>();
@@ -270,7 +270,7 @@ public class ShotOnGoalGlobalOutput {
 		playerBallJoinExpressions.add(playerBallJoinExp7);
 
 		MapAO playerBallJoin = OperatorBuildHelper.createMapAO(
-				playerBallJoinExpressions, playerBallJoinAO, 0, 0);
+				playerBallJoinExpressions, playerBallJoinAO, 0, 0, false);
 
 		// Add to list
 		allOperators.add(playerBallJoinAO);
@@ -460,7 +460,7 @@ public class ShotOnGoalGlobalOutput {
 		goalAreaMapParams.add(goalAreaMapParam13);
 
 		MapAO goalAreaMap = OperatorBuildHelper.createMapAO(goalAreaMapParams,
-				durationAndLengthCriteria, 0, 0);
+				durationAndLengthCriteria, 0, 0,false);
 
 		// 2. Route
 		List<String> goalDetectionPredicates = new ArrayList<String>();
@@ -583,7 +583,7 @@ public class ShotOnGoalGlobalOutput {
 		mapParams.add(mapParam9);
 		mapParams.add(mapParam10);
 
-		return OperatorBuildHelper.createMapAO(mapParams, source, 0, 0);
+		return OperatorBuildHelper.createMapAO(mapParams, source, 0, 0, false);
 	}
 
 	/**
@@ -696,6 +696,6 @@ public class ShotOnGoalGlobalOutput {
 		mapParams.add(goalAreaMapParam13);
 
 		return OperatorBuildHelper.createMapAO(mapParams, source, 0,
-				sourceOutputPort);
+				sourceOutputPort, false);
 	}
 }

@@ -99,7 +99,7 @@ public class CrossesGlobalSportsQLParser implements ISportsQLParser{
 						+ ") AND ((y < " + CROSSINGZONE_RIGHT_SIDE + ") OR (y > "
 						+ CROSSINGZONE_LEFT_SIDE + ")), 1, 0)", "in_crossing_zone_right", selectBallInField));
 
-		MapAO inCrossingZoneMap = OperatorBuildHelper.createMapAO(expressions, selectBallInField, 0, 0);
+		MapAO inCrossingZoneMap = OperatorBuildHelper.createMapAO(expressions, selectBallInField, 0, 0, false);
 		allOperators.add(inCrossingZoneMap);
 		expressions.clear();
 		
@@ -134,7 +134,7 @@ public class CrossesGlobalSportsQLParser implements ISportsQLParser{
 		expressions.add(OperatorBuildHelper.createExpressionParameter("eif( (x <" + TARGETZONE_LEFT_HALF + ") AND ( y > " + CROSSINGZONE_RIGHT_SIDE +") AND (y <" + CROSSINGZONE_LEFT_SIDE +") AND (z >" + MIN_BALL_HEIGHT +"),1,0)","in_target_zone_left", selectBallInField));
 		expressions.add(OperatorBuildHelper.createExpressionParameter("eif( (x >" + TARGETZONE_RIGHT_HALF + ") AND ( y > " + CROSSINGZONE_RIGHT_SIDE +") AND (y <" + CROSSINGZONE_LEFT_SIDE +") AND (z >" + MIN_BALL_HEIGHT +"),1,0)","in_target_zone_right", selectBallInField));
 		
-		MapAO inTargetZone = OperatorBuildHelper.createMapAO(expressions, selectBallInField, 0, 0);
+		MapAO inTargetZone = OperatorBuildHelper.createMapAO(expressions, selectBallInField, 0, 0, false);
 		allOperators.add(inTargetZone);
 		expressions.clear();
 		

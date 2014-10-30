@@ -78,6 +78,8 @@ public class SportsQLDistributorRegistry {
 
 		return outputConfig;
 	}
+	
+	
 
 	public static ISportsQLDistributor getSportsQLDistributor(String sportsQL) {
 		String type = null;
