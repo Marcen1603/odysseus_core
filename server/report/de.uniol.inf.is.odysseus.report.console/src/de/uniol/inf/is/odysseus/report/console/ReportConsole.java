@@ -39,7 +39,7 @@ public class ReportConsole implements CommandProvider {
 	public String getHelp() {
 		StringBuilder sb = new StringBuilder();
 		
-		sb.append("report         - Prints a current status report about odysseus, bundles, services, etc.");
+		sb.append("report         - Prints a current status report about odysseus, bundles, services, etc.\n");
 		
 		return sb.toString();
 	}
@@ -48,13 +48,13 @@ public class ReportConsole implements CommandProvider {
 		IReport report = reportGenerator.generateReport(getActiveSession());
 		
 		for( String reportTitle : report.getTitles() ) {
-			System.out.println(getLine());
-			System.out.println("## " + reportTitle);
-			System.out.println(getLine());
-			System.out.println();
+			ci.println(getLine());
+			ci.println("## " + reportTitle);
+			ci.println(getLine());
+			ci.println();
 			Optional<String> optReportText = report.getReportText(reportTitle);
-			System.out.println(optReportText.isPresent() ? optReportText.get() : NO_REPORT_TEXT);
-			System.out.println();
+			ci.println(optReportText.isPresent() ? optReportText.get() : NO_REPORT_TEXT);
+			ci.println();
 		}
 	}
 	
