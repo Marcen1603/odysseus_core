@@ -26,6 +26,8 @@ public class Temper1Sensor extends Sensor {
 		sBuilder.append("#PARSER PQL\n");
 		sBuilder.append("\n");
 		
+		//TODO: auf den rohdaten: temperatur > 24
+		
 		//Activity: hot
 		//Configuration:
 		String activityConfiguration = getSourceNamePrefix()+"_"+getName()+"_ActivityConfiguration_"+getSourceNamePostfix();
