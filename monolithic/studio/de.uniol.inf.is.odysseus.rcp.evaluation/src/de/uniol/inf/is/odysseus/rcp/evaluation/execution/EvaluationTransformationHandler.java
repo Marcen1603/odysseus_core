@@ -85,7 +85,7 @@ public class EvaluationTransformationHandler implements IPreTransformationHandle
 		Set<Class<? extends ILogicalOperator>> set = new HashSet<>();
 		set.add(AbstractAccessAO.class);
 		set.add(StreamAO.class);
-		CollectOperatorLogicalGraphVisitor<ILogicalOperator> collVisitor = new CollectOperatorLogicalGraphVisitor<ILogicalOperator>(set);
+		CollectOperatorLogicalGraphVisitor<ILogicalOperator> collVisitor = new CollectOperatorLogicalGraphVisitor<ILogicalOperator>(set,true);
 		GenericGraphWalker collectWalker = new GenericGraphWalker();
 		collectWalker.prefixWalk(root, collVisitor);		
 		for (ILogicalOperator accessAO : collVisitor.getResult()) {

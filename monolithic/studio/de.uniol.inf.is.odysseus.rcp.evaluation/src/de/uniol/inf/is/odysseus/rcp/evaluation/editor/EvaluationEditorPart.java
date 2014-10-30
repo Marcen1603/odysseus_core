@@ -563,7 +563,7 @@ public class EvaluationEditorPart extends EditorPart implements IResourceChangeL
 	}
 
 	protected void addParameter() {
-		String name = "NEW_PARAMATER";
+		String name = "NEW_PARAMETER";
 
 		if (evaluationModel.parameterNameExists(name)) {
 			int i = 1;
