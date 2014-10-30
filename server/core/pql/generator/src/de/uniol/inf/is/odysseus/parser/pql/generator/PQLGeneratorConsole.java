@@ -52,7 +52,7 @@ public class PQLGeneratorConsole implements CommandProvider {
 		StringBuilder sb = new StringBuilder();
 		
 		sb.append("---PQLGenerator commands---\n");
-		sb.append("generatePQL <queryID>		- Generates and prints the PQL-Text of the given query.\n");
+		sb.append("    generatePQL <queryID>		- Generates and prints the PQL-Text of the given query.\n");
 		
 		return sb.toString();
 	}
@@ -60,7 +60,7 @@ public class PQLGeneratorConsole implements CommandProvider {
 	public void _generatePQL(CommandInterpreter ci) {
 		String queryIDString = ci.nextArgument();
 		if (Strings.isNullOrEmpty(queryIDString)) {
-			System.out.println("usage: generatePQL <queryID>");
+			ci.println("usage: generatePQL <queryID>");
 			return;
 		}
 
@@ -68,17 +68,17 @@ public class PQLGeneratorConsole implements CommandProvider {
 		try {
 			queryID = Integer.valueOf(queryIDString);
 		} catch (Throwable t) {
-			System.out.println("usage: generatePQL <queryID>");
+			ci.println("usage: generatePQL <queryID>");
 		}
 
 		if( !executor.getLogicalQueryIds(getActiveSession()).contains(queryID) ) {
-			System.out.println("No query with queryid " + queryID + " found");
+			ci.println("No query with queryid " + queryID + " found");
 			return;
 		}
 		
 		ILogicalQuery logicalQuery = executor.getLogicalQueryById(queryID, getActiveSession());
 		String pqlStatement = pqlGenerator.generatePQLStatement(logicalQuery.getLogicalPlan());
-		System.out.println(pqlStatement);
+		ci.println(pqlStatement);
 	}
 
 }
