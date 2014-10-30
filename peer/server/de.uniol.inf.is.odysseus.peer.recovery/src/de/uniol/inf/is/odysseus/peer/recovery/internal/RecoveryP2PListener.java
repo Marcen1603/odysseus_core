@@ -93,45 +93,52 @@ public class RecoveryP2PListener extends Observable implements IRecoveryP2PListe
 			@Override
 			public void run() {
 				while (!isInterrupted()) {
+					
+					if(p2pDictionary == null) {
+						
+						// Already unbound
+						return;
+						
+					}
 					Collection<PeerID> peerIDs = p2pDictionary.getRemotePeerIDs();
-					if (savedPeerIDs == null) {
-						savedPeerIDs = peerIDs;
-					} else {
-						// Check, if we lost a peer
-						for (PeerID pid : savedPeerIDs) {
-							if (!peerIDs.contains(pid)) {
-								LOG.debug("Lost peer");
-								// We lost a peer, start recovery
-								P2PNetworkNotification notification = new P2PNetworkNotification(
-										P2PNetworkNotification.LOST_PEER, pid);
-								setChanged();
-								notifyObservers(notification);
-
+						if (savedPeerIDs == null) {
+							savedPeerIDs = peerIDs;
+						} else {
+							// Check, if we lost a peer
+							for (PeerID pid : savedPeerIDs) {
+								if (!peerIDs.contains(pid)) {
+									LOG.debug("Lost peer");
+									// We lost a peer, start recovery
+									P2PNetworkNotification notification = new P2PNetworkNotification(
+											P2PNetworkNotification.LOST_PEER, pid);
+									setChanged();
+									notifyObservers(notification);
+	
+								}
+							}
+	
+							// Check, if there is a new peer
+							for (PeerID pid : peerIDs) {
+								if (!savedPeerIDs.contains(pid)) {
+									// We found a new peer
+									LOG.debug("Found new peer: {}", p2pDictionary.getRemotePeerName(pid));
+									P2PNetworkNotification notification = new P2PNetworkNotification(
+											P2PNetworkNotification.FOUND_PEER, pid);
+									setChanged();
+									notifyObservers(notification);
+								}
+							}
+	
+							savedPeerIDs = peerIDs;
+						}
+	
+						synchronized (this) {
+							try {
+								this.wait(WAIT_TIME_MS);
+							} catch (InterruptedException e) {
+								e.printStackTrace();
 							}
 						}
-
-						// Check, if there is a new peer
-						for (PeerID pid : peerIDs) {
-							if (!savedPeerIDs.contains(pid)) {
-								// We found a new peer
-								LOG.debug("Found new peer: {}", p2pDictionary.getRemotePeerName(pid));
-								P2PNetworkNotification notification = new P2PNetworkNotification(
-										P2PNetworkNotification.FOUND_PEER, pid);
-								setChanged();
-								notifyObservers(notification);
-							}
-						}
-
-						savedPeerIDs = peerIDs;
-					}
-
-					synchronized (this) {
-						try {
-							this.wait(WAIT_TIME_MS);
-						} catch (InterruptedException e) {
-							e.printStackTrace();
-						}
-					}
 				}
 			}
 		};
