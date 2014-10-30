@@ -104,4 +104,17 @@ public interface IRecoveryCommunicator {
 	 */
 	public void chooseBuddyForQuery(ID sharedQueryId);
 
+	/**
+	 * Sends a message to the given peer that it has to go on sending the tuples
+	 * for the given pipeId. (Stop buffering)
+	 * 
+	 * @param receiverPeer
+	 *            The peer which should stop buffering and going on to send the
+	 *            tuples
+	 * @param pipeId
+	 *            The pipeId for which the receiver of this message should go on
+	 *            sending tuples
+	 */
+	public void sendGoOnMessage(PeerID receiverPeer, PipeID pipeId);
+
 }

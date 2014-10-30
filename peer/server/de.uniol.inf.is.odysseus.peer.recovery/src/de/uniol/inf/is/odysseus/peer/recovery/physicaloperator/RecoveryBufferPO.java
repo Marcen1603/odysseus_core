@@ -1,5 +1,7 @@
 package de.uniol.inf.is.odysseus.peer.recovery.physicaloperator;
 
+import net.jxta.pipe.PipeID;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,12 +21,13 @@ public class RecoveryBufferPO<T extends IStreamObject<? extends ITimeInterval>> 
 	}
 
 	private BUFFER_STATES bufferState = BUFFER_STATES.NOT_BUFFERING;
+	private IRecoveryTupleStore tupleStore;
+	private PipeID pipeId;
 
-	IRecoveryTupleStore tupleStore;
-
-	public RecoveryBufferPO() {
+	public RecoveryBufferPO(PipeID pipeId) {
 		super();
 		tupleStore = new ArrayDequeRecoveryTupleStore();
+		this.pipeId = pipeId;
 	}
 
 	@Override
@@ -56,7 +59,7 @@ public class RecoveryBufferPO<T extends IStreamObject<? extends ITimeInterval>> 
 
 			T tupleToProcess = (T) tupleStore.getNextTuple();
 			while (tupleToProcess != null) {
-				super.process(tupleToProcess, 0);
+				transfer(tupleToProcess, 0);
 				tupleToProcess = (T) tupleStore.getNextTuple();
 			}
 			this.bufferState = BUFFER_STATES.NOT_BUFFERING;
@@ -66,6 +69,14 @@ public class RecoveryBufferPO<T extends IStreamObject<? extends ITimeInterval>> 
 	@Override
 	public String getName() {
 		return "RecoveryBufferPO";
+	}
+	
+	/**
+	 * 
+	 * @return The PipeID from the sender which is behind this buffer
+	 */
+	public PipeID getPipeId() {
+		return this.pipeId;
 	}
 
 }

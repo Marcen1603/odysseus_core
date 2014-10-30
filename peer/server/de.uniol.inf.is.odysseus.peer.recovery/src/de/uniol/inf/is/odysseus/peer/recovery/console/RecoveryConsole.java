@@ -39,13 +39,11 @@ import de.uniol.inf.is.odysseus.peer.recovery.util.RecoveryHelper;
  */
 public class RecoveryConsole implements CommandProvider {
 
-	private static final Logger LOG = LoggerFactory
-			.getLogger(RecoveryConsole.class);
+	private static final Logger LOG = LoggerFactory.getLogger(RecoveryConsole.class);
 
 	private static IP2PNetworkManager p2pNetworkManager;
 	private static IP2PDictionary p2pDictionary;
-	private static Collection<IRecoveryAllocator> recoveryAllocators = Lists
-			.newArrayList();
+	private static Collection<IRecoveryAllocator> recoveryAllocators = Lists.newArrayList();
 	/**
 	 * Executor to get queries
 	 */
@@ -113,8 +111,7 @@ public class RecoveryConsole implements CommandProvider {
 	/**
 	 * The recovery communicator, if there is one bound.
 	 */
-	private static Optional<IRecoveryCommunicator> cCommunicator = Optional
-			.absent();
+	private static Optional<IRecoveryCommunicator> cCommunicator = Optional.absent();
 
 	/**
 	 * Binds a recovery communicator. <br />
@@ -126,11 +123,9 @@ public class RecoveryConsole implements CommandProvider {
 	 */
 	public static void bindCommunicator(IRecoveryCommunicator communicator) {
 
-		Preconditions.checkNotNull(communicator,
-				"The recovery communicator to bind must be not null!");
+		Preconditions.checkNotNull(communicator, "The recovery communicator to bind must be not null!");
 		cCommunicator = Optional.of(communicator);
-		LOG.debug("Bound {} as a recovery communicator.", communicator
-				.getClass().getSimpleName());
+		LOG.debug("Bound {} as a recovery communicator.", communicator.getClass().getSimpleName());
 
 	}
 
@@ -144,14 +139,11 @@ public class RecoveryConsole implements CommandProvider {
 	 */
 	public static void unbindCommunicator(IRecoveryCommunicator communicator) {
 
-		Preconditions.checkNotNull(communicator,
-				"The recovery communicator to unbind must be not null!");
-		if (cCommunicator.isPresent()
-				&& cCommunicator.get().equals(communicator)) {
+		Preconditions.checkNotNull(communicator, "The recovery communicator to unbind must be not null!");
+		if (cCommunicator.isPresent() && cCommunicator.get().equals(communicator)) {
 
 			cCommunicator = Optional.absent();
-			LOG.debug("Unbound {} as a recovery communicator.", communicator
-					.getClass().getSimpleName());
+			LOG.debug("Unbound {} as a recovery communicator.", communicator.getClass().getSimpleName());
 
 		}
 
@@ -201,6 +193,8 @@ public class RecoveryConsole implements CommandProvider {
 		sb.append("	recoveryAllocation <AllocatorName> - Gets the id and name of a peer to allocate to (for testing) \n");
 		sb.append("	startPeerFailureDetection <AllocatorName> - Starts detection of peer failures with the given allocator. \n");
 		sb.append("	stopPeerFailureDetection - Stops detection of peer failures. \n");
+		sb.append("	holdOn <PipeId> - Let this peer hold on\n");
+		sb.append("	goOn <PipeId> - Let this peer go on\n");
 		return sb.toString();
 	}
 
@@ -212,7 +206,7 @@ public class RecoveryConsole implements CommandProvider {
 			ci.println("Don't know this peer id");
 			return;
 		}
-		
+
 		cCommunicator.get().recover(failedPeer);
 
 	}
@@ -224,14 +218,12 @@ public class RecoveryConsole implements CommandProvider {
 		Optional<PeerID> peerId = RecoveryHelper.determinePeerID(peerName);
 
 		if (peerId.isPresent()) {
-			Set<ID> queryIds = LocalBackupInformationAccess
-					.getStoredSharedQueryIdsForPeer(peerId.get());
-			ci.println("PQL-Queries for peer with peerId "
-					+ peerId.get());
+			Set<ID> queryIds = LocalBackupInformationAccess.getStoredSharedQueryIdsForPeer(peerId.get());
+			ci.println("PQL-Queries for peer with peerId " + peerId.get());
 			for (ID queryId : queryIds) {
 				ci.println("Shared Query ID: " + queryId);
-				ImmutableCollection<String> pqls = LocalBackupInformationAccess
-						.getStoredPQLStatements(queryId, peerId.get());
+				ImmutableCollection<String> pqls = LocalBackupInformationAccess.getStoredPQLStatements(queryId,
+						peerId.get());
 
 				for (String pql : pqls) {
 					ci.println("Query: ");
@@ -259,16 +251,16 @@ public class RecoveryConsole implements CommandProvider {
 
 		Optional<PeerID> optNewPeer = RecoveryHelper.determinePeerID(newPeerName);
 		PeerID newPeer;
-		if(!optNewPeer.isPresent()) {
+		if (!optNewPeer.isPresent()) {
 			ci.println("Don't know new peer. Take myself instead.");
 			newPeer = p2pNetworkManager.getLocalPeerID();
 		} else {
 			newPeer = optNewPeer.get();
 		}
-		
+
 		Optional<PeerID> optFailedPeer = RecoveryHelper.determinePeerID(failedPeerName);
 		PeerID failedPeer;
-		if(!optFailedPeer.isPresent()) {
+		if (!optFailedPeer.isPresent()) {
 			ci.println("Don't know failed peer. Take myself instead.");
 			failedPeer = p2pNetworkManager.getLocalPeerID();
 		} else {
@@ -279,8 +271,7 @@ public class RecoveryConsole implements CommandProvider {
 		try {
 			queryUri = new URI(queryId);
 			ID sharedQueryId = ID.create(queryUri);
-			cCommunicator.get().installQueriesOnNewPeer(failedPeer, newPeer,
-					sharedQueryId);
+			cCommunicator.get().installQueriesOnNewPeer(failedPeer, newPeer, sharedQueryId);
 		} catch (URISyntaxException e) {
 			ci.println("Can't parse the queryId.");
 		}
@@ -314,21 +305,16 @@ public class RecoveryConsole implements CommandProvider {
 		PipeID pipeId = getPipeIDFromCi(ci);
 
 		if (receiverPeerId == null) {
-			System.out
-					.println("Don't know new receiver peer. Take myself insead.");
-			receiverPeerId = RecoveryCommunicator.getP2pNetworkManager()
-					.getLocalPeerID();
+			ci.println("Don't know new receiver peer. Take myself insead.");
+			receiverPeerId = RecoveryCommunicator.getP2pNetworkManager().getLocalPeerID();
 		}
 
 		if (newSendrePeerId == null) {
-			System.out
-					.println("Don't know new sender peer. Take myself insead.");
-			newSendrePeerId = RecoveryCommunicator.getP2pNetworkManager()
-					.getLocalPeerID();
+			ci.println("Don't know new sender peer. Take myself insead.");
+			newSendrePeerId = RecoveryCommunicator.getP2pNetworkManager().getLocalPeerID();
 		}
 
-		cCommunicator.get().sendUpdateReceiverMessage(receiverPeerId,
-				newSendrePeerId, pipeId);
+		cCommunicator.get().sendUpdateReceiverMessage(receiverPeerId, newSendrePeerId, pipeId);
 	}
 
 	public void _startPeerFailureDetection(CommandInterpreter ci) {
@@ -337,18 +323,15 @@ public class RecoveryConsole implements CommandProvider {
 		String allocatorName = ci.nextArgument();
 		if (Strings.isNullOrEmpty(allocatorName)) {
 
-			System.out
-					.println("usage: startPeerFailureDetection <AllocatorName>");
+			System.out.println("usage: startPeerFailureDetection <AllocatorName>");
 			return;
 
 		}
 
-		Optional<IRecoveryAllocator> optAllocator = RecoveryConsole
-				.determineAllocator(allocatorName);
+		Optional<IRecoveryAllocator> optAllocator = RecoveryConsole.determineAllocator(allocatorName);
 		if (!optAllocator.isPresent()) {
 
-			ci.println("No recovery allocator found with the name "
-					+ allocatorName);
+			ci.println("No recovery allocator found with the name " + allocatorName);
 			return;
 
 		}
@@ -358,9 +341,8 @@ public class RecoveryConsole implements CommandProvider {
 
 		peerFailureDetector.startPeerFailureDetection();
 
-		System.out
-				.println("Peer failure detection is now switched on on this peer with usage of "
-						+ allocator.getName() + " allocator.");
+		ci.println("Peer failure detection is now switched on on this peer with usage of "
+				+ allocator.getName() + " allocator.");
 	}
 
 	public void _stopPeerFailureDetection(CommandInterpreter ci) {
@@ -368,15 +350,13 @@ public class RecoveryConsole implements CommandProvider {
 
 		peerFailureDetector.stopPeerFailureDetection();
 
-		System.out
-				.println("Peer failure detection is now switched off on this peer.");
+		ci.println("Peer failure detection is now switched off on this peer.");
 	}
 
 	public void _lsBackupStore(CommandInterpreter ci) {
 		StringBuilder sb = new StringBuilder();
 
-		ImmutableCollection<ID> storedIds = LocalBackupInformationAccess
-				.getStoredIDs();
+		ImmutableCollection<ID> storedIds = LocalBackupInformationAccess.getStoredIDs();
 
 		if (storedIds.isEmpty()) {
 			ci.println("No shared query ids stored.");
@@ -435,12 +415,10 @@ public class RecoveryConsole implements CommandProvider {
 
 		}
 
-		Optional<IRecoveryAllocator> optAllocator = RecoveryConsole
-				.determineAllocator(allocatorName);
+		Optional<IRecoveryAllocator> optAllocator = RecoveryConsole.determineAllocator(allocatorName);
 		if (!optAllocator.isPresent()) {
 
-			ci.println("No recovery allocator found with the name "
-					+ allocatorName);
+			ci.println("No recovery allocator found with the name " + allocatorName);
 			return;
 
 		}
@@ -448,14 +426,22 @@ public class RecoveryConsole implements CommandProvider {
 
 		PeerID peer = null;
 		try {
-			peer = allocator.allocate(p2pDictionary.getRemotePeerIDs(),
-					p2pNetworkManager.getLocalPeerID());
-			ci.println("Allocator has chosen "
-					+ p2pDictionary.getRemotePeerName(peer) + " as target");
+			peer = allocator.allocate(p2pDictionary.getRemotePeerIDs(), p2pNetworkManager.getLocalPeerID());
+			ci.println("Allocator has chosen " + p2pDictionary.getRemotePeerName(peer) + " as target");
 		} catch (QueryPartAllocationException e) {
 			e.printStackTrace();
 		}
 
+	}
+
+	public void _holdOn(CommandInterpreter ci) {
+		PipeID pipe = getPipeIDFromCi(ci);
+		RecoveryHelper.startBuffering(pipe.toString());
+	}
+	
+	public void _goOn(CommandInterpreter ci) {
+		PipeID pipe = getPipeIDFromCi(ci);
+		RecoveryHelper.resumeSubscriptions(pipe);
 	}
 
 	/**
@@ -469,8 +455,8 @@ public class RecoveryConsole implements CommandProvider {
 		String peerNameString = ci.nextArgument();
 		PeerID peerId = null;
 		if (!Strings.isNullOrEmpty(peerNameString)) {
-			peerId = RecoveryHelper.determinePeerID(peerNameString).isPresent() ? RecoveryHelper
-					.determinePeerID(peerNameString).get() : null;
+			peerId = RecoveryHelper.determinePeerID(peerNameString).isPresent() ? RecoveryHelper.determinePeerID(
+					peerNameString).get() : null;
 		}
 
 		return peerId;
@@ -505,21 +491,21 @@ public class RecoveryConsole implements CommandProvider {
 	 * @param ci
 	 * @return SharedQueryId which is made from the next argument from the ci
 	 */
-//	private ID getSharedQueryIdFromCi(CommandInterpreter ci) {
-//		String sharedQueryIdString = ci.nextArgument();
-//		ID sharedQueryId = null;
-//		if (!Strings.isNullOrEmpty(sharedQueryIdString)) {
-//			URI sharedIdUri;
-//			try {
-//				sharedIdUri = new URI(sharedQueryIdString);
-//				sharedQueryId = ID.create(sharedIdUri);
-//			} catch (URISyntaxException e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//			}
-//		}
-//		return sharedQueryId;
-//	}
+	// private ID getSharedQueryIdFromCi(CommandInterpreter ci) {
+	// String sharedQueryIdString = ci.nextArgument();
+	// ID sharedQueryId = null;
+	// if (!Strings.isNullOrEmpty(sharedQueryIdString)) {
+	// URI sharedIdUri;
+	// try {
+	// sharedIdUri = new URI(sharedQueryIdString);
+	// sharedQueryId = ID.create(sharedIdUri);
+	// } catch (URISyntaxException e) {
+	// // TODO Auto-generated catch block
+	// e.printStackTrace();
+	// }
+	// }
+	// return sharedQueryId;
+	// }
 
 	/**
 	 * Determines the {@link IRecoveryAllocator} by name.
@@ -529,11 +515,9 @@ public class RecoveryConsole implements CommandProvider {
 	 * @return An {@link IRecoveryAllocator}, if there is one bound with
 	 *         <code>allocatorName</code> as name.
 	 */
-	private static Optional<IRecoveryAllocator> determineAllocator(
-			String allocatorName) {
+	private static Optional<IRecoveryAllocator> determineAllocator(String allocatorName) {
 
-		Preconditions.checkNotNull(allocatorName,
-				"The name of the recovery allocator must be not null!");
+		Preconditions.checkNotNull(allocatorName, "The name of the recovery allocator must be not null!");
 
 		for (IRecoveryAllocator allocator : RecoveryConsole.recoveryAllocators) {
 

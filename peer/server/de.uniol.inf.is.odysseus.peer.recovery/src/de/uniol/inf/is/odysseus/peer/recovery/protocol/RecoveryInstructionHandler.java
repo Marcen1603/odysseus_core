@@ -1,6 +1,7 @@
 package de.uniol.inf.is.odysseus.peer.recovery.protocol;
 
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Collection;
 
 import net.jxta.id.ID;
@@ -60,11 +61,13 @@ public class RecoveryInstructionHandler {
 	 * @param instructionMessage
 	 *            The incoming message
 	 */
-	public static void handleInstruction(PeerID sender,
-			RecoveryInstructionMessage instructionMessage) {
+	public static void handleInstruction(PeerID sender, RecoveryInstructionMessage instructionMessage) {
 		switch (instructionMessage.getMessageType()) {
 		case RecoveryInstructionMessage.HOLD_ON:
 			holdOn(instructionMessage.getPipeId());
+			break;
+		case RecoveryInstructionMessage.GO_ON:
+			goOn(instructionMessage.getPipeId());
 			break;
 		case RecoveryInstructionMessage.ADD_QUERY:
 			addQuery(instructionMessage.getPqlQuery());
@@ -79,15 +82,19 @@ public class RecoveryInstructionHandler {
 	}
 
 	private static void holdOn(PipeID pipeId) {
-		// Here we want to store the tuples.
-		// TODO Start buffering - and when to stop?
-		//RecoveryHelper.insertBuffer(pipeId.toString());
-		
+		// Here we want to store the tuples
+		RecoveryHelper.startBuffering(pipeId.toString());
+	}
+
+	private static void goOn(PipeID pipeId) {
+		// Here we want to empty the buffer and go on sending the tuples to the
+		// next peer
+		RecoveryHelper.resumeSubscriptions(pipeId);
 	}
 
 	@SuppressWarnings("rawtypes")
 	private static void addQuery(String pql) {
-				
+
 		Collection<Integer> installedQueries = RecoveryHelper.installAndRunQueryPartFromPql(pql);
 
 		// Call "receiveFromNewPeer" on the subsequent receiver so that that
@@ -101,8 +108,7 @@ public class RecoveryInstructionHandler {
 						JxtaSenderPO sender = (JxtaSenderPO) operator;
 
 						// For this sender we want to get the peer to which
-						// it
-						// sends to update the receiver on the other peer
+						// it sends to update the receiver on the other peer
 
 						try {
 							String peerIdString = sender.getPeerIDString();
@@ -117,21 +123,41 @@ public class RecoveryInstructionHandler {
 							PeerID ownPeerId = p2pNetworkManager.getLocalPeerID();
 
 							recoveryCommunicator.sendUpdateReceiverMessage(peer, ownPeerId, pipe);
-						} catch (Exception e) {
+						} catch (URISyntaxException e) {
 							e.printStackTrace();
 						}
+					} else if (operator instanceof JxtaReceiverPO) {
+						JxtaReceiverPO receiver = (JxtaReceiverPO) operator;
 
+						// TODO This peer we have to tell that he can go on
+						try {
+							String peerIdString = receiver.getPeerIDString();
+							URI peerUri = new URI(peerIdString);
+							PeerID peer = PeerID.create(peerUri);
+							// To this peer we have to send an "GO_ON"
+							// message
+							String pipeIdString = receiver.getPipeIDString();
+							URI pipeUri = new URI(pipeIdString);
+							PipeID pipe = PipeID.create(pipeUri);
+
+							recoveryCommunicator.sendGoOnMessage(peer, pipe);
+							
+						} catch (URISyntaxException e) {
+							e.printStackTrace();
+						}
 					}
 				}
 			}
 		}
+
+		// TODO Now we have to tell the previous peer that he can go on
+
 	}
 
 	@SuppressWarnings("rawtypes")
 	private static void updateReceiver(PeerID newSender, PipeID pipeId) {
 		// 1. Get the receiver, which we have to update
-		Collection<IPhysicalQuery> queries = RecoveryCommunicator.getExecutor().getExecutionPlan()
-				.getQueries();
+		Collection<IPhysicalQuery> queries = RecoveryCommunicator.getExecutor().getExecutionPlan().getQueries();
 		for (IPhysicalQuery query : queries) {
 			for (IPhysicalOperator op : query.getAllOperators()) {
 				if (op instanceof JxtaReceiverPO) {

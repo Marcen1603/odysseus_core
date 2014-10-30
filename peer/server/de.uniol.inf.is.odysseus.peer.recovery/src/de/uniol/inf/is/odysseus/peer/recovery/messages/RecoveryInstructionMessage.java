@@ -23,20 +23,25 @@ public class RecoveryInstructionMessage implements IMessage {
 	public static final int HOLD_ON = 0;
 
 	/**
+	 * The peer can go on sending the tuples
+	 */
+	public static final int GO_ON = 1;
+
+	/**
 	 * The peer has to install the attached queries
 	 */
-	public static final int ADD_QUERY = 1;
+	public static final int ADD_QUERY = 2;
 
-	public static final int UPDATE_SENDER = 2;
+	public static final int UPDATE_SENDER = 3;
 
-	public static final int UPDATE_RECEIVER = 3;
+	public static final int UPDATE_RECEIVER = 4;
 
 	/**
 	 * The peer which receives this message is the buddy of the sender, so the
 	 * receiving peer is (also) responsible for recovery if the sender peer
 	 * fails
 	 */
-	public static final int BE_BUDDY = 4;
+	public static final int BE_BUDDY = 5;
 
 	private String pqlQuery;
 	private int messageType;
@@ -46,9 +51,9 @@ public class RecoveryInstructionMessage implements IMessage {
 	private PipeID pipeId;
 
 	/**
-	 * This message tells, that the receiver of this message should hold on.
-	 * This means that the peer stores the results of that query and sends it
-	 * further when he receives a message with the new receiver.
+	 * This message tells that the receiver of this message should hold on. This
+	 * means that the peer stores the results of that query-part and sends it
+	 * further when he receives a goOnMessage.
 	 * 
 	 * @param queryId
 	 *            ID of the query which has to hold on.
@@ -59,6 +64,21 @@ public class RecoveryInstructionMessage implements IMessage {
 		holdOnMessage.setMessageType(HOLD_ON);
 		holdOnMessage.setPipeId(pipeId);
 		return holdOnMessage;
+	}
+
+	/**
+	 * This message tells that the receiver of this message can go in with
+	 * sending messages to the next peer for the given peerId. This will empty
+	 * the buffer.
+	 * 
+	 * @param pipeId
+	 * @return
+	 */
+	public static RecoveryInstructionMessage createGoOnMessage(PipeID pipeId) {
+		RecoveryInstructionMessage goOnMessage = new RecoveryInstructionMessage();
+		goOnMessage.setMessageType(GO_ON);
+		goOnMessage.setPipeId(pipeId);
+		return goOnMessage;
 	}
 
 	/**
@@ -80,8 +100,7 @@ public class RecoveryInstructionMessage implements IMessage {
 		return addQueryMessage;
 	}
 
-	public static RecoveryInstructionMessage createUpdateSenderMessage(PeerID newSender,
-			ID sharedQueryId) {
+	public static RecoveryInstructionMessage createUpdateSenderMessage(PeerID newSender, ID sharedQueryId) {
 		RecoveryInstructionMessage newSenderMessage = new RecoveryInstructionMessage();
 		newSenderMessage.setMessageType(UPDATE_SENDER);
 		newSenderMessage.setNewSender(newSender);
@@ -101,8 +120,7 @@ public class RecoveryInstructionMessage implements IMessage {
 	 *            peers belong together
 	 * @return A message which tells to receive the tuples from a new peer
 	 */
-	public static RecoveryInstructionMessage createUpdateReceiverMessage(PeerID newSender,
-			PipeID pipeId) {
+	public static RecoveryInstructionMessage createUpdateReceiverMessage(PeerID newSender, PipeID pipeId) {
 		RecoveryInstructionMessage upateReceiverMessage = new RecoveryInstructionMessage();
 		upateReceiverMessage.setMessageType(UPDATE_RECEIVER);
 		upateReceiverMessage.setNewSender(newSender);
@@ -142,8 +160,9 @@ public class RecoveryInstructionMessage implements IMessage {
 
 		switch (messageType) {
 		case HOLD_ON:
+		case GO_ON:
 			pipeIdLength = pipeId.toString().getBytes().length;
-			bbsize = 4 + 4 + sharedQueryId.toString().getBytes().length;
+			bbsize = 4 + 4 + pipeIdLength;
 			bb = ByteBuffer.allocate(bbsize);
 			// 1. MessageType
 			bb.putInt(messageType);
@@ -197,13 +216,14 @@ public class RecoveryInstructionMessage implements IMessage {
 		// TODO Not finished yet
 		ByteBuffer bb = ByteBuffer.wrap(data);
 		messageType = bb.getInt();
-		
+
 		int pipeIdLength = 0;
 		byte[] pipeIdByte;
 		String pipeIdString;
-		
+
 		switch (messageType) {
 		case HOLD_ON:
+		case GO_ON:
 			pipeIdLength = bb.getInt();
 			pipeIdByte = new byte[pipeIdLength];
 			bb.get(pipeIdByte, 0, pipeIdLength);

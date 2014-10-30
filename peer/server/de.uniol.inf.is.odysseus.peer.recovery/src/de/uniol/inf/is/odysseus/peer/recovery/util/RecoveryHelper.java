@@ -1,24 +1,27 @@
 package de.uniol.inf.is.odysseus.peer.recovery.util;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
+
+import net.jxta.peer.PeerID;
+import net.jxta.pipe.PipeID;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import net.jxta.peer.PeerID;
 
 import com.google.common.base.Optional;
 
 import de.uniol.inf.is.odysseus.core.collection.Context;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
-import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
-import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
+import de.uniol.inf.is.odysseus.core.physicaloperator.AbstractPhysicalSubscription;
+import de.uniol.inf.is.odysseus.core.physicaloperator.ControllablePhysicalSubscription;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
-import de.uniol.inf.is.odysseus.core.physicaloperator.AbstractPhysicalSubscription;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.RestructHelper;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
@@ -207,6 +210,89 @@ public class RecoveryHelper {
 		return senders;
 	}
 
+	/**
+	 * 
+	 * @return A list of all RecoveryBufferPOs which are currently in the
+	 *         execution plan
+	 */
+	@SuppressWarnings("rawtypes")
+	public static List<RecoveryBufferPO> getRecoveryBuffers() {
+		List<RecoveryBufferPO> buffers = new ArrayList<RecoveryBufferPO>();
+
+		Iterator<IPhysicalQuery> queryIterator = RecoveryCommunicator.getExecutor().getExecutionPlan().getQueries()
+				.iterator();
+		// Iterate through all queries we have installed
+		while (queryIterator.hasNext()) {
+			IPhysicalQuery query = queryIterator.next();
+			Set<IPhysicalOperator> ops = query.getAllOperators();
+
+			// Get the roots for each installed query (there we can find the
+			// JxtaSenders)
+			for (IPhysicalOperator op : ops) {
+				if (op instanceof RecoveryBufferPO) {
+					RecoveryBufferPO sender = (RecoveryBufferPO) op;
+					buffers.add(sender);
+				}
+			}
+		}
+
+		return buffers;
+	}
+
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	public static List<ControllablePhysicalSubscription> getSubscriptions(PipeID pipeId) {
+		List<ControllablePhysicalSubscription> subscriptions = new ArrayList<ControllablePhysicalSubscription>();
+
+		Iterator<IPhysicalQuery> queryIterator = RecoveryCommunicator.getExecutor().getExecutionPlan().getQueries()
+				.iterator();
+		// Iterate through all queries we have installed
+		while (queryIterator.hasNext()) {
+			IPhysicalQuery query = queryIterator.next();
+			Set<IPhysicalOperator> ops = query.getAllOperators();
+
+			// Get the roots for each installed query (there we can find the
+			// JxtaSenders)
+			for (IPhysicalOperator op : ops) {
+				if (op instanceof JxtaSenderPO) {
+					JxtaSenderPO sender = (JxtaSenderPO) op;
+					if (sender.getPipeIDString().equals(pipeId.toString())) {
+						List<AbstractPhysicalSubscription> subs = sender.getSubscribedToSource();
+						for (AbstractPhysicalSubscription sub : subs) {
+							if (sub instanceof ControllablePhysicalSubscription) {
+								ControllablePhysicalSubscription subscription = (ControllablePhysicalSubscription) sub;
+								subscriptions.add(subscription);
+							}
+						}
+					}
+				}
+			}
+		}
+
+		return subscriptions;
+	}
+
+	@SuppressWarnings("rawtypes")
+	public static void resumeSubscriptions(PipeID pipeId) {
+		for (ControllablePhysicalSubscription sub : getSubscriptions(pipeId)) {
+			sub.resume();
+		}
+	}
+
+	/**
+	 * 
+	 * @param pipeId
+	 * @return The buffer which is before the sender with the given pipeId.
+	 *         Null, if there is no such buffer.
+	 */
+	@SuppressWarnings("rawtypes")
+	public static RecoveryBufferPO getRecoveryBuffer(PipeID pipeId) {
+		for (RecoveryBufferPO buffer : getRecoveryBuffers()) {
+			if (buffer.getPipeId().equals(pipeId))
+				return buffer;
+		}
+		return null;
+	}
+
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public static void addNewSender(JxtaSenderPO originalSender, PeerID newPeer) {
 		// TEST Update sender
@@ -267,43 +353,59 @@ public class RecoveryHelper {
 	public static void insertOperatorBefore(ISink sink, AbstractPipe operatorToInsert, int port) {
 
 		AbstractPhysicalSubscription subscription = (AbstractPhysicalSubscription) sink.getSubscribedToSource(port);
+		ArrayList<IPhysicalOperator> emptyCallPath = new ArrayList<IPhysicalOperator>();
 
 		sink.unsubscribeFromSource(subscription);
 		operatorToInsert.subscribeToSource(subscription.getTarget(), subscription.getSinkInPort(),
 				subscription.getSourceOutPort(), subscription.getSchema());
 		operatorToInsert.subscribeSink(sink, subscription.getSinkInPort(), subscription.getSinkInPort(),
 				subscription.getSchema(), true, subscription.getOpenCalls());
+		operatorToInsert.setOutputSchema(subscription.getSchema());
 		operatorToInsert.addOwner(sink.getOwner());
+		operatorToInsert.open(sink, subscription.getSinkInPort(), subscription.getSinkInPort(), emptyCallPath,
+				sink.getOwner());
 
 	}
 
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	public static void suspendSink(ISink sink) {
+		Collection<AbstractPhysicalSubscription> subscriptions = sink.getSubscribedToSource();
+		for (AbstractPhysicalSubscription subscription : subscriptions) {
+			if (subscription instanceof ControllablePhysicalSubscription) {
+				ControllablePhysicalSubscription sub = (ControllablePhysicalSubscription) subscription;
+				sub.suspend();
+			} else {
+				// TODO Errorhandling
+			}
+		}
+	}
+
 	/***
-	 * Adds a buffer for each incoming port of a jxta Sender. Copied from
-	 * MovingStateHelper from Loadbalancing
+	 * 
 	 * 
 	 * @param pipeID
 	 *            PipeID of JxtaSender
-	 * @return List of added Buffers.
+	 * @return
 	 */
 	@SuppressWarnings("rawtypes")
-	public static List<RecoveryBufferPO> insertBuffer(String pipeID) {
+	public static void startBuffering(String pipeID) {
 		IPhysicalOperator operator = getPhysicalJxtaOperator(true, pipeID);
 		if (operator == null) {
 			LOG.error("No Sender with PipeID " + pipeID + " found.");
 			// TODO Error
-			return null;
 		}
 		JxtaSenderPO sender = (JxtaSenderPO) operator;
+		suspendSink(sender);
+	}
 
-		ArrayList<RecoveryBufferPO> addedBuffers = new ArrayList<RecoveryBufferPO>();
-
-		for (int i = 0; i < sender.getInputPortCount(); i++) {
-			RecoveryBufferPO<IStreamObject<ITimeInterval>> buffer = new RecoveryBufferPO<IStreamObject<ITimeInterval>>();
-			insertOperatorBefore(sender, buffer, i);
-			addedBuffers.add(buffer);
+	public static PipeID convertToPipeId(String pipeId) {
+		PipeID pipe = null;
+		try {
+			URI uri = new URI(pipeId);
+			pipe = PipeID.create(uri);
+		} catch (URISyntaxException e) {
+			e.printStackTrace();
 		}
-
-		return addedBuffers;
-
+		return pipe;
 	}
 }
