@@ -1061,6 +1061,11 @@ public class SmartHomeServerPlugIn implements BundleActivator {
 				executeQuery(actorConfigIfParticipateActivity, sbConfig.toString());
 				executeQuery(setConfigStreamName, sbSetConfig.toString());
 				executeQuery(entitySetStateStreamName, sbEntitySetState.toString());
+				
+				
+				//TODO: fehler auf dem raspberry pi beheben.
+				
+				
 			}else{
 				LOG.debug("the source is currently not imported source:"+fieldDevice.getActivitySourceName()+"");
 			}
