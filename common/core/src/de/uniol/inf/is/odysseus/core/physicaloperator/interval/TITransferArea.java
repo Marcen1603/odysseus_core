@@ -60,7 +60,7 @@ public class TITransferArea<R extends IStreamObject<? extends ITimeInterval>, W 
 		
 	}
 
-	static final Logger logger = LoggerFactory.getLogger(TITransferArea.class);
+	static final transient Logger logger = LoggerFactory.getLogger(TITransferArea.class);
 
 	// remember the last time stamp for each input port
 	// can contain null, if no element is seen

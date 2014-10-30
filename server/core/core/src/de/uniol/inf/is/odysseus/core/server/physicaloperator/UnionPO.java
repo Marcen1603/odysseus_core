@@ -29,6 +29,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.IStatefulPO;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ITransferArea;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.physicaloperator.AbstractPhysicalSubscription;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.state.UnionPOState;
 
 public class UnionPO<R extends IStreamObject<?>> extends AbstractPipe<R, R>
 		implements IStatefulOperator, IStatefulPO {
@@ -119,7 +120,6 @@ public class UnionPO<R extends IStreamObject<?>> extends AbstractPipe<R, R>
 		} else {
 			return true;
 		}
-
 	}
 
 	@Override
@@ -129,34 +129,20 @@ public class UnionPO<R extends IStreamObject<?>> extends AbstractPipe<R, R>
 
 	@Override
 	public Serializable getState() {
-		UnionPOState state = new UnionPOState();
-		state.transferArea = this.transferArea;
+		UnionPOState<R> state = new UnionPOState<R>();
+		state.setTransferArea(this.transferArea);
 		return state;
-	}
+	} 
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public void setState(Serializable s) {
 		try {
-			UnionPOState state = (UnionPOState) s;
-			this.transferArea = state.transferArea;
+			UnionPOState<R> state = (UnionPOState<R>) s;
+			this.transferArea = state.getTransferArea();
 			this.transferArea.setTransfer(this);
 		} catch (Throwable T) {
 			logger.error("The serializable state to set for the UnionPO is not a valid UnionPOState!");
 		}
-	}
-
-	/**
-	 * The current state of an {@link UnionPO} is defined by its transfer area
-	 * and its groups.
-	 * 
-	 * @author Chris Tönjes-Deye
-	 * 
-	 */
-	private class UnionPOState implements Serializable {
-
-		private static final long serialVersionUID = 9088231287860150949L;
-
-		ITransferArea<R, R> transferArea;
 	}
 }

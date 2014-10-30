@@ -47,6 +47,7 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.Aggregate
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.IGroupProcessor;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.IPartialAggregate;
 import de.uniol.inf.is.odysseus.intervalapproach.sweeparea.DefaultTISweepArea;
+import de.uniol.inf.is.odysseus.server.intervalapproach.state.AggregateTIPOState;
 
 public class AggregateTIPO<Q extends ITimeInterval, R extends IStreamObject<Q>, W extends IStreamObject<Q>>
 		extends AggregatePO<Q, R, W> implements IHasMetadataMergeFunction<Q>,
@@ -684,47 +685,23 @@ public class AggregateTIPO<Q extends ITimeInterval, R extends IStreamObject<Q>, 
 
 	@Override
 	public Serializable getState() {
-		
-		AggregateTIPOState state = new AggregateTIPOState();
-		state.transferArea = this.transferArea;
-		state.groups = this.groups;
+		AggregateTIPOState<Q, R, W> state = new AggregateTIPOState<Q, R, W>();
+		state.setTransferArea(this.transferArea);
+		state.setGroups(this.groups);
 		return state;	
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public void setState(Serializable s) {
-		
 		try {
-			
-			AggregateTIPOState state = (AggregateTIPOState) s;
-			this.transferArea = state.transferArea;
+			AggregateTIPOState<Q, R, W> state = (AggregateTIPOState<Q, R, W>) s;
+			this.transferArea = state.getTransferArea();
 			this.transferArea.setTransfer(this);
-			this.groups = state.groups;
-			
+			this.groups = state.getGroups();
 		} catch(Throwable T) {
-		
 			logger.error("The serializable state to set for the AggregateTIPO is not a valid AggregateTIPOState!");
-			
 		}
 		
 	}
-	
-	/**
-	 * The current state of an {@link AggregateTIPO} is defined by 
-	 * its transfer area and its groups.
-	 * 
-	 * @author Michael Brand
-	 *
-	 */
-	private class AggregateTIPOState implements Serializable {
-		
-		private static final long serialVersionUID = 9088231287860150949L;
-
-		ITransferArea<W,W> transferArea;
-		
-		Map<Long, DefaultTISweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>>> groups;
-		
-	}
-
 }
