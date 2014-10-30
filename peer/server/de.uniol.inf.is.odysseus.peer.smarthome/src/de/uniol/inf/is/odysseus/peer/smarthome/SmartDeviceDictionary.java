@@ -66,8 +66,7 @@ public class SmartDeviceDictionary {
 						long delta = System.currentTimeMillis()
 								- SMART_DEVICE_AVAILABLE_AFTER_LAST_HEARTBEAT_MS;
 
-						LOG.debug("cleanup() heartBeat:" + heartBeat
-								+ " delta:" + delta);
+						//LOG.debug("cleanup() heartBeat:" + heartBeat		+ " delta:" + delta);
 
 						if (heartBeat < delta) {
 							removeSmartDevice(peerId);
@@ -99,7 +98,7 @@ public class SmartDeviceDictionary {
 
 				}
 			} catch (Exception e) {
-				LOG.debug(e.getMessage(), e);
+				LOG.error(e.getMessage(), e);
 			}
 		} else {
 			// Update existing SmartDevice
@@ -115,7 +114,7 @@ public class SmartDeviceDictionary {
 	}
 
 	private synchronized void removeSmartDevice(String smartDevicePeerID) {
-		LOG.debug("removeSmartDevice peerID:" + smartDevicePeerID);
+		//LOG.debug("removeSmartDevice peerID:" + smartDevicePeerID);
 
 		SmartDevice smartDeviceToRemove = getSmartDevices().get(
 				smartDevicePeerID);
