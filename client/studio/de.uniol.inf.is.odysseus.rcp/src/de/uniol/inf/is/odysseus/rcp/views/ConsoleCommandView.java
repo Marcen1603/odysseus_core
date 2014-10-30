@@ -29,75 +29,89 @@ import com.google.common.collect.Lists;
 public class ConsoleCommandView extends ViewPart {
 
 	private static final Logger LOG = LoggerFactory.getLogger(ConsoleCommandView.class);
-	private static final Collection<CommandProvider> commandProviders = Lists.newArrayList();
-	
+	private static final Collection<CommandProvider> COMMAND_PROVIDERS = Lists.newArrayList();
+
 	private Text outputText;
 	private Combo inputCombo;
 
 	// called by OSGi-DS
 	public static void bindCommandProvider(CommandProvider serv) {
-		commandProviders.add(serv);
+		COMMAND_PROVIDERS.add(serv);
 	}
 
 	// called by OSGi-DS
 	public static void unbindCommandProvider(CommandProvider serv) {
-		commandProviders.remove(serv);
+		COMMAND_PROVIDERS.remove(serv);
 	}
-	
+
 	@Override
 	public void createPartControl(Composite parent) {
 		parent.setLayout(new GridLayout());
-		
-		outputText = new Text(parent, SWT.BORDER | SWT.READ_ONLY | SWT.MULTI | SWT.V_SCROLL | SWT.H_SCROLL);
-	    
-		Font initialFont = outputText.getFont();
-	    FontData[] fontData = initialFont.getFontData();
-	    for (int i = 0; i < fontData.length; i++) {
-	      fontData[i].setName("Courier");
-	    }
-	    Font newFont = new Font(Display.getCurrent(), fontData);
-	    outputText.setFont(newFont);
-	    
-		if( System.getProperty("user.name").equalsIgnoreCase("Michael Brand")) {
-			outputText.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_MAGENTA));
-		} else {
-			outputText.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_WHITE));
-		}
-		outputText.setLayoutData(new GridData(GridData.FILL_BOTH));
-		
+
+		createOutputText(parent);
+
 		Composite inputComposite = new Composite(parent, SWT.NONE);
 		inputComposite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		inputComposite.setLayout(new GridLayout(2, false));
-		
+
 		Label inputLabel = new Label(inputComposite, SWT.NONE);
 		inputLabel.setText(">");
-		
+
 		inputCombo = new Combo(inputComposite, SWT.BORDER);
 		inputCombo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		inputCombo.addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyPressed(KeyEvent e) {
-				if( e.keyCode == 13 ) { // Return-key
-					Combo inputCombo = (Combo)e.getSource();
+				if (e.keyCode == 13) { // Return-key
+					Combo inputCombo = (Combo) e.getSource();
 					String commandText = inputCombo.getText().trim();
-					
-					if( commandText.equalsIgnoreCase("clear")) {
+
+					if (commandText.equalsIgnoreCase("clear")) {
 						outputText.setText("");
-					} else if( commandText.equalsIgnoreCase("help")) {
+					} else if (commandText.equalsIgnoreCase("help")) {
 						printHelp();
 					} else {
-						sendCommand( commandText );
-						inputCombo.add(commandText );
-						if( inputCombo.getItemCount() > 10 ) {
-							inputCombo.remove(10);
-						}
+						sendCommand(commandText);
 					}
-					
+
+					addCommandToHistory(inputCombo, commandText);
+
 					inputCombo.setText("");
 				}
 			}
 
 		});
+	}
+
+	private static Text createOutputText(Composite parent) {
+		Text text = new Text(parent, SWT.BORDER | SWT.READ_ONLY | SWT.MULTI | SWT.V_SCROLL | SWT.H_SCROLL);
+		setFont(text);
+
+		if (System.getProperty("user.name").equalsIgnoreCase("Michael Brand")) {
+			text.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_MAGENTA));
+		} else {
+			text.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_WHITE));
+		}
+		text.setLayoutData(new GridData(GridData.FILL_BOTH));
+
+		return text;
+	}
+
+	private static void setFont(Text text) {
+		Font initialFont = text.getFont();
+		FontData[] fontData = initialFont.getFontData();
+		for (int i = 0; i < fontData.length; i++) {
+			fontData[i].setName("Courier");
+		}
+		Font newFont = new Font(Display.getCurrent(), fontData);
+		text.setFont(newFont);
+	}
+
+	private static void addCommandToHistory(Combo inputCombo, String commandText) {
+		inputCombo.add(commandText);
+		if (inputCombo.getItemCount() > 10) {
+			inputCombo.remove(10);
+		}
 	}
 
 	@Override
@@ -107,31 +121,31 @@ public class ConsoleCommandView extends ViewPart {
 
 	private void printHelp() {
 		outputText.append("\n> help\n");
-		for( CommandProvider provider : commandProviders ) {
+		for (CommandProvider provider : COMMAND_PROVIDERS) {
 			outputText.append(provider.getHelp() + "\n");
 		}
 	}
-	
+
 	private void sendCommand(String text) {
-		if( Strings.isNullOrEmpty(text)) {
+		if (Strings.isNullOrEmpty(text)) {
 			return;
 		}
 		String[] splitted = text.split("\\ ", 2);
 		String command = splitted[0];
 		String parameters = splitted.length > 1 ? splitted[1] : null;
-		
+
 		Optional<Method> optMethod = determineCommandMethod(command);
 		Optional<CommandProvider> optProvider = determineProvider(command);
-		if( !Strings.isNullOrEmpty(outputText.getText() ) ) {
+		if (!Strings.isNullOrEmpty(outputText.getText())) {
 			outputText.append("\n");
 		}
-		
-		if( !optMethod.isPresent() ) {
+
+		if (!optMethod.isPresent()) {
 			outputText.append("No such command: " + command);
 		}
-		
+
 		outputText.append("> " + text + "\n");
-		
+
 		CommandInterpreter ci = new TextCommandInterpreter(outputText, parameters != null ? parameters.split("\\ ") : new String[0]);
 		try {
 			optMethod.get().invoke(optProvider.get(), ci);
@@ -141,25 +155,25 @@ public class ConsoleCommandView extends ViewPart {
 	}
 
 	private static Optional<Method> determineCommandMethod(String command) {
-		for( CommandProvider provider : commandProviders ) {
+		for (CommandProvider provider : COMMAND_PROVIDERS) {
 			try {
 				return Optional.of(provider.getClass().getMethod("_" + command, CommandInterpreter.class));
 			} catch (NoSuchMethodException e) {
 			}
 		}
-		
+
 		return Optional.absent();
 	}
-	
+
 	private static Optional<CommandProvider> determineProvider(String command) {
-		for( CommandProvider provider : commandProviders ) {
+		for (CommandProvider provider : COMMAND_PROVIDERS) {
 			try {
 				provider.getClass().getMethod("_" + command, CommandInterpreter.class);
 				return Optional.of(provider);
 			} catch (NoSuchMethodException e) {
 			}
 		}
-		
+
 		return Optional.absent();
 	}
 
