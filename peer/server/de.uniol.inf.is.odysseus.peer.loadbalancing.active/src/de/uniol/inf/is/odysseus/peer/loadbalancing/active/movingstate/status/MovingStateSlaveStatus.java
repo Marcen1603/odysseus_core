@@ -2,15 +2,10 @@ package de.uniol.inf.is.odysseus.peer.loadbalancing.active.movingstate.status;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
-import java.util.concurrent.ConcurrentHashMap;
 
 import net.jxta.peer.PeerID;
-import de.uniol.inf.is.odysseus.p2p_new.physicaloperator.JxtaReceiverPO;
-import de.uniol.inf.is.odysseus.p2p_new.physicaloperator.JxtaSenderPO;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.common.ILoadBalancingSlaveStatus;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.movingstate.communicator.MovingStateMessageDispatcher;
-import de.uniol.inf.is.odysseus.peer.loadbalancing.active.physicaloperator.LoadBalancingBufferPO;
 
 public class MovingStateSlaveStatus implements ILoadBalancingSlaveStatus {
 	
@@ -34,14 +29,8 @@ public class MovingStateSlaveStatus implements ILoadBalancingSlaveStatus {
 	private final PeerID initiatingPeer;
 	
 	private Collection<Integer> installedQueries;
+	private ArrayList<String> knownPipes;
 	
-	@SuppressWarnings("rawtypes")
-	private ConcurrentHashMap<String,JxtaSenderPO> replacedSenders;
-	@SuppressWarnings("rawtypes")
-	private ConcurrentHashMap<String,JxtaReceiverPO> replacedReceivers;
-	
-	@SuppressWarnings("rawtypes")
-	private ArrayList<LoadBalancingBufferPO> installedBuffers;
 	
 	private final MovingStateMessageDispatcher messageDispatcher;
 	
@@ -54,32 +43,25 @@ public class MovingStateSlaveStatus implements ILoadBalancingSlaveStatus {
 		this.installedQueries = installedQueries;
 	}
 	
-	public boolean isPipeKnown(String pipeId) {
-		return replacedSenders.containsKey(pipeId) || replacedReceivers.containsKey(pipeId);
-	}
 	
-	@SuppressWarnings("rawtypes")
-	public void storeReplacedSender(String newPipeId, JxtaSenderPO sender) {
-		replacedSenders.put(newPipeId,sender);
-	}
-	
-	@SuppressWarnings("rawtypes")
-	public void storeReplacedReceiver(String newPipeId, JxtaReceiverPO receiver) {
-		replacedReceivers.put(newPipeId,receiver);
-	}
-	
-	@SuppressWarnings("rawtypes")
 	public MovingStateSlaveStatus(INVOLVEMENT_TYPES involvementType, LB_PHASES phase, PeerID initiatingPeer, int lbProcessId, MovingStateMessageDispatcher messageDispatcher) {
 		this.phase = phase;
 		this.involvementType = involvementType;
 		this.initiatingPeer = initiatingPeer;
 		this.lbProcessId = lbProcessId;
 		this.messageDispatcher = messageDispatcher;
-		this.replacedReceivers = new ConcurrentHashMap<String,JxtaReceiverPO>();
-		this.replacedSenders = new ConcurrentHashMap<String,JxtaSenderPO>();
-		this.installedBuffers = new ArrayList<LoadBalancingBufferPO>();
+		this.knownPipes = new ArrayList<String>();
 	}
 
+	public void addKnownPipe(String pipe) {
+		if(!isPipeKnown(pipe)) {
+			knownPipes.add(pipe);
+		}
+	}
+	
+	public boolean isPipeKnown(String pipe) {
+		return knownPipes.contains(pipe);
+	}
 
 	public LB_PHASES getPhase() {
 		return phase;
@@ -107,21 +89,6 @@ public class MovingStateSlaveStatus implements ILoadBalancingSlaveStatus {
 		return messageDispatcher;
 	}
 	
-	@SuppressWarnings("rawtypes")
-	public void storeBuffer(LoadBalancingBufferPO buffer) {
-		installedBuffers.add(buffer);
-	}
-	
-	@SuppressWarnings("rawtypes")
-	public List<LoadBalancingBufferPO> getInstalledBuffers() {
-		return installedBuffers;
-	}
-	
-	@SuppressWarnings("rawtypes")
-	public JxtaSenderPO getReplacedSender(String newPipeID) {
-		return replacedSenders.get(newPipeID);
-	}
-
 	@Override
 	public String getCommunicatorName() {
 		return COMMUNICATOR_NAME;

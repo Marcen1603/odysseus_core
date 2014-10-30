@@ -119,18 +119,18 @@ public class ResponseHandler {
 				LOG.debug("Jobs left:" + dispatcher.getNumberOfRunningJobs());
 				
 				if (dispatcher.getNumberOfRunningJobs() == 0) {
+
+					LOG.debug("IF YOU CAN READ THIS, EVERYTHING WORKS! :)");
+					
 					// All success messages received. Yay!
 					status.setPhase(LB_PHASES.COPYING_STATES);
-					LOG.debug("WAITING FOR SYNC");
+					LOG.debug("INITIATING COPYING STATES");
+					MovingStateHelper.initiateStateCopy(status);
 				}
 			}
 			
 			break;
-
-		case MovingStateResponseMessage.SYNC_FINISHED:
-			//TODO Not gonna happen.
-			break;
-
+		
 		case MovingStateResponseMessage.FAILURE_INSTALL_QUERY:
 			LOG.debug("Got FAILURE_INSTALL_QUERY");
 			if(status.getPhase().equals(LB_PHASES.COPYING_QUERY)) {

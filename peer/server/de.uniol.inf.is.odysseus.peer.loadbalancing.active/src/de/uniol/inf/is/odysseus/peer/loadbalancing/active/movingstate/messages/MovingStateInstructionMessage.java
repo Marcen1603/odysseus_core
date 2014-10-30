@@ -28,9 +28,8 @@ public class MovingStateInstructionMessage implements IMessage {
 
 	private String PQLQuery;
 
-	private String newPeerId;
-	private String oldPipeId;
-	private String newPipeId;
+	private String pipeId;
+	private String peerId;
 	private String operatorType;
 	private int operatorIndex;
 
@@ -46,7 +45,6 @@ public class MovingStateInstructionMessage implements IMessage {
 		MovingStateInstructionMessage message = new MovingStateInstructionMessage();
 		message.loadBalancingProcessId = lbProcessId;
 		message.operatorType = operatorType;
-		message.newPipeId = pipeID;
 		message.setOperatorIndex(operatorIndex);
 		message.msgType = INITIATE_STATE_COPY;
 
@@ -82,31 +80,28 @@ public class MovingStateInstructionMessage implements IMessage {
 			int lbProcessId, String pipeID) {
 		MovingStateInstructionMessage message = new MovingStateInstructionMessage();
 		message.loadBalancingProcessId = lbProcessId;
-		message.setOldPipeId(pipeID);
+		message.setPipeId(pipeID);
 		message.msgType = PIPE_SUCCCESS_RECEIVED;
 		return message;
 	}
 
 	public static MovingStateInstructionMessage createInstallBufferAndReplaceSenderMsg(
 			int lbProcessId, String newPeerId,
-			String oldPipeId, String newPipeId) {
+			String pipeId) {
 		MovingStateInstructionMessage message = new MovingStateInstructionMessage();
 		message.loadBalancingProcessId = lbProcessId;
-		message.oldPipeId = oldPipeId;
-		message.newPipeId = newPipeId;
-		message.newPeerId = newPeerId;
+		message.pipeId = pipeId;
+		message.peerId = newPeerId;
 		message.msgType = INSTALL_BUFFER_AND_REPLACE_SENDER;
 		return message;
 	}
 
 	public static MovingStateInstructionMessage createReplaceReceiverMsg(
-			int lbProcessId, String newPeerId, String oldPipeId,
-			String newPipeId) {
+			int lbProcessId, String peerId, String pipeId) {
 		MovingStateInstructionMessage message = new MovingStateInstructionMessage();
 		message.loadBalancingProcessId = lbProcessId;
-		message.oldPipeId = oldPipeId;
-		message.newPipeId = newPipeId;
-		message.newPeerId = newPeerId;
+		message.pipeId = pipeId;
+		message.peerId = peerId;
 		message.msgType = REPLACE_RECEIVER;
 		return message;
 	}
@@ -156,26 +151,23 @@ public class MovingStateInstructionMessage implements IMessage {
 			/*
 			 * Allocate byte Buffer: 4 Bytes for integer msgType 4 Bytes for
 			 * integer loadBalancingProcessId 4 Bytes for integer Size of
-			 * oldPipeId 4 Bytes for integer Size of newPipeId 4 Bytes for
-			 * integer Size of newPeerId oldPipeId newPipeId newPeerId
+			 * oldPipeId 4 Bytes for
+			 * integer Size of newPeerId oldPipeId newPeerId
 			 */
 
-			byte[] oldPipeIdBytes = oldPipeId.getBytes();
-			byte[] newPipeIdBytes = newPipeId.getBytes();
-			byte[] newPeerIdBytes = newPeerId.getBytes();
+			byte[] oldPipeIdBytes = pipeId.getBytes();
+			byte[] newPeerIdBytes = peerId.getBytes();
 
-			bbsize = 4 + 4 + 4 + 4 + 4 + oldPipeIdBytes.length
-					+ newPipeIdBytes.length + newPeerIdBytes.length;
+			bbsize = 4 + 4 + 4 + 4  + oldPipeIdBytes.length
+					 + newPeerIdBytes.length;
 
 			bb = ByteBuffer.allocate(bbsize);
 			bb.putInt(msgType);
 			bb.putInt(loadBalancingProcessId);
 			bb.putInt(oldPipeIdBytes.length);
-			bb.putInt(newPipeIdBytes.length);
 			bb.putInt(newPeerIdBytes.length);
 
 			bb.put(oldPipeIdBytes);
-			bb.put(newPipeIdBytes);
 			bb.put(newPeerIdBytes);
 			break;
 
@@ -186,7 +178,7 @@ public class MovingStateInstructionMessage implements IMessage {
 			 * integer loadBalancingProcessId 4 Bytes for integer Size of
 			 * oldPipeId oldPipeId
 			 */
-			byte[] oldPipeIdAsBytes = oldPipeId.getBytes();
+			byte[] oldPipeIdAsBytes = pipeId.getBytes();
 
 			bbsize = 4 + 4 + 4 + 4 + 4 + oldPipeIdAsBytes.length;
 
@@ -200,7 +192,7 @@ public class MovingStateInstructionMessage implements IMessage {
 
 		case INITIATE_STATE_COPY:
 
-			byte[] pipeIdAsBytes = newPipeId.getBytes();
+			byte[] pipeIdAsBytes = pipeId.getBytes();
 			byte[] operatorTypeAsBytes = operatorType.getBytes();
 
 			/*
@@ -246,34 +238,32 @@ public class MovingStateInstructionMessage implements IMessage {
 
 		case REPLACE_RECEIVER:
 		case INSTALL_BUFFER_AND_REPLACE_SENDER:
-			int sizeOfOldPipeId = bb.getInt();
-			int sizeOfNewPipeId = bb.getInt();
-			int sizeOfNewPeerId = bb.getInt();
-
-			byte[] oldPipeIdAsBytes = new byte[sizeOfOldPipeId];
-			byte[] newPipeIdAsBytes = new byte[sizeOfNewPipeId];
-			byte[] newPeerIdAsBytes = new byte[sizeOfNewPeerId];
-
-			bb.get(oldPipeIdAsBytes);
-			bb.get(newPipeIdAsBytes);
-			bb.get(newPeerIdAsBytes);
-
-			this.oldPipeId = new String(oldPipeIdAsBytes);
-			this.newPipeId = new String(newPipeIdAsBytes);
-			this.newPeerId = new String(newPeerIdAsBytes);
-			break;
-		case PIPE_SUCCCESS_RECEIVED:
 			int sizeOfPipeId = bb.getInt();
+			int sizeOfPeerId = bb.getInt();
+
 			byte[] pipeIdAsBytes = new byte[sizeOfPipeId];
+			byte[] peerIdAsBytes = new byte[sizeOfPeerId];
+
 			bb.get(pipeIdAsBytes);
-			this.oldPipeId = new String(pipeIdAsBytes);
+			bb.get(peerIdAsBytes);
+
+			this.pipeId = new String(pipeIdAsBytes);
+			this.peerId = new String(peerIdAsBytes);
 			break;
+			
+		case PIPE_SUCCCESS_RECEIVED:
+			int sizeOfOldPipeId = bb.getInt();
+			byte[] oldPipeIdAsBytes = new byte[sizeOfOldPipeId];
+			bb.get(oldPipeIdAsBytes);
+			this.pipeId = new String(oldPipeIdAsBytes);
+			break;
+			
 		case INITIATE_STATE_COPY:
 
-			int newPipeIdLength = bb.getInt();
-			byte[] newPipeIdBytes = new byte[newPipeIdLength];
-			bb.get(newPipeIdBytes);
-			this.newPipeId = new String(newPipeIdBytes);
+			int pipeIdLength = bb.getInt();
+			byte[] pipeIdBytes = new byte[pipeIdLength];
+			bb.get(pipeIdBytes);
+			this.pipeId = new String(pipeIdBytes);
 
 			int operatorTypeLength = bb.getInt();
 			byte[] operatorTypeBytes = new byte[operatorTypeLength];
@@ -311,29 +301,22 @@ public class MovingStateInstructionMessage implements IMessage {
 		PQLQuery = pQLQuery;
 	}
 
-	public String getNewPeerId() {
-		return newPeerId;
+	public String getPeerId() {
+		return peerId;
 	}
 
-	public void setNewPeerId(String newPeerId) {
-		this.newPeerId = newPeerId;
+	public void setPeerId(String peerId) {
+		this.peerId = peerId;
 	}
 
-	public String getOldPipeId() {
-		return oldPipeId;
+	public String getPipeId() {
+		return pipeId;
 	}
 
-	public void setOldPipeId(String oldPipeId) {
-		this.oldPipeId = oldPipeId;
+	public void setPipeId(String pipeId) {
+		this.pipeId = pipeId;
 	}
 
-	public String getNewPipeId() {
-		return newPipeId;
-	}
-
-	public void setNewPipeId(String newPipeId) {
-		this.newPipeId = newPipeId;
-	}
 
 	public String getOperatorType() {
 		return operatorType;

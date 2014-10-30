@@ -14,17 +14,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
-import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
-import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
+import de.uniol.inf.is.odysseus.core.physicaloperator.AbstractPhysicalSubscription;
+import de.uniol.inf.is.odysseus.core.physicaloperator.ControllablePhysicalSubscription;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IStatefulPO;
-import de.uniol.inf.is.odysseus.core.physicaloperator.AbstractPhysicalSubscription;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IPipe;
 import de.uniol.inf.is.odysseus.p2p_new.IP2PNetworkManager;
-import de.uniol.inf.is.odysseus.p2p_new.data.DataTransmissionException;
 import de.uniol.inf.is.odysseus.p2p_new.logicaloperator.JxtaReceiverAO;
 import de.uniol.inf.is.odysseus.p2p_new.logicaloperator.JxtaSenderAO;
 import de.uniol.inf.is.odysseus.p2p_new.physicaloperator.JxtaReceiverPO;
@@ -39,7 +37,6 @@ import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.common.L
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.common.OutgoingConnection;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.movingstate.status.MovingStateMasterStatus;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.movingstate.status.MovingStateSlaveStatus;
-import de.uniol.inf.is.odysseus.peer.loadbalancing.active.physicaloperator.LoadBalancingBufferPO;
 
 public class MovingStateHelper {
 	
@@ -57,6 +54,30 @@ public class MovingStateHelper {
 			statefulPOs = traverseGraphAndFindStatefulOperators(root, statefulPOs);
 		}
 		return statefulPOs;
+	}
+	
+	public static void initiateStateCopy(MovingStateMasterStatus status) {
+		MovingStateCommunicatorImpl communicator = MovingStateCommunicatorImpl.getInstance();
+		MovingStateMessageDispatcher dispatcher = status.getMessageDispatcher();
+		
+		List<IStatefulPO> statefulOperators = getStatefulOperatorList(status.getLogicalQuery());
+		for(IStatefulPO statefulPO : statefulOperators) {
+			//Installing a new State Sender
+			String stateSenderPipe = MovingStateManager.getInstance().addSender(status.getVolunteeringPeer().toString());
+			dispatcher.sendInititateStateCopy(status.getVolunteeringPeer(), communicator, stateSenderPipe, statefulPO.getClass().toString(), statefulOperators.indexOf(statefulPO));
+		}
+	}
+	
+	public static void installStateReceiver(MovingStateSlaveStatus status, String pipeID, String operatorType, int operatorIndex) {
+		LOG.debug("Installing State Receiver for operator #"+operatorIndex+ " of type " + operatorType + " at pipe ID: " + pipeID);
+		Collection<Integer> installedQueries = status.getInstalledQueries();
+		ArrayList<IStatefulPO> statefulOperators = new ArrayList<IStatefulPO>();
+		for(int queryID : installedQueries) {
+			statefulOperators.addAll(getStatefulOperatorList(queryID));
+		}
+		//TODO Check for right operator type!
+		MovingStateManager.getInstance().addReceiver(status.getMasterPeer().toString(), pipeID);
+		status.getMessageDispatcher().sendInititiateStateCopyAck(status.getMasterPeer(), status.getLbProcessId(), pipeID);
 	}
 	
 	
@@ -108,44 +129,67 @@ public class MovingStateHelper {
 		}
 	}
 	
+	/***
+	 * Starts buffering of a jxta Sender
+	 * @param pipeID PipeID of JxtaSender
+	 * @throws LoadBalancingException 
+	 */
 	@SuppressWarnings("rawtypes")
-	public static void stopBuffering(MovingStateSlaveStatus status) {
-		for(LoadBalancingBufferPO buffer : status.getInstalledBuffers()) {
-			buffer.stopBuffering();
+	public static void startBuffering(String pipeID) throws LoadBalancingException {
+		IPhysicalOperator operator = LoadBalancingHelper.getPhysicalJxtaOperator(true, pipeID);
+		if(operator==null) {
+			throw new LoadBalancingException("No Sender with pipeID " + pipeID + " found.");
+		}
+		JxtaSenderPO sender = (JxtaSenderPO)operator;
+		for(Object subscription : sender.getSubscribedToSource()) {
+			if(subscription instanceof ControllablePhysicalSubscription) {
+				ControllablePhysicalSubscription controllableSubscription = (ControllablePhysicalSubscription)subscription;
+				controllableSubscription.suspend();
+			}
+			else {
+				throw new LoadBalancingException("At least one subscription is not controllable.");
+			}
+		}
+		
+	}
+	
+	@SuppressWarnings("rawtypes")
+	public static void setNewPeerId(String pipeID, String peerID, boolean isSender) throws LoadBalancingException {
+		IPhysicalOperator operator = LoadBalancingHelper.getPhysicalJxtaOperator(isSender, pipeID);
+		if(operator==null) {
+			throw new LoadBalancingException("No Sender with pipeID " + pipeID + " found.");
+		}
+		if(operator instanceof JxtaSenderPO) {
+			LoadBalancingHelper.setNewPeerID((JxtaSenderPO)operator, peerID);
+		}
+		if(operator instanceof JxtaReceiverPO) {
+			LoadBalancingHelper.setNewPeerID((JxtaReceiverPO)operator, peerID);
 		}
 	}
 	
 	
 	/***
-	 * Adds a buffer for each incoming port of a jxta Sender
+	 * Stops buffering of a jxta Sender
 	 * @param pipeID PipeID of JxtaSender
-	 * @return List of added Buffers.
+	 * @throws LoadBalancingException 
 	 */
 	@SuppressWarnings("rawtypes")
-	public static List<LoadBalancingBufferPO> insertBuffer(String pipeID) {
+	public static void stopBuffering(String pipeID) throws LoadBalancingException {
 		IPhysicalOperator operator = LoadBalancingHelper.getPhysicalJxtaOperator(true, pipeID);
 		if(operator==null) {
-			LOG.error("No Sender with PipeID " + pipeID+ " found.");
-			//TODO Error
-			return null;
+			throw new LoadBalancingException("No Sender with pipeID " + pipeID + " found.");
 		}
 		JxtaSenderPO sender = (JxtaSenderPO)operator;
-		
-		ArrayList<LoadBalancingBufferPO> addedBuffers = new ArrayList<LoadBalancingBufferPO>();
-		
-		for(int i=0;i<sender.getInputPortCount();i++) {
-			LoadBalancingBufferPO<IStreamObject<ITimeInterval>> buffer = new LoadBalancingBufferPO<IStreamObject<ITimeInterval>>();
-			LoadBalancingHelper.insertOperatorBefore(sender, buffer,i);
-			addedBuffers.add(buffer);
+		for(Object subscription : sender.getSubscribedToSource()) {
+			if(subscription instanceof ControllablePhysicalSubscription) {
+				ControllablePhysicalSubscription controllableSubscription = (ControllablePhysicalSubscription)subscription;
+				controllableSubscription.resume();
+			}
+			else {
+				throw new LoadBalancingException("At least one subscription is not controllable.");
+			}
 		}
 		
-		return addedBuffers;
-		
-	}
-	
-	@SuppressWarnings("rawtypes")
-	public static void removeBuffer(LoadBalancingBufferPO buffer) {
-		LoadBalancingHelper.removeOperatorFromStream(buffer);
 	}
 	
 	
@@ -178,7 +222,7 @@ public class MovingStateHelper {
 				PeerID destinationPeer = LoadBalancingHelper.toPeerID(sender.getPeerID());
 				peersForPipe.put(newPipe,destinationPeer);
 				
-				dispatcher.sendReplaceReceiverMessage(destinationPeer, volunteeringPeer, oldPipe, newPipe,deliveryFailedListener);
+				dispatcher.sendReplaceReceiverMessage(destinationPeer, volunteeringPeer, oldPipe, deliveryFailedListener);
 			}
 		}
 		status.setPeersForPipe(peersForPipe);
@@ -203,6 +247,9 @@ public class MovingStateHelper {
 				.getMessageDispatcher();
 
 		HashMap<String,PeerID> peersForPipe = status.getPeersForPipe();
+		if(peersForPipe==null) {
+			peersForPipe = new HashMap<String,PeerID>();
+		}
 
 		for (ILogicalOperator operator : modifiedQueryPart.getOperators()) {
 			if (operator instanceof JxtaReceiverAO) {
@@ -213,116 +260,13 @@ public class MovingStateHelper {
 				PeerID destinationPeer = LoadBalancingHelper.toPeerID(receiver.getPeerID());
 				peersForPipe.put(newPipe,destinationPeer);
 				
-				dispatcher.sendInstallBufferAndReplaceSenderMessage(destinationPeer, volunteeringPeer, oldPipe, newPipe, deliveryFailedListener);
+				dispatcher.sendInstallBufferAndReplaceSenderMessage(destinationPeer, volunteeringPeer, oldPipe, deliveryFailedListener);
 			}
 		}
 		status.setPeersForPipe(peersForPipe);
 
 	}
 	
-	@SuppressWarnings("rawtypes")
-	public static LoadBalancingBufferPO installBufferBeforeSender(JxtaSenderPO sender) {
-		LoadBalancingBufferPO buffer = new LoadBalancingBufferPO();
-		LoadBalancingHelper.insertOperatorBefore(sender, buffer, 0);
-		return buffer;
-	}
-	
-	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public static void attachSecondSenderToBufferPO (LoadBalancingBufferPO buffer, JxtaSenderPO sender) {
-		buffer.subscribeSink(sender, 0, 1, buffer.getOutputSchema());
-		//TODO open?
-	}
-	
-	@SuppressWarnings("rawtypes")
-	public static void addBufferAndCopySender(MovingStateSlaveStatus status, String newPeerId, String oldPipeId, String newPipeId) throws LoadBalancingException, DataTransmissionException {
-		JxtaSenderAO senderAO = (JxtaSenderAO)LoadBalancingHelper.getLogicalJxtaOperator(true, oldPipeId);
-		
-		if(senderAO==null) {
-			LOG.error("No sender with pipe ID " + oldPipeId + " found.");
-			throw new LoadBalancingException("No sender with pipe ID " + oldPipeId + " found.");
-		}
-		
-		JxtaSenderAO logicalSenderCopy = (JxtaSenderAO) senderAO.clone();
-		logicalSenderCopy.setPipeID(newPipeId);
-		logicalSenderCopy.setPeerID(newPeerId);
-
-		JxtaSenderPO physicalSenderCopy = new JxtaSenderPO(logicalSenderCopy);
-		JxtaSenderPO physicalOriginal = (JxtaSenderPO) LoadBalancingHelper
-				.getPhysicalJxtaOperator(true, oldPipeId);
-		physicalSenderCopy
-				.setOutputSchema(physicalOriginal.getOutputSchema());
-
-		LoadBalancingBufferPO buffer = installBufferBeforeSender(physicalOriginal);
-		buffer.startBuffering();
-		LOG.debug("Installed Buffer.");
-		attachSecondSenderToBufferPO(buffer,physicalSenderCopy);
-		LOG.debug("Installed Buffer and additional Sender with PeerID " + physicalSenderCopy.getPeerIDString() + " and PipeID " + physicalSenderCopy.getPipeIDString());
-		status.storeBuffer(buffer);
-		status.storeReplacedSender(newPipeId, physicalOriginal);
-	}
-	
-	
-	/**
-	 * Finds a JxtaOperator by pipeId, creates a physical Copy and connects both
-	 * Operators to the stream.
-	 * 
-	 * @param isSender
-	 *            determines if Operator to look for is a Sender or a receiver.
-	 * @param newPeerId
-	 *            PeerId which the new Operator is connected to.
-	 * @param oldPipeId
-	 *            Pipe Id of old Operator
-	 * @param newPipeId
-	 *            Pipe Id of new Operator.
-	 * @throws DataTransmissionException
-	 * @Param lbProcessId LoadBalancingProcessId.
-	 */
-	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public static void findAndReplaceReceiver(MovingStateSlaveStatus status, String newPeerId, String oldPipeId,
-			String newPipeId) throws DataTransmissionException, LoadBalancingException{
-		
-		JxtaReceiverAO receiver = (JxtaReceiverAO)LoadBalancingHelper.getLogicalJxtaOperator(false, oldPipeId);
-		
-		if(receiver==null) {
-			LOG.error("No receiver with pipe ID " + oldPipeId + " found.");
-			throw new LoadBalancingException("No receiver with pipe ID " + oldPipeId + " found.");
-		}
-		JxtaReceiverAO logicalReceiverCopy = (JxtaReceiverAO) receiver.clone();
-		logicalReceiverCopy.setPipeID(newPipeId);
-		logicalReceiverCopy.setPeerID(newPeerId);
-		logicalReceiverCopy.setSchema(receiver.getSchema());
-		
-		JxtaReceiverPO physicalOriginal = (JxtaReceiverPO) LoadBalancingHelper
-				.getPhysicalJxtaOperator(false, oldPipeId);
-		logicalReceiverCopy.setSchemaName(physicalOriginal.getOutputSchema().getURI());
-				
-		JxtaReceiverPO physicalCopy = new JxtaReceiverPO(logicalReceiverCopy);
-				
-		physicalCopy
-		.setOutputSchema(physicalOriginal.getOutputSchema());
-
-		List<AbstractPhysicalSubscription<ISink<? super IStreamObject>>> subscriptionList = physicalOriginal
-						.getSubscriptions();
-
-				for (AbstractPhysicalSubscription<ISink<? super IStreamObject>> subscription : subscriptionList) {
-
-					physicalOriginal.unsubscribeSink(subscription);
-					physicalCopy.subscribeSink(subscription.getTarget(),
-							subscription.getSinkInPort(),
-							subscription.getSourceOutPort(),
-							subscription.getSchema(), true,
-							subscription.getOpenCalls());
-					
-					ArrayList<IPhysicalOperator> emptyCallPath = new ArrayList<IPhysicalOperator>();
-					physicalOriginal.open(subscription.getTarget(), 0, 0, emptyCallPath,
-							physicalOriginal.getOwner());
-				}
-
-				LOG.debug("Installed additional Receiver with PeerID " + physicalCopy.getPeerIDString() + " and PipeID " + physicalCopy.getPipeIDString());
-				status.storeReplacedReceiver(newPipeId, physicalOriginal);
-		}
-		
-
 	/**
 	 * Relinks a logical Query Part to a new peer.
 	 * @param modifiedPart

@@ -19,9 +19,12 @@ public class MovingStateResponseMessage implements IMessage {
 	public static final int SUCCESS_DUPLICATE = 3;
 	public static final int FAILURE_DUPLICATE_RECEIVER = 4;
 	
-	public static final int SYNC_FINISHED = 5;
+	public static final int ACK_COPY_STATES = 5;
+	public static final int STATE_COPY_FINISHED = 6;
 	
-	public static final int DELETE_FINISHED = 6;
+	public static final int ACK_ALL_STATE_COPIES_FINISHED = 7;
+	
+	public static final int DELETE_FINISHED = 8;
 	
 	
 	
@@ -88,13 +91,6 @@ public class MovingStateResponseMessage implements IMessage {
 		return message;
 	}
 
-	public static MovingStateResponseMessage createSyncFinishedMsg(int lbProcessId, String pipeID) {
-		MovingStateResponseMessage message = new MovingStateResponseMessage();
-		message.setMsgType(SYNC_FINISHED);
-		message.setLoadBalancingProcessId(lbProcessId);
-		message.setPipeID(pipeID);
-		return message;
-	}
 
 	@Override
 	/**
@@ -124,7 +120,6 @@ public class MovingStateResponseMessage implements IMessage {
 				break;
 				
 			case SUCCESS_DUPLICATE:
-			case SYNC_FINISHED:
 			case DELETE_FINISHED:
 				
 				/*
@@ -166,7 +161,6 @@ public class MovingStateResponseMessage implements IMessage {
 		switch(msgType) {
 			
 		case SUCCESS_DUPLICATE:
-		case SYNC_FINISHED:
 		case DELETE_FINISHED:
 			
 			int pipeIdSize = bb.getInt();

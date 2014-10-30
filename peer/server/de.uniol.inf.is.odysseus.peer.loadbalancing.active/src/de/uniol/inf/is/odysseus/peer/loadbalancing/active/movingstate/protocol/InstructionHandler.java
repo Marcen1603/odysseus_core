@@ -39,9 +39,7 @@ public class InstructionHandler {
 	public static void handleInstruction(
 			MovingStateInstructionMessage instruction, PeerID senderPeer) {
 		// TODO normal sources
-		LOG.debug("Got Instruction for Process:"
-				+ instruction.getLoadBalancingProcessId());
-
+		
 		int lbProcessId = instruction.getLoadBalancingProcessId();
 		MovingStateMessageDispatcher dispatcher = null;
 
@@ -109,7 +107,7 @@ public class InstructionHandler {
 			break;
 
 		case MovingStateInstructionMessage.INSTALL_BUFFER_AND_REPLACE_SENDER:
-			LOG.debug("Got INSTALL_BUFFER_AND_COPY_SENDER.");
+			LOG.debug("Got INSTALL_BUFFER_AND_REPLACE_SENDER.");
 			// Create Status if none exist
 			if (status == null) {
 				status = new MovingStateSlaveStatus(
@@ -121,21 +119,22 @@ public class InstructionHandler {
 				LoadBalancingStatusCache.getInstance().storeSlaveStatus(
 						senderPeer, lbProcessId, status);
 			}
+			
 			// Process Pipe only if not already processed:
 			if ((status.getPhase()
 					.equals(MovingStateSlaveStatus.LB_PHASES.WAITING_FOR_FINISH))
 					|| (status.getPhase()
 							.equals(MovingStateSlaveStatus.LB_PHASES.WAITING_FOR_COPY))
-					&& !status.isPipeKnown(instruction.getNewPipeId())) {
-
+					&& !status.isPipeKnown(instruction.getPipeId())) {
+				String pipe = instruction.getPipeId();
+				String peer = instruction.getPeerId();
+				status.addKnownPipe(pipe);
+				
 				dispatcher = status.getMessageDispatcher();
 				try {
-					MovingStateHelper.addBufferAndCopySender(status,
-							instruction.getNewPeerId(),
-							instruction.getOldPipeId(),
-							instruction.getNewPipeId());
-					dispatcher.sendDuplicateSuccess(senderPeer,
-							instruction.getNewPipeId());
+					MovingStateHelper.startBuffering(pipe);
+					MovingStateHelper.setNewPeerId(pipe, peer,true);
+					dispatcher.sendDuplicateSuccess(status.getMasterPeer(), pipe);
 				} catch (Exception e) {
 					LOG.error("Error while copying JxtaSender:");
 					LOG.error(e.getMessage());
@@ -145,7 +144,7 @@ public class InstructionHandler {
 			break;
 
 		case MovingStateInstructionMessage.REPLACE_RECEIVER:
-			LOG.debug("Got COPY_RECEIVER");
+			LOG.debug("Got REPLACE_RECEIVER");
 			// Create Status if none exist
 			if (status == null) {
 				status = new MovingStateSlaveStatus(
@@ -162,20 +161,17 @@ public class InstructionHandler {
 					.equals(MovingStateSlaveStatus.LB_PHASES.WAITING_FOR_FINISH))
 					|| (status.getPhase()
 							.equals(MovingStateSlaveStatus.LB_PHASES.WAITING_FOR_COPY))
-					&& !status.isPipeKnown(instruction.getNewPipeId())) {
-
-				LOG.debug("Installing pipe " + instruction.getNewPipeId());
-
+					&& !status.isPipeKnown(instruction.getPipeId())) {
+				String pipe = instruction.getPipeId();
+				String peer = instruction.getPeerId();
+				
+				status.addKnownPipe(pipe);
 				dispatcher = status.getMessageDispatcher();
 				try {
-					MovingStateHelper.findAndReplaceReceiver(status,
-							instruction.getNewPeerId(),
-							instruction.getOldPipeId(),
-							instruction.getNewPipeId());
-					dispatcher.sendDuplicateSuccess(senderPeer,
-							instruction.getNewPipeId());
+					MovingStateHelper.setNewPeerId(pipe, peer,false);
+					dispatcher.sendDuplicateSuccess(status.getMasterPeer(), pipe);
 				} catch (Exception e) {
-					LOG.error("Error while copying JxtaOperator:");
+					LOG.error("Error while replacing JxtaReceiver:");
 					LOG.error(e.getMessage());
 					dispatcher.sendDuplicateFailure(senderPeer);
 				}
@@ -189,7 +185,7 @@ public class InstructionHandler {
 				return;
 			}
 			status.getMessageDispatcher().stopRunningJob(
-					instruction.getOldPipeId());
+					instruction.getPipeId());
 			break;
 
 		case MovingStateInstructionMessage.INITIATE_STATE_COPY:
@@ -202,9 +198,8 @@ public class InstructionHandler {
 			if (status.getPhase().equals(
 					MovingStateSlaveStatus.LB_PHASES.WAITING_FOR_COPY)) {
 				MovingStateManager.getInstance().addReceiver(
-						senderPeer.toString(), instruction.getNewPipeId());
-				// TODO inject status into operator
-				// TODO Send Ack
+						senderPeer.toString(), instruction.getPipeId());
+
 			}
 			break;
 
@@ -215,7 +210,7 @@ public class InstructionHandler {
 			}
 			if (status.getPhase().equals(
 					MovingStateSlaveStatus.LB_PHASES.WAITING_FOR_FINISH)) {
-				MovingStateHelper.stopBuffering(status);
+				//TODO Stop buffering.
 			}
 
 			break;

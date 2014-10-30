@@ -2,7 +2,7 @@ package de.uniol.inf.is.odysseus.peer.loadbalancing.active.movingstate.buffer;
 
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
-
+@Deprecated
 public interface ILoadBalancingBuffer {
 
 	/**

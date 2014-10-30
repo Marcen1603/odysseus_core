@@ -128,6 +128,23 @@ public class MovingStateMessageDispatcher {
 		}
 	}
 	
+
+	/**
+	 * Send by Slave Peer to master Peer to stop tell master peer that changing a Pipe went well.
+	 * @param destination
+	 * @param pipeID
+	 */
+	public void sendPipeSuccessMsg(PeerID destination, String pipeID) {
+		MovingStateResponseMessage message = MovingStateResponseMessage.createDuplicateSuccessMessage(lbProcessId, pipeID);
+		try {
+			LOG.debug("Send DuplicateSuccess");
+			peerCommunicator.send(destination, message);
+		} catch (PeerCommunicationException e) {
+			LOG.error("Error while sending Message:");
+			LOG.error(e.getMessage());
+		}
+	}
+	
 	
 	
 
@@ -205,6 +222,22 @@ public class MovingStateMessageDispatcher {
 			currentJob.start();
 	}
 	
+	public void sendInititateStateCopy(PeerID volunteeringPeer, IMessageDeliveryFailedListener listener, String pipeID, String operatorType, int operatorIndex) {
+		LOG.debug("Send INITIATE_STATE_COPY");
+		if(this.currentJobs==null) {
+			this.currentJobs = new ConcurrentHashMap<String,RepeatingMessageSend>();
+		}
+		RepeatingMessageSend job = new RepeatingMessageSend(peerCommunicator,MovingStateInstructionMessage.createInitiateStateCopyMsg(lbProcessId, pipeID, operatorType, operatorIndex),volunteeringPeer);
+		this.currentJobs.put(pipeID,job);
+		job.addListener(listener);
+		job.start();
+	}
+	
+	public void sendInititiateStateCopyAck(PeerID masterPeer, int lbProcessId, String pipeID) {
+		LOG.debug("Send INITIATE_STATE_COPY_ACK");
+		//TODO
+	}
+	
 	/**
 	 * Stops a running message job.
 	 */
@@ -222,10 +255,12 @@ public class MovingStateMessageDispatcher {
 	 * @param job
 	 */
 	public void stopRunningJob(String job) {
-		if(this.currentJobs.containsKey(job)) {
-			currentJobs.get(job).stopRunning();
-			currentJobs.get(job).clearListeners();
-			currentJobs.remove(job);
+		if(this.currentJobs!=null) {
+			if(this.currentJobs.containsKey(job)) {
+				currentJobs.get(job).stopRunning();
+				currentJobs.get(job).clearListeners();
+				currentJobs.remove(job);
+			}
 		}
 	}
 	
@@ -251,29 +286,10 @@ public class MovingStateMessageDispatcher {
 		}
 	}
 
-	/**
-	 * Sends Sync finished Message.
-	 * @param initiatingPeer
-	 * @param pipeId
-	 */
-	public void sendSyncFinished(PeerID initiatingPeer, String pipeId) {
 
-		LOG.debug("Send SyncFinished for pipeID " + pipeId);
-		MovingStateResponseMessage message = MovingStateResponseMessage.createSyncFinishedMsg(lbProcessId, pipeId);
-		if(this.currentJobs==null) {
-			this.currentJobs = new ConcurrentHashMap<String,RepeatingMessageSend>();
-		}
-		if(!this.currentJobs.containsKey(initiatingPeer.toString())) {
-			RepeatingMessageSend job = new RepeatingMessageSend(peerCommunicator,message,initiatingPeer);
-			this.currentJobs.put(initiatingPeer.toString(), job);
-			job.start();
-		}
-	}
-	
-
-	public void sendReplaceReceiverMessage(PeerID peer, String newPeerId, String oldPipeId, String newPipeId,IMessageDeliveryFailedListener listener) {
+	public void sendReplaceReceiverMessage(PeerID peer, String newPeerId, String oldPipeId, IMessageDeliveryFailedListener listener) {
 		
-		MovingStateInstructionMessage message = MovingStateInstructionMessage.createReplaceReceiverMsg(lbProcessId, newPeerId, oldPipeId, newPipeId);
+		MovingStateInstructionMessage message = MovingStateInstructionMessage.createReplaceReceiverMsg(lbProcessId, newPeerId, oldPipeId);
 		if(this.currentJobs==null) {
 			this.currentJobs = new ConcurrentHashMap<String,RepeatingMessageSend>();
 		}
@@ -286,12 +302,12 @@ public class MovingStateMessageDispatcher {
 		}
 	}
 	
-	public void sendInstallBufferAndReplaceSenderMessage(PeerID peer, String newPeerId, String oldPipeId, String newPipeId, IMessageDeliveryFailedListener listener) {
-		MovingStateInstructionMessage message = MovingStateInstructionMessage.createInstallBufferAndReplaceSenderMsg(lbProcessId, newPeerId, oldPipeId, newPipeId);
+	public void sendInstallBufferAndReplaceSenderMessage(PeerID peer, String newPeerId, String oldPipeId, IMessageDeliveryFailedListener listener) {
+		MovingStateInstructionMessage message = MovingStateInstructionMessage.createInstallBufferAndReplaceSenderMsg(lbProcessId, newPeerId, oldPipeId);
 		if(this.currentJobs==null) {
 			this.currentJobs = new ConcurrentHashMap<String,RepeatingMessageSend>();
 		}
-		if(this.currentJobs!=null && !this.currentJobs.containsKey(oldPipeId)) {
+		if(!this.currentJobs.containsKey(oldPipeId)) {
 			LOG.debug("Sending INSTALL_BUFFER_AND_REPLACE_SENDER Message");
 			RepeatingMessageSend job = new RepeatingMessageSend(peerCommunicator, message, peer);
 			job.addListener(listener);

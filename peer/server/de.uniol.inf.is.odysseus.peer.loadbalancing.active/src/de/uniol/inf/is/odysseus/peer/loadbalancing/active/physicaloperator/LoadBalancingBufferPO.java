@@ -16,6 +16,7 @@ import de.uniol.inf.is.odysseus.peer.loadbalancing.active.movingstate.buffer.ILo
  *
  * @param <T>
  */
+@Deprecated
 public class LoadBalancingBufferPO<T extends IStreamObject<? extends ITimeInterval>>
 		extends AbstractPipe<T, T> {
 	
@@ -69,7 +70,7 @@ public class LoadBalancingBufferPO<T extends IStreamObject<? extends ITimeInterv
 			
 			T tupleToProcess = (T) tupleStore.getNextTuple();
 			while(tupleToProcess!=null) {
-				super.process(tupleToProcess, 0);
+				transfer(tupleToProcess, 0);
 				tupleToProcess = (T) tupleStore.getNextTuple();
 			}
 			this.bufferState=BUFFER_STATES.NOT_BUFFERING;

@@ -18,10 +18,10 @@ import de.uniol.inf.is.odysseus.core.collection.Context;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
+import de.uniol.inf.is.odysseus.core.physicaloperator.AbstractPhysicalSubscription;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
-import de.uniol.inf.is.odysseus.core.physicaloperator.AbstractPhysicalSubscription;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.RestructHelper;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TopAO;
@@ -31,6 +31,7 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSource;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
+import de.uniol.inf.is.odysseus.p2p_new.data.DataTransmissionException;
 import de.uniol.inf.is.odysseus.p2p_new.logicaloperator.JxtaReceiverAO;
 import de.uniol.inf.is.odysseus.p2p_new.logicaloperator.JxtaSenderAO;
 import de.uniol.inf.is.odysseus.p2p_new.physicaloperator.JxtaReceiverPO;
@@ -134,6 +135,7 @@ public class LoadBalancingHelper {
 	 *            input port of sink
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
+	@Deprecated
 	public static void insertOperatorBefore(ISink sink, AbstractPipe operatorToInsert, int port) {
 
 		AbstractPhysicalSubscription subscription = (AbstractPhysicalSubscription) sink.getSubscribedToSource(port);
@@ -144,12 +146,33 @@ public class LoadBalancingHelper {
 				subscription.getSourceOutPort(), subscription.getSchema());
 		operatorToInsert.subscribeSink(sink, subscription.getSinkInPort(),
 				subscription.getSinkInPort(), subscription.getSchema(), true,
-				subscription.getOpenCalls());
+				subscription.getOpenCalls()-1);
 		operatorToInsert.open(sink, subscription.getSinkInPort(), subscription.getSinkInPort(),
 				emptyCallPath, sink.getOwner());
 		operatorToInsert.addOwner(sink.getOwner());
 
 	}
+	
+	
+	@SuppressWarnings("rawtypes")
+	public static void setNewPeerID(JxtaSenderPO sender,String peerID) throws LoadBalancingException {
+		try {
+			sender.sendToNewPeer(peerID);
+		} catch (DataTransmissionException e) {
+			throw new LoadBalancingException("Could not set new PeerID to Sender.");
+		}
+	}
+
+	
+	@SuppressWarnings("rawtypes")
+	public static void setNewPeerID(JxtaReceiverPO receiver,String peerID) throws LoadBalancingException {
+		try {
+			receiver.receiveFromNewPeer(peerID);
+		} catch (DataTransmissionException e) {
+			throw new LoadBalancingException("Could not set new PeerID to Receiver.");
+		}
+	}
+
 
 	/***
 	 * Removes an Operator (which has to have only one incoming or one outgoing
@@ -158,6 +181,7 @@ public class LoadBalancingHelper {
 	 * @param sink
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
+	@Deprecated
 	public static void removeOperatorFromStream(AbstractPipe operator) {
 		Collection<AbstractPhysicalSubscription> sourceSubscriptions = operator.getSubscribedToSource();
 		Collection<AbstractPhysicalSubscription> sinkSubscriptions = operator.getSubscriptions();
@@ -513,5 +537,7 @@ public class LoadBalancingHelper {
 		RestructHelper.collectOperators(query.getLogicalPlan(), operators);
 		return new LogicalQueryPart(operators);
 	}
+
+	
 
 }

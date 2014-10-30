@@ -157,18 +157,6 @@ public class ActiveLoadbalancingConsole implements CommandProvider {
 
 	}
 
-	public static void _insertBuffer(CommandInterpreter ci) {
-
-		final String USAGE_ERROR = "Usage: insertBuffer <pipeID>";
-
-		String pipe = ci.nextArgument();
-		if (Strings.isNullOrEmpty(pipe)) {
-			ci.println(USAGE_ERROR);
-			return;
-		}
-		MovingStateHelper.insertBuffer(pipe);
-	}
-
 	// called by OSGi-DS
 	public static void bindLoadBalancingCommunicator(
 			ILoadBalancingCommunicator communicator) {
@@ -221,7 +209,6 @@ public class ActiveLoadbalancingConsole implements CommandProvider {
 		sb.append("    cpJxtaSender <oldPipeId> <newPipeId> <newPeername> - Tries to copy and install a Sender\n");
 		sb.append("    cpJxtaReceiver <oldPipeId> <newPipeId> <newPeername> - Tries to copy and install a Receiver\n");
 		sb.append("    setLBCommunicator <communicatorName>                 - Sets LoadBalancing Communicator to use\n");
-		sb.append("    insertBuffer <pipeID>                                - Inserts Buffer before Sender with pipeID\n");
 		sb.append("    installStateSender <peerID>                          - Installs new MovingStateSender to PeerID\n");
 		sb.append("    installStateReceiver <peerID> <pipeID>               - Installs new MovingStateReceiver with peer and pipeID\n");
 		sb.append("    sendData <pipeID>                                    - Sends Data to MovingStateSender with pipeID\n");
@@ -232,7 +219,7 @@ public class ActiveLoadbalancingConsole implements CommandProvider {
 		return sb.toString();
 	}
 	
-	void _listStatefulOperators(CommandInterpreter ci) {
+	public void _listStatefulOperators(CommandInterpreter ci) {
 		final String ERROR_USAGE = "Usage: listStatefulOperators <queryID>";
 		ci.println("Looking for stateful OPs");
 		
