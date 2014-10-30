@@ -48,13 +48,16 @@ public class OdysseusConsole extends AppenderSkeleton {
 	public void createConsole() {
 		MessageConsole myConsole = findConsole(CONSOLE_NAME);
 		outStream = myConsole.newMessageStream();
-		if (Boolean.parseBoolean(OdysseusRCPConfiguration.get("redirectSysOut",
-				"true"))) {
-			System.setOut(new PrintStream(outStream));
-		}
-		if (Boolean.parseBoolean(OdysseusRCPConfiguration.get("redirectSysErr",
-				"true"))) {
-			System.setErr(new PrintStream(outStream));
+		String sysReDir = System.getProperty("sysredirect","false");
+		if (Boolean.parseBoolean(sysReDir)) {
+			if (Boolean.parseBoolean(OdysseusRCPConfiguration.get(
+					"redirectSysOut", "true"))) {
+				System.setOut(new PrintStream(outStream));
+			}
+			if (Boolean.parseBoolean(OdysseusRCPConfiguration.get(
+					"redirectSysErr", "true"))) {
+				System.setErr(new PrintStream(outStream));
+			}
 		}
 		this.layout = new PatternLayout("%-4r %-5p %c{1} %x - %m - %l %n");
 	}

@@ -153,10 +153,10 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 			POEventType.OpenInit);
 	final private POEvent openDoneEvent = new POEvent(this,
 			POEventType.OpenDone);
-	final private POEvent pushInitEvent = new POEvent(this,
-			POEventType.PushInit);
-	final private POEvent pushDoneEvent = new POEvent(this,
-			POEventType.PushDone);
+//	final private POEvent pushInitEvent = new POEvent(this,
+//			POEventType.PushInit);
+//	final private POEvent pushDoneEvent = new POEvent(this,
+//			POEventType.PushDone);
 	// final private POEvent pushListInitEvent = new POEvent(this,
 	// POEventType.PushListInit);
 	// final private POEvent pushListDoneEvent = new POEvent(this,
@@ -450,14 +450,14 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 
 	@Override
 	final public void transfer(T object, int sourceOutPort) {
-		fire(this.pushInitEvent);
+		//fire(this.pushInitEvent);
 		// necessary to not lose tuples in a plan migration
 		locker.lock();
 		for (AbstractPhysicalSubscription<ISink<? super T>> sink : this.activeSinkSubscriptions) {
 			transfer(object, sourceOutPort, sink);
 		}
 		locker.unlock();
-		fire(this.pushDoneEvent);
+		//fire(this.pushDoneEvent);
 	}
 
 	@SuppressWarnings("rawtypes")

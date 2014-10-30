@@ -130,8 +130,8 @@ public abstract class AbstractSink<R extends IStreamObject<?>> extends
 
 	final protected AtomicBoolean sinkOpen = new AtomicBoolean(false);
 
-	protected POEvent[] processInitEvent = null;
-	protected POEvent[] processDoneEvent = null;
+//	protected POEvent[] processInitEvent = null;
+//	protected POEvent[] processDoneEvent = null;
 
 	// ------------------------------------------------------------------
 
@@ -179,14 +179,14 @@ public abstract class AbstractSink<R extends IStreamObject<?>> extends
 	protected void setInputPortCount(int ports) {
 		if (ports > noInputPorts) {
 			this.noInputPorts = ports;
-			processInitEvent = new POEvent[noInputPorts];
-			processDoneEvent = new POEvent[noInputPorts];
-			for (int i = 0; i < noInputPorts; i++) {
-				processInitEvent[i] = new POPortEvent(getInstance(),
-						POEventType.ProcessInit, i);
-				processDoneEvent[i] = new POPortEvent(getInstance(),
-						POEventType.ProcessDone, i);
-			}
+//			processInitEvent = new POEvent[noInputPorts];
+//			processDoneEvent = new POEvent[noInputPorts];
+//			for (int i = 0; i < noInputPorts; i++) {
+//				processInitEvent[i] = new POPortEvent(getInstance(),
+//						POEventType.ProcessInit, i);
+//				processDoneEvent[i] = new POPortEvent(getInstance(),
+//						POEventType.ProcessDone, i);
+//			}
 		}
 	}
 
@@ -299,9 +299,9 @@ public abstract class AbstractSink<R extends IStreamObject<?>> extends
 
 	@Override
 	final public void process(R object, int port) {
-		fire(processInitEvent[port]);
+		//fire(processInitEvent[port]);
 		process_next(object, port);
-		fire(processDoneEvent[port]);
+		//fire(processDoneEvent[port]);
 	}
 
 	// @Override
