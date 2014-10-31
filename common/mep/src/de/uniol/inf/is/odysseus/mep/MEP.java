@@ -88,6 +88,9 @@ import de.uniol.inf.is.odysseus.mep.functions.math.ArcCosinusFunction;
 import de.uniol.inf.is.odysseus.mep.functions.math.ArcSinusFunction;
 import de.uniol.inf.is.odysseus.mep.functions.math.ArcTangens2Function;
 import de.uniol.inf.is.odysseus.mep.functions.math.ArcTangensFunction;
+import de.uniol.inf.is.odysseus.mep.functions.math.BitAndOperator;
+import de.uniol.inf.is.odysseus.mep.functions.math.BitInvertOperator;
+import de.uniol.inf.is.odysseus.mep.functions.math.BitOrOperator;
 import de.uniol.inf.is.odysseus.mep.functions.math.CeilFunction;
 import de.uniol.inf.is.odysseus.mep.functions.math.CosinusFunction;
 import de.uniol.inf.is.odysseus.mep.functions.math.DivisionOperator;
@@ -98,6 +101,7 @@ import de.uniol.inf.is.odysseus.mep.functions.math.HyperbolicCosinusFunction;
 import de.uniol.inf.is.odysseus.mep.functions.math.HyperbolicSinusFunction;
 import de.uniol.inf.is.odysseus.mep.functions.math.HyperbolicTangensFunction;
 import de.uniol.inf.is.odysseus.mep.functions.math.InfFunction;
+import de.uniol.inf.is.odysseus.mep.functions.math.LeftShiftOperator;
 import de.uniol.inf.is.odysseus.mep.functions.math.Log10Function;
 import de.uniol.inf.is.odysseus.mep.functions.math.LogFunction;
 import de.uniol.inf.is.odysseus.mep.functions.math.MinusOperator;
@@ -107,6 +111,7 @@ import de.uniol.inf.is.odysseus.mep.functions.math.NaNFunction;
 import de.uniol.inf.is.odysseus.mep.functions.math.PIFunction;
 import de.uniol.inf.is.odysseus.mep.functions.math.PlusOperator;
 import de.uniol.inf.is.odysseus.mep.functions.math.PowerOperator;
+import de.uniol.inf.is.odysseus.mep.functions.math.RightShiftOperator;
 import de.uniol.inf.is.odysseus.mep.functions.math.RoundFunction;
 import de.uniol.inf.is.odysseus.mep.functions.math.SignFunction;
 import de.uniol.inf.is.odysseus.mep.functions.math.SinusFunction;
@@ -281,6 +286,13 @@ public class MEP implements IExpressionParser {
 		registerFunction(new StringEqualsOperator());
 		registerFunction(new NotEqualsOperator());
 		registerFunction(new StringNotEqualsOperator());
+		
+		/** Bit functions */
+		registerFunction(new LeftShiftOperator());
+		registerFunction(new RightShiftOperator());
+		registerFunction(new BitInvertOperator());
+		registerFunction(new BitAndOperator());
+		registerFunction(new BitOrOperator());
 
 		/** Math Functions */
 		registerFunction(new GreaterThanOperator());

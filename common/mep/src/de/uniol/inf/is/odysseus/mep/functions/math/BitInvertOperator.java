@@ -13,42 +13,35 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
   */
-package de.uniol.inf.is.odysseus.mep;
+package de.uniol.inf.is.odysseus.mep.functions.math;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
+import de.uniol.inf.is.odysseus.mep.AbstractUnaryOperator;
 
-public abstract class AbstractBinaryNumberInputOperator<T> extends AbstractBinaryOperator<T>{
+public class BitInvertOperator extends AbstractUnaryOperator<Long> {
+
+	private static final long serialVersionUID = 5934608915212061886L;
+	public static final SDFDatatype[][] accTypes = new SDFDatatype[][] { SDFDatatype.NUMBERS};
 	
-	private static final long serialVersionUID = -195306610974958000L;
-	private static final SDFDatatype[][] accTypes = new SDFDatatype[][] { SDFDatatype.NUMBERS_OBJECT, SDFDatatype.NUMBERS_OBJECT};
-	
-	public AbstractBinaryNumberInputOperator(String symbol, SDFDatatype returnType) {
-		super(symbol,accTypes, returnType);
+	public BitInvertOperator() {
+		super("~", accTypes, SDFDatatype.LONG);
 	}
 	
 	@Override
-	public boolean isCommutative() {
-		return false;
+	public int getPrecedence() {
+		return 3;
 	}
 
 	@Override
-	public boolean isAssociative() {
-		return false;
+	public Long getValue() {
+		Long in = getNumericalInputValue(0).longValue();
+		return ~in; 
 	}
 
-	@Override
-	public boolean isLeftDistributiveWith(IOperator<T> operator) {
-		return false;
-	}
-
-	@Override
-	public boolean isRightDistributiveWith(IOperator<T> operator) {
-		return false;
-	}
-	
 	@Override
 	public de.uniol.inf.is.odysseus.mep.IOperator.ASSOCIATIVITY getAssociativity() {
 		return null;
 	}
 	
+
 }
