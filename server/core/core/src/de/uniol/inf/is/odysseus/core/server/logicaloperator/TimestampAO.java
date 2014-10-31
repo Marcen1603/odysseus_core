@@ -274,7 +274,7 @@ public class TimestampAO extends UnaryLogicalOp {
 	}
 	
 	public String getLocaleStr() {
-		return this.locale.toString();
+		return this.locale != null ? this.locale.toString() : null;
 	}
 	
 	public List<String> getLocales(){
