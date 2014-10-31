@@ -263,7 +263,7 @@ public class SmartHomeServerPlugIn implements BundleActivator {
 		//
 		// Temper1
 		Temper1Sensor temper1 = new Temper1Sensor("temper1", "temper1",
-				peerName, cleanPeerID);
+				peerName, "");// cleanPeerID
 		temper1.addPossibleActivityName("hot");
 		//
 		// GPIO_07 as input sensor
@@ -358,11 +358,10 @@ public class SmartHomeServerPlugIn implements BundleActivator {
 
 					getJxtaServicesProvider().publish(smartDeviceAdv);
 					getJxtaServicesProvider().remotePublish(smartDeviceAdv);
-					
-					
-					
-					//getJxtaServicesProvider().publish(smartDeviceAdv, lifetime,expirationTime);
-					//getJxtaServicesProvider().remotePublish(smartDeviceAdv,expirationTime);
+
+					// getJxtaServicesProvider().publish(smartDeviceAdv,
+					// lifetime,expirationTime);
+					// getJxtaServicesProvider().remotePublish(smartDeviceAdv,expirationTime);
 
 					// getJxtaServicesProvider().publishInfinite(smartDeviceAdv);
 					// getJxtaServicesProvider().remotePublishInfinite(smartDeviceAdv);
@@ -630,11 +629,8 @@ public class SmartHomeServerPlugIn implements BundleActivator {
 	private static void executeQuery(String viewName, String query) {
 		// TODO: only one query per execution!
 
-		
-		LOG.debug("viewName:"+viewName+" query:"+query);
-		
-		
-		
+		LOG.error("viewName:" + viewName + " query:" + query);
+
 		Collection<Integer> queryIDs = ServerExecutorService
 				.getServerExecutor().addQuery(query, "OdysseusScript",
 						SessionManagementService.getActiveSession(),
@@ -870,7 +866,6 @@ public class SmartHomeServerPlugIn implements BundleActivator {
 
 	public static class SmartDeviceDictionaryListener implements
 			ISmartDeviceDictionaryListener {
-		private boolean ruleHotIsExecuted = false;
 
 		@Override
 		public void smartDeviceAdded(SmartDeviceDictionary sender,
@@ -883,19 +878,20 @@ public class SmartHomeServerPlugIn implements BundleActivator {
 			if (smartDevice.getContextName().equals("Office")) {
 				for (FieldDevice fieldDevice : smartDevice
 						.getConnectedFieldDevices()) {
-					
-					LOG.debug("FieldDevice class:"+fieldDevice.getClass().toString());
-					LOG.debug("FieldDevice class.getName:"+fieldDevice.getClass().getName());
-					
-					
-					if (fieldDevice instanceof Sensor || fieldDevice instanceof Temper1Sensor) {
-						
+
+					LOG.debug("FieldDevice class:"
+							+ fieldDevice.getClass().toString());
+					LOG.debug("FieldDevice class.getName:"
+							+ fieldDevice.getClass().getName());
+
+					if (fieldDevice instanceof Sensor
+							|| fieldDevice instanceof Temper1Sensor) {
+
 						if (fieldDevice instanceof Sensor) {
 							LOG.debug("FieldDevice instanceof Sensor");
-						}else{
+						} else {
 							LOG.debug("FieldDevice !instanceof Sensor");
 						}
-						
 
 						String rawSourceName = fieldDevice.getRawSourceName();
 						@SuppressWarnings("unused")
@@ -961,7 +957,7 @@ public class SmartHomeServerPlugIn implements BundleActivator {
 
 		private void executeRuleHotAsync(final FieldDevice fieldDevice) {
 			Thread t = new Thread(new Runnable() {
-				private boolean importMessageWasShown=false;
+				private boolean importMessageWasShown = false;
 
 				@Override
 				public void run() {
@@ -970,14 +966,16 @@ public class SmartHomeServerPlugIn implements BundleActivator {
 							Thread.sleep(200);
 						} catch (InterruptedException e) {
 						}
-						
-						if (p2pDictionary.isImported(fieldDevice
-								.getActivitySourceName())) {
+
+						if (p2pDictionary != null
+								&& fieldDevice != null
+								&& p2pDictionary.isImported(fieldDevice
+										.getActivitySourceName())) {
 							executeRuleHot(fieldDevice);
-						}else if(!importMessageWasShown){
-							importMessageWasShown=true;
-							LOG.debug("waiting for import sourcename: "+fieldDevice
-									.getActivitySourceName());
+						} else if (!importMessageWasShown) {
+							importMessageWasShown = true;
+							LOG.debug("waiting for import sourcename: "
+									+ fieldDevice.getActivitySourceName());
 						}
 					}
 				}
@@ -985,160 +983,6 @@ public class SmartHomeServerPlugIn implements BundleActivator {
 			t.setName("execute rule hot thread.");
 			t.setDaemon(true);
 			t.start();
-		}
-
-		private void executeRuleHot(FieldDevice fieldDevice) {
-			if (!ruleHotIsExecuted) {
-				ruleHotIsExecuted = true;
-
-				LOG.debug("------------------------------------------------------------");
-				LOG.debug("Rule for activity:hot wurde erfüllt und wird nun ausgeführt.");
-				LOG.debug("FieldDevice name:" + fieldDevice.getName());
-				LOG.debug("FieldDevice rawSourceName:"
-						+ fieldDevice.getRawSourceName());
-				LOG.debug("FieldDevice activitySourceName:"
-						+ fieldDevice.getActivitySourceName());
-				LOG.debug("------------------------------------------------------------");
-
-				// TODO: Auf Aktivität: "hot" lauschen, sobald diese
-				// ausgeführt wird, soll eine 1 an LED gesendet
-				// werden:
-
-				// TODO: Anfrage ausführen um einen Aktor aufgrund
-				// der Aktivität zu steuern.
-
-				// Eine Senke für den Aktor anlegen:
-				// out =
-				// aktivityToStateTransformator(aktivität:"hot",Entität:"Temper1",out:1
-				// , temper1_activity_datenstrom)
-				// RPiGPIO(pin=11, out)
-				String gpio11ActorName = "gpio11Actor";
-				@SuppressWarnings("unused")
-				RPiGPIOActor gpio11Actor = new RPiGPIOActor();
-
-				// 1. Import data stream with activities of the field device:
-				// fieldDevice.getName()
-				// and listen for the activity: "hot"
-				String activityImportedName = getLocalPeerName() + "_"
-						+ fieldDevice.getName() + "_Activity_imported";
-				StringBuilder activityImport = new StringBuilder();
-				activityImport.append("#PARSER PQL\n");
-				activityImport.append("#RUNQUERY\n");
-				activityImport.append(activityImportedName + " := SELECT({\n");
-				activityImport
-						.append("    predicate=\"ActivityName = 'hot'\"\n");
-				activityImport.append("    },\n");
-				activityImport.append("    "
-						+ fieldDevice.getActivitySourceName() + "\n");
-				activityImport.append(")\n");
-				activityImport.append("\n");
-
-				// 2. create configuration of the actor, how it will be set if
-				// the fieldDevice.getName() is participating at the activity:
-				// "hot"
-				String actorConfigIfParticipateActivity = getLocalPeerName()
-						+ "_" + fieldDevice.getName() + "_Config";
-				StringBuilder sbConfig = new StringBuilder();
-				sbConfig.append("#PARSER PQL\n");
-				sbConfig.append("#RUNQUERY\n");
-				sbConfig.append("    " + actorConfigIfParticipateActivity
-						+ " := ACCESS({\n");
-				sbConfig.append("    transport = 'activityconfiguration',\n");
-				sbConfig.append("    source = '"
-						+ actorConfigIfParticipateActivity + "',\n");
-				sbConfig.append("    datahandler = 'Tuple',\n");
-				sbConfig.append("    wrapper = 'GenericPull',\n");
-				sbConfig.append("    protocol='none',\n");
-				sbConfig.append("    options=[\n");
-				sbConfig.append("      ['entity', '1'],\n");
-				sbConfig.append("      ['activity', 'hot']\n");
-				sbConfig.append("    ],\n");
-				sbConfig.append("    schema=[\n");
-				sbConfig.append("      ['ConfigEntityName', 'String'],\n");
-				sbConfig.append("      ['ConfigActivityName', 'String']\n");
-				sbConfig.append("    ]\n");
-				sbConfig.append("  }\n");
-				sbConfig.append(")\n");
-				sbConfig.append("\n");
-				sbConfig.append("\n");
-
-				String setConfigStreamName = getLocalPeerName() + "_"
-						+ fieldDevice.getName() + "_SetActor_"
-						+ gpio11ActorName;
-				StringBuilder sbSetConfig = new StringBuilder();
-				sbSetConfig.append("#PARSER PQL\n");
-				sbSetConfig.append("#RUNQUERY\n");
-				sbSetConfig.append("" + setConfigStreamName + " := RENAME({\n");
-				sbSetConfig
-						.append("        aliases = ['PinNumber', 'PinState']\n");
-				sbSetConfig.append("    },\n");
-				sbSetConfig.append("    PROJECT({\n");
-				sbSetConfig
-						.append("        attributes = ['ActivityName', 'ConfigEntityName']\n");
-				sbSetConfig.append("    },\n");
-				sbSetConfig.append("        JOIN({\n");
-				sbSetConfig.append("            predicate = '"
-						+ activityImportedName + ".ActivityName = "
-						+ actorConfigIfParticipateActivity
-						+ ".ConfigActivityName'\n");
-				sbSetConfig.append("        },\n");
-				sbSetConfig.append("        " + activityImportedName + ",\n");
-				sbSetConfig.append("        "
-						+ actorConfigIfParticipateActivity + "\n");
-				sbSetConfig.append("        )\n");
-				sbSetConfig.append("    )\n");
-				sbSetConfig.append(")\n");
-				sbSetConfig.append("\n");
-
-				// InputSchema: schema=[['PinNumber', 'String'],['PinState',
-				// 'String']]
-				String entitySetStateStreamName = getLocalPeerName()+"_rpigpio11_";
-				StringBuilder sbEntitySetState = new StringBuilder();
-				sbEntitySetState.append("#PARSER PQL\n");
-				sbEntitySetState.append("#RUNQUERY\n");
-				sbEntitySetState.append("" + entitySetStateStreamName
-						+ " := SENDER({\n");
-				sbEntitySetState
-						.append("                    sink='"+entitySetStateStreamName+"',\n");
-				sbEntitySetState
-						.append("                    wrapper='GenericPush',\n");
-				sbEntitySetState
-						.append("                    transport='RPiGPIO',\n");
-				sbEntitySetState
-						.append("                    protocol='none',\n");
-				sbEntitySetState
-						.append("                    datahandler='Tuple',\n");
-				sbEntitySetState.append("                    options=[\n");
-				sbEntitySetState
-						.append("                      ['GPIO.11.mode', 'OUT'],\n");
-				sbEntitySetState
-						.append("                      ['GPIO.11.pull', 'down']\n");
-				sbEntitySetState.append("                    ]         \n");
-				sbEntitySetState.append("                  },\n");
-				sbEntitySetState.append("                  "
-						+ setConfigStreamName + "\n");
-				sbEntitySetState.append("                )\n");
-
-				if (p2pDictionary.isImported(fieldDevice
-						.getActivitySourceName())) {
-					executeQuery(activityImportedName,
-							activityImport.toString());
-					executeQuery(actorConfigIfParticipateActivity,
-							sbConfig.toString());
-					executeQuery(setConfigStreamName, sbSetConfig.toString());
-					executeQuery(entitySetStateStreamName,
-							sbEntitySetState.toString());
-
-					// TODO: fehler auf dem raspberry pi beheben.
-
-					
-					
-					
-				} else {
-					LOG.debug("the source is currently not imported source:"
-							+ fieldDevice.getActivitySourceName() + "");
-				}
-			}
 		}
 
 		@Override
@@ -1163,6 +1007,136 @@ public class SmartHomeServerPlugIn implements BundleActivator {
 			// Logik-Regeln überprüft und anschließend ausgeführt oder entfernt
 			// werden!
 
+		}
+	}
+
+	private static boolean ruleHotIsExecuted = false;
+
+	private static void executeRuleHot(FieldDevice fieldDevice) {
+		if (!ruleHotIsExecuted) {
+			ruleHotIsExecuted = true;
+
+			LOG.debug("------------------------------------------------------------");
+			LOG.debug("Rule for activity:hot wurde erfüllt und wird nun ausgeführt.");
+			LOG.debug("FieldDevice name:" + fieldDevice.getName());
+			LOG.debug("FieldDevice rawSourceName:"
+					+ fieldDevice.getRawSourceName());
+			LOG.debug("FieldDevice activitySourceName:"
+					+ fieldDevice.getActivitySourceName());
+			LOG.debug("------------------------------------------------------------");
+
+			// TODO: Auf Aktivität: "hot" lauschen, sobald diese
+			// ausgeführt wird, soll eine 1 an LED gesendet
+			// werden:
+
+			// TODO: Anfrage ausführen um einen Aktor aufgrund
+			// der Aktivität zu steuern.
+
+			// Eine Senke für den Aktor anlegen:
+			// out =
+			// aktivityToStateTransformator(aktivität:"hot",Entität:"Temper1",out:1
+			// , temper1_activity_datenstrom)
+			// RPiGPIO(pin=11, out)
+			String gpio11ActorName = "gpio11Actor";
+			@SuppressWarnings("unused")
+			RPiGPIOActor gpio11Actor = new RPiGPIOActor();
+
+			// 1. Import data stream with activities of the field device:
+			// fieldDevice.getName()
+			// and listen for the activity: "hot"
+			String activityImportedName = getLocalPeerName() + "_"
+					+ fieldDevice.getName() + "_Activity_imported";
+			StringBuilder activityImport = new StringBuilder();
+			activityImport.append("#PARSER PQL\n");
+			activityImport.append("#RUNQUERY\n");
+			activityImport.append(activityImportedName + " := SELECT({\n");
+			activityImport.append("    predicate=\"ActivityName = 'hot'\"\n");
+			activityImport.append("    },\n");
+			activityImport.append("    " + fieldDevice.getActivitySourceName()
+					+ "\n");
+			activityImport.append(")\n");
+			activityImport.append("\n");
+
+			// 2. create configuration of the actor, how it will be set if
+			// the fieldDevice.getName() is participating at the activity:
+			// "hot"
+			String actorConfigIfParticipateActivity = getLocalPeerName() + "_"
+					+ fieldDevice.getName() + "_Config";
+			StringBuilder sbConfig = new StringBuilder();
+			sbConfig.append("#PARSER PQL\n");
+			sbConfig.append("#RUNQUERY\n");
+			sbConfig.append("    " + actorConfigIfParticipateActivity
+					+ " := ACCESS({\n");
+			sbConfig.append("    transport = 'activityconfiguration',\n");
+			sbConfig.append("    source = '" + actorConfigIfParticipateActivity
+					+ "',\n");
+			sbConfig.append("    datahandler = 'Tuple',\n");
+			sbConfig.append("    wrapper = 'GenericPull',\n");
+			sbConfig.append("    protocol='none',\n");
+			sbConfig.append("    options=[\n");
+			sbConfig.append("      ['entity', '1'],\n");
+			sbConfig.append("      ['activity', 'hot']\n");
+			sbConfig.append("    ],\n");
+			sbConfig.append("    schema=[\n");
+			sbConfig.append("      ['ConfigEntityName', 'String'],\n");
+			sbConfig.append("      ['ConfigActivityName', 'String']\n");
+			sbConfig.append("    ]\n");
+			sbConfig.append("  }\n");
+			sbConfig.append(")\n");
+			sbConfig.append("\n");
+			sbConfig.append("\n");
+
+			String setConfigStreamName = getLocalPeerName() + "_"
+					+ fieldDevice.getName() + "_SetActor_" + gpio11ActorName;
+			StringBuilder sbSetConfig = new StringBuilder();
+			sbSetConfig.append("#PARSER PQL\n");
+			sbSetConfig.append("#RUNQUERY\n");
+			sbSetConfig.append("" + setConfigStreamName + " := RENAME({\n");
+			sbSetConfig.append("        aliases = ['PinNumber', 'PinState']\n");
+			sbSetConfig.append("    },\n");
+			sbSetConfig.append("    PROJECT({\n");
+			sbSetConfig.append("        attributes = "
+					+ "    ['ActivityName','ConfigEntityName']\n");
+			sbSetConfig.append("    },\n");
+			sbSetConfig.append("        JOIN({\n");
+			sbSetConfig.append("            predicate = '"
+					+ activityImportedName + ".ActivityName = "
+					+ actorConfigIfParticipateActivity
+					+ ".ConfigActivityName'\n");
+			sbSetConfig.append("        },\n");
+			sbSetConfig.append("ELEMENTWINDOW({size = 1}, " + activityImportedName + "),\n");
+			sbSetConfig.append("ELEMENTWINDOW({size = 1}, " + actorConfigIfParticipateActivity + ")\n");
+			sbSetConfig.append("        )\n");
+			sbSetConfig.append("    )\n");
+			sbSetConfig.append(")\n");
+			sbSetConfig.append("\n");
+
+			// InputSchema: schema=[['PinNumber', 'String'],['PinState',
+			// 'String']]
+			String entitySetStateStreamName = getLocalPeerName()
+					+ "_rpigpio11_";
+			StringBuilder sbEntitySetState = new StringBuilder();
+			sbEntitySetState.append("#PARSER PQL\n");
+			sbEntitySetState.append("#RUNQUERY\n");
+			sbEntitySetState.append("" + entitySetStateStreamName
+					+ " = RPIGPIOSINK({sink='" + entitySetStateStreamName
+					+ "', pin=11, pinstate='low'}," + setConfigStreamName + ")\n");
+			
+			
+			if (p2pDictionary.isImported(fieldDevice.getActivitySourceName())) {
+				executeQuery(activityImportedName, activityImport.toString());
+				executeQuery(actorConfigIfParticipateActivity,
+						sbConfig.toString());
+				executeQuery(setConfigStreamName, sbSetConfig.toString());
+				executeQuery(entitySetStateStreamName,
+						sbEntitySetState.toString());
+
+				// TODO: fehler auf dem raspberry pi beheben.
+
+			} else {
+				LOG.debug("the source is currently not imported source:"
+						+ fieldDevice.getActivitySourceName() + "");
+			}
 		}
 	}
 }

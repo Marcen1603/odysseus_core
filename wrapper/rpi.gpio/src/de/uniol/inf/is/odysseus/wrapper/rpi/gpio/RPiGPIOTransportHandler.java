@@ -18,6 +18,8 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITranspor
 
 public class RPiGPIOTransportHandler extends AbstractSimplePullTransportHandler<Tuple<?>> {
 
+	//TODO: Auf push umbauen.
+	
 	private static final Logger LOG = LoggerFactory.getLogger(RPiGPIOTransportHandler.class);
 	
 	public static final String NAME = "RPiGPIO";

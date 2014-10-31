@@ -30,6 +30,9 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITranspor
 
 public class Temper1TransportHandler extends
 		AbstractSimplePullTransportHandler<Tuple<?>> {
+	
+	//TODO: TransportHandler auf Push umbauen.
+	
 	private static final String ENTITY_NAME = "temper";
 
 	private static Logger LOG = LoggerFactory
