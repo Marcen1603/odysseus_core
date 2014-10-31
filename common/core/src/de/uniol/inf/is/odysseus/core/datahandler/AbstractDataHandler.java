@@ -17,42 +17,43 @@ package de.uniol.inf.is.odysseus.core.datahandler;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.ObjectInputStream;
 import java.text.DecimalFormat;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.ICSVToString;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 
 
 public abstract class AbstractDataHandler<T> implements IDataHandler<T> {
 
-	private boolean prototype = true;
-	private SDFSchema schema;
+	final private SDFSchema schema;
+	
+	protected AbstractDataHandler(SDFSchema schema){
+		this.schema = schema;
+	}
 	
 	protected AbstractDataHandler(){
+		this.schema = null;
 	}
 	
 	@Override
-	public IDataHandler<T> createInstance(List<String> schema) {
+	final public IDataHandler<T> createInstance(List<SDFDatatype> schema) {
 		return getInstance(schema);
 	}
 	
-	protected IDataHandler<T> getInstance(List<String> schema){
-		// Hint: Currently only needed for TupleDataHandler
-		return null;
-
-	}
-
 	@Override
-	public IDataHandler<T> createInstance(SDFSchema schema) {
+	final public IDataHandler<T> createInstance(SDFSchema schema) {
 		IDataHandler<T> i = getInstance(schema);
-		i.setPrototype(false);
-		i.setSchema(schema);
 		return i;
 	}
 	
 	abstract protected IDataHandler<T> getInstance(SDFSchema schema); 
+
+	protected IDataHandler<T> getInstance(List<SDFDatatype> schema){
+		// Hint: Currently only needed for TupleDataHandler
+		return null;
+	}
 
 		
 	@Override
@@ -63,8 +64,7 @@ public abstract class AbstractDataHandler<T> implements IDataHandler<T> {
 	
 	@Override
 	public T readData(InputStream inputStream) throws IOException {
-		return readData((ObjectInputStream) inputStream);
-		//throw new UnsupportedOperationException("Sorry. Reading from input stream is currently not supported by this data handler");
+		throw new UnsupportedOperationException("Sorry. Reading from input stream is currently not supported by this data handler");
 	}
 	
 	@Override
@@ -74,7 +74,7 @@ public abstract class AbstractDataHandler<T> implements IDataHandler<T> {
 	}
 		
 	@Override
-	public T readData(T input) {
+	final public T readData(T input) {
 		return input;
 	}
 	
@@ -82,7 +82,7 @@ public abstract class AbstractDataHandler<T> implements IDataHandler<T> {
 	public void writeData(StringBuilder string, Object data) {
 	    string.append(data);
 	}
-	
+		
     @Override
     public void writeData(List<String> output, Object data) {
         output.add(data.toString());
@@ -110,23 +110,8 @@ public abstract class AbstractDataHandler<T> implements IDataHandler<T> {
 	}
 	
 	@Override
-	public boolean isPrototype() {
-		return prototype;
-	}
-	
-	@Override
-	public void setPrototype(boolean p) {
-		this.prototype = p;
-	}
-	
-	@Override
 	public SDFSchema getSchema() {
 		return schema;
-	}
-	
-	@Override
-	public void setSchema(SDFSchema schema) {
-		this.schema = schema;
 	}
 	
 	@Override
@@ -134,9 +119,8 @@ public abstract class AbstractDataHandler<T> implements IDataHandler<T> {
 	
 	@Override
 	public boolean isSemanticallyEqual(IDataHandler<?> other) {
-		if(this.isPrototype() != other.isPrototype()) {
-			return false;
-		} else if(!this.schema.equals(other.getSchema())) {
+		
+		if(this.schema != other.getSchema()) {
 			return false;
 		} else if(!this.getSupportedDataTypes().containsAll(other.getSupportedDataTypes())) {
 			return false;

@@ -15,8 +15,6 @@
  */
 package de.uniol.inf.is.odysseus.probabilistic.datahandler;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -95,7 +93,8 @@ public class ProbabilisticTupleDataHandler extends AbstractDataHandler<Probabili
      *            Flag indicating whether null values should be supported
      */
     protected ProbabilisticTupleDataHandler(final SDFSchema schema, final boolean nullMode) {
-        this.nullMode = nullMode;
+        super(schema);
+    	this.nullMode = nullMode;
         this.createDataHandler(schema);
     }
 
@@ -117,7 +116,7 @@ public class ProbabilisticTupleDataHandler extends AbstractDataHandler<Probabili
      * (java.util.List)
      */
     @Override
-    public final IDataHandler<ProbabilisticTuple<?>> getInstance(final List<String> schema) {
+    public final IDataHandler<ProbabilisticTuple<?>> getInstance(final List<SDFDatatype> schema) {
         final ProbabilisticTupleDataHandler handler = new ProbabilisticTupleDataHandler(false);
         handler.init(schema);
         return handler;
@@ -144,40 +143,13 @@ public class ProbabilisticTupleDataHandler extends AbstractDataHandler<Probabili
      * @param schema
      *            The schema
      */
-    public final void init(final List<String> schema) {
+    public final void init(final List<SDFDatatype> schema) {
         if (this.dataHandlers == null) {
             this.createDataHandler(schema);
         }
         else {
             throw new RuntimeException("ProbabilisticTupleDataHandler is immutable. Values already set");
         }
-    }
-
-    /*
-     * 
-     * @see
-     * de.uniol.inf.is.odysseus.core.datahandler.IDataHandler#readData(java.
-     * io.ObjectInputStream)
-     */
-    @Override
-    public final ProbabilisticTuple<?> readData(final ObjectInputStream inputStream) throws IOException {
-        Objects.requireNonNull(inputStream);
-        ProbabilisticTuple<?> r = null;
-        final Object[] attributes = new Object[this.dataHandlers.length];
-        for (int i = 0; i < this.dataHandlers.length; i++) {
-            attributes[i] = this.dataHandlers[i].readData(inputStream);
-        }
-        final MultivariateMixtureDistribution[] distribution = new MultivariateMixtureDistribution[this.maxDistributions];
-        int distributions = 0;
-        for (int i = 0; i < this.maxDistributions; i++) {
-            if (inputStream.available() > 0) {
-                distribution[i] = this.probabilisticDistributionHandler.readData(inputStream);
-                distributions = i;
-            }
-        }
-        r = new ProbabilisticTuple<IMetaAttribute>(attributes, this.requiresDeepClone);
-        r.setDistributions(Arrays.copyOfRange(distribution, 0, distributions));
-        return r;
     }
 
     /*
@@ -471,14 +443,14 @@ public class ProbabilisticTupleDataHandler extends AbstractDataHandler<Probabili
      * @param schema
      *            The schema
      */
-    private void createDataHandler(final List<String> schema) {
+    private void createDataHandler(final List<SDFDatatype> schema) {
         this.dataHandlers = new IDataHandler<?>[schema.size()];
         this.requiresDeepClone = true;
         this.maxDistributions = 0;
         int i = 0;
-        for (final String attribute : schema) {
+        for (final SDFDatatype attribute : schema) {
 
-            final IDataHandler<?> handler = DataHandlerRegistry.getDataHandler(attribute, (SDFSchema) null);
+            final IDataHandler<?> handler = DataHandlerRegistry.getDataHandler(attribute.toString(), (SDFSchema) null);
 
             if (handler == null) {
                 throw new IllegalArgumentException("Unregistered datatype " + attribute);

@@ -18,7 +18,6 @@ package de.uniol.inf.is.odysseus.image.common.datahandler;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.ObjectInputStream;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
@@ -48,24 +47,7 @@ public class ImageDataHandler extends AbstractDataHandler<Image> {
 	}
 
 	public ImageDataHandler() {
-		super();
-	}
-
-	@Override
-	public Image readData(final ObjectInputStream inputStream)
-			throws IOException {
-		BufferedImage bimage = null;
-		try {
-			bimage = (BufferedImage) inputStream.readObject();
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
-		}
-		if (bimage != null) {
-			return new Image(bimage);
-		} else {
-			return null;
-		}
-
+		super(null);
 	}
 
 	@Override

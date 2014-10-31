@@ -15,8 +15,6 @@
   */
 package de.uniol.inf.is.odysseus.core.datahandler;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
@@ -56,18 +54,6 @@ public class ListDataHandler extends AbstractDataHandler<List<?>>{
 	@Override
 	public IDataHandler<List<?>> getInstance(SDFSchema schema) {
 		return new ListDataHandler(schema);
-	}
-	
-	@Override
-	public List<?> readData(ObjectInputStream inputStream) throws IOException {
-		ArrayList<Object> values = new ArrayList<Object>();
-		int size = inputStream.readInt();
-		for(int i = 0; i<size; i++){
-			Object value = this.handler.readData(inputStream);
-			values.add(value);
-		}
-		
-		return values;
 	}
 	
 	@Override

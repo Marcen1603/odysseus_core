@@ -754,7 +754,7 @@ public class WebserviceServer {
 			handler = new NullAwareTupleDataHandler(root.getOutputSchema());
 		} else {
 			handler = new TupleDataHandler()
-					.getInstance(root.getOutputSchema());
+					.createInstance(root.getOutputSchema());
 		}
 
 		ByteBufferHandler<Tuple<ITimeInterval>> objectHandler = new ByteBufferHandler<Tuple<ITimeInterval>>(

@@ -3,8 +3,6 @@ package de.uniol.inf.is.odysseus.wrapper.kinect.datahandler;
 import static de.uniol.inf.is.odysseus.wrapper.kinect.utils.Constants.DEPTHMAP_MARKER;
 import static de.uniol.inf.is.odysseus.wrapper.kinect.utils.Constants.INTEGER_BYTES_SIZE;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -59,12 +57,6 @@ public class KinectDepthMapHandler extends AbstractDataHandler<KinectDepthMap> {
 
         throw new IllegalArgumentException(
                 "DepthMap was not recorded. Use ['depth','true'] in options.");
-    }
-
-    @Override
-    public KinectDepthMap readData(ObjectInputStream inputStream)
-            throws IOException {
-        throw new RuntimeException("Method is not implemented.");
     }
 
     @Override

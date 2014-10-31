@@ -1,7 +1,5 @@
 package de.uniol.inf.is.odysseus.relational.datahandler;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
@@ -40,18 +38,6 @@ public class RelationalElementPartialAggregateDataHandler extends AbstractDataHa
 		}
 	}
 
-	@Override
-	public RelationalElementPartialAggregate readData(ObjectInputStream inputStream)
-			throws IOException {
-		String type = typeHandler.readData(inputStream);
-		IDataHandler<?> contentHandler = DataHandlerRegistry.getDataHandler(type, (SDFSchema)null);
-		if (contentHandler != null){
-			Object data = contentHandler.readData(inputStream);
-			return new RelationalElementPartialAggregate(data, type);
-		}else{
-			throw new IllegalArgumentException("No Datahandler von type "+type+" registered!");
-		}	
-	}
 
 	@Override
 	public RelationalElementPartialAggregate readData(String string) {

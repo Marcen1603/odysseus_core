@@ -3,8 +3,6 @@ package de.uniol.inf.is.odysseus.wrapper.kinect.datahandler;
 import static de.uniol.inf.is.odysseus.wrapper.kinect.utils.Constants.SKELETON_MARKER;
 import static de.uniol.inf.is.odysseus.wrapper.kinect.utils.Constants.INTEGER_BYTES_SIZE;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -54,12 +52,6 @@ public class KinectSkeletonMapHandler extends AbstractDataHandler<KinectSkeleton
 
         throw new IllegalArgumentException(
                 "Skeleton map was not recorded. Use ['skeleton','true'] in options.");
-    }
-    
-    @Override
-    public KinectSkeletonMap readData(ObjectInputStream inputStream)
-            throws IOException {
-        throw new RuntimeException("Method is not implemented.");
     }
     
     @Override

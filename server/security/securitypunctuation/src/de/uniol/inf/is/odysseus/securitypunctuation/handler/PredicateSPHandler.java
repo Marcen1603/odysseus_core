@@ -15,8 +15,6 @@
  ******************************************************************************/
 package de.uniol.inf.is.odysseus.securitypunctuation.handler;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -69,12 +67,6 @@ public class PredicateSPHandler extends AbstractDataHandler<ISecurityPunctuation
 		
 		ISecurityPunctuation sp = new PredicateSecurityPunctuation(objects, schema);
 		return sp;
-	}
-
-	@Override
-	public ISecurityPunctuation readData(ObjectInputStream inputStream)
-			throws IOException {
-		return null;
 	}
 
 	@Override

@@ -15,8 +15,6 @@
  */
 package de.uniol.inf.is.odysseus.spatial.access;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
@@ -64,11 +62,6 @@ public class SpatialKMLHandler extends AbstractDataHandler<Object> {
 			e.printStackTrace();
 		}
 		return null;
-	}
-
-	@Override
-	public Object readData(ObjectInputStream inputStream) throws IOException {
-		throw new RuntimeException("Method not supported!");
 	}
 
 	@Override

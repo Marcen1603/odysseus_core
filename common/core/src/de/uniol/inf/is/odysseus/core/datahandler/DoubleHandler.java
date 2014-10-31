@@ -15,8 +15,6 @@
  */
 package de.uniol.inf.is.odysseus.core.datahandler;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
@@ -37,12 +35,7 @@ public class DoubleHandler extends AbstractDataHandler<Double> {
 	}
 
 	public DoubleHandler() {
-		super();
-	}
-
-	@Override
-	public Double readData(ObjectInputStream inputStream) throws IOException {
-		return inputStream.readDouble();
+		super(null);
 	}
 
 	@Override

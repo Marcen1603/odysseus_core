@@ -2,7 +2,6 @@ package de.uniol.inf.is.odysseus.imagejcv.common.datahandler;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.ObjectInputStream;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
@@ -41,30 +40,9 @@ public class ImageJCVDataHandler extends AbstractDataHandler<ImageJCV> {
 	}
 	
 	public ImageJCVDataHandler() {
-		super();
+		super(null);
 	}
 	
-	/**
-	 * Reads data from ObjectInputStream.
-	 * 
-	 * @author Kristian Bruns
-	 * 
-	 * @return ImageJCV Readed image.
-	 */
-	@Override
-	public ImageJCV readData(final ObjectInputStream inputStream) throws IOException {
-		IplImage image = null;
-		try {
-			image = (IplImage) inputStream.readObject();
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
-		}
-		if (image != null) {
-			return new ImageJCV(image);
-		} else {
-			return null;
-		}
-	}
 	
 	/**
 	 * Reads data from String.

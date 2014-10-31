@@ -1,7 +1,5 @@
 package de.uniol.inf.is.odysseus.complexnumber;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
@@ -18,6 +16,10 @@ public class ComplexNumberDataHandler extends
 		types.add(SDFComplexNumberDatatype.COMPLEX_NUMBER.getURI());
 	}
 	
+	public ComplexNumberDataHandler() {
+		super(null);
+	}
+	
 	@Override
 	protected IDataHandler<ComplexNumber> getInstance(SDFSchema schema) {
 		return new ComplexNumberDataHandler();
@@ -28,19 +30,6 @@ public class ComplexNumberDataHandler extends
 		double r = buffer.getDouble();
 		double i = buffer.getDouble();
 		return new ComplexNumber(r,i);
-	}
-
-	@Override
-	public ComplexNumber readData(ObjectInputStream inputStream)
-			throws IOException {
-		ComplexNumber c;
-		try {
-			c = (ComplexNumber) inputStream.readObject();
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
-			c = null;
-		}
-		return c;
 	}
 
 	@Override

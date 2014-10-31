@@ -16,8 +16,6 @@
 
 package de.uniol.inf.is.odysseus.core.datahandler;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
@@ -35,15 +33,14 @@ public class BooleanHandler  extends AbstractDataHandler<Boolean> {
 	static {		
 		types.add(SDFDatatype.BOOLEAN.getURI());
 	}
+	
+	public BooleanHandler() {
+		super(null);
+	}
 
 	@Override
 	public IDataHandler<Boolean> getInstance(SDFSchema schema) {
 		return new BooleanHandler();
-	}
-	
-	@Override
-	public Boolean readData(ObjectInputStream inputStream) throws IOException {
-		return inputStream.readBoolean();
 	}
 	
 	@Override

@@ -17,7 +17,6 @@ package de.uniol.inf.is.odysseus.core.datahandler;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.ObjectInputStream;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -50,25 +49,28 @@ public class TupleDataHandler extends AbstractDataHandler<Tuple<?>> {
 
 	// Default Constructor for declarative Service needed
 	public TupleDataHandler() {
+		super(null);
 		nullMode = false;
 	}
 
 	protected TupleDataHandler(boolean nullMode) {
+		super(null);
 		this.nullMode = nullMode;
 	}
 
 	protected TupleDataHandler(SDFSchema schema, boolean nullMode) {
+		super(schema);
 		this.nullMode = nullMode;
 		this.createDataHandler(schema);
 	}
 
 	@Override
-	public IDataHandler<Tuple<?>> getInstance(SDFSchema schema) {
+	protected IDataHandler<Tuple<?>> getInstance(SDFSchema schema) {
 		return new TupleDataHandler(schema, false);
 	}
 
 	@Override
-	public IDataHandler<Tuple<?>> getInstance(List<String> schema) {
+	protected IDataHandler<Tuple<?>> getInstance(List<SDFDatatype> schema) {
 		TupleDataHandler handler = new TupleDataHandler(false);
 		handler.init(schema);
 		return handler;
@@ -83,28 +85,13 @@ public class TupleDataHandler extends AbstractDataHandler<Tuple<?>> {
 		}
 	}
 
-	public void init(List<String> schema) {
+	public void init(List<SDFDatatype> schema) {
 		if (dataHandlers == null) {
 			createDataHandler(schema);
 		} else {
 			throw new RuntimeException(
 					"TupleDataHandler is immutable. Values already set");
 		}
-	}
-
-	@Override	
-	public Tuple<?> readData(ObjectInputStream inputStream) throws IOException {
-		Object[] attributes = new Object[dataHandlers.length];
-		for (int i = 0; i < this.dataHandlers.length; i++) {
-            try {
-                attributes[i] = dataHandlers[i].readData(inputStream);
-            }
-            catch (Exception e) {
-                logger.warn("Error parsing stream with " + dataHandlers[i].getClass() + " " + e.getMessage());
-                attributes[i] = null;
-            }
-		}
-		return new Tuple<IMetaAttribute>(attributes, false);
 	}
 	
 	@Override
@@ -154,11 +141,6 @@ public class TupleDataHandler extends AbstractDataHandler<Tuple<?>> {
 		return tuple;
 	}
 	
-	@Override
-	public Tuple<?> readData(Tuple<?> input) {
-		return input;
-	}
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -319,13 +301,13 @@ public class TupleDataHandler extends AbstractDataHandler<Tuple<?>> {
 		}
 	}
 
-	private void createDataHandler(List<String> schema) {
+	private void createDataHandler(List<SDFDatatype> schema) {
 		this.dataHandlers = new IDataHandler<?>[schema.size()];
 		int i = 0;
-		for (String attribute : schema) {
+		for (SDFDatatype attribute : schema) {
 
 			IDataHandler<?> handler = DataHandlerRegistry.getDataHandler(
-					attribute, (SDFSchema) null);
+					attribute.toString(), (SDFSchema) null);
 
 			if (handler == null) {
 				throw new IllegalArgumentException("Unregistered datatype "

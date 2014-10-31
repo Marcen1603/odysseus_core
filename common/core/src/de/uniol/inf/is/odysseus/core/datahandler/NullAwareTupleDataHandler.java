@@ -48,7 +48,7 @@ public class NullAwareTupleDataHandler extends TupleDataHandler {
 	}
 
 	@Override
-	public IDataHandler<Tuple<?>> getInstance(List<String> schema) {
+	public IDataHandler<Tuple<?>> getInstance(List<SDFDatatype> schema) {
 		NullAwareTupleDataHandler handler = new NullAwareTupleDataHandler();
 		handler.init(schema);
 		return handler;

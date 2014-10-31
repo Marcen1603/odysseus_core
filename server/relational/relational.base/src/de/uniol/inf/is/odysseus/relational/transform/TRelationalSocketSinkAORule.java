@@ -59,7 +59,7 @@ public class TRelationalSocketSinkAORule extends
 		if (socketSinkPO == null) {
 
 			IDataHandler<?> handler = new TupleDataHandler()
-					.getInstance(operator.getOutputSchema());
+					.createInstance(operator.getOutputSchema());
 			ByteBufferHandler<Tuple<ITimeInterval>> objectHandler = new ByteBufferHandler<Tuple<ITimeInterval>>(
 					handler);
 			socketSinkPO = new SocketSinkPO(operator.getSinkPort(),

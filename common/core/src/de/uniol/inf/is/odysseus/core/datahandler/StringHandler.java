@@ -15,8 +15,6 @@
  */
 package de.uniol.inf.is.odysseus.core.datahandler;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
 import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
 import java.nio.charset.CharacterCodingException;
@@ -51,11 +49,6 @@ public class StringHandler extends AbstractDataHandler<String> {
 	}
 
 	@Override
-	public String readData(ObjectInputStream inputStream) throws IOException {
-		return inputStream.readUTF();
-	}
-
-	@Override
 	public String readData(ByteBuffer b) {
 		int size = b.getInt();
 		if (size >= 0) {
@@ -75,12 +68,7 @@ public class StringHandler extends AbstractDataHandler<String> {
 			return null;
 		}
 	}
-
-	@Override
-	public String readData(String string) {
-		return string;
-	}
-
+	
 	@Override
 	public void writeData(List<String> output, Object data) {
 		output.add((String) data);

@@ -15,8 +15,6 @@
  */
 package de.uniol.inf.is.odysseus.probabilistic.continuous.datahandler;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -99,47 +97,6 @@ public class ProbabilisticDistributionHandler extends AbstractDataHandler<Multiv
             distributionMixture.setScale(scale);
             distributionMixture.setSupport(support);
         }
-        return distributionMixture;
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * de.uniol.inf.is.odysseus.core.datahandler.IDataHandler#readData(java.
-     * io.ObjectInputStream)
-     */
-    @Override
-    public final MultivariateMixtureDistribution readData(final ObjectInputStream inputStream) throws IOException {
-        Objects.requireNonNull(inputStream);
-        Preconditions.checkArgument(inputStream.available() >= 4);
-        final int size = inputStream.readInt();
-        final List<Pair<Double, IMultivariateDistribution>> mixtures = new ArrayList<Pair<Double, IMultivariateDistribution>>();
-        final int dimension = inputStream.readInt();
-        for (int m = 0; m < size; m++) {
-            final double weight = inputStream.readDouble();
-            final double[] mean = new double[dimension];
-            for (int i = 0; i < mean.length; i++) {
-                mean[i] = inputStream.readDouble();
-            }
-            final double[] entries = new double[dimension];
-            for (int i = 0; i < entries.length; i++) {
-                entries[i] = inputStream.readDouble();
-            }
-
-            final IMultivariateDistribution distribution = new MultivariateNormalDistribution(mean, CovarianceMatrixUtils.toMatrix(entries).getData());
-            mixtures.add(new Pair<Double, IMultivariateDistribution>(weight, distribution));
-        }
-        final double scale = inputStream.readDouble();
-        final Interval[] support = new Interval[dimension];
-        for (int i = 0; i < support.length; i++) {
-            support[i] = new Interval(inputStream.readDouble(), inputStream.readDouble());
-        }
-
-        final MultivariateMixtureDistribution distributionMixture = new MultivariateMixtureDistribution(mixtures);
-        distributionMixture.setScale(scale);
-        distributionMixture.setSupport(support);
-
         return distributionMixture;
     }
 

@@ -16,8 +16,6 @@
 
 package de.uniol.inf.is.odysseus.core.datahandler;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
@@ -38,6 +36,10 @@ public class BitVectorDataHandler extends AbstractDataHandler<BitVector> {
 		types.add(SDFDatatype.BITVECTOR.getURI());
 	}
 
+	public BitVectorDataHandler() {
+		super(null);
+	}
+	
 	@Override
 	public IDataHandler<BitVector> getInstance(SDFSchema schema) {
 		return new BitVectorDataHandler();
@@ -62,11 +64,6 @@ public class BitVectorDataHandler extends AbstractDataHandler<BitVector> {
 		buffer.putInt(bytes.length);
 		buffer.put(v.getBytes());
 		buffer.putInt(v.isMSBAccess()?1:0);
-	}
-
-	@Override
-	public BitVector readData(ObjectInputStream inputStream) throws IOException {
-		throw new UnsupportedOperationException();
 	}
 
 	@Override

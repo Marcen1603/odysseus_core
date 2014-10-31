@@ -15,8 +15,6 @@
  */
 package de.uniol.inf.is.odysseus.datatype.interval.datahandler;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
@@ -43,14 +41,7 @@ public class IntervalDoubleHandler extends AbstractDataHandler<IntervalDouble> {
 	}
 
 	public IntervalDoubleHandler() {
-		super();
-	}
-
-	@Override
-	public IntervalDouble readData(final ObjectInputStream inputStream)
-			throws IOException {
-		return new IntervalDouble(inputStream.readDouble(),
-				inputStream.readDouble());
+		super(null);
 	}
 
 	@Override

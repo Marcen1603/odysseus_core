@@ -15,8 +15,6 @@
  */
 package de.uniol.inf.is.odysseus.core.datahandler;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
@@ -40,12 +38,7 @@ public class FloatDataHandler extends AbstractDataHandler<Float> {
     }
 
     public FloatDataHandler() {
-        super();
-    }
-
-    @Override
-    public Float readData(ObjectInputStream inputStream) throws IOException {
-        return inputStream.readFloat();
+        super(null);
     }
 
     @Override

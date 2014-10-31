@@ -15,8 +15,6 @@
  ******************************************************************************/
 package de.uniol.inf.is.odysseus.wrapper.opcda.datahandler;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
@@ -53,7 +51,7 @@ public class OPCDADataHandler<T> extends AbstractDataHandler<OPCValue<T>> {
      *
      */
     public OPCDADataHandler() {
-        super();
+        super(null);
 
     }
 
@@ -74,22 +72,6 @@ public class OPCDADataHandler<T> extends AbstractDataHandler<OPCValue<T>> {
     @Override
     public IDataHandler<OPCValue<T>> getInstance(final SDFSchema schema) {
         return new OPCDADataHandler<T>(schema);
-    }
-
-    /**
-     *
-     * {@inheritDoc}
-     */
-    @Override
-    public OPCValue<T> readData(final ObjectInputStream inputStream) throws IOException {
-        long timestamp = this.longHandler.readData(inputStream).longValue();
-        short quality = this.shortHandler.readData(inputStream).shortValue();
-        int error = this.intHandler.readData(inputStream).intValue();
-        
-        @SuppressWarnings("unchecked")
-		T value = (T) this.valueHandler.readData(inputStream);
-        
-        return new OPCValue<T>(timestamp, value, quality, error);
     }
 
     /**

@@ -15,6 +15,7 @@
  ******************************************************************************/
 package de.uniol.inf.is.odysseus.transform.rules;
 
+import java.util.LinkedList;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -32,6 +33,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.IAccessPa
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportDirection;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.TransportHandlerRegistry;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractAccessAO;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IIterableSource;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.pull.AccessPO;
@@ -227,8 +229,12 @@ public class TAccessAORule extends AbstractTransformationRule<AbstractAccessAO> 
 		IDataHandler<?> dataHandler = null;
 		if (operator.getDataHandler() != null) {
 			if (operator.getInputSchema() != null) {
+				List<SDFDatatype> dtList = new LinkedList<SDFDatatype>();
+				for (String dt: operator.getInputSchema()){
+					dtList.add(getDataDictionary().getDatatype(dt));
+				}
 				dataHandler = DataHandlerRegistry.getDataHandler(
-						operator.getDataHandler(), operator.getInputSchema());
+						operator.getDataHandler(), dtList);
 			} else if (operator.getOutputSchema() != null) {
 				dataHandler = DataHandlerRegistry.getDataHandler(
 						operator.getDataHandler(), operator.getOutputSchema());

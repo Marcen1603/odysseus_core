@@ -1,7 +1,5 @@
 package de.uniol.inf.is.odysseus.wrapper.fnirs.datahandler;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
@@ -30,10 +28,8 @@ public class TestPartialAggregateDataHandler extends
 		types.add(TEST_PARTIAL_AGGREGATE.getURI());
 	}
 	
-	@Override
-	public IDataHandler<TestPartialAggregate<?>> getInstance(
-			List<String> schema) {
-		return new TestPartialAggregateDataHandler();
+	public TestPartialAggregateDataHandler() {
+		super(null);
 	}
 	
 	@Override
@@ -45,13 +41,6 @@ public class TestPartialAggregateDataHandler extends
 	@Override
 	public TestPartialAggregate<?> readData(ByteBuffer buffer) {
 		int count = buffer.getInt();
-		return new TestPartialAggregate<>(count);
-	}
-
-	@Override
-	public TestPartialAggregate<?> readData(ObjectInputStream inputStream)
-			throws IOException {
-		int count = inputStream.readInt();
 		return new TestPartialAggregate<>(count);
 	}
 

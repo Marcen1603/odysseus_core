@@ -15,8 +15,6 @@
  ******************************************************************************/
 package de.uniol.inf.is.odysseus.core.datahandler;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
@@ -39,17 +37,6 @@ public class ObjectDataHandler<M> extends AbstractDataHandler<M> {
 	
 	@Override
 	public M readData(ByteBuffer buffer) {
-		return null;
-	}
-
-	@SuppressWarnings("unchecked")
-	@Override
-	public M readData(ObjectInputStream inputStream) throws IOException {
-		try {
-			return (M) inputStream.readObject();
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
-		}
 		return null;
 	}
 

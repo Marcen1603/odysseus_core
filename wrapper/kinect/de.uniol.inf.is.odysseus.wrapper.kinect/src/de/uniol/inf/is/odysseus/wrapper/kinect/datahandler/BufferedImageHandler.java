@@ -5,7 +5,6 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.ObjectInputStream;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -29,6 +28,7 @@ public class BufferedImageHandler extends AbstractDataHandler<BufferedImage> {
      * Standard constructor.
      */
     public BufferedImageHandler() {
+    	super(null);
     }
 
     /**
@@ -37,6 +37,7 @@ public class BufferedImageHandler extends AbstractDataHandler<BufferedImage> {
      * Passed schema.
      */
     public BufferedImageHandler(SDFSchema schema) {
+    	super(schema);
     }
 
 	@Override
@@ -49,18 +50,6 @@ public class BufferedImageHandler extends AbstractDataHandler<BufferedImage> {
 			BufferedImage bImageFromConvert = ImageIO.read(in);
 			return bImageFromConvert;
 		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		return null;
-	}
-
-	@Override
-	public BufferedImage readData(ObjectInputStream inputStream)
-			throws IOException {
-		try {			
-			BufferedImage rect = (BufferedImage) inputStream.readObject();
-			return rect;
-		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 		}
 		return null;

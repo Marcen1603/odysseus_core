@@ -3,8 +3,6 @@ package de.uniol.inf.is.odysseus.wrapper.kinect.datahandler;
 import static de.uniol.inf.is.odysseus.wrapper.kinect.utils.Constants.COLORMAP_MARKER;
 import static de.uniol.inf.is.odysseus.wrapper.kinect.utils.Constants.INTEGER_BYTES_SIZE;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -60,12 +58,6 @@ public class KinectColorMapHandler extends AbstractDataHandler<KinectColorMap> {
 
         throw new IllegalArgumentException(
                 "ColorMap was not recorded. Use ['color','true'] in options.");
-    }
-
-    @Override
-    public KinectColorMap readData(ObjectInputStream inputStream)
-            throws IOException {
-        throw new RuntimeException("Method is not implemented.");
     }
 
     @Override

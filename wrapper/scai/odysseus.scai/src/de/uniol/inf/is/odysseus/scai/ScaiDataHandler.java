@@ -15,10 +15,6 @@
  ******************************************************************************/
 package de.uniol.inf.is.odysseus.scai;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.ObjectInputStream;
 import java.math.BigDecimal;
 import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
@@ -68,10 +64,9 @@ public class ScaiDataHandler extends AbstractDataHandler<Tuple<?>> {
 	}
 
 	private final Charset charset = Charset.forName("UTF-8");
-	private SDFSchema schema;
 
 	public ScaiDataHandler() {
-		// Needed for declarative service
+		super(null);
 	}
 
 	/**
@@ -80,7 +75,7 @@ public class ScaiDataHandler extends AbstractDataHandler<Tuple<?>> {
 	 * @param schema
 	 */
 	private ScaiDataHandler(SDFSchema schema) {
-		this.schema = schema;
+		super(schema);
 	}
 
 	@Override
@@ -105,25 +100,6 @@ public class ScaiDataHandler extends AbstractDataHandler<Tuple<?>> {
 			LOG.warn(e.getMessage(), e);
 			throw new IllegalArgumentException(e);
 		}
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * de.uniol.inf.is.odysseus.core.datahandler.IDataHandler#readData(java.
-	 * io.ObjectInputStream)
-	 */
-	@Override
-	public Tuple<?> readData(ObjectInputStream inputStream) throws IOException {
-		StringBuilder inputBuffer = new StringBuilder();
-		BufferedReader in = new BufferedReader(new InputStreamReader(
-				inputStream));
-		String buffer = "";
-		while ((buffer = in.readLine()) != null) {
-			inputBuffer.append(buffer);
-		}
-		return readData(inputBuffer.toString());
 	}
 
 	/*
@@ -174,16 +150,16 @@ public class ScaiDataHandler extends AbstractDataHandler<Tuple<?>> {
 
 		final SensorDataDescription sensorData = scai.getSCAI().getPayload()
 				.addNewMeasurements().addNewDataStream();
-		SDFAttribute domainAttribute = schema.findAttribute(DOMAIN_ATTRIBUTE);
-		SDFAttribute nameAttribute = schema.findAttribute(NAME_ATTRIBUTE);
+		SDFAttribute domainAttribute = getSchema().findAttribute(DOMAIN_ATTRIBUTE);
+		SDFAttribute nameAttribute = getSchema().findAttribute(NAME_ATTRIBUTE);
 		if (domainAttribute != null) {
-			String domain = r.getAttribute(schema.indexOf(domainAttribute));
+			String domain = r.getAttribute(getSchema().indexOf(domainAttribute));
 			sensorData.setSensorDomainName(domain);
 		} else {
 			sensorData.setSensorDomainName("UNKNOWN");
 		}
 		if (nameAttribute != null) {
-			String name = r.getAttribute(schema.indexOf(nameAttribute));
+			String name = r.getAttribute(getSchema().indexOf(nameAttribute));
 			sensorData.setSensorName(name);
 		} else {
 			sensorData.setSensorName("UNKNOWN");
@@ -193,8 +169,8 @@ public class ScaiDataHandler extends AbstractDataHandler<Tuple<?>> {
 		calendar.setTimeInMillis(metadata.getStart().getMainPoint());
 		sensorData.setTimeStamp(calendar);
 		// Insert each attribute
-		for (int i = 0; i < schema.size(); i++) {
-			final String key = schema.get(i).getAttributeName();
+		for (int i = 0; i < getSchema().size(); i++) {
+			final String key = getSchema().get(i).getAttributeName();
 			if ((!key.endsWith("_quality"))
 					&& (!key.equalsIgnoreCase(DOMAIN_ATTRIBUTE))
 					&& (!key.equalsIgnoreCase(NAME_ATTRIBUTE))) {
@@ -202,8 +178,8 @@ public class ScaiDataHandler extends AbstractDataHandler<Tuple<?>> {
 						.addNewDataStreamElement();
 				nameData.setPath(key);
 				nameData.setData(r.getAttribute(i).toString());
-				int qualityIndex = schema.indexOf(key + "_quality");
-				if ((qualityIndex >= 0) && (qualityIndex < schema.size())) {
+				int qualityIndex = getSchema().indexOf(key + "_quality");
+				if ((qualityIndex >= 0) && (qualityIndex < getSchema().size())) {
 					nameData.setQuality(new BigDecimal(r.getAttribute(
 							qualityIndex).toString()));
 				} else {
@@ -279,17 +255,17 @@ public class ScaiDataHandler extends AbstractDataHandler<Tuple<?>> {
 					event.put(path + "_quality", quality.doubleValue());
 				}
 				try {
-					Object[] retObj = new Object[schema.size()];
-					for (int ii = 0; ii < schema.size(); ii++) {
-						String attr = schema.get(ii).getAttributeName();
+					Object[] retObj = new Object[getSchema().size()];
+					for (int ii = 0; ii < getSchema().size(); ii++) {
+						String attr = getSchema().get(ii).getAttributeName();
 						Object value = event.get(attr);
 						// If value was not recognized correctly ...
-						if (schema.get(ii).getDatatype().isNumeric()
+						if (getSchema().get(ii).getDatatype().isNumeric()
 								&& value instanceof String) {
-							if (schema.get(ii).getDatatype().isInteger()) {
+							if (getSchema().get(ii).getDatatype().isInteger()) {
 								retObj[ii] = Integer.parseInt((String) value);
-							} else if (schema.get(ii).getDatatype().isFloat()
-									|| schema.get(ii).getDatatype().isDouble()) {
+							} else if (getSchema().get(ii).getDatatype().isFloat()
+									|| getSchema().get(ii).getDatatype().isDouble()) {
 								retObj[ii] = Double.parseDouble((String) value);
 							}
 						} else {

@@ -15,8 +15,6 @@
  ******************************************************************************/
 package de.uniol.inf.is.odysseus.dwd;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
@@ -39,14 +37,12 @@ public class DWDKLDataHandler extends AbstractDataHandler<Tuple<?>> {
 
 	static private Logger logger = LoggerFactory.getLogger(DWDKLDataHandler.class);
 	
+	public DWDKLDataHandler() {
+		super(null);
+	}
+	
 	@Override
 	public Tuple<?> readData(ByteBuffer buffer) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Tuple<?> readData(ObjectInputStream inputStream) throws IOException {
 		// TODO Auto-generated method stub
 		return null;
 	}

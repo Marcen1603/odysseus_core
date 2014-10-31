@@ -1,7 +1,5 @@
 package de.uniol.inf.is.odysseus.core.server.datahandler;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
@@ -29,7 +27,7 @@ public class CountPartialAggregateDataHandler extends
 	
 	@Override
 	public IDataHandler<CountPartialAggregate<?>> getInstance(
-			List<String> schema) {
+			List<SDFDatatype> schema) {
 		return new CountPartialAggregateDataHandler();
 	}
 	
@@ -42,13 +40,6 @@ public class CountPartialAggregateDataHandler extends
 	@Override
 	public CountPartialAggregate<?> readData(ByteBuffer buffer) {
 		int count = buffer.getInt();
-		return new CountPartialAggregate<>(count);
-	}
-
-	@Override
-	public CountPartialAggregate<?> readData(ObjectInputStream inputStream)
-			throws IOException {
-		int count = inputStream.readInt();
 		return new CountPartialAggregate<>(count);
 	}
 

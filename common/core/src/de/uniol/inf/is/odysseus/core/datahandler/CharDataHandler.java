@@ -15,8 +15,6 @@
  */
 package de.uniol.inf.is.odysseus.core.datahandler;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
@@ -36,15 +34,14 @@ public class CharDataHandler extends AbstractDataHandler<Character> {
 		types.add(SDFDatatype.CHAR.getURI());		
 	}
 
+	public CharDataHandler() {
+		super(null);
+	}
+	
 	@Override
 	public Character readData(ByteBuffer buffer) {
 		char b = buffer.getChar();
 		return new Character(b);
-	}
-
-	@Override
-	public Character readData(ObjectInputStream inputStream) throws IOException {
-		return new Character(inputStream.readChar());		
 	}
 
 	@Override

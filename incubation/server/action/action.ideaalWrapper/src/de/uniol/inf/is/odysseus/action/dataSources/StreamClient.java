@@ -42,7 +42,7 @@ public class StreamClient {
 	public StreamClient(Socket connection, SDFSchema schema) {
 		this.connection = connection;
 		
-		this.objectHandler = new ByteBufferHandler<Tuple<IMetaAttribute>>(new TupleDataHandler().getInstance(schema));
+		this.objectHandler = new ByteBufferHandler<Tuple<IMetaAttribute>>(new TupleDataHandler().createInstance(schema));
 	}
 	
 	public void writeObject(Tuple<IMetaAttribute> tuple) throws IOException {

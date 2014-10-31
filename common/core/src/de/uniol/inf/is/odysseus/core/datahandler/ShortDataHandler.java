@@ -15,8 +15,6 @@
  */
 package de.uniol.inf.is.odysseus.core.datahandler;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
@@ -34,11 +32,6 @@ public class ShortDataHandler extends AbstractDataHandler<Short> {
 	@Override
 	public IDataHandler<Short> getInstance(SDFSchema schema) {
 		return new ShortDataHandler();
-	}
-	
-	@Override
-	public Short readData(ObjectInputStream inputStream) throws IOException {
-		return inputStream.readShort();
 	}
 	
 	@Override

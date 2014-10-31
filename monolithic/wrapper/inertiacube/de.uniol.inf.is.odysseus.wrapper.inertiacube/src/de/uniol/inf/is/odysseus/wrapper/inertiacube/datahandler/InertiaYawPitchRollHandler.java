@@ -1,6 +1,5 @@
 package de.uniol.inf.is.odysseus.wrapper.inertiacube.datahandler;
 
-import java.io.ObjectInputStream;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -22,6 +21,7 @@ public class InertiaYawPitchRollHandler extends AbstractDataHandler<YawPitchRoll
      * Standard constructor.
      */
     public InertiaYawPitchRollHandler() {
+    	super(null);
     }
 
     /**
@@ -30,6 +30,7 @@ public class InertiaYawPitchRollHandler extends AbstractDataHandler<YawPitchRoll
      * Passed schema.
      */
     public InertiaYawPitchRollHandler(SDFSchema schema) {
+    	super(schema);
     }
 
 	@Override
@@ -38,11 +39,6 @@ public class InertiaYawPitchRollHandler extends AbstractDataHandler<YawPitchRoll
 		float pitch = buffer.getFloat();
 		float roll = buffer.getFloat();
 		return new YawPitchRoll(yaw, pitch, roll);
-	}
-
-	@Override
-	public YawPitchRoll readData(ObjectInputStream inputStream) {
-    	throw new RuntimeException("Method is not implemented.");
 	}
 
 	@Override

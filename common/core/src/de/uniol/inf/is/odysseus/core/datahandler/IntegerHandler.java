@@ -15,8 +15,6 @@
  */
 package de.uniol.inf.is.odysseus.core.datahandler;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
@@ -33,11 +31,6 @@ public class IntegerHandler extends AbstractDataHandler<Integer> {
 	@Override
 	public IDataHandler<Integer> getInstance(SDFSchema schema) {
 		return new IntegerHandler();
-	}
-
-	@Override
-	public Integer readData(ObjectInputStream inputStream) throws IOException {
-		return inputStream.readInt();
 	}
 
 	@Override

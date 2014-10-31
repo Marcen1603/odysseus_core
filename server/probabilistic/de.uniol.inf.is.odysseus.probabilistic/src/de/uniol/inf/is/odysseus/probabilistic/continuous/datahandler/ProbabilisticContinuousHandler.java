@@ -15,8 +15,6 @@
  */
 package de.uniol.inf.is.odysseus.probabilistic.continuous.datahandler;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -44,19 +42,6 @@ public class ProbabilisticContinuousHandler extends AbstractDataHandler<Probabil
         ProbabilisticContinuousHandler.TYPES.add(SDFProbabilisticDatatype.PROBABILISTIC_DOUBLE.getURI());
     }
 
-    /*
-     * 
-     * @see
-     * de.uniol.inf.is.odysseus.core.datahandler.IDataHandler#readData(java.
-     * io.ObjectInputStream)
-     */
-    @Override
-    public final ProbabilisticDouble readData(final ObjectInputStream inputStream) throws IOException {
-        Objects.requireNonNull(inputStream);
-        Preconditions.checkArgument(inputStream.available() >= 4);
-        final int distributionIndex = inputStream.readInt();
-        return new ProbabilisticDouble(distributionIndex);
-    }
 
     /*
      * 

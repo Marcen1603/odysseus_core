@@ -1,7 +1,5 @@
 package de.uniol.inf.is.odysseus.wrapper.urg.datahandler;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -24,6 +22,7 @@ public class UrgScannDataHandler extends AbstractDataHandler<UrgScann> {
      * Standard constructor.
      */
     public UrgScannDataHandler() {
+    	super(null);
     }
 
     /**
@@ -32,16 +31,12 @@ public class UrgScannDataHandler extends AbstractDataHandler<UrgScann> {
      * Passed schema.
      */
     public UrgScannDataHandler(SDFSchema schema) {
+    	super(schema);
     }
     
 	@Override
 	public UrgScann readData(ByteBuffer buffer) {
 		return MessageParser.parseMessage(buffer);
-	}
-
-	@Override
-	public UrgScann readData(ObjectInputStream inputStream) throws IOException {
-		throw new RuntimeException("Method is not implemented.");
 	}
 
 	@Override

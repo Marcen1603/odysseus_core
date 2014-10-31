@@ -1,7 +1,5 @@
 package de.uniol.inf.is.odysseus.core.server.datahandler;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
@@ -27,9 +25,13 @@ public class AvgSumPartialAggregateDataHandler extends
 		types.add(SDFDatatype.AVG_SUM_PARTIAL_AGGREGATE.getURI());
 	}
 	
+	public AvgSumPartialAggregateDataHandler() {
+		super(null);
+	}
+	
 	@Override
 	public IDataHandler<AvgSumPartialAggregate<?>> getInstance(
-			List<String> schema) {
+			List<SDFDatatype> schema) {
 		return new AvgSumPartialAggregateDataHandler();
 	}
 	
@@ -43,14 +45,6 @@ public class AvgSumPartialAggregateDataHandler extends
 	public AvgSumPartialAggregate<?> readData(ByteBuffer buffer) {
 		int count = buffer.getInt();
 		double sum = buffer.getDouble();
-		return new AvgSumPartialAggregate<>(sum, count);
-	}
-
-	@Override
-	public AvgSumPartialAggregate<?> readData(ObjectInputStream inputStream)
-			throws IOException {
-		int count = inputStream.readInt();
-		double sum = inputStream.readDouble();
 		return new AvgSumPartialAggregate<>(sum, count);
 	}
 

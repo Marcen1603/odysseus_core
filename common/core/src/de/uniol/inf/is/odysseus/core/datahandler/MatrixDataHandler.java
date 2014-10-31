@@ -15,8 +15,6 @@
  */
 package de.uniol.inf.is.odysseus.core.datahandler;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
@@ -45,19 +43,6 @@ public class MatrixDataHandler extends AbstractDataHandler<double[][]> {
         double[][] value = new double[size][];
         for (int i = 0; i < size; i++) {
             value[i] = this.handler.readData(buffer);
-        }
-        return value;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public double[][] readData(ObjectInputStream inputStream) throws IOException {
-        int size = inputStream.readInt();
-        double[][] value = new double[size][];
-        for (int i = 0; i < size; i++) {
-            value[i] = this.handler.readData(inputStream);
         }
         return value;
     }

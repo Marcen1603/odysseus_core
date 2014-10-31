@@ -25,6 +25,7 @@ import org.slf4j.LoggerFactory;
 import com.google.common.collect.ImmutableList;
 
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 
 /**
@@ -83,7 +84,7 @@ public class DataHandlerRegistry {
 	}
 
 	public static IDataHandler<?> getDataHandler(String dataType,
-			List<String> schema) {
+			List<SDFDatatype> schema) {
 		IDataHandler<?> ret = dataHandlers.get(dataType.toLowerCase());
 		if (ret != null) {
 			ret = ret.createInstance(schema);
