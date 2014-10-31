@@ -26,13 +26,14 @@ public class XESLogDataImporter {
 	public final static String VALUE = "value";
 	public final static String EVENT = "event";
 	private final static String FILEPATH = "/home/phil/Documents/eventlogs/Chapter_7/Lfull.xes";
+	private final static String FILEPATH2 = "/home/phil/Documents/eventlogs/inductiveminer_log.xes";
 	private static Map<String,Integer> traceCounter = new HashMap();
 	
 	
 	public static List<DataTuple> getEvents(){
 		List<DataTuple> eventTuples = Lists.newArrayList();
 		
-		File document = new File(FILEPATH);
+		File document = new File(FILEPATH2);
 		DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
 		DocumentBuilder dBuilder;
 
