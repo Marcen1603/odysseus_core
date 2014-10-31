@@ -16,9 +16,11 @@ Import-Package: com.google.common.collect,
 Export-Package: de.uniol.inf.is.odysseus.persistentqueries,
  de.uniol.inf.is.odysseus.server.intervalapproach,
  de.uniol.inf.is.odysseus.server.intervalapproach.logicaloperator,
+ de.uniol.inf.is.odysseus.server.intervalapproach.state,
  de.uniol.inf.is.odysseus.server.intervalapproach.transform,
  de.uniol.inf.is.odysseus.server.intervalapproach.transform.join,
- de.uniol.inf.is.odysseus.server.intervalapproach.window
+ de.uniol.inf.is.odysseus.server.intervalapproach.window,
+ de.uniol.inf.is.odysseus.server.intervalapproach.window.state
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Require-Bundle: de.uniol.inf.is.odysseus.core.server,
  de.uniol.inf.is.odysseus.core;bundle-version="1.0.0",

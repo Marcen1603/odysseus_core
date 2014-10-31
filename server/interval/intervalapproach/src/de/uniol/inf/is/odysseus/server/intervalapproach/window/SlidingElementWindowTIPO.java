@@ -15,6 +15,7 @@
  */
 package de.uniol.inf.is.odysseus.server.intervalapproach.window;
 
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -29,15 +30,17 @@ import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IStatefulPO;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ITransferArea;
 import de.uniol.inf.is.odysseus.core.physicaloperator.interval.TITransferArea;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractWindowAO;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.IGroupProcessor;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.NoGroupProcessor;
+import de.uniol.inf.is.odysseus.server.intervalapproach.window.state.SlidingElementWindowTIPOState;
 
 public class SlidingElementWindowTIPO<T extends IStreamObject<ITimeInterval>>
-		extends AbstractWindowTIPO<T> {
+		extends AbstractWindowTIPO<T> implements IStatefulPO {
 
 	Logger LOG = LoggerFactory.getLogger(SlidingElementWindowTIPO.class);
 
@@ -45,7 +48,8 @@ public class SlidingElementWindowTIPO<T extends IStreamObject<ITimeInterval>>
 
 	private ITransferArea<T, T> transferArea = new TITransferArea<>();
 
-	final private Map<Long, List<T>> buffers = new HashMap<>();
+	private Map<Long, List<T>> buffers = new HashMap<>();
+	
 	boolean forceElement = true;
 	private final long advance;
 	private PointInTime lastTs = null;
@@ -216,6 +220,31 @@ public class SlidingElementWindowTIPO<T extends IStreamObject<ITimeInterval>>
 	@Override
 	public AbstractPipe<T, T> clone() {
 		throw new IllegalArgumentException("Currently not implemented!");
+	}
+
+	@Override
+	public Serializable getState() {
+		SlidingElementWindowTIPOState<T> state = new SlidingElementWindowTIPOState<T>();
+		state.setBuffers(buffers);
+		state.setGroupProcessor(groupProcessor);
+		state.setLastTs(lastTs);
+		state.setTransferArea(transferArea);
+		return state;
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public void setState(Serializable serializable) {
+		try {
+			SlidingElementWindowTIPOState<T> state = (SlidingElementWindowTIPOState<T>) serializable;
+			buffers = state.getBuffers();
+			groupProcessor = state.getGroupProcessor();
+			lastTs = state.getLastTs();
+			transferArea = state.getTransferArea();
+			transferArea.setTransfer(this);			
+		} catch (Throwable T) {
+			LOG.error("The serializable state to set for the SlidingElementWindowTIPO is not a valid SlidingElementWindowTIPOState!");
+		}
 	}
 
 }

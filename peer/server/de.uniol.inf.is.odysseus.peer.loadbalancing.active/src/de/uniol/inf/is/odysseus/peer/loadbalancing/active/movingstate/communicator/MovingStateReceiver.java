@@ -40,9 +40,10 @@ public class MovingStateReceiver implements ITransmissionReceiverListener {
 	public void onReceiveData(ITransmissionReceiver receiver, byte[] data) {
 		ByteArrayInputStream bis = new ByteArrayInputStream(data);
 		ObjectInput in = null;
+		
 		try {
 		  in = new ObjectInputStream(bis);
-		  receivedState = (Serializable)in.readObject(); 
+		  receivedState = (Serializable)in.readObject();
 		  LOG.debug("Received: ");
 		  LOG.debug(receivedState.toString());
 		} catch (IOException e) {
