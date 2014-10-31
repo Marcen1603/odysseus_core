@@ -18,7 +18,7 @@ public class LossyCountingPO <T extends IMetaAttribute> extends AbstractPipe<Tup
 		private final int TUPLE_FREQ_POS = 0;
 		private final int TUPLE_BUCKET_POS = 1;
 		private final int TUPLE_NAME_POS = 2;
-		private int error = 5; // corresponds to w
+		private int error = 10; // corresponds to w
 		private HashMap<Object,Tuple<T>> activities = Maps.newHashMap();
 		private HashMap<Object,Tuple<T>> cases = Maps.newHashMap();
 		private HashMap<Object,Tuple<T>> relations = Maps.newHashMap();
@@ -94,9 +94,7 @@ public class LossyCountingPO <T extends IMetaAttribute> extends AbstractPipe<Tup
 			if(cases.containsKey(caseId)){
 				//Erzeuge Relationsschlüssel
 				String relationKeyName = (String)cases.get(caseId).getAttribute(TUPLE_NAME_POS)+ "" +newActivityName;
-				if(relationKeyName.equals("ha")){
-					System.out.println("ha: "+caseId);
-				}
+
 				incrementAndReplaceCaseData(caseId,newActivityName,cases);
 				//updates the frequenz counter of the relations Tuples
 				updateData(relationKeyName, relations);
