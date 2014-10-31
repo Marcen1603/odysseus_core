@@ -23,7 +23,10 @@ import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.Multivari
  * @param <T>
  */
 public class AvgPartialAggregate<T> extends AbstractPartialAggregate<T> {
-    /** The sum value of the aggregate. */
+
+	private static final long serialVersionUID = -6575036200793378372L;
+
+	/** The sum value of the aggregate. */
     private MultivariateMixtureDistribution sum;
     /** The count value of the aggregate. */
     private int count = 0;

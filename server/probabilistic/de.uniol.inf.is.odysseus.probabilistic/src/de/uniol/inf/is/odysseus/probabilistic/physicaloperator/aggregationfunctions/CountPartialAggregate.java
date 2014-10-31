@@ -23,7 +23,9 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunct
  * @param <T>
  */
 public class CountPartialAggregate<T> extends AbstractPartialAggregate<T> {
-    /** The value of the aggregate. */
+
+	private static final long serialVersionUID = -8566525376093084571L;
+	/** The value of the aggregate. */
     private double count = 0.0;
     /** The result data type. */
     private final String datatype;

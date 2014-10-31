@@ -33,7 +33,10 @@ import de.uniol.inf.is.odysseus.probabilistic.common.Polynomial;
  * @param <T>
  */
 public class OneWorldAvgPartialAggregate<T> extends AbstractPartialAggregate<T> {
-    /** The logger. */
+
+	private static final long serialVersionUID = -3979148035308294036L;
+
+	/** The logger. */
     private static final Logger LOG = LoggerFactory.getLogger(OneWorldAvgPartialAggregate.class);
 
     /** Upper probability bound. */
