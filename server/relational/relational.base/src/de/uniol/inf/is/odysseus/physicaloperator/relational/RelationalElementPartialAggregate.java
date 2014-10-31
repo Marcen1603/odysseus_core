@@ -7,6 +7,8 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.functions
 public class RelationalElementPartialAggregate extends
 		ElementPartialAggregate<Tuple<?>> {
 
+	private static final long serialVersionUID = -1220783987930401544L;
+
 	public RelationalElementPartialAggregate(Tuple<?> elem, String datatype) {
 		super(elem, datatype);
 	}

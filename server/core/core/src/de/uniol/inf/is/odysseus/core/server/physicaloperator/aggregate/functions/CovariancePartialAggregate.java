@@ -23,7 +23,8 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunct
  */
 public class CovariancePartialAggregate<R> extends AbstractPartialAggregate<R> {
 
-    private double sumA;
+	private static final long serialVersionUID = 3904441654181161018L;
+	private double sumA;
     private double sumB;
     private double crossproductSum;
     private int count;

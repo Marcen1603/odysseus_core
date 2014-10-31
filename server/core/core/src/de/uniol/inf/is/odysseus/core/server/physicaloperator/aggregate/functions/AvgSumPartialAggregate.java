@@ -19,6 +19,9 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunct
 
 
 public class AvgSumPartialAggregate<R> extends AbstractPartialAggregate<R> {
+
+	private static final long serialVersionUID = -1345991906490443262L;
+	
 	Double aggValue;
 	int aggCount;
 	

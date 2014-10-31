@@ -6,6 +6,8 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.NoGroupPr
 
 public class RelationalNoGroupProcessor<T extends IMetaAttribute> extends NoGroupProcessor<Tuple<T>, Tuple<T>> {
 	
+	private static final long serialVersionUID = -4691145764024320101L;
+
 	@SuppressWarnings("rawtypes")
 	static final RelationalNoGroupProcessor instance = new RelationalNoGroupProcessor();
 	

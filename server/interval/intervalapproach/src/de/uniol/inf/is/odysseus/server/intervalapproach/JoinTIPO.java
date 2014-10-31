@@ -15,6 +15,7 @@
  */
 package de.uniol.inf.is.odysseus.server.intervalapproach;
 
+import java.io.Serializable;
 import java.util.Iterator;
 
 import org.slf4j.Logger;
@@ -28,6 +29,7 @@ import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IStatefulOperator;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IStatefulPO;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ITransferArea;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
@@ -38,6 +40,7 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.IHasMetadataMergeFu
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IHasPredicate;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IPipe;
 import de.uniol.inf.is.odysseus.intervalapproach.sweeparea.DefaultTISweepArea;
+import de.uniol.inf.is.odysseus.server.intervalapproach.state.JoinTIPOState;
 import de.uniol.inf.is.odysseus.sweeparea.ITimeIntervalSweepArea;
 
 /**
@@ -55,7 +58,7 @@ import de.uniol.inf.is.odysseus.sweeparea.ITimeIntervalSweepArea;
  */
 public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>>
 		extends AbstractPipe<T, T> implements IHasPredicate,
-		IHasMetadataMergeFunction<K>, IStatefulOperator {
+		IHasMetadataMergeFunction<K>, IStatefulOperator, IStatefulPO {
 	private static Logger _logger = null;
 
 	private static Logger getLogger() {
@@ -450,6 +453,27 @@ public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>>
 	@Override
 	public long getElementsStored2() {
 		return areas[1].size();
+	}
+
+	@Override
+	public Serializable getState() {
+		JoinTIPOState<K, T> state = new JoinTIPOState<K, T>();
+		state.setSweepAreas(areas);
+		state.setTransferArea(transferFunction);
+		return state;
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public void setState(Serializable s) {
+		try {
+			JoinTIPOState<K, T> state = (JoinTIPOState<K, T>) s;
+			this.areas = state.getSweepAreas();
+			this.transferFunction = state.getTransferArea();
+			this.transferFunction.setTransfer(this);
+		} catch(Throwable T) {
+			_logger.error("The serializable state to set for the AggregateTIPO is not a valid AggregateTIPOState!");
+		}
 	}
 
 }

@@ -10,7 +10,9 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunct
  * 
  */
 public class CompletenessPartialAggregate<T> extends AbstractPartialAggregate<T> {
-    /** The number of non-null items (depending on implementation). */
+
+	private static final long serialVersionUID = -7585294235677204519L;
+	/** The number of non-null items (depending on implementation). */
     private double nonNullCount = 0.0;
     /** The number of total items. */
     private double totalCount = 0.0;

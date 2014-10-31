@@ -23,6 +23,9 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunct
 
 public class ListPartialAggregate<T> extends AbstractPartialAggregate<T> implements Iterable<T>{
 	
+
+	private static final long serialVersionUID = -1236414242464365484L;
+
 	final List<T> elems;
 	
 	public ListPartialAggregate(T elem) {

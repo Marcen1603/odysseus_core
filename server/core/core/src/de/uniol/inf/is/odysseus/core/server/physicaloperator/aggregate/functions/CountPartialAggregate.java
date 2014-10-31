@@ -19,6 +19,8 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunct
 
 
 public class CountPartialAggregate<T> extends AbstractPartialAggregate<T> {
+
+	private static final long serialVersionUID = -8211985028216817715L;
 	int count = 0;
 
 	

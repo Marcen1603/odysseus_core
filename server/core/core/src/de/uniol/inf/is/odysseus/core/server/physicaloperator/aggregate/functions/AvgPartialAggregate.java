@@ -11,7 +11,10 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunct
  * 
  */
 public class AvgPartialAggregate<R> extends AbstractPartialAggregate<R> {
-    private double mean;
+
+	private static final long serialVersionUID = 8223160967939959922L;
+	
+	private double mean;
     private int count;
 
     public AvgPartialAggregate(double value) {

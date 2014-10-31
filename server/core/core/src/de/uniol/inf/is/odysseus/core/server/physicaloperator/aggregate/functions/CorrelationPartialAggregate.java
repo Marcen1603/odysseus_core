@@ -23,7 +23,8 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunct
  */
 public class CorrelationPartialAggregate<R> extends AbstractPartialAggregate<R> {
 
-    private double sumA;
+	private static final long serialVersionUID = -1700211702940005284L;
+	private double sumA;
     private double sumB;
     private double squareSumA;
     private double squareSumB;

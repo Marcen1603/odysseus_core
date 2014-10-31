@@ -20,6 +20,8 @@ import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.AbstractPartialAggregate;
 
 public class RatePartialAggregate<T> extends AbstractPartialAggregate<T> {
+
+	private static final long serialVersionUID = -2303048677100893579L;
 	int count = 0;
 	final PointInTime start;
 	PointInTime end;

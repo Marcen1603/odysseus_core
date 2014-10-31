@@ -15,11 +15,13 @@
   */
 package de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions;
 
+import java.io.Serializable;
+
 import de.uniol.inf.is.odysseus.core.IClone;
 
 
 
-public interface IPartialAggregate<T> extends IClone{
+public interface IPartialAggregate<T> extends IClone, Serializable{
 	/**
 	 * Method will be called after removing a partial aggregate from sweep area
 	 */

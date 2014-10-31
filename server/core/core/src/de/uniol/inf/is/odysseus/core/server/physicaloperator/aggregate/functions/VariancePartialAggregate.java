@@ -23,7 +23,8 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunct
  */
 public class VariancePartialAggregate<R> extends AbstractPartialAggregate<R> {
 
-    private double diffSquareSum;
+	private static final long serialVersionUID = -4774098935070401113L;
+	private double diffSquareSum;
     private double mean;
     private int count;
 

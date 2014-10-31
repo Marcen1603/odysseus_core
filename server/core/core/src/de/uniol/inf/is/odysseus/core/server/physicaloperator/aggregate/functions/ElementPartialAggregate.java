@@ -20,6 +20,9 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunct
 
 
 public class ElementPartialAggregate<T> extends AbstractPartialAggregate<T> {
+
+	private static final long serialVersionUID = -7568230052134641977L;
+	
 	T elem;
 	final String datatype;
 		

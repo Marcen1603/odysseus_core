@@ -21,7 +21,10 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunct
  * @author Christian Kuka <christian@kuka.cc>
  */
 public class GreenwaldKhannaMedianPartialAggregate<T> extends AbstractPartialAggregate<T> {
-    private static final Logger LOG = LoggerFactory.getLogger(GreenwaldKhannaMedianPartialAggregate.class);
+
+	private static final long serialVersionUID = -6999923917595784322L;
+
+	private static final Logger LOG = LoggerFactory.getLogger(GreenwaldKhannaMedianPartialAggregate.class);
 
     private final double epsilon;
     private LinkedList<Tuple> summary;

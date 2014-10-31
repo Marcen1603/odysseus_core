@@ -16,7 +16,9 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunct
  */
 public class MedianPartialAggregate<T> extends AbstractPartialAggregate<T> {
 
-    private final Queue<Double> upper = new PriorityQueue<Double>();
+	private static final long serialVersionUID = -7798856857638228860L;
+
+	private final Queue<Double> upper = new PriorityQueue<Double>();
 
     private final Queue<Double> lower = new PriorityQueue<Double>(11, new Comparator<Double>() {
         @Override

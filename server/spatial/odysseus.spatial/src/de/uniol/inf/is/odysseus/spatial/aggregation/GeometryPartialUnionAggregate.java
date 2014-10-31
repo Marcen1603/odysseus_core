@@ -24,7 +24,9 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunct
  */
 public class GeometryPartialUnionAggregate<T> extends AbstractPartialAggregate<T> {
 
-    private Geometry geometry;
+	private static final long serialVersionUID = -3843295016500024967L;
+
+	private Geometry geometry;
 
     public GeometryPartialUnionAggregate(final Geometry geoometry) {
         this.geometry = (Geometry) this.geometry.clone();

@@ -22,7 +22,10 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunct
  * @author Christian Kuka <christian.kuka@offis.de>
  */
 public class NthPartialAggregate<T> extends AbstractPartialAggregate<T> {
-    T elem;
+
+	private static final long serialVersionUID = 5432559301926339228L;
+
+	T elem;
     int n;
 
     public NthPartialAggregate(T elem) {
