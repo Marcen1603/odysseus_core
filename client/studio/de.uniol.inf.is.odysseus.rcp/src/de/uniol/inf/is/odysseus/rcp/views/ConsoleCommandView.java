@@ -48,7 +48,7 @@ public class ConsoleCommandView extends ViewPart {
 	public void createPartControl(Composite parent) {
 		parent.setLayout(new GridLayout());
 
-		createOutputText(parent);
+		outputText = createOutputText(parent);
 
 		Composite inputComposite = new Composite(parent, SWT.NONE);
 		inputComposite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
