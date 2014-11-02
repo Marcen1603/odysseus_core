@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.physicaloperator.relational;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
@@ -7,6 +8,7 @@ import java.util.Map;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IStatefulPO;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFExpression;
@@ -14,9 +16,9 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.IGroupProcessor;
 
 public class RelationalStateMapPO<T extends IMetaAttribute> extends
-		RelationalMapPO<T> {
+		RelationalMapPO<T> implements IStatefulPO {
 
-	final private Map<Long, LinkedList<Tuple<T>>> groupsLastObjects = new HashMap<>();
+	private Map<Long, LinkedList<Tuple<T>>> groupsLastObjects = new HashMap<>();
 	final private IGroupProcessor<Tuple<T>, Tuple<T>> groupProcessor;
 	private int maxHistoryElements = 0;
 
@@ -93,6 +95,25 @@ public class RelationalStateMapPO<T extends IMetaAttribute> extends
 		synchronized (g) {
 			g.init();
 		}
+	}
+
+	@Override
+	public Serializable getState() {
+
+		return (HashMap<Long, LinkedList<Tuple<T>>>) this.groupsLastObjects;
+
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public void setState(Serializable state) {
+
+		if (state instanceof HashMap) {
+
+			this.groupsLastObjects = (HashMap<Long, LinkedList<Tuple<T>>>) state;
+
+		}
+
 	}
 
 }
