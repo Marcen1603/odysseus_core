@@ -16,5 +16,18 @@ public class SpaceUnitHelper {
 			return spaceValue;
 		}
 	}
+	
+	public static double getMeters(double spaceValue, SpaceUnit unit){
+		switch(unit) {
+		case meters:
+			return spaceValue;
+		case centimeters:
+			return spaceValue/100;
+		case millimeters:
+			return spaceValue/1000;
+		default:
+			return spaceValue;
+		}
+	}
 
 }

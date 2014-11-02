@@ -339,10 +339,10 @@ public class OperatorBuildHelper {
 			MapAO metersMap = OperatorBuildHelper.createMapAO(meterExpressions,
 					source, 0, 0, false);
 
-			firstPredicateString = "x_meter >= " + startX;
-			secondPredicateString = "x_meter <= " + endX;
-			thirdPredicateString = "y_meter >= " + startY;
-			fourthPredicateString = "y_meter <= " + endY;
+			firstPredicateString = "x_meter >= " + SpaceUnitHelper.getMeters(startX, SpaceUnit.millimeters);
+			secondPredicateString = "x_meter <= " + SpaceUnitHelper.getMeters(endX, SpaceUnit.millimeters);
+			thirdPredicateString = "y_meter >= " + SpaceUnitHelper.getMeters(startY, SpaceUnit.millimeters);
+			fourthPredicateString = "y_meter <= " + SpaceUnitHelper.getMeters(endY, SpaceUnit.millimeters);
 
 			selectAO.subscribeTo(metersMap, metersMap.getOutputSchema());
 		}
