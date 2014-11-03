@@ -17,6 +17,7 @@ package de.uniol.inf.is.odysseus.core.server.logicaloperator;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -188,6 +189,10 @@ public class AggregateAO extends UnaryLogicalOp {
 		SDFSchema outputSchema;
 		List<SDFAttribute> outAttribs = new ArrayList<>();
 
+		// calls of addAttribute decides the sequence of output attributes
+		// not useful here...
+		sortOutputAttributeList(outputAttributList); 
+				
 		for (Pair<SDFAttribute, Boolean> a : outputAttributList) {
 			if (outputPA && a.getE2()) {
 				SDFDatatype type = SDFDatatype.PARTIAL_AGGREGATE;
@@ -217,6 +222,15 @@ public class AggregateAO extends UnaryLogicalOp {
 			outputSchema = new SDFSchema("<tmp>", Tuple.class, outAttribs);
 		}
 		return outputSchema;
+	}
+
+	private static void sortOutputAttributeList(List<Pair<SDFAttribute, Boolean>> list) {
+		Collections.sort(list, new Comparator<Pair<SDFAttribute, Boolean>>() {
+			@Override
+			public int compare(Pair<SDFAttribute, Boolean> pair1, Pair<SDFAttribute, Boolean> pair2) {
+				return pair1.getE1().getAttributeName().compareTo(pair2.getE1().getAttributeName());
+			}
+		});
 	}
 
 	@Parameter(type = IntegerParameter.class, optional = true)
