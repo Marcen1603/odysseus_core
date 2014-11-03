@@ -17,11 +17,12 @@ public class MovingStateInstructionMessage implements IMessage {
 	public static final int REPLACE_RECEIVER = 2;
 	public static final int INSTALL_BUFFER_AND_REPLACE_SENDER = 3;
 	public static final int INITIATE_STATE_COPY = 4;
-	public static final int FINISHED_COPYING_STATES = 5;
-	public static final int STOP_BUFFERING = 6;
+	public static final int INJECT_STATE = 5;
+	public static final int FINISHED_COPYING_STATES = 6;
+	public static final int STOP_BUFFERING = 7;
 
-	public static final int MESSAGE_RECEIVED = 7;
-	public static final int PIPE_SUCCCESS_RECEIVED = 8;
+	public static final int MESSAGE_RECEIVED = 8;
+	public static final int PIPE_SUCCCESS_RECEIVED = 9;
 
 	private int loadBalancingProcessId;
 	private int msgType;

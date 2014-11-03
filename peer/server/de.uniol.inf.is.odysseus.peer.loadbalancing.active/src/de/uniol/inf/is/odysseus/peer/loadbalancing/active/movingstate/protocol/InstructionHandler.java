@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.collection.Context;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IStatefulPO;
 import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicator;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.common.LoadBalancingHelper;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.common.LoadBalancingStatusCache;
@@ -197,8 +198,20 @@ public class InstructionHandler {
 			}
 			if (status.getPhase().equals(
 					MovingStateSlaveStatus.LB_PHASES.WAITING_FOR_COPY)) {
-				MovingStateManager.getInstance().addReceiver(
-						senderPeer.toString(), instruction.getPipeId());
+				if(MovingStateHelper.compareStatefulOperator(instruction.getOperatorIndex(), status.getInstalledQueries(), instruction.getOperatorType())) {
+					IStatefulPO operator = MovingStateHelper.getStatefulPO(instruction.getOperatorIndex(),status.getInstalledQueries());
+					MovingStateManager.getInstance().addReceiver(
+							senderPeer.toString(), instruction.getPipeId());
+					status.addReceiver(instruction.getPipeId(), operator);
+				}
+				else {
+					//TODO Error
+				}
+				
+				
+				
+				status.getMessageDispatcher().sendInititiateStateCopyAck(status.getMasterPeer(), status.getLbProcessId(), instruction.getPipeId());
+				//TODO Error Handling
 
 			}
 			break;

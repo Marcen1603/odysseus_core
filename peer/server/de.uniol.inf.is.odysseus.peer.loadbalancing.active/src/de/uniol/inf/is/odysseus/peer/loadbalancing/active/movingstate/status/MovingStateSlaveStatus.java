@@ -2,8 +2,10 @@ package de.uniol.inf.is.odysseus.peer.loadbalancing.active.movingstate.status;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.concurrent.ConcurrentHashMap;
 
 import net.jxta.peer.PeerID;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IStatefulPO;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.common.ILoadBalancingSlaveStatus;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.movingstate.communicator.MovingStateMessageDispatcher;
 
@@ -31,6 +33,8 @@ public class MovingStateSlaveStatus implements ILoadBalancingSlaveStatus {
 	private Collection<Integer> installedQueries;
 	private ArrayList<String> knownPipes;
 	
+	private ConcurrentHashMap<String, IStatefulPO> receiverOperatorMapping;
+	
 	
 	private final MovingStateMessageDispatcher messageDispatcher;
 	
@@ -51,8 +55,22 @@ public class MovingStateSlaveStatus implements ILoadBalancingSlaveStatus {
 		this.lbProcessId = lbProcessId;
 		this.messageDispatcher = messageDispatcher;
 		this.knownPipes = new ArrayList<String>();
+		this.receiverOperatorMapping = new ConcurrentHashMap<String,IStatefulPO>();
+	}
+	
+	public void addReceiver(String pipeId, IStatefulPO operator) {
+		if(!receiverOperatorMapping.containsKey(pipeId)) {
+			receiverOperatorMapping.put(pipeId, operator);
+		}
 	}
 
+	public IStatefulPO getStatefulPOforPipe(String pipeID) {
+		if(receiverOperatorMapping.containsKey(pipeID)) {
+			return receiverOperatorMapping.get(pipeID);
+		}
+		return null;
+	}
+	
 	public void addKnownPipe(String pipe) {
 		if(!isPipeKnown(pipe)) {
 			knownPipes.add(pipe);

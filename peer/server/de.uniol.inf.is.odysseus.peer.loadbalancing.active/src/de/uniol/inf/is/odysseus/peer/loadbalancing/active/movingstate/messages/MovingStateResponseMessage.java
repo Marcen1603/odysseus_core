@@ -19,7 +19,7 @@ public class MovingStateResponseMessage implements IMessage {
 	public static final int SUCCESS_DUPLICATE = 3;
 	public static final int FAILURE_DUPLICATE_RECEIVER = 4;
 	
-	public static final int ACK_COPY_STATES = 5;
+	public static final int ACK_INIT_STATE_COPY = 5;
 	public static final int STATE_COPY_FINISHED = 6;
 	
 	public static final int ACK_ALL_STATE_COPIES_FINISHED = 7;
@@ -50,6 +50,14 @@ public class MovingStateResponseMessage implements IMessage {
 		MovingStateResponseMessage message = new MovingStateResponseMessage();
 		message.setLoadBalancingProcessId(loadBalancingProcessId);
 		message.setMsgType(ACK_LOADBALANCING);
+		return message;
+	}
+	
+	public static MovingStateResponseMessage createAckInitStateCopyMessage(int lbProcessId, String pipe) {
+		MovingStateResponseMessage message = new MovingStateResponseMessage();
+		message.setLoadBalancingProcessId(lbProcessId);
+		message.setPipeID(pipe);
+		message.setMsgType(ACK_INIT_STATE_COPY);
 		return message;
 	}
 	
@@ -121,13 +129,14 @@ public class MovingStateResponseMessage implements IMessage {
 				
 			case SUCCESS_DUPLICATE:
 			case DELETE_FINISHED:
+			case ACK_INIT_STATE_COPY:
 				
 				/*
 				 * Allocate byte Buffer:
 				 *  4 Bytes for msgType
 				 * 	4 Bytes for integer loadBalancingProcessId
 				 *  4 Bytes for integer pipeIdSize
-				 *  payloadSize bytes for PipeId
+				 *  pipeIdSize bytes for PipeId
 				 */
 				
 				byte[] pipeIdAsBytes = pipeID.getBytes();
@@ -162,6 +171,7 @@ public class MovingStateResponseMessage implements IMessage {
 			
 		case SUCCESS_DUPLICATE:
 		case DELETE_FINISHED:
+		case ACK_INIT_STATE_COPY:
 			
 			int pipeIdSize = bb.getInt();
 			byte[] pipeIdBytes = new byte[pipeIdSize];

@@ -56,6 +56,14 @@ public class MovingStateHelper {
 		return statefulPOs;
 	}
 	
+	public static List<IStatefulPO> getStatefulOperatorList(Collection<Integer> installedQueries) {
+		List<IStatefulPO> statefulList = new ArrayList<IStatefulPO>();
+		for(int queryId : installedQueries) {
+			statefulList.addAll(getStatefulOperatorList(queryId));
+		}
+		return statefulList;
+	}
+	
 	public static void initiateStateCopy(MovingStateMasterStatus status) {
 		MovingStateCommunicatorImpl communicator = MovingStateCommunicatorImpl.getInstance();
 		MovingStateMessageDispatcher dispatcher = status.getMessageDispatcher();
@@ -335,5 +343,31 @@ public class MovingStateHelper {
 		status.setModifiedPart(modifiedPart);
 		status.setReplacedPipes(replacedPipes);
 		return replacedPipes;
+	}
+
+	public static void sendNextState(int operatorIndex, String pipeID, int queryId) throws LoadBalancingException {
+		//TODO Error Handling
+		MovingStateSender sender = MovingStateManager.getInstance().getSender(pipeID);
+		List<IStatefulPO> statefulPOs = getStatefulOperatorList(queryId);
+		IStatefulPO toSend = statefulPOs.get(operatorIndex);	
+		sender.sendData(toSend.getState());
+		
+	}
+
+	public static boolean compareStatefulOperator(int operatorIndex,
+			Collection<Integer> installedQueries, String operatorType) {
+		List<IStatefulPO> statefulList = getStatefulOperatorList(installedQueries);
+		IStatefulPO operator = statefulList.get(operatorIndex);
+		if(operator!=null) {
+			if(operator.getClass().toString().equals(operatorType))
+				return true;
+		}
+		return false;
+	}
+
+	public static IStatefulPO getStatefulPO(int operatorIndex,
+			Collection<Integer> installedQueries) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

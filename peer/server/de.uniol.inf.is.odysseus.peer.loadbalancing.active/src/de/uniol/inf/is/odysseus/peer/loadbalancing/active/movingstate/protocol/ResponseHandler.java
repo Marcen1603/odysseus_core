@@ -130,6 +130,13 @@ public class ResponseHandler {
 			}
 			
 			break;
+			
+		case MovingStateResponseMessage.ACK_INIT_STATE_COPY:
+			LOG.debug("Got ACK_INIT_STATE_COPY");
+			if(status.getPhase().equals(LB_PHASES.COPYING_STATES)) {
+				dispatcher.stopRunningJob(response.getPipeID());
+				//TODO Send states :)
+			}
 		
 		case MovingStateResponseMessage.FAILURE_INSTALL_QUERY:
 			LOG.debug("Got FAILURE_INSTALL_QUERY");

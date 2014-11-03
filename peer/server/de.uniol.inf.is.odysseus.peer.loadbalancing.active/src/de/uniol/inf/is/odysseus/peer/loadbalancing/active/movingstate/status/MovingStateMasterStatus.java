@@ -2,8 +2,10 @@ package de.uniol.inf.is.odysseus.peer.loadbalancing.active.movingstate.status;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.concurrent.ConcurrentHashMap;
 
 import net.jxta.peer.PeerID;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IStatefulPO;
 import de.uniol.inf.is.odysseus.peer.distribute.ILogicalQueryPart;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.common.ILoadBalancingMasterStatus;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.movingstate.communicator.MovingStateMessageDispatcher;
@@ -39,6 +41,7 @@ public class MovingStateMasterStatus implements ILoadBalancingMasterStatus{
 	private ILogicalQueryPart originalPart;
 	private ILogicalQueryPart modifiedPart;
 	private HashMap<String,String> replacedPipes;
+	private ConcurrentHashMap<String,IStatefulPO> senderOperatorMapping;
 	
 	private ArrayList<String> pipesToSync;
 	
@@ -110,6 +113,18 @@ public class MovingStateMasterStatus implements ILoadBalancingMasterStatus{
 	public void setReplacedPipes(HashMap<String, String> replacedPipes) {
 		this.replacedPipes = replacedPipes;
 	}
+	public void addSender(String pipe, IStatefulPO operator) {
+		if(!senderOperatorMapping.containsKey(pipe)) {
+			senderOperatorMapping.put(pipe, operator);
+		}
+	}
+	public IStatefulPO getSender(String pipe) {
+		if(senderOperatorMapping.containsKey(pipe)) {
+			return senderOperatorMapping.get(pipe);
+		}
+		return null;
+	}
+	
 	@Override
 	public String getCommunicationStrategy() {
 		return COMMUNCIATOR_NAME;
