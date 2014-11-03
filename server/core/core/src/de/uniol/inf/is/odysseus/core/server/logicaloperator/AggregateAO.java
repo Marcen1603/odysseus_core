@@ -191,7 +191,6 @@ public class AggregateAO extends UnaryLogicalOp {
 
 		// calls of addAttribute decides the sequence of output attributes
 		// not useful here...
-		sortOutputAttributeList(outputAttributList); 
 				
 		for (Pair<SDFAttribute, Boolean> a : outputAttributList) {
 			if (outputPA && a.getE2()) {
@@ -222,15 +221,6 @@ public class AggregateAO extends UnaryLogicalOp {
 			outputSchema = new SDFSchema("<tmp>", Tuple.class, outAttribs);
 		}
 		return outputSchema;
-	}
-
-	private static void sortOutputAttributeList(List<Pair<SDFAttribute, Boolean>> list) {
-		Collections.sort(list, new Comparator<Pair<SDFAttribute, Boolean>>() {
-			@Override
-			public int compare(Pair<SDFAttribute, Boolean> pair1, Pair<SDFAttribute, Boolean> pair2) {
-				return pair1.getE1().getAttributeName().compareTo(pair2.getE1().getAttributeName());
-			}
-		});
 	}
 
 	@Parameter(type = IntegerParameter.class, optional = true)
