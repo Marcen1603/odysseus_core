@@ -511,30 +511,31 @@ public class RecoveryCommunicator implements IRecoveryCommunicator, IPeerCommuni
 		sendMessage(receiverPeer, message);
 	}
 
+	@Override
+	public void chooseBuddyForQuery(ID sharedQueryId) {
+		// TODO Use a buddy-allocator? For now, we just choose the first peer we
+		// know
+		// 1. Choose buddy
+		PeerID buddy = p2pDictionary.getRemotePeerIDs().iterator().next();
+
+		// 2. Get the necessary backup-information
+		ImmutableSet<String> infos = LocalBackupInformationAccess.getStoredPQLStatements(sharedQueryId,
+				p2pNetworkManager.getLocalPeerID());
+		List<String> pql = infos.asList();
+
+		// 3. Send this to the buddy
+		RecoveryInstructionMessage buddyMessage = RecoveryInstructionMessage.createBeBuddyMessage(sharedQueryId, pql);
+		sendMessage(buddy, buddyMessage);
+		
+		// 4. TODO Save, that this is my buddy so that we can find a new buddy if that one fails
+	}
+
 	private void sendMessage(PeerID receiverPeer, IMessage message) {
 		try {
 			peerCommunicator.send(receiverPeer, message);
 		} catch (PeerCommunicationException e) {
 			e.printStackTrace();
 		}
-	}
-
-	@Override
-	public void chooseBuddyForQuery(ID sharedQueryId) {
-		// TODO Use a buddy-allocator? For now, we just choose the first peer we
-		// know
-		PeerID buddy = p2pDictionary.getRemotePeerIDs().iterator().next();
-
-		// 1. Send that this peer is my buddy
-		RecoveryInstructionMessage buddyMessage = RecoveryInstructionMessage.createBeBuddyMessage(sharedQueryId);
-		try {
-			peerCommunicator.send(buddy, buddyMessage);
-		} catch (PeerCommunicationException e) {
-			e.printStackTrace();
-		}
-
-		// 2. Give the necessary backup-information to this peer
-
 	}
 
 	public static IRecoveryAllocator getRecoveryAllocator() {

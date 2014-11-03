@@ -34,6 +34,7 @@ public class SocketDataTransmissionSender extends EndpointDataTransmissionSender
 	private final Map<PeerID, ServerSocket> serverSocketMap = Maps.newConcurrentMap();
 	private final Map<PeerID, Socket> clientSocketMap = Maps.newConcurrentMap();
 	private final Collection<PeerID> toRemoveList = Lists.newArrayList();
+	private Object semaphore = new Object();
 
 	private RepeatingMessageSend portMessageRepeater;
 
@@ -54,13 +55,11 @@ public class SocketDataTransmissionSender extends EndpointDataTransmissionSender
 					ServerSocket serverSocket = new ServerSocket(0);
 					serverSocketMap.put(senderPeer, serverSocket);
 
-					LOG.debug("Opened (unaccepted) server socket for {} on port {}.", P2PDictionary
-							.getInstance().getRemotePeerName(senderPeer), serverSocket
-							.getLocalPort());
+					LOG.debug("Opened (unaccepted) server socket for {} on port {}.", P2PDictionary.getInstance()
+							.getRemotePeerName(senderPeer), serverSocket.getLocalPort());
 					sendPortMessage(serverSocket.getLocalPort(), senderPeer);
 					Socket clientSocket = serverSocket.accept();
-					LOG.debug("Server socket on port {} was accepted from peer {}", serverSocket
-							.getLocalPort(),
+					LOG.debug("Server socket on port {} was accepted from peer {}", serverSocket.getLocalPort(),
 							P2PDictionary.getInstance().getRemotePeerName(senderPeer));
 					clientSocketMap.put(senderPeer, clientSocket);
 
@@ -80,20 +79,25 @@ public class SocketDataTransmissionSender extends EndpointDataTransmissionSender
 		// Repeat this message until we get an PortAckMessage
 		portMessageRepeater = new RepeatingMessageSend(peerCommunicator, msg, senderPeer);
 		portMessageRepeater.start();
-		LOG.debug("Startet to send port-messages for port " + msg.getPort() + " to {}",
-				P2PDictionary.getInstance().getRemotePeerName(senderPeer));
+		LOG.debug("Startet to send port-messages for port " + msg.getPort() + " to {}", P2PDictionary.getInstance()
+				.getRemotePeerName(senderPeer));
 	}
 
 	@Override
 	public void receivedMessage(IPeerCommunicator communicator, PeerID senderPeer, IMessage message) {
 		if (message instanceof PortAckMessage) {
 			PortAckMessage portAckMessage = (PortAckMessage) message;
-			if (portAckMessage.getId() == getId() && portMessageRepeater != null) {
-				LOG.debug("Received portAckMessage for port " + portAckMessage.getPort()
-						+ "  from {}", P2PDictionary.getInstance().getRemotePeerName(senderPeer));
-				portMessageRepeater.stopRunning();
-				portMessageRepeater = null;
+			synchronized (semaphore) {
+				if (portMessageRepeater != null) {
+					if (portAckMessage.getId() == getId() && portMessageRepeater != null) {
+						LOG.debug("Received portAckMessage for port " + portAckMessage.getPort() + "  from {}",
+								P2PDictionary.getInstance().getRemotePeerName(senderPeer));
+						portMessageRepeater.stopRunning();
+						portMessageRepeater = null;
+					}
+				}
 			}
+
 		} else {
 			super.receivedMessage(communicator, senderPeer, message);
 		}

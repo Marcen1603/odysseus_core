@@ -349,10 +349,6 @@ public class LocalBackupInformationAccess {
 		return ImmutableSet.copyOf(pqls);
 		
 	}
-	
-	/*
-	 * TODO Buddy information. Not clear atm. if they are needed.
-	 */
 
 	/**
 	 * Adds a peer to the list of peers for which we are a buddy.

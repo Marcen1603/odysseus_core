@@ -195,6 +195,7 @@ public class RecoveryConsole implements CommandProvider {
 		sb.append("	stopPeerFailureDetection - Stops detection of peer failures. \n");
 		sb.append("	holdOn <PipeId> - Let this peer hold on\n");
 		sb.append("	goOn <PipeId> - Let this peer go on\n");
+		sb.append("	beBuddy <sharedQueryId> - Sends a random peer a message that he is the buddy for the <sharedQueryId> and the necessary backup-infos\n");
 		return sb.toString();
 	}
 
@@ -341,8 +342,8 @@ public class RecoveryConsole implements CommandProvider {
 
 		peerFailureDetector.startPeerFailureDetection();
 
-		ci.println("Peer failure detection is now switched on on this peer with usage of "
-				+ allocator.getName() + " allocator.");
+		ci.println("Peer failure detection is now switched on on this peer with usage of " + allocator.getName()
+				+ " allocator.");
 	}
 
 	public void _stopPeerFailureDetection(CommandInterpreter ci) {
@@ -438,10 +439,21 @@ public class RecoveryConsole implements CommandProvider {
 		PipeID pipe = getPipeIDFromCi(ci);
 		RecoveryHelper.startBuffering(pipe.toString());
 	}
-	
+
 	public void _goOn(CommandInterpreter ci) {
 		PipeID pipe = getPipeIDFromCi(ci);
 		RecoveryHelper.resumeSubscriptions(pipe);
+	}
+
+	public void _beBuddy(CommandInterpreter ci) {
+		ID sharedQueryId = getSharedQueryIdFromCi(ci);
+		
+		if (!cCommunicator.isPresent()) {
+			LOG.error("No recovery communicator bound!");
+			return;
+		}
+		
+		cCommunicator.get().chooseBuddyForQuery(sharedQueryId);
 	}
 
 	/**
@@ -491,21 +503,21 @@ public class RecoveryConsole implements CommandProvider {
 	 * @param ci
 	 * @return SharedQueryId which is made from the next argument from the ci
 	 */
-	// private ID getSharedQueryIdFromCi(CommandInterpreter ci) {
-	// String sharedQueryIdString = ci.nextArgument();
-	// ID sharedQueryId = null;
-	// if (!Strings.isNullOrEmpty(sharedQueryIdString)) {
-	// URI sharedIdUri;
-	// try {
-	// sharedIdUri = new URI(sharedQueryIdString);
-	// sharedQueryId = ID.create(sharedIdUri);
-	// } catch (URISyntaxException e) {
-	// // TODO Auto-generated catch block
-	// e.printStackTrace();
-	// }
-	// }
-	// return sharedQueryId;
-	// }
+	private ID getSharedQueryIdFromCi(CommandInterpreter ci) {
+		String sharedQueryIdString = ci.nextArgument();
+		ID sharedQueryId = null;
+		if (!Strings.isNullOrEmpty(sharedQueryIdString)) {
+			URI sharedIdUri;
+			try {
+				sharedIdUri = new URI(sharedQueryIdString);
+				sharedQueryId = ID.create(sharedIdUri);
+			} catch (URISyntaxException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		return sharedQueryId;
+	}
 
 	/**
 	 * Determines the {@link IRecoveryAllocator} by name.

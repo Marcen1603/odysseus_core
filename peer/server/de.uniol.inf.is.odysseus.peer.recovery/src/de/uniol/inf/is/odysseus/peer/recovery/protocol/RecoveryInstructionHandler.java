@@ -3,6 +3,7 @@ package de.uniol.inf.is.odysseus.peer.recovery.protocol;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Collection;
+import java.util.List;
 
 import net.jxta.id.ID;
 import net.jxta.peer.PeerID;
@@ -76,7 +77,7 @@ public class RecoveryInstructionHandler {
 			updateReceiver(instructionMessage.getNewSender(), instructionMessage.getPipeId());
 			break;
 		case RecoveryInstructionMessage.BE_BUDDY:
-			beBuddy(sender, instructionMessage.getSharedQueryId());
+			beBuddy(sender, instructionMessage.getSharedQueryId(), instructionMessage.getPql());
 			break;
 		}
 	}
@@ -176,7 +177,7 @@ public class RecoveryInstructionHandler {
 		}
 	}
 
-	private static void beBuddy(PeerID sender, ID sharedQueryId) {
+	private static void beBuddy(PeerID sender, ID sharedQueryId, List<String> pql) {
 		LocalBackupInformationAccess.addBuddy(sender, sharedQueryId);
 	}
 

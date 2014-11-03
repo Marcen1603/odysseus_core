@@ -3,6 +3,8 @@ package de.uniol.inf.is.odysseus.peer.recovery.messages;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.ByteBuffer;
+import java.util.ArrayList;
+import java.util.List;
 
 import net.jxta.id.ID;
 import net.jxta.peer.PeerID;
@@ -49,6 +51,7 @@ public class RecoveryInstructionMessage implements IMessage {
 	private PeerID newReceiver;
 	private ID sharedQueryId;
 	private PipeID pipeId;
+	private List<String> pql;
 
 	/**
 	 * This message tells that the receiver of this message should hold on. This
@@ -135,12 +138,13 @@ public class RecoveryInstructionMessage implements IMessage {
 	 * backup-information to this peer.
 	 * 
 	 * @return A message which tells the receiver that he is a buddy of the
-	 *         sender
+	 *         sender for the specified sharedQueryId
 	 */
-	public static RecoveryInstructionMessage createBeBuddyMessage(ID sharedQueryId) {
+	public static RecoveryInstructionMessage createBeBuddyMessage(ID sharedQueryId, List<String> infos) {
 		RecoveryInstructionMessage beBuddyMessage = new RecoveryInstructionMessage();
 		beBuddyMessage.setMessageType(BE_BUDDY);
 		beBuddyMessage.setSharedQueryId(sharedQueryId);
+		beBuddyMessage.setPql(infos);
 		return beBuddyMessage;
 	}
 
@@ -196,11 +200,25 @@ public class RecoveryInstructionMessage implements IMessage {
 			bb.put(pipeId.toString().getBytes());
 			break;
 		case BE_BUDDY:
-			bbsize = 4 + 4 + sharedQueryIdLength;
+			// for the length of the list
+			int listLength = 4;
+			// integers for the lengths of the pql strings
+			listLength += 4 * pql.toArray().length;
+			// length of the strings
+			for (String pqlString : pql) {
+				listLength += pqlString.getBytes().length;
+			}
+			bbsize = 4 + 4 + sharedQueryIdLength + listLength;
 			bb = ByteBuffer.allocate(bbsize);
 			bb.putInt(messageType);
 			bb.putInt(sharedQueryIdLength);
 			bb.put(sharedQueryId.toString().getBytes());
+			// Now the list
+			bb.putInt(pql.toArray().toString().length());
+			for (String pqlString : pql) {
+				bb.putInt(pqlString.getBytes().length);
+				bb.put(pqlString.getBytes());
+			}
 			break;
 		}
 
@@ -221,6 +239,10 @@ public class RecoveryInstructionMessage implements IMessage {
 		byte[] pipeIdByte;
 		String pipeIdString;
 
+		int sharedQueryIdLength = 0;
+		byte[] sharedQueryIdByte;
+		String sharedQueryIdString;
+
 		switch (messageType) {
 		case HOLD_ON:
 		case GO_ON:
@@ -236,10 +258,10 @@ public class RecoveryInstructionMessage implements IMessage {
 			}
 			break;
 		case ADD_QUERY:
-			int sharedQueryIdLength = bb.getInt();
-			byte[] sharedQueryIdByte = new byte[sharedQueryIdLength];
+			sharedQueryIdLength = bb.getInt();
+			sharedQueryIdByte = new byte[sharedQueryIdLength];
 			bb.get(sharedQueryIdByte, 0, sharedQueryIdLength);
-			String sharedQueryIdString = new String(sharedQueryIdByte);
+			sharedQueryIdString = new String(sharedQueryIdByte);
 			try {
 				URI uri = new URI(sharedQueryIdString);
 				sharedQueryId = ID.create(uri);
@@ -276,6 +298,27 @@ public class RecoveryInstructionMessage implements IMessage {
 				e.printStackTrace();
 			}
 
+			break;
+		case BE_BUDDY:
+			sharedQueryIdLength = bb.getInt();
+			sharedQueryIdByte = new byte[sharedQueryIdLength];
+			bb.get(sharedQueryIdByte, 0, sharedQueryIdLength);
+			sharedQueryIdString = new String(sharedQueryIdByte);
+			try {
+				URI uri = new URI(sharedQueryIdString);
+				sharedQueryId = ID.create(uri);
+			} catch (URISyntaxException e) {
+				e.printStackTrace();
+			}
+			int listLength = bb.getInt();
+			pql = new ArrayList<String>();
+			for (int i = 0; i < listLength; i++) {
+				int stringLength = bb.getInt();
+				byte[] pqlByte = new byte[stringLength];
+				bb.get(pqlByte, 0, stringLength);
+				String pqlString = new String(pqlByte);
+				pql.add(pqlString);
+			}
 			break;
 		}
 	}
@@ -326,6 +369,14 @@ public class RecoveryInstructionMessage implements IMessage {
 
 	public void setPipeId(PipeID pipeId) {
 		this.pipeId = pipeId;
+	}
+
+	public List<String> getPql() {
+		return pql;
+	}
+
+	public void setPql(List<String> pql) {
+		this.pql = pql;
 	}
 
 }
