@@ -189,9 +189,6 @@ public class AggregateAO extends UnaryLogicalOp {
 		SDFSchema outputSchema;
 		List<SDFAttribute> outAttribs = new ArrayList<>();
 
-		// calls of addAttribute decides the sequence of output attributes
-		// not useful here...
-				
 		for (Pair<SDFAttribute, Boolean> a : outputAttributList) {
 			if (outputPA && a.getE2()) {
 				SDFDatatype type = SDFDatatype.PARTIAL_AGGREGATE;
