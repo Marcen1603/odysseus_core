@@ -827,8 +827,6 @@ public class OperatorBuildHelper {
 			aggregateItems.add(param.getValue());
 		}
 
-		aggregateAO.setAggregationItems(aggregateItems);
-
 		// GroupBy
 		if (groupBys != null) {
 			if (!(groupBys.size() == 1 && groupBys.get(0).isEmpty())) {
@@ -837,9 +835,10 @@ public class OperatorBuildHelper {
 				aggregateAO.setGroupingAttributes(createAttributeList(groupBys,
 						source));
 			}
-
 		}
 
+		aggregateAO.setAggregationItems(aggregateItems);
+		
 		aggregateAO.subscribeTo(source, source.getOutputSchema());
 
 		return aggregateAO;
