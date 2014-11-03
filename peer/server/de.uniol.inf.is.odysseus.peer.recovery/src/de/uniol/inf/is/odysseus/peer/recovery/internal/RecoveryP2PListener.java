@@ -163,6 +163,21 @@ public class RecoveryP2PListener extends Observable implements IRecoveryP2PListe
 		}
 		LOG.debug("PeerFailureDetector activated");
 	}
+	
+	@Override
+	public void tryStartPeerFailureDetection() {
+		
+		if(p2pNetworkManager != null && p2pDictionary != null) {
+			
+			startPeerFailureDetection();
+			
+		} else {
+			
+			LOG.debug("Can not start peer failure detection.");
+			
+		}
+		
+	}
 
 	/**
 	 * Called by OSGi on Bundle deactivation.

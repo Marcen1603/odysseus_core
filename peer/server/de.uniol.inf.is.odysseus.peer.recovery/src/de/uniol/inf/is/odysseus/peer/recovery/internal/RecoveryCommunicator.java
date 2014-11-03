@@ -92,7 +92,7 @@ public class RecoveryCommunicator implements IRecoveryCommunicator, IPeerCommuni
 		if (recoveryP2PListener != null) {
 			recoveryP2PListener.addObserver(this);
 			if (recoveryAllocator != null) {
-				recoveryP2PListener.startPeerFailureDetection();
+				recoveryP2PListener.tryStartPeerFailureDetection();
 			}
 		}
 
