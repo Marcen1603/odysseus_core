@@ -15,11 +15,14 @@
   */
 package de.uniol.inf.is.odysseus.core.collection;
 
+import java.io.Serializable;
+
 import de.uniol.inf.is.odysseus.core.IClone;
 
-public class ClonablePair<E1 extends IClone, E2 extends IClone> extends CloneableIdPair<E1, E2>{
+public class ClonablePair<E1 extends IClone, E2 extends IClone> extends CloneableIdPair<E1, E2> implements Serializable{
 
-	
+	private static final long serialVersionUID = -3270815529098454372L;
+
 	public ClonablePair(E1 e1, E2 e2) {
 		super(e1,e2);
 	}

@@ -15,10 +15,15 @@
   */
 package de.uniol.inf.is.odysseus.core.collection;
 
+import java.io.Serializable;
+
 import de.uniol.inf.is.odysseus.core.IClone;
 
-public class CloneableIdPair<E1 extends IClone, E2 extends IClone> implements IPair<E1, E2> {
+public class CloneableIdPair<E1 extends IClone, E2 extends IClone> implements IPair<E1, E2>, Serializable{
 
+	private static final long serialVersionUID = 5364531537262143157L;
+
+	// Note: ClonableIDPair is only serializable, if E1 and E2 are also serializable
 	final E1 e1;
 	final E2 e2;
 	private int hashCode = -1;

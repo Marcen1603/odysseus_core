@@ -32,7 +32,7 @@ public class FESortedClonablePair<E1 extends IClone, E2 extends IClone> extends
 		Comparable<FESortedClonablePair<E1, E2>>, IClone, Serializable {
 
 	private static final long serialVersionUID = 4073268423938864555L;
-
+	
 	public FESortedClonablePair(E1 e1, E2 e2) {
 		super(e1, e2);
 	}
