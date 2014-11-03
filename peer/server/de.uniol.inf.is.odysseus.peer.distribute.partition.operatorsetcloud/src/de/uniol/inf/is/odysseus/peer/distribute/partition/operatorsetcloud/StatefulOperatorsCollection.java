@@ -7,6 +7,7 @@ import com.google.common.collect.Lists;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AggregateAO;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.AssociativeStorageAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.JoinAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnionAO;
 
@@ -20,6 +21,7 @@ public final class StatefulOperatorsCollection {
 		statefulOperators.add(JoinAO.class);
 		statefulOperators.add(AggregateAO.class);
 		statefulOperators.add(JoinAO.class);
+		statefulOperators.add(AssociativeStorageAO.class);
 	}
 
 	public boolean isStateful( ILogicalOperator operator ) {
