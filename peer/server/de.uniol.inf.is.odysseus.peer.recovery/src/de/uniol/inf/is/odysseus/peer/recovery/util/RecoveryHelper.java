@@ -24,9 +24,11 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.ControllablePhysicalSubscr
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
+import de.uniol.inf.is.odysseus.core.server.datadictionary.DataDictionaryProvider;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.RestructHelper;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSource;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
@@ -51,14 +53,14 @@ public class RecoveryHelper {
 	 *            PQL to execute.
 	 */
 	public static Collection<Integer> installAndRunQueryPartFromPql(String pql) {
-		
+
 		Collection<Integer> installedQueries = Lists.newArrayList();
-		
-		if(!RecoveryCommunicator.getExecutor().isPresent()) {
-			
+
+		if (!RecoveryCommunicator.getExecutor().isPresent()) {
+
 			LOG.error("No executor bound!");
 			return installedQueries;
-			
+
 		}
 
 		IServerExecutor executor = RecoveryCommunicator.getExecutor().get();
@@ -79,14 +81,14 @@ public class RecoveryHelper {
 	 * @return PeerID
 	 */
 	public static Optional<PeerID> determinePeerID(String peerName) {
-		
-		if(!RecoveryCommunicator.getP2PDictionary().isPresent()) {
-			
+
+		if (!RecoveryCommunicator.getP2PDictionary().isPresent()) {
+
 			LOG.error("No P2P dictionary bound!");
 			return Optional.absent();
-			
+
 		}
-		
+
 		for (PeerID pid : RecoveryCommunicator.getP2PDictionary().get().getRemotePeerIDs()) {
 			if (RecoveryCommunicator.getP2PDictionary().get().getRemotePeerName(pid).equals(peerName)) {
 				return Optional.of(pid);
@@ -116,13 +118,13 @@ public class RecoveryHelper {
 	 */
 	public static IPhysicalOperator getPhysicalJxtaOperator(boolean lookForSender, String pipeID) {
 
-		if(!RecoveryCommunicator.getExecutor().isPresent()) {
-			
+		if (!RecoveryCommunicator.getExecutor().isPresent()) {
+
 			LOG.error("No executor bound!");
 			return null;
-			
+
 		}
-		
+
 		IServerExecutor executor = RecoveryCommunicator.getExecutor().get();
 
 		for (IPhysicalQuery query : executor.getExecutionPlan().getQueries()) {
@@ -191,14 +193,14 @@ public class RecoveryHelper {
 	 * @return List of installed LogicalQueryParts.
 	 */
 	public static Collection<ILogicalQueryPart> getInstalledQueryParts() {
-		
+
 		ArrayList<ILogicalQueryPart> parts = new ArrayList<ILogicalQueryPart>();
-		
-		if(!RecoveryCommunicator.getExecutor().isPresent()) {
-			
+
+		if (!RecoveryCommunicator.getExecutor().isPresent()) {
+
 			LOG.error("No executor bound!");
 			return parts;
-			
+
 		}
 
 		IServerExecutor executor = RecoveryCommunicator.getExecutor().get();
@@ -220,18 +222,18 @@ public class RecoveryHelper {
 	 *         this peer
 	 */
 	public static List<JxtaSenderPO<?>> getJxtaSenders() {
-				
+
 		List<JxtaSenderPO<?>> senders = new ArrayList<JxtaSenderPO<?>>();
-		
-		if(!RecoveryCommunicator.getExecutor().isPresent()) {
-			
+
+		if (!RecoveryCommunicator.getExecutor().isPresent()) {
+
 			LOG.error("No executor bound!");
 			return senders;
-			
+
 		}
 
-		Iterator<IPhysicalQuery> queryIterator = RecoveryCommunicator.getExecutor().get().getExecutionPlan().getQueries()
-				.iterator();
+		Iterator<IPhysicalQuery> queryIterator = RecoveryCommunicator.getExecutor().get().getExecutionPlan()
+				.getQueries().iterator();
 		// Iterate through all queries we have installed
 		while (queryIterator.hasNext()) {
 			IPhysicalQuery query = queryIterator.next();
@@ -258,16 +260,16 @@ public class RecoveryHelper {
 	@SuppressWarnings("rawtypes")
 	public static List<RecoveryBufferPO> getRecoveryBuffers() {
 		List<RecoveryBufferPO> buffers = new ArrayList<RecoveryBufferPO>();
-		
-		if(!RecoveryCommunicator.getExecutor().isPresent()) {
-			
+
+		if (!RecoveryCommunicator.getExecutor().isPresent()) {
+
 			LOG.error("No executor bound!");
 			return buffers;
-			
+
 		}
 
-		Iterator<IPhysicalQuery> queryIterator = RecoveryCommunicator.getExecutor().get().getExecutionPlan().getQueries()
-				.iterator();
+		Iterator<IPhysicalQuery> queryIterator = RecoveryCommunicator.getExecutor().get().getExecutionPlan()
+				.getQueries().iterator();
 		// Iterate through all queries we have installed
 		while (queryIterator.hasNext()) {
 			IPhysicalQuery query = queryIterator.next();
@@ -290,15 +292,15 @@ public class RecoveryHelper {
 	public static List<ControllablePhysicalSubscription> getSubscriptions(PipeID pipeId) {
 		List<ControllablePhysicalSubscription> subscriptions = new ArrayList<ControllablePhysicalSubscription>();
 
-		if(!RecoveryCommunicator.getExecutor().isPresent()) {
-			
+		if (!RecoveryCommunicator.getExecutor().isPresent()) {
+
 			LOG.error("No executor bound!");
 			return subscriptions;
-			
+
 		}
-		
-		Iterator<IPhysicalQuery> queryIterator = RecoveryCommunicator.getExecutor().get().getExecutionPlan().getQueries()
-				.iterator();
+
+		Iterator<IPhysicalQuery> queryIterator = RecoveryCommunicator.getExecutor().get().getExecutionPlan()
+				.getQueries().iterator();
 		// Iterate through all queries we have installed
 		while (queryIterator.hasNext()) {
 			IPhysicalQuery query = queryIterator.next();
@@ -349,14 +351,14 @@ public class RecoveryHelper {
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public static void addNewSender(JxtaSenderPO originalSender, PeerID newPeer) {
-		
-		if(!RecoveryCommunicator.getExecutor().isPresent()) {
-			
+
+		if (!RecoveryCommunicator.getExecutor().isPresent()) {
+
 			LOG.error("No executor bound!");
 			return;
-			
+
 		}
-		
+
 		// TEST Update sender
 		// Goal: install a new sender which officially sends to the new
 		// receiver so that if we stop a query, it will stop on the new
@@ -469,5 +471,22 @@ public class RecoveryHelper {
 			e.printStackTrace();
 		}
 		return pipe;
+	}
+
+	/**
+	 * Converts a PQL-String to a physical query
+	 * @param pql The PQL String you want to have as a physical query
+	 * @return A list of physical queries
+	 */
+	public static List<IPhysicalQuery> convertToPhysicalPlan(String pql) {
+		TransformationConfiguration trafoConfig = new TransformationConfiguration("relational");
+		List<IPhysicalQuery> physicalQueries = RecoveryCommunicator
+				.getExecutor()
+				.get()
+				.getCompiler()
+				.translateAndTransformQuery(pql, "PQL", RecoveryCommunicator.getActiveSession(),
+						DataDictionaryProvider.getDataDictionary(RecoveryCommunicator.getActiveSession().getTenant()),
+						trafoConfig, Context.empty());
+		return physicalQueries;
 	}
 }

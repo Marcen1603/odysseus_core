@@ -1,7 +1,9 @@
 package de.uniol.inf.is.odysseus.peer.recovery.internal;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import net.jxta.id.ID;
 import net.jxta.peer.PeerID;
@@ -12,8 +14,11 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.p2p_new.IP2PNetworkManager;
+import de.uniol.inf.is.odysseus.p2p_new.physicaloperator.JxtaReceiverPO;
 import de.uniol.inf.is.odysseus.peer.distribute.ILogicalQueryPart;
 import de.uniol.inf.is.odysseus.peer.distribute.listener.AbstractQueryDistributionListener;
 import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryBackupInformation;
@@ -21,6 +26,7 @@ import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryBackupInformationStore;
 import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryCommunicator;
 import de.uniol.inf.is.odysseus.peer.recovery.util.BackupInformationCalculator;
 import de.uniol.inf.is.odysseus.peer.recovery.util.LocalBackupInformationAccess;
+import de.uniol.inf.is.odysseus.peer.recovery.util.RecoveryHelper;
 
 /**
  * The query distribution listener for recovery processes. <br />
@@ -29,20 +35,17 @@ import de.uniol.inf.is.odysseus.peer.recovery.util.LocalBackupInformationAccess;
  * 
  * @author Michael Brand
  */
-public class RecoveryQueryDistributionListener extends
-		AbstractQueryDistributionListener {
+public class RecoveryQueryDistributionListener extends AbstractQueryDistributionListener {
 
 	/**
 	 * The logger instance for this class.
 	 */
-	private static final Logger LOG = LoggerFactory
-			.getLogger(RecoveryQueryDistributionListener.class);
+	private static final Logger LOG = LoggerFactory.getLogger(RecoveryQueryDistributionListener.class);
 
 	/**
 	 * The P2P network manager, if there is one bound.
 	 */
-	private static Optional<IP2PNetworkManager> cNetworkManager = Optional
-			.absent();
+	private static Optional<IP2PNetworkManager> cNetworkManager = Optional.absent();
 
 	/**
 	 * Binds a P2P network manager. <br />
@@ -54,11 +57,9 @@ public class RecoveryQueryDistributionListener extends
 	 */
 	public static void bindNetworkManager(IP2PNetworkManager manager) {
 
-		Preconditions.checkNotNull(manager,
-				"The P2P network manager to bind must be not null!");
+		Preconditions.checkNotNull(manager, "The P2P network manager to bind must be not null!");
 		cNetworkManager = Optional.of(manager);
-		LOG.debug("Bound {} as a P2P network manager for recovery.", manager
-				.getClass().getSimpleName());
+		LOG.debug("Bound {} as a P2P network manager for recovery.", manager.getClass().getSimpleName());
 
 	}
 
@@ -72,14 +73,11 @@ public class RecoveryQueryDistributionListener extends
 	 */
 	public static void unbindNetworkManager(IP2PNetworkManager manager) {
 
-		Preconditions.checkNotNull(manager,
-				"The P2P network manager to unbind must be not null!");
-		if (cNetworkManager.isPresent()
-				&& cNetworkManager.get().equals(manager)) {
+		Preconditions.checkNotNull(manager, "The P2P network manager to unbind must be not null!");
+		if (cNetworkManager.isPresent() && cNetworkManager.get().equals(manager)) {
 
 			cNetworkManager = Optional.absent();
-			LOG.debug("Unbound {} as a P2P network manager for recovery.",
-					manager.getClass().getSimpleName());
+			LOG.debug("Unbound {} as a P2P network manager for recovery.", manager.getClass().getSimpleName());
 
 		}
 
@@ -88,8 +86,7 @@ public class RecoveryQueryDistributionListener extends
 	/**
 	 * The recovery communicator, if there is one bound.
 	 */
-	private static Optional<IRecoveryCommunicator> cCommunicator = Optional
-			.absent();
+	private static Optional<IRecoveryCommunicator> cCommunicator = Optional.absent();
 
 	/**
 	 * Binds a recovery communicator. <br />
@@ -101,11 +98,9 @@ public class RecoveryQueryDistributionListener extends
 	 */
 	public static void bindCommunicator(IRecoveryCommunicator communicator) {
 
-		Preconditions.checkNotNull(communicator,
-				"The recovery communicator to bind must be not null!");
+		Preconditions.checkNotNull(communicator, "The recovery communicator to bind must be not null!");
 		cCommunicator = Optional.of(communicator);
-		LOG.debug("Bound {} as a recovery communicator.", communicator
-				.getClass().getSimpleName());
+		LOG.debug("Bound {} as a recovery communicator.", communicator.getClass().getSimpleName());
 
 	}
 
@@ -119,17 +114,12 @@ public class RecoveryQueryDistributionListener extends
 	 */
 	public static void unbindCommunicator(IRecoveryCommunicator communicator) {
 
-		Preconditions.checkNotNull(communicator,
-				"The recovery communicator to unbind must be not null!");
-		if (cCommunicator.isPresent()
-				&& cCommunicator.get().equals(communicator)) {
+		Preconditions.checkNotNull(communicator, "The recovery communicator to unbind must be not null!");
+		if (cCommunicator.isPresent() && cCommunicator.get().equals(communicator)) {
 
 			cCommunicator = Optional.absent();
-			LOG.debug("Unbound {} as a recovery communicator.", communicator
-					.getClass().getSimpleName());
-
+			LOG.debug("Unbound {} as a recovery communicator.", communicator.getClass().getSimpleName());
 		}
-
 	}
 
 	/**
@@ -138,8 +128,7 @@ public class RecoveryQueryDistributionListener extends
 	private BackupInformationCalculator mBackupInfoCalculator = new BackupInformationCalculator();
 
 	@Override
-	public void afterPostProcessing(ILogicalQuery query,
-			Map<ILogicalQueryPart, PeerID> allocationMap) {
+	public void afterPostProcessing(ILogicalQuery query, Map<ILogicalQueryPart, PeerID> allocationMap) {
 
 		// Keep allocation map for that query in mind, because after
 		// transmission, all query parts will be disconnected.
@@ -148,12 +137,11 @@ public class RecoveryQueryDistributionListener extends
 	}
 
 	@Override
-	public void afterTransmission(ILogicalQuery query,
-			Map<ILogicalQueryPart, PeerID> allocationMap, ID sharedQueryId) {
+	public void afterTransmission(ILogicalQuery query, Map<ILogicalQueryPart, PeerID> allocationMap, ID sharedQueryId) {
 
 		// Calculate backup information
-		Map<PeerID, Collection<IRecoveryBackupInformation>> infoMap = this.mBackupInfoCalculator
-				.calcBackupInformation(sharedQueryId, query, allocationMap);
+		Map<PeerID, Collection<IRecoveryBackupInformation>> infoMap = this.mBackupInfoCalculator.calcBackupInformation(
+				sharedQueryId, query, allocationMap);
 
 		if (!cNetworkManager.isPresent()) {
 
@@ -173,9 +161,8 @@ public class RecoveryQueryDistributionListener extends
 			for (IRecoveryBackupInformation info : infoMap.get(peer)) {
 
 				if (peer.equals(cNetworkManager.get().getLocalPeerID())) {
-
 					LocalBackupInformationAccess.getStore().add(info);
-
+					checkForBuddy(info);
 				} else {
 
 					cCommunicator.get().sendBackupInformation(peer, info);
@@ -186,5 +173,28 @@ public class RecoveryQueryDistributionListener extends
 
 		}
 
+	}
+
+	/**
+	 * Checks, if this peer is the first peer in the chain of peers for a query.
+	 * (This peer has no JxtaReceiverPO for the specific shared query.) If so,
+	 * this peer needs a buddy.
+	 */
+	private void checkForBuddy(IRecoveryBackupInformation info) {
+		boolean foundReceiver = false;
+		List<IPhysicalQuery> plans = RecoveryHelper.convertToPhysicalPlan(info.getLocalPQL());
+		for (IPhysicalQuery plan : plans) {
+			Set<IPhysicalOperator> ops = plan.getAllOperators();
+			for (IPhysicalOperator op : ops) {
+				if (op instanceof JxtaReceiverPO) {
+					foundReceiver = true;
+				}
+			}
+		}
+
+		if (!foundReceiver) {
+			// We need a buddy
+			cCommunicator.get().chooseBuddyForQuery(info.getSharedQuery());
+		}
 	}
 }

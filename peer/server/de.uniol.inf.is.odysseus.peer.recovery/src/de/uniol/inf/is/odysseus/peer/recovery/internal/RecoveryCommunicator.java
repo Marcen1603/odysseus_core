@@ -22,11 +22,8 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableSet;
 
-import de.uniol.inf.is.odysseus.core.collection.Context;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
-import de.uniol.inf.is.odysseus.core.server.datadictionary.DataDictionaryProvider;
-import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvider;
@@ -555,7 +552,11 @@ public class RecoveryCommunicator implements IRecoveryCommunicator, IPeerCommuni
 
 	}
 
-	// TODO javaDoc
+	/**
+	 * Determines, which peers have to hold on and sends them a holdOn-message
+	 * @param sharedQueryId The shared query id, for which the peers have to hold on
+	 * @param failedPeer The peerId from the failed peer
+	 */
 	private void determineAndSendHoldOnMessages(ID sharedQueryId, PeerID failedPeer) {
 		
 		// Preconditions
@@ -578,12 +579,9 @@ public class RecoveryCommunicator implements IRecoveryCommunicator, IPeerCommuni
 		
 		// Test: Tell the peers which sent tuples to the failed peer that
 		// they have to hold on
-		TransformationConfiguration trafoConfig = new TransformationConfiguration("relational");
 		ImmutableSet<String> backupPQL = LocalBackupInformationAccess.getStoredPQLStatements(sharedQueryId, failedPeer);
 		for (String pql : backupPQL) {
-			List<IPhysicalQuery> physicalQueries = cExecutor.get().getCompiler().translateAndTransformQuery(pql, "PQL",
-					getActiveSession(), DataDictionaryProvider.getDataDictionary(getActiveSession().getTenant()),
-					trafoConfig, Context.empty());
+			List<IPhysicalQuery> physicalQueries = RecoveryHelper.convertToPhysicalPlan(pql);
 			// Search for the receiver
 			for (IPhysicalQuery query : physicalQueries) {
 				for (IPhysicalOperator op : query.getAllOperators()) {
@@ -770,7 +768,11 @@ public class RecoveryCommunicator implements IRecoveryCommunicator, IPeerCommuni
 		// 4. TODO Save, that this is my buddy so that we can find a new buddy if that one fails
 	}
 
-	// TODO javaDoc
+	/**
+	 * Sends a message to the given peer
+	 * @param receiverPeer The peer which has to receive the message
+	 * @param message The message which you want to send
+	 */
 	private void sendMessage(PeerID receiverPeer, IMessage message) {
 		
 		// Preconditions

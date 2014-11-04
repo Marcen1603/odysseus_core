@@ -200,6 +200,7 @@ public class RecoveryInstructionMessage implements IMessage {
 			bb.put(pipeId.toString().getBytes());
 			break;
 		case BE_BUDDY:
+			sharedQueryIdLength = sharedQueryId.toString().getBytes().length;
 			// for the length of the list
 			int listLength = 4;
 			// integers for the lengths of the pql strings
