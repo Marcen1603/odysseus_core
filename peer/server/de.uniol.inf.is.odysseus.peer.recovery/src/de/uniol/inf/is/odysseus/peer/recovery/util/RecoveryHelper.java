@@ -219,10 +219,9 @@ public class RecoveryHelper {
 	 * @return All JxtaSenderPOs which can be found in the execution plan on
 	 *         this peer
 	 */
-	@SuppressWarnings("rawtypes")
-	public static List<JxtaSenderPO> getJxtaSenders() {
+	public static List<JxtaSenderPO<?>> getJxtaSenders() {
 				
-		List<JxtaSenderPO> senders = new ArrayList<JxtaSenderPO>();
+		List<JxtaSenderPO<?>> senders = new ArrayList<JxtaSenderPO<?>>();
 		
 		if(!RecoveryCommunicator.getExecutor().isPresent()) {
 			
@@ -242,7 +241,7 @@ public class RecoveryHelper {
 			// JxtaSenders)
 			for (IPhysicalOperator root : roots) {
 				if (root instanceof JxtaSenderPO) {
-					JxtaSenderPO sender = (JxtaSenderPO) root;
+					JxtaSenderPO<?> sender = (JxtaSenderPO<?>) root;
 					senders.add(sender);
 				}
 			}

@@ -437,10 +437,10 @@ public class RecoveryCommunicator implements IRecoveryCommunicator, IPeerCommuni
 	// Code with recovery logic
 	// -----------------------------------------------------
 
-	@SuppressWarnings({ "rawtypes" })
 	@Override
 	public void recover(PeerID failedPeer) {
 		
+		// Preconditions
 		if(!cP2PNetworkManager.isPresent()) {
 			
 			LOG.error("No P2P network manager bound!");
@@ -476,11 +476,10 @@ public class RecoveryCommunicator implements IRecoveryCommunicator, IPeerCommuni
 		// are not the direct sender, so we have to save for which queries we
 		// are the direct sender
 		List<ID> sharedQueryIdsForRecovery = new ArrayList<ID>();
+		List<JxtaSenderPO<?>> senders = RecoveryHelper.getJxtaSenders();
+		List<JxtaSenderPO<?>> affectedSenders = new ArrayList<JxtaSenderPO<?>>();
 
-		List<JxtaSenderPO> senders = RecoveryHelper.getJxtaSenders();
-		List<JxtaSenderPO> affectedSenders = new ArrayList<JxtaSenderPO>();
-
-		for (JxtaSenderPO sender : senders) {
+		for (JxtaSenderPO<?> sender : senders) {
 			if (sender.getPeerIDString().equals(failedPeer.toString())) {
 				// We were a direct sender to the failed peer
 
@@ -556,9 +555,10 @@ public class RecoveryCommunicator implements IRecoveryCommunicator, IPeerCommuni
 
 	}
 
-	@SuppressWarnings("rawtypes")
+	// TODO javaDoc
 	private void determineAndSendHoldOnMessages(ID sharedQueryId, PeerID failedPeer) {
 		
+		// Preconditions
 		if(!cP2PNetworkManager.isPresent()) {
 			
 			LOG.error("No P2P network manager bound!");
@@ -588,7 +588,7 @@ public class RecoveryCommunicator implements IRecoveryCommunicator, IPeerCommuni
 			for (IPhysicalQuery query : physicalQueries) {
 				for (IPhysicalOperator op : query.getAllOperators()) {
 					if (op instanceof JxtaReceiverPO) {
-						JxtaReceiverPO receiver = (JxtaReceiverPO) op;
+						JxtaReceiverPO<?> receiver = (JxtaReceiverPO<?>) op;
 						// This is the information about the peer from which
 						// we get the data
 						// This peer has to hold on
@@ -696,6 +696,7 @@ public class RecoveryCommunicator implements IRecoveryCommunicator, IPeerCommuni
 
 	}
 
+	@Override
 	public void sendRecoveryAgreementMessage(PeerID failedPeer, ID sharedQueryId) {
 		
 		if(!cP2PDictionary.isPresent()) {
@@ -730,6 +731,7 @@ public class RecoveryCommunicator implements IRecoveryCommunicator, IPeerCommuni
 		sendMessage(receiverPeer, message);
 	}
 
+	@Override
 	public void sendGoOnMessage(PeerID receiverPeer, PipeID pipeId) {
 		RecoveryInstructionMessage message = RecoveryInstructionMessage.createGoOnMessage(pipeId);
 		sendMessage(receiverPeer, message);
@@ -738,6 +740,7 @@ public class RecoveryCommunicator implements IRecoveryCommunicator, IPeerCommuni
 	@Override
 	public void chooseBuddyForQuery(ID sharedQueryId) {
 		
+		// Preconditions
 		if(!cP2PNetworkManager.isPresent()) {
 			
 			LOG.error("No P2P network manager bound!");
@@ -767,8 +770,10 @@ public class RecoveryCommunicator implements IRecoveryCommunicator, IPeerCommuni
 		// 4. TODO Save, that this is my buddy so that we can find a new buddy if that one fails
 	}
 
+	// TODO javaDoc
 	private void sendMessage(PeerID receiverPeer, IMessage message) {
 		
+		// Preconditions
 		if(!cPeerCommunicator.isPresent()) {
 			
 			LOG.error("No peer communicator bound!");
