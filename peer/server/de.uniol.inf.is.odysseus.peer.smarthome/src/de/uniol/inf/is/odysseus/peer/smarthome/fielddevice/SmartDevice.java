@@ -19,8 +19,8 @@ public class SmartDevice implements Serializable {
 		return connectedFieldDevices;
 	}
 	
-	public List<Sensor> getConnectedSensors(){
-		List<Sensor> sensors = new ArrayList<Sensor>();
+	public ArrayList<Sensor> getConnectedSensors(){
+		ArrayList<Sensor> sensors = new ArrayList<Sensor>();
 		for(FieldDevice fieldDevice : getConnectedFieldDevices()){
 			if(fieldDevice instanceof Sensor){
 				sensors.add((Sensor)fieldDevice);
@@ -29,8 +29,8 @@ public class SmartDevice implements Serializable {
 		return sensors;
 	}
 	
-	public List<Actor> getConnectedActors(){
-		List<Actor> actors = new ArrayList<Actor>();
+	public ArrayList<Actor> getConnectedActors(){
+		ArrayList<Actor> actors = new ArrayList<Actor>();
 		for(FieldDevice fieldDevice : getConnectedFieldDevices()){
 			if(fieldDevice instanceof Actor){
 				actors.add((Actor)fieldDevice);

@@ -1,5 +1,9 @@
 package de.uniol.inf.is.odysseus.peer.smarthome.server;
 
+import java.awt.List;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map.Entry;
 
 import net.jxta.document.Advertisement;
@@ -15,8 +19,8 @@ import de.uniol.inf.is.odysseus.peer.smarthome.fielddevice.Actor;
 import de.uniol.inf.is.odysseus.peer.smarthome.fielddevice.Sensor;
 import de.uniol.inf.is.odysseus.peer.smarthome.fielddevice.SmartDevice;
 
-public class Logic implements
-		ISmartDeviceDictionaryListener, IAdvertisementDiscovererListener {
+public class Logic implements ISmartDeviceDictionaryListener,
+		IAdvertisementDiscovererListener {
 	private static final Logger LOG = LoggerFactory
 			.getLogger(SmartHomeServerPlugIn.class);
 	private static Logic instance;
@@ -41,14 +45,6 @@ public class Logic implements
 	@Override
 	public void smartDeviceRemoved(SmartDeviceServerDictionaryDiscovery sender,
 			SmartDevice remoteSmartDevice) {
-
-		LOG.debug("SmartHomeServerPlugIn smartDeviceRemoved: "
-				+ SmartDeviceServer.getInstance().getLocalSmartDevice()
-						.getPeerID());
-
-		if (QueryExecutor.getInstance().isRunningLogicRule(remoteSmartDevice)) {
-			QueryExecutor.getInstance().removeAllLogicRules(remoteSmartDevice);
-		}
 	}
 
 	@Override
@@ -56,22 +52,90 @@ public class Logic implements
 			SmartDevice smartDevice) {
 		// LOG.debug("smartDeviceUpdated: " +
 		// smartDevice.getPeerIDString());
-
-		// TODO: Nachschauen was sich am SmartDevice geändert hat.
-		// Falls Sensoren hinzugefügt oder entfernt wurden, dann müssen die
-		// Logik-Regeln überprüft und anschließend ausgeführt oder entfernt
-		// werden!
-
 	}
 
 	void processLogic(SmartDevice newSmartDevice) {
 		/*******************************
-		 * TODO: Logic processing: 1. find matches
+		 * TODO: Logic processing:
 		 *******************************/
+
+		HashMap<String, String> relatedActivityNames = getRelatedActivityNamesWithSourceName(newSmartDevice);
+
+		importRelatedSources(relatedActivityNames, newSmartDevice);
+		//TODO:
+		executeRelatedActorLogicRuleQueries(newSmartDevice);
+
+		/*
+		HashMap<String, String> actorLogicQueries = getActorLogicQueries(
+				relatedActivityNames, newSmartDevice);
+		for(Entry<String, String> entry : actorLogicQueries.entrySet()){
+			String sourceName = entry.getKey();
+			String query = entry.getValue();
+			
+			LOG.debug("sourceName:"+sourceName+" query:"+query);
+			
+			
+			//QueryExecutor
+			//.getInstance()
+			//.executeActorLogicRuleWhenPossibleAsync(possibleActivityName,
+			// sensor, actor, smartDeviceWithSensor);
+			
+		}
+	*/
+	}
+
+	private HashMap<String, String> getActorLogicQueries(
+			HashMap<String, String> relatedActivityNames,
+			SmartDevice newSmartDevice) {
+		HashMap<String, String> map = new HashMap<>();
+
+		ArrayList<Actor> connectedActors = SmartDeviceServer.getInstance()
+				.getLocalSmartDevice().getConnectedActors();
+
+		for (Entry<String, String> entry : relatedActivityNames.entrySet()) {
+			String activityName = entry.getKey();
+			//String activitySourceName = entry.getValue();
+
+			
+			for (Actor actor : connectedActors) {
+				actor.setActivitySourceName(activityName);
+				try {
+					LinkedHashMap<String, String> actorLogicRules = actor
+							.getLogicRuleOfActivity(activityName);
+					//logicRuleQueries: sourceName, logicRuleQuery
+
+					map.putAll(actorLogicRules);
+					
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		}
+		return map;
+	}
+
+	private void executeRelatedActorLogicRuleQueries(SmartDevice newSmartDevice) {
+		HashMap<Sensor, Actor> relatedSensorsWithActors = getRelatedSensorsWithActorsWithLogic(newSmartDevice);
+		for (Entry<Sensor, Actor> entry : relatedSensorsWithActors.entrySet()) {
+			Sensor sensor = entry.getKey();
+			Actor actor = entry.getValue();
+
+			// QueryExecutor
+			// .getInstance()
+			// .executeActorLogicRuleWhenPossibleAsync(possibleActivityName,
+			// sensor, actor, smartDeviceWithSensor);
+
+		}
+
+	}
+
+	private HashMap<Sensor, Actor> getRelatedSensorsWithActorsWithLogic(
+			SmartDevice newSmartDevice) {
+		HashMap<Sensor, Actor> map = new HashMap<Sensor, Actor>();
 
 		String smartDeviceContextName = "";
 		if (SmartDeviceServer.getInstance().getLocalSmartDevice() == null) {
-			return;
+			return map;
 		} else {
 			smartDeviceContextName = SmartDeviceServer.getInstance()
 					.getLocalSmartDevice().getContextName();
@@ -84,7 +148,6 @@ public class Logic implements
 		if (smartDeviceContextName != null
 				&& newSmartDevice.getContextName().equals(
 						smartDeviceContextName)) {
-
 			for (Sensor remoteSensor : newSmartDevice.getConnectedSensors()) {
 				// LOG.debug("_remoteSensor:"+remoteSensor.getName());
 				for (String possibleActivityNameFromSensor : remoteSensor
@@ -100,26 +163,13 @@ public class Logic implements
 								if (actorActivity
 										.equals(possibleActivityNameFromSensor)) {
 
-									LOG.debug("_!_a:"
-											+ possibleActivityNameFromSensor
-											+ " rS:" + remoteSensor + " ac:"
-											+ localActor.getName() + " nD:"
-											+ newSmartDevice.getPeerName());
-
+									map.put(remoteSensor, localActor);
+									
+									//TODO:
 									QueryExecutor
-											.getInstance()
-											.addNeededSourceForImport(
-													remoteSensor
-															.getActivitySourceName(possibleActivityNameFromSensor),
-													newSmartDevice.getPeerID());
-
-									QueryExecutor
-											.getInstance()
-											.executeActorLogicRuleWhenPossibleAsync(
-													possibleActivityNameFromSensor,
-													(Sensor) remoteSensor,
-													(Actor) localActor,
-													newSmartDevice);
+									.getInstance()
+									.executeActorLogicRuleWhenPossibleAsync(possibleActivityNameFromSensor,
+											remoteSensor, localActor, newSmartDevice);
 								}
 							}
 						}
@@ -127,10 +177,78 @@ public class Logic implements
 				}
 			}
 		} else {
-			// The context does not matter:
+			// TODO: The context does not matter:
 
 		}
 
+		return map;
+	}
+
+	private void importRelatedSources(
+			HashMap<String, String> relatedActivityNames,
+			SmartDevice newSmartDevice) {
+		LOG.debug("newSmartDevice from Peer:" + newSmartDevice.getPeerName());
+		for (Entry<String, String> entry : relatedActivityNames.entrySet()) {
+			String activityName = entry.getKey();
+			String activitySourceName = entry.getValue();
+
+			LOG.debug("activityName:" + activityName + " activitySourceName:"
+					+ activitySourceName);
+
+			QueryExecutor.getInstance().addNeededSourceForImport(activityName,
+					newSmartDevice.getPeerID());
+		}
+	}
+
+	private HashMap<String, String> getRelatedActivityNamesWithSourceName(
+			SmartDevice newSmartDevice) {
+		HashMap<String, String> map = new HashMap<>();
+
+		String smartDeviceContextName = "";
+		if (SmartDeviceServer.getInstance().getLocalSmartDevice() == null) {
+			return map;
+		} else {
+			smartDeviceContextName = SmartDeviceServer.getInstance()
+					.getLocalSmartDevice().getContextName();
+			LOG.debug("smartDeviceCtx:" + smartDeviceContextName
+					+ " newSmartDeviceCtx:" + newSmartDevice.getContextName());
+			// TODO: comment out next line
+			smartDeviceContextName = "Office";
+		}
+
+		if (smartDeviceContextName != null
+				&& newSmartDevice.getContextName().equals(
+						smartDeviceContextName)) {
+			for (Sensor remoteSensor : newSmartDevice.getConnectedSensors()) {
+				// LOG.debug("_remoteSensor:"+remoteSensor.getName());
+				for (String possibleActivityNameFromSensor : remoteSensor
+						.getPossibleActivityNames()) {
+					// LOG.debug("__possibleActivityNameFromSensor:"+possibleActivityNameFromSensor);
+					for (Actor localActor : SmartDeviceServer.getInstance()
+							.getLocalSmartDevice().getConnectedActors()) {
+						// LOG.debug("___:"+localActor.getName());
+						if (localActor != null) {
+							for (String actorActivity : localActor
+									.getPossibleActivityNames()) {
+								// LOG.debug("____:"+actorActivity);
+								if (actorActivity
+										.equals(possibleActivityNameFromSensor)) {
+
+									map.put(possibleActivityNameFromSensor,
+											remoteSensor
+													.getActivitySourceName(possibleActivityNameFromSensor));
+								}
+							}
+						}
+					}
+				}
+			}
+		} else {
+			// TODO: The context does not matter:
+
+		}
+
+		return map;
 	}
 
 	public static boolean isSourceNameNeddedByLogicRule(String sourceName) {

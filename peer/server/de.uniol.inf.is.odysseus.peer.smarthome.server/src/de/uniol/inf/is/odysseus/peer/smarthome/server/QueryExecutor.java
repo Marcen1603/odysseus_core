@@ -22,7 +22,7 @@ import de.uniol.inf.is.odysseus.peer.smarthome.fielddevice.SmartDevice;
 import de.uniol.inf.is.odysseus.peer.smarthome.server.service.ServerExecutorService;
 import de.uniol.inf.is.odysseus.peer.smarthome.server.service.SessionManagementService;
 
-public class QueryExecutor implements IP2PDictionaryListener {
+public class QueryExecutor implements IP2PDictionaryListener, ISmartDeviceDictionaryListener {
 	private static final Logger LOG = LoggerFactory
 			.getLogger(SmartHomeServerPlugIn.class);
 	private static QueryExecutor instance;
@@ -431,5 +431,35 @@ public class QueryExecutor implements IP2PDictionaryListener {
 			}
 		}
 		return false;
+	}
+
+	@Override
+	public void smartDeviceAdded(SmartDeviceServerDictionaryDiscovery sender,
+			SmartDevice smartDevice) {
+	}
+
+	@Override
+	public void smartDeviceRemoved(SmartDeviceServerDictionaryDiscovery sender,
+			SmartDevice smartDevice) {
+		LOG.debug("QueryExecutor smartDeviceRemoved: "
+				+ SmartDeviceServer.getInstance().getLocalSmartDevice()
+						.getPeerID());
+
+		if (QueryExecutor.getInstance().isRunningLogicRule(smartDevice)) {
+			QueryExecutor.getInstance().removeAllLogicRules(smartDevice);
+		}
+	}
+
+	@Override
+	public void smartDeviceUpdated(SmartDeviceServerDictionaryDiscovery sender,
+			SmartDevice smartDevice) {
+		// LOG.debug("smartDeviceUpdated: " +
+		// smartDevice.getPeerIDString());
+		//
+		// TODO: Nachschauen was sich am SmartDevice geändert hat.
+				// Falls Sensoren hinzugefügt oder entfernt wurden, dann müssen die
+				// Logik-Regeln überprüft und anschließend ausgeführt oder entfernt
+				// werden!
+
 	}
 }

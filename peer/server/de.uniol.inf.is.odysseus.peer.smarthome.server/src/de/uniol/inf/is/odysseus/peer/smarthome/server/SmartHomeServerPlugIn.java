@@ -32,6 +32,9 @@ public class SmartHomeServerPlugIn implements BundleActivator {
 	public void start(BundleContext bundleContext) throws Exception {
 		SmartDeviceServerDictionaryDiscovery.getInstance().addListener(
 				Logic.getInstance());
+		SmartDeviceServerDictionaryDiscovery.getInstance().addListener(
+				QueryExecutor.getInstance());
+		
 
 		bundle = bundleContext.getBundle();
 	}
@@ -39,6 +42,8 @@ public class SmartHomeServerPlugIn implements BundleActivator {
 	public void stop(BundleContext context) throws Exception {
 		SmartDeviceServerDictionaryDiscovery.getInstance().removeListener(
 				Logic.getInstance());
+		SmartDeviceServerDictionaryDiscovery.getInstance().removeListener(
+				QueryExecutor.getInstance());
 		bundle = null;
 	}
 

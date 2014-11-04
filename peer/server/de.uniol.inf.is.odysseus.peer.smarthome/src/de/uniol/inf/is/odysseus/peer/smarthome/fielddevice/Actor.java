@@ -25,6 +25,12 @@ public abstract class Actor implements FieldDevice, Serializable {
 		return this.name;
 	}
 	
+	/**
+	 * 
+	 * @param possibleActivityName
+	 * @return
+	 * @throws Exception
+	 */
 	public LinkedHashMap<String, String> getLogicRuleOfActivity(
 			String possibleActivityName) throws Exception {
 		if(this.getActivitySourceName()==null || this.getActivitySourceName().equals("")){

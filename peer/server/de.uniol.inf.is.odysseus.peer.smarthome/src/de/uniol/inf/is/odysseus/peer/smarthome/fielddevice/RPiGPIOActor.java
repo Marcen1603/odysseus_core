@@ -171,6 +171,8 @@ public class RPiGPIOActor extends Actor {
 				logicRuleQueries.put(entitySetStateStreamName,
 						sbEntitySetState.toString());
 
+				
+//
 				super.addLogicRuleForActivity(activity, logicRuleQueries);
 			}
 			initWasRun = true;
