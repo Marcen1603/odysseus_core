@@ -170,7 +170,81 @@ public class RecoveryCommunicator implements IRecoveryCommunicator, IPeerCommuni
 		
 	}
 	
-	private static IPeerCommunicator peerCommunicator;
+	/**
+	 * The peer communicator, if there is one bound.
+	 */
+	private static Optional<IPeerCommunicator> cPeerCommunicator = Optional.absent();
+	
+	/**
+	 * Registers messages and listeners at the peer communicator.
+	 */
+	private void registerMessagesAndAddListeners() {
+		
+		Preconditions.checkArgument(cPeerCommunicator.isPresent());
+		cPeerCommunicator.get().registerMessageType(RecoveryInstructionMessage.class);
+		cPeerCommunicator.get().addListener(this, RecoveryInstructionMessage.class);
+		cPeerCommunicator.get().registerMessageType(BackupInformationMessage.class);
+		cPeerCommunicator.get().addListener(this, BackupInformationMessage.class);
+		cPeerCommunicator.get().registerMessageType(RecoveryAgreementMessage.class);
+		cPeerCommunicator.get().addListener(this, RecoveryAgreementMessage.class);
+		cPeerCommunicator.get().registerMessageType(RemoveQueryMessage.class);
+		cPeerCommunicator.get().addListener(this, RemoveQueryMessage.class);
+		
+	}
+	
+	/**
+	 * Unregisters messages and listeners at the peer communicator.
+	 */
+	private void unregisterMessagesAndAddListeners() {
+		
+		Preconditions.checkArgument(cPeerCommunicator.isPresent());
+		cPeerCommunicator.get().removeListener(this, RecoveryInstructionMessage.class);
+		cPeerCommunicator.get().unregisterMessageType(RecoveryInstructionMessage.class);
+		cPeerCommunicator.get().removeListener(this, BackupInformationMessage.class);
+		cPeerCommunicator.get().unregisterMessageType(BackupInformationMessage.class);
+		cPeerCommunicator.get().removeListener(this, RecoveryAgreementMessage.class);
+		cPeerCommunicator.get().unregisterMessageType(RecoveryAgreementMessage.class);
+		cPeerCommunicator.get().removeListener(this, RemoveQueryMessage.class);
+		
+	}
+	
+	/**
+	 * Binds a peer communicator. <br />
+	 * Called by OSGi-DS.
+	 * @param serv The peer communicator to bind. <br />
+	 * Must be not null.
+	 */
+	public void bindPeerCommunicator(IPeerCommunicator serv) {
+		
+		Preconditions.checkNotNull(serv);
+		cPeerCommunicator = Optional.of(serv);
+		LOG.debug("Bound {} as a peer communicator.", serv
+				.getClass().getSimpleName());		
+		this.registerMessagesAndAddListeners();
+
+	}
+
+	/**
+	 * Unbinds a peer communicator, if it's the bound one. <br />
+	 * Called by OSGi-DS.
+	 * @param serv The peer communicator to unbind. <br />
+	 * Must be not null.
+	 */
+	public void unbindPeerCommunicator(IPeerCommunicator serv) {
+		
+		Preconditions.checkNotNull(serv);
+		
+		if (cPeerCommunicator.isPresent() && cPeerCommunicator.get() == serv) {
+			
+			cPeerCommunicator = Optional.absent();
+			LOG.debug("Unbound {} as a peer communicator.", serv
+					.getClass().getSimpleName());
+			this.unregisterMessagesAndAddListeners();
+			
+		}
+		
+	}
+		
 	private static IRecoveryP2PListener recoveryP2PListener;
 	private static IRecoveryAllocator recoveryAllocator;
 
@@ -204,47 +278,6 @@ public class RecoveryCommunicator implements IRecoveryCommunicator, IPeerCommuni
 			recoveryP2PListener.stopPeerFailureDetection();
 		}
 
-	}
-
-	/**
-	 * called by OSGi-DS to bind Peer Communicator (registers all Messages and
-	 * adds Listeners)
-	 * 
-	 * @param serv
-	 *            PeerCommunicator to bind.
-	 */
-	public void bindPeerCommunicator(IPeerCommunicator serv) {
-		peerCommunicator = serv;
-		peerCommunicator.registerMessageType(RecoveryInstructionMessage.class);
-		peerCommunicator.addListener(this, RecoveryInstructionMessage.class);
-		peerCommunicator.registerMessageType(BackupInformationMessage.class);
-		peerCommunicator.addListener(this, BackupInformationMessage.class);
-		peerCommunicator.registerMessageType(RecoveryAgreementMessage.class);
-		peerCommunicator.addListener(this, RecoveryAgreementMessage.class);
-		peerCommunicator.registerMessageType(RemoveQueryMessage.class);
-		peerCommunicator.addListener(this, RemoveQueryMessage.class);
-
-	}
-
-	/**
-	 * called by OSGi-DS to unbind Peer Communicator (unregisters all Messages
-	 * and removes Listeners)
-	 * 
-	 * @param serv
-	 *            Peer Communicator to unbind.
-	 * 
-	 */
-	public void unbindPeerCommunicator(IPeerCommunicator serv) {
-		if (peerCommunicator == serv) {
-			peerCommunicator.removeListener(this, RecoveryInstructionMessage.class);
-			peerCommunicator.unregisterMessageType(RecoveryInstructionMessage.class);
-			peerCommunicator.removeListener(this, BackupInformationMessage.class);
-			peerCommunicator.unregisterMessageType(BackupInformationMessage.class);
-			peerCommunicator.removeListener(this, RecoveryAgreementMessage.class);
-			peerCommunicator.unregisterMessageType(RecoveryAgreementMessage.class);
-			peerCommunicator.removeListener(this, RemoveQueryMessage.class);
-			peerCommunicator = null;
-		}
 	}
 
 	/**
@@ -443,6 +476,11 @@ public class RecoveryCommunicator implements IRecoveryCommunicator, IPeerCommuni
 			LOG.error("No P2P network manager bound!");
 			return;
 			
+		} else if(!cPeerCommunicator.isPresent()) {
+			
+			LOG.error("No peer communicator bound!");
+			return;
+			
 		}
 		
 		// Test: Tell the peers which sent tuples to the failed peer that
@@ -475,7 +513,7 @@ public class RecoveryCommunicator implements IRecoveryCommunicator, IPeerCommuni
 								sendHoldOnMessage(peerToHoldOn, holdOnMessage);
 							} else {
 								// We are the peer
-								receivedMessage(peerCommunicator, peerToHoldOn, holdOnMessage);
+								receivedMessage(cPeerCommunicator.get(), peerToHoldOn, holdOnMessage);
 							}
 						} catch (URISyntaxException e) {
 							e.printStackTrace();
@@ -498,6 +536,13 @@ public class RecoveryCommunicator implements IRecoveryCommunicator, IPeerCommuni
 		Preconditions.checkNotNull(failedPeer);
 		Preconditions.checkNotNull(newPeer);
 		Preconditions.checkNotNull(sharedQueryId);
+		
+		if(!cPeerCommunicator.isPresent()) {
+			
+			LOG.error("No peer communicator bound!");
+			return;
+			
+		}
 
 		ImmutableCollection<String> pqlParts = LocalBackupInformationAccess.getStoredPQLStatements(sharedQueryId,
 				failedPeer);
@@ -511,7 +556,7 @@ public class RecoveryCommunicator implements IRecoveryCommunicator, IPeerCommuni
 		RecoveryInstructionMessage takeOverMessage = RecoveryInstructionMessage.createAddQueryMessage(pql,
 				sharedQueryId);
 		try {
-			peerCommunicator.send(newPeer, takeOverMessage);
+			cPeerCommunicator.get().send(newPeer, takeOverMessage);
 		} catch (Throwable e) {
 			LOG.error("Could not send add query message to peer " + newPeer.toString(), e);
 		}
@@ -630,8 +675,16 @@ public class RecoveryCommunicator implements IRecoveryCommunicator, IPeerCommuni
 	}
 
 	private void sendMessage(PeerID receiverPeer, IMessage message) {
+		
+		if(!cPeerCommunicator.isPresent()) {
+			
+			LOG.error("No peer communicator bound!");
+			return;
+			
+		}
+		
 		try {
-			peerCommunicator.send(receiverPeer, message);
+			cPeerCommunicator.get().send(receiverPeer, message);
 		} catch (PeerCommunicationException e) {
 			e.printStackTrace();
 		}
