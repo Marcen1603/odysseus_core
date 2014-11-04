@@ -76,7 +76,7 @@ public class SmartHomeServerPlugInCopy implements BundleActivator {
 	// SmartDevice:
 	public static final String SMART_DEVICE_CONFIG_FILE = "odysseusSmartDevice.conf";
 	private static SmartDeviceConfig smartDeviceConfig;
-	private static SmartDeviceDictionaryDiscovery smartDeviceDictionary;
+	private static SmartDeviceServerDictionaryDiscovery smartDeviceDictionary;
 	private static SmartDeviceDictionaryListener smartDeviceDictionaryListener;
 	private static SmartDevice smartDevice;
 	private static SmartDeviceListener smartDeviceListener;
@@ -786,7 +786,7 @@ public class SmartHomeServerPlugInCopy implements BundleActivator {
 	}
 
 	public static void saveSmartDeviceConfig() {
-		SmartDeviceConfiguration.setSmartDeviceConfig(SMART_DEVICE_CONFIG_FILE,
+		SmartDeviceLocalConfiguration.setSmartDeviceConfig(SMART_DEVICE_CONFIG_FILE,
 				smartDeviceConfig);
 	}
 
@@ -957,7 +957,7 @@ public class SmartHomeServerPlugInCopy implements BundleActivator {
 
 	private void initSmartDeviceDictionary() {
 		if (smartDeviceDictionary == null) {
-			smartDeviceDictionary = new SmartDeviceDictionaryDiscovery();
+			smartDeviceDictionary = new SmartDeviceServerDictionaryDiscovery();
 			smartDeviceDictionaryListener = new SmartDeviceDictionaryListener();
 			smartDeviceDictionary.addListener(smartDeviceDictionaryListener);
 		}
@@ -967,7 +967,7 @@ public class SmartHomeServerPlugInCopy implements BundleActivator {
 		if (smartDeviceConfig == null) {
 			smartDeviceConfig = new SmartDeviceConfig();
 			// overwrite the initital object with information from saved file
-			smartDeviceConfig.overwriteWith(SmartDeviceConfiguration
+			smartDeviceConfig.overwriteWith(SmartDeviceLocalConfiguration
 					.getSmartDeviceConfig(SMART_DEVICE_CONFIG_FILE));
 		}
 	}
@@ -976,7 +976,7 @@ public class SmartHomeServerPlugInCopy implements BundleActivator {
 			ISmartDeviceDictionaryListener {
 
 		@Override
-		public void smartDeviceAdded(SmartDeviceDictionaryDiscovery sender,
+		public void smartDeviceAdded(SmartDeviceServerDictionaryDiscovery sender,
 				SmartDevice newSmartDevice) {
 			LOG.debug("smartDeviceAdded: " + newSmartDevice.getPeerID()
 					+ " processLogic(...");
@@ -985,7 +985,7 @@ public class SmartHomeServerPlugInCopy implements BundleActivator {
 		}
 
 		@Override
-		public void smartDeviceRemoved(SmartDeviceDictionaryDiscovery sender,
+		public void smartDeviceRemoved(SmartDeviceServerDictionaryDiscovery sender,
 				SmartDevice remoteSmartDevice) {
 
 			LOG.debug("SmartHomeServerPlugIn smartDeviceRemoved: "
@@ -997,7 +997,7 @@ public class SmartHomeServerPlugInCopy implements BundleActivator {
 		}
 
 		@Override
-		public void smartDeviceUpdated(SmartDeviceDictionaryDiscovery sender,
+		public void smartDeviceUpdated(SmartDeviceServerDictionaryDiscovery sender,
 				SmartDevice smartDevice) {
 			// LOG.debug("smartDeviceUpdated: " +
 			// smartDevice.getPeerIDString());

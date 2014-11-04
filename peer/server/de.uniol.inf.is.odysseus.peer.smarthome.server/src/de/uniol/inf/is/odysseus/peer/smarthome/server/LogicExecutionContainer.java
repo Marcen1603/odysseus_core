@@ -67,7 +67,6 @@ public class LogicExecutionContainer {
 
 	public boolean isLogicRuleRunning(String possibleActivityName,
 			Sensor sensor, Actor actor, SmartDevice smartDevice) {
-		// TODO Auto-generated method stub
 		// TODO: überprüfen ob die Logic-Regel bereits ausgeführt
 		// wird/wurde!
 

@@ -32,6 +32,7 @@ public class RPiGPIOActor extends Actor {
 	 * @param state
 	 */
 	public void addActivityForState(String activity, State state) {
+		addPossibleActivityName(activity);
 		this.getStateForActivity().put(activity, state);
 	}
 
