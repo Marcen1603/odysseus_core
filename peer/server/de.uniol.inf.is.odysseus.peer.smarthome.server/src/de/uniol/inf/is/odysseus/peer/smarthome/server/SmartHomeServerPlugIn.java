@@ -3,6 +3,9 @@ package de.uniol.inf.is.odysseus.peer.smarthome.server;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.LinkedHashMap;
+import java.util.ListIterator;
+import java.util.Map.Entry;
 import java.util.NoSuchElementException;
 
 import net.jxta.document.Advertisement;
@@ -28,10 +31,14 @@ import de.uniol.inf.is.odysseus.p2p_new.IMessage;
 import de.uniol.inf.is.odysseus.p2p_new.IP2PNetworkManager;
 import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicator;
 import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicatorListener;
+import de.uniol.inf.is.odysseus.p2p_new.InvalidP2PSource;
 import de.uniol.inf.is.odysseus.p2p_new.PeerCommunicationException;
+import de.uniol.inf.is.odysseus.p2p_new.PeerException;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.IP2PDictionary;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.IP2PDictionaryListener;
+import de.uniol.inf.is.odysseus.p2p_new.dictionary.MultipleSourceAdvertisement;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.SourceAdvertisement;
+import de.uniol.inf.is.odysseus.p2p_new.dictionary.sources.SourceAdvertisementInstantiator;
 import de.uniol.inf.is.odysseus.parser.pql.generator.IPQLGenerator;
 import de.uniol.inf.is.odysseus.peer.smarthome.ISmartDeviceDictionaryListener;
 import de.uniol.inf.is.odysseus.peer.smarthome.SmartDeviceConfig;
@@ -41,7 +48,7 @@ import de.uniol.inf.is.odysseus.peer.smarthome.SmartDeviceDictionary;
 import de.uniol.inf.is.odysseus.peer.smarthome.SmartDeviceMessage;
 import de.uniol.inf.is.odysseus.peer.smarthome.SmartDeviceRequestMessage;
 import de.uniol.inf.is.odysseus.peer.smarthome.SmartDeviceResponseMessage;
-import de.uniol.inf.is.odysseus.peer.smarthome.fielddevice.FieldDevice;
+import de.uniol.inf.is.odysseus.peer.smarthome.fielddevice.Actor;
 import de.uniol.inf.is.odysseus.peer.smarthome.fielddevice.RPiGPIOActor;
 import de.uniol.inf.is.odysseus.peer.smarthome.fielddevice.RPiGPIOSensor;
 import de.uniol.inf.is.odysseus.peer.smarthome.fielddevice.Sensor;
@@ -67,7 +74,7 @@ public class SmartHomeServerPlugIn implements BundleActivator {
 	private static P2PDictionaryListener p2pDictionaryListener;
 
 	private static SmartDeviceConfigurationListener smartDeviceConfigurationListener;
-	private static SmartDeviceAdvertisementListener smartDeviceAdvertisementListener;
+	private static AdvertisementListener advertisementListener;
 
 	// SmartDevice:
 	public static final String SMART_DEVICE_CONFIG_FILE = "odysseusSmartDevice.conf";
@@ -113,22 +120,25 @@ public class SmartHomeServerPlugIn implements BundleActivator {
 			LOG.error("Couldn't register advertisement type: "
 					+ SmartDeviceAdvertisement.getAdvertisementType());
 		}
+
+		AdvertisementFactory.registerAdvertisementInstance(
+				SourceAdvertisement.getAdvertisementType(),
+				new SourceAdvertisementInstantiator());
 	}
 
 	// called by OSGi-DS
 	public static void bindP2PNetworkManager(IP2PNetworkManager serv) {
 		p2pNetworkManager = serv;
 
-		smartDeviceAdvertisementListener = new SmartDeviceAdvertisementListener();
-		p2pNetworkManager
-				.addAdvertisementListener(smartDeviceAdvertisementListener);
+		advertisementListener = new AdvertisementListener();
+		p2pNetworkManager.addAdvertisementListener(advertisementListener);
 	}
 
 	// called by OSGi-DS
 	public static void unbindP2PNetworkManager(IP2PNetworkManager serv) {
 		if (p2pNetworkManager == serv) {
 			p2pNetworkManager
-					.removeAdvertisementListener(smartDeviceAdvertisementListener);
+					.removeAdvertisementListener(advertisementListener);
 			p2pNetworkManager = null;
 		}
 	}
@@ -249,142 +259,6 @@ public class SmartHomeServerPlugIn implements BundleActivator {
 		return p2pDictionary;
 	}
 
-	private static void initSmartDeviceForAdvertisement() {
-		/*****************************************
-		 * TODO: init smart device for advertisement
-		 *****************************************/
-		String peerIdString = getLocalPeerID();
-		String cleanPeerID = peerIdString.replaceAll("[-+.^:,]", "");
-		String peerName = p2pNetworkManager.getLocalPeerName().intern()
-				.toString();
-
-		//
-		// 1. Instantiate Sensors:
-		//
-		// Temper1
-		Temper1Sensor temper1 = new Temper1Sensor("temper1", "temper1",
-				peerName, "");// cleanPeerID
-		temper1.addPossibleActivityName("hot");
-		//
-		// GPIO_07 as input sensor
-		RPiGPIOSensor gpioTaste7 = new RPiGPIOSensor("RPiGPIOTaster",
-				"rpigpiotaster", peerName, cleanPeerID);
-		gpioTaste7.addPossibleActivityName("Tasterbetaetigt");
-		gpioTaste7.setInputPin("7");
-		// gpioTaste11.setPinState("high");
-
-		//
-		// 2. instantiate SmartDevice:
-		//
-		smartDevice = new SmartDevice();
-		smartDevice.setPeerID(getLocalPeerID());
-		smartDevice.setSmartDevice(getSmartDeviceConfig());
-		smartDevice.addConnectedFieldDevice(temper1);
-		// smartDevice.addConnectedFieldDevice(gpioTaste7);
-
-		//
-		// 3. Execute queries:
-		//
-		executeSensorQueries(smartDevice);
-
-		//
-		// 4. SmartDevice is ready for advertisement now:
-		//
-		smartDevice.setReady(true);
-	}
-
-	private static void executeSensorQueries(SmartDevice smartDevice) {
-		for (FieldDevice fieldDevice : smartDevice.getConnectedFieldDevices()) {
-			if (fieldDevice instanceof Sensor) {
-				Sensor sensor = (Sensor) fieldDevice;
-
-				// stream with raw values of the sensor
-				executeQuery(sensor.getRawSourceName(),
-						sensor.getQueryForRawValues());
-
-				// stream with participating activities of the sensor
-				executeQuery(sensor.getActivitySourceName(),
-						sensor.getQueryForActivityInterpreter());
-			}
-		}
-	}
-
-	private static void publishSmartDeviceAdvertisementAsync() {
-		Thread thread = new Thread(new Runnable() {
-			@SuppressWarnings("unused")
-			@Override
-			public void run() {
-				waitForP2PNetworkManager();
-				waitForJxtaServicesProvider();
-				waitForServerExecutorService();
-
-				printLocalPeerID();
-
-				// TODO: one advertisement has an expirationTime. Publish every
-				// X seconds or minutes:
-
-				LOG.error("publishSmartDeviceAdvertisementAsync started and will be executing in 5 sec.");
-
-				/*
-				 * // wait for SmartDevice while (smartDevice == null ||
-				 * !smartDevice.isReady()) { try { Thread.sleep(200); } catch
-				 * (InterruptedException e) { } }
-				 */
-
-				try {
-					Thread.sleep(5000);
-				} catch (InterruptedException e1) {
-					e1.printStackTrace();
-				}
-
-				LOG.error("publishSmartDeviceAdvertisementAsync() now:");
-
-				try {
-					initSmartDeviceForAdvertisement();
-
-					String advType = SmartDeviceAdvertisement
-							.getAdvertisementType();
-					ID advID = IDFactory.newPipeID(getP2PNetworkManager()
-							.getLocalPeerGroupID());
-					PeerID localPeerID = p2pNetworkManager.getLocalPeerID();
-
-					SmartDeviceAdvertisement smartDeviceAdv = (SmartDeviceAdvertisement) AdvertisementFactory
-							.newAdvertisement(advType);
-					smartDeviceAdv.setID(advID);
-					smartDeviceAdv.setPeerID(localPeerID);
-
-					long lifetime = 60 * 2;
-					long expirationTime = 60 * 3;
-
-					getJxtaServicesProvider().publish(smartDeviceAdv);
-					getJxtaServicesProvider().remotePublish(smartDeviceAdv);
-
-					// getJxtaServicesProvider().publish(smartDeviceAdv,
-					// lifetime,expirationTime);
-					// getJxtaServicesProvider().remotePublish(smartDeviceAdv,expirationTime);
-
-					// getJxtaServicesProvider().publishInfinite(smartDeviceAdv);
-					// getJxtaServicesProvider().remotePublishInfinite(smartDeviceAdv);
-				} catch (IOException ex) {
-					LOG.error(ex.getMessage(), ex);
-				}
-			}
-
-			private void printLocalPeerID() {
-				try {
-					LOG.debug("SmartDevice PeerID: "
-							+ SmartHomeServerPlugIn.p2pNetworkManager
-									.getLocalPeerID().intern().toString());
-				} catch (Exception ex) {
-					LOG.debug("SmartDevice PeerID currently is null");
-				}
-			}
-		});
-		thread.setName("SmartHomeServerPlugIn SmartDeviceAdvertisement Thread");
-		thread.setDaemon(true);
-		thread.start();
-	}
-
 	@SuppressWarnings("unused")
 	private static void showActualImportedSourcesAsync() {
 		Thread thread = new Thread(new Runnable() {
@@ -409,26 +283,203 @@ public class SmartHomeServerPlugIn implements BundleActivator {
 		thread.start();
 	}
 
-	public static boolean isLocalPeer(PeerID peer) {
+	private static void initSmartDeviceForAdvertisement() {
+		/*****************************************
+		 * TODO: init smart device for advertisement
+		 *****************************************/
+
+		// TODO: GUI für die folgenden Schritte bauen!
+
+		String peerIdString = getLocalPeerID().intern().toString();
+		String cleanPeerID = peerIdString.replaceAll("[-+.^:,]", "");
+		String peerName = p2pNetworkManager.getLocalPeerName().intern()
+				.toString();
+
+		LOG.debug("-----\ninitSmartDeviceForAdvertisement\n\tcleanPeerID:"
+				+ cleanPeerID);
+
+		//
+		// 1. Instantiate Sensors:
+		// Temper1
+		Temper1Sensor temper1 = new Temper1Sensor("temper1", peerName, "");// cleanPeerID
+		temper1.addActivityForCondition("hot", "Temperature > 24");
+		//
+		// GPIO_07 as input sensor
+		RPiGPIOSensor gpioTaste7 = new RPiGPIOSensor("RPiGPIOTaster7",
+				peerName, "");// postfix: cleanPeerID
+		gpioTaste7.setInputPin(7);
+		gpioTaste7.addActivityForPinState("Tasterbetaetigt",
+				RPiGPIOSensor.GPIO_SENSOR_STATE.HIGH);
+
+		//
+		// 2. instantiate SmartDevice:
+		smartDevice = new SmartDevice();
+		smartDevice.setPeerID(getLocalPeerID());
+		smartDevice.setPeerName(getLocalPeerName());
+		smartDevice.setSmartDevice(getSmartDeviceConfig());
+		smartDevice.addConnectedFieldDevice(temper1);
+		smartDevice.addConnectedFieldDevice(gpioTaste7);
+
+		LOG.debug("LocalSmartDeviceCtx:" + smartDevice.getContextName());
+
+		//
+		// 3. Execute queries:
+		executeSensorQueries(smartDevice);
+
+		//
+		// 4. SmartDevice is ready for advertisement now:
+		smartDevice.setReady(true);
+
+		// //////////////////////////////////////////////////////////
+		// LED GPIO_11
+		RPiGPIOActor gpioLED11 = new RPiGPIOActor("gpioLED11", peerName, "");// cleanPeerID
+		gpioLED11.addPossibleActivityName("hot");
+		// gpioLED11.addLogicRule(logicRuleLEDOnHot);
+
+		gpioLED11.addActivityForState("hot", RPiGPIOActor.State.TOGGLE);
+		gpioLED11.addActivityForState("Tasterbetaetigt",
+				RPiGPIOActor.State.TOGGLE);
+
+		/*
+		 * ArrayList<String> manyActivities = new ArrayList<String>();
+		 * manyActivities.add("hot"); manyActivities.add("blub");
+		 * gpioLED11.addActivitiesForState(manyActivities,
+		 * RPiGPIOActor.State.TOGGLE);
+		 */
+
+		smartDevice.addConnectedFieldDevice(gpioLED11);
+	}
+
+	private static void executeSensorQueries(SmartDevice smartDevice) {
+		for (Sensor sensor : smartDevice.getConnectedSensors()) {
+			for (Entry<String, String> queryForRawValue : sensor
+					.getQueriesForRawValues().entrySet()) {
+				String queryName = queryForRawValue.getKey();
+				String query = queryForRawValue.getValue();
+
+				try {
+					executeQueryNow(queryName, query);
+
+				} catch (NoSuchElementException ex) {
+					LOG.error(ex.getMessage(), ex);
+				} catch (Exception ex) {
+					LOG.error("EXCEPTION - viewName:" + queryName + " query:"
+							+ query);
+					LOG.error(ex.getMessage(), ex);
+				}
+			}
+
+			// stream with participating activities of the sensor
+			for (Entry<String, String> activityInterpreterQuery : sensor
+					.getQueryForActivityInterpreterQueries().entrySet()) {
+				String queryName = activityInterpreterQuery.getKey();
+				String query = activityInterpreterQuery.getValue();
+
+				try {
+					executeQueryNow(queryName, query);
+
+				} catch (NoSuchElementException ex) {
+					LOG.error(ex.getMessage(), ex);
+				} catch (Exception ex) {
+					LOG.error("EXCEPTION - viewName:" + queryName + " query:"
+							+ query);
+					LOG.error(ex.getMessage(), ex);
+				}
+			}
+		}
+	}
+
+	private static void publishSmartDeviceAdvertisementAsync() {
+		Thread thread = new Thread(new Runnable() {
+			@SuppressWarnings("unused")
+			@Override
+			public void run() {
+				waitForP2PNetworkManager();
+				waitForJxtaServicesProvider();
+				waitForServerExecutorService();
+
+				printLocalPeerID();
+
+				LOG.error("publishSmartDeviceAdvertisementAsync() in 5 sec.");
+				try {
+					Thread.sleep(5000);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+
+				LOG.error("publishSmartDeviceAdvertisementAsync() now:");
+
+				try {
+					initSmartDeviceForAdvertisement();
+
+					String advType = SmartDeviceAdvertisement
+							.getAdvertisementType();
+					ID advID = IDFactory.newPipeID(getP2PNetworkManager()
+							.getLocalPeerGroupID());
+					PeerID localPeerID = p2pNetworkManager.getLocalPeerID();
+
+					SmartDeviceAdvertisement smartDeviceAdv = (SmartDeviceAdvertisement) AdvertisementFactory
+							.newAdvertisement(advType);
+					smartDeviceAdv.setID(advID);
+					smartDeviceAdv.setPeerID(localPeerID);
+
+					long lifetime = 60 * 2;
+					long expirationTime = 60 * 3;
+
+					// TODO: one advertisement has an expirationTime. Publish
+					// every
+					// X seconds or minutes:
+
+					getJxtaServicesProvider().publish(smartDeviceAdv);
+					getJxtaServicesProvider().remotePublish(smartDeviceAdv);
+
+					// getJxtaServicesProvider().publish(smartDeviceAdv,
+					// lifetime,expirationTime);
+					// getJxtaServicesProvider().remotePublish(smartDeviceAdv,expirationTime);
+
+					// getJxtaServicesProvider().publishInfinite(smartDeviceAdv);
+					// getJxtaServicesProvider().remotePublishInfinite(smartDeviceAdv);
+				} catch (IOException ex) {
+					LOG.error(ex.getMessage(), ex);
+				}
+			}
+		});
+		thread.setName("SmartHomeServerPlugIn SmartDeviceAdvertisement Thread");
+		thread.setDaemon(true);
+		thread.start();
+	}
+
+	private static void printLocalPeerID() {
+		try {
+			LOG.debug("SmartDevice PeerID: "
+					+ SmartHomeServerPlugIn.p2pNetworkManager.getLocalPeerID()
+							.intern().toString());
+		} catch (Exception ex) {
+			LOG.debug("SmartDevice PeerID currently is null");
+		}
+	}
+
+	public static boolean isLocalPeer(PeerID peerID) {
 		if (SmartHomeServerPlugIn.getP2PNetworkManager() == null
 				|| p2pNetworkManager.getLocalPeerID() == null
 				|| SmartHomeServerPlugIn.p2pNetworkManager.getLocalPeerID()
 						.intern() == null) {
 			return false;
-		} else if (peer == null || peer.intern() == null) {
+		} else if (peerID == null || peerID.intern() == null) {
 			return false;
 		}
 
-		return isLocalPeer(peer.intern().toString());
+		return isLocalPeer(peerID.intern().toString());
 	}
 
-	public static boolean isLocalPeer(String peerID) {
+	public static boolean isLocalPeer(String peerIDString) {
 		String str1 = SmartHomeServerPlugIn.p2pNetworkManager.getLocalPeerID()
 				.intern().toString();
 
-		if (str1 == null || peerID == null)
+		if (str1 == null || peerIDString == null)
 			return false;
-		return str1.equals(peerID);
+		return str1.equals(peerIDString);
 	}
 
 	public static SmartDeviceConfig getSmartDeviceConfig() {
@@ -481,12 +532,12 @@ public class SmartHomeServerPlugIn implements BundleActivator {
 		}
 	}
 
-	public static class SmartDeviceAdvertisementListener implements
+	public static class AdvertisementListener implements
 			IAdvertisementDiscovererListener {
 		@Override
 		public void advertisementDiscovered(Advertisement advertisement) {
-			// LOG.debug("advertisementDiscovered AdvType:"+
-			// advertisement.getAdvType());
+			// LOG.debug("advertisementDiscovered AdvType:"
+			// + advertisement.getAdvType());
 
 			if (advertisement != null
 					&& advertisement instanceof SmartDeviceAdvertisement
@@ -495,6 +546,71 @@ public class SmartHomeServerPlugIn implements BundleActivator {
 
 				SmartDeviceAdvertisement adv = (SmartDeviceAdvertisement) advertisement;
 				getSmartDeviceInformations(adv);
+
+			} else if (advertisement != null
+					&& advertisement instanceof SourceAdvertisement
+					&& advertisement.getAdvType().equals(
+							SourceAdvertisement.getAdvertisementType())) {
+				SourceAdvertisement srcAdv = (SourceAdvertisement) advertisement;
+
+				importIfNeccessary(srcAdv);
+			} else if (advertisement != null
+					&& advertisement instanceof MultipleSourceAdvertisement
+					&& advertisement.getAdvType().equals(
+							MultipleSourceAdvertisement.getAdvertisementType())) {
+				MultipleSourceAdvertisement multiSourceAdv = (MultipleSourceAdvertisement) advertisement;
+
+				String peerIDStr = multiSourceAdv.getPeerID().intern()
+						.toString();
+
+				// TODO:
+				if (getSourcesNeededForImport().containsValue(peerIDStr)) {
+					for (SourceAdvertisement sAdv : multiSourceAdv
+							.getSourceAdvertisements()) {
+						try {
+							LOG.debug("---importIfNeccessary---Source:"
+									+ sAdv.getName());
+
+							if (!getP2PDictionary().isImported(sAdv.getName())) {
+								LOG.debug("---importIfNeccessary---importSource:"
+										+ sAdv.getName());
+
+								getP2PDictionary().importSource(sAdv,
+										sAdv.getName());
+
+								removeSourceNeededForImport(sAdv.getName());
+							}
+						} catch (PeerException e) {
+							e.printStackTrace();
+						} catch (InvalidP2PSource e) {
+							e.printStackTrace();
+						}
+					}
+				}
+			}
+		}
+
+		private void importIfNeccessary(SourceAdvertisement srcAdv) {
+			// TODO: import if neccessary
+
+			// LOG.debug("importIfNeccessary srcAdv.getName(): " +
+			// srcAdv.getName());
+
+			if (!getP2PDictionary().isImported(srcAdv.getName())
+					&& getSourcesNeededForImport()
+							.containsKey(srcAdv.getName())) {
+				try {
+					LOG.debug("---importIfNeccessary---importSource:"
+							+ srcAdv.getName());
+
+					getP2PDictionary().importSource(srcAdv, srcAdv.getName());
+
+					removeSourceNeededForImport(srcAdv.getName());
+				} catch (PeerException e) {
+					e.printStackTrace();
+				} catch (InvalidP2PSource e) {
+					e.printStackTrace();
+				}
 			}
 		}
 
@@ -548,6 +664,17 @@ public class SmartHomeServerPlugIn implements BundleActivator {
 		}
 	}
 
+	private static LinkedHashMap<String, String> getSourcesNeededForImport() {
+		if (sourcesNeededForImport == null) {
+			sourcesNeededForImport = new LinkedHashMap<String, String>();
+		}
+		return sourcesNeededForImport;
+	}
+
+	public static void removeSourceNeededForImport(String srcName) {
+		getSourcesNeededForImport().remove(srcName);
+	}
+
 	private static boolean isFoundInFoundPeers(PeerID peerID) {
 		ArrayList<PeerID> foundPeerIDArray = getFoundPeerIDs();
 		for (PeerID foundPeerID : foundPeerIDArray) {
@@ -595,21 +722,14 @@ public class SmartHomeServerPlugIn implements BundleActivator {
 				SourceAdvertisement advertisement, String sourceName) {
 			LOG.debug("sourceImportRemoved sourceName:" + sourceName);
 
-			// Anfragen wieder entfernen:
+			if (isSourceNameUsingByLogicRule(sourceName)) {
+				LOG.debug("-----");
+				LOG.debug("you must remove logicRule who depends on sourceName:"
+						+ sourceName + "!!!");
+				LOG.debug("-----");
 
-			if (sourceName.equals("rpigpiosrc")) {
+				// TODO: Anfragen wieder entfernen:
 
-			} else if (sourceName.equals("raspberrygpiosrc")) {
-
-			} else if (sourceName.equals("bananagpiosrc")) {
-
-			} else if (sourceName.equals("rpigpiosrcbuttonautoexport")) {
-				/*
-				 * if(forwardButtonStateToLEDQueryID!=null){
-				 * ServerExecutorService
-				 * .getServerExecutor().removeQuery(forwardButtonStateToLEDQueryID
-				 * , SessionManagementService.getActiveSession()); }
-				 */
 			}
 		}
 
@@ -626,43 +746,40 @@ public class SmartHomeServerPlugIn implements BundleActivator {
 		}
 	}
 
-	private static void executeQuery(String viewName, String query) {
-		// TODO: only one query per execution!
-
-		LOG.error("viewName:" + viewName + " query:" + query);
+	private static void executeQueryNow(String viewName, String query)
+			throws Exception {
+		// LOG.error("viewName:" + viewName + " query:" + query);
 
 		Collection<Integer> queryIDs = ServerExecutorService
 				.getServerExecutor().addQuery(query, "OdysseusScript",
 						SessionManagementService.getActiveSession(),
 						"Standard", Context.empty());
 		Integer queryId;
-		try {
-			if (queryIDs == null) {
-				LOG.debug("queryIDs==null ");
-				return;
-			}
 
-			if (!queryIDs.iterator().hasNext()) {
-				LOG.debug("!queryIDs.iterator().hasNext()");
-				return;
-			}
-
-			queryId = queryIDs.iterator().next();
-			IPhysicalQuery physicalQuery = ServerExecutorService
-					.getServerExecutor().getExecutionPlan()
-					.getQueryById(queryId);
-			ILogicalQuery logicalQuery = physicalQuery.getLogicalQuery();
-			logicalQuery.setName(viewName);
-			logicalQuery.setParserId("P2P");
-			logicalQuery.setUser(SessionManagementService.getActiveSession());
-			logicalQuery.setQueryText("Exporting " + viewName);
-		} catch (NoSuchElementException ex) {
-			LOG.error(ex.getMessage(), ex);
+		if (queryIDs == null) {
+			LOG.debug("queryIDs==null @viewName:" + viewName);
+			return;
 		}
 
+		if (!queryIDs.iterator().hasNext()) {
+			LOG.debug("!queryIDs.iterator().hasNext() @viewName:" + viewName);
+			return;
+		}
+
+		queryId = queryIDs.iterator().next();
+		IPhysicalQuery physicalQuery = ServerExecutorService
+				.getServerExecutor().getExecutionPlan().getQueryById(queryId);
+		ILogicalQuery logicalQuery = physicalQuery.getLogicalQuery();
+		logicalQuery.setName(viewName);
+		logicalQuery.setParserId("P2P");
+		logicalQuery.setUser(SessionManagementService.getActiveSession());
+		logicalQuery.setQueryText("Exporting " + viewName);
+
+		LOG.debug("QueryId:" + queryId + " viewName:" + viewName);
+
 		/*
-		 * try { p2pDictionary.exportSource(viewName); } catch (PeerException
-		 * ex) { LOG.error(ex.getMessage(), ex); }
+		 * exportSource: try { p2pDictionary.exportSource(viewName); } catch
+		 * (PeerException ex) { LOG.error(ex.getMessage(), ex); }
 		 */
 	}
 
@@ -714,17 +831,6 @@ public class SmartHomeServerPlugIn implements BundleActivator {
 				}
 			} else if (message instanceof SmartDeviceMessage) {
 				LOG.debug("receivedMessage instanceof SmartDeviceMessage");
-				/*
-				 * SmartDeviceMessage smessage = (SmartDeviceMessage) message;
-				 * 
-				 * String testMessage = "Echo! from Server";
-				 * 
-				 * if (!isLocalPeer(senderPeer) &&
-				 * !smessage.getText().equals(testMessage)) { try {
-				 * SmartHomeServerPlugIn.getPeerCommunicator() .send(senderPeer,
-				 * new SmartDeviceMessage(testMessage)); } catch
-				 * (PeerCommunicationException e) { e.printStackTrace(); } }
-				 */
 			}
 		}
 	}
@@ -869,131 +975,23 @@ public class SmartHomeServerPlugIn implements BundleActivator {
 
 		@Override
 		public void smartDeviceAdded(SmartDeviceDictionary sender,
-				SmartDevice smartDevice) {
-			LOG.debug("smartDeviceAdded: " + smartDevice.getPeerIDString());
+				SmartDevice newSmartDevice) {
+			LOG.debug("smartDeviceAdded: " + newSmartDevice.getPeerID()
+					+ " processLogic(...");
 
-			/*******************************
-			 * TODO: Logic processing:
-			 *******************************/
-			if (smartDevice.getContextName().equals("Office")) {
-				for (FieldDevice fieldDevice : smartDevice
-						.getConnectedFieldDevices()) {
-
-					LOG.debug("FieldDevice class:"
-							+ fieldDevice.getClass().toString());
-					LOG.debug("FieldDevice class.getName:"
-							+ fieldDevice.getClass().getName());
-
-					if (fieldDevice instanceof Sensor
-							|| fieldDevice instanceof Temper1Sensor) {
-
-						if (fieldDevice instanceof Sensor) {
-							LOG.debug("FieldDevice instanceof Sensor");
-						} else {
-							LOG.debug("FieldDevice !instanceof Sensor");
-						}
-
-						String rawSourceName = fieldDevice.getRawSourceName();
-						@SuppressWarnings("unused")
-						String activitySourceName = fieldDevice
-								.getActivitySourceName();
-
-						for (String possibleActivityName : fieldDevice
-								.getPossibleActivityNames()) {
-
-							// Rule 1:
-							// run async?
-							if (possibleActivityName.equals("Tasterbetaetigt")) {
-								// Check for peerID...
-								// same rule can run for different peers/sensors
-
-								LOG.debug("Rule for activity:Tasterbetaetigt wurde erfüllt und wird nun ausgeführt.");
-
-								// ActivitySource muss abgefragt werden,
-								// wenn die Entität an der Aktivität teilnimmt
-								// dann soll der Zustand des Aktors geändert
-								// werden
-								// (Lampe an/aus)
-
-								String viewName = "rpiTest";
-								StringBuilder sb = new StringBuilder();
-								sb.append("#PARSER PQL\n");
-								// sb.append("#ADDQUERY\n");
-								// sb.append("#QNAME Exporting " + viewName +
-								// "\n");
-								sb.append("#RUNQUERY\n");
-								sb.append("rpigpiosinkoutput = RPIGPIOSINK({sink='rpigpiosink', pin=11, pinstate='low'},"
-										+ rawSourceName + ")\n");
-								// sb.append(pqlGenerator.generatePQLStatement(rpiGPIOSinkAO));
-								sb.append("\n");
-								String scriptText = sb.toString();
-
-								if (p2pDictionary != null
-										&& p2pDictionary
-												.isImported(rawSourceName)
-										&& !p2pDictionary
-												.isSourceNameAlreadyInUse(rawSourceName)
-										&& foundPeerIDs.contains(smartDevice
-												.getPeerID())) {
-									LOG.debug("sourceIsImported run the actor logic script now:");
-									executeQuery(viewName, scriptText);
-
-								} else {
-
-									LOG.debug("source is not imported or the peerID was not found, the actor logic script is not running!");
-								}
-							} else if (possibleActivityName.equals("hot")) {
-								executeRuleHotAsync(fieldDevice);
-							}
-
-							// Rule2:
-							// ...
-						}
-					}
-				}
-
-			} // ... other contexts
-		}
-
-		private void executeRuleHotAsync(final FieldDevice fieldDevice) {
-			Thread t = new Thread(new Runnable() {
-				private boolean importMessageWasShown = false;
-
-				@Override
-				public void run() {
-					while (!ruleHotIsExecuted) {
-						try {
-							Thread.sleep(200);
-						} catch (InterruptedException e) {
-						}
-
-						if (p2pDictionary != null
-								&& fieldDevice != null
-								&& p2pDictionary.isImported(fieldDevice
-										.getActivitySourceName())) {
-							executeRuleHot(fieldDevice);
-						} else if (!importMessageWasShown) {
-							importMessageWasShown = true;
-							LOG.debug("waiting for import sourcename: "
-									+ fieldDevice.getActivitySourceName());
-						}
-					}
-				}
-			});
-			t.setName("execute rule hot thread.");
-			t.setDaemon(true);
-			t.start();
+			processLogic(newSmartDevice);
 		}
 
 		@Override
 		public void smartDeviceRemoved(SmartDeviceDictionary sender,
-				SmartDevice smartDevice) {
+				SmartDevice remoteSmartDevice) {
+
 			LOG.debug("SmartHomeServerPlugIn smartDeviceRemoved: "
-					+ smartDevice.getPeerIDString());
+					+ smartDevice.getPeerID());
 
-			// TODO: wenn eine Logik-Regel aufgrund eines SmartDevice
-			// ausgeführt wurde, dann muss diese nun wieder entfernt werden!!!
-
+			if (isRunningLogicRule(remoteSmartDevice)) {
+				removeAllLogicRules(remoteSmartDevice);
+			}
 		}
 
 		@Override
@@ -1010,133 +1008,238 @@ public class SmartHomeServerPlugIn implements BundleActivator {
 		}
 	}
 
-	private static boolean ruleHotIsExecuted = false;
+	private static void processLogic(SmartDevice newSmartDevice) {
+		/*******************************
+		 * TODO: Logic processing: 1. find matches
+		 *******************************/
 
-	private static void executeRuleHot(FieldDevice fieldDevice) {
-		if (!ruleHotIsExecuted) {
-			ruleHotIsExecuted = true;
+		String smartDeviceContextName = "";
+		if (smartDevice == null) {
+			return;
+		} else {
+			smartDeviceContextName = smartDevice.getContextName();
+			LOG.debug("smartDeviceCtx:" + smartDeviceContextName
+					+ " newSmartDeviceCtx:" + newSmartDevice.getContextName());
+			// TODO: comment out next line
+			smartDeviceContextName = "Office";
+		}
 
-			LOG.debug("------------------------------------------------------------");
-			LOG.debug("Rule for activity:hot wurde erfüllt und wird nun ausgeführt.");
-			LOG.debug("FieldDevice name:" + fieldDevice.getName());
-			LOG.debug("FieldDevice rawSourceName:"
-					+ fieldDevice.getRawSourceName());
-			LOG.debug("FieldDevice activitySourceName:"
-					+ fieldDevice.getActivitySourceName());
-			LOG.debug("------------------------------------------------------------");
+		if (smartDeviceContextName != null
+				&& newSmartDevice.getContextName().equals(
+						smartDeviceContextName)) {
+			for (Sensor remoteSensor : newSmartDevice.getConnectedSensors()) {
+				for (String possibleActivityName : remoteSensor
+						.getPossibleActivityNames()) {
+					for (Actor localActor : smartDevice.getConnectedActors()) {
+						if (localActor != null
+								&& localActor.getPossibleActivityNames()
+										.contains(possibleActivityName)) {
 
-			// TODO: Auf Aktivität: "hot" lauschen, sobald diese
-			// ausgeführt wird, soll eine 1 an LED gesendet
-			// werden:
+							addNeededSourceForImport(
+									remoteSensor
+											.getActivitySourceName(possibleActivityName),
+									newSmartDevice.getPeerID());
 
-			// TODO: Anfrage ausführen um einen Aktor aufgrund
-			// der Aktivität zu steuern.
+							executeLogicRuleWhenPossibleAsync(
+									possibleActivityName,
+									(Sensor) remoteSensor, (Actor) localActor,
+									newSmartDevice);
+						}
+					}
+				}
+			}
+		} else {
+			// The context does not matter:
 
-			// Eine Senke für den Aktor anlegen:
-			// out =
-			// aktivityToStateTransformator(aktivität:"hot",Entität:"Temper1",out:1
-			// , temper1_activity_datenstrom)
-			// RPiGPIO(pin=11, out)
-			String gpio11ActorName = "gpio11Actor";
-			@SuppressWarnings("unused")
-			RPiGPIOActor gpio11Actor = new RPiGPIOActor();
+		}
 
-			// 1. Import data stream with activities of the field device:
-			// fieldDevice.getName()
-			// and listen for the activity: "hot"
-			String activityImportedName = getLocalPeerName() + "_"
-					+ fieldDevice.getName() + "_Activity_imported";
-			StringBuilder activityImport = new StringBuilder();
-			activityImport.append("#PARSER PQL\n");
-			activityImport.append("#RUNQUERY\n");
-			activityImport.append(activityImportedName + " := SELECT({\n");
-			activityImport.append("    predicate=\"ActivityName = 'hot'\"\n");
-			activityImport.append("    },\n");
-			activityImport.append("    " + fieldDevice.getActivitySourceName()
-					+ "\n");
-			activityImport.append(")\n");
-			activityImport.append("\n");
+	}
 
-			// 2. create configuration of the actor, how it will be set if
-			// the fieldDevice.getName() is participating at the activity:
-			// "hot"
-			String actorConfigIfParticipateActivity = getLocalPeerName() + "_"
-					+ fieldDevice.getName() + "_Config";
-			StringBuilder sbConfig = new StringBuilder();
-			sbConfig.append("#PARSER PQL\n");
-			sbConfig.append("#RUNQUERY\n");
-			sbConfig.append("    " + actorConfigIfParticipateActivity
-					+ " := ACCESS({\n");
-			sbConfig.append("    transport = 'activityconfiguration',\n");
-			sbConfig.append("    source = '" + actorConfigIfParticipateActivity
-					+ "',\n");
-			sbConfig.append("    datahandler = 'Tuple',\n");
-			sbConfig.append("    wrapper = 'GenericPull',\n");
-			sbConfig.append("    protocol='none',\n");
-			sbConfig.append("    options=[\n");
-			sbConfig.append("      ['entity', '1'],\n");
-			sbConfig.append("      ['activity', 'hot']\n");
-			sbConfig.append("    ],\n");
-			sbConfig.append("    schema=[\n");
-			sbConfig.append("      ['ConfigEntityName', 'String'],\n");
-			sbConfig.append("      ['ConfigActivityName', 'String']\n");
-			sbConfig.append("    ]\n");
-			sbConfig.append("  }\n");
-			sbConfig.append(")\n");
-			sbConfig.append("\n");
-			sbConfig.append("\n");
+	private static LinkedHashMap<String, String> sourcesNeededForImport;
 
-			String setConfigStreamName = getLocalPeerName() + "_"
-					+ fieldDevice.getName() + "_SetActor_" + gpio11ActorName;
-			StringBuilder sbSetConfig = new StringBuilder();
-			sbSetConfig.append("#PARSER PQL\n");
-			sbSetConfig.append("#RUNQUERY\n");
-			sbSetConfig.append("" + setConfigStreamName + " := RENAME({\n");
-			sbSetConfig.append("        aliases = ['PinNumber', 'PinState']\n");
-			sbSetConfig.append("    },\n");
-			sbSetConfig.append("    PROJECT({\n");
-			sbSetConfig.append("        attributes = "
-					+ "    ['ActivityName','ConfigEntityName']\n");
-			sbSetConfig.append("    },\n");
-			sbSetConfig.append("        JOIN({\n");
-			sbSetConfig.append("            predicate = '"
-					+ activityImportedName + ".ActivityName = "
-					+ actorConfigIfParticipateActivity
-					+ ".ConfigActivityName'\n");
-			sbSetConfig.append("        },\n");
-			sbSetConfig.append("ELEMENTWINDOW({size = 1}, " + activityImportedName + "),\n");
-			sbSetConfig.append("ELEMENTWINDOW({size = 1}, " + actorConfigIfParticipateActivity + ")\n");
-			sbSetConfig.append("        )\n");
-			sbSetConfig.append("    )\n");
-			sbSetConfig.append(")\n");
-			sbSetConfig.append("\n");
+	public static void addNeededSourceForImport(String activitySourceName,
+			String peerIDString) {
+		if (!getP2PDictionary().isImported(activitySourceName)) {
+			if (sourcesNeededForImport == null) {
+				sourcesNeededForImport = new LinkedHashMap<String, String>();
+			}
+			sourcesNeededForImport.put(activitySourceName, peerIDString);
+		}
+	}
 
-			// InputSchema: schema=[['PinNumber', 'String'],['PinState',
-			// 'String']]
-			String entitySetStateStreamName = getLocalPeerName()
-					+ "_rpigpio11_";
-			StringBuilder sbEntitySetState = new StringBuilder();
-			sbEntitySetState.append("#PARSER PQL\n");
-			sbEntitySetState.append("#RUNQUERY\n");
-			sbEntitySetState.append("" + entitySetStateStreamName
-					+ " = RPIGPIOSINK({sink='" + entitySetStateStreamName
-					+ "', pin=11, pinstate='low'}," + setConfigStreamName + ")\n");
-			
-			
-			if (p2pDictionary.isImported(fieldDevice.getActivitySourceName())) {
-				executeQuery(activityImportedName, activityImport.toString());
-				executeQuery(actorConfigIfParticipateActivity,
-						sbConfig.toString());
-				executeQuery(setConfigStreamName, sbSetConfig.toString());
-				executeQuery(entitySetStateStreamName,
-						sbEntitySetState.toString());
+	public static void removeAllLogicRules(SmartDevice remoteSmartDevice) {
+		for (Sensor sensor : remoteSmartDevice.getConnectedSensors()) {
+			// iterate backward:
+			ListIterator<String> iterator = new ArrayList<String>(sensor
+					.getQueryForActivityInterpreterQueries().keySet())
+					.listIterator(sensor
+							.getQueryForActivityInterpreterQueries().size());
+			while (iterator.hasPrevious()) {
+				String queryName = iterator.previous();
 
-				// TODO: fehler auf dem raspberry pi beheben.
+				stopQuery(queryName);
+			}
 
-			} else {
-				LOG.debug("the source is currently not imported source:"
-						+ fieldDevice.getActivitySourceName() + "");
+			// iterate backward:
+			ListIterator<String> iteratorRawValues = new ArrayList<String>(
+					sensor.getQueriesForRawValues().keySet())
+					.listIterator(sensor.getQueriesForRawValues().size());
+			while (iteratorRawValues.hasPrevious()) {
+				String queryName = iteratorRawValues.previous();
+
+				stopQuery(queryName);
 			}
 		}
+	}
+
+	private static void stopQuery(String queryName) {
+		LOG.debug("stop and removeQueryName:" + queryName);
+
+		ServerExecutorService.getServerExecutor().removeQuery(queryName,
+				SessionManagementService.getActiveSession());
+	}
+
+	public static boolean isSourceNameNeddedByLogicRule(String sourceName) {
+		// TODO: check correctness
+
+		for (Actor actor : smartDevice.getConnectedActors()) {
+			for (String activity : actor.getPossibleActivityNames()) {
+				try {
+					for (Entry<String, String> map : actor
+							.getLogicRuleOfActivity(activity).entrySet()) {
+						String queryName = map.getKey();
+						// String query = map.getValue();
+
+						if (sourceName.equals(queryName)) {
+							return true;
+						}
+					}
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		}
+
+		return false;
+	}
+
+	public static boolean isSourceNameUsingByLogicRule(String sourceName) {
+		return getP2PDictionary().isSourceNameAlreadyInUse(sourceName);
+	}
+
+	public static boolean isRunningLogicRule(SmartDevice remoteSmartDevice) {
+		// TODO: check correctness
+		for (Sensor sensor : remoteSmartDevice.getConnectedSensors()) {
+			for (Entry<String, String> entry : sensor
+					.getQueryForActivityInterpreterQueries().entrySet()) {
+				String queryName = entry.getKey();
+				if (getP2PDictionary().isSourceNameAlreadyInUse(queryName)) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
+	public static void executeLogicRuleWhenPossibleAsync(
+			final String possibleActivityName, final Sensor sensor,
+			final Actor actor, final SmartDevice smartDeviceWithSensor) {
+		Thread t = new Thread(new Runnable() {
+			boolean ruleExecuted = false;
+
+			@Override
+			public void run() {
+				String message = "executeLogicRuleAsync activity:"
+						+ possibleActivityName + " sensor:" + sensor.getName()
+						+ " actor:" + actor.getName() + " smartDevice:"
+						+ smartDeviceWithSensor.getPeerName();
+				LOG.debug(message);
+
+				while (!ruleExecuted) {
+					try {
+						Thread.sleep(2000);
+					} catch (Exception ex) {
+					}
+
+					try {
+
+						if (isLogicExecutionPossible(possibleActivityName,
+								sensor, actor, smartDeviceWithSensor)) {
+
+							executeLogicRuleNow(possibleActivityName, sensor,
+									actor, smartDeviceWithSensor);
+							ruleExecuted = true;
+						} else {
+							// LOG.debug("!isLogicExecutionPossible: " +
+							// message);
+							// TODO: import neccessary source:
+
+						}
+					} catch (Exception ex) {
+						LOG.error(ex.getMessage(), ex);
+					}
+				}
+			}
+		});
+		t.setName("Logic execution thread. smartDevice:"
+				+ smartDeviceWithSensor + " activityName:"
+				+ possibleActivityName + " sensor:" + sensor + " actor:"
+				+ actor);
+		t.setDaemon(true);
+		t.start();
+	}
+
+	private static void executeLogicRuleNow(String possibleActivityName,
+			Sensor sensor, Actor actor, SmartDevice smartDeviceWithSensor) {
+		LOG.debug("executeLogicRule(" + possibleActivityName + "," + sensor
+				+ "," + actor + "," + smartDeviceWithSensor.getPeerName() + ")");
+
+		if (isLogicExecutionPossible(possibleActivityName, sensor, actor,
+				smartDeviceWithSensor)) {
+
+			LOG.debug("sourceIsImported run the actor logic script now:");
+
+			try {
+				actor.setActivitySourceName(sensor
+						.getActivitySourceName(possibleActivityName));
+
+				LinkedHashMap<String, String> logicRuleQueries = actor
+						.getLogicRuleOfActivity(possibleActivityName);
+				for (Entry<String, String> entry : logicRuleQueries.entrySet()) {
+					String viewName = entry.getKey();
+					String ruleQuery = entry.getValue();
+
+					LOG.debug("executeLogicRule(" + possibleActivityName + ","
+							+ sensor + "," + actor + ") viewName:" + viewName);
+
+					executeQueryNow(viewName, ruleQuery);
+
+				}
+			} catch (Exception ex) {
+				LOG.debug(ex.getMessage(), ex);
+			}
+		} else {
+			String sName;
+			if (sensor != null
+					&& sensor.getActivitySourceName(possibleActivityName) != null) {
+				sName = sensor.getActivitySourceName(possibleActivityName);
+			} else {
+				sName = "null";
+			}
+
+			LOG.debug("source is not imported or the peerID was not found, the actor logic script is not running! sourceName:"
+					+ sName);
+		}
+	}
+
+	private static boolean isLogicExecutionPossible(
+			String possibleActivityName, Sensor sensor, Actor actor,
+			SmartDevice smartDeviceWithSensor) {
+		// TODO: überprüfen ob die Logic-Regel bereits ausgeführt wird/wurde!
+
+		return p2pDictionary != null
+				&& p2pDictionary.isImported(sensor.getRawSourceName())
+				&& p2pDictionary.isImported(sensor
+						.getActivitySourceName(possibleActivityName));
 	}
 }

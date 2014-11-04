@@ -15,6 +15,7 @@ import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.AbstractSimplePullTransportHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandler;
+import de.uniol.inf.is.odysseus.wrapper.rpi.gpio.OSInvestigator.OS;
 
 public class RPiGPIOTransportHandler extends AbstractSimplePullTransportHandler<Tuple<?>> {
 
@@ -111,11 +112,28 @@ public class RPiGPIOTransportHandler extends AbstractSimplePullTransportHandler<
 		LOG.debug("myinitGPIO() is called.");
 		
 		try{
-			if(gpioController==null)
-				gpioController = GpioFactory.getInstance();
+			OS os = OSInvestigator.getCurrentOS();
 			
-			if(myButton==null)
-				myButton = gpioController.provisionDigitalInputPin(RaspiPin.GPIO_07,"MyButton");
+			switch (os) {
+			case NUX:
+				if(gpioController==null){
+					gpioController = GpioFactory.getInstance();
+					if(myButton==null){
+						myButton = gpioController.provisionDigitalInputPin(RaspiPin.GPIO_07,"MyButton");
+					}
+				}
+				break;
+			case WIN:
+			case MAC:
+			case UNKNOWN:
+				LOG.warn("The RPiGPIO TransportHandler works only on the raspberry pi with linux and the pi4j library!");
+				break;
+			default:
+				break;
+			}
+			
+			
+			
 		}catch(NullPointerException ex){
 			ex.printStackTrace();
 		}catch(Exception ex){

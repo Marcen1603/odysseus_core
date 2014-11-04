@@ -13,9 +13,30 @@ public class SmartDevice implements Serializable {
 	private String contextName;
 	private List<FieldDevice> connectedFieldDevices = new ArrayList<FieldDevice>();
 	private boolean state = false;
+	private String peerName;
 
 	public List<FieldDevice> getConnectedFieldDevices() {
 		return connectedFieldDevices;
+	}
+	
+	public List<Sensor> getConnectedSensors(){
+		List<Sensor> sensors = new ArrayList<Sensor>();
+		for(FieldDevice fieldDevice : getConnectedFieldDevices()){
+			if(fieldDevice instanceof Sensor){
+				sensors.add((Sensor)fieldDevice);
+			}
+		}
+		return sensors;
+	}
+	
+	public List<Actor> getConnectedActors(){
+		List<Actor> actors = new ArrayList<Actor>();
+		for(FieldDevice fieldDevice : getConnectedFieldDevices()){
+			if(fieldDevice instanceof Actor){
+				actors.add((Actor)fieldDevice);
+			}
+		}
+		return actors;
 	}
 
 	public void setConnectedFieldDevices(List<FieldDevice> connectedFieldDevices) {
@@ -48,10 +69,6 @@ public class SmartDevice implements Serializable {
 
 	public String getPeerID() {
 		return this.smartDevicePeerID;
-	}
-
-	public String getPeerIDString() {
-		return this.smartDevicePeerID.intern().toString();
 	}
 
 	@Override
@@ -88,5 +105,13 @@ public class SmartDevice implements Serializable {
 
 	public void setReady(boolean state) {
 		this.state = state;
+	}
+
+	public String getPeerName() {
+		return this.peerName;
+	}
+
+	public void setPeerName(String peerName) {
+		this.peerName = peerName;
 	}
 }

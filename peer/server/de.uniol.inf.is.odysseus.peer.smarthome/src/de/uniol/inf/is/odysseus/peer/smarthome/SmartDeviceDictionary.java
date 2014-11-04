@@ -82,7 +82,7 @@ public class SmartDeviceDictionary {
 	}
 
 	public void addSmartDevice(SmartDevice newSmartDevice) {
-		if (!getSmartDevices().containsKey(newSmartDevice.getPeerIDString())) {
+		if (!getSmartDevices().containsKey(newSmartDevice.getPeerID())) {
 			// Add new SmartDevice
 			try {
 				String smartDevicePeerID = newSmartDevice.getPeerID().intern()
@@ -103,7 +103,7 @@ public class SmartDeviceDictionary {
 		} else {
 			// Update existing SmartDevice
 			SmartDevice existingSmartDevice = getSmartDevices().get(
-					newSmartDevice.getPeerIDString());
+					newSmartDevice.getPeerID());
 
 			synchronized (getSmartDevices()) {
 				existingSmartDevice.overwriteWith(newSmartDevice);
@@ -126,7 +126,7 @@ public class SmartDeviceDictionary {
 	}
 
 	private synchronized void refreshHeartBeat(SmartDevice smartDevice) {
-		String smartDevicePeerID = smartDevice.getPeerIDString();
+		String smartDevicePeerID = smartDevice.getPeerID();
 		synchronized (this.smartDevicesHeartBeat) {
 			Long currentTime = new Long(System.currentTimeMillis());
 			getSmartDevicesHeartBeat().put(smartDevicePeerID, currentTime);
