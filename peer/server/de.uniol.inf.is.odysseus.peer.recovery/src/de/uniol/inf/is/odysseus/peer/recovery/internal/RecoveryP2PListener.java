@@ -8,6 +8,9 @@ import net.jxta.peer.PeerID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Optional;
+import com.google.common.base.Preconditions;
+
 import de.uniol.inf.is.odysseus.p2p_new.IP2PNetworkListener;
 import de.uniol.inf.is.odysseus.p2p_new.IP2PNetworkManager;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.IP2PDictionary;
@@ -27,6 +30,87 @@ public class RecoveryP2PListener extends Observable implements IRecoveryP2PListe
 	 * The logger instance for this class.
 	 */
 	private static final Logger LOG = LoggerFactory.getLogger(RecoveryP2PListener.class);
+	
+	/**
+	 * The P2P network manager, if there is one bound.
+	 */
+	private static Optional<IP2PNetworkManager> cP2PNetworkManager = Optional.absent();
+	
+	/**
+	 * Binds a P2P network manager. <br />
+	 * Called by OSGi-DS.
+	 * @param serv The P2P network manager to bind. <br />
+	 * Must be not null.
+	 */
+	public static void bindP2PNetworkManager(IP2PNetworkManager serv) {
+		
+		Preconditions.checkNotNull(serv);
+		cP2PNetworkManager = Optional.of(serv);
+		LOG.debug("Bound {} as a P2P network manager.", serv
+				.getClass().getSimpleName());
+		
+	}
+
+	/**
+	 * Unbinds a P2P network manager, if it's the bound one. <br />
+	 * Called by OSGi-DS.
+	 * @param serv The P2P network manager to unbind. <br />
+	 * Must be not null.
+	 */
+	public static void unbindP2PNetworkManager(IP2PNetworkManager serv) {
+		
+		Preconditions.checkNotNull(serv);
+		
+		if (cP2PNetworkManager.isPresent() && cP2PNetworkManager.get() == serv) {
+			
+			cP2PNetworkManager = Optional.absent();
+			LOG.debug("Unbound {} as a P2P network manager.", serv
+					.getClass().getSimpleName());
+			
+		}
+		
+	}
+	
+	/**
+	 * The P2P dictionary, if there is one bound.
+	 */
+	private static Optional<IP2PDictionary> cP2PDictionary = Optional.absent();
+	
+	/**
+	 * Binds a P2P dictionary. <br />
+	 * Called by OSGi-DS.
+	 * @param serv The P2P dictionary to bind. <br />
+	 * Must be not null.
+	 */
+	public static void bindP2PDictionary(IP2PDictionary serv) {
+		
+		Preconditions.checkNotNull(serv);
+		cP2PDictionary = Optional.of(serv);
+		LOG.debug("Bound {} as a P2P dictionary.", serv
+				.getClass().getSimpleName());
+		
+	}
+
+	/**
+	 * Unbinds a P2P dictionary, if it's the bound one. <br />
+	 * Called by OSGi-DS.
+	 * @param serv The P2P dictionary to unbind. <br />
+	 * Must be not null.
+	 */
+	public void unbindP2PDictionary(IP2PDictionary serv) {
+		
+		Preconditions.checkNotNull(serv);
+		
+		if (cP2PDictionary.isPresent() && cP2PDictionary.get() == serv) {
+			
+			this.stopPeerFailureDetection();
+			cP2PDictionary = Optional.absent();
+			LOG.debug("Unbound {} as a P2P dictionary.", serv
+					.getClass().getSimpleName());
+			
+		}
+		
+	}
 	
 	private final static int WAIT_TIME_MS = 1000;
 	
@@ -61,11 +145,19 @@ public class RecoveryP2PListener extends Observable implements IRecoveryP2PListe
 		@Override
 		public void run() {
 			
+			// Preconditions
+			if(!cP2PDictionary.isPresent()) {
+				
+				LOG.error("No P2P dictionary bound!");
+				return;
+				
+			}
+			
 			this.mActive = true;
 			
 			while (this.mActive) {
 				
-				Collection<PeerID> peerIDs = p2pDictionary.getRemotePeerIDs();
+				Collection<PeerID> peerIDs = cP2PDictionary.get().getRemotePeerIDs();
 				
 				if (savedPeerIDs == null) {
 					
@@ -91,7 +183,7 @@ public class RecoveryP2PListener extends Observable implements IRecoveryP2PListe
 						if (!savedPeerIDs.contains(pid)) {
 							
 							// We found a new peer
-							LOG.debug("Found new peer: {}", p2pDictionary.getRemotePeerName(pid));
+							LOG.debug("Found new peer: {}", cP2PDictionary.get().getRemotePeerName(pid));
 							this.handleNewPeer(pid);
 							
 						}
@@ -123,59 +215,18 @@ public class RecoveryP2PListener extends Observable implements IRecoveryP2PListe
 		
 	}
 
-	private static IP2PDictionary p2pDictionary;
-	private static IP2PNetworkManager p2pNetworkManager;
-
 	private Collection<PeerID> savedPeerIDs;
 	private FailPeerListenerThread failPeerListenerThread;
-
-	// called by OSGi-DS
-	public static void bindP2PDictionary(IP2PDictionary serv) {
-		p2pDictionary = serv;
-	}
-
-	// called by OSGi-DS
-	public void unbindP2PDictionary(IP2PDictionary serv) {
-		if (p2pDictionary == serv) {
-			this.stopPeerFailureDetection();
-			p2pDictionary = null;
-		}
-	}
-
-	// called by OSGi-DS
-	public static void bindP2PNetworkManager(IP2PNetworkManager serv) {
-		p2pNetworkManager = serv;
-	}
-
-	// called by OSGi-DS
-	public static void unbindP2PNetworkManager(IP2PNetworkManager serv) {
-		if (p2pNetworkManager == serv) {
-			p2pNetworkManager = null;
-		}
-	}
 
 	/**
 	 * Called by OSGi on Bundle activation.
 	 */
 	public void activate() {
-		if(p2pNetworkManager != null) {
-			p2pNetworkManager.addListener(this);
+		
+		if(cP2PNetworkManager.isPresent()) {
+			cP2PNetworkManager.get().addListener(this);
 		}
 		LOG.debug("PeerFailureDetector activated");
-	}
-	
-	@Override
-	public void tryStartPeerFailureDetection() {
-		
-		if(p2pNetworkManager != null && p2pDictionary != null) {
-			
-			startPeerFailureDetection();
-			
-		} else {
-			
-			LOG.debug("Can not start peer failure detection.");
-			
-		}
 		
 	}
 
@@ -189,6 +240,14 @@ public class RecoveryP2PListener extends Observable implements IRecoveryP2PListe
 	@Override
 	public void startPeerFailureDetection() {
 		
+		// Preconditions
+		if(!cP2PNetworkManager.isPresent()) {
+			
+			LOG.error("No P2P network manager bound!");
+			return;
+			
+		}
+		
 		LOG.debug("Peer failure detection started");
 
 		if (failPeerListenerThread != null) {
@@ -200,10 +259,40 @@ public class RecoveryP2PListener extends Observable implements IRecoveryP2PListe
 
 		failPeerListenerThread = new FailPeerListenerThread();
 
-		if (failPeerListenerThread != null && p2pNetworkManager.getLocalPeerName() != null) {
+		if (failPeerListenerThread != null && cP2PNetworkManager.get().getLocalPeerName() != null) {
+			
+			// Having several peers on the same machine started at the same time may cause timing problems
+			int numTries = 0;			
+			while(cP2PNetworkManager.get().getLocalPeerID() == null && numTries < 10) {
+				
+				synchronized (this) {
+					
+					try {
+						
+						this.wait(WAIT_TIME_MS);
+						numTries++;
+						
+					} catch (InterruptedException e) {
+						
+						e.printStackTrace();
+						break;
+						
+					}
+					
+				}
+				
+			}
+			
+			if(cP2PNetworkManager.get().getLocalPeerID() == null) {
+				
+				LOG.error("Can not determine local peer ID!");
+				return;
+				
+			}
+			
 			failPeerListenerThread.setName("PeerFailureDetection_"
-					+ p2pNetworkManager.getLocalPeerName() + "_"
-					+ p2pNetworkManager.getLocalPeerID().toString());
+					+ cP2PNetworkManager.get().getLocalPeerName() + "_"
+					+ cP2PNetworkManager.get().getLocalPeerID().toString());
 			failPeerListenerThread.setDaemon(true);
 			failPeerListenerThread.start();
 		}
@@ -222,11 +311,20 @@ public class RecoveryP2PListener extends Observable implements IRecoveryP2PListe
 
 	@Override
 	public void networkStarted(IP2PNetworkManager sender) {
+		
+		// Preconditions
+		if(!cP2PNetworkManager.isPresent()) {
+			
+			LOG.error("No P2P network manager bound!");
+			return;
+			
+		}
+		
 		// Start listening to the network as soon as it's started
 		if (failPeerListenerThread != null && !failPeerListenerThread.isAlive()) {
 			failPeerListenerThread.setName("PeerFailureDetection_"
-					+ p2pNetworkManager.getLocalPeerName() + "_"
-					+ p2pNetworkManager.getLocalPeerID().toString());
+					+ cP2PNetworkManager.get().getLocalPeerName() + "_"
+					+ cP2PNetworkManager.get().getLocalPeerID().toString());
 			failPeerListenerThread.setDaemon(true);
 			failPeerListenerThread.start();
 		}

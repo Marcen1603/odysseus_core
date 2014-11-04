@@ -412,7 +412,7 @@ public class RecoveryCommunicator implements IRecoveryCommunicator, IPeerCommuni
 			
 			if (cRecoveryAllocator.isPresent()) {
 				
-				cRecoveryP2PListener.get().tryStartPeerFailureDetection();
+				cRecoveryP2PListener.get().startPeerFailureDetection();
 				
 			}
 			

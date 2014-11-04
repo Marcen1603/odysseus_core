@@ -12,11 +12,6 @@ import java.util.Observer;
 public interface IRecoveryP2PListener {
 	
 	/**
-	 * Tries to start detection for peer failures.
-	 */
-	public void tryStartPeerFailureDetection();
-	
-	/**
 	 * Starts detection for peer failures. <br />
 	 * Ensure that a P2P dictionary and a P2P network manager are present.
 	 */
