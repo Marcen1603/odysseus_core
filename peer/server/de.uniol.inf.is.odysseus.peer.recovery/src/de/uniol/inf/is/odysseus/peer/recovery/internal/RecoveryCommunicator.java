@@ -17,6 +17,7 @@ import net.jxta.pipe.PipeID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableSet;
@@ -67,10 +68,58 @@ public class RecoveryCommunicator implements IRecoveryCommunicator, IPeerCommuni
 	 */
 	private static final Logger LOG = LoggerFactory.getLogger(RecoveryCommunicator.class);
 
+	// TODO unused
 	public static final String JXTA_KEY_RECEIVER_PIPE_ID = "receiverPipeId";
 	public static final String JXTA_KEY_SENDER_PIPE_ID = "senderPipeId";
 
-	private static IP2PNetworkManager p2pNetworkManager;
+	/**
+	 * The P2P network manager, if there is one bound.
+	 */
+	private static Optional<IP2PNetworkManager> cP2PNetworkManager = Optional.absent();
+	
+	/**
+	 * Binds a P2P network manager. <br />
+	 * Called by OSGi-DS.
+	 * @param serv The P2P network manager to bind. <br />
+	 * Must be not null.
+	 */
+	public static void bindP2PNetworkManager(IP2PNetworkManager serv) {
+		
+		Preconditions.checkNotNull(serv);
+		cP2PNetworkManager = Optional.of(serv);
+		LOG.debug("Bound {} as a P2P network manager.", serv
+				.getClass().getSimpleName());
+		
+	}
+
+	/**
+	 * Unbinds a P2P network manager, if it's the bound one. <br />
+	 * Called by OSGi-DS.
+	 * @param serv The P2P network manager to unbind. <br />
+	 * Must be not null.
+	 */
+	public static void unbindP2PNetworkManager(IP2PNetworkManager serv) {
+		
+		Preconditions.checkNotNull(serv);
+		
+		if (cP2PNetworkManager.isPresent() && cP2PNetworkManager.get() == serv) {
+			
+			cP2PNetworkManager = Optional.absent();
+			LOG.debug("Unbound {} as a P2P network manager.", serv
+					.getClass().getSimpleName());
+			
+		}
+		
+	}
+	
+	/**
+	 * Gets the P2P network manager.
+	 * @return The bound P2P network manager or {@link Optional#absent()}, if there is none bound.
+	 */
+	public static Optional<IP2PNetworkManager> getP2pNetworkManager() {
+		return cP2PNetworkManager;
+	}
+	
 	private static IP2PDictionary p2pDictionary;
 	private static IPeerCommunicator peerCommunicator;
 	private static IRecoveryP2PListener recoveryP2PListener;
@@ -106,18 +155,6 @@ public class RecoveryCommunicator implements IRecoveryCommunicator, IPeerCommuni
 			recoveryP2PListener.stopPeerFailureDetection();
 		}
 
-	}
-
-	// called by OSGi-DS
-	public static void bindP2PNetworkManager(IP2PNetworkManager serv) {
-		p2pNetworkManager = serv;
-	}
-
-	// called by OSGi-DS
-	public static void unbindP2PNetworkManager(IP2PNetworkManager serv) {
-		if (p2pNetworkManager == serv) {
-			p2pNetworkManager = null;
-		}
 	}
 
 	// called by OSGi-DS
@@ -247,14 +284,6 @@ public class RecoveryCommunicator implements IRecoveryCommunicator, IPeerCommuni
 		RecoveryCommunicator.p2pDictionary = p2pDictionary;
 	}
 
-	public static IP2PNetworkManager getP2pNetworkManager() {
-		return p2pNetworkManager;
-	}
-
-	public static void setP2pNetworkManager(IP2PNetworkManager p2pNetworkManager) {
-		RecoveryCommunicator.p2pNetworkManager = p2pNetworkManager;
-	}
-
 	// -----------------------------------------------------
 	// Code with recovery logic
 	// -----------------------------------------------------
@@ -262,6 +291,13 @@ public class RecoveryCommunicator implements IRecoveryCommunicator, IPeerCommuni
 	@SuppressWarnings({ "rawtypes" })
 	@Override
 	public void recover(PeerID failedPeer) {
+		
+		if(!cP2PNetworkManager.isPresent()) {
+			
+			LOG.error("No P2P network manager bound!");
+			return;
+			
+		}
 
 		LOG.debug("Startet recovery for {}", p2pDictionary.getRemotePeerName(failedPeer));
 
@@ -338,7 +374,7 @@ public class RecoveryCommunicator implements IRecoveryCommunicator, IPeerCommuni
 			} else {
 				try {
 					peer = recoveryAllocator.allocate(p2pDictionary.getRemotePeerIDs(),
-							p2pNetworkManager.getLocalPeerID());
+							cP2PNetworkManager.get().getLocalPeerID());
 					LOG.debug("Peer ID for recovery allocation found.");
 				} catch (QueryPartAllocationException e) {
 					LOG.error("Peer ID search for recovery allocation failed.");
@@ -349,7 +385,7 @@ public class RecoveryCommunicator implements IRecoveryCommunicator, IPeerCommuni
 			// If the peer is null, we don't know any other peer so we have to
 			// install it on ourself
 			if (peer == null)
-				peer = p2pNetworkManager.getLocalPeerID();
+				peer = cP2PNetworkManager.get().getLocalPeerID();
 
 			determineAndSendHoldOnMessages(sharedQueryId, failedPeer);
 
@@ -367,6 +403,14 @@ public class RecoveryCommunicator implements IRecoveryCommunicator, IPeerCommuni
 
 	@SuppressWarnings("rawtypes")
 	private void determineAndSendHoldOnMessages(ID sharedQueryId, PeerID failedPeer) {
+		
+		if(!cP2PNetworkManager.isPresent()) {
+			
+			LOG.error("No P2P network manager bound!");
+			return;
+			
+		}
+		
 		// Test: Tell the peers which sent tuples to the failed peer that
 		// they have to hold on
 		TransformationConfiguration trafoConfig = new TransformationConfiguration("relational");
@@ -393,7 +437,7 @@ public class RecoveryCommunicator implements IRecoveryCommunicator, IPeerCommuni
 									.createHoldOnMessage(pipe);
 							uri = new URI(peerId);
 							PeerID peerToHoldOn = PeerID.create(uri);
-							if (!peerToHoldOn.equals(p2pNetworkManager.getLocalPeerID())) {
+							if (!peerToHoldOn.equals(cP2PNetworkManager.get().getLocalPeerID())) {
 								sendHoldOnMessage(peerToHoldOn, holdOnMessage);
 							} else {
 								// We are the peer
@@ -513,6 +557,14 @@ public class RecoveryCommunicator implements IRecoveryCommunicator, IPeerCommuni
 
 	@Override
 	public void chooseBuddyForQuery(ID sharedQueryId) {
+		
+		if(!cP2PNetworkManager.isPresent()) {
+			
+			LOG.error("No P2P network manager bound!");
+			return;
+			
+		}
+		
 		// TODO Use a buddy-allocator? For now, we just choose the first peer we
 		// know
 		// 1. Choose buddy
@@ -520,7 +572,7 @@ public class RecoveryCommunicator implements IRecoveryCommunicator, IPeerCommuni
 
 		// 2. Get the necessary backup-information
 		ImmutableSet<String> infos = LocalBackupInformationAccess.getStoredPQLStatements(sharedQueryId,
-				p2pNetworkManager.getLocalPeerID());
+				cP2PNetworkManager.get().getLocalPeerID());
 		List<String> pql = infos.asList();
 
 		// 3. Send this to the buddy

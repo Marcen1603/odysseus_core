@@ -194,7 +194,15 @@ public class RecoveryAgreementHandler {
 	 * @return true, if we have the "higher number", false, if the other one has
 	 */
 	private static boolean thisPeerHasHigherNumber(PeerID peer) {
-		return RecoveryCommunicator.getP2pNetworkManager().getLocalPeerID()
+		
+		if(!RecoveryCommunicator.getP2pNetworkManager().isPresent()) {
+			
+			LOG.error("No P2P network manager bound!");
+			return false;
+			
+		}
+		
+		return RecoveryCommunicator.getP2pNetworkManager().get().getLocalPeerID()
 				.toString().compareTo(peer.toString()) >= 0;
 	}
 
