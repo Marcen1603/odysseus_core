@@ -112,33 +112,56 @@ public class RecoveryP2PListener extends Observable implements IRecoveryP2PListe
 		
 	}
 	
+	/**
+	 * The time [ms] between two network look ups for failed or new peers.
+	 */
 	private final static int WAIT_TIME_MS = 1000;
 	
-	private class FailPeerListenerThread extends Thread {
+	/**
+	 * A P2P network observer observes the P2P network for failed or new peers.
+	 * @author Michael Brand & Simon Kuespert
+	 *
+	 */
+	private class P2PNetworkObserver extends Thread {
 		
+		/**
+		 * True, if the thread is currently running.
+		 */
 		private volatile boolean mActive = false;
 		
-		public void activeInterrupt() {
+		@Override
+		public void interrupt() {
 			
 			this.mActive = false;
+			super.interrupt();
 			
 		}
 		
+		// TODO own listener interface
+		/**
+		 * Sends a notification indicating that a peer left the network.
+		 * @param pid The ID of the left peer.
+		 */
 		private void handlePeerLost(PeerID pid) {
 			
 			P2PNetworkNotification notification = new P2PNetworkNotification(
 					P2PNetworkNotification.LOST_PEER, pid);
-			setChanged();
-			notifyObservers(notification);
+			RecoveryP2PListener.this.setChanged();
+			RecoveryP2PListener.this.notifyObservers(notification);
 			
 		}
 		
+		// TODO own listener interface
+		/**
+		 * Sends a notification indicating that a peer joined the network.
+		 * @param pid The ID of the entered peer.
+		 */
 		private void handleNewPeer(PeerID pid) {
 			
 			P2PNetworkNotification notification = new P2PNetworkNotification(
 					P2PNetworkNotification.FOUND_PEER, pid);
-			setChanged();
-			notifyObservers(notification);
+			RecoveryP2PListener.this.setChanged();
+			RecoveryP2PListener.this.notifyObservers(notification);
 			
 		}
 		
@@ -159,19 +182,18 @@ public class RecoveryP2PListener extends Observable implements IRecoveryP2PListe
 				
 				Collection<PeerID> peerIDs = cP2PDictionary.get().getRemotePeerIDs();
 				
-				if (savedPeerIDs == null) {
+				if (RecoveryP2PListener.this.mKnownPeerIDs == null) {
 					
-					savedPeerIDs = peerIDs;
+					RecoveryP2PListener.this.mKnownPeerIDs = peerIDs;
 					
 				} else {
 					
 					// Check, if we lost a peer
-					for (PeerID pid : savedPeerIDs) {
+					for (PeerID pid : RecoveryP2PListener.this.mKnownPeerIDs) {
 						
 						if (!peerIDs.contains(pid)) {
 							
-							// We lost a peer, start recovery
-							LOG.debug("Lost peer");
+							LOG.debug("Lost peer: {}", cP2PDictionary.get().getRemotePeerName(pid));
 							this.handlePeerLost(pid);
 
 						}
@@ -180,16 +202,15 @@ public class RecoveryP2PListener extends Observable implements IRecoveryP2PListe
 					// Check, if there is a new peer
 					for (PeerID pid : peerIDs) {
 						
-						if (!savedPeerIDs.contains(pid)) {
+						if (!RecoveryP2PListener.this.mKnownPeerIDs.contains(pid)) {
 							
-							// We found a new peer
 							LOG.debug("Found new peer: {}", cP2PDictionary.get().getRemotePeerName(pid));
 							this.handleNewPeer(pid);
 							
 						}
 					}
 
-					savedPeerIDs = peerIDs;
+					RecoveryP2PListener.this.mKnownPeerIDs = peerIDs;
 					
 				}
 
@@ -200,9 +221,7 @@ public class RecoveryP2PListener extends Observable implements IRecoveryP2PListe
 						this.wait(WAIT_TIME_MS);
 						
 					} catch (InterruptedException e) {
-						
-						LOG.error("FailPeerListenerThread interrupted");
-						e.printStackTrace();
+
 						this.mActive = false;
 						
 					}
@@ -215,8 +234,15 @@ public class RecoveryP2PListener extends Observable implements IRecoveryP2PListe
 		
 	}
 
-	private Collection<PeerID> savedPeerIDs;
-	private FailPeerListenerThread failPeerListenerThread;
+	/**
+	 * All currently known peers.
+	 */
+	private Collection<PeerID> mKnownPeerIDs;
+	
+	/**
+	 * P2P network observer, if there is one at the moment.
+	 */
+	private Optional<P2PNetworkObserver> mNetworkObserver = Optional.absent();
 
 	/**
 	 * Called by OSGi on Bundle activation.
@@ -224,7 +250,9 @@ public class RecoveryP2PListener extends Observable implements IRecoveryP2PListe
 	public void activate() {
 		
 		if(cP2PNetworkManager.isPresent()) {
+			
 			cP2PNetworkManager.get().addListener(this);
+			
 		}
 		LOG.debug("PeerFailureDetector activated");
 		
@@ -234,7 +262,9 @@ public class RecoveryP2PListener extends Observable implements IRecoveryP2PListe
 	 * Called by OSGi on Bundle deactivation.
 	 */
 	public void deactivate() {
+		
 		LOG.debug("PeerFailureDetector deactivated");
+		
 	}
 
 	@Override
@@ -250,16 +280,18 @@ public class RecoveryP2PListener extends Observable implements IRecoveryP2PListe
 		
 		LOG.debug("Peer failure detection started");
 
-		if (failPeerListenerThread != null) {
+		if (this.mNetworkObserver.isPresent()) {
+			
 			// Stop old thread if it is already running
-			failPeerListenerThread.activeInterrupt();
-			failPeerListenerThread = null;
+			this.mNetworkObserver.get().interrupt();
+			this.mNetworkObserver = Optional.absent();
 			LOG.debug("Stopped already running peer failure detection.");
+			
 		}
 
-		failPeerListenerThread = new FailPeerListenerThread();
+		P2PNetworkObserver networkObserver = new P2PNetworkObserver();
 
-		if (failPeerListenerThread != null && cP2PNetworkManager.get().getLocalPeerName() != null) {
+		if (cP2PNetworkManager.get().getLocalPeerName() != null) {
 			
 			// Having several peers on the same machine started at the same time may cause timing problems
 			int numTries = 0;			
@@ -290,22 +322,29 @@ public class RecoveryP2PListener extends Observable implements IRecoveryP2PListe
 				
 			}
 			
-			failPeerListenerThread.setName("PeerFailureDetection_"
+			networkObserver.setName("PeerFailureDetection_"
 					+ cP2PNetworkManager.get().getLocalPeerName() + "_"
 					+ cP2PNetworkManager.get().getLocalPeerID().toString());
-			failPeerListenerThread.setDaemon(true);
-			failPeerListenerThread.start();
+			networkObserver.setDaemon(true);
+			networkObserver.start();
+			this.mNetworkObserver = Optional.of(networkObserver);
+			
 		}
 
 	}
 
 	@Override
 	public void stopPeerFailureDetection() {
-		if (failPeerListenerThread != null) {
-			failPeerListenerThread.activeInterrupt();
+		
+		if (this.mNetworkObserver.isPresent()) {
+			
+			mNetworkObserver.get().interrupt();
 			LOG.debug("Peer failure detection stopped");
+			
 		} else {
+			
 			LOG.debug("Tried to stop peer failure detection, but it was stopped already.");
+			
 		}
 	}
 
@@ -321,20 +360,36 @@ public class RecoveryP2PListener extends Observable implements IRecoveryP2PListe
 		}
 		
 		// Start listening to the network as soon as it's started
-		if (failPeerListenerThread != null && !failPeerListenerThread.isAlive()) {
-			failPeerListenerThread.setName("PeerFailureDetection_"
+		if(!this.mNetworkObserver.isPresent()) {
+			
+			return;
+			
+		}
+		
+		P2PNetworkObserver networkObserver = this.mNetworkObserver.get();
+		
+		if (!networkObserver.isAlive()) {
+			
+			networkObserver.setName("PeerFailureDetection_"
 					+ cP2PNetworkManager.get().getLocalPeerName() + "_"
 					+ cP2PNetworkManager.get().getLocalPeerID().toString());
-			failPeerListenerThread.setDaemon(true);
-			failPeerListenerThread.start();
+			networkObserver.setDaemon(true);
+			networkObserver.start();
+			this.mNetworkObserver = Optional.of(networkObserver);
+			
 		}
+		
 	}
 
 	@Override
 	public void networkStopped(IP2PNetworkManager p2pNetworkManager) {
 		
-		failPeerListenerThread.activeInterrupt();
-		failPeerListenerThread = null;
+		if(this.mNetworkObserver.isPresent()) {
+		
+			mNetworkObserver.get().interrupt();
+			mNetworkObserver = Optional.absent();
+			
+		}
 
 	}
 
