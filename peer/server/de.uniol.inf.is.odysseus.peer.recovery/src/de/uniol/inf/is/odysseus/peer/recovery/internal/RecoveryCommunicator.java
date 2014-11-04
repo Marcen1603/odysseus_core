@@ -116,11 +116,60 @@ public class RecoveryCommunicator implements IRecoveryCommunicator, IPeerCommuni
 	 * Gets the P2P network manager.
 	 * @return The bound P2P network manager or {@link Optional#absent()}, if there is none bound.
 	 */
-	public static Optional<IP2PNetworkManager> getP2pNetworkManager() {
+	public static Optional<IP2PNetworkManager> getP2PNetworkManager() {
 		return cP2PNetworkManager;
 	}
 	
-	private static IP2PDictionary p2pDictionary;
+	/**
+	 * The P2P dictionary, if there is one bound.
+	 */
+	private static Optional<IP2PDictionary> cP2PDictionary = Optional.absent();
+	
+	/**
+	 * Binds a P2P dictionary. <br />
+	 * Called by OSGi-DS.
+	 * @param serv The P2P dictionary to bind. <br />
+	 * Must be not null.
+	 */
+	public static void bindP2PDictionary(IP2PDictionary serv) {
+		
+		Preconditions.checkNotNull(serv);
+		cP2PDictionary = Optional.of(serv);
+		LOG.debug("Bound {} as a P2P dictionary.", serv
+				.getClass().getSimpleName());
+		
+	}
+
+	/**
+	 * Unbinds a P2P dictionary, if it's the bound one. <br />
+	 * Called by OSGi-DS.
+	 * @param serv The P2P dictionary to unbind. <br />
+	 * Must be not null.
+	 */
+	public static void unbindP2PDictionary(IP2PDictionary serv) {
+		
+		Preconditions.checkNotNull(serv);
+		
+		if (cP2PDictionary.isPresent() && cP2PDictionary.get() == serv) {
+			
+			cP2PDictionary = Optional.absent();
+			LOG.debug("Unbound {} as a P2P dictionary.", serv
+					.getClass().getSimpleName());
+			
+		}
+		
+	}
+	
+	/**
+	 * Gets the P2P dictionary.
+	 * @return The bound P2P dictionary or {@link Optional#absent()}, if there is none bound.
+	 */
+	public static Optional<IP2PDictionary> getP2PDictionary() {
+		
+		return cP2PDictionary;
+		
+	}
+	
 	private static IPeerCommunicator peerCommunicator;
 	private static IRecoveryP2PListener recoveryP2PListener;
 	private static IRecoveryAllocator recoveryAllocator;
@@ -155,18 +204,6 @@ public class RecoveryCommunicator implements IRecoveryCommunicator, IPeerCommuni
 			recoveryP2PListener.stopPeerFailureDetection();
 		}
 
-	}
-
-	// called by OSGi-DS
-	public static void bindP2PDictionary(IP2PDictionary serv) {
-		p2pDictionary = serv;
-	}
-
-	// called by OSGi-DS
-	public static void unbindP2PDictionary(IP2PDictionary serv) {
-		if (p2pDictionary == serv) {
-			p2pDictionary = null;
-		}
 	}
 
 	/**
@@ -276,14 +313,6 @@ public class RecoveryCommunicator implements IRecoveryCommunicator, IPeerCommuni
 		return executor;
 	}
 
-	public static IP2PDictionary getP2pDictionary() {
-		return p2pDictionary;
-	}
-
-	public static void setP2pDictionary(IP2PDictionary p2pDictionary) {
-		RecoveryCommunicator.p2pDictionary = p2pDictionary;
-	}
-
 	// -----------------------------------------------------
 	// Code with recovery logic
 	// -----------------------------------------------------
@@ -297,9 +326,14 @@ public class RecoveryCommunicator implements IRecoveryCommunicator, IPeerCommuni
 			LOG.error("No P2P network manager bound!");
 			return;
 			
+		} else if(!cP2PDictionary.isPresent()) {
+			
+			LOG.error("No P2P dictionary bound!");
+			return;
+			
 		}
 
-		LOG.debug("Startet recovery for {}", p2pDictionary.getRemotePeerName(failedPeer));
+		LOG.debug("Startet recovery for {}", cP2PDictionary.get().getRemotePeerName(failedPeer));
 
 		// 1. Check, if we have backup information for the failed peer and for
 		// which shared-query-ids
@@ -373,7 +407,7 @@ public class RecoveryCommunicator implements IRecoveryCommunicator, IPeerCommuni
 				LOG.error("No allocator for recovery allocation set.");
 			} else {
 				try {
-					peer = recoveryAllocator.allocate(p2pDictionary.getRemotePeerIDs(),
+					peer = recoveryAllocator.allocate(cP2PDictionary.get().getRemotePeerIDs(),
 							cP2PNetworkManager.get().getLocalPeerID());
 					LOG.debug("Peer ID for recovery allocation found.");
 				} catch (QueryPartAllocationException e) {
@@ -525,10 +559,18 @@ public class RecoveryCommunicator implements IRecoveryCommunicator, IPeerCommuni
 	}
 
 	public void sendRecoveryAgreementMessage(PeerID failedPeer, ID sharedQueryId) {
+		
+		if(!cP2PDictionary.isPresent()) {
+			
+			LOG.error("No P2P dictionary bound!");
+			return;
+			
+		}
+		
 		// Send this to all other peers we know
 		RecoveryAgreementMessage message = RecoveryAgreementMessage.createRecoveryAgreementMessage(failedPeer,
 				sharedQueryId);
-		for (PeerID destinationPeer : p2pDictionary.getRemotePeerIDs())
+		for (PeerID destinationPeer : cP2PDictionary.get().getRemotePeerIDs())
 			sendMessage(destinationPeer, message);
 	}
 
@@ -563,12 +605,17 @@ public class RecoveryCommunicator implements IRecoveryCommunicator, IPeerCommuni
 			LOG.error("No P2P network manager bound!");
 			return;
 			
+		} else if(!cP2PDictionary.isPresent()) {
+			
+			LOG.error("No P2P dictionary bound!");
+			return;
+			
 		}
 		
 		// TODO Use a buddy-allocator? For now, we just choose the first peer we
 		// know
 		// 1. Choose buddy
-		PeerID buddy = p2pDictionary.getRemotePeerIDs().iterator().next();
+		PeerID buddy = cP2PDictionary.get().getRemotePeerIDs().iterator().next();
 
 		// 2. Get the necessary backup-information
 		ImmutableSet<String> infos = LocalBackupInformationAccess.getStoredPQLStatements(sharedQueryId,

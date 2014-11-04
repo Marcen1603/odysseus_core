@@ -299,7 +299,7 @@ public class RecoveryConsole implements CommandProvider {
 			LOG.error("No recovery communicator bound!");
 			return;
 
-		} else if(!RecoveryCommunicator.getP2pNetworkManager().isPresent()) {
+		} else if(!RecoveryCommunicator.getP2PNetworkManager().isPresent()) {
 			
 			LOG.error("No P2P network manager bound!");
 			return;
@@ -312,12 +312,12 @@ public class RecoveryConsole implements CommandProvider {
 
 		if (receiverPeerId == null) {
 			ci.println("Don't know new receiver peer. Take myself insead.");
-			receiverPeerId = RecoveryCommunicator.getP2pNetworkManager().get().getLocalPeerID();
+			receiverPeerId = RecoveryCommunicator.getP2PNetworkManager().get().getLocalPeerID();
 		}
 
 		if (newSendrePeerId == null) {
 			ci.println("Don't know new sender peer. Take myself insead.");
-			newSendrePeerId = RecoveryCommunicator.getP2pNetworkManager().get().getLocalPeerID();
+			newSendrePeerId = RecoveryCommunicator.getP2PNetworkManager().get().getLocalPeerID();
 		}
 
 		cCommunicator.get().sendUpdateReceiverMessage(receiverPeerId, newSendrePeerId, pipeId);
