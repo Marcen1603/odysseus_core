@@ -45,7 +45,7 @@ public class Temper1Sensor extends Sensor {
 					activity);
 			String filteredRawValuesQuery = createStatementForFilteredRawValues(
 					filteredRawValues, condition);
-			addQueryForActivityInterpreter(filteredRawValues,
+			addViewForActivityInterpreter(filteredRawValues,
 					filteredRawValuesQuery);
 
 			// Activity: hot
@@ -55,7 +55,7 @@ public class Temper1Sensor extends Sensor {
 			String actConf = createQueryForActivityConfiguration(activity,
 					activityConfiguration);
 
-			addQueryForActivityInterpreter(activityConfiguration, actConf);
+			addViewForActivityInterpreter(activityConfiguration, actConf);
 
 			// Join with predicate: temp > 24°C
 			String activitySourceName = getNameCombination("Activity", activity);
@@ -64,7 +64,7 @@ public class Temper1Sensor extends Sensor {
 
 			setActivitySourceName(activity, activitySourceName);
 
-			addQueryForActivityInterpreter(activitySourceName, actSoNa);
+			addViewForActivityInterpreter(activitySourceName, actSoNa);
 		}
 	}
 
@@ -159,12 +159,12 @@ public class Temper1Sensor extends Sensor {
 	}
 
 	@Override
-	public LinkedHashMap<String, String> getQueryForActivityInterpreterQueries() {
+	public LinkedHashMap<String, String> getViewForActivityInterpreterQueries() {
 		// delete all
-		setQueryForActivityInterpreterQueries(null);
+		setViewForActivityInterpreterQueries(null);
 
 		generateQueryForActivityInterpreter();
 
-		return super.getQueryForActivityInterpreterQueries();
+		return super.getViewForActivityInterpreterQueries();
 	}
 }

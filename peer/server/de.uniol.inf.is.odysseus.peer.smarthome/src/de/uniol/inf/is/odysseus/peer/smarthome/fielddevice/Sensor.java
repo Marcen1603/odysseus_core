@@ -19,7 +19,7 @@ public abstract class Sensor implements FieldDevice, Serializable {
 	
 	private List<String> listPossibleActivityNames;
 	//private Map<String, ActivityInterpreter> activityInterpreters = Maps.newHashMap();
-	private LinkedHashMap<String, String> queryForActivityInterpreter;
+	private LinkedHashMap<String, String> viewForActivityInterpreter;
 	private HashMap<String, String> activitySourceNameMap;
 	
 	
@@ -78,32 +78,17 @@ public abstract class Sensor implements FieldDevice, Serializable {
 			getPossibleActivityNames().add(activityName);			
 		}
 	}
-
-	/*
-	public Map<String, ActivityInterpreter> getActivityInterpreters() {
-		return activityInterpreters;
+	public void setViewForActivityInterpreterQueries(LinkedHashMap<String, String> interpreters) {
+		this.viewForActivityInterpreter = interpreters;
 	}
-	public void setActivityInterpreters(Map<String, ActivityInterpreter> activityInterpreters) {
-		this.activityInterpreters = activityInterpreters;
-	}
-	public void addActivityInterpreter(String activity,ActivityInterpreter activityInterpreter){
-		this.activityInterpreters.put(activity, activityInterpreter);
-	}
-	*/
-	
-	public void setQueryForActivityInterpreterQueries(LinkedHashMap<String, String> interpreters) {
-		this.queryForActivityInterpreter = interpreters;
-	}
-	
-	protected void addQueryForActivityInterpreter(String queryName, String query) {
-		if(this.queryForActivityInterpreter==null){
-			this.queryForActivityInterpreter = new LinkedHashMap<String, String>();
+	protected void addViewForActivityInterpreter(String queryName, String query) {
+		if(this.viewForActivityInterpreter==null){
+			this.viewForActivityInterpreter = new LinkedHashMap<String, String>();
 		}
-		this.queryForActivityInterpreter.put(queryName, query);
+		this.viewForActivityInterpreter.put(queryName, query);
 	}
-	
-	public LinkedHashMap<String, String> getQueryForActivityInterpreterQueries() {
-		return this.queryForActivityInterpreter;
+	public LinkedHashMap<String, String> getViewForActivityInterpreterQueries() {
+		return this.viewForActivityInterpreter;
 	}
 	public String getPostfix() {
 		return this.postfix;

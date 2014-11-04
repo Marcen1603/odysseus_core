@@ -41,13 +41,13 @@ public class RPiGPIOSensor extends Sensor {
 			String activityConfigName = getNameCombination(
 					"ActivityConfiguration", activity);
 			String activityConfigQuery = generateActivityConfig(activity, activityConfigName);
-			addQueryForActivityInterpreter(activityConfigName,
+			addViewForActivityInterpreter(activityConfigName,
 					activityConfigQuery);
 
 			String activitySourceName = getNameCombination("Activity", activity);
 			String activityQuery = generateActivityStream(activitySourceName, activityConfigName);
 			setActivitySourceName(activity, activitySourceName);
-			addQueryForActivityInterpreter(activitySourceName, activityQuery);
+			addViewForActivityInterpreter(activitySourceName, activityQuery);
 		}
 	}
 
@@ -140,12 +140,12 @@ public class RPiGPIOSensor extends Sensor {
 	}
 	
 	@Override
-	public LinkedHashMap<String, String> getQueryForActivityInterpreterQueries() {
+	public LinkedHashMap<String, String> getViewForActivityInterpreterQueries() {
 		// delete all
-		setQueryForActivityInterpreterQueries(null);
+		setViewForActivityInterpreterQueries(null);
 
 		generateQueryForActivityInterpreter();
 
-		return super.getQueryForActivityInterpreterQueries();
+		return super.getViewForActivityInterpreterQueries();
 	}
 }
