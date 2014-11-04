@@ -8,6 +8,10 @@ import java.util.List;
 import net.jxta.id.ID;
 import net.jxta.peer.PeerID;
 import net.jxta.pipe.PipeID;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
@@ -29,6 +33,8 @@ import de.uniol.inf.is.odysseus.peer.recovery.util.RecoveryHelper;
  *
  */
 public class RecoveryInstructionHandler {
+	
+	private static final Logger LOG = LoggerFactory.getLogger(RecoveryInstructionHandler.class);
 
 	private static IRecoveryCommunicator recoveryCommunicator;
 	private static IP2PNetworkManager p2pNetworkManager;
@@ -95,12 +101,19 @@ public class RecoveryInstructionHandler {
 
 	@SuppressWarnings("rawtypes")
 	private static void addQuery(String pql) {
+		
+		if(!RecoveryCommunicator.getExecutor().isPresent()) {
+			
+			LOG.error("No executor bound!");
+			return;
+			
+		}
 
 		Collection<Integer> installedQueries = RecoveryHelper.installAndRunQueryPartFromPql(pql);
 
 		// Call "receiveFromNewPeer" on the subsequent receiver so that that
 		// peer creates a socket-connection to us
-		IServerExecutor executor = RecoveryCommunicator.getExecutor();
+		IServerExecutor executor = RecoveryCommunicator.getExecutor().get();
 
 		for (IPhysicalQuery query : executor.getExecutionPlan().getQueries()) {
 			if (installedQueries.contains(query.getID())) {
@@ -157,8 +170,16 @@ public class RecoveryInstructionHandler {
 
 	@SuppressWarnings("rawtypes")
 	private static void updateReceiver(PeerID newSender, PipeID pipeId) {
+		
+		if(!RecoveryCommunicator.getExecutor().isPresent()) {
+			
+			LOG.error("No executor bound!");
+			return;
+			
+		}
+		
 		// 1. Get the receiver, which we have to update
-		Collection<IPhysicalQuery> queries = RecoveryCommunicator.getExecutor().getExecutionPlan().getQueries();
+		Collection<IPhysicalQuery> queries = RecoveryCommunicator.getExecutor().get().getExecutionPlan().getQueries();
 		for (IPhysicalQuery query : queries) {
 			for (IPhysicalOperator op : query.getAllOperators()) {
 				if (op instanceof JxtaReceiverPO) {

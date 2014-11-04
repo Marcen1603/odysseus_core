@@ -343,7 +343,7 @@ public class RecoveryConsole implements CommandProvider {
 		}
 		IRecoveryAllocator allocator = optAllocator.get();
 
-		RecoveryCommunicator.setRecoveryAllocator(allocator);
+		RecoveryCommunicator.bindRecoveryAllocator(allocator);
 
 		peerFailureDetector.startPeerFailureDetection();
 

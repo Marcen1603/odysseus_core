@@ -218,9 +218,9 @@ public class RecoveryCommunicator implements IRecoveryCommunicator, IPeerCommuni
 		
 		Preconditions.checkNotNull(serv);
 		cPeerCommunicator = Optional.of(serv);
+		this.registerMessagesAndAddListeners();
 		LOG.debug("Bound {} as a peer communicator.", serv
 				.getClass().getSimpleName());		
-		this.registerMessagesAndAddListeners();
 
 	}
 
@@ -236,36 +236,186 @@ public class RecoveryCommunicator implements IRecoveryCommunicator, IPeerCommuni
 		
 		if (cPeerCommunicator.isPresent() && cPeerCommunicator.get() == serv) {
 			
+			this.unregisterMessagesAndAddListeners();
 			cPeerCommunicator = Optional.absent();
 			LOG.debug("Unbound {} as a peer communicator.", serv
 					.getClass().getSimpleName());
-			this.unregisterMessagesAndAddListeners();
 			
 		}
 		
 	}
 		
-	private static IRecoveryP2PListener recoveryP2PListener;
-	private static IRecoveryAllocator recoveryAllocator;
+	/**
+	 * The recovery P2P listener, if there is one bound.
+	 */
+	private static Optional<IRecoveryP2PListener> cRecoveryP2PListener = Optional.absent();
+	
+	/**
+	 * Binds a recovery P2P listener. <br />
+	 * Called by OSGi-DS.
+	 * @param serv The recovery P2P listener to bind. <br />
+	 * Must be not null.
+	 */
+	public static void bindRecoveryP2PListener(IRecoveryP2PListener serv) {
+		
+		Preconditions.checkNotNull(serv);
+		cRecoveryP2PListener = Optional.of(serv);
+		LOG.debug("Bound {} as a recovery P2P listener.", serv
+				.getClass().getSimpleName());
+		
+	}
 
 	/**
-	 * Executor to get queries
+	 * Unbinds a recovery P2P listener, if it's the bound one. <br />
+	 * Called by OSGi-DS.
+	 * @param serv The recovery P2P listener to unbind. <br />
+	 * Must be not null.
 	 */
-	private static IServerExecutor executor;
+	public static void unbindRecoveryP2PListener(IRecoveryP2PListener serv) {
+		
+		Preconditions.checkNotNull(serv);
+		
+		if (cRecoveryP2PListener.isPresent() && cRecoveryP2PListener.get() == serv) {
+			
+			cRecoveryP2PListener = Optional.absent();
+			LOG.debug("Unbound {} as a recovery P2P listener.", serv
+					.getClass().getSimpleName());
+			
+		}
+		
+	}
+	
+	// TODO The communicator should not bind an allocator. Single strategies and the console should do. M.B.
+	
 	/**
-	 * Active Session. Use getActiveSession() to avoid null pointers.
+	 * The recovery allocator, if there is one bound.
 	 */
-	private static ISession activeSession;
+	private static Optional<IRecoveryAllocator> cRecoveryAllocator = Optional.absent();
+	
+	/**
+	 * Binds a recovery allocator. <br />
+	 * Called by OSGi-DS.
+	 * @param serv The recovery allocator to bind. <br />
+	 * Must be not null.
+	 */
+	public static void bindRecoveryAllocator(IRecoveryAllocator serv) {
+		
+		Preconditions.checkNotNull(serv);
+		cRecoveryAllocator = Optional.of(serv);
+		LOG.debug("Bound {} as a recovery allocator.", serv
+				.getClass().getSimpleName());
+		
+	}
+
+	/**
+	 * Unbinds a recovery allocator, if it's the bound one. <br />
+	 * Called by OSGi-DS.
+	 * @param serv The recovery allocator to unbind. <br />
+	 * Must be not null.
+	 */
+	public static void unbindRecoveryAllocator(IRecoveryAllocator serv) {
+		
+		Preconditions.checkNotNull(serv);
+		
+		if (cRecoveryAllocator.isPresent() && cRecoveryAllocator.get() == serv) {
+			
+			cRecoveryAllocator = Optional.absent();
+			LOG.debug("Unbound {} as a recovery allocator.", serv
+					.getClass().getSimpleName());
+			
+		}
+		
+	}
+
+	/**
+	 * The executor, if there is one bound.
+	 */
+	private static Optional<IServerExecutor> cExecutor = Optional.absent();
+	
+	/**
+	 * Binds an executor. <br />
+	 * Called by OSGi-DS.
+	 * @param serv The executor to bind. <br />
+	 * Must be not null.
+	 */
+	public static void bindExecutor(IExecutor serv) {
+		
+		Preconditions.checkNotNull(serv);
+		Preconditions.checkArgument(serv instanceof IServerExecutor);
+		cExecutor = Optional.of((IServerExecutor) serv);
+		LOG.debug("Bound {} as an executor.", serv
+				.getClass().getSimpleName());
+		
+	}
+
+	/**
+	 * Unbinds an executor, if it's the bound one. <br />
+	 * Called by OSGi-DS.
+	 * @param serv The executor to unbind. <br />
+	 * Must be not null.
+	 */
+	public static void unbindExecutor(IExecutor serv) {
+		
+		Preconditions.checkNotNull(serv);
+		Preconditions.checkArgument(serv instanceof IServerExecutor);
+		
+		if (cExecutor.isPresent() && cExecutor.get() == (IServerExecutor) serv) {
+			
+			cExecutor = Optional.absent();
+			LOG.debug("Unbound {} as an executor.", serv
+					.getClass().getSimpleName());
+			
+		}
+		
+	}
+	
+	/**
+	 * Gets the executor.
+	 * @return The bound executor or {@link Optional#absent()}, if there is none bound.
+	 */
+	public static Optional<IServerExecutor> getExecutor() {
+		
+		return cExecutor;
+		
+	}
+	
+	/**
+	 * The active Session. <br />
+	 * Only to be used by {@link #getActiveSession()}.
+	 */
+	private static ISession cActiveSession;
+	
+	/**
+	 * Gets the currently active session.
+	 */
+	public static ISession getActiveSession() {
+		
+		if (cActiveSession == null || !cActiveSession.isValid()) {
+			
+			cActiveSession = UserManagementProvider.getSessionmanagement().loginSuperUser(null,
+					UserManagementProvider.getDefaultTenant().getName());
+			
+		}
+		
+		return cActiveSession;
+		
+	}
 
 	/**
 	 * Called by OSGi on Bundle activation.
 	 */
 	public void activate() {
-		if (recoveryP2PListener != null) {
-			recoveryP2PListener.addObserver(this);
-			if (recoveryAllocator != null) {
-				recoveryP2PListener.tryStartPeerFailureDetection();
+		
+		if (cRecoveryP2PListener.isPresent()) {
+			
+			cRecoveryP2PListener.get().addObserver(this);
+			
+			if (cRecoveryAllocator.isPresent()) {
+				
+				cRecoveryP2PListener.get().tryStartPeerFailureDetection();
+				
 			}
+			
 		}
 
 	}
@@ -274,76 +424,13 @@ public class RecoveryCommunicator implements IRecoveryCommunicator, IPeerCommuni
 	 * Called by OSGi on Bundle deactivation.
 	 */
 	public void deactivate() {
-		if (recoveryAllocator != null) {
-			recoveryP2PListener.stopPeerFailureDetection();
+		
+		if (cRecoveryP2PListener.isPresent() && cRecoveryAllocator.isPresent()) {
+			
+			cRecoveryP2PListener.get().stopPeerFailureDetection();
+			
 		}
 
-	}
-
-	/**
-	 * called by OSGi-DS to bind Executor
-	 * 
-	 * @param exe
-	 *            Executor to bind.
-	 */
-	public static void bindExecutor(IExecutor exe) {
-		executor = (IServerExecutor) exe;
-	}
-
-	/**
-	 * called by OSGi-DS to unbind Executor
-	 * 
-	 * @param exe
-	 *            Executor to unbind.
-	 */
-	public static void unbindExecutor(IExecutor exe) {
-		if (executor == exe) {
-			executor = null;
-		}
-	}
-
-	// called by OSGi-DS
-	public static void bindRecoveryP2PListener(IRecoveryP2PListener serv) {
-		recoveryP2PListener = serv;
-	}
-
-	// called by OSGi-DS
-	public static void unbindRecoveryP2PListener(IRecoveryP2PListener serv) {
-		if (recoveryP2PListener == serv)
-			recoveryP2PListener = null;
-	}
-
-	// called by OSGi-DS
-	public static void bindRecoveryAllocator(IRecoveryAllocator allocator) {
-		recoveryAllocator = allocator;
-	}
-
-	// called by OSGi-DS
-	public static void unbindRecoveryAllocator(IRecoveryAllocator allocator) {
-		if (recoveryAllocator == allocator)
-			recoveryAllocator = null;
-	}
-
-	/**
-	 * Gets currently active Session.
-	 * 
-	 * @return active Session
-	 */
-	public static ISession getActiveSession() {
-		if (activeSession == null || !activeSession.isValid()) {
-			activeSession = UserManagementProvider.getSessionmanagement().loginSuperUser(null,
-					UserManagementProvider.getDefaultTenant().getName());
-		}
-		return activeSession;
-	}
-
-	/**
-	 * Getter for Executor
-	 * 
-	 * @return
-	 */
-	public static IServerExecutor getExecutor() {
-		return executor;
 	}
 
 	// -----------------------------------------------------
@@ -362,6 +449,11 @@ public class RecoveryCommunicator implements IRecoveryCommunicator, IPeerCommuni
 		} else if(!cP2PDictionary.isPresent()) {
 			
 			LOG.error("No P2P dictionary bound!");
+			return;
+			
+		} else if(!cRecoveryAllocator.isPresent()) {
+			
+			LOG.error("No recovery allocator bound!");
 			return;
 			
 		}
@@ -436,17 +528,13 @@ public class RecoveryCommunicator implements IRecoveryCommunicator, IPeerCommuni
 
 			PeerID peer = null;
 
-			if (recoveryAllocator == null) {
-				LOG.error("No allocator for recovery allocation set.");
-			} else {
-				try {
-					peer = recoveryAllocator.allocate(cP2PDictionary.get().getRemotePeerIDs(),
-							cP2PNetworkManager.get().getLocalPeerID());
-					LOG.debug("Peer ID for recovery allocation found.");
-				} catch (QueryPartAllocationException e) {
-					LOG.error("Peer ID search for recovery allocation failed.");
-					e.printStackTrace();
-				}
+			try {
+				peer = cRecoveryAllocator.get().allocate(cP2PDictionary.get().getRemotePeerIDs(),
+						cP2PNetworkManager.get().getLocalPeerID());
+				LOG.debug("Peer ID for recovery allocation found.");
+			} catch (QueryPartAllocationException e) {
+				LOG.error("Peer ID search for recovery allocation failed.");
+				e.printStackTrace();
 			}
 
 			// If the peer is null, we don't know any other peer so we have to
@@ -481,6 +569,11 @@ public class RecoveryCommunicator implements IRecoveryCommunicator, IPeerCommuni
 			LOG.error("No peer communicator bound!");
 			return;
 			
+		} else if(!cExecutor.isPresent()) {
+			
+			LOG.error("No executor bound!");
+			return;
+			
 		}
 		
 		// Test: Tell the peers which sent tuples to the failed peer that
@@ -488,7 +581,7 @@ public class RecoveryCommunicator implements IRecoveryCommunicator, IPeerCommuni
 		TransformationConfiguration trafoConfig = new TransformationConfiguration("relational");
 		ImmutableSet<String> backupPQL = LocalBackupInformationAccess.getStoredPQLStatements(sharedQueryId, failedPeer);
 		for (String pql : backupPQL) {
-			List<IPhysicalQuery> physicalQueries = executor.getCompiler().translateAndTransformQuery(pql, "PQL",
+			List<IPhysicalQuery> physicalQueries = cExecutor.get().getCompiler().translateAndTransformQuery(pql, "PQL",
 					getActiveSession(), DataDictionaryProvider.getDataDictionary(getActiveSession().getTenant()),
 					trafoConfig, Context.empty());
 			// Search for the receiver
@@ -690,11 +783,4 @@ public class RecoveryCommunicator implements IRecoveryCommunicator, IPeerCommuni
 		}
 	}
 
-	public static IRecoveryAllocator getRecoveryAllocator() {
-		return recoveryAllocator;
-	}
-
-	public static void setRecoveryAllocator(IRecoveryAllocator recoveryAllocator) {
-		RecoveryCommunicator.recoveryAllocator = recoveryAllocator;
-	}
 }

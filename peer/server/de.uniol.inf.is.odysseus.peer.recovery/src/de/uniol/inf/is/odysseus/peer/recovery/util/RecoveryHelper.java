@@ -15,6 +15,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Optional;
+import com.google.common.collect.Lists;
 
 import de.uniol.inf.is.odysseus.core.collection.Context;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
@@ -50,11 +51,20 @@ public class RecoveryHelper {
 	 *            PQL to execute.
 	 */
 	public static Collection<Integer> installAndRunQueryPartFromPql(String pql) {
+		
+		Collection<Integer> installedQueries = Lists.newArrayList();
+		
+		if(!RecoveryCommunicator.getExecutor().isPresent()) {
+			
+			LOG.error("No executor bound!");
+			return installedQueries;
+			
+		}
 
-		IServerExecutor executor = RecoveryCommunicator.getExecutor();
+		IServerExecutor executor = RecoveryCommunicator.getExecutor().get();
 		ISession session = RecoveryCommunicator.getActiveSession();
 
-		Collection<Integer> installedQueries = executor.addQuery(pql, "PQL", session, "Standard", Context.empty());
+		installedQueries = executor.addQuery(pql, "PQL", session, "Standard", Context.empty());
 
 		// TODO send success message
 
@@ -106,7 +116,14 @@ public class RecoveryHelper {
 	 */
 	public static IPhysicalOperator getPhysicalJxtaOperator(boolean lookForSender, String pipeID) {
 
-		IServerExecutor executor = RecoveryCommunicator.getExecutor();
+		if(!RecoveryCommunicator.getExecutor().isPresent()) {
+			
+			LOG.error("No executor bound!");
+			return null;
+			
+		}
+		
+		IServerExecutor executor = RecoveryCommunicator.getExecutor().get();
 
 		for (IPhysicalQuery query : executor.getExecutionPlan().getQueries()) {
 			for (IPhysicalOperator operator : query.getAllOperators()) {
@@ -174,11 +191,19 @@ public class RecoveryHelper {
 	 * @return List of installed LogicalQueryParts.
 	 */
 	public static Collection<ILogicalQueryPart> getInstalledQueryParts() {
+		
+		ArrayList<ILogicalQueryPart> parts = new ArrayList<ILogicalQueryPart>();
+		
+		if(!RecoveryCommunicator.getExecutor().isPresent()) {
+			
+			LOG.error("No executor bound!");
+			return parts;
+			
+		}
 
-		IServerExecutor executor = RecoveryCommunicator.getExecutor();
+		IServerExecutor executor = RecoveryCommunicator.getExecutor().get();
 		ISession session = RecoveryCommunicator.getActiveSession();
 
-		ArrayList<ILogicalQueryPart> parts = new ArrayList<ILogicalQueryPart>();
 		for (int queryId : executor.getLogicalQueryIds(session)) {
 			ILogicalQuery query = executor.getLogicalQueryById(queryId, session);
 
@@ -196,9 +221,17 @@ public class RecoveryHelper {
 	 */
 	@SuppressWarnings("rawtypes")
 	public static List<JxtaSenderPO> getJxtaSenders() {
+				
 		List<JxtaSenderPO> senders = new ArrayList<JxtaSenderPO>();
+		
+		if(!RecoveryCommunicator.getExecutor().isPresent()) {
+			
+			LOG.error("No executor bound!");
+			return senders;
+			
+		}
 
-		Iterator<IPhysicalQuery> queryIterator = RecoveryCommunicator.getExecutor().getExecutionPlan().getQueries()
+		Iterator<IPhysicalQuery> queryIterator = RecoveryCommunicator.getExecutor().get().getExecutionPlan().getQueries()
 				.iterator();
 		// Iterate through all queries we have installed
 		while (queryIterator.hasNext()) {
@@ -226,8 +259,15 @@ public class RecoveryHelper {
 	@SuppressWarnings("rawtypes")
 	public static List<RecoveryBufferPO> getRecoveryBuffers() {
 		List<RecoveryBufferPO> buffers = new ArrayList<RecoveryBufferPO>();
+		
+		if(!RecoveryCommunicator.getExecutor().isPresent()) {
+			
+			LOG.error("No executor bound!");
+			return buffers;
+			
+		}
 
-		Iterator<IPhysicalQuery> queryIterator = RecoveryCommunicator.getExecutor().getExecutionPlan().getQueries()
+		Iterator<IPhysicalQuery> queryIterator = RecoveryCommunicator.getExecutor().get().getExecutionPlan().getQueries()
 				.iterator();
 		// Iterate through all queries we have installed
 		while (queryIterator.hasNext()) {
@@ -251,7 +291,14 @@ public class RecoveryHelper {
 	public static List<ControllablePhysicalSubscription> getSubscriptions(PipeID pipeId) {
 		List<ControllablePhysicalSubscription> subscriptions = new ArrayList<ControllablePhysicalSubscription>();
 
-		Iterator<IPhysicalQuery> queryIterator = RecoveryCommunicator.getExecutor().getExecutionPlan().getQueries()
+		if(!RecoveryCommunicator.getExecutor().isPresent()) {
+			
+			LOG.error("No executor bound!");
+			return subscriptions;
+			
+		}
+		
+		Iterator<IPhysicalQuery> queryIterator = RecoveryCommunicator.getExecutor().get().getExecutionPlan().getQueries()
 				.iterator();
 		// Iterate through all queries we have installed
 		while (queryIterator.hasNext()) {
@@ -303,6 +350,14 @@ public class RecoveryHelper {
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public static void addNewSender(JxtaSenderPO originalSender, PeerID newPeer) {
+		
+		if(!RecoveryCommunicator.getExecutor().isPresent()) {
+			
+			LOG.error("No executor bound!");
+			return;
+			
+		}
+		
 		// TEST Update sender
 		// Goal: install a new sender which officially sends to the new
 		// receiver so that if we stop a query, it will stop on the new
@@ -342,7 +397,7 @@ public class RecoveryHelper {
 
 		List<IPhysicalOperator> plan = new ArrayList<IPhysicalOperator>();
 		plan.add(jxtaSender);
-		RecoveryCommunicator.getExecutor().addQuery(plan, RecoveryCommunicator.getActiveSession(), "Standard");
+		RecoveryCommunicator.getExecutor().get().addQuery(plan, RecoveryCommunicator.getActiveSession(), "Standard");
 
 	}
 
