@@ -215,7 +215,7 @@ public class RecoveryInstructionMessage implements IMessage {
 			bb.putInt(sharedQueryIdLength);
 			bb.put(sharedQueryId.toString().getBytes());
 			// Now the list
-			bb.putInt(pql.toArray().toString().length());
+			bb.putInt(pql.size());
 			for (String pqlString : pql) {
 				bb.putInt(pqlString.getBytes().length);
 				bb.put(pqlString.getBytes());
