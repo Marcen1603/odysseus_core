@@ -3,14 +3,14 @@ package de.uniol.inf.is.odysseus.peer.smarthome.fielddevice;
 import java.util.LinkedHashMap;
 
 
-public class RpiGPIOActor extends Actor {
+public class RpiGPIOActor3 extends Actor {
 	private static final long serialVersionUID = 1L;
 
 	public enum State {
 		ON, OFF, TOGGLE
 	}
 
-	public RpiGPIOActor(String name, String prefix, String postfix) {
+	public RpiGPIOActor3(String name, String prefix, String postfix) {
 		super(name, prefix, postfix);
 	}
 
