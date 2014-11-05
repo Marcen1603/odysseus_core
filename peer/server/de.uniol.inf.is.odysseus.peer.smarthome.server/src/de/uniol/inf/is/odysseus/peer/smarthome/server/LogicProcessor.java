@@ -214,7 +214,7 @@ public class LogicProcessor implements ISmartDeviceDictionaryListener {
 								rule.addActivityInterpreter(activityInterpreter);
 								
 								QueryExecutor.getInstance().executeQueriesAsync(rule, activityInterpreter, rule.getLogicRuleQueries(activityInterpreter), activityInterpreter.getActivitySourceName());
-							
+								
 							}
 						}
 					}	

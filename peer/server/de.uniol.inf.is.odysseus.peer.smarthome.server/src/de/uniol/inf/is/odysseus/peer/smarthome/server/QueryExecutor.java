@@ -399,14 +399,10 @@ public class QueryExecutor implements IP2PDictionaryListener,
 		}
 	}
 
-	protected void executeQueryNow(LinkedHashMap<String, String> queries) {
+	protected void executeQueryNow(LinkedHashMap<String, String> queries)
+			throws Exception {
 		for (Entry<String, String> entry : queries.entrySet()) {
-			try {
-				LOG.debug("executeQueryNow(" + entry.getKey() + "");
-				executeQueryNow(entry.getKey(), entry.getValue());
-			} catch (Exception ex) {
-				LOG.error(ex.getMessage(), ex);
-			}
+			executeQueryNow(entry.getKey(), entry.getValue());
 		}
 	}
 

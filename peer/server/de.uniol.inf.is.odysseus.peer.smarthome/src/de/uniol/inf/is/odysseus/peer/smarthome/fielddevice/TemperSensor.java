@@ -40,14 +40,11 @@ public class TemperSensor extends Sensor {
 	class TemperSensorActivityInterpreter extends ActivityInterpreter {
 		private static final long serialVersionUID = 1L;
 		private String condition;
-		private String activitySourceName;
 
-		TemperSensorActivityInterpreter(Sensor sensor, String activityName, String prefix, String postfix) {
+		TemperSensorActivityInterpreter(Sensor sensor, String activityName,
+				String prefix, String postfix) {
 			super(sensor, activityName, prefix, postfix);
 
-			String activitySourceName = getNameCombination("Activity",
-					getActivityName());
-			setActivitySourceName(activitySourceName);
 		}
 
 		public void setCondition(String _condition) {
@@ -81,18 +78,9 @@ public class TemperSensor extends Sensor {
 
 			String actSoNa = createActivitySourceQuery(filteredRawValues,
 					activityConfiguration, getActivitySourceName());
-			queries.put(activitySourceName, actSoNa);
+			queries.put(getActivitySourceName(), actSoNa);
 
 			return queries;
-		}
-
-		private void setActivitySourceName(String _activitySourceName) {
-			this.activitySourceName = _activitySourceName;
-		}
-
-		@Override
-		public String getActivitySourceName() {
-			return this.activitySourceName;
 		}
 
 		private String createActivitySourceQuery(String filteredRawValues,
@@ -172,15 +160,4 @@ public class TemperSensor extends Sensor {
 			return actConfSB.toString();
 		}
 	}
-
-	@Override
-	public String getActivitySourceName(String activityName) {
-		for (ActivityInterpreter inter : getActivityInterpreters()) {
-			if (inter.getActivityName().equals(activityName)) {
-				return inter.getActivitySourceName();
-			}
-		}
-		return null;
-	}
-
 }

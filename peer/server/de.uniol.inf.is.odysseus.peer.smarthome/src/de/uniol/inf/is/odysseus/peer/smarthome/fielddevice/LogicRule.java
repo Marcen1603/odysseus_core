@@ -17,7 +17,7 @@ public abstract class LogicRule implements Serializable {
 	public LogicRule(Actor actor, String activityName, String prefix,
 			String postfix) {
 		this.setActor(actor);
-		this.activityName = activityName;
+		this.setActivityName(activityName);
 		this.setPrefix(prefix);
 		this.setPostfix(postfix);
 	}
@@ -89,6 +89,14 @@ public abstract class LogicRule implements Serializable {
 		if (getPrefix() != null && !getPrefix().equals("")) {
 			n.append(getPrefix() + "_");
 		}
+		
+		if (getActor().getName() != null && !getActor().getName().equals("")) {
+			n.append(getActor().getName() + "_");
+		}
+		
+		//TODO: append ActivityInterpreterName or something to identify the source!?
+		
+		
 		n.append(activity + "_" + name);
 
 		if (getPostfix() != null && !getPostfix().equals("")) {

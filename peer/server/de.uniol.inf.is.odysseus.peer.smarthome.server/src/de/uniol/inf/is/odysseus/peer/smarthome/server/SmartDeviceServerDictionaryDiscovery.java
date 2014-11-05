@@ -188,7 +188,7 @@ public class SmartDeviceServerDictionaryDiscovery implements
 					SmartDeviceServerDictionaryDiscovery.getInstance()
 							.addSmartDevice(smartDevice);
 				} else {
-					LOG.debug("The smart device response is null!!!");
+					LOG.debug("The smart device response is null!!! Are all classes in SmartDevice serializable?");
 				}
 			}
 		} else if (message instanceof SmartDeviceMessage) {

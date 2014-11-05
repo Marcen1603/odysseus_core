@@ -2,55 +2,26 @@ package de.uniol.inf.is.odysseus.peer.smarthome.fielddevice;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
-public abstract class Sensor implements FieldDevice, Serializable {
+public abstract class Sensor extends FieldDevice implements Serializable {
 	private static final long serialVersionUID = 1L;
-	private String name;
 	private String rawSourceName;
-	private String postfix;
-	private String prefix;
-	
 	private ArrayList<ActivityInterpreter> activityInterpreterList;
-	private SmartDevice smartDevice;
 
+	/**
+	 * 
+	 * @return Map<String,String> <ViewName,Query>
+	 */
+	public abstract Map<String, String> getQueriesForRawValues();
+
+	
 	public Sensor(String name, String prefix, String postfix) {
-		this.setName(name);
+		super(name, prefix, postfix);
+
 		this.setRawSourceName(name, prefix, postfix);
-		this.setPrefix(prefix);
-		this.setPostfix(postfix);
-	}
-	public void setPrefix(String prefix) {
-		this.prefix = prefix;
-	}
-
-	public String getPrefix() {
-		return this.prefix;
-	}
-
-	public void setPostfix(String postfix) {
-		this.postfix = postfix;
-	}
-	public String getPostfix() {
-		return this.postfix;
-	}
-	public void setSmartDevice(SmartDevice smartDevice) {
-		this.smartDevice = smartDevice;
-	}
-
-	public SmartDevice getSmartDevice(){
-		return this.smartDevice;
 	}
 	
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
 	public String getRawSourceName() {
 		return rawSourceName;
 	}
@@ -71,33 +42,12 @@ public abstract class Sensor implements FieldDevice, Serializable {
 		this.rawSourceName = rawSourceName;
 	}
 
-	public abstract Map<String, String> getQueriesForRawValues();
-
-	@Override
-	public List<String> getPossibleActivityNames() {
-		ArrayList<String> list = new ArrayList<String>();
-		
-		for(ActivityInterpreter interpreter : getActivityInterpreters()){
-			if(!list.contains(interpreter.getActivityName())){
-				list.add(interpreter.getActivityName());
-			}
-		}
-		
-		return list;
-	}
-
-	@Override
-	public String toString() {
-		return getName();
-	}
-
-	public abstract String getActivitySourceName(String possibleActivityName);
-
 	public void addActivityInterpreter(ActivityInterpreter activityInterpreter) {
 		getActivityInterpreters().add(activityInterpreter);
 	}
 
-	public void removeActivityInterpreter(ActivityInterpreter activityInterpreter) {
+	public void removeActivityInterpreter(
+			ActivityInterpreter activityInterpreter) {
 		getActivityInterpreters().remove(activityInterpreter);
 	}
 
@@ -106,5 +56,14 @@ public abstract class Sensor implements FieldDevice, Serializable {
 			activityInterpreterList = new ArrayList<ActivityInterpreter>();
 		}
 		return activityInterpreterList;
+	}
+
+	public String getActivitySourceName(String activityName) {
+		for (ActivityInterpreter inter : getActivityInterpreters()) {
+			if (inter.getActivityName().equals(activityName)) {
+				return inter.getActivitySourceName();
+			}
+		}
+		return null;
 	}
 }

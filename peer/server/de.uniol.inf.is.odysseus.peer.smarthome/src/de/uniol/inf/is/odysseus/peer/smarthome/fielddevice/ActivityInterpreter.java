@@ -9,42 +9,53 @@ public abstract class ActivityInterpreter implements Serializable {
 	private String activityName;
 	private String prefix;
 	private String postfix;
+	private String activitySourceName;
 	
 	public ActivityInterpreter(Sensor _sensor, String _activityName, String prefix, String postfix) {
 		this.setSensor(_sensor);
 		this.setActivityName(_activityName);
 		this.setPrefix(prefix);
 		this.setPostfix(postfix);
+		
+		String activitySourceName = getNameCombination("Activity",
+				getActivityName());
+		setActivitySourceName(activitySourceName);
 	}
 	
-	public void setPrefix(String prefix) {
+	private void setPrefix(String prefix) {
 		this.prefix = prefix;
 	}
 
-	public String getPrefix() {
+	private String getPrefix() {
 		return this.prefix;
 	}
 
-	public void setPostfix(String postfix) {
+	private void setPostfix(String postfix) {
 		this.postfix = postfix;
 	}
-	public String getPostfix() {
+	private String getPostfix() {
 		return this.postfix;
 	}
 	public String getActivityName(){
 		return this.activityName;
 	}
-	public void setActivityName(String activityName){
+	private void setActivityName(String activityName){
 		this.activityName = activityName;
 	}
 	public abstract HashMap<String, String> getActivityInterpreterQueries(
 			String activityName);
-	public abstract String getActivitySourceName();
 	public Sensor getSensor() {
 		return sensor;
 	}
 	private void setSensor(Sensor sensor) {
 		this.sensor = sensor;
+	}
+	private void setActivitySourceName(String _activitySourceName) {
+		this.activitySourceName = _activitySourceName;
+	}
+	
+	public String getActivitySourceName() {
+		return this.activitySourceName;
 	}
 	protected String getNameCombination(String name, String activity) {
 		StringBuilder n = new StringBuilder();
