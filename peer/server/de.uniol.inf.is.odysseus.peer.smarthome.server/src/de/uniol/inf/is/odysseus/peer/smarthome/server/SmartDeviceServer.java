@@ -15,8 +15,8 @@ import de.uniol.inf.is.odysseus.p2p_new.IP2PNetworkManager;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.IP2PDictionary;
 import de.uniol.inf.is.odysseus.peer.smarthome.fielddevice.ActivityInterpreter;
 import de.uniol.inf.is.odysseus.peer.smarthome.fielddevice.RPiGPIOSensor;
-import de.uniol.inf.is.odysseus.peer.smarthome.fielddevice.RpiGPIOActor3;
-import de.uniol.inf.is.odysseus.peer.smarthome.fielddevice.RpiGPIOActor3.State;
+import de.uniol.inf.is.odysseus.peer.smarthome.fielddevice.RPiGPIOActor;
+import de.uniol.inf.is.odysseus.peer.smarthome.fielddevice.RPiGPIOActor.State;
 import de.uniol.inf.is.odysseus.peer.smarthome.fielddevice.Sensor;
 import de.uniol.inf.is.odysseus.peer.smarthome.fielddevice.SmartDevice;
 import de.uniol.inf.is.odysseus.peer.smarthome.fielddevice.TemperSensor;
@@ -296,7 +296,7 @@ public class SmartDeviceServer {
 		 * RPiGPIOActor.State.TOGGLE);
 		 */
 
-		RpiGPIOActor3 gpioLED11 = new RpiGPIOActor3("RPiLED11", peerName, "");
+		RPiGPIOActor gpioLED11 = new RPiGPIOActor("RPiLED11", peerName, "");
 		gpioLED11.createLogicRuleWithState("hot", State.TOGGLE);
 		gpioLED11.createLogicRuleWithState("cold", State.TOGGLE);
 		getLocalSmartDevice().addConnectedFieldDevice(gpioLED11);

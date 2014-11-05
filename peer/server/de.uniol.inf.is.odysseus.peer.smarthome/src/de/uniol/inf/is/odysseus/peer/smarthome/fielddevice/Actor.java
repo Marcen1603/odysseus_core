@@ -4,8 +4,6 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import de.uniol.inf.is.odysseus.peer.smarthome.fielddevice.RpiGPIOActor3.RpiGPIOActorLogicRule;
-
 public abstract class Actor implements FieldDevice, Serializable {
 	private static final long serialVersionUID = 1L;
 	private String name;
@@ -94,7 +92,7 @@ public abstract class Actor implements FieldDevice, Serializable {
 		this.postfix = postfix;
 	}
 
-	public void addLogicRuleForActivity(RpiGPIOActorLogicRule newRule) {
+	public void addLogicRuleForActivity(LogicRule newRule) {
 		getLogicRules().add(newRule);
 	}
 
