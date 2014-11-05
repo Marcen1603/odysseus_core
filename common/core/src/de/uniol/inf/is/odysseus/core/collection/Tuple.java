@@ -635,8 +635,20 @@ public class Tuple<T extends IMetaAttribute> extends AbstractStreamObject<T>
 						} else {
 							retBuff.append(curAttribute);
 						}
+					} else if (curAttribute instanceof double[]) {
+						double[] values = (double[]) curAttribute;
+						for (int iValue=0; iValue < values.length; iValue++) {
+							if (iValue > 0) {
+								retBuff.append(delimiter);
+							}
+							if (floatingFormatter != null) {
+								retBuff.append(floatingFormatter.format(values[iValue]));
+							} else{
+								retBuff.append(values[iValue]);
+							}
+						}
 					} else {
-						if (textSeperator != null 
+						if (textSeperator != null
 								&& curAttribute instanceof String) {
 							retBuff.append(textSeperator)
 									.append(curAttribute.toString())
