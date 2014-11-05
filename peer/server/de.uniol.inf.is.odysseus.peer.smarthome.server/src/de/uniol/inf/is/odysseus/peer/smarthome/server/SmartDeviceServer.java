@@ -1,6 +1,8 @@
 package de.uniol.inf.is.odysseus.peer.smarthome.server;
 
 import java.io.IOException;
+import java.util.Map.Entry;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -11,10 +13,13 @@ import net.jxta.peer.PeerID;
 import de.uniol.inf.is.odysseus.p2p_new.IJxtaServicesProvider;
 import de.uniol.inf.is.odysseus.p2p_new.IP2PNetworkManager;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.IP2PDictionary;
-import de.uniol.inf.is.odysseus.peer.smarthome.fielddevice.RPiGPIOActor;
+import de.uniol.inf.is.odysseus.peer.smarthome.fielddevice.ActivityInterpreter;
 import de.uniol.inf.is.odysseus.peer.smarthome.fielddevice.RPiGPIOSensor;
+import de.uniol.inf.is.odysseus.peer.smarthome.fielddevice.RpiGPIOActor;
+import de.uniol.inf.is.odysseus.peer.smarthome.fielddevice.RpiGPIOActor.State;
+import de.uniol.inf.is.odysseus.peer.smarthome.fielddevice.Sensor;
 import de.uniol.inf.is.odysseus.peer.smarthome.fielddevice.SmartDevice;
-import de.uniol.inf.is.odysseus.peer.smarthome.fielddevice.Temper1Sensor;
+import de.uniol.inf.is.odysseus.peer.smarthome.fielddevice.TemperSensor;
 import de.uniol.inf.is.odysseus.peer.smarthome.server.advertisement.SmartDeviceAdvertisement;
 import de.uniol.inf.is.odysseus.peer.smarthome.server.service.ServerExecutorService;
 
@@ -244,8 +249,13 @@ public class SmartDeviceServer {
 		//
 		// 1. Instantiate Sensors:
 		// Temper1
-		Temper1Sensor temper1 = new Temper1Sensor("temper1", peerName, "");// cleanPeerID
-		temper1.addActivityForCondition("hot", "Temperature > 24");
+		//Temper1Sensor temper1 = new Temper1Sensor("temper1", peerName, "");// cleanPeerID
+		//temper1.createActivityInterpreterWithCondition("hot", "Temperature > 24");
+		
+		TemperSensor temper = new TemperSensor("temper", peerName, "");
+		temper.createActivityInterpreterWithCondition("hot", "Temperature > 24");
+		temper.createActivityInterpreterWithCondition("cold", "Temperature < 18");
+		
 		//
 		// GPIO_07 as input sensor
 		RPiGPIOSensor gpioTaste7 = new RPiGPIOSensor("RPiGPIOTaster7",
@@ -262,7 +272,9 @@ public class SmartDeviceServer {
 		getLocalSmartDevice().setSmartDevice(
 				SmartDeviceLocalConfigurationServer.getInstance()
 						.getSmartDeviceConfig());
-		getLocalSmartDevice().addConnectedFieldDevice(temper1);
+		//getLocalSmartDevice().addConnectedFieldDevice(temper1);
+		getLocalSmartDevice().addConnectedFieldDevice(temper);
+		temper.setSmartDevice(getLocalSmartDevice());
 		//TODO: getLocalSmartDevice().addConnectedFieldDevice(gpioTaste7);
 
 		LOG.debug("LocalSmartDeviceCtx:"
@@ -270,11 +282,11 @@ public class SmartDeviceServer {
 
 		// //////////////////////////////////////////////////////////
 		// LED GPIO_11
-		RPiGPIOActor gpioLED11 = new RPiGPIOActor("gpioLED11", peerName, "");// cleanPeerID
-		gpioLED11.addPossibleActivityName("hot");
+		//RPiGPIOActorAlt gpioLED11 = new RPiGPIOActorAlt("gpioLED11", peerName, "");// cleanPeerID
+		//gpioLED11.addPossibleActivityName("hot");
 		// gpioLED11.addLogicRule(logicRuleLEDOnHot);
 
-		gpioLED11.addActivityForState("hot", RPiGPIOActor.State.TOGGLE);
+		//gpioLED11.addActivityForState("hot", RPiGPIOActorAlt.State.TOGGLE);
 		//TODO: gpioLED11.addActivityForState("Tasterbetaetigt", RPiGPIOActor.State.TOGGLE);
 		
 		/*
@@ -284,14 +296,54 @@ public class SmartDeviceServer {
 		 * RPiGPIOActor.State.TOGGLE);
 		 */
 
+		RpiGPIOActor gpioLED11 = new RpiGPIOActor("RPiLED11", peerName, "");
+		gpioLED11.createLogicRuleWithState("hot", State.TOGGLE);
+		gpioLED11.createLogicRuleWithState("cold", State.TOGGLE);
 		getLocalSmartDevice().addConnectedFieldDevice(gpioLED11);
 
 		//
 		// 3. Execute queries:
-		QueryExecutor.getInstance()
-				.executeActivityInterpreterQueries(getLocalSmartDevice());
+		executeActivityInterpreterQueries(getLocalSmartDevice());
 
 		// 4. SmartDevice is ready for advertisement now:
 		getLocalSmartDevice().setReady(true);
+	}
+	
+	void executeActivityInterpreterQueries(SmartDevice smartDevice) {
+		for (Sensor sensor : smartDevice.getConnectedSensors()) {
+			for (Entry<String, String> queryForRawValue : sensor
+					.getQueriesForRawValues().entrySet()) {
+				String viewName = queryForRawValue.getKey();
+				String query = queryForRawValue.getValue();
+				
+				try {
+					QueryExecutor.getInstance()
+					.executeQueryNow(viewName, query);
+				} catch (Exception e) {
+					LOG.error(e.getMessage(), e);
+				}
+			}
+
+			for (ActivityInterpreter activityInterpreter : sensor
+					.getActivityInterpreters()) {
+				String activityName = activityInterpreter.getActivityName();
+				String activitySourceName = activityInterpreter.getActivitySourceName();
+				
+				for(Entry<String, String> entry : activityInterpreter.getActivityInterpreterQueries(activityName).entrySet()){
+					String viewName = entry.getKey();
+					String query = entry.getValue();
+					
+					try {
+						QueryExecutor.getInstance()
+						.executeQueryNow(viewName, query);
+						
+					} catch (Exception e) {
+						LOG.error(e.getMessage(), e);
+					}
+				}
+				
+				QueryExecutor.getInstance().exportWhenPossibleAsync(activitySourceName);
+			}
+		}
 	}
 }

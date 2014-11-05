@@ -2,18 +2,17 @@ package de.uniol.inf.is.odysseus.peer.smarthome.fielddevice;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
+
+import de.uniol.inf.is.odysseus.peer.smarthome.fielddevice.RpiGPIOActor.RpiGPIOActorLogicRule;
 
 public abstract class Actor implements FieldDevice, Serializable {
 	private static final long serialVersionUID = 1L;
 	private String name;
 	private List<String> listPossibleActivityNames;
-	private String activitySourceName;
-	private HashMap<String, LinkedHashMap<String, String>> logicRules;
 	private String prefix;
 	private String postfix;
+	private ArrayList<LogicRule> logicRulesList;
 
 	public Actor(String name, String prefix, String postfix) {
 		this.name = name;
@@ -31,6 +30,7 @@ public abstract class Actor implements FieldDevice, Serializable {
 	 * @return
 	 * @throws Exception
 	 */
+	/*
 	public LinkedHashMap<String, String> getLogicRuleOfActivity(
 			String possibleActivityName) throws Exception {
 		if(this.getActivitySourceName()==null || this.getActivitySourceName().equals("")){
@@ -43,6 +43,7 @@ public abstract class Actor implements FieldDevice, Serializable {
 		
 		return this.logicRules.get(possibleActivityName);
 	}
+	*/
 	
 	/*
 	 * 	LinkedHashMap<String, String> logicRuleQueriesCopy = new LinkedHashMap<String, String>();
@@ -57,7 +58,6 @@ public abstract class Actor implements FieldDevice, Serializable {
 
 	 */
 	
-	protected abstract void initLogicRules();
 
 	@Override
 	public List<String> getPossibleActivityNames() {
@@ -78,14 +78,6 @@ public abstract class Actor implements FieldDevice, Serializable {
 		return getName();
 	}
 	
-	public void setActivitySourceName(String name) {
-		this.activitySourceName = name;
-	}
-	
-	public String getActivitySourceName(){
-		return this.activitySourceName;
-	}
-
 	public String getPrefix() {
 		return prefix;
 	}
@@ -102,15 +94,14 @@ public abstract class Actor implements FieldDevice, Serializable {
 		this.postfix = postfix;
 	}
 
-	public void addLogicRuleForActivity(String activity,
-			LinkedHashMap<String, String> logicRuleQueries) {
-		initLogicRulesContainerIfNeeded();
-		this.logicRules.put(activity, logicRuleQueries);
+	public void addLogicRuleForActivity(RpiGPIOActorLogicRule newRule) {
+		getLogicRules().add(newRule);
 	}
 
-	private void initLogicRulesContainerIfNeeded() {
-		if(this.logicRules==null){
-			this.logicRules = new HashMap<String, LinkedHashMap<String, String>>();
+	public ArrayList<LogicRule> getLogicRules() {
+		if(this.logicRulesList==null){
+			this.logicRulesList = new ArrayList<LogicRule>();
 		}
+		return logicRulesList;
 	}
 }

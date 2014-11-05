@@ -1,7 +1,7 @@
 package de.uniol.inf.is.odysseus.peer.smarthome.fielddevice;
 
 import java.util.HashMap;
-import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.Map.Entry;
 
 import org.slf4j.Logger;
@@ -29,6 +29,7 @@ public class RPiGPIOSensor extends Sensor {
 		generateQueryForRawValues();
 	}
 
+	@SuppressWarnings("unused")
 	private void generateQueryForActivityInterpreter() {
 		for (Entry<String, GPIO_SENSOR_STATE> entry : getActivityConditionMap()
 				.entrySet()) {
@@ -41,14 +42,26 @@ public class RPiGPIOSensor extends Sensor {
 			String activityConfigName = getNameCombination(
 					"ActivityConfiguration", activity);
 			String activityConfigQuery = generateActivityConfig(activity, activityConfigName);
-			addViewForActivityInterpreter(activityConfigName,
-					activityConfigQuery);
+			//addViewForActivityInterpreter(activityConfigName,
+			//		activityConfigQuery);
 
 			String activitySourceName = getNameCombination("Activity", activity);
 			String activityQuery = generateActivityStream(activitySourceName, activityConfigName);
 			setActivitySourceName(activity, activitySourceName);
-			addViewForActivityInterpreter(activitySourceName, activityQuery);
+			//addViewForActivityInterpreter(activitySourceName, activityQuery);
+			
 		}
+	}
+
+	private void setActivitySourceName(String activity,
+			String activitySourceName) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	private String getNameCombination(String string, String activity) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	private String generateActivityStream(String activityStreamName, String activityConfiguration) {
@@ -110,7 +123,7 @@ public class RPiGPIOSensor extends Sensor {
 		sBuilder.append(getRawSourceName() + " := RPIGPIOSOURCE({SOURCE = '"
 				+ getRawSourceName() + "', PIN = " + pin + "})"); 
 		
-		addQueryForRawValues(getRawSourceName(), sBuilder.toString());
+		//addQueryForRawValues(getRawSourceName(), sBuilder.toString());
 	}
 
 	@Override
@@ -126,7 +139,7 @@ public class RPiGPIOSensor extends Sensor {
 			GPIO_SENSOR_STATE pinState) {
 		try {
 			getActivityConditionMap().put(activity, pinState);
-			addPossibleActivityName(activity);
+			//addPossibleActivityName(activity);
 		} catch (Exception ex) {
 			LOG.error(ex.getMessage(), ex);
 		}
@@ -139,6 +152,7 @@ public class RPiGPIOSensor extends Sensor {
 		return this.activityPinStateMap;
 	}
 	
+	/*
 	@Override
 	public LinkedHashMap<String, String> getViewForActivityInterpreterQueries() {
 		// delete all
@@ -147,5 +161,42 @@ public class RPiGPIOSensor extends Sensor {
 		generateQueryForActivityInterpreter();
 
 		return super.getViewForActivityInterpreterQueries();
+	}
+	*/
+
+	@Override
+	public Map<String, String> getQueriesForRawValues() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String getActivitySourceName(String possibleActivityName) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	class RPiGPIOActivityInterpreter extends ActivityInterpreter{
+		private static final long serialVersionUID = 1L;
+
+		public RPiGPIOActivityInterpreter(Sensor _sensor, String _activityName,
+				String prefix, String postfix) {
+			super(_sensor, _activityName, prefix, postfix);
+			// TODO Auto-generated constructor stub
+		}
+
+		@Override
+		public HashMap<String, String> getActivityInterpreterQueries(
+				String activityName) {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public String getActivitySourceName() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+		
 	}
 }

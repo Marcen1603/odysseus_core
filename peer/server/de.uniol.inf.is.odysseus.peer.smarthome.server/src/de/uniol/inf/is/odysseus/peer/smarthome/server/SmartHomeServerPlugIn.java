@@ -31,7 +31,7 @@ public class SmartHomeServerPlugIn implements BundleActivator {
 
 	public void start(BundleContext bundleContext) throws Exception {
 		SmartDeviceServerDictionaryDiscovery.getInstance().addListener(
-				Logic.getInstance());
+				LogicProcessor.getInstance());
 		SmartDeviceServerDictionaryDiscovery.getInstance().addListener(
 				QueryExecutor.getInstance());
 		
@@ -41,7 +41,7 @@ public class SmartHomeServerPlugIn implements BundleActivator {
 
 	public void stop(BundleContext context) throws Exception {
 		SmartDeviceServerDictionaryDiscovery.getInstance().removeListener(
-				Logic.getInstance());
+				LogicProcessor.getInstance());
 		SmartDeviceServerDictionaryDiscovery.getInstance().removeListener(
 				QueryExecutor.getInstance());
 		bundle = null;
@@ -66,8 +66,7 @@ public class SmartHomeServerPlugIn implements BundleActivator {
 		SmartDeviceServer.getInstance().bindP2PNetworkManager(serv);
 		SmartDeviceServerDictionaryDiscovery.getInstance()
 				.bindP2PNetworkManager(serv);
-		Logic.getInstance()
-				.bindP2PNetworkManager(serv);
+		QueryExecutor.getInstance().bindP2PNetworkManager(serv);
 	}
 
 	// called by OSGi-DS
@@ -75,8 +74,7 @@ public class SmartHomeServerPlugIn implements BundleActivator {
 		SmartDeviceServer.getInstance().unbindP2PNetworkManager(serv);
 		SmartDeviceServerDictionaryDiscovery.getInstance()
 				.unbindP2PNetworkManager(serv);
-		Logic.getInstance()
-				.unbindP2PNetworkManager(serv);
+		QueryExecutor.getInstance().unbindP2PNetworkManager(serv);
 
 		if (p2pNetworkManager == serv) {
 			p2pNetworkManager = null;

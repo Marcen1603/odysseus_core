@@ -280,7 +280,7 @@ public class SmartDeviceServerDictionaryDiscovery implements
 		synchronized (listeners) {
 			for (ISmartDeviceDictionaryListener listener : listeners) {
 				try {
-					LOG.debug("fireSmartDeviceRemovedEvent");
+					LOG.debug("fireSmartDeviceRemovedEvent smartDevice:"+smartDevice.getPeerName()+" listener:"+listener.getClass());
 					listener.smartDeviceRemoved(this, smartDevice);
 				} catch (Throwable t) {
 					LOG.error(

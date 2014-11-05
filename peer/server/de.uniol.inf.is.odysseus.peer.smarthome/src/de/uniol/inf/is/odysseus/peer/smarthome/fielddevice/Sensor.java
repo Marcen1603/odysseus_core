@@ -2,11 +2,8 @@ package de.uniol.inf.is.odysseus.peer.smarthome.fielddevice;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-
 
 public abstract class Sensor implements FieldDevice, Serializable {
 	private static final long serialVersionUID = 1L;
@@ -15,122 +12,99 @@ public abstract class Sensor implements FieldDevice, Serializable {
 	private String postfix;
 	private String prefix;
 	
-	private LinkedHashMap<String, String> queriesForRawValues;
-	
-	private List<String> listPossibleActivityNames;
-	//private Map<String, ActivityInterpreter> activityInterpreters = Maps.newHashMap();
-	private LinkedHashMap<String, String> viewForActivityInterpreter;
-	private HashMap<String, String> activitySourceNameMap;
-	
-	
+	private ArrayList<ActivityInterpreter> activityInterpreterList;
+	private SmartDevice smartDevice;
+
 	public Sensor(String name, String prefix, String postfix) {
 		this.setName(name);
 		this.setRawSourceName(name, prefix, postfix);
 		this.setPrefix(prefix);
 		this.setPostfix(postfix);
 	}
-
-	public String getName() {
-		return name;
-	}
-	public void setName(String name) {
-		this.name = name;
-	}
-	public String getRawSourceName() {
-		return rawSourceName;
-	}
-	public void setRawSourceName(String sourceName, String prefix, String postfix) {
-		String rawSourceName = "";
-		if(prefix!=null && !prefix.equals("")){
-			rawSourceName += prefix+"_";
-		}
-		
-		rawSourceName+="rawValues_"+sourceName+"";
-		
-		if(postfix!=null && !postfix.equals("")){
-			rawSourceName += "_"+postfix;
-		}
-		
-		this.rawSourceName = rawSourceName;
-	}
-	
-	protected void addQueryForRawValues(String queryName, String query){
-		if(this.queriesForRawValues==null){
-			this.queriesForRawValues = new LinkedHashMap<String,String>();
-		}
-		this.queriesForRawValues.put(queryName, query);
-	}
-	
-	public Map<String,String> getQueriesForRawValues(){
-		return this.queriesForRawValues;
-	}
-	
-	@Override
-	public List<String> getPossibleActivityNames() {
-		if(listPossibleActivityNames==null){
-			listPossibleActivityNames = new ArrayList<String>();
-		}
-		return listPossibleActivityNames;
+	public void setPrefix(String prefix) {
+		this.prefix = prefix;
 	}
 
-	protected void addPossibleActivityName(String activityName) {
-		if(!getPossibleActivityNames().contains(activityName)){
-			getPossibleActivityNames().add(activityName);			
-		}
+	public String getPrefix() {
+		return this.prefix;
 	}
-	public void setViewForActivityInterpreterQueries(LinkedHashMap<String, String> interpreters) {
-		this.viewForActivityInterpreter = interpreters;
-	}
-	protected void addViewForActivityInterpreter(String queryName, String query) {
-		if(this.viewForActivityInterpreter==null){
-			this.viewForActivityInterpreter = new LinkedHashMap<String, String>();
-		}
-		this.viewForActivityInterpreter.put(queryName, query);
-	}
-	public LinkedHashMap<String, String> getViewForActivityInterpreterQueries() {
-		return this.viewForActivityInterpreter;
+
+	public void setPostfix(String postfix) {
+		this.postfix = postfix;
 	}
 	public String getPostfix() {
 		return this.postfix;
 	}
-	public void setPrefix(String prefix) {
-		this.prefix = prefix;
+	public void setSmartDevice(SmartDevice smartDevice) {
+		this.smartDevice = smartDevice;
 	}
-	public String getPrefix() {
-		return this.prefix;
-	}
-	public void setPostfix(String postfix) {
-		this.postfix = postfix;
+
+	public SmartDevice getSmartDevice(){
+		return this.smartDevice;
 	}
 	
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getRawSourceName() {
+		return rawSourceName;
+	}
+
+	private void setRawSourceName(String sourceName, String prefix,
+			String postfix) {
+		String rawSourceName = "";
+		if (prefix != null && !prefix.equals("")) {
+			rawSourceName += prefix + "_";
+		}
+
+		rawSourceName += "rawValues_" + sourceName + "";
+
+		if (postfix != null && !postfix.equals("")) {
+			rawSourceName += "_" + postfix;
+		}
+
+		this.rawSourceName = rawSourceName;
+	}
+
+	public abstract Map<String, String> getQueriesForRawValues();
+
+	@Override
+	public List<String> getPossibleActivityNames() {
+		ArrayList<String> list = new ArrayList<String>();
+		
+		for(ActivityInterpreter interpreter : getActivityInterpreters()){
+			if(!list.contains(interpreter.getActivityName())){
+				list.add(interpreter.getActivityName());
+			}
+		}
+		
+		return list;
+	}
+
 	@Override
 	public String toString() {
 		return getName();
 	}
-	
-	protected void setActivitySourceName(String activity,
-			String activitySourceName) {
-		if(this.activitySourceNameMap==null){
-			this.activitySourceNameMap = new HashMap<String,String>();
-		}
-		this.activitySourceNameMap.put(activity, activitySourceName);
+
+	public abstract String getActivitySourceName(String possibleActivityName);
+
+	public void addActivityInterpreter(ActivityInterpreter activityInterpreter) {
+		getActivityInterpreters().add(activityInterpreter);
 	}
-	
-	public String getActivitySourceName(String possibleActivityName) {
-		return this.activitySourceNameMap.get(possibleActivityName);
+
+	public void removeActivityInterpreter(ActivityInterpreter activityInterpreter) {
+		getActivityInterpreters().remove(activityInterpreter);
 	}
-	
-	protected String getNameCombination(String name, String activity) {
-		StringBuilder n = new StringBuilder();
-		if(getPrefix()!=null && !getPrefix().equals("")){
-			n.append(getPrefix()+"_");
+
+	public ArrayList<ActivityInterpreter> getActivityInterpreters() {
+		if (activityInterpreterList == null) {
+			activityInterpreterList = new ArrayList<ActivityInterpreter>();
 		}
-		n.append(activity+"_"+name);
-		
-		if(getPostfix()!=null && !getPostfix().equals("")){
-			n.append("_"+getPostfix());
-		}
-		
-		return n.toString();
+		return activityInterpreterList;
 	}
 }
