@@ -123,18 +123,10 @@ public class AppendFileTransportHandler extends AbstractSimplePullTransportHandl
 		if (currentLine == null)
 			return null;
 				
-//		System.out.println("\"" + currentLine + "\" @ " + currentTimeStamp);		
-		
-		String[] parts = currentLine.split(" ");
-		
-		Tuple<IMetaAttribute> tuple = new Tuple<>(parts.length+2, false);		
+		Tuple<IMetaAttribute> tuple = new Tuple<>(3, false);		
 		tuple.setAttribute(0, (long)(currentTimeStamp));
 		tuple.setAttribute(1, (long)(currentTimeStamp+lineDelay));
-		
-		for (int i=0;i<parts.length;i++)
-		{
-			tuple.setAttribute(i+2, Double.parseDouble(parts[i]));
-		}
+		tuple.setAttribute(2, currentLine);//VectorFromStringFunction.vectorFromString(currentLine, " ")); 
 		
 		currentTimeStamp += lineDelay;
 		
@@ -176,8 +168,9 @@ public class AppendFileTransportHandler extends AbstractSimplePullTransportHandl
 		System.out.println("Call hasNext");
 		
    		if (checkNext())
-   		{
+   		{   			   		
    			System.out.println("Call hasNext returned true");
+   			
    			return true;
    		}
    		else
