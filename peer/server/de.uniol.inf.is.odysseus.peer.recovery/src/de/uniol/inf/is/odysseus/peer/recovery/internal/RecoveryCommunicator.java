@@ -253,9 +253,10 @@ public class RecoveryCommunicator implements IRecoveryCommunicator, IPeerCommuni
 	 * @param serv The recovery P2P listener to bind. <br />
 	 * Must be not null.
 	 */
-	public static void bindRecoveryP2PListener(IRecoveryP2PListener serv) {
+	public void bindRecoveryP2PListener(IRecoveryP2PListener serv) {
 		
 		Preconditions.checkNotNull(serv);
+		serv.addObserver(this);
 		cRecoveryP2PListener = Optional.of(serv);
 		LOG.debug("Bound {} as a recovery P2P listener.", serv
 				.getClass().getSimpleName());
@@ -396,38 +397,6 @@ public class RecoveryCommunicator implements IRecoveryCommunicator, IPeerCommuni
 		
 		return cActiveSession;
 		
-	}
-
-	/**
-	 * Called by OSGi on Bundle activation.
-	 */
-	public void activate() {
-		
-		if (cRecoveryP2PListener.isPresent()) {
-			
-			cRecoveryP2PListener.get().addObserver(this);
-			
-			if (cRecoveryAllocator.isPresent()) {
-				
-				cRecoveryP2PListener.get().startPeerFailureDetection();
-				
-			}
-			
-		}
-
-	}
-
-	/**
-	 * Called by OSGi on Bundle deactivation.
-	 */
-	public void deactivate() {
-		
-		if (cRecoveryP2PListener.isPresent() && cRecoveryAllocator.isPresent()) {
-			
-			cRecoveryP2PListener.get().stopPeerFailureDetection();
-			
-		}
-
 	}
 
 	// -----------------------------------------------------
