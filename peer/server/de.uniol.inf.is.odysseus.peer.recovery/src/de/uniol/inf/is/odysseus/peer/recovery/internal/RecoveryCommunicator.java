@@ -242,8 +242,7 @@ public class RecoveryCommunicator implements IRecoveryCommunicator, IPeerCommuni
 	public void bindRecoveryP2PListener(IRecoveryP2PListener serv) {
 		
 		Preconditions.checkNotNull(serv);
-		// TODO commented code was added by Michael (maybe needs to be uncommented again)
-//		serv.addObserver(this);
+		serv.addObserver(this);
 		cRecoveryP2PListener = Optional.of(serv);
 		LOG.debug("Bound {} as a recovery P2P listener.", serv
 				.getClass().getSimpleName());
@@ -383,42 +382,6 @@ public class RecoveryCommunicator implements IRecoveryCommunicator, IPeerCommuni
 		return cActiveSession;
 		
 	}
-
-// TODO start of the code that was replaced by Michael	
-	
-	/**
-	 * Called by OSGi on Bundle activation.
-	 */
-	public void activate() {
-		
-		if (cRecoveryP2PListener.isPresent()) {
-			
-			cRecoveryP2PListener.get().addObserver(this);
-			
-			if (cRecoveryStrategyManager.isPresent()) {
-				
-				cRecoveryP2PListener.get().startPeerFailureDetection();
-				
-			}
-			
-		}
-
-	}
-
-	/**
-	 * Called by OSGi on Bundle deactivation.
-	 */
-	public void deactivate() {
-		
-		if (cRecoveryP2PListener.isPresent() && cRecoveryStrategyManager.isPresent()) {
-			
-			cRecoveryP2PListener.get().stopPeerFailureDetection();
-			
-		}
-
-	}	
-	
-	// TODO end of the code that was replaced by Michael
 
 	@Override
 	public void sendHoldOnMessage(PeerID peerToHoldOn, RecoveryInstructionMessage holdOnMessage) {
