@@ -1,10 +1,11 @@
 package de.uniol.inf.is.odysseus.core.physicaloperator.access.transport;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.SocketException;
+import java.nio.ByteBuffer;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -15,7 +16,6 @@ public class SimpleUDPReceiveTransportHandler extends AbstractPushTransportHandl
 
 	private static class ReceiveThread extends Thread {
 
-		private boolean running = true;
 		private final byte[] receiveData = new byte[1024];
 		private DatagramSocket serverSocket;
 		private final SimpleUDPReceiveTransportHandler handler;
@@ -31,26 +31,33 @@ public class SimpleUDPReceiveTransportHandler extends AbstractPushTransportHandl
 		@Override
 		public void run() {
 			try {
-				while (running) {
+				while (true) {
 					DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
 					serverSocket.receive(receivePacket);
 
 					byte[] data = new byte[receivePacket.getLength()];
 					System.arraycopy(receivePacket.getData(), 0, data, 0, data.length);
 					
-					handler.fireProcess(new ByteArrayInputStream(data));
+					ByteBuffer buffer = ByteBuffer.wrap(data);
+					buffer.position(buffer.limit());
+					handler.fireProcess(buffer);
 				}
 			} catch (IOException e) {
-				LOG.error("Could not receive data from ETW", e);
-			}
-
-			if (serverSocket != null) {
-				serverSocket.close();
+				if (serverSocket != null)
+					LOG.error("Could not receive data from ETW", e);
 			}
 		}
 
 		public void stopRunning() {
-			running = false;
+			serverSocket.close();
+			serverSocket = null;
+			
+			try {
+				super.join();
+			} 
+			catch (InterruptedException e) {
+				e.printStackTrace();
+			}
 		}
 	}
 
@@ -125,7 +132,12 @@ public class SimpleUDPReceiveTransportHandler extends AbstractPushTransportHandl
 	
 	@Override
 	public boolean isSemanticallyEqualImpl(ITransportHandler other) {
-		return true;
+		if (!(other instanceof SimpleUDPReceiveTransportHandler)) 
+			return false;
+		
+		SimpleUDPReceiveTransportHandler otherUDP = (SimpleUDPReceiveTransportHandler) other;
+		
+		return port == otherUDP.port;
 	}
 
 }
