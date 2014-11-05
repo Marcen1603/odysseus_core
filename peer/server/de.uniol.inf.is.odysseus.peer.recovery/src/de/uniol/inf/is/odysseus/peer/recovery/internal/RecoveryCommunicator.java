@@ -1,14 +1,8 @@
 package de.uniol.inf.is.odysseus.peer.recovery.internal;
 
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
-import java.util.Set;
 
 import net.jxta.id.ID;
 import net.jxta.peer.PeerID;
@@ -19,13 +13,10 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableSet;
 
-import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
-import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvider;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.p2p_new.IMessage;
@@ -34,22 +25,17 @@ import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicator;
 import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicatorListener;
 import de.uniol.inf.is.odysseus.p2p_new.PeerCommunicationException;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.IP2PDictionary;
-import de.uniol.inf.is.odysseus.p2p_new.physicaloperator.JxtaReceiverPO;
-import de.uniol.inf.is.odysseus.p2p_new.physicaloperator.JxtaSenderPO;
-import de.uniol.inf.is.odysseus.peer.distribute.QueryPartAllocationException;
 import de.uniol.inf.is.odysseus.peer.distribute.message.RemoveQueryMessage;
-import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryAllocator;
 import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryBackupInformation;
 import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryCommunicator;
 import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryP2PListener;
+import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryStrategyManager;
 import de.uniol.inf.is.odysseus.peer.recovery.messages.BackupInformationMessage;
 import de.uniol.inf.is.odysseus.peer.recovery.messages.RecoveryAgreementMessage;
 import de.uniol.inf.is.odysseus.peer.recovery.messages.RecoveryInstructionMessage;
 import de.uniol.inf.is.odysseus.peer.recovery.protocol.RecoveryAgreementHandler;
 import de.uniol.inf.is.odysseus.peer.recovery.protocol.RecoveryInstructionHandler;
-import de.uniol.inf.is.odysseus.peer.recovery.util.BackupInformationHelper;
 import de.uniol.inf.is.odysseus.peer.recovery.util.LocalBackupInformationAccess;
-import de.uniol.inf.is.odysseus.peer.recovery.util.RecoveryHelper;
 
 /**
  * A recovery communicator handles the communication between peers for recovery
@@ -256,7 +242,8 @@ public class RecoveryCommunicator implements IRecoveryCommunicator, IPeerCommuni
 	public void bindRecoveryP2PListener(IRecoveryP2PListener serv) {
 		
 		Preconditions.checkNotNull(serv);
-		serv.addObserver(this);
+		// TODO commented code was added by Michael (maybe needs to be uncommented again)
+//		serv.addObserver(this);
 		cRecoveryP2PListener = Optional.of(serv);
 		LOG.debug("Bound {} as a recovery P2P listener.", serv
 				.getClass().getSimpleName());
@@ -283,42 +270,40 @@ public class RecoveryCommunicator implements IRecoveryCommunicator, IPeerCommuni
 		
 	}
 	
-	// TODO The communicator should not bind an allocator. Single strategies and the console should do. M.B.
-	
 	/**
-	 * The recovery allocator, if there is one bound.
+	 * The recovery strategy manager, if there is one bound.
 	 */
-	private static Optional<IRecoveryAllocator> cRecoveryAllocator = Optional.absent();
+	private static Optional<IRecoveryStrategyManager> cRecoveryStrategyManager = Optional.absent();
 	
 	/**
-	 * Binds a recovery allocator. <br />
+	 * Binds a recovery strategy manager. <br />
 	 * Called by OSGi-DS.
-	 * @param serv The recovery allocator to bind. <br />
+	 * @param serv The recovery strategy manager to bind. <br />
 	 * Must be not null.
 	 */
-	public static void bindRecoveryAllocator(IRecoveryAllocator serv) {
+	public static void bindRecoveryStrategyManager(IRecoveryStrategyManager serv) {
 		
 		Preconditions.checkNotNull(serv);
-		cRecoveryAllocator = Optional.of(serv);
-		LOG.debug("Bound {} as a recovery allocator.", serv
+		cRecoveryStrategyManager = Optional.of(serv);
+		LOG.debug("Bound {} as a recovery strategy manager.", serv
 				.getClass().getSimpleName());
 		
 	}
 
 	/**
-	 * Unbinds a recovery allocator, if it's the bound one. <br />
+	 * Unbinds a recovery strategy manager, if it's the bound one. <br />
 	 * Called by OSGi-DS.
-	 * @param serv The recovery allocator to unbind. <br />
+	 * @param serv The recovery strategy manager to unbind. <br />
 	 * Must be not null.
 	 */
-	public static void unbindRecoveryAllocator(IRecoveryAllocator serv) {
+	public static void unbindRecoveryStrategyManager(IRecoveryStrategyManager serv) {
 		
 		Preconditions.checkNotNull(serv);
 		
-		if (cRecoveryAllocator.isPresent() && cRecoveryAllocator.get() == serv) {
+		if (cRecoveryStrategyManager.isPresent() && cRecoveryStrategyManager.get() == serv) {
 			
-			cRecoveryAllocator = Optional.absent();
-			LOG.debug("Unbound {} as a recovery allocator.", serv
+			cRecoveryStrategyManager = Optional.absent();
+			LOG.debug("Unbound {} as a recovery strategy manager.", serv
 					.getClass().getSimpleName());
 			
 		}
@@ -399,190 +384,41 @@ public class RecoveryCommunicator implements IRecoveryCommunicator, IPeerCommuni
 		
 	}
 
-	// -----------------------------------------------------
-	// Code with recovery logic
-	// -----------------------------------------------------
-
-	@Override
-	public void recover(PeerID failedPeer) {
+// TODO start of the code that was replaced by Michael	
+	
+	/**
+	 * Called by OSGi on Bundle activation.
+	 */
+	public void activate() {
 		
-		// Preconditions
-		if(!cP2PNetworkManager.isPresent()) {
+		if (cRecoveryP2PListener.isPresent()) {
 			
-			LOG.error("No P2P network manager bound!");
-			return;
+			cRecoveryP2PListener.get().addObserver(this);
 			
-		} else if(!cP2PDictionary.isPresent()) {
-			
-			LOG.error("No P2P dictionary bound!");
-			return;
-			
-		} else if(!cRecoveryAllocator.isPresent()) {
-			
-			LOG.error("No recovery allocator bound!");
-			return;
-			
-		}
-
-		LOG.debug("Startet recovery for {}", cP2PDictionary.get().getRemotePeerName(failedPeer));
-
-		// 1. Check, if we have backup information for the failed peer and for
-		// which shared-query-ids
-		// Return if there is no backup information stored for the given peer
-
-		Collection<ID> sharedQueryIdsForPeer = LocalBackupInformationAccess.getStoredSharedQueryIdsForPeer(failedPeer);
-		if (sharedQueryIdsForPeer == null || sharedQueryIdsForPeer.isEmpty()) {
-			// We don't have any information about that failed peer
-			return;
-		}
-
-		// 2. Check, if we were a direct sender to that failed peer
-
-		// We maybe have backup-information about queries for that peer where we
-		// are not the direct sender, so we have to save for which queries we
-		// are the direct sender
-		List<ID> sharedQueryIdsForRecovery = new ArrayList<ID>();
-		List<JxtaSenderPO<?>> senders = RecoveryHelper.getJxtaSenders();
-		List<JxtaSenderPO<?>> affectedSenders = new ArrayList<JxtaSenderPO<?>>();
-
-		for (JxtaSenderPO<?> sender : senders) {
-			if (sender.getPeerIDString().equals(failedPeer.toString())) {
-				// We were a direct sender to the failed peer
-
-				// Determine for which shared query id we are the direct
-				// sender: Search in the saved backup information for
-				// that pipe id and look, which shared query id belongs
-				// to the operator which has this pipeId
-				Set<SharedQuery> pqls = LocalBackupInformationAccess.getStoredPQLStatements(failedPeer);
-				for (SharedQuery sharedQuery : pqls) {
-					List<String> pqlParts = sharedQuery.getPqlParts();
-					for (String pql : pqlParts) {
-						if (pql.contains(sender.getPipeIDString())) {
-							// This is the shared query id we search for
-							sharedQueryIdsForRecovery.add(sharedQuery.getSharedQueryID());
-
-							// Save that this sender if affected
-							affectedSenders.add(sender);
-						}
-					}
-				}
+			if (cRecoveryStrategyManager.isPresent()) {
+				
+				cRecoveryP2PListener.get().startPeerFailureDetection();
+				
 			}
-		}
-
-		// 3. Check, if we are the buddy of that peer
-		Map<PeerID, List<ID>> buddyMap = LocalBackupInformationAccess.getBuddyList();
-		if (buddyMap.containsKey(failedPeer)) {
-			// We are a buddy for that peer
-			sharedQueryIdsForRecovery.addAll(buddyMap.get(failedPeer));
-
-			// TODO What are the affected senders? Maybe no sender is affected
-			// cause it's a totally different peer. Maybe we have to tell other
-			// peers to install new receivers or sth. like that
-		}
-
-		// To update the affected senders
-		int i = 0;
-
-		// Reallocate each query to another peer
-		for (ID sharedQueryId : sharedQueryIdsForRecovery) {
-			// 4. Search for another peer who can take the parts from the failed
-			// peer
-
-			// TODO find a good place to reallocate if the peer doesn't accept
-			// the query or is unable to install it
-
-			PeerID peer = null;
-
-			try {
-				peer = cRecoveryAllocator.get().allocate(cP2PDictionary.get().getRemotePeerIDs(),
-						cP2PNetworkManager.get().getLocalPeerID());
-				LOG.debug("Peer ID for recovery allocation found.");
-			} catch (QueryPartAllocationException e) {
-				LOG.error("Peer ID search for recovery allocation failed.");
-				e.printStackTrace();
-			}
-
-			// If the peer is null, we don't know any other peer so we have to
-			// install it on ourself
-			if (peer == null)
-				peer = cP2PNetworkManager.get().getLocalPeerID();
-
-			determineAndSendHoldOnMessages(sharedQueryId, failedPeer);
-
-			// 5. Tell the new peer to install the parts from the failed peer
-			RecoveryAgreementHandler.waitForAndDoRecovery(failedPeer, sharedQueryId, peer);
-
-			// 6. Update our sender so it knows the new peerId
-			if (i < affectedSenders.size()) {
-				affectedSenders.get(i).setPeerIDString(peer.toString());
-			}
-
+			
 		}
 
 	}
 
 	/**
-	 * Determines, which peers have to hold on and sends them a holdOn-message
-	 * @param sharedQueryId The shared query id, for which the peers have to hold on
-	 * @param failedPeer The peerId from the failed peer
+	 * Called by OSGi on Bundle deactivation.
 	 */
-	private void determineAndSendHoldOnMessages(ID sharedQueryId, PeerID failedPeer) {
+	public void deactivate() {
 		
-		// Preconditions
-		if(!cP2PNetworkManager.isPresent()) {
+		if (cRecoveryP2PListener.isPresent() && cRecoveryStrategyManager.isPresent()) {
 			
-			LOG.error("No P2P network manager bound!");
-			return;
-			
-		} else if(!cPeerCommunicator.isPresent()) {
-			
-			LOG.error("No peer communicator bound!");
-			return;
-			
-		} else if(!cExecutor.isPresent()) {
-			
-			LOG.error("No executor bound!");
-			return;
+			cRecoveryP2PListener.get().stopPeerFailureDetection();
 			
 		}
-		
-		// Test: Tell the peers which sent tuples to the failed peer that
-		// they have to hold on
-		ImmutableSet<String> backupPQL = LocalBackupInformationAccess.getStoredPQLStatements(sharedQueryId, failedPeer);
-		for (String pql : backupPQL) {
-			List<IPhysicalQuery> physicalQueries = RecoveryHelper.convertToPhysicalPlan(pql);
-			// Search for the receiver
-			for (IPhysicalQuery query : physicalQueries) {
-				for (IPhysicalOperator op : query.getAllOperators()) {
-					if (op instanceof JxtaReceiverPO) {
-						JxtaReceiverPO<?> receiver = (JxtaReceiverPO<?>) op;
-						// This is the information about the peer from which
-						// we get the data
-						// This peer has to hold on
-						String peerId = receiver.getPeerIDString();
-						String pipeId = receiver.getPipeIDString();
 
-						try {
-							URI uri = new URI(pipeId);
-							PipeID pipe = PipeID.create(uri);
-							RecoveryInstructionMessage holdOnMessage = RecoveryInstructionMessage
-									.createHoldOnMessage(pipe);
-							uri = new URI(peerId);
-							PeerID peerToHoldOn = PeerID.create(uri);
-							if (!peerToHoldOn.equals(cP2PNetworkManager.get().getLocalPeerID())) {
-								sendHoldOnMessage(peerToHoldOn, holdOnMessage);
-							} else {
-								// We are the peer
-								receivedMessage(cPeerCommunicator.get(), peerToHoldOn, holdOnMessage);
-							}
-						} catch (URISyntaxException e) {
-							e.printStackTrace();
-						}
-					}
-				}
-			}
-		}
-	}
+	}	
+	
+	// TODO end of the code that was replaced by Michael
 
 	@Override
 	public void sendHoldOnMessage(PeerID peerToHoldOn, RecoveryInstructionMessage holdOnMessage) {
@@ -591,25 +427,18 @@ public class RecoveryCommunicator implements IRecoveryCommunicator, IPeerCommuni
 
 	// TODO Better way: allocate each single query part new. M.B.
 	@Override
-	public void installQueriesOnNewPeer(PeerID failedPeer, PeerID newPeer, ID sharedQueryId) {
+	public void installQueriesOnNewPeer(PeerID failedPeer, PeerID newPeer, ID sharedQueryId,  String pql) {
 
 		Preconditions.checkNotNull(failedPeer);
 		Preconditions.checkNotNull(newPeer);
 		Preconditions.checkNotNull(sharedQueryId);
+		Preconditions.checkNotNull(pql);
 		
 		if(!cPeerCommunicator.isPresent()) {
 			
 			LOG.error("No peer communicator bound!");
 			return;
 			
-		}
-
-		ImmutableCollection<String> pqlParts = LocalBackupInformationAccess.getStoredPQLStatements(sharedQueryId,
-				failedPeer);
-
-		String pql = "";
-		for (String pqlPart : pqlParts) {
-			pql += " " + pqlPart;
 		}
 
 		// Send the add query message
@@ -619,12 +448,6 @@ public class RecoveryCommunicator implements IRecoveryCommunicator, IPeerCommuni
 			cPeerCommunicator.get().send(newPeer, takeOverMessage);
 		} catch (Throwable e) {
 			LOG.error("Could not send add query message to peer " + newPeer.toString(), e);
-		}
-
-		for (String pqlCode : pqlParts) {
-
-			BackupInformationHelper.updateInfoStores(failedPeer, newPeer, sharedQueryId, pqlCode);
-
 		}
 
 	}
@@ -685,8 +508,16 @@ public class RecoveryCommunicator implements IRecoveryCommunicator, IPeerCommuni
 		if (notification instanceof P2PNetworkNotification) {
 			P2PNetworkNotification p2pNotification = (P2PNetworkNotification) notification;
 			if (p2pNotification.getType().equals(P2PNetworkNotification.LOST_PEER)) {
+				
+				if(!cRecoveryStrategyManager.isPresent()) {
+					
+					LOG.error("No Recovery strategy manager bound!");
+					return;
+					
+				}
+				
 				// Start recovery
-				recover(p2pNotification.getPeer());
+				cRecoveryStrategyManager.get().startRecovery(p2pNotification.getPeer());
 			}
 		}
 	}

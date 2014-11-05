@@ -28,7 +28,10 @@ import de.uniol.inf.is.odysseus.peer.distribute.QueryPartAllocationException;
 import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryAllocator;
 import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryCommunicator;
 import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryP2PListener;
+import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryStrategy;
+import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryStrategyManager;
 import de.uniol.inf.is.odysseus.peer.recovery.internal.RecoveryCommunicator;
+import de.uniol.inf.is.odysseus.peer.recovery.util.BackupInformationHelper;
 import de.uniol.inf.is.odysseus.peer.recovery.util.LocalBackupInformationAccess;
 import de.uniol.inf.is.odysseus.peer.recovery.util.RecoveryHelper;
 
@@ -49,6 +52,8 @@ public class RecoveryConsole implements CommandProvider {
 	 */
 	private static IServerExecutor executor;
 	private static IRecoveryP2PListener peerFailureDetector;
+	private static Collection<IRecoveryStrategy> recoveryStrategies = Lists.newArrayList();
+	private static Collection<IRecoveryStrategyManager> recoveryStrategyManagers = Lists.newArrayList();
 
 	// called by OSGi-DS
 	public static void bindP2PNetworkManager(IP2PNetworkManager serv) {
@@ -151,20 +156,38 @@ public class RecoveryConsole implements CommandProvider {
 
 	// called by OSGi-DS
 	public static void bindRecoveryAllocator(IRecoveryAllocator allocator) {
-
 		RecoveryConsole.recoveryAllocators.add(allocator);
-
 	}
 
 	// called by OSGi-DS
 	public static void unbindRecoveryAllocator(IRecoveryAllocator allocator) {
-
 		if (allocator != null) {
-
 			RecoveryConsole.recoveryAllocators.remove(allocator);
-
 		}
+	}
+	
+	// called by OSGi-DS
+	public static void bindRecoveryStrategy(IRecoveryStrategy recoveryStrategy) {
+		RecoveryConsole.recoveryStrategies.add(recoveryStrategy);
+	}
 
+	// called by OSGi-DS
+	public static void unbindRecoveryStrategy(IRecoveryStrategy recoveryStrategy) {
+		if (recoveryStrategy != null) {
+			RecoveryConsole.recoveryStrategies.remove(recoveryStrategy);
+		}
+	}
+	
+	// called by OSGi-DS
+	public static void bindRecoveryStrategyManager(IRecoveryStrategyManager recoveryStrategyManager) {
+		RecoveryConsole.recoveryStrategyManagers.add(recoveryStrategyManager);
+	}
+
+	// called by OSGi-DS
+	public static void unbindRecoveryStrategyManager(IRecoveryStrategyManager recoveryStrategyManager) {
+		if (recoveryStrategyManager != null) {
+			RecoveryConsole.recoveryStrategyManagers.remove(recoveryStrategyManager);
+		}
 	}
 
 	// called by OSGi-DS
@@ -186,6 +209,8 @@ public class RecoveryConsole implements CommandProvider {
 		sb.append("	recover <PeerID from failed peer> - Starts recovery for the peer <PeerID from failed peer>\n");
 		sb.append("	lsBackupStore - Lists the stored sharedQueryIds with a list of peers which have parts of this sharedQuery. sharedQueryId: peer1, peer2, peer3\n");
 		sb.append("	lsRecoveryAllocators - Lists the available recovery allocators.\n");
+		sb.append("	lsRecoveryStrategies - Lists the available recovery strategies.\n");
+		sb.append("	lsRecoveryStrategyManagers - Lists the available recovery strategy managers.\n");
 		sb.append("	showPeerPQL <PeerName> - Shows the PQL that this peer knows from <PeerName>.\n");
 		sb.append("	sendHoldOn <PeerName from receiver> <sharedQueryId> - Send a hold-on message to <PeerName from receiver>, so that this should stop sending the tuples from query <sharedQueryId> further.\n");
 		sb.append("	sendUpdateReceiver <PeerName from receiver> <PeerName from new sender> <pipeId> - Send an updateReceiver-message to <PeerName from receiver>, so that this should receive the tuples fir pipe <pipeId> from the new sender <PeerName from new sender>.\n");
@@ -208,7 +233,12 @@ public class RecoveryConsole implements CommandProvider {
 			return;
 		}
 
-		cCommunicator.get().recover(failedPeer);
+		if(recoveryStrategyManagers.size() > 0){
+			recoveryStrategyManagers.iterator().next().startRecovery(failedPeer);
+		} else {
+			LOG.error("No recovery strategy manager bound");
+		}
+		
 
 	}
 
@@ -272,7 +302,20 @@ public class RecoveryConsole implements CommandProvider {
 		try {
 			queryUri = new URI(queryId);
 			ID sharedQueryId = ID.create(queryUri);
-			cCommunicator.get().installQueriesOnNewPeer(failedPeer, newPeer, sharedQueryId);
+			ImmutableCollection<String> pqlParts = LocalBackupInformationAccess.getStoredPQLStatements(sharedQueryId,
+					failedPeer);
+
+			String pql = "";
+			for (String pqlPart : pqlParts) {
+				pql += " " + pqlPart;
+			}
+			cCommunicator.get().installQueriesOnNewPeer(failedPeer, newPeer, sharedQueryId, pql);
+			
+			for (String pqlCode : pqlParts) {
+
+				BackupInformationHelper.updateInfoStores(failedPeer, newPeer, sharedQueryId, pqlCode);
+
+			}
 		} catch (URISyntaxException e) {
 			ci.println("Can't parse the queryId.");
 		}
@@ -342,8 +385,10 @@ public class RecoveryConsole implements CommandProvider {
 
 		}
 		IRecoveryAllocator allocator = optAllocator.get();
+		
+		//TODO fix this method
 
-		RecoveryCommunicator.bindRecoveryAllocator(allocator);
+//		RecoveryCommunicator.bindRecoveryAllocator(allocator);
 
 		peerFailureDetector.startPeerFailureDetection();
 
@@ -436,6 +481,40 @@ public class RecoveryConsole implements CommandProvider {
 			ci.println("Allocator has chosen " + p2pDictionary.getRemotePeerName(peer) + " as target");
 		} catch (QueryPartAllocationException e) {
 			e.printStackTrace();
+		}
+
+	}
+	
+	/**
+	 * Lists all available {@link IRecoveryStrategyManager}s bound via OSGI-DS.
+	 * 
+	 * @param ci
+	 *            The {@link CommandInterpreter} instance.
+	 */
+	public void _lsRecoveryStrategyManagers(CommandInterpreter ci) {
+
+		ci.println("Available recovery strategy managers:");
+		for (IRecoveryStrategyManager strategyManager : RecoveryConsole.recoveryStrategyManagers) {
+
+			ci.println(strategyManager.getName());
+
+		}
+
+	}
+	
+	/**
+	 * Lists all available {@link IRecoveryStrategy}s bound via OSGI-DS.
+	 * 
+	 * @param ci
+	 *            The {@link CommandInterpreter} instance.
+	 */
+	public void _lsRecoveryStrategies(CommandInterpreter ci) {
+
+		ci.println("Available recovery strategies:");
+		for (IRecoveryStrategy strategy : RecoveryConsole.recoveryStrategies) {
+
+			ci.println(strategy.getName());
+
 		}
 
 	}

@@ -10,5 +10,7 @@
    <reference bind="bindRecoveryP2PListener" cardinality="1..1" interface="de.uniol.inf.is.odysseus.peer.recovery.IRecoveryP2PListener" name="IRecoveryP2PListener" policy="static" unbind="unbindRecoveryP2PListener"/>
    <reference bind="bindCommunicator" cardinality="1..1" interface="de.uniol.inf.is.odysseus.peer.recovery.IRecoveryCommunicator" name="IRecoveryCommunicator" policy="static" unbind="unbindCommunicator"/>
    <reference bind="bindRecoveryAllocator" cardinality="0..n" interface="de.uniol.inf.is.odysseus.peer.recovery.IRecoveryAllocator" name="IRecoveryAllocator" policy="dynamic" unbind="unbindRecoveryAllocator"/>
+   <reference bind="bindRecoveryStrategy" cardinality="0..n" interface="de.uniol.inf.is.odysseus.peer.recovery.IRecoveryStrategy" name="IRecoveryStrategy" policy="static" unbind="unbindRecoveryStrategy"/>
+   <reference bind="bindRecoveryStrategyManager" cardinality="0..n" interface="de.uniol.inf.is.odysseus.peer.recovery.IRecoveryStrategyManager" name="IRecoveryStrategyManager" policy="dynamic" unbind="unbindRecoveryStrategyManager"/>
   
 </scr:component>

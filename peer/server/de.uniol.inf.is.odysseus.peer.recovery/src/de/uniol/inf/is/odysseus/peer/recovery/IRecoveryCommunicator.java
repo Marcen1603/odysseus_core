@@ -9,20 +9,10 @@ import de.uniol.inf.is.odysseus.peer.recovery.messages.RecoveryInstructionMessag
  * A recovery communicator handles the communication between peers for recovery
  * mechanisms.
  * 
- * @author Tobias Brandt & Michael Brand
+ * @author Tobias Brandt & Michael Brand & Simon Kuespert
  *
  */
 public interface IRecoveryCommunicator {
-
-	/**
-	 * Does the recovery for the failed peer (and checks, if this peer can and
-	 * should to this). This is the method you should call if you notice that a
-	 * peer failed.
-	 * 
-	 * @param failedPeer
-	 *            The PeerID from the failed peer
-	 */
-	public void recover(PeerID failedPeer);
 
 	/**
 	 * Experimental: Sends a message to all given peers, that they should hold
@@ -89,9 +79,11 @@ public interface IRecoveryCommunicator {
 	 * @param sharedQueryId
 	 *            The id of the shared query which the new peer should recover
 	 *            from the failed peer
+	 * @param pql
+	 * 			  The PQL string with the query arguements to be installed           
 	 */
 	// TODO Better way: allocate each single query part new. M.B.
-	public void installQueriesOnNewPeer(PeerID failedPeer, PeerID newPeer, ID sharedQueryId);
+	public void installQueriesOnNewPeer(PeerID failedPeer, PeerID newPeer, ID sharedQueryId, String pql);
 
 	/**
 	 * The RecoveryCommunicator will search for a buddy peer which will save
@@ -116,5 +108,6 @@ public interface IRecoveryCommunicator {
 	 *            sending tuples
 	 */
 	public void sendGoOnMessage(PeerID receiverPeer, PipeID pipeId);
+	
 
 }

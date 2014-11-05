@@ -15,10 +15,13 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableCollection;
 
 import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryCommunicator;
 import de.uniol.inf.is.odysseus.peer.recovery.internal.RecoveryCommunicator;
 import de.uniol.inf.is.odysseus.peer.recovery.messages.RecoveryAgreementMessage;
+import de.uniol.inf.is.odysseus.peer.recovery.util.BackupInformationHelper;
+import de.uniol.inf.is.odysseus.peer.recovery.util.LocalBackupInformationAccess;
 
 public class RecoveryAgreementHandler {
 
@@ -174,8 +177,22 @@ public class RecoveryAgreementHandler {
 								.contains(sharedQueryId)) {
 					// We still want to do recovery for that peer for that query
 					// id
+					ImmutableCollection<String> pqlParts = LocalBackupInformationAccess.getStoredPQLStatements(sharedQueryId,
+							failedPeer);
+
+					String pql = "";
+					for (String pqlPart : pqlParts) {
+						pql += " " + pqlPart;
+					}
+					
 					cCommunicator.get().installQueriesOnNewPeer(failedPeer,
-							newPeer, sharedQueryId);
+							newPeer, sharedQueryId, pql);
+					
+					for (String pqlCode : pqlParts) {
+
+						BackupInformationHelper.updateInfoStores(failedPeer, newPeer, sharedQueryId, pqlCode);
+
+					}
 
 					// Now we did this, so remove that we want to do this
 					// recovery

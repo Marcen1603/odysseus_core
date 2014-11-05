@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" activate="activate" deactivate="deactivate" immediate="false" name="de.uniol.inf.is.odysseus.peer.recovery.strategy.upstreambackup.RecoveryStrategyUpstreamBackup">
+   <implementation class="de.uniol.inf.is.odysseus.peer.recovery.strategy.upstreambackup.RecoveryStrategyUpstreamBackup"/>
+   <reference bind="bindP2PDictionary" cardinality="1..1" interface="de.uniol.inf.is.odysseus.p2p_new.dictionary.IP2PDictionary" name="IP2PDictionary" policy="static" unbind="unbindP2PDictionary"/>
+   <reference bind="bindP2PNetworkManager" cardinality="1..1" interface="de.uniol.inf.is.odysseus.p2p_new.IP2PNetworkManager" name="IP2PNetworkManager" policy="static" unbind="unbindP2PNetworkManager"/>
+   <service>
+      <provide interface="de.uniol.inf.is.odysseus.peer.recovery.IRecoveryStrategy"/>
+   </service>
+   <reference bind="bindRecoveryAllocator" cardinality="1..1" interface="de.uniol.inf.is.odysseus.peer.recovery.IRecoveryAllocator" name="IRecoveryAllocator" policy="static" unbind="unbindRecoveryAllocator"/>
+   <reference bind="bindRecoveryDynamicBackup" cardinality="1..1" interface="de.uniol.inf.is.odysseus.peer.recovery.IRecoveryDynamicBackup" name="IRecoveryDynamicBackup" policy="static" unbind="unbindRecoveryDynamicBackup"/>
+</scr:component>
