@@ -27,6 +27,7 @@ import java.util.Map.Entry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.core.collection.FESortedClonablePair;
 import de.uniol.inf.is.odysseus.core.metadata.IMetadataMergeFunction;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
@@ -688,6 +689,9 @@ public class AggregateTIPO<Q extends ITimeInterval, R extends IStreamObject<Q>, 
 		AggregateTIPOState<Q, R, W> state = new AggregateTIPOState<Q, R, W>();
 		state.setTransferArea(this.transferArea);
 		state.setGroups(this.groups);
+		state.setEval(super.getAllEvalFunctions());
+		state.setInit(super.getAllInitFunctions());
+		state.setMerger(super.getAllMergerFunctions());
 		return state;	
 	}
 
@@ -699,6 +703,16 @@ public class AggregateTIPO<Q extends ITimeInterval, R extends IStreamObject<Q>, 
 			this.transferArea = state.getTransferArea();
 			this.transferArea.setTransfer(this);
 			this.groups = state.getGroups();
+			for(FESortedClonablePair<SDFSchema,AggregateFunction> key : state.getEval().keySet()) {
+				this.setEvalFunction(key, state.getEval().get(key));
+			}
+			for(FESortedClonablePair<SDFSchema,AggregateFunction> key : state.getInit().keySet()) {
+				this.setInitFunction(key, state.getInit().get(key));
+			}
+			for(FESortedClonablePair<SDFSchema,AggregateFunction> key : state.getMerger().keySet()) {
+				this.setMergeFunction(key, state.getMerger().get(key));
+			}
+			
 		} catch(Throwable T) {
 			logger.error("The serializable state to set for the AggregateTIPO is not a valid AggregateTIPOState!");
 		}

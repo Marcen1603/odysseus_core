@@ -124,9 +124,21 @@ abstract public class AggregatePO<M extends IMetaAttribute, R extends IStreamObj
 		eval.put(p, e);
 	}
 
+	protected Map<FESortedClonablePair<SDFSchema, AggregateFunction>, IInitializer<R>> getAllInitFunctions() {
+		return init;
+	}
+	
+	protected Map<FESortedClonablePair<SDFSchema, AggregateFunction>, IMerger<R>> getAllMergerFunctions() {
+		return merger;
+	}
+	
 	protected IEvaluator<R, W> getEvalFunction(
 			FESortedClonablePair<SDFSchema, AggregateFunction> p) {
 		return eval.get(p);
+	}
+	
+	protected Map<FESortedClonablePair<SDFSchema, AggregateFunction>, IEvaluator<R, W>> getAllEvalFunctions() {
+		return eval;
 	}
 
 	protected IMerger<R> getMergeFunction(
