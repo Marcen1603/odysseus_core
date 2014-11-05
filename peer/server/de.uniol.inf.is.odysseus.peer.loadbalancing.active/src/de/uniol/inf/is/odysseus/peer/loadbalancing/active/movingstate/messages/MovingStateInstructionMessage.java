@@ -47,6 +47,7 @@ public class MovingStateInstructionMessage implements IMessage {
 		message.loadBalancingProcessId = lbProcessId;
 		message.operatorType = operatorType;
 		message.setOperatorIndex(operatorIndex);
+		message.setPipeId(pipeID);
 		message.msgType = INITIATE_STATE_COPY;
 
 		return message;
@@ -202,7 +203,7 @@ public class MovingStateInstructionMessage implements IMessage {
 			 * pipeId 4 Bytes for integer Size of operatorType operatorType 4
 			 * Bytes for integer operator Index.
 			 */
-			bbsize = 4 + 4 + 4 + 4 + operatorTypeAsBytes.length
+			bbsize = 4 + 4 + 4 + 4 + 4 + operatorTypeAsBytes.length
 					+ pipeIdAsBytes.length;
 			bb = ByteBuffer.allocate(bbsize);
 			bb.putInt(msgType);

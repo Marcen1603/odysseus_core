@@ -180,7 +180,7 @@ public class InstructionHandler {
 			break;
 
 		case MovingStateInstructionMessage.PIPE_SUCCCESS_RECEIVED:
-			LOG.debug("Got PIPE_SUCCESS");
+			LOG.debug("Got PIPE_SUCCESS_RECEIVED");
 			if (status == null) {
 				LOG.error("Status on Slave Peer is null.");
 				return;
@@ -190,29 +190,24 @@ public class InstructionHandler {
 			break;
 
 		case MovingStateInstructionMessage.INITIATE_STATE_COPY:
-
 			LOG.debug("Got INITITATE_STATE_COPY");
 			if (status == null) {
 				LOG.error("Status on Slave Peer is null.");
 				return;
 			}
-			if (status.getPhase().equals(
-					MovingStateSlaveStatus.LB_PHASES.WAITING_FOR_COPY)) {
+			MovingStateManager manager = MovingStateManager.getInstance();
+			if (status.getPhase().equals(MovingStateSlaveStatus.LB_PHASES.WAITING_FOR_COPY) 
+					&& !manager.isReceiverPipeKnown(instruction.getPipeId())) {
 				if(MovingStateHelper.compareStatefulOperator(instruction.getOperatorIndex(), status.getInstalledQueries(), instruction.getOperatorType())) {
 					IStatefulPO operator = MovingStateHelper.getStatefulPO(instruction.getOperatorIndex(),status.getInstalledQueries());
-					MovingStateManager.getInstance().addReceiver(
+					manager.addReceiver(
 							senderPeer.toString(), instruction.getPipeId());
 					status.addReceiver(instruction.getPipeId(), operator);
+					status.getMessageDispatcher().sendInititiateStateCopyAck(status.getMasterPeer(), status.getLbProcessId(), instruction.getPipeId());
 				}
 				else {
-					//TODO Error
+					//TODO Send StateCopyFail.
 				}
-				
-				
-				
-				status.getMessageDispatcher().sendInititiateStateCopyAck(status.getMasterPeer(), status.getLbProcessId(), instruction.getPipeId());
-				//TODO Error Handling
-
 			}
 			break;
 

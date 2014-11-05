@@ -10,7 +10,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
+import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IStatefulPO;
+import de.uniol.inf.is.odysseus.core.planmanagement.IOperatorOwner;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.IPipe;
 import de.uniol.inf.is.odysseus.p2p_new.data.DataTransmissionException;
 import de.uniol.inf.is.odysseus.p2p_new.data.DataTransmissionManager;
 import de.uniol.inf.is.odysseus.p2p_new.data.ITransmissionReceiver;
@@ -81,11 +84,31 @@ public class MovingStateReceiver implements ITransmissionReceiverListener {
 		
 	}
 	
+	@SuppressWarnings("rawtypes")
 	public void injectState(IStatefulPO operator) throws LoadBalancingException {
 		if(receivedState==null) {
 			throw new LoadBalancingException("Tried injecting State without having state received.");
 		}
-		operator.setState(receivedState);
-		
+		if(operator instanceof IPipe) {
+			IPipe physicalOp = (IPipe)operator;
+			for(IOperatorOwner owner : physicalOp.getOwner()) {
+				physicalOp.suspend(owner);
+			}
+			operator.setState(receivedState);
+			for(IOperatorOwner owner : physicalOp.getOwner()) {
+				physicalOp.resume(owner);
+			}
+		}
+		else if (operator instanceof ISink) {
+			ISink physicalOp = (ISink)operator;
+			for(IOperatorOwner owner : physicalOp.getOwner()) {
+				physicalOp.suspend(owner);
+			}
+			operator.setState(receivedState);
+			for(IOperatorOwner owner : physicalOp.getOwner()) {
+				physicalOp.resume(owner);
+			}
+		}
+		//TODO Source has no suspend method.
 	}
 }

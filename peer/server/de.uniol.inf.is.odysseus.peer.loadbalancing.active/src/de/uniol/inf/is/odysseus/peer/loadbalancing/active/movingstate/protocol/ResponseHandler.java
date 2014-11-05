@@ -117,15 +117,12 @@ public class ResponseHandler {
 				dispatcher.stopRunningJob(response.getPipeID());
 				LOG.debug("Stopped JOB " + response.getPipeID());
 				LOG.debug("Jobs left:" + dispatcher.getNumberOfRunningJobs());
-				
 				if (dispatcher.getNumberOfRunningJobs() == 0) {
-
-					LOG.debug("IF YOU CAN READ THIS, EVERYTHING WORKS! :)");
-					
 					// All success messages received. Yay!
 					status.setPhase(LB_PHASES.COPYING_STATES);
 					LOG.debug("INITIATING COPYING STATES");
 					MovingStateHelper.initiateStateCopy(status);
+					//TODO what if no stateful Ops?
 				}
 			}
 			
@@ -135,8 +132,12 @@ public class ResponseHandler {
 			LOG.debug("Got ACK_INIT_STATE_COPY");
 			if(status.getPhase().equals(LB_PHASES.COPYING_STATES)) {
 				dispatcher.stopRunningJob(response.getPipeID());
-				//TODO Send states :)
 			}
+			if(dispatcher.getNumberOfRunningJobs()==0) {
+				LOG.debug("IF YOU CAN READ THIS, EVERYTHING WORKS! :)");
+				
+			}
+			break;
 		
 		case MovingStateResponseMessage.FAILURE_INSTALL_QUERY:
 			LOG.debug("Got FAILURE_INSTALL_QUERY");

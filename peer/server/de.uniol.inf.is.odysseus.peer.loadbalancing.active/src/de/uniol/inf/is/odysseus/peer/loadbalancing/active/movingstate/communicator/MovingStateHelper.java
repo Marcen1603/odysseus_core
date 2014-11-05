@@ -51,7 +51,8 @@ public class MovingStateHelper {
 		List<IStatefulPO> statefulPOs = new ArrayList<IStatefulPO>();
 		for(IPhysicalOperator root : roots) {
 			LOG.debug(("Found root for Query " + queryId +": " + root.getName()));
-			statefulPOs = traverseGraphAndFindStatefulOperators(root, statefulPOs);
+			List<IStatefulPO> knownOperators = new ArrayList<IStatefulPO>();
+			statefulPOs.addAll(traverseGraphAndFindStatefulOperators(root, knownOperators));
 		}
 		return statefulPOs;
 	}
@@ -69,6 +70,7 @@ public class MovingStateHelper {
 		MovingStateMessageDispatcher dispatcher = status.getMessageDispatcher();
 		
 		List<IStatefulPO> statefulOperators = getStatefulOperatorList(status.getLogicalQuery());
+		LOG.debug("Got list of "+statefulOperators.size()+" Stateful Operators.");
 		for(IStatefulPO statefulPO : statefulOperators) {
 			//Installing a new State Sender
 			String stateSenderPipe = MovingStateManager.getInstance().addSender(status.getVolunteeringPeer().toString());
@@ -95,20 +97,26 @@ public class MovingStateHelper {
 		if(root instanceof IStatefulPO && !knownOperators.contains(root)) {
 			LOG.debug((" + Found stateful Op: " +  root.getName()));
 			knownOperators.add((IStatefulPO)root);
+		} else {
+			LOG.debug(" - Op " + root.getName() + " not added.");
 		}
-		if(root instanceof ISink) {
-			return knownOperators;
-		}
-		if(root instanceof ISource) {
-			ISource rootAsSource = (ISource) root;
-			for (AbstractPhysicalSubscription subscription : (Collection<AbstractPhysicalSubscription>)rootAsSource.getSubscriptions()) {
+		if(root instanceof IPipe) {
+			LOG.debug("   recognized Operator as Pipe.");
+			IPipe rootAsSource = (IPipe) root;
+			for (AbstractPhysicalSubscription subscription : (Collection<AbstractPhysicalSubscription>)rootAsSource.getSubscribedToSource()) {
 				knownOperators = traverseGraphAndFindStatefulOperators((IPhysicalOperator)subscription.getTarget(),knownOperators);
 			}
 			return knownOperators;
 		}
-		if(root instanceof IPipe) {
-			IPipe rootAsSource = (IPipe) root;
-			for (AbstractPhysicalSubscription subscription : (Collection<AbstractPhysicalSubscription>)rootAsSource.getSubscriptions()) {
+		
+		if(root instanceof ISource) {
+			LOG.debug("   recognized Operator as Source.");
+			return knownOperators;
+		}
+		if(root instanceof ISink) {
+			LOG.debug("   recognized Operator as Sink.");
+			ISink rootAsSink = (ISink) root;
+			for (AbstractPhysicalSubscription subscription : (Collection<AbstractPhysicalSubscription>)rootAsSink.getSubscribedToSource()) {
 				knownOperators = traverseGraphAndFindStatefulOperators((IPhysicalOperator)subscription.getTarget(),knownOperators);
 			}
 			return knownOperators;
@@ -367,7 +375,8 @@ public class MovingStateHelper {
 
 	public static IStatefulPO getStatefulPO(int operatorIndex,
 			Collection<Integer> installedQueries) {
-		// TODO Auto-generated method stub
-		return null;
+		List<IStatefulPO> statefulList = getStatefulOperatorList(installedQueries);
+		return statefulList.get(operatorIndex);
+	
 	}
 }

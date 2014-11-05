@@ -223,19 +223,25 @@ public class MovingStateMessageDispatcher {
 	}
 	
 	public void sendInititateStateCopy(PeerID volunteeringPeer, IMessageDeliveryFailedListener listener, String pipeID, String operatorType, int operatorIndex) {
-		LOG.debug("Send INITIATE_STATE_COPY");
+		LOG.debug("Send INITIATE_STATE_COPY to Peer " + volunteeringPeer.toString());
 		if(this.currentJobs==null) {
 			this.currentJobs = new ConcurrentHashMap<String,RepeatingMessageSend>();
 		}
 		RepeatingMessageSend job = new RepeatingMessageSend(peerCommunicator,MovingStateInstructionMessage.createInitiateStateCopyMsg(lbProcessId, pipeID, operatorType, operatorIndex),volunteeringPeer);
-		this.currentJobs.put(pipeID,job);
 		job.addListener(listener);
 		job.start();
+		this.currentJobs.put(pipeID,job);
 	}
 	
 	public void sendInititiateStateCopyAck(PeerID masterPeer, int lbProcessId, String pipeID) {
 		LOG.debug("Send INITIATE_STATE_COPY_ACK");
-		//TODO
+		MovingStateResponseMessage message = MovingStateResponseMessage.createAckInitStateCopyMessage(lbProcessId, pipeID);
+		try {
+			peerCommunicator.send(masterPeer, message);
+		}
+		catch(Exception e) {
+			//Do nothing as MasterPeer will re-send Instruction.
+		}
 	}
 	
 	/**

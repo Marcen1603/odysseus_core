@@ -48,6 +48,14 @@ public class MovingStateManager {
 		
 	}
 	
+	public boolean isReceiverPipeKnown(String pipeId) {
+		return receiverMap.containsKey(pipeId);
+	}
+	
+	public boolean isSenderPipeKnown(String pipeId) {
+		return senderMap.containsKey(pipeId);
+	}
+	
 	public void addReceiver(String peerID, String pipeID) {
 		try {
 			MovingStateReceiver receiver = new MovingStateReceiver(peerID,pipeID);
