@@ -12,7 +12,12 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.IUserDefinedFunctio
  * @author Henrik Surm
  */
 
-class Filter2
+interface IFilter
+{
+	public double doFilter(double input);
+}
+
+class Filter2 implements IFilter
 {
 	// Order = 6, Sampling rate = 6.??Hz, Cutoff Freq = 0.08Hz
 	private final int 	 NZEROS = 6;
@@ -22,7 +27,7 @@ class Filter2
 	private final double[] xv = new double[NZEROS+1];
 	private final double[] yv = new double[NPOLES+1];
 
-	public double doFilter(double input)
+	@Override public double doFilter(double input)
 	{ 
 		xv[0] = xv[1]; xv[1] = xv[2]; xv[2] = xv[3]; xv[3] = xv[4]; xv[4] = xv[5]; xv[5] = xv[6]; 
 	    xv[6] = input / GAIN;
@@ -36,7 +41,7 @@ class Filter2
 	}	
 }
 
-class Filter
+class Filter implements IFilter
 {
 	// Order = 6, Sampling rate = 20.83Hz, Cutoff Freq = 0.08Hz
 	private final int 	 NZEROS = 6;
@@ -46,7 +51,7 @@ class Filter
 	private final double[] xv = new double[NZEROS+1];
 	private final double[] yv = new double[NPOLES+1];
 
-	public double doFilter(double input)
+	@Override public double doFilter(double input)
 	{ 
 		xv[0] = xv[1]; xv[1] = xv[2]; xv[2] = xv[3]; xv[3] = xv[4]; xv[4] = xv[5]; xv[5] = xv[6]; 
         xv[6] = input / GAIN;
@@ -65,7 +70,8 @@ class Filter
 public class DigitalFilterUDF implements IUserDefinedFunction<Tuple<? extends IMetaAttribute>, Tuple<? extends IMetaAttribute>> 
 {
 	private static final long serialVersionUID = 4077769822100028025L;
-	private Filter[] filters;
+	private int index;
+	private IFilter[] filters;
 	
 	public DigitalFilterUDF() 
 	{		 
@@ -77,11 +83,10 @@ public class DigitalFilterUDF implements IUserDefinedFunction<Tuple<? extends IM
 	@Override
 	public void init(String initString) 
 	{
-		int numFilters = Integer.parseInt(initString);
-		filters = new Filter[numFilters];
-		
-		for (int i=0;i<numFilters;i++)
-			filters[i] = new Filter();
+		if (initString != null)
+			index = Integer.parseInt(initString);
+		else
+			index = 0;
 	}
 	
 	/**
@@ -89,23 +94,41 @@ public class DigitalFilterUDF implements IUserDefinedFunction<Tuple<? extends IM
 	 */
 	@Override public Tuple<? extends IMetaAttribute> process(Tuple<? extends IMetaAttribute> in, int port) 
 	{
-		int num = in.getAttributes().length;
-		for (int i=0;i<num;i++)
+		Object attribute = in.getAttribute(index);
+		
+		if (attribute instanceof double[])
 		{
-			double result = filters[i].doFilter((Double)in.getAttribute(i));
-			in.setAttribute(i, result);
+			double[] values = (double[]) attribute;
+			
+			int num = values.length;
+			
+			if (filters == null)
+			{
+				filters = new IFilter[num];
+				for (int i=0;i<num;i++)
+					filters[i] = new Filter2();
+			}
+			
+			for (int i=0;i<num;i++)
+			{
+				values[i] = filters[i].doFilter(values[i]);
+			}
+		}
+		
+		if (attribute instanceof Double)
+		{
+			if (filters == null)
+			{
+				filters = new IFilter[1];
+				filters[0] = new Filter2();
+			}
+			
+			in.setAttribute(index, filters[0].doFilter((Double)attribute));
 		}
 		
 		return in;
 	}
 	
-	/**
-	 * Returns output mode of this class.
-	 * 
-	 * @author Kristian Bruns
-	 * 
-	 * @return OutputMode Output mode.
-	 */
 	@Override public OutputMode getOutputMode() 
 	{
         return OutputMode.MODIFIED_INPUT;

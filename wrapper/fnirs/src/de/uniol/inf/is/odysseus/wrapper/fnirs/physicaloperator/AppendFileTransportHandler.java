@@ -126,7 +126,7 @@ public class AppendFileTransportHandler extends AbstractSimplePullTransportHandl
 		Tuple<IMetaAttribute> tuple = new Tuple<>(3, false);		
 		tuple.setAttribute(0, (long)(currentTimeStamp));
 		tuple.setAttribute(1, (long)(currentTimeStamp+lineDelay));
-		tuple.setAttribute(2, currentLine);//VectorFromStringFunction.vectorFromString(currentLine, " ")); 
+		tuple.setAttribute(2, currentLine); 
 		
 		currentTimeStamp += lineDelay;
 		
