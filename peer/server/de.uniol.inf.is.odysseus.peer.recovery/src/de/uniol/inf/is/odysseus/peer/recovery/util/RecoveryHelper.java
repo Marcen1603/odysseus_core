@@ -19,6 +19,7 @@ import com.google.common.collect.Lists;
 
 import de.uniol.inf.is.odysseus.core.collection.Context;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
+import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.physicaloperator.AbstractPhysicalSubscription;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ControllablePhysicalSubscription;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
@@ -475,11 +476,16 @@ public class RecoveryHelper {
 
 	/**
 	 * Converts a PQL-String to a physical query
-	 * @param pql The PQL String you want to have as a physical query
+	 * 
+	 * @param pql
+	 *            The PQL String you want to have as a physical query
 	 * @return A list of physical queries
 	 */
 	public static List<IPhysicalQuery> convertToPhysicalPlan(String pql) {
-		TransformationConfiguration trafoConfig = new TransformationConfiguration("relational");
+		// TransformationConfiguration trafoConfig = new
+		// TransformationConfiguration("relational",
+		// ITimeInterval.class.getName(), ILatency.class.getName());
+		TransformationConfiguration trafoConfig = new TransformationConfiguration(ITimeInterval.class.getName());
 		List<IPhysicalQuery> physicalQueries = RecoveryCommunicator
 				.getExecutor()
 				.get()
