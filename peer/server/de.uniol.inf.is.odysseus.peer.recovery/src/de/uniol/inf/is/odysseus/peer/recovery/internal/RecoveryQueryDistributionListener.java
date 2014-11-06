@@ -162,11 +162,12 @@ public class RecoveryQueryDistributionListener extends AbstractQueryDistribution
 
 				if (peer.equals(cNetworkManager.get().getLocalPeerID())) {
 					LocalBackupInformationAccess.getStore().add(info);
-					checkForBuddy(info);
 				} else {
-
 					cCommunicator.get().sendBackupInformation(peer, info);
+				}
 
+				if (info.getPeer().equals(cNetworkManager.get().getLocalPeerID())) {
+					checkForBuddy(info);
 				}
 
 			}
@@ -188,13 +189,15 @@ public class RecoveryQueryDistributionListener extends AbstractQueryDistribution
 			for (IPhysicalOperator op : ops) {
 				if (op instanceof JxtaReceiverPO) {
 					foundReceiver = true;
+					break;
 				}
 			}
+			if (!foundReceiver) {
+				// We need a buddy
+				cCommunicator.get().chooseBuddyForQuery(info.getSharedQuery());
+			}
+			foundReceiver = false;
 		}
 
-		if (!foundReceiver) {
-			// We need a buddy
-			cCommunicator.get().chooseBuddyForQuery(info.getSharedQuery());
-		}
 	}
 }
