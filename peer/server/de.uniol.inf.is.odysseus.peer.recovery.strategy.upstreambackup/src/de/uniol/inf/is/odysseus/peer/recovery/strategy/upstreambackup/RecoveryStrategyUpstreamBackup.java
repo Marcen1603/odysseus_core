@@ -224,7 +224,7 @@ public class RecoveryStrategyUpstreamBackup implements IRecoveryStrategy{
 			
 		}
 		
-		LOG.debug("Started recovery for {}", cP2PDictionary.get().getRemotePeerName(failedPeer));
+		LOG.debug("Want to start recovery for {}", cP2PDictionary.get().getRemotePeerName(failedPeer));
 
 		// To update the affected senders
 		int i = 0;
@@ -233,6 +233,7 @@ public class RecoveryStrategyUpstreamBackup implements IRecoveryStrategy{
 		// TODO Refactor allocation process
 		
 		for (ID sharedQueryId : cRecoveryDynamicBackup.get().getSharedQueryIdsForRecovery(failedPeer)) {
+			LOG.debug("Have info for {} -> I can do recovery.", cP2PDictionary.get().getRemotePeerName(failedPeer));
 			// 4. Search for another peer who can take the parts from the failed
 			// peer
 
