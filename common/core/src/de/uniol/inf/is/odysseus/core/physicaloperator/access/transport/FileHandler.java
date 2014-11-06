@@ -29,9 +29,11 @@ public class FileHandler extends AbstractFileHandler {
 
 	public static final String FILENAME = "filename";
 	public static final String PRELOAD = "preload";
+	public static final String CREATEDIR = "createdir";
 	public static final String NAME = "File";
 
 	
+	private boolean createDir = false;
 	private boolean preload = false;
 	private FileInputStream fis;
 
@@ -43,10 +45,12 @@ public class FileHandler extends AbstractFileHandler {
 		super(protocolHandler, options);
 		preload = (options.containsKey(PRELOAD)) ? Boolean
 				.parseBoolean(options.get(PRELOAD)) : false;
+				
+		createDir = options.getBoolean(CREATEDIR, false);
 	}
 
 	@Override
-	public void processInOpen() throws IOException {		
+	public void processInOpen() throws IOException {
 		if (!preload) {
 			final File file = new File(filename);
 			try {
@@ -122,6 +126,15 @@ public class FileHandler extends AbstractFileHandler {
 	@Override
 	public void processOutOpen() throws IOException {		
 		final File file = new File(filename);
+		
+		if (createDir)
+		{
+			File parentFile = file.getParentFile(); 
+			if (!parentFile.exists())
+				if (!parentFile.mkdirs())
+					throw new IOException("Could not create directory for " + filename);
+		}
+		
 		try {
 			out = new FileOutputStream(file, append);
 			fireOnConnect();
