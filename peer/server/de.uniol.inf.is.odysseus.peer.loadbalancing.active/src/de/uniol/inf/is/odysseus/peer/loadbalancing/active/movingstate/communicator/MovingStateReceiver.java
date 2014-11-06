@@ -48,9 +48,9 @@ public class MovingStateReceiver implements ITransmissionReceiverListener {
 	}
 	
 	public void notifyListeners() {
-		for(IStateReceivedListener listener : listener) {
-			if(listener!=null) {
-				listener.stateReceived(pipe);
+		for(IStateReceivedListener l : listener) {
+			if(l!=null) {
+				l.stateReceived(pipe);
 			}
 		}
 	}
