@@ -19,7 +19,9 @@ import de.uniol.inf.is.odysseus.p2p_new.IP2PNetworkManager;
 import de.uniol.inf.is.odysseus.p2p_new.data.DataTransmissionException;
 import de.uniol.inf.is.odysseus.p2p_new.physicaloperator.JxtaReceiverPO;
 import de.uniol.inf.is.odysseus.p2p_new.physicaloperator.JxtaSenderPO;
+import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryBackupInformation;
 import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryCommunicator;
+import de.uniol.inf.is.odysseus.peer.recovery.internal.BackupInformation;
 import de.uniol.inf.is.odysseus.peer.recovery.internal.RecoveryCommunicator;
 import de.uniol.inf.is.odysseus.peer.recovery.messages.RecoveryInstructionMessage;
 import de.uniol.inf.is.odysseus.peer.recovery.util.LocalBackupInformationAccess;
@@ -198,8 +200,18 @@ public class RecoveryInstructionHandler {
 		}
 	}
 
-	private static void beBuddy(PeerID sender, ID sharedQueryId, List<String> pql) {
+	private static void beBuddy(PeerID sender, ID sharedQueryId, List<String> pqls) {
 		LocalBackupInformationAccess.addBuddy(sender, sharedQueryId);
+		IRecoveryBackupInformation info = new BackupInformation();
+		info.setPeer(sender);
+		info.setSharedQuery(sharedQueryId);
+		String totalPQL = "";
+		for(String pql : pqls) {
+			totalPQL += " " + pql;
+		}
+		info.setPQL(totalPQL);
+		LocalBackupInformationAccess.getStore().add(info);
+		LOG.debug("I am now the buddy for {}", RecoveryCommunicator.getP2PDictionary().get().getRemotePeerName(sender));
 	}
 
 }

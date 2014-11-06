@@ -396,6 +396,7 @@ public class RecoveryConsole implements CommandProvider {
 			return;
 		}
 
+		sb.append("Information about other peers:\n");
 		for (ID id : storedIds) {
 			sb.append(id.toString() + " : ");
 			ImmutableCollection<PeerID> peersForThisQueryId = LocalBackupInformationAccess
@@ -410,6 +411,14 @@ public class RecoveryConsole implements CommandProvider {
 			}
 
 			sb.append("\n");
+		}
+		
+		sb.append("\nInformation about me:\n");
+		for (ID id : storedIds) {
+			ImmutableCollection<String> pqls = LocalBackupInformationAccess.getLocalPQL(id);
+			for (String pql : pqls) {
+				sb.append(pql + "\n");
+			}
 		}
 
 		ci.println(sb.toString());

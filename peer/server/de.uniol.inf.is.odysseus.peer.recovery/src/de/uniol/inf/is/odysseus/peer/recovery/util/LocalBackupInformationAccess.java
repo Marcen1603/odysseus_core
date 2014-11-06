@@ -326,7 +326,7 @@ public class LocalBackupInformationAccess {
 	 * @return The local PQL codes of all query parts of the given distributed query
 	 *         for which backup information are stored.
 	 */
-	public ImmutableCollection<String> getLocalPQL(ID sharedQueryId) {
+	public static ImmutableCollection<String> getLocalPQL(ID sharedQueryId) {
 		
 		Preconditions.checkNotNull(sharedQueryId);
 

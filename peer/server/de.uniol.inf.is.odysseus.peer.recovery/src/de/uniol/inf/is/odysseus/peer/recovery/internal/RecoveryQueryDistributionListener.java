@@ -157,23 +157,17 @@ public class RecoveryQueryDistributionListener extends AbstractQueryDistribution
 
 		// Distribute backup information
 		for (PeerID peer : infoMap.keySet()) {
-
 			for (IRecoveryBackupInformation info : infoMap.get(peer)) {
 
 				if (peer.equals(cNetworkManager.get().getLocalPeerID())) {
 					LocalBackupInformationAccess.getStore().add(info);
+					checkForBuddy(info.getLocalPQL(), info.getSharedQuery());
+
 				} else {
 					cCommunicator.get().sendBackupInformation(peer, info);
 				}
-
-				if (info.getPeer().equals(cNetworkManager.get().getLocalPeerID())) {
-					checkForBuddy(info);
-				}
-
 			}
-
 		}
-
 	}
 
 	/**
@@ -181,9 +175,9 @@ public class RecoveryQueryDistributionListener extends AbstractQueryDistribution
 	 * (This peer has no JxtaReceiverPO for the specific shared query.) If so,
 	 * this peer needs a buddy.
 	 */
-	private void checkForBuddy(IRecoveryBackupInformation info) {
+	private void checkForBuddy(String pql, ID sharedQueryId) {
 		boolean foundReceiver = false;
-		List<IPhysicalQuery> plans = RecoveryHelper.convertToPhysicalPlan(info.getLocalPQL());
+		List<IPhysicalQuery> plans = RecoveryHelper.convertToPhysicalPlan(pql);
 		for (IPhysicalQuery plan : plans) {
 			Set<IPhysicalOperator> ops = plan.getAllOperators();
 			for (IPhysicalOperator op : ops) {
@@ -194,7 +188,7 @@ public class RecoveryQueryDistributionListener extends AbstractQueryDistribution
 			}
 			if (!foundReceiver) {
 				// We need a buddy
-				cCommunicator.get().chooseBuddyForQuery(info.getSharedQuery());
+				cCommunicator.get().chooseBuddyForQuery(sharedQueryId);
 			}
 			foundReceiver = false;
 		}
