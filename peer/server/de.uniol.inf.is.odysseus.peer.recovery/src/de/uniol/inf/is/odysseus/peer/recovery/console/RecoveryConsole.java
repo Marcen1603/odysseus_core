@@ -216,7 +216,7 @@ public class RecoveryConsole implements CommandProvider {
 		sb.append("	sendUpdateReceiver <PeerName from receiver> <PeerName from new sender> <pipeId> - Send an updateReceiver-message to <PeerName from receiver>, so that this should receive the tuples fir pipe <pipeId> from the new sender <PeerName from new sender>.\n");
 		sb.append("	sendAddQueriesFromPeer <PeerName from receiver> <PeerName from failed peer> <sharedQueryId> - The <PeerName from receiver> will get a message which tells that the peer has to install the query <sharedQueryId> from <PeerName from failed peer>. \n");
 		sb.append("	recoveryAllocation <AllocatorName> - Gets the id and name of a peer to allocate to (for testing) \n");
-		sb.append("	startPeerFailureDetection <AllocatorName> - DEPRECATED - Starts detection of peer failures with the given allocator. \n");
+		sb.append("	startPeerFailureDetection - DEPRECATED - Starts detection of peer failures with the given allocator. \n");
 		sb.append("	stopPeerFailureDetection - DEPRECATED - Stops detection of peer failures. \n");
 		sb.append("	holdOn <PipeId> - Let this peer hold on\n");
 		sb.append("	goOn <PipeId> - Let this peer go on\n");
@@ -371,31 +371,9 @@ public class RecoveryConsole implements CommandProvider {
 		Preconditions.checkNotNull(ci, "Command interpreter must be not null!");
 		ci.println("Deprecated!");
 
-		String allocatorName = ci.nextArgument();
-		if (Strings.isNullOrEmpty(allocatorName)) {
-
-			ci.println("usage: startPeerFailureDetection <AllocatorName>");
-			return;
-
-		}
-
-		Optional<IRecoveryAllocator> optAllocator = RecoveryConsole.determineAllocator(allocatorName);
-		if (!optAllocator.isPresent()) {
-
-			ci.println("No recovery allocator found with the name " + allocatorName);
-			return;
-
-		}
-		IRecoveryAllocator allocator = optAllocator.get();
-		
-		//TODO fix this method
-
-//		RecoveryCommunicator.bindRecoveryAllocator(allocator);
-
 		p2pNetworkController.start();
 
-		ci.println("Peer failure detection is now switched on on this peer with usage of " + allocator.getName()
-				+ " allocator.");
+		ci.println("Peer failure detection is now switched on on this peer.");
 	}
 
 	@Deprecated
