@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.peer.loadbalancing.active.movingstate.communicator;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -36,7 +37,6 @@ import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.common.L
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.common.LoadBalancingHelper;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.common.OutgoingConnection;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.movingstate.status.MovingStateMasterStatus;
-import de.uniol.inf.is.odysseus.peer.loadbalancing.active.movingstate.status.MovingStateSlaveStatus;
 
 public class MovingStateHelper {
 	
@@ -44,6 +44,23 @@ public class MovingStateHelper {
 	private static final Logger LOG = LoggerFactory
 			.getLogger(MovingStateHelper.class);
 	
+	
+	public static void sendState(String pipe, IStatefulPO operator) throws LoadBalancingException {
+		MovingStateSender sender = MovingStateManager.getInstance().getSender(pipe);
+		
+		if(operator==null) {
+			throw new LoadBalancingException("Stateful Operator cannot be null.");
+		}
+		
+		if(sender==null) {
+			throw new LoadBalancingException("No sender found for pipeID " + pipe);
+		}
+		
+		LOG.debug("Sending state for " + operator.toString() + " on pipe " + pipe);
+		Serializable state = operator.getState();
+		sender.sendData(state);
+		LOG.debug("Data sent.");
+	}
 	
 	public static List<IStatefulPO> getStatefulOperatorList(int queryId) {
 		IExecutor executor = ActiveLoadBalancingActivator.getExecutor();
@@ -74,22 +91,10 @@ public class MovingStateHelper {
 		for(IStatefulPO statefulPO : statefulOperators) {
 			//Installing a new State Sender
 			String stateSenderPipe = MovingStateManager.getInstance().addSender(status.getVolunteeringPeer().toString());
+			status.addSender(stateSenderPipe, statefulPO);
 			dispatcher.sendInititateStateCopy(status.getVolunteeringPeer(), communicator, stateSenderPipe, statefulPO.getClass().toString(), statefulOperators.indexOf(statefulPO));
 		}
 	}
-	
-	public static void installStateReceiver(MovingStateSlaveStatus status, String pipeID, String operatorType, int operatorIndex) {
-		LOG.debug("Installing State Receiver for operator #"+operatorIndex+ " of type " + operatorType + " at pipe ID: " + pipeID);
-		Collection<Integer> installedQueries = status.getInstalledQueries();
-		ArrayList<IStatefulPO> statefulOperators = new ArrayList<IStatefulPO>();
-		for(int queryID : installedQueries) {
-			statefulOperators.addAll(getStatefulOperatorList(queryID));
-		}
-		//TODO Check for right operator type!
-		MovingStateManager.getInstance().addReceiver(status.getMasterPeer().toString(), pipeID);
-		status.getMessageDispatcher().sendInititiateStateCopyAck(status.getMasterPeer(), status.getLbProcessId(), pipeID);
-	}
-	
 	
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	private static List<IStatefulPO> traverseGraphAndFindStatefulOperators(IPhysicalOperator root, List<IStatefulPO> knownOperators) {
@@ -353,15 +358,6 @@ public class MovingStateHelper {
 		return replacedPipes;
 	}
 
-	public static void sendNextState(int operatorIndex, String pipeID, int queryId) throws LoadBalancingException {
-		//TODO Error Handling
-		MovingStateSender sender = MovingStateManager.getInstance().getSender(pipeID);
-		List<IStatefulPO> statefulPOs = getStatefulOperatorList(queryId);
-		IStatefulPO toSend = statefulPOs.get(operatorIndex);	
-		sender.sendData(toSend.getState());
-		
-	}
-
 	public static boolean compareStatefulOperator(int operatorIndex,
 			Collection<Integer> installedQueries, String operatorType) {
 		List<IStatefulPO> statefulList = getStatefulOperatorList(installedQueries);
@@ -378,5 +374,10 @@ public class MovingStateHelper {
 		List<IStatefulPO> statefulList = getStatefulOperatorList(installedQueries);
 		return statefulList.get(operatorIndex);
 	
+	}
+
+	public static void injectState(String pipeId) {
+		// TODO Auto-generated method stub
+		
 	}
 }

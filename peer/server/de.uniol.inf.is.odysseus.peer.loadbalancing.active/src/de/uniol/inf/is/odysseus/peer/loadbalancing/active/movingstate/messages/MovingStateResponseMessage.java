@@ -53,6 +53,14 @@ public class MovingStateResponseMessage implements IMessage {
 		return message;
 	}
 	
+	public static MovingStateResponseMessage createStateCopyFinishedMessage(int lbProcessId, String pipe) {
+		MovingStateResponseMessage message = new MovingStateResponseMessage();
+		message.setLoadBalancingProcessId(lbProcessId);
+		message.setPipeID(pipe);
+		message.setMsgType(STATE_COPY_FINISHED);
+		return message;
+	}
+	
 	public static MovingStateResponseMessage createAckInitStateCopyMessage(int lbProcessId, String pipe) {
 		MovingStateResponseMessage message = new MovingStateResponseMessage();
 		message.setLoadBalancingProcessId(lbProcessId);
@@ -130,6 +138,7 @@ public class MovingStateResponseMessage implements IMessage {
 			case SUCCESS_DUPLICATE:
 			case DELETE_FINISHED:
 			case ACK_INIT_STATE_COPY:
+			case STATE_COPY_FINISHED:
 				
 				/*
 				 * Allocate byte Buffer:
@@ -172,6 +181,7 @@ public class MovingStateResponseMessage implements IMessage {
 		case SUCCESS_DUPLICATE:
 		case DELETE_FINISHED:
 		case ACK_INIT_STATE_COPY:
+		case STATE_COPY_FINISHED:
 			
 			int pipeIdSize = bb.getInt();
 			byte[] pipeIdBytes = new byte[pipeIdSize];

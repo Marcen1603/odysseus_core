@@ -21,6 +21,16 @@ public class MovingStateSender {
 			.getLogger(MovingStateSender.class);
 	
 	private final ITransmissionSender transmission;
+	private boolean successfullyTransmitted=false;
+	
+	public void setSuccessfullyTransmitted() {
+		successfullyTransmitted = true;
+	}
+	
+	public boolean isSuccessfullyTransmitted() {
+		return successfullyTransmitted;
+	}
+	
 	
 	public  MovingStateSender(String peerID, String pipeID) throws DataTransmissionException {
 		this.transmission = DataTransmissionManager.getInstance()

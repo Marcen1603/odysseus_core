@@ -8,8 +8,9 @@ import net.jxta.peer.PeerID;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IStatefulPO;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.common.ILoadBalancingSlaveStatus;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.movingstate.communicator.MovingStateMessageDispatcher;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.active.movingstate.protocol.IStateReceivedListener;
 
-public class MovingStateSlaveStatus implements ILoadBalancingSlaveStatus {
+public class MovingStateSlaveStatus implements ILoadBalancingSlaveStatus, IStateReceivedListener {
 	
 	private final String COMMUNICATOR_NAME = "MovingState";
 	
@@ -110,6 +111,12 @@ public class MovingStateSlaveStatus implements ILoadBalancingSlaveStatus {
 	@Override
 	public String getCommunicatorName() {
 		return COMMUNICATOR_NAME;
+	}
+
+
+	@Override
+	public void stateReceived(String pipe) {
+		getMessageDispatcher().sendCopyStateFinished(this.getMasterPeer(), pipe);
 	}
 
 

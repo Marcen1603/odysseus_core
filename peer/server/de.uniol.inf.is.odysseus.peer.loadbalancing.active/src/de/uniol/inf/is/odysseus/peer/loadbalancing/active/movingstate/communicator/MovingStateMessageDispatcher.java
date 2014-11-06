@@ -112,6 +112,16 @@ public class MovingStateMessageDispatcher {
 		}
 	}
 	
+	public void sendCopyStateFinished(PeerID destination, String pipeID) {
+		MovingStateResponseMessage message = MovingStateResponseMessage.createStateCopyFinishedMessage(lbProcessId, pipeID);
+		try {
+			peerCommunicator.send(destination, message);
+		} catch (PeerCommunicationException e) {
+			LOG.error("Error while sending message:");
+			LOG.error(e.getMessage());
+		}
+	}
+	
 	/**
 	 * Send by Master Peer to slave Peer to stop spamming.
 	 * @param destination

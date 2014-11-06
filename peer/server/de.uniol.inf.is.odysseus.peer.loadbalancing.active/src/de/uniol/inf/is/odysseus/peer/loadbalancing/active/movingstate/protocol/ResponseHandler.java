@@ -5,12 +5,15 @@ import net.jxta.peer.PeerID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.core.physicaloperator.IStatefulPO;
 import de.uniol.inf.is.odysseus.peer.distribute.ILogicalQueryPart;
 import de.uniol.inf.is.odysseus.peer.distribute.util.LogicalQueryHelper;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.common.LoadBalancingException;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.common.LoadBalancingHelper;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.common.LoadBalancingStatusCache;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.movingstate.communicator.MovingStateCommunicatorImpl;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.movingstate.communicator.MovingStateHelper;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.active.movingstate.communicator.MovingStateManager;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.movingstate.communicator.MovingStateMessageDispatcher;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.movingstate.messages.MovingStateResponseMessage;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.movingstate.status.MovingStateMasterStatus;
@@ -134,7 +137,17 @@ public class ResponseHandler {
 				dispatcher.stopRunningJob(response.getPipeID());
 			}
 			if(dispatcher.getNumberOfRunningJobs()==0) {
-				LOG.debug("IF YOU CAN READ THIS, EVERYTHING WORKS! :)");
+				LOG.debug("Sending states.");
+				for(String pipe : status.getAllSenderPipes()) {
+					IStatefulPO operator = status.getOperatorForSender(pipe);
+					try {
+						MovingStateHelper.sendState(pipe, operator);
+					} catch (LoadBalancingException e) {
+						LOG.error("Sending state failed.");
+						//TODO Error Handling
+						e.printStackTrace();
+					}
+				}
 				
 			}
 			break;
@@ -148,6 +161,20 @@ public class ResponseHandler {
 			}
 			break;
 			
+		case MovingStateResponseMessage.STATE_COPY_FINISHED:
+			LOG.debug("Got STATE_COPY_FINISHED");
+			if(status.getPhase().equals((LB_PHASES.COPYING_STATES))) {
+				String pipe = response.getPipeID();
+				MovingStateManager.getInstance().getSender(pipe).setSuccessfullyTransmitted();
+				//TODO What about missing messages?
+				LOG.debug("Unfinished Transmissions:" +status.getNumberOfUnfinishedTransmissions());
+				if(status.getNumberOfUnfinishedTransmissions()==0) {
+					
+					status.setPhase(LB_PHASES.STOP_BUFFERING);
+					
+				}
+			}
+		break;
 
 		case MovingStateResponseMessage.FAILURE_DUPLICATE_RECEIVER:
 			LOG.debug("Got FAILURE_DUPLICATE_RECEIVER");
@@ -159,7 +186,7 @@ public class ResponseHandler {
 			break;
 		
 		case MovingStateResponseMessage.DELETE_FINISHED:
-			if(status.getPhase().equals(LB_PHASES.DELETING)) {
+			if(status.getPhase().equals(LB_PHASES.STOP_BUFFERING)) {
 				LOG.debug("Deleting finished for pipe " + response.getPipeID());
 				dispatcher.stopRunningJob(response.getPipeID());
 				if(dispatcher.getNumberOfRunningJobs()==0) {
@@ -193,7 +220,7 @@ public class ResponseHandler {
 			MovingStateHelper.notifyInvolvedPeers(status);
 			break;
 		case COPYING_STATES:
-		case DELETING:
+		case STOP_BUFFERING:
 			// New query is already running. 
 			//TODO Go on as if nothing happened?
 			break;

@@ -2,12 +2,14 @@ package de.uniol.inf.is.odysseus.peer.loadbalancing.active.movingstate.status;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 import net.jxta.peer.PeerID;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IStatefulPO;
 import de.uniol.inf.is.odysseus.peer.distribute.ILogicalQueryPart;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.common.ILoadBalancingMasterStatus;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.active.movingstate.communicator.MovingStateManager;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.movingstate.communicator.MovingStateMessageDispatcher;
 
 /**
@@ -20,7 +22,7 @@ public class MovingStateMasterStatus implements ILoadBalancingMasterStatus{
 	private final String COMMUNCIATOR_NAME = "MovingState";
 	
 	public enum LB_PHASES {
-		INITIATING,COPYING_QUERY,RELINKING_SENDERS,RELINKING_RECEIVERS,COPYING_STATES,DELETING,FAILURE
+		INITIATING,COPYING_QUERY,RELINKING_SENDERS,RELINKING_RECEIVERS,COPYING_STATES,STOP_BUFFERING,FINISHED,FAILURE
 	}
 	
 	private MovingStateMessageDispatcher messageDispatcher;
@@ -32,6 +34,16 @@ public class MovingStateMasterStatus implements ILoadBalancingMasterStatus{
 			MovingStateMessageDispatcher messageDispatcher) {
 		this.messageDispatcher = messageDispatcher;
 	}
+	
+	public int getNumberOfUnfinishedTransmissions() {
+		int counter = 0;
+		for(String pipe : senderOperatorMapping.keySet()) {
+			if(MovingStateManager.getInstance().getSender(pipe)!=null && !MovingStateManager.getInstance().getSender(pipe).isSuccessfullyTransmitted()) {
+				counter++;
+			}
+		}
+		return counter;
+	}
 
 
 	private LB_PHASES phase = LB_PHASES.INITIATING;
@@ -41,7 +53,7 @@ public class MovingStateMasterStatus implements ILoadBalancingMasterStatus{
 	private ILogicalQueryPart originalPart;
 	private ILogicalQueryPart modifiedPart;
 	private HashMap<String,String> replacedPipes;
-	private ConcurrentHashMap<String,IStatefulPO> senderOperatorMapping;
+	private ConcurrentHashMap<String,IStatefulPO> senderOperatorMapping = new ConcurrentHashMap<String,IStatefulPO>();
 	
 	private ArrayList<String> pipesToSync;
 	
@@ -69,6 +81,10 @@ public class MovingStateMasterStatus implements ILoadBalancingMasterStatus{
 	}
 	public void setPeersForPipe(HashMap<String, PeerID> peersForPipe) {
 		this.peersForPipe = peersForPipe;
+	}
+	
+	public Set<String> getAllSenderPipes() {
+		return senderOperatorMapping.keySet();
 	}
 	
 	public LB_PHASES getPhase() {
@@ -118,7 +134,7 @@ public class MovingStateMasterStatus implements ILoadBalancingMasterStatus{
 			senderOperatorMapping.put(pipe, operator);
 		}
 	}
-	public IStatefulPO getSender(String pipe) {
+	public IStatefulPO getOperatorForSender(String pipe) {
 		if(senderOperatorMapping.containsKey(pipe)) {
 			return senderOperatorMapping.get(pipe);
 		}

@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectInputStream;
 import java.io.Serializable;
+import java.util.ArrayList;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,6 +20,7 @@ import de.uniol.inf.is.odysseus.p2p_new.data.DataTransmissionManager;
 import de.uniol.inf.is.odysseus.p2p_new.data.ITransmissionReceiver;
 import de.uniol.inf.is.odysseus.p2p_new.data.ITransmissionReceiverListener;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.common.LoadBalancingException;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.active.movingstate.protocol.IStateReceivedListener;
 
 public class MovingStateReceiver implements ITransmissionReceiverListener {
 	
@@ -27,9 +29,14 @@ public class MovingStateReceiver implements ITransmissionReceiverListener {
 	
 	private final ITransmissionReceiver transmission;
 	
+	private ArrayList<IStateReceivedListener> listener = new ArrayList<IStateReceivedListener>();
+	private String pipe;
 	private Serializable receivedState;
+	private boolean receivingFinished = false;
 	
-	
+	public void resetFinished() {
+		this.receivingFinished = false;
+	}
 	
 	public MovingStateReceiver(String peerID, String pipeID) throws DataTransmissionException {
 		
@@ -37,49 +44,65 @@ public class MovingStateReceiver implements ITransmissionReceiverListener {
 		transmission.addListener(this);
 		transmission.open();
 		transmission.sendOpen();
+		this.pipe = pipeID;
 	}
-
+	
+	public void notifyListeners() {
+		for(IStateReceivedListener listener : listener) {
+			if(listener!=null) {
+				listener.stateReceived(pipe);
+			}
+		}
+	}
+	
+	public void addListener(IStateReceivedListener listener) {
+		if(!this.listener.contains(listener))
+			this.listener.add(listener);
+	}
+	
+	public boolean hasStatus() {
+		return this.receivedState!=null;
+	}
+	
 	@Override
 	public void onReceiveData(ITransmissionReceiver receiver, byte[] data) {
-		ByteArrayInputStream bis = new ByteArrayInputStream(data);
-		ObjectInput in = null;
-		
-		try {
-		  in = new ObjectInputStream(bis);
-		  receivedState = (Serializable)in.readObject();
-		  LOG.debug("Received: ");
-		  LOG.debug(receivedState.toString());
-		} catch (IOException e) {
-			LOG.error("Error while deserializing bytes.");
-			e.printStackTrace();
-		} catch (ClassNotFoundException e) {
-			LOG.error("Class not found.");
-			e.printStackTrace();
-		} finally {
-		  try {
-		    bis.close();
-		  } catch (IOException ex) {
-		    // ignore close exception
-		  }
-		  try {
-		    if (in != null) {
-		      in.close();
-		    }
-		  } catch (IOException ex) {
-		    // ignore close exception
-		  }
-		} 
+		if(!receivingFinished) {
+			ByteArrayInputStream bis = new ByteArrayInputStream(data);
+			ObjectInput in = null;
+			
+			try {
+			  in = new ObjectInputStream(bis);
+			  receivedState = (Serializable)in.readObject();
+			  receivingFinished = true;
+			  LOG.debug("Received: ");
+			  LOG.debug(receivedState.toString());
+			  notifyListeners();
+			} catch (IOException e) {
+				LOG.error("Error while deserializing bytes.");
+				e.printStackTrace();
+			} catch (ClassNotFoundException e) {
+				LOG.error("Class not found.");
+				e.printStackTrace();
+			} finally {
+			  try {
+			    bis.close();
+			  } catch (IOException ex) {
+			    // ignore close exception
+			  }
+			  try {
+			    if (in != null) {
+			      in.close();
+			    }
+			  } catch (IOException ex) {
+			    // ignore close exception
+			  }
+			} 
+		}
 	}
 
 	@Override
 	public void onReceivePunctuation(ITransmissionReceiver receiver,
 			IPunctuation punc) {
-		//ignore as we are not an operator
-		
-	}
-
-	@Override
-	public void onReceiveDone(ITransmissionReceiver receiver) {
 		//ignore as we are not an operator
 		
 	}
@@ -110,5 +133,11 @@ public class MovingStateReceiver implements ITransmissionReceiverListener {
 			}
 		}
 		//TODO Source has no suspend method.
+	}
+
+	@Override
+	public void onReceiveDone(ITransmissionReceiver receiver) {
+		
+		
 	}
 }

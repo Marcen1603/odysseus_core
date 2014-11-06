@@ -203,6 +203,7 @@ public class InstructionHandler {
 					manager.addReceiver(
 							senderPeer.toString(), instruction.getPipeId());
 					status.addReceiver(instruction.getPipeId(), operator);
+					manager.getReceiver(instruction.getPipeId()).addListener(status);
 					status.getMessageDispatcher().sendInititiateStateCopyAck(status.getMasterPeer(), status.getLbProcessId(), instruction.getPipeId());
 				}
 				else {
