@@ -198,6 +198,39 @@ public class SmartDeviceLogicView extends ViewPart {
 		tableColumnLayout.setColumnData(reactionColumn.getColumn(), new ColumnWeightData(10, 25, true));
 		
 		
+		
+		/************* Reaction ****************/
+		TableViewerColumn currentSensorsColumn = new TableViewerColumn(smartDevicesTable, SWT.NONE);
+		currentSensorsColumn.getColumn().setText("ConnectedActivityInterpreters");
+		currentSensorsColumn.setLabelProvider(new CellLabelProvider() {
+			@Override
+			public void update(ViewerCell cell) {
+				LogicRule rule = (LogicRule) cell.getElement();
+				cell.setText(""+rule.getActivityInterpretersWithRunningRules().size());
+				
+				
+				/*
+				if (isLocalID((PeerID) cell.getElement())) {
+					try {
+						cell.setText(InetAddress.getLocalHost().getHostAddress() + ":" + SmartHomeRCPActivator.getP2PNetworkManager().getPort());
+					} catch (UnknownHostException e) {
+						cell.setText("<unknown>");
+					}
+					cell.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_GRAY));
+				} else {
+					Optional<String> optAddress = SmartHomeRCPActivator.getP2PDictionary().getRemotePeerAddress((PeerID) cell.getElement());
+					if (optAddress.isPresent()) {
+						cell.setText(optAddress.get());
+					} else {
+						cell.setText("<unknown>");
+					}
+				}
+				*/
+			}
+		});
+		tableColumnLayout.setColumnData(currentSensorsColumn.getColumn(), new ColumnWeightData(10, 25, true));
+		
+		
 		smartDevicesTable.setInput(getLogicRules());
 		
 		refreshAsync();

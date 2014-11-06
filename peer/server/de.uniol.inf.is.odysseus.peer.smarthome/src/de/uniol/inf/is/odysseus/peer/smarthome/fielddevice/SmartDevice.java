@@ -18,7 +18,7 @@ public class SmartDevice extends ASmartDevice implements Serializable {
 	private String peerName = "local";
 	
 	private transient ArrayList<ISmartDeviceListener> smartDeviceListener;
-	private ConnectedFieldDeviceListener fieldDeviceListener;
+	private transient ConnectedFieldDeviceListener fieldDeviceListener;
 	
 	private static SmartDevice instance;
 	
@@ -131,14 +131,11 @@ public class SmartDevice extends ASmartDevice implements Serializable {
 	// called by OSGi-DS
 	public void activate() {
 		instance = this;
-		System.out.println("SmartDevice activate: ");
 		
 	}
 
 	// called by OSGi-DS
 	public void deactivate() {
-		System.out.println("SmartDevice deactivate: ");
-		
 		instance = null;
 	}
 
@@ -165,13 +162,11 @@ public class SmartDevice extends ASmartDevice implements Serializable {
 
 	@Override
 	public void addSmartDeviceListener(ISmartDeviceListener listener) {
-		System.out.println("SmartDevice addSmartDeviceListener: ");
 		getSmartDeviceListener().add(listener);
 	}
 	
 	@Override
 	public void removeSmartDeviceListener(ISmartDeviceListener listener) {
-		System.out.println("removeSmartDeviceListener: ");
 		getSmartDeviceListener().remove(listener);
 	}
 	private ArrayList<ISmartDeviceListener> getSmartDeviceListener() {
