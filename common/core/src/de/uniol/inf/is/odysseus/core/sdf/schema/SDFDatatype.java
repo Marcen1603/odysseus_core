@@ -58,6 +58,7 @@ public class SDFDatatype extends SDFElement implements Serializable {
 	public static final SDFDatatype DOCUMENT = new SDFDatatype("Document");
 	public static final SDFDatatype LONG = new SDFDatatype("Long");
 	public static final SDFDatatype INTEGER = new SDFDatatype("Integer");
+	public static final SDFDatatype UNSIGNEDINT16 = new SDFDatatype("UnsignedInt16");
 	public static final SDFDatatype BYTE = new SDFDatatype("Byte");
 	public static final SDFDatatype CHAR = new SDFDatatype("Char");
 	public static final SDFDatatype FLOAT = new SDFDatatype("Float");

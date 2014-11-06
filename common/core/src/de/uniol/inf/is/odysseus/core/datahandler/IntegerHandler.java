@@ -26,6 +26,7 @@ public class IntegerHandler extends AbstractDataHandler<Integer> {
 	static protected List<String> types = new ArrayList<String>();
 	static {
 		types.add(SDFDatatype.INTEGER.getURI());
+		types.add(SDFDatatype.UNSIGNEDINT16.getURI());
 	}
 
 	@Override
