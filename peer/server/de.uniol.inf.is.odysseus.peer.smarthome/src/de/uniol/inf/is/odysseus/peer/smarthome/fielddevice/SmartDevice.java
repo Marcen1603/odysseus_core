@@ -2,50 +2,61 @@ package de.uniol.inf.is.odysseus.peer.smarthome.fielddevice;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
-import net.jxta.peer.PeerID;
+import com.google.common.collect.Lists;
+
 import de.uniol.inf.is.odysseus.peer.smarthome.SmartDeviceConfig;
 
-public class SmartDevice implements Serializable {
+public class SmartDevice extends ASmartDevice implements Serializable {
 	private static final long serialVersionUID = 1L;
 	private String smartDevicePeerID;
 	private String contextName;
 	private List<FieldDevice> connectedFieldDevices = new ArrayList<FieldDevice>();
 	private boolean state = false;
-	private String peerName;
+	private String peerName = "local";
+	
+	private transient ArrayList<ISmartDeviceListener> smartDeviceListener;
+	
+	private static ASmartDevice instance;
 
 	public List<FieldDevice> getConnectedFieldDevices() {
 		return connectedFieldDevices;
 	}
-	
-	public ArrayList<Sensor> getConnectedSensors(){
+
+	public ArrayList<Sensor> getConnectedSensors() {
 		ArrayList<Sensor> sensors = new ArrayList<Sensor>();
-		for(FieldDevice fieldDevice : getConnectedFieldDevices()){
-			if(fieldDevice instanceof Sensor){
-				sensors.add((Sensor)fieldDevice);
+		for (FieldDevice fieldDevice : getConnectedFieldDevices()) {
+			if (fieldDevice instanceof Sensor) {
+				sensors.add((Sensor) fieldDevice);
 			}
 		}
 		return sensors;
 	}
-	
-	public ArrayList<Actor> getConnectedActors(){
+
+	public ArrayList<Actor> getConnectedActors() {
 		ArrayList<Actor> actors = new ArrayList<Actor>();
-		for(FieldDevice fieldDevice : getConnectedFieldDevices()){
-			if(fieldDevice instanceof Actor){
-				actors.add((Actor)fieldDevice);
+		for (FieldDevice fieldDevice : getConnectedFieldDevices()) {
+			if (fieldDevice instanceof Actor) {
+				actors.add((Actor) fieldDevice);
 			}
 		}
 		return actors;
 	}
 
-	public void setConnectedFieldDevices(List<FieldDevice> connectedFieldDevices) {
+	private void setConnectedFieldDevices(
+			List<FieldDevice> connectedFieldDevices) {
 		this.connectedFieldDevices = connectedFieldDevices;
 	}
 
 	public void addConnectedFieldDevice(FieldDevice device) {
 		this.connectedFieldDevices.add(device);
+		device.setSmartDevice(this);
+		fireFieldDeviceConnected(device);
 	}
+
+	
 
 	public String getContextName() {
 		return contextName;
@@ -71,24 +82,7 @@ public class SmartDevice implements Serializable {
 		return this.smartDevicePeerID;
 	}
 
-	@Override
-	public boolean equals(Object obj) {
-		if (obj instanceof PeerID) {
-			String peerID = this.getPeerID().intern().toString();
-			PeerID objPeerID = ((PeerID) obj);
-			String objPeerIDString = objPeerID.intern().toString();
-
-			if (peerID != null && objPeerIDString != null) {
-				return peerID.equals(objPeerIDString);
-			} else {
-				return false;
-			}
-		} else {
-			return super.equals(obj);
-		}
-	}
-
-	public void overwriteWith(SmartDevice smartDevice) {
+	public void overwriteWith(ASmartDevice smartDevice) {
 		if (smartDevice != null) {
 			this.setContextName(smartDevice.getContextName());
 		}
@@ -105,7 +99,10 @@ public class SmartDevice implements Serializable {
 
 	public void setReady(boolean state) {
 		this.state = state;
+		fireReadyStateChanged(state);
 	}
+
+	
 
 	public String getPeerName() {
 		return this.peerName;
@@ -113,5 +110,81 @@ public class SmartDevice implements Serializable {
 
 	public void setPeerName(String peerName) {
 		this.peerName = peerName;
+	}
+
+	// //////
+	// called by OSGi-DS
+	public void activate() {
+		instance = this;
+		System.out.println("SmartDevice activate: ");
+		
+	}
+
+	// called by OSGi-DS
+	public void deactivate() {
+		System.out.println("SmartDevice deactivate: ");
+		
+		instance = null;
+	}
+
+	// called by OSGi-DS
+	public void bindListener(ISmartDeviceListener serv) {
+		addListener(serv);
+	}
+
+	// called by OSGi-DS
+	public void unbindListener(ISmartDeviceListener serv) {
+		removeListener(serv);
+	}
+
+	public static boolean isActivated() {
+		return instance != null;
+	}
+	
+	public static ASmartDevice getInstance() {
+		if(instance==null){
+			instance = new SmartDevice();
+		}
+		return instance;
+	}
+
+	@Override
+	public void addListener(ISmartDeviceListener listener) {
+		System.out.println("addListener: ");
+		getSmartDeviceListener().add(listener);
+	}
+	
+	@Override
+	public void removeListener(ISmartDeviceListener listener) {
+		System.out.println("removeListener: ");
+		getSmartDeviceListener().remove(listener);
+	}
+	private ArrayList<ISmartDeviceListener> getSmartDeviceListener() {
+		if(smartDeviceListener==null){
+			smartDeviceListener = new ArrayList<ISmartDeviceListener>();
+		}
+		return smartDeviceListener;
+	}
+	
+	private void fireFieldDeviceConnected(FieldDevice device) {
+		for(ISmartDeviceListener listener : getSmartDeviceListener()){
+			listener.fieldDeviceConnected(this, device);
+		}
+	}
+	private void fireReadyStateChanged(boolean state) {
+		for(ISmartDeviceListener listener : getSmartDeviceListener()){
+			listener.readyStateChanged(this, state);
+		}
+	}
+
+	@Override
+	public Collection<? extends LogicRule> getLogicRules() {
+		Collection<LogicRule> rules = Lists.newLinkedList();
+		
+		for(Actor actor : getConnectedActors()){
+			rules.addAll(actor.getLogicRules());
+		}
+		
+		return rules;
 	}
 }

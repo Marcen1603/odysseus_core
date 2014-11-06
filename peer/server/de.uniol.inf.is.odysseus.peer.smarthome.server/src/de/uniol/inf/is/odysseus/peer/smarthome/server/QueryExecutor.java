@@ -26,6 +26,7 @@ import de.uniol.inf.is.odysseus.p2p_new.dictionary.MultipleSourceAdvertisement;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.SourceAdvertisement;
 import de.uniol.inf.is.odysseus.peer.smarthome.fielddevice.ActivityInterpreter;
 import de.uniol.inf.is.odysseus.peer.smarthome.fielddevice.Actor;
+import de.uniol.inf.is.odysseus.peer.smarthome.fielddevice.ASmartDevice;
 import de.uniol.inf.is.odysseus.peer.smarthome.fielddevice.LogicRule;
 import de.uniol.inf.is.odysseus.peer.smarthome.fielddevice.Sensor;
 import de.uniol.inf.is.odysseus.peer.smarthome.fielddevice.SmartDevice;
@@ -69,7 +70,7 @@ public class QueryExecutor implements IP2PDictionaryListener,
 		getSourcesNeededForImport().remove(srcName);
 	}
 
-	public void removeAllLogicRules(SmartDevice remoteSmartDevice) {
+	public void removeAllLogicRules(ASmartDevice remoteSmartDevice) {
 		LOG.debug("removeAllLogicRules:" + remoteSmartDevice.getPeerName());
 		for (Actor actor : remoteSmartDevice.getConnectedActors()) {
 			for (LogicRule rule : actor.getLogicRules()) {
@@ -475,12 +476,12 @@ public class QueryExecutor implements IP2PDictionaryListener,
 	 */
 	@Override
 	public void smartDeviceAdded(SmartDeviceServerDictionaryDiscovery sender,
-			SmartDevice smartDevice) {
+			ASmartDevice smartDevice) {
 	}
 
 	@Override
 	public void smartDeviceRemoved(SmartDeviceServerDictionaryDiscovery sender,
-			SmartDevice smartDevice) {
+			ASmartDevice smartDevice) {
 
 		LOG.debug("QueryExecutor smartDeviceRemoved: "
 				+ SmartDeviceServer.getInstance().getLocalSmartDevice()
@@ -493,7 +494,7 @@ public class QueryExecutor implements IP2PDictionaryListener,
 
 	@Override
 	public void smartDeviceUpdated(SmartDeviceServerDictionaryDiscovery sender,
-			SmartDevice smartDevice) {
+			ASmartDevice smartDevice) {
 		// LOG.debug("smartDeviceUpdated: " +
 		// smartDevice.getPeerIDString());
 		//

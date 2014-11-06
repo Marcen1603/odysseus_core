@@ -2,12 +2,10 @@ package de.uniol.inf.is.odysseus.peer.smarthome;
 
 import java.io.IOException;
 
-import de.uniol.inf.is.odysseus.peer.smarthome.fielddevice.SmartDevice;
-
-
+import de.uniol.inf.is.odysseus.peer.smarthome.fielddevice.ASmartDevice;
 
 public class SmartDeviceResponseMessage extends SmartDeviceMessage {
-	private SmartDevice smartDevice;
+	private ASmartDevice smartDevice;
 	
 	public byte[] toBytes() {
 		try {
@@ -20,17 +18,17 @@ public class SmartDeviceResponseMessage extends SmartDeviceMessage {
 	
 	public void fromBytes(byte[] data) {
 		try {
-			this.smartDevice = (SmartDevice) deserialize(data);
+			this.smartDevice = (ASmartDevice) deserialize(data);
 		} catch (ClassNotFoundException | IOException e) {
 			e.printStackTrace();
 		}
 	}
 
-	public SmartDevice getSmartDevice() {
+	public ASmartDevice getSmartDevice() {
 		return smartDevice;
 	}
 
-	public void setSmartDevice(SmartDevice smartDevice) {
+	public void setSmartDevice(ASmartDevice smartDevice) {
 		this.smartDevice = smartDevice;
 	}
 

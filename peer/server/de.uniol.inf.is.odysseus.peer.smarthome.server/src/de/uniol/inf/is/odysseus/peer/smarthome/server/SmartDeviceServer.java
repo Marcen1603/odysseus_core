@@ -14,11 +14,12 @@ import de.uniol.inf.is.odysseus.p2p_new.IJxtaServicesProvider;
 import de.uniol.inf.is.odysseus.p2p_new.IP2PNetworkManager;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.IP2PDictionary;
 import de.uniol.inf.is.odysseus.peer.smarthome.fielddevice.ActivityInterpreter;
+import de.uniol.inf.is.odysseus.peer.smarthome.fielddevice.ASmartDevice;
 import de.uniol.inf.is.odysseus.peer.smarthome.fielddevice.RPiGPIOSensor;
 import de.uniol.inf.is.odysseus.peer.smarthome.fielddevice.RPiGPIOActor;
+import de.uniol.inf.is.odysseus.peer.smarthome.fielddevice.SmartDevice;
 import de.uniol.inf.is.odysseus.peer.smarthome.fielddevice.RPiGPIOActor.State;
 import de.uniol.inf.is.odysseus.peer.smarthome.fielddevice.Sensor;
-import de.uniol.inf.is.odysseus.peer.smarthome.fielddevice.SmartDevice;
 import de.uniol.inf.is.odysseus.peer.smarthome.fielddevice.TemperSensor;
 import de.uniol.inf.is.odysseus.peer.smarthome.server.advertisement.SmartDeviceAdvertisement;
 import de.uniol.inf.is.odysseus.peer.smarthome.server.service.ServerExecutorService;
@@ -28,7 +29,7 @@ public class SmartDeviceServer {
 			.getLogger(SmartHomeServerPlugIn.class);
 	private static SmartDeviceServer instance;
 	private static IP2PDictionary p2pDictionary;
-	private static SmartDevice localSmartDevice;
+	//private static ISmartDevice localSmartDevice;
 	private static IP2PNetworkManager p2pNetworkManager;
 	private static IJxtaServicesProvider jxtaServicesProvider;
 
@@ -167,8 +168,8 @@ public class SmartDeviceServer {
 		}
 	}
 
-	public SmartDevice getLocalSmartDevice() {
-		return localSmartDevice;
+	public ASmartDevice getLocalSmartDevice() {
+		return SmartDevice.getInstance();
 	}
 
 	public void unbindP2PNetworkManager(IP2PNetworkManager serv) {
@@ -185,9 +186,11 @@ public class SmartDeviceServer {
 		return p2pNetworkManager;
 	}
 
-	public static void setLocalSmartDevice(SmartDevice _localSmartDevice) {
+	/*
+	public static void setLocalSmartDevice(ISmartDevice _localSmartDevice) {
 		localSmartDevice = _localSmartDevice;
 	}
+	*/
 
 	protected static IJxtaServicesProvider getJxtaServicesProvider() {
 		return jxtaServicesProvider;
@@ -264,7 +267,6 @@ public class SmartDeviceServer {
 
 		//
 		// 2. instantiate SmartDevice:
-		setLocalSmartDevice(new SmartDevice());
 		getLocalSmartDevice().setPeerID(getLocalPeerID());
 		getLocalSmartDevice().setPeerName(getLocalPeerName());
 		getLocalSmartDevice().setSmartDevice(
@@ -294,7 +296,7 @@ public class SmartDeviceServer {
 		getLocalSmartDevice().setReady(true);
 	}
 
-	void executeActivityInterpreterQueries(SmartDevice smartDevice) {
+	void executeActivityInterpreterQueries(ASmartDevice smartDevice) {
 		for (Sensor sensor : smartDevice.getConnectedSensors()) {
 			for (Entry<String, String> queryForRawValue : sensor
 					.getQueriesForRawValues().entrySet()) {

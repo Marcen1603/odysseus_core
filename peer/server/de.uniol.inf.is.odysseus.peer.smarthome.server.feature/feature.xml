@@ -21,6 +21,7 @@
       <import plugin="de.uniol.inf.is.odysseus.peer.server"/>
       <import plugin="de.uniol.inf.is.odysseus.core"/>
       <import plugin="de.uniol.inf.is.odysseus.core.server"/>
+      <import plugin="de.uniol.inf.is.odysseus.p2p_new"/>
    </requires>
 
    <plugin

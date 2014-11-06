@@ -29,7 +29,7 @@ import de.uniol.inf.is.odysseus.parser.pql.generator.IPQLGenerator;
 import de.uniol.inf.is.odysseus.peer.smarthome.SmartDeviceMessage;
 import de.uniol.inf.is.odysseus.peer.smarthome.SmartDeviceRequestMessage;
 import de.uniol.inf.is.odysseus.peer.smarthome.SmartDeviceResponseMessage;
-import de.uniol.inf.is.odysseus.peer.smarthome.fielddevice.SmartDevice;
+import de.uniol.inf.is.odysseus.peer.smarthome.fielddevice.ASmartDevice;
 import de.uniol.inf.is.odysseus.peer.smarthome.server.advertisement.SmartDeviceAdvertisement;
 import de.uniol.inf.is.odysseus.peer.smarthome.server.advertisement.SmartDeviceAdvertisementInstantiator;
 
@@ -42,7 +42,7 @@ public class SmartDeviceServerDictionaryDiscovery implements
 
 	private static final Logger LOG = LoggerFactory
 			.getLogger(SmartHomeServerPlugIn.class);
-	private Map<String, SmartDevice> smartDevices = Maps.newHashMap();
+	private Map<String, ASmartDevice> smartDevices = Maps.newHashMap();
 	private Map<String, Long> smartDevicesHeartBeat = Maps.newHashMap();
 	private final List<ISmartDeviceDictionaryListener> listeners = Lists
 			.newArrayList();
@@ -148,7 +148,7 @@ public class SmartDeviceServerDictionaryDiscovery implements
 				SmartDeviceRequestMessage smartDevRequest = new SmartDeviceRequestMessage(
 						"request");
 
-				getPeerCommunicator().send(adv.getPeerID(), smartDevRequest);
+				getPeerCommunicator().send(adv.getPeerID(), smartDevRequest);	
 			} catch (PeerCommunicationException e) {
 				LOG.error(e.getMessage() + " PeerID:"
 						+ adv.getPeerID().intern().toString(), e);
@@ -174,7 +174,7 @@ public class SmartDeviceServerDictionaryDiscovery implements
 					getPeerCommunicator().send(senderPeer, smartDeviceResponse);
 				} catch (PeerCommunicationException ex) {
 					LOG.error(ex.getMessage(), ex);
-				}
+				} 
 			} catch (Exception ex) {
 				LOG.error(ex.getMessage(), ex);
 			}
@@ -182,7 +182,7 @@ public class SmartDeviceServerDictionaryDiscovery implements
 			SmartDeviceResponseMessage smartDeviceResponse = (SmartDeviceResponseMessage) message;
 
 			if (!isLocalPeer(senderPeer)) {
-				SmartDevice smartDevice = smartDeviceResponse.getSmartDevice();
+				ASmartDevice smartDevice = smartDeviceResponse.getSmartDevice();
 
 				if (smartDevice != null) {
 					SmartDeviceServerDictionaryDiscovery.getInstance()
@@ -196,7 +196,7 @@ public class SmartDeviceServerDictionaryDiscovery implements
 		}
 	}
 
-	public void addSmartDevice(SmartDevice newSmartDevice) {
+	public void addSmartDevice(ASmartDevice newSmartDevice) {
 		if (!getSmartDevices().containsKey(newSmartDevice.getPeerID())) {
 			//LOG.debug("Add new SmartDevice");
 			// Add new SmartDevice
@@ -219,7 +219,7 @@ public class SmartDeviceServerDictionaryDiscovery implements
 		} else {
 			//LOG.debug("Update existing SmartDevice");
 			// Update existing SmartDevice
-			SmartDevice existingSmartDevice = getSmartDevices().get(
+			ASmartDevice existingSmartDevice = getSmartDevices().get(
 					newSmartDevice.getPeerID());
 
 			synchronized (getSmartDevices()) {
@@ -233,7 +233,7 @@ public class SmartDeviceServerDictionaryDiscovery implements
 	private synchronized void removeSmartDevice(String smartDevicePeerID) {
 		// LOG.debug("removeSmartDevice peerID:" + smartDevicePeerID);
 
-		SmartDevice smartDeviceToRemove = getSmartDevices().get(
+		ASmartDevice smartDeviceToRemove = getSmartDevices().get(
 				smartDevicePeerID);
 
 		getSmartDevices().remove(smartDevicePeerID);
@@ -242,7 +242,7 @@ public class SmartDeviceServerDictionaryDiscovery implements
 		fireSmartDeviceRemovedEvent(smartDeviceToRemove);
 	}
 
-	private synchronized void refreshHeartBeat(SmartDevice smartDevice) {
+	private synchronized void refreshHeartBeat(ASmartDevice smartDevice) {
 		String smartDevicePeerID = smartDevice.getPeerID();
 		synchronized (this.smartDevicesHeartBeat) {
 			Long currentTime = new Long(System.currentTimeMillis());
@@ -262,7 +262,7 @@ public class SmartDeviceServerDictionaryDiscovery implements
 		}
 	}
 
-	protected final void fireSmartDeviceAddEvent(SmartDevice smartDevice) {
+	protected final void fireSmartDeviceAddEvent(ASmartDevice smartDevice) {
 		synchronized (listeners) {
 			for (ISmartDeviceDictionaryListener listener : listeners) {
 				try {
@@ -276,7 +276,7 @@ public class SmartDeviceServerDictionaryDiscovery implements
 		}
 	}
 
-	protected final void fireSmartDeviceRemovedEvent(SmartDevice smartDevice) {
+	protected final void fireSmartDeviceRemovedEvent(ASmartDevice smartDevice) {
 		synchronized (listeners) {
 			for (ISmartDeviceDictionaryListener listener : listeners) {
 				try {
@@ -291,7 +291,7 @@ public class SmartDeviceServerDictionaryDiscovery implements
 		}
 	}
 
-	protected final void fireSmartDeviceUpdatedEvent(SmartDevice smartDevice) {
+	protected final void fireSmartDeviceUpdatedEvent(ASmartDevice smartDevice) {
 		synchronized (listeners) {
 			for (ISmartDeviceDictionaryListener listener : listeners) {
 				try {
@@ -305,13 +305,13 @@ public class SmartDeviceServerDictionaryDiscovery implements
 		}
 	}
 
-	public Map<String, SmartDevice> getSmartDevices() {
+	public Map<String, ASmartDevice> getSmartDevices() {
 		// cleanup();
 		return smartDevices;
 	}
 
 	public synchronized void setSmartDevices(
-			Map<String, SmartDevice> smartDevices) {
+			Map<String, ASmartDevice> smartDevices) {
 		this.smartDevices = smartDevices;
 	}
 

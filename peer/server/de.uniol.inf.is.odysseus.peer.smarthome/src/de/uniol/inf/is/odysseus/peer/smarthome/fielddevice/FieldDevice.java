@@ -2,12 +2,13 @@ package de.uniol.inf.is.odysseus.peer.smarthome.fielddevice;
 
 import java.io.Serializable;
 
+
 public abstract class FieldDevice implements Serializable {
 	private static final long serialVersionUID = 1L;
 	private String name;
 	private String prefix;
 	private String postfix;
-	private SmartDevice smartDevice;
+	private ASmartDevice smartDevice;
 
 	public FieldDevice(String name, String prefix, String postfix) {
 		this.setName(name);
@@ -15,11 +16,11 @@ public abstract class FieldDevice implements Serializable {
 		this.setPostfix(postfix);
 	}
 	
-	public void setSmartDevice(SmartDevice smartDevice) {
+	public void setSmartDevice(ASmartDevice smartDevice) {
 		this.smartDevice = smartDevice;
 	}
 
-	public SmartDevice getSmartDevice(){
+	public ASmartDevice getSmartDevice(){
 		return this.smartDevice;
 	}
 	

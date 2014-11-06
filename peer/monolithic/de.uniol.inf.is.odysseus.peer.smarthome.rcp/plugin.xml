@@ -13,6 +13,14 @@
       </view>
       <view
             category="de.uniol.inf.is.odysseus.rcp.peer.smarthome.SmartHomeCategory"
+            class="de.uniol.inf.is.odysseus.peer.smarthome.rcp.views.SmartDeviceLogicView"
+            icon="icons/SmartHome.png"
+            id="de.uniol.inf.is.odysseus.rcp.peer.SmartDeviceLogicView"
+            name="Smart Device Logic"
+            restorable="true">
+      </view>
+      <view
+            category="de.uniol.inf.is.odysseus.rcp.peer.smarthome.SmartHomeCategory"
             class="de.uniol.inf.is.odysseus.peer.smarthome.rcp.views.SmartDeviceConfigurationView"
             icon="icons/DeviceConfiguration.png"
             id="de.uniol.inf.is.odysseus.rcp.peer.SmartDeviceConfigurationView"
@@ -69,6 +77,13 @@
          </view>
          <view
                id="de.uniol.inf.is.odysseus.rcp.peer.SmartDeviceView"
+               minimized="false"
+               relationship="stack"
+               relative="org.eclipse.ui.console.ConsoleView"
+               visible="true">
+         </view>
+         <view
+               id="de.uniol.inf.is.odysseus.rcp.peer.SmartDeviceLogicView"
                minimized="false"
                relationship="stack"
                relative="org.eclipse.ui.console.ConsoleView"

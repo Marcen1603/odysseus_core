@@ -17,6 +17,11 @@
       [Enter License Description here.]
    </license>
 
+   <requires>
+      <import plugin="de.uniol.inf.is.odysseus.peer.smarthome"/>
+      <import plugin="de.uniol.inf.is.odysseus.peer.smarthome.server"/>
+   </requires>
+
    <plugin
          id="de.uniol.inf.is.odysseus.peer.smarthome.rcp"
          download-size="0"
