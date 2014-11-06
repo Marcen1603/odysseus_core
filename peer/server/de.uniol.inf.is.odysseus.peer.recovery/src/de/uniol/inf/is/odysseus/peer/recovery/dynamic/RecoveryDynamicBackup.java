@@ -311,14 +311,9 @@ public class RecoveryDynamicBackup implements IRecoveryDynamicBackup {
 									.createHoldOnMessage(pipe);
 							uri = new URI(peerId);
 							PeerID peerToHoldOn = PeerID.create(uri);
-							// TODO does the local peer get the message too or do we need the if-then-else? 
-							// in that case the interface of the communicator has to be changed
-//							if (!peerToHoldOn.equals(p2pNetworkManager.getLocalPeerID())) {
-								cRecoveryCommunicator.get().sendHoldOnMessage(peerToHoldOn, holdOnMessage);
-//							} else {
-//								// We are the peer
-//								receivedMessage(peerCommunicator, peerToHoldOn, holdOnMessage);
-//							}
+							
+							cRecoveryCommunicator.get().sendHoldOnMessage(peerToHoldOn, holdOnMessage);
+							
 						} catch (URISyntaxException e) {
 							e.printStackTrace();
 						}
