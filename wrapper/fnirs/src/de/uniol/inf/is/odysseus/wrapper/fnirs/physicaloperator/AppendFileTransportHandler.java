@@ -41,12 +41,12 @@ public class AppendFileTransportHandler extends AbstractSimplePullTransportHandl
 	public static final String NAME = "AppendFile";
 
 	public String fileName;
-	public long 	checkDelay;
-	public double 	lineDelay;
+	public long checkDelay;
+	public double lineDelay;
 	
 	private BufferedReader currentStream = null;
 	private String currentLine = null;
-
+	private long currentLineNumber = 1;
 	private double currentTimeStamp; // All timestamps in ms
 	
 	
@@ -83,6 +83,7 @@ public class AppendFileTransportHandler extends AbstractSimplePullTransportHandl
     public void processInOpen() throws IOException 
     {
     	currentLine = null;
+    	currentLineNumber = 0;
     }
 
     @Override
@@ -123,12 +124,14 @@ public class AppendFileTransportHandler extends AbstractSimplePullTransportHandl
 		if (currentLine == null)
 			return null;
 				
-		Tuple<IMetaAttribute> tuple = new Tuple<>(3, false);		
+		Tuple<IMetaAttribute> tuple = new Tuple<>(4, false);		
 		tuple.setAttribute(0, (long)(currentTimeStamp));
 		tuple.setAttribute(1, (long)(currentTimeStamp+lineDelay));
-		tuple.setAttribute(2, currentLine); 
+		tuple.setAttribute(2, currentLineNumber);
+		tuple.setAttribute(3, new String(currentLine)); 
 		
 		currentTimeStamp += lineDelay;
+		currentLineNumber++;
 		
         return tuple;		
 	}
@@ -165,12 +168,10 @@ public class AppendFileTransportHandler extends AbstractSimplePullTransportHandl
 	
 	@Override public boolean hasNext() 
 	{
-		System.out.println("Call hasNext");
-		
+		System.out.println("Call hasNext");		
    		if (checkNext())
    		{   			   		
-   			System.out.println("Call hasNext returned true");
-   			
+   			System.out.println("Call hasNext returned true");   			
    			return true;
    		}
    		else
