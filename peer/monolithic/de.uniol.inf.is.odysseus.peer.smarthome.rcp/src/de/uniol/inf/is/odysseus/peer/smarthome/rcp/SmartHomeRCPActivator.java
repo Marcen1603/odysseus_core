@@ -86,7 +86,7 @@ public class SmartHomeRCPActivator implements BundleActivator {
 		System.out.println("---bindLocalSmartDevice: "+_smartDevice.getPeerName());
 		
 		
-		localSmartDevice.addListener(smartDeviceListener);
+		localSmartDevice.addSmartDeviceListener(smartDeviceListener);
 	}
 
 	// called by OSGi-DS
@@ -136,19 +136,35 @@ public class SmartHomeRCPActivator implements BundleActivator {
 		@Override
 		public void fieldDeviceConnected(ASmartDevice sender, FieldDevice device) {
 			if(device instanceof Sensor){
-				System.out.println("fieldDeviceConnected Sensor:"+device.getName());
+				System.out.println("SmartHomeRCPActivator fieldDeviceConnected Sensor:"+device.getName());
 				
 			}else if(device instanceof Actor){
-				System.out.println("fieldDeviceConnected Actor:"+device.getName());
+				System.out.println("SmartHomeRCPActivator fieldDeviceConnected Actor:"+device.getName());
 				
 			}else{
-				System.out.println("fieldDeviceConnected device:"+device.getName());
+				System.out.println("SmartHomeRCPActivator fieldDeviceConnected device:"+device.getName());
 				
 			}
 		}
 
+
+		@Override
+		public void fieldDeviceRemoved(ASmartDevice smartDevice,
+				FieldDevice device) {
+			if(device instanceof Sensor){
+				System.out.println("SmartHomeRCPActivator fieldDeviceRemoved Sensor:"+device.getName());
+				
+			}else if(device instanceof Actor){
+				System.out.println("SmartHomeRCPActivator fieldDeviceRemoved Actor:"+device.getName());
+				
+			}else{
+				System.out.println("SmartHomeRCPActivator fieldDeviceRemoved device:"+device.getName());
+				
+			}
+		}
 		@Override
 		public void readyStateChanged(ASmartDevice smartDevice, boolean state) {
+			
 		}
 	};
 }

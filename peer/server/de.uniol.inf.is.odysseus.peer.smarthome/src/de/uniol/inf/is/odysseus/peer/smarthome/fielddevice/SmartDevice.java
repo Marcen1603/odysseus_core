@@ -18,9 +18,10 @@ public class SmartDevice extends ASmartDevice implements Serializable {
 	private String peerName = "local";
 	
 	private transient ArrayList<ISmartDeviceListener> smartDeviceListener;
+	private ConnectedFieldDeviceListener fieldDeviceListener;
 	
-	private static ASmartDevice instance;
-
+	private static SmartDevice instance;
+	
 	public List<FieldDevice> getConnectedFieldDevices() {
 		return connectedFieldDevices;
 	}
@@ -51,12 +52,28 @@ public class SmartDevice extends ASmartDevice implements Serializable {
 	}
 
 	public void addConnectedFieldDevice(FieldDevice device) {
-		this.connectedFieldDevices.add(device);
-		device.setSmartDevice(this);
-		fireFieldDeviceConnected(device);
+		if(this.connectedFieldDevices.add(device)){
+			device.setSmartDevice(this);
+			device.addFieldDeviceListener(getConnectedFieldDeviceListener());
+			fireFieldDeviceConnected(device);			
+		}
 	}
-
 	
+	public void removeConnectedFieldDevice(FieldDevice device){
+		if(this.connectedFieldDevices.remove(device)){
+			device.removeFieldDeviceListener(getConnectedFieldDeviceListener());
+			fireFieldDeviceRemoved(device);
+		}
+	}
+	
+	
+
+	private IFieldDeviceListener getConnectedFieldDeviceListener() {
+		if(fieldDeviceListener==null){
+			fieldDeviceListener = new ConnectedFieldDeviceListener();
+		}
+		return fieldDeviceListener;
+	}
 
 	public String getContextName() {
 		return contextName;
@@ -66,7 +83,7 @@ public class SmartDevice extends ASmartDevice implements Serializable {
 		this.contextName = contextName;
 	}
 
-	public void setSmartDevice(SmartDeviceConfig config) {
+	public void setSmartDeviceConfig(SmartDeviceConfig config) {
 		if (config.getContextname() != null) {
 			setContextName(config.getContextname());
 		}
@@ -101,9 +118,7 @@ public class SmartDevice extends ASmartDevice implements Serializable {
 		this.state = state;
 		fireReadyStateChanged(state);
 	}
-
 	
-
 	public String getPeerName() {
 		return this.peerName;
 	}
@@ -129,12 +144,12 @@ public class SmartDevice extends ASmartDevice implements Serializable {
 
 	// called by OSGi-DS
 	public void bindListener(ISmartDeviceListener serv) {
-		addListener(serv);
+		addSmartDeviceListener(serv);
 	}
 
 	// called by OSGi-DS
 	public void unbindListener(ISmartDeviceListener serv) {
-		removeListener(serv);
+		removeSmartDeviceListener(serv);
 	}
 
 	public static boolean isActivated() {
@@ -149,14 +164,14 @@ public class SmartDevice extends ASmartDevice implements Serializable {
 	}
 
 	@Override
-	public void addListener(ISmartDeviceListener listener) {
-		System.out.println("addListener: ");
+	public void addSmartDeviceListener(ISmartDeviceListener listener) {
+		System.out.println("SmartDevice addSmartDeviceListener: ");
 		getSmartDeviceListener().add(listener);
 	}
 	
 	@Override
-	public void removeListener(ISmartDeviceListener listener) {
-		System.out.println("removeListener: ");
+	public void removeSmartDeviceListener(ISmartDeviceListener listener) {
+		System.out.println("removeSmartDeviceListener: ");
 		getSmartDeviceListener().remove(listener);
 	}
 	private ArrayList<ISmartDeviceListener> getSmartDeviceListener() {
@@ -169,6 +184,11 @@ public class SmartDevice extends ASmartDevice implements Serializable {
 	private void fireFieldDeviceConnected(FieldDevice device) {
 		for(ISmartDeviceListener listener : getSmartDeviceListener()){
 			listener.fieldDeviceConnected(this, device);
+		}
+	}
+	private void fireFieldDeviceRemoved(FieldDevice device) {
+		for(ISmartDeviceListener listener : getSmartDeviceListener()){
+			listener.fieldDeviceRemoved(this, device);
 		}
 	}
 	private void fireReadyStateChanged(boolean state) {
@@ -186,5 +206,13 @@ public class SmartDevice extends ASmartDevice implements Serializable {
 		}
 		
 		return rules;
+	}
+	
+	private class ConnectedFieldDeviceListener implements IFieldDeviceListener{
+		@Override
+		public void logicRuleRemoved(LogicRule rule) {
+			// TODO Auto-generated method stub
+			
+		}
 	}
 }

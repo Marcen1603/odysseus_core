@@ -57,6 +57,38 @@
       </category>
 	</extension>
 	<extension
+         point="org.eclipse.ui.commands">
+      <command
+            defaultHandler="de.uniol.inf.is.odysseus.peer.smarthome.rcp.commands.AddLogicRuleCommand"
+            id="de.uniol.inf.is.odysseus.rcp.commands.AddLogicRuleCommand"
+            name="Add logic rule">
+      </command>
+      <command
+            defaultHandler="de.uniol.inf.is.odysseus.peer.smarthome.rcp.commands.DeleteLogicRuleCommand"
+            id="de.uniol.inf.is.odysseus.rcp.commands.DeleteLogicRuleCommand"
+            name="Delete logic rule">
+      </command>
+    </extension>
+    <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            allPopups="false"
+            locationURI="toolbar:de.uniol.inf.is.odysseus.rcp.peer.SmartDeviceLogicView">
+         <command
+               commandId="de.uniol.inf.is.odysseus.rcp.commands.AddLogicRuleCommand"
+               label="Add"
+               style="push"
+               tooltip="Add">
+         </command>
+         <command
+               commandId="de.uniol.inf.is.odysseus.rcp.commands.DeleteLogicRuleCommand"
+               label="Delete"
+               style="push"
+               tooltip="Delete">
+         </command>
+      </menuContribution>
+    </extension>
+	<extension
          point="org.eclipse.ui.perspectives">
       <perspective
             class="de.uniol.inf.is.odysseus.peer.smarthome.rcp.perspectives.SmartHomePerspective"

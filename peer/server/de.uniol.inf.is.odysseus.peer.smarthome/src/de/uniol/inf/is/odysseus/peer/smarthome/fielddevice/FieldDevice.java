@@ -1,6 +1,7 @@
 package de.uniol.inf.is.odysseus.peer.smarthome.fielddevice;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 
 
 public abstract class FieldDevice implements Serializable {
@@ -9,6 +10,7 @@ public abstract class FieldDevice implements Serializable {
 	private String prefix;
 	private String postfix;
 	private ASmartDevice smartDevice;
+	private transient ArrayList<IFieldDeviceListener> listener;
 
 	public FieldDevice(String name, String prefix, String postfix) {
 		this.setName(name);
@@ -49,6 +51,21 @@ public abstract class FieldDevice implements Serializable {
 	}
 	public String toString() {
 		return getName();
+	}
+
+	public void addFieldDeviceListener(IFieldDeviceListener fieldDeviceListener) {
+		getFieldDeviceListeners().add(fieldDeviceListener);
+	}
+	
+	public void removeFieldDeviceListener(IFieldDeviceListener fieldDeviceListener) {
+		getFieldDeviceListeners().remove(fieldDeviceListener);
+	}
+
+	protected ArrayList<IFieldDeviceListener> getFieldDeviceListeners() {
+		if(listener==null){
+			listener = new ArrayList<IFieldDeviceListener>();
+		}
+		return listener;
 	}
 
 }

@@ -27,6 +27,9 @@ public class SmartHomePerspective implements IPerspectiveFactory {
 		IFolderLayout top = layout.createFolder("top", IPageLayout.TOP, 0.25f, editorArea);
 		top.addView(IPageLayout.ID_EDITOR_AREA);
 		//top.addView("de.uniol.inf.is.odysseus.peer.smarthome.rcp.views.SmartDeviceConfigurationView");
+		
+		
+		
 	}
 
 }

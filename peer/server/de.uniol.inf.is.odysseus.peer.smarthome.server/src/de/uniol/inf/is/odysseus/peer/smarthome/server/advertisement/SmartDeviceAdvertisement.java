@@ -10,7 +10,6 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Preconditions;
 
-import de.uniol.inf.is.odysseus.peer.smarthome.fielddevice.SmartDevice;
 import net.jxta.document.Advertisement;
 import net.jxta.document.Attributable;
 import net.jxta.document.Document;
@@ -49,7 +48,7 @@ public class SmartDeviceAdvertisement extends Advertisement implements
 	private PeerID peerID;
 	private String peerName = "";
 	// private String contextName = "";
-	private SmartDevice smartDevice = new SmartDevice();
+	//private SmartDevice smartDevice;
 
 	public SmartDeviceAdvertisement(Element<?> root) {
 		final TextElement<?> doc = (TextElement<?>) Preconditions.checkNotNull(
@@ -105,7 +104,7 @@ public class SmartDeviceAdvertisement extends Advertisement implements
 		id = viewAdvertisement.id;
 		peerID = viewAdvertisement.peerID;
 		pipeID = viewAdvertisement.pipeID;
-		smartDevice = viewAdvertisement.smartDevice;
+		//smartDevice = viewAdvertisement.smartDevice;
 	}
 
 	@Override
@@ -226,6 +225,7 @@ public class SmartDeviceAdvertisement extends Advertisement implements
 		}
 	}
 
+	/*
 	public SmartDevice getSmartDevice() {
 		return smartDevice;
 	}
@@ -233,6 +233,7 @@ public class SmartDeviceAdvertisement extends Advertisement implements
 	public void setSmartDevice(SmartDevice smartDevice) {
 		this.smartDevice = smartDevice;
 	}
+	*/
 
 	/*
 	// Read the object from Base64 string.

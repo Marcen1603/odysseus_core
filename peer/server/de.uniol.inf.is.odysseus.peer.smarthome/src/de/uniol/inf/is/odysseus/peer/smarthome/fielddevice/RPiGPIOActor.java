@@ -17,7 +17,7 @@ public class RPiGPIOActor extends Actor {
 		RPiGPIOActorLogicRule newRule = new RPiGPIOActorLogicRule(this,
 				activityName, getPrefix(), getPostfix());
 		newRule.setState(state);
-
+		
 		addLogicRuleForActivity(newRule);
 	}
 
@@ -192,6 +192,11 @@ public class RPiGPIOActor extends Actor {
 					+ "', pin=11, pinstate='low'}," + setConfigStreamName
 					+ ")\n");
 			return sbEntitySetState;
+		}
+
+		@Override
+		public String getReactionDescription() {
+			return "State change:"+getState();
 		}
 	}
 }

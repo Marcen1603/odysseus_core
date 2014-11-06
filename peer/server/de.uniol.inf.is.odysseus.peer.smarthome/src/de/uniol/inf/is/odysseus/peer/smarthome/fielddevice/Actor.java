@@ -10,15 +10,30 @@ public abstract class Actor extends FieldDevice implements Serializable {
 	public Actor(String name, String prefix, String postfix) {
 		super(name, prefix, postfix);
 	}
-	
+
 	public void addLogicRuleForActivity(LogicRule newRule) {
 		getLogicRules().add(newRule);
 	}
 
 	public ArrayList<LogicRule> getLogicRules() {
-		if(this.logicRulesList==null){
+		if (this.logicRulesList == null) {
 			this.logicRulesList = new ArrayList<LogicRule>();
 		}
 		return logicRulesList;
+	}
+
+	public boolean deleteLogicRule(LogicRule rule) {
+		if (getLogicRules().remove(rule)) {
+			fireLogicRuleRemoved(rule);
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	private void fireLogicRuleRemoved(LogicRule rule) {
+		for (IFieldDeviceListener listener : getFieldDeviceListeners()) {
+			listener.logicRuleRemoved(rule);
+		}
 	}
 }

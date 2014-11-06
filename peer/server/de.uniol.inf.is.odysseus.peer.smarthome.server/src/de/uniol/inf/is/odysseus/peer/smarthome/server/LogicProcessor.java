@@ -9,6 +9,9 @@ import org.slf4j.LoggerFactory;
 import de.uniol.inf.is.odysseus.peer.smarthome.fielddevice.ActivityInterpreter;
 import de.uniol.inf.is.odysseus.peer.smarthome.fielddevice.Actor;
 import de.uniol.inf.is.odysseus.peer.smarthome.fielddevice.ASmartDevice;
+import de.uniol.inf.is.odysseus.peer.smarthome.fielddevice.FieldDevice;
+import de.uniol.inf.is.odysseus.peer.smarthome.fielddevice.IFieldDeviceListener;
+import de.uniol.inf.is.odysseus.peer.smarthome.fielddevice.ISmartDeviceListener;
 import de.uniol.inf.is.odysseus.peer.smarthome.fielddevice.LogicRule;
 import de.uniol.inf.is.odysseus.peer.smarthome.fielddevice.Sensor;
 
@@ -16,9 +19,10 @@ public class LogicProcessor implements ISmartDeviceDictionaryListener {
 	private static final Logger LOG = LoggerFactory
 			.getLogger(SmartHomeServerPlugIn.class);
 	private static LogicProcessor instance;
-
-	LogicProcessor() {
-
+	private SmartDeviceListener localSmartDeviceListener;
+	
+	private LogicProcessor() {
+		
 	}
 
 	/************************************************
@@ -228,5 +232,45 @@ public class LogicProcessor implements ISmartDeviceDictionaryListener {
 			instance = new LogicProcessor();
 		}
 		return instance;
+	}
+	
+	public class SmartDeviceListener implements ISmartDeviceListener{
+		@Override
+		public void fieldDeviceConnected(ASmartDevice sender, FieldDevice device) {
+			device.addFieldDeviceListener(new IFieldDeviceListener() {
+				@Override
+				public void logicRuleRemoved(LogicRule rule) {
+					//TODO logicRuleRemoved: stop queries for this rule now!
+					
+					
+					try{
+						System.out.println("___logicRuleRemoved "+rule.getActivityName()+" Actor:"+rule.getActor().getName()+"");
+					}catch(Exception ex){
+						System.out.println("___logicRuleRemoved something null...");
+					}
+				}
+			});
+		}
+
+		@Override
+		public void fieldDeviceRemoved(ASmartDevice smartDevice,
+				FieldDevice device) {
+			LOG.debug("fieldDeviceRemoved device:"+device.getName());
+		}
+		
+		@Override
+		public void readyStateChanged(ASmartDevice smartDevice, boolean state) {
+			LOG.debug("smartDevice: "+smartDevice.getPeerName()+" readyState:"+state);
+		}
+		
+	}
+
+	public void initForLocalSmartDevice() {
+		System.out.println("___LogicProcessor init()___start");
+		
+		localSmartDeviceListener = new SmartDeviceListener();
+		SmartDeviceServer.getInstance().getLocalSmartDevice().addSmartDeviceListener(localSmartDeviceListener);
+		
+		System.out.println("___LogicProcessor init()___end");
 	}
 }

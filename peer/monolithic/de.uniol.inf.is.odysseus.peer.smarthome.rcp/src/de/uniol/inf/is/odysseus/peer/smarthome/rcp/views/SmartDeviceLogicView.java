@@ -7,6 +7,7 @@ import org.eclipse.jface.layout.TableColumnLayout;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.CellLabelProvider;
 import org.eclipse.jface.viewers.ColumnWeightData;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.jface.viewers.ViewerCell;
@@ -18,6 +19,8 @@ import org.eclipse.ui.part.ViewPart;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Optional;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 
 import de.uniol.inf.is.odysseus.peer.smarthome.fielddevice.Actor;
@@ -27,7 +30,6 @@ import de.uniol.inf.is.odysseus.peer.smarthome.fielddevice.ISmartDeviceListener;
 import de.uniol.inf.is.odysseus.peer.smarthome.fielddevice.LogicRule;
 import de.uniol.inf.is.odysseus.peer.smarthome.fielddevice.Sensor;
 import de.uniol.inf.is.odysseus.peer.smarthome.rcp.SmartHomeRCPActivator;
-
 
 public class SmartDeviceLogicView extends ViewPart {
 	private static final Logger LOG = LoggerFactory.getLogger(SmartDeviceLogicView.class);
@@ -46,7 +48,14 @@ public class SmartDeviceLogicView extends ViewPart {
 				
 			}
 		}
-
+		
+		@Override
+		public void fieldDeviceRemoved(ASmartDevice smartDevice,
+				FieldDevice device) {
+			// TODO Auto-generated method stub
+			
+		}
+		
 		@Override
 		public void readyStateChanged(ASmartDevice smartDevice, boolean state) {
 		}
@@ -54,11 +63,25 @@ public class SmartDeviceLogicView extends ViewPart {
 	private TableViewer smartDevicesTable;
 	private List<LogicRule> logicRules = Lists.newArrayList();
 	private Collection<LogicRule> refreshing = Lists.newLinkedList();
+	private static SmartDeviceLogicView instance;
+	
+	/*
+	public static class TableEntry {
+		public LogicRule logicRule;
+
+		public int index;
+		public String entity;
+
+		public String activityName;
+		public String actor;
+	}
+	*/
+	
 	
 	@Override
 	public void createPartControl(Composite parent) {
 		localSmartDevice = SmartHomeRCPActivator.getLocalSmartDevice();
-		localSmartDevice.addListener(smartDeviceListener);
+		localSmartDevice.addSmartDeviceListener(smartDeviceListener);
 		
 		setPartName("Smart Device Logic");
 		
@@ -66,7 +89,7 @@ public class SmartDeviceLogicView extends ViewPart {
 		final TableColumnLayout tableColumnLayout = new TableColumnLayout();
 		tableComposite.setLayout(tableColumnLayout);
 
-		smartDevicesTable = new TableViewer(tableComposite, SWT.SINGLE);
+		smartDevicesTable = new TableViewer(tableComposite, SWT.MULTI | SWT.FULL_SELECTION);
 		smartDevicesTable.getTable().setHeaderVisible(true);
 		smartDevicesTable.getTable().setLinesVisible(true);
 		smartDevicesTable.setContentProvider(ArrayContentProvider.getInstance());
@@ -74,14 +97,14 @@ public class SmartDeviceLogicView extends ViewPart {
 		//TODO: Show current running logic rules of the local SmartDevice:
 		//TODO: further show logic of the selected smart device:
 		
-		/************* Entität ****************/
-		TableViewerColumn nameColumn = new TableViewerColumn(smartDevicesTable, SWT.NONE);
-		nameColumn.getColumn().setText("Entität");
-		nameColumn.setLabelProvider(new CellLabelProvider() {
+		/************* Entity ****************/
+		TableViewerColumn entityColumn = new TableViewerColumn(smartDevicesTable, SWT.NONE);
+		entityColumn.getColumn().setText("Entity");
+		entityColumn.setLabelProvider(new CellLabelProvider() {
 			@Override
 			public void update(ViewerCell cell) {
 				//LogicRule rule = (LogicRule) cell.getElement();
-				cell.setText("Entität 1");
+				cell.setText("<none>");
 				/*
 				if (isLocalID(pid)) {
 					cell.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_GRAY));
@@ -89,13 +112,13 @@ public class SmartDeviceLogicView extends ViewPart {
 				*/
 			}
 		});
-		tableColumnLayout.setColumnData(nameColumn.getColumn(), new ColumnWeightData(10, 25, true));
+		tableColumnLayout.setColumnData(entityColumn.getColumn(), new ColumnWeightData(10, 25, true));
 		
 		
-		/************* Aktivität ****************/
-		TableViewerColumn contextnameColumn = new TableViewerColumn(smartDevicesTable, SWT.NONE);
-		contextnameColumn.getColumn().setText("Aktivität");
-		contextnameColumn.setLabelProvider(new CellLabelProvider() {
+		/************* Activity ****************/
+		TableViewerColumn activityColumn = new TableViewerColumn(smartDevicesTable, SWT.NONE);
+		activityColumn.getColumn().setText("Activity");
+		activityColumn.setLabelProvider(new CellLabelProvider() {
 			@Override
 			public void update(ViewerCell cell) {
 				LogicRule rule = (LogicRule) cell.getElement();
@@ -107,18 +130,17 @@ public class SmartDeviceLogicView extends ViewPart {
 				*/
 			}
 		});
-		tableColumnLayout.setColumnData(contextnameColumn.getColumn(), new ColumnWeightData(10, 25, true));
+		tableColumnLayout.setColumnData(activityColumn.getColumn(), new ColumnWeightData(10, 25, true));
 		
 		
-		
-		/************* Reaktion ****************/
-		TableViewerColumn addressColumn = new TableViewerColumn(smartDevicesTable, SWT.NONE);
-		addressColumn.getColumn().setText("Reaktion");
-		addressColumn.setLabelProvider(new CellLabelProvider() {
+		/************* Actor ****************/
+		TableViewerColumn actorColumn = new TableViewerColumn(smartDevicesTable, SWT.NONE);
+		actorColumn.getColumn().setText("Actor");
+		actorColumn.setLabelProvider(new CellLabelProvider() {
 			@Override
 			public void update(ViewerCell cell) {
 				LogicRule rule = (LogicRule) cell.getElement();
-				cell.setText("Actor:"+rule.getActor().getName()+" ");
+				cell.setText(""+rule.getActor().getName()+"");
 				
 				
 				/*
@@ -140,13 +162,47 @@ public class SmartDeviceLogicView extends ViewPart {
 				*/
 			}
 		});
-		tableColumnLayout.setColumnData(addressColumn.getColumn(), new ColumnWeightData(10, 25, true));
+		tableColumnLayout.setColumnData(actorColumn.getColumn(), new ColumnWeightData(10, 25, true));
+		
+		
+		
+		/************* Reaction ****************/
+		TableViewerColumn reactionColumn = new TableViewerColumn(smartDevicesTable, SWT.NONE);
+		reactionColumn.getColumn().setText("Reaction");
+		reactionColumn.setLabelProvider(new CellLabelProvider() {
+			@Override
+			public void update(ViewerCell cell) {
+				LogicRule rule = (LogicRule) cell.getElement();
+				cell.setText(""+rule.getReactionDescription());
+				
+				
+				/*
+				if (isLocalID((PeerID) cell.getElement())) {
+					try {
+						cell.setText(InetAddress.getLocalHost().getHostAddress() + ":" + SmartHomeRCPActivator.getP2PNetworkManager().getPort());
+					} catch (UnknownHostException e) {
+						cell.setText("<unknown>");
+					}
+					cell.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_GRAY));
+				} else {
+					Optional<String> optAddress = SmartHomeRCPActivator.getP2PDictionary().getRemotePeerAddress((PeerID) cell.getElement());
+					if (optAddress.isPresent()) {
+						cell.setText(optAddress.get());
+					} else {
+						cell.setText("<unknown>");
+					}
+				}
+				*/
+			}
+		});
+		tableColumnLayout.setColumnData(reactionColumn.getColumn(), new ColumnWeightData(10, 25, true));
 		
 		
 		smartDevicesTable.setInput(getLogicRules());
 		
 		refreshAsync();
 		
+		instance = this;
 	}
 	
 	
@@ -258,4 +314,24 @@ public class SmartDeviceLogicView extends ViewPart {
 
 	}
 
+
+	public static Optional<SmartDeviceLogicView> getInstance() {
+		return Optional.fromNullable(instance);
+	}
+
+
+	public List<LogicRule> getSelectedLogicRules() {
+		ImmutableList.Builder<LogicRule> resultBuilder = new ImmutableList.Builder<>();
+
+		IStructuredSelection selection = (IStructuredSelection) smartDevicesTable.getSelection();
+		if (!selection.isEmpty()) {
+			for (Object selectedObj : selection.toList()) {
+				//selection.getFirstElement()
+				resultBuilder.add(((LogicRule) selectedObj));
+			}
+
+		}
+		return resultBuilder.build();
+	}
+	
 }

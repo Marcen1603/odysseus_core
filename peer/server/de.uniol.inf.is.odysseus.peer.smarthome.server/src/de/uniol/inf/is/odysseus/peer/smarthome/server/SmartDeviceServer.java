@@ -29,7 +29,7 @@ public class SmartDeviceServer {
 			.getLogger(SmartHomeServerPlugIn.class);
 	private static SmartDeviceServer instance;
 	private static IP2PDictionary p2pDictionary;
-	//private static ISmartDevice localSmartDevice;
+	// private static ISmartDevice localSmartDevice;
 	private static IP2PNetworkManager p2pNetworkManager;
 	private static IJxtaServicesProvider jxtaServicesProvider;
 
@@ -187,10 +187,9 @@ public class SmartDeviceServer {
 	}
 
 	/*
-	public static void setLocalSmartDevice(ISmartDevice _localSmartDevice) {
-		localSmartDevice = _localSmartDevice;
-	}
-	*/
+	 * public static void setLocalSmartDevice(ISmartDevice _localSmartDevice) {
+	 * localSmartDevice = _localSmartDevice; }
+	 */
 
 	protected static IJxtaServicesProvider getJxtaServicesProvider() {
 		return jxtaServicesProvider;
@@ -221,8 +220,10 @@ public class SmartDeviceServer {
 				waitForServerExecutorService();
 				waitForJxtaServicesProvider();
 				waitForP2PNetworkManager();
+				waitForLogicProcessor();
 
 				try {
+					LogicProcessor.getInstance().initForLocalSmartDevice();
 					initLocalSmartDevice();
 				} catch (Exception ex) {
 					LOG.error(ex.getMessage(), ex);
@@ -232,6 +233,15 @@ public class SmartDeviceServer {
 		t.setName("SmartDeviceServer initLocalSmartDeviceAsync thread");
 		t.setDaemon(true);
 		t.start();
+	}
+
+	protected void waitForLogicProcessor() {
+		while (LogicProcessor.getInstance() == null) {
+			try {
+				Thread.sleep(100);
+			} catch (InterruptedException e) {
+			}
+		}
 	}
 
 	private void initLocalSmartDevice() {
@@ -269,7 +279,7 @@ public class SmartDeviceServer {
 		// 2. instantiate SmartDevice:
 		getLocalSmartDevice().setPeerID(getLocalPeerID());
 		getLocalSmartDevice().setPeerName(getLocalPeerName());
-		getLocalSmartDevice().setSmartDevice(
+		getLocalSmartDevice().setSmartDeviceConfig(
 				SmartDeviceLocalConfigurationServer.getInstance()
 						.getSmartDeviceConfig());
 		// getLocalSmartDevice().addConnectedFieldDevice(temper1);
@@ -284,10 +294,10 @@ public class SmartDeviceServer {
 		RPiGPIOActor gpioLED11 = new RPiGPIOActor("RPiLED11", peerName, "");
 		gpioLED11.createLogicRuleWithState("hot", State.TOGGLE);
 		gpioLED11.createLogicRuleWithState("cold", State.TOGGLE);
-		//TODO: gpioLED11.createLogicRuleWithState("Tasterbetaetigt", State.TOGGLE);
+		// TODO: gpioLED11.createLogicRuleWithState("Tasterbetaetigt",
+		// State.TOGGLE);
 		getLocalSmartDevice().addConnectedFieldDevice(gpioLED11);
-		
-		
+
 		//
 		// 3. Execute queries:
 		executeActivityInterpreterQueries(getLocalSmartDevice());

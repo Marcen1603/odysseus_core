@@ -34,7 +34,7 @@ public abstract class LogicRule implements Serializable {
 		return actor;
 	}
 
-	public void setActor(Actor actor) {
+	private void setActor(Actor actor) {
 		this.actor = actor;
 	}
 
@@ -126,4 +126,6 @@ public abstract class LogicRule implements Serializable {
 	public boolean isRunningWith(ActivityInterpreter activityInterpreter) {
 		return getActivityInterpretersWithRunningRules().contains(activityInterpreter);
 	}
+
+	public abstract String getReactionDescription();
 }
