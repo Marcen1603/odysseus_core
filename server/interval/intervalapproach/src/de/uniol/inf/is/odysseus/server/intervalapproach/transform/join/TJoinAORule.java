@@ -46,7 +46,8 @@ public class TJoinAORule extends AbstractIntervalTransformationRule<JoinAO> {
 			joinPO.setJoinPredicate(pred.clone());
 		}
 		joinPO.setCardinalities(joinAO.getCard());
-
+		joinPO.setSweepAreaName(joinAO.getSweepAreaName());
+		
 		// This is "bullsh*" The is no need for a window. The elements could
 		// already have start and end timestamps!
 

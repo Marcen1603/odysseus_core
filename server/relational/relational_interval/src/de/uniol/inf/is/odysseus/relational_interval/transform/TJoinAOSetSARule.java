@@ -45,8 +45,11 @@ public class TJoinAOSetSARule extends AbstractTransformationRule<JoinTIPO> {
 		// a hash sweep area
 		// otherwise use a JoinTISweepArea
 		//IPredicate pred = joinPO.getJoinPredicate();
-		String areaName = "TIJoinSA";
+		String areaName = "TIJoinSA";		
 		
+		if (joinPO.getSweepAreaName() != null){
+			areaName = joinPO.getSweepAreaName();
+		}
 		
 		try {
 			areas[0] = (ITimeIntervalSweepArea) SweepAreaRegistry.getSweepArea(areaName);

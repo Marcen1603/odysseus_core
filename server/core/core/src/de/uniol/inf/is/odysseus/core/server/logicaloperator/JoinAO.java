@@ -30,6 +30,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Paramete
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.BooleanParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.EnumParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.PredicateParameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IHasPredicate;
 
 /**
@@ -45,14 +46,10 @@ public class JoinAO extends BinaryLogicalOp implements IHasPredicate {
 	private boolean assureOrder = true;
 
 	private IPredicate<?> predicate;
+	private String sweepAreaName; 
 
 	public JoinAO() {
 		super();
-	}
-
-	public JoinAO(IPredicate<?> joinPredicate) {
-		super();
-		this.setPredicate(joinPredicate);
 	}
 
 	public JoinAO(JoinAO joinAO) {
@@ -62,6 +59,7 @@ public class JoinAO extends BinaryLogicalOp implements IHasPredicate {
 			this.predicate = joinAO.predicate;
 		}
 		this.assureOrder = joinAO.assureOrder;
+		this.sweepAreaName = joinAO.sweepAreaName;
 	}
 
 	@Parameter(type = EnumParameter.class, optional = true, doc = "Type of input streams. For optimization purposes: ONE_ONE, ONE_MANY, MANY_ONE, MANY_MANY")
@@ -73,6 +71,15 @@ public class JoinAO extends BinaryLogicalOp implements IHasPredicate {
 		return card;
 	}
 
+	@Parameter(type = StringParameter.class, optional = true, doc = "Overwrite the sweep area")
+	public void setSweepAreaName(String sweepAreaName) {
+		this.sweepAreaName = sweepAreaName;
+	}
+	
+	public String getSweepAreaName() {
+		return sweepAreaName;
+	}
+	
 	public boolean isAssureOrder() {
 		return assureOrder;
 	}

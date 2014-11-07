@@ -78,6 +78,7 @@ public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>>
 
 	protected boolean inOrder = true;
 	protected Cardinalities card = null;
+	protected String sweepAreaName = null;
 
 	// ------------------------------------------------------------------------------------
 
@@ -114,6 +115,7 @@ public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>>
 		this.transferFunction.init(this, getSubscribedToSource().size());
 		this.creationFunction = join.creationFunction.clone();
 		this.card = join.card;
+		this.sweepAreaName = join.sweepAreaName;
 	}
 
 	public IDataMergeFunction<T, K> getDataMerge() {
@@ -163,6 +165,14 @@ public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>>
 		this.card = card;
 	}
 
+	public void setSweepAreaName(String name){
+		this.sweepAreaName = name;
+	}
+	
+	public String getSweepAreaName() {
+		return sweepAreaName;
+	}
+	
 	public void setTransferFunction(ITransferArea<T, T> transferFunction) {
 		this.transferFunction = transferFunction;
 	}

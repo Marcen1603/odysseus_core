@@ -16,7 +16,6 @@
 package de.uniol.inf.is.odysseus.core.server.logicaloperator;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
-import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 
 @LogicalOperator(minInputPorts = 2, maxInputPorts = 2, doc = "Left join: CURRENTLY NOT WORKING CORRECTLY.", url = "http://odysseus.offis.uni-oldenburg.de:8090/display/ODYSSEUS/LeftJoin+operator", name = "LEFTJOIN", category = { LogicalOperatorCategory.BASE })
@@ -29,10 +28,6 @@ public class LeftJoinAO extends JoinAO{
 
 	public LeftJoinAO(){
 		super();
-	}
-	
-	public LeftJoinAO(IPredicate<?> joinPredicate) {
-		super(joinPredicate);
 	}
 
 	public LeftJoinAO(LeftJoinAO joinPO) {
