@@ -234,23 +234,23 @@ public class SmartDeviceLogicView extends ViewPart {
 		
 		smartDevicesTable.setInput(getLogicRules());
 		
-		refreshAsync();
+		refreshLoopAsync();
 		
 		instance = this;
 	}
 	
 	
-	private void refreshAsync() {
+	private void refreshLoopAsync() {
 		Thread t = new Thread(new Runnable() {
 			@Override
 			public void run() {
 				while(true){
+					refresh();
+					
 					try {
 						Thread.sleep(5000);
 					} catch (InterruptedException e) {
 					}
-					
-					refresh();
 				}
 			}
 		});

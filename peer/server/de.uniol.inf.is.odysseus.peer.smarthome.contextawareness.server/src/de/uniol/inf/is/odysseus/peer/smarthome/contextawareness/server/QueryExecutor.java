@@ -201,8 +201,14 @@ public class QueryExecutor implements IP2PDictionaryListener,
 				waitForImport(sourcNameToWaitFor);
 
 				try {
-					executeQueryNow(logicRuleQueries);
-					rule.setRunningWith(activityInterpreter);
+					//TODO: loop to wait for import source: activityInterpreter.getActivitySourceName()
+					
+					if(getP2PDictionary().isImported(activityInterpreter.getActivitySourceName())){
+						executeQueryNow(logicRuleQueries);
+						rule.setRunningWith(activityInterpreter);
+					}else{
+						LOG.error("can't execute logicrules, because source is not imported. source name: "+activityInterpreter.getActivitySourceName());
+					}
 				} catch (Exception ex) {
 					LOG.error(ex.getMessage(), ex);
 				}
@@ -214,7 +220,7 @@ public class QueryExecutor implements IP2PDictionaryListener,
 	}
 
 	private void stopLogicRuleQueries(String sourceName) {
-		LOG.debug("stopLogicRuleQueries:" + sourceName);
+		LOG.debug("stopLogicRuleQueries for sourceName:" + sourceName);
 		for (Actor actor : SmartDeviceServer.getInstance()
 				.getLocalSmartDevice().getConnectedActors()) {
 			for (LogicRule rule : actor.getLogicRules()) {
@@ -505,5 +511,40 @@ public class QueryExecutor implements IP2PDictionaryListener,
 		//
 		// vergleich von altem mit neuem SmartDevice?
 
+	}
+
+	public void stopLogicRuleAsync(final LogicRule rule) {
+		Thread t = new Thread(new Runnable() {
+			@Override
+			public void run() {
+				try {
+					stopLogicRuleNow(rule);
+				} catch (Exception ex) {
+					LOG.error(ex.getMessage(), ex);
+				}
+			}
+		});
+		t.setName(QueryExecutor.class + " stopLogicRuleAsync thread.");
+		t.setDaemon(true);
+		t.start();
+	}
+
+	private void stopLogicRuleNow(LogicRule rule) {
+		LOG.debug("stopLogicRuleNow");
+		for(ActivityInterpreter activityInterpreter : rule.getActivityInterpretersWithRunningRules()){
+			@SuppressWarnings({ "rawtypes", "unchecked" })
+			ListIterator<Map.Entry<String, String>> iter = new ArrayList(
+					rule.getLogicRuleQueries(activityInterpreter)
+							.entrySet()).listIterator(rule
+					.getLogicRuleQueries(activityInterpreter)
+					.size());
+
+			while (iter.hasPrevious()) {
+				Map.Entry<String, String> entry = iter.previous();
+				
+				String viewName = entry.getKey();
+				stopQueryAndRemoveViewOrStream(viewName);
+			}
+		}
 	}
 }

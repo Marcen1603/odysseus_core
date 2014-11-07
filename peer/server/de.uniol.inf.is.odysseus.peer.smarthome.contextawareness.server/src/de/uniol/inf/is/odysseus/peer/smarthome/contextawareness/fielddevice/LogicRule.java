@@ -67,6 +67,11 @@ public abstract class LogicRule implements Serializable {
 		return activitySourceNameList;
 	}
 
+	/**
+	 * 
+	 * @param activityInterpreter
+	 * @return <String,String> <viewName,Query>
+	 */
 	public abstract LinkedHashMap<String, String> getLogicRuleQueries(
 			ActivityInterpreter activityInterpreter);
 

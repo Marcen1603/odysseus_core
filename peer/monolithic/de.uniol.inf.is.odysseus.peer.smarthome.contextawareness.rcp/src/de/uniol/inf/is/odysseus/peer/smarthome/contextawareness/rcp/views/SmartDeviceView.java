@@ -45,26 +45,27 @@ import de.uniol.inf.is.odysseus.p2p_new.util.RepeatingJobThread;
 import de.uniol.inf.is.odysseus.peer.resource.IResourceUsage;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.rcp.SmartHomeRCPActivator;
 
-public class SmartDeviceView extends ViewPart implements IP2PDictionaryListener, ISelectionProvider {
+public class SmartDeviceView extends ViewPart implements
+		IP2PDictionaryListener, ISelectionProvider {
 	private static final long REFRESH_INTERVAL_MILLIS = 5000;
-	
-	private static final Logger LOG = LoggerFactory.getLogger(SmartDeviceView.class);
-	
+
+	private static final Logger LOG = LoggerFactory
+			.getLogger(SmartDeviceView.class);
+
 	private IP2PDictionary p2pDictionary;
 	private final List<PeerID> foundPeerIDs = Lists.newArrayList();
 	private final Map<PeerID, IResourceUsage> usageMap = Maps.newHashMap();
 	private TableViewer smartDevicesTable;
 	private RepeatingJobThread refresher;
 	private Collection<PeerID> refreshing = Lists.newLinkedList();
-	
 
 	@Override
 	public void createPartControl(Composite parent) {
 		p2pDictionary = SmartHomeRCPActivator.getP2PDictionary();
 		p2pDictionary.addListener(this);
-		
+
 		setPartName("Smart Devices");
-		
+
 		final Composite tableComposite = new Composite(parent, SWT.NONE);
 		final TableColumnLayout tableColumnLayout = new TableColumnLayout();
 		tableComposite.setLayout(tableColumnLayout);
@@ -72,10 +73,12 @@ public class SmartDeviceView extends ViewPart implements IP2PDictionaryListener,
 		smartDevicesTable = new TableViewer(tableComposite, SWT.SINGLE);
 		smartDevicesTable.getTable().setHeaderVisible(true);
 		smartDevicesTable.getTable().setLinesVisible(true);
-		smartDevicesTable.setContentProvider(ArrayContentProvider.getInstance());
-		
+		smartDevicesTable
+				.setContentProvider(ArrayContentProvider.getInstance());
+
 		/************* Name ****************/
-		TableViewerColumn nameColumn = new TableViewerColumn(smartDevicesTable, SWT.NONE);
+		TableViewerColumn nameColumn = new TableViewerColumn(smartDevicesTable,
+				SWT.NONE);
 		nameColumn.getColumn().setText("Name");
 		nameColumn.setLabelProvider(new CellLabelProvider() {
 			@Override
@@ -83,25 +86,26 @@ public class SmartDeviceView extends ViewPart implements IP2PDictionaryListener,
 				PeerID pid = (PeerID) cell.getElement();
 				cell.setText(determinePeerName(pid));
 				if (isLocalID(pid)) {
-					cell.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_GRAY));
+					cell.setBackground(Display.getCurrent().getSystemColor(
+							SWT.COLOR_GRAY));
 				}
 			}
 		});
-		tableColumnLayout.setColumnData(nameColumn.getColumn(), new ColumnWeightData(10, 25, true));
+		tableColumnLayout.setColumnData(nameColumn.getColumn(),
+				new ColumnWeightData(10, 25, true));
 		/*
-		ColumnViewerSorter sorter = new ColumnViewerSorter(smartDevicesTable, nameColumn) {
-			@Override
-			protected int doCompare(Viewer viewer, Object e1, Object e2) {
-				String n1 = determinePeerName((PeerID) e1);
-				String n2 = determinePeerName((PeerID) e2);
-				return n1.compareTo(n2);
-			}
-		};
-		sorter.setSorter(sorter, ColumnViewerSorter.NONE);
-		*/
+		 * ColumnViewerSorter sorter = new ColumnViewerSorter(smartDevicesTable,
+		 * nameColumn) {
+		 * 
+		 * @Override protected int doCompare(Viewer viewer, Object e1, Object
+		 * e2) { String n1 = determinePeerName((PeerID) e1); String n2 =
+		 * determinePeerName((PeerID) e2); return n1.compareTo(n2); } };
+		 * sorter.setSorter(sorter, ColumnViewerSorter.NONE);
+		 */
 
 		/************* Context ****************/
-		TableViewerColumn contextnameColumn = new TableViewerColumn(smartDevicesTable, SWT.NONE);
+		TableViewerColumn contextnameColumn = new TableViewerColumn(
+				smartDevicesTable, SWT.NONE);
 		contextnameColumn.getColumn().setText("Context");
 		contextnameColumn.setLabelProvider(new CellLabelProvider() {
 			@Override
@@ -109,29 +113,38 @@ public class SmartDeviceView extends ViewPart implements IP2PDictionaryListener,
 				PeerID pid = (PeerID) cell.getElement();
 				cell.setText(determinePeerContextName(pid));
 				if (isLocalID(pid)) {
-					cell.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_GRAY));
+					cell.setBackground(Display.getCurrent().getSystemColor(
+							SWT.COLOR_GRAY));
 				}
 			}
 		});
-		tableColumnLayout.setColumnData(contextnameColumn.getColumn(), new ColumnWeightData(10, 25, true));
-		
-		
+		tableColumnLayout.setColumnData(contextnameColumn.getColumn(),
+				new ColumnWeightData(10, 25, true));
+
 		/************* Address ****************/
-		TableViewerColumn addressColumn = new TableViewerColumn(smartDevicesTable, SWT.NONE);
+		TableViewerColumn addressColumn = new TableViewerColumn(
+				smartDevicesTable, SWT.NONE);
 		addressColumn.getColumn().setText("Address");
 		addressColumn.setLabelProvider(new CellLabelProvider() {
 			@Override
 			public void update(ViewerCell cell) {
 				if (isLocalID((PeerID) cell.getElement())) {
 					try {
-						cell.setText(InetAddress.getLocalHost().getHostAddress() + ":" + SmartHomeRCPActivator.getP2PNetworkManager().getPort());
+						cell.setText(InetAddress.getLocalHost()
+								.getHostAddress()
+								+ ":"
+								+ SmartHomeRCPActivator.getP2PNetworkManager()
+										.getPort());
 					} catch (UnknownHostException e) {
 						cell.setText("<unknown>");
 					}
-					cell.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_GRAY));
+					cell.setBackground(Display.getCurrent().getSystemColor(
+							SWT.COLOR_GRAY));
 				} else {
 					cell.setText("<unknown>");
-					Optional<String> optAddress = SmartHomeRCPActivator.getPeerDictionary().getRemotePeerAddress((PeerID) cell.getElement());
+					Optional<String> optAddress = SmartHomeRCPActivator
+							.getPeerDictionary().getRemotePeerAddress(
+									(PeerID) cell.getElement());
 					if (optAddress.isPresent()) {
 						cell.setText(optAddress.get());
 					} else {
@@ -140,85 +153,100 @@ public class SmartDeviceView extends ViewPart implements IP2PDictionaryListener,
 				}
 			}
 		});
-		tableColumnLayout.setColumnData(addressColumn.getColumn(), new ColumnWeightData(10, 25, true));
+		tableColumnLayout.setColumnData(addressColumn.getColumn(),
+				new ColumnWeightData(10, 25, true));
 		/*
-		new ColumnViewerSorter(smartDevicesTable, addressColumn) {
-			@Override
-			protected int doCompare(Viewer viewer, Object e1, Object e2) {
-				return 0;
-			}
-		};
-		*/
-		
+		 * new ColumnViewerSorter(smartDevicesTable, addressColumn) {
+		 * 
+		 * @Override protected int doCompare(Viewer viewer, Object e1, Object
+		 * e2) { return 0; } };
+		 */
+
 		hideSelectionIfNeeded(smartDevicesTable);
 
 		smartDevicesTable.setInput(foundPeerIDs);
-		
-		refresher = new RepeatingJobThread(REFRESH_INTERVAL_MILLIS, "Refresher of PeerView") {
+
+		refresher = new RepeatingJobThread(REFRESH_INTERVAL_MILLIS,
+				"Refresher of PeerView") {
 			@Override
 			public void doJob() {
 				refresh();
 			}
 		};
 		refresher.start();
-		
-		
-		
-		smartDevicesTable.addDoubleClickListener(new IDoubleClickListener(){
+
+		smartDevicesTable.addDoubleClickListener(new IDoubleClickListener() {
 			@Override
 			public void doubleClick(DoubleClickEvent event) {
-				IStructuredSelection selection = (IStructuredSelection) event.getSelection();
-				
-				if(selection.size()==1){
+				IStructuredSelection selection = (IStructuredSelection) event
+						.getSelection();
+
+				if (selection.size() == 1) {
 					Object firstElement = selection.getFirstElement();
-					
+
 					if (firstElement instanceof PeerID) {
-						PeerID selectedPeer = (PeerID)firstElement;
-						
-						System.out.println("double click on peerID:"+selectedPeer.intern());
-						
-						//Open Configuration for PeerID:selectedPeer.intern()
-							//1. get the current configuration from the peer
-							//2. display the configuration
-							//3. click on save button: send the new configuration to the peer
-						
-			        }
-				}else{
-					//Configuration for more then one peer at the same time is not implemented.
-				}
-			}
-		});
-		
-		smartDevicesTable.addSelectionChangedListener(new ISelectionChangedListener() {
-			@Override
-			public void selectionChanged(SelectionChangedEvent event) {
-				IStructuredSelection selection = (IStructuredSelection) event.getSelection();
-				
-				if(selection.size()==1){
-					Object firstElement = selection.getFirstElement();
-					
-					if (firstElement instanceof PeerID) {
-						@SuppressWarnings("unused")
-						PeerID selectedPeer = (PeerID)firstElement;
-						
-						//System.out.println("SmartDeviceView selectionChanged to peerID:"+selectedPeer.intern());
+						PeerID selectedPeer = (PeerID) firstElement;
+
+						System.out.println("double click on peerID:"
+								+ selectedPeer.intern());
+
+						// Open Configuration for PeerID:selectedPeer.intern()
+						// 1. get the current configuration from the peer
+						// 2. display the configuration
+						// 3. click on save button: send the new configuration
+						// to the peer
+
 					}
+				} else {
+					// Configuration for more then one peer at the same time is
+					// not implemented.
 				}
 			}
 		});
-		
+
+		smartDevicesTable
+				.addSelectionChangedListener(new ISelectionChangedListener() {
+					@Override
+					public void selectionChanged(SelectionChangedEvent event) {
+						IStructuredSelection selection = (IStructuredSelection) event
+								.getSelection();
+
+						if (selection.size() == 1) {
+							Object firstElement = selection.getFirstElement();
+
+							if (firstElement instanceof PeerID) {
+								@SuppressWarnings("unused")
+								PeerID selectedPeer = (PeerID) firstElement;
+
+								// System.out.println("SmartDeviceView selectionChanged to peerID:"+selectedPeer.intern());
+							}
+						}
+					}
+				});
+
 		getSite().setSelectionProvider(smartDevicesTable);
 	}
 
 	public void refresh() {
 		Collection<PeerID> foundPeerIDsCopy = null;
 		synchronized (foundPeerIDs) {
-			foundPeerIDs.clear();
-			//foundPeerIDs.addAll(p2pDictionary.getRemotePeerIDs());
-			foundPeerIDsCopy = Lists.newArrayList(foundPeerIDs);
+			try {
+				foundPeerIDs.clear();
+				if (SmartHomeRCPActivator.getPeerDictionary() != null
+						&& SmartHomeRCPActivator.getPeerDictionary()
+								.getRemotePeerIDs() != null) {
+					foundPeerIDs.addAll(SmartHomeRCPActivator
+							.getPeerDictionary().getRemotePeerIDs());
+				}
+				foundPeerIDsCopy = Lists.newArrayList(foundPeerIDs);
+			} catch (NullPointerException ex) {
+				LOG.error(ex.getMessage(), ex);
+			} catch (Exception ex) {
+				LOG.error(ex.getMessage(), ex);
+			}
 		}
 		refreshTableAsync();
-		
+
 		for (final PeerID remotePeerID : foundPeerIDsCopy) {
 
 			synchronized (refreshing) {
@@ -228,40 +256,28 @@ public class SmartDeviceView extends ViewPart implements IP2PDictionaryListener,
 
 				refreshing.add(remotePeerID);
 			}
-			
+
 			/*
-			Thread t = new Thread(new Runnable() {
-				@Override
-				public void run() {
-					try {
-						Future<Optional<IResourceUsage>> futureUsage = usageManager.getRemoteResourceUsage(remotePeerID);
-						try {
-							Optional<IResourceUsage> optResourceUsage = futureUsage.get();
-							if (optResourceUsage.isPresent()) {
-								IResourceUsage resourceUsage = optResourceUsage.get();
-								synchronized (usageMap) {
-									usageMap.put(remotePeerID, resourceUsage);
-								}
-								refreshTableAsync();
-							}
-						} catch (InterruptedException | ExecutionException e) {
-							LOG.error("Could not get resource usage", e);
-						}
-
-					} finally {
-						synchronized (refreshing) {
-							refreshing.remove(remotePeerID);
-						}
-					}
-				}
-			});
-
-			t.setDaemon(true);
-			t.setName("PeerView update for peer " + p2pDictionary.getRemotePeerName(remotePeerID));
-			t.start();
-			*/
+			 * Thread t = new Thread(new Runnable() {
+			 * 
+			 * @Override public void run() { try {
+			 * Future<Optional<IResourceUsage>> futureUsage =
+			 * usageManager.getRemoteResourceUsage(remotePeerID); try {
+			 * Optional<IResourceUsage> optResourceUsage = futureUsage.get(); if
+			 * (optResourceUsage.isPresent()) { IResourceUsage resourceUsage =
+			 * optResourceUsage.get(); synchronized (usageMap) {
+			 * usageMap.put(remotePeerID, resourceUsage); } refreshTableAsync();
+			 * } } catch (InterruptedException | ExecutionException e) {
+			 * LOG.error("Could not get resource usage", e); }
+			 * 
+			 * } finally { synchronized (refreshing) {
+			 * refreshing.remove(remotePeerID); } } } });
+			 * 
+			 * t.setDaemon(true); t.setName("PeerView update for peer " +
+			 * p2pDictionary.getRemotePeerName(remotePeerID)); t.start();
+			 */
 		}
-		
+
 		synchronized (usageMap) {
 			for (PeerID peerID : usageMap.keySet().toArray(new PeerID[0])) {
 				if (!foundPeerIDs.contains(peerID)) {
@@ -270,7 +286,7 @@ public class SmartDeviceView extends ViewPart implements IP2PDictionaryListener,
 			}
 		}
 	}
-	
+
 	private void refreshTableAsync() {
 		Display disp = PlatformUI.getWorkbench().getDisplay();
 		if (!disp.isDisposed()) {
@@ -283,7 +299,8 @@ public class SmartDeviceView extends ViewPart implements IP2PDictionaryListener,
 							smartDevicesTable.refresh();
 
 							synchronized (foundPeerIDs) {
-								setPartName("Smart Devices (" + foundPeerIDs.size() + ")");
+								setPartName("Smart Devices ("
+										+ foundPeerIDs.size() + ")");
 							}
 						}
 					}
@@ -291,37 +308,38 @@ public class SmartDeviceView extends ViewPart implements IP2PDictionaryListener,
 			});
 		}
 	}
-	
+
 	private String determinePeerName(PeerID id) {
-		try{
+		try {
 			if (isLocalID(id)) {
 				return "<local>";
 			}
-		}catch(NullPointerException ex){
-			
+		} catch (NullPointerException ex) {
+
 		}
 		return SmartHomeRCPActivator.getPeerDictionary().getRemotePeerName(id);
 	}
-	
+
 	private String determinePeerContextName(PeerID pid) {
-		//TODO: 
+		// TODO:
 		return "none";
 	}
-	
+
 	private static boolean isLocalID(PeerID pid) {
 		boolean value = false;
-		try{
-			if(SmartHomeRCPActivator.getP2PNetworkManager()!=null 
-					&& SmartHomeRCPActivator.getP2PNetworkManager().getLocalPeerID()!=null 
-					&& pid!=null){
-				value = SmartHomeRCPActivator.getP2PNetworkManager().getLocalPeerID().equals(pid);
+		try {
+			if (SmartHomeRCPActivator.getP2PNetworkManager() != null
+					&& SmartHomeRCPActivator.getP2PNetworkManager()
+							.getLocalPeerID() != null && pid != null) {
+				value = SmartHomeRCPActivator.getP2PNetworkManager()
+						.getLocalPeerID().equals(pid);
 			}
-		}catch(NullPointerException ex){
+		} catch (NullPointerException ex) {
 			throw ex;
 		}
 		return value;
 	}
-	
+
 	private void hideSelectionIfNeeded(final TableViewer tableViewer) {
 		tableViewer.getTable().addMouseListener(new MouseAdapter() {
 			@Override
@@ -332,58 +350,64 @@ public class SmartDeviceView extends ViewPart implements IP2PDictionaryListener,
 			}
 		});
 	}
-	
+
 	@Override
 	public void setFocus() {
 		smartDevicesTable.getTable().setFocus();
 	}
 
 	@Override
-	public void sourceAdded(IP2PDictionary sender, SourceAdvertisement advertisement) {
+	public void sourceAdded(IP2PDictionary sender,
+			SourceAdvertisement advertisement) {
 		// TODO Auto-generated method stub
 		LOG.debug("sourceAdded");
-		
+
 	}
 
 	@Override
-	public void sourceRemoved(IP2PDictionary sender, SourceAdvertisement advertisement) {
+	public void sourceRemoved(IP2PDictionary sender,
+			SourceAdvertisement advertisement) {
 		// TODO Auto-generated method stub
 		LOG.debug("sourceRemoved");
-		
+
 	}
 
 	@Override
-	public void sourceImported(IP2PDictionary sender, SourceAdvertisement advertisement, String sourceName) {
+	public void sourceImported(IP2PDictionary sender,
+			SourceAdvertisement advertisement, String sourceName) {
 		// TODO Auto-generated method stub
 		LOG.debug("sourceImported");
-		
+
 	}
 
 	@Override
-	public void sourceImportRemoved(IP2PDictionary sender, SourceAdvertisement advertisement, String sourceName) {
+	public void sourceImportRemoved(IP2PDictionary sender,
+			SourceAdvertisement advertisement, String sourceName) {
 		// TODO Auto-generated method stub
 		LOG.debug("sourceImportRemoved");
-		
+
 	}
 
 	@Override
-	public void sourceExported(IP2PDictionary sender, SourceAdvertisement advertisement, String sourceName) {
+	public void sourceExported(IP2PDictionary sender,
+			SourceAdvertisement advertisement, String sourceName) {
 		// TODO Auto-generated method stub
 		LOG.debug("sourceExported");
-		
+
 	}
 
 	@Override
-	public void sourceExportRemoved(IP2PDictionary sender, SourceAdvertisement advertisement, String sourceName) {
+	public void sourceExportRemoved(IP2PDictionary sender,
+			SourceAdvertisement advertisement, String sourceName) {
 		// TODO Auto-generated method stub
 		LOG.debug("sourceExportRemoved");
-		
+
 	}
 
 	@Override
 	public void addSelectionChangedListener(ISelectionChangedListener listener) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
@@ -396,12 +420,12 @@ public class SmartDeviceView extends ViewPart implements IP2PDictionaryListener,
 	public void removeSelectionChangedListener(
 			ISelectionChangedListener listener) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void setSelection(ISelection selection) {
 		// TODO Auto-generated method stub
-		
+
 	}
 }

@@ -240,14 +240,12 @@ public class LogicProcessor implements ISmartDeviceDictionaryListener {
 			device.addFieldDeviceListener(new IFieldDeviceListener() {
 				@Override
 				public void logicRuleRemoved(LogicRule rule) {
-					//TODO logicRuleRemoved: stop queries for this rule now!
-					//Async:
-					
+					QueryExecutor.getInstance().stopLogicRuleAsync(rule);
 					
 					try{
-						System.out.println("LogicProcessor() logicRuleRemoved "+rule.getActivityName()+" Actor:"+rule.getActor().getName()+"");
+						System.out.println("LogicProcessor() logicRuleRemoved: "+rule.getActivityName()+" Actor:"+rule.getActor().getName()+"");
 					}catch(Exception ex){
-						System.out.println("LogicProcessor() logicRuleRemoved something null...");
+						System.out.println("LogicProcessor() logicRuleRemoved: something null...");
 					}
 				}
 			});

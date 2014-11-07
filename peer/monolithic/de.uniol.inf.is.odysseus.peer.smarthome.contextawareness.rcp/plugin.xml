@@ -66,6 +66,12 @@
 	</extension>
 	<extension
          point="org.eclipse.ui.commands">
+         
+      <command
+            defaultHandler="de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.rcp.commands.RefreshLogicRuleCommand"
+            id="de.uniol.inf.is.odysseus.rcp.commands.RefreshLogicRuleCommand"
+            name="Refresh logic rules">
+      </command>   
       <command
             defaultHandler="de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.rcp.commands.AddLogicRuleCommand"
             id="de.uniol.inf.is.odysseus.rcp.commands.AddLogicRuleCommand"
@@ -82,6 +88,12 @@
       <menuContribution
             allPopups="false"
             locationURI="toolbar:de.uniol.inf.is.odysseus.rcp.peer.SmartDeviceLogicView">
+         <command
+               commandId="de.uniol.inf.is.odysseus.rcp.commands.RefreshLogicRuleCommand"
+               label="Refresh"
+               style="push"
+               tooltip="Refresh">
+         </command> 
          <command
                commandId="de.uniol.inf.is.odysseus.rcp.commands.AddLogicRuleCommand"
                label="Add"
