@@ -24,23 +24,22 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
  * 
  * @author Marco Grawunder
  */
-public class ToFloatIEEE754 extends AbstractToFloatIEEE754 {
+public class ToFloatIEEE754_2 extends AbstractToFloatIEEE754 {
 
 	private static final long serialVersionUID = 1201584883722391034L;
 	private static final SDFDatatype[][] accTypes = new SDFDatatype[][] {
 			new SDFDatatype[] { SDFDatatype.UNSIGNEDINT16 },
-			new SDFDatatype[] { SDFDatatype.UNSIGNEDINT16 },
-			new SDFDatatype[] { SDFDatatype.BOOLEAN } };
+			new SDFDatatype[] { SDFDatatype.UNSIGNEDINT16 }};
 
-	public ToFloatIEEE754() {
-		super( 3, accTypes);
+	public ToFloatIEEE754_2() {
+		super( 2, accTypes);
 	}
 
 	@Override
 	public Float getValue() {
 		Integer v1 = getNumericalInputValue(0).intValue();
 		Integer v2 = getNumericalInputValue(1).intValue();
-		Boolean byteSwap = getInputValue(2);
+		Boolean byteSwap = false;
 		return calcValue(v1, v2, byteSwap);
 	}
 
