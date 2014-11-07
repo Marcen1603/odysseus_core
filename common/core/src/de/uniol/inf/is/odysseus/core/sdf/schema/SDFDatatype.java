@@ -277,6 +277,7 @@ public class SDFDatatype extends SDFElement implements Serializable {
 		types.add(SDFDatatype.END_TIMESTAMP_STRING);
 		types.add(SDFDatatype.FLOAT);
 		types.add(SDFDatatype.INTEGER);
+		types.add(SDFDatatype.UNSIGNEDINT16);
 		types.add(SDFDatatype.LONG);
 		types.add(SDFDatatype.START_TIMESTAMP);
 		types.add(SDFDatatype.START_TIMESTAMP_STRING);
