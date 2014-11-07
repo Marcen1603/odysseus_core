@@ -83,4 +83,9 @@ public abstract class AbstractTimeIntervalSweepArea<T extends IStreamObject<? ex
 		LOG.debug("Latest tuple: {}", this.lastInserted);
 		return (this.lastInserted != null ? this.lastInserted.getMetadata().getEnd() : null);
 	}
+	
+	@Override
+	public String getName() {
+		return this.getClass().getName();
+	}
 }

@@ -229,4 +229,8 @@ public class PriorityIdHashSweepArea<K extends ITimeIntervalPriority, T extends 
 		return null;
 	}
 
+	@Override
+	public String getName() {
+		return "PrioIdHashSA";
+	}
 }

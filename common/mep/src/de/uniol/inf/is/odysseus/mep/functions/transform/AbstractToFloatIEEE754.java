@@ -16,10 +16,8 @@
 package de.uniol.inf.is.odysseus.mep.functions.transform;
 
 import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
-import de.uniol.inf.is.odysseus.mep.AbstractFunction;
 
 /**
  * Converts two unsigned integer to a float value. with IEEE 754 (single

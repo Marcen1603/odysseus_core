@@ -292,4 +292,9 @@ public class HashJoinSweepArea implements ITimeIntervalSweepArea<Tuple<? extends
 		// TODO Auto-generated method stub
 		return null;
 	}
+	
+	@Override
+	public String getName() {
+		return "HashJoinSA";
+	}
 }

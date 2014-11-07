@@ -160,5 +160,5 @@ public interface ISweepArea<T> extends Iterable<T>, Serializable {
 	 */
 	ISweepArea<T> clone();
 
-	//String getName();
+	String getName();
 }
