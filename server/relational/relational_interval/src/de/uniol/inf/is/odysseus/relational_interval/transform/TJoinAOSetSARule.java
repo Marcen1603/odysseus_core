@@ -17,12 +17,13 @@ package de.uniol.inf.is.odysseus.relational_interval.transform;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
-import de.uniol.inf.is.odysseus.server.intervalapproach.JoinTIPO;
-import de.uniol.inf.is.odysseus.server.intervalapproach.JoinTISweepArea;
-import de.uniol.inf.is.odysseus.sweeparea.ITimeIntervalSweepArea;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationException;
 import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
+import de.uniol.inf.is.odysseus.server.intervalapproach.JoinTIPO;
+import de.uniol.inf.is.odysseus.sweeparea.ITimeIntervalSweepArea;
+import de.uniol.inf.is.odysseus.sweeparea.SweepAreaRegistry;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 @SuppressWarnings({"unchecked","rawtypes"})
@@ -44,9 +45,19 @@ public class TJoinAOSetSARule extends AbstractTransformationRule<JoinTIPO> {
 		// a hash sweep area
 		// otherwise use a JoinTISweepArea
 		//IPredicate pred = joinPO.getJoinPredicate();
+		String areaName = "TIJoinSA";
 		
-		areas[0] = new JoinTISweepArea();
-		areas[1] = new JoinTISweepArea();
+		
+		try {
+			areas[0] = (ITimeIntervalSweepArea) SweepAreaRegistry.getSweepArea(areaName);
+			areas[1] = (ITimeIntervalSweepArea) SweepAreaRegistry.getSweepArea(areaName);;
+		} catch (InstantiationException | IllegalAccessException e) {
+			throw new TransformationException("Cannot find sweep area of type "+areaName);
+		};
+		
+		if (areas[0] == null || areas[1]==null){
+			throw new TransformationException("Cannot find sweep area of type "+areaName);
+		}
 		
 		// This will only work, if the current plan is not distributed! 
 		// FIXME: Find a better solution !

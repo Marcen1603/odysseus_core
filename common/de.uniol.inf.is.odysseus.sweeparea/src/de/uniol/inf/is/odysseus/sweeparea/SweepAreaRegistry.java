@@ -13,6 +13,11 @@ public class SweepAreaRegistry {
 
 	static private Map<String, ISweepArea<?>> areas = new HashMap<String, ISweepArea<?>>();
 
+	public SweepAreaRegistry(){
+		// Default Constructor
+		logger.trace("Created new SweepAreaRegistry");
+	}
+	
 	static public void register(ISweepArea<?> area) {
 		try {
 			logger.trace("Register new area " + area.getName());
@@ -32,9 +37,13 @@ public class SweepAreaRegistry {
 		areas.remove(area.getName().toLowerCase());
 	}
 
-	static ISweepArea<?> getSweepArea(String name)
+	static public ISweepArea<?> getSweepArea(String name)
 			throws InstantiationException, IllegalAccessException {
-		return areas.get(name).getClass().newInstance();
+		ISweepArea<?> a = areas.get(name.toLowerCase());
+		if (a != null) {
+			return a.getClass().newInstance();
+		}
+		return null;
 	}
 
 	static public ImmutableList<String> getAreaNames() {
