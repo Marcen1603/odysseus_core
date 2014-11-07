@@ -204,6 +204,7 @@ import de.uniol.inf.is.odysseus.mep.functions.transform.ToLongFunction;
 import de.uniol.inf.is.odysseus.mep.functions.transform.ToNumberFunction;
 import de.uniol.inf.is.odysseus.mep.functions.transform.ToShortFunction;
 import de.uniol.inf.is.odysseus.mep.functions.transform.ToStringFunction;
+import de.uniol.inf.is.odysseus.mep.functions.transform.ToUnsignedInt16Function;
 import de.uniol.inf.is.odysseus.mep.functions.tuple.TupleAccessFunction;
 import de.uniol.inf.is.odysseus.mep.impl.ExpressionBuilderVisitor;
 import de.uniol.inf.is.odysseus.mep.impl.MEPImpl;
@@ -347,6 +348,7 @@ public class MEP implements IExpressionParser {
 		registerFunction(new ToLongFunction());
 		registerFunction(new ToListFunction());
 		registerFunction(new ToIntegerFunction());
+		registerFunction(new ToUnsignedInt16Function());
 		registerFunction(new ToCharFunction());
 		registerFunction(new ToStringFunction());
 		registerFunction(new ToHexFromStringFunction());

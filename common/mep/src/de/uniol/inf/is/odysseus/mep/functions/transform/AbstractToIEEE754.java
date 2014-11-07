@@ -22,43 +22,24 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.mep.AbstractFunction;
 
 /**
- * Converts two unsigned integer to a float value. with IEEE 754 (single
- * precision)
+ * Converts walues with IEEE 754 
  * 
  * 
  * @author Marco Grawunder
  */
-abstract public class AbstractToFloatIEEE754 extends AbstractToIEEE754<Float> {
+abstract public class AbstractToIEEE754<T> extends AbstractFunction<T> {
 
 	private static final long serialVersionUID = 1201584883722391034L;
 
-	public AbstractToFloatIEEE754(int arity, SDFDatatype[][] accTypes) {
-		super("toFloat", arity, accTypes, SDFDatatype.FLOAT);
+	public AbstractToIEEE754(String name,int arity, SDFDatatype[][] accTypes, SDFDatatype returnType) {
+		super(name, arity, accTypes, returnType);
 	}
 
-	protected static Float calcValue(Integer v1, Integer v2, Boolean byteSwap) {
-		byte[] bytes1 = intToByteArray(v1, byteSwap);
-		byte[] bytes2 = intToByteArray(v2, byteSwap);
+	public static final byte[] intToByteArray(int value, boolean byteSwap) {
+		ByteBuffer buffer = ByteBuffer.allocate(4);
+		buffer.order(byteSwap ? ByteOrder.LITTLE_ENDIAN : ByteOrder.BIG_ENDIAN);
+		return buffer.putInt(value).array();
 
-		ByteBuffer buffer = ByteBuffer.allocate(16);
-
-		if (!byteSwap) {
-			putToBuffer(buffer, bytes1,2,3);
-			putToBuffer(buffer, bytes2,2,3);
-		}else{
-			putToBuffer(buffer, bytes1,0,1);
-			putToBuffer(buffer, bytes2,0,1);
-		}
-		buffer.flip();
-
-		return buffer.getFloat();
 	}
-
-	private static void putToBuffer(ByteBuffer buffer, byte[] bytes, int from, int to) {
-		for (int i=from;i<=to;i++){
-			buffer.put(bytes[i]);
-		}
-	}
-
 
 }
