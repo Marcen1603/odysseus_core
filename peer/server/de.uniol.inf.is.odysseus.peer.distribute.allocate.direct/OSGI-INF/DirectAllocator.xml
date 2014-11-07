@@ -4,5 +4,5 @@
    <service>
       <provide interface="de.uniol.inf.is.odysseus.peer.distribute.IQueryPartAllocator"/>
    </service>
-   <reference bind="bindP2PDictionary" cardinality="1..1" interface="de.uniol.inf.is.odysseus.p2p_new.dictionary.IP2PDictionary" name="IP2PDictionary" policy="static" unbind="unbindP2PDictionary"/>
+   <reference bind="bindPeerDictionary" cardinality="1..1" interface="de.uniol.inf.is.odysseus.p2p_new.dictionary.IPeerDictionary" name="IPeerDictionary" policy="static" unbind="unbindPeerDictionary"/>
 </scr:component>

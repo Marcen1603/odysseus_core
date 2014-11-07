@@ -14,6 +14,7 @@ import de.uniol.inf.is.odysseus.p2p_new.IJxtaServicesProvider;
 import de.uniol.inf.is.odysseus.p2p_new.IP2PNetworkManager;
 import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicator;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.IP2PDictionary;
+import de.uniol.inf.is.odysseus.p2p_new.dictionary.IPeerDictionary;
 import de.uniol.inf.is.odysseus.peer.ping.IPingMap;
 import de.uniol.inf.is.odysseus.peer.rcp.views.ChatMessage;
 import de.uniol.inf.is.odysseus.peer.resource.IPeerResourceUsageManager;
@@ -26,6 +27,7 @@ public class RCPP2PNewPlugIn extends AbstractUIPlugin {
 	private static IP2PNetworkManager p2pNetworkManager;
 	private static IPeerCommunicator peerCommunicator;
 	private static IP2PDictionary p2pDictionary;
+	private static IPeerDictionary peerDictionary;
 	private static IPeerResourceUsageManager peerResourceUsageManager;
 	private static IPingMap pingMap;
 	private static IServerExecutor serverExecutor;
@@ -66,6 +68,18 @@ public class RCPP2PNewPlugIn extends AbstractUIPlugin {
 	public static void unbindP2PDictionary(IP2PDictionary serv) {
 		if (p2pDictionary == serv) {
 			p2pDictionary = null;
+		}
+	}
+	
+	// called by OSGi-DS
+	public static void bindPeerDictionary(IPeerDictionary serv) {
+		peerDictionary = serv;
+	}
+
+	// called by OSGi-DS
+	public static void unbindPeerDictionary(IPeerDictionary serv) {
+		if (peerDictionary == serv) {
+			peerDictionary = null;
 		}
 	}
 	
@@ -127,6 +141,10 @@ public class RCPP2PNewPlugIn extends AbstractUIPlugin {
 	
 	public static IP2PDictionary getP2PDictionary() {
 		return p2pDictionary;
+	}
+	
+	public static IPeerDictionary getPeerDictionary() {
+		return peerDictionary;
 	}
 	
 	public static IPeerResourceUsageManager getPeerResourceUsageManager() {

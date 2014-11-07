@@ -15,29 +15,29 @@ import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.QueryBuildConfiguration;
 import de.uniol.inf.is.odysseus.p2p_new.IP2PNetworkManager;
-import de.uniol.inf.is.odysseus.p2p_new.dictionary.IP2PDictionary;
+import de.uniol.inf.is.odysseus.p2p_new.dictionary.IPeerDictionary;
 import de.uniol.inf.is.odysseus.peer.distribute.ILogicalQueryPart;
 import de.uniol.inf.is.odysseus.peer.distribute.QueryPartAllocationException;
 
 // TODO javaDoc
 public class RoundRobinWithUserAllocator extends AbstractRoundRobinAllocator {
 	
-	private static IP2PDictionary p2pDictionary;
+	private static IPeerDictionary peerDictionary;
 	
 	private static IP2PNetworkManager p2pNetworkManager;
 
 	// called by OSGi-DS
-	public static void bindP2PDictionary(IP2PDictionary serv) {
+	public static void bindPeerDictionary(IPeerDictionary serv) {
 		
-		RoundRobinWithUserAllocator.p2pDictionary = serv;
+		RoundRobinWithUserAllocator.peerDictionary = serv;
 		
 	}
 
 	// called by OSGi-DS
-	public static void unbindP2PDictionary(IP2PDictionary serv) {
+	public static void unbindPeerDictionary(IPeerDictionary serv) {
 	
-		if(serv.equals(RoundRobinWithUserAllocator.p2pDictionary))
-			p2pDictionary = null;
+		if(serv.equals(RoundRobinWithUserAllocator.peerDictionary))
+			peerDictionary = null;
 		
 	}
 
@@ -58,13 +58,13 @@ public class RoundRobinWithUserAllocator extends AbstractRoundRobinAllocator {
 	
 	private static Map<String, PeerID> determinePeerNames() {
 		
-		Collection<PeerID> remotePeerIDs = p2pDictionary.getRemotePeerIDs();
+		Collection<PeerID> remotePeerIDs = peerDictionary.getRemotePeerIDs();
 
 		Map<String, PeerID> peerNameMap = Maps.newHashMap();
 		
 		for(PeerID remotePeerID : remotePeerIDs ) {
 			
-			String peerName = p2pDictionary.getRemotePeerName(remotePeerID);
+			String peerName = peerDictionary.getRemotePeerName(remotePeerID);
 			if(!peerName.equals("<unknown>")) {
 				peerNameMap.put(peerName, remotePeerID);
 			}

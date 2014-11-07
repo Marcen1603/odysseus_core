@@ -40,6 +40,7 @@ import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicator;
 import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicatorListener;
 import de.uniol.inf.is.odysseus.p2p_new.PeerCommunicationException;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.IP2PDictionary;
+import de.uniol.inf.is.odysseus.p2p_new.dictionary.IPeerDictionary;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.SourceAdvertisement;
 import de.uniol.inf.is.odysseus.peer.distribute.IQueryPartController;
 import de.uniol.inf.is.odysseus.peer.distribute.PeerDistributePlugIn;
@@ -60,6 +61,7 @@ public class QueryPartReceiver implements IPeerCommunicatorListener {
 	private static IP2PNetworkManager p2pNetworkManager;
 	private static IPeerCommunicator peerCommunicator;
 	private static IP2PDictionary p2pDictionary;
+	private static IPeerDictionary peerDictionary;
 	private static IQueryPartController controller;
 
 	private static Collection<Integer> ackedQueryPartIDs = Lists.newLinkedList();
@@ -144,6 +146,18 @@ public class QueryPartReceiver implements IPeerCommunicatorListener {
 	public static void unbindP2PDictionary(IP2PDictionary serv) {
 		if (p2pDictionary == serv) {
 			p2pDictionary = null;
+		}
+	}
+	
+	// called by OSGi-DS
+	public static void bindPeerDictionary(IPeerDictionary serv) {
+		peerDictionary = serv;
+	}
+
+	// called by OSGi-DS
+	public static void unbindPeerDictionary(IPeerDictionary serv) {
+		if (peerDictionary == serv) {
+			peerDictionary = null;
 		}
 	}
 	
@@ -266,13 +280,13 @@ public class QueryPartReceiver implements IPeerCommunicatorListener {
 									streamAO.setSourceName(resource);
 									
 								} else {
-									throw new QueryDistributionException("Source " + sourceName + " of peer " + p2pDictionary.getRemotePeerName(peerIDString) + " (locally known as " + importedName + ") is not known in local data dictionary!");
+									throw new QueryDistributionException("Source " + sourceName + " of peer " + peerDictionary.getRemotePeerName(peerIDString) + " (locally known as " + importedName + ") is not known in local data dictionary!");
 								}
 							} else {
-								throw new QueryDistributionException("Source " + sourceName + " of peer " + p2pDictionary.getRemotePeerName(peerIDString) + " is not imported!");
+								throw new QueryDistributionException("Source " + sourceName + " of peer " + peerDictionary.getRemotePeerName(peerIDString) + " is not imported!");
 							}
 						} else {
-							throw new QueryDistributionException("Source " + sourceName + " of peer " + p2pDictionary.getRemotePeerName(peerIDString) + " is not known!");
+							throw new QueryDistributionException("Source " + sourceName + " of peer " + peerDictionary.getRemotePeerName(peerIDString) + " is not known!");
 						}
 					}
 				}

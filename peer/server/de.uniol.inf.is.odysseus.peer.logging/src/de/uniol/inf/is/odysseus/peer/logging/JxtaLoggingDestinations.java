@@ -35,7 +35,7 @@ public class JxtaLoggingDestinations {
 				}
 			}
 			
-			Collection<PeerID> knownPeers = JXTALoggingPlugIn.getP2PDictionary().getRemotePeerIDs();
+			Collection<PeerID> knownPeers = JXTALoggingPlugIn.getPeerDictionary().getRemotePeerIDs();
 			
 			for( PeerID destination : destinationMap.keySet().toArray(new PeerID[0])) {
 				if( !knownPeers.contains(destination)) {

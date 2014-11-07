@@ -21,7 +21,7 @@ public class LogAdvertisementListener implements IAdvertisementDiscovererListene
 			LoggingAdvertisement logAdv = (LoggingAdvertisement)advertisement;
 			
 			PeerID pid = logAdv.getPeerID();
-			if( !JXTALoggingPlugIn.getP2PDictionary().getRemotePeerIDs().contains(pid)) {
+			if( !JXTALoggingPlugIn.getPeerDictionary().getRemotePeerIDs().contains(pid)) {
 				try {
 					JXTALoggingPlugIn.getJxtaServicesProvider().flushAdvertisement(logAdv);
 				} catch (IOException e) {

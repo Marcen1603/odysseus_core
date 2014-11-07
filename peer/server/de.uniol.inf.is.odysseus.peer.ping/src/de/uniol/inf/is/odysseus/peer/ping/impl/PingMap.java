@@ -17,6 +17,7 @@ import com.google.common.collect.Maps;
 
 import de.uniol.inf.is.odysseus.p2p_new.IP2PNetworkManager;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.IP2PDictionary;
+import de.uniol.inf.is.odysseus.p2p_new.dictionary.IPeerDictionary;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.P2PDictionaryAdapter;
 import de.uniol.inf.is.odysseus.peer.ping.IPingMap;
 import de.uniol.inf.is.odysseus.peer.ping.IPingMapListener;
@@ -29,7 +30,8 @@ public class PingMap extends P2PDictionaryAdapter implements IPingMap  {
 	private static final Random RAND = new Random();
 	
 	private static PingMap instance;
-	private static IP2PDictionary dictionary;
+	private static IP2PDictionary p2pDictionary;
+	private static IPeerDictionary peerDictionary;
 	private static IP2PNetworkManager networkManager;
 	
 	private final Map<PeerID, PingMapNode> nodes = Maps.newHashMap();
@@ -41,13 +43,25 @@ public class PingMap extends P2PDictionaryAdapter implements IPingMap  {
 	
 	// called by OSGi-DS
 	public static void bindP2PDictionary(IP2PDictionary serv) {
-		dictionary = serv;
+		p2pDictionary = serv;
 	}
 
 	// called by OSGi-DS
 	public static void unbindP2PDictionary(IP2PDictionary serv) {
-		if (dictionary == serv) {
-			dictionary = null;
+		if (p2pDictionary == serv) {
+			p2pDictionary = null;
+		}
+	}
+	
+	// called by OSGi-DS
+	public static void bindPeerDictionary(IPeerDictionary serv) {
+		peerDictionary = serv;
+	}
+
+	// called by OSGi-DS
+	public static void unbindPeerDictionary(IPeerDictionary serv) {
+		if (peerDictionary == serv) {
+			peerDictionary = null;
 		}
 	}
 
@@ -64,7 +78,7 @@ public class PingMap extends P2PDictionaryAdapter implements IPingMap  {
 	}
 	
 	public void activate() {
-		dictionary.addListener(this);
+		p2pDictionary.addListener(this);
 		
 		LOG.debug("PingMap activated");
 		
@@ -72,7 +86,7 @@ public class PingMap extends P2PDictionaryAdapter implements IPingMap  {
 	}
 	
 	public void deactivate() {
-		dictionary.removeListener(this);
+		p2pDictionary.removeListener(this);
 		
 		LOG.debug("PingMap deactivated");
 		
@@ -116,7 +130,7 @@ public class PingMap extends P2PDictionaryAdapter implements IPingMap  {
 		node.setPosition(position);
 		
 		if( LOG.isDebugEnabled() ) {
-			LOG.debug("Updateing position to {}, latency={} of peer {}", new Object[]{toString(position), latency, dictionary.getRemotePeerName(peerID)});
+			LOG.debug("Updateing position to {}, latency={} of peer {}", new Object[]{toString(position), latency, peerDictionary.getRemotePeerName(peerID)});
 		}
 		
 		Vector3D direction = position.subtract(localPosition);

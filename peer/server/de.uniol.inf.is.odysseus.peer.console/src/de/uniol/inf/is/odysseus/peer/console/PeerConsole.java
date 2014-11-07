@@ -25,10 +25,10 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
+import de.uniol.inf.is.odysseus.core.physicaloperator.AbstractPhysicalSubscription;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
-import de.uniol.inf.is.odysseus.core.physicaloperator.AbstractPhysicalSubscription;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.server.console.OdysseusConsole;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
@@ -44,6 +44,7 @@ import de.uniol.inf.is.odysseus.p2p_new.InvalidP2PSource;
 import de.uniol.inf.is.odysseus.p2p_new.PeerCommunicationException;
 import de.uniol.inf.is.odysseus.p2p_new.PeerException;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.IP2PDictionary;
+import de.uniol.inf.is.odysseus.p2p_new.dictionary.IPeerDictionary;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.SourceAdvertisement;
 import de.uniol.inf.is.odysseus.peer.logging.JXTALoggingPlugIn;
 import de.uniol.inf.is.odysseus.peer.logging.JxtaLoggingDestinations;
@@ -58,6 +59,7 @@ public class PeerConsole implements CommandProvider, IPeerCommunicatorListener {
 	private static final Logger LOG = LoggerFactory.getLogger(PeerConsole.class);
 
 	private static IP2PDictionary p2pDictionary;
+	private static IPeerDictionary peerDictionary;
 	private static IPeerResourceUsageManager peerResourceUsageManager;
 	private static IPingMap pingMap;
 	private static IP2PNetworkManager p2pNetworkManager;
@@ -77,6 +79,18 @@ public class PeerConsole implements CommandProvider, IPeerCommunicatorListener {
 	public static void unbindP2PDictionary(IP2PDictionary serv) {
 		if (p2pDictionary == serv) {
 			p2pDictionary = null;
+		}
+	}
+	
+	// called by OSGi-DS
+	public static void bindPeerDictionary(IPeerDictionary serv) {
+		peerDictionary = serv;
+	}
+
+	// called by OSGi-DS
+	public static void unbindPeerDictionary(IPeerDictionary serv) {
+		if (peerDictionary == serv) {
+			peerDictionary = null;
 		}
 	}
 
@@ -253,12 +267,12 @@ public class PeerConsole implements CommandProvider, IPeerCommunicatorListener {
 	}
 
 	public void _listPeers(CommandInterpreter ci) {
-		Collection<PeerID> remotePeerIDs = p2pDictionary.getRemotePeerIDs();
+		Collection<PeerID> remotePeerIDs = peerDictionary.getRemotePeerIDs();
 		ci.println("Remote peers known: " + remotePeerIDs.size());
 
 		List<String> output = Lists.newLinkedList();
 		for (PeerID remotePeerID : remotePeerIDs) {
-			output.add(p2pDictionary.getRemotePeerName(remotePeerID) + " = " + remotePeerID);
+			output.add(peerDictionary.getRemotePeerName(remotePeerID) + " = " + remotePeerID);
 		}
 
 		sortAndPrintList(ci, output);
@@ -286,16 +300,16 @@ public class PeerConsole implements CommandProvider, IPeerCommunicatorListener {
 	}
 
 	public void _ping(CommandInterpreter ci) {
-		Collection<PeerID> remotePeerIDs = p2pDictionary.getRemotePeerIDs();
+		Collection<PeerID> remotePeerIDs = peerDictionary.getRemotePeerIDs();
 		ci.println("Current known ping(s):");
 
 		List<String> output = Lists.newLinkedList();
 		for (PeerID remotePeerID : remotePeerIDs) {
 			Optional<Double> optPing = pingMap.getPing(remotePeerID);
 			if (optPing.isPresent()) {
-				output.add(p2pDictionary.getRemotePeerName(remotePeerID) + " : " + optPing.get());
+				output.add(peerDictionary.getRemotePeerName(remotePeerID) + " : " + optPing.get());
 			} else {
-				output.add(p2pDictionary.getRemotePeerName(remotePeerID) + " : <unknown>");
+				output.add(peerDictionary.getRemotePeerName(remotePeerID) + " : <unknown>");
 			}
 		}
 
@@ -303,16 +317,16 @@ public class PeerConsole implements CommandProvider, IPeerCommunicatorListener {
 	}
 	
 	public void _lsPingPositions( CommandInterpreter ci ) {
-		Collection<PeerID> remotePeerIDs = p2pDictionary.getRemotePeerIDs();
+		Collection<PeerID> remotePeerIDs = peerDictionary.getRemotePeerIDs();
 		ci.println("Current known ping position(s):");
 		
 		List<String> output = Lists.newLinkedList();
 		for (PeerID remotePeerID : remotePeerIDs) {
 			Optional<IPingMapNode> optNode = pingMap.getNode(remotePeerID);
 			if( optNode.isPresent() ) {
-				output.add(p2pDictionary.getRemotePeerName(remotePeerID) + " : " + toString(optNode.get().getPosition()));
+				output.add(peerDictionary.getRemotePeerName(remotePeerID) + " : " + toString(optNode.get().getPosition()));
 			} else {
-				output.add(p2pDictionary.getRemotePeerName(remotePeerID) + " : <unknown>" );				
+				output.add(peerDictionary.getRemotePeerName(remotePeerID) + " : <unknown>" );				
 			}
 		}		
 		
@@ -482,7 +496,7 @@ public class PeerConsole implements CommandProvider, IPeerCommunicatorListener {
 		if (!destinations.isEmpty()) {
 			List<String> output = Lists.newLinkedList();
 			for (PeerID destination : destinations) {
-				output.add(p2pDictionary.getRemotePeerName(destination));
+				output.add(peerDictionary.getRemotePeerName(destination));
 			}
 
 			sortAndPrintList(ci, output);
@@ -492,12 +506,12 @@ public class PeerConsole implements CommandProvider, IPeerCommunicatorListener {
 	}
 
 	public void _listEndpointConnections(CommandInterpreter ci) {
-		Collection<PeerID> connectedPeers = p2pDictionary.getRemotePeerIDs();
+		Collection<PeerID> connectedPeers = peerDictionary.getRemotePeerIDs();
 
 		ci.println("Connected peers count: " + connectedPeers.size());
 		List<String> output = Lists.newLinkedList();
 		for (PeerID remotePeerID : connectedPeers) {
-			output.add(p2pDictionary.getRemotePeerName(remotePeerID) + " = " + remotePeerID);
+			output.add(peerDictionary.getRemotePeerName(remotePeerID) + " = " + remotePeerID);
 		}
 
 		sortAndPrintList(ci, output);
@@ -543,7 +557,7 @@ public class PeerConsole implements CommandProvider, IPeerCommunicatorListener {
 		List<String> output = Lists.newArrayList();
 
 		for (SourceAdvertisement importedSource : importedSources) {
-			output.add(importedSource.getName() + " " + sourceTypeString(importedSource) + " (from " + p2pDictionary.getRemotePeerName(importedSource.getPeerID()) + ")");
+			output.add(importedSource.getName() + " " + sourceTypeString(importedSource) + " (from " + peerDictionary.getRemotePeerName(importedSource.getPeerID()) + ")");
 		}
 
 		sortAndPrintList(ci, output);
@@ -635,7 +649,7 @@ public class PeerConsole implements CommandProvider, IPeerCommunicatorListener {
 
 		for (SourceAdvertisement src : sources) {
 			String txt = src.getName() + " " + sourceTypeString(src);
-			txt += " from " + p2pDictionary.getRemotePeerName(src.getPeerID());
+			txt += " from " + peerDictionary.getRemotePeerName(src.getPeerID());
 
 			if (Strings.isNullOrEmpty(filter) || txt.contains(filter)) {
 				output.add(txt);
@@ -723,13 +737,13 @@ public class PeerConsole implements CommandProvider, IPeerCommunicatorListener {
 	}
 
 	public void _listPeerAddresses(CommandInterpreter ci) {
-		Collection<PeerID> remotePeerIDs = p2pDictionary.getRemotePeerIDs();
+		Collection<PeerID> remotePeerIDs = peerDictionary.getRemotePeerIDs();
 		ci.println("Remote peers known: " + remotePeerIDs.size());
 
 		List<String> output = Lists.newLinkedList();
 		for (PeerID remotePeerID : remotePeerIDs) {
-			Optional<String> optAddress = p2pDictionary.getRemotePeerAddress(remotePeerID);
-			output.add(p2pDictionary.getRemotePeerName(remotePeerID) + " : " + (optAddress.isPresent() ? optAddress.get() : "<unknown>"));
+			Optional<String> optAddress = peerDictionary.getRemotePeerAddress(remotePeerID);
+			output.add(peerDictionary.getRemotePeerName(remotePeerID) + " : " + (optAddress.isPresent() ? optAddress.get() : "<unknown>"));
 		}
 
 		sortAndPrintList(ci, output);
@@ -863,8 +877,8 @@ public class PeerConsole implements CommandProvider, IPeerCommunicatorListener {
 	}
 
 	private static Optional<PeerID> determinePeerID(String peerName) {
-		for (PeerID pid : p2pDictionary.getRemotePeerIDs()) {
-			if (p2pDictionary.getRemotePeerName(pid).equals(peerName)) {
+		for (PeerID pid : peerDictionary.getRemotePeerIDs()) {
+			if (peerDictionary.getRemotePeerName(pid).equals(peerName)) {
 				return Optional.of(pid);
 			}
 		}
@@ -886,22 +900,22 @@ public class PeerConsole implements CommandProvider, IPeerCommunicatorListener {
 		} else if (message instanceof LoginMessage) {
 			if (loggedInPeers.contains(senderPeer)) {
 				sendLoginOKMessage(senderPeer);
-				LOG.debug("Peer {} already logged in", p2pDictionary.getRemotePeerName(senderPeer));
+				LOG.debug("Peer {} already logged in", peerDictionary.getRemotePeerName(senderPeer));
 				return;
 			}
 
 			processLoginMessage(senderPeer, message);
 		} else if (message instanceof LoginOKMessage) {
 			loggedToPeers.add(senderPeer);
-			LOG.error("Login to peer '" + p2pDictionary.getRemotePeerName(senderPeer) + "' ok");
+			LOG.error("Login to peer '" + peerDictionary.getRemotePeerName(senderPeer) + "' ok");
 		} else if (message instanceof LogoutMessage) {
 			loggedInPeers.remove(senderPeer);
-			LOG.debug("Peer '{}' logged out", p2pDictionary.getRemotePeerName(senderPeer));
+			LOG.debug("Peer '{}' logged out", peerDictionary.getRemotePeerName(senderPeer));
 
 			sendLogoutOKMessage(senderPeer);
 		} else if (message instanceof LogoutOKMessage) {
 			loggedToPeers.remove(senderPeer);
-			LOG.error("Logout from peer '" + p2pDictionary.getRemotePeerName(senderPeer) + "' ok");
+			LOG.error("Logout from peer '" + peerDictionary.getRemotePeerName(senderPeer) + "' ok");
 		}
 	}
 
@@ -910,7 +924,7 @@ public class PeerConsole implements CommandProvider, IPeerCommunicatorListener {
 		try {
 			peerCommunicator.send(senderPeer, msg);
 		} catch (PeerCommunicationException e) {
-			LOG.debug("Could not send logoutOK message to peer '{}'", p2pDictionary.getRemotePeerName(senderPeer), e);
+			LOG.debug("Could not send logoutOK message to peer '{}'", peerDictionary.getRemotePeerName(senderPeer), e);
 		}
 	}
 
@@ -928,7 +942,7 @@ public class PeerConsole implements CommandProvider, IPeerCommunicatorListener {
 		try {
 			peerCommunicator.send(senderPeer, okMsg);
 		} catch (PeerCommunicationException e) {
-			LOG.error("Could not send ok message to peer {}", p2pDictionary.getRemotePeerName(senderPeer), e);
+			LOG.error("Could not send ok message to peer {}", peerDictionary.getRemotePeerName(senderPeer), e);
 		}
 	}
 
@@ -976,7 +990,7 @@ public class PeerConsole implements CommandProvider, IPeerCommunicatorListener {
 	}
 
 	private void processCommandOutputMessage(IPeerCommunicator communicator, PeerID senderPeer, CommandOutputMessage cmd) {
-		LOG.error("Output from '" + p2pDictionary.getRemotePeerName(senderPeer) + "':");
+		LOG.error("Output from '" + peerDictionary.getRemotePeerName(senderPeer) + "':");
 		LOG.error(cmd.getOutput());
 	}
 
@@ -991,7 +1005,7 @@ public class PeerConsole implements CommandProvider, IPeerCommunicatorListener {
 	public void _lsLoggedInPeers(CommandInterpreter ci) {
 		List<String> output = Lists.newArrayList();
 		for (PeerID loggedInPeer : loggedInPeers) {
-			output.add(p2pDictionary.getRemotePeerName(loggedInPeer));
+			output.add(peerDictionary.getRemotePeerName(loggedInPeer));
 		}
 
 		ci.println("Following remote peers are logged in here:");
@@ -1005,7 +1019,7 @@ public class PeerConsole implements CommandProvider, IPeerCommunicatorListener {
 	public void _lsLoggedToPeers(CommandInterpreter ci) {
 		List<String> output = Lists.newArrayList();
 		for (PeerID loggedInPeer : loggedToPeers) {
-			output.add(p2pDictionary.getRemotePeerName(loggedInPeer));
+			output.add(peerDictionary.getRemotePeerName(loggedInPeer));
 		}
 
 		ci.println("Following remote peers we are logged in:");

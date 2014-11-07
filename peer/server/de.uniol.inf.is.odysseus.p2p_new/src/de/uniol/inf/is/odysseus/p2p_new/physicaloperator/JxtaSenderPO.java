@@ -26,7 +26,7 @@ import de.uniol.inf.is.odysseus.p2p_new.data.DataTransmissionException;
 import de.uniol.inf.is.odysseus.p2p_new.data.DataTransmissionManager;
 import de.uniol.inf.is.odysseus.p2p_new.data.ITransmissionSender;
 import de.uniol.inf.is.odysseus.p2p_new.data.ITransmissionSenderListener;
-import de.uniol.inf.is.odysseus.p2p_new.dictionary.impl.P2PDictionary;
+import de.uniol.inf.is.odysseus.p2p_new.dictionary.impl.PeerDictionary;
 import de.uniol.inf.is.odysseus.p2p_new.logicaloperator.JxtaSenderAO;
 import de.uniol.inf.is.odysseus.p2p_new.network.P2PNetworkManager;
 import de.uniol.inf.is.odysseus.p2p_new.service.ServerExecutorService;
@@ -255,7 +255,7 @@ public class JxtaSenderPO<T extends IStreamObject<?>> extends AbstractSink<T>
 		}
 
 		return " ["
-				+ P2PDictionary.getInstance().getRemotePeerName(
+				+ PeerDictionary.getInstance().getRemotePeerName(
 						toPeerID(peerIDString)) + "]";
 	}
 

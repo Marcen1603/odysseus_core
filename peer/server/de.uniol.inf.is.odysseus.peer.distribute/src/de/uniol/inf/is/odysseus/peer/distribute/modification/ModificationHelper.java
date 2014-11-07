@@ -19,6 +19,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractAccessAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.RenameAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.StreamAO;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.IP2PDictionary;
+import de.uniol.inf.is.odysseus.p2p_new.dictionary.IPeerDictionary;
 import de.uniol.inf.is.odysseus.peer.distribute.ILogicalQueryPart;
 import de.uniol.inf.is.odysseus.peer.distribute.QueryPartModificationException;
 
@@ -36,34 +37,34 @@ public class ModificationHelper {
 			.getLogger(ModificationHelper.class);
 
 	/**
-	 * The bound {@link IP2PDictionary}.
+	 * The bound {@link IPeerDictionary}.
 	 */
-	private static IP2PDictionary p2pDict;
+	private static IPeerDictionary peerDict;
 
 	/**
-	 * Binds an {@link IP2PDictionary}.
+	 * Binds an {@link IPeerDictionary}.
 	 * 
 	 * @param dict
-	 *            The {@link IP2PDictionary} to bind.
+	 *            The {@link IPeerDictionary} to bind.
 	 */
-	public static void bindP2PDictionary(IP2PDictionary dict) {
+	public static void bindPeerDictionary(IPeerDictionary dict) {
 
-		ModificationHelper.p2pDict = dict;
+		ModificationHelper.peerDict = dict;
 
 	}
 
 	/**
-	 * Unbinds an {@link IP2PDictionary}, if <code>dict</code> is the bound one.
+	 * Unbinds an {@link IPeerDictionary}, if <code>dict</code> is the bound one.
 	 * 
 	 * @param dict
-	 *            The {@link IP2PDictionary} to unbind.
+	 *            The {@link IPeerDictionary} to unbind.
 	 */
-	public static void unbindP2PDictionary(IP2PDictionary dict) {
+	public static void unbindPeerDictionary(IPeerDictionary dict) {
 
-		if (ModificationHelper.p2pDict != null
-				|| ModificationHelper.p2pDict.equals(dict)) {
+		if (ModificationHelper.peerDict != null
+				|| ModificationHelper.peerDict.equals(dict)) {
 
-			ModificationHelper.p2pDict = null;
+			ModificationHelper.peerDict = null;
 
 		}
 
@@ -522,14 +523,14 @@ public class ModificationHelper {
 	public static boolean validateDegreeOfModification(
 			int numQueryPartsToAllocate) {
 
-		if (ModificationHelper.p2pDict == null) {
+		if (ModificationHelper.peerDict == null) {
 
 			ModificationHelper.LOG.error("No P2P dictionary found!");
 			return false;
 
 		}
 
-		int availablePeers = ModificationHelper.p2pDict.getRemotePeerIDs()
+		int availablePeers = ModificationHelper.peerDict.getRemotePeerIDs()
 				.size();
 
 		if (availablePeers + 1 < numQueryPartsToAllocate) {

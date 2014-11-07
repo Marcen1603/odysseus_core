@@ -149,12 +149,12 @@ public class ChatView extends ViewPart implements IPeerCommunicatorListener, IP2
 	}
 
 	private static String determinePeerName(PeerID peerID) {
-		return RCPP2PNewPlugIn.getP2PDictionary().getRemotePeerName(peerID);
+		return RCPP2PNewPlugIn.getPeerDictionary().getRemotePeerName(peerID);
 	}
 
 	private void updateTable() {
 		peerIDs.clear();
-		peerIDs.addAll(RCPP2PNewPlugIn.getP2PDictionary().getRemotePeerIDs());
+		peerIDs.addAll(RCPP2PNewPlugIn.getPeerDictionary().getRemotePeerIDs());
 
 		refreshTableAsync();
 	}
@@ -212,7 +212,7 @@ public class ChatView extends ViewPart implements IPeerCommunicatorListener, IP2
 				appendToChatTextAsync(getCurrentTime() + " " + RCPP2PNewPlugIn.getP2PNetworkManager().getLocalPeerName() + ": " + text);
 				
 				ChatMessage chat = new ChatMessage(text, false);
-				for (PeerID peerID : RCPP2PNewPlugIn.getP2PDictionary().getRemotePeerIDs()) {
+				for (PeerID peerID : RCPP2PNewPlugIn.getPeerDictionary().getRemotePeerIDs()) {
 					RCPP2PNewPlugIn.getPeerCommunicator().send(peerID, chat);
 				}
 			}

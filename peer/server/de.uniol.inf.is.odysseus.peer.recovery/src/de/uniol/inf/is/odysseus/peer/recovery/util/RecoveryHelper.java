@@ -83,15 +83,15 @@ public class RecoveryHelper {
 	 */
 	public static Optional<PeerID> determinePeerID(String peerName) {
 
-		if (!RecoveryCommunicator.getP2PDictionary().isPresent()) {
+		if (!RecoveryCommunicator.getPeerDictionary().isPresent()) {
 
 			LOG.error("No P2P dictionary bound!");
 			return Optional.absent();
 
 		}
 
-		for (PeerID pid : RecoveryCommunicator.getP2PDictionary().get().getRemotePeerIDs()) {
-			if (RecoveryCommunicator.getP2PDictionary().get().getRemotePeerName(pid).equals(peerName)) {
+		for (PeerID pid : RecoveryCommunicator.getPeerDictionary().get().getRemotePeerIDs()) {
+			if (RecoveryCommunicator.getPeerDictionary().get().getRemotePeerName(pid).equals(peerName)) {
 				return Optional.of(pid);
 			}
 		}
@@ -106,7 +106,7 @@ public class RecoveryHelper {
 	 * @return Name of the peer
 	 */
 	public static String determinePeerName(PeerID peerId) {
-		return RecoveryCommunicator.getP2PDictionary().get().getRemotePeerName(peerId);
+		return RecoveryCommunicator.getPeerDictionary().get().getRemotePeerName(peerId);
 	}
 
 	@SuppressWarnings("rawtypes")

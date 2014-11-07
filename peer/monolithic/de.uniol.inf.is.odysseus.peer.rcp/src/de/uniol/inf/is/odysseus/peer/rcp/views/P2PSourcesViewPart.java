@@ -31,6 +31,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.p2p_new.IAdvertisementDiscovererListener;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.IP2PDictionary;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.IP2PDictionaryListener;
+import de.uniol.inf.is.odysseus.p2p_new.dictionary.IPeerDictionary;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.SourceAdvertisement;
 import de.uniol.inf.is.odysseus.peer.rcp.RCPP2PNewPlugIn;
 
@@ -55,6 +56,7 @@ public class P2PSourcesViewPart extends ViewPart implements IP2PDictionaryListen
 	private static P2PSourcesViewPart instance;
 
 	private IP2PDictionary p2pDictionary;
+	private IPeerDictionary peerDictionary;
 	private TableViewer sourcesTable;
 	private List<TableEntry> input = Lists.newArrayList();
 
@@ -62,6 +64,7 @@ public class P2PSourcesViewPart extends ViewPart implements IP2PDictionaryListen
 	public void createPartControl(Composite parent) {
 		p2pDictionary = RCPP2PNewPlugIn.getP2PDictionary();
 		p2pDictionary.addListener(this);
+		peerDictionary = RCPP2PNewPlugIn.getPeerDictionary();
 
 		final Composite tableComposite = new Composite(parent, SWT.NONE);
 		final TableColumnLayout tableColumnLayout = new TableColumnLayout();
@@ -287,7 +290,7 @@ public class P2PSourcesViewPart extends ViewPart implements IP2PDictionaryListen
 
 	public void refreshTable() {
 		input.clear();
-		input.addAll(determineTableEntries(p2pDictionary));
+		input.addAll(determineTableEntries(p2pDictionary, peerDictionary));
 
 		updateTable();
 	}
@@ -319,9 +322,9 @@ public class P2PSourcesViewPart extends ViewPart implements IP2PDictionaryListen
 		return Optional.absent();
 	}
 
-	private static List<TableEntry> determineTableEntries(IP2PDictionary p2pDictionary) {
+	private static List<TableEntry> determineTableEntries(IP2PDictionary p2pDictionary, IPeerDictionary peerDictionary) {
 		List<TableEntry> result = Lists.newArrayList();
-		if( p2pDictionary == null ) {
+		if( p2pDictionary == null || peerDictionary == null ) {
 			return result;
 		}
 
@@ -333,7 +336,7 @@ public class P2PSourcesViewPart extends ViewPart implements IP2PDictionaryListen
 			entry.index = result.size() + 1;
 			entry.schema = toString(publishedSource.getOutputSchema());
 			entry.type = publishedSource.isStream() ? "Stream" : "View";
-			entry.peerNames = determinePeerName(p2pDictionary, publishedSource.getPeerID());
+			entry.peerNames = determinePeerName(peerDictionary, publishedSource.getPeerID());
 			entry.advertisement = publishedSource;
 			entry.portedName = determinePortedName(p2pDictionary, publishedSource);
 			entry.sourceNames = publishedSource.getName();
@@ -363,7 +366,7 @@ public class P2PSourcesViewPart extends ViewPart implements IP2PDictionaryListen
 		return sb.toString();
 	}
 
-	private static String determinePeerName(IP2PDictionary dict, PeerID peerID) {
+	private static String determinePeerName(IPeerDictionary dict, PeerID peerID) {
 		if (peerID.equals(RCPP2PNewPlugIn.getP2PNetworkManager().getLocalPeerID())) {
 			return "_local_";
 		}

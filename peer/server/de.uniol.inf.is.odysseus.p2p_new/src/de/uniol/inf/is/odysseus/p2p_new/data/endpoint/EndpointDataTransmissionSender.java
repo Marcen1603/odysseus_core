@@ -21,7 +21,7 @@ import de.uniol.inf.is.odysseus.p2p_new.PeerCommunicationException;
 import de.uniol.inf.is.odysseus.p2p_new.data.AbstractTransmissionSender;
 import de.uniol.inf.is.odysseus.p2p_new.data.DataTransmissionException;
 import de.uniol.inf.is.odysseus.p2p_new.data.socket.PortAckMessage;
-import de.uniol.inf.is.odysseus.p2p_new.dictionary.impl.P2PDictionary;
+import de.uniol.inf.is.odysseus.p2p_new.dictionary.impl.PeerDictionary;
 
 public class EndpointDataTransmissionSender extends AbstractTransmissionSender implements IPeerCommunicatorListener {
 
@@ -101,7 +101,7 @@ public class EndpointDataTransmissionSender extends AbstractTransmissionSender i
 	}
 
 	protected void processOpenMessage(PeerID senderPeer, OpenMessage message) {
-		LOG.debug("Got open message from '{}'", P2PDictionary.getInstance().getRemotePeerName(senderPeer));
+		LOG.debug("Got open message from '{}'", PeerDictionary.getInstance().getRemotePeerName(senderPeer));
 
 		synchronized (pids) {
 			if (pids.size() == 1 && pids.contains(senderPeer)) {
@@ -121,7 +121,7 @@ public class EndpointDataTransmissionSender extends AbstractTransmissionSender i
 	}
 
 	protected void processCloseMessage(PeerID senderPeer, CloseMessage message) {
-		LOG.debug("Got close message from '{}'", P2PDictionary.getInstance().getRemotePeerName(senderPeer));
+		LOG.debug("Got close message from '{}'", PeerDictionary.getInstance().getRemotePeerName(senderPeer));
 
 		synchronized (pids) {
 			if (pids.contains(senderPeer)) {

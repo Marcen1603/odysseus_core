@@ -23,7 +23,7 @@ import de.uniol.inf.is.odysseus.p2p_new.IP2PNetworkManager;
 import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicator;
 import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicatorListener;
 import de.uniol.inf.is.odysseus.p2p_new.PeerCommunicationException;
-import de.uniol.inf.is.odysseus.p2p_new.dictionary.IP2PDictionary;
+import de.uniol.inf.is.odysseus.p2p_new.dictionary.IPeerDictionary;
 import de.uniol.inf.is.odysseus.p2p_new.util.RepeatingJobThread;
 import de.uniol.inf.is.odysseus.peer.resource.IPeerResourceUsageManager;
 import de.uniol.inf.is.odysseus.peer.resource.IResourceUsage;
@@ -50,7 +50,7 @@ public final class PeerResourceUsageManager implements IPeerResourceUsageManager
 	private static IP2PNetworkManager p2pNetworkManager;
 	private static IPeerCommunicator peerCommunicator;
 	private static IServerExecutor serverExecutor;
-	private static IP2PDictionary p2pDictionary;
+	private static IPeerDictionary peerDictionary;
 
 	private final Map<PeerID, IResourceUsage> usageMap = Maps.newHashMap();
 	private final UsageStatisticCollector usageCollector = new UsageStatisticCollector();
@@ -100,14 +100,14 @@ public final class PeerResourceUsageManager implements IPeerResourceUsageManager
 	}
 	
 	// called by OSGi-DS
-	public static void bindP2PDictionary(IP2PDictionary serv) {
-		p2pDictionary = serv;
+	public static void bindPeerDictionary(IPeerDictionary serv) {
+		peerDictionary = serv;
 	}
 
 	// called by OSGi-DS
-	public static void unbindP2PDictionary(IP2PDictionary serv) {
-		if (p2pDictionary == serv) {
-			p2pDictionary = null;
+	public static void unbindPeerDictionary(IPeerDictionary serv) {
+		if (peerDictionary == serv) {
+			peerDictionary = null;
 		}
 	}
 
@@ -238,7 +238,7 @@ public final class PeerResourceUsageManager implements IPeerResourceUsageManager
 				}
 			}
 			
-			int remotePeerCount = p2pDictionary.getRemotePeerIDs().size();
+			int remotePeerCount = peerDictionary.getRemotePeerIDs().size();
 			
 			synchronized( usageCollector ) {
 				usageCollector.addStatistics(freeMemory, totalMemory, SIGAR_WRAPPER.getCpuFree(), SIGAR_WRAPPER.getCpuMax(), runningQueries, stoppedQueries, remotePeerCount, SIGAR_WRAPPER.getNetMax(), SIGAR_WRAPPER.getNetOutputRate(), SIGAR_WRAPPER.getNetInputRate());

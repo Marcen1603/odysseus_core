@@ -3,21 +3,21 @@ package de.uniol.inf.is.odysseus.peer.distribute.allocate.roundrobin;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 
-import de.uniol.inf.is.odysseus.p2p_new.dictionary.IP2PDictionary;
+import de.uniol.inf.is.odysseus.p2p_new.dictionary.IPeerDictionary;
 
 public class RoundRobinActivator implements BundleActivator {
 
-	private static IP2PDictionary p2pDictionary;
+	private static IPeerDictionary peerDictionary;
 
 	// called by OSGi-DS
-	public static void bindP2PDictionary(IP2PDictionary serv) {
-		p2pDictionary = serv;
+	public static void bindPeerDictionary(IPeerDictionary serv) {
+		peerDictionary = serv;
 	}
 
 	// called by OSGi-DS
-	public static void unbindP2PDictionary(IP2PDictionary serv) {
-		if (p2pDictionary == serv) {
-			p2pDictionary = null;
+	public static void unbindPeerDictionary(IPeerDictionary serv) {
+		if (peerDictionary == serv) {
+			peerDictionary = null;
 		}
 	}
 	@Override
@@ -29,7 +29,7 @@ public class RoundRobinActivator implements BundleActivator {
 	public void stop(BundleContext context) throws Exception {
 	}
 
-	public static IP2PDictionary getP2PDictionary() {
-		return p2pDictionary;
+	public static IPeerDictionary getPeerDictionary() {
+		return peerDictionary;
 	}
 }

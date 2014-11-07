@@ -102,7 +102,7 @@ public abstract class AbstractRoundRobinAllocator implements IQueryPartAllocator
 				peerIDIndex = tempPeerIDIndex;
 			}
 			
-			LOG.debug("Allocated to peer {} for query part {}", RoundRobinActivator.getP2PDictionary().getRemotePeerName(chosenPeerID), queryPart);
+			LOG.debug("Allocated to peer {} for query part {}", RoundRobinActivator.getPeerDictionary().getRemotePeerName(chosenPeerID), queryPart);
 			allocationMap.put(queryPart, chosenPeerID);
 		}
 		
@@ -117,7 +117,7 @@ public abstract class AbstractRoundRobinAllocator implements IQueryPartAllocator
 		}
 		
 		for( PeerID peerID : peerIDs ) {
-			LOG.debug("\t{}", RoundRobinActivator.getP2PDictionary().getRemotePeerName(peerID));
+			LOG.debug("\t{}", RoundRobinActivator.getPeerDictionary().getRemotePeerName(peerID));
 		}
 	}
 

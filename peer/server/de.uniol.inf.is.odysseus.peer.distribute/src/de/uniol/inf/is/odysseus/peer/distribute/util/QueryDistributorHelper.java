@@ -19,7 +19,7 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecu
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.QueryBuildConfiguration;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.p2p_new.IP2PNetworkManager;
-import de.uniol.inf.is.odysseus.p2p_new.dictionary.IP2PDictionary;
+import de.uniol.inf.is.odysseus.p2p_new.dictionary.IPeerDictionary;
 import de.uniol.inf.is.odysseus.peer.distribute.DistributionCheckException;
 import de.uniol.inf.is.odysseus.peer.distribute.IDistributionChecker;
 import de.uniol.inf.is.odysseus.peer.distribute.ILogicalQueryPart;
@@ -37,18 +37,18 @@ public final class QueryDistributorHelper {
 
 	private static final Logger LOG = LoggerFactory.getLogger(QueryDistributorHelper.class);
 	
-	private static IP2PDictionary p2pDictionary;
+	private static IPeerDictionary peerDictionary;
 	private static IP2PNetworkManager p2pNetworkManager;
 
 	// called by OSGi-DS
-	public static void bindP2PDictionary(IP2PDictionary serv) {
-		p2pDictionary = serv;
+	public static void bindPeerDictionary(IPeerDictionary serv) {
+		peerDictionary = serv;
 	}
 
 	// called by OSGi-DS
-	public static void unbindP2PDictionary(IP2PDictionary serv) {
-		if (p2pDictionary == serv) {
-			p2pDictionary = null;
+	public static void unbindPeerDictionary(IPeerDictionary serv) {
+		if (peerDictionary == serv) {
+			peerDictionary = null;
 		}
 	}
 
@@ -191,14 +191,14 @@ public final class QueryDistributorHelper {
 
 		try {
 			InterfaceParametersPair<IQueryPartAllocator> firstAllocator = allocators.get(0);
-			Map<ILogicalQueryPart, PeerID> allocationMap = firstAllocator.getInterface().allocate(modifiedQueryParts, query, p2pDictionary.getRemotePeerIDs(), p2pNetworkManager.getLocalPeerID(), config, firstAllocator.getParameters());
+			Map<ILogicalQueryPart, PeerID> allocationMap = firstAllocator.getInterface().allocate(modifiedQueryParts, query, peerDictionary.getRemotePeerIDs(), p2pNetworkManager.getLocalPeerID(), config, firstAllocator.getParameters());
 			
 			if (allocationMap == null || allocationMap.isEmpty()) {
 				throw new QueryDistributionException("Query part allocation map from allocator '" + firstAllocator.getInterface().getName() + "' is null or empty!");
 			}
 
 			if (LOG.isDebugEnabled()) {
-				LoggingHelper.printAllocationMap(allocationMap, p2pDictionary);
+				LoggingHelper.printAllocationMap(allocationMap, peerDictionary);
 			}
 			
 			return allocationMap;
@@ -212,14 +212,14 @@ public final class QueryDistributorHelper {
 		
 		try {
 			InterfaceParametersPair<IQueryPartAllocator> firstAllocator = allocators.get(0);
-			Map<ILogicalQueryPart, PeerID> allocationMap = firstAllocator.getInterface().reallocate(previousAllocationMap, faultyPeers, p2pDictionary.getRemotePeerIDs(), p2pNetworkManager.getLocalPeerID(), config, firstAllocator.getParameters());
+			Map<ILogicalQueryPart, PeerID> allocationMap = firstAllocator.getInterface().reallocate(previousAllocationMap, faultyPeers, peerDictionary.getRemotePeerIDs(), p2pNetworkManager.getLocalPeerID(), config, firstAllocator.getParameters());
 			
 			if (allocationMap == null || allocationMap.isEmpty()) {
 				throw new QueryDistributionException("Query part allocation map from allocator '" + firstAllocator.getInterface().getName() + "' is null or empty!");
 			}
 
 			if (LOG.isDebugEnabled()) {
-				LoggingHelper.printAllocationMap(allocationMap, p2pDictionary);
+				LoggingHelper.printAllocationMap(allocationMap, peerDictionary);
 			}
 			
 			return allocationMap;
@@ -231,7 +231,7 @@ public final class QueryDistributorHelper {
 	public static String toPeerNames(List<PeerID> faultyPeers) {
 		StringBuilder sb = new StringBuilder();
 		for( PeerID pid : faultyPeers ) {
-			sb.append(p2pDictionary.getRemotePeerName(pid)).append(" ");
+			sb.append(peerDictionary.getRemotePeerName(pid)).append(" ");
 		}
 		return sb.toString();
 	}

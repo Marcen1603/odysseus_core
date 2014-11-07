@@ -14,7 +14,7 @@ import de.uniol.inf.is.odysseus.p2p_new.IAdvertisementDiscovererListener;
 import de.uniol.inf.is.odysseus.p2p_new.IJxtaServicesProvider;
 import de.uniol.inf.is.odysseus.p2p_new.IP2PNetworkManager;
 import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicator;
-import de.uniol.inf.is.odysseus.p2p_new.dictionary.IP2PDictionary;
+import de.uniol.inf.is.odysseus.p2p_new.dictionary.IPeerDictionary;
 import de.uniol.inf.is.odysseus.peer.config.PeerConfiguration;
 import de.uniol.inf.is.odysseus.peer.logging.adv.LoggingAdvertisement;
 import de.uniol.inf.is.odysseus.peer.logging.adv.LoggingAdvertisementInstatiator;
@@ -32,7 +32,7 @@ public class JXTALoggingPlugIn implements BundleActivator {
 	private static final IAdvertisementDiscovererListener LOGADVERTISEMENT_DISCOVERER_LISTENER = new LogAdvertisementListener();
 
 	private static IPeerCommunicator peerCommunicator;
-	private static IP2PDictionary p2pDictionary;
+	private static IPeerDictionary peerDictionary;
 	private static IJxtaServicesProvider jxtaServicesProvider;
 	private static IP2PNetworkManager p2pNetworkManager;
 
@@ -58,18 +58,18 @@ public class JXTALoggingPlugIn implements BundleActivator {
 	}
 
 	// called by OSGi-DS
-	public static void bindP2PDictionary(IP2PDictionary serv) {
-		p2pDictionary = serv;
+	public static void bindPeerDictionary(IPeerDictionary serv) {
+		peerDictionary = serv;
 		
-		LOG.debug("Bound P2PDictionary {}", serv);
+		LOG.debug("Bound PeerDictionary {}", serv);
 	}
 
 	// called by OSGi-DS
-	public static void unbindP2PDictionary(IP2PDictionary serv) {
-		if (p2pDictionary == serv) {
-			p2pDictionary = null;
+	public static void unbindPeerDictionary(IPeerDictionary serv) {
+		if (peerDictionary == serv) {
+			peerDictionary = null;
 			
-			LOG.debug("Unbound P2PDictionary {}", serv);
+			LOG.debug("Unbound PeerDictionary {}", serv);
 		}
 	}
 	
@@ -110,8 +110,8 @@ public class JXTALoggingPlugIn implements BundleActivator {
 		return peerCommunicator;
 	}
 	
-	public static IP2PDictionary getP2PDictionary() {
-		return p2pDictionary;
+	public static IPeerDictionary getPeerDictionary() {
+		return peerDictionary;
 	}
 	
 	public static IJxtaServicesProvider getJxtaServicesProvider() {

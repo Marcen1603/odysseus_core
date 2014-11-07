@@ -12,7 +12,7 @@ import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 
 import de.uniol.inf.is.odysseus.p2p_new.IP2PNetworkManager;
-import de.uniol.inf.is.odysseus.p2p_new.dictionary.IP2PDictionary;
+import de.uniol.inf.is.odysseus.p2p_new.dictionary.IPeerDictionary;
 import de.uniol.inf.is.odysseus.p2p_new.physicaloperator.JxtaSenderPO;
 import de.uniol.inf.is.odysseus.peer.distribute.QueryPartAllocationException;
 import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryAllocator;
@@ -78,39 +78,39 @@ public class RecoveryStrategyUpstreamBackup implements IRecoveryStrategy{
 	}
 	
 	/**
-	 * The P2P dictionary, if there is one bound.
+	 * The Peer dictionary, if there is one bound.
 	 */
-	private static Optional<IP2PDictionary> cP2PDictionary = Optional.absent();
+	private static Optional<IPeerDictionary> cPeerDictionary = Optional.absent();
 	
 	/**
-	 * Binds a P2P dictionary. <br />
+	 * Binds a Peer dictionary. <br />
 	 * Called by OSGi-DS.
-	 * @param serv The P2P dictionary to bind. <br />
+	 * @param serv The Peer dictionary to bind. <br />
 	 * Must be not null.
 	 */
-	public static void bindP2PDictionary(IP2PDictionary serv) {
+	public static void bindPeerDictionary(IPeerDictionary serv) {
 		
 		Preconditions.checkNotNull(serv);
-		cP2PDictionary = Optional.of(serv);
-		LOG.debug("Bound {} as a P2P dictionary.", serv
+		cPeerDictionary = Optional.of(serv);
+		LOG.debug("Bound {} as a Peer dictionary.", serv
 				.getClass().getSimpleName());
 		
 	}
 
 	/**
-	 * Unbinds a P2P dictionary, if it's the bound one. <br />
+	 * Unbinds a Peer dictionary, if it's the bound one. <br />
 	 * Called by OSGi-DS.
-	 * @param serv The P2P dictionary to unbind. <br />
+	 * @param serv The Peer dictionary to unbind. <br />
 	 * Must be not null.
 	 */
-	public static void unbindP2PDictionary(IP2PDictionary serv) {
+	public static void unbindPeerDictionary(IPeerDictionary serv) {
 		
 		Preconditions.checkNotNull(serv);
 		
-		if (cP2PDictionary.isPresent() && cP2PDictionary.get() == serv) {
+		if (cPeerDictionary.isPresent() && cPeerDictionary.get() == serv) {
 			
-			cP2PDictionary = Optional.absent();
-			LOG.debug("Unbound {} as a P2P dictionary.", serv
+			cPeerDictionary = Optional.absent();
+			LOG.debug("Unbound {} as a Peer dictionary.", serv
 					.getClass().getSimpleName());
 			
 		}
@@ -207,7 +207,7 @@ public class RecoveryStrategyUpstreamBackup implements IRecoveryStrategy{
 			LOG.error("No P2P network manager bound!");
 			return;
 			
-		} else if(!cP2PDictionary.isPresent()) {
+		} else if(!cPeerDictionary.isPresent()) {
 			
 			LOG.error("No P2P dictionary bound!");
 			return;
@@ -224,7 +224,7 @@ public class RecoveryStrategyUpstreamBackup implements IRecoveryStrategy{
 			
 		}
 		
-		LOG.debug("Want to start recovery for {}", cP2PDictionary.get().getRemotePeerName(failedPeer));
+		LOG.debug("Want to start recovery for {}", cPeerDictionary.get().getRemotePeerName(failedPeer));
 
 		// To update the affected senders
 		int i = 0;
@@ -233,7 +233,7 @@ public class RecoveryStrategyUpstreamBackup implements IRecoveryStrategy{
 		// TODO Refactor allocation process
 		
 		for (ID sharedQueryId : cRecoveryDynamicBackup.get().getSharedQueryIdsForRecovery(failedPeer)) {
-			LOG.debug("Have info for {} -> I can do recovery.", cP2PDictionary.get().getRemotePeerName(failedPeer));
+			LOG.debug("Have info for {} -> I can do recovery.", cPeerDictionary.get().getRemotePeerName(failedPeer));
 			// 4. Search for another peer who can take the parts from the failed
 			// peer
 
@@ -246,7 +246,7 @@ public class RecoveryStrategyUpstreamBackup implements IRecoveryStrategy{
 				LOG.error("No allocator for recovery allocation set.");
 			} else {
 				try {
-					peer = cRecoveryAllocator.get().allocate(cP2PDictionary.get().getRemotePeerIDs(),
+					peer = cRecoveryAllocator.get().allocate(cPeerDictionary.get().getRemotePeerIDs(),
 							cP2PNetworkManager.get().getLocalPeerID());
 					LOG.debug("Peer ID for recovery allocation found.");
 				} catch (QueryPartAllocationException e) {

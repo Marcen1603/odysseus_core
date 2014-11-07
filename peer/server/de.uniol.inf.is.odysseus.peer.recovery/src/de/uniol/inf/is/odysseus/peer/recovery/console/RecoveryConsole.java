@@ -23,11 +23,11 @@ import com.google.common.collect.Lists;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.p2p_new.IP2PNetworkManager;
-import de.uniol.inf.is.odysseus.p2p_new.dictionary.IP2PDictionary;
+import de.uniol.inf.is.odysseus.p2p_new.dictionary.IPeerDictionary;
 import de.uniol.inf.is.odysseus.peer.distribute.QueryPartAllocationException;
+import de.uniol.inf.is.odysseus.peer.recovery.IP2PNetworkController;
 import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryAllocator;
 import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryCommunicator;
-import de.uniol.inf.is.odysseus.peer.recovery.IP2PNetworkController;
 import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryStrategy;
 import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryStrategyManager;
 import de.uniol.inf.is.odysseus.peer.recovery.internal.RecoveryCommunicator;
@@ -45,7 +45,7 @@ public class RecoveryConsole implements CommandProvider {
 	private static final Logger LOG = LoggerFactory.getLogger(RecoveryConsole.class);
 
 	private static IP2PNetworkManager p2pNetworkManager;
-	private static IP2PDictionary p2pDictionary;
+	private static IPeerDictionary peerDictionary;
 	private static Collection<IRecoveryAllocator> recoveryAllocators = Lists.newArrayList();
 	/**
 	 * Executor to get queries
@@ -102,14 +102,14 @@ public class RecoveryConsole implements CommandProvider {
 	}
 
 	// called by OSGi-DS
-	public static void bindP2PDictionary(IP2PDictionary serv) {
-		p2pDictionary = serv;
+	public static void bindPeerDictionary(IPeerDictionary serv) {
+		peerDictionary = serv;
 	}
 
 	// called by OSGi-DS
-	public static void unbindP2PDictionary(IP2PDictionary serv) {
-		if (p2pDictionary == serv) {
-			p2pDictionary = null;
+	public static void unbindPeerDictionary(IPeerDictionary serv) {
+		if (peerDictionary == serv) {
+			peerDictionary = null;
 		}
 	}
 
@@ -468,8 +468,8 @@ public class RecoveryConsole implements CommandProvider {
 
 		PeerID peer = null;
 		try {
-			peer = allocator.allocate(p2pDictionary.getRemotePeerIDs(), p2pNetworkManager.getLocalPeerID());
-			ci.println("Allocator has chosen " + p2pDictionary.getRemotePeerName(peer) + " as target");
+			peer = allocator.allocate(peerDictionary.getRemotePeerIDs(), p2pNetworkManager.getLocalPeerID());
+			ci.println("Allocator has chosen " + peerDictionary.getRemotePeerName(peer) + " as target");
 		} catch (QueryPartAllocationException e) {
 			e.printStackTrace();
 		}

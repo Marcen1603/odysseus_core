@@ -1,8 +1,6 @@
 package de.uniol.inf.is.odysseus.p2p_new.dictionary.impl;
 
 import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
@@ -14,7 +12,6 @@ import net.jxta.id.ID;
 import net.jxta.id.IDFactory;
 import net.jxta.peer.PeerID;
 import net.jxta.pipe.PipeID;
-import net.jxta.protocol.PeerAdvertisement;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,6 +48,7 @@ import de.uniol.inf.is.odysseus.p2p_new.InvalidP2PSource;
 import de.uniol.inf.is.odysseus.p2p_new.PeerException;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.IP2PDictionary;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.IP2PDictionaryListener;
+import de.uniol.inf.is.odysseus.p2p_new.dictionary.IPeerDictionary;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.MultipleSourceAdvertisement;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.RemoveMultipleSourceAdvertisement;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.RemoveSourceAdvertisement;
@@ -69,10 +67,10 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 
 	private static final String AUTOIMPORT_SYS_PROPERTY = "peer.autoimport";
 	private static final String AUTOEXPORT_SYS_PROPERTY = "peer.autoexport";
-	private static final String UNKNOWN_PEER_NAME = "<unknown>";
 
 	private static P2PDictionary instance;
 	private static IPQLGenerator pqlGenerator;
+	private static IPeerDictionary peerDictionary;
 
 	private final List<IP2PDictionaryListener> listeners = Lists.newArrayList();
 
@@ -82,14 +80,9 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 
 	private final RemoveSourceAdvertisementCollector removeSourceAdvCollector = new RemoveSourceAdvertisementCollector();
 	private final SourceAdvertisementCollector sourceAdvCollector = new SourceAdvertisementCollector();
-	private final Map<PeerID, String> remotePeerNameMap = Maps.newHashMap();
-	private final Map<PeerID, String> remotePeerAddressMap = Maps.newHashMap();
 	private final Collection<SourceAdvertisement> srcAdvs = Lists.newArrayList();
 
 	private AutoExporter autoExporter;
-	private boolean peersChanged = true;
-
-	private Collection<PeerID> currentPeerIDs;
 
 	// called by OSGi-DS
 	public void bindListener(IP2PDictionaryListener serv) {
@@ -110,6 +103,18 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 	public static void unbindPQLGenerator(IPQLGenerator serv) {
 		if (pqlGenerator == serv) {
 			pqlGenerator = null;
+		}
+	}
+	
+	// called by OSGi-DS
+	public static void bindPeerDictionary(IPeerDictionary serv) {
+		peerDictionary = serv;
+	}
+
+	// called by OSGi-DS
+	public static void unbindPeerDictionary(IPeerDictionary serv) {
+		if (peerDictionary == serv) {
+			peerDictionary = null;
 		}
 	}
 
@@ -222,8 +227,6 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 				}
 			}
 		}
-		
-		peersChanged = true;
 	}
 	
 	private void applyRemoveSourceAdvertisements(Collection<SourceAdvertisement> srcAdvs) {
@@ -261,7 +264,7 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 		Iterator<SourceAdvertisement> it = srcAdvs.iterator();
 		while (it.hasNext()) {
 			SourceAdvertisement srcAdv = it.next();
-			if (!srcAdv.isLocal() && !getRemotePeerIDs().contains(srcAdv.getPeerID())) {
+			if (!srcAdv.isLocal() && !peerDictionary.getRemotePeerIDs().contains(srcAdv.getPeerID())) {
 				removeSourceImport(srcAdv);
 				tryFlushAdvertisement(srcAdv);
 				it.remove();
@@ -272,7 +275,7 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 
 		for (MultipleSourceAdvertisement multiSrcAdv : multiSrcAdvs) {
 
-			if (!multiSrcAdv.isLocal() && !getRemotePeerIDs().contains(multiSrcAdv.getPeerID())) {
+			if (!multiSrcAdv.isLocal() && !peerDictionary.getRemotePeerIDs().contains(multiSrcAdv.getPeerID())) {
 				for (SourceAdvertisement srcAdv : multiSrcAdv.getSourceAdvertisements()) {
 					removeSourceImport(srcAdv);
 				}
@@ -593,104 +596,6 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 	@Override
 	public ImmutableList<SourceAdvertisement> getExportedSources() {
 		return ImmutableList.copyOf(exportedSourcesQueryMap.keySet());
-	}
-
-	@Override
-	public Collection<PeerID> getRemotePeerIDs() {
-		if (JxtaServicesProvider.isActivated()) {
-			if (peersChanged) {
-				currentPeerIDs = toPeerIDs(JxtaServicesProvider.getInstance().getPeerAdvertisements());
-				peersChanged = false;
-			}
-			return currentPeerIDs;
-
-		}
-		return Lists.newArrayList();
-	}
-
-	private static final Map<PeerAdvertisement, Long> toFlushMap = Maps.newConcurrentMap();
-
-	private Collection<PeerID> toPeerIDs(Collection<PeerAdvertisement> peerAdvs) {
-		Collection<PeerID> ids = Lists.newLinkedList();
-		PeerID localPeerID = P2PNetworkManager.getInstance().getLocalPeerID();
-
-		LOG.debug("Determining peers");
-		for (PeerAdvertisement adv : peerAdvs) {
-			if (!localPeerID.equals(adv.getPeerID())) {
-				if (JxtaServicesProvider.getInstance().isReachable(adv.getPeerID())) {
-					ids.add(adv.getPeerID());
-					LOG.debug("Peer " + adv.getName() + " is reachable");
-					toFlushMap.remove(adv);
-
-				} else {
-					LOG.debug("Peer " + adv.getName() + " is NOT reachable anymore");
-					remotePeerNameMap.remove(adv.getPeerID());
-					remotePeerAddressMap.remove(adv.getPeerID());
-
-					tryFlushAdvertisement(adv);
-				}
-			}
-		}
-		return ids;
-	}
-
-	@Override
-	public String getRemotePeerName(PeerID peerID) {
-		Preconditions.checkNotNull(peerID, "PeerID to get the name from must not be null!");
-
-		if (peerID.equals(P2PNetworkManager.getInstance().getLocalPeerID())) {
-			return P2PNetworkManager.getInstance().getLocalPeerName();
-		}
-		if (remotePeerNameMap.containsKey(peerID)) {
-			return remotePeerNameMap.get(peerID);
-		}
-
-		Collection<PeerAdvertisement> peerAdvs = JxtaServicesProvider.getInstance().getPeerAdvertisements();
-		for (PeerAdvertisement peerAdv : peerAdvs) {
-			if (peerAdv.getPeerID().equals(peerID)) {
-				remotePeerNameMap.put(peerID, peerAdv.getName());
-				return peerAdv.getName();
-			}
-		}
-
-		return UNKNOWN_PEER_NAME;
-	}
-	
-	@Override
-	public String getRemotePeerName(String peerIDString) {
-		Preconditions.checkArgument(!Strings.isNullOrEmpty(peerIDString), "PeerIDString must not be null or empty!");
-		
-		return getRemotePeerName(toPeerID(peerIDString));
-	}
-	
-	private static PeerID toPeerID(String text) {
-		try {
-			final URI id = new URI(text);
-			return (PeerID)IDFactory.fromURI(id);
-		} catch (URISyntaxException | ClassCastException ex) {
-			LOG.error("Could not set id", ex);
-			return null;
-		}
-	}
-	
-	@Override
-	public Optional<String> getRemotePeerAddress(PeerID peerID) {
-		Preconditions.checkNotNull(peerID, "PeerID to get the address from must not be null!");
-
-		if( peerID.equals(P2PNetworkManager.getInstance().getLocalPeerID())) {
-			return Optional.of("127.0.0.1");
-		}
-		
-		String address = remotePeerAddressMap.get(peerID);
-		if (Strings.isNullOrEmpty(address)) {
-			Optional<String> newAddress = JxtaServicesProvider.getInstance().getRemotePeerAddress(peerID);
-			if (newAddress.isPresent() && !newAddress.get().startsWith("0.0.0.0")) {
-				remotePeerAddressMap.put(peerID, newAddress.get());
-				return newAddress;
-			}
-			return Optional.absent();
-		}
-		return Optional.of(address);
 	}
 
 	// called by DataDictionary
@@ -1015,7 +920,7 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 			} else if (adv instanceof SourceAdvertisement) {
 				SourceAdvertisement srcAdv = (SourceAdvertisement) adv;
 
-				LOG.debug("Got source advertisement. Name is {} provided from {}", srcAdv.getName(), getRemotePeerName(srcAdv.getPeerID()));
+				LOG.debug("Got source advertisement. Name is {} provided from {}", srcAdv.getName(), peerDictionary.getRemotePeerName(srcAdv.getPeerID()));
 
 				if (!srcAdv.isLocal() && isAutoImport()) {
 					LOG.debug("Do autoimport of it");
@@ -1026,7 +931,7 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 			} else if (adv instanceof MultipleSourceAdvertisement) {
 				MultipleSourceAdvertisement multSrcAdv = (MultipleSourceAdvertisement) adv;
 
-				LOG.debug("Got multiple source advertisement. It contains {} sources provided from {}", multSrcAdv.getSourceAdvertisements().size(), getRemotePeerName(multSrcAdv.getPeerID()));
+				LOG.debug("Got multiple source advertisement. It contains {} sources provided from {}", multSrcAdv.getSourceAdvertisements().size(), peerDictionary.getRemotePeerName(multSrcAdv.getPeerID()));
 
 				if (!multSrcAdv.isLocal() && isAutoImport()) {
 					LOG.debug("Autoimporting them");

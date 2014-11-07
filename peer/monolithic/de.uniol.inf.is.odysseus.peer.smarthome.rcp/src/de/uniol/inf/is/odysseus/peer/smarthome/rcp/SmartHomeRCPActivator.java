@@ -9,6 +9,7 @@ import de.uniol.inf.is.odysseus.p2p_new.IAdvertisementDiscovererListener;
 import de.uniol.inf.is.odysseus.p2p_new.IP2PNetworkManager;
 import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicator;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.IP2PDictionary;
+import de.uniol.inf.is.odysseus.p2p_new.dictionary.IPeerDictionary;
 import de.uniol.inf.is.odysseus.peer.smarthome.fielddevice.Actor;
 import de.uniol.inf.is.odysseus.peer.smarthome.fielddevice.FieldDevice;
 import de.uniol.inf.is.odysseus.peer.smarthome.fielddevice.ASmartDevice;
@@ -22,6 +23,7 @@ public class SmartHomeRCPActivator implements BundleActivator {
 	private static IP2PNetworkManager p2pNetworkManager;
 	private static IPeerCommunicator peerCommunicator;
 	private static IP2PDictionary p2pDictionary;
+	private static IPeerDictionary peerDictionary;
 	private static SmartDeviceAdvertisementListener smartDeviceAdvertisementListener;
 
 	private static ASmartDevice localSmartDevice;
@@ -90,6 +92,18 @@ public class SmartHomeRCPActivator implements BundleActivator {
 		}
 	}
 
+	// called by OSGi-DS
+	public static void bindPeerDictionary(IPeerDictionary serv) {
+		peerDictionary = serv;
+	}
+	
+	// called by OSGi-DS
+	public static void unbindPeerDictionary(IPeerDictionary serv) {
+		if (peerDictionary == serv) {
+			peerDictionary = null;
+		}
+	}
+	
 	public static IP2PNetworkManager getP2PNetworkManager() {
 		return p2pNetworkManager;
 	}
@@ -100,6 +114,10 @@ public class SmartHomeRCPActivator implements BundleActivator {
 
 	public static IP2PDictionary getP2PDictionary() {
 		return p2pDictionary;
+	}
+	
+	public static IPeerDictionary getPeerDictionary() {
+		return peerDictionary;
 	}
 
 	public static class SmartDeviceAdvertisementListener implements

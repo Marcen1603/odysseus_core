@@ -40,6 +40,7 @@ import com.google.common.base.Optional;
 
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.IP2PDictionary;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.IP2PDictionaryListener;
+import de.uniol.inf.is.odysseus.p2p_new.dictionary.IPeerDictionary;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.SourceAdvertisement;
 import de.uniol.inf.is.odysseus.p2p_new.util.RepeatingJobThread;
 import de.uniol.inf.is.odysseus.peer.resource.IResourceUsage;
@@ -51,6 +52,7 @@ public class SmartDeviceView extends ViewPart implements IP2PDictionaryListener,
 	private static final Logger LOG = LoggerFactory.getLogger(SmartDeviceView.class);
 	
 	private IP2PDictionary p2pDictionary;
+	private IPeerDictionary peerDictionary;
 	private final List<PeerID> foundPeerIDs = Lists.newArrayList();
 	private final Map<PeerID, IResourceUsage> usageMap = Maps.newHashMap();
 	private TableViewer smartDevicesTable;
@@ -61,6 +63,7 @@ public class SmartDeviceView extends ViewPart implements IP2PDictionaryListener,
 	@Override
 	public void createPartControl(Composite parent) {
 		p2pDictionary = SmartHomeRCPActivator.getP2PDictionary();
+		peerDictionary = SmartHomeRCPActivator.getPeerDictionary();
 		p2pDictionary.addListener(this);
 		
 		setPartName("Smart Devices");
@@ -130,7 +133,7 @@ public class SmartDeviceView extends ViewPart implements IP2PDictionaryListener,
 					}
 					cell.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_GRAY));
 				} else {
-					Optional<String> optAddress = SmartHomeRCPActivator.getP2PDictionary().getRemotePeerAddress((PeerID) cell.getElement());
+					Optional<String> optAddress = SmartHomeRCPActivator.getPeerDictionary().getRemotePeerAddress((PeerID) cell.getElement());
 					if (optAddress.isPresent()) {
 						cell.setText(optAddress.get());
 					} else {
@@ -213,7 +216,7 @@ public class SmartDeviceView extends ViewPart implements IP2PDictionaryListener,
 		Collection<PeerID> foundPeerIDsCopy = null;
 		synchronized (foundPeerIDs) {
 			foundPeerIDs.clear();
-			foundPeerIDs.addAll(p2pDictionary.getRemotePeerIDs());
+			foundPeerIDs.addAll(peerDictionary.getRemotePeerIDs());
 			foundPeerIDsCopy = Lists.newArrayList(foundPeerIDs);
 		}
 		refreshTableAsync();
@@ -299,7 +302,7 @@ public class SmartDeviceView extends ViewPart implements IP2PDictionaryListener,
 		}catch(NullPointerException ex){
 			
 		}
-		return p2pDictionary.getRemotePeerName(id);
+		return peerDictionary.getRemotePeerName(id);
 	}
 	
 	private String determinePeerContextName(PeerID pid) {

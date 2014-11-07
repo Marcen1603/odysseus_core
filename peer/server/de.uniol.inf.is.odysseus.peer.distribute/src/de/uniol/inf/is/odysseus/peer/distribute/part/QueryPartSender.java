@@ -40,6 +40,7 @@ import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicator;
 import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicatorListener;
 import de.uniol.inf.is.odysseus.p2p_new.RepeatingMessageSend;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.IP2PDictionary;
+import de.uniol.inf.is.odysseus.p2p_new.dictionary.IPeerDictionary;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.SourceAdvertisement;
 import de.uniol.inf.is.odysseus.p2p_new.logicaloperator.JxtaReceiverAO;
 import de.uniol.inf.is.odysseus.p2p_new.logicaloperator.JxtaSenderAO;
@@ -61,6 +62,7 @@ public class QueryPartSender implements IPeerCommunicatorListener {
 
 	private static IP2PNetworkManager p2pNetworkManager;
 	private static IP2PDictionary p2pDictionary;
+	private static IPeerDictionary peerDictionary;
 	private static IPQLGenerator pqlGenerator;
 	private static IPeerCommunicator peerCommunicator;
 
@@ -95,6 +97,18 @@ public class QueryPartSender implements IPeerCommunicatorListener {
 	public static void unbindP2PDictionary(IP2PDictionary serv) {
 		if (p2pDictionary == serv) {
 			p2pDictionary = null;
+		}
+	}
+	
+	// called by OSGi-DS
+	public static void bindPeerDictionary(IPeerDictionary serv) {
+		peerDictionary = serv;
+	}
+
+	// called by OSGi-DS
+	public static void unbindPeerDictionary(IPeerDictionary serv) {
+		if (peerDictionary == serv) {
+			peerDictionary = null;
 		}
 	}
 
@@ -388,7 +402,7 @@ public class QueryPartSender implements IPeerCommunicatorListener {
 		if (LOG.isDebugEnabled()) {
 			LOG.debug("Response results: ");
 			for (Integer qpid : sendResultMap.keySet()) {
-				LOG.debug("\tQueryPartID {} (Peer {}) : {}", new Object[] { qpid, p2pDictionary.getRemotePeerName(sendDestinationMap.get(qpid)), sendResultMap.get(qpid) });
+				LOG.debug("\tQueryPartID {} (Peer {}) : {}", new Object[] { qpid, peerDictionary.getRemotePeerName(sendDestinationMap.get(qpid)), sendResultMap.get(qpid) });
 			}
 		}
 
@@ -405,7 +419,7 @@ public class QueryPartSender implements IPeerCommunicatorListener {
 			if (LOG.isErrorEnabled()) {
 				LOG.error("Could not distribute the query parts since peers are not reachable");
 				for (PeerID missingPeer : missingPeers) {
-					LOG.error("\t{} : {}", p2pDictionary.getRemotePeerName(missingPeer), missingPeer);
+					LOG.error("\t{} : {}", peerDictionary.getRemotePeerName(missingPeer), missingPeer);
 				}
 			}
 
@@ -429,7 +443,7 @@ public class QueryPartSender implements IPeerCommunicatorListener {
 			if (LOG.isErrorEnabled()) {
 				LOG.error("Could not distribute the query since peers could not execute/add its query part:");
 				for (int index = 0; index < faultyPeers.size(); index++) {
-					LOG.error("\t{}: {}", p2pDictionary.getRemotePeerName(faultyPeers.get(index)), faultMessages.get(index));
+					LOG.error("\t{}: {}", peerDictionary.getRemotePeerName(faultyPeers.get(index)), faultMessages.get(index));
 				}
 			}
 
@@ -448,7 +462,7 @@ public class QueryPartSender implements IPeerCommunicatorListener {
 			if (!sendPeerIDs.contains(destination)) {
 				sendPeerIDs.add(destination);
 
-				LOG.debug("Send abort to peer '{}'", p2pDictionary.getRemotePeerName(destination));
+				LOG.debug("Send abort to peer '{}'", peerDictionary.getRemotePeerName(destination));
 
 				RepeatingMessageSend abortSender = new RepeatingMessageSend(peerCommunicator, new AbortQueryPartAddMessage(sharedQueryID), destination);
 				abortSenderMap.put(new PeerIDSharedQueryIDPair(destination, sharedQueryID), abortSender);

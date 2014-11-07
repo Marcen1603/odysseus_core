@@ -28,6 +28,7 @@ import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicatorListener;
 import de.uniol.inf.is.odysseus.p2p_new.PeerCommunicationException;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.IP2PDictionary;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.P2PDictionaryAdapter;
+import de.uniol.inf.is.odysseus.p2p_new.dictionary.impl.PeerDictionary;
 import de.uniol.inf.is.odysseus.p2p_new.provider.JxtaServicesProvider;
 
 public class EndpointPeerCommunicator extends P2PDictionaryAdapter implements IPeerCommunicator, EndpointListener {
@@ -203,7 +204,7 @@ public class EndpointPeerCommunicator extends P2PDictionaryAdapter implements IP
 					}
 				}
 			} else {
-				LOG.warn("Got message with too few bytes from " + p2pDictionary.getRemotePeerName(pid));
+				LOG.warn("Got message with too few bytes from " + PeerDictionary.getInstance().getRemotePeerName(pid));
 			}
 		} catch( Throwable t ) {
 			LOG.error("Exception during processing incoming message", t);

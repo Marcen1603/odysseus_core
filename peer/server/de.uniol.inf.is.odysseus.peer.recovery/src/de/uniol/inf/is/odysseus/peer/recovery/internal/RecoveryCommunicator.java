@@ -22,7 +22,7 @@ import de.uniol.inf.is.odysseus.p2p_new.IP2PNetworkManager;
 import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicator;
 import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicatorListener;
 import de.uniol.inf.is.odysseus.p2p_new.PeerCommunicationException;
-import de.uniol.inf.is.odysseus.p2p_new.dictionary.IP2PDictionary;
+import de.uniol.inf.is.odysseus.p2p_new.dictionary.IPeerDictionary;
 import de.uniol.inf.is.odysseus.peer.distribute.message.RemoveQueryMessage;
 import de.uniol.inf.is.odysseus.peer.recovery.IP2PNetworkController;
 import de.uniol.inf.is.odysseus.peer.recovery.IP2PNetworkController.IP2PNetworkControllerListener;
@@ -108,56 +108,58 @@ public class RecoveryCommunicator implements IRecoveryCommunicator, IPeerCommuni
 	}
 
 	/**
-	 * The P2P dictionary, if there is one bound.
+	 * The Peer dictionary, if there is one bound.
 	 */
-	private static Optional<IP2PDictionary> cP2PDictionary = Optional.absent();
+	private static Optional<IPeerDictionary> cPeerDictionary = Optional.absent();
 
 	/**
-	 * Binds a P2P dictionary. <br />
+	 * Binds a Peer dictionary. <br />
 	 * Called by OSGi-DS.
 	 * 
 	 * @param serv
-	 *            The P2P dictionary to bind. <br />
+	 *            The Peer dictionary to bind. <br />
 	 *            Must be not null.
 	 */
-	public static void bindP2PDictionary(IP2PDictionary serv) {
+	public static void bindPeerDictionary(IPeerDictionary serv) {
 
 		Preconditions.checkNotNull(serv);
-		cP2PDictionary = Optional.of(serv);
-		LOG.debug("Bound {} as a P2P dictionary.", serv.getClass().getSimpleName());
+		cPeerDictionary = Optional.of(serv);
+		LOG.debug("Bound {} as a Peer dictionary.", serv.getClass()
+				.getSimpleName());
 
 	}
 
 	/**
-	 * Unbinds a P2P dictionary, if it's the bound one. <br />
+	 * Unbinds a Peer dictionary, if it's the bound one. <br />
 	 * Called by OSGi-DS.
 	 * 
 	 * @param serv
-	 *            The P2P dictionary to unbind. <br />
+	 *            The Peer dictionary to unbind. <br />
 	 *            Must be not null.
 	 */
-	public static void unbindP2PDictionary(IP2PDictionary serv) {
+	public static void unbindPeerDictionary(IPeerDictionary serv) {
 
 		Preconditions.checkNotNull(serv);
 
-		if (cP2PDictionary.isPresent() && cP2PDictionary.get() == serv) {
+		if (cPeerDictionary.isPresent() && cPeerDictionary.get() == serv) {
 
-			cP2PDictionary = Optional.absent();
-			LOG.debug("Unbound {} as a P2P dictionary.", serv.getClass().getSimpleName());
+			cPeerDictionary = Optional.absent();
+			LOG.debug("Unbound {} as a Peer dictionary.", serv.getClass()
+					.getSimpleName());
 
 		}
 
 	}
 
 	/**
-	 * Gets the P2P dictionary.
+	 * Gets the Peer dictionary.
 	 * 
-	 * @return The bound P2P dictionary or {@link Optional#absent()}, if there
+	 * @return The bound Peer dictionary or {@link Optional#absent()}, if there
 	 *         is none bound.
 	 */
-	public static Optional<IP2PDictionary> getP2PDictionary() {
+	public static Optional<IPeerDictionary> getPeerDictionary() {
 
-		return cP2PDictionary;
+		return cPeerDictionary;
 
 	}
 
@@ -469,7 +471,7 @@ public class RecoveryCommunicator implements IRecoveryCommunicator, IPeerCommuni
 	@Override
 	public void sendRecoveryAgreementMessage(PeerID failedPeer, ID sharedQueryId) {
 
-		if (!cP2PDictionary.isPresent()) {
+		if (!cPeerDictionary.isPresent()) {
 
 			LOG.error("No P2P dictionary bound!");
 			return;
@@ -479,7 +481,7 @@ public class RecoveryCommunicator implements IRecoveryCommunicator, IPeerCommuni
 		// Send this to all other peers we know
 		RecoveryAgreementMessage message = RecoveryAgreementMessage.createRecoveryAgreementMessage(failedPeer,
 				sharedQueryId);
-		for (PeerID destinationPeer : cP2PDictionary.get().getRemotePeerIDs())
+		for (PeerID destinationPeer : cPeerDictionary.get().getRemotePeerIDs())
 			sendMessage(destinationPeer, message);
 	}
 
@@ -505,17 +507,14 @@ public class RecoveryCommunicator implements IRecoveryCommunicator, IPeerCommuni
 			LOG.error("No P2P network manager bound!");
 			return;
 
-		} else if (!cP2PDictionary.isPresent()) {
+		} else if (!cPeerDictionary.isPresent()) {
 
 			LOG.error("No P2P dictionary bound!");
 			return;
 
 		}
-
-		// TODO Use a buddy-allocator? For now, we just choose the first peer we
-		// know
-		// 1. Choose buddy
-		PeerID buddy = cP2PDictionary.get().getRemotePeerIDs().iterator().next();
+		
+		PeerID buddy = cPeerDictionary.get().getRemotePeerIDs().iterator().next();
 
 		// 2. Get the necessary backup-information
 		ImmutableCollection<String> infos = LocalBackupInformationAccess.getLocalPQL(sharedQueryId);

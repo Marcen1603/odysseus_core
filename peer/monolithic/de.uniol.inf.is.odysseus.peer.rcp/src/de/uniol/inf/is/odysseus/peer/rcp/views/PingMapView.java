@@ -120,7 +120,7 @@ public class PingMapView extends ViewPart implements PaintListener, MouseMoveLis
 
 	private static Collection<IPingMapNode> collectNodes(IPingMap pingMap) {
 		Collection<IPingMapNode> nodes = Lists.newArrayList(); 
-		for( PeerID peerID : RCPP2PNewPlugIn.getP2PDictionary().getRemotePeerIDs()) {
+		for( PeerID peerID : RCPP2PNewPlugIn.getPeerDictionary().getRemotePeerIDs()) {
 			Optional<IPingMapNode> optNode = pingMap.getNode(peerID);
 			if( optNode.isPresent() ) {
 				nodes.add(optNode.get());
@@ -138,7 +138,7 @@ public class PingMapView extends ViewPart implements PaintListener, MouseMoveLis
 	}
 
 	private static String determinePeerName(IPingMapNode node) {
-		return RCPP2PNewPlugIn.getP2PDictionary().getRemotePeerName(node.getPeerID());
+		return RCPP2PNewPlugIn.getPeerDictionary().getRemotePeerName(node.getPeerID());
 	}
 
 	private static Map<Vector3D, String> shiftPoints(Vector3D localPoint, Map<Vector3D, String> points) {

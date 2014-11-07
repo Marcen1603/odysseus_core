@@ -6,16 +6,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import com.google.common.collect.UnmodifiableIterator;
-
 import net.jxta.document.Advertisement;
 import net.jxta.document.AdvertisementFactory;
 import net.jxta.peer.PeerID;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import com.google.common.collect.UnmodifiableIterator;
 
 import de.uniol.inf.is.odysseus.p2p_new.IAdvertisementDiscovererListener;
 import de.uniol.inf.is.odysseus.p2p_new.IMessage;
@@ -24,6 +24,7 @@ import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicator;
 import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicatorListener;
 import de.uniol.inf.is.odysseus.p2p_new.PeerCommunicationException;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.IP2PDictionary;
+import de.uniol.inf.is.odysseus.p2p_new.dictionary.IPeerDictionary;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.SourceAdvertisement;
 import de.uniol.inf.is.odysseus.parser.pql.generator.IPQLGenerator;
 import de.uniol.inf.is.odysseus.peer.smarthome.SmartDeviceMessage;
@@ -51,6 +52,7 @@ public class SmartDeviceServerDictionaryDiscovery implements
 	private IPeerCommunicator peerCommunicator;
 	private static IPQLGenerator pqlGenerator;
 	private static IP2PDictionary p2pDictionary;
+	private static IPeerDictionary peerDictionary;
 	private static IP2PNetworkManager p2pNetworkManager;
 	private static ArrayList<PeerID> foundPeerIDs = new ArrayList<PeerID>();
 	private static Collection<PeerID> refreshing = Lists.newLinkedList();
@@ -418,7 +420,7 @@ public class SmartDeviceServerDictionaryDiscovery implements
 
 	public static ArrayList<PeerID> getFoundPeerIDs() {
 		ArrayList<PeerID> foundPeerIDArray = Lists.newArrayList();
-		foundPeerIDArray.addAll(getP2PDictionary().getRemotePeerIDs());
+		foundPeerIDArray.addAll(getPeerDictionary().getRemotePeerIDs());
 		return foundPeerIDArray;
 	}
 
@@ -449,10 +451,10 @@ public class SmartDeviceServerDictionaryDiscovery implements
 	public static void refreshFoundPeerIDs() {
 		Collection<PeerID> foundPeerIDsCopy = null;
 		if (foundPeerIDs != null && p2pDictionary != null
-				&& p2pDictionary.getRemotePeerIDs() != null) {
+				&& peerDictionary.getRemotePeerIDs() != null) {
 			synchronized (foundPeerIDs) {
 				foundPeerIDs.clear();
-				foundPeerIDs.addAll(p2pDictionary.getRemotePeerIDs());
+				foundPeerIDs.addAll(peerDictionary.getRemotePeerIDs());
 				foundPeerIDsCopy = Lists.newArrayList(foundPeerIDs);
 			}
 
@@ -585,6 +587,20 @@ public class SmartDeviceServerDictionaryDiscovery implements
 	public void unbindP2PDictionary(IP2PDictionary serv) {
 		if (p2pDictionary == serv) {
 			p2pDictionary = null;
+		}
+	}
+	
+	private static IPeerDictionary getPeerDictionary() {
+		return peerDictionary;
+	}
+
+	public void bindPeerDictionary(IPeerDictionary serv) {
+		peerDictionary = serv;
+	}
+
+	public void unbindPeerDictionary(IPeerDictionary serv) {
+		if (peerDictionary == serv) {
+			peerDictionary = null;
 		}
 	}
 

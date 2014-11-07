@@ -4,30 +4,31 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+import net.jxta.peer.PeerID;
+
 import com.google.common.base.Optional;
 import com.google.common.collect.Maps;
 
-import net.jxta.peer.PeerID;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.QueryBuildConfiguration;
-import de.uniol.inf.is.odysseus.p2p_new.dictionary.IP2PDictionary;
+import de.uniol.inf.is.odysseus.p2p_new.dictionary.IPeerDictionary;
 import de.uniol.inf.is.odysseus.peer.distribute.ILogicalQueryPart;
 import de.uniol.inf.is.odysseus.peer.distribute.IQueryPartAllocator;
 import de.uniol.inf.is.odysseus.peer.distribute.QueryPartAllocationException;
 
 public class DirectAllocator implements IQueryPartAllocator {
 
-	private static IP2PDictionary p2pDictionary;
+	private static IPeerDictionary peerDictionary;
 
 	// called by OSGi-DS
-	public static void bindP2PDictionary(IP2PDictionary serv) {
-		p2pDictionary = serv;
+	public static void bindPeerDictionary(IPeerDictionary serv) {
+		peerDictionary = serv;
 	}
 
 	// called by OSGi-DS
-	public static void unbindP2PDictionary(IP2PDictionary serv) {
-		if (p2pDictionary == serv) {
-			p2pDictionary = null;
+	public static void unbindPeerDictionary(IPeerDictionary serv) {
+		if (peerDictionary == serv) {
+			peerDictionary = null;
 		}
 	}
 
@@ -66,8 +67,8 @@ public class DirectAllocator implements IQueryPartAllocator {
 	}
 
 	private static Optional<PeerID> determineRemotePeerID(String peerName) {
-		for (PeerID peerID : p2pDictionary.getRemotePeerIDs()) {
-			if (p2pDictionary.getRemotePeerName(peerID).equals(peerName)) {
+		for (PeerID peerID : peerDictionary.getRemotePeerIDs()) {
+			if (peerDictionary.getRemotePeerName(peerID).equals(peerName)) {
 				return Optional.of(peerID);
 			}
 		}

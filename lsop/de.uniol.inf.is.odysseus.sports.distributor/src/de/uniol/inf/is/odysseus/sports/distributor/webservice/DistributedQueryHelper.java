@@ -9,13 +9,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import net.jxta.document.AdvertisementFactory;
 import net.jxta.id.ID;
 import net.jxta.id.IDFactory;
 import net.jxta.peer.PeerID;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.uniol.inf.is.odysseus.core.collection.Context;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
@@ -29,7 +30,7 @@ import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.p2p_new.IJxtaServicesProvider;
 import de.uniol.inf.is.odysseus.p2p_new.IP2PNetworkListener;
 import de.uniol.inf.is.odysseus.p2p_new.IP2PNetworkManager;
-import de.uniol.inf.is.odysseus.p2p_new.dictionary.IP2PDictionary;
+import de.uniol.inf.is.odysseus.p2p_new.dictionary.IPeerDictionary;
 import de.uniol.inf.is.odysseus.p2p_new.logicaloperator.JxtaSenderAO;
 import de.uniol.inf.is.odysseus.p2p_new.physicaloperator.JxtaSenderPO;
 import de.uniol.inf.is.odysseus.peer.distribute.ILogicalQueryPart;
@@ -44,7 +45,7 @@ import de.uniol.inf.is.odysseus.rest.service.RestService;
  *
  */
 public class DistributedQueryHelper {
-	private static IP2PDictionary p2pDictionary;
+	private static IPeerDictionary peerDictionary;
 	private static IQueryPartController queryPartController;
 	private static IServerExecutor serverExecutor;
 	private static IP2PNetworkManager p2pNetworkManager;
@@ -119,13 +120,13 @@ public class DistributedQueryHelper {
 	
 
 	// called by OSGi-DS
-	public static void bindP2PDictionary(IP2PDictionary serv) {
-		p2pDictionary = serv;
+	public static void bindPeerDictionary(IPeerDictionary serv) {
+		peerDictionary = serv;
 	}
 
 	// called by OSGi-DS
-	public static void unbindP2PDictionary(IP2PDictionary serv) {
-		p2pDictionary = null;
+	public static void unbindPeerDictionary(IPeerDictionary serv) {
+		peerDictionary = null;
 	}
 
 	// called by OSGi-DS
@@ -135,7 +136,7 @@ public class DistributedQueryHelper {
 	}
 
 	public static void unbindP2PNetworkManager(IP2PNetworkManager serv) {
-		p2pDictionary = null;
+		peerDictionary = null;
 	}
 
 	// called by OSGi-DS
@@ -206,7 +207,7 @@ public class DistributedQueryHelper {
 				for (ILogicalOperator op : entry.getKey().getOperators()) {
 					if (op.getSubscriptions().size() == 0 && !(op instanceof JxtaSenderAO) || (op.getSubscriptions().size() ==1 && op.getSubscriptions().iterator().next().getTarget() instanceof TopAO)) {
 						DistributedQueryInfo info = new DistributedQueryInfo();
-						String address = p2pDictionary.getRemotePeerAddress(entry.getValue()).orNull();
+						String address = peerDictionary.getRemotePeerAddress(entry.getValue()).orNull();
 						String ip = removePort(address);
 						String sharedQueryIdString = sharedQueryId.toURI().toString();
 						Integer port = webserviceAdvListener.getRestPort(entry.getValue());
@@ -252,7 +253,7 @@ public class DistributedQueryHelper {
 	}
 
 	public static boolean isDistributionPossible() {
-		return p2pDictionary.getRemotePeerIDs().size()>0;
+		return peerDictionary.getRemotePeerIDs().size()>0;
 	}
 	
 	

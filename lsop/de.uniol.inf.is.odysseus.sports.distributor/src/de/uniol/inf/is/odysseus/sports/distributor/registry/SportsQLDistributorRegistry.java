@@ -1,6 +1,7 @@
 package de.uniol.inf.is.odysseus.sports.distributor.registry;
 
 import java.util.Map;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.slf4j.Logger;
@@ -8,7 +9,7 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Maps;
 
-import de.uniol.inf.is.odysseus.p2p_new.dictionary.IP2PDictionary;
+import de.uniol.inf.is.odysseus.p2p_new.dictionary.IPeerDictionary;
 import de.uniol.inf.is.odysseus.sports.distributor.helper.DistributionConfigBuildHelper;
 import de.uniol.inf.is.odysseus.sports.distributor.helper.enums.Parser;
 import de.uniol.inf.is.odysseus.sports.distributor.impl.ISportsQLDistributor;
@@ -29,15 +30,15 @@ public class SportsQLDistributorRegistry {
 
 	private static Map<String, ISportsQLDistributor> sportsQLDistributorMap = Maps
 			.newHashMap();
-	private static IP2PDictionary p2pDictionary;
+	private static IPeerDictionary peerDictionary;
 
-	public static void bindP2PDictionary(IP2PDictionary dictionary) {
-		p2pDictionary = dictionary;
+	public static void bindPeerDictionary(IPeerDictionary dictionary) {
+		peerDictionary = dictionary;
 	}
 
-	public static void unbindP2PDictionary(IP2PDictionary dictionary) {
-		if (p2pDictionary == dictionary) {
-			p2pDictionary = null;
+	public static void unbindPeerDictionary(IPeerDictionary dictionary) {
+		if (peerDictionary == dictionary) {
+			peerDictionary = null;
 		}
 	}
 
@@ -96,7 +97,7 @@ public class SportsQLDistributorRegistry {
 		}
 
 		// check if any peer is online
-		if (p2pDictionary.getRemotePeerIDs().size() > 0) {
+		if (peerDictionary.getRemotePeerIDs().size() > 0) {
 			if (!sportsQLDistributorMap.containsKey(type + "_" + game + "_"
 					+ name)) {
 				logger.info("Distributor for: " + type + "_" + game + "_"

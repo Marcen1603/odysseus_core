@@ -15,7 +15,7 @@ import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicatorListener;
 import de.uniol.inf.is.odysseus.p2p_new.RepeatingMessageSend;
 import de.uniol.inf.is.odysseus.p2p_new.data.AbstractTransmissionReceiver;
 import de.uniol.inf.is.odysseus.p2p_new.data.DataTransmissionException;
-import de.uniol.inf.is.odysseus.p2p_new.dictionary.impl.P2PDictionary;
+import de.uniol.inf.is.odysseus.p2p_new.dictionary.impl.PeerDictionary;
 
 public class EndpointDataTransmissionReceiver extends AbstractTransmissionReceiver implements IPeerCommunicatorListener {
 
@@ -74,7 +74,7 @@ public class EndpointDataTransmissionReceiver extends AbstractTransmissionReceiv
 		} else if (message instanceof OpenAckMessage) {
 			OpenAckMessage msg = (OpenAckMessage) message;
 			if (msg.getIdHash() == idHash) {
-				LOG.debug("Got open ack from '{}'", P2PDictionary.getInstance().getRemotePeerName(senderPeer));
+				LOG.debug("Got open ack from '{}'", PeerDictionary.getInstance().getRemotePeerName(senderPeer));
 
 				if( openRepeater != null ) {
 					openRepeater.stopRunning();
@@ -84,7 +84,7 @@ public class EndpointDataTransmissionReceiver extends AbstractTransmissionReceiv
 		} else if (message instanceof CloseAckMessage) {
 			CloseAckMessage msg = (CloseAckMessage) message;
 			if (msg.getIdHash() == idHash) {
-				LOG.debug("Got close ack from '{}'", P2PDictionary.getInstance().getRemotePeerName(senderPeer));
+				LOG.debug("Got close ack from '{}'", PeerDictionary.getInstance().getRemotePeerName(senderPeer));
 
 				if( closeRepeater != null ) {
 					closeRepeater.stopRunning();
@@ -96,7 +96,7 @@ public class EndpointDataTransmissionReceiver extends AbstractTransmissionReceiv
 
 	@Override
 	public void sendOpen() throws DataTransmissionException {
-		LOG.debug("Send open to peer '{}'", P2PDictionary.getInstance().getRemotePeerName(pid));
+		LOG.debug("Send open to peer '{}'", PeerDictionary.getInstance().getRemotePeerName(pid));
 		final OpenMessage openMessage = new OpenMessage(idHash);
 
 		openRepeater = new RepeatingMessageSend(peerCommunicator, openMessage, pid);
@@ -105,7 +105,7 @@ public class EndpointDataTransmissionReceiver extends AbstractTransmissionReceiv
 
 	@Override
 	public void sendClose() throws DataTransmissionException {
-		LOG.debug("Send close to peer '{}'", P2PDictionary.getInstance().getRemotePeerName(pid));
+		LOG.debug("Send close to peer '{}'", PeerDictionary.getInstance().getRemotePeerName(pid));
 
 		CloseMessage closeMessage = new CloseMessage(idHash);
 		closeRepeater = new RepeatingMessageSend(peerCommunicator, closeMessage, pid);

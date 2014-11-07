@@ -13,7 +13,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
-import de.uniol.inf.is.odysseus.p2p_new.dictionary.IP2PDictionary;
+import de.uniol.inf.is.odysseus.p2p_new.dictionary.IPeerDictionary;
 import de.uniol.inf.is.odysseus.peer.distribute.ILogicalQueryPart;
 import de.uniol.inf.is.odysseus.peer.distribute.QueryPartAllocationException;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.ILoadBalancingAllocator;
@@ -104,7 +104,7 @@ public abstract class AbstractRoundRobinAllocator implements ILoadBalancingAlloc
 			Collection<ILogicalQueryPart> queryParts, 
 			List<PeerID> peerIDs) {
 		
-		IP2PDictionary peerDictionary = Activator.getPeerDictionary().get();
+		IPeerDictionary peerDictionary = Activator.getPeerDictionary().get();
 		int peerIDIndex = 0;		
 		Map<ILogicalQueryPart, PeerID> allocationMap = Maps.newHashMap();
 		
@@ -184,7 +184,7 @@ public abstract class AbstractRoundRobinAllocator implements ILoadBalancingAlloc
 	 */
 	private static void logPeers(Collection<PeerID> peerIDs) {
 		
-		IP2PDictionary peerDictionary = Activator.getPeerDictionary().get();
+		IPeerDictionary peerDictionary = Activator.getPeerDictionary().get();
 		
 		if(peerIDs == null || peerIDs.isEmpty()) {
 			

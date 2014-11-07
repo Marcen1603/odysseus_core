@@ -22,7 +22,7 @@ import de.uniol.inf.is.odysseus.p2p_new.data.DataTransmissionException;
 import de.uniol.inf.is.odysseus.p2p_new.data.endpoint.CloseMessage;
 import de.uniol.inf.is.odysseus.p2p_new.data.endpoint.EndpointDataTransmissionSender;
 import de.uniol.inf.is.odysseus.p2p_new.data.endpoint.OpenMessage;
-import de.uniol.inf.is.odysseus.p2p_new.dictionary.impl.P2PDictionary;
+import de.uniol.inf.is.odysseus.p2p_new.dictionary.impl.PeerDictionary;
 import de.uniol.inf.is.odysseus.p2p_new.util.ObjectByteConverter;
 
 public class SocketDataTransmissionSender extends EndpointDataTransmissionSender {
@@ -55,12 +55,12 @@ public class SocketDataTransmissionSender extends EndpointDataTransmissionSender
 					ServerSocket serverSocket = new ServerSocket(0);
 					serverSocketMap.put(senderPeer, serverSocket);
 
-					LOG.debug("Opened (unaccepted) server socket for {} on port {}.", P2PDictionary.getInstance()
+					LOG.debug("Opened (unaccepted) server socket for {} on port {}.", PeerDictionary.getInstance()
 							.getRemotePeerName(senderPeer), serverSocket.getLocalPort());
 					sendPortMessage(serverSocket.getLocalPort(), senderPeer);
 					Socket clientSocket = serverSocket.accept();
 					LOG.debug("Server socket on port {} was accepted from peer {}", serverSocket.getLocalPort(),
-							P2PDictionary.getInstance().getRemotePeerName(senderPeer));
+							PeerDictionary.getInstance().getRemotePeerName(senderPeer));
 					clientSocketMap.put(senderPeer, clientSocket);
 
 				} catch (IOException e) {
@@ -79,7 +79,7 @@ public class SocketDataTransmissionSender extends EndpointDataTransmissionSender
 		// Repeat this message until we get an PortAckMessage
 		portMessageRepeater = new RepeatingMessageSend(peerCommunicator, msg, senderPeer);
 		portMessageRepeater.start();
-		LOG.debug("Startet to send port-messages for port " + msg.getPort() + " to {}", P2PDictionary.getInstance()
+		LOG.debug("Startet to send port-messages for port " + msg.getPort() + " to {}", PeerDictionary.getInstance()
 				.getRemotePeerName(senderPeer));
 	}
 
@@ -91,7 +91,7 @@ public class SocketDataTransmissionSender extends EndpointDataTransmissionSender
 				if (portMessageRepeater != null) {
 					if (portAckMessage.getId() == getId() && portMessageRepeater != null) {
 						LOG.debug("Received portAckMessage for port " + portAckMessage.getPort() + "  from {}",
-								P2PDictionary.getInstance().getRemotePeerName(senderPeer));
+								PeerDictionary.getInstance().getRemotePeerName(senderPeer));
 						portMessageRepeater.stopRunning();
 						portMessageRepeater = null;
 					}

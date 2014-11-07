@@ -9,7 +9,7 @@ import net.jxta.peer.PeerID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniol.inf.is.odysseus.p2p_new.dictionary.IP2PDictionary;
+import de.uniol.inf.is.odysseus.p2p_new.dictionary.IPeerDictionary;
 import de.uniol.inf.is.odysseus.peer.distribute.ILogicalQueryPart;
 import de.uniol.inf.is.odysseus.peer.distribute.IQueryDistributionPostProcessor;
 import de.uniol.inf.is.odysseus.peer.distribute.IQueryDistributionPreProcessor;
@@ -66,11 +66,11 @@ public final class LoggingHelper {
 		}
 	}
 
-	public static void printAllocationMap(Map<ILogicalQueryPart, PeerID> allocationMap, IP2PDictionary p2pDictionary) {
+	public static void printAllocationMap(Map<ILogicalQueryPart, PeerID> allocationMap, IPeerDictionary peerDictionary) {
 		if( LOG.isDebugEnabled() ) {
 			for (ILogicalQueryPart part : allocationMap.keySet()) {
 				PeerID allocatedPeerID = allocationMap.get(part);
-				LOG.debug("Allocated query part {} --> {}", part, p2pDictionary.getRemotePeerName(allocatedPeerID));
+				LOG.debug("Allocated query part {} --> {}", part, peerDictionary.getRemotePeerName(allocatedPeerID));
 			}
 		}
 	}

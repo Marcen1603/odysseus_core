@@ -15,7 +15,7 @@ import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.QueryBuildConfiguration;
 import de.uniol.inf.is.odysseus.p2p_new.IP2PNetworkManager;
-import de.uniol.inf.is.odysseus.p2p_new.dictionary.IP2PDictionary;
+import de.uniol.inf.is.odysseus.p2p_new.dictionary.IPeerDictionary;
 import de.uniol.inf.is.odysseus.peer.distribute.ILogicalQueryPart;
 import de.uniol.inf.is.odysseus.peer.distribute.IQueryPartAllocator;
 import de.uniol.inf.is.odysseus.peer.distribute.QueryPartAllocationException;
@@ -24,30 +24,30 @@ public class UserAllocator implements IQueryPartAllocator {
 
 	private static final Random random = new Random(0);
 	
-	private static IP2PDictionary p2pDictionary;
-	private static IP2PNetworkManager p2pNetworkManager;
+	private static IPeerDictionary peerDictionary;
+	private static IP2PNetworkManager peerNetworkManager;
 
 	// called by OSGi-DS
-	public static void bindP2PDictionary(IP2PDictionary serv) {
-		p2pDictionary = serv;
+	public static void bindPeerDictionary(IPeerDictionary serv) {
+		peerDictionary = serv;
 	}
 
 	// called by OSGi-DS
-	public static void unbindP2PDictionary(IP2PDictionary serv) {
-		if (p2pDictionary == serv) {
-			p2pDictionary = null;
+	public static void unbindPeerDictionary(IPeerDictionary serv) {
+		if (peerDictionary == serv) {
+			peerDictionary = null;
 		}
 	}
 
 	// called by OSGi-DS
 	public static void bindP2PNetworkManager(IP2PNetworkManager serv) {
-		p2pNetworkManager = serv;
+		peerNetworkManager = serv;
 	}
 
 	// called by OSGi-DS
 	public static void unbindP2PNetworkManager(IP2PNetworkManager serv) {
-		if (p2pNetworkManager == serv) {
-			p2pNetworkManager = null;
+		if (peerNetworkManager == serv) {
+			peerNetworkManager = null;
 		}
 	}
 	
@@ -60,7 +60,7 @@ public class UserAllocator implements IQueryPartAllocator {
 	public Map<ILogicalQueryPart, PeerID> allocate(Collection<ILogicalQueryPart> queryParts, ILogicalQuery query, Collection<PeerID> knownRemotePeers, PeerID localPeerID, QueryBuildConfiguration config, List<String> allocatorParameters) throws QueryPartAllocationException {
 		
 		Map<String, PeerID> peerNameMap = determinePeerNames();
-		peerNameMap.put(p2pNetworkManager.getLocalPeerName(), localPeerID);
+		peerNameMap.put(peerNetworkManager.getLocalPeerName(), localPeerID);
 		peerNameMap.put("local", localPeerID);
 		
 		return userAllocationImpl(queryParts, localPeerID, peerNameMap);
@@ -70,7 +70,7 @@ public class UserAllocator implements IQueryPartAllocator {
 	public Map<ILogicalQueryPart, PeerID> reallocate(Map<ILogicalQueryPart, PeerID> previousAllocationMap, Collection<PeerID> faultyPeers, Collection<PeerID> knownRemotePeers, PeerID localPeerID, QueryBuildConfiguration config, List<String> allocatorParameters) throws QueryPartAllocationException {
 
 		Map<String, PeerID> peerNameMap = determinePeerNames();
-		peerNameMap.put(p2pNetworkManager.getLocalPeerName(), localPeerID);
+		peerNameMap.put(peerNetworkManager.getLocalPeerName(), localPeerID);
 		peerNameMap.put("local", localPeerID);
 		
 		for( String peerName : peerNameMap.keySet().toArray(new String[0]) ) {
@@ -102,11 +102,11 @@ public class UserAllocator implements IQueryPartAllocator {
 	}
 
 	private static Map<String, PeerID> determinePeerNames() {
-		Collection<PeerID> remotePeerIDs = p2pDictionary.getRemotePeerIDs();
+		Collection<PeerID> remotePeerIDs = peerDictionary.getRemotePeerIDs();
 
 		Map<String, PeerID> peerNameMap = Maps.newHashMap();
 		for( PeerID remotePeerID : remotePeerIDs ) {
-			String peerName = p2pDictionary.getRemotePeerName(remotePeerID);
+			String peerName = peerDictionary.getRemotePeerName(remotePeerID);
 			if( !peerName.equals("<unknown>") ) {
 				peerNameMap.put(peerName, remotePeerID);
 			}

@@ -39,6 +39,7 @@ import com.google.common.collect.Maps;
 
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.IP2PDictionary;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.IP2PDictionaryListener;
+import de.uniol.inf.is.odysseus.p2p_new.dictionary.IPeerDictionary;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.SourceAdvertisement;
 import de.uniol.inf.is.odysseus.p2p_new.util.RepeatingJobThread;
 import de.uniol.inf.is.odysseus.peer.rcp.RCPP2PNewPlugIn;
@@ -58,6 +59,7 @@ public class PeerView extends ViewPart implements IP2PDictionaryListener {
 	private final List<PeerID> foundPeerIDs = Lists.newArrayList();
 
 	private IP2PDictionary p2pDictionary;
+	private IPeerDictionary peerDictionary;
 
 	private TableViewer peersTable;
 	private RepeatingJobThread refresher;
@@ -67,6 +69,7 @@ public class PeerView extends ViewPart implements IP2PDictionaryListener {
 	public void createPartControl(Composite parent) {
 		p2pDictionary = RCPP2PNewPlugIn.getP2PDictionary();
 		p2pDictionary.addListener(this);
+		peerDictionary = RCPP2PNewPlugIn.getPeerDictionary();
 
 		final Composite tableComposite = new Composite(parent, SWT.NONE);
 		final TableColumnLayout tableColumnLayout = new TableColumnLayout();
@@ -115,7 +118,7 @@ public class PeerView extends ViewPart implements IP2PDictionaryListener {
 					}
 					cell.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_GRAY));
 				} else {
-					Optional<String> optAddress = RCPP2PNewPlugIn.getP2PDictionary().getRemotePeerAddress((PeerID) cell.getElement());
+					Optional<String> optAddress = RCPP2PNewPlugIn.getPeerDictionary().getRemotePeerAddress((PeerID) cell.getElement());
 					if (optAddress.isPresent()) {
 						cell.setText(optAddress.get());
 					} else {
@@ -531,7 +534,7 @@ public class PeerView extends ViewPart implements IP2PDictionaryListener {
 		Collection<PeerID> foundPeerIDsCopy = null;
 		synchronized (foundPeerIDs) {
 			foundPeerIDs.clear();
-			foundPeerIDs.addAll(p2pDictionary.getRemotePeerIDs());
+			foundPeerIDs.addAll(peerDictionary.getRemotePeerIDs());
 			foundPeerIDsCopy = Lists.newArrayList(foundPeerIDs);
 		}
 		refreshTableAsync();
@@ -574,7 +577,7 @@ public class PeerView extends ViewPart implements IP2PDictionaryListener {
 			});
 
 			t.setDaemon(true);
-			t.setName("PeerView update for peer " + p2pDictionary.getRemotePeerName(remotePeerID));
+			t.setName("PeerView update for peer " + peerDictionary.getRemotePeerName(remotePeerID));
 			t.start();
 		}
 
@@ -621,7 +624,7 @@ public class PeerView extends ViewPart implements IP2PDictionaryListener {
 		if (isLocalID(id)) {
 			return "<local>";
 		}
-		return p2pDictionary.getRemotePeerName(id);
+		return peerDictionary.getRemotePeerName(id);
 	}
 
 	private Optional<IResourceUsage> determineResourceUsage(PeerID id) {

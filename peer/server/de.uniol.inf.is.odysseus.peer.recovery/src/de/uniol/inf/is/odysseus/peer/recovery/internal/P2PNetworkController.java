@@ -12,7 +12,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 
 import de.uniol.inf.is.odysseus.p2p_new.IP2PNetworkManager;
-import de.uniol.inf.is.odysseus.p2p_new.dictionary.IP2PDictionary;
+import de.uniol.inf.is.odysseus.p2p_new.dictionary.IPeerDictionary;
 import de.uniol.inf.is.odysseus.peer.recovery.IP2PNetworkController;
 
 /**
@@ -95,7 +95,7 @@ public class P2PNetworkController implements IP2PNetworkController {
 		LOG.debug("Bound {} as a P2P network manager.", serv.getClass()
 				.getSimpleName());
 
-		if (!mNetworkObserver.isPresent() && cP2PDictionary.isPresent()) {
+		if (!mNetworkObserver.isPresent() && cPeerDictionary.isPresent()) {
 
 			this.start();
 
@@ -127,23 +127,23 @@ public class P2PNetworkController implements IP2PNetworkController {
 	}
 
 	/**
-	 * The P2P dictionary, if there is one bound.
+	 * The Peer dictionary, if there is one bound.
 	 */
-	private static Optional<IP2PDictionary> cP2PDictionary = Optional.absent();
+	private static Optional<IPeerDictionary> cPeerDictionary = Optional.absent();
 
 	/**
-	 * Binds a P2P dictionary. <br />
+	 * Binds a Peer dictionary. <br />
 	 * Called by OSGi-DS.
 	 * 
 	 * @param serv
-	 *            The P2P dictionary to bind. <br />
+	 *            The Peer dictionary to bind. <br />
 	 *            Must be not null.
 	 */
-	public void bindP2PDictionary(IP2PDictionary serv) {
+	public void bindPeerDictionary(IPeerDictionary serv) {
 
 		Preconditions.checkNotNull(serv);
-		cP2PDictionary = Optional.of(serv);
-		LOG.debug("Bound {} as a P2P dictionary.", serv.getClass()
+		cPeerDictionary = Optional.of(serv);
+		LOG.debug("Bound {} as a Peer dictionary.", serv.getClass()
 				.getSimpleName());
 
 		if (!mNetworkObserver.isPresent() && cP2PNetworkManager.isPresent()) {
@@ -155,21 +155,21 @@ public class P2PNetworkController implements IP2PNetworkController {
 	}
 
 	/**
-	 * Unbinds a P2P dictionary, if it's the bound one. <br />
+	 * Unbinds a Peer dictionary, if it's the bound one. <br />
 	 * Called by OSGi-DS.
 	 * 
 	 * @param serv
-	 *            The P2P dictionary to unbind. <br />
+	 *            The Peer dictionary to unbind. <br />
 	 *            Must be not null.
 	 */
-	public void unbindP2PDictionary(IP2PDictionary serv) {
+	public void unbindPeerDictionary(IPeerDictionary serv) {
 
 		Preconditions.checkNotNull(serv);
 
-		if (cP2PDictionary.isPresent() && cP2PDictionary.get() == serv) {
+		if (cPeerDictionary.isPresent() && cPeerDictionary.get() == serv) {
 
 			this.stop();
-			cP2PDictionary = Optional.absent();
+			cPeerDictionary = Optional.absent();
 			LOG.debug("Unbound {} as a P2P dictionary.", serv.getClass()
 					.getSimpleName());
 
@@ -244,7 +244,7 @@ public class P2PNetworkController implements IP2PNetworkController {
 		public void run() {
 
 			// Preconditions
-			if (!cP2PDictionary.isPresent()) {
+			if (!cPeerDictionary.isPresent()) {
 
 				LOG.error("No P2P dictionary bound!");
 				return;
@@ -256,13 +256,13 @@ public class P2PNetworkController implements IP2PNetworkController {
 
 			while (this.mActive) {
 
-				if (!cP2PDictionary.isPresent()) {
+				if (!cPeerDictionary.isPresent()) {
 
 					this.mActive = false;
 					break;
 
 				}
-				Collection<PeerID> peerIDs = cP2PDictionary.get()
+				Collection<PeerID> peerIDs = cPeerDictionary.get()
 						.getRemotePeerIDs();
 
 				if (P2PNetworkController.this.mKnownPeerIDs == null) {
@@ -276,13 +276,13 @@ public class P2PNetworkController implements IP2PNetworkController {
 
 						if (!peerIDs.contains(pid)) {
 
-							if (!cP2PDictionary.isPresent()) {
+							if (!cPeerDictionary.isPresent()) {
 
 								this.mActive = false;
 								break;
 
 							}
-							LOG.debug("Lost peer: {}", cP2PDictionary.get()
+							LOG.debug("Lost peer: {}", cPeerDictionary.get()
 									.getRemotePeerName(pid));
 							this.handlePeerLost(pid);
 
@@ -295,13 +295,13 @@ public class P2PNetworkController implements IP2PNetworkController {
 						if (!P2PNetworkController.this.mKnownPeerIDs
 								.contains(pid)) {
 
-							if (!cP2PDictionary.isPresent()) {
+							if (!cPeerDictionary.isPresent()) {
 
 								this.mActive = false;
 								break;
 
 							}
-							LOG.debug("Found new peer: {}", cP2PDictionary
+							LOG.debug("Found new peer: {}", cPeerDictionary
 									.get().getRemotePeerName(pid));
 							this.handleNewPeer(pid);
 

@@ -19,15 +19,15 @@ import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.p2p_new.IP2PNetworkManager;
-import de.uniol.inf.is.odysseus.p2p_new.dictionary.IP2PDictionary;
+import de.uniol.inf.is.odysseus.p2p_new.dictionary.IPeerDictionary;
 import de.uniol.inf.is.odysseus.peer.distribute.ILogicalQueryPart;
 import de.uniol.inf.is.odysseus.peer.distribute.LogicalQueryPart;
 import de.uniol.inf.is.odysseus.peer.distribute.QueryPartAllocationException;
 import de.uniol.inf.is.odysseus.peer.distribute.util.LogicalQueryHelper;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.ILoadBalancingAllocator;
-import de.uniol.inf.is.odysseus.peer.loadbalancing.active.ILoadBalancingStrategy;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.ILoadBalancingCommunicator;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.ILoadBalancingListener;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.active.ILoadBalancingStrategy;
 import de.uniol.inf.is.odysseus.peer.resource.IPeerResourceUsageManager;
 import de.uniol.inf.is.odysseus.peer.resource.IResourceUsage;
 
@@ -184,7 +184,7 @@ public class SimpleLoadBalancingStrategy implements ILoadBalancingStrategy, ILoa
 		 */
 		private PeerID getPeerIDToAllocate(ILogicalQuery query) throws InterruptedException {
 			
-			final IP2PDictionary peerDictionary = Activator.getPeerDictionary().get();
+			final IPeerDictionary peerDictionary = Activator.getPeerDictionary().get();
 			final IP2PNetworkManager networkManager = Activator.getNetworkManager().get();
 			final ImmutableCollection<ILogicalOperator> partOperators = ImmutableList.copyOf(LogicalQueryHelper.getAllOperators(query.getLogicalPlan()));
 			final ILogicalQueryPart queryPart = new LogicalQueryPart(partOperators);

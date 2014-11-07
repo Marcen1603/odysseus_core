@@ -25,7 +25,7 @@ import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvide
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.p2p_new.IP2PNetworkManager;
 import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicator;
-import de.uniol.inf.is.odysseus.p2p_new.dictionary.IP2PDictionary;
+import de.uniol.inf.is.odysseus.p2p_new.dictionary.IPeerDictionary;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.ILoadBalancingAllocator;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.ILoadBalancingCommunicator;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.ILoadBalancingStrategy;
@@ -58,7 +58,7 @@ public class ActiveLoadbalancingConsole implements CommandProvider {
 	/**
 	 * Used to store OSGi Services.
 	 */
-	private static IP2PDictionary p2pDictionary;
+	private static IPeerDictionary peerDictionary;
 	private static IP2PNetworkManager p2pNetworkManager;
 	private static IPeerCommunicator peerCommunicator;
 	private static IServerExecutor executor;
@@ -70,14 +70,14 @@ public class ActiveLoadbalancingConsole implements CommandProvider {
 			.newArrayList();
 
 	// called by OSGi-DS
-	public static void bindP2PDictionary(IP2PDictionary serv) {
-		p2pDictionary = serv;
+	public static void bindPeerDictionary(IPeerDictionary serv) {
+		peerDictionary = serv;
 	}
 
 	// called by OSGi-DS
-	public static void unbindP2PDictionary(IP2PDictionary serv) {
-		if (p2pDictionary == serv) {
-			p2pDictionary = null;
+	public static void unbindPeerDictionary(IPeerDictionary serv) {
+		if (peerDictionary == serv) {
+			peerDictionary = null;
 		}
 	}
 
@@ -388,9 +388,9 @@ public class ActiveLoadbalancingConsole implements CommandProvider {
 			return;
 		}
 
-		Collection<PeerID> peerIDs = p2pDictionary.getRemotePeerIDs();
+		Collection<PeerID> peerIDs = peerDictionary.getRemotePeerIDs();
 		for (PeerID peer : peerIDs) {
-			if (p2pDictionary.getRemotePeerName(peer).equals(peerName)) {
+			if (peerDictionary.getRemotePeerName(peer).equals(peerName)) {
 				String newPipe = MovingStateManager.getInstance().addSender(peer.toString());
 				ci.println("Pipe installed:");
 				ci.println(newPipe);
@@ -477,9 +477,9 @@ public class ActiveLoadbalancingConsole implements CommandProvider {
 			return;
 		}
 
-		Collection<PeerID> peerIDs = p2pDictionary.getRemotePeerIDs();
+		Collection<PeerID> peerIDs = peerDictionary.getRemotePeerIDs();
 		for (PeerID peer : peerIDs) {
-			if (p2pDictionary.getRemotePeerName(peer).equals(peerName)) {
+			if (peerDictionary.getRemotePeerName(peer).equals(peerName)) {
 				MovingStateManager.getInstance().addReceiver(peer.toString(), pipeID);
 				ci.println("Receiver installed");
 				return;

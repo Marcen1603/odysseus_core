@@ -9,6 +9,7 @@ import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.IP2PDictionary;
+import de.uniol.inf.is.odysseus.p2p_new.dictionary.IPeerDictionary;
 
 /**
  * The {@link BundleActivator} for the bundle <code>de.uniol.inf.is.odysseus.peer.loadbalancing.active.allocator.roundrobin</code>.
@@ -22,15 +23,15 @@ public class Activator implements BundleActivator {
 	private static final Logger LOG = LoggerFactory.getLogger(Activator.class);
 	
 	/**
-	 * The {@link IP2PDictionary}.
+	 * The {@link IPeerDictionary}.
 	 */
-	private static IP2PDictionary cPeerDictionary;
+	private static IPeerDictionary cPeerDictionary;
 	
 	/**
 	 * Gets the peer dictionary.
-	 * @return The {@link IP2PDictionary}, if one is bound.
+	 * @return The {@link IPeerDictionary}, if one is bound.
 	 */
-	public static Optional<IP2PDictionary> getPeerDictionary() {
+	public static Optional<IPeerDictionary> getPeerDictionary() {
 		
 		return Optional.fromNullable(Activator.cPeerDictionary);
 		
@@ -39,9 +40,9 @@ public class Activator implements BundleActivator {
 	/**
 	 * Binds a peer dictionary. <br />
 	 * Called by OSGI-DS.
-	 * @param dictionary The implementation of {@link IP2PDictionary} to be bound.
+	 * @param dictionary The implementation of {@link IPeerDictionary} to be bound.
 	 */
-	public static void bindPeerDictionary(IP2PDictionary dictionary) {
+	public static void bindPeerDictionary(IPeerDictionary dictionary) {
 		
 		Preconditions.checkNotNull("The peer dictionary to be bound must be not null!");
 		
@@ -53,9 +54,9 @@ public class Activator implements BundleActivator {
 	/**
 	 * Removes the binding for a peer dictionary. <br />
 	 * Called by OSGI-DS.
-	 * @param dictionary The implementation of {@link IP2PDictionary} to be unbound.
+	 * @param dictionary The implementation of {@link IPeerDictionary} to be unbound.
 	 */
-	public static void unbindPeerDictionary(IP2PDictionary dictionary) {
+	public static void unbindPeerDictionary(IPeerDictionary dictionary) {
 		
 		if(dictionary != null && dictionary.equals(Activator.cPeerDictionary)) {
 			

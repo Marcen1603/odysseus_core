@@ -24,7 +24,7 @@ import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.QueryBuildConfiguration;
 import de.uniol.inf.is.odysseus.costmodel.DetailCost;
 import de.uniol.inf.is.odysseus.p2p_new.IP2PNetworkManager;
-import de.uniol.inf.is.odysseus.p2p_new.dictionary.IP2PDictionary;
+import de.uniol.inf.is.odysseus.p2p_new.dictionary.IPeerDictionary;
 import de.uniol.inf.is.odysseus.peer.distribute.ILogicalQueryPart;
 import de.uniol.inf.is.odysseus.peer.distribute.IQueryPartAllocator;
 import de.uniol.inf.is.odysseus.peer.distribute.QueryPartAllocationException;
@@ -44,7 +44,7 @@ public class SurveyBasedAllocator implements IQueryPartAllocator {
 	private static final Logger LOG = LoggerFactory.getLogger(SurveyBasedAllocator.class);
 
 	private static IP2PNetworkManager p2pNetworkManager;
-	private static IP2PDictionary p2pDictionary;
+	private static IPeerDictionary peerDictionary;
 	private static IPingMap pingMap;
 
 	private Map<ILogicalQueryPart, List<PeerID>> allocationMapResult;
@@ -62,14 +62,14 @@ public class SurveyBasedAllocator implements IQueryPartAllocator {
 	}
 
 	// called by OSGi-DS
-	public static void bindP2PDictionary(IP2PDictionary serv) {
-		p2pDictionary = serv;
+	public static void bindPeerDictionary(IPeerDictionary serv) {
+		peerDictionary = serv;
 	}
 
 	// called by OSGi-DS
-	public static void unbindP2PDictionary(IP2PDictionary serv) {
-		if (p2pDictionary == serv) {
-			p2pDictionary = null;
+	public static void unbindPeerDictionary(IPeerDictionary serv) {
+		if (peerDictionary == serv) {
+			peerDictionary = null;
 		}
 	}
 
@@ -283,7 +283,7 @@ public class SurveyBasedAllocator implements IQueryPartAllocator {
 		for( ILogicalQueryPart queryPart : bidPlanMap.keySet() ) {
 			LOG.debug("\t{}:", queryPart);
 			for( Bid bid : bidPlanMap.get(queryPart)) {
-				LOG.debug("\t\t{}:\t{}", p2pDictionary.getRemotePeerName(bid.getBidderPeerID()), bid.getValue());
+				LOG.debug("\t\t{}:\t{}", peerDictionary.getRemotePeerName(bid.getBidderPeerID()), bid.getValue());
 			}
 		}
 	}

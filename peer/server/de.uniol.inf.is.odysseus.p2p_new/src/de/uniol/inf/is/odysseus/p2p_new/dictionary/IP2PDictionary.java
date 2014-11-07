@@ -2,8 +2,6 @@ package de.uniol.inf.is.odysseus.p2p_new.dictionary;
 
 import java.util.Collection;
 
-import net.jxta.peer.PeerID;
-
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
 
@@ -35,10 +33,5 @@ public interface IP2PDictionary {
 	Optional<SourceAdvertisement> getExportedSource( String viewName );
 	ImmutableList<SourceAdvertisement> getExportedSources();
 	Optional<JxtaSenderAO> getExportingSenderAO( SourceAdvertisement advertisement);
-	
-	Collection<PeerID> getRemotePeerIDs();
-	String getRemotePeerName( PeerID peerID );
-	String getRemotePeerName( String peerIDString );
-	Optional<String> getRemotePeerAddress( PeerID peerID );
 
 }

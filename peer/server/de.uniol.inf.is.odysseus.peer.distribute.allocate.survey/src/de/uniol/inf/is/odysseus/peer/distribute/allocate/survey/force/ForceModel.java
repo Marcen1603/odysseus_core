@@ -20,7 +20,7 @@ import com.google.common.collect.Maps;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.p2p_new.IP2PNetworkManager;
-import de.uniol.inf.is.odysseus.p2p_new.dictionary.IP2PDictionary;
+import de.uniol.inf.is.odysseus.p2p_new.dictionary.IPeerDictionary;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.SourceAdvertisement;
 import de.uniol.inf.is.odysseus.p2p_new.logicaloperator.JxtaReceiverAO;
 import de.uniol.inf.is.odysseus.peer.distribute.ILogicalQueryPart;
@@ -59,7 +59,7 @@ public class ForceModel {
 
 	private static IPingMap pingMap;
 	private static IP2PNetworkManager p2pNetworkManager;
-	private static IP2PDictionary p2pDictionary;
+	private static IPeerDictionary peerDictionary;
 
 	private final ForceNode localForceNode;
 	private final Collection<ForceNode> forceNodes;
@@ -93,14 +93,14 @@ public class ForceModel {
 	}
 
 	// called by OSGi-DS
-	public static void bindP2PDictionary(IP2PDictionary serv) {
-		p2pDictionary = serv;
+	public static void bindPeerDictionary(IPeerDictionary serv) {
+		peerDictionary = serv;
 	}
 
 	// called by OSGi-DS
-	public static void unbindP2PDictionary(IP2PDictionary serv) {
-		if (p2pDictionary == serv) {
-			p2pDictionary = null;
+	public static void unbindPeerDictionary(IPeerDictionary serv) {
+		if (peerDictionary == serv) {
+			peerDictionary = null;
 		}
 	}
 
@@ -160,7 +160,7 @@ public class ForceModel {
 			Collection<Bid> queryPartBids = bids.get(queryPart);
 			Bid bestBid = determineBestBid(queryPartBids);
 			Optional<IPingMapNode> optPingMapNode = pingMap.getNode(bestBid.getBidderPeerID());
-			LOG.debug("Best bid for query part {} is from {}", queryPart, p2pDictionary.getRemotePeerName(bestBid.getBidderPeerID()));
+			LOG.debug("Best bid for query part {} is from {}", queryPart, peerDictionary.getRemotePeerName(bestBid.getBidderPeerID()));
 
 			Vector3D nodePosition = optPingMapNode.isPresent() ? optPingMapNode.get().getPosition() : createRandomVector3D();
 			LOG.debug("Position is {}", toString(nodePosition));
@@ -171,9 +171,9 @@ public class ForceModel {
 	}
 
 	private static void debugNodePositions() {
-		for (PeerID peerID : p2pDictionary.getRemotePeerIDs()) {
+		for (PeerID peerID : peerDictionary.getRemotePeerIDs()) {
 			Vector3D position = pingMap.getNode(peerID).get().getPosition();
-			LOG.debug("Current position of {}: {}", p2pDictionary.getRemotePeerName(peerID), toString(position));
+			LOG.debug("Current position of {}: {}", peerDictionary.getRemotePeerName(peerID), toString(position));
 		}
 		LOG.debug("Current position of {}: {}", p2pNetworkManager.getLocalPeerName(), toString(pingMap.getLocalPosition()));
 	}
@@ -312,7 +312,7 @@ public class ForceModel {
 				Bid oneAndOnlyBid = bidsForQueryPart.iterator().next();
 				result.put(queryPart, Lists.newArrayList(oneAndOnlyBid.getBidderPeerID()));
 
-				LOG.debug("Got only one bid (value={}) from peer {}", oneAndOnlyBid.getValue(), p2pDictionary.getRemotePeerName(oneAndOnlyBid.getBidderPeerID()));
+				LOG.debug("Got only one bid (value={}) from peer {}", oneAndOnlyBid.getValue(), peerDictionary.getRemotePeerName(oneAndOnlyBid.getBidderPeerID()));
 			} else {
 				LOG.debug("Got {} bids for this query part", bidsForQueryPart.size());
 
@@ -329,10 +329,10 @@ public class ForceModel {
 
 	private static Map<PeerID, Vector3D> createPositionMap() {
 		Map<PeerID, Vector3D> positionMap = Maps.newHashMap();
-		for (PeerID peerID : p2pDictionary.getRemotePeerIDs()) {
+		for (PeerID peerID : peerDictionary.getRemotePeerIDs()) {
 			Vector3D position = pingMap.getNode(peerID).get().getPosition();
 			positionMap.put(peerID, position);
-			LOG.debug("Current position of {}: {}", p2pDictionary.getRemotePeerName(peerID), toString(position));
+			LOG.debug("Current position of {}: {}", peerDictionary.getRemotePeerName(peerID), toString(position));
 		}
 		LOG.debug("Current position of {}: {}", p2pNetworkManager.getLocalPeerName(), toString(pingMap.getLocalPosition()));
 
@@ -348,7 +348,7 @@ public class ForceModel {
 				PeerID avoidedPeer = avoidedPeerList.get(0);
 				if (!avoidedPeers.contains(avoidedPeer)) {
 					if (LOG.isDebugEnabled()) {
-						LOG.debug("One avoiding part is {} from {}", avoidingQueryParts, p2pDictionary.getRemotePeerName(avoidedPeer));
+						LOG.debug("One avoiding part is {} from {}", avoidingQueryParts, peerDictionary.getRemotePeerName(avoidedPeer));
 					}
 				}
 				avoidedPeers.add(avoidedPeer);
@@ -395,7 +395,7 @@ public class ForceModel {
 
 			// Absichtlich umgedreht!
 			double peerValue = ((latencyFactor * bidWeight) + (invertedBidFactor * latencyWeight)) / (bidWeight + latencyWeight);
-			LOG.debug("\t{}:\tPeerValue={} \t(BidValue={}\tLatencyValue={} )", new Object[] { p2pDictionary.getRemotePeerName(peerID), peerValue, invertedBidFactor, latencyFactor });
+			LOG.debug("\t{}:\tPeerValue={} \t(BidValue={}\tLatencyValue={} )", new Object[] { peerDictionary.getRemotePeerName(peerID), peerValue, invertedBidFactor, latencyFactor });
 
 			if (avoidedPeers.contains(peerID)) {
 				avoidedPeerValues.add(new ValuePeerPair(peerValue, peerID));
@@ -411,7 +411,7 @@ public class ForceModel {
 		Collections.sort(avoidedPeerValues);
 
 		List<PeerID> peerList = determineSortedPeers(peerValues, avoidedPeerValues);
-		LOG.debug("Best peer is {}", p2pDictionary.getRemotePeerName(peerList.get(0)));
+		LOG.debug("Best peer is {}", peerDictionary.getRemotePeerName(peerList.get(0)));
 		return peerList;
 	}
 
@@ -435,7 +435,7 @@ public class ForceModel {
 
 		sb.append("Avoiding peers: ");
 		for (PeerID peerID : avoidedPeers) {
-			sb.append(p2pDictionary.getRemotePeerName(peerID)).append("  ");
+			sb.append(peerDictionary.getRemotePeerName(peerID)).append("  ");
 		}
 
 		LOG.debug(sb.toString());

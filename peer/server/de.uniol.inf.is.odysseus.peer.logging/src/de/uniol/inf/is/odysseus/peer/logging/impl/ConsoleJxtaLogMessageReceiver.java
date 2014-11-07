@@ -16,7 +16,7 @@ public class ConsoleJxtaLogMessageReceiver implements IJxtaLogMessageReceiver {
 	
 	@Override
 	public void logMessage(PeerID senderPeerID, int logLevel, String loggerName, String text) {
-		String peerName = JXTALoggingPlugIn.getP2PDictionary().getRemotePeerName(senderPeerID);
+		String peerName = JXTALoggingPlugIn.getPeerDictionary().getRemotePeerName(senderPeerID);
 
 		printPeerMessage(logLevel, peerName, loggerName, text);
 	}

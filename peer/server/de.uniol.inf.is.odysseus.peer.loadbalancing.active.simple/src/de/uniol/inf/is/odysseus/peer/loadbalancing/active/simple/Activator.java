@@ -13,6 +13,7 @@ import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvide
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.p2p_new.IP2PNetworkManager;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.IP2PDictionary;
+import de.uniol.inf.is.odysseus.p2p_new.dictionary.IPeerDictionary;
 import de.uniol.inf.is.odysseus.peer.resource.IPeerResourceUsageManager;
 
 /**
@@ -44,9 +45,9 @@ public class Activator implements BundleActivator {
 	private static IPeerResourceUsageManager cResourceManager;
 
 	/**
-	 * The {@link IP2PDictionary}.
+	 * The {@link IPeerDictionary}.
 	 */
-	private static IP2PDictionary cPeerDictionary;
+	private static IPeerDictionary cPeerDictionary;
 
 	/**
 	 * The {@link IP2PNetworkManager}.
@@ -177,9 +178,9 @@ public class Activator implements BundleActivator {
 	/**
 	 * Gets the peer dictionary.
 	 * 
-	 * @return The {@link IP2PDictionary}, if one is bound.
+	 * @return The {@link IPeerDictionary}, if one is bound.
 	 */
-	public static Optional<IP2PDictionary> getPeerDictionary() {
+	public static Optional<IPeerDictionary> getPeerDictionary() {
 
 		return Optional.fromNullable(Activator.cPeerDictionary);
 
@@ -190,9 +191,9 @@ public class Activator implements BundleActivator {
 	 * Called by OSGI-DS.
 	 * 
 	 * @param dictionary
-	 *            The implementation of {@link IP2PDictionary} to be bound.
+	 *            The implementation of {@link IPeerDictionary} to be bound.
 	 */
-	public static void bindPeerDictionary(IP2PDictionary dictionary) {
+	public static void bindPeerDictionary(IPeerDictionary dictionary) {
 
 		Preconditions
 				.checkNotNull("The peer dictionary to be bound must be not null!");
@@ -208,9 +209,9 @@ public class Activator implements BundleActivator {
 	 * Called by OSGI-DS.
 	 * 
 	 * @param dictionary
-	 *            The implementation of {@link IP2PDictionary} to be unbound.
+	 *            The implementation of {@link IPeerDictionary} to be unbound.
 	 */
-	public static void unbindPeerDictionary(IP2PDictionary dictionary) {
+	public static void unbindPeerDictionary(IPeerDictionary dictionary) {
 
 		if (dictionary != null && dictionary.equals(Activator.cPeerDictionary)) {
 

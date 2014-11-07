@@ -21,7 +21,7 @@ import de.uniol.inf.is.odysseus.p2p_new.PeerCommunicationException;
 import de.uniol.inf.is.odysseus.p2p_new.activator.P2PNewPlugIn;
 import de.uniol.inf.is.odysseus.p2p_new.data.DataTransmissionException;
 import de.uniol.inf.is.odysseus.p2p_new.data.endpoint.EndpointDataTransmissionReceiver;
-import de.uniol.inf.is.odysseus.p2p_new.dictionary.impl.P2PDictionary;
+import de.uniol.inf.is.odysseus.p2p_new.dictionary.impl.PeerDictionary;
 import de.uniol.inf.is.odysseus.p2p_new.util.ObjectByteConverter;
 
 public class SocketDataTransmissionReceiver extends EndpointDataTransmissionReceiver {
@@ -40,7 +40,7 @@ public class SocketDataTransmissionReceiver extends EndpointDataTransmissionRece
 		super(communicator, peerID, id);
 
 		communicator.addListener(this, PortMessage.class);
-		Optional<String> optAddress = P2PDictionary.getInstance().getRemotePeerAddress(
+		Optional<String> optAddress = PeerDictionary.getInstance().getRemotePeerAddress(
 				toPeerID(peerID));
 		if (optAddress.isPresent()) {
 			try {
@@ -80,7 +80,7 @@ public class SocketDataTransmissionReceiver extends EndpointDataTransmissionRece
 				final int port = portMessage.getPort();
 
 				LOG.debug("Received portMessage for port " + portMessage.getPort() + " from {}",
-						P2PDictionary.getInstance().getRemotePeerName(senderPeer));
+						PeerDictionary.getInstance().getRemotePeerName(senderPeer));
 
 				// Send PortAckMessage
 				sendPortAckMessage(communicator, senderPeer, port, portMessage.getId());
@@ -138,10 +138,10 @@ public class SocketDataTransmissionReceiver extends EndpointDataTransmissionRece
 		PortAckMessage portAckMessage = new PortAckMessage(port, id);
 		try {
 			communicator.send(receiverPeer, portAckMessage);
-			LOG.debug("Sent portAckMessage for port " + port + " to {}", P2PDictionary
+			LOG.debug("Sent portAckMessage for port " + port + " to {}", PeerDictionary
 					.getInstance().getRemotePeerName(receiverPeer));
 		} catch (PeerCommunicationException e) {
-			LOG.error("Could not send the portAckMessage to peer {}", P2PDictionary.getInstance()
+			LOG.error("Could not send the portAckMessage to peer {}", PeerDictionary.getInstance()
 					.getRemotePeerName(receiverPeer));
 		}
 	}

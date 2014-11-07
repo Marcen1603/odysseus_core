@@ -18,7 +18,7 @@ import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.QueryBuildConfiguration;
 import de.uniol.inf.is.odysseus.costmodel.physical.IPhysicalCost;
 import de.uniol.inf.is.odysseus.p2p_new.IP2PNetworkManager;
-import de.uniol.inf.is.odysseus.p2p_new.dictionary.IP2PDictionary;
+import de.uniol.inf.is.odysseus.p2p_new.dictionary.IPeerDictionary;
 import de.uniol.inf.is.odysseus.peer.distribute.ILogicalQueryPart;
 import de.uniol.inf.is.odysseus.peer.distribute.IQueryPartAllocator;
 import de.uniol.inf.is.odysseus.peer.distribute.QueryPartAllocationException;
@@ -34,7 +34,7 @@ public class LoadBalancingAllocator implements IQueryPartAllocator {
 
 	private static IPeerResourceUsageManager peerResourceUsageManager;
 	private static IP2PNetworkManager p2pNetworkManager;
-	private static IP2PDictionary p2pDictionary;
+	private static IPeerDictionary peerDictionary;
 
 	private Map<ILogicalQueryPart, List<PeerID>> balancedParts;
 
@@ -63,14 +63,14 @@ public class LoadBalancingAllocator implements IQueryPartAllocator {
 	}
 
 	// called by OSGi-DS
-	public static void bindP2PDictionary(IP2PDictionary serv) {
-		p2pDictionary = serv;
+	public static void bindPeerDictionary(IPeerDictionary serv) {
+		peerDictionary = serv;
 	}
 
 	// called by OSGi-DS
-	public static void unbindP2PDictionary(IP2PDictionary serv) {
-		if (p2pDictionary == serv) {
-			p2pDictionary = null;
+	public static void unbindPeerDictionary(IPeerDictionary serv) {
+		if (peerDictionary == serv) {
+			peerDictionary = null;
 		}
 	}
 
@@ -138,7 +138,7 @@ public class LoadBalancingAllocator implements IQueryPartAllocator {
 	}
 
 	private static Map<PeerID, IResourceUsage> determineCurrentResourceUsagesOfPeers() {
-		Collection<PeerID> remotePeers = p2pDictionary.getRemotePeerIDs();
+		Collection<PeerID> remotePeers = peerDictionary.getRemotePeerIDs();
 
 		Map<PeerID, IResourceUsage> usages = Maps.newHashMap();
 		for (PeerID remotePeer : remotePeers) {

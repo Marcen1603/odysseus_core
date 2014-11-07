@@ -17,7 +17,7 @@ import de.uniol.inf.is.odysseus.p2p_new.IMessage;
 import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicator;
 import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicatorListener;
 import de.uniol.inf.is.odysseus.p2p_new.PeerCommunicationException;
-import de.uniol.inf.is.odysseus.p2p_new.dictionary.IP2PDictionary;
+import de.uniol.inf.is.odysseus.p2p_new.dictionary.IPeerDictionary;
 import de.uniol.inf.is.odysseus.p2p_new.util.RepeatingJobThread;
 import de.uniol.inf.is.odysseus.peer.ping.IPingMap;
 
@@ -30,7 +30,7 @@ public class Pinger extends RepeatingJobThread implements IPeerCommunicatorListe
 	private static final int PING_INTERVAL = 15000;
 	private static final int MAX_PONG_WAIT_MILLIS = 30000;
 
-	private static IP2PDictionary dictionary;
+	private static IPeerDictionary dictionary;
 	private static IPeerCommunicator peerCommunicator;
 	private static PingMap pingMap;
 	private static Pinger instance;
@@ -42,12 +42,12 @@ public class Pinger extends RepeatingJobThread implements IPeerCommunicatorListe
 	}
 
 	// called by OSGi-DS
-	public static void bindP2PDictionary(IP2PDictionary serv) {
+	public static void bindPeerDictionary(IPeerDictionary serv) {
 		dictionary = serv;
 	}
 
 	// called by OSGi-DS
-	public static void unbindP2PDictionary(IP2PDictionary serv) {
+	public static void unbindPeerDictionary(IPeerDictionary serv) {
 		if (dictionary == serv) {
 			dictionary = null;
 		}

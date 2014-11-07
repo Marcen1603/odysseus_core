@@ -35,7 +35,7 @@ public class JxtaReceiverOperatorDetailProvider extends AbstractKeyValueUpdaterP
 	}
 
 	private static String determineDestinationPeerName(JxtaReceiverPO operator) {
-		return RCPP2PNewPlugIn.getP2PDictionary().getRemotePeerName(toPeerID(operator.getPeerIDString()));
+		return RCPP2PNewPlugIn.getPeerDictionary().getRemotePeerName(toPeerID(operator.getPeerIDString()));
 	}
 
 	protected static PeerID toPeerID(String peerIDString) {

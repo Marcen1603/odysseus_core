@@ -211,7 +211,7 @@ public class RecoveryInstructionHandler {
 		}
 		info.setPQL(totalPQL);
 		LocalBackupInformationAccess.getStore().add(info);
-		LOG.debug("I am now the buddy for {}", RecoveryCommunicator.getP2PDictionary().get().getRemotePeerName(sender));
+		LOG.debug("I am now the buddy for {}", RecoveryCommunicator.getPeerDictionary().get().getRemotePeerName(sender));
 	}
 
 }

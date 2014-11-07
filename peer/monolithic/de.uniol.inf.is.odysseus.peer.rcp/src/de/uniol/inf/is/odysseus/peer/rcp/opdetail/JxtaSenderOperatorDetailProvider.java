@@ -45,7 +45,7 @@ public class JxtaSenderOperatorDetailProvider extends AbstractKeyValueUpdaterPro
 			return "<none>";
 		}
 		
-		return RCPP2PNewPlugIn.getP2PDictionary().getRemotePeerName(toPeerID(operator.getPeerIDString()));
+		return RCPP2PNewPlugIn.getPeerDictionary().getRemotePeerName(toPeerID(operator.getPeerIDString()));
 	}
 
 	protected static PeerID toPeerID(String peerIDString) {
