@@ -17,9 +17,6 @@
       [Enter License Description here.]
    </license>
 
-   <requires>
-      <import plugin="de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.server"/>
-   </requires>
 
    <plugin
          id="de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.rcp"

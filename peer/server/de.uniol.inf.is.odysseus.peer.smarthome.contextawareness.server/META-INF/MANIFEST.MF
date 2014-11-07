@@ -32,7 +32,6 @@ Import-Package: com.google.common.base,
  de.uniol.inf.is.odysseus.p2p_new,
  de.uniol.inf.is.odysseus.p2p_new.dictionary,
  de.uniol.inf.is.odysseus.parser.pql.generator,
- de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.utils,
  de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice,
  de.uniol.inf.is.odysseus.ruleengine.rule,
  de.uniol.inf.is.odysseus.ruleengine.ruleflow,
@@ -46,5 +45,7 @@ Require-Bundle: Jxta_2.6_Source,
  de.uniol.inf.is.odysseus.core;bundle-version="1.0.0",
  de.uniol.inf.is.odysseus.core.server;bundle-version="1.0.0",
  de.uniol.inf.is.odysseus.p2p_new;bundle-version="1.0.0"
-Export-Package: de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.utils,
- de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice
+Export-Package: 
+ de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice,
+ de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.utils
+
