@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
-      id="de.uniol.inf.is.odysseus.peer.smarthome.rcp.feature"
+      id="de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.rcp.feature"
       label="Smart Home Feature"
       version="1.0.0.qualifier"
       provider-name="Andrej Albrecht">

@@ -36,6 +36,7 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.base.Optional;
 
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.IP2PDictionary;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.IP2PDictionaryListener;
@@ -130,15 +131,12 @@ public class SmartDeviceView extends ViewPart implements IP2PDictionaryListener,
 					cell.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_GRAY));
 				} else {
 					cell.setText("<unknown>");
-					/*
-					//TODO::: 
-					Optional<String> optAddress = SmartHomeRCPActivator.getP2PDictionary().getRemotePeerAddress((PeerID) cell.getElement());
+					Optional<String> optAddress = SmartHomeRCPActivator.getPeerDictionary().getRemotePeerAddress((PeerID) cell.getElement());
 					if (optAddress.isPresent()) {
 						cell.setText(optAddress.get());
 					} else {
 						cell.setText("<unknown>");
 					}
-					*/
 				}
 			}
 		});
@@ -302,8 +300,7 @@ public class SmartDeviceView extends ViewPart implements IP2PDictionaryListener,
 		}catch(NullPointerException ex){
 			
 		}
-		//TODO: return p2pDictionary.getRemotePeerName(id);
-		return "";
+		return SmartHomeRCPActivator.getPeerDictionary().getRemotePeerName(id);
 	}
 	
 	private String determinePeerContextName(PeerID pid) {

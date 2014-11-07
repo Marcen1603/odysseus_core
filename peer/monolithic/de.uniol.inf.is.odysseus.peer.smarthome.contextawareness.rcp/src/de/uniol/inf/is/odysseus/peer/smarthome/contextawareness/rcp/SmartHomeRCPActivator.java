@@ -9,6 +9,7 @@ import de.uniol.inf.is.odysseus.p2p_new.IAdvertisementDiscovererListener;
 import de.uniol.inf.is.odysseus.p2p_new.IP2PNetworkManager;
 import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicator;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.IP2PDictionary;
+import de.uniol.inf.is.odysseus.p2p_new.dictionary.IPeerDictionary;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.ASmartDevice;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.Actor;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.FieldDevice;
@@ -26,6 +27,8 @@ public class SmartHomeRCPActivator implements BundleActivator {
 	private static SmartDeviceAdvertisementListener smartDeviceAdvertisementListener;
 
 	private static ISmartDeviceService smartDeviceService;
+
+	private static IPeerDictionary peerDictionary;
 
 	@Override
 	public void start(BundleContext context) throws Exception {
@@ -78,14 +81,27 @@ public class SmartHomeRCPActivator implements BundleActivator {
 	}
 
 	// called by OSGi-DS
-	public static void bindSmartDeviceService(ISmartDeviceService _smartDeviceService) {
-		System.out.println("bindSmartDeviceService");
+	public static void bindPeerDictionary(IPeerDictionary serv) {
+		peerDictionary = serv;
+	}
+
+	// called by OSGi-DS
+	public static void unbindPeerDictionary(IPeerDictionary serv) {
+		if (peerDictionary == serv) {
+			peerDictionary = null;
+		}
+	}
+
+	// called by OSGi-DS
+	public static void bindSmartDeviceService(
+			ISmartDeviceService _smartDeviceService) {
 		smartDeviceService = _smartDeviceService;
 		smartDeviceService.addSmartDeviceListener(smartDeviceListener);
 	}
 
 	// called by OSGi-DS
-	public static void unbindSmartDeviceService(ISmartDeviceService _smartDeviceService) {
+	public static void unbindSmartDeviceService(
+			ISmartDeviceService _smartDeviceService) {
 		if (smartDeviceService == _smartDeviceService) {
 			smartDeviceService.removeSmartDeviceListener(smartDeviceListener);
 			smartDeviceService = null;
@@ -102,6 +118,10 @@ public class SmartHomeRCPActivator implements BundleActivator {
 
 	public static IP2PDictionary getP2PDictionary() {
 		return p2pDictionary;
+	}
+
+	public static IPeerDictionary getPeerDictionary() {
+		return peerDictionary;
 	}
 
 	public static class SmartDeviceAdvertisementListener implements

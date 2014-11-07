@@ -10,6 +10,7 @@ import de.uniol.inf.is.odysseus.p2p_new.IJxtaServicesProvider;
 import de.uniol.inf.is.odysseus.p2p_new.IP2PNetworkManager;
 import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicator;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.IP2PDictionary;
+import de.uniol.inf.is.odysseus.p2p_new.dictionary.IPeerDictionary;
 import de.uniol.inf.is.odysseus.parser.pql.generator.IPQLGenerator;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.utils.SmartDeviceConfigurationRequestMessage;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.utils.SmartDeviceConfigurationResponseMessage;
@@ -29,12 +30,13 @@ public class SmartHomeServerPlugIn implements BundleActivator {
 	private static IJxtaServicesProvider jxtaServicesProvider;
 	private static IPQLGenerator pqlGenerator;
 
+	private static IPeerDictionary peerDictionary;
+
 	public void start(BundleContext bundleContext) throws Exception {
 		SmartDeviceServerDictionaryDiscovery.getInstance().addListener(
 				LogicProcessor.getInstance());
 		SmartDeviceServerDictionaryDiscovery.getInstance().addListener(
 				QueryExecutor.getInstance());
-		
 
 		bundle = bundleContext.getBundle();
 	}
@@ -130,9 +132,21 @@ public class SmartHomeServerPlugIn implements BundleActivator {
 				serv);
 		SmartDeviceServer.getInstance().unbindP2PDictionary(serv);
 		QueryExecutor.getInstance().unbindP2PDictionary(serv);
-		
+
 		if (p2pDictionary == serv) {
 			p2pDictionary = null;
+		}
+	}
+
+	// called by OSGi-DS
+	public static void bindPeerDictionary(IPeerDictionary serv) {
+		peerDictionary = serv;
+	}
+
+	// called by OSGi-DS
+	public static void unbindPeerDictionary(IPeerDictionary serv) {
+		if (peerDictionary == serv) {
+			peerDictionary = null;
 		}
 	}
 
@@ -188,6 +202,10 @@ public class SmartHomeServerPlugIn implements BundleActivator {
 
 	public static IP2PDictionary getP2PDictionary() {
 		return p2pDictionary;
+	}
+
+	public static IPeerDictionary getPeerDictionary() {
+		return peerDictionary;
 	}
 
 }

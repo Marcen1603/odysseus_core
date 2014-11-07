@@ -53,7 +53,7 @@ public class SmartDeviceServerDictionaryDiscovery implements
 	private static IP2PDictionary p2pDictionary;
 	private static IP2PNetworkManager p2pNetworkManager;
 	private static ArrayList<PeerID> foundPeerIDs = new ArrayList<PeerID>();
-	//private static Collection<PeerID> refreshing = Lists.newLinkedList();
+	private static Collection<PeerID> refreshing = Lists.newLinkedList();
 
 	public SmartDeviceServerDictionaryDiscovery() {
 		cleanupAsync();
@@ -418,7 +418,7 @@ public class SmartDeviceServerDictionaryDiscovery implements
 
 	public static ArrayList<PeerID> getFoundPeerIDs() {
 		ArrayList<PeerID> foundPeerIDArray = Lists.newArrayList();
-		//TODO: foundPeerIDArray.addAll(getP2PDictionary().getRemotePeerIDs());
+		foundPeerIDArray.addAll(SmartHomeServerPlugIn.getPeerDictionary().getRemotePeerIDs());
 		return foundPeerIDArray;
 	}
 
@@ -447,13 +447,12 @@ public class SmartDeviceServerDictionaryDiscovery implements
 	}
 
 	public static void refreshFoundPeerIDs() {
-		/*
 		Collection<PeerID> foundPeerIDsCopy = null;
 		if (foundPeerIDs != null && p2pDictionary != null
-				&& p2pDictionary.getRemotePeerIDs() != null) {
+				&& SmartHomeServerPlugIn.getPeerDictionary().getRemotePeerIDs() != null) {
 			synchronized (foundPeerIDs) {
 				foundPeerIDs.clear();
-				foundPeerIDs.addAll(p2pDictionary.getRemotePeerIDs());
+				foundPeerIDs.addAll(SmartHomeServerPlugIn.getPeerDictionary().getRemotePeerIDs());
 				foundPeerIDsCopy = Lists.newArrayList(foundPeerIDs);
 			}
 
@@ -469,7 +468,7 @@ public class SmartDeviceServerDictionaryDiscovery implements
 				}
 			}
 		}
-		*/
+		
 
 		// printFoundPeerIDs(foundPeerIDsCopy);
 	}

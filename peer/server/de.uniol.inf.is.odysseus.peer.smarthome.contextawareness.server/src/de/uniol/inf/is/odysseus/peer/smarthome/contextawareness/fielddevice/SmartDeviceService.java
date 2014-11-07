@@ -12,13 +12,11 @@ public class SmartDeviceService implements ISmartDeviceService {
 		// called by OSGi-DS
 		public void activate() {
 			instance = this;
-			System.out.println("SmartDeviceService activate");
 		}
 
 		// called by OSGi-DS
 		public void deactivate() {
 			instance = null;
-			System.out.println("SmartDeviceService activate");
 		}
 
 		// called by OSGi-DS
