@@ -84,15 +84,15 @@ public class MapAO extends UnaryLogicalOp {
 				// name!
 				String lastString = null;
 				String toSplit;
-				if (exprString.startsWith("__")) {
-					toSplit = exprString.substring(exprString.indexOf(".") + 1);
-					if (exprString.indexOf(".") > -1) {
-						lastString = exprString.substring(0,
-								exprString.indexOf(".") - 1);
-					}
-				} else {
+//				if (exprString.startsWith("__")) {
+//					toSplit = exprString.substring(exprString.indexOf(".") + 1);
+//					if (exprString.indexOf(".") > -1) {
+//						lastString = exprString.substring(0,
+//								exprString.indexOf(".") - 1);
+//					}
+//				} else {
 					toSplit = exprString;
-				}
+//				}
 				String[] split = SDFElement.splitURI(toSplit);
 				final SDFElement elem;
 				if (split[1] != null && split[1].length() > 0) {
