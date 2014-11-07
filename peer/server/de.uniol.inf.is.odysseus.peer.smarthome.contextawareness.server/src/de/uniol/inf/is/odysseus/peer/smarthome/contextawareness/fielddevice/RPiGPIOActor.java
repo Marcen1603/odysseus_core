@@ -11,8 +11,11 @@ public class RPiGPIOActor extends Actor {
 
 	public RPiGPIOActor(String name, String prefix, String postfix) {
 		super(name, prefix, postfix);
+		addActorAction(new RPiGPIOActorAction(State.ON));
+		addActorAction(new RPiGPIOActorAction(State.OFF));
+		addActorAction(new RPiGPIOActorAction(State.TOGGLE));
 	}
-
+	
 	public void createLogicRuleWithState(String activityName, State state) {
 		RPiGPIOActorLogicRule newRule = new RPiGPIOActorLogicRule(this,
 				activityName, getPrefix(), getPostfix());
@@ -198,5 +201,22 @@ public class RPiGPIOActor extends Actor {
 		public String getReactionDescription() {
 			return "State change:"+getState();
 		}
+	}
+	
+	class RPiGPIOActorAction implements IActorAction{
+
+		private State name;
+
+		RPiGPIOActorAction(State state){
+			super();
+			this.name = state;
+		}
+		
+		@Override
+		public String getName() {
+			String _name = this.name.toString();
+			return _name;
+		}
+		
 	}
 }

@@ -256,7 +256,7 @@ public class SmartDeviceServer {
 		String peerName = getP2PNetworkManager().getLocalPeerName().intern()
 				.toString();
 
-		LOG.debug("-----\ninitSmartDeviceForAdvertisement\n\tcleanPeerID:"
+		LOG.debug("initSmartDeviceForAdvertisement cleanPeerID:"
 				+ cleanPeerID);
 
 		//
