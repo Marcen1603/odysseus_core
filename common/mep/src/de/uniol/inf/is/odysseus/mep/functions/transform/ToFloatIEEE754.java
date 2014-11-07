@@ -44,7 +44,7 @@ public class ToFloatIEEE754 extends AbstractFunction<Float> {
 	public Float getValue() {
 		Integer v1 = getNumericalInputValue(0).intValue();
 		Integer v2 = getNumericalInputValue(1).intValue();
-		Boolean byteSwap = getInputValue(3);
+		Boolean byteSwap = getInputValue(2);
 		return calcValue(v1, v2, byteSwap);
 	}
 
