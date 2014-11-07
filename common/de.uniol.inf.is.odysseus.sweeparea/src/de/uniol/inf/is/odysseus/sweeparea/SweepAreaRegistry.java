@@ -8,8 +8,8 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.ImmutableList;
 
-public class SweapAreaRegistry {
-	static Logger logger = LoggerFactory.getLogger(SweapAreaRegistry.class);
+public class SweepAreaRegistry {
+	static Logger logger = LoggerFactory.getLogger(SweepAreaRegistry.class);
 
 	static private Map<String, ISweepArea<?>> areas = new HashMap<String, ISweepArea<?>>();
 

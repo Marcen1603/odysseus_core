@@ -109,4 +109,9 @@ public class JoinTISweepArea<T extends IStreamObject<? extends ITimeInterval>>
 		}
 		return result.iterator();
 	}
+	
+	@Override
+	public String getName() {
+		return "TIJoinSA";
+	}
 }
