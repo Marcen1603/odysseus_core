@@ -9,6 +9,7 @@ import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.physicaloperator.Heartbeat;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
@@ -196,6 +197,33 @@ public class AssureHeartbeatPO<R extends IStreamObject<? extends ITimeInterval>>
 	public void setStartTimerAfterFirstElement(
 			boolean startTimerAfterFirstElement) {
 		this.startTimerAfterFirstElement  = startTimerAfterFirstElement;
+	}
+	
+	@Override
+	public boolean isSemanticallyEqual(IPhysicalOperator ipo) {
+		if (!(ipo instanceof AssureHeartbeatPO)){
+			return false;
+		}
+		@SuppressWarnings("unchecked")
+		AssureHeartbeatPO<R> po = (AssureHeartbeatPO<R>) ipo;
+		
+		if (this.realTimeDelay != po.realTimeDelay){
+			return false;
+		}
+				
+		if (this.applicationTimeDelay != po.applicationTimeDelay){
+			return false;
+		}
+		
+		if (this.sendAlwaysHeartbeat != po.sendAlwaysHeartbeat){
+			return false;
+		}
+		
+		if (this.allowOutofOrder != po.allowOutofOrder){
+			return false;
+		}
+		
+		return true;
 	}
 
 }
