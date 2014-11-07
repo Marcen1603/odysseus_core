@@ -95,8 +95,8 @@ limitations under the License.
       <feature id="de.uniol.inf.is.odysseus.common.feature"/>
       <feature id="de.uniol.inf.is.odysseus.peer.ddc.feature"/>
       <feature id="org.eclipse.equinox.p2.extras.feature"/>
-      <feature id="de.uniol.inf.is.odysseus.peer.smarthome.server.feature" version="1.0.0.qualifier"/>
       <feature id="de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.rcp.feature" version="1.0.0.qualifier"/>
+      <feature id="de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.server.feature" version="1.0.0.qualifier"/>
    </features>
 
    <configurations>
