@@ -4,46 +4,22 @@ import java.util.ArrayList;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
-import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.SDFExpressionParameter;
 import de.uniol.inf.is.odysseus.peer.ddc.MissingDDCEntryException;
-import de.uniol.inf.is.odysseus.sports.sportsql.parser.ISportsQLParser;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.SportsQLQuery;
-import de.uniol.inf.is.odysseus.sports.sportsql.parser.annotations.SportsQL;
-import de.uniol.inf.is.odysseus.sports.sportsql.parser.annotations.SportsQLParameter;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.buildhelper.OperatorBuildHelper;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.buildhelper.SportsQLParameterHelper;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.ddcaccess.AbstractSportsDDCAccess;
-import de.uniol.inf.is.odysseus.sports.sportsql.parser.enums.GameType;
-import de.uniol.inf.is.odysseus.sports.sportsql.parser.enums.StatisticType;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.parameter.SportsQLSpaceParameter;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.parameter.SportsQLTimeParameter;
 
-/**
- * Parser for SportsQL: Query: Ball contacts of all player.
- * 
- * SportsQL:
- * 
- * Example Query:
- * 
- * { "statisticType": "global", "gameType": "soccer", "name": "ball_contact",
- * "parameters": { "time": { "start": 0, "end" :
- * 90, } "space": { "startx":-50, "starty":-33960 "endx":52489
- * "endy":33965 } } }
- * 
- * @author Thomas Pr�nie
- *
- */
-@SportsQL(gameTypes = GameType.SOCCER, statisticTypes = { StatisticType.GLOBAL }, name = "ball_contact", parameters = {
-		@SportsQLParameter(name = "time", parameterClass = SportsQLTimeParameter.class, mandatory = false),
-		@SportsQLParameter(name = "space", parameterClass = SportsQLSpaceParameter.class, mandatory = false) })
-public class BallContactGlobalSportsQLParser implements ISportsQLParser {
+public class BallContactGlobalOutput {
 
 	/**
 	 * Percentage change of velocity
 	 */
-	//private final double velocityChange = 0.15;
+	// private final double velocityChange = 0.15;
 	private final double velocityChange = 0.10;
 
 	/**
@@ -56,20 +32,6 @@ public class BallContactGlobalSportsQLParser implements ISportsQLParser {
 	 * ball
 	 */
 	private final String radius = "400";
-
-	@Override
-	public ILogicalQuery parse(SportsQLQuery sportsQL) throws NumberFormatException, MissingDDCEntryException {
-
-		// List for all operators, which will be used in this query plan
-		ArrayList<ILogicalOperator> allOperators = new ArrayList<ILogicalOperator>();
-
-		ILogicalOperator output = getOutputOperator(
-				OperatorBuildHelper.createGameStreamAO(), sportsQL,
-				allOperators);
-
-		return OperatorBuildHelper.finishQuery(output, allOperators,
-				sportsQL.getName());
-	}
 
 	/**
 	 * Return list of expressions for the ball
@@ -101,7 +63,7 @@ public class BallContactGlobalSportsQLParser implements ISportsQLParser {
 						source);
 		SDFExpressionParameter ex2 = OperatorBuildHelper
 				.createExpressionParameter("entity_id", "entity_id", source);
-		
+
 		SDFExpressionParameter ex3 = OperatorBuildHelper
 				.createExpressionParameter("team_id", "team_id", source);
 
@@ -121,13 +83,14 @@ public class BallContactGlobalSportsQLParser implements ISportsQLParser {
 	 * @param sportsQL
 	 * @param allOperators
 	 * @return
-	 * @throws MissingDDCEntryException 
-	 * @throws NumberFormatException 
+	 * @throws MissingDDCEntryException
+	 * @throws NumberFormatException
 	 */
 	@SuppressWarnings("rawtypes")
 	public ILogicalOperator getOutputOperator(
 			ILogicalOperator soccerGameStreamAO, SportsQLQuery sportsQL,
-			List<ILogicalOperator> allOperators) throws NumberFormatException, MissingDDCEntryException {
+			List<ILogicalOperator> allOperators) throws NumberFormatException,
+			MissingDDCEntryException {
 
 		// List of predicates to use in single operators
 		ArrayList<String> predicates = new ArrayList<String>();
@@ -154,19 +117,21 @@ public class BallContactGlobalSportsQLParser implements ISportsQLParser {
 
 		// get only ball sensors
 		List<IPredicate> ballPredicates = new ArrayList<IPredicate>();
-		for(int sensorId : AbstractSportsDDCAccess.getBallEntityIds()) {
-			IPredicate ballPredicate = OperatorBuildHelper.createRelationalPredicate("entity_id = " + sensorId);
+		for (int sensorId : AbstractSportsDDCAccess.getBallEntityIds()) {
+			IPredicate ballPredicate = OperatorBuildHelper
+					.createRelationalPredicate("entity_id = " + sensorId);
 			ballPredicates.add(ballPredicate);
-		}		
+		}
 		List<IPredicate<?>> predicatesBall = new ArrayList<IPredicate<?>>();
-		predicatesBall.add(OperatorBuildHelper.createOrPredicate(ballPredicates));
-		
-		ILogicalOperator split_balls = OperatorBuildHelper.createRoutePredicatesAO(
-				predicatesBall, game_space);
+		predicatesBall.add(OperatorBuildHelper
+				.createOrPredicate(ballPredicates));
+
+		ILogicalOperator split_balls = OperatorBuildHelper
+				.createRoutePredicatesAO(predicatesBall, game_space);
 		allOperators.add(split_balls);
 		predicates.clear();
 
-		attributes.add("v");		
+		attributes.add("v");
 		ArrayList<String> groupBy = new ArrayList<String>();
 		groupBy.add("entity_id");
 
@@ -184,10 +149,9 @@ public class BallContactGlobalSportsQLParser implements ISportsQLParser {
 		allOperators.add(ball_position_map);
 
 		// window size = 1, advance = 1
-		ILogicalOperator ball_window = OperatorBuildHelper.createElementWindowAO(
-			1, 1, ball_position_map);
-	allOperators.add(ball_window);
-		
+		ILogicalOperator ball_window = OperatorBuildHelper
+				.createElementWindowAO(1, 1, ball_position_map);
+		allOperators.add(ball_window);
 
 		// Get position of players in game
 		ILogicalOperator players_position_map = OperatorBuildHelper
@@ -203,9 +167,9 @@ public class BallContactGlobalSportsQLParser implements ISportsQLParser {
 		// Join the sources and show only values if ball is near to a player
 		predicates.add("SpatialDistance(ball_pos,player_pos)<" + radius);
 		ILogicalOperator proximity_join = OperatorBuildHelper.createJoinAO(
-			predicates, players_window, ball_window);
-	//			predicates, players_window, ball_position_map);
-				
+				predicates, players_window, ball_window);
+		// predicates, players_window, ball_position_map);
+
 		allOperators.add(proximity_join);
 		predicates.clear();
 
@@ -219,22 +183,26 @@ public class BallContactGlobalSportsQLParser implements ISportsQLParser {
 
 		// Detect changes in entity_id if another player hits the ball
 		attributes.add("entity_id");
-		ILogicalOperator ballContactDetected = OperatorBuildHelper.createChangeDetectAO(
-				OperatorBuildHelper.createAttributeList(attributes,
-						delete_duplicates), 0.0, delete_duplicates);
+		ILogicalOperator ballContactDetected = OperatorBuildHelper
+				.createChangeDetectAO(OperatorBuildHelper.createAttributeList(
+						attributes, delete_duplicates), 0.0, delete_duplicates);
 		allOperators.add(ballContactDetected);
 		attributes.clear();
-		
-		ILogicalOperator clearEndTimestamp = OperatorBuildHelper.clearEndTimestamp(ballContactDetected);
-		allOperators.add(clearEndTimestamp);	
 
-		List<String> groupCount = new ArrayList<String>();
-		groupCount.add("entity_id");
-		groupCount.add("team_id");
-		
-		ILogicalOperator countOutput = OperatorBuildHelper.createAggregateAO("count", groupCount, "entity_id", "ballContactCount", "Integer", clearEndTimestamp, 1);
-		allOperators.add(countOutput);
-	
-		return countOutput;
+		ILogicalOperator clearEndTimestamp = OperatorBuildHelper
+				.clearEndTimestamp(ballContactDetected);
+		allOperators.add(clearEndTimestamp);
+
+		/*
+		 * List<String> groupCount = new ArrayList<String>();
+		 * groupCount.add("entity_id"); groupCount.add("team_id");
+		 * 
+		 * ILogicalOperator countOutput =
+		 * OperatorBuildHelper.createAggregateAO("count", groupCount,
+		 * "entity_id", "ballContactCount", "Integer", clearEndTimestamp, 1);
+		 * allOperators.add(countOutput);
+		 */
+
+		return clearEndTimestamp;
 	}
 }
