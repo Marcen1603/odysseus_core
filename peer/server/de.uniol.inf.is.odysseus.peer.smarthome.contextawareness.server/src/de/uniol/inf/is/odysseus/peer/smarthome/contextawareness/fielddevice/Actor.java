@@ -6,7 +6,7 @@ import java.util.ArrayList;
 public abstract class Actor extends FieldDevice implements Serializable {
 	private static final long serialVersionUID = 1L;
 	private ArrayList<LogicRule> logicRulesList;
-	private ArrayList<IActorAction> actorActions;
+	private ArrayList<AbstractActorAction> actorActions;
 
 	public Actor(String name, String prefix, String postfix) {
 		super(name, prefix, postfix);
@@ -38,14 +38,14 @@ public abstract class Actor extends FieldDevice implements Serializable {
 		}
 	}
 
-	public ArrayList<IActorAction> getActions() {
+	public ArrayList<AbstractActorAction> getActions() {
 		if(actorActions==null){
-			actorActions= new ArrayList<IActorAction>();
+			actorActions= new ArrayList<AbstractActorAction>();
 		}
 		return actorActions;
 	}
 	
-	protected void addActorAction(IActorAction action) {
+	protected void addActorAction(AbstractActorAction action) {
 		getActions().add(action);
 	}
 }

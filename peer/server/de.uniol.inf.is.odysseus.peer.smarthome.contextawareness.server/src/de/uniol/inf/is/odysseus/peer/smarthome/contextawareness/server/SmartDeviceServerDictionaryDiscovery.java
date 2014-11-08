@@ -19,13 +19,10 @@ import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.p2p_new.IAdvertisementDiscovererListener;
 import de.uniol.inf.is.odysseus.p2p_new.IMessage;
-import de.uniol.inf.is.odysseus.p2p_new.IP2PNetworkManager;
 import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicator;
 import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicatorListener;
 import de.uniol.inf.is.odysseus.p2p_new.PeerCommunicationException;
-import de.uniol.inf.is.odysseus.p2p_new.dictionary.IP2PDictionary;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.SourceAdvertisement;
-import de.uniol.inf.is.odysseus.parser.pql.generator.IPQLGenerator;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.ASmartDevice;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.server.advertisement.SmartDeviceAdvertisement;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.server.advertisement.SmartDeviceAdvertisementInstantiator;
@@ -48,10 +45,7 @@ public class SmartDeviceServerDictionaryDiscovery implements
 			.newArrayList();
 
 	private long lastGarbageCollectorTime = 0;
-	private IPeerCommunicator peerCommunicator;
-	private static IPQLGenerator pqlGenerator;
-	private static IP2PDictionary p2pDictionary;
-	private static IP2PNetworkManager p2pNetworkManager;
+
 	private static ArrayList<PeerID> foundPeerIDs = new ArrayList<PeerID>();
 	private static Collection<PeerID> refreshing = Lists.newLinkedList();
 
@@ -142,13 +136,14 @@ public class SmartDeviceServerDictionaryDiscovery implements
 	}
 
 	void getSmartDeviceInformations(SmartDeviceAdvertisement adv) {
-		//LOG.debug("getSmartDeviceInformations");
+		LOG.debug("getSmartDeviceInformations peer:"+adv.getPeerName());
 		if (adv != null && isPeerIdAvailable(adv.getPeerID())) {
 			try {
 				SmartDeviceRequestMessage smartDevRequest = new SmartDeviceRequestMessage(
 						"request");
 
-				getPeerCommunicator().send(adv.getPeerID(), smartDevRequest);	
+				SmartDeviceServer.getInstance().getPeerCommunicator()
+						.send(adv.getPeerID(), smartDevRequest);
 			} catch (PeerCommunicationException e) {
 				LOG.error(e.getMessage() + " PeerID:"
 						+ adv.getPeerID().intern().toString(), e);
@@ -171,17 +166,18 @@ public class SmartDeviceServerDictionaryDiscovery implements
 						.getInstance().getLocalSmartDevice());
 
 				try {
-					getPeerCommunicator().send(senderPeer, smartDeviceResponse);
+					SmartDeviceServer.getInstance().getPeerCommunicator()
+							.send(senderPeer, smartDeviceResponse);
 				} catch (PeerCommunicationException ex) {
 					LOG.error(ex.getMessage(), ex);
-				} 
+				}
 			} catch (Exception ex) {
 				LOG.error(ex.getMessage(), ex);
 			}
 		} else if (message instanceof SmartDeviceResponseMessage) {
 			SmartDeviceResponseMessage smartDeviceResponse = (SmartDeviceResponseMessage) message;
 
-			if (!isLocalPeer(senderPeer)) {
+			if (!SmartDeviceServer.isLocalPeer(senderPeer)) {
 				ASmartDevice smartDevice = smartDeviceResponse.getSmartDevice();
 
 				if (smartDevice != null) {
@@ -198,7 +194,7 @@ public class SmartDeviceServerDictionaryDiscovery implements
 
 	public void addSmartDevice(ASmartDevice newSmartDevice) {
 		if (!getSmartDevices().containsKey(newSmartDevice.getPeerID())) {
-			//LOG.debug("Add new SmartDevice");
+			// LOG.debug("Add new SmartDevice");
 			// Add new SmartDevice
 			try {
 				String smartDevicePeerID = newSmartDevice.getPeerID().intern()
@@ -217,7 +213,7 @@ public class SmartDeviceServerDictionaryDiscovery implements
 				LOG.error(e.getMessage(), e);
 			}
 		} else {
-			//LOG.debug("Update existing SmartDevice");
+			// LOG.debug("Update existing SmartDevice");
 			// Update existing SmartDevice
 			ASmartDevice existingSmartDevice = getSmartDevices().get(
 					newSmartDevice.getPeerID());
@@ -251,6 +247,7 @@ public class SmartDeviceServerDictionaryDiscovery implements
 	}
 
 	public void addListener(ISmartDeviceDictionaryListener listener) {
+		LOG.debug(" addListener");
 		synchronized (listeners) {
 			listeners.add(listener);
 		}
@@ -266,7 +263,8 @@ public class SmartDeviceServerDictionaryDiscovery implements
 		synchronized (listeners) {
 			for (ISmartDeviceDictionaryListener listener : listeners) {
 				try {
-					listener.smartDeviceAdded(this, smartDevice);
+					listener.smartDeviceAdded(SmartDeviceServer.getInstance(),
+							smartDevice);
 				} catch (Throwable t) {
 					LOG.error(
 							"Exception during invokinf smart device dictionary listener",
@@ -280,8 +278,11 @@ public class SmartDeviceServerDictionaryDiscovery implements
 		synchronized (listeners) {
 			for (ISmartDeviceDictionaryListener listener : listeners) {
 				try {
-					LOG.debug("fireSmartDeviceRemovedEvent smartDevice:"+smartDevice.getPeerName()+" listener:"+listener.getClass());
-					listener.smartDeviceRemoved(this, smartDevice);
+					LOG.debug("fireSmartDeviceRemovedEvent smartDevice:"
+							+ smartDevice.getPeerName() + " listener:"
+							+ listener.getClass());
+					listener.smartDeviceRemoved(
+							SmartDeviceServer.getInstance(), smartDevice);
 				} catch (Throwable t) {
 					LOG.error(
 							"Exception during invokinf smart device dictionary listener",
@@ -295,7 +296,8 @@ public class SmartDeviceServerDictionaryDiscovery implements
 		synchronized (listeners) {
 			for (ISmartDeviceDictionaryListener listener : listeners) {
 				try {
-					listener.smartDeviceUpdated(this, smartDevice);
+					listener.smartDeviceUpdated(
+							SmartDeviceServer.getInstance(), smartDevice);
 				} catch (Throwable t) {
 					LOG.error(
 							"Exception during invokinf smart device dictionary listener",
@@ -333,33 +335,11 @@ public class SmartDeviceServerDictionaryDiscovery implements
 		return instance;
 	}
 
-	public void bindPeerCommunicator(IPeerCommunicator _peerCommunicator) {
-		peerCommunicator = _peerCommunicator;
-		_peerCommunicator.registerMessageType(SmartDeviceRequestMessage.class);
-		_peerCommunicator.registerMessageType(SmartDeviceResponseMessage.class);
-
-		_peerCommunicator.addListener(this, SmartDeviceRequestMessage.class);
-		_peerCommunicator.addListener(this, SmartDeviceResponseMessage.class);
-	}
-
-	public void unbindPeerCommunicator(IPeerCommunicator _peerCommunicator) {
-		if (peerCommunicator == _peerCommunicator) {
-			_peerCommunicator.removeListener(this,
-					SmartDeviceRequestMessage.class);
-			_peerCommunicator.removeListener(this,
-					SmartDeviceResponseMessage.class);
-
-			// peerCommunicator.unregisterMessageType(SmartDeviceRequestMessage.class);
-			// peerCommunicator.unregisterMessageType(SmartDeviceResponseMessage.class);
-			peerCommunicator = null;
-		}
-	}
-
 	private static boolean isPeerIdAvailable(PeerID peerID) {
 		if (peerID == null) {
 			// LOG.debug("peerID==null");
 			return false;
-		} else if (isLocalPeer(peerID.intern().toString())) {
+		} else if (SmartDeviceServer.isLocalPeer(peerID.intern().toString())) {
 			// LOG.debug("peerID is LocalPeer: " + peerID.intern().toString());
 			return false;
 		} else if (foundPeerIDs == null || peerID == null
@@ -384,27 +364,6 @@ public class SmartDeviceServerDictionaryDiscovery implements
 		}
 	}
 
-	public static boolean isLocalPeer(String peerIDString) {
-		String str1 = getP2PNetworkManager().getLocalPeerID().intern()
-				.toString();
-
-		if (str1 == null || peerIDString == null)
-			return false;
-		return str1.equals(peerIDString);
-	}
-
-	public static boolean isLocalPeer(PeerID peerID) {
-		if (getP2PNetworkManager() == null
-				|| getP2PNetworkManager().getLocalPeerID() == null
-				|| getP2PNetworkManager().getLocalPeerID().intern() == null) {
-			return false;
-		} else if (peerID == null || peerID.intern() == null) {
-			return false;
-		}
-
-		return isLocalPeer(peerID.intern().toString());
-	}
-
 	private static boolean isFoundInFoundPeers(PeerID peerID) {
 		ArrayList<PeerID> foundPeerIDArray = getFoundPeerIDs();
 		for (PeerID foundPeerID : foundPeerIDArray) {
@@ -418,7 +377,8 @@ public class SmartDeviceServerDictionaryDiscovery implements
 
 	public static ArrayList<PeerID> getFoundPeerIDs() {
 		ArrayList<PeerID> foundPeerIDArray = Lists.newArrayList();
-		foundPeerIDArray.addAll(SmartHomeServerPlugIn.getPeerDictionary().getRemotePeerIDs());
+		foundPeerIDArray.addAll(SmartHomeServerPlugIn.getPeerDictionary()
+				.getRemotePeerIDs());
 		return foundPeerIDArray;
 	}
 
@@ -448,11 +408,13 @@ public class SmartDeviceServerDictionaryDiscovery implements
 
 	public static void refreshFoundPeerIDs() {
 		Collection<PeerID> foundPeerIDsCopy = null;
-		if (foundPeerIDs != null && p2pDictionary != null
+		if (foundPeerIDs != null
+				&& SmartHomeServerPlugIn.getPeerDictionary() != null
 				&& SmartHomeServerPlugIn.getPeerDictionary().getRemotePeerIDs() != null) {
 			synchronized (foundPeerIDs) {
 				foundPeerIDs.clear();
-				foundPeerIDs.addAll(SmartHomeServerPlugIn.getPeerDictionary().getRemotePeerIDs());
+				foundPeerIDs.addAll(SmartHomeServerPlugIn.getPeerDictionary()
+						.getRemotePeerIDs());
 				foundPeerIDsCopy = Lists.newArrayList(foundPeerIDs);
 			}
 
@@ -468,7 +430,6 @@ public class SmartDeviceServerDictionaryDiscovery implements
 				}
 			}
 		}
-		
 
 		// printFoundPeerIDs(foundPeerIDsCopy);
 	}
@@ -494,8 +455,8 @@ public class SmartDeviceServerDictionaryDiscovery implements
 				waitForP2PDictionary();
 				waitForPQLGenerator();
 
-				UnmodifiableIterator<SourceAdvertisement> iteratorSources = p2pDictionary
-						.getImportedSources().iterator();
+				UnmodifiableIterator<SourceAdvertisement> iteratorSources = SmartHomeServerPlugIn
+						.getP2PDictionary().getImportedSources().iterator();
 				while (iteratorSources.hasNext()) {
 					SourceAdvertisement sourceAdv = iteratorSources.next();
 
@@ -510,7 +471,7 @@ public class SmartDeviceServerDictionaryDiscovery implements
 	}
 
 	private static void waitForP2PDictionary() {
-		while (getP2PDictionary() == null) {
+		while (SmartHomeServerPlugIn.getP2PDictionary() == null) {
 			try {
 				Thread.sleep(100);
 			} catch (InterruptedException e) {
@@ -519,8 +480,8 @@ public class SmartDeviceServerDictionaryDiscovery implements
 	}
 
 	private static void waitForP2PNetworkManager() {
-		while (getP2PNetworkManager() == null
-				|| !getP2PNetworkManager().isStarted()) {
+		while (SmartHomeServerPlugIn.getP2PNetworkManager() == null
+				|| !SmartHomeServerPlugIn.getP2PNetworkManager().isStarted()) {
 			try {
 				Thread.sleep(100);
 			} catch (InterruptedException e) {
@@ -529,7 +490,7 @@ public class SmartDeviceServerDictionaryDiscovery implements
 	}
 
 	private static void waitForPQLGenerator() {
-		while (getPQLGenerator() == null) {
+		while (SmartHomeServerPlugIn.getPQLGenerator() == null) {
 			try {
 				Thread.sleep(100);
 			} catch (InterruptedException e) {
@@ -537,56 +498,39 @@ public class SmartDeviceServerDictionaryDiscovery implements
 		}
 	}
 
-	public static IPQLGenerator getPQLGenerator() {
-		return pqlGenerator;
-	}
+	/*
+	 * public static IPQLGenerator getPQLGenerator() { return pqlGenerator; }
+	 * 
+	 * 
+	 * 
+	 * public IPeerCommunicator getPeerCommunicator() { return peerCommunicator;
+	 * }
+	 * 
+	 * public void setPeerCommunicator(IPeerCommunicator peerCommunicator) {
+	 * this.peerCommunicator = peerCommunicator; }
+	 */
 
-	public void bindPQLGenerator(IPQLGenerator serv) {
-		pqlGenerator = serv;
-	}
-
-	public void unbindPQLGenerator(IPQLGenerator serv) {
-		if (pqlGenerator == serv) {
-			pqlGenerator = null;
-		}
-	}
-
-	public IPeerCommunicator getPeerCommunicator() {
-		return peerCommunicator;
-	}
-
-	public void setPeerCommunicator(IPeerCommunicator peerCommunicator) {
-		this.peerCommunicator = peerCommunicator;
-	}
-
-	private static IP2PNetworkManager getP2PNetworkManager() {
-		return p2pNetworkManager;
-	}
-
-	public void bindP2PNetworkManager(IP2PNetworkManager serv) {
-		p2pNetworkManager = serv;
-		p2pNetworkManager.addAdvertisementListener(this);
-	}
-
-	public void unbindP2PNetworkManager(IP2PNetworkManager serv) {
-		if (p2pNetworkManager == serv) {
-			p2pNetworkManager.removeAdvertisementListener(this);
-			p2pNetworkManager = null;
-		}
-	}
-
-	private static IP2PDictionary getP2PDictionary() {
-		return p2pDictionary;
-	}
-
-	public void bindP2PDictionary(IP2PDictionary serv) {
-		p2pDictionary = serv;
-	}
-
-	public void unbindP2PDictionary(IP2PDictionary serv) {
-		if (p2pDictionary == serv) {
-			p2pDictionary = null;
-		}
-	}
+	/*
+	 * private static IP2PNetworkManager getP2PNetworkManager() { return
+	 * p2pNetworkManager; }
+	 * 
+	 * public void bindP2PNetworkManager(IP2PNetworkManager serv) {
+	 * p2pNetworkManager = serv;
+	 * p2pNetworkManager.addAdvertisementListener(this); }
+	 * 
+	 * public void unbindP2PNetworkManager(IP2PNetworkManager serv) { if
+	 * (p2pNetworkManager == serv) {
+	 * p2pNetworkManager.removeAdvertisementListener(this); p2pNetworkManager =
+	 * null; } }
+	 * 
+	 * private static IP2PDictionary getP2PDictionary() { return p2pDictionary;
+	 * }
+	 * 
+	 * public void bindP2PDictionary(IP2PDictionary serv) { p2pDictionary =
+	 * serv; }
+	 * 
+	 * public void unbindP2PDictionary(IP2PDictionary serv) { if (p2pDictionary
+	 * == serv) { p2pDictionary = null; } }
+	 */
 
 }

@@ -203,8 +203,8 @@ public class RPiGPIOActor extends Actor {
 		}
 	}
 	
-	class RPiGPIOActorAction implements IActorAction{
-
+	class RPiGPIOActorAction extends AbstractActorAction{
+		private static final long serialVersionUID = 1L;
 		private State name;
 
 		RPiGPIOActorAction(State state){

@@ -1,7 +1,6 @@
 package de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.server;
 
 import java.io.IOException;
-import java.util.Map.Entry;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,17 +11,20 @@ import net.jxta.id.IDFactory;
 import net.jxta.peer.PeerID;
 import de.uniol.inf.is.odysseus.p2p_new.IJxtaServicesProvider;
 import de.uniol.inf.is.odysseus.p2p_new.IP2PNetworkManager;
+import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicator;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.IP2PDictionary;
+import de.uniol.inf.is.odysseus.parser.pql.generator.IPQLGenerator;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.ASmartDevice;
-import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.ActivityInterpreter;
+import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.LogicRule;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.RPiGPIOActor;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.RPiGPIOSensor;
-import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.Sensor;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.SmartDevice;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.TemperSensor;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.RPiGPIOActor.State;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.server.advertisement.SmartDeviceAdvertisement;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.server.service.ServerExecutorService;
+import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.utils.SmartDeviceRequestMessage;
+import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.utils.SmartDeviceResponseMessage;
 
 public class SmartDeviceServer {
 	private static final Logger LOG = LoggerFactory
@@ -35,7 +37,9 @@ public class SmartDeviceServer {
 
 	final long SmartDeviceAdvertisement_LIFETIME = 30 * 2;
 	final long SmartDeviceAdvertisement_EXPIRATION_TIME = 30 * 3;
-
+	private static IPQLGenerator pqlGenerator;
+	private SmartDeviceListener localSmartDeviceListener;
+	
 	SmartDeviceServer() {
 		initLocalSmartDeviceAsync();
 		createAndPublishSmartDeviceAdvertisementWhenPossibleAsync();
@@ -174,12 +178,14 @@ public class SmartDeviceServer {
 
 	public void unbindP2PNetworkManager(IP2PNetworkManager serv) {
 		if (p2pNetworkManager == serv) {
+			p2pNetworkManager.removeAdvertisementListener(SmartDeviceServerDictionaryDiscovery.getInstance()); 
 			p2pNetworkManager = null;
 		}
 	}
 
 	public void bindP2PNetworkManager(IP2PNetworkManager serv) {
 		p2pNetworkManager = serv;
+		p2pNetworkManager.addAdvertisementListener(SmartDeviceServerDictionaryDiscovery.getInstance()); 
 	}
 
 	private static IP2PNetworkManager getP2PNetworkManager() {
@@ -223,7 +229,7 @@ public class SmartDeviceServer {
 				waitForLogicProcessor();
 
 				try {
-					LogicProcessor.getInstance().initForLocalSmartDevice();
+					initForLocalSmartDevice();
 					initLocalSmartDevice();
 				} catch (Exception ex) {
 					LOG.error(ex.getMessage(), ex);
@@ -233,6 +239,11 @@ public class SmartDeviceServer {
 		t.setName("SmartDeviceServer initLocalSmartDeviceAsync thread");
 		t.setDaemon(true);
 		t.start();
+	}
+	
+	public void initForLocalSmartDevice() {
+		localSmartDeviceListener = new SmartDeviceListener();
+		SmartDeviceServer.getInstance().getLocalSmartDevice().addSmartDeviceListener(localSmartDeviceListener);
 	}
 
 	protected void waitForLogicProcessor() {
@@ -300,50 +311,97 @@ public class SmartDeviceServer {
 
 		//
 		// 3. Execute queries:
-		executeActivityInterpreterQueries(getLocalSmartDevice());
+		LogicProcessor.getInstance().executeActivityInterpreterQueries(getLocalSmartDevice());
 
 		// 4. SmartDevice is ready for advertisement now:
 		getLocalSmartDevice().setReady(true);
 	}
 
-	void executeActivityInterpreterQueries(ASmartDevice smartDevice) {
-		for (Sensor sensor : smartDevice.getConnectedSensors()) {
-			for (Entry<String, String> queryForRawValue : sensor
-					.getQueriesForRawValues().entrySet()) {
-				String viewName = queryForRawValue.getKey();
-				String query = queryForRawValue.getValue();
+	public static boolean isLocalPeer(String peerIDString) {
+		String str1 = getP2PNetworkManager().getLocalPeerID().intern()
+				.toString();
 
-				try {
-					QueryExecutor.getInstance()
-							.executeQueryNow(viewName, query);
-				} catch (Exception e) {
-					LOG.error(e.getMessage(), e);
-				}
-			}
+		if (str1 == null || peerIDString == null)
+			return false;
+		return str1.equals(peerIDString);
+	}
 
-			for (ActivityInterpreter activityInterpreter : sensor
-					.getActivityInterpreters()) {
-				String activityName = activityInterpreter.getActivityName();
-				String activitySourceName = activityInterpreter
-						.getActivitySourceName();
-
-				for (Entry<String, String> entry : activityInterpreter
-						.getActivityInterpreterQueries(activityName).entrySet()) {
-					String viewName = entry.getKey();
-					String query = entry.getValue();
-
-					try {
-						QueryExecutor.getInstance().executeQueryNow(viewName,
-								query);
-
-					} catch (Exception e) {
-						LOG.error(e.getMessage(), e);
-					}
-				}
-
-				QueryExecutor.getInstance().exportWhenPossibleAsync(
-						activitySourceName);
-			}
+	public static boolean isLocalPeer(PeerID peerID) {
+		if (getP2PNetworkManager() == null
+				|| getP2PNetworkManager().getLocalPeerID() == null
+				|| getP2PNetworkManager().getLocalPeerID().intern() == null) {
+			return false;
+		} else if (peerID == null || peerID.intern() == null) {
+			return false;
 		}
+
+		return isLocalPeer(peerID.intern().toString());
+	}
+	
+	public void bindPQLGenerator(IPQLGenerator serv) {
+		pqlGenerator = serv;
+	}
+
+	public void unbindPQLGenerator(IPQLGenerator serv) {
+		if (pqlGenerator == serv) {
+			pqlGenerator = null;
+		}
+	}
+	
+	public void bindPeerCommunicator(IPeerCommunicator _peerCommunicator) {
+		peerCommunicator = _peerCommunicator;
+		_peerCommunicator.registerMessageType(SmartDeviceRequestMessage.class);
+		_peerCommunicator.registerMessageType(SmartDeviceResponseMessage.class);
+
+		_peerCommunicator.addListener(SmartDeviceServerDictionaryDiscovery.getInstance(), SmartDeviceRequestMessage.class);
+		_peerCommunicator.addListener(SmartDeviceServerDictionaryDiscovery.getInstance(), SmartDeviceResponseMessage.class);
+	}
+
+	public void unbindPeerCommunicator(IPeerCommunicator _peerCommunicator) {
+		if (peerCommunicator == _peerCommunicator) {
+			_peerCommunicator.removeListener(SmartDeviceServerDictionaryDiscovery.getInstance(),
+					SmartDeviceRequestMessage.class);
+			_peerCommunicator.removeListener(SmartDeviceServerDictionaryDiscovery.getInstance(),
+					SmartDeviceResponseMessage.class);
+
+			// peerCommunicator.unregisterMessageType(SmartDeviceRequestMessage.class);
+			// peerCommunicator.unregisterMessageType(SmartDeviceResponseMessage.class);
+			peerCommunicator = null;
+		}
+	}
+	private IPeerCommunicator peerCommunicator;
+	///private static IPQLGenerator pqlGenerator;
+	///private static IP2PDictionary p2pDictionary;
+	///private static IP2PNetworkManager p2pNetworkManager;
+	
+	/*
+	public static IPQLGenerator getPQLGenerator() {
+		return pqlGenerator;
+	}
+	
+	public static IPQLGenerator getPQLGenerator() {
+		return pqlGenerator;
+	}
+	*/
+
+	public static IPQLGenerator getPQLGenerator() {
+		return pqlGenerator;
+	}
+
+	public IPeerCommunicator getPeerCommunicator() {
+		return peerCommunicator;
+	}
+	
+	public void addListener(ISmartDeviceDictionaryListener listener) {
+		LOG.debug(" addListener");
+		SmartDeviceServerDictionaryDiscovery.getInstance().addListener(listener);
+	}
+
+	public void removeListener(ISmartDeviceDictionaryListener listener) {
+		SmartDeviceServerDictionaryDiscovery.getInstance().removeListener(listener);
+	}
+	
+	protected void stopLogicRule(LogicRule rule) {
+		QueryExecutor.getInstance().stopLogicRuleAsync(rule);
 	}
 }

@@ -9,9 +9,6 @@ import org.slf4j.LoggerFactory;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.ASmartDevice;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.ActivityInterpreter;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.Actor;
-import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.FieldDevice;
-import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.IFieldDeviceListener;
-import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.ISmartDeviceListener;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.LogicRule;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.Sensor;
 
@@ -19,7 +16,7 @@ public class LogicProcessor implements ISmartDeviceDictionaryListener {
 	private static final Logger LOG = LoggerFactory
 			.getLogger(SmartHomeServerPlugIn.class);
 	private static LogicProcessor instance;
-	private SmartDeviceListener localSmartDeviceListener;
+	
 	
 	private LogicProcessor() {
 		
@@ -29,7 +26,7 @@ public class LogicProcessor implements ISmartDeviceDictionaryListener {
 	 * ISmartDeviceDictionaryListener
 	 */
 	@Override
-	public void smartDeviceAdded(SmartDeviceServerDictionaryDiscovery sender,
+	public void smartDeviceAdded(SmartDeviceServer sender,
 			ASmartDevice newSmartDevice) {
 		LOG.debug("smartDeviceAdded: " + newSmartDevice.getPeerID()
 				+ " processLogic("+newSmartDevice.getPeerName());
@@ -38,14 +35,16 @@ public class LogicProcessor implements ISmartDeviceDictionaryListener {
 	}
 
 	@Override
-	public void smartDeviceRemoved(SmartDeviceServerDictionaryDiscovery sender,
+	public void smartDeviceRemoved(SmartDeviceServer sender,
 			ASmartDevice removedSmartDevice) {
 		LOG.debug("smartDeviceRemoved: " + removedSmartDevice.getPeerName());
+		//TODO: beide methoden vergleichen!!!
 		removeRelevantLogicRules(removedSmartDevice);
+		QueryExecutor.getInstance().removeAllLogicRules(removedSmartDevice);
 	}
 
 	@Override
-	public void smartDeviceUpdated(SmartDeviceServerDictionaryDiscovery sender,
+	public void smartDeviceUpdated(SmartDeviceServer sender,
 			ASmartDevice updatedSmartDevice) {
 		updateLogicRulesIfNeeded(updatedSmartDevice);
 	}
@@ -201,6 +200,16 @@ public class LogicProcessor implements ISmartDeviceDictionaryListener {
 	
 	private void updateLogicRulesIfNeeded(ASmartDevice updatedSmartDevice) {
 		// TODO:
+		// LOG.debug("smartDeviceUpdated: " +
+				// smartDevice.getPeerIDString());
+				//
+				// TODO: Nachschauen was sich am SmartDevice geändert hat.
+				// Falls Sensoren hinzugefügt oder entfernt wurden, dann müssen die
+				// Logik-Regeln überprüft und anschließend ausgeführt oder entfernt
+				// werden!
+				//
+				// vergleich von altem mit neuem SmartDevice?
+		
 		
 	}
 	
@@ -234,38 +243,59 @@ public class LogicProcessor implements ISmartDeviceDictionaryListener {
 		return instance;
 	}
 	
-	public class SmartDeviceListener implements ISmartDeviceListener{
-		@Override
-		public void fieldDeviceConnected(ASmartDevice sender, FieldDevice device) {
-			device.addFieldDeviceListener(new IFieldDeviceListener() {
-				@Override
-				public void logicRuleRemoved(LogicRule rule) {
-					QueryExecutor.getInstance().stopLogicRuleAsync(rule);
-					
-					try{
-						System.out.println("LogicProcessor() logicRuleRemoved: "+rule.getActivityName()+" Actor:"+rule.getActor().getName()+"");
-					}catch(Exception ex){
-						System.out.println("LogicProcessor() logicRuleRemoved: something null...");
-					}
-				}
-			});
-		}
+	
 
-		@Override
-		public void fieldDeviceRemoved(ASmartDevice smartDevice,
-				FieldDevice device) {
-			LOG.debug("fieldDeviceRemoved device:"+device.getName());
-		}
-		
-		@Override
-		public void readyStateChanged(ASmartDevice smartDevice, boolean state) {
-			LOG.debug("smartDevice: "+smartDevice.getPeerName()+" readyState:"+state);
-		}
-		
-	}
-
+	
+	
+	/*
 	public void initForLocalSmartDevice() {
 		localSmartDeviceListener = new SmartDeviceListener();
 		SmartDeviceServer.getInstance().getLocalSmartDevice().addSmartDeviceListener(localSmartDeviceListener);
 	}
+	*/
+	
+	
+	void executeActivityInterpreterQueries(ASmartDevice smartDevice) {
+		for (Sensor sensor : smartDevice.getConnectedSensors()) {
+			for (Entry<String, String> queryForRawValue : sensor
+					.getQueriesForRawValues().entrySet()) {
+				String viewName = queryForRawValue.getKey();
+				String query = queryForRawValue.getValue();
+
+				try {
+					QueryExecutor.getInstance()
+							.executeQueryNow(viewName, query);
+				} catch (Exception e) {
+					LOG.error(e.getMessage(), e);
+				}
+			}
+
+			for (ActivityInterpreter activityInterpreter : sensor
+					.getActivityInterpreters()) {
+				String activityName = activityInterpreter.getActivityName();
+				String activitySourceName = activityInterpreter
+						.getActivitySourceName();
+
+				for (Entry<String, String> entry : activityInterpreter
+						.getActivityInterpreterQueries(activityName).entrySet()) {
+					String viewName = entry.getKey();
+					String query = entry.getValue();
+
+					try {
+						QueryExecutor.getInstance().executeQueryNow(viewName,
+								query);
+
+					} catch (Exception e) {
+						LOG.error(e.getMessage(), e);
+					}
+				}
+
+				QueryExecutor.getInstance().exportWhenPossibleAsync(
+						activitySourceName);
+			}
+		}
+	}
+	
+	
+	
 }

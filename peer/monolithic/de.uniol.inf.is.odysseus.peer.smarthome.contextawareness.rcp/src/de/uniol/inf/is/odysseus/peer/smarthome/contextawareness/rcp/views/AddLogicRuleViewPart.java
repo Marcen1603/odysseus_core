@@ -10,7 +10,7 @@ import org.eclipse.ui.part.ViewPart;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.LogicRuleFactory;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.ASmartDevice;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.Actor;
-import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.IActorAction;
+import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.AbstractActorAction;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.LogicRule;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.rcp.SmartHomeRCPActivator;
 
@@ -145,7 +145,7 @@ public class AddLogicRuleViewPart extends ViewPart {
 					selectedActor);
 
 			ArrayList<String> list = new ArrayList<>();
-			for (IActorAction actions : actor.getActions()) {
+			for (AbstractActorAction actions : actor.getActions()) {
 				list.add(actions.getName());
 			}
 
@@ -187,7 +187,7 @@ public class AddLogicRuleViewPart extends ViewPart {
 					selectedActor);
 
 			if (selectedActorAction >= 0) {
-				IActorAction actorAction = actor.getActions().get(
+				AbstractActorAction actorAction = actor.getActions().get(
 						selectedActorAction);
 
 				LogicRule createdlogicRule = LogicRuleFactory.createLogicRule(

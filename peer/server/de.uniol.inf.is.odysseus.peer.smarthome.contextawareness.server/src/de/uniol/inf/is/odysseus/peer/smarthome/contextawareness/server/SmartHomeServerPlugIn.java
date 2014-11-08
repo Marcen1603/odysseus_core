@@ -33,19 +33,16 @@ public class SmartHomeServerPlugIn implements BundleActivator {
 	private static IPeerDictionary peerDictionary;
 
 	public void start(BundleContext bundleContext) throws Exception {
-		SmartDeviceServerDictionaryDiscovery.getInstance().addListener(
+		SmartDeviceServer.getInstance().addListener(
 				LogicProcessor.getInstance());
-		SmartDeviceServerDictionaryDiscovery.getInstance().addListener(
-				QueryExecutor.getInstance());
 
 		bundle = bundleContext.getBundle();
 	}
 
 	public void stop(BundleContext context) throws Exception {
-		SmartDeviceServerDictionaryDiscovery.getInstance().removeListener(
+		SmartDeviceServer.getInstance().removeListener(
 				LogicProcessor.getInstance());
-		SmartDeviceServerDictionaryDiscovery.getInstance().removeListener(
-				QueryExecutor.getInstance());
+		
 		bundle = null;
 	}
 
@@ -66,16 +63,16 @@ public class SmartHomeServerPlugIn implements BundleActivator {
 		p2pNetworkManager = serv;
 
 		SmartDeviceServer.getInstance().bindP2PNetworkManager(serv);
-		SmartDeviceServerDictionaryDiscovery.getInstance()
-				.bindP2PNetworkManager(serv);
+		//SmartDeviceServerDictionaryDiscovery.getInstance()
+		//		.bindP2PNetworkManager(serv);
 		QueryExecutor.getInstance().bindP2PNetworkManager(serv);
 	}
 
 	// called by OSGi-DS
 	public static void unbindP2PNetworkManager(IP2PNetworkManager serv) {
 		SmartDeviceServer.getInstance().unbindP2PNetworkManager(serv);
-		SmartDeviceServerDictionaryDiscovery.getInstance()
-				.unbindP2PNetworkManager(serv);
+		//SmartDeviceServerDictionaryDiscovery.getInstance()
+		//		.unbindP2PNetworkManager(serv);
 		QueryExecutor.getInstance().unbindP2PNetworkManager(serv);
 
 		if (p2pNetworkManager == serv) {
@@ -87,8 +84,10 @@ public class SmartHomeServerPlugIn implements BundleActivator {
 	public static void bindPeerCommunicator(IPeerCommunicator serv) {
 		peerCommunicator = serv;
 
-		SmartDeviceServerDictionaryDiscovery.getInstance()
+		SmartDeviceServer.getInstance()
 				.bindPeerCommunicator(serv);
+		//SmartDeviceServerDictionaryDiscovery.getInstance()
+		//.bindPeerCommunicator(serv);
 		SmartDeviceLocalConfigurationServer.getInstance().bindPeerCommunicator(
 				serv);
 	}
@@ -97,8 +96,10 @@ public class SmartHomeServerPlugIn implements BundleActivator {
 	public static void unbindPeerCommunicator(IPeerCommunicator serv) {
 		SmartDeviceLocalConfigurationServer.getInstance()
 				.unbindPeerCommunicator(serv);
-		SmartDeviceServerDictionaryDiscovery.getInstance()
-				.unbindPeerCommunicator(serv);
+		//SmartDeviceServerDictionaryDiscovery.getInstance()
+		//		.unbindPeerCommunicator(serv);
+		SmartDeviceServer.getInstance()
+		.unbindPeerCommunicator(serv);
 
 		if (peerCommunicator == serv) {
 			peerCommunicator
@@ -120,16 +121,16 @@ public class SmartHomeServerPlugIn implements BundleActivator {
 		p2pDictionary = serv;
 
 		SmartDeviceServer.getInstance().bindP2PDictionary(serv);
-		SmartDeviceServerDictionaryDiscovery.getInstance().bindP2PDictionary(
-				serv);
+		//SmartDeviceServerDictionaryDiscovery.getInstance().bindP2PDictionary(
+		//		serv);
 		QueryExecutor.getInstance().bindP2PDictionary(serv);
 		// showActualImportedSourcesAsync();
 	}
 
 	// called by OSGi-DS
 	public static void unbindP2PDictionary(IP2PDictionary serv) {
-		SmartDeviceServerDictionaryDiscovery.getInstance().unbindP2PDictionary(
-				serv);
+		//SmartDeviceServerDictionaryDiscovery.getInstance().unbindP2PDictionary(
+		//		serv);
 		SmartDeviceServer.getInstance().unbindP2PDictionary(serv);
 		QueryExecutor.getInstance().unbindP2PDictionary(serv);
 
@@ -170,14 +171,18 @@ public class SmartHomeServerPlugIn implements BundleActivator {
 	public static void bindPQLGenerator(IPQLGenerator serv) {
 		pqlGenerator = serv;
 
-		SmartDeviceServerDictionaryDiscovery.getInstance().bindPQLGenerator(
+		SmartDeviceServer.getInstance().bindPQLGenerator(
 				serv);
+		//SmartDeviceServerDictionaryDiscovery.getInstance().bindPQLGenerator(
+		//		serv);
 	}
 
 	// called by OSGi-DS
 	public static void unbindPQLGenerator(IPQLGenerator serv) {
-		SmartDeviceServerDictionaryDiscovery.getInstance().unbindPQLGenerator(
+		SmartDeviceServer.getInstance().unbindPQLGenerator(
 				serv);
+		//SmartDeviceServerDictionaryDiscovery.getInstance().unbindPQLGenerator(
+		//		serv);
 
 		if (pqlGenerator == serv) {
 			pqlGenerator = null;

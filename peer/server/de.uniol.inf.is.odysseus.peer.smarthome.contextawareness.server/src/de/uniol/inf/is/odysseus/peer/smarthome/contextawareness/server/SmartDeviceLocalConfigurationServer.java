@@ -48,7 +48,7 @@ public class SmartDeviceLocalConfigurationServer implements
 		} else if (message instanceof SmartDeviceConfigurationResponseMessage) {
 			SmartDeviceConfigurationResponseMessage configResponse = (SmartDeviceConfigurationResponseMessage) message;
 
-			if (!SmartDeviceServerDictionaryDiscovery.isLocalPeer(senderPeer)) {
+			if (!SmartDeviceServer.isLocalPeer(senderPeer)) {
 				if (getSmartDeviceConfig()
 						.getContextname() != null) {
 					try {
