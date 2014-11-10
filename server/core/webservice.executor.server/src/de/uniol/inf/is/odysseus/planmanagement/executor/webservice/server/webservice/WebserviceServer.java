@@ -136,8 +136,8 @@ import de.uniol.inf.is.odysseus.security.ssl.SSLServerSocketProvider;
 		LogicalQuery.class, ConnectionInformation.class, Context.class })
 public class WebserviceServer {
 
-	private static final int SINK_MIN_PORT = 10000;
-	private static final int SINK_MAX_PORT = 20000;
+	private static final int SINK_MIN_PORT = OdysseusConfiguration.getInt("webservice.queryconnect.sink.minport", 10000);
+	private static final int SINK_MAX_PORT = OdysseusConfiguration.getInt("webservice.queryconnect.sink.maxport", 20000);;
 
 	/**
 	 * Socket Management

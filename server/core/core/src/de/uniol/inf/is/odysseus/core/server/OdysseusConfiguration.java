@@ -190,6 +190,8 @@ public class OdysseusConfiguration {
 		props.setProperty("WebService.MaxPort","10000");
 		props.setProperty("WebService.SSL", "false");
 		props.setProperty("Webservice.SSL_Client_Authentication", "false");
+		props.setProperty("webservice.queryconnect.sink.minport","10000");
+		props.setProperty("webservice.queryconnect.sink.maxport","20000");
 		
 		
 		// security and crypto stuff, e.g. for creating self-signed certificates

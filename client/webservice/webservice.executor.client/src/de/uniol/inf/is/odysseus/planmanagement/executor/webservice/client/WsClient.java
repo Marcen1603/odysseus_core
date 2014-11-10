@@ -261,6 +261,7 @@ public class WsClient implements IExecutor, IClientExecutor, IOperatorOwner {
 		IUser user = new WsClientUser(username, password, true);
 		WsClientSession session = new WsClientSession(user, null, REMOVEME);
 		session.setToken(securitytoken);
+		ClientSessionStore.addSession(REMOVEME, session);
 		fireUpdateEvent(IUpdateEventListener.SESSION);
 		return session;
 	}
