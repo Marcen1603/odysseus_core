@@ -36,113 +36,115 @@ import de.uniol.inf.is.odysseus.peer.recovery.util.LocalBackupInformationAccess;
 import de.uniol.inf.is.odysseus.peer.recovery.util.RecoveryHelper;
 
 /**
- * This class implements the actions that are taken, when a
- * new peer needs to be found and queries of failed peers need
- * to be allocated.
+ * This class implements the actions that are taken, when a new peer needs to be
+ * found and queries of failed peers need to be allocated.
+ * 
  * @author Simon Kuespert
  *
  */
 public class RecoveryDynamicBackup implements IRecoveryDynamicBackup {
-	
+
 	/**
 	 * The logger instance for this class.
 	 */
 	private static final Logger LOG = LoggerFactory.getLogger(RecoveryDynamicBackup.class);
-	
+
 	/**
 	 * The recovery communicator, if there is one bound.
 	 */
 	private static Optional<IRecoveryCommunicator> cRecoveryCommunicator = Optional.absent();
-	
+
 	/**
 	 * Binds a recovery communicator. <br />
 	 * Called by OSGi-DS.
-	 * @param serv The recovery communicator to bind. <br />
-	 * Must be not null.
+	 * 
+	 * @param serv
+	 *            The recovery communicator to bind. <br />
+	 *            Must be not null.
 	 */
 	public static void bindRecoveryCommunicator(IRecoveryCommunicator serv) {
-		
+
 		Preconditions.checkNotNull(serv);
 		Preconditions.checkArgument(serv instanceof IRecoveryCommunicator);
 		cRecoveryCommunicator = Optional.of(serv);
-		LOG.debug("Bound {} as a recovery communicator.", serv
-				.getClass().getSimpleName());
-		
+		LOG.debug("Bound {} as a recovery communicator.", serv.getClass().getSimpleName());
+
 	}
 
 	/**
 	 * Unbinds a recovery communicator, if it's the bound one. <br />
 	 * Called by OSGi-DS.
-	 * @param serv The recovery communicator to unbind. <br />
-	 * Must be not null.
+	 * 
+	 * @param serv
+	 *            The recovery communicator to unbind. <br />
+	 *            Must be not null.
 	 */
 	public static void unbindRecoveryCommunicator(IRecoveryCommunicator serv) {
-		
+
 		Preconditions.checkNotNull(serv);
 		Preconditions.checkArgument(serv instanceof IRecoveryCommunicator);
-		
+
 		if (cRecoveryCommunicator.isPresent() && cRecoveryCommunicator.get() == serv) {
-			
+
 			cRecoveryCommunicator = Optional.absent();
-			LOG.debug("Unbound {} as a recovery communicator.", serv
-					.getClass().getSimpleName());
-			
+			LOG.debug("Unbound {} as a recovery communicator.", serv.getClass().getSimpleName());
+
 		}
-		
+
 	}
-	
-	
+
 	/**
 	 * Active Session. Use getActiveSession() to avoid null pointers.
 	 */
 	private static ISession activeSession;
-	
+
 	/**
 	 * The executor, if there is one bound.
 	 */
 	private static Optional<IServerExecutor> cExecutor = Optional.absent();
-	
+
 	/**
 	 * Binds an executor. <br />
 	 * Called by OSGi-DS.
-	 * @param serv The executor to bind. <br />
-	 * Must be not null.
+	 * 
+	 * @param serv
+	 *            The executor to bind. <br />
+	 *            Must be not null.
 	 */
 	public static void bindExecutor(IExecutor serv) {
-		
+
 		Preconditions.checkNotNull(serv);
 		Preconditions.checkArgument(serv instanceof IServerExecutor);
 		cExecutor = Optional.of((IServerExecutor) serv);
-		LOG.debug("Bound {} as an executor.", serv
-				.getClass().getSimpleName());
-		
+		LOG.debug("Bound {} as an executor.", serv.getClass().getSimpleName());
+
 	}
 
 	/**
 	 * Unbinds an executor, if it's the bound one. <br />
 	 * Called by OSGi-DS.
-	 * @param serv The executor to unbind. <br />
-	 * Must be not null.
+	 * 
+	 * @param serv
+	 *            The executor to unbind. <br />
+	 *            Must be not null.
 	 */
 	public static void unbindExecutor(IExecutor serv) {
-		
+
 		Preconditions.checkNotNull(serv);
 		Preconditions.checkArgument(serv instanceof IServerExecutor);
-		
+
 		if (cExecutor.isPresent() && cExecutor.get() == (IServerExecutor) serv) {
-			
+
 			cExecutor = Optional.absent();
-			LOG.debug("Unbound {} as an executor.", serv
-					.getClass().getSimpleName());
-			
+			LOG.debug("Unbound {} as an executor.", serv.getClass().getSimpleName());
+
 		}
-		
+
 	}
-	
+
 	public static Optional<IServerExecutor> getcExecutor() {
 		return cExecutor;
 	}
-
 
 	/**
 	 * Gets currently active Session.
@@ -156,19 +158,17 @@ public class RecoveryDynamicBackup implements IRecoveryDynamicBackup {
 		}
 		return activeSession;
 	}
-	
-	
+
 	@Override
-	public List<ID> getSharedQueryIdsForRecovery(PeerID failedPeer){
-		
+	public List<ID> getSharedQueryIdsForRecovery(PeerID failedPeer) {
+
 		List<ID> sharedQueryIdsForRecovery = new ArrayList<ID>();
-		
+
 		// 1. Check, if we have backup information for the failed peer and for
 		// which shared-query-ids
 		// Return if there is no backup information stored for the given peer
 
-		Collection<ID> sharedQueryIdsForPeer = LocalBackupInformationAccess
-				.getStoredSharedQueryIdsForPeer(failedPeer);
+		Collection<ID> sharedQueryIdsForPeer = LocalBackupInformationAccess.getStoredSharedQueryIdsForPeer(failedPeer);
 		if (sharedQueryIdsForPeer == null || sharedQueryIdsForPeer.isEmpty()) {
 			// We don't have any information about that failed peer
 			return sharedQueryIdsForRecovery;
@@ -180,7 +180,6 @@ public class RecoveryDynamicBackup implements IRecoveryDynamicBackup {
 		// are not the direct sender, so we have to save for which queries we
 		// are the direct sender
 
-
 		List<JxtaSenderPO<?>> senders = RecoveryHelper.getJxtaSenders();
 
 		for (JxtaSenderPO<?> sender : senders) {
@@ -191,8 +190,7 @@ public class RecoveryDynamicBackup implements IRecoveryDynamicBackup {
 				// sender: Search in the saved backup information for
 				// that pipe id and look, which shared query id belongs
 				// to the operator which has this pipeId
-				Set<SharedQuery> pqls = LocalBackupInformationAccess
-						.getStoredPQLStatements(failedPeer);
+				Set<SharedQuery> pqls = LocalBackupInformationAccess.getStoredPQLStatements(failedPeer);
 				for (SharedQuery sharedQuery : pqls) {
 					List<String> pqlParts = sharedQuery.getPqlParts();
 					for (String pql : pqlParts) {
@@ -213,16 +211,15 @@ public class RecoveryDynamicBackup implements IRecoveryDynamicBackup {
 		}
 		return sharedQueryIdsForRecovery;
 	}
-	
+
 	@Override
-	public List<JxtaSenderPO<?>> getAffectedSenders(PeerID failedPeer){
-		
+	public List<JxtaSenderPO<?>> getAffectedSenders(PeerID failedPeer) {
+
 		// 1. Check, if we have backup information for the failed peer and for
 		// which shared-query-ids
 		// Return if there is no backup information stored for the given peer
 
-		Collection<ID> sharedQueryIdsForPeer = LocalBackupInformationAccess
-				.getStoredSharedQueryIdsForPeer(failedPeer);
+		Collection<ID> sharedQueryIdsForPeer = LocalBackupInformationAccess.getStoredSharedQueryIdsForPeer(failedPeer);
 		if (sharedQueryIdsForPeer == null || sharedQueryIdsForPeer.isEmpty()) {
 			// We don't have any information about that failed peer
 			return null;
@@ -233,7 +230,6 @@ public class RecoveryDynamicBackup implements IRecoveryDynamicBackup {
 		// We maybe have backup-information about queries for that peer where we
 		// are not the direct sender, so we have to save for which queries we
 		// are the direct sender
-
 
 		List<JxtaSenderPO<?>> senders = RecoveryHelper.getJxtaSenders();
 		List<JxtaSenderPO<?>> affectedSenders = new ArrayList<JxtaSenderPO<?>>();
@@ -246,8 +242,7 @@ public class RecoveryDynamicBackup implements IRecoveryDynamicBackup {
 				// sender: Search in the saved backup information for
 				// that pipe id and look, which shared query id belongs
 				// to the operator which has this pipeId
-				Set<SharedQuery> pqls = LocalBackupInformationAccess
-						.getStoredPQLStatements(failedPeer);
+				Set<SharedQuery> pqls = LocalBackupInformationAccess.getStoredPQLStatements(failedPeer);
 				for (SharedQuery sharedQuery : pqls) {
 					List<String> pqlParts = sharedQuery.getPqlParts();
 					for (String pql : pqlParts) {
@@ -270,24 +265,25 @@ public class RecoveryDynamicBackup implements IRecoveryDynamicBackup {
 		}
 		return affectedSenders;
 	}
-	
+
+	@Override
 	public void determineAndSendHoldOnMessages(ID sharedQueryId, PeerID failedPeer) {
-		
+
 		// Preconditions
-		if(!cExecutor.isPresent()) {
-			
+		if (!cExecutor.isPresent()) {
+
 			LOG.error("No executor bound!");
 			return;
-			
+
 		}
-		
-		if(!cRecoveryCommunicator.isPresent()) {
-			
+
+		if (!cRecoveryCommunicator.isPresent()) {
+
 			LOG.error("No recovery communicator bound!");
 			return;
-			
+
 		}
-		
+
 		// Test: Tell the peers which sent tuples to the failed peer that
 		// they have to hold on
 		ImmutableSet<String> backupPQL = LocalBackupInformationAccess.getStoredPQLStatements(sharedQueryId, failedPeer);
@@ -311,9 +307,9 @@ public class RecoveryDynamicBackup implements IRecoveryDynamicBackup {
 									.createHoldOnMessage(pipe);
 							uri = new URI(peerId);
 							PeerID peerToHoldOn = PeerID.create(uri);
-							
+
 							cRecoveryCommunicator.get().sendHoldOnMessage(peerToHoldOn, holdOnMessage);
-							
+
 						} catch (URISyntaxException e) {
 							e.printStackTrace();
 						}
@@ -322,14 +318,28 @@ public class RecoveryDynamicBackup implements IRecoveryDynamicBackup {
 			}
 		}
 	}
-	
+
 	@Override
-	public void initiateAgreement(PeerID failedPeer, ID sharedQueryId,
-			PeerID newPeer) {
+	public void initiateAgreement(PeerID failedPeer, ID sharedQueryId, PeerID newPeer) {
 		RecoveryAgreementHandler.waitForAndDoRecovery(failedPeer, sharedQueryId, newPeer);
-		
+
 	}
 
-	
-	
+	@Override
+	public List<ID> removeMyBuddyAndSearchNew(PeerID failedPeer) {
+		if (!cRecoveryCommunicator.isPresent()) {
+			LOG.error("No recovery communicator bound!");
+			return null;
+		}
+		
+		if (LocalBackupInformationAccess.getMyBuddyList().containsKey(failedPeer)) {
+			LOG.debug("My buddy failed, I have to search for new buddies.");
+			List<ID> sharedQueryIds = LocalBackupInformationAccess.removeMyBuddy(failedPeer);
+			for (ID sharedQueryId : sharedQueryIds) {
+				cRecoveryCommunicator.get().chooseBuddyForQuery(sharedQueryId);
+			}
+		}
+		return null;
+	}
+
 }

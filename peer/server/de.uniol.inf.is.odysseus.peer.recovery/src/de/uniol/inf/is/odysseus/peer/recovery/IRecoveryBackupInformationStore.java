@@ -98,7 +98,7 @@ public interface IRecoveryBackupInformationStore {
 	public void remove(String pql);
 
 	/*
-	 * TODO Buddy information. Not clear atm. if they are needed.
+	 * Buddy-information (the peers for which we are the buddy)
 	 */
 
 	/**
@@ -119,5 +119,39 @@ public interface IRecoveryBackupInformationStore {
 	 * @return The Map of peers you are the buddy for
 	 */
 	public Map<PeerID, List<ID>> getBuddyList();
+
+	/*
+	 * My buddies (the peers which are my buddies)
+	 */
+
+	/**
+	 * Adds a peer to the list of peers which are my buddies (so they would do
+	 * the recovery if I would fail)
+	 * 
+	 * @param peerId
+	 *            The PeerID from the peer which is my buddy
+	 * @param sharedQueryId
+	 *            The id of the shared query for which this peer is responsible
+	 *            for if I fail
+	 */
+	public void addMyBuddy(PeerID peerId, ID sharedQueryId);
+
+	/**
+	 * Removes a peer from the list of my buddies, e.g., if that other peer
+	 * fails and can no longer be my buddy
+	 * 
+	 * @param peerId
+	 *            The PeerID from the peer which was my buddy
+	 * @return The list of sharedQueryIds the other peer was responsible for
+	 */
+	public List<ID> removeMyBuddy(PeerID peerId);
+
+	/**
+	 * Gives you the map of peers that are my buddies. These peers would be
+	 * responsible if I fail.
+	 * 
+	 * @return The Map of peers which are my buddies
+	 */
+	public Map<PeerID, List<ID>> getMyBuddyList();
 
 }

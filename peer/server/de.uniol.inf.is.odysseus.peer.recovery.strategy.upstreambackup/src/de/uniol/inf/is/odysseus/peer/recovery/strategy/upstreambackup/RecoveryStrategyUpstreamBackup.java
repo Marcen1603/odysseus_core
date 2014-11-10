@@ -224,6 +224,9 @@ public class RecoveryStrategyUpstreamBackup implements IRecoveryStrategy{
 			
 		}
 		
+		// Was this peer responsible for us? (Were we a buddy for him?) -> if so, search new buddies
+		cRecoveryDynamicBackup.get().removeMyBuddyAndSearchNew(failedPeer);
+		
 		LOG.debug("Want to start recovery for {}", cPeerDictionary.get().getRemotePeerName(failedPeer));
 
 		// To update the affected senders

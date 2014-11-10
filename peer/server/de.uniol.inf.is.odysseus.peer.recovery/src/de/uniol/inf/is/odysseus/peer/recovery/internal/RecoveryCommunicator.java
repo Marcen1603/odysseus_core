@@ -123,8 +123,7 @@ public class RecoveryCommunicator implements IRecoveryCommunicator, IPeerCommuni
 
 		Preconditions.checkNotNull(serv);
 		cPeerDictionary = Optional.of(serv);
-		LOG.debug("Bound {} as a Peer dictionary.", serv.getClass()
-				.getSimpleName());
+		LOG.debug("Bound {} as a Peer dictionary.", serv.getClass().getSimpleName());
 
 	}
 
@@ -143,8 +142,7 @@ public class RecoveryCommunicator implements IRecoveryCommunicator, IPeerCommuni
 		if (cPeerDictionary.isPresent() && cPeerDictionary.get() == serv) {
 
 			cPeerDictionary = Optional.absent();
-			LOG.debug("Unbound {} as a Peer dictionary.", serv.getClass()
-					.getSimpleName());
+			LOG.debug("Unbound {} as a Peer dictionary.", serv.getClass().getSimpleName());
 
 		}
 
@@ -470,7 +468,7 @@ public class RecoveryCommunicator implements IRecoveryCommunicator, IPeerCommuni
 			return;
 
 		}
-		
+
 		PeerID buddy = cPeerDictionary.get().getRemotePeerIDs().iterator().next();
 
 		// 2. Get the necessary backup-information
@@ -481,8 +479,9 @@ public class RecoveryCommunicator implements IRecoveryCommunicator, IPeerCommuni
 		RecoveryInstructionMessage buddyMessage = RecoveryInstructionMessage.createBeBuddyMessage(sharedQueryId, pql);
 		sendMessage(buddy, buddyMessage);
 
-		// 4. TODO Save, that this is my buddy so that we can find a new buddy
-		// if that one fails
+		// 4. Save, that this is my buddy so that we can find a new buddy if
+		// that one fails
+		LocalBackupInformationAccess.addMyBuddy(buddy, sharedQueryId);
 	}
 
 	/**

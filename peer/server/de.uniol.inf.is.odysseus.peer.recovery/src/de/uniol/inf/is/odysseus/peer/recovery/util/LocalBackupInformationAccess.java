@@ -33,14 +33,12 @@ public class LocalBackupInformationAccess {
 	/**
 	 * The logger instance for this class.
 	 */
-	private static final Logger LOG = LoggerFactory
-			.getLogger(LocalBackupInformationAccess.class);
+	private static final Logger LOG = LoggerFactory.getLogger(LocalBackupInformationAccess.class);
 
 	/**
 	 * The bound backup information store, if there is one bound.
 	 */
-	private static Optional<IRecoveryBackupInformationStore> cInfoStore = Optional
-			.absent();
+	private static Optional<IRecoveryBackupInformationStore> cInfoStore = Optional.absent();
 
 	/**
 	 * Binds a backup information store. <br />
@@ -54,8 +52,7 @@ public class LocalBackupInformationAccess {
 
 		Preconditions.checkNotNull(store);
 		cInfoStore = Optional.of(store);
-		LOG.debug("Bound {} as a backup information store for recovery.", store
-				.getClass().getSimpleName());
+		LOG.debug("Bound {} as a backup information store for recovery.", store.getClass().getSimpleName());
 
 	}
 
@@ -73,8 +70,7 @@ public class LocalBackupInformationAccess {
 		if (cInfoStore.isPresent() && cInfoStore.get().equals(store)) {
 
 			cInfoStore = Optional.absent();
-			LOG.debug("Unbound {} as a backup information store for recovery.",
-					store.getClass().getSimpleName());
+			LOG.debug("Unbound {} as a backup information store for recovery.", store.getClass().getSimpleName());
 
 		}
 
@@ -121,8 +117,7 @@ public class LocalBackupInformationAccess {
 
 		Set<String> pqls = Sets.newHashSet();
 
-		for (IRecoveryBackupInformation info : cInfoStore.get().get(
-				sharedQueryId)) {
+		for (IRecoveryBackupInformation info : cInfoStore.get().get(sharedQueryId)) {
 
 			pqls.add(info.getPQL());
 
@@ -186,8 +181,7 @@ public class LocalBackupInformationAccess {
 	 *         for which backup information are stored and which are allocated
 	 *         to the given peer.
 	 */
-	public static ImmutableSet<String> getStoredPQLStatements(ID sharedQueryId,
-			PeerID peerId) {
+	public static ImmutableSet<String> getStoredPQLStatements(ID sharedQueryId, PeerID peerId) {
 
 		Preconditions.checkNotNull(sharedQueryId);
 		Preconditions.checkNotNull(peerId);
@@ -204,8 +198,7 @@ public class LocalBackupInformationAccess {
 
 		for (String pql : pqlStatements) {
 
-			Optional<IRecoveryBackupInformation> info = cInfoStore.get().get(
-					pql);
+			Optional<IRecoveryBackupInformation> info = cInfoStore.get().get(pql);
 			Preconditions.checkArgument(info.isPresent());
 
 			if (info.get().getPeer().equals(peerId)) {
@@ -249,8 +242,7 @@ public class LocalBackupInformationAccess {
 	 *         given distributed query and for which backup information are
 	 *         stored.
 	 */
-	public static ImmutableSet<PeerID> getStoredPeersForSharedQueryId(
-			ID sharedQueryId) {
+	public static ImmutableSet<PeerID> getStoredPeersForSharedQueryId(ID sharedQueryId) {
 
 		Preconditions.checkNotNull(sharedQueryId);
 
@@ -262,8 +254,7 @@ public class LocalBackupInformationAccess {
 		}
 
 		Set<PeerID> peers = Sets.newHashSet();
-		for (IRecoveryBackupInformation info : cInfoStore.get().get(
-				sharedQueryId)) {
+		for (IRecoveryBackupInformation info : cInfoStore.get().get(sharedQueryId)) {
 
 			if (!peers.contains(info.getPeer())) {
 
@@ -302,8 +293,7 @@ public class LocalBackupInformationAccess {
 		Set<ID> sharedQueryIds = Sets.newHashSet();
 
 		for (ID queryId : cInfoStore.get().getAll().keySet()) {
-			for (IRecoveryBackupInformation info : cInfoStore.get()
-					.get(queryId)) {
+			for (IRecoveryBackupInformation info : cInfoStore.get().get(queryId)) {
 				if (info.getPeer().equals(peerId)) {
 					// This is what we search: For this peer we have a
 					// sharedQueryId
@@ -315,7 +305,7 @@ public class LocalBackupInformationAccess {
 
 		return ImmutableSet.copyOf(sharedQueryIds);
 	}
-	
+
 	/**
 	 * Gets all local query parts of a given distributed query for which backup
 	 * information are stored.
@@ -323,11 +313,11 @@ public class LocalBackupInformationAccess {
 	 * @param sharedQueryId
 	 *            The ID of the distributed query. <br />
 	 *            Must be not null!
-	 * @return The local PQL codes of all query parts of the given distributed query
-	 *         for which backup information are stored.
+	 * @return The local PQL codes of all query parts of the given distributed
+	 *         query for which backup information are stored.
 	 */
 	public static ImmutableCollection<String> getLocalPQL(ID sharedQueryId) {
-		
+
 		Preconditions.checkNotNull(sharedQueryId);
 
 		if (!cInfoStore.isPresent()) {
@@ -339,15 +329,14 @@ public class LocalBackupInformationAccess {
 
 		Set<String> pqls = Sets.newHashSet();
 
-		for (IRecoveryBackupInformation info : cInfoStore.get().get(
-				sharedQueryId)) {
+		for (IRecoveryBackupInformation info : cInfoStore.get().get(sharedQueryId)) {
 
 			pqls.add(info.getLocalPQL());
 
 		}
 
 		return ImmutableSet.copyOf(pqls);
-		
+
 	}
 
 	/**
@@ -381,6 +370,58 @@ public class LocalBackupInformationAccess {
 		}
 
 		return cInfoStore.get().getBuddyList();
+	}
+
+	/**
+	 * Adds a peer to the list of my buddies (the peers which are responsible if
+	 * I fail)
+	 * 
+	 * @param peerId
+	 *            The PeerID from the peer which is my buddy
+	 * @param sharedQueryId
+	 *            The id of the shared query for which this peer is responsible
+	 *            for if I fail
+	 */
+	public static void addMyBuddy(PeerID peerId, ID sharedQueryId) {
+		if (!cInfoStore.isPresent()) {
+			LOG.error("No backup information store for recovery bound!");
+			return;
+		}
+
+		cInfoStore.get().addMyBuddy(peerId, sharedQueryId);
+	}
+
+	/**
+	 * Gives you the map of peers that are my buddies. These peers would be
+	 * responsible if I fail.
+	 * 
+	 * @return The Map of peers which are my buddies
+	 */
+	public static Map<PeerID, List<ID>> getMyBuddyList() {
+		if (!cInfoStore.isPresent()) {
+			LOG.error("No backup information store for recovery bound!");
+			return null;
+		}
+
+		return cInfoStore.get().getMyBuddyList();
+	}
+
+	/**
+	 * Removes a peer from the list of my buddies, e.g., if that other peer
+	 * fails and can no longer be my buddy
+	 * 
+	 * @param peerId
+	 *            The PeerID from the peer which was my buddy
+	 * @return The list with the shared query-ids, if it was a buddy for me,
+	 *         null, if not
+	 */
+	public static List<ID> removeMyBuddy(PeerID peerId) {
+		if (!cInfoStore.isPresent()) {
+			LOG.error("No backup information store for recovery bound!");
+			return null;
+		}
+
+		return cInfoStore.get().removeMyBuddy(peerId);
 	}
 
 }

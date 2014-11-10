@@ -43,8 +43,7 @@ public class BackupInformationStore implements IRecoveryBackupInformationStore {
 	/**
 	 * The mapping of backup information to shared queries.
 	 */
-	private final Map<ID, Collection<IRecoveryBackupInformation>> mInfos = Maps
-			.newHashMap();
+	private final Map<ID, Collection<IRecoveryBackupInformation>> mInfos = Maps.newHashMap();
 
 	@Override
 	public void add(IRecoveryBackupInformation info) {
@@ -57,8 +56,7 @@ public class BackupInformationStore implements IRecoveryBackupInformationStore {
 
 		} else {
 
-			Collection<IRecoveryBackupInformation> infos = Sets
-					.newHashSet(info);
+			Collection<IRecoveryBackupInformation> infos = Sets.newHashSet(info);
 			this.mInfos.put(info.getSharedQuery(), infos);
 
 		}
@@ -117,8 +115,7 @@ public class BackupInformationStore implements IRecoveryBackupInformationStore {
 
 		Preconditions.checkNotNull(pql);
 
-		for (ID sharedQuery : this.mInfos.keySet().toArray(
-				new ID[this.mInfos.keySet().size()])) {
+		for (ID sharedQuery : this.mInfos.keySet().toArray(new ID[this.mInfos.keySet().size()])) {
 
 			for (IRecoveryBackupInformation info : this.mInfos.get(sharedQuery)) {
 
@@ -139,8 +136,7 @@ public class BackupInformationStore implements IRecoveryBackupInformationStore {
 
 		Preconditions.checkNotNull(info);
 
-		for (ID sharedQuery : this.mInfos.keySet().toArray(
-				new ID[this.mInfos.keySet().size()])) {
+		for (ID sharedQuery : this.mInfos.keySet().toArray(new ID[this.mInfos.keySet().size()])) {
 
 			this.mInfos.get(sharedQuery).remove(info);
 
@@ -149,7 +145,7 @@ public class BackupInformationStore implements IRecoveryBackupInformationStore {
 	}
 
 	/*
-	 * TODO Buddy information. Not clear atm. if they are needed.
+	 * Buddy-information (the peers for which we are the buddy)
 	 */
 
 	/**
@@ -174,6 +170,39 @@ public class BackupInformationStore implements IRecoveryBackupInformationStore {
 	@Override
 	public Map<PeerID, List<ID>> getBuddyList() {
 		ImmutableMap<PeerID, List<ID>> copyMap = ImmutableMap.copyOf(mBuddyMap);
+		return copyMap;
+	}
+
+	/*
+	 * My buddies (the peers which are my buddies)
+	 */
+
+	/**
+	 * The stored information which peers are my buddies
+	 */
+	private final Map<PeerID, List<ID>> mMyBuddyMap = Maps.newHashMap();
+
+	@Override
+	public void addMyBuddy(PeerID peerId, ID sharedQueryId) {
+		List<ID> queryList = null;
+		if (!mMyBuddyMap.containsKey(peerId)) {
+			queryList = new ArrayList<ID>();
+		} else {
+			queryList = mMyBuddyMap.get(peerId);
+		}
+
+		queryList.add(sharedQueryId);
+		mMyBuddyMap.put(peerId, queryList);
+	}
+
+	@Override
+	public List<ID> removeMyBuddy(PeerID peerId) {
+		return mMyBuddyMap.remove(peerId);
+	}
+
+	@Override
+	public Map<PeerID, List<ID>> getMyBuddyList() {
+		ImmutableMap<PeerID, List<ID>> copyMap = ImmutableMap.copyOf(mMyBuddyMap);
 		return copyMap;
 	}
 
