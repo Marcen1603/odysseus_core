@@ -38,6 +38,9 @@ import javax.jws.soap.SOAPBinding.Style;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlTransient;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.google.common.collect.ImmutableList;
 
 import de.uniol.inf.is.odysseus.core.collection.Context;
@@ -135,6 +138,8 @@ import de.uniol.inf.is.odysseus.security.ssl.SSLServerSocketProvider;
 @XmlSeeAlso({ SimpleGraph.class, String[].class, GraphNode.class,
 		LogicalQuery.class, ConnectionInformation.class, Context.class })
 public class WebserviceServer {
+	
+	static final private Logger logger = LoggerFactory.getLogger(WebserviceServer.class);
 
 	private static final int SINK_MIN_PORT = OdysseusConfiguration.getInt("webservice.queryconnect.sink.minport", 10000);
 	private static final int SINK_MAX_PORT = OdysseusConfiguration.getInt("webservice.queryconnect.sink.maxport", 20000);;
@@ -166,6 +171,7 @@ public class WebserviceServer {
 		if (user != null) {
 			String token = user.getToken();
 			StringResponse response = new StringResponse(token, true);
+			logger.debug("New user "+username+"@"+tenantname+" connected.");
 			return response;
 		}
 		return new StringResponse(null, false);
@@ -180,6 +186,7 @@ public class WebserviceServer {
 		if (user != null) {
 			String token = user.getToken();
 			StringResponse response = new StringResponse(token, true);
+			logger.debug("New user "+username+" "+password+" connected.");
 			return response;
 		}
 		return new StringResponse(null, false);
