@@ -25,7 +25,6 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecu
 import de.uniol.inf.is.odysseus.p2p_new.IP2PNetworkManager;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.IPeerDictionary;
 import de.uniol.inf.is.odysseus.peer.distribute.QueryPartAllocationException;
-import de.uniol.inf.is.odysseus.peer.recovery.IP2PNetworkController;
 import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryAllocator;
 import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryCommunicator;
 import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryStrategy;
@@ -51,7 +50,6 @@ public class RecoveryConsole implements CommandProvider {
 	 * Executor to get queries
 	 */
 	private static IServerExecutor executor;
-	private static IP2PNetworkController p2pNetworkController;
 	private static Collection<IRecoveryStrategy> recoveryStrategies = Lists.newArrayList();
 	private static Collection<IRecoveryStrategyManager> recoveryStrategyManagers = Lists.newArrayList();
 
@@ -64,18 +62,6 @@ public class RecoveryConsole implements CommandProvider {
 	public static void unbindP2PNetworkManager(IP2PNetworkManager serv) {
 		if (p2pNetworkManager == serv) {
 			p2pNetworkManager = null;
-		}
-	}
-
-	// called by OSGi-DS
-	public static void bindP2PNetworkController(IP2PNetworkController serv) {
-		p2pNetworkController = serv;
-	}
-
-	// called by OSGi-DS
-	public static void unbindP2PNetworkController(IP2PNetworkController serv) {
-		if (p2pNetworkController == serv) {
-			p2pNetworkController = null;
 		}
 	}
 
@@ -216,8 +202,6 @@ public class RecoveryConsole implements CommandProvider {
 		sb.append("	sendUpdateReceiver <PeerName from receiver> <PeerName from new sender> <pipeId> - Send an updateReceiver-message to <PeerName from receiver>, so that this should receive the tuples fir pipe <pipeId> from the new sender <PeerName from new sender>.\n");
 		sb.append("	sendAddQueriesFromPeer <PeerName from receiver> <PeerName from failed peer> <sharedQueryId> - The <PeerName from receiver> will get a message which tells that the peer has to install the query <sharedQueryId> from <PeerName from failed peer>. \n");
 		sb.append("	recoveryAllocation <AllocatorName> - Gets the id and name of a peer to allocate to (for testing) \n");
-		sb.append("	startPeerFailureDetection - DEPRECATED - Starts detection of peer failures with the given allocator. \n");
-		sb.append("	stopPeerFailureDetection - DEPRECATED - Stops detection of peer failures. \n");
 		sb.append("	holdOn <PipeId> - Let this peer hold on\n");
 		sb.append("	goOn <PipeId> - Let this peer go on\n");
 		sb.append("	beBuddy <sharedQueryId> - Sends a random peer a message that he is the buddy for the <sharedQueryId> and the necessary backup-infos\n");
@@ -364,26 +348,6 @@ public class RecoveryConsole implements CommandProvider {
 		}
 
 		cCommunicator.get().sendUpdateReceiverMessage(receiverPeerId, newSendrePeerId, pipeId);
-	}
-
-	@Deprecated
-	public void _startPeerFailureDetection(CommandInterpreter ci) {
-		Preconditions.checkNotNull(ci, "Command interpreter must be not null!");
-		ci.println("Deprecated!");
-
-		p2pNetworkController.start();
-
-		ci.println("Peer failure detection is now switched on on this peer.");
-	}
-
-	@Deprecated
-	public void _stopPeerFailureDetection(CommandInterpreter ci) {
-		Preconditions.checkNotNull(ci, "Command interpreter must be not null!");
-		ci.println("Deprecated!");
-
-		p2pNetworkController.stop();
-
-		ci.println("Peer failure detection is now switched off on this peer.");
 	}
 
 	public void _lsBackupStore(CommandInterpreter ci) {

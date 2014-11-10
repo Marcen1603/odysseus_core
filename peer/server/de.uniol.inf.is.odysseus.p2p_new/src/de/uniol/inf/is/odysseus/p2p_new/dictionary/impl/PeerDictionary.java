@@ -144,6 +144,46 @@ public class PeerDictionary implements IPeerDictionary,
 		removeListener(serv);
 
 	}
+	
+	private void firePeerAddedEvent(PeerID peer) {
+		
+		Preconditions.checkNotNull(peer);
+		
+		for(IPeerDictionaryListener listener : this.listeners) {
+			
+			try {
+			
+				listener.peerAdded(peer);
+				
+			} catch(Throwable t) {
+				
+				LOG.error(t.getMessage());
+				
+			}
+			
+		}
+		
+	}
+	
+	private void firePeerRemovedEvent(PeerID peer) {
+		
+		Preconditions.checkNotNull(peer);
+		
+		for(IPeerDictionaryListener listener : this.listeners) {
+			
+			try {
+			
+				listener.peerRemoved(peer);
+				
+			} catch(Throwable t) {
+				
+				LOG.error(t.getMessage());
+				
+			}
+			
+		}
+		
+	}
 
 	public void activate() {
 
@@ -290,12 +330,34 @@ public class PeerDictionary implements IPeerDictionary,
 	@Override
 	public void updateAdvertisements() {
 		
-		Collection<PeerID> peerIDs = toPeerIDs(JxtaServicesProvider
+		Collection<PeerID> peers = toPeerIDs(JxtaServicesProvider
 				.getInstance().getPeerAdvertisements());
 		
-		synchronized (currentPeerIDs) {
+		// Check for peers to add
+		for(PeerID peer : peers) {
+			
+			if(!this.currentPeerIDs.contains(peer)) {
+				
+				this.firePeerAddedEvent(peer);
+				
+			}
+			
+		}
 		
-			currentPeerIDs = peerIDs;
+		// Check for peers to remove
+		for(PeerID peer : this.currentPeerIDs) {
+			
+			if(!peers.contains(peer)) {
+				
+				this.firePeerRemovedEvent(peer);
+				
+			}
+			
+		}
+		
+		synchronized (currentPeerIDs) {
+			
+			currentPeerIDs = peers;
 			
 		}
 

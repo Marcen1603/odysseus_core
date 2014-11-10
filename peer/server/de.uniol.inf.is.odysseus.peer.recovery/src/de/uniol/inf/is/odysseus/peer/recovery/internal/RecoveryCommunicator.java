@@ -23,9 +23,8 @@ import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicator;
 import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicatorListener;
 import de.uniol.inf.is.odysseus.p2p_new.PeerCommunicationException;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.IPeerDictionary;
+import de.uniol.inf.is.odysseus.p2p_new.dictionary.IPeerDictionaryListener;
 import de.uniol.inf.is.odysseus.peer.distribute.message.RemoveQueryMessage;
-import de.uniol.inf.is.odysseus.peer.recovery.IP2PNetworkController;
-import de.uniol.inf.is.odysseus.peer.recovery.IP2PNetworkController.IP2PNetworkControllerListener;
 import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryBackupInformation;
 import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryCommunicator;
 import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryStrategyManager;
@@ -44,7 +43,7 @@ import de.uniol.inf.is.odysseus.peer.recovery.util.LocalBackupInformationAccess;
  *
  */
 public class RecoveryCommunicator implements IRecoveryCommunicator, IPeerCommunicatorListener,
-		IP2PNetworkControllerListener {
+		IPeerDictionaryListener {
 
 	/**
 	 * The logger instance for this class.
@@ -235,48 +234,6 @@ public class RecoveryCommunicator implements IRecoveryCommunicator, IPeerCommuni
 			this.unregisterMessagesAndAddListeners();
 			cPeerCommunicator = Optional.absent();
 			LOG.debug("Unbound {} as a peer communicator.", serv.getClass().getSimpleName());
-
-		}
-
-	}
-
-	/**
-	 * The P2P network controller, if there is one bound.
-	 */
-	private static Optional<IP2PNetworkController> cP2PNetworkController = Optional.absent();
-
-	/**
-	 * Binds a P2P network controller. <br />
-	 * Called by OSGi-DS.
-	 * 
-	 * @param serv
-	 *            The P2P network controller to bind. <br />
-	 *            Must be not null.
-	 */
-	public void bindP2PNetworkController(IP2PNetworkController serv) {
-
-		Preconditions.checkNotNull(serv);
-		cP2PNetworkController = Optional.of(serv);
-		LOG.debug("Bound {} as a P2P network controller.", serv.getClass().getSimpleName());
-
-	}
-
-	/**
-	 * Unbinds a P2P network controller, if it's the bound one. <br />
-	 * Called by OSGi-DS.
-	 * 
-	 * @param serv
-	 *            The P2P network controller to unbind. <br />
-	 *            Must be not null.
-	 */
-	public static void unbindP2PNetworkController(IP2PNetworkController serv) {
-
-		Preconditions.checkNotNull(serv);
-
-		if (cP2PNetworkController.isPresent() && cP2PNetworkController.get() == serv) {
-
-			cP2PNetworkController = Optional.absent();
-			LOG.debug("Unbound {} as a P2P network controllerr.", serv.getClass().getSimpleName());
 
 		}
 
@@ -554,15 +511,15 @@ public class RecoveryCommunicator implements IRecoveryCommunicator, IPeerCommuni
 	}
 
 	@Override
-	public void onPeerEntered(PeerID peer) {
-
+	public void peerAdded(PeerID peer) {
+		
 		// Nothing to do.
-
+		
 	}
 
 	@Override
-	public void onPeerLeaved(PeerID peer) {
-
+	public void peerRemoved(PeerID peer) {
+		
 		Preconditions.checkNotNull(peer);
 		if (!cRecoveryStrategyManager.isPresent()) {
 
@@ -573,7 +530,7 @@ public class RecoveryCommunicator implements IRecoveryCommunicator, IPeerCommuni
 
 		// Start recovery
 		cRecoveryStrategyManager.get().startRecovery(peer);
-
+		
 	}
 
 }

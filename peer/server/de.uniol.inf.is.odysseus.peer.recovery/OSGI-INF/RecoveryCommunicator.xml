@@ -3,7 +3,7 @@
    <implementation class="de.uniol.inf.is.odysseus.peer.recovery.internal.RecoveryCommunicator"/>
    <service>
       <provide interface="de.uniol.inf.is.odysseus.peer.recovery.IRecoveryCommunicator"/>
-      <provide interface="de.uniol.inf.is.odysseus.peer.recovery.IP2PNetworkController$IP2PNetworkControllerListener"/>
+      <provide interface="de.uniol.inf.is.odysseus.p2p_new.dictionary.IPeerDictionaryListener"/>
    </service>
    <reference bind="bindPeerCommunicator" cardinality="1..1" interface="de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicator" name="IPeerCommunicator" policy="static" unbind="unbindPeerCommunicator"/>
    <reference bind="bindExecutor" cardinality="1..1" interface="de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor" name="IExecutor" policy="static" unbind="unbindExecutor"/>
