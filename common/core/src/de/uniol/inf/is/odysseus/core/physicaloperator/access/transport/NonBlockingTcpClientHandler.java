@@ -162,7 +162,7 @@ public class NonBlockingTcpClientHandler extends AbstractTransportHandler
 	@Override
 	public void connectionFailed(final ConnectorSelectorHandler handler,
 			final Exception cause) {
-		infoService.error("Could not connet to server " + host + " on port "
+		infoService.error("Could not connect to server " + host + " on port "
 				+ port, cause);
 		NonBlockingTcpClientHandler.LOG.error(cause.getMessage(), cause);
 	}
