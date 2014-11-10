@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import de.uniol.inf.is.odysseus.core.collection.Context;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IStatefulPO;
 import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicator;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.common.LoadBalancingException;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.common.LoadBalancingHelper;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.common.LoadBalancingStatusCache;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.movingstate.communicator.MovingStateCommunicatorImpl;
@@ -129,9 +130,12 @@ public class InstructionHandler {
 					&& !status.isPipeKnown(instruction.getPipeId())) {
 				String pipe = instruction.getPipeId();
 				String peer = instruction.getPeerId();
+				
 				status.addKnownPipe(pipe);
+				status.addBufferedPipe(pipe);
 				
 				dispatcher = status.getMessageDispatcher();
+				
 				try {
 					MovingStateHelper.startBuffering(pipe);
 					MovingStateHelper.setNewPeerId(pipe, peer,true);
@@ -211,15 +215,40 @@ public class InstructionHandler {
 				}
 			}
 			break;
+		
+		case MovingStateInstructionMessage.FINISHED_COPYING_STATES:
+			LOG.debug("Got FINISHED_COPYING_STATES");
+			if(status.getPhase().equals(MovingStateSlaveStatus.LB_PHASES.WAITING_FOR_COPY)) {
+				status.setPhase(MovingStateSlaveStatus.LB_PHASES.WAITING_FOR_FINISH);
+				status.getMessageDispatcher().sendAckCopyingFinished(senderPeer);
+			}
+			break;
 
 		case MovingStateInstructionMessage.STOP_BUFFERING:
 			LOG.debug("Got STOP_BUFFERING");
 			if (status == null) {
 				return;
 			}
+			boolean successful = true;
 			if (status.getPhase().equals(
 					MovingStateSlaveStatus.LB_PHASES.WAITING_FOR_FINISH)) {
-				//TODO Stop buffering.
+				for(String pipe : status.getBufferedPipes()) {
+					try {
+						MovingStateHelper.stopBuffering(pipe);
+					} catch (LoadBalancingException e) {
+						LOG.error("Error while stopping buffering.");
+						// TODO Error Handling
+						e.printStackTrace();
+						successful = false;
+					}
+				}
+				if(successful) {
+					status.setPhase(MovingStateSlaveStatus.LB_PHASES.WAITING_FOR_MSG_RECEIVED);
+					status.getMessageDispatcher().sendStopBufferingFinished(status.getMasterPeer());
+				}
+				else {
+					//TODO What if it fails?
+				}
 			}
 
 			break;

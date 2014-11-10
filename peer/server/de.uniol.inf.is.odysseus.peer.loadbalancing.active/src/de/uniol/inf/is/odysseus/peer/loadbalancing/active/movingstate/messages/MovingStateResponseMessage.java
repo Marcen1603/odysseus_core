@@ -24,7 +24,7 @@ public class MovingStateResponseMessage implements IMessage {
 	
 	public static final int ACK_ALL_STATE_COPIES_FINISHED = 7;
 	
-	public static final int DELETE_FINISHED = 8;
+	public static final int STOP_BUFFERING_FINISHED = 8;
 	
 	
 	
@@ -76,14 +76,6 @@ public class MovingStateResponseMessage implements IMessage {
 		return message;
 	}
 	
-	public static MovingStateResponseMessage createDeleteFinishedMessage(int loadBalancingProcessId, String pipeID) {
-		MovingStateResponseMessage message = new MovingStateResponseMessage();
-		message.setLoadBalancingProcessId(loadBalancingProcessId);
-		message.setPipeID(pipeID);
-		message.setMsgType(DELETE_FINISHED);
-		return message;
-	}
-	
 	public static MovingStateResponseMessage createDuplicateSuccessMessage(int loadBalancingProcessId, String pipeID) {
 		MovingStateResponseMessage message = new MovingStateResponseMessage();
 		message.setLoadBalancingProcessId(loadBalancingProcessId);
@@ -122,6 +114,8 @@ public class MovingStateResponseMessage implements IMessage {
 			case FAILURE_INSTALL_QUERY:
 			case FAILURE_DUPLICATE_RECEIVER:
 			case SUCCESS_INSTALL_QUERY:
+			case ACK_ALL_STATE_COPIES_FINISHED:
+			case STOP_BUFFERING_FINISHED:
 				
 				/*
 				 * Allocate byte Buffer:
@@ -136,7 +130,6 @@ public class MovingStateResponseMessage implements IMessage {
 				break;
 				
 			case SUCCESS_DUPLICATE:
-			case DELETE_FINISHED:
 			case ACK_INIT_STATE_COPY:
 			case STATE_COPY_FINISHED:
 				
@@ -179,7 +172,6 @@ public class MovingStateResponseMessage implements IMessage {
 		switch(msgType) {
 			
 		case SUCCESS_DUPLICATE:
-		case DELETE_FINISHED:
 		case ACK_INIT_STATE_COPY:
 		case STATE_COPY_FINISHED:
 			
@@ -238,6 +230,22 @@ public class MovingStateResponseMessage implements IMessage {
 	 */
 	public void setLoadBalancingProcessId(int loadBalancingProcessId) {
 		this.loadBalancingProcessId = loadBalancingProcessId;
+	}
+
+	public static MovingStateResponseMessage createAckCopyingFinishedMsg(
+			int lbProcessId) {
+		MovingStateResponseMessage message = new MovingStateResponseMessage();
+		message.setLoadBalancingProcessId(lbProcessId);
+		message.setMsgType(ACK_ALL_STATE_COPIES_FINISHED);
+		return message;
+	}
+
+	public static MovingStateResponseMessage createStopBufferingFinishedMsg(
+			int lbProcessId) {
+		MovingStateResponseMessage message = new MovingStateResponseMessage();
+		message.setLoadBalancingProcessId(lbProcessId);
+		message.setMsgType(STOP_BUFFERING_FINISHED);
+		return message;
 	}
 	
 	

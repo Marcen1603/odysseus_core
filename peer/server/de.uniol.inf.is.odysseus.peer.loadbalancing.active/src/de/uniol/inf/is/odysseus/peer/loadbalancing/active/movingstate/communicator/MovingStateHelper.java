@@ -8,7 +8,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
-import net.jxta.id.IDFactory;
 import net.jxta.peer.PeerID;
 
 import org.slf4j.Logger;
@@ -21,9 +20,9 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IStatefulPO;
+import de.uniol.inf.is.odysseus.core.planmanagement.IOperatorOwner;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IPipe;
-import de.uniol.inf.is.odysseus.p2p_new.IP2PNetworkManager;
 import de.uniol.inf.is.odysseus.p2p_new.logicaloperator.JxtaReceiverAO;
 import de.uniol.inf.is.odysseus.p2p_new.logicaloperator.JxtaSenderAO;
 import de.uniol.inf.is.odysseus.p2p_new.physicaloperator.JxtaReceiverPO;
@@ -61,6 +60,7 @@ public class MovingStateHelper {
 		sender.sendData(state);
 		LOG.debug("Data sent.");
 	}
+	
 	
 	public static List<IStatefulPO> getStatefulOperatorList(int queryId) {
 		IExecutor executor = ActiveLoadBalancingActivator.getExecutor();
@@ -188,6 +188,18 @@ public class MovingStateHelper {
 		}
 	}
 	
+	@SuppressWarnings("rawtypes")
+	public static void openReceiver(JxtaReceiverPO receiver) {
+	
+		for(Object ownerObject : receiver.getOwner()) {
+			if(ownerObject instanceof IOperatorOwner) {
+				IOperatorOwner owner = (IOperatorOwner) ownerObject;
+				receiver.open(owner);
+			}
+			
+		}
+	}
+	
 	
 	/***
 	 * Stops buffering of a jxta Sender
@@ -196,6 +208,7 @@ public class MovingStateHelper {
 	 */
 	@SuppressWarnings("rawtypes")
 	public static void stopBuffering(String pipeID) throws LoadBalancingException {
+		LOG.debug("Resuming Sender with pipe " + pipeID);
 		IPhysicalOperator operator = LoadBalancingHelper.getPhysicalJxtaOperator(true, pipeID);
 		if(operator==null) {
 			throw new LoadBalancingException("No Sender with pipeID " + pipeID + " found.");
@@ -228,7 +241,6 @@ public class MovingStateHelper {
 		
 		String volunteeringPeer = status.getVolunteeringPeer().toString();
 		ILogicalQueryPart modifiedQueryPart = status.getModifiedPart();
-		HashMap<String, String> replacedPipes = status.getReplacedPipes();
 		MovingStateMessageDispatcher dispatcher = status
 				.getMessageDispatcher();
 
@@ -238,16 +250,21 @@ public class MovingStateHelper {
 			if (operator instanceof JxtaSenderAO) {
 				JxtaSenderAO sender = (JxtaSenderAO) operator;
 				
-				String newPipe = sender.getPipeID();
-				String oldPipe = replacedPipes.get(sender.getPipeID());
+				String pipe = sender.getPipeID();
 				PeerID destinationPeer = LoadBalancingHelper.toPeerID(sender.getPeerID());
-				peersForPipe.put(newPipe,destinationPeer);
+				peersForPipe.put(pipe,destinationPeer);
 				
-				dispatcher.sendReplaceReceiverMessage(destinationPeer, volunteeringPeer, oldPipe, deliveryFailedListener);
+				dispatcher.sendReplaceReceiverMessage(destinationPeer, volunteeringPeer, pipe, deliveryFailedListener);
 			}
 		}
 		status.setPeersForPipe(peersForPipe);
 
+	}
+	
+	public static void sendStopBufferingToUpstreamPeers(MovingStateMasterStatus status) {
+		for(PeerID peer : status.getUpstreamPeers()) {
+			status.getMessageDispatcher().sendStopBuffering(peer, MovingStateCommunicatorImpl.getInstance());
+		}
 	}
 	
 	/**
@@ -263,7 +280,8 @@ public class MovingStateHelper {
 		
 		String volunteeringPeer = status.getVolunteeringPeer().toString();
 		ILogicalQueryPart modifiedQueryPart = status.getModifiedPart();
-		HashMap<String, String> replacedPipes = status.getReplacedPipes();
+		ArrayList<PeerID> upstreamPeers = new ArrayList<PeerID>();
+		
 		MovingStateMessageDispatcher dispatcher = status
 				.getMessageDispatcher();
 
@@ -276,15 +294,17 @@ public class MovingStateHelper {
 			if (operator instanceof JxtaReceiverAO) {
 				JxtaReceiverAO receiver = (JxtaReceiverAO) operator;
 				
-				String newPipe = receiver.getPipeID();
-				String oldPipe = replacedPipes.get(receiver.getPipeID());
+				String pipe = receiver.getPipeID();
 				PeerID destinationPeer = LoadBalancingHelper.toPeerID(receiver.getPeerID());
-				peersForPipe.put(newPipe,destinationPeer);
+				if(!upstreamPeers.contains(destinationPeer))
+					upstreamPeers.add(destinationPeer);
+				peersForPipe.put(pipe,destinationPeer);
 				
-				dispatcher.sendInstallBufferAndReplaceSenderMessage(destinationPeer, volunteeringPeer, oldPipe, deliveryFailedListener);
+				dispatcher.sendInstallBufferAndReplaceSenderMessage(destinationPeer, volunteeringPeer, pipe, deliveryFailedListener);
 			}
 		}
 		status.setPeersForPipe(peersForPipe);
+		status.setUpstreamPeers(upstreamPeers);
 
 	}
 	
@@ -294,9 +314,7 @@ public class MovingStateHelper {
 	 * @param status
 	 * @return
 	 */
-	public static HashMap<String, String> relinkQueryPart(ILogicalQueryPart modifiedPart,MovingStateMasterStatus status) {
-		
-		IP2PNetworkManager p2pNetworkManager = ActiveLoadBalancingActivator.getP2pNetworkManager();
+	public static void relinkQueryPart(ILogicalQueryPart modifiedPart,MovingStateMasterStatus status) {
 		
 		LoadBalancingHelper.removeTopAOs(modifiedPart);
 		
@@ -310,7 +328,6 @@ public class MovingStateHelper {
 		Collection<ILogicalOperator> relativeSources = LogicalQueryHelper
 				.getRelativeSourcesOfLogicalQueryPart(modifiedPart);
 
-		HashMap<String, String> replacedPipes = new HashMap<String, String>();
 		ArrayList<String> senderPipes = new ArrayList<String>();
 
 		for (ILogicalOperator relativeSource : relativeSources) {
@@ -318,14 +335,9 @@ public class MovingStateHelper {
 				Collection<IncomingConnection> connections = incomingConnections
 						.get(relativeSource);
 				for (IncomingConnection connection : connections) {
-
-					String newPipeID = IDFactory.newPipeID(
-							p2pNetworkManager.getLocalPeerGroupID()).toString();
-					
 					JxtaReceiverAO receiver = LoadBalancingHelper.createReceiverAO(connection,
-							newPipeID);
+							connection.oldPipeID);
 
-					replacedPipes.put(newPipeID, connection.oldPipeID);
 					modifiedPart.addOperator(receiver);
 					
 				}
@@ -337,12 +349,7 @@ public class MovingStateHelper {
 				Collection<OutgoingConnection> connections = outgoingConnections
 						.get(relativeSink);
 				for (OutgoingConnection connection : connections) {
-					String newPipeID = IDFactory.newPipeID(
-							p2pNetworkManager.getLocalPeerGroupID()).toString();
-
-					replacedPipes.put(newPipeID, connection.oldPipeID);
-					
-					JxtaSenderAO sender = LoadBalancingHelper.createSenderAO(connection, newPipeID);
+					JxtaSenderAO sender = LoadBalancingHelper.createSenderAO(connection, connection.oldPipeID);
 					modifiedPart.addOperator(sender);
 					senderPipes.add(connection.oldPipeID);
 				}
@@ -354,8 +361,6 @@ public class MovingStateHelper {
 			LOG.debug(pipe);
 		}
 		status.setModifiedPart(modifiedPart);
-		status.setReplacedPipes(replacedPipes);
-		return replacedPipes;
 	}
 
 	public static boolean compareStatefulOperator(int operatorIndex,

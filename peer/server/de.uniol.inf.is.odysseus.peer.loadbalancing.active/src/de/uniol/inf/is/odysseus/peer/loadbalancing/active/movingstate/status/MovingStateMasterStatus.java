@@ -22,10 +22,19 @@ public class MovingStateMasterStatus implements ILoadBalancingMasterStatus{
 	private final String COMMUNCIATOR_NAME = "MovingState";
 	
 	public enum LB_PHASES {
-		INITIATING,COPYING_QUERY,RELINKING_SENDERS,RELINKING_RECEIVERS,COPYING_STATES,STOP_BUFFERING,FINISHED,FAILURE
+		INITIATING,COPYING_QUERY,RELINKING_SENDERS,RELINKING_RECEIVERS,COPYING_STATES,COPYING_FINISHED,STOP_BUFFERING,FINISHED,FAILURE
 	}
 	
 	private MovingStateMessageDispatcher messageDispatcher;
+	private ArrayList<PeerID> upstreamPeers;
+	
+	public void setUpstreamPeers(ArrayList<PeerID> peers) {
+		this.upstreamPeers = peers;
+	}
+	
+	public ArrayList<PeerID> getUpstreamPeers() {
+		return upstreamPeers;
+	}
 	
 	public MovingStateMessageDispatcher getMessageDispatcher() {
 		return messageDispatcher;
@@ -52,7 +61,6 @@ public class MovingStateMasterStatus implements ILoadBalancingMasterStatus{
 	private int logicalQuery;
 	private ILogicalQueryPart originalPart;
 	private ILogicalQueryPart modifiedPart;
-	private HashMap<String,String> replacedPipes;
 	private ConcurrentHashMap<String,IStatefulPO> senderOperatorMapping = new ConcurrentHashMap<String,IStatefulPO>();
 	
 	private ArrayList<String> pipesToSync;
@@ -123,12 +131,7 @@ public class MovingStateMasterStatus implements ILoadBalancingMasterStatus{
 	public void setVolunteeringPeer(PeerID volunteeringPeer) {
 		this.volunteeringPeer = volunteeringPeer;
 	}
-	public HashMap<String, String> getReplacedPipes() {
-		return replacedPipes;
-	}
-	public void setReplacedPipes(HashMap<String, String> replacedPipes) {
-		this.replacedPipes = replacedPipes;
-	}
+	
 	public void addSender(String pipe, IStatefulPO operator) {
 		if(!senderOperatorMapping.containsKey(pipe)) {
 			senderOperatorMapping.put(pipe, operator);

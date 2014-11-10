@@ -371,16 +371,39 @@ public class MovingStateMessageDispatcher {
 		}
 	}
 
-	public void sendDeleteFinished(PeerID peerID, String oldPipeId) {
-		MovingStateResponseMessage response = MovingStateResponseMessage.createDeleteFinishedMessage(lbProcessId, oldPipeId);
-		try {
-			LOG.debug("Send DELETE_FINISHED Response");
-			peerCommunicator.send(peerID, response);
+	public void sendFinishedCopyingStates(PeerID destinationPeer) {
+		LOG.debug("Sending COPYING_FINISHED to peer with ID "  + destinationPeer.toString());
+		MovingStateInstructionMessage message = MovingStateInstructionMessage.createFinishedCopyingStatesMsg(lbProcessId);
+		this.currentJob = new RepeatingMessageSend(peerCommunicator,message,destinationPeer);
+		currentJob.start();
+	}
+
+	public void sendAckCopyingFinished(PeerID masterPeer) {
+		LOG.debug("Sending ACK_COPYING_FINISHED");
+		MovingStateResponseMessage message = MovingStateResponseMessage.createAckCopyingFinishedMsg(lbProcessId);
+		this.currentJob = new RepeatingMessageSend(peerCommunicator,message,masterPeer);
+		currentJob.start();
+	}
+
+	public void sendStopBuffering(PeerID peer, IMessageDeliveryFailedListener listener) {
+		MovingStateInstructionMessage message = MovingStateInstructionMessage.createStopBufferingMsg(lbProcessId);
+		if(this.currentJobs==null) {
+			this.currentJobs = new ConcurrentHashMap<String,RepeatingMessageSend>();
 		}
-		catch (PeerCommunicationException e) {
-			LOG.error("Error while sending Message:");
-			LOG.error(e.getMessage());
+		if(!this.currentJobs.containsKey(peer.toString())) {
+			LOG.debug("Sending STOP_BUFFERING Message");
+			RepeatingMessageSend job = new RepeatingMessageSend(peerCommunicator, message, peer);
+			job.addListener(listener);
+			this.currentJobs.put(peer.toString(), job);
+			job.start();
 		}
+		
+	}
+
+	public void sendStopBufferingFinished(PeerID masterPeer) {
+		MovingStateResponseMessage message = MovingStateResponseMessage.createStopBufferingFinishedMsg(lbProcessId);
+		this.currentJob = new RepeatingMessageSend(peerCommunicator,message,masterPeer);
+		currentJob.start();
 	}
 	
 	

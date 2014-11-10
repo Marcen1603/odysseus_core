@@ -16,9 +16,14 @@ import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 
+import de.uniol.inf.is.odysseus.core.physicaloperator.AbstractPhysicalSubscription;
+import de.uniol.inf.is.odysseus.core.physicaloperator.ControllablePhysicalSubscription;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
+import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
+import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IStatefulPO;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.IPipe;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvider;
@@ -26,6 +31,7 @@ import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.p2p_new.IP2PNetworkManager;
 import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicator;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.IPeerDictionary;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.active.ActiveLoadBalancingActivator;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.ILoadBalancingAllocator;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.ILoadBalancingCommunicator;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.ILoadBalancingStrategy;
@@ -216,6 +222,7 @@ public class ActiveLoadbalancingConsole implements CommandProvider {
 		sb.append("    testSendState <pipeID> <LocalQueryId>              - Sends state of first StatefulPO in Query to pipe\n");
 		sb.append("    testInjectState <pipeID> <LocalQueryId>              - Injects received state from pipe to first statefol Operator in query.\n");
 		sb.append("    listStatefolOperators <queryID>                      - Lists all statefol Operators in a query (useful to determine order)\n");
+		sb.append("    printSubscriptions <queryId>                         - Prints detais about all Subscriptions in a query.\n");
 		return sb.toString();
 	}
 	
@@ -458,6 +465,75 @@ public class ActiveLoadbalancingConsole implements CommandProvider {
 		}
 		ci.println("Data sent.");
 		
+	}
+
+	public void _printSubscriptions(CommandInterpreter ci) {
+		
+		final String ERROR_USAGE = "Usage: printSubscriptions <queryId>";
+		
+		String localQueryIdString = ci.nextArgument();
+		if (Strings.isNullOrEmpty(localQueryIdString)) {
+
+			ci.println(ERROR_USAGE);
+			return;
+		}
+		
+		int localQueryId;
+		
+		try {
+			localQueryId = Integer.parseInt(localQueryIdString);
+		}
+		catch(NumberFormatException e) {
+			ci.println(ERROR_USAGE);
+			return;
+		}
+		
+		
+		
+		IExecutor executor = ActiveLoadBalancingActivator.getExecutor();
+		List<IPhysicalOperator> roots = executor.getPhysicalRoots(localQueryId, ActiveLoadBalancingActivator.getActiveSession());
+		for(IPhysicalOperator root : roots) {
+			traverseGraphAndPrintSubscriptions(root,ci);
+		}
+	}
+	
+	
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	private static void traverseGraphAndPrintSubscriptions(IPhysicalOperator root, CommandInterpreter ci) {
+		if(root instanceof IPipe) {
+			IPipe rootAsSource = (IPipe) root;
+			for (AbstractPhysicalSubscription subscription : (Collection<AbstractPhysicalSubscription>)rootAsSource.getSubscribedToSource()) {
+				printSubscsription(subscription,root,ci);
+				traverseGraphAndPrintSubscriptions((IPhysicalOperator)subscription.getTarget(),ci);
+			}
+			return;
+		}
+		
+		if(root instanceof ISource) {
+			return;
+		}
+		if(root instanceof ISink) {
+			LOG.debug("   recognized Operator as Sink.");
+			ISink rootAsSink = (ISink) root;
+			for (AbstractPhysicalSubscription subscription : (Collection<AbstractPhysicalSubscription>)rootAsSink.getSubscribedToSource()) {
+				printSubscsription(subscription,root,ci);
+				traverseGraphAndPrintSubscriptions((IPhysicalOperator)subscription.getTarget(),ci);
+			}
+			return;
+		}
+		return;
+	}
+	
+	@SuppressWarnings("rawtypes")
+	private static void printSubscsription(AbstractPhysicalSubscription subscription, IPhysicalOperator operator, CommandInterpreter ci) {
+		IPhysicalOperator target = (IPhysicalOperator)subscription.getTarget();
+		if(subscription instanceof ControllablePhysicalSubscription) {
+			ControllablePhysicalSubscription cSub = (ControllablePhysicalSubscription) subscription;
+			ci.println(operator.getName()+"->"+target.getName()+"    OpenCalls:" + subscription.getOpenCalls() + " suspended: " + cSub.isSuspended());
+		}
+		else {
+			ci.println(operator.getName()+"->"+target.getName()+"    OpenCalls:" + subscription.getOpenCalls() + " (not controllable)");
+		}
 	}
 	
 	public void _installStateReceiver(CommandInterpreter ci) {

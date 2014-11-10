@@ -163,15 +163,37 @@ public class ResponseHandler {
 			
 		case MovingStateResponseMessage.STATE_COPY_FINISHED:
 			LOG.debug("Got STATE_COPY_FINISHED");
-			if(status.getPhase().equals((LB_PHASES.COPYING_STATES))) {
+			if(status.getPhase().equals(LB_PHASES.COPYING_STATES)) {
 				String pipe = response.getPipeID();
 				MovingStateManager.getInstance().getSender(pipe).setSuccessfullyTransmitted();
 				//TODO What about missing messages?
 				LOG.debug("Unfinished Transmissions:" +status.getNumberOfUnfinishedTransmissions());
 				if(status.getNumberOfUnfinishedTransmissions()==0) {
-					
-					status.setPhase(LB_PHASES.STOP_BUFFERING);
-					
+					status.setPhase(LB_PHASES.COPYING_FINISHED);
+					status.getMessageDispatcher().sendFinishedCopyingStates(status.getVolunteeringPeer());
+				}
+			}
+		break;
+		
+		case MovingStateResponseMessage.ACK_ALL_STATE_COPIES_FINISHED:
+			LOG.debug("Got ACK_ALL_STATE_COPIES_FINISHED");
+			if(status.getPhase().equals(LB_PHASES.COPYING_FINISHED)) {
+				status.getMessageDispatcher().stopRunningJob();
+				status.setPhase(LB_PHASES.STOP_BUFFERING);
+				dispatcher.sendMsgReceived(senderPeer);
+				MovingStateHelper.sendStopBufferingToUpstreamPeers(status);
+			}
+		break;
+			
+		case MovingStateResponseMessage.STOP_BUFFERING_FINISHED:
+			LOG.debug("Got STOP_BUFFERING_FINISHED");
+			if(status.getPhase().equals(LB_PHASES.STOP_BUFFERING)) {
+				dispatcher.stopRunningJob(senderPeer.toString());
+				dispatcher.sendMsgReceived(senderPeer);
+				if(dispatcher.getNumberOfRunningJobs()==0) {
+					LoadBalancingHelper.deleteQuery(status.getLogicalQuery());
+					status.setPhase(LB_PHASES.FINISHED);
+					loadBalancingSuccessfullyFinished(status);
 				}
 			}
 		break;
@@ -182,16 +204,6 @@ public class ResponseHandler {
 				dispatcher.sendMsgReceived(senderPeer);
 				LOG.error("Duplicating connections failed. Aborting.");
 				handleError(status,communicationListener);
-			}
-			break;
-		
-		case MovingStateResponseMessage.DELETE_FINISHED:
-			if(status.getPhase().equals(LB_PHASES.STOP_BUFFERING)) {
-				LOG.debug("Deleting finished for pipe " + response.getPipeID());
-				dispatcher.stopRunningJob(response.getPipeID());
-				if(dispatcher.getNumberOfRunningJobs()==0) {
-					loadBalancingSuccessfullyFinished(status);
-				}
 			}
 			break;
 		}

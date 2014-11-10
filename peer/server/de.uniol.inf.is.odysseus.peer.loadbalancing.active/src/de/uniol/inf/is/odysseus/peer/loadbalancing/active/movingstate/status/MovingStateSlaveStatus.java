@@ -33,6 +33,7 @@ public class MovingStateSlaveStatus implements ILoadBalancingSlaveStatus, IState
 	
 	private Collection<Integer> installedQueries;
 	private ArrayList<String> knownPipes;
+	private ArrayList<String> bufferedPipes;
 	
 	private ConcurrentHashMap<String, IStatefulPO> receiverOperatorMapping;
 	
@@ -42,8 +43,15 @@ public class MovingStateSlaveStatus implements ILoadBalancingSlaveStatus, IState
 	public Collection<Integer> getInstalledQueries() {
 		return installedQueries;
 	}
-
-
+	
+	public synchronized void addBufferedPipe(String pipe) {
+		if(bufferedPipes==null) {
+			bufferedPipes = new ArrayList<String>();
+		}
+		if(!bufferedPipes.contains(pipe))
+			bufferedPipes.add(pipe);
+	}
+	
 	public void setInstalledQueries(Collection<Integer> installedQueries) {
 		this.installedQueries = installedQueries;
 	}
@@ -117,6 +125,16 @@ public class MovingStateSlaveStatus implements ILoadBalancingSlaveStatus, IState
 	@Override
 	public void stateReceived(String pipe) {
 		getMessageDispatcher().sendCopyStateFinished(this.getMasterPeer(), pipe);
+	}
+
+
+	public ArrayList<String> getBufferedPipes() {
+		return bufferedPipes;
+	}
+
+
+	public void setBufferedPipes(ArrayList<String> bufferedPipes) {
+		this.bufferedPipes = bufferedPipes;
 	}
 
 

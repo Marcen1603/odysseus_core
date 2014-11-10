@@ -52,7 +52,14 @@ public class MovingStateInstructionMessage implements IMessage {
 
 		return message;
 	}
-
+	
+	public static MovingStateInstructionMessage createFinishedCopyingStatesMsg(int lbProcessId) {
+		MovingStateInstructionMessage message = new MovingStateInstructionMessage();
+		message.loadBalancingProcessId = lbProcessId;
+		message.msgType = FINISHED_COPYING_STATES;
+		return message;
+	}
+	
 	public static MovingStateInstructionMessage createInitiateMsg(
 			int lbProcessId) {
 		MovingStateInstructionMessage message = new MovingStateInstructionMessage();
@@ -121,6 +128,8 @@ public class MovingStateInstructionMessage implements IMessage {
 
 		case INITIATE_LOADBALANCING:
 		case MESSAGE_RECEIVED:
+		case FINISHED_COPYING_STATES:
+		case STOP_BUFFERING:
 			/*
 			 * Allocate byte Buffer: 4 Bytes for integer msgType 4 Bytes for
 			 * integer loadBalancingProcessId
@@ -160,7 +169,7 @@ public class MovingStateInstructionMessage implements IMessage {
 			byte[] oldPipeIdBytes = pipeId.getBytes();
 			byte[] newPeerIdBytes = peerId.getBytes();
 
-			bbsize = 4 + 4 + 4 + 4  + oldPipeIdBytes.length
+			bbsize = 4 + 4 + 4 + 4 + oldPipeIdBytes.length
 					 + newPeerIdBytes.length;
 
 			bb = ByteBuffer.allocate(bbsize);
@@ -251,6 +260,8 @@ public class MovingStateInstructionMessage implements IMessage {
 
 			this.pipeId = new String(pipeIdAsBytes);
 			this.peerId = new String(peerIdAsBytes);
+			
+			
 			break;
 			
 		case PIPE_SUCCCESS_RECEIVED:
@@ -334,6 +345,14 @@ public class MovingStateInstructionMessage implements IMessage {
 
 	public void setOperatorIndex(int operatorIndex) {
 		this.operatorIndex = operatorIndex;
+	}
+
+	public static MovingStateInstructionMessage createStopBufferingMsg(
+			int lbProcessId) {
+		MovingStateInstructionMessage message = new MovingStateInstructionMessage();
+		message.setLoadBalancingProcessId(lbProcessId);
+		message.setMsgType(STOP_BUFFERING);
+		return message;
 	}
 
 }
