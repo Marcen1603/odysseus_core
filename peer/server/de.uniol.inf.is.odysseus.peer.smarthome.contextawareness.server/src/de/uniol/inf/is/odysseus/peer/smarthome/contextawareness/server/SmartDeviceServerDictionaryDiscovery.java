@@ -136,7 +136,7 @@ public class SmartDeviceServerDictionaryDiscovery implements
 	}
 
 	void getSmartDeviceInformations(SmartDeviceAdvertisement adv) {
-		LOG.debug("getSmartDeviceInformations peer:"+adv.getPeerName());
+		//LOG.debug("getSmartDeviceInformations peer:"+adv.getPeerName());
 		if (adv != null && isPeerIdAvailable(adv.getPeerID())) {
 			try {
 				SmartDeviceRequestMessage smartDevRequest = new SmartDeviceRequestMessage(
