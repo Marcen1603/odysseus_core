@@ -31,7 +31,7 @@ public class ToHexFromNumberFunction extends AbstractFunction<String> {
      */
     private static final long serialVersionUID = -5267841297277120825L;
     private static final SDFDatatype[][] accTypes = new SDFDatatype[][] { { SDFDatatype.BYTE, SDFDatatype.SHORT, SDFDatatype.INTEGER, SDFDatatype.LONG, SDFDatatype.START_TIMESTAMP,
-            SDFDatatype.END_TIMESTAMP, SDFDatatype.TIMESTAMP } };
+            SDFDatatype.END_TIMESTAMP, SDFDatatype.TIMESTAMP, SDFDatatype.UNSIGNEDINT16 } };
 
     public ToHexFromNumberFunction() {
         super("toHex", 1, accTypes, SDFDatatype.STRING);
