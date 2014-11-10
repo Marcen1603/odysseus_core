@@ -469,19 +469,25 @@ public class RecoveryCommunicator implements IRecoveryCommunicator, IPeerCommuni
 		}
 
 		// TODO Buddy allocator
-		PeerID buddy = cPeerDictionary.get().getRemotePeerIDs().iterator().next();
+		if (cPeerDictionary.get().getRemotePeerIDs().iterator().hasNext()) {
+			PeerID buddy = cPeerDictionary.get().getRemotePeerIDs().iterator().next();
 
-		// 2. Get the necessary backup-information
-		ImmutableCollection<String> infos = LocalBackupInformationAccess.getLocalPQL(sharedQueryId);
-		List<String> pql = infos.asList();
+			// 2. Get the necessary backup-information
+			ImmutableCollection<String> infos = LocalBackupInformationAccess.getLocalPQL(sharedQueryId);
+			List<String> pql = infos.asList();
 
-		// 3. Send this to the buddy
-		RecoveryInstructionMessage buddyMessage = RecoveryInstructionMessage.createBeBuddyMessage(sharedQueryId, pql);
-		sendMessage(buddy, buddyMessage);
+			// 3. Send this to the buddy
+			RecoveryInstructionMessage buddyMessage = RecoveryInstructionMessage.createBeBuddyMessage(sharedQueryId,
+					pql);
+			sendMessage(buddy, buddyMessage);
 
-		// 4. Save, that this is my buddy so that we can find a new buddy if
-		// that one fails
-		LocalBackupInformationAccess.addMyBuddy(buddy, sharedQueryId);
+			// 4. Save, that this is my buddy so that we can find a new buddy if
+			// that one fails
+			LocalBackupInformationAccess.addMyBuddy(buddy, sharedQueryId);
+		} else {
+			LOG.error("I am the last man standing - can't find a buddy.");
+		}
+
 	}
 
 	/**
@@ -526,7 +532,7 @@ public class RecoveryCommunicator implements IRecoveryCommunicator, IPeerCommuni
 		}
 
 		if (cPeerDictionary.isPresent()) {
-			LOG.debug("Lost peer: {}", cPeerDictionary.get().getRemotePeerName(peer.toString()));
+			LOG.debug("Lost peer: {}", peer.toString());
 		}
 
 		// Start recovery

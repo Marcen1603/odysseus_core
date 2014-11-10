@@ -79,7 +79,7 @@ public class RecoveryInstructionHandler {
 			goOn(instructionMessage.getPipeId());
 			break;
 		case RecoveryInstructionMessage.ADD_QUERY:
-			addQuery(instructionMessage.getPqlQuery());
+			addQuery(instructionMessage.getPqlQuery(), instructionMessage.getSharedQueryId());
 			break;
 		case RecoveryInstructionMessage.UPDATE_RECEIVER:
 			updateReceiver(instructionMessage.getNewSender(), instructionMessage.getPipeId());
@@ -102,7 +102,7 @@ public class RecoveryInstructionHandler {
 	}
 
 	@SuppressWarnings("rawtypes")
-	private static void addQuery(String pql) {
+	private static void addQuery(String pql, ID sharedQueryId) {
 		
 		if(!RecoveryCommunicator.getExecutor().isPresent()) {
 			
@@ -116,7 +116,7 @@ public class RecoveryInstructionHandler {
 		// Call "receiveFromNewPeer" on the subsequent receiver so that that
 		// peer creates a socket-connection to us
 		IServerExecutor executor = RecoveryCommunicator.getExecutor().get();
-
+		boolean foundReceiver = false;
 		for (IPhysicalQuery query : executor.getExecutionPlan().getQueries()) {
 			if (installedQueries.contains(query.getID())) {
 				for (IPhysicalOperator operator : query.getAllOperators()) {
@@ -143,6 +143,7 @@ public class RecoveryInstructionHandler {
 							e.printStackTrace();
 						}
 					} else if (operator instanceof JxtaReceiverPO) {
+						foundReceiver = true;
 						JxtaReceiverPO receiver = (JxtaReceiverPO) operator;
 
 						try {
@@ -164,9 +165,11 @@ public class RecoveryInstructionHandler {
 				}
 			}
 		}
-
-		// TODO Now we have to tell the previous peer that he can go on
-
+		
+		if (!foundReceiver) {
+			// We don't have a receiver, thus we need a buddy
+			recoveryCommunicator.chooseBuddyForQuery(sharedQueryId);
+		}
 	}
 
 	@SuppressWarnings("rawtypes")

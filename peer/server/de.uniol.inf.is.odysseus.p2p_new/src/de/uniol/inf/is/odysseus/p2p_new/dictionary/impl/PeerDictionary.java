@@ -20,6 +20,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
@@ -29,16 +30,13 @@ import de.uniol.inf.is.odysseus.p2p_new.dictionary.IPeerDictionaryListener;
 import de.uniol.inf.is.odysseus.p2p_new.network.P2PNetworkManager;
 import de.uniol.inf.is.odysseus.p2p_new.provider.JxtaServicesProvider;
 
-public class PeerDictionary implements IPeerDictionary,
-		IAdvertisementDiscovererListener {
+public class PeerDictionary implements IPeerDictionary, IAdvertisementDiscovererListener {
 
-	private static final Logger LOG = LoggerFactory
-			.getLogger(PeerDictionary.class);
+	private static final Logger LOG = LoggerFactory.getLogger(PeerDictionary.class);
 
 	private static final String UNKNOWN_PEER_NAME = "<unknown>";
 
-	private static final Map<PeerAdvertisement, Long> toFlushMap = Maps
-			.newConcurrentMap();
+	private static final Map<PeerAdvertisement, Long> toFlushMap = Maps.newConcurrentMap();
 
 	private static void tryFlushAdvertisement(Advertisement srcAdvertisement) {
 
@@ -46,8 +44,7 @@ public class PeerDictionary implements IPeerDictionary,
 
 			if (JxtaServicesProvider.isActivated()) {
 
-				JxtaServicesProvider.getInstance().flushAdvertisement(
-						srcAdvertisement);
+				JxtaServicesProvider.getInstance().flushAdvertisement(srcAdvertisement);
 
 			}
 
@@ -59,8 +56,7 @@ public class PeerDictionary implements IPeerDictionary,
 
 	}
 
-	private final List<IPeerDictionaryListener> listeners = Lists
-			.newArrayList();
+	private final List<IPeerDictionaryListener> listeners = Lists.newArrayList();
 
 	private static PeerDictionary instance;
 
@@ -108,8 +104,7 @@ public class PeerDictionary implements IPeerDictionary,
 
 			if (!localPeerID.equals(adv.getPeerID())) {
 
-				if (JxtaServicesProvider.getInstance().isReachable(
-						adv.getPeerID())) {
+				if (JxtaServicesProvider.getInstance().isReachable(adv.getPeerID())) {
 
 					ids.add(adv.getPeerID());
 					LOG.debug("Peer " + adv.getName() + " is reachable");
@@ -117,8 +112,7 @@ public class PeerDictionary implements IPeerDictionary,
 
 				} else {
 
-					LOG.debug("Peer " + adv.getName()
-							+ " is NOT reachable anymore");
+					LOG.debug("Peer " + adv.getName() + " is NOT reachable anymore");
 					remotePeerNameMap.remove(adv.getPeerID());
 					remotePeerAddressMap.remove(adv.getPeerID());
 					tryFlushAdvertisement(adv);
@@ -144,45 +138,45 @@ public class PeerDictionary implements IPeerDictionary,
 		removeListener(serv);
 
 	}
-	
+
 	private void firePeerAddedEvent(PeerID peer) {
-		
+
 		Preconditions.checkNotNull(peer);
-		
-		for(IPeerDictionaryListener listener : this.listeners) {
-			
+
+		for (IPeerDictionaryListener listener : this.listeners) {
+
 			try {
-			
+
 				listener.peerAdded(peer);
-				
-			} catch(Throwable t) {
-				
+
+			} catch (Throwable t) {
+
 				LOG.error(t.getMessage());
-				
+
 			}
-			
+
 		}
-		
+
 	}
-	
+
 	private void firePeerRemovedEvent(PeerID peer) {
-		
+
 		Preconditions.checkNotNull(peer);
-		
-		for(IPeerDictionaryListener listener : this.listeners) {
-			
+
+		for (IPeerDictionaryListener listener : this.listeners) {
+
 			try {
-			
+
 				listener.peerRemoved(peer);
-				
-			} catch(Throwable t) {
-				
+
+			} catch (Throwable t) {
+
 				LOG.error(t.getMessage());
-				
+
 			}
-			
+
 		}
-		
+
 	}
 
 	public void activate() {
@@ -216,8 +210,7 @@ public class PeerDictionary implements IPeerDictionary,
 	@Override
 	public void addListener(IPeerDictionaryListener listener) {
 
-		Preconditions.checkNotNull(listener,
-				"Listener to add must not be null!");
+		Preconditions.checkNotNull(listener, "Listener to add must not be null!");
 		synchronized (listeners) {
 
 			listeners.add(listener);
@@ -229,8 +222,7 @@ public class PeerDictionary implements IPeerDictionary,
 	@Override
 	public void removeListener(IPeerDictionaryListener listener) {
 
-		Preconditions.checkNotNull(listener,
-				"Listener to remove must not be null!");
+		Preconditions.checkNotNull(listener, "Listener to remove must not be null!");
 		synchronized (listeners) {
 
 			listeners.remove(listener);
@@ -249,8 +241,7 @@ public class PeerDictionary implements IPeerDictionary,
 	@Override
 	public String getRemotePeerName(PeerID peerID) {
 
-		Preconditions.checkNotNull(peerID,
-				"PeerID to get the name from must not be null!");
+		Preconditions.checkNotNull(peerID, "PeerID to get the name from must not be null!");
 
 		if (peerID.equals(P2PNetworkManager.getInstance().getLocalPeerID())) {
 
@@ -263,8 +254,7 @@ public class PeerDictionary implements IPeerDictionary,
 
 		}
 
-		Collection<PeerAdvertisement> peerAdvs = JxtaServicesProvider
-				.getInstance().getPeerAdvertisements();
+		Collection<PeerAdvertisement> peerAdvs = JxtaServicesProvider.getInstance().getPeerAdvertisements();
 		for (PeerAdvertisement peerAdv : peerAdvs) {
 
 			if (peerAdv.getPeerID().equals(peerID)) {
@@ -281,8 +271,7 @@ public class PeerDictionary implements IPeerDictionary,
 	@Override
 	public String getRemotePeerName(String peerIDString) {
 
-		Preconditions.checkArgument(!Strings.isNullOrEmpty(peerIDString),
-				"PeerIDString must not be null or empty!");
+		Preconditions.checkArgument(!Strings.isNullOrEmpty(peerIDString), "PeerIDString must not be null or empty!");
 		return getRemotePeerName(toPeerID(peerIDString));
 
 	}
@@ -290,8 +279,7 @@ public class PeerDictionary implements IPeerDictionary,
 	@Override
 	public Optional<String> getRemotePeerAddress(PeerID peerID) {
 
-		Preconditions.checkNotNull(peerID,
-				"PeerID to get the address from must not be null!");
+		Preconditions.checkNotNull(peerID, "PeerID to get the address from must not be null!");
 
 		if (peerID.equals(P2PNetworkManager.getInstance().getLocalPeerID())) {
 
@@ -302,10 +290,8 @@ public class PeerDictionary implements IPeerDictionary,
 		String address = remotePeerAddressMap.get(peerID);
 		if (Strings.isNullOrEmpty(address)) {
 
-			Optional<String> newAddress = JxtaServicesProvider.getInstance()
-					.getRemotePeerAddress(peerID);
-			if (newAddress.isPresent()
-					&& !newAddress.get().startsWith("0.0.0.0")) {
+			Optional<String> newAddress = JxtaServicesProvider.getInstance().getRemotePeerAddress(peerID);
+			if (newAddress.isPresent() && !newAddress.get().startsWith("0.0.0.0")) {
 
 				remotePeerAddressMap.put(peerID, newAddress.get());
 				return newAddress;
@@ -329,38 +315,28 @@ public class PeerDictionary implements IPeerDictionary,
 
 	@Override
 	public void updateAdvertisements() {
-		
-		Collection<PeerID> peers = toPeerIDs(JxtaServicesProvider
-				.getInstance().getPeerAdvertisements());
-		
-		// Check for peers to add
-		for(PeerID peer : peers) {
-			
-			if(!this.currentPeerIDs.contains(peer)) {
-				
-				this.firePeerAddedEvent(peer);
-				
-			}
-			
-		}
-		
-		// Check for peers to remove
-		for(PeerID peer : this.currentPeerIDs) {
-			
-			if(!peers.contains(peer)) {
-				
-				this.firePeerRemovedEvent(peer);
-				
-			}
-			
-		}
+
+		Collection<PeerID> peers = toPeerIDs(JxtaServicesProvider.getInstance().getPeerAdvertisements());
+
+		Collection<PeerID> oldPeers = ImmutableSet.copyOf(currentPeerIDs);
 		
 		synchronized (currentPeerIDs) {
-			
 			currentPeerIDs = peers;
-			
 		}
 
+		// Check for peers to add
+		for (PeerID peer : peers) {
+			if (!oldPeers.contains(peer)) {
+				this.firePeerAddedEvent(peer);
+			}
+		}
+
+		// Check for peers to remove
+		for (PeerID peer : oldPeers) {
+			if (!peers.contains(peer)) {
+				this.firePeerRemovedEvent(peer);
+			}
+		}
 	}
 
 }
