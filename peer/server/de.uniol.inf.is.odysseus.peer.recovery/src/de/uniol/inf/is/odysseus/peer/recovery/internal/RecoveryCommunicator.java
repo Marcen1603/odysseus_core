@@ -42,8 +42,7 @@ import de.uniol.inf.is.odysseus.peer.recovery.util.LocalBackupInformationAccess;
  * @author Tobias Brandt & Michael Brand & Simon Kuespert
  *
  */
-public class RecoveryCommunicator implements IRecoveryCommunicator, IPeerCommunicatorListener,
-		IPeerDictionaryListener {
+public class RecoveryCommunicator implements IRecoveryCommunicator, IPeerCommunicatorListener, IPeerDictionaryListener {
 
 	/**
 	 * The logger instance for this class.
@@ -469,6 +468,7 @@ public class RecoveryCommunicator implements IRecoveryCommunicator, IPeerCommuni
 
 		}
 
+		// TODO Buddy allocator
 		PeerID buddy = cPeerDictionary.get().getRemotePeerIDs().iterator().next();
 
 		// 2. Get the necessary backup-information
@@ -511,25 +511,26 @@ public class RecoveryCommunicator implements IRecoveryCommunicator, IPeerCommuni
 
 	@Override
 	public void peerAdded(PeerID peer) {
-		
 		// Nothing to do.
-		
+		if (cPeerDictionary.isPresent()) {
+			LOG.debug("Found new peer: {}", cPeerDictionary.get().getRemotePeerName(peer.toString()));
+		}
 	}
 
 	@Override
 	public void peerRemoved(PeerID peer) {
-		
 		Preconditions.checkNotNull(peer);
 		if (!cRecoveryStrategyManager.isPresent()) {
-
 			LOG.error("No Recovery strategy manager bound!");
 			return;
+		}
 
+		if (cPeerDictionary.isPresent()) {
+			LOG.debug("Lost peer: {}", cPeerDictionary.get().getRemotePeerName(peer.toString()));
 		}
 
 		// Start recovery
 		cRecoveryStrategyManager.get().startRecovery(peer);
-		
 	}
 
 }

@@ -145,7 +145,6 @@ public class RecoveryInstructionHandler {
 					} else if (operator instanceof JxtaReceiverPO) {
 						JxtaReceiverPO receiver = (JxtaReceiverPO) operator;
 
-						// TODO This peer we have to tell that he can go on
 						try {
 							String peerIdString = receiver.getPeerIDString();
 							URI peerUri = new URI(peerIdString);
