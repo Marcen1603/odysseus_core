@@ -725,9 +725,11 @@ public class WebserviceServer {
 					}
 				}
 			}
-
+			if (address == null){
+				address = InetAddress.getLocalHost();
+			}
 			ConnectionInformation connectInfo = new ConnectionInformation(port,
-					InetAddress.getLocalHost().getHostAddress());
+						address.getHostAddress());
 			return new ConnectionInformationResponse(connectInfo, true);
 		} catch (SocketException e) {
 			e.printStackTrace();
