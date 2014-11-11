@@ -7,15 +7,18 @@ import java.util.Map;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.AggregateAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.ChangeDetectAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.ElementWindowAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.JoinAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.MapAO;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.MergeAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.ProjectAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.RouteAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.SelectAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.StateMapAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.StreamAO;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.TimeWindowAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.SDFExpressionParameter;
 import de.uniol.inf.is.odysseus.peer.ddc.MissingDDCEntryException;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.ISportsQLParser;
@@ -110,6 +113,7 @@ public class PassesSportsQLParser implements ISportsQLParser {
 	private static final String CROSS_PASS = "cross";
 	
 	
+	
 	//Attributes
 	private static String ATTRIBUTE_BALL_POS_X = "ball_pos_x";
 	private static String ATTRIBUTE_BALL_POS_Y = "ball_pos_y";
@@ -140,6 +144,25 @@ public class PassesSportsQLParser implements ISportsQLParser {
 	private static String ATTRIBUTE_PASS_LENGTH= "pass_length";
 	private static String ATTRIBUTE_DIRECT_PASS= "direct_pass";
 	private static String ATTRIBUTE_DOUBLE_PASS= "double_pass";
+	
+	private static String ATTRIBUTE_PASS_SUCCESS = "passes_successful";
+	private static String ATTRIBUTE_PASS_FAIL = "passes_misplaced";
+	private static String ATTRIBUTE_PASS_RECEIVED = "passes_received";
+	private static String ATTRIBUTE_PASS_INTERCEPTED = "passes_intercepted";
+	private static String ATTRIBUTE_PASS_SUCC_SHORT = "short_passes_successful";
+	private static String ATTRIBUTE_PASS_FAIL_SHORT = "short_passes_misplaced";
+	private static String ATTRIBUTE_PASS_SUCC_LONG = "long_passes_successful";
+	private static String ATTRIBUTE_PASS_FAIL_LONG = "long_passes_misplaced";
+	private static String ATTRIBUTE_PASS_SUCC_FORWARD = "forward_passes_successful";
+	private static String ATTRIBUTE_PASS_FAIL_FORWARD = "forward_passes_misplaced";
+	private static String ATTRIBUTE_PASS_SUCC_CROSS = "cross_passes_successful";
+	private static String ATTRIBUTE_PASS_FAIL_CROSS = "cross_passes_misplaced";
+	private static String ATTRIBUTE_PASS_SUCC_BACK = "back_passes_successful";
+	private static String ATTRIBUTE_PASS_FAIL_BACK = "back_passes_misplaced";
+	private static String ATTRIBUTE_PASS_SUCC_DIRECT = "direct_passes_successful";
+	private static String ATTRIBUTE_PASS_FAIL_DIRECT = "direct_passes_misplaced";
+	private static String ATTRIBUTE_PASS_SUCC_DOUBLE = "double_passes_successful";
+	private static String ATTRIBUTE_PASS_FAIL_DOUBLE = "double_passes_misplaced";
 	
 	private static String ATTRIBUTE_VX= "vx";
 	private static String ATTRIBUTE_VY= "vy";
@@ -463,8 +486,222 @@ public class PassesSportsQLParser implements ISportsQLParser {
 		ProjectAO resultStreamProject = OperatorBuildHelper.createProjectAO(resultStreamAttributes, doublePassSelect);
 		allOperators.add(resultStreamProject);	
 		
-		// 23. Finish		
-		return OperatorBuildHelper.finishQuery(resultStreamProject, allOperators, sportsQL.getName());		
+		// 23. Statemap1
+		List<SDFExpressionParameter> statemapExpressions2 = new ArrayList<SDFExpressionParameter>();
+
+		statemapExpressions2.add(OperatorBuildHelper.createExpressionParameter(
+				ATTRIBUTE_P1_ENTITY_ID, ATTRIBUTE_PLAYER_SID, resultStreamProject));
+		statemapExpressions2.add(OperatorBuildHelper.createExpressionParameter(
+				"eif(" + ATTRIBUTE_P1_TEAM_ID + " = " + ATTRIBUTE_P2_TEAM_ID
+						+ ", 1, 0)", ATTRIBUTE_PASS_SUCCESS,
+				resultStreamProject));
+		statemapExpressions2.add(OperatorBuildHelper.createExpressionParameter(
+				"eif(" + ATTRIBUTE_P1_TEAM_ID + " = " + ATTRIBUTE_P2_TEAM_ID
+						+ ", 0, 1)", ATTRIBUTE_PASS_FAIL, resultStreamProject));
+		statemapExpressions2.add(OperatorBuildHelper.createExpressionParameter(
+				"0", ATTRIBUTE_PASS_RECEIVED, resultStreamProject));
+		statemapExpressions2.add(OperatorBuildHelper.createExpressionParameter(
+				"0", ATTRIBUTE_PASS_INTERCEPTED, resultStreamProject));
+		statemapExpressions2.add(OperatorBuildHelper.createExpressionParameter(
+				"eif(" + ATTRIBUTE_P1_TEAM_ID + " = " + ATTRIBUTE_P2_TEAM_ID
+						+ " AND " + ATTRIBUTE_PASS_LENGTH + " = '" + SHORT_PASS
+						+ "', 1, 0)", ATTRIBUTE_PASS_SUCC_SHORT,
+				resultStreamProject));
+		statemapExpressions2.add(OperatorBuildHelper.createExpressionParameter(
+				"eif(" + ATTRIBUTE_P1_TEAM_ID + " != " + ATTRIBUTE_P2_TEAM_ID
+						+ " AND " + ATTRIBUTE_PASS_LENGTH + " = '" + SHORT_PASS
+						+ "', 1, 0)", ATTRIBUTE_PASS_FAIL_SHORT,
+				resultStreamProject));
+		statemapExpressions2.add(OperatorBuildHelper.createExpressionParameter(
+				"eif(" + ATTRIBUTE_P1_TEAM_ID + " = " + ATTRIBUTE_P2_TEAM_ID
+						+ " AND " + ATTRIBUTE_PASS_LENGTH + " = '" + LONG_PASS
+						+ "', 1, 0)", ATTRIBUTE_PASS_SUCC_LONG,
+				resultStreamProject));
+		statemapExpressions2.add(OperatorBuildHelper.createExpressionParameter(
+				"eif(" + ATTRIBUTE_P1_TEAM_ID + " != " + ATTRIBUTE_P2_TEAM_ID
+						+ " AND " + ATTRIBUTE_PASS_LENGTH + " = '" + LONG_PASS
+						+ "', 1, 0)", ATTRIBUTE_PASS_FAIL_LONG,
+				resultStreamProject));
+		statemapExpressions2.add(OperatorBuildHelper.createExpressionParameter(
+				"eif(" + ATTRIBUTE_P1_TEAM_ID + " = " + ATTRIBUTE_P2_TEAM_ID
+						+ " AND " + ATTRIBUTE_PASS_DIRECTION + " = '"
+						+ FORWARDS_PASS + "', 1, 0)",
+				ATTRIBUTE_PASS_SUCC_FORWARD, resultStreamProject));
+		statemapExpressions2.add(OperatorBuildHelper.createExpressionParameter(
+				"eif(" + ATTRIBUTE_P1_TEAM_ID + " != " + ATTRIBUTE_P2_TEAM_ID
+						+ " AND " + ATTRIBUTE_PASS_DIRECTION + " = '"
+						+ FORWARDS_PASS + "', 1, 0)",
+				ATTRIBUTE_PASS_FAIL_FORWARD, resultStreamProject));
+		statemapExpressions2.add(OperatorBuildHelper.createExpressionParameter(
+				"eif(" + ATTRIBUTE_P1_TEAM_ID + " = " + ATTRIBUTE_P2_TEAM_ID
+						+ " AND " + ATTRIBUTE_PASS_DIRECTION + " = '"
+						+ CROSS_PASS + "', 1, 0)", ATTRIBUTE_PASS_SUCC_CROSS,
+				resultStreamProject));
+		statemapExpressions2.add(OperatorBuildHelper.createExpressionParameter(
+				"eif(" + ATTRIBUTE_P1_TEAM_ID + " != " + ATTRIBUTE_P2_TEAM_ID
+						+ " AND " + ATTRIBUTE_PASS_DIRECTION + " = '"
+						+ CROSS_PASS + "', 1, 0)", ATTRIBUTE_PASS_FAIL_CROSS,
+				resultStreamProject));
+		statemapExpressions2.add(OperatorBuildHelper.createExpressionParameter(
+				"eif(" + ATTRIBUTE_P1_TEAM_ID + " = " + ATTRIBUTE_P2_TEAM_ID
+						+ " AND " + ATTRIBUTE_PASS_DIRECTION + " = '"
+						+ BACK_PASS + "', 1, 0)", ATTRIBUTE_PASS_SUCC_BACK,
+				resultStreamProject));
+		statemapExpressions2.add(OperatorBuildHelper.createExpressionParameter(
+				"eif(" + ATTRIBUTE_P1_TEAM_ID + " != " + ATTRIBUTE_P2_TEAM_ID
+						+ " AND " + ATTRIBUTE_PASS_DIRECTION + " = '"
+						+ BACK_PASS + "', 1, 0)", ATTRIBUTE_PASS_FAIL_BACK,
+				resultStreamProject));
+		statemapExpressions2.add(OperatorBuildHelper.createExpressionParameter(
+				"eif(" + ATTRIBUTE_P1_TEAM_ID + " = " + ATTRIBUTE_P2_TEAM_ID
+						+ " AND " + ATTRIBUTE_DIRECT_PASS + " = 'true', 1, 0)",
+				ATTRIBUTE_PASS_SUCC_DIRECT, resultStreamProject));
+		statemapExpressions2.add(OperatorBuildHelper.createExpressionParameter(
+				"eif(" + ATTRIBUTE_P1_TEAM_ID + " != " + ATTRIBUTE_P2_TEAM_ID
+						+ " AND " + ATTRIBUTE_DIRECT_PASS + " = 'false', 1, 0)",
+				ATTRIBUTE_PASS_FAIL_DIRECT, resultStreamProject));
+		statemapExpressions2.add(OperatorBuildHelper.createExpressionParameter(
+				"eif(" + ATTRIBUTE_P1_TEAM_ID + " = " + ATTRIBUTE_P2_TEAM_ID
+						+ " AND " + ATTRIBUTE_DOUBLE_PASS + " = 'true', 1, 0)",
+				ATTRIBUTE_PASS_SUCC_DOUBLE, resultStreamProject));
+		statemapExpressions2.add(OperatorBuildHelper.createExpressionParameter(
+				"eif(" + ATTRIBUTE_P1_TEAM_ID + " != " + ATTRIBUTE_P2_TEAM_ID
+						+ " AND " + ATTRIBUTE_DOUBLE_PASS + " = 'false', 1, 0)",
+				ATTRIBUTE_PASS_FAIL_DOUBLE, resultStreamProject));
+
+		StateMapAO lastStateMapAO = OperatorBuildHelper.createStateMapAO(
+				statemapExpressions2, "", resultStreamProject);
+		allOperators.add(lastStateMapAO);
+
+		// 24. Statemap2
+		List<SDFExpressionParameter> statemapExpressions3 = new ArrayList<SDFExpressionParameter>();
+
+		statemapExpressions3.add(OperatorBuildHelper.createExpressionParameter(
+				ATTRIBUTE_P2_ENTITY_ID, ATTRIBUTE_PLAYER_SID, resultStreamProject));
+		statemapExpressions3.add(OperatorBuildHelper.createExpressionParameter(
+				"0", ATTRIBUTE_PASS_SUCCESS, resultStreamProject));
+		statemapExpressions3.add(OperatorBuildHelper.createExpressionParameter(
+				"0", ATTRIBUTE_PASS_FAIL, resultStreamProject));
+		statemapExpressions3.add(OperatorBuildHelper.createExpressionParameter(
+				"eif(" + ATTRIBUTE_P1_TEAM_ID + " = " + ATTRIBUTE_P2_TEAM_ID
+						+ ", 1, 0)", ATTRIBUTE_PASS_RECEIVED, resultStreamProject));
+		statemapExpressions3.add(OperatorBuildHelper.createExpressionParameter(
+				"eif(" + ATTRIBUTE_P1_TEAM_ID + " = " + ATTRIBUTE_P2_TEAM_ID
+						+ ", 0, 1)", ATTRIBUTE_PASS_INTERCEPTED, resultStreamProject));
+		statemapExpressions3.add(OperatorBuildHelper.createExpressionParameter(
+				"0", ATTRIBUTE_PASS_SUCC_SHORT, resultStreamProject));
+		statemapExpressions3.add(OperatorBuildHelper.createExpressionParameter(
+				"0", ATTRIBUTE_PASS_FAIL_SHORT, resultStreamProject));
+		statemapExpressions3.add(OperatorBuildHelper.createExpressionParameter(
+				"0", ATTRIBUTE_PASS_SUCC_LONG, resultStreamProject));
+		statemapExpressions3.add(OperatorBuildHelper.createExpressionParameter(
+				"0", ATTRIBUTE_PASS_FAIL_LONG, resultStreamProject));
+		statemapExpressions3.add(OperatorBuildHelper.createExpressionParameter(
+				"0", ATTRIBUTE_PASS_SUCC_FORWARD, resultStreamProject));
+		statemapExpressions3.add(OperatorBuildHelper.createExpressionParameter(
+				"0", ATTRIBUTE_PASS_FAIL_FORWARD, resultStreamProject));
+		statemapExpressions3.add(OperatorBuildHelper.createExpressionParameter(
+				"0", ATTRIBUTE_PASS_SUCC_CROSS, resultStreamProject));
+		statemapExpressions3.add(OperatorBuildHelper.createExpressionParameter(
+				"0", ATTRIBUTE_PASS_FAIL_CROSS, resultStreamProject));
+		statemapExpressions3.add(OperatorBuildHelper.createExpressionParameter(
+				"0", ATTRIBUTE_PASS_SUCC_BACK, resultStreamProject));
+		statemapExpressions3.add(OperatorBuildHelper.createExpressionParameter(
+				"0", ATTRIBUTE_PASS_FAIL_BACK, resultStreamProject));
+		statemapExpressions3.add(OperatorBuildHelper.createExpressionParameter(
+				"0", ATTRIBUTE_PASS_SUCC_DIRECT, resultStreamProject));
+		statemapExpressions3.add(OperatorBuildHelper.createExpressionParameter(
+				"0", ATTRIBUTE_PASS_FAIL_DIRECT, resultStreamProject));
+		statemapExpressions3.add(OperatorBuildHelper.createExpressionParameter(
+				"0", ATTRIBUTE_PASS_SUCC_DOUBLE, resultStreamProject));
+		statemapExpressions3.add(OperatorBuildHelper.createExpressionParameter(
+				"0", ATTRIBUTE_PASS_FAIL_DOUBLE, resultStreamProject));
+
+		StateMapAO forRealLastStateMapAO = OperatorBuildHelper
+				.createStateMapAO(statemapExpressions3, "", resultStreamProject);
+		allOperators.add(forRealLastStateMapAO);
+
+		// 25. Join
+		MergeAO lastStateMapsJoin = OperatorBuildHelper.createMergeAO(lastStateMapAO,forRealLastStateMapAO);
+		allOperators.add(lastStateMapsJoin);
+		
+		// 26. Window
+		TimeWindowAO timeWindow = OperatorBuildHelper.createTimeWindowAO(
+				(long)(120 * TimeUnitHelper.getBTUtoMillisecondsFactor(TimeUnit.valueOf(AbstractSportsDDCAccess.getBasetimeunit().toLowerCase()))), "MINUTES", lastStateMapsJoin);
+		allOperators.add(timeWindow);
+		
+		// 27. Aggregate 
+		List<String> functions2 = new ArrayList<String>();
+		functions2.add("SUM");
+		functions2.add("SUM");
+		functions2.add("SUM");
+		functions2.add("SUM");
+		functions2.add("SUM");
+		functions2.add("SUM");
+		functions2.add("SUM");
+		functions2.add("SUM");
+		functions2.add("SUM");
+		functions2.add("SUM");
+		functions2.add("SUM");
+		functions2.add("SUM");
+		functions2.add("SUM");
+		functions2.add("SUM");
+		functions2.add("SUM");
+		functions2.add("SUM");
+		functions2.add("SUM");
+		functions2.add("SUM");
+		
+		List<String> inputAttributeNames2 = new ArrayList<String>();
+		inputAttributeNames2.add(ATTRIBUTE_PASS_SUCCESS);
+		inputAttributeNames2.add(ATTRIBUTE_PASS_FAIL);
+		inputAttributeNames2.add(ATTRIBUTE_PASS_RECEIVED);
+		inputAttributeNames2.add(ATTRIBUTE_PASS_INTERCEPTED);
+		inputAttributeNames2.add(ATTRIBUTE_PASS_SUCC_SHORT);
+		inputAttributeNames2.add(ATTRIBUTE_PASS_FAIL_SHORT);
+		inputAttributeNames2.add(ATTRIBUTE_PASS_SUCC_LONG);
+		inputAttributeNames2.add(ATTRIBUTE_PASS_FAIL_LONG);
+		inputAttributeNames2.add(ATTRIBUTE_PASS_SUCC_FORWARD);
+		inputAttributeNames2.add(ATTRIBUTE_PASS_FAIL_FORWARD);
+		inputAttributeNames2.add(ATTRIBUTE_PASS_SUCC_CROSS);
+		inputAttributeNames2.add(ATTRIBUTE_PASS_FAIL_CROSS);
+		inputAttributeNames2.add(ATTRIBUTE_PASS_SUCC_BACK);
+		inputAttributeNames2.add(ATTRIBUTE_PASS_FAIL_BACK);
+		inputAttributeNames2.add(ATTRIBUTE_PASS_SUCC_DIRECT);
+		inputAttributeNames2.add(ATTRIBUTE_PASS_FAIL_DIRECT);
+		inputAttributeNames2.add(ATTRIBUTE_PASS_SUCC_DOUBLE);
+		inputAttributeNames2.add(ATTRIBUTE_PASS_FAIL_DOUBLE);
+
+		List<String> outputAttributeNames2 = new ArrayList<String>();
+		outputAttributeNames2.add(ATTRIBUTE_PASS_SUCCESS);
+		outputAttributeNames2.add(ATTRIBUTE_PASS_FAIL);
+		outputAttributeNames2.add(ATTRIBUTE_PASS_RECEIVED);
+		outputAttributeNames2.add(ATTRIBUTE_PASS_INTERCEPTED);
+		outputAttributeNames2.add(ATTRIBUTE_PASS_SUCC_SHORT);
+		outputAttributeNames2.add(ATTRIBUTE_PASS_FAIL_SHORT);
+		outputAttributeNames2.add(ATTRIBUTE_PASS_SUCC_LONG);
+		outputAttributeNames2.add(ATTRIBUTE_PASS_FAIL_LONG);
+		outputAttributeNames2.add(ATTRIBUTE_PASS_SUCC_FORWARD);
+		outputAttributeNames2.add(ATTRIBUTE_PASS_FAIL_FORWARD);
+		outputAttributeNames2.add(ATTRIBUTE_PASS_SUCC_CROSS);
+		outputAttributeNames2.add(ATTRIBUTE_PASS_FAIL_CROSS);
+		outputAttributeNames2.add(ATTRIBUTE_PASS_SUCC_BACK);
+		outputAttributeNames2.add(ATTRIBUTE_PASS_FAIL_BACK);
+		outputAttributeNames2.add(ATTRIBUTE_PASS_SUCC_DIRECT);
+		outputAttributeNames2.add(ATTRIBUTE_PASS_FAIL_DIRECT);
+		outputAttributeNames2.add(ATTRIBUTE_PASS_SUCC_DOUBLE);
+		outputAttributeNames2.add(ATTRIBUTE_PASS_FAIL_DOUBLE);
+
+		List<String> groupBy = new ArrayList<String>();
+		groupBy.add(ATTRIBUTE_PLAYER_SID);
+
+		AggregateAO aggregate2 = OperatorBuildHelper.createAggregateAO(
+				functions2, groupBy, inputAttributeNames2, outputAttributeNames2,
+				null, timeWindow, -1);
+
+		allOperators.add(aggregate2);
+		
+		// 28. Finish		
+		return OperatorBuildHelper.finishQuery(aggregate2, allOperators, sportsQL.getName());		
 	}
 	
 	private ILogicalOperator createDoublePassSelectAO(ILogicalOperator source, SportsQLQuery query) {
