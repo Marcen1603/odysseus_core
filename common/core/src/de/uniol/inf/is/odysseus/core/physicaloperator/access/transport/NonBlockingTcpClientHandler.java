@@ -184,6 +184,10 @@ public class NonBlockingTcpClientHandler extends AbstractTransportHandler
 							+ " Tryin' next server", cause);
 			currentHost++;
 			connect();
+			try {
+				this.connector.connect();
+			} catch (IOException e) {
+			}
 		} else {
 			infoService.error("Could not connect any server " + hosts
 					+ " on ports " + ports, cause);
