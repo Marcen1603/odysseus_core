@@ -5,6 +5,9 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
@@ -14,10 +17,12 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFExpression;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.IGroupProcessor;
+import de.uniol.inf.is.odysseus.physicaloperator.relational.state.RelationalStateMapPOState;
 
 public class RelationalStateMapPO<T extends IMetaAttribute> extends
 		RelationalMapPO<T> implements IStatefulPO {
-
+	Logger LOG = LoggerFactory.getLogger(RelationalStateMapPO.class);
+	
 	private Map<Long, LinkedList<Tuple<T>>> groupsLastObjects = new HashMap<>();
 	final private IGroupProcessor<Tuple<T>, Tuple<T>> groupProcessor;
 	private int maxHistoryElements = 0;
@@ -99,21 +104,20 @@ public class RelationalStateMapPO<T extends IMetaAttribute> extends
 
 	@Override
 	public Serializable getState() {
-
-		return (HashMap<Long, LinkedList<Tuple<T>>>) this.groupsLastObjects;
-
+		RelationalStateMapPOState<T> state = new RelationalStateMapPOState<T>();
+		state.setGroupsLastObjects(groupsLastObjects);
+		return state;
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public void setState(Serializable state) {
-
-		if (state instanceof HashMap) {
-
-			this.groupsLastObjects = (HashMap<Long, LinkedList<Tuple<T>>>) state;
-
+	public void setState(Serializable serializable) {
+		try {
+			RelationalStateMapPOState<T> state = (RelationalStateMapPOState<T>) serializable;
+			groupsLastObjects = state.getGroupsLastObjects();
+		} catch (Throwable T) {
+			LOG.error("The serializable state to set for the RelationalStateMapPO is not a valid RelationalStateMapPOState!");
 		}
-
 	}
 
 }

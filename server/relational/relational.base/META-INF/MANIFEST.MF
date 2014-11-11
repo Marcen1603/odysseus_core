@@ -31,6 +31,7 @@ Import-Package: com.rits.cloning,
  org.slf4j
 Export-Package: de.uniol.inf.is.odysseus.logicaloperator.relational,
  de.uniol.inf.is.odysseus.physicaloperator.relational,
+ de.uniol.inf.is.odysseus.physicaloperator.relational.state,
  de.uniol.inf.is.odysseus.relational.base,
  de.uniol.inf.is.odysseus.relational.base.predicate,
  de.uniol.inf.is.odysseus.relational.rewrite,
