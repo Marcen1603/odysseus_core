@@ -16,6 +16,7 @@
 package de.uniol.inf.is.odysseus.rcp.viewer.stream.table;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
@@ -267,7 +268,12 @@ public class StreamTableEditor implements IStreamEditorType {
 				try {
 					Object attr = ((Tuple<?>) cell.getElement()).getAttribute(attributeIndex);
 					if (attr != null) {
-						cell.setText(attr.toString());
+                        if (attr instanceof Object[]) {
+                            cell.setText(Arrays.deepToString((Object[]) attr));
+                        }
+                        else {
+                            cell.setText(attr.toString());
+                        }
 					} else {
 						cell.setText("<null>");
 					}
