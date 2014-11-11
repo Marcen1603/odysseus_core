@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.peer.recovery.internal;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import net.jxta.id.ID;
@@ -49,9 +50,12 @@ public class RecoveryCommunicator implements IRecoveryCommunicator, IPeerCommuni
 	 */
 	private static final Logger LOG = LoggerFactory.getLogger(RecoveryCommunicator.class);
 
-	// TODO unused
-	public static final String JXTA_KEY_RECEIVER_PIPE_ID = "receiverPipeId";
-	public static final String JXTA_KEY_SENDER_PIPE_ID = "senderPipeId";
+	/**
+	 * The list of sharedQueryIDs where we didn't find a buddy for, cause we
+	 * were the last peer in the (known) network. If a new peer comes to the
+	 * network, we will make him the buddy for us for these sharedQueryIds
+	 */
+	private List<ID> noBuddyList = new ArrayList<ID>();
 
 	/**
 	 * The P2P network manager, if there is one bound.
@@ -485,7 +489,8 @@ public class RecoveryCommunicator implements IRecoveryCommunicator, IPeerCommuni
 			// that one fails
 			LocalBackupInformationAccess.addMyBuddy(buddy, sharedQueryId);
 		} else {
-			LOG.error("I am the last man standing - can't find a buddy.");
+			noBuddyList.add(sharedQueryId);
+			LOG.error("I am the last man standing - can't find a buddy. Saved id to list.");
 		}
 
 	}
@@ -517,9 +522,14 @@ public class RecoveryCommunicator implements IRecoveryCommunicator, IPeerCommuni
 
 	@Override
 	public void peerAdded(PeerID peer) {
-		// Nothing to do.
 		if (cPeerDictionary.isPresent()) {
 			LOG.debug("Found new peer: {}", cPeerDictionary.get().getRemotePeerName(peer.toString()));
+		}
+		// If we have sharedQueryIds where we don't have a buddy for - let the
+		// new peer be the buddy for us
+		for (ID sharedQueryId : noBuddyList) {
+			chooseBuddyForQuery(sharedQueryId);
+			LOG.debug("Chose the new peer as my buddy for {}", sharedQueryId);
 		}
 	}
 
