@@ -554,19 +554,19 @@ public class PassesSportsQLParser implements ISportsQLParser {
 				resultStreamProject));
 		statemapExpressions2.add(OperatorBuildHelper.createExpressionParameter(
 				"eif(" + ATTRIBUTE_P1_TEAM_ID + " = " + ATTRIBUTE_P2_TEAM_ID
-						+ " AND " + ATTRIBUTE_DIRECT_PASS + " = 'true', 1, 0)",
+						+ " AND " + ATTRIBUTE_DIRECT_PASS + " = true, 1, 0)",
 				ATTRIBUTE_PASS_SUCC_DIRECT, resultStreamProject));
 		statemapExpressions2.add(OperatorBuildHelper.createExpressionParameter(
 				"eif(" + ATTRIBUTE_P1_TEAM_ID + " != " + ATTRIBUTE_P2_TEAM_ID
-						+ " AND " + ATTRIBUTE_DIRECT_PASS + " = 'false', 1, 0)",
+						+ " AND " + ATTRIBUTE_DIRECT_PASS + " = false, 1, 0)",
 				ATTRIBUTE_PASS_FAIL_DIRECT, resultStreamProject));
 		statemapExpressions2.add(OperatorBuildHelper.createExpressionParameter(
 				"eif(" + ATTRIBUTE_P1_TEAM_ID + " = " + ATTRIBUTE_P2_TEAM_ID
-						+ " AND " + ATTRIBUTE_DOUBLE_PASS + " = 'true', 1, 0)",
+						+ " AND " + ATTRIBUTE_DOUBLE_PASS + " = true, 1, 0)",
 				ATTRIBUTE_PASS_SUCC_DOUBLE, resultStreamProject));
 		statemapExpressions2.add(OperatorBuildHelper.createExpressionParameter(
 				"eif(" + ATTRIBUTE_P1_TEAM_ID + " != " + ATTRIBUTE_P2_TEAM_ID
-						+ " AND " + ATTRIBUTE_DOUBLE_PASS + " = 'false', 1, 0)",
+						+ " AND " + ATTRIBUTE_DOUBLE_PASS + " = false, 1, 0)",
 				ATTRIBUTE_PASS_FAIL_DOUBLE, resultStreamProject));
 
 		StateMapAO lastStateMapAO = OperatorBuildHelper.createStateMapAO(
