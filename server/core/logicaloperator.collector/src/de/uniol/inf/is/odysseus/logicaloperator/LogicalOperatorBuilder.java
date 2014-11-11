@@ -238,7 +238,12 @@ public class LogicalOperatorBuilder implements BundleActivator, BundleListener {
 			if (doc == null || doc.isEmpty()) {
 				logger.warn("Documentation for {} not available!", logicalOperatorAnnotation.name());
 			}
-			GenericOperatorBuilder builder = new GenericOperatorBuilder(curOp, logicalOperatorAnnotation.name(), parameters, logicalOperatorAnnotation.minInputPorts(), logicalOperatorAnnotation.maxInputPorts(), doc, logicalOperatorAnnotation.category());
+            String url = logicalOperatorAnnotation.url();
+            if (url == null || url.isEmpty()) {
+                logger.warn("URL for {} not available!", logicalOperatorAnnotation.name());
+            }
+            GenericOperatorBuilder builder = new GenericOperatorBuilder(curOp, logicalOperatorAnnotation.name(), parameters, logicalOperatorAnnotation.minInputPorts(),
+                    logicalOperatorAnnotation.maxInputPorts(), doc, url, logicalOperatorAnnotation.category());
 			OperatorBuilderFactory.addOperatorBuilder(builder);
 		} catch (NoClassDefFoundError e) {
 			e.printStackTrace();
