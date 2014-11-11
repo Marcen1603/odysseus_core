@@ -5,22 +5,25 @@ import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.StateMapAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.SDFExpressionParameter;
 import de.uniol.inf.is.odysseus.peer.ddc.MissingDDCEntryException;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.SportsQLQuery;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.buildhelper.OperatorBuildHelper;
+import de.uniol.inf.is.odysseus.sports.sportsql.parser.buildhelper.SoccerGameAttributes;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.buildhelper.SportsQLParameterHelper;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.ddcaccess.AbstractSportsDDCAccess;
+import de.uniol.inf.is.odysseus.sports.sportsql.parser.helper.TimeUnitHelper;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.parameter.SportsQLSpaceParameter;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.parameter.SportsQLTimeParameter;
+import de.uniol.inf.is.odysseus.sports.sportsql.parser.parameter.SportsQLTimeParameter.TimeUnit;
 
 public class BallContactGlobalOutput {
 
 	/**
 	 * Percentage change of velocity
 	 */
-	// private final double velocityChange = 0.15;
-	private final double velocityChange = 0.10;
+	private final double velocityChange = 0.15;
 
 	/**
 	 * Boolean which describes the relative tolerance
@@ -32,6 +35,10 @@ public class BallContactGlobalOutput {
 	 * ball
 	 */
 	private final String radius = "400";
+	
+	private static String ATTRIBUTE_VX= "vx";
+	private static String ATTRIBUTE_VY= "vy";
+	private static String ATTRIBUTE_VZ= "vz";
 
 	/**
 	 * Return list of expressions for the ball
@@ -131,14 +138,23 @@ public class BallContactGlobalOutput {
 		allOperators.add(split_balls);
 		predicates.clear();
 
-		attributes.add("v");
+		
 		ArrayList<String> groupBy = new ArrayList<String>();
 		groupBy.add("entity_id");
+		
+		
+		
+		ILogicalOperator addAttributesStateMapAO = addXVYVZV(split_balls);
+		allOperators.add(addAttributesStateMapAO);
+		
+		attributes.add(ATTRIBUTE_VX);
+		attributes.add(ATTRIBUTE_VY);
+		attributes.add(ATTRIBUTE_VZ);
 
 		ILogicalOperator ball_velocity_changes = OperatorBuildHelper
 				.createChangeDetectAO(attributes, OperatorBuildHelper
-						.createAttributeList(groupBy, split_balls),
-						relativeTolerance, velocityChange, split_balls, 100);
+						.createAttributeList(groupBy, addAttributesStateMapAO),
+						relativeTolerance, velocityChange, addAttributesStateMapAO, 100);
 		allOperators.add(ball_velocity_changes);
 		attributes.clear();
 
@@ -204,5 +220,46 @@ public class BallContactGlobalOutput {
 		 */
 
 		return clearEndTimestamp;
+	}
+	
+	
+
+	private StateMapAO addXVYVZV(ILogicalOperator source) throws MissingDDCEntryException{
+		List<SDFExpressionParameter> statemapExpressions = new ArrayList<SDFExpressionParameter>();
+		statemapExpressions.add(OperatorBuildHelper.createExpressionParameter(
+				SoccerGameAttributes.ENTITY_ID, source));
+		statemapExpressions.add(OperatorBuildHelper.createExpressionParameter(
+				OperatorBuildHelper.ATTRIBUTE_MINUTE, source));
+		statemapExpressions.add(OperatorBuildHelper.createExpressionParameter(
+				OperatorBuildHelper.ATTRIBUTE_SECOND, source));
+		statemapExpressions.add(OperatorBuildHelper.createExpressionParameter(
+				SoccerGameAttributes.X, source));
+		statemapExpressions.add(OperatorBuildHelper.createExpressionParameter(
+				SoccerGameAttributes.Y, source));
+		statemapExpressions.add(OperatorBuildHelper.createExpressionParameter(
+				SoccerGameAttributes.Z, source));
+		statemapExpressions.add(OperatorBuildHelper.createExpressionParameter(
+				SoccerGameAttributes.V, source));
+		statemapExpressions.add(OperatorBuildHelper.createExpressionParameter(
+				SoccerGameAttributes.A, source));
+		statemapExpressions.add(OperatorBuildHelper.createExpressionParameter(
+				SoccerGameAttributes.TS, source));
+		statemapExpressions.add(OperatorBuildHelper.createExpressionParameter(
+				SoccerGameAttributes.TEAM_ID, source));
+		
+		// new attributes
+		statemapExpressions.add(OperatorBuildHelper.createExpressionParameter(
+				"(" + SoccerGameAttributes.X + "/1000) / ((" + SoccerGameAttributes.TS + "- __last_1." + SoccerGameAttributes.TS + ")/" + TimeUnitHelper.getBTUtoSecondsFactor(TimeUnit.valueOf(AbstractSportsDDCAccess.getBasetimeunit().toLowerCase())) + ")",
+				ATTRIBUTE_VX, source));
+		statemapExpressions.add(OperatorBuildHelper.createExpressionParameter(
+				"(" + SoccerGameAttributes.Y + "/1000) / ((" + SoccerGameAttributes.TS + "- __last_1." + SoccerGameAttributes.TS + ")/" + TimeUnitHelper.getBTUtoSecondsFactor(TimeUnit.valueOf(AbstractSportsDDCAccess.getBasetimeunit().toLowerCase())) + ")",
+				ATTRIBUTE_VY, source));
+		statemapExpressions.add(OperatorBuildHelper.createExpressionParameter(
+				"(" + SoccerGameAttributes.Z + "/1000) / ((" + SoccerGameAttributes.TS + "- __last_1." + SoccerGameAttributes.TS + ")/" + TimeUnitHelper.getBTUtoSecondsFactor(TimeUnit.valueOf(AbstractSportsDDCAccess.getBasetimeunit().toLowerCase())) + ")",
+				ATTRIBUTE_VZ, source));
+		
+		StateMapAO addAttributesStateMapAO = OperatorBuildHelper
+				.createStateMapAO(statemapExpressions, SoccerGameAttributes.ENTITY_ID, source);
+		return addAttributesStateMapAO;
 	}
 }
