@@ -40,6 +40,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -69,6 +70,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.ProtocolHa
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.IAccessPattern;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportDirection;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandler;
+import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.NonBlockingTcpClientHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.TransportHandlerRegistry;
 import de.uniol.inf.is.odysseus.core.planmanagement.IOperatorOwner;
 import de.uniol.inf.is.odysseus.core.planmanagement.IOwnedOperator;
@@ -678,11 +680,17 @@ public class WsClient implements IExecutor, IClientExecutor, IOperatorOwner {
 		SDFSchema outputSchema = exec.getOutputSchema(queryId, caller);
 		IDataHandler dataHandler = DataHandlerRegistry.getDataHandler("Tuple",
 				outputSchema);
-		InetSocketAddress adr = (InetSocketAddress) ((IClientExecutor) exec)
+		List<SocketAddress> adr = ((IClientExecutor) exec)
 				.getSocketConnectionInformation(queryId, caller);
 		OptionMap options = new OptionMap();
-		options.setOption("port", REMOVEME + adr.getPort());
-		options.setOption("host", adr.getHostName());
+		String hosts = "";
+		String ports = "";
+		for (SocketAddress sa:adr){
+			hosts+=((InetSocketAddress)sa).getHostString()+",";
+			ports+=((InetSocketAddress)sa).getPort()+",";
+		}
+		options.setOption("ports", ports);
+		options.setOption("hosts", hosts);
 		// TODO: Send logininfo to server
 		options.setOption("logininfo", caller.getToken() + "\n");
 		// TODO username and password get from anywhere
@@ -692,7 +700,7 @@ public class WsClient implements IExecutor, IClientExecutor, IOperatorOwner {
 		// Must be done to add the transport to the protocoll ... seems not
 		// really intuitive ...
 		ITransportHandler th = TransportHandlerRegistry.getInstance(
-				"TCPClient", h, options);
+				NonBlockingTcpClientHandler.NAME, h, options);
 		h.setTransportHandler(th);
 		ClientReceiver receiver = new ClientReceiver(h);
 		receiver.setOutputSchema(outputSchema);
@@ -727,7 +735,7 @@ public class WsClient implements IExecutor, IClientExecutor, IOperatorOwner {
 	 * @return SocketAddress
 	 */
 	@Override
-	public SocketAddress getSocketConnectionInformation(int queryId,
+	public List<SocketAddress> getSocketConnectionInformation(int queryId,
 			ISession caller) {
 		if (getWebserviceServer(caller.getConnectionName()) != null) {
 			try {
@@ -738,8 +746,13 @@ public class WsClient implements IExecutor, IClientExecutor, IOperatorOwner {
 				if (infoResponse != null) {
 					ConnectionInformation info = infoResponse
 							.getResponseValue();
-					return new InetSocketAddress(InetAddress.getByName(info
-							.getAddress()), info.getPort());
+					List<SocketAddress> addresses = new LinkedList<SocketAddress>();
+					List<String> adressStrings = info.getAddress();
+					for (String a : adressStrings) {
+						addresses.add(new InetSocketAddress(
+								InetAddress.getByName(a), info.getPort()));
+					}
+					return addresses;
 				}
 			} catch (UnknownHostException | InvalidUserDataException_Exception e) {
 				throw new PlanManagementException(e);

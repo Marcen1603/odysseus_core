@@ -17,6 +17,7 @@
 package de.uniol.inf.is.odysseus.core.planmanagement.executor;
 
 import java.net.SocketAddress;
+import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 
@@ -29,6 +30,6 @@ import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 public interface IClientExecutor {
 
 	boolean connect(String connectString);	
-	SocketAddress getSocketConnectionInformation(int queryId, ISession caller);	
+	List<SocketAddress> getSocketConnectionInformation(int queryId, ISession caller);	
 	
 }

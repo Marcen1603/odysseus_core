@@ -17,7 +17,6 @@ package de.uniol.inf.is.odysseus.mep.functions.math;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.mep.AbstractBinaryNumberInputOperator;
-import de.uniol.inf.is.odysseus.mep.IOperator;
 
 public class PowerOperator extends AbstractBinaryNumberInputOperator<Double> {
 

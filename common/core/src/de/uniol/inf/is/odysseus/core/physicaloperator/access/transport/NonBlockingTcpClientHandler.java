@@ -22,6 +22,8 @@ import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
 import java.nio.channels.SocketChannel;
+import java.util.LinkedList;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -91,8 +93,12 @@ public class NonBlockingTcpClientHandler extends AbstractTransportHandler
 
 	// The host name
 	public static final String HOST = "host";
+	// list of host names
+	public static final String HOSTS = "hosts";
 	// The port
 	public static final String PORT = "port";
+	// list of ports
+	public static final String PORTS = "ports";
 	// The read buffer size
 	public static final String READ_BUFFER = "read";
 	// The write buffer size
@@ -111,21 +117,23 @@ public class NonBlockingTcpClientHandler extends AbstractTransportHandler
 	static final Logger LOG = LoggerFactory
 			.getLogger(NonBlockingTcpClientHandler.class);
 	private TCPConnector connector;
-	private String host;
+	private List<String> hosts = new LinkedList<String>();
+	private List<Integer> ports = new LinkedList<Integer>();
+	private int currentHost = -1;
 	private byte[] initializeCommand;
 	/** In and output for data transfer */
 	@SuppressWarnings("unused")
 	private InputStream input;
 
 	private OutputStream output;
-	private int port;
 	private int readBufferSize;
 	private SelectorThread selector;
 	private int writeBufferSize;
 	private boolean autoconnect;
 	NioTcpConnection connection;
-	
-	static final InfoService infoService = InfoServiceFactory.getInfoService(NonBlockingTcpClientHandler.class.getName());
+
+	static final InfoService infoService = InfoServiceFactory
+			.getInfoService(NonBlockingTcpClientHandler.class.getName());
 
 	public NonBlockingTcpClientHandler() {
 		super();
@@ -137,12 +145,19 @@ public class NonBlockingTcpClientHandler extends AbstractTransportHandler
 		this.init();
 		try {
 			this.selector = SelectorThread.getInstance();
-			final InetSocketAddress address = new InetSocketAddress(
-					this.getHost(), this.getPort());
-			this.connector = new TCPConnector(this.selector, address, this,
-					this.getInitializeCommand());
+			currentHost = 0;
+			connect();
 		} catch (final IOException e) {
 			NonBlockingTcpClientHandler.LOG.error(e.getMessage(), e);
+		}
+	}
+
+	private void connect() {
+		if (hosts.size() > 0) {
+			final InetSocketAddress address = new InetSocketAddress(
+					hosts.get(currentHost), ports.get(currentHost));
+			this.connector = new TCPConnector(this.selector, address, this,
+					this.getInitializeCommand());
 		}
 	}
 
@@ -162,8 +177,17 @@ public class NonBlockingTcpClientHandler extends AbstractTransportHandler
 	@Override
 	public void connectionFailed(final ConnectorSelectorHandler handler,
 			final Exception cause) {
-		infoService.error("Could not connect to server " + host + " on port "
-				+ port, cause);
+		if (currentHost + 1 < hosts.size()) {
+			infoService.warning(
+					"Could not connect to server " + hosts.get(currentHost)
+							+ " on port " + ports.get(currentHost)
+							+ " Tryin' next server", cause);
+			currentHost++;
+			connect();
+		} else {
+			infoService.error("Could not connect any server " + hosts
+					+ " on ports " + ports, cause);
+		}
 		NonBlockingTcpClientHandler.LOG.error(cause.getMessage(), cause);
 	}
 
@@ -201,9 +225,9 @@ public class NonBlockingTcpClientHandler extends AbstractTransportHandler
 			return false;
 		}
 		final NonBlockingTcpClientHandler other = (NonBlockingTcpClientHandler) o;
-		if (!this.host.equals(other.host)) {
+		if (!this.hosts.equals(other.hosts)) {
 			return false;
-		} else if (this.port != other.port) {
+		} else if (this.ports.equals(other.ports)) {
 			return false;
 		} else if (this.readBufferSize != other.readBufferSize) {
 			return false;
@@ -220,7 +244,7 @@ public class NonBlockingTcpClientHandler extends AbstractTransportHandler
 	@Override
 	public void notify(final IConnection con,
 			final ConnectionMessageReason reason) {
-		infoService.warning("Connection information "+con+" --> "+reason);
+		infoService.warning("Connection information " + con + " --> " + reason);
 		switch (reason) {
 		case ConnectionAbort:
 			super.fireOnDisconnect();
@@ -291,20 +315,20 @@ public class NonBlockingTcpClientHandler extends AbstractTransportHandler
 		}
 	}
 
-	/**
-	 * @param host
-	 *            the host to set
-	 */
-	public void setHost(final String host) {
-		this.host = host;
-	}
-
-	/**
-	 * @return the host
-	 */
-	public String getHost() {
-		return this.host;
-	}
+	// /**
+	// * @param host
+	// * the host to set
+	// */
+	// public void setHost(final String host) {
+	// this.host = host;
+	// }
+	//
+	// /**
+	// * @return the host
+	// */
+	// public String getHost() {
+	// return this.host;
+	// }
 
 	/**
 	 * @param initializeCommand
@@ -334,20 +358,21 @@ public class NonBlockingTcpClientHandler extends AbstractTransportHandler
 		return this.initializeCommand;
 	}
 
-	/**
-	 * @param port
-	 *            the port to set
-	 */
-	public void setPort(final int port) {
-		this.port = port;
-	}
-
-	/**
-	 * @return the port
-	 */
-	public int getPort() {
-		return this.port;
-	}
+	//
+	// /**
+	// * @param port
+	// * the port to set
+	// */
+	// public void setPort(final int port) {
+	// this.port = port;
+	// }
+	//
+	// /**
+	// * @return the port
+	// */
+	// public int getPort() {
+	// return this.port;
+	// }
 
 	/**
 	 * @param readBufferSize
@@ -407,11 +432,41 @@ public class NonBlockingTcpClientHandler extends AbstractTransportHandler
 
 	private void init() {
 		final OptionMap options = this.getOptionsMap();
-		setHost(options.get(HOST, "127.0.0.1"));
-		setPort(options.getInt(PORT, 8080));
-		setReadBufferSize(options.getInt(READ_BUFFER,10240));
-		setWriteBufferSize(options.getInt(WRITE_BUFFER,10240));
-		
+
+		this.hosts.clear();
+		if (!options.containsKey(HOST) && !options.containsKey(HOSTS)) {
+			hosts.add("127.0.0.1");
+		} else {
+			if (options.containsKey(HOST)) {
+				hosts.add(options.get(HOST));
+			}
+			if (options.containsKey(HOSTS)) {
+				String hostList = options.get(HOSTS);
+				String[] h = hostList.split(",");
+				for (String hostEntry : h) {
+					hosts.add(hostEntry);
+				}
+			}
+		}
+
+		this.ports.clear();
+		if (!options.containsKey(PORT) && !options.containsKey(PORTS)) {
+			ports.add(8080);
+		} else {
+			if (options.containsKey(PORT)) {
+				ports.add(options.getInt(PORT, -1));
+			}
+			if (options.containsKey(PORTS)) {
+				String portList = options.get(PORTS);
+				String[] h = portList.split(",");
+				for (String portEntry : h) {
+					ports.add(Integer.parseInt(portEntry));
+				}
+			}
+
+		}
+		setReadBufferSize(options.getInt(READ_BUFFER, 10240));
+		setWriteBufferSize(options.getInt(WRITE_BUFFER, 10240));
 
 		if (options.containsKey(NonBlockingTcpClientHandler.INITIALIZE_ALIAS)) {
 			this.setInitializeCommand(options

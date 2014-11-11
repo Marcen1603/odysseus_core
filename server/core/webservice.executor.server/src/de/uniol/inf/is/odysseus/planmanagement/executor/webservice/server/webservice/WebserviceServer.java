@@ -25,6 +25,7 @@ import java.util.Collection;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -130,7 +131,7 @@ import de.uniol.inf.is.odysseus.security.ssl.SSLServerSocketProvider;
 
 /**
  * 
- * @author Dennis Geesen, Thore Stratmann
+ * @author Dennis Geesen, Thore Stratmann, Marco Grawunder
  */
 
 @WebService
@@ -138,11 +139,14 @@ import de.uniol.inf.is.odysseus.security.ssl.SSLServerSocketProvider;
 @XmlSeeAlso({ SimpleGraph.class, String[].class, GraphNode.class,
 		LogicalQuery.class, ConnectionInformation.class, Context.class })
 public class WebserviceServer {
-	
-	static final private Logger logger = LoggerFactory.getLogger(WebserviceServer.class);
 
-	private static final int SINK_MIN_PORT = OdysseusConfiguration.getInt("webservice.queryconnect.sink.minport", 10000);
-	private static final int SINK_MAX_PORT = OdysseusConfiguration.getInt("webservice.queryconnect.sink.maxport", 20000);;
+	static final private Logger logger = LoggerFactory
+			.getLogger(WebserviceServer.class);
+
+	private static final int SINK_MIN_PORT = OdysseusConfiguration.getInt(
+			"webservice.queryconnect.sink.minport", 10000);
+	private static final int SINK_MAX_PORT = OdysseusConfiguration.getInt(
+			"webservice.queryconnect.sink.maxport", 20000);;
 
 	/**
 	 * Socket Management
@@ -151,7 +155,7 @@ public class WebserviceServer {
 	@XmlTransient
 	private Map<Integer, Map<Integer, Integer>> socketPortMap = new HashMap<>();
 	private Map<Integer, Map<Integer, SocketSinkPO>> socketSinkMap = new HashMap<>();
-	private InetAddress address;
+	private List<String> address;
 
 	protected IExecutor getExecutor() {
 		return ExecutorServiceBinding.getExecutor();
@@ -171,7 +175,8 @@ public class WebserviceServer {
 		if (user != null) {
 			String token = user.getToken();
 			StringResponse response = new StringResponse(token, true);
-			logger.debug("New user "+username+"@"+tenantname+" connected.");
+			logger.debug("New user " + username + "@" + tenantname
+					+ " connected.");
 			return response;
 		}
 		return new StringResponse(null, false);
@@ -186,7 +191,7 @@ public class WebserviceServer {
 		if (user != null) {
 			String token = user.getToken();
 			StringResponse response = new StringResponse(token, true);
-			logger.debug("New user "+username+" connected.");
+			logger.debug("New user " + username + " connected.");
 			return response;
 		}
 		return new StringResponse(null, false);
@@ -716,7 +721,8 @@ public class WebserviceServer {
 			}
 			po.addAllowedSessionId(securityToken);
 			if (this.address == null) {
-
+				List<InetAddress> addresses = new LinkedList<InetAddress>();
+				addresses.add(InetAddress.getLocalHost());
 				Enumeration<NetworkInterface> interfaces = NetworkInterface
 						.getNetworkInterfaces();
 				while (interfaces.hasMoreElements()) {
@@ -727,16 +733,20 @@ public class WebserviceServer {
 					if (ni.isLoopback()) {
 						continue;
 					}
-					if (ni.getInetAddresses().hasMoreElements()) {
-						this.address = ni.getInetAddresses().nextElement();
+					Enumeration<InetAddress> iter = ni.getInetAddresses();
+					while (iter.hasMoreElements()) {
+						addresses.add(iter.nextElement());
+					}
+				}
+				address = new LinkedList<String>();
+				for (InetAddress i : addresses) {
+					if (!address.contains(i.getHostAddress())) {
+						address.add(i.getHostAddress());
 					}
 				}
 			}
-			if (address == null){
-				address = InetAddress.getLocalHost();
-			}
 			ConnectionInformation connectInfo = new ConnectionInformation(port,
-						address.getHostAddress());
+					address);
 			return new ConnectionInformationResponse(connectInfo, true);
 		} catch (SocketException e) {
 			e.printStackTrace();
@@ -762,8 +772,8 @@ public class WebserviceServer {
 		if (nullValues) {
 			handler = new NullAwareTupleDataHandler(root.getOutputSchema());
 		} else {
-			handler = new TupleDataHandler()
-					.createInstance(root.getOutputSchema());
+			handler = new TupleDataHandler().createInstance(root
+					.getOutputSchema());
 		}
 
 		ByteBufferHandler<Tuple<ITimeInterval>> objectHandler = new ByteBufferHandler<Tuple<ITimeInterval>>(

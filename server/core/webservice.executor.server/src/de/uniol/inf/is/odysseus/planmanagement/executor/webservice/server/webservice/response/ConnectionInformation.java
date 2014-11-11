@@ -29,6 +29,8 @@
  */
 package de.uniol.inf.is.odysseus.planmanagement.executor.webservice.server.webservice.response;
 
+import java.util.List;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlType;
@@ -49,9 +51,9 @@ public class ConnectionInformation {
 	}
 	
 	public int port;
-	public String address;
+	public List<String> address;
 	
-	public ConnectionInformation(int port, String address) {
+	public ConnectionInformation(int port, List<String> address) {
 		this.port = port;
 		this.address = address;
 	}
