@@ -1216,6 +1216,7 @@ public class OperatorBuildHelper {
 			ILogicalOperator source) {
 		ElementWindowAO windowAO = new ElementWindowAO();
 		//null cause timeUnit is deprecated
+		windowAO.setBaseTimeUnit(TimeUnit.MILLISECONDS);
 		TimeValueItem windowSize = new TimeValueItem(size, TimeUnit.MILLISECONDS);
 		TimeValueItem windowAdvance = new TimeValueItem(advance, TimeUnit.MILLISECONDS);
 		windowAO.setWindowSize(windowSize);
@@ -1223,6 +1224,8 @@ public class OperatorBuildHelper {
 		windowAO.subscribeTo(source, source.getOutputSchema());
 		return windowAO;
 	}
+	
+
 
 	/**
 	 * Creates a TimeWindow.

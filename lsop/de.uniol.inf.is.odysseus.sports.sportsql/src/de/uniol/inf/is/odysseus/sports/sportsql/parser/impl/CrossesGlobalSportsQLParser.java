@@ -145,8 +145,8 @@ public class CrossesGlobalSportsQLParser implements ISportsQLParser{
 		allOperators.add(inTargetZoneFilter);
 		attributes.clear();
 		
-		ElementWindowAO windowTargetZone = OperatorBuildHelper.createElementWindowAO(1, 1, inTargetZoneFilter);
-		ElementWindowAO windowLastInBox = OperatorBuildHelper.createElementWindowAO(1, 1, lastInBox);
+		ElementWindowAO windowTargetZone = OperatorBuildHelper.createElementWindowAO(1000, 1000, inTargetZoneFilter);
+		ElementWindowAO windowLastInBox = OperatorBuildHelper.createElementWindowAO(1000, 1000, lastInBox);
 		
 		allOperators.add(windowTargetZone);
 		allOperators.add(windowLastInBox);

@@ -100,7 +100,7 @@ public class PassesSportsQLParser implements ISportsQLParser {
 	//private static final int BACK_A_4 = -180;
 	
 	// Min velocity change to select important tuples
-	private static final double BALL_VELOCITY_CHANGE_IN_PERCENT= 0.15;
+	private static final double BALL_VELOCITY_CHANGE_IN_PERCENT= 0.10;
 	
 	// Radius to detect a ball contact
 	private static final int RADIUS= 400;

@@ -197,7 +197,7 @@ public class PathWithBallSportsQLParser implements ISportsQLParser {
 		// /player_window = WINDOW({SIZE = 1, TYPE = 'TUPLE',ADVANCE = 1},
 		// player_pos)
 		ILogicalOperator playerWindow = OperatorBuildHelper
-				.createElementWindowAO(1, 1, playerPosition);
+				.createElementWindowAO(1000, 1000, playerPosition);
 		allOperators.add(playerWindow);
 
 		// /ball_window = WINDOW({SIZE = 1, TYPE = 'TUPLE',ADVANCE = 1},

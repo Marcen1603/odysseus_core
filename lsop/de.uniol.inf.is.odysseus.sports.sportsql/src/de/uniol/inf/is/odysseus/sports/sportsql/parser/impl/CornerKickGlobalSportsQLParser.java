@@ -194,7 +194,7 @@ public class CornerKickGlobalSportsQLParser implements ISportsQLParser {
 		// activeBallBehindGoalline_wnd = ELEMENTWINDOW({SIZE = 1, ADVANCE=1},
 		// activeBallBehindGoalline_change)
 		ElementWindowAO activeBallBehindGoallineWindow = OperatorBuildHelper
-				.createElementWindowAO(1, 1, activeBallBehindGoallineChange);
+				.createElementWindowAO(1000, 1000, activeBallBehindGoallineChange);
 		operatorList.add(activeBallBehindGoallineWindow);
 
 		// BallOnCornerSpot_wnd = ELEMENTWINDOW({SIZE = 1, ADVANCE=1},
