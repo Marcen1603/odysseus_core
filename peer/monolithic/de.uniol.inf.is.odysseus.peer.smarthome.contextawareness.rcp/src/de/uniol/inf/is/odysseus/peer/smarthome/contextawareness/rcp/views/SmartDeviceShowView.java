@@ -46,12 +46,12 @@ import de.uniol.inf.is.odysseus.p2p_new.util.RepeatingJobThread;
 import de.uniol.inf.is.odysseus.peer.resource.IResourceUsage;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.rcp.SmartHomeRCPActivator;
 
-public class SmartDeviceView extends ViewPart implements
+public class SmartDeviceShowView extends ViewPart implements
 		IP2PDictionaryListener, ISelectionProvider {
 	private static final long REFRESH_INTERVAL_MILLIS = 5000;
 
 	private static final Logger LOG = LoggerFactory
-			.getLogger(SmartDeviceView.class);
+			.getLogger(SmartDeviceShowView.class);
 
 	private IP2PDictionary p2pDictionary;
 	private final List<PeerID> foundPeerIDs = Lists.newArrayList();
@@ -60,7 +60,7 @@ public class SmartDeviceView extends ViewPart implements
 	private RepeatingJobThread refresher;
 	private Collection<PeerID> refreshing = Lists.newLinkedList();
 
-	private static SmartDeviceView instance;
+	private static SmartDeviceShowView instance;
 
 	@Override
 	public void createPartControl(Composite parent) {
@@ -434,7 +434,7 @@ public class SmartDeviceView extends ViewPart implements
 
 	}
 	
-	public static Optional<SmartDeviceView> getInstance(){
+	public static Optional<SmartDeviceShowView> getInstance(){
 		return Optional.fromNullable(instance);
 	}
 

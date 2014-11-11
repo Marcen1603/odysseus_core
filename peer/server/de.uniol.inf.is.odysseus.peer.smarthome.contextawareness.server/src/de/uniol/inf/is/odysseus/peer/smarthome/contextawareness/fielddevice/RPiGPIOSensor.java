@@ -160,5 +160,10 @@ public class RPiGPIOSensor extends Sensor {
 		public GPIO_SENSOR_STATE getPinState() {
 			return this.pinState;
 		}
+
+		@Override
+		public String getActivityInterpreterDescription() {
+			return "Pin:"+getInputPin()+" PinState:"+getPinState();
+		}
 	}
 }

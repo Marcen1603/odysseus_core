@@ -70,4 +70,6 @@ public abstract class ActivityInterpreter implements Serializable {
 
 		return n.toString();
 	}
+
+	public abstract String getActivityInterpreterDescription();
 }

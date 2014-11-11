@@ -11,33 +11,33 @@ import org.eclipse.swt.widgets.Display;
 import com.google.common.base.Optional;
 
 import de.uniol.inf.is.odysseus.p2p_new.PeerCommunicationException;
-import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.LogicRule;
-import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.rcp.views.LogicRuleShowViewPart;
+import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.ActivityInterpreter;
+import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.rcp.views.ActivityInterpreterShowView;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.server.SmartDeviceServer;
 import de.uniol.inf.is.odysseus.rcp.StatusBarManager;
 
-public class DeleteLogicRuleCommand extends AbstractHandler {
+public class DeleteActivityInterpreterCommand extends AbstractHandler {
 
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
-		Optional<LogicRuleShowViewPart> optView = LogicRuleShowViewPart
+		Optional<ActivityInterpreterShowView> optView = ActivityInterpreterShowView
 				.getInstance();
 		if (optView.isPresent()) {
-			LogicRuleShowViewPart view = optView.get();
+			ActivityInterpreterShowView view = optView.get();
 
-			List<LogicRule> selectedLogicRules = view.getSelectedLogicRules();
+			List<ActivityInterpreter> selectedLogicRules = view.getSelectedActivityInterpreters();
 			if (!selectedLogicRules.isEmpty()) {
 				MessageDialog msgDialog = new MessageDialog(Display
 						.getCurrent().getActiveShell(), null, null,
-						"Delete selected logic rule(s)?",
+						"Delete selected activity interpreter(s)?",
 						MessageDialog.WARNING, new String[] { "Ok", "Cancel" },
 						1);
 				msgDialog.open();
 
 				if (msgDialog.getReturnCode() == 0) {
 					int okCount = 0;
-					for (LogicRule rule : selectedLogicRules) {
-						if (removeLogicRule(rule)) {
+					for (ActivityInterpreter rule : selectedLogicRules) {
+						if (removeActivityInterpreter(rule)) {
 							okCount++;
 						}
 					}
@@ -50,15 +50,15 @@ public class DeleteLogicRuleCommand extends AbstractHandler {
 		return null;
 	}
 
-	private boolean removeLogicRule(LogicRule rule) {
-		// System.out.println("DeleteLogicRule ActivityName:"+rule.getActivityName()+" Actor:"+rule.getActor().getName());
+	private boolean removeActivityInterpreter(ActivityInterpreter interpreter) {
+		System.out.println("removeActivityInterpreter ActivityName:"+interpreter.getActivityName()+" Sensor:"+interpreter.getSensor().getName());
 		
-		if(SmartDeviceServer.isLocalPeer(rule.getActor().getSmartDevice().getPeerID())){
-			return rule.getActor().deleteLogicRule(rule);
+		if(SmartDeviceServer.isLocalPeer(interpreter.getSensor().getSmartDevice().getPeerID())){
+			return interpreter.getSensor().removeActivityInterpreter(interpreter);
 		}else{
-			rule.getActor().deleteLogicRule(rule);
 			try {
-				rule.getActor().save();
+				interpreter.getSensor().removeActivityInterpreter(interpreter);
+				interpreter.getSensor().save();
 				return true;
 			} catch (PeerCommunicationException e) {
 				e.printStackTrace();
@@ -66,5 +66,4 @@ public class DeleteLogicRuleCommand extends AbstractHandler {
 		}
 		return false;
 	}
-
 }

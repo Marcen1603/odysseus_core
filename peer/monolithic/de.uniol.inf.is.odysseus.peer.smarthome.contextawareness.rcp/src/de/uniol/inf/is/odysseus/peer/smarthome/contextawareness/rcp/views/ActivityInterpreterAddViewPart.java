@@ -2,40 +2,44 @@ package de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.rcp.views;
 
 import java.util.ArrayList;
 
-import net.jxta.peer.PeerID;
-
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ComboViewer;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.part.ViewPart;
-
-import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.ASmartDevice;
-import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.Actor;
-import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.AbstractActorAction;
-import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.LogicRule;
-import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.rcp.SmartHomeRCPActivator;
-import de.uniol.inf.is.odysseus.rcp.StatusBarManager;
-
-import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Combo;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.part.ViewPart;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Optional;
 import com.google.common.collect.Lists;
 
-public class AddLogicRuleViewPart extends ViewPart {
+import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.ASmartDevice;
+import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.AbstractActorAction;
+import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.ActivityInterpreter;
+import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.Actor;
+import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.Sensor;
+import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.rcp.SmartHomeRCPActivator;
+import de.uniol.inf.is.odysseus.rcp.StatusBarManager;
+import net.jxta.peer.PeerID;
+
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+
+import com.google.common.base.Optional;
+
+public class ActivityInterpreterAddViewPart extends ViewPart {
+
+	public static final String ID = "de.uniol.inf.is.odysseus.rcp.peer.smarthome.contextawareness.ActivityInterpreterAddViewPart";
+
 	private static final Logger LOG = LoggerFactory
 			.getLogger(SmartHomeRCPActivator.class);
 
@@ -43,14 +47,10 @@ public class AddLogicRuleViewPart extends ViewPart {
 
 	// private List<PeerID> foundPeerIDs = Lists.newArrayList();
 
-	public AddLogicRuleViewPart() {
-	}
-
-	public static final String ID = "de.uniol.inf.is.odysseus.rcp.peer.smarthome.contextawareness.AddLogicRuleViewPart";
 	private ASmartDevice localSmartDevice;
-	private Combo actorsCombo;
+	private Combo sensorsCombo;
 	private Combo activityNamesCombo;
-	private Combo actorActionsCombo;
+	private Combo sensorsConditionCombo;
 	private ComboViewer smartDeviceComboViewer;
 	private ArrayList<PeerID> foundPeerIDs = Lists.newArrayList();
 
@@ -80,8 +80,8 @@ public class AddLogicRuleViewPart extends ViewPart {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				refreshActivityNamesCombo();
-				refreshActorsComboItems();
-				refreshActorActionsCombo();
+				refreshSensorsComboItems();
+				refreshSensorConditionsCombo();
 			}
 
 			@Override
@@ -131,15 +131,15 @@ public class AddLogicRuleViewPart extends ViewPart {
 		Label lblAaad = new Label(tableComposite, SWT.NONE);
 		lblAaad.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false,
 				1, 1));
-		lblAaad.setText("Actor:");
+		lblAaad.setText("Sensor:");
 
-		actorsCombo = new Combo(tableComposite, SWT.READ_ONLY);
-		actorsCombo.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true,
+		sensorsCombo = new Combo(tableComposite, SWT.READ_ONLY);
+		sensorsCombo.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true,
 				false, 1, 1));
-		actorsCombo.addSelectionListener(new SelectionListener() {
+		sensorsCombo.addSelectionListener(new SelectionListener() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				refreshActorActionsCombo();
+				refreshSensorConditionsCombo();
 			}
 
 			@Override
@@ -153,18 +153,18 @@ public class AddLogicRuleViewPart extends ViewPart {
 				false, 1, 1));
 		lblAction.setText("Action:");
 
-		actorActionsCombo = new Combo(tableComposite, SWT.READ_ONLY);
-		actorActionsCombo.setLayoutData(new GridData(SWT.FILL, SWT.CENTER,
+		sensorsConditionCombo = new Combo(tableComposite, SWT.READ_ONLY);
+		sensorsConditionCombo.setLayoutData(new GridData(SWT.FILL, SWT.CENTER,
 				true, false, 1, 1));
 
 		Button btnCreate = new Button(tableComposite, SWT.NONE);
 		btnCreate.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				createLogicRule();
+				createActivityInterpreter();
 			}
 		});
-		btnCreate.setText("Create rule");
+		btnCreate.setText("Create");
 
 		Button btnCancel = new Button(tableComposite, SWT.NONE);
 		btnCancel.addSelectionListener(new SelectionAdapter() {
@@ -174,15 +174,6 @@ public class AddLogicRuleViewPart extends ViewPart {
 			}
 		});
 		btnCancel.setText("Cancel");
-
-		// text field: for activity name
-
-		// Drop-Down list: with connected actors
-		// localSmartDevice =
-		// SmartHomeRCPActivator.getSmartDeviceService().getLocalSmartDevice();
-
-		// Drop-Down list: to select action of the actor to execute when the
-		// entered activity occures
 
 		refreshAll();
 
@@ -203,7 +194,7 @@ public class AddLogicRuleViewPart extends ViewPart {
 				}
 			}
 		});
-		t.setName("AddLogicRule GUI element refresher thread.");
+		t.setName("AddActivityInterpreter GUI element refresher thread.");
 		t.setDaemon(true);
 		t.start();
 	}
@@ -211,8 +202,8 @@ public class AddLogicRuleViewPart extends ViewPart {
 	protected void refreshAll() {
 		refreshFoundPeerIDsList();
 		refreshActivityNamesCombo();
-		refreshActorsComboItems();
-		refreshActorActionsCombo();
+		refreshSensorsComboItems();
+		refreshSensorConditionsCombo();
 	}
 
 	private void refreshFoundPeerIDsList() {
@@ -259,25 +250,12 @@ public class AddLogicRuleViewPart extends ViewPart {
 		}
 	}
 
-	/*
-	 * private void refreshSmartDevicesCombo() { refreshFoundPeerIDsList();
-	 * //SmartHomeRCPActivator.getSmartDeviceService().getLocalSmartDevice()
-	 * ArrayList<String> list = new ArrayList<>(); list.add("<local>");
-	 * 
-	 * //TODO: add smartdevicedictionary
-	 * 
-	 * //list.add(foundPeerIDs);
-	 * 
-	 * String[] listArray = convertToArray(list);
-	 * smartDeviceCombo.setItems(listArray); }
-	 */
-
 	private void refreshActivityNamesCombo() {
 
 		ArrayList<String> list = new ArrayList<>();
-		for (Actor actor : getLocalSmartDevice().getConnectedActors()) {
-			for (LogicRule rule : actor.getLogicRules()) {
-				list.add(rule.getActivityName());
+		for (Sensor sensor : getLocalSmartDevice().getConnectedSensors()) {
+			for (ActivityInterpreter interpreter : sensor.getActivityInterpreters()) {
+				list.add(interpreter.getActivityName());
 			}
 		}
 
@@ -288,7 +266,7 @@ public class AddLogicRuleViewPart extends ViewPart {
 		}
 	}
 
-	private void refreshActorsComboItems() {
+	private void refreshSensorsComboItems() {
 		int selectedSmartDevice = smartDeviceComboViewer.getCombo()
 				.getSelectionIndex();
 		if (selectedSmartDevice < 0) {
@@ -302,13 +280,13 @@ public class AddLogicRuleViewPart extends ViewPart {
 			return;
 		}
 
-		String[] items = new String[smartDevice.getConnectedActors().size()];
+		String[] items = new String[smartDevice.getConnectedSensors().size()];
 
-		for (int i = 0; i < smartDevice.getConnectedActors().size(); i++) {
-			items[i] = smartDevice.getConnectedActors().get(i).getName();
+		for (int i = 0; i < smartDevice.getConnectedSensors().size(); i++) {
+			items[i] = smartDevice.getConnectedSensors().get(i).getName();
 		}
 
-		actorsCombo.setItems(items);
+		sensorsCombo.setItems(items);
 	}
 
 	private static boolean isLocalID(PeerID pid) {
@@ -326,7 +304,7 @@ public class AddLogicRuleViewPart extends ViewPart {
 		return value;
 	}
 
-	private void refreshActorActionsCombo() {
+	private void refreshSensorConditionsCombo() {
 		int selectedSmartDevice = smartDeviceComboViewer.getCombo()
 				.getSelectionIndex();
 		if (selectedSmartDevice < 0) {
@@ -340,10 +318,11 @@ public class AddLogicRuleViewPart extends ViewPart {
 			return;
 		}
 
-		int selectedActor = actorsCombo.getSelectionIndex();
+		int selectedSensor = sensorsCombo.getSelectionIndex();
 
-		if (selectedActor >= 0) {
-			Actor actor = smartDevice.getConnectedActors().get(selectedActor);
+		if (selectedSensor >= 0) {
+			/*
+			Actor actor = smartDevice.getConnectedActors().get(selectedSensor);
 
 			ArrayList<String> list = new ArrayList<>();
 			for (AbstractActorAction actions : actor.getActions()) {
@@ -351,9 +330,10 @@ public class AddLogicRuleViewPart extends ViewPart {
 			}
 
 			String[] listArray = convertToArray(list);
-			actorActionsCombo.setItems(listArray);
+			sensorsConditionCombo.setItems(listArray);
+			*/
 		} else {
-			actorActionsCombo.setItems(new String[] {});
+			sensorsConditionCombo.setItems(new String[] {});
 		}
 	}
 
@@ -376,21 +356,22 @@ public class AddLogicRuleViewPart extends ViewPart {
 		return localSmartDevice;
 	}
 
-	private void createLogicRule() {
+	@SuppressWarnings("unused")
+	private void createActivityInterpreter() {
 		int selectedPeerID = smartDeviceComboViewer.getCombo()
 				.getSelectionIndex();
 		String activityName = activityNamesCombo.getText();
 		// String actorName = actorsCombo.getText();
 		// String actorActionName = actorActionsCombo.getText();
-		int selectedActor = actorsCombo.getSelectionIndex();
-		int selectedActorAction = actorActionsCombo.getSelectionIndex();
+		int selectedActor = sensorsCombo.getSelectionIndex();
+		int selectedActorAction = sensorsConditionCombo.getSelectionIndex();
 
 		if (selectedPeerID < 0 || foundPeerIDs.get(selectedPeerID) == null) {
 			MessageDialog msgDialog = new MessageDialog(
 					Display.getCurrent().getActiveShell(),
 					null,
 					null,
-					"The logic rule can't created. Please select a smart device.",
+					"The activity interpreter can't created. Please select a smart device.",
 					MessageDialog.WARNING, new String[] { "Ok" }, 0);
 			msgDialog.open();
 			return;
@@ -401,7 +382,7 @@ public class AddLogicRuleViewPart extends ViewPart {
 					Display.getCurrent().getActiveShell(),
 					null,
 					null,
-					"The logic rule can't created. Please enter an activity name.",
+					"The activity interpreter can't created. Please enter an activity name.",
 					MessageDialog.WARNING, new String[] { "Ok" }, 0);
 			msgDialog.open();
 			return;
@@ -410,7 +391,7 @@ public class AddLogicRuleViewPart extends ViewPart {
 		if (selectedActor < 0) {
 			MessageDialog msgDialog = new MessageDialog(Display.getCurrent()
 					.getActiveShell(), null, null,
-					"The logic rule can't created. Please select an actor.",
+					"Theactivity interpreter can't created. Please select an actor.",
 					MessageDialog.WARNING, new String[] { "Ok" }, 0);
 			msgDialog.open();
 			return;
@@ -421,7 +402,7 @@ public class AddLogicRuleViewPart extends ViewPart {
 					Display.getCurrent().getActiveShell(),
 					null,
 					null,
-					"The logic rule can't created. Please select an action for the actor.",
+					"The activity interpreter can't created. Please select an action for the actor.",
 					MessageDialog.WARNING, new String[] { "Ok" }, 0);
 			msgDialog.open();
 			return;
@@ -437,33 +418,35 @@ public class AddLogicRuleViewPart extends ViewPart {
 
 		try {
 			if (isLocalID(currentPeer)) {
-				if (actor.createLogicRuleWithAction(activityName, actorAction)) {
-					refreshLogicRuleViewPart();
+				//TODO: 
+				if (false && actor.createLogicRuleWithAction(activityName, actorAction)) {
+					refreshActivityInterpreterViewPart();
 					StatusBarManager.getInstance().setMessage(
-							"Logic rule created for device: "
+							"Activity interpreter created for device: "
 									+ smartDevice.getPeerName());
 				} else {
 					MessageDialog msgDialog = new MessageDialog(
 							Display.getCurrent().getActiveShell(),
 							null,
 							null,
-							"The logic rule can't created. Maybe it already exists?",
+							"The activity interpreter can't created. Maybe it already exists?",
 							MessageDialog.WARNING, new String[] { "Ok" }, 0);
 					msgDialog.open();
 				}
 			} else {
 				try {
-					if (actor.createLogicRuleWithAction(activityName,
+					//TODO: 
+					if (false && actor.createLogicRuleWithAction(activityName,
 							actorAction) && actor.save()) {
 						StatusBarManager.getInstance().setMessage(
-								"Logic rule created for device: "
+								"Activity interpreter created for device: "
 										+ smartDevice.getPeerName());
 					} else {
 						MessageDialog msgDialog = new MessageDialog(
 								Display.getCurrent().getActiveShell(),
 								null,
 								null,
-								"The logic rule can't created. Maybe it already exists.",
+								"The activity interpreter can't created. Maybe it already exists.",
 								MessageDialog.WARNING, new String[] { "Ok" }, 0);
 						msgDialog.open();
 					}
@@ -472,7 +455,7 @@ public class AddLogicRuleViewPart extends ViewPart {
 							Display.getCurrent().getActiveShell(),
 							null,
 							null,
-							"The logic rule can't created. Maybe there is no connection to the remote peer.",
+							"The activity interpreter can't created. Maybe there is no connection to the remote peer.",
 							MessageDialog.WARNING, new String[] { "Ok" }, 0);
 					msgDialog.open();
 				}
@@ -480,7 +463,7 @@ public class AddLogicRuleViewPart extends ViewPart {
 		} catch (Exception ex) {
 			MessageDialog msgDialog = new MessageDialog(Display.getCurrent()
 					.getActiveShell(), null, null,
-					"The logic rule can't created.", MessageDialog.WARNING,
+					"The activity interpreter can't created.", MessageDialog.WARNING,
 					new String[] { "Ok" }, 0);
 			msgDialog.open();
 		}
@@ -497,11 +480,11 @@ public class AddLogicRuleViewPart extends ViewPart {
 		return smartDevice;
 	}
 
-	private void refreshLogicRuleViewPart() {
-		Optional<SmartDeviceLogicView> optView = SmartDeviceLogicView
+	private void refreshActivityInterpreterViewPart() {
+		Optional<ActivityInterpreterShowView> optView = ActivityInterpreterShowView
 				.getInstance();
 		if (optView.isPresent()) {
-			SmartDeviceLogicView view = optView.get();
+			ActivityInterpreterShowView view = optView.get();
 			view.refresh();
 		}
 	}

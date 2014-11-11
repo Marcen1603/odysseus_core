@@ -19,7 +19,7 @@ http://odysseus.informatik.uni-oldenburg.de/
 
    <launcherArgs>
       <programArgs>-clean -console -debug -nl en -data @noDefault</programArgs>
-      <vmArgs>-Xms1000M -Xmx1000M -XX:+HeapDumpOnOutOfMemoryError -Dpeer.name=Banana -Dpeer.group.name=SmartHomeWorld  -Dpi4j.debug=true -Dpeer.autoimport=false  -Dpeer.autoexport=false -Dsmartdevice.example.sensors=true -Dsmartdevice.example.actors=true</vmArgs>
+      <vmArgs>-Xms1000M -Xmx1000M -XX:+HeapDumpOnOutOfMemoryError -Dpeer.name=Banana -Dpeer.group.name=SmartHomeWorld  -Dpi4j.debug=true -Dpeer.autoimport=false  -Dpeer.autoexport=false -Dsmartdevice.example.activityinterpreters=true -Dsmartdevice.example.logicrules=true</vmArgs>
       <vmArgsMac>-XstartOnFirstThread -Dorg.eclipse.swt.internal.carbon.smallFonts
       </vmArgsMac>
    </launcherArgs>

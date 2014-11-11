@@ -4,6 +4,8 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Map;
 
+import de.uniol.inf.is.odysseus.p2p_new.PeerCommunicationException;
+
 public abstract class Sensor extends FieldDevice implements Serializable {
 	private static final long serialVersionUID = 1L;
 	private String rawSourceName;
@@ -46,9 +48,9 @@ public abstract class Sensor extends FieldDevice implements Serializable {
 		getActivityInterpreters().add(activityInterpreter);
 	}
 
-	public void removeActivityInterpreter(
+	public boolean removeActivityInterpreter(
 			ActivityInterpreter activityInterpreter) {
-		getActivityInterpreters().remove(activityInterpreter);
+		return getActivityInterpreters().remove(activityInterpreter);
 	}
 
 	public ArrayList<ActivityInterpreter> getActivityInterpreters() {
@@ -65,5 +67,10 @@ public abstract class Sensor extends FieldDevice implements Serializable {
 			}
 		}
 		return null;
+	}
+
+
+	public boolean save() throws PeerCommunicationException {
+		return getSmartDevice().save();
 	}
 }

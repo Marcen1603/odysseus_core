@@ -31,18 +31,18 @@ import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.utils.SmartDevic
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.utils.SmartDeviceConfigurationResponseMessage;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.utils.SmartDeviceMessage;
 
-public class SmartDeviceConfigurationView extends ViewPart implements IPeerCommunicatorListener {
-	private static final Logger LOG = LoggerFactory.getLogger(SmartDeviceConfigurationView.class);
+public class SmartDeviceConfigurationEditViewPart extends ViewPart implements IPeerCommunicatorListener {
+	private static final Logger LOG = LoggerFactory.getLogger(SmartDeviceConfigurationEditViewPart.class);
 	public static final String ID = "de.uniol.inf.is.odysseus.rcp.peer.SmartDeviceConfigurationView";
 	private PeerID selectedPeer;
 
-	public SmartDeviceConfigurationView() {
+	public SmartDeviceConfigurationEditViewPart() {
 	}
 	
 	private ISelectionListener listener = new ISelectionListener() {
 		public void selectionChanged(IWorkbenchPart sourcepart, ISelection selection) {
 			
-			if(sourcepart instanceof SmartDeviceView){
+			if(sourcepart instanceof SmartDeviceShowView){
 				//System.out.println("SmartDeviceView!!!!!");
 				
 				if (selection instanceof IStructuredSelection) {
@@ -54,10 +54,10 @@ public class SmartDeviceConfigurationView extends ViewPart implements IPeerCommu
 						if (firstElement instanceof PeerID) {
 							PeerID selectedPeer = (PeerID)firstElement;
 							
-							SmartDeviceConfigurationView.this.selectedPeer = selectedPeer;
+							SmartDeviceConfigurationEditViewPart.this.selectedPeer = selectedPeer;
 							
-							SmartDeviceConfigurationView.this.peerIDText.setText(selectedPeer.intern().toString());
-							SmartDeviceConfigurationView.this.peerIDText.setEditable(false);
+							SmartDeviceConfigurationEditViewPart.this.peerIDText.setText(selectedPeer.intern().toString());
+							SmartDeviceConfigurationEditViewPart.this.peerIDText.setEditable(false);
 							
 							loadConfiguration();
 						}
@@ -72,9 +72,9 @@ public class SmartDeviceConfigurationView extends ViewPart implements IPeerCommu
 	private Text peerContextNameText;
 	
 	private void clearSelection() {
-		SmartDeviceConfigurationView.this.selectedPeer = null;
-		SmartDeviceConfigurationView.this.peerIDText.setText("");
-		SmartDeviceConfigurationView.this.peerContextNameText.setText("");
+		SmartDeviceConfigurationEditViewPart.this.selectedPeer = null;
+		SmartDeviceConfigurationEditViewPart.this.peerIDText.setText("");
+		SmartDeviceConfigurationEditViewPart.this.peerContextNameText.setText("");
 	}
 	
 	@Override
@@ -178,7 +178,7 @@ public class SmartDeviceConfigurationView extends ViewPart implements IPeerCommu
 		if(selectedPeer!=null){
 			try {
 				SmartDeviceConfig config = new SmartDeviceConfig();
-				config.setContextname(SmartDeviceConfigurationView.this.peerContextNameText.getText());
+				config.setContextname(SmartDeviceConfigurationEditViewPart.this.peerContextNameText.getText());
 				
 				SmartDeviceConfigurationResponseMessage smartDeviceConfigResponse = new SmartDeviceConfigurationResponseMessage();
 				smartDeviceConfigResponse.setSmartDeviceConfig(config);
@@ -209,7 +209,7 @@ public class SmartDeviceConfigurationView extends ViewPart implements IPeerCommu
 		Display.getDefault().syncExec(new Runnable() {
 		    public void run() {
 		    	if(isSelectedPeer(senderPeer)){
-		    		SmartDeviceConfigurationView.this.peerContextNameText.setText(contextName);
+		    		SmartDeviceConfigurationEditViewPart.this.peerContextNameText.setText(contextName);
 		    	}
 		    }
 		});
@@ -217,13 +217,13 @@ public class SmartDeviceConfigurationView extends ViewPart implements IPeerCommu
 	
 	public boolean isSelectedPeer(PeerID peer)
 	{
-		if(SmartDeviceConfigurationView.this.selectedPeer==null || SmartDeviceConfigurationView.this.selectedPeer.intern()==null){
+		if(SmartDeviceConfigurationEditViewPart.this.selectedPeer==null || SmartDeviceConfigurationEditViewPart.this.selectedPeer.intern()==null){
 			return false;
 		}else if(peer==null || peer.intern()==null){
 			return false;
 		}
 		
-		String str1 = SmartDeviceConfigurationView.this.selectedPeer.intern().toString();
+		String str1 = SmartDeviceConfigurationEditViewPart.this.selectedPeer.intern().toString();
 		String str2 = peer.intern().toString();
 		
 		if(str1==null || str2==null) return false;

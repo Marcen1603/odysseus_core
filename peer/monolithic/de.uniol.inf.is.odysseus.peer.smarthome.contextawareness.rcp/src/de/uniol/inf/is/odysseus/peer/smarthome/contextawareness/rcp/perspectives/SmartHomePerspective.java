@@ -6,9 +6,9 @@ import org.eclipse.ui.IPerspectiveFactory;
 import org.eclipse.ui.console.IConsoleConstants;
 import org.eclipse.ui.navigator.resources.ProjectExplorer;
 
-import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.rcp.views.AddActivityInterpreterViewPart;
-import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.rcp.views.AddLogicRuleViewPart;
-import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.rcp.views.SmartDeviceConfigurationView;
+import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.rcp.views.ActivityInterpreterAddViewPart;
+import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.rcp.views.LogicRuleAddViewPart;
+import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.rcp.views.SmartDeviceConfigurationEditViewPart;
 
 public class SmartHomePerspective implements IPerspectiveFactory {
 
@@ -41,9 +41,9 @@ public class SmartHomePerspective implements IPerspectiveFactory {
 		IFolderLayout folder = layout.createFolder("topFolder", IPageLayout.TOP,
 				0.5f, editorArea);
 		//folder.addPlaceholder(AddLogicRuleViewPart.ID + ":*");
-		folder.addView(SmartDeviceConfigurationView.ID);
-		folder.addView(AddLogicRuleViewPart.ID);
-		folder.addView(AddActivityInterpreterViewPart.ID);
+		folder.addView(SmartDeviceConfigurationEditViewPart.ID);
+		folder.addView(LogicRuleAddViewPart.ID);
+		folder.addView(ActivityInterpreterAddViewPart.ID);
 		
 		/*
 		// //

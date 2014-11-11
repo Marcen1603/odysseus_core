@@ -5,15 +5,15 @@ import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import com.google.common.base.Optional;
 
-import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.rcp.views.SmartDeviceLogicView;
+import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.rcp.views.LogicRuleShowViewPart;
 
 public class RefreshLogicRuleCommand extends AbstractHandler {
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
-		Optional<SmartDeviceLogicView> optView = SmartDeviceLogicView
+		Optional<LogicRuleShowViewPart> optView = LogicRuleShowViewPart
 				.getInstance();
 		if (optView.isPresent()) {
-			SmartDeviceLogicView view = optView.get();
+			LogicRuleShowViewPart view = optView.get();
 			view.refresh();
 		}
 		return null;

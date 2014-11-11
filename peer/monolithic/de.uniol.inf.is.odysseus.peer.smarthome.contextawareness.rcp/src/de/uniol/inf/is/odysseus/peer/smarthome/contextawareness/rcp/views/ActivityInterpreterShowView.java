@@ -23,10 +23,10 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.ASmartDevice;
+import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.ActivityInterpreter;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.Actor;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.FieldDevice;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.ISmartDeviceListener;
-import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.LogicRule;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.Sensor;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.SmartDevice;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.rcp.SmartHomeRCPActivator;
@@ -39,12 +39,12 @@ import org.eclipse.swt.widgets.TreeColumn;
 import org.eclipse.jface.viewers.TreeViewerColumn;
 import org.eclipse.jface.viewers.ColumnPixelData;
 
-public class SmartDeviceLogicView extends ViewPart {
-	public SmartDeviceLogicView() {
+public class ActivityInterpreterShowView extends ViewPart {
+	public ActivityInterpreterShowView() {
 	}
 
 	private static final Logger LOG = LoggerFactory
-			.getLogger(SmartDeviceLogicView.class);
+			.getLogger(ActivityInterpreterShowView.class);
 	ISmartDeviceListener smartDeviceListener = new ISmartDeviceListener() {
 		@Override
 		public void fieldDeviceConnected(ASmartDevice sender, FieldDevice device) {
@@ -58,12 +58,13 @@ public class SmartDeviceLogicView extends ViewPart {
 				LOG.debug("fieldDeviceConnected device:" + device.getName());
 
 			}
+			refresh();
 		}
 
 		@Override
 		public void fieldDeviceRemoved(ASmartDevice smartDevice,
 				FieldDevice device) {
-			
+			refresh();
 		}
 
 		@Override
@@ -79,11 +80,10 @@ public class SmartDeviceLogicView extends ViewPart {
 	private ArrayList<ASmartDevice> foundSmartDevices = Lists.newArrayList();
 	private TreeViewer treeViewer;
 	private Tree tree;
-	private static SmartDeviceLogicView instance;
+	private static ActivityInterpreterShowView instance;
 
 	@Override
 	public void createPartControl(Composite parent) {
-
 		Composite composite = new Composite(parent, SWT.NONE);
 		TreeColumnLayout tcl_composite = new TreeColumnLayout();
 		composite.setLayout(tcl_composite);
@@ -98,7 +98,7 @@ public class SmartDeviceLogicView extends ViewPart {
 		TreeColumn trclmnSmartdevice = treeViewerColumn.getColumn();
 		tcl_composite.setColumnData(trclmnSmartdevice, new ColumnPixelData(150,
 				true, true));
-		trclmnSmartdevice.setText("SmartDevice");
+		trclmnSmartdevice.setText("SmartDevice / Sensor");
 
 		TreeViewerColumn treeViewerColumn_1 = new TreeViewerColumn(treeViewer,
 				SWT.NONE);
@@ -109,15 +109,13 @@ public class SmartDeviceLogicView extends ViewPart {
 
 		TreeViewerColumn treeViewerColumn_3 = new TreeViewerColumn(treeViewer,
 				SWT.NONE);
-		TreeColumn trclmnAction = treeViewerColumn_3.getColumn();
-		tcl_composite.setColumnData(trclmnAction, new ColumnPixelData(150,
+		TreeColumn trclmnActivityInterpreter = treeViewerColumn_3.getColumn();
+		tcl_composite.setColumnData(trclmnActivityInterpreter, new ColumnPixelData(150,
 				true, true));
-		trclmnAction.setText("Action");
+		trclmnActivityInterpreter.setText("ActivityInterpreterDescription");
 
-		// localSmartDevice =
-		// SmartHomeRCPActivator.getSmartDeviceService().getLocalSmartDevice();
-		// foundSmartDevices =
-		// SmartHomeRCPActivator.getSmartDeviceService().getSmartDeviceServerDictionaryDiscovery().getFoundSmartDeviceList();
+		
+		
 		if (treeViewer != null && foundSmartDevices != null) {
 			treeViewer.setContentProvider(new ViewContentProvider());
 			treeViewer.setLabelProvider(new ViewLabelProvider());
@@ -131,9 +129,7 @@ public class SmartDeviceLogicView extends ViewPart {
 
 		treeViewer.expandAll();
 
-		// localSmartDevice.addSmartDeviceListener(smartDeviceListener);
-
-		setPartName("Smart Device Logic");
+		setPartName("Smart Device Activity Interpreter");
 
 		refreshLoopAsync();
 
@@ -145,16 +141,18 @@ public class SmartDeviceLogicView extends ViewPart {
 			@Override
 			public void run() {
 				while (true) {
-					refresh();
-
 					try {
+						refresh();
+						
 						Thread.sleep(5000);
 					} catch (InterruptedException e) {
+					} catch(NullPointerException ex){
+						
 					}
 				}
 			}
 		});
-		t.setName("Smart Device LogicRule refresher thread.");
+		t.setName("Smart Device ActivityInterpreter refresher thread.");
 		t.setDaemon(true);
 		t.start();
 	}
@@ -184,8 +182,6 @@ public class SmartDeviceLogicView extends ViewPart {
 				refreshing.add(remotePeerID);
 			}
 		}
-
-		// methodXY();
 	}
 
 	private void refreshTableAsync() {
@@ -197,38 +193,32 @@ public class SmartDeviceLogicView extends ViewPart {
 					synchronized (treeViewer) {
 						if (!treeViewer.getTree().isDisposed()) {
 							treeViewer.refresh();
-
-							// synchronized (foundPeerIDs) {
-							// setPartName("Smart Devices (" +
-							// foundPeerIDs.size() + ")");
-							// }
-
 						}
 					}
 				}
 			});
 		}
 	}
-	
+
 	@Override
 	public void setFocus() {
 
 	}
 
-	public static Optional<SmartDeviceLogicView> getInstance() {
+	public static Optional<ActivityInterpreterShowView> getInstance() {
 		return Optional.fromNullable(instance);
 	}
 
-	public List<LogicRule> getSelectedLogicRules() {
-		ImmutableList.Builder<LogicRule> resultBuilder = new ImmutableList.Builder<>();
+	public List<ActivityInterpreter> getSelectedActivityInterpreters() {
+		ImmutableList.Builder<ActivityInterpreter> resultBuilder = new ImmutableList.Builder<>();
 
 		IStructuredSelection selection = (IStructuredSelection) treeViewer
 				.getSelection();
 		if (!selection.isEmpty()) {
 			for (Object selectedObj : selection.toList()) {
-				if(selectedObj instanceof LogicRule){
-				//selection.getFirstElement();
-				resultBuilder.add(((LogicRule) selectedObj));
+				if (selectedObj instanceof ActivityInterpreter) {
+					// selection.getFirstElement();
+					resultBuilder.add(((ActivityInterpreter) selectedObj));
 				}
 			}
 		}
@@ -237,15 +227,12 @@ public class SmartDeviceLogicView extends ViewPart {
 	}
 
 	class ViewContentProvider implements ITreeContentProvider {
-
 		@Override
 		public void dispose() {
-
 		}
 
 		@Override
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-			
 		}
 
 		@Override
@@ -266,27 +253,25 @@ public class SmartDeviceLogicView extends ViewPart {
 				return devices;
 			} else if (inputElement instanceof ASmartDevice) {
 				ASmartDevice device = (ASmartDevice) inputElement;
-				Actor[] list = new Actor[device.getConnectedActors().size()];
+				Sensor[] list = new Sensor[device.getConnectedSensors().size()];
 				int i = 0;
-				for (Actor actor : device.getConnectedActors()) {
-					list[i++] = actor;
+				for (Sensor sensor : device.getConnectedSensors()) {
+					list[i++] = sensor;
 				}
-				;
-				LOG.error("getElements return Actor[]");
+				LOG.error("getElements return Sensor[].length:"+list.length);
 				return list;
-			} else if (inputElement instanceof Actor) {
-				Actor actor = (Actor) inputElement;
-				Collection<? extends LogicRule> rules = actor.getLogicRules();
-				LogicRule[] list = new LogicRule[rules.size()];
+			} else if (inputElement instanceof Sensor) {
+				Sensor sensor = (Sensor) inputElement;
+				Collection<? extends ActivityInterpreter> activityInterpreter = sensor.getActivityInterpreters();
+				ActivityInterpreter[] list = new ActivityInterpreter[activityInterpreter.size()];
 				int i = 0;
-				for (LogicRule rule : rules) {
-					list[i++] = rule;
+				for (ActivityInterpreter interpret : activityInterpreter) {
+					list[i++] = interpret;
 				}
-				;
-				LOG.error("getElements return LogicRule[]");
+				LOG.error("getElements return ActivityInterpreter[].length:"+list.length);
 				return list;
 			} else {
-				LOG.error("getElements return null");
+				//LOG.error("getElements return null");
 				return null;
 			}
 		}
@@ -295,29 +280,27 @@ public class SmartDeviceLogicView extends ViewPart {
 		public Object[] getChildren(Object parentElement) {
 			if (parentElement instanceof SmartDevice) {
 				SmartDevice smartDevice = (SmartDevice) parentElement;
-				Collection<Actor> actors = smartDevice.getConnectedActors();
-				Actor[] list = new Actor[actors.size()];
+				Collection<Sensor> sensors = smartDevice.getConnectedSensors();
+				Sensor[] list = new Sensor[sensors.size()];
 				int i = 0;
-				for (Actor actor : actors) {
-					list[i++] = actor;
+				for (Sensor sensor : sensors) {
+					list[i++] = sensor;
 				}
-				;
 				return list;
-			} else if (parentElement instanceof Actor) {
-				Actor actor = (Actor) parentElement;
-				Collection<? extends LogicRule> rules = actor.getLogicRules();
-				LogicRule[] list = new LogicRule[rules.size()];
+			} else if (parentElement instanceof Sensor) {
+				Sensor sensor = (Sensor) parentElement;
+				Collection<? extends ActivityInterpreter> activityInterpreters = sensor.getActivityInterpreters();
+				ActivityInterpreter[] list = new ActivityInterpreter[activityInterpreters.size()];
 				int i = 0;
-				for (LogicRule rule : rules) {
-					list[i++] = rule;
+				for (ActivityInterpreter interpr : activityInterpreters) {
+					list[i++] = interpr;
 				}
-				;
 				return list;
-			} else if (parentElement instanceof LogicRule) {
+			} else if (parentElement instanceof ActivityInterpreter) {
 				return null;
 			}
 
-			return (ASmartDevice[]) parentElement;
+			return null;
 		}
 
 		@Override
@@ -326,12 +309,12 @@ public class SmartDeviceLogicView extends ViewPart {
 				return null;
 			} else if (element instanceof ASmartDevice) {
 				return null;
-			} else if (element instanceof Actor) {
-				Actor actor = (Actor) element;
-				return actor.getSmartDevice();
-			} else if (element instanceof LogicRule) {
-				LogicRule rule = (LogicRule) element;
-				return rule.getActor();
+			} else if (element instanceof Sensor) {
+				Sensor sensor = (Sensor) element;
+				return sensor.getSmartDevice();
+			} else if (element instanceof ActivityInterpreter) {
+				ActivityInterpreter interpret = (ActivityInterpreter) element;
+				return interpret.getSensor();
 			}
 			return null;
 		}
@@ -342,10 +325,10 @@ public class SmartDeviceLogicView extends ViewPart {
 				return true;
 			} else if (element instanceof ASmartDevice) {
 				ASmartDevice device = (ASmartDevice) element;
-				return device.getLogicRules().size() > 0;
-			} else if (element instanceof Actor) {
-				Actor actor = (Actor) element;
-				return actor.getLogicRules().size() > 0;
+				return device.getConnectedSensors().size() > 0;
+			} else if (element instanceof Sensor) {
+				Sensor sensor = (Sensor) element;
+				return sensor.getActivityInterpreters().size() > 0;
 			}
 			return false;
 		}
@@ -357,32 +340,30 @@ public class SmartDeviceLogicView extends ViewPart {
 		public void update(ViewerCell cell) {
 			StyledString text = new StyledString();
 
-			
-
 			switch (cell.getColumnIndex()) {
-			case 0:// SmartDevice
-				if (cell.getElement() instanceof ASmartDevice) {
+			case 0:
+				if (cell.getElement() instanceof ASmartDevice) {// SmartDevice
 					ASmartDevice device = (ASmartDevice) cell.getElement();
-					if(SmartDeviceServer.isLocalPeer(device.getPeerID())){
-						text.append("<local>"+device.getPeerName());
-					}else{
+					if (SmartDeviceServer.isLocalPeer(device.getPeerID())) {
+						text.append("<local>" + device.getPeerName());
+					} else {
 						text.append(device.getPeerName());
 					}
-				}else if (cell.getElement() instanceof Actor) {
-					Actor actor = (Actor) cell.getElement();
-					text.append(actor.getName());
+				} else if (cell.getElement() instanceof Sensor) {//Sensor
+					Sensor sensor = (Sensor) cell.getElement();
+					text.append(sensor.getName());
 				}
 				break;
 			case 1:// Activity
-				if (cell.getElement() instanceof LogicRule) {
-					LogicRule rule = (LogicRule) cell.getElement();
-					text.append(rule.getActivityName());
+				if (cell.getElement() instanceof ActivityInterpreter) {
+					ActivityInterpreter interpreter = (ActivityInterpreter) cell.getElement();
+					text.append(interpreter.getActivityName());
 				}
 				break;
-			case 2:// Action
-				if (cell.getElement() instanceof LogicRule) {
-					LogicRule rule = (LogicRule) cell.getElement();
-					text.append(rule.getReactionDescription());
+			case 2:// ActivityInterpreter
+				if (cell.getElement() instanceof ActivityInterpreter) {
+					ActivityInterpreter interpret = (ActivityInterpreter) cell.getElement();
+					text.append(interpret.getActivityInterpreterDescription());
 				}
 				break;
 
@@ -391,7 +372,6 @@ public class SmartDeviceLogicView extends ViewPart {
 			}
 
 			cell.setText(text.toString());
-			// super.update(cell);
 			cell.setStyleRanges(text.getStyleRanges());
 			super.update(cell);
 		}

@@ -29,8 +29,8 @@ import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.utils.SmartDevic
 public class SmartDeviceServer {
 	private static final Logger LOG = LoggerFactory
 			.getLogger(SmartHomeServerPlugIn.class);
-	private static final String INIT_EXAMPLE_ACTIVITY_INTERPRETERS_SYS_PROPERTY = "smartdevice.example.sensors";
-	private static final String INIT_EXAMPLE_LOGIC_RULES_SYS_PROPERTY = "smartdevice.example.actors";
+	private static final String INIT_EXAMPLE_ACTIVITY_INTERPRETERS_SYS_PROPERTY = "smartdevice.example.activityinterpreters";
+	private static final String INIT_EXAMPLE_LOGIC_RULES_SYS_PROPERTY = "smartdevice.example.logicrules";
 	private static SmartDeviceServer instance;
 	private static IP2PDictionary p2pDictionary;
 	// private static ISmartDevice localSmartDevice;

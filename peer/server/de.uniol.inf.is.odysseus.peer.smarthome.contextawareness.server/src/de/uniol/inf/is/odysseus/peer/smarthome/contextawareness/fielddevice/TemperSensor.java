@@ -159,5 +159,10 @@ public class TemperSensor extends Sensor {
 			actConfSB.append("\n");
 			return actConfSB.toString();
 		}
+
+		@Override
+		public String getActivityInterpreterDescription() {
+			return "Condition: "+getCondition();
+		}
 	}
 }
