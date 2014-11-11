@@ -5,8 +5,8 @@ import java.util.Objects;
 import org.bytedeco.javacpp.opencv_core.IplImage;
 
 
-import static org.bytedeco.javacpp.opencv_core.*;
 
+import static org.bytedeco.javacpp.opencv_core.*;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.imagejcv.common.datatype.ImageJCV;
 import de.uniol.inf.is.odysseus.imagejcv.common.sdf.schema.SDFImageJCVDatatype;
@@ -78,6 +78,10 @@ public class GetAmountOfBlackFunction extends AbstractFunction<Double> {
 			}
 		}
 		
-		return ((double) schwarz / (double) gesamt) * 100;
+		double result = ((double) schwarz / (double) gesamt) * 100;
+		
+		result = Math.round(100.0 * result) / 100.0;
+		
+		return result;
 	}
 }
