@@ -50,7 +50,7 @@ public class IfFunction extends AbstractFunction<Object> {
 	public SDFDatatype determineType(IExpression<?>[] args) {
 		// if then and else arguments have the same type, we are sure to return
 		// a value of that type
-		if (args != null && args.length == 2) {
+		if (args != null && args.length == 3) {
 			SDFDatatype type1 = args[1].getReturnType();
 			SDFDatatype type2 = args[2].getReturnType();
 			if (type1 == type2) {
