@@ -52,6 +52,19 @@ public class BackupInformationStore implements IRecoveryBackupInformationStore {
 
 		if (this.mInfos.containsKey(info.getSharedQuery())) {
 
+			for (IRecoveryBackupInformation backupInfo : this.mInfos.get(info.getSharedQuery())) {
+				if (info.getPQL() != null && backupInfo.getPQL() != null) {
+					String comparePQL1 = backupInfo.getPQL().trim().toLowerCase();
+					String comparePQL2 = info.getPQL().trim().toLowerCase();
+
+					if (comparePQL1.equals(comparePQL2)) {
+						// If we already have this pql -> don't save it twice
+						return;
+					}
+				}
+
+			}
+
 			this.mInfos.get(info.getSharedQuery()).add(info);
 
 		} else {

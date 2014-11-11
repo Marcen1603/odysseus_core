@@ -166,6 +166,12 @@ public class RecoveryInstructionHandler {
 			}
 		}
 		
+		// Add this info to the local-backup-info
+		IRecoveryBackupInformation backupInfo = new BackupInformation();
+		backupInfo.setSharedQuery(sharedQueryId);
+		backupInfo.setLocalPQL(pql);
+		LocalBackupInformationAccess.getStore().add(backupInfo);
+		
 		if (!foundReceiver) {
 			// We don't have a receiver, thus we need a buddy
 			recoveryCommunicator.chooseBuddyForQuery(sharedQueryId);

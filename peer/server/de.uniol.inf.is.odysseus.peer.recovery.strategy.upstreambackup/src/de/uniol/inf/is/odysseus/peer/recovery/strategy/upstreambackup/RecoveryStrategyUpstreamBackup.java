@@ -254,7 +254,6 @@ public class RecoveryStrategyUpstreamBackup implements IRecoveryStrategy{
 					LOG.debug("Peer ID for recovery allocation found.");
 				} catch (QueryPartAllocationException e) {
 					LOG.error("Peer ID search for recovery allocation failed.");
-					e.printStackTrace();
 				}
 			}
 
