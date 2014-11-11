@@ -11,4 +11,6 @@ public interface ISmartDeviceListener {
 	public abstract void fieldDeviceRemoved(ASmartDevice sender,
 			FieldDevice device);
 
+	public abstract void fieldDevicesUpdated(SmartDevice smartDevice);
+
 }

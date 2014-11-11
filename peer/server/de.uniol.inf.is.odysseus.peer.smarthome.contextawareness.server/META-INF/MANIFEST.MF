@@ -48,5 +48,6 @@ Require-Bundle: Jxta_2.6_Source,
 Export-Package: 
  de.uniol.inf.is.odysseus.peer.smarthome.contextawareness,
  de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice,
+ de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.server,
  de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.utils
 

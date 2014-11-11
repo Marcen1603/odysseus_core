@@ -96,6 +96,9 @@ public class RPiGPIOTransportHandler extends AbstractSimplePullTransportHandler<
             
         	tuple.setAttribute(0, "pinNumber");
         	tuple.setAttribute(1, Long.parseLong(buttonState));
+        	//TODO: 
+        	//tuple.setAttribute(2, System.currentTimeMillis());
+        	//Starttimestamp
 		}catch(ClassCastException ex){
 			LOG.error(ex.getMessage(), ex);
 		}catch(Exception ex){

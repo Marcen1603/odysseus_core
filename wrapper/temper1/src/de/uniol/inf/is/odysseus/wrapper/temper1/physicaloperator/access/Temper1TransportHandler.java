@@ -165,6 +165,10 @@ public class Temper1TransportHandler extends
 
 			updateConnectedTemperatureSensors();
 		}
+		
+		//TODO: 
+    	//tuple.setAttribute(2, System.currentTimeMillis());
+    	//Starttimestamp
 
 		return tuple;
 	}

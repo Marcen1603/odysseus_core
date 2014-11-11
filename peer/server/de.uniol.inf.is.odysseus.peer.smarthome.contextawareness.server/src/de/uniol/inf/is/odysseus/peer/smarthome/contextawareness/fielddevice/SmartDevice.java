@@ -7,9 +7,22 @@ import java.util.List;
 
 import com.google.common.collect.Lists;
 
+import de.uniol.inf.is.odysseus.p2p_new.PeerCommunicationException;
+import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.server.SmartDeviceServer;
+import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.server.SmartDeviceServerDictionaryDiscovery;
+import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.server.SmartHomeServerPlugIn;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.utils.SmartDeviceConfig;
+import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.utils.SmartDeviceResponseMessage;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import net.jxta.peer.PeerID;
 
 public class SmartDevice extends ASmartDevice implements Serializable {
+	private static final Logger LOG = LoggerFactory
+			.getLogger(SmartHomeServerPlugIn.class);
+	//private static final Logger LOG = LoggerFactory
+	//		.getLogger(SmartHomeServerPlugIn.class);
 	private static final long serialVersionUID = 1L;
 	private String smartDevicePeerID;
 	private String contextName;
@@ -105,8 +118,11 @@ public class SmartDevice extends ASmartDevice implements Serializable {
 		if (smartDevice.getConnectedFieldDevices() != null) {
 			this.setConnectedFieldDevices(smartDevice
 					.getConnectedFieldDevices());
+			fireFieldDevicesUpdated();
 		}
 	}
+
+	
 
 	public boolean isReady() {
 		return this.state;
@@ -187,6 +203,34 @@ public class SmartDevice extends ASmartDevice implements Serializable {
 		public void logicRuleRemoved(LogicRule rule) {
 			// TODO Auto-generated method stub
 
+		}
+	}
+
+	@Override
+	public boolean save() throws PeerCommunicationException {
+		if(!SmartDeviceServer.isLocalPeer(this.getPeerID())){
+			SmartDeviceResponseMessage smartDeviceResponse = new SmartDeviceResponseMessage();
+			smartDeviceResponse.setSmartDevice(this);
+			
+			PeerID peer = SmartDeviceServerDictionaryDiscovery.getPeerIDOfString(getPeerID());
+			
+			LOG.debug("save() send to peer: "+this.getPeerName());
+			
+				SmartDeviceServer.getInstance().getPeerCommunicator()
+						.send(peer, smartDeviceResponse);
+				return true;
+		}else{
+			//SmartDeviceServer.getInstance().getLocalSmartDevice().overwriteWith(this);
+			
+			//TODO: save local
+			
+			return false;
+		}		
+	}
+	
+	private void fireFieldDevicesUpdated() {
+		for (ISmartDeviceListener listener : getSmartDeviceListener()) {
+			listener.fieldDevicesUpdated(this);
 		}
 	}
 }

@@ -16,6 +16,7 @@ import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.Fiel
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.ISmartDeviceListener;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.ISmartDeviceService;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.Sensor;
+import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.SmartDevice;
 
 public class SmartHomeRCPActivator implements BundleActivator {
 	public static final String NO_P2P_CONNECTION_TEXT = "<no p2p connection>";
@@ -191,6 +192,11 @@ public class SmartHomeRCPActivator implements BundleActivator {
 		@Override
 		public void readyStateChanged(ASmartDevice smartDevice, boolean state) {
 
+		}
+
+		@Override
+		public void fieldDevicesUpdated(SmartDevice smartDevice) {
+			
 		}
 	};
 }

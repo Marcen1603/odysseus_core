@@ -39,7 +39,7 @@ public class SmartDeviceServerDictionaryDiscovery implements
 
 	private static final Logger LOG = LoggerFactory
 			.getLogger(SmartHomeServerPlugIn.class);
-	private Map<String, ASmartDevice> smartDevices = Maps.newHashMap();
+	private Map<String, ASmartDevice> foundSmartDevices = Maps.newHashMap();
 	private Map<String, Long> smartDevicesHeartBeat = Maps.newHashMap();
 	private final List<ISmartDeviceDictionaryListener> listeners = Lists
 			.newArrayList();
@@ -176,9 +176,9 @@ public class SmartDeviceServerDictionaryDiscovery implements
 			}
 		} else if (message instanceof SmartDeviceResponseMessage) {
 			SmartDeviceResponseMessage smartDeviceResponse = (SmartDeviceResponseMessage) message;
+			ASmartDevice smartDevice = smartDeviceResponse.getSmartDevice();
 
-			if (!SmartDeviceServer.isLocalPeer(senderPeer)) {
-				ASmartDevice smartDevice = smartDeviceResponse.getSmartDevice();
+			if (!SmartDeviceServer.isLocalPeer(senderPeer) && !isLocalSmartDevice(smartDevice)) {
 
 				if (smartDevice != null) {
 					SmartDeviceServerDictionaryDiscovery.getInstance()
@@ -186,22 +186,35 @@ public class SmartDeviceServerDictionaryDiscovery implements
 				} else {
 					LOG.debug("The smart device response is null!!! Are all classes in SmartDevice serializable?");
 				}
+			}else if(!SmartDeviceServer.isLocalPeer(senderPeer)){
+				//TODO: update local smart device:
+				LOG.debug("TODO: update local smart device: "+ smartDevice.getPeerName());
+				
+				SmartDeviceServer.getInstance().getLocalSmartDevice().overwriteWith(smartDevice);
 			}
 		} else if (message instanceof SmartDeviceMessage) {
 			LOG.debug("receivedMessage instanceof SmartDeviceMessage");
 		}
 	}
 
+	private boolean isLocalSmartDevice(ASmartDevice smartDevice) {
+		if(smartDevice.getPeerID().equals(SmartDeviceServer.getInstance().getLocalSmartDevice().getPeerID())){
+			return true;
+		}else{
+			return false;			
+		}
+	}
+
 	public void addSmartDevice(ASmartDevice newSmartDevice) {
-		if (!getSmartDevices().containsKey(newSmartDevice.getPeerID())) {
+		if (!getFoundSmartDevices().containsKey(newSmartDevice.getPeerID())) {
 			// LOG.debug("Add new SmartDevice");
 			// Add new SmartDevice
 			try {
 				String smartDevicePeerID = newSmartDevice.getPeerID().intern()
 						.toString();
 				if (smartDevicePeerID != null && !smartDevicePeerID.equals("")) {
-					synchronized (getSmartDevices()) {
-						getSmartDevices()
+					synchronized (getFoundSmartDevices()) {
+						getFoundSmartDevices()
 								.put(smartDevicePeerID, newSmartDevice);
 						refreshHeartBeat(newSmartDevice);
 					}
@@ -213,12 +226,12 @@ public class SmartDeviceServerDictionaryDiscovery implements
 				LOG.error(e.getMessage(), e);
 			}
 		} else {
-			// LOG.debug("Update existing SmartDevice");
+			//LOG.debug("Update existing SmartDevice");
 			// Update existing SmartDevice
-			ASmartDevice existingSmartDevice = getSmartDevices().get(
+			ASmartDevice existingSmartDevice = getFoundSmartDevices().get(
 					newSmartDevice.getPeerID());
 
-			synchronized (getSmartDevices()) {
+			synchronized (getFoundSmartDevices()) {
 				existingSmartDevice.overwriteWith(newSmartDevice);
 				refreshHeartBeat(existingSmartDevice);
 			}
@@ -229,10 +242,10 @@ public class SmartDeviceServerDictionaryDiscovery implements
 	private synchronized void removeSmartDevice(String smartDevicePeerID) {
 		// LOG.debug("removeSmartDevice peerID:" + smartDevicePeerID);
 
-		ASmartDevice smartDeviceToRemove = getSmartDevices().get(
+		ASmartDevice smartDeviceToRemove = getFoundSmartDevices().get(
 				smartDevicePeerID);
 
-		getSmartDevices().remove(smartDevicePeerID);
+		getFoundSmartDevices().remove(smartDevicePeerID);
 		getSmartDevicesHeartBeat().remove(smartDevicePeerID);
 
 		fireSmartDeviceRemovedEvent(smartDeviceToRemove);
@@ -307,14 +320,21 @@ public class SmartDeviceServerDictionaryDiscovery implements
 		}
 	}
 
-	public Map<String, ASmartDevice> getSmartDevices() {
+	public Map<String, ASmartDevice> getFoundSmartDevices() {
 		// cleanup();
-		return smartDevices;
+		return foundSmartDevices;
+	}
+	
+	public ArrayList<ASmartDevice> getFoundSmartDeviceList() {
+		ArrayList<ASmartDevice> list = new ArrayList<ASmartDevice>();
+		if(foundSmartDevices!=null)
+			list.addAll(foundSmartDevices.values());
+		return list;
 	}
 
 	public synchronized void setSmartDevices(
 			Map<String, ASmartDevice> smartDevices) {
-		this.smartDevices = smartDevices;
+		this.foundSmartDevices = smartDevices;
 	}
 
 	public synchronized Map<String, Long> getSmartDevicesHeartBeat() {
@@ -496,6 +516,16 @@ public class SmartDeviceServerDictionaryDiscovery implements
 			} catch (InterruptedException e) {
 			}
 		}
+	}
+
+	public static PeerID getPeerIDOfString(String peerID) {
+		for(PeerID peer : getFoundPeerIDs()){
+			if(peer.intern().toString().equals(peerID)){
+				return peer;
+			}
+		}
+
+		return null;
 	}
 
 	/*

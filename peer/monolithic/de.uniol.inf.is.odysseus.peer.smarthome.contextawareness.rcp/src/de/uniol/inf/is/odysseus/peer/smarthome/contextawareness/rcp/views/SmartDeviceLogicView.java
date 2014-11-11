@@ -1,15 +1,14 @@
 package de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.rcp.views;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import org.eclipse.jface.layout.TableColumnLayout;
-import org.eclipse.jface.viewers.ArrayContentProvider;
-import org.eclipse.jface.viewers.CellLabelProvider;
-import org.eclipse.jface.viewers.ColumnWeightData;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.TableViewer;
-import org.eclipse.jface.viewers.TableViewerColumn;
+import org.eclipse.jface.viewers.ITreeContentProvider;
+import org.eclipse.jface.viewers.StyledCellLabelProvider;
+import org.eclipse.jface.viewers.StyledString;
+import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerCell;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
@@ -29,224 +28,125 @@ import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.Fiel
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.ISmartDeviceListener;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.LogicRule;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.Sensor;
+import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.SmartDevice;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.rcp.SmartHomeRCPActivator;
+import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.server.SmartDeviceServer;
+
+import org.eclipse.swt.widgets.Tree;
+import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.jface.layout.TreeColumnLayout;
+import org.eclipse.swt.widgets.TreeColumn;
+import org.eclipse.jface.viewers.TreeViewerColumn;
+import org.eclipse.jface.viewers.ColumnPixelData;
 
 public class SmartDeviceLogicView extends ViewPart {
-	private static final Logger LOG = LoggerFactory.getLogger(SmartDeviceLogicView.class);
-	private ASmartDevice localSmartDevice;
-	ISmartDeviceListener smartDeviceListener = new ISmartDeviceListener(){
+	public SmartDeviceLogicView() {
+	}
+
+	private static final Logger LOG = LoggerFactory
+			.getLogger(SmartDeviceLogicView.class);
+	ISmartDeviceListener smartDeviceListener = new ISmartDeviceListener() {
 		@Override
 		public void fieldDeviceConnected(ASmartDevice sender, FieldDevice device) {
-			if(device instanceof Sensor){
-				LOG.debug("fieldDeviceConnected Sensor:"+device.getName());
-				
-			}else if(device instanceof Actor){
-				LOG.debug("fieldDeviceConnected Actor:"+device.getName());
-				
-			}else{
-				LOG.debug("fieldDeviceConnected device:"+device.getName());
-				
+			if (device instanceof Sensor) {
+				LOG.debug("fieldDeviceConnected Sensor:" + device.getName());
+
+			} else if (device instanceof Actor) {
+				LOG.debug("fieldDeviceConnected Actor:" + device.getName());
+
+			} else {
+				LOG.debug("fieldDeviceConnected device:" + device.getName());
+
 			}
 		}
-		
+
 		@Override
 		public void fieldDeviceRemoved(ASmartDevice smartDevice,
 				FieldDevice device) {
-			// TODO Auto-generated method stub
 			
 		}
-		
+
 		@Override
 		public void readyStateChanged(ASmartDevice smartDevice, boolean state) {
 		}
+
+		@Override
+		public void fieldDevicesUpdated(SmartDevice smartDevice) {
+			refresh();
+		}
 	};
-	private TableViewer smartDevicesTable;
-	private List<LogicRule> logicRules = Lists.newArrayList();
-	private Collection<LogicRule> refreshing = Lists.newLinkedList();
+	private ArrayList<ASmartDevice> refreshing = Lists.newArrayList();
+	private ArrayList<ASmartDevice> foundSmartDevices = Lists.newArrayList();
+	private TreeViewer treeViewer;
+	private Tree tree;
 	private static SmartDeviceLogicView instance;
-	
-	/*
-	public static class TableEntry {
-		public LogicRule logicRule;
 
-		public int index;
-		public String entity;
-
-		public String activityName;
-		public String actor;
-	}
-	*/
-	
-	
 	@Override
 	public void createPartControl(Composite parent) {
-		localSmartDevice = SmartHomeRCPActivator.getSmartDeviceService().getLocalSmartDevice();
-		localSmartDevice.addSmartDeviceListener(smartDeviceListener);
-		
-		setPartName("Smart Device Logic");
-		
-		final Composite tableComposite = new Composite(parent, SWT.NONE);
-		final TableColumnLayout tableColumnLayout = new TableColumnLayout();
-		tableComposite.setLayout(tableColumnLayout);
 
-		smartDevicesTable = new TableViewer(tableComposite, SWT.MULTI | SWT.FULL_SELECTION);
-		smartDevicesTable.getTable().setHeaderVisible(true);
-		smartDevicesTable.getTable().setLinesVisible(true);
-		smartDevicesTable.setContentProvider(ArrayContentProvider.getInstance());
-		
-		//TODO: Show current running logic rules of the local SmartDevice:
-		//TODO: further show logic of the selected smart device:
-		
-		/************* Entity ****************/
-		/*
-		TableViewerColumn entityColumn = new TableViewerColumn(smartDevicesTable, SWT.NONE);
-		entityColumn.getColumn().setText("Entity");
-		entityColumn.setLabelProvider(new CellLabelProvider() {
-			@Override
-			public void update(ViewerCell cell) {
-				//LogicRule rule = (LogicRule) cell.getElement();
-				cell.setText("<none>");
-				/ *
-				if (isLocalID(pid)) {
-					cell.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_GRAY));
-				}
-				* /
-			}
-		});
-		tableColumnLayout.setColumnData(entityColumn.getColumn(), new ColumnWeightData(10, 25, true));
-		*/
-		
-		/************* Activity ****************/
-		TableViewerColumn activityColumn = new TableViewerColumn(smartDevicesTable, SWT.NONE);
-		activityColumn.getColumn().setText("Activity");
-		activityColumn.setLabelProvider(new CellLabelProvider() {
-			@Override
-			public void update(ViewerCell cell) {
-				LogicRule rule = (LogicRule) cell.getElement();
-				cell.setText(rule.getActivityName());
-				/*
-				if (isLocalID(pid)) {
-					cell.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_GRAY));
-				}
-				*/
-			}
-		});
-		tableColumnLayout.setColumnData(activityColumn.getColumn(), new ColumnWeightData(10, 25, true));
-		
-		
-		/************* Actor ****************/
-		TableViewerColumn actorColumn = new TableViewerColumn(smartDevicesTable, SWT.NONE);
-		actorColumn.getColumn().setText("Actor");
-		actorColumn.setLabelProvider(new CellLabelProvider() {
-			@Override
-			public void update(ViewerCell cell) {
-				LogicRule rule = (LogicRule) cell.getElement();
-				cell.setText(""+rule.getActor().getName()+"");
-				
-				
-				/*
-				if (isLocalID((PeerID) cell.getElement())) {
-					try {
-						cell.setText(InetAddress.getLocalHost().getHostAddress() + ":" + SmartHomeRCPActivator.getP2PNetworkManager().getPort());
-					} catch (UnknownHostException e) {
-						cell.setText("<unknown>");
-					}
-					cell.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_GRAY));
-				} else {
-					Optional<String> optAddress = SmartHomeRCPActivator.getP2PDictionary().getRemotePeerAddress((PeerID) cell.getElement());
-					if (optAddress.isPresent()) {
-						cell.setText(optAddress.get());
-					} else {
-						cell.setText("<unknown>");
-					}
-				}
-				*/
-			}
-		});
-		tableColumnLayout.setColumnData(actorColumn.getColumn(), new ColumnWeightData(10, 25, true));
-		
-		
-		
-		/************* Reaction ****************/
-		TableViewerColumn reactionColumn = new TableViewerColumn(smartDevicesTable, SWT.NONE);
-		reactionColumn.getColumn().setText("Reaction");
-		reactionColumn.setLabelProvider(new CellLabelProvider() {
-			@Override
-			public void update(ViewerCell cell) {
-				LogicRule rule = (LogicRule) cell.getElement();
-				cell.setText(""+rule.getReactionDescription());
-				
-				
-				/*
-				if (isLocalID((PeerID) cell.getElement())) {
-					try {
-						cell.setText(InetAddress.getLocalHost().getHostAddress() + ":" + SmartHomeRCPActivator.getP2PNetworkManager().getPort());
-					} catch (UnknownHostException e) {
-						cell.setText("<unknown>");
-					}
-					cell.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_GRAY));
-				} else {
-					Optional<String> optAddress = SmartHomeRCPActivator.getP2PDictionary().getRemotePeerAddress((PeerID) cell.getElement());
-					if (optAddress.isPresent()) {
-						cell.setText(optAddress.get());
-					} else {
-						cell.setText("<unknown>");
-					}
-				}
-				*/
-			}
-		});
-		tableColumnLayout.setColumnData(reactionColumn.getColumn(), new ColumnWeightData(10, 25, true));
-		
-		
-		
-		/************* Reaction ****************/
-		TableViewerColumn currentSensorsColumn = new TableViewerColumn(smartDevicesTable, SWT.NONE);
-		currentSensorsColumn.getColumn().setText("ConnectedActivityInterpreters");
-		currentSensorsColumn.setLabelProvider(new CellLabelProvider() {
-			@Override
-			public void update(ViewerCell cell) {
-				LogicRule rule = (LogicRule) cell.getElement();
-				cell.setText(""+rule.getActivityInterpretersWithRunningRules().size());
-				
-				
-				/*
-				if (isLocalID((PeerID) cell.getElement())) {
-					try {
-						cell.setText(InetAddress.getLocalHost().getHostAddress() + ":" + SmartHomeRCPActivator.getP2PNetworkManager().getPort());
-					} catch (UnknownHostException e) {
-						cell.setText("<unknown>");
-					}
-					cell.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_GRAY));
-				} else {
-					Optional<String> optAddress = SmartHomeRCPActivator.getP2PDictionary().getRemotePeerAddress((PeerID) cell.getElement());
-					if (optAddress.isPresent()) {
-						cell.setText(optAddress.get());
-					} else {
-						cell.setText("<unknown>");
-					}
-				}
-				*/
-			}
-		});
-		tableColumnLayout.setColumnData(currentSensorsColumn.getColumn(), new ColumnWeightData(10, 25, true));
-		
-		
-		smartDevicesTable.setInput(getLogicRules());
-		
+		Composite composite = new Composite(parent, SWT.NONE);
+		TreeColumnLayout tcl_composite = new TreeColumnLayout();
+		composite.setLayout(tcl_composite);
+
+		treeViewer = new TreeViewer(composite, SWT.BORDER);
+		tree = treeViewer.getTree();
+		tree.setHeaderVisible(true);
+		tree.setLinesVisible(true);
+
+		TreeViewerColumn treeViewerColumn = new TreeViewerColumn(treeViewer,
+				SWT.NONE);
+		TreeColumn trclmnSmartdevice = treeViewerColumn.getColumn();
+		tcl_composite.setColumnData(trclmnSmartdevice, new ColumnPixelData(150,
+				true, true));
+		trclmnSmartdevice.setText("SmartDevice");
+
+		TreeViewerColumn treeViewerColumn_1 = new TreeViewerColumn(treeViewer,
+				SWT.NONE);
+		TreeColumn trclmnActivity = treeViewerColumn_1.getColumn();
+		tcl_composite.setColumnData(trclmnActivity, new ColumnPixelData(150,
+				true, true));
+		trclmnActivity.setText("Activity");
+
+		TreeViewerColumn treeViewerColumn_3 = new TreeViewerColumn(treeViewer,
+				SWT.NONE);
+		TreeColumn trclmnAction = treeViewerColumn_3.getColumn();
+		tcl_composite.setColumnData(trclmnAction, new ColumnPixelData(150,
+				true, true));
+		trclmnAction.setText("Action");
+
+		// localSmartDevice =
+		// SmartHomeRCPActivator.getSmartDeviceService().getLocalSmartDevice();
+		// foundSmartDevices =
+		// SmartHomeRCPActivator.getSmartDeviceService().getSmartDeviceServerDictionaryDiscovery().getFoundSmartDeviceList();
+		if (treeViewer != null && foundSmartDevices != null) {
+			treeViewer.setContentProvider(new ViewContentProvider());
+			treeViewer.setLabelProvider(new ViewLabelProvider());
+			treeViewer.setInput(foundSmartDevices);
+		} else {
+			LOG.debug("something null");
+		}
+
+		refresh();
+		treeViewer.refresh();
+
+		treeViewer.expandAll();
+
+		// localSmartDevice.addSmartDeviceListener(smartDeviceListener);
+
+		setPartName("Smart Device Logic");
+
 		refreshLoopAsync();
-		
+
 		instance = this;
 	}
-	
-	
+
 	private void refreshLoopAsync() {
 		Thread t = new Thread(new Runnable() {
 			@Override
 			public void run() {
-				while(true){
+				while (true) {
 					refresh();
-					
+
 					try {
 						Thread.sleep(5000);
 					} catch (InterruptedException e) {
@@ -259,20 +159,24 @@ public class SmartDeviceLogicView extends ViewPart {
 		t.start();
 	}
 
-
 	public void refresh() {
-		if(localSmartDevice==null){
+		if (foundSmartDevices == null) {
 			return;
 		}
-		Collection<LogicRule> logicRulesCopy = null;
-		synchronized (getLogicRules()) {
-			getLogicRules().clear();
-			getLogicRules().addAll(localSmartDevice.getLogicRules());
-			logicRulesCopy = Lists.newArrayList(getLogicRules());
+		ArrayList<ASmartDevice> foundSmartDevicesCopy = null;
+		synchronized (foundSmartDevices) {
+			foundSmartDevices.clear();
+			foundSmartDevices.add(SmartHomeRCPActivator.getSmartDeviceService()
+					.getLocalSmartDevice());
+			foundSmartDevices.addAll(SmartHomeRCPActivator
+					.getSmartDeviceService()
+					.getSmartDeviceServerDictionaryDiscovery()
+					.getFoundSmartDeviceList());
+			foundSmartDevicesCopy = Lists.newArrayList(foundSmartDevices);
 		}
 		refreshTableAsync();
-		
-		for (final LogicRule remotePeerID : logicRulesCopy) {
+
+		for (final ASmartDevice remotePeerID : foundSmartDevicesCopy) {
 			synchronized (refreshing) {
 				if (refreshing.contains(remotePeerID)) {
 					continue;
@@ -280,26 +184,25 @@ public class SmartDeviceLogicView extends ViewPart {
 				refreshing.add(remotePeerID);
 			}
 		}
-		
-		//methodXY();
+
+		// methodXY();
 	}
-	
-	
+
 	private void refreshTableAsync() {
 		Display disp = PlatformUI.getWorkbench().getDisplay();
 		if (!disp.isDisposed()) {
 			disp.asyncExec(new Runnable() {
 				@Override
 				public void run() {
-					synchronized (smartDevicesTable) {
-						if (!smartDevicesTable.getTable().isDisposed()) {
-							smartDevicesTable.refresh();
+					synchronized (treeViewer) {
+						if (!treeViewer.getTree().isDisposed()) {
+							treeViewer.refresh();
 
-							
-							//synchronized (foundPeerIDs) {
-							//	setPartName("Smart Devices (" + foundPeerIDs.size() + ")");
-							//}
-							
+							// synchronized (foundPeerIDs) {
+							// setPartName("Smart Devices (" +
+							// foundPeerIDs.size() + ")");
+							// }
+
 						}
 					}
 				}
@@ -307,68 +210,190 @@ public class SmartDeviceLogicView extends ViewPart {
 		}
 	}
 	
-	
-	//methodXY
-	/*
-	Thread t = new Thread(new Runnable() {
-		@Override
-		public void run() {
-			try {
-				Future<Optional<IResourceUsage>> futureUsage = usageManager.getRemoteResourceUsage(remotePeerID);
-				try {
-					Optional<IResourceUsage> optResourceUsage = futureUsage.get();
-					if (optResourceUsage.isPresent()) {
-						IResourceUsage resourceUsage = optResourceUsage.get();
-						synchronized (usageMap) {
-							usageMap.put(remotePeerID, resourceUsage);
-						}
-						refreshTableAsync();
-					}
-				} catch (InterruptedException | ExecutionException e) {
-					LOG.error("Could not get resource usage", e);
-				}
-
-			} finally {
-				synchronized (refreshing) {
-					refreshing.remove(remotePeerID);
-				}
-			}
-		}
-	});
-
-	t.setDaemon(true);
-	t.setName("PeerView update for peer " + p2pDictionary.getRemotePeerName(remotePeerID));
-	t.start();
-	*/
-
-	private Collection<LogicRule> getLogicRules() {
-		return this.logicRules;
-	}
-
 	@Override
 	public void setFocus() {
-		// TODO Auto-generated method stub
 
 	}
-
 
 	public static Optional<SmartDeviceLogicView> getInstance() {
 		return Optional.fromNullable(instance);
 	}
 
-
 	public List<LogicRule> getSelectedLogicRules() {
 		ImmutableList.Builder<LogicRule> resultBuilder = new ImmutableList.Builder<>();
 
-		IStructuredSelection selection = (IStructuredSelection) smartDevicesTable.getSelection();
+		IStructuredSelection selection = (IStructuredSelection) treeViewer
+				.getSelection();
 		if (!selection.isEmpty()) {
 			for (Object selectedObj : selection.toList()) {
-				//selection.getFirstElement()
+				if(selectedObj instanceof LogicRule){
+				//selection.getFirstElement();
 				resultBuilder.add(((LogicRule) selectedObj));
+				}
 			}
-
 		}
+
 		return resultBuilder.build();
 	}
-	
+
+	class ViewContentProvider implements ITreeContentProvider {
+
+		@Override
+		public void dispose() {
+
+		}
+
+		@Override
+		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+			
+		}
+
+		@Override
+		public Object[] getElements(Object inputElement) {
+			if (inputElement instanceof ArrayList) {
+				@SuppressWarnings("unchecked")
+				ArrayList<ASmartDevice> list = (ArrayList<ASmartDevice>) inputElement;
+				@SuppressWarnings("rawtypes")
+				ASmartDevice[] devices = new ASmartDevice[((ArrayList) inputElement)
+						.size()];
+
+				int i = 0;
+				for (ASmartDevice dev : list) {
+					devices[i++] = dev;
+				}
+
+				// LOG.error("getElements return ASmartDevice[]");
+				return devices;
+			} else if (inputElement instanceof ASmartDevice) {
+				ASmartDevice device = (ASmartDevice) inputElement;
+				Actor[] list = new Actor[device.getConnectedActors().size()];
+				int i = 0;
+				for (Actor actor : device.getConnectedActors()) {
+					list[i++] = actor;
+				}
+				;
+				LOG.error("getElements return Actor[]");
+				return list;
+			} else if (inputElement instanceof Actor) {
+				Actor actor = (Actor) inputElement;
+				Collection<? extends LogicRule> rules = actor.getLogicRules();
+				LogicRule[] list = new LogicRule[rules.size()];
+				int i = 0;
+				for (LogicRule rule : rules) {
+					list[i++] = rule;
+				}
+				;
+				LOG.error("getElements return LogicRule[]");
+				return list;
+			} else {
+				LOG.error("getElements return null");
+				return null;
+			}
+		}
+
+		@Override
+		public Object[] getChildren(Object parentElement) {
+			if (parentElement instanceof SmartDevice) {
+				SmartDevice smartDevice = (SmartDevice) parentElement;
+				Collection<Actor> actors = smartDevice.getConnectedActors();
+				Actor[] list = new Actor[actors.size()];
+				int i = 0;
+				for (Actor actor : actors) {
+					list[i++] = actor;
+				}
+				;
+				return list;
+			} else if (parentElement instanceof Actor) {
+				Actor actor = (Actor) parentElement;
+				Collection<? extends LogicRule> rules = actor.getLogicRules();
+				LogicRule[] list = new LogicRule[rules.size()];
+				int i = 0;
+				for (LogicRule rule : rules) {
+					list[i++] = rule;
+				}
+				;
+				return list;
+			} else if (parentElement instanceof LogicRule) {
+				return null;
+			}
+
+			return (ASmartDevice[]) parentElement;
+		}
+
+		@Override
+		public Object getParent(Object element) {
+			if (element instanceof ArrayList) {
+				return null;
+			} else if (element instanceof ASmartDevice) {
+				return null;
+			} else if (element instanceof Actor) {
+				Actor actor = (Actor) element;
+				return actor.getSmartDevice();
+			} else if (element instanceof LogicRule) {
+				LogicRule rule = (LogicRule) element;
+				return rule.getActor();
+			}
+			return null;
+		}
+
+		@Override
+		public boolean hasChildren(Object element) {
+			if (element instanceof ArrayList) {
+				return true;
+			} else if (element instanceof ASmartDevice) {
+				ASmartDevice device = (ASmartDevice) element;
+				return device.getLogicRules().size() > 0;
+			} else if (element instanceof Actor) {
+				Actor actor = (Actor) element;
+				return actor.getLogicRules().size() > 0;
+			}
+			return false;
+		}
+
+	}
+
+	class ViewLabelProvider extends StyledCellLabelProvider {
+		@Override
+		public void update(ViewerCell cell) {
+			StyledString text = new StyledString();
+
+			
+
+			switch (cell.getColumnIndex()) {
+			case 0:// SmartDevice
+				if (cell.getElement() instanceof ASmartDevice) {
+					ASmartDevice device = (ASmartDevice) cell.getElement();
+					if(SmartDeviceServer.isLocalPeer(device.getPeerID())){
+						text.append("<local>"+device.getPeerName());
+					}else{
+						text.append(device.getPeerName());
+					}
+				}else if (cell.getElement() instanceof Actor) {
+					Actor actor = (Actor) cell.getElement();
+					text.append(actor.getName());
+				}
+				break;
+			case 1:// Activity
+				if (cell.getElement() instanceof LogicRule) {
+					LogicRule rule = (LogicRule) cell.getElement();
+					text.append(rule.getActivityName());
+				}
+				break;
+			case 2:// Action
+				if (cell.getElement() instanceof LogicRule) {
+					LogicRule rule = (LogicRule) cell.getElement();
+					text.append(rule.getReactionDescription());
+				}
+				break;
+
+			default:
+				break;
+			}
+
+			cell.setText(text.toString());
+			// super.update(cell);
+			cell.setStyleRanges(text.getStyleRanges());
+			super.update(cell);
+		}
+	}
 }

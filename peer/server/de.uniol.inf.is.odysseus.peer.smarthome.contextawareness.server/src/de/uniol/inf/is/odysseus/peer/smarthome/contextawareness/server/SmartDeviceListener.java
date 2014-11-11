@@ -8,6 +8,7 @@ import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.Fiel
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.IFieldDeviceListener;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.ISmartDeviceListener;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.LogicRule;
+import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.SmartDevice;
 
 public class SmartDeviceListener implements ISmartDeviceListener{
 	private static final Logger LOG = LoggerFactory
@@ -38,5 +39,11 @@ public class SmartDeviceListener implements ISmartDeviceListener{
 	@Override
 	public void readyStateChanged(ASmartDevice smartDevice, boolean state) {
 		LOG.debug("smartDevice: "+smartDevice.getPeerName()+" readyState:"+state);
+	}
+
+	@Override
+	public void fieldDevicesUpdated(SmartDevice smartDevice) {
+		LOG.debug("fieldDevicesUpdated smart device:"+smartDevice.getPeerName());
+		
 	}
 }

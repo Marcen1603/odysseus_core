@@ -15,13 +15,62 @@ public class RPiGPIOActor extends Actor {
 		addActorAction(new RPiGPIOActorAction(State.OFF));
 		addActorAction(new RPiGPIOActorAction(State.TOGGLE));
 	}
-	
+
+	@Override
 	public void createLogicRuleWithState(String activityName, State state) {
 		RPiGPIOActorLogicRule newRule = new RPiGPIOActorLogicRule(this,
 				activityName, getPrefix(), getPostfix());
 		newRule.setState(state);
-		
+
 		addLogicRuleForActivity(newRule);
+	}
+
+	@Override
+	public boolean createLogicRuleWithAction(String activityName,
+			AbstractActorAction actorAction) {
+		RPiGPIOActorLogicRule newRule = new RPiGPIOActorLogicRule(this,
+				activityName, getPrefix(), getPostfix());
+		switch (actorAction.getName()) {
+		case "ON":
+			newRule.setState(State.ON);
+			break;
+		case "OFF":
+			newRule.setState(State.OFF);
+
+			break;
+		case "TOGGLE":
+			newRule.setState(State.TOGGLE);
+
+			break;
+		default:
+			break;
+		}
+
+		if (logicRuleExist(newRule)) {
+			return false;
+		}
+
+		addLogicRuleForActivity(newRule);
+		return true;
+	}
+
+	@Override
+	public boolean logicRuleExist(LogicRule newRule) {
+		if (newRule instanceof RPiGPIOActorLogicRule) {
+			RPiGPIOActorLogicRule rpiNewRule = (RPiGPIOActorLogicRule) newRule;
+
+			for (LogicRule rule : getLogicRules()) {
+				if (rule instanceof RPiGPIOActorLogicRule) {
+					RPiGPIOActorLogicRule rpiRule = (RPiGPIOActorLogicRule) rule;
+					if (rpiRule.getActivityName().equals(
+							rpiNewRule.getActivityName())
+							&& rpiRule.getState().equals(rpiNewRule.getState())) {
+						return true;
+					}
+				}
+			}
+		}
+		return false;
 	}
 
 	class RPiGPIOActorLogicRule extends LogicRule {
@@ -199,24 +248,25 @@ public class RPiGPIOActor extends Actor {
 
 		@Override
 		public String getReactionDescription() {
-			return "State change:"+getState();
+			return "State change:" + getState();
 		}
 	}
-	
-	class RPiGPIOActorAction extends AbstractActorAction{
+
+	class RPiGPIOActorAction extends AbstractActorAction {
 		private static final long serialVersionUID = 1L;
 		private State name;
 
-		RPiGPIOActorAction(State state){
+		RPiGPIOActorAction(State state) {
 			super();
 			this.name = state;
 		}
-		
+
 		@Override
 		public String getName() {
 			String _name = this.name.toString();
 			return _name;
 		}
-		
+
 	}
+
 }

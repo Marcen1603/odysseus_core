@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import de.uniol.inf.is.odysseus.p2p_new.PeerCommunicationException;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.utils.SmartDeviceConfig;
 import net.jxta.peer.PeerID;
 
@@ -68,5 +69,7 @@ public abstract class ASmartDevice implements Serializable { // ISmartDevice,
 	public abstract void removeSmartDeviceListener(ISmartDeviceListener listener);
 
 	public abstract Collection<? extends LogicRule> getLogicRules();
+
+	public abstract boolean save() throws PeerCommunicationException;
 
 }

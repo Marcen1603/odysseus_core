@@ -3,6 +3,9 @@ package de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice;
 import java.io.Serializable;
 import java.util.ArrayList;
 
+import de.uniol.inf.is.odysseus.p2p_new.PeerCommunicationException;
+import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.RPiGPIOActor.State;
+
 public abstract class Actor extends FieldDevice implements Serializable {
 	private static final long serialVersionUID = 1L;
 	private ArrayList<LogicRule> logicRulesList;
@@ -25,6 +28,7 @@ public abstract class Actor extends FieldDevice implements Serializable {
 
 	public boolean deleteLogicRule(LogicRule rule) {
 		if (getLogicRules().remove(rule)) {
+			
 			fireLogicRuleRemoved(rule);
 			return true;
 		} else {
@@ -47,5 +51,15 @@ public abstract class Actor extends FieldDevice implements Serializable {
 	
 	protected void addActorAction(AbstractActorAction action) {
 		getActions().add(action);
+	}
+	
+	public abstract void createLogicRuleWithState(String activityName, State state);
+
+	public abstract boolean createLogicRuleWithAction(String activityName,
+			AbstractActorAction actorAction);
+	public abstract boolean logicRuleExist(LogicRule newRule);
+
+	public boolean save() throws PeerCommunicationException {
+		return getSmartDevice().save();
 	}
 }

@@ -2,6 +2,7 @@ package de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.rcp.views;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -58,6 +59,8 @@ public class SmartDeviceView extends ViewPart implements
 	private TableViewer smartDevicesTable;
 	private RepeatingJobThread refresher;
 	private Collection<PeerID> refreshing = Lists.newLinkedList();
+
+	private static SmartDeviceView instance;
 
 	@Override
 	public void createPartControl(Composite parent) {
@@ -225,6 +228,7 @@ public class SmartDeviceView extends ViewPart implements
 				});
 
 		getSite().setSelectionProvider(smartDevicesTable);
+		instance = this;
 	}
 
 	public void refresh() {
@@ -235,6 +239,7 @@ public class SmartDeviceView extends ViewPart implements
 				if (SmartHomeRCPActivator.getPeerDictionary() != null
 						&& SmartHomeRCPActivator.getPeerDictionary()
 								.getRemotePeerIDs() != null) {
+					foundPeerIDs.add(SmartHomeRCPActivator.getP2PNetworkManager().getLocalPeerID());
 					foundPeerIDs.addAll(SmartHomeRCPActivator
 							.getPeerDictionary().getRemotePeerIDs());
 				}
@@ -312,7 +317,7 @@ public class SmartDeviceView extends ViewPart implements
 	private String determinePeerName(PeerID id) {
 		try {
 			if (isLocalID(id)) {
-				return "<local>";
+				return "<local>"+SmartHomeRCPActivator.getP2PNetworkManager().getLocalPeerName();
 			}
 		} catch (NullPointerException ex) {
 
@@ -427,5 +432,13 @@ public class SmartDeviceView extends ViewPart implements
 	public void setSelection(ISelection selection) {
 		// TODO Auto-generated method stub
 
+	}
+	
+	public static Optional<SmartDeviceView> getInstance(){
+		return Optional.fromNullable(instance);
+	}
+
+	public ArrayList<PeerID> getSmartDevicesCopy() {
+		return Lists.newArrayList(foundPeerIDs);
 	}
 }
