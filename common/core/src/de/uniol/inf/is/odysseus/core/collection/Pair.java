@@ -15,8 +15,12 @@
   */
 package de.uniol.inf.is.odysseus.core.collection;
 
+import java.io.Serializable;
 
-public class Pair<E1, E2> implements IPair<E1, E2>{
+
+public class Pair<E1, E2> implements IPair<E1, E2>, Serializable{
+
+	private static final long serialVersionUID = -2471885403570715271L;
 
 	E1 e1;
 	E2 e2;
