@@ -186,7 +186,7 @@ public class WebserviceServer {
 		if (user != null) {
 			String token = user.getToken();
 			StringResponse response = new StringResponse(token, true);
-			logger.debug("New user "+username+" "+password+" connected.");
+			logger.debug("New user "+username+" connected.");
 			return response;
 		}
 		return new StringResponse(null, false);
