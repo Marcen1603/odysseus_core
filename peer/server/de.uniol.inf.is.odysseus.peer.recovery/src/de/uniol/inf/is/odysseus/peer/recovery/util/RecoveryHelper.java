@@ -15,6 +15,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Optional;
+import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 
 import de.uniol.inf.is.odysseus.core.collection.Context;
@@ -29,8 +30,11 @@ import de.uniol.inf.is.odysseus.core.server.datadictionary.DataDictionaryProvide
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.RestructHelper;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSource;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.IQueryParser;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.IExecutorCommand;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.dd.CreateQueryCommand;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.p2p_new.data.DataTransmissionException;
@@ -46,6 +50,52 @@ import de.uniol.inf.is.odysseus.peer.recovery.physicaloperator.RecoveryBufferPO;
 public class RecoveryHelper {
 
 	private static final Logger LOG = LoggerFactory.getLogger(RecoveryHelper.class);
+	
+	/**
+	 * The PQL parser, if there is one bound.
+	 */
+	private static Optional<IQueryParser> cPQLParser = Optional.absent();
+
+	/**
+	 * Binds a query parser. <br />
+	 * Called by OSGi-DS.
+	 * 
+	 * @param serv
+	 *            The query parser to bind. <br />
+	 *            Must be not null.
+	 */
+	public static void bindParser(IQueryParser serv) {
+
+		Preconditions.checkNotNull(serv);
+		if(serv.getLanguage().equals("PQL")) {
+			
+			cPQLParser = Optional.of(serv);
+			LOG.debug("Bound {} as a pql parser.", serv.getClass().getSimpleName());
+			
+		}
+
+	}
+
+	/**
+	 * Unbinds a query parser, if it's the bound one. <br />
+	 * Called by OSGi-DS.
+	 * 
+	 * @param serv
+	 *            The query parser to unbind. <br />
+	 *            Must be not null.
+	 */
+	public static void unbindParser(IQueryParser serv) {
+
+		Preconditions.checkNotNull(serv);
+
+		if (cPQLParser.isPresent() && cPQLParser.get() == serv) {
+
+			cPQLParser = Optional.absent();
+			LOG.debug("Unbound {} as a pql parser.", serv.getClass().getSimpleName());
+
+		}
+
+	}
 
 	/**
 	 * Installs and executes a query from PQL.
@@ -473,6 +523,37 @@ public class RecoveryHelper {
 		}
 		return pipe;
 	}
+	
+	public static List<ILogicalQuery> convertToLogicalQueries(String pql) {
+		
+		if (!cPQLParser.isPresent()) {
+
+			LOG.error("No PQL parser bound!");
+			return Lists.newArrayList();
+
+		}
+		
+		List<IExecutorCommand> cmds = cPQLParser.get().parse(pql, RecoveryCommunicator.getActiveSession(),
+						DataDictionaryProvider.getDataDictionary(RecoveryCommunicator.getActiveSession().getTenant()), Context.empty());
+		List<ILogicalQuery> queries = Lists.newArrayList();
+		
+		for(IExecutorCommand cmd : cmds) {
+			
+			if(!(cmd instanceof CreateQueryCommand)) {
+				
+				LOG.error("PQL parser did return an executor command, which is not a create query command!");
+				continue;
+				
+			}
+			
+			CreateQueryCommand createCmd = (CreateQueryCommand) cmd;
+			queries.add(createCmd.getQuery());
+			
+		}
+		
+		return queries;
+		
+	}
 
 	/**
 	 * Converts a PQL-String to a physical query
@@ -482,9 +563,7 @@ public class RecoveryHelper {
 	 * @return A list of physical queries
 	 */
 	public static List<IPhysicalQuery> convertToPhysicalPlan(String pql) {
-		// TransformationConfiguration trafoConfig = new
-		// TransformationConfiguration("relational",
-		// ITimeInterval.class.getName(), ILatency.class.getName());
+		
 		TransformationConfiguration trafoConfig = new TransformationConfiguration(ITimeInterval.class.getName());
 		List<IPhysicalQuery> physicalQueries = RecoveryCommunicator
 				.getExecutor()
@@ -494,5 +573,6 @@ public class RecoveryHelper {
 						DataDictionaryProvider.getDataDictionary(RecoveryCommunicator.getActiveSession().getTenant()),
 						trafoConfig, Context.empty());
 		return physicalQueries;
+		
 	}
 }
