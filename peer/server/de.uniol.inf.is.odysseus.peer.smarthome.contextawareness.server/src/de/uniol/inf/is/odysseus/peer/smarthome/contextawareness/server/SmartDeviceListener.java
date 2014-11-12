@@ -5,7 +5,7 @@ import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.ASmartDevice;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.FieldDevice;
-import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.IFieldDeviceListener;
+import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.ILogicRuleListener;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.ISmartDeviceListener;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.LogicRule;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.SmartDevice;
@@ -16,7 +16,7 @@ public class SmartDeviceListener implements ISmartDeviceListener{
 	
 	@Override
 	public void fieldDeviceConnected(ASmartDevice sender, FieldDevice device) {
-		device.addFieldDeviceListener(new IFieldDeviceListener() {
+		device.addLogicRuleListener(new ILogicRuleListener() {
 			@Override
 			public void logicRuleRemoved(LogicRule rule) {
 				SmartDeviceServer.getInstance().stopLogicRule(rule);

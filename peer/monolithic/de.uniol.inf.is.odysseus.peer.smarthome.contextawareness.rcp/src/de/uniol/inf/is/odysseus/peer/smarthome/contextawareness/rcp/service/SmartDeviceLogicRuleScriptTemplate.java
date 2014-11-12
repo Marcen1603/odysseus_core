@@ -17,7 +17,15 @@ public class SmartDeviceLogicRuleScriptTemplate implements
 
 	@Override
 	public String getText() {
-		return "///SmartDevice LogicRule Script Template";
+		StringBuilder sb = new StringBuilder();
+		sb.append("///SmartDevice LogicRule Script Template\n");
+		sb.append("\n");
+		sb.append("#SMARTDEVICE_LOGIC_RULE_NAME <logic rule name>");
+		sb.append("\n");
+		sb.append("///Query:\n");
+		sb.append("\n");
+		
+		return sb.toString();
 	}
 
 }

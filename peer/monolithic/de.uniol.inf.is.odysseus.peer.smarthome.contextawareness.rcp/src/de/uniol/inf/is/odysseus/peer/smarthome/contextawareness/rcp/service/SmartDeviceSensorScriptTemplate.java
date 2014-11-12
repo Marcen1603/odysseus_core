@@ -6,17 +6,25 @@ public class SmartDeviceSensorScriptTemplate implements IOdysseusScriptTemplate 
 
 	@Override
 	public String getName() {
-		return "SmartDevice Sensor Template";
+		return "SmartDevice Sensor Script Template";
 	}
 
 	@Override
 	public String getDescription() {
-		return "SmartDevice Sensor Template description";
+		return "SmartDevice Sensor Script Template description";
 	}
 
 	@Override
 	public String getText() {
-		return "///SmartDevice Sensor Template";
+		StringBuilder sb = new StringBuilder();
+		sb.append("///SmartDevice Sensor Script Template\n");
+		sb.append("\n");
+		sb.append("#SMARTDEVICE_SENSOR_NAME <sensor name>");
+		sb.append("\n");
+		sb.append("///Query for raw values:\n");
+		sb.append("\n");
+		
+		return sb.toString();
 	}
 
 }

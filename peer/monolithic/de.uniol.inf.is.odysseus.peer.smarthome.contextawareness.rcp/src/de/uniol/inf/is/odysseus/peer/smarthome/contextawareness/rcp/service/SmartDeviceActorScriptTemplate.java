@@ -16,7 +16,15 @@ public class SmartDeviceActorScriptTemplate implements IOdysseusScriptTemplate {
 
 	@Override
 	public String getText() {
-		return "//SmartDevice Actor Script Template";
+		StringBuilder sb = new StringBuilder();
+		sb.append("///SmartDevice Actor Script Template\n");
+		sb.append("\n");
+		sb.append("#SMARTDEVICE_ACTOR_NAME <actor name>");
+		sb.append("\n");
+		sb.append("///Query:\n");
+		sb.append("\n");
+		
+		return sb.toString();
 	}
 
 }

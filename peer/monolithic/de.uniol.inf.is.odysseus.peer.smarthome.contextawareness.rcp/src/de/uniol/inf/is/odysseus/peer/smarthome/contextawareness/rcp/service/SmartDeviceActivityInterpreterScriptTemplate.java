@@ -17,7 +17,15 @@ public class SmartDeviceActivityInterpreterScriptTemplate implements
 
 	@Override
 	public String getText() {
-		return "///SmartDevice ActivityInterpreter Script Template";
+		StringBuilder sb = new StringBuilder();
+		sb.append("///SmartDevice ActivityInterpreter Script Template\n");
+		sb.append("\n");
+		sb.append("#SMARTDEVICE_ACTIVITY_INTERPRETER_NAME <activity interpreter name>");
+		sb.append("\n");
+		sb.append("///Query:\n");
+		sb.append("\n");
+		
+		return sb.toString();
 	}
 
 }
