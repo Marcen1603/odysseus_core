@@ -30,7 +30,7 @@ public class SmartDevice extends ASmartDevice implements Serializable {
 	private boolean state = false;
 	private String peerName = "local";
 
-	private transient ArrayList<ISmartDeviceListener> smartDeviceListener;
+	private transient ArrayList<IFieldDeviceListener> smartDeviceListener;
 	private transient ConnectedFieldDeviceListener fieldDeviceListener;
 
 	private static SmartDevice instance;
@@ -67,7 +67,7 @@ public class SmartDevice extends ASmartDevice implements Serializable {
 	public void addConnectedFieldDevice(FieldDevice device) {
 		if (this.connectedFieldDevices.add(device)) {
 			device.setSmartDevice(this);
-			device.addFieldDeviceListener(getConnectedFieldDeviceListener());
+			device.addLogicRuleListener(getConnectedFieldDeviceListener());
 			fireFieldDeviceConnected(device);
 		}
 	}
@@ -79,7 +79,7 @@ public class SmartDevice extends ASmartDevice implements Serializable {
 		}
 	}
 
-	private IFieldDeviceListener getConnectedFieldDeviceListener() {
+	private ILogicRuleListener getConnectedFieldDeviceListener() {
 		if (fieldDeviceListener == null) {
 			fieldDeviceListener = new ConnectedFieldDeviceListener();
 		}
@@ -153,36 +153,36 @@ public class SmartDevice extends ASmartDevice implements Serializable {
 	}
 
 	@Override
-	public void addSmartDeviceListener(ISmartDeviceListener listener) {
+	public void addFieldDeviceListener(IFieldDeviceListener listener) {
 		getSmartDeviceListener().add(listener);
 	}
 
 	@Override
-	public void removeSmartDeviceListener(ISmartDeviceListener listener) {
+	public void removeFieldDeviceListener(IFieldDeviceListener listener) {
 		getSmartDeviceListener().remove(listener);
 	}
 
-	private ArrayList<ISmartDeviceListener> getSmartDeviceListener() {
+	private ArrayList<IFieldDeviceListener> getSmartDeviceListener() {
 		if (smartDeviceListener == null) {
-			smartDeviceListener = new ArrayList<ISmartDeviceListener>();
+			smartDeviceListener = new ArrayList<IFieldDeviceListener>();
 		}
 		return smartDeviceListener;
 	}
 
 	private void fireFieldDeviceConnected(FieldDevice device) {
-		for (ISmartDeviceListener listener : getSmartDeviceListener()) {
+		for (IFieldDeviceListener listener : getSmartDeviceListener()) {
 			listener.fieldDeviceConnected(this, device);
 		}
 	}
 
 	private void fireFieldDeviceRemoved(FieldDevice device) {
-		for (ISmartDeviceListener listener : getSmartDeviceListener()) {
+		for (IFieldDeviceListener listener : getSmartDeviceListener()) {
 			listener.fieldDeviceRemoved(this, device);
 		}
 	}
 
 	private void fireReadyStateChanged(boolean state) {
-		for (ISmartDeviceListener listener : getSmartDeviceListener()) {
+		for (IFieldDeviceListener listener : getSmartDeviceListener()) {
 			listener.readyStateChanged(this, state);
 		}
 	}
@@ -198,7 +198,7 @@ public class SmartDevice extends ASmartDevice implements Serializable {
 		return rules;
 	}
 
-	private class ConnectedFieldDeviceListener implements IFieldDeviceListener {
+	private class ConnectedFieldDeviceListener implements ILogicRuleListener {
 		@Override
 		public void logicRuleRemoved(LogicRule rule) {
 			// TODO Auto-generated method stub
@@ -229,7 +229,7 @@ public class SmartDevice extends ASmartDevice implements Serializable {
 	}
 	
 	private void fireFieldDevicesUpdated() {
-		for (ISmartDeviceListener listener : getSmartDeviceListener()) {
+		for (IFieldDeviceListener listener : getSmartDeviceListener()) {
 			listener.fieldDevicesUpdated(this);
 		}
 	}

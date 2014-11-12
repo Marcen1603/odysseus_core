@@ -13,7 +13,7 @@ import de.uniol.inf.is.odysseus.p2p_new.dictionary.IPeerDictionary;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.ASmartDevice;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.Actor;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.FieldDevice;
-import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.ISmartDeviceListener;
+import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.IFieldDeviceListener;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.Sensor;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.SmartDevice;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.server.service.ISmartDeviceService;
@@ -155,7 +155,7 @@ public class SmartHomeRCPActivator implements BundleActivator {
 		return smartDeviceService;
 	}
 
-	static ISmartDeviceListener smartDeviceListener = new ISmartDeviceListener() {
+	static IFieldDeviceListener smartDeviceListener = new IFieldDeviceListener() {
 		@Override
 		public void fieldDeviceConnected(ASmartDevice sender, FieldDevice device) {
 			if (device instanceof Sensor) {

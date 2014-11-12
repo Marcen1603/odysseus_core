@@ -37,7 +37,7 @@ public abstract class Actor extends FieldDevice implements Serializable {
 	}
 
 	private void fireLogicRuleRemoved(LogicRule rule) {
-		for (IFieldDeviceListener listener : getFieldDeviceListeners()) {
+		for (ILogicRuleListener listener : getFieldDeviceListeners()) {
 			listener.logicRuleRemoved(rule);
 		}
 	}

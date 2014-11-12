@@ -26,7 +26,7 @@ import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.ASma
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.ActivityInterpreter;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.Actor;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.FieldDevice;
-import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.ISmartDeviceListener;
+import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.IFieldDeviceListener;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.Sensor;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.SmartDevice;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.rcp.SmartHomeRCPActivator;
@@ -45,7 +45,7 @@ public class ActivityInterpreterShowView extends ViewPart {
 
 	private static final Logger LOG = LoggerFactory
 			.getLogger(ActivityInterpreterShowView.class);
-	ISmartDeviceListener smartDeviceListener = new ISmartDeviceListener() {
+	IFieldDeviceListener smartDeviceListener = new IFieldDeviceListener() {
 		@Override
 		public void fieldDeviceConnected(ASmartDevice sender, FieldDevice device) {
 			if (device instanceof Sensor) {

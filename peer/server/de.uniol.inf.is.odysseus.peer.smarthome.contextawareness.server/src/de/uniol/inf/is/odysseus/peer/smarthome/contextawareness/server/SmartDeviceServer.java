@@ -42,7 +42,7 @@ public class SmartDeviceServer {
 	final long SmartDeviceAdvertisement_LIFETIME = 30 * 2;
 	final long SmartDeviceAdvertisement_EXPIRATION_TIME = 30 * 3;
 	private static IPQLGenerator pqlGenerator;
-	private SmartDeviceListener localSmartDeviceListener;
+	private FieldDeviceListener localSmartDeviceListener;
 	private TemperSensor temper;
 	private RPiGPIOSensor gpioTaste7;
 	private RPiGPIOActor gpioLED11;
@@ -253,9 +253,9 @@ public class SmartDeviceServer {
 	}
 
 	public void initForLocalSmartDevice() {
-		localSmartDeviceListener = new SmartDeviceListener();
+		localSmartDeviceListener = new FieldDeviceListener();
 		SmartDeviceServer.getInstance().getLocalSmartDevice()
-				.addSmartDeviceListener(localSmartDeviceListener);
+				.addFieldDeviceListener(localSmartDeviceListener);
 	}
 
 	protected void waitForLogicProcessor() {

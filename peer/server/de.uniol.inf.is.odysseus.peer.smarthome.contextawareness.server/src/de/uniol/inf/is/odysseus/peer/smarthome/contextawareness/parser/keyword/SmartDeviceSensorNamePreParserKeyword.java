@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.parser.keyword;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -19,7 +20,23 @@ public class SmartDeviceSensorNamePreParserKeyword extends AbstractPreParserKeyw
 		if (parameter.length() == 0)
 			throw new OdysseusScriptException("Parameter needed for #"+KEYWORD);
 		
+		String[] splitted = parameter.trim().split(" ");
+		@SuppressWarnings("unused")
+		List<String> parameters = generateParameterList(splitted);
+		
+		
+		
 		variables.put(KEYWORD, parameter);
+	}
+
+	private List<String> generateParameterList(String[] splitted) {
+		ArrayList<String> list = new ArrayList<>();
+		
+		for(int i=0; i<splitted.length;i++){
+			list.add(splitted[i]);
+		}
+		
+		return list;
 	}
 
 	@Override

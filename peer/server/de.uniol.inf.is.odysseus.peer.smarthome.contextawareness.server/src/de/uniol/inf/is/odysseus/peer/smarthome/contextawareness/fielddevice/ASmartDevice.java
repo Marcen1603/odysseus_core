@@ -64,9 +64,9 @@ public abstract class ASmartDevice implements Serializable { // ISmartDevice,
 
 	public abstract void setPeerName(String peerName);
 
-	public abstract void addSmartDeviceListener(ISmartDeviceListener listener);
+	public abstract void addFieldDeviceListener(IFieldDeviceListener listener);
 
-	public abstract void removeSmartDeviceListener(ISmartDeviceListener listener);
+	public abstract void removeFieldDeviceListener(IFieldDeviceListener listener);
 
 	public abstract Collection<? extends LogicRule> getLogicRules();
 

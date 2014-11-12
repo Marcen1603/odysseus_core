@@ -13,8 +13,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.collection.Context;
+import de.uniol.inf.is.odysseus.core.planmanagement.executor.IUpdateEventListener;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.QueryState;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.ICompilerListener;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.planexecution.IPlanExecutionListener;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.planexecution.event.AbstractPlanExecutionEvent;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.planmodification.IPlanModificationListener;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.planmodification.event.AbstractPlanModificationEvent;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.p2p_new.IAdvertisementDiscovererListener;
 import de.uniol.inf.is.odysseus.p2p_new.IP2PNetworkManager;
@@ -41,7 +47,92 @@ public class QueryExecutor implements IP2PDictionaryListener,
 	private static IP2PDictionary p2pDictionary;
 	private static LinkedHashMap<String, String> sourcesNeededForImport;
 	private IP2PNetworkManager p2pNetworkManager;
+	private IPlanModificationListener planModListener;
+	private IPlanExecutionListener planExecutionListener;
+	private ICompilerListener compilerListener;
+	private IUpdateEventListener updateEventListener;
 
+	private QueryExecutor(){
+		//SessionManagementService.getActiveSession()
+		
+		Thread t = new Thread(new Runnable() {
+			@Override
+			public void run() {
+				waitForServerExecutorService();
+				
+				addListeners();
+			}
+		});
+		t.setName(getClass()+" Add listeners thread.");
+		t.setDaemon(true);
+		t.start();
+	}
+	
+	private void waitForServerExecutorService() {
+		while(ServerExecutorService.getServerExecutor()==null || !ServerExecutorService.getServerExecutor().isRunning()){
+			try {
+				Thread.sleep(100);
+			} catch (InterruptedException e) {
+			}
+		}
+	}
+	
+	private void addListeners() {
+		planModListener = new IPlanModificationListener() {
+			@Override
+			public void planModificationEvent(AbstractPlanModificationEvent<?> eventArgs) {
+				LOG.debug("planModificationEvent");
+			}
+		};
+		
+		planExecutionListener = new IPlanExecutionListener() {
+			@Override
+			public void planExecutionEvent(AbstractPlanExecutionEvent<?> eventArgs) {
+				LOG.debug("planExecutionEvent");
+			}
+		};
+		
+		compilerListener = new ICompilerListener() {
+			@Override
+			public void transformationBound() {
+				LOG.debug("transformationBound");
+			}
+			
+			@Override
+			public void rewriteBound() {
+				LOG.debug("rewriteBound");
+			}
+			
+			@Override
+			public void planGeneratorBound() {
+				LOG.debug("planGeneratorBound");
+			}
+			
+			@Override
+			public void parserBound(String parserID) {
+				LOG.debug("parserBound");
+			}
+		};
+		
+		updateEventListener = new IUpdateEventListener() {
+			@Override
+			public void eventOccured() {
+				LOG.debug("eventOccured");
+			}
+		};
+		//StoredProcedure storedProcedureSmartDevice = new StoredProcedure("nameSmartDevice", "", null);
+		//storedProcedureSmartDevice.
+		
+		ServerExecutorService.getServerExecutor().addCompilerListener(compilerListener, SessionManagementService.getActiveSession());
+		ServerExecutorService.getServerExecutor().addPlanExecutionListener(planExecutionListener);
+		ServerExecutorService.getServerExecutor().addPlanModificationListener(planModListener);
+		//ServerExecutorService.getServerExecutor().addStoredProcedure("SmartDeviceStoredProcedure", storedProcedureSmartDevice, SessionManagementService.getActiveSession());
+		ServerExecutorService.getServerExecutor().addUpdateEventListener(updateEventListener, "", SessionManagementService.getActiveSession());
+		
+		ServerExecutorService.getServerExecutor().getCompiler().addCompilerListener(compilerListener);
+		
+	}
+	
 	public static QueryExecutor getInstance() {
 		if (instance == null) {
 			instance = new QueryExecutor();

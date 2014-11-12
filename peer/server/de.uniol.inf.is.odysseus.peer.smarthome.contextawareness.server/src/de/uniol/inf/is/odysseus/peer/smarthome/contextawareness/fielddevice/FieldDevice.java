@@ -10,7 +10,7 @@ public abstract class FieldDevice implements Serializable {
 	private String prefix;
 	private String postfix;
 	private ASmartDevice smartDevice;
-	private transient ArrayList<IFieldDeviceListener> listener;
+	private transient ArrayList<ILogicRuleListener> listener;
 
 	public FieldDevice(String name, String prefix, String postfix) {
 		this.setName(name);
@@ -53,17 +53,17 @@ public abstract class FieldDevice implements Serializable {
 		return getName();
 	}
 
-	public void addFieldDeviceListener(IFieldDeviceListener fieldDeviceListener) {
+	public void addLogicRuleListener(ILogicRuleListener fieldDeviceListener) {
 		getFieldDeviceListeners().add(fieldDeviceListener);
 	}
 	
-	public void removeFieldDeviceListener(IFieldDeviceListener fieldDeviceListener) {
+	public void removeFieldDeviceListener(ILogicRuleListener fieldDeviceListener) {
 		getFieldDeviceListeners().remove(fieldDeviceListener);
 	}
 
-	protected ArrayList<IFieldDeviceListener> getFieldDeviceListeners() {
+	protected ArrayList<ILogicRuleListener> getFieldDeviceListeners() {
 		if(listener==null){
-			listener = new ArrayList<IFieldDeviceListener>();
+			listener = new ArrayList<ILogicRuleListener>();
 		}
 		return listener;
 	}

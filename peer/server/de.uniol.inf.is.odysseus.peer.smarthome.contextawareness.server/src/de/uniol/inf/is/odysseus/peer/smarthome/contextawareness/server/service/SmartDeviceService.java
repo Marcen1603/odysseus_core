@@ -4,13 +4,13 @@ import java.util.ArrayList;
 
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.ASmartDevice;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.FieldDevice;
-import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.ISmartDeviceListener;
+import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.IFieldDeviceListener;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.server.SmartDeviceServer;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.server.SmartDeviceServerDictionaryDiscovery;
 
 public class SmartDeviceService implements ISmartDeviceService {
 		private static SmartDeviceService instance;
-		private ArrayList<ISmartDeviceListener> smartDeviceListener;
+		private ArrayList<IFieldDeviceListener> smartDeviceListener;
 
 		// //////
 		// called by OSGi-DS
@@ -24,46 +24,46 @@ public class SmartDeviceService implements ISmartDeviceService {
 		}
 
 		// called by OSGi-DS
-		public void bindListener(ISmartDeviceListener serv) {
+		public void bindListener(IFieldDeviceListener serv) {
 			addSmartDeviceListener(serv);
 		}
 
 		// called by OSGi-DS
-		public void unbindListener(ISmartDeviceListener serv) {
+		public void unbindListener(IFieldDeviceListener serv) {
 			removeSmartDeviceListener(serv);
 		}
 
 		@Override
-		public void addSmartDeviceListener(ISmartDeviceListener listener) {
+		public void addSmartDeviceListener(IFieldDeviceListener listener) {
 			getSmartDeviceListener().add(listener);
 		}
 		
 		@Override
-		public void removeSmartDeviceListener(ISmartDeviceListener listener) {
+		public void removeSmartDeviceListener(IFieldDeviceListener listener) {
 			getSmartDeviceListener().remove(listener);
 		}
-		private ArrayList<ISmartDeviceListener> getSmartDeviceListener() {
+		private ArrayList<IFieldDeviceListener> getSmartDeviceListener() {
 			if(smartDeviceListener==null){
-				smartDeviceListener = new ArrayList<ISmartDeviceListener>();
+				smartDeviceListener = new ArrayList<IFieldDeviceListener>();
 			}
 			return smartDeviceListener;
 		}
 		
 		@SuppressWarnings("unused")
 		private void fireFieldDeviceConnected(FieldDevice device) {
-			for(ISmartDeviceListener listener : getSmartDeviceListener()){
+			for(IFieldDeviceListener listener : getSmartDeviceListener()){
 				listener.fieldDeviceConnected(getLocalSmartDevice(), device);
 			}
 		}
 		@SuppressWarnings("unused")
 		private void fireFieldDeviceRemoved(FieldDevice device) {
-			for(ISmartDeviceListener listener : getSmartDeviceListener()){
+			for(IFieldDeviceListener listener : getSmartDeviceListener()){
 				listener.fieldDeviceRemoved(getLocalSmartDevice(), device);
 			}
 		}
 		@SuppressWarnings("unused")
 		private void fireReadyStateChanged(boolean state) {
-			for(ISmartDeviceListener listener : getSmartDeviceListener()){
+			for(IFieldDeviceListener listener : getSmartDeviceListener()){
 				listener.readyStateChanged(getLocalSmartDevice(), state);
 			}
 		}

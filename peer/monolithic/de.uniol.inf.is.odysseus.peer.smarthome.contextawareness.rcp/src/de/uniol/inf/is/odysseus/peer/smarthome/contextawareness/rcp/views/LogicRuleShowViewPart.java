@@ -25,7 +25,7 @@ import com.google.common.collect.Lists;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.ASmartDevice;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.Actor;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.FieldDevice;
-import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.ISmartDeviceListener;
+import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.IFieldDeviceListener;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.LogicRule;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.Sensor;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.SmartDevice;
@@ -45,7 +45,7 @@ public class LogicRuleShowViewPart extends ViewPart {
 
 	private static final Logger LOG = LoggerFactory
 			.getLogger(LogicRuleShowViewPart.class);
-	ISmartDeviceListener smartDeviceListener = new ISmartDeviceListener() {
+	IFieldDeviceListener smartDeviceListener = new IFieldDeviceListener() {
 		@Override
 		public void fieldDeviceConnected(ASmartDevice sender, FieldDevice device) {
 			if (device instanceof Sensor) {
