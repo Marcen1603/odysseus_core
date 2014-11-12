@@ -82,7 +82,10 @@ import de.uniol.inf.is.odysseus.mep.functions.crypt.SHA244Function;
 import de.uniol.inf.is.odysseus.mep.functions.crypt.SHA256Function;
 import de.uniol.inf.is.odysseus.mep.functions.crypt.SHA384Function;
 import de.uniol.inf.is.odysseus.mep.functions.crypt.SHA512Function;
+import de.uniol.inf.is.odysseus.mep.functions.list.IndexOfFunction;
+import de.uniol.inf.is.odysseus.mep.functions.list.IsEmptyFunction;
 import de.uniol.inf.is.odysseus.mep.functions.list.ListContainsFunction;
+import de.uniol.inf.is.odysseus.mep.functions.list.SizeFunction;
 import de.uniol.inf.is.odysseus.mep.functions.math.AbsoluteFunction;
 import de.uniol.inf.is.odysseus.mep.functions.math.ArcCosinusFunction;
 import de.uniol.inf.is.odysseus.mep.functions.math.ArcSinusFunction;
@@ -483,6 +486,9 @@ public class MEP implements IExpressionParser {
 
 		// List Functions
 		registerFunction(new ListContainsFunction());
+        registerFunction(new IsEmptyFunction());
+        registerFunction(new SizeFunction());
+        registerFunction(new IndexOfFunction());
 
 		registerFunction(new TupleAccessFunction());
 
