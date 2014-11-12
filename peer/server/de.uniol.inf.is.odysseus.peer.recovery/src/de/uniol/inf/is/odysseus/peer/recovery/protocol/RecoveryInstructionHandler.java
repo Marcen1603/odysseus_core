@@ -24,6 +24,7 @@ import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryCommunicator;
 import de.uniol.inf.is.odysseus.peer.recovery.internal.BackupInformation;
 import de.uniol.inf.is.odysseus.peer.recovery.internal.RecoveryCommunicator;
 import de.uniol.inf.is.odysseus.peer.recovery.messages.RecoveryInstructionMessage;
+import de.uniol.inf.is.odysseus.peer.recovery.util.BuddyHelper;
 import de.uniol.inf.is.odysseus.peer.recovery.util.LocalBackupInformationAccess;
 import de.uniol.inf.is.odysseus.peer.recovery.util.RecoveryHelper;
 
@@ -35,7 +36,7 @@ import de.uniol.inf.is.odysseus.peer.recovery.util.RecoveryHelper;
  *
  */
 public class RecoveryInstructionHandler {
-	
+
 	private static final Logger LOG = LoggerFactory.getLogger(RecoveryInstructionHandler.class);
 
 	private static IRecoveryCommunicator recoveryCommunicator;
@@ -103,12 +104,12 @@ public class RecoveryInstructionHandler {
 
 	@SuppressWarnings("rawtypes")
 	private static void addQuery(String pql, ID sharedQueryId) {
-		
-		if(!RecoveryCommunicator.getExecutor().isPresent()) {
-			
+
+		if (!RecoveryCommunicator.getExecutor().isPresent()) {
+
 			LOG.error("No executor bound!");
 			return;
-			
+
 		}
 
 		Collection<Integer> installedQueries = RecoveryHelper.installAndRunQueryPartFromPql(pql);
@@ -116,7 +117,6 @@ public class RecoveryInstructionHandler {
 		// Call "receiveFromNewPeer" on the subsequent receiver so that that
 		// peer creates a socket-connection to us
 		IServerExecutor executor = RecoveryCommunicator.getExecutor().get();
-		boolean foundReceiver = false;
 		for (IPhysicalQuery query : executor.getExecutionPlan().getQueries()) {
 			if (installedQueries.contains(query.getID())) {
 				for (IPhysicalOperator operator : query.getAllOperators()) {
@@ -142,37 +142,18 @@ public class RecoveryInstructionHandler {
 						} catch (URISyntaxException e) {
 							e.printStackTrace();
 						}
-					} else if (operator instanceof JxtaReceiverPO) {
-						foundReceiver = true;
-						JxtaReceiverPO receiver = (JxtaReceiverPO) operator;
-
-						try {
-							String peerIdString = receiver.getPeerIDString();
-							URI peerUri = new URI(peerIdString);
-							PeerID peer = PeerID.create(peerUri);
-							// To this peer we have to send an "GO_ON"
-							// message
-							String pipeIdString = receiver.getPipeIDString();
-							URI pipeUri = new URI(pipeIdString);
-							PipeID pipe = PipeID.create(pipeUri);
-
-							recoveryCommunicator.sendGoOnMessage(peer, pipe);
-							
-						} catch (URISyntaxException e) {
-							e.printStackTrace();
-						}
 					}
 				}
 			}
 		}
-		
+
 		// Add this info to the local-backup-info
 		IRecoveryBackupInformation backupInfo = new BackupInformation();
 		backupInfo.setSharedQuery(sharedQueryId);
 		backupInfo.setLocalPQL(pql);
 		LocalBackupInformationAccess.getStore().add(backupInfo);
-		
-		if (!foundReceiver) {
+
+		if (BuddyHelper.needBuddy(pql)) {
 			// We don't have a receiver, thus we need a buddy
 			recoveryCommunicator.chooseBuddyForQuery(sharedQueryId);
 		}
@@ -180,14 +161,14 @@ public class RecoveryInstructionHandler {
 
 	@SuppressWarnings("rawtypes")
 	private static void updateReceiver(PeerID newSender, PipeID pipeId) {
-		
-		if(!RecoveryCommunicator.getExecutor().isPresent()) {
-			
+
+		if (!RecoveryCommunicator.getExecutor().isPresent()) {
+
 			LOG.error("No executor bound!");
 			return;
-			
+
 		}
-		
+
 		// 1. Get the receiver, which we have to update
 		Collection<IPhysicalQuery> queries = RecoveryCommunicator.getExecutor().get().getExecutionPlan().getQueries();
 		for (IPhysicalQuery query : queries) {
@@ -214,7 +195,7 @@ public class RecoveryInstructionHandler {
 		info.setPeer(sender);
 		info.setSharedQuery(sharedQueryId);
 		String totalPQL = "";
-		for(String pql : pqls) {
+		for (String pql : pqls) {
 			totalPQL += " " + pql;
 		}
 		info.setPQL(totalPQL);
