@@ -33,6 +33,8 @@ import windscadaanwendung.hd.ae.HitAEData;
  * 
  */
 public class HitAEView extends ViewPart implements AEObserver {
+	public HitAEView() {
+	}
 
 	private static Composite hitAEContainer;
 	private static Composite parent;
@@ -60,8 +62,10 @@ public class HitAEView extends ViewPart implements AEObserver {
 		swtDateSince = new DateTime(toolsContainer, SWT.BORDER);
 		swtDateSince.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false,
 				false, 1, 1));
+		swtDateSince.setDate(2005, 0, 1);
 
 		swtTimeSince = new DateTime(toolsContainer, SWT.BORDER | SWT.TIME);
+		swtTimeSince.setTime(0, 0, 0);
 
 		Label lblDatenBis = new Label(toolsContainer, SWT.NONE);
 		lblDatenBis.setText("Daten bis:");
@@ -69,8 +73,10 @@ public class HitAEView extends ViewPart implements AEObserver {
 		swtDateUntil = new DateTime(toolsContainer, SWT.BORDER);
 		swtDateUntil.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false,
 				false, 1, 1));
+		swtDateUntil.setDate(2005, 0, 1);
 
 		swtTimeUntil = new DateTime(toolsContainer, SWT.BORDER | SWT.TIME);
+		swtTimeUntil.setDate(0, 45, 0);
 
 		btnZeigeGelesene = new Button(toolsContainer, SWT.CHECK);
 		btnZeigeGelesene.addSelectionListener(new SelectionAdapter() {

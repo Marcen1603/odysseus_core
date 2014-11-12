@@ -23,6 +23,8 @@ public class ListView extends ViewPart {
 
 	public static final String ID = "windscadaanwendung.views.ListView";
 	static Tree tree;
+	
+	public static WindFarm selectedFarm = null;
 
 	@Override
 	public void createPartControl(Composite parent) {
@@ -118,16 +120,22 @@ public class ListView extends ViewPart {
 
 	/**
 	 * This method sets the selectedFarm in windSCADA to show the data from in
-	 * the Views
+	 * the Views.
+	 * If the selectedFarm is already set nothing will happen.
 	 * 
 	 * @param selectedFarm
 	 *            the windFarm which data should be shown
 	 */
 	private static void handleSelectionWindFarm(WindFarm selectedFarm) {
-		UebersichtView.setSelectedWindpark(selectedFarm);
-		DetailView.setSelectedWKA(null);
-		DashboardPartViewObserver.setWindFarm(selectedFarm);
-		// MapView.setSelectedFarm(selectedFarm);
+		if (ListView.selectedFarm != selectedFarm) {
+			UebersichtView.setSelectedWindpark(selectedFarm);
+			DetailView.setSelectedWKA(null);
+			DashboardPartViewObserver.setWindFarm(selectedFarm);
+			// MapView.setSelectedFarm(selectedFarm);
+			ListView.selectedFarm = selectedFarm;
+		} else {
+			// The selected Farm is already shown. Do nothing!
+		}
 	}
 
 }
