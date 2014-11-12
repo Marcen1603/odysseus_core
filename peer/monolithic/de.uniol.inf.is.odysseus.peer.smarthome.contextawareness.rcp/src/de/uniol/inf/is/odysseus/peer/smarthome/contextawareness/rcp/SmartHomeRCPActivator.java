@@ -49,7 +49,6 @@ public class SmartHomeRCPActivator implements BundleActivator {
 
 	// called by OSGi-DS
 	public static void bindP2PNetworkManager(IP2PNetworkManager serv) {
-		System.out.println("SmartHomeRCPActivator bindP2PNetworkManager");
 		p2pNetworkManager = serv;
 
 		smartDeviceAdvertisementListener = new SmartDeviceAdvertisementListener();
@@ -66,7 +65,6 @@ public class SmartHomeRCPActivator implements BundleActivator {
 
 	// called by OSGi-DS
 	public static void bindPeerCommunicator(IPeerCommunicator serv) {
-		System.out.println("SmartHomeRCPActivator bindPeerCommunicator");
 		peerCommunicator = serv;
 		// peerCommunicator.registerMessageType(SmartDeviceMessage.class);
 	}
@@ -106,8 +104,6 @@ public class SmartHomeRCPActivator implements BundleActivator {
 	// called by OSGi-DS
 	public static void bindSmartDeviceService(
 			ISmartDeviceService _smartDeviceService) {
-		System.out.println("SmartHomeRCPActivator bindSmartDeviceService");
-
 		smartDeviceService = _smartDeviceService;
 		smartDeviceService.addSmartDeviceListener(smartDeviceListener);
 	}
