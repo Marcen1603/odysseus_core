@@ -12,9 +12,13 @@ public class SmartDeviceKeywordProvider implements IPreParserKeywordProvider {
 	public Map<String, Class<? extends IPreParserKeyword>> getKeywords() {
 		Map<String, Class<? extends IPreParserKeyword>> keywords = new HashMap<String, Class<? extends IPreParserKeyword>>();
 		
-		keywords.put(SmartDeviceSensorNamePreParserKeyword.KEYWORD, SmartDeviceSensorNamePreParserKeyword.class);
+		keywords.put(SmartDeviceAddSensorNamePreParserKeyword.KEYWORD, SmartDeviceAddSensorNamePreParserKeyword.class);
+		keywords.put(SmartDeviceSensorRawSourceName.KEYWORD, SmartDeviceSensorRawSourceName.class);
+
 		keywords.put(SmartDeviceActivityInterpreterNamePreParserKeyword.KEYWORD, SmartDeviceActivityInterpreterNamePreParserKeyword.class);
+		
 		keywords.put(SmartDeviceLogicRuleNamePreParserKeyword.KEYWORD, SmartDeviceLogicRuleNamePreParserKeyword.class);
+		
 		keywords.put(SmartDeviceActorNamePreParserKeyword.KEYWORD, SmartDeviceActorNamePreParserKeyword.class);
 		
 		return keywords;

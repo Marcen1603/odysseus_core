@@ -17,12 +17,25 @@ public class SmartDeviceSensorScriptTemplate implements IOdysseusScriptTemplate 
 	@Override
 	public String getText() {
 		StringBuilder sb = new StringBuilder();
-		sb.append("///SmartDevice Sensor Script Template\n");
+		sb.append("///SmartDevice Sensor Template\n");
 		sb.append("\n");
-		sb.append("#SMARTDEVICE_SENSOR_NAME <sensor name>");
+		sb.append("#DEFINE sensorname newSensor1\n");
+		sb.append("#PARSER PQL\n");
+		sb.append("#QNAME ${sensorname}_query\n");
+		sb.append("#SMARTDEVICE_SENSOR_NAME ${sensorname}\n");
+		sb.append("#SMARTDEVICE_SENSOR_RAW_SOURCE_NAME ${sensorname}_source\n");
+		sb.append("#SMARTDEVICE_ADD_SENSOR_NAME ${sensorname}\n");
 		sb.append("\n");
-		sb.append("///Query for raw values:\n");
+		sb.append("#RUNQUERY\n");
+		sb.append("${sensorname}_source := TEMPER1ACCESS({SOURCE = 'temper1', TEMPNUMBER = 0})\n");
 		sb.append("\n");
+		
+		
+		//sb.append("\n");
+		//sb.append("#SMARTDEVICE_SENSOR_NAME <sensor name>");
+		//sb.append("\n");
+		//sb.append("///Query for raw values:\n");
+		//sb.append("\n");
 		
 		return sb.toString();
 	}
