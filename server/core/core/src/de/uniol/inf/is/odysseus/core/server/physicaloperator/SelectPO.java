@@ -28,23 +28,39 @@ public class SelectPO<T extends IStreamObject<?>> extends AbstractPipe<T, T>
 		implements IHasPredicate {
 
 	private IPredicate<? super T> predicate;
-	private IHeartbeatGenerationStrategy<T> heartbeatGenerationStrategy = new NoHeartbeatGenerationStrategy<T>();
+    private int heartbeatRate;
+    private IHeartbeatGenerationStrategy<T> heartbeatGenerationStrategy = new NoHeartbeatGenerationStrategy<>();
 
-	@Override
-	public IPredicate<? super T> getPredicate() {
-		return predicate;
+    public SelectPO(IPredicate<? super T> predicate) {
+        this.predicate = predicate.clone();
+    }
+
+    public SelectPO(SelectPO<T> po) {
+        super(po);
+        this.predicate = po.predicate.clone();
+        this.heartbeatGenerationStrategy = po.heartbeatGenerationStrategy.clone();
 	}
 
-	public SelectPO(IPredicate<? super T> predicate) {
-		this.predicate = predicate.clone();
-	}
+    @Override
+    public IPredicate<? super T> getPredicate() {
+        return predicate;
+    }
 
-	public SelectPO(SelectPO<T> po) {
-		super(po);
-		this.predicate = po.predicate.clone();
-		this.heartbeatGenerationStrategy = po.heartbeatGenerationStrategy
-				.clone();
-	}
+    /**
+     * @return the heartbeat rate
+     */
+    public int getHeartbeatRate() {
+        return this.heartbeatRate;
+    }
+
+    /**
+     * Set the heartbeat rate
+     * 
+     * @param heartbeatRate
+     */
+    public void setHeartbeatRate(int heartbeatRate) {
+        this.heartbeatRate = heartbeatRate;
+    }
 
 	@Override
 	public OutputMode getOutputMode() {
@@ -76,7 +92,7 @@ public class SelectPO<T extends IStreamObject<?>> extends AbstractPipe<T, T>
 
 	@Override
 	public SelectPO<T> clone() {
-		return new SelectPO<T>(this);
+        return new SelectPO<>(this);
 	}
 
 	// /* (non-Javadoc)
@@ -162,4 +178,5 @@ public class SelectPO<T extends IStreamObject<?>> extends AbstractPipe<T, T>
 		}
 		return false;
 	}
+
 }

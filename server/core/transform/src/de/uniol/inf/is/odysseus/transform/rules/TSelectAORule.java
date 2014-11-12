@@ -34,6 +34,7 @@ public class TSelectAORule extends AbstractTransformationRule<SelectAO> {
 	public void execute(SelectAO selectAO, TransformationConfiguration transformConfig) throws RuleException {		
 		@SuppressWarnings({ "unchecked", "rawtypes" })
 		SelectPO<?> selectPO = new SelectPO(selectAO.getPredicate());
+        selectPO.setHeartbeatRate(selectAO.getHeartbeatRate());
 		defaultExecute(selectAO, selectPO, transformConfig, true, true);		
 	}
 
