@@ -19,14 +19,15 @@ import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableSet;
 
-import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
+import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
+import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
-import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvider;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
-import de.uniol.inf.is.odysseus.p2p_new.physicaloperator.JxtaReceiverPO;
+import de.uniol.inf.is.odysseus.p2p_new.logicaloperator.JxtaReceiverAO;
 import de.uniol.inf.is.odysseus.p2p_new.physicaloperator.JxtaSenderPO;
+import de.uniol.inf.is.odysseus.peer.distribute.util.LogicalQueryHelper;
 import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryCommunicator;
 import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryDynamicBackup;
 import de.uniol.inf.is.odysseus.peer.recovery.internal.SharedQuery;
@@ -288,17 +289,17 @@ public class RecoveryDynamicBackup implements IRecoveryDynamicBackup {
 		// they have to hold on
 		ImmutableSet<String> backupPQL = LocalBackupInformationAccess.getStoredPQLStatements(sharedQueryId, failedPeer);
 		for (String pql : backupPQL) {
-			List<IPhysicalQuery> physicalQueries = RecoveryHelper.convertToPhysicalPlan(pql);
+			List<ILogicalQuery> logicalQueries = RecoveryHelper.convertToLogicalQueries(pql);
 			// Search for the receiver
-			for (IPhysicalQuery query : physicalQueries) {
-				for (IPhysicalOperator op : query.getAllOperators()) {
-					if (op instanceof JxtaReceiverPO) {
-						JxtaReceiverPO<?> receiver = (JxtaReceiverPO<?>) op;
+			for (ILogicalQuery query : logicalQueries) {
+				for (ILogicalOperator op : LogicalQueryHelper.getAllOperators(query)) {
+					if (op instanceof JxtaReceiverAO) {
+						JxtaReceiverAO receiver = (JxtaReceiverAO) op;
 						// This is the information about the peer from which
 						// we get the data
 						// This peer has to hold on
-						String peerId = receiver.getPeerIDString();
-						String pipeId = receiver.getPipeIDString();
+						String peerId = receiver.getPeerID();
+						String pipeId = receiver.getPipeID();
 
 						try {
 							URI uri = new URI(pipeId);
@@ -317,6 +318,40 @@ public class RecoveryDynamicBackup implements IRecoveryDynamicBackup {
 				}
 			}
 		}
+		/*
+		 * Note: Switched from using physical operators to using logical operators.
+		 * RecoveryHelper.convertToPhysicalPlan still exists but is deprecated. M.B.
+		 */
+//		for (String pql : backupPQL) {
+//			List<IPhysicalQuery> physicalQueries = RecoveryHelper.convertToPhysicalPlan(pql);
+//			// Search for the receiver
+//			for (IPhysicalQuery query : physicalQueries) {
+//				for (IPhysicalOperator op : query.getAllOperators()) {
+//					if (op instanceof JxtaReceiverPO) {
+//						JxtaReceiverPO<?> receiver = (JxtaReceiverPO<?>) op;
+//						// This is the information about the peer from which
+//						// we get the data
+//						// This peer has to hold on
+//						String peerId = receiver.getPeerIDString();
+//						String pipeId = receiver.getPipeIDString();
+//
+//						try {
+//							URI uri = new URI(pipeId);
+//							PipeID pipe = PipeID.create(uri);
+//							RecoveryInstructionMessage holdOnMessage = RecoveryInstructionMessage
+//									.createHoldOnMessage(pipe);
+//							uri = new URI(peerId);
+//							PeerID peerToHoldOn = PeerID.create(uri);
+//
+//							cRecoveryCommunicator.get().sendHoldOnMessage(peerToHoldOn, holdOnMessage);
+//
+//						} catch (URISyntaxException e) {
+//							e.printStackTrace();
+//						}
+//					}
+//				}
+//			}
+//		}
 	}
 
 	@Override

@@ -3,7 +3,6 @@ package de.uniol.inf.is.odysseus.peer.recovery.internal;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import net.jxta.id.ID;
 import net.jxta.peer.PeerID;
@@ -14,13 +13,13 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 
-import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
+import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
-import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.p2p_new.IP2PNetworkManager;
-import de.uniol.inf.is.odysseus.p2p_new.physicaloperator.JxtaReceiverPO;
+import de.uniol.inf.is.odysseus.p2p_new.logicaloperator.JxtaReceiverAO;
 import de.uniol.inf.is.odysseus.peer.distribute.ILogicalQueryPart;
 import de.uniol.inf.is.odysseus.peer.distribute.listener.AbstractQueryDistributionListener;
+import de.uniol.inf.is.odysseus.peer.distribute.util.LogicalQueryHelper;
 import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryBackupInformation;
 import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryBackupInformationStore;
 import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryCommunicator;
@@ -177,11 +176,10 @@ public class RecoveryQueryDistributionListener extends AbstractQueryDistribution
 	 */
 	private void checkForBuddy(String pql, ID sharedQueryId) {
 		boolean foundReceiver = false;
-		List<IPhysicalQuery> plans = RecoveryHelper.convertToPhysicalPlan(pql);
-		for (IPhysicalQuery plan : plans) {
-			Set<IPhysicalOperator> ops = plan.getAllOperators();
-			for (IPhysicalOperator op : ops) {
-				if (op instanceof JxtaReceiverPO) {
+		List<ILogicalQuery> logicalQueries = RecoveryHelper.convertToLogicalQueries(pql);
+		for (ILogicalQuery query : logicalQueries) {
+			for (ILogicalOperator op : LogicalQueryHelper.getAllOperators(query)) {
+				if (op instanceof JxtaReceiverAO) {
 					foundReceiver = true;
 					break;
 				}
@@ -192,6 +190,26 @@ public class RecoveryQueryDistributionListener extends AbstractQueryDistribution
 			}
 			foundReceiver = false;
 		}
+		
+		/*
+		 * Note: Switched from using physical operators to using logical operators.
+		 * RecoveryHelper.convertToPhysicalPlan still exists but is deprecated. M.B.
+		 */
+//		List<IPhysicalQuery> plans = RecoveryHelper.convertToPhysicalPlan(pql);
+//		for (IPhysicalQuery plan : plans) {
+//			Set<IPhysicalOperator> ops = plan.getAllOperators();
+//			for (IPhysicalOperator op : ops) {
+//				if (op instanceof JxtaReceiverPO) {
+//					foundReceiver = true;
+//					break;
+//				}
+//			}
+//			if (!foundReceiver) {
+//				// We need a buddy
+//				cCommunicator.get().chooseBuddyForQuery(sharedQueryId);
+//			}
+//			foundReceiver = false;
+//		}
 
 	}
 }
