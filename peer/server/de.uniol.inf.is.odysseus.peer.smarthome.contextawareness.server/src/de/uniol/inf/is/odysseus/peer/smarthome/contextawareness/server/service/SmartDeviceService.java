@@ -1,7 +1,10 @@
-package de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice;
+package de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.server.service;
 
 import java.util.ArrayList;
 
+import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.ASmartDevice;
+import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.FieldDevice;
+import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.ISmartDeviceListener;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.server.SmartDeviceServer;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.server.SmartDeviceServerDictionaryDiscovery;
 

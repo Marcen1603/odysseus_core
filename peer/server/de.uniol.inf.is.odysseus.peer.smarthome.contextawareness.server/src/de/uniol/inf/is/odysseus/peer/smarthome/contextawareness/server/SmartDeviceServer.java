@@ -29,6 +29,8 @@ import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.utils.SmartDevic
 public class SmartDeviceServer {
 	private static final Logger LOG = LoggerFactory
 			.getLogger(SmartHomeServerPlugIn.class);
+	private static final String INIT_SENSORS_SYS_PROPERTY = "smartdevice.init.sensors";
+	private static final String INIT_ACTORS_SYS_PROPERTY = "smartdevice.init.actors";
 	private static final String INIT_EXAMPLE_ACTIVITY_INTERPRETERS_SYS_PROPERTY = "smartdevice.example.activityinterpreters";
 	private static final String INIT_EXAMPLE_LOGIC_RULES_SYS_PROPERTY = "smartdevice.example.logicrules";
 	private static SmartDeviceServer instance;
@@ -41,6 +43,9 @@ public class SmartDeviceServer {
 	final long SmartDeviceAdvertisement_EXPIRATION_TIME = 30 * 3;
 	private static IPQLGenerator pqlGenerator;
 	private SmartDeviceListener localSmartDeviceListener;
+	private TemperSensor temper;
+	private RPiGPIOSensor gpioTaste7;
+	private RPiGPIOActor gpioLED11;
 
 	SmartDeviceServer() {
 		initLocalSmartDeviceAsync();
@@ -282,39 +287,27 @@ public class SmartDeviceServer {
 				SmartDeviceLocalConfigurationServer.getInstance()
 						.getSmartDeviceConfig());
 
-		//
-		// 1. Instantiate Sensors:
-		// Temper1
-		TemperSensor temper = new TemperSensor("temper", peerName, "");
-
-		//
-		// GPIO_07 as input sensor
-		RPiGPIOSensor gpioTaste7 = new RPiGPIOSensor("RPiGPIOTaster7",
-				peerName, "");// postfix: cleanPeerID
-		gpioTaste7.setInputPin(7);
-
-		// getLocalSmartDevice().addConnectedFieldDevice(temper1);
-		getLocalSmartDevice().addConnectedFieldDevice(temper);
-		getLocalSmartDevice().addConnectedFieldDevice(gpioTaste7);
-
-		temper.setSmartDevice(getLocalSmartDevice());
-		gpioTaste7.setSmartDevice(getLocalSmartDevice());
-
-		String propertySensors = System
-				.getProperty(INIT_EXAMPLE_ACTIVITY_INTERPRETERS_SYS_PROPERTY);
+		String propertySensors = System.getProperty(INIT_SENSORS_SYS_PROPERTY);
 		if (propertySensors != null && propertySensors.equals("true")) {
-			addExampleActivityInterpreters(peerName, temper, gpioTaste7);
+			initSensors(peerName);
 		}
 
-		// //////////////////////////////////////////////////////////
-		// LED GPIO_11
-		RPiGPIOActor gpioLED11 = new RPiGPIOActor("RPiLED11", peerName, "");
-		getLocalSmartDevice().addConnectedFieldDevice(gpioLED11);
+		String propActivityInterpreters = System
+				.getProperty(INIT_EXAMPLE_ACTIVITY_INTERPRETERS_SYS_PROPERTY);
+		if (propActivityInterpreters != null
+				&& propActivityInterpreters.equals("true")) {
+			addExampleActivityInterpreters(peerName);
+		}
 
 		String propertyActors = System
 				.getProperty(INIT_EXAMPLE_LOGIC_RULES_SYS_PROPERTY);
 		if (propertyActors != null && propertyActors.equals("true")) {
-			addExampleLogicRules(peerName, gpioLED11);
+			addExampleLogicRules(peerName);
+		}
+
+		String propActors = System.getProperty(INIT_ACTORS_SYS_PROPERTY);
+		if (propActors != null && propActors.equals("true")) {
+			initActors(peerName);
 		}
 
 		//
@@ -326,8 +319,32 @@ public class SmartDeviceServer {
 		getLocalSmartDevice().setReady(true);
 	}
 
-	private void addExampleActivityInterpreters(String peerName,
-			TemperSensor temper, RPiGPIOSensor gpioTaste7) {
+	private void initSensors(String peerName) {
+		//
+		// 1. Instantiate Sensors:
+		// Temper1
+		temper = new TemperSensor("temper", peerName, "");
+
+		//
+		// GPIO_07 as input sensor
+		gpioTaste7 = new RPiGPIOSensor("RPiGPIOTaster7", peerName, "");// postfix:
+																		// cleanPeerID
+		gpioTaste7.setInputPin(7);
+
+		// getLocalSmartDevice().addConnectedFieldDevice(temper1);
+		getLocalSmartDevice().addConnectedFieldDevice(temper);
+		getLocalSmartDevice().addConnectedFieldDevice(gpioTaste7);
+
+		temper.setSmartDevice(getLocalSmartDevice());
+		gpioTaste7.setSmartDevice(getLocalSmartDevice());
+
+	}
+
+	private void addExampleActivityInterpreters(String peerName) {
+		if (temper == null) {
+			initSensors(peerName);
+		}
+
 		temper.createActivityInterpreterWithCondition("hot", "Temperature > 24");
 		temper.createActivityInterpreterWithCondition("cold",
 				"Temperature < 18");
@@ -336,11 +353,21 @@ public class SmartDeviceServer {
 				RPiGPIOSensor.GPIO_SENSOR_STATE.HIGH);
 	}
 
-	private void addExampleLogicRules(String peerName, RPiGPIOActor gpioLED11) {
+	private void addExampleLogicRules(String peerName) {
+		if (gpioLED11 == null) {
+			initActors(peerName);
+		}
 		gpioLED11.createLogicRuleWithState("hot", State.TOGGLE);
 		gpioLED11.createLogicRuleWithState("cold", State.TOGGLE);
 		// TODO: gpioLED11.createLogicRuleWithState("Tasterbetaetigt",
 		// State.TOGGLE);
+	}
+
+	private void initActors(String peerName) {
+		// //////////////////////////////////////////////////////////
+		// LED GPIO_11
+		gpioLED11 = new RPiGPIOActor("RPiLED11", peerName, "");
+		getLocalSmartDevice().addConnectedFieldDevice(gpioLED11);
 	}
 
 	public static boolean isLocalPeer(String peerIDString) {

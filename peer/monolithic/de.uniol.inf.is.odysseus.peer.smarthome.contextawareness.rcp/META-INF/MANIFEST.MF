@@ -6,7 +6,7 @@ Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.rcp.SmartHomeRCPActivator
 Bundle-Vendor: Andrej Albrecht
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
-Service-Component: OSGI-INF/SmartHomeRCPPlugIn.xml
+Service-Component: OSGI-INF/SmartHomeRCPPlugIn.xml,OSGI-INF/SmartDeviceSensorScriptTemplateService.xml,OSGI-INF/SmartDeviceActivityInterpreterScriptTemplateService.xml,OSGI-INF/SmartDeviceLogicRuleScriptTemplateService.xml,OSGI-INF/SmartDeviceActorScriptTemplateService.xml
 Bundle-ActivationPolicy: lazy
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
@@ -19,15 +19,17 @@ Require-Bundle: org.eclipse.ui,
  Jxta_2.6_Source;bundle-version="1.0.0",
  de.uniol.inf.is.odysseus.peer.update;bundle-version="1.0.0",
  de.uniol.inf.is.odysseus.core.server;bundle-version="1.0.0",
- org.eclipse.jface
+ org.eclipse.jface,
+ de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.server
 Import-Package: de.uniol.inf.is.odysseus.peer.config,
  de.uniol.inf.is.odysseus.peer.ping,
  de.uniol.inf.is.odysseus.peer.resource,
- de.uniol.inf.is.odysseus.peer.smarthome.contextawareness,
  de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice,
  de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.server,
+ de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.server.service,
  de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.utils,
  de.uniol.inf.is.odysseus.rcp,
+ de.uniol.inf.is.odysseus.rcp.editor.text,
  org.apache.commons.math.analysis,
  org.apache.commons.math.geometry,
  org.apache.commons.math3.geometry.euclidean.twod;version="3.2.0",
