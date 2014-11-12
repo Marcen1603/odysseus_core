@@ -1,5 +1,7 @@
 package de.uniol.inf.is.odysseus.keyperformanceindicators.physicaloperator;
-
+/**
+ *  Christopher Licht
+ */
 
 import java.util.ArrayList;
 import java.util.Iterator;

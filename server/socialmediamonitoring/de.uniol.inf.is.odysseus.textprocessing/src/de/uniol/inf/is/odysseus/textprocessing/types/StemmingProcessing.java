@@ -49,8 +49,6 @@ public class StemmingProcessing implements ITextProcessing {
 				
 				if(this.stemmer.stem())
 					stringBuild.append(this.stemmer.getCurrent() + " ");
-				
-				System.out.println("Stemming-false:" + this.stemmer.getCurrent());
 			}
 			tmpResult.add(stringBuild.toString());
 		}
@@ -62,8 +60,6 @@ public class StemmingProcessing implements ITextProcessing {
 				
 				if(this.stemmer.stem())
 					tmpResult.add(this.stemmer.getCurrent());
-				
-				System.out.println("Stemming:" + this.stemmer.getCurrent());
 			}
 		}
 		return tmpResult;
@@ -85,8 +81,5 @@ public class StemmingProcessing implements ITextProcessing {
 		{
 			this.stopWordFlag = "false";
 		}
-		
-		System.out.println("FLAG Stemming: " + this.stopWordFlag);
-		
 	}
 }

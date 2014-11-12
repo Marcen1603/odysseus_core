@@ -1,5 +1,9 @@
 package de.uniol.inf.is.odysseus.textprocessing.physicaloperator;
 
+/**
+ * Christopher Licht
+ */
+
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -139,22 +143,7 @@ public class TextProcessingPO<M extends ITimeInterval, R extends Tuple<M>> exten
 			li.add(iter.next().toString());
 		}
 		
-		
-		System.out.println("Ergebnis:" + li);
-		
 		object.setAttribute(this.positionInputText, li);
-		transfer(object, 0);
-		
-		
-		/***Alternativ durch StringBuilder***/
-		/*StringBuilder sb = new StringBuilder();		
-	
-		while(iter.hasNext())
-			sb.append(iter.next() + " ");*/
-		
-		//object.setAttribute(this.positionInputText, sb);
-		//transfer(object, 0);
-		//outputTuple.setAttribute(0, sb.toString());
-	
+		transfer(object, 0);	
 	}
 }

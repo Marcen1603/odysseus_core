@@ -1,5 +1,9 @@
 package de.uniol.inf.is.odysseus.sentimentanalysis.physicaloperator;
 
+//import java.io.File;
+//import java.io.FileWriter;
+//import java.io.IOException;
+//import java.util.Date;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -152,8 +156,6 @@ public class SentimentAnalysisPO<M extends ITimeInterval> extends AbstractPipe<T
 		{
 			//System.out.println("Threshold fall below " + this.thresholdValue);
 		}
-		//System.out.println("===== Instance classified =====");
-		//System.out.println("Class: " + instances.classAttribute().value((int) pred));
 		this.classification =  instances.classAttribute().value((int) pred);
 	}
 	
@@ -176,10 +178,7 @@ public class SentimentAnalysisPO<M extends ITimeInterval> extends AbstractPipe<T
 		this.classifier.setClassifier(this.userDefinedClassifier);
 		
 		Evaluation evaluation = new Evaluation(this.trainData);		
-		evaluation.crossValidateModel(this.classifier, this.trainData, this.maxTrainSize, new Random(1));
-		
-	    System.out.println("===========EVALUATION:\n " + evaluation.toSummaryString());
-		System.out.println("===========EVALUATION-DETAILS:\n " + evaluation.toClassDetailsString());
+		evaluation.crossValidateModel(this.classifier, this.trainData, 5, new Random(1));
 		
 		isEvaluated = true;
 	}
@@ -194,8 +193,6 @@ public class SentimentAnalysisPO<M extends ITimeInterval> extends AbstractPipe<T
 				this.classifier.setFilter(this.filter);
 				this.classifier.setClassifier(this.userDefinedClassifier);
 				this.classifier.buildClassifier(this.trainData);
-				
-				System.out.println("=========== Training data successfully ===========");
 				
 				this.isTrained = true;
 		} 
@@ -238,8 +235,6 @@ public class SentimentAnalysisPO<M extends ITimeInterval> extends AbstractPipe<T
 						
 		instances.add(instance);
 		
-		System.out.println("===== Instance created =====");
-		System.out.println(instances);
 		return instances;
 	}
 
@@ -256,7 +251,6 @@ public class SentimentAnalysisPO<M extends ITimeInterval> extends AbstractPipe<T
 			List<Tuple<M>> list = this.sweepArea.queryOverlapsAsList(object.getMetadata());
 			
 			try {
-				
 				    instances.clear();
 				
 					for(Tuple<M> obj : list)
@@ -264,7 +258,7 @@ public class SentimentAnalysisPO<M extends ITimeInterval> extends AbstractPipe<T
 						this.instance = WekaConverter.convertToNominalInstance(obj, this.resolver);
 						instances.add(this.instance);
 					}
-						
+					
 					//this.instance = WekaConverter.convertToNominalInstance(object, this.resolver);
 					//instances.add(this.instance);
 				
@@ -287,12 +281,11 @@ public class SentimentAnalysisPO<M extends ITimeInterval> extends AbstractPipe<T
 					e.printStackTrace();
 				}
 		}
-		//else if(port == 0 && !(this.trainData.size() < this.maxTrainSize))
-		else if((port == 0) && (this.trainData != null))
-		{			
-			//if(this.trainData.size() >= this.maxTrainSize)
-			if(isTrained && isEvaluated)
+		else 
+		{
+			if(/*(port == 0) &&*/ (isTrained) && (isEvaluated))
 			{
+				//if(this.trainData.size() >= this.maxTrainSize)		
 				try 
 				{
 					Instances instances = createInstancesForClassifying(object.getAttribute(this.attributeTextToBeClassifiedPos).toString());
@@ -304,8 +297,7 @@ public class SentimentAnalysisPO<M extends ITimeInterval> extends AbstractPipe<T
 					e.printStackTrace();
 				}
 			}
-		}		
-	
+		}
 	}
 
 	private void prepareTupelForOutput(Tuple<M> object) {
@@ -378,11 +370,9 @@ public class SentimentAnalysisPO<M extends ITimeInterval> extends AbstractPipe<T
 	protected void process_close() {
 		super.process_close();
 		
-		isTrained = false;
+		//isTrained = false;
 		isEvaluated = false;
-		this.trainData.clear();
+		//this.trainData.clear();
 		this.instances.clear();
 	}
-	
-	
 }

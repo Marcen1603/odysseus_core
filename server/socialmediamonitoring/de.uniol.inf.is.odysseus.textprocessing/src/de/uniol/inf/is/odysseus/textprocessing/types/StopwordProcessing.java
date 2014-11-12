@@ -1,10 +1,10 @@
 package de.uniol.inf.is.odysseus.textprocessing.types;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
+//import java.io.BufferedReader;
+//import java.io.File;
+//import java.io.FileNotFoundException;
+//import java.io.FileReader;
+//import java.io.IOException;
 import java.util.Iterator;
 import java.util.Vector;
 
@@ -25,7 +25,6 @@ public class StopwordProcessing implements ITextProcessing {
 		return new StopwordProcessing(this.kpiType);
 	}
 
-	@Override
 	public String getType() {
 		return this.kpiType;
 	}
@@ -55,7 +54,7 @@ public class StopwordProcessing implements ITextProcessing {
 				}
 				else
 				{
-					System.out.println("Stopword:" + tempText[i]);
+					//System.out.println("Stopword:" + tempText[i] + " entfernt.");
 				}
 			}
 			result.add(stringBuild.toString());
@@ -72,7 +71,7 @@ public class StopwordProcessing implements ITextProcessing {
 				}
 				else
 				{
-					System.out.println("Stopword: " + tempSentence);
+					//System.out.println("Stopword: " + tempSentence);
 				}
 			}
 		}
@@ -81,33 +80,33 @@ public class StopwordProcessing implements ITextProcessing {
 	
 	private void setListWithAdditionalStopWords()
 	{
-		String[] parts;
-		
-		BufferedReader br = null;
-        try 
-        {
-        	br = new BufferedReader(new FileReader(new File("D:\\OdysseusOriginal\\trunk\\server\\socialmediamonitoring\\de.uniol.inf.is.odysseus.textprocessing\\OSGI-INF\\stopwords.txt")));
-            String line = null;
-            while((line = br.readLine()) != null) {            
-                parts = line.split(",");
-                for(String str : parts)
-                {
-                	this.stopWords.add(str);
-                }
-            }
-        } catch(FileNotFoundException e) {
-            e.printStackTrace();
-        } catch(IOException e) {
-            e.printStackTrace();
-        } finally {
-            if(br != null) {
-                try {
-                    br.close();
-                } catch(IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
+//		String[] parts;
+//		
+//		BufferedReader br = null;
+//        try 
+//        {
+//        	br = new BufferedReader(new FileReader(new File("D:\\OdysseusOriginal\\trunk\\server\\socialmediamonitoring\\de.uniol.inf.is.odysseus.textprocessing\\OSGI-INF\\stopwords.txt")));
+//            String line = null;
+//            while((line = br.readLine()) != null) {            
+//                parts = line.split(",");
+//                for(String str : parts)
+//                {
+//                	this.stopWords.add(str);
+//                }
+//            }
+//        } catch(FileNotFoundException e) {
+//            e.printStackTrace();
+//        } catch(IOException e) {
+//            e.printStackTrace();
+//        } finally {
+//            if(br != null) {
+//                try {
+//                    br.close();
+//                } catch(IOException e) {
+//                    e.printStackTrace();
+//                }
+//            }
+//        }
 	}
 
 	@Override
@@ -119,9 +118,6 @@ public class StopwordProcessing implements ITextProcessing {
 		{
 			this.stopWordFlag = "false";
 		}
-		
-		System.out.println("FLAG: " + this.stopWordFlag);
-		
 		setListWithAdditionalStopWords();
 	}
 }
