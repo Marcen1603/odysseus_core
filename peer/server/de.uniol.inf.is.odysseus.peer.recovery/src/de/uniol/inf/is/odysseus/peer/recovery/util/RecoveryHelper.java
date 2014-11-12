@@ -31,6 +31,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.RestructHelper;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSource;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.IQueryParser;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.QueryParseException;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.IExecutorCommand;
@@ -572,13 +573,24 @@ public class RecoveryHelper {
 			return Lists.newArrayList();
 
 		}
-
-		List<IExecutorCommand> cmds = cPQLParser.get().parse(
-				pql,
-				RecoveryCommunicator.getActiveSession(),
-				DataDictionaryProvider.getDataDictionary(RecoveryCommunicator
-						.getActiveSession().getTenant()), Context.empty());
+		
+		List<IExecutorCommand> cmds = Lists.newArrayList();
 		List<ILogicalQuery> queries = Lists.newArrayList();
+		
+		try {
+
+			cmds = cPQLParser.get().parse(
+					pql,
+					RecoveryCommunicator.getActiveSession(),
+					DataDictionaryProvider.getDataDictionary(RecoveryCommunicator
+							.getActiveSession().getTenant()), Context.empty());
+			
+		} catch(QueryParseException e) {
+			
+			LOG.error("Could not parse {}", pql, e);
+			return queries;
+			
+		}
 
 		for (IExecutorCommand cmd : cmds) {
 
