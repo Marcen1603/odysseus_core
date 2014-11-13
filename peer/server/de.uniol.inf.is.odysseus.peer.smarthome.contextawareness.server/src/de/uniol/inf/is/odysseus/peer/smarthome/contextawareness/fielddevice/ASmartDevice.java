@@ -72,4 +72,13 @@ public abstract class ASmartDevice implements Serializable { // ISmartDevice,
 
 	public abstract boolean save() throws PeerCommunicationException;
 
+	public Sensor getSensor(String sensorName) {
+		for(FieldDevice fd : getConnectedFieldDevices()){
+			if(fd instanceof Sensor && fd.getName().equals(sensorName)){
+				return (de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.Sensor) fd;
+			}
+		}
+		return null;
+	}
+
 }

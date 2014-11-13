@@ -80,6 +80,11 @@ public class TemperSensor extends Sensor {
 					activityConfiguration, getActivitySourceName());
 			queries.put(getActivitySourceName(), actSoNa);
 
+			//for(Entry<String, String> entry : queries.entrySet()){
+			//	System.out.println("SourceName:"+entry.getKey()+" Query:"+entry.getValue());	
+			//}
+			
+			
 			return queries;
 		}
 

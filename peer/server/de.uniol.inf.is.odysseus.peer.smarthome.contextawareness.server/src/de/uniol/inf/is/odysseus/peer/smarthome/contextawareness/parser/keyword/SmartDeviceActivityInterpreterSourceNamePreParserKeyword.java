@@ -9,9 +9,10 @@ import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.script.parser.AbstractPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptException;
 
-public class SmartDeviceActivityInterpreterNamePreParserKeyword extends AbstractPreParserKeyword {
+public class SmartDeviceActivityInterpreterSourceNamePreParserKeyword extends
+		AbstractPreParserKeyword {
 
-	public static final String KEYWORD = "SMARTDEVICE_ACTIVITY_INTERPRETER_NAME";
+	public static final String KEYWORD = "SMARTDEVICE_ACTIVITY_INTERPRETER_SOURCE_NAME";
 	
 	@Override
 	public void validate(Map<String, Object> variables, String parameter,
@@ -27,6 +28,7 @@ public class SmartDeviceActivityInterpreterNamePreParserKeyword extends Abstract
 			String parameter, ISession caller, Context context)
 			throws OdysseusScriptException {
 		variables.put(KEYWORD, parameter);
+		
 		return null;
 	}
 

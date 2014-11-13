@@ -34,8 +34,6 @@ public class SmartDeviceAddSensorNamePreParserKeyword extends
 
 		Object sensorRawSourceName = variables
 				.get(SmartDeviceSensorRawSourceName.KEYWORD);
-		
-		
 		if (sensorRawSourceName == null
 				|| !(sensorRawSourceName instanceof String)
 				|| sensorRawSourceName.equals("")) {
@@ -82,7 +80,7 @@ public class SmartDeviceAddSensorNamePreParserKeyword extends
 		LOG.debug("SensorRawSourceName:"+sensorRawSourceName);
 		LOG.debug("SensorQueryName:"+sensorQueryName);
 		
-		Sensor sensor = new Sensor(parameter, "", "") {
+		Sensor sensor = new Sensor(sensorName, "", "") {
 			private static final long serialVersionUID = 1L;
 			@Override
 			public Map<String, String> getQueriesForRawValues() {
@@ -97,5 +95,4 @@ public class SmartDeviceAddSensorNamePreParserKeyword extends
 		
 		return null;
 	}
-
 }
