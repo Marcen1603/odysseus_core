@@ -58,7 +58,8 @@ public class SDFDatatype extends SDFElement implements Serializable {
 	public static final SDFDatatype DOCUMENT = new SDFDatatype("Document");
 	public static final SDFDatatype LONG = new SDFDatatype("Long");
 	public static final SDFDatatype INTEGER = new SDFDatatype("Integer");
-	public static final SDFDatatype UNSIGNEDINT16 = new SDFDatatype("UnsignedInt16");
+	public static final SDFDatatype UNSIGNEDINT16 = new SDFDatatype(
+			"UnsignedInt16");
 	public static final SDFDatatype BYTE = new SDFDatatype("Byte");
 	public static final SDFDatatype CHAR = new SDFDatatype("Char");
 	public static final SDFDatatype FLOAT = new SDFDatatype("Float");
@@ -67,6 +68,7 @@ public class SDFDatatype extends SDFElement implements Serializable {
 	public static final SDFDatatype BOOLEAN = new SDFDatatype("Boolean");
 	public static final SDFDatatype SHORT = new SDFDatatype("Short");
 	public static final SDFDatatype BITVECTOR = new SDFDatatype("BitVector");
+	public static final SDFDatatype HEXSTRING = new SDFDatatype("HexString");
 
 	public static final SDFDatatype KEYVALUEOBJECT = new SDFDatatype(
 			"KeyValueObject");
@@ -166,13 +168,33 @@ public class SDFDatatype extends SDFElement implements Serializable {
 	public static final SDFDatatype VAR_PARTIAL_AGGREGATE = new SDFDatatype(
 			"VarPartialAggregate");
 
-	public static final SDFDatatype[] NUMBERS = new SDFDatatype[] { BYTE,
-			SHORT, INTEGER, LONG, FLOAT, DOUBLE, START_TIMESTAMP,
-			END_TIMESTAMP, TIMESTAMP };
-	public static final SDFDatatype[] NUMBERS_OBJECT = new SDFDatatype[] {
-			OBJECT, BYTE, SHORT, INTEGER, LONG, FLOAT, DOUBLE, START_TIMESTAMP,
-			END_TIMESTAMP, TIMESTAMP };
-
+	public static final SDFDatatype[] DISCRETE_NUMBERS = new SDFDatatype[] {
+			BYTE, SHORT, INTEGER, LONG, START_TIMESTAMP, END_TIMESTAMP,
+			TIMESTAMP, UNSIGNEDINT16 };
+	
+	public static final SDFDatatype[] FLOATING_NUMBERS = new SDFDatatype[] {
+			FLOAT, DOUBLE };
+	
+	public static final SDFDatatype[] NUMBERS = new SDFDatatype[DISCRETE_NUMBERS.length+FLOATING_NUMBERS.length];
+	static{
+		int i = 0;
+		for (SDFDatatype s:DISCRETE_NUMBERS){
+			NUMBERS[i++] = s;
+		}
+		for (SDFDatatype s:FLOATING_NUMBERS){
+			NUMBERS[i++] = s;
+		}
+	}
+	
+	public static final SDFDatatype[] NUMBERS_OBJECT = new SDFDatatype[NUMBERS.length+1] ;
+	static{
+		int i = 0;
+		for (SDFDatatype s:NUMBERS){
+			NUMBERS_OBJECT[i++] = s;
+		}		
+		NUMBERS_OBJECT[i++] = OBJECT;
+	}
+	
 	public static final SDFDatatype[] LONG_NUMBERS = new SDFDatatype[] { LONG,
 			START_TIMESTAMP, END_TIMESTAMP, TIMESTAMP };
 
@@ -285,6 +307,7 @@ public class SDFDatatype extends SDFElement implements Serializable {
 		types.add(SDFDatatype.CHAR);
 		types.add(SDFDatatype.BYTE);
 		types.add(SDFDatatype.BITVECTOR);
+		types.add(SDFDatatype.HEXSTRING);
 
 		types.add(SDFDatatype.LIST);
 		types.add(SDFDatatype.LIST_STRING);
@@ -548,8 +571,8 @@ public class SDFDatatype extends SDFElement implements Serializable {
 	@Override
 	public String toString() {
 		if (type == KindOfDatatype.GENERIC) {
-			return super.toString()+"<"+getSubType()+">";
-		}else{
+			return super.toString() + "<" + getSubType() + ">";
+		} else {
 			return super.toString();
 		}
 	}

@@ -217,11 +217,20 @@ void Negation()       :
 }
 
 void PowExpression()       :
-{}
+{
+ Token t;
+}
 {
   UnaryExpression()
   (
-    "^" UnaryExpression()/*@bgen(jjtree) #Function( 2) */
+    (
+      t = "^"
+      | t = "<<"
+      | t = ">>"
+      | t = "|"
+      | t = "&"
+    )
+    UnaryExpression()/*@bgen(jjtree) #Function( 2) */
     {
       ASTFunction jjtn001 = new ASTFunction(JJTFUNCTION);
       boolean jjtc001 = true;
@@ -235,7 +244,7 @@ void PowExpression()       :
     }
 /*@egen*/
     {
-      jjtn001.setSymbol("^");
+      jjtn001.setSymbol(t.image);
     }/*@bgen(jjtree)*/
     } finally {
       if (jjtc001) {
@@ -474,7 +483,7 @@ void OrExpression()       :
 void ArrayExpression()      :
 {}
 {
-  OrExpression()
+  Variable()
   (
     < OPEN_ARRAY > UnaryExpressionList() < CLOSE_ARRAY >/*@bgen(jjtree) #Function( 2) */
     {

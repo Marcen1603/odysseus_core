@@ -146,13 +146,22 @@ void Negation() #void :
 }
 
 void PowExpression() #void :
-{}
+{
+ Token t;
+}
 {
   UnaryExpression()
   (
-    "^" UnaryExpression()
+    (
+      t = "^"
+      | t = "<<"
+      | t = ">>"
+      | t = "|"
+      | t = "&"
+    )
+    UnaryExpression()
     {
-      jjtThis.setSymbol("^");
+      jjtThis.setSymbol(t.image);
     }
     #Function(2)
 )*

@@ -33,6 +33,7 @@
  ***/
 package de.uniol.inf.is.odysseus.core.collection;
 
+import java.nio.ByteBuffer;
 
 /**
  * Class that implements a collection for bits, storing them packed into bytes.
@@ -237,13 +238,33 @@ public class BitVector {
 	 */
 	@Override
 	public String toString() {
+		return toString(false, false);
+	}
+
+	public String toString(boolean prettyPrint, boolean leadingZeros) {
 		StringBuffer sbuf = new StringBuffer();
+		boolean nonZeroFound = false;
 		for (int i = 0; i < size(); i++) {
 			int idx = doTranslateIndex(i);
-			sbuf.append(((((m_Data[byteIndex(idx)] & (0x01 << bitIndex(idx))) != 0) ? true
-					: false) ? '1' : '0'));
-			if (((i + 1) % 8) == 0) {
-				sbuf.append(" ");
+			char toAppend = 
+			((((m_Data[byteIndex(idx)] & (0x01 << bitIndex(idx))) != 0) ? true
+					: false) ? '1' : '0');
+			if (leadingZeros){
+				sbuf.append(toAppend);
+			}else{
+				if (nonZeroFound){
+					sbuf.append(toAppend);
+				}else{
+					if (toAppend == '1'){
+						nonZeroFound = true;
+						sbuf.append(toAppend);
+					}
+				}
+			}
+			if (prettyPrint) {
+				if (((i + 1) % 8) == 0) {
+					sbuf.append(" ");
+				}
 			}
 		}
 		return sbuf.toString();
@@ -324,6 +345,30 @@ public class BitVector {
 		}
 	}// translateIndex
 	
+
+	public Byte asByte(){
+		return m_Data[m_Data.length-1];
+	}
+
+	public Integer asInteger(){
+		ByteBuffer buf = ByteBuffer.allocate(Integer.SIZE/8);
+		for (int i=m_Data.length-4;i<m_Data.length;i++){
+			buf.put(m_Data[i]);
+		}
+		buf.flip();
+		return buf.getInt();
+	}
+
+	public Long asLong(){
+		ByteBuffer buf = ByteBuffer.allocate(Long.SIZE/8);
+		for (int i=m_Data.length-8;i<m_Data.length;i++){
+			buf.put(m_Data[i]);
+		}
+		buf.flip();
+		return buf.getLong();
+	}
+
+	
 	/**
 	 * Factory method for creating a <tt>BitVector</tt> instance wrapping the
 	 * given byte data.
@@ -355,4 +400,26 @@ public class BitVector {
 
 	private static final int[] ODD_OFFSETS = { -1, -3, -5, -7 };
 	private static final int[] STRAIGHT_OFFSETS = { 7, 5, 3, 1 };
+
+	public static BitVector fromInteger(Integer s) {
+		ByteBuffer intBuf = ByteBuffer.allocate(Integer.SIZE / 8);
+		intBuf.putInt(s);
+		return createBitVector(intBuf.array());
+	}
+
+	public static BitVector fromLong(Long s) {
+		ByteBuffer longBuf = ByteBuffer.allocate(Long.SIZE / 8);
+		longBuf.putLong(s);
+		return createBitVector(longBuf.array());
+	}
+
+	public static BitVector fromString(String s) {
+		BitVector v = new BitVector(s.length());
+		int i = 0;
+		for (char digit : s.toCharArray()) {
+			v.setBit(i++, digit == '1');
+		}
+		return v;
+	}
+
 }// class BitVector

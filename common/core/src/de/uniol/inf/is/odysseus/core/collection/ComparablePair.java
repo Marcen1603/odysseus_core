@@ -25,6 +25,8 @@ package de.uniol.inf.is.odysseus.core.collection;
  */
 public class ComparablePair<E1 extends Comparable<E1>, E2 extends Comparable<E2>> extends Pair<E1, E2> implements Comparable<Pair<E1, E2>>{
 
+	private static final long serialVersionUID = -2564386093597787996L;
+
 	public ComparablePair(E1 e1, E2 e2) {
 		super(e1, e2);
 	}

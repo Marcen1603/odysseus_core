@@ -15,6 +15,9 @@
  ******************************************************************************/
 package de.uniol.inf.is.odysseus.mep.functions.transform;
 
+import java.nio.ByteBuffer;
+
+import de.uniol.inf.is.odysseus.core.collection.BitVector;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.mep.AbstractFunction;
 
@@ -24,22 +27,23 @@ import de.uniol.inf.is.odysseus.mep.AbstractFunction;
  * @author Christian Kuka <christian@kuka.cc>
  *
  */
-public class ToBinaryFromNumberFunction extends AbstractFunction<String> {
+public class ToBinaryFromNumberFunction extends AbstractFunction<BitVector> {
     /**
      * 
      */
     private static final long serialVersionUID = 9108818182686191083L;
     private static final SDFDatatype[][] accTypes = new SDFDatatype[][] { { SDFDatatype.BYTE, SDFDatatype.SHORT, SDFDatatype.INTEGER, SDFDatatype.LONG, SDFDatatype.START_TIMESTAMP,
             SDFDatatype.END_TIMESTAMP, SDFDatatype.TIMESTAMP } };
-
+    private final ByteBuffer buf = ByteBuffer.allocate(Long.SIZE/8);
+    
     public ToBinaryFromNumberFunction() {
-        super("toBinary", 1, accTypes, SDFDatatype.STRING);
+        super("toBinary", 1, accTypes, SDFDatatype.BITVECTOR);
     }
 
     @Override
-    public String getValue() {
-        Number s = getNumericalInputValue(0);
-        return Long.toBinaryString(s.longValue());
+    public BitVector getValue() {
+        Long s = getNumericalInputValue(0).longValue();
+        return BitVector.fromLong(s);
     }
 
 }

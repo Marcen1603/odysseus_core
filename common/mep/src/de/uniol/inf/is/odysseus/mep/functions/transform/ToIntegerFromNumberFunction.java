@@ -16,30 +16,24 @@
 package de.uniol.inf.is.odysseus.mep.functions.transform;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
-import de.uniol.inf.is.odysseus.mep.AbstractFunction;
+import de.uniol.inf.is.odysseus.mep.AbstractUnaryNumberInputFunction;
 
 /**
  * Converts a given value to an integer value.
  * 
- * @author Christian Kuka <christian@kuka.cc>
+ * @author Marco Grawunder
  */
-public class ToIntegerFunction extends AbstractFunction<Integer> {
+public class ToIntegerFromNumberFunction extends
+		AbstractUnaryNumberInputFunction<Integer> {
 
-    private static final long serialVersionUID = 2799997996073155068L;
+	private static final long serialVersionUID = 2799997996073155068L;
 
-    public ToIntegerFunction() {
-        super("toInteger", 1, getAllTypes(1), SDFDatatype.INTEGER);
-    }
+	public ToIntegerFromNumberFunction() {
+		super("toInteger", SDFDatatype.INTEGER);
+	}
 
-    @Override
-    public Integer getValue() {
-        String s = getInputValue(0).toString();
-        if (s.equalsIgnoreCase("true")) {
-            return new Integer(1);
-        }
-        else if (s.equalsIgnoreCase("false")) {
-            return new Integer(0);
-        }
-        return new Integer((new Double(Double.parseDouble(s))).intValue());
-    }
+	@Override
+	public Integer getValue() {
+		return getNumericalInputValue(0).intValue();
+	}
 }

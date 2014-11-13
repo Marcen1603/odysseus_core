@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright 2014 The Odysseus Team
+ * Copyright 2012 The Odysseus Team
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,30 +17,24 @@ package de.uniol.inf.is.odysseus.mep.functions.transform;
 
 import de.uniol.inf.is.odysseus.core.collection.BitVector;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
-import de.uniol.inf.is.odysseus.mep.AbstractFunction;
+import de.uniol.inf.is.odysseus.mep.AbstractUnaryBitvectorInputFunction;
 
 /**
- * Converts a given value to its binary representation.
+ * Converts a given value to a byte value.
  * 
  * @author Christian Kuka <christian@kuka.cc>
- *
  */
-public class ToBinaryFromStringFunction extends AbstractFunction<BitVector> {
+public class ToByteFromBitVectorFunction extends AbstractUnaryBitvectorInputFunction<Byte> {
 
-    /**
-     * 
-     */
-    private static final long serialVersionUID = -5765976619584170922L;
-    private static final SDFDatatype[][] accTypes = new SDFDatatype[][] { { SDFDatatype.STRING } };
+	private static final long serialVersionUID = 6268335067252659860L;
 
-    public ToBinaryFromStringFunction() {
-        super("toBinary", 1, accTypes, SDFDatatype.BITVECTOR);
-    }
+	public ToByteFromBitVectorFunction() {
+		super("toByte",  SDFDatatype.BYTE);
+	}
 
-    @Override
-    public BitVector getValue() {
-	    String s = getInputValue(0).toString();	    
-        return BitVector.fromString(s);
-    }
-
+	@Override
+	public Byte getValue() {
+		BitVector v = getInputValue(0);
+		return v.asByte();
+	}
 }

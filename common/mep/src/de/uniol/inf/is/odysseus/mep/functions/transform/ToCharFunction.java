@@ -16,7 +16,7 @@
 package de.uniol.inf.is.odysseus.mep.functions.transform;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
-import de.uniol.inf.is.odysseus.mep.AbstractFunction;
+import de.uniol.inf.is.odysseus.mep.AbstractUnaryStringInputFunction;
 
 /**
  * Converts a given value to a char value.
@@ -24,7 +24,7 @@ import de.uniol.inf.is.odysseus.mep.AbstractFunction;
  * @author Christian Kuka <christian@kuka.cc>
  *
  */
-public class ToCharFunction extends AbstractFunction<Character> {
+public class ToCharFunction extends AbstractUnaryStringInputFunction<Character> {
 
     /**
      * 
@@ -32,7 +32,7 @@ public class ToCharFunction extends AbstractFunction<Character> {
     private static final long serialVersionUID = 1956450848515723544L;
 
     public ToCharFunction() {
-        super("toChar", 1, getAllTypes(1), SDFDatatype.CHAR);
+        super("toChar", SDFDatatype.CHAR);
     }
 
     @Override

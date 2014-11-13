@@ -15,41 +15,30 @@
  ******************************************************************************/
 package de.uniol.inf.is.odysseus.mep.functions.transform;
 
-import java.util.Formatter;
-
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
-import de.uniol.inf.is.odysseus.mep.AbstractFunction;
+import de.uniol.inf.is.odysseus.mep.AbstractUnaryDiscreteInputFunction;
+
 
 /**
- * Converts a given value to its hex representation.
+ * Converts a given value to a char value.
  * 
  * @author Christian Kuka <christian@kuka.cc>
  *
  */
-public class ToHexFromStringFunction extends AbstractFunction<String> {
+public class ToCharFromNumberFunction extends AbstractUnaryDiscreteInputFunction<Character>{
 
     /**
      * 
      */
-    private static final long serialVersionUID = 9004186949865153913L;
-    private static final SDFDatatype[][] accTypes = new SDFDatatype[][] { { SDFDatatype.STRING } };
-
-    public ToHexFromStringFunction() {
-        super("toHex", 1, accTypes, SDFDatatype.HEXSTRING);
+    private static final long serialVersionUID = 1956450848515723544L;
+  
+    public ToCharFromNumberFunction() {
+        super("toChar", SDFDatatype.CHAR);
     }
 
     @Override
-    public String getValue() {
-        String s = getInputValue(0).toString();
-        byte[] bytes = s.getBytes();
-        StringBuilder sb = new StringBuilder(bytes.length * 2);
-
-        try (Formatter formatter = new Formatter(sb)) {
-            for (byte b : bytes) {
-                formatter.format("%02x", new Byte(b));
-            }
-        }
-        return sb.toString();
+    public Character getValue() {
+        return (char)getNumericalInputValue(0).longValue();
     }
 
 }

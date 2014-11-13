@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright 2014 The Odysseus Team
+ * Copyright 2012 The Odysseus Team
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,32 +16,28 @@
 package de.uniol.inf.is.odysseus.mep.functions.transform;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
-import de.uniol.inf.is.odysseus.mep.AbstractFunction;
+import de.uniol.inf.is.odysseus.mep.AbstractUnaryBooleanInputFunction;
 
 /**
- * Converts a given value to its hex representation.
+ * Converts a given value to an integer value.
  * 
  * @author Christian Kuka <christian@kuka.cc>
- *
+ * @author Marco Grawunder 
  */
-public class ToHexFromNumberFunction extends AbstractFunction<String> {
+public class ToIntegerFromBooleanFunction extends AbstractUnaryBooleanInputFunction<Integer> {
 
-    /**
-     * 
-     */
-    private static final long serialVersionUID = -5267841297277120825L;
-    private static final SDFDatatype[][] accTypes = new SDFDatatype[][] { { SDFDatatype.BYTE, SDFDatatype.SHORT, SDFDatatype.INTEGER, SDFDatatype.LONG, SDFDatatype.START_TIMESTAMP,
-            SDFDatatype.END_TIMESTAMP, SDFDatatype.TIMESTAMP, SDFDatatype.UNSIGNEDINT16 } };
+    private static final long serialVersionUID = 2799997996073155068L;
 
-    public ToHexFromNumberFunction() {
-        super("toHex", 1, accTypes, SDFDatatype.STRING);
+    public ToIntegerFromBooleanFunction() {
+        super("toInteger", SDFDatatype.INTEGER);
     }
 
     @Override
-    public String getValue() {
-        Number s = getNumericalInputValue(0);
-        return Long.toHexString(s.longValue());
-
+    public Integer getValue() {
+        String s = getInputValue(0).toString();
+        if (s.equalsIgnoreCase("true")) {
+            return new Integer(1);
+        }
+        return new Integer(0);
     }
-
 }

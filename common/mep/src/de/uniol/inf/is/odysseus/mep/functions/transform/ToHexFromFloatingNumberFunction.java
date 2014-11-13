@@ -33,7 +33,7 @@ public class ToHexFromFloatingNumberFunction extends AbstractFunction<String> {
     private static final SDFDatatype[][] accTypes = new SDFDatatype[][] { { SDFDatatype.DOUBLE, SDFDatatype.FLOAT } };
 
     public ToHexFromFloatingNumberFunction() {
-        super("toHex", 1, accTypes, SDFDatatype.STRING);
+        super("toHex", 1, accTypes, SDFDatatype.HEXSTRING);
     }
 
     @Override

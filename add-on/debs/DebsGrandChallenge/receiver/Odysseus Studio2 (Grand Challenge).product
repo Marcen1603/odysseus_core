@@ -111,6 +111,8 @@ http://odysseus.informatik.uni-oldenburg.de/
       <feature id="de.uniol.inf.is.odysseus.complexnumber.feature" version="1.0.0.qualifier"/>
       <feature id="de.uniol.inf.is.odysseus.context.feature" version="1.0.0.qualifier"/>
       <feature id="de.uniol.inf.is.odysseus.wsenrich.feature" version="1.0.0.qualifier"/>
+      <feature id="de.uniol.inf.is.odysseus.imagejcv.feature" version="1.0.0.qualifier"/>
+      <feature id="de.uniol.inf.is.odysseus.video.feature" version="1.0.0.qualifier"/>
    </features>
 
    <configurations>

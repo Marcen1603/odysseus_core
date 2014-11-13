@@ -8,7 +8,7 @@ public class BitOrOperator extends AbstractBinaryNumberInputOperator<Long> {
 	private static final long serialVersionUID = -730023743642274236L;
 
 	public BitOrOperator() {
-		super("&", SDFDatatype.LONG);
+		super("|", SDFDatatype.LONG);
 	}
 
 	@Override
@@ -21,7 +21,7 @@ public class BitOrOperator extends AbstractBinaryNumberInputOperator<Long> {
 		Long left = getNumericalInputValue(0).longValue();
 		Long right  = getNumericalInputValue(1).longValue();
 		
-		return left & right;
+		return left | right;
 	}
 
 	

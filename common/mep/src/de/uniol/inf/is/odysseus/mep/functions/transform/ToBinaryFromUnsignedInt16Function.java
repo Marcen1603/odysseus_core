@@ -15,41 +15,31 @@
  ******************************************************************************/
 package de.uniol.inf.is.odysseus.mep.functions.transform;
 
-import java.util.Formatter;
-
+import de.uniol.inf.is.odysseus.core.collection.BitVector;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.mep.AbstractFunction;
 
 /**
- * Converts a given value to its hex representation.
+ * Converts a given value to its binary representation.
  * 
  * @author Christian Kuka <christian@kuka.cc>
  *
  */
-public class ToHexFromStringFunction extends AbstractFunction<String> {
-
+public class ToBinaryFromUnsignedInt16Function extends AbstractFunction<BitVector> {
     /**
      * 
      */
-    private static final long serialVersionUID = 9004186949865153913L;
-    private static final SDFDatatype[][] accTypes = new SDFDatatype[][] { { SDFDatatype.STRING } };
+    private static final long serialVersionUID = 9108818182686191083L;
+    private static final SDFDatatype[][] accTypes = new SDFDatatype[][] { { SDFDatatype.UNSIGNEDINT16 } };
 
-    public ToHexFromStringFunction() {
-        super("toHex", 1, accTypes, SDFDatatype.HEXSTRING);
+    public ToBinaryFromUnsignedInt16Function() {
+        super("toBinary", 1, accTypes, SDFDatatype.BITVECTOR);
     }
 
     @Override
-    public String getValue() {
-        String s = getInputValue(0).toString();
-        byte[] bytes = s.getBytes();
-        StringBuilder sb = new StringBuilder(bytes.length * 2);
-
-        try (Formatter formatter = new Formatter(sb)) {
-            for (byte b : bytes) {
-                formatter.format("%02x", new Byte(b));
-            }
-        }
-        return sb.toString();
+    public BitVector getValue() {
+        Integer s = getNumericalInputValue(0).intValue();
+        return BitVector.fromInteger(s);
     }
 
 }

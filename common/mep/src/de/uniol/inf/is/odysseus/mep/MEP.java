@@ -33,189 +33,10 @@ import de.uniol.inf.is.odysseus.core.mep.IFunction;
 import de.uniol.inf.is.odysseus.core.mep.ParseException;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
-import de.uniol.inf.is.odysseus.mep.functions.BurnFunction;
-import de.uniol.inf.is.odysseus.mep.functions.CPULoadFunction;
-import de.uniol.inf.is.odysseus.mep.functions.EvalFunction;
-import de.uniol.inf.is.odysseus.mep.functions.IfFunction;
-import de.uniol.inf.is.odysseus.mep.functions.IsNaNFunction;
-import de.uniol.inf.is.odysseus.mep.functions.IsNullFunction;
-import de.uniol.inf.is.odysseus.mep.functions.MemoryFunction;
-import de.uniol.inf.is.odysseus.mep.functions.RandomFunction;
-import de.uniol.inf.is.odysseus.mep.functions.RandomFunction2;
-import de.uniol.inf.is.odysseus.mep.functions.ReadFunction;
-import de.uniol.inf.is.odysseus.mep.functions.SMaxFunction;
-import de.uniol.inf.is.odysseus.mep.functions.SMinFunction;
-import de.uniol.inf.is.odysseus.mep.functions.SleepFunction;
-import de.uniol.inf.is.odysseus.mep.functions.SplitFunction;
-import de.uniol.inf.is.odysseus.mep.functions.SplitFunctionOld;
-import de.uniol.inf.is.odysseus.mep.functions.StoredLineFunction;
-import de.uniol.inf.is.odysseus.mep.functions.StoredValueFunction;
-import de.uniol.inf.is.odysseus.mep.functions.UUIDFunction;
-import de.uniol.inf.is.odysseus.mep.functions.UptimeFunction;
-import de.uniol.inf.is.odysseus.mep.functions.array.ListElementAtFunction;
-import de.uniol.inf.is.odysseus.mep.functions.bitvector.BitAccessFunction;
-import de.uniol.inf.is.odysseus.mep.functions.bitvector.BitSubsetFunction;
-import de.uniol.inf.is.odysseus.mep.functions.bitvector.BitVectorToLong;
-import de.uniol.inf.is.odysseus.mep.functions.bool.AndOperator;
-import de.uniol.inf.is.odysseus.mep.functions.bool.NotOperator;
-import de.uniol.inf.is.odysseus.mep.functions.bool.OrOperator;
-import de.uniol.inf.is.odysseus.mep.functions.bool.XorOperator;
-import de.uniol.inf.is.odysseus.mep.functions.compare.BooleanEqualsOperator;
-import de.uniol.inf.is.odysseus.mep.functions.compare.EqualsOperator;
-import de.uniol.inf.is.odysseus.mep.functions.compare.GreaterEqualsOperator;
-import de.uniol.inf.is.odysseus.mep.functions.compare.GreaterThanOperator;
-import de.uniol.inf.is.odysseus.mep.functions.compare.LikeFunction;
-import de.uniol.inf.is.odysseus.mep.functions.compare.NotEqualsOperator;
-import de.uniol.inf.is.odysseus.mep.functions.compare.SmallerEqualsOperator;
-import de.uniol.inf.is.odysseus.mep.functions.compare.SmallerThanOperator;
-import de.uniol.inf.is.odysseus.mep.functions.compare.StringEqualsOperator;
-import de.uniol.inf.is.odysseus.mep.functions.compare.StringNotEqualsOperator;
-import de.uniol.inf.is.odysseus.mep.functions.crypt.DSAFunction;
-import de.uniol.inf.is.odysseus.mep.functions.crypt.DSASignFunction;
-import de.uniol.inf.is.odysseus.mep.functions.crypt.DSAVerifyFunction;
-import de.uniol.inf.is.odysseus.mep.functions.crypt.MD5Function;
-import de.uniol.inf.is.odysseus.mep.functions.crypt.RSAFunction;
-import de.uniol.inf.is.odysseus.mep.functions.crypt.RSASignFunction;
-import de.uniol.inf.is.odysseus.mep.functions.crypt.RSAVerifyFunction;
-import de.uniol.inf.is.odysseus.mep.functions.crypt.SHA1Function;
-import de.uniol.inf.is.odysseus.mep.functions.crypt.SHA244Function;
-import de.uniol.inf.is.odysseus.mep.functions.crypt.SHA256Function;
-import de.uniol.inf.is.odysseus.mep.functions.crypt.SHA384Function;
-import de.uniol.inf.is.odysseus.mep.functions.crypt.SHA512Function;
-import de.uniol.inf.is.odysseus.mep.functions.list.IndexOfFunction;
-import de.uniol.inf.is.odysseus.mep.functions.list.IsEmptyFunction;
-import de.uniol.inf.is.odysseus.mep.functions.list.ListContainsFunction;
-import de.uniol.inf.is.odysseus.mep.functions.list.SizeFunction;
-import de.uniol.inf.is.odysseus.mep.functions.math.AbsoluteFunction;
-import de.uniol.inf.is.odysseus.mep.functions.math.ArcCosinusFunction;
-import de.uniol.inf.is.odysseus.mep.functions.math.ArcSinusFunction;
-import de.uniol.inf.is.odysseus.mep.functions.math.ArcTangens2Function;
-import de.uniol.inf.is.odysseus.mep.functions.math.ArcTangensFunction;
-import de.uniol.inf.is.odysseus.mep.functions.math.BitAndOperator;
-import de.uniol.inf.is.odysseus.mep.functions.math.BitInvertOperator;
-import de.uniol.inf.is.odysseus.mep.functions.math.BitOrOperator;
-import de.uniol.inf.is.odysseus.mep.functions.math.CeilFunction;
-import de.uniol.inf.is.odysseus.mep.functions.math.CosinusFunction;
-import de.uniol.inf.is.odysseus.mep.functions.math.DivisionOperator;
-import de.uniol.inf.is.odysseus.mep.functions.math.EFunction;
-import de.uniol.inf.is.odysseus.mep.functions.math.ExpFunction;
-import de.uniol.inf.is.odysseus.mep.functions.math.FloorFunction;
-import de.uniol.inf.is.odysseus.mep.functions.math.HyperbolicCosinusFunction;
-import de.uniol.inf.is.odysseus.mep.functions.math.HyperbolicSinusFunction;
-import de.uniol.inf.is.odysseus.mep.functions.math.HyperbolicTangensFunction;
-import de.uniol.inf.is.odysseus.mep.functions.math.InfFunction;
-import de.uniol.inf.is.odysseus.mep.functions.math.LeftShiftOperator;
-import de.uniol.inf.is.odysseus.mep.functions.math.Log10Function;
-import de.uniol.inf.is.odysseus.mep.functions.math.LogFunction;
-import de.uniol.inf.is.odysseus.mep.functions.math.MinusOperator;
-import de.uniol.inf.is.odysseus.mep.functions.math.ModuloOperator;
-import de.uniol.inf.is.odysseus.mep.functions.math.MultiplicationOperator;
-import de.uniol.inf.is.odysseus.mep.functions.math.NaNFunction;
-import de.uniol.inf.is.odysseus.mep.functions.math.PIFunction;
-import de.uniol.inf.is.odysseus.mep.functions.math.PlusOperator;
-import de.uniol.inf.is.odysseus.mep.functions.math.PowerOperator;
-import de.uniol.inf.is.odysseus.mep.functions.math.RightShiftOperator;
-import de.uniol.inf.is.odysseus.mep.functions.math.RoundFunction;
-import de.uniol.inf.is.odysseus.mep.functions.math.SignFunction;
-import de.uniol.inf.is.odysseus.mep.functions.math.SinusFunction;
-import de.uniol.inf.is.odysseus.mep.functions.math.SqrtFunction;
-import de.uniol.inf.is.odysseus.mep.functions.math.TangensFunction;
-import de.uniol.inf.is.odysseus.mep.functions.math.ToDegrees;
-import de.uniol.inf.is.odysseus.mep.functions.math.ToRadians;
-import de.uniol.inf.is.odysseus.mep.functions.math.UnaryMinusOperator;
-import de.uniol.inf.is.odysseus.mep.functions.string.ConcatFunction;
-import de.uniol.inf.is.odysseus.mep.functions.string.LengthFunction;
-import de.uniol.inf.is.odysseus.mep.functions.string.LowerFunction;
-import de.uniol.inf.is.odysseus.mep.functions.string.StartsWithFunction;
-import de.uniol.inf.is.odysseus.mep.functions.string.StringContainsFunction;
-import de.uniol.inf.is.odysseus.mep.functions.string.StringDivisionOperator;
-import de.uniol.inf.is.odysseus.mep.functions.string.StringMinusOperator;
-import de.uniol.inf.is.odysseus.mep.functions.string.StringMultiplicationOperator;
-import de.uniol.inf.is.odysseus.mep.functions.string.StringPlusOperator;
-import de.uniol.inf.is.odysseus.mep.functions.string.SubStringFunction;
-import de.uniol.inf.is.odysseus.mep.functions.string.SubStringFunction2;
-import de.uniol.inf.is.odysseus.mep.functions.string.UpperFunction;
-import de.uniol.inf.is.odysseus.mep.functions.time.BusinessDaysFunction;
-import de.uniol.inf.is.odysseus.mep.functions.time.CurDateFunction;
-import de.uniol.inf.is.odysseus.mep.functions.time.DateInMillis;
-import de.uniol.inf.is.odysseus.mep.functions.time.DateMinusNumberOperator;
-import de.uniol.inf.is.odysseus.mep.functions.time.DateMinusOperator;
-import de.uniol.inf.is.odysseus.mep.functions.time.DatePlusNumberOperator;
-import de.uniol.inf.is.odysseus.mep.functions.time.DatePlusOperator;
-import de.uniol.inf.is.odysseus.mep.functions.time.DayFunction;
-import de.uniol.inf.is.odysseus.mep.functions.time.DayOfMonthFunction;
-import de.uniol.inf.is.odysseus.mep.functions.time.DayOfMonthStringFunction;
-import de.uniol.inf.is.odysseus.mep.functions.time.DayStringFunction;
-import de.uniol.inf.is.odysseus.mep.functions.time.DaysFunction;
-import de.uniol.inf.is.odysseus.mep.functions.time.HourFunction;
-import de.uniol.inf.is.odysseus.mep.functions.time.HourStringFunction;
-import de.uniol.inf.is.odysseus.mep.functions.time.HoursFunction;
-import de.uniol.inf.is.odysseus.mep.functions.time.MilliSecondFunction;
-import de.uniol.inf.is.odysseus.mep.functions.time.MilliSecondStringFunction;
-import de.uniol.inf.is.odysseus.mep.functions.time.MilliSecondsFunction;
-import de.uniol.inf.is.odysseus.mep.functions.time.MilliTimeFunction;
-import de.uniol.inf.is.odysseus.mep.functions.time.MinuteFunction;
-import de.uniol.inf.is.odysseus.mep.functions.time.MinuteOfDayFunction;
-import de.uniol.inf.is.odysseus.mep.functions.time.MinuteStringFunction;
-import de.uniol.inf.is.odysseus.mep.functions.time.MinutesFunction;
-import de.uniol.inf.is.odysseus.mep.functions.time.MonthFunction;
-import de.uniol.inf.is.odysseus.mep.functions.time.MonthStringFunction;
-import de.uniol.inf.is.odysseus.mep.functions.time.MonthsFunction;
-import de.uniol.inf.is.odysseus.mep.functions.time.NanoTimeFunction;
-import de.uniol.inf.is.odysseus.mep.functions.time.SecondFunction;
-import de.uniol.inf.is.odysseus.mep.functions.time.SecondStringFunction;
-import de.uniol.inf.is.odysseus.mep.functions.time.SecondsFunction;
-import de.uniol.inf.is.odysseus.mep.functions.time.StreamDateFunction;
-import de.uniol.inf.is.odysseus.mep.functions.time.StreamDateFunction2;
-import de.uniol.inf.is.odysseus.mep.functions.time.StreamTimeFunction;
-import de.uniol.inf.is.odysseus.mep.functions.time.SysDateFunction;
-import de.uniol.inf.is.odysseus.mep.functions.time.TimestampFunction;
-import de.uniol.inf.is.odysseus.mep.functions.time.WeekFunction;
-import de.uniol.inf.is.odysseus.mep.functions.time.WeekStringFunction;
-import de.uniol.inf.is.odysseus.mep.functions.time.WeekdayFunction;
-import de.uniol.inf.is.odysseus.mep.functions.time.WeekdayStringFunction;
-import de.uniol.inf.is.odysseus.mep.functions.time.YearFunction;
-import de.uniol.inf.is.odysseus.mep.functions.time.YearStringFunction;
-import de.uniol.inf.is.odysseus.mep.functions.time.YearsFunction;
-import de.uniol.inf.is.odysseus.mep.functions.transform.DateToLongFunction;
-import de.uniol.inf.is.odysseus.mep.functions.transform.DateToStringFunction;
-import de.uniol.inf.is.odysseus.mep.functions.transform.DoubleToBooleanFunction;
-import de.uniol.inf.is.odysseus.mep.functions.transform.DoubleToByteFunction;
-import de.uniol.inf.is.odysseus.mep.functions.transform.DoubleToCharFunction;
-import de.uniol.inf.is.odysseus.mep.functions.transform.DoubleToFloatFunction;
-import de.uniol.inf.is.odysseus.mep.functions.transform.DoubleToIntegerFunction;
-import de.uniol.inf.is.odysseus.mep.functions.transform.DoubleToLongFunction;
-import de.uniol.inf.is.odysseus.mep.functions.transform.DoubleToShortFunction;
-import de.uniol.inf.is.odysseus.mep.functions.transform.ToBinaryFromFloatingNumberFunction;
-import de.uniol.inf.is.odysseus.mep.functions.transform.ToBinaryFromNumberFunction;
-import de.uniol.inf.is.odysseus.mep.functions.transform.ToBinaryFromStringFunction;
-import de.uniol.inf.is.odysseus.mep.functions.transform.ToBooleanFunction;
-import de.uniol.inf.is.odysseus.mep.functions.transform.ToByteFunction;
-import de.uniol.inf.is.odysseus.mep.functions.transform.ToCharFunction;
-import de.uniol.inf.is.odysseus.mep.functions.transform.ToDateFromNumberFunction;
-import de.uniol.inf.is.odysseus.mep.functions.transform.ToDateFromStringFunction;
-import de.uniol.inf.is.odysseus.mep.functions.transform.ToDoubleFunction;
-import de.uniol.inf.is.odysseus.mep.functions.transform.ToFloatFunction;
-import de.uniol.inf.is.odysseus.mep.functions.transform.ToFloatIEEE754;
-import de.uniol.inf.is.odysseus.mep.functions.transform.ToFloatIEEE754_2;
-import de.uniol.inf.is.odysseus.mep.functions.transform.ToHexFromFloatingNumberFunction;
-import de.uniol.inf.is.odysseus.mep.functions.transform.ToHexFromNumberFunction;
-import de.uniol.inf.is.odysseus.mep.functions.transform.ToHexFromStringFunction;
-import de.uniol.inf.is.odysseus.mep.functions.transform.ToIntegerFunction;
-import de.uniol.inf.is.odysseus.mep.functions.transform.ToListFunction;
-import de.uniol.inf.is.odysseus.mep.functions.transform.ToLongFunction;
-import de.uniol.inf.is.odysseus.mep.functions.transform.ToNumberFunction;
-import de.uniol.inf.is.odysseus.mep.functions.transform.ToShortFunction;
-import de.uniol.inf.is.odysseus.mep.functions.transform.ToStringFunction;
-import de.uniol.inf.is.odysseus.mep.functions.transform.ToUnsignedInt16Function;
-import de.uniol.inf.is.odysseus.mep.functions.tuple.TupleAccessFunction;
 import de.uniol.inf.is.odysseus.mep.impl.ExpressionBuilderVisitor;
 import de.uniol.inf.is.odysseus.mep.impl.MEPImpl;
-import de.uniol.inf.is.odysseus.mep.impl.MatrixFunction;
-import de.uniol.inf.is.odysseus.mep.impl.MatrixLine;
 import de.uniol.inf.is.odysseus.mep.impl.SimpleNode;
 
-@SuppressWarnings("deprecation")
 public class MEP implements IExpressionParser {
 
 	volatile protected static Logger _logger = null;
@@ -274,227 +95,231 @@ public class MEP implements IExpressionParser {
 
 	private static Map<FunctionSignature, IFunction<?>> functions = new HashMap<FunctionSignature, IFunction<?>>();
 	private static FunctionStore functionStore = FunctionStore.getInstance();
-	static {
-
-		getLogger().debug("Register Base Function");
-		/** BitVector Functions */
-		registerFunction(new BitAccessFunction());
-		registerFunction(new BitVectorToLong());
-		registerFunction(new BitSubsetFunction());
-
-		/** Boolean Functions */
-		registerFunction(new AndOperator());
-		registerFunction(new OrOperator());
-		registerFunction(new XorOperator());
-
-		registerFunction(new EqualsOperator());
-		registerFunction(new BooleanEqualsOperator());
-		registerFunction(new StringEqualsOperator());
-		registerFunction(new NotEqualsOperator());
-		registerFunction(new StringNotEqualsOperator());
-		
-		/** Bit functions */
-		registerFunction(new LeftShiftOperator());
-		registerFunction(new RightShiftOperator());
-		registerFunction(new BitInvertOperator());
-		registerFunction(new BitAndOperator());
-		registerFunction(new BitOrOperator());
-
-		/** Math Functions */
-		registerFunction(new GreaterThanOperator());
-		registerFunction(new SmallerThanOperator());
-		registerFunction(new GreaterEqualsOperator());
-		registerFunction(new SmallerEqualsOperator());
-
-		registerFunction(new PlusOperator());
-		registerFunction(new MinusOperator());
-
-		registerFunction(new MultiplicationOperator());
-		registerFunction(new DivisionOperator());
-		registerFunction(new ModuloOperator());
-
-		registerFunction(new PowerOperator());
-		registerFunction(new SqrtFunction());
-
-		registerFunction(new NotOperator());
-		registerFunction(new UnaryMinusOperator());
-
-		registerFunction(new AbsoluteFunction());
-		registerFunction(new CeilFunction());
-		registerFunction(new DoubleToLongFunction());
-		registerFunction(new DoubleToIntegerFunction());
-		registerFunction(new DoubleToFloatFunction());
-		registerFunction(new DoubleToShortFunction());
-		registerFunction(new DoubleToByteFunction());
-		registerFunction(new DoubleToBooleanFunction());
-		registerFunction(new DoubleToCharFunction());
-		registerFunction(new FloorFunction());
-		registerFunction(new IfFunction());
-		registerFunction(new SinusFunction());
-		registerFunction(new HyperbolicSinusFunction());
-		registerFunction(new ArcSinusFunction());
-		registerFunction(new CosinusFunction());
-		registerFunction(new HyperbolicCosinusFunction());
-		registerFunction(new ArcCosinusFunction());
-		registerFunction(new TangensFunction());
-		registerFunction(new HyperbolicTangensFunction());
-		registerFunction(new ArcTangensFunction());
-		registerFunction(new ArcTangens2Function());
-		registerFunction(new ToNumberFunction());
-		registerFunction(new ToBooleanFunction());
-		registerFunction(new ToByteFunction());
-		registerFunction(new ToShortFunction());
-		registerFunction(new ToFloatFunction());
-		registerFunction(new ToFloatIEEE754());
-		registerFunction(new ToFloatIEEE754_2());
-		registerFunction(new ToDoubleFunction());
-		registerFunction(new ToLongFunction());
-		registerFunction(new ToListFunction());
-		registerFunction(new ToIntegerFunction());
-		registerFunction(new ToUnsignedInt16Function());
-		registerFunction(new ToCharFunction());
-		registerFunction(new ToStringFunction());
-		registerFunction(new ToHexFromStringFunction());
-		registerFunction(new ToHexFromNumberFunction());
-		registerFunction(new ToHexFromFloatingNumberFunction());
-		registerFunction(new ToBinaryFromStringFunction());
-		registerFunction(new ToBinaryFromNumberFunction());
-		registerFunction(new ToBinaryFromFloatingNumberFunction());
-		registerFunction(new RandomFunction());
-		registerFunction(new RandomFunction2());
-		registerFunction(new RoundFunction());
-		registerFunction(new SignFunction());
-
-		registerFunction(new PIFunction());
-		registerFunction(new EFunction());
-		registerFunction(new NaNFunction());
-		registerFunction(new InfFunction());
-
-		registerFunction(new ExpFunction());
-		registerFunction(new LogFunction());
-		registerFunction(new Log10Function());
-
-		registerFunction(new ToRadians());
-		registerFunction(new ToDegrees());
-
-		registerFunction(new IsNullFunction());
-		registerFunction(new IsNaNFunction());
-		registerFunction(new AssureNumber());
-
-		/** String Functions */
-		registerFunction(new LikeFunction());
-		registerFunction(new StringContainsFunction());
-		registerFunction(new StringPlusOperator());
-		registerFunction(new StringMinusOperator());
-		registerFunction(new StringMultiplicationOperator());
-		registerFunction(new StringDivisionOperator());
-		registerFunction(new ConcatFunction());
-		registerFunction(new SubStringFunction());
-		registerFunction(new SubStringFunction2());
-		registerFunction(new StartsWithFunction());
-		registerFunction(new LengthFunction());
-		registerFunction(new UpperFunction());
-		registerFunction(new LowerFunction());
-
-		/** Date Functions */
-		registerFunction(new ToDateFromStringFunction());
-		registerFunction(new ToDateFromNumberFunction());
-		registerFunction(new DateToStringFunction());
-		registerFunction(new DateToLongFunction());
-
-		registerFunction(new DatePlusOperator());
-		registerFunction(new DatePlusNumberOperator());
-		registerFunction(new DateMinusOperator());
-		registerFunction(new DateMinusNumberOperator());
-
-        registerFunction(new MilliSecondFunction());
-		registerFunction(new SecondFunction());
-		registerFunction(new MinuteFunction());
-		registerFunction(new MinuteOfDayFunction());
-		registerFunction(new HourFunction());
-		registerFunction(new DayFunction());
-		registerFunction(new DayOfMonthFunction());
-		registerFunction(new WeekdayFunction());
-		registerFunction(new WeekFunction());
-		registerFunction(new MonthFunction());
-		registerFunction(new YearFunction());
-
-        registerFunction(new MilliSecondStringFunction());
-		registerFunction(new SecondStringFunction());
-		registerFunction(new MinuteStringFunction());
-		registerFunction(new HourStringFunction());
-		registerFunction(new DayStringFunction());
-		registerFunction(new DayOfMonthStringFunction());
-		registerFunction(new WeekdayStringFunction());
-		registerFunction(new WeekStringFunction());
-		registerFunction(new MonthStringFunction());
-		registerFunction(new YearStringFunction());
-
-        registerFunction(new MilliSecondsFunction());
-		registerFunction(new SecondsFunction());
-		registerFunction(new MinutesFunction());
-		registerFunction(new HoursFunction());
-		registerFunction(new DaysFunction());
-		registerFunction(new MonthsFunction());
-		registerFunction(new YearsFunction());
-		registerFunction(new BusinessDaysFunction());
-
-		registerFunction(new MilliTimeFunction());
-		registerFunction(new CurDateFunction());
-		registerFunction(new NanoTimeFunction());
-		registerFunction(new DateInMillis());
-
-		registerFunction(new SysDateFunction());
-		registerFunction(new StreamDateFunction());
-		registerFunction(new StreamDateFunction2());
-		registerFunction(new StreamTimeFunction());
-		registerFunction(new TimestampFunction());
-
-		registerFunction(new MD5Function());
-		registerFunction(new SHA1Function());
-		registerFunction(new SHA256Function());
-		registerFunction(new SHA244Function());
-		registerFunction(new SHA384Function());
-		registerFunction(new SHA512Function());
-		registerFunction(new DSAFunction());
-		registerFunction(new DSASignFunction());
-		registerFunction(new DSAVerifyFunction());
-		registerFunction(new RSAFunction());
-		registerFunction(new RSASignFunction());
-		registerFunction(new RSAVerifyFunction());
-
-		registerFunction(new UUIDFunction());
-		registerFunction(new CPULoadFunction());
-		registerFunction(new UptimeFunction());
-		registerFunction(new MemoryFunction());
-		registerFunction(new ReadFunction());
-		registerFunction(new EvalFunction());
-		registerFunction(new SMinFunction());
-		registerFunction(new SMaxFunction());
-
-		registerFunction(new SleepFunction());
-		registerFunction(new BurnFunction());
-
-		registerFunction(new StoredValueFunction());
-		registerFunction(new StoredLineFunction());
-
-		registerFunction(new SplitFunction());
-		registerFunction(new SplitFunctionOld());
-
-		// Array Functions
-		registerFunction(new ListElementAtFunction());
-
-		// List Functions
-		registerFunction(new ListContainsFunction());
-        registerFunction(new IsEmptyFunction());
-        registerFunction(new SizeFunction());
-        registerFunction(new IndexOfFunction());
-
-		registerFunction(new TupleAccessFunction());
-
-		registerFunction(new MatrixFunction());
-		registerFunction(new MatrixLine());
-	}
+	// MG: Now done by Activator
+	//	static {
+//
+//		getLogger().debug("Register Base Function");
+//		
+//		
+//		/** BitVector Functions */
+//		registerFunction(new BitAccessFunction());
+//		registerFunction(new BitVectorToLong());
+//		registerFunction(new BitSubsetFunction());
+//
+//		/** Boolean Functions */
+//		registerFunction(new AndOperator());
+//		registerFunction(new OrOperator());
+//		registerFunction(new XorOperator());
+//
+//		registerFunction(new EqualsOperator());
+//		registerFunction(new BooleanEqualsOperator());
+//		registerFunction(new StringEqualsOperator());
+//		registerFunction(new NotEqualsOperator());
+//		registerFunction(new StringNotEqualsOperator());
+//		
+//		/** Bit functions */
+//		registerFunction(new LeftShiftOperator());
+//		registerFunction(new RightShiftOperator());
+//		registerFunction(new BitInvertOperator());
+//		registerFunction(new BitAndOperator());
+//		registerFunction(new BitOrOperator());
+//
+//		/** Math Functions */
+//		registerFunction(new GreaterThanOperator());
+//		registerFunction(new SmallerThanOperator());
+//		registerFunction(new GreaterEqualsOperator());
+//		registerFunction(new SmallerEqualsOperator());
+//
+//		registerFunction(new PlusOperator());
+//		registerFunction(new MinusOperator());
+//
+//		registerFunction(new MultiplicationOperator());
+//		registerFunction(new DivisionOperator());
+//		registerFunction(new ModuloOperator());
+//
+//		registerFunction(new PowerOperator());
+//		registerFunction(new SqrtFunction());
+//
+//		registerFunction(new NotOperator());
+//		registerFunction(new UnaryMinusOperator());
+//
+//		registerFunction(new AbsoluteFunction());
+//		registerFunction(new CeilFunction());
+//		registerFunction(new DoubleToLongFunction());
+//		registerFunction(new DoubleToIntegerFunction());
+//		registerFunction(new DoubleToFloatFunction());
+//		registerFunction(new DoubleToShortFunction());
+//		registerFunction(new DoubleToByteFunction());
+//		registerFunction(new DoubleToBooleanFunction());
+//		registerFunction(new DoubleToCharFunction());
+//		registerFunction(new FloorFunction());
+//		registerFunction(new IfFunction());
+//		registerFunction(new SinusFunction());
+//		registerFunction(new HyperbolicSinusFunction());
+//		registerFunction(new ArcSinusFunction());
+//		registerFunction(new CosinusFunction());
+//		registerFunction(new HyperbolicCosinusFunction());
+//		registerFunction(new ArcCosinusFunction());
+//		registerFunction(new TangensFunction());
+//		registerFunction(new HyperbolicTangensFunction());
+//		registerFunction(new ArcTangensFunction());
+//		registerFunction(new ArcTangens2Function());
+//		registerFunction(new ToNumberFunction());
+//		registerFunction(new ToBooleanFunction());
+//		registerFunction(new ToByteFunction());
+//		registerFunction(new ToShortFunction());
+//		registerFunction(new ToFloatFunction());
+//		registerFunction(new ToFloatIEEE754());
+//		registerFunction(new ToFloatIEEE754_2());
+//		registerFunction(new ToDoubleFunction());
+//		registerFunction(new ToLongFunction());
+//		registerFunction(new ToListFunction());
+//		registerFunction(new ToIntegerFromNumberFunction());
+//		registerFunction(new ToUnsignedInt16Function());
+//		registerFunction(new ToCharFunction());
+//		registerFunction(new ToStringFunction());
+//		registerFunction(new ToHexFromStringFunction());
+//		registerFunction(new ToHexFromDiscreteFunction());
+//		registerFunction(new ToHexFromFloatingNumberFunction());
+//		registerFunction(new ToBinaryFromStringFunction());
+//		registerFunction(new ToBinaryFromNumberFunction());
+//		registerFunction(new ToBinaryFromUnsignedInt16Function());
+//		registerFunction(new ToBinaryFromFloatingNumberFunction());
+//		registerFunction(new RandomFunction());
+//		registerFunction(new RandomFunction2());
+//		registerFunction(new RoundFunction());
+//		registerFunction(new SignFunction());
+//
+//		registerFunction(new PIFunction());
+//		registerFunction(new EFunction());
+//		registerFunction(new NaNFunction());
+//		registerFunction(new InfFunction());
+//
+//		registerFunction(new ExpFunction());
+//		registerFunction(new LogFunction());
+//		registerFunction(new Log10Function());
+//
+//		registerFunction(new ToRadians());
+//		registerFunction(new ToDegrees());
+//
+//		registerFunction(new IsNullFunction());
+//		registerFunction(new IsNaNFunction());
+//		registerFunction(new AssureNumber());
+//
+//		/** String Functions */
+//		registerFunction(new LikeFunction());
+//		registerFunction(new StringContainsFunction());
+//		registerFunction(new StringPlusOperator());
+//		registerFunction(new StringMinusOperator());
+//		registerFunction(new StringMultiplicationOperator());
+//		registerFunction(new StringDivisionOperator());
+//		registerFunction(new ConcatFunction());
+//		registerFunction(new SubStringFunction());
+//		registerFunction(new SubStringFunction2());
+//		registerFunction(new StartsWithFunction());
+//		registerFunction(new LengthFunction());
+//		registerFunction(new UpperFunction());
+//		registerFunction(new LowerFunction());
+//
+//		/** Date Functions */
+//		registerFunction(new ToDateFromStringFunction());
+//		registerFunction(new ToDateFromNumberFunction());
+//		registerFunction(new DateToStringFunction());
+//		registerFunction(new DateToLongFunction());
+//
+//		registerFunction(new DatePlusOperator());
+//		registerFunction(new DatePlusNumberOperator());
+//		registerFunction(new DateMinusOperator());
+//		registerFunction(new DateMinusNumberOperator());
+//
+//        registerFunction(new MilliSecondFunction());
+//		registerFunction(new SecondFunction());
+//		registerFunction(new MinuteFunction());
+//		registerFunction(new MinuteOfDayFunction());
+//		registerFunction(new HourFunction());
+//		registerFunction(new DayFunction());
+//		registerFunction(new DayOfMonthFunction());
+//		registerFunction(new WeekdayFunction());
+//		registerFunction(new WeekFunction());
+//		registerFunction(new MonthFunction());
+//		registerFunction(new YearFunction());
+//
+//        registerFunction(new MilliSecondStringFunction());
+//		registerFunction(new SecondStringFunction());
+//		registerFunction(new MinuteStringFunction());
+//		registerFunction(new HourStringFunction());
+//		registerFunction(new DayStringFunction());
+//		registerFunction(new DayOfMonthStringFunction());
+//		registerFunction(new WeekdayStringFunction());
+//		registerFunction(new WeekStringFunction());
+//		registerFunction(new MonthStringFunction());
+//		registerFunction(new YearStringFunction());
+//
+//        registerFunction(new MilliSecondsFunction());
+//		registerFunction(new SecondsFunction());
+//		registerFunction(new MinutesFunction());
+//		registerFunction(new HoursFunction());
+//		registerFunction(new DaysFunction());
+//		registerFunction(new MonthsFunction());
+//		registerFunction(new YearsFunction());
+//		registerFunction(new BusinessDaysFunction());
+//
+//		registerFunction(new MilliTimeFunction());
+//		registerFunction(new CurDateFunction());
+//		registerFunction(new NanoTimeFunction());
+//		registerFunction(new DateInMillis());
+//
+//		registerFunction(new SysDateFunction());
+//		registerFunction(new StreamDateFunction());
+//		registerFunction(new StreamDateFunction2());
+//		registerFunction(new StreamTimeFunction());
+//		registerFunction(new TimestampFunction());
+//
+//		registerFunction(new MD5Function());
+//		registerFunction(new SHA1Function());
+//		registerFunction(new SHA256Function());
+//		registerFunction(new SHA244Function());
+//		registerFunction(new SHA384Function());
+//		registerFunction(new SHA512Function());
+//		registerFunction(new DSAFunction());
+//		registerFunction(new DSASignFunction());
+//		registerFunction(new DSAVerifyFunction());
+//		registerFunction(new RSAFunction());
+//		registerFunction(new RSASignFunction());
+//		registerFunction(new RSAVerifyFunction());
+//
+//		registerFunction(new UUIDFunction());
+//		registerFunction(new CPULoadFunction());
+//		registerFunction(new UptimeFunction());
+//		registerFunction(new MemoryFunction());
+//		registerFunction(new ReadFunction());
+//		registerFunction(new EvalFunction());
+//		registerFunction(new SMinFunction());
+//		registerFunction(new SMaxFunction());
+//
+//		registerFunction(new SleepFunction());
+//		registerFunction(new BurnFunction());
+//
+//		registerFunction(new StoredValueFunction());
+//		registerFunction(new StoredLineFunction());
+//
+//		registerFunction(new SplitFunction());
+//		registerFunction(new SplitFunctionOld());
+//
+//		// Array Functions
+//		registerFunction(new ListElementAtFunction());
+//
+//		// List Functions
+//		registerFunction(new ListContainsFunction());
+//        registerFunction(new IsEmptyFunction());
+//        registerFunction(new SizeFunction());
+//        registerFunction(new IndexOfFunction());
+//
+//		registerFunction(new TupleAccessFunction());
+//
+//		registerFunction(new MatrixFunction());
+//		registerFunction(new MatrixLine());
+//	}
 
 	/**
 	 * Register a MEP function instance

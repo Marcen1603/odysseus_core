@@ -23,6 +23,9 @@ package de.uniol.inf.is.odysseus.core.collection;
  */
 public class FESortedPair<E1 extends Comparable<E1>,E2> extends Pair<E1, E2> implements Comparable<FESortedPair<E1,E2>>{
 		
+
+	private static final long serialVersionUID = 3214828942893197412L;
+
 	public FESortedPair(E1 e1, E2 e2) {
 		super(e1, e2);
 	}

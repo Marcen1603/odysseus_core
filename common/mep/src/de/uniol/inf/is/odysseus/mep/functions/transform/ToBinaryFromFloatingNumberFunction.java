@@ -15,8 +15,9 @@
  ******************************************************************************/
 package de.uniol.inf.is.odysseus.mep.functions.transform;
 
+import de.uniol.inf.is.odysseus.core.collection.BitVector;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
-import de.uniol.inf.is.odysseus.mep.AbstractFunction;
+import de.uniol.inf.is.odysseus.mep.AbstractUnaryFloatingInputFunction;
 
 /**
  * Converts a given value to its binary representation.
@@ -24,21 +25,21 @@ import de.uniol.inf.is.odysseus.mep.AbstractFunction;
  * @author Christian Kuka <christian@kuka.cc>
  *
  */
-public class ToBinaryFromFloatingNumberFunction extends AbstractFunction<String> {
+public class ToBinaryFromFloatingNumberFunction extends AbstractUnaryFloatingInputFunction<BitVector> {
     /**
      * 
      */
     private static final long serialVersionUID = -6367175693609340243L;
-    private static final SDFDatatype[][] accTypes = new SDFDatatype[][] { { SDFDatatype.DOUBLE, SDFDatatype.FLOAT } };
 
     public ToBinaryFromFloatingNumberFunction() {
-        super("toBinary", 1, accTypes, SDFDatatype.STRING);
+        super("toBinary", SDFDatatype.BITVECTOR);
     }
 
     @Override
-    public String getValue() {
+    public BitVector getValue() {
         Number s = getNumericalInputValue(0);
-        return Long.toBinaryString(Double.doubleToRawLongBits(s.doubleValue()));
+   
+        return BitVector.fromLong(Double.doubleToRawLongBits(s.doubleValue()));
     }
 
 }
