@@ -76,7 +76,8 @@ public class SmartDeviceAddSensorNamePreParserKeyword extends
 		String sensorName = parameter;
 		final String sensorRawSourceName = (String) variables.get(SmartDeviceSensorRawSourceName.KEYWORD);
 		String sensorQueryName = (String) variables.get("QNAME");
-		
+		final String queryForRawValues = "";
+
 		LOG.debug("SensorName:" + sensorName);
 		LOG.debug("SensorRawSourceName:"+sensorRawSourceName);
 		LOG.debug("SensorQueryName:"+sensorQueryName);
@@ -87,7 +88,7 @@ public class SmartDeviceAddSensorNamePreParserKeyword extends
 			public Map<String, String> getQueriesForRawValues() {
 				Map<String,String> map = new HashMap<String, String>();
 				
-				map.put(sensorRawSourceName, "");
+				map.put(sensorRawSourceName, queryForRawValues);
 				
 				return map;
 			}
