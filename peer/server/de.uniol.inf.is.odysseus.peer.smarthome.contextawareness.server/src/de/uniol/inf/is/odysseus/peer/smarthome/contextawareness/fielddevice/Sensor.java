@@ -10,6 +10,7 @@ public abstract class Sensor extends FieldDevice implements Serializable {
 	private static final long serialVersionUID = 1L;
 	private String rawSourceName;
 	private ArrayList<ActivityInterpreter> activityInterpreterList;
+	private transient ArrayList<IActivityInterpreterListener> activityInterpreterListeners;
 
 	/**
 	 * 
@@ -44,14 +45,39 @@ public abstract class Sensor extends FieldDevice implements Serializable {
 		this.rawSourceName = rawSourceName;
 	}
 
-	public void addActivityInterpreter(ActivityInterpreter activityInterpreter) {
-		getActivityInterpreters().add(activityInterpreter);
+	public boolean addActivityInterpreter(ActivityInterpreter activityInterpreter) {
+		if(getActivityInterpreters().add(activityInterpreter)){
+			fireActivityInterpreterAdded(activityInterpreter);
+			return true;
+		}else{
+			return false;
+		}
 	}
 
 	public boolean removeActivityInterpreter(
 			ActivityInterpreter activityInterpreter) {
-		return getActivityInterpreters().remove(activityInterpreter);
+		if(getActivityInterpreters().remove(activityInterpreter)){
+			fireActivityInterpreterRemoved(activityInterpreter);
+			return true;
+		}else{
+			return false;
+		}
 	}
+
+	private void fireActivityInterpreterAdded(
+			ActivityInterpreter activityInterpreter) {
+		for(IActivityInterpreterListener listener : getActivityInterpreterListeners()){
+			listener.activityInterpreterAdded(activityInterpreter);
+		}
+	}
+	
+	private void fireActivityInterpreterRemoved(
+			ActivityInterpreter activityInterpreter) {
+		for(IActivityInterpreterListener listener : getActivityInterpreterListeners()){
+			listener.activityInterpreterRemoved(activityInterpreter);
+		}
+	}
+
 
 	public ArrayList<ActivityInterpreter> getActivityInterpreters() {
 		if (activityInterpreterList == null) {
@@ -69,6 +95,20 @@ public abstract class Sensor extends FieldDevice implements Serializable {
 		return null;
 	}
 
+	public void addActivityInterpreterListener(IActivityInterpreterListener fieldDeviceListener) {
+		getActivityInterpreterListeners().add(fieldDeviceListener);
+	}
+	
+	public void removeActivityInterpreterListener(IActivityInterpreterListener fieldDeviceListener) {
+		getActivityInterpreterListeners().remove(fieldDeviceListener);
+	}
+
+	protected ArrayList<IActivityInterpreterListener> getActivityInterpreterListeners() {
+		if(activityInterpreterListeners==null){
+			activityInterpreterListeners = new ArrayList<IActivityInterpreterListener>();
+		}
+		return activityInterpreterListeners;
+	}
 
 	public boolean save() throws PeerCommunicationException {
 		return getSmartDevice().save();

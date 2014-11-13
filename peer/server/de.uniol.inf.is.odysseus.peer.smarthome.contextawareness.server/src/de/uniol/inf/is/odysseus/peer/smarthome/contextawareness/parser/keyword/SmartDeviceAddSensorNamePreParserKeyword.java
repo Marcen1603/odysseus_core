@@ -1,7 +1,6 @@
 package de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.parser.keyword;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -11,7 +10,7 @@ import org.slf4j.LoggerFactory;
 import de.uniol.inf.is.odysseus.core.collection.Context;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.IExecutorCommand;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
-import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.Sensor;
+import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.ComplexSensor;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.server.SmartDeviceServer;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.server.SmartHomeServerPlugIn;
 import de.uniol.inf.is.odysseus.script.parser.AbstractPreParserKeyword;
@@ -37,13 +36,13 @@ public class SmartDeviceAddSensorNamePreParserKeyword extends
 		if (sensorRawSourceName == null
 				|| !(sensorRawSourceName instanceof String)
 				|| sensorRawSourceName.equals("")) {
-			throw new OdysseusScriptException("#"+SmartDeviceSensorRawSourceName.KEYWORD+" needed for the sensor.");
+			throw new OdysseusScriptException("#"
+					+ SmartDeviceSensorRawSourceName.KEYWORD
+					+ " needed for the sensor.");
 		}
-		
-		Object sensorQueryName = variables
-				.get("QNAME");
-		if (sensorQueryName == null
-				|| !(sensorQueryName instanceof String)
+
+		Object sensorQueryName = variables.get("QNAME");
+		if (sensorQueryName == null || !(sensorQueryName instanceof String)
 				|| sensorQueryName.equals("")) {
 			throw new OdysseusScriptException("#QNAME needed for the sensor.");
 		}
@@ -72,27 +71,26 @@ public class SmartDeviceAddSensorNamePreParserKeyword extends
 		variables.put(KEYWORD, parameter);
 
 		String sensorName = parameter;
-		final String sensorRawSourceName = (String) variables.get(SmartDeviceSensorRawSourceName.KEYWORD);
+		final String sensorRawSourceName = (String) variables
+				.get(SmartDeviceSensorRawSourceName.KEYWORD);
 		String sensorQueryName = (String) variables.get("QNAME");
-		final String queryForRawValues = "";
+		//final String queryForRawValues = "";
 
 		LOG.debug("SensorName:" + sensorName);
-		LOG.debug("SensorRawSourceName:"+sensorRawSourceName);
-		LOG.debug("SensorQueryName:"+sensorQueryName);
-		
-		Sensor sensor = new Sensor(sensorName, "", "") {
-			private static final long serialVersionUID = 1L;
-			@Override
-			public Map<String, String> getQueriesForRawValues() {
-				Map<String,String> map = new HashMap<String, String>();
-				
-				map.put(sensorRawSourceName, queryForRawValues);
-				
-				return map;
-			}
-		};
-		SmartDeviceServer.getInstance().getLocalSmartDevice().addConnectedFieldDevice(sensor);
+		LOG.debug("SensorRawSourceName:" + sensorRawSourceName);
+		LOG.debug("SensorQueryName:" + sensorQueryName);
+
+		try {
+			ComplexSensor sensor = new ComplexSensor(sensorName, "", "");
+			sensor.setRawSourceName(sensorRawSourceName);
+
+			SmartDeviceServer.getInstance().getLocalSmartDevice()
+					.addConnectedFieldDevice(sensor);
+		} catch (Exception ex) {
+			LOG.error(ex.getMessage(), ex);
+		}
 		
 		return null;
 	}
+
 }

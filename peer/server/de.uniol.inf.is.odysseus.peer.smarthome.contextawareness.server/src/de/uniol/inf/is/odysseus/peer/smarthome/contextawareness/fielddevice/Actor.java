@@ -10,6 +10,7 @@ public abstract class Actor extends FieldDevice implements Serializable {
 	private static final long serialVersionUID = 1L;
 	private ArrayList<LogicRule> logicRulesList;
 	private ArrayList<AbstractActorAction> actorActions;
+	private transient ArrayList<ILogicRuleListener> logicRuleListeners;
 
 	public Actor(String name, String prefix, String postfix) {
 		super(name, prefix, postfix);
@@ -37,7 +38,7 @@ public abstract class Actor extends FieldDevice implements Serializable {
 	}
 
 	private void fireLogicRuleRemoved(LogicRule rule) {
-		for (ILogicRuleListener listener : getFieldDeviceListeners()) {
+		for (ILogicRuleListener listener : getLogicRuleListeners()) {
 			listener.logicRuleRemoved(rule);
 		}
 	}
@@ -61,5 +62,20 @@ public abstract class Actor extends FieldDevice implements Serializable {
 
 	public boolean save() throws PeerCommunicationException {
 		return getSmartDevice().save();
+	}
+	
+	public void addLogicRuleListener(ILogicRuleListener fieldDeviceListener) {
+		getLogicRuleListeners().add(fieldDeviceListener);
+	}
+	
+	public void removeLogicRuleListener(ILogicRuleListener fieldDeviceListener) {
+		getLogicRuleListeners().remove(fieldDeviceListener);
+	}
+
+	protected ArrayList<ILogicRuleListener> getLogicRuleListeners() {
+		if(logicRuleListeners==null){
+			logicRuleListeners = new ArrayList<ILogicRuleListener>();
+		}
+		return logicRuleListeners;
 	}
 }

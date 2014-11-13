@@ -1,7 +1,6 @@
 package de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 
 
 public abstract class FieldDevice implements Serializable {
@@ -10,7 +9,8 @@ public abstract class FieldDevice implements Serializable {
 	private String prefix;
 	private String postfix;
 	private ASmartDevice smartDevice;
-	private transient ArrayList<ILogicRuleListener> listener;
+	
+	
 
 	public FieldDevice(String name, String prefix, String postfix) {
 		this.setName(name);
@@ -52,20 +52,4 @@ public abstract class FieldDevice implements Serializable {
 	public String toString() {
 		return getName();
 	}
-
-	public void addLogicRuleListener(ILogicRuleListener fieldDeviceListener) {
-		getFieldDeviceListeners().add(fieldDeviceListener);
-	}
-	
-	public void removeFieldDeviceListener(ILogicRuleListener fieldDeviceListener) {
-		getFieldDeviceListeners().remove(fieldDeviceListener);
-	}
-
-	protected ArrayList<ILogicRuleListener> getFieldDeviceListeners() {
-		if(listener==null){
-			listener = new ArrayList<ILogicRuleListener>();
-		}
-		return listener;
-	}
-
 }

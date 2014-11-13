@@ -50,7 +50,7 @@ public abstract class ActivityInterpreter implements Serializable {
 	private void setSensor(Sensor sensor) {
 		this.sensor = sensor;
 	}
-	private void setActivitySourceName(String _activitySourceName) {
+	public void setActivitySourceName(String _activitySourceName) {
 		this.activitySourceName = _activitySourceName;
 	}
 	
@@ -72,4 +72,6 @@ public abstract class ActivityInterpreter implements Serializable {
 	}
 
 	public abstract String getActivityInterpreterDescription();
+
+	
 }

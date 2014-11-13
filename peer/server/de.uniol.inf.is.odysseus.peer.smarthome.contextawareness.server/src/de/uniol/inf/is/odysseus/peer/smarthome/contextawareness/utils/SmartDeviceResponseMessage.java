@@ -5,6 +5,9 @@ import java.io.IOException;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.ASmartDevice;
 
 public class SmartDeviceResponseMessage extends SmartDeviceMessage {
+	//private static transient final Logger LOG = LoggerFactory
+	//.getLogger(SmartHomeServerPlugIn.class);
+	
 	private ASmartDevice smartDevice;
 	
 	public byte[] toBytes() {
