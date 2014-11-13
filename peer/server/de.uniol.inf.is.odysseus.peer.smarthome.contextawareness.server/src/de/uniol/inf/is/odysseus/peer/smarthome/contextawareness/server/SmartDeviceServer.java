@@ -23,6 +23,7 @@ import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.Temp
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.RPiGPIOActor.State;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.server.advertisement.SmartDeviceAdvertisement;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.server.service.ServerExecutorService;
+import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.server.service.SessionManagementService;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.utils.SmartDeviceRequestMessage;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.utils.SmartDeviceResponseMessage;
 
@@ -238,7 +239,8 @@ public class SmartDeviceServer {
 				waitForJxtaServicesProvider();
 				waitForP2PNetworkManager();
 				waitForLogicProcessor();
-
+				waitForTemper();
+					
 				try {
 					initForLocalSmartDevice();
 					initLocalSmartDevice();
@@ -258,6 +260,24 @@ public class SmartDeviceServer {
 				.addFieldDeviceListener(localSmartDeviceListener);
 	}
 
+	private void waitForTemper() {
+		boolean loop=true;
+		while(loop){
+			java.util.List<String> list = ServerExecutorService.getServerExecutor().getOperatorNames(SessionManagementService.getActiveSession());
+			
+			for(String l : list){
+				if(l.equalsIgnoreCase("temper1access")){
+					loop = false;
+				}
+			}
+			
+			try {
+				Thread.sleep(100);
+			} catch (InterruptedException e) {
+			}
+		}
+	}
+	
 	protected void waitForLogicProcessor() {
 		while (LogicProcessor.getInstance() == null) {
 			try {
