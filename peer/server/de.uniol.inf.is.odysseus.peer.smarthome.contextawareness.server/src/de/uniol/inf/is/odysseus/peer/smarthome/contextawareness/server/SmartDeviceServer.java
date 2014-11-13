@@ -377,10 +377,11 @@ public class SmartDeviceServer {
 		if (gpioLED11 == null) {
 			initActors(peerName);
 		}
-		gpioLED11.createLogicRuleWithState("hot", State.TOGGLE);
-		gpioLED11.createLogicRuleWithState("cold", State.TOGGLE);
-		// TODO: gpioLED11.createLogicRuleWithState("Tasterbetaetigt",
-		// State.TOGGLE);
+		//TODO: test, test, test
+		//gpioLED11.createLogicRuleWithState("hot", State.TOGGLE);
+		//gpioLED11.createLogicRuleWithState("cold", State.TOGGLE);
+		gpioLED11.createLogicRuleWithState("Tasterbetaetigt", State.TOGGLE);
+		
 	}
 
 	private void initActors(String peerName) {
