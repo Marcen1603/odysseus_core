@@ -28,9 +28,7 @@ public class TemperSensor extends Sensor {
 		sBuilder.append("#PARSER PQL\n");
 		sBuilder.append("#QNAME " + getRawSourceName() + "_query\n");
 		sBuilder.append("#RUNQUERY\n");
-		sBuilder.append(getRawSourceName() + " := TEMPER1ACCESS({SOURCE = '"
-				+ getRawSourceName()
-				+ "', tempnumber = 0,options=[['tempnumber','0']]})");
+		sBuilder.append(getRawSourceName() + " := TEMPER1ACCESS({SOURCE = '"+getRawSourceName()+"', TEMPNUMBER = 0})");
 
 		rawValueQueries.put(getRawSourceName(), sBuilder.toString());
 
