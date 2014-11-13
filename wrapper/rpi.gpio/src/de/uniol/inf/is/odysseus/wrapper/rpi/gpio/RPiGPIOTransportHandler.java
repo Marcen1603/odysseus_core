@@ -106,6 +106,9 @@ public class RPiGPIOTransportHandler extends AbstractSimplePullTransportHandler<
 				LOG.error("On Raspberry Pi? pi4j installed?");
 				flagExceptionThrown=true;
 			}
+			
+			tuple.setAttribute(0, "nullError");
+        	tuple.setAttribute(1, 0);
 		}
 		
 		return tuple;
