@@ -94,7 +94,7 @@ public class RPiGPIOTransportHandler extends AbstractSimplePullTransportHandler<
             	buttonState = "0";
             }
             
-        	tuple.setAttribute(0, "pinNumber");
+        	tuple.setAttribute(0, "pinNumber"+myButton.getPin().getAddress());
         	tuple.setAttribute(1, Long.parseLong(buttonState));
         	//TODO: 
         	//tuple.setAttribute(2, System.currentTimeMillis());
@@ -103,12 +103,12 @@ public class RPiGPIOTransportHandler extends AbstractSimplePullTransportHandler<
 			LOG.error(ex.getMessage(), ex);
 		}catch(Exception ex){
 			if(!flagExceptionThrown){
-				LOG.error("On Raspberry Pi? pi4j installed?");
+				LOG.error("On Raspberry Pi? pi4j installed? ");
 				flagExceptionThrown=true;
 			}
 			
-			tuple.setAttribute(0, "nullError");
-        	tuple.setAttribute(1, 0);
+			tuple.setAttribute(0, "pinNumber7");
+        	tuple.setAttribute(1, 1);
 		}
 		
 		return tuple;
