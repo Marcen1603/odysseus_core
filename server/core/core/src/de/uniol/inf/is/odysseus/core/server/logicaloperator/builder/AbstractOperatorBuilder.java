@@ -217,7 +217,7 @@ public abstract class AbstractOperatorBuilder implements IOperatorBuilder {
 				this.errors.addAll(parameter.getErrors());
 			}
 			if (parameter.hasValue() && parameter.isDeprecated()) {
-				this.warnings.add("Parameter "
+				this.warnings.add(this.getName()+": Parameter "
 						+ parameter.getName() + " is deprecated!");
 			}
 		}
