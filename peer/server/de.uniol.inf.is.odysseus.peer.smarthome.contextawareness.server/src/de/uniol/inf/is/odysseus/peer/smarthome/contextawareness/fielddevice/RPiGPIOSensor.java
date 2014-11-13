@@ -7,9 +7,10 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.server.SmartHomeServerPlugIn;
+
 public class RPiGPIOSensor extends Sensor {
-	@SuppressWarnings("unused")
-	private static final Logger LOG = LoggerFactory.getLogger(Sensor.class);
+	private static final Logger LOG = LoggerFactory.getLogger(SmartHomeServerPlugIn.class);
 	private static final long serialVersionUID = 1L;
 	private int inputPin;
 
@@ -52,6 +53,8 @@ public class RPiGPIOSensor extends Sensor {
 				+ getRawSourceName() + "', PIN = " + inputPin + "})");
 
 		rawValueQueries.put(getRawSourceName(), sBuilder.toString());
+		
+		LOG.debug("RawValues sourcename:"+getRawSourceName()+" Query:"+sBuilder.toString());
 
 		return rawValueQueries;
 	}
@@ -87,7 +90,11 @@ public class RPiGPIOSensor extends Sensor {
 					getActivitySourceName(), activityConfigName);
 
 			queries.put(getActivitySourceName(), activityQuery);
-
+			
+			LOG.debug("getActivityInterpreterQueries:");
+			LOG.debug("sourcename:"+activityConfigName+" Query:"+activityConfigQuery);
+			LOG.debug("sourcename:"+getActivitySourceName()+" Query:"+activityQuery);
+			
 			return queries;
 		}
 
