@@ -36,6 +36,7 @@ import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.common.L
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.common.LoadBalancingHelper;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.common.OutgoingConnection;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.movingstate.status.MovingStateMasterStatus;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.active.movingstate.status.MovingStateSlaveStatus;
 
 public class MovingStateHelper {
 	
@@ -389,8 +390,16 @@ public class MovingStateHelper {
 	
 	}
 
-	public static void injectState(String pipeId) {
-		// TODO Auto-generated method stub
+	public static void injectState(MovingStateSlaveStatus status, String pipeId) {
+		try {
+			IStatefulPO op = status.getStatefulPOforPipe(pipeId);
+			MovingStateManager.getInstance().getReceiver(pipeId).injectState(op);
+			status.getMessageDispatcher().sendCopyStateFinished(status.getMasterPeer(), pipeId);
+		}
+		catch(Exception e) {
+			//TODO Error Handling
+		}
+		
 		
 	}
 }

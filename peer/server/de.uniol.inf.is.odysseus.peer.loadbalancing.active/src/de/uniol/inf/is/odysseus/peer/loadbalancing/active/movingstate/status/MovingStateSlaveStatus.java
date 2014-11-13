@@ -7,6 +7,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import net.jxta.peer.PeerID;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IStatefulPO;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.common.ILoadBalancingSlaveStatus;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.active.movingstate.communicator.MovingStateHelper;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.movingstate.communicator.MovingStateMessageDispatcher;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.movingstate.protocol.IStateReceivedListener;
 
@@ -124,7 +125,8 @@ public class MovingStateSlaveStatus implements ILoadBalancingSlaveStatus, IState
 
 	@Override
 	public void stateReceived(String pipe) {
-		getMessageDispatcher().sendCopyStateFinished(this.getMasterPeer(), pipe);
+		MovingStateHelper.injectState(this,pipe);
+		
 	}
 
 
