@@ -16,6 +16,7 @@ public interface ITransmissionReceiver {
 	/**
 	 * Change the peerId. E.g., if the sender changes due to recovery.
 	 * @param peerId The id of the new peer
+	 * @throws DataTransmissionException 
 	 */
-	public void setPeerId(PeerID peerId);
+	public void setPeerId(PeerID peerId) throws DataTransmissionException;
 }

@@ -127,7 +127,7 @@ public class EndpointDataTransmissionReceiver extends AbstractTransmissionReceiv
 	}
 	
 	@Override
-	public void setPeerId(PeerID peerId) {
+	public void setPeerId(PeerID peerId) throws DataTransmissionException {
 		this.pid = peerId;
 	}
 }

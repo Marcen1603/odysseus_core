@@ -40,6 +40,11 @@ public class SocketDataTransmissionReceiver extends EndpointDataTransmissionRece
 		super(communicator, peerID, id);
 
 		communicator.addListener(this, PortMessage.class);
+		determinePeerAddress(peerID);
+	}
+
+	private void determinePeerAddress(String peerID)
+			throws DataTransmissionException {
 		Optional<String> optAddress = PeerDictionary.getInstance().getRemotePeerAddress(
 				toPeerID(peerID));
 		if (optAddress.isPresent()) {
@@ -90,7 +95,7 @@ public class SocketDataTransmissionReceiver extends EndpointDataTransmissionRece
 					public void run() {
 						try {
 							socket = new Socket(address, port);
-							LOG.debug("Opened socket on port {}", port);
+							LOG.debug("Opened socket on port {} for address {}", port,address);
 							InputStream inputStream = socket.getInputStream();
 							while (true) {
 								int bytesRead = inputStream.read(buffer);
@@ -144,6 +149,14 @@ public class SocketDataTransmissionReceiver extends EndpointDataTransmissionRece
 			LOG.error("Could not send the portAckMessage to peer {}", PeerDictionary.getInstance()
 					.getRemotePeerName(receiverPeer));
 		}
+	}
+	
+	@Override
+	public void setPeerId(PeerID peerId) throws DataTransmissionException {
+		//Only changes peer Id. Still need to determine new Address.
+		super.setPeerId(peerId);
+		LOG.debug("Set new Peer Id to {}", peerId);
+		determinePeerAddress(peerId.toString());
 	}
 
 	private void processBytes(byte[] msg) {

@@ -219,10 +219,12 @@ public class JxtaReceiverPO<T extends IStreamObject> extends AbstractSource<T>
 	public void receiveFromNewPeer(String peerId)
 			throws DataTransmissionException {
 		this.peerIDString = peerId;
-
+		
 		// Update transmission		
 		transmission.close();
+		transmission.removeListener(this);
 		transmission.setPeerId(toPeerID(peerId));
+		transmission.addListener(this);
 		transmission.open();
 
 		if(isRunning)

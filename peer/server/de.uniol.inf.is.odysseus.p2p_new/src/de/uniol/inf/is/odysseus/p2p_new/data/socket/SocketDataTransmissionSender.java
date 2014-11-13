@@ -62,6 +62,9 @@ public class SocketDataTransmissionSender extends EndpointDataTransmissionSender
 					LOG.debug("Server socket on port {} was accepted from peer {}", serverSocket.getLocalPort(),
 							PeerDictionary.getInstance().getRemotePeerName(senderPeer));
 					clientSocketMap.put(senderPeer, clientSocket);
+					for (PeerID peerID : clientSocketMap.keySet()) {
+						LOG.debug("clientSocketMap contains " + peerID.toString());
+					}
 
 				} catch (IOException e) {
 					LOG.error("Could not create Server socket", e);

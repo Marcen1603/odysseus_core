@@ -277,13 +277,7 @@ public class JxtaSenderPO<T extends IStreamObject<?>> extends AbstractSink<T>
 	public void sendToNewPeer(String peerId) throws DataTransmissionException {
 		this.peerIDString = peerId;
 
-		// Update transmission
-		transmission.close();
-		transmission.removeListener(this);
+		//Don't mess with the transmission, as the receiver does all the negotiation.
 
-		this.transmission = DataTransmissionManager.getInstance()
-				.registerTransmissionSender(peerIDString, pipeIDString);
-		this.transmission.addListener(this);
-		this.transmission.open();
 	}
 }

@@ -32,6 +32,7 @@ public class ResponseHandler {
 	private static final Logger LOG = LoggerFactory
 			.getLogger(ResponseHandler.class);
 	
+	private static boolean DEBUG_BYPASS_STATE_COPY = false;
 	
 	
 	/**
@@ -124,7 +125,13 @@ public class ResponseHandler {
 					// All success messages received. Yay!
 					status.setPhase(LB_PHASES.COPYING_STATES);
 					LOG.debug("INITIATING COPYING STATES");
-					MovingStateHelper.initiateStateCopy(status);
+					if(DEBUG_BYPASS_STATE_COPY) {
+						status.setPhase(LB_PHASES.COPYING_FINISHED);
+						status.getMessageDispatcher().sendFinishedCopyingStates(status.getVolunteeringPeer());
+					}
+					else {
+						MovingStateHelper.initiateStateCopy(status);
+					}
 					//TODO what if no stateful Ops?
 				}
 			}
@@ -181,6 +188,7 @@ public class ResponseHandler {
 				status.getMessageDispatcher().stopRunningJob();
 				status.setPhase(LB_PHASES.STOP_BUFFERING);
 				dispatcher.sendMsgReceived(senderPeer);
+				LoadBalancingHelper.cutSendersFromQuery(status.getLogicalQuery());
 				MovingStateHelper.sendStopBufferingToUpstreamPeers(status);
 			}
 		break;
@@ -191,6 +199,7 @@ public class ResponseHandler {
 				dispatcher.stopRunningJob(senderPeer.toString());
 				dispatcher.sendMsgReceived(senderPeer);
 				if(dispatcher.getNumberOfRunningJobs()==0) {
+					//TODO 
 					LoadBalancingHelper.deleteQuery(status.getLogicalQuery());
 					status.setPhase(LB_PHASES.FINISHED);
 					loadBalancingSuccessfullyFinished(status);

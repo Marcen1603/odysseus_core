@@ -43,6 +43,10 @@ public class EndpointDataTransmissionSender extends AbstractTransmissionSender i
 
 	@Override
 	public void open() {
+		LOG.debug("Open called...");
+		for(PeerID pid : pids) {
+			LOG.debug(pid.toString());
+		}
 		this.communicator.addListener(this, OpenMessage.class);
 		this.communicator.addListener(this, CloseMessage.class);
 		this.communicator.addListener(this, PortAckMessage.class);
@@ -50,6 +54,10 @@ public class EndpointDataTransmissionSender extends AbstractTransmissionSender i
 
 	@Override
 	public void close() {
+		LOG.debug("Close called...");
+		for(PeerID pid : pids) {
+			LOG.debug(pid.toString());
+		}
 		this.communicator.removeListener(this, OpenMessage.class);
 		this.communicator.removeListener(this, CloseMessage.class);
 		this.communicator.removeListener(this, PortAckMessage.class);
@@ -90,6 +98,10 @@ public class EndpointDataTransmissionSender extends AbstractTransmissionSender i
 		if (message instanceof OpenMessage) {
 			OpenMessage openMessage = (OpenMessage) message;
 			if (openMessage.getIdHash() == idHash) {
+				LOG.debug("Sender with following PIDS got OPEN-Message:");
+				for(PeerID pid : pids) {
+					LOG.debug(pid.toString());
+				}
 				processOpenMessage(senderPeer, openMessage);
 			}
 		} else if (message instanceof CloseMessage) {

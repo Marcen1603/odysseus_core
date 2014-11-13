@@ -1,6 +1,7 @@
 package de.uniol.inf.is.odysseus.peer.loadbalancing.active.console;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -492,17 +493,66 @@ public class ActiveLoadbalancingConsole implements CommandProvider {
 		
 		IExecutor executor = ActiveLoadBalancingActivator.getExecutor();
 		List<IPhysicalOperator> roots = executor.getPhysicalRoots(localQueryId, ActiveLoadBalancingActivator.getActiveSession());
+		
+		
+		ArrayList<IPhysicalOperator> sourcesOfQuery = new ArrayList<IPhysicalOperator>();
 		for(IPhysicalOperator root : roots) {
-			traverseGraphAndPrintSubscriptions(root,ci);
+			ArrayList<IPhysicalOperator> newSources = traverseGraphAndGetSources(root,new ArrayList<IPhysicalOperator>());
+			for (IPhysicalOperator source : newSources) {
+				if(!sourcesOfQuery.contains(source))
+					sourcesOfQuery.add(source);
+			}
+		}
+		
+		for (IPhysicalOperator source : sourcesOfQuery) {
+			traverseGraphAndPrintSubscriptions(source,ci);
 		}
 	}
 	
 	
-	@SuppressWarnings({ "unchecked", "rawtypes" })
-	private static void traverseGraphAndPrintSubscriptions(IPhysicalOperator root, CommandInterpreter ci) {
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	private static ArrayList<IPhysicalOperator> traverseGraphAndGetSources(IPhysicalOperator root,ArrayList<IPhysicalOperator> knownSources) {
 		if(root instanceof IPipe) {
 			IPipe rootAsSource = (IPipe) root;
 			for (AbstractPhysicalSubscription subscription : (Collection<AbstractPhysicalSubscription>)rootAsSource.getSubscribedToSource()) {
+				ArrayList<IPhysicalOperator> newSources = new ArrayList<IPhysicalOperator>();
+				newSources.addAll(traverseGraphAndGetSources((IPhysicalOperator)subscription.getTarget(),knownSources));
+				for(IPhysicalOperator source : newSources) {
+					if(!knownSources.contains(source)) {
+						knownSources.add(source);
+					}
+				}
+			}
+			return knownSources;
+		}
+		
+		if(root instanceof ISource) {
+			if(!knownSources.contains(root)) {
+				knownSources.add(root);
+			}
+			return knownSources;
+		}
+		if(root instanceof ISink) {
+			ISink rootAsSink = (ISink) root;
+			for (AbstractPhysicalSubscription subscription : (Collection<AbstractPhysicalSubscription>)rootAsSink.getSubscribedToSource()) {
+				ArrayList<IPhysicalOperator> newSources = new ArrayList<IPhysicalOperator>();
+				newSources.addAll(traverseGraphAndGetSources((IPhysicalOperator)subscription.getTarget(),knownSources));
+				for(IPhysicalOperator source : newSources) {
+					if(!knownSources.contains(source)) {
+						knownSources.add(source);
+					}
+				}
+			}
+			return knownSources;
+		}
+		return knownSources;
+	}
+	
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	private static void traverseGraphAndPrintSubscriptions(IPhysicalOperator root, CommandInterpreter ci) {
+		if(root instanceof IPipe) {
+			IPipe rootAsPipe = (IPipe) root;
+			for (AbstractPhysicalSubscription subscription : (Collection<AbstractPhysicalSubscription>)rootAsPipe.getSubscriptions()) {
 				printSubscsription(subscription,root,ci);
 				traverseGraphAndPrintSubscriptions((IPhysicalOperator)subscription.getTarget(),ci);
 			}
@@ -510,15 +560,14 @@ public class ActiveLoadbalancingConsole implements CommandProvider {
 		}
 		
 		if(root instanceof ISource) {
-			return;
-		}
-		if(root instanceof ISink) {
-			LOG.debug("   recognized Operator as Sink.");
-			ISink rootAsSink = (ISink) root;
-			for (AbstractPhysicalSubscription subscription : (Collection<AbstractPhysicalSubscription>)rootAsSink.getSubscribedToSource()) {
+			ISource rootAsSource = (ISource) root;
+			for (AbstractPhysicalSubscription subscription : (Collection<AbstractPhysicalSubscription>)rootAsSource.getSubscriptions()) {
 				printSubscsription(subscription,root,ci);
 				traverseGraphAndPrintSubscriptions((IPhysicalOperator)subscription.getTarget(),ci);
 			}
+			return;
+		}
+		if(root instanceof ISink) {
 			return;
 		}
 		return;
@@ -529,7 +578,8 @@ public class ActiveLoadbalancingConsole implements CommandProvider {
 		IPhysicalOperator target = (IPhysicalOperator)subscription.getTarget();
 		if(subscription instanceof ControllablePhysicalSubscription) {
 			ControllablePhysicalSubscription cSub = (ControllablePhysicalSubscription) subscription;
-			ci.println(operator.getName()+"->"+target.getName()+"    OpenCalls:" + subscription.getOpenCalls() + " suspended: " + cSub.isSuspended());
+			ci.println(operator.getName()+"->"+target.getName()+"    OpenCalls:" + cSub.getOpenCalls() + " suspended: " + cSub.isSuspended());
+			ci.println("* " + cSub.toString());
 		}
 		else {
 			ci.println(operator.getName()+"->"+target.getName()+"    OpenCalls:" + subscription.getOpenCalls() + " (not controllable)");

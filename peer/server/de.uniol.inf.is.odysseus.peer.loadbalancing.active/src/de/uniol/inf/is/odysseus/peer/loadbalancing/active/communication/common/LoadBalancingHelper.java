@@ -88,7 +88,7 @@ public class LoadBalancingHelper {
 	 * @param queryID
 	 */
 	@SuppressWarnings({ "rawtypes" })
-	public static void cutQuery(int queryID) {
+	public static void cutReceiversFromQuery(int queryID) {
 
 		IServerExecutor executor = ActiveLoadBalancingActivator.getExecutor();
 		IPhysicalQuery query = executor.getExecutionPlan().getQueryById(queryID);
@@ -101,6 +101,21 @@ public class LoadBalancingHelper {
 			}
 		}
 	}
+	
+	@SuppressWarnings("rawtypes")
+	public static void cutSendersFromQuery(int queryID) {
+		IServerExecutor executor = ActiveLoadBalancingActivator.getExecutor();
+		IPhysicalQuery query = executor.getExecutionPlan().getQueryById(queryID);
+		
+		for (IPhysicalOperator operator : query.getAllOperators()) {
+
+			if (operator instanceof JxtaSenderPO) {
+				JxtaSenderPO sender = (JxtaSenderPO) operator;
+				sender.unsubscribeFromAllSources();
+			}
+		}
+	}
+	
 
 	public static JxtaReceiverAO createReceiverAO(IncomingConnection connection, String pipeID) {
 		JxtaReceiverAO receiver = new JxtaReceiverAO();
@@ -111,6 +126,7 @@ public class LoadBalancingHelper {
 		receiver.setSchema(connection.schema.getAttributes());
 		receiver.setSchemaName(connection.schema.getURI());
 		receiver.connectSink(connection.localOperator, connection.port, 0, connection.schema);
+		LOG.debug("Created RECEIVER with PeerID " + connection.remotePeerID);
 		return receiver;
 	}
 
@@ -121,6 +137,7 @@ public class LoadBalancingHelper {
 		sender.setOutputSchema(connection.schema);
 		connection.localOperator.connectSink(sender, 0, connection.port,
 				connection.localOperator.getOutputSchema());
+		LOG.debug("Created SENDER with PeerID " + connection.remotePeerID);
 		return sender;
 	}
 
@@ -497,6 +514,9 @@ public class LoadBalancingHelper {
 			part.removeOperator(topAO);
 		}
 	}
+	
+	
+	
 
 	/**
 	 * Get all currently Installed Queries as Query Parts.

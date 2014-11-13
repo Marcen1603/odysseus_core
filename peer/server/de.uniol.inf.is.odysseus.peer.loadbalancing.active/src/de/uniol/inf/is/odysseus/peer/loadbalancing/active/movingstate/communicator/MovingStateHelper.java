@@ -45,6 +45,7 @@ public class MovingStateHelper {
 	
 	
 	public static void sendState(String pipe, IStatefulPO operator) throws LoadBalancingException {
+		
 		MovingStateSender sender = MovingStateManager.getInstance().getSender(pipe);
 		
 		if(operator==null) {
@@ -59,10 +60,13 @@ public class MovingStateHelper {
 		Serializable state = operator.getState();
 		sender.sendData(state);
 		LOG.debug("Data sent.");
+		
+		
 	}
 	
 	
 	public static List<IStatefulPO> getStatefulOperatorList(int queryId) {
+		
 		IExecutor executor = ActiveLoadBalancingActivator.getExecutor();
 		List<IPhysicalOperator> roots = executor.getPhysicalRoots(queryId, ActiveLoadBalancingActivator.getActiveSession());
 		List<IStatefulPO> statefulPOs = new ArrayList<IStatefulPO>();
@@ -72,6 +76,7 @@ public class MovingStateHelper {
 			statefulPOs.addAll(traverseGraphAndFindStatefulOperators(root, knownOperators));
 		}
 		return statefulPOs;
+		
 	}
 	
 	public static List<IStatefulPO> getStatefulOperatorList(Collection<Integer> installedQueries) {
@@ -83,15 +88,18 @@ public class MovingStateHelper {
 	}
 	
 	public static void initiateStateCopy(MovingStateMasterStatus status) {
+		
 		MovingStateCommunicatorImpl communicator = MovingStateCommunicatorImpl.getInstance();
 		MovingStateMessageDispatcher dispatcher = status.getMessageDispatcher();
 		
 		List<IStatefulPO> statefulOperators = getStatefulOperatorList(status.getLogicalQuery());
 		LOG.debug("Got list of "+statefulOperators.size()+" Stateful Operators.");
 		for(IStatefulPO statefulPO : statefulOperators) {
+			
 			//Installing a new State Sender
 			String stateSenderPipe = MovingStateManager.getInstance().addSender(status.getVolunteeringPeer().toString());
 			status.addSender(stateSenderPipe, statefulPO);
+			
 			dispatcher.sendInititateStateCopy(status.getVolunteeringPeer(), communicator, stateSenderPipe, statefulPO.getClass().toString(), statefulOperators.indexOf(statefulPO));
 		}
 	}
@@ -337,7 +345,6 @@ public class MovingStateHelper {
 				for (IncomingConnection connection : connections) {
 					JxtaReceiverAO receiver = LoadBalancingHelper.createReceiverAO(connection,
 							connection.oldPipeID);
-
 					modifiedPart.addOperator(receiver);
 					
 				}
@@ -350,6 +357,7 @@ public class MovingStateHelper {
 						.get(relativeSink);
 				for (OutgoingConnection connection : connections) {
 					JxtaSenderAO sender = LoadBalancingHelper.createSenderAO(connection, connection.oldPipeID);
+					
 					modifiedPart.addOperator(sender);
 					senderPipes.add(connection.oldPipeID);
 				}
