@@ -102,12 +102,14 @@ public class SmartDeviceServerFieldDeviceListener implements IFieldDeviceListene
 	public void readyStateChanged(ASmartDevice smartDevice, boolean state) {
 		LOG.debug("smartDevice: " + smartDevice.getPeerName() + " readyState:"
 				+ state);
+		
 	}
 
 	@Override
 	public void fieldDevicesUpdated(SmartDevice smartDevice) {
 		LOG.debug("fieldDevicesUpdated smart device:"
 				+ smartDevice.getPeerName());
-
+		
+		
 	}
 }

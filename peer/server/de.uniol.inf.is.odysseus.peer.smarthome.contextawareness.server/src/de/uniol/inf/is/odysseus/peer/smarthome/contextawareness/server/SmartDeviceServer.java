@@ -47,6 +47,7 @@ public class SmartDeviceServer {
 	private TemperSensor temper;
 	private RPiGPIOSensor gpioTaste7;
 	private RPiGPIOActor gpioLED11;
+	private RPiGPIOActor gpioLED10;
 
 	SmartDeviceServer() {
 		initLocalSmartDeviceAsync();
@@ -389,7 +390,13 @@ public class SmartDeviceServer {
 		// //////////////////////////////////////////////////////////
 		// LED GPIO_11
 		gpioLED11 = new RPiGPIOActor("RPiLED11", peerName, "");
+		gpioLED10.setPin(11);
 		getLocalSmartDevice().addConnectedFieldDevice(gpioLED11);
+		
+		
+		gpioLED10 = new RPiGPIOActor("RPiLED10", peerName, "");
+		gpioLED10.setPin(10);
+		getLocalSmartDevice().addConnectedFieldDevice(gpioLED10);
 	}
 
 	public static boolean isLocalPeer(String peerIDString) {

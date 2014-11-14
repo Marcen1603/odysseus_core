@@ -9,6 +9,8 @@ public class RPiGPIOActor extends Actor {
 		ON, OFF, TOGGLE
 	}
 
+	private int pin;
+
 	public RPiGPIOActor(String name, String prefix, String postfix) {
 		super(name, prefix, postfix);
 		addActorAction(new RPiGPIOActorAction(State.ON));
@@ -21,8 +23,13 @@ public class RPiGPIOActor extends Actor {
 		RPiGPIOActorLogicRule newRule = new RPiGPIOActorLogicRule(this,
 				activityName, getPrefix(), getPostfix());
 		newRule.setState(state);
+		newRule.setPin(getPin());
 
 		addLogicRuleForActivity(newRule);
+	}
+
+	private int getPin() {
+		return this.pin;
 	}
 
 	@Override
@@ -76,11 +83,16 @@ public class RPiGPIOActor extends Actor {
 	class RPiGPIOActorLogicRule extends LogicRule {
 		private static final long serialVersionUID = 1L;
 		private State state;
+		private int pin;
 
 		RPiGPIOActorLogicRule(Actor actor, String activityName, String prefix,
 				String postfix) {
 			super(actor, activityName, prefix, postfix);
 
+		}
+
+		public void setPin(int pin) {
+			this.pin = pin;
 		}
 
 		public void setState(State _state) {
@@ -136,7 +148,7 @@ public class RPiGPIOActor extends Actor {
 
 			// InputSchema: schema=[['PinNumber', 'String'],['PinState',
 			// 'String']]
-			String entitySetStateStreamName = getNameCombination("rpigpio11",
+			String entitySetStateStreamName = getNameCombination(getName(),
 					activity);
 			StringBuilder sbEntitySetState = entitySetStateStream(
 					setConfigStreamName, entitySetStateStreamName);
@@ -241,14 +253,18 @@ public class RPiGPIOActor extends Actor {
 			sbEntitySetState.append("#RUNQUERY\n");
 			sbEntitySetState.append("" + entitySetStateStreamName
 					+ " = RPIGPIOSINK({sink='" + entitySetStateStreamName
-					+ "', pin=11, pinstate='low'}," + setConfigStreamName
+					+ "', pin="+getPin()+", pinstate='low'}," + setConfigStreamName
 					+ ")\n");
 			return sbEntitySetState;
 		}
 
+		private int getPin() {
+			return this.pin;
+		}
+
 		@Override
 		public String getReactionDescription() {
-			return "State change:" + getState();
+			return "pin:"+getPin()+" State change:" + getState();
 		}
 	}
 
@@ -267,6 +283,10 @@ public class RPiGPIOActor extends Actor {
 			return _name;
 		}
 
+	}
+
+	public void setPin(int pin) {
+		this.pin = pin;
 	}
 
 }
