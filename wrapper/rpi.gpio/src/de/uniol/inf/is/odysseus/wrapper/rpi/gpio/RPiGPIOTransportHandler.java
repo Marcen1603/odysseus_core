@@ -1,6 +1,8 @@
 package de.uniol.inf.is.odysseus.wrapper.rpi.gpio;
 
 
+import java.util.EnumSet;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -8,7 +10,11 @@ import com.pi4j.io.gpio.GpioController;
 import com.pi4j.io.gpio.GpioFactory;
 import com.pi4j.io.gpio.GpioPinDigitalInput;
 import com.pi4j.io.gpio.Pin;
+import com.pi4j.io.gpio.PinMode;
+import com.pi4j.io.gpio.PinPullResistance;
+import com.pi4j.io.gpio.RaspiGpioProvider;
 import com.pi4j.io.gpio.RaspiPin;
+import com.pi4j.io.gpio.impl.PinImpl;
 
 import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
@@ -34,8 +40,7 @@ public class RPiGPIOTransportHandler extends AbstractSimplePullTransportHandler<
 	//private String pullState = "low";
 
 	private static GpioController gpioController;
-	@SuppressWarnings("unused")
-	private Pin _pin = RaspiPin.GPIO_07;
+	private Pin pin; //= RaspiPin.GPIO_07
 
 	private boolean flagExceptionThrown = false;//Exception was not thrown at this point.
 	
@@ -49,13 +54,33 @@ public class RPiGPIOTransportHandler extends AbstractSimplePullTransportHandler<
 		RPiGPIOTransportHandler tHandler = new RPiGPIOTransportHandler();
 		protocolHandler.setTransportHandler(tHandler);
 		this.init(options);
+		tHandler.setPin(this.pin);
 		tHandler.myinitGPIO();
 		return tHandler;
 	}
 	
+	private void setPin(Pin pin) {
+		this.pin = pin;
+	}
+
 	protected void init(final OptionMap options) {
 		if (options.containsKey(RPiGPIOTransportHandler.PIN)) {
-            //this.pin = options.get(RPiGPIOTransportHandler.PIN);
+            String _pin = options.get(RPiGPIOTransportHandler.PIN);
+			Integer pinInteger = Integer.parseInt(_pin);
+            
+			LOG.debug("init");
+			
+			if(pinInteger. intValue() == 1){
+				this.pin = new PinImpl(RaspiGpioProvider.NAME, pinInteger.intValue(), "GPIO "+_pin.toString(), 
+	                    EnumSet.of(PinMode.DIGITAL_INPUT, PinMode.DIGITAL_OUTPUT, PinMode.PWM_OUTPUT),
+	                    PinPullResistance.all());
+			}else{
+				this.pin = new PinImpl(RaspiGpioProvider.NAME, pinInteger.intValue(), "GPIO "+_pin.toString(), 
+		                EnumSet.of(PinMode.DIGITAL_INPUT, PinMode.DIGITAL_OUTPUT),
+		                PinPullResistance.all());
+			}
+			
+			LOG.debug("this.pin:"+this.pin.getAddress());
         }
 		
 		if (options.containsKey(RPiGPIOTransportHandler.MODE)) {
@@ -125,7 +150,7 @@ public class RPiGPIOTransportHandler extends AbstractSimplePullTransportHandler<
 				if(gpioController==null){
 					gpioController = GpioFactory.getInstance();
 					if(myButton==null){
-						myButton = gpioController.provisionDigitalInputPin(RaspiPin.GPIO_07,"MyButton");
+						myButton = gpioController.provisionDigitalInputPin(this.pin,"MyButton");
 					}
 				}
 				break;
@@ -153,4 +178,5 @@ public class RPiGPIOTransportHandler extends AbstractSimplePullTransportHandler<
 	public boolean isSemanticallyEqualImpl(ITransportHandler other) {
 		return false;
 	}
+	
 }

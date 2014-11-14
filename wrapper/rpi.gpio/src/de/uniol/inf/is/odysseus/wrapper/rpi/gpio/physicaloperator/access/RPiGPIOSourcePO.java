@@ -26,6 +26,9 @@ public class RPiGPIOSourcePO extends AbstractSource<Tuple<?>> {
 	protected void process_open() throws OpenFailedException {
 		LOG.debug("process_open");
 		
+		LOG.debug("pin:"+pin.toString());
+		
+		
 	}
 	
 

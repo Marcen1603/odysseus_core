@@ -47,6 +47,7 @@ public class RPiGPIOSourceAO extends AbstractAccessAO {
 		schema.add(new SDFAttribute(null, "PinState", SDFDatatype.LONG, null));
 		setAttributes(schema);
 		//['PinNumber', 'String'],['PinState', 'String']
+		
 	}
 	
 	public RPiGPIOSourceAO(RPiGPIOSourceAO other) {
