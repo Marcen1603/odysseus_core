@@ -76,7 +76,7 @@ public class SortAO extends UnaryLogicalOp {
         return this.attributes;
     }
 
-    @Parameter(type = BooleanParameter.class, name = "ASCENDING", optional = false, isList = true, doc = "The sort of each attribute")
+    @Parameter(type = BooleanParameter.class, name = "ASCENDING", optional = true, isList = true, doc = "The sort of each attribute")
     public void setAscending(List<Boolean> ascending) {
         this.ascending = ascending;
 
