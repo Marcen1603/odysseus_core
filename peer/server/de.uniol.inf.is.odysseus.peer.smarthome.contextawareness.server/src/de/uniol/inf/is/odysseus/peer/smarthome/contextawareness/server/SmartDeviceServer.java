@@ -398,7 +398,7 @@ public class SmartDeviceServer {
 		// //////////////////////////////////////////////////////////
 		// LED GPIO_11
 		gpioLED11 = new RPiGPIOActor("RPiLED11", peerName, "");
-		gpioLED10.setPin(11);
+		gpioLED11.setPin(11);
 		getLocalSmartDevice().addConnectedFieldDevice(gpioLED11);
 		
 		

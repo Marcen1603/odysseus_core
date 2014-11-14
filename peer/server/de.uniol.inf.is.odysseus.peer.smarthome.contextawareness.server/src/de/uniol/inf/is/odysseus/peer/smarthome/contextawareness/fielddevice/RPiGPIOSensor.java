@@ -50,8 +50,18 @@ public class RPiGPIOSensor extends Sensor {
 		sBuilder.append("#PARSER PQL\n");
 		sBuilder.append("#QNAME " + getRawSourceName() + "\n");
 		sBuilder.append("#RUNQUERY\n");
-		sBuilder.append(getRawSourceName() + " := RPIGPIOSOURCE({SOURCE = '"
-				+ getRawSourceName() + "', PIN = " + inputPin + "})");
+		//sBuilder.append(getRawSourceName() + " := RPIGPIOSOURCE({SOURCE = '"
+		//		+ getRawSourceName() + "', PIN = " + inputPin + "})");
+		sBuilder.append(getRawSourceName() + " := ACCESS({\n");
+		sBuilder.append("    source='"+getRawSourceName()+"',\n");
+		sBuilder.append("    wrapper='GenericPull',\n");
+		sBuilder.append("    transport='RPiGPIO',\n");
+		sBuilder.append("    protocol='none',\n");
+		sBuilder.append("    datahandler='Tuple',\n");
+		sBuilder.append("    options=[['pin', '" + inputPin + "'],['mode', 'in']],\n");
+		sBuilder.append("    schema=[['PinNumber', 'String'],['PinState', 'Long']]\n");                                     
+		sBuilder.append("  }\n");                            
+		sBuilder.append(")\n");
 
 		rawValueQueries.put(getRawSourceName(), sBuilder.toString());
 
