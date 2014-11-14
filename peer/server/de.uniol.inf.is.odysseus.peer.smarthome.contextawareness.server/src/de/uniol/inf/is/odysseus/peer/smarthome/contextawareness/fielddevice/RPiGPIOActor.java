@@ -156,7 +156,7 @@ public class RPiGPIOActor extends Actor {
 					.append("#QNAME " + activityImportedName + "_query\n");
 			activityImport.append("#RUNQUERY\n");
 			activityImport.append(activityImportedName + " := SELECT({\n");
-			activityImport.append("    predicate=\"ActivityName = 'hot'\"\n");
+			activityImport.append("    predicate=\"ActivityName = '"+getActivityName()+"'\"\n");
 			activityImport.append("    },\n");
 			activityImport.append("    " + activitySourceName + "\n");
 			activityImport.append(")\n");
