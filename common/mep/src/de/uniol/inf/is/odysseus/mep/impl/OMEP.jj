@@ -189,9 +189,13 @@ void UnaryMinus()       :
 }
 
 void Negation()       :
-{}
 {
-  "!" UnaryExpression()/*@bgen(jjtree) #Function( 1) */
+ Token t;
+}
+{
+  ( t = "!" |
+    t = "~" )
+    UnaryExpression()/*@bgen(jjtree) #Function( 1) */
   {
     ASTFunction jjtn001 = new ASTFunction(JJTFUNCTION);
     boolean jjtc001 = true;
@@ -205,7 +209,7 @@ void Negation()       :
   }
 /*@egen*/
   {
-    jjtn001.setSymbol("!");
+    jjtn001.setSymbol(t.image);
   }/*@bgen(jjtree)*/
   } finally {
     if (jjtc001) {

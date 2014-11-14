@@ -136,11 +136,15 @@ void UnaryMinus() #void :
 }
 
 void Negation() #void :
-{}
 {
-  "!" UnaryExpression()
+ Token t;
+}
+{
+  ( t = "!" |
+    t = "~" )
+    UnaryExpression()
   {
-    jjtThis.setSymbol("!");
+    jjtThis.setSymbol(t.image);
   }
   #Function(1)
 }

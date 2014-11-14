@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright 2014 The Odysseus Team
+ * Copyright 2012 The Odysseus Team
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,33 +13,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package de.uniol.inf.is.odysseus.mep.functions.transform;
+package de.uniol.inf.is.odysseus.mep.functions.bool;
 
 import de.uniol.inf.is.odysseus.core.collection.BitVector;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
-import de.uniol.inf.is.odysseus.mep.AbstractFunction;
+import de.uniol.inf.is.odysseus.mep.AbstractUnaryBitvectorInputFunction;
 
 /**
- * Converts a given value to its binary representation.
+ * Converts a given value to an integer value.
  * 
- * @author Christian Kuka <christian@kuka.cc>
- *
+ * @author Marco Grawunder
  */
-public class ToBinaryFromUnsignedInt16Function extends AbstractFunction<BitVector> {
-    /**
-     * 
-     */
-    private static final long serialVersionUID = 9108818182686191083L;
-    private static final SDFDatatype[][] accTypes = new SDFDatatype[][] { { SDFDatatype.UNSIGNEDINT16 } };
+public class ToIntegerFunctionFromBitVector extends AbstractUnaryBitvectorInputFunction<Integer> {
 
-    public ToBinaryFromUnsignedInt16Function() {
-        super("toBinary", 1, accTypes, SDFDatatype.BITVECTOR);
+    private static final long serialVersionUID = 2799997996073155068L;
+
+    public ToIntegerFunctionFromBitVector() {
+        super("toInteger", SDFDatatype.INTEGER);
     }
 
     @Override
-    public BitVector getValue() {
-        Integer s = getNumericalInputValue(0).intValue();
-        return BitVector.fromInteger(s);
+    public Integer getValue() {
+    	BitVector s = getInputValue(0);
+    	return s.asInteger();
     }
-
 }

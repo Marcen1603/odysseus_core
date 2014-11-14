@@ -41,7 +41,7 @@ import java.nio.ByteBuffer;
  *
  * @author Dieter Wimberger
  * @version 1.2rc1 (09/11/2004)
- * @author Marco Grawunder (modified version with new constructors)
+ * @author Marco Grawunder (modified version with new constructors and further processing methods)
  */
 public class BitVector {
 
@@ -221,7 +221,7 @@ public class BitVector {
 	 * <tt>int</tt>.
 	 * <p>
 	 * 
-	 * @return the number of bits in this <tt>BitVector</tt>.
+	 * @return the number of bytes in this <tt>BitVector</tt>.
 	 */
 	public final int byteSize() {
 		return m_Data.length;
@@ -266,6 +266,10 @@ public class BitVector {
 					sbuf.append(" ");
 				}
 			}
+		}
+		// The value could be zero, so set at least one 0
+		if (sbuf.length() == 0){
+			sbuf.append("0");
 		}
 		return sbuf.toString();
 	}// toString
@@ -414,12 +418,51 @@ public class BitVector {
 	}
 
 	public static BitVector fromString(String s) {
-		BitVector v = new BitVector(s.length());
+		// length must be factor of 8
+		int length = ((s.length()/8)+1)*8;
+		BitVector v = new BitVector(length);
 		int i = 0;
 		for (char digit : s.toCharArray()) {
 			v.setBit(i++, digit == '1');
 		}
 		return v;
 	}
-
+	
+	// -----------------------
+	// Bitoperations
+	// -----------------------
+	public static BitVector and(BitVector left, BitVector right){
+		// the returning bitvector contains maximum min(left,right) bytes
+		int retSize = java.lang.Math.min(left.byteSize(), right.byteSize());
+		byte[] retBytes = new byte[retSize];
+		// the last retSize bytes must be merged
+		for (int i=0;i<retSize;i++){
+			byte leftByte = left.m_Data[left.m_Data.length-i-1];
+			byte rightByte = right.m_Data[right.m_Data.length-i-1];
+			retBytes[retSize-i-1] = (byte) ( leftByte & rightByte );
+		}
+		return BitVector.createBitVector(retBytes);
+	}
+	
+	public static BitVector or(BitVector left, BitVector right){
+		// the returning bitvector contains maximum min(left,right) bytes
+		int retSize = java.lang.Math.min(left.byteSize(), right.byteSize());
+		byte[] retBytes = new byte[retSize];
+		// the last retSize bytes must be merged
+		for (int i=0;i<retSize;i++){
+			byte leftByte = left.m_Data[left.m_Data.length-i-1];
+			byte rightByte = right.m_Data[right.m_Data.length-i-1];
+			retBytes[retSize-i-1] = (byte) ( leftByte | rightByte );
+		}
+		return BitVector.createBitVector(retBytes);
+	}
+	
+	public static BitVector not(BitVector input){
+		byte[] retBytes = new byte[input.m_Data.length];
+		int i=0;
+		for (Byte b:input.m_Data){
+			retBytes[i++] = (byte) ~b;
+		}
+		return BitVector.createBitVector(retBytes);	
+	}
 }// class BitVector

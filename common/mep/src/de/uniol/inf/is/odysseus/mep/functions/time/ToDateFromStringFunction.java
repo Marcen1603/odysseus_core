@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.mep.functions.transform;
+package de.uniol.inf.is.odysseus.mep.functions.time;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;

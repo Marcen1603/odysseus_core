@@ -13,10 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package de.uniol.inf.is.odysseus.mep.functions.transform;
+package de.uniol.inf.is.odysseus.mep.functions.hex;
+
+import java.util.Formatter;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
-import de.uniol.inf.is.odysseus.mep.AbstractUnaryDiscreteInputFunction;
+import de.uniol.inf.is.odysseus.mep.AbstractFunction;
 
 /**
  * Converts a given value to its hex representation.
@@ -24,19 +26,30 @@ import de.uniol.inf.is.odysseus.mep.AbstractUnaryDiscreteInputFunction;
  * @author Christian Kuka <christian@kuka.cc>
  *
  */
-public class ToHexFromDiscreteFunction extends AbstractUnaryDiscreteInputFunction<String> {
+public class ToHexFromStringFunction extends AbstractFunction<String> {
 
-    private static final long serialVersionUID = -5267841297277120825L;
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 9004186949865153913L;
+    private static final SDFDatatype[][] accTypes = new SDFDatatype[][] { { SDFDatatype.STRING } };
 
-    public ToHexFromDiscreteFunction() {
-        super("toHex", SDFDatatype.HEXSTRING);
+    public ToHexFromStringFunction() {
+        super("toHex", 1, accTypes, SDFDatatype.HEXSTRING);
     }
 
     @Override
     public String getValue() {
-        Number s = getNumericalInputValue(0);
-        return Long.toHexString(s.longValue());
+        String s = getInputValue(0).toString();
+        byte[] bytes = s.getBytes();
+        StringBuilder sb = new StringBuilder(bytes.length * 2);
 
+        try (Formatter formatter = new Formatter(sb)) {
+            for (byte b : bytes) {
+                formatter.format("%02x", new Byte(b));
+            }
+        }
+        return sb.toString();
     }
 
 }

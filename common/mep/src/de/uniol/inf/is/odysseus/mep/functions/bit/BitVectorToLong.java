@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.mep.functions.bitvector;
+package de.uniol.inf.is.odysseus.mep.functions.bit;
 
 import java.math.BigInteger;
 

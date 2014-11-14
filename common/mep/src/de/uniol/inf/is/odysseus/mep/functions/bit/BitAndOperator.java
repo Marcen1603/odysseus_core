@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.mep.functions.math;
+package de.uniol.inf.is.odysseus.mep.functions.bit;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.mep.AbstractBinaryNumberInputOperator;

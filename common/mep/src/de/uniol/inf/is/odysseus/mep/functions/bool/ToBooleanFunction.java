@@ -13,33 +13,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package de.uniol.inf.is.odysseus.mep.functions.transform;
+package de.uniol.inf.is.odysseus.mep.functions.bool;
 
-import de.uniol.inf.is.odysseus.core.collection.BitVector;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
-import de.uniol.inf.is.odysseus.mep.AbstractUnaryFloatingInputFunction;
+import de.uniol.inf.is.odysseus.mep.AbstractFunction;
 
 /**
- * Converts a given value to its binary representation.
+ * Converts a given value to a boolean value.
  * 
+ * @author Marco Grawunder
  * @author Christian Kuka <christian@kuka.cc>
- *
+ * 
  */
-public class ToBinaryFromFloatingNumberFunction extends AbstractUnaryFloatingInputFunction<BitVector> {
-    /**
-     * 
-     */
-    private static final long serialVersionUID = -6367175693609340243L;
+public class ToBooleanFunction extends AbstractFunction<Boolean> {
 
-    public ToBinaryFromFloatingNumberFunction() {
-        super("toBinary", SDFDatatype.BITVECTOR);
+    private static final long serialVersionUID = 6172939691360862021L;
+
+    public ToBooleanFunction() {
+        super("toBoolean", 1,getAllTypes(1), SDFDatatype.BOOLEAN);
     }
 
     @Override
-    public BitVector getValue() {
-        Number s = getNumericalInputValue(0);
-   
-        return BitVector.fromLong(Double.doubleToRawLongBits(s.doubleValue()));
+    public Boolean getValue() {
+        String s = getInputValue(0).toString();
+        return new Boolean(Boolean.parseBoolean(s));
     }
 
 }

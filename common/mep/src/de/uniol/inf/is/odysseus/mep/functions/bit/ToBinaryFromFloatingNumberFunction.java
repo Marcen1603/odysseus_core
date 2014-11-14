@@ -13,11 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package de.uniol.inf.is.odysseus.mep.functions.transform;
+package de.uniol.inf.is.odysseus.mep.functions.bit;
 
 import de.uniol.inf.is.odysseus.core.collection.BitVector;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
-import de.uniol.inf.is.odysseus.mep.AbstractFunction;
+import de.uniol.inf.is.odysseus.mep.AbstractUnaryFloatingInputFunction;
 
 /**
  * Converts a given value to its binary representation.
@@ -25,22 +25,21 @@ import de.uniol.inf.is.odysseus.mep.AbstractFunction;
  * @author Christian Kuka <christian@kuka.cc>
  *
  */
-public class ToBinaryFromStringFunction extends AbstractFunction<BitVector> {
-
+public class ToBinaryFromFloatingNumberFunction extends AbstractUnaryFloatingInputFunction<BitVector> {
     /**
      * 
      */
-    private static final long serialVersionUID = -5765976619584170922L;
-    private static final SDFDatatype[][] accTypes = new SDFDatatype[][] { { SDFDatatype.STRING } };
+    private static final long serialVersionUID = -6367175693609340243L;
 
-    public ToBinaryFromStringFunction() {
-        super("toBinary", 1, accTypes, SDFDatatype.BITVECTOR);
+    public ToBinaryFromFloatingNumberFunction() {
+        super("toBinary", SDFDatatype.BITVECTOR);
     }
 
     @Override
     public BitVector getValue() {
-	    String s = getInputValue(0).toString();	    
-        return BitVector.fromString(s);
+        Number s = getNumericalInputValue(0);
+   
+        return BitVector.fromLong(Double.doubleToRawLongBits(s.doubleValue()));
     }
 
 }

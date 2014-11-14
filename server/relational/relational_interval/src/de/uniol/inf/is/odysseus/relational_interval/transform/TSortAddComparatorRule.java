@@ -42,7 +42,7 @@ public class TSortAddComparatorRule extends AbstractTransformationRule<SortTIPO<
         final boolean[] ascending = operator.getAscending();
         Comparator<Tuple<? extends ITimeInterval>> comparator = new Comparator<Tuple<? extends ITimeInterval>>() {
 
-            @SuppressWarnings("unchecked")
+            @SuppressWarnings({ "unchecked", "rawtypes" })
             @Override
             public int compare(Tuple<? extends ITimeInterval> o1, Tuple<? extends ITimeInterval> o2) {
                 int sum = 0;
