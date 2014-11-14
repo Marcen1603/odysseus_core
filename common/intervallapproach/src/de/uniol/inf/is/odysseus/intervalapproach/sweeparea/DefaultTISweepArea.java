@@ -25,14 +25,14 @@ import java.util.List;
 import de.uniol.inf.is.odysseus.core.Order;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
+import de.uniol.inf.is.odysseus.core.metadata.MetadataComparator;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.metadata.TimeInterval;
-import de.uniol.inf.is.odysseus.core.metadata.MetadataComparator;
+import de.uniol.inf.is.odysseus.intervalapproach.predicate.TotallyBeforePredicate;
 import de.uniol.inf.is.odysseus.sweeparea.AbstractTimeIntervalSweepArea;
 import de.uniol.inf.is.odysseus.sweeparea.FastArrayList;
 import de.uniol.inf.is.odysseus.sweeparea.IFastList;
 import de.uniol.inf.is.odysseus.sweeparea.ITimeIntervalSweepArea;
-import de.uniol.inf.is.odysseus.intervalapproach.predicate.TotallyBeforePredicate;
 
 /**
  * This sweeparea implementation provides some optimizations on extract and
@@ -283,6 +283,31 @@ public class DefaultTISweepArea<T extends IStreamObject<? extends ITimeInterval>
 		}
 		return retval.iterator();
 	}
+
+    /**
+     * Extracts all elements starting before or equal the given
+     * @link{PointInTime}
+     * 
+     * @param validity
+     * @return A list of elements
+     */
+    public Iterator<T> extractElementsStartingBeforeOrEquals(PointInTime validity) {
+        ArrayList<T> retval = new ArrayList<>();
+        synchronized (getElements()) {
+            Iterator<T> li = getElements().iterator();
+            while (li.hasNext()) {
+                T s_hat = li.next();
+                if (s_hat.getMetadata().getStart().beforeOrEquals(validity)) {
+                    retval.add(s_hat);
+                    li.remove();
+                }
+                else {
+                    break;
+                }
+            }
+        }
+        return retval.iterator();
+    }
 
 	public Iterator<T> extractElementsEndBefore(PointInTime validity) {
 		ArrayList<T> retval = new ArrayList<T>();
