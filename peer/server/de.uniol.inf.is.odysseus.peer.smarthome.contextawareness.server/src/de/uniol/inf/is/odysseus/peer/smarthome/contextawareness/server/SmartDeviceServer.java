@@ -373,7 +373,7 @@ public class SmartDeviceServer {
 
 		temper.createActivityInterpreterWithCondition("hot", "Temperature > 24");
 		temper.createActivityInterpreterWithCondition("cold",
-				"Temperature < 18");
+				"Temperature < 24");
 
 		gpioTaste7.createActivityInterpreterForPinState("Tasterbetaetigt",
 				RPiGPIOSensor.GPIO_SENSOR_STATE.HIGH);
@@ -386,12 +386,12 @@ public class SmartDeviceServer {
 			initActors(peerName);
 		}
 		//TODO: test, test, test
-		//gpioLED11.createLogicRuleWithState("hot", State.TOGGLE);
-		//gpioLED11.createLogicRuleWithState("cold", State.TOGGLE);
-		gpioLED11.createLogicRuleWithState("Tasterbetaetigt", State.TOGGLE);
+		gpioLED11.createLogicRuleWithState("hot", State.ON);
+		gpioLED11.createLogicRuleWithState("cold", State.OFF);
+		//gpioLED11.createLogicRuleWithState("Tasterbetaetigt", State.TOGGLE);
 		
 		//Tasterbetaetigt0
-		gpioLED10.createLogicRuleWithState("Tasterbetaetigt0", State.OFF);
+		//gpioLED10.createLogicRuleWithState("Tasterbetaetigt0", State.OFF);
 	}
 
 	private void initActors(String peerName) {
