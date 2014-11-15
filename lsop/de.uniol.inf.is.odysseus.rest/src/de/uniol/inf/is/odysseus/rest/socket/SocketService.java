@@ -1,11 +1,13 @@
-package de.uniol.inf.is.odysseus.sports.rest.socket;
+package de.uniol.inf.is.odysseus.rest.socket;
 
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.SocketException;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
@@ -15,17 +17,15 @@ import de.uniol.inf.is.odysseus.core.objecthandler.ByteBufferHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.OdysseusConfiguration;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.sink.NioByteBufferSinkStreamHandlerBuilder;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.sink.SocketSinkPO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.plan.IExecutionPlan;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
-import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvider;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
-import de.uniol.inf.is.odysseus.core.usermanagement.ITenant;
-import de.uniol.inf.is.odysseus.sports.rest.ExecutorServiceBinding;
-import de.uniol.inf.is.odysseus.sports.rest.dto.SocketInfo;
-import de.uniol.inf.is.odysseus.sports.rest.exception.InvalidUserDataException;
+import de.uniol.inf.is.odysseus.rest.ExecutorServiceBinding;
 
 public class SocketService {
 
@@ -49,25 +49,22 @@ public class SocketService {
 		return SocketService.instance;
 	}
 
-	public SocketInfo getConnectionInformation(String securityToken, int queryId, int rootPort)
-			throws InvalidUserDataException {
+	public SocketInfo getConnectionInformation(ISession session, int queryId, int rootPort)  {
 		int minPort = Integer.valueOf(OdysseusConfiguration.getInt("minSinkPort",SINK_MIN_PORT));
 		int maxPort = Integer.valueOf(OdysseusConfiguration.getInt("maxSinkPort", SINK_MAX_PORT));
 		IPhysicalOperator rootOperator = getRootOperator(queryId, rootPort);
-		return getConnectionInformationWithPorts(securityToken, queryId,minPort, maxPort, rootOperator);
+		return getConnectionInformationWithPorts(session, queryId,minPort, maxPort, rootOperator);
 	}
 	
-	public SocketInfo getConnectionInformation(String securityToken, int queryId, IPhysicalOperator operator) throws InvalidUserDataException {
+	public SocketInfo getConnectionInformation(ISession session, int queryId, IPhysicalOperator operator)  {
 		int minPort = Integer.valueOf(OdysseusConfiguration.getInt("minSinkPort",SINK_MIN_PORT));
 		int maxPort = Integer.valueOf(OdysseusConfiguration.getInt("maxSinkPort", SINK_MAX_PORT));
-		return getConnectionInformationWithPorts(securityToken, queryId,minPort, maxPort, operator);
+		return getConnectionInformationWithPorts(session, queryId,minPort, maxPort, operator);
 	}
 
 
-	public SocketInfo getConnectionInformationWithPorts(String securityToken,int queryId, int minPort, int maxPort, IPhysicalOperator operator)
-			throws InvalidUserDataException {
+	public SocketInfo getConnectionInformationWithPorts(ISession session,int queryId, int minPort, int maxPort, IPhysicalOperator operator)  {
 		try {
-			loginWithSecurityToken(securityToken);
 			int port = 0;
 			SocketSinkPO po = socketSinkMap.get(queryId);
 			if (po == null) {
@@ -80,7 +77,7 @@ public class SocketService {
 				po = socketSinkMap.get(queryId);
 			}
 			
-			po.addAllowedSessionId(securityToken);
+			po.addAllowedSessionId(session.getToken());
 			if (this.address == null) {
 
 				Enumeration<NetworkInterface> interfaces = NetworkInterface
@@ -99,8 +96,7 @@ public class SocketService {
 				}
 			}
 
-			SocketInfo socketInfo = new SocketInfo(InetAddress.getLocalHost()
-					.getHostAddress(), port);
+			SocketInfo socketInfo = new SocketInfo(InetAddress.getLocalHost().getHostAddress(), port, this.getAttributeInformationList(operator));
 
 			return socketInfo;
 
@@ -111,6 +107,19 @@ public class SocketService {
 			e.printStackTrace();
 			return null;
 		}
+	}
+	
+	private List<AttributeInformation> getAttributeInformationList(IPhysicalOperator operator){
+		SDFSchema outputSchema = operator.getOutputSchema();
+		
+		List<SDFAttribute> attibuteList = outputSchema.getAttributes();
+		
+		ArrayList<AttributeInformation> attributeInformationList = new ArrayList<AttributeInformation>();
+		for (SDFAttribute sdfAttribute : attibuteList) {
+			attributeInformationList.add(new AttributeInformation(sdfAttribute.getAttributeName(),sdfAttribute.getDatatype().getQualName()));
+		}
+		
+		return attributeInformationList;
 	}
 
 	private int getNextFreePort(int min, int max) {
@@ -154,26 +163,4 @@ public class SocketService {
 
 	}
 
-	protected ISession loginWithSecurityToken(String securityToken)
-			throws InvalidUserDataException {
-		ISession session = UserManagementProvider.getSessionmanagement().login(
-				securityToken);
-		if (session != null) {
-			return session;
-		}
-		throw new InvalidUserDataException(
-				"Security token unknown! You have to login first to obtain a security token!");
-	}
-
-	public ISession login() {
-		String passwordText = "manager";
-		byte[] password = passwordText.getBytes();
-		ITenant tenant = UserManagementProvider.getTenant("");
-		ISession session = UserManagementProvider.getSessionmanagement().login(
-				"System", password, tenant);
-
-		return session;
-	}
-
-	
 }

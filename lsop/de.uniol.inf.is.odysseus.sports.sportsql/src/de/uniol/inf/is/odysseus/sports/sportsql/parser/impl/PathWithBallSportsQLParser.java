@@ -8,6 +8,7 @@ import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.StreamAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.SDFExpressionParameter;
+import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.peer.ddc.MissingDDCEntryException;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.ISportsQLParser;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.SportsQLParseException;
@@ -50,7 +51,7 @@ public class PathWithBallSportsQLParser implements ISportsQLParser {
 	 * @Parameter sportsQL Query to parse.
 	 * @throws SportsQLParseException
 	 */
-	public ILogicalQuery parse(SportsQLQuery sportsQL)
+	public ILogicalQuery parse(ISession session, SportsQLQuery sportsQL)
 			throws SportsQLParseException, NumberFormatException, MissingDDCEntryException {
 		List<ILogicalOperator> allOperators = new ArrayList<ILogicalOperator>();
 
@@ -106,8 +107,8 @@ public class PathWithBallSportsQLParser implements ISportsQLParser {
 		// /Beginning of QueryPlan.
 
 		// Create AccessAOs for sources.
-		StreamAO source = OperatorBuildHelper.createGameStreamAO();
-		StreamAO metadata = OperatorBuildHelper.createMetadataStreamAO();
+		StreamAO source = OperatorBuildHelper.createGameStreamAO(session);
+		StreamAO metadata = OperatorBuildHelper.createMetadataStreamAO(session);
 
 		// Filter by Time
 		ILogicalOperator selectedTime = OperatorBuildHelper

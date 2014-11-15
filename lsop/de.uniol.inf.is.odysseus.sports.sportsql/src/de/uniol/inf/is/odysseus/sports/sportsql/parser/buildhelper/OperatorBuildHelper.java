@@ -58,7 +58,6 @@ import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.core.usermanagement.ITenant;
 import de.uniol.inf.is.odysseus.mep.MEP;
 import de.uniol.inf.is.odysseus.peer.ddc.MissingDDCEntryException;
-import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
 import de.uniol.inf.is.odysseus.relational.base.predicate.RelationalPredicate;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.ddcaccess.AbstractSportsDDCAccess;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.helper.SpaceUnitHelper;
@@ -93,22 +92,21 @@ public class OperatorBuildHelper {
 	 */
 	public static final int TEAM_ID_RIGHT_GOAL_SHOOTERS = 1;
 	public static final int TEAM_ID_LEFT_GOAL_SHOOTERS = 2;
-	
+
 	/**
 	 * Times
 	 */
 	public static final int START_MINUTE = 0;
 	public static final int END_MINUTE = 90;
-	
+
 	/***
 	 * Some Conversion Constants
 	 */
 	public static final int CONVERSION_DIVIDEND_POSITION_TO_METERS = 1000;
-	
+
 	public static final String ATTRIBUTE_MINUTE = "minute";
 	public static final String ATTRIBUTE_SECOND = "second";
 	public static final String ATTRIBUTE_MILLISECOND = "milliseconds";
-	
 
 	/**
 	 * Creates a MapAP with a list of expressions. To create such expressions,
@@ -125,14 +123,15 @@ public class OperatorBuildHelper {
 	 * @return A MapAO with the given expressions
 	 */
 	public static MapAO createMapAO(List<SDFExpressionParameter> expressions,
-			ILogicalOperator source, int sinkInPort, int sourceOutPort, boolean evaluateOnPunctuation) {
+			ILogicalOperator source, int sinkInPort, int sourceOutPort,
+			boolean evaluateOnPunctuation) {
 		MapAO mapAO = new MapAO();
 
 		List<NamedExpressionItem> expressionItems = new ArrayList<NamedExpressionItem>();
 		for (SDFExpressionParameter param : expressions) {
 			expressionItems.add(param.getValue());
 		}
-		
+
 		mapAO.setEvaluateOnPunctuation(evaluateOnPunctuation);
 
 		mapAO.setExpressions(expressionItems);
@@ -159,11 +158,10 @@ public class OperatorBuildHelper {
 			List<SDFExpressionParameter> expressions, String groupBy,
 			ILogicalOperator source) {
 		List<String> groupingAttributes = new ArrayList<String>();
-		if(groupBy.length() > 0){
+		if (groupBy.length() > 0) {
 			groupingAttributes.add(groupBy);
 		}
-	
-		
+
 		return createStateMapAO(expressions, groupingAttributes, source);
 
 	}
@@ -264,25 +262,29 @@ public class OperatorBuildHelper {
 	 * @param source
 	 *            Source Operator
 	 * @return
-	 * @throws MissingDDCEntryException 
-	 * @throws NumberFormatException 
+	 * @throws MissingDDCEntryException
+	 * @throws NumberFormatException
 	 */
 	@SuppressWarnings("rawtypes")
 	public static SelectAO createSpaceSelect(SportsQLSpaceParameter parameter,
-			boolean inMeters, ILogicalOperator source) throws NumberFormatException, MissingDDCEntryException {
-		
+			boolean inMeters, ILogicalOperator source)
+			throws NumberFormatException, MissingDDCEntryException {
+
 		SpaceUnit unit = parameter.getUnit();
-		if(unit == null) {
+		if (unit == null) {
 			unit = SpaceUnit.millimeters;
 		}
-		
-		double startX = SpaceUnitHelper.getMillimeters(parameter.getStartx(), unit);
-		double startY = SpaceUnitHelper.getMillimeters(parameter.getStarty(), unit);
+
+		double startX = SpaceUnitHelper.getMillimeters(parameter.getStartx(),
+				unit);
+		double startY = SpaceUnitHelper.getMillimeters(parameter.getStarty(),
+				unit);
 		double endX = SpaceUnitHelper.getMillimeters(parameter.getEndx(), unit);
 		double endY = SpaceUnitHelper.getMillimeters(parameter.getEndy(), unit);
 
-		if(parameter.getSpace() != null) {
-			Space space = AbstractSportsDDCAccess.getSpace(parameter.getSpace());
+		if (parameter.getSpace() != null) {
+			Space space = AbstractSportsDDCAccess
+					.getSpace(parameter.getSpace());
 			startX = space.getXMin();
 			startY = space.getYMin();
 			endX = space.getXMax();
@@ -305,11 +307,15 @@ public class OperatorBuildHelper {
 			SDFExpressionParameter param1 = OperatorBuildHelper
 					.createExpressionParameter("entity_id", source);
 			SDFExpressionParameter param2 = OperatorBuildHelper
-					.createExpressionParameter("x / 1000 - " + AbstractSportsDDCAccess.getFieldXMin()
-							+ "/" + CONVERSION_DIVIDEND_POSITION_TO_METERS, "x_meter", source);
+					.createExpressionParameter("x / 1000 - "
+							+ AbstractSportsDDCAccess.getFieldXMin() + "/"
+							+ CONVERSION_DIVIDEND_POSITION_TO_METERS,
+							"x_meter", source);
 			SDFExpressionParameter param3 = OperatorBuildHelper
-					.createExpressionParameter("y / 1000 - " + AbstractSportsDDCAccess.getFieldYMin()
-							+ "/" + CONVERSION_DIVIDEND_POSITION_TO_METERS, "y_meter", source);
+					.createExpressionParameter("y / 1000 - "
+							+ AbstractSportsDDCAccess.getFieldYMin() + "/"
+							+ CONVERSION_DIVIDEND_POSITION_TO_METERS,
+							"y_meter", source);
 			SDFExpressionParameter param4 = OperatorBuildHelper
 					.createExpressionParameter("x", source);
 			SDFExpressionParameter param5 = OperatorBuildHelper
@@ -324,8 +330,7 @@ public class OperatorBuildHelper {
 					.createExpressionParameter("ts", source);
 			SDFExpressionParameter param15 = OperatorBuildHelper
 					.createExpressionParameter("team_id", source);
-			
-			
+
 			meterExpressions.add(param1);
 			meterExpressions.add(param2);
 			meterExpressions.add(param3);
@@ -339,10 +344,14 @@ public class OperatorBuildHelper {
 			MapAO metersMap = OperatorBuildHelper.createMapAO(meterExpressions,
 					source, 0, 0, false);
 
-			firstPredicateString = "x_meter >= " + SpaceUnitHelper.getMeters(startX, SpaceUnit.millimeters);
-			secondPredicateString = "x_meter <= " + SpaceUnitHelper.getMeters(endX, SpaceUnit.millimeters);
-			thirdPredicateString = "y_meter >= " + SpaceUnitHelper.getMeters(startY, SpaceUnit.millimeters);
-			fourthPredicateString = "y_meter <= " + SpaceUnitHelper.getMeters(endY, SpaceUnit.millimeters);
+			firstPredicateString = "x_meter >= "
+					+ SpaceUnitHelper.getMeters(startX, SpaceUnit.millimeters);
+			secondPredicateString = "x_meter <= "
+					+ SpaceUnitHelper.getMeters(endX, SpaceUnit.millimeters);
+			thirdPredicateString = "y_meter >= "
+					+ SpaceUnitHelper.getMeters(startY, SpaceUnit.millimeters);
+			fourthPredicateString = "y_meter <= "
+					+ SpaceUnitHelper.getMeters(endY, SpaceUnit.millimeters);
 
 			selectAO.subscribeTo(metersMap, metersMap.getOutputSchema());
 		}
@@ -410,7 +419,7 @@ public class OperatorBuildHelper {
 
 		return teamSelectAO;
 	}
-	
+
 	/**
 	 * Creates a SelectAO which selects both teams
 	 * 
@@ -420,17 +429,17 @@ public class OperatorBuildHelper {
 	 */
 	public static SelectAO createBothTeamSelectAO(ILogicalOperator source) {
 		SelectAO teamSelectAO = new SelectAO();
-		
+
 		String predicateString = "(team_id = 1) OR (team_id = 2)";
 		SDFExpression predicateExpression = new SDFExpression(predicateString,
 				MEP.getInstance());
-		
+
 		RelationalPredicate predicate = new RelationalPredicate(
 				predicateExpression);
 		teamSelectAO.setPredicate(predicate);
-		
+
 		teamSelectAO.subscribeTo(source, source.getOutputSchema());
-		
+
 		return teamSelectAO;
 	}
 
@@ -459,20 +468,30 @@ public class OperatorBuildHelper {
 		int startMinute = Integer.MIN_VALUE;
 		int endMinute = Integer.MAX_VALUE;
 
-		if (timeParameter.getTime() != null && timeParameter.getTime().equals(SportsQLTimeParameter.TIME_PARAMETER_ALWAYS)) {
+		if (timeParameter.getTime() != null
+				&& timeParameter.getTime().equals(
+						SportsQLTimeParameter.TIME_PARAMETER_ALWAYS)) {
 			startMinute = Integer.MIN_VALUE;
 			endMinute = Integer.MAX_VALUE;
-		} else if (timeParameter.getTime() != null && timeParameter.getTime().equals(SportsQLTimeParameter.TIME_PARAMTER_GAME)) {
+		} else if (timeParameter.getTime() != null
+				&& timeParameter.getTime().equals(
+						SportsQLTimeParameter.TIME_PARAMTER_GAME)) {
 			// Just the time in the game
 			startMinute = START_MINUTE;
 			endMinute = END_MINUTE;
-		} else if (timeParameter.getTime() != null && timeParameter.getTime().equals(SportsQLTimeParameter.TIME_PARAMETER_NOW)) {
+		} else if (timeParameter.getTime() != null
+				&& timeParameter.getTime().equals(
+						SportsQLTimeParameter.TIME_PARAMETER_NOW)) {
 			// TODO: Do the right thing if timeParameter says "now"
 
-		} else if (timeParameter.getStart() != null && timeParameter.getEnd() != null && timeParameter.getUnit() != null) {
-			startMinute = TimeUnitHelper.getMinutes(timeParameter.getStart(), timeParameter.getUnit());
-			endMinute = TimeUnitHelper.getMinutes(timeParameter.getEnd(), timeParameter.getUnit());
-		} 
+		} else if (timeParameter.getStart() != null
+				&& timeParameter.getEnd() != null
+				&& timeParameter.getUnit() != null) {
+			startMinute = TimeUnitHelper.getMinutes(timeParameter.getStart(),
+					timeParameter.getUnit());
+			endMinute = TimeUnitHelper.getMinutes(timeParameter.getEnd(),
+					timeParameter.getUnit());
+		}
 
 		// 1. minute >= ${parameterTimeStart_minute}
 		String firstPredicateString = "minute >= " + startMinute;
@@ -499,22 +518,24 @@ public class OperatorBuildHelper {
 				.createAndPredicate(firstPredicate, secondPredicate);
 		IPredicate fullAndPredicate = ComplexPredicateHelper
 				.createAndPredicate(firstAndPrdicate, thirdPredicate);
-		
-//		String fullPredicateString = firstPredicateString; // + " AND " + secondPredicateString + " AND " + thirdPredicateString;
-//		SDFExpression fullExpression = new SDFExpression(fullPredicateString, MEP.getInstance());
-//		IPredicate fullPredicate = new RelationalPredicate(fullExpression);
+
+		// String fullPredicateString = firstPredicateString; // + " AND " +
+		// secondPredicateString + " AND " + thirdPredicateString;
+		// SDFExpression fullExpression = new SDFExpression(fullPredicateString,
+		// MEP.getInstance());
+		// IPredicate fullPredicate = new RelationalPredicate(fullExpression);
 
 		selectAO.setPredicate(fullAndPredicate);
 		selectAO.subscribeTo(source, source.getOutputSchema());
 		return selectAO;
 	}
-	
-	public static TimestampAO clearEndTimestamp(ILogicalOperator source){
+
+	public static TimestampAO clearEndTimestamp(ILogicalOperator source) {
 		TimestampAO timeStampAO = new TimestampAO();
 		timeStampAO.setClearEnd(true);
-		
+
 		timeStampAO.subscribeTo(source, source.getOutputSchema());
-		
+
 		return timeStampAO;
 	}
 
@@ -541,13 +562,15 @@ public class OperatorBuildHelper {
 		List<SDFExpressionParameter> expressions = new ArrayList<SDFExpressionParameter>();
 
 		SDFExpressionParameter ex1 = OperatorBuildHelper
-				.createExpressionParameter("entity_id", source);		
-		
+				.createExpressionParameter("entity_id", source);
+
 		SDFExpressionParameter ex2 = OperatorBuildHelper
-				.createExpressionParameter("DoubleToInteger(ts/60000000)", ATTRIBUTE_MINUTE, source);
+				.createExpressionParameter("DoubleToInteger(ts/60000000)",
+						ATTRIBUTE_MINUTE, source);
 		SDFExpressionParameter ex3 = OperatorBuildHelper
-				.createExpressionParameter("DoubleToInteger((ts/1000000) % 60)", ATTRIBUTE_SECOND, source);
-		
+				.createExpressionParameter(
+						"DoubleToInteger((ts/1000000) % 60)", ATTRIBUTE_SECOND,
+						source);
 
 		SDFExpressionParameter ex5 = OperatorBuildHelper
 				.createExpressionParameter("x", source);
@@ -577,13 +600,11 @@ public class OperatorBuildHelper {
 
 		MapAO firstMap = OperatorBuildHelper.createMapAO(expressions, source,
 				0, 0, false);
-		
+
 		firstMap.initialize();
-		
+
 		return firstMap;
 	}
-	
-	
 
 	/**
 	 * Creates a Select Operator to filter Entity by Id.
@@ -709,7 +730,7 @@ public class OperatorBuildHelper {
 		return createAggregateAO(aggregationFunction, "", inputAttributeName,
 				outputAttributeName, null, source);
 	}
-	
+
 	/**
 	 * Creates an AggregateAO with the specified output type
 	 * 
@@ -760,7 +781,7 @@ public class OperatorBuildHelper {
 			List<String> groupBy, String inputAttributeName,
 			String outputAttributeName, String outputType,
 			ILogicalOperator source, int dumpAtValueCount) {
-		
+
 		List<String> aggregationFunctions = new ArrayList<String>();
 		aggregationFunctions.add(aggregationFunction);
 		List<String> inputAttributeNames = new ArrayList<String>();
@@ -770,11 +791,10 @@ public class OperatorBuildHelper {
 		List<String> outputTypes = new ArrayList<String>();
 		outputTypes.add(outputType);
 		return createAggregateAO(aggregationFunctions, groupBy,
-				inputAttributeNames, outputAttributeNames, outputTypes, source, dumpAtValueCount);
+				inputAttributeNames, outputAttributeNames, outputTypes, source,
+				dumpAtValueCount);
 	}
-	
-	
-	
+
 	/**
 	 * Creates an AggregateAO with the specified output type
 	 * 
@@ -783,7 +803,8 @@ public class OperatorBuildHelper {
 	 * @param groupBy
 	 *            The list of names of the attributes you want to group by
 	 * @param inputAttributeName
-	 *            The list of input attributes over which the aggregation should be done
+	 *            The list of input attributes over which the aggregation should
+	 *            be done
 	 * @param outputAttributeName
 	 *            The list of names of the output attribute for this aggregation
 	 * @param outputType
@@ -793,20 +814,20 @@ public class OperatorBuildHelper {
 	 *            The operator before this one
 	 * @return
 	 */
-	public static AggregateAO createAggregateAO(List<String> aggregationFunctions,
-			List<String> groupBys, List<String> inputAttributeNames,
+	public static AggregateAO createAggregateAO(
+			List<String> aggregationFunctions, List<String> groupBys,
+			List<String> inputAttributeNames,
 			List<String> outputAttributeNames, List<String> outputTypes,
 			ILogicalOperator source, int dumpAtValueCount) {
 		AggregateAO aggregateAO = new AggregateAO();
-		
-		if(dumpAtValueCount != -1){
+
+		if (dumpAtValueCount != -1) {
 			aggregateAO.setDumpAtValueCount(dumpAtValueCount);
 		}
-		
-		
+
 		List<AggregateItem> aggregateItems = new ArrayList<AggregateItem>();
 
-		for (int i = 0; i<aggregationFunctions.size(); i++) {
+		for (int i = 0; i < aggregationFunctions.size(); i++) {
 			// Fill parameter
 			AggregateItemParameter param = new AggregateItemParameter();
 			List<String> aggregateOptions = new ArrayList<String>();
@@ -838,12 +859,11 @@ public class OperatorBuildHelper {
 		}
 
 		aggregateAO.setAggregationItems(aggregateItems);
-		
+
 		aggregateAO.subscribeTo(source, source.getOutputSchema());
 
 		return aggregateAO;
 	}
-
 
 	public static CoalesceAO createCoalesceAO(List<String> attributes,
 			String aggregationFunction, String inputAttributeName,
@@ -887,7 +907,7 @@ public class OperatorBuildHelper {
 		List<AggregateItem> aggregateItems = new ArrayList<AggregateItem>();
 		aggregateItems.add(param.getValue());
 		coalesceAO.setAggregationItems(aggregateItems);
-		
+
 		// Subscribe to source
 		coalesceAO.subscribeTo(source, source.getOutputSchema());
 
@@ -944,7 +964,7 @@ public class OperatorBuildHelper {
 		}
 		return createRoutePredicatesAO(predicates, source);
 	}
-	
+
 	/**
 	 * Returns routeAO with a list of predicates
 	 * 
@@ -952,14 +972,13 @@ public class OperatorBuildHelper {
 	 * @param source
 	 * @return
 	 */
-	public static RouteAO createRoutePredicatesAO(List<IPredicate<?>> predicates, 
-			ILogicalOperator source) {
+	public static RouteAO createRoutePredicatesAO(
+			List<IPredicate<?>> predicates, ILogicalOperator source) {
 		RouteAO rAO = new RouteAO();
 		rAO.setPredicates(predicates);
 		rAO.subscribeTo(source, source.getOutputSchema());
 		return rAO;
 	}
-	
 
 	/**
 	 * Returns changeDetectAO with list of Attributes, groupBy, relative
@@ -986,14 +1005,14 @@ public class OperatorBuildHelper {
 		cAO.setGroupingAttributes(groupBy);
 		cAO.setRelativeTolerance(relativeTolerance);
 		cAO.setTolerance(tolerance);
-	
-		if(heartbeatRate != -1){
+
+		if (heartbeatRate != -1) {
 			cAO.setHeartbeatRate(heartbeatRate);
 		}
-		
+
 		// cAO.subscribeToSource(source, 0, 1, inputSchema);
 		cAO.subscribeTo(source, source.getOutputSchema());
-		
+
 		return cAO;
 	}
 
@@ -1035,26 +1054,26 @@ public class OperatorBuildHelper {
 			ILogicalOperator source) {
 		return createChangeDetectAO(attributes, tolerance, false, 0, source);
 	}
-	
-	
+
 	/**
 	 * Returns changeDetectAO with a list of Attributes and an absolute
 	 * tolerance with deliverFirstElement set to false
 	 * 
 	 * @param attributes
-	 * 			List of Attributes where changes should occur
+	 *            List of Attributes where changes should occur
 	 * @param tolerance
-	 * 			(Absolute) Tolerance applied to changeDetection.
+	 *            (Absolute) Tolerance applied to changeDetection.
 	 * @param heartbeatRate
-	 * 			Heartbeatrate every x tupel send a heartbeat
+	 *            Heartbeatrate every x tupel send a heartbeat
 	 * @param source
-	 * 			 Source to link to.
+	 *            Source to link to.
 	 * @return
 	 */
 	public static ChangeDetectAO createChangeDetectAO(
 			List<SDFAttribute> attributes, double tolerance, int heartbeatRate,
 			ILogicalOperator source) {
-		return createChangeDetectAO(attributes, tolerance, false, heartbeatRate, source);
+		return createChangeDetectAO(attributes, tolerance, false,
+				heartbeatRate, source);
 	}
 
 	/**
@@ -1082,7 +1101,7 @@ public class OperatorBuildHelper {
 		cAO.subscribeTo(source, source.getOutputSchema());
 		return cAO;
 	}
-	
+
 	/**
 	 * Returns changeDetectAO with a list of Attributes and an absolute
 	 * tolerance
@@ -1094,14 +1113,15 @@ public class OperatorBuildHelper {
 	 * @param deliverFirstElement
 	 *            If you want to deliver the first element
 	 * @param groupBy
-	 * 			  List of Attributes to group by
+	 *            List of Attributes to group by
 	 * @param source
 	 *            Source to link to.
 	 * @return
 	 */
 	public static ChangeDetectAO createChangeDetectAO(
 			List<SDFAttribute> attributes, double tolerance,
-			boolean deliverFirstElement, List<SDFAttribute> groupBy, ILogicalOperator source) {
+			boolean deliverFirstElement, List<SDFAttribute> groupBy,
+			ILogicalOperator source) {
 		ChangeDetectAO cAO = new ChangeDetectAO();
 
 		cAO.setAttr(attributes);
@@ -1111,7 +1131,7 @@ public class OperatorBuildHelper {
 		cAO.setGroupingAttributes(groupBy);
 		return cAO;
 	}
-	
+
 	/**
 	 * 
 	 * @param attributes
@@ -1123,7 +1143,8 @@ public class OperatorBuildHelper {
 	 */
 	public static ChangeDetectAO createChangeDetectAO(
 			List<SDFAttribute> attributes, double tolerance,
-			boolean deliverFirstElement, int heartbeatRate, ILogicalOperator source) {
+			boolean deliverFirstElement, int heartbeatRate,
+			ILogicalOperator source) {
 		ChangeDetectAO cAO = new ChangeDetectAO();
 
 		cAO.setAttr(attributes);
@@ -1133,15 +1154,13 @@ public class OperatorBuildHelper {
 		cAO.subscribeTo(source, source.getOutputSchema());
 		return cAO;
 	}
-	
-	
+
 	public static SelectAO createSelectAO(String predicate,
 			ILogicalOperator source) {
 		List<String> predicates = new ArrayList<String>();
 		predicates.add(predicate);
 		return createSelectAO(predicates, source);
 	}
-	
 
 	/**
 	 * Returns selectAO with a list of predicates
@@ -1215,17 +1234,17 @@ public class OperatorBuildHelper {
 	public static ElementWindowAO createElementWindowAO(int size, int advance,
 			ILogicalOperator source) {
 		ElementWindowAO windowAO = new ElementWindowAO();
-		//null cause timeUnit is deprecated
+		// null cause timeUnit is deprecated
 		windowAO.setBaseTimeUnit(TimeUnit.MILLISECONDS);
-		TimeValueItem windowSize = new TimeValueItem(size, TimeUnit.MILLISECONDS);
-		TimeValueItem windowAdvance = new TimeValueItem(advance, TimeUnit.MILLISECONDS);
+		TimeValueItem windowSize = new TimeValueItem(size,
+				TimeUnit.MILLISECONDS);
+		TimeValueItem windowAdvance = new TimeValueItem(advance,
+				TimeUnit.MILLISECONDS);
 		windowAO.setWindowSize(windowSize);
 		windowAO.setWindowAdvance(windowAdvance);
 		windowAO.subscribeTo(source, source.getOutputSchema());
 		return windowAO;
 	}
-	
-
 
 	/**
 	 * Creates a TimeWindow.
@@ -1254,7 +1273,7 @@ public class OperatorBuildHelper {
 
 		return timeWindowAO;
 	}
-	
+
 	/**
 	 * Creates a TimeWindow.
 	 * 
@@ -1262,15 +1281,15 @@ public class OperatorBuildHelper {
 	 *            How big the window is. Number of seconds, minutes, etc.
 	 *            (depends on the timeUnit) in this Window
 	 * @param slide
-	 * 			  slide of the Window
+	 *            slide of the Window
 	 * @param timeUnit
 	 *            e.g. "second" or "minute"
 	 * @param source
 	 *            Source operator
 	 * @return
 	 */
-	public static TimeWindowAO createTimeWindowAO(long size, long slide, String timeUnit,
-			ILogicalOperator source) {
+	public static TimeWindowAO createTimeWindowAO(long size, long slide,
+			String timeUnit, ILogicalOperator source) {
 		// TODO timeUnit with static finals
 		TimeWindowAO timeWindowAO = new TimeWindowAO();
 		TimeParameter timeParamenter = new TimeParameter();
@@ -1279,7 +1298,7 @@ public class OperatorBuildHelper {
 		parameterInputValue.add(timeUnit);
 		timeParamenter.setInputValue(parameterInputValue);
 		timeWindowAO.setWindowSize(timeParamenter.getValue());
-		
+
 		TimeParameter timeParamenter2 = new TimeParameter();
 		List<String> parameterInputValue2 = new ArrayList<String>();
 		parameterInputValue2.add(String.valueOf(slide));
@@ -1526,7 +1545,7 @@ public class OperatorBuildHelper {
 	 *            Name of source
 	 * @return
 	 */
-	public static AccessAO createAccessAO(String sourcename) {
+	public static AccessAO createAccessAO(ISession session, String sourcename) {
 		// We need the dataDictionary for this parameter
 		IDataDictionary dataDict = OperatorBuildHelper.getDataDictionary();
 
@@ -1535,7 +1554,6 @@ public class OperatorBuildHelper {
 		source.setInputValue(sourcename);
 		source.setDataDictionary(dataDict);
 
-		ISession session = OperatorBuildHelper.getActiveSession();
 		source.setCaller(session);
 
 		return source.getValue();
@@ -1547,10 +1565,10 @@ public class OperatorBuildHelper {
 	 * @param sourceName
 	 * @return
 	 */
-	public static StreamAO createStreamAO(String sourceName) {
+	public static StreamAO createStreamAO(ISession session,String sourceName) {
 		StreamAO streamAO = new StreamAO();
 
-		AccessAO access = createAccessAO(sourceName);
+		AccessAO access = createAccessAO(session,sourceName);
 		streamAO.setSource(access);
 
 		streamAO.setName(sourceName);
@@ -1563,9 +1581,9 @@ public class OperatorBuildHelper {
 	 * 
 	 * @return
 	 */
-	public static StreamAO createGameStreamAO() {
+	public static StreamAO createGameStreamAO(ISession session) {
 		String gameSourceName = OperatorBuildHelper.MAIN_STREAM_NAME;
-		return createStreamAO(gameSourceName);
+		return createStreamAO(session, gameSourceName);
 	}
 
 	/**
@@ -1573,9 +1591,9 @@ public class OperatorBuildHelper {
 	 * 
 	 * @return
 	 */
-	public static StreamAO createMetadataStreamAO() {
+	public static StreamAO createMetadataStreamAO(ISession session) {
 		String gameSourceName = OperatorBuildHelper.METADATA_STREAM_NAME;
-		return createStreamAO(gameSourceName);
+		return createStreamAO(session, gameSourceName);
 	}
 
 	/**
@@ -1712,14 +1730,6 @@ public class OperatorBuildHelper {
 		return dd;
 	}
 
-	/**
-	 * You maybe need the current session
-	 * 
-	 * @return The current session
-	 */
-	public static ISession getActiveSession() {
-		return OdysseusRCPPlugIn.getActiveSession();
-	}
 
 	/**
 	 * Creates Attribute Resolver to find Attributes by String
@@ -1899,7 +1909,5 @@ public class OperatorBuildHelper {
 				predicateExpression);
 		return finishedPredicate;
 	}
-	
-	
 
 }

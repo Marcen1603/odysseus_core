@@ -21,6 +21,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.StateMapAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.StreamAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TupleAggregateAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.SDFExpressionParameter;
+import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.peer.ddc.MissingDDCEntryException;
 import de.uniol.inf.is.odysseus.relational.base.predicate.RelationalPredicate;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.SportsQLParseException;
@@ -71,7 +72,7 @@ public class ShotOnGoalGlobalOutput {
 	public static final String MIN_ACCELERATION = "55000000.0";
 
 	@SuppressWarnings({ "rawtypes" })
-	public ILogicalOperator createGlobalOutput(SportsQLQuery sportsQL,
+	public ILogicalOperator createGlobalOutput(ISession session,SportsQLQuery sportsQL,
 			List<ILogicalOperator> allOperators) throws SportsQLParseException, NumberFormatException, MissingDDCEntryException {
 
 		// ---------------------
@@ -79,8 +80,8 @@ public class ShotOnGoalGlobalOutput {
 		// ---------------------
 
 		// GameStream and MetaDataStream
-		StreamAO gameStream = OperatorBuildHelper.createGameStreamAO();
-		StreamAO metaDataStream = OperatorBuildHelper.createMetadataStreamAO();
+		StreamAO gameStream = OperatorBuildHelper.createGameStreamAO(session);
+		StreamAO metaDataStream = OperatorBuildHelper.createMetadataStreamAO(session);
 
 		// Add to list
 		allOperators.add(gameStream);

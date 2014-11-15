@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.sports.rest;
 
+
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 
@@ -31,5 +32,5 @@ public class Activator implements BundleActivator {
 	public void stop(BundleContext bundleContext) throws Exception {
 		Activator.context = null;
 	}
-
+	
 }

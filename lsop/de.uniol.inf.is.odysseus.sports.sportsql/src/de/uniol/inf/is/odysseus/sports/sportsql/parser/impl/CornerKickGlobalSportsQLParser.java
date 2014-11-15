@@ -13,6 +13,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.ProjectAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.SelectAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.StreamAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.SDFExpressionParameter;
+import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.peer.ddc.MissingDDCEntryException;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.ISportsQLParser;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.SportsQLParseException;
@@ -49,7 +50,7 @@ public class CornerKickGlobalSportsQLParser implements ISportsQLParser {
 	 * @throws NumberFormatException 
 	 */
 	@Override
-	public ILogicalQuery parse(SportsQLQuery sportsQL)
+	public ILogicalQuery parse(ISession session,SportsQLQuery sportsQL)
 			throws SportsQLParseException, NumberFormatException, MissingDDCEntryException {
 
 		double xMin = AbstractSportsDDCAccess.getFieldXMin();
@@ -59,7 +60,7 @@ public class CornerKickGlobalSportsQLParser implements ISportsQLParser {
 
 		ArrayList<ILogicalOperator> operatorList = new ArrayList<ILogicalOperator>();
 
-		StreamAO source = OperatorBuildHelper.createGameStreamAO();
+		StreamAO source = OperatorBuildHelper.createGameStreamAO(session);
 
 		operatorList.add(source);
 

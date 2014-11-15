@@ -66,9 +66,9 @@ public class DistributedQueryHelper {
 	 * @param queryBuildConfigurationName
 	 * @return null if query distribution was not successful
 	 */
-	public static DistributedQueryInfo executeQuery(String query,
+	public static DistributedQueryInfo executeQuery(String query,String parser,
 			ISession activeSession, String queryBuildConfigurationName) {
-		serverExecutor.addQuery(query, "OdysseusScript", activeSession, queryBuildConfigurationName, Context.empty());
+		serverExecutor.addQuery(query, parser, activeSession, queryBuildConfigurationName, Context.empty());
 		return queryDistributionListener.getNextDistributedQueryInfo();
 	}
 
@@ -218,7 +218,6 @@ public class DistributedQueryHelper {
 						}
 						info.setSharedQueryId(sharedQueryIdString);
 						info.setTopOperatorPeerIP(ip);
-						info.setQueryDistributed(true);
 						distributedQueryInfoList.add(info);
 						return;
 					}

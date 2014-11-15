@@ -1,6 +1,5 @@
 package de.uniol.inf.is.odysseus.sports.rest.dto;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
@@ -8,9 +7,8 @@ import java.util.ArrayList;
  * @author Thomas
  *
  */
-public class MetadataInfo implements Serializable{
+public class MetadataInfo {
 
-	private static final long serialVersionUID = 1119362165790651658L;
 	private ArrayList<ElementInfo> elements;
 	private ArrayList<GoalInfo> goals;
 	private FieldInfo field;

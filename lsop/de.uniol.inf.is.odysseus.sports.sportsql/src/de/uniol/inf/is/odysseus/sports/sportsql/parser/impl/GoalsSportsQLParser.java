@@ -14,6 +14,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.SelectAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.StreamAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TimeWindowAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.SDFExpressionParameter;
+import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.peer.ddc.MissingDDCEntryException;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.ISportsQLParser;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.SportsQLParseException;
@@ -40,14 +41,14 @@ public class GoalsSportsQLParser implements ISportsQLParser {
 
 	@SuppressWarnings("rawtypes")
 	@Override
-	public ILogicalQuery parse(SportsQLQuery sportsQL)
+	public ILogicalQuery parse(ISession session,SportsQLQuery sportsQL)
 			throws SportsQLParseException, NumberFormatException, MissingDDCEntryException {
 
 		List<ILogicalOperator> allOperators = new ArrayList<ILogicalOperator>();
 		ArrayList<String> predicates = new ArrayList<String>();
 		ArrayList<String> attributes = new ArrayList<String>();
 
-		StreamAO soccerGameStreamAO = OperatorBuildHelper.createGameStreamAO();
+		StreamAO soccerGameStreamAO = OperatorBuildHelper.createGameStreamAO(session);
 
 		// get only ball
 		List<IPredicate> ballPredicates = new ArrayList<IPredicate>();

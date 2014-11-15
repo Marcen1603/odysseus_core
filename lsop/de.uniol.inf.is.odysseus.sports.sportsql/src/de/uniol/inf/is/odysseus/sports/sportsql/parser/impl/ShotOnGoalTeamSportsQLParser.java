@@ -8,6 +8,7 @@ import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AggregateAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.SelectAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TimeWindowAO;
+import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.peer.ddc.MissingDDCEntryException;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.ISportsQLParser;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.SportsQLParseException;
@@ -41,7 +42,7 @@ public class ShotOnGoalTeamSportsQLParser implements ISportsQLParser {
 	private static final int GAME_LENGTH = 90;
 	
 	@Override
-	public ILogicalQuery parse(SportsQLQuery sportsQL)
+	public ILogicalQuery parse(ISession session,SportsQLQuery sportsQL)
 			throws SportsQLParseException, NumberFormatException, MissingDDCEntryException {
 
 		// Do all the steps one till nine
@@ -49,7 +50,7 @@ public class ShotOnGoalTeamSportsQLParser implements ISportsQLParser {
 
 		ShotOnGoalGlobalOutput globalParser = new ShotOnGoalGlobalOutput();
 		ILogicalOperator forecastCriteria = globalParser.createGlobalOutput(
-				sportsQL, allOperators);
+				session, sportsQL, allOperators);
 
 		// -------------------------------------------------------------------
 		// Tenth part

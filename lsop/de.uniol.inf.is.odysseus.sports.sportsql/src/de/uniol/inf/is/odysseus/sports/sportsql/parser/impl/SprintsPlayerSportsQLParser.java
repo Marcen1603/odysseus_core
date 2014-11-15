@@ -19,6 +19,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.StreamAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TimeWindowAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.SDFExpressionParameter;
 import de.uniol.inf.is.odysseus.core.server.predicate.ComplexPredicateHelper;
+import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.mep.MEP;
 import de.uniol.inf.is.odysseus.peer.ddc.MissingDDCEntryException;
 import de.uniol.inf.is.odysseus.relational.base.predicate.RelationalPredicate;
@@ -90,12 +91,12 @@ public class SprintsPlayerSportsQLParser implements ISportsQLParser {
 	private List<ILogicalOperator> allOperators = new ArrayList<ILogicalOperator>();
 
 	@Override
-	public ILogicalQuery parse(SportsQLQuery sportsQL)
+	public ILogicalQuery parse(ISession session,SportsQLQuery sportsQL)
 			throws SportsQLParseException, NumberFormatException, MissingDDCEntryException {
 
-		StreamAO soccerGameStreamAO = OperatorBuildHelper.createGameStreamAO();
+		StreamAO soccerGameStreamAO = OperatorBuildHelper.createGameStreamAO(session);
 		StreamAO metadataStreamAO = OperatorBuildHelper
-				.createMetadataStreamAO();
+				.createMetadataStreamAO(session);
 		SportsQLSpaceParameter spaceParameter = SportsQLParameterHelper
 				.getSpaceParameter(sportsQL);
 

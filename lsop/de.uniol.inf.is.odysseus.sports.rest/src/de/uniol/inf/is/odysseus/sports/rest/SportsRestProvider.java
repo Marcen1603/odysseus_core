@@ -1,24 +1,18 @@
 package de.uniol.inf.is.odysseus.sports.rest;
 
-import org.restlet.Application;
-import org.restlet.Restlet;
 import org.restlet.routing.Router;
 
 import de.uniol.inf.is.odysseus.rest.provider.IRestProvider;
-import de.uniol.inf.is.odysseus.sports.rest.serverresources.DistributedQueryServerResource;
-import de.uniol.inf.is.odysseus.sports.rest.serverresources.DistributedQuerySocketInfoServerResource;
-import de.uniol.inf.is.odysseus.sports.rest.serverresources.LoginServerResource;
+import de.uniol.inf.is.odysseus.sports.rest.serverresources.DistributedSportsQLSocketServerResource;
+import de.uniol.inf.is.odysseus.sports.rest.serverresources.ExecuteSportsQLServerResource;
 import de.uniol.inf.is.odysseus.sports.rest.serverresources.MetadataServerResource;
-import de.uniol.inf.is.odysseus.sports.rest.serverresources.QueryServerResource;
-import de.uniol.inf.is.odysseus.sports.rest.serverresources.QueryWithLoginServerResource;
-import de.uniol.inf.is.odysseus.sports.rest.serverresources.SocketInfoServerResource;
 
 /**
  * This class gets instantiated only one time so here are the API´s routes defined 
  * @author Thomas, Thore
  *
  */
-public class SportsRestProvider extends Application implements IRestProvider{
+public class SportsRestProvider implements IRestProvider{
 
 	@Override
 	public String getPath() {
@@ -26,30 +20,14 @@ public class SportsRestProvider extends Application implements IRestProvider{
 	}
 
 	@Override
-	public Restlet createInboundRoot() {
-		
+	public void attachServerResources(Router router) {
 		System.setProperty("java.net.preferIPv4Stack", "true");
+
+		router.attach("/"+ExecuteSportsQLServerResource.PATH, ExecuteSportsQLServerResource.class);
+
+		router.attach("/"+DistributedSportsQLSocketServerResource.PATH, DistributedSportsQLSocketServerResource.class);
 		
-		//Router must be defined in order to handle incoming requests
-		//In this case only one router, perhaps we install another router for authentication in the future
-		Router router = new Router(getContext());
+		router.attach("/"+MetadataServerResource.PATH, MetadataServerResource.class);
 		
-
-		router.attach("/query", QueryServerResource.class);
-
-		router.attach("/socket_info", SocketInfoServerResource.class);
-
-		router.attach("/login", LoginServerResource.class);
-
-		router.attach("/querywithlogin", QueryWithLoginServerResource.class);
-		
-		router.attach("/metadata", MetadataServerResource.class);
-		
-		
-		router.attach("/distributed_query", DistributedQueryServerResource.class);
-
-		router.attach("/distributed_query_socket_info", DistributedQuerySocketInfoServerResource.class);
-
-		return router;
 	}
 }

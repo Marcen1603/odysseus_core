@@ -1,15 +1,13 @@
 package de.uniol.inf.is.odysseus.sports.rest.dto;
 
-import java.io.Serializable;
 
 /**
  * This class represents a data transfer object for different kind of elements on the gamefield
  * @author Thomas
  *
  */
-public class ElementInfo implements Serializable {
+public class ElementInfo  {
 	
-	private static final long serialVersionUID = -5349759487022901177L;
 	private Integer sensor_id;
 	private Integer entity_id;
 	private String entity;

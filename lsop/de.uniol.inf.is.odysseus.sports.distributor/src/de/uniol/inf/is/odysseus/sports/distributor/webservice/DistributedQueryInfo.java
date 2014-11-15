@@ -10,7 +10,6 @@ public class DistributedQueryInfo {
 	private String sharedQueryId;
 	private String topOperatorPeerIP;
 	private int topOperatorPeerRestPort;
-	private boolean queryDistributed;
 	
 	public DistributedQueryInfo() {
 		
@@ -40,15 +39,6 @@ public class DistributedQueryInfo {
 	public void setTopOperatorPeerRestPort(int topOperatorPeerRestPort) {
 		this.topOperatorPeerRestPort = topOperatorPeerRestPort;
 	}
-
-	public boolean isQueryDistributed() {
-		return queryDistributed;
-	}
-
-	public void setQueryDistributed(boolean queryDistributed) {
-		this.queryDistributed = queryDistributed;
-	}
-
 	
 
 }

@@ -15,6 +15,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.SelectAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.StateMapAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.StreamAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.SDFExpressionParameter;
+import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.peer.ddc.MissingDDCEntryException;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.ISportsQLParser;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.SportsQLParseException;
@@ -50,7 +51,7 @@ public class CrossesGlobalSportsQLParser implements ISportsQLParser{
 	 * @throws NumberFormatException 
 	 */
 	@Override
-	public ILogicalQuery parse(SportsQLQuery sportsQL)
+	public ILogicalQuery parse(ISession session,SportsQLQuery sportsQL)
 			throws SportsQLParseException, NumberFormatException, MissingDDCEntryException {
 		
 		final double CENTER_LINE = AbstractSportsDDCAccess.calculateCenterX();
@@ -65,7 +66,7 @@ public class CrossesGlobalSportsQLParser implements ISportsQLParser{
 		
 		List<ILogicalOperator> allOperators = new ArrayList<ILogicalOperator>();
 		ArrayList<String> predicates = new ArrayList<>();
-		StreamAO soccerGameStreamAO = OperatorBuildHelper.createGameStreamAO();
+		StreamAO soccerGameStreamAO = OperatorBuildHelper.createGameStreamAO(session);
 		
 		// 1. Time Parameter
 		SportsQLTimeParameter timeParameter = SportsQLParameterHelper.getTimeParameter(sportsQL);

@@ -7,6 +7,7 @@ import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.SelectAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.StreamAO;
+import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.ISportsQLParser;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.SportsQLParseException;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.SportsQLQuery;
@@ -29,10 +30,10 @@ import de.uniol.inf.is.odysseus.sports.sportsql.parser.enums.StatisticType;
 public class TestSelectSportsQLParser implements ISportsQLParser {
 
 	@Override
-	public ILogicalQuery parse(SportsQLQuery sportsQL)
+	public ILogicalQuery parse(ISession session,SportsQLQuery sportsQL)
 			throws SportsQLParseException {
 		List<ILogicalOperator> allOperators = new ArrayList<ILogicalOperator>();
-		StreamAO access = OperatorBuildHelper.createGameStreamAO();
+		StreamAO access = OperatorBuildHelper.createGameStreamAO(session);
 		SelectAO testSelect = OperatorBuildHelper.createEntityIDSelect(8, access);
 		allOperators.add(access);
 		allOperators.add(testSelect);

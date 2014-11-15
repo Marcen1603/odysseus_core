@@ -1,10 +1,6 @@
-package de.uniol.inf.is.odysseus.sports.rest.dto;
+package de.uniol.inf.is.odysseus.rest.socket;
 
 
-/**
- * This class represents an attribute of a schema
- * @author Thore Stratmann
- */
 public class AttributeInformation{
 	
 	private String name;

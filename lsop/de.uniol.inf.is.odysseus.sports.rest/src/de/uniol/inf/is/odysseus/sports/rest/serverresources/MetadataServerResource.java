@@ -2,17 +2,17 @@ package de.uniol.inf.is.odysseus.sports.rest.serverresources;
 
 import java.util.ArrayList;
 
-import org.restlet.Response;
 import org.restlet.data.Status;
-import org.restlet.ext.jackson.JacksonRepresentation;
-import org.restlet.resource.ServerResource;
+import org.restlet.resource.Post;
+import org.restlet.resource.ResourceException;
 
-import de.uniol.inf.is.odysseus.sports.rest.dto.DataTransferObject;
+import de.uniol.inf.is.odysseus.rest.dto.request.SecurityTokenRequestDTO;
+import de.uniol.inf.is.odysseus.rest.dto.response.GenericResponseDTO;
+import de.uniol.inf.is.odysseus.rest.serverresources.AbstractSessionServerResource;
 import de.uniol.inf.is.odysseus.sports.rest.dto.ElementInfo;
 import de.uniol.inf.is.odysseus.sports.rest.dto.FieldInfo;
 import de.uniol.inf.is.odysseus.sports.rest.dto.GoalInfo;
 import de.uniol.inf.is.odysseus.sports.rest.dto.MetadataInfo;
-import de.uniol.inf.is.odysseus.sports.rest.resources.IMetadataResource;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.ddcaccess.SoccerDDCAccess;
 
 /**
@@ -20,24 +20,21 @@ import de.uniol.inf.is.odysseus.sports.sportsql.parser.ddcaccess.SoccerDDCAccess
  * @author Thomas
  *
  */
-public class MetadataServerResource extends ServerResource implements IMetadataResource {
+public class MetadataServerResource extends AbstractSessionServerResource {
 
 	
-	@Override
-	public void getMetadata() {
-		Response response = getResponse();
+	public static final String PATH = "metadata";
+
+
+	@Post
+	public GenericResponseDTO<MetadataInfo> getMetadata(SecurityTokenRequestDTO securityTokenRequestDTO) {
+		loginWithToken(securityTokenRequestDTO.getToken());
 		
 		try {
-			
-			MetadataInfo metadata = new MetadataInfo(getElements(), getGoals(), getField());
-			DataTransferObject dto = new DataTransferObject("Metadata", metadata);
-			
-			response.setEntity(new JacksonRepresentation<DataTransferObject>(dto));
-			response.setStatus(Status.SUCCESS_OK);
-			
+			MetadataInfo info = new MetadataInfo(getElements(), getGoals(), getField());
+			return new GenericResponseDTO<MetadataInfo>(info);
 		} catch (Exception e) {
-			e.printStackTrace();
-			response.setStatus(Status.SERVER_ERROR_INTERNAL);
+			throw new ResourceException(Status.SERVER_ERROR_INTERNAL,"Error while creating meta data");
 		}
 	}
 	

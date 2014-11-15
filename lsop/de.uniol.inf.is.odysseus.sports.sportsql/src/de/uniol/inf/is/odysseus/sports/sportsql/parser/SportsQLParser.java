@@ -15,7 +15,6 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.IExe
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.dd.CreateQueryCommand;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.peer.ddc.MissingDDCEntryException;
-import de.uniol.inf.is.odysseus.sports.sportsql.parser.buildhelper.OperatorBuildHelper;
 import de.uniol.inf.is.odysseus.sports.sportsql.registry.SportsQLParserRegistry;
 
 /**
@@ -39,9 +38,8 @@ public class SportsQLParser implements IQueryParser {
 		ISportsQLParser parser = SportsQLParserRegistry
 				.getSportsQLParser(sportQLQuery);
 		try {
-			ILogicalQuery logicalQuery = parser.parse(sportQLQuery);
-			IExecutorCommand exeCommand = new CreateQueryCommand(logicalQuery,
-					OperatorBuildHelper.getActiveSession());
+			ILogicalQuery logicalQuery = parser.parse(user,sportQLQuery);
+			IExecutorCommand exeCommand = new CreateQueryCommand(logicalQuery,user);
 			List<IExecutorCommand> exeCommands = new ArrayList<IExecutorCommand>();
 			exeCommands.add(exeCommand);
 			return exeCommands;
