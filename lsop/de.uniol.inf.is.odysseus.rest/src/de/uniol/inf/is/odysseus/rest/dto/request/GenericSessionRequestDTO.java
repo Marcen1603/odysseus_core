@@ -4,7 +4,8 @@ public class GenericSessionRequestDTO<T> extends AbstractSessionRequestDTO {
 	private T value;
 	
 	
-	public GenericSessionRequestDTO(T value) {
+	public GenericSessionRequestDTO(String token, T value) {
+		super(token);
 		this.value = value;
 	}
 	public GenericSessionRequestDTO() {
