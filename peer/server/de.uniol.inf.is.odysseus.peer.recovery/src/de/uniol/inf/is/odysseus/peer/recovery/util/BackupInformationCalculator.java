@@ -104,6 +104,7 @@ public class BackupInformationCalculator {
 				IRecoveryBackupInformation info = new BackupInformation();
 				info.setSharedQuery(sharedQueryId);
 				info.setLocalPQL(LogicalQueryHelper.generatePQLStatementFromQueryPart(node.getQueryPart()));
+				info.setLocationPeer(peerId);
 
 				ILogicalQueryPart part = outConnection.getEndNode()
 						.getQueryPart();
@@ -113,7 +114,7 @@ public class BackupInformationCalculator {
 					continue;
 
 				}
-				info.setPeer(allocationMap.get(part));
+				info.setAboutPeer(allocationMap.get(part));
 
 				String pqlStatement = LogicalQueryHelper
 						.generatePQLStatementFromQueryPart(part);
@@ -238,7 +239,7 @@ public class BackupInformationCalculator {
 
 			IRecoveryBackupInformation endPartInfo = new BackupInformation();
 			endPartInfo.setSharedQuery(sharedQueryID);
-			endPartInfo.setPeer(endPartPeer);
+			endPartInfo.setAboutPeer(endPartPeer);
 			endPartInfo.setPQL(endPartPQL);
 			endPartInfo.setLocalPQL(LogicalQueryHelper.generatePQLStatementFromQueryPart(node.getQueryPart()));
 

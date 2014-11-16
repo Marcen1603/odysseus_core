@@ -25,6 +25,7 @@ import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicatorListener;
 import de.uniol.inf.is.odysseus.p2p_new.PeerCommunicationException;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.IPeerDictionary;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.IPeerDictionaryListener;
+import de.uniol.inf.is.odysseus.parser.pql.generator.IPQLGenerator;
 import de.uniol.inf.is.odysseus.peer.distribute.message.RemoveQueryMessage;
 import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryBackupInformation;
 import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryCommunicator;
@@ -34,6 +35,7 @@ import de.uniol.inf.is.odysseus.peer.recovery.messages.RecoveryAgreementMessage;
 import de.uniol.inf.is.odysseus.peer.recovery.messages.RecoveryInstructionMessage;
 import de.uniol.inf.is.odysseus.peer.recovery.protocol.RecoveryAgreementHandler;
 import de.uniol.inf.is.odysseus.peer.recovery.protocol.RecoveryInstructionHandler;
+import de.uniol.inf.is.odysseus.peer.recovery.util.BuddyHelper;
 import de.uniol.inf.is.odysseus.peer.recovery.util.LocalBackupInformationAccess;
 
 /**
@@ -281,6 +283,20 @@ public class RecoveryCommunicator implements IRecoveryCommunicator, IPeerCommuni
 		}
 
 	}
+	
+	private static IPQLGenerator pqlGenerator;
+
+	// called by OSGi-DS
+	public static void bindPQLGenerator(IPQLGenerator serv) {
+		pqlGenerator = serv;
+	}
+
+	// called by OSGi-DS
+	public static void unbindPQLGenerator(IPQLGenerator serv) {
+		if (pqlGenerator == serv) {
+			pqlGenerator = null;
+		}
+	}
 
 	/**
 	 * The executor, if there is one bound.
@@ -384,12 +400,17 @@ public class RecoveryCommunicator implements IRecoveryCommunicator, IPeerCommuni
 		// Send the add query message
 		RecoveryInstructionMessage takeOverMessage = RecoveryInstructionMessage.createAddQueryMessage(pql,
 				sharedQueryId);
-		try {
-			cPeerCommunicator.get().send(newPeer, takeOverMessage);
-		} catch (Throwable e) {
-			LOG.error("Could not send add query message to peer " + newPeer.toString(), e);
-		}
+		sendMessage(newPeer, takeOverMessage);
 
+		// Give this peer the backup-info from the peer which he recovers
+		List<IRecoveryBackupInformation> infos = BuddyHelper.findBackupInfoForBuddy(failedPeer);
+		for (IRecoveryBackupInformation info : infos) {
+			// Now this is located on the new peer, the failed peer does not
+			// exist anymore
+			info.setLocationPeer(newPeer);
+			BackupInformationMessage backupMessage = new BackupInformationMessage(info);
+			sendMessage(newPeer, backupMessage);
+		}
 	}
 
 	@Override
@@ -430,10 +451,8 @@ public class RecoveryCommunicator implements IRecoveryCommunicator, IPeerCommuni
 	public void sendRecoveryAgreementMessage(PeerID failedPeer, ID sharedQueryId) {
 
 		if (!cPeerDictionary.isPresent()) {
-
 			LOG.error("No P2P dictionary bound!");
 			return;
-
 		}
 
 		// Send this to all other peers we know
@@ -444,7 +463,9 @@ public class RecoveryCommunicator implements IRecoveryCommunicator, IPeerCommuni
 	}
 
 	@Override
-	public void sendUpdateReceiverMessage(PeerID receiverPeer, PeerID newSenderPeer, PipeID pipeId) {
+	public void sendUpdateReceiverMessage(PeerID receiverPeer, PeerID newSenderPeer, PipeID pipeId, ID sharedQueryId) {
+
+		// 1. Tell the peer to update the receiver
 		RecoveryInstructionMessage message = RecoveryInstructionMessage.createUpdateReceiverMessage(newSenderPeer,
 				pipeId);
 		sendMessage(receiverPeer, message);
@@ -485,7 +506,17 @@ public class RecoveryCommunicator implements IRecoveryCommunicator, IPeerCommuni
 					pql);
 			sendMessage(buddy, buddyMessage);
 
-			// 4. Save, that this is my buddy so that we can find a new buddy if
+			// 4. Give the buddy the backup-information I have stored so that he
+			// can do the recovery I was responsible for (well, I still am
+			// responsible for it now, but when I fail there has to be someone
+			// else)
+			List<IRecoveryBackupInformation> backupInfosForOthers = BuddyHelper
+					.findBackupInfoForBuddy(cP2PNetworkManager.get().getLocalPeerID());
+			for (IRecoveryBackupInformation info : backupInfosForOthers) {
+				sendBackupInformation(buddy, info);
+			}
+
+			// 5. Save, that this is my buddy so that we can find a new buddy if
 			// that one fails
 			LocalBackupInformationAccess.addMyBuddy(buddy, sharedQueryId);
 		} else {
@@ -507,10 +538,8 @@ public class RecoveryCommunicator implements IRecoveryCommunicator, IPeerCommuni
 
 		// Preconditions
 		if (!cPeerCommunicator.isPresent()) {
-
 			LOG.error("No peer communicator bound!");
 			return;
-
 		}
 
 		try {

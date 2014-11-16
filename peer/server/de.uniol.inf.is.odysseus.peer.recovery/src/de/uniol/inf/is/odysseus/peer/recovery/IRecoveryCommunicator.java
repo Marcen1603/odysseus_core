@@ -39,7 +39,7 @@ public interface IRecoveryCommunicator {
 	 * @param pipeId
 	 *            The pipeId which is affected
 	 */
-	public void sendUpdateReceiverMessage(PeerID receiverPeer, PeerID newSenderPeer, PipeID pipeId);
+	public void sendUpdateReceiverMessage(PeerID receiverPeer, PeerID newSenderPeer, PipeID pipeId, ID sharedQueryId);
 
 	/**
 	 * Sends a recovery-agreement message to all known peers. This message tells

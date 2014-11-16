@@ -58,17 +58,29 @@ public interface IRecoveryBackupInformation {
 	 * Sets the id of the peer, where the query part is executed.
 	 * 
 	 * @param peer
-	 *            The id of the peer, where the query part is executed. <br />
+	 *            The id of the peer where the query part is executed. <br />
 	 *            Must be not null.
 	 */
-	public void setPeer(PeerID peer);
+	public void setAboutPeer(PeerID peer);
 
 	/**
 	 * Gets the id of the peer, where the query part is executed.
 	 * 
-	 * @return The id of the peer, where the query part is executed.
+	 * @return The id of the peer where the query part is executed.
 	 */
-	public PeerID getPeer();
+	public PeerID getAboutPeer();
+	
+	/**
+	 * 
+	 * @return The id of the peer where this backup-information originally is located
+	 */
+	public PeerID getLocationPeer();
+
+	/**
+	 * Sets the id of the peer where this backup-information originally is located
+	 * @param mLocationPeer The id of the peer where this backup-information originally is located
+	 */
+	public void setLocationPeer(PeerID locationPeer);
 
 	/**
 	 * Gets the information about subsequent parts.

@@ -199,7 +199,7 @@ public class RecoveryConsole implements CommandProvider {
 		sb.append("	lsRecoveryStrategyManagers - Lists the available recovery strategy managers.\n");
 		sb.append("	showPeerPQL <PeerName> - Shows the PQL that this peer knows from <PeerName>.\n");
 		sb.append("	sendHoldOn <PeerName from receiver> <sharedQueryId> - Send a hold-on message to <PeerName from receiver>, so that this should stop sending the tuples from query <sharedQueryId> further.\n");
-		sb.append("	sendUpdateReceiver <PeerName from receiver> <PeerName from new sender> <pipeId> - Send an updateReceiver-message to <PeerName from receiver>, so that this should receive the tuples fir pipe <pipeId> from the new sender <PeerName from new sender>.\n");
+		sb.append("	sendUpdateReceiver <PeerName from receiver> <PeerName from new sender> <pipeId> <sharedQueryId> - Send an updateReceiver-message to <PeerName from receiver>, so that this should receive the tuples fir pipe <pipeId> from the new sender <PeerName from new sender>.\n");
 		sb.append("	sendAddQueriesFromPeer <PeerName from receiver> <PeerName from failed peer> <sharedQueryId> - The <PeerName from receiver> will get a message which tells that the peer has to install the query <sharedQueryId> from <PeerName from failed peer>. \n");
 		sb.append("	recoveryAllocation <AllocatorName> - Gets the id and name of a peer to allocate to (for testing) \n");
 		sb.append("	holdOn <PipeId> - Let this peer hold on\n");
@@ -336,6 +336,7 @@ public class RecoveryConsole implements CommandProvider {
 		PeerID receiverPeerId = getPeerIdFromCi(ci);
 		PeerID newSendrePeerId = getPeerIdFromCi(ci);
 		PipeID pipeId = getPipeIDFromCi(ci);
+		ID sharesQueryID = getSharedQueryIdFromCi(ci);
 
 		if (receiverPeerId == null) {
 			ci.println("Don't know new receiver peer. Take myself insead.");
@@ -347,7 +348,7 @@ public class RecoveryConsole implements CommandProvider {
 			newSendrePeerId = RecoveryCommunicator.getP2PNetworkManager().get().getLocalPeerID();
 		}
 
-		cCommunicator.get().sendUpdateReceiverMessage(receiverPeerId, newSendrePeerId, pipeId);
+		cCommunicator.get().sendUpdateReceiverMessage(receiverPeerId, newSendrePeerId, pipeId, sharesQueryID);
 	}
 
 	public void _lsBackupStore(CommandInterpreter ci) {

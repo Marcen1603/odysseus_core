@@ -32,8 +32,7 @@ public class BackupInformationMessage implements IMessage {
 	/**
 	 * The logger instance for this class.
 	 */
-	private static final Logger LOG = LoggerFactory
-			.getLogger(BackupInformationMessage.class);
+	private static final Logger LOG = LoggerFactory.getLogger(BackupInformationMessage.class);
 
 	/**
 	 * The backup information, which has to be sent or which has received.
@@ -92,17 +91,19 @@ public class BackupInformationMessage implements IMessage {
 		byte[] peerBytes = this.determinePeerBytes();
 		bufferSize += 4 + peerBytes.length;
 
-		byte[][] subsequentPartsInfoBytes = this
-				.determineSubsequentPartsInfoBytes();
+		byte[][] subsequentPartsInfoBytes = this.determineSubsequentPartsInfoBytes();
 		bufferSize += 4;
 		for (int i = 0; i < subsequentPartsInfoBytes.length; i++) {
 
 			bufferSize += 4 + subsequentPartsInfoBytes[i].length;
 
 		}
-		
+
 		byte[] localPqlBytes = this.determineLocalPQLBytes();
 		bufferSize += 4 + localPqlBytes.length;
+
+		byte[] locationPeerBytes = this.determineLocationPeerBytes();
+		bufferSize += 4 + locationPeerBytes.length;
 
 		ByteBuffer buffer = ByteBuffer.allocate(bufferSize);
 
@@ -122,9 +123,12 @@ public class BackupInformationMessage implements IMessage {
 			buffer.put(subsequentPartsInfoBytes[i]);
 
 		}
-		
+
 		buffer.putInt(localPqlBytes.length);
 		buffer.put(localPqlBytes);
+
+		buffer.putInt(locationPeerBytes.length);
+		buffer.put(locationPeerBytes);
 
 		buffer.flip();
 		return buffer.array();
@@ -137,21 +141,38 @@ public class BackupInformationMessage implements IMessage {
 	 * @return The bytes of {@link IRecoveryBackupInformation#getLocalPQL()}.
 	 */
 	private byte[] determineLocalPQLBytes() {
-		
+
 		Preconditions.checkNotNull(this.mInfo);
-		return this.mInfo.getLocalPQL().getBytes();
-		
+		if(this.mInfo.getLocalPQL() != null)
+			return this.mInfo.getLocalPQL().getBytes();
+		return "".getBytes();
+
+	}
+
+	/**
+	 * Encodes the peer id "locationPeer"
+	 * 
+	 * @return The bytes of {@link IRecoveryBackupInformation#getLocationPeer()}
+	 *         .
+	 */
+	private byte[] determineLocationPeerBytes() {
+		Preconditions.checkNotNull(this.mInfo);
+		return this.mInfo.getLocationPeer().toString().getBytes();
 	}
 
 	/**
 	 * Encodes the peer id.
 	 * 
-	 * @return The bytes of {@link IRecoveryBackupInformation#getPeer()}.
+	 * @return The bytes of {@link IRecoveryBackupInformation#getAboutPeer()}.
 	 */
 	private byte[] determinePeerBytes() {
 
 		Preconditions.checkNotNull(this.mInfo);
-		return this.mInfo.getPeer().toString().getBytes();
+		if(this.mInfo.getAboutPeer() != null)
+			return this.mInfo.getAboutPeer().toString().getBytes();
+		
+		byte[] empty = new byte[0];
+		return empty;
 
 	}
 
@@ -163,7 +184,10 @@ public class BackupInformationMessage implements IMessage {
 	private byte[] determinePQLBytes() {
 
 		Preconditions.checkNotNull(this.mInfo);
-		return this.mInfo.getPQL().getBytes();
+		if (this.mInfo.getPQL() != null)
+			return this.mInfo.getPQL().getBytes();
+
+		return "".getBytes();
 
 	}
 
@@ -177,16 +201,13 @@ public class BackupInformationMessage implements IMessage {
 	private byte[][] determineSubsequentPartsInfoBytes() {
 
 		Preconditions.checkNotNull(this.mInfo);
-		byte[][] subsequentPartsInfoBytes = new byte[this.mInfo
-				.getSubsequentPartsInformation().size()][];
+		byte[][] subsequentPartsInfoBytes = new byte[this.mInfo.getSubsequentPartsInformation().size()][];
 
 		int i = 0;
-		Iterator<IRecoveryBackupInformation> iter = this.mInfo
-				.getSubsequentPartsInformation().iterator();
+		Iterator<IRecoveryBackupInformation> iter = this.mInfo.getSubsequentPartsInformation().iterator();
 		while (iter.hasNext()) {
 
-			subsequentPartsInfoBytes[i] = new BackupInformationMessage(
-					iter.next()).toBytes();
+			subsequentPartsInfoBytes[i] = new BackupInformationMessage(iter.next()).toBytes();
 			i++;
 
 		}
@@ -218,6 +239,7 @@ public class BackupInformationMessage implements IMessage {
 		this.peerFromBytes(buffer);
 		this.subsequentPartsInfoFromBytes(buffer);
 		this.localPqlFromBytes(buffer);
+		this.locationPeerFromBytes(buffer);
 
 	}
 
@@ -231,11 +253,11 @@ public class BackupInformationMessage implements IMessage {
 	 */
 	private void peerFromBytes(ByteBuffer buffer) {
 
-		Preconditions.checkArgument(this.mInfo.getPeer() == null);
+		Preconditions.checkArgument(this.mInfo.getAboutPeer() == null);
 		Preconditions.checkNotNull(buffer);
 		byte[] peerBytes = new byte[buffer.getInt()];
 		buffer.get(peerBytes);
-		this.mInfo.setPeer(toPeerID(new String(peerBytes)));
+		this.mInfo.setAboutPeer(toPeerID(new String(peerBytes)));
 
 	}
 
@@ -256,13 +278,13 @@ public class BackupInformationMessage implements IMessage {
 		this.mInfo.setPQL(new String(pqlBytes));
 
 	}
-	
+
 	/**
 	 * Decodes the local PQL code from bytes.
 	 * 
 	 * @param buffer
-	 *            The current byte buffer, where the information about the local PQL
-	 *            code are next. <br />
+	 *            The current byte buffer, where the information about the local
+	 *            PQL code are next. <br />
 	 *            Must be not null.
 	 */
 	private void localPqlFromBytes(ByteBuffer buffer) {
@@ -285,8 +307,7 @@ public class BackupInformationMessage implements IMessage {
 	 */
 	private void subsequentPartsInfoFromBytes(ByteBuffer buffer) {
 
-		Preconditions.checkArgument(this.mInfo.getSubsequentPartsInformation()
-				.isEmpty());
+		Preconditions.checkArgument(this.mInfo.getSubsequentPartsInformation().isEmpty());
 		Preconditions.checkNotNull(buffer);
 		Collection<IRecoveryBackupInformation> info = Sets.newHashSet();
 		int numInfo = buffer.getInt();
@@ -324,6 +345,14 @@ public class BackupInformationMessage implements IMessage {
 
 	}
 
+	private void locationPeerFromBytes(ByteBuffer buffer) {
+		Preconditions.checkArgument(this.mInfo.getLocationPeer() == null);
+		Preconditions.checkNotNull(buffer);
+		byte[] locationPeerBytes = new byte[buffer.getInt()];
+		buffer.get(locationPeerBytes);
+		this.mInfo.setLocationPeer(toPeerID(new String(locationPeerBytes)));
+	}
+
 	/**
 	 * Creates a shared query id from String.
 	 * 
@@ -341,7 +370,7 @@ public class BackupInformationMessage implements IMessage {
 			final URI id = new URI(text);
 			return IDFactory.fromURI(id);
 
-		} catch (URISyntaxException | ClassCastException ex) {
+		} catch (URISyntaxException | ClassCastException | IllegalArgumentException ex) {
 
 			LOG.error("Could not get id from text {}", text, ex);
 			return null;
@@ -367,7 +396,7 @@ public class BackupInformationMessage implements IMessage {
 			final URI id = new URI(text);
 			return PeerID.create(id);
 
-		} catch (URISyntaxException | ClassCastException ex) {
+		} catch (URISyntaxException | ClassCastException | IllegalArgumentException ex) {
 
 			LOG.error("Could not get id from text {}", text, ex);
 			return null;

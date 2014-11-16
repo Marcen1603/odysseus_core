@@ -201,7 +201,7 @@ public class LocalBackupInformationAccess {
 			Optional<IRecoveryBackupInformation> info = cInfoStore.get().get(pql);
 			Preconditions.checkArgument(info.isPresent());
 
-			if (info.get().getPeer().equals(peerId)) {
+			if (info.get().getAboutPeer().equals(peerId)) {
 
 				out.add(pql);
 			}
@@ -256,9 +256,9 @@ public class LocalBackupInformationAccess {
 		Set<PeerID> peers = Sets.newHashSet();
 		for (IRecoveryBackupInformation info : cInfoStore.get().get(sharedQueryId)) {
 
-			if (!peers.contains(info.getPeer())) {
+			if (!peers.contains(info.getAboutPeer())) {
 
-				peers.add(info.getPeer());
+				peers.add(info.getAboutPeer());
 
 			}
 
@@ -294,7 +294,7 @@ public class LocalBackupInformationAccess {
 
 		for (ID queryId : cInfoStore.get().getAll().keySet()) {
 			for (IRecoveryBackupInformation info : cInfoStore.get().get(queryId)) {
-				if (info.getPeer().equals(peerId)) {
+				if (info.getAboutPeer().equals(peerId)) {
 					// This is what we search: For this peer we have a
 					// sharedQueryId
 					sharedQueryIds.add(queryId);

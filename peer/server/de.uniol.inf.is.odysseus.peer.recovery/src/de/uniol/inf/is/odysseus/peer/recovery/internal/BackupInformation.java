@@ -68,30 +68,42 @@ public class BackupInformation implements IRecoveryBackupInformation {
 	}
 
 	/**
-	 * The id of the peer, where the query part is executed.
+	 * The id of the peer where the query part is executed. The PQL is about
+	 * this peer.
 	 */
-	private PeerID mPeer;
+	private PeerID mAboutPeer;
 
 	@Override
-	public void setPeer(PeerID peer) {
-
+	public void setAboutPeer(PeerID peer) {
 		Preconditions.checkNotNull(peer);
-		this.mPeer = peer;
-
+		this.mAboutPeer = peer;
 	}
 
 	@Override
-	public PeerID getPeer() {
+	public PeerID getAboutPeer() {
+		return this.mAboutPeer;
+	}
 
-		return this.mPeer;
+	/**
+	 * The id of the peer where this backup-information originally is located.
+	 * This is not necessary the peer where the information is located right
+	 * now, because sometimes a peer needs the backup-information of another
+	 * peer to restore this information in case of recovery.
+	 */
+	private PeerID mLocationPeer;
 
+	public PeerID getLocationPeer() {
+		return mLocationPeer;
+	}
+
+	public void setLocationPeer(PeerID locationPeer) {
+		this.mLocationPeer = locationPeer;
 	}
 
 	/**
 	 * The information about subsequent parts.
 	 */
-	private Collection<IRecoveryBackupInformation> mSubsequentPartsInformation = Sets
-			.newHashSet();
+	private Collection<IRecoveryBackupInformation> mSubsequentPartsInformation = Sets.newHashSet();
 
 	@Override
 	public ImmutableCollection<IRecoveryBackupInformation> getSubsequentPartsInformation() {
@@ -101,8 +113,7 @@ public class BackupInformation implements IRecoveryBackupInformation {
 	}
 
 	@Override
-	public void setSubsequentPartsInformation(
-			Collection<IRecoveryBackupInformation> info) {
+	public void setSubsequentPartsInformation(Collection<IRecoveryBackupInformation> info) {
 
 		Preconditions.checkNotNull(info);
 		this.mSubsequentPartsInformation = info;
@@ -113,8 +124,7 @@ public class BackupInformation implements IRecoveryBackupInformation {
 	public void removeSubsequentPartsInformation(IRecoveryBackupInformation info) {
 
 		Preconditions.checkNotNull(info);
-		Preconditions.checkArgument(this.mSubsequentPartsInformation
-				.contains(info));
+		Preconditions.checkArgument(this.mSubsequentPartsInformation.contains(info));
 		this.mSubsequentPartsInformation.remove(info);
 
 	}
@@ -123,8 +133,7 @@ public class BackupInformation implements IRecoveryBackupInformation {
 	public void addSubsequentPartsInformation(IRecoveryBackupInformation info) {
 
 		Preconditions.checkNotNull(info);
-		Preconditions.checkArgument(!this.mSubsequentPartsInformation
-				.contains(info));
+		Preconditions.checkArgument(!this.mSubsequentPartsInformation.contains(info));
 		this.mSubsequentPartsInformation.add(info);
 
 	}
@@ -136,7 +145,7 @@ public class BackupInformation implements IRecoveryBackupInformation {
 
 	@Override
 	public void setLocalPQL(String pql) {
-		
+
 		Preconditions.checkNotNull(pql);
 		this.mLocalPQL = pql;
 
@@ -144,9 +153,9 @@ public class BackupInformation implements IRecoveryBackupInformation {
 
 	@Override
 	public String getLocalPQL() {
-		
+
 		return this.mLocalPQL;
-		
+
 	}
 
 }

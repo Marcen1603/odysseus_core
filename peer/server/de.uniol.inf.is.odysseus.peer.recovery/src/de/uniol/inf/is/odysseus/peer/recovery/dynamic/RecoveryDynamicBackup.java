@@ -318,40 +318,6 @@ public class RecoveryDynamicBackup implements IRecoveryDynamicBackup {
 				}
 			}
 		}
-		/*
-		 * Note: Switched from using physical operators to using logical operators.
-		 * RecoveryHelper.convertToPhysicalPlan still exists but is deprecated. M.B.
-		 */
-//		for (String pql : backupPQL) {
-//			List<IPhysicalQuery> physicalQueries = RecoveryHelper.convertToPhysicalPlan(pql);
-//			// Search for the receiver
-//			for (IPhysicalQuery query : physicalQueries) {
-//				for (IPhysicalOperator op : query.getAllOperators()) {
-//					if (op instanceof JxtaReceiverPO) {
-//						JxtaReceiverPO<?> receiver = (JxtaReceiverPO<?>) op;
-//						// This is the information about the peer from which
-//						// we get the data
-//						// This peer has to hold on
-//						String peerId = receiver.getPeerIDString();
-//						String pipeId = receiver.getPipeIDString();
-//
-//						try {
-//							URI uri = new URI(pipeId);
-//							PipeID pipe = PipeID.create(uri);
-//							RecoveryInstructionMessage holdOnMessage = RecoveryInstructionMessage
-//									.createHoldOnMessage(pipe);
-//							uri = new URI(peerId);
-//							PeerID peerToHoldOn = PeerID.create(uri);
-//
-//							cRecoveryCommunicator.get().sendHoldOnMessage(peerToHoldOn, holdOnMessage);
-//
-//						} catch (URISyntaxException e) {
-//							e.printStackTrace();
-//						}
-//					}
-//				}
-//			}
-//		}
 	}
 
 	@Override

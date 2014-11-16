@@ -19,6 +19,7 @@ import de.uniol.inf.is.odysseus.p2p_new.IP2PNetworkManager;
 import de.uniol.inf.is.odysseus.p2p_new.data.DataTransmissionException;
 import de.uniol.inf.is.odysseus.p2p_new.physicaloperator.JxtaReceiverPO;
 import de.uniol.inf.is.odysseus.p2p_new.physicaloperator.JxtaSenderPO;
+import de.uniol.inf.is.odysseus.parser.pql.generator.IPQLGenerator;
 import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryBackupInformation;
 import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryCommunicator;
 import de.uniol.inf.is.odysseus.peer.recovery.internal.BackupInformation;
@@ -41,6 +42,7 @@ public class RecoveryInstructionHandler {
 
 	private static IRecoveryCommunicator recoveryCommunicator;
 	private static IP2PNetworkManager p2pNetworkManager;
+	private static IPQLGenerator pqlGenerator;
 
 	// called by OSGi-DS
 	public static void bindRecoveryCommunicator(IRecoveryCommunicator communicator) {
@@ -63,6 +65,17 @@ public class RecoveryInstructionHandler {
 		if (p2pNetworkManager == serv) {
 			p2pNetworkManager = null;
 		}
+	}
+	
+	// called by OSGi-DS
+	public static void bindPQLGenerator(IPQLGenerator generator) {
+		pqlGenerator = generator;
+	}
+	
+	// called by OSGi-DS
+	public static void unbindPQLGenerator(IPQLGenerator generator) {
+		if (pqlGenerator == generator)
+			pqlGenerator = null;
 	}
 
 	/**
@@ -138,7 +151,7 @@ public class RecoveryInstructionHandler {
 
 							PeerID ownPeerId = p2pNetworkManager.getLocalPeerID();
 
-							recoveryCommunicator.sendUpdateReceiverMessage(peer, ownPeerId, pipe);
+							recoveryCommunicator.sendUpdateReceiverMessage(peer, ownPeerId, pipe, sharedQueryId);
 						} catch (URISyntaxException e) {
 							e.printStackTrace();
 						}
@@ -151,6 +164,9 @@ public class RecoveryInstructionHandler {
 		IRecoveryBackupInformation backupInfo = new BackupInformation();
 		backupInfo.setSharedQuery(sharedQueryId);
 		backupInfo.setLocalPQL(pql);
+		backupInfo.setLocationPeer(p2pNetworkManager.getLocalPeerID());
+		backupInfo.setAboutPeer(p2pNetworkManager.getLocalPeerID());
+		backupInfo.setPQL("");
 		LocalBackupInformationAccess.getStore().add(backupInfo);
 
 		if (BuddyHelper.needBuddy(pql)) {
@@ -187,18 +203,26 @@ public class RecoveryInstructionHandler {
 				}
 			}
 		}
+		
+		// 2. TODO Update the PQL of my local BackupInformation
+		//pqlGenerator.generatePQLStatement(startOperator)
+		
+		// 3. TODO Send everyone that my information changed
+		
 	}
 
 	private static void beBuddy(PeerID sender, ID sharedQueryId, List<String> pqls) {
 		LocalBackupInformationAccess.addBuddy(sender, sharedQueryId);
 		IRecoveryBackupInformation info = new BackupInformation();
-		info.setPeer(sender);
+		info.setAboutPeer(sender);
 		info.setSharedQuery(sharedQueryId);
 		String totalPQL = "";
 		for (String pql : pqls) {
 			totalPQL += " " + pql;
 		}
 		info.setPQL(totalPQL);
+		// This info is meant to be used in this peer
+		info.setLocationPeer(RecoveryCommunicator.getP2PNetworkManager().get().getLocalPeerID());
 		LocalBackupInformationAccess.getStore().add(info);
 		LOG.debug("I am now the buddy for {}", RecoveryCommunicator.getPeerDictionary().get().getRemotePeerName(sender));
 	}

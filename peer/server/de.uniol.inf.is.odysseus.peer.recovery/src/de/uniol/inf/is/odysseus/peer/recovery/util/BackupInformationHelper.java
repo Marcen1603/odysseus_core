@@ -240,7 +240,7 @@ public class BackupInformationHelper implements IPlanModificationListener {
 
 			// 2. Save the information about the new peer
 			IRecoveryBackupInformation updatedInfo = affectedInfo.get();
-			updatedInfo.setPeer(newPeer);
+			updatedInfo.setAboutPeer(newPeer);
 			LocalBackupInformationAccess.getStore().add(updatedInfo);
 			
 		}
