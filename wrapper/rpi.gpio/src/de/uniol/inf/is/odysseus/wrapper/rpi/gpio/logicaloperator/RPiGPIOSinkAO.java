@@ -3,6 +3,9 @@ package de.uniol.inf.is.odysseus.wrapper.rpi.gpio.logicaloperator;
 
 import java.util.EnumSet;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.pi4j.io.gpio.Pin;
 import com.pi4j.io.gpio.PinMode;
 import com.pi4j.io.gpio.PinPullResistance;
@@ -22,8 +25,8 @@ import de.uniol.inf.is.odysseus.wrapper.rpi.gpio.RPiGPIOTransportHandler;
 
 @LogicalOperator(maxInputPorts = 1, minInputPorts = 1, name = "RPIGPIOSINK", doc="Sink for Raspberry Pi GPIO-Port", category={LogicalOperatorCategory.SINK})
 public class RPiGPIOSinkAO extends AbstractSenderAO {
-	//private static final Logger LOG = LoggerFactory
-	//		.getLogger(RPiGPIOSinkAO.class);
+	private static final Logger LOG = LoggerFactory
+			.getLogger(RPiGPIOSinkAO.class);
 	
 	private static final long serialVersionUID = 1L;
 	private Pin pin;
@@ -50,6 +53,8 @@ public class RPiGPIOSinkAO extends AbstractSenderAO {
 	
 	@Parameter(name = "pin", doc = "GPIO Pin Number", type = IntegerParameter.class, optional = false)
     public void setPin(Integer pin) {
+		LOG.debug("setPin:"+pin.intValue());
+		
 		// see class: com.pi4j.io.gpio.RaspiPin;
 		if(pin.intValue() == 1){
 			this.pin = new PinImpl(RaspiGpioProvider.NAME, pin.intValue(), "GPIO "+pin.toString(), 
@@ -72,6 +77,8 @@ public class RPiGPIOSinkAO extends AbstractSenderAO {
 	
 	@Parameter(name = "pinstate", doc = "GPIO Pin state ('high' or 'low')", type = StringParameter.class, optional = false)
 	public void setPinState(String pinState) throws Exception {
+		LOG.debug("setPinState:"+pinState);
+		
 		switch (pinState.toLowerCase()) {
 		case "high":
 			this.pinState = PinState.HIGH;

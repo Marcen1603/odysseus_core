@@ -148,7 +148,7 @@ public class RPiGPIOSinkPO extends AbstractSink<Tuple<?>> {
 			// String pin = tuple.getAttribute(0);
 			// String pinState = tuple.getAttribute(1);
 
-			LOG.debug("pin:"+pin+" pinState:"+pinState);
+			//LOG.debug("pin:"+pin+" pinState:"+pinState);
 
 			// System.out.println("pin:"+pin+" pinState:"+pinState);
 
