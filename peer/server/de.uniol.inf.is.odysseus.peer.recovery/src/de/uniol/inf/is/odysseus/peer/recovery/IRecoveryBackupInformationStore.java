@@ -20,12 +20,10 @@ import com.google.common.collect.ImmutableMap;
  * - id of the distributed query <br />
  * - the PQL code of the query part <br />
  * - the id of the peer, where the query part is executed <br />
- * - information about subsequent parts (relative to the query part): PQL code
- * and peer, where it is executed <br />
+ * - information about subsequent parts (relative to the query part): PQL code and peer, where it is executed <br />
  * - the PQL code of the local part for which the backup information are.
  * 
- * The stored information are about query parts, which are subsequent to query
- * parts executed on the local peer.
+ * The stored information are about query parts, which are subsequent to query parts executed on the local peer.
  * 
  * @author Michael Brand
  *
@@ -44,8 +42,7 @@ public interface IRecoveryBackupInformationStore {
 	/**
 	 * Gets all stored information.
 	 * 
-	 * @return A mapping of information to distributed query ids (for which the
-	 *         information are part of).
+	 * @return A mapping of information to distributed query ids (for which the information are part of).
 	 */
 	public ImmutableMap<ID, Collection<IRecoveryBackupInformation>> getAll();
 
@@ -65,8 +62,7 @@ public interface IRecoveryBackupInformationStore {
 	 * @param pql
 	 *            The PQL code of the query part. <br />
 	 *            Must be not null.
-	 * @return The stored information or {@link Optional#absent()}, if there is
-	 *         no information stored.
+	 * @return The stored information or {@link Optional#absent()}, if there is no information stored.
 	 */
 	public Optional<IRecoveryBackupInformation> get(String pql);
 
@@ -97,6 +93,16 @@ public interface IRecoveryBackupInformationStore {
 	 */
 	public void remove(String pql);
 
+	/**
+	 * Removes the information about that given sharedQueryId which is about the given peerId
+	 * 
+	 * @param sharedQueryId
+	 *            The sharedQueryId of the info
+	 * @param aboutPeerId
+	 *            The peer the information is about
+	 */
+	void remove(ID sharedQueryId, PeerID aboutPeerId);
+
 	/*
 	 * Buddy-information (the peers for which we are the buddy)
 	 */
@@ -107,14 +113,13 @@ public interface IRecoveryBackupInformationStore {
 	 * @param peerId
 	 *            The PeerID from the peer which wants that we are the buddy
 	 * @param sharedQueryId
-	 *            The id of the shared query which we are responsible for if the
-	 *            given peer fails
+	 *            The id of the shared query which we are responsible for if the given peer fails
 	 */
 	public void addBuddy(PeerID peerId, ID sharedQueryId);
 
 	/**
-	 * Gives you the map of peers you are the buddy for and the id's of the
-	 * shared queries you have to handle if the peer fails
+	 * Gives you the map of peers you are the buddy for and the id's of the shared queries you have to handle if the
+	 * peer fails
 	 * 
 	 * @return The Map of peers you are the buddy for
 	 */
@@ -125,20 +130,17 @@ public interface IRecoveryBackupInformationStore {
 	 */
 
 	/**
-	 * Adds a peer to the list of peers which are my buddies (so they would do
-	 * the recovery if I would fail)
+	 * Adds a peer to the list of peers which are my buddies (so they would do the recovery if I would fail)
 	 * 
 	 * @param peerId
 	 *            The PeerID from the peer which is my buddy
 	 * @param sharedQueryId
-	 *            The id of the shared query for which this peer is responsible
-	 *            for if I fail
+	 *            The id of the shared query for which this peer is responsible for if I fail
 	 */
 	public void addMyBuddy(PeerID peerId, ID sharedQueryId);
 
 	/**
-	 * Removes a peer from the list of my buddies, e.g., if that other peer
-	 * fails and can no longer be my buddy
+	 * Removes a peer from the list of my buddies, e.g., if that other peer fails and can no longer be my buddy
 	 * 
 	 * @param peerId
 	 *            The PeerID from the peer which was my buddy
@@ -147,8 +149,7 @@ public interface IRecoveryBackupInformationStore {
 	public List<ID> removeMyBuddy(PeerID peerId);
 
 	/**
-	 * Gives you the map of peers that are my buddies. These peers would be
-	 * responsible if I fail.
+	 * Gives you the map of peers that are my buddies. These peers would be responsible if I fail.
 	 * 
 	 * @return The Map of peers which are my buddies
 	 */

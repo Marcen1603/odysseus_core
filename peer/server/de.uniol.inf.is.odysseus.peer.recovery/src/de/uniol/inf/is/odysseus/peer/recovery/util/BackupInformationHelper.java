@@ -33,14 +33,12 @@ public class BackupInformationHelper implements IPlanModificationListener {
 	/**
 	 * The logger instance for this class.
 	 */
-	private static Logger LOG = LoggerFactory
-			.getLogger(BackupInformationHelper.class);
+	private static Logger LOG = LoggerFactory.getLogger(BackupInformationHelper.class);
 
 	/**
 	 * The recovery communicator, if there is one bound.
 	 */
-	private static Optional<IRecoveryCommunicator> cCommunicator = Optional
-			.absent();
+	private static Optional<IRecoveryCommunicator> cCommunicator = Optional.absent();
 
 	/**
 	 * Binds a recovery communicator. <br />
@@ -52,11 +50,9 @@ public class BackupInformationHelper implements IPlanModificationListener {
 	 */
 	public static void bindCommunicator(IRecoveryCommunicator communicator) {
 
-		Preconditions.checkNotNull(communicator,
-				"The recovery communicator to bind must be not null!");
+		Preconditions.checkNotNull(communicator, "The recovery communicator to bind must be not null!");
 		cCommunicator = Optional.of(communicator);
-		LOG.debug("Bound {} as a recovery communicator.", communicator
-				.getClass().getSimpleName());
+		LOG.debug("Bound {} as a recovery communicator.", communicator.getClass().getSimpleName());
 
 	}
 
@@ -70,14 +66,11 @@ public class BackupInformationHelper implements IPlanModificationListener {
 	 */
 	public static void unbindCommunicator(IRecoveryCommunicator communicator) {
 
-		Preconditions.checkNotNull(communicator,
-				"The recovery communicator to unbind must be not null!");
-		if (cCommunicator.isPresent()
-				&& cCommunicator.get().equals(communicator)) {
+		Preconditions.checkNotNull(communicator, "The recovery communicator to unbind must be not null!");
+		if (cCommunicator.isPresent() && cCommunicator.get().equals(communicator)) {
 
 			cCommunicator = Optional.absent();
-			LOG.debug("Unbound {} as a recovery communicator.", communicator
-					.getClass().getSimpleName());
+			LOG.debug("Unbound {} as a recovery communicator.", communicator.getClass().getSimpleName());
 
 		}
 
@@ -86,8 +79,7 @@ public class BackupInformationHelper implements IPlanModificationListener {
 	/**
 	 * The query part controller, if there is one bound.
 	 */
-	private static Optional<IQueryPartController> cController = Optional
-			.absent();
+	private static Optional<IQueryPartController> cController = Optional.absent();
 
 	/**
 	 * Binds a query part controller. <br />
@@ -99,11 +91,9 @@ public class BackupInformationHelper implements IPlanModificationListener {
 	 */
 	public static void bindController(IQueryPartController controller) {
 
-		Preconditions.checkNotNull(controller,
-				"The query part controller to bind must be not null!");
+		Preconditions.checkNotNull(controller, "The query part controller to bind must be not null!");
 		cController = Optional.of(controller);
-		LOG.debug("Bound {} as a query part controller.", controller.getClass()
-				.getSimpleName());
+		LOG.debug("Bound {} as a query part controller.", controller.getClass().getSimpleName());
 
 	}
 
@@ -117,13 +107,11 @@ public class BackupInformationHelper implements IPlanModificationListener {
 	 */
 	public static void unbindController(IQueryPartController controller) {
 
-		Preconditions.checkNotNull(controller,
-				"The query part controller to unbind must be not null!");
+		Preconditions.checkNotNull(controller, "The query part controller to unbind must be not null!");
 		if (cController.isPresent() && cCommunicator.get().equals(controller)) {
 
 			cController = Optional.absent();
-			LOG.debug("Unbound {} as a query part controller.", controller
-					.getClass().getSimpleName());
+			LOG.debug("Unbound {} as a query part controller.", controller.getClass().getSimpleName());
 
 		}
 
@@ -144,13 +132,11 @@ public class BackupInformationHelper implements IPlanModificationListener {
 	 */
 	public void bindExecutor(IExecutor executor) {
 
-		Preconditions.checkNotNull(executor,
-				"The executor to bind must be not null!");
+		Preconditions.checkNotNull(executor, "The executor to bind must be not null!");
 		IServerExecutor serverExecutor = (IServerExecutor) executor;
 		serverExecutor.addPlanModificationListener(this);
 		cExecutor = Optional.of(serverExecutor);
-		LOG.debug("Bound {} as an executor.", executor.getClass()
-				.getSimpleName());
+		LOG.debug("Bound {} as an executor.", executor.getClass().getSimpleName());
 
 	}
 
@@ -164,22 +150,19 @@ public class BackupInformationHelper implements IPlanModificationListener {
 	 */
 	public void unbindExecutor(IExecutor executor) {
 
-		Preconditions.checkNotNull(executor,
-				"The executor to unbind must be not null!");
+		Preconditions.checkNotNull(executor, "The executor to unbind must be not null!");
 		if (cExecutor.isPresent() && cExecutor.get().equals(executor)) {
 
 			((IServerExecutor) executor).removePlanModificationListener(this);
 			cExecutor = Optional.absent();
-			LOG.debug("Unbound {} as an executor.", executor.getClass()
-					.getSimpleName());
+			LOG.debug("Unbound {} as an executor.", executor.getClass().getSimpleName());
 
 		}
 
 	}
 
 	/**
-	 * Updates the backup information store (of this and other affected peers)
-	 * after a take over.
+	 * Updates the backup information store (of this and other affected peers) after a take over.
 	 * 
 	 * @param oldPeer
 	 *            The former peer, which has executed <code>pqlCode</code>. <br />
@@ -194,8 +177,7 @@ public class BackupInformationHelper implements IPlanModificationListener {
 	 *            The PQL code, which has been taken over. <br />
 	 *            Must be null.
 	 */
-	public static void updateInfoStores(PeerID oldPeer, PeerID newPeer,
-			ID sharedQueryId, String pqlCode) {
+	public static void updateInfoStores(PeerID oldPeer, PeerID newPeer, ID sharedQueryId, String pqlCode) {
 
 		Preconditions.checkNotNull(oldPeer);
 		Preconditions.checkNotNull(newPeer);
@@ -210,31 +192,28 @@ public class BackupInformationHelper implements IPlanModificationListener {
 		}
 
 		// The affected backup information
-		Optional<IRecoveryBackupInformation> affectedInfo = LocalBackupInformationAccess
-				.getStore().get(pqlCode);
+		Optional<IRecoveryBackupInformation> affectedInfo = LocalBackupInformationAccess.getStore().get(pqlCode);
 
-		Collection<IRecoveryBackupInformation> subsequentInfos = Sets
-				.newHashSet();
+		Collection<IRecoveryBackupInformation> subsequentInfos = Sets.newHashSet();
 		if (affectedInfo.isPresent()) {
 
 			// Determine, which backup information have to be sent to the new
 			// peer
-			subsequentInfos = affectedInfo.get()
-					.getSubsequentPartsInformation();
+			subsequentInfos = affectedInfo.get().getSubsequentPartsInformation();
 
 		}
 
 		// Send these information
 		for (IRecoveryBackupInformation info : subsequentInfos) {
 
-			cCommunicator.get().sendBackupInformation(newPeer, info);
+			cCommunicator.get().sendBackupInformation(newPeer, info, true);
 
 		}
 
 		if (affectedInfo.isPresent()) {
 
 			// Update the local backup information due to the take over
-			
+
 			// 1. Remove info that we saved about the failed peer
 			LocalBackupInformationAccess.getStore().remove(affectedInfo.get());
 
@@ -242,7 +221,7 @@ public class BackupInformationHelper implements IPlanModificationListener {
 			IRecoveryBackupInformation updatedInfo = affectedInfo.get();
 			updatedInfo.setAboutPeer(newPeer);
 			LocalBackupInformationAccess.getStore().add(updatedInfo);
-			
+
 		}
 
 	}
@@ -257,8 +236,7 @@ public class BackupInformationHelper implements IPlanModificationListener {
 
 		}
 
-		if (PlanModificationEventType.QUERY_REMOVE.equals(eventArgs
-				.getEventType())) {
+		if (PlanModificationEventType.QUERY_REMOVE.equals(eventArgs.getEventType())) {
 
 			int queryID = ((IPhysicalQuery) eventArgs.getValue()).getID();
 			ID sharedQueryID = cController.get().getSharedQueryID(queryID);

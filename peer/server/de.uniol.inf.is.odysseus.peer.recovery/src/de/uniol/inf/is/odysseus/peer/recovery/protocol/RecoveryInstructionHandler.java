@@ -223,7 +223,7 @@ public class RecoveryInstructionHandler {
 			newBackupPQL = pqlGenerator.generatePQLStatement(query.getLogicalQuery().getLogicalPlan());
 		}
 
-		// 2. TODO Update the PQL of my local BackupInformation
+		// 2. Update the PQL of my local BackupInformation
 		// Big question: Where to put this? I don't know the sharedQueryId ... (Here I could make it that I know it, but
 		// if the LB changes the Receiver, I don't know it) and the pql is not the same, cause it has other names for
 		// the operators
@@ -241,16 +241,15 @@ public class RecoveryInstructionHandler {
 						if (logicalOp instanceof JxtaReceiverAO) {
 							if (((JxtaReceiverAO) logicalOp).getPipeID().equals(pipeId.toString())) {
 								// This is the information we search for
-								LocalBackupInformationAccess.updateLocalPQL(sharedQueryId, localPQL, newBackupPQL);
+								IRecoveryBackupInformation updatedInfo = LocalBackupInformationAccess.updateLocalPQL(sharedQueryId, localPQL, newBackupPQL);
+								// Distribute to other peers
+								recoveryCommunicator.distributeUpdatedBackupInfo(updatedInfo);
 							}
 						}
 					}
 				}
 			}
 		}
-
-		// 3. TODO Send everyone that my information changed
-		
 		
 	}
 

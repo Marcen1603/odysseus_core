@@ -408,7 +408,7 @@ public class RecoveryCommunicator implements IRecoveryCommunicator, IPeerCommuni
 			// Now this is located on the new peer, the failed peer does not
 			// exist anymore
 			info.setLocationPeer(newPeer);
-			BackupInformationMessage backupMessage = new BackupInformationMessage(info);
+			BackupInformationMessage backupMessage = new BackupInformationMessage(info, BackupInformationMessage.NEW_INFO);
 			sendMessage(newPeer, backupMessage);
 		}
 	}
@@ -422,7 +422,17 @@ public class RecoveryCommunicator implements IRecoveryCommunicator, IPeerCommuni
 		} else if (message instanceof BackupInformationMessage) {
 
 			// Store the backup information
-			LocalBackupInformationAccess.getStore().add(((BackupInformationMessage) message).getInfo());
+			BackupInformationMessage backupInfoMessage = (BackupInformationMessage) message;
+			int messageType = backupInfoMessage.getMessageType();
+			if (messageType == BackupInformationMessage.NEW_INFO)
+				LocalBackupInformationAccess.getStore().add(((BackupInformationMessage) message).getInfo());
+			else if (messageType == BackupInformationMessage.UPDATE_INFO) {
+				// Just save the info, if we already have information about this
+				if (LocalBackupInformationAccess.getStoredPQLStatements(backupInfoMessage.getInfo().getSharedQuery(), senderPeer) != null) {
+					
+					LocalBackupInformationAccess.updateInfo(backupInfoMessage.getInfo().getSharedQuery(), backupInfoMessage.getInfo().getAboutPeer(), backupInfoMessage.getInfo().getPQL(), backupInfoMessage.getInfo().getLocationPeer(), backupInfoMessage.getInfo().getLocalPQL());
+				}
+			}
 
 		} else if (message instanceof RemoveQueryMessage) {
 
@@ -435,13 +445,25 @@ public class RecoveryCommunicator implements IRecoveryCommunicator, IPeerCommuni
 
 		}
 	}
+	
+	@Override
+	public void distributeUpdatedBackupInfo(IRecoveryBackupInformation info) {
+		for (PeerID peer : cPeerDictionary.get().getRemotePeerIDs()) {
+			sendBackupInformation(peer, info, false);
+		}
+	}
 
 	@Override
-	public void sendBackupInformation(PeerID destination, IRecoveryBackupInformation info) {
+	public void sendBackupInformation(PeerID destination, IRecoveryBackupInformation info, boolean isNewInfo) {
 
 		Preconditions.checkNotNull(destination);
 		Preconditions.checkNotNull(info);
-		BackupInformationMessage message = new BackupInformationMessage(info);
+		int messageType;
+		if (isNewInfo)
+			messageType = BackupInformationMessage.NEW_INFO;
+		else
+			messageType = BackupInformationMessage.UPDATE_INFO;
+		BackupInformationMessage message = new BackupInformationMessage(info, messageType);
 
 		sendMessage(destination, message);
 
@@ -513,7 +535,7 @@ public class RecoveryCommunicator implements IRecoveryCommunicator, IPeerCommuni
 			List<IRecoveryBackupInformation> backupInfosForOthers = BuddyHelper
 					.findBackupInfoForBuddy(cP2PNetworkManager.get().getLocalPeerID());
 			for (IRecoveryBackupInformation info : backupInfosForOthers) {
-				sendBackupInformation(buddy, info);
+				sendBackupInformation(buddy, info, true);
 			}
 
 			// 5. Save, that this is my buddy so that we can find a new buddy if

@@ -186,6 +186,17 @@ public class BackupInformationStore implements IRecoveryBackupInformationStore {
 		}
 
 	}
+	
+	@Override
+	public void remove(ID sharedQueryId, PeerID aboutPeerId) {
+		Preconditions.checkNotNull(sharedQueryId);
+		Preconditions.checkNotNull(aboutPeerId);
+		for (IRecoveryBackupInformation info : this.mInfos.get(sharedQueryId)) {
+			if (info.getAboutPeer().equals(aboutPeerId)) {
+				this.mInfos.get(sharedQueryId).remove(info);
+			}
+		}
+	}
 
 	/*
 	 * Buddy-information (the peers for which we are the buddy)

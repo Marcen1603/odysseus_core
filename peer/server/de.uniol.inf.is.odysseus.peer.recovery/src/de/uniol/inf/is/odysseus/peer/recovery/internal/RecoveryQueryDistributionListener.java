@@ -158,7 +158,7 @@ public class RecoveryQueryDistributionListener extends AbstractQueryDistribution
 					LocalBackupInformationAccess.getStore().add(info);
 					checkForBuddy(info.getLocalPQL(), info.getSharedQuery());
 				} else {
-					cCommunicator.get().sendBackupInformation(peer, info);
+					cCommunicator.get().sendBackupInformation(peer, info, true);
 				}
 			}
 		}
