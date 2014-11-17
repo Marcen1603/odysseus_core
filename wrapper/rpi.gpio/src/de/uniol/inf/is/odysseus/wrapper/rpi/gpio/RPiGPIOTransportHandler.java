@@ -1,6 +1,5 @@
 package de.uniol.inf.is.odysseus.wrapper.rpi.gpio;
 
-
 import java.util.EnumSet;
 
 import org.slf4j.Logger;
@@ -22,132 +21,144 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.AbstractS
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandler;
 import de.uniol.inf.is.odysseus.wrapper.rpi.gpio.OSInvestigator.OS;
 
-public class RPiGPIOTransportHandler extends AbstractSimplePullTransportHandler<Tuple<?>> {
+public class RPiGPIOTransportHandler extends
+		AbstractSimplePullTransportHandler<Tuple<?>> {
 
-	//TODO: Auf push umbauen.
-	
-	private static final Logger LOG = LoggerFactory.getLogger(RPiGPIOTransportHandler.class);
-	
+	// TODO: Auf push umbauen.
+
+	private static final Logger LOG = LoggerFactory
+			.getLogger(RPiGPIOTransportHandler.class);
+
 	public static final String NAME = "RPiGPIO";
-	
+
 	private final static String PIN = "pin"; // Pull: down or up
 	private final static String MODE = "mode"; // Tranport mode: in or out
-	private final static String PULL_STATE = "pull"; // Pull: down or up (high or low)
+	private final static String PULL_STATE = "pull"; // Pull: down or up (high
+														// or low)
 
-	//private String pin = "";
-	//private String mode = "in";
-	//private String pullState = "low";
+	// private String pin = "";
+	// private String mode = "in";
+	// private String pullState = "low";
 
 	private static GpioController gpioController;
-	private Pin pin; //= RaspiPin.GPIO_07
+	private Pin pin; // = RaspiPin.GPIO_07
 
-	private boolean flagExceptionThrown = false;//Exception was not thrown at this point.
-	
-	static{
-		//myinitGPIO();
+	private boolean flagExceptionThrown = false;// Exception was not thrown at
+												// this point.
+
+	static {
+		// myinitGPIO();
 	}
-	
+
 	@Override
 	public ITransportHandler createInstance(
 			IProtocolHandler<?> protocolHandler, OptionMap options) {
 		RPiGPIOTransportHandler tHandler = new RPiGPIOTransportHandler();
 		tHandler.init(options);
 		tHandler.myinitGPIO();
-		
+
 		protocolHandler.setTransportHandler(tHandler);
 		return tHandler;
 	}
-	
+
 	protected void init(final OptionMap options) {
 		if (options.containsKey(RPiGPIOTransportHandler.PIN)) {
-            String _pin = options.get(RPiGPIOTransportHandler.PIN);
+			String _pin = options.get(RPiGPIOTransportHandler.PIN);
 			Integer pinInteger = Integer.parseInt(_pin);
-            
+
 			LOG.error("init");
-			
-			if(pinInteger. intValue() == 1){
-				this.pin = new PinImpl(RaspiGpioProvider.NAME, pinInteger.intValue(), "GPIO "+_pin.toString(), 
-	                    EnumSet.of(PinMode.DIGITAL_INPUT, PinMode.DIGITAL_OUTPUT, PinMode.PWM_OUTPUT),
-	                    PinPullResistance.all());
-			}else{
-				this.pin = new PinImpl(RaspiGpioProvider.NAME, pinInteger.intValue(), "GPIO "+_pin.toString(), 
-		                EnumSet.of(PinMode.DIGITAL_INPUT, PinMode.DIGITAL_OUTPUT),
-		                PinPullResistance.all());
+
+			if (pinInteger.intValue() == 1) {
+				this.pin = new PinImpl(RaspiGpioProvider.NAME,
+						pinInteger.intValue(), "GPIO " + _pin.toString(),
+						EnumSet.of(PinMode.DIGITAL_INPUT,
+								PinMode.DIGITAL_OUTPUT, PinMode.PWM_OUTPUT),
+						PinPullResistance.all());
+			} else {
+				this.pin = new PinImpl(RaspiGpioProvider.NAME,
+						pinInteger.intValue(), "GPIO " + _pin.toString(),
+						EnumSet.of(PinMode.DIGITAL_INPUT,
+								PinMode.DIGITAL_OUTPUT),
+						PinPullResistance.all());
 			}
-			
-			LOG.error("this.pin:"+this.pin.getAddress());
-        }
-		
+
+			LOG.error("this.pin:" + this.pin.getAddress());
+		}
+
 		if (options.containsKey(RPiGPIOTransportHandler.MODE)) {
-            //this.mode = options.get(RPiGPIOTransportHandler.MODE);
-        }
-		
+			// this.mode = options.get(RPiGPIOTransportHandler.MODE);
+		}
+
 		if (options.containsKey(RPiGPIOTransportHandler.PULL_STATE)) {
-            //this.pullState = options.get(RPiGPIOTransportHandler.PULL_STATE);
-        }
-    }
-	
+			// this.pullState = options.get(RPiGPIOTransportHandler.PULL_STATE);
+		}
+	}
+
 	@Override
 	public String getName() {
 		return NAME;
 	}
-	
+
 	@Override
 	public boolean hasNext() {
 		return true;
 	}
-	
+
 	private static GpioPinDigitalInput myButton;
-	
+
 	@Override
 	public Tuple<?> getNext() {
 		@SuppressWarnings("rawtypes")
 		Tuple<?> tuple = new Tuple(2, false);
-		
-		try{
-            boolean buttonPressed = myButton.isHigh();
-            
-        	String buttonState = "";
-            if(buttonPressed){
-            	buttonState = "1";
-            }else{
-            	buttonState = "0";
-            }
-            
-        	tuple.setAttribute(0, "pinNumber"+myButton.getPin().getAddress());
-        	tuple.setAttribute(1, Long.parseLong(buttonState));
-        	//TODO: 
-        	//tuple.setAttribute(2, System.currentTimeMillis());
-        	//Starttimestamp
-		}catch(ClassCastException ex){
-			LOG.error(ex.getMessage(), ex);
-		}catch(Exception ex){
-			if(!flagExceptionThrown){
-				LOG.error("On Raspberry Pi? pi4j installed? ");
-				flagExceptionThrown=true;
+
+		try {
+			boolean buttonPressed = myButton.isHigh();
+
+			String buttonState = "";
+			if (buttonPressed) {
+				buttonState = "1";
+			} else {
+				buttonState = "0";
 			}
-			
+
+			tuple.setAttribute(0, "pinNumber" + myButton.getPin().getAddress());
+			tuple.setAttribute(1, Long.parseLong(buttonState));
+			// TODO:
+			// tuple.setAttribute(2, System.currentTimeMillis());
+			// Starttimestamp
+		} catch (ClassCastException ex) {
+			LOG.error(ex.getMessage(), ex);
+		} catch (Exception ex) {
+			if (!flagExceptionThrown) {
+				LOG.error("On Raspberry Pi? pi4j installed? ");
+				flagExceptionThrown = true;
+			}
+
 			tuple.setAttribute(0, "pinNumber7");
-        	tuple.setAttribute(1, 1);
+			tuple.setAttribute(1, 1);
 		}
-		
+
 		return tuple;
 	}
-	
+
 	private void myinitGPIO() {
 		LOG.debug("myinitGPIO() is called.");
-		
-		try{
+
+		try {
 			OS os = OSInvestigator.getCurrentOS();
-			
+
 			switch (os) {
 			case NUX:
-				if(gpioController==null){
+				if (gpioController == null) {
 					gpioController = GpioFactory.getInstance();
-					if(myButton==null){
-						myButton = gpioController.provisionDigitalInputPin(this.pin,"MyButton");
-					}
+
 				}
+
+				if (myButton == null) {
+					myButton = gpioController.provisionDigitalInputPin(
+							this.pin, "MyButton");
+				}
+
 				break;
 			case WIN:
 			case MAC:
@@ -157,21 +168,19 @@ public class RPiGPIOTransportHandler extends AbstractSimplePullTransportHandler<
 			default:
 				break;
 			}
-			
-			
-			
-		}catch(NullPointerException ex){
+
+		} catch (NullPointerException ex) {
 			ex.printStackTrace();
-		}catch(Exception ex){
+		} catch (Exception ex) {
 			ex.printStackTrace();
-		}catch (UnsatisfiedLinkError ex) {
+		} catch (UnsatisfiedLinkError ex) {
 			ex.printStackTrace();
 		}
 	}
-	
+
 	@Override
 	public boolean isSemanticallyEqualImpl(ITransportHandler other) {
 		return false;
 	}
-	
+
 }
