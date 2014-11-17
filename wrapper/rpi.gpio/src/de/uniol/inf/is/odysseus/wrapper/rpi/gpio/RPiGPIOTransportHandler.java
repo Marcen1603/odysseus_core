@@ -40,7 +40,7 @@ public class RPiGPIOTransportHandler extends
 	// private String mode = "in";
 	// private String pullState = "low";
 
-	private static GpioController gpioController;
+	private GpioController gpioController;
 	private Pin pin; // = RaspiPin.GPIO_07
 
 	private boolean flagExceptionThrown = false;// Exception was not thrown at
@@ -142,7 +142,7 @@ public class RPiGPIOTransportHandler extends
 	}
 
 	private void myinitGPIO() {
-		LOG.debug("myinitGPIO() is called.");
+		LOG.error("myinitGPIO() is called.");
 
 		try {
 			OS os = OSInvestigator.getCurrentOS();
@@ -155,6 +155,7 @@ public class RPiGPIOTransportHandler extends
 				}
 
 				if (myButton == null) {
+					LOG.error("myButton == null -> initWithPin:"+this.pin.getAddress());
 					myButton = gpioController.provisionDigitalInputPin(
 							this.pin, "MyButton");
 				}
