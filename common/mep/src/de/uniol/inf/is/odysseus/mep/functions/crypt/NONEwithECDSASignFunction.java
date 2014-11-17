@@ -16,16 +16,18 @@
 package de.uniol.inf.is.odysseus.mep.functions.crypt;
 
 /**
- * Returns the SHA-1 hash sum of a string.
- *
  * @author Christian Kuka <christian@kuka.cc>
+ *
  */
-public class SHA1Function extends AbstractDigestFunction {
+public class NONEwithECDSASignFunction extends AbstractCryptSignFunction {
 
-    private static final long serialVersionUID = 8655635125372049567L;
+    /**
+     *
+     */
+    private static final long serialVersionUID = 2873625064258047760L;
 
-    public SHA1Function() {
-        super("SHA-1");
+    public NONEwithECDSASignFunction() {
+        super("EC", "NONEwithECDSA");
     }
 
 }

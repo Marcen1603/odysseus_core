@@ -1,5 +1,5 @@
-/********************************************************************************** 
- * Copyright 2011 The Odysseus Team
+/**********************************************************************************
+ * Copyright 2014 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,45 +15,20 @@
  */
 package de.uniol.inf.is.odysseus.mep.functions.crypt;
 
-import java.nio.charset.Charset;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-
-import javax.xml.bind.DatatypeConverter;
-
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
-import de.uniol.inf.is.odysseus.mep.AbstractFunction;
-
 /**
  * Returns the SHA-256 hash sum of a string.
- * 
+ *
  * @author Christian Kuka <christian@kuka.cc>
  */
-public class SHA256Function extends AbstractFunction<String> {
+public class SHA256Function extends AbstractDigestFunction {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 7560161608552170153L;
-	private static final SDFDatatype[][] accTypes = new SDFDatatype[][]{ { SDFDatatype.STRING }};
-	private final Charset charset = Charset.forName("UTF8");
+    /**
+     *
+     */
+    private static final long serialVersionUID = 7560161608552170153L;
 
-	public SHA256Function() {
-		super("sha256",1,accTypes,SDFDatatype.STRING);
-	}
-	
-	@Override
-	public String getValue() {
-		StringBuilder sb = new StringBuilder();
-		try {
-			MessageDigest algorithm = MessageDigest.getInstance("SHA-256");
-			algorithm.reset();
-			algorithm.update(getInputValue(0).toString().getBytes(charset));
-			sb.append(DatatypeConverter.printHexBinary(algorithm.digest()));
-		} catch (NoSuchAlgorithmException e) {
-			throw new RuntimeException(e);
-		}
-		return sb.toString();
-	}
+    public SHA256Function() {
+        super("SHA-256");
+    }
 
 }
