@@ -293,6 +293,9 @@ public class QueryExecutor implements IP2PDictionaryListener,
 
 				try {
 					//TODO: loop to wait for import source: activityInterpreter.getActivitySourceName()
+					//QueryState queryState = ServerExecutorService.getServerExecutor()
+					//		.getQueryState(queryName);
+					//queryState.equals(QueryState.RUNNING);
 					
 					if(getP2PDictionary().isImported(activityInterpreter.getActivitySourceName())){
 						executeQueryNow(logicRuleQueries);
@@ -342,7 +345,16 @@ public class QueryExecutor implements IP2PDictionaryListener,
 	public Integer executeQueryNow(String viewName, String query)
 			throws Exception {
 		// LOG.error("viewName:" + viewName + " query:" + query);
-		if (!queryIsRunning(viewName + "_query")) {
+		
+		QueryState queryState = ServerExecutorService.getServerExecutor()
+				.getQueryState(viewName+"_query");
+		queryState.equals(QueryState.UNDEF);
+		
+		LOG.debug("query:'"+viewName+"_query' queryState:'"+queryState+"'");
+		
+		
+		
+		if (!queryIsRunning(viewName + "_query") ) {
 			Collection<Integer> queryIDs = ServerExecutorService
 					.getServerExecutor().addQuery(query, "OdysseusScript",
 							SessionManagementService.getActiveSession(),
