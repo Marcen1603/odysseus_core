@@ -150,14 +150,19 @@ public class RPiGPIOTransportHandler extends
 			switch (os) {
 			case NUX:
 				if (gpioController == null) {
+					LOG.error("gpioController == null");
 					gpioController = GpioFactory.getInstance();
-
+				}else{
+					LOG.error("gpioController != null");
 				}
 
 				if (myButton == null) {
-					LOG.error("myButton == null -> initWithPin:"+this.pin.getAddress());
+					LOG.error("myButton == null     -> initWithPin:"+this.pin.getAddress());
+					
 					myButton = gpioController.provisionDigitalInputPin(
 							this.pin, "MyButton");
+				}else{
+					LOG.error("myButton != null");
 				}
 
 				break;
