@@ -75,6 +75,8 @@ public class DatatypeRegistry {
 				FloatDataTypeMappingHandler.class);
 		addMapping(SDFDatatype.INTEGER, Types.INTEGER,
 				IntegerDataTypeMappingHandler.class, true);
+		addMapping(SDFDatatype.UNSIGNEDINT16, Types.INTEGER,
+				IntegerDataTypeMappingHandler.class, false);
 		addMapping(Types.SMALLINT, SDFDatatype.INTEGER,
 				IntegerDataTypeMappingHandler.class);
 		addMapping(SDFDatatype.LONG, Types.BIGINT,
