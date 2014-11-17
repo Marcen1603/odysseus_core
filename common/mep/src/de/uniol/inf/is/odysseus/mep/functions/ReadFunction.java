@@ -18,6 +18,7 @@ package de.uniol.inf.is.odysseus.mep.functions;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
@@ -51,29 +52,21 @@ public class ReadFunction extends AbstractFunction<String> {
         File file = new File(path);
         StringBuilder sb = new StringBuilder();
         if (file.canRead()) {
-            BufferedReader reader = null;
             try {
                 FileInputStream stream = new FileInputStream(file);
-                reader = new BufferedReader(new InputStreamReader(stream));
-                String line = null;
-                while ((line = reader.readLine()) != null) {
-                    sb.append(line);
+                try (BufferedReader reader = new BufferedReader(new InputStreamReader(stream))) {
+                    String line = null;
+                    while ((line = reader.readLine()) != null) {
+                        sb.append(line);
+                    }
+                }
+                catch (IOException e) {
+                    LOG.warn(e.getMessage(), e);
                 }
             }
-            catch (IOException e) {
+            catch (FileNotFoundException e) {
                 LOG.warn(e.getMessage(), e);
             }
-            finally {
-                if (reader != null) {
-                    try {
-                        reader.close();
-                    }
-                    catch (IOException e) {
-                        LOG.warn(e.getMessage(), e);
-                    }
-                }
-            }
-
         }
         return sb.toString();
     }
