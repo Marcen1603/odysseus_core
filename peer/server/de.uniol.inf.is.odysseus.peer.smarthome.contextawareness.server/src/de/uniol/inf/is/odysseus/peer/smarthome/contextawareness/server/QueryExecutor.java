@@ -227,7 +227,9 @@ public class QueryExecutor implements IP2PDictionaryListener,
 				waitForP2PDictionary();
 
 				try {
-					getP2PDictionary().exportSource(sourceName);
+					if(getP2PDictionary().getSources(sourceName)!=null && getP2PDictionary().getSources(sourceName).size()>0){
+						getP2PDictionary().exportSource(sourceName);
+					}
 				} catch (PeerException e) {
 					LOG.debug("export source:" + sourceName);
 					LOG.error(e.getMessage(), e);
@@ -350,7 +352,7 @@ public class QueryExecutor implements IP2PDictionaryListener,
 				.getQueryState(viewName+"_query");
 		queryState.equals(QueryState.UNDEF);
 		
-		LOG.debug("query:'"+viewName+"_query' queryState:'"+queryState+"'");
+		LOG.debug("executeQueryNow() query:'"+viewName+"_query' queryState:'"+queryState+"'");
 		
 		
 		

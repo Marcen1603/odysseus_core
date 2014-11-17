@@ -13,7 +13,6 @@ import com.pi4j.io.gpio.Pin;
 import com.pi4j.io.gpio.PinMode;
 import com.pi4j.io.gpio.PinPullResistance;
 import com.pi4j.io.gpio.RaspiGpioProvider;
-import com.pi4j.io.gpio.RaspiPin;
 import com.pi4j.io.gpio.impl.PinImpl;
 
 import de.uniol.inf.is.odysseus.core.collection.OptionMap;
@@ -68,7 +67,7 @@ public class RPiGPIOTransportHandler extends AbstractSimplePullTransportHandler<
             String _pin = options.get(RPiGPIOTransportHandler.PIN);
 			Integer pinInteger = Integer.parseInt(_pin);
             
-			LOG.debug("init");
+			LOG.error("init");
 			
 			if(pinInteger. intValue() == 1){
 				this.pin = new PinImpl(RaspiGpioProvider.NAME, pinInteger.intValue(), "GPIO "+_pin.toString(), 
@@ -80,7 +79,7 @@ public class RPiGPIOTransportHandler extends AbstractSimplePullTransportHandler<
 		                PinPullResistance.all());
 			}
 			
-			LOG.debug("this.pin:"+this.pin.getAddress());
+			LOG.error("this.pin:"+this.pin.getAddress());
         }
 		
 		if (options.containsKey(RPiGPIOTransportHandler.MODE)) {
