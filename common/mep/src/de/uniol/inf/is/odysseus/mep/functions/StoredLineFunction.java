@@ -24,12 +24,12 @@ public class StoredLineFunction extends AbstractFunction<double[][]> {
      * 
      */
     private static final long serialVersionUID = 6045568038655218127L;
-    private static final SDFDatatype[][] acceptedTypes = { { SDFDatatype.STRING }, { SDFDatatype.MATRIX_DOUBLE }, { SDFDatatype.MATRIX_DOUBLE } };
+    private static final SDFDatatype[][] acceptedTypes = { { SDFDatatype.STRING }, SDFDatatype.MATRIXS, SDFDatatype.MATRIXS };
 
     public StoredLineFunction() {
-    	super("storedLine", 3, acceptedTypes, SDFDatatype.MATRIX_DOUBLE, false);
+        super("storedLine", 3, acceptedTypes, SDFDatatype.MATRIX_DOUBLE, false);
     }
-    
+
     @Override
     public double[][] getValue() {
         String name = getInputValue(0);
@@ -43,9 +43,7 @@ public class StoredLineFunction extends AbstractFunction<double[][]> {
         if (store != null) {
             return new double[][] { store.getLine(path, new int[] { index[0] }) };
         }
-        else {
-            return new double[][] { { 0.0 } };
-        }
+        return new double[][] { { 0.0 } };
     }
 
 }

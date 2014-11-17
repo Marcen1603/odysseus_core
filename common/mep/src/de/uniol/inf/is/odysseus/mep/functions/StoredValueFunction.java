@@ -24,12 +24,11 @@ public class StoredValueFunction extends AbstractFunction<Double> {
      * 
      */
     private static final long serialVersionUID = 6045568038655218127L;
-    private static final SDFDatatype[][] acceptedTypes = { { SDFDatatype.STRING }, { SDFDatatype.MATRIX_DOUBLE }, { SDFDatatype.MATRIX_DOUBLE } };
+    private static final SDFDatatype[][] acceptedTypes = { { SDFDatatype.STRING }, SDFDatatype.MATRIXS, SDFDatatype.MATRIXS };
 
     public StoredValueFunction() {
-    	super("storedValue",3, acceptedTypes,SDFDatatype.DOUBLE, false);
+        super("storedValue", 3, acceptedTypes, SDFDatatype.DOUBLE, false);
     }
-    
 
     @Override
     public Double getValue() {
@@ -41,11 +40,9 @@ public class StoredValueFunction extends AbstractFunction<Double> {
         Objects.requireNonNull(index);
         IAssociativeStorage<Tuple<?>> store = AssociativeStorageManager.get(name);
         if (store != null) {
-            return store.get(path, index);
+            return new Double(store.get(path, index));
         }
-        else {
-            return 0.0;
-        }
+        return new Double(0.0);
     }
 
 }
