@@ -114,6 +114,7 @@ public class StartStopPredicateCoalescePO<M extends ITimeInterval> extends
 						currentPartialAggregates, false);
 				IStreamObject<M> out = getGroupProcessor().createOutputElement(
 						e.getKey(), result);
+				out.setMetadata(currentPartialAggregates.getMetadata());
 				transfer(out);
 			}
 			currentPAs.clear();
