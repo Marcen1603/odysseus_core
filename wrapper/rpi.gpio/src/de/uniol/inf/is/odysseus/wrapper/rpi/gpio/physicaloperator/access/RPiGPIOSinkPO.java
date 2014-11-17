@@ -70,7 +70,7 @@ public class RPiGPIOSinkPO extends AbstractSink<Tuple<?>> {
 			case WIN:
 			case MAC:
 			case UNKNOWN:
-				LOG.warn("The RPiGPIO TransportHandler works only on the raspberry pi with linux and the pi4j library!");
+				LOG.warn(""+RPiGPIOSinkAO.class+" works only on raspberry pi with linux and pi4j library!");
 				break;
 			default:
 				break;
@@ -86,15 +86,16 @@ public class RPiGPIOSinkPO extends AbstractSink<Tuple<?>> {
 			return;
 		}
 
-		LOG.debug("initGPIOPins()");
+		LOG.error("RPiGPIOSinkPO initGPIOPins() pin:"+this.pin);
+		
 		try {
 			// LOG.error("\n\r ---- pinState:"+pinState.toString()+"\n\r ------");
 			if (pinState != null) {
-				myLED = gpioController.provisionDigitalOutputPin(pin,
-						pin.getName(), pinState);
+				this.myLED = gpioController.provisionDigitalOutputPin(this.pin,
+						this.pin.getName(), pinState);
 			} else {
-				myLED = gpioController.provisionDigitalOutputPin(pin,
-						pin.getName(), PinState.LOW);
+				this.myLED = gpioController.provisionDigitalOutputPin(this.pin,
+						this.pin.getName(), PinState.LOW);
 				LOG.debug("pinState==null");
 			}
 		} catch (Exception ex) {
@@ -104,7 +105,7 @@ public class RPiGPIOSinkPO extends AbstractSink<Tuple<?>> {
 
 	@Override
 	protected void process_next(Tuple<?> tuple, int port) {
-		if (tuple == null || myLED == null) {
+		if (tuple == null || this.myLED == null) {
 			if (!messageWasShownTupleLedNUll) {
 				LOG.error("tuple or myLED is null!");
 				messageWasShownTupleLedNUll = true;
@@ -132,9 +133,9 @@ public class RPiGPIOSinkPO extends AbstractSink<Tuple<?>> {
 					String compareValue = (String) "1";
 
 					if (value.equals(compareValue)) {
-						myLED.high();
+						this.myLED.high();
 					} else {
-						myLED.low();
+						this.myLED.low();
 					}
 				}
 				if (tuple.size() > 2) {
@@ -147,7 +148,7 @@ public class RPiGPIOSinkPO extends AbstractSink<Tuple<?>> {
 			// String pin = tuple.getAttribute(0);
 			// String pinState = tuple.getAttribute(1);
 
-			// LOG.debug("pin:"+pin+" pinState:"+pinState);
+			LOG.debug("pin:"+pin+" pinState:"+pinState);
 
 			// System.out.println("pin:"+pin+" pinState:"+pinState);
 

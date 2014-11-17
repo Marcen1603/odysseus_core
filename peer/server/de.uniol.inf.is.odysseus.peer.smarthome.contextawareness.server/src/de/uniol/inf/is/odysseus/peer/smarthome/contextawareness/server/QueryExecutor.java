@@ -350,11 +350,12 @@ public class QueryExecutor implements IP2PDictionaryListener,
 		
 		QueryState queryState = ServerExecutorService.getServerExecutor()
 				.getQueryState(viewName+"_query");
-		queryState.equals(QueryState.UNDEF);
+		//queryState.equals(QueryState.UNDEF);
 		
-		LOG.debug("executeQueryNow() query:'"+viewName+"_query' queryState:'"+queryState+"'");
+		LOG.error("executeQueryNow() query:'"+viewName+"_query' queryState:'"+queryState+"'");
 		
 		
+		//&& queryState.equals(QueryState.UNDEF)
 		
 		if (!queryIsRunning(viewName + "_query") ) {
 			Collection<Integer> queryIDs = ServerExecutorService

@@ -22,6 +22,9 @@ import de.uniol.inf.is.odysseus.wrapper.rpi.gpio.RPiGPIOTransportHandler;
 
 @LogicalOperator(maxInputPorts = 1, minInputPorts = 1, name = "RPIGPIOSINK", doc="Sink for Raspberry Pi GPIO-Port", category={LogicalOperatorCategory.SINK})
 public class RPiGPIOSinkAO extends AbstractSenderAO {
+	//private static final Logger LOG = LoggerFactory
+	//		.getLogger(RPiGPIOSinkAO.class);
+	
 	private static final long serialVersionUID = 1L;
 	private Pin pin;
 	private PinState pinState;
