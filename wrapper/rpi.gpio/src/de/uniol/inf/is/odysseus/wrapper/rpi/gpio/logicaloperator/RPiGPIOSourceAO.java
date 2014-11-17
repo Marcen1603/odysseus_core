@@ -29,16 +29,10 @@ public class RPiGPIOSourceAO extends AbstractAccessAO {
 	
 	public RPiGPIOSourceAO() {
 		super();
-		init();
-	}
-	
-	private void init() {
 		setTransportHandler(RPiGPIOTransportHandler.NAME);
 		setWrapper(Constants.GENERIC_PULL);
-		setProtocolHandler("none");
-		
-		//setDataHandler();
 		setDataHandler("Tuple");
+		setProtocolHandler("none");
 		
 		
 		//SDF Schema:
@@ -52,7 +46,6 @@ public class RPiGPIOSourceAO extends AbstractAccessAO {
 	
 	public RPiGPIOSourceAO(RPiGPIOSourceAO other) {
 		super(other);
-		init();
 		this.pin = other.pin;
 	}
 	
