@@ -10,6 +10,7 @@ import net.jxta.peer.PeerID;
 
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
+import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
@@ -53,16 +54,45 @@ public class BackupInformationStore implements IRecoveryBackupInformationStore {
 		if (this.mInfos.containsKey(info.getSharedQuery())) {
 
 			for (IRecoveryBackupInformation backupInfo : this.mInfos.get(info.getSharedQuery())) {
+				
+				if (backupInfo.equals(info))
+					return;
+				
 				if (info.getPQL() != null && backupInfo.getPQL() != null) {
 					String comparePQL1 = backupInfo.getPQL().trim().toLowerCase();
 					String comparePQL2 = info.getPQL().trim().toLowerCase();
 
 					if (comparePQL1.equals(comparePQL2)) {
-						// If we already have this pql -> don't save it twice
+						// If we already have this PQl -> don't save it twice
+						
+						// But maybe the other information which is in this message has to be merges into this backupInfo
+						if (Strings.isNullOrEmpty(backupInfo.getLocalPQL()) && !Strings.isNullOrEmpty(info.getLocalPQL())) {
+							if (backupInfo.getLocationPeer() == null && info.getLocationPeer() != null) {
+								backupInfo.setLocalPQL(info.getLocalPQL());
+								backupInfo.setLocationPeer(info.getLocationPeer());
+							}
+						}
+							
 						return;
 					}
 				}
+				if (info.getLocalPQL() != null && backupInfo.getLocalPQL() != null) {
+					String comparePQL1 = backupInfo.getLocalPQL().trim().toLowerCase();
+					String comparePQL2 = info.getLocalPQL().trim().toLowerCase();
 
+					if (comparePQL1.equals(comparePQL2)) {
+						// If we already have this local PQL -> don't save it twice
+						
+						// But maybe the other information which is in this message has to be merges into this backupInfo
+						if (Strings.isNullOrEmpty(backupInfo.getPQL()) && !Strings.isNullOrEmpty(info.getPQL())) {
+							if (backupInfo.getAboutPeer() == null && info.getAboutPeer() != null) {
+								backupInfo.setPQL(info.getPQL());
+								backupInfo.setAboutPeer(info.getAboutPeer());
+							}
+						}
+						return;
+					}
+				}
 			}
 
 			this.mInfos.get(info.getSharedQuery()).add(info);

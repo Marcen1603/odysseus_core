@@ -171,7 +171,6 @@ public class RecoveryInstructionHandler {
 		backupInfo.setSharedQuery(sharedQueryId);
 		backupInfo.setLocalPQL(pql);
 		backupInfo.setLocationPeer(p2pNetworkManager.getLocalPeerID());
-		backupInfo.setAboutPeer(p2pNetworkManager.getLocalPeerID());
 		backupInfo.setPQL("");
 		LocalBackupInformationAccess.getStore().add(backupInfo);
 
@@ -249,10 +248,10 @@ public class RecoveryInstructionHandler {
 				}
 			}
 		}
-		// LocalBackupInformationAccess.getStore().add(info);
 
 		// 3. TODO Send everyone that my information changed
-
+		
+		
 	}
 
 	private static void beBuddy(PeerID sender, ID sharedQueryId, List<String> pqls) {

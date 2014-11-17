@@ -156,5 +156,64 @@ public class BackupInformation implements IRecoveryBackupInformation {
 		return this.mLocalPQL;
 
 	}
+	
+	@Override
+	public boolean equals(Object other) {
+		if (!(other instanceof IRecoveryBackupInformation)) {
+			return false;
+		}
+		IRecoveryBackupInformation otherInfo = (IRecoveryBackupInformation) other;
+		if(this.mSharedQuery == null ^ otherInfo.getSharedQuery() == null) {
+			// Just one of both is null
+			return false;
+		} else if (this.mSharedQuery != null && otherInfo.getSharedQuery() != null) {
+			// Both are not null
+			if (!this.mSharedQuery.equals(otherInfo)) {
+				return false;
+			}
+		}
+		
+		if(this.mAboutPeer == null ^ otherInfo.getAboutPeer() == null) {
+			// Just one of both is null
+			return false;
+		} else if (this.mAboutPeer != null && otherInfo.getAboutPeer() != null) {
+			// Both are not null
+			if (!this.mAboutPeer.equals(otherInfo.getAboutPeer())) {
+				return false;
+			}
+		}
+		
+		if(this.mLocationPeer == null ^ otherInfo.getLocationPeer() == null) {
+			// Just one of both is null
+			return false;
+		} else if (this.mLocationPeer != null && otherInfo.getLocationPeer() != null) {
+			// Both are not null
+			if (!this.mLocationPeer.equals(otherInfo.getLocationPeer())) {
+				return false;
+			}
+		}
+		
+		if(this.mPQL == null ^ otherInfo.getPQL() == null) {
+			// Just one of both is null
+			return false;
+		} else if (this.mPQL != null && otherInfo.getPQL() != null) {
+			// Both are not null
+			if (!this.mPQL.trim().toLowerCase().equals(otherInfo.getPQL().trim().toLowerCase())) {
+				return false;
+			}
+		}
+		
+		if(this.mLocalPQL == null ^ otherInfo.getLocalPQL() == null) {
+			// Just one of both is null
+			return false;
+		} else if (this.mLocalPQL != null && otherInfo.getLocalPQL() != null) {
+			// Both are not null
+			if (!this.mLocalPQL.trim().toLowerCase().equals(otherInfo.getLocalPQL().trim().toLowerCase())) {
+				return false;
+			}
+		}
+				
+		return true;
+	}
 
 }
