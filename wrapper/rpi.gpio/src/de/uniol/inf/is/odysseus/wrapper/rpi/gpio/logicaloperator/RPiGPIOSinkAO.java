@@ -53,7 +53,7 @@ public class RPiGPIOSinkAO extends AbstractSenderAO {
 	
 	@Parameter(name = "pin", doc = "GPIO Pin Number", type = IntegerParameter.class, optional = false)
     public void setPin(Integer pin) {
-		LOG.debug("setPin:"+pin.intValue());
+		LOG.error("setPin:"+pin.intValue());
 		
 		// see class: com.pi4j.io.gpio.RaspiPin;
 		if(pin.intValue() == 1){
