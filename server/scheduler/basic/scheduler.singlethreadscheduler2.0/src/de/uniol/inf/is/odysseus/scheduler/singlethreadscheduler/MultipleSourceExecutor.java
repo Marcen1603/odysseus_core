@@ -12,13 +12,16 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.core.infoservice.InfoService;
+import de.uniol.inf.is.odysseus.core.infoservice.InfoServiceFactory;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IIterableSource;
 
 public class MultipleSourceExecutor extends Thread implements ISourceExecutor {
 
-	Logger logger = LoggerFactory.getLogger(MultipleSourceExecutor.class);
+	static final Logger logger = LoggerFactory.getLogger(MultipleSourceExecutor.class);
+	static final InfoService infoService = InfoServiceFactory.getInfoService(MultipleSourceExecutor.class);
 	private boolean interrupt = false;
-	final private List<IIterableSource<?>> sources = new ArrayList<>();
+ 	final private List<IIterableSource<?>> sources = new ArrayList<>();
 	final private List<IIterableSource<?>> toAdd = new LinkedList<>();
 	final private List<IIterableSource<?>> toRemove = new LinkedList<>();
 
@@ -71,6 +74,7 @@ public class MultipleSourceExecutor extends Thread implements ISourceExecutor {
 		} catch (Exception e) {
 			// TODO: Error Handler
 			e.printStackTrace();
+			infoService.error("Error in processing sources "+sources,e);
 		}
 
 		logger.debug("Removing Source Executor " + this.getName() + " with sources: " + sources);
