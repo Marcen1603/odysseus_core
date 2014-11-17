@@ -123,11 +123,12 @@ public class RecoveryInstructionMessage implements IMessage {
 	 *            peers belong together
 	 * @return A message which tells to receive the tuples from a new peer
 	 */
-	public static RecoveryInstructionMessage createUpdateReceiverMessage(PeerID newSender, PipeID pipeId) {
+	public static RecoveryInstructionMessage createUpdateReceiverMessage(PeerID newSender, PipeID pipeId, ID sharedQueryId) {
 		RecoveryInstructionMessage upateReceiverMessage = new RecoveryInstructionMessage();
 		upateReceiverMessage.setMessageType(UPDATE_RECEIVER);
 		upateReceiverMessage.setNewSender(newSender);
 		upateReceiverMessage.setPipeId(pipeId);
+		upateReceiverMessage.setSharedQueryId(sharedQueryId);
 		return upateReceiverMessage;
 	}
 
@@ -189,11 +190,14 @@ public class RecoveryInstructionMessage implements IMessage {
 		case UPDATE_SENDER:
 			break;
 		case UPDATE_RECEIVER:
+			sharedQueryIdLength = sharedQueryId.toString().getBytes().length;
 			int newSenderLength = newSender.toString().getBytes().length;
 			pipeIdLength = pipeId.toString().getBytes().length;
-			bbsize = 4 + 4 + newSenderLength + 4 + pipeIdLength;
+			bbsize = 4 + 4 + sharedQueryIdLength + 4 + newSenderLength + 4 + pipeIdLength;
 			bb = ByteBuffer.allocate(bbsize);
 			bb.putInt(messageType);
+			bb.putInt(sharedQueryIdLength);
+			bb.put(sharedQueryId.toString().getBytes());
 			bb.putInt(newSenderLength);
 			bb.put(newSender.toString().getBytes());
 			bb.putInt(pipeIdLength);
@@ -240,10 +244,6 @@ public class RecoveryInstructionMessage implements IMessage {
 		byte[] pipeIdByte;
 		String pipeIdString;
 
-		int sharedQueryIdLength = 0;
-		byte[] sharedQueryIdByte;
-		String sharedQueryIdString;
-
 		switch (messageType) {
 		case HOLD_ON:
 		case GO_ON:
@@ -259,24 +259,15 @@ public class RecoveryInstructionMessage implements IMessage {
 			}
 			break;
 		case ADD_QUERY:
-			sharedQueryIdLength = bb.getInt();
-			sharedQueryIdByte = new byte[sharedQueryIdLength];
-			bb.get(sharedQueryIdByte, 0, sharedQueryIdLength);
-			sharedQueryIdString = new String(sharedQueryIdByte);
-			try {
-				URI uri = new URI(sharedQueryIdString);
-				sharedQueryId = ID.create(uri);
-			} catch (URISyntaxException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-
+			extractSharedQueryId(bb);
 			int pqlLength = bb.getInt();
 			byte[] pqlAsByte = new byte[pqlLength];
 			bb.get(pqlAsByte);
 			pqlQuery = new String(pqlAsByte);
 			break;
 		case UPDATE_RECEIVER:
+			extractSharedQueryId(bb);
+			
 			int newSenderLength = bb.getInt();
 			byte[] newSenderByte = new byte[newSenderLength];
 			bb.get(newSenderByte, 0, newSenderLength);
@@ -301,16 +292,7 @@ public class RecoveryInstructionMessage implements IMessage {
 
 			break;
 		case BE_BUDDY:
-			sharedQueryIdLength = bb.getInt();
-			sharedQueryIdByte = new byte[sharedQueryIdLength];
-			bb.get(sharedQueryIdByte, 0, sharedQueryIdLength);
-			sharedQueryIdString = new String(sharedQueryIdByte);
-			try {
-				URI uri = new URI(sharedQueryIdString);
-				sharedQueryId = ID.create(uri);
-			} catch (URISyntaxException e) {
-				e.printStackTrace();
-			}
+			extractSharedQueryId(bb);
 			int listLength = bb.getInt();
 			pql = new ArrayList<String>();
 			for (int i = 0; i < listLength; i++) {
@@ -321,6 +303,20 @@ public class RecoveryInstructionMessage implements IMessage {
 				pql.add(pqlString);
 			}
 			break;
+		}
+	}
+	
+	private void extractSharedQueryId(ByteBuffer bb) {
+		int sharedQueryIdLength = bb.getInt();
+		byte[] sharedQueryIdByte = new byte[sharedQueryIdLength];
+		bb.get(sharedQueryIdByte, 0, sharedQueryIdLength);
+		String sharedQueryIdString = new String(sharedQueryIdByte);
+		try {
+			URI uri = new URI(sharedQueryIdString);
+			sharedQueryId = ID.create(uri);
+		} catch (URISyntaxException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
 

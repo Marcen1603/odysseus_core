@@ -98,6 +98,25 @@ public class BackupInformationCalculator {
 
 			PeerID peerId = allocationMap.get(node.getQueryPart());
 
+			if (node.getConnectionsAsStart().isEmpty()) {
+				// We just have the local pql for this query
+				IRecoveryBackupInformation info = new BackupInformation();
+				info.setSharedQuery(sharedQueryId);
+				info.setLocalPQL(LogicalQueryHelper.generatePQLStatementFromQueryPart(node.getQueryPart()));
+				info.setLocationPeer(peerId);
+				
+				if (infoMap.containsKey(peerId)) {
+
+					infoMap.get(peerId).add(info);
+
+				} else {
+
+					Collection<IRecoveryBackupInformation> infos = Sets
+							.newHashSet(info);
+					infoMap.put(peerId, infos);
+
+				}
+			}
 			for (QueryPartGraphConnection outConnection : node
 					.getConnectionsAsStart()) {
 

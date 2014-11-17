@@ -75,7 +75,6 @@ public class BackupInformation implements IRecoveryBackupInformation {
 
 	@Override
 	public void setAboutPeer(PeerID peer) {
-		Preconditions.checkNotNull(peer);
 		this.mAboutPeer = peer;
 	}
 

@@ -12,14 +12,20 @@ import net.jxta.pipe.PipeID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.collect.ImmutableCollection;
+
+import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
+import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.p2p_new.IP2PNetworkManager;
 import de.uniol.inf.is.odysseus.p2p_new.data.DataTransmissionException;
+import de.uniol.inf.is.odysseus.p2p_new.logicaloperator.JxtaReceiverAO;
 import de.uniol.inf.is.odysseus.p2p_new.physicaloperator.JxtaReceiverPO;
 import de.uniol.inf.is.odysseus.p2p_new.physicaloperator.JxtaSenderPO;
 import de.uniol.inf.is.odysseus.parser.pql.generator.IPQLGenerator;
+import de.uniol.inf.is.odysseus.peer.distribute.util.LogicalQueryHelper;
 import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryBackupInformation;
 import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryCommunicator;
 import de.uniol.inf.is.odysseus.peer.recovery.internal.BackupInformation;
@@ -30,8 +36,7 @@ import de.uniol.inf.is.odysseus.peer.recovery.util.LocalBackupInformationAccess;
 import de.uniol.inf.is.odysseus.peer.recovery.util.RecoveryHelper;
 
 /**
- * This class handles incoming RecoveryInstructionMessages, e.g., to install a
- * new query for recovery.
+ * This class handles incoming RecoveryInstructionMessages, e.g., to install a new query for recovery.
  * 
  * @author Tobias Brandt
  *
@@ -66,12 +71,12 @@ public class RecoveryInstructionHandler {
 			p2pNetworkManager = null;
 		}
 	}
-	
+
 	// called by OSGi-DS
 	public static void bindPQLGenerator(IPQLGenerator generator) {
 		pqlGenerator = generator;
 	}
-	
+
 	// called by OSGi-DS
 	public static void unbindPQLGenerator(IPQLGenerator generator) {
 		if (pqlGenerator == generator)
@@ -96,7 +101,8 @@ public class RecoveryInstructionHandler {
 			addQuery(instructionMessage.getPqlQuery(), instructionMessage.getSharedQueryId());
 			break;
 		case RecoveryInstructionMessage.UPDATE_RECEIVER:
-			updateReceiver(instructionMessage.getNewSender(), instructionMessage.getPipeId());
+			updateReceiver(instructionMessage.getNewSender(), instructionMessage.getPipeId(),
+					instructionMessage.getSharedQueryId());
 			break;
 		case RecoveryInstructionMessage.BE_BUDDY:
 			beBuddy(sender, instructionMessage.getSharedQueryId(), instructionMessage.getPql());
@@ -176,7 +182,7 @@ public class RecoveryInstructionHandler {
 	}
 
 	@SuppressWarnings("rawtypes")
-	private static void updateReceiver(PeerID newSender, PipeID pipeId) {
+	private static void updateReceiver(PeerID newSender, PipeID pipeId, ID sharedQueryId) {
 
 		if (!RecoveryCommunicator.getExecutor().isPresent()) {
 
@@ -186,6 +192,7 @@ public class RecoveryInstructionHandler {
 		}
 
 		// 1. Get the receiver, which we have to update
+		String newBackupPQL = "";
 		Collection<IPhysicalQuery> queries = RecoveryCommunicator.getExecutor().get().getExecutionPlan().getQueries();
 		for (IPhysicalQuery query : queries) {
 			for (IPhysicalOperator op : query.getAllOperators()) {
@@ -195,6 +202,18 @@ public class RecoveryInstructionHandler {
 						// This should be the receiver we have to update
 						try {
 							receiver.receiveFromNewPeer(newSender.toString());
+
+							// Change the logical plan to update the
+							// backup-information
+							Collection<ILogicalOperator> logicalOps = LogicalQueryHelper.getAllOperators(query
+									.getLogicalQuery().getLogicalPlan());
+							for (ILogicalOperator logicalOp : logicalOps) {
+								if (logicalOp instanceof JxtaReceiverAO) {
+									JxtaReceiverAO logicalReceiver = (JxtaReceiverAO) logicalOp;
+									logicalReceiver.setPeerID(newSender.toString());
+								}
+							}
+
 						} catch (DataTransmissionException e) {
 							// TODO Auto-generated catch block
 							e.printStackTrace();
@@ -202,13 +221,38 @@ public class RecoveryInstructionHandler {
 					}
 				}
 			}
+			newBackupPQL = pqlGenerator.generatePQLStatement(query.getLogicalQuery().getLogicalPlan());
 		}
-		
+
 		// 2. TODO Update the PQL of my local BackupInformation
-		//pqlGenerator.generatePQLStatement(startOperator)
-		
+		// Big question: Where to put this? I don't know the sharedQueryId ... (Here I could make it that I know it, but
+		// if the LB changes the Receiver, I don't know it) and the pql is not the same, cause it has other names for
+		// the operators
+		// Maybe just search for the pipeId?
+
+		// For now, take the sharedQueryId from the message
+
+		// Search for the right information
+		if (newBackupPQL != null && !newBackupPQL.isEmpty()) {
+			ImmutableCollection<String> localPQLs = LocalBackupInformationAccess.getLocalPQL(sharedQueryId);
+			sharedQueryId.toString();
+			for (String localPQL : localPQLs) {
+				for (ILogicalQuery logicalQuery : RecoveryHelper.convertToLogicalQueries(localPQL)) {
+					for (ILogicalOperator logicalOp : LogicalQueryHelper.getAllOperators(logicalQuery.getLogicalPlan())) {
+						if (logicalOp instanceof JxtaReceiverAO) {
+							if (((JxtaReceiverAO) logicalOp).getPipeID().equals(pipeId.toString())) {
+								// This is the information we search for
+								LocalBackupInformationAccess.updateLocalPQL(sharedQueryId, localPQL, newBackupPQL);
+							}
+						}
+					}
+				}
+			}
+		}
+		// LocalBackupInformationAccess.getStore().add(info);
+
 		// 3. TODO Send everyone that my information changed
-		
+
 	}
 
 	private static void beBuddy(PeerID sender, ID sharedQueryId, List<String> pqls) {

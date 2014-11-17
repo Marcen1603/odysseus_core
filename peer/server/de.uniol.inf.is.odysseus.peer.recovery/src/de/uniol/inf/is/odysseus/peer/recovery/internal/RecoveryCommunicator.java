@@ -467,7 +467,7 @@ public class RecoveryCommunicator implements IRecoveryCommunicator, IPeerCommuni
 
 		// 1. Tell the peer to update the receiver
 		RecoveryInstructionMessage message = RecoveryInstructionMessage.createUpdateReceiverMessage(newSenderPeer,
-				pipeId);
+				pipeId, sharedQueryId);
 		sendMessage(receiverPeer, message);
 	}
 

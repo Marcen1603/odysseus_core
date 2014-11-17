@@ -19,6 +19,7 @@ import com.google.common.collect.Sets;
 
 import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryBackupInformation;
 import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryBackupInformationStore;
+import de.uniol.inf.is.odysseus.peer.recovery.internal.RecoveryCommunicator;
 import de.uniol.inf.is.odysseus.peer.recovery.internal.SharedQuery;
 
 /**
@@ -201,7 +202,7 @@ public class LocalBackupInformationAccess {
 			Optional<IRecoveryBackupInformation> info = cInfoStore.get().get(pql);
 			Preconditions.checkArgument(info.isPresent());
 
-			if (info.get().getAboutPeer().equals(peerId)) {
+			if (info.get().getAboutPeer() != null && info.get().getAboutPeer().equals(peerId)) {
 
 				out.add(pql);
 			}
@@ -256,7 +257,7 @@ public class LocalBackupInformationAccess {
 		Set<PeerID> peers = Sets.newHashSet();
 		for (IRecoveryBackupInformation info : cInfoStore.get().get(sharedQueryId)) {
 
-			if (!peers.contains(info.getAboutPeer())) {
+			if (info.getAboutPeer() != null && !peers.contains(info.getAboutPeer())) {
 
 				peers.add(info.getAboutPeer());
 
@@ -294,7 +295,7 @@ public class LocalBackupInformationAccess {
 
 		for (ID queryId : cInfoStore.get().getAll().keySet()) {
 			for (IRecoveryBackupInformation info : cInfoStore.get().get(queryId)) {
-				if (info.getAboutPeer().equals(peerId)) {
+				if (info.getAboutPeer() != null && info.getAboutPeer().equals(peerId)) {
 					// This is what we search: For this peer we have a
 					// sharedQueryId
 					sharedQueryIds.add(queryId);
@@ -304,6 +305,24 @@ public class LocalBackupInformationAccess {
 		}
 
 		return ImmutableSet.copyOf(sharedQueryIds);
+	}
+	
+	public static void updateLocalPQL(ID sharedQueryId, String oldPQL, String newPQL) {
+		Preconditions.checkNotNull(sharedQueryId);
+
+		if (!cInfoStore.isPresent()) {
+			LOG.error("No backup information store for recovery bound!");
+			return;
+		}
+
+		for (IRecoveryBackupInformation info : cInfoStore.get().get(sharedQueryId)) {
+			if (info.getLocalPQL() != null) {
+				if(info.getLocalPQL().equals(oldPQL)) {
+					info.setLocalPQL(newPQL);
+					break;
+				}
+			}
+		}
 	}
 
 	/**
@@ -321,20 +340,18 @@ public class LocalBackupInformationAccess {
 		Preconditions.checkNotNull(sharedQueryId);
 
 		if (!cInfoStore.isPresent()) {
-
 			LOG.error("No backup information store for recovery bound!");
 			return null;
-
 		}
 
 		Set<String> pqls = Sets.newHashSet();
 
 		for (IRecoveryBackupInformation info : cInfoStore.get().get(sharedQueryId)) {
-			if (info.getLocalPQL() != null)
+			if (info.getLocalPQL() != null && info.getLocationPeer().equals(RecoveryCommunicator.getP2PNetworkManager().get().getLocalPeerID()))
 				pqls.add(info.getLocalPQL());
-
 		}
-
+		
+		
 		return ImmutableSet.copyOf(pqls);
 
 	}
