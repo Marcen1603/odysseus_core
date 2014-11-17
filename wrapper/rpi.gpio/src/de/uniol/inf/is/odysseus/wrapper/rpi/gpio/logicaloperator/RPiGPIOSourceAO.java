@@ -29,6 +29,16 @@ public class RPiGPIOSourceAO extends AbstractAccessAO {
 	
 	public RPiGPIOSourceAO() {
 		super();
+		init();
+	}
+
+	public RPiGPIOSourceAO(RPiGPIOSourceAO other) {
+		super(other);
+		init();
+		this.pin = other.pin;
+	}
+	
+	private void init() {
 		setTransportHandler(RPiGPIOTransportHandler.NAME);
 		setWrapper(Constants.GENERIC_PULL);
 		setDataHandler("Tuple");
@@ -41,14 +51,8 @@ public class RPiGPIOSourceAO extends AbstractAccessAO {
 		schema.add(new SDFAttribute(null, "PinState", SDFDatatype.LONG, null));
 		setAttributes(schema);
 		//['PinNumber', 'String'],['PinState', 'String']
-		
 	}
-	
-	public RPiGPIOSourceAO(RPiGPIOSourceAO other) {
-		super(other);
-		this.pin = other.pin;
-	}
-	
+
 	@Override
 	public AbstractLogicalOperator clone() {
 		return new RPiGPIOSourceAO(this);
