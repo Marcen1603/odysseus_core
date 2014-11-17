@@ -42,6 +42,7 @@ public class RPiGPIOTransportHandler extends
 
 	private GpioController gpioController;
 	private Pin pin; // = RaspiPin.GPIO_07
+	private GpioPinDigitalInput myButton;
 
 	private boolean flagExceptionThrown = false;// Exception was not thrown at
 												// this point.
@@ -104,7 +105,7 @@ public class RPiGPIOTransportHandler extends
 		return true;
 	}
 
-	private static GpioPinDigitalInput myButton;
+	
 
 	@Override
 	public Tuple<?> getNext() {
