@@ -46,6 +46,7 @@ public abstract class AbstractFragmentAO extends UnaryLogicalOp {
 		
 		super(fragmentAO);
 		this.numFragments = fragmentAO.numFragments;
+		this.heartbeatrate = fragmentAO.heartbeatrate;
 		
 	}
 
