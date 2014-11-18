@@ -8,24 +8,45 @@ import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
+
+/***
+ * Implements an ArrayDeque Buffer, which should be able to buffer tuples while loadbalancing is running.
+ * Deprecated because subscriptions can be suspended.
+ * @author Carsten Cordes
+ *
+ */
 @Deprecated
 public class ArrayDequeLoadBalancingBuffer implements ILoadBalancingBuffer{
 	
-	
+	/***
+	 * Logger
+	 */
 	private static final Logger LOG = LoggerFactory
 			.getLogger(ArrayDequeLoadBalancingBuffer.class);
 	
+	/**
+	 * Buffer
+	 */
 	private ArrayDeque<IStreamObject<? extends ITimeInterval>> tupleStore;
 
+	/***
+	 * Constructor
+	 */
 	public ArrayDequeLoadBalancingBuffer() {
 		tupleStore = new ArrayDeque<IStreamObject<? extends ITimeInterval>>();
 	}
 	
+	/**
+	 * Saves tuple in Buffer
+	 */
 	@Override
 	public void saveTuple(IStreamObject<? extends ITimeInterval> tuple) {
 		tupleStore.addLast(tuple);
 	}
 
+	/**
+	 * Gets Tuple from buffer if there are any.
+	 */
 	@Override
 	public IStreamObject<? extends ITimeInterval> getNextTuple() {
 		try {

@@ -25,39 +25,36 @@ import de.uniol.inf.is.odysseus.peer.loadbalancing.active.movingstate.protocol.R
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.movingstate.status.MovingStateMasterStatus;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.movingstate.status.MovingStateMasterStatus.LB_PHASES;
 
-public class MovingStateCommunicatorImpl implements
-		IPeerCommunicatorListener, ILoadBalancingCommunicator, IMessageDeliveryFailedListener{
+/***
+ * Implements a MovingState Communicator
+ * 
+ * @author Carsten Cordes
+ *
+ */
+public class MovingStateCommunicatorImpl implements IPeerCommunicatorListener,
+		ILoadBalancingCommunicator, IMessageDeliveryFailedListener {
 
-	/**
-	 * 
-	 * @author Carsten Cordes Class to encapsulate a Connection to an operator
-	 *         on another Peer.
-	 * 
-	 */
-	
 	/**
 	 * Name of the Communicator
 	 */
 	private final String COMMUNICATOR_NAME = "MovingState";
-	
+
 	/**
 	 * The logger instance for this class.
 	 */
 	private static final Logger LOG = LoggerFactory
 			.getLogger(MovingStateCommunicatorImpl.class);
 
-
 	/**
 	 * Peer Communicator
 	 */
 	private static IPeerCommunicator peerCommunicator;
-	
+
 	/**
 	 * List of registered Listeners.
 	 */
 	private ArrayList<ILoadBalancingListener> listeners = new ArrayList<ILoadBalancingListener>();
 
-	
 	/**
 	 * Instance of Communication Listener.
 	 */
@@ -71,16 +68,16 @@ public class MovingStateCommunicatorImpl implements
 	public static MovingStateCommunicatorImpl getInstance() {
 		return instance;
 	}
-	
 
 	/**
 	 * Getter for PeerCommunicator
+	 * 
 	 * @return
 	 */
 	public static IPeerCommunicator getPeerCommunicator() {
 		return peerCommunicator;
 	}
-	
+
 	/**
 	 * called by OSGi-DS to bind Peer Communicator (registers all Messages and
 	 * adds Listeners)
@@ -96,11 +93,9 @@ public class MovingStateCommunicatorImpl implements
 
 		peerCommunicator
 				.registerMessageType(MovingStateInstructionMessage.class);
-		peerCommunicator.addListener(this,
-				MovingStateInstructionMessage.class);
+		peerCommunicator.addListener(this, MovingStateInstructionMessage.class);
 
-		peerCommunicator
-				.registerMessageType(MovingStateResponseMessage.class);
+		peerCommunicator.registerMessageType(MovingStateResponseMessage.class);
 		peerCommunicator.addListener(this, MovingStateResponseMessage.class);
 
 	}
@@ -116,8 +111,8 @@ public class MovingStateCommunicatorImpl implements
 	public void unbindPeerCommunicator(IPeerCommunicator serv) {
 		LOG.debug("Unbound Peer Communicator.");
 		if (peerCommunicator == serv) {
-			peerCommunicator.removeListener(this,
-					MovingStateAbortMessage.class);
+			peerCommunicator
+					.removeListener(this, MovingStateAbortMessage.class);
 			peerCommunicator.removeListener(this,
 					MovingStateInstructionMessage.class);
 			peerCommunicator.removeListener(this,
@@ -133,8 +128,6 @@ public class MovingStateCommunicatorImpl implements
 			peerCommunicator = null;
 		}
 	}
-	
-	
 
 	/**
 	 * Called by OSGi on Bundle activation.
@@ -178,7 +171,6 @@ public class MovingStateCommunicatorImpl implements
 
 	}
 
-	
 	/**
 	 * Initiates the copy Process between a Peer and another Peer (after
 	 * Allocation)
@@ -192,19 +184,20 @@ public class MovingStateCommunicatorImpl implements
 	public void initiateLoadBalancing(PeerID otherPeer, int queryId) {
 		ILogicalQueryPart partToCopy = LoadBalancingHelper
 				.getInstalledQueryPart(queryId);
-		
+
 		MovingStateMasterStatus status = new MovingStateMasterStatus();
 		status.setOriginalPart(partToCopy);
-		
+
 		int lbProcessIdentifier = LoadBalancingStatusCache.getInstance()
 				.storeLocalProcess(status);
-		
-		LOG.debug("New LoadBalancing Status created. LoadBalancing Process Id " + lbProcessIdentifier);
-		status.setLogicalQuery(queryId);
-		status.setMessageDispatcher(new MovingStateMessageDispatcher(peerCommunicator, lbProcessIdentifier));
-		status.getMessageDispatcher().sendInitiate(otherPeer,this);
-	}
 
+		LOG.debug("New LoadBalancing Status created. LoadBalancing Process Id "
+				+ lbProcessIdentifier);
+		status.setLogicalQuery(queryId);
+		status.setMessageDispatcher(new MovingStateMessageDispatcher(
+				peerCommunicator, lbProcessIdentifier));
+		status.getMessageDispatcher().sendInitiate(otherPeer, this);
+	}
 
 	/**
 	 * Adds a LoadBalancing Listener
@@ -222,95 +215,100 @@ public class MovingStateCommunicatorImpl implements
 		if (listeners.contains(listener))
 			listeners.remove(listener);
 	}
-	
+
 	@Override
+	/***
+	 * Used to get Communcator-name
+	 */
 	public String getName() {
 		return COMMUNICATOR_NAME;
 	}
-	
 
+	/**
+	 * Notfies Strategy that LoadBalancing is finished.
+	 */
 	public void notifyFinished() {
-		for(ILoadBalancingListener listener : listeners) {
+		for (ILoadBalancingListener listener : listeners) {
 			listener.notifyLoadBalancingFinished();
 		}
-		
+
 	}
 
 	/**
-	 * Called when Message delivery on Master Peer failed. Decides whether to abort or not.
+	 * Called when Message delivery on Master Peer failed. Decides whether to
+	 * abort or not.
 	 */
 	@Override
 	public void update(IMessage message, PeerID peerId) {
-		if(message instanceof MovingStateInstructionMessage) {
-			MovingStateInstructionMessage instruction = (MovingStateInstructionMessage)message;
+		if (message instanceof MovingStateInstructionMessage) {
+			MovingStateInstructionMessage instruction = (MovingStateInstructionMessage) message;
 			handleTimeoutOnMasterPeer(instruction);
 		}
-		
-		if(message instanceof MovingStateAbortMessage) {
+
+		if (message instanceof MovingStateAbortMessage) {
 			MovingStateAbortMessage abortMsg = (MovingStateAbortMessage) message;
-			//If Abort Instruction could not be delivered... Bad luck. Stop Sending it and try finishing up.
-			if(abortMsg.getMsgType()==MovingStateAbortMessage.ABORT_INSTRUCTION) {
+			// If Abort Instruction could not be delivered... Bad luck. Stop
+			// Sending it and try finishing up.
+			if (abortMsg.getMsgType() == MovingStateAbortMessage.ABORT_INSTRUCTION) {
 				AbortHandler.stopSendingAbort(abortMsg, peerId);
 			}
 		}
-		
-		//No need to process Messages from slave Peers, as the master Peer will notice that they don't answer and initiate Abort.
-		
-	}
 
+		// No need to process Messages from slave Peers, as the master Peer will
+		// notice that they don't answer and initiate Abort.
+
+	}
 
 	/**
 	 * When Timeout happens and peer is in corresponding Phase -> Handle Error.
+	 * 
 	 * @param instruction
+	 *            InstructionMessage that caused timeout.
 	 */
 	private void handleTimeoutOnMasterPeer(
 			MovingStateInstructionMessage instruction) {
 		;
-		
+
 		int lbProcessId = instruction.getLoadBalancingProcessId();
-		MovingStateMasterStatus status = (MovingStateMasterStatus)LoadBalancingStatusCache.getInstance().getStatusForLocalProcess(lbProcessId);
-		
-		if(status==null) {
+		MovingStateMasterStatus status = (MovingStateMasterStatus) LoadBalancingStatusCache
+				.getInstance().getStatusForLocalProcess(lbProcessId);
+
+		if (status == null) {
 			LOG.debug("Timeout or Failure occured. Current status: null");
 			return;
 		}
-		
-		LOG.debug("Timeout or Failure occured. Current status: " + status.getPhase());
-		
-		
-		switch(instruction.getMsgType()){
-			case MovingStateInstructionMessage.INITIATE_LOADBALANCING:
-				if(status.getPhase().equals(LB_PHASES.INITIATING)) {
-					ResponseHandler.handleError(status,this);
-				}
-				break;
-			case MovingStateInstructionMessage.ADD_QUERY:
-				if(status.getPhase().equals(LB_PHASES.COPYING_QUERY)) {
-					ResponseHandler.handleError(status,this);
-				}
-				break;
-			case MovingStateInstructionMessage.REPLACE_RECEIVER:
-				if(status.getPhase().equals(LB_PHASES.RELINKING_RECEIVERS)) {
-					ResponseHandler.handleError(status,this);
-				}
-				break;
-				//TODO Redo this for Moving State Strategy.
-				/**
-			case MovingStateInstructionMessage.COPY_SENDER:
-				if(status.getPhase().equals(LB_PHASES.RELINKING_SENDERS)) {
-					ResponseHandler.handleError(status,this);
-				}
-				break;
-			case MovingStateInstructionMessage.DELETE_RECEIVER:
-			case MovingStateInstructionMessage.DELETE_SENDER:
-				if(status.getPhase().equals(LB_PHASES.INITIATING)) {
-					ResponseHandler.handleError(status,this);
-				}
-				break;
-				*/
+
+		LOG.debug("Timeout or Failure occured. Current status: "
+				+ status.getPhase());
+
+		switch (instruction.getMsgType()) {
+		case MovingStateInstructionMessage.INITIATE_LOADBALANCING:
+			if (status.getPhase().equals(LB_PHASES.INITIATING)) {
+				ResponseHandler.handleError(status, this);
+			}
+			break;
+		case MovingStateInstructionMessage.ADD_QUERY:
+			if (status.getPhase().equals(LB_PHASES.COPYING_QUERY)) {
+				ResponseHandler.handleError(status, this);
+			}
+			break;
+		case MovingStateInstructionMessage.REPLACE_RECEIVER:
+			if (status.getPhase().equals(LB_PHASES.RELINKING_RECEIVERS)) {
+				ResponseHandler.handleError(status, this);
+			}
+			break;
+		// TODO Redo this for Moving State Strategy.
+		/**
+		 * case MovingStateInstructionMessage.COPY_SENDER:
+		 * if(status.getPhase().equals(LB_PHASES.RELINKING_SENDERS)) {
+		 * ResponseHandler.handleError(status,this); } break; case
+		 * MovingStateInstructionMessage.DELETE_RECEIVER: case
+		 * MovingStateInstructionMessage.DELETE_SENDER:
+		 * if(status.getPhase().equals(LB_PHASES.INITIATING)) {
+		 * ResponseHandler.handleError(status,this); } break;
+		 */
 		}
-		
+
 	}
-	
-	
+
 }

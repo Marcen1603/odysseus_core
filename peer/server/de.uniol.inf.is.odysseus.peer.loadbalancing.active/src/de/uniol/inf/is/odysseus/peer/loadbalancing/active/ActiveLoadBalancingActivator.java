@@ -11,19 +11,39 @@ import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvide
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.p2p_new.IP2PNetworkManager;
 
+/**
+ * Bundle Activator for Active LoadBalancing Bundle.
+ * Holds constants and references to severeal needed services.
+ * @author Carsten Cordes
+ *
+ */
 public class ActiveLoadBalancingActivator implements BundleActivator{
 	
+	/**
+	 * Size of Transport Buffer needed to transfer states in MovingState Strategy
+	 */
 	public static final int TRANSPORT_BUFFER_SIZE = 640*480*3+(1+4);
 	
+	/**
+	 * Logger
+	 */
 	private static final Logger LOG = LoggerFactory
 			.getLogger(ActiveLoadBalancingActivator.class);
 
+	/**
+	 * OSGi-Start function.
+	 * Does nothing.
+	 */
 	@Override
 	public void start(BundleContext context) throws Exception {
 		//Nothing to do here
 		
 	}
 
+	/**
+	 * OSGi-Stop Function
+	 * does nothing.
+	 */
 	@Override
 	public void stop(BundleContext context) throws Exception {
 		//Nothing to do here

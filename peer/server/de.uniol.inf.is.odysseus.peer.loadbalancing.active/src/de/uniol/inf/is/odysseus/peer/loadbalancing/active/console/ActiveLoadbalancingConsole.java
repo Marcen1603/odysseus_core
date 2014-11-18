@@ -62,6 +62,7 @@ public class ActiveLoadbalancingConsole implements CommandProvider {
 	 * Session Variable
 	 */
 	private static ISession activeSession;
+
 	/**
 	 * Used to store OSGi Services.
 	 */
@@ -69,6 +70,10 @@ public class ActiveLoadbalancingConsole implements CommandProvider {
 	private static IP2PNetworkManager p2pNetworkManager;
 	private static IPeerCommunicator peerCommunicator;
 	private static IServerExecutor executor;
+
+	/**
+	 * Used to store different LoadBalancing Parts.
+	 */
 	private static Collection<ILoadBalancingStrategy> loadBalancingStrategies = Lists
 			.newArrayList();
 	private static Collection<ILoadBalancingAllocator> loadBalancingAllocators = Lists
@@ -226,34 +231,39 @@ public class ActiveLoadbalancingConsole implements CommandProvider {
 		sb.append("    printSubscriptions <queryId>                         - Prints detais about all Subscriptions in a query.\n");
 		return sb.toString();
 	}
-	
+
+	/**
+	 * Lists all Stateful Operators in a particular query.
+	 * 
+	 * @param ci
+	 *            CommandInterpreter
+	 */
 	public void _listStatefulOperators(CommandInterpreter ci) {
 		final String ERROR_USAGE = "Usage: listStatefulOperators <queryID>";
 		ci.println("Looking for stateful OPs");
-		
-		
+
 		String localQueryIdString = ci.nextArgument();
 		if (Strings.isNullOrEmpty(localQueryIdString)) {
 
 			ci.println(ERROR_USAGE);
 			return;
 		}
-		
+
 		int localQueryId;
-		
+
 		try {
 			localQueryId = Integer.parseInt(localQueryIdString);
-		}
-		catch(NumberFormatException e) {
+		} catch (NumberFormatException e) {
 			ci.println(ERROR_USAGE);
 			return;
 		}
-		
-		List<IStatefulPO> statefulList = MovingStateHelper.getStatefulOperatorList(localQueryId);
-		int i=0;
-		for(IStatefulPO statefulOp : statefulList) {
+
+		List<IStatefulPO> statefulList = MovingStateHelper
+				.getStatefulOperatorList(localQueryId);
+		int i = 0;
+		for (IStatefulPO statefulOp : statefulList) {
 			IPhysicalOperator operator = (IPhysicalOperator) statefulOp;
-			ci.println("["+i+"] " + operator.getName());
+			ci.println("[" + i + "] " + operator.getName());
 		}
 	}
 
@@ -345,6 +355,12 @@ public class ActiveLoadbalancingConsole implements CommandProvider {
 
 	}
 
+	/***
+	 * Sets LoadBalancing Communicator
+	 * 
+	 * @param ci
+	 *            CommandInterpreter
+	 */
 	public void _setLBCommunicator(CommandInterpreter ci) {
 		final String ERROR_USAGE = "Usage: setLBCommunicator <communicatorName>";
 		final String ERROR_NOTFOUND = "Error: No communicator found with name ";
@@ -368,6 +384,12 @@ public class ActiveLoadbalancingConsole implements CommandProvider {
 
 	}
 
+	/**
+	 * Stops Loadbalancing Monitoring.
+	 * 
+	 * @param ci
+	 *            CommandInterpreter
+	 */
 	public void _stopLB(CommandInterpreter ci) {
 
 		final String ERROR_NOT_RUNNING = "No load balancing running!";
@@ -384,6 +406,13 @@ public class ActiveLoadbalancingConsole implements CommandProvider {
 
 	}
 
+	/**
+	 * Manually install State sender (returns a PipeID which can be used to
+	 * install State Receiver)
+	 * 
+	 * @param ci
+	 *            CommandInterpreter
+	 */
 	public void _installStateSender(CommandInterpreter ci) {
 
 		final String ERROR_USAGE = "Usage: installStateSender <peerName>";
@@ -399,7 +428,8 @@ public class ActiveLoadbalancingConsole implements CommandProvider {
 		Collection<PeerID> peerIDs = peerDictionary.getRemotePeerIDs();
 		for (PeerID peer : peerIDs) {
 			if (peerDictionary.getRemotePeerName(peer).equals(peerName)) {
-				String newPipe = MovingStateManager.getInstance().addSender(peer.toString());
+				String newPipe = MovingStateManager.getInstance().addSender(
+						peer.toString());
 				ci.println("Pipe installed:");
 				ci.println(newPipe);
 				return;
@@ -407,54 +437,55 @@ public class ActiveLoadbalancingConsole implements CommandProvider {
 		}
 		ci.println(ERROR_NOTFOUND + peerName);
 	}
-	
+
 	public void _testSendState(CommandInterpreter ci) {
 		final String ERROR_USAGE = "Usage: testSendStatus <pipeID> <LocalQueryId>";
 		final String ERROR_LOCALOP = "ERROR: Local Query does not contain stateful Operator.";
 		final String ERROR_NOTFOUND = "ERROR: No Sender found for pipe:";
-		
+
 		String pipeId = ci.nextArgument();
 		if (Strings.isNullOrEmpty(pipeId)) {
 
 			ci.println(ERROR_USAGE);
 			return;
 		}
-		
+
 		String localQueryIdString = ci.nextArgument();
 		if (Strings.isNullOrEmpty(localQueryIdString)) {
 
 			ci.println(ERROR_USAGE);
 			return;
 		}
-		
+
 		int localQueryId;
-		
+
 		try {
 			localQueryId = Integer.parseInt(localQueryIdString);
-		}
-		catch(NumberFormatException e) {
+		} catch (NumberFormatException e) {
 			ci.println(ERROR_USAGE);
 			return;
 		}
-		
-		IStatefulPO statefulOp=null;
-		
-		IPhysicalQuery localQuery = executor.getExecutionPlan().getQueryById(localQueryId);
-		for(IPhysicalOperator operator : localQuery.getAllOperators()) {
-			if(operator instanceof IStatefulPO) {
-				statefulOp = (IStatefulPO)operator;
+
+		IStatefulPO statefulOp = null;
+
+		IPhysicalQuery localQuery = executor.getExecutionPlan().getQueryById(
+				localQueryId);
+		for (IPhysicalOperator operator : localQuery.getAllOperators()) {
+			if (operator instanceof IStatefulPO) {
+				statefulOp = (IStatefulPO) operator;
 				break;
 			}
 		}
-		
-		if(statefulOp==null) {
+
+		if (statefulOp == null) {
 			ci.println(ERROR_LOCALOP);
 			return;
 		}
 		Serializable state = statefulOp.getState();
-		
-		MovingStateSender sender = MovingStateManager.getInstance().getSender(pipeId);
-		if(sender==null) {
+
+		MovingStateSender sender = MovingStateManager.getInstance().getSender(
+				pipeId);
+		if (sender == null) {
 			ci.println(ERROR_NOTFOUND + pipeId);
 			return;
 		}
@@ -465,80 +496,96 @@ public class ActiveLoadbalancingConsole implements CommandProvider {
 			return;
 		}
 		ci.println("Data sent.");
-		
+
 	}
 
+	/***
+	 * Prints all downstream Subscriptions of a Query (Can be used to track
+	 * open/suspend Calls)
+	 * 
+	 * @param ci
+	 */
 	public void _printSubscriptions(CommandInterpreter ci) {
-		
+
 		final String ERROR_USAGE = "Usage: printSubscriptions <queryId>";
-		
+
 		String localQueryIdString = ci.nextArgument();
 		if (Strings.isNullOrEmpty(localQueryIdString)) {
 
 			ci.println(ERROR_USAGE);
 			return;
 		}
-		
+
 		int localQueryId;
-		
+
 		try {
 			localQueryId = Integer.parseInt(localQueryIdString);
-		}
-		catch(NumberFormatException e) {
+		} catch (NumberFormatException e) {
 			ci.println(ERROR_USAGE);
 			return;
 		}
-		
-		
-		
+
 		IExecutor executor = ActiveLoadBalancingActivator.getExecutor();
-		List<IPhysicalOperator> roots = executor.getPhysicalRoots(localQueryId, ActiveLoadBalancingActivator.getActiveSession());
-		
-		
+		List<IPhysicalOperator> roots = executor.getPhysicalRoots(localQueryId,
+				ActiveLoadBalancingActivator.getActiveSession());
+
 		ArrayList<IPhysicalOperator> sourcesOfQuery = new ArrayList<IPhysicalOperator>();
-		for(IPhysicalOperator root : roots) {
-			ArrayList<IPhysicalOperator> newSources = traverseGraphAndGetSources(root,new ArrayList<IPhysicalOperator>());
+		for (IPhysicalOperator root : roots) {
+			ArrayList<IPhysicalOperator> newSources = traverseGraphAndGetSources(
+					root, new ArrayList<IPhysicalOperator>());
 			for (IPhysicalOperator source : newSources) {
-				if(!sourcesOfQuery.contains(source))
+				if (!sourcesOfQuery.contains(source))
 					sourcesOfQuery.add(source);
 			}
 		}
-		
+
 		for (IPhysicalOperator source : sourcesOfQuery) {
-			traverseGraphAndPrintSubscriptions(source,ci);
+			traverseGraphAndPrintSubscriptions(source, ci);
 		}
 	}
-	
-	
+
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	private static ArrayList<IPhysicalOperator> traverseGraphAndGetSources(IPhysicalOperator root,ArrayList<IPhysicalOperator> knownSources) {
-		if(root instanceof IPipe) {
+	/**
+	 * Used when printing subscriptions. Recursively traverses the whole graph from the roots upstream to get sources.
+	 * @param root Where to start traversing
+	 * @param knownSources Already known sources.
+	 * @return List of sources.
+	 */
+	private static ArrayList<IPhysicalOperator> traverseGraphAndGetSources(
+			IPhysicalOperator root, ArrayList<IPhysicalOperator> knownSources) {
+		if (root instanceof IPipe) {
 			IPipe rootAsSource = (IPipe) root;
-			for (AbstractPhysicalSubscription subscription : (Collection<AbstractPhysicalSubscription>)rootAsSource.getSubscribedToSource()) {
+			for (AbstractPhysicalSubscription subscription : (Collection<AbstractPhysicalSubscription>) rootAsSource
+					.getSubscribedToSource()) {
 				ArrayList<IPhysicalOperator> newSources = new ArrayList<IPhysicalOperator>();
-				newSources.addAll(traverseGraphAndGetSources((IPhysicalOperator)subscription.getTarget(),knownSources));
-				for(IPhysicalOperator source : newSources) {
-					if(!knownSources.contains(source)) {
+				newSources.addAll(traverseGraphAndGetSources(
+						(IPhysicalOperator) subscription.getTarget(),
+						knownSources));
+				for (IPhysicalOperator source : newSources) {
+					if (!knownSources.contains(source)) {
 						knownSources.add(source);
 					}
 				}
 			}
 			return knownSources;
 		}
-		
-		if(root instanceof ISource) {
-			if(!knownSources.contains(root)) {
+
+		if (root instanceof ISource) {
+			if (!knownSources.contains(root)) {
 				knownSources.add(root);
 			}
 			return knownSources;
 		}
-		if(root instanceof ISink) {
+		if (root instanceof ISink) {
 			ISink rootAsSink = (ISink) root;
-			for (AbstractPhysicalSubscription subscription : (Collection<AbstractPhysicalSubscription>)rootAsSink.getSubscribedToSource()) {
+			for (AbstractPhysicalSubscription subscription : (Collection<AbstractPhysicalSubscription>) rootAsSink
+					.getSubscribedToSource()) {
 				ArrayList<IPhysicalOperator> newSources = new ArrayList<IPhysicalOperator>();
-				newSources.addAll(traverseGraphAndGetSources((IPhysicalOperator)subscription.getTarget(),knownSources));
-				for(IPhysicalOperator source : newSources) {
-					if(!knownSources.contains(source)) {
+				newSources.addAll(traverseGraphAndGetSources(
+						(IPhysicalOperator) subscription.getTarget(),
+						knownSources));
+				for (IPhysicalOperator source : newSources) {
+					if (!knownSources.contains(source)) {
 						knownSources.add(source);
 					}
 				}
@@ -547,45 +594,73 @@ public class ActiveLoadbalancingConsole implements CommandProvider {
 		}
 		return knownSources;
 	}
-	
+
+	/***
+	 * Traverses Graph downstream recursively and prints all Subscriptions
+	 * 
+	 * @param root
+	 *            Where to start.
+	 * @param ci
+	 *            CommandInterpreter
+	 */
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	private static void traverseGraphAndPrintSubscriptions(IPhysicalOperator root, CommandInterpreter ci) {
-		if(root instanceof IPipe) {
+	private static void traverseGraphAndPrintSubscriptions(
+			IPhysicalOperator root, CommandInterpreter ci) {
+		if (root instanceof IPipe) {
 			IPipe rootAsPipe = (IPipe) root;
-			for (AbstractPhysicalSubscription subscription : (Collection<AbstractPhysicalSubscription>)rootAsPipe.getSubscriptions()) {
-				printSubscsription(subscription,root,ci);
-				traverseGraphAndPrintSubscriptions((IPhysicalOperator)subscription.getTarget(),ci);
+			for (AbstractPhysicalSubscription subscription : (Collection<AbstractPhysicalSubscription>) rootAsPipe
+					.getSubscriptions()) {
+				printSubscsription(subscription, root, ci);
+				traverseGraphAndPrintSubscriptions(
+						(IPhysicalOperator) subscription.getTarget(), ci);
 			}
 			return;
 		}
-		
-		if(root instanceof ISource) {
+
+		if (root instanceof ISource) {
 			ISource rootAsSource = (ISource) root;
-			for (AbstractPhysicalSubscription subscription : (Collection<AbstractPhysicalSubscription>)rootAsSource.getSubscriptions()) {
-				printSubscsription(subscription,root,ci);
-				traverseGraphAndPrintSubscriptions((IPhysicalOperator)subscription.getTarget(),ci);
+			for (AbstractPhysicalSubscription subscription : (Collection<AbstractPhysicalSubscription>) rootAsSource
+					.getSubscriptions()) {
+				printSubscsription(subscription, root, ci);
+				traverseGraphAndPrintSubscriptions(
+						(IPhysicalOperator) subscription.getTarget(), ci);
 			}
 			return;
 		}
-		if(root instanceof ISink) {
+		if (root instanceof ISink) {
 			return;
 		}
 		return;
 	}
-	
+
+	/***
+	 * Prints a subscription.
+	 * 
+	 * @param subscription
+	 *            Subscription to print.
+	 * @param operator
+	 *            Operator where subscription belongs to
+	 * @param ci
+	 *            CommandInterpreter (needed for printing)
+	 */
 	@SuppressWarnings("rawtypes")
-	private static void printSubscsription(AbstractPhysicalSubscription subscription, IPhysicalOperator operator, CommandInterpreter ci) {
-		IPhysicalOperator target = (IPhysicalOperator)subscription.getTarget();
-		if(subscription instanceof ControllablePhysicalSubscription) {
+	private static void printSubscsription(
+			AbstractPhysicalSubscription subscription,
+			IPhysicalOperator operator, CommandInterpreter ci) {
+		IPhysicalOperator target = (IPhysicalOperator) subscription.getTarget();
+		if (subscription instanceof ControllablePhysicalSubscription) {
 			ControllablePhysicalSubscription cSub = (ControllablePhysicalSubscription) subscription;
-			ci.println(operator.getName()+"->"+target.getName()+"    OpenCalls:" + cSub.getOpenCalls() + " suspended: " + cSub.isSuspended());
+			ci.println(operator.getName() + "->" + target.getName()
+					+ "    OpenCalls:" + cSub.getOpenCalls() + " suspended: "
+					+ cSub.isSuspended());
 			ci.println("* " + cSub.toString());
-		}
-		else {
-			ci.println(operator.getName()+"->"+target.getName()+"    OpenCalls:" + subscription.getOpenCalls() + " (not controllable)");
+		} else {
+			ci.println(operator.getName() + "->" + target.getName()
+					+ "    OpenCalls:" + subscription.getOpenCalls()
+					+ " (not controllable)");
 		}
 	}
-	
+
 	public void _installStateReceiver(CommandInterpreter ci) {
 		final String ERROR_USAGE = "Usage: installStateReceiver <peerName> <pipeID>";
 		final String ERROR_NOTFOUND = "Error: No peer found with name ";
@@ -596,9 +671,9 @@ public class ActiveLoadbalancingConsole implements CommandProvider {
 			ci.println(ERROR_USAGE);
 			return;
 		}
-		
+
 		String pipeID = ci.nextArgument();
-		if(Strings.isNullOrEmpty(pipeID)) {
+		if (Strings.isNullOrEmpty(pipeID)) {
 			ci.println(ERROR_USAGE);
 			return;
 		}
@@ -606,14 +681,15 @@ public class ActiveLoadbalancingConsole implements CommandProvider {
 		Collection<PeerID> peerIDs = peerDictionary.getRemotePeerIDs();
 		for (PeerID peer : peerIDs) {
 			if (peerDictionary.getRemotePeerName(peer).equals(peerName)) {
-				MovingStateManager.getInstance().addReceiver(peer.toString(), pipeID);
+				MovingStateManager.getInstance().addReceiver(peer.toString(),
+						pipeID);
 				ci.println("Receiver installed");
 				return;
 			}
 		}
 		ci.println(ERROR_NOTFOUND + peerName);
 	}
-	
+
 	public void _sendData(CommandInterpreter ci) {
 		final String ERROR_USAGE = "Usage: sendData <pipeID> <message>";
 		final String ERROR_NOTFOUND = "Error: No sender found with pipe ";
@@ -623,7 +699,7 @@ public class ActiveLoadbalancingConsole implements CommandProvider {
 			ci.println(ERROR_USAGE);
 			return;
 		}
-		
+
 		String nextWord = ci.nextArgument();
 		if (Strings.isNullOrEmpty(nextWord)) {
 
@@ -631,15 +707,16 @@ public class ActiveLoadbalancingConsole implements CommandProvider {
 			return;
 		}
 		StringBuilder sb = new StringBuilder();
-		while(nextWord!=null) {
+		while (nextWord != null) {
 			sb.append(nextWord);
 			sb.append(' ');
 			nextWord = ci.nextArgument();
 		}
 		String message = sb.toString();
 
-		MovingStateSender sender = MovingStateManager.getInstance().getSender(pipeID);
-		if(sender==null) {
+		MovingStateSender sender = MovingStateManager.getInstance().getSender(
+				pipeID);
+		if (sender == null) {
 			ci.println(ERROR_NOTFOUND + pipeID);
 			return;
 		}
@@ -651,57 +728,65 @@ public class ActiveLoadbalancingConsole implements CommandProvider {
 		}
 		ci.println("Sent: " + message);
 	}
-	
+
+	/***
+	 * Injects a previously received state in the first stateful Operator in
+	 * List. Can be used to test serialisation.
+	 * 
+	 * @param ci
+	 *            CommandInterpreter
+	 */
 	public void _testInjectState(CommandInterpreter ci) {
 		final String ERROR_USAGE = "Usage: testInjectState <pipeID> <LocalQueryId>";
 		final String ERROR_LOCALOP = "ERROR: Local Query does not contain stateful Operator.";
 		final String ERROR_NOTFOUND = "ERROR: No Sender found for pipe:";
-		final String ERROR_NOTHING_RECEIVED ="ERROR: No status received. Try sending a status first.";
-		
+		final String ERROR_NOTHING_RECEIVED = "ERROR: No status received. Try sending a status first.";
+
 		String pipeId = ci.nextArgument();
 		if (Strings.isNullOrEmpty(pipeId)) {
 
 			ci.println(ERROR_USAGE);
 			return;
 		}
-		
+
 		String localQueryIdString = ci.nextArgument();
 		if (Strings.isNullOrEmpty(localQueryIdString)) {
 
 			ci.println(ERROR_USAGE);
 			return;
 		}
-		
+
 		int localQueryId;
-		
+
 		try {
 			localQueryId = Integer.parseInt(localQueryIdString);
-		}
-		catch(NumberFormatException e) {
+		} catch (NumberFormatException e) {
 			ci.println(ERROR_USAGE);
 			return;
 		}
-		
-		IStatefulPO statefulOp=null;
-		
-		IPhysicalQuery localQuery = executor.getExecutionPlan().getQueryById(localQueryId);
-		for(IPhysicalOperator operator : localQuery.getAllOperators()) {
-			if(operator instanceof IStatefulPO) {
-				statefulOp = (IStatefulPO)operator;
+
+		IStatefulPO statefulOp = null;
+
+		IPhysicalQuery localQuery = executor.getExecutionPlan().getQueryById(
+				localQueryId);
+		for (IPhysicalOperator operator : localQuery.getAllOperators()) {
+			if (operator instanceof IStatefulPO) {
+				statefulOp = (IStatefulPO) operator;
 				break;
 			}
 		}
-		
-		if(statefulOp==null) {
+
+		if (statefulOp == null) {
 			ci.println(ERROR_LOCALOP);
 			return;
 		}
-		MovingStateReceiver receiver = MovingStateManager.getInstance().getReceiver(pipeId);
-		if(receiver==null) {
+		MovingStateReceiver receiver = MovingStateManager.getInstance()
+				.getReceiver(pipeId);
+		if (receiver == null) {
 			ci.println(ERROR_NOTFOUND + pipeId);
 			return;
 		}
-		
+
 		try {
 			receiver.injectState(statefulOp);
 		} catch (de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.common.LoadBalancingException e) {
@@ -709,13 +794,14 @@ public class ActiveLoadbalancingConsole implements CommandProvider {
 			return;
 		}
 		ci.println("Injected State.");
-		
+
 	}
 
 	/**
 	 * Lists installed QueryParts (logical)
 	 * 
 	 * @param ci
+	 *            CommandInterpreter
 	 */
 	public void _lsParts(CommandInterpreter ci) {
 
@@ -860,12 +946,11 @@ public class ActiveLoadbalancingConsole implements CommandProvider {
 		return Optional.absent();
 
 	}
-	
 
 	/**
 	 * Returns currently active Session.
 	 * 
-	 * @return
+	 * @return Session.
 	 */
 	private static ISession getActiveSession() {
 		if (activeSession == null || !activeSession.isValid()) {
@@ -878,11 +963,17 @@ public class ActiveLoadbalancingConsole implements CommandProvider {
 		return activeSession;
 	}
 
+	/**
+	 * Prints a Message on every Log-Level, useful to verify which log-level is
+	 * active ;)
+	 * 
+	 * @param ci
+	 */
 	public static void _testLog(CommandInterpreter ci) {
 		LOG.debug("Debug Log.");
 		LOG.warn("Warning Log");
 		LOG.info("Info Log.");
 		LOG.error("Error Log");
 	}
-	
+
 }

@@ -117,7 +117,7 @@ public class LoadBalancingHelper {
 	}
 	
 
-	public static JxtaReceiverAO createReceiverAO(IncomingConnection connection, String pipeID) {
+	public static JxtaReceiverAO createReceiverAO(UpstreamConnection connection, String pipeID) {
 		JxtaReceiverAO receiver = new JxtaReceiverAO();
 		// TODO more than 1 outgoing connection from Receiver!
 
@@ -130,7 +130,7 @@ public class LoadBalancingHelper {
 		return receiver;
 	}
 
-	public static JxtaSenderAO createSenderAO(OutgoingConnection connection, String pipeID) {
+	public static JxtaSenderAO createSenderAO(DownstreamConnection connection, String pipeID) {
 		JxtaSenderAO sender = new JxtaSenderAO();
 		sender.setPeerID(connection.remotePeerID);
 		sender.setPipeID(pipeID);
@@ -421,9 +421,9 @@ public class LoadBalancingHelper {
 	 * @return Map with Logical Operators and their Connections to external
 	 *         Operators.
 	 */
-	public static Map<ILogicalOperator, Collection<OutgoingConnection>> stripJxtaSenders(
+	public static Map<ILogicalOperator, Collection<DownstreamConnection>> stripJxtaSenders(
 			ILogicalQueryPart part) {
-		HashMap<ILogicalOperator, Collection<OutgoingConnection>> result = new HashMap<ILogicalOperator, Collection<OutgoingConnection>>();
+		HashMap<ILogicalOperator, Collection<DownstreamConnection>> result = new HashMap<ILogicalOperator, Collection<DownstreamConnection>>();
 		ArrayList<ILogicalOperator> toRemove = new ArrayList<ILogicalOperator>();
 		for (ILogicalOperator operator : part.getOperators()) {
 			if (operator instanceof JxtaSenderAO) {
@@ -433,10 +433,10 @@ public class LoadBalancingHelper {
 					ILogicalOperator incomingOperator = subscription.getTarget();
 
 					if (!result.containsKey(incomingOperator)) {
-						result.put(incomingOperator, new ArrayList<OutgoingConnection>());
+						result.put(incomingOperator, new ArrayList<DownstreamConnection>());
 					}
 					result.get(incomingOperator).add(
-							new OutgoingConnection(incomingOperator, sender.getPeerID(), sender
+							new DownstreamConnection(incomingOperator, sender.getPeerID(), sender
 									.getPipeID(), subscription.getSourceOutPort(), subscription
 									.getSchema()));
 
@@ -460,11 +460,11 @@ public class LoadBalancingHelper {
 	 * @return Map with Logical Operators and their Connections to external
 	 *         Operators.
 	 */
-	public static Map<ILogicalOperator, Collection<IncomingConnection>> stripJxtaReceivers(
+	public static Map<ILogicalOperator, Collection<UpstreamConnection>> stripJxtaReceivers(
 			ILogicalQueryPart part) {
 
 		// TODO More than 1 out Port!
-		HashMap<ILogicalOperator, Collection<IncomingConnection>> result = new HashMap<ILogicalOperator, Collection<IncomingConnection>>();
+		HashMap<ILogicalOperator, Collection<UpstreamConnection>> result = new HashMap<ILogicalOperator, Collection<UpstreamConnection>>();
 
 		ArrayList<ILogicalOperator> toRemove = new ArrayList<ILogicalOperator>();
 
@@ -475,10 +475,10 @@ public class LoadBalancingHelper {
 
 					ILogicalOperator targetOperator = subscription.getTarget();
 					if (!result.containsKey(targetOperator)) {
-						result.put(targetOperator, new ArrayList<IncomingConnection>());
+						result.put(targetOperator, new ArrayList<UpstreamConnection>());
 					}
 					result.get(targetOperator).add(
-							new IncomingConnection(targetOperator, receiver.getPeerID(), receiver
+							new UpstreamConnection(targetOperator, receiver.getPeerID(), receiver
 									.getPipeID(), subscription.getSinkInPort(), subscription
 									.getSchema()));
 

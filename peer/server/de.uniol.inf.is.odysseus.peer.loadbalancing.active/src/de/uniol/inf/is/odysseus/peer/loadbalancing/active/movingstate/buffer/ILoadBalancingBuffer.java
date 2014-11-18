@@ -3,6 +3,12 @@ package de.uniol.inf.is.odysseus.peer.loadbalancing.active.movingstate.buffer;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 @Deprecated
+/***
+ * Interface for Tuple Buffer
+ * Deprecated because Subscriptions can be suspended.
+ * @author Carsten Cordes
+ *
+ */
 public interface ILoadBalancingBuffer {
 
 	/**

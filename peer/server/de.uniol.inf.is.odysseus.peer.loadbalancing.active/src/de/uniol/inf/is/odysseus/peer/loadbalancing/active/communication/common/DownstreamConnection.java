@@ -4,11 +4,38 @@ import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 
 /**
- * Simple POJO used to hold some information about incoming and outgoing connections between Peers.
+ * Simple POJO used to hold some information about downstream connections between Peers.
  * @author Carsten Cordes
  *
  */
-public class IncomingConnection {
+public class DownstreamConnection {
+	
+
+
+	/**
+	 * Peer ID of downstream Peer.
+	 */
+	public String remotePeerID;
+	
+	/**
+	 * Local operator which holds connection.
+	 */
+	public ILogicalOperator localOperator;
+	
+	/**
+	 * Old pipe ID (needs to be replaced in some Strategies)
+	 */
+	public String oldPipeID;
+	
+	/**
+	 * Port number (source out)
+	 */
+	public int port;
+	
+	/**
+	 * Output Schema
+	 */
+	public SDFSchema schema;
 
 	/**
 	 * Constructor
@@ -24,7 +51,7 @@ public class IncomingConnection {
 	 * @param schema
 	 *            connection schema
 	 */
-	public IncomingConnection(ILogicalOperator operator, String remotePeerID,
+	public DownstreamConnection(ILogicalOperator operator, String remotePeerID,
 			String oldPipeID, int port, SDFSchema schema) {
 		this.localOperator = operator;
 		this.remotePeerID = remotePeerID;
@@ -32,10 +59,4 @@ public class IncomingConnection {
 		this.port = port;
 		this.schema = schema;
 	}
-
-	public String remotePeerID;
-	public ILogicalOperator localOperator;
-	public String oldPipeID;
-	public int port;
-	public SDFSchema schema;
 };

@@ -31,10 +31,10 @@ import de.uniol.inf.is.odysseus.peer.distribute.ILogicalQueryPart;
 import de.uniol.inf.is.odysseus.peer.distribute.util.LogicalQueryHelper;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.ActiveLoadBalancingActivator;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.common.IMessageDeliveryFailedListener;
-import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.common.IncomingConnection;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.common.UpstreamConnection;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.common.LoadBalancingException;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.common.LoadBalancingHelper;
-import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.common.OutgoingConnection;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.common.DownstreamConnection;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.paralleltrack.status.ParallelTrackMasterStatus;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.paralleltrack.status.ParallelTrackSlaveStatus;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.physicaloperator.LoadBalancingSynchronizerPO;
@@ -290,9 +290,9 @@ public class ParallelTrackHelper {
 		
 		LoadBalancingHelper.removeTopAOs(modifiedPart);
 		
-		Map<ILogicalOperator, Collection<IncomingConnection>> incomingConnections = LoadBalancingHelper
+		Map<ILogicalOperator, Collection<UpstreamConnection>> incomingConnections = LoadBalancingHelper
 				.stripJxtaReceivers(modifiedPart);
-		Map<ILogicalOperator, Collection<OutgoingConnection>> outgoingConnections = LoadBalancingHelper
+		Map<ILogicalOperator, Collection<DownstreamConnection>> outgoingConnections = LoadBalancingHelper
 				.stripJxtaSenders(modifiedPart);
 		
 		Collection<ILogicalOperator> relativeSinks = LogicalQueryHelper
@@ -305,9 +305,9 @@ public class ParallelTrackHelper {
 
 		for (ILogicalOperator relativeSource : relativeSources) {
 			if (incomingConnections.containsKey(relativeSource)) {
-				Collection<IncomingConnection> connections = incomingConnections
+				Collection<UpstreamConnection> connections = incomingConnections
 						.get(relativeSource);
-				for (IncomingConnection connection : connections) {
+				for (UpstreamConnection connection : connections) {
 
 					String newPipeID = IDFactory.newPipeID(
 							p2pNetworkManager.getLocalPeerGroupID()).toString();
@@ -324,9 +324,9 @@ public class ParallelTrackHelper {
 		
 		for (ILogicalOperator relativeSink : relativeSinks) {
 			if (outgoingConnections.containsKey(relativeSink)) {
-				Collection<OutgoingConnection> connections = outgoingConnections
+				Collection<DownstreamConnection> connections = outgoingConnections
 						.get(relativeSink);
-				for (OutgoingConnection connection : connections) {
+				for (DownstreamConnection connection : connections) {
 					String newPipeID = IDFactory.newPipeID(
 							p2pNetworkManager.getLocalPeerGroupID()).toString();
 

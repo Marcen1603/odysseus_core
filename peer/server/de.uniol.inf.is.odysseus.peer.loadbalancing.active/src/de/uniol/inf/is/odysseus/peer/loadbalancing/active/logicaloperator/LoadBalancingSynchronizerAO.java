@@ -22,7 +22,7 @@ public class LoadBalancingSynchronizerAO extends BinaryLogicalOp {
 	 * The version of this class for serialization.
 	 */
 	private static final long serialVersionUID = 7546316063206366721L;
-	
+
 	/**
 	 * The threshold for the synchronization process.
 	 */
@@ -59,25 +59,27 @@ public class LoadBalancingSynchronizerAO extends BinaryLogicalOp {
 		return new LoadBalancingSynchronizerAO(this);
 
 	}
-	
+
 	/**
 	 * Gets the threshold for the synchronization process.
-	 * @return Value and unit of the time-span, the synchronization process shall last at maximum.
+	 * 
+	 * @return Value and unit of the time-span, the synchronization process
+	 *         shall last at maximum.
 	 */
 	public TimeValueItem getThreshold() {
-		
-		return this.threshold;	
-		
+
+		return this.threshold;
+
 	}
-	
+
 	/**
 	 * Sets the threshold for the synchronization process.
 	 */
 	@Parameter(type = TimeParameter.class, name = "threshold", optional = true)
 	public void setThreshold(TimeValueItem threshold) {
-		
+
 		this.threshold = threshold;
-		
+
 	}
 
 }
