@@ -25,7 +25,7 @@ public abstract class AbstractFragmentAO extends UnaryLogicalOp {
 	/**
 	 * The heartbeatrate 
 	 */
-	private int heartbeatrate = 10;;
+	private int heartbeatrate = 10;
 	
 	/**
 	 * Constructs a new {@link AbstractFragmentAO}.
