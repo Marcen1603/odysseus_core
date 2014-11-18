@@ -24,7 +24,6 @@ import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.p2p_new.IP2PNetworkManager;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.IPeerDictionary;
-import de.uniol.inf.is.odysseus.peer.distribute.QueryPartAllocationException;
 import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryAllocator;
 import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryCommunicator;
 import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryStrategy;
@@ -201,7 +200,6 @@ public class RecoveryConsole implements CommandProvider {
 		sb.append("	sendHoldOn <PeerName from receiver> <sharedQueryId> - Send a hold-on message to <PeerName from receiver>, so that this should stop sending the tuples from query <sharedQueryId> further.\n");
 		sb.append("	sendUpdateReceiver <PeerName from receiver> <PeerName from new sender> <pipeId> <sharedQueryId> - Send an updateReceiver-message to <PeerName from receiver>, so that this should receive the tuples fir pipe <pipeId> from the new sender <PeerName from new sender>.\n");
 		sb.append("	sendAddQueriesFromPeer <PeerName from receiver> <PeerName from failed peer> <sharedQueryId> - The <PeerName from receiver> will get a message which tells that the peer has to install the query <sharedQueryId> from <PeerName from failed peer>. \n");
-		sb.append("	recoveryAllocation <AllocatorName> - Gets the id and name of a peer to allocate to (for testing) \n");
 		sb.append("	holdOn <PipeId> - Let this peer hold on\n");
 		sb.append("	goOn <PipeId> - Let this peer go on\n");
 		sb.append("	beBuddy <sharedQueryId> - Sends a random peer a message that he is the buddy for the <sharedQueryId> and the necessary backup-infos\n");
@@ -405,41 +403,6 @@ public class RecoveryConsole implements CommandProvider {
 		}
 
 	}
-
-	/**
-	 * Console command to test allocation.
-	 * 
-	 * @param ci
-	 *            The {@link CommandInterpreter} instance.
-	 */
-	public void _recoveryAllocation(CommandInterpreter ci) {
-
-		String allocatorName = ci.nextArgument();
-		if (Strings.isNullOrEmpty(allocatorName)) {
-
-			ci.println("usage: recoveryAllocation <AllocatorName>");
-			return;
-
-		}
-
-		Optional<IRecoveryAllocator> optAllocator = RecoveryConsole.determineAllocator(allocatorName);
-		if (!optAllocator.isPresent()) {
-
-			ci.println("No recovery allocator found with the name " + allocatorName);
-			return;
-
-		}
-		IRecoveryAllocator allocator = optAllocator.get();
-
-		PeerID peer = null;
-		try {
-			peer = allocator.allocate(peerDictionary.getRemotePeerIDs(), p2pNetworkManager.getLocalPeerID());
-			ci.println("Allocator has chosen " + peerDictionary.getRemotePeerName(peer) + " as target");
-		} catch (QueryPartAllocationException e) {
-			e.printStackTrace();
-		}
-
-	}
 	
 	/**
 	 * Lists all available {@link IRecoveryStrategyManager}s bound via OSGI-DS.
@@ -567,6 +530,7 @@ public class RecoveryConsole implements CommandProvider {
 	 * @return An {@link IRecoveryAllocator}, if there is one bound with
 	 *         <code>allocatorName</code> as name.
 	 */
+	@SuppressWarnings("unused")
 	private static Optional<IRecoveryAllocator> determineAllocator(String allocatorName) {
 
 		Preconditions.checkNotNull(allocatorName, "The name of the recovery allocator must be not null!");

@@ -1,10 +1,13 @@
 package de.uniol.inf.is.odysseus.peer.recovery;
 
 import java.util.List;
+import java.util.Map;
 
 import net.jxta.id.ID;
 import net.jxta.peer.PeerID;
 import de.uniol.inf.is.odysseus.p2p_new.physicaloperator.JxtaSenderPO;
+import de.uniol.inf.is.odysseus.peer.distribute.ILogicalQueryPart;
+import de.uniol.inf.is.odysseus.peer.distribute.QueryPartAllocationException;
 
 /**
  * This interface describes the actions that are taken, when a new peer needs to
@@ -69,4 +72,14 @@ public interface IRecoveryDynamicBackup {
 	 *         null, if not
 	 */
 	public List<ID> removeMyBuddyAndSearchNew(PeerID failedPeer);
+	
+	/**
+	 * Allocates QueryParts of a failed peer to a new peer.	 
+	 * @param sharedQueryId Query that needs allocation
+	 * @param recoveryAllocator The specific recovery allocator given by the strategy
+	 * @param failedPeer PeerID of the failed peer
+	 * @return Map<ILogicalQueryPart, PeerID> of the new peers to allocate to
+	 */
+
+	public Map<ILogicalQueryPart, PeerID> allocateToNewPeer(PeerID failedPeer, ID sharedQueryId, IRecoveryAllocator recoveryAllocator) throws QueryPartAllocationException;
 }
