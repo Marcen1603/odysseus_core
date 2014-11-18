@@ -8,6 +8,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionaryWritable;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.RenameAO;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationException;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.AbstractExecutorCommand;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.IUserManagementWritable;
@@ -23,6 +24,9 @@ public class CreateViewCommand extends AbstractExecutorCommand {
 		super(caller);
 		this.rootAO = rootAO;
 		this.name = name;
+		if (!rootAO.isSourceOperator()){
+			throw new TransformationException("Can only create a view on sources not on sinks");
+		}
 	}
 
 	@Override

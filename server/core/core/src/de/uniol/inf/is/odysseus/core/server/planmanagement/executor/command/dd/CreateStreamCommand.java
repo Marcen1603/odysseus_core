@@ -4,6 +4,7 @@ package de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.dd;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionaryWritable;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationException;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.AbstractExecutorCommand;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.IUserManagementWritable;
@@ -19,6 +20,9 @@ public class CreateStreamCommand extends AbstractExecutorCommand {
 		super(caller);
 		this.rootAO = rootAO;
 		this.name = name;	
+		if (!rootAO.isSourceOperator()){
+			throw new TransformationException("Can only create a stream on sources not on sinks");
+		}
 	}
 	
 	@Override
