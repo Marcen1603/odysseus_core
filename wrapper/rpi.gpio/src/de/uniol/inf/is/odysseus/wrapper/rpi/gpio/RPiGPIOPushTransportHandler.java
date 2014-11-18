@@ -43,26 +43,32 @@ public class RPiGPIOPushTransportHandler extends AbstractTransportHandler {
 	private boolean getOutputStreamFlag = false;
 	private boolean getInputStreamFlag = false;
 
+	public RPiGPIOPushTransportHandler() {
+	}
+
+	public RPiGPIOPushTransportHandler(
+			final IProtocolHandler<?> protocolHandler, final OptionMap options) {
+		super(protocolHandler, options);
+		this.init(options);
+		this.init();
+	}
+
+	private void init(OptionMap options) {
+		if (options.containsKey(PINNUMBER)) {
+			this.setPinNumber(options.get(PINNUMBER));
+		}
+	}
+
 	@Override
 	public ITransportHandler createInstance(
 			IProtocolHandler<?> protocolHandler, OptionMap options) {
-		RPiGPIOPushTransportHandler tHandler = new RPiGPIOPushTransportHandler();
-
-		if (options.containsKey(PINNUMBER)) {
-			tHandler.setPinNumber(options.get(PINNUMBER));
-		}
-
-		// init for input:
-		tHandler.init();
-		protocolHandler.setTransportHandler(tHandler);
-
-		return tHandler;
+		return new RPiGPIOPushTransportHandler(protocolHandler, options);
 	}
 
 	private void setPinNumber(String pinNumber) {
 		Integer pinInteger = Integer.parseInt(pinNumber);
 
-		LOG.debug("setPinNumber:"+pinNumber);
+		LOG.debug("setPinNumber:" + pinNumber);
 
 		if (pinInteger.intValue() == 1) {
 			this.pin = new PinImpl(RaspiGpioProvider.NAME,
@@ -81,62 +87,53 @@ public class RPiGPIOPushTransportHandler extends AbstractTransportHandler {
 		OS os = OSInvestigator.getCurrentOS();
 
 		switch (os) {
-		case NUX: break;
+		case NUX:
+			break;
 		case WIN:
 		case MAC:
 		case UNKNOWN:
 			LOG.warn("The RPiGPIOPushTransportHandler works only on raspberry pi with linux and pi4j library!");
+			//startRepeatedTestValues();
 			return;
 		default:
 			break;
 		}
-		
+
 		initIfNeeded();
 
-		myButton.addListener(new GpioPinListenerDigital() {
+	}
+
+	private void startRepeatedTestValues() {
+		LOG.debug("startRepeatedTestValues");
+
+		@SuppressWarnings("rawtypes")
+		Tuple<?> tuple = new Tuple(2, false);
+		tuple.setAttribute(0, "pinNumber7");
+		tuple.setAttribute(1, 0);
+
+		fireProcess(tuple);
+
+		Thread t = new Thread(new Runnable() {
 			@Override
-			public void handleGpioPinDigitalStateChangeEvent(
-					GpioPinDigitalStateChangeEvent event) {
-
-				LOG.debug(" --> GPIO PIN STATE CHANGE: " + event.getPin()
-						+ " = " + event.getState());
-
-				//LOG.debug("init with pin:" + pin.toString());
-
-				@SuppressWarnings("rawtypes")
-				Tuple<?> tuple = new Tuple(2, false);
-
-				try {
-					boolean buttonPressed = myButton.isHigh();
-
-					String buttonState = "";
-					if (buttonPressed) {
-						buttonState = "1";
-					} else {
-						buttonState = "0";
-					}
-
-					tuple.setAttribute(0, "pinNumber"
-							+ myButton.getPin().getAddress());
-					tuple.setAttribute(1, Long.parseLong(buttonState));
-					// TODO:
-					// tuple.setAttribute(2, System.currentTimeMillis());
-					// Starttimestamp
-				} catch (ClassCastException ex) {
-					LOG.error(ex.getMessage(), ex);
-				} catch (Exception ex) {
-					if (!flagExceptionThrown) {
-						LOG.error("On Raspberry Pi? pi4j installed? ");
-						flagExceptionThrown = true;
-					}
-
+			public void run() {
+				while (true) {
+					@SuppressWarnings("rawtypes")
+					Tuple<?> tuple = new Tuple(2, false);
 					tuple.setAttribute(0, "pinNumber7");
 					tuple.setAttribute(1, 1);
-				}
 
-				fireProcess(tuple);
+					fireProcess(tuple);
+
+					try {
+						Thread.sleep(1000);
+					} catch (InterruptedException e) {
+					}
+				}
 			}
 		});
+		t.setName("test values RPiGPIOPushTransportHandler gpio input pins");
+		t.setDaemon(true);
+		t.start();
 	}
 
 	private void initIfNeeded() {
@@ -158,20 +155,83 @@ public class RPiGPIOPushTransportHandler extends AbstractTransportHandler {
 	@Override
 	public void processInOpen() throws IOException {
 		LOG.debug("processInOpen");
-		
-		
+
+		OS os = OSInvestigator.getCurrentOS();
+
+		switch (os) {
+		case NUX:
+			myButton.addListener(new GpioPinListenerDigital() {
+				@Override
+				public void handleGpioPinDigitalStateChangeEvent(
+						GpioPinDigitalStateChangeEvent event) {
+
+					LOG.debug(" --> GPIO PIN STATE CHANGE: " + event.getPin()
+							+ " = " + event.getState());
+
+					// LOG.debug("init with pin:" + pin.toString());
+
+					@SuppressWarnings("rawtypes")
+					Tuple<?> tuple = new Tuple(2, false);
+
+					try {
+						boolean buttonPressed = myButton.isHigh();
+
+						String buttonState = "";
+						if (buttonPressed) {
+							buttonState = "1";
+						} else {
+							buttonState = "0";
+						}
+
+						tuple.setAttribute(0, "pinNumber"
+								+ myButton.getPin().getAddress());
+						tuple.setAttribute(1, Long.parseLong(buttonState));
+						// TODO:
+						// tuple.setAttribute(2, System.currentTimeMillis());
+						// Starttimestamp
+					} catch (ClassCastException ex) {
+						LOG.error(ex.getMessage(), ex);
+					} catch (Exception ex) {
+						if (!flagExceptionThrown) {
+							LOG.error("On Raspberry Pi? pi4j installed? ");
+							flagExceptionThrown = true;
+						}
+
+						tuple.setAttribute(0, "pinNumber7");
+						tuple.setAttribute(1, 1);
+					}
+
+					fireProcess(tuple);
+				}
+			});
+			break;
+		case WIN:
+		case MAC:
+		case UNKNOWN:
+
+			startRepeatedTestValues();
+			return;
+		default:
+			break;
+		}
+
 	}
 
 	@Override
 	public void processOutOpen() throws IOException {
 		LOG.debug("processOutOpen");
-		
-		
+
 	}
 
 	@Override
 	public void processInClose() throws IOException {
 		LOG.debug("processInClose");
+		
+		myButton.removeAllListeners();
+		gpioController.removeAllListeners();
+		
+		myButton=null;
+		gpioController=null;
 	}
 
 	@Override
@@ -182,15 +242,14 @@ public class RPiGPIOPushTransportHandler extends AbstractTransportHandler {
 	@Override
 	public void send(byte[] message) throws IOException {
 		LOG.debug("send message:" + message.length);
-		
+
 		String messageString = new String(message);
-		
+
 		LOG.debug("send messageString:" + messageString);
-		
+
 		Long number = Long.parseLong(messageString);
 		LOG.debug("send number:" + number);
-		
-		
+
 	}
 
 	@Override
