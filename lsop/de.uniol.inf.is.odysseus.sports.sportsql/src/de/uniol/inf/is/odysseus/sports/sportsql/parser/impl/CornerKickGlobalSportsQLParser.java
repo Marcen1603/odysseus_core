@@ -125,8 +125,8 @@ public class CornerKickGlobalSportsQLParser implements ISportsQLParser {
 		ArrayList<SDFExpressionParameter> expressions = new ArrayList<SDFExpressionParameter>();
 		expressions.add(OperatorBuildHelper.createExpressionParameter(SoccerGameAttributes.ENTITY_ID,
 				activeBall));
-		expressions.add(OperatorBuildHelper.createExpressionParameter(SoccerGameAttributes.TS,
-				activeBall));
+		expressions.add(OperatorBuildHelper.createExpressionParameter(
+				"toInteger(" + SoccerGameAttributes.TS + ")", SoccerGameAttributes.TS, activeBall));
 		expressions.add(OperatorBuildHelper.createExpressionParameter(SoccerGameAttributes.X,
 				activeBall));
 		expressions.add(OperatorBuildHelper.createExpressionParameter(SoccerGameAttributes.Y,
