@@ -53,7 +53,7 @@ public class ShowQueryTextCommand extends AbstractHandler implements IHandler {
 				Shell shell = HandlerUtil.getActiveWorkbenchWindow(event).getShell();
 				MessageBox box = new MessageBox(shell, SWT.ICON_INFORMATION | SWT.OK);
 				box.setText("Query text for query "+id);
-				box.setMessage(queryText);
+				box.setMessage(queryText.length() > 500?(queryText.substring(0, 500)+"..."):queryText);
 				box.open();
 			} else {
 				LOG.error("Executor is not set");
