@@ -28,12 +28,13 @@ import de.uniol.inf.is.odysseus.peer.recovery.internal.BackupInformation;
  *
  */
 public class BackupInformationMessage implements IMessage {
-	
+
 	/**
-	 * Update information will only be saved on the peer which receives this message if he already had this information (for this peer for this sharedQueryId)
+	 * Update information will only be saved on the peer which receives this message if he already had this information
+	 * (for this peer for this sharedQueryId)
 	 */
 	public final static int UPDATE_INFO = 0;
-	
+
 	/**
 	 * This type of information will be saved on the receiving peer
 	 */
@@ -48,7 +49,7 @@ public class BackupInformationMessage implements IMessage {
 	 * The backup information, which has to be sent or which has received.
 	 */
 	private IRecoveryBackupInformation mInfo = new BackupInformation();
-	
+
 	/**
 	 * Either {@link #NEW_INFO} or {@link #UPDATE_INFO}.
 	 */
@@ -87,7 +88,7 @@ public class BackupInformationMessage implements IMessage {
 		return this.mInfo;
 
 	}
-	
+
 	public int getMessageType() {
 		return this.mMessageType;
 	}
@@ -123,7 +124,7 @@ public class BackupInformationMessage implements IMessage {
 		bufferSize += 4 + locationPeerBytes.length;
 
 		ByteBuffer buffer = ByteBuffer.allocate(bufferSize);
-		
+
 		buffer.putInt(mMessageType);
 
 		buffer.putInt(sharedQueryBytes.length);
@@ -175,7 +176,9 @@ public class BackupInformationMessage implements IMessage {
 	 */
 	private byte[] determineLocationPeerBytes() {
 		Preconditions.checkNotNull(this.mInfo);
-		return this.mInfo.getLocationPeer().toString().getBytes();
+		if (this.mInfo.getLocationPeer() != null)
+			return this.mInfo.getLocationPeer().toString().getBytes();
+		return new byte[0];
 	}
 
 	/**
@@ -362,9 +365,12 @@ public class BackupInformationMessage implements IMessage {
 	private void locationPeerFromBytes(ByteBuffer buffer) {
 		Preconditions.checkArgument(this.mInfo.getLocationPeer() == null);
 		Preconditions.checkNotNull(buffer);
-		byte[] locationPeerBytes = new byte[buffer.getInt()];
-		buffer.get(locationPeerBytes);
-		this.mInfo.setLocationPeer(toPeerID(new String(locationPeerBytes)));
+		int locationPeerSize = buffer.getInt();
+		if (locationPeerSize > 0) {
+			byte[] locationPeerBytes = new byte[locationPeerSize];
+			buffer.get(locationPeerBytes);
+			this.mInfo.setLocationPeer(toPeerID(new String(locationPeerBytes)));
+		}
 	}
 
 	/**

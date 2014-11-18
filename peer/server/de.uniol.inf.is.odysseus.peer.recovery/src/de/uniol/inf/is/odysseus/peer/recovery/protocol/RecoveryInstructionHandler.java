@@ -242,8 +242,15 @@ public class RecoveryInstructionHandler {
 							if (((JxtaReceiverAO) logicalOp).getPipeID().equals(pipeId.toString())) {
 								// This is the information we search for
 								IRecoveryBackupInformation updatedInfo = LocalBackupInformationAccess.updateLocalPQL(sharedQueryId, localPQL, newBackupPQL);
+								
 								// Distribute to other peers
-								recoveryCommunicator.distributeUpdatedBackupInfo(updatedInfo);
+								IRecoveryBackupInformation infoToDistribute = new BackupInformation();
+								infoToDistribute.setSharedQuery(updatedInfo.getSharedQuery());
+								infoToDistribute.setAboutPeer(RecoveryCommunicator.getP2PNetworkManager().get().getLocalPeerID());
+								infoToDistribute.setPQL(updatedInfo.getLocalPQL());
+								
+								recoveryCommunicator.distributeUpdatedBackupInfo(infoToDistribute);
+								
 							}
 						}
 					}
