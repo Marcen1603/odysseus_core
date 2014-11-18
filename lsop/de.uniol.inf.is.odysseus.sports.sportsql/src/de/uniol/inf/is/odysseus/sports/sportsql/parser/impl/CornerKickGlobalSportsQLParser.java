@@ -2,16 +2,17 @@ package de.uniol.inf.is.odysseus.sports.sportsql.parser.impl;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.ChangeDetectAO;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.ElementWindowAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.JoinAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.MapAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.ProjectAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.SelectAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.StreamAO;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.TimeWindowAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.SDFExpressionParameter;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.peer.ddc.MissingDDCEntryException;
@@ -20,6 +21,7 @@ import de.uniol.inf.is.odysseus.sports.sportsql.parser.SportsQLParseException;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.SportsQLQuery;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.annotations.SportsQL;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.buildhelper.OperatorBuildHelper;
+import de.uniol.inf.is.odysseus.sports.sportsql.parser.buildhelper.SoccerGameAttributes;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.ddcaccess.AbstractSportsDDCAccess;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.ddcaccess.SoccerDDCAccess;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.enums.GameType;
@@ -59,16 +61,17 @@ public class CornerKickGlobalSportsQLParser implements ISportsQLParser {
 		double yMax = AbstractSportsDDCAccess.getFieldYMax();
 
 		ArrayList<ILogicalOperator> operatorList = new ArrayList<ILogicalOperator>();
-
+		ArrayList<String> attributes = new ArrayList<String>();
+		
 		StreamAO source = OperatorBuildHelper.createGameStreamAO(session);
 
 		operatorList.add(source);
 
 		ArrayList<String> projectionAttributes = new ArrayList<String>();
-		projectionAttributes.add("sid");
-		projectionAttributes.add("ts");
-		projectionAttributes.add("x");
-		projectionAttributes.add("y");
+		projectionAttributes.add(SoccerGameAttributes.ENTITY_ID);
+		projectionAttributes.add(SoccerGameAttributes.TS);
+		projectionAttributes.add(SoccerGameAttributes.X);
+		projectionAttributes.add(SoccerGameAttributes.Y);
 
 		// projected = PROJECT({attributes = ['sid', 'ts', 'x',
 		// 'y']},soccergame)
@@ -91,18 +94,18 @@ public class CornerKickGlobalSportsQLParser implements ISportsQLParser {
 		String predicate = "(";
 		Iterator<Integer> ballSensorIterator = AbstractSportsDDCAccess.getBallEntityIds().iterator();
 		while(ballSensorIterator.hasNext()) {
-			int sensorId = ballSensorIterator.next();
-			predicate += "sid = " + sensorId;
+			int entityId = ballSensorIterator.next();
+			predicate += SoccerGameAttributes.ENTITY_ID + " = " + entityId;
 			if(ballSensorIterator.hasNext()) {
 				predicate += " OR ";
 			}
 		}
 		predicate += ")";
 		
-		predicate += " AND (x >= " + (xMin - FIELD_TOLERANCE) + ")";
-		predicate += " AND (x <= " + (xMax + FIELD_TOLERANCE) + ")";
-		predicate += "AND (y >= " + (yMin - FIELD_TOLERANCE) + ")";
-		predicate += "AND (y <= " + (yMax + FIELD_TOLERANCE) + ")";
+		predicate += " AND (" + SoccerGameAttributes.X + " >= " + (xMin - FIELD_TOLERANCE) + ")";
+		predicate += " AND (" + SoccerGameAttributes.X + " <= " + (xMax + FIELD_TOLERANCE) + ")";
+		predicate += "AND (" + SoccerGameAttributes.Y + " >= " + (yMin - FIELD_TOLERANCE) + ")";
+		predicate += "AND (" + SoccerGameAttributes.Y + " <= " + (yMax + FIELD_TOLERANCE) + ")";
 		
 		
 		SelectAO activeBall = OperatorBuildHelper.createSelectAO(
@@ -120,19 +123,19 @@ public class CornerKickGlobalSportsQLParser implements ISportsQLParser {
 		// ['eif(y > ${goalline2}, 1, 0)', 'BallBehindGoalline2_right']
 		// ]}, activeBall)
 		ArrayList<SDFExpressionParameter> expressions = new ArrayList<SDFExpressionParameter>();
-		expressions.add(OperatorBuildHelper.createExpressionParameter("sid",
+		expressions.add(OperatorBuildHelper.createExpressionParameter(SoccerGameAttributes.ENTITY_ID,
 				activeBall));
-		expressions.add(OperatorBuildHelper.createExpressionParameter("ts",
+		expressions.add(OperatorBuildHelper.createExpressionParameter(SoccerGameAttributes.TS,
 				activeBall));
-		expressions.add(OperatorBuildHelper.createExpressionParameter("x",
+		expressions.add(OperatorBuildHelper.createExpressionParameter(SoccerGameAttributes.X,
 				activeBall));
-		expressions.add(OperatorBuildHelper.createExpressionParameter("y",
+		expressions.add(OperatorBuildHelper.createExpressionParameter(SoccerGameAttributes.Y,
 				activeBall));
 		expressions.add(OperatorBuildHelper.createExpressionParameter(
-				"eif(x < " + SoccerDDCAccess.getGoalareaLeftX() + ", 1, 0)",
+				"eif(" + SoccerGameAttributes.X + " < " + SoccerDDCAccess.getGoalareaLeftX() + ", 1, 0)",
 				"BallBehindGoalline1_left", activeBall));
 		expressions.add(OperatorBuildHelper.createExpressionParameter(
-				"eif(x > " + SoccerDDCAccess.getGoalareaRightX() + ", 1, 0)",
+				"eif(" + SoccerGameAttributes.X + " > " + SoccerDDCAccess.getGoalareaRightX() + ", 1, 0)",
 				"BallBehindGoalline2_right", activeBall));
 
 		MapAO activeBallBehindGoalline = OperatorBuildHelper
@@ -163,16 +166,16 @@ public class CornerKickGlobalSportsQLParser implements ISportsQLParser {
 		// (${y_min} + 2000) , 1, 0)', 'BallOnCornerSpot2_top']
 		// ]}, activeBall)
 		ArrayList<SDFExpressionParameter> ballExpressions = new ArrayList<SDFExpressionParameter>();
-		ballExpressions.add(OperatorBuildHelper.createExpressionParameter("ts",
+		ballExpressions.add(OperatorBuildHelper.createExpressionParameter(SoccerGameAttributes.TS,
 				"spot_ball_ts", activeBall));
 		ballExpressions.add(OperatorBuildHelper.createExpressionParameter(
-				"eif((y <= (" + (yMin + CORNER_SPOT_TOLERANCE) + ") OR y >= ("
-						+ (yMax - CORNER_SPOT_TOLERANCE) + ")) AND x >= ("
+				"eif((" + SoccerGameAttributes.Y + " <= (" + (yMin + CORNER_SPOT_TOLERANCE) + ") OR " + SoccerGameAttributes.Y + "  >= ("
+						+ (yMax - CORNER_SPOT_TOLERANCE) + ")) AND " + SoccerGameAttributes.X + " >= ("
 						+ (xMax - CORNER_SPOT_TOLERANCE) + ") , 1, 0)",
 				"BallOnCornerSpot1_bottom", activeBall));
 		ballExpressions.add(OperatorBuildHelper.createExpressionParameter(
-				"eif((y <= (" + (yMin + CORNER_SPOT_TOLERANCE) + ") OR y >= ("
-						+ (yMax - CORNER_SPOT_TOLERANCE) + ")) AND x <= ("
+				"eif((" + SoccerGameAttributes.Y + " <= (" + (yMin + CORNER_SPOT_TOLERANCE) + ") OR " + SoccerGameAttributes.Y + " >= ("
+						+ (yMax - CORNER_SPOT_TOLERANCE) + ")) AND " + SoccerGameAttributes.X + " <= ("
 						+ (xMin + CORNER_SPOT_TOLERANCE) + ") , 1, 0)",
 				"BallOnCornerSpot2_top", activeBall));
 		MapAO ballOnCornerSpot = OperatorBuildHelper.createMapAO(
@@ -191,84 +194,58 @@ public class CornerKickGlobalSportsQLParser implements ISportsQLParser {
 						changeDetectCornerAttributes, ballOnCornerSpot), 0,
 						ballOnCornerSpot);
 		operatorList.add(ballOnCornerSpotChange);
+		
+		
+		// time windows for goal behind line and ball on corner spot
+		TimeWindowAO ball_on_cornerspot_window = OperatorBuildHelper.createTimeWindowAO(30, "SECONDS", ballOnCornerSpotChange);
+		operatorList.add(ball_on_cornerspot_window);
+		
+		TimeWindowAO behind_goalline_window = OperatorBuildHelper.createTimeWindowAO(30, "SECONDS", activeBallBehindGoallineChange);
+		operatorList.add(behind_goalline_window);
+		
+		// join these to windows to detect corners
+		JoinAO corners_join = OperatorBuildHelper.createJoinAO("((BallBehindGoalline1_left = 1 AND (BallOnCornerSpot1_bottom = 1 OR BallOnCornerSpot2_top = 1)) OR "
+				+ "(BallBehindGoalline2_right = 1 AND (BallOnCornerSpot1_bottom = 1 OR BallOnCornerSpot2_top = 1))) AND "
+				+ "ts < spot_ball_ts", "MANY_MANY", behind_goalline_window, ball_on_cornerspot_window);
+		operatorList.add(corners_join);
 
-		// activeBallBehindGoalline_wnd = ELEMENTWINDOW({SIZE = 1, ADVANCE=1},
-		// activeBallBehindGoalline_change)
-		ElementWindowAO activeBallBehindGoallineWindow = OperatorBuildHelper
-				.createElementWindowAO(1000, 1000, activeBallBehindGoallineChange);
-		operatorList.add(activeBallBehindGoallineWindow);
+		// only one corner for each ball behind line
+		attributes.add("ts");
+		ChangeDetectAO corner_cd = OperatorBuildHelper
+				.createChangeDetectAO(OperatorBuildHelper.createAttributeList(
+						attributes, corners_join), 0.0, 100, corners_join);
+		corner_cd.setDeliverFirstElement(true);
+		operatorList.add(corner_cd);
+		attributes.clear();
+		
+		// return only 1 / 0 for each side of game field
+		MapAO corners_lr = OperatorBuildHelper.createMapAO(
+				getExpressionForLeftRightCorner(corner_cd),
+				corner_cd, 0, 0, false);
+		operatorList.add(corners_lr);
+		
 
-		// BallOnCornerSpot_wnd = ELEMENTWINDOW({SIZE = 1, ADVANCE=1},
-		// BallOnCornerSpot_change)
-		ElementWindowAO ballOnCornerSpotWindow = OperatorBuildHelper
-				.createElementWindowAO(1, 1, ballOnCornerSpotChange);
-		operatorList.add(ballOnCornerSpotWindow);
+		// TODO: add an aggregate or similar to sum corners for each team
 
-		//
-		// corner_join = JOIN({predicate='(BallBehindGoalline1_left = 1 OR
-		// BallBehindGoalline2_right = 1) AND ts > (spot_ball_ts -
-		// 30000000000000) AND ts < spot_ball_ts AND
-		// (BallOnCornerSpot1_bottom = 1 OR BallOnCornerSpot2_top = 1) '},
-		// activeBallBehindGoalline_wnd, BallOnCornerSpot_wnd)
-		//
-
-//		ArrayList<String> joinPredicates = new ArrayList<String>();
-//		joinPredicates
-//				.add("BallBehindGoalline1_left = 1 OR BallBehindGoalline2_right = 1");
-//		joinPredicates.add("ts > (spot_ball_ts - "
-//				+ TIME_BETWEEN_GOALLINE_AND_CORNER + ")");
-//		joinPredicates.add("ts < spot_ball_ts");
-//		joinPredicates
-//				.add("BallOnCornerSpot1_bottom = 1 OR BallOnCornerSpot2_top = 1");
-
-		String joinPredicates = "(BallBehindGoalline1_left = 1 OR BallBehindGoalline2_right = 1) AND (BallOnCornerSpot1_bottom = 1 OR BallOnCornerSpot2_top = 1) AND (ts > (spot_ball_ts - " + TIME_BETWEEN_GOALLINE_AND_CORNER + ")) AND (ts < spot_ball_ts)";
-		JoinAO cornerJoin = OperatorBuildHelper.createJoinAO(
-				joinPredicates, null, activeBallBehindGoallineWindow,
-				ballOnCornerSpotWindow);
-		operatorList.add(cornerJoin);
-
-		// corners = CHANGEDETECT({
-		// attr = ['ts'],
-		// }, corner_join)
-		ArrayList<String> changeDetectCorners = new ArrayList<String>();
-		changeDetectCorners.add("ts");
-		ChangeDetectAO corners = OperatorBuildHelper.createChangeDetectAO(
-				OperatorBuildHelper.createAttributeList(changeDetectCorners,
-						cornerJoin), 0, true, cornerJoin);
-		operatorList.add(corners);
-
-		// corners_time = MAP({
-		// expressions = [
-		// 'BallBehindGoalline1_left',
-		// 'BallBehindGoalline2_right',
-		// ['((spot_ball_ts - ${STARTTS}) / 60000000000000.0)',
-		// 'timeInMinutes'],
-		// 'BallOnCornerSpot1_bottom',
-		// 'BallOnCornerSpot2_top'
-		// ]}, corners)
-
-		ArrayList<SDFExpressionParameter> cornersTimeExpressions = new ArrayList<SDFExpressionParameter>();
-		cornersTimeExpressions
-				.add(OperatorBuildHelper.createExpressionParameter(
-						"BallBehindGoalline1_left", corners));
-		cornersTimeExpressions
-				.add(OperatorBuildHelper.createExpressionParameter(
-						"BallBehindGoalline2_right", corners));
-		cornersTimeExpressions.add(OperatorBuildHelper
-				.createExpressionParameter("((spot_ball_ts) / " + FACTOR_TS_GAMETIME + ")", "timeInMinutes",
-						corners));
-		cornersTimeExpressions
-				.add(OperatorBuildHelper.createExpressionParameter(
-						"BallOnCornerSpot1_bottom", corners));
-		cornersTimeExpressions.add(OperatorBuildHelper
-				.createExpressionParameter("BallOnCornerSpot2_top", corners));
-
-		MapAO cornersTime = OperatorBuildHelper.createMapAO(
-				cornersTimeExpressions, corners, 0, 0, false);
-		operatorList.add(cornersTime);
-
-		return OperatorBuildHelper.finishQuery(cornersTime, operatorList,
+		return OperatorBuildHelper.finishQuery(corners_lr, operatorList,
 				sportsQL.getName());
+	}
+	
+	private List<SDFExpressionParameter> getExpressionForLeftRightCorner(
+			ILogicalOperator source) throws NumberFormatException, MissingDDCEntryException {
+		
+		List<SDFExpressionParameter> expressions = new ArrayList<SDFExpressionParameter>();
+		SDFExpressionParameter ex1 = OperatorBuildHelper
+				.createExpressionParameter("ts", "corner_ts", source);
+		SDFExpressionParameter ex2 = OperatorBuildHelper
+				.createExpressionParameter("toInteger(eif(BallBehindGoalline1_left = 1, 1, 0))", "CornerLeft", source);
+		SDFExpressionParameter ex3 = OperatorBuildHelper
+				.createExpressionParameter("toInteger(eif(BallBehindGoalline2_right = 1, 1, 0))", "CornerRight", source);	
+		expressions.add(ex1);
+		expressions.add(ex2);
+		expressions.add(ex3);
+
+		return expressions;
 	}
 
 }
