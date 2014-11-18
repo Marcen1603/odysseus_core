@@ -11,6 +11,7 @@ import com.pi4j.io.gpio.PinState;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSink;
 import de.uniol.inf.is.odysseus.wrapper.rpi.gpio.OSInvestigator;
@@ -20,17 +21,22 @@ public class RPiGPIOSinkPO extends AbstractSink<Tuple<?>> {
 	private static final Logger LOG = LoggerFactory
 			.getLogger(RPiGPIOSinkPO.class);
 	private Pin pin;
-	@SuppressWarnings("unused")
 	private SDFSchema schema;
 	private GpioController gpioController;
 	private GpioPinDigitalOutput myLED;
 	private boolean flagExceptionProcessNext = false;
 	private PinState pinState;
 	private boolean messageWasShownTupleLedNUll = false;
+	private int pinStateIndex;
 
 	public RPiGPIOSinkPO(SDFSchema s) {
 		initGPIOController();
 		this.schema = s;
+		
+		final SDFAttribute pinStateAttribute = schema.findAttribute("pinState");
+        if (pinStateAttribute != null) {
+            this.pinStateIndex = schema.indexOf(pinStateAttribute);
+        }
 	}
 
 	public RPiGPIOSinkPO(RPiGPIOSinkAO operator) {
@@ -120,6 +126,9 @@ public class RPiGPIOSinkPO extends AbstractSink<Tuple<?>> {
 			String w = "";
 
 			if (tuple != null) {
+				//TODO: tuple.getAttribute(pinStateIndex);
+				
+				
 				w += "tuple.size:" + tuple.size();
 				if (tuple.size() > 0) {
 					w += " Att1:" + tuple.getAttribute(0);
@@ -175,6 +184,10 @@ public class RPiGPIOSinkPO extends AbstractSink<Tuple<?>> {
 	@Override
 	public AbstractSink<Tuple<?>> clone() {
 		return new RPiGPIOSinkPO(this);
+	}
+
+	public int getPinStateIndex() {
+		return pinStateIndex;
 	}
 
 }

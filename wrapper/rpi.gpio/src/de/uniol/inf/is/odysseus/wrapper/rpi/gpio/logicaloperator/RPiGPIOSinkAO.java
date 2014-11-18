@@ -14,7 +14,6 @@ import com.pi4j.io.gpio.RaspiGpioProvider;
 import com.pi4j.io.gpio.impl.PinImpl;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractSenderAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
@@ -101,9 +100,9 @@ public class RPiGPIOSinkAO extends AbstractSenderAO {
 	}
 
 	@Override
-	public AbstractLogicalOperator clone() {
-		return new RPiGPIOSinkAO(this);
-	}
+    public RPiGPIOSinkAO clone() {
+        return new RPiGPIOSinkAO(this);
+    }
 	
 	@Override
 	public boolean isSourceOperator() {

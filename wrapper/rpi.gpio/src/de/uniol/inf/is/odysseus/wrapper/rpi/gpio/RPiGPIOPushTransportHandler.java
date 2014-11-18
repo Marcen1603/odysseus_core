@@ -61,7 +61,7 @@ public class RPiGPIOPushTransportHandler extends AbstractTransportHandler {
 	private void setPinNumber(String pinNumber) {
 		Integer pinInteger = Integer.parseInt(pinNumber);
 
-		LOG.error("setPinNumber:"+pinNumber);
+		LOG.debug("setPinNumber:"+pinNumber);
 
 		if (pinInteger.intValue() == 1) {
 			this.pin = new PinImpl(RaspiGpioProvider.NAME,
@@ -87,7 +87,7 @@ public class RPiGPIOPushTransportHandler extends AbstractTransportHandler {
 				LOG.debug(" --> GPIO PIN STATE CHANGE: " + event.getPin()
 						+ " = " + event.getState());
 
-				LOG.debug("init with pin:" + pin.toString());
+				//LOG.debug("init with pin:" + pin.toString());
 
 				@SuppressWarnings("rawtypes")
 				Tuple<?> tuple = new Tuple(2, false);
@@ -143,38 +143,38 @@ public class RPiGPIOPushTransportHandler extends AbstractTransportHandler {
 
 	@Override
 	public void processInOpen() throws IOException {
-		LOG.error("processInOpen");
+		LOG.debug("processInOpen");
 		
 		
 	}
 
 	@Override
 	public void processOutOpen() throws IOException {
-		LOG.error("processOutOpen");
+		LOG.debug("processOutOpen");
 		
 		
 	}
 
 	@Override
 	public void processInClose() throws IOException {
-		LOG.error("processInClose");
+		LOG.debug("processInClose");
 	}
 
 	@Override
 	public void processOutClose() throws IOException {
-		LOG.error("processOutClose");
+		LOG.debug("processOutClose");
 	}
 
 	@Override
 	public void send(byte[] message) throws IOException {
-		LOG.error("send message:" + message.length);
+		LOG.debug("send message:" + message.length);
 		
 		String messageString = new String(message);
 		
-		LOG.error("send messageString:" + messageString);
+		LOG.debug("send messageString:" + messageString);
 		
 		Long number = Long.parseLong(messageString);
-		LOG.error("send number:" + number);
+		LOG.debug("send number:" + number);
 		
 		
 	}
