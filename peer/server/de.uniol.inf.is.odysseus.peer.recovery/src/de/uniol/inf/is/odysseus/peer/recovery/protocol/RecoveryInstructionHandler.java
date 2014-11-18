@@ -12,11 +12,10 @@ import net.jxta.pipe.PipeID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.collect.ImmutableCollection;
+import com.google.common.base.Strings;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
-import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.p2p_new.IP2PNetworkManager;
@@ -213,6 +212,8 @@ public class RecoveryInstructionHandler {
 								}
 							}
 
+							newBackupPQL = pqlGenerator.generatePQLStatement(query.getLogicalQuery().getLogicalPlan());
+							break;
 						} catch (DataTransmissionException e) {
 							// TODO Auto-generated catch block
 							e.printStackTrace();
@@ -220,7 +221,6 @@ public class RecoveryInstructionHandler {
 					}
 				}
 			}
-			newBackupPQL = pqlGenerator.generatePQLStatement(query.getLogicalQuery().getLogicalPlan());
 		}
 
 		// 2. Update the PQL of my local BackupInformation
@@ -232,32 +232,14 @@ public class RecoveryInstructionHandler {
 		// For now, take the sharedQueryId from the message
 
 		// Search for the right information
-		if (newBackupPQL != null && !newBackupPQL.isEmpty()) {
-			ImmutableCollection<String> localPQLs = LocalBackupInformationAccess.getLocalPQL(sharedQueryId);
-			sharedQueryId.toString();
-			for (String localPQL : localPQLs) {
-				for (ILogicalQuery logicalQuery : RecoveryHelper.convertToLogicalQueries(localPQL)) {
-					for (ILogicalOperator logicalOp : LogicalQueryHelper.getAllOperators(logicalQuery.getLogicalPlan())) {
-						if (logicalOp instanceof JxtaReceiverAO) {
-							if (((JxtaReceiverAO) logicalOp).getPipeID().equals(pipeId.toString())) {
-								// This is the information we search for
-								IRecoveryBackupInformation updatedInfo = LocalBackupInformationAccess.updateLocalPQL(sharedQueryId, localPQL, newBackupPQL);
-								
-								// Distribute to other peers
-								IRecoveryBackupInformation infoToDistribute = new BackupInformation();
-								infoToDistribute.setSharedQuery(updatedInfo.getSharedQuery());
-								infoToDistribute.setAboutPeer(RecoveryCommunicator.getP2PNetworkManager().get().getLocalPeerID());
-								infoToDistribute.setPQL(updatedInfo.getLocalPQL());
-								
-								recoveryCommunicator.distributeUpdatedBackupInfo(infoToDistribute);
-								
-							}
-						}
-					}
-				}
+		if (!Strings.isNullOrEmpty(newBackupPQL)) {
+			List<IRecoveryBackupInformation> infosToDistribute = RecoveryHelper.updateLocalPQL(newBackupPQL, pipeId,
+					sharedQueryId);
+			for (IRecoveryBackupInformation backupInfo : infosToDistribute) {
+				recoveryCommunicator.distributeUpdatedBackupInfo(backupInfo);
 			}
 		}
-		
+
 	}
 
 	private static void beBuddy(PeerID sender, ID sharedQueryId, List<String> pqls) {
