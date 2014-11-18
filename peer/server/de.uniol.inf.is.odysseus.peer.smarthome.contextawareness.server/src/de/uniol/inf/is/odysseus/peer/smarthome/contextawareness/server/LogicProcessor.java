@@ -180,6 +180,10 @@ public class LogicProcessor implements ISmartDeviceDictionaryListener {
 									+ logicRule.getActivityName()+" sensorPeerName:"+activityInterpreter.getSensor().getSmartDevice().getPeerName()
 									);
 							
+							String activitySourceName = activityInterpreter
+									.getActivitySourceName();
+							logicRule.addActivitySourceName(activitySourceName);
+							
 							map.put(activityInterpreter, logicRule);
 						}
 					}
