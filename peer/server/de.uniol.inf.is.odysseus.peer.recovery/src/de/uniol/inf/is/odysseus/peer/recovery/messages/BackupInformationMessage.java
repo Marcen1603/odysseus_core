@@ -49,6 +49,9 @@ public class BackupInformationMessage implements IMessage {
 	 */
 	private IRecoveryBackupInformation mInfo = new BackupInformation();
 	
+	/**
+	 * Either {@link #NEW_INFO} or {@link #UPDATE_INFO}.
+	 */
 	private int mMessageType;
 
 	/**
