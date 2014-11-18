@@ -23,62 +23,64 @@ import de.uniol.inf.is.odysseus.peer.loadbalancing.active.movingstate.status.Mov
  * Handles Responses sent by Peers when they finish or fail instructions.
  */
 public class ResponseHandler {
-	
 
 	/**
 	 * The logger instance for this class.
 	 */
-	
+
 	private static final Logger LOG = LoggerFactory
 			.getLogger(ResponseHandler.class);
-	
+
+	/***
+	 * Flag used for Debug purpose: Bypasses State Copy.
+	 */
 	private static boolean DEBUG_BYPASS_STATE_COPY = false;
-	
-	
+
 	/**
 	 * Handles Responses sent by Peers when they finish or fail instructions.
+	 * 
 	 * @param response
 	 * @param senderPeer
 	 */
 	public static void handlePeerResonse(MovingStateResponseMessage response,
 			PeerID senderPeer) {
-		
-		LOG.debug("Got response for lbProcess Id " + response.getLoadBalancingProcessId());
-		
+
+		LOG.debug("Got response for lbProcess Id "
+				+ response.getLoadBalancingProcessId());
+
 		int loadBalancingProcessId = response.getLoadBalancingProcessId();
-		MovingStateMasterStatus status = (MovingStateMasterStatus)LoadBalancingStatusCache
+		MovingStateMasterStatus status = (MovingStateMasterStatus) LoadBalancingStatusCache
 				.getInstance().getStatusForLocalProcess(loadBalancingProcessId);
-		
-		MovingStateCommunicatorImpl communicationListener = MovingStateCommunicatorImpl.getInstance();
+
+		MovingStateCommunicatorImpl communicationListener = MovingStateCommunicatorImpl
+				.getInstance();
 
 		// LoadBalancing Process is no longer active -> ignore!
 		if (status == null) {
 			return;
 		}
 
-		MovingStateMessageDispatcher dispatcher = status
-				.getMessageDispatcher();
+		MovingStateMessageDispatcher dispatcher = status.getMessageDispatcher();
 
 		switch (response.getMsgType()) {
 		case MovingStateResponseMessage.ACK_LOADBALANCING:
 			LOG.debug("Got ACK_LOADBALANCING");
 			if (status.getPhase().equals(
 					MovingStateMasterStatus.LB_PHASES.INITIATING)) {
-				
+
 				status.setVolunteeringPeer(senderPeer);
 				status.setPhase(MovingStateMasterStatus.LB_PHASES.COPYING_QUERY);
 				dispatcher.stopRunningJob();
 
 				ILogicalQueryPart modifiedQueryPart = LoadBalancingHelper
 						.getCopyOfQueryPart(status.getOriginalPart());
-				MovingStateHelper
-						.relinkQueryPart(modifiedQueryPart,status);
+				MovingStateHelper.relinkQueryPart(modifiedQueryPart, status);
 
 				String pqlFromQueryPart = LogicalQueryHelper
 						.generatePQLStatementFromQueryPart(modifiedQueryPart);
 				LOG.debug("Generated PQL Statement:" + pqlFromQueryPart);
 				dispatcher.sendAddQuery(status.getVolunteeringPeer(),
-						pqlFromQueryPart,communicationListener);
+						pqlFromQueryPart, communicationListener);
 			}
 			break;
 
@@ -97,15 +99,16 @@ public class ResponseHandler {
 			break;
 
 		case MovingStateResponseMessage.SUCCESS_DUPLICATE:
-			
+
 			if (status.getPhase().equals(
 					MovingStateMasterStatus.LB_PHASES.RELINKING_SENDERS)) {
 				LOG.debug("Got SUCCESS_DUPLICATE for SENDER");
-				dispatcher.sendPipeSuccessReceivedMsg(senderPeer, response.getPipeID());
+				dispatcher.sendPipeSuccessReceivedMsg(senderPeer,
+						response.getPipeID());
 				dispatcher.stopRunningJob(response.getPipeID());
 				LOG.debug("Stopped JOB " + response.getPipeID());
 				LOG.debug("Jobs left:" + dispatcher.getNumberOfRunningJobs());
-				
+
 				if (dispatcher.getNumberOfRunningJobs() == 0) {
 					// All success messages received. Yay!
 					status.setPhase(LB_PHASES.RELINKING_RECEIVERS);
@@ -113,11 +116,11 @@ public class ResponseHandler {
 					LOG.debug("Status: Relinking Receivers.");
 				}
 			}
-			
-			if (status.getPhase().equals(
-					LB_PHASES.RELINKING_RECEIVERS)) {
+
+			if (status.getPhase().equals(LB_PHASES.RELINKING_RECEIVERS)) {
 				LOG.debug("Got SUCCESS_DUPLICATE for RECEIVER");
-				dispatcher.sendPipeSuccessReceivedMsg(senderPeer, response.getPipeID());
+				dispatcher.sendPipeSuccessReceivedMsg(senderPeer,
+						response.getPipeID());
 				dispatcher.stopRunningJob(response.getPipeID());
 				LOG.debug("Stopped JOB " + response.getPipeID());
 				LOG.debug("Jobs left:" + dispatcher.getNumberOfRunningJobs());
@@ -125,114 +128,126 @@ public class ResponseHandler {
 					// All success messages received. Yay!
 					status.setPhase(LB_PHASES.COPYING_STATES);
 					LOG.debug("INITIATING COPYING STATES");
-					if(DEBUG_BYPASS_STATE_COPY) {
+					if (DEBUG_BYPASS_STATE_COPY) {
 						status.setPhase(LB_PHASES.COPYING_FINISHED);
-						status.getMessageDispatcher().sendFinishedCopyingStates(status.getVolunteeringPeer());
-					}
-					else {
+						status.getMessageDispatcher()
+								.sendFinishedCopyingStates(
+										status.getVolunteeringPeer());
+					} else {
 						MovingStateHelper.initiateStateCopy(status);
 					}
-					//TODO what if no stateful Ops?
+					// TODO what if no stateful Ops?
 				}
 			}
-			
+
 			break;
-			
+
 		case MovingStateResponseMessage.ACK_INIT_STATE_COPY:
 			LOG.debug("Got ACK_INIT_STATE_COPY");
-			if(status.getPhase().equals(LB_PHASES.COPYING_STATES)) {
+			if (status.getPhase().equals(LB_PHASES.COPYING_STATES)) {
 				dispatcher.stopRunningJob(response.getPipeID());
 			}
-			if(dispatcher.getNumberOfRunningJobs()==0) {
+			if (dispatcher.getNumberOfRunningJobs() == 0) {
 				LOG.debug("Sending states.");
-				for(String pipe : status.getAllSenderPipes()) {
+				for (String pipe : status.getAllSenderPipes()) {
 					IStatefulPO operator = status.getOperatorForSender(pipe);
 					try {
 						MovingStateHelper.sendState(pipe, operator);
 					} catch (LoadBalancingException e) {
 						LOG.error("Sending state failed.");
-						//TODO Error Handling
+						// TODO Error Handling
 						e.printStackTrace();
 					}
 				}
-				
+
 			}
 			break;
-		
+
 		case MovingStateResponseMessage.FAILURE_INSTALL_QUERY:
 			LOG.debug("Got FAILURE_INSTALL_QUERY");
-			if(status.getPhase().equals(LB_PHASES.COPYING_QUERY)) {
+			if (status.getPhase().equals(LB_PHASES.COPYING_QUERY)) {
 				dispatcher.sendMsgReceived(senderPeer);
 				LOG.error("Installing Query on remote Peer failed. Aborting.");
-				handleError(status,communicationListener);
+				handleError(status, communicationListener);
 			}
 			break;
-			
+
 		case MovingStateResponseMessage.STATE_COPY_FINISHED:
 			LOG.debug("Got STATE_COPY_FINISHED");
-			if(status.getPhase().equals(LB_PHASES.COPYING_STATES)) {
+			if (status.getPhase().equals(LB_PHASES.COPYING_STATES)) {
 				String pipe = response.getPipeID();
-				MovingStateManager.getInstance().getSender(pipe).setSuccessfullyTransmitted();
-				//TODO What about missing messages?
-				LOG.debug("Unfinished Transmissions:" +status.getNumberOfUnfinishedTransmissions());
-				if(status.getNumberOfUnfinishedTransmissions()==0) {
+				MovingStateManager.getInstance().getSender(pipe)
+						.setSuccessfullyTransmitted();
+				// TODO What about missing messages?
+				LOG.debug("Unfinished Transmissions:"
+						+ status.getNumberOfUnfinishedTransmissions());
+				if (status.getNumberOfUnfinishedTransmissions() == 0) {
 					status.setPhase(LB_PHASES.COPYING_FINISHED);
-					status.getMessageDispatcher().sendFinishedCopyingStates(status.getVolunteeringPeer());
+					status.getMessageDispatcher().sendFinishedCopyingStates(
+							status.getVolunteeringPeer());
 				}
 			}
-		break;
-		
+			break;
+
 		case MovingStateResponseMessage.ACK_ALL_STATE_COPIES_FINISHED:
 			LOG.debug("Got ACK_ALL_STATE_COPIES_FINISHED");
-			if(status.getPhase().equals(LB_PHASES.COPYING_FINISHED)) {
+			if (status.getPhase().equals(LB_PHASES.COPYING_FINISHED)) {
 				status.getMessageDispatcher().stopRunningJob();
 				status.setPhase(LB_PHASES.STOP_BUFFERING);
 				dispatcher.sendMsgReceived(senderPeer);
-				LoadBalancingHelper.cutSendersFromQuery(status.getLogicalQuery());
+				LoadBalancingHelper.cutSendersFromQuery(status
+						.getLogicalQuery());
 				MovingStateHelper.sendStopBufferingToUpstreamPeers(status);
 			}
-		break;
-			
+			break;
+
 		case MovingStateResponseMessage.STOP_BUFFERING_FINISHED:
 			LOG.debug("Got STOP_BUFFERING_FINISHED");
-			if(status.getPhase().equals(LB_PHASES.STOP_BUFFERING)) {
+			if (status.getPhase().equals(LB_PHASES.STOP_BUFFERING)) {
 				dispatcher.stopRunningJob(senderPeer.toString());
 				dispatcher.sendMsgReceived(senderPeer);
-				if(dispatcher.getNumberOfRunningJobs()==0) {
-					//TODO 
+				if (dispatcher.getNumberOfRunningJobs() == 0) {
+					// TODO
 					LoadBalancingHelper.deleteQuery(status.getLogicalQuery());
 					status.setPhase(LB_PHASES.FINISHED);
 					loadBalancingSuccessfullyFinished(status);
 				}
 			}
-		break;
+			break;
 
 		case MovingStateResponseMessage.FAILURE_DUPLICATE_RECEIVER:
 			LOG.debug("Got FAILURE_DUPLICATE_RECEIVER");
-			if(status.getPhase().equals(LB_PHASES.RELINKING_RECEIVERS) || status.getPhase().equals(LB_PHASES.RELINKING_SENDERS) ) {
+			if (status.getPhase().equals(LB_PHASES.RELINKING_RECEIVERS)
+					|| status.getPhase().equals(LB_PHASES.RELINKING_SENDERS)) {
 				dispatcher.sendMsgReceived(senderPeer);
 				LOG.error("Duplicating connections failed. Aborting.");
-				handleError(status,communicationListener);
+				handleError(status, communicationListener);
 			}
 			break;
 		}
 
 	}
-	
+
 	/**
 	 * Decides what to do when error occurs.
+	 * 
 	 * @param status
+	 *            Status
+	 * @param communicationListener
+	 *            Communication Listener
 	 */
-	public static void handleError(MovingStateMasterStatus status,MovingStateCommunicatorImpl communicationListener) {
+	public static void handleError(MovingStateMasterStatus status,
+			MovingStateCommunicatorImpl communicationListener) {
 		MovingStateMessageDispatcher dispatcher = status.getMessageDispatcher();
-		
+
 		// Handle error depending on current LoadBalancing phase.
 		switch (status.getPhase()) {
 		case INITIATING:
 		case COPYING_QUERY:
 			// Send abort only to volunteering Peer
 			dispatcher.stopAllMessages();
-			dispatcher.sendAbortInstruction(status.getVolunteeringPeer(),communicationListener);
+			dispatcher.sendAbortInstruction(status.getVolunteeringPeer(),
+					communicationListener);
 			break;
 		case RELINKING_RECEIVERS:
 		case RELINKING_SENDERS:
@@ -242,8 +257,8 @@ public class ResponseHandler {
 			break;
 		case COPYING_STATES:
 		case STOP_BUFFERING:
-			// New query is already running. 
-			//TODO Go on as if nothing happened?
+			// New query is already running.
+			// TODO Go on as if nothing happened?
 			break;
 		default:
 			break;
@@ -251,17 +266,20 @@ public class ResponseHandler {
 		}
 
 	}
-	
+
 	/**
 	 * Called after LoadBalancing was finished successfully.
-	 * @param status LoadBalancing Status
+	 * 
+	 * @param status
+	 *            LoadBalancing Status
 	 */
-	public static void loadBalancingSuccessfullyFinished(MovingStateMasterStatus status) {
+	public static void loadBalancingSuccessfullyFinished(
+			MovingStateMasterStatus status) {
 		LOG.info("LoadBalancing successfully finished.");
-		LoadBalancingStatusCache.getInstance().deleteLocalStatus(status.getProcessId());
+		LoadBalancingStatusCache.getInstance().deleteLocalStatus(
+				status.getProcessId());
 		MovingStateCommunicatorImpl.getInstance().notifyFinished();
-		
+
 	}
-	
 
 }

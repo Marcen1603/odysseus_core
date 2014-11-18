@@ -11,24 +11,43 @@ import de.uniol.inf.is.odysseus.p2p_new.IMessage;
  */
 public class MovingStateAbortMessage implements IMessage {
 	
+	/**
+	 * Constants used for communication
+	 */
 	public static final int ABORT_INSTRUCTION = 0;
 	public static final int ABORT_RESPONSE = 1;
 
-	/*
+	/**
 	 * ID to identify current load Balancing process (is reused in different stages of negotiation between clients)
 	 */
 	private int loadBalancingProcessId;
+	
+	/***
+	 * Stores MessageType (constants above)
+	 */
 	private int msgType;
 	
-	
+	/***
+	 * Gets message type
+	 * @return Type of Message (one of constants above)
+	 */
 	public int getMsgType() {
 		return msgType;
 	}
 
+	/**
+	 * Sets message type 
+	 * @param msgType Message-Type (one of constants above)
+	 */
 	public void setMsgType(int msgType) {
 		this.msgType = msgType;
 	}
 
+	/**
+	 * Returns an AbortMessage
+	 * @param lbProcessId LoadBalancingProcess Id
+	 * @return AbortMessage with msgType ABORT_INSTRUCTION
+	 */
 	public static MovingStateAbortMessage createAbortInstructionMsg(int lbProcessId){
 		
 		MovingStateAbortMessage message = new MovingStateAbortMessage();
@@ -38,7 +57,12 @@ public class MovingStateAbortMessage implements IMessage {
 		return message;
 	}
 	
-public static MovingStateAbortMessage createAbortResponseMsg(int lbProcessId){
+	/***
+	 * Returns response to an AbortMessage
+	 * @param lbProcessId LoadBalancingProcessId
+	 * @return AbortMessage with MsgType ABORT_RESPONSE
+	 */
+    public static MovingStateAbortMessage createAbortResponseMsg(int lbProcessId){
 		
 		MovingStateAbortMessage message = new MovingStateAbortMessage();
 		

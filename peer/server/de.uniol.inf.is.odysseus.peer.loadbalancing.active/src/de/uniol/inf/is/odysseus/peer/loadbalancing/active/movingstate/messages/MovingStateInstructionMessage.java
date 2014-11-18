@@ -5,13 +5,16 @@ import java.nio.ByteBuffer;
 import de.uniol.inf.is.odysseus.p2p_new.IMessage;
 
 /**
- * Message to which advises Peers to duplicate a particular connection.
+ * Messages sent from Master to slave Peer to instruct slave Peer.
  * 
  * @author Carsten Cordes
  * 
  */
 public class MovingStateInstructionMessage implements IMessage {
 
+	/***
+	 * Constants used to indicate MessageType.
+	 */
 	public static final int INITIATE_LOADBALANCING = 0;
 	public static final int ADD_QUERY = 1;
 	public static final int REPLACE_RECEIVER = 2;
@@ -20,18 +23,35 @@ public class MovingStateInstructionMessage implements IMessage {
 	public static final int INJECT_STATE = 5;
 	public static final int FINISHED_COPYING_STATES = 6;
 	public static final int STOP_BUFFERING = 7;
-
 	public static final int MESSAGE_RECEIVED = 8;
 	public static final int PIPE_SUCCCESS_RECEIVED = 9;
 
 	private int loadBalancingProcessId;
 	private int msgType;
 
+	/**
+	 * PQLQuery for ADD_QUERY Message
+	 */
 	private String PQLQuery;
 
+	/**
+	 * Pipe ID used in different Messages
+	 */
 	private String pipeId;
+
+	/**
+	 * PeerID used i different Messages
+	 */
 	private String peerId;
+
+	/**
+	 * Operator Type used in INITIATE_STATE_COPY Message
+	 */
 	private String operatorType;
+
+	/**
+	 * Operator Index used in INITIATE_STATE_COPY Message
+	 */
 	private int operatorIndex;
 
 	/**
@@ -40,6 +60,19 @@ public class MovingStateInstructionMessage implements IMessage {
 	public MovingStateInstructionMessage() {
 	}
 
+	/***
+	 * Creates initiate state copy Message
+	 * 
+	 * @param lbProcessId
+	 *            LoadBalancing Process ID
+	 * @param pipeID
+	 *            PipeID Used for transmission
+	 * @param operatorType
+	 *            Type of operator (for error handling)
+	 * @param operatorIndex
+	 *            index of Operator in List
+	 * @return Message with MSGType INITIATE_STATE_COPY
+	 */
 	public static MovingStateInstructionMessage createInitiateStateCopyMsg(
 			int lbProcessId, String pipeID, String operatorType,
 			int operatorIndex) {
@@ -52,14 +85,29 @@ public class MovingStateInstructionMessage implements IMessage {
 
 		return message;
 	}
-	
-	public static MovingStateInstructionMessage createFinishedCopyingStatesMsg(int lbProcessId) {
+
+	/***
+	 * Creates Finished Copying States Message
+	 * 
+	 * @param lbProcessId
+	 *            LoadBalancing Process ID
+	 * @return Message with msgType FINISHED_COPYING_STATES
+	 */
+	public static MovingStateInstructionMessage createFinishedCopyingStatesMsg(
+			int lbProcessId) {
 		MovingStateInstructionMessage message = new MovingStateInstructionMessage();
 		message.loadBalancingProcessId = lbProcessId;
 		message.msgType = FINISHED_COPYING_STATES;
 		return message;
 	}
-	
+
+	/***
+	 * creates Initiate LoadBalancing Message
+	 * 
+	 * @param lbProcessId
+	 *            Loadbalancing Process Id
+	 * @return Message with msgType INITIATE_LOADBALANCING
+	 */
 	public static MovingStateInstructionMessage createInitiateMsg(
 			int lbProcessId) {
 		MovingStateInstructionMessage message = new MovingStateInstructionMessage();
@@ -68,6 +116,13 @@ public class MovingStateInstructionMessage implements IMessage {
 		return message;
 	}
 
+	/***
+	 * Creates Message Received message
+	 * 
+	 * @param lbProcessId
+	 *            LoadBalancing Process Id
+	 * @return Message with msgType MESSAGE_RECEIVED
+	 */
 	public static MovingStateInstructionMessage createMessageReceivedMsg(
 			int lbProcessId) {
 		MovingStateInstructionMessage message = new MovingStateInstructionMessage();
@@ -76,6 +131,15 @@ public class MovingStateInstructionMessage implements IMessage {
 		return message;
 	}
 
+	/***
+	 * Creates AddQuery Message
+	 * 
+	 * @param lbProcessId
+	 *            LoadBalancingProcess Id
+	 * @param PQLQuery
+	 *            PQL Query to install
+	 * @return Message with ADD_QUERY msgType
+	 */
 	public static MovingStateInstructionMessage createAddQueryMsg(
 			int lbProcessId, String PQLQuery) {
 		MovingStateInstructionMessage message = new MovingStateInstructionMessage();
@@ -85,6 +149,15 @@ public class MovingStateInstructionMessage implements IMessage {
 		return message;
 	}
 
+	/***
+	 * Create Pipe Received Message
+	 * 
+	 * @param lbProcessId
+	 *            LoadBalancingProcess Id
+	 * @param pipeID
+	 *            PipeID
+	 * @return Message with msgType PIPE_SUCCESS_RECEIVED
+	 */
 	public static MovingStateInstructionMessage createPipeReceivedMsg(
 			int lbProcessId, String pipeID) {
 		MovingStateInstructionMessage message = new MovingStateInstructionMessage();
@@ -94,9 +167,19 @@ public class MovingStateInstructionMessage implements IMessage {
 		return message;
 	}
 
+	/***
+	 * creates Install Buffer and Replace Sender Message
+	 * 
+	 * @param lbProcessId
+	 *            LoadBalancingProcess Id
+	 * @param newPeerId
+	 *            New Peer ID
+	 * @param pipeId
+	 *            Pipe ID to identify Sender
+	 * @return Message with msgType INSTALL_BUFFER_AND_REPLACE_SENDER
+	 */
 	public static MovingStateInstructionMessage createInstallBufferAndReplaceSenderMsg(
-			int lbProcessId, String newPeerId,
-			String pipeId) {
+			int lbProcessId, String newPeerId, String pipeId) {
 		MovingStateInstructionMessage message = new MovingStateInstructionMessage();
 		message.loadBalancingProcessId = lbProcessId;
 		message.pipeId = pipeId;
@@ -105,6 +188,17 @@ public class MovingStateInstructionMessage implements IMessage {
 		return message;
 	}
 
+	/***
+	 * creates Replace Receiver Message
+	 * 
+	 * @param lbProcessId
+	 *            LoadBalancingProcess Id
+	 * @param peerId
+	 *            new PeerID
+	 * @param pipeId
+	 *            pipe ID to identify receiver
+	 * @return Message with msgType REPLACE_RECEIVER
+	 */
 	public static MovingStateInstructionMessage createReplaceReceiverMsg(
 			int lbProcessId, String peerId, String pipeId) {
 		MovingStateInstructionMessage message = new MovingStateInstructionMessage();
@@ -162,15 +256,15 @@ public class MovingStateInstructionMessage implements IMessage {
 			/*
 			 * Allocate byte Buffer: 4 Bytes for integer msgType 4 Bytes for
 			 * integer loadBalancingProcessId 4 Bytes for integer Size of
-			 * oldPipeId 4 Bytes for
-			 * integer Size of newPeerId oldPipeId newPeerId
+			 * oldPipeId 4 Bytes for integer Size of newPeerId oldPipeId
+			 * newPeerId
 			 */
 
 			byte[] oldPipeIdBytes = pipeId.getBytes();
 			byte[] newPeerIdBytes = peerId.getBytes();
 
 			bbsize = 4 + 4 + 4 + 4 + oldPipeIdBytes.length
-					 + newPeerIdBytes.length;
+					+ newPeerIdBytes.length;
 
 			bb = ByteBuffer.allocate(bbsize);
 			bb.putInt(msgType);
@@ -260,17 +354,16 @@ public class MovingStateInstructionMessage implements IMessage {
 
 			this.pipeId = new String(pipeIdAsBytes);
 			this.peerId = new String(peerIdAsBytes);
-			
-			
+
 			break;
-			
+
 		case PIPE_SUCCCESS_RECEIVED:
 			int sizeOfOldPipeId = bb.getInt();
 			byte[] oldPipeIdAsBytes = new byte[sizeOfOldPipeId];
 			bb.get(oldPipeIdAsBytes);
 			this.pipeId = new String(oldPipeIdAsBytes);
 			break;
-			
+
 		case INITIATE_STATE_COPY:
 
 			int pipeIdLength = bb.getInt();
@@ -290,63 +383,146 @@ public class MovingStateInstructionMessage implements IMessage {
 
 	}
 
+	/***
+	 * Gets Loadbalancing Process Id
+	 * 
+	 * @return Load Balancing Process Id
+	 */
 	public int getLoadBalancingProcessId() {
 		return loadBalancingProcessId;
 	}
 
+	/**
+	 * Sets loadBalancing Process Id
+	 * 
+	 * @param loadBalancingProcessId
+	 *            Process Id.
+	 */
 	public void setLoadBalancingProcessId(int loadBalancingProcessId) {
 		this.loadBalancingProcessId = loadBalancingProcessId;
 	}
 
+	/**
+	 * Returngs Message Type
+	 * 
+	 * @return Message Type
+	 */
 	public int getMsgType() {
 		return msgType;
 	}
 
+	/***
+	 * Sets Message Type
+	 * 
+	 * @param msgType
+	 *            Message Type
+	 */
 	public void setMsgType(int msgType) {
 		this.msgType = msgType;
 	}
 
+	/**
+	 * Returns PQL Query
+	 * 
+	 * @return PQL Query
+	 */
 	public String getPQLQuery() {
 		return PQLQuery;
 	}
 
+	/**
+	 * Sets PQL Query
+	 * 
+	 * @param pQLQuery
+	 *            PQL Query
+	 */
 	public void setPQLQuery(String pQLQuery) {
 		PQLQuery = pQLQuery;
 	}
 
+	/**
+	 * Gets Peer ID
+	 * 
+	 * @return peerID
+	 */
 	public String getPeerId() {
 		return peerId;
 	}
 
+	/***
+	 * Sets Peer ID
+	 * 
+	 * @param peerId
+	 *            Peer ID
+	 */
 	public void setPeerId(String peerId) {
 		this.peerId = peerId;
 	}
 
+	/***
+	 * Gets Pipe Id
+	 * 
+	 * @return Pipe ID
+	 */
 	public String getPipeId() {
 		return pipeId;
 	}
 
+	/**
+	 * Sets Pipe ID
+	 * 
+	 * @param pipeId
+	 *            Pipe Id
+	 */
 	public void setPipeId(String pipeId) {
 		this.pipeId = pipeId;
 	}
 
-
+	/***
+	 * Gets operator Type
+	 * 
+	 * @return operator Type
+	 */
 	public String getOperatorType() {
 		return operatorType;
 	}
 
+	/***
+	 * Sets operator Type
+	 * 
+	 * @param operatorType
+	 *            Operator Type
+	 */
 	public void setOperatorType(String operatorType) {
 		this.operatorType = operatorType;
 	}
 
+	/***
+	 * Gets operator index
+	 * 
+	 * @return operator index
+	 */
 	public int getOperatorIndex() {
 		return operatorIndex;
 	}
 
+	/***
+	 * Sets operator index
+	 * 
+	 * @param operatorIndex
+	 *            operator index
+	 */
 	public void setOperatorIndex(int operatorIndex) {
 		this.operatorIndex = operatorIndex;
 	}
 
+	/***
+	 * Create STOP_BUFFERING Message
+	 * 
+	 * @param lbProcessId
+	 *            LoadBalancing Process ID
+	 * @return Message with msgType STOP_BUFFERING
+	 */
 	public static MovingStateInstructionMessage createStopBufferingMsg(
 			int lbProcessId) {
 		MovingStateInstructionMessage message = new MovingStateInstructionMessage();
