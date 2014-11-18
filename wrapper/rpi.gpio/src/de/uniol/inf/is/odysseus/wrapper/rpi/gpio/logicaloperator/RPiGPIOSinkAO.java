@@ -13,7 +13,9 @@ import com.pi4j.io.gpio.PinState;
 import com.pi4j.io.gpio.RaspiGpioProvider;
 import com.pi4j.io.gpio.impl.PinImpl;
 
+import de.uniol.inf.is.odysseus.core.datahandler.TupleDataHandler;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractSenderAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
@@ -23,7 +25,7 @@ import de.uniol.inf.is.odysseus.core.server.util.Constants;
 import de.uniol.inf.is.odysseus.wrapper.rpi.gpio.RPiGPIOPushTransportHandler;
 
 @LogicalOperator(maxInputPorts = 1, minInputPorts = 1, name = "RPIGPIOSINK", doc="Sink for Raspberry Pi GPIO-Port", category={LogicalOperatorCategory.SINK})
-public class RPiGPIOSinkAO extends AbstractSenderAO {
+public class RPiGPIOSinkAO extends AbstractLogicalOperator {
 	private static final Logger LOG = LoggerFactory
 			.getLogger(RPiGPIOSinkAO.class);
 	
@@ -37,11 +39,14 @@ public class RPiGPIOSinkAO extends AbstractSenderAO {
 	}
 
 	private void init() {
-		setTransportHandler(RPiGPIOPushTransportHandler.NAME);
-		setWrapper(Constants.GENERIC_PULL);
-		setProtocolHandler("none");
+		//setTransportHandler(RPiGPIOPushTransportHandler.NAME);
+		//setWrapper(Constants.GENERIC_PUSH);
+		
+		//setProtocolHandler("none");
 		//setDataHandler();
 		//setDataHandler("Tuple");
+		
+		//setDataHandler(new TupleDataHandler().getSupportedDataTypes().get(0));
 	}
 	
 	public RPiGPIOSinkAO(RPiGPIOSinkAO other) {

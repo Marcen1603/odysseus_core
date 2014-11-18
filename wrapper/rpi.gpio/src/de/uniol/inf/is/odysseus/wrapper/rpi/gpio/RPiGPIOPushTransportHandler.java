@@ -85,7 +85,7 @@ public class RPiGPIOPushTransportHandler extends AbstractTransportHandler {
 		case WIN:
 		case MAC:
 		case UNKNOWN:
-			LOG.warn("The RPiGPIOPushTransportHandler works only on the raspberry pi with linux and the pi4j library!");
+			LOG.warn("The RPiGPIOPushTransportHandler works only on raspberry pi with linux and pi4j library!");
 			return;
 		default:
 			break;

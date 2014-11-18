@@ -28,14 +28,15 @@ public class RPiGPIOSinkPO extends AbstractSink<Tuple<?>> {
 	private boolean flagExceptionProcessNext = false;
 	private PinState pinState;
 	private boolean messageWasShownTupleLedNUll = false;
-	private int pinStateIndex;
+	private int pinStateIndex=-1;
 	private OS os;
+	private boolean pinStateMessageFlag = false;
 
 	public RPiGPIOSinkPO(SDFSchema s) {
 		initGPIOController();
 		this.schema = s;
 		
-		final SDFAttribute pinStateAttribute = schema.findAttribute("pinState");
+		final SDFAttribute pinStateAttribute = schema.findAttribute("PinState");
         if (pinStateAttribute != null) {
             this.pinStateIndex = schema.indexOf(pinStateAttribute);
         }
@@ -58,6 +59,17 @@ public class RPiGPIOSinkPO extends AbstractSink<Tuple<?>> {
 		setPin(other.pin);
 		setPinState(other.pinState);
 		this.pinStateIndex = other.pinStateIndex;
+
+		initGPIOPins();
+	}
+
+	public RPiGPIOSinkPO(RPiGPIOSinkAO operator, SDFSchema schema) {
+		this.schema = schema;
+		
+		initGPIOController();
+
+		this.pin = operator.getPin2();
+		this.pinState = operator.getPinStatePinState();
 
 		initGPIOPins();
 	}
@@ -91,11 +103,15 @@ public class RPiGPIOSinkPO extends AbstractSink<Tuple<?>> {
 	}
 
 	private void initGPIOPins() {
+		LOG.error("RPiGPIOSinkPO initGPIOPins() pin:"+this.pin);
+
 		if (gpioController == null || !os.equals(OS.NUX)) {
+			
+			
+			
 			return;
 		}
 
-		LOG.error("RPiGPIOSinkPO initGPIOPins() pin:"+this.pin);
 		
 		try {
 			// LOG.error("\n\r ---- pinState:"+pinState.toString()+"\n\r ------");
@@ -114,6 +130,11 @@ public class RPiGPIOSinkPO extends AbstractSink<Tuple<?>> {
 
 	@Override
 	protected void process_next(Tuple<?> tuple, int port) {
+		if(!pinStateMessageFlag){
+			System.out.println("pin:"+this.pin.getAddress()+" pinStateIndex:"+this.pinStateIndex);
+			pinStateMessageFlag =true;
+		}
+		
 		if (tuple == null || this.myLED == null) {
 			if (!messageWasShownTupleLedNUll) {
 				LOG.error("tuple or myLED is null!");
@@ -125,45 +146,23 @@ public class RPiGPIOSinkPO extends AbstractSink<Tuple<?>> {
 		}
 
 		try {
-			@SuppressWarnings("unused")
-			String w = "";
-
 			if (tuple != null) {
-				//TODO: tuple.getAttribute(pinStateIndex);
+				String value;
+				if(this.pinStateIndex>=0){
+					value = tuple.getAttribute(this.pinStateIndex).toString();
+				}else{
+					value = tuple.getAttribute(1).toString();
+				}
 				
 				
-				w += "tuple.size:" + tuple.size();
-				if (tuple.size() > 0) {
-					w += " Att1:" + tuple.getAttribute(0);
-				}
-				if (tuple.size() > 1) {
-					w += " Att2:" + tuple.getAttribute(1);
+				String compareValue = (String) "1";
 
-					// LOG.error("Att:"+tuple.getAttribute(1));
-
-					String value = tuple.getAttribute(1).toString();
-					String compareValue = (String) "1";
-
-					if (value.equals(compareValue)) {
-						this.myLED.high();
-					} else {
-						this.myLED.low();
-					}
-				}
-				if (tuple.size() > 2) {
-					w += " Att3:" + tuple.getAttribute(2);
+				if (value.equals(compareValue)) {
+					this.myLED.high();
+				} else {
+					this.myLED.low();
 				}
 			}
-
-			// LOG.error("process_next port:"+port+" w:"+w);
-
-			// String pin = tuple.getAttribute(0);
-			// String pinState = tuple.getAttribute(1);
-
-			//LOG.debug("pin:"+pin+" pinState:"+pinState);
-
-			// System.out.println("pin:"+pin+" pinState:"+pinState);
-
 		} catch (Exception ex) {
 			if (!flagExceptionProcessNext) {
 				LOG.error(

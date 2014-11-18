@@ -20,7 +20,7 @@ public class TRPiGPIOSinkAORule extends AbstractTransformationRule<RPiGPIOSinkAO
 	public void execute(RPiGPIOSinkAO operator,
 			TransformationConfiguration transformConfig) throws RuleException {
 		try {
-			defaultExecute(operator, new RPiGPIOSinkPO(operator), transformConfig, true, true);
+			defaultExecute(operator, new RPiGPIOSinkPO(operator, operator.getOutputSchema()), transformConfig, true, true);
 		} catch (Exception e) {
 			LOG.error("Exception in TRPiGPIOSinkAORule");
 			throw new RuleException("Could not create RPiGPIOSinkPO", e);
