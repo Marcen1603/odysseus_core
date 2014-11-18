@@ -118,7 +118,7 @@ public class LocalBackupInformationAccess {
 		Set<String> pqls = Sets.newHashSet();
 
 		for (IRecoveryBackupInformation info : cInfoStore.get().get(sharedQueryId)) {
-			if (!Strings.isNullOrEmpty(info.getLocalPQL()))
+			if (!Strings.isNullOrEmpty(info.getPQL()))
 				pqls.add(info.getPQL());
 
 		}
