@@ -386,6 +386,7 @@ public class LocalBackupInformationAccess {
 
 		for (IRecoveryBackupInformation info : cInfoStore.get().get(sharedQueryId)) {
 			if (info.getLocalPQL() != null
+					&& info.getLocationPeer() != null
 					&& info.getLocationPeer()
 							.equals(RecoveryCommunicator.getP2PNetworkManager().get().getLocalPeerID()))
 				pqls.add(info.getLocalPQL());
