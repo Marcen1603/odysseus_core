@@ -231,7 +231,6 @@ public class RecoveryStrategyUpstreamBackup implements IRecoveryStrategy{
 		LOG.debug("Want to start recovery for {}", cPeerDictionary.get().getRemotePeerName(failedPeer));
 
 		// Reallocate each query to another peer
-		// TODO Refactor allocation process
 		
 		for (ID sharedQueryId : cRecoveryDynamicBackup.get().getSharedQueryIdsForRecovery(failedPeer)) {
 			LOG.debug("Have info for {} -> I can do recovery.", cPeerDictionary.get().getRemotePeerName(failedPeer));
@@ -247,6 +246,7 @@ public class RecoveryStrategyUpstreamBackup implements IRecoveryStrategy{
 				LOG.error("No allocator for recovery allocation set.");
 			} else {
 				try {
+					// get a PeerID for allocation
 					allocationMap = cRecoveryDynamicBackup.get().allocateToNewPeer(failedPeer, sharedQueryId, cRecoveryAllocator.get());
 					if(allocationMap.values() != null){
 						LOG.debug("Peer ID for recovery allocation found.");
@@ -259,6 +259,7 @@ public class RecoveryStrategyUpstreamBackup implements IRecoveryStrategy{
 					LOG.error("Peer ID search for recovery allocation failed.");
 				}
 			}
+			// use the found PeerID
 			for(PeerID pid : allocationMap.values()){
 				cRecoveryDynamicBackup.get().determineAndSendHoldOnMessages(sharedQueryId, failedPeer);
 

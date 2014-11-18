@@ -453,12 +453,11 @@ public class RecoveryDynamicBackup implements IRecoveryDynamicBackup {
 			
 		}
 
-		// Test: Tell the peers which sent tuples to the failed peer that
-		// they have to hold on
+		// Get the logical query for the pql statement and convert it to query parts for allocation
 		ImmutableSet<String> backupPQL = LocalBackupInformationAccess.getStoredPQLStatements(sharedQueryId, failedPeer);
 		for (String pql : backupPQL) {
 			List<ILogicalQuery> logicalQueries = RecoveryHelper.convertToLogicalQueries(pql);			
-			// Search for the receiver
+			// allocate the query
 			for (ILogicalQuery query : logicalQueries) {
 				ILogicalQueryPart queryPart = new LogicalQueryPart(LogicalQueryHelper.getAllOperators(query));
 				ImmutableCollection<ILogicalQueryPart> queryParts = ImmutableList.copyOf(Lists.newArrayList(queryPart));
