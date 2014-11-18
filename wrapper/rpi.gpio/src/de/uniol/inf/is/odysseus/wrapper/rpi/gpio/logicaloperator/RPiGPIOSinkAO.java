@@ -20,7 +20,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Paramete
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IntegerParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
 import de.uniol.inf.is.odysseus.core.server.util.Constants;
-import de.uniol.inf.is.odysseus.wrapper.rpi.gpio.RPiGPIOTransportHandler;
+import de.uniol.inf.is.odysseus.wrapper.rpi.gpio.RPiGPIOPushTransportHandler;
 
 @LogicalOperator(maxInputPorts = 1, minInputPorts = 1, name = "RPIGPIOSINK", doc="Sink for Raspberry Pi GPIO-Port", category={LogicalOperatorCategory.SINK})
 public class RPiGPIOSinkAO extends AbstractSenderAO {
@@ -37,7 +37,7 @@ public class RPiGPIOSinkAO extends AbstractSenderAO {
 	}
 
 	private void init() {
-		setTransportHandler(RPiGPIOTransportHandler.NAME);
+		setTransportHandler(RPiGPIOPushTransportHandler.NAME);
 		setWrapper(Constants.GENERIC_PULL);
 		setProtocolHandler("none");
 		//setDataHandler();

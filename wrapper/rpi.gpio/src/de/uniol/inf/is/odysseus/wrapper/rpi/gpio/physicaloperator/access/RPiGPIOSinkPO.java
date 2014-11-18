@@ -15,6 +15,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSink;
 import de.uniol.inf.is.odysseus.wrapper.rpi.gpio.OSInvestigator;
+import de.uniol.inf.is.odysseus.wrapper.rpi.gpio.OSInvestigator.OS;
 import de.uniol.inf.is.odysseus.wrapper.rpi.gpio.logicaloperator.RPiGPIOSinkAO;
 
 public class RPiGPIOSinkPO extends AbstractSink<Tuple<?>> {
@@ -28,6 +29,7 @@ public class RPiGPIOSinkPO extends AbstractSink<Tuple<?>> {
 	private PinState pinState;
 	private boolean messageWasShownTupleLedNUll = false;
 	private int pinStateIndex;
+	private OS os;
 
 	public RPiGPIOSinkPO(SDFSchema s) {
 		initGPIOController();
@@ -55,6 +57,7 @@ public class RPiGPIOSinkPO extends AbstractSink<Tuple<?>> {
 
 		setPin(other.pin);
 		setPinState(other.pinState);
+		this.pinStateIndex = other.pinStateIndex;
 
 		initGPIOPins();
 	}
@@ -67,7 +70,7 @@ public class RPiGPIOSinkPO extends AbstractSink<Tuple<?>> {
 		LOG.debug("RPiGPIOSinkPO init()");
 
 		try {
-			OSInvestigator.OS os = OSInvestigator.getCurrentOS();
+			os = OSInvestigator.getCurrentOS();
 
 			switch (os) {
 			case NUX:
@@ -88,7 +91,7 @@ public class RPiGPIOSinkPO extends AbstractSink<Tuple<?>> {
 	}
 
 	private void initGPIOPins() {
-		if (gpioController == null) {
+		if (gpioController == null || !os.equals(OS.NUX)) {
 			return;
 		}
 

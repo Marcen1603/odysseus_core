@@ -24,6 +24,7 @@ import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.AbstractTransportHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandler;
+import de.uniol.inf.is.odysseus.wrapper.rpi.gpio.OSInvestigator.OS;
 
 public class RPiGPIOPushTransportHandler extends AbstractTransportHandler {
 	private static final Logger LOG = LoggerFactory
@@ -77,6 +78,19 @@ public class RPiGPIOPushTransportHandler extends AbstractTransportHandler {
 	}
 
 	private void init() {
+		OS os = OSInvestigator.getCurrentOS();
+
+		switch (os) {
+		case NUX: break;
+		case WIN:
+		case MAC:
+		case UNKNOWN:
+			LOG.warn("The RPiGPIOPushTransportHandler works only on the raspberry pi with linux and the pi4j library!");
+			return;
+		default:
+			break;
+		}
+		
 		initIfNeeded();
 
 		myButton.addListener(new GpioPinListenerDigital() {
