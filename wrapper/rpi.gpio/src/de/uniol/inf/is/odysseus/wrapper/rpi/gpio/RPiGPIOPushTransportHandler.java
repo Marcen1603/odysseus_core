@@ -30,7 +30,6 @@ public class RPiGPIOPushTransportHandler extends AbstractTransportHandler {
 			.getLogger(RPiGPIOPushTransportHandler.class);
 
 	public static final String NAME = "RPiGPIOPush";
-
 	private static final String PINNUMBER = "pin";
 
 	// Example PushTransportHandler: OPCDATransportHandler<T>
@@ -41,7 +40,6 @@ public class RPiGPIOPushTransportHandler extends AbstractTransportHandler {
 	private boolean flagExceptionThrown;
 
 	private boolean getOutputStreamFlag = false;
-
 	private boolean getInputStreamFlag = false;
 
 	@Override
@@ -63,7 +61,7 @@ public class RPiGPIOPushTransportHandler extends AbstractTransportHandler {
 	private void setPinNumber(String pinNumber) {
 		Integer pinInteger = Integer.parseInt(pinNumber);
 
-		LOG.error("setPinNumber");
+		LOG.error("setPinNumber:"+pinNumber);
 
 		if (pinInteger.intValue() == 1) {
 			this.pin = new PinImpl(RaspiGpioProvider.NAME,
@@ -145,30 +143,40 @@ public class RPiGPIOPushTransportHandler extends AbstractTransportHandler {
 
 	@Override
 	public void processInOpen() throws IOException {
-		LOG.debug("processInOpen");
+		LOG.error("processInOpen");
+		
+		
 	}
 
 	@Override
 	public void processOutOpen() throws IOException {
-		LOG.debug("processOutOpen");
+		LOG.error("processOutOpen");
+		
+		
 	}
 
 	@Override
 	public void processInClose() throws IOException {
-		LOG.debug("processInClose");
+		LOG.error("processInClose");
 	}
 
 	@Override
 	public void processOutClose() throws IOException {
-		LOG.debug("processOutClose");
+		LOG.error("processOutClose");
 	}
 
 	@Override
 	public void send(byte[] message) throws IOException {
 		LOG.error("send message:" + message.length);
-
-		Long number = Long.parseLong(new String(message));
+		
+		String messageString = new String(message);
+		
+		LOG.error("send messageString:" + messageString);
+		
+		Long number = Long.parseLong(messageString);
 		LOG.error("send number:" + number);
+		
+		
 	}
 
 	@Override
