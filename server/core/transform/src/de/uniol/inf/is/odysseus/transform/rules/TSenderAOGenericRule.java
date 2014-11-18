@@ -24,6 +24,8 @@ import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.collection.Resource;
 import de.uniol.inf.is.odysseus.core.datahandler.DataHandlerRegistry;
 import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
+import de.uniol.inf.is.odysseus.core.infoservice.InfoService;
+import de.uniol.inf.is.odysseus.core.infoservice.InfoServiceFactory;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.ProtocolHandlerRegistry;
@@ -48,8 +50,11 @@ import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
  */
 public class TSenderAOGenericRule extends
 		AbstractTransformationRule<AbstractSenderAO> {
+	
 	static Logger LOG = LoggerFactory.getLogger(TSenderAOGenericRule.class);
-
+	static final InfoService INFOSERVICE = InfoServiceFactory.getInfoService(TSenderAOGenericRule.class);
+	
+	
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -113,7 +118,7 @@ public class TSenderAOGenericRule extends
 
 		List<String> unusedOptions = options.getUnreadOptions();
 		if (!unusedOptions.isEmpty()) {
-			LOG.warn("The following options where not used in translation "
+			INFOSERVICE.warning("The following options where not used in translation "
 					+ unusedOptions);
 		}
 

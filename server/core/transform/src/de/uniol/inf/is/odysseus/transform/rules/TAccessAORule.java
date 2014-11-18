@@ -153,7 +153,7 @@ public class TAccessAORule extends AbstractTransformationRule<AbstractAccessAO> 
 			}
 			List<String> unusedOptions = options.getUnreadOptions();
 			if (unusedOptions.size() > 0) {
-				LOG.warn("The following options where not used in translation "
+				infoService.warning("The following options where not used in translation "
 						+ unusedOptions);
 			}
 
