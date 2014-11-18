@@ -112,8 +112,10 @@ public class TSenderAOGenericRule extends
 		}
 
 		List<String> unusedOptions = options.getUnreadOptions();
-		LOG.warn("The following options where not used in translation "
-				+ unusedOptions);
+		if (!unusedOptions.isEmpty()) {
+			LOG.warn("The following options where not used in translation "
+					+ unusedOptions);
+		}
 
 		defaultExecute(operator, senderPO, config, true, true);
 	}
