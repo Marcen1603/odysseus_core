@@ -29,6 +29,8 @@ public class RPiGPIOPushTransportHandler extends AbstractTransportHandler {
 	private static final Logger LOG = LoggerFactory
 			.getLogger(RPiGPIOPushTransportHandler.class);
 
+	public static final String NAME = "RPiGPIOPush";
+
 	private static final String PINNUMBER = "pin";
 
 	// Example PushTransportHandler: OPCDATransportHandler<T>
@@ -37,6 +39,10 @@ public class RPiGPIOPushTransportHandler extends AbstractTransportHandler {
 	private GpioController gpioController;
 	private GpioPinDigitalInput myButton;
 	private boolean flagExceptionThrown;
+
+	private boolean getOutputStreamFlag = false;
+
+	private boolean getInputStreamFlag = false;
 
 	@Override
 	public ITransportHandler createInstance(
@@ -47,6 +53,7 @@ public class RPiGPIOPushTransportHandler extends AbstractTransportHandler {
 			tHandler.setPinNumber(options.get(PINNUMBER));
 		}
 
+		// init for input:
 		tHandler.init();
 		protocolHandler.setTransportHandler(tHandler);
 
@@ -123,45 +130,64 @@ public class RPiGPIOPushTransportHandler extends AbstractTransportHandler {
 	private void initIfNeeded() {
 		if (gpioController == null) {
 			gpioController = GpioFactory.getInstance();
-			if (myButton == null) {
-				myButton = gpioController.provisionDigitalInputPin(this.pin,
-						"MyButton");
-			}
+		}
+
+		if (myButton == null) {
+			myButton = gpioController.provisionDigitalInputPin(this.pin,
+					"MyButton");
 		}
 	}
 
 	@Override
 	public String getName() {
-		return "RPiGPIOPush";
+		return NAME;
 	}
 
 	@Override
 	public void processInOpen() throws IOException {
+		LOG.debug("processInOpen");
 	}
 
 	@Override
 	public void processOutOpen() throws IOException {
+		LOG.debug("processOutOpen");
 	}
 
 	@Override
 	public void processInClose() throws IOException {
+		LOG.debug("processInClose");
 	}
 
 	@Override
 	public void processOutClose() throws IOException {
+		LOG.debug("processOutClose");
 	}
 
 	@Override
 	public void send(byte[] message) throws IOException {
+		LOG.error("send message:" + message.length);
+
+		Long number = Long.parseLong(new String(message));
+		LOG.error("send number:" + number);
 	}
 
 	@Override
 	public InputStream getInputStream() {
+		if (!getInputStreamFlag) {
+			LOG.debug("getInputStream");
+			getInputStreamFlag = true;
+		}
+
 		return null;
 	}
 
 	@Override
 	public OutputStream getOutputStream() {
+		if (!getOutputStreamFlag) {
+			LOG.debug("getOutputStream");
+			getOutputStreamFlag = true;
+		}
+
 		return null;
 	}
 

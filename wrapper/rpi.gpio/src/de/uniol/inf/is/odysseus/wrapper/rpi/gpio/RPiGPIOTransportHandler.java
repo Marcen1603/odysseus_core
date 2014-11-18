@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.wrapper.rpi.gpio;
 
+import java.io.IOException;
 import java.util.EnumSet;
 
 import org.slf4j.Logger;
@@ -189,5 +190,14 @@ public class RPiGPIOTransportHandler extends
 	public boolean isSemanticallyEqualImpl(ITransportHandler other) {
 		return false;
 	}
-
+	
+	@Override
+	public void send(byte[] message) throws IOException
+	{
+		
+		LOG.debug("send: message.length"+message.length);
+		
+		
+	}
+	
 }
