@@ -9,8 +9,6 @@ import org.slf4j.LoggerFactory;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
-import de.uniol.inf.is.odysseus.core.metadata.IStreamable;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.QueryParseException;
 import de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.horizontal.physicaloperator.AbstractFragmentPO;
 import de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.horizontal.range.logicaloperator.RangeFragmentAO;
@@ -66,29 +64,9 @@ public class RangeFragmentPO<T extends IStreamObject<IMetaAttribute>>
 		
 	}
 
-	/**
-	 * Constructs a new {@link RangeFragmentPO} as a copy of an existing one.
-	 * @param fragmentPO The {@link RangeFragmentPO} to be copied.
-	 */
-	public RangeFragmentPO(RangeFragmentPO<T> fragmentPO) {
-		
-		super(fragmentPO);
-		
-		this.attributeIndex = fragmentPO.attributeIndex;
-		this.ranges = fragmentPO.ranges;
-		this.numericRanges = fragmentPO.numericRanges;
-		
-	}
 	
 	@Override
-	public AbstractPipe<T, T> clone() {
-		
-		return new RangeFragmentPO<T>(this);
-		
-	}
-	
-	@Override
-	protected int route(IStreamable object) {
+	protected int route(IStreamObject<IMetaAttribute> object) {
 		
 		// XXX Only for tuple M.B.
 		
@@ -96,7 +74,6 @@ public class RangeFragmentPO<T extends IStreamObject<IMetaAttribute>>
 		
 		if(object instanceof Tuple) {
 			
-			@SuppressWarnings("unchecked")
 			Tuple<IMetaAttribute> tuple = (Tuple<IMetaAttribute>) object;
 			
 			for(int rangeNo = 0; rangeNo < this.ranges.size(); rangeNo++) {

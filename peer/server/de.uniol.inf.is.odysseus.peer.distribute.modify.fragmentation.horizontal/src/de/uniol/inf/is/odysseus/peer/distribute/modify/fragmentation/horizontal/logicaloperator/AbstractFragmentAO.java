@@ -5,6 +5,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOpera
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnaryLogicalOp;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.GetParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IntegerParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.LongParameter;
 
 /**
@@ -20,6 +21,11 @@ public abstract class AbstractFragmentAO extends UnaryLogicalOp {
 	 * The number of fragments.
 	 */
 	private long numFragments;
+	
+	/**
+	 * The heartbeatrate 
+	 */
+	private int heartbeatrate = 10;;
 	
 	/**
 	 * Constructs a new {@link AbstractFragmentAO}.
@@ -64,7 +70,15 @@ public abstract class AbstractFragmentAO extends UnaryLogicalOp {
 		
 		this.numFragments = numFragments;
 		this.addParameterInfo("FRAGMENTS", numFragments);
-		
+	}
+	
+	@Parameter(type = IntegerParameter.class, name ="Heartbeatreate", optional = true, doc ="Send heartbeats to all other ports. Default is 10")
+	public void setHeartbeatrate(int heartbeatrate) {
+		this.heartbeatrate = heartbeatrate;
+	}
+	
+	public int getHeartbeatrate() {
+		return heartbeatrate;
 	}
 	
 	@Override

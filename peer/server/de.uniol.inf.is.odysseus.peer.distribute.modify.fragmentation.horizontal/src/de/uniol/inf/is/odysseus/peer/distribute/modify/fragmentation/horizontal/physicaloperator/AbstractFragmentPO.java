@@ -18,16 +18,19 @@ import de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.horizontal.
  * {@link AbstractFragmentAO}.
  * 
  * @author Michael Brand
+ * @author Marco Grawunder
  */
-public abstract class AbstractFragmentPO<T extends IStreamObject<IMetaAttribute>> extends AbstractPipe<T, T> {
+public abstract class AbstractFragmentPO<T extends IStreamObject<IMetaAttribute>>
+		extends AbstractPipe<T, T> {
 
-	private static final Logger log = LoggerFactory.getLogger(AbstractFragmentPO.class);
-	
+	private static final Logger log = LoggerFactory
+			.getLogger(AbstractFragmentPO.class);
+
 	/**
 	 * The rate heartbeats are send.
 	 */
-	private final int heartbeatRate = 10;
-	
+	private final int heartbeatRate;
+
 	/**
 	 * The current amount of heartbeats.
 	 */
@@ -50,24 +53,8 @@ public abstract class AbstractFragmentPO<T extends IStreamObject<IMetaAttribute>
 		super();
 		this.numFragments = (int) fragmentAO.getNumberOfFragments();
 		this.heartbeatCounter = new int[this.numFragments];
-
+		this.heartbeatRate = fragmentAO.getHeartbeatrate();
 	}
-
-	/**
-	 * Constructs a new {@link AbstractFragmentPO} as a copy of an existing one.
-	 * 
-	 * @param fragmentPO
-	 *            The {@link AbstractFragmentPO} to be copied.
-	 */
-	public AbstractFragmentPO(AbstractFragmentPO<T> fragmentPO) {
-
-		super(fragmentPO);
-		this.numFragments = fragmentPO.numFragments;
-
-	}
-
-	@Override
-	public abstract AbstractPipe<T, T> clone();
 
 	@Override
 	public OutputMode getOutputMode() {
@@ -80,37 +67,52 @@ public abstract class AbstractFragmentPO<T extends IStreamObject<IMetaAttribute>
 	@SuppressWarnings("unchecked")
 	protected void process_next(T object, int port) {
 		int outPort = this.route(object);
-		AbstractFragmentPO.log.debug("Routed " + object + " to output port " + outPort);
+		AbstractFragmentPO.log.debug("Routed " + object + " to output port "
+				+ outPort);
 		this.transfer(object, outPort);
 
-		sendHeartbeats(outPort, ((IStreamObject<? extends ITimeInterval>) object).getMetadata().getStart());
+		sendHeartbeats(outPort,
+				((IStreamObject<? extends ITimeInterval>) object).getMetadata()
+						.getStart());
 	}
 
 	@Override
 	public void processPunctuation(IPunctuation punctuation, int port) {
 
-		int outPort = this.route(punctuation);
-		AbstractFragmentPO.log.debug("Routed " + punctuation + " to output port " + outPort);
-		this.sendPunctuation(punctuation, outPort);
-
-		sendHeartbeats(outPort, punctuation.getTime());
-		
+		// Send punctuations to all fragments!
+		for (int outPort = 0; outPort < numFragments; outPort++) {
+			AbstractFragmentPO.log.debug("Routed " + punctuation
+					+ " to output port " + outPort);
+			this.sendPunctuation(punctuation, outPort);
+		}
 	}
 
 	/**
-	 * Send heartbeats in order to communicate the temporal advance to all ports.
-	 * @param exceptionPort The port, where the current element is routed. There will no heartbeat send.
-	 * @param currentPoT The {@link PointInTime} of the current element.
+	 * Send heartbeats in order to communicate the temporal advance to all
+	 * ports.
+	 * 
+	 * @param exceptionPort
+	 *            The port, where the current element is routed. There will no
+	 *            heartbeat send.
+	 * @param currentPoT
+	 *            The {@link PointInTime} of the current element.
 	 */
 	private void sendHeartbeats(int exceptionPort, PointInTime currentPoT) {
-		
+
 		final Heartbeat heartbeat = Heartbeat.createNewHeartbeat(currentPoT);
-		
-		for(int p = 0; p < this.numFragments; p++) {
-			
-			if(p != exceptionPort && ++this.heartbeatCounter[p] % this.heartbeatRate != 0)
-				this.sendPunctuation(heartbeat, p);
-			
+
+		for (int p = 0; p < this.numFragments; p++) {
+
+			if (p != exceptionPort){
+				
+				if (heartbeatCounter[p] < heartbeatRate){
+					heartbeatCounter[p]++;
+				}else{
+					this.sendPunctuation(heartbeat, p);
+					heartbeatCounter[p] = 0;
+				}
+			}
+
 		}
 	}
 
@@ -121,6 +123,6 @@ public abstract class AbstractFragmentPO<T extends IStreamObject<IMetaAttribute>
 	 *            The incoming {@link IStreamable} object.
 	 * @return The output port to which <code>object</code> shall be transfered.
 	 */
-	protected abstract int route(IStreamable object);
+	protected abstract int route(IStreamObject<IMetaAttribute> object);
 
 }
