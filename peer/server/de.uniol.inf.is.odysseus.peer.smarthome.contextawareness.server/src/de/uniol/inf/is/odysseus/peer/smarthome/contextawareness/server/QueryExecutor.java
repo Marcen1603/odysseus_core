@@ -301,7 +301,7 @@ public class QueryExecutor implements IP2PDictionaryListener,
 					
 					if(getP2PDictionary().isImported(activityInterpreter.getActivitySourceName())){
 						executeQueryNow(logicRuleQueries);
-						rule.setRunningWith(activityInterpreter);
+						rule.addRunningWith(activityInterpreter);
 					}else{
 						LOG.error("can't execute logicrules, because source is not imported. source name: "+activityInterpreter.getActivitySourceName());
 					}

@@ -108,6 +108,7 @@ public class RPiGPIOActor extends Actor {
 				ActivityInterpreter activityInterpreter) {
 			LinkedHashMap<String, String> map = new LinkedHashMap<>();
 
+			String peerName = activityInterpreter.getSensor().getSmartDevice().getPeerName();
 			String activity = activityInterpreter.getActivityName();
 			String activitySourceName = activityInterpreter
 					.getActivitySourceName();
@@ -123,7 +124,7 @@ public class RPiGPIOActor extends Actor {
 			// fieldDevice.getName()
 			// and listen for the activity: "hot"
 			String activityImportedName = getNameCombination(
-					"Activity_imported", activity);
+					"Activity_imported", activity, peerName);
 			StringBuilder activityImport = activityImportedStream(
 					activityImportedName, activitySourceName);
 
@@ -132,14 +133,14 @@ public class RPiGPIOActor extends Actor {
 			// 2. create configuration of the actor, how it will be set if
 			// the fieldDevice.getName() is participating at the activity:
 			String actorConfigIfParticipateActivity = getNameCombination(
-					"Config", activity);
+					"Config", activity, peerName);
 			StringBuilder sbConfig = actorConfigIfParticipateActivity(activity,
 					actorConfigIfParticipateActivity);
 
 			map.put(actorConfigIfParticipateActivity, sbConfig.toString());
 
 			String setConfigStreamName = getNameCombination("SetActor",
-					activity);
+					activity, peerName);
 			StringBuilder sbSetConfig = entityConfigStream(
 					actorConfigIfParticipateActivity, setConfigStreamName,
 					activitySourceName);
@@ -149,7 +150,7 @@ public class RPiGPIOActor extends Actor {
 			// InputSchema: schema=[['PinNumber', 'String'],['PinState',
 			// 'String']]
 			String entitySetStateStreamName = getNameCombination(getName(),
-					activity);
+					activity, peerName);
 			StringBuilder sbEntitySetState = entitySetStateStream(
 					setConfigStreamName, entitySetStateStreamName);
 

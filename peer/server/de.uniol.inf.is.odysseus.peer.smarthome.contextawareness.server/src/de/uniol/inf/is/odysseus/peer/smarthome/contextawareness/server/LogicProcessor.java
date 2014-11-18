@@ -175,14 +175,19 @@ public class LogicProcessor implements ISmartDeviceDictionaryListener {
 					for (LogicRule logicRule : localActor.getLogicRules()) {
 						if (activityInterpreter.getActivityName().equals(
 								logicRule.getActivityName())) {
-							LOG.debug("activityInterpreter,logicRule activityName:"
-									+ logicRule.getActivityName());
+							
+							LOG.debug("activityInterpreter:"+activityInterpreter.getActivityName()+" logicRuleActivityName:"
+									+ logicRule.getActivityName()+" sensorPeerName:"+activityInterpreter.getSensor().getSmartDevice().getPeerName()
+									);
+							
 							map.put(activityInterpreter, logicRule);
 						}
 					}
 				}
 			}
 		}
+		
+		LOG.debug("map.size():"+map.size());
 	}
 
 	private void removeRelevantLogicRules(ASmartDevice removedSmartDevice) {
@@ -234,29 +239,32 @@ public class LogicProcessor implements ISmartDeviceDictionaryListener {
 
 	private void executeRelatedLogicRules(ASmartDevice newSmartDevice) {
 		LOG.debug("executeRelatedLogicRules:" + newSmartDevice.getPeerName());
+		
 		for (Actor localActor : SmartDeviceServer.getInstance()
 				.getLocalSmartDevice().getConnectedActors()) {
-			for (LogicRule rule : localActor.getLogicRules()) {
-				for (String activitySourceNameLogicRule : rule
+			for (LogicRule localRule : localActor.getLogicRules()) {
+				for (String activitySourceNameLogicRule : localRule
 						.getActivitySourceNameList()) {
-					for (Sensor sensor : newSmartDevice.getConnectedSensors()) {
-						for (ActivityInterpreter activityInterpreter : sensor
+					for (Sensor remoteSensor : newSmartDevice.getConnectedSensors()) {
+						for (ActivityInterpreter remoteActivityInterpreter : remoteSensor
 								.getActivityInterpreters()) {
-							if (activityInterpreter.getActivitySourceName()
+							if (remoteActivityInterpreter.getActivitySourceName()
 									.equals(activitySourceNameLogicRule)) {
 								// match: logicRule with ActivityInterpreter
 
 								// Add activityInterpreter and this adds
 								// activitySourceName to LogicRule:
-								rule.addActivityInterpreter(activityInterpreter);
+								localRule.addActivityInterpreter(remoteActivityInterpreter);
 
+								
+								//LOG.debug("");
 								QueryExecutor
 										.getInstance()
 										.executeQueriesAsync(
-												rule,
-												activityInterpreter,
-												rule.getLogicRuleQueries(activityInterpreter),
-												activityInterpreter
+												localRule,
+												remoteActivityInterpreter,
+												localRule.getLogicRuleQueries(remoteActivityInterpreter),
+												remoteActivityInterpreter
 														.getActivitySourceName());
 
 							}

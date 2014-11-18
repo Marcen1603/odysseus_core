@@ -89,7 +89,7 @@ public abstract class LogicRule implements Serializable {
 		return activityInterpreterList;
 	}
 
-	protected String getNameCombination(String name, String activity) {
+	protected String getNameCombination(String name, String activity, String peerName) {
 		StringBuilder n = new StringBuilder();
 		if (getPrefix() != null && !getPrefix().equals("")) {
 			n.append(getPrefix() + "_");
@@ -100,7 +100,9 @@ public abstract class LogicRule implements Serializable {
 		}
 		
 		//TODO: append ActivityInterpreterName or something to identify the source!?
-		
+		if (peerName!=null && !peerName.equals("")) {
+			n.append("source_"+peerName+"_");
+		}
 		
 		n.append(activity + "_" + name);
 
@@ -111,7 +113,7 @@ public abstract class LogicRule implements Serializable {
 		return n.toString();
 	}
 
-	public void setRunningWith(ActivityInterpreter activityInterpreter) {
+	public void addRunningWith(ActivityInterpreter activityInterpreter) {
 		if (!getActivityInterpretersWithRunningRules().contains(activityInterpreter)) {
 			getActivityInterpretersWithRunningRules().add(activityInterpreter);
 		}
