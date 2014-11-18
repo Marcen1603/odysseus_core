@@ -106,13 +106,6 @@ public class RPiGPIOPushTransportHandler extends AbstractTransportHandler {
 	private void startRepeatedTestValues() {
 		LOG.debug("startRepeatedTestValues");
 
-		@SuppressWarnings("rawtypes")
-		Tuple<?> tuple = new Tuple(2, false);
-		tuple.setAttribute(0, "pinNumber7");
-		tuple.setAttribute(1, 0);
-
-		fireProcess(tuple);
-
 		Thread t = new Thread(new Runnable() {
 			@Override
 			public void run() {
@@ -160,6 +153,8 @@ public class RPiGPIOPushTransportHandler extends AbstractTransportHandler {
 
 		switch (os) {
 		case NUX:
+			fireButtonState();
+			
 			myButton.addListener(new GpioPinListenerDigital() {
 				@Override
 				public void handleGpioPinDigitalStateChangeEvent(
@@ -170,51 +165,61 @@ public class RPiGPIOPushTransportHandler extends AbstractTransportHandler {
 
 					// LOG.debug("init with pin:" + pin.toString());
 
-					@SuppressWarnings("rawtypes")
-					Tuple<?> tuple = new Tuple(2, false);
-
-					try {
-						boolean buttonPressed = myButton.isHigh();
-
-						String buttonState = "";
-						if (buttonPressed) {
-							buttonState = "1";
-						} else {
-							buttonState = "0";
-						}
-
-						tuple.setAttribute(0, "pinNumber"
-								+ myButton.getPin().getAddress());
-						tuple.setAttribute(1, Long.parseLong(buttonState));
-						// TODO:
-						// tuple.setAttribute(2, System.currentTimeMillis());
-						// Starttimestamp
-					} catch (ClassCastException ex) {
-						LOG.error(ex.getMessage(), ex);
-					} catch (Exception ex) {
-						if (!flagExceptionThrown) {
-							LOG.error("On Raspberry Pi? pi4j installed? ");
-							flagExceptionThrown = true;
-						}
-
-						tuple.setAttribute(0, "pinNumber7");
-						tuple.setAttribute(1, 1);
-					}
-
-					fireProcess(tuple);
+					fireButtonState();
 				}
 			});
 			break;
 		case WIN:
 		case MAC:
 		case UNKNOWN:
-
+			@SuppressWarnings("rawtypes")
+			Tuple<?> tuple = new Tuple(2, false);
+			tuple.setAttribute(0, "pinNumber7");
+			tuple.setAttribute(1, 0);
+			fireProcess(tuple);
+			
 			startRepeatedTestValues();
 			return;
 		default:
 			break;
 		}
 
+	}
+	
+	private void fireButtonState() {
+		@SuppressWarnings("rawtypes")
+		final
+		Tuple<?> tuple = new Tuple(2, false);
+
+		try {
+			boolean buttonPressed = myButton.isHigh();
+
+			String buttonState = "";
+			if (buttonPressed) {
+				buttonState = "1";
+			} else {
+				buttonState = "0";
+			}
+
+			tuple.setAttribute(0, "pinNumber"
+					+ myButton.getPin().getAddress());
+			tuple.setAttribute(1, Long.parseLong(buttonState));
+			// TODO:
+			// tuple.setAttribute(2, System.currentTimeMillis());
+			// Starttimestamp
+		} catch (ClassCastException ex) {
+			LOG.error(ex.getMessage(), ex);
+		} catch (Exception ex) {
+			if (!flagExceptionThrown) {
+				LOG.error("On Raspberry Pi? pi4j installed? ");
+				flagExceptionThrown = true;
+			}
+
+			tuple.setAttribute(0, "pinNumber7");
+			tuple.setAttribute(1, 1);
+		}
+
+		fireProcess(tuple);
 	}
 
 	@Override
@@ -276,4 +281,6 @@ public class RPiGPIOPushTransportHandler extends AbstractTransportHandler {
 	public boolean isSemanticallyEqualImpl(ITransportHandler other) {
 		return false;
 	}
+	
+
 }
