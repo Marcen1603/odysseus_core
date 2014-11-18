@@ -78,8 +78,7 @@ public abstract class AbstractFragmentPO<T extends IStreamObject<IMetaAttribute>
 
 	@Override
 	@SuppressWarnings("unchecked")
-	protected synchronized void process_next(T object, int port) {
-		// DO NOT SYNCHRONIZE ON THIS!
+	protected void process_next(T object, int port) {
 		int outPort = this.route(object);
 		AbstractFragmentPO.log.debug("Routed " + object + " to output port " + outPort);
 		this.transfer(object, outPort);
@@ -88,7 +87,7 @@ public abstract class AbstractFragmentPO<T extends IStreamObject<IMetaAttribute>
 	}
 
 	@Override
-	public synchronized void processPunctuation(IPunctuation punctuation, int port) {
+	public void processPunctuation(IPunctuation punctuation, int port) {
 
 		int outPort = this.route(punctuation);
 		AbstractFragmentPO.log.debug("Routed " + punctuation + " to output port " + outPort);
