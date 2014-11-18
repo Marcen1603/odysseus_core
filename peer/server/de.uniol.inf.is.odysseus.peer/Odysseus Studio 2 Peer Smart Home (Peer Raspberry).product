@@ -19,7 +19,7 @@ http://odysseus.informatik.uni-oldenburg.de/
 
    <launcherArgs>
       <programArgs>-clean -console -debug -nl en -data @noDefault</programArgs>
-      <vmArgs>-Xms1000M -Xmx1000M -XX:+HeapDumpOnOutOfMemoryError -Dpeer.name=Raspberry -Dpeer.group.name=SmartHomeWorld  -Dpi4j.debug=true -Dpeer.autoimport=false -Dpeer.autoexport=false -Dsmartdevice.init.sensors=false -Dsmartdevice.init.actors=false -Dsmartdevice.example.sensors=false -Dsmartdevice.example.actors=false</vmArgs>
+      <vmArgs>-Xms1000M -Xmx1000M -XX:+HeapDumpOnOutOfMemoryError -Dpeer.name=Raspberry -Dpeer.group.name=SmartHomeWorld  -Dpi4j.debug=true -Dpeer.autoimport=false -Dpeer.autoexport=false -Dsmartdevice.init.sensors=false -Dsmartdevice.init.sensors=false -Dsmartdevice.init.actors=true -Dsmartdevice.example.activityinterpreters=false -Dsmartdevice.example.logicrules=false</vmArgs>
       <vmArgsMac>-XstartOnFirstThread -Dorg.eclipse.swt.internal.carbon.smallFonts
       </vmArgsMac>
    </launcherArgs>

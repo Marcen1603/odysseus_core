@@ -178,7 +178,8 @@ public class LogicProcessor implements ISmartDeviceDictionaryListener {
 							
 							LOG.debug("activityInterpreter:"+activityInterpreter.getActivityName()+" logicRuleActivityName:"
 									+ logicRule.getActivityName()+" sensorPeerName:"+activityInterpreter.getSensor().getSmartDevice().getPeerName()
-									);
+									+ " ruleDesc:"+logicRule.getReactionDescription()+" actDesc:"+activityInterpreter.getActivityInterpreterDescription());
+							
 							
 							String activitySourceName = activityInterpreter
 									.getActivitySourceName();

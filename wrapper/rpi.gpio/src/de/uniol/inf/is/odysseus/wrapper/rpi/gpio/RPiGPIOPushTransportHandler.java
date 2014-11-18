@@ -99,7 +99,7 @@ public class RPiGPIOPushTransportHandler extends AbstractTransportHandler {
 			break;
 		}
 
-		initIfNeeded();
+		
 
 	}
 
@@ -149,6 +149,8 @@ public class RPiGPIOPushTransportHandler extends AbstractTransportHandler {
 	public void processInOpen() throws IOException {
 		LOG.debug("processInOpen");
 
+		initIfNeeded();
+		
 		OS os = OSInvestigator.getCurrentOS();
 
 		switch (os) {

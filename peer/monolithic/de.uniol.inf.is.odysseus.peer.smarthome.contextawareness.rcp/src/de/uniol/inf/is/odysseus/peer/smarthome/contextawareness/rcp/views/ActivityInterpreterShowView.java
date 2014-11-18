@@ -49,13 +49,13 @@ public class ActivityInterpreterShowView extends ViewPart {
 		@Override
 		public void fieldDeviceConnected(ASmartDevice sender, FieldDevice device) {
 			if (device instanceof Sensor) {
-				LOG.debug("fieldDeviceConnected Sensor:" + device.getName());
+				LOG.debug("ActivityInterpreterShowView fieldDeviceConnected Sensor:" + device.getName());
 
 			} else if (device instanceof Actor) {
-				LOG.debug("fieldDeviceConnected Actor:" + device.getName());
+				LOG.debug("ActivityInterpreterShowView fieldDeviceConnected Actor:" + device.getName());
 
 			} else {
-				LOG.debug("fieldDeviceConnected device:" + device.getName());
+				LOG.debug("ActivityInterpreterShowView fieldDeviceConnected device:" + device.getName());
 
 			}
 			refresh();

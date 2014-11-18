@@ -395,7 +395,6 @@ public class SmartDeviceServer {
 		////gpioLED10.createLogicRuleWithState("cold", State.OFF);
 		gpioLED10.createLogicRuleWithState("pin7down", State.OFF);
 		gpioLED10.createLogicRuleWithState("pin0down", State.ON);
-		
 	}
 
 	private void initActors(String peerName) {

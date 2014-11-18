@@ -38,7 +38,7 @@ public class SmartDeviceServerFieldDeviceListener implements IFieldDeviceListene
 			
 			@Override
 			public void activityInterpreterAdded(ActivityInterpreter activityInterpreter) {
-				LOG.debug("activityInterpreterAdded:" + activityInterpreter.getActivityName());
+				LOG.debug("SmartDeviceServerFieldDeviceListener activityInterpreterAdded:" + activityInterpreter.getActivityName());
 				
 				if(SmartDeviceServer.isLocalPeer(activityInterpreter.getSensor().getSmartDevice().getPeerID())){
 					QueryExecutor.getInstance().exportWhenPossibleAsync(
@@ -54,7 +54,7 @@ public class SmartDeviceServerFieldDeviceListener implements IFieldDeviceListene
 
 	@Override
 	public void fieldDeviceConnected(ASmartDevice sender, FieldDevice device) {
-		LOG.debug("fieldDeviceConnected device:" + device.getName());
+		LOG.debug("SmartDeviceServerFieldDeviceListener fieldDeviceConnected device:" + device.getName());
 		
 		if (device instanceof Actor) {
 			((Actor) device).addLogicRuleListener(new ILogicRuleListener() {
@@ -87,7 +87,7 @@ public class SmartDeviceServerFieldDeviceListener implements IFieldDeviceListene
 
 	@Override
 	public void fieldDeviceRemoved(ASmartDevice smartDevice, FieldDevice device) {
-		LOG.debug("fieldDeviceRemoved device:" + device.getName());
+		LOG.debug("SmartDeviceServerFieldDeviceListener fieldDeviceRemoved device:" + device.getName());
 		
 		if (device instanceof Actor) {
 			
@@ -100,14 +100,14 @@ public class SmartDeviceServerFieldDeviceListener implements IFieldDeviceListene
 
 	@Override
 	public void readyStateChanged(ASmartDevice smartDevice, boolean state) {
-		LOG.debug("smartDevice: " + smartDevice.getPeerName() + " readyState:"
+		LOG.debug("SmartDeviceServerFieldDeviceListener smartDevice: " + smartDevice.getPeerName() + " readyState:"
 				+ state);
 		
 	}
 
 	@Override
 	public void fieldDevicesUpdated(SmartDevice smartDevice) {
-		LOG.debug("fieldDevicesUpdated smart device:"
+		LOG.debug("SmartDeviceServerFieldDeviceListener fieldDevicesUpdated smart device:"
 				+ smartDevice.getPeerName());
 		
 		

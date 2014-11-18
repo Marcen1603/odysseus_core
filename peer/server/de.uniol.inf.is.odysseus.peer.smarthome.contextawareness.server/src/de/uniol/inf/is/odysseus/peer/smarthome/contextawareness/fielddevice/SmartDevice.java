@@ -66,7 +66,7 @@ public class SmartDevice extends ASmartDevice implements Serializable {
 	}
 
 	public void addConnectedFieldDevice(FieldDevice device) {
-		if (this.connectedFieldDevices.add(device)) {
+		if (!this.connectedFieldDevices.contains(device) && this.connectedFieldDevices.add(device)) {
 			device.setSmartDevice(this);
 			if(device instanceof Sensor){
 				((Sensor) device).addActivityInterpreterListener(getActivityInterpreterListener());

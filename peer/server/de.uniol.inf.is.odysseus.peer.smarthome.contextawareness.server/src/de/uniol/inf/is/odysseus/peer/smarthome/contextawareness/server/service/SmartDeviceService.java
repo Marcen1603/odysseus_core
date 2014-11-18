@@ -51,21 +51,27 @@ public class SmartDeviceService implements ISmartDeviceService {
 		
 		@SuppressWarnings("unused")
 		private void fireFieldDeviceConnected(FieldDevice device) {
+			/*
 			for(IFieldDeviceListener listener : getSmartDeviceListener()){
 				listener.fieldDeviceConnected(getLocalSmartDevice(), device);
 			}
+			*/
 		}
 		@SuppressWarnings("unused")
 		private void fireFieldDeviceRemoved(FieldDevice device) {
+			/*
 			for(IFieldDeviceListener listener : getSmartDeviceListener()){
 				listener.fieldDeviceRemoved(getLocalSmartDevice(), device);
 			}
+			*/
 		}
 		@SuppressWarnings("unused")
 		private void fireReadyStateChanged(boolean state) {
+			/*
 			for(IFieldDeviceListener listener : getSmartDeviceListener()){
 				listener.readyStateChanged(getLocalSmartDevice(), state);
 			}
+			*/
 		}
 
 		public static boolean isActivated() {
