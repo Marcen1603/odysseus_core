@@ -230,9 +230,14 @@ public class RecoveryStrategyUpstreamBackup implements IRecoveryStrategy{
 		
 		LOG.debug("Want to start recovery for {}", cPeerDictionary.get().getRemotePeerName(failedPeer));
 
+		List<ID> sharedQueryIds = cRecoveryDynamicBackup.get().getSharedQueryIdsForRecovery(failedPeer);
+		if (sharedQueryIds == null || sharedQueryIds.isEmpty()) {
+			LOG.debug("Can't do recovery for {}. Don't have the information.", cPeerDictionary.get().getRemotePeerName(failedPeer));
+		}
+		
 		// Reallocate each query to another peer
 		
-		for (ID sharedQueryId : cRecoveryDynamicBackup.get().getSharedQueryIdsForRecovery(failedPeer)) {
+		for (ID sharedQueryId : sharedQueryIds) {
 			LOG.debug("Have info for {} -> I can do recovery.", cPeerDictionary.get().getRemotePeerName(failedPeer));
 			// 4. Search for another peer who can take the parts from the failed
 			// peer
