@@ -83,9 +83,27 @@ abstract public class AbstractFileHandler extends AbstractTransportHandler {
 	}
 
 	private void dumpBuffer() throws IOException {
-		writeBuffer.flip();
-		out.write(writeBuffer.array());
+		ByteBuffer copy = cloneByteBuffer(writeBuffer);
+		copy.flip();
+		out.write(copy.array());
 		writeBuffer.clear();
+	}
+	
+	public static ByteBuffer cloneByteBuffer(final ByteBuffer original) {
+	    // Create clone with same capacity as original.
+	    final ByteBuffer clone = (original.isDirect()) ?
+	        ByteBuffer.allocateDirect(original.capacity()) :
+	        ByteBuffer.allocate(original.capacity());
+
+	    // Create a read-only copy of the original.
+	    // This allows reading from the original without modifying it.
+	    final ByteBuffer readOnlyCopy = original.asReadOnlyBuffer();
+
+	    // Flip and read from the original.
+	    readOnlyCopy.flip();
+	    clone.put(readOnlyCopy);
+
+	    return clone;
 	}
 
 	@Override
