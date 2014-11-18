@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.horizontal.physicaloperator;
+package de.uniol.inf.is.odysseus.server.fragmentation.horizontal.physicaloperator;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,7 +11,7 @@ import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.physicaloperator.Heartbeat;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
-import de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.horizontal.logicaloperator.AbstractFragmentAO;
+import de.uniol.inf.is.odysseus.server.fragmentation.horizontal.logicaloperator.AbstractFragmentAO;
 
 /**
  * A {@link AbstractFragmentPO} can be used to realize a
@@ -39,7 +39,7 @@ public abstract class AbstractFragmentPO<T extends IStreamObject<IMetaAttribute>
 	/**
 	 * The number of fragments.
 	 */
-	protected int numFragments;
+	protected final int numFragments;
 
 	/**
 	 * Constructs a new {@link AbstractFragmentPO}.
@@ -115,6 +115,8 @@ public abstract class AbstractFragmentPO<T extends IStreamObject<IMetaAttribute>
 
 		}
 	}
+	
+	
 
 	/**
 	 * Routes an incoming object to the next output port.

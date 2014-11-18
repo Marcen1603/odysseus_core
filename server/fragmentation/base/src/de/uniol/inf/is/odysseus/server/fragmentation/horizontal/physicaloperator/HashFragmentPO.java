@@ -1,11 +1,10 @@
-package de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.horizontal.hash.physicaloperator;
+package de.uniol.inf.is.odysseus.server.fragmentation.horizontal.physicaloperator;
 
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
-import de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.horizontal.hash.logicaloperator.HashFragmentAO;
-import de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.horizontal.physicaloperator.AbstractFragmentPO;
+import de.uniol.inf.is.odysseus.server.fragmentation.horizontal.logicaloperator.HashFragmentAO;
 
 /**
  * A {@link HashFragmentPO} can be used to realize a {@link HashFragmentAO}. <br />
@@ -83,7 +82,7 @@ public class HashFragmentPO<T extends IStreamObject<IMetaAttribute>> extends
 			
 		}
 		
-		return hashCode % this.numFragments;
+		return hashCode % numFragments;
 
 	}
 	

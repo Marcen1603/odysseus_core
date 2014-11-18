@@ -1,10 +1,10 @@
-package de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.horizontal.roundrobin.transform;
+package de.uniol.inf.is.odysseus.server.fragmentation.horizontal.transform;
 
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
-import de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.horizontal.roundrobin.logicaloperator.RoundRobinFragmentAO;
-import de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.horizontal.roundrobin.physicaloperator.RoundRobinFragmentPO;
 import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
+import de.uniol.inf.is.odysseus.server.fragmentation.horizontal.logicaloperator.RoundRobinFragmentAO;
+import de.uniol.inf.is.odysseus.server.fragmentation.horizontal.physicaloperator.RoundRobinFragmentPO;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 

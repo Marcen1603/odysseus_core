@@ -1,9 +1,8 @@
-package de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.horizontal.roundrobin.physicaloperator;
+package de.uniol.inf.is.odysseus.server.fragmentation.horizontal.physicaloperator;
 
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
-import de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.horizontal.physicaloperator.AbstractFragmentPO;
-import de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.horizontal.roundrobin.logicaloperator.RoundRobinFragmentAO;
+import de.uniol.inf.is.odysseus.server.fragmentation.horizontal.logicaloperator.RoundRobinFragmentAO;
 
 /**
  * A {@link RoundRobinFragmentPO} can be used to realize a {@link RoundRobinFragmentAO}. <br />

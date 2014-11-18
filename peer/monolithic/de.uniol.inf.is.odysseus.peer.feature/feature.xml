@@ -31,6 +31,59 @@ Unless required by applicable law or agreed to in writing, software
          id="de.uniol.inf.is.odysseus.peer.ddc.feature"
          version="0.0.0"/>
 
+   <requires>
+      <import plugin="org.eclipse.osgi"/>
+      <import plugin="de.uniol.inf.is.odysseus.core.server" version="1.0.0" match="greaterOrEqual"/>
+      <import plugin="de.uniol.inf.is.odysseus.core" version="1.0.0" match="greaterOrEqual"/>
+      <import plugin="com.google.guava"/>
+      <import plugin="de.uniol.inf.is.odysseus.slf4j" version="1.0.0" match="greaterOrEqual"/>
+      <import plugin="de.uniol.inf.is.odysseus.p2p_new" version="1.0.0" match="greaterOrEqual"/>
+      <import plugin="Jxta_2.6_Source" version="1.0.0" match="greaterOrEqual"/>
+      <import plugin="de.uniol.inf.is.odysseus.parser.pql.generator"/>
+      <import plugin="de.uniol.inf.is.odysseus.script.parser"/>
+      <import plugin="com.google.guava" version="12.0.0" match="greaterOrEqual"/>
+      <import plugin="de.uniol.inf.is.odysseus.costmodel.physical" version="1.0.0" match="greaterOrEqual"/>
+      <import plugin="de.uniol.inf.is.odysseus.costmodel" version="1.0.0" match="greaterOrEqual"/>
+      <import plugin="de.uniol.inf.is.odysseus.interval_latency" version="1.0.0" match="greaterOrEqual"/>
+      <import plugin="de.uniol.inf.is.odysseus.datarate" version="1.0.0" match="greaterOrEqual"/>
+      <import plugin="de.uniol.inf.is.odysseus.datarate_systemload" version="1.0.0" match="greaterOrEqual"/>
+      <import plugin="de.uniol.inf.is.odysseus.systemload" version="1.0.0" match="greaterOrEqual"/>
+      <import plugin="de.uniol.inf.is.odysseus.latency" version="1.0.0" match="greaterOrEqual"/>
+      <import plugin="de.uniol.inf.is.odysseus.ruleengine"/>
+      <import plugin="de.uniol.inf.is.odysseus.transform"/>
+      <import plugin="de.uniol.inf.is.odysseus.peer.distribute" version="1.0.0" match="greaterOrEqual"/>
+      <import plugin="com.google.guava" version="14.0.0" match="greaterOrEqual"/>
+      <import plugin="de.uniol.inf.is.odysseus.sigar" version="1.0.0" match="greaterOrEqual"/>
+      <import plugin="de.uniol.inf.is.odysseus.parser.pql.generator" version="1.0.0" match="greaterOrEqual"/>
+      <import plugin="de.uniol.inf.is.odysseus.costmodel.logical" version="1.0.0" match="greaterOrEqual"/>
+      <import plugin="Commons.Math"/>
+      <import plugin="de.uniol.inf.is.odysseus.peer.resource" version="1.0.0" match="greaterOrEqual"/>
+      <import plugin="sigar" version="1.0.0" match="greaterOrEqual"/>
+      <import plugin="de.uniol.inf.is.odysseus.updater"/>
+      <import plugin="org.eclipse.core.runtime"/>
+      <import plugin="de.uniol.inf.is.odysseus.transform" version="1.0.0" match="greaterOrEqual"/>
+      <import plugin="de.uniol.inf.is.odysseus.ruleengine" version="1.0.0" match="greaterOrEqual"/>
+      <import plugin="de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation" version="1.0.0" match="greaterOrEqual"/>
+      <import plugin="de.uniol.inf.is.odysseus.relational_interval"/>
+      <import plugin="de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.horizontal" version="1.0.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.ui"/>
+      <import plugin="de.uniol.inf.is.odysseus.rcp.login" version="1.0.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.swt"/>
+      <import plugin="de.uniol.inf.is.odysseus.peer.update" version="1.0.0" match="greaterOrEqual"/>
+      <import plugin="de.uniol.inf.is.odysseus.rcp.base"/>
+      <import plugin="org.apache.commons.math3"/>
+      <import plugin="org.eclipse.ui.console"/>
+      <import plugin="org.eclipse.ui.navigator.resources"/>
+      <import plugin="de.uniol.inf.is.odysseus.intervalapproach" version="1.0.0" match="greaterOrEqual"/>
+      <import plugin="de.uniol.inf.is.odysseus.server.intervalapproach" version="1.0.0" match="greaterOrEqual"/>
+      <import plugin="org.apache.commons.lang3"/>
+      <import plugin="de.uniol.inf.is.odysseus.core.server.console"/>
+      <import plugin="de.uniol.inf.is.odysseus.mep"/>
+      <import plugin="de.uniol.inf.is.odysseus.relational.base"/>
+      <import plugin="de.uniol.inf.is.odysseus.sweeparea"/>
+      <import plugin="org.json" version="1.0.0" match="greaterOrEqual"/>
+   </requires>
+
    <plugin
          id="de.uniol.inf.is.odysseus.peer"
          download-size="0"
@@ -340,6 +393,13 @@ Unless required by applicable law or agreed to in writing, software
 
    <plugin
          id="org.json"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="de.uniol.inf.is.odysseus.server.fragmentation"
          download-size="0"
          install-size="0"
          version="0.0.0"

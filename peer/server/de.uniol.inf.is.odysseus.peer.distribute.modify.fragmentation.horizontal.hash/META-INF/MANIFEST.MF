@@ -17,4 +17,5 @@ Require-Bundle: de.uniol.inf.is.odysseus.core;bundle-version="1.0.0",
  Jxta_2.6_Source;bundle-version="1.0.0"
 Service-Component: OSGI-INF/HashHorizontalFragmentationQueryPartModificator.xml,OSGI-INF/AggregateHashHorizontalFragmentationRule.xml,OSGI-INF/RelationalFastMedianHashHorizontalFragmentationRule.xml,OSGI-INF/StateMapHashHorizontalFragmentationRule.xml,OSGI-INF/TupleAggregateHashHorizontalFragmentationRule.xml,
  OSGI-INF/AssociativeStorageHashHorizontalFragmentationRule.xml
-Import-Package: de.uniol.inf.is.odysseus.relational_interval.logicaloperator
+Import-Package: de.uniol.inf.is.odysseus.relational_interval.logicaloperator,
+ de.uniol.inf.is.odysseus.server.fragmentation.horizontal.logicaloperator
