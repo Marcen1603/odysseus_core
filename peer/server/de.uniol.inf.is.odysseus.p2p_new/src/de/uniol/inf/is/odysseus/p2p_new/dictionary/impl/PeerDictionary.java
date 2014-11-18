@@ -151,7 +151,7 @@ public class PeerDictionary implements IPeerDictionary, IAdvertisementDiscoverer
 
 			} catch (Throwable t) {
 
-				LOG.error(t.getMessage());
+				LOG.error("Listener {} got an error", listener, t);
 
 			}
 
@@ -171,7 +171,7 @@ public class PeerDictionary implements IPeerDictionary, IAdvertisementDiscoverer
 
 			} catch (Throwable t) {
 
-				LOG.error(t.getMessage());
+				LOG.error("Listener {} got an error", listener, t);
 
 			}
 
