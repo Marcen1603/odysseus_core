@@ -67,7 +67,7 @@ public abstract class AbstractFragmentPO<T extends IStreamObject<IMetaAttribute>
 	@SuppressWarnings("unchecked")
 	protected void process_next(T object, int port) {
 		int outPort = this.route(object);
-		AbstractFragmentPO.log.debug("Routed " + object + " to output port "
+		AbstractFragmentPO.log.trace("Routed " + object + " to output port "
 				+ outPort);
 		this.transfer(object, outPort);
 
@@ -81,7 +81,7 @@ public abstract class AbstractFragmentPO<T extends IStreamObject<IMetaAttribute>
 
 		// Send punctuations to all fragments!
 		for (int outPort = 0; outPort < numFragments; outPort++) {
-			AbstractFragmentPO.log.debug("Routed " + punctuation
+			AbstractFragmentPO.log.trace("Routed " + punctuation
 					+ " to output port " + outPort);
 			this.sendPunctuation(punctuation, outPort);
 		}
