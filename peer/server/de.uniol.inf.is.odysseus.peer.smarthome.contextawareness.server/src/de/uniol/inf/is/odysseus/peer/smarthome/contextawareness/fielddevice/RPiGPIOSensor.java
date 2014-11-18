@@ -54,12 +54,12 @@ public class RPiGPIOSensor extends Sensor {
 		//		+ getRawSourceName() + "', PIN = " + inputPin + "})");
 		
 		sBuilder.append(getRawSourceName() + " := ACCESS({\n");
-		sBuilder.append("    source='taster7',\n");
+		sBuilder.append("    source='taster"+getInputPin()+"',\n");
 		sBuilder.append("    wrapper='GenericPush',\n");
 		sBuilder.append("    transport='RPiGPIOPush',\n");
 		sBuilder.append("    protocol='none',\n");
 		sBuilder.append("    datahandler='Tuple',\n");
-		sBuilder.append("    options=[['pin', '" + inputPin + "'],['mode', 'in']],\n");
+		sBuilder.append("    options=[['pin', '" + getInputPin() + "'],['mode', 'in']],\n");
 		sBuilder.append("    schema=[['PinNumber', 'String'],['PinState', 'Long']]\n");
 		sBuilder.append("  }\n");
 		sBuilder.append(")\n");

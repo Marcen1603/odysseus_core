@@ -131,7 +131,7 @@ public class RPiGPIOSinkPO extends AbstractSink<Tuple<?>> {
 	@Override
 	protected void process_next(Tuple<?> tuple, int port) {
 		if(!pinStateMessageFlag){
-			System.out.println("pin:"+this.pin.getAddress()+" pinStateIndex:"+this.pinStateIndex);
+			LOG.debug("pin:"+this.pin.getAddress()+" pinStateIndex:"+this.pinStateIndex);
 			pinStateMessageFlag =true;
 		}
 		

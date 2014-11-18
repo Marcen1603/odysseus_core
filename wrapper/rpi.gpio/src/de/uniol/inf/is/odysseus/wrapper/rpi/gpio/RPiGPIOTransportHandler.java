@@ -136,7 +136,7 @@ public class RPiGPIOTransportHandler extends
 				flagExceptionThrown = true;
 			}
 
-			tuple.setAttribute(0, "pinNumber7");
+			tuple.setAttribute(0, "pinNumber"+pin.getAddress());
 			tuple.setAttribute(1, 1);
 		}
 

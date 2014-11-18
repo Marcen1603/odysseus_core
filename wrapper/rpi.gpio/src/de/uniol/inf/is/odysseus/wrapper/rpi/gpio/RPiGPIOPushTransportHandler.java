@@ -112,7 +112,7 @@ public class RPiGPIOPushTransportHandler extends AbstractTransportHandler {
 				while (true) {
 					@SuppressWarnings("rawtypes")
 					Tuple<?> tuple = new Tuple(2, false);
-					tuple.setAttribute(0, "pinNumber7");
+					tuple.setAttribute(0, "pinNumber"+pin.getAddress());
 					tuple.setAttribute(1, 1);
 
 					fireProcess(tuple);
@@ -174,7 +174,7 @@ public class RPiGPIOPushTransportHandler extends AbstractTransportHandler {
 		case UNKNOWN:
 			@SuppressWarnings("rawtypes")
 			Tuple<?> tuple = new Tuple(2, false);
-			tuple.setAttribute(0, "pinNumber7");
+			tuple.setAttribute(0, "pinNumber"+pin.getAddress());
 			tuple.setAttribute(1, 0);
 			fireProcess(tuple);
 			
@@ -215,7 +215,7 @@ public class RPiGPIOPushTransportHandler extends AbstractTransportHandler {
 				flagExceptionThrown = true;
 			}
 
-			tuple.setAttribute(0, "pinNumber7");
+			tuple.setAttribute(0, "pinNumber"+pin.getAddress());
 			tuple.setAttribute(1, 1);
 		}
 
@@ -232,9 +232,13 @@ public class RPiGPIOPushTransportHandler extends AbstractTransportHandler {
 	public void processInClose() throws IOException {
 		LOG.debug("processInClose");
 		
+		if(myButton!=null){
 		myButton.removeAllListeners();
+		}
+		if(gpioController!=null){
 		gpioController.removeAllListeners();
-		
+		}
+				
 		myButton=null;
 		gpioController=null;
 	}
