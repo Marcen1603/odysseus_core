@@ -19,7 +19,7 @@ public class DefaultDistributor implements ISportsQLDistributor {
 
 		StringBuilder distributionConfig = new StringBuilder();
 		distributionConfig.append(DistributionConfigBuildHelper
-				.createPeerPartition(Partition.OPERATORCLOUD));
+				.createPeerPartition(Partition.OPERATORSETCLOUD));
 		distributionConfig.append(DistributionConfigBuildHelper
 				.createPeerAllocate(Allocate.ROUNDROBIN));
 		distributionConfig.append(DistributionConfigBuildHelper

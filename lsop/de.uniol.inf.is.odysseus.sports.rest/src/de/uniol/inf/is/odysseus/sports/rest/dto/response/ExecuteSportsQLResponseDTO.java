@@ -11,16 +11,18 @@ public class ExecuteSportsQLResponseDTO extends AbstractResponseDTO {
 	private String token;
 	private SocketInfo socketInfo;
 	private int queryId;
+	private int restPort;
 	
 	
 	public ExecuteSportsQLResponseDTO() {
 
 	}
 		
-	public ExecuteSportsQLResponseDTO(String token, SocketInfo socketInfo, int queryId) {
+	public ExecuteSportsQLResponseDTO(String token, SocketInfo socketInfo, int queryId, int restPort) {
 		this.token = token;
 		this.socketInfo = socketInfo;
 		this.queryId = queryId;
+		this.restPort = restPort;
 	}
 
 	public String getToken() {
@@ -46,6 +48,16 @@ public class ExecuteSportsQLResponseDTO extends AbstractResponseDTO {
 	public void setQueryId(int queryId) {
 		this.queryId = queryId;
 	}
+
+	public int getRestPort() {
+		return restPort;
+	}
+
+	public void setRestPort(int restPort) {
+		this.restPort = restPort;
+	}
+	
+	
 
 
 	

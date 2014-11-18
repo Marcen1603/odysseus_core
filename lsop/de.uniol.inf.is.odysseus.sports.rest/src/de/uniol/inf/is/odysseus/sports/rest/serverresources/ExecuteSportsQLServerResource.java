@@ -13,6 +13,7 @@ import de.uniol.inf.is.odysseus.core.collection.Context;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
 import de.uniol.inf.is.odysseus.rest.serverresources.AbstractSessionServerResource;
+import de.uniol.inf.is.odysseus.rest.service.RestService;
 import de.uniol.inf.is.odysseus.rest.socket.SocketInfo;
 import de.uniol.inf.is.odysseus.rest.socket.SocketService;
 import de.uniol.inf.is.odysseus.sports.distributor.registry.SportsQLDistributorRegistry;
@@ -44,7 +45,7 @@ public class ExecuteSportsQLServerResource extends AbstractSessionServerResource
 				res.setNext(client);
 				DistributedSportsQLSocketRequestDTO req = new DistributedSportsQLSocketRequestDTO(info.getSharedQueryId(), executeSportsQLRequestDTO.getUsername(), executeSportsQLRequestDTO.getPassword());
 				DistributedSportsQLSocketResponseDTO resp = res.post(req, DistributedSportsQLSocketResponseDTO.class);
-				return new ExecuteSportsQLResponseDTO(resp.getToken(), resp.getSocketInfo(), resp.getQueryId());
+				return new ExecuteSportsQLResponseDTO(resp.getToken(), resp.getSocketInfo(), resp.getQueryId(),info.getTopOperatorPeerRestPort());
 			} catch (Exception e) {
 				e.printStackTrace();
 				return null;
@@ -54,7 +55,7 @@ public class ExecuteSportsQLServerResource extends AbstractSessionServerResource
 			int queryId = queryIDs.iterator().next();	
 			ExecutorServiceBinding.getExecutor().startQuery(queryId, OdysseusRCPPlugIn.getActiveSession());
 			SocketInfo peerSocket = SocketService.getInstance().getConnectionInformation(session, queryId,0);
-			return new ExecuteSportsQLResponseDTO(session.getToken(), peerSocket, queryIDs.iterator().next());
+			return new ExecuteSportsQLResponseDTO(session.getToken(), peerSocket, queryIDs.iterator().next(), RestService.getPort());
 		}
 	}
 	
