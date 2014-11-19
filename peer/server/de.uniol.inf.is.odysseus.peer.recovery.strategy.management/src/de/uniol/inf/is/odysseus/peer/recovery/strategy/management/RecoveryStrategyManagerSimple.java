@@ -1,6 +1,7 @@
 package de.uniol.inf.is.odysseus.peer.recovery.strategy.management;
 
 import java.util.Collection;
+import java.util.UUID;
 
 import net.jxta.peer.PeerID;
 
@@ -68,9 +69,9 @@ public class RecoveryStrategyManagerSimple implements IRecoveryStrategyManager {
 	}
 	
 	@Override
-	public void startRecovery(PeerID failedPeer) {
+	public void startRecovery(PeerID failedPeer, UUID recoveryStateIdentifier) {
 		if(recoveryStrategies.size() > 0){
-			recoveryStrategies.iterator().next().recover(failedPeer);
+			recoveryStrategies.iterator().next().recover(failedPeer, recoveryStateIdentifier);
 		} else {
 			LOG.error("No recovery strategy bound");
 		}

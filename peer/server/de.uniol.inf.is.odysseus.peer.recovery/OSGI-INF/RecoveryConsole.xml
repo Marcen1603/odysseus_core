@@ -11,5 +11,4 @@
    <reference bind="bindRecoveryAllocator" cardinality="0..n" interface="de.uniol.inf.is.odysseus.peer.recovery.IRecoveryAllocator" name="IRecoveryAllocator" policy="dynamic" unbind="unbindRecoveryAllocator"/>
    <reference bind="bindRecoveryStrategy" cardinality="0..n" interface="de.uniol.inf.is.odysseus.peer.recovery.IRecoveryStrategy" name="IRecoveryStrategy" policy="static" unbind="unbindRecoveryStrategy"/>
    <reference bind="bindRecoveryStrategyManager" cardinality="0..n" interface="de.uniol.inf.is.odysseus.peer.recovery.IRecoveryStrategyManager" name="IRecoveryStrategyManager" policy="dynamic" unbind="unbindRecoveryStrategyManager"/>
-  
 </scr:component>

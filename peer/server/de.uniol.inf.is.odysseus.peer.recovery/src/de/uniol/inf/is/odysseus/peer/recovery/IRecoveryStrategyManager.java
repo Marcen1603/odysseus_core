@@ -1,7 +1,9 @@
 package de.uniol.inf.is.odysseus.peer.recovery;
 
-import de.uniol.inf.is.odysseus.peer.distribute.util.INamedInterface;
+import java.util.UUID;
+
 import net.jxta.peer.PeerID;
+import de.uniol.inf.is.odysseus.peer.distribute.util.INamedInterface;
 
 /**
  * Interface that decides which recovery strategy is taken
@@ -15,6 +17,7 @@ public interface IRecoveryStrategyManager extends INamedInterface {
 	 * Starts the recovery with the specific recovery strategy management.
 	 *
 	 * @param failedPeer Peer that failed or left the network.
+	 * @param recoveryStateIdentifier - identifies the state of the recovery
 	 */
-	public void startRecovery(PeerID failedPeer);
+	public void startRecovery(PeerID failedPeer, UUID recoveryStateIdentifier);
 }

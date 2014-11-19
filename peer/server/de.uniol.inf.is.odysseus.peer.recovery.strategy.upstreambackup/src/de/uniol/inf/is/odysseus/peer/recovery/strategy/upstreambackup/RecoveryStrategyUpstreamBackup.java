@@ -2,6 +2,7 @@ package de.uniol.inf.is.odysseus.peer.recovery.strategy.upstreambackup;
 
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import net.jxta.id.ID;
 import net.jxta.peer.PeerID;
@@ -211,7 +212,7 @@ public class RecoveryStrategyUpstreamBackup implements IRecoveryStrategy {
 	}
 
 	@Override
-	public void recover(PeerID failedPeer) {
+	public void recover(PeerID failedPeer, UUID recoveryStateIdentifier) {
 
 		// Preconditions
 		if (!cPeerDictionary.isPresent()) {

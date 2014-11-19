@@ -75,7 +75,6 @@ public class RecoveryDynamicBackup implements IRecoveryDynamicBackup {
 	public static void bindRecoveryCommunicator(IRecoveryCommunicator serv) {
 
 		Preconditions.checkNotNull(serv);
-		Preconditions.checkArgument(serv instanceof IRecoveryCommunicator);
 		cRecoveryCommunicator = Optional.of(serv);
 		LOG.debug("Bound {} as a recovery communicator.", serv.getClass().getSimpleName());
 
@@ -92,7 +91,6 @@ public class RecoveryDynamicBackup implements IRecoveryDynamicBackup {
 	public static void unbindRecoveryCommunicator(IRecoveryCommunicator serv) {
 
 		Preconditions.checkNotNull(serv);
-		Preconditions.checkArgument(serv instanceof IRecoveryCommunicator);
 
 		if (cRecoveryCommunicator.isPresent() && cRecoveryCommunicator.get() == serv) {
 

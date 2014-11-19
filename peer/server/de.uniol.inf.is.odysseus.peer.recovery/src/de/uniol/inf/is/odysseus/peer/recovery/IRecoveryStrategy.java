@@ -1,5 +1,7 @@
 package de.uniol.inf.is.odysseus.peer.recovery;
 
+import java.util.UUID;
+
 import de.uniol.inf.is.odysseus.peer.distribute.util.INamedInterface;
 import net.jxta.peer.PeerID;
 
@@ -18,6 +20,7 @@ public interface IRecoveryStrategy extends INamedInterface {
 	 * 
 	 * @param failedPeer
 	 *            The PeerID from the failed peer
+	 * @param inadequatePeers 
 	 */
-	public void recover(PeerID failedPeer);
+	void recover(PeerID failedPeer, UUID recoveryStateIdentifier);
 }

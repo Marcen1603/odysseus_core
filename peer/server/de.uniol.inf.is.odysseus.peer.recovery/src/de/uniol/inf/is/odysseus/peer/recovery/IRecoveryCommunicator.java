@@ -1,8 +1,11 @@
 package de.uniol.inf.is.odysseus.peer.recovery;
 
+import java.util.UUID;
+
 import net.jxta.id.ID;
 import net.jxta.peer.PeerID;
 import net.jxta.pipe.PipeID;
+import de.uniol.inf.is.odysseus.peer.recovery.internal.RecoveryProcessState;
 import de.uniol.inf.is.odysseus.peer.recovery.messages.RecoveryInstructionMessage;
 
 /**
@@ -103,5 +106,18 @@ public interface IRecoveryCommunicator {
 	 *            The pipeId for which the receiver of this message should go on sending tuples
 	 */
 	public void sendGoOnMessage(PeerID receiverPeer, PipeID pipeId);
+	
+	/**
+	 * 
+	 * @param peer
+	 */
+	void peerRemoved(PeerID peer);
+
+	/**
+	 * 
+	 * @param identifier
+	 * @return
+	 */
+	RecoveryProcessState getRecoveryProcessState(UUID identifier);
 
 }

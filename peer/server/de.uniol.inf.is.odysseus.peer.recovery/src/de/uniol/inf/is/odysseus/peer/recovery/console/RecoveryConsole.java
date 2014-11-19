@@ -45,6 +45,11 @@ public class RecoveryConsole implements CommandProvider {
 	private static IP2PNetworkManager p2pNetworkManager;
 	private static IPeerDictionary peerDictionary;
 	private static Collection<IRecoveryAllocator> recoveryAllocators = Lists.newArrayList();
+	
+	/**
+	 * The recovery communicator, if there is one bound.
+	 */
+	private static Optional<IRecoveryCommunicator> cCommunicator = Optional.absent();
 	/**
 	 * Executor to get queries
 	 */
@@ -52,6 +57,8 @@ public class RecoveryConsole implements CommandProvider {
 	private static Collection<IRecoveryStrategy> recoveryStrategies = Lists.newArrayList();
 	private static Collection<IRecoveryStrategyManager> recoveryStrategyManagers = Lists.newArrayList();
 
+	
+	
 	// called by OSGi-DS
 	public static void bindP2PNetworkManager(IP2PNetworkManager serv) {
 		p2pNetworkManager = serv;
@@ -97,11 +104,6 @@ public class RecoveryConsole implements CommandProvider {
 			peerDictionary = null;
 		}
 	}
-
-	/**
-	 * The recovery communicator, if there is one bound.
-	 */
-	private static Optional<IRecoveryCommunicator> cCommunicator = Optional.absent();
 
 	/**
 	 * Binds a recovery communicator. <br />
@@ -214,14 +216,14 @@ public class RecoveryConsole implements CommandProvider {
 			ci.println("Don't know this peer id");
 			return;
 		}
+		if (!cCommunicator.isPresent()) {
 
-		if(recoveryStrategyManagers.size() > 0){
-			recoveryStrategyManagers.iterator().next().startRecovery(failedPeer);
-		} else {
-			LOG.error("No recovery strategy manager bound");
+			LOG.error("No recovery communicator bound!");
+			return;
+
 		}
-		
 
+		cCommunicator.get().peerRemoved(failedPeer);
 	}
 
 	public void _showPeerPQL(CommandInterpreter ci) {
