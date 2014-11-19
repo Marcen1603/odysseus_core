@@ -5,7 +5,6 @@ import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.AggregateAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.SelectAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TimeWindowAO;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
@@ -31,7 +30,7 @@ import de.uniol.inf.is.odysseus.sports.sportsql.parser.parameter.SportsQLTimePar
  *         logical query)
  *
  */
-@SportsQL(gameTypes = { GameType.SOCCER }, statisticTypes = { StatisticType.PLAYER }, name = "shotongoal", parameters = {
+@SportsQL(gameTypes = { GameType.SOCCER }, statisticTypes = { StatisticType.PLAYER }, name = "shot_on_goal_player", parameters = {
 		@SportsQLParameter(name = "time", parameterClass = SportsQLTimeParameter.class, mandatory = false),
 		@SportsQLParameter(name = "space", parameterClass = SportsQLSpaceParameter.class, mandatory = false) })
 public class ShotOnGoalPlayerSportsQLParser implements ISportsQLParser {
@@ -67,8 +66,14 @@ public class ShotOnGoalPlayerSportsQLParser implements ISportsQLParser {
 				sportsQL.getEntityId(), timeWindow);
 
 		// 3. Aggregate (sum the shots for this player)
-		AggregateAO out = OperatorBuildHelper.createAggregateAO("sum", "shot",
-				"shots", entitySelect);
+		//AggregateAO out = OperatorBuildHelper.createAggregateAO("sum", "shot",
+		//		"shots", entitySelect);
+		
+		List<String> groupCount = new ArrayList<String>();
+		groupCount.add("entity_id");
+		
+		ILogicalOperator out = OperatorBuildHelper.createAggregateAO("sum", groupCount, "shot", "shots", "Integer", entitySelect, 1);
+		
 
 		// Add to list
 		allOperators.add(timeWindow);
