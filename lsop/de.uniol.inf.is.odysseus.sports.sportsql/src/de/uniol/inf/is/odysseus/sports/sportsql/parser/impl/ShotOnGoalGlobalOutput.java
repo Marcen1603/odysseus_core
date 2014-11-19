@@ -8,7 +8,6 @@ import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.ChangeDetectAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.CoalesceAO;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.EnrichAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.JoinAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.MapAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.MergeAO;
@@ -81,11 +80,11 @@ public class ShotOnGoalGlobalOutput {
 
 		// GameStream and MetaDataStream
 		StreamAO gameStream = OperatorBuildHelper.createGameStreamAO(session);
-		StreamAO metaDataStream = OperatorBuildHelper.createMetadataStreamAO(session);
+	//	StreamAO metaDataStream = OperatorBuildHelper.createMetadataStreamAO(session);
 
 		// Add to list
 		allOperators.add(gameStream);
-		allOperators.add(metaDataStream);
+		//allOperators.add(metaDataStream);
 
 		// -------------------------------------------------------------------
 		// First part
@@ -106,12 +105,12 @@ public class ShotOnGoalGlobalOutput {
 				spaceParam, false, timeSelect);
 
 		// 3. Enrich with the metastream
-		EnrichAO enrichedStream = OperatorBuildHelper.createEnrichAO(
-				"sensorid = sid", spaceSelect, metaDataStream);
+	//	EnrichAO enrichedStream = OperatorBuildHelper.createEnrichAO(
+		//		"sensorid = sid", spaceSelect, metaDataStream);
 
 		// Add to the list
 		allOperators.add(spaceSelect);
-		allOperators.add(enrichedStream);
+		//allOperators.add(enrichedStream);
 
 		// -------------------------------------------------------------------
 		// Second part
@@ -119,8 +118,20 @@ public class ShotOnGoalGlobalOutput {
 		// -------------------------------------------------------------------
 
 		// 1. Select for ball
-		SelectAO ballSelect = OperatorBuildHelper.createEntitySelectByName(
-				AbstractSportsDDCAccess.ENTITY_BALL, enrichedStream);
+		//SelectAO ballSelect = OperatorBuildHelper.createEntitySelectByName(
+		//		AbstractSportsDDCAccess.ENTITY_BALL, spaceSelect);
+		
+		// get only ball sensors
+		List<IPredicate> ballPredicates = new ArrayList<IPredicate>();
+		for (int sensorId : AbstractSportsDDCAccess.getBallEntityIds()) {
+			IPredicate ballPredicate = OperatorBuildHelper
+					.createRelationalPredicate("entity_id = " + sensorId);
+			ballPredicates.add(ballPredicate);
+		}
+		IPredicate ballIPredicate = OperatorBuildHelper.createOrPredicate(ballPredicates);
+		
+		SelectAO ballSelect  = OperatorBuildHelper.createSelectAO(ballIPredicate, spaceSelect);
+		
 
 		// 2. Project for important variables
 		List<String> ballProjectList = new ArrayList<String>();
@@ -189,17 +200,16 @@ public class ShotOnGoalGlobalOutput {
 		// Filter the sensor data stream for player feet events
 		// -------------------------------------------------------------------
 
+		
 		// 1. Select for the feet
-		String feetSelectPredicate = "entity != \""
-				+ AbstractSportsDDCAccess.ENTITY_REFEREE + "\"";
-		feetSelectPredicate += " AND entity != \""
-				+ AbstractSportsDDCAccess.ENTITY_REFEREE + "\"";
-		feetSelectPredicate += " AND (remark = \""
-				+ AbstractSportsDDCAccess.REMARK_LEFT_LEG+ "\" OR remark = \""
-				+ AbstractSportsDDCAccess.REMARK_RIGHT_LEG + "\")";
-
-		SelectAO playerLegSelect = OperatorBuildHelper.createSelectAO(
-				feetSelectPredicate, enrichedStream);
+		//String feetSelectPredicate = "entity_id != \""+ teamIds + "\"";
+	
+		//SelectAO playerLegSelect = OperatorBuildHelper.createSelectAO(
+	//			feetSelectPredicate, spaceSelect);
+	
+		//Select only team 1 and team 2
+		SelectAO teamSelect = OperatorBuildHelper.createBothTeamSelectAO(spaceSelect);
+	
 
 		// 2. Project
 		List<String> feetProjectList = new ArrayList<String>();
@@ -210,10 +220,10 @@ public class ShotOnGoalGlobalOutput {
 		feetProjectList.add("entity_id");
 		feetProjectList.add("team_id");
 		ProjectAO players = OperatorBuildHelper.createProjectAO(
-				feetProjectList, playerLegSelect);
+				feetProjectList, teamSelect);
 
 		// Add to list
-		allOperators.add(playerLegSelect);
+		allOperators.add(teamSelect);
 		allOperators.add(players);
 
 		// -------------------------------------------------------------------

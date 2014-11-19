@@ -1161,6 +1161,8 @@ public class OperatorBuildHelper {
 		predicates.add(predicate);
 		return createSelectAO(predicates, source);
 	}
+	
+	
 
 	/**
 	 * Returns selectAO with a list of predicates
