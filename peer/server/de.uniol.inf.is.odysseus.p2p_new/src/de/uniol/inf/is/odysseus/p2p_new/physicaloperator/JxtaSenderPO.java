@@ -3,8 +3,10 @@ package de.uniol.inf.is.odysseus.p2p_new.physicaloperator;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.ByteBuffer;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Vector;
 
 import net.jxta.id.IDFactory;
 import net.jxta.peer.PeerID;
@@ -31,14 +33,15 @@ import de.uniol.inf.is.odysseus.p2p_new.logicaloperator.JxtaSenderAO;
 import de.uniol.inf.is.odysseus.p2p_new.network.P2PNetworkManager;
 import de.uniol.inf.is.odysseus.p2p_new.service.ServerExecutorService;
 import de.uniol.inf.is.odysseus.p2p_new.service.SessionManagementService;
+import de.uniol.inf.is.odysseus.p2p_new.util.IObservableOperator;
+import de.uniol.inf.is.odysseus.p2p_new.util.IOperatorObserver;
 import de.uniol.inf.is.odysseus.p2p_new.util.ObjectByteConverter;
 import de.uniol.inf.is.odysseus.systemload.ISystemLoad;
 
-public class JxtaSenderPO<T extends IStreamObject<?>> extends AbstractSink<T>
-		implements ITransmissionSenderListener {
+public class JxtaSenderPO<T extends IStreamObject<?>> extends AbstractSink<T> implements ITransmissionSenderListener,
+		IObservableOperator {
 
-	private static final Logger LOG = LoggerFactory
-			.getLogger(JxtaSenderPO.class);
+	private static final Logger LOG = LoggerFactory.getLogger(JxtaSenderPO.class);
 
 	private ITransmissionSender transmission;
 	private final String pipeIDString;
@@ -67,6 +70,8 @@ public class JxtaSenderPO<T extends IStreamObject<?>> extends AbstractSink<T>
 				.registerTransmissionSender(peerIDString, pipeIDString);
 		this.transmission.addListener(this);
 		this.transmission.open();
+
+		mObservers = new Vector<IOperatorObserver>();
 	}
 
 	public JxtaSenderPO(JxtaSenderPO<T> po) {
@@ -84,6 +89,8 @@ public class JxtaSenderPO<T extends IStreamObject<?>> extends AbstractSink<T>
 		this.uploadRateBytesPerSecond = po.uploadRateBytesPerSecond;
 		this.uploadRateCurrentByteCount = po.uploadRateCurrentByteCount;
 		this.uploadRateTimestamp = po.uploadRateTimestamp;
+
+		mObservers = new Vector<IOperatorObserver>();
 	}
 
 	@Override
@@ -115,8 +122,7 @@ public class JxtaSenderPO<T extends IStreamObject<?>> extends AbstractSink<T>
 	protected void process_next(T object, int port) {
 		createDataHandlerIfNeeded();
 
-		ByteBuffer buffer = ByteBuffer
-				.allocate(P2PNewPlugIn.TRANSPORT_BUFFER_SIZE);
+		ByteBuffer buffer = ByteBuffer.allocate(P2PNewPlugIn.TRANSPORT_BUFFER_SIZE);
 		dataHandler.writeData(buffer, object);
 
 		Object metadata = object.getMetadata();
@@ -125,16 +131,14 @@ public class JxtaSenderPO<T extends IStreamObject<?>> extends AbstractSink<T>
 				((ISystemLoad) metadata).addSystemLoad(localPeerName);
 			}
 
-			byte[] metadataBytes = ObjectByteConverter.objectToBytes(object
-					.getMetadata());
+			byte[] metadataBytes = ObjectByteConverter.objectToBytes(object.getMetadata());
 			buffer.putInt(metadataBytes.length);
 			buffer.put(metadataBytes);
 		}
 
 		Map<String, Object> metadataMap = object.getMetadataMap();
 		if (!metadataMap.isEmpty()) {
-			byte[] metadataMapBytes = ObjectByteConverter
-					.objectToBytes(metadataMap);
+			byte[] metadataMapBytes = ObjectByteConverter.objectToBytes(metadataMap);
 			buffer.putInt(metadataMapBytes.length);
 			buffer.put(metadataMapBytes);
 		}
@@ -167,8 +171,7 @@ public class JxtaSenderPO<T extends IStreamObject<?>> extends AbstractSink<T>
 
 	private void createDataHandlerIfNeeded() {
 		if (dataHandler == null) {
-			dataHandler = (NullAwareTupleDataHandler) new NullAwareTupleDataHandler()
-					.createInstance(getOutputSchema());
+			dataHandler = (NullAwareTupleDataHandler) new NullAwareTupleDataHandler().createInstance(getOutputSchema());
 			LOG.debug("{} : Data Handler created", getName());
 		}
 	}
@@ -181,8 +184,7 @@ public class JxtaSenderPO<T extends IStreamObject<?>> extends AbstractSink<T>
 		if (optQueryID.isPresent()) {
 			int queryID = optQueryID.get();
 			LOG.debug("{} : Starting query {}", getName(), queryID);
-			ServerExecutorService.getServerExecutor().startQuery(queryID,
-					SessionManagementService.getActiveSession());
+			ServerExecutorService.getServerExecutor().startQuery(queryID, SessionManagementService.getActiveSession());
 		}
 	}
 
@@ -192,8 +194,7 @@ public class JxtaSenderPO<T extends IStreamObject<?>> extends AbstractSink<T>
 		if (optQueryID.isPresent()) {
 			int queryID = optQueryID.get();
 			LOG.debug("{} : Stopping query {}", getName(), queryID);
-			ServerExecutorService.getServerExecutor().stopQuery(queryID,
-					SessionManagementService.getActiveSession());
+			ServerExecutorService.getServerExecutor().stopQuery(queryID, SessionManagementService.getActiveSession());
 		}
 	}
 
@@ -222,14 +223,20 @@ public class JxtaSenderPO<T extends IStreamObject<?>> extends AbstractSink<T>
 	}
 
 	/**
-	 * Updates the peerId from this sender, if there is a new peer which has the
-	 * receiver to this sender. E.g. when there is a new peer due to recovery
+	 * Updates the peerId from this sender, if there is a new peer which has the receiver to this sender. E.g. when
+	 * there is a new peer due to recovery
 	 * 
 	 * @param peerId
 	 *            The new peerId
 	 */
 	public void setPeerIDString(String peerId) {
 		this.peerIDString = peerId;
+
+		// Notify the observers with the new peerId so that they can update the backup-information
+		List<String> infoList = new ArrayList<String>();
+		infoList.add(peerId);
+		infoList.add(this.pipeIDString);
+		notifyObservers(infoList);
 	}
 
 	public String getPipeIDString() {
@@ -254,9 +261,7 @@ public class JxtaSenderPO<T extends IStreamObject<?>> extends AbstractSink<T>
 			return "";
 		}
 
-		return " ["
-				+ PeerDictionary.getInstance().getRemotePeerName(
-						toPeerID(peerIDString)) + "]";
+		return " [" + PeerDictionary.getInstance().getRemotePeerName(toPeerID(peerIDString)) + "]";
 	}
 
 	protected static PeerID toPeerID(String peerIDString) {
@@ -271,13 +276,58 @@ public class JxtaSenderPO<T extends IStreamObject<?>> extends AbstractSink<T>
 
 	/**
 	 * To send the data to a new peer (e.g. in case of recovery) use this method.
-	 * @param peerId The id of the new receiver peer
+	 * 
+	 * @param peerId
+	 *            The id of the new receiver peer
 	 * @throws DataTransmissionException
 	 */
 	public void sendToNewPeer(String peerId) throws DataTransmissionException {
 		this.peerIDString = peerId;
 
-		//Don't mess with the transmission, as the receiver does all the negotiation.
+		// Notify the observers with the new peerId so that they can update the backup-information
+		List<String> infoList = new ArrayList<String>();
+		infoList.add(peerId);
+		infoList.add(this.pipeIDString);
+		notifyObservers(infoList);
 
+		// Don't mess with the transmission, as the receiver does all the negotiation.
+	}
+
+	// For the observer-pattern
+	// ------------------------
+
+	private Vector<IOperatorObserver> mObservers;
+
+	@Override
+	public void addObserver(IOperatorObserver observer) {
+		synchronized (mObservers) {
+			if (!mObservers.contains(observer)) {
+				mObservers.addElement(observer);
+				LOG.debug("New observer added.");
+			}
+		}
+	}
+
+	@Override
+	public void removeObserver(IOperatorObserver observer) {
+		synchronized (mObservers) {
+			mObservers.removeElement(observer);
+		}
+	}
+
+	@Override
+	public void removeObservers() {
+		synchronized (mObservers) {
+			mObservers.removeAllElements();
+		}
+	}
+
+	@Override
+	public void notifyObservers(Object arg) {
+		synchronized (mObservers) {
+			for (int i = 0; i < mObservers.size(); i++) {
+				mObservers.elementAt(i).update(this, arg);
+			}
+		}
 	}
 }

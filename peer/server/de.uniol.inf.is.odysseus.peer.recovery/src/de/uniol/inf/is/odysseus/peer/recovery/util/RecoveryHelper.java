@@ -690,31 +690,45 @@ public class RecoveryHelper {
 	}
 
 	/**
-	 * Searches for an installed query with an JxtaReceiverPO which has this pipeId
+	 * Searches for an installed query with an JxtaReceiverPO or JxtaSenderPO which has this pipeId
 	 * 
 	 * @param pipeId
 	 *            The pipeId to search for in the JxtaReceiverPOs
+	 * @param searchForReceiver
+	 *            If true, this method will search for a receiver with the given pipeId, if false, for a sender
 	 * @return The query with an JxtaReceicerPO with the given pipeId
 	 */
 	@SuppressWarnings("rawtypes")
-	public static IPhysicalQuery findInstalledQueryWithJxtaReceiver(PipeID pipeId) {
+	public static IPhysicalQuery findInstalledQueryWithJxtaOperator(PipeID pipeId, boolean searchForReceiver) {
 		Collection<IPhysicalQuery> queries = RecoveryCommunicator.getExecutor().get().getExecutionPlan().getQueries();
 		for (IPhysicalQuery query : queries) {
 			for (IPhysicalOperator op : query.getAllOperators()) {
-				if (op instanceof JxtaReceiverPO) {
-					JxtaReceiverPO receiver = (JxtaReceiverPO) op;
-					if (receiver.getPipeIDString().equals(pipeId.toString())) {
-						return query;
+				if (searchForReceiver) {
+					if (op instanceof JxtaReceiverPO) {
+						JxtaReceiverPO receiver = (JxtaReceiverPO) op;
+						if (receiver.getPipeIDString().equals(pipeId.toString())) {
+							return query;
+						}
+					}
+				} else {
+					if (op instanceof JxtaSenderPO) {
+						JxtaSenderPO sender = (JxtaSenderPO) op;
+						if (sender.getPipeIDString().equals(pipeId.toString())) {
+							return query;
+						}
 					}
 				}
+
 			}
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Returns a JxtaReceiverPO from a given query.
-	 * @param query The query where the JxtaReceiverPO is in
+	 * 
+	 * @param query
+	 *            The query where the JxtaReceiverPO is in
 	 * @return The JxtaReceiverPO or null, if no one was found
 	 */
 	@SuppressWarnings("rawtypes")
@@ -722,6 +736,23 @@ public class RecoveryHelper {
 		for (IPhysicalOperator op : query.getAllOperators()) {
 			if (op instanceof JxtaReceiverPO) {
 				return (JxtaReceiverPO) op;
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * Returns a JxtaSenderPO from a given query.
+	 * 
+	 * @param query
+	 *            The query where the JxtaSenderPO is in
+	 * @return The JxtaSenderPO or null, if no one was found
+	 */
+	@SuppressWarnings("rawtypes")
+	public static JxtaSenderPO findJxtaSenderPO(PhysicalQuery query) {
+		for (IPhysicalOperator op : query.getAllOperators()) {
+			if (op instanceof JxtaSenderPO) {
+				return (JxtaSenderPO) op;
 			}
 		}
 		return null;

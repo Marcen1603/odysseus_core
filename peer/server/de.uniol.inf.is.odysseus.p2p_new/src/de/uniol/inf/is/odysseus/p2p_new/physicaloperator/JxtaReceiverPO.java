@@ -74,7 +74,7 @@ public class JxtaReceiverPO<T extends IStreamObject> extends AbstractSource<T> i
 
 		isRunning = false;
 
-		mObservers = new Vector<IOperatorObserver>(10);
+		mObservers = new Vector<IOperatorObserver>();
 	}
 
 	public JxtaReceiverPO(JxtaReceiverPO<T> po) {
@@ -95,7 +95,7 @@ public class JxtaReceiverPO<T extends IStreamObject> extends AbstractSource<T> i
 
 		isRunning = false;
 
-		mObservers = new Vector<IOperatorObserver>(10);
+		mObservers = new Vector<IOperatorObserver>();
 	}
 
 	@Override

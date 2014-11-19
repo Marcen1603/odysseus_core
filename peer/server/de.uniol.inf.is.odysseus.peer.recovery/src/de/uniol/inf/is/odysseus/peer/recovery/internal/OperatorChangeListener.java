@@ -19,7 +19,9 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandlin
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.PhysicalQuery;
 import de.uniol.inf.is.odysseus.p2p_new.logicaloperator.JxtaReceiverAO;
+import de.uniol.inf.is.odysseus.p2p_new.logicaloperator.JxtaSenderAO;
 import de.uniol.inf.is.odysseus.p2p_new.physicaloperator.JxtaReceiverPO;
+import de.uniol.inf.is.odysseus.p2p_new.physicaloperator.JxtaSenderPO;
 import de.uniol.inf.is.odysseus.p2p_new.util.IObservableOperator;
 import de.uniol.inf.is.odysseus.p2p_new.util.IOperatorObserver;
 import de.uniol.inf.is.odysseus.parser.pql.generator.IPQLGenerator;
@@ -130,24 +132,33 @@ public class OperatorChangeListener implements IOperatorObserver, IPlanModificat
 
 		Preconditions.checkNotNull(pqlGenerator);
 
-		if (observable instanceof JxtaReceiverPO) {
+		boolean updateReceiver = false;
+		if (observable instanceof JxtaReceiverPO)
+			updateReceiver = true;
+		else if (observable instanceof JxtaSenderPO)
+			updateReceiver = false;
+
+		if (observable instanceof JxtaReceiverPO || observable instanceof JxtaSenderPO) {
 			if (arg instanceof List) {
 				List<String> infoList = (List<String>) arg;
 				if (infoList.size() >= 2) {
 					String newPeerId = infoList.get(0);
 					String pipeId = infoList.get(1);
 
-					IPhysicalQuery query = RecoveryHelper.findInstalledQueryWithJxtaReceiver(RecoveryHelper
-							.convertToPipeId(pipeId));
+					IPhysicalQuery query = RecoveryHelper.findInstalledQueryWithJxtaOperator(
+							RecoveryHelper.convertToPipeId(pipeId), updateReceiver);
 
 					// Change the logical plan to update the
 					// backup-information
 					Collection<ILogicalOperator> logicalOps = LogicalQueryHelper.getAllOperators(query
 							.getLogicalQuery().getLogicalPlan());
 					for (ILogicalOperator logicalOp : logicalOps) {
-						if (logicalOp instanceof JxtaReceiverAO) {
+						if (updateReceiver && logicalOp instanceof JxtaReceiverAO) {
 							JxtaReceiverAO logicalReceiver = (JxtaReceiverAO) logicalOp;
 							logicalReceiver.setPeerID(newPeerId);
+						} else if (!updateReceiver && logicalOp instanceof JxtaSenderAO) {
+							JxtaSenderAO logicalSender = (JxtaSenderAO) logicalOp;
+							logicalSender.setPeerID(newPeerId);
 						}
 					}
 					String newBackupPQL = pqlGenerator.generatePQLStatement(query.getLogicalQuery().getLogicalPlan());
@@ -177,6 +188,11 @@ public class OperatorChangeListener implements IOperatorObserver, IPlanModificat
 				JxtaReceiverPO receiver = RecoveryHelper.findJxtaReceiverPO(query);
 				if (receiver != null)
 					receiver.addObserver(this);
+
+				JxtaSenderPO sender = RecoveryHelper.findJxtaSenderPO(query);
+				if (sender != null)
+					sender.addObserver(this);
+
 			}
 		}
 	}
