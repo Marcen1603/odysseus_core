@@ -1,0 +1,19 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Peer Rest
+Bundle-SymbolicName: de.uniol.inf.is.odysseus.peer.rest
+Bundle-Version: 1.0.0.qualifier
+Bundle-Activator: de.uniol.inf.is.odysseus.peer.rest.Activator
+Require-Bundle: org.eclipse.core.runtime,
+ de.uniol.inf.is.odysseus.peer.ping,
+ de.uniol.inf.is.odysseus.p2p_new,
+ Jxta_2.6_Source,
+ Commons.Math,
+ com.google.guava,
+ de.uniol.inf.is.odysseus.rest,
+ restlet-osgi-2.2.1,
+ de.uniol.inf.is.odysseus.core
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-ActivationPolicy: lazy
+Service-Component: OSGI-INF/PingMapServiceBinding.xml,
+ OSGI-INF/PeerRestProvider.xml
