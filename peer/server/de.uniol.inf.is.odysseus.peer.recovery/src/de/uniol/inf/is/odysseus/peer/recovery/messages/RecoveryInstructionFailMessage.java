@@ -19,6 +19,16 @@ import de.uniol.inf.is.odysseus.p2p_new.IMessage;
  */
 public class RecoveryInstructionFailMessage implements IMessage {
 
+	public static final int HOLD_ON_FAIL = 0;
+
+	public static final int GO_ON_FAIL = 1;
+
+	public static final int ADD_QUERY_FAIL = 2;
+
+	public static final int UPDATE_SENDER_FAIL = 3;
+
+	public static final int UPDATE_RECEIVER_FAIL = 4;
+	
 	private int mMessageType;
 	private PipeID mPipeId;
 	private String mMessage = "FAILED";

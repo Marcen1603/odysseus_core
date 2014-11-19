@@ -32,6 +32,8 @@ import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryCommunicator;
 import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryStrategyManager;
 import de.uniol.inf.is.odysseus.peer.recovery.messages.BackupInformationMessage;
 import de.uniol.inf.is.odysseus.peer.recovery.messages.RecoveryAgreementMessage;
+import de.uniol.inf.is.odysseus.peer.recovery.messages.RecoveryInstructionAckMessage;
+import de.uniol.inf.is.odysseus.peer.recovery.messages.RecoveryInstructionFailMessage;
 import de.uniol.inf.is.odysseus.peer.recovery.messages.RecoveryInstructionMessage;
 import de.uniol.inf.is.odysseus.peer.recovery.protocol.RecoveryAgreementHandler;
 import de.uniol.inf.is.odysseus.peer.recovery.protocol.RecoveryBackupMessageHandler;
@@ -398,6 +400,8 @@ public class RecoveryCommunicator implements IRecoveryCommunicator, IPeerCommuni
 				sharedQueryId);
 		sendMessage(newPeer, takeOverMessage);
 
+		
+		
 		// Give this peer the backup-info from the peer which he recovers
 		List<IRecoveryBackupInformation> infos = BuddyHelper.findBackupInfoForBuddy(failedPeer);
 		for (IRecoveryBackupInformation info : infos) {
@@ -413,26 +417,28 @@ public class RecoveryCommunicator implements IRecoveryCommunicator, IPeerCommuni
 	@Override
 	public void receivedMessage(IPeerCommunicator communicator, PeerID senderPeer, IMessage message) {
 		if (message instanceof RecoveryInstructionMessage) {
+			// handle instruction message
 			RecoveryInstructionMessage instruction = (RecoveryInstructionMessage) message;
 			RecoveryInstructionHandler.handleInstruction(senderPeer, instruction);
-
+		} else if (message instanceof RecoveryInstructionAckMessage){
+			// handle ack message for instruction
+			RecoveryInstructionAckMessage instruction = (RecoveryInstructionAckMessage) message;
+			RecoveryInstructionHandler.handleAckInstruction(senderPeer, instruction);
+		} else if (message instanceof RecoveryInstructionFailMessage){
+			// handle fail message for instruction
+			RecoveryInstructionFailMessage instruction = (RecoveryInstructionFailMessage) message;
+			RecoveryInstructionHandler.handleFailedInstruction(senderPeer, instruction);
 		} else if (message instanceof BackupInformationMessage) {
-
 			// Store the backup information
 			BackupInformationMessage backupInfoMessage = (BackupInformationMessage) message;
 			RecoveryBackupMessageHandler.handleBackupMessage(senderPeer, backupInfoMessage);
-			
-
 		} else if (message instanceof RemoveQueryMessage) {
-
 			// Remove stored backup information
 			LocalBackupInformationAccess.getStore().remove(((RemoveQueryMessage) message).getSharedQueryID());
-
 		} else if (message instanceof RecoveryAgreementMessage) {
 			RecoveryAgreementMessage agreementMessage = (RecoveryAgreementMessage) message;
 			RecoveryAgreementHandler.handleAgreementMessage(senderPeer, agreementMessage);
-
-		}
+		} 
 	}
 
 	@Override

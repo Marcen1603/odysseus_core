@@ -24,6 +24,8 @@ import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryBackupInformation;
 import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryCommunicator;
 import de.uniol.inf.is.odysseus.peer.recovery.internal.BackupInformation;
 import de.uniol.inf.is.odysseus.peer.recovery.internal.RecoveryCommunicator;
+import de.uniol.inf.is.odysseus.peer.recovery.messages.RecoveryInstructionAckMessage;
+import de.uniol.inf.is.odysseus.peer.recovery.messages.RecoveryInstructionFailMessage;
 import de.uniol.inf.is.odysseus.peer.recovery.messages.RecoveryInstructionMessage;
 import de.uniol.inf.is.odysseus.peer.recovery.util.BuddyHelper;
 import de.uniol.inf.is.odysseus.peer.recovery.util.LocalBackupInformationAccess;
@@ -102,6 +104,34 @@ public class RecoveryInstructionHandler {
 			beBuddy(sender, instructionMessage.getSharedQueryId(), instructionMessage.getPql());
 			break;
 		}
+	}
+	
+	public static void handleAckInstruction(PeerID senderPeer,
+			RecoveryInstructionAckMessage instruction) {
+		switch (instruction.getMessageType()) {
+		case RecoveryInstructionAckMessage.ADD_QUERY_ACK:
+			transferBackupInfo();
+			break;
+		}
+	}
+
+	private static void transferBackupInfo() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public static void handleFailedInstruction(PeerID senderPeer,
+			RecoveryInstructionFailMessage instruction) {
+		switch (instruction.getMessageType()) {
+		case RecoveryInstructionFailMessage.ADD_QUERY_FAIL:
+			reallocateToOtherPeer();
+			break;
+		}
+	}
+
+	private static void reallocateToOtherPeer() {
+		// TODO Auto-generated method stub
+		
 	}
 
 	private static void holdOn(PipeID pipeId) {
@@ -238,5 +268,7 @@ public class RecoveryInstructionHandler {
 		LocalBackupInformationAccess.getStore().add(info);
 		LOG.debug("I am now the buddy for {}", RecoveryCommunicator.getPeerDictionary().get().getRemotePeerName(sender));
 	}
+
+	
 
 }
