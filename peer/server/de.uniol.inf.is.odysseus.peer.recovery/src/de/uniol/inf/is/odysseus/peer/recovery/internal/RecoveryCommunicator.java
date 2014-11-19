@@ -252,7 +252,7 @@ public class RecoveryCommunicator implements IRecoveryCommunicator,
 				RecoveryAgreementMessage.class);
 
 		cPeerCommunicator.get().removeListener(this, RemoveQueryMessage.class);
-		cPeerCommunicator.get().unregisterMessageType(RemoveQueryMessage.class);
+		//cPeerCommunicator.get().unregisterMessageType(RemoveQueryMessage.class); we don't need to unregister this here
 	}
 
 	/**
