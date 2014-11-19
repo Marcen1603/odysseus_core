@@ -15,11 +15,15 @@
  ******************************************************************************/
 package de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.figure;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.draw2d.Graphics;
 import org.eclipse.draw2d.geometry.Dimension;
 import org.eclipse.draw2d.geometry.Rectangle;
@@ -102,7 +106,17 @@ public class MultipleImagesPictogramFigure extends
 		imagePictograms.clear();
 		for (ImagePictogram ip : node.getImages()) {
 			Image image = null;
-			String filename = ip.getFile().getLocation().toOSString();
+			IResource ressource = ip.getFile();
+			if (ressource == null){
+				throw new RuntimeException("Unable to find file for "+ip);
+			}
+			IPath location = ressource.getLocation();
+			if (location == null){
+				throw new RuntimeException("Unable to find location for "+ressource);
+			}
+						
+			String filename = location.toOSString();
+			
 			image = ImageFactory.getImage(filename);
 			addImage(image, ip);
 		}
