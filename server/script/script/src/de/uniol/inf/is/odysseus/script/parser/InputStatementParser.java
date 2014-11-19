@@ -4,6 +4,9 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -18,6 +21,10 @@ public class InputStatementParser {
 		INPUT_KEYS.add(OdysseusScriptParser.PARAMETER_KEY + "INPUT");
 		INPUT_KEYS.add(OdysseusScriptParser.PARAMETER_KEY + "INCLUDE");
 	}
+
+	private static enum SourceType {
+		HTTP, FILE
+	};
 
 	private final String[] textToParse;
 	private final ReplacementContainer replacements;
@@ -59,35 +66,23 @@ public class InputStatementParser {
 								+ INPUT_KEY + ": " + line);
 					}
 
-					String fileName = lineParts[1].trim();
+					String inputName = lineParts[1].trim();
+					final String[] inputLines;
 
-					File includingFile = new File(fileName);
-					if (!includingFile.exists()) {
-						throw new OdysseusScriptException("File for "
-								+ INPUT_KEY + " '" + fileName
-								+ "' does not exist!");
-					}
-
-					if (unwrappingFiles.contains(fileName)) {
+					if (unwrappingFiles.contains(inputName)) {
 						throw new OdysseusScriptException("Cyclic " + INPUT_KEY
-								+ " with file '" + fileName + "'");
+								+ " with file '" + inputName + "'");
 					}
 
-					try {
-						unwrappingFiles.add(fileName);
-						String[] fileLines = readTextLinesFromFile(includingFile);
+					if (inputName.toLowerCase().startsWith("http")) {
+						inputLines = readFromInput(inputName, SourceType.HTTP);
+					} else {
+						inputLines = readFromInput(inputName, SourceType.FILE);
+					}
 
-						String[] unwrappedFileLines = unwrapImpl(fileLines);
-						for (String unwrappedFileLine : unwrappedFileLines) {
-							resultText.add(unwrappedFileLine);
-						}
-
-					} catch (IOException e) {
-						throw new OdysseusScriptException("Could not "
-								+ INPUT_KEY + " file '" + fileName + "'", e);
-
-					} finally {
-						unwrappingFiles.remove(fileName);
+					String[] unwrappedFileLines = unwrapImpl(inputLines);
+					for (String unwrappedFileLine : unwrappedFileLines) {
+						resultText.add(unwrappedFileLine);
 					}
 				}
 			}
@@ -100,9 +95,61 @@ public class InputStatementParser {
 		return resultText.toArray(new String[resultText.size()]);
 	}
 
-	private static String[] readTextLinesFromFile(File includingFile)
-			throws IOException {
+	private String[] readFromInput(String inputName, SourceType readType)
+			throws OdysseusScriptException {
+
+		final String[] inputLines;
+
+		try {
+			unwrappingFiles.add(inputName);
+			switch (readType) {
+			case FILE:
+
+				inputLines = readTextLinesFromFile(inputName);
+				break;
+			case HTTP:
+				inputLines = readTextLinesFromHttp(inputName);
+				break;
+			default:
+				throw new OdysseusScriptException("Could not read from '"
+						+ inputName + "'");
+			}
+
+		} catch (IOException e) {
+			throw new OdysseusScriptException("Could not read from '"
+					+ inputName + "'", e);
+
+		} finally {
+			unwrappingFiles.remove(inputName);
+		}
+		return inputLines;
+	}
+
+	private static String[] readTextLinesFromFile(String inputName)
+			throws IOException, OdysseusScriptException {
+
+		File includingFile = new File(inputName);
+		if (!includingFile.exists()) {
+			throw new OdysseusScriptException("Input-file '" + inputName
+					+ "' does not exist!");
+		}
 		BufferedReader br = new BufferedReader(new FileReader(includingFile));
+		return readFromReader(br);
+	}
+
+	private static String[] readTextLinesFromHttp(String inputName)
+			throws IOException, OdysseusScriptException {
+
+		URL source = new URL(inputName);
+		URLConnection conn = source.openConnection();
+
+		BufferedReader br = new BufferedReader(new InputStreamReader(
+				conn.getInputStream()));
+		return readFromReader(br);
+	}
+
+	private static String[] readFromReader(BufferedReader br)
+			throws IOException {
 		List<String> lines = Lists.newArrayList();
 
 		try {
@@ -118,4 +165,5 @@ public class InputStatementParser {
 			br.close();
 		}
 	}
+
 }
