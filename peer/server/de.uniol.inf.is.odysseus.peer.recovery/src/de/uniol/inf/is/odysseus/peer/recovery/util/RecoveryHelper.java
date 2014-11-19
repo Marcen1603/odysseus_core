@@ -39,6 +39,7 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecu
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.IExecutorCommand;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.dd.CreateQueryCommand;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.query.PhysicalQuery;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.p2p_new.data.DataTransmissionException;
 import de.uniol.inf.is.odysseus.p2p_new.logicaloperator.JxtaReceiverAO;
@@ -53,6 +54,12 @@ import de.uniol.inf.is.odysseus.peer.recovery.internal.BackupInformation;
 import de.uniol.inf.is.odysseus.peer.recovery.internal.RecoveryCommunicator;
 import de.uniol.inf.is.odysseus.peer.recovery.physicaloperator.RecoveryBufferPO;
 
+/**
+ * This class has some helper-methods for the recovery.
+ * 
+ * @author Tobias Brandt & Michael Brand
+ *
+ */
 public class RecoveryHelper {
 
 	private static final Logger LOG = LoggerFactory.getLogger(RecoveryHelper.class);
@@ -643,6 +650,23 @@ public class RecoveryHelper {
 	}
 
 	/**
+	 * Updates the local backup-information with the given new backup-PQL and prepares a list with information for all
+	 * the other peer which may have interest in this information. In opposite to the same method with the sharedQueryId
+	 * this method searches within the whole backup-information, hence it's less efficient
+	 * 
+	 * @param newBackupPQL
+	 * @param pipeId
+	 * @return
+	 */
+	public static List<IRecoveryBackupInformation> updateLocalPQL(String newBackupPQL, PipeID pipeId) {
+		List<IRecoveryBackupInformation> infosToDistribute = new ArrayList<IRecoveryBackupInformation>();
+		for (ID sharedQueryId : LocalBackupInformationAccess.getStoredIDs()) {
+			infosToDistribute.addAll(updateLocalPQL(newBackupPQL, pipeId, sharedQueryId));
+		}
+		return infosToDistribute;
+	}
+
+	/**
 	 * Finds an installed JxtaReceiverPO by the given PipeID (searches for a JxtaReceiverPO with this pipeID)
 	 * 
 	 * @param pipeId
@@ -665,4 +689,41 @@ public class RecoveryHelper {
 		return null;
 	}
 
+	/**
+	 * Searches for an installed query with an JxtaReceiverPO which has this pipeId
+	 * 
+	 * @param pipeId
+	 *            The pipeId to search for in the JxtaReceiverPOs
+	 * @return The query with an JxtaReceicerPO with the given pipeId
+	 */
+	@SuppressWarnings("rawtypes")
+	public static IPhysicalQuery findInstalledQueryWithJxtaReceiver(PipeID pipeId) {
+		Collection<IPhysicalQuery> queries = RecoveryCommunicator.getExecutor().get().getExecutionPlan().getQueries();
+		for (IPhysicalQuery query : queries) {
+			for (IPhysicalOperator op : query.getAllOperators()) {
+				if (op instanceof JxtaReceiverPO) {
+					JxtaReceiverPO receiver = (JxtaReceiverPO) op;
+					if (receiver.getPipeIDString().equals(pipeId.toString())) {
+						return query;
+					}
+				}
+			}
+		}
+		return null;
+	}
+	
+	/**
+	 * Returns a JxtaReceiverPO from a given query.
+	 * @param query The query where the JxtaReceiverPO is in
+	 * @return The JxtaReceiverPO or null, if no one was found
+	 */
+	@SuppressWarnings("rawtypes")
+	public static JxtaReceiverPO findJxtaReceiverPO(PhysicalQuery query) {
+		for (IPhysicalOperator op : query.getAllOperators()) {
+			if (op instanceof JxtaReceiverPO) {
+				return (JxtaReceiverPO) op;
+			}
+		}
+		return null;
+	}
 }

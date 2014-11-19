@@ -420,7 +420,7 @@ public class RecoveryCommunicator implements IRecoveryCommunicator, IPeerCommuni
 
 			// Store the backup information
 			BackupInformationMessage backupInfoMessage = (BackupInformationMessage) message;
-			RecoveryBackupMessageHandler.handleInstruction(senderPeer, backupInfoMessage);
+			RecoveryBackupMessageHandler.handleBackupMessage(senderPeer, backupInfoMessage);
 			
 
 		} else if (message instanceof RemoveQueryMessage) {

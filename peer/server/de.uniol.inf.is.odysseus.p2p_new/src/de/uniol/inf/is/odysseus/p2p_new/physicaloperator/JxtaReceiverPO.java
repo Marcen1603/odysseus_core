@@ -3,6 +3,9 @@ package de.uniol.inf.is.odysseus.p2p_new.physicaloperator;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.ByteBuffer;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Vector;
 
 import net.jxta.id.IDFactory;
 import net.jxta.peer.PeerID;
@@ -28,15 +31,16 @@ import de.uniol.inf.is.odysseus.p2p_new.dictionary.impl.PeerDictionary;
 import de.uniol.inf.is.odysseus.p2p_new.logicaloperator.JxtaReceiverAO;
 import de.uniol.inf.is.odysseus.p2p_new.network.P2PNetworkManager;
 import de.uniol.inf.is.odysseus.p2p_new.util.ByteBufferUtil;
+import de.uniol.inf.is.odysseus.p2p_new.util.IObservableOperator;
+import de.uniol.inf.is.odysseus.p2p_new.util.IOperatorObserver;
 import de.uniol.inf.is.odysseus.systemload.ISystemLoad;
 
 @SuppressWarnings("rawtypes")
 @NoSampling
-public class JxtaReceiverPO<T extends IStreamObject> extends AbstractSource<T>
-		implements ITransmissionReceiverListener {
+public class JxtaReceiverPO<T extends IStreamObject> extends AbstractSource<T> implements
+		ITransmissionReceiverListener, IObservableOperator {
 
-	private static final Logger LOG = LoggerFactory
-			.getLogger(JxtaReceiverPO.class);
+	private static final Logger LOG = LoggerFactory.getLogger(JxtaReceiverPO.class);
 
 	private final NullAwareTupleDataHandler dataHandler;
 	private ITransmissionReceiver transmission;
@@ -50,27 +54,27 @@ public class JxtaReceiverPO<T extends IStreamObject> extends AbstractSource<T>
 	private double downloadRateBytesPerSecond;
 	private long downloadRateTimestamp;
 	private long downloadRateCurrentByteCount;
-	
+
 	// So we know if the query was running when we do recovery
 	private boolean isRunning;
 
 	public JxtaReceiverPO(JxtaReceiverAO ao) throws DataTransmissionException {
 		SDFSchema schema = ao.getOutputSchema().clone();
 		setOutputSchema(schema);
-		dataHandler = (NullAwareTupleDataHandler) new NullAwareTupleDataHandler()
-				.createInstance(schema);
+		dataHandler = (NullAwareTupleDataHandler) new NullAwareTupleDataHandler().createInstance(schema);
 
 		pipeIDString = ao.getPipeID();
 		peerIDString = ao.getPeerID();
 
 		localPeerName = P2PNetworkManager.getInstance().getLocalPeerName();
 
-		transmission = DataTransmissionManager.getInstance()
-				.registerTransmissionReceiver(peerIDString, pipeIDString);
+		transmission = DataTransmissionManager.getInstance().registerTransmissionReceiver(peerIDString, pipeIDString);
 		transmission.addListener(this);
 		transmission.open();
-		
+
 		isRunning = false;
+
+		mObservers = new Vector<IOperatorObserver>(10);
 	}
 
 	public JxtaReceiverPO(JxtaReceiverPO<T> po) {
@@ -88,8 +92,10 @@ public class JxtaReceiverPO<T extends IStreamObject> extends AbstractSource<T>
 		this.downloadRateBytesPerSecond = po.downloadRateBytesPerSecond;
 		this.downloadRateCurrentByteCount = po.downloadRateCurrentByteCount;
 		this.downloadRateTimestamp = po.downloadRateTimestamp;
-		
+
 		isRunning = false;
+
+		mObservers = new Vector<IOperatorObserver>(10);
 	}
 
 	@Override
@@ -138,8 +144,7 @@ public class JxtaReceiverPO<T extends IStreamObject> extends AbstractSource<T>
 		}
 
 		@SuppressWarnings("unchecked")
-		T streamObject = (T) ByteBufferUtil.createStreamObject(
-				ByteBuffer.wrap(data), dataHandler);
+		T streamObject = (T) ByteBufferUtil.createStreamObject(ByteBuffer.wrap(data), dataHandler);
 
 		Object metadata = streamObject.getMetadata();
 		if (metadata instanceof ISystemLoad) {
@@ -153,8 +158,7 @@ public class JxtaReceiverPO<T extends IStreamObject> extends AbstractSource<T>
 	}
 
 	@Override
-	public void onReceivePunctuation(ITransmissionReceiver receiver,
-			IPunctuation punc) {
+	public void onReceivePunctuation(ITransmissionReceiver receiver, IPunctuation punc) {
 		sendPunctuation(punc);
 	}
 
@@ -193,9 +197,7 @@ public class JxtaReceiverPO<T extends IStreamObject> extends AbstractSource<T>
 			return "";
 		}
 
-		return " ["
-				+ PeerDictionary.getInstance().getRemotePeerName(
-						toPeerID(peerIDString)) + "]";
+		return " [" + PeerDictionary.getInstance().getRemotePeerName(toPeerID(peerIDString)) + "]";
 	}
 
 	protected static PeerID toPeerID(String peerIDString) {
@@ -212,22 +214,64 @@ public class JxtaReceiverPO<T extends IStreamObject> extends AbstractSource<T>
 	 * Updates the receiver so that is receives the data from a new peer
 	 * 
 	 * @param peerId
-	 *            From the new peer from which this receiver should receive the
-	 *            data
+	 *            From the new peer from which this receiver should receive the data
 	 * @throws DataTransmissionException
 	 */
-	public void receiveFromNewPeer(String peerId)
-			throws DataTransmissionException {
+	public void receiveFromNewPeer(String peerId) throws DataTransmissionException {
 		this.peerIDString = peerId;
-		
-		// Update transmission		
+
+		// Update transmission
 		transmission.close();
 		transmission.removeListener(this);
 		transmission.setPeerId(toPeerID(peerId));
 		transmission.addListener(this);
 		transmission.open();
 
-		if(isRunning)
+		if (isRunning)
 			process_open();
+
+		// Notify the observers with the new peerId so that they can update the backup-information
+		List<String> infoList = new ArrayList<String>();
+		infoList.add(peerId);
+		infoList.add(this.pipeIDString);
+		notifyObservers(infoList);
+	}
+
+	// For the observer-pattern
+	// ------------------------
+
+	private Vector<IOperatorObserver> mObservers;
+
+	@Override
+	public void addObserver(IOperatorObserver observer) {
+		synchronized (mObservers) {
+			if (!mObservers.contains(observer)) {
+				mObservers.addElement(observer);
+				LOG.debug("New observer added.");
+			}
+		}
+	}
+
+	@Override
+	public void removeObserver(IOperatorObserver observer) {
+		synchronized (mObservers) {
+			mObservers.removeElement(observer);
+		}
+	}
+
+	@Override
+	public void removeObservers() {
+		synchronized (mObservers) {
+			mObservers.removeAllElements();
+		}
+	}
+
+	@Override
+	public void notifyObservers(Object arg) {
+		synchronized (mObservers) {
+			for (int i = 0; i < mObservers.size(); i++) {
+				mObservers.elementAt(i).update(this, arg);
+			}
+		}
 	}
 }

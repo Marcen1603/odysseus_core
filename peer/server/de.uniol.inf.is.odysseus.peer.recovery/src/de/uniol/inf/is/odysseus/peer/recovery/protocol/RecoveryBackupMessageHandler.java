@@ -20,7 +20,7 @@ public class RecoveryBackupMessageHandler {
 	 * @param backupInformationMessage
 	 *            The informationMessage to handle
 	 */
-	public static void handleInstruction(PeerID sender, BackupInformationMessage backupInformationMessage) {
+	public static void handleBackupMessage(PeerID sender, BackupInformationMessage backupInformationMessage) {
 		int messageType = backupInformationMessage.getMessageType();
 
 		switch (messageType) {

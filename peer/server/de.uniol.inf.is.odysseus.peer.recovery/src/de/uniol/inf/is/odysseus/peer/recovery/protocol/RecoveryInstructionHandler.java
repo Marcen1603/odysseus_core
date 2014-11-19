@@ -12,19 +12,14 @@ import net.jxta.pipe.PipeID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Strings;
-
-import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.p2p_new.IP2PNetworkManager;
 import de.uniol.inf.is.odysseus.p2p_new.data.DataTransmissionException;
-import de.uniol.inf.is.odysseus.p2p_new.logicaloperator.JxtaReceiverAO;
 import de.uniol.inf.is.odysseus.p2p_new.physicaloperator.JxtaReceiverPO;
 import de.uniol.inf.is.odysseus.p2p_new.physicaloperator.JxtaSenderPO;
 import de.uniol.inf.is.odysseus.parser.pql.generator.IPQLGenerator;
-import de.uniol.inf.is.odysseus.peer.distribute.util.LogicalQueryHelper;
 import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryBackupInformation;
 import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryCommunicator;
 import de.uniol.inf.is.odysseus.peer.recovery.internal.BackupInformation;
@@ -120,6 +115,14 @@ public class RecoveryInstructionHandler {
 		RecoveryHelper.resumeSubscriptions(pipeId);
 	}
 
+	/**
+	 * Adds a query (installs and runs it) and saves the new backup-information. If neccecary, searches for a buddy
+	 * 
+	 * @param pql
+	 *            The PQL String to install
+	 * @param sharedQueryId
+	 *            The id of the shared query where this PQL belongs to
+	 */
 	@SuppressWarnings("rawtypes")
 	private static void addQuery(String pql, ID sharedQueryId) {
 
@@ -190,7 +193,6 @@ public class RecoveryInstructionHandler {
 		}
 
 		// 1. Get the receiver, which we have to update
-		String newBackupPQL = "";
 		Collection<IPhysicalQuery> queries = RecoveryCommunicator.getExecutor().get().getExecutionPlan().getQueries();
 		for (IPhysicalQuery query : queries) {
 			for (IPhysicalOperator op : query.getAllOperators()) {
@@ -200,19 +202,6 @@ public class RecoveryInstructionHandler {
 						// This should be the receiver we have to update
 						try {
 							receiver.receiveFromNewPeer(newSender.toString());
-
-							// Change the logical plan to update the
-							// backup-information
-							Collection<ILogicalOperator> logicalOps = LogicalQueryHelper.getAllOperators(query
-									.getLogicalQuery().getLogicalPlan());
-							for (ILogicalOperator logicalOp : logicalOps) {
-								if (logicalOp instanceof JxtaReceiverAO) {
-									JxtaReceiverAO logicalReceiver = (JxtaReceiverAO) logicalOp;
-									logicalReceiver.setPeerID(newSender.toString());
-								}
-							}
-
-							newBackupPQL = pqlGenerator.generatePQLStatement(query.getLogicalQuery().getLogicalPlan());
 							break;
 						} catch (DataTransmissionException e) {
 							// TODO Auto-generated catch block
@@ -222,26 +211,18 @@ public class RecoveryInstructionHandler {
 				}
 			}
 		}
-
-		// 2. Update the PQL of my local BackupInformation
-		// Big question: Where to put this? I don't know the sharedQueryId ... (Here I could make it that I know it, but
-		// if the LB changes the Receiver, I don't know it) and the pql is not the same, cause it has other names for
-		// the operators
-		// Maybe just search for the pipeId?
-
-		// For now, take the sharedQueryId from the message
-
-		// Search for the right information
-		if (!Strings.isNullOrEmpty(newBackupPQL)) {
-			List<IRecoveryBackupInformation> infosToDistribute = RecoveryHelper.updateLocalPQL(newBackupPQL, pipeId,
-					sharedQueryId);
-			for (IRecoveryBackupInformation backupInfo : infosToDistribute) {
-				recoveryCommunicator.distributeUpdatedBackupInfo(backupInfo);
-			}
-		}
-
 	}
 
+	/**
+	 * Saves, that this peer is a buddy for the given peer and saves the corresponding backup-information
+	 * 
+	 * @param sender
+	 *            The sender of the message - this is the peer we will be the buddy for
+	 * @param sharedQueryId
+	 *            The id of the shared query we ware the buddy for
+	 * @param pqls
+	 *            The PQL-Strings with the information about the peer we are the buddy for
+	 */
 	private static void beBuddy(PeerID sender, ID sharedQueryId, List<String> pqls) {
 		LocalBackupInformationAccess.addBuddy(sender, sharedQueryId);
 		IRecoveryBackupInformation info = new BackupInformation();
