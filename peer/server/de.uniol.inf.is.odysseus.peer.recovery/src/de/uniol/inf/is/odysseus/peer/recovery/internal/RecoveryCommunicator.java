@@ -173,33 +173,48 @@ public class RecoveryCommunicator implements IRecoveryCommunicator, IPeerCommuni
 	 * Registers messages and listeners at the peer communicator.
 	 */
 	private void registerMessagesAndAddListeners() {
-
 		Preconditions.checkArgument(cPeerCommunicator.isPresent());
 		cPeerCommunicator.get().registerMessageType(RecoveryInstructionMessage.class);
 		cPeerCommunicator.get().addListener(this, RecoveryInstructionMessage.class);
+		
+		cPeerCommunicator.get().registerMessageType(RecoveryInstructionAckMessage.class);
+		cPeerCommunicator.get().addListener(this, RecoveryInstructionAckMessage.class);
+		
+		cPeerCommunicator.get().registerMessageType(RecoveryInstructionFailMessage.class);
+		cPeerCommunicator.get().addListener(this, RecoveryInstructionFailMessage.class);
+		
 		cPeerCommunicator.get().registerMessageType(BackupInformationMessage.class);
 		cPeerCommunicator.get().addListener(this, BackupInformationMessage.class);
+		
 		cPeerCommunicator.get().registerMessageType(RecoveryAgreementMessage.class);
 		cPeerCommunicator.get().addListener(this, RecoveryAgreementMessage.class);
+		
 		cPeerCommunicator.get().registerMessageType(RemoveQueryMessage.class);
 		cPeerCommunicator.get().addListener(this, RemoveQueryMessage.class);
-
 	}
 
 	/**
 	 * Unregisters messages and listeners at the peer communicator.
 	 */
 	private void unregisterMessagesAndAddListeners() {
-
 		Preconditions.checkArgument(cPeerCommunicator.isPresent());
 		cPeerCommunicator.get().removeListener(this, RecoveryInstructionMessage.class);
 		cPeerCommunicator.get().unregisterMessageType(RecoveryInstructionMessage.class);
+		
+		cPeerCommunicator.get().removeListener(this, RecoveryInstructionAckMessage.class);
+		cPeerCommunicator.get().unregisterMessageType(RecoveryInstructionAckMessage.class);
+		
+		cPeerCommunicator.get().removeListener(this, RecoveryInstructionFailMessage.class);
+		cPeerCommunicator.get().unregisterMessageType(RecoveryInstructionFailMessage.class);
+		
 		cPeerCommunicator.get().removeListener(this, BackupInformationMessage.class);
 		cPeerCommunicator.get().unregisterMessageType(BackupInformationMessage.class);
+		
 		cPeerCommunicator.get().removeListener(this, RecoveryAgreementMessage.class);
 		cPeerCommunicator.get().unregisterMessageType(RecoveryAgreementMessage.class);
+		
 		cPeerCommunicator.get().removeListener(this, RemoveQueryMessage.class);
-
+		cPeerCommunicator.get().unregisterMessageType(RemoveQueryMessage.class);
 	}
 
 	/**
