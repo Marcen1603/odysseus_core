@@ -144,8 +144,14 @@ public class RecoveryStrategyUpstreamBackup implements IRecoveryStrategy {
 	public static void bindRecoveryAllocator(IRecoveryAllocator serv) {
 
 		Preconditions.checkNotNull(serv);
-		cRecoveryAllocator = Optional.of(serv);
-		LOG.debug("Bound {} as a recovery allocator.", serv.getClass().getSimpleName());
+		
+		if(cRecoveryAllocator.isPresent() && cRecoveryAllocator.get().getName().equals("roundrobinwithlocal") ){
+			// use local as default so do nothing here
+		} else {
+			cRecoveryAllocator = Optional.of(serv);
+			LOG.debug("Bound {} as a recovery allocator.", serv.getClass().getSimpleName());
+		}
+
 
 	}
 
