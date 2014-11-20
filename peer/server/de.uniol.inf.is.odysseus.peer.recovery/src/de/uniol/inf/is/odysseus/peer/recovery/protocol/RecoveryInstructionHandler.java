@@ -136,13 +136,15 @@ public class RecoveryInstructionHandler {
 
 	private static void holdOn(PipeID pipeId) {
 		// Here we want to store the tuples
-		RecoveryHelper.startBuffering(pipeId.toString());
+		
+		// TODO Don't do this now, cause we never send goOn messages.
+		//RecoveryHelper.startBuffering(pipeId.toString());
 	}
 
 	private static void goOn(PipeID pipeId) {
 		// Here we want to empty the buffer and go on sending the tuples to the
 		// next peer
-		RecoveryHelper.resumeSubscriptions(pipeId);
+		RecoveryHelper.resumeFromBuffering(pipeId.toString());
 	}
 
 	/**

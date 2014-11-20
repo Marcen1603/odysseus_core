@@ -391,7 +391,7 @@ public class RecoveryConsole implements CommandProvider {
 
 	public void _goOn(CommandInterpreter ci) {
 		PipeID pipe = getPipeIDFromCi(ci);
-		RecoveryHelper.resumeSubscriptions(pipe);
+		RecoveryHelper.resumeFromBuffering(pipe.toString());
 	}
 
 	public void _beBuddy(CommandInterpreter ci) {

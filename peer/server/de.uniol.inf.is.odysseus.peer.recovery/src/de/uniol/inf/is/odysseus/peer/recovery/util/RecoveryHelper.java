@@ -27,6 +27,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.AbstractPhysicalSubscripti
 import de.uniol.inf.is.odysseus.core.physicaloperator.ControllablePhysicalSubscription;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
+import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.DataDictionaryProvider;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.RestructHelper;
@@ -81,10 +82,8 @@ public class RecoveryHelper {
 
 		Preconditions.checkNotNull(serv);
 		if (serv.getLanguage().equals("PQL")) {
-
 			cPQLParser = Optional.of(serv);
 			LOG.debug("Bound {} as a pql parser.", serv.getClass().getSimpleName());
-
 		}
 
 	}
@@ -102,10 +101,8 @@ public class RecoveryHelper {
 		Preconditions.checkNotNull(serv);
 
 		if (cPQLParser.isPresent() && cPQLParser.get() == serv) {
-
 			cPQLParser = Optional.absent();
 			LOG.debug("Unbound {} as a pql parser.", serv.getClass().getSimpleName());
-
 		}
 
 	}
@@ -121,10 +118,8 @@ public class RecoveryHelper {
 		Collection<Integer> installedQueries = Lists.newArrayList();
 
 		if (!RecoveryCommunicator.getExecutor().isPresent()) {
-
 			LOG.error("No executor bound!");
 			return installedQueries;
-
 		}
 
 		IServerExecutor executor = RecoveryCommunicator.getExecutor().get();
@@ -147,10 +142,8 @@ public class RecoveryHelper {
 	public static Optional<PeerID> determinePeerID(String peerName) {
 
 		if (!RecoveryCommunicator.getPeerDictionary().isPresent()) {
-
 			LOG.error("No P2P dictionary bound!");
 			return Optional.absent();
-
 		}
 
 		for (PeerID pid : RecoveryCommunicator.getPeerDictionary().get().getRemotePeerIDs()) {
@@ -183,10 +176,8 @@ public class RecoveryHelper {
 	public static IPhysicalOperator getPhysicalJxtaOperator(boolean lookForSender, String pipeID) {
 
 		if (!RecoveryCommunicator.getExecutor().isPresent()) {
-
 			LOG.error("No executor bound!");
 			return null;
-
 		}
 
 		IServerExecutor executor = RecoveryCommunicator.getExecutor().get();
@@ -259,10 +250,8 @@ public class RecoveryHelper {
 		ArrayList<ILogicalQueryPart> parts = new ArrayList<ILogicalQueryPart>();
 
 		if (!RecoveryCommunicator.getExecutor().isPresent()) {
-
 			LOG.error("No executor bound!");
 			return parts;
-
 		}
 
 		IServerExecutor executor = RecoveryCommunicator.getExecutor().get();
@@ -287,10 +276,8 @@ public class RecoveryHelper {
 		List<JxtaSenderPO<?>> senders = new ArrayList<JxtaSenderPO<?>>();
 
 		if (!RecoveryCommunicator.getExecutor().isPresent()) {
-
 			LOG.error("No executor bound!");
 			return senders;
-
 		}
 
 		Iterator<IPhysicalQuery> queryIterator = RecoveryCommunicator.getExecutor().get().getExecutionPlan()
@@ -322,10 +309,8 @@ public class RecoveryHelper {
 		List<RecoveryBufferPO> buffers = new ArrayList<RecoveryBufferPO>();
 
 		if (!RecoveryCommunicator.getExecutor().isPresent()) {
-
 			LOG.error("No executor bound!");
 			return buffers;
-
 		}
 
 		Iterator<IPhysicalQuery> queryIterator = RecoveryCommunicator.getExecutor().get().getExecutionPlan()
@@ -387,13 +372,6 @@ public class RecoveryHelper {
 		return subscriptions;
 	}
 
-	@SuppressWarnings("rawtypes")
-	public static void resumeSubscriptions(PipeID pipeId) {
-		for (ControllablePhysicalSubscription sub : getSubscriptions(pipeId)) {
-			sub.resume();
-		}
-	}
-
 	/**
 	 * 
 	 * @param pipeId
@@ -409,13 +387,12 @@ public class RecoveryHelper {
 	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
+	@Deprecated
 	public static void addNewSender(JxtaSenderPO originalSender, PeerID newPeer) {
 
 		if (!RecoveryCommunicator.getExecutor().isPresent()) {
-
 			LOG.error("No executor bound!");
 			return;
-
 		}
 
 		// TEST Update sender
@@ -489,37 +466,74 @@ public class RecoveryHelper {
 
 	}
 
+	/**
+	 * Suspends or resumes the subscription to a sink.
+	 * 
+	 * @param sink The sink where the subscription goes to which has to be suspended
+	 * @param suspend true, if you want to suspend, false, if you want to resume
+	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public static void suspendSink(ISink sink) {
+	public static void suspendOrResumeSink(ISink sink, boolean suspend) {
 		Collection<AbstractPhysicalSubscription> subscriptions = sink.getSubscribedToSource();
 		for (AbstractPhysicalSubscription subscription : subscriptions) {
-			if (subscription instanceof ControllablePhysicalSubscription) {
-				ControllablePhysicalSubscription sub = (ControllablePhysicalSubscription) subscription;
-				sub.suspend();
-			} else {
-				// TODO Errorhandling
+			ISource test = ((ISource) subscription.getTarget());
+			Collection<AbstractPhysicalSubscription> col = test.getSubscriptions();
+			for (AbstractPhysicalSubscription sub : col) {
+				if (sub instanceof ControllablePhysicalSubscription) {
+					ControllablePhysicalSubscription controlSub = (ControllablePhysicalSubscription) sub;
+					if (suspend && !controlSub.isSuspended()) {
+						controlSub.suspend();
+					} else if (!suspend && controlSub.isSuspended()) {
+						controlSub.resume();
+					}
+				} else {
+					// TODO Errorhandling
+				}
 			}
 		}
 	}
 
-	/***
-	 * 
+	/**
+	 * Starts to buffer before the JxtaSenderPO with the given pipeID
 	 * 
 	 * @param pipeID
-	 *            PipeID of JxtaSender
-	 * @return
+	 *            The pipeID to search for
 	 */
 	@SuppressWarnings("rawtypes")
 	public static void startBuffering(String pipeID) {
 		IPhysicalOperator operator = getPhysicalJxtaOperator(true, pipeID);
 		if (operator == null) {
 			LOG.error("No Sender with PipeID " + pipeID + " found.");
-			// TODO Error
+			return;
 		}
 		JxtaSenderPO sender = (JxtaSenderPO) operator;
-		suspendSink(sender);
+		suspendOrResumeSink(sender, true);
 	}
 
+	/**
+	 * Resumes the buffer and goes on to send tuples over the JxtaSender with the given pipeID
+	 * 
+	 * @param pipeID
+	 *            The pipeID to search for
+	 */
+	@SuppressWarnings("rawtypes")
+	public static void resumeFromBuffering(String pipeID) {
+		IPhysicalOperator operator = getPhysicalJxtaOperator(true, pipeID);
+		if (operator == null) {
+			LOG.error("No Sender with PipeID " + pipeID + " found.");
+			return;
+		}
+		JxtaSenderPO sender = (JxtaSenderPO) operator;
+		suspendOrResumeSink(sender, false);
+	}
+
+	/**
+	 * Converts a string to a pipeID
+	 * 
+	 * @param pipeId
+	 *            The pipeID as a String
+	 * @return The pipeID, if conversion is possible, null, if not
+	 */
 	public static PipeID convertToPipeId(String pipeId) {
 		PipeID pipe = null;
 		try {
