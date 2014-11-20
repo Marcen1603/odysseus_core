@@ -113,113 +113,26 @@ public class RPiGPIOActor extends Actor {
 			String activitySourceName = activityInterpreter
 					.getActivitySourceName();
 
-			// ////
-
-			// logicRules = new HashMap<String, LinkedHashMap<String,
-			// String>>();
-
-			// super.get
-
-			// 1. Import data stream with activities of the field device:
-			// fieldDevice.getName()
-			// and listen for the activity: "hot"
-			String activityImportedName = getNameCombination(
-					"Activity_imported", activity, peerName);
-			StringBuilder activityImport = activityImportedStream(
-					activityImportedName, activitySourceName);
-
-			map.put(activityImportedName, activityImport.toString());
-
-			// 2. create configuration of the actor, how it will be set if
-			// the fieldDevice.getName() is participating at the activity:
-			String actorConfigIfParticipateActivity = getNameCombination(
-					"Config", activity, peerName);
-			//StringBuilder sbConfig = actorConfigIfParticipateActivity(activity,
-			//		actorConfigIfParticipateActivity);
-
-			//map.put(actorConfigIfParticipateActivity, sbConfig.toString());
 
 			String setConfigStreamName = getNameCombination("SetActor",
 					activity, peerName);
-			StringBuilder sbSetConfig = entityConfigStream(
-					actorConfigIfParticipateActivity, setConfigStreamName,
+			StringBuilder sbSetConfig = entityConfigStream(setConfigStreamName,
 					activitySourceName, activity);
 
 			map.put(setConfigStreamName, sbSetConfig.toString());
 
-			// InputSchema: schema=[['PinNumber', 'String'],['PinState',
-			// 'String']]
+			
 			String entitySetStateStreamName = getNameCombination(getName(),
 					activity, peerName);
 			StringBuilder sbEntitySetState = entitySetStateStream(
 					setConfigStreamName, entitySetStateStreamName);
 
 			map.put(entitySetStateStreamName, sbEntitySetState.toString());
-
-			// ///
-
+			
 			return map;
 		}
 
-		private StringBuilder activityImportedStream(
-				String activityImportedName, String activitySourceName) {
-			StringBuilder activityImport = new StringBuilder();
-			activityImport.append("#PARSER PQL\n");
-			activityImport
-					.append("#QNAME " + activityImportedName + "_query\n");
-			activityImport.append("#RUNQUERY\n");
-			activityImport.append(activityImportedName + " := SELECT({\n");
-			activityImport.append("    predicate=\"ActivityName = '"+getActivityName()+"'\"\n");
-			activityImport.append("    },\n");
-			activityImport.append("    " + activitySourceName + "\n");
-			activityImport.append(")\n");
-			activityImport.append("\n");
-			return activityImport;
-		}
-
-		//TODO: 
-		@SuppressWarnings("unused")
-		private StringBuilder actorConfigIfParticipateActivity(String activity,
-				String actorConfigIfParticipateActivity) {
-
-			String setState;
-			if (getState().equals(State.ON) || getState().equals(State.TOGGLE)) {
-				setState = "1";
-			} else {
-				setState = "0";
-			}
-
-			StringBuilder sbConfig = new StringBuilder();
-			sbConfig.append("#PARSER PQL\n");
-			sbConfig.append("#QNAME " + actorConfigIfParticipateActivity
-					+ "_query\n");
-			sbConfig.append("#RUNQUERY\n");
-			sbConfig.append("    " + actorConfigIfParticipateActivity
-					+ " := ACCESS({\n");
-			sbConfig.append("    transport = 'activityconfiguration',\n");
-			sbConfig.append("    source = '" + actorConfigIfParticipateActivity
-					+ "',\n");
-			sbConfig.append("    datahandler = 'Tuple',\n");
-			sbConfig.append("    wrapper = 'GenericPull',\n");
-			sbConfig.append("    protocol='none',\n");
-			sbConfig.append("    options=[\n");
-			sbConfig.append("      ['entity', '" + setState + "'],\n");
-			sbConfig.append("      ['activity', '" + activity + "']\n");
-			sbConfig.append("    ],\n");
-			sbConfig.append("    schema=[\n");
-			sbConfig.append("      ['ConfigEntityName', 'String'],\n");
-			sbConfig.append("      ['ConfigActivityName', 'String']\n");
-			sbConfig.append("    ]\n");
-			sbConfig.append("  }\n");
-			sbConfig.append(")\n");
-			sbConfig.append("\n");
-			sbConfig.append("\n");
-			return sbConfig;
-		}
-
-		private StringBuilder entityConfigStream(
-				String actorConfigIfParticipateActivity,
-				String setConfigStreamName, String activitySourceName, String activity) {
+		private StringBuilder entityConfigStream(String setConfigStreamName, String activitySourceName, String activity) {
 			StringBuilder sbSetConfig = new StringBuilder();
 			sbSetConfig.append("#PARSER PQL\n");
 			sbSetConfig.append("#QNAME " + setConfigStreamName + "_query\n");
@@ -233,34 +146,7 @@ public class RPiGPIOActor extends Actor {
 			sbSetConfig.append("                        },\n");
 			sbSetConfig.append("                        "+activitySourceName+"\n");
 			sbSetConfig.append("                      )))\n");
-			
-			/*
-			sbSetConfig.append("" + setConfigStreamName + " := RENAME({\n");
-			sbSetConfig.append("        aliases = ['PinNumber', 'PinState']\n");
-			sbSetConfig.append("    },\n");
-			sbSetConfig.append("    PROJECT({\n");
-			sbSetConfig.append("        attributes = "
-					+ "    ['ActivityName','ConfigEntityName']\n");
-			sbSetConfig.append("    },\n");
-			sbSetConfig.append("        JOIN({\n");
-			sbSetConfig.append("            predicate = '" + activitySourceName
-					+ ".ActivityName = " + actorConfigIfParticipateActivity
-					+ ".ConfigActivityName'\n");
-			sbSetConfig.append("        },\n");
-			sbSetConfig.append("ELEMENTWINDOW({size = 1}, "
-					+ activitySourceName + "),\n");
-			sbSetConfig.append("ELEMENTWINDOW({size = 1}, "
-					+ actorConfigIfParticipateActivity + ")\n");
-			sbSetConfig.append("        )\n");
-			sbSetConfig.append("    )\n");
-			sbSetConfig.append(")\n");
 			sbSetConfig.append("\n");
-			*/
-			
-			
-			
-			
-			
 			
 			return sbSetConfig;
 		}
@@ -278,6 +164,7 @@ public class RPiGPIOActor extends Actor {
 			//		+ ")\n");
 			
 			sbEntitySetState.append("" + entitySetStateStreamName +" = RPIGPIOSINK({pin="+getPin()+", pinstate='low'}," + setConfigStreamName+")");
+			sbEntitySetState.append("\n");
 			
 			return sbEntitySetState;
 		}
@@ -306,11 +193,9 @@ public class RPiGPIOActor extends Actor {
 			String _name = this.name.toString();
 			return _name;
 		}
-
 	}
 
 	public void setPin(int pin) {
 		this.pin = pin;
 	}
-
 }
