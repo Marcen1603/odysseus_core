@@ -133,6 +133,19 @@ public class RPiGPIOActor extends Actor {
 		}
 
 		private StringBuilder entityConfigStream(String setConfigStreamName, String activitySourceName, String activity) {
+			String v = "";
+			switch (getState()) {
+			case ON:
+				v = "1";
+				break;
+			case OFF:
+				v = "0";
+				break;
+			default:
+				break;
+			}
+			
+			
 			StringBuilder sbSetConfig = new StringBuilder();
 			sbSetConfig.append("#PARSER PQL\n");
 			sbSetConfig.append("#QNAME " + setConfigStreamName + "_query\n");
@@ -140,7 +153,7 @@ public class RPiGPIOActor extends Actor {
 			sbSetConfig.append(""+setConfigStreamName+" := RENAME({\n");
 			sbSetConfig.append("                        aliases = ['PinNumber', 'PinState']\n");                                                             
 			sbSetConfig.append("                      },MAP({\n");
-			sbSetConfig.append("                      expressions = ['EntityName','concat(substring(toString(ActivityName),0,0),1)']\n");                                                                       
+			sbSetConfig.append("                      expressions = ['EntityName','concat(substring(toString(ActivityName),0,0),"+v+")']\n");                                                                       
 			sbSetConfig.append("                    },SELECT({\n");
 			sbSetConfig.append("                          predicate=\"ActivityName = '"+activity+"'\"\n");                                                                                                                                                                          
 			sbSetConfig.append("                        },\n");
