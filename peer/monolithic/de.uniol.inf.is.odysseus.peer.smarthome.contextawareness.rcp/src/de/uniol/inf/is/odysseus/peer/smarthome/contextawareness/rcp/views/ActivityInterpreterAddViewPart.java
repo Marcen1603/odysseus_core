@@ -397,6 +397,7 @@ public class ActivityInterpreterAddViewPart extends ViewPart {
 			return;
 		}
 
+		/*
 		if (selectedActorAction < 0) {
 			MessageDialog msgDialog = new MessageDialog(
 					Display.getCurrent().getActiveShell(),
@@ -407,6 +408,7 @@ public class ActivityInterpreterAddViewPart extends ViewPart {
 			msgDialog.open();
 			return;
 		}
+		*/
 
 		PeerID currentPeer = foundPeerIDs.get(selectedPeerID);
 		ASmartDevice smartDevice = getSmartDevice(currentPeer);

@@ -134,16 +134,16 @@ public class RPiGPIOActor extends Actor {
 			// the fieldDevice.getName() is participating at the activity:
 			String actorConfigIfParticipateActivity = getNameCombination(
 					"Config", activity, peerName);
-			StringBuilder sbConfig = actorConfigIfParticipateActivity(activity,
-					actorConfigIfParticipateActivity);
+			//StringBuilder sbConfig = actorConfigIfParticipateActivity(activity,
+			//		actorConfigIfParticipateActivity);
 
-			map.put(actorConfigIfParticipateActivity, sbConfig.toString());
+			//map.put(actorConfigIfParticipateActivity, sbConfig.toString());
 
 			String setConfigStreamName = getNameCombination("SetActor",
 					activity, peerName);
 			StringBuilder sbSetConfig = entityConfigStream(
 					actorConfigIfParticipateActivity, setConfigStreamName,
-					activitySourceName);
+					activitySourceName, activity);
 
 			map.put(setConfigStreamName, sbSetConfig.toString());
 
@@ -177,6 +177,8 @@ public class RPiGPIOActor extends Actor {
 			return activityImport;
 		}
 
+		//TODO: 
+		@SuppressWarnings("unused")
 		private StringBuilder actorConfigIfParticipateActivity(String activity,
 				String actorConfigIfParticipateActivity) {
 
@@ -217,11 +219,22 @@ public class RPiGPIOActor extends Actor {
 
 		private StringBuilder entityConfigStream(
 				String actorConfigIfParticipateActivity,
-				String setConfigStreamName, String activitySourceName) {
+				String setConfigStreamName, String activitySourceName, String activity) {
 			StringBuilder sbSetConfig = new StringBuilder();
 			sbSetConfig.append("#PARSER PQL\n");
 			sbSetConfig.append("#QNAME " + setConfigStreamName + "_query\n");
 			sbSetConfig.append("#RUNQUERY\n");
+			sbSetConfig.append(""+setConfigStreamName+" := RENAME({\n");
+			sbSetConfig.append("                        aliases = ['PinNumber', 'PinState']\n");                                                             
+			sbSetConfig.append("                      },MAP({\n");
+			sbSetConfig.append("                      expressions = ['EntityName','concat(substring(toString(ActivityName),0,0),1)']\n");                                                                       
+			sbSetConfig.append("                    },SELECT({\n");
+			sbSetConfig.append("                          predicate=\"ActivityName = '"+activity+"'\"\n");                                                                                                                                                                          
+			sbSetConfig.append("                        },\n");
+			sbSetConfig.append("                        "+activitySourceName+"\n");
+			sbSetConfig.append("                      )))\n");
+			
+			/*
 			sbSetConfig.append("" + setConfigStreamName + " := RENAME({\n");
 			sbSetConfig.append("        aliases = ['PinNumber', 'PinState']\n");
 			sbSetConfig.append("    },\n");
@@ -242,6 +255,13 @@ public class RPiGPIOActor extends Actor {
 			sbSetConfig.append("    )\n");
 			sbSetConfig.append(")\n");
 			sbSetConfig.append("\n");
+			*/
+			
+			
+			
+			
+			
+			
 			return sbSetConfig;
 		}
 

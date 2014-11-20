@@ -110,10 +110,11 @@ public class RPiGPIOSensor extends Sensor {
 					"ActivityConfiguration", getActivityName());
 			String activityConfigQuery = generateActivityConfig(
 					getActivityName(), activityConfigName);
-			queries.put(activityConfigName, activityConfigQuery);
+			//queries.put(activityConfigName, activityConfigQuery);
+			
 
 			String activityQuery = generateActivityStream(
-					getActivitySourceName(), activityConfigName);
+					getActivitySourceName(), activityConfigName, getActivityName());
 
 			queries.put(getActivitySourceName(), activityQuery);
 
@@ -127,8 +128,9 @@ public class RPiGPIOSensor extends Sensor {
 		}
 
 		private String generateActivityStream(String activityStreamName,
-				String activityConfiguration) {
+				String activityConfiguration, String activity) {
 			StringBuilder sBuilder2 = new StringBuilder();
+			/*
 			sBuilder2.append("#PARSER PQL\n");
 			sBuilder2.append("#QNAME " + activityStreamName + "_query\n");
 			sBuilder2.append("#RUNQUERY\n");
@@ -152,6 +154,25 @@ public class RPiGPIOSensor extends Sensor {
 							+ activityConfiguration + ")\n");
 			sBuilder2.append("                      )\n");
 			sBuilder2.append("                    ))\n");
+			*/
+			sBuilder2.append("#PARSER PQL\n");
+			sBuilder2.append("#QNAME " + activityStreamName + "_query\n");
+			sBuilder2.append("#RUNQUERY\n");
+			sBuilder2.append(""+activityStreamName+" := RENAME({\n");
+			sBuilder2.append("                    aliases = ['EntityName', 'ActivityName']\n");                 
+			sBuilder2.append("                  },\n");
+			sBuilder2.append("                  MAP({\n");
+			sBuilder2.append("                      expressions = ['PinNumber','concat(substring(toString(PinState),0,0),\""+activity+"\")'] \n");                                                                      
+			sBuilder2.append("                    },\n");
+			sBuilder2.append("                    SELECT({\n");
+			sBuilder2.append("                        predicate='PinState = 1'\n");                                                                                                   
+			sBuilder2.append("                      },\n");
+			sBuilder2.append("                      "+getRawSourceName()+"\n");
+			sBuilder2.append("                    )   \n");                                                            
+			sBuilder2.append("                  )\n");
+			sBuilder2.append("                )\n");
+			
+			
 			return sBuilder2.toString();
 		}
 

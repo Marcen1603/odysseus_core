@@ -40,7 +40,10 @@ Import-Package: com.google.common.base,
  de.uniol.inf.is.odysseus.transform.rule,
  org.osgi.framework;version="1.3.0",
  org.slf4j
-Service-Component: OSGI-INF/SmartHomeServerPlugIn.xml,OSGI-INF/ServerExecutor.xml,OSGI-INF/ActivityConfigurationTransportHandler.xml,OSGI-INF/SmartDeviceService.xml,OSGI-INF/SmartDeviceKeywordProvider.xml
+Service-Component: OSGI-INF/SmartHomeServerPlugIn.xml,
+  OSGI-INF/ServerExecutor.xml,
+  OSGI-INF/SmartDeviceService.xml,
+  OSGI-INF/SmartDeviceKeywordProvider.xml
 Require-Bundle: Jxta_2.6_Source,
  de.uniol.inf.is.odysseus.wrapper.rpi.gpio;bundle-version="1.0.0",
  de.uniol.inf.is.odysseus.core;bundle-version="1.0.0",
