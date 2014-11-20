@@ -469,8 +469,10 @@ public class RecoveryHelper {
 	/**
 	 * Suspends or resumes the subscription to a sink.
 	 * 
-	 * @param sink The sink where the subscription goes to which has to be suspended
-	 * @param suspend true, if you want to suspend, false, if you want to resume
+	 * @param sink
+	 *            The sink where the subscription goes to which has to be suspended
+	 * @param suspend
+	 *            true, if you want to suspend, false, if you want to resume
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public static void suspendOrResumeSink(ISink sink, boolean suspend) {
@@ -543,6 +545,24 @@ public class RecoveryHelper {
 			e.printStackTrace();
 		}
 		return pipe;
+	}
+
+	/**
+	 * Coverts a string to a peerID
+	 * 
+	 * @param peerId
+	 *            The peerID as a string
+	 * @return The peerID, if conversion is possible, null, if not
+	 */
+	public static PeerID convertToPeerId(String peerId) {
+		PeerID peer = null;
+		try {
+			URI peerUri = new URI(peerId);
+			peer = PeerID.create(peerUri);
+		} catch (URISyntaxException e) {
+			e.printStackTrace();
+		}
+		return peer;
 	}
 
 	/**

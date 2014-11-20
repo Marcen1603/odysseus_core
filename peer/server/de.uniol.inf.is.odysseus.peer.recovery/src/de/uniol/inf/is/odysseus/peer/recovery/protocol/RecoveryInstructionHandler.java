@@ -1,7 +1,5 @@
 package de.uniol.inf.is.odysseus.peer.recovery.protocol;
 
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.Collection;
 import java.util.List;
 
@@ -105,9 +103,8 @@ public class RecoveryInstructionHandler {
 			break;
 		}
 	}
-	
-	public static void handleAckInstruction(PeerID senderPeer,
-			RecoveryInstructionAckMessage instruction) {
+
+	public static void handleAckInstruction(PeerID senderPeer, RecoveryInstructionAckMessage instruction) {
 		switch (instruction.getMessageType()) {
 		case RecoveryInstructionAckMessage.ADD_QUERY_ACK:
 			transferBackupInfo();
@@ -117,11 +114,10 @@ public class RecoveryInstructionHandler {
 
 	private static void transferBackupInfo() {
 		// TODO Auto-generated method stub
-		
+
 	}
 
-	public static void handleFailedInstruction(PeerID senderPeer,
-			RecoveryInstructionFailMessage instruction) {
+	public static void handleFailedInstruction(PeerID senderPeer, RecoveryInstructionFailMessage instruction) {
 		switch (instruction.getMessageType()) {
 		case RecoveryInstructionFailMessage.ADD_QUERY_FAIL:
 			reallocateToOtherPeer();
@@ -131,14 +127,12 @@ public class RecoveryInstructionHandler {
 
 	private static void reallocateToOtherPeer() {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	private static void holdOn(PipeID pipeId) {
 		// Here we want to store the tuples
-		
-		// TODO Don't do this now, cause we never send goOn messages.
-		//RecoveryHelper.startBuffering(pipeId.toString());
+		RecoveryHelper.startBuffering(pipeId.toString());
 	}
 
 	private static void goOn(PipeID pipeId) {
@@ -179,22 +173,25 @@ public class RecoveryInstructionHandler {
 						// For this sender we want to get the peer to which
 						// it sends to update the receiver on the other peer
 
-						try {
-							String peerIdString = sender.getPeerIDString();
-							URI peerUri = new URI(peerIdString);
-							PeerID peer = PeerID.create(peerUri);
-							// To this peer we have to send an "UPDATE_RECEIVER"
-							// message
-							String pipeIdString = sender.getPipeIDString();
-							URI pipeUri = new URI(pipeIdString);
-							PipeID pipe = PipeID.create(pipeUri);
+						PeerID peer = RecoveryHelper.convertToPeerId(sender.getPeerIDString());
+						// To this peer we have to send an "UPDATE_RECEIVER" message
+						PipeID pipe = RecoveryHelper.convertToPipeId(sender.getPipeIDString());
+						PeerID ownPeerId = p2pNetworkManager.getLocalPeerID();
 
-							PeerID ownPeerId = p2pNetworkManager.getLocalPeerID();
-
+						if (peer != null && pipe != null)
 							recoveryCommunicator.sendUpdateReceiverMessage(peer, ownPeerId, pipe, sharedQueryId);
-						} catch (URISyntaxException e) {
-							e.printStackTrace();
-						}
+
+					} else if (operator instanceof JxtaReceiverPO) {
+						// GO ON
+						// -----
+						JxtaReceiverPO receiver = (JxtaReceiverPO) operator;
+
+						// For this receiver, we want to tell the sender that he can go on
+						PeerID peer = RecoveryHelper.convertToPeerId(receiver.getPeerIDString());
+						PipeID pipe = RecoveryHelper.convertToPipeId(receiver.getPipeIDString());
+
+						if (peer != null && pipe != null)
+							recoveryCommunicator.sendGoOnMessage(peer, pipe);
 					}
 				}
 			}
@@ -270,7 +267,5 @@ public class RecoveryInstructionHandler {
 		LocalBackupInformationAccess.getStore().add(info);
 		LOG.debug("I am now the buddy for {}", RecoveryCommunicator.getPeerDictionary().get().getRemotePeerName(sender));
 	}
-
-	
 
 }
