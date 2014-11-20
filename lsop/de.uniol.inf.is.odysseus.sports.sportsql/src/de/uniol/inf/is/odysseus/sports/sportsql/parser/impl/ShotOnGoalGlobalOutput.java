@@ -46,9 +46,9 @@ import de.uniol.inf.is.odysseus.sports.sportsql.parser.parameter.SportsQLTimePar
 public class ShotOnGoalGlobalOutput {
 
 	/**
-	 * The maximal timeshift to detect shooters [ps]
+	 * The maximal timeshift to detect shooters [ms]
 	 */
-	public final static String MAX_TIMESHIFT_SHOOTER = "5000000000.0";
+	public final static String MAX_TIMESHIFT_SHOOTER = "5.0";
 
 	/**
 	 * The maximal distance of players to be shooters [mm]
@@ -131,7 +131,7 @@ public class ShotOnGoalGlobalOutput {
 		IPredicate ballIPredicate = OperatorBuildHelper.createOrPredicate(ballPredicates);
 		
 		SelectAO ballSelect  = OperatorBuildHelper.createSelectAO(ballIPredicate, spaceSelect);
-		
+		ballSelect.setName("Ball SELECT");
 
 		// 2. Project for important variables
 		List<String> ballProjectList = new ArrayList<String>();
@@ -142,7 +142,8 @@ public class ShotOnGoalGlobalOutput {
 		ballProjectList.add("a");
 		ProjectAO activeBall = OperatorBuildHelper.createProjectAO(
 				ballProjectList, ballSelect);
-
+		
+		activeBall.setName("activeBAll");
 		// Add to list
 		allOperators.add(ballSelect);
 		allOperators.add(activeBall);
@@ -249,9 +250,12 @@ public class ShotOnGoalGlobalOutput {
 
 		IPredicate playerBallJoinAndPredicate = OperatorBuildHelper
 				.createAndPredicate(playerBallJoinPredicates);
+		
 		JoinAO playerBallJoinAO = OperatorBuildHelper.createJoinAO(
 				playerBallJoinAndPredicate, "ONE_MANY", accelerationCriteria,
 				players);
+		
+		playerBallJoinAO.setName("Player Ball Join");
 
 		// 2. Map
 		SDFExpressionParameter playerBallJoinExp1 = OperatorBuildHelper

@@ -31,8 +31,7 @@ public class ExecuteSportsQLServerResource extends AbstractSessionServerResource
 
 	@Post
 	public ExecuteSportsQLResponseDTO executeSportsQL(ExecuteSportsQLRequestDTO executeSportsQLRequestDTO) {
-		
-		ISession session = loginWithToken(executeSportsQLRequestDTO.getToken());
+				ISession session = loginWithToken(executeSportsQLRequestDTO.getToken());
 		
 		if (DistributedQueryHelper.isDistributionPossible()) {
 			String sportsQL = SportsQLDistributorRegistry.addSportsQLDistributorConfig(executeSportsQLRequestDTO.getSportsQL());	
@@ -51,7 +50,15 @@ public class ExecuteSportsQLServerResource extends AbstractSessionServerResource
 				return null;
 			}
 		} else {
-			Collection<Integer> queryIDs = ExecutorServiceBinding.getExecutor().addQuery(executeSportsQLRequestDTO.getSportsQL(), "SportsQL", session, executeSportsQLRequestDTO.getTransformationConfig(), Context.empty());
+			StringBuilder sportsQL = new StringBuilder();
+			sportsQL.append("#PARSER SportsQL\n");
+			sportsQL.append("#DOREWRITE false\n");
+			sportsQL.append("#ADDQUERY \n");
+			sportsQL.append(executeSportsQLRequestDTO.getSportsQL());
+		
+			
+			
+			Collection<Integer> queryIDs = ExecutorServiceBinding.getExecutor().addQuery(sportsQL.toString(), "OdysseusScript", session, executeSportsQLRequestDTO.getTransformationConfig(), Context.empty());
 			int queryId = queryIDs.iterator().next();	
 			ExecutorServiceBinding.getExecutor().startQuery(queryId, OdysseusRCPPlugIn.getActiveSession());
 			SocketInfo peerSocket = SocketService.getInstance().getConnectionInformation(session, queryId,0);
