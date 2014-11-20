@@ -388,7 +388,7 @@ public class SmartDeviceServer {
 		//gpioLED11.createLogicRuleWithState("hot", State.OFF);
 		//gpioLED11.createLogicRuleWithState("cold", State.ON);
 		gpioLED11.createLogicRuleWithState("pin7down", State.ON);
-		gpioLED11.createLogicRuleWithState("pin0down", State.OFF);
+		//gpioLED11.createLogicRuleWithState("pin0down", State.OFF);
 		
 		//Tasterbetaetigt0
 		////gpioLED10.createLogicRuleWithState("hot", State.ON);
