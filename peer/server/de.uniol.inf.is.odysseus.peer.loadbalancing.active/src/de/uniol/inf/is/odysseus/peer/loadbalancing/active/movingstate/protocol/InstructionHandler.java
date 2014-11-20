@@ -202,6 +202,7 @@ public class InstructionHandler {
 				return;
 			}
 			MovingStateManager manager = MovingStateManager.getInstance();
+			try {
 			if (status.getPhase().equals(
 					MovingStateSlaveStatus.LB_PHASES.WAITING_FOR_COPY)
 					&& !manager.isReceiverPipeKnown(instruction.getPipeId())) {
@@ -221,8 +222,11 @@ public class InstructionHandler {
 							status.getMasterPeer(), status.getLbProcessId(),
 							instruction.getPipeId());
 				} else {
-					// TODO Send StateCopyFail.
+						throw new LoadBalancingException("Operators do not match on both peers.");
 				}
+			}
+			} catch (Exception e) {
+				status.getMessageDispatcher().sendInitiateStateCopyFail(senderPeer, instruction.getPeerId());
 			}
 			break;
 
@@ -249,7 +253,6 @@ public class InstructionHandler {
 						MovingStateHelper.stopBuffering(pipe);
 					} catch (LoadBalancingException e) {
 						LOG.error("Error while stopping buffering.");
-						// TODO Error Handling
 						e.printStackTrace();
 						successful = false;
 					}
@@ -260,6 +263,8 @@ public class InstructionHandler {
 							status.getMasterPeer());
 				} else {
 					// TODO What if it fails?
+					// Rollback doesn't make any more sense at this point. 
+					
 				}
 			}
 

@@ -556,4 +556,22 @@ public class MovingStateMessageDispatcher {
 		currentJob.start();
 	}
 
+	
+	/***
+	 * Sends FAIL Message when INITIATE_STATE_COPY fails.
+	 * @param senderPeer Master Peer
+	 * @param pipeId Pipe ID which failed.
+	 */
+	public void sendInitiateStateCopyFail(PeerID senderPeer, String pipeID) {
+		MovingStateResponseMessage message = MovingStateResponseMessage.createInitStateCopyFail(lbProcessId,pipeID);
+		try {
+			peerCommunicator.send(senderPeer, message);
+		}
+		catch(Exception e) {
+			//Master Peer will try again.
+			LOG.error("Could not send Message.");
+		}
+		
+	}
+
 }

@@ -32,10 +32,10 @@ public class ResponseHandler {
 			.getLogger(ResponseHandler.class);
 
 	/***
-	 * Flag used for Debug purpose: Bypasses State Copy.
+	 * Flag that defines how protocol handles Error during state copy Phase (as LoadBalancing can be done without having all states copied correctly.)
 	 */
-	private static boolean DEBUG_BYPASS_STATE_COPY = false;
-
+	private static final boolean CONTINUE_ON_STATE_COPY_ERROR = true;
+	
 	/**
 	 * Handles Responses sent by Peers when they finish or fail instructions.
 	 * 
@@ -128,18 +128,9 @@ public class ResponseHandler {
 					// All success messages received. Yay!
 					status.setPhase(LB_PHASES.COPYING_STATES);
 					LOG.debug("INITIATING COPYING STATES");
-					if (DEBUG_BYPASS_STATE_COPY) {
-						status.setPhase(LB_PHASES.COPYING_FINISHED);
-						status.getMessageDispatcher()
-								.sendFinishedCopyingStates(
-										status.getVolunteeringPeer());
-					} else {
-						MovingStateHelper.initiateStateCopy(status);
-					}
-					// TODO what if no stateful Ops?
+					MovingStateHelper.initiateStateCopy(status);
 				}
 			}
-
 			break;
 
 		case MovingStateResponseMessage.ACK_INIT_STATE_COPY:
@@ -155,11 +146,19 @@ public class ResponseHandler {
 						MovingStateHelper.sendState(pipe, operator);
 					} catch (LoadBalancingException e) {
 						LOG.error("Sending state failed.");
-						// TODO Error Handling
-						e.printStackTrace();
+						handleError(status,communicationListener);
 					}
 				}
 
+			}
+			break;
+		
+		case MovingStateResponseMessage.FAIL_INIT_STATE_COPY:
+			LOG.debug("Got FAILURE_INIT_STATE_COPY");
+			if (status.getPhase().equals(LB_PHASES.COPYING_STATES)) {
+				dispatcher.sendMsgReceived(senderPeer);
+				LOG.error("Installing Query on remote Peer failed. Aborting.");
+				handleError(status, communicationListener);
 			}
 			break;
 
@@ -188,6 +187,8 @@ public class ResponseHandler {
 				}
 			}
 			break;
+			
+		
 
 		case MovingStateResponseMessage.ACK_ALL_STATE_COPIES_FINISHED:
 			LOG.debug("Got ACK_ALL_STATE_COPIES_FINISHED");
@@ -207,7 +208,7 @@ public class ResponseHandler {
 				dispatcher.stopRunningJob(senderPeer.toString());
 				dispatcher.sendMsgReceived(senderPeer);
 				if (dispatcher.getNumberOfRunningJobs() == 0) {
-					// TODO
+					//TODO Missing Messages.
 					LoadBalancingHelper.deleteQuery(status.getLogicalQuery());
 					status.setPhase(LB_PHASES.FINISHED);
 					loadBalancingSuccessfullyFinished(status);
@@ -239,7 +240,7 @@ public class ResponseHandler {
 	public static void handleError(MovingStateMasterStatus status,
 			MovingStateCommunicatorImpl communicationListener) {
 		MovingStateMessageDispatcher dispatcher = status.getMessageDispatcher();
-
+		
 		// Handle error depending on current LoadBalancing phase.
 		switch (status.getPhase()) {
 		case INITIATING:
@@ -256,10 +257,19 @@ public class ResponseHandler {
 			MovingStateHelper.notifyInvolvedPeers(status);
 			break;
 		case COPYING_STATES:
+			if(!CONTINUE_ON_STATE_COPY_ERROR) {
+				//TODO Abort 
+			}
+			//else: Ignore.
+			break;
 		case STOP_BUFFERING:
 			// New query is already running.
 			// TODO Go on as if nothing happened?
 			break;
+		case COPYING_FINISHED:
+			//TODO
+			break;
+		
 		default:
 			break;
 

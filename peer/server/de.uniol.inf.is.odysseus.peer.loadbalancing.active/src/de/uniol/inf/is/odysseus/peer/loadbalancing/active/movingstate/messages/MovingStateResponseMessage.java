@@ -21,9 +21,12 @@ public class MovingStateResponseMessage implements IMessage {
 	public static final int SUCCESS_DUPLICATE = 3;
 	public static final int FAILURE_DUPLICATE_RECEIVER = 4;
 	public static final int ACK_INIT_STATE_COPY = 5;
-	public static final int STATE_COPY_FINISHED = 6;
-	public static final int ACK_ALL_STATE_COPIES_FINISHED = 7;
-	public static final int STOP_BUFFERING_FINISHED = 8;
+	public static final int FAIL_INIT_STATE_COPY = 6;
+	public static final int STATE_COPY_FINISHED = 7;
+	public static final int ACK_ALL_STATE_COPIES_FINISHED = 8;
+	public static final int STOP_BUFFERING_FINISHED = 9;
+	
+	
 
 	/**
 	 * ID to identify current load Balancing process (is reused in different
@@ -337,6 +340,15 @@ public class MovingStateResponseMessage implements IMessage {
 		MovingStateResponseMessage message = new MovingStateResponseMessage();
 		message.setLoadBalancingProcessId(lbProcessId);
 		message.setMsgType(STOP_BUFFERING_FINISHED);
+		return message;
+	}
+
+	public static MovingStateResponseMessage createInitStateCopyFail(
+			int lbProcessId, String pipeId) {
+		MovingStateResponseMessage message = new MovingStateResponseMessage();
+		message.setLoadBalancingProcessId(lbProcessId);
+		message.setPipeID(pipeId);
+		message.setMsgType(FAIL_INIT_STATE_COPY);
 		return message;
 	}
 

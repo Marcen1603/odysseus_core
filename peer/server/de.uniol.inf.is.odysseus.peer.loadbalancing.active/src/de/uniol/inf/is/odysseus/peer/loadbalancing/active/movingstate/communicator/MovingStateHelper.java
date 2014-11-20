@@ -37,6 +37,7 @@ import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.common.L
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.common.DownstreamConnection;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.movingstate.status.MovingStateMasterStatus;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.movingstate.status.MovingStateSlaveStatus;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.active.movingstate.status.MovingStateMasterStatus.LB_PHASES;
 
 /***
  * Helper class for MovingState Strategy
@@ -142,6 +143,15 @@ public class MovingStateHelper {
 				.getLogicalQuery());
 		LOG.debug("Got list of " + statefulOperators.size()
 				+ " Stateful Operators.");
+		
+		if (statefulOperators.size()==0) {
+			LOG.info("No stateful Operators found in Query. Skipping State-Copy-Phase.");
+			status.setPhase(LB_PHASES.COPYING_FINISHED);
+			status.getMessageDispatcher()
+					.sendFinishedCopyingStates(
+							status.getVolunteeringPeer());
+		}
+		
 		for (IStatefulPO statefulPO : statefulOperators) {
 
 			// Installing a new State Sender
