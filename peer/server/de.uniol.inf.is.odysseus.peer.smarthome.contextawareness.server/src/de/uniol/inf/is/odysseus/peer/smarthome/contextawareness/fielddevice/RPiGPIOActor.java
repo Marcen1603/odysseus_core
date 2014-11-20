@@ -163,7 +163,7 @@ public class RPiGPIOActor extends Actor {
 			//		+ "', pin="+getPin()+", pinstate='low'}," + setConfigStreamName
 			//		+ ")\n");
 			
-			sbEntitySetState.append("" + entitySetStateStreamName +" := RPIGPIOSINK({pin="+getPin()+", pinstate='low'}," + setConfigStreamName+")");
+			sbEntitySetState.append("" + entitySetStateStreamName +" = RPIGPIOSINK({pin="+getPin()+", pinstate='low'}," + setConfigStreamName+")");
 			sbEntitySetState.append("\n");
 			
 			return sbEntitySetState;
