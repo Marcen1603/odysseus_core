@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.peer.recovery.strategy.upstreambackup;
 
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -265,8 +266,13 @@ public class RecoveryStrategyUpstreamBackup implements IRecoveryStrategy {
 					// get a PeerID for allocation
 					allocationMap = cRecoveryDynamicBackup.get().allocateToNewPeer(failedPeer, sharedQueryId,
 							cRecoveryAllocator.get());
-					if (allocationMap.values() != null) {
+					if (allocationMap != null && allocationMap.values() != null) {
 						LOG.debug("Peer ID for recovery allocation found.");
+						Iterator<ILogicalQueryPart> iterator = allocationMap.keySet().iterator();
+						while(iterator.hasNext()){
+							ILogicalQueryPart queryPart = iterator.next();
+							sendRecoveryMessages(sharedQueryId, failedPeer, allocationMap.get(queryPart), queryPart, recoveryStateIdentifier);
+						}
 					} else {
 						LOG.debug("Unable to find Peer ID for recovery allocation.");
 					}
@@ -276,26 +282,19 @@ public class RecoveryStrategyUpstreamBackup implements IRecoveryStrategy {
 					LOG.error("Peer ID search for recovery allocation failed.");
 				}
 			}
-			// use the found PeerID
-			if (allocationMap != null && allocationMap.values() != null) {
-				for (PeerID pid : allocationMap.values()) {
-					sendRecoveryMessages(sharedQueryId, failedPeer, pid, recoveryStateIdentifier);
-				}
-			} else {
-				// We don't have a peer - take ourself instead
-				LOG.debug("Don't have a peer to allocate to - use myself instead.");
-				sendRecoveryMessages(sharedQueryId, failedPeer, cP2PNetworkManager.get().getLocalPeerID(), recoveryStateIdentifier);
-			}
 
 		}
 
 	}
 	
-	private void sendRecoveryMessages(ID sharedQueryId, PeerID failedPeer, PeerID newPeer, UUID recoveryStateIdentifier) {
+
+	private void sendRecoveryMessages(ID sharedQueryId, PeerID failedPeer, PeerID newPeer, ILogicalQueryPart queryPart, UUID recoveryStateIdentifier) {
 		cRecoveryDynamicBackup.get().determineAndSendHoldOnMessages(sharedQueryId, failedPeer, recoveryStateIdentifier);
 
+
 		// 5. Tell the new peer to install the parts from the failed peer
-		cRecoveryDynamicBackup.get().initiateAgreement(failedPeer, sharedQueryId, newPeer, recoveryStateIdentifier);
+		cRecoveryDynamicBackup.get().initiateAgreement(failedPeer, sharedQueryId, newPeer, queryPart, recoveryStateIdentifier);
+
 
 		// 6. Update our sender so it knows the new peerId
 		List<JxtaSenderPO<?>> affectedSenders = cRecoveryDynamicBackup.get().getAffectedSenders(failedPeer, recoveryStateIdentifier);

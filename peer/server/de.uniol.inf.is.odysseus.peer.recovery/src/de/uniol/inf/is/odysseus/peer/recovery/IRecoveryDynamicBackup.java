@@ -29,9 +29,11 @@ public interface IRecoveryDynamicBackup {
 	 * @param newPeer
 	 *            The peer where we want to install the parts of the query from
 	 *            the failed peer
+	 * @param queryPart 
 	 * @param recoveryStateIdentifier 
 	 */
-	public void initiateAgreement(PeerID failedPeer, ID sharedQueryId, PeerID newPeer, UUID recoveryStateIdentifier);
+	public void initiateAgreement(PeerID failedPeer, ID sharedQueryId, PeerID newPeer, ILogicalQueryPart queryPart, UUID recoveryStateIdentifier);
+
 
 	/**
 	 * Gets a list of the affected senders, that need a new target.

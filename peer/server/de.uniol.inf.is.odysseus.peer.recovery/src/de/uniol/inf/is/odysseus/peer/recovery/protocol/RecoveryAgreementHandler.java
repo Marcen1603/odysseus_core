@@ -16,25 +16,27 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableCollection;
 
+import de.uniol.inf.is.odysseus.peer.distribute.ILogicalQueryPart;
+import de.uniol.inf.is.odysseus.peer.distribute.util.LogicalQueryHelper;
 import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryCommunicator;
 import de.uniol.inf.is.odysseus.peer.recovery.internal.RecoveryCommunicator;
 import de.uniol.inf.is.odysseus.peer.recovery.messages.RecoveryAgreementMessage;
 import de.uniol.inf.is.odysseus.peer.recovery.util.BackupInformationHelper;
-import de.uniol.inf.is.odysseus.peer.recovery.util.LocalBackupInformationAccess;
 
 public class RecoveryAgreementHandler {
 
 	/**
 	 * The logger instance for this class.
 	 */
-	private static final Logger LOG = LoggerFactory.getLogger(RecoveryAgreementHandler.class);
+	private static final Logger LOG = LoggerFactory
+			.getLogger(RecoveryAgreementHandler.class);
 
 	/**
 	 * The recovery communicator, if there is one bound.
 	 */
-	private static Optional<IRecoveryCommunicator> cCommunicator = Optional.absent();
+	private static Optional<IRecoveryCommunicator> cCommunicator = Optional
+			.absent();
 
 	/**
 	 * Binds a recovery communicator. <br />
@@ -46,9 +48,11 @@ public class RecoveryAgreementHandler {
 	 */
 	public static void bindCommunicator(IRecoveryCommunicator communicator) {
 
-		Preconditions.checkNotNull(communicator, "The recovery communicator to bind must be not null!");
+		Preconditions.checkNotNull(communicator,
+				"The recovery communicator to bind must be not null!");
 		cCommunicator = Optional.of(communicator);
-		LOG.debug("Bound {} as a recovery communicator.", communicator.getClass().getSimpleName());
+		LOG.debug("Bound {} as a recovery communicator.", communicator
+				.getClass().getSimpleName());
 
 	}
 
@@ -62,11 +66,14 @@ public class RecoveryAgreementHandler {
 	 */
 	public static void unbindCommunicator(IRecoveryCommunicator communicator) {
 
-		Preconditions.checkNotNull(communicator, "The recovery communicator to unbind must be not null!");
-		if (cCommunicator.isPresent() && cCommunicator.get().equals(communicator)) {
+		Preconditions.checkNotNull(communicator,
+				"The recovery communicator to unbind must be not null!");
+		if (cCommunicator.isPresent()
+				&& cCommunicator.get().equals(communicator)) {
 
 			cCommunicator = Optional.absent();
-			LOG.debug("Unbound {} as a recovery communicator.", communicator.getClass().getSimpleName());
+			LOG.debug("Unbound {} as a recovery communicator.", communicator
+					.getClass().getSimpleName());
 
 		}
 
@@ -85,7 +92,8 @@ public class RecoveryAgreementHandler {
 	 */
 	private static Map<PeerID, List<ID>> recoveryPeers = new HashMap<PeerID, List<ID>>();
 
-	public static void handleAgreementMessage(PeerID senderPeer, RecoveryAgreementMessage message) {
+	public static void handleAgreementMessage(PeerID senderPeer,
+			RecoveryAgreementMessage message) {
 
 		// Question to think about later: What if we get a message, but we will
 		// detect a bit later,
@@ -112,7 +120,8 @@ public class RecoveryAgreementHandler {
 			// failed peer for this query
 
 			// Remove that we want to do recovery for this query on this peer
-			removeBackupQueueEntry(message.getFailedPeer(), message.getSharedQueryId());
+			removeBackupQueueEntry(message.getFailedPeer(),
+					message.getSharedQueryId());
 
 			return;
 		}
@@ -134,7 +143,9 @@ public class RecoveryAgreementHandler {
 	 *            the failed peer
 	 * @param recoveryStateIdentifier 
 	 */
-	public static void waitForAndDoRecovery(final PeerID failedPeer, final ID sharedQueryId, final PeerID newPeer, final UUID recoveryStateIdentifier) {
+	public static void waitForAndDoRecovery(final PeerID failedPeer,
+			final ID sharedQueryId, final PeerID newPeer,
+			final ILogicalQueryPart queryPart, final UUID recoveryStateIdentifier) {
 
 		if (!cCommunicator.isPresent()) {
 			LOG.error("No recovery communicator bound!");
@@ -153,7 +164,9 @@ public class RecoveryAgreementHandler {
 		recoveryPeers.put(failedPeer, queriesForPeer);
 
 		// 3. Send to all other peers that we want to do the recovery
+
 		cCommunicator.get().sendRecoveryAgreementMessage(failedPeer, sharedQueryId, recoveryStateIdentifier);
+
 
 		// 4. Wait a few seconds until we just do the recovery
 		Timer timer = new Timer();
@@ -163,22 +176,21 @@ public class RecoveryAgreementHandler {
 			public void run() {
 				// 5. If the time is over and we still think we should do the
 				// recovery: Do the recovery
-				if (recoveryPeers.containsKey(failedPeer) && recoveryPeers.get(failedPeer).contains(sharedQueryId)) {
+				if (recoveryPeers.containsKey(failedPeer)
+						&& recoveryPeers.get(failedPeer)
+								.contains(sharedQueryId)) {
 					// We still want to do recovery for that peer for that query
 					// id
-					ImmutableCollection<String> pqlParts = LocalBackupInformationAccess.getStoredPQLStatements(
-							sharedQueryId, failedPeer);
 
-					String pql = "";
-					for (String pqlPart : pqlParts) {
-						pql += " " + pqlPart;
-					}
+					// get PQL from query part
+					String pql = LogicalQueryHelper
+							.generatePQLStatementFromQueryPart(queryPart);
+
 
 					cCommunicator.get().installQueriesOnNewPeer(failedPeer, newPeer, sharedQueryId, pql, recoveryStateIdentifier);
 
-					for (String pqlCode : pqlParts) {
-						BackupInformationHelper.updateInfoStores(failedPeer, newPeer, sharedQueryId, pqlCode);
-					}
+					BackupInformationHelper.updateInfoStores(failedPeer,
+							newPeer, sharedQueryId, pql);
 
 					// Now we did this, so remove that we want to do this
 					// recovery
@@ -188,6 +200,40 @@ public class RecoveryAgreementHandler {
 		}, WAIT_MS);
 
 	}
+
+	// @Override
+	// public void run() {
+	// // 5. If the time is over and we still think we should do the
+	// // recovery: Do the recovery
+	// if (recoveryPeers.containsKey(failedPeer) &&
+	// recoveryPeers.get(failedPeer).contains(sharedQueryId)) {
+	// // We still want to do recovery for that peer for that query
+	// // id
+	// ImmutableCollection<String> pqlParts =
+	// LocalBackupInformationAccess.getStoredPQLStatements(
+	// sharedQueryId, failedPeer);
+	//
+	// String pql = "";
+	// for (String pqlPart : pqlParts) {
+	// pql += " " + pqlPart;
+	// }
+	//
+	// cCommunicator.get().installQueriesOnNewPeer(failedPeer, newPeer,
+	// sharedQueryId, pql);
+	//
+	// for (String pqlCode : pqlParts) {
+	// BackupInformationHelper.updateInfoStores(failedPeer, newPeer,
+	// sharedQueryId, pqlCode);
+	// }
+	//
+	// // Now we did this, so remove that we want to do this
+	// // recovery
+	// removeBackupQueueEntry(failedPeer, sharedQueryId);
+	// }
+	// }
+	// }, WAIT_MS);
+	//
+	// }
 
 	/**
 	 * To compare two peerIds.
@@ -205,7 +251,8 @@ public class RecoveryAgreementHandler {
 
 		}
 
-		return RecoveryCommunicator.getP2PNetworkManager().get().getLocalPeerID().toString().compareTo(peer.toString()) >= 0;
+		return RecoveryCommunicator.getP2PNetworkManager().get()
+				.getLocalPeerID().toString().compareTo(peer.toString()) >= 0;
 	}
 
 	/**
@@ -214,7 +261,8 @@ public class RecoveryAgreementHandler {
 	 * @param failedPeer
 	 * @param sharedQueryId
 	 */
-	private static void removeBackupQueueEntry(PeerID failedPeer, ID sharedQueryId) {
+	private static void removeBackupQueueEntry(PeerID failedPeer,
+			ID sharedQueryId) {
 		List<ID> queries = recoveryPeers.get(failedPeer);
 		queries.remove(sharedQueryId);
 

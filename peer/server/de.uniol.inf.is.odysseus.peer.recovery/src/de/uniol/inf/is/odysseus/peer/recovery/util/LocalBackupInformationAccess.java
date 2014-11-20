@@ -355,10 +355,10 @@ public class LocalBackupInformationAccess {
 	public static void updateInfo(ID sharedQueryId, PeerID aboutPeer, String aboutPeerPQL, PeerID locationPeer,
 			String localPQL) {
 		for (IRecoveryBackupInformation info : cInfoStore.get().get(sharedQueryId)) {
-			if (aboutPeer != null && info.getAboutPeer().equals(aboutPeer)) {
+			if (aboutPeer != null && info.getAboutPeer() != null && info.getAboutPeer().equals(aboutPeer)) {
 				info.setPQL(aboutPeerPQL);
 			}
-			if (locationPeer != null && info.getLocationPeer().equals(locationPeer)) {
+			if (locationPeer != null && info.getLocationPeer() != null && info.getLocationPeer().equals(locationPeer)) {
 				info.setLocalPQL(localPQL);
 			}
 		}

@@ -122,7 +122,7 @@ public class BackupInformationStore implements IRecoveryBackupInformationStore {
 
 			for (IRecoveryBackupInformation info : this.mInfos.get(sharedQuery)) {
 
-				if (info.getPQL().equals(pql)) {
+				if (info.getPQL() != null && info.getPQL().equals(pql)) {
 
 					return Optional.of(info);
 
