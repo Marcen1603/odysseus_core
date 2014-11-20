@@ -40,11 +40,13 @@ public class WebserviceAdvertisement extends Advertisement implements Serializab
 
 	private static final String REST_PORT = "restPort";
 	private static final String PEER_ID_TAG = "peerID";
+	private static final String ID_TAG = "id";
 
 	private static final String[] INDEX_FIELDS = new String[] { PEER_ID_TAG, REST_PORT };
 	
 	private int restPort;
 	private PeerID peerID;
+	private ID id;
 
 	public WebserviceAdvertisement(Element<?> root) {
 		final TextElement<?> doc = (TextElement<?>) Preconditions.checkNotNull(root, "Root element must not be null!");
@@ -83,6 +85,7 @@ public class WebserviceAdvertisement extends Advertisement implements Serializab
 			((Attributable) doc).addAttribute("xmlns:jxta", "http://jxta.org");
 		}
 
+		appendElement(doc, ID_TAG, id.toString());
 		appendElement(doc, REST_PORT, restPort+"");
 		appendElement(doc, PEER_ID_TAG, peerID.toString());
 
@@ -95,6 +98,10 @@ public class WebserviceAdvertisement extends Advertisement implements Serializab
 
 	public void setPeerID(PeerID peerID) {
 		this.peerID = peerID;
+	}
+	
+	public void setID(ID id) {
+		this.id = id;
 	}
 
 	public int getRestPort() {
@@ -125,12 +132,13 @@ public class WebserviceAdvertisement extends Advertisement implements Serializab
 		WebserviceAdvertisement adv = (WebserviceAdvertisement) obj;
 		return
 				Objects.equals(adv.peerID, peerID) &&
+				Objects.equals(adv.id, id) &&
 				Objects.equals(adv.restPort, restPort); 
 	}
 	
 	@Override
 	public int hashCode() {
-		return Objects.hash(peerID, restPort);
+		return Objects.hash(id, restPort);
 	}
 
 	private void handleElement(TextElement<?> elem) {

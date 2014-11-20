@@ -181,7 +181,7 @@ public class DistributedQueryHelper {
 		public void networkStarted(IP2PNetworkManager sender) {
 			registerAdvertisementTypes();
 			p2pNetworkManager.addAdvertisementListener(webserviceAdvListener);
-			webserviceAdvSender.publishWebserviceAdvertisement(jxtaServicesProvider, p2pNetworkManager.getLocalPeerID());
+			webserviceAdvSender.publishWebserviceAdvertisement(jxtaServicesProvider, p2pNetworkManager.getLocalPeerID(),p2pNetworkManager.getLocalPeerGroupID());
 			QueryDistributionNotifier.bindListener(queryDistributionListener);
 		}
 		

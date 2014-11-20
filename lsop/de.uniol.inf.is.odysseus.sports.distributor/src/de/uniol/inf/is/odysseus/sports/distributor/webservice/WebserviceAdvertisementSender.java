@@ -3,10 +3,14 @@ package de.uniol.inf.is.odysseus.sports.distributor.webservice;
 
 import java.io.IOException;
 
+import net.jxta.id.IDFactory;
 import net.jxta.peer.PeerID;
+import net.jxta.peergroup.PeerGroupID;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+
 
 
 
@@ -35,10 +39,11 @@ public class WebserviceAdvertisementSender {
 	 * @param provider
 	 * @param peerId
 	 */
-	public void publishWebserviceAdvertisement(IJxtaServicesProvider provider, PeerID peerId) {
+	public void publishWebserviceAdvertisement(IJxtaServicesProvider provider, PeerID peerId, PeerGroupID peerGroupID) {
 		WebserviceAdvertisement adv = new WebserviceAdvertisement();
 		adv.setRestPort(RestService.getPort());
 		adv.setPeerID(peerId);
+		adv.setID(IDFactory.newPipeID(peerGroupID));
 		if (adv != null) {
 			try {
 				waitForJxtaServicesProvider(provider);
