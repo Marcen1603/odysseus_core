@@ -3,7 +3,9 @@ package de.uniol.inf.is.odysseus.peer.recovery.messages;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.ByteBuffer;
+import java.util.UUID;
 
+import net.jxta.id.ID;
 import net.jxta.pipe.PipeID;
 import de.uniol.inf.is.odysseus.p2p_new.IMessage;
 
@@ -12,10 +14,10 @@ import de.uniol.inf.is.odysseus.p2p_new.IMessage;
  * 
  * @see RecoveryInstructionMessage
  * @author Michael Brand
- *
+ * 
  */
 public class RecoveryInstructionAckMessage implements IMessage {
-	
+
 	public static final int HOLD_ON_ACK = 0;
 
 	public static final int GO_ON_ACK = 1;
@@ -25,41 +27,53 @@ public class RecoveryInstructionAckMessage implements IMessage {
 	public static final int UPDATE_SENDER_ACK = 3;
 
 	public static final int UPDATE_RECEIVER_ACK = 4;
-	
+
 	private int mMessageType;
 	private PipeID mPipeId;
+	private UUID recoveryProcessStateId;
 
 	public RecoveryInstructionAckMessage() {
-
 		// Empty default constructor
-
 	}
 
 	public RecoveryInstructionAckMessage(PipeID pipeId, int messageType) {
-
 		this.mMessageType = messageType;
 		this.mPipeId = pipeId;
+	}
 
+	public static RecoveryInstructionAckMessage createAddQueryAckMessage(
+			ID sharedQueryId, UUID recoveryProcessStateId) {
+		RecoveryInstructionAckMessage addQueryAckMessage = new RecoveryInstructionAckMessage();
+		addQueryAckMessage.setMessageType(ADD_QUERY_ACK);
+		addQueryAckMessage.setRecoveryProcessStateId(recoveryProcessStateId);
+		return addQueryAckMessage;
 	}
 
 	@Override
 	public byte[] toBytes() {
-
 		ByteBuffer bb = null;
 		int bbsize;
-
 		int pipeIdLength = 0;
 
-		pipeIdLength = this.mPipeId.toString().getBytes().length;
-		bbsize = 4 + 4 + pipeIdLength;
-		bb = ByteBuffer.allocate(bbsize);
-		bb.putInt(this.mMessageType);
-		bb.putInt(pipeIdLength);
-		bb.put(this.mPipeId.toString().getBytes());
+		switch (mMessageType) {
+		case ADD_QUERY_ACK:
+			pipeIdLength = this.mPipeId.toString().getBytes().length;
+			byte[] processIdAsBytes = recoveryProcessStateId.toString()
+					.getBytes();
+
+			bbsize = 4 + 4 + pipeIdLength + 4 + processIdAsBytes.length;
+			bb = ByteBuffer.allocate(bbsize);
+			bb.putInt(this.mMessageType);
+			bb.putInt(pipeIdLength);
+			bb.put(this.mPipeId.toString().getBytes());
+			bb.putInt(processIdAsBytes.length);
+			bb.put(processIdAsBytes);
+			
+			break;
+		}
 
 		bb.flip();
 		return bb.array();
-
 	}
 
 	/**
@@ -67,37 +81,50 @@ public class RecoveryInstructionAckMessage implements IMessage {
 	 */
 	@Override
 	public void fromBytes(byte[] data) {
-
 		ByteBuffer bb = ByteBuffer.wrap(data);
 		this.mMessageType = bb.getInt();
 
-		int pipeIdLength = bb.getInt();
-		byte[] pipeIdByte = new byte[pipeIdLength];
-		String pipeIdString = new String(pipeIdByte);
-
-		try {
-
-			URI uri = new URI(pipeIdString);
-			this.mPipeId = PipeID.create(uri);
-
-		} catch (URISyntaxException e) {
-
-			e.printStackTrace();
-
+		switch (mMessageType) {
+		case ADD_QUERY_ACK:
+			int pipeIdLength = bb.getInt();
+			byte[] pipeIdByte = new byte[pipeIdLength];
+			String pipeIdString = new String(pipeIdByte);
+			try {
+				URI uri = new URI(pipeIdString);
+				this.mPipeId = PipeID.create(uri);
+			} catch (URISyntaxException e) {
+				e.printStackTrace();
+			}
+			
+			int processIdLength = bb.getInt();
+			byte[] processIdAsBytes = new byte[processIdLength];
+			bb.get(processIdAsBytes);
+			recoveryProcessStateId = UUID.fromString(new String(processIdAsBytes));
+			break;
 		}
-
 	}
 
 	public int getMessageType() {
-
 		return this.mMessageType;
+	}
 
+	public void setMessageType(int messageType) {
+		this.mMessageType = messageType;
 	}
 
 	public PipeID getPipeId() {
-
 		return this.mPipeId;
-
 	}
 
+	public void setPipeId(PipeID pipeId) {
+		this.mPipeId = pipeId;
+	}
+
+	public UUID getRecoveryProcessStateId() {
+		return recoveryProcessStateId;
+	}
+
+	public void setRecoveryProcessStateId(UUID recoveryProcessStateId) {
+		this.recoveryProcessStateId = recoveryProcessStateId;
+	}
 }

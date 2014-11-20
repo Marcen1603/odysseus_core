@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.UUID;
 
 import net.jxta.id.ID;
 import net.jxta.peer.PeerID;
@@ -131,8 +132,9 @@ public class RecoveryAgreementHandler {
 	 * @param newPeer
 	 *            The peer where we want to install the parts of the query from
 	 *            the failed peer
+	 * @param recoveryStateIdentifier 
 	 */
-	public static void waitForAndDoRecovery(final PeerID failedPeer, final ID sharedQueryId, final PeerID newPeer) {
+	public static void waitForAndDoRecovery(final PeerID failedPeer, final ID sharedQueryId, final PeerID newPeer, final UUID recoveryStateIdentifier) {
 
 		if (!cCommunicator.isPresent()) {
 			LOG.error("No recovery communicator bound!");
@@ -151,7 +153,7 @@ public class RecoveryAgreementHandler {
 		recoveryPeers.put(failedPeer, queriesForPeer);
 
 		// 3. Send to all other peers that we want to do the recovery
-		cCommunicator.get().sendRecoveryAgreementMessage(failedPeer, sharedQueryId);
+		cCommunicator.get().sendRecoveryAgreementMessage(failedPeer, sharedQueryId, recoveryStateIdentifier);
 
 		// 4. Wait a few seconds until we just do the recovery
 		Timer timer = new Timer();
@@ -172,7 +174,7 @@ public class RecoveryAgreementHandler {
 						pql += " " + pqlPart;
 					}
 
-					cCommunicator.get().installQueriesOnNewPeer(failedPeer, newPeer, sharedQueryId, pql);
+					cCommunicator.get().installQueriesOnNewPeer(failedPeer, newPeer, sharedQueryId, pql, recoveryStateIdentifier);
 
 					for (String pqlCode : pqlParts) {
 						BackupInformationHelper.updateInfoStores(failedPeer, newPeer, sharedQueryId, pqlCode);

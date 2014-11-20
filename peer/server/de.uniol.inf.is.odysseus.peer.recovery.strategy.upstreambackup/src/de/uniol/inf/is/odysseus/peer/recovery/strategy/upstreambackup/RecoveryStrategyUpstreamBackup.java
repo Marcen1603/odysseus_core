@@ -279,26 +279,26 @@ public class RecoveryStrategyUpstreamBackup implements IRecoveryStrategy {
 			// use the found PeerID
 			if (allocationMap != null && allocationMap.values() != null) {
 				for (PeerID pid : allocationMap.values()) {
-					sendRecoveryMessages(sharedQueryId, failedPeer, pid);
+					sendRecoveryMessages(sharedQueryId, failedPeer, pid, recoveryStateIdentifier);
 				}
 			} else {
 				// We don't have a peer - take ourself instead
 				LOG.debug("Don't have a peer to allocate to - use myself instead.");
-				sendRecoveryMessages(sharedQueryId, failedPeer, cP2PNetworkManager.get().getLocalPeerID());
+				sendRecoveryMessages(sharedQueryId, failedPeer, cP2PNetworkManager.get().getLocalPeerID(), recoveryStateIdentifier);
 			}
 
 		}
 
 	}
 	
-	private void sendRecoveryMessages(ID sharedQueryId, PeerID failedPeer, PeerID newPeer) {
-		cRecoveryDynamicBackup.get().determineAndSendHoldOnMessages(sharedQueryId, failedPeer);
+	private void sendRecoveryMessages(ID sharedQueryId, PeerID failedPeer, PeerID newPeer, UUID recoveryStateIdentifier) {
+		cRecoveryDynamicBackup.get().determineAndSendHoldOnMessages(sharedQueryId, failedPeer, recoveryStateIdentifier);
 
 		// 5. Tell the new peer to install the parts from the failed peer
-		cRecoveryDynamicBackup.get().initiateAgreement(failedPeer, sharedQueryId, newPeer);
+		cRecoveryDynamicBackup.get().initiateAgreement(failedPeer, sharedQueryId, newPeer, recoveryStateIdentifier);
 
 		// 6. Update our sender so it knows the new peerId
-		List<JxtaSenderPO<?>> affectedSenders = cRecoveryDynamicBackup.get().getAffectedSenders(failedPeer);
+		List<JxtaSenderPO<?>> affectedSenders = cRecoveryDynamicBackup.get().getAffectedSenders(failedPeer, recoveryStateIdentifier);
 		for (int i = 0; i < affectedSenders.size(); i++) {
 			affectedSenders.get(i).setPeerIDString(newPeer.toString());
 		}

@@ -7,6 +7,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 
 import net.jxta.id.ID;
 import net.jxta.peer.PeerID;
@@ -301,7 +302,7 @@ public class RecoveryDynamicBackup implements IRecoveryDynamicBackup {
 	}
 
 	@Override
-	public List<JxtaSenderPO<?>> getAffectedSenders(PeerID failedPeer) {
+	public List<JxtaSenderPO<?>> getAffectedSenders(PeerID failedPeer, UUID recoveryStateIdentifier) {
 
 		// 1. Check, if we have backup information for the failed peer and for
 		// which shared-query-ids
@@ -355,7 +356,7 @@ public class RecoveryDynamicBackup implements IRecoveryDynamicBackup {
 	}
 
 	@Override
-	public void determineAndSendHoldOnMessages(ID sharedQueryId, PeerID failedPeer) {
+	public void determineAndSendHoldOnMessages(ID sharedQueryId, PeerID failedPeer, UUID recoveryStateIdentifier) {
 
 		// Preconditions
 		if (!cExecutor.isPresent()) {
@@ -396,7 +397,7 @@ public class RecoveryDynamicBackup implements IRecoveryDynamicBackup {
 							uri = new URI(peerId);
 							PeerID peerToHoldOn = PeerID.create(uri);
 
-							cRecoveryCommunicator.get().sendHoldOnMessage(peerToHoldOn, holdOnMessage);
+							cRecoveryCommunicator.get().sendHoldOnMessage(peerToHoldOn, holdOnMessage, recoveryStateIdentifier);
 
 						} catch (URISyntaxException e) {
 							e.printStackTrace();
@@ -408,8 +409,8 @@ public class RecoveryDynamicBackup implements IRecoveryDynamicBackup {
 	}
 
 	@Override
-	public void initiateAgreement(PeerID failedPeer, ID sharedQueryId, PeerID newPeer) {
-		RecoveryAgreementHandler.waitForAndDoRecovery(failedPeer, sharedQueryId, newPeer);
+	public void initiateAgreement(PeerID failedPeer, ID sharedQueryId, PeerID newPeer, UUID recoveryStateIdentifier) {
+		RecoveryAgreementHandler.waitForAndDoRecovery(failedPeer, sharedQueryId, newPeer, recoveryStateIdentifier);
 
 	}
 

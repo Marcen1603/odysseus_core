@@ -33,7 +33,11 @@ import de.uniol.inf.is.odysseus.peer.distribute.message.RemoveQueryMessage;
 import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryBackupInformation;
 import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryCommunicator;
 import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryStrategyManager;
+import de.uniol.inf.is.odysseus.peer.recovery.messages.BackupInformationAckMessage;
+import de.uniol.inf.is.odysseus.peer.recovery.messages.BackupInformationFailMessage;
 import de.uniol.inf.is.odysseus.peer.recovery.messages.BackupInformationMessage;
+import de.uniol.inf.is.odysseus.peer.recovery.messages.RecoveryAgreementAckMessage;
+import de.uniol.inf.is.odysseus.peer.recovery.messages.RecoveryAgreementFailMessage;
 import de.uniol.inf.is.odysseus.peer.recovery.messages.RecoveryAgreementMessage;
 import de.uniol.inf.is.odysseus.peer.recovery.messages.RecoveryInstructionAckMessage;
 import de.uniol.inf.is.odysseus.peer.recovery.messages.RecoveryInstructionFailMessage;
@@ -213,9 +217,29 @@ public class RecoveryCommunicator implements IRecoveryCommunicator,
 				BackupInformationMessage.class);
 
 		cPeerCommunicator.get().registerMessageType(
+				BackupInformationAckMessage.class);
+		cPeerCommunicator.get().addListener(this,
+				BackupInformationAckMessage.class);
+
+		cPeerCommunicator.get().registerMessageType(
+				BackupInformationFailMessage.class);
+		cPeerCommunicator.get().addListener(this,
+				BackupInformationFailMessage.class);
+
+		cPeerCommunicator.get().registerMessageType(
 				RecoveryAgreementMessage.class);
 		cPeerCommunicator.get().addListener(this,
 				RecoveryAgreementMessage.class);
+		
+		cPeerCommunicator.get().registerMessageType(
+				RecoveryAgreementAckMessage.class);
+		cPeerCommunicator.get().addListener(this,
+				RecoveryAgreementAckMessage.class);
+		
+		cPeerCommunicator.get().registerMessageType(
+				RecoveryAgreementFailMessage.class);
+		cPeerCommunicator.get().addListener(this,
+				RecoveryAgreementFailMessage.class);
 
 		cPeerCommunicator.get().registerMessageType(RemoveQueryMessage.class);
 		cPeerCommunicator.get().addListener(this, RemoveQueryMessage.class);
@@ -247,9 +271,29 @@ public class RecoveryCommunicator implements IRecoveryCommunicator,
 				BackupInformationMessage.class);
 
 		cPeerCommunicator.get().removeListener(this,
+				BackupInformationAckMessage.class);
+		cPeerCommunicator.get().unregisterMessageType(
+				BackupInformationAckMessage.class);
+
+		cPeerCommunicator.get().removeListener(this,
+				BackupInformationFailMessage.class);
+		cPeerCommunicator.get().unregisterMessageType(
+				BackupInformationFailMessage.class);
+
+		cPeerCommunicator.get().removeListener(this,
 				RecoveryAgreementMessage.class);
 		cPeerCommunicator.get().unregisterMessageType(
 				RecoveryAgreementMessage.class);
+		
+		cPeerCommunicator.get().removeListener(this,
+				RecoveryAgreementAckMessage.class);
+		cPeerCommunicator.get().unregisterMessageType(
+				RecoveryAgreementAckMessage.class);
+		
+		cPeerCommunicator.get().removeListener(this,
+				RecoveryAgreementFailMessage.class);
+		cPeerCommunicator.get().unregisterMessageType(
+				RecoveryAgreementFailMessage.class);
 
 		cPeerCommunicator.get().removeListener(this, RemoveQueryMessage.class);
 		//cPeerCommunicator.get().unregisterMessageType(RemoveQueryMessage.class); we don't need to unregister this here
@@ -440,14 +484,14 @@ public class RecoveryCommunicator implements IRecoveryCommunicator,
 
 	@Override
 	public void sendHoldOnMessage(PeerID peerToHoldOn,
-			RecoveryInstructionMessage holdOnMessage) {
+			RecoveryInstructionMessage holdOnMessage, UUID recoveryStateIdentifier) {
 		sendMessage(peerToHoldOn, holdOnMessage);
 	}
 
 	// TODO Better way: allocate each single query part new. M.B.
 	@Override
 	public void installQueriesOnNewPeer(PeerID failedPeer, PeerID newPeer,
-			ID sharedQueryId, String pql) {
+			ID sharedQueryId, String pql, UUID recoveryStateIdentifier) {
 
 		Preconditions.checkNotNull(failedPeer);
 		Preconditions.checkNotNull(newPeer);
@@ -463,7 +507,7 @@ public class RecoveryCommunicator implements IRecoveryCommunicator,
 
 		// Send the add query message
 		RecoveryInstructionMessage takeOverMessage = RecoveryInstructionMessage
-				.createAddQueryMessage(pql, sharedQueryId);
+				.createAddQueryMessage(pql, sharedQueryId, recoveryStateIdentifier);
 		sendMessage(newPeer, takeOverMessage);
 
 		// TODO remove sending backup informations here, because they need to be executed after
@@ -555,7 +599,7 @@ public class RecoveryCommunicator implements IRecoveryCommunicator,
 	}
 
 	@Override
-	public void sendRecoveryAgreementMessage(PeerID failedPeer, ID sharedQueryId) {
+	public void sendRecoveryAgreementMessage(PeerID failedPeer, ID sharedQueryId, UUID recoveryStateIdentifier) {
 
 		if (!cPeerDictionary.isPresent()) {
 			LOG.error("No P2P dictionary bound!");

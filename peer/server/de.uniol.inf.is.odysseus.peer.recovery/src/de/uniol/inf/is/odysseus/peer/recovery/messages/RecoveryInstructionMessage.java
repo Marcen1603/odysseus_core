@@ -5,6 +5,7 @@ import java.net.URISyntaxException;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import net.jxta.id.ID;
 import net.jxta.peer.PeerID;
@@ -51,6 +52,7 @@ public class RecoveryInstructionMessage implements IMessage {
 	private PeerID newReceiver;
 	private ID sharedQueryId;
 	private PipeID pipeId;
+	private UUID recoveryProcessStateId;
 	private List<String> pql;
 
 	/**
@@ -95,11 +97,12 @@ public class RecoveryInstructionMessage implements IMessage {
 	 *            parts from different peers belong together
 	 * @return A message which tells the receiving peer to install this query.
 	 */
-	public static RecoveryInstructionMessage createAddQueryMessage(String pqlQuery, ID sharedQueryId) {
+	public static RecoveryInstructionMessage createAddQueryMessage(String pqlQuery, ID sharedQueryId, UUID recoveryProcessStateId) {
 		RecoveryInstructionMessage addQueryMessage = new RecoveryInstructionMessage();
 		addQueryMessage.setMessageType(ADD_QUERY);
 		addQueryMessage.setPqlQuery(pqlQuery);
 		addQueryMessage.setSharedQueryId(sharedQueryId);
+		addQueryMessage.setRecoveryProcessStateId(recoveryProcessStateId);
 		return addQueryMessage;
 	}
 
@@ -179,13 +182,16 @@ public class RecoveryInstructionMessage implements IMessage {
 		case ADD_QUERY:
 			sharedQueryIdLength = sharedQueryId.toString().getBytes().length;
 			byte[] pqlAsBytes = pqlQuery.getBytes();
-			bbsize = 4 + 4 + sharedQueryIdLength + 4 + pqlAsBytes.length;
+			byte[] processIdAsBytes = recoveryProcessStateId.toString().getBytes();
+			bbsize = 4 + 4 + sharedQueryIdLength + 4 + pqlAsBytes.length + 4 + processIdAsBytes.length;
 			bb = ByteBuffer.allocate(bbsize);
 			bb.putInt(messageType);
 			bb.putInt(sharedQueryId.toString().getBytes().length);
 			bb.put(sharedQueryId.toString().getBytes());
 			bb.putInt(pqlAsBytes.length);
 			bb.put(pqlAsBytes);
+			bb.putInt(processIdAsBytes.length);
+			bb.put(processIdAsBytes);
 			break;
 		case UPDATE_SENDER:
 			break;
@@ -264,6 +270,11 @@ public class RecoveryInstructionMessage implements IMessage {
 			byte[] pqlAsByte = new byte[pqlLength];
 			bb.get(pqlAsByte);
 			pqlQuery = new String(pqlAsByte);
+			
+			int processIdLength = bb.getInt();
+			byte[] processIdAsBytes = new byte[processIdLength];
+			bb.get(processIdAsBytes);
+			recoveryProcessStateId = UUID.fromString(new String(processIdAsBytes));
 			break;
 		case UPDATE_RECEIVER:
 			extractSharedQueryId(bb);
@@ -374,6 +385,14 @@ public class RecoveryInstructionMessage implements IMessage {
 
 	public void setPql(List<String> pql) {
 		this.pql = pql;
+	}
+
+	public UUID getRecoveryProcessStateId() {
+		return recoveryProcessStateId;
+	}
+
+	public void setRecoveryProcessStateId(UUID recoveryProcessStateId) {
+		this.recoveryProcessStateId = recoveryProcessStateId;
 	}
 
 }

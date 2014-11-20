@@ -2,6 +2,7 @@ package de.uniol.inf.is.odysseus.peer.recovery;
 
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import net.jxta.id.ID;
 import net.jxta.peer.PeerID;
@@ -28,17 +29,19 @@ public interface IRecoveryDynamicBackup {
 	 * @param newPeer
 	 *            The peer where we want to install the parts of the query from
 	 *            the failed peer
+	 * @param recoveryStateIdentifier 
 	 */
-	public void initiateAgreement(PeerID failedPeer, ID sharedQueryId, PeerID newPeer);
+	public void initiateAgreement(PeerID failedPeer, ID sharedQueryId, PeerID newPeer, UUID recoveryStateIdentifier);
 
 	/**
 	 * Gets a list of the affected senders, that need a new target.
 	 * 
 	 * @param failedPeer
 	 *            PeerID of the failed peer
+	 * @param recoveryStateIdentifier 
 	 * @return List with the affected senders.
 	 */
-	public List<JxtaSenderPO<?>> getAffectedSenders(PeerID failedPeer);
+	public List<JxtaSenderPO<?>> getAffectedSenders(PeerID failedPeer, UUID recoveryStateIdentifier);
 
 	/**
 	 * Checks for which query this peer is responsible and gets the list with
@@ -58,8 +61,9 @@ public interface IRecoveryDynamicBackup {
 	 *            ID of the query to be hold on.
 	 * @param failedPeer
 	 *            PeerID of the failed peer.
+	 * @param recoveryStateIdentifier 
 	 */
-	public void determineAndSendHoldOnMessages(ID sharedQueryId, PeerID failedPeer);
+	public void determineAndSendHoldOnMessages(ID sharedQueryId, PeerID failedPeer, UUID recoveryStateIdentifier);
 
 	/**
 	 * Checks, if that peer was responsible for me (if he was a buddy for me)

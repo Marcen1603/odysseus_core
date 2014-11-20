@@ -29,7 +29,6 @@ import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryCommunicator;
 import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryStrategy;
 import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryStrategyManager;
 import de.uniol.inf.is.odysseus.peer.recovery.internal.RecoveryCommunicator;
-import de.uniol.inf.is.odysseus.peer.recovery.util.BackupInformationHelper;
 import de.uniol.inf.is.odysseus.peer.recovery.util.LocalBackupInformationAccess;
 import de.uniol.inf.is.odysseus.peer.recovery.util.RecoveryHelper;
 
@@ -248,61 +247,6 @@ public class RecoveryConsole implements CommandProvider {
 			}
 		}
 
-	}
-
-	public void _sendAddQueriesFromPeer(CommandInterpreter ci) {
-		Preconditions.checkNotNull(ci, "Command interpreter must not be null!");
-
-		if (!cCommunicator.isPresent()) {
-
-			LOG.error("No recovery communicator bound!");
-			return;
-
-		}
-
-		String newPeerName = ci.nextArgument();
-		String failedPeerName = ci.nextArgument();
-		String queryId = ci.nextArgument();
-
-		Optional<PeerID> optNewPeer = RecoveryHelper.determinePeerID(newPeerName);
-		PeerID newPeer;
-		if (!optNewPeer.isPresent()) {
-			ci.println("Don't know new peer. Take myself instead.");
-			newPeer = p2pNetworkManager.getLocalPeerID();
-		} else {
-			newPeer = optNewPeer.get();
-		}
-
-		Optional<PeerID> optFailedPeer = RecoveryHelper.determinePeerID(failedPeerName);
-		PeerID failedPeer;
-		if (!optFailedPeer.isPresent()) {
-			ci.println("Don't know failed peer. Take myself instead.");
-			failedPeer = p2pNetworkManager.getLocalPeerID();
-		} else {
-			failedPeer = optFailedPeer.get();
-		}
-
-		URI queryUri;
-		try {
-			queryUri = new URI(queryId);
-			ID sharedQueryId = ID.create(queryUri);
-			ImmutableCollection<String> pqlParts = LocalBackupInformationAccess.getStoredPQLStatements(sharedQueryId,
-					failedPeer);
-
-			String pql = "";
-			for (String pqlPart : pqlParts) {
-				pql += " " + pqlPart;
-			}
-			cCommunicator.get().installQueriesOnNewPeer(failedPeer, newPeer, sharedQueryId, pql);
-			
-			for (String pqlCode : pqlParts) {
-
-				BackupInformationHelper.updateInfoStores(failedPeer, newPeer, sharedQueryId, pqlCode);
-
-			}
-		} catch (URISyntaxException e) {
-			ci.println("Can't parse the queryId.");
-		}
 	}
 
 	public void _sendHoldOn(CommandInterpreter ci) {

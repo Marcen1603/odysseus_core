@@ -19,13 +19,14 @@ public interface IRecoveryCommunicator {
 	/**
 	 * Experimental: Sends a message to all given peers, that they should hold on for the respective shared query id.
 	 * (So, peers[0] should hold on for queryIds[0], peers[1] for queryIds[1] and so on)
+	 * @param recoveryStateIdentifier 
 	 * 
 	 * @param peers
 	 *            List of peer which should on for the respective queryId
 	 * @param queryIds
 	 *            List of query-ids for which the respective peer should hold on
 	 */
-	public void sendHoldOnMessage(PeerID peerToHoldOn, RecoveryInstructionMessage holdOnMessage);
+	public void sendHoldOnMessage(PeerID peerToHoldOn, RecoveryInstructionMessage holdOnMessage, UUID recoveryStateIdentifier);
 
 	/**
 	 * Sends a message to the receiverPeer, that this peer has to update it's JxtaReceiverPO with the given pipeId, so
@@ -48,8 +49,9 @@ public interface IRecoveryCommunicator {
 	 *            The failed peer this peer wants to do recovery for
 	 * @param sharedQueryId
 	 *            The shared query id, for which this peer wants to do the recovery
+	 * @param recoveryStateIdentifier 
 	 */
-	public void sendRecoveryAgreementMessage(PeerID failedPeer, ID sharedQueryId);
+	public void sendRecoveryAgreementMessage(PeerID failedPeer, ID sharedQueryId, UUID recoveryStateIdentifier);
 
 	/**
 	 * Sends a message with backup information to another peer.
@@ -83,9 +85,10 @@ public interface IRecoveryCommunicator {
 	 *            The id of the shared query which the new peer should recover from the failed peer
 	 * @param pql
 	 *            The PQL string with the query arguements to be installed
+	 * @param recoveryStateIdentifier 
 	 */
 	// TODO Better way: allocate each single query part new. M.B.
-	public void installQueriesOnNewPeer(PeerID failedPeer, PeerID newPeer, ID sharedQueryId, String pql);
+	public void installQueriesOnNewPeer(PeerID failedPeer, PeerID newPeer, ID sharedQueryId, String pql, UUID recoveryStateIdentifier);
 
 	/**
 	 * The RecoveryCommunicator will search for a buddy peer which will save that it's the buddy for this peer for this
