@@ -300,6 +300,8 @@ public class OperatorBuildHelper {
 		String fourthPredicateString = "y <= " + endY;
 
 		SelectAO selectAO = new SelectAO();
+		
+	
 
 		if (inMeters) {
 			// Calculate meters from input stream
@@ -386,6 +388,7 @@ public class OperatorBuildHelper {
 				.createAndPredicate(firstAndPredicate, secondAndPredicate);
 
 		selectAO.setPredicate(fullAndPredicate);
+	
 		if (!inMeters) {
 			// Subscribe to the original source (not the MapAO for meters)
 			selectAO.subscribeTo(source, source.getOutputSchema());
