@@ -1,6 +1,8 @@
-package de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice;
+package de.uniol.inf.is.odysseus.peer.smarthome.contextawareness;
 
 import java.io.Serializable;
+
+import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.smartdevice.ASmartDevice;
 
 
 public abstract class FieldDevice implements Serializable {

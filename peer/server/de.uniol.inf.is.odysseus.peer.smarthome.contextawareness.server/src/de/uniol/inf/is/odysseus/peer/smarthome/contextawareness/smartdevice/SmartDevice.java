@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice;
+package de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.smartdevice;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -8,7 +8,14 @@ import java.util.List;
 import com.google.common.collect.Lists;
 
 import de.uniol.inf.is.odysseus.p2p_new.PeerCommunicationException;
+import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.FieldDevice;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.SmartHomeServerPlugIn;
+import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.activityinterpreter.ActivityInterpreter;
+import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.activityinterpreter.IActivityInterpreterListener;
+import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.actor.Actor;
+import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.logicrule.ILogicRuleListener;
+import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.logicrule.LogicRule;
+import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.sensor.Sensor;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.server.SmartDevicePublisher;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.server.SmartDeviceServerDictionaryDiscovery;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.utils.SmartDeviceConfig;
@@ -31,7 +38,7 @@ public class SmartDevice extends ASmartDevice implements Serializable {
 	private boolean state = false;
 	private String peerName = "local";
 
-	private transient ArrayList<IFieldDeviceListener> smartDeviceListener;
+	private transient ArrayList<ISmartDeviceListener> smartDeviceListener;
 	private transient LogicRuleListener fieldDeviceListener;
 	private transient ActivityInterpreterListener activityInterpreterListener;
 
@@ -172,36 +179,36 @@ public class SmartDevice extends ASmartDevice implements Serializable {
 	}
 
 	@Override
-	public void addFieldDeviceListener(IFieldDeviceListener listener) {
-		getFieldDeviceListener().add(listener);
+	public void addSmartDeviceListener(ISmartDeviceListener listener) {
+		getSmartDeviceListener().add(listener);
 	}
 
 	@Override
-	public void removeFieldDeviceListener(IFieldDeviceListener listener) {
-		getFieldDeviceListener().remove(listener);
+	public void removeSmartDeviceListener(ISmartDeviceListener listener) {
+		getSmartDeviceListener().remove(listener);
 	}
 
-	private ArrayList<IFieldDeviceListener> getFieldDeviceListener() {
+	private ArrayList<ISmartDeviceListener> getSmartDeviceListener() {
 		if (smartDeviceListener == null) {
-			smartDeviceListener = new ArrayList<IFieldDeviceListener>();
+			smartDeviceListener = new ArrayList<ISmartDeviceListener>();
 		}
 		return smartDeviceListener;
 	}
 
 	private void fireFieldDeviceConnected(FieldDevice device) {
-		for (IFieldDeviceListener listener : getFieldDeviceListener()) {
+		for (ISmartDeviceListener listener : getSmartDeviceListener()) {
 			listener.fieldDeviceConnected(this, device);
 		}
 	}
 
 	private void fireFieldDeviceRemoved(FieldDevice device) {
-		for (IFieldDeviceListener listener : getFieldDeviceListener()) {
+		for (ISmartDeviceListener listener : getSmartDeviceListener()) {
 			listener.fieldDeviceRemoved(this, device);
 		}
 	}
 
 	private void fireReadyStateChanged(boolean state) {
-		for (IFieldDeviceListener listener : getFieldDeviceListener()) {
+		for (ISmartDeviceListener listener : getSmartDeviceListener()) {
 			listener.readyStateChanged(this, state);
 		}
 	}
@@ -263,7 +270,7 @@ public class SmartDevice extends ASmartDevice implements Serializable {
 	}
 	
 	private void fireFieldDevicesUpdated() {
-		for (IFieldDeviceListener listener : getFieldDeviceListener()) {
+		for (ISmartDeviceListener listener : getSmartDeviceListener()) {
 			listener.fieldDevicesUpdated(this);
 		}
 	}

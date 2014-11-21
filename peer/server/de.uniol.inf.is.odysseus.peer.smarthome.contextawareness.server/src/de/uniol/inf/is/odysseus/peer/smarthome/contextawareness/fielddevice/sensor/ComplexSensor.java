@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice;
+package de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.sensor;
 
 import java.util.HashMap;
 import java.util.Map;

@@ -1,8 +1,11 @@
-package de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice;
+package de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.logicrule;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
+
+import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.activityinterpreter.ActivityInterpreter;
+import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.actor.Actor;
 
 public abstract class LogicRule implements Serializable {
 	private static final long serialVersionUID = 1L;

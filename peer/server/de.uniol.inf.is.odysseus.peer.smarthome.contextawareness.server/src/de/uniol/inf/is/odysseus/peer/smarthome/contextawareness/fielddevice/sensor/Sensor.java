@@ -1,10 +1,13 @@
-package de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice;
+package de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.sensor;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Map;
 
 import de.uniol.inf.is.odysseus.p2p_new.PeerCommunicationException;
+import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.FieldDevice;
+import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.activityinterpreter.ActivityInterpreter;
+import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.activityinterpreter.IActivityInterpreterListener;
 
 public abstract class Sensor extends FieldDevice implements Serializable {
 	private static final long serialVersionUID = 1L;

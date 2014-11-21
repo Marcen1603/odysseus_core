@@ -7,18 +7,18 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.SmartHomeServerPlugIn;
-import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.ASmartDevice;
-import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.ActivityInterpreter;
-import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.Actor;
-import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.LogicRule;
-import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.Sensor;
+import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.activityinterpreter.ActivityInterpreter;
+import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.actor.Actor;
+import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.logicrule.LogicRule;
+import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.sensor.Sensor;
+import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.smartdevice.ASmartDevice;
 
-public class LogicProcessor implements ISmartDeviceDictionaryListener {
+public class LogicRuleProcessor implements ISmartDeviceDictionaryListener {
 	private static final Logger LOG = LoggerFactory
 			.getLogger(SmartHomeServerPlugIn.class);
-	private static LogicProcessor instance;
+	private static LogicRuleProcessor instance;
 
-	private LogicProcessor() {
+	private LogicRuleProcessor() {
 
 	}
 
@@ -281,9 +281,9 @@ public class LogicProcessor implements ISmartDeviceDictionaryListener {
 		}
 	}
 
-	public static LogicProcessor getInstance() {
+	public static LogicRuleProcessor getInstance() {
 		if (instance == null) {
-			instance = new LogicProcessor();
+			instance = new LogicRuleProcessor();
 		}
 		return instance;
 	}
@@ -295,48 +295,5 @@ public class LogicProcessor implements ISmartDeviceDictionaryListener {
 	 * ().addSmartDeviceListener(localSmartDeviceListener); }
 	 */
 
-	void executeActivityInterpreterQueries(ASmartDevice smartDevice) {
-		for (Sensor sensor : smartDevice.getConnectedSensors()) {
-			for (Entry<String, String> queryForRawValue : sensor
-					.getQueriesForRawValues().entrySet()) {
-				String viewName = queryForRawValue.getKey();
-				String query = queryForRawValue.getValue();
-
-				try {
-					QueryExecutor.getInstance()
-							.executeQueryNow(viewName, query);
-				} catch (Exception e) {
-					LOG.error(e.getMessage(), e);
-				}
-			}
-
-			for (ActivityInterpreter activityInterpreter : sensor
-					.getActivityInterpreters()) {
-				String activityName = activityInterpreter.getActivityName();
-				String activitySourceName = activityInterpreter
-						.getActivitySourceName();
-
-				for (Entry<String, String> entry : activityInterpreter
-						.getActivityInterpreterQueries(activityName).entrySet()) {
-					String viewName = entry.getKey();
-					String query = entry.getValue();
-
-					try {
-						QueryExecutor.getInstance().executeQueryNow(viewName,
-								query);
-
-					} catch (Exception e) {
-						LOG.error(e.getMessage(), e);
-					}
-				}
-
-				try {
-					QueryExecutor.getInstance().exportWhenPossibleAsync(
-							activitySourceName);
-				} catch (Exception ex) {
-					LOG.error(ex.getMessage(), ex);
-				}
-			}
-		}
-	}
+	
 }

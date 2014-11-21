@@ -1,7 +1,9 @@
-package de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice;
+package de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.activityinterpreter;
 
 import java.io.Serializable;
 import java.util.HashMap;
+
+import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.sensor.Sensor;
 
 public abstract class ActivityInterpreter implements Serializable {
 	private static final long serialVersionUID = 1L;

@@ -2,15 +2,15 @@ package de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.server.service;
 
 import java.util.ArrayList;
 
-import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.ASmartDevice;
-import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.FieldDevice;
-import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.IFieldDeviceListener;
+import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.FieldDevice;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.server.SmartDevicePublisher;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.server.SmartDeviceServerDictionaryDiscovery;
+import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.smartdevice.ASmartDevice;
+import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.smartdevice.ISmartDeviceListener;
 
 public class SmartDeviceService implements ISmartDeviceService {
 		private static SmartDeviceService instance;
-		private ArrayList<IFieldDeviceListener> smartDeviceListener;
+		private ArrayList<ISmartDeviceListener> smartDeviceListener;
 
 		// //////
 		// called by OSGi-DS
@@ -24,27 +24,27 @@ public class SmartDeviceService implements ISmartDeviceService {
 		}
 
 		// called by OSGi-DS
-		public void bindListener(IFieldDeviceListener serv) {
+		public void bindListener(ISmartDeviceListener serv) {
 			addSmartDeviceListener(serv);
 		}
 
 		// called by OSGi-DS
-		public void unbindListener(IFieldDeviceListener serv) {
+		public void unbindListener(ISmartDeviceListener serv) {
 			removeSmartDeviceListener(serv);
 		}
 
 		@Override
-		public void addSmartDeviceListener(IFieldDeviceListener listener) {
+		public void addSmartDeviceListener(ISmartDeviceListener listener) {
 			getSmartDeviceListener().add(listener);
 		}
 		
 		@Override
-		public void removeSmartDeviceListener(IFieldDeviceListener listener) {
+		public void removeSmartDeviceListener(ISmartDeviceListener listener) {
 			getSmartDeviceListener().remove(listener);
 		}
-		private ArrayList<IFieldDeviceListener> getSmartDeviceListener() {
+		private ArrayList<ISmartDeviceListener> getSmartDeviceListener() {
 			if(smartDeviceListener==null){
-				smartDeviceListener = new ArrayList<IFieldDeviceListener>();
+				smartDeviceListener = new ArrayList<ISmartDeviceListener>();
 			}
 			return smartDeviceListener;
 		}

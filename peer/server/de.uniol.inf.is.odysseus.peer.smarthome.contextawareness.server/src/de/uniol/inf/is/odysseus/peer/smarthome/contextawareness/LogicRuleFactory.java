@@ -3,9 +3,9 @@ package de.uniol.inf.is.odysseus.peer.smarthome.contextawareness;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.Actor;
-import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.AbstractActorAction;
-import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.LogicRule;
+import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.actor.AbstractActorAction;
+import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.actor.Actor;
+import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.logicrule.LogicRule;
 
 public class LogicRuleFactory {
 	private static final Logger LOG = LoggerFactory

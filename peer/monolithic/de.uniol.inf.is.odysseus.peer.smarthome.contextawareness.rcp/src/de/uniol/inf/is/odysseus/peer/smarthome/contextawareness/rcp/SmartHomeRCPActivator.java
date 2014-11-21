@@ -10,12 +10,6 @@ import de.uniol.inf.is.odysseus.p2p_new.IP2PNetworkManager;
 import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicator;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.IP2PDictionary;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.IPeerDictionary;
-import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.ASmartDevice;
-import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.Actor;
-import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.FieldDevice;
-import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.IFieldDeviceListener;
-import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.Sensor;
-import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.SmartDevice;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.server.service.ISmartDeviceService;
 
 public class SmartHomeRCPActivator implements BundleActivator {
@@ -105,14 +99,14 @@ public class SmartHomeRCPActivator implements BundleActivator {
 	public static void bindSmartDeviceService(
 			ISmartDeviceService _smartDeviceService) {
 		smartDeviceService = _smartDeviceService;
-		smartDeviceService.addSmartDeviceListener(smartDeviceListener);
+		//smartDeviceService.addSmartDeviceListener(smartDeviceListener);
 	}
 
 	// called by OSGi-DS
 	public static void unbindSmartDeviceService(
 			ISmartDeviceService _smartDeviceService) {
 		if (smartDeviceService == _smartDeviceService) {
-			smartDeviceService.removeSmartDeviceListener(smartDeviceListener);
+			//smartDeviceService.removeSmartDeviceListener(smartDeviceListener);
 			smartDeviceService = null;
 		}
 	}
@@ -154,57 +148,4 @@ public class SmartHomeRCPActivator implements BundleActivator {
 	public static ISmartDeviceService getSmartDeviceService() {
 		return smartDeviceService;
 	}
-
-	static IFieldDeviceListener smartDeviceListener = new IFieldDeviceListener() {
-		@Override
-		public void fieldDeviceConnected(ASmartDevice sender, FieldDevice device) {
-			if (device instanceof Sensor) {
-				System.out
-						.println("SmartHomeRCPActivator fieldDeviceConnected Sensor:"
-								+ device.getName());
-
-			} else if (device instanceof Actor) {
-				System.out
-						.println("SmartHomeRCPActivator fieldDeviceConnected Actor:"
-								+ device.getName());
-
-			} else {
-				System.out
-						.println("SmartHomeRCPActivator fieldDeviceConnected device:"
-								+ device.getName());
-
-			}
-		}
-
-		@Override
-		public void fieldDeviceRemoved(ASmartDevice smartDevice,
-				FieldDevice device) {
-			if (device instanceof Sensor) {
-				System.out
-						.println("SmartHomeRCPActivator fieldDeviceRemoved Sensor:"
-								+ device.getName());
-
-			} else if (device instanceof Actor) {
-				System.out
-						.println("SmartHomeRCPActivator fieldDeviceRemoved Actor:"
-								+ device.getName());
-
-			} else {
-				System.out
-						.println("SmartHomeRCPActivator fieldDeviceRemoved device:"
-								+ device.getName());
-
-			}
-		}
-
-		@Override
-		public void readyStateChanged(ASmartDevice smartDevice, boolean state) {
-
-		}
-
-		@Override
-		public void fieldDevicesUpdated(SmartDevice smartDevice) {
-
-		}
-	};
 }

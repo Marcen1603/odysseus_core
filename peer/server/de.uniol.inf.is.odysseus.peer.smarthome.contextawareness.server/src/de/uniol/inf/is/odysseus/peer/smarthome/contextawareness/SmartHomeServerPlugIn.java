@@ -12,7 +12,7 @@ import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicator;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.IP2PDictionary;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.IPeerDictionary;
 import de.uniol.inf.is.odysseus.parser.pql.generator.IPQLGenerator;
-import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.server.LogicProcessor;
+import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.server.LogicRuleProcessor;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.server.QueryExecutor;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.server.SmartDeviceLocalConfigurationServer;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.server.SmartDevicePublisher;
@@ -38,14 +38,14 @@ public class SmartHomeServerPlugIn implements BundleActivator {
 
 	public void start(BundleContext bundleContext) throws Exception {
 		SmartDevicePublisher.getInstance().addListener(
-				LogicProcessor.getInstance());
+				LogicRuleProcessor.getInstance());
 
 		bundle = bundleContext.getBundle();
 	}
 
 	public void stop(BundleContext context) throws Exception {
 		SmartDevicePublisher.getInstance().removeListener(
-				LogicProcessor.getInstance());
+				LogicRuleProcessor.getInstance());
 		
 		bundle = null;
 	}

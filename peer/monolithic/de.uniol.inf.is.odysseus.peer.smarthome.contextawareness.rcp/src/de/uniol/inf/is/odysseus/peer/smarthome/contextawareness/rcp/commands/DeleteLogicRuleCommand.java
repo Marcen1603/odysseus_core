@@ -11,7 +11,7 @@ import org.eclipse.swt.widgets.Display;
 import com.google.common.base.Optional;
 
 import de.uniol.inf.is.odysseus.p2p_new.PeerCommunicationException;
-import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.LogicRule;
+import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.logicrule.LogicRule;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.rcp.views.LogicRuleShowViewPart;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.server.SmartDevicePublisher;
 import de.uniol.inf.is.odysseus.rcp.StatusBarManager;

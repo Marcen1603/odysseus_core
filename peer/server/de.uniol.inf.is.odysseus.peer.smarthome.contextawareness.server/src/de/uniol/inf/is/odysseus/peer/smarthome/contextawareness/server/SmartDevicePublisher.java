@@ -15,16 +15,16 @@ import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicator;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.IP2PDictionary;
 import de.uniol.inf.is.odysseus.parser.pql.generator.IPQLGenerator;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.SmartHomeServerPlugIn;
-import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.ASmartDevice;
-import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.LogicRule;
-import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.RPiGPIOActor;
-import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.RPiGPIOSensor;
-import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.SmartDevice;
-import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.TemperSensor;
-import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.RPiGPIOActor.State;
+import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.actor.RPiGPIOActor;
+import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.actor.RPiGPIOActor.State;
+import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.logicrule.LogicRule;
+import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.sensor.RPiGPIOSensor;
+import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.sensor.TemperSensor;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.server.advertisement.SmartDeviceAdvertisement;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.server.service.ServerExecutorService;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.server.service.SessionManagementService;
+import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.smartdevice.ASmartDevice;
+import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.smartdevice.SmartDevice;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.utils.SmartDeviceRequestMessage;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.utils.SmartDeviceResponseMessage;
 
@@ -44,7 +44,7 @@ public class SmartDevicePublisher {
 	final long SmartDeviceAdvertisement_LIFETIME = 30 * 2;
 	final long SmartDeviceAdvertisement_EXPIRATION_TIME = 30 * 3;
 	private static IPQLGenerator pqlGenerator;
-	private SmartDevicePublisherFieldDeviceListener localSmartDeviceListener;
+	private SmartDevicePublisherSmartDeviceListener localSmartDeviceListener;
 	private TemperSensor temper;
 	private RPiGPIOSensor gpioTaste7;
 	private RPiGPIOActor gpioLED11;
@@ -258,9 +258,14 @@ public class SmartDevicePublisher {
 	}
 
 	public void initForLocalSmartDevice() {
-		localSmartDeviceListener = new SmartDevicePublisherFieldDeviceListener();
+		localSmartDeviceListener = new SmartDevicePublisherSmartDeviceListener();
+		
 		SmartDevicePublisher.getInstance().getLocalSmartDevice()
-				.addFieldDeviceListener(localSmartDeviceListener);
+				.addSmartDeviceListener(localSmartDeviceListener);
+		
+		//TODO:
+		//SmartDevicePublisher.getInstance().getLocalSmartDevice()
+		//.addFieldDeviceListener(ActivityInterpreterProcessor.getInstance());
 	}
 
 	private void waitForTemper() {
@@ -282,7 +287,7 @@ public class SmartDevicePublisher {
 	}
 	
 	protected void waitForLogicProcessor() {
-		while (LogicProcessor.getInstance() == null) {
+		while (LogicRuleProcessor.getInstance() == null) {
 			try {
 				Thread.sleep(100);
 			} catch (InterruptedException e) {
@@ -335,7 +340,7 @@ public class SmartDevicePublisher {
 
 		//
 		// 3. Execute queries:
-		LogicProcessor.getInstance().executeActivityInterpreterQueries(
+		ActivityInterpreterProcessor.getInstance().executeActivityInterpreterQueries(
 				getLocalSmartDevice());
 
 		// 4. SmartDevice is ready for advertisement now:

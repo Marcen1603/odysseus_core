@@ -1,6 +1,8 @@
-package de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice;
+package de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.activityinterpreter;
 
 import java.util.HashMap;
+
+import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.sensor.Sensor;
 
 public class ComplexActivityInterpreter extends ActivityInterpreter {
 	private static final long serialVersionUID = 1L;
