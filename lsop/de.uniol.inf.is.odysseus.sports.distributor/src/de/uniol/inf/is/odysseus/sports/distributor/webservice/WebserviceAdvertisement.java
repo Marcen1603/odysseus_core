@@ -25,7 +25,6 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Preconditions;
 
-
 /**
  * Advertisement with information to the rest service (e.g. port)
  * @author Thore Stratmann
@@ -42,7 +41,7 @@ public class WebserviceAdvertisement extends Advertisement implements Serializab
 	private static final String PEER_ID_TAG = "peerID";
 	private static final String ID_TAG = "id";
 
-	private static final String[] INDEX_FIELDS = new String[] { PEER_ID_TAG, REST_PORT };
+	private static final String[] INDEX_FIELDS = new String[] { ID_TAG, PEER_ID_TAG, REST_PORT };
 	
 	private int restPort;
 	private PeerID peerID;
@@ -66,7 +65,7 @@ public class WebserviceAdvertisement extends Advertisement implements Serializab
 		Preconditions.checkNotNull(advertisement, "Advertisement to copy must not be null!");
 		restPort = advertisement.restPort;
 		peerID = advertisement.peerID;
-
+		id = advertisement.id;
 	}
 
 	public WebserviceAdvertisement() {
@@ -146,6 +145,8 @@ public class WebserviceAdvertisement extends Advertisement implements Serializab
 			setRestPort(Integer.valueOf(elem.getTextValue()));
 		} else if (elem.getName().equals(PEER_ID_TAG)) {
 			setPeerID((PeerID) toID(elem));
+		} else if( elem.getName().equals(ID_TAG)) {
+			setID(toID(elem));
 		}
 	}
 	
@@ -174,7 +175,6 @@ public class WebserviceAdvertisement extends Advertisement implements Serializab
 
 	@Override
 	public ID getID() {
-		return this.peerID;
+		return this.id;
 	}
 }
-
