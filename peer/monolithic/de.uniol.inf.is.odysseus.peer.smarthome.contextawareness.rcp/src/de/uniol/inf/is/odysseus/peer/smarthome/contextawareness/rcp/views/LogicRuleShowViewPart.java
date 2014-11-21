@@ -72,7 +72,7 @@ public class LogicRuleShowViewPart extends ViewPart {
 		}
 
 		@Override
-		public void fieldDevicesUpdated(SmartDevice smartDevice) {
+		public void SmartDevicesUpdated(ASmartDevice smartDevice) {
 			refresh();
 		}
 	};

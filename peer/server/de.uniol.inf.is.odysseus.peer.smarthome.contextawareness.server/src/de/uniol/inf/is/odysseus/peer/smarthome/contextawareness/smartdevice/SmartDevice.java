@@ -144,7 +144,7 @@ public class SmartDevice extends ASmartDevice implements Serializable {
 		if (smartDevice.getConnectedFieldDevices() != null) {
 			this.setConnectedFieldDevices(smartDevice
 					.getConnectedFieldDevices());
-			fireFieldDevicesUpdated();
+			fireSmartDevicesUpdated();
 		}
 	}
 
@@ -269,9 +269,9 @@ public class SmartDevice extends ASmartDevice implements Serializable {
 		}		
 	}
 	
-	private void fireFieldDevicesUpdated() {
+	private void fireSmartDevicesUpdated() {
 		for (ISmartDeviceListener listener : getSmartDeviceListener()) {
-			listener.fieldDevicesUpdated(this);
+			listener.SmartDevicesUpdated(this);
 		}
 	}
 }

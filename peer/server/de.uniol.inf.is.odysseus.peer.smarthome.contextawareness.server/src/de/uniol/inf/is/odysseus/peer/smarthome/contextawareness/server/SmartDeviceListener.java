@@ -11,7 +11,6 @@ import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.logi
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.sensor.Sensor;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.smartdevice.ASmartDevice;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.smartdevice.ISmartDeviceListener;
-import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.smartdevice.SmartDevice;
 
 public class SmartDeviceListener implements ISmartDeviceListener {
 	private static final Logger LOG = LoggerFactory
@@ -54,7 +53,7 @@ public class SmartDeviceListener implements ISmartDeviceListener {
 	}
 
 	@Override
-	public void fieldDevicesUpdated(SmartDevice smartDevice) {
+	public void SmartDevicesUpdated(ASmartDevice smartDevice) {
 		LOG.debug("fieldDevicesUpdated smart device:"
 				+ smartDevice.getPeerName());
 

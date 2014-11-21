@@ -35,16 +35,17 @@ public class SmartDevicePublisher {
 	private static final String INIT_ACTORS_SYS_PROPERTY = "smartdevice.init.actors";
 	private static final String INIT_EXAMPLE_ACTIVITY_INTERPRETERS_SYS_PROPERTY = "smartdevice.example.activityinterpreters";
 	private static final String INIT_EXAMPLE_LOGIC_RULES_SYS_PROPERTY = "smartdevice.example.logicrules";
+	
 	private static SmartDevicePublisher instance;
+	
 	private static IP2PDictionary p2pDictionary;
-	// private static ISmartDevice localSmartDevice;
 	private static IP2PNetworkManager p2pNetworkManager;
 	private static IJxtaServicesProvider jxtaServicesProvider;
+	private static IPQLGenerator pqlGenerator;
 
 	final long SmartDeviceAdvertisement_LIFETIME = 30 * 2;
 	final long SmartDeviceAdvertisement_EXPIRATION_TIME = 30 * 3;
-	private static IPQLGenerator pqlGenerator;
-	private SmartDevicePublisherSmartDeviceListener localSmartDeviceListener;
+	
 	private TemperSensor temper;
 	private RPiGPIOSensor gpioTaste7;
 	private RPiGPIOActor gpioLED11;
@@ -207,11 +208,6 @@ public class SmartDevicePublisher {
 		return p2pNetworkManager;
 	}
 
-	/*
-	 * public static void setLocalSmartDevice(ISmartDevice _localSmartDevice) {
-	 * localSmartDevice = _localSmartDevice; }
-	 */
-
 	protected static IJxtaServicesProvider getJxtaServicesProvider() {
 		return jxtaServicesProvider;
 	}
@@ -258,14 +254,8 @@ public class SmartDevicePublisher {
 	}
 
 	public void initForLocalSmartDevice() {
-		localSmartDeviceListener = new SmartDevicePublisherSmartDeviceListener();
-		
 		SmartDevicePublisher.getInstance().getLocalSmartDevice()
-				.addSmartDeviceListener(localSmartDeviceListener);
-		
-		//TODO:
-		//SmartDevicePublisher.getInstance().getLocalSmartDevice()
-		//.addFieldDeviceListener(ActivityInterpreterProcessor.getInstance());
+		.addSmartDeviceListener(ActivityInterpreterProcessor.getInstance());
 	}
 
 	private void waitForTemper() {
@@ -299,9 +289,7 @@ public class SmartDevicePublisher {
 		/*****************************************
 		 * init smart device for advertisement
 		 *****************************************/
-
-		// TODO: GUI für die folgenden Schritte bauen!
-
+		
 		String peerIdString = getLocalPeerID().intern().toString();
 		String cleanPeerID = peerIdString.replaceAll("[-+.^:,]", "");
 		String peerName = getP2PNetworkManager().getLocalPeerName().intern()
@@ -338,12 +326,7 @@ public class SmartDevicePublisher {
 			initActors(peerName);
 		}
 
-		//
-		// 3. Execute queries:
-		ActivityInterpreterProcessor.getInstance().executeActivityInterpreterQueries(
-				getLocalSmartDevice());
-
-		// 4. SmartDevice is ready for advertisement now:
+		// SmartDevice is ready for advertisement now:
 		getLocalSmartDevice().setReady(true);
 		
 	}
@@ -380,10 +363,10 @@ public class SmartDevicePublisher {
 		//temper.createActivityInterpreterWithCondition("hot", "Temperature > 24");
 		//temper.createActivityInterpreterWithCondition("cold", "Temperature < 24");
 
-		gpioTaste7.createActivityInterpreterForPinState("pindown",//pin7down
+		gpioTaste7.createActivityInterpreterForPinState("pin7down",//pin7down
 				RPiGPIOSensor.GPIO_SENSOR_STATE.HIGH);
 		
-		gpioTaste0.createActivityInterpreterForPinState("pindown", RPiGPIOSensor.GPIO_SENSOR_STATE.HIGH);////pin0down
+		gpioTaste0.createActivityInterpreterForPinState("pin0down", RPiGPIOSensor.GPIO_SENSOR_STATE.HIGH);////pin0down
 	}
 
 	private void addExampleLogicRules(String peerName) {
@@ -393,7 +376,7 @@ public class SmartDevicePublisher {
 		//TODO: test, test, test
 		//gpioLED11.createLogicRuleWithState("hot", State.OFF);
 		//gpioLED11.createLogicRuleWithState("cold", State.ON);
-		gpioLED11.createLogicRuleWithState("pindown", State.ON);
+		gpioLED11.createLogicRuleWithState("pin7down", State.ON);
 		//gpioLED11.createLogicRuleWithState("pin0down", State.OFF);
 		
 		//Tasterbetaetigt0
@@ -469,23 +452,11 @@ public class SmartDevicePublisher {
 					SmartDeviceServerDictionaryDiscovery.getInstance(),
 					SmartDeviceResponseMessage.class);
 
-			// peerCommunicator.unregisterMessageType(SmartDeviceRequestMessage.class);
-			// peerCommunicator.unregisterMessageType(SmartDeviceResponseMessage.class);
 			peerCommunicator = null;
 		}
 	}
 
 	private IPeerCommunicator peerCommunicator;
-
-	// /private static IPQLGenerator pqlGenerator;
-	// /private static IP2PDictionary p2pDictionary;
-	// /private static IP2PNetworkManager p2pNetworkManager;
-
-	/*
-	 * public static IPQLGenerator getPQLGenerator() { return pqlGenerator; }
-	 * 
-	 * public static IPQLGenerator getPQLGenerator() { return pqlGenerator; }
-	 */
 
 	public static IPQLGenerator getPQLGenerator() {
 		return pqlGenerator;
