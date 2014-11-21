@@ -20,3 +20,4 @@ Import-Package: com.fasterxml.jackson.core,
  de.uniol.inf.is.odysseus.transform.rule,
  org.osgi.framework;version="1.6.0",
  org.slf4j
+Export-Package: de.uniol.inf.is.odysseus.keyvalue.datahandler

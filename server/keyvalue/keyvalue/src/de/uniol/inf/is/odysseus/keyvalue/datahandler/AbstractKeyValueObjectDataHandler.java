@@ -7,6 +7,7 @@ import java.nio.charset.CharacterCodingException;
 import java.nio.charset.Charset;
 
 import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 
@@ -27,6 +28,8 @@ public abstract class AbstractKeyValueObjectDataHandler<T extends KeyValueObject
 				true);
 		bsonMapper.configure(SerializationFeature.ORDER_MAP_ENTRIES_BY_KEYS,
 				true);
+		jsonMapper.configure(JsonParser.Feature.ALLOW_SINGLE_QUOTES, true);
+		bsonMapper.configure(JsonParser.Feature.ALLOW_SINGLE_QUOTES, true);
 	}
 
 	public AbstractKeyValueObjectDataHandler() {

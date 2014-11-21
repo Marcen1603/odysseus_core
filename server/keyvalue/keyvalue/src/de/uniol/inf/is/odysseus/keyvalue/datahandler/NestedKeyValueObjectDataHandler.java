@@ -16,7 +16,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 
 /**
- * @author Jan Sören Schwarz
+ * @author Jan Sï¿½ren Schwarz
  * 
  */
 public class NestedKeyValueObjectDataHandler extends AbstractKeyValueObjectDataHandler<NestedKeyValueObject<?>> {
@@ -49,7 +49,7 @@ public class NestedKeyValueObjectDataHandler extends AbstractKeyValueObjectDataH
 //			LOG.debug("JSON-String: " + json);
 			JsonNode rootNode = jsonMapper.reader().readTree(json);		
 			if(!rootNode.isObject()) {
-				//könnte das wirklich vorkommen?
+				//kï¿½nnte das wirklich vorkommen?
 				rootNode = rootNode.get(0);
 			} 
 			Map<String, Object> map = jsonMapper.reader().treeToValue(rootNode, Map.class);
