@@ -7,7 +7,8 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Require-Bundle: de.uniol.inf.is.odysseus.core,
  de.uniol.inf.is.odysseus.core.server,
  de.uniol.inf.is.odysseus.transform,
- de.uniol.inf.is.odysseus.ruleengine
+ de.uniol.inf.is.odysseus.ruleengine,
+ jama;bundle-version="1.0.0"
 Import-Package: com.google.common.base,
  de.uniol.inf.is.odysseus.mep,
  de.uniol.inf.is.odysseus.peer.ddc,

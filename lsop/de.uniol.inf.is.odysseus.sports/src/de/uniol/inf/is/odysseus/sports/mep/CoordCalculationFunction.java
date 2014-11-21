@@ -80,15 +80,20 @@ public class CoordCalculationFunction extends AbstractFunction<Double> {
 
 	private static void setUpField() {
 		try {
+			
+			String[] xminKey = "field,xmin".split(",");
+			String[] yminKey = "field,ymin".split(",");
+			String[] xmaxKey = "field,xmax".split(",");
+			String[] ymaxKey = "field,ymax".split(",");
 
 			double xmin = Double.valueOf(CoordCalculationFunction.ddc
-					.getValue(new DDCKey("field,xmin")));
+					.getValue(new DDCKey(xminKey)));
 			double ymin = Double.valueOf(CoordCalculationFunction.ddc
-					.getValue(new DDCKey("field,ymin")));
+					.getValue(new DDCKey(yminKey)));
 			double xmax = Double.valueOf(CoordCalculationFunction.ddc
-					.getValue(new DDCKey("field,xmax")));
+					.getValue(new DDCKey(xmaxKey)));
 			double ymax = Double.valueOf(CoordCalculationFunction.ddc
-					.getValue(new DDCKey("field,ymax")));
+					.getValue(new DDCKey(ymaxKey)));
 
 			listOfAccessPoints.put("topLeft", new Point2D.Double(xmin, ymin));
 			listOfAccessPoints.put("topRight", new Point2D.Double(xmax, ymin));
