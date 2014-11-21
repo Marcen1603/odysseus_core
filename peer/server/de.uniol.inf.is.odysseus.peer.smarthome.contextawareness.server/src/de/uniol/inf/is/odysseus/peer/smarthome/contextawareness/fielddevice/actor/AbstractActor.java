@@ -7,30 +7,35 @@ import de.uniol.inf.is.odysseus.p2p_new.PeerCommunicationException;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.FieldDevice;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.actor.RPiGPIOActor.State;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.logicrule.ILogicRuleListener;
-import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.logicrule.LogicRule;
+import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.logicrule.AbstractLogicRule;
 
-public abstract class Actor extends FieldDevice implements Serializable {
+public abstract class AbstractActor extends FieldDevice implements Serializable {
 	private static final long serialVersionUID = 1L;
-	private ArrayList<LogicRule> logicRulesList;
+	private ArrayList<AbstractLogicRule> logicRulesList;
 	private ArrayList<AbstractActorAction> actorActions;
 	private transient ArrayList<ILogicRuleListener> logicRuleListeners;
 
-	public Actor(String name, String prefix, String postfix) {
+	public AbstractActor(String name, String prefix, String postfix) {
 		super(name, prefix, postfix);
 	}
 
-	public void addLogicRuleForActivity(LogicRule newRule) {
-		getLogicRules().add(newRule);
+	public boolean addLogicRuleForActivity(AbstractLogicRule rule) {
+		if(getLogicRules().add(rule)){
+			fireLogicRuleAdded(rule);
+			return true;
+		}else{
+			return false;
+		}
 	}
 
-	public ArrayList<LogicRule> getLogicRules() {
+	public ArrayList<AbstractLogicRule> getLogicRules() {
 		if (this.logicRulesList == null) {
-			this.logicRulesList = new ArrayList<LogicRule>();
+			this.logicRulesList = new ArrayList<AbstractLogicRule>();
 		}
 		return logicRulesList;
 	}
 
-	public boolean deleteLogicRule(LogicRule rule) {
+	public boolean deleteLogicRule(AbstractLogicRule rule) {
 		if (getLogicRules().remove(rule)) {
 			
 			fireLogicRuleRemoved(rule);
@@ -39,8 +44,14 @@ public abstract class Actor extends FieldDevice implements Serializable {
 			return false;
 		}
 	}
+	
+	private void fireLogicRuleAdded(AbstractLogicRule rule) {
+		for (ILogicRuleListener listener : getLogicRuleListeners()) {
+			listener.logicRuleAdded(rule);
+		}
+	}
 
-	private void fireLogicRuleRemoved(LogicRule rule) {
+	private void fireLogicRuleRemoved(AbstractLogicRule rule) {
 		for (ILogicRuleListener listener : getLogicRuleListeners()) {
 			listener.logicRuleRemoved(rule);
 		}
@@ -61,7 +72,7 @@ public abstract class Actor extends FieldDevice implements Serializable {
 
 	public abstract boolean createLogicRuleWithAction(String activityName,
 			AbstractActorAction actorAction);
-	public abstract boolean logicRuleExist(LogicRule newRule);
+	public abstract boolean logicRuleExist(AbstractLogicRule newRule);
 
 	public boolean save() throws PeerCommunicationException {
 		return getSmartDevice().save();

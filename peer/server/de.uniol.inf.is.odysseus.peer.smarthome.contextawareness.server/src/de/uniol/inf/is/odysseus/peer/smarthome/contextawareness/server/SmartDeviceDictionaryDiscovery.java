@@ -27,14 +27,14 @@ import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.SmartHomeServerP
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.server.advertisement.SmartDeviceAdvertisement;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.server.advertisement.SmartDeviceAdvertisementInstantiator;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.smartdevice.ASmartDevice;
-import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.utils.SmartDeviceMessage;
-import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.utils.SmartDeviceRequestMessage;
-import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.utils.SmartDeviceResponseMessage;
+import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.smartdevice.message.SmartDeviceMessage;
+import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.smartdevice.message.SmartDeviceRequestMessage;
+import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.smartdevice.message.SmartDeviceResponseMessage;
 
-public class SmartDeviceServerDictionaryDiscovery implements
+public class SmartDeviceDictionaryDiscovery implements
 		IPeerCommunicatorListener, IAdvertisementDiscovererListener {
 
-	private static SmartDeviceServerDictionaryDiscovery instance;
+	private static SmartDeviceDictionaryDiscovery instance;
 	private long GARBAGE_COLLECTOR_REPEAT_TIME_MS = 30000;
 	private long SMART_DEVICE_AVAILABLE_AFTER_LAST_HEARTBEAT_MS = 30000;
 
@@ -50,7 +50,7 @@ public class SmartDeviceServerDictionaryDiscovery implements
 	private static ArrayList<PeerID> foundPeerIDs = new ArrayList<PeerID>();
 	private static Collection<PeerID> refreshing = Lists.newLinkedList();
 
-	public SmartDeviceServerDictionaryDiscovery() {
+	public SmartDeviceDictionaryDiscovery() {
 		cleanupAsync();
 		refreshFoundPeerIDsAsync();
 		registerAdvertisementTypes();
@@ -179,15 +179,15 @@ public class SmartDeviceServerDictionaryDiscovery implements
 			SmartDeviceResponseMessage smartDeviceResponse = (SmartDeviceResponseMessage) message;
 			ASmartDevice smartDevice = smartDeviceResponse.getSmartDevice();
 
-			if (!SmartDevicePublisher.isLocalPeer(senderPeer) && !isLocalSmartDevice(smartDevice)) {
+			if (!SmartDevicePublisher.getInstance().isLocalPeer(senderPeer) && !isLocalSmartDevice(smartDevice)) {
 
 				if (smartDevice != null) {
-					SmartDeviceServerDictionaryDiscovery.getInstance()
+					SmartDeviceDictionaryDiscovery.getInstance()
 							.addSmartDevice(smartDevice);
 				} else {
 					LOG.debug("The smart device response is null!!! Are all classes in SmartDevice serializable?");
 				}
-			}else if(!SmartDevicePublisher.isLocalPeer(senderPeer)){
+			}else if(!SmartDevicePublisher.getInstance().isLocalPeer(senderPeer)){
 				//TODO: update local smart device:
 				LOG.debug("TODO: update local smart device: "+ smartDevice.getPeerName());
 				
@@ -349,9 +349,9 @@ public class SmartDeviceServerDictionaryDiscovery implements
 		}
 	}
 
-	public static SmartDeviceServerDictionaryDiscovery getInstance() {
+	public static SmartDeviceDictionaryDiscovery getInstance() {
 		if (instance == null) {
-			instance = new SmartDeviceServerDictionaryDiscovery();
+			instance = new SmartDeviceDictionaryDiscovery();
 		}
 		return instance;
 	}
@@ -528,40 +528,4 @@ public class SmartDeviceServerDictionaryDiscovery implements
 
 		return null;
 	}
-
-	/*
-	 * public static IPQLGenerator getPQLGenerator() { return pqlGenerator; }
-	 * 
-	 * 
-	 * 
-	 * public IPeerCommunicator getPeerCommunicator() { return peerCommunicator;
-	 * }
-	 * 
-	 * public void setPeerCommunicator(IPeerCommunicator peerCommunicator) {
-	 * this.peerCommunicator = peerCommunicator; }
-	 */
-
-	/*
-	 * private static IP2PNetworkManager getP2PNetworkManager() { return
-	 * p2pNetworkManager; }
-	 * 
-	 * public void bindP2PNetworkManager(IP2PNetworkManager serv) {
-	 * p2pNetworkManager = serv;
-	 * p2pNetworkManager.addAdvertisementListener(this); }
-	 * 
-	 * public void unbindP2PNetworkManager(IP2PNetworkManager serv) { if
-	 * (p2pNetworkManager == serv) {
-	 * p2pNetworkManager.removeAdvertisementListener(this); p2pNetworkManager =
-	 * null; } }
-	 * 
-	 * private static IP2PDictionary getP2PDictionary() { return p2pDictionary;
-	 * }
-	 * 
-	 * public void bindP2PDictionary(IP2PDictionary serv) { p2pDictionary =
-	 * serv; }
-	 * 
-	 * public void unbindP2PDictionary(IP2PDictionary serv) { if (p2pDictionary
-	 * == serv) { p2pDictionary = null; } }
-	 */
-
 }

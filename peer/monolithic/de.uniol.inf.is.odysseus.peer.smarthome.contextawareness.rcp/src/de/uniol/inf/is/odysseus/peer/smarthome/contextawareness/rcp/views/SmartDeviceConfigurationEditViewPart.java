@@ -26,10 +26,12 @@ import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicator;
 import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicatorListener;
 import de.uniol.inf.is.odysseus.p2p_new.PeerCommunicationException;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.rcp.SmartHomeRCPActivator;
-import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.utils.SmartDeviceConfig;
-import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.utils.SmartDeviceConfigurationRequestMessage;
-import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.utils.SmartDeviceConfigurationResponseMessage;
-import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.utils.SmartDeviceMessage;
+import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.server.SmartDeviceLocalConfigurationServer;
+import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.server.SmartDevicePublisher;
+import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.server.config.SmartDeviceConfig;
+import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.server.config.SmartDeviceConfigurationRequestMessage;
+import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.server.config.SmartDeviceConfigurationResponseMessage;
+import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.smartdevice.message.SmartDeviceMessage;
 
 public class SmartDeviceConfigurationEditViewPart extends ViewPart implements IPeerCommunicatorListener {
 	private static final Logger LOG = LoggerFactory.getLogger(SmartDeviceConfigurationEditViewPart.class);
@@ -180,10 +182,16 @@ public class SmartDeviceConfigurationEditViewPart extends ViewPart implements IP
 				SmartDeviceConfig config = new SmartDeviceConfig();
 				config.setContextname(SmartDeviceConfigurationEditViewPart.this.peerContextNameText.getText());
 				
-				SmartDeviceConfigurationResponseMessage smartDeviceConfigResponse = new SmartDeviceConfigurationResponseMessage();
-				smartDeviceConfigResponse.setSmartDeviceConfig(config);
-				
-				SmartHomeRCPActivator.getPeerCommunicator().send(selectedPeer, smartDeviceConfigResponse);
+				if(SmartDevicePublisher.getInstance().isLocalPeer(selectedPeer)){
+					SmartDeviceLocalConfigurationServer.getInstance().overWriteSmartDeviceConfigWith(config);
+					SmartDeviceLocalConfigurationServer.getInstance().saveSmartDeviceConfig();
+					
+				}else{
+					SmartDeviceConfigurationResponseMessage smartDeviceConfigResponse = new SmartDeviceConfigurationResponseMessage();
+					smartDeviceConfigResponse.setSmartDeviceConfig(config);
+					
+					SmartHomeRCPActivator.getPeerCommunicator().send(selectedPeer, smartDeviceConfigResponse);
+				}
 			} catch (PeerCommunicationException ex) {
 				LOG.error("Cannot send message", ex);
 			}

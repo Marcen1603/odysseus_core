@@ -2,12 +2,12 @@ package de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.act
 
 import java.util.HashMap;
 
-import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.sensor.Sensor;
+import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.sensor.AbstractSensor;
 
 public class ComplexActivityInterpreter extends ActivityInterpreter {
 	private static final long serialVersionUID = 1L;
 
-	public ComplexActivityInterpreter(Sensor _sensor, String _activityName,
+	public ComplexActivityInterpreter(AbstractSensor _sensor, String _activityName,
 			String prefix, String postfix) {
 		super(_sensor, _activityName, prefix, postfix);
 

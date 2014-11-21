@@ -9,7 +9,7 @@ import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.FieldDevice;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.activityinterpreter.ActivityInterpreter;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.activityinterpreter.IActivityInterpreterListener;
 
-public abstract class Sensor extends FieldDevice implements Serializable {
+public abstract class AbstractSensor extends FieldDevice implements Serializable {
 	private static final long serialVersionUID = 1L;
 	private String rawSourceName;
 	private ArrayList<ActivityInterpreter> activityInterpreterList;
@@ -22,7 +22,7 @@ public abstract class Sensor extends FieldDevice implements Serializable {
 	public abstract Map<String, String> getQueriesForRawValues();
 
 	
-	public Sensor(String name, String prefix, String postfix) {
+	public AbstractSensor(String name, String prefix, String postfix) {
 		super(name, prefix, postfix);
 
 		this.setRawSourceName(name, prefix, postfix);
@@ -49,7 +49,12 @@ public abstract class Sensor extends FieldDevice implements Serializable {
 	}
 
 	public boolean addActivityInterpreter(ActivityInterpreter activityInterpreter) {
+		if(activityInterpreterForActivityNameExist(activityInterpreter.getActivityName())){
+			return false;
+		}
+		
 		if(getActivityInterpreters().add(activityInterpreter)){
+			getSmartDevice().updateActivitiesSources();
 			fireActivityInterpreterAdded(activityInterpreter);
 			return true;
 		}else{
@@ -57,9 +62,19 @@ public abstract class Sensor extends FieldDevice implements Serializable {
 		}
 	}
 
+	private boolean activityInterpreterForActivityNameExist(String activityName) {
+		for(ActivityInterpreter interpreter : getActivityInterpreters()){
+			if(interpreter.getActivityName().equals(activityName)){
+				return true;
+			}
+		}
+		return false;
+	}
+
 	public boolean removeActivityInterpreter(
 			ActivityInterpreter activityInterpreter) {
 		if(getActivityInterpreters().remove(activityInterpreter)){
+			getSmartDevice().updateActivitiesSources();
 			fireActivityInterpreterRemoved(activityInterpreter);
 			return true;
 		}else{

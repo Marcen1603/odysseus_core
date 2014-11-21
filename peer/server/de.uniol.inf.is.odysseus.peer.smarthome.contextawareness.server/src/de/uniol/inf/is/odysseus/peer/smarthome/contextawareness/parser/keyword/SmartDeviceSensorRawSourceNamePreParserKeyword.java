@@ -9,7 +9,7 @@ import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.script.parser.AbstractPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptException;
 
-public class SmartDeviceSensorRawSourceName extends AbstractPreParserKeyword {
+public class SmartDeviceSensorRawSourceNamePreParserKeyword extends AbstractPreParserKeyword {
 
 	public static final String KEYWORD = "SMARTDEVICE_SENSOR_RAW_SOURCE_NAME";
 	

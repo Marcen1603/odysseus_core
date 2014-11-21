@@ -14,8 +14,8 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
 
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.actor.AbstractActorAction;
-import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.actor.Actor;
-import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.logicrule.LogicRule;
+import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.actor.AbstractActor;
+import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.logicrule.AbstractLogicRule;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.rcp.SmartHomeRCPActivator;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.smartdevice.ASmartDevice;
 import de.uniol.inf.is.odysseus.rcp.StatusBarManager;
@@ -254,8 +254,8 @@ public class LogicRuleAddViewPart extends ViewPart {
 	private void refreshActivityNamesCombo() {
 
 		ArrayList<String> list = new ArrayList<>();
-		for (Actor actor : getLocalSmartDevice().getConnectedActors()) {
-			for (LogicRule rule : actor.getLogicRules()) {
+		for (AbstractActor actor : getLocalSmartDevice().getConnectedActors()) {
+			for (AbstractLogicRule rule : actor.getLogicRules()) {
 				list.add(rule.getActivityName());
 			}
 		}
@@ -322,7 +322,7 @@ public class LogicRuleAddViewPart extends ViewPart {
 		int selectedActor = actorsCombo.getSelectionIndex();
 
 		if (selectedActor >= 0) {
-			Actor actor = smartDevice.getConnectedActors().get(selectedActor);
+			AbstractActor actor = smartDevice.getConnectedActors().get(selectedActor);
 
 			ArrayList<String> list = new ArrayList<>();
 			for (AbstractActorAction actions : actor.getActions()) {
@@ -409,7 +409,7 @@ public class LogicRuleAddViewPart extends ViewPart {
 		PeerID currentPeer = foundPeerIDs.get(selectedPeerID);
 		ASmartDevice smartDevice = getSmartDevice(currentPeer);
 
-		Actor actor = smartDevice.getConnectedActors().get(selectedActor);
+		AbstractActor actor = smartDevice.getConnectedActors().get(selectedActor);
 
 		AbstractActorAction actorAction = actor.getActions().get(
 				selectedActorAction);
@@ -468,7 +468,7 @@ public class LogicRuleAddViewPart extends ViewPart {
 	private ASmartDevice getSmartDevice(PeerID currentPeer) {
 		ASmartDevice smartDevice = SmartHomeRCPActivator
 				.getSmartDeviceService()
-				.getSmartDeviceServerDictionaryDiscovery()
+				.getSmartDeviceDictionaryDiscovery()
 				.getFoundSmartDevices().get(currentPeer.intern().toString());
 		if (isLocalID(currentPeer)) {
 			smartDevice = getLocalSmartDevice();

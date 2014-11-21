@@ -3,9 +3,9 @@ package de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.act
 import java.util.LinkedHashMap;
 
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.activityinterpreter.ActivityInterpreter;
-import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.logicrule.LogicRule;
+import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.logicrule.AbstractLogicRule;
 
-public class RPiGPIOActor extends Actor {
+public class RPiGPIOActor extends AbstractActor {
 	private static final long serialVersionUID = 1L;
 
 	public enum State {
@@ -65,11 +65,11 @@ public class RPiGPIOActor extends Actor {
 	}
 
 	@Override
-	public boolean logicRuleExist(LogicRule newRule) {
+	public boolean logicRuleExist(AbstractLogicRule newRule) {
 		if (newRule instanceof RPiGPIOActorLogicRule) {
 			RPiGPIOActorLogicRule rpiNewRule = (RPiGPIOActorLogicRule) newRule;
 
-			for (LogicRule rule : getLogicRules()) {
+			for (AbstractLogicRule rule : getLogicRules()) {
 				if (rule instanceof RPiGPIOActorLogicRule) {
 					RPiGPIOActorLogicRule rpiRule = (RPiGPIOActorLogicRule) rule;
 					if (rpiRule.getActivityName().equals(
@@ -83,12 +83,12 @@ public class RPiGPIOActor extends Actor {
 		return false;
 	}
 
-	class RPiGPIOActorLogicRule extends LogicRule {
+	class RPiGPIOActorLogicRule extends AbstractLogicRule {
 		private static final long serialVersionUID = 1L;
 		private State state;
 		private int pin;
 
-		RPiGPIOActorLogicRule(Actor actor, String activityName, String prefix,
+		RPiGPIOActorLogicRule(AbstractActor actor, String activityName, String prefix,
 				String postfix) {
 			super(actor, activityName, prefix, postfix);
 

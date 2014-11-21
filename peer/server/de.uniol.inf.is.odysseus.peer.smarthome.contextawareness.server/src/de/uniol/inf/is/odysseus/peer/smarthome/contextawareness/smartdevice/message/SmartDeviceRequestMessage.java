@@ -1,14 +1,14 @@
-package de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.utils;
+package de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.smartdevice.message;
 
 
-public class SmartDeviceConfigurationRequestMessage extends SmartDeviceConfigurationMessage {
-
-	private String text;
+public class SmartDeviceRequestMessage extends SmartDeviceMessage {
 	
-	public SmartDeviceConfigurationRequestMessage() {
+	private String text = "";
+	
+	public SmartDeviceRequestMessage() {
 	}
 	
-	public SmartDeviceConfigurationRequestMessage(String text) {
+	public SmartDeviceRequestMessage(String text) {
 		this.text = text;
 	}
 	

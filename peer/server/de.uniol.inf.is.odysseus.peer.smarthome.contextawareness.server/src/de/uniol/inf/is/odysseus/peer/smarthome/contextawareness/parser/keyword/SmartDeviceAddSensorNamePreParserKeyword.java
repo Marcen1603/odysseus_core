@@ -32,12 +32,12 @@ public class SmartDeviceAddSensorNamePreParserKeyword extends
 					+ KEYWORD);
 
 		Object sensorRawSourceName = variables
-				.get(SmartDeviceSensorRawSourceName.KEYWORD);
+				.get(SmartDeviceSensorRawSourceNamePreParserKeyword.KEYWORD);
 		if (sensorRawSourceName == null
 				|| !(sensorRawSourceName instanceof String)
 				|| sensorRawSourceName.equals("")) {
 			throw new OdysseusScriptException("#"
-					+ SmartDeviceSensorRawSourceName.KEYWORD
+					+ SmartDeviceSensorRawSourceNamePreParserKeyword.KEYWORD
 					+ " needed for the sensor.");
 		}
 
@@ -72,7 +72,7 @@ public class SmartDeviceAddSensorNamePreParserKeyword extends
 
 		String sensorName = parameter;
 		final String sensorRawSourceName = (String) variables
-				.get(SmartDeviceSensorRawSourceName.KEYWORD);
+				.get(SmartDeviceSensorRawSourceNamePreParserKeyword.KEYWORD);
 		String sensorQueryName = (String) variables.get("QNAME");
 		//final String queryForRawValues = "";
 

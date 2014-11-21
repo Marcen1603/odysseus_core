@@ -9,10 +9,10 @@ import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicator;
 import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicatorListener;
 import de.uniol.inf.is.odysseus.p2p_new.PeerCommunicationException;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.SmartHomeServerPlugIn;
-import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.utils.SmartDeviceConfig;
-import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.utils.SmartDeviceConfigurationRequestMessage;
-import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.utils.SmartDeviceConfigurationResponseMessage;
-import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.utils.SmartDeviceMessage;
+import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.server.config.SmartDeviceConfig;
+import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.server.config.SmartDeviceConfigurationRequestMessage;
+import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.server.config.SmartDeviceConfigurationResponseMessage;
+import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.smartdevice.message.SmartDeviceMessage;
 
 public class SmartDeviceLocalConfigurationServer implements
 		IPeerCommunicatorListener {
@@ -49,7 +49,7 @@ public class SmartDeviceLocalConfigurationServer implements
 		} else if (message instanceof SmartDeviceConfigurationResponseMessage) {
 			SmartDeviceConfigurationResponseMessage configResponse = (SmartDeviceConfigurationResponseMessage) message;
 
-			if (!SmartDevicePublisher.isLocalPeer(senderPeer)) {
+			if (!SmartDevicePublisher.getInstance().isLocalPeer(senderPeer)) {
 				if (getSmartDeviceConfig()
 						.getContextname() != null) {
 					try {
@@ -68,7 +68,7 @@ public class SmartDeviceLocalConfigurationServer implements
 		}
 	}
 
-	public static SmartDeviceLocalConfigurationServer getInstance() {
+	public synchronized static SmartDeviceLocalConfigurationServer getInstance() {
 		if (instance == null) {
 			instance = new SmartDeviceLocalConfigurationServer();
 		}
@@ -113,7 +113,7 @@ public class SmartDeviceLocalConfigurationServer implements
 		smartDeviceConfig.overwriteWith(config);
 	}
 	
-	private void initSmartDeviceConfig() {
+	private static void initSmartDeviceConfig() {
 		if (smartDeviceConfig == null) {
 			smartDeviceConfig = new SmartDeviceConfig();
 			// overwrite the initital object with information from saved file
@@ -126,7 +126,7 @@ public class SmartDeviceLocalConfigurationServer implements
 		return smartDeviceConfig;
 	}
 	
-	public static void saveSmartDeviceConfig() {
+	public void saveSmartDeviceConfig() {
 		SmartDeviceLocalConfiguration.setSmartDeviceConfig(SMART_DEVICE_CONFIG_FILE,
 				smartDeviceConfig);
 	}

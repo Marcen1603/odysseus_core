@@ -15,7 +15,7 @@ public class SmartDeviceKeywordProvider implements IPreParserKeywordProvider {
 		keywords.put(SmartDeviceSensorNamePreParserKeyword.KEYWORD, SmartDeviceSensorNamePreParserKeyword.class);
 		
 		keywords.put(SmartDeviceAddSensorNamePreParserKeyword.KEYWORD, SmartDeviceAddSensorNamePreParserKeyword.class);
-		keywords.put(SmartDeviceSensorRawSourceName.KEYWORD, SmartDeviceSensorRawSourceName.class);
+		keywords.put(SmartDeviceSensorRawSourceNamePreParserKeyword.KEYWORD, SmartDeviceSensorRawSourceNamePreParserKeyword.class);
 
 		keywords.put(SmartDeviceActivityInterpreterSourceNamePreParserKeyword.KEYWORD, SmartDeviceActivityInterpreterSourceNamePreParserKeyword.class);
 		keywords.put(SmartDeviceAddActivityInterpreterNamePreParserKeyword.KEYWORD, SmartDeviceAddActivityInterpreterNamePreParserKeyword.class);

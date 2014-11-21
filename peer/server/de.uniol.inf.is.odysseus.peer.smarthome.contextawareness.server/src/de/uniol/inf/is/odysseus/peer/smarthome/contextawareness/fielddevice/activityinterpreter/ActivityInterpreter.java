@@ -3,17 +3,17 @@ package de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.act
 import java.io.Serializable;
 import java.util.HashMap;
 
-import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.sensor.Sensor;
+import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.sensor.AbstractSensor;
 
 public abstract class ActivityInterpreter implements Serializable {
 	private static final long serialVersionUID = 1L;
-	private Sensor sensor;
+	private AbstractSensor sensor;
 	private String activityName;
 	private String prefix;
 	private String postfix;
 	private String activitySourceName;
 	
-	public ActivityInterpreter(Sensor _sensor, String _activityName, String prefix, String postfix) {
+	public ActivityInterpreter(AbstractSensor _sensor, String _activityName, String prefix, String postfix) {
 		this.setSensor(_sensor);
 		this.setActivityName(_activityName);
 		this.setPrefix(prefix);
@@ -46,10 +46,10 @@ public abstract class ActivityInterpreter implements Serializable {
 	}
 	public abstract HashMap<String, String> getActivityInterpreterQueries(
 			String activityName);
-	public Sensor getSensor() {
+	public AbstractSensor getSensor() {
 		return sensor;
 	}
-	private void setSensor(Sensor sensor) {
+	private void setSensor(AbstractSensor sensor) {
 		this.sensor = sensor;
 	}
 	public void setActivitySourceName(String _activitySourceName) {
@@ -57,7 +57,7 @@ public abstract class ActivityInterpreter implements Serializable {
 	}
 	
 	public String getActivitySourceName() {
-		return this.activitySourceName;
+		return this.activitySourceName+ "_"+getSensor().getName();
 	}
 	protected String getNameCombination(String name, String activity) {
 		StringBuilder n = new StringBuilder();
@@ -65,7 +65,7 @@ public abstract class ActivityInterpreter implements Serializable {
 			n.append(getPrefix() + "_");
 		}
 		n.append(activity + "_" + name);
-
+		
 		if (getPostfix() != null && !getPostfix().equals("")) {
 			n.append("_" + getPostfix());
 		}

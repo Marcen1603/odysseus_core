@@ -24,8 +24,8 @@ import com.google.common.collect.Lists;
 
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.FieldDevice;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.activityinterpreter.ActivityInterpreter;
-import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.actor.Actor;
-import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.sensor.Sensor;
+import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.actor.AbstractActor;
+import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.sensor.AbstractSensor;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.rcp.SmartHomeRCPActivator;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.server.SmartDevicePublisher;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.smartdevice.ASmartDevice;
@@ -48,10 +48,10 @@ public class ActivityInterpreterShowView extends ViewPart {
 	ISmartDeviceListener smartDeviceListener = new ISmartDeviceListener() {
 		@Override
 		public void fieldDeviceConnected(ASmartDevice sender, FieldDevice device) {
-			if (device instanceof Sensor) {
+			if (device instanceof AbstractSensor) {
 				LOG.debug("ActivityInterpreterShowView fieldDeviceConnected Sensor:" + device.getName());
 
-			} else if (device instanceof Actor) {
+			} else if (device instanceof AbstractActor) {
 				LOG.debug("ActivityInterpreterShowView fieldDeviceConnected Actor:" + device.getName());
 
 			} else {
@@ -68,11 +68,11 @@ public class ActivityInterpreterShowView extends ViewPart {
 		}
 
 		@Override
-		public void readyStateChanged(ASmartDevice smartDevice, boolean state) {
+		public void smartDeviceReadyStateChanged(ASmartDevice smartDevice, boolean state) {
 		}
 
 		@Override
-		public void SmartDevicesUpdated(ASmartDevice smartDevice) {
+		public void smartDevicesUpdated(ASmartDevice smartDevice) {
 			refresh();
 		}
 	};
@@ -168,7 +168,7 @@ public class ActivityInterpreterShowView extends ViewPart {
 					.getLocalSmartDevice());
 			foundSmartDevices.addAll(SmartHomeRCPActivator
 					.getSmartDeviceService()
-					.getSmartDeviceServerDictionaryDiscovery()
+					.getSmartDeviceDictionaryDiscovery()
 					.getFoundSmartDeviceList());
 			foundSmartDevicesCopy = Lists.newArrayList(foundSmartDevices);
 		}
@@ -253,15 +253,15 @@ public class ActivityInterpreterShowView extends ViewPart {
 				return devices;
 			} else if (inputElement instanceof ASmartDevice) {
 				ASmartDevice device = (ASmartDevice) inputElement;
-				Sensor[] list = new Sensor[device.getConnectedSensors().size()];
+				AbstractSensor[] list = new AbstractSensor[device.getConnectedSensors().size()];
 				int i = 0;
-				for (Sensor sensor : device.getConnectedSensors()) {
+				for (AbstractSensor sensor : device.getConnectedSensors()) {
 					list[i++] = sensor;
 				}
 				LOG.error("getElements return Sensor[].length:"+list.length);
 				return list;
-			} else if (inputElement instanceof Sensor) {
-				Sensor sensor = (Sensor) inputElement;
+			} else if (inputElement instanceof AbstractSensor) {
+				AbstractSensor sensor = (AbstractSensor) inputElement;
 				Collection<? extends ActivityInterpreter> activityInterpreter = sensor.getActivityInterpreters();
 				ActivityInterpreter[] list = new ActivityInterpreter[activityInterpreter.size()];
 				int i = 0;
@@ -280,15 +280,15 @@ public class ActivityInterpreterShowView extends ViewPart {
 		public Object[] getChildren(Object parentElement) {
 			if (parentElement instanceof SmartDevice) {
 				SmartDevice smartDevice = (SmartDevice) parentElement;
-				Collection<Sensor> sensors = smartDevice.getConnectedSensors();
-				Sensor[] list = new Sensor[sensors.size()];
+				Collection<AbstractSensor> sensors = smartDevice.getConnectedSensors();
+				AbstractSensor[] list = new AbstractSensor[sensors.size()];
 				int i = 0;
-				for (Sensor sensor : sensors) {
+				for (AbstractSensor sensor : sensors) {
 					list[i++] = sensor;
 				}
 				return list;
-			} else if (parentElement instanceof Sensor) {
-				Sensor sensor = (Sensor) parentElement;
+			} else if (parentElement instanceof AbstractSensor) {
+				AbstractSensor sensor = (AbstractSensor) parentElement;
 				Collection<? extends ActivityInterpreter> activityInterpreters = sensor.getActivityInterpreters();
 				ActivityInterpreter[] list = new ActivityInterpreter[activityInterpreters.size()];
 				int i = 0;
@@ -309,8 +309,8 @@ public class ActivityInterpreterShowView extends ViewPart {
 				return null;
 			} else if (element instanceof ASmartDevice) {
 				return null;
-			} else if (element instanceof Sensor) {
-				Sensor sensor = (Sensor) element;
+			} else if (element instanceof AbstractSensor) {
+				AbstractSensor sensor = (AbstractSensor) element;
 				return sensor.getSmartDevice();
 			} else if (element instanceof ActivityInterpreter) {
 				ActivityInterpreter interpret = (ActivityInterpreter) element;
@@ -326,8 +326,8 @@ public class ActivityInterpreterShowView extends ViewPart {
 			} else if (element instanceof ASmartDevice) {
 				ASmartDevice device = (ASmartDevice) element;
 				return device.getConnectedSensors().size() > 0;
-			} else if (element instanceof Sensor) {
-				Sensor sensor = (Sensor) element;
+			} else if (element instanceof AbstractSensor) {
+				AbstractSensor sensor = (AbstractSensor) element;
 				return sensor.getActivityInterpreters().size() > 0;
 			}
 			return false;
@@ -349,8 +349,8 @@ public class ActivityInterpreterShowView extends ViewPart {
 					} else {
 						text.append(device.getPeerName());
 					}
-				} else if (cell.getElement() instanceof Sensor) {//Sensor
-					Sensor sensor = (Sensor) cell.getElement();
+				} else if (cell.getElement() instanceof AbstractSensor) {//Sensor
+					AbstractSensor sensor = (AbstractSensor) cell.getElement();
 					text.append(sensor.getName());
 				}
 				break;

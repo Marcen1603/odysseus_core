@@ -3,7 +3,7 @@ package de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.sen
 import java.util.HashMap;
 import java.util.Map;
 
-public class ComplexSensor extends Sensor {
+public class ComplexSensor extends AbstractSensor {
 	private static final long serialVersionUID = 1L;
 	private String sensorRawSourceName;
 

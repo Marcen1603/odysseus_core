@@ -5,19 +5,19 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.activityinterpreter.ActivityInterpreter;
-import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.actor.Actor;
+import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.actor.AbstractActor;
 
-public abstract class LogicRule implements Serializable {
+public abstract class AbstractLogicRule implements Serializable {
 	private static final long serialVersionUID = 1L;
 	private String activityName;
-	private Actor actor;
+	private AbstractActor actor;
 	private String prefix;
 	private String postfix;
 	private ArrayList<String> activitySourceNameList;
 	private ArrayList<ActivityInterpreter> activityInterpreterList;
 	private ArrayList<ActivityInterpreter> runningRules;
 
-	public LogicRule(Actor actor, String activityName, String prefix,
+	public AbstractLogicRule(AbstractActor actor, String activityName, String prefix,
 			String postfix) {
 		this.setActor(actor);
 		this.setActivityName(activityName);
@@ -33,11 +33,11 @@ public abstract class LogicRule implements Serializable {
 		return activityName;
 	}
 
-	public Actor getActor() {
+	public AbstractActor getActor() {
 		return actor;
 	}
 
-	private void setActor(Actor actor) {
+	private void setActor(AbstractActor actor) {
 		this.actor = actor;
 	}
 

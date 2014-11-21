@@ -16,10 +16,11 @@ import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.server.LogicRule
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.server.QueryExecutor;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.server.SmartDeviceLocalConfigurationServer;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.server.SmartDevicePublisher;
-import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.utils.SmartDeviceConfigurationRequestMessage;
-import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.utils.SmartDeviceConfigurationResponseMessage;
-import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.utils.SmartDeviceRequestMessage;
-import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.utils.SmartDeviceResponseMessage;
+import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.server.SmartDeviceDictionaryDiscovery;
+import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.server.config.SmartDeviceConfigurationRequestMessage;
+import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.server.config.SmartDeviceConfigurationResponseMessage;
+import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.smartdevice.message.SmartDeviceRequestMessage;
+import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.smartdevice.message.SmartDeviceResponseMessage;
 
 public class SmartHomeServerPlugIn implements BundleActivator {
 
@@ -37,16 +38,14 @@ public class SmartHomeServerPlugIn implements BundleActivator {
 	private static IPeerDictionary peerDictionary;
 
 	public void start(BundleContext bundleContext) throws Exception {
-		SmartDevicePublisher.getInstance().addListener(
-				LogicRuleProcessor.getInstance());
+		SmartDeviceDictionaryDiscovery.getInstance().addListener(LogicRuleProcessor.getInstance());
 
 		bundle = bundleContext.getBundle();
 	}
 
 	public void stop(BundleContext context) throws Exception {
-		SmartDevicePublisher.getInstance().removeListener(
-				LogicRuleProcessor.getInstance());
-		
+		SmartDeviceDictionaryDiscovery.getInstance().removeListener(LogicRuleProcessor.getInstance());
+
 		bundle = null;
 	}
 
@@ -66,6 +65,10 @@ public class SmartHomeServerPlugIn implements BundleActivator {
 	public static void bindP2PNetworkManager(IP2PNetworkManager serv) {
 		p2pNetworkManager = serv;
 
+		p2pNetworkManager
+		.addAdvertisementListener(SmartDeviceDictionaryDiscovery
+				.getInstance());
+		
 		SmartDevicePublisher.getInstance().bindP2PNetworkManager(serv);
 		//SmartDeviceServerDictionaryDiscovery.getInstance()
 		//		.bindP2PNetworkManager(serv);
@@ -74,12 +77,16 @@ public class SmartHomeServerPlugIn implements BundleActivator {
 
 	// called by OSGi-DS
 	public static void unbindP2PNetworkManager(IP2PNetworkManager serv) {
-		SmartDevicePublisher.getInstance().unbindP2PNetworkManager(serv);
-		//SmartDeviceServerDictionaryDiscovery.getInstance()
-		//		.unbindP2PNetworkManager(serv);
-		QueryExecutor.getInstance().unbindP2PNetworkManager(serv);
-
 		if (p2pNetworkManager == serv) {
+			SmartDevicePublisher.getInstance().unbindP2PNetworkManager(serv);
+			//SmartDeviceServerDictionaryDiscovery.getInstance()
+			//		.unbindP2PNetworkManager(serv);
+			QueryExecutor.getInstance().unbindP2PNetworkManager(serv);
+
+			
+			p2pNetworkManager
+			.removeAdvertisementListener(SmartDeviceDictionaryDiscovery
+					.getInstance());
 			p2pNetworkManager = null;
 		}
 	}

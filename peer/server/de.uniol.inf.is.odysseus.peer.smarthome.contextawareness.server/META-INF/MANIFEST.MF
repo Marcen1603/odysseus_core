@@ -56,7 +56,9 @@ Export-Package:
  de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.logicrule,
  de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.sensor,
  de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.server,
+ de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.server.config,
  de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.server.service,
  de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.smartdevice,
+ de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.smartdevice.message,
  de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.utils
 

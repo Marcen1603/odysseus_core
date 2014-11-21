@@ -21,8 +21,8 @@ import com.google.common.collect.Lists;
 
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.activityinterpreter.ActivityInterpreter;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.actor.AbstractActorAction;
-import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.actor.Actor;
-import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.sensor.Sensor;
+import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.actor.AbstractActor;
+import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.sensor.AbstractSensor;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.rcp.SmartHomeRCPActivator;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.smartdevice.ASmartDevice;
 import de.uniol.inf.is.odysseus.rcp.StatusBarManager;
@@ -253,7 +253,7 @@ public class ActivityInterpreterAddViewPart extends ViewPart {
 	private void refreshActivityNamesCombo() {
 
 		ArrayList<String> list = new ArrayList<>();
-		for (Sensor sensor : getLocalSmartDevice().getConnectedSensors()) {
+		for (AbstractSensor sensor : getLocalSmartDevice().getConnectedSensors()) {
 			for (ActivityInterpreter interpreter : sensor.getActivityInterpreters()) {
 				list.add(interpreter.getActivityName());
 			}
@@ -413,7 +413,7 @@ public class ActivityInterpreterAddViewPart extends ViewPart {
 		PeerID currentPeer = foundPeerIDs.get(selectedPeerID);
 		ASmartDevice smartDevice = getSmartDevice(currentPeer);
 
-		Actor actor = smartDevice.getConnectedActors().get(selectedActor);
+		AbstractActor actor = smartDevice.getConnectedActors().get(selectedActor);
 
 		AbstractActorAction actorAction = actor.getActions().get(
 				selectedActorAction);
@@ -474,7 +474,7 @@ public class ActivityInterpreterAddViewPart extends ViewPart {
 	private ASmartDevice getSmartDevice(PeerID currentPeer) {
 		ASmartDevice smartDevice = SmartHomeRCPActivator
 				.getSmartDeviceService()
-				.getSmartDeviceServerDictionaryDiscovery()
+				.getSmartDeviceDictionaryDiscovery()
 				.getFoundSmartDevices().get(currentPeer.intern().toString());
 		if (isLocalID(currentPeer)) {
 			smartDevice = getLocalSmartDevice();

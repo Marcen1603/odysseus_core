@@ -23,9 +23,9 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.FieldDevice;
-import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.actor.Actor;
-import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.logicrule.LogicRule;
-import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.sensor.Sensor;
+import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.actor.AbstractActor;
+import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.logicrule.AbstractLogicRule;
+import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.sensor.AbstractSensor;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.rcp.SmartHomeRCPActivator;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.server.SmartDevicePublisher;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.smartdevice.ASmartDevice;
@@ -48,10 +48,10 @@ public class LogicRuleShowViewPart extends ViewPart {
 	ISmartDeviceListener smartDeviceListener = new ISmartDeviceListener() {
 		@Override
 		public void fieldDeviceConnected(ASmartDevice sender, FieldDevice device) {
-			if (device instanceof Sensor) {
+			if (device instanceof AbstractSensor) {
 				LOG.debug("fieldDeviceConnected Sensor:" + device.getName());
 
-			} else if (device instanceof Actor) {
+			} else if (device instanceof AbstractActor) {
 				LOG.debug("fieldDeviceConnected Actor:" + device.getName());
 
 			} else {
@@ -68,11 +68,11 @@ public class LogicRuleShowViewPart extends ViewPart {
 		}
 
 		@Override
-		public void readyStateChanged(ASmartDevice smartDevice, boolean state) {
+		public void smartDeviceReadyStateChanged(ASmartDevice smartDevice, boolean state) {
 		}
 
 		@Override
-		public void SmartDevicesUpdated(ASmartDevice smartDevice) {
+		public void smartDevicesUpdated(ASmartDevice smartDevice) {
 			refresh();
 		}
 	};
@@ -168,7 +168,7 @@ public class LogicRuleShowViewPart extends ViewPart {
 					.getLocalSmartDevice());
 			foundSmartDevices.addAll(SmartHomeRCPActivator
 					.getSmartDeviceService()
-					.getSmartDeviceServerDictionaryDiscovery()
+					.getSmartDeviceDictionaryDiscovery()
 					.getFoundSmartDeviceList());
 			foundSmartDevicesCopy = Lists.newArrayList(foundSmartDevices);
 		}
@@ -209,16 +209,16 @@ public class LogicRuleShowViewPart extends ViewPart {
 		return Optional.fromNullable(instance);
 	}
 
-	public List<LogicRule> getSelectedLogicRules() {
-		ImmutableList.Builder<LogicRule> resultBuilder = new ImmutableList.Builder<>();
+	public List<AbstractLogicRule> getSelectedLogicRules() {
+		ImmutableList.Builder<AbstractLogicRule> resultBuilder = new ImmutableList.Builder<>();
 
 		IStructuredSelection selection = (IStructuredSelection) treeViewer
 				.getSelection();
 		if (!selection.isEmpty()) {
 			for (Object selectedObj : selection.toList()) {
-				if (selectedObj instanceof LogicRule) {
+				if (selectedObj instanceof AbstractLogicRule) {
 					// selection.getFirstElement();
-					resultBuilder.add(((LogicRule) selectedObj));
+					resultBuilder.add(((AbstractLogicRule) selectedObj));
 				}
 			}
 		}
@@ -253,20 +253,20 @@ public class LogicRuleShowViewPart extends ViewPart {
 				return devices;
 			} else if (inputElement instanceof ASmartDevice) {
 				ASmartDevice device = (ASmartDevice) inputElement;
-				Actor[] list = new Actor[device.getConnectedActors().size()];
+				AbstractActor[] list = new AbstractActor[device.getConnectedActors().size()];
 				int i = 0;
-				for (Actor actor : device.getConnectedActors()) {
+				for (AbstractActor actor : device.getConnectedActors()) {
 					list[i++] = actor;
 				}
 				;
 				//LOG.error("getElements return Actor[]");
 				return list;
-			} else if (inputElement instanceof Actor) {
-				Actor actor = (Actor) inputElement;
-				Collection<? extends LogicRule> rules = actor.getLogicRules();
-				LogicRule[] list = new LogicRule[rules.size()];
+			} else if (inputElement instanceof AbstractActor) {
+				AbstractActor actor = (AbstractActor) inputElement;
+				Collection<? extends AbstractLogicRule> rules = actor.getLogicRules();
+				AbstractLogicRule[] list = new AbstractLogicRule[rules.size()];
 				int i = 0;
-				for (LogicRule rule : rules) {
+				for (AbstractLogicRule rule : rules) {
 					list[i++] = rule;
 				}
 				;
@@ -282,23 +282,23 @@ public class LogicRuleShowViewPart extends ViewPart {
 		public Object[] getChildren(Object parentElement) {
 			if (parentElement instanceof SmartDevice) {
 				SmartDevice smartDevice = (SmartDevice) parentElement;
-				Collection<Actor> actors = smartDevice.getConnectedActors();
-				Actor[] list = new Actor[actors.size()];
+				Collection<AbstractActor> actors = smartDevice.getConnectedActors();
+				AbstractActor[] list = new AbstractActor[actors.size()];
 				int i = 0;
-				for (Actor actor : actors) {
+				for (AbstractActor actor : actors) {
 					list[i++] = actor;
 				}
 				return list;
-			} else if (parentElement instanceof Actor) {
-				Actor actor = (Actor) parentElement;
-				Collection<? extends LogicRule> rules = actor.getLogicRules();
-				LogicRule[] list = new LogicRule[rules.size()];
+			} else if (parentElement instanceof AbstractActor) {
+				AbstractActor actor = (AbstractActor) parentElement;
+				Collection<? extends AbstractLogicRule> rules = actor.getLogicRules();
+				AbstractLogicRule[] list = new AbstractLogicRule[rules.size()];
 				int i = 0;
-				for (LogicRule rule : rules) {
+				for (AbstractLogicRule rule : rules) {
 					list[i++] = rule;
 				}
 				return list;
-			} else if (parentElement instanceof LogicRule) {
+			} else if (parentElement instanceof AbstractLogicRule) {
 				return null;
 			}
 
@@ -311,11 +311,11 @@ public class LogicRuleShowViewPart extends ViewPart {
 				return null;
 			} else if (element instanceof ASmartDevice) {
 				return null;
-			} else if (element instanceof Actor) {
-				Actor actor = (Actor) element;
+			} else if (element instanceof AbstractActor) {
+				AbstractActor actor = (AbstractActor) element;
 				return actor.getSmartDevice();
-			} else if (element instanceof LogicRule) {
-				LogicRule rule = (LogicRule) element;
+			} else if (element instanceof AbstractLogicRule) {
+				AbstractLogicRule rule = (AbstractLogicRule) element;
 				return rule.getActor();
 			}
 			return null;
@@ -328,8 +328,8 @@ public class LogicRuleShowViewPart extends ViewPart {
 			} else if (element instanceof ASmartDevice) {
 				ASmartDevice device = (ASmartDevice) element;
 				return device.getLogicRules().size() > 0;
-			} else if (element instanceof Actor) {
-				Actor actor = (Actor) element;
+			} else if (element instanceof AbstractActor) {
+				AbstractActor actor = (AbstractActor) element;
 				return actor.getLogicRules().size() > 0;
 			}
 			return false;
@@ -351,20 +351,20 @@ public class LogicRuleShowViewPart extends ViewPart {
 					} else {
 						text.append(device.getPeerName());
 					}
-				} else if (cell.getElement() instanceof Actor) {//Actor
-					Actor actor = (Actor) cell.getElement();
+				} else if (cell.getElement() instanceof AbstractActor) {//Actor
+					AbstractActor actor = (AbstractActor) cell.getElement();
 					text.append(actor.getName());
 				}
 				break;
 			case 1:// Activity
-				if (cell.getElement() instanceof LogicRule) {
-					LogicRule rule = (LogicRule) cell.getElement();
+				if (cell.getElement() instanceof AbstractLogicRule) {
+					AbstractLogicRule rule = (AbstractLogicRule) cell.getElement();
 					text.append(rule.getActivityName());
 				}
 				break;
 			case 2:// Action
-				if (cell.getElement() instanceof LogicRule) {
-					LogicRule rule = (LogicRule) cell.getElement();
+				if (cell.getElement() instanceof AbstractLogicRule) {
+					AbstractLogicRule rule = (AbstractLogicRule) cell.getElement();
 					text.append(rule.getReactionDescription());
 				}
 				break;

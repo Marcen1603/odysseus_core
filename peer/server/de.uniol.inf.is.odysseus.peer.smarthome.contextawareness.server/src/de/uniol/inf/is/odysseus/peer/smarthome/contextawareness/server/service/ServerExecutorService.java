@@ -13,13 +13,11 @@ public class ServerExecutorService {
 private static final Logger LOG = LoggerFactory.getLogger(ServerExecutorService.class);
 	
 	private static IServerExecutor serverExecutor;
-	//private static JxtaRemoveOperatorPlanListener listener = new JxtaRemoveOperatorPlanListener();
 	
 	// called by OSGi
 	public void bindExecutor( IExecutor executor ) {
 		if( executor instanceof IServerExecutor ) {
 			serverExecutor = (IServerExecutor)executor;
-			//serverExecutor.addPlanModificationListener(listener);
 			
 			LOG.debug("Bound server executor {} ", executor);
 		}
@@ -28,7 +26,6 @@ private static final Logger LOG = LoggerFactory.getLogger(ServerExecutorService.
 	// caleld by OSGi
 	public void unbindExecutor( IExecutor executor ) {
 		if( executor == serverExecutor ){
-			//serverExecutor.removePlanModificationListener(listener);
 			serverExecutor = null;
 			
 			LOG.debug("Unbound server executor {} ", executor);

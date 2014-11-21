@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.utils;
+package de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.smartdevice.message;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -8,7 +8,7 @@ import java.io.ObjectOutputStream;
 
 import de.uniol.inf.is.odysseus.p2p_new.IMessage;
 
-public abstract class SmartDeviceConfigurationMessage implements IMessage {
+public abstract class SmartDeviceMessage implements IMessage {
 	protected static byte[] serialize(Object obj) throws IOException {
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		ObjectOutputStream oos = new ObjectOutputStream(baos);

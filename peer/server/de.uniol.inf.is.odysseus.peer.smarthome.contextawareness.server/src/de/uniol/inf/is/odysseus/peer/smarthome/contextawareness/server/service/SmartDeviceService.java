@@ -2,9 +2,8 @@ package de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.server.service;
 
 import java.util.ArrayList;
 
-import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.FieldDevice;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.server.SmartDevicePublisher;
-import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.server.SmartDeviceServerDictionaryDiscovery;
+import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.server.SmartDeviceDictionaryDiscovery;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.smartdevice.ASmartDevice;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.smartdevice.ISmartDeviceListener;
 
@@ -42,36 +41,12 @@ public class SmartDeviceService implements ISmartDeviceService {
 		public void removeSmartDeviceListener(ISmartDeviceListener listener) {
 			getSmartDeviceListener().remove(listener);
 		}
+		
 		private ArrayList<ISmartDeviceListener> getSmartDeviceListener() {
 			if(smartDeviceListener==null){
 				smartDeviceListener = new ArrayList<ISmartDeviceListener>();
 			}
 			return smartDeviceListener;
-		}
-		
-		@SuppressWarnings("unused")
-		private void fireFieldDeviceConnected(FieldDevice device) {
-			/*
-			for(IFieldDeviceListener listener : getSmartDeviceListener()){
-				listener.fieldDeviceConnected(getLocalSmartDevice(), device);
-			}
-			*/
-		}
-		@SuppressWarnings("unused")
-		private void fireFieldDeviceRemoved(FieldDevice device) {
-			/*
-			for(IFieldDeviceListener listener : getSmartDeviceListener()){
-				listener.fieldDeviceRemoved(getLocalSmartDevice(), device);
-			}
-			*/
-		}
-		@SuppressWarnings("unused")
-		private void fireReadyStateChanged(boolean state) {
-			/*
-			for(IFieldDeviceListener listener : getSmartDeviceListener()){
-				listener.readyStateChanged(getLocalSmartDevice(), state);
-			}
-			*/
 		}
 
 		public static boolean isActivated() {
@@ -89,13 +64,11 @@ public class SmartDeviceService implements ISmartDeviceService {
 			return SmartDevicePublisher.getInstance().getLocalSmartDevice();
 		}
 
-		@Override
-		public SmartDevicePublisher getSmartDeviceServer() {
+		public SmartDevicePublisher getSmartDevicePublisher() {
 			return SmartDevicePublisher.getInstance();
 		}
 
-		@Override
-		public SmartDeviceServerDictionaryDiscovery getSmartDeviceServerDictionaryDiscovery() {
-			return SmartDeviceServerDictionaryDiscovery.getInstance();
+		public SmartDeviceDictionaryDiscovery getSmartDeviceDictionaryDiscovery() {
+			return SmartDeviceDictionaryDiscovery.getInstance();
 		}
 }

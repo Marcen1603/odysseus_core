@@ -6,7 +6,7 @@ import java.util.Map;
 
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.activityinterpreter.ActivityInterpreter;
 
-public class TemperSensor extends Sensor {
+public class TemperSensor extends AbstractSensor {
 	private static final long serialVersionUID = 1L;
 
 	public TemperSensor(String name, String prefix, String postfix) {
@@ -41,7 +41,7 @@ public class TemperSensor extends Sensor {
 		private static final long serialVersionUID = 1L;
 		private String condition;
 
-		TemperSensorActivityInterpreter(Sensor sensor, String activityName,
+		TemperSensorActivityInterpreter(AbstractSensor sensor, String activityName,
 				String prefix, String postfix) {
 			super(sensor, activityName, prefix, postfix);
 

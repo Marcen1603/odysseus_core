@@ -32,9 +32,9 @@ import de.uniol.inf.is.odysseus.p2p_new.dictionary.MultipleSourceAdvertisement;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.SourceAdvertisement;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.SmartHomeServerPlugIn;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.activityinterpreter.ActivityInterpreter;
-import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.actor.Actor;
-import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.logicrule.LogicRule;
-import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.sensor.Sensor;
+import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.actor.AbstractActor;
+import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.logicrule.AbstractLogicRule;
+import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.sensor.AbstractSensor;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.server.service.ServerExecutorService;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.server.service.SessionManagementService;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.smartdevice.ASmartDevice;
@@ -134,7 +134,7 @@ public class QueryExecutor implements IP2PDictionaryListener,
 		
 	}
 	
-	public static QueryExecutor getInstance() {
+	public synchronized static QueryExecutor getInstance() {
 		if (instance == null) {
 			instance = new QueryExecutor();
 		}
@@ -164,9 +164,9 @@ public class QueryExecutor implements IP2PDictionaryListener,
 
 	public void removeAllLogicRules(ASmartDevice remoteSmartDevice) {
 		LOG.debug("removeAllLogicRules:" + remoteSmartDevice.getPeerName());
-		for (Actor actor : remoteSmartDevice.getConnectedActors()) {
-			for (LogicRule rule : actor.getLogicRules()) {
-				for (Sensor remoteSensor : remoteSmartDevice
+		for (AbstractActor actor : remoteSmartDevice.getConnectedActors()) {
+			for (AbstractLogicRule rule : actor.getLogicRules()) {
+				for (AbstractSensor remoteSensor : remoteSmartDevice
 						.getConnectedSensors()) {
 					for (ActivityInterpreter activityInterpreter : remoteSensor
 							.getActivityInterpreters()) {
@@ -199,10 +199,10 @@ public class QueryExecutor implements IP2PDictionaryListener,
 	}
 
 	public boolean isRunningLogicRule(SmartDevice remoteSmartDevice) {
-		for (Actor localActor : SmartDevicePublisher.getInstance()
+		for (AbstractActor localActor : SmartDevicePublisher.getInstance()
 				.getLocalSmartDevice().getConnectedActors()) {
-			for (LogicRule rule : localActor.getLogicRules()) {
-				for (Sensor remoteSensor : remoteSmartDevice
+			for (AbstractLogicRule rule : localActor.getLogicRules()) {
+				for (AbstractSensor remoteSensor : remoteSmartDevice
 						.getConnectedSensors()) {
 					for (ActivityInterpreter activityInterpreter : remoteSensor
 							.getActivityInterpreters()) {
@@ -283,7 +283,7 @@ public class QueryExecutor implements IP2PDictionaryListener,
 	 *            as LinkedHashMap<String,String>(<ViewName,Query>)
 	 * @param sourcNameToWaitFor
 	 */
-	public void executeQueriesAsync(final LogicRule rule,
+	public void executeQueriesAsync(final AbstractLogicRule rule,
 			final ActivityInterpreter activityInterpreter,
 			final LinkedHashMap<String, String> logicRuleQueries,
 			final String sourcNameToWaitFor) {
@@ -318,9 +318,9 @@ public class QueryExecutor implements IP2PDictionaryListener,
 
 	private void stopLogicRuleQueries(String sourceName) {
 		LOG.debug("stopLogicRuleQueries for sourceName:" + sourceName);
-		for (Actor actor : SmartDevicePublisher.getInstance()
+		for (AbstractActor actor : SmartDevicePublisher.getInstance()
 				.getLocalSmartDevice().getConnectedActors()) {
-			for (LogicRule rule : actor.getLogicRules()) {
+			for (AbstractLogicRule rule : actor.getLogicRules()) {
 				for (ActivityInterpreter activityInterpreter : rule
 						.getActivityInterpretersWithRunningRules()) {
 					if (rule.isRunningWith(activityInterpreter)) {
@@ -436,7 +436,7 @@ public class QueryExecutor implements IP2PDictionaryListener,
 		return p2pDictionary;
 	}
 
-	private void stopQueryAndRemoveViewOrStream(String queryName) {
+	void stopQueryAndRemoveViewOrStream(String queryName) {
 		LOG.debug("stopQuery:" + queryName);
 
 		try {
@@ -588,7 +588,7 @@ public class QueryExecutor implements IP2PDictionaryListener,
 		// LOG.debug("sourceExportRemoved: " + sourceName);
 	}
 
-	public void stopLogicRuleAsync(final LogicRule rule) {
+	public void stopLogicRuleAsync(final AbstractLogicRule rule) {
 		Thread t = new Thread(new Runnable() {
 			@Override
 			public void run() {
@@ -604,7 +604,7 @@ public class QueryExecutor implements IP2PDictionaryListener,
 		t.start();
 	}
 
-	private void stopLogicRuleNow(LogicRule rule) {
+	private void stopLogicRuleNow(AbstractLogicRule rule) {
 		LOG.debug("stopLogicRuleNow");
 		for(ActivityInterpreter activityInterpreter : rule.getActivityInterpretersWithRunningRules()){
 			@SuppressWarnings({ "rawtypes", "unchecked" })

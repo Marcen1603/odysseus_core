@@ -3,26 +3,20 @@ package de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.smartdevice;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.p2p_new.PeerCommunicationException;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.FieldDevice;
-import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.actor.Actor;
-import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.logicrule.LogicRule;
-import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.sensor.Sensor;
-import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.utils.SmartDeviceConfig;
+import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.actor.AbstractActor;
+import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.logicrule.AbstractLogicRule;
+import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.sensor.AbstractSensor;
+import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.server.config.SmartDeviceConfig;
 import net.jxta.peer.PeerID;
 
 public abstract class ASmartDevice implements Serializable { // ISmartDevice,
 	private static final long serialVersionUID = 1L;
-
-	/*
-	public static ASmartDevice getInstance() {
-		return null;
-	}
-	*/
-
-	// public abstract boolean equals(Object obj);
+	
 	public boolean equals(Object obj) {
 		if (obj instanceof PeerID) {
 			String peerID = this.getPeerID().intern().toString();
@@ -39,15 +33,16 @@ public abstract class ASmartDevice implements Serializable { // ISmartDevice,
 		}
 	}
 
-	// /ISmartDevice
 	public abstract List<FieldDevice> getConnectedFieldDevices();
 
-	public abstract ArrayList<Sensor> getConnectedSensors();
+	public abstract ArrayList<AbstractSensor> getConnectedSensors();
 
-	public abstract ArrayList<Actor> getConnectedActors();
+	public abstract ArrayList<AbstractActor> getConnectedActors();
 
 	public abstract void addConnectedFieldDevice(FieldDevice device);
 
+	public abstract void removeConnectedFieldDevice(FieldDevice device);
+	
 	public abstract String getContextName();
 
 	public abstract void setContextName(String contextName);
@@ -72,15 +67,22 @@ public abstract class ASmartDevice implements Serializable { // ISmartDevice,
 
 	public abstract void removeSmartDeviceListener(ISmartDeviceListener listener);
 
-	public abstract Collection<? extends LogicRule> getLogicRules();
+	public abstract Collection<? extends AbstractLogicRule> getLogicRules();
 
 	public abstract boolean save() throws PeerCommunicationException;
 
-	public Sensor getSensor(String sensorName) {
-		for(Sensor sensor : getConnectedSensors()){
+	public AbstractSensor getSensor(String sensorName) {
+		for(AbstractSensor sensor : getConnectedSensors()){
 			return sensor;
 		}
 		return null;
 	}
+
+	public abstract String getMergedActivitySourceName(String activitySourceName);
+
+	public abstract HashMap<String, ArrayList<String>> getActivitySourceMap();
+
+	public abstract void updateActivitiesSources();
+
 	
 }

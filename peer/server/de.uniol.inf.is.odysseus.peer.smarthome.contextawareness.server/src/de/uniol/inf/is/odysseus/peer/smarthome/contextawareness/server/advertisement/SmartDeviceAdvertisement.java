@@ -36,19 +36,15 @@ public class SmartDeviceAdvertisement extends Advertisement implements
 	private static final String NAME_TAG = "name";
 	private static final String PEER_ID_TAG = "originalPeerID";
 	private static final String PIPE_ID_TAG = "pipeID";
-	// private static final String CONTEXT_NAME = "contextName";
-	// private static final String SMART_DEVICE = "smartDevice";
 
 	private static final String[] INDEX_FIELDS = new String[] { ID_TAG,
-			NAME_TAG }; // PEER_ID_TAG,
+			NAME_TAG };
 
 	private ID id;
 	private String name = "";
 	private PipeID pipeID;
 	private PeerID peerID;
 	private String peerName = "";
-	// private String contextName = "";
-	//private SmartDevice smartDevice;
 
 	public SmartDeviceAdvertisement(Element<?> root) {
 		final TextElement<?> doc = (TextElement<?>) Preconditions.checkNotNull(
@@ -69,29 +65,7 @@ public class SmartDeviceAdvertisement extends Advertisement implements
 		} else if (elem.getName().equals(PIPE_ID_TAG)) {
 			setPipeID((PipeID) toID(elem));
 		}
-
-		/*
-		 * } else if (elem.getName().equals(CONTEXT_NAME)) {
-		 * setContextName(elem.getTextValue());
-		 */
-
-		/*
-		 * else if (elem.getName().equals(SMART_DEVICE)) {
-		 * setSmartDevice(elem.getTextValue()); }
-		 */
 	}
-/*
-	private void setSmartDevice(String smartDeviceString) {
-		try {
-			SmartDevice smartDevice = (SmartDevice) fromString(smartDeviceString);
-			this.smartDevice = smartDevice;
-		} catch (ClassNotFoundException e) {
-			LOG.error(e.getMessage(), e);
-		} catch (IOException e) {
-			LOG.error(e.getMessage(), e);
-		}
-	}
-	*/
 
 	public SmartDeviceAdvertisement() {
 		// for JXTA-side instances
@@ -104,7 +78,6 @@ public class SmartDeviceAdvertisement extends Advertisement implements
 		id = viewAdvertisement.id;
 		peerID = viewAdvertisement.peerID;
 		pipeID = viewAdvertisement.pipeID;
-		//smartDevice = viewAdvertisement.smartDevice;
 	}
 
 	@Override
@@ -129,22 +102,6 @@ public class SmartDeviceAdvertisement extends Advertisement implements
 		appendElement(doc, ID_TAG, this.id.toString());
 		appendElement(doc, NAME_TAG, this.name);
 		appendElement(doc, PEER_ID_TAG, this.peerID.toString());
-		//appendElement(doc, PIPE_ID_TAG, pipeID.toString());
-
-		/*
-		 * if (this.contextName != null) { appendElement(doc, CONTEXT_NAME,
-		 * this.contextName); }
-		 */
-
-		// Append connectedFieldDevices as JSON:
-		// connectedFieldDevices
-
-		/*
-		 * // String string = toString( new SomeClass() ); try { String
-		 * connectedFDString = toString(smartDevice); appendElement(doc,
-		 * SMART_DEVICE, connectedFDString); } catch (IOException e) {
-		 * LOG.error(e.getMessage(), e); }
-		 */
 	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
@@ -179,14 +136,7 @@ public class SmartDeviceAdvertisement extends Advertisement implements
 	public static String getAdvertisementType() {
 		return ADVERTISEMENT_TYPE;
 	}
-
-	/*
-	 * public void setContextName(String contextName) { this.contextName =
-	 * contextName; }
-	 * 
-	 * public String getContextName() { return this.contextName; }
-	 */
-
+	
 	public void setPeerID(PeerID peerID) {
 		this.peerID = peerID;
 	}
@@ -224,45 +174,4 @@ public class SmartDeviceAdvertisement extends Advertisement implements
 			return null;
 		}
 	}
-
-	/*
-	public SmartDevice getSmartDevice() {
-		return smartDevice;
-	}
-
-	public void setSmartDevice(SmartDevice smartDevice) {
-		this.smartDevice = smartDevice;
-	}
-	*/
-
-	/*
-	// Read the object from Base64 string.
-	private static Object fromString(String s) throws IOException,
-			ClassNotFoundException {
-		byte[] data = Base64Coder.decode(s);
-		ObjectInputStream ois = new ObjectInputStream(new ByteArrayInputStream(
-				data));
-		Object o = ois.readObject();
-		ois.close();
-		return o;
-	}
-
-	// Write the object to a Base64 string.
-	private static String toString(Serializable o) throws IOException {
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		ObjectOutputStream oos = new ObjectOutputStream(baos);
-		oos.writeObject(o);
-		oos.close();
-		return new String(Base64Coder.encode(baos.toByteArray()));
-	}
-	*/
-
-	/**
-	 * //Example: String string = toString( new SomeClass() );
-	 * System.out.println(" Encoded serialized version " ); System.out.println(
-	 * string ); SomeClass some = ( SomeClass ) fromString( string );
-	 * System.out.println( "\n\nReconstituted object"); System.out.println( some
-	 * );
-	 */
-
 }

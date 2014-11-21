@@ -11,7 +11,7 @@ import org.eclipse.swt.widgets.Display;
 import com.google.common.base.Optional;
 
 import de.uniol.inf.is.odysseus.p2p_new.PeerCommunicationException;
-import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.logicrule.LogicRule;
+import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.logicrule.AbstractLogicRule;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.rcp.views.LogicRuleShowViewPart;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.server.SmartDevicePublisher;
 import de.uniol.inf.is.odysseus.rcp.StatusBarManager;
@@ -25,7 +25,7 @@ public class DeleteLogicRuleCommand extends AbstractHandler {
 		if (optView.isPresent()) {
 			LogicRuleShowViewPart view = optView.get();
 
-			List<LogicRule> selectedLogicRules = view.getSelectedLogicRules();
+			List<AbstractLogicRule> selectedLogicRules = view.getSelectedLogicRules();
 			if (!selectedLogicRules.isEmpty()) {
 				MessageDialog msgDialog = new MessageDialog(Display
 						.getCurrent().getActiveShell(), null, null,
@@ -36,7 +36,7 @@ public class DeleteLogicRuleCommand extends AbstractHandler {
 
 				if (msgDialog.getReturnCode() == 0) {
 					int okCount = 0;
-					for (LogicRule rule : selectedLogicRules) {
+					for (AbstractLogicRule rule : selectedLogicRules) {
 						if (removeLogicRule(rule)) {
 							okCount++;
 						}
@@ -50,7 +50,7 @@ public class DeleteLogicRuleCommand extends AbstractHandler {
 		return null;
 	}
 
-	private boolean removeLogicRule(LogicRule rule) {
+	private boolean removeLogicRule(AbstractLogicRule rule) {
 		// System.out.println("DeleteLogicRule ActivityName:"+rule.getActivityName()+" Actor:"+rule.getActor().getName());
 		
 		if(SmartDevicePublisher.isLocalPeer(rule.getActor().getSmartDevice().getPeerID())){

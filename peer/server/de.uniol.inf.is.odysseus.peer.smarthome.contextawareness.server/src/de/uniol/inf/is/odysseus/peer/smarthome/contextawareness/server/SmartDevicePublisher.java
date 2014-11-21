@@ -17,7 +17,7 @@ import de.uniol.inf.is.odysseus.parser.pql.generator.IPQLGenerator;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.SmartHomeServerPlugIn;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.actor.RPiGPIOActor;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.actor.RPiGPIOActor.State;
-import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.logicrule.LogicRule;
+import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.logicrule.AbstractLogicRule;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.sensor.RPiGPIOSensor;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.sensor.TemperSensor;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.server.advertisement.SmartDeviceAdvertisement;
@@ -25,8 +25,8 @@ import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.server.service.S
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.server.service.SessionManagementService;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.smartdevice.ASmartDevice;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.smartdevice.SmartDevice;
-import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.utils.SmartDeviceRequestMessage;
-import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.utils.SmartDeviceResponseMessage;
+import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.smartdevice.message.SmartDeviceRequestMessage;
+import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.smartdevice.message.SmartDeviceResponseMessage;
 
 public class SmartDevicePublisher {
 	private static final Logger LOG = LoggerFactory
@@ -126,7 +126,7 @@ public class SmartDevicePublisher {
 		}
 	}
 
-	public static SmartDevicePublisher getInstance() {
+	public synchronized static SmartDevicePublisher getInstance() {
 		if (instance == null) {
 			instance = new SmartDevicePublisher();
 		}
@@ -184,24 +184,18 @@ public class SmartDevicePublisher {
 		}
 	}
 
-	public ASmartDevice getLocalSmartDevice() {
+	public synchronized ASmartDevice getLocalSmartDevice() {
 		return SmartDevice.getInstance();
 	}
 
 	public void unbindP2PNetworkManager(IP2PNetworkManager serv) {
 		if (p2pNetworkManager == serv) {
-			p2pNetworkManager
-					.removeAdvertisementListener(SmartDeviceServerDictionaryDiscovery
-							.getInstance());
 			p2pNetworkManager = null;
 		}
 	}
 
 	public void bindP2PNetworkManager(IP2PNetworkManager serv) {
 		p2pNetworkManager = serv;
-		p2pNetworkManager
-				.addAdvertisementListener(SmartDeviceServerDictionaryDiscovery
-						.getInstance());
 	}
 
 	private static IP2PNetworkManager getP2PNetworkManager() {
@@ -254,8 +248,10 @@ public class SmartDevicePublisher {
 	}
 
 	public void initForLocalSmartDevice() {
-		SmartDevicePublisher.getInstance().getLocalSmartDevice()
-		.addSmartDeviceListener(ActivityInterpreterProcessor.getInstance());
+		LOG.error("initForLocalSmartDevice add listener...");
+		
+		getLocalSmartDevice().addSmartDeviceListener(ActivityInterpreterProcessor.getInstance());
+		getLocalSmartDevice().addSmartDeviceListener(LogicRuleProcessor.getInstance());
 	}
 
 	private void waitForTemper() {
@@ -363,16 +359,17 @@ public class SmartDevicePublisher {
 		//temper.createActivityInterpreterWithCondition("hot", "Temperature > 24");
 		//temper.createActivityInterpreterWithCondition("cold", "Temperature < 24");
 
-		gpioTaste7.createActivityInterpreterForPinState("pin7down",//pin7down
+		gpioTaste7.createActivityInterpreterForPinState("pindown",//pin7down
 				RPiGPIOSensor.GPIO_SENSOR_STATE.HIGH);
 		
-		gpioTaste0.createActivityInterpreterForPinState("pin0down", RPiGPIOSensor.GPIO_SENSOR_STATE.HIGH);////pin0down
+		gpioTaste0.createActivityInterpreterForPinState("pindown", RPiGPIOSensor.GPIO_SENSOR_STATE.HIGH);////pin0down
 	}
 
 	private void addExampleLogicRules(String peerName) {
 		if (gpioLED11 == null) {
 			initActors(peerName);
 		}
+		
 		//TODO: test, test, test
 		//gpioLED11.createLogicRuleWithState("hot", State.OFF);
 		//gpioLED11.createLogicRuleWithState("cold", State.ON);
@@ -384,6 +381,8 @@ public class SmartDevicePublisher {
 		////gpioLED10.createLogicRuleWithState("cold", State.OFF);
 		//gpioLED10.createLogicRuleWithState("pin7down", State.OFF);
 		//gpioLED10.createLogicRuleWithState("pin0down", State.ON);
+		
+		
 	}
 
 	private void initActors(String peerName) {
@@ -408,7 +407,7 @@ public class SmartDevicePublisher {
 		return str1.equals(peerIDString);
 	}
 
-	public static boolean isLocalPeer(PeerID peerID) {
+	public boolean isLocalPeer(PeerID peerID) {
 		if (getP2PNetworkManager() == null
 				|| getP2PNetworkManager().getLocalPeerID() == null
 				|| getP2PNetworkManager().getLocalPeerID().intern() == null) {
@@ -436,20 +435,20 @@ public class SmartDevicePublisher {
 		_peerCommunicator.registerMessageType(SmartDeviceResponseMessage.class);
 
 		_peerCommunicator.addListener(
-				SmartDeviceServerDictionaryDiscovery.getInstance(),
+				SmartDeviceDictionaryDiscovery.getInstance(),
 				SmartDeviceRequestMessage.class);
 		_peerCommunicator.addListener(
-				SmartDeviceServerDictionaryDiscovery.getInstance(),
+				SmartDeviceDictionaryDiscovery.getInstance(),
 				SmartDeviceResponseMessage.class);
 	}
 
 	public void unbindPeerCommunicator(IPeerCommunicator _peerCommunicator) {
 		if (peerCommunicator == _peerCommunicator) {
 			_peerCommunicator.removeListener(
-					SmartDeviceServerDictionaryDiscovery.getInstance(),
+					SmartDeviceDictionaryDiscovery.getInstance(),
 					SmartDeviceRequestMessage.class);
 			_peerCommunicator.removeListener(
-					SmartDeviceServerDictionaryDiscovery.getInstance(),
+					SmartDeviceDictionaryDiscovery.getInstance(),
 					SmartDeviceResponseMessage.class);
 
 			peerCommunicator = null;
@@ -465,19 +464,8 @@ public class SmartDevicePublisher {
 	public IPeerCommunicator getPeerCommunicator() {
 		return peerCommunicator;
 	}
-
-	public void addListener(ISmartDeviceDictionaryListener listener) {
-		LOG.debug(" addListener");
-		SmartDeviceServerDictionaryDiscovery.getInstance()
-				.addListener(listener);
-	}
-
-	public void removeListener(ISmartDeviceDictionaryListener listener) {
-		SmartDeviceServerDictionaryDiscovery.getInstance().removeListener(
-				listener);
-	}
-
-	protected void stopLogicRule(LogicRule rule) {
+	
+	protected void stopLogicRule(AbstractLogicRule rule) {
 		QueryExecutor.getInstance().stopLogicRuleAsync(rule);
 	}
 }

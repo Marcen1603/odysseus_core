@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.utils;
+package de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.smartdevice.message;
 
 import java.io.IOException;
 
