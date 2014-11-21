@@ -10,10 +10,10 @@ import org.slf4j.LoggerFactory;
 import de.uniol.inf.is.odysseus.core.collection.Context;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.IExecutorCommand;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
+import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.SmartHomeServerPlugIn;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.ComplexActivityInterpreter;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.Sensor;
-import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.server.SmartDeviceServer;
-import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.server.SmartHomeServerPlugIn;
+import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.server.SmartDevicePublisher;
 import de.uniol.inf.is.odysseus.script.parser.AbstractPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptException;
 
@@ -85,7 +85,7 @@ public class SmartDeviceAddActivityInterpreterNamePreParserKeyword extends
 		LOG.debug("sensorName:" + sensorName);
 
 		try {
-			Sensor sensor = SmartDeviceServer.getInstance()
+			Sensor sensor = SmartDevicePublisher.getInstance()
 					.getLocalSmartDevice().getSensor(sensorName);
 
 			ComplexActivityInterpreter interpreter = new ComplexActivityInterpreter(

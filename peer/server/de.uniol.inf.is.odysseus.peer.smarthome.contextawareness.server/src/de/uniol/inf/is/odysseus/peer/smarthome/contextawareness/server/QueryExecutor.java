@@ -30,6 +30,7 @@ import de.uniol.inf.is.odysseus.p2p_new.dictionary.IP2PDictionary;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.IP2PDictionaryListener;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.MultipleSourceAdvertisement;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.SourceAdvertisement;
+import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.SmartHomeServerPlugIn;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.ASmartDevice;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.ActivityInterpreter;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.Actor;
@@ -198,7 +199,7 @@ public class QueryExecutor implements IP2PDictionaryListener,
 	}
 
 	public boolean isRunningLogicRule(SmartDevice remoteSmartDevice) {
-		for (Actor localActor : SmartDeviceServer.getInstance()
+		for (Actor localActor : SmartDevicePublisher.getInstance()
 				.getLocalSmartDevice().getConnectedActors()) {
 			for (LogicRule rule : localActor.getLogicRules()) {
 				for (Sensor remoteSensor : remoteSmartDevice
@@ -317,7 +318,7 @@ public class QueryExecutor implements IP2PDictionaryListener,
 
 	private void stopLogicRuleQueries(String sourceName) {
 		LOG.debug("stopLogicRuleQueries for sourceName:" + sourceName);
-		for (Actor actor : SmartDeviceServer.getInstance()
+		for (Actor actor : SmartDevicePublisher.getInstance()
 				.getLocalSmartDevice().getConnectedActors()) {
 			for (LogicRule rule : actor.getLogicRules()) {
 				for (ActivityInterpreter activityInterpreter : rule

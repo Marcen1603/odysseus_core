@@ -14,6 +14,7 @@ import de.uniol.inf.is.odysseus.p2p_new.IP2PNetworkManager;
 import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicator;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.IP2PDictionary;
 import de.uniol.inf.is.odysseus.parser.pql.generator.IPQLGenerator;
+import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.SmartHomeServerPlugIn;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.ASmartDevice;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.LogicRule;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.RPiGPIOActor;
@@ -27,14 +28,14 @@ import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.server.service.S
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.utils.SmartDeviceRequestMessage;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.utils.SmartDeviceResponseMessage;
 
-public class SmartDeviceServer {
+public class SmartDevicePublisher {
 	private static final Logger LOG = LoggerFactory
 			.getLogger(SmartHomeServerPlugIn.class);
 	private static final String INIT_SENSORS_SYS_PROPERTY = "smartdevice.init.sensors";
 	private static final String INIT_ACTORS_SYS_PROPERTY = "smartdevice.init.actors";
 	private static final String INIT_EXAMPLE_ACTIVITY_INTERPRETERS_SYS_PROPERTY = "smartdevice.example.activityinterpreters";
 	private static final String INIT_EXAMPLE_LOGIC_RULES_SYS_PROPERTY = "smartdevice.example.logicrules";
-	private static SmartDeviceServer instance;
+	private static SmartDevicePublisher instance;
 	private static IP2PDictionary p2pDictionary;
 	// private static ISmartDevice localSmartDevice;
 	private static IP2PNetworkManager p2pNetworkManager;
@@ -43,14 +44,14 @@ public class SmartDeviceServer {
 	final long SmartDeviceAdvertisement_LIFETIME = 30 * 2;
 	final long SmartDeviceAdvertisement_EXPIRATION_TIME = 30 * 3;
 	private static IPQLGenerator pqlGenerator;
-	private SmartDeviceServerFieldDeviceListener localSmartDeviceListener;
+	private SmartDevicePublisherFieldDeviceListener localSmartDeviceListener;
 	private TemperSensor temper;
 	private RPiGPIOSensor gpioTaste7;
 	private RPiGPIOActor gpioLED11;
 	private RPiGPIOActor gpioLED10;
 	private RPiGPIOSensor gpioTaste0;
 
-	SmartDeviceServer() {
+	SmartDevicePublisher() {
 		initLocalSmartDeviceAsync();
 		createAndPublishSmartDeviceAdvertisementWhenPossibleAsync();
 	}
@@ -124,9 +125,9 @@ public class SmartDeviceServer {
 		}
 	}
 
-	public static SmartDeviceServer getInstance() {
+	public static SmartDevicePublisher getInstance() {
 		if (instance == null) {
-			instance = new SmartDeviceServer();
+			instance = new SmartDevicePublisher();
 		}
 		return instance;
 	}
@@ -257,8 +258,8 @@ public class SmartDeviceServer {
 	}
 
 	public void initForLocalSmartDevice() {
-		localSmartDeviceListener = new SmartDeviceServerFieldDeviceListener();
-		SmartDeviceServer.getInstance().getLocalSmartDevice()
+		localSmartDeviceListener = new SmartDevicePublisherFieldDeviceListener();
+		SmartDevicePublisher.getInstance().getLocalSmartDevice()
 				.addFieldDeviceListener(localSmartDeviceListener);
 	}
 
@@ -374,10 +375,10 @@ public class SmartDeviceServer {
 		//temper.createActivityInterpreterWithCondition("hot", "Temperature > 24");
 		//temper.createActivityInterpreterWithCondition("cold", "Temperature < 24");
 
-		gpioTaste7.createActivityInterpreterForPinState("pin7down",
+		gpioTaste7.createActivityInterpreterForPinState("pindown",//pin7down
 				RPiGPIOSensor.GPIO_SENSOR_STATE.HIGH);
 		
-		gpioTaste0.createActivityInterpreterForPinState("pin0down", RPiGPIOSensor.GPIO_SENSOR_STATE.HIGH);
+		gpioTaste0.createActivityInterpreterForPinState("pindown", RPiGPIOSensor.GPIO_SENSOR_STATE.HIGH);////pin0down
 	}
 
 	private void addExampleLogicRules(String peerName) {
@@ -387,7 +388,7 @@ public class SmartDeviceServer {
 		//TODO: test, test, test
 		//gpioLED11.createLogicRuleWithState("hot", State.OFF);
 		//gpioLED11.createLogicRuleWithState("cold", State.ON);
-		gpioLED11.createLogicRuleWithState("pin7down", State.ON);
+		gpioLED11.createLogicRuleWithState("pindown", State.ON);
 		//gpioLED11.createLogicRuleWithState("pin0down", State.OFF);
 		
 		//Tasterbetaetigt0

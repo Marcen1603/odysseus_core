@@ -6,6 +6,7 @@ import java.util.Map.Entry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.SmartHomeServerPlugIn;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.ASmartDevice;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.ActivityInterpreter;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.Actor;
@@ -25,7 +26,7 @@ public class LogicProcessor implements ISmartDeviceDictionaryListener {
 	 * ISmartDeviceDictionaryListener
 	 */
 	@Override
-	public void smartDeviceAdded(SmartDeviceServer sender,
+	public void smartDeviceAdded(SmartDevicePublisher sender,
 			ASmartDevice newSmartDevice) {
 		LOG.debug("smartDeviceAdded: " + newSmartDevice.getPeerID()
 				+ " processLogic(" + newSmartDevice.getPeerName());
@@ -34,7 +35,7 @@ public class LogicProcessor implements ISmartDeviceDictionaryListener {
 	}
 
 	@Override
-	public void smartDeviceRemoved(SmartDeviceServer sender,
+	public void smartDeviceRemoved(SmartDevicePublisher sender,
 			ASmartDevice removedSmartDevice) {
 		LOG.debug("smartDeviceRemoved: " + removedSmartDevice.getPeerName());
 		// TODO: beide methoden vergleichen!!!
@@ -43,7 +44,7 @@ public class LogicProcessor implements ISmartDeviceDictionaryListener {
 	}
 
 	@Override
-	public void smartDeviceUpdated(SmartDeviceServer sender,
+	public void smartDeviceUpdated(SmartDevicePublisher sender,
 			ASmartDevice updatedSmartDevice) {
 		updateLogicRulesIfNeeded(updatedSmartDevice);
 	}
@@ -70,10 +71,10 @@ public class LogicProcessor implements ISmartDeviceDictionaryListener {
 		HashMap<ActivityInterpreter, LogicRule> map = new HashMap<>();
 
 		String smartDeviceContextName = "";
-		if (SmartDeviceServer.getInstance().getLocalSmartDevice() == null) {
+		if (SmartDevicePublisher.getInstance().getLocalSmartDevice() == null) {
 			return map;
 		} else {
-			smartDeviceContextName = SmartDeviceServer.getInstance()
+			smartDeviceContextName = SmartDevicePublisher.getInstance()
 					.getLocalSmartDevice().getContextName();
 			LOG.debug("smartDeviceCtx:" + smartDeviceContextName
 					+ " newSmartDeviceCtx:" + newSmartDevice.getContextName());
@@ -87,7 +88,7 @@ public class LogicProcessor implements ISmartDeviceDictionaryListener {
 			for (Sensor remoteSensor : newSmartDevice.getConnectedSensors()) {
 				for (ActivityInterpreter activityInterpreter : remoteSensor
 						.getActivityInterpreters()) {
-					for (Actor connectedActor : SmartDeviceServer.getInstance()
+					for (Actor connectedActor : SmartDevicePublisher.getInstance()
 							.getLocalSmartDevice().getConnectedActors()) {
 						for (LogicRule logicRule : connectedActor
 								.getLogicRules()) {
@@ -142,10 +143,10 @@ public class LogicProcessor implements ISmartDeviceDictionaryListener {
 		HashMap<ActivityInterpreter, LogicRule> map = new HashMap<ActivityInterpreter, LogicRule>();
 
 		String smartDeviceContextName = "";
-		if (SmartDeviceServer.getInstance().getLocalSmartDevice() == null) {
+		if (SmartDevicePublisher.getInstance().getLocalSmartDevice() == null) {
 			return map;
 		} else {
-			smartDeviceContextName = SmartDeviceServer.getInstance()
+			smartDeviceContextName = SmartDevicePublisher.getInstance()
 					.getLocalSmartDevice().getContextName();
 			LOG.debug("smartDeviceCtx:" + smartDeviceContextName
 					+ " newSmartDeviceCtx:" + newSmartDevice.getContextName());
@@ -170,7 +171,7 @@ public class LogicProcessor implements ISmartDeviceDictionaryListener {
 		for (Sensor remoteSensor : newSmartDevice.getConnectedSensors()) {
 			for (ActivityInterpreter activityInterpreter : remoteSensor
 					.getActivityInterpreters()) {
-				for (Actor localActor : SmartDeviceServer.getInstance()
+				for (Actor localActor : SmartDevicePublisher.getInstance()
 						.getLocalSmartDevice().getConnectedActors()) {
 					for (LogicRule logicRule : localActor.getLogicRules()) {
 						if (activityInterpreter.getActivityName().equals(
@@ -180,10 +181,10 @@ public class LogicProcessor implements ISmartDeviceDictionaryListener {
 									+ logicRule.getActivityName()+" sensorPeerName:"+activityInterpreter.getSensor().getSmartDevice().getPeerName()
 									+ " ruleDesc:"+logicRule.getReactionDescription()+" actDesc:"+activityInterpreter.getActivityInterpreterDescription());
 							
-							
-							String activitySourceName = activityInterpreter
-									.getActivitySourceName();
-							logicRule.addActivitySourceName(activitySourceName);
+							//TODO: !?
+							//String activitySourceName = activityInterpreter
+							//		.getActivitySourceName();
+							//logicRule.addActivitySourceName(activitySourceName);
 							
 							map.put(activityInterpreter, logicRule);
 						}
@@ -245,7 +246,7 @@ public class LogicProcessor implements ISmartDeviceDictionaryListener {
 	private void executeRelatedLogicRules(ASmartDevice newSmartDevice) {
 		LOG.debug("executeRelatedLogicRules:" + newSmartDevice.getPeerName());
 		
-		for (Actor localActor : SmartDeviceServer.getInstance()
+		for (Actor localActor : SmartDevicePublisher.getInstance()
 				.getLocalSmartDevice().getConnectedActors()) {
 			for (LogicRule localRule : localActor.getLogicRules()) {
 				for (String activitySourceNameLogicRule : localRule

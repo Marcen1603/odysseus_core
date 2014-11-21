@@ -8,6 +8,7 @@ import de.uniol.inf.is.odysseus.p2p_new.IMessage;
 import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicator;
 import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicatorListener;
 import de.uniol.inf.is.odysseus.p2p_new.PeerCommunicationException;
+import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.SmartHomeServerPlugIn;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.utils.SmartDeviceConfig;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.utils.SmartDeviceConfigurationRequestMessage;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.utils.SmartDeviceConfigurationResponseMessage;
@@ -48,7 +49,7 @@ public class SmartDeviceLocalConfigurationServer implements
 		} else if (message instanceof SmartDeviceConfigurationResponseMessage) {
 			SmartDeviceConfigurationResponseMessage configResponse = (SmartDeviceConfigurationResponseMessage) message;
 
-			if (!SmartDeviceServer.isLocalPeer(senderPeer)) {
+			if (!SmartDevicePublisher.isLocalPeer(senderPeer)) {
 				if (getSmartDeviceConfig()
 						.getContextname() != null) {
 					try {

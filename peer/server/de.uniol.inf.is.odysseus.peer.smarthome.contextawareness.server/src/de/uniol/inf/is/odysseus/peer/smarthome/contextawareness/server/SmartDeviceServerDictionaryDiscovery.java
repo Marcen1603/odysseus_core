@@ -23,6 +23,7 @@ import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicator;
 import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicatorListener;
 import de.uniol.inf.is.odysseus.p2p_new.PeerCommunicationException;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.SourceAdvertisement;
+import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.SmartHomeServerPlugIn;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.ASmartDevice;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.server.advertisement.SmartDeviceAdvertisement;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.server.advertisement.SmartDeviceAdvertisementInstantiator;
@@ -142,7 +143,7 @@ public class SmartDeviceServerDictionaryDiscovery implements
 				SmartDeviceRequestMessage smartDevRequest = new SmartDeviceRequestMessage(
 						"request");
 
-				SmartDeviceServer.getInstance().getPeerCommunicator()
+				SmartDevicePublisher.getInstance().getPeerCommunicator()
 						.send(adv.getPeerID(), smartDevRequest);
 			} catch (PeerCommunicationException e) {
 				LOG.error(e.getMessage() + " PeerID:"
@@ -162,11 +163,11 @@ public class SmartDeviceServerDictionaryDiscovery implements
 			// send out this information
 			try {
 				SmartDeviceResponseMessage smartDeviceResponse = new SmartDeviceResponseMessage();
-				smartDeviceResponse.setSmartDevice(SmartDeviceServer
+				smartDeviceResponse.setSmartDevice(SmartDevicePublisher
 						.getInstance().getLocalSmartDevice());
 
 				try {
-					SmartDeviceServer.getInstance().getPeerCommunicator()
+					SmartDevicePublisher.getInstance().getPeerCommunicator()
 							.send(senderPeer, smartDeviceResponse);
 				} catch (PeerCommunicationException ex) {
 					LOG.error(ex.getMessage(), ex);
@@ -178,7 +179,7 @@ public class SmartDeviceServerDictionaryDiscovery implements
 			SmartDeviceResponseMessage smartDeviceResponse = (SmartDeviceResponseMessage) message;
 			ASmartDevice smartDevice = smartDeviceResponse.getSmartDevice();
 
-			if (!SmartDeviceServer.isLocalPeer(senderPeer) && !isLocalSmartDevice(smartDevice)) {
+			if (!SmartDevicePublisher.isLocalPeer(senderPeer) && !isLocalSmartDevice(smartDevice)) {
 
 				if (smartDevice != null) {
 					SmartDeviceServerDictionaryDiscovery.getInstance()
@@ -186,11 +187,11 @@ public class SmartDeviceServerDictionaryDiscovery implements
 				} else {
 					LOG.debug("The smart device response is null!!! Are all classes in SmartDevice serializable?");
 				}
-			}else if(!SmartDeviceServer.isLocalPeer(senderPeer)){
+			}else if(!SmartDevicePublisher.isLocalPeer(senderPeer)){
 				//TODO: update local smart device:
 				LOG.debug("TODO: update local smart device: "+ smartDevice.getPeerName());
 				
-				SmartDeviceServer.getInstance().getLocalSmartDevice().overwriteWith(smartDevice);
+				SmartDevicePublisher.getInstance().getLocalSmartDevice().overwriteWith(smartDevice);
 			}
 		} else if (message instanceof SmartDeviceMessage) {
 			LOG.debug("receivedMessage instanceof SmartDeviceMessage");
@@ -198,7 +199,7 @@ public class SmartDeviceServerDictionaryDiscovery implements
 	}
 
 	private boolean isLocalSmartDevice(ASmartDevice smartDevice) {
-		if(smartDevice.getPeerID().equals(SmartDeviceServer.getInstance().getLocalSmartDevice().getPeerID())){
+		if(smartDevice.getPeerID().equals(SmartDevicePublisher.getInstance().getLocalSmartDevice().getPeerID())){
 			return true;
 		}else{
 			return false;			
@@ -276,7 +277,7 @@ public class SmartDeviceServerDictionaryDiscovery implements
 		synchronized (listeners) {
 			for (ISmartDeviceDictionaryListener listener : listeners) {
 				try {
-					listener.smartDeviceAdded(SmartDeviceServer.getInstance(),
+					listener.smartDeviceAdded(SmartDevicePublisher.getInstance(),
 							smartDevice);
 				} catch (Throwable t) {
 					LOG.error(
@@ -295,7 +296,7 @@ public class SmartDeviceServerDictionaryDiscovery implements
 							+ smartDevice.getPeerName() + " listener:"
 							+ listener.getClass());
 					listener.smartDeviceRemoved(
-							SmartDeviceServer.getInstance(), smartDevice);
+							SmartDevicePublisher.getInstance(), smartDevice);
 				} catch (Throwable t) {
 					LOG.error(
 							"Exception during invokinf smart device dictionary listener",
@@ -310,7 +311,7 @@ public class SmartDeviceServerDictionaryDiscovery implements
 			for (ISmartDeviceDictionaryListener listener : listeners) {
 				try {
 					listener.smartDeviceUpdated(
-							SmartDeviceServer.getInstance(), smartDevice);
+							SmartDevicePublisher.getInstance(), smartDevice);
 				} catch (Throwable t) {
 					LOG.error(
 							"Exception during invokinf smart device dictionary listener",
@@ -359,7 +360,7 @@ public class SmartDeviceServerDictionaryDiscovery implements
 		if (peerID == null) {
 			// LOG.debug("peerID==null");
 			return false;
-		} else if (SmartDeviceServer.isLocalPeer(peerID.intern().toString())) {
+		} else if (SmartDevicePublisher.isLocalPeer(peerID.intern().toString())) {
 			// LOG.debug("peerID is LocalPeer: " + peerID.intern().toString());
 			return false;
 		} else if (foundPeerIDs == null || peerID == null

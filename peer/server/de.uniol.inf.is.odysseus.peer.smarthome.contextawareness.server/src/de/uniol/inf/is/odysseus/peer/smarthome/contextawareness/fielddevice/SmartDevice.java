@@ -8,14 +8,15 @@ import java.util.List;
 import com.google.common.collect.Lists;
 
 import de.uniol.inf.is.odysseus.p2p_new.PeerCommunicationException;
-import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.server.SmartDeviceServer;
+import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.SmartHomeServerPlugIn;
+import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.server.SmartDevicePublisher;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.server.SmartDeviceServerDictionaryDiscovery;
-import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.server.SmartHomeServerPlugIn;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.utils.SmartDeviceConfig;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.utils.SmartDeviceResponseMessage;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import net.jxta.peer.PeerID;
 
 public class SmartDevice extends ASmartDevice implements Serializable {
@@ -241,7 +242,7 @@ public class SmartDevice extends ASmartDevice implements Serializable {
 
 	@Override
 	public boolean save() throws PeerCommunicationException {
-		if(!SmartDeviceServer.isLocalPeer(this.getPeerID())){
+		if(!SmartDevicePublisher.isLocalPeer(this.getPeerID())){
 			SmartDeviceResponseMessage smartDeviceResponse = new SmartDeviceResponseMessage();
 			smartDeviceResponse.setSmartDevice(this);
 			
@@ -249,7 +250,7 @@ public class SmartDevice extends ASmartDevice implements Serializable {
 			
 			LOG.debug("save() send to peer: "+this.getPeerName());
 			
-				SmartDeviceServer.getInstance().getPeerCommunicator()
+				SmartDevicePublisher.getInstance().getPeerCommunicator()
 						.send(peer, smartDeviceResponse);
 				return true;
 		}else{

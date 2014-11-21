@@ -3,6 +3,7 @@ package de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.server;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.SmartHomeServerPlugIn;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.ASmartDevice;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.ActivityInterpreter;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.Actor;
@@ -14,12 +15,12 @@ import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.Logi
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.Sensor;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.SmartDevice;
 
-public class SmartDeviceServerFieldDeviceListener implements IFieldDeviceListener {
+public class SmartDevicePublisherFieldDeviceListener implements IFieldDeviceListener {
 	private static final Logger LOG = LoggerFactory
 			.getLogger(SmartHomeServerPlugIn.class);
 	private IActivityInterpreterListener activityInterpreterListener;
 	
-	SmartDeviceServerFieldDeviceListener(){
+	SmartDevicePublisherFieldDeviceListener(){
 		activityInterpreterListener = new IActivityInterpreterListener() {
 			
 			@Override
@@ -27,7 +28,7 @@ public class SmartDeviceServerFieldDeviceListener implements IFieldDeviceListene
 					ActivityInterpreter activityInterpreter) {
 				LOG.debug("activityInterpreterRemoved:" + activityInterpreter.getActivityName());
 				
-				if(SmartDeviceServer.isLocalPeer(activityInterpreter.getSensor().getSmartDevice().getPeerID())){
+				if(SmartDevicePublisher.isLocalPeer(activityInterpreter.getSensor().getSmartDevice().getPeerID())){
 					QueryExecutor.getInstance().removeSourceIfNeccessary(activityInterpreter.getActivitySourceName());
 				}else{
 					//activityInterpreterRemoved at remote smart device:
@@ -40,7 +41,7 @@ public class SmartDeviceServerFieldDeviceListener implements IFieldDeviceListene
 			public void activityInterpreterAdded(ActivityInterpreter activityInterpreter) {
 				LOG.debug("SmartDeviceServerFieldDeviceListener activityInterpreterAdded:" + activityInterpreter.getActivityName());
 				
-				if(SmartDeviceServer.isLocalPeer(activityInterpreter.getSensor().getSmartDevice().getPeerID())){
+				if(SmartDevicePublisher.isLocalPeer(activityInterpreter.getSensor().getSmartDevice().getPeerID())){
 					QueryExecutor.getInstance().exportWhenPossibleAsync(
 							activityInterpreter.getActivitySourceName());
 				}else{
@@ -60,7 +61,7 @@ public class SmartDeviceServerFieldDeviceListener implements IFieldDeviceListene
 			((Actor) device).addLogicRuleListener(new ILogicRuleListener() {
 				@Override
 				public void logicRuleRemoved(LogicRule rule) {
-					SmartDeviceServer.getInstance().stopLogicRule(rule);
+					SmartDevicePublisher.getInstance().stopLogicRule(rule);
 
 					try {
 						System.out

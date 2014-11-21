@@ -4,7 +4,7 @@ import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.ASma
 
 
 public interface ISmartDeviceDictionaryListener {
-	void smartDeviceAdded(SmartDeviceServer sender, ASmartDevice smartDevice);
-	void smartDeviceRemoved(SmartDeviceServer sender, ASmartDevice smartDevice);
-	void smartDeviceUpdated(SmartDeviceServer sender, ASmartDevice smartDevice);
+	void smartDeviceAdded(SmartDevicePublisher sender, ASmartDevice smartDevice);
+	void smartDeviceRemoved(SmartDevicePublisher sender, ASmartDevice smartDevice);
+	void smartDeviceUpdated(SmartDevicePublisher sender, ASmartDevice smartDevice);
 }

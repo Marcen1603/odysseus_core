@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.ASmartDevice;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.FieldDevice;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.IFieldDeviceListener;
-import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.server.SmartDeviceServer;
+import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.server.SmartDevicePublisher;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.server.SmartDeviceServerDictionaryDiscovery;
 
 public class SmartDeviceService implements ISmartDeviceService {
@@ -86,12 +86,12 @@ public class SmartDeviceService implements ISmartDeviceService {
 		}
 
 		public ASmartDevice getLocalSmartDevice() {
-			return SmartDeviceServer.getInstance().getLocalSmartDevice();
+			return SmartDevicePublisher.getInstance().getLocalSmartDevice();
 		}
 
 		@Override
-		public SmartDeviceServer getSmartDeviceServer() {
-			return SmartDeviceServer.getInstance();
+		public SmartDevicePublisher getSmartDeviceServer() {
+			return SmartDevicePublisher.getInstance();
 		}
 
 		@Override

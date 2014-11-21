@@ -6,7 +6,6 @@ import org.slf4j.LoggerFactory;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.Actor;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.AbstractActorAction;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.LogicRule;
-import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.server.SmartHomeServerPlugIn;
 
 public class LogicRuleFactory {
 	private static final Logger LOG = LoggerFactory

@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.server;
+package de.uniol.inf.is.odysseus.peer.smarthome.contextawareness;
 
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleActivator;
@@ -12,6 +12,10 @@ import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicator;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.IP2PDictionary;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.IPeerDictionary;
 import de.uniol.inf.is.odysseus.parser.pql.generator.IPQLGenerator;
+import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.server.LogicProcessor;
+import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.server.QueryExecutor;
+import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.server.SmartDeviceLocalConfigurationServer;
+import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.server.SmartDevicePublisher;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.utils.SmartDeviceConfigurationRequestMessage;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.utils.SmartDeviceConfigurationResponseMessage;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.utils.SmartDeviceRequestMessage;
@@ -33,14 +37,14 @@ public class SmartHomeServerPlugIn implements BundleActivator {
 	private static IPeerDictionary peerDictionary;
 
 	public void start(BundleContext bundleContext) throws Exception {
-		SmartDeviceServer.getInstance().addListener(
+		SmartDevicePublisher.getInstance().addListener(
 				LogicProcessor.getInstance());
 
 		bundle = bundleContext.getBundle();
 	}
 
 	public void stop(BundleContext context) throws Exception {
-		SmartDeviceServer.getInstance().removeListener(
+		SmartDevicePublisher.getInstance().removeListener(
 				LogicProcessor.getInstance());
 		
 		bundle = null;
@@ -62,7 +66,7 @@ public class SmartHomeServerPlugIn implements BundleActivator {
 	public static void bindP2PNetworkManager(IP2PNetworkManager serv) {
 		p2pNetworkManager = serv;
 
-		SmartDeviceServer.getInstance().bindP2PNetworkManager(serv);
+		SmartDevicePublisher.getInstance().bindP2PNetworkManager(serv);
 		//SmartDeviceServerDictionaryDiscovery.getInstance()
 		//		.bindP2PNetworkManager(serv);
 		QueryExecutor.getInstance().bindP2PNetworkManager(serv);
@@ -70,7 +74,7 @@ public class SmartHomeServerPlugIn implements BundleActivator {
 
 	// called by OSGi-DS
 	public static void unbindP2PNetworkManager(IP2PNetworkManager serv) {
-		SmartDeviceServer.getInstance().unbindP2PNetworkManager(serv);
+		SmartDevicePublisher.getInstance().unbindP2PNetworkManager(serv);
 		//SmartDeviceServerDictionaryDiscovery.getInstance()
 		//		.unbindP2PNetworkManager(serv);
 		QueryExecutor.getInstance().unbindP2PNetworkManager(serv);
@@ -84,7 +88,7 @@ public class SmartHomeServerPlugIn implements BundleActivator {
 	public static void bindPeerCommunicator(IPeerCommunicator serv) {
 		peerCommunicator = serv;
 
-		SmartDeviceServer.getInstance()
+		SmartDevicePublisher.getInstance()
 				.bindPeerCommunicator(serv);
 		//SmartDeviceServerDictionaryDiscovery.getInstance()
 		//.bindPeerCommunicator(serv);
@@ -98,7 +102,7 @@ public class SmartHomeServerPlugIn implements BundleActivator {
 				.unbindPeerCommunicator(serv);
 		//SmartDeviceServerDictionaryDiscovery.getInstance()
 		//		.unbindPeerCommunicator(serv);
-		SmartDeviceServer.getInstance()
+		SmartDevicePublisher.getInstance()
 		.unbindPeerCommunicator(serv);
 
 		if (peerCommunicator == serv) {
@@ -120,7 +124,7 @@ public class SmartHomeServerPlugIn implements BundleActivator {
 	public static void bindP2PDictionary(IP2PDictionary serv) {
 		p2pDictionary = serv;
 
-		SmartDeviceServer.getInstance().bindP2PDictionary(serv);
+		SmartDevicePublisher.getInstance().bindP2PDictionary(serv);
 		//SmartDeviceServerDictionaryDiscovery.getInstance().bindP2PDictionary(
 		//		serv);
 		QueryExecutor.getInstance().bindP2PDictionary(serv);
@@ -131,7 +135,7 @@ public class SmartHomeServerPlugIn implements BundleActivator {
 	public static void unbindP2PDictionary(IP2PDictionary serv) {
 		//SmartDeviceServerDictionaryDiscovery.getInstance().unbindP2PDictionary(
 		//		serv);
-		SmartDeviceServer.getInstance().unbindP2PDictionary(serv);
+		SmartDevicePublisher.getInstance().unbindP2PDictionary(serv);
 		QueryExecutor.getInstance().unbindP2PDictionary(serv);
 
 		if (p2pDictionary == serv) {
@@ -155,12 +159,12 @@ public class SmartHomeServerPlugIn implements BundleActivator {
 	public static void bindJxtaServicesProvider(IJxtaServicesProvider serv) {
 		jxtaServicesProvider = serv;
 
-		SmartDeviceServer.getInstance().bindJxtaServicesProvider(serv);
+		SmartDevicePublisher.getInstance().bindJxtaServicesProvider(serv);
 	}
 
 	// called by OSGi-DS
 	public static void unbindJxtaServicesProvider(IJxtaServicesProvider serv) {
-		SmartDeviceServer.getInstance().unbindJxtaServicesProvider(serv);
+		SmartDevicePublisher.getInstance().unbindJxtaServicesProvider(serv);
 
 		if (jxtaServicesProvider == serv) {
 			jxtaServicesProvider = null;
@@ -171,7 +175,7 @@ public class SmartHomeServerPlugIn implements BundleActivator {
 	public static void bindPQLGenerator(IPQLGenerator serv) {
 		pqlGenerator = serv;
 
-		SmartDeviceServer.getInstance().bindPQLGenerator(
+		SmartDevicePublisher.getInstance().bindPQLGenerator(
 				serv);
 		//SmartDeviceServerDictionaryDiscovery.getInstance().bindPQLGenerator(
 		//		serv);
@@ -179,7 +183,7 @@ public class SmartHomeServerPlugIn implements BundleActivator {
 
 	// called by OSGi-DS
 	public static void unbindPQLGenerator(IPQLGenerator serv) {
-		SmartDeviceServer.getInstance().unbindPQLGenerator(
+		SmartDevicePublisher.getInstance().unbindPQLGenerator(
 				serv);
 		//SmartDeviceServerDictionaryDiscovery.getInstance().unbindPQLGenerator(
 		//		serv);

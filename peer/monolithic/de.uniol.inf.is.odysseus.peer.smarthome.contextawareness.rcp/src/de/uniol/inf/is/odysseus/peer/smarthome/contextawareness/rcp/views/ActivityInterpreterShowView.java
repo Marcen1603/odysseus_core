@@ -30,7 +30,7 @@ import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.IFie
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.Sensor;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.SmartDevice;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.rcp.SmartHomeRCPActivator;
-import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.server.SmartDeviceServer;
+import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.server.SmartDevicePublisher;
 
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.jface.viewers.TreeViewer;
@@ -344,7 +344,7 @@ public class ActivityInterpreterShowView extends ViewPart {
 			case 0:
 				if (cell.getElement() instanceof ASmartDevice) {// SmartDevice
 					ASmartDevice device = (ASmartDevice) cell.getElement();
-					if (SmartDeviceServer.isLocalPeer(device.getPeerID())) {
+					if (SmartDevicePublisher.isLocalPeer(device.getPeerID())) {
 						text.append("<local>" + device.getPeerName());
 					} else {
 						text.append(device.getPeerName());

@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Odysseus Peer Smart Home Server
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.server
 Bundle-Version: 1.0.0.qualifier
-Bundle-Activator: de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.server.SmartHomeServerPlugIn
+Bundle-Activator: de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.SmartHomeServerPlugIn
 Bundle-Vendor: Andrej Albrecht
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Import-Package: com.google.common.base,

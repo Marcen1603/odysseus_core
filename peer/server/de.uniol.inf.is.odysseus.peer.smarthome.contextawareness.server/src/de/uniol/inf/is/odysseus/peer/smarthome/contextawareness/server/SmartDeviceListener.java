@@ -3,6 +3,7 @@ package de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.server;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.SmartHomeServerPlugIn;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.ASmartDevice;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.Actor;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.FieldDevice;
@@ -22,7 +23,7 @@ public class SmartDeviceListener implements ISmartDeviceListener {
 			((Actor) device).addLogicRuleListener(new ILogicRuleListener() {
 				@Override
 				public void logicRuleRemoved(LogicRule rule) {
-					SmartDeviceServer.getInstance().stopLogicRule(rule);
+					SmartDevicePublisher.getInstance().stopLogicRule(rule);
 
 					try {
 						System.out

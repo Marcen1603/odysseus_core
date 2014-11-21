@@ -13,7 +13,7 @@ import com.google.common.base.Optional;
 import de.uniol.inf.is.odysseus.p2p_new.PeerCommunicationException;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.ActivityInterpreter;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.rcp.views.ActivityInterpreterShowView;
-import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.server.SmartDeviceServer;
+import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.server.SmartDevicePublisher;
 import de.uniol.inf.is.odysseus.rcp.StatusBarManager;
 
 public class DeleteActivityInterpreterCommand extends AbstractHandler {
@@ -53,7 +53,7 @@ public class DeleteActivityInterpreterCommand extends AbstractHandler {
 	private boolean removeActivityInterpreter(ActivityInterpreter interpreter) {
 		System.out.println("removeActivityInterpreter ActivityName:"+interpreter.getActivityName()+" Sensor:"+interpreter.getSensor().getName());
 		
-		if(SmartDeviceServer.isLocalPeer(interpreter.getSensor().getSmartDevice().getPeerID())){
+		if(SmartDevicePublisher.isLocalPeer(interpreter.getSensor().getSmartDevice().getPeerID())){
 			return interpreter.getSensor().removeActivityInterpreter(interpreter);
 		}else{
 			try {
