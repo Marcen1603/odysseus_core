@@ -342,4 +342,25 @@ public class SmartDevice extends ASmartDevice implements Serializable {
 			getActivitySourceMap().put(activityName, list);
 		}
 	}
+
+	@Override
+	public HashMap<String, String> getActivityViewNameOfMergedActivities() {
+		HashMap<String, String> map = new HashMap<>();
+		
+		for(FieldDevice device : getConnectedFieldDevices()){
+			if(device instanceof AbstractSensor){
+				AbstractSensor sensor = (AbstractSensor)device;
+				for(ActivityInterpreter interpreter : sensor.getActivityInterpreters()){
+					map.put(interpreter.getActivityName(), getMergedActivitySourceName(interpreter.getActivityName()));
+				}
+			}
+		}
+		
+		return map;
+	}
+
+	@Override
+	public String getMergedImportedActivitiesSourceName(String activityName) {
+		return "Imported_Activities_"+activityName;
+	}
 }

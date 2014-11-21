@@ -11,9 +11,6 @@ import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.FieldDevice;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.SmartHomeServerPlugIn;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.activityinterpreter.ActivityInterpreter;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.activityinterpreter.IActivityInterpreterListener;
-import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.actor.AbstractActor;
-import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.logicrule.ILogicRuleListener;
-import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.logicrule.AbstractLogicRule;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.sensor.AbstractSensor;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.server.service.SmartDeviceService;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.smartdevice.ASmartDevice;
@@ -24,11 +21,11 @@ public class ActivityInterpreterProcessor implements ISmartDeviceListener {
 			.getLogger(SmartHomeServerPlugIn.class);
 	private static ActivityInterpreterProcessor instance = new ActivityInterpreterProcessor();
 	private IActivityInterpreterListener activityInterpreterListener;
-	private ILogicRuleListener logicRuleListener;
+	
 
 	private ActivityInterpreterProcessor() {
 		createActivityInterpreterListener();
-		createLogicRuleListener();
+		
 	}
 
 	private void createActivityInterpreterListener() {
@@ -43,12 +40,13 @@ public class ActivityInterpreterProcessor implements ISmartDeviceListener {
 						.getSensor().getSmartDevice().getPeerID())) {
 					QueryExecutor.getInstance().removeSourceIfNeccessary(
 							activityInterpreter.getActivitySourceName());
+					QueryExecutor.getInstance().removeExport(activityInterpreter.getActivitySourceName());
 				} else {
 					// activityInterpreterRemoved at remote smart device:
 
 				}
 				
-				refreshActivitySourceMergedExport();
+				//TODO: refreshActivitySourceMergedExport();
 			}
 
 			@Override
@@ -69,17 +67,21 @@ public class ActivityInterpreterProcessor implements ISmartDeviceListener {
 					try {
 						QueryExecutor.getInstance().executeQueryNow(viewName,
 								query);
-
+						
+						//TODO 1:
+						QueryExecutor.getInstance().exportWhenPossibleAsync(viewName);
 					} catch (Exception e) {
 						LOG.error(e.getMessage(), e);
 					}
 				}
 				
-				refreshActivitySourceMergedExport();
+				//TODO 1: refreshActivitySourceMergedExport();
 			}
 		};
 	}
 	
+	//TODO 1: 
+	@SuppressWarnings("unused")
 	private synchronized void refreshActivitySourceMergedExport() {
 		LOG.debug("refreshActivitySourceMergedExport(...) map.size:");
 		
@@ -124,6 +126,8 @@ public class ActivityInterpreterProcessor implements ISmartDeviceListener {
 			if(activitySourceNames.size()>=1){
 				LOG.debug("----mergedActivitySourceName:"+mergedActivitySourceName+" Query: \n"+mergedActivitySourceNameQuery);
 				
+				QueryExecutor.getInstance().removeExport(mergedActivitySourceName);
+				
 				try{
 					QueryExecutor.getInstance().stopQueryAndRemoveViewOrStream(mergedActivitySourceName);
 				}catch(Exception ex){
@@ -131,9 +135,14 @@ public class ActivityInterpreterProcessor implements ISmartDeviceListener {
 				}
 				
 				try {
-					
 					QueryExecutor.getInstance().executeQueryNow(mergedActivitySourceName, mergedActivitySourceNameQuery);
-					QueryExecutor.getInstance().exportWhenPossibleAsync(mergedActivitySourceName);
+					
+				} catch (Exception ex) {
+					LOG.error(ex.getMessage(), ex);
+				}
+				
+				try {
+					QueryExecutor.getInstance().exportNow(mergedActivitySourceName);
 				} catch (Exception ex) {
 					LOG.error(ex.getMessage(), ex);
 				}
@@ -141,29 +150,7 @@ public class ActivityInterpreterProcessor implements ISmartDeviceListener {
 		}
 	}
 
-	private void createLogicRuleListener() {
-		logicRuleListener = new ILogicRuleListener() {
-			@Override
-			public void logicRuleAdded(AbstractLogicRule rule) {
-				// TODO Auto-generated method stub
-				
-			}
-			
-			@Override
-			public void logicRuleRemoved(AbstractLogicRule rule) {
-				try {
-					SmartDevicePublisher.getInstance().stopLogicRule(rule);
-					
-					System.out.println("LogicProcessor() logicRuleRemoved: "
-							+ rule.getActivityName() + " Actor:"
-							+ rule.getActor().getName() + "");
-				} catch (Exception ex) {
-					System.out
-							.println("LogicProcessor() logicRuleRemoved: something null...");
-				}
-			}
-		};
-	}
+	
 
 	public synchronized static ActivityInterpreterProcessor getInstance() {
 		return instance;
@@ -176,10 +163,7 @@ public class ActivityInterpreterProcessor implements ISmartDeviceListener {
 	public void fieldDeviceConnected(ASmartDevice sender, FieldDevice device) {
 		LOG.debug("fieldDeviceConnected: " + device.getName());
 
-		if (device instanceof AbstractActor) {
-			AbstractActor actor = (AbstractActor) device;
-			actor.addLogicRuleListener(logicRuleListener);
-		} else if (device instanceof AbstractSensor) {
+		if (device instanceof AbstractSensor) {
 			AbstractSensor sensor = (AbstractSensor) device;
 
 			for (Entry<String, String> queryForRawValue : sensor
@@ -203,17 +187,7 @@ public class ActivityInterpreterProcessor implements ISmartDeviceListener {
 	public void fieldDeviceRemoved(ASmartDevice sender, FieldDevice device) {
 		LOG.debug("fieldDeviceRemoved: " + device.getName());
 
-		if (device instanceof AbstractActor) {
-			AbstractActor actor = (AbstractActor) device;
-			
-			//TODO: stop and remove logic rules!
-			for(@SuppressWarnings("unused") AbstractLogicRule rule : actor.getLogicRules()){
-				//rule.getActivityInterpretersWithRunningRules()
-				
-			}
-
-			actor.removeLogicRuleListener(logicRuleListener);
-		} else if (device instanceof AbstractSensor) {
+		if (device instanceof AbstractSensor) {
 			AbstractSensor sensor = (AbstractSensor) device;
 			
 			//TODO: Stop activity interpreters

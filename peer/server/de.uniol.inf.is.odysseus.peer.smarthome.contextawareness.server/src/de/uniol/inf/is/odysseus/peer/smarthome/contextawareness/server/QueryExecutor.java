@@ -13,14 +13,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.collection.Context;
-import de.uniol.inf.is.odysseus.core.planmanagement.executor.IUpdateEventListener;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.QueryState;
-import de.uniol.inf.is.odysseus.core.server.planmanagement.ICompilerListener;
-import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.planexecution.IPlanExecutionListener;
-import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.planexecution.event.AbstractPlanExecutionEvent;
-import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.planmodification.IPlanModificationListener;
-import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.planmodification.event.AbstractPlanModificationEvent;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.p2p_new.IAdvertisementDiscovererListener;
 import de.uniol.inf.is.odysseus.p2p_new.IP2PNetworkManager;
@@ -48,25 +42,8 @@ public class QueryExecutor implements IP2PDictionaryListener,
 	private static IP2PDictionary p2pDictionary;
 	private static LinkedHashMap<String, String> sourcesNeededForImport;
 	private IP2PNetworkManager p2pNetworkManager;
-	private IPlanModificationListener planModListener;
-	private IPlanExecutionListener planExecutionListener;
-	private ICompilerListener compilerListener;
-	private IUpdateEventListener updateEventListener;
 
 	private QueryExecutor(){
-		//SessionManagementService.getActiveSession()
-		
-		Thread t = new Thread(new Runnable() {
-			@Override
-			public void run() {
-				waitForServerExecutorService();
-				
-				addListeners();
-			}
-		});
-		t.setName(getClass()+" Add listeners thread.");
-		t.setDaemon(true);
-		t.start();
 	}
 	
 	private void waitForServerExecutorService() {
@@ -76,62 +53,6 @@ public class QueryExecutor implements IP2PDictionaryListener,
 			} catch (InterruptedException e) {
 			}
 		}
-	}
-	
-	private void addListeners() {
-		planModListener = new IPlanModificationListener() {
-			@Override
-			public void planModificationEvent(AbstractPlanModificationEvent<?> eventArgs) {
-				LOG.debug("planModificationEvent");
-			}
-		};
-		
-		planExecutionListener = new IPlanExecutionListener() {
-			@Override
-			public void planExecutionEvent(AbstractPlanExecutionEvent<?> eventArgs) {
-				LOG.debug("planExecutionEvent");
-			}
-		};
-		
-		compilerListener = new ICompilerListener() {
-			@Override
-			public void transformationBound() {
-				LOG.debug("transformationBound");
-			}
-			
-			@Override
-			public void rewriteBound() {
-				LOG.debug("rewriteBound");
-			}
-			
-			@Override
-			public void planGeneratorBound() {
-				LOG.debug("planGeneratorBound");
-			}
-			
-			@Override
-			public void parserBound(String parserID) {
-				LOG.debug("parserBound");
-			}
-		};
-		
-		updateEventListener = new IUpdateEventListener() {
-			@Override
-			public void eventOccured() {
-				LOG.debug("eventOccured");
-			}
-		};
-		//StoredProcedure storedProcedureSmartDevice = new StoredProcedure("nameSmartDevice", "", null);
-		//storedProcedureSmartDevice.
-		
-		ServerExecutorService.getServerExecutor().addCompilerListener(compilerListener, SessionManagementService.getActiveSession());
-		ServerExecutorService.getServerExecutor().addPlanExecutionListener(planExecutionListener);
-		ServerExecutorService.getServerExecutor().addPlanModificationListener(planModListener);
-		//ServerExecutorService.getServerExecutor().addStoredProcedure("SmartDeviceStoredProcedure", storedProcedureSmartDevice, SessionManagementService.getActiveSession());
-		ServerExecutorService.getServerExecutor().addUpdateEventListener(updateEventListener, "", SessionManagementService.getActiveSession());
-		
-		ServerExecutorService.getServerExecutor().getCompiler().addCompilerListener(compilerListener);
-		
 	}
 	
 	public synchronized static QueryExecutor getInstance() {
@@ -225,14 +146,24 @@ public class QueryExecutor implements IP2PDictionaryListener,
 		Thread t = new Thread(new Runnable() {
 			@Override
 			public void run() {
+				LOG.debug("exportWhenPossibleAsync() ");
+				
+				waitForServerExecutorService();
 				waitForP2PDictionary();
+				//waitForSource(sourceName);
+				
+				LOG.debug("exportWhenPossibleAsync() waitForP2PDictionary done.");
 
 				try {
+					getP2PDictionary().exportSource(sourceName);
+					
 					if(getP2PDictionary().getSources(sourceName)!=null && getP2PDictionary().getSources(sourceName).size()>0){
-						getP2PDictionary().exportSource(sourceName);
+						LOG.debug("exportWhenPossibleAsync exportSource!!!!!!!");
+					}else{
+						LOG.debug("exportWhenPossibleAsync FALSE exportSource!!!!!!!");
 					}
 				} catch (PeerException e) {
-					LOG.debug("export source:" + sourceName);
+					LOG.debug("___!!!___export source Exception:" + sourceName);
 					LOG.error(e.getMessage(), e);
 				}
 			}
@@ -242,19 +173,28 @@ public class QueryExecutor implements IP2PDictionaryListener,
 		t.start();
 	}
 
+	protected void waitForSource(String sourceName) {
+		while(getP2PDictionary().getSources(sourceName)!=null && getP2PDictionary().getSources(sourceName).size() <= 0 ){
+			try {
+				Thread.sleep(100);
+			} catch (InterruptedException e) {
+			}
+		}
+	}
+
 	@Override
 	public void advertisementDiscovered(Advertisement advertisement) {
 		if (advertisement instanceof SourceAdvertisement) {
 			SourceAdvertisement srcAdv = (SourceAdvertisement) advertisement;
 
-			importIfNeccessary(srcAdv);
+			importOrRemoveIfNeccessary(srcAdv);
 		} else if (advertisement instanceof MultipleSourceAdvertisement) {
 			MultipleSourceAdvertisement multiSourceAdv = (MultipleSourceAdvertisement) advertisement;
 
 			for (SourceAdvertisement sAdv : multiSourceAdv
 					.getSourceAdvertisements()) {
 
-				importIfNeccessary(sAdv);
+				importOrRemoveIfNeccessary(sAdv);
 			}
 		}
 	}
@@ -403,7 +343,7 @@ public class QueryExecutor implements IP2PDictionaryListener,
 		return queryState.equals(QueryState.RUNNING);
 	}
 
-	private void importIfNeccessary(SourceAdvertisement srcAdv) {
+	private void importOrRemoveIfNeccessary(SourceAdvertisement srcAdv) {
 		if (!getP2PDictionary().isImported(srcAdv.getName())
 				&& getSourcesNeededForImport().containsKey(srcAdv.getName())) {
 			try {
@@ -411,14 +351,13 @@ public class QueryExecutor implements IP2PDictionaryListener,
 						+ srcAdv.getName());
 
 				getP2PDictionary().importSource(srcAdv, srcAdv.getName());
-				removeSourceIfNeccessary(srcAdv.getName());
 			} catch (PeerException e) {
 				e.printStackTrace();
 			} catch (InvalidP2PSource e) {
 				e.printStackTrace();
 			}
 		} else if (getP2PDictionary().isImported(srcAdv.getName())
-				&& getSourcesNeededForImport().containsKey(srcAdv.getName())) {
+				&& !getSourcesNeededForImport().containsKey(srcAdv.getName())) {
 			removeSourceIfNeccessary(srcAdv.getName());
 		} else {
 
@@ -541,7 +480,7 @@ public class QueryExecutor implements IP2PDictionaryListener,
 			SourceAdvertisement advertisement) {
 		LOG.debug("sourceAdded");
 
-		importIfNeccessary(advertisement);
+		importOrRemoveIfNeccessary(advertisement);
 	}
 
 	@Override
@@ -562,7 +501,7 @@ public class QueryExecutor implements IP2PDictionaryListener,
 			return;
 		}
 
-		removeSourceIfNeccessary(sourceName);
+		//removeSourceIfNeccessary(sourceName);
 	}
 
 	@Override
@@ -573,7 +512,9 @@ public class QueryExecutor implements IP2PDictionaryListener,
 
 		// QueryExecutor.getInstance().removeSourceIfNeccessary(sourceName);
 
-		stopLogicRuleQueries(sourceName);
+		//stopLogicRuleQueries(sourceName);
+		
+		
 	}
 
 	@Override
@@ -621,5 +562,13 @@ public class QueryExecutor implements IP2PDictionaryListener,
 				stopQueryAndRemoveViewOrStream(viewName);
 			}
 		}
+	}
+
+	public void removeExport(String mergedActivitySourceName) {
+		getP2PDictionary().removeSourceExport(mergedActivitySourceName);
+	}
+
+	public void exportNow(String mergedActivitySourceName) throws PeerException {
+		getP2PDictionary().exportSource(mergedActivitySourceName);
 	}
 }

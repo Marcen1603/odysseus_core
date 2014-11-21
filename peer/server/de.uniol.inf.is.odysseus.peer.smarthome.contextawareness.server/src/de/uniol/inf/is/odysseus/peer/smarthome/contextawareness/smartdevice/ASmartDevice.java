@@ -78,11 +78,15 @@ public abstract class ASmartDevice implements Serializable { // ISmartDevice,
 		return null;
 	}
 
-	public abstract String getMergedActivitySourceName(String activitySourceName);
+	public abstract String getMergedActivitySourceName(String activityName);
 
 	public abstract HashMap<String, ArrayList<String>> getActivitySourceMap();
 
 	public abstract void updateActivitiesSources();
+
+	public abstract HashMap<String, String> getActivityViewNameOfMergedActivities();
+
+	public abstract String getMergedImportedActivitiesSourceName(String activityName);
 
 	
 }
