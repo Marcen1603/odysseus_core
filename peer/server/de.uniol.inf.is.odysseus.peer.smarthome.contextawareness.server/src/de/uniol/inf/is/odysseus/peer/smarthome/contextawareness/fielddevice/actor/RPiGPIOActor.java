@@ -87,6 +87,7 @@ public class RPiGPIOActor extends AbstractActor {
 		private static final long serialVersionUID = 1L;
 		private State state;
 		private int pin;
+		private String activitySourceName;
 
 		RPiGPIOActorLogicRule(AbstractActor actor, String activityName, String prefix,
 				String postfix) {
@@ -127,6 +128,34 @@ public class RPiGPIOActor extends AbstractActor {
 			
 			String entitySetStateStreamName = getNameCombination(getName(),
 					activity, peerName);
+			StringBuilder sbEntitySetState = entitySetStateStream(
+					setConfigStreamName, entitySetStateStreamName);
+
+			map.put(entitySetStateStreamName, sbEntitySetState.toString());
+			
+			return map;
+		}
+		
+		@Override
+		public LinkedHashMap<String, String> getLogicRulesQueriesWithActivitySourceName() {
+			if(getActivitySourceName()==null || getActivitySourceName().equals("")){
+				return null;
+			}
+			
+			LinkedHashMap<String, String> map = new LinkedHashMap<>();
+
+			String peerName = getActor().getSmartDevice().getPeerName();
+			
+			String setConfigStreamName = getNameCombination("SetActor",
+					getActivityName(), peerName);
+			StringBuilder sbSetConfig = entityConfigStream(setConfigStreamName,
+					getActivitySourceName(), getActivityName());
+
+			map.put(setConfigStreamName, sbSetConfig.toString());
+
+			
+			String entitySetStateStreamName = getNameCombination(getName(),
+					getActivityName(), peerName);
 			StringBuilder sbEntitySetState = entitySetStateStream(
 					setConfigStreamName, entitySetStateStreamName);
 
@@ -193,6 +222,17 @@ public class RPiGPIOActor extends AbstractActor {
 		public String getReactionDescription() {
 			return "pin:"+getPin()+" State change:" + getState();
 		}
+
+		@Override
+		public void setActivitySourceName(
+				String activitySourceName) {
+			this.activitySourceName = activitySourceName;
+		}
+		
+		@Override
+		public String getActivitySourceName() {
+			return this.activitySourceName;
+		}
 	}
 
 	class RPiGPIOActorAction extends AbstractActorAction {
@@ -214,4 +254,6 @@ public class RPiGPIOActor extends AbstractActor {
 	public void setPin(int pin) {
 		this.pin = pin;
 	}
+
+	
 }

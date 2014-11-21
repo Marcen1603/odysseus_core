@@ -138,4 +138,10 @@ public abstract class AbstractLogicRule implements Serializable {
 	}
 
 	public abstract String getReactionDescription();
+
+	public abstract void setActivitySourceName(String activitySourceName);
+
+	public abstract String getActivitySourceName();
+
+	public abstract LinkedHashMap<String, String> getLogicRulesQueriesWithActivitySourceName();
 }

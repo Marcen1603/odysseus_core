@@ -265,6 +265,10 @@ public class SmartDevice extends ASmartDevice implements Serializable {
 		}
 	}
 	
+	/**
+	 * 
+	 * return HashMap<String, ArrayList<String>> (HashMap<ActivityName, ArrayList<ActivitySourceName>>)
+	 */
 	@Override
 	public synchronized HashMap<String, ArrayList<String>> getActivitySourceMap() {
 		if(activitySourceMap==null){

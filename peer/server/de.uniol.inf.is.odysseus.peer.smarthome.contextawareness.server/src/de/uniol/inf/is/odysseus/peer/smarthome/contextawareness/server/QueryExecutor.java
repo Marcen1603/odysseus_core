@@ -571,4 +571,34 @@ public class QueryExecutor implements IP2PDictionaryListener,
 	public void exportNow(String mergedActivitySourceName) throws PeerException {
 		getP2PDictionary().exportSource(mergedActivitySourceName);
 	}
+
+	public boolean isImportedSource(String source) {
+		return getP2PDictionary().isImported(source);
+	}
+
+	public void executeQueryAsync(final String queryName, final String query, final String sourceNameToWaitFor) {
+		Thread t = new Thread(new Runnable() {
+			@Override
+			public void run() {
+				//TODO:
+				//waitForSource(sourceNameToWaitFor);
+				while(!p2pDictionary.isSourceNameAlreadyInUse(sourceNameToWaitFor)){
+					try {
+						Thread.sleep(100);
+					} catch (InterruptedException e) {
+					}
+				}
+				
+				
+				try {
+					executeQueryNow(queryName, query);
+				} catch (Exception e) {
+					LOG.error(e.getMessage(), e);
+				}				
+			}
+		});
+		t.setName("execute query async thread to wait for source");
+		t.setDaemon(true);
+		t.start();
+	}
 }

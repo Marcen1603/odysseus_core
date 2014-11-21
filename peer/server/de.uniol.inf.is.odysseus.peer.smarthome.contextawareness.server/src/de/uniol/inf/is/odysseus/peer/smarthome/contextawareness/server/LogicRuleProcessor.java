@@ -2,6 +2,7 @@ package de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.server;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map.Entry;
 
 import org.slf4j.Logger;
@@ -14,6 +15,7 @@ import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.acto
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.logicrule.AbstractLogicRule;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.logicrule.ILogicRuleListener;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.sensor.AbstractSensor;
+import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.server.service.SmartDeviceService;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.smartdevice.ASmartDevice;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.smartdevice.ISmartDeviceListener;
 
@@ -22,6 +24,7 @@ public class LogicRuleProcessor implements ISmartDeviceDictionaryListener, ISmar
 			.getLogger(SmartHomeServerPlugIn.class);
 	private static LogicRuleProcessor instance;
 	private ILogicRuleListener logicRuleListener;
+	private HashMap<String, ArrayList<String>> activitySourceMap;
 	
 	private LogicRuleProcessor() {
 		createLogicRuleListener();
@@ -60,7 +63,71 @@ public class LogicRuleProcessor implements ISmartDeviceDictionaryListener, ISmar
 	void processLogic(ASmartDevice newSmartDevice) {
 		LOG.debug("processLogic for newSmartDevice:"
 				+ newSmartDevice.getPeerName());
+		
+		
+		//
+		HashMap<ActivityInterpreter, AbstractLogicRule> relatedActivityInterpreterWithLogicRule = getRelatedActivityNamesWithSourceName(newSmartDevice);
 
+		importRelatedSourcesFromActivityInterpreter(relatedActivityInterpreterWithLogicRule, newSmartDevice);
+		
+		
+		
+		////
+		boolean doit=false;
+		for(AbstractSensor sensor : newSmartDevice.getConnectedSensors()){
+			for(ActivityInterpreter interpreter : sensor.getActivityInterpreters()){
+				addActivitySourceToMap(interpreter.getActivityName(), interpreter.getActivitySourceName());
+				doit=true;
+			}
+		}
+		
+		if(doit){
+		for(Entry<String, ArrayList<String>> entry : getActivitySourceMap().entrySet()){
+			String activityName = entry.getKey();
+			ArrayList<String> activitySourceNames = entry.getValue();
+			
+			LOG.debug("activityName:"+activityName+" size:"+activitySourceNames.size());
+			
+			String importedMergedActivitySourceName = SmartDeviceService.getInstance().getLocalSmartDevice().getMergedImportedActivitiesSourceName(activityName);
+			try{
+				QueryExecutor.getInstance().stopQueryAndRemoveViewOrStream(importedMergedActivitySourceName);
+			}catch(Exception ex){
+				LOG.error(ex.getMessage(), ex);
+			}
+			
+			runQueriesWhenPossibleAsync(activityName, activitySourceNames);
+		}
+		}
+		
+		
+		////
+		for(AbstractLogicRule rule : SmartDevicePublisher.getInstance().getLocalSmartDevice().getLogicRules()){
+			String importedMergedActivitySourceName = SmartDeviceService.getInstance().getLocalSmartDevice().getMergedImportedActivitiesSourceName(rule.getActivityName());
+			if(importedMergedActivitySourceName!=null && !importedMergedActivitySourceName.equals("")){
+				LOG.debug("rule:\""+rule.getReactionDescription()+"\" addActivitySourceName:"+importedMergedActivitySourceName);
+				rule.setActivitySourceName(importedMergedActivitySourceName);
+				
+				for(Entry<String, String> entry : rule.getLogicRulesQueriesWithActivitySourceName().entrySet()){
+					String queryName = entry.getKey();
+					String query = entry.getValue();
+					
+					LOG.debug("executeQueryAsync queryName:"+queryName+" query:"+query+ " waitForSource:"+importedMergedActivitySourceName);
+					
+					try {
+						QueryExecutor.getInstance().executeQueryAsync(queryName, query, importedMergedActivitySourceName);
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+				}
+			}
+		}
+		
+		
+		//execute logic rules with activity source name:
+
+		
+		
+		
 		/*
 		//TODO 1b:
 		HashMap<String, String> activityWithSourceNameMap = newSmartDevice.getActivityViewNameOfMergedActivities();
@@ -87,7 +154,7 @@ public class LogicRuleProcessor implements ISmartDeviceDictionaryListener, ISmar
 		//refreshActivitySourceMergedImport();
 		*/
 		
-		
+		/*
 		HashMap<ActivityInterpreter, AbstractLogicRule> relatedActivityInterpreterWithLogicRule = getRelatedActivityNamesWithSourceName(newSmartDevice);
 
 		importRelatedSourcesFromActivityInterpreter(relatedActivityInterpreterWithLogicRule, newSmartDevice);
@@ -95,7 +162,119 @@ public class LogicRuleProcessor implements ISmartDeviceDictionaryListener, ISmar
 		insertActivitySourceNamesToLogicRules(newSmartDevice);
 
 		executeRelatedLogicRules(newSmartDevice);
+		*/
+	}
+
+	private void runQueriesWhenPossibleAsync(final String activityName,
+			final ArrayList<String> activitySourceNames) {
+		Thread t = new Thread(new Runnable() {
+			@Override
+			public void run() {
+				waitForSources(activitySourceNames);
+				
+				runQueriesNow(activityName, activitySourceNames);
+			}
+		});
+		t.setName("runQueriesWhenPossibleAsync Imported union thread.");
+		t.setDaemon(true);
+		t.start();
+	}
+
+	protected void waitForSources(ArrayList<String> activitySourceNames) {
+		boolean check = false;
+		while(!check){
+			check = true;
+			for(String source : activitySourceNames){
+				if(!QueryExecutor.getInstance().isImportedSource(source)){
+					check = false;
+					break;
+				}
+			}
+			
+			try {
+				Thread.sleep(100);
+			} catch (InterruptedException e) {
+			}
+		}
+	}
+
+	private void runQueriesNow(String activityName,
+			ArrayList<String> activitySourceNames) {
+		String importedMergedActivitySourceName = SmartDeviceService.getInstance().getLocalSmartDevice().getMergedImportedActivitiesSourceName(activityName);
 		
+		String mergedActivitySourceNameQuery = "";
+		mergedActivitySourceNameQuery += "#PARSER PQL\n";
+		mergedActivitySourceNameQuery += "#QNAME "+importedMergedActivitySourceName+"_query\n";
+		mergedActivitySourceNameQuery += "#ADDQUERY\n";
+		mergedActivitySourceNameQuery += importedMergedActivitySourceName+" := ";
+		
+		if(activitySourceNames.size()==1){
+			mergedActivitySourceNameQuery += activitySourceNames.get(0);
+		}else if(activitySourceNames.size()>1){
+			mergedActivitySourceNameQuery += "";
+			int i = 0;
+			for(String activitySource : activitySourceNames){
+				if(i==0){//first
+					mergedActivitySourceNameQuery += "UNION("+activitySource+",\n";
+				}else if(i>0 && i < activitySourceNames.size()-1){//middle
+					mergedActivitySourceNameQuery += "UNION("+activitySource+",\n";
+				}else if(i<activitySourceNames.size()){//last
+					mergedActivitySourceNameQuery += activitySource+")\n";
+					for(int n=i;n>1;n--){
+						mergedActivitySourceNameQuery += ")\n";
+					}
+				}
+				
+				i++;
+			}
+		}
+		
+		if(activitySourceNames.size()>=1){
+			LOG.debug("----Imported MergedActivitySourceName:"+importedMergedActivitySourceName+" Query: \n"+mergedActivitySourceNameQuery);
+			
+			try{
+				QueryExecutor.getInstance().stopQueryAndRemoveViewOrStream(importedMergedActivitySourceName);
+			}catch(Exception ex){
+				LOG.error(ex.getMessage(), ex);
+			}
+			
+			try {
+				QueryExecutor.getInstance().executeQueryNow(importedMergedActivitySourceName, mergedActivitySourceNameQuery);
+				
+			} catch (Exception ex) {
+				LOG.error(ex.getMessage(), ex);
+			}
+		}
+	}
+	
+	private synchronized void addActivitySourceToMap(String activityName, String activitySourceName) {
+		if(getActivitySourceMap().get(activityName)!=null){//this activity exist!
+			ArrayList<String> list = getActivitySourceMap().get(activityName);
+			if(list == null){
+				list = new ArrayList<String>();
+			}
+			
+			if(!list.contains(activitySourceName)){
+				list.add(activitySourceName);
+			}
+			
+			getActivitySourceMap().put(activityName, list);
+		}else{ //new activity
+			ArrayList<String> list = new ArrayList<String>();
+			list.add(activitySourceName);
+			getActivitySourceMap().put(activityName, list);
+		}
+	}
+	
+	/**
+	 * 
+	 * return HashMap<String, ArrayList<String>> (HashMap<ActivityName, ArrayList<ActivitySourceName>>)
+	 */
+	private synchronized HashMap<String, ArrayList<String>> getActivitySourceMap() {
+		if(activitySourceMap==null){
+			activitySourceMap = new HashMap<String, ArrayList<String>>();
+		}
+		return activitySourceMap;
 	}
 
 	private HashMap<ActivityInterpreter, AbstractLogicRule> getRelatedActivityNamesWithSourceName(
