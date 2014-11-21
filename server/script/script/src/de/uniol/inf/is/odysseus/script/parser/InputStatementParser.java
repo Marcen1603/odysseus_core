@@ -74,7 +74,9 @@ public class InputStatementParser {
 								+ " with file '" + inputName + "'");
 					}
 
-					if (inputName.toLowerCase().startsWith("http")) {
+					if (inputName.toLowerCase().startsWith("http://")||
+							inputName.toLowerCase().startsWith("ftp://")||
+							inputName.toLowerCase().startsWith("https://")){
 						inputLines = readFromInput(inputName, SourceType.HTTP);
 					} else {
 						inputLines = readFromInput(inputName, SourceType.FILE);
