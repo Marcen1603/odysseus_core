@@ -215,5 +215,21 @@ public class BackupInformation implements IRecoveryBackupInformation {
 				
 		return true;
 	}
+	
+	@Override
+	public String toString() {
+		
+		StringBuffer out = new StringBuffer();
+		
+		out.append("Shared query ID = " + this.mSharedQuery + ".\n");
+		out.append("PQL to backup = " + this.mPQL + " ");
+		out.append("from peer = " + this.mAboutPeer + ".\n");
+		out.append("Local PQL = " + this.mLocalPQL + " ");
+		out.append("from peer = " + this.mLocationPeer + ".\n");
+		out.append("Subsequent backup information are not listed here!");
+		
+		return out.toString();
+		
+	}
 
 }
