@@ -1,8 +1,8 @@
 package de.uniol.inf.is.odysseus.peer.recovery.internal;
 
 import java.util.Map;
-import java.util.UUID;
 
+import net.jxta.impl.id.UUID.UUID;
 import net.jxta.peer.PeerID;
 
 import org.slf4j.Logger;
@@ -18,7 +18,6 @@ import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicatorListener;
 import de.uniol.inf.is.odysseus.p2p_new.RepeatingMessageSend;
 import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryBackupInformation;
 import de.uniol.inf.is.odysseus.peer.recovery.messages.BackupInformationAckMessage;
-import de.uniol.inf.is.odysseus.peer.recovery.messages.BackupInformationFailMessage;
 import de.uniol.inf.is.odysseus.peer.recovery.messages.BackupInformationMessage;
 
 /**
@@ -74,7 +73,7 @@ public class BackupInformationSender implements IPeerCommunicatorListener {
 	 * Data structure to keep already received results of all currently running
 	 * repeating message send processes in mind.
 	 */
-	private final Map<UUID, String> cResultMap = Maps.newConcurrentMap();
+	private final Map<UUID, Boolean> cResultMap = Maps.newConcurrentMap();
 
 	/**
 	 * The peer communicator, if there is one bound.
@@ -96,11 +95,7 @@ public class BackupInformationSender implements IPeerCommunicatorListener {
 				BackupInformationAckMessage.class);
 		cPeerCommunicator.get().addListener(this,
 				BackupInformationAckMessage.class);
-
-		cPeerCommunicator.get().registerMessageType(
-				BackupInformationFailMessage.class);
-		cPeerCommunicator.get().addListener(this,
-				BackupInformationFailMessage.class);
+		
 	}
 
 	/**
@@ -118,11 +113,7 @@ public class BackupInformationSender implements IPeerCommunicatorListener {
 				BackupInformationAckMessage.class);
 		cPeerCommunicator.get().removeListener(this,
 				BackupInformationAckMessage.class);
-
-		cPeerCommunicator.get().unregisterMessageType(
-				BackupInformationFailMessage.class);
-		cPeerCommunicator.get().removeListener(this,
-				BackupInformationFailMessage.class);
+		
 	}
 
 	/**
@@ -231,17 +222,17 @@ public class BackupInformationSender implements IPeerCommunicatorListener {
 				cPeerCommunicator.get(), message, destination);
 
 		synchronized (cSenderMap) {
-			cSenderMap.put(info.toUUID(), msgSender);
+			cSenderMap.put(info.getUUID(), msgSender);
 		}
 		synchronized (cDestinationMap) {
-			cDestinationMap.put(info.toUUID(), destination);
+			cDestinationMap.put(info.getUUID(), destination);
 		}
 
 		msgSender.start();
 		LOG.debug("Sent backup info {} to peerID {}", info, destination);
 
 		LOG.debug("Waiting for response from peer...");
-		while (senderIsActive(info.toUUID())) {
+		while (senderIsActive(info.getUUID())) {
 			try {
 				Thread.sleep(300);
 			} catch (InterruptedException e) {
@@ -255,13 +246,19 @@ public class BackupInformationSender implements IPeerCommunicatorListener {
 
 		String result = "";
 		synchronized (cResultMap) {
-			if (!cResultMap.containsKey(info.toUUID())) {
+			if (!cResultMap.containsKey(info.getUUID())) {
 				result = "Could not send backup information: Peer is not reachable!";
 			} else {
-				result = cResultMap.get(info.toUUID());
-				cResultMap.remove(info.toUUID());
+				result = OK_RESULT;
 			}
+			cResultMap.remove(info.getUUID());
 
+		}
+		synchronized (cSenderMap) {
+			cSenderMap.remove(info.getUUID());
+		}
+		synchronized (cDestinationMap) {
+			cDestinationMap.remove(info.getUUID());
 		}
 
 		if (result.equals(OK_RESULT)) {
@@ -269,13 +266,6 @@ public class BackupInformationSender implements IPeerCommunicatorListener {
 		}
 
 		// else
-		synchronized (cSenderMap) {
-			cSenderMap.remove(info.toUUID());
-		}
-		synchronized (cDestinationMap) {
-			cDestinationMap.remove(info.toUUID());
-		}
-
 		LOG.error("Could not send backup information: {}", result);
 		return false;
 
@@ -309,7 +299,7 @@ public class BackupInformationSender implements IPeerCommunicatorListener {
 			PeerID senderPeer, IMessage message) {
 		if (message instanceof BackupInformationAckMessage) {
 			BackupInformationAckMessage ackMessage = (BackupInformationAckMessage) message;
-
+			
 			synchronized (cSenderMap) {
 				RepeatingMessageSend sender = cSenderMap.get(ackMessage
 						.getUUID());
@@ -321,24 +311,10 @@ public class BackupInformationSender implements IPeerCommunicatorListener {
 			}
 
 			synchronized (cResultMap) {
-				cResultMap.put(ackMessage.getUUID(), OK_RESULT);
+				cResultMap.put(ackMessage.getUUID(), true);
 			}
 
-		} else if (message instanceof BackupInformationFailMessage) {
-			BackupInformationFailMessage failMessage = (BackupInformationFailMessage) message;
-
-			synchronized (cSenderMap) {
-				RepeatingMessageSend sender = cSenderMap.get(failMessage
-						.getUUID());
-
-				if (sender != null) {
-					sender.stopRunning();
-					cSenderMap.remove(failMessage.getUUID());
-				}
-			}
-
-			cResultMap
-					.put(failMessage.getUUID(), failMessage.getErrorMessage());
 		}
+		
 	}
 }

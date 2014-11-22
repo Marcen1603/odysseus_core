@@ -158,6 +158,9 @@ public class RecoveryQueryDistributionListener extends AbstractQueryDistribution
 					LocalBackupInformationAccess.getStore().add(info);
 					checkForBuddy(info.getLocalPQL(), info.getSharedQuery());
 				} else {
+					// Note: may return false.
+					// Since the distributed query has been transferred, the failure will cause recovery to start.
+					// Nothing to do here. M.B.
 					cCommunicator.get().sendBackupInformation(peer, info, true);
 				}
 			}

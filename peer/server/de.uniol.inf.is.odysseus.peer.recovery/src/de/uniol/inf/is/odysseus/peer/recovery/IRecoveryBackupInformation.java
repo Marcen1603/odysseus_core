@@ -1,9 +1,9 @@
 package de.uniol.inf.is.odysseus.peer.recovery;
 
 import java.util.Collection;
-import java.util.UUID;
 
 import net.jxta.id.ID;
+import net.jxta.impl.id.UUID.UUID;
 import net.jxta.peer.PeerID;
 
 import com.google.common.collect.ImmutableCollection;
@@ -145,8 +145,16 @@ public interface IRecoveryBackupInformation {
 	/**
 	 * A UUID for the backup information.
 	 * 
-	 * @return A UUID based on {@link #toString()}.
+	 * @return A UUID.
 	 */
-	public UUID toUUID();
+	public UUID getUUID();
 
+	/**
+	 * Sets the id.
+	 * 
+	 * @param id
+	 *            The given UUID. <br />
+	 *            Must be not null.
+	 */
+	public void setUUID(UUID id);
 }

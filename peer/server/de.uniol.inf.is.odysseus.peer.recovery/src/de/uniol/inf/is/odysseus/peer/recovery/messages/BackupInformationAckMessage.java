@@ -1,7 +1,8 @@
 package de.uniol.inf.is.odysseus.peer.recovery.messages;
 
 import java.nio.ByteBuffer;
-import java.util.UUID;
+
+import net.jxta.impl.id.UUID.UUID;
 
 import com.google.common.base.Preconditions;
 
@@ -41,7 +42,7 @@ public class BackupInformationAckMessage implements IMessage {
 	public BackupInformationAckMessage(IRecoveryBackupInformation info) {
 
 		Preconditions.checkNotNull(info);
-		this.mID = info.toUUID();
+		this.mID = info.getUUID();
 
 	}
 
@@ -128,7 +129,7 @@ public class BackupInformationAckMessage implements IMessage {
 	private static UUID toID(String text) {
 
 		Preconditions.checkNotNull(text);
-		return UUID.fromString(text);
+		return new UUID(text);
 
 	}
 

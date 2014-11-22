@@ -206,6 +206,7 @@ public class BackupInformationHelper implements IPlanModificationListener {
 		// Send these information
 		for (IRecoveryBackupInformation info : subsequentInfos) {
 
+			// TODO may return false. M.B.
 			cCommunicator.get().sendBackupInformation(newPeer, info, true);
 
 		}
