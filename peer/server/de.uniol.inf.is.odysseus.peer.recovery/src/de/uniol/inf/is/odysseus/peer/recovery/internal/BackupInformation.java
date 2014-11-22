@@ -1,6 +1,7 @@
 package de.uniol.inf.is.odysseus.peer.recovery.internal;
 
 import java.util.Collection;
+import java.util.UUID;
 
 import net.jxta.id.ID;
 import net.jxta.peer.PeerID;
@@ -229,6 +230,13 @@ public class BackupInformation implements IRecoveryBackupInformation {
 		out.append("Subsequent backup information are not listed here!");
 		
 		return out.toString();
+		
+	}
+
+	@Override
+	public UUID toUUID() {
+		
+		return UUID.fromString(this.toString());
 		
 	}
 

@@ -1,6 +1,7 @@
 package de.uniol.inf.is.odysseus.peer.recovery;
 
 import java.util.Collection;
+import java.util.UUID;
 
 import net.jxta.id.ID;
 import net.jxta.peer.PeerID;
@@ -69,16 +70,21 @@ public interface IRecoveryBackupInformation {
 	 * @return The id of the peer where the query part is executed.
 	 */
 	public PeerID getAboutPeer();
-	
+
 	/**
 	 * 
-	 * @return The id of the peer where this backup-information originally is located
+	 * @return The id of the peer where this backup-information originally is
+	 *         located
 	 */
 	public PeerID getLocationPeer();
 
 	/**
-	 * Sets the id of the peer where this backup-information originally is located
-	 * @param mLocationPeer The id of the peer where this backup-information originally is located
+	 * Sets the id of the peer where this backup-information originally is
+	 * located
+	 * 
+	 * @param mLocationPeer
+	 *            The id of the peer where this backup-information originally is
+	 *            located
 	 */
 	public void setLocationPeer(PeerID locationPeer);
 
@@ -135,5 +141,12 @@ public interface IRecoveryBackupInformation {
 	 *         are.
 	 */
 	public String getLocalPQL();
+
+	/**
+	 * A UUID for the backup information.
+	 * 
+	 * @return A UUID based on {@link #toString()}.
+	 */
+	public UUID toUUID();
 
 }

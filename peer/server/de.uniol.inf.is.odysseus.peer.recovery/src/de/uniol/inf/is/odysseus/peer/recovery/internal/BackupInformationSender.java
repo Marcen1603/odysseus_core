@@ -1,8 +1,8 @@
 package de.uniol.inf.is.odysseus.peer.recovery.internal;
 
 import java.util.Map;
+import java.util.UUID;
 
-import net.jxta.id.ID;
 import net.jxta.peer.PeerID;
 
 import org.slf4j.Logger;
@@ -21,47 +21,86 @@ import de.uniol.inf.is.odysseus.peer.recovery.messages.BackupInformationAckMessa
 import de.uniol.inf.is.odysseus.peer.recovery.messages.BackupInformationFailMessage;
 import de.uniol.inf.is.odysseus.peer.recovery.messages.BackupInformationMessage;
 
-// TODO javaDoc
+/**
+ * Entity to send backup information. <br />
+ * Uses repeating message send routines and informs by boolean return values
+ * about success/fails.
+ * 
+ * @author Michael Brand
+ *
+ */
 public class BackupInformationSender implements IPeerCommunicatorListener {
 
+	/**
+	 * The logger instance for this class.
+	 */
 	private static final Logger LOG = LoggerFactory
 			.getLogger(BackupInformationSender.class);
 
+	/**
+	 * The result code for successes.
+	 */
 	private static final String OK_RESULT = "OK";
 
-	private static final Map<ID, RepeatingMessageSend> senderMap = Maps
+	/**
+	 * The single instance of this class.
+	 */
+	private static BackupInformationSender cInstance;
+
+	/**
+	 * The single instance of this class.
+	 * 
+	 * @return The active {@link BackupInformationSender} or null, if no
+	 *         {@link IPeerCommunicator} is bound.
+	 */
+	public static BackupInformationSender getInstance() {
+		return cInstance;
+	}
+
+	/**
+	 * Data structure to keep all currently running repeating message send
+	 * processes in mind.
+	 */
+	private final Map<UUID, RepeatingMessageSend> cSenderMap = Maps
 			.newConcurrentMap();
-	private static final Map<ID, PeerID> sendDestinationMap = Maps
-			.newConcurrentMap();
-	private static final Map<ID, String> sendResultMap = Maps
-			.newConcurrentMap();
+
+	/**
+	 * Data structure to keep the destinations of all currently running
+	 * repeating message send processes in mind.
+	 */
+	private final Map<UUID, PeerID> cDestinationMap = Maps.newConcurrentMap();
+
+	/**
+	 * Data structure to keep already received results of all currently running
+	 * repeating message send processes in mind.
+	 */
+	private final Map<UUID, String> cResultMap = Maps.newConcurrentMap();
 
 	/**
 	 * The peer communicator, if there is one bound.
 	 */
-	private static Optional<IPeerCommunicator> cPeerCommunicator = Optional
-			.absent();
+	private Optional<IPeerCommunicator> cPeerCommunicator = Optional.absent();
 
 	/**
 	 * Registers messages and listeners at the peer communicator.
 	 */
-	private void registerMessagesAndAddListeners() {	
+	private void registerMessagesAndAddListeners() {
 		Preconditions.checkArgument(cPeerCommunicator.isPresent());
 
 		cPeerCommunicator.get().registerMessageType(
 				BackupInformationMessage.class);
 		cPeerCommunicator.get().addListener(this,
 				BackupInformationMessage.class);
-		
+
 		cPeerCommunicator.get().registerMessageType(
 				BackupInformationAckMessage.class);
 		cPeerCommunicator.get().addListener(this,
 				BackupInformationAckMessage.class);
-		
+
 		cPeerCommunicator.get().registerMessageType(
 				BackupInformationFailMessage.class);
 		cPeerCommunicator.get().addListener(this,
-				BackupInformationFailMessage.class);		
+				BackupInformationFailMessage.class);
 	}
 
 	/**
@@ -100,6 +139,7 @@ public class BackupInformationSender implements IPeerCommunicatorListener {
 		this.registerMessagesAndAddListeners();
 		LOG.debug("Bound {} as a peer communicator.", serv.getClass()
 				.getSimpleName());
+		cInstance = this;
 	}
 
 	/**
@@ -118,22 +158,65 @@ public class BackupInformationSender implements IPeerCommunicatorListener {
 			cPeerCommunicator = Optional.absent();
 			LOG.debug("Unbound {} as a peer communicator.", serv.getClass()
 					.getSimpleName());
+			cInstance = null;
 		}
 	}
 
-	public static boolean sendNewBackupInfo(PeerID destination,
+	/**
+	 * Sends given backup information as a new information to a given peer by
+	 * using a repeating message send process.
+	 * 
+	 * @param destination
+	 *            The ID of the given peer. <br />
+	 *            Must be not null.
+	 * @param info
+	 *            The given backup information. <br />
+	 *            Must be not null.
+	 * @return True, if an acknowledge returned from the given peer; false,
+	 *         else.
+	 */
+	public boolean sendNewBackupInfo(PeerID destination,
 			IRecoveryBackupInformation info) {
 		return sendBackupInfo(destination, info,
 				BackupInformationMessage.NEW_INFO);
 	}
 
-	public static boolean sendBackupInfoUpdate(PeerID destination,
+	/**
+	 * Sends given backup information as an update to a given peer by using a
+	 * repeating message send process.
+	 * 
+	 * @param destination
+	 *            The ID of the given peer. <br />
+	 *            Must be not null.
+	 * @param info
+	 *            The given backup information. <br />
+	 *            Must be not null.
+	 * @return True, if an acknowledge returned from the given peer; false,
+	 *         else.
+	 */
+	public boolean sendBackupInfoUpdate(PeerID destination,
 			IRecoveryBackupInformation info) {
 		return sendBackupInfo(destination, info,
 				BackupInformationMessage.UPDATE_INFO);
 	}
 
-	private static boolean sendBackupInfo(PeerID destination,
+	/**
+	 * Sends given backup information to a given peer by using a repeating
+	 * message send process.
+	 * 
+	 * @param destination
+	 *            The ID of the given peer. <br />
+	 *            Must be not null.
+	 * @param info
+	 *            The given backup information. <br />
+	 *            Must be not null.
+	 * @param messageType
+	 *            {@link BackupInformationMessage#NEW_INFO} or
+	 *            {@link BackupInformationMessage#UPDATE_INFO}.
+	 * @return True, if an acknowledge returned from the given peer; false,
+	 *         else.
+	 */
+	private boolean sendBackupInfo(PeerID destination,
 			IRecoveryBackupInformation info, int messageType) {
 		Preconditions.checkNotNull(destination);
 		Preconditions.checkNotNull(info);
@@ -147,33 +230,36 @@ public class BackupInformationSender implements IPeerCommunicatorListener {
 		RepeatingMessageSend msgSender = new RepeatingMessageSend(
 				cPeerCommunicator.get(), message, destination);
 
-		synchronized (senderMap) {
-			senderMap.put(info.getSharedQuery(), msgSender);
+		synchronized (cSenderMap) {
+			cSenderMap.put(info.toUUID(), msgSender);
 		}
-		synchronized (sendDestinationMap) {
-			sendDestinationMap.put(info.getSharedQuery(), destination);
+		synchronized (cDestinationMap) {
+			cDestinationMap.put(info.toUUID(), destination);
 		}
 
 		msgSender.start();
 		LOG.debug("Sent backup info {} to peerID {}", info, destination);
 
 		LOG.debug("Waiting for response from peer...");
-		while (senderIsActive(info.getSharedQuery())) {
+		while (senderIsActive(info.toUUID())) {
 			try {
 				Thread.sleep(300);
 			} catch (InterruptedException e) {
-				// TODO
+
+				LOG.error("...interrupted!", e);
+				return false;
+
 			}
 
 		}
 
 		String result = "";
-		synchronized (sendResultMap) {
-			if (!sendResultMap.containsKey(info.getSharedQuery())) {
+		synchronized (cResultMap) {
+			if (!cResultMap.containsKey(info.toUUID())) {
 				result = "Could not send backup information: Peer is not reachable!";
 			} else {
-				result = sendResultMap.get(info.getSharedQuery());
-				sendResultMap.remove(info.getSharedQuery());
+				result = cResultMap.get(info.toUUID());
+				cResultMap.remove(info.toUUID());
 			}
 
 		}
@@ -183,11 +269,11 @@ public class BackupInformationSender implements IPeerCommunicatorListener {
 		}
 
 		// else
-		synchronized (senderMap) {
-			senderMap.remove(info.getSharedQuery());
+		synchronized (cSenderMap) {
+			cSenderMap.remove(info.toUUID());
 		}
-		synchronized (sendDestinationMap) {
-			sendDestinationMap.remove(info.getSharedQuery());
+		synchronized (cDestinationMap) {
+			cDestinationMap.remove(info.toUUID());
 		}
 
 		LOG.error("Could not send backup information: {}", result);
@@ -195,14 +281,26 @@ public class BackupInformationSender implements IPeerCommunicatorListener {
 
 	}
 
-	private static boolean senderIsActive(ID sharedQuery) {
-		synchronized (senderMap) {
-			if (!senderMap.containsKey(sharedQuery)) {
+	/**
+	 * Checks, if a given repeating message send process is still active.
+	 * 
+	 * @param id
+	 *            The UUID of the backup information identifying the repeating
+	 *            message send process. <br />
+	 *            Must be not null.
+	 * @return True, if the given repeating message send process is still
+	 *         active; false, else.
+	 */
+	private boolean senderIsActive(UUID id) {
+		Preconditions.checkNotNull(id);
+
+		synchronized (cSenderMap) {
+			if (!cSenderMap.containsKey(id)) {
 				return false;
 			}
 
 			// else
-			return senderMap.get(sharedQuery).isRunning();
+			return cSenderMap.get(id).isRunning();
 		}
 	}
 
@@ -212,35 +310,35 @@ public class BackupInformationSender implements IPeerCommunicatorListener {
 		if (message instanceof BackupInformationAckMessage) {
 			BackupInformationAckMessage ackMessage = (BackupInformationAckMessage) message;
 
-			synchronized (senderMap) {
-				RepeatingMessageSend sender = senderMap.get(ackMessage
-						.getSharedQueryID());
-				
+			synchronized (cSenderMap) {
+				RepeatingMessageSend sender = cSenderMap.get(ackMessage
+						.getUUID());
+
 				if (sender != null) {
 					sender.stopRunning();
-					senderMap.remove(ackMessage.getSharedQueryID());
+					cSenderMap.remove(ackMessage.getUUID());
 				}
 			}
 
-			synchronized (sendResultMap) {
-				sendResultMap.put(ackMessage.getSharedQueryID(), OK_RESULT);
+			synchronized (cResultMap) {
+				cResultMap.put(ackMessage.getUUID(), OK_RESULT);
 			}
 
 		} else if (message instanceof BackupInformationFailMessage) {
 			BackupInformationFailMessage failMessage = (BackupInformationFailMessage) message;
 
-			synchronized (senderMap) {
-				RepeatingMessageSend sender = senderMap.get(failMessage
-						.getSharedQueryID());
+			synchronized (cSenderMap) {
+				RepeatingMessageSend sender = cSenderMap.get(failMessage
+						.getUUID());
 
 				if (sender != null) {
 					sender.stopRunning();
-					senderMap.remove(failMessage.getSharedQueryID());
+					cSenderMap.remove(failMessage.getUUID());
 				}
 			}
 
-			sendResultMap.put(failMessage.getSharedQueryID(),
-					failMessage.getErrorMessage());
+			cResultMap
+					.put(failMessage.getUUID(), failMessage.getErrorMessage());
 		}
 	}
 }
