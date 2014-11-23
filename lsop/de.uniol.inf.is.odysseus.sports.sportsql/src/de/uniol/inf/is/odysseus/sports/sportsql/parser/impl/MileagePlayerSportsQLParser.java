@@ -99,6 +99,6 @@ public class MileagePlayerSportsQLParser implements ISportsQLParser {
 		ChangeDetectAO checkDifference = OperatorBuildHelper.createChangeDetectAO(attr, 0.1, true, groupBy, sumAggregateAO);
 		
 		return OperatorBuildHelper.finishQuery(checkDifference, allOperators,
-				sportsQL.getName());
+				sportsQL.getDisplayName());
 	}
 }

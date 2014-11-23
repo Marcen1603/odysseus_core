@@ -115,7 +115,7 @@ public class MileageTeamSportsQLParser implements ISportsQLParser {
 		List<SDFAttribute> groupBy = OperatorBuildHelper.createAttributeList("team_id", sumAggregate);
 		ChangeDetectAO checkDifference = OperatorBuildHelper.createChangeDetectAO(attr, 0.1, true, groupBy, sumAggregate);
 		
-		return OperatorBuildHelper.finishQuery(checkDifference, allOperators, sportsQL.getName());
+		return OperatorBuildHelper.finishQuery(checkDifference, allOperators, sportsQL.getDisplayName());
 	}
 
 

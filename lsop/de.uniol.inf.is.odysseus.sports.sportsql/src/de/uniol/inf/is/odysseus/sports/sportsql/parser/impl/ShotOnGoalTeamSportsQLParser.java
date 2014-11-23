@@ -5,7 +5,6 @@ import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.SelectAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TimeWindowAO;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.peer.ddc.MissingDDCEntryException;
@@ -62,26 +61,17 @@ public class ShotOnGoalTeamSportsQLParser implements ISportsQLParser {
 				GAME_LENGTH, "Minutes",
 				forecastCriteria);
 
-		// 2. Select for correct entity
-		SelectAO entitySelect = OperatorBuildHelper.createTeamSelectAO(
-				sportsQL.getEntityId(), timeWindow);
-
-		// 3. Aggregate (sum the shots for this player)
-		//AggregateAO out = OperatorBuildHelper.createAggregateAO("sum", "shot",
-		//		"shots", entitySelect);
-		
 		List<String> groupCount = new ArrayList<String>();
 		groupCount.add("team_id");
 		
-		ILogicalOperator out = OperatorBuildHelper.createAggregateAO("sum", groupCount, "shot", "shots", "Integer", entitySelect, 1);
+		ILogicalOperator out = OperatorBuildHelper.createAggregateAO("sum", groupCount, "shot", "shots", "Integer", timeWindow, 1);
 
 		// Add to list
 		allOperators.add(timeWindow);
-		allOperators.add(entitySelect);
 		allOperators.add(out);
-
+		
 		return OperatorBuildHelper.finishQuery(out, allOperators,
-				sportsQL.getName());
+				sportsQL.getDisplayName());
 	}
 
 }

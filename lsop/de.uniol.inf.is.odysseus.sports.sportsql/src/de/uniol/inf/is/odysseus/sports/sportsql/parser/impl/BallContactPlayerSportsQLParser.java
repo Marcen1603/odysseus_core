@@ -74,7 +74,7 @@ public class BallContactPlayerSportsQLParser implements ISportsQLParser {
 		allOperators.add(countOutput);
 		
 		
-		return OperatorBuildHelper.finishQuery(countOutput, allOperators, sportsQL.getName());
+		return OperatorBuildHelper.finishQuery(countOutput, allOperators, sportsQL.getDisplayName());
 	}
 
 }

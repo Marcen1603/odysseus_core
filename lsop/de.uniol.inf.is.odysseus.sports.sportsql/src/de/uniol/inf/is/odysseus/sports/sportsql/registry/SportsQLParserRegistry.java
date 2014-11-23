@@ -130,6 +130,9 @@ public class SportsQLParserRegistry {
 		String type = null;
 		String game = null;
 		String name = null;
+		
+		String displayName = null;
+		
 		Long entityId = null;
 		Map<String, ISportsQLParameter> parametersMap = new HashMap<String, ISportsQLParameter>();
 
@@ -164,6 +167,13 @@ public class SportsQLParserRegistry {
 		try {
 			JSONObject obj = new JSONObject(sportsQL);
 			jsonParameters = obj.getJSONObject("parameters");			
+		} catch (JSONException e) {
+			// optional
+		}
+		
+		try {
+			JSONObject obj = new JSONObject(sportsQL);
+			displayName = obj.getString("displayName");			
 		} catch (JSONException e) {
 			// optional
 		}
@@ -214,6 +224,12 @@ public class SportsQLParserRegistry {
 		query.setName(name.trim().toUpperCase());
 		if (entityId != null) {
 			query.setEntityId(entityId);
+		}
+		
+		if(displayName != null){
+			query.setDisplayName(displayName.toUpperCase());
+		}else{
+			query.setDisplayName(name.toUpperCase());
 		}
 		query.setParameters(parametersMap);
 		return query;

@@ -25,6 +25,7 @@ public class SportsQLQuery implements Serializable {
 	private GameType gameType;
 	private long entityId;
 	private Map<String, ISportsQLParameter> parameters;
+	private String displayName;
 	
 	
 	
@@ -69,6 +70,14 @@ public class SportsQLQuery implements Serializable {
 
 	public void setGameType(GameType gameType) {
 		this.gameType = gameType;
+	}
+	
+	public void setDisplayName(String displayName){
+		this.displayName = displayName;
+	}
+	
+	public String getDisplayName(){
+		return this.displayName;
 	}
 	
 	

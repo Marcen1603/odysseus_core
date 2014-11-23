@@ -304,7 +304,7 @@ public class SprintsPlayerSportsQLParser implements ISportsQLParser {
 
 		// 11. Finish
 		return OperatorBuildHelper.finishQuery(topSource, allOperators,
-				sportsQL.getName());
+				sportsQL.getDisplayName());
 	}
 
 	// Overview: SpeedParameter Project

@@ -81,7 +81,7 @@ public class ShotOnGoalPlayerSportsQLParser implements ISportsQLParser {
 		allOperators.add(out);
 
 		return OperatorBuildHelper.finishQuery(out, allOperators,
-				sportsQL.getName());
+				sportsQL.getDisplayName());
 	}
 
 }

@@ -71,7 +71,7 @@ public class GlobalGameSportsQLParser implements ISportsQLParser {
 		
 	
 		return OperatorBuildHelper.finishQuery(projectAO, allOperators,
-				sportsQL.getName());
+				sportsQL.getDisplayName());
 	}
 
 }

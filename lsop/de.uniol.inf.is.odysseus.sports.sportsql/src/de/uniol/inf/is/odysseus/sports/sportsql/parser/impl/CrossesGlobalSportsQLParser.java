@@ -184,7 +184,7 @@ public class CrossesGlobalSportsQLParser implements ISportsQLParser{
 		MapAO result = OperatorBuildHelper.createStateMapAO(expressions, checkSelect);
 		allOperators.add(result);
 		
-		return OperatorBuildHelper.finishQuery(result, allOperators, sportsQL.getName());		
+		return OperatorBuildHelper.finishQuery(result, allOperators, sportsQL.getDisplayName());		
 	}
 	
 	private RouteAO createSplitSoccerDataRouteAO(ILogicalOperator source) throws NumberFormatException, MissingDDCEntryException {				

@@ -228,7 +228,7 @@ public class CornerKickGlobalSportsQLParser implements ISportsQLParser {
 		// TODO: add an aggregate or similar to sum corners for each team
 
 		return OperatorBuildHelper.finishQuery(corners_lr, operatorList,
-				sportsQL.getName());
+				sportsQL.getDisplayName());
 	}
 	
 	private List<SDFExpressionParameter> getExpressionForLeftRightCorner(

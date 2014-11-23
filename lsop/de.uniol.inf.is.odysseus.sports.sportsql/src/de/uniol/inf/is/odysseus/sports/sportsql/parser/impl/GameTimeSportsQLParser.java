@@ -109,7 +109,7 @@ public class GameTimeSportsQLParser implements ISportsQLParser {
 
 		// 5. Finish
 		return OperatorBuildHelper.finishQuery(gameTimeChangeDetect,
-				allOperators, sportsQL.getName());
+				allOperators, sportsQL.getDisplayName());
 	}
 
 	private String getStartTimestamp(SportsQLQuery sportsQL) {

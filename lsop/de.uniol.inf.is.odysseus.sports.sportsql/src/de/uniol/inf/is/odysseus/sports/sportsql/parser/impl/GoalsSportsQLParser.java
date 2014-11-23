@@ -152,7 +152,7 @@ public class GoalsSportsQLParser implements ISportsQLParser {
 		allOperators.add(goals_aggregate);
 		
 		return OperatorBuildHelper.finishQuery(goals_aggregate, allOperators,
-				sportsQL.getName());
+				sportsQL.getDisplayName());
 	}
 	
 	private AggregateAO createGoalsAggregate(ILogicalOperator input) {

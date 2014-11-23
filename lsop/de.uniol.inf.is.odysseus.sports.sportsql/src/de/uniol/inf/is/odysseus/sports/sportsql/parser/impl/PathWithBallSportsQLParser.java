@@ -217,7 +217,7 @@ public class PathWithBallSportsQLParser implements ISportsQLParser {
 		allOperators.add(result);
 
 		return OperatorBuildHelper.finishQuery(result, allOperators,
-				sportsQL.getName());
+				sportsQL.getDisplayName());
 	}
 
 }

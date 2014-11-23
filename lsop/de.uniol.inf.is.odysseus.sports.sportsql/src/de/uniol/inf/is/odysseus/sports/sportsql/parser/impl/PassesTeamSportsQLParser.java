@@ -323,7 +323,7 @@ public class PassesTeamSportsQLParser implements ISportsQLParser {
 		allOperators.add(aggregate2);
 		
 		// 28. Finish		
-		return OperatorBuildHelper.finishQuery(aggregate2, allOperators, sportsQL.getName());		
+		return OperatorBuildHelper.finishQuery(aggregate2, allOperators, sportsQL.getDisplayName());		
 	}
 
 }
