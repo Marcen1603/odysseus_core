@@ -80,11 +80,9 @@ public class ShotOnGoalGlobalOutput {
 
 		// GameStream and MetaDataStream
 		StreamAO gameStream = OperatorBuildHelper.createGameStreamAO(session);
-	//	StreamAO metaDataStream = OperatorBuildHelper.createMetadataStreamAO(session);
 
 		// Add to list
 		allOperators.add(gameStream);
-		//allOperators.add(metaDataStream);
 
 		// -------------------------------------------------------------------
 		// First part
@@ -104,23 +102,13 @@ public class ShotOnGoalGlobalOutput {
 		SelectAO spaceSelect = OperatorBuildHelper.createSpaceSelect(
 				spaceParam, false, timeSelect);
 
-		// 3. Enrich with the metastream
-	//	EnrichAO enrichedStream = OperatorBuildHelper.createEnrichAO(
-		//		"sensorid = sid", spaceSelect, metaDataStream);
-
 		// Add to the list
 		allOperators.add(spaceSelect);
-		//allOperators.add(enrichedStream);
 
 		// -------------------------------------------------------------------
 		// Second part
 		// Filter the sensor data stream for ball events
 		// -------------------------------------------------------------------
-
-		// 1. Select for ball
-		//SelectAO ballSelect = OperatorBuildHelper.createEntitySelectByName(
-		//		AbstractSportsDDCAccess.ENTITY_BALL, spaceSelect);
-		
 		// get only ball sensors
 		List<IPredicate> ballPredicates = new ArrayList<IPredicate>();
 		for (int sensorId : AbstractSportsDDCAccess.getBallEntityIds()) {
@@ -131,8 +119,7 @@ public class ShotOnGoalGlobalOutput {
 		IPredicate ballIPredicate = OperatorBuildHelper.createOrPredicate(ballPredicates);
 		
 		SelectAO ballSelect  = OperatorBuildHelper.createSelectAO(ballIPredicate, spaceSelect);
-		ballSelect.setName("Ball SELECT");
-
+	
 		// 2. Project for important variables
 		List<String> ballProjectList = new ArrayList<String>();
 		ballProjectList.add("ts");
@@ -200,19 +187,12 @@ public class ShotOnGoalGlobalOutput {
 		// Fourth part
 		// Filter the sensor data stream for player feet events
 		// -------------------------------------------------------------------
-
-		
-		// 1. Select for the feet
-		//String feetSelectPredicate = "entity_id != \""+ teamIds + "\"";
-	
-		//SelectAO playerLegSelect = OperatorBuildHelper.createSelectAO(
-	//			feetSelectPredicate, spaceSelect);
 	
 		//Select only team 1 and team 2
 		SelectAO teamSelect = OperatorBuildHelper.createBothTeamSelectAO(spaceSelect);
 	
 
-		// 2. Project
+		// 1. Project
 		List<String> feetProjectList = new ArrayList<String>();
 		feetProjectList.add("ts");
 		feetProjectList.add("x");

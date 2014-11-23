@@ -65,10 +65,6 @@ public class ShotOnGoalPlayerSportsQLParser implements ISportsQLParser {
 		SelectAO entitySelect = OperatorBuildHelper.createEntityIDSelect(
 				sportsQL.getEntityId(), timeWindow);
 
-		// 3. Aggregate (sum the shots for this player)
-		//AggregateAO out = OperatorBuildHelper.createAggregateAO("sum", "shot",
-		//		"shots", entitySelect);
-		
 		List<String> groupCount = new ArrayList<String>();
 		groupCount.add("entity_id");
 		
