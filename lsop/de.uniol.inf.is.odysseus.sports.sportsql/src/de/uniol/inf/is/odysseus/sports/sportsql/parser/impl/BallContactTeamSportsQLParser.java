@@ -19,7 +19,7 @@ import de.uniol.inf.is.odysseus.sports.sportsql.parser.parameter.SportsQLSpacePa
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.parameter.SportsQLTimeParameter;
 
 
-@SportsQL(gameTypes = GameType.SOCCER, statisticTypes = { StatisticType.TEAM }, name = "ball_contact_team", parameters = {
+@SportsQL(gameTypes = GameType.SOCCER, statisticTypes = { StatisticType.TEAM }, name = "ball_contact", parameters = {
 		@SportsQLParameter(name = "time", parameterClass = SportsQLTimeParameter.class, mandatory = false),
 		@SportsQLParameter(name = "space", parameterClass = SportsQLSpaceParameter.class, mandatory = false) })
 public class BallContactTeamSportsQLParser implements ISportsQLParser{
