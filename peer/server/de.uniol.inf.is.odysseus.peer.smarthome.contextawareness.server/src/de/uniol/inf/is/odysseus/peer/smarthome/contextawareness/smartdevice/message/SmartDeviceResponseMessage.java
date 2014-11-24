@@ -10,7 +10,7 @@ public class SmartDeviceResponseMessage extends SmartDeviceMessage {
 	
 	private ASmartDevice smartDevice;
 	
-	public byte[] toBytes() {
+	public synchronized byte[] toBytes() {
 		try {
 			return serialize(smartDevice);
 		} catch (IOException e) {
@@ -19,7 +19,7 @@ public class SmartDeviceResponseMessage extends SmartDeviceMessage {
 		return null;
 	}
 	
-	public void fromBytes(byte[] data) {
+	public synchronized void fromBytes(byte[] data) {
 		try {
 			this.smartDevice = (ASmartDevice) deserialize(data);
 		} catch (ClassNotFoundException | IOException e) {
