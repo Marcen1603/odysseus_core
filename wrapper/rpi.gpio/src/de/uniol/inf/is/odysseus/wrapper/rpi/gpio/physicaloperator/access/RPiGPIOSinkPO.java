@@ -130,6 +130,7 @@ public class RPiGPIOSinkPO extends AbstractSink<Tuple<?>> {
 	@Override
 	protected void process_next(Tuple<?> tuple, int port) {
 		try {
+			LOG.debug("RPiGPIOSinkPO process_next:");
 
 			if (!pinStateMessageFlag) {
 				LOG.debug("pin:" + this.pin.getAddress() + " pinStateIndex:"
@@ -139,7 +140,14 @@ public class RPiGPIOSinkPO extends AbstractSink<Tuple<?>> {
 
 			if (tuple == null || this.myLED == null) {
 				if (!messageWasShownTupleLedNUll) {
-					LOG.error("tuple or myLED is null!");
+					if(tuple == null){
+						LOG.error("tuple is null!");
+					}
+					if(this.myLED == null){
+						LOG.error("this.myLED is null!");
+						
+					}
+					
 					messageWasShownTupleLedNUll = true;
 				}
 				return;
@@ -155,6 +163,8 @@ public class RPiGPIOSinkPO extends AbstractSink<Tuple<?>> {
 					value = tuple.getAttribute(1).toString();
 				}
 
+				
+				
 				String compareValue = (String) "1";
 
 				if (value.equals(compareValue)) {

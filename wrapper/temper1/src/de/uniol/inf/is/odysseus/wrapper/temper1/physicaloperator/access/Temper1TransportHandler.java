@@ -30,9 +30,9 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITranspor
 
 public class Temper1TransportHandler extends
 		AbstractSimplePullTransportHandler<Tuple<?>> {
-	
-	//TODO: TransportHandler auf Push umbauen.
-	
+
+	// TODO: TransportHandler auf Push umbauen.
+
 	private static final String ENTITY_NAME = "temper";
 
 	private static Logger LOG = LoggerFactory
@@ -74,11 +74,17 @@ public class Temper1TransportHandler extends
 
 	private static long firstErrorTime;
 
+	private static boolean errorNr4Shown;
+
+	private static boolean errorNr3Shown;
+
+	private static boolean errorNr2Shown;
+
 	static {
 		// TODO:Enabling components of bundle
 		// de.uniol.inf.is.odysseus.wrapper.temper1 did not complete in 30000 ms
 		ClassPathLibraryLoader.loadNativeHIDLibrary();
-		//LOG.debug("//ClassPathLibraryLoader.loadNativeHIDLibrary();");
+		// LOG.debug("//ClassPathLibraryLoader.loadNativeHIDLibrary();");
 	}
 
 	public Temper1TransportHandler() {
@@ -165,10 +171,10 @@ public class Temper1TransportHandler extends
 
 			updateConnectedTemperatureSensors();
 		}
-		
-		//TODO: 
-    	//tuple.setAttribute(2, System.currentTimeMillis());
-    	//Starttimestamp
+
+		// TODO:
+		// tuple.setAttribute(2, System.currentTimeMillis());
+		// Starttimestamp
 
 		return tuple;
 	}
@@ -474,11 +480,20 @@ public class Temper1TransportHandler extends
 				}
 			}
 		} catch (IOException e) {
-			LOG.error(e.getMessage() + " ErrorNr.2", e);
+			if (!errorNr2Shown) {
+				LOG.error(e.getMessage() + " ErrorNr.2", e);
+				errorNr2Shown = true;
+			}
 		} catch (InterruptedException e) {
-			LOG.error(e.getMessage() + " ErrorNr.3", e);
+			if (!errorNr3Shown) {
+				LOG.error(e.getMessage() + " ErrorNr.3", e);
+				errorNr3Shown = true;
+			}
 		} catch (Exception e) {
-			LOG.error(e.getMessage() + " ErrorNr.4", e);
+			if (!errorNr4Shown) {
+				LOG.error(e.getMessage() + " ErrorNr.4", e);
+				errorNr4Shown = true;
+			}
 		}
 		throw new Exception("No temperature value available.");
 	}
