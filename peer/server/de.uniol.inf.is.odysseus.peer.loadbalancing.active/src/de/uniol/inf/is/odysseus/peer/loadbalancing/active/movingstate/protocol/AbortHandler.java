@@ -8,9 +8,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicator;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.common.LoadBalancingException;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.common.LoadBalancingHelper;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.common.LoadBalancingStatusCache;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.movingstate.communicator.MovingStateCommunicatorImpl;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.active.movingstate.communicator.MovingStateHelper;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.movingstate.communicator.MovingStateMessageDispatcher;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.movingstate.messages.MovingStateAbortMessage;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.movingstate.status.MovingStateMasterStatus;
@@ -86,17 +88,30 @@ public class AbortHandler {
 			switch (status.getInvolvementType()) {
 
 			case PEER_WITH_SENDER_OR_RECEIVER:
-				// TODO
-				/*
-				 * if(status.getReplacedPipes()!=null) { ArrayList<String>
-				 * installedPipes = Collections.list(status
-				 * .getReplacedPipes().keys()); for (String pipe :
-				 * installedPipes) { LOG.error("Removing Operator with Pipe ID "
-				 * + pipe);
-				 * LoadBalancingHelper.removeDuplicateJxtaOperator(pipe); } }
-				 */
-				// NO break, since Peer could in theory also be the volunteering
-				// peer
+				boolean isSender = false;
+				if(status.getBufferedPipes()!=null && status.getBufferedPipes().size()>0) {
+					isSender = true;
+				}
+				
+				if(status.getPipeOldPeerMapping()!=null) {
+					for (String pipeID : status.getPipeOldPeerMapping().keySet()) {
+						try {
+							MovingStateHelper.setNewPeerId(pipeID, status.getPipeOldPeerMapping().get(pipeID), isSender);
+						} catch (LoadBalancingException e) {
+							//do nothing as there is nothing we can do
+						}
+					}
+				}
+				if(isSender) {
+					for (String pipeID : status.getBufferedPipes()) {
+						try {
+							MovingStateHelper.stopBuffering(pipeID);
+						} catch (LoadBalancingException e) {
+							//do nothing as there is nothing we can do
+						}
+					}
+				}
+				//No break.
 				//$FALL-THROUGH$
 			case VOLUNTEERING_PEER:
 				Collection<Integer> queriesToRemove = status

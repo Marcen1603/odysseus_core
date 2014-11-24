@@ -231,6 +231,7 @@ public class MovingStateHelper {
 				new HashSet<PeerID>(status.getPeersForPipe().values()));
 		involvedPeers.add(status.getVolunteeringPeer());
 		for (PeerID peer : involvedPeers) {
+			LOG.debug("Asking Peer " + peer, " to abort.");
 			status.getMessageDispatcher().sendAbortInstruction(peer,
 					deliveryFailedListener);
 		}

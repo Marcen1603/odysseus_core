@@ -87,12 +87,28 @@ public class MovingStateSlaveStatus implements ILoadBalancingSlaveStatus,
 	private ConcurrentHashMap<String, IStatefulPO> receiverOperatorMapping;
 
 	/***
+	 * Mapping between pipe IDs and their old PeerID
+	 */
+	private ConcurrentHashMap<String,String> pipeOldPeerMapping;
+	
+	/***
 	 * Message Dispatcher for LoadBalancingProcess
 	 */
 	private final MovingStateMessageDispatcher messageDispatcher;
 
 	public Collection<Integer> getInstalledQueries() {
 		return installedQueries;
+	}
+	
+	/**
+	 * Adds a Pipe ID and its old Peer ID to status. Needed for rollback.
+	 * @param pipeID PipeID of changed pipe
+	 * @param peerID Old Peer ID of pipe.
+	 */
+	public void addChangedPipe(String pipeID, String peerID) {
+		if(!pipeOldPeerMapping.containsKey(pipeID)) {
+			pipeOldPeerMapping.put(pipeID,peerID);
+		}
 	}
 
 	/**
@@ -143,6 +159,7 @@ public class MovingStateSlaveStatus implements ILoadBalancingSlaveStatus,
 		this.messageDispatcher = messageDispatcher;
 		this.knownPipes = new ArrayList<String>();
 		this.receiverOperatorMapping = new ConcurrentHashMap<String, IStatefulPO>();
+		this.pipeOldPeerMapping = new ConcurrentHashMap<String,String>();
 	}
 
 	/***
@@ -285,6 +302,14 @@ public class MovingStateSlaveStatus implements ILoadBalancingSlaveStatus,
 	 */
 	public void setBufferedPipes(ArrayList<String> bufferedPipes) {
 		this.bufferedPipes = bufferedPipes;
+	}
+
+	public ConcurrentHashMap<String,String> getPipeOldPeerMapping() {
+		return pipeOldPeerMapping;
+	}
+
+	public void setPipeOldPeerMapping(ConcurrentHashMap<String,String> pipeOldPeerMapping) {
+		this.pipeOldPeerMapping = pipeOldPeerMapping;
 	}
 
 }

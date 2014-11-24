@@ -258,16 +258,14 @@ public class ResponseHandler {
 			break;
 		case COPYING_STATES:
 			if(!CONTINUE_ON_STATE_COPY_ERROR) {
-				//TODO Abort 
+				dispatcher.stopAllMessages();
+				MovingStateHelper.notifyInvolvedPeers(status);
 			}
 			//else: Ignore.
 			break;
 		case STOP_BUFFERING:
 			// New query is already running.
-			// TODO Go on as if nothing happened?
-			break;
-		case COPYING_FINISHED:
-			//TODO
+			// Can not do anything if stream fails to reactivate.
 			break;
 		
 		default:
