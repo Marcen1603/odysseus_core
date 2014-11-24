@@ -113,29 +113,11 @@ public class RecoveryInstructionHandler {
 
 	public static void handleAckInstruction(PeerID senderPeer,
 			RecoveryInstructionAckMessage instruction) {
-		switch (instruction.getMessageType()) {
-		case RecoveryInstructionAckMessage.ADD_QUERY_ACK:
-			transferBackupInfo();
-			break;
-		}
-	}
-
-	private static void transferBackupInfo() {
-		// TODO Auto-generated method stub
-
+		
 	}
 
 	public static void handleFailedInstruction(PeerID senderPeer,
 			RecoveryInstructionFailMessage instruction) {
-		switch (instruction.getMessageType()) {
-		case RecoveryInstructionFailMessage.ADD_QUERY_FAIL:
-			reallocateToOtherPeer();
-			break;
-		}
-	}
-
-	private static void reallocateToOtherPeer() {
-		// TODO Auto-generated method stub
 
 	}
 
