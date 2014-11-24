@@ -24,9 +24,13 @@ import com.ghgande.j2mod.modbus.msg.ReadInputRegistersRequest;
 import com.ghgande.j2mod.modbus.msg.ReadInputRegistersResponse;
 import com.ghgande.j2mod.modbus.msg.ReadMultipleRegistersRequest;
 import com.ghgande.j2mod.modbus.msg.ReadMultipleRegistersResponse;
+import com.ghgande.j2mod.modbus.msg.WriteCoilRequest;
+import com.ghgande.j2mod.modbus.msg.WriteMultipleCoilsRequest;
+import com.ghgande.j2mod.modbus.msg.WriteMultipleRegistersRequest;
 import com.ghgande.j2mod.modbus.net.TCPMasterConnection;
 import com.ghgande.j2mod.modbus.procimg.InputRegister;
 import com.ghgande.j2mod.modbus.procimg.Register;
+import com.ghgande.j2mod.modbus.util.BitVector;
 
 import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
@@ -48,7 +52,9 @@ public class ModbusTCPTransportHandler extends
 	public static final String REF = "ref";
 	public static final String COUNT = "count";
 	public static final String FUNCTION_CODE = "FUNCTION_CODE".toLowerCase();
+	public static final String WRITE_FUNCTION_CODE = "WRITE_FUNCTION_CODE".toLowerCase();	
 	public static final String UNIT_ID = "unitid";
+	
 
 	private int port;
 	private InetAddress slave;
@@ -57,9 +63,9 @@ public class ModbusTCPTransportHandler extends
 
 	private TCPMasterConnection con;
 	private ModbusTCPTransaction trans;
-	private ModbusRequest req;
 
-	private int functionCode;
+	private int readFunctionCode;
+	private int writeFunctionCode;
 
 	private int unitID;
 
@@ -87,7 +93,10 @@ public class ModbusTCPTransportHandler extends
 		}
 		ref = Integer.parseInt(options.get(REF));
 		count = Integer.parseInt(options.get(COUNT));
-		functionCode = options.getInt(FUNCTION_CODE, 2);
+		readFunctionCode = options.getInt(FUNCTION_CODE, 2);
+		
+		writeFunctionCode = options.getInt(WRITE_FUNCTION_CODE, -1);
+		
 		logger.debug("initialized with port=" + port + " slave=" + slave
 				+ " ref=" + ref + " count=" + count + " for function "
 				+ FUNCTION_CODE);
@@ -107,6 +116,8 @@ public class ModbusTCPTransportHandler extends
 
 	@Override
 	public void processInOpen() throws IOException {
+		ModbusRequest req = null;
+
 		logger.debug("Opening connection to slave " + slave);
 		// 2. Open the connection
 		con = new TCPMasterConnection(slave);
@@ -116,12 +127,13 @@ public class ModbusTCPTransportHandler extends
 		} catch (Exception e) {
 			throw new IOException(e);
 		}
-		// TODO: This seems to read one value --> List of ref and count!
-		logger.debug("Creating new read request");
+		// Optional: Configure Modbus Source...
+		initSource();
+		
 		// 3. Prepare the request
 
 		// req = new ReadInputDiscretesRequest(ref, count);
-		switch (functionCode) {
+		switch (readFunctionCode) {
 		case Modbus.READ_INPUT_DISCRETES:
 			req = new ReadInputDiscretesRequest(ref, count);
 			break;
@@ -135,7 +147,7 @@ public class ModbusTCPTransportHandler extends
 			req = new ReadCoilsRequest(ref, count);
 			break;
 		default:
-			throw new IllegalArgumentException("FUNCTION_CODE " + functionCode
+			throw new IllegalArgumentException("FUNCTION_CODE " + readFunctionCode
 					+ " not know");
 		}
 
@@ -146,6 +158,46 @@ public class ModbusTCPTransportHandler extends
 		logger.debug("Creating new Transaction");
 		trans = new ModbusTCPTransaction(con);
 		trans.setRequest(req);
+	}
+
+	private void initSource() {
+		ModbusRequest req = null;
+		
+		// TODO: Move parameter to options
+
+		// 5 (WriteCoilRequest),
+		// 15 (WriteMultipleCoilsRequest) und
+		// 16 (WriteMultipleRegistersRequest),
+		
+		switch (writeFunctionCode) {
+		case Modbus.WRITE_COIL:
+			boolean b = true;
+			req = new WriteCoilRequest(ref, b);
+			break;
+		case Modbus.WRITE_MULTIPLE_COILS:
+			com.ghgande.j2mod.modbus.util.BitVector bv = null;
+			new WriteMultipleCoilsRequest(ref, bv);
+			new WriteMultipleCoilsRequest(ref, count);
+			break;
+		case Modbus.WRITE_MULTIPLE_REGISTERS:
+			int first = 0;
+			Register[] registers = null;
+			new WriteMultipleRegistersRequest(first, registers);
+			break;
+		}
+
+		if (req != null){
+			trans = new ModbusTCPTransaction(con);
+			trans.setRequest(req);
+			try {
+				trans.execute();
+				@SuppressWarnings("unused")
+				ModbusResponse response = trans.getResponse();
+				// What to do with the response?
+			} catch (ModbusException e) {
+				e.printStackTrace();
+			}
+		}
 	}
 
 	@Override
@@ -229,7 +281,8 @@ public class ModbusTCPTransportHandler extends
 				t.setAttribute(0, discretes.createOdysseusBitVector());
 				break;
 			case Modbus.READ_COILS:
-				com.ghgande.j2mod.modbus.util.BitVector coils = ((ReadCoilsResponse) response).getCoils();
+				com.ghgande.j2mod.modbus.util.BitVector coils = ((ReadCoilsResponse) response)
+						.getCoils();
 				t.setAttribute(0, coils.createOdysseusBitVector());
 				break;
 			default:
