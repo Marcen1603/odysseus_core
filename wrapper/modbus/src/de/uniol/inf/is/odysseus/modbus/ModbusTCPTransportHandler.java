@@ -16,6 +16,8 @@ import com.ghgande.j2mod.modbus.ModbusException;
 import com.ghgande.j2mod.modbus.io.ModbusTCPTransaction;
 import com.ghgande.j2mod.modbus.msg.ModbusRequest;
 import com.ghgande.j2mod.modbus.msg.ModbusResponse;
+import com.ghgande.j2mod.modbus.msg.ReadCoilsRequest;
+import com.ghgande.j2mod.modbus.msg.ReadCoilsResponse;
 import com.ghgande.j2mod.modbus.msg.ReadInputDiscretesRequest;
 import com.ghgande.j2mod.modbus.msg.ReadInputDiscretesResponse;
 import com.ghgande.j2mod.modbus.msg.ReadInputRegistersRequest;
@@ -129,6 +131,9 @@ public class ModbusTCPTransportHandler extends
 		case Modbus.READ_MULTIPLE_REGISTERS:
 			req = new ReadMultipleRegistersRequest(ref, count);
 			break;
+		case Modbus.READ_COILS:
+			req = new ReadCoilsRequest(ref, count);
+			break;
 		default:
 			throw new IllegalArgumentException("FUNCTION_CODE " + functionCode
 					+ " not know");
@@ -222,6 +227,10 @@ public class ModbusTCPTransportHandler extends
 				com.ghgande.j2mod.modbus.util.BitVector discretes = ((ReadInputDiscretesResponse) response)
 						.getDiscretes();
 				t.setAttribute(0, discretes.createOdysseusBitVector());
+				break;
+			case Modbus.READ_COILS:
+				com.ghgande.j2mod.modbus.util.BitVector coils = ((ReadCoilsResponse) response).getCoils();
+				t.setAttribute(0, coils.createOdysseusBitVector());
 				break;
 			default:
 				t.setAttribute(0, response.getHexMessage());
