@@ -69,11 +69,13 @@ public class ImagePictogram extends AbstractPictogram {
 			return null;
 		}
 		IResource file = getGraphicsLayer().getProject().findMember(filename);
+		
 		return file;
 	}
 
 	public void setFilename(String filename) {
 		this.filename = filename;
+		filename.replace('\\', '/');
 		setDirty();
 	}
 
