@@ -28,18 +28,18 @@ public class RPiGPIOSinkPO extends AbstractSink<Tuple<?>> {
 	private boolean flagExceptionProcessNext = false;
 	private PinState pinState;
 	private boolean messageWasShownTupleLedNUll = false;
-	private int pinStateIndex=-1;
+	private int pinStateIndex = -1;
 	private OS os;
 	private boolean pinStateMessageFlag = false;
 
 	public RPiGPIOSinkPO(SDFSchema s) {
 		initGPIOController();
 		this.schema = s;
-		
+
 		final SDFAttribute pinStateAttribute = schema.findAttribute("PinState");
-        if (pinStateAttribute != null) {
-            this.pinStateIndex = schema.indexOf(pinStateAttribute);
-        }
+		if (pinStateAttribute != null) {
+			this.pinStateIndex = schema.indexOf(pinStateAttribute);
+		}
 	}
 
 	public RPiGPIOSinkPO(RPiGPIOSinkAO operator) {
@@ -65,7 +65,7 @@ public class RPiGPIOSinkPO extends AbstractSink<Tuple<?>> {
 
 	public RPiGPIOSinkPO(RPiGPIOSinkAO operator, SDFSchema schema) {
 		this.schema = schema;
-		
+
 		initGPIOController();
 
 		this.pin = operator.getPin2();
@@ -91,7 +91,9 @@ public class RPiGPIOSinkPO extends AbstractSink<Tuple<?>> {
 			case WIN:
 			case MAC:
 			case UNKNOWN:
-				LOG.warn(""+RPiGPIOSinkAO.class+" works only on raspberry pi with linux and pi4j library!");
+				LOG.warn(""
+						+ RPiGPIOSinkAO.class
+						+ " works only on raspberry pi with linux and pi4j library!");
 				break;
 			default:
 				break;
@@ -103,16 +105,13 @@ public class RPiGPIOSinkPO extends AbstractSink<Tuple<?>> {
 	}
 
 	private void initGPIOPins() {
-		LOG.error("RPiGPIOSinkPO initGPIOPins() pin:"+this.pin);
+		LOG.error("RPiGPIOSinkPO initGPIOPins() pin:" + this.pin);
 
 		if (gpioController == null || !os.equals(OS.NUX)) {
-			
-			
-			
+
 			return;
 		}
 
-		
 		try {
 			// LOG.error("\n\r ---- pinState:"+pinState.toString()+"\n\r ------");
 			if (pinState != null) {
@@ -130,31 +129,32 @@ public class RPiGPIOSinkPO extends AbstractSink<Tuple<?>> {
 
 	@Override
 	protected void process_next(Tuple<?> tuple, int port) {
-		if(!pinStateMessageFlag){
-			LOG.debug("pin:"+this.pin.getAddress()+" pinStateIndex:"+this.pinStateIndex);
-			pinStateMessageFlag =true;
-		}
-		
-		if (tuple == null || this.myLED == null) {
-			if (!messageWasShownTupleLedNUll) {
-				LOG.error("tuple or myLED is null!");
-				messageWasShownTupleLedNUll = true;
-			}
-			return;
-		} else {
-			messageWasShownTupleLedNUll = false;
-		}
-
 		try {
+
+			if (!pinStateMessageFlag) {
+				LOG.debug("pin:" + this.pin.getAddress() + " pinStateIndex:"
+						+ this.pinStateIndex);
+				pinStateMessageFlag = true;
+			}
+
+			if (tuple == null || this.myLED == null) {
+				if (!messageWasShownTupleLedNUll) {
+					LOG.error("tuple or myLED is null!");
+					messageWasShownTupleLedNUll = true;
+				}
+				return;
+			} else {
+				messageWasShownTupleLedNUll = false;
+			}
+
 			if (tuple != null) {
 				String value;
-				if(this.pinStateIndex>=0){
+				if (this.pinStateIndex >= 0) {
 					value = tuple.getAttribute(this.pinStateIndex).toString();
-				}else{
+				} else {
 					value = tuple.getAttribute(1).toString();
 				}
-				
-				
+
 				String compareValue = (String) "1";
 
 				if (value.equals(compareValue)) {

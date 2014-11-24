@@ -223,7 +223,11 @@ public class RPiGPIOPushTransportHandler extends AbstractTransportHandler {
 			tuple.setAttribute(1, 1);
 		}
 
-		fireProcess(tuple);
+		try{
+			fireProcess(tuple);
+		}catch(Exception ex){
+			LOG.error(ex.getMessage(), ex);
+		}
 	}
 
 	@Override
