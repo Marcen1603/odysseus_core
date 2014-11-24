@@ -29,10 +29,7 @@ public class WebserviceAdvertisementSender {
 
 	private static final Logger LOG = LoggerFactory
 			.getLogger(WebserviceAdvertisementSender.class);
-	private static final long WAIT_TIME_MILLIS = 21 * 1000;
-
-
-
+//	private static final long WAIT_TIME_MILLIS = 21 * 1000;
 
 	/**
 	 * Publishes an advertisement with information to the rest service
@@ -47,8 +44,8 @@ public class WebserviceAdvertisementSender {
 		if (adv != null) {
 			try {
 				waitForJxtaServicesProvider(provider);
-				provider.publish(adv, WAIT_TIME_MILLIS, WAIT_TIME_MILLIS);
-				provider.remotePublish(adv, WAIT_TIME_MILLIS);
+				provider.publishInfinite(adv);
+				provider.remotePublishInfinite(adv);
 			} catch (IOException e) {
 				LOG.error("Could not publish webservice advertisement", e);
 			}
