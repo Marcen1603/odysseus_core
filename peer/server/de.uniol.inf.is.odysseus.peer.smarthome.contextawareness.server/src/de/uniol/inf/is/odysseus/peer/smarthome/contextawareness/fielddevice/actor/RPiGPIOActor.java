@@ -110,6 +110,8 @@ public class RPiGPIOActor extends AbstractActor {
 		@Override
 		public LinkedHashMap<String, String> getLogicRuleQueries(
 				ActivityInterpreter activityInterpreter) {
+			System.out.println("  !!!!!!!!  ");
+			
 			LinkedHashMap<String, String> map = new LinkedHashMap<>();
 
 			String peerName = activityInterpreter.getSensor().getSmartDevice().getPeerName();
@@ -123,13 +125,13 @@ public class RPiGPIOActor extends AbstractActor {
 			StringBuilder sbSetConfig = entityConfigStream(setConfigStreamName,
 					activitySourceName, activity);
 
-			map.put(setConfigStreamName, sbSetConfig.toString());
+			//map.put(setConfigStreamName, sbSetConfig.toString());
 
 			
 			String entitySetStateStreamName = getNameCombination(getName(),
 					activity, peerName);
 			StringBuilder sbEntitySetState = entitySetStateStream(
-					setConfigStreamName, entitySetStateStreamName);
+					setConfigStreamName, entitySetStateStreamName, getActivitySourceName(), getActivityName());
 
 			map.put(entitySetStateStreamName, sbEntitySetState.toString());
 			
@@ -143,7 +145,7 @@ public class RPiGPIOActor extends AbstractActor {
 			}
 			
 			LinkedHashMap<String, String> map = new LinkedHashMap<>();
-
+			
 			String peerName = getActor().getSmartDevice().getPeerName();
 			
 			String setConfigStreamName = getNameCombination("SetActor",
@@ -151,13 +153,13 @@ public class RPiGPIOActor extends AbstractActor {
 			StringBuilder sbSetConfig = entityConfigStream(setConfigStreamName,
 					getActivitySourceName(), getActivityName());
 
-			map.put(setConfigStreamName, sbSetConfig.toString());
+			//map.put(setConfigStreamName, sbSetConfig.toString());
 
 			
 			String entitySetStateStreamName = getNameCombination(getName(),
 					getActivityName(), peerName);
 			StringBuilder sbEntitySetState = entitySetStateStream(
-					setConfigStreamName, entitySetStateStreamName);
+					setConfigStreamName, entitySetStateStreamName, getActivitySourceName(), getActivityName());
 
 			map.put(entitySetStateStreamName, sbEntitySetState.toString());
 			
@@ -193,11 +195,27 @@ public class RPiGPIOActor extends AbstractActor {
 			sbSetConfig.append("                      )))\n");
 			sbSetConfig.append("\n");
 			
+			System.out.println("query:\n"+sbSetConfig.toString()+"\n");
+			
 			return sbSetConfig;
 		}
 
 		private StringBuilder entitySetStateStream(String setConfigStreamName,
-				String entitySetStateStreamName) {
+				String entitySetStateStreamName, String activitySourceName, String activity) {
+			
+			String v = "";
+			switch (getState()) {
+			case ON:
+				v = "1";
+				break;
+			case OFF:
+				v = "0";
+				break;
+			default:
+				break;
+			}
+			
+			
 			StringBuilder sbEntitySetState = new StringBuilder();
 			sbEntitySetState.append("#PARSER PQL\n");
 			sbEntitySetState.append("#QNAME " + entitySetStateStreamName
@@ -208,7 +226,19 @@ public class RPiGPIOActor extends AbstractActor {
 			//		+ "', pin="+getPin()+", pinstate='low'}," + setConfigStreamName
 			//		+ ")\n");
 			
-			sbEntitySetState.append("" + entitySetStateStreamName +" = RPIGPIOSINK({pin="+getPin()+", pinstate='low'}," + setConfigStreamName+")");
+			//sbEntitySetState.append("" + entitySetStateStreamName +" = RPIGPIOSINK({pin="+getPin()+", pinstate='low'}," + setConfigStreamName+")");
+			
+			sbEntitySetState.append("" + entitySetStateStreamName +" = RPIGPIOSINK({pin="+getPin()+", pinstate='low'},RENAME({\n");
+			sbEntitySetState.append("    aliases = ['PinNumber', 'PinState']\n");
+			sbEntitySetState.append("  },MAP({\n");
+			sbEntitySetState.append("  expressions = ['EntityName','concat(substring(toString(ActivityName),0,0),"+v+")']\n");
+			sbEntitySetState.append("},SELECT({\n");
+			sbEntitySetState.append("      predicate=\"ActivityName = '"+activity+"'\"\n");
+			sbEntitySetState.append("    },\n");
+			sbEntitySetState.append("    "+activitySourceName+"\n");
+			sbEntitySetState.append("  ))))\n");
+			
+			
 			sbEntitySetState.append("\n");
 			
 			return sbEntitySetState;

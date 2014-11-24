@@ -589,6 +589,8 @@ public class QueryExecutor implements IP2PDictionaryListener,
 					}
 				}
 				
+				LOG.debug("source is available:"+sourceNameToWaitFor);
+				
 				
 				try {
 					executeQueryNow(queryName, query);
