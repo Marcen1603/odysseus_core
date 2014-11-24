@@ -42,7 +42,6 @@ import de.uniol.inf.is.odysseus.peer.recovery.messages.RecoveryInstructionAckMes
 import de.uniol.inf.is.odysseus.peer.recovery.messages.RecoveryInstructionFailMessage;
 import de.uniol.inf.is.odysseus.peer.recovery.messages.RecoveryInstructionMessage;
 import de.uniol.inf.is.odysseus.peer.recovery.protocol.RecoveryAgreementHandler;
-import de.uniol.inf.is.odysseus.peer.recovery.protocol.RecoveryBackupMessageHandler;
 import de.uniol.inf.is.odysseus.peer.recovery.protocol.RecoveryInstructionHandler;
 import de.uniol.inf.is.odysseus.peer.recovery.util.BuddyHelper;
 import de.uniol.inf.is.odysseus.peer.recovery.util.LocalBackupInformationAccess;
@@ -216,6 +215,8 @@ public class RecoveryCommunicator implements IRecoveryCommunicator,
 				BackupInformationMessage.class);
 
 		cPeerCommunicator.get().registerMessageType(
+				BackupInformationAckMessage.class);
+		cPeerCommunicator.get().addListener(this,
 				BackupInformationAckMessage.class);
 
 		cPeerCommunicator.get().registerMessageType(
@@ -551,10 +552,12 @@ public class RecoveryCommunicator implements IRecoveryCommunicator,
 		} else if (message instanceof BackupInformationMessage) {
 			// Store the backup information
 			BackupInformationMessage backupInfoMessage = (BackupInformationMessage) message;
-			RecoveryBackupMessageHandler.handleBackupMessage(senderPeer,
-					backupInfoMessage);
-			this.sendMessage(senderPeer, new BackupInformationAckMessage(
-					backupInfoMessage.getInfo()));
+			BackupInformationReceiver.getInstance().receivedMessage(
+					backupInfoMessage, senderPeer, cPeerCommunicator.get());
+		} else if (message instanceof BackupInformationAckMessage) {
+			BackupInformationAckMessage ackMessage = (BackupInformationAckMessage) message;
+			BackupInformationSender.getInstance()
+					.receivedAckMessage(ackMessage);
 		} else if (message instanceof RemoveQueryMessage) {
 			// Remove stored backup information
 			LocalBackupInformationAccess.getStore().remove(
@@ -579,13 +582,17 @@ public class RecoveryCommunicator implements IRecoveryCommunicator,
 			IRecoveryBackupInformation info, boolean isNewInfo) {
 		Preconditions.checkNotNull(destination);
 		Preconditions.checkNotNull(info);
+		if (!cPeerCommunicator.isPresent()) {
+			LOG.error("No peer communicator bound!");
+			return false;
+		}
 
 		if (isNewInfo) {
 			return BackupInformationSender.getInstance().sendNewBackupInfo(
-					destination, info);
+					destination, info, cPeerCommunicator.get());
 		} else {
 			return BackupInformationSender.getInstance().sendBackupInfoUpdate(
-					destination, info);
+					destination, info, cPeerCommunicator.get());
 		}
 
 	}

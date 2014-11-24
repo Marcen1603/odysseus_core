@@ -13,8 +13,7 @@ Require-Bundle: de.uniol.inf.is.odysseus.core,
  com.google.guava,
  de.uniol.inf.is.odysseus.slf4j,
  org.eclipse.osgi;bundle-version="3.7.2"
-Service-Component: OSGI-INF/RecoveryConsole.xml,OSGI-INF/BackupInformationStore.xml,OSGI-INF/RecoveryQueryDistributionListener.xml,OSGI-INF/RecoveryCommunicator.xml,OSGI-INF/LocalBackupInformationAccess.xml,OSGI-INF/RecoveryAgreementHandler.xml,OSGI-INF/RecoveryInstructionHandler.xml,OSGI-INF/BackupInformationHelper.xml,OSGI-INF/RecoveryDynamicBackup.xml,OSGI-INF/RecoveryHelper.xml,OSGI-INF/OperatorChangeListener.xml,
- OSGI-INF/BackupInformationSender.xml
+Service-Component: OSGI-INF/RecoveryConsole.xml,OSGI-INF/BackupInformationStore.xml,OSGI-INF/RecoveryQueryDistributionListener.xml,OSGI-INF/RecoveryCommunicator.xml,OSGI-INF/LocalBackupInformationAccess.xml,OSGI-INF/RecoveryAgreementHandler.xml,OSGI-INF/RecoveryInstructionHandler.xml,OSGI-INF/BackupInformationHelper.xml,OSGI-INF/RecoveryDynamicBackup.xml,OSGI-INF/RecoveryHelper.xml,OSGI-INF/OperatorChangeListener.xml
 Export-Package: de.uniol.inf.is.odysseus.peer.recovery
 Import-Package: de.uniol.inf.is.odysseus.core.server.logicaloperator,
  de.uniol.inf.is.odysseus.core.server.planmanagement.executor,

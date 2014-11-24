@@ -8,13 +8,10 @@ import net.jxta.peer.PeerID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
 
-import de.uniol.inf.is.odysseus.p2p_new.IMessage;
 import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicator;
-import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicatorListener;
 import de.uniol.inf.is.odysseus.p2p_new.RepeatingMessageSend;
 import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryBackupInformation;
 import de.uniol.inf.is.odysseus.peer.recovery.messages.BackupInformationAckMessage;
@@ -28,7 +25,7 @@ import de.uniol.inf.is.odysseus.peer.recovery.messages.BackupInformationMessage;
  * @author Michael Brand
  *
  */
-public class BackupInformationSender implements IPeerCommunicatorListener {
+public class BackupInformationSender {
 
 	/**
 	 * The logger instance for this class.
@@ -44,13 +41,12 @@ public class BackupInformationSender implements IPeerCommunicatorListener {
 	/**
 	 * The single instance of this class.
 	 */
-	private static BackupInformationSender cInstance;
+	private static BackupInformationSender cInstance = new BackupInformationSender();
 
 	/**
 	 * The single instance of this class.
 	 * 
-	 * @return The active {@link BackupInformationSender} or null, if no
-	 *         {@link IPeerCommunicator} is bound.
+	 * @return The active {@link BackupInformationSender}.
 	 */
 	public static BackupInformationSender getInstance() {
 		return cInstance;
@@ -76,84 +72,6 @@ public class BackupInformationSender implements IPeerCommunicatorListener {
 	private final Map<UUID, Boolean> cResultMap = Maps.newConcurrentMap();
 
 	/**
-	 * The peer communicator, if there is one bound.
-	 */
-	private Optional<IPeerCommunicator> cPeerCommunicator = Optional.absent();
-
-	/**
-	 * Registers messages and listeners at the peer communicator.
-	 */
-	private void registerMessagesAndAddListeners() {
-		Preconditions.checkArgument(cPeerCommunicator.isPresent());
-
-		cPeerCommunicator.get().registerMessageType(
-				BackupInformationMessage.class);
-		cPeerCommunicator.get().addListener(this,
-				BackupInformationMessage.class);
-
-		cPeerCommunicator.get().registerMessageType(
-				BackupInformationAckMessage.class);
-		cPeerCommunicator.get().addListener(this,
-				BackupInformationAckMessage.class);
-		
-	}
-
-	/**
-	 * Unregisters messages and listeners at the peer communicator.
-	 */
-	private void unregisterMessagesAndAddListeners() {
-		Preconditions.checkArgument(cPeerCommunicator.isPresent());
-
-		cPeerCommunicator.get().unregisterMessageType(
-				BackupInformationMessage.class);
-		cPeerCommunicator.get().removeListener(this,
-				BackupInformationMessage.class);
-
-		cPeerCommunicator.get().unregisterMessageType(
-				BackupInformationAckMessage.class);
-		cPeerCommunicator.get().removeListener(this,
-				BackupInformationAckMessage.class);
-		
-	}
-
-	/**
-	 * Binds a peer communicator. <br />
-	 * Called by OSGi-DS.
-	 * 
-	 * @param serv
-	 *            The peer communicator to bind. <br />
-	 *            Must be not null.
-	 */
-	public void bindPeerCommunicator(IPeerCommunicator serv) {
-		Preconditions.checkNotNull(serv);
-		cPeerCommunicator = Optional.of(serv);
-		this.registerMessagesAndAddListeners();
-		LOG.debug("Bound {} as a peer communicator.", serv.getClass()
-				.getSimpleName());
-		cInstance = this;
-	}
-
-	/**
-	 * Unbinds a peer communicator, if it's the bound one. <br />
-	 * Called by OSGi-DS.
-	 * 
-	 * @param serv
-	 *            The peer communicator to unbind. <br />
-	 *            Must be not null.
-	 */
-	public void unbindPeerCommunicator(IPeerCommunicator serv) {
-		Preconditions.checkNotNull(serv);
-
-		if (cPeerCommunicator.isPresent() && cPeerCommunicator.get() == serv) {
-			this.unregisterMessagesAndAddListeners();
-			cPeerCommunicator = Optional.absent();
-			LOG.debug("Unbound {} as a peer communicator.", serv.getClass()
-					.getSimpleName());
-			cInstance = null;
-		}
-	}
-
-	/**
 	 * Sends given backup information as a new information to a given peer by
 	 * using a repeating message send process.
 	 * 
@@ -163,13 +81,16 @@ public class BackupInformationSender implements IPeerCommunicatorListener {
 	 * @param info
 	 *            The given backup information. <br />
 	 *            Must be not null.
+	 * @param communicator
+	 *            An active peer communicator. <br />
+	 *            Must be not null.
 	 * @return True, if an acknowledge returned from the given peer; false,
 	 *         else.
 	 */
 	public boolean sendNewBackupInfo(PeerID destination,
-			IRecoveryBackupInformation info) {
+			IRecoveryBackupInformation info, IPeerCommunicator communicator) {
 		return sendBackupInfo(destination, info,
-				BackupInformationMessage.NEW_INFO);
+				BackupInformationMessage.NEW_INFO, communicator);
 	}
 
 	/**
@@ -182,13 +103,16 @@ public class BackupInformationSender implements IPeerCommunicatorListener {
 	 * @param info
 	 *            The given backup information. <br />
 	 *            Must be not null.
+	 * @param communicator
+	 *            An active peer communicator. <br />
+	 *            Must be not null.
 	 * @return True, if an acknowledge returned from the given peer; false,
 	 *         else.
 	 */
 	public boolean sendBackupInfoUpdate(PeerID destination,
-			IRecoveryBackupInformation info) {
+			IRecoveryBackupInformation info, IPeerCommunicator communicator) {
 		return sendBackupInfo(destination, info,
-				BackupInformationMessage.UPDATE_INFO);
+				BackupInformationMessage.UPDATE_INFO, communicator);
 	}
 
 	/**
@@ -204,22 +128,23 @@ public class BackupInformationSender implements IPeerCommunicatorListener {
 	 * @param messageType
 	 *            {@link BackupInformationMessage#NEW_INFO} or
 	 *            {@link BackupInformationMessage#UPDATE_INFO}.
+	 * @param communicator
+	 *            An active peer communicator. <br />
+	 *            Must be not null.
 	 * @return True, if an acknowledge returned from the given peer; false,
 	 *         else.
 	 */
 	private boolean sendBackupInfo(PeerID destination,
-			IRecoveryBackupInformation info, int messageType) {
+			IRecoveryBackupInformation info, int messageType,
+			IPeerCommunicator communicator) {
 		Preconditions.checkNotNull(destination);
 		Preconditions.checkNotNull(info);
-		if (!cPeerCommunicator.isPresent()) {
-			LOG.error("No peer communicator bound!");
-			return false;
-		}
+		Preconditions.checkNotNull(communicator);
 
 		BackupInformationMessage message = new BackupInformationMessage(info,
 				messageType);
-		RepeatingMessageSend msgSender = new RepeatingMessageSend(
-				cPeerCommunicator.get(), message, destination);
+		RepeatingMessageSend msgSender = new RepeatingMessageSend(communicator,
+				message, destination);
 
 		synchronized (cSenderMap) {
 			cSenderMap.put(info.getUUID(), msgSender);
@@ -294,27 +219,28 @@ public class BackupInformationSender implements IPeerCommunicatorListener {
 		}
 	}
 
-	@Override
-	public void receivedMessage(IPeerCommunicator communicator,
-			PeerID senderPeer, IMessage message) {
-		if (message instanceof BackupInformationAckMessage) {
-			BackupInformationAckMessage ackMessage = (BackupInformationAckMessage) message;
-			
-			synchronized (cSenderMap) {
-				RepeatingMessageSend sender = cSenderMap.get(ackMessage
-						.getUUID());
+	/**
+	 * Handling of a received acknowledge message.
+	 * 
+	 * @param message
+	 *            The received message. <br />
+	 *            Must be not null.
+	 */
+	public void receivedAckMessage(BackupInformationAckMessage message) {
+		Preconditions.checkNotNull(message);
 
-				if (sender != null) {
-					sender.stopRunning();
-					cSenderMap.remove(ackMessage.getUUID());
-				}
+		synchronized (cSenderMap) {
+			RepeatingMessageSend sender = cSenderMap.get(message.getUUID());
+
+			if (sender != null) {
+				sender.stopRunning();
+				cSenderMap.remove(message.getUUID());
 			}
-
-			synchronized (cResultMap) {
-				cResultMap.put(ackMessage.getUUID(), true);
-			}
-
 		}
-		
+
+		synchronized (cResultMap) {
+			cResultMap.put(message.getUUID(), true);
+		}
+
 	}
 }
