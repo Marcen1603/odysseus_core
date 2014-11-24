@@ -74,8 +74,7 @@ public class ImagePictogram extends AbstractPictogram {
 	}
 
 	public void setFilename(String filename) {
-		this.filename = filename;
-		filename.replace('\\', '/');
+		this.filename = filename.replace('\\', '/');
 		setDirty();
 	}
 

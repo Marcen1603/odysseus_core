@@ -104,7 +104,7 @@ public class GraphicsLayer extends Observable implements Serializable, Observer 
 	}
 
 	public void setBackgroundImagePath(String backgroundImagePath) {
-		this.backgroundImagePath = backgroundImagePath;
+		this.backgroundImagePath = backgroundImagePath.replace('\\', '/');
 	}
 
 	/**
