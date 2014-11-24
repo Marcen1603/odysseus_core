@@ -219,6 +219,12 @@ public class RecoveryStrategyUpstreamBackup implements IRecoveryStrategy {
 	}
 
 	@Override
+	public void recoverSingleQueryPart(PeerID failedPeer, UUID recoveryStateIdentifier, ILogicalQueryPart queryPart){
+		
+	}
+	
+	
+	@Override
 	public void recover(PeerID failedPeer, UUID recoveryStateIdentifier) {
 
 		// Preconditions
@@ -260,9 +266,6 @@ public class RecoveryStrategyUpstreamBackup implements IRecoveryStrategy {
 			// 4. Search for another peer who can take the parts from the failed
 			// peer
 
-			// TODO find a good place to reallocate if the peer doesn't accept
-			// the query or is unable to install it
-
 			Map<ILogicalQueryPart, PeerID> allocationMap = null;
 
 			if (!cRecoveryAllocator.isPresent()) {
@@ -279,12 +282,12 @@ public class RecoveryStrategyUpstreamBackup implements IRecoveryStrategy {
 							ILogicalQueryPart queryPart = iterator.next();
 							sendRecoveryMessages(sharedQueryId, failedPeer, allocationMap.get(queryPart), queryPart, recoveryStateIdentifier);
 						}
+						// TODO add all queryParts to RecoveryProcessState
 					} else {
 						LOG.debug("Unable to find Peer ID for recovery allocation.");
 					}
 
 				} catch (QueryPartAllocationException e) {
-					// TODO reallocation
 					LOG.error("Peer ID search for recovery allocation failed.");
 				}
 			}

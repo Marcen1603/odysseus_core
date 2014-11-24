@@ -3,6 +3,7 @@ package de.uniol.inf.is.odysseus.peer.recovery;
 import java.util.UUID;
 
 import net.jxta.peer.PeerID;
+import de.uniol.inf.is.odysseus.peer.distribute.ILogicalQueryPart;
 import de.uniol.inf.is.odysseus.peer.distribute.util.INamedInterface;
 
 /**
@@ -20,4 +21,7 @@ public interface IRecoveryStrategyManager extends INamedInterface {
 	 * @param recoveryStateIdentifier - identifies the state of the recovery
 	 */
 	public void startRecovery(PeerID failedPeer, UUID recoveryStateIdentifier);
+
+	void restartRecovery(PeerID failedPeer, UUID recoveryStateIdentifier,
+			ILogicalQueryPart queryPart);
 }

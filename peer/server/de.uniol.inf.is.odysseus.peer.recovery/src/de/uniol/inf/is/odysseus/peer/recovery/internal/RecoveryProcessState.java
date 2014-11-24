@@ -14,7 +14,7 @@ public class RecoveryProcessState {
 	
 	private UUID identifier;
 	private PeerID failedPeerID;
-	private Map<ID ,List<ILogicalQueryPart>> sharedQueryParts;
+	private List<ILogicalQueryPart> notProcessedQueryParts;
 	private Map<ID ,Map<ILogicalQueryPart, List<PeerID>>> inadequatePeersForQueryParts;
 	
 	public RecoveryProcessState(PeerID failedPeerID){
@@ -50,11 +50,18 @@ public class RecoveryProcessState {
 		
 		inadequatePeersForQueryParts.get(sharedQueryID).get(queryPart).add(failedPeerID);
 	}
-	
-	public Map<ID, List<ILogicalQueryPart>> getSharedQueryParts(){
-		return sharedQueryParts;
+
+	public void queryPartIsProcessed(ILogicalQueryPart queryPart){
+		notProcessedQueryParts.remove(queryPart);
 	}
 	
-	// TODO add other methods for sharedQueryParts
+	public List<ILogicalQueryPart> getCurrentlyNotProcessedQueryParts() {
+		return notProcessedQueryParts;
+	}
+
+	public void initNotProcessedQueryParts(List<ILogicalQueryPart> notProcessedQueryParts) {
+		this.notProcessedQueryParts = notProcessedQueryParts;
+	}
+	
 }
 

@@ -18,6 +18,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableCollection;
 
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
+import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvider;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
@@ -29,7 +30,10 @@ import de.uniol.inf.is.odysseus.p2p_new.PeerCommunicationException;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.IPeerDictionary;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.IPeerDictionaryListener;
 import de.uniol.inf.is.odysseus.parser.pql.generator.IPQLGenerator;
+import de.uniol.inf.is.odysseus.peer.distribute.ILogicalQueryPart;
+import de.uniol.inf.is.odysseus.peer.distribute.LogicalQueryPart;
 import de.uniol.inf.is.odysseus.peer.distribute.message.RemoveQueryMessage;
+import de.uniol.inf.is.odysseus.peer.distribute.util.LogicalQueryHelper;
 import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryBackupInformation;
 import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryCommunicator;
 import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryStrategyManager;
@@ -45,6 +49,7 @@ import de.uniol.inf.is.odysseus.peer.recovery.protocol.RecoveryAgreementHandler;
 import de.uniol.inf.is.odysseus.peer.recovery.protocol.RecoveryInstructionHandler;
 import de.uniol.inf.is.odysseus.peer.recovery.util.BuddyHelper;
 import de.uniol.inf.is.odysseus.peer.recovery.util.LocalBackupInformationAccess;
+import de.uniol.inf.is.odysseus.peer.recovery.util.RecoveryHelper;
 
 /**
  * A recovery communicator handles the communication between peers for recovery
@@ -478,7 +483,6 @@ public class RecoveryCommunicator implements IRecoveryCommunicator,
 		sendMessage(peerToHoldOn, holdOnMessage);
 	}
 
-	// TODO Better way: allocate each single query part new. M.B.
 	@Override
 	public void installQueriesOnNewPeer(PeerID failedPeer, PeerID newPeer,
 			ID sharedQueryId, String pql, UUID recoveryStateIdentifier) {
@@ -489,10 +493,8 @@ public class RecoveryCommunicator implements IRecoveryCommunicator,
 		Preconditions.checkNotNull(pql);
 
 		if (!cPeerCommunicator.isPresent()) {
-
 			LOG.error("No peer communicator bound!");
 			return;
-
 		}
 
 		// Send the add query message
@@ -528,27 +530,15 @@ public class RecoveryCommunicator implements IRecoveryCommunicator,
 		} else if (message instanceof RecoveryInstructionAckMessage) {
 			// handle ack message for instruction
 			RecoveryInstructionAckMessage instructionAckMessage = (RecoveryInstructionAckMessage) message;
-
 			if (instructionAckMessage.getMessageType() == RecoveryInstructionAckMessage.ADD_QUERY_ACK) {
-				// Give this peer the backup-info from the peer which he
-				// recovers
-
-				// TODO get code from above
+				handleAddQueryAck(senderPeer, instructionAckMessage);
 			}
-
 		} else if (message instanceof RecoveryInstructionFailMessage) {
 			// handle fail message for instruction
 			RecoveryInstructionFailMessage instructionFailMessage = (RecoveryInstructionFailMessage) message;
-
-			if (instructionFailMessage.getMessageType() == RecoveryInstructionAckMessage.ADD_QUERY_ACK) {
-				// senderPeer is peer that couldn't recover, we need to
-				// reallocate another peer
-				// TODO send processId in every message and get it here
-				// cRecoveryStrategyManager.get().startRecovery(failedPeer,
-				// processId);
-
+			if (instructionFailMessage.getMessageType() == RecoveryInstructionFailMessage.ADD_QUERY_FAIL) {
+				handleAddQueryFail(senderPeer, instructionFailMessage);
 			}
-
 		} else if (message instanceof BackupInformationMessage) {
 			// Store the backup information
 			BackupInformationMessage backupInfoMessage = (BackupInformationMessage) message;
@@ -566,6 +556,77 @@ public class RecoveryCommunicator implements IRecoveryCommunicator,
 			RecoveryAgreementMessage agreementMessage = (RecoveryAgreementMessage) message;
 			RecoveryAgreementHandler.handleAgreementMessage(senderPeer,
 					agreementMessage);
+		}
+	}
+
+	private void handleAddQueryFail(PeerID senderPeer,
+			RecoveryInstructionFailMessage instructionFailMessage) {
+		if (instructionFailMessage.getRecoveryProcessStateId() != null) {
+			RecoveryProcessState state = getRecoveryProcessState(instructionFailMessage
+					.getRecoveryProcessStateId());
+			if (state != null) {
+				// senderPeer is peer that couldn't recover, we need to
+				// reallocate another peer
+
+				List<ILogicalQuery> logicalQueries = RecoveryHelper
+						.convertToLogicalQueries(instructionFailMessage
+								.getPqlQueryPart());
+				// allocate the query
+				if (!logicalQueries.isEmpty()) {
+					ILogicalQueryPart queryPart = new LogicalQueryPart(
+							LogicalQueryHelper.getAllOperators(logicalQueries
+									.get(0)));
+
+					state.addInadequatePeer(senderPeer,
+							instructionFailMessage.getSharedQueryId(),
+							queryPart);
+					cRecoveryStrategyManager.get().restartRecovery(
+							state.getFailedPeerId(), state.getIdentifier(),
+							queryPart);
+				}
+			} else {
+				LOG.error("Could not found RecoveryProcessState with ID: {}",
+						instructionFailMessage.getRecoveryProcessStateId());
+			}
+		} else {
+			LOG.error("ADD-Query-Fail has no RecoveryProcessStateId");
+		}
+	}
+
+	private void handleAddQueryAck(PeerID senderPeer,
+			RecoveryInstructionAckMessage instructionAckMessage) {
+		if (instructionAckMessage.getRecoveryProcessStateId() != null) {
+			RecoveryProcessState state = getRecoveryProcessState(instructionAckMessage
+					.getRecoveryProcessStateId());
+			if (state != null) {
+				// Give this peer the backup-info from the peer which he
+				// recovers
+				List<ILogicalQuery> logicalQueries = RecoveryHelper
+						.convertToLogicalQueries(instructionAckMessage
+								.getPqlQueryPart());
+				if (!logicalQueries.isEmpty()) {
+					ILogicalQueryPart queryPart = new LogicalQueryPart(
+							LogicalQueryHelper.getAllOperators(logicalQueries
+									.get(0)));
+					state.queryPartIsProcessed(queryPart);
+				}
+
+				List<IRecoveryBackupInformation> infos = BuddyHelper
+						.findBackupInfoForBuddy(state.getFailedPeerId());
+				for (IRecoveryBackupInformation info : infos) {
+					// Now this is located on the new peer, the failed
+					// peer does not exist anymore
+					info.setLocationPeer(senderPeer);
+					BackupInformationMessage backupMessage = new BackupInformationMessage(
+							info, BackupInformationMessage.NEW_INFO);
+					sendMessage(senderPeer, backupMessage);
+				}
+			} else {
+				LOG.error("Could not found RecoveryProcessState with ID: {}",
+						instructionAckMessage.getRecoveryProcessStateId());
+			}
+		} else {
+			LOG.error("ADD-Query-ACK has no RecoveryProcessStateId");
 		}
 	}
 
@@ -629,6 +690,20 @@ public class RecoveryCommunicator implements IRecoveryCommunicator,
 		RecoveryInstructionMessage message = RecoveryInstructionMessage
 				.createGoOnMessage(pipeId);
 		sendMessage(receiverPeer, message);
+	}
+
+	@Override
+	public void sendAddQueryFail(PeerID senderPeer,
+			RecoveryInstructionMessage instructionMessage) {
+		// TODO create FAIL Message
+
+	}
+
+	@Override
+	public void sendAddQueryAck(PeerID senderPeer,
+			RecoveryInstructionMessage instructionMessage) {
+		// TODO create ACK Message
+
 	}
 
 	@Override

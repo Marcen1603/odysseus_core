@@ -13,7 +13,7 @@ import de.uniol.inf.is.odysseus.peer.recovery.messages.RecoveryInstructionMessag
  * mechanisms.
  * 
  * @author Tobias Brandt & Michael Brand & Simon Kuespert
- *
+ * 
  */
 public interface IRecoveryCommunicator {
 
@@ -80,7 +80,6 @@ public interface IRecoveryCommunicator {
 	 */
 	public boolean sendBackupInformation(PeerID destination,
 			IRecoveryBackupInformation info, boolean isNewInfo);
-
 	/**
 	 * Distributes the backup-information as updated information to every peer,
 	 * so that the peer who are affected can update their information
@@ -147,5 +146,11 @@ public interface IRecoveryCommunicator {
 	 * @return
 	 */
 	RecoveryProcessState getRecoveryProcessState(UUID identifier);
+
+	void sendAddQueryFail(PeerID senderPeer,
+			RecoveryInstructionMessage instructionMessage);
+
+	void sendAddQueryAck(PeerID senderPeer,
+			RecoveryInstructionMessage instructionMessage);
 
 }

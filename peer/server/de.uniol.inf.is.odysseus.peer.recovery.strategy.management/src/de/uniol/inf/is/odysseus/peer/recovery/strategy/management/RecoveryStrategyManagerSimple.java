@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 
+import de.uniol.inf.is.odysseus.peer.distribute.ILogicalQueryPart;
 import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryStrategy;
 import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryStrategyManager;
 
@@ -75,9 +76,18 @@ public class RecoveryStrategyManagerSimple implements IRecoveryStrategyManager {
 		} else {
 			LOG.error("No recovery strategy bound");
 		}
-		
 	}
 
+	@Override
+	public void restartRecovery(PeerID failedPeer, UUID recoveryStateIdentifier, ILogicalQueryPart queryPart) {
+		if(recoveryStrategies.size() > 0){
+			recoveryStrategies.iterator().next().recoverSingleQueryPart(failedPeer, recoveryStateIdentifier, queryPart);
+		} else {
+			LOG.error("No recovery strategy bound");
+		}
+	}
+	
+	
 	@Override
 	public String getName() {
 		return "simple";
