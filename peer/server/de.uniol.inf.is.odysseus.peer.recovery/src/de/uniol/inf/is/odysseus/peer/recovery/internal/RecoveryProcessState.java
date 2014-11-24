@@ -16,11 +16,14 @@ public class RecoveryProcessState {
 	private PeerID failedPeerID;
 	private List<ILogicalQueryPart> notProcessedQueryParts;
 	private Map<ID ,Map<ILogicalQueryPart, List<PeerID>>> inadequatePeersForQueryParts;
+	private Map<ID ,Map<ILogicalQueryPart, PeerID>> allocationMaps; 
 	
 	public RecoveryProcessState(PeerID failedPeerID){
 		this.failedPeerID = failedPeerID;
-		inadequatePeersForQueryParts = new HashMap<ID, Map< ILogicalQueryPart, List<PeerID>>>();
 		identifier = UUID.randomUUID();
+		notProcessedQueryParts = new ArrayList<ILogicalQueryPart>();
+		inadequatePeersForQueryParts = new HashMap<ID, Map< ILogicalQueryPart, List<PeerID>>>();
+		allocationMaps = new HashMap<ID ,Map<ILogicalQueryPart, PeerID>>();
 	}
 	
 	public UUID getIdentifier(){
@@ -51,6 +54,10 @@ public class RecoveryProcessState {
 		inadequatePeersForQueryParts.get(sharedQueryID).get(queryPart).add(failedPeerID);
 	}
 
+	public void addNotProcessedQueryPart(ILogicalQueryPart queryPart){
+		notProcessedQueryParts.add(queryPart);
+	}
+	
 	public void queryPartIsProcessed(ILogicalQueryPart queryPart){
 		notProcessedQueryParts.remove(queryPart);
 	}
@@ -59,8 +66,36 @@ public class RecoveryProcessState {
 		return notProcessedQueryParts;
 	}
 
-	public void initNotProcessedQueryParts(List<ILogicalQueryPart> notProcessedQueryParts) {
-		this.notProcessedQueryParts = notProcessedQueryParts;
+	public Map<ILogicalQueryPart, PeerID> getAllocationMap(ID sharedQueryId) {
+		if (allocationMaps.isEmpty()){
+			return null;
+		}
+		if (allocationMaps.containsKey(sharedQueryId)){
+			return allocationMaps.get(sharedQueryId);			
+		}
+		return null;
+	}
+
+	public void setAllocationMap(ID sharedQueryId, Map<ILogicalQueryPart, PeerID> allocationMap) {
+		this.allocationMaps.put(sharedQueryId, allocationMap);
+	}
+	
+	public ID getSharedQueryIdForQueryPart(ILogicalQueryPart queryPart){
+		if (queryPart == null){
+			return null;
+		}
+		for (ID sharedQueryId : allocationMaps.keySet()) {
+			for (ILogicalQueryPart queryPartFromAllocation : allocationMaps.get(sharedQueryId).keySet()) {
+				if (queryPartFromAllocation.equals(queryPart)){
+					return sharedQueryId;
+				}
+			}
+		}
+		return null;
+	}
+
+	public boolean allQueryPartsRecovered() {
+		return notProcessedQueryParts.isEmpty();
 	}
 	
 }

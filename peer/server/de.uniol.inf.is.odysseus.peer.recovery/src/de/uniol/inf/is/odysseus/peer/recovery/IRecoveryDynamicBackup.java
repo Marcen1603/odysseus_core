@@ -9,6 +9,7 @@ import net.jxta.peer.PeerID;
 import de.uniol.inf.is.odysseus.p2p_new.physicaloperator.JxtaSenderPO;
 import de.uniol.inf.is.odysseus.peer.distribute.ILogicalQueryPart;
 import de.uniol.inf.is.odysseus.peer.distribute.QueryPartAllocationException;
+import de.uniol.inf.is.odysseus.peer.recovery.internal.RecoveryProcessState;
 
 /**
  * This interface describes the actions that are taken, when a new peer needs to
@@ -88,4 +89,13 @@ public interface IRecoveryDynamicBackup {
 	 */
 
 	public Map<ILogicalQueryPart, PeerID> allocateToNewPeer(PeerID failedPeer, ID sharedQueryId, IRecoveryAllocator recoveryAllocator) throws QueryPartAllocationException;
+
+
+	public Map<ILogicalQueryPart, PeerID> reallocateToNewPeer(
+			Map<ILogicalQueryPart, PeerID> allocationMap,
+			List<PeerID> inadequatePeers,
+			IRecoveryAllocator recoveryAllocator) throws QueryPartAllocationException;
+
+
+	RecoveryProcessState getRecoveryProcessState(UUID recoveryProcessStateId);
 }

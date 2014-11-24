@@ -18,7 +18,6 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableCollection;
 
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
-import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvider;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
@@ -30,10 +29,7 @@ import de.uniol.inf.is.odysseus.p2p_new.PeerCommunicationException;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.IPeerDictionary;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.IPeerDictionaryListener;
 import de.uniol.inf.is.odysseus.parser.pql.generator.IPQLGenerator;
-import de.uniol.inf.is.odysseus.peer.distribute.ILogicalQueryPart;
-import de.uniol.inf.is.odysseus.peer.distribute.LogicalQueryPart;
 import de.uniol.inf.is.odysseus.peer.distribute.message.RemoveQueryMessage;
-import de.uniol.inf.is.odysseus.peer.distribute.util.LogicalQueryHelper;
 import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryBackupInformation;
 import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryCommunicator;
 import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryStrategyManager;
@@ -46,11 +42,11 @@ import de.uniol.inf.is.odysseus.peer.recovery.messages.RecoveryAgreementMessage;
 import de.uniol.inf.is.odysseus.peer.recovery.messages.RecoveryInstructionAckMessage;
 import de.uniol.inf.is.odysseus.peer.recovery.messages.RecoveryInstructionFailMessage;
 import de.uniol.inf.is.odysseus.peer.recovery.messages.RecoveryInstructionMessage;
+import de.uniol.inf.is.odysseus.peer.recovery.protocol.AddQueryResponseHandler;
 import de.uniol.inf.is.odysseus.peer.recovery.protocol.RecoveryAgreementHandler;
 import de.uniol.inf.is.odysseus.peer.recovery.protocol.RecoveryInstructionHandler;
 import de.uniol.inf.is.odysseus.peer.recovery.util.BuddyHelper;
 import de.uniol.inf.is.odysseus.peer.recovery.util.LocalBackupInformationAccess;
-import de.uniol.inf.is.odysseus.peer.recovery.util.RecoveryHelper;
 
 /**
  * A recovery communicator handles the communication between peers for recovery
@@ -239,11 +235,11 @@ public class RecoveryCommunicator implements IRecoveryCommunicator,
 				RecoveryAgreementFailMessage.class);
 		cPeerCommunicator.get().addListener(this,
 				RecoveryAgreementFailMessage.class);
-		
+
 		cPeerCommunicator.get().registerMessageType(
 				AddQueryResponseMessage.class);
-		cPeerCommunicator.get().addListener(this,
-				AddQueryResponseMessage.class);
+		cPeerCommunicator.get()
+				.addListener(this, AddQueryResponseMessage.class);
 
 		cPeerCommunicator.get().registerMessageType(RemoveQueryMessage.class);
 		cPeerCommunicator.get().addListener(this, RemoveQueryMessage.class);
@@ -293,7 +289,7 @@ public class RecoveryCommunicator implements IRecoveryCommunicator,
 				RecoveryAgreementFailMessage.class);
 		cPeerCommunicator.get().unregisterMessageType(
 				RecoveryAgreementFailMessage.class);
-		
+
 		cPeerCommunicator.get().removeListener(this,
 				AddQueryResponseMessage.class);
 		cPeerCommunicator.get().unregisterMessageType(
@@ -541,11 +537,13 @@ public class RecoveryCommunicator implements IRecoveryCommunicator,
 		} else if (message instanceof RecoveryInstructionAckMessage) {
 			// handle ack message for instruction
 			RecoveryInstructionAckMessage instructionAckMessage = (RecoveryInstructionAckMessage) message;
-			RecoveryInstructionHandler.handleAckInstruction(senderPeer, instructionAckMessage);
+			RecoveryInstructionHandler.handleAckInstruction(senderPeer,
+					instructionAckMessage);
 		} else if (message instanceof RecoveryInstructionFailMessage) {
 			// handle fail message for instruction
 			RecoveryInstructionFailMessage instructionFailMessage = (RecoveryInstructionFailMessage) message;
-			RecoveryInstructionHandler.handleFailedInstruction(senderPeer, instructionFailMessage);
+			RecoveryInstructionHandler.handleFailedInstruction(senderPeer,
+					instructionFailMessage);
 		} else if (message instanceof BackupInformationMessage) {
 			// Store the backup information
 			BackupInformationMessage backupInfoMessage = (BackupInformationMessage) message;
@@ -563,84 +561,11 @@ public class RecoveryCommunicator implements IRecoveryCommunicator,
 			RecoveryAgreementMessage agreementMessage = (RecoveryAgreementMessage) message;
 			RecoveryAgreementHandler.handleAgreementMessage(senderPeer,
 					agreementMessage);
-		} else if (message instanceof AddQueryResponseMessage){
+		} else if (message instanceof AddQueryResponseMessage) {
 			AddQueryResponseMessage responseMessage = (AddQueryResponseMessage) message;
-			if (responseMessage.getMessageType() == AddQueryResponseMessage.ACK){
-				handleAddQueryAck(senderPeer, responseMessage);
-			} else if (responseMessage.getMessageType() == AddQueryResponseMessage.FAIL){
-				handleAddQueryFail(senderPeer, responseMessage);
-			}
-		}
-	}
-
-	private void handleAddQueryFail(PeerID senderPeer,
-			AddQueryResponseMessage addQueryFailResponse) {
-		if (addQueryFailResponse.getRecoveryProcessStateId() != null) {
-			RecoveryProcessState state = getRecoveryProcessState(addQueryFailResponse
-					.getRecoveryProcessStateId());
-			if (state != null) {
-				// senderPeer is peer that couldn't recover, we need to
-				// reallocate another peer
-
-				List<ILogicalQuery> logicalQueries = RecoveryHelper
-						.convertToLogicalQueries(addQueryFailResponse
-								.getPqlQueryPart());
-				// allocate the query
-				if (!logicalQueries.isEmpty()) {
-					ILogicalQueryPart queryPart = new LogicalQueryPart(
-							LogicalQueryHelper.getAllOperators(logicalQueries
-									.get(0)));
-
-					state.addInadequatePeer(senderPeer,
-							addQueryFailResponse.getSharedQueryId(),
-							queryPart);
-					cRecoveryStrategyManager.get().restartRecovery(
-							state.getFailedPeerId(), state.getIdentifier(),
-							queryPart);
-				}
-			} else {
-				LOG.error("Could not found RecoveryProcessState with ID: {}",
-						addQueryFailResponse.getRecoveryProcessStateId());
-			}
-		} else {
-			LOG.error("ADD-Query-Fail has no RecoveryProcessStateId");
-		}
-	}
-
-	private void handleAddQueryAck(PeerID senderPeer,
-			AddQueryResponseMessage addQueryAckResponse) {
-		if (addQueryAckResponse.getRecoveryProcessStateId() != null) {
-			RecoveryProcessState state = getRecoveryProcessState(addQueryAckResponse
-					.getRecoveryProcessStateId());
-			if (state != null) {
-				// Give this peer the backup-info from the peer which he
-				// recovers
-				List<ILogicalQuery> logicalQueries = RecoveryHelper
-						.convertToLogicalQueries(addQueryAckResponse
-								.getPqlQueryPart());
-				if (!logicalQueries.isEmpty()) {
-					ILogicalQueryPart queryPart = new LogicalQueryPart(
-							LogicalQueryHelper.getAllOperators(logicalQueries
-									.get(0)));
-					state.queryPartIsProcessed(queryPart);
-				}
-
-				List<IRecoveryBackupInformation> infos = BuddyHelper
-						.findBackupInfoForBuddy(state.getFailedPeerId());
-				for (IRecoveryBackupInformation info : infos) {
-					// Now this is located on the new peer, the failed
-					// peer does not exist anymore
-					info.setLocationPeer(senderPeer);
-					BackupInformationMessage backupMessage = new BackupInformationMessage(
-							info, BackupInformationMessage.NEW_INFO);
-					sendMessage(senderPeer, backupMessage);
-				}
-			} else {
-				LOG.error("Could not found RecoveryProcessState with ID: {}",
-						addQueryAckResponse.getRecoveryProcessStateId());
-			}
-		} else {
-			LOG.error("ADD-Query-ACK has no RecoveryProcessStateId");
+			AddQueryResponseHandler.getInstance().handleAddQueryResponse(senderPeer, responseMessage, this,
+					cRecoveryStrategyManager.get());
+			
 		}
 	}
 
@@ -709,15 +634,18 @@ public class RecoveryCommunicator implements IRecoveryCommunicator,
 	@Override
 	public void sendAddQueryFail(PeerID senderPeer,
 			RecoveryInstructionMessage instructionMessage) {
-		// TODO create FAIL Message
+		AddQueryResponseMessage failResponse = AddQueryResponseMessage
+				.createAddQueryFailMessage(instructionMessage);
+		sendMessage(senderPeer, failResponse);
 
 	}
 
 	@Override
 	public void sendAddQueryAck(PeerID senderPeer,
 			RecoveryInstructionMessage instructionMessage) {
-		// TODO create ACK Message
-
+		AddQueryResponseMessage ackResponse = AddQueryResponseMessage
+				.createAddQueryAckMessage(instructionMessage);
+		sendMessage(senderPeer, ackResponse);
 	}
 
 	@Override
@@ -781,7 +709,7 @@ public class RecoveryCommunicator implements IRecoveryCommunicator,
 	 * @param message
 	 *            The message which you want to send
 	 */
-	private void sendMessage(PeerID receiverPeer, IMessage message) {
+	public void sendMessage(PeerID receiverPeer, IMessage message) {
 
 		// Preconditions
 		if (!cPeerCommunicator.isPresent()) {
@@ -836,6 +764,13 @@ public class RecoveryCommunicator implements IRecoveryCommunicator,
 			return null;
 		}
 		return recoveryProcessStates.get(identifier);
+	}
+
+	@Override
+	public void removeRecoveryProcessState(UUID identifier) {
+		if (recoveryProcessStates.containsKey(identifier)) {
+			recoveryProcessStates.remove(identifier);
+		}
 	}
 
 }

@@ -153,4 +153,6 @@ public interface IRecoveryCommunicator {
 	void sendAddQueryAck(PeerID senderPeer,
 			RecoveryInstructionMessage instructionMessage);
 
+	void removeRecoveryProcessState(UUID identifier);
+
 }

@@ -40,6 +40,7 @@ import de.uniol.inf.is.odysseus.peer.distribute.util.LogicalQueryHelper;
 import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryAllocator;
 import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryCommunicator;
 import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryDynamicBackup;
+import de.uniol.inf.is.odysseus.peer.recovery.internal.RecoveryProcessState;
 import de.uniol.inf.is.odysseus.peer.recovery.internal.SharedQuery;
 import de.uniol.inf.is.odysseus.peer.recovery.messages.RecoveryInstructionMessage;
 import de.uniol.inf.is.odysseus.peer.recovery.protocol.RecoveryAgreementHandler;
@@ -429,7 +430,13 @@ public class RecoveryDynamicBackup implements IRecoveryDynamicBackup {
 		}
 		return null;
 	}
-
+	
+	@Override
+	public RecoveryProcessState getRecoveryProcessState(UUID recoveryProcessStateId){
+		return cRecoveryCommunicator.get().getRecoveryProcessState(recoveryProcessStateId);
+	}
+	
+	
 	@Override
 	public Map<ILogicalQueryPart, PeerID> allocateToNewPeer(PeerID failedPeer, ID sharedQueryId, IRecoveryAllocator recoveryAllocator) throws QueryPartAllocationException {
 
@@ -464,6 +471,14 @@ public class RecoveryDynamicBackup implements IRecoveryDynamicBackup {
 			}
 		}	
 		return null;
+	}
+
+	@Override
+	public Map<ILogicalQueryPart, PeerID> reallocateToNewPeer(
+			Map<ILogicalQueryPart, PeerID> previousAllocationMap,
+			List<PeerID> inadequatePeers,
+			IRecoveryAllocator recoveryAllocator) throws QueryPartAllocationException {
+		return recoveryAllocator.reallocate(previousAllocationMap, inadequatePeers, cPeerDictionary.get().getRemotePeerIDs(), cP2PNetworkManager.get().getLocalPeerID());
 	}
 
 }

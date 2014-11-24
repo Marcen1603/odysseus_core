@@ -27,18 +27,36 @@ public class AddQueryResponseMessage implements IMessage {
 	}
 
 	public static AddQueryResponseMessage createAddQueryAckMessage(
-			ID sharedQueryId, UUID recoveryProcessStateId) {
+			RecoveryInstructionMessage instruction) {
+		return createAddQueryAckMessage(instruction.getSharedQueryId(),
+				instruction.getRecoveryProcessStateId(),
+				instruction.getPqlQuery());
+	}
+
+	public static AddQueryResponseMessage createAddQueryAckMessage(
+			ID sharedQueryId, UUID recoveryProcessStateId, String pqlQueryPart) {
 		AddQueryResponseMessage addQueryAckMessage = new AddQueryResponseMessage();
 		addQueryAckMessage.setMessageType(ACK);
 		addQueryAckMessage.setRecoveryProcessStateId(recoveryProcessStateId);
+		addQueryAckMessage.setPqlQueryPart(pqlQueryPart);
+		addQueryAckMessage.setSharedQueryId(sharedQueryId);
 		return addQueryAckMessage;
 	}
 
 	public static AddQueryResponseMessage createAddQueryFailMessage(
-			ID sharedQueryId, UUID recoveryProcessStateId) {
+			RecoveryInstructionMessage instruction) {
+		return createAddQueryFailMessage(instruction.getSharedQueryId(),
+				instruction.getRecoveryProcessStateId(),
+				instruction.getPqlQuery());
+	}
+
+	public static AddQueryResponseMessage createAddQueryFailMessage(
+			ID sharedQueryId, UUID recoveryProcessStateId, String pqlQueryPart) {
 		AddQueryResponseMessage addQueryAckMessage = new AddQueryResponseMessage();
 		addQueryAckMessage.setMessageType(FAIL);
 		addQueryAckMessage.setRecoveryProcessStateId(recoveryProcessStateId);
+		addQueryAckMessage.setPqlQueryPart(pqlQueryPart);
+		addQueryAckMessage.setSharedQueryId(sharedQueryId);
 		return addQueryAckMessage;
 	}
 
