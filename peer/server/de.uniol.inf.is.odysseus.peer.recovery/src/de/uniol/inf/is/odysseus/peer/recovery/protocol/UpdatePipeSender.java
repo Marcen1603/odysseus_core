@@ -19,7 +19,7 @@ import de.uniol.inf.is.odysseus.peer.recovery.messages.RecoveryUpdatePipeRespons
  * @author Michael Brand
  *
  */
-public class UpdatePipeSender extends AbstractRepeatingMessageSender {
+public class UpdatePipeSender extends AbstractRepeatingMessageSender<RecoveryUpdatePipeResponseMessage> {
 
 	/**
 	 * The single instance of this class.
@@ -133,15 +133,7 @@ public class UpdatePipeSender extends AbstractRepeatingMessageSender {
 
 	}
 	
-
-	
-	/**
-	 * Handling of a received response message.
-	 * 
-	 * @param message
-	 *            The received message. <br />
-	 *            Must be not null.
-	 */
+	@Override
 	public void receivedResponseMessage(RecoveryUpdatePipeResponseMessage message) {
 		Preconditions.checkNotNull(message);
 

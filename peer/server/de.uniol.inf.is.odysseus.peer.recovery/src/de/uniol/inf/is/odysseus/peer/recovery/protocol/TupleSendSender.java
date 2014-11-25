@@ -18,7 +18,7 @@ import de.uniol.inf.is.odysseus.peer.recovery.messages.RecoveryTupleSendResponse
  * @author Michael Brand
  *
  */
-public class TupleSendSender extends AbstractRepeatingMessageSender {
+public class TupleSendSender extends AbstractRepeatingMessageSender<RecoveryTupleSendResponseMessage> {
 
 	/**
 	 * The single instance of this class.
@@ -107,15 +107,7 @@ public class TupleSendSender extends AbstractRepeatingMessageSender {
 
 	}
 	
-
-	
-	/**
-	 * Handling of a received response message.
-	 * 
-	 * @param message
-	 *            The received message. <br />
-	 *            Must be not null.
-	 */
+	@Override
 	public void receivedResponseMessage(RecoveryTupleSendResponseMessage message) {
 		Preconditions.checkNotNull(message);
 

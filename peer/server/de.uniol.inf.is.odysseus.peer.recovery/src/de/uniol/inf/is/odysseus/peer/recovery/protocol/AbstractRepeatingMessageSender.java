@@ -23,7 +23,7 @@ import de.uniol.inf.is.odysseus.p2p_new.RepeatingMessageSend;
  * @author Michael Brand
  *
  */
-public abstract class AbstractRepeatingMessageSender {
+public abstract class AbstractRepeatingMessageSender<ResponseMessageType extends IMessage> {
 
 	/**
 	 * The logger instance for this class.
@@ -157,5 +157,14 @@ public abstract class AbstractRepeatingMessageSender {
 			return mSenderMap.get(id).isRunning();
 		}
 	}
+	
+	/**
+	 * Handling of a received response message.
+	 * 
+	 * @param message
+	 *            The received message. <br />
+	 *            Must be not null.
+	 */
+	public abstract void receivedResponseMessage(ResponseMessageType message);
 	
 }

@@ -20,7 +20,7 @@ import de.uniol.inf.is.odysseus.peer.recovery.messages.RecoveryBuddyResponseMess
  * @author Michael Brand
  *
  */
-public class BuddySender extends AbstractRepeatingMessageSender {
+public class BuddySender extends AbstractRepeatingMessageSender<RecoveryBuddyResponseMessage> {
 
 	/**
 	 * The single instance of this class.
@@ -71,13 +71,7 @@ public class BuddySender extends AbstractRepeatingMessageSender {
 	
 
 	
-	/**
-	 * Handling of a received response message.
-	 * 
-	 * @param message
-	 *            The received message. <br />
-	 *            Must be not null.
-	 */
+	@Override
 	public void receivedResponseMessage(RecoveryBuddyResponseMessage message) {
 		Preconditions.checkNotNull(message);
 
