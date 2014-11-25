@@ -118,7 +118,7 @@ public interface IRecoveryCommunicator {
 	 *            The id of the shared query for which the other peer will be
 	 *            the buddy (and thus will do the recovery if this peer fails)
 	 */
-	public void chooseBuddyForQuery(ID sharedQueryId);
+	public boolean chooseBuddyForQuery(ID sharedQueryId);
 
 	/**
 	 * Sends a message to the given peer that it has to go on sending the tuples

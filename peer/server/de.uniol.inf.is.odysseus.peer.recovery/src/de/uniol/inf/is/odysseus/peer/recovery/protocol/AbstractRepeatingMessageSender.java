@@ -14,7 +14,6 @@ import com.google.common.collect.Maps;
 import de.uniol.inf.is.odysseus.p2p_new.IMessage;
 import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicator;
 import de.uniol.inf.is.odysseus.p2p_new.RepeatingMessageSend;
-import de.uniol.inf.is.odysseus.peer.recovery.messages.RecoveryTupleSendResponseMessage;
 
 /**
  * Abstract entity to send messages. <br />
@@ -35,26 +34,26 @@ public abstract class AbstractRepeatingMessageSender {
 	/**
 	 * The result code for successes.
 	 */
-	private static final String OK_RESULT = "OK";
+	public static final String OK_RESULT = "OK";
 
 	/**
 	 * Data structure to keep all currently running repeating message send
 	 * processes in mind.
 	 */
-	private final Map<UUID, RepeatingMessageSend> mSenderMap = Maps
+	protected final Map<UUID, RepeatingMessageSend> mSenderMap = Maps
 			.newConcurrentMap();
 
 	/**
 	 * Data structure to keep the destinations of all currently running
 	 * repeating message send processes in mind.
 	 */
-	private final Map<UUID, PeerID> mDestinationMap = Maps.newConcurrentMap();
+	protected final Map<UUID, PeerID> mDestinationMap = Maps.newConcurrentMap();
 
 	/**
 	 * Data structure to keep already received results of all currently running
 	 * repeating message send processes in mind.
 	 */
-	private final Map<UUID, String> mResultMap = Maps.newConcurrentMap();
+	protected final Map<UUID, String> mResultMap = Maps.newConcurrentMap();
 
 	/**
 	 * Sends given message to a given peer by using a repeating message send
@@ -158,33 +157,5 @@ public abstract class AbstractRepeatingMessageSender {
 			return mSenderMap.get(id).isRunning();
 		}
 	}
-
-	/**
-	 * Handling of a received response message.
-	 * 
-	 * @param message
-	 *            The received message. <br />
-	 *            Must be not null.
-	 */
-	public void receivedResponseMessage(RecoveryTupleSendResponseMessage message) {
-		Preconditions.checkNotNull(message);
-
-		synchronized (mSenderMap) {
-			RepeatingMessageSend sender = mSenderMap.get(message.getUUID());
-
-			if (sender != null) {
-				sender.stopRunning();
-				mSenderMap.remove(message.getUUID());
-			}
-		}
-
-		String result = OK_RESULT;
-		if (!message.isPositive()) {
-			result = message.getErrorMessage().get();
-		}
-		synchronized (mResultMap) {
-			mResultMap.put(message.getUUID(), result);
-		}
-
-	}
+	
 }

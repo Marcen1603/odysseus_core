@@ -1,9 +1,7 @@
 package de.uniol.inf.is.odysseus.peer.recovery.protocol;
 
 import java.util.Collection;
-import java.util.List;
 
-import net.jxta.id.ID;
 import net.jxta.peer.PeerID;
 import net.jxta.pipe.PipeID;
 
@@ -24,7 +22,6 @@ import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryCommunicator;
 import de.uniol.inf.is.odysseus.peer.recovery.internal.BackupInformation;
 import de.uniol.inf.is.odysseus.peer.recovery.internal.RecoveryCommunicator;
 import de.uniol.inf.is.odysseus.peer.recovery.messages.RecoveryAddQueryMessage;
-import de.uniol.inf.is.odysseus.peer.recovery.messages.RecoveryBuddyMessage;
 import de.uniol.inf.is.odysseus.peer.recovery.util.BuddyHelper;
 import de.uniol.inf.is.odysseus.peer.recovery.util.LocalBackupInformationAccess;
 import de.uniol.inf.is.odysseus.peer.recovery.util.RecoveryHelper;
@@ -79,14 +76,6 @@ public class RecoveryInstructionHandler {
 	public static void unbindPQLGenerator(IPQLGenerator generator) {
 		if (pqlGenerator == generator)
 			pqlGenerator = null;
-	}
-
-	public static void handleBuddyInstruction(RecoveryBuddyMessage message,
-			PeerID sender) {
-		Preconditions.checkNotNull(message);
-		Preconditions.checkNotNull(sender);
-
-		beBuddy(sender, message.getSharedQueryId(), message.getPQLCodes());
 	}
 
 	public static void handleAddQueryInstruction(
@@ -191,38 +180,6 @@ public class RecoveryInstructionHandler {
 			recoveryCommunicator.chooseBuddyForQuery(instructionMessage
 					.getSharedQueryId());
 		}
-	}
-
-	/**
-	 * Saves, that this peer is a buddy for the given peer and saves the
-	 * corresponding backup-information
-	 * 
-	 * @param sender
-	 *            The sender of the message - this is the peer we will be the
-	 *            buddy for
-	 * @param sharedQueryId
-	 *            The id of the shared query we ware the buddy for
-	 * @param pqls
-	 *            The PQL-Strings with the information about the peer we are the
-	 *            buddy for
-	 */
-	private static void beBuddy(PeerID sender, ID sharedQueryId,
-			List<String> pqls) {
-		LocalBackupInformationAccess.addBuddy(sender, sharedQueryId);
-		IRecoveryBackupInformation info = new BackupInformation();
-		info.setAboutPeer(sender);
-		info.setSharedQuery(sharedQueryId);
-		String totalPQL = "";
-		for (String pql : pqls) {
-			totalPQL += " " + pql;
-		}
-		info.setPQL(totalPQL);
-		// This info is meant to be used in this peer
-		info.setLocationPeer(RecoveryCommunicator.getP2PNetworkManager().get()
-				.getLocalPeerID());
-		LocalBackupInformationAccess.getStore().add(info);
-		LOG.debug("I am now the buddy for {}", RecoveryCommunicator
-				.getPeerDictionary().get().getRemotePeerName(sender));
 	}
 
 }

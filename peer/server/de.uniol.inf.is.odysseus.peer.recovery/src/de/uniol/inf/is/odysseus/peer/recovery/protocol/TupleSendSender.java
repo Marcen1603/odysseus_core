@@ -6,7 +6,9 @@ import net.jxta.pipe.PipeID;
 import com.google.common.base.Preconditions;
 
 import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicator;
+import de.uniol.inf.is.odysseus.p2p_new.RepeatingMessageSend;
 import de.uniol.inf.is.odysseus.peer.recovery.messages.RecoveryTupleSendMessage;
+import de.uniol.inf.is.odysseus.peer.recovery.messages.RecoveryTupleSendResponseMessage;
 
 /**
  * Entity to send tuple send instructions. <br />
@@ -102,6 +104,37 @@ public class TupleSendSender extends AbstractRepeatingMessageSender {
 				holdOn);
 		return repeatingSend(destination, message, message.getUUID(),
 				communicator);
+
+	}
+	
+
+	
+	/**
+	 * Handling of a received response message.
+	 * 
+	 * @param message
+	 *            The received message. <br />
+	 *            Must be not null.
+	 */
+	public void receivedResponseMessage(RecoveryTupleSendResponseMessage message) {
+		Preconditions.checkNotNull(message);
+
+		synchronized (mSenderMap) {
+			RepeatingMessageSend sender = mSenderMap.get(message.getUUID());
+
+			if (sender != null) {
+				sender.stopRunning();
+				mSenderMap.remove(message.getUUID());
+			}
+		}
+
+		String result = OK_RESULT;
+		if (!message.isPositive()) {
+			result = message.getErrorMessage().get();
+		}
+		synchronized (mResultMap) {
+			mResultMap.put(message.getUUID(), result);
+		}
 
 	}
 
