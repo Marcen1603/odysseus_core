@@ -31,7 +31,7 @@ public class GPSToLocalCoordFunction extends AbstractFunction<Double>{
 	 * The logger for this class.
 	 */
 	private static final Logger LOG = LoggerFactory
-			.getLogger(CoordCalculationFunction.class);
+			.getLogger(GPSToLocalCoordFunction.class);
 
 	protected static IDistributedDataContainer ddc;
 
