@@ -20,13 +20,13 @@ public class Activator implements BundleActivator {
 	@Override
 	public void start(BundleContext bundleContext) throws Exception {
 		Activator.context = bundleContext;
+		err = System.err;
+		out = System.out;
 		//create console
 		OdysseusConsole oc = new OdysseusConsole();
 		oc.createConsole();
 		// add it to log4j
 		Logger.getRootLogger().addAppender(oc);
-		err = System.err;
-		out = System.out;
 	}
 
 	@Override
