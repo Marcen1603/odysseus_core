@@ -1,10 +1,9 @@
-package de.uniol.inf.is.odysseus.peer.recovery.internal;
+package de.uniol.inf.is.odysseus.peer.recovery.protocol;
 
 import java.util.Map;
 
 import net.jxta.impl.id.UUID.UUID;
 import net.jxta.peer.PeerID;
-import net.jxta.pipe.PipeID;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,24 +13,25 @@ import com.google.common.collect.Maps;
 
 import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicator;
 import de.uniol.inf.is.odysseus.p2p_new.RepeatingMessageSend;
-import de.uniol.inf.is.odysseus.peer.recovery.messages.RecoveryTupleSendMessage;
-import de.uniol.inf.is.odysseus.peer.recovery.messages.RecoveryTupleSendResponseMessage;
+import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryBackupInformation;
+import de.uniol.inf.is.odysseus.peer.recovery.messages.BackupInformationAckMessage;
+import de.uniol.inf.is.odysseus.peer.recovery.messages.BackupInformationMessage;
 
 /**
- * Entity to send tuple send instructions. <br />
+ * Entity to send backup information. <br />
  * Uses repeating message send routines and informs by boolean return values
  * about success/fails.
  * 
  * @author Michael Brand
  *
  */
-public class TupleSendSender {
+public class BackupInformationSender {
 
 	/**
 	 * The logger instance for this class.
 	 */
 	private static final Logger LOG = LoggerFactory
-			.getLogger(TupleSendSender.class);
+			.getLogger(BackupInformationSender.class);
 
 	/**
 	 * The result code for successes.
@@ -41,14 +41,14 @@ public class TupleSendSender {
 	/**
 	 * The single instance of this class.
 	 */
-	private static TupleSendSender cInstance = new TupleSendSender();
+	private static BackupInformationSender cInstance = new BackupInformationSender();
 
 	/**
 	 * The single instance of this class.
 	 * 
-	 * @return The active {@link TupleSendSender}.
+	 * @return The active {@link BackupInformationSender}.
 	 */
-	public static TupleSendSender getInstance() {
+	public static BackupInformationSender getInstance() {
 		return cInstance;
 	}
 
@@ -69,17 +69,17 @@ public class TupleSendSender {
 	 * Data structure to keep already received results of all currently running
 	 * repeating message send processes in mind.
 	 */
-	private final Map<UUID, String> cResultMap = Maps.newConcurrentMap();
+	private final Map<UUID, Boolean> cResultMap = Maps.newConcurrentMap();
 
 	/**
-	 * Sends given hold on instruction to a given peer by using a repeating
-	 * message send process.
+	 * Sends given backup information as a new information to a given peer by
+	 * using a repeating message send process.
 	 * 
 	 * @param destination
 	 *            The ID of the given peer. <br />
 	 *            Must be not null.
-	 * @param pipe
-	 *            The affected pipe. <br />
+	 * @param info
+	 *            The given backup information. <br />
 	 *            Must be not null.
 	 * @param communicator
 	 *            An active peer communicator. <br />
@@ -87,58 +87,62 @@ public class TupleSendSender {
 	 * @return True, if an acknowledge returned from the given peer; false,
 	 *         else.
 	 */
-	public boolean sendHoldOnInstruction(PeerID destination, PipeID pipe,
-			IPeerCommunicator communicator) {
-		return sendInstruction(destination, pipe, true, communicator);
+	public boolean sendNewBackupInfo(PeerID destination,
+			IRecoveryBackupInformation info, IPeerCommunicator communicator) {
+		return sendBackupInfo(destination, info,
+				BackupInformationMessage.NEW_INFO, communicator);
 	}
 
 	/**
-	 * Sends given go on instruction to a given peer by using a repeating
-	 * message send process.
-	 * 
-	 * @param destination
-	 *            The ID of the given peer. <br />
-	 *            Must be not null.
-	 * @param pipe
-	 *            The affected pipe. <br />
-	 *            Must be not null.
-	 * @param communicator
-	 *            An active peer communicator. <br />
-	 *            Must be not null.
-	 * @return True, if an acknowledge returned from the given peer; false,
-	 *         else.
-	 */
-	public boolean sendGoOnInstruction(PeerID destination, PipeID pipe,
-			IPeerCommunicator communicator) {
-		return sendInstruction(destination, pipe, false, communicator);
-	}
-
-	/**
-	 * Sends given go on or hold on instruction to a given peer by using a
+	 * Sends given backup information as an update to a given peer by using a
 	 * repeating message send process.
 	 * 
 	 * @param destination
 	 *            The ID of the given peer. <br />
 	 *            Must be not null.
-	 * @param pipe
-	 *            The affected pipe. <br />
+	 * @param info
+	 *            The given backup information. <br />
 	 *            Must be not null.
-	 * @param holdOn
-	 *            True for a hold on message; false for a go on message.
 	 * @param communicator
 	 *            An active peer communicator. <br />
 	 *            Must be not null.
 	 * @return True, if an acknowledge returned from the given peer; false,
 	 *         else.
 	 */
-	public boolean sendInstruction(PeerID destination, PipeID pipe,
-			boolean holdOn, IPeerCommunicator communicator) {
+	public boolean sendBackupInfoUpdate(PeerID destination,
+			IRecoveryBackupInformation info, IPeerCommunicator communicator) {
+		return sendBackupInfo(destination, info,
+				BackupInformationMessage.UPDATE_INFO, communicator);
+	}
+
+	/**
+	 * Sends given backup information to a given peer by using a repeating
+	 * message send process.
+	 * 
+	 * @param destination
+	 *            The ID of the given peer. <br />
+	 *            Must be not null.
+	 * @param info
+	 *            The given backup information. <br />
+	 *            Must be not null.
+	 * @param messageType
+	 *            {@link BackupInformationMessage#NEW_INFO} or
+	 *            {@link BackupInformationMessage#UPDATE_INFO}.
+	 * @param communicator
+	 *            An active peer communicator. <br />
+	 *            Must be not null.
+	 * @return True, if an acknowledge returned from the given peer; false,
+	 *         else.
+	 */
+	private boolean sendBackupInfo(PeerID destination,
+			IRecoveryBackupInformation info, int messageType,
+			IPeerCommunicator communicator) {
 		Preconditions.checkNotNull(destination);
-		Preconditions.checkNotNull(pipe);
+		Preconditions.checkNotNull(info);
 		Preconditions.checkNotNull(communicator);
 
-		RecoveryTupleSendMessage message = new RecoveryTupleSendMessage(pipe,
-				holdOn);
+		BackupInformationMessage message = new BackupInformationMessage(info,
+				messageType);
 		RepeatingMessageSend msgSender = new RepeatingMessageSend(communicator,
 				message, destination);
 
@@ -150,12 +154,7 @@ public class TupleSendSender {
 		}
 
 		msgSender.start();
-		String instr = "go on";
-		if (holdOn) {
-			instr = "hold on";
-		}
-		LOG.debug("Sent {} for pipe {} to peerID {}", new Object[] { instr,
-				pipe, destination });
+		LOG.debug("Sent backup info {} to peerID {}", info, destination);
 
 		LOG.debug("Waiting for response from peer...");
 		while (senderIsActive(message.getUUID())) {
@@ -175,7 +174,7 @@ public class TupleSendSender {
 			if (!cResultMap.containsKey(message.getUUID())) {
 				result = "Could not send backup information: Peer is not reachable!";
 			} else {
-				result = cResultMap.get(message.getUUID());
+				result = OK_RESULT;
 			}
 			cResultMap.remove(message.getUUID());
 
@@ -192,7 +191,7 @@ public class TupleSendSender {
 		}
 
 		// else
-		LOG.error("Could not send {} instruction: {}", instr, result);
+		LOG.error("Could not send backup information: {}", result);
 		return false;
 
 	}
@@ -221,13 +220,13 @@ public class TupleSendSender {
 	}
 
 	/**
-	 * Handling of a received response message.
+	 * Handling of a received acknowledge message.
 	 * 
 	 * @param message
 	 *            The received message. <br />
 	 *            Must be not null.
 	 */
-	public void receivedResponseMessage(RecoveryTupleSendResponseMessage message) {
+	public void receivedAckMessage(BackupInformationAckMessage message) {
 		Preconditions.checkNotNull(message);
 
 		synchronized (cSenderMap) {
@@ -239,12 +238,8 @@ public class TupleSendSender {
 			}
 		}
 
-		String result = OK_RESULT;
-		if (!message.isPositive()) {
-			result = message.getErrorMessage().get();
-		}
 		synchronized (cResultMap) {
-			cResultMap.put(message.getUUID(), result);
+			cResultMap.put(message.getUUID(), true);
 		}
 
 	}

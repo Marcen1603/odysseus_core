@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.peer.recovery.internal;
+package de.uniol.inf.is.odysseus.peer.recovery.protocol;
 
 import net.jxta.peer.PeerID;
 

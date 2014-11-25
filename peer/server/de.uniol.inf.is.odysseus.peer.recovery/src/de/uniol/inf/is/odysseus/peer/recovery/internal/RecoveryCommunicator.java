@@ -43,8 +43,12 @@ import de.uniol.inf.is.odysseus.peer.recovery.messages.RecoveryTupleSendMessage;
 import de.uniol.inf.is.odysseus.peer.recovery.messages.RecoveryTupleSendResponseMessage;
 import de.uniol.inf.is.odysseus.peer.recovery.messages.RecoveryUpdatePipeMessage;
 import de.uniol.inf.is.odysseus.peer.recovery.protocol.AddQueryResponseHandler;
+import de.uniol.inf.is.odysseus.peer.recovery.protocol.BackupInformationReceiver;
+import de.uniol.inf.is.odysseus.peer.recovery.protocol.BackupInformationSender;
 import de.uniol.inf.is.odysseus.peer.recovery.protocol.RecoveryAgreementHandler;
 import de.uniol.inf.is.odysseus.peer.recovery.protocol.RecoveryInstructionHandler;
+import de.uniol.inf.is.odysseus.peer.recovery.protocol.TupleSendReceiver;
+import de.uniol.inf.is.odysseus.peer.recovery.protocol.TupleSendSender;
 import de.uniol.inf.is.odysseus.peer.recovery.util.BuddyHelper;
 import de.uniol.inf.is.odysseus.peer.recovery.util.LocalBackupInformationAccess;
 
