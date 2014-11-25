@@ -50,7 +50,7 @@ public class SmartDevicePublisher {
 	private RPiGPIOSensor gpioTaste7;
 	private RPiGPIOActor gpioLED11;
 	private RPiGPIOActor gpioLED10;
-	private RPiGPIOSensor gpioTaste0;
+	private RPiGPIOSensor gpioTaste3;
 
 	SmartDevicePublisher() {
 		initLocalSmartDeviceAsync();
@@ -340,14 +340,14 @@ public class SmartDevicePublisher {
 		gpioTaste7.setInputPin(7);
 		
 		
-		gpioTaste0 = new RPiGPIOSensor("RPiGPIOTaster0", peerName, "");// postfix:
+		gpioTaste3 = new RPiGPIOSensor("RPiGPIOTaster3", peerName, "");// postfix:
 		// cleanPeerID
-		gpioTaste0.setInputPin(0);
+		gpioTaste3.setInputPin(3);
 
 		// getLocalSmartDevice().addConnectedFieldDevice(temper1);
 		getLocalSmartDevice().addConnectedFieldDevice(temper);
 		getLocalSmartDevice().addConnectedFieldDevice(gpioTaste7);
-		getLocalSmartDevice().addConnectedFieldDevice(gpioTaste0);
+		getLocalSmartDevice().addConnectedFieldDevice(gpioTaste3);
 		
 	}
 
@@ -362,7 +362,7 @@ public class SmartDevicePublisher {
 		gpioTaste7.createActivityInterpreterForPinState("pin7down",//pin7down
 				RPiGPIOSensor.GPIO_SENSOR_STATE.HIGH);
 		
-		gpioTaste0.createActivityInterpreterForPinState("pin0down", RPiGPIOSensor.GPIO_SENSOR_STATE.HIGH);////pin0down
+		gpioTaste3.createActivityInterpreterForPinState("pin3down", RPiGPIOSensor.GPIO_SENSOR_STATE.HIGH);////pin0down
 	}
 
 	private void addExampleLogicRules(String peerName) {
@@ -380,7 +380,7 @@ public class SmartDevicePublisher {
 		////gpioLED10.createLogicRuleWithState("hot", State.ON);
 		////gpioLED10.createLogicRuleWithState("cold", State.OFF);
 		gpioLED10.createLogicRuleWithState("pin7down", State.ON);
-		//gpioLED10.createLogicRuleWithState("pin0down", State.OFF);
+		//gpioLED10.createLogicRuleWithState("pin3down", State.OFF);
 		
 		
 	}
