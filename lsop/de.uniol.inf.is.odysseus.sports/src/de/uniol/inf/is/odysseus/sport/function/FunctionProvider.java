@@ -7,6 +7,7 @@ import de.uniol.inf.is.odysseus.core.mep.IFunction;
 import de.uniol.inf.is.odysseus.mep.IFunctionProvider;
 import de.uniol.inf.is.odysseus.sports.mep.AccessToDCCFunction;
 import de.uniol.inf.is.odysseus.sports.mep.CoordCalculationFunction;
+import de.uniol.inf.is.odysseus.sports.mep.GPSToLocalCoordFunction;
 import de.uniol.inf.is.odysseus.sports.mep.IsSensorBallFunction;
 
 public class FunctionProvider implements IFunctionProvider {
@@ -17,6 +18,7 @@ public class FunctionProvider implements IFunctionProvider {
 		funcs.add(new AccessToDCCFunction());
 		funcs.add(new IsSensorBallFunction());
 		funcs.add(new CoordCalculationFunction());
+		funcs.add(new GPSToLocalCoordFunction());
 		return funcs;
 	}
 
