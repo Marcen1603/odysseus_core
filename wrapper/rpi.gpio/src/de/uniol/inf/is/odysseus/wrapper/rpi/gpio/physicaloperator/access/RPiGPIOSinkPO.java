@@ -199,7 +199,7 @@ public class RPiGPIOSinkPO extends AbstractSink<Tuple<?>> {
 	}
 
 	public int getPinStateIndex() {
-		return pinStateIndex;
+		return this.pinStateIndex;
 	}
 
 }

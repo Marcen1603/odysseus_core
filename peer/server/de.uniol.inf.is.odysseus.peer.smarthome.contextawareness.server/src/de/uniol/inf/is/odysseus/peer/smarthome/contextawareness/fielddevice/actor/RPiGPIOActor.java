@@ -131,8 +131,7 @@ public class RPiGPIOActor extends AbstractActor {
 			
 			String entitySetStateStreamName = getNameCombination(getName(),
 					activity, peerName);
-			StringBuilder sbEntitySetState = entitySetStateStream(
-					setConfigStreamName, entitySetStateStreamName, getActivitySourceName(), getActivityName());
+			StringBuilder sbEntitySetState = entitySetStateStream(entitySetStateStreamName, getActivitySourceName(), getActivityName());
 
 			map.put(entitySetStateStreamName, sbEntitySetState.toString());
 			
@@ -150,11 +149,11 @@ public class RPiGPIOActor extends AbstractActor {
 			String peerName = getActor().getSmartDevice().getPeerName();
 			
 			//TODO:
-			String setConfigStreamName = getNameCombination("SetActor",
-					getActivityName(), peerName);
-			@SuppressWarnings("unused")
-			StringBuilder sbSetConfig = entityConfigStream(setConfigStreamName,
-					getActivitySourceName(), getActivityName());
+			///String setConfigStreamName = getNameCombination("SetActor",
+			///		getActivityName(), peerName);
+			///@SuppressWarnings("unused")
+			///StringBuilder sbSetConfig = entityConfigStream(setConfigStreamName,
+			///		getActivitySourceName(), getActivityName());
 
 			//map.put(setConfigStreamName, sbSetConfig.toString());
 
@@ -162,7 +161,7 @@ public class RPiGPIOActor extends AbstractActor {
 			String entitySetStateStreamName = getNameCombination(getName(),
 					getActivityName(), peerName);
 			StringBuilder sbEntitySetState = entitySetStateStream(
-					setConfigStreamName, entitySetStateStreamName, getActivitySourceName(), getActivityName());
+					entitySetStateStreamName, getActivitySourceName(), getActivityName());
 
 			map.put(entitySetStateStreamName, sbEntitySetState.toString());
 			
@@ -203,7 +202,7 @@ public class RPiGPIOActor extends AbstractActor {
 			return sbSetConfig;
 		}
 
-		private StringBuilder entitySetStateStream(String setConfigStreamName,
+		private StringBuilder entitySetStateStream(
 				String entitySetStateStreamName, String activitySourceName, String activity) {
 			
 			String v = "";
@@ -231,6 +230,7 @@ public class RPiGPIOActor extends AbstractActor {
 			
 			//sbEntitySetState.append("" + entitySetStateStreamName +" = RPIGPIOSINK({pin="+getPin()+", pinstate='low'}," + setConfigStreamName+")");
 			
+			
 			sbEntitySetState.append("" + entitySetStateStreamName +" = RPIGPIOSINK({pin="+getPin()+", pinstate='low'},RENAME({\n");
 			sbEntitySetState.append("    aliases = ['PinNumber', 'PinState']\n");
 			sbEntitySetState.append("  },MAP({\n");
@@ -241,6 +241,18 @@ public class RPiGPIOActor extends AbstractActor {
 			sbEntitySetState.append("    "+activitySourceName+"\n");
 			sbEntitySetState.append("  ))))\n");
 			
+			
+			/*
+			sbEntitySetState.append("" + entitySetStateStreamName +" := RENAME({\n");
+			sbEntitySetState.append("    aliases = ['PinNumber', 'PinState']\n");
+			sbEntitySetState.append("  },MAP({\n");
+			sbEntitySetState.append("  expressions = ['EntityName','concat(substring(toString(ActivityName),0,0),"+v+")']\n");
+			sbEntitySetState.append("},SELECT({\n");
+			sbEntitySetState.append("      predicate=\"ActivityName = '"+activity+"'\"\n");
+			sbEntitySetState.append("    },\n");
+			sbEntitySetState.append("    "+activitySourceName+"\n");
+			sbEntitySetState.append("  )))\n");
+			*/
 			
 			sbEntitySetState.append("\n");
 			
