@@ -293,7 +293,7 @@ public class QueryExecutor implements IP2PDictionaryListener,
 				.getQueryState(viewName+"_query");
 		//queryState.equals(QueryState.UNDEF);
 		
-		LOG.error("executeQueryNow() query:'"+viewName+"_query' queryState:'"+queryState+"'");
+		LOG.error("executeQueryNow() viewName:'"+viewName+"_query' queryState:'"+queryState+"' query:\n"+query+"\n");
 		
 		
 		//&& queryState.equals(QueryState.UNDEF)
