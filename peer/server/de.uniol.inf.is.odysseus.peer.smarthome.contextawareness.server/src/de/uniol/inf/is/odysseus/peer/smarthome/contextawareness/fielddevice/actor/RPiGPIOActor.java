@@ -122,6 +122,7 @@ public class RPiGPIOActor extends AbstractActor {
 			//TODO:
 			String setConfigStreamName = getNameCombination("SetActor",
 					activity, peerName);
+			@SuppressWarnings("unused")
 			StringBuilder sbSetConfig = entityConfigStream(setConfigStreamName,
 					activitySourceName, activity);
 
@@ -148,8 +149,10 @@ public class RPiGPIOActor extends AbstractActor {
 			
 			String peerName = getActor().getSmartDevice().getPeerName();
 			
+			//TODO:
 			String setConfigStreamName = getNameCombination("SetActor",
 					getActivityName(), peerName);
+			@SuppressWarnings("unused")
 			StringBuilder sbSetConfig = entityConfigStream(setConfigStreamName,
 					getActivitySourceName(), getActivityName());
 

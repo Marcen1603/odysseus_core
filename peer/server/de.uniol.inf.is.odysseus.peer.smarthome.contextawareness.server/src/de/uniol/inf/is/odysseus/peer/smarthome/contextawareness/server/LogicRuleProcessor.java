@@ -2,7 +2,6 @@ package de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.server;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.Map.Entry;
 
 import org.slf4j.Logger;
