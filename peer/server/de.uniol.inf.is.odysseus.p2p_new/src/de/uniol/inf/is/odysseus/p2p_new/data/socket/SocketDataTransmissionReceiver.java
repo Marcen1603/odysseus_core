@@ -34,6 +34,7 @@ public class SocketDataTransmissionReceiver extends EndpointDataTransmissionRece
 
 	private Socket socket;
 	private InetAddress address;
+	private Boolean receiving = false;
 
 	public SocketDataTransmissionReceiver(IPeerCommunicator communicator, String peerID, String id)
 			throws DataTransmissionException {
@@ -90,48 +91,58 @@ public class SocketDataTransmissionReceiver extends EndpointDataTransmissionRece
 				// Send PortAckMessage
 				sendPortAckMessage(communicator, senderPeer, port, portMessage.getId());
 
-				Thread t = new Thread(new Runnable() {
-					@Override
-					public void run() {
-						try {
-							socket = new Socket(address, port);
-							LOG.debug("Opened socket on port {} for address {}", port,address);
-							InputStream inputStream = socket.getInputStream();
-							while (true) {
-								int bytesRead = inputStream.read(buffer);
-								if (bytesRead == -1) {
-									LOG.debug("Reached end of data stream. Socket closed...");
-									break;
-								} else if (bytesRead > 0) {
-									byte[] msg = new byte[bytesRead];
-									System.arraycopy(buffer, 0, msg, 0, bytesRead);
-
-									mb.put(msg);
-
-									byte[] packet = mb.getPacket();
-									if (packet != null) {
-										processBytes(packet);
+				synchronized( receiving ) {
+					if( !receiving ) { 
+						receiving = true;
+						
+						Thread t = new Thread(new Runnable() {
+							@Override
+							public void run() {
+								try {
+									socket = new Socket(address, port);
+									LOG.debug("Opened socket on port {} for address {}", port,address);
+									InputStream inputStream = socket.getInputStream();
+									while (true) {
+										int bytesRead = inputStream.read(buffer);
+										if (bytesRead == -1) {
+											LOG.debug("Reached end of data stream. Socket closed...");
+											break;
+										} else if (bytesRead > 0) {
+											byte[] msg = new byte[bytesRead];
+											System.arraycopy(buffer, 0, msg, 0, bytesRead);
+		
+											mb.put(msg);
+		
+											byte[] packet = mb.getPacket();
+											if (packet != null) {
+												processBytes(packet);
+											}
+										}
+									}
+								} catch (SocketException e) {
+									tryCloseSocket(socket);
+									if (!e.getMessage().equals("socket closed")) {
+										LOG.error("Exception while reading socket data", e);
+									}
+		
+								} catch (IOException e) {
+									LOG.error("Exception while reading socket data", e);
+		
+									tryCloseSocket(socket);
+									socket = null;
+								} finally {
+									synchronized( receiving ) {
+										receiving = false;
 									}
 								}
 							}
-						} catch (SocketException e) {
-							tryCloseSocket(socket);
-							if (!e.getMessage().equals("socket closed")) {
-								LOG.error("Exception while reading socket data", e);
-							}
-
-						} catch (IOException e) {
-							LOG.error("Exception while reading socket data", e);
-
-							tryCloseSocket(socket);
-							socket = null;
-						}
+		
+						});
+						t.setName("Reading data thread");
+						t.setDaemon(true);
+						t.start();
 					}
-
-				});
-				t.setName("Reading data thread");
-				t.setDaemon(true);
-				t.start();
+				}
 			}
 		} else {
 			super.receivedMessage(communicator, senderPeer, message);
