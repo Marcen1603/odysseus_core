@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
@@ -13,6 +14,9 @@ import java.util.HashSet;
 
 
 
+
+
+import java.util.List;
 
 import org.apache.commons.math.geometry.Vector3D;
 
@@ -31,7 +35,7 @@ public class PingMapHelper implements IPingMapListener {
 	
 	private static PingMapHelper instance;
 	private IPingMap pingMap;
-	private Collection<IPingMapNode> pingMapNodes = Collections.synchronizedSet(new HashSet<IPingMapNode>());
+	private List<IPingMapNode> pingMapNodes = Collections.synchronizedList(new ArrayList<IPingMapNode>());
 	private Collection<SocketThread> socketThreads = Collections.synchronizedSet(new HashSet<SocketThread>());
 
 	
@@ -66,6 +70,7 @@ public class PingMapHelper implements IPingMapListener {
 		ImmutableCollection<PeerID> peers = PingMapServiceBinding.getPeerDictionary().getRemotePeerIDs();
 		synchronized (pingMapNodes) {
 			pingMapNodes.clear();
+			pingMapNodes.add(pingMap.getNode(PingMapServiceBinding.getP2PNetworkManager().getLocalPeerID()).orNull());
 			for (PeerID peer : peers) {
 				IPingMapNode node = pingMap.getNode(peer).orNull();
 				if (node != null) {
@@ -96,14 +101,17 @@ public class PingMapHelper implements IPingMapListener {
 						out.writeInt(pingMapNodes.size());
 						for (IPingMapNode node : pingMapNodes) {
 							String peerId = node.getPeerID().toString();
+							String peerName = PingMapServiceBinding.getPeerDictionary().getRemotePeerName(peerId);
 							out.writeUTF(peerId);
+							out.writeUTF(peerName);
 							Vector3D pos = node.getPosition();
 							out.writeDouble(pos.getX());
 							out.writeDouble(pos.getY());
 							out.writeDouble(pos.getZ());
+							out.writeDouble(pingMap.getPing(node.getPeerID()).or(0d));
 						}
 					}				
-					Thread.sleep(1000);
+					Thread.sleep(3000);
 				}
 			} catch (SocketException e) {
 				synchronized (socketThreads) {
