@@ -17,7 +17,6 @@ import com.google.common.base.Preconditions;
 
 import de.uniol.inf.is.odysseus.p2p_new.IP2PNetworkManager;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.IPeerDictionary;
-import de.uniol.inf.is.odysseus.p2p_new.physicaloperator.JxtaSenderPO;
 import de.uniol.inf.is.odysseus.peer.distribute.ILogicalQueryPart;
 import de.uniol.inf.is.odysseus.peer.distribute.QueryPartAllocationException;
 import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryAllocator;
@@ -384,14 +383,7 @@ public class RecoveryStrategyUpstreamBackup implements IRecoveryStrategy {
 
 		// 5. Tell the new peer to install the parts from the failed peer
 		cRecoveryDynamicBackup.get().initiateAgreement(failedPeer,
-				sharedQueryId, newPeer, queryPart, recoveryStateIdentifier);
-
-		// 6. Update our sender so it knows the new peerId
-		List<JxtaSenderPO<?>> affectedSenders = cRecoveryDynamicBackup.get()
-				.getAffectedSenders(failedPeer, recoveryStateIdentifier);
-		for (int i = 0; i < affectedSenders.size(); i++) {
-			affectedSenders.get(i).setPeerIDString(newPeer.toString());
-		}
+				sharedQueryId, newPeer, queryPart, recoveryStateIdentifier);		
 	}
 
 	@Override

@@ -30,6 +30,7 @@ import de.uniol.inf.is.odysseus.p2p_new.dictionary.IPeerDictionary;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.IPeerDictionaryListener;
 import de.uniol.inf.is.odysseus.parser.pql.generator.IPQLGenerator;
 import de.uniol.inf.is.odysseus.peer.distribute.message.RemoveQueryMessage;
+import de.uniol.inf.is.odysseus.peer.recovery.IAddQueryResponseHandler;
 import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryBackupInformation;
 import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryCommunicator;
 import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryStrategyManager;
@@ -44,7 +45,6 @@ import de.uniol.inf.is.odysseus.peer.recovery.messages.RecoveryTupleSendMessage;
 import de.uniol.inf.is.odysseus.peer.recovery.messages.RecoveryTupleSendResponseMessage;
 import de.uniol.inf.is.odysseus.peer.recovery.messages.RecoveryUpdatePipeMessage;
 import de.uniol.inf.is.odysseus.peer.recovery.messages.RecoveryUpdatePipeResponseMessage;
-import de.uniol.inf.is.odysseus.peer.recovery.protocol.AddQueryResponseHandler;
 import de.uniol.inf.is.odysseus.peer.recovery.protocol.BackupInformationReceiver;
 import de.uniol.inf.is.odysseus.peer.recovery.protocol.BackupInformationSender;
 import de.uniol.inf.is.odysseus.peer.recovery.protocol.BuddyReceiver;
@@ -474,6 +474,25 @@ public class RecoveryCommunicator implements IRecoveryCommunicator,
 		}
 
 	}
+	
+	private static Optional<IAddQueryResponseHandler> cAddQueryResponseHandler = Optional.absent();
+	
+	public static void bindAddQueryResponseHandler(IAddQueryResponseHandler serv) {
+		Preconditions.checkNotNull(serv);
+		cAddQueryResponseHandler = Optional.of(serv);
+		LOG.debug("Bound {} as an AddQueryResponseHandler.", serv.getClass().getSimpleName());
+	}
+
+	public static void unbindAddQueryResponseHandler(IAddQueryResponseHandler serv) {
+		Preconditions.checkNotNull(serv);
+		if (cAddQueryResponseHandler.isPresent() && cAddQueryResponseHandler.get() == serv) {
+			cAddQueryResponseHandler = Optional.absent();
+			LOG.debug("Unbound {} as an AddQueryResponseHandler.", serv.getClass()
+					.getSimpleName());
+		}
+	}
+	
+	
 
 	/**
 	 * Gets the executor.
@@ -542,21 +561,6 @@ public class RecoveryCommunicator implements IRecoveryCommunicator,
 		RecoveryAddQueryMessage takeOverMessage = new RecoveryAddQueryMessage(
 				pql, sharedQueryId, recoveryStateIdentifier);
 		sendMessage(newPeer, takeOverMessage);
-
-		// TODO remove sending backup informations here, because they need to be
-		// executed after
-		// installation of pql was successful
-		List<IRecoveryBackupInformation> infos = BuddyHelper
-				.findBackupInfoForBuddy(failedPeer);
-		for (IRecoveryBackupInformation info : infos) {
-			// Now this is located on the new peer, the failed peer does not
-			// exist anymore
-			info.setLocationPeer(newPeer);
-			BackupInformationMessage backupMessage = new BackupInformationMessage(
-					info, BackupInformationMessage.NEW_INFO);
-			sendMessage(newPeer, backupMessage);
-		}
-
 	}
 
 	@Override
@@ -606,9 +610,8 @@ public class RecoveryCommunicator implements IRecoveryCommunicator,
 					agreementMessage);
 		} else if (message instanceof AddQueryResponseMessage) {
 			AddQueryResponseMessage responseMessage = (AddQueryResponseMessage) message;
-			AddQueryResponseHandler.getInstance().handleAddQueryResponse(
-					senderPeer, responseMessage, this,
-					cRecoveryStrategyManager.get());
+			cAddQueryResponseHandler.get().handleAddQueryResponse(
+					senderPeer, responseMessage, this);
 
 		}
 	}

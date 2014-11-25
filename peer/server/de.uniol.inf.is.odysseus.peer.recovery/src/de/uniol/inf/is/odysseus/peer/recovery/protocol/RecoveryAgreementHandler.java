@@ -22,7 +22,6 @@ import de.uniol.inf.is.odysseus.peer.distribute.util.LogicalQueryHelper;
 import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryCommunicator;
 import de.uniol.inf.is.odysseus.peer.recovery.internal.RecoveryCommunicator;
 import de.uniol.inf.is.odysseus.peer.recovery.messages.RecoveryAgreementMessage;
-import de.uniol.inf.is.odysseus.peer.recovery.util.BackupInformationHelper;
 
 public class RecoveryAgreementHandler {
 
@@ -188,9 +187,6 @@ public class RecoveryAgreementHandler {
 
 
 					cCommunicator.get().installQueriesOnNewPeer(failedPeer, newPeer, sharedQueryId, pql, recoveryStateIdentifier);
-
-					BackupInformationHelper.updateInfoStores(failedPeer,
-							newPeer, sharedQueryId, pql);
 
 					// Now we did this, so remove that we want to do this
 					// recovery

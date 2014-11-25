@@ -6,7 +6,6 @@ import java.util.UUID;
 
 import net.jxta.id.ID;
 import net.jxta.peer.PeerID;
-import de.uniol.inf.is.odysseus.p2p_new.physicaloperator.JxtaSenderPO;
 import de.uniol.inf.is.odysseus.peer.distribute.ILogicalQueryPart;
 import de.uniol.inf.is.odysseus.peer.distribute.QueryPartAllocationException;
 import de.uniol.inf.is.odysseus.peer.recovery.internal.RecoveryProcessState;
@@ -35,16 +34,6 @@ public interface IRecoveryDynamicBackup {
 	 */
 	public void initiateAgreement(PeerID failedPeer, ID sharedQueryId, PeerID newPeer, ILogicalQueryPart queryPart, UUID recoveryStateIdentifier);
 
-
-	/**
-	 * Gets a list of the affected senders, that need a new target.
-	 * 
-	 * @param failedPeer
-	 *            PeerID of the failed peer
-	 * @param recoveryStateIdentifier 
-	 * @return List with the affected senders.
-	 */
-	public List<JxtaSenderPO<?>> getAffectedSenders(PeerID failedPeer, UUID recoveryStateIdentifier);
 
 	/**
 	 * Checks for which query this peer is responsible and gets the list with

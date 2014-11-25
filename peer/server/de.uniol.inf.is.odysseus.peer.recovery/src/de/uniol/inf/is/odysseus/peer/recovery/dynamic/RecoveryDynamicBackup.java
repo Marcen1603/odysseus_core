@@ -302,60 +302,6 @@ public class RecoveryDynamicBackup implements IRecoveryDynamicBackup {
 	}
 
 	@Override
-	public List<JxtaSenderPO<?>> getAffectedSenders(PeerID failedPeer, UUID recoveryStateIdentifier) {
-
-		// 1. Check, if we have backup information for the failed peer and for
-		// which shared-query-ids
-		// Return if there is no backup information stored for the given peer
-
-		Collection<ID> sharedQueryIdsForPeer = LocalBackupInformationAccess.getStoredSharedQueryIdsForPeer(failedPeer);
-		if (sharedQueryIdsForPeer == null || sharedQueryIdsForPeer.isEmpty()) {
-			// We don't have any information about that failed peer
-			return null;
-		}
-
-		// 2. Check, if we were a direct sender to that failed peer
-
-		// We maybe have backup-information about queries for that peer where we
-		// are not the direct sender, so we have to save for which queries we
-		// are the direct sender
-
-		List<JxtaSenderPO<?>> senders = RecoveryHelper.getJxtaSenders();
-		List<JxtaSenderPO<?>> affectedSenders = new ArrayList<JxtaSenderPO<?>>();
-
-		for (JxtaSenderPO<?> sender : senders) {
-			if (sender.getPeerIDString().equals(failedPeer.toString())) {
-				// We were a direct sender to the failed peer
-
-				// Determine for which shared query id we are the direct
-				// sender: Search in the saved backup information for
-				// that pipe id and look, which shared query id belongs
-				// to the operator which has this pipeId
-				Set<SharedQuery> pqls = LocalBackupInformationAccess.getStoredPQLStatements(failedPeer);
-				for (SharedQuery sharedQuery : pqls) {
-					List<String> pqlParts = sharedQuery.getPqlParts();
-					for (String pql : pqlParts) {
-						if (pql.contains(sender.getPipeIDString())) {
-							// Save that this sender if affected
-							affectedSenders.add(sender);
-						}
-					}
-				}
-			}
-		}
-
-		// 3. Check, if we are the buddy of that peer
-		Map<PeerID, List<ID>> buddyMap = LocalBackupInformationAccess.getBuddyList();
-		if (buddyMap.containsKey(failedPeer)) {
-
-			// TODO What are the affected senders? Maybe no sender is affected
-			// cause it's a totally different peer. Maybe we have to tell other
-			// peers to install new receivers or sth. like that
-		}
-		return affectedSenders;
-	}
-
-	@Override
 	public void determineAndSendHoldOnMessages(ID sharedQueryId, PeerID failedPeer, UUID recoveryStateIdentifier) {
 
 		// Preconditions
@@ -396,7 +342,6 @@ public class RecoveryDynamicBackup implements IRecoveryDynamicBackup {
 							PeerID peerToHoldOn = PeerID.create(uri);
 
 							cRecoveryCommunicator.get().sendHoldOnMessage(peerToHoldOn, pipe);
-
 						} catch (URISyntaxException e) {
 							e.printStackTrace();
 						}
