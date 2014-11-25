@@ -81,10 +81,13 @@ public class MovingStateHelper {
 		LOG.debug("Sending state for " + operator.toString() + " on pipe "
 				+ pipe);
 		Serializable state = operator.getState();
+		LOG.debug("Got state.");
 		sender.sendData(state);
 		LOG.debug("Data sent.");
 
 	}
+	
+	
 
 	/***
 	 * Gets a list of Stateful Operators from Query
@@ -244,7 +247,6 @@ public class MovingStateHelper {
 	 *            PipeID of JxtaSender
 	 * @throws LoadBalancingException
 	 */
-	@SuppressWarnings("rawtypes")
 	public static void startBuffering(String pipeID)
 			throws LoadBalancingException {
 		IPhysicalOperator operator = LoadBalancingHelper
@@ -253,18 +255,62 @@ public class MovingStateHelper {
 			throw new LoadBalancingException("No Sender with pipeID " + pipeID
 					+ " found.");
 		}
-		JxtaSenderPO sender = (JxtaSenderPO) operator;
-		for (Object subscription : sender.getSubscribedToSource()) {
-			if (subscription instanceof ControllablePhysicalSubscription) {
-				ControllablePhysicalSubscription controllableSubscription = (ControllablePhysicalSubscription) subscription;
-				controllableSubscription.suspend();
-			} else {
-				throw new LoadBalancingException(
-						"At least one subscription is not controllable.");
-			}
-		}
+		startBuffering(operator);
 
 	}
+	
+	
+	/***
+	 * Starts Buffering before a given Operator
+	 * @param operator Operator to start buffering
+	 * @throws LoadBalancingException
+	 */
+	@SuppressWarnings({ "rawtypes" })
+	public static void startBuffering(IPhysicalOperator operator) throws LoadBalancingException {
+		if(operator instanceof ISink) {
+			for(Object subscriptionFrom : ((ISink) operator).getSubscribedToSource()) {
+				AbstractPhysicalSubscription sub = (AbstractPhysicalSubscription)subscriptionFrom;
+				ISource operatorBefore = (ISource)sub.getTarget();
+				
+				for(Object subscriptionTo : operatorBefore.getSubscriptions()) {
+					AbstractPhysicalSubscription subTo = (AbstractPhysicalSubscription)subscriptionTo;
+					
+					if(subTo.getTarget()!=operator)
+						continue;
+					
+					if(subTo instanceof ControllablePhysicalSubscription) {
+						ControllablePhysicalSubscription cSub = (ControllablePhysicalSubscription)subTo;
+						cSub.suspend();
+					}
+					else {
+						LOG.error("At least one subscription to Operator is not suspendable.");
+					}
+				}
+				
+				
+			}
+		}
+		else {
+			throw new LoadBalancingException("Operator has no incoming connections.");
+		}
+	}
+	
+	@SuppressWarnings("rawtypes")
+	public static void stopBuffering(IPhysicalOperator operator) throws LoadBalancingException {
+		if(operator instanceof ISink) {
+			for(Object subscription : ((ISink) operator).getSubscribedToSource()) {
+				if(subscription instanceof ControllablePhysicalSubscription) {
+					ControllablePhysicalSubscription cSub = (ControllablePhysicalSubscription)subscription;
+					cSub.resume();
+				}
+			}
+		}
+		else {
+			throw new LoadBalancingException("Operator has no incoming connections.");
+		}
+	}
+	
+	
 
 	/***
 	 * Sets Sender or Receiver to new PeerID.
@@ -319,7 +365,6 @@ public class MovingStateHelper {
 	 *            PipeID of JxtaSender
 	 * @throws LoadBalancingException
 	 */
-	@SuppressWarnings("rawtypes")
 	public static void stopBuffering(String pipeID)
 			throws LoadBalancingException {
 		LOG.debug("Resuming Sender with pipe " + pipeID);
@@ -329,16 +374,7 @@ public class MovingStateHelper {
 			throw new LoadBalancingException("No Sender with pipeID " + pipeID
 					+ " found.");
 		}
-		JxtaSenderPO sender = (JxtaSenderPO) operator;
-		for (Object subscription : sender.getSubscribedToSource()) {
-			if (subscription instanceof ControllablePhysicalSubscription) {
-				ControllablePhysicalSubscription controllableSubscription = (ControllablePhysicalSubscription) subscription;
-				controllableSubscription.resume();
-			} else {
-				throw new LoadBalancingException(
-						"At least one subscription is not controllable.");
-			}
-		}
+		stopBuffering(operator);
 
 	}
 

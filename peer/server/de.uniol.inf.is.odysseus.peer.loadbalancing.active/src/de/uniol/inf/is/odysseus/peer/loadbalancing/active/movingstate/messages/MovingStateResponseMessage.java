@@ -18,13 +18,14 @@ public class MovingStateResponseMessage implements IMessage {
 	public static final int ACK_LOADBALANCING = 0;
 	public static final int SUCCESS_INSTALL_QUERY = 1;
 	public static final int FAILURE_INSTALL_QUERY = 2;
-	public static final int SUCCESS_DUPLICATE = 3;
-	public static final int FAILURE_DUPLICATE_RECEIVER = 4;
-	public static final int ACK_INIT_STATE_COPY = 5;
-	public static final int FAIL_INIT_STATE_COPY = 6;
-	public static final int STATE_COPY_FINISHED = 7;
-	public static final int ACK_ALL_STATE_COPIES_FINISHED = 8;
-	public static final int STOP_BUFFERING_FINISHED = 9;
+	public static final int SUCCESS_DUPLICATE_SENDER = 3;
+	public static final int SUCCESS_DUPLICATE_RECEIVER = 4;
+	public static final int FAILURE_DUPLICATE_RECEIVER = 5;
+	public static final int ACK_INIT_STATE_COPY = 6;
+	public static final int FAIL_INIT_STATE_COPY = 7;
+	public static final int STATE_COPY_FINISHED = 8;
+	public static final int ACK_ALL_STATE_COPIES_FINISHED = 9;
+	public static final int STOP_BUFFERING_FINISHED = 10;
 	
 	
 
@@ -122,22 +123,42 @@ public class MovingStateResponseMessage implements IMessage {
 	}
 
 	/***
-	 * Create Duplicate Success Message
+	 * Create Duplicate Success Message for Senders
 	 * 
 	 * @param loadBalancingProcessId
 	 *            LoadBalancing Process ID
 	 * @param pipeID
 	 *            Pipe ID
-	 * @return Message with msgType SUCCESS_DUPLICATE
+	 * @return Message with msgType SUCCESS_DUPLICATE_SENDER
 	 */
-	public static MovingStateResponseMessage createDuplicateSuccessMessage(
+	public static MovingStateResponseMessage createDuplicateSenderSuccessMessage(
 			int loadBalancingProcessId, String pipeID) {
 		MovingStateResponseMessage message = new MovingStateResponseMessage();
 		message.setLoadBalancingProcessId(loadBalancingProcessId);
 		message.setPipeID(pipeID);
-		message.setMsgType(SUCCESS_DUPLICATE);
+		message.setMsgType(SUCCESS_DUPLICATE_SENDER);
 		return message;
 	}
+	
+
+	/***
+	 * Create Duplicate Success Message for Receivers
+	 * 
+	 * @param loadBalancingProcessId
+	 *            LoadBalancing Process ID
+	 * @param pipeID
+	 *            Pipe ID
+	 * @return Message with msgType SUCCESS_DUPLICATE_RECEIVER
+	 */
+	public static MovingStateResponseMessage createDuplicateReceiverSuccessMessage(
+			int loadBalancingProcessId, String pipeID) {
+		MovingStateResponseMessage message = new MovingStateResponseMessage();
+		message.setLoadBalancingProcessId(loadBalancingProcessId);
+		message.setPipeID(pipeID);
+		message.setMsgType(SUCCESS_DUPLICATE_RECEIVER);
+		return message;
+	}
+
 
 	/**
 	 * Create DuplicteFailure Message
@@ -197,7 +218,8 @@ public class MovingStateResponseMessage implements IMessage {
 
 			break;
 
-		case SUCCESS_DUPLICATE:
+		case SUCCESS_DUPLICATE_SENDER:
+		case SUCCESS_DUPLICATE_RECEIVER:
 		case ACK_INIT_STATE_COPY:
 		case STATE_COPY_FINISHED:
 
@@ -236,7 +258,8 @@ public class MovingStateResponseMessage implements IMessage {
 
 		switch (msgType) {
 
-		case SUCCESS_DUPLICATE:
+		case SUCCESS_DUPLICATE_SENDER:
+		case SUCCESS_DUPLICATE_RECEIVER:
 		case ACK_INIT_STATE_COPY:
 		case STATE_COPY_FINISHED:
 

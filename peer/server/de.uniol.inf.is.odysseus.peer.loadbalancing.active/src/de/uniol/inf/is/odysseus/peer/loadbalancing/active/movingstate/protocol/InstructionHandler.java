@@ -139,7 +139,7 @@ public class InstructionHandler {
 				try {
 					MovingStateHelper.startBuffering(pipe);
 					MovingStateHelper.setNewPeerId(pipe, peer, true);
-					dispatcher.sendDuplicateSuccess(status.getMasterPeer(),
+					dispatcher.sendDuplicateSenderSuccess(status.getMasterPeer(),
 							pipe);
 				} catch (Exception e) {
 					LOG.error("Error while copying JxtaSender:");
@@ -175,7 +175,7 @@ public class InstructionHandler {
 				dispatcher = status.getMessageDispatcher();
 				try {
 					MovingStateHelper.setNewPeerId(pipe, peer, false);
-					dispatcher.sendDuplicateSuccess(status.getMasterPeer(),
+					dispatcher.sendDuplicateReceiverSuccess(status.getMasterPeer(),
 							pipe);
 				} catch (Exception e) {
 					LOG.error("Error while replacing JxtaReceiver:");

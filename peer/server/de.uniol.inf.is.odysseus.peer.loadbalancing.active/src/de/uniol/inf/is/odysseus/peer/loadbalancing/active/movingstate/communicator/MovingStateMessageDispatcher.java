@@ -101,19 +101,44 @@ public class MovingStateMessageDispatcher {
 
 	/**
 	 * Send by slave peer to master peer to indicate a successfull Duplication
-	 * of a pipe
+	 * of a (sender)pipe
 	 * 
 	 * @param destination
 	 * @param pipeID
 	 */
-	public void sendDuplicateSuccess(PeerID destination, String pipeID) {
+	public void sendDuplicateSenderSuccess(PeerID destination, String pipeID) {
 		if (this.currentJobs == null) {
 			this.currentJobs = new ConcurrentHashMap<String, RepeatingMessageSend>();
 		}
 		if (!this.currentJobs.containsKey(pipeID)) {
-			LOG.debug("Send DuplicateSuccess");
+			LOG.debug("Send DuplicateSENDERSuccess");
 			MovingStateResponseMessage message = MovingStateResponseMessage
-					.createDuplicateSuccessMessage(lbProcessId, pipeID);
+					.createDuplicateSenderSuccessMessage(lbProcessId, pipeID);
+			RepeatingMessageSend job = new RepeatingMessageSend(
+					peerCommunicator, message, destination);
+			this.currentJobs.put(pipeID, job);
+			job.start();
+		}
+	}
+	
+
+
+
+	/**
+	 * Send by slave peer to master peer to indicate a successfull Duplication
+	 * of a (receiver)pipe
+	 * 
+	 * @param destination
+	 * @param pipeID
+	 */
+	public void sendDuplicateReceiverSuccess(PeerID destination, String pipeID) {
+		if (this.currentJobs == null) {
+			this.currentJobs = new ConcurrentHashMap<String, RepeatingMessageSend>();
+		}
+		if (!this.currentJobs.containsKey(pipeID)) {
+			LOG.debug("Send DuplicateRECEIVERSuccess");
+			MovingStateResponseMessage message = MovingStateResponseMessage
+					.createDuplicateReceiverSuccessMessage(lbProcessId, pipeID);
 			RepeatingMessageSend job = new RepeatingMessageSend(
 					peerCommunicator, message, destination);
 			this.currentJobs.put(pipeID, job);
@@ -172,7 +197,7 @@ public class MovingStateMessageDispatcher {
 	 */
 	public void sendPipeSuccessMsg(PeerID destination, String pipeID) {
 		MovingStateResponseMessage message = MovingStateResponseMessage
-				.createDuplicateSuccessMessage(lbProcessId, pipeID);
+				.createDuplicateSenderSuccessMessage(lbProcessId, pipeID);
 		try {
 			LOG.debug("Send DuplicateSuccess");
 			peerCommunicator.send(destination, message);

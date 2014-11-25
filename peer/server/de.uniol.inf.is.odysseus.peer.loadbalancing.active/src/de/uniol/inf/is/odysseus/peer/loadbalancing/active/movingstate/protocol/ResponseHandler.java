@@ -98,7 +98,7 @@ public class ResponseHandler {
 			}
 			break;
 
-		case MovingStateResponseMessage.SUCCESS_DUPLICATE:
+		case MovingStateResponseMessage.SUCCESS_DUPLICATE_SENDER:
 
 			if (status.getPhase().equals(
 					MovingStateMasterStatus.LB_PHASES.RELINKING_SENDERS)) {
@@ -110,13 +110,16 @@ public class ResponseHandler {
 				LOG.debug("Jobs left:" + dispatcher.getNumberOfRunningJobs());
 
 				if (dispatcher.getNumberOfRunningJobs() == 0) {
+					
 					// All success messages received. Yay!
 					status.setPhase(LB_PHASES.RELINKING_RECEIVERS);
 					MovingStateHelper.notifyDownstreamPeers(status);
-					LOG.debug("Status: Relinking Receivers.");
+					LOG.debug("Status Relinking Receivers.");
 				}
 			}
-
+			break;
+		
+		case MovingStateResponseMessage.SUCCESS_DUPLICATE_RECEIVER:
 			if (status.getPhase().equals(LB_PHASES.RELINKING_RECEIVERS)) {
 				LOG.debug("Got SUCCESS_DUPLICATE for RECEIVER");
 				dispatcher.sendPipeSuccessReceivedMsg(senderPeer,
@@ -196,7 +199,7 @@ public class ResponseHandler {
 				status.getMessageDispatcher().stopRunningJob();
 				status.setPhase(LB_PHASES.STOP_BUFFERING);
 				dispatcher.sendMsgReceived(senderPeer);
-				LoadBalancingHelper.cutSendersFromQuery(status
+				LoadBalancingHelper.cutReceiversFromQuery(status
 						.getLogicalQuery());
 				MovingStateHelper.sendStopBufferingToUpstreamPeers(status);
 			}

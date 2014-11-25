@@ -102,20 +102,6 @@ public class LoadBalancingHelper {
 		}
 	}
 	
-	@SuppressWarnings("rawtypes")
-	public static void cutSendersFromQuery(int queryID) {
-		IServerExecutor executor = ActiveLoadBalancingActivator.getExecutor();
-		IPhysicalQuery query = executor.getExecutionPlan().getQueryById(queryID);
-		
-		for (IPhysicalOperator operator : query.getAllOperators()) {
-
-			if (operator instanceof JxtaSenderPO) {
-				JxtaSenderPO sender = (JxtaSenderPO) operator;
-				sender.unsubscribeFromAllSources();
-			}
-		}
-	}
-	
 
 	public static JxtaReceiverAO createReceiverAO(UpstreamConnection connection, String pipeID) {
 		JxtaReceiverAO receiver = new JxtaReceiverAO();
