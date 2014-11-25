@@ -16,7 +16,6 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.p2p_new.IP2PNetworkManager;
-import de.uniol.inf.is.odysseus.p2p_new.data.DataTransmissionException;
 import de.uniol.inf.is.odysseus.p2p_new.physicaloperator.JxtaReceiverPO;
 import de.uniol.inf.is.odysseus.p2p_new.physicaloperator.JxtaSenderPO;
 import de.uniol.inf.is.odysseus.parser.pql.generator.IPQLGenerator;
@@ -26,7 +25,6 @@ import de.uniol.inf.is.odysseus.peer.recovery.internal.BackupInformation;
 import de.uniol.inf.is.odysseus.peer.recovery.internal.RecoveryCommunicator;
 import de.uniol.inf.is.odysseus.peer.recovery.messages.RecoveryAddQueryMessage;
 import de.uniol.inf.is.odysseus.peer.recovery.messages.RecoveryBuddyMessage;
-import de.uniol.inf.is.odysseus.peer.recovery.messages.RecoveryUpdatePipeMessage;
 import de.uniol.inf.is.odysseus.peer.recovery.util.BuddyHelper;
 import de.uniol.inf.is.odysseus.peer.recovery.util.LocalBackupInformationAccess;
 import de.uniol.inf.is.odysseus.peer.recovery.util.RecoveryHelper;
@@ -81,17 +79,6 @@ public class RecoveryInstructionHandler {
 	public static void unbindPQLGenerator(IPQLGenerator generator) {
 		if (pqlGenerator == generator)
 			pqlGenerator = null;
-	}
-
-	public static void handleUpdatePipeInstruction(
-			RecoveryUpdatePipeMessage message) {
-		Preconditions.checkNotNull(message);
-		if (message.isSenderUpdateInstruction()) {
-			// TODO nothing to do?
-		} else {
-			updateReceiver(message.getNewPeerId(), message.getPipeId(),
-					message.getSharedQueryId());
-		}
 	}
 
 	public static void handleBuddyInstruction(RecoveryBuddyMessage message,
@@ -203,39 +190,6 @@ public class RecoveryInstructionHandler {
 			// We don't have a receiver, thus we need a buddy
 			recoveryCommunicator.chooseBuddyForQuery(instructionMessage
 					.getSharedQueryId());
-		}
-	}
-
-	@SuppressWarnings("rawtypes")
-	private static void updateReceiver(PeerID newSender, PipeID pipeId,
-			ID sharedQueryId) {
-
-		if (!RecoveryCommunicator.getExecutor().isPresent()) {
-
-			LOG.error("No executor bound!");
-			return;
-
-		}
-
-		// 1. Get the receiver, which we have to update
-		Collection<IPhysicalQuery> queries = RecoveryCommunicator.getExecutor()
-				.get().getExecutionPlan().getQueries();
-		for (IPhysicalQuery query : queries) {
-			for (IPhysicalOperator op : query.getAllOperators()) {
-				if (op instanceof JxtaReceiverPO) {
-					JxtaReceiverPO receiver = (JxtaReceiverPO) op;
-					if (receiver.getPipeIDString().equals(pipeId.toString())) {
-						// This should be the receiver we have to update
-						try {
-							receiver.receiveFromNewPeer(newSender.toString());
-							break;
-						} catch (DataTransmissionException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
-					}
-				}
-			}
 		}
 	}
 

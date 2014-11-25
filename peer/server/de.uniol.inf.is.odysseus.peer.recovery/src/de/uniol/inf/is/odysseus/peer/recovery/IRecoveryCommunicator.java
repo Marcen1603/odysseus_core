@@ -44,7 +44,7 @@ public interface IRecoveryCommunicator {
 	 * @param pipeId
 	 *            The pipeId which is affected
 	 */
-	public void sendUpdateReceiverMessage(PeerID receiverPeer,
+	public boolean sendUpdateReceiverMessage(PeerID receiverPeer,
 			PeerID newSenderPeer, PipeID pipeId, ID sharedQueryId);
 
 	/**
