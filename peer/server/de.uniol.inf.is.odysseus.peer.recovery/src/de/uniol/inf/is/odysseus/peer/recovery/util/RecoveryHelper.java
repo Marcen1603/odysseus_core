@@ -475,7 +475,7 @@ public class RecoveryHelper {
 	 *            true, if you want to suspend, false, if you want to resume
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public static void suspendOrResumeSink(ISink sink, boolean suspend) {
+	public static void suspendOrResumeSink(ISink sink, boolean suspend) throws Exception {
 		Collection<AbstractPhysicalSubscription> subscriptions = sink.getSubscribedToSource();
 		for (AbstractPhysicalSubscription subscription : subscriptions) {
 			ISource test = ((ISource) subscription.getTarget());
@@ -490,6 +490,7 @@ public class RecoveryHelper {
 					}
 				} else {
 					// TODO Errorhandling
+					throw new Exception("Error on suspendOrResumeSink"); // XXX Workaround till real error handling
 				}
 			}
 		}
@@ -501,14 +502,14 @@ public class RecoveryHelper {
 	 * @param pipeID
 	 *            The pipeID to search for
 	 */
-	@SuppressWarnings("rawtypes")
-	public static void startBuffering(String pipeID) {
+	public static void startBuffering(String pipeID) throws Exception {
 		IPhysicalOperator operator = getPhysicalJxtaOperator(true, pipeID);
 		if (operator == null) {
-			LOG.error("No Sender with PipeID " + pipeID + " found.");
-			return;
+			String errorMessage = "No Sender with PipeID " + pipeID + " found." ;
+			LOG.error(errorMessage);
+			throw new IllegalArgumentException(errorMessage);
 		}
-		JxtaSenderPO sender = (JxtaSenderPO) operator;
+		JxtaSenderPO<?> sender = (JxtaSenderPO<?>) operator;
 		suspendOrResumeSink(sender, true);
 	}
 
@@ -518,14 +519,14 @@ public class RecoveryHelper {
 	 * @param pipeID
 	 *            The pipeID to search for
 	 */
-	@SuppressWarnings("rawtypes")
-	public static void resumeFromBuffering(String pipeID) {
+	public static void resumeFromBuffering(String pipeID) throws Exception {
 		IPhysicalOperator operator = getPhysicalJxtaOperator(true, pipeID);
 		if (operator == null) {
-			LOG.error("No Sender with PipeID " + pipeID + " found.");
-			return;
+			String errorMessage = "No Sender with PipeID " + pipeID + " found." ;
+			LOG.error(errorMessage);
+			throw new IllegalArgumentException(errorMessage);
 		}
-		JxtaSenderPO sender = (JxtaSenderPO) operator;
+		JxtaSenderPO<?> sender = (JxtaSenderPO<?>) operator;
 		suspendOrResumeSink(sender, false);
 	}
 

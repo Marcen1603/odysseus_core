@@ -7,7 +7,6 @@ import net.jxta.peer.PeerID;
 import net.jxta.pipe.PipeID;
 import de.uniol.inf.is.odysseus.peer.recovery.internal.RecoveryProcessState;
 import de.uniol.inf.is.odysseus.peer.recovery.messages.RecoveryAddQueryMessage;
-import de.uniol.inf.is.odysseus.peer.recovery.messages.RecoveryTupleSendMessage;
 
 /**
  * A recovery communicator handles the communication between peers for recovery
@@ -30,9 +29,7 @@ public interface IRecoveryCommunicator {
 	 * @param queryIds
 	 *            List of query-ids for which the respective peer should hold on
 	 */
-	public void sendHoldOnMessage(PeerID peerToHoldOn,
-			RecoveryTupleSendMessage holdOnMessage,
-			UUID recoveryStateIdentifier);
+	public boolean sendHoldOnMessage(PeerID receiverPeer, PipeID pipeId);
 
 	/**
 	 * Sends a message to the receiverPeer, that this peer has to update it's
@@ -81,6 +78,7 @@ public interface IRecoveryCommunicator {
 	 */
 	public boolean sendBackupInformation(PeerID destination,
 			IRecoveryBackupInformation info, boolean isNewInfo);
+
 	/**
 	 * Distributes the backup-information as updated information to every peer,
 	 * so that the peer who are affected can update their information
@@ -133,7 +131,7 @@ public interface IRecoveryCommunicator {
 	 *            The pipeId for which the receiver of this message should go on
 	 *            sending tuples
 	 */
-	public void sendGoOnMessage(PeerID receiverPeer, PipeID pipeId);
+	public boolean sendGoOnMessage(PeerID receiverPeer, PipeID pipeId);
 
 	/**
 	 * 

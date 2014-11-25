@@ -40,6 +40,7 @@ import de.uniol.inf.is.odysseus.peer.recovery.messages.RecoveryAddQueryMessage;
 import de.uniol.inf.is.odysseus.peer.recovery.messages.RecoveryAgreementMessage;
 import de.uniol.inf.is.odysseus.peer.recovery.messages.RecoveryBuddyMessage;
 import de.uniol.inf.is.odysseus.peer.recovery.messages.RecoveryTupleSendMessage;
+import de.uniol.inf.is.odysseus.peer.recovery.messages.RecoveryTupleSendResponseMessage;
 import de.uniol.inf.is.odysseus.peer.recovery.messages.RecoveryUpdatePipeMessage;
 import de.uniol.inf.is.odysseus.peer.recovery.protocol.AddQueryResponseHandler;
 import de.uniol.inf.is.odysseus.peer.recovery.protocol.RecoveryAgreementHandler;
@@ -237,6 +238,11 @@ public class RecoveryCommunicator implements IRecoveryCommunicator,
 				RecoveryBuddyMessage.class);
 		cPeerCommunicator.get().addListener(this,
 				RecoveryBuddyMessage.class);
+		
+		cPeerCommunicator.get().registerMessageType(
+				RecoveryTupleSendResponseMessage.class);
+		cPeerCommunicator.get().addListener(this,
+				RecoveryTupleSendResponseMessage.class);
 	}
 
 	/**
@@ -287,6 +293,11 @@ public class RecoveryCommunicator implements IRecoveryCommunicator,
 				RecoveryBuddyMessage.class);
 		cPeerCommunicator.get().removeListener(this,
 				RecoveryBuddyMessage.class);
+		
+		cPeerCommunicator.get().unregisterMessageType(
+				RecoveryTupleSendResponseMessage.class);
+		cPeerCommunicator.get().removeListener(this,
+				RecoveryTupleSendResponseMessage.class);
 	}
 
 	/**
@@ -473,10 +484,15 @@ public class RecoveryCommunicator implements IRecoveryCommunicator,
 	}
 
 	@Override
-	public void sendHoldOnMessage(PeerID peerToHoldOn,
-			RecoveryTupleSendMessage holdOnMessage,
-			UUID recoveryStateIdentifier) {
-		sendMessage(peerToHoldOn, holdOnMessage);
+	public boolean sendHoldOnMessage(PeerID receiverPeer, PipeID pipeId) {
+		Preconditions.checkNotNull(receiverPeer);
+		Preconditions.checkNotNull(pipeId);
+		if (!cPeerCommunicator.isPresent()) {
+			LOG.error("No peer communicator bound!");
+			return false;
+		}
+		
+		return TupleSendSender.getInstance().sendHoldOnInstruction(receiverPeer, pipeId, cPeerCommunicator.get());
 	}
 
 	@Override
@@ -517,7 +533,11 @@ public class RecoveryCommunicator implements IRecoveryCommunicator,
 	public void receivedMessage(IPeerCommunicator communicator,
 			PeerID senderPeer, IMessage message) {
 		if (message instanceof RecoveryTupleSendMessage) {
-			RecoveryInstructionHandler.handleTupleSendInstruction((RecoveryTupleSendMessage) message);
+			RecoveryTupleSendMessage rtsMessage = (RecoveryTupleSendMessage) message;
+			TupleSendReceiver.getInstance().receivedMessage(rtsMessage, senderPeer, communicator);
+		} else if (message instanceof RecoveryTupleSendResponseMessage) {
+			RecoveryTupleSendResponseMessage responseMessage = (RecoveryTupleSendResponseMessage) message;
+			TupleSendSender.getInstance().receivedResponseMessage(responseMessage);
 		} else if (message instanceof RecoveryUpdatePipeMessage) {
 			RecoveryInstructionHandler.handleUpdatePipeInstruction((RecoveryUpdatePipeMessage) message);
 		} else if (message instanceof RecoveryBuddyMessage) {
@@ -604,9 +624,15 @@ public class RecoveryCommunicator implements IRecoveryCommunicator,
 	}
 
 	@Override
-	public void sendGoOnMessage(PeerID receiverPeer, PipeID pipeId) {
-		RecoveryTupleSendMessage message = new RecoveryTupleSendMessage(pipeId, false);
-		sendMessage(receiverPeer, message);
+	public boolean sendGoOnMessage(PeerID receiverPeer, PipeID pipeId) {
+		Preconditions.checkNotNull(receiverPeer);
+		Preconditions.checkNotNull(pipeId);
+		if (!cPeerCommunicator.isPresent()) {
+			LOG.error("No peer communicator bound!");
+			return false;
+		}
+		
+		return TupleSendSender.getInstance().sendGoOnInstruction(receiverPeer, pipeId, cPeerCommunicator.get());
 	}
 
 	@Override

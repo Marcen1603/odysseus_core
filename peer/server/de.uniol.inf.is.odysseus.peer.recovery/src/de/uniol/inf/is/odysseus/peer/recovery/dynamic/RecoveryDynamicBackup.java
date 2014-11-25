@@ -42,7 +42,6 @@ import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryCommunicator;
 import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryDynamicBackup;
 import de.uniol.inf.is.odysseus.peer.recovery.internal.RecoveryProcessState;
 import de.uniol.inf.is.odysseus.peer.recovery.internal.SharedQuery;
-import de.uniol.inf.is.odysseus.peer.recovery.messages.RecoveryTupleSendMessage;
 import de.uniol.inf.is.odysseus.peer.recovery.protocol.RecoveryAgreementHandler;
 import de.uniol.inf.is.odysseus.peer.recovery.util.LocalBackupInformationAccess;
 import de.uniol.inf.is.odysseus.peer.recovery.util.RecoveryHelper;
@@ -393,11 +392,10 @@ public class RecoveryDynamicBackup implements IRecoveryDynamicBackup {
 						try {
 							URI uri = new URI(pipeId);
 							PipeID pipe = PipeID.create(uri);
-							RecoveryTupleSendMessage holdOnMessage = new RecoveryTupleSendMessage(pipe, true);
 							uri = new URI(peerId);
 							PeerID peerToHoldOn = PeerID.create(uri);
 
-							cRecoveryCommunicator.get().sendHoldOnMessage(peerToHoldOn, holdOnMessage, recoveryStateIdentifier);
+							cRecoveryCommunicator.get().sendHoldOnMessage(peerToHoldOn, pipe);
 
 						} catch (URISyntaxException e) {
 							e.printStackTrace();

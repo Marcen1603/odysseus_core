@@ -386,12 +386,20 @@ public class RecoveryConsole implements CommandProvider {
 
 	public void _holdOn(CommandInterpreter ci) {
 		PipeID pipe = getPipeIDFromCi(ci);
-		RecoveryHelper.startBuffering(pipe.toString());
+		try {
+			RecoveryHelper.startBuffering(pipe.toString());
+		} catch(Exception e) {
+			LOG.error("Error while holdOn.", e);
+		}
 	}
 
 	public void _goOn(CommandInterpreter ci) {
 		PipeID pipe = getPipeIDFromCi(ci);
-		RecoveryHelper.resumeFromBuffering(pipe.toString());
+		try {
+			RecoveryHelper.resumeFromBuffering(pipe.toString());
+		} catch(Exception e) {
+			LOG.error("Error while goOn.", e);
+		}
 	}
 
 	public void _beBuddy(CommandInterpreter ci) {

@@ -26,7 +26,6 @@ import de.uniol.inf.is.odysseus.peer.recovery.internal.BackupInformation;
 import de.uniol.inf.is.odysseus.peer.recovery.internal.RecoveryCommunicator;
 import de.uniol.inf.is.odysseus.peer.recovery.messages.RecoveryAddQueryMessage;
 import de.uniol.inf.is.odysseus.peer.recovery.messages.RecoveryBuddyMessage;
-import de.uniol.inf.is.odysseus.peer.recovery.messages.RecoveryTupleSendMessage;
 import de.uniol.inf.is.odysseus.peer.recovery.messages.RecoveryUpdatePipeMessage;
 import de.uniol.inf.is.odysseus.peer.recovery.util.BuddyHelper;
 import de.uniol.inf.is.odysseus.peer.recovery.util.LocalBackupInformationAccess;
@@ -83,48 +82,32 @@ public class RecoveryInstructionHandler {
 		if (pqlGenerator == generator)
 			pqlGenerator = null;
 	}
-	
-	public static void handleTupleSendInstruction(RecoveryTupleSendMessage message) {
-		Preconditions.checkNotNull(message);
-		if (message.isHoldOnInstruction()) {
-			holdOn(message.getPipeId());
-		} else {
-			goOn(message.getPipeId());
-		}
-	}
-	
-	public static void handleUpdatePipeInstruction(RecoveryUpdatePipeMessage message) {
+
+	public static void handleUpdatePipeInstruction(
+			RecoveryUpdatePipeMessage message) {
 		Preconditions.checkNotNull(message);
 		if (message.isSenderUpdateInstruction()) {
 			// TODO nothing to do?
 		} else {
-			updateReceiver(message.getNewPeerId(), message.getPipeId(), message.getSharedQueryId());
+			updateReceiver(message.getNewPeerId(), message.getPipeId(),
+					message.getSharedQueryId());
 		}
 	}
-	
-	public static void handleBuddyInstruction(RecoveryBuddyMessage message, PeerID sender) {
+
+	public static void handleBuddyInstruction(RecoveryBuddyMessage message,
+			PeerID sender) {
 		Preconditions.checkNotNull(message);
 		Preconditions.checkNotNull(sender);
-		
+
 		beBuddy(sender, message.getSharedQueryId(), message.getPQLCodes());
 	}
 
-	public static void handleAddQueryInstruction(RecoveryAddQueryMessage message, PeerID sender) {
+	public static void handleAddQueryInstruction(
+			RecoveryAddQueryMessage message, PeerID sender) {
 		Preconditions.checkNotNull(message);
 		Preconditions.checkNotNull(sender);
-		
+
 		addQuery(sender, message);
-	}
-
-	private static void holdOn(PipeID pipeId) {
-		// Here we want to store the tuples
-		RecoveryHelper.startBuffering(pipeId.toString());
-	}
-
-	private static void goOn(PipeID pipeId) {
-		// Here we want to empty the buffer and go on sending the tuples to the
-		// next peer
-		RecoveryHelper.resumeFromBuffering(pipeId.toString());
 	}
 
 	/**
@@ -137,24 +120,28 @@ public class RecoveryInstructionHandler {
 	 *            The id of the shared query where this PQL belongs to
 	 */
 	@SuppressWarnings("rawtypes")
-	private static void addQuery(PeerID senderPeer, RecoveryAddQueryMessage instructionMessage) {
+	private static void addQuery(PeerID senderPeer,
+			RecoveryAddQueryMessage instructionMessage) {
 		if (!RecoveryCommunicator.getExecutor().isPresent()) {
 			LOG.error("No executor bound!");
 			return;
 		}
-		
-		Collection<Integer> installedQueries;  
+
+		Collection<Integer> installedQueries;
 		try {
 			installedQueries = RecoveryHelper
-					.installAndRunQueryPartFromPql(instructionMessage.getPQLCode());
-			if (installedQueries == null || installedQueries.size() == 0){
+					.installAndRunQueryPartFromPql(instructionMessage
+							.getPQLCode());
+			if (installedQueries == null || installedQueries.size() == 0) {
 				LOG.error("Installing QueryPart on Peer failed. Searching for other peers.");
-				recoveryCommunicator.sendAddQueryFail(senderPeer, instructionMessage);
+				recoveryCommunicator.sendAddQueryFail(senderPeer,
+						instructionMessage);
 				return;
 			}
 		} catch (Exception e) {
 			LOG.error("Installing QueryPart on Peer failed. Searching for other peers.");
-			recoveryCommunicator.sendAddQueryFail(senderPeer, instructionMessage);
+			recoveryCommunicator.sendAddQueryFail(senderPeer,
+					instructionMessage);
 			return;
 		}
 		// installing query was successful, send ACK
@@ -182,7 +169,8 @@ public class RecoveryInstructionHandler {
 
 						if (peer != null && pipe != null)
 							recoveryCommunicator.sendUpdateReceiverMessage(
-									peer, ownPeerId, pipe, instructionMessage.getSharedQueryId());
+									peer, ownPeerId, pipe,
+									instructionMessage.getSharedQueryId());
 
 					} else if (operator instanceof JxtaReceiverPO) {
 						// GO ON
@@ -213,7 +201,8 @@ public class RecoveryInstructionHandler {
 
 		if (BuddyHelper.needBuddy(instructionMessage.getPQLCode())) {
 			// We don't have a receiver, thus we need a buddy
-			recoveryCommunicator.chooseBuddyForQuery(instructionMessage.getSharedQueryId());
+			recoveryCommunicator.chooseBuddyForQuery(instructionMessage
+					.getSharedQueryId());
 		}
 	}
 
