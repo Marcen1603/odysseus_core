@@ -124,7 +124,6 @@ public abstract class AbstractRepeatingMessageSender<ResponseMessageType extends
 			mDestinationMap.remove(uuid);
 		}
 
-		System.out.println(message.getClass().getSimpleName());
 		if (result.equals(OK_RESULT)) {
 			return true;
 		}
