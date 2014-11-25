@@ -380,7 +380,7 @@ public class SmartDevicePublisher {
 		////gpioLED10.createLogicRuleWithState("hot", State.ON);
 		////gpioLED10.createLogicRuleWithState("cold", State.OFF);
 		gpioLED10.createLogicRuleWithState("pin7down", State.ON);
-		gpioLED10.createLogicRuleWithState("pin0down", State.OFF);
+		//gpioLED10.createLogicRuleWithState("pin0down", State.OFF);
 		
 		
 	}
