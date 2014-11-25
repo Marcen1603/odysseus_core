@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 
 import com.pi4j.io.gpio.GpioController;
 import com.pi4j.io.gpio.GpioFactory;
+import com.pi4j.io.gpio.GpioPin;
 import com.pi4j.io.gpio.GpioPinDigitalInput;
 import com.pi4j.io.gpio.Pin;
 import com.pi4j.io.gpio.PinMode;
@@ -135,8 +136,31 @@ public class RPiGPIOPushTransportHandler extends AbstractTransportHandler {
 		}
 
 		if (myButton == null) {
-			myButton = gpioController.provisionDigitalInputPin(this.pin,
-					"MyButton");
+			try{
+				myButton = gpioController.provisionDigitalInputPin(this.pin,
+						"MyButton");
+				
+			}catch(Exception ex){
+				LOG.debug(ex.getMessage(), ex);
+				
+				while(gpioController.getProvisionedPins().iterator().hasNext()){
+					GpioPin _pin = gpioController.getProvisionedPins().iterator().next();
+					
+					if(_pin.getPin().getAddress() == this.pin.getAddress()){
+						//GpioPin[] pins = new GpioPin[1];
+						//pins[0] = _pin;
+						
+						LOG.debug("unprovisionPin:"+_pin.getPin().getAddress());
+						gpioController.unprovisionPin(_pin);
+						break;
+					}
+				}
+				
+				LOG.debug("provisionPin:"+this.pin.getAddress());
+				myButton = gpioController.provisionDigitalInputPin(this.pin,
+						"MyButton");
+				
+			}
 		}
 	}
 
