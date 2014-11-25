@@ -6,7 +6,8 @@ import net.jxta.id.ID;
 import net.jxta.peer.PeerID;
 import net.jxta.pipe.PipeID;
 import de.uniol.inf.is.odysseus.peer.recovery.internal.RecoveryProcessState;
-import de.uniol.inf.is.odysseus.peer.recovery.messages.RecoveryInstructionMessage;
+import de.uniol.inf.is.odysseus.peer.recovery.messages.RecoveryAddQueryMessage;
+import de.uniol.inf.is.odysseus.peer.recovery.messages.RecoveryTupleSendMessage;
 
 /**
  * A recovery communicator handles the communication between peers for recovery
@@ -30,7 +31,7 @@ public interface IRecoveryCommunicator {
 	 *            List of query-ids for which the respective peer should hold on
 	 */
 	public void sendHoldOnMessage(PeerID peerToHoldOn,
-			RecoveryInstructionMessage holdOnMessage,
+			RecoveryTupleSendMessage holdOnMessage,
 			UUID recoveryStateIdentifier);
 
 	/**
@@ -148,10 +149,10 @@ public interface IRecoveryCommunicator {
 	RecoveryProcessState getRecoveryProcessState(UUID identifier);
 
 	void sendAddQueryFail(PeerID senderPeer,
-			RecoveryInstructionMessage instructionMessage);
+			RecoveryAddQueryMessage instructionMessage);
 
 	void sendAddQueryAck(PeerID senderPeer,
-			RecoveryInstructionMessage instructionMessage);
+			RecoveryAddQueryMessage instructionMessage);
 
 	void removeRecoveryProcessState(UUID identifier);
 

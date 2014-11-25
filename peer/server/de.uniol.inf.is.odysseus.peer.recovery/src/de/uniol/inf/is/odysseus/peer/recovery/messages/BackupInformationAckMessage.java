@@ -35,14 +35,14 @@ public class BackupInformationAckMessage implements IMessage {
 	/**
 	 * Creates a new backup information acknowledge message.
 	 * 
-	 * @param info
-	 *            The received information. <br />
+	 * @param id
+	 *            The id of the received message. <br />
 	 *            Must be not null.
 	 */
-	public BackupInformationAckMessage(IRecoveryBackupInformation info) {
+	public BackupInformationAckMessage(UUID id) {
 
-		Preconditions.checkNotNull(info);
-		this.mID = info.getUUID();
+		Preconditions.checkNotNull(id);
+		this.mID = id;
 
 	}
 

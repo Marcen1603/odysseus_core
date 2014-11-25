@@ -27,10 +27,10 @@ public class AddQueryResponseMessage implements IMessage {
 	}
 
 	public static AddQueryResponseMessage createAddQueryAckMessage(
-			RecoveryInstructionMessage instruction) {
+			RecoveryAddQueryMessage instruction) {
 		return createAddQueryAckMessage(instruction.getSharedQueryId(),
-				instruction.getRecoveryProcessStateId(),
-				instruction.getPqlQuery());
+				instruction.getRecoveryProcessId(),
+				instruction.getPQLCode());
 	}
 
 	public static AddQueryResponseMessage createAddQueryAckMessage(
@@ -44,10 +44,10 @@ public class AddQueryResponseMessage implements IMessage {
 	}
 
 	public static AddQueryResponseMessage createAddQueryFailMessage(
-			RecoveryInstructionMessage instruction) {
+			RecoveryAddQueryMessage instruction) {
 		return createAddQueryFailMessage(instruction.getSharedQueryId(),
-				instruction.getRecoveryProcessStateId(),
-				instruction.getPqlQuery());
+				instruction.getRecoveryProcessId(),
+				instruction.getPQLCode());
 	}
 
 	public static AddQueryResponseMessage createAddQueryFailMessage(

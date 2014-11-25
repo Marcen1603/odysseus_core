@@ -77,7 +77,7 @@ public class BackupInformationReceiver {
 
 		try {
 			communicator.send(sender,
-					new BackupInformationAckMessage(message.getInfo()));
+					new BackupInformationAckMessage(message.getUUID()));
 		} catch (PeerCommunicationException e) {
 			LOG.error("Could not send backup information ack message!", e);
 		}

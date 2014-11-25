@@ -147,17 +147,17 @@ public class BackupInformationSender {
 				message, destination);
 
 		synchronized (cSenderMap) {
-			cSenderMap.put(info.getUUID(), msgSender);
+			cSenderMap.put(message.getUUID(), msgSender);
 		}
 		synchronized (cDestinationMap) {
-			cDestinationMap.put(info.getUUID(), destination);
+			cDestinationMap.put(message.getUUID(), destination);
 		}
 
 		msgSender.start();
 		LOG.debug("Sent backup info {} to peerID {}", info, destination);
 
 		LOG.debug("Waiting for response from peer...");
-		while (senderIsActive(info.getUUID())) {
+		while (senderIsActive(message.getUUID())) {
 			try {
 				Thread.sleep(300);
 			} catch (InterruptedException e) {
@@ -171,19 +171,19 @@ public class BackupInformationSender {
 
 		String result = "";
 		synchronized (cResultMap) {
-			if (!cResultMap.containsKey(info.getUUID())) {
+			if (!cResultMap.containsKey(message.getUUID())) {
 				result = "Could not send backup information: Peer is not reachable!";
 			} else {
 				result = OK_RESULT;
 			}
-			cResultMap.remove(info.getUUID());
+			cResultMap.remove(message.getUUID());
 
 		}
 		synchronized (cSenderMap) {
-			cSenderMap.remove(info.getUUID());
+			cSenderMap.remove(message.getUUID());
 		}
 		synchronized (cDestinationMap) {
-			cDestinationMap.remove(info.getUUID());
+			cDestinationMap.remove(message.getUUID());
 		}
 
 		if (result.equals(OK_RESULT)) {

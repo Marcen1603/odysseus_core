@@ -3,8 +3,6 @@ package de.uniol.inf.is.odysseus.peer.recovery.internal;
 import java.util.Collection;
 
 import net.jxta.id.ID;
-import net.jxta.impl.id.UUID.UUID;
-import net.jxta.impl.id.UUID.UUIDFactory;
 import net.jxta.peer.PeerID;
 
 import com.google.common.base.Preconditions;
@@ -28,25 +26,6 @@ import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryBackupInformation;
  *
  */
 public class BackupInformation implements IRecoveryBackupInformation {
-	
-	/**
-	 * The id of the backup information.
-	 */
-	private UUID mID = UUIDFactory.newUUID();
-	
-	@Override
-	public UUID getUUID() {
-		
-		return this.mID;
-		
-	}
-	
-	@Override
-	public void setUUID(UUID id) {
-		
-		this.mID = id;
-		
-	}
 
 	/**
 	 * The id of the distributed query.

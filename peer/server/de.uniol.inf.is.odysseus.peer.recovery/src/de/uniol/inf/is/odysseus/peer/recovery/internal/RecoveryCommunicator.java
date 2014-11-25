@@ -36,12 +36,11 @@ import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryStrategyManager;
 import de.uniol.inf.is.odysseus.peer.recovery.messages.AddQueryResponseMessage;
 import de.uniol.inf.is.odysseus.peer.recovery.messages.BackupInformationAckMessage;
 import de.uniol.inf.is.odysseus.peer.recovery.messages.BackupInformationMessage;
-import de.uniol.inf.is.odysseus.peer.recovery.messages.RecoveryAgreementAckMessage;
-import de.uniol.inf.is.odysseus.peer.recovery.messages.RecoveryAgreementFailMessage;
+import de.uniol.inf.is.odysseus.peer.recovery.messages.RecoveryAddQueryMessage;
 import de.uniol.inf.is.odysseus.peer.recovery.messages.RecoveryAgreementMessage;
-import de.uniol.inf.is.odysseus.peer.recovery.messages.RecoveryInstructionAckMessage;
-import de.uniol.inf.is.odysseus.peer.recovery.messages.RecoveryInstructionFailMessage;
-import de.uniol.inf.is.odysseus.peer.recovery.messages.RecoveryInstructionMessage;
+import de.uniol.inf.is.odysseus.peer.recovery.messages.RecoveryBuddyMessage;
+import de.uniol.inf.is.odysseus.peer.recovery.messages.RecoveryTupleSendMessage;
+import de.uniol.inf.is.odysseus.peer.recovery.messages.RecoveryUpdatePipeMessage;
 import de.uniol.inf.is.odysseus.peer.recovery.protocol.AddQueryResponseHandler;
 import de.uniol.inf.is.odysseus.peer.recovery.protocol.RecoveryAgreementHandler;
 import de.uniol.inf.is.odysseus.peer.recovery.protocol.RecoveryInstructionHandler;
@@ -197,19 +196,9 @@ public class RecoveryCommunicator implements IRecoveryCommunicator,
 	private void registerMessagesAndAddListeners() {
 		Preconditions.checkArgument(cPeerCommunicator.isPresent());
 		cPeerCommunicator.get().registerMessageType(
-				RecoveryInstructionMessage.class);
+				RecoveryAddQueryMessage.class);
 		cPeerCommunicator.get().addListener(this,
-				RecoveryInstructionMessage.class);
-
-		cPeerCommunicator.get().registerMessageType(
-				RecoveryInstructionAckMessage.class);
-		cPeerCommunicator.get().addListener(this,
-				RecoveryInstructionAckMessage.class);
-
-		cPeerCommunicator.get().registerMessageType(
-				RecoveryInstructionFailMessage.class);
-		cPeerCommunicator.get().addListener(this,
-				RecoveryInstructionFailMessage.class);
+				RecoveryAddQueryMessage.class);
 
 		cPeerCommunicator.get().registerMessageType(
 				BackupInformationMessage.class);
@@ -225,16 +214,6 @@ public class RecoveryCommunicator implements IRecoveryCommunicator,
 				RecoveryAgreementMessage.class);
 		cPeerCommunicator.get().addListener(this,
 				RecoveryAgreementMessage.class);
-
-		cPeerCommunicator.get().registerMessageType(
-				RecoveryAgreementAckMessage.class);
-		cPeerCommunicator.get().addListener(this,
-				RecoveryAgreementAckMessage.class);
-
-		cPeerCommunicator.get().registerMessageType(
-				RecoveryAgreementFailMessage.class);
-		cPeerCommunicator.get().addListener(this,
-				RecoveryAgreementFailMessage.class);
 
 		cPeerCommunicator.get().registerMessageType(
 				AddQueryResponseMessage.class);
@@ -243,6 +222,21 @@ public class RecoveryCommunicator implements IRecoveryCommunicator,
 
 		cPeerCommunicator.get().registerMessageType(RemoveQueryMessage.class);
 		cPeerCommunicator.get().addListener(this, RemoveQueryMessage.class);
+
+		cPeerCommunicator.get().registerMessageType(
+				RecoveryTupleSendMessage.class);
+		cPeerCommunicator.get().addListener(this,
+				RecoveryTupleSendMessage.class);
+		
+		cPeerCommunicator.get().registerMessageType(
+				RecoveryUpdatePipeMessage.class);
+		cPeerCommunicator.get().addListener(this,
+				RecoveryUpdatePipeMessage.class);
+		
+		cPeerCommunicator.get().registerMessageType(
+				RecoveryBuddyMessage.class);
+		cPeerCommunicator.get().addListener(this,
+				RecoveryBuddyMessage.class);
 	}
 
 	/**
@@ -251,19 +245,9 @@ public class RecoveryCommunicator implements IRecoveryCommunicator,
 	private void unregisterMessagesAndAddListeners() {
 		Preconditions.checkArgument(cPeerCommunicator.isPresent());
 		cPeerCommunicator.get().removeListener(this,
-				RecoveryInstructionMessage.class);
+				RecoveryAddQueryMessage.class);
 		cPeerCommunicator.get().unregisterMessageType(
-				RecoveryInstructionMessage.class);
-
-		cPeerCommunicator.get().removeListener(this,
-				RecoveryInstructionAckMessage.class);
-		cPeerCommunicator.get().unregisterMessageType(
-				RecoveryInstructionAckMessage.class);
-
-		cPeerCommunicator.get().removeListener(this,
-				RecoveryInstructionFailMessage.class);
-		cPeerCommunicator.get().unregisterMessageType(
-				RecoveryInstructionFailMessage.class);
+				RecoveryAddQueryMessage.class);
 
 		cPeerCommunicator.get().removeListener(this,
 				BackupInformationMessage.class);
@@ -279,16 +263,6 @@ public class RecoveryCommunicator implements IRecoveryCommunicator,
 				RecoveryAgreementMessage.class);
 		cPeerCommunicator.get().unregisterMessageType(
 				RecoveryAgreementMessage.class);
-
-		cPeerCommunicator.get().removeListener(this,
-				RecoveryAgreementAckMessage.class);
-		cPeerCommunicator.get().unregisterMessageType(
-				RecoveryAgreementAckMessage.class);
-
-		cPeerCommunicator.get().removeListener(this,
-				RecoveryAgreementFailMessage.class);
-		cPeerCommunicator.get().unregisterMessageType(
-				RecoveryAgreementFailMessage.class);
 
 		cPeerCommunicator.get().removeListener(this,
 				AddQueryResponseMessage.class);
@@ -298,6 +272,21 @@ public class RecoveryCommunicator implements IRecoveryCommunicator,
 		cPeerCommunicator.get().removeListener(this, RemoveQueryMessage.class);
 		// cPeerCommunicator.get().unregisterMessageType(RemoveQueryMessage.class);
 		// we don't need to unregister this here
+
+		cPeerCommunicator.get().unregisterMessageType(
+				RecoveryTupleSendMessage.class);
+		cPeerCommunicator.get().removeListener(this,
+				RecoveryTupleSendMessage.class);
+		
+		cPeerCommunicator.get().unregisterMessageType(
+				RecoveryUpdatePipeMessage.class);
+		cPeerCommunicator.get().removeListener(this,
+				RecoveryUpdatePipeMessage.class);
+		
+		cPeerCommunicator.get().unregisterMessageType(
+				RecoveryBuddyMessage.class);
+		cPeerCommunicator.get().removeListener(this,
+				RecoveryBuddyMessage.class);
 	}
 
 	/**
@@ -485,7 +474,7 @@ public class RecoveryCommunicator implements IRecoveryCommunicator,
 
 	@Override
 	public void sendHoldOnMessage(PeerID peerToHoldOn,
-			RecoveryInstructionMessage holdOnMessage,
+			RecoveryTupleSendMessage holdOnMessage,
 			UUID recoveryStateIdentifier) {
 		sendMessage(peerToHoldOn, holdOnMessage);
 	}
@@ -505,9 +494,7 @@ public class RecoveryCommunicator implements IRecoveryCommunicator,
 		}
 
 		// Send the add query message
-		RecoveryInstructionMessage takeOverMessage = RecoveryInstructionMessage
-				.createAddQueryMessage(pql, sharedQueryId,
-						recoveryStateIdentifier);
+		RecoveryAddQueryMessage takeOverMessage = new RecoveryAddQueryMessage(pql, sharedQueryId, recoveryStateIdentifier);
 		sendMessage(newPeer, takeOverMessage);
 
 		// TODO remove sending backup informations here, because they need to be
@@ -529,21 +516,14 @@ public class RecoveryCommunicator implements IRecoveryCommunicator,
 	@Override
 	public void receivedMessage(IPeerCommunicator communicator,
 			PeerID senderPeer, IMessage message) {
-		if (message instanceof RecoveryInstructionMessage) {
-			// handle instruction message
-			RecoveryInstructionMessage instruction = (RecoveryInstructionMessage) message;
-			RecoveryInstructionHandler.handleInstruction(senderPeer,
-					instruction);
-		} else if (message instanceof RecoveryInstructionAckMessage) {
-			// handle ack message for instruction
-			RecoveryInstructionAckMessage instructionAckMessage = (RecoveryInstructionAckMessage) message;
-			RecoveryInstructionHandler.handleAckInstruction(senderPeer,
-					instructionAckMessage);
-		} else if (message instanceof RecoveryInstructionFailMessage) {
-			// handle fail message for instruction
-			RecoveryInstructionFailMessage instructionFailMessage = (RecoveryInstructionFailMessage) message;
-			RecoveryInstructionHandler.handleFailedInstruction(senderPeer,
-					instructionFailMessage);
+		if (message instanceof RecoveryTupleSendMessage) {
+			RecoveryInstructionHandler.handleTupleSendInstruction((RecoveryTupleSendMessage) message);
+		} else if (message instanceof RecoveryUpdatePipeMessage) {
+			RecoveryInstructionHandler.handleUpdatePipeInstruction((RecoveryUpdatePipeMessage) message);
+		} else if (message instanceof RecoveryBuddyMessage) {
+			RecoveryInstructionHandler.handleBuddyInstruction((RecoveryBuddyMessage) message, senderPeer);
+		}else if (message instanceof RecoveryAddQueryMessage) {
+			RecoveryInstructionHandler.handleAddQueryInstruction((RecoveryAddQueryMessage) message, senderPeer);
 		} else if (message instanceof BackupInformationMessage) {
 			// Store the backup information
 			BackupInformationMessage backupInfoMessage = (BackupInformationMessage) message;
@@ -563,9 +543,10 @@ public class RecoveryCommunicator implements IRecoveryCommunicator,
 					agreementMessage);
 		} else if (message instanceof AddQueryResponseMessage) {
 			AddQueryResponseMessage responseMessage = (AddQueryResponseMessage) message;
-			AddQueryResponseHandler.getInstance().handleAddQueryResponse(senderPeer, responseMessage, this,
+			AddQueryResponseHandler.getInstance().handleAddQueryResponse(
+					senderPeer, responseMessage, this,
 					cRecoveryStrategyManager.get());
-			
+
 		}
 	}
 
@@ -618,22 +599,19 @@ public class RecoveryCommunicator implements IRecoveryCommunicator,
 			PeerID newSenderPeer, PipeID pipeId, ID sharedQueryId) {
 
 		// 1. Tell the peer to update the receiver
-		RecoveryInstructionMessage message = RecoveryInstructionMessage
-				.createUpdateReceiverMessage(newSenderPeer, pipeId,
-						sharedQueryId);
+		RecoveryUpdatePipeMessage message = new RecoveryUpdatePipeMessage(pipeId, newSenderPeer, sharedQueryId, false);
 		sendMessage(receiverPeer, message);
 	}
 
 	@Override
 	public void sendGoOnMessage(PeerID receiverPeer, PipeID pipeId) {
-		RecoveryInstructionMessage message = RecoveryInstructionMessage
-				.createGoOnMessage(pipeId);
+		RecoveryTupleSendMessage message = new RecoveryTupleSendMessage(pipeId, false);
 		sendMessage(receiverPeer, message);
 	}
 
 	@Override
 	public void sendAddQueryFail(PeerID senderPeer,
-			RecoveryInstructionMessage instructionMessage) {
+			RecoveryAddQueryMessage instructionMessage) {
 		AddQueryResponseMessage failResponse = AddQueryResponseMessage
 				.createAddQueryFailMessage(instructionMessage);
 		sendMessage(senderPeer, failResponse);
@@ -642,7 +620,7 @@ public class RecoveryCommunicator implements IRecoveryCommunicator,
 
 	@Override
 	public void sendAddQueryAck(PeerID senderPeer,
-			RecoveryInstructionMessage instructionMessage) {
+			RecoveryAddQueryMessage instructionMessage) {
 		AddQueryResponseMessage ackResponse = AddQueryResponseMessage
 				.createAddQueryAckMessage(instructionMessage);
 		sendMessage(senderPeer, ackResponse);
@@ -675,8 +653,7 @@ public class RecoveryCommunicator implements IRecoveryCommunicator,
 			List<String> pql = infos.asList();
 
 			// 3. Send this to the buddy
-			RecoveryInstructionMessage buddyMessage = RecoveryInstructionMessage
-					.createBeBuddyMessage(sharedQueryId, pql);
+			RecoveryBuddyMessage buddyMessage = new RecoveryBuddyMessage(pql, sharedQueryId);
 			sendMessage(buddy, buddyMessage);
 
 			// 4. Give the buddy the backup-information I have stored so that he

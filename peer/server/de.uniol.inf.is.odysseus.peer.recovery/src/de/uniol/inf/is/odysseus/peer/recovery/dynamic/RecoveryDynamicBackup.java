@@ -42,7 +42,7 @@ import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryCommunicator;
 import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryDynamicBackup;
 import de.uniol.inf.is.odysseus.peer.recovery.internal.RecoveryProcessState;
 import de.uniol.inf.is.odysseus.peer.recovery.internal.SharedQuery;
-import de.uniol.inf.is.odysseus.peer.recovery.messages.RecoveryInstructionMessage;
+import de.uniol.inf.is.odysseus.peer.recovery.messages.RecoveryTupleSendMessage;
 import de.uniol.inf.is.odysseus.peer.recovery.protocol.RecoveryAgreementHandler;
 import de.uniol.inf.is.odysseus.peer.recovery.util.LocalBackupInformationAccess;
 import de.uniol.inf.is.odysseus.peer.recovery.util.RecoveryHelper;
@@ -393,8 +393,7 @@ public class RecoveryDynamicBackup implements IRecoveryDynamicBackup {
 						try {
 							URI uri = new URI(pipeId);
 							PipeID pipe = PipeID.create(uri);
-							RecoveryInstructionMessage holdOnMessage = RecoveryInstructionMessage
-									.createHoldOnMessage(pipe);
+							RecoveryTupleSendMessage holdOnMessage = new RecoveryTupleSendMessage(pipe, true);
 							uri = new URI(peerId);
 							PeerID peerToHoldOn = PeerID.create(uri);
 

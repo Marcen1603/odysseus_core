@@ -9,6 +9,7 @@ import java.util.Iterator;
 import net.jxta.id.ID;
 import net.jxta.id.IDFactory;
 import net.jxta.impl.id.UUID.UUID;
+import net.jxta.impl.id.UUID.UUIDFactory;
 import net.jxta.peer.PeerID;
 
 import org.slf4j.Logger;
@@ -47,6 +48,20 @@ public class BackupInformationMessage implements IMessage {
 	 */
 	private static final Logger LOG = LoggerFactory
 			.getLogger(BackupInformationMessage.class);
+	
+	/**
+	 * The id of the message.
+	 */
+	private UUID mID = UUIDFactory.newUUID();
+
+	/**
+	 * The id of the message.
+	 * 
+	 * @return A unique identifier.
+	 */
+	public UUID getUUID() {
+		return this.mID;
+	}
 
 	/**
 	 * The backup information, which has to be sent or which has received.
@@ -175,7 +190,7 @@ public class BackupInformationMessage implements IMessage {
 	private byte[] determineIdBytes() {
 
 		Preconditions.checkNotNull(this.mInfo);
-		return this.mInfo.getUUID().toString().getBytes();
+		return this.mID.toString().getBytes();
 
 	}
 
@@ -394,7 +409,7 @@ public class BackupInformationMessage implements IMessage {
 		Preconditions.checkNotNull(buffer);
 		byte[] idBytes = new byte[buffer.getInt()];
 		buffer.get(idBytes);
-		this.mInfo.setUUID(toUUID(new String(idBytes)));
+		this.mID = toUUID(new String(idBytes));
 
 	}
 
