@@ -1,6 +1,5 @@
 package de.uniol.inf.is.odysseus.peer.console;
 
-import java.io.PrintStream;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.InetAddress;
@@ -964,19 +963,12 @@ public class PeerConsole implements CommandProvider, IPeerCommunicatorListener {
 					return;
 				}
 			}
-			CommandInterpreter delegateCi = new DelegateCommandInterpreter(parameters != null ? parameters.split("\\ ") : new String[0]);
-
-			PrintStream oldOut = System.out;
-			ConsoleOutputStream cos = new ConsoleOutputStream(System.out);
+			StringBuilderCommandInterpreter delegateCi = new StringBuilderCommandInterpreter(parameters != null ? parameters.split("\\ ") : new String[0]);
 
 			LOG.debug("Executing command");
-			System.setOut(cos);
 			m.invoke(this, delegateCi);
-			System.setOut(oldOut);
 
-			String text = cos.getOutput();
-
-			CommandOutputMessage out = new CommandOutputMessage(text);
+			CommandOutputMessage out = new CommandOutputMessage(delegateCi.getText());
 			try {
 				LOG.debug("Command executed. Send results back");
 				peerCommunicator.send(senderPeer, out);
