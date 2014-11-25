@@ -385,15 +385,18 @@ public class QueryExecutor implements IP2PDictionaryListener,
 			LOG.error(ex.getMessage(), ex);
 		}
 
+		/*
 		try {
 			removeViewImmediately(queryName);
 			removeViewImmediately(queryName + "_query");
 		} catch (Exception ex) {
 			LOG.error(ex.getMessage(), ex);
 		}
+		*/
 	}
 
 	private void stopQueryImmediately(String queryName) {
+		LOG.debug("stopQueryImmediately:"+queryName);
 		QueryState queryState = ServerExecutorService.getServerExecutor()
 				.getQueryState(queryName);
 		if (queryState.equals(QueryState.RUNNING)) {
@@ -406,11 +409,13 @@ public class QueryExecutor implements IP2PDictionaryListener,
 					+ queryState);
 		}
 
-		ServerExecutorService.getServerExecutor().removeViewOrStream(queryName,
-				SessionManagementService.getActiveSession());
+		//TODO:
+		//ServerExecutorService.getServerExecutor().removeViewOrStream(queryName,
+		//		SessionManagementService.getActiveSession());
 	}
 
 	private void removeViewImmediately(String queryName) {
+		LOG.debug("removeViewImmediately:"+queryName);
 		ServerExecutorService.getServerExecutor().removeViewOrStream(queryName,
 				SessionManagementService.getActiveSession());
 	}
