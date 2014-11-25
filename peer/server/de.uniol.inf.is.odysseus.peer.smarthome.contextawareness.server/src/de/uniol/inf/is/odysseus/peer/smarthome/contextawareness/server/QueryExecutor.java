@@ -77,6 +77,7 @@ public class QueryExecutor implements IP2PDictionaryListener,
 	public void addNeededSourceForImport(String neddedSourceName,
 			String peerIDString) {
 		getSourcesNeededForImport().put(neddedSourceName, peerIDString);
+		
 	}
 
 	public void removeSourceIfNeccessary(String srcName) {
@@ -241,8 +242,8 @@ public class QueryExecutor implements IP2PDictionaryListener,
 					//queryState.equals(QueryState.RUNNING);
 					
 					if(getP2PDictionary().isImported(activityInterpreter.getActivitySourceName())){
-						executeQueryNow(logicRuleQueries);
 						rule.addRunningWith(activityInterpreter);
+						executeQueryNow(logicRuleQueries);
 					}else{
 						LOG.error("can't execute logicrules, because source is not imported. source name: "+activityInterpreter.getActivitySourceName());
 					}
@@ -343,7 +344,7 @@ public class QueryExecutor implements IP2PDictionaryListener,
 		return queryState.equals(QueryState.RUNNING);
 	}
 
-	private void importOrRemoveIfNeccessary(SourceAdvertisement srcAdv) {
+	void importOrRemoveIfNeccessary(SourceAdvertisement srcAdv) {
 		if (!getP2PDictionary().isImported(srcAdv.getName())
 				&& getSourcesNeededForImport().containsKey(srcAdv.getName())) {
 			try {
@@ -376,7 +377,7 @@ public class QueryExecutor implements IP2PDictionaryListener,
 	}
 
 	void stopQueryAndRemoveViewOrStream(String queryName) {
-		LOG.debug("stopQuery:" + queryName);
+		LOG.debug("stopQuery:" + queryName+" and:"+queryName+"_query");
 
 		try {
 			stopQueryImmediately(queryName);
@@ -385,14 +386,12 @@ public class QueryExecutor implements IP2PDictionaryListener,
 			LOG.error(ex.getMessage(), ex);
 		}
 
-		/*
 		try {
 			removeViewImmediately(queryName);
 			removeViewImmediately(queryName + "_query");
 		} catch (Exception ex) {
 			LOG.error(ex.getMessage(), ex);
 		}
-		*/
 	}
 
 	private void stopQueryImmediately(String queryName) {
@@ -408,10 +407,18 @@ public class QueryExecutor implements IP2PDictionaryListener,
 			LOG.debug("can't stopQueryName:" + queryName + " queryState:"
 					+ queryState);
 		}
+		
+		//TODO test:
+		try{
+			ServerExecutorService.getServerExecutor().removeQuery(queryName,
+					SessionManagementService.getActiveSession());
+		}catch(Exception ex){
+			//LOG.error(ex.getMessage(), ex);
+		}
 
 		//TODO:
-		//ServerExecutorService.getServerExecutor().removeViewOrStream(queryName,
-		//		SessionManagementService.getActiveSession());
+		ServerExecutorService.getServerExecutor().removeViewOrStream(queryName,
+				SessionManagementService.getActiveSession());
 	}
 
 	private void removeViewImmediately(String queryName) {
@@ -551,7 +558,16 @@ public class QueryExecutor implements IP2PDictionaryListener,
 	}
 
 	private void stopLogicRuleNow(AbstractLogicRule rule) {
-		LOG.debug("stopLogicRuleNow");
+		LOG.debug("stopLogicRuleNow rule.description:"+rule.getReactionDescription());
+		
+		for(Entry<String, String> entry : rule.getLogicRulesQueriesWithActivitySourceName().entrySet()){
+			String queryName = entry.getKey();
+			//String query = entry.getValue();
+			
+			stopQueryAndRemoveViewOrStream(queryName);
+		}
+		
+		
 		for(ActivityInterpreter activityInterpreter : rule.getActivityInterpretersWithRunningRules()){
 			@SuppressWarnings({ "rawtypes", "unchecked" })
 			ListIterator<Map.Entry<String, String>> iter = new ArrayList(

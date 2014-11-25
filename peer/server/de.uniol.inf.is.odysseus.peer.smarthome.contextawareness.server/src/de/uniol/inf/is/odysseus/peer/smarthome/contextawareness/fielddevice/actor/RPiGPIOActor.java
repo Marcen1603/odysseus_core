@@ -40,6 +40,8 @@ public class RPiGPIOActor extends AbstractActor {
 			AbstractActorAction actorAction) {
 		RPiGPIOActorLogicRule newRule = new RPiGPIOActorLogicRule(this,
 				activityName, getPrefix(), getPostfix());
+		newRule.setPin(getPin());
+		
 		switch (actorAction.getName()) {
 		case "ON":
 			newRule.setState(State.ON);
@@ -280,25 +282,25 @@ public class RPiGPIOActor extends AbstractActor {
 		}
 	}
 
+
+	public void setPin(int pin) {
+		this.pin = pin;
+	}
+
 	class RPiGPIOActorAction extends AbstractActorAction {
 		private static final long serialVersionUID = 1L;
 		private State name;
-
+		
 		RPiGPIOActorAction(State state) {
 			super();
 			this.name = state;
 		}
-
+		
 		@Override
 		public String getName() {
 			String _name = this.name.toString();
 			return _name;
 		}
 	}
-
-	public void setPin(int pin) {
-		this.pin = pin;
-	}
-
 	
 }
