@@ -2,7 +2,6 @@ package de.uniol.inf.is.odysseus.peer.rest.pingmap;
 
 
 import java.io.DataOutputStream;
-import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
@@ -101,14 +100,21 @@ public class PingMapHelper implements IPingMapListener {
 						out.writeInt(pingMapNodes.size());
 						for (IPingMapNode node : pingMapNodes) {
 							String peerId = node.getPeerID().toString();
-							String peerName = PingMapServiceBinding.getPeerDictionary().getRemotePeerName(peerId);
+							String peerName = "";
+							double ping = 0;
+							try {
+								peerName = PingMapServiceBinding.getPeerDictionary().getRemotePeerName(peerId);
+								ping = pingMap.getPing(node.getPeerID()).or(0d);
+							} catch (Exception e) {
+								//ignore
+							}
 							out.writeUTF(peerId);
 							out.writeUTF(peerName);
 							Vector3D pos = node.getPosition();
 							out.writeDouble(pos.getX());
 							out.writeDouble(pos.getY());
 							out.writeDouble(pos.getZ());
-							out.writeDouble(pingMap.getPing(node.getPeerID()).or(0d));
+							out.writeDouble(ping);
 						}
 					}				
 					Thread.sleep(3000);
@@ -120,11 +126,15 @@ public class PingMapHelper implements IPingMapListener {
 						PingMapServiceBinding.getPingMap().removeListener(PingMapHelper.this);
 					}
 				}	
-			} catch (InterruptedException e) {
+			} catch (Exception e) {
 				e.printStackTrace();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+				synchronized (socketThreads) {
+					socketThreads.remove(this);
+					if (socketThreads.size() == 0) {
+						PingMapServiceBinding.getPingMap().removeListener(PingMapHelper.this);
+					}
+				}
+			} 
 		}
 	}
 	
