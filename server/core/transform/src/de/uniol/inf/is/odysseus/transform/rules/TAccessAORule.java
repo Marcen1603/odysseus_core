@@ -128,23 +128,20 @@ public class TAccessAORule extends AbstractTransformationRule<AbstractAccessAO> 
 			}
 			if (options.containsKey("scheduler.delay")) {
 				if (accessPO instanceof IIterableSource) {
-					((IIterableSource) accessPO).setDelay(Long
-							.parseLong(operator.getOptionsMap().get(
-									"scheduler.delay")));
+					((IIterableSource) accessPO).setDelay(options.getLong(
+									"scheduler.delay",-1));
 				}
 			}
 			if (options.containsKey("scheduler.yieldrate")) {
 				if (accessPO instanceof IIterableSource) {
-					((IIterableSource) accessPO).setYieldRate(Integer
-							.parseInt(operator.getOptionsMap().get(
-									"scheduler.yieldrate")));
+					((IIterableSource) accessPO).setYieldRate(options.getInt(
+									"scheduler.yieldrate",-1));
 				}
 			}
 			if (options.containsKey("scheduler.yieldnanos")) {
 				if (accessPO instanceof IIterableSource) {
-					((IIterableSource) accessPO).setYieldDurationNanos(Integer
-							.parseInt(operator.getOptionsMap().get(
-									"scheduler.yieldnanos")));
+					((IIterableSource) accessPO).setYieldDurationNanos(options.getInt(
+									"scheduler.yieldnanos",-1));
 				}
 			}
 			if (!config.isVirtualTransformation()) {
