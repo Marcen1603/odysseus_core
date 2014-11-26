@@ -52,7 +52,7 @@ public class ModbusTCPTransportHandler extends
 	public static final String SLAVE = "slave";
 	public static final String UNIT_ID = "unitid";
 
-	public static final String FUNCTION_CODE = "FUNCTION_CODE".toLowerCase();
+	public static final String FUNCTION_CODE = "function_code";
 	public static final String REF = "ref";
 	public static final String COUNT = "count";
 
@@ -60,7 +60,7 @@ public class ModbusTCPTransportHandler extends
 	public static final String WRITE_BITVECTOR = "write_bitvector";
 	public static final String WRITE_REGISTERS = "write_registers";
 	public static final String WRITE_BOOLEAN = "write_boolean";
-	public static final String WRITE_FUNCTION_CODE = "WRITE_FUNCTION_CODE".toLowerCase();	
+	public static final String WRITE_FUNCTION_CODE = "write_function_code";	
 	
 
 	private int port;
@@ -115,7 +115,9 @@ public class ModbusTCPTransportHandler extends
 		writeRef = options.getInt(WRITE_REF,-1);
 		
 		if (options.containsKey(WRITE_BITVECTOR)){
-			writeVector = BitVector.fromString(options.get(WRITE_BITVECTOR));
+			String bitString = options.get(WRITE_BITVECTOR);
+			BitVector.checkBitString(bitString);
+			writeVector = BitVector.fromString(bitString);
 		}
 		
 		if (options.containsKey(WRITE_BOOLEAN)){

@@ -417,6 +417,14 @@ public class BitVector {
 		return createBitVector(longBuf.array());
 	}
 
+	public static void checkBitString(String s){
+		for (char digit : s.toCharArray()) {
+			if (digit != '1' && digit != '0'){
+				throw new IllegalArgumentException(digit+" is not valid in BitVector");
+			}
+		}
+	}
+	
 	public static BitVector fromString(String s) {
 		// length must be factor of 8
 		int length = ((s.length()/8)+1)*8;

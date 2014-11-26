@@ -289,9 +289,9 @@ abstract public class AbstractAccessAO extends AbstractLogicalOperator {
 		return true;
 	}
 
-	protected String buildString(List<String> elements, String sep) {
+	protected String buildString(List<?> elements, String sep) {
 		StringBuffer v = new StringBuffer();
-		for (String s : elements) {
+		for (Object s : elements) {
 			v.append(s).append(sep);
 		}
 		return v.substring(0, v.length() - 1);
