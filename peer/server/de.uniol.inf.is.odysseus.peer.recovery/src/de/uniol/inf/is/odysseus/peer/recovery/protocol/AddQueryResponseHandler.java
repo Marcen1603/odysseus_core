@@ -222,7 +222,7 @@ public class AddQueryResponseHandler implements IAddQueryResponseHandler {
 					List<String> pqlParts = sharedQuery.getPqlParts();
 					for (String pql : pqlParts) {
 						if (pql.contains(sender.getPipeIDString())) {
-							// Save that this sender if affected
+							// Save that this sender is affected
 							affectedSenders.add(sender);
 						}
 					}
