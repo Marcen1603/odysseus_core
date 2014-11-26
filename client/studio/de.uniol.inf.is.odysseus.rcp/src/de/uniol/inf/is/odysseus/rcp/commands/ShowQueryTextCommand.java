@@ -15,16 +15,21 @@
  */
 package de.uniol.inf.is.odysseus.rcp.commands;
 
+import java.io.ByteArrayInputStream;
 import java.util.List;
 
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.IHandler;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.MessageBox;
-import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.handlers.HandlerUtil;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.ide.IDE;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -50,16 +55,49 @@ public class ShowQueryTextCommand extends AbstractHandler implements IHandler {
 				int id = (Integer)selection;
 				ILogicalQuery query = executor.getLogicalQueryById(id, OdysseusRCPPlugIn.getActiveSession());
 				String queryText = query.getQueryText();
-				Shell shell = HandlerUtil.getActiveWorkbenchWindow(event).getShell();
-				MessageBox box = new MessageBox(shell, SWT.ICON_INFORMATION | SWT.OK);
-				box.setText("Query text for query "+id);
-				box.setMessage(queryText.length() > 500?(queryText.substring(0, 500)+"..."):queryText);
-				box.open();
+				
+				IWorkbenchPage activePage = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
+				
+				try {
+					IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject("[Generated]");
+					if( !project.exists() ) {
+						project.create(null);
+					}
+					if( !project.isOpen() ) {
+						project.open(null);
+					}
+					
+					IFile file = project.getFile(query.getName() + "." + determineFileExtension(query));
+					if( file.exists() ) {
+						file.setContents(new ByteArrayInputStream(queryText.getBytes()), IFile.FORCE, null);
+					} else {
+						file.create(new ByteArrayInputStream(queryText.getBytes()), false, null);
+					}
+					IDE.openEditor(activePage, file, "de.uniol.inf.is.odysseus.rcp.editor.OdysseusScriptEditor");
+					
+				} catch (PartInitException e) {
+					LOG.error("Could not open editor for showing the query text", e);
+				} catch (CoreException e) {
+					LOG.error("Could not open editor for showing the query text", e);
+				}
+				
 			} else {
 				LOG.error("Executor is not set");
 			}						
 		}				
 		return null;
+	}
+
+	private static String determineFileExtension(ILogicalQuery query) {
+		switch( query.getParserId() ) {
+		case "PQL":
+			return "pql";
+		case "CQL":
+			return "cql";
+		case "OdysseusScript":
+			return "qry";
+		}
+		return "tmp";
 	}
 
 }
