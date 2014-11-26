@@ -122,20 +122,20 @@ public class GPSToLocalCoordFunction extends AbstractFunction<Double>{
 			double yGPSTopRight = Double.valueOf(GPSToLocalCoordFunction.ddc
 					.getValue(new DDCKey(yGPSTopRightKey)));
 
-			HashMap<String, Point2D> point = new HashMap<String, Point2D>();
-			point.put(LOCAL, new Point2D.Double(xmin,ymax));
-			point.put(GPS, new Point2D.Double(xGPSBottomLeft, yGPSBottomLeft));
-			listOfAccessPoints.put(BOTTOM_LEFT, point);
+			HashMap<String, Point2D> point1 = new HashMap<String, Point2D>();
+			point1.put(LOCAL, new Point2D.Double(xmin,ymax));
+			point1.put(GPS, new Point2D.Double(xGPSBottomLeft, yGPSBottomLeft));
+			listOfAccessPoints.put(BOTTOM_LEFT, point1);
 			
-			point.clear();
-			point.put(LOCAL, new Point2D.Double(xmin, ymin));
-			point.put(GPS, new Point2D.Double(xGPSTopLeft, yGPSTopLeft));
-			listOfAccessPoints.put(TOP_LEFT, point);
+			HashMap<String, Point2D> point2 = new HashMap<String, Point2D>();
+			point2.put(LOCAL, new Point2D.Double(xmin, ymin));
+			point2.put(GPS, new Point2D.Double(xGPSTopLeft, yGPSTopLeft));
+			listOfAccessPoints.put(TOP_LEFT, point2);
 			
-			point.clear();
-			point.put(LOCAL, new Point2D.Double(xmax, ymin));
-			point.put(GPS, new Point2D.Double(xGPSTopRight, yGPSTopRight));
-			listOfAccessPoints.put(TOP_RIGHT, point);
+			HashMap<String, Point2D> point3 = new HashMap<String, Point2D>();
+			point3.put(LOCAL, new Point2D.Double(xmax, ymin));
+			point3.put(GPS, new Point2D.Double(xGPSTopRight, yGPSTopRight));
+			listOfAccessPoints.put(TOP_RIGHT, point3);
 
 			hasBeenSetUp = true;
 
