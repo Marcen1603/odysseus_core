@@ -36,25 +36,34 @@ public class SocketDataTransmissionReceiver extends EndpointDataTransmissionRece
 	private InetAddress address;
 	private Boolean receiving = false;
 
-	public SocketDataTransmissionReceiver(IPeerCommunicator communicator, String peerID, String id)
-			throws DataTransmissionException {
+	public SocketDataTransmissionReceiver(IPeerCommunicator communicator, String peerID, String id) throws DataTransmissionException {
 		super(communicator, peerID, id);
 
-		communicator.addListener(this, PortMessage.class);
 		determinePeerAddress(peerID);
 	}
+	
+	@Override
+	public void open() {
+		super.open();
+		
+		getPeerCommunicator().addListener(this, PortMessage.class);
+	}
 
-	private void determinePeerAddress(String peerID)
-			throws DataTransmissionException {
-		Optional<String> optAddress = PeerDictionary.getInstance().getRemotePeerAddress(
-				toPeerID(peerID));
+	@Override
+	public void close() {
+		getPeerCommunicator().removeListener(this, PortMessage.class);
+		
+		super.close();
+	}
+
+	private void determinePeerAddress(String peerID) throws DataTransmissionException {
+		Optional<String> optAddress = PeerDictionary.getInstance().getRemotePeerAddress(toPeerID(peerID));
 		if (optAddress.isPresent()) {
 			try {
 				String addressString = optAddress.get();
 				if (addressString.startsWith("[")) {
 					// IPv6
-					address = InetAddress.getByName(addressString.substring(0,
-							addressString.indexOf("]") + 1));
+					address = InetAddress.getByName(addressString.substring(0, addressString.indexOf("]") + 1));
 					LOG.debug("Using IPv6 for socket connection: {}", address);
 				} else {
 					// IPv4
@@ -68,12 +77,10 @@ public class SocketDataTransmissionReceiver extends EndpointDataTransmissionRece
 				}
 			} catch (UnknownHostException e) {
 				address = null;
-				throw new DataTransmissionException("Address of peerid '" + peerID
-						+ "' can not be determined", e);
+				throw new DataTransmissionException("Address of peerid '" + peerID + "' can not be determined", e);
 			}
 		} else {
-			throw new DataTransmissionException("Direct address peerid '" + peerID
-					+ "' can not be determined");
+			throw new DataTransmissionException("Direct address peerid '" + peerID + "' can not be determined");
 		}
 	}
 
@@ -85,63 +92,66 @@ public class SocketDataTransmissionReceiver extends EndpointDataTransmissionRece
 			if (portMessage.getId() == getId()) {
 				final int port = portMessage.getPort();
 
-				LOG.debug("Received portMessage for port " + portMessage.getPort() + " from {}",
-						PeerDictionary.getInstance().getRemotePeerName(senderPeer));
+				LOG.debug("Received portMessage for port " + portMessage.getPort() + " from {}", PeerDictionary.getInstance().getRemotePeerName(senderPeer));
 
 				// Send PortAckMessage
 				sendPortAckMessage(communicator, senderPeer, port, portMessage.getId());
 
-				synchronized( receiving ) {
-					if( !receiving ) { 
-						receiving = true;
-						
-						Thread t = new Thread(new Runnable() {
-							@Override
-							public void run() {
-								try {
-									socket = new Socket(address, port);
-									LOG.debug("Opened socket on port {} for address {}", port,address);
-									InputStream inputStream = socket.getInputStream();
-									while (true) {
-										int bytesRead = inputStream.read(buffer);
-										if (bytesRead == -1) {
-											LOG.debug("Reached end of data stream. Socket closed...");
-											break;
-										} else if (bytesRead > 0) {
-											byte[] msg = new byte[bytesRead];
-											System.arraycopy(buffer, 0, msg, 0, bytesRead);
-		
-											mb.put(msg);
-		
-											byte[] packet = mb.getPacket();
-											if (packet != null) {
-												processBytes(packet);
-											}
+				synchronized (receiving) {
+					if (receiving) {
+						LOG.debug("{}: Already receiving ... aborting", this);
+						return;
+					}
+					receiving = true;
+					LOG.debug("{}: Beginning receiving async", this);
+
+					Thread t = new Thread(new Runnable() {
+						@Override
+						public void run() {
+							try {
+								socket = new Socket(address, port);
+								LOG.debug("Opened socket on port {} for address {}", port, address);
+								InputStream inputStream = socket.getInputStream();
+								while (true) {
+									int bytesRead = inputStream.read(buffer);
+									if (bytesRead == -1) {
+										LOG.debug("Reached end of data stream. Socket closed...");
+										break;
+									} else if (bytesRead > 0) {
+										byte[] msg = new byte[bytesRead];
+										System.arraycopy(buffer, 0, msg, 0, bytesRead);
+
+										mb.put(msg);
+
+										byte[] packet = mb.getPacket();
+										if (packet != null) {
+											processBytes(packet);
 										}
 									}
-								} catch (SocketException e) {
-									tryCloseSocket(socket);
-									if (!e.getMessage().equals("socket closed")) {
-										LOG.error("Exception while reading socket data", e);
-									}
-		
-								} catch (IOException e) {
+								}
+							} catch (SocketException e) {
+								tryCloseSocket(socket);
+								if (!e.getMessage().equals("socket closed")) {
 									LOG.error("Exception while reading socket data", e);
-		
-									tryCloseSocket(socket);
-									socket = null;
-								} finally {
-									synchronized( receiving ) {
-										receiving = false;
-									}
+								}
+
+							} catch (IOException e) {
+								LOG.error("Exception while reading socket data", e);
+
+								tryCloseSocket(socket);
+							} finally {
+								socket = null;
+								synchronized (receiving) {
+									receiving = false;
+									LOG.debug("Receiving ended");
 								}
 							}
-		
-						});
-						t.setName("Reading data thread");
-						t.setDaemon(true);
-						t.start();
-					}
+						}
+
+					});
+					t.setName("Reading data thread");
+					t.setDaemon(true);
+					t.start();
 				}
 			}
 		} else {
@@ -149,22 +159,19 @@ public class SocketDataTransmissionReceiver extends EndpointDataTransmissionRece
 		}
 	}
 
-	private void sendPortAckMessage(IPeerCommunicator communicator, PeerID receiverPeer, int port,
-			int id) {
+	private void sendPortAckMessage(IPeerCommunicator communicator, PeerID receiverPeer, int port, int id) {
 		PortAckMessage portAckMessage = new PortAckMessage(port, id);
 		try {
 			communicator.send(receiverPeer, portAckMessage);
-			LOG.debug("Sent portAckMessage for port " + port + " to {}", PeerDictionary
-					.getInstance().getRemotePeerName(receiverPeer));
+			LOG.debug("Sent portAckMessage for port " + port + " to {}", PeerDictionary.getInstance().getRemotePeerName(receiverPeer));
 		} catch (PeerCommunicationException e) {
-			LOG.error("Could not send the portAckMessage to peer {}", PeerDictionary.getInstance()
-					.getRemotePeerName(receiverPeer));
+			LOG.error("Could not send the portAckMessage to peer {}", PeerDictionary.getInstance().getRemotePeerName(receiverPeer));
 		}
 	}
-	
+
 	@Override
 	public void setPeerId(PeerID peerId) throws DataTransmissionException {
-		//Only changes peer Id. Still need to determine new Address.
+		// Only changes peer Id. Still need to determine new Address.
 		super.setPeerId(peerId);
 		LOG.debug("Set new Peer Id to {}", peerId);
 		determinePeerAddress(peerId.toString());

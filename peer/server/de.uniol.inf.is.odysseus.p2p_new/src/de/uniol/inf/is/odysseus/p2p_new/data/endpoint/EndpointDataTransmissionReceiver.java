@@ -130,4 +130,8 @@ public class EndpointDataTransmissionReceiver extends AbstractTransmissionReceiv
 	public void setPeerId(PeerID peerId) throws DataTransmissionException {
 		this.pid = peerId;
 	}
+	
+	protected IPeerCommunicator getPeerCommunicator() {
+		return peerCommunicator;
+	}
 }

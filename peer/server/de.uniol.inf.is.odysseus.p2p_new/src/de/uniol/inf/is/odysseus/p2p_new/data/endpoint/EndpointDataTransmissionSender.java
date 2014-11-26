@@ -182,5 +182,9 @@ public class EndpointDataTransmissionSender extends AbstractTransmissionSender i
 	protected final int getId() {
 		return idHash;
 	}
+	
+	protected IPeerCommunicator getCommunicator() {
+		return communicator;
+	}
 
 }
