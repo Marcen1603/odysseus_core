@@ -39,7 +39,7 @@ public class CreateStoredProcedureKeyword extends AbstractPreParserExecutorKeywo
 				break;
 			}
 			// each line should be a variable name
-			procVars.add(lines[i].trim());
+			procVars.add(lines[i].trim().toUpperCase());
 		}
 
 		// next, we check, if they are variables within the procedure that are not defined
