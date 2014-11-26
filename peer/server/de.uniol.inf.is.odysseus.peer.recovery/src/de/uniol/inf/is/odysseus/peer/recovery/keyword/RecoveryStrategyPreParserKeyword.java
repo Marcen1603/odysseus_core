@@ -4,20 +4,23 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-import com.google.common.base.Optional;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.google.common.base.Strings;
 
 import de.uniol.inf.is.odysseus.core.collection.Context;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.IExecutorCommand;
-import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.IQueryBuildSetting;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
-import de.uniol.inf.is.odysseus.peer.distribute.util.KeywordHelper;
-import de.uniol.inf.is.odysseus.peer.recovery.parameter.RecoveryStrategyParameter;
+import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryStrategy;
 import de.uniol.inf.is.odysseus.peer.recovery.registry.RecoveryStrategyRegistry;
 import de.uniol.inf.is.odysseus.script.parser.AbstractPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptException;
 
 public class RecoveryStrategyPreParserKeyword extends AbstractPreParserKeyword {
+
+	
+	private static final Logger LOG = LoggerFactory.getLogger(RecoveryStrategyPreParserKeyword.class);
 
 	public static final String KEYWORD = "RECOVERY_STRATEGY";
 	
@@ -38,18 +41,9 @@ public class RecoveryStrategyPreParserKeyword extends AbstractPreParserKeyword {
 
 	@Override
 	public List<IExecutorCommand> execute(Map<String, Object> variables, String parameter, ISession caller, Context context) throws OdysseusScriptException {
-		List<IQueryBuildSetting<?>> settings = getAdditionalTransformationSettings(variables);
-		
-		String[] splitted = parameter.trim().split(" ");
-		List<String> parameters = KeywordHelper.generateParameterList(splitted);
-		
-		Optional<RecoveryStrategyParameter> optParameter = KeywordHelper.getQueryBuildSettingOfType( settings, RecoveryStrategyParameter.class);
-		if( optParameter.isPresent() ) {
-			optParameter.get().add(splitted[0], parameters);
-		} else {
-			settings.add(new RecoveryStrategyParameter(splitted[0], parameters));
-		}
-		
+		IRecoveryStrategy strategy = RecoveryStrategyRegistry.getInstance().get(parameter);
+		LOG.debug("Selected recovery strategy "+strategy.getName());
+
 		return null;
 	}
 

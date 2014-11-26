@@ -4,20 +4,22 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-import com.google.common.base.Optional;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.google.common.base.Strings;
 
 import de.uniol.inf.is.odysseus.core.collection.Context;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.IExecutorCommand;
-import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.IQueryBuildSetting;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
-import de.uniol.inf.is.odysseus.peer.distribute.util.KeywordHelper;
-import de.uniol.inf.is.odysseus.peer.recovery.parameter.RecoveryStrategyManagerParameter;
+import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryStrategyManager;
 import de.uniol.inf.is.odysseus.peer.recovery.registry.RecoveryStrategyManagerRegistry;
 import de.uniol.inf.is.odysseus.script.parser.AbstractPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptException;
 
 public class RecoveryStrategyManagerPreParserKeyword extends AbstractPreParserKeyword {
+
+	private static final Logger LOG = LoggerFactory.getLogger(RecoveryStrategyManagerPreParserKeyword.class);
 
 	public static final String KEYWORD = "RECOVERY_STRATEGY_MANAGER";
 	
@@ -38,18 +40,9 @@ public class RecoveryStrategyManagerPreParserKeyword extends AbstractPreParserKe
 
 	@Override
 	public List<IExecutorCommand> execute(Map<String, Object> variables, String parameter, ISession caller, Context context) throws OdysseusScriptException {
-		List<IQueryBuildSetting<?>> settings = getAdditionalTransformationSettings(variables);
-		
-		String[] splitted = parameter.trim().split(" ");
-		List<String> parameters = KeywordHelper.generateParameterList(splitted);
-		
-		Optional<RecoveryStrategyManagerParameter> optParameter = KeywordHelper.getQueryBuildSettingOfType( settings, RecoveryStrategyManagerParameter.class);
-		if( optParameter.isPresent() ) {
-			optParameter.get().add(splitted[0], parameters);
-		} else {
-			settings.add(new RecoveryStrategyManagerParameter(splitted[0], parameters));
-		}
-		
+		IRecoveryStrategyManager strategyManager = RecoveryStrategyManagerRegistry.getInstance().get(parameter);		
+		LOG.debug("Selected recovery strategy manager "+strategyManager.getName());
+
 		return null;
 
 	}
