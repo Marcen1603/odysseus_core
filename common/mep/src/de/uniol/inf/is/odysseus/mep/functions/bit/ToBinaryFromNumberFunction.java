@@ -34,7 +34,6 @@ public class ToBinaryFromNumberFunction extends AbstractFunction<BitVector> {
     private static final long serialVersionUID = 9108818182686191083L;
     private static final SDFDatatype[][] accTypes = new SDFDatatype[][] { { SDFDatatype.BYTE, SDFDatatype.SHORT, SDFDatatype.INTEGER, SDFDatatype.LONG, SDFDatatype.START_TIMESTAMP,
             SDFDatatype.END_TIMESTAMP, SDFDatatype.TIMESTAMP } };
-    private final ByteBuffer buf = ByteBuffer.allocate(Long.SIZE/8);
     
     public ToBinaryFromNumberFunction() {
         super("toBinary", 1, accTypes, SDFDatatype.BITVECTOR);
