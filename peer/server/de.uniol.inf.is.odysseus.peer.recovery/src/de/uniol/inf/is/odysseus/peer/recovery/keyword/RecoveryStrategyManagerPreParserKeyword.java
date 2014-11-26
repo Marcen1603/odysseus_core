@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.peer.distribute.keyword;
+package de.uniol.inf.is.odysseus.peer.recovery.keyword;
 
 import java.util.Collection;
 import java.util.List;
@@ -11,51 +11,52 @@ import de.uniol.inf.is.odysseus.core.collection.Context;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.IExecutorCommand;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.IQueryBuildSetting;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
-import de.uniol.inf.is.odysseus.peer.distribute.parameter.QueryDistributionPreProcessorParameter;
-import de.uniol.inf.is.odysseus.peer.distribute.registry.QueryDistributionPreProcessorRegistry;
 import de.uniol.inf.is.odysseus.peer.distribute.util.KeywordHelper;
+import de.uniol.inf.is.odysseus.peer.recovery.parameter.RecoveryStrategyManagerParameter;
+import de.uniol.inf.is.odysseus.peer.recovery.registry.RecoveryStrategyManagerRegistry;
 import de.uniol.inf.is.odysseus.script.parser.AbstractPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptException;
 
-public class PeerQueryDistributionPreProcessorPreParserKeyword extends AbstractPreParserKeyword {
+public class RecoveryStrategyManagerPreParserKeyword extends AbstractPreParserKeyword {
 
-	public static final String KEYWORD = "PEER_PREPROCESSOR";
+	public static final String KEYWORD = "RECOVERY_STRATEGY_MANAGER";
 	
 	@Override
 	public void validate(Map<String, Object> variables, String parameter, ISession caller, Context context) throws OdysseusScriptException {
 		
 		if( Strings.isNullOrEmpty(parameter)) {
-			throw new OdysseusScriptException("Query distribution preprocessor name is missing");
+			throw new OdysseusScriptException("Recovery strategy manager name is missing");
 		}
 		
 		String[] splitted = parameter.trim().split(" ");
-		String preProcessorName = splitted[0].trim();
-		if( !QueryDistributionPreProcessorRegistry.getInstance().contains(preProcessorName)) {
-			throw new OdysseusScriptException("Query distribution preprocessor name '" + preProcessorName + "' is not registered!");
+		String strategyManagerName = splitted[0].trim();
+		
+		if( !RecoveryStrategyManagerRegistry.getInstance().contains(strategyManagerName)) {
+			throw new OdysseusScriptException("Recovery strategy manager name '" + strategyManagerName + "' is not registered!");
 		}
 	}
 
 	@Override
 	public List<IExecutorCommand> execute(Map<String, Object> variables, String parameter, ISession caller, Context context) throws OdysseusScriptException {
-		
 		List<IQueryBuildSetting<?>> settings = getAdditionalTransformationSettings(variables);
 		
 		String[] splitted = parameter.trim().split(" ");
 		List<String> parameters = KeywordHelper.generateParameterList(splitted);
 		
-		Optional<QueryDistributionPreProcessorParameter> optParameter = KeywordHelper.getQueryBuildSettingOfType( settings, QueryDistributionPreProcessorParameter.class);
+		Optional<RecoveryStrategyManagerParameter> optParameter = KeywordHelper.getQueryBuildSettingOfType( settings, RecoveryStrategyManagerParameter.class);
 		if( optParameter.isPresent() ) {
 			optParameter.get().add(splitted[0], parameters);
 		} else {
-			settings.add(new QueryDistributionPreProcessorParameter(splitted[0], parameters));
+			settings.add(new RecoveryStrategyManagerParameter(splitted[0], parameters));
 		}
 		
 		return null;
+
 	}
-	
+
 	@Override
 	public Collection<String> getAllowedParameters(ISession caller) {
-		return QueryDistributionPreProcessorRegistry.getInstance().getNames();
+		return RecoveryStrategyManagerRegistry.getInstance().getNames();
 	}
 
 }

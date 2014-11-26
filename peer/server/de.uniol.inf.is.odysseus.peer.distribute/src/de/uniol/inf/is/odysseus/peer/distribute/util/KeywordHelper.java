@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.peer.distribute.keyword;
+package de.uniol.inf.is.odysseus.peer.distribute.util;
 
 import java.util.List;
 
@@ -8,7 +8,7 @@ import com.google.common.collect.Lists;
 
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.IQueryBuildSetting;
 
-final class KeywordHelper {
+public final class KeywordHelper {
 
 	private KeywordHelper() {
 	}

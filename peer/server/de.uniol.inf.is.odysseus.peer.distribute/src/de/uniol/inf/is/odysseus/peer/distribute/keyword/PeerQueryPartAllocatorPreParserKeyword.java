@@ -13,6 +13,7 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparam
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.peer.distribute.parameter.QueryPartAllocatorParameter;
 import de.uniol.inf.is.odysseus.peer.distribute.registry.QueryPartAllocatorRegistry;
+import de.uniol.inf.is.odysseus.peer.distribute.util.KeywordHelper;
 import de.uniol.inf.is.odysseus.script.parser.AbstractPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptException;
 
