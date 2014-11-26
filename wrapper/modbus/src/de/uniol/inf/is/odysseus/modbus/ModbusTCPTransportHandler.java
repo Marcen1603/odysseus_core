@@ -30,8 +30,9 @@ import com.ghgande.j2mod.modbus.msg.WriteMultipleRegistersRequest;
 import com.ghgande.j2mod.modbus.net.TCPMasterConnection;
 import com.ghgande.j2mod.modbus.procimg.InputRegister;
 import com.ghgande.j2mod.modbus.procimg.Register;
-import com.ghgande.j2mod.modbus.util.BitVector;
+import com.ghgande.j2mod.modbus.procimg.SimpleRegister;
 
+import de.uniol.inf.is.odysseus.core.collection.BitVector;
 import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
@@ -49,25 +50,39 @@ public class ModbusTCPTransportHandler extends
 
 	public static final String PORT = "port";
 	public static final String SLAVE = "slave";
+	public static final String UNIT_ID = "unitid";
+
+	public static final String FUNCTION_CODE = "FUNCTION_CODE".toLowerCase();
 	public static final String REF = "ref";
 	public static final String COUNT = "count";
-	public static final String FUNCTION_CODE = "FUNCTION_CODE".toLowerCase();
+
+	public static final String WRITE_REF = "write_ref";
+	public static final String WRITE_BITVECTOR = "write_bitvector";
+	public static final String WRITE_REGISTERS = "write_registers";
+	public static final String WRITE_BOOLEAN = "write_boolean";
 	public static final String WRITE_FUNCTION_CODE = "WRITE_FUNCTION_CODE".toLowerCase();	
-	public static final String UNIT_ID = "unitid";
 	
 
 	private int port;
+	private int unitID;
 	private InetAddress slave;
+	private int readFunctionCode;
+
 	private int ref;
 	private int count;
 
+	private int writeFunctionCode;
+	private int writeRef;
+	private BitVector writeVector;
+	private Boolean writeBoolean;
+	private Register[] writeRegisters;
+
+	
 	private TCPMasterConnection con;
 	private ModbusTCPTransaction trans;
 
-	private int readFunctionCode;
-	private int writeFunctionCode;
+	
 
-	private int unitID;
 
 	public ModbusTCPTransportHandler() {
 	}
@@ -96,6 +111,27 @@ public class ModbusTCPTransportHandler extends
 		readFunctionCode = options.getInt(FUNCTION_CODE, 2);
 		
 		writeFunctionCode = options.getInt(WRITE_FUNCTION_CODE, -1);
+		
+		writeRef = options.getInt(WRITE_REF,-1);
+		
+		if (options.containsKey(WRITE_BITVECTOR)){
+			writeVector = BitVector.fromString(options.get(WRITE_BITVECTOR));
+		}
+		
+		if (options.containsKey(WRITE_BOOLEAN)){
+			writeBoolean = options.getBoolean(WRITE_BOOLEAN, false);
+		}
+		
+		if (options.containsKey(WRITE_REGISTERS)){
+			String[] splitted = options.get(WRITE_REGISTERS).split(",");
+			writeRegisters = new Register[splitted.length];
+			int i=0;
+			for (String r:splitted){
+				writeRegisters[i++] = new SimpleRegister(Integer.parseInt(r));
+			}
+		}
+		
+		checkWriteParameter();
 		
 		logger.debug("initialized with port=" + port + " slave=" + slave
 				+ " ref=" + ref + " count=" + count + " for function "
@@ -160,10 +196,47 @@ public class ModbusTCPTransportHandler extends
 		trans.setRequest(req);
 	}
 
+	private void checkWriteParameter(){
+		// 5 (WriteCoilRequest),
+		// 15 (WriteMultipleCoilsRequest) und
+		// 16 (WriteMultipleRegistersRequest),
+		
+		if (writeFunctionCode == -1){
+			return;
+		}
+		
+		if (writeRef == -1){
+			throw new IllegalArgumentException(WRITE_REF+" must be set for "+WRITE_FUNCTION_CODE+" "+writeFunctionCode);
+		}
+		
+		switch (writeFunctionCode) {
+		case Modbus.WRITE_COIL:
+			if (writeBoolean == null){
+				throw new IllegalArgumentException(WRITE_BOOLEAN+" must be set for "+WRITE_FUNCTION_CODE+" "+writeFunctionCode);	
+			}
+			break;
+		case Modbus.WRITE_MULTIPLE_COILS:
+			if (writeVector == null){
+				throw new IllegalArgumentException(WRITE_BITVECTOR+" must be set for "+WRITE_FUNCTION_CODE+" "+writeFunctionCode);
+			}
+			break;
+		case Modbus.WRITE_MULTIPLE_REGISTERS:
+			if (writeRegisters == null){
+				throw new IllegalArgumentException(WRITE_REGISTERS+" must be set for "+WRITE_FUNCTION_CODE+" "+writeFunctionCode);
+			}
+			break;
+		}
+
+	}
+	
 	private void initSource() {
+
+		if (writeFunctionCode == -1){
+			return;
+		}
+		
 		ModbusRequest req = null;
 		
-		// TODO: Move parameter to options
 
 		// 5 (WriteCoilRequest),
 		// 15 (WriteMultipleCoilsRequest) und
@@ -171,21 +244,20 @@ public class ModbusTCPTransportHandler extends
 		
 		switch (writeFunctionCode) {
 		case Modbus.WRITE_COIL:
-			boolean b = true;
-			req = new WriteCoilRequest(ref, b);
+			req = new WriteCoilRequest(writeRef, writeBoolean);
 			break;
 		case Modbus.WRITE_MULTIPLE_COILS:
-			com.ghgande.j2mod.modbus.util.BitVector bv = null;
-			new WriteMultipleCoilsRequest(ref, bv);
-			new WriteMultipleCoilsRequest(ref, count);
+			new WriteMultipleCoilsRequest(writeRef, new com.ghgande.j2mod.modbus.util.BitVector(writeVector));
 			break;
 		case Modbus.WRITE_MULTIPLE_REGISTERS:
-			int first = 0;
-			Register[] registers = null;
-			new WriteMultipleRegistersRequest(first, registers);
+			new WriteMultipleRegistersRequest(writeRef, writeRegisters);
 			break;
 		}
-
+		
+		if (unitID >= 0) {
+			req.setUnitID(unitID);
+		}
+		
 		if (req != null){
 			trans = new ModbusTCPTransaction(con);
 			trans.setRequest(req);
