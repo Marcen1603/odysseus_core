@@ -59,7 +59,7 @@ public class OptionMap {
 		return v != null ? v : defaultValue;
 	}
 
-	public boolean getBoolean(String key, Boolean defaultValue) {
+    public boolean getBoolean(String key, boolean defaultValue) {
 		String v = get(key);
 		return v != null ? Boolean.parseBoolean(v) : defaultValue;
 	}
@@ -68,6 +68,11 @@ public class OptionMap {
 		String v = get(key);
 		return v != null ? v.toCharArray()[0] : defaultValue;
 	}
+
+    public short getShort(String key, short defaultValue) {
+        String v = get(key);
+        return v != null ? Short.parseShort(v) : defaultValue;
+    }
 
 	public int getInt(String key, int defaultValue) {
 		String v = get(key);
@@ -78,6 +83,11 @@ public class OptionMap {
 		String v = get(key);
 		return v != null ? Long.parseLong(v) : defaultValue;
 	}
+
+    public float getFloat(String key, float defaultValue) {
+        String v = get(key);
+        return v != null ? Float.parseFloat(v) : defaultValue;
+    }
 
 	public double getDouble(String key, double defaultValue) {
 		String v = get(key);
