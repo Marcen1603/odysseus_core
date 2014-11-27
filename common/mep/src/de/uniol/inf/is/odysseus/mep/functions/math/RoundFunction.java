@@ -30,7 +30,7 @@ public class RoundFunction extends AbstractFunction<Double> {
 	
 	@Override
 	public Double getValue() {
-		return Math.round(getNumericalInputValue(0)*(getNumericalInputValue(1)*10))/(getNumericalInputValue(1)*10);
+		return Math.round(getNumericalInputValue(0)*Math.pow(10, getNumericalInputValue(1)))/Math.pow(10, getNumericalInputValue(1));
 	}
 
 }
