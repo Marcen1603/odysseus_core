@@ -49,12 +49,14 @@ public class EndpointDataTransmissionReceiver extends AbstractTransmissionReceiv
 		this.peerCommunicator.removeListener(this, DataMessage.class);
 		this.peerCommunicator.removeListener(this, PunctuationMessage.class);
 		this.peerCommunicator.removeListener(this, OpenAckMessage.class);
-		this.peerCommunicator.removeListener(this, CloseAckMessage.class);
+//		this.peerCommunicator.removeListener(this, CloseAckMessage.class);
 		this.peerCommunicator.removeListener(this, DoneMessage.class);
 	}
 
 	@Override
 	public void receivedMessage(IPeerCommunicator communicator, PeerID senderPeer, IMessage message) {
+		LOG.debug("Got message of type {}", message.getClass().getName());
+		
 		if (message instanceof DataMessage) {
 			DataMessage dataMessage = (DataMessage) message;
 			if (dataMessage.getIdHash() == idHash) {
@@ -83,13 +85,16 @@ public class EndpointDataTransmissionReceiver extends AbstractTransmissionReceiv
 			}
 		} else if (message instanceof CloseAckMessage) {
 			CloseAckMessage msg = (CloseAckMessage) message;
+			LOG.debug("Got close ack from '{}'", PeerDictionary.getInstance().getRemotePeerName(senderPeer));
 			if (msg.getIdHash() == idHash) {
-				LOG.debug("Got close ack from '{}'", PeerDictionary.getInstance().getRemotePeerName(senderPeer));
-
+				LOG.debug("With right id");
+				peerCommunicator.removeListener(this, CloseAckMessage.class);
 				if( closeRepeater != null ) {
 					closeRepeater.stopRunning();
 					closeRepeater = null;
 				}
+			} else {
+				LOG.debug("With wrong id");
 			}
 		}
 	}

@@ -115,6 +115,8 @@ public class EndpointDataTransmissionSender extends AbstractTransmissionSender i
 	protected void processOpenMessage(PeerID senderPeer, OpenMessage message) {
 		LOG.debug("Got open message from '{}'", PeerDictionary.getInstance().getRemotePeerName(senderPeer));
 
+		trySend(senderPeer, new OpenAckMessage(idHash));
+
 		synchronized (pids) {
 			if (pids.size() == 1 && pids.contains(senderPeer)) {
 				LOG.debug("Call open event");
@@ -128,13 +130,13 @@ public class EndpointDataTransmissionSender extends AbstractTransmissionSender i
 				}
 			}
 		}
-
-		trySend(senderPeer, new OpenAckMessage(idHash));
 	}
 
 	protected void processCloseMessage(PeerID senderPeer, CloseMessage message) {
 		LOG.debug("Got close message from '{}'", PeerDictionary.getInstance().getRemotePeerName(senderPeer));
 
+		trySend(senderPeer, new CloseAckMessage(idHash));
+		
 		synchronized (pids) {
 			if (pids.contains(senderPeer)) {
 				pids.remove(senderPeer);
@@ -145,8 +147,6 @@ public class EndpointDataTransmissionSender extends AbstractTransmissionSender i
 				}
 			}
 		}
-
-		trySend(senderPeer, new CloseAckMessage(idHash));
 	}
 
 	protected final Collection<PeerID> getOpenedPeers() {
@@ -155,9 +155,11 @@ public class EndpointDataTransmissionSender extends AbstractTransmissionSender i
 
 	private void trySend(PeerID senderPeer, IMessage message) {
 		try {
+			LOG.debug("Trying to send message {}", message.getClass().getName());
+			
 			communicator.send(senderPeer, message);
 		} catch (PeerCommunicationException e) {
-			LOG.debug("Could not send openack message", e);
+			LOG.error("Could not send openack message", e);
 		}
 	}
 
