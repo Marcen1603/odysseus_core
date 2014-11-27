@@ -254,7 +254,6 @@ public class RecoveryDynamicBackup implements IRecoveryDynamicBackup {
 
 	@Override
 	public List<ID> getSharedQueryIdsForRecovery(PeerID failedPeer) {
-
 		List<ID> sharedQueryIdsForRecovery = new ArrayList<ID>();
 
 		// 1. Check, if we have backup information for the failed peer and for
@@ -289,7 +288,8 @@ public class RecoveryDynamicBackup implements IRecoveryDynamicBackup {
 					for (String pql : pqlParts) {
 						if (pql.contains(sender.getPipeIDString())) {
 							// This is the shared query id we search for
-							sharedQueryIdsForRecovery.add(sharedQuery.getSharedQueryID());
+							if (!sharedQueryIdsForRecovery.contains(sharedQuery.getSharedQueryID()))
+								sharedQueryIdsForRecovery.add(sharedQuery.getSharedQueryID());
 						}
 					}
 				}
@@ -300,7 +300,10 @@ public class RecoveryDynamicBackup implements IRecoveryDynamicBackup {
 		Map<PeerID, List<ID>> buddyMap = LocalBackupInformationAccess.getBuddyList();
 		if (buddyMap.containsKey(failedPeer)) {
 			// We are a buddy for that peer
-			sharedQueryIdsForRecovery.addAll(buddyMap.get(failedPeer));
+			for (ID sharedQueryId : buddyMap.get(failedPeer)) {
+				if (!sharedQueryIdsForRecovery.contains(sharedQueryId))
+					sharedQueryIdsForRecovery.add(sharedQueryId);
+			}
 		}
 		return sharedQueryIdsForRecovery;
 	}
