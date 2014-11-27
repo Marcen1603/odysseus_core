@@ -1,11 +1,10 @@
 package de.uniol.inf.is.odysseus.peer.loadbalancing.active.allocate.roundrobin;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
 import net.jxta.peer.PeerID;
-
-import com.google.common.collect.Lists;
 
 /**
  * The round robin allocator, which includes the local peer.
@@ -22,11 +21,12 @@ public class RoundRobinWithLocalAllocator extends AbstractRoundRobinAllocator {
 
 	@Override
 	protected List<PeerID> determineConsideredPeerIDs(Collection<PeerID> knownRemotePeers, PeerID localPeerID) {
-		
-		List<PeerID> peers = Lists.newArrayList(knownRemotePeers);		
+		List<PeerID> peers = new ArrayList<PeerID>();
+		// don't change the order of peers !!!
+		// Round Robin now first allocates all other peers and after that the own peer
 		peers.add(localPeerID);		
-		return peers;
-		
+		peers.addAll(knownRemotePeers);		
+		return peers;		
 	}
 
 }
