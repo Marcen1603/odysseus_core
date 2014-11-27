@@ -49,7 +49,7 @@ public class EndpointDataTransmissionReceiver extends AbstractTransmissionReceiv
 		this.peerCommunicator.removeListener(this, DataMessage.class);
 		this.peerCommunicator.removeListener(this, PunctuationMessage.class);
 		this.peerCommunicator.removeListener(this, OpenAckMessage.class);
-//		this.peerCommunicator.removeListener(this, CloseAckMessage.class);
+		this.peerCommunicator.removeListener(this, CloseAckMessage.class);
 		this.peerCommunicator.removeListener(this, DoneMessage.class);
 	}
 
