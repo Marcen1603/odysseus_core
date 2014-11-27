@@ -714,4 +714,9 @@ public class RecoveryCommunicator implements IRecoveryCommunicator,
 		}
 	}
 
+	@Override
+	public void setRecoveryStrategyManager(IRecoveryStrategyManager strategyManager) {
+		cRecoveryStrategyManager = Optional.of(strategyManager);		
+	}
+
 }

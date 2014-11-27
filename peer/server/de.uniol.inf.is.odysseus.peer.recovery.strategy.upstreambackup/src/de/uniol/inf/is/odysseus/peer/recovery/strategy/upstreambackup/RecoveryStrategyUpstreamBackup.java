@@ -391,4 +391,9 @@ public class RecoveryStrategyUpstreamBackup implements IRecoveryStrategy {
 		return "upstreambackup";
 	}
 
+	@Override
+	public void setAllocator(IRecoveryAllocator allocator) {
+		cRecoveryAllocator = Optional.of(allocator);
+	}
+
 }

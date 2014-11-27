@@ -13,6 +13,8 @@ import de.uniol.inf.is.odysseus.core.collection.Context;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.IExecutorCommand;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryStrategy;
+import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryStrategyManager;
+import de.uniol.inf.is.odysseus.peer.recovery.registry.RecoveryStrategyManagerRegistry;
 import de.uniol.inf.is.odysseus.peer.recovery.registry.RecoveryStrategyRegistry;
 import de.uniol.inf.is.odysseus.script.parser.AbstractPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptException;
@@ -43,7 +45,9 @@ public class RecoveryStrategyPreParserKeyword extends AbstractPreParserKeyword {
 	public List<IExecutorCommand> execute(Map<String, Object> variables, String parameter, ISession caller, Context context) throws OdysseusScriptException {
 		IRecoveryStrategy strategy = RecoveryStrategyRegistry.getInstance().get(parameter);
 		LOG.debug("Selected recovery strategy "+strategy.getName());
-
+		for (IRecoveryStrategyManager strategyManager : RecoveryStrategyManagerRegistry.getInstance().getInterfaceContributions()) {
+			strategyManager.setRecoveryStrategy(strategy);
+		}
 		return null;
 	}
 

@@ -70,6 +70,10 @@ public class NamedInterfaceRegistry<T extends INamedInterface> {
 		return ImmutableList.copyOf(interfaceMap.keySet());
 	}
 	
+	public final ImmutableCollection<T> getInterfaceContributions() {
+		return ImmutableList.copyOf(interfaceMap.values());
+	}
+	
 	public final T get( String name ) {
 		Preconditions.checkNotNull(!Strings.isNullOrEmpty(name), "Name of Interface contribution to get must not be null or empty!");
 		

@@ -12,7 +12,9 @@ import com.google.common.base.Strings;
 import de.uniol.inf.is.odysseus.core.collection.Context;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.IExecutorCommand;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
+import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryCommunicator;
 import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryStrategyManager;
+import de.uniol.inf.is.odysseus.peer.recovery.registry.RecoveryCommunicatorRegistry;
 import de.uniol.inf.is.odysseus.peer.recovery.registry.RecoveryStrategyManagerRegistry;
 import de.uniol.inf.is.odysseus.script.parser.AbstractPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptException;
@@ -42,7 +44,9 @@ public class RecoveryStrategyManagerPreParserKeyword extends AbstractPreParserKe
 	public List<IExecutorCommand> execute(Map<String, Object> variables, String parameter, ISession caller, Context context) throws OdysseusScriptException {
 		IRecoveryStrategyManager strategyManager = RecoveryStrategyManagerRegistry.getInstance().get(parameter);		
 		LOG.debug("Selected recovery strategy manager "+strategyManager.getName());
-
+		for (IRecoveryCommunicator communicator : RecoveryCommunicatorRegistry.getRecoveryCommunicators()) {
+			communicator.setRecoveryStrategyManager(strategyManager);
+		}
 		return null;
 
 	}

@@ -24,4 +24,6 @@ public interface IRecoveryStrategyManager extends INamedInterface {
 
 	void restartRecovery(PeerID failedPeer, UUID recoveryStateIdentifier,
 			ILogicalQueryPart queryPart);
+	
+	void setRecoveryStrategy(IRecoveryStrategy strategy);
 }

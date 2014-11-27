@@ -27,4 +27,6 @@ public interface IRecoveryStrategy extends INamedInterface {
 
 	void recoverSingleQueryPart(PeerID failedPeer,
 			UUID recoveryStateIdentifier, ILogicalQueryPart queryPart);
+	
+	void setAllocator(IRecoveryAllocator allocator);
 }

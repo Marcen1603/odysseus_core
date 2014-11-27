@@ -93,4 +93,9 @@ public class RecoveryStrategyManagerSimple implements IRecoveryStrategyManager {
 		return "simple";
 	}
 
+	@Override
+	public void setRecoveryStrategy(IRecoveryStrategy strategy) {
+		
+	}
+
 }

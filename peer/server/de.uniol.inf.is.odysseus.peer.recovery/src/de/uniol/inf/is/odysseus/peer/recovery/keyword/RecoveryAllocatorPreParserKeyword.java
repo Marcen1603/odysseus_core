@@ -13,7 +13,9 @@ import de.uniol.inf.is.odysseus.core.collection.Context;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.IExecutorCommand;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryAllocator;
+import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryStrategy;
 import de.uniol.inf.is.odysseus.peer.recovery.registry.RecoveryAllocatorRegistry;
+import de.uniol.inf.is.odysseus.peer.recovery.registry.RecoveryStrategyRegistry;
 import de.uniol.inf.is.odysseus.script.parser.AbstractPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptException;
 
@@ -42,6 +44,9 @@ public class RecoveryAllocatorPreParserKeyword extends AbstractPreParserKeyword 
 	public List<IExecutorCommand> execute(Map<String, Object> variables, String parameter, ISession caller, Context context) throws OdysseusScriptException {
 		IRecoveryAllocator allocator = RecoveryAllocatorRegistry.getInstance().get(parameter);
 		LOG.info("Selected recovery allocator "+allocator.getName());
+		for (IRecoveryStrategy strategy : RecoveryStrategyRegistry.getInstance().getInterfaceContributions()) {
+			strategy.setAllocator(allocator);
+		}
 		return null;
 	}
 

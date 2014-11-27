@@ -158,5 +158,7 @@ public interface IRecoveryCommunicator {
 			RecoveryAddQueryMessage instructionMessage);
 
 	void removeRecoveryProcessState(UUID identifier);
+	
+	void setRecoveryStrategyManager(IRecoveryStrategyManager strategyManager);
 
 }
