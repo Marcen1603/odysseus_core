@@ -136,6 +136,8 @@ public class SmartHomeServerPlugIn implements BundleActivator {
 		//		serv);
 		QueryExecutor.getInstance().bindP2PDictionary(serv);
 		// showActualImportedSourcesAsync();
+		
+		p2pDictionary.addListener(LogicRuleProcessor.getInstance());
 	}
 
 	// called by OSGi-DS
@@ -146,6 +148,7 @@ public class SmartHomeServerPlugIn implements BundleActivator {
 		QueryExecutor.getInstance().unbindP2PDictionary(serv);
 
 		if (p2pDictionary == serv) {
+			p2pDictionary.removeListener(LogicRuleProcessor.getInstance());
 			p2pDictionary = null;
 		}
 	}

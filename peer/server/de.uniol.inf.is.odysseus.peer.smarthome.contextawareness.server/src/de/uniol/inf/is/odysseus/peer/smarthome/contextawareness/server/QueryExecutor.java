@@ -299,7 +299,7 @@ public class QueryExecutor implements IP2PDictionaryListener,
 		
 		//&& queryState.equals(QueryState.UNDEF)
 		
-		//if (!queryIsRunning(viewName + "_query") ) {
+		if (!queryIsRunning(viewName + "_query") ) {
 			Collection<Integer> queryIDs = ServerExecutorService
 					.getServerExecutor().addQuery(query, "OdysseusScript",
 							SessionManagementService.getActiveSession(),
@@ -332,12 +332,11 @@ public class QueryExecutor implements IP2PDictionaryListener,
 			LOG.debug("QueryId:" + queryId + " viewName:" + viewName);
 
 			return queryId;
-		//}
-		//return null;
+		}
+		return null;
 	}
 
-	//TODO: 
-	@SuppressWarnings("unused")
+	//TODO:
 	private boolean queryIsRunning(String queryName) {
 		QueryState queryState = ServerExecutorService.getServerExecutor()
 				.getQueryState(queryName);

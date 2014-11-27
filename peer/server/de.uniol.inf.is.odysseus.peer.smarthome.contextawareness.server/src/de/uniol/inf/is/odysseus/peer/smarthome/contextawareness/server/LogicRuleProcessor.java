@@ -9,6 +9,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.GetParameter;
+import de.uniol.inf.is.odysseus.p2p_new.dictionary.IP2PDictionary;
+import de.uniol.inf.is.odysseus.p2p_new.dictionary.IP2PDictionaryListener;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.SourceAdvertisement;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.FieldDevice;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.SmartHomeServerPlugIn;
@@ -24,7 +26,7 @@ import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.smartdevice.Smar
 import net.jxta.peer.PeerID;
 
 public class LogicRuleProcessor implements ISmartDeviceDictionaryListener,
-		ISmartDeviceListener {
+		ISmartDeviceListener, IP2PDictionaryListener {
 	private static final Logger LOG = LoggerFactory
 			.getLogger(SmartHomeServerPlugIn.class);
 	private static LogicRuleProcessor instance;
@@ -648,19 +650,26 @@ public class LogicRuleProcessor implements ISmartDeviceDictionaryListener,
 				.getInstance().getFoundSmartDeviceList();
 
 		for (ASmartDevice device : foundSmartDevices) {
+			LOG.debug("_device:"+device.getPeerName());
 			for (AbstractSensor sensor : device.getConnectedSensors()) {
 				for (ActivityInterpreter interpreter : sensor
 						.getActivityInterpreters()) {
 					if (interpreter.getActivityName().equals(
 							rule.getActivityName())) {
-
+						LOG.debug("__interpreter.getActivityName().equals(rule.getActivityName():"+interpreter.getActivityName());
+						
+						
+						QueryExecutor.getInstance().addNeededSourceForImport(interpreter.getActivitySourceName(), interpreter.getSensor().getSmartDevice().getPeerID());
+						
+						
 						Collection<SourceAdvertisement> publishedSources = SmartHomeServerPlugIn
 								.getP2PDictionary().getSources();
 						for (SourceAdvertisement publishedSource : publishedSources) {
+							LOG.debug("___publishedSource:"+publishedSource.getName());
 							if (publishedSource.getName().equals(
 									interpreter.getActivitySourceName())) {
 								
-								LOG.debug("_importSourcesIfKnown sourceName:"+publishedSource.getName());
+								LOG.debug("____importSourcesIfKnown sourceName:"+publishedSource.getName());
 								
 								
 								QueryExecutor.getInstance().addNeededSourceForImport(interpreter.getActivitySourceName(), publishedSource.getPeerID().intern().toString());
@@ -716,5 +725,50 @@ public class LogicRuleProcessor implements ISmartDeviceDictionaryListener,
 	public void smartDevicesUpdated(ASmartDevice smartDevice) {
 		LOG.debug("smartDevicesUpdated");
 
+	}
+
+	/******
+	 * IP2PDictionaryListener:
+	 */
+	@Override
+	public void sourceAdded(IP2PDictionary sender,
+			SourceAdvertisement advertisement) {
+		LOG.debug("sourceAdded");
+		
+		
+	}
+
+	@Override
+	public void sourceRemoved(IP2PDictionary sender,
+			SourceAdvertisement advertisement) {
+		LOG.debug("sourceRemoved");
+	}
+
+	@Override
+	public void sourceImported(IP2PDictionary sender,
+			SourceAdvertisement advertisement, String sourceName) {
+		LOG.debug("sourceImported");
+		
+		//TODO: start relevant Queries
+		
+		
+	}
+
+	@Override
+	public void sourceImportRemoved(IP2PDictionary sender,
+			SourceAdvertisement advertisement, String sourceName) {
+		LOG.debug("sourceImportRemoved");
+	}
+
+	@Override
+	public void sourceExported(IP2PDictionary sender,
+			SourceAdvertisement advertisement, String sourceName) {
+		LOG.debug("sourceExported");
+	}
+
+	@Override
+	public void sourceExportRemoved(IP2PDictionary sender,
+			SourceAdvertisement advertisement, String sourceName) {
+		LOG.debug("sourceExportRemoved");
 	}
 }
