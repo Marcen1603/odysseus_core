@@ -81,8 +81,8 @@ public class SmartDevicePublisher {
 
 						SmartDeviceAdvertisement smartDeviceAdv = getLocalSmartDeviceAdvertisement();
 
-						//getJxtaServicesProvider().publish(smartDeviceAdv);
-						//getJxtaServicesProvider().remotePublish(smartDeviceAdv);
+						getJxtaServicesProvider().publish(smartDeviceAdv);
+						getJxtaServicesProvider().remotePublish(smartDeviceAdv);
 
 						getJxtaServicesProvider().publish(smartDeviceAdv,
 								SmartDeviceAdvertisement_LIFETIME_SEC,
