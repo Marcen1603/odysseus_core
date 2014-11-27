@@ -110,7 +110,7 @@ public interface IRecoveryCommunicator {
 	 */
 	// TODO Better way: allocate each single query part new. M.B.
 	public void installQueriesOnNewPeer(PeerID failedPeer, PeerID newPeer,
-			ID sharedQueryId, String pql, UUID recoveryStateIdentifier);
+			ID sharedQueryId, String pql, UUID recoveryStateIdentifier, UUID subprocessID);
 
 	/**
 	 * The RecoveryCommunicator will search for a buddy peer which will save

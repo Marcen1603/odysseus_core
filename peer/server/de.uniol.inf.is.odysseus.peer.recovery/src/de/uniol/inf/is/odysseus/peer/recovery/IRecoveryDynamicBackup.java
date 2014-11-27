@@ -15,7 +15,7 @@ import de.uniol.inf.is.odysseus.peer.recovery.internal.RecoveryProcessState;
  * be found and queries of failed peers need to be allocated.
  * 
  * @author Simon Kuespert
- *
+ * 
  */
 public interface IRecoveryDynamicBackup {
 
@@ -29,11 +29,12 @@ public interface IRecoveryDynamicBackup {
 	 * @param newPeer
 	 *            The peer where we want to install the parts of the query from
 	 *            the failed peer
-	 * @param queryPart 
-	 * @param recoveryStateIdentifier 
+	 * @param queryPart
+	 * @param recoveryStateIdentifier
 	 */
-	public void initiateAgreement(PeerID failedPeer, ID sharedQueryId, PeerID newPeer, ILogicalQueryPart queryPart, UUID recoveryStateIdentifier);
-
+	public void initiateAgreement(PeerID failedPeer, ID sharedQueryId,
+			PeerID newPeer, ILogicalQueryPart queryPart,
+			UUID recoveryStateIdentifier, UUID subprocessID);
 
 	/**
 	 * Checks for which query this peer is responsible and gets the list with
@@ -53,14 +54,15 @@ public interface IRecoveryDynamicBackup {
 	 *            ID of the query to be hold on.
 	 * @param failedPeer
 	 *            PeerID of the failed peer.
-	 * @param recoveryStateIdentifier 
+	 * @param recoveryStateIdentifier
 	 */
-	public void determineAndSendHoldOnMessages(ID sharedQueryId, PeerID failedPeer, UUID recoveryStateIdentifier);
+	public void determineAndSendHoldOnMessages(ID sharedQueryId,
+			PeerID failedPeer, UUID recoveryStateIdentifier);
 
 	/**
 	 * Checks, if that peer was responsible for me (if he was a buddy for me)
-	 * and deletes him from the list (e.g. cause he failed)
-	 * If so, this method initiates, that we get a new buddy
+	 * and deletes him from the list (e.g. cause he failed) If so, this method
+	 * initiates, that we get a new buddy
 	 * 
 	 * @param failedPeer
 	 *            The peer which failed
@@ -68,23 +70,27 @@ public interface IRecoveryDynamicBackup {
 	 *         null, if not
 	 */
 	public List<ID> removeMyBuddyAndSearchNew(PeerID failedPeer);
-	
+
 	/**
-	 * Allocates QueryParts of a failed peer to a new peer.	 
-	 * @param sharedQueryId Query that needs allocation
-	 * @param recoveryAllocator The specific recovery allocator given by the strategy
-	 * @param failedPeer PeerID of the failed peer
+	 * Allocates QueryParts of a failed peer to a new peer.
+	 * 
+	 * @param sharedQueryId
+	 *            Query that needs allocation
+	 * @param recoveryAllocator
+	 *            The specific recovery allocator given by the strategy
+	 * @param failedPeer
+	 *            PeerID of the failed peer
 	 * @return Map<ILogicalQueryPart, PeerID> of the new peers to allocate to
 	 */
 
-	public Map<ILogicalQueryPart, PeerID> allocateToNewPeer(PeerID failedPeer, ID sharedQueryId, IRecoveryAllocator recoveryAllocator) throws QueryPartAllocationException;
-
+	public Map<ILogicalQueryPart, PeerID> allocateToNewPeer(PeerID failedPeer,
+			ID sharedQueryId, IRecoveryAllocator recoveryAllocator)
+			throws QueryPartAllocationException;
 
 	public Map<ILogicalQueryPart, PeerID> reallocateToNewPeer(
 			Map<ILogicalQueryPart, PeerID> allocationMap,
-			List<PeerID> inadequatePeers,
-			IRecoveryAllocator recoveryAllocator) throws QueryPartAllocationException;
-
+			List<PeerID> inadequatePeers, IRecoveryAllocator recoveryAllocator)
+			throws QueryPartAllocationException;
 
 	RecoveryProcessState getRecoveryProcessState(UUID recoveryProcessStateId);
 }

@@ -455,7 +455,7 @@ public class RecoveryCommunicator implements IRecoveryCommunicator,
 
 	@Override
 	public void installQueriesOnNewPeer(PeerID failedPeer, PeerID newPeer,
-			ID sharedQueryId, String pql, UUID recoveryStateIdentifier) {
+			ID sharedQueryId, String pql, UUID recoveryStateIdentifier, UUID subprocessID) {
 
 		Preconditions.checkNotNull(failedPeer);
 		Preconditions.checkNotNull(newPeer);
@@ -469,7 +469,7 @@ public class RecoveryCommunicator implements IRecoveryCommunicator,
 
 		// Send the add query message
 		RecoveryAddQueryMessage takeOverMessage = new RecoveryAddQueryMessage(
-				pql, sharedQueryId, recoveryStateIdentifier);
+				pql, sharedQueryId, recoveryStateIdentifier, subprocessID);
 		sendMessage(newPeer, takeOverMessage);
 	}
 

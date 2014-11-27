@@ -15,6 +15,7 @@ public class AddQueryResponseMessage implements IMessage {
 
 	private int mMessageType;
 	private UUID recoveryProcessStateId;
+	private UUID subprocessId;
 	private String pqlQueryPart;
 	private ID sharedQueryId;
 
@@ -30,14 +31,16 @@ public class AddQueryResponseMessage implements IMessage {
 			RecoveryAddQueryMessage instruction) {
 		return createAddQueryAckMessage(instruction.getSharedQueryId(),
 				instruction.getRecoveryProcessId(),
+				instruction.getmSubprocessId(),
 				instruction.getPQLCode());
 	}
 
 	public static AddQueryResponseMessage createAddQueryAckMessage(
-			ID sharedQueryId, UUID recoveryProcessStateId, String pqlQueryPart) {
+			ID sharedQueryId, UUID recoveryProcessStateId, UUID subprocessId, String pqlQueryPart) {
 		AddQueryResponseMessage addQueryAckMessage = new AddQueryResponseMessage();
 		addQueryAckMessage.setMessageType(ACK);
 		addQueryAckMessage.setRecoveryProcessStateId(recoveryProcessStateId);
+		addQueryAckMessage.setSubprocessId(subprocessId);
 		addQueryAckMessage.setPqlQueryPart(pqlQueryPart);
 		addQueryAckMessage.setSharedQueryId(sharedQueryId);
 		return addQueryAckMessage;
@@ -47,17 +50,19 @@ public class AddQueryResponseMessage implements IMessage {
 			RecoveryAddQueryMessage instruction) {
 		return createAddQueryFailMessage(instruction.getSharedQueryId(),
 				instruction.getRecoveryProcessId(),
+				instruction.getmSubprocessId(),
 				instruction.getPQLCode());
 	}
 
 	public static AddQueryResponseMessage createAddQueryFailMessage(
-			ID sharedQueryId, UUID recoveryProcessStateId, String pqlQueryPart) {
-		AddQueryResponseMessage addQueryAckMessage = new AddQueryResponseMessage();
-		addQueryAckMessage.setMessageType(FAIL);
-		addQueryAckMessage.setRecoveryProcessStateId(recoveryProcessStateId);
-		addQueryAckMessage.setPqlQueryPart(pqlQueryPart);
-		addQueryAckMessage.setSharedQueryId(sharedQueryId);
-		return addQueryAckMessage;
+			ID sharedQueryId, UUID recoveryProcessStateId, UUID subprocessId, String pqlQueryPart) {
+		AddQueryResponseMessage addQueryFailMessage = new AddQueryResponseMessage();
+		addQueryFailMessage.setMessageType(FAIL);
+		addQueryFailMessage.setRecoveryProcessStateId(recoveryProcessStateId);
+		addQueryFailMessage.setSubprocessId(subprocessId);
+		addQueryFailMessage.setPqlQueryPart(pqlQueryPart);
+		addQueryFailMessage.setSharedQueryId(sharedQueryId);
+		return addQueryFailMessage;
 	}
 
 	@Override
@@ -69,13 +74,16 @@ public class AddQueryResponseMessage implements IMessage {
 		sharedQueryIdLength = sharedQueryId.toString().getBytes().length;
 		byte[] pqlAsBytes = pqlQueryPart.getBytes();
 		byte[] processIdAsBytes = recoveryProcessStateId.toString().getBytes();
+		byte[] subprocessIdAsBytes = subprocessId.toString().getBytes();
 
-		bbsize = 4 + 4 + processIdAsBytes.length + 4 + pqlAsBytes.length + 4
+		bbsize = 4 + 4 + processIdAsBytes.length + 4 + subprocessIdAsBytes.length + 4 + pqlAsBytes.length + 4
 				+ sharedQueryIdLength;
 		bb = ByteBuffer.allocate(bbsize);
 		bb.putInt(this.mMessageType);
 		bb.putInt(processIdAsBytes.length);
 		bb.put(processIdAsBytes);
+		bb.putInt(subprocessIdAsBytes.length);
+		bb.put(subprocessIdAsBytes);
 		bb.putInt(pqlAsBytes.length);
 		bb.put(pqlAsBytes);
 		bb.putInt(sharedQueryId.toString().getBytes().length);
@@ -98,6 +106,11 @@ public class AddQueryResponseMessage implements IMessage {
 		bb.get(processIdAsBytes);
 		recoveryProcessStateId = UUID.fromString(new String(processIdAsBytes));
 
+		int subprocessIdLength = bb.getInt();
+		byte[] subprocessIdAsBytes = new byte[subprocessIdLength];
+		bb.get(subprocessIdAsBytes);
+		subprocessId = UUID.fromString(new String(subprocessIdAsBytes));
+		
 		int pqlLength = bb.getInt();
 		byte[] pqlAsByte = new byte[pqlLength];
 		bb.get(pqlAsByte);
@@ -149,5 +162,13 @@ public class AddQueryResponseMessage implements IMessage {
 
 	public void setSharedQueryId(ID sharedQueryId) {
 		this.sharedQueryId = sharedQueryId;
+	}
+
+	public UUID getSubprocessId() {
+		return subprocessId;
+	}
+
+	public void setSubprocessId(UUID subprocessId) {
+		this.subprocessId = subprocessId;
 	}
 }

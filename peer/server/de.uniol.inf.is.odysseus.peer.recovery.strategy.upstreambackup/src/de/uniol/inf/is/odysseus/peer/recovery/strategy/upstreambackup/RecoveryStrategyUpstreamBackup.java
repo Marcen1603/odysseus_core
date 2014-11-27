@@ -23,6 +23,7 @@ import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryAllocator;
 import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryDynamicBackup;
 import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryStrategy;
 import de.uniol.inf.is.odysseus.peer.recovery.internal.RecoveryProcessState;
+import de.uniol.inf.is.odysseus.peer.recovery.internal.RecoverySubProcessState;
 
 /**
  * Implementation of the Upstream-Backup {@link IRecoveryStrategy}.
@@ -238,7 +239,7 @@ public class RecoveryStrategyUpstreamBackup implements IRecoveryStrategy {
 
 	@Override
 	public void recoverSingleQueryPart(PeerID failedPeer,
-			UUID recoveryStateIdentifier, ILogicalQueryPart queryPart) {
+			UUID recoveryStateIdentifier, UUID recoverySubStateIdentifier) {
 		// Preconditions
 		if (!cRecoveryAllocator.isPresent()) {
 			LOG.error("No recovery allocator bound!");
@@ -261,7 +262,10 @@ public class RecoveryStrategyUpstreamBackup implements IRecoveryStrategy {
 				return;
 			}
 
-			ID sharedQueryId = state.getSharedQueryIdForQueryPart(queryPart);
+			RecoverySubProcessState subState = state
+					.getRecoverySubprocess(recoverySubStateIdentifier);
+
+			ID sharedQueryId = subState.getSharedQueryId();
 			Map<ILogicalQueryPart, PeerID> previousAllocationMap = state
 					.getAllocationMap(sharedQueryId);
 			if (sharedQueryId == null || previousAllocationMap == null) {
@@ -269,8 +273,7 @@ public class RecoveryStrategyUpstreamBackup implements IRecoveryStrategy {
 						+ "previous AllocationMap is missing). Reallocation is aborted.");
 			}
 
-			List<PeerID> inadequatePeers = state.getInadequatePeers(
-					sharedQueryId, queryPart);
+			List<PeerID> inadequatePeers = subState.getInadequatePeers();
 			if (inadequatePeers == null) {
 				inadequatePeers = new ArrayList<PeerID>();
 				LOG.debug("Querypart has no inadequate peers. This could be a problem, "
@@ -286,7 +289,9 @@ public class RecoveryStrategyUpstreamBackup implements IRecoveryStrategy {
 							.keySet()) {
 						sendRecoveryMessages(sharedQueryId, failedPeer,
 								allocationMap.get(queryPartForAllocation),
-								queryPartForAllocation, recoveryStateIdentifier);
+								queryPartForAllocation,
+								recoveryStateIdentifier,
+								recoverySubStateIdentifier);
 					}
 				} else {
 					LOG.debug("Unable to find Peer ID for reallocation.");
@@ -357,10 +362,12 @@ public class RecoveryStrategyUpstreamBackup implements IRecoveryStrategy {
 								.keySet().iterator();
 						while (iterator.hasNext()) {
 							ILogicalQueryPart queryPart = iterator.next();
+							UUID subprocessID = state.createNewSubprocess(
+									sharedQueryId, queryPart);
+
 							sendRecoveryMessages(sharedQueryId, failedPeer,
 									allocationMap.get(queryPart), queryPart,
-									recoveryStateIdentifier);
-							state.addNotProcessedQueryPart(queryPart);
+									recoveryStateIdentifier, subprocessID);
 						}
 					} else {
 						LOG.debug("Unable to find Peer ID for recovery allocation.");
@@ -377,13 +384,14 @@ public class RecoveryStrategyUpstreamBackup implements IRecoveryStrategy {
 
 	private void sendRecoveryMessages(ID sharedQueryId, PeerID failedPeer,
 			PeerID newPeer, ILogicalQueryPart queryPart,
-			UUID recoveryStateIdentifier) {
+			UUID recoveryStateIdentifier, UUID subprocessID) {
 		cRecoveryDynamicBackup.get().determineAndSendHoldOnMessages(
 				sharedQueryId, failedPeer, recoveryStateIdentifier);
 
 		// 5. Tell the new peer to install the parts from the failed peer
 		cRecoveryDynamicBackup.get().initiateAgreement(failedPeer,
-				sharedQueryId, newPeer, queryPart, recoveryStateIdentifier);		
+				sharedQueryId, newPeer, queryPart, recoveryStateIdentifier,
+				subprocessID);
 	}
 
 	@Override

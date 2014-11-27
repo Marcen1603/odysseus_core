@@ -75,6 +75,8 @@ public class RecoveryAddQueryMessage implements IMessage {
 	 */
 	private java.util.UUID mProcessId;
 
+	private java.util.UUID mSubprocessId;
+
 	/**
 	 * The id of the recovery process.
 	 * 
@@ -103,9 +105,10 @@ public class RecoveryAddQueryMessage implements IMessage {
 	 * @param processId
 	 *            The id of the recovery process. <br />
 	 *            Must be not null,
+	 * @param subprocessID
 	 */
 	public RecoveryAddQueryMessage(String pql, ID sharedQuery,
-			java.util.UUID processId) {
+			java.util.UUID processId, java.util.UUID subprocessID) {
 		Preconditions.checkNotNull(pql);
 		Preconditions.checkNotNull(sharedQuery);
 		Preconditions.checkNotNull(processId);
@@ -113,6 +116,7 @@ public class RecoveryAddQueryMessage implements IMessage {
 		this.mPQL = pql;
 		this.mSharedQuery = sharedQuery;
 		this.mProcessId = processId;
+		this.mSubprocessId = subprocessID;
 	}
 
 	@Override
@@ -121,9 +125,11 @@ public class RecoveryAddQueryMessage implements IMessage {
 		byte[] pqlBytes = this.mPQL.getBytes();
 		byte[] sharedQueryBytes = this.mSharedQuery.toString().getBytes();
 		byte[] processIdBytes = this.mProcessId.toString().getBytes();
+		byte[] subprocessIdBytes = this.mSubprocessId.toString().getBytes();
 
 		int bufferSize = 4 + idBytes.length + 4 + pqlBytes.length + 4
-				+ sharedQueryBytes.length + 4 + processIdBytes.length;
+				+ sharedQueryBytes.length + 4 + processIdBytes.length + 4
+				+ subprocessIdBytes.length;
 		ByteBuffer buffer = ByteBuffer.allocate(bufferSize);
 
 		buffer.putInt(idBytes.length);
@@ -134,6 +140,8 @@ public class RecoveryAddQueryMessage implements IMessage {
 		buffer.put(sharedQueryBytes);
 		buffer.putInt(processIdBytes.length);
 		buffer.put(processIdBytes);
+		buffer.putInt(subprocessIdBytes.length);
+		buffer.put(subprocessIdBytes);
 
 		buffer.flip();
 		return buffer.array();
@@ -162,11 +170,25 @@ public class RecoveryAddQueryMessage implements IMessage {
 		} catch (URISyntaxException e) {
 			LOG.error("Could not create shared query id from bytes!", e);
 		}
-		
+
 		int processIdBytesLength = buffer.getInt();
 		byte[] processIdBytes = new byte[processIdBytesLength];
 		buffer.get(processIdBytes);
 		this.mProcessId = java.util.UUID.fromString(new String(processIdBytes));
+		
+		int subprocessIdBytesLength = buffer.getInt();
+		byte[] subprocessIdBytes = new byte[subprocessIdBytesLength];
+		buffer.get(subprocessIdBytes);
+		this.mSubprocessId = java.util.UUID.fromString(new String(subprocessIdBytes));
+		
+	}
+
+	public java.util.UUID getmSubprocessId() {
+		return mSubprocessId;
+	}
+
+	public void setmSubprocessId(java.util.UUID mSubprocessId) {
+		this.mSubprocessId = mSubprocessId;
 	}
 
 }

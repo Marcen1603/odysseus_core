@@ -2,7 +2,6 @@ package de.uniol.inf.is.odysseus.peer.recovery;
 
 import java.util.UUID;
 
-import de.uniol.inf.is.odysseus.peer.distribute.ILogicalQueryPart;
 import de.uniol.inf.is.odysseus.peer.distribute.util.INamedInterface;
 import net.jxta.peer.PeerID;
 
@@ -26,7 +25,7 @@ public interface IRecoveryStrategy extends INamedInterface {
 	void recover(PeerID failedPeer, UUID recoveryStateIdentifier);
 
 	void recoverSingleQueryPart(PeerID failedPeer,
-			UUID recoveryStateIdentifier, ILogicalQueryPart queryPart);
+			UUID recoveryStateIdentifier, UUID recoverySubStateIdentifier);
 	
 	void setAllocator(IRecoveryAllocator allocator);
 }

@@ -139,7 +139,7 @@ public class RecoveryAgreementHandler {
 	 * @param recoveryStateIdentifier
 	 */
 	public static void waitForAndDoRecovery(final PeerID failedPeer, final ID sharedQueryId, final PeerID newPeer,
-			final ILogicalQueryPart queryPart, final UUID recoveryStateIdentifier) {
+			final ILogicalQueryPart queryPart, final UUID recoveryStateIdentifier, final UUID subprocessID) {
 
 		if (!cCommunicator.isPresent()) {
 			LOG.error("No recovery communicator bound!");
@@ -179,7 +179,7 @@ public class RecoveryAgreementHandler {
 					String pql = LogicalQueryHelper.generatePQLStatementFromQueryPart(queryPart);
 
 					cCommunicator.get().installQueriesOnNewPeer(failedPeer, newPeer, sharedQueryId, pql,
-							recoveryStateIdentifier);
+							recoveryStateIdentifier, subprocessID);
 
 					// Now we did this, so remove that we want to do this recovery
 					removeBackupQueueEntry(failedPeer, sharedQueryId);
