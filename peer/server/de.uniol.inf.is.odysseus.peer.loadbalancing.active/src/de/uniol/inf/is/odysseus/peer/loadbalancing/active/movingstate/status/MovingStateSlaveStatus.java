@@ -2,6 +2,7 @@ package de.uniol.inf.is.odysseus.peer.loadbalancing.active.movingstate.status;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
 import net.jxta.peer.PeerID;
@@ -51,6 +52,9 @@ public class MovingStateSlaveStatus implements ILoadBalancingSlaveStatus,
 	 */
 	private LB_PHASES phase;
 
+	
+	private List<IStatefulPO> statefulOperatorList;
+	
 	/**
 	 * Holds involvement Type of peer
 	 */
@@ -310,6 +314,14 @@ public class MovingStateSlaveStatus implements ILoadBalancingSlaveStatus,
 
 	public void setPipeOldPeerMapping(ConcurrentHashMap<String,String> pipeOldPeerMapping) {
 		this.pipeOldPeerMapping = pipeOldPeerMapping;
+	}
+
+	public List<IStatefulPO> getStatefulOperatorList() {
+		return statefulOperatorList;
+	}
+	
+	public synchronized void setStatefulOperatorList(List<IStatefulPO> statefulOperatorList) {
+		this.statefulOperatorList = statefulOperatorList;
 	}
 
 }

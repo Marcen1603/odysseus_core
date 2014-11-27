@@ -26,6 +26,31 @@ public class MovingStateMasterStatus implements ILoadBalancingMasterStatus {
 	 */
 	private final String COMMUNCIATOR_NAME = "MovingState";
 
+	private volatile boolean locked=false;
+	
+	/***
+	 * Get a lock (used to coordinate different phases)
+	 */
+	public void lock() {
+		locked = true;
+	}
+	
+	/***
+	 * Release lock
+	 */
+	public void unlock() {
+		locked = false;
+	}
+	
+	/***
+	 * Tests if lock is set.
+	 * @return True if locked
+	 */
+	public boolean isLocked() {
+		return locked;
+	}
+	
+	
 	/***
 	 * Different LoadBalancing Phases in MovingState Protocol
 	 * 

@@ -1,6 +1,7 @@
 package de.uniol.inf.is.odysseus.peer.loadbalancing.active.movingstate.protocol;
 
 import java.util.Collection;
+import java.util.List;
 
 import net.jxta.peer.PeerID;
 
@@ -206,13 +207,16 @@ public class InstructionHandler {
 			if (status.getPhase().equals(
 					MovingStateSlaveStatus.LB_PHASES.WAITING_FOR_COPY)
 					&& !manager.isReceiverPipeKnown(instruction.getPipeId())) {
-				if (MovingStateHelper.compareStatefulOperator(
+				List<IStatefulPO> statefulOperatorList = status.getStatefulOperatorList();
+				if(statefulOperatorList==null) {
+					statefulOperatorList = MovingStateHelper.getStatefulOperatorList(status.getInstalledQueries());
+					status.setStatefulOperatorList(statefulOperatorList);
+				}
+				
+				if (MovingStateHelper.compareStatefulOperator(statefulOperatorList,
 						instruction.getOperatorIndex(),
-						status.getInstalledQueries(),
 						instruction.getOperatorType())) {
-					IStatefulPO operator = MovingStateHelper.getStatefulPO(
-							instruction.getOperatorIndex(),
-							status.getInstalledQueries());
+					IStatefulPO operator = statefulOperatorList.get(instruction.getOperatorIndex());
 					manager.addReceiver(senderPeer.toString(),
 							instruction.getPipeId());
 					status.addReceiver(instruction.getPipeId(), operator);

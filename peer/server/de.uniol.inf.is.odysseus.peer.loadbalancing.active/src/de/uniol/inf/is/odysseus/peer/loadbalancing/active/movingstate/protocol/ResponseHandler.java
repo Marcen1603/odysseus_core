@@ -89,19 +89,21 @@ public class ResponseHandler {
 			// When in Phase copying, the success Message says that Installing
 			// the Query Part on the other Peer was successful.
 			if (status.getPhase().equals(
-					MovingStateMasterStatus.LB_PHASES.COPYING_QUERY)) {
+					MovingStateMasterStatus.LB_PHASES.COPYING_QUERY) && !status.isLocked()) {
+				status.lock();
 				dispatcher.sendMsgReceived(senderPeer);
 				dispatcher.stopRunningJob();
 				status.setPhase(MovingStateMasterStatus.LB_PHASES.RELINKING_SENDERS);
 				LOG.debug("Relinking Senders.");
 				MovingStateHelper.notifyUpstreamPeers(status);
+				status.unlock();
 			}
 			break;
 
 		case MovingStateResponseMessage.SUCCESS_DUPLICATE_SENDER:
 
 			if (status.getPhase().equals(
-					MovingStateMasterStatus.LB_PHASES.RELINKING_SENDERS)) {
+					MovingStateMasterStatus.LB_PHASES.RELINKING_SENDERS)  && !status.isLocked()) {
 				LOG.debug("Got SUCCESS_DUPLICATE for SENDER");
 				dispatcher.sendPipeSuccessReceivedMsg(senderPeer,
 						response.getPipeID());
@@ -110,17 +112,18 @@ public class ResponseHandler {
 				LOG.debug("Jobs left:" + dispatcher.getNumberOfRunningJobs());
 
 				if (dispatcher.getNumberOfRunningJobs() == 0) {
-					
+					status.lock();
 					// All success messages received. Yay!
 					status.setPhase(LB_PHASES.RELINKING_RECEIVERS);
 					MovingStateHelper.notifyDownstreamPeers(status);
 					LOG.debug("Status Relinking Receivers.");
+					status.unlock();
 				}
 			}
 			break;
 		
 		case MovingStateResponseMessage.SUCCESS_DUPLICATE_RECEIVER:
-			if (status.getPhase().equals(LB_PHASES.RELINKING_RECEIVERS)) {
+			if (status.getPhase().equals(LB_PHASES.RELINKING_RECEIVERS) && !status.isLocked()) {
 				LOG.debug("Got SUCCESS_DUPLICATE for RECEIVER");
 				dispatcher.sendPipeSuccessReceivedMsg(senderPeer,
 						response.getPipeID());
@@ -128,23 +131,26 @@ public class ResponseHandler {
 				LOG.debug("Stopped JOB " + response.getPipeID());
 				LOG.debug("Jobs left:" + dispatcher.getNumberOfRunningJobs());
 				if (dispatcher.getNumberOfRunningJobs() == 0) {
+					status.lock();
 					// All success messages received. Yay!
 					status.setPhase(LB_PHASES.COPYING_STATES);
 					LOG.debug("INITIATING COPYING STATES");
 					MovingStateHelper.initiateStateCopy(status);
+					status.unlock();
 				}
 			}
 			break;
 
 		case MovingStateResponseMessage.ACK_INIT_STATE_COPY:
 			LOG.debug("Got ACK_INIT_STATE_COPY");
-			if (status.getPhase().equals(LB_PHASES.COPYING_STATES)) {
+			if (status.getPhase().equals(LB_PHASES.COPYING_STATES) && !status.isLocked()) {
 				dispatcher.stopRunningJob(response.getPipeID());
 			}
 			if (dispatcher.getNumberOfRunningJobs() == 0) {
 				LOG.debug("Sending states.");
 				for (String pipe : status.getAllSenderPipes()) {
 					IStatefulPO operator = status.getOperatorForSender(pipe);
+					
 					try {
 						MovingStateHelper.sendState(pipe, operator);
 					} catch (LoadBalancingException e) {
@@ -211,7 +217,6 @@ public class ResponseHandler {
 				dispatcher.stopRunningJob(senderPeer.toString());
 				dispatcher.sendMsgReceived(senderPeer);
 				if (dispatcher.getNumberOfRunningJobs() == 0) {
-					//TODO Missing Messages.
 					LoadBalancingHelper.deleteQuery(status.getLogicalQuery());
 					status.setPhase(LB_PHASES.FINISHED);
 					loadBalancingSuccessfullyFinished(status);

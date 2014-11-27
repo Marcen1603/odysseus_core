@@ -137,7 +137,7 @@ public class MovingStateHelper {
 	 *            MasterStatus
 	 */
 	public static void initiateStateCopy(MovingStateMasterStatus status) {
-
+		LOG.debug("Inititate State copy called.");
 		MovingStateCommunicatorImpl communicator = MovingStateCommunicatorImpl
 				.getInstance();
 		MovingStateMessageDispatcher dispatcher = status.getMessageDispatcher();
@@ -280,7 +280,9 @@ public class MovingStateHelper {
 					
 					if(subTo instanceof ControllablePhysicalSubscription) {
 						ControllablePhysicalSubscription cSub = (ControllablePhysicalSubscription)subTo;
+						LOG.debug("Calling suspend on Subscription:"+ cSub);
 						cSub.suspend();
+						LOG.debug("Open calls is now " +cSub.getOpenCalls());
 					}
 					else {
 						LOG.error("At least one subscription to Operator is not suspendable.");
@@ -298,11 +300,28 @@ public class MovingStateHelper {
 	@SuppressWarnings("rawtypes")
 	public static void stopBuffering(IPhysicalOperator operator) throws LoadBalancingException {
 		if(operator instanceof ISink) {
-			for(Object subscription : ((ISink) operator).getSubscribedToSource()) {
-				if(subscription instanceof ControllablePhysicalSubscription) {
-					ControllablePhysicalSubscription cSub = (ControllablePhysicalSubscription)subscription;
-					cSub.resume();
+			for(Object subscriptionFrom : ((ISink) operator).getSubscribedToSource()) {
+				AbstractPhysicalSubscription sub = (AbstractPhysicalSubscription)subscriptionFrom;
+				ISource operatorBefore = (ISource)sub.getTarget();
+				
+				for(Object subscriptionTo : operatorBefore.getSubscriptions()) {
+					AbstractPhysicalSubscription subTo = (AbstractPhysicalSubscription)subscriptionTo;
+					
+					if(subTo.getTarget()!=operator)
+						continue;
+					
+					if(subTo instanceof ControllablePhysicalSubscription) {
+						ControllablePhysicalSubscription cSub = (ControllablePhysicalSubscription)subTo;
+						LOG.debug("Calling resume on Subscription:"+ cSub);
+						cSub.resume();
+						LOG.debug("Open calls is now " +cSub.getOpenCalls());
+					}
+					else {
+						LOG.error("At least one subscription to Operator is not suspendable.");
+					}
 				}
+				
+				
 			}
 		}
 		else {
@@ -540,10 +559,8 @@ public class MovingStateHelper {
 	 *            Operator Type to comapre
 	 * @return true if Operator is of Type operatorType, false if not.
 	 */
-	public static boolean compareStatefulOperator(int operatorIndex,
-			Collection<Integer> installedQueries, String operatorType) {
-		List<IStatefulPO> statefulList = getStatefulOperatorList(installedQueries);
-		IStatefulPO operator = statefulList.get(operatorIndex);
+	public static boolean compareStatefulOperator(List<IStatefulPO> statefulOperatorList,int operatorIndex, String operatorType) {
+		IStatefulPO operator = statefulOperatorList.get(operatorIndex);
 		if (operator != null) {
 			if (operator.getClass().toString().equals(operatorType))
 				return true;
