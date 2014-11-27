@@ -72,7 +72,8 @@ public class ActivityInterpreterShowView extends ViewPart {
 		}
 
 		@Override
-		public void smartDevicesUpdated(ASmartDevice smartDevice) {
+		public void smartDevicesUpdated(ASmartDevice newSmartDevice,
+				ASmartDevice oldDevice) {
 			refresh();
 		}
 	};

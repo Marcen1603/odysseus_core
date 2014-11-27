@@ -593,7 +593,11 @@ public class QueryExecutor implements IP2PDictionaryListener,
 	}
 
 	public boolean isImportedSource(String source) {
-		return getP2PDictionary().isImported(source);
+		if(getP2PDictionary()!=null){
+			return getP2PDictionary().isImported(source);
+		}else{
+			return false;
+		}
 	}
 
 	public void executeQueryAsync(final String queryName, final String query, final String sourceNameToWaitFor) {
@@ -602,12 +606,13 @@ public class QueryExecutor implements IP2PDictionaryListener,
 			public void run() {
 				//TODO:
 				//waitForSource(sourceNameToWaitFor);
-				while(!p2pDictionary.isSourceNameAlreadyInUse(sourceNameToWaitFor)){
+				while(p2pDictionary==null || !p2pDictionary.isSourceNameAlreadyInUse(sourceNameToWaitFor)){
 					try {
 						Thread.sleep(100);
 					} catch (InterruptedException e) {
 					}
 				}
+				
 				
 				LOG.debug("source is available:"+sourceNameToWaitFor);
 				

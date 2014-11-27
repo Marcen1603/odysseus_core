@@ -20,8 +20,6 @@ import org.slf4j.LoggerFactory;
 import com.google.common.collect.Lists;
 
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.activityinterpreter.ActivityInterpreter;
-import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.actor.AbstractActorAction;
-import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.actor.AbstractActor;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.sensor.AbstractSensor;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.rcp.SmartHomeRCPActivator;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.smartdevice.ASmartDevice;
@@ -35,8 +33,11 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 
 import com.google.common.base.Optional;
+import org.eclipse.swt.widgets.Text;
 
 public class ActivityInterpreterAddViewPart extends ViewPart {
+	public ActivityInterpreterAddViewPart() {
+	}
 
 	public static final String ID = "de.uniol.inf.is.odysseus.rcp.peer.smarthome.contextawareness.ActivityInterpreterAddViewPart";
 
@@ -50,9 +51,10 @@ public class ActivityInterpreterAddViewPart extends ViewPart {
 	private ASmartDevice localSmartDevice;
 	private Combo sensorsCombo;
 	private Combo activityNamesCombo;
-	private Combo sensorsConditionCombo;
+	private Combo sensorsPossibleAttributesCombo;
 	private ComboViewer smartDeviceComboViewer;
 	private ArrayList<PeerID> foundPeerIDs = Lists.newArrayList();
+	private Text activityInterpreterConditionTextView;
 
 	@Override
 	public void createPartControl(Composite parent) {
@@ -151,11 +153,23 @@ public class ActivityInterpreterAddViewPart extends ViewPart {
 		Label lblAction = new Label(tableComposite, SWT.NONE);
 		lblAction.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false,
 				false, 1, 1));
-		lblAction.setText("Action:");
+		lblAction.setText("PossibleAttributes:");
 
-		sensorsConditionCombo = new Combo(tableComposite, SWT.READ_ONLY);
-		sensorsConditionCombo.setLayoutData(new GridData(SWT.FILL, SWT.CENTER,
-				true, false, 1, 1));
+		sensorsPossibleAttributesCombo = new Combo(tableComposite,
+				SWT.READ_ONLY);
+		sensorsPossibleAttributesCombo.setLayoutData(new GridData(SWT.FILL,
+				SWT.CENTER, true, false, 1, 1));
+
+		Label lblCondition = new Label(tableComposite, SWT.NONE);
+		lblCondition.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false,
+				false, 1, 1));
+		lblCondition.setAlignment(SWT.RIGHT);
+		lblCondition.setText("Condition:");
+
+		activityInterpreterConditionTextView = new Text(tableComposite,
+				SWT.BORDER);
+		activityInterpreterConditionTextView.setLayoutData(new GridData(
+				SWT.FILL, SWT.CENTER, true, false, 1, 1));
 
 		Button btnCreate = new Button(tableComposite, SWT.NONE);
 		btnCreate.addSelectionListener(new SelectionAdapter() {
@@ -253,8 +267,10 @@ public class ActivityInterpreterAddViewPart extends ViewPart {
 	private void refreshActivityNamesCombo() {
 
 		ArrayList<String> list = new ArrayList<>();
-		for (AbstractSensor sensor : getLocalSmartDevice().getConnectedSensors()) {
-			for (ActivityInterpreter interpreter : sensor.getActivityInterpreters()) {
+		for (AbstractSensor sensor : getLocalSmartDevice()
+				.getConnectedSensors()) {
+			for (ActivityInterpreter interpreter : sensor
+					.getActivityInterpreters()) {
 				list.add(interpreter.getActivityName());
 			}
 		}
@@ -321,19 +337,18 @@ public class ActivityInterpreterAddViewPart extends ViewPart {
 		int selectedSensor = sensorsCombo.getSelectionIndex();
 
 		if (selectedSensor >= 0) {
-			/*
-			Actor actor = smartDevice.getConnectedActors().get(selectedSensor);
+			AbstractSensor sensor = smartDevice.getConnectedSensors().get(
+					selectedSensor);
 
 			ArrayList<String> list = new ArrayList<>();
-			for (AbstractActorAction actions : actor.getActions()) {
-				list.add(actions.getName());
+			for (String attributes : sensor.getPossibleAttributes()) {
+				list.add(attributes);
 			}
 
 			String[] listArray = convertToArray(list);
-			sensorsConditionCombo.setItems(listArray);
-			*/
+			sensorsPossibleAttributesCombo.setItems(listArray);
 		} else {
-			sensorsConditionCombo.setItems(new String[] {});
+			sensorsPossibleAttributesCombo.setItems(new String[] {});
 		}
 	}
 
@@ -356,15 +371,17 @@ public class ActivityInterpreterAddViewPart extends ViewPart {
 		return localSmartDevice;
 	}
 
-	@SuppressWarnings("unused")
 	private void createActivityInterpreter() {
 		int selectedPeerID = smartDeviceComboViewer.getCombo()
 				.getSelectionIndex();
 		String activityName = activityNamesCombo.getText();
 		// String actorName = actorsCombo.getText();
 		// String actorActionName = actorActionsCombo.getText();
-		int selectedActor = sensorsCombo.getSelectionIndex();
-		int selectedActorAction = sensorsConditionCombo.getSelectionIndex();
+		int selectedSensor = sensorsCombo.getSelectionIndex();
+		// int selectedActorAction =
+		// sensorsPossibleAttributesCombo.getSelectionIndex();
+		String activityInterpreterCondition = activityInterpreterConditionTextView
+				.getText();
 
 		if (selectedPeerID < 0 || foundPeerIDs.get(selectedPeerID) == null) {
 			MessageDialog msgDialog = new MessageDialog(
@@ -388,40 +405,39 @@ public class ActivityInterpreterAddViewPart extends ViewPart {
 			return;
 		}
 
-		if (selectedActor < 0) {
-			MessageDialog msgDialog = new MessageDialog(Display.getCurrent()
-					.getActiveShell(), null, null,
+		if (selectedSensor < 0) {
+			MessageDialog msgDialog = new MessageDialog(
+					Display.getCurrent().getActiveShell(),
+					null,
+					null,
 					"Theactivity interpreter can't created. Please select an actor.",
 					MessageDialog.WARNING, new String[] { "Ok" }, 0);
 			msgDialog.open();
 			return;
 		}
 
-		/*
-		if (selectedActorAction < 0) {
+		if (activityInterpreterConditionTextView == null
+				|| activityInterpreterConditionTextView.equals("")) {
 			MessageDialog msgDialog = new MessageDialog(
 					Display.getCurrent().getActiveShell(),
 					null,
 					null,
-					"The activity interpreter can't created. Please select an action for the actor.",
+					"The activity interpreter can't created. Please enter a condition.",
 					MessageDialog.WARNING, new String[] { "Ok" }, 0);
 			msgDialog.open();
 			return;
 		}
-		*/
 
 		PeerID currentPeer = foundPeerIDs.get(selectedPeerID);
 		ASmartDevice smartDevice = getSmartDevice(currentPeer);
+		AbstractSensor sensor = smartDevice.getConnectedSensors().get(
+				selectedSensor);
 
-		AbstractActor actor = smartDevice.getConnectedActors().get(selectedActor);
+		if (isLocalID(currentPeer)) {
+			try {
 
-		AbstractActorAction actorAction = actor.getActions().get(
-				selectedActorAction);
-
-		try {
-			if (isLocalID(currentPeer)) {
-				//TODO: 
-				if (false && actor.createLogicRuleWithAction(activityName, actorAction)) {
+				if (sensor.createActivityInterpreterWithCondition(activityName,
+						activityInterpreterCondition)) {
 					refreshActivityInterpreterViewPart();
 					StatusBarManager.getInstance().setMessage(
 							"Activity interpreter created for device: "
@@ -431,50 +447,51 @@ public class ActivityInterpreterAddViewPart extends ViewPart {
 							Display.getCurrent().getActiveShell(),
 							null,
 							null,
-							"The activity interpreter can't created. Maybe it already exists?",
+							"The activity interpreter can't created on local peer. Maybe it already exists?",
 							MessageDialog.WARNING, new String[] { "Ok" }, 0);
 					msgDialog.open();
 				}
-			} else {
-				try {
-					//TODO: 
-					if (false && actor.createLogicRuleWithAction(activityName,
-							actorAction) && actor.save()) {
-						StatusBarManager.getInstance().setMessage(
-								"Activity interpreter created for device: "
-										+ smartDevice.getPeerName());
-					} else {
-						MessageDialog msgDialog = new MessageDialog(
-								Display.getCurrent().getActiveShell(),
-								null,
-								null,
-								"The activity interpreter can't created. Maybe it already exists.",
-								MessageDialog.WARNING, new String[] { "Ok" }, 0);
-						msgDialog.open();
-					}
-				} catch (Exception ex) {
+			} catch (Exception ex) {
+				MessageDialog msgDialog = new MessageDialog(
+						Display.getCurrent().getActiveShell(),
+						null,
+						null,
+						"The activity interpreter can't created on local peer.",
+						MessageDialog.WARNING, new String[] { "Ok" }, 0);
+				msgDialog.open();
+			}
+		} else {
+			try {
+				if (sensor.createActivityInterpreterWithCondition(activityName,
+						activityInterpreterCondition) && sensor.save()) {
+					StatusBarManager.getInstance().setMessage(
+							"Activity interpreter created for device: "
+									+ smartDevice.getPeerName());
+				} else {
 					MessageDialog msgDialog = new MessageDialog(
 							Display.getCurrent().getActiveShell(),
 							null,
 							null,
-							"The activity interpreter can't created. Maybe there is no connection to the remote peer.",
+							"The activity interpreter can't created on remote peer. Maybe it already exists.",
 							MessageDialog.WARNING, new String[] { "Ok" }, 0);
 					msgDialog.open();
 				}
+			} catch (Exception ex) {
+				MessageDialog msgDialog = new MessageDialog(
+						Display.getCurrent().getActiveShell(),
+						null,
+						null,
+						"The activity interpreter can't created on remote peer. Maybe there is no connection to the remote peer.",
+						MessageDialog.WARNING, new String[] { "Ok" }, 0);
+				msgDialog.open();
 			}
-		} catch (Exception ex) {
-			MessageDialog msgDialog = new MessageDialog(Display.getCurrent()
-					.getActiveShell(), null, null,
-					"The activity interpreter can't created.", MessageDialog.WARNING,
-					new String[] { "Ok" }, 0);
-			msgDialog.open();
 		}
+
 	}
 
 	private ASmartDevice getSmartDevice(PeerID currentPeer) {
 		ASmartDevice smartDevice = SmartHomeRCPActivator
-				.getSmartDeviceService()
-				.getSmartDeviceDictionaryDiscovery()
+				.getSmartDeviceService().getSmartDeviceDictionaryDiscovery()
 				.getFoundSmartDevices().get(currentPeer.intern().toString());
 		if (isLocalID(currentPeer)) {
 			smartDevice = getLocalSmartDevice();

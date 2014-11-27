@@ -75,5 +75,16 @@ public abstract class ActivityInterpreter implements Serializable {
 
 	public abstract String getActivityInterpreterDescription();
 
+	@Override
+	public boolean equals(Object obj) {
+		if(obj instanceof ActivityInterpreter){
+			ActivityInterpreter other = (ActivityInterpreter) obj;
+			if(getActivityName().equals(other.getActivityName()) &&
+					getActivityInterpreterDescription().equals(other.getActivityInterpreterDescription())){
+				return true;
+			}
+		}
+		return super.equals(obj);
+	}
 	
 }

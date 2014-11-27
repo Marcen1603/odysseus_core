@@ -8,7 +8,6 @@ import java.util.Map.Entry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.GetParameter;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.IP2PDictionary;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.IP2PDictionaryListener;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.SourceAdvertisement;
@@ -22,8 +21,6 @@ import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.sens
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.server.service.SmartDeviceService;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.smartdevice.ASmartDevice;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.smartdevice.ISmartDeviceListener;
-import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.smartdevice.SmartDevice;
-import net.jxta.peer.PeerID;
 
 public class LogicRuleProcessor implements ISmartDeviceDictionaryListener,
 		ISmartDeviceListener, IP2PDictionaryListener {
@@ -72,78 +69,16 @@ public class LogicRuleProcessor implements ISmartDeviceDictionaryListener,
 				+ newSmartDevice.getPeerName());
 
 		//
-		HashMap<ActivityInterpreter, AbstractLogicRule> relatedActivityInterpreterWithLogicRule = getRelatedActivityNamesWithSourceName(newSmartDevice);
-		importRelatedSourcesFromActivityInterpreter(
-				relatedActivityInterpreterWithLogicRule, newSmartDevice);
-
-		// //
-		boolean doit = false;
-		for (AbstractSensor sensor : newSmartDevice.getConnectedSensors()) {
-			for (ActivityInterpreter interpreter : sensor
-					.getActivityInterpreters()) {
-				addActivitySourceToMap(interpreter.getActivityName(),
-						interpreter.getActivitySourceName());
-				doit = true;
-			}
-		}
+		boolean doit = updateLogicRuleWithActivityInterpreters(newSmartDevice);
 
 		if (doit) {
-			for (Entry<String, ArrayList<String>> entry : getActivitySourceMap()
-					.entrySet()) {
-				String activityName = entry.getKey();
-				ArrayList<String> activitySourceNames = entry.getValue();
-
-				LOG.debug("activityName:" + activityName + " size:"
-						+ activitySourceNames.size());
-
-				String importedMergedActivitySourceName = SmartDeviceService
-						.getInstance().getLocalSmartDevice()
-						.getMergedImportedActivitiesSourceName(activityName);
-				try {
-					QueryExecutor.getInstance().stopQueryAndRemoveViewOrStream(
-							importedMergedActivitySourceName);
-				} catch (Exception ex) {
-					LOG.error(ex.getMessage(), ex);
-				}
-
-				runQueriesWhenPossibleAsync(activityName, activitySourceNames);
-			}
+			updateActivitySourceUnionImports();
 		}
 
 		// //
 		for (AbstractLogicRule rule : SmartDevicePublisher.getInstance()
 				.getLocalSmartDevice().getLogicRules()) {
-			String importedMergedActivitySourceName = SmartDeviceService
-					.getInstance()
-					.getLocalSmartDevice()
-					.getMergedImportedActivitiesSourceName(
-							rule.getActivityName());
-			if (importedMergedActivitySourceName != null
-					&& !importedMergedActivitySourceName.equals("")) {
-				LOG.debug("rule:\"" + rule.getReactionDescription()
-						+ "\" addActivitySourceName:"
-						+ importedMergedActivitySourceName);
-				rule.setActivitySourceName(importedMergedActivitySourceName);
-
-				for (Entry<String, String> entry : rule
-						.getLogicRulesQueriesWithActivitySourceName()
-						.entrySet()) {
-					String queryName = entry.getKey();
-					String query = entry.getValue();
-
-					LOG.debug("executeQueryAsync queryName:" + queryName
-							+ " query:" + query + " waitForSource:"
-							+ importedMergedActivitySourceName);
-
-					try {
-						QueryExecutor.getInstance().executeQueryAsync(
-								queryName, query,
-								importedMergedActivitySourceName);
-					} catch (Exception e) {
-						e.printStackTrace();
-					}
-				}
-			}
+			startLogicRuleAsync(rule);
 		}
 
 		// execute logic rules with activity source name:
@@ -182,6 +117,82 @@ public class LogicRuleProcessor implements ISmartDeviceDictionaryListener,
 		 * 
 		 * executeRelatedLogicRules(newSmartDevice);
 		 */
+	}
+
+	private boolean updateLogicRuleWithActivityInterpreters(ASmartDevice newSmartDevice) {
+		HashMap<ActivityInterpreter, AbstractLogicRule> relatedActivityInterpreterWithLogicRule = getRelatedActivityNamesWithSourceName(newSmartDevice);
+		importRelatedSourcesFromActivityInterpreter(
+				relatedActivityInterpreterWithLogicRule, newSmartDevice);
+
+		// //
+		boolean doit = false;
+		for (AbstractSensor sensor : newSmartDevice.getConnectedSensors()) {
+			for (ActivityInterpreter interpreter : sensor
+					.getActivityInterpreters()) {
+				addActivitySourceToMap(interpreter.getActivityName(),
+						interpreter.getActivitySourceName());
+				doit = true;
+			}
+		}
+		return doit;
+	}
+
+	private void updateActivitySourceUnionImports() {
+		for (Entry<String, ArrayList<String>> entry : getActivitySourceMap()
+				.entrySet()) {
+			String activityName = entry.getKey();
+			ArrayList<String> activitySourceNames = entry.getValue();
+
+			LOG.debug("activityName:" + activityName + " size:"
+					+ activitySourceNames.size());
+
+			String importedMergedActivitySourceName = SmartDeviceService
+					.getInstance().getLocalSmartDevice()
+					.getMergedImportedActivitiesSourceName(activityName);
+			try {
+				QueryExecutor.getInstance().stopQueryAndRemoveViewOrStream(
+						importedMergedActivitySourceName);
+			} catch (Exception ex) {
+				LOG.error(ex.getMessage(), ex);
+			}
+
+			runQueriesWhenPossibleAsync(activityName, activitySourceNames);
+		}
+	}
+
+	private void startLogicRuleAsync(AbstractLogicRule rule) {
+		
+		String importedMergedActivitySourceName = SmartDeviceService
+				.getInstance()
+				.getLocalSmartDevice()
+				.getMergedImportedActivitiesSourceName(
+						rule.getActivityName());
+		if (importedMergedActivitySourceName != null
+				&& !importedMergedActivitySourceName.equals("")) {
+			LOG.debug("rule:\"" + rule.getReactionDescription()
+					+ "\" addActivitySourceName:"
+					+ importedMergedActivitySourceName);
+			rule.setActivitySourceName(importedMergedActivitySourceName);
+
+			for (Entry<String, String> entry : rule
+					.getLogicRulesQueriesWithActivitySourceName()
+					.entrySet()) {
+				String queryName = entry.getKey();
+				String query = entry.getValue();
+
+				LOG.debug("executeQueryAsync queryName:" + queryName
+						+ " query:" + query + " waitForSource:"
+						+ importedMergedActivitySourceName);
+
+				try {
+					QueryExecutor.getInstance().executeQueryAsync(
+							queryName, query,
+							importedMergedActivitySourceName);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		}
 	}
 
 	private void runQueriesWhenPossibleAsync(final String activityName,
@@ -644,36 +655,47 @@ public class LogicRuleProcessor implements ISmartDeviceDictionaryListener,
 	}
 
 	protected void importSourcesIfKnown(AbstractLogicRule rule) {
-		LOG.debug("importSourcesIfKnown for activity:"+rule.getActivityName());
-		
+		LOG.debug("importSourcesIfKnown for activity:" + rule.getActivityName());
+
 		ArrayList<ASmartDevice> foundSmartDevices = SmartDeviceDictionaryDiscovery
 				.getInstance().getFoundSmartDeviceList();
 
 		for (ASmartDevice device : foundSmartDevices) {
-			LOG.debug("_device:"+device.getPeerName());
+			LOG.debug("_device:" + device.getPeerName());
 			for (AbstractSensor sensor : device.getConnectedSensors()) {
 				for (ActivityInterpreter interpreter : sensor
 						.getActivityInterpreters()) {
 					if (interpreter.getActivityName().equals(
 							rule.getActivityName())) {
-						LOG.debug("__interpreter.getActivityName().equals(rule.getActivityName():"+interpreter.getActivityName());
-						
-						
-						QueryExecutor.getInstance().addNeededSourceForImport(interpreter.getActivitySourceName(), interpreter.getSensor().getSmartDevice().getPeerID());
-						
-						
+						LOG.debug("__interpreter.getActivityName().equals(rule.getActivityName():"
+								+ interpreter.getActivityName());
+
+						QueryExecutor.getInstance().addNeededSourceForImport(
+								interpreter.getActivitySourceName(),
+								interpreter.getSensor().getSmartDevice()
+										.getPeerID());
+
 						Collection<SourceAdvertisement> publishedSources = SmartHomeServerPlugIn
 								.getP2PDictionary().getSources();
 						for (SourceAdvertisement publishedSource : publishedSources) {
-							LOG.debug("___publishedSource:"+publishedSource.getName());
+							LOG.debug("___publishedSource:"
+									+ publishedSource.getName());
 							if (publishedSource.getName().equals(
 									interpreter.getActivitySourceName())) {
-								
-								LOG.debug("____importSourcesIfKnown sourceName:"+publishedSource.getName());
-								
-								
-								QueryExecutor.getInstance().addNeededSourceForImport(interpreter.getActivitySourceName(), publishedSource.getPeerID().intern().toString());
-								QueryExecutor.getInstance().importOrRemoveIfNeccessary(publishedSource);
+
+								LOG.debug("____importSourcesIfKnown sourceName:"
+										+ publishedSource.getName());
+
+								QueryExecutor
+										.getInstance()
+										.addNeededSourceForImport(
+												interpreter
+														.getActivitySourceName(),
+												publishedSource.getPeerID()
+														.intern().toString());
+								QueryExecutor.getInstance()
+										.importOrRemoveIfNeccessary(
+												publishedSource);
 							}
 						}
 					}
@@ -704,11 +726,8 @@ public class LogicRuleProcessor implements ISmartDeviceDictionaryListener,
 		if (device instanceof AbstractActor) {
 			AbstractActor actor = (AbstractActor) device;
 
-			// TODO: stop and remove logic rules!
-			for (@SuppressWarnings("unused")
-			AbstractLogicRule rule : actor.getLogicRules()) {
-				// rule.getActivityInterpretersWithRunningRules()
-
+			for(AbstractLogicRule rule : actor.getLogicRules()) {
+				stopLogicRuleAsync(rule);
 			}
 
 			actor.removeLogicRuleListener(logicRuleListener);
@@ -722,9 +741,94 @@ public class LogicRuleProcessor implements ISmartDeviceDictionaryListener,
 	}
 
 	@Override
-	public void smartDevicesUpdated(ASmartDevice smartDevice) {
-		LOG.debug("smartDevicesUpdated");
+	public void smartDevicesUpdated(ASmartDevice newSmartDevice,
+			ASmartDevice oldSmartDevice) {
+		LOG.debug("smartDevicesUpdated ");
 
+		if (isLocalPeer(newSmartDevice)) {
+			// start new logic rules:
+			ArrayList<AbstractLogicRule> newRules = getNewLogicRules(
+					newSmartDevice, oldSmartDevice);
+			for (AbstractLogicRule rule : newRules) {
+				LOG.debug("start new logic rule:" + rule.getActivityName()
+						+ " desc:" + rule.getReactionDescription());
+
+				// TODO:
+				
+				for(ASmartDevice smartDevice : SmartDeviceDictionaryDiscovery.getInstance().getFoundSmartDeviceList()){
+					if(updateLogicRuleWithActivityInterpreters(smartDevice)){
+						updateActivitySourceUnionImports();
+					}
+				}
+				
+				startLogicRuleAsync(rule);
+			}
+
+			// stop removed logic rules:
+			ArrayList<AbstractLogicRule> removedRules = getRemovedLogicRules(
+					newSmartDevice, oldSmartDevice);
+			for (AbstractLogicRule rule : removedRules) {
+				LOG.debug("stop removed logic rule:" + rule.getActivityName()
+						+ " desc:" + rule.getReactionDescription());
+
+				// TODO:
+				stopLogicRuleAsync(rule);
+			}
+		}
+	}
+
+	private void stopLogicRuleAsync(AbstractLogicRule rule) {
+		// TODO Auto-generated method stub
+		LOG.debug("stopLogicRuleAsync() -> currently not implemented!");
+		
+		
+	}
+
+	private boolean isLocalPeer(ASmartDevice newSmartDevice) {
+		return SmartDeviceService.getInstance().getLocalSmartDevice()
+				.equals(newSmartDevice);
+	}
+
+	private ArrayList<AbstractLogicRule> getRemovedLogicRules(
+			ASmartDevice newSmartDevice, ASmartDevice oldSmartDevice) {
+		ArrayList<AbstractLogicRule> list = new ArrayList<>();
+
+		getLeftIntersection(oldSmartDevice, newSmartDevice, list);
+
+		return list;
+	}
+
+	private ArrayList<AbstractLogicRule> getNewLogicRules(
+			ASmartDevice newSmartDevice, ASmartDevice oldSmartDevice) {
+		ArrayList<AbstractLogicRule> list = new ArrayList<>();
+
+		getLeftIntersection(newSmartDevice, oldSmartDevice, list);
+
+		return list;
+	}
+
+	private void getLeftIntersection(ASmartDevice leftSmartDevice,
+			ASmartDevice rightSmartDevice, ArrayList<AbstractLogicRule> list) {
+		for (AbstractActor actor : leftSmartDevice.getConnectedActors()) {
+			for (AbstractActor rightActor : rightSmartDevice
+					.getConnectedActors()) {
+				for (AbstractLogicRule leftRule : actor.getLogicRules()) {
+
+					boolean ruleExist = false;
+					for (AbstractLogicRule rightRule : rightActor
+							.getLogicRules()) {
+						if (leftRule.equals(rightRule)) {
+							ruleExist = true;
+							break;
+						}
+					}
+
+					if (!ruleExist && !list.contains(leftRule)) {
+						list.add(leftRule);
+					}
+				}
+			}
+		}
 	}
 
 	/******
@@ -734,8 +838,7 @@ public class LogicRuleProcessor implements ISmartDeviceDictionaryListener,
 	public void sourceAdded(IP2PDictionary sender,
 			SourceAdvertisement advertisement) {
 		LOG.debug("sourceAdded");
-		
-		
+
 	}
 
 	@Override
@@ -748,8 +851,9 @@ public class LogicRuleProcessor implements ISmartDeviceDictionaryListener,
 	public void sourceImported(IP2PDictionary sender,
 			SourceAdvertisement advertisement, String sourceName) {
 		LOG.debug("sourceImported");
-		
-		//TODO: start relevant Queries
+
+		// TODO: start relevant Queries
+		LOG.debug("start relevant queries. currently not implemented!");
 		
 		
 	}

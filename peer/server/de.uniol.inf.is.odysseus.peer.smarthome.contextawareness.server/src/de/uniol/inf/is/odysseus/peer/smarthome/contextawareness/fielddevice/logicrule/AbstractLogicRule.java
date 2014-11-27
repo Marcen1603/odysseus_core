@@ -144,4 +144,17 @@ public abstract class AbstractLogicRule implements Serializable {
 	public abstract String getActivitySourceName();
 
 	public abstract LinkedHashMap<String, String> getLogicRulesQueriesWithActivitySourceName();
+
+	@Override
+	public boolean equals(Object obj) {
+		if(obj instanceof AbstractLogicRule){
+			AbstractLogicRule other = (AbstractLogicRule)obj;
+			if(this.getActivityName().equals(other.getActivityName()) &&
+					this.getReactionDescription().equals(other.getReactionDescription())){
+				//					this.getActivitySourceName().equals(other.getActivitySourceName()) &&
+				return true;
+			}
+		}
+		return super.equals(obj);
+	}
 }

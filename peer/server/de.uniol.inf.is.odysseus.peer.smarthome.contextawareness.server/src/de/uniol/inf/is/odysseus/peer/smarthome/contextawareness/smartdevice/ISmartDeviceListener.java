@@ -6,5 +6,5 @@ public interface ISmartDeviceListener {
 	public abstract void fieldDeviceConnected(ASmartDevice sender, FieldDevice device);
 	public abstract void fieldDeviceRemoved(ASmartDevice sender, FieldDevice device);
 	public abstract void smartDeviceReadyStateChanged(ASmartDevice sender, boolean state);
-	public abstract void smartDevicesUpdated(ASmartDevice smartDevice);
+	public abstract void smartDevicesUpdated(ASmartDevice newSmartDevice, ASmartDevice oldDevice);
 }

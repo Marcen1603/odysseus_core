@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.sensor;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -24,5 +25,21 @@ public class ComplexSensor extends AbstractSensor {
 		map.put(sensorRawSourceName, queryForRawValues);
 
 		return map;
+	}
+
+	@Override
+	public boolean createActivityInterpreterWithCondition(String activityName,
+			String activityInterpreterCondition) {
+		// TODO Auto-generated method stub
+		
+		
+		
+		return false;
+	}
+
+	@Override
+	public ArrayList<String> getPossibleAttributes() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

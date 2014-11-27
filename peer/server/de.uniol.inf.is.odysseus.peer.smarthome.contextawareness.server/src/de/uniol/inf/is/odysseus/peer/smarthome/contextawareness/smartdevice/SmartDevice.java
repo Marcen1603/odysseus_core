@@ -144,6 +144,13 @@ public class SmartDevice extends ASmartDevice implements Serializable {
 	}
 
 	public void overwriteWith(ASmartDevice smartDevice) {
+		ASmartDevice oldDevice = null;
+		try {
+			oldDevice = (ASmartDevice) this.clone();
+		} catch (CloneNotSupportedException e) {
+			LOG.debug(e.getMessage(), e);
+		}
+		
 		if (smartDevice != null) {
 			this.setContextName(smartDevice.getContextName());
 		}
@@ -151,7 +158,7 @@ public class SmartDevice extends ASmartDevice implements Serializable {
 		if (smartDevice.getConnectedFieldDevices() != null) {
 			this.setConnectedFieldDevices(smartDevice
 					.getConnectedFieldDevices());
-			fireSmartDevicesUpdated();
+			fireSmartDevicesUpdated(oldDevice);
 		}
 	}
 	
@@ -299,9 +306,9 @@ public class SmartDevice extends ASmartDevice implements Serializable {
 		}		
 	}
 	
-	private void fireSmartDevicesUpdated() {
+	private void fireSmartDevicesUpdated(ASmartDevice oldDevice) {
 		for (ISmartDeviceListener listener : getSmartDeviceListener()) {
-			listener.smartDevicesUpdated(this);
+			listener.smartDevicesUpdated(this, oldDevice);
 		}
 	}
 
@@ -367,4 +374,6 @@ public class SmartDevice extends ASmartDevice implements Serializable {
 	public String getMergedImportedActivitiesSourceName(String activityName) {
 		return "Imported_Activities_"+activityName;
 	}
+	
+
 }

@@ -21,11 +21,10 @@ public class ActivityInterpreterProcessor implements ISmartDeviceListener {
 			.getLogger(SmartHomeServerPlugIn.class);
 	private static ActivityInterpreterProcessor instance = new ActivityInterpreterProcessor();
 	private IActivityInterpreterListener activityInterpreterListener;
-	
 
 	private ActivityInterpreterProcessor() {
 		createActivityInterpreterListener();
-		
+
 	}
 
 	private void createActivityInterpreterListener() {
@@ -40,13 +39,14 @@ public class ActivityInterpreterProcessor implements ISmartDeviceListener {
 						.getSensor().getSmartDevice().getPeerID())) {
 					QueryExecutor.getInstance().removeSourceIfNeccessary(
 							activityInterpreter.getActivitySourceName());
-					QueryExecutor.getInstance().removeExport(activityInterpreter.getActivitySourceName());
+					QueryExecutor.getInstance().removeExport(
+							activityInterpreter.getActivitySourceName());
 				} else {
 					// activityInterpreterRemoved at remote smart device:
 
 				}
-				
-				//TODO: refreshActivitySourceMergedExport();
+
+				// TODO: refreshActivitySourceMergedExport();
 			}
 
 			@Override
@@ -55,102 +55,98 @@ public class ActivityInterpreterProcessor implements ISmartDeviceListener {
 				LOG.debug(" activityInterpreterAdded:"
 						+ activityInterpreter.getActivityName());
 
-				String activityName = activityInterpreter.getActivityName();
-				//String activitySourceName = activityInterpreter
-				//		.getActivitySourceName();
+				startActivityInterpreter(activityInterpreter);
 
-				for (Entry<String, String> entry : activityInterpreter
-						.getActivityInterpreterQueries(activityName).entrySet()) {
-					String viewName = entry.getKey();
-					String query = entry.getValue();
-
-					try {
-						QueryExecutor.getInstance().executeQueryNow(viewName,
-								query);
-						
-						//TODO 1:
-						QueryExecutor.getInstance().exportWhenPossibleAsync(viewName);
-					} catch (Exception e) {
-						LOG.error(e.getMessage(), e);
-					}
-				}
-				
-				//TODO 1: refreshActivitySourceMergedExport();
+				// TODO 1: refreshActivitySourceMergedExport();
 			}
+
 		};
 	}
+
 	
-	//TODO 1: 
+
+	// TODO 1:
 	@SuppressWarnings("unused")
 	private synchronized void refreshActivitySourceMergedExport() {
 		LOG.debug("refreshActivitySourceMergedExport(...) map.size:");
-		
-		HashMap<String, ArrayList<String>> map = SmartDevicePublisher.getInstance().getLocalSmartDevice().getActivitySourceMap();
-		
-		for(Entry<String, ArrayList<String>> entry : map.entrySet()){
+
+		HashMap<String, ArrayList<String>> map = SmartDevicePublisher
+				.getInstance().getLocalSmartDevice().getActivitySourceMap();
+
+		for (Entry<String, ArrayList<String>> entry : map.entrySet()) {
 			String activityName = entry.getKey();
 			ArrayList<String> activitySourceNames = entry.getValue();
-			
-			LOG.debug("activityName:"+activityName+" size:"+activitySourceNames.size());
-			
-			
-			String mergedActivitySourceName = SmartDeviceService.getInstance().getLocalSmartDevice().getMergedActivitySourceName(activityName);
+
+			LOG.debug("activityName:" + activityName + " size:"
+					+ activitySourceNames.size());
+
+			String mergedActivitySourceName = SmartDeviceService.getInstance()
+					.getLocalSmartDevice()
+					.getMergedActivitySourceName(activityName);
 			String mergedActivitySourceNameQuery = "";
 			mergedActivitySourceNameQuery += "#PARSER PQL\n";
-			mergedActivitySourceNameQuery += "#QNAME "+mergedActivitySourceName+"_query\n";
+			mergedActivitySourceNameQuery += "#QNAME "
+					+ mergedActivitySourceName + "_query\n";
 			mergedActivitySourceNameQuery += "#ADDQUERY\n";
-			mergedActivitySourceNameQuery += mergedActivitySourceName+" := ";
-			
-			if(activitySourceNames.size()==1){
+			mergedActivitySourceNameQuery += mergedActivitySourceName + " := ";
+
+			if (activitySourceNames.size() == 1) {
 				mergedActivitySourceNameQuery += activitySourceNames.get(0);
-			}else if(activitySourceNames.size()>1){
+			} else if (activitySourceNames.size() > 1) {
 				mergedActivitySourceNameQuery += "";
 				int i = 0;
-				for(String activitySource : activitySourceNames){
-					if(i==0){//first
-						mergedActivitySourceNameQuery += "UNION("+activitySource+",\n";
-					}else if(i>0 && i < activitySourceNames.size()-1){//middle
-						mergedActivitySourceNameQuery += "UNION("+activitySource+",\n";
-					}else if(i<activitySourceNames.size()){//last
-						mergedActivitySourceNameQuery += activitySource+")\n";
-						for(int n=i;n>1;n--){
+				for (String activitySource : activitySourceNames) {
+					if (i == 0) {// first
+						mergedActivitySourceNameQuery += "UNION("
+								+ activitySource + ",\n";
+					} else if (i > 0 && i < activitySourceNames.size() - 1) {// middle
+						mergedActivitySourceNameQuery += "UNION("
+								+ activitySource + ",\n";
+					} else if (i < activitySourceNames.size()) {// last
+						mergedActivitySourceNameQuery += activitySource + ")\n";
+						for (int n = i; n > 1; n--) {
 							mergedActivitySourceNameQuery += ")\n";
 						}
 					}
-					
+
 					i++;
 				}
-				
+
 			}
-			
-			if(activitySourceNames.size()>=1){
-				LOG.debug("----mergedActivitySourceName:"+mergedActivitySourceName+" Query: \n"+mergedActivitySourceNameQuery);
-				
-				QueryExecutor.getInstance().removeExport(mergedActivitySourceName);
-				
-				try{
-					QueryExecutor.getInstance().stopQueryAndRemoveViewOrStream(mergedActivitySourceName);
-				}catch(Exception ex){
-					LOG.error(ex.getMessage(), ex);
-				}
-				
+
+			if (activitySourceNames.size() >= 1) {
+				LOG.debug("----mergedActivitySourceName:"
+						+ mergedActivitySourceName + " Query: \n"
+						+ mergedActivitySourceNameQuery);
+
+				QueryExecutor.getInstance().removeExport(
+						mergedActivitySourceName);
+
 				try {
-					QueryExecutor.getInstance().executeQueryNow(mergedActivitySourceName, mergedActivitySourceNameQuery);
-					
+					QueryExecutor.getInstance().stopQueryAndRemoveViewOrStream(
+							mergedActivitySourceName);
 				} catch (Exception ex) {
 					LOG.error(ex.getMessage(), ex);
 				}
-				
+
 				try {
-					QueryExecutor.getInstance().exportNow(mergedActivitySourceName);
+					QueryExecutor.getInstance().executeQueryNow(
+							mergedActivitySourceName,
+							mergedActivitySourceNameQuery);
+
+				} catch (Exception ex) {
+					LOG.error(ex.getMessage(), ex);
+				}
+
+				try {
+					QueryExecutor.getInstance().exportNow(
+							mergedActivitySourceName);
 				} catch (Exception ex) {
 					LOG.error(ex.getMessage(), ex);
 				}
 			}
 		}
 	}
-
-	
 
 	public synchronized static ActivityInterpreterProcessor getInstance() {
 		return instance;
@@ -189,13 +185,14 @@ public class ActivityInterpreterProcessor implements ISmartDeviceListener {
 
 		if (device instanceof AbstractSensor) {
 			AbstractSensor sensor = (AbstractSensor) device;
-			
-			//TODO: Stop activity interpreters
-			for(@SuppressWarnings("unused") ActivityInterpreter interpreter : sensor.getActivityInterpreters()){
-				//interpreter.getActivityInterpreterQueries(activityName)
-				
+
+			// TODO: Stop activity interpreters
+			for (@SuppressWarnings("unused")
+			ActivityInterpreter interpreter : sensor.getActivityInterpreters()) {
+				// interpreter.getActivityInterpreterQueries(activityName)
+
 			}
-			
+
 			sensor.removeActivityInterpreterListener(activityInterpreterListener);
 		}
 	}
@@ -207,10 +204,84 @@ public class ActivityInterpreterProcessor implements ISmartDeviceListener {
 	}
 
 	@Override
-	public void smartDevicesUpdated(ASmartDevice smartDevice) {
-		LOG.debug("SmartDevicesUpdated: " + smartDevice.getPeerName());
-
-		// TODO:
+	public void smartDevicesUpdated(ASmartDevice newSmartDevice, ASmartDevice oldDevice) {
+		LOG.debug("SmartDevicesUpdated: " + newSmartDevice.getPeerName());
 		
+		
+		
+		//Start new activity interpreters:
+		for(AbstractSensor sensor : newSmartDevice.getConnectedSensors()){
+			for(ActivityInterpreter interpreter : sensor.getActivityInterpreters()){
+				if(!SmartHomeServerPlugIn.getP2PDictionary().isSourceNameAlreadyInUse(interpreter.getActivitySourceName())){
+					startActivityInterpreter(interpreter);
+				}
+			}
+		}
+		
+		//TODO: Stop removed activity interpreters:
+		for(AbstractSensor sensor : oldDevice.getConnectedSensors()){
+			
+			for(AbstractSensor newSensor : newSmartDevice.getConnectedSensors()){
+				if(sensor.getName().equals(newSensor.getName())){
+					for(ActivityInterpreter interpreter : sensor.getActivityInterpreters()){
+				
+						boolean interpreterExist=false;
+						for(ActivityInterpreter newInterpreter : newSensor.getActivityInterpreters()){
+							if(interpreter.equals(newInterpreter)){
+								interpreterExist=true;;
+								break;
+							}
+						}
+						
+						if(!interpreterExist){
+							stopActivityInterpreter(interpreter);
+						}
+					}
+				}
+			}
+		}
+	}
+
+	private void stopActivityInterpreter(ActivityInterpreter activityInterpreter) {
+		String activityName = activityInterpreter.getActivityName();
+		// String activitySourceName = activityInterpreter
+		// .getActivitySourceName();
+
+		for (Entry<String, String> entry : activityInterpreter
+				.getActivityInterpreterQueries(activityName).entrySet()) {
+			String viewName = entry.getKey();
+			//String query = entry.getValue();
+
+			try {
+				QueryExecutor.getInstance().removeSourceIfNeccessary(
+						activityInterpreter.getActivitySourceName());
+				QueryExecutor.getInstance().removeExport(viewName);
+				QueryExecutor.getInstance().stopQueryAndRemoveViewOrStream(viewName);
+			} catch (Exception e) {
+				LOG.error(e.getMessage(), e);
+			}
+		}
+	}
+	
+	private void startActivityInterpreter(
+			ActivityInterpreter activityInterpreter) {
+		String activityName = activityInterpreter.getActivityName();
+		// String activitySourceName = activityInterpreter
+		// .getActivitySourceName();
+
+		for (Entry<String, String> entry : activityInterpreter
+				.getActivityInterpreterQueries(activityName).entrySet()) {
+			String viewName = entry.getKey();
+			String query = entry.getValue();
+
+			try {
+				QueryExecutor.getInstance().executeQueryNow(viewName, query);
+
+				// TODO 1:
+				QueryExecutor.getInstance().exportWhenPossibleAsync(viewName);
+			} catch (Exception e) {
+				LOG.error(e.getMessage(), e);
+			}
+		}
 	}
 }

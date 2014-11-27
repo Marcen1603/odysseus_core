@@ -14,7 +14,7 @@ import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.sens
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.server.config.SmartDeviceConfig;
 import net.jxta.peer.PeerID;
 
-public abstract class ASmartDevice implements Serializable { // ISmartDevice,
+public abstract class ASmartDevice implements Serializable, Cloneable { // ISmartDevice,
 	private static final long serialVersionUID = 1L;
 	
 	public boolean equals(Object obj) {

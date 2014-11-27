@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.sensor;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -72,16 +73,40 @@ public class RPiGPIOSensor extends AbstractSensor {
 
 		return rawValueQueries;
 	}
+	
+	@Override
+	public boolean createActivityInterpreterWithCondition(String activityName,
+			String activityInterpreterCondition) {
+		RPiGPIOActivityInterpreter interpreter = new RPiGPIOActivityInterpreter(this, activityName, getPrefix(), getPostfix());
+		interpreter.setCondition(activityInterpreterCondition);
+
+		return addActivityInterpreter(interpreter);
+	}
+	
+	@Override
+	public ArrayList<String> getPossibleAttributes() {
+		ArrayList<String> list = new ArrayList<>();
+		
+		//list.add("PinNumber [String]");
+		list.add("PinState [Long] (Possible values: 0,1) example: PinState = 1");
+		
+		return list;
+	}
 
 	class RPiGPIOActivityInterpreter extends ActivityInterpreter {
 		private static final long serialVersionUID = 1L;
 		private int inputPin;
 		private GPIO_SENSOR_STATE pinState;
+		private String condition;
 
 		public RPiGPIOActivityInterpreter(AbstractSensor _sensor, String _activityName,
 				String prefix, String postfix) {
 			super(_sensor, _activityName, prefix, postfix);
 
+		}
+
+		public void setCondition(String activityInterpreterCondition) {
+			this.condition = activityInterpreterCondition;
 		}
 
 		/**
@@ -107,6 +132,17 @@ public class RPiGPIOSensor extends AbstractSensor {
 
 		private String generateActivityStream(String activityStreamName,
 				String activity) {
+			String con="";
+			if(this.condition!=null && !this.condition.equals("")){
+				con = this.condition;
+			}else if(getPinState().equals(GPIO_SENSOR_STATE.HIGH)){
+				con = "PinState = 1";
+			}else if(getPinState().equals(GPIO_SENSOR_STATE.LOW)){
+				con = "PinState = 0";
+			}else{
+				con = "PinState = 1";
+			}
+			
 			StringBuilder sBuilder2 = new StringBuilder();
 			sBuilder2.append("#PARSER PQL\n");
 			sBuilder2.append("#QNAME " + activityStreamName + "_query\n");
@@ -118,14 +154,13 @@ public class RPiGPIOSensor extends AbstractSensor {
 			sBuilder2.append("                      expressions = ['PinNumber','concat(substring(toString(PinState),0,0),\""+activity+"\")'] \n");                                                                      
 			sBuilder2.append("                    },\n");
 			sBuilder2.append("                    SELECT({\n");
-			sBuilder2.append("                        predicate='PinState = 1'\n");                                                                                                   
+			sBuilder2.append("                        predicate='"+con+"'\n");                                                                                                   
 			sBuilder2.append("                      },\n");
 			sBuilder2.append("                      "+getRawSourceName()+"\n");
 			sBuilder2.append("                    )   \n");                                                            
 			sBuilder2.append("                  )\n");
 			sBuilder2.append("                )\n");
 			sBuilder2.append("\n");
-			
 			
 			return sBuilder2.toString();
 		}
@@ -148,7 +183,12 @@ public class RPiGPIOSensor extends AbstractSensor {
 
 		@Override
 		public String getActivityInterpreterDescription() {
-			return "Pin:" + getInputPin() + " PinState:" + getPinState();
+			if(this.condition!=null && !this.condition.equals("")){
+				return "Condition: "+this.condition;
+			}else{
+				return "Pin:" + getInputPin() + " PinState:" + getPinState();				
+			}
 		}
 	}
+
 }

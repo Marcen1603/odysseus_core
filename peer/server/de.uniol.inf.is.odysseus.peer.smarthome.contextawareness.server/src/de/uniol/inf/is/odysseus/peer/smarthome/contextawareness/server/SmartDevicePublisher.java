@@ -43,8 +43,8 @@ public class SmartDevicePublisher {
 	private static IJxtaServicesProvider jxtaServicesProvider;
 	private static IPQLGenerator pqlGenerator;
 
-	final long SmartDeviceAdvertisement_LIFETIME = 30 * 2;
-	final long SmartDeviceAdvertisement_EXPIRATION_TIME = 30 * 3;
+	final long SmartDeviceAdvertisement_LIFETIME_SEC = 30;
+	final long SmartDeviceAdvertisement_EXPIRATION_TIME_SEC = 40;
 	
 	private TemperSensor temper;
 	private RPiGPIOSensor gpioTaste7;
@@ -72,7 +72,7 @@ public class SmartDevicePublisher {
 
 				try {
 					LOG.debug("publishSmartDeviceAdvertisementAsync() now and every "
-							+ SmartDeviceAdvertisement_LIFETIME + " sec.");
+							+ SmartDeviceAdvertisement_LIFETIME_SEC + " sec.");
 
 					while (true) {
 						waitForP2PNetworkManager();
@@ -81,16 +81,16 @@ public class SmartDevicePublisher {
 
 						SmartDeviceAdvertisement smartDeviceAdv = getLocalSmartDeviceAdvertisement();
 
-						getJxtaServicesProvider().publish(smartDeviceAdv);
-						getJxtaServicesProvider().remotePublish(smartDeviceAdv);
+						//getJxtaServicesProvider().publish(smartDeviceAdv);
+						//getJxtaServicesProvider().remotePublish(smartDeviceAdv);
 
 						getJxtaServicesProvider().publish(smartDeviceAdv,
-								SmartDeviceAdvertisement_LIFETIME,
-								SmartDeviceAdvertisement_EXPIRATION_TIME);
+								SmartDeviceAdvertisement_LIFETIME_SEC,
+								SmartDeviceAdvertisement_EXPIRATION_TIME_SEC);
 						getJxtaServicesProvider().remotePublish(smartDeviceAdv,
-								SmartDeviceAdvertisement_EXPIRATION_TIME);
+								SmartDeviceAdvertisement_EXPIRATION_TIME_SEC);
 
-						Thread.sleep(SmartDeviceAdvertisement_LIFETIME * 1000);
+						Thread.sleep(SmartDeviceAdvertisement_LIFETIME_SEC * 1000);
 					}
 				} catch (IOException ex) {
 					LOG.error(ex.getMessage(), ex);

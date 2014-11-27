@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.sensor;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -13,13 +14,14 @@ public class TemperSensor extends AbstractSensor {
 		super(name, prefix, postfix);
 	}
 
-	public void createActivityInterpreterWithCondition(String activityName,
+	@Override
+	public boolean createActivityInterpreterWithCondition(String activityName,
 			String condition) {
 		TemperSensorActivityInterpreter activityInterpreter = new TemperSensorActivityInterpreter(
 				this, activityName, getPrefix(), getPostfix());
 		activityInterpreter.setCondition(condition);
-
-		addActivityInterpreter(activityInterpreter);
+		
+		return addActivityInterpreter(activityInterpreter);
 	}
 
 	@Override
@@ -37,6 +39,15 @@ public class TemperSensor extends AbstractSensor {
 		return rawValueQueries;
 	}
 
+	@Override
+	public ArrayList<String> getPossibleAttributes() {
+		ArrayList<String> list = new ArrayList<>();
+		
+		list.add("Temperature (°C) [Long] (Possible values: from -∞ to +∞) example: Temperature > 20");
+		
+		return list;
+	}
+	
 	class TemperSensorActivityInterpreter extends ActivityInterpreter {
 		private static final long serialVersionUID = 1L;
 		private String condition;
@@ -60,109 +71,33 @@ public class TemperSensor extends AbstractSensor {
 				String activityName) {
 			LinkedHashMap<String, String> queries = new LinkedHashMap<String, String>();
 
-			String filteredRawValues = getNameCombination("filteredRawValues",
-					activityName);
-			String filteredRawValuesQuery = createStatementForFilteredRawValues(
-					filteredRawValues, getCondition());
-			queries.put(filteredRawValues, filteredRawValuesQuery);
-
-			// Activity: hot
-			// Configuration:
-			String activityConfiguration = getNameCombination(
-					"ActivityConfiguration", activityName);
-			String actConf = createQueryForActivityConfiguration(activityName,
-					activityConfiguration);
-			queries.put(activityConfiguration, actConf);
-
-			// Join with predicate: temp > 24°C
-
-			String actSoNa = createActivitySourceQuery(filteredRawValues,
-					activityConfiguration, getActivitySourceName());
+			String actSoNa = createActivitySourceQuery(getActivitySourceName());
 			queries.put(getActivitySourceName(), actSoNa);
 
-			//for(Entry<String, String> entry : queries.entrySet()){
-			//	System.out.println("SourceName:"+entry.getKey()+" Query:"+entry.getValue());	
-			//}
-			
-			
 			return queries;
 		}
 
-		private String createActivitySourceQuery(String filteredRawValues,
-				String activityConfiguration, String activitySourceName) {
-			StringBuilder actSoNaSB = new StringBuilder();
-			actSoNaSB.append("#PARSER PQL\n");
-			actSoNaSB.append("#QNAME " + activitySourceName + "_query\n");
-			actSoNaSB.append("#RUNQUERY\n");
-
-			// /1:
-			actSoNaSB.append("" + activitySourceName + " := PROJECT({ \n");
-			actSoNaSB.append("    attributes = ['" + filteredRawValues
-					+ ".EntityName', 'ActivityName']},\n");// /
-			actSoNaSB.append(" JOIN({\n");
-
-			// /oder 2.
-			// sBuilder3.append(""+query3Name+" := JOIN({\n");//
-
-			actSoNaSB.append("                  predicate = '"
-					+ filteredRawValues + ".EntityName = "
-					+ activityConfiguration + ".EntityName'\n");
-			actSoNaSB.append("                },\n");
-			actSoNaSB.append("                ELEMENTWINDOW({size = 1}, "
-					+ filteredRawValues + "),\n");
-			actSoNaSB.append("                ELEMENTWINDOW({size = 1}, "
-					+ activityConfiguration + ")\n");
-			actSoNaSB.append("              )\n");
-
-			// 1:
-			actSoNaSB.append("          )\n");// /
-
-			actSoNaSB.append("\n");
-			return actSoNaSB.toString();
-		}
-
-		private String createStatementForFilteredRawValues(
-				String filteredRawValues, String condition) {
-			StringBuilder filteredSB = new StringBuilder();
-			filteredSB.append("#PARSER PQL\n");
-			filteredSB.append("#QNAME " + filteredRawValues + "_query\n");
-			filteredSB.append("#RUNQUERY\n");
-			filteredSB.append("" + filteredRawValues + " := SELECT({\n");
-			filteredSB
-					.append("                predicate='" + condition + "'\n");
-			filteredSB.append("              },\n");
-			filteredSB.append("                " + getRawSourceName() + "\n");
-			filteredSB.append("              )\n");
-			filteredSB.append("\n");
-			return filteredSB.toString();
-		}
-
-		private String createQueryForActivityConfiguration(String activity,
-				String activityConfiguration) {
-			StringBuilder actConfSB = new StringBuilder();
-			actConfSB.append("#PARSER PQL\n");
-			actConfSB.append("#QNAME " + activityConfiguration + "_query\n");
-			actConfSB.append("#RUNQUERY\n");
-			actConfSB.append("    " + activityConfiguration + " := \n");
-			actConfSB.append("	 ACCESS({\n");
-			actConfSB.append("      transport = 'activityconfiguration',\n");
-			actConfSB.append("      source = '" + activityConfiguration
-					+ "',\n");
-			actConfSB.append("      datahandler = 'Tuple',\n");
-			actConfSB.append("      wrapper = 'GenericPull',\n");
-			actConfSB.append("      protocol='none',\n");
-			actConfSB.append("      options=[\n");
-			actConfSB.append("        ['entity', 'temper'],\n");
-			actConfSB.append("        ['activity', '" + activity + "']\n");
-			actConfSB.append("      ],\n");
-			actConfSB.append("      schema=[\n");
-			actConfSB.append("        ['EntityName', 'String'],\n");
-			actConfSB.append("        ['ActivityName', 'String']\n");
-			actConfSB.append("      ]\n");
-			actConfSB.append("      }\n");
-			actConfSB.append("    )\n");
-			actConfSB.append("\n");
-			return actConfSB.toString();
+		private String createActivitySourceQuery(String activitySourceName) {
+			StringBuilder sBuilder2 = new StringBuilder();
+			sBuilder2.append("#PARSER PQL\n");
+			sBuilder2.append("#QNAME " + activitySourceName + "_query\n");
+			sBuilder2.append("#RUNQUERY\n");
+			sBuilder2.append(""+activitySourceName+" := RENAME({\n");
+			sBuilder2.append("                    aliases = ['EntityName', 'ActivityName']\n");                 
+			sBuilder2.append("                  },\n");
+			sBuilder2.append("                  MAP({\n");
+			sBuilder2.append("                      expressions = ['EntityName','concat(substring(toString(Temperature),0,0),\""+getActivityName()+"\")'] \n");                                                                      
+			sBuilder2.append("                    },\n");
+			sBuilder2.append("                    SELECT({\n");
+			sBuilder2.append("                        predicate='"+condition+"'\n");                                                                                                   
+			sBuilder2.append("                      },\n");
+			sBuilder2.append("                      "+getRawSourceName()+"\n");
+			sBuilder2.append("                    )   \n");                                                            
+			sBuilder2.append("                  )\n");
+			sBuilder2.append("                )\n");
+			sBuilder2.append("\n");
+			
+			return sBuilder2.toString();
 		}
 
 		@Override
@@ -170,4 +105,6 @@ public class TemperSensor extends AbstractSensor {
 			return "Condition: "+getCondition();
 		}
 	}
+
+	
 }

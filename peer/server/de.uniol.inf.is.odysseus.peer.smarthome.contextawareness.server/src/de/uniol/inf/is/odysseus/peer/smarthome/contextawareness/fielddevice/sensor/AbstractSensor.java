@@ -131,4 +131,11 @@ public abstract class AbstractSensor extends FieldDevice implements Serializable
 	public boolean save() throws PeerCommunicationException {
 		return getSmartDevice().save();
 	}
+
+
+	public abstract boolean createActivityInterpreterWithCondition(String activityName,
+			String activityInterpreterCondition);
+
+
+	public abstract ArrayList<String> getPossibleAttributes();
 }
