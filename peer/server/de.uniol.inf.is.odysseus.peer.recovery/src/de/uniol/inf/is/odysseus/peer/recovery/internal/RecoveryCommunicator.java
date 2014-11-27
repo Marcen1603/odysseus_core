@@ -674,6 +674,9 @@ public class RecoveryCommunicator implements IRecoveryCommunicator,
 		// If we have sharedQueryIds where we don't have a buddy for - let the
 		// new peer be the buddy for us
 		for (ID sharedQueryId : noBuddyList) {
+			// TODO Remove, when we got the ack from the buddy?
+			noBuddyList.remove(sharedQueryId);
+			
 			chooseBuddyForQuery(sharedQueryId);
 			LOG.debug("Chose the new peer as my buddy for {}", sharedQueryId);
 		}
@@ -696,6 +699,11 @@ public class RecoveryCommunicator implements IRecoveryCommunicator,
 		recoveryProcessStates.put(state.getIdentifier(), state);
 		cRecoveryStrategyManager.get().startRecovery(peer,
 				state.getIdentifier());
+	}
+	
+	@Override
+	public boolean removeSharedQueryIdFromNoBuddyList(ID sharedQueryId) {
+		return noBuddyList.remove(sharedQueryId);
 	}
 
 	@Override

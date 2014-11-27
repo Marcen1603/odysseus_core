@@ -160,5 +160,15 @@ public interface IRecoveryCommunicator {
 	void removeRecoveryProcessState(UUID identifier);
 	
 	void setRecoveryStrategyManager(IRecoveryStrategyManager strategyManager);
+	
+	/**
+	 * Removes a shared query id from the list of the ids, for which this peer needs a buddy but was not able to find
+	 * one
+	 * 
+	 * @param sharedQueryId
+	 *            The id of the shared query to remove
+	 * @return true, if there was a id to remove, false, if not
+	 */
+	public boolean removeSharedQueryIdFromNoBuddyList(ID sharedQueryId);
 
 }

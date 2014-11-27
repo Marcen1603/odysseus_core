@@ -247,6 +247,11 @@ public class BackupInformationHelper implements IPlanModificationListener {
 
 			// Remove backup information
 			LocalBackupInformationAccess.getStore().remove(sharedQueryID);
+			
+			// Remove, that we need a buddy for this
+			if (cCommunicator.isPresent()) {
+				cCommunicator.get().removeSharedQueryIdFromNoBuddyList(sharedQueryID);
+			}
 
 		}
 
