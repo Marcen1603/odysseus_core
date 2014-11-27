@@ -27,7 +27,7 @@ import de.uniol.inf.is.odysseus.peer.recovery.util.LocalBackupInformationAccess;
  * @author Michael Brand
  *
  */
-public class BuddyReceiver {
+public class BuddyReceiver extends AbtractRepeatingMessageReceiver {
 
 	/**
 	 * The logger instance for this class.
@@ -38,7 +38,7 @@ public class BuddyReceiver {
 	/**
 	 * The single instance of this class.
 	 */
-	private static BuddyReceiver cInstance = new BuddyReceiver();
+	private static BuddyReceiver cInstance;
 
 	/**
 	 * The single instance of this class.
@@ -49,36 +49,44 @@ public class BuddyReceiver {
 		return cInstance;
 	}
 
-	/**
-	 * Handling of a received buddy message.
-	 * 
-	 * @param message
-	 *            The received message. <br />
-	 *            Must be not null.
-	 * @param sender
-	 *            The sender of the message. <br />
-	 *            Must be not null.
-	 * @param communicator
-	 *            An active peer communicator. <br />
-	 *            Must be not null.
-	 */
-	public void receivedMessage(RecoveryBuddyMessage message, PeerID sender,
-			IPeerCommunicator communicator) {
+	@Override
+	public void bindPeerCommunicator(IPeerCommunicator serv) {
+		super.bindPeerCommunicator(serv);
+		cInstance = this;
+		serv.registerMessageType(RecoveryBuddyMessage.class);
+		serv.addListener(this, RecoveryBuddyMessage.class);
+	}
+
+	@Override
+	public void unbindPeerCommunicator(IPeerCommunicator serv) {
+		super.unbindPeerCommunicator(serv);
+		cInstance = null;
+		serv.unregisterMessageType(RecoveryBuddyMessage.class);
+		serv.removeListener(this, RecoveryBuddyMessage.class);
+	}
+
+	@Override
+	public void receivedMessage(IPeerCommunicator communicator,
+			PeerID senderPeer, IMessage message) {
 		Preconditions.checkNotNull(message);
-		Preconditions.checkNotNull(sender);
+		Preconditions.checkNotNull(senderPeer);
 		Preconditions.checkNotNull(communicator);
 
-		beBuddy(sender, message.getSharedQueryId(), message.getPQLCodes());
-		IMessage response = new RecoveryBuddyResponseMessage(message.getUUID());
+		if (message instanceof RecoveryBuddyMessage) {
+			RecoveryBuddyMessage buddyMessage = (RecoveryBuddyMessage) message;
+			beBuddy(senderPeer, buddyMessage.getSharedQueryId(),
+					buddyMessage.getPQLCodes());
+			RecoveryBuddyResponseMessage response = new RecoveryBuddyResponseMessage(
+					buddyMessage.getUUID());
 
-		try {
-			communicator.send(sender, response);
-		} catch (PeerCommunicationException e) {
-			LOG.error(
-					"Could not send tuple send instruction response message!",
-					e);
+			try {
+				communicator.send(senderPeer, response);
+			} catch (PeerCommunicationException e) {
+				LOG.error(
+						"Could not send tuple send instruction response message!",
+						e);
+			}
 		}
-
 	}
 
 	/**

@@ -29,6 +29,7 @@ public interface IRecoveryCommunicator {
 	 * @param queryIds
 	 *            List of query-ids for which the respective peer should hold on
 	 */
+	// TODO handle result. M.B.
 	public boolean sendHoldOnMessage(PeerID receiverPeer, PipeID pipeId);
 
 	/**
@@ -44,6 +45,7 @@ public interface IRecoveryCommunicator {
 	 * @param pipeId
 	 *            The pipeId which is affected
 	 */
+	// TODO handle result. M.B.
 	public boolean sendUpdateReceiverMessage(PeerID receiverPeer,
 			PeerID newSenderPeer, PipeID pipeId, ID sharedQueryId);
 
@@ -76,6 +78,7 @@ public interface IRecoveryCommunicator {
 	 *            an updated information
 	 * @return true, if an acknowledge received; false, else.
 	 */
+	// TODO handle result. M.B.
 	public boolean sendBackupInformation(PeerID destination,
 			IRecoveryBackupInformation info, boolean isNewInfo);
 
@@ -118,6 +121,7 @@ public interface IRecoveryCommunicator {
 	 *            The id of the shared query for which the other peer will be
 	 *            the buddy (and thus will do the recovery if this peer fails)
 	 */
+	// TODO handle result. M.B.
 	public boolean chooseBuddyForQuery(ID sharedQueryId);
 
 	/**
@@ -131,6 +135,7 @@ public interface IRecoveryCommunicator {
 	 *            The pipeId for which the receiver of this message should go on
 	 *            sending tuples
 	 */
+	// TODO handle result. M.B.
 	public boolean sendGoOnMessage(PeerID receiverPeer, PipeID pipeId);
 
 	/**

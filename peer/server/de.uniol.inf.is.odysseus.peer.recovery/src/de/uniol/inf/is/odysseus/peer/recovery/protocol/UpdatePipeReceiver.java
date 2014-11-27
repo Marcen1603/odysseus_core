@@ -19,8 +19,8 @@ import de.uniol.inf.is.odysseus.p2p_new.PeerCommunicationException;
 import de.uniol.inf.is.odysseus.p2p_new.data.DataTransmissionException;
 import de.uniol.inf.is.odysseus.p2p_new.physicaloperator.JxtaReceiverPO;
 import de.uniol.inf.is.odysseus.peer.recovery.internal.RecoveryCommunicator;
-import de.uniol.inf.is.odysseus.peer.recovery.messages.RecoveryTupleSendResponseMessage;
 import de.uniol.inf.is.odysseus.peer.recovery.messages.RecoveryUpdatePipeMessage;
+import de.uniol.inf.is.odysseus.peer.recovery.messages.RecoveryUpdatePipeResponseMessage;
 
 /**
  * Entity to handle received pipe update instructions. <br />
@@ -29,7 +29,7 @@ import de.uniol.inf.is.odysseus.peer.recovery.messages.RecoveryUpdatePipeMessage
  * @author Michael Brand
  *
  */
-public class UpdatePipeReceiver {
+public class UpdatePipeReceiver extends AbtractRepeatingMessageReceiver {
 
 	/**
 	 * The logger instance for this class.
@@ -40,7 +40,7 @@ public class UpdatePipeReceiver {
 	/**
 	 * The single instance of this class.
 	 */
-	private static UpdatePipeReceiver cInstance = new UpdatePipeReceiver();
+	private static UpdatePipeReceiver cInstance;
 
 	/**
 	 * The single instance of this class.
@@ -51,49 +51,56 @@ public class UpdatePipeReceiver {
 		return cInstance;
 	}
 
-	/**
-	 * Handling of a received pipe update message.
-	 * 
-	 * @param message
-	 *            The received message. <br />
-	 *            Must be not null.
-	 * @param sender
-	 *            The sender of the message. <br />
-	 *            Must be not null.
-	 * @param communicator
-	 *            An active peer communicator. <br />
-	 *            Must be not null.
-	 */
-	public void receivedMessage(RecoveryUpdatePipeMessage message,
-			PeerID sender, IPeerCommunicator communicator) {
+	@Override
+	public void bindPeerCommunicator(IPeerCommunicator serv) {
+		super.bindPeerCommunicator(serv);
+		cInstance = this;
+		serv.registerMessageType(RecoveryUpdatePipeMessage.class);
+		serv.addListener(this, RecoveryUpdatePipeMessage.class);
+	}
+
+	@Override
+	public void unbindPeerCommunicator(IPeerCommunicator serv) {
+		super.unbindPeerCommunicator(serv);
+		cInstance = null;
+		serv.unregisterMessageType(RecoveryUpdatePipeMessage.class);
+		serv.removeListener(this, RecoveryUpdatePipeMessage.class);
+	}
+
+	@Override
+	public void receivedMessage(IPeerCommunicator communicator,
+			PeerID senderPeer, IMessage message) {
 		Preconditions.checkNotNull(message);
-		Preconditions.checkNotNull(sender);
+		Preconditions.checkNotNull(senderPeer);
 		Preconditions.checkNotNull(communicator);
 
-		IMessage response = null;
-		try {
-			if (message.isSenderUpdateInstruction()) {
-				// TODO nothing to do?
-			} else {
-				updateReceiver(message.getNewPeerId(), message.getPipeId(),
-						message.getSharedQueryId());
+		if (message instanceof RecoveryUpdatePipeMessage) {
+			RecoveryUpdatePipeMessage upMessage = (RecoveryUpdatePipeMessage) message;
+			RecoveryUpdatePipeResponseMessage response = null;
+			try {
+				if (upMessage.isSenderUpdateInstruction()) {
+					// TODO nothing to do?
+				} else {
+					updateReceiver(upMessage.getNewPeerId(),
+							upMessage.getPipeId(), upMessage.getSharedQueryId());
+				}
+				response = new RecoveryUpdatePipeResponseMessage(
+						upMessage.getUUID());
+			} catch (DataTransmissionException e) {
+				response = new RecoveryUpdatePipeResponseMessage(
+						upMessage.getUUID(), e.getMessage());
 			}
-			response = new RecoveryTupleSendResponseMessage(message.getUUID());
-		} catch (DataTransmissionException e) {
-			response = new RecoveryTupleSendResponseMessage(message.getUUID(),
-					e.getMessage());
-		}
 
-		try {
-			communicator.send(sender, response);
-		} catch (PeerCommunicationException e) {
-			LOG.error(
-					"Could not send tuple send instruction response message!",
-					e);
+			try {
+				communicator.send(senderPeer, response);
+			} catch (PeerCommunicationException e) {
+				LOG.error(
+						"Could not send tuple send instruction response message!",
+						e);
+			}
 		}
-
 	}
-	
+
 	private void updateReceiver(PeerID newSender, PipeID pipeId,
 			ID sharedQueryId) throws DataTransmissionException {
 
@@ -120,5 +127,5 @@ public class UpdatePipeReceiver {
 			}
 		}
 	}
-	
+
 }

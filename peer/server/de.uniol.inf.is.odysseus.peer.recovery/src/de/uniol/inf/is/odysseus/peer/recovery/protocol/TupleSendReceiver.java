@@ -22,7 +22,7 @@ import de.uniol.inf.is.odysseus.peer.recovery.util.RecoveryHelper;
  * @author Michael Brand
  *
  */
-public class TupleSendReceiver {
+public class TupleSendReceiver extends AbtractRepeatingMessageReceiver {
 
 	/**
 	 * The logger instance for this class.
@@ -33,7 +33,7 @@ public class TupleSendReceiver {
 	/**
 	 * The single instance of this class.
 	 */
-	private static TupleSendReceiver cInstance = new TupleSendReceiver();
+	private static TupleSendReceiver cInstance;
 
 	/**
 	 * The single instance of this class.
@@ -43,47 +43,53 @@ public class TupleSendReceiver {
 	public static TupleSendReceiver getInstance() {
 		return cInstance;
 	}
+	
+	@Override
+	public void bindPeerCommunicator(IPeerCommunicator serv) {
+		super.bindPeerCommunicator(serv);
+		cInstance = this;
+		serv.registerMessageType(RecoveryTupleSendMessage.class);
+		serv.addListener(this, RecoveryTupleSendMessage.class);
+	}
 
-	/**
-	 * Handling of a received tuple send message.
-	 * 
-	 * @param message
-	 *            The received message. <br />
-	 *            Must be not null.
-	 * @param sender
-	 *            The sender of the message. <br />
-	 *            Must be not null.
-	 * @param communicator
-	 *            An active peer communicator. <br />
-	 *            Must be not null.
-	 */
-	public void receivedMessage(RecoveryTupleSendMessage message,
-			PeerID sender, IPeerCommunicator communicator) {
+	@Override
+	public void unbindPeerCommunicator(IPeerCommunicator serv) {
+		super.unbindPeerCommunicator(serv);
+		cInstance = null;
+		serv.unregisterMessageType(RecoveryTupleSendMessage.class);
+		serv.removeListener(this, RecoveryTupleSendMessage.class);
+	}
+
+	@Override
+	public void receivedMessage(IPeerCommunicator communicator,
+			PeerID senderPeer, IMessage message) {
 		Preconditions.checkNotNull(message);
-		Preconditions.checkNotNull(sender);
+		Preconditions.checkNotNull(senderPeer);
 		Preconditions.checkNotNull(communicator);
-
-		IMessage response = null;
-		try {
-			if (message.isHoldOnInstruction()) {
-				this.holdOn(message.getPipeId());
-			} else {
-				this.goOn(message.getPipeId());
+		
+		if (message instanceof RecoveryTupleSendMessage) {
+			RecoveryTupleSendMessage tsMessage = (RecoveryTupleSendMessage) message;
+			RecoveryTupleSendResponseMessage response = null;
+			try {
+				if (tsMessage.isHoldOnInstruction()) {
+					this.holdOn(tsMessage.getPipeId());
+				} else {
+					this.goOn(tsMessage.getPipeId());
+				}
+				response = new RecoveryTupleSendResponseMessage(tsMessage.getUUID());
+			} catch (Exception e) {
+				response = new RecoveryTupleSendResponseMessage(tsMessage.getUUID(),
+						e.getMessage());
 			}
-			response = new RecoveryTupleSendResponseMessage(message.getUUID());
-		} catch (Exception e) {
-			response = new RecoveryTupleSendResponseMessage(message.getUUID(),
-					e.getMessage());
-		}
 
-		try {
-			communicator.send(sender, response);
-		} catch (PeerCommunicationException e) {
-			LOG.error(
-					"Could not send tuple send instruction response message!",
-					e);
+			try {
+				communicator.send(senderPeer, response);
+			} catch (PeerCommunicationException e) {
+				LOG.error(
+						"Could not send tuple send instruction response message!",
+						e);
+			}
 		}
-
 	}
 
 	private void holdOn(PipeID pipeId) throws Exception {

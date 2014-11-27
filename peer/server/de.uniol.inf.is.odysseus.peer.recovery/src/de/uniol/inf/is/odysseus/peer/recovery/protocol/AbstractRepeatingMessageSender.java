@@ -8,11 +8,13 @@ import net.jxta.peer.PeerID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
 
 import de.uniol.inf.is.odysseus.p2p_new.IMessage;
 import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicator;
+import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicatorListener;
 import de.uniol.inf.is.odysseus.p2p_new.RepeatingMessageSend;
 
 /**
@@ -23,18 +25,61 @@ import de.uniol.inf.is.odysseus.p2p_new.RepeatingMessageSend;
  * @author Michael Brand
  *
  */
-public abstract class AbstractRepeatingMessageSender<ResponseMessageType extends IMessage> {
+public abstract class AbstractRepeatingMessageSender implements
+		IPeerCommunicatorListener {
 
 	/**
 	 * The logger instance for this class.
 	 */
 	private static final Logger LOG = LoggerFactory
-			.getLogger(TupleSendSender.class);
+			.getLogger(AbstractRepeatingMessageSender.class);
 
 	/**
 	 * The result code for successes.
 	 */
 	public static final String OK_RESULT = "OK";
+
+	/**
+	 * The peer communicator, if there is one bound.
+	 */
+	protected Optional<IPeerCommunicator> mPeerCommunicator = Optional.absent();
+
+	/**
+	 * Binds a peer communicator. <br />
+	 * Called by OSGi-DS.
+	 * 
+	 * @param serv
+	 *            The peer communicator to bind. <br />
+	 *            Must be not null.
+	 */
+	public void bindPeerCommunicator(IPeerCommunicator serv) {
+
+		Preconditions.checkNotNull(serv);
+		if (!mPeerCommunicator.isPresent()) {
+			mPeerCommunicator = Optional.of(serv);
+			LOG.debug("Bound {} as a peer communicator.", serv.getClass()
+					.getSimpleName());
+		}
+	}
+
+	/**
+	 * Unbinds a peer communicator, if it's the bound one. <br />
+	 * Called by OSGi-DS.
+	 * 
+	 * @param serv
+	 *            The peer communicator to unbind. <br />
+	 *            Must be not null.
+	 */
+	public void unbindPeerCommunicator(IPeerCommunicator serv) {
+
+		Preconditions.checkNotNull(serv);
+
+		if (mPeerCommunicator.isPresent() && mPeerCommunicator.get() == serv) {
+			mPeerCommunicator = Optional.absent();
+			LOG.debug("Unbound {} as a peer communicator.", serv.getClass()
+					.getSimpleName());
+		}
+	}
 
 	/**
 	 * Data structure to keep all currently running repeating message send
@@ -124,9 +169,11 @@ public abstract class AbstractRepeatingMessageSender<ResponseMessageType extends
 			mDestinationMap.remove(uuid);
 		}
 
+		System.err.println(message.getClass().getSimpleName());
 		if (result.equals(OK_RESULT)) {
 			return true;
 		}
+		System.err.println("HEUL");
 
 		// else
 		LOG.error("Could not send {}: {}", message, result);
@@ -156,14 +203,38 @@ public abstract class AbstractRepeatingMessageSender<ResponseMessageType extends
 			return mSenderMap.get(id).isRunning();
 		}
 	}
-	
+
 	/**
 	 * Handling of a received response message.
 	 * 
-	 * @param message
-	 *            The received message. <br />
+	 * @param messageID
+	 *            The id of thereceived message. <br />
 	 *            Must be not null.
+	 * @param errorMessage
+	 *            The error message, if the response is a fail or
+	 *            {@link Optional#absent()}, if the response is a fail.
 	 */
-	public abstract void receivedResponseMessage(ResponseMessageType message);
-	
+	protected void handleResponseMessage(UUID messageID,
+			Optional<String> errorMessage) {
+		Preconditions.checkNotNull(messageID);
+
+		synchronized (mSenderMap) {
+			RepeatingMessageSend sender = mSenderMap.get(messageID);
+
+			if (sender != null) {
+				sender.stopRunning();
+				mSenderMap.remove(messageID);
+			}
+		}
+
+		String result = OK_RESULT;
+		if (errorMessage.isPresent()) {
+			result = errorMessage.get();
+		}
+		synchronized (mResultMap) {
+			mResultMap.put(messageID, result);
+		}
+
+	}
+
 }

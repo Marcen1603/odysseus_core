@@ -5,8 +5,8 @@ import net.jxta.pipe.PipeID;
 
 import com.google.common.base.Preconditions;
 
+import de.uniol.inf.is.odysseus.p2p_new.IMessage;
 import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicator;
-import de.uniol.inf.is.odysseus.p2p_new.RepeatingMessageSend;
 import de.uniol.inf.is.odysseus.peer.recovery.messages.RecoveryTupleSendMessage;
 import de.uniol.inf.is.odysseus.peer.recovery.messages.RecoveryTupleSendResponseMessage;
 
@@ -18,12 +18,12 @@ import de.uniol.inf.is.odysseus.peer.recovery.messages.RecoveryTupleSendResponse
  * @author Michael Brand
  *
  */
-public class TupleSendSender extends AbstractRepeatingMessageSender<RecoveryTupleSendResponseMessage> {
+public class TupleSendSender extends AbstractRepeatingMessageSender {
 
 	/**
 	 * The single instance of this class.
 	 */
-	private static TupleSendSender cInstance = new TupleSendSender();
+	private static TupleSendSender cInstance;
 
 	/**
 	 * The single instance of this class.
@@ -106,28 +106,34 @@ public class TupleSendSender extends AbstractRepeatingMessageSender<RecoveryTupl
 				communicator);
 
 	}
-	
+
 	@Override
-	public void receivedResponseMessage(RecoveryTupleSendResponseMessage message) {
-		Preconditions.checkNotNull(message);
-
-		synchronized (mSenderMap) {
-			RepeatingMessageSend sender = mSenderMap.get(message.getUUID());
-
-			if (sender != null) {
-				sender.stopRunning();
-				mSenderMap.remove(message.getUUID());
-			}
-		}
-
-		String result = OK_RESULT;
-		if (!message.isPositive()) {
-			result = message.getErrorMessage().get();
-		}
-		synchronized (mResultMap) {
-			mResultMap.put(message.getUUID(), result);
-		}
-
+	public void bindPeerCommunicator(IPeerCommunicator serv) {
+		super.bindPeerCommunicator(serv);
+		cInstance = this;
+		serv.registerMessageType(RecoveryTupleSendResponseMessage.class);
+		serv.addListener(this, RecoveryTupleSendResponseMessage.class);
 	}
 
+	@Override
+	public void unbindPeerCommunicator(IPeerCommunicator serv) {
+		super.unbindPeerCommunicator(serv);
+		cInstance = null;
+		serv.unregisterMessageType(RecoveryTupleSendResponseMessage.class);
+		serv.removeListener(this, RecoveryTupleSendResponseMessage.class);
+	}
+
+	@Override
+	public void receivedMessage(IPeerCommunicator communicator,
+			PeerID senderPeer, IMessage message) {
+		Preconditions.checkNotNull(communicator);
+		Preconditions.checkNotNull(senderPeer);
+		Preconditions.checkNotNull(message);
+
+		if (message instanceof RecoveryTupleSendResponseMessage) {
+			RecoveryTupleSendResponseMessage response = (RecoveryTupleSendResponseMessage) message;
+			handleResponseMessage(response.getUUID(),
+					response.getErrorMessage());
+		}
+	}
 }

@@ -6,8 +6,8 @@ import net.jxta.pipe.PipeID;
 
 import com.google.common.base.Preconditions;
 
+import de.uniol.inf.is.odysseus.p2p_new.IMessage;
 import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicator;
-import de.uniol.inf.is.odysseus.p2p_new.RepeatingMessageSend;
 import de.uniol.inf.is.odysseus.peer.recovery.messages.RecoveryUpdatePipeMessage;
 import de.uniol.inf.is.odysseus.peer.recovery.messages.RecoveryUpdatePipeResponseMessage;
 
@@ -19,12 +19,12 @@ import de.uniol.inf.is.odysseus.peer.recovery.messages.RecoveryUpdatePipeRespons
  * @author Michael Brand
  *
  */
-public class UpdatePipeSender extends AbstractRepeatingMessageSender<RecoveryUpdatePipeResponseMessage> {
+public class UpdatePipeSender extends AbstractRepeatingMessageSender {
 
 	/**
 	 * The single instance of this class.
 	 */
-	private static UpdatePipeSender cInstance = new UpdatePipeSender();
+	private static UpdatePipeSender cInstance;
 
 	/**
 	 * The single instance of this class.
@@ -134,26 +134,32 @@ public class UpdatePipeSender extends AbstractRepeatingMessageSender<RecoveryUpd
 	}
 	
 	@Override
-	public void receivedResponseMessage(RecoveryUpdatePipeResponseMessage message) {
+	public void bindPeerCommunicator(IPeerCommunicator serv) {
+		super.bindPeerCommunicator(serv);
+		cInstance = this;
+		serv.registerMessageType(RecoveryUpdatePipeResponseMessage.class);
+		serv.addListener(this, RecoveryUpdatePipeResponseMessage.class);
+	}
+
+	@Override
+	public void unbindPeerCommunicator(IPeerCommunicator serv) {
+		super.unbindPeerCommunicator(serv);
+		cInstance = null;
+		serv.unregisterMessageType(RecoveryUpdatePipeResponseMessage.class);
+		serv.removeListener(this, RecoveryUpdatePipeResponseMessage.class);
+	}
+
+	@Override
+	public void receivedMessage(IPeerCommunicator communicator,
+			PeerID senderPeer, IMessage message) {
+		Preconditions.checkNotNull(communicator);
+		Preconditions.checkNotNull(senderPeer);
 		Preconditions.checkNotNull(message);
-
-		synchronized (mSenderMap) {
-			RepeatingMessageSend sender = mSenderMap.get(message.getUUID());
-
-			if (sender != null) {
-				sender.stopRunning();
-				mSenderMap.remove(message.getUUID());
-			}
+		
+		if(message instanceof RecoveryUpdatePipeMessage) {
+			RecoveryUpdatePipeResponseMessage response = (RecoveryUpdatePipeResponseMessage) message;
+			handleResponseMessage(response.getUUID(), response.getErrorMessage());
 		}
-
-		String result = OK_RESULT;
-		if (!message.isPositive()) {
-			result = message.getErrorMessage().get();
-		}
-		synchronized (mResultMap) {
-			mResultMap.put(message.getUUID(), result);
-		}
-
 	}
 
 }

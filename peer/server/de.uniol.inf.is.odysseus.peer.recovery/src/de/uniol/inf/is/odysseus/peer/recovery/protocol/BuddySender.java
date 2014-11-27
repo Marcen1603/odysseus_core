@@ -7,8 +7,8 @@ import net.jxta.peer.PeerID;
 
 import com.google.common.base.Preconditions;
 
+import de.uniol.inf.is.odysseus.p2p_new.IMessage;
 import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicator;
-import de.uniol.inf.is.odysseus.p2p_new.RepeatingMessageSend;
 import de.uniol.inf.is.odysseus.peer.recovery.messages.RecoveryBuddyMessage;
 import de.uniol.inf.is.odysseus.peer.recovery.messages.RecoveryBuddyResponseMessage;
 
@@ -20,12 +20,12 @@ import de.uniol.inf.is.odysseus.peer.recovery.messages.RecoveryBuddyResponseMess
  * @author Michael Brand
  *
  */
-public class BuddySender extends AbstractRepeatingMessageSender<RecoveryBuddyResponseMessage> {
+public class BuddySender extends AbstractRepeatingMessageSender {
 
 	/**
 	 * The single instance of this class.
 	 */
-	private static BuddySender cInstance = new BuddySender();
+	private static BuddySender cInstance;
 
 	/**
 	 * The single instance of this class.
@@ -69,29 +69,33 @@ public class BuddySender extends AbstractRepeatingMessageSender<RecoveryBuddyRes
 
 	}
 	
-
-	
 	@Override
-	public void receivedResponseMessage(RecoveryBuddyResponseMessage message) {
+	public void bindPeerCommunicator(IPeerCommunicator serv) {
+		super.bindPeerCommunicator(serv);
+		cInstance = this;
+		serv.registerMessageType(RecoveryBuddyResponseMessage.class);
+		serv.addListener(this, RecoveryBuddyResponseMessage.class);
+	}
+
+	@Override
+	public void unbindPeerCommunicator(IPeerCommunicator serv) {
+		super.unbindPeerCommunicator(serv);
+		cInstance = null;
+		serv.unregisterMessageType(RecoveryBuddyResponseMessage.class);
+		serv.removeListener(this, RecoveryBuddyResponseMessage.class);
+	}
+
+	@Override
+	public void receivedMessage(IPeerCommunicator communicator,
+			PeerID senderPeer, IMessage message) {
+		Preconditions.checkNotNull(communicator);
+		Preconditions.checkNotNull(senderPeer);
 		Preconditions.checkNotNull(message);
-
-		synchronized (mSenderMap) {
-			RepeatingMessageSend sender = mSenderMap.get(message.getUUID());
-
-			if (sender != null) {
-				sender.stopRunning();
-				mSenderMap.remove(message.getUUID());
-			}
+		
+		if(message instanceof RecoveryBuddyResponseMessage) {
+			RecoveryBuddyResponseMessage response = (RecoveryBuddyResponseMessage) message;
+			handleResponseMessage(response.getUUID(), response.getErrorMessage());
 		}
-
-		String result = OK_RESULT;
-		if (!message.isPositive()) {
-			result = message.getErrorMessage().get();
-		}
-		synchronized (mResultMap) {
-			mResultMap.put(message.getUUID(), result);
-		}
-
 	}
 
 }
