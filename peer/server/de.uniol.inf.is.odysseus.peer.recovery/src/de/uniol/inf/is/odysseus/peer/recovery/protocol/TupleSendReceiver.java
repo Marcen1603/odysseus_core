@@ -69,6 +69,10 @@ public class TupleSendReceiver extends AbtractRepeatingMessageReceiver {
 		
 		if (message instanceof RecoveryTupleSendMessage) {
 			RecoveryTupleSendMessage tsMessage = (RecoveryTupleSendMessage) message;
+			if(mReceivedUUIDs.contains(tsMessage.getUUID())) {
+				return;
+			}
+			
 			RecoveryTupleSendResponseMessage response = null;
 			try {
 				if (tsMessage.isHoldOnInstruction()) {
@@ -89,6 +93,7 @@ public class TupleSendReceiver extends AbtractRepeatingMessageReceiver {
 						"Could not send tuple send instruction response message!",
 						e);
 			}
+			mReceivedUUIDs.add(tsMessage.getUUID());
 		}
 	}
 

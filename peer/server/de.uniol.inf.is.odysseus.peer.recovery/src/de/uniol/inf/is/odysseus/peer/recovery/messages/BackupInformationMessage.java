@@ -32,23 +32,11 @@ import de.uniol.inf.is.odysseus.peer.recovery.internal.BackupInformation;
 public class BackupInformationMessage implements IMessage {
 
 	/**
-	 * Update information will only be saved on the peer which receives this
-	 * message if he already had this information (for this peer for this
-	 * sharedQueryId)
-	 */
-	public final static int UPDATE_INFO = 0;
-
-	/**
-	 * This type of information will be saved on the receiving peer
-	 */
-	public final static int NEW_INFO = 1;
-
-	/**
 	 * The logger instance for this class.
 	 */
 	private static final Logger LOG = LoggerFactory
 			.getLogger(BackupInformationMessage.class);
-	
+
 	/**
 	 * The id of the message.
 	 */
@@ -69,9 +57,10 @@ public class BackupInformationMessage implements IMessage {
 	private IRecoveryBackupInformation mInfo = new BackupInformation();
 
 	/**
-	 * Either {@link #NEW_INFO} or {@link #UPDATE_INFO}.
+	 * True for a update of backup information; false for new backup
+	 * information.
 	 */
-	private int mMessageType;
+	private boolean mUpdate;
 
 	/**
 	 * Empty default constructor.
@@ -88,12 +77,15 @@ public class BackupInformationMessage implements IMessage {
 	 * @param info
 	 *            The information to send. <br />
 	 *            Must be not null.
+	 * @param update
+	 *            True for a update of backup information; false for new backup
+	 *            information.
 	 */
 	public BackupInformationMessage(IRecoveryBackupInformation info,
-			int messageType) {
+			boolean update) {
 		Preconditions.checkNotNull(info);
 		this.mInfo = info;
-		this.mMessageType = messageType;
+		this.mUpdate = update;
 	}
 
 	/**
@@ -109,8 +101,12 @@ public class BackupInformationMessage implements IMessage {
 
 	}
 
-	public int getMessageType() {
-		return this.mMessageType;
+	/**
+	 * True for a update of backup information; false for new backup
+	 * information.
+	 */
+	public boolean isUpdate() {
+		return this.mUpdate;
 	}
 
 	@Override
@@ -149,7 +145,7 @@ public class BackupInformationMessage implements IMessage {
 
 		ByteBuffer buffer = ByteBuffer.allocate(bufferSize);
 
-		buffer.putInt(mMessageType);
+		buffer.putInt((this.mUpdate) ? 1 : 0);
 
 		buffer.putInt(sharedQueryBytes.length);
 		buffer.put(sharedQueryBytes);
@@ -271,7 +267,7 @@ public class BackupInformationMessage implements IMessage {
 		while (iter.hasNext()) {
 
 			subsequentPartsInfoBytes[i] = new BackupInformationMessage(
-					iter.next(), this.mMessageType).toBytes();
+					iter.next(), this.mUpdate).toBytes();
 			i++;
 
 		}
@@ -297,7 +293,7 @@ public class BackupInformationMessage implements IMessage {
 
 		Preconditions.checkNotNull(data);
 		ByteBuffer buffer = ByteBuffer.wrap(data);
-		this.mMessageType = buffer.getInt();
+		this.mUpdate = (buffer.getInt() == 1) ? true : false;
 
 		this.sharedQueryFromBytes(buffer);
 		this.pqlFromBytes(buffer);

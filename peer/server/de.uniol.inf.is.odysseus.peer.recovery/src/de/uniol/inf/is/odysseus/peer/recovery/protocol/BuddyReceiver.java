@@ -74,6 +74,10 @@ public class BuddyReceiver extends AbtractRepeatingMessageReceiver {
 
 		if (message instanceof RecoveryBuddyMessage) {
 			RecoveryBuddyMessage buddyMessage = (RecoveryBuddyMessage) message;
+			if(mReceivedUUIDs.contains(buddyMessage.getUUID())) {
+				return;
+			}
+			
 			beBuddy(senderPeer, buddyMessage.getSharedQueryId(),
 					buddyMessage.getPQLCodes());
 			RecoveryBuddyResponseMessage response = new RecoveryBuddyResponseMessage(
@@ -86,6 +90,7 @@ public class BuddyReceiver extends AbtractRepeatingMessageReceiver {
 						"Could not send tuple send instruction response message!",
 						e);
 			}
+			mReceivedUUIDs.add(buddyMessage.getUUID());
 		}
 	}
 

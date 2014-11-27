@@ -35,11 +35,8 @@ import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryBackupInformation;
 import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryCommunicator;
 import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryStrategyManager;
 import de.uniol.inf.is.odysseus.peer.recovery.messages.AddQueryResponseMessage;
-import de.uniol.inf.is.odysseus.peer.recovery.messages.BackupInformationAckMessage;
-import de.uniol.inf.is.odysseus.peer.recovery.messages.BackupInformationMessage;
 import de.uniol.inf.is.odysseus.peer.recovery.messages.RecoveryAddQueryMessage;
 import de.uniol.inf.is.odysseus.peer.recovery.messages.RecoveryAgreementMessage;
-import de.uniol.inf.is.odysseus.peer.recovery.protocol.BackupInformationReceiver;
 import de.uniol.inf.is.odysseus.peer.recovery.protocol.BackupInformationSender;
 import de.uniol.inf.is.odysseus.peer.recovery.protocol.BuddySender;
 import de.uniol.inf.is.odysseus.peer.recovery.protocol.RecoveryAgreementHandler;
@@ -203,16 +200,6 @@ public class RecoveryCommunicator implements IRecoveryCommunicator,
 				.addListener(this, RecoveryAddQueryMessage.class);
 
 		cPeerCommunicator.get().registerMessageType(
-				BackupInformationMessage.class);
-		cPeerCommunicator.get().addListener(this,
-				BackupInformationMessage.class);
-
-		cPeerCommunicator.get().registerMessageType(
-				BackupInformationAckMessage.class);
-		cPeerCommunicator.get().addListener(this,
-				BackupInformationAckMessage.class);
-
-		cPeerCommunicator.get().registerMessageType(
 				RecoveryAgreementMessage.class);
 		cPeerCommunicator.get().addListener(this,
 				RecoveryAgreementMessage.class);
@@ -235,16 +222,6 @@ public class RecoveryCommunicator implements IRecoveryCommunicator,
 				RecoveryAddQueryMessage.class);
 		cPeerCommunicator.get().unregisterMessageType(
 				RecoveryAddQueryMessage.class);
-
-		cPeerCommunicator.get().removeListener(this,
-				BackupInformationMessage.class);
-		cPeerCommunicator.get().unregisterMessageType(
-				BackupInformationMessage.class);
-
-		cPeerCommunicator.get().removeListener(this,
-				BackupInformationAckMessage.class);
-		cPeerCommunicator.get().unregisterMessageType(
-				BackupInformationAckMessage.class);
 
 		cPeerCommunicator.get().removeListener(this,
 				RecoveryAgreementMessage.class);
@@ -502,15 +479,6 @@ public class RecoveryCommunicator implements IRecoveryCommunicator,
 		if (message instanceof RecoveryAddQueryMessage) {
 			RecoveryInstructionHandler.handleAddQueryInstruction(
 					(RecoveryAddQueryMessage) message, senderPeer);
-		} else if (message instanceof BackupInformationMessage) {
-			// Store the backup information
-			BackupInformationMessage backupInfoMessage = (BackupInformationMessage) message;
-			BackupInformationReceiver.getInstance().receivedMessage(
-					backupInfoMessage, senderPeer, cPeerCommunicator.get());
-		} else if (message instanceof BackupInformationAckMessage) {
-			BackupInformationAckMessage ackMessage = (BackupInformationAckMessage) message;
-			BackupInformationSender.getInstance()
-					.receivedAckMessage(ackMessage);
 		} else if (message instanceof RemoveQueryMessage) {
 			// Remove stored backup information
 			LocalBackupInformationAccess.getStore().remove(

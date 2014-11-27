@@ -1,10 +1,15 @@
 package de.uniol.inf.is.odysseus.peer.recovery.protocol;
 
+import java.util.Set;
+
+import net.jxta.impl.id.UUID.UUID;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
+import com.google.common.collect.Sets;
 
 import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicator;
 import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicatorListener;
@@ -71,5 +76,10 @@ public abstract class AbtractRepeatingMessageReceiver implements
 					.getSimpleName());
 		}
 	}
+	
+	/**
+	 * All already received messages (their UUID).
+	 */
+	protected final Set<UUID> mReceivedUUIDs = Sets.newHashSet();
 
 }

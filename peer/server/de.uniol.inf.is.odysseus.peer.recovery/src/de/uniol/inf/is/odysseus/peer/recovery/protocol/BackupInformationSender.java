@@ -1,21 +1,14 @@
 package de.uniol.inf.is.odysseus.peer.recovery.protocol;
 
-import java.util.Map;
-
-import net.jxta.impl.id.UUID.UUID;
 import net.jxta.peer.PeerID;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.google.common.base.Preconditions;
-import com.google.common.collect.Maps;
 
+import de.uniol.inf.is.odysseus.p2p_new.IMessage;
 import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicator;
-import de.uniol.inf.is.odysseus.p2p_new.RepeatingMessageSend;
 import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryBackupInformation;
-import de.uniol.inf.is.odysseus.peer.recovery.messages.BackupInformationAckMessage;
 import de.uniol.inf.is.odysseus.peer.recovery.messages.BackupInformationMessage;
+import de.uniol.inf.is.odysseus.peer.recovery.messages.BackupInformationResponseMessage;
 
 /**
  * Entity to send backup information. <br />
@@ -25,23 +18,12 @@ import de.uniol.inf.is.odysseus.peer.recovery.messages.BackupInformationMessage;
  * @author Michael Brand
  *
  */
-public class BackupInformationSender {
-
-	/**
-	 * The logger instance for this class.
-	 */
-	private static final Logger LOG = LoggerFactory
-			.getLogger(BackupInformationSender.class);
-
-	/**
-	 * The result code for successes.
-	 */
-	private static final String OK_RESULT = "OK";
+public class BackupInformationSender extends AbstractRepeatingMessageSender {
 
 	/**
 	 * The single instance of this class.
 	 */
-	private static BackupInformationSender cInstance = new BackupInformationSender();
+	private static BackupInformationSender cInstance;
 
 	/**
 	 * The single instance of this class.
@@ -51,25 +33,6 @@ public class BackupInformationSender {
 	public static BackupInformationSender getInstance() {
 		return cInstance;
 	}
-
-	/**
-	 * Data structure to keep all currently running repeating message send
-	 * processes in mind.
-	 */
-	private final Map<UUID, RepeatingMessageSend> cSenderMap = Maps
-			.newConcurrentMap();
-
-	/**
-	 * Data structure to keep the destinations of all currently running
-	 * repeating message send processes in mind.
-	 */
-	private final Map<UUID, PeerID> cDestinationMap = Maps.newConcurrentMap();
-
-	/**
-	 * Data structure to keep already received results of all currently running
-	 * repeating message send processes in mind.
-	 */
-	private final Map<UUID, Boolean> cResultMap = Maps.newConcurrentMap();
 
 	/**
 	 * Sends given backup information as a new information to a given peer by
@@ -90,7 +53,7 @@ public class BackupInformationSender {
 	public boolean sendNewBackupInfo(PeerID destination,
 			IRecoveryBackupInformation info, IPeerCommunicator communicator) {
 		return sendBackupInfo(destination, info,
-				BackupInformationMessage.NEW_INFO, communicator);
+				false, communicator);
 	}
 
 	/**
@@ -112,7 +75,7 @@ public class BackupInformationSender {
 	public boolean sendBackupInfoUpdate(PeerID destination,
 			IRecoveryBackupInformation info, IPeerCommunicator communicator) {
 		return sendBackupInfo(destination, info,
-				BackupInformationMessage.UPDATE_INFO, communicator);
+				true, communicator);
 	}
 
 	/**
@@ -125,9 +88,9 @@ public class BackupInformationSender {
 	 * @param info
 	 *            The given backup information. <br />
 	 *            Must be not null.
-	 * @param messageType
-	 *            {@link BackupInformationMessage#NEW_INFO} or
-	 *            {@link BackupInformationMessage#UPDATE_INFO}.
+	 * @param update
+	 *            True for a update of backup information; false for new backup
+	 *            information.
 	 * @param communicator
 	 *            An active peer communicator. <br />
 	 *            Must be not null.
@@ -135,112 +98,46 @@ public class BackupInformationSender {
 	 *         else.
 	 */
 	private boolean sendBackupInfo(PeerID destination,
-			IRecoveryBackupInformation info, int messageType,
+			IRecoveryBackupInformation info, boolean update,
 			IPeerCommunicator communicator) {
 		Preconditions.checkNotNull(destination);
 		Preconditions.checkNotNull(info);
 		Preconditions.checkNotNull(communicator);
 
 		BackupInformationMessage message = new BackupInformationMessage(info,
-				messageType);
-		RepeatingMessageSend msgSender = new RepeatingMessageSend(communicator,
-				message, destination);
-
-		synchronized (cSenderMap) {
-			cSenderMap.put(message.getUUID(), msgSender);
-		}
-		synchronized (cDestinationMap) {
-			cDestinationMap.put(message.getUUID(), destination);
-		}
-
-		msgSender.start();
-		LOG.debug("Sent backup info {} to peerID {}", info, destination);
-
-		LOG.debug("Waiting for response from peer...");
-		while (senderIsActive(message.getUUID())) {
-			try {
-				Thread.sleep(300);
-			} catch (InterruptedException e) {
-
-				LOG.error("...interrupted!", e);
-				return false;
-
-			}
-
-		}
-
-		String result = "";
-		synchronized (cResultMap) {
-			if (!cResultMap.containsKey(message.getUUID())) {
-				result = "Could not send backup information: Peer is not reachable!";
-			} else {
-				result = OK_RESULT;
-			}
-			cResultMap.remove(message.getUUID());
-
-		}
-		synchronized (cSenderMap) {
-			cSenderMap.remove(message.getUUID());
-		}
-		synchronized (cDestinationMap) {
-			cDestinationMap.remove(message.getUUID());
-		}
-
-		if (result.equals(OK_RESULT)) {
-			return true;
-		}
-
-		// else
-		LOG.error("Could not send backup information: {}", result);
-		return false;
+				update);
+		return repeatingSend(destination, message, message.getUUID(),
+				communicator);
 
 	}
 
-	/**
-	 * Checks, if a given repeating message send process is still active.
-	 * 
-	 * @param id
-	 *            The UUID of the backup information identifying the repeating
-	 *            message send process. <br />
-	 *            Must be not null.
-	 * @return True, if the given repeating message send process is still
-	 *         active; false, else.
-	 */
-	private boolean senderIsActive(UUID id) {
-		Preconditions.checkNotNull(id);
-
-		synchronized (cSenderMap) {
-			if (!cSenderMap.containsKey(id)) {
-				return false;
-			}
-
-			// else
-			return cSenderMap.get(id).isRunning();
-		}
+	@Override
+	public void bindPeerCommunicator(IPeerCommunicator serv) {
+		super.bindPeerCommunicator(serv);
+		cInstance = this;
+		serv.registerMessageType(BackupInformationResponseMessage.class);
+		serv.addListener(this, BackupInformationResponseMessage.class);
 	}
 
-	/**
-	 * Handling of a received acknowledge message.
-	 * 
-	 * @param message
-	 *            The received message. <br />
-	 *            Must be not null.
-	 */
-	public void receivedAckMessage(BackupInformationAckMessage message) {
+	@Override
+	public void unbindPeerCommunicator(IPeerCommunicator serv) {
+		super.unbindPeerCommunicator(serv);
+		cInstance = null;
+		serv.unregisterMessageType(BackupInformationResponseMessage.class);
+		serv.removeListener(this, BackupInformationResponseMessage.class);
+	}
+
+	@Override
+	public void receivedMessage(IPeerCommunicator communicator,
+			PeerID senderPeer, IMessage message) {
+		Preconditions.checkNotNull(communicator);
+		Preconditions.checkNotNull(senderPeer);
 		Preconditions.checkNotNull(message);
 
-		synchronized (cSenderMap) {
-			RepeatingMessageSend sender = cSenderMap.get(message.getUUID());
-
-			if (sender != null) {
-				sender.stopRunning();
-				cSenderMap.remove(message.getUUID());
-			}
+		if (message instanceof BackupInformationResponseMessage) {
+			BackupInformationResponseMessage response = (BackupInformationResponseMessage) message;
+			handleResponseMessage(response.getUUID(),
+					response.getErrorMessage());
 		}
-
-		synchronized (cResultMap) {
-			cResultMap.put(message.getUUID(), true);
-		}
-
 	}
 }

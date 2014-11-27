@@ -7,11 +7,12 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Preconditions;
 
+import de.uniol.inf.is.odysseus.p2p_new.IMessage;
 import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicator;
 import de.uniol.inf.is.odysseus.p2p_new.PeerCommunicationException;
 import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryBackupInformation;
-import de.uniol.inf.is.odysseus.peer.recovery.messages.BackupInformationAckMessage;
 import de.uniol.inf.is.odysseus.peer.recovery.messages.BackupInformationMessage;
+import de.uniol.inf.is.odysseus.peer.recovery.messages.BackupInformationResponseMessage;
 import de.uniol.inf.is.odysseus.peer.recovery.util.LocalBackupInformationAccess;
 
 /**
@@ -21,7 +22,7 @@ import de.uniol.inf.is.odysseus.peer.recovery.util.LocalBackupInformationAccess;
  * @author Michael Brand
  *
  */
-public class BackupInformationReceiver {
+public class BackupInformationReceiver extends AbtractRepeatingMessageReceiver {
 
 	/**
 	 * The logger instance for this class.
@@ -32,7 +33,7 @@ public class BackupInformationReceiver {
 	/**
 	 * The single instance of this class.
 	 */
-	private static BackupInformationReceiver cInstance = new BackupInformationReceiver();
+	private static BackupInformationReceiver cInstance;
 
 	/**
 	 * The single instance of this class.
@@ -43,45 +44,50 @@ public class BackupInformationReceiver {
 		return cInstance;
 	}
 
-	/**
-	 * Handling of a received backup information message.
-	 * 
-	 * @param message
-	 *            The received message. <br />
-	 *            Must be not null.
-	 * @param sender
-	 *            The sender of the message. <br />
-	 *            Must be not null.
-	 * @param communicator
-	 *            An active peer communicator. <br />
-	 *            Must be not null.
-	 */
-	public void receivedMessage(BackupInformationMessage message,
-			PeerID sender, IPeerCommunicator communicator) {
+	@Override
+	public void bindPeerCommunicator(IPeerCommunicator serv) {
+		super.bindPeerCommunicator(serv);
+		cInstance = this;
+		serv.registerMessageType(BackupInformationMessage.class);
+		serv.addListener(this, BackupInformationMessage.class);
+	}
+
+	@Override
+	public void unbindPeerCommunicator(IPeerCommunicator serv) {
+		super.unbindPeerCommunicator(serv);
+		cInstance = null;
+		serv.unregisterMessageType(BackupInformationMessage.class);
+		serv.removeListener(this, BackupInformationMessage.class);
+	}
+	
+	@Override
+	public void receivedMessage(IPeerCommunicator communicator,
+			PeerID senderPeer, IMessage message) {
 		Preconditions.checkNotNull(message);
-		Preconditions.checkNotNull(sender);
+		Preconditions.checkNotNull(senderPeer);
 		Preconditions.checkNotNull(communicator);
 
-		switch (message.getMessageType()) {
-		case BackupInformationMessage.NEW_INFO:
-			handleNewInformation(message.getInfo());
-			break;
-		case BackupInformationMessage.UPDATE_INFO:
-			handleUpdateInformation(sender, message.getInfo());
-			break;
-		default:
-			LOG.error("Unknown backup information message type: {}",
-					message.getMessageType());
-			return;
-		}
+		if (message instanceof BackupInformationMessage) {
+			BackupInformationMessage biMessage = (BackupInformationMessage) message;
+			if(mReceivedUUIDs.contains(biMessage.getUUID())) {
+				return;
+			}
+			
+			if(biMessage.isUpdate()) {
+				handleUpdateInformation(senderPeer, biMessage.getInfo());
+			} else {
+				handleNewInformation(biMessage.getInfo());
+			}
 
-		try {
-			communicator.send(sender,
-					new BackupInformationAckMessage(message.getUUID()));
-		} catch (PeerCommunicationException e) {
-			LOG.error("Could not send backup information ack message!", e);
+			try {
+				communicator.send(senderPeer, new BackupInformationResponseMessage(biMessage.getUUID()));
+			} catch (PeerCommunicationException e) {
+				LOG.error(
+						"Could not send tuple send instruction response message!",
+						e);
+			}
+			mReceivedUUIDs.add(biMessage.getUUID());
 		}
-
 	}
 
 	/**

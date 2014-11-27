@@ -169,11 +169,9 @@ public abstract class AbstractRepeatingMessageSender implements
 			mDestinationMap.remove(uuid);
 		}
 
-		System.err.println(message.getClass().getSimpleName());
 		if (result.equals(OK_RESULT)) {
 			return true;
 		}
-		System.err.println("HEUL");
 
 		// else
 		LOG.error("Could not send {}: {}", message, result);
