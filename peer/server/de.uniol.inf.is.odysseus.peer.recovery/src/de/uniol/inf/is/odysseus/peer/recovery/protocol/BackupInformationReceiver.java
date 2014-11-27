@@ -69,7 +69,9 @@ public class BackupInformationReceiver extends AbtractRepeatingMessageReceiver {
 
 		if (message instanceof BackupInformationMessage) {
 			BackupInformationMessage biMessage = (BackupInformationMessage) message;
-			if(mReceivedUUIDs.contains(biMessage.getUUID())) {
+			if(!mReceivedUUIDs.contains(biMessage.getUUID())) {
+				mReceivedUUIDs.add(biMessage.getUUID());
+			} else {
 				return;
 			}
 			
@@ -86,7 +88,6 @@ public class BackupInformationReceiver extends AbtractRepeatingMessageReceiver {
 						"Could not send tuple send instruction response message!",
 						e);
 			}
-			mReceivedUUIDs.add(biMessage.getUUID());
 		}
 	}
 

@@ -76,7 +76,9 @@ public class UpdatePipeReceiver extends AbtractRepeatingMessageReceiver {
 
 		if (message instanceof RecoveryUpdatePipeMessage) {
 			RecoveryUpdatePipeMessage upMessage = (RecoveryUpdatePipeMessage) message;
-			if(mReceivedUUIDs.contains(upMessage.getUUID())) {
+			if(!mReceivedUUIDs.contains(upMessage.getUUID())) {
+				mReceivedUUIDs.add(upMessage.getUUID());
+			} else {
 				return;
 			}
 			
@@ -102,7 +104,7 @@ public class UpdatePipeReceiver extends AbtractRepeatingMessageReceiver {
 						"Could not send tuple send instruction response message!",
 						e);
 			}
-			mReceivedUUIDs.add(upMessage.getUUID());
+		
 		}
 	}
 
