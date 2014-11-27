@@ -15,9 +15,10 @@ public class RoundRobinWithLocalAllocator extends AbstractRoundRobinAllocator {
 	}
 
 	@Override
-	protected List<PeerID> determineConsideredPeerIDs(Collection<PeerID> knownRemotePeers, PeerID localPeerID) {
+	protected List<PeerID> determineConsideredPeerIDs(Collection<PeerID> knownRemotePeers, PeerID localPeerID, Collection<PeerID> peersToIgnore ) {
 		List<PeerID> peers = Lists.newArrayList(knownRemotePeers);
 		peers.add(localPeerID);
+		peers.removeAll(peersToIgnore);
 		return peers;
 	}
 

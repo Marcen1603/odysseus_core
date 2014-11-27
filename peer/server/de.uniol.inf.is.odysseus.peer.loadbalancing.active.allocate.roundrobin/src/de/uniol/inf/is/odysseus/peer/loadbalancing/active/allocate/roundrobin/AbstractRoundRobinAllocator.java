@@ -3,6 +3,7 @@ package de.uniol.inf.is.odysseus.peer.loadbalancing.active.allocate.roundrobin;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import net.jxta.peer.PeerID;
 
@@ -11,6 +12,7 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.IPeerDictionary;
@@ -30,6 +32,8 @@ public abstract class AbstractRoundRobinAllocator implements ILoadBalancingAlloc
 	 */
 	private static final Logger LOG = LoggerFactory.getLogger(AbstractRoundRobinAllocator.class);
 	
+	public static final String MONITOR_APP_NAME = "PeerMonitorServer";
+	
 	@Override
 	public Map<ILogicalQueryPart, PeerID> allocate(
 			Collection<ILogicalQueryPart> queryParts, 
@@ -45,7 +49,7 @@ public abstract class AbstractRoundRobinAllocator implements ILoadBalancingAlloc
 			
 		}
 		
-		List<PeerID> peerIDs = determineConsideredPeerIDs(knownRemotePeers, localPeerID);
+		List<PeerID> peerIDs = determineConsideredPeerIDs(knownRemotePeers, localPeerID, determinePeersToIgnore(knownRemotePeers));
 		if(LOG.isDebugEnabled()) {
 			
 			logPeers(peerIDs);
@@ -76,7 +80,7 @@ public abstract class AbstractRoundRobinAllocator implements ILoadBalancingAlloc
 			
 		}
 		
-		List<PeerID> peerIDs = determineConsideredPeerIDs(knownRemotePeers, localPeerID);
+		List<PeerID> peerIDs = determineConsideredPeerIDs(knownRemotePeers, localPeerID, determinePeersToIgnore(knownRemotePeers));
 		peerIDs.removeAll(faultyPeers);
 		if(LOG.isDebugEnabled()) {
 			
@@ -92,6 +96,21 @@ public abstract class AbstractRoundRobinAllocator implements ILoadBalancingAlloc
 		
 		return roundRobinImpl(previousAllocationMap.keySet(), peerIDs);
 		
+	}
+	
+	private Set<PeerID> determinePeersToIgnore(
+			Collection<PeerID> knownRemotePeers) throws QueryPartAllocationException {
+		if(!Activator.getPeerDictionary().isPresent()) {			
+			throw new QueryPartAllocationException("No peer dictionary set");			
+		}
+		
+		Set<PeerID> peersToIgnore = Sets.newHashSet();
+		for(PeerID peer : knownRemotePeers) {
+			if(Activator.getPeerDictionary().get().getRemotePeerName(peer).equals(MONITOR_APP_NAME)) {
+				peersToIgnore.add(peer);
+			}
+		}
+		return peersToIgnore;
 	}
 	
 	/**
@@ -232,6 +251,6 @@ public abstract class AbstractRoundRobinAllocator implements ILoadBalancingAlloc
 	 * @param localPeerID The ID of the local peer.
 	 * @return A list of {@link PeerID}s, the round robin allocator can use for allocation.
 	 */
-	protected abstract List<PeerID> determineConsideredPeerIDs(Collection<PeerID> knownRemotePeers, PeerID localPeerID);
+	protected abstract List<PeerID> determineConsideredPeerIDs(Collection<PeerID> knownRemotePeers, PeerID localPeerID, Collection<PeerID> peersToIgnore);
 	
 }

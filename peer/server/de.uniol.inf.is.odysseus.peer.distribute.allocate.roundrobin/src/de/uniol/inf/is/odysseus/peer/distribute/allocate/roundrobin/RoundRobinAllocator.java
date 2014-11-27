@@ -3,9 +3,9 @@ package de.uniol.inf.is.odysseus.peer.distribute.allocate.roundrobin;
 import java.util.Collection;
 import java.util.List;
 
-import com.google.common.collect.Lists;
-
 import net.jxta.peer.PeerID;
+
+import com.google.common.collect.Lists;
 
 public class RoundRobinAllocator extends AbstractRoundRobinAllocator {
 
@@ -15,8 +15,10 @@ public class RoundRobinAllocator extends AbstractRoundRobinAllocator {
 	}
 
 	@Override
-	protected List<PeerID> determineConsideredPeerIDs(Collection<PeerID> knownRemotePeers, PeerID localPeerID) {
-		return Lists.newArrayList(knownRemotePeers);
+	protected List<PeerID> determineConsideredPeerIDs(Collection<PeerID> knownRemotePeers, PeerID localPeerID, Collection<PeerID> peersToIgnore ) {
+		List<PeerID> peers = Lists.newArrayList(knownRemotePeers);
+		peers.removeAll(peersToIgnore);
+		return peers;
 	}
 
 }

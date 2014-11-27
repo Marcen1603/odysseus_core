@@ -3,6 +3,7 @@ package de.uniol.inf.is.odysseus.peer.distribute.allocate.roundrobin;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import net.jxta.peer.PeerID;
 
@@ -11,6 +12,7 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.QueryBuildConfiguration;
@@ -22,11 +24,13 @@ public abstract class AbstractRoundRobinAllocator implements IQueryPartAllocator
 
 	private static final Logger LOG = LoggerFactory.getLogger(AbstractRoundRobinAllocator.class);
 	
+	public static final String MONITOR_APP_NAME = "PeerMonitorServer";
+	
 	@Override
 	public Map<ILogicalQueryPart, PeerID> allocate(Collection<ILogicalQueryPart> queryParts, ILogicalQuery query, Collection<PeerID> knownRemotePeers, PeerID localPeerID, QueryBuildConfiguration config, List<String> allocatorParameters) throws QueryPartAllocationException {
 		LOG.debug("Begin round robin allocation");
 		
-		List<PeerID> peerIDs = determineConsideredPeerIDs(knownRemotePeers, localPeerID);
+		List<PeerID> peerIDs = determineConsideredPeerIDs(knownRemotePeers, localPeerID, determinePeersToIgnore(knownRemotePeers));
 		if( LOG.isDebugEnabled() ) {
 			logPeers(peerIDs);
 		}
@@ -38,11 +42,26 @@ public abstract class AbstractRoundRobinAllocator implements IQueryPartAllocator
 		return roundRobinImpl(queryParts, peerIDs);
 	}
 
+	private Set<PeerID> determinePeersToIgnore(
+			Collection<PeerID> knownRemotePeers) throws QueryPartAllocationException {
+		if(RoundRobinActivator.getPeerDictionary() == null) {			
+			throw new QueryPartAllocationException("No peer dictionary set");			
+		}
+		
+		Set<PeerID> peersToIgnore = Sets.newHashSet();
+		for(PeerID peer : knownRemotePeers) {
+			if(RoundRobinActivator.getPeerDictionary().getRemotePeerName(peer).equals(MONITOR_APP_NAME)) {
+				peersToIgnore.add(peer);
+			}
+		}
+		return peersToIgnore;
+	}
+
 	@Override
 	public Map<ILogicalQueryPart, PeerID> reallocate(Map<ILogicalQueryPart, PeerID> previousAllocationMap, Collection<PeerID> faultyPeers, Collection<PeerID> knownRemotePeers, PeerID localPeerID, QueryBuildConfiguration config, List<String> allocatorParameters) throws QueryPartAllocationException {
 		LOG.debug("Begin round robin reallocation");
 		
-		List<PeerID> peerIDs = determineConsideredPeerIDs(knownRemotePeers, localPeerID);
+		List<PeerID> peerIDs = determineConsideredPeerIDs(knownRemotePeers, localPeerID, determinePeersToIgnore(knownRemotePeers));
 		peerIDs.removeAll(faultyPeers);
 		if( LOG.isDebugEnabled() ) {
 			logPeers(peerIDs);
@@ -134,5 +153,5 @@ public abstract class AbstractRoundRobinAllocator implements IQueryPartAllocator
 		return avoidedPeers;
 	}
 
-	protected abstract List<PeerID> determineConsideredPeerIDs( Collection<PeerID> knownRemotePeers, PeerID localPeerID );
+	protected abstract List<PeerID> determineConsideredPeerIDs( Collection<PeerID> knownRemotePeers, PeerID localPeerID, Collection<PeerID> peersToIgnore );
 }
