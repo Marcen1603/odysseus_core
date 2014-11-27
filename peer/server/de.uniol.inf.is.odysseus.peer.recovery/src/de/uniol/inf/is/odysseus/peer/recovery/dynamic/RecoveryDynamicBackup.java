@@ -47,8 +47,8 @@ import de.uniol.inf.is.odysseus.peer.recovery.util.LocalBackupInformationAccess;
 import de.uniol.inf.is.odysseus.peer.recovery.util.RecoveryHelper;
 
 /**
- * This class implements the actions that are taken, when a new peer needs to be
- * found and queries of failed peers need to be allocated.
+ * This class implements the actions that are taken, when a new peer needs to be found and queries of failed peers need
+ * to be allocated.
  * 
  * @author Simon Kuespert
  *
@@ -167,85 +167,89 @@ public class RecoveryDynamicBackup implements IRecoveryDynamicBackup {
 		}
 		return activeSession;
 	}
-	
+
 	/**
 	 * The P2P network manager, if there is one bound.
 	 */
 	private static Optional<IP2PNetworkManager> cP2PNetworkManager = Optional.absent();
-	
+
 	/**
 	 * Binds a P2P network manager. <br />
 	 * Called by OSGi-DS.
-	 * @param serv The P2P network manager to bind. <br />
-	 * Must be not null.
+	 * 
+	 * @param serv
+	 *            The P2P network manager to bind. <br />
+	 *            Must be not null.
 	 */
 	public static void bindP2PNetworkManager(IP2PNetworkManager serv) {
-		
+
 		Preconditions.checkNotNull(serv);
 		cP2PNetworkManager = Optional.of(serv);
-		LOG.debug("Bound {} as a P2P network manager.", serv
-				.getClass().getSimpleName());
-		
+		LOG.debug("Bound {} as a P2P network manager.", serv.getClass().getSimpleName());
+
 	}
 
 	/**
 	 * Unbinds a P2P network manager, if it's the bound one. <br />
 	 * Called by OSGi-DS.
-	 * @param serv The P2P network manager to unbind. <br />
-	 * Must be not null.
+	 * 
+	 * @param serv
+	 *            The P2P network manager to unbind. <br />
+	 *            Must be not null.
 	 */
 	public static void unbindP2PNetworkManager(IP2PNetworkManager serv) {
-		
+
 		Preconditions.checkNotNull(serv);
-		
+
 		if (cP2PNetworkManager.isPresent() && cP2PNetworkManager.get() == serv) {
-			
+
 			cP2PNetworkManager = Optional.absent();
-			LOG.debug("Unbound {} as a P2P network manager.", serv
-					.getClass().getSimpleName());
-			
+			LOG.debug("Unbound {} as a P2P network manager.", serv.getClass().getSimpleName());
+
 		}
-		
+
 	}
-	
+
 	/**
 	 * The Peer dictionary, if there is one bound.
 	 */
 	private static Optional<IPeerDictionary> cPeerDictionary = Optional.absent();
-	
+
 	/**
 	 * Binds a Peer dictionary. <br />
 	 * Called by OSGi-DS.
-	 * @param serv The Peer dictionary to bind. <br />
-	 * Must be not null.
+	 * 
+	 * @param serv
+	 *            The Peer dictionary to bind. <br />
+	 *            Must be not null.
 	 */
 	public static void bindPeerDictionary(IPeerDictionary serv) {
-		
+
 		Preconditions.checkNotNull(serv);
 		cPeerDictionary = Optional.of(serv);
-		LOG.debug("Bound {} as a Peer dictionary.", serv
-				.getClass().getSimpleName());
-		
+		LOG.debug("Bound {} as a Peer dictionary.", serv.getClass().getSimpleName());
+
 	}
 
 	/**
 	 * Unbinds a Peer dictionary, if it's the bound one. <br />
 	 * Called by OSGi-DS.
-	 * @param serv The Peer dictionary to unbind. <br />
-	 * Must be not null.
+	 * 
+	 * @param serv
+	 *            The Peer dictionary to unbind. <br />
+	 *            Must be not null.
 	 */
 	public static void unbindPeerDictionary(IPeerDictionary serv) {
-		
+
 		Preconditions.checkNotNull(serv);
-		
+
 		if (cPeerDictionary.isPresent() && cPeerDictionary.get() == serv) {
-			
+
 			cPeerDictionary = Optional.absent();
-			LOG.debug("Unbound {} as a Peer dictionary.", serv
-					.getClass().getSimpleName());
-			
+			LOG.debug("Unbound {} as a Peer dictionary.", serv.getClass().getSimpleName());
+
 		}
-		
+
 	}
 
 	@Override
@@ -272,7 +276,7 @@ public class RecoveryDynamicBackup implements IRecoveryDynamicBackup {
 		List<JxtaSenderPO<?>> senders = RecoveryHelper.getJxtaSenders();
 
 		for (JxtaSenderPO<?> sender : senders) {
-			if (sender.getPeerIDString().equals(failedPeer.toString())) {
+			if (sender.getPeerIDString() != null && sender.getPeerIDString().equals(failedPeer.toString())) {
 				// We were a direct sender to the failed peer
 
 				// Determine for which shared query id we are the direct
@@ -352,8 +356,10 @@ public class RecoveryDynamicBackup implements IRecoveryDynamicBackup {
 	}
 
 	@Override
-	public void initiateAgreement(PeerID failedPeer, ID sharedQueryId, PeerID newPeer, ILogicalQueryPart queryPart, UUID recoveryStateIdentifier) {
-		RecoveryAgreementHandler.waitForAndDoRecovery(failedPeer, sharedQueryId, newPeer, queryPart, recoveryStateIdentifier);
+	public void initiateAgreement(PeerID failedPeer, ID sharedQueryId, PeerID newPeer, ILogicalQueryPart queryPart,
+			UUID recoveryStateIdentifier) {
+		RecoveryAgreementHandler.waitForAndDoRecovery(failedPeer, sharedQueryId, newPeer, queryPart,
+				recoveryStateIdentifier);
 	}
 
 	@Override
@@ -362,7 +368,7 @@ public class RecoveryDynamicBackup implements IRecoveryDynamicBackup {
 			LOG.error("No recovery communicator bound!");
 			return null;
 		}
-		
+
 		if (LocalBackupInformationAccess.getMyBuddyList().containsKey(failedPeer)) {
 			LOG.debug("My buddy failed, I have to search for new buddies.");
 			List<ID> sharedQueryIds = LocalBackupInformationAccess.removeMyBuddy(failedPeer);
@@ -372,15 +378,15 @@ public class RecoveryDynamicBackup implements IRecoveryDynamicBackup {
 		}
 		return null;
 	}
-	
+
 	@Override
-	public RecoveryProcessState getRecoveryProcessState(UUID recoveryProcessStateId){
+	public RecoveryProcessState getRecoveryProcessState(UUID recoveryProcessStateId) {
 		return cRecoveryCommunicator.get().getRecoveryProcessState(recoveryProcessStateId);
 	}
-	
-	
+
 	@Override
-	public Map<ILogicalQueryPart, PeerID> allocateToNewPeer(PeerID failedPeer, ID sharedQueryId, IRecoveryAllocator recoveryAllocator) throws QueryPartAllocationException {
+	public Map<ILogicalQueryPart, PeerID> allocateToNewPeer(PeerID failedPeer, ID sharedQueryId,
+			IRecoveryAllocator recoveryAllocator) throws QueryPartAllocationException {
 
 		// Preconditions
 		if (!cExecutor.isPresent()) {
@@ -388,39 +394,39 @@ public class RecoveryDynamicBackup implements IRecoveryDynamicBackup {
 			LOG.error("No executor bound!");
 			return null;
 
-		} else if (!cP2PNetworkManager.isPresent()){
-			
+		} else if (!cP2PNetworkManager.isPresent()) {
+
 			LOG.error("No P2PNetworkManager bound!");
 			return null;
-			
-		} else if (!cPeerDictionary.isPresent()){
-			
+
+		} else if (!cPeerDictionary.isPresent()) {
+
 			LOG.error("No PeerDictionary bound!");
 			return null;
-			
+
 		}
 
 		// Get the logical query for the pql statement and convert it to query parts for allocation
 		ImmutableSet<String> backupPQL = LocalBackupInformationAccess.getStoredPQLStatements(sharedQueryId, failedPeer);
 		for (String pql : backupPQL) {
-			List<ILogicalQuery> logicalQueries = RecoveryHelper.convertToLogicalQueries(pql);			
+			List<ILogicalQuery> logicalQueries = RecoveryHelper.convertToLogicalQueries(pql);
 			// allocate the query
 			for (ILogicalQuery query : logicalQueries) {
 				ILogicalQueryPart queryPart = new LogicalQueryPart(LogicalQueryHelper.getAllOperators(query));
 				ImmutableCollection<ILogicalQueryPart> queryParts = ImmutableList.copyOf(Lists.newArrayList(queryPart));
-				return recoveryAllocator.allocate(queryParts, query, cPeerDictionary.get().getRemotePeerIDs(), cP2PNetworkManager.get().getLocalPeerID());
-				
+				return recoveryAllocator.allocate(queryParts, query, cPeerDictionary.get().getRemotePeerIDs(),
+						cP2PNetworkManager.get().getLocalPeerID());
+
 			}
-		}	
+		}
 		return null;
 	}
 
 	@Override
-	public Map<ILogicalQueryPart, PeerID> reallocateToNewPeer(
-			Map<ILogicalQueryPart, PeerID> previousAllocationMap,
-			List<PeerID> inadequatePeers,
-			IRecoveryAllocator recoveryAllocator) throws QueryPartAllocationException {
-		return recoveryAllocator.reallocate(previousAllocationMap, inadequatePeers, cPeerDictionary.get().getRemotePeerIDs(), cP2PNetworkManager.get().getLocalPeerID());
+	public Map<ILogicalQueryPart, PeerID> reallocateToNewPeer(Map<ILogicalQueryPart, PeerID> previousAllocationMap,
+			List<PeerID> inadequatePeers, IRecoveryAllocator recoveryAllocator) throws QueryPartAllocationException {
+		return recoveryAllocator.reallocate(previousAllocationMap, inadequatePeers, cPeerDictionary.get()
+				.getRemotePeerIDs(), cP2PNetworkManager.get().getLocalPeerID());
 	}
 
 }
