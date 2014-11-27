@@ -38,83 +38,67 @@ public class AddQueryResponseHandler implements IAddQueryResponseHandler {
 	/**
 	 * The logger instance for this class.
 	 */
-	private static final Logger LOG = LoggerFactory
-			.getLogger(AddQueryResponseHandler.class);
-	private static Optional<IRecoveryStrategyManager> recoveryStrategyManager = Optional
-			.absent();
+	private static final Logger LOG = LoggerFactory.getLogger(AddQueryResponseHandler.class);
+	private static Optional<IRecoveryStrategyManager> recoveryStrategyManager = Optional.absent();
 	private Optional<IPeerCommunicator> peerCommunicator = Optional.absent();
 
 	public void bindPeerCommunicator(IPeerCommunicator serv) {
 		Preconditions.checkNotNull(serv);
 		peerCommunicator = Optional.of(serv);
-		LOG.debug("Bound {} as a peer communicator.", serv.getClass()
-				.getSimpleName());
+		LOG.debug("Bound {} as a peer communicator.", serv.getClass().getSimpleName());
 	}
 
 	public void unbindPeerCommunicator(IPeerCommunicator serv) {
 		Preconditions.checkNotNull(serv);
 		if (peerCommunicator.isPresent() && peerCommunicator.get() == serv) {
 			peerCommunicator = Optional.absent();
-			LOG.debug("Unbound {} as a peer communicator.", serv.getClass()
-					.getSimpleName());
+			LOG.debug("Unbound {} as a peer communicator.", serv.getClass().getSimpleName());
 		}
 	}
 
 	public static void bindRecoveryStrategyManager(IRecoveryStrategyManager serv) {
 		Preconditions.checkNotNull(serv);
 		recoveryStrategyManager = Optional.of(serv);
-		LOG.debug("Bound {} as a recovery strategy manager.", serv.getClass()
-				.getSimpleName());
+		LOG.debug("Bound {} as a recovery strategy manager.", serv.getClass().getSimpleName());
 	}
 
-	public static void unbindRecoveryStrategyManager(
-			IRecoveryStrategyManager serv) {
+	public static void unbindRecoveryStrategyManager(IRecoveryStrategyManager serv) {
 		Preconditions.checkNotNull(serv);
-		if (recoveryStrategyManager.isPresent()
-				&& recoveryStrategyManager.get() == serv) {
+		if (recoveryStrategyManager.isPresent() && recoveryStrategyManager.get() == serv) {
 			recoveryStrategyManager = Optional.absent();
-			LOG.debug("Unbound {} as a recovery strategy manager.", serv
-					.getClass().getSimpleName());
+			LOG.debug("Unbound {} as a recovery strategy manager.", serv.getClass().getSimpleName());
 		}
 	}
 
 	@Override
-	public void handleAddQueryResponse(PeerID senderPeer,
-			AddQueryResponseMessage responseMessage,
+	public void handleAddQueryResponse(PeerID senderPeer, AddQueryResponseMessage responseMessage,
 			IRecoveryCommunicator recoveryCommunicator) {
 		if (responseMessage.getMessageType() == AddQueryResponseMessage.ACK) {
 			handleAddQueryAck(senderPeer, responseMessage, recoveryCommunicator);
 		} else if (responseMessage.getMessageType() == AddQueryResponseMessage.FAIL) {
-			handleAddQueryFail(senderPeer, responseMessage,
-					recoveryCommunicator);
+			handleAddQueryFail(senderPeer, responseMessage, recoveryCommunicator);
 		}
 	}
 
-	private void handleAddQueryFail(PeerID senderPeer,
-			AddQueryResponseMessage addQueryFailResponse,
+	private void handleAddQueryFail(PeerID senderPeer, AddQueryResponseMessage addQueryFailResponse,
 			IRecoveryCommunicator recoveryCommunicator) {
 
 		if (addQueryFailResponse.getRecoveryProcessStateId() != null) {
-			RecoveryProcessState state = recoveryCommunicator
-					.getRecoveryProcessState(addQueryFailResponse
-							.getRecoveryProcessStateId());
+			RecoveryProcessState state = recoveryCommunicator.getRecoveryProcessState(addQueryFailResponse
+					.getRecoveryProcessStateId());
 			if (state != null) {
 				// senderPeer is peer that couldn't recover, we need to
 				// reallocate another peer
 
-				List<ILogicalQuery> logicalQueries = RecoveryHelper
-						.convertToLogicalQueries(addQueryFailResponse
-								.getPqlQueryPart());
+				List<ILogicalQuery> logicalQueries = RecoveryHelper.convertToLogicalQueries(addQueryFailResponse
+						.getPqlQueryPart());
 				// allocate the query
 				if (!logicalQueries.isEmpty()) {
 					ILogicalQueryPart queryPart = new LogicalQueryPart(
-							LogicalQueryHelper.getAllOperators(logicalQueries
-									.get(0)));
+							LogicalQueryHelper.getAllOperators(logicalQueries.get(0)));
 
-					state.addInadequatePeer(senderPeer,
-							addQueryFailResponse.getSharedQueryId(), queryPart);
-					recoveryStrategyManager.get().restartRecovery(
-							state.getFailedPeerId(), state.getIdentifier(),
+					state.addInadequatePeer(senderPeer, addQueryFailResponse.getSharedQueryId(), queryPart);
+					recoveryStrategyManager.get().restartRecovery(state.getFailedPeerId(), state.getIdentifier(),
 							queryPart);
 				}
 			} else {
@@ -126,55 +110,43 @@ public class AddQueryResponseHandler implements IAddQueryResponseHandler {
 		}
 	}
 
-	private void handleAddQueryAck(PeerID senderPeer,
-			AddQueryResponseMessage addQueryAckResponse,
+	private void handleAddQueryAck(PeerID senderPeer, AddQueryResponseMessage addQueryAckResponse,
 			IRecoveryCommunicator recoveryCommunicator) {
 		if (addQueryAckResponse.getRecoveryProcessStateId() != null) {
-			RecoveryProcessState state = recoveryCommunicator
-					.getRecoveryProcessState(addQueryAckResponse
-							.getRecoveryProcessStateId());
+			RecoveryProcessState state = recoveryCommunicator.getRecoveryProcessState(addQueryAckResponse
+					.getRecoveryProcessStateId());
 			if (state != null) {
 				// Give this peer the backup-info from the peer which he
 				// recovers
-				List<ILogicalQuery> logicalQueries = RecoveryHelper
-						.convertToLogicalQueries(addQueryAckResponse
-								.getPqlQueryPart());
+				List<ILogicalQuery> logicalQueries = RecoveryHelper.convertToLogicalQueries(addQueryAckResponse
+						.getPqlQueryPart());
 				if (!logicalQueries.isEmpty()) {
 					ILogicalQueryPart queryPart = new LogicalQueryPart(
-							LogicalQueryHelper.getAllOperators(logicalQueries
-									.get(0)));
+							LogicalQueryHelper.getAllOperators(logicalQueries.get(0)));
 					state.queryPartIsProcessed(queryPart);
 				}
 
-				List<IRecoveryBackupInformation> infos = BuddyHelper
-						.findBackupInfoForBuddy(state.getFailedPeerId());
+				List<IRecoveryBackupInformation> infos = BuddyHelper.findBackupInfoForBuddy(state.getFailedPeerId());
 				for (IRecoveryBackupInformation info : infos) {
 					// Now this is located on the new peer, the failed
 					// peer does not exist anymore
 					info.setLocationPeer(senderPeer);
 
-					BackupInformationSender.getInstance().sendNewBackupInfo(
-							senderPeer, info, peerCommunicator.get());
+					BackupInformationSender.getInstance().sendNewBackupInfo(senderPeer, info, peerCommunicator.get());
 				}
 
 				// 6. Update our sender so it knows the new peerId
-				List<JxtaSenderPO<?>> affectedSenders = getAffectedSenders(state
-						.getFailedPeerId());
+				List<JxtaSenderPO<?>> affectedSenders = getAffectedSenders(state.getFailedPeerId());
 				for (int i = 0; i < affectedSenders.size(); i++) {
-					affectedSenders.get(i).setPeerIDString(
-							senderPeer.toString());
+					affectedSenders.get(i).setPeerIDString(senderPeer.toString());
 				}
 
 				// Remove recovery process state if all queryParts are processed
-				BackupInformationHelper.updateInfoStores(
-						state.getFailedPeerId(), senderPeer,
-						addQueryAckResponse.getSharedQueryId(),
-						addQueryAckResponse.getPqlQueryPart());
+				BackupInformationHelper.updateInfoStores(state.getFailedPeerId(), senderPeer,
+						addQueryAckResponse.getSharedQueryId(), addQueryAckResponse.getPqlQueryPart());
 
 				if (state.allQueryPartsRecovered()) {
-					recoveryCommunicator
-							.removeRecoveryProcessState(addQueryAckResponse
-									.getRecoveryProcessStateId());
+					recoveryCommunicator.removeRecoveryProcessState(addQueryAckResponse.getRecoveryProcessStateId());
 				}
 
 			} else {
@@ -192,8 +164,7 @@ public class AddQueryResponseHandler implements IAddQueryResponseHandler {
 		// which shared-query-ids
 		// Return if there is no backup information stored for the given peer
 
-		Collection<ID> sharedQueryIdsForPeer = LocalBackupInformationAccess
-				.getStoredSharedQueryIdsForPeer(failedPeer);
+		Collection<ID> sharedQueryIdsForPeer = LocalBackupInformationAccess.getStoredSharedQueryIdsForPeer(failedPeer);
 		if (sharedQueryIdsForPeer == null || sharedQueryIdsForPeer.isEmpty()) {
 			// We don't have any information about that failed peer
 			return null;
@@ -209,15 +180,14 @@ public class AddQueryResponseHandler implements IAddQueryResponseHandler {
 		List<JxtaSenderPO<?>> affectedSenders = new ArrayList<JxtaSenderPO<?>>();
 
 		for (JxtaSenderPO<?> sender : senders) {
-			if (sender.getPeerIDString().equals(failedPeer.toString())) {
+			if (sender.getPeerIDString() != null && sender.getPeerIDString().equals(failedPeer.toString())) {
 				// We were a direct sender to the failed peer
 
 				// Determine for which shared query id we are the direct
 				// sender: Search in the saved backup information for
 				// that pipe id and look, which shared query id belongs
 				// to the operator which has this pipeId
-				Set<SharedQuery> pqls = LocalBackupInformationAccess
-						.getStoredPQLStatements(failedPeer);
+				Set<SharedQuery> pqls = LocalBackupInformationAccess.getStoredPQLStatements(failedPeer);
 				for (SharedQuery sharedQuery : pqls) {
 					List<String> pqlParts = sharedQuery.getPqlParts();
 					for (String pql : pqlParts) {
@@ -231,8 +201,7 @@ public class AddQueryResponseHandler implements IAddQueryResponseHandler {
 		}
 
 		// 3. Check, if we are the buddy of that peer
-		Map<PeerID, List<ID>> buddyMap = LocalBackupInformationAccess
-				.getBuddyList();
+		Map<PeerID, List<ID>> buddyMap = LocalBackupInformationAccess.getBuddyList();
 		if (buddyMap.containsKey(failedPeer)) {
 
 			// TODO What are the affected senders? Maybe no sender is affected
