@@ -29,7 +29,6 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
-import de.uniol.inf.is.odysseus.core.server.console.OdysseusConsole;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.core.streamconnection.DefaultStreamConnection;
@@ -56,6 +55,7 @@ import de.uniol.inf.is.odysseus.peer.update.PeerUpdatePlugIn;
 public class PeerConsole implements CommandProvider, IPeerCommunicatorListener {
 
 	private static final Logger LOG = LoggerFactory.getLogger(PeerConsole.class);
+	private static final Collection<CommandProvider> COMMAND_PROVIDERS = Lists.newArrayList();
 
 	private static IP2PDictionary p2pDictionary;
 	private static IPeerDictionary peerDictionary;
@@ -80,7 +80,7 @@ public class PeerConsole implements CommandProvider, IPeerCommunicatorListener {
 			p2pDictionary = null;
 		}
 	}
-	
+
 	// called by OSGi-DS
 	public static void bindPeerDictionary(IPeerDictionary serv) {
 		peerDictionary = serv;
@@ -189,6 +189,16 @@ public class PeerConsole implements CommandProvider, IPeerCommunicatorListener {
 		if (executor == serv) {
 			executor = null;
 		}
+	}
+
+	// called by OSGi-DS
+	public static void bindCommandProvider(CommandProvider serv) {
+		COMMAND_PROVIDERS.add(serv);
+	}
+
+	// called by OSGi-DS
+	public static void unbindCommandProvider(CommandProvider serv) {
+		COMMAND_PROVIDERS.remove(serv);
 	}
 
 	// called by OSGi-DS
@@ -314,25 +324,25 @@ public class PeerConsole implements CommandProvider, IPeerCommunicatorListener {
 
 		sortAndPrintList(ci, output);
 	}
-	
-	public void _lsPingPositions( CommandInterpreter ci ) {
+
+	public void _lsPingPositions(CommandInterpreter ci) {
 		Collection<PeerID> remotePeerIDs = peerDictionary.getRemotePeerIDs();
 		ci.println("Current known ping position(s):");
-		
+
 		List<String> output = Lists.newLinkedList();
 		for (PeerID remotePeerID : remotePeerIDs) {
 			Optional<IPingMapNode> optNode = pingMap.getNode(remotePeerID);
-			if( optNode.isPresent() ) {
+			if (optNode.isPresent()) {
 				output.add(peerDictionary.getRemotePeerName(remotePeerID) + " : " + toString(optNode.get().getPosition()));
 			} else {
-				output.add(peerDictionary.getRemotePeerName(remotePeerID) + " : <unknown>" );				
+				output.add(peerDictionary.getRemotePeerName(remotePeerID) + " : <unknown>");
 			}
-		}		
-		
+		}
+
 		sortAndPrintList(ci, output);
 	}
-	
-	public void _listPingPositions( CommandInterpreter ci ) {
+
+	public void _listPingPositions(CommandInterpreter ci) {
 		_lsPingPositions(ci);
 	}
 
@@ -667,10 +677,10 @@ public class PeerConsole implements CommandProvider, IPeerCommunicatorListener {
 
 		ci.println("Send update message to remote peers");
 	}
-	
-	public void _remoteRestartAll( CommandInterpreter ci ) {
+
+	public void _remoteRestartAll(CommandInterpreter ci) {
 		PeerUpdatePlugIn.sendRestartMessageToRemotePeers();
-		
+
 		ci.println("Send restart message to remote peers");
 	}
 
@@ -950,35 +960,53 @@ public class PeerConsole implements CommandProvider, IPeerCommunicatorListener {
 		String command = splitted[0];
 		String parameters = splitted.length > 1 ? splitted[1] : null;
 		LOG.debug("Got command message: " + command);
-		try {
-			Method m = null;
+		
+		Optional<Method> optMethod = determineCommandMethod(command);
+		Optional<CommandProvider> optProvider = determineProvider(command);
+		StringBuilderCommandInterpreter delegateCi = new StringBuilderCommandInterpreter(parameters != null ? parameters.split("\\ ") : new String[0]);
 
+		if (!optMethod.isPresent()) {
+			delegateCi.println("No such command: " + command);
+		} else {
 			try {
-				m = getClass().getMethod("_" + command, CommandInterpreter.class);
-			} catch (NoSuchMethodException e) {
-				try {
-					m = OdysseusConsole.class.getMethod("_" + command, CommandInterpreter.class);
-				} catch (NoSuchMethodException e1) {
-					LOG.debug("Could not execute remote command", e);
-					return;
-				}
+				optMethod.get().invoke(optProvider.get(), delegateCi);
+				// delegateCi contains output of command now
+			} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+				LOG.error("Could not execute command {}", command, e);
+				delegateCi.println("Could not execute command " + command + " : " + e.getMessage());
 			}
-			StringBuilderCommandInterpreter delegateCi = new StringBuilderCommandInterpreter(parameters != null ? parameters.split("\\ ") : new String[0]);
-
-			LOG.debug("Executing command");
-			m.invoke(this, delegateCi);
-
-			CommandOutputMessage out = new CommandOutputMessage(delegateCi.getText());
-			try {
-				LOG.debug("Command executed. Send results back");
-				peerCommunicator.send(senderPeer, out);
-			} catch (PeerCommunicationException e) {
-				LOG.debug("Could not send console output", e);
-			}
-
-		} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException | SecurityException e) {
-			LOG.debug("Could not execute remote command", e);
 		}
+
+		CommandOutputMessage out = new CommandOutputMessage(delegateCi.getText());
+		try {
+			LOG.debug("Command executed. Send results back");
+			peerCommunicator.send(senderPeer, out);
+		} catch (PeerCommunicationException e) {
+			LOG.debug("Could not send console output", e);
+		}
+	}
+
+	private static Optional<Method> determineCommandMethod(String command) {
+		for (CommandProvider provider : COMMAND_PROVIDERS) {
+			try {
+				return Optional.of(provider.getClass().getMethod("_" + command, CommandInterpreter.class));
+			} catch (NoSuchMethodException e) {
+			}
+		}
+
+		return Optional.absent();
+	}
+
+	private static Optional<CommandProvider> determineProvider(String command) {
+		for (CommandProvider provider : COMMAND_PROVIDERS) {
+			try {
+				provider.getClass().getMethod("_" + command, CommandInterpreter.class);
+				return Optional.of(provider);
+			} catch (NoSuchMethodException e) {
+			}
+		}
+
+		return Optional.absent();
 	}
 
 	private void processCommandOutputMessage(IPeerCommunicator communicator, PeerID senderPeer, CommandOutputMessage cmd) {
@@ -1074,10 +1102,10 @@ public class PeerConsole implements CommandProvider, IPeerCommunicatorListener {
 		}
 
 		Optional<IPhysicalOperator> optOperator = findOperatorByHash(operatorHash);
-		if( !optOperator.isPresent() ) {
+		if (!optOperator.isPresent()) {
 			optOperator = findOperatorByName(ci, operatorName);
 		}
-		
+
 		if (optOperator.isPresent()) {
 			final IPhysicalOperator operator = optOperator.get();
 			ci.println("Connecting to physical operator " + operator);
@@ -1113,20 +1141,20 @@ public class PeerConsole implements CommandProvider, IPeerCommunicatorListener {
 
 	private static Optional<IPhysicalOperator> findOperatorByName(CommandInterpreter ci, String operatorName) {
 		int queryID = -1;
-		
+
 		int splitPos = operatorName.indexOf(":");
-		if( splitPos != -1 ){
+		if (splitPos != -1) {
 			try {
-				queryID = Integer.valueOf( operatorName.substring(0, splitPos));
+				queryID = Integer.valueOf(operatorName.substring(0, splitPos));
 				operatorName = operatorName.substring(splitPos + 1);
-			} catch( Throwable t ) {
+			} catch (Throwable t) {
 			}
 		}
-		
+
 		Collection<IPhysicalQuery> physicalQueries = executor.getExecutionPlan().getQueries();
 		Collection<IPhysicalOperator> foundOperators = Lists.newArrayList();
 		for (IPhysicalQuery physicalQuery : physicalQueries) {
-			if( queryID == -1 || physicalQuery.getID() == queryID ) {
+			if (queryID == -1 || physicalQuery.getID() == queryID) {
 				List<IPhysicalOperator> physicalOperators = physicalQuery.getPhysicalChilds();
 				for (IPhysicalOperator physicalOperator : physicalOperators) {
 					if (physicalOperator.getName().equals(operatorName)) {
@@ -1135,15 +1163,15 @@ public class PeerConsole implements CommandProvider, IPeerCommunicatorListener {
 				}
 			}
 		}
-		
-		if( foundOperators.size() == 1 ) {
+
+		if (foundOperators.size() == 1) {
 			return Optional.of(foundOperators.iterator().next());
-		} else if ( !foundOperators.isEmpty() ) { 
+		} else if (!foundOperators.isEmpty()) {
 			ci.println("Warning: Found multiple operators with name '" + operatorName + "': " + foundOperators);
 			ci.println("Selecting first one");
 			return Optional.of(foundOperators.iterator().next());
-		} 
-		
+		}
+
 		return Optional.absent();
 	}
 
@@ -1201,7 +1229,7 @@ public class PeerConsole implements CommandProvider, IPeerCommunicatorListener {
 		for (int i = 0; i < depth; ++i) {
 			b.append("\t");
 		}
-		
+
 		b.append(sink.getClass().getSimpleName());
 		b.append("(").append(sink.hashCode()).append(")");
 		b.append("[").append(sink.getName()).append("]\n");
