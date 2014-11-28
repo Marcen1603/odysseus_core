@@ -15,9 +15,11 @@
  ******************************************************************************/
 package de.uniol.inf.is.odysseus.test.cheatsheet;
 
+import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -59,6 +61,22 @@ public class CheatSheetGenerator {
         try (FileOutputStream out = new FileOutputStream(file)) {
             try (PrintStream print = new PrintStream(out)) {
                 print.println(builder.toString());
+                String[] env = new String[] {};
+                System.out.println("Executing: /usr/bin/pdflatex -synctex=1 -interaction nonstopmode " + file);
+
+                final Process process = Runtime.getRuntime().exec("/usr/bin/pdflatex -synctex=1 -interaction nonstopmode " + file, env);
+                try {
+                    process.waitFor();
+                    BufferedReader reader = new BufferedReader(new InputStreamReader(process.getErrorStream()));
+                    String line;
+                    while ((line = reader.readLine()) != null) {
+                        System.err.println(line);
+                    }
+                }
+                catch (final InterruptedException e) {
+                    System.err.println(e.getMessage());
+                    e.printStackTrace();
+                }
             }
         }
 

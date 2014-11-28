@@ -59,16 +59,18 @@ public class TestRunnerApplication implements IApplication {
 
 		oneFailed = executeComponents(context);
 		LOG.debug("All tests were run.");
+
+        if (System.getProperty("cheatsheet") != null) {
+            String file = System.getProperty("cheatsheet");
+            CheatSheetGenerator.execute(file);
+        }
+
 		if (oneFailed) {
 			LOG.debug("At least one test failed!");
 			return -1;
 		}
 		LOG.debug("All tests finished with no errors.");
 
-        if (System.getProperty("cheatsheet") != null) {
-            String file = System.getProperty("cheatsheet");
-            CheatSheetGenerator.execute(file);
-        }
 		return IApplication.EXIT_OK;
 	}
 
