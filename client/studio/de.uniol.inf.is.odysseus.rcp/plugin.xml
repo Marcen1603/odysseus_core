@@ -286,6 +286,26 @@
             id="de.uniol.inf.is.odysseus.rcp.commands.DisableRefreshSourcesViewCommand"
             name="Disable Refreshing Sources View">
       </command>
+      <command
+            defaultHandler="de.uniol.inf.is.odysseus.rcp.commands.RefreshStoredProceduresView"
+            id="de.uniol.inf.is.odysseus.rcp.commands.RefreshStoredProceduresView"
+            name="Refresh Stored Procedures View">
+      </command>
+      <command
+            defaultHandler="de.uniol.inf.is.odysseus.rcp.commands.DropStoredProcedureCommand"
+            id="de.uniol.inf.is.odysseus.rcp.commands.DropStoredProcedure"
+            name="Drop Stored Procedure">
+      </command>
+      <command
+            defaultHandler="de.uniol.inf.is.odysseus.rcp.commands.ExpandStoredProceduresViewCommand"
+            id="de.uniol.inf.is.odysseus.rcp.commands.ExpandStoredProceduresView"
+            name="Expand Stored Procedures">
+      </command>
+      <command
+            defaultHandler="de.uniol.inf.is.odysseus.rcp.commands.CollapseStoredProceduresViewCommand"
+            id="de.uniol.inf.is.odysseus.rcp.commands.CollapseStoredProceduresView"
+            name="Collapse Stored Procedures">
+      </command>
     </extension>
    <extension
          point="org.eclipse.ui.menus">
@@ -857,6 +877,38 @@
                </parameter>
             </command>
          </toolbar>
+      </menuContribution>
+      <menuContribution
+            allPopups="false"
+            locationURI="toolbar:de.uniol.inf.is.odysseus.rcp.views.StoredProceduresView">
+         <command
+               commandId="de.uniol.inf.is.odysseus.rcp.commands.DropStoredProcedure"
+               icon="icons/delete.png"
+               label="Drop Stored Procedure"
+               style="push"
+               tooltip="Drop">
+         </command>
+         <command
+               commandId="de.uniol.inf.is.odysseus.rcp.commands.RefreshStoredProceduresView"
+               icon="icons/refresh.gif"
+               label="Refresh"
+               style="push"
+               tooltip="Refresh">
+         </command>
+         <command
+               commandId="de.uniol.inf.is.odysseus.rcp.commands.ExpandStoredProceduresView"
+               icon="icons/expandall.gif"
+               label="Expand"
+               style="push"
+               tooltip="Expand">
+         </command>
+         <command
+               commandId="de.uniol.inf.is.odysseus.rcp.commands.CollapseStoredProceduresView"
+               icon="icons/collapseall.gif"
+               label="Collapse"
+               style="push"
+               tooltip="Collapse">
+         </command>
       </menuContribution>
     </extension>
    <extension
