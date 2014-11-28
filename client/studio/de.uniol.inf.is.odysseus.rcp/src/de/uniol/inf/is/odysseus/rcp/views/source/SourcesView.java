@@ -53,7 +53,7 @@ public class SourcesView extends ViewPart implements IUpdateEventListener {
 	private StackLayout stackLayout;
 	private Label label;
 
-	volatile AtomicBoolean isRefreshing;
+	volatile AtomicBoolean isRefreshing = new AtomicBoolean();
 	private boolean refreshEnabled = true;
 
 	@Override
