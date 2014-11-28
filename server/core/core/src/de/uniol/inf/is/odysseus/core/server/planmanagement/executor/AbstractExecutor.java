@@ -902,7 +902,7 @@ public abstract class AbstractExecutor implements IServerExecutor,
 	// ----------------------------------------------------------------------------------------------------------
 
 	@Override
-	public void addUpdateEventListener(IUpdateEventListener listener,
+	public synchronized void addUpdateEventListener(IUpdateEventListener listener,
 			String type, ISession session) {
 		// Remember Listener (must be different for dd and other, because each
 		// session could have another dd)
@@ -943,7 +943,7 @@ public abstract class AbstractExecutor implements IServerExecutor,
 	}
 
 	@Override
-	public void removeUpdateEventListener(IUpdateEventListener listener,
+	public synchronized void removeUpdateEventListener(IUpdateEventListener listener,
 			String type, ISession session) {
 		List<IUpdateEventListener> l;
 		if (type != IUpdateEventListener.DATADICTIONARY) {

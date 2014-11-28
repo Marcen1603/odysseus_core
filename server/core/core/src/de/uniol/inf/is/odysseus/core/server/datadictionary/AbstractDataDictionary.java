@@ -1017,6 +1017,8 @@ abstract public class AbstractDataDictionary implements IDataDictionary,
 		synchronized (listeners) {
 			for (IDataDictionaryListener listener : listeners) {
 				try {
+					LOG.trace("Fire data dictionary changed event listener : {}", listener);
+					
 					listener.dataDictionaryChanged(this);
 				} catch (Throwable throwable) {
 					LOG.error("Exception in listener of data dictionary",
