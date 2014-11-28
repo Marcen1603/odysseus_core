@@ -16,6 +16,7 @@
 package de.uniol.inf.is.odysseus.rcp.views.source;
 
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.util.LocalSelectionTransfer;
@@ -52,7 +53,7 @@ public class SourcesView extends ViewPart implements IUpdateEventListener {
 	private StackLayout stackLayout;
 	private Label label;
 
-	volatile boolean isRefreshing;
+	volatile AtomicBoolean isRefreshing;
 	private boolean refreshEnabled = true;
 
 	@Override
@@ -122,21 +123,21 @@ public class SourcesView extends ViewPart implements IUpdateEventListener {
 	public void refresh() {
 
 		if (refreshEnabled) {
-			if (isRefreshing) {
+			if (isRefreshing.get()) {
 				return;
 			}
 			if( PlatformUI.getWorkbench().getDisplay().isDisposed() ) {
 				return;
 			}
 			
-			isRefreshing = true;
+			isRefreshing.set(true);
 			
 			PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
 
 				@Override
 				public void run() {
 					try {
-						isRefreshing = false;
+						isRefreshing.set(false);
 						if (!getTreeViewer().getTree().isDisposed()) {
 							List<ViewInformation> streamsAndViews = OdysseusRCPPlugIn.getExecutor().getStreamsAndViewsInformation(OdysseusRCPPlugIn.getActiveSession());
 							if (streamsAndViews != null) {
