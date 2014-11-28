@@ -12,7 +12,7 @@
       </programArgs>
       <programArgsLin>-os linux -ws gtk -arch x86_64
       </programArgsLin>
-      <vmArgs>-Dosgi.requiredJavaVersion=1.7 -Xms1024m -Xmx1024m -Dlog4j.configuration=log4j.test.properties
+      <vmArgs>-Dosgi.requiredJavaVersion=1.7 -Xms1024m -Xmx1024m -Dlog4j.configuration=log4j.test.properties -Dcheatsheet=OdysseusRef.tex
       </vmArgs>
       <vmArgsMac>-XstartOnFirstThread -Dorg.eclipse.swt.internal.carbon.smallFonts
       </vmArgsMac>

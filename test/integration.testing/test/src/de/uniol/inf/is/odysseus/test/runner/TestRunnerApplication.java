@@ -29,6 +29,7 @@ import org.slf4j.LoggerFactory;
 import com.google.common.collect.Lists;
 
 import de.uniol.inf.is.odysseus.test.StatusCode;
+import de.uniol.inf.is.odysseus.test.cheatsheet.CheatSheetGenerator;
 import de.uniol.inf.is.odysseus.test.component.ITestComponent;
 import de.uniol.inf.is.odysseus.test.context.BasicTestContext;
 
@@ -63,6 +64,11 @@ public class TestRunnerApplication implements IApplication {
 			return -1;
 		}
 		LOG.debug("All tests finished with no errors.");
+
+        if (System.getProperty("cheatsheet") != null) {
+            String file = System.getProperty("cheatsheet");
+            CheatSheetGenerator.execute(file);
+        }
 		return IApplication.EXIT_OK;
 	}
 
