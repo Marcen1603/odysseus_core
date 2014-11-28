@@ -53,7 +53,7 @@ public abstract class AbstractMatrixPlusScalarOperator extends AbstractBinaryOpe
 
     @Override
     public boolean isCommutative() {
-        return true;
+        return false;
     }
 
     @Override

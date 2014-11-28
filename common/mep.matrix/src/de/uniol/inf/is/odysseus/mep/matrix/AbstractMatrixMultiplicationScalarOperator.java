@@ -53,7 +53,7 @@ public abstract class AbstractMatrixMultiplicationScalarOperator extends Abstrac
 
     @Override
     public boolean isCommutative() {
-        return true;
+        return false;
     }
 
     @Override
