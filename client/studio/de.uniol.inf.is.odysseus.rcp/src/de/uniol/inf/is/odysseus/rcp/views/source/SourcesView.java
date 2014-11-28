@@ -74,7 +74,8 @@ public class SourcesView extends ViewPart implements IUpdateEventListener {
 		refresh();
 		OdysseusRCPPlugIn.getExecutor().addUpdateEventListener(this, IUpdateEventListener.DATADICTIONARY, OdysseusRCPPlugIn.getActiveSession());
 		OdysseusRCPPlugIn.getExecutor().addUpdateEventListener(this, IUpdateEventListener.SESSION, null);
-
+		LOG.trace("Registered update event listener for sources View");
+		
 		// UserManagement.getInstance().addUserManagementListener(this);
 		getSite().setSelectionProvider(getTreeViewer());
 
@@ -90,12 +91,15 @@ public class SourcesView extends ViewPart implements IUpdateEventListener {
 
 		stackLayout.topControl = label;
 		parent.layout();
+		
+		LOG.trace("SourcesView created");
 	}
 
 	@Override
 	public void dispose() {
 		OdysseusRCPPlugIn.getExecutor().removeUpdateEventListener(this, IUpdateEventListener.DATADICTIONARY, OdysseusRCPPlugIn.getActiveSession());
 		OdysseusRCPPlugIn.getExecutor().removeUpdateEventListener(this, IUpdateEventListener.SESSION, null);
+		LOG.trace("Deregistered update event listener for sources View");
 		super.dispose();
 	}
 
@@ -121,37 +125,51 @@ public class SourcesView extends ViewPart implements IUpdateEventListener {
 	}
 
 	public void refresh() {
-
+		LOG.trace("Trying to refresh sources view..");
 		if (refreshEnabled) {
 			if (isRefreshing.get()) {
+				LOG.trace("Already refreshing... abort");
 				return;
 			}
+			
 			if( PlatformUI.getWorkbench().getDisplay().isDisposed() ) {
+				LOG.trace("Sources View is disposed... abort");
 				return;
 			}
 			
 			isRefreshing.set(true);
+			LOG.trace("Begin refreshing async");
 			
 			PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
 
 				@Override
 				public void run() {
 					try {
+						LOG.trace("Begin real refreshing");
 						isRefreshing.set(false);
+
 						if (!getTreeViewer().getTree().isDisposed()) {
 							List<ViewInformation> streamsAndViews = OdysseusRCPPlugIn.getExecutor().getStreamsAndViewsInformation(OdysseusRCPPlugIn.getActiveSession());
 							if (streamsAndViews != null) {
+								LOG.trace("Got {} streams and Views.", streamsAndViews.size() );
 								getTreeViewer().setInput(streamsAndViews);
 								if (!streamsAndViews.isEmpty()) {
 									stackLayout.topControl = getTreeViewer().getTree();
 								}
 								setPartName("Sources (" + streamsAndViews.size() + ")");
 							} else {
+								LOG.trace("Got no streams and views");
 								stackLayout.topControl = label;
 								setPartName("Sources (0)");
 							}
 							parent.layout();
+							
+							LOG.trace("Doing refresh now!");
+							getTreeViewer().refresh();
+						} else {
+							LOG.trace("View is disposed!");
 						}
+						LOG.trace("Refresh finished");
 					} catch (Exception e) {
 						LOG.error("Exception during setting input for treeViewer in sourcesView", e);
 						INFO.error("Exception during setting input for treeViewer in sourcesView", e);
@@ -159,6 +177,8 @@ public class SourcesView extends ViewPart implements IUpdateEventListener {
 				}
 
 			});
+		} else {
+			LOG.trace("Refresh is disabled");
 		}
 	}
 
@@ -168,6 +188,8 @@ public class SourcesView extends ViewPart implements IUpdateEventListener {
 
 	@Override
 	public void eventOccured() {
+		LOG.trace("Got update event");
+		
 		refresh();
 	}
 
@@ -177,10 +199,14 @@ public class SourcesView extends ViewPart implements IUpdateEventListener {
 
 	public void setRefreshEnabled(boolean refreshEnabled) {
 		this.refreshEnabled = refreshEnabled;
+		LOG.trace("Refresh enabled = {}", refreshEnabled);
+		refresh();
 	}
 	
 	public void switchRefreshEnabled(){
 		refreshEnabled = !refreshEnabled;
+		LOG.trace("Switch Refresh enabled to {}", refreshEnabled);
+		
 		refresh();
 	}
 
