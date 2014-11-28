@@ -292,7 +292,6 @@
             name="Refresh Stored Procedures View">
       </command>
       <command
-            defaultHandler="de.uniol.inf.is.odysseus.rcp.commands.DropStoredProcedureCommand"
             id="de.uniol.inf.is.odysseus.rcp.commands.DropStoredProcedure"
             name="Drop Stored Procedure">
       </command>
@@ -305,6 +304,11 @@
             defaultHandler="de.uniol.inf.is.odysseus.rcp.commands.CollapseStoredProceduresViewCommand"
             id="de.uniol.inf.is.odysseus.rcp.commands.CollapseStoredProceduresView"
             name="Collapse Stored Procedures">
+      </command>
+      <command
+            defaultHandler="de.uniol.inf.is.odysseus.rcp.commands.DropAllStoredProceduresCommand"
+            id="de.uniol.inf.is.odysseus.rcp.commands.DropAllStoredProcedures"
+            name="Drop All Stored Procedures">
       </command>
     </extension>
    <extension
@@ -882,11 +886,11 @@
             allPopups="false"
             locationURI="toolbar:de.uniol.inf.is.odysseus.rcp.views.StoredProceduresView">
          <command
-               commandId="de.uniol.inf.is.odysseus.rcp.commands.DropStoredProcedure"
+               commandId="de.uniol.inf.is.odysseus.rcp.commands.DropAllStoredProcedures"
                icon="icons/delete.png"
-               label="Drop Stored Procedure"
+               label="Drop All Stored Procedures"
                style="push"
-               tooltip="Drop">
+               tooltip="Drop All Stored Procedures">
          </command>
          <command
                commandId="de.uniol.inf.is.odysseus.rcp.commands.RefreshStoredProceduresView"
@@ -908,6 +912,17 @@
                label="Collapse"
                style="push"
                tooltip="Collapse">
+         </command>
+      </menuContribution>
+      <menuContribution
+            allPopups="false"
+            locationURI="popup:de.uniol.inf.is.odysseus.rcp.views.StoredProceduresView">
+         <command
+               commandId="de.uniol.inf.is.odysseus.rcp.commands.DropStoredProcedure"
+               icon="icons/delete.png"
+               label="Drop Stored Procedure"
+               style="push"
+               tooltip="Drop">
          </command>
       </menuContribution>
     </extension>
@@ -1045,6 +1060,19 @@
             </iterate>
          </with>
       </definition>
+      <definition
+            id="storedProcedureIsSelected">
+         <with
+               variable="selection">
+            <iterate
+                  ifEmpty="false"
+                  operator="or">
+               <instanceof
+                     value="de.uniol.inf.is.odysseus.core.procedure.StoredProcedure">
+               </instanceof>
+            </iterate>
+         </with>
+      </definition>
    </extension>
    <extension
          point="org.eclipse.ui.handlers">
@@ -1117,6 +1145,15 @@
          <enabledWhen>
             <reference
                   definitionId="oneOrMoreQueryIsSelected">
+            </reference>
+         </enabledWhen>
+      </handler>
+      <handler
+            class="de.uniol.inf.is.odysseus.rcp.commands.DropStoredProcedureCommand"
+            commandId="de.uniol.inf.is.odysseus.rcp.commands.DropStoredProcedure">
+         <enabledWhen>
+            <reference
+                  definitionId="storedProcedureIsSelected">
             </reference>
          </enabledWhen>
       </handler>

@@ -16,14 +16,14 @@ public class DropStoredProcedureCommand extends AbstractHandler {
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		List<StoredProcedure> selectedProcs = SelectionProvider.getSelection(event);
-		
-		if( !selectedProcs.isEmpty() ) {
-			for( StoredProcedure selectedProc : selectedProcs ) {
+
+		if (!selectedProcs.isEmpty()) {
+			for (StoredProcedure selectedProc : selectedProcs) {
 				OdysseusRCPPlugIn.getExecutor().removeStoredProcedure(selectedProc.getName(), OdysseusRCPPlugIn.getActiveSession());
 				StatusBarManager.getInstance().setMessage(selectedProcs.size() + " stored procedures removed");
 			}
 		}
-		
+
 		return null;
 	}
 
