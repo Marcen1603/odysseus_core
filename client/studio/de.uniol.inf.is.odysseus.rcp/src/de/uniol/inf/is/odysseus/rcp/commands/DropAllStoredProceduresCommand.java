@@ -13,22 +13,25 @@ import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.procedure.StoredProcedure;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
+import de.uniol.inf.is.odysseus.rcp.StatusBarManager;
 
 public class DropAllStoredProceduresCommand extends AbstractHandler {
 
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
-		if( !confirm() ) {
-			return null;
-		}
-		
 		ISession session = OdysseusRCPPlugIn.getActiveSession();
 		IExecutor executor = OdysseusRCPPlugIn.getExecutor();
 		
 		List<StoredProcedure> storedProcedures = executor.getStoredProcedures(session);
+		if( storedProcedures.isEmpty() || !confirm() ) {
+			return null;
+		}
+		
 		for( StoredProcedure storedProcedure : storedProcedures ) {
 			executor.removeStoredProcedure(storedProcedure.getName(), session);
 		}
+		StatusBarManager.getInstance().setMessage("Removed all stored procedures");
+		
 		return null;
 	}
 
