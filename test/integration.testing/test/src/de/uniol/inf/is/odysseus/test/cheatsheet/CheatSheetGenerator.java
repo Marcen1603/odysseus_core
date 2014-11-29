@@ -30,6 +30,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.datahandler.DataHandlerRegistry;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorInformation;
@@ -54,6 +57,8 @@ import de.uniol.inf.is.odysseus.test.context.BasicTestContext;
  *
  */
 public class CheatSheetGenerator {
+    static final Logger LOG = LoggerFactory.getLogger(CheatSheetGenerator.class);
+    private static final String LATEX_CMD = "/usr/bin/pdflatex";
 
     public static void execute(String file) throws FileNotFoundException, IOException {
 
@@ -64,19 +69,23 @@ public class CheatSheetGenerator {
                 print.println(builder.toString());
                 String[] env = new String[] {};
                 String directory = (new File(file)).getParent();
-                System.out.println("Executing: /usr/bin/pdflatex -synctex=1 -interaction nonstopmode -output-directory " + directory + " " + file);
-                final Process process = Runtime.getRuntime().exec("/usr/bin/pdflatex -synctex=1 -interaction nonstopmode -output-directory " + directory + " " + file, env);
-                try {
-                    process.waitFor();
-                    BufferedReader reader = new BufferedReader(new InputStreamReader(process.getErrorStream()));
-                    String line;
-                    while ((line = reader.readLine()) != null) {
-                        System.err.println(line);
+                if ((new File(LATEX_CMD)).exists()) {
+                    LOG.info("Executing '{} -synctex=1 -interaction nonstopmode -output-directory {} {}'", new String[] { LATEX_CMD, directory, file });
+                    final Process process = Runtime.getRuntime().exec("/usr/bin/pdflatex -synctex=1 -interaction nonstopmode -output-directory " + directory + " " + file, env);
+                    try {
+                        process.waitFor();
+                        BufferedReader reader = new BufferedReader(new InputStreamReader(process.getErrorStream()));
+                        String line;
+                        while ((line = reader.readLine()) != null) {
+                            LOG.error(line);
+                        }
+                    }
+                    catch (final InterruptedException e) {
+                        LOG.error(e.getMessage(), e);
                     }
                 }
-                catch (final InterruptedException e) {
-                    System.err.println(e.getMessage());
-                    e.printStackTrace();
+                else {
+                    LOG.warn("Unable to execute {} to generate cheatsheet PDF", LATEX_CMD);
                 }
             }
         }
