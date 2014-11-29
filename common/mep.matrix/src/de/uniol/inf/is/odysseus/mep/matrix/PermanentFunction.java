@@ -21,6 +21,7 @@ import java.util.List;
 
 import org.apache.commons.math.util.MathUtils;
 import org.apache.commons.math3.linear.Array2DRowRealMatrix;
+import org.apache.commons.math3.linear.NonSquareMatrixException;
 import org.apache.commons.math3.linear.RealMatrix;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
@@ -73,7 +74,7 @@ public class PermanentFunction extends AbstractFunction<Double> {
             }
             return sum;
         }
-        return 0.0;
+        throw new NonSquareMatrixException(a.getRowDimension(), a.getColumnDimension());
     }
 
     private static void calcHeapPermutation(List<int[]> out, int[] value, int n) {
