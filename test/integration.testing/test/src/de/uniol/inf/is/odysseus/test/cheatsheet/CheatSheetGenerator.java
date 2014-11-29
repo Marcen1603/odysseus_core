@@ -46,7 +46,6 @@ import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvide
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.mep.FunctionSignature;
 import de.uniol.inf.is.odysseus.mep.MEP;
-import de.uniol.inf.is.odysseus.script.parser.KeywordProvider;
 import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptParser;
 import de.uniol.inf.is.odysseus.script.parser.ReplacementProviderManager;
 import de.uniol.inf.is.odysseus.test.ExecutorProvider;
@@ -344,7 +343,7 @@ public class CheatSheetGenerator {
             if (i > 0) {
                 builder.append(" & ");
             }
-            builder.append(CheatSheetGenerator.sanitize(data));
+            builder.append(CheatSheetGenerator.sanitize(data.toUpperCase()));
             if (i == 1) {
                 builder.append(" \\\\\n");
                 i = 0;
@@ -366,7 +365,7 @@ public class CheatSheetGenerator {
             if (i > 0) {
                 builder.append(" & ");
             }
-            builder.append(CheatSheetGenerator.sanitize(protocol));
+            builder.append(CheatSheetGenerator.sanitize(protocol.toUpperCase()));
             if (i == 1) {
                 builder.append(" \\\\\n");
                 i = 0;
@@ -388,7 +387,7 @@ public class CheatSheetGenerator {
             if (i > 0) {
                 builder.append(" & ");
             }
-            builder.append(CheatSheetGenerator.sanitize(transport));
+            builder.append(CheatSheetGenerator.sanitize(transport.toUpperCase()));
             if (i == 1) {
                 builder.append(" \\\\\n");
                 i = 0;
@@ -408,16 +407,6 @@ public class CheatSheetGenerator {
         Collections.sort(commands);
         for (final String command : commands) {
             builder.append(" ").append(CheatSheetGenerator.sanitize(command.toUpperCase())).append("\\\\\n");
-        }
-        builder.append("\\subsection{Options}\n");
-        final KeywordProvider keywordProvider = new KeywordProvider();
-        final List<String> options = new ArrayList<>();
-        for (final String key : keywordProvider.getKeywords().keySet()) {
-            options.add(key);
-        }
-        Collections.sort(options);
-        for (final String option : options) {
-            builder.append(" ").append(CheatSheetGenerator.sanitize(option.toUpperCase())).append("\\\\\n");
         }
         builder.append("\\subsection{Constants}\n");
         final List<String> constants = new ArrayList<>();
@@ -443,7 +432,7 @@ public class CheatSheetGenerator {
         builder.append("        options=[['filename','example.csv']],\n");
         builder.append("        schema=[['value','Double']]\n");
         builder.append("})\n");
-        builder.append("output = map({expressions = ['value + 3']}, input)\n");
+        builder.append("output = MAP({expressions = ['value + 3']}, input)\n");
         builder.append("\\end{verbatim}\n\n");
 
     }
