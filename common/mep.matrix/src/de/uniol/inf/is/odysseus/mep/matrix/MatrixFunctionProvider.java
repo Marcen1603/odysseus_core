@@ -29,7 +29,7 @@ public class MatrixFunctionProvider implements IFunctionProvider {
     @Override
     public List<IFunction<?>> getFunctions() {
 
-        List<IFunction<?>> functions = new ArrayList<IFunction<?>>();
+        List<IFunction<?>> functions = new ArrayList<>();
         functions.add(new MatrixGetEntry());
         functions.add(new MatrixGetVectorOperator());
         functions.add(new MatrixGetValueOperator());
@@ -77,6 +77,7 @@ public class MatrixFunctionProvider implements IFunctionProvider {
         functions.add(new VectorFromStringFunction());
         
         functions.add(new PermsFunction());
+        functions.add(new PermanentFunction());
         functions.add(new ZerosMatrixFunction());
         functions.add(new OnesMatrixFunction());
 
