@@ -1,12 +1,12 @@
 /*******************************************************************************
  * Copyright 2014 The Odysseus Team
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -60,39 +60,39 @@ public class CheatSheetGenerator {
     static final Logger LOG = LoggerFactory.getLogger(CheatSheetGenerator.class);
     private static final String LATEX_CMD = "/usr/bin/pdflatex";
 
-    public static void execute(String file) throws FileNotFoundException, IOException {
+    public static void execute(final String file) throws FileNotFoundException, IOException {
 
-        StringBuilder builder = new StringBuilder();
-        build(builder);
+        final StringBuilder builder = new StringBuilder();
+        CheatSheetGenerator.build(builder);
         try (FileOutputStream out = new FileOutputStream(file)) {
             try (PrintStream print = new PrintStream(out)) {
                 print.println(builder.toString());
-                String[] env = new String[] {};
-                String directory = (new File(file)).getParent();
-                if ((new File(LATEX_CMD)).exists()) {
-                    LOG.info("Executing '{} -synctex=1 -interaction nonstopmode -output-directory {} {}'", new String[] { LATEX_CMD, directory, file });
+                final String[] env = new String[] {};
+                final String directory = (new File(file)).getParent();
+                if ((new File(CheatSheetGenerator.LATEX_CMD)).exists()) {
+                    CheatSheetGenerator.LOG.info("Executing '{} -synctex=1 -interaction nonstopmode -output-directory {} {}'", new String[] { CheatSheetGenerator.LATEX_CMD, directory, file });
                     final Process process = Runtime.getRuntime().exec("/usr/bin/pdflatex -synctex=1 -interaction nonstopmode -output-directory " + directory + " " + file, env);
                     try {
                         process.waitFor();
-                        BufferedReader reader = new BufferedReader(new InputStreamReader(process.getErrorStream()));
+                        final BufferedReader reader = new BufferedReader(new InputStreamReader(process.getErrorStream()));
                         String line;
                         while ((line = reader.readLine()) != null) {
-                            LOG.error(line);
+                            CheatSheetGenerator.LOG.error(line);
                         }
                     }
                     catch (final InterruptedException e) {
-                        LOG.error(e.getMessage(), e);
+                        CheatSheetGenerator.LOG.error(e.getMessage(), e);
                     }
                 }
                 else {
-                    LOG.warn("Unable to execute {} to generate cheatsheet PDF", LATEX_CMD);
+                    CheatSheetGenerator.LOG.warn("Unable to execute {} to generate cheatsheet PDF", CheatSheetGenerator.LATEX_CMD);
                 }
             }
         }
 
     }
 
-    static void build(StringBuilder builder) {
+    static void build(final StringBuilder builder) {
         builder.append("\\documentclass[10pt,landscape]{article}\n\n");
         builder.append("\\usepackage{multicol}\n");
         builder.append("\\usepackage{calc}\n");
@@ -162,13 +162,13 @@ public class CheatSheetGenerator {
 
         builder.append("\\newlength{\\MyLen}\n");
         builder.append("\\settowidth{\\MyLen}{\\texttt{letterpaper}/\\texttt{a4paper} \\ }\n\n");
-        buildPQLOperators(builder);
-        buildAggregationFunctions(builder);
-        buildMEPFunctions(builder);
-        buildHandlers(builder);
-        buildOdysseusScript(builder);
+        CheatSheetGenerator.buildPQLOperators(builder);
+        CheatSheetGenerator.buildAggregationFunctions(builder);
+        CheatSheetGenerator.buildMEPFunctions(builder);
+        CheatSheetGenerator.buildHandlers(builder);
+        CheatSheetGenerator.buildOdysseusScript(builder);
 
-        buildSample(builder);
+        CheatSheetGenerator.buildSample(builder);
         builder.append("\\rule{0.3\\linewidth}{0.25pt}\n");
         builder.append("\\scriptsize\n\n");
         builder.append("Copyright \\copyright\\ ").append(Calendar.getInstance().get(Calendar.YEAR)).append(" ODYSSEUS Team\n\n");
@@ -177,44 +177,46 @@ public class CheatSheetGenerator {
         builder.append("\\end{document}\n");
     }
 
-    private static void buildPQLOperators(StringBuilder builder) {
+    private static void buildPQLOperators(final StringBuilder builder) {
         builder.append("\\section{Operators}\n");
         if (ExecutorProvider.getExeuctor() != null) {
-            BasicTestContext context = new BasicTestContext();
+            final BasicTestContext context = new BasicTestContext();
             context.setPassword("manager");
             context.setUsername("System");
-            ISession session = UserManagementProvider.getSessionmanagement().login(context.getUsername(), context.getPassword().getBytes(), UserManagementProvider.getDefaultTenant());
+            final ISession session = UserManagementProvider.getSessionmanagement().login(context.getUsername(), context.getPassword().getBytes(), UserManagementProvider.getDefaultTenant());
 
-            List<LogicalOperatorInformation> operators = ExecutorProvider.getExeuctor().getOperatorInformations(session);
+            final List<LogicalOperatorInformation> operators = ExecutorProvider.getExeuctor().getOperatorInformations(session);
             Collections.sort(operators, new Comparator<LogicalOperatorInformation>() {
 
                 @Override
-                public int compare(LogicalOperatorInformation o1, LogicalOperatorInformation o2) {
+                public int compare(final LogicalOperatorInformation o1, final LogicalOperatorInformation o2) {
                     return o1.getOperatorName().compareTo(o2.getOperatorName());
                 }
 
             });
-            for (LogicalOperatorInformation operator : operators) {
-                builder.append("\\subsection{").append(sanitize(operator.getOperatorName().toUpperCase())).append("}\n");
-                builder.append(sanitize(operator.getDoc())).append("\n");
+            for (final LogicalOperatorInformation operator : operators) {
+                builder.append("\\subsection{").append(CheatSheetGenerator.sanitize(operator.getOperatorName().toUpperCase())).append("}\n");
+                builder.append(CheatSheetGenerator.sanitize(operator.getDoc())).append("\n");
                 String len = "";
-                for (LogicalParameterInformation parameter : operator.getParameters()) {
+                for (final LogicalParameterInformation parameter : operator.getParameters()) {
                     if (parameter.getName().length() > len.length()) {
-                        len = sanitize(parameter.getName());
+                        len = CheatSheetGenerator.sanitize(parameter.getName());
                     }
                 }
                 builder.append("\\settowidth{\\MyLen}{\\texttt{").append(len).append("} }\n");
                 builder.append("\\begin{tabular}{@{}p{\\the\\MyLen}@{}p{\\linewidth-\\the\\MyLen}@{}}\n");
 
                 // name, id und destination rausfiltern
-                for (LogicalParameterInformation parameter : operator.getParameters()) {
-                    if ((!parameter.getName().equalsIgnoreCase("NAME")) && (!parameter.getName().equalsIgnoreCase("ID")) && (!parameter.getName().equalsIgnoreCase("DESTINATION")))
+                for (final LogicalParameterInformation parameter : operator.getParameters()) {
+                    if ((!parameter.getName().equalsIgnoreCase("NAME")) && (!parameter.getName().equalsIgnoreCase("ID")) && (!parameter.getName().equalsIgnoreCase("DESTINATION"))) {
                         if (!parameter.getDoc().equalsIgnoreCase("No description")) {
-                            builder.append("\\texttt{").append(sanitize(parameter.getName())).append("}  & ").append(sanitize(parameter.getDoc())).append(" \\\\\n");
+                            builder.append("\\texttt{").append(CheatSheetGenerator.sanitize(parameter.getName())).append("}  & ").append(CheatSheetGenerator.sanitize(parameter.getDoc()))
+                                    .append(" \\\\\n");
                         }
                         else {
-                            builder.append("\\texttt{").append(sanitize(parameter.getName())).append("}  & -- \\\\\n");
+                            builder.append("\\texttt{").append(CheatSheetGenerator.sanitize(parameter.getName())).append("}  & -- \\\\\n");
                         }
+                    }
                 }
 
                 builder.append("\\end{tabular}\n");
@@ -222,18 +224,18 @@ public class CheatSheetGenerator {
         }
     }
 
-    private static void buildAggregationFunctions(StringBuilder builder) {
+    private static void buildAggregationFunctions(final StringBuilder builder) {
         builder.append("\\section{Aggregates}\n");
 
-        List<String> functions = new ArrayList<>(AggregateFunctionBuilderRegistry.getFunctionNames(Tuple.class));
+        final List<String> functions = new ArrayList<>(AggregateFunctionBuilderRegistry.getFunctionNames(Tuple.class));
         Collections.sort(functions);
         builder.append("\\begin{tabular}{@{}l@{\\hspace{1em}}l@{\\hspace{1em}}l@{}}\n");
         int i = 0;
-        for (String function : functions) {
+        for (final String function : functions) {
             if (i > 0) {
                 builder.append(" & ");
             }
-            builder.append(sanitize(function));
+            builder.append(CheatSheetGenerator.sanitize(function));
             if (i == 1) {
                 builder.append(" \\\\\n");
                 i = 0;
@@ -246,26 +248,26 @@ public class CheatSheetGenerator {
 
     }
 
-    private static void buildMEPFunctions(StringBuilder builder) {
+    private static void buildMEPFunctions(final StringBuilder builder) {
         builder.append("\\section{Functions}\n");
-        List<FunctionSignature> functionSignatures = new ArrayList<>(MEP.getFunctions());
+        final List<FunctionSignature> functionSignatures = new ArrayList<>(MEP.getFunctions());
         Collections.sort(functionSignatures, new Comparator<FunctionSignature>() {
 
             @Override
-            public int compare(FunctionSignature o1, FunctionSignature o2) {
+            public int compare(final FunctionSignature o1, final FunctionSignature o2) {
                 return o1.getSymbol().compareTo(o2.getSymbol());
             }
 
         });
 
-        List<IFunction<?>> symbols = new ArrayList<>();
-        Map<String, List<IFunction<?>>> functions = new HashMap<>();
+        final List<IFunction<?>> symbols = new ArrayList<>();
+        final Map<String, List<IFunction<?>>> functions = new HashMap<>();
 
-        for (FunctionSignature functionSignature : functionSignatures) {
-            IFunction<?> function = MEP.getFunction(functionSignature);
-            if ((function.getSymbol().charAt(0) >= 'A' && function.getSymbol().charAt(0) <= 'Z') || (function.getSymbol().charAt(0) >= 'a' && function.getSymbol().charAt(0) <= 'z')) {
+        for (final FunctionSignature functionSignature : functionSignatures) {
+            final IFunction<?> function = MEP.getFunction(functionSignature);
+            if (((function.getSymbol().charAt(0) >= 'A') && (function.getSymbol().charAt(0) <= 'Z')) || ((function.getSymbol().charAt(0) >= 'a') && (function.getSymbol().charAt(0) <= 'z'))) {
                 String packageName = function.getClass().getPackage().getName();
-                int index = packageName.lastIndexOf(".");
+                final int index = packageName.lastIndexOf(".");
                 packageName = packageName.substring(index + 1, index + 2).toUpperCase() + packageName.substring(index + 2);
                 if (!functions.containsKey(packageName)) {
                     functions.put(packageName, new ArrayList<IFunction<?>>());
@@ -279,68 +281,70 @@ public class CheatSheetGenerator {
             }
         }
 
-        for (String packageName : functions.keySet()) {
+        final List<String> packages = new ArrayList<>(functions.keySet());
+        Collections.sort(packages);
+        for (final String packageName : packages) {
             builder.append("\\subsection{").append(packageName).append("}\n");
             String len = "";
-            for (IFunction<?> function : functions.get(packageName)) {
+            for (final IFunction<?> function : functions.get(packageName)) {
                 if (function.getSymbol().length() > len.length()) {
-                    len = sanitize(function.getSymbol());
+                    len = CheatSheetGenerator.sanitize(function.getSymbol());
                 }
             }
             // builder.append("\\begin{multicols}{2}\n");
-            for (IFunction<?> function : functions.get(packageName)) {
-                String name = function.getSymbol();
-                String returnType = function.getReturnType().getQualName();
-                StringBuilder sb = new StringBuilder();
+            for (final IFunction<?> function : functions.get(packageName)) {
+                final String name = function.getSymbol();
+                final String returnType = function.getReturnType().getQualName();
+                final StringBuilder sb = new StringBuilder();
 
                 for (int i = 0; i < function.getArity(); i++) {
                     if (i > 0) {
                         sb.append(", ");
                     }
-                    sb.append(concatDatatypes(function.getAcceptedTypes(i)));
+                    sb.append(CheatSheetGenerator.concatDatatypes(function.getAcceptedTypes(i)));
                 }
 
-                builder.append("\\texttt{").append(sanitize(name)).append("(\\textit{").append(sanitize(sb.toString())).append("})}");
-                builder.append(" $\\rightarrow$ ").append(sanitize(returnType)).append("\\\\\n");
+                builder.append("\\texttt{").append(CheatSheetGenerator.sanitize(name)).append("(\\textit{").append(CheatSheetGenerator.sanitize(sb.toString())).append("})}");
+                builder.append(" $\\rightarrow$ ").append(CheatSheetGenerator.sanitize(returnType)).append("\\\\\n");
             }
             // builder.append("\\end{multicols}\n\n");
         }
 
         builder.append("\\section{Symbols}\n");
-        for (IFunction<?> symbol : symbols) {
-            String name = symbol.getSymbol();
-            String returnType = symbol.getReturnType().getQualName();
-            StringBuilder sb = new StringBuilder();
+        for (final IFunction<?> symbol : symbols) {
+            final String name = symbol.getSymbol();
+            final String returnType = symbol.getReturnType().getQualName();
+            final StringBuilder sb = new StringBuilder();
             for (int i = 0; i < symbol.getArity(); i++) {
                 if (i > 0) {
                     sb.append(", ");
                 }
-                sb.append(concatDatatypes(symbol.getAcceptedTypes(i)));
+                sb.append(CheatSheetGenerator.concatDatatypes(symbol.getAcceptedTypes(i)));
             }
 
-            builder.append("\\texttt{").append(sanitize(name)).append("(\\textit{").append(sanitize(sb.toString())).append("})}");
-            builder.append(" $\\rightarrow$ ").append(sanitize(returnType)).append("\\\\\n");
+            builder.append("\\texttt{").append(CheatSheetGenerator.sanitize(name)).append("(\\textit{").append(CheatSheetGenerator.sanitize(sb.toString())).append("})}");
+            builder.append(" $\\rightarrow$ ").append(CheatSheetGenerator.sanitize(returnType)).append("\\\\\n");
         }
     }
 
-    private static void buildHandlers(StringBuilder builder) {
+    private static void buildHandlers(final StringBuilder builder) {
         builder.append("\\section{Handlers}\n");
-        buildDataHandlers(builder);
-        buildProtocolHandlers(builder);
-        buildTransportHandlers(builder);
+        CheatSheetGenerator.buildDataHandlers(builder);
+        CheatSheetGenerator.buildProtocolHandlers(builder);
+        CheatSheetGenerator.buildTransportHandlers(builder);
     }
 
-    private static void buildDataHandlers(StringBuilder builder) {
+    private static void buildDataHandlers(final StringBuilder builder) {
         builder.append("\\subsection{Data Handlers}\n");
         final List<String> datas = new ArrayList<>(DataHandlerRegistry.getHandlerNames());
         Collections.sort(datas);
         builder.append("\\begin{tabular}{@{}l@{\\hspace{1em}}l@{\\hspace{1em}}l@{}}\n");
         int i = 0;
-        for (String data : datas) {
+        for (final String data : datas) {
             if (i > 0) {
                 builder.append(" & ");
             }
-            builder.append(sanitize(data));
+            builder.append(CheatSheetGenerator.sanitize(data));
             if (i == 1) {
                 builder.append(" \\\\\n");
                 i = 0;
@@ -352,17 +356,17 @@ public class CheatSheetGenerator {
         builder.append("\\end{tabular}\n\n");
     }
 
-    private static void buildProtocolHandlers(StringBuilder builder) {
+    private static void buildProtocolHandlers(final StringBuilder builder) {
         builder.append("\\subsection{Protocol Handlers}\n");
         final List<String> protocols = new ArrayList<>(ProtocolHandlerRegistry.getHandlerNames());
         Collections.sort(protocols);
         builder.append("\\begin{tabular}{@{}l@{\\hspace{1em}}l@{\\hspace{1em}}l@{}}\n");
         int i = 0;
-        for (String protocol : protocols) {
+        for (final String protocol : protocols) {
             if (i > 0) {
                 builder.append(" & ");
             }
-            builder.append(sanitize(protocol));
+            builder.append(CheatSheetGenerator.sanitize(protocol));
             if (i == 1) {
                 builder.append(" \\\\\n");
                 i = 0;
@@ -374,17 +378,17 @@ public class CheatSheetGenerator {
         builder.append("\\end{tabular}\n\n");
     }
 
-    private static void buildTransportHandlers(StringBuilder builder) {
+    private static void buildTransportHandlers(final StringBuilder builder) {
         builder.append("\\subsection{Transport Handlers}\n");
         final List<String> transports = new ArrayList<>(TransportHandlerRegistry.getHandlerNames());
         Collections.sort(transports);
         builder.append("\\begin{tabular}{@{}l@{\\hspace{1em}}l@{\\hspace{1em}}l@{}}\n");
         int i = 0;
-        for (String transport : transports) {
+        for (final String transport : transports) {
             if (i > 0) {
                 builder.append(" & ");
             }
-            builder.append(sanitize(transport));
+            builder.append(CheatSheetGenerator.sanitize(transport));
             if (i == 1) {
                 builder.append(" \\\\\n");
                 i = 0;
@@ -396,37 +400,37 @@ public class CheatSheetGenerator {
         builder.append("\\end{tabular}\n\n");
     }
 
-    private static void buildOdysseusScript(StringBuilder builder) {
+    private static void buildOdysseusScript(final StringBuilder builder) {
         builder.append("\\section{Odysseus Script}\n");
-        OdysseusScriptParser parser = new OdysseusScriptParser();
+        final OdysseusScriptParser parser = new OdysseusScriptParser();
         builder.append("\\subsection{Commands}\n");
-        List<String> commands = new ArrayList<>(parser.getKeywordNames());
+        final List<String> commands = new ArrayList<>(parser.getKeywordNames());
         Collections.sort(commands);
-        for (String command : commands) {
-            builder.append(" ").append(sanitize(command.toUpperCase())).append("\\\\\n");
+        for (final String command : commands) {
+            builder.append(" ").append(CheatSheetGenerator.sanitize(command.toUpperCase())).append("\\\\\n");
         }
         builder.append("\\subsection{Options}\n");
-        KeywordProvider keywordProvider = new KeywordProvider();
-        List<String> options = new ArrayList<>();
-        for (String key : keywordProvider.getKeywords().keySet()) {
+        final KeywordProvider keywordProvider = new KeywordProvider();
+        final List<String> options = new ArrayList<>();
+        for (final String key : keywordProvider.getKeywords().keySet()) {
             options.add(key);
         }
         Collections.sort(options);
-        for (String option : options) {
-            builder.append(" ").append(sanitize(option.toUpperCase())).append("\\\\\n");
+        for (final String option : options) {
+            builder.append(" ").append(CheatSheetGenerator.sanitize(option.toUpperCase())).append("\\\\\n");
         }
         builder.append("\\subsection{Constants}\n");
-        List<String> constants = new ArrayList<>();
-        for (String key : ReplacementProviderManager.generateProviderMap().keySet()) {
+        final List<String> constants = new ArrayList<>();
+        for (final String key : ReplacementProviderManager.generateProviderMap().keySet()) {
             constants.add(key.substring(1));
         }
         Collections.sort(constants);
-        for (String constant : constants) {
-            builder.append(" ").append(sanitize(constant.toUpperCase())).append("\\\\\n");
+        for (final String constant : constants) {
+            builder.append(" ").append(CheatSheetGenerator.sanitize(constant.toUpperCase())).append("\\\\\n");
         }
     }
 
-    private static void buildSample(StringBuilder builder) {
+    private static void buildSample(final StringBuilder builder) {
         builder.append("\\section{Sample Odysseus\\ query}\n");
         builder.append("\\begin{verbatim}\n");
         builder.append("#PARSER PQL\n");
@@ -444,7 +448,7 @@ public class CheatSheetGenerator {
 
     }
 
-    private static String sanitize(String string) {
+    private static String sanitize(final String string) {
         String result = string;
 
         result = result.replace("\\", "\\textbackslash{}");
@@ -464,12 +468,12 @@ public class CheatSheetGenerator {
         return result;
     }
 
-    private static String concatDatatypes(SDFDatatype[] types) {
-        if (types == null || types.length == 0) {
+    private static String concatDatatypes(final SDFDatatype[] types) {
+        if ((types == null) || (types.length == 0)) {
             return "";
         }
 
-        StringBuilder sb = new StringBuilder();
+        final StringBuilder sb = new StringBuilder();
 
         if (types.equals(SDFDatatype.NUMBERS)) {
             sb.append("Number");
