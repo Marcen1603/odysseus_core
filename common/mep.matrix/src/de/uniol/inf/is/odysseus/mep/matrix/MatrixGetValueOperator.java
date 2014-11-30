@@ -1,4 +1,4 @@
-/********************************************************************************** 
+/**********************************************************************************
  * Copyright 2014 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,25 +20,32 @@ import de.uniol.inf.is.odysseus.mep.AbstractFunction;
 
 /**
  * @author Christian Kuka <christian@kuka.cc>
- * 
+ * @version $Id$
+ *
  */
 public class MatrixGetValueOperator extends AbstractFunction<Double> {
 
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = -7381160514480433136L;
-    private static final SDFDatatype[][] accTypes = new SDFDatatype[][] { SDFDatatype.MATRIXS, SDFDatatype.VECTORS };
+    private static final SDFDatatype[][] ACC_TYPES = new SDFDatatype[][] { SDFDatatype.MATRIXS, SDFDatatype.VECTORS };
 
     public MatrixGetValueOperator() {
-        super("[]", 2, accTypes, SDFDatatype.DOUBLE);
+        super("[]", 2, MatrixGetValueOperator.ACC_TYPES, SDFDatatype.DOUBLE);
     }
 
     @Override
     public Double getValue() {
-        double[][] a = (double[][]) getInputValue(0);
-        double[] pos = (double[]) getInputValue(0);
-        return a[(int) pos[0]][(int) pos[1]];
+        final double[][] a = (double[][]) this.getInputValue(0);
+        final double[] pos = (double[]) this.getInputValue(1);
+        if (pos.length > 1) {
+            return new Double(a[(int) pos[0]][(int) pos[1]]);
+        }
+        else if (pos.length == 1) {
+            return new Double(a[(int) pos[0]][0]);
+        }
+        return new Double(a[0][0]);
     }
 
 }

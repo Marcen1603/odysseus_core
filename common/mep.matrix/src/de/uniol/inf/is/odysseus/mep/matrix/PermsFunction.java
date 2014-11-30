@@ -1,4 +1,4 @@
-/********************************************************************************** 
+/**********************************************************************************
  * Copyright 2014 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -29,42 +29,42 @@ import de.uniol.inf.is.odysseus.mep.AbstractFunction;
  */
 public class PermsFunction extends AbstractFunction<double[][]> {
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = 8679234269779879914L;
     private static final SDFDatatype[][] ACC_TYPES = new SDFDatatype[][] { SDFDatatype.VECTORS };
 
     public PermsFunction() {
-        super("perms", 1, ACC_TYPES, SDFDatatype.MATRIX_DOUBLE);
+        super("perms", 1, PermsFunction.ACC_TYPES, SDFDatatype.MATRIX_DOUBLE);
     }
 
     @Override
     public double[][] getValue() {
-        double[] a = (double[]) this.getInputValue(0);
-        return getValueInternal(a);
+        final double[] a = (double[]) this.getInputValue(0);
+        return PermsFunction.getValueInternal(a);
     }
 
-    protected static double[][] getValueInternal(double[] a) {
-        long factorial = MathUtils.factorial(a.length);
-        List<double[]> out = new ArrayList<>((int) factorial);
-        calcHeapPermutation(out, a, a.length);
+    protected static double[][] getValueInternal(final double[] a) {
+        final long factorial = MathUtils.factorial(a.length);
+        final List<double[]> out = new ArrayList<>((int) factorial);
+        PermsFunction.calcHeapPermutation(out, a, a.length);
         return out.toArray(new double[][] {});
     }
 
-    private static void calcHeapPermutation(List<double[]> out, double[] value, int n) {
+    private static void calcHeapPermutation(final List<double[]> out, final double[] value, final int n) {
         if (n == 1) {
             out.add(value.clone());
         }
         else {
             for (int i = 0; i < n; i++) {
-                calcHeapPermutation(out, value, n - 1);
-                if (n % 2 == 1) {
-                    double tmp = value[0];
+                PermsFunction.calcHeapPermutation(out, value, n - 1);
+                if ((n % 2) == 1) {
+                    final double tmp = value[0];
                     value[0] = value[n - 1];
                     value[n - 1] = tmp;
                 }
                 else {
-                    double tmp = value[i];
+                    final double tmp = value[i];
                     value[i] = value[n - 1];
                     value[n - 1] = tmp;
                 }

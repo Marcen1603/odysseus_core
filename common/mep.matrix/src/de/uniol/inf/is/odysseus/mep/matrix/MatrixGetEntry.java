@@ -1,4 +1,4 @@
-/********************************************************************************** 
+/**********************************************************************************
  * Copyright 2011 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -23,32 +23,33 @@ import de.uniol.inf.is.odysseus.mep.AbstractFunction;
 
 /**
  * Gets a single entry from a matrix
- * 
+ *
  * @author Christian Kuka <christian@kuka.cc>
- * 
+ * @version $Id$
+ *
  */
 public class MatrixGetEntry extends AbstractFunction<Double> {
 
     private static final long serialVersionUID = 8960765237278191962L;
-    public static final SDFDatatype[][] accTypes = new SDFDatatype[][] { SDFDatatype.MATRIXS, SDFDatatype.NUMBERS, SDFDatatype.NUMBERS };
+    private static final SDFDatatype[][] ACC_TYPES = new SDFDatatype[][] { SDFDatatype.MATRIXS, SDFDatatype.NUMBERS, SDFDatatype.NUMBERS };
 
     /**
- * 
- */
+     *
+     */
     public MatrixGetEntry() {
-        super("get", 3, accTypes, SDFDatatype.DOUBLE);
+        super("get", 3, MatrixGetEntry.ACC_TYPES, SDFDatatype.DOUBLE);
     }
 
     /**
-     * 
+     *
      * {@inheritDoc}
      */
     @Override
     public Double getValue() {
-        RealMatrix a = new Array2DRowRealMatrix((double[][]) this.getInputValue(0), false);
-        int row = this.getNumericalInputValue(1).intValue();
-        int column = this.getNumericalInputValue(2).intValue();
-        return a.getEntry(row, column);
+        final RealMatrix a = new Array2DRowRealMatrix((double[][]) this.getInputValue(0), false);
+        final int row = this.getNumericalInputValue(1).intValue();
+        final int column = this.getNumericalInputValue(2).intValue();
+        return new Double(a.getEntry(row, column));
     }
 
 }

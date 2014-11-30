@@ -1,4 +1,4 @@
-/********************************************************************************** 
+/**********************************************************************************
  * Copyright 2011 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -25,17 +25,18 @@ import de.uniol.inf.is.odysseus.mep.functions.math.MinusOperator;
 import de.uniol.inf.is.odysseus.mep.functions.math.PlusOperator;
 
 /**
- * 
- * @author Christian Kuka <christian.kuka@offis.de>
- * 
+ *
+ * @author Christian Kuka <christian@kuka.cc>
+ * @version $Id$
+ *
  */
 public class MatrixMultiplicationOperator extends AbstractBinaryOperator<double[][]> {
 
     private static final long serialVersionUID = 1646121521152263872L;
-    private static final SDFDatatype[][] accTypes = new SDFDatatype[][] { SDFDatatype.MATRIXS, SDFDatatype.MATRIXS };
+    private static final SDFDatatype[][] ACC_TYPES = new SDFDatatype[][] { SDFDatatype.MATRIXS, SDFDatatype.MATRIXS };
 
     public MatrixMultiplicationOperator() {
-        super("*", accTypes, SDFDatatype.MATRIX_DOUBLE);
+        super("*", MatrixMultiplicationOperator.ACC_TYPES, SDFDatatype.MATRIX_DOUBLE);
     }
 
     @Override
@@ -45,13 +46,13 @@ public class MatrixMultiplicationOperator extends AbstractBinaryOperator<double[
 
     @Override
     public double[][] getValue() {
-        RealMatrix a = new Array2DRowRealMatrix((double[][]) this.getInputValue(0), false);
-        RealMatrix b = new Array2DRowRealMatrix((double[][]) this.getInputValue(1), false);
+        final RealMatrix a = new Array2DRowRealMatrix((double[][]) this.getInputValue(0), false);
+        final RealMatrix b = new Array2DRowRealMatrix((double[][]) this.getInputValue(1), false);
 
-        return getValueInternal(a, b);
+        return MatrixMultiplicationOperator.getValueInternal(a, b);
     }
 
-    protected double[][] getValueInternal(RealMatrix a, RealMatrix b) {
+    protected static double[][] getValueInternal(final RealMatrix a, final RealMatrix b) {
         return a.multiply(b).getData();
     }
 
@@ -71,15 +72,15 @@ public class MatrixMultiplicationOperator extends AbstractBinaryOperator<double[
     }
 
     @Override
-    public boolean isLeftDistributiveWith(IOperator<double[][]> operator) {
-        return operator.getClass() == MatrixPlusOperator.class || operator.getClass() == MatrixMinusOperator.class || operator.getClass() == PlusOperator.class
-                || operator.getClass() == MinusOperator.class;
+    public boolean isLeftDistributiveWith(final IOperator<double[][]> operator) {
+        return (operator.getClass() == MatrixPlusOperator.class) || (operator.getClass() == MatrixMinusOperator.class) || (operator.getClass() == PlusOperator.class)
+                || (operator.getClass() == MinusOperator.class);
     }
 
     @Override
-    public boolean isRightDistributiveWith(IOperator<double[][]> operator) {
-        return operator.getClass() == MatrixPlusOperator.class || operator.getClass() == MatrixMinusOperator.class || operator.getClass() == PlusOperator.class
-                || operator.getClass() == MinusOperator.class;
+    public boolean isRightDistributiveWith(final IOperator<double[][]> operator) {
+        return (operator.getClass() == MatrixPlusOperator.class) || (operator.getClass() == MatrixMinusOperator.class) || (operator.getClass() == PlusOperator.class)
+                || (operator.getClass() == MinusOperator.class);
     }
 
 }

@@ -1,4 +1,4 @@
-/********************************************************************************** 
+/**********************************************************************************
  * Copyright 2014 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -22,21 +22,22 @@ import de.uniol.inf.is.odysseus.mep.AbstractFunction;
 
 /**
  * @author Christian Kuka <christian@kuka.cc>
- * 
+ * @version $Id$
+ *
  */
 public class VectorToMatrixFunction extends AbstractFunction<double[][]> {
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = -5197270672337781196L;
-    public static final SDFDatatype[][] accTypes = new SDFDatatype[][] { SDFDatatype.VECTORS };
+    public static final SDFDatatype[][] ACC_TYPES = new SDFDatatype[][] { SDFDatatype.VECTORS };
 
     public VectorToMatrixFunction() {
-        super("toMatrix", 1, accTypes, SDFDatatype.MATRIX_DOUBLE);
+        super("toMatrix", 1, VectorToMatrixFunction.ACC_TYPES, SDFDatatype.MATRIX_DOUBLE);
     }
 
     @Override
     public double[][] getValue() {
-        return (new Array2DRowRealMatrix((double[]) this.getInputValue(0))).getData();
+        return (new Array2DRowRealMatrix(new double[][] { (double[]) this.getInputValue(0) }, false)).getData();
     }
 }

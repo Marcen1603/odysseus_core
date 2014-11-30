@@ -1,4 +1,4 @@
-/********************************************************************************** 
+/**********************************************************************************
  * Copyright 2011 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -21,68 +21,105 @@ import java.util.List;
 import de.uniol.inf.is.odysseus.core.mep.IFunction;
 import de.uniol.inf.is.odysseus.mep.IFunctionProvider;
 
+/**
+ *
+ * @author Christian Kuka <christian@kuka.cc>
+ * @version $Id$
+ *
+ */
 public class MatrixFunctionProvider implements IFunctionProvider {
 
     public MatrixFunctionProvider() {
     }
 
+    /**
+     *
+     * {@inheritDoc}
+     */
     @Override
     public List<IFunction<?>> getFunctions() {
 
-        List<IFunction<?>> functions = new ArrayList<>();
+        final List<IFunction<?>> functions = new ArrayList<>();
+
+        // Getter functions
         functions.add(new MatrixGetEntry());
+        functions.add(new VectorGetEntry());
+
         functions.add(new MatrixGetVectorOperator());
         functions.add(new MatrixGetValueOperator());
-        functions.add(new VectorGetOperator());
-        
+        functions.add(new VectorGetValueOperator());
+
+        functions.add(new SubMatrixFunction());
+        functions.add(new SubVectorFunction());
+
+        // Compare operator
         functions.add(new MatrixEqualsOperator());
+        functions.add(new VectorEqualsOperator());
+
+        // Arithmetic operators
         functions.add(new MatrixMinusOperator());
         functions.add(new MatrixMinusScalarRHSOperator());
+        functions.add(new VectorMinusOperator());
+        functions.add(new VectorMinusScalarRHSOperator());
+
         functions.add(new MatrixMultiplicationOperator());
         functions.add(new MatrixMultiplicationScalarRHSOperator());
         functions.add(new MatrixMultiplicationScalarLHSOperator());
+        functions.add(new VectorMultiplicationOperator());
+        functions.add(new VectorMultiplicationScalarRHSOperator());
+        functions.add(new VectorMultiplicationScalarLHSOperator());
+
         functions.add(new MatrixPlusOperator());
         functions.add(new MatrixPlusScalarRHSOperator());
         functions.add(new MatrixPlusScalarLHSOperator());
-        functions.add(new MatrixDivisionScalarRHSOperator());
-        functions.add(new MatrixPowerOperator());
-        functions.add(new MatrixDeterminantFunction());
-        functions.add(new MatrixTraceFunction());
-        functions.add(new MatrixTransposeFunction());
-        functions.add(new MatrixInverseFunction());
-        functions.add(new MatrixIdentityMatrixFunction());
+        functions.add(new VectorPlusOperator());
+        functions.add(new VectorPlusScalarRHSOperator());
+        functions.add(new VectorPlusScalarLHSOperator());
 
-        functions.add(new MatrixSubMatrixFunction());
-        
+        functions.add(new MatrixDivisionScalarRHSOperator());
+        functions.add(new VectorDivisionScalarRHSOperator());
+
         // Aggregation functions
-        functions.add(new MatrixSMinFunction());
-        functions.add(new MatrixSMaxFunction());
-        functions.add(new MatrixSCountFunction());
-        functions.add(new MatrixSSumFunction());
-        functions.add(new MatrixSAVGFunction());
-        functions.add(new MatrixSMedianFunction());
-        functions.add(new VectorSMinFunction());
-        functions.add(new VectorSMaxFunction());
-        functions.add(new VectorSCountFunction());
-        functions.add(new VectorSSumFunction());
-        functions.add(new VectorSAVGFunction());
-        
+        functions.add(new MinMatrixFunction());
+        functions.add(new MinVectorFunction());
+
+        functions.add(new MaxMatrixFunction());
+        functions.add(new MaxVectorFunction());
+
+        functions.add(new CountMatrixFunction());
+        functions.add(new CountVectorFunction());
+
+        functions.add(new SumMatrixFunction());
+        functions.add(new SumVectorFunction());
+
+        functions.add(new AvgMatrixFunction());
+        functions.add(new AvgVectorFunction());
+
+        functions.add(new MedianMatrixFunction());
+        functions.add(new MedianVectorFunction());
+
+        // Transformation functions
         functions.add(new MatrixToVectorFunction());
-        functions.add(new VectorToMatrixFunction());    
-        
-        // Read functions
-        functions.add(new MatrixReadFunction());    
-        functions.add(new VectorReadFunction());    
-        functions.add(new VectorReadRowFunction());  
+        functions.add(new VectorToMatrixFunction());
+        functions.add(new ToStringMatrixFunction());
+        functions.add(new ToStringVectorFunction());
         functions.add(new VectorFromStringFunction());
-        
+
+        // Read functions
+        functions.add(new ReadMatrixFunction());
+        functions.add(new ReadVectorFunction());
+        functions.add(new ReadVectorRowFunction());
+
         functions.add(new PermsFunction());
         functions.add(new PermanentFunction());
+        functions.add(new MatrixPowerOperator());
+        functions.add(new DeterminantFunction());
+        functions.add(new TraceFunction());
+        functions.add(new TransposeFunction());
+        functions.add(new InverseMatrixFunction());
+        functions.add(new IdentityMatrixFunction());
         functions.add(new ZerosMatrixFunction());
         functions.add(new OnesMatrixFunction());
-
-        functions.add(new MatrixToStringFunction());
-        functions.add(new VectorToStringFunction());
 
         return functions;
     }

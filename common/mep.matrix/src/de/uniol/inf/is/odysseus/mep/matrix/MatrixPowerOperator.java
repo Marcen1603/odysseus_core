@@ -8,17 +8,18 @@ import de.uniol.inf.is.odysseus.mep.AbstractBinaryOperator;
 import de.uniol.inf.is.odysseus.mep.IOperator;
 
 /**
- * 
- * @author Christian Kuka <christian.kuka@offis.de>
- * 
+ *
+ * @author Christian Kuka <christian@kuka.cc>
+ * @version $Id$
+ *
  */
 public class MatrixPowerOperator extends AbstractBinaryOperator<double[][]> {
 
     private static final long serialVersionUID = -3615756862571687620L;
-    public static final SDFDatatype[][] accTypes = new SDFDatatype[][] { SDFDatatype.MATRIXS, SDFDatatype.NUMBERS };
+    private static final SDFDatatype[][] ACC_TYPES = new SDFDatatype[][] { SDFDatatype.MATRIXS, SDFDatatype.NUMBERS };
 
     public MatrixPowerOperator() {
-        super("^", accTypes, SDFDatatype.MATRIX_DOUBLE);
+        super("^", MatrixPowerOperator.ACC_TYPES, SDFDatatype.MATRIX_DOUBLE);
     }
 
     @Override
@@ -28,13 +29,13 @@ public class MatrixPowerOperator extends AbstractBinaryOperator<double[][]> {
 
     @Override
     public double[][] getValue() {
-        RealMatrix a = new Array2DRowRealMatrix((double[][]) this.getInputValue(0), false);
-        int b = ((Number) getInputValue(1)).intValue();
+        final RealMatrix a = new Array2DRowRealMatrix((double[][]) this.getInputValue(0), false);
+        final int b = ((Number) this.getInputValue(1)).intValue();
 
-        return getValueInternal(a, b);
+        return MatrixPowerOperator.getValueInternal(a, b);
     }
 
-    protected double[][] getValueInternal(RealMatrix a, int b) {
+    protected static double[][] getValueInternal(final RealMatrix a, final int b) {
         return a.power(b).getData();
     }
 
@@ -49,12 +50,12 @@ public class MatrixPowerOperator extends AbstractBinaryOperator<double[][]> {
     }
 
     @Override
-    public boolean isLeftDistributiveWith(IOperator<double[][]> operator) {
+    public boolean isLeftDistributiveWith(final IOperator<double[][]> operator) {
         return false;
     }
 
     @Override
-    public boolean isRightDistributiveWith(IOperator<double[][]> operator) {
+    public boolean isRightDistributiveWith(final IOperator<double[][]> operator) {
         return false;
     }
 

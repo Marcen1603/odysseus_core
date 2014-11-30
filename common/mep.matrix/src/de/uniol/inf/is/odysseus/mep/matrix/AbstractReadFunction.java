@@ -1,4 +1,4 @@
-/********************************************************************************** 
+/**********************************************************************************
  * Copyright 2014 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -34,13 +34,14 @@ import de.uniol.inf.is.odysseus.mep.AbstractFunction;
 
 /**
  * @author Christian Kuka <christian@kuka.cc>
- * 
+ * @version $Id$
+ *
  */
 abstract public class AbstractReadFunction<T> extends AbstractFunction<T> {
 
     /**
-	 * 
-	 */
+     *
+     */
     private static final long serialVersionUID = -4388346024131508003L;
     private static final Logger LOG = LoggerFactory.getLogger(AbstractReadFunction.class);
 
@@ -50,13 +51,13 @@ abstract public class AbstractReadFunction<T> extends AbstractFunction<T> {
      * @param acceptedTypes
      * @param returnType
      */
-    public AbstractReadFunction(String symbol, int arity, SDFDatatype[][] acceptedTypes, SDFDatatype returnType) {
+    public AbstractReadFunction(final String symbol, final int arity, final SDFDatatype[][] acceptedTypes, final SDFDatatype returnType) {
         super(symbol, arity, acceptedTypes, returnType);
     }
 
-    protected static double[][] getValueInternal(String path, String delimiter, int[] elements) {
-        File file = new File(path);
-        List<double[]> resultList = new LinkedList<>();
+    protected static double[][] getValueInternal(final String path, final String delimiter, final int[] elements) {
+        final File file = new File(path);
+        final List<double[]> resultList = new LinkedList<>();
         if (file.canRead()) {
             FileInputStream stream;
             try {
@@ -64,16 +65,16 @@ abstract public class AbstractReadFunction<T> extends AbstractFunction<T> {
                 try (BufferedReader reader = new BufferedReader(new InputStreamReader(stream))) {
                     String line = null;
                     while ((line = reader.readLine()) != null) {
-                        String[] stringValues = line.split(Pattern.quote("" + delimiter));
+                        final String[] stringValues = line.split(Pattern.quote("" + delimiter));
                         if (elements != null) {
-                            double[] values = new double[elements.length];
+                            final double[] values = new double[elements.length];
                             for (int i = 0; i < elements.length; i++) {
                                 values[i] = Double.parseDouble(stringValues[elements[i]].trim());
                             }
                             resultList.add(values);
                         }
                         else {
-                            double[] values = new double[stringValues.length];
+                            final double[] values = new double[stringValues.length];
                             for (int i = 0; i < stringValues.length; i++) {
                                 values[i] = Double.parseDouble(stringValues[i].trim());
                             }
@@ -81,16 +82,16 @@ abstract public class AbstractReadFunction<T> extends AbstractFunction<T> {
                         }
                     }
                 }
-                catch (IOException e) {
-                    LOG.warn(e.getMessage(), e);
+                catch (final IOException e) {
+                    AbstractReadFunction.LOG.warn(e.getMessage(), e);
                 }
             }
-            catch (FileNotFoundException e) {
-                LOG.warn(e.getMessage(), e);
+            catch (final FileNotFoundException e) {
+                AbstractReadFunction.LOG.warn(e.getMessage(), e);
             }
         }
-        double[][] result = new double[resultList.size()][resultList.get(0).length];
-        Iterator<double[]> iter = resultList.iterator();
+        final double[][] result = new double[resultList.size()][resultList.get(0).length];
+        final Iterator<double[]> iter = resultList.iterator();
         int i = 0;
         while (iter.hasNext()) {
             result[i] = iter.next();

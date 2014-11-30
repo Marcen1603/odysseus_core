@@ -1,4 +1,4 @@
-/********************************************************************************** 
+/**********************************************************************************
  * Copyright 2014 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -21,31 +21,31 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.mep.AbstractFunction;
 
 /**
- * 
+ *
  * @author Christian Kuka <christian@kuka.cc>
- * 
+ *
  */
 public class OnesMatrixFunction extends AbstractFunction<double[][]> {
 
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = -3659254948198127788L;
     public static final SDFDatatype[][] accTypes = new SDFDatatype[][] { SDFDatatype.NUMBERS, SDFDatatype.NUMBERS };
 
     public OnesMatrixFunction() {
-        super("ones", 2, accTypes, SDFDatatype.MATRIX_DOUBLE);
+        super("ones", 2, OnesMatrixFunction.accTypes, SDFDatatype.MATRIX_DOUBLE);
     }
 
     @Override
     public double[][] getValue() {
-        int width = getNumericalInputValue(0).intValue();
-        int height = getNumericalInputValue(1).intValue();
-        return getValueInternal(width, height);
+        final int width = this.getNumericalInputValue(0).intValue();
+        final int height = this.getNumericalInputValue(1).intValue();
+        return OnesMatrixFunction.getValueInternal(width, height);
     }
 
-    protected static double[][] getValueInternal(int width, int height) {
-        double[][] ones = new double[height][width];
+    protected static double[][] getValueInternal(final int width, final int height) {
+        final double[][] ones = new double[height][width];
         Arrays.fill(ones, new Double(1.0));
         return ones;
     }

@@ -29,43 +29,44 @@ import de.uniol.inf.is.odysseus.mep.AbstractFunction;
 
 /**
  * MEP Function to calculate the permanent of a matrix.
- * http://en.wikipedia.org/wiki/Permanent
- * 
- * @author Christian Kuka <christian@kuka.cc>
  *
+ * @see <a href="http://en.wikipedia.org/wiki/Permanent">Permanent</a>
+ *
+ * @author Christian Kuka <christian@kuka.cc>
+ * @version $Id$
  */
 public class PermanentFunction extends AbstractFunction<Double> {
 
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = 8610775865571282157L;
     public static final SDFDatatype[][] accTypes = new SDFDatatype[][] { SDFDatatype.MATRIXS };
 
     public PermanentFunction() {
-        super("perm", 1, accTypes, SDFDatatype.DOUBLE);
+        super("perm", 1, PermanentFunction.accTypes, SDFDatatype.DOUBLE);
     }
 
     @Override
     public Double getValue() {
-        RealMatrix a = new Array2DRowRealMatrix((double[][]) this.getInputValue(0), false);
-        return new Double(getValueInternal(a));
+        final RealMatrix a = new Array2DRowRealMatrix((double[][]) this.getInputValue(0), false);
+        return new Double(PermanentFunction.getValueInternal(a));
     }
 
-    protected static double getValueInternal(RealMatrix a) {
+    protected static double getValueInternal(final RealMatrix a) {
         if (a.isSquare()) {
             final int order = a.getRowDimension();
 
-            int[] indexes = new int[order];
+            final int[] indexes = new int[order];
             for (int i = 0; i < order; i++) {
                 indexes[i] = i;
             }
-            long factorial = MathUtils.factorial(order);
-            List<int[]> permutations = new ArrayList<>((int) factorial);
-            calcHeapPermutation(permutations, indexes, order);
+            final long factorial = MathUtils.factorial(order);
+            final List<int[]> permutations = new ArrayList<>((int) factorial);
+            PermanentFunction.calcHeapPermutation(permutations, indexes, order);
 
             double sum = 0.0;
-            for (int[] p : permutations) {
+            for (final int[] p : permutations) {
                 double product = 1.0;
                 for (int i = 0; i < order; i++) {
                     product *= a.getEntry(i, p[i]);
@@ -77,20 +78,20 @@ public class PermanentFunction extends AbstractFunction<Double> {
         throw new NonSquareMatrixException(a.getRowDimension(), a.getColumnDimension());
     }
 
-    private static void calcHeapPermutation(List<int[]> out, int[] value, int n) {
+    private static void calcHeapPermutation(final List<int[]> out, final int[] value, final int n) {
         if (n == 1) {
             out.add(value.clone());
         }
         else {
             for (int i = 0; i < n; i++) {
-                calcHeapPermutation(out, value, n - 1);
-                if (n % 2 == 1) {
-                    int tmp = value[0];
+                PermanentFunction.calcHeapPermutation(out, value, n - 1);
+                if ((n % 2) == 1) {
+                    final int tmp = value[0];
                     value[0] = value[n - 1];
                     value[n - 1] = tmp;
                 }
                 else {
-                    int tmp = value[i];
+                    final int tmp = value[i];
                     value[i] = value[n - 1];
                     value[n - 1] = tmp;
                 }

@@ -1,4 +1,4 @@
-/********************************************************************************** 
+/**********************************************************************************
  * Copyright 2014 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -21,28 +21,28 @@ import org.apache.commons.math3.linear.RealMatrix;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 
 /**
- * 
+ *
  * @author Christian Kuka <christian@kuka.cc>
- * 
+ * @version $Id$
+ *
  */
 public class MatrixMinusScalarRHSOperator extends AbstractMatrixMinusScalarOperator {
 
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = -670967211901284252L;
-    private static final SDFDatatype[][] accTypes = new SDFDatatype[][] { SDFDatatype.MATRIXS, SDFDatatype.NUMBERS };
+    private static final SDFDatatype[][] ACC_TYPES = new SDFDatatype[][] { SDFDatatype.MATRIXS, SDFDatatype.NUMBERS };
 
     public MatrixMinusScalarRHSOperator() {
-        super(MatrixMinusScalarRHSOperator.accTypes);
+        super(MatrixMinusScalarRHSOperator.ACC_TYPES);
     }
 
     @Override
     public double[][] getValue() {
         final RealMatrix a = new Array2DRowRealMatrix((double[][]) this.getInputValue(0), false);
         final double b = this.getNumericalInputValue(1).doubleValue();
-
-        return this.getValueInternal(a, b);
+        return AbstractMatrixMinusScalarOperator.getValueInternal(a, b);
     }
 
 }

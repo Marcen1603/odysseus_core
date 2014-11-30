@@ -1,4 +1,4 @@
-/********************************************************************************** 
+/**********************************************************************************
  * Copyright 2014 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -22,14 +22,15 @@ import de.uniol.inf.is.odysseus.mep.AbstractBinaryOperator;
 import de.uniol.inf.is.odysseus.mep.IOperator;
 
 /**
- * 
+ *
  * @author Christian Kuka <christian@kuka.cc>
- * 
+ * @version $Id$
+ *
  */
 public abstract class AbstractMatrixMinusScalarOperator extends AbstractBinaryOperator<double[][]> {
 
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = -4638197980062027520L;
 
@@ -42,7 +43,7 @@ public abstract class AbstractMatrixMinusScalarOperator extends AbstractBinaryOp
         return 6;
     }
 
-    protected double[][] getValueInternal(final RealMatrix a, final double b) {
+    protected static double[][] getValueInternal(final RealMatrix a, final double b) {
         return a.scalarAdd(-b).getData();
     }
 
