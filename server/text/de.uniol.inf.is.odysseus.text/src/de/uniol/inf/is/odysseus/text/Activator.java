@@ -1,4 +1,4 @@
-/********************************************************************************** 
+/**********************************************************************************
  * Copyright 2011 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,35 +18,36 @@ package de.uniol.inf.is.odysseus.text;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 
+/**
+ *
+ * @author Christian Kuka <christian@kuka.cc>
+ * @version $Id$
+ *
+ */
 public class Activator implements BundleActivator {
 
-	private static BundleContext context;
+    private static BundleContext context;
 
-	static BundleContext getContext() {
-		return context;
-	}
+    static BundleContext getContext() {
+        return Activator.context;
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.osgi.framework.BundleActivator#start(org.osgi.framework.BundleContext
-	 * )
-	 */
-	@Override
-	public void start(BundleContext bundleContext) throws Exception {
-		Activator.context = bundleContext;
-	}
+    /**
+     *
+     * {@inheritDoc}
+     */
+    @Override
+    public void start(final BundleContext bundleContext) throws Exception {
+        Activator.context = bundleContext;
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.osgi.framework.BundleActivator#stop(org.osgi.framework.BundleContext)
-	 */
-	@Override
-	public void stop(BundleContext bundleContext) throws Exception {
-		Activator.context = null;
-	}
+    /**
+     *
+     * {@inheritDoc}
+     */
+    @Override
+    public void stop(final BundleContext bundleContext) throws Exception {
+        Activator.context = null;
+    }
 
 }

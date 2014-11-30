@@ -1,4 +1,4 @@
-/********************************************************************************** 
+/**********************************************************************************
  * Copyright 2011 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.uniol.inf.is.odysseus.text.function;
+package de.uniol.inf.is.odysseus.text.function.text;
 
 import org.apache.commons.codec.language.Soundex;
 
@@ -22,27 +22,27 @@ import de.uniol.inf.is.odysseus.mep.AbstractFunction;
 
 /**
  * MEP function to compute the soundex of a string
- * 
+ *
  * @author Christian Kuka <christian@kuka.cc>
  * @version $Id$
- * 
+ *
  */
 public class SoundexFunction extends AbstractFunction<String> {
 
     /**
-	 * 
-	 */
+     *
+     */
     private static final long serialVersionUID = 3286522655596260036L;
-    private static final SDFDatatype[][] accTypes = new SDFDatatype[][] { { SDFDatatype.STRING }, { SDFDatatype.STRING } };
+    private static final SDFDatatype[][] ACC_TYPES = new SDFDatatype[][] { { SDFDatatype.STRING } };
 
     public SoundexFunction() {
-        super("soundex", 2, accTypes, SDFDatatype.STRING);
+        super("soundex", 1, SoundexFunction.ACC_TYPES, SDFDatatype.STRING);
     }
 
     @Override
     public String getValue() {
-        Soundex soundex = new Soundex();
-        String soundexValue = soundex.soundex(getInputValue(0).toString());
+        final Soundex soundex = new Soundex();
+        final String soundexValue = soundex.soundex(this.getInputValue(0).toString());
         return soundexValue;
     }
 }

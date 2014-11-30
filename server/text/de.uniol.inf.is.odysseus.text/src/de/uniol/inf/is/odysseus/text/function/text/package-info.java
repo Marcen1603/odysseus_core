@@ -1,4 +1,4 @@
-/********************************************************************************** 
+/**********************************************************************************
  * Copyright 2011 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,6 +15,7 @@
  */
 /**
  * @author Christian Kuka <christian@kuka.cc>
+ * @version $Id$
  *
  */
-package de.uniol.inf.is.odysseus.text.function;
+package de.uniol.inf.is.odysseus.text.function.text;

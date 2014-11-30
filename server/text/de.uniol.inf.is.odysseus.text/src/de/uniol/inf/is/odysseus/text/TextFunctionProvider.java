@@ -1,4 +1,4 @@
-/********************************************************************************** 
+/**********************************************************************************
  * Copyright 2011 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -23,36 +23,35 @@ import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.mep.IFunction;
 import de.uniol.inf.is.odysseus.mep.IFunctionProvider;
-import de.uniol.inf.is.odysseus.text.function.ColognePhoneticFunction;
-import de.uniol.inf.is.odysseus.text.function.LevensteinFunction;
-import de.uniol.inf.is.odysseus.text.function.MetaphoneFunction;
-import de.uniol.inf.is.odysseus.text.function.SoundexFunction;
+import de.uniol.inf.is.odysseus.text.function.text.ColognePhoneticFunction;
+import de.uniol.inf.is.odysseus.text.function.text.LevensteinFunction;
+import de.uniol.inf.is.odysseus.text.function.text.MetaphoneFunction;
+import de.uniol.inf.is.odysseus.text.function.text.SoundexFunction;
 
 /**
- * 
+ *
  * @author Christian Kuka <christian@kuka.cc>
- * 
+ * @version $Id$
+ *
  */
 public class TextFunctionProvider implements IFunctionProvider {
-	private static final Logger LOG = LoggerFactory
-			.getLogger(TextFunctionProvider.class);
+    private static final Logger LOG = LoggerFactory.getLogger(TextFunctionProvider.class);
 
-	public TextFunctionProvider() {
+    public TextFunctionProvider() {
 
-	}
+    }
 
-	@Override
-	public List<IFunction<?>> getFunctions() {
+    @Override
+    public List<IFunction<?>> getFunctions() {
 
-		final List<IFunction<?>> functions = new ArrayList<IFunction<?>>();
+        final List<IFunction<?>> functions = new ArrayList<>();
 
-		functions.add(new SoundexFunction());
-		functions.add(new ColognePhoneticFunction());
-		functions.add(new MetaphoneFunction());
-		functions.add(new LevensteinFunction());
-		TextFunctionProvider.LOG.info(String.format("Register functions: %s",
-				functions));
-		return functions;
-	}
+        functions.add(new SoundexFunction());
+        functions.add(new ColognePhoneticFunction());
+        functions.add(new MetaphoneFunction());
+        functions.add(new LevensteinFunction());
+        TextFunctionProvider.LOG.info(String.format("Register functions: %s", functions));
+        return functions;
+    }
 
 }

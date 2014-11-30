@@ -1,4 +1,4 @@
-/********************************************************************************** 
+/**********************************************************************************
  * Copyright 2011 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.uniol.inf.is.odysseus.text.function;
+package de.uniol.inf.is.odysseus.text.function.text;
 
 import org.apache.commons.codec.language.Metaphone;
 
@@ -22,28 +22,28 @@ import de.uniol.inf.is.odysseus.mep.AbstractFunction;
 
 /**
  * MEP function to compute the metaphone of a string
- * 
+ *
  * @author Christian Kuka <christian@kuka.cc>
- * 
+ * @version $Id$
+ *
  */
 public class MetaphoneFunction extends AbstractFunction<String> {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -8470425457909284574L;
-	private static final SDFDatatype[][] accTypes = new SDFDatatype[][] { {SDFDatatype.STRING},{SDFDatatype.STRING} };
+    /**
+     *
+     */
+    private static final long serialVersionUID = -8470425457909284574L;
+    private static final SDFDatatype[][] ACC_TYPES = new SDFDatatype[][] { { SDFDatatype.STRING } };
 
-	public MetaphoneFunction() {
-		super("metaphone",1,accTypes,SDFDatatype.STRING);
-	}
-	
-	@Override
-	public String getValue() {
-		Metaphone metaphone = new Metaphone();
-		String metaphoneValue = metaphone
-				.metaphone(getInputValue(0).toString());
-		return metaphoneValue;
-	}
+    public MetaphoneFunction() {
+        super("metaphone", 1, MetaphoneFunction.ACC_TYPES, SDFDatatype.STRING);
+    }
+
+    @Override
+    public String getValue() {
+        final Metaphone metaphone = new Metaphone();
+        final String metaphoneValue = metaphone.metaphone(this.getInputValue(0).toString());
+        return metaphoneValue;
+    }
 
 }

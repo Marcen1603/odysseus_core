@@ -1,4 +1,4 @@
-/********************************************************************************** 
+/**********************************************************************************
  * Copyright 2011 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.uniol.inf.is.odysseus.text.function;
+package de.uniol.inf.is.odysseus.text.function.text;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -22,24 +22,23 @@ import de.uniol.inf.is.odysseus.mep.AbstractFunction;
 
 /**
  * MEP function to compute the levenstein distance of a string
- * 
+ *
  * @author Christian Kuka <christian@kuka.cc>
- * 
+ * @version $Id$
+ *
  */
 public class LevensteinFunction extends AbstractFunction<Integer> {
 
-	private static final long serialVersionUID = 5254931226986934896L;
-	private static final SDFDatatype[][] accTypes = new SDFDatatype[][] {
-			{ SDFDatatype.STRING }, { SDFDatatype.STRING } };
+    private static final long serialVersionUID = 5254931226986934896L;
+    private static final SDFDatatype[][] ACC_TYPES = new SDFDatatype[][] { { SDFDatatype.STRING }, { SDFDatatype.STRING } };
 
-	public LevensteinFunction() {
-		super("levenstein", 2, accTypes, SDFDatatype.INTEGER);
-	}
+    public LevensteinFunction() {
+        super("levenstein", 2, LevensteinFunction.ACC_TYPES, SDFDatatype.INTEGER);
+    }
 
-	@Override
-	public Integer getValue() {
-		return StringUtils.getLevenshteinDistance(getInputValue(0).toString(),
-				getInputValue(1).toString());
-	}
+    @Override
+    public Integer getValue() {
+        return new Integer(StringUtils.getLevenshteinDistance(this.getInputValue(0).toString(), this.getInputValue(1).toString()));
+    }
 
 }

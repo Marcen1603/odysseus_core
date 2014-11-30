@@ -1,4 +1,4 @@
-/********************************************************************************** 
+/**********************************************************************************
  * Copyright 2011 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,34 +13,34 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.uniol.inf.is.odysseus.text.function;
+package de.uniol.inf.is.odysseus.text.function.text;
+
+import org.apache.commons.codec.language.ColognePhonetic;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.mep.AbstractFunction;
 
-import org.apache.commons.codec.language.ColognePhonetic;
-
 /**
  * MEP function to compute the cologne phonetic of a string
- * 
+ *
  * @author Christian Kuka <christian@kuka.cc>
- * 
+ * @version $Id$
+ *
  */
 public class ColognePhoneticFunction extends AbstractFunction<String> {
 
-	private static final long serialVersionUID = 1265565609372371657L;
-	private static final SDFDatatype[][] accTypes = new SDFDatatype[][] { {SDFDatatype.STRING},{SDFDatatype.STRING} };
+    private static final long serialVersionUID = 1265565609372371657L;
+    private static final SDFDatatype[][] ACC_TYPES = new SDFDatatype[][] { { SDFDatatype.STRING } };
 
-	public ColognePhoneticFunction() {
-		super("colognephonetic",1,accTypes,SDFDatatype.STRING);
-	}
-	
-	@Override
-	public String getValue() {
-		ColognePhonetic colognePhonetic = new ColognePhonetic();
-		String colognePhoneticValue = colognePhonetic
-				.colognePhonetic(getInputValue(0).toString());
-		return colognePhoneticValue;
-	}
+    public ColognePhoneticFunction() {
+        super("colognephonetic", 1, ColognePhoneticFunction.ACC_TYPES, SDFDatatype.STRING);
+    }
+
+    @Override
+    public String getValue() {
+        final ColognePhonetic colognePhonetic = new ColognePhonetic();
+        final String colognePhoneticValue = colognePhonetic.colognePhonetic(this.getInputValue(0).toString());
+        return colognePhoneticValue;
+    }
 
 }
