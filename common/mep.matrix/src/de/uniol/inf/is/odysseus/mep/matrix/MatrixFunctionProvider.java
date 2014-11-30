@@ -57,6 +57,13 @@ public class MatrixFunctionProvider implements IFunctionProvider {
         functions.add(new VectorEqualsOperator());
 
         // Arithmetic operators
+        functions.add(new MatrixPlusOperator());
+        functions.add(new MatrixPlusScalarRHSOperator());
+        functions.add(new MatrixPlusScalarLHSOperator());
+        functions.add(new VectorPlusOperator());
+        functions.add(new VectorPlusScalarRHSOperator());
+        functions.add(new VectorPlusScalarLHSOperator());
+
         functions.add(new MatrixMinusOperator());
         functions.add(new MatrixMinusScalarRHSOperator());
         functions.add(new VectorMinusOperator());
@@ -69,12 +76,7 @@ public class MatrixFunctionProvider implements IFunctionProvider {
         functions.add(new VectorMultiplicationScalarRHSOperator());
         functions.add(new VectorMultiplicationScalarLHSOperator());
 
-        functions.add(new MatrixPlusOperator());
-        functions.add(new MatrixPlusScalarRHSOperator());
-        functions.add(new MatrixPlusScalarLHSOperator());
-        functions.add(new VectorPlusOperator());
-        functions.add(new VectorPlusScalarRHSOperator());
-        functions.add(new VectorPlusScalarLHSOperator());
+
 
         functions.add(new MatrixDivisionScalarRHSOperator());
         functions.add(new VectorDivisionScalarRHSOperator());

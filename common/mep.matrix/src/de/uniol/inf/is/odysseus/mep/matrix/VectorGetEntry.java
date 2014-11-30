@@ -37,7 +37,7 @@ public class VectorGetEntry extends AbstractFunction<Double> {
      *
      */
     public VectorGetEntry() {
-        super("get", 3, VectorGetEntry.ACC_TYPES, SDFDatatype.DOUBLE);
+        super("get", 2, VectorGetEntry.ACC_TYPES, SDFDatatype.DOUBLE);
     }
 
     /**
