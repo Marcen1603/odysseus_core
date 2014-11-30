@@ -33,7 +33,7 @@ import de.uniol.inf.is.odysseus.mep.functions.math.PlusOperator;
 public class VectorMultiplicationOperator extends AbstractBinaryOperator<double[][]> {
 
     private static final long serialVersionUID = 1646121521152263872L;
-    private static final SDFDatatype[][] ACC_TYPES = new SDFDatatype[][] { SDFDatatype.VECTORS, SDFDatatype.MATRIXS };
+    private static final SDFDatatype[][] ACC_TYPES = new SDFDatatype[][] { SDFDatatype.VECTORS, SDFDatatype.VECTORS };
 
     public VectorMultiplicationOperator() {
         super("*", VectorMultiplicationOperator.ACC_TYPES, SDFDatatype.MATRIX_DOUBLE);

@@ -76,10 +76,13 @@ public class MatrixFunctionProvider implements IFunctionProvider {
         functions.add(new VectorMultiplicationScalarRHSOperator());
         functions.add(new VectorMultiplicationScalarLHSOperator());
 
-
-
         functions.add(new MatrixDivisionScalarRHSOperator());
         functions.add(new VectorDivisionScalarRHSOperator());
+
+        functions.add(new MatrixPowerOperator());
+
+        functions.add(new InnerProductMatrixFunction());
+        functions.add(new InnerProductVectorFunction());
 
         // Aggregation functions
         functions.add(new MinMatrixFunction());
@@ -114,7 +117,6 @@ public class MatrixFunctionProvider implements IFunctionProvider {
 
         functions.add(new PermsFunction());
         functions.add(new PermanentFunction());
-        functions.add(new MatrixPowerOperator());
         functions.add(new DeterminantFunction());
         functions.add(new TraceFunction());
         functions.add(new TransposeFunction());

@@ -32,7 +32,7 @@ public class CountVectorFunction extends AbstractFunction<Integer> {
     private static final SDFDatatype[][] ACC_TYPES = new SDFDatatype[][] { SDFDatatype.VECTORS };
 
     public CountVectorFunction() {
-        super("sCount", 1, CountVectorFunction.ACC_TYPES, SDFDatatype.DOUBLE);
+        super("sCount", 1, CountVectorFunction.ACC_TYPES, SDFDatatype.INTEGER);
     }
 
     @Override
