@@ -6,6 +6,8 @@ import de.uniol.inf.is.odysseus.p2p_new.activator.P2PNewPlugIn;
 
 public class MessageByteBuffer {
 
+	
+	
 	private final ByteBuffer buffer = ByteBuffer.allocate(P2PNewPlugIn.TRANSPORT_BUFFER_SIZE);
 	private final ByteBuffer sizeBuffer = ByteBuffer.allocate(4);
 
@@ -38,7 +40,7 @@ public class MessageByteBuffer {
 
 				if (currentSize + message.remaining() < size) {
 					currentSize = currentSize + message.remaining();
-					buffer.put(message);
+					buffer.put(message.get());
 				} else {
 					buffer.put(message.array(), message.position(), size - currentSize);
 					message.position(message.position() + ( size - currentSize) );
