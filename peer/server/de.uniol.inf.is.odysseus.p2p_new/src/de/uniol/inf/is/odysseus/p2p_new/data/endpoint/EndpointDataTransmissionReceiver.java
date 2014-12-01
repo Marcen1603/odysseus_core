@@ -139,4 +139,10 @@ public class EndpointDataTransmissionReceiver extends AbstractTransmissionReceiv
 	protected IPeerCommunicator getPeerCommunicator() {
 		return peerCommunicator;
 	}
+
+	@Override
+	public void stopReceiving() {
+		//Has to be implemented in SubClass.
+		
+	}
 }

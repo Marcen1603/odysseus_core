@@ -19,4 +19,9 @@ public interface ITransmissionReceiver {
 	 * @throws DataTransmissionException 
 	 */
 	public void setPeerId(PeerID peerId) throws DataTransmissionException;
+	
+	/**
+	 * Stops current receiver, so that it can be set to new Peer ID.
+	 */
+	public void stopReceiving();
 }

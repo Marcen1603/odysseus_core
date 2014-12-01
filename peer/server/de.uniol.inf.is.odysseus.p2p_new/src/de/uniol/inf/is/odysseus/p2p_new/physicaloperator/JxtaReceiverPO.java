@@ -221,6 +221,7 @@ public class JxtaReceiverPO<T extends IStreamObject> extends AbstractSource<T> i
 		this.peerIDString = peerId;
 
 		// Update transmission
+		transmission.stopReceiving();
 		transmission.close();
 		transmission.removeListener(this);
 		transmission.setPeerId(toPeerID(peerId));

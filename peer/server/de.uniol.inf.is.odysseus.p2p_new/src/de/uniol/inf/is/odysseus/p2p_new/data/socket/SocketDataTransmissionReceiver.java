@@ -158,6 +158,13 @@ public class SocketDataTransmissionReceiver extends EndpointDataTransmissionRece
 			super.receivedMessage(communicator, senderPeer, message);
 		}
 	}
+	
+	@Override
+	public void stopReceiving() {
+		synchronized(receiving) {
+			receiving=false;
+		}
+	}
 
 	private void sendPortAckMessage(IPeerCommunicator communicator, PeerID receiverPeer, int port, int id) {
 		PortAckMessage portAckMessage = new PortAckMessage(port, id);
@@ -201,6 +208,7 @@ public class SocketDataTransmissionReceiver extends EndpointDataTransmissionRece
 		} catch (IOException e1) {
 		}
 	}
+	
 
 	@Override
 	public void sendClose() throws DataTransmissionException {

@@ -52,7 +52,7 @@ public class SimpleLoadBalancingStrategy implements ILoadBalancingStrategy, ILoa
 	/**
 	 * The default threshold for the CPU load as percentage.
 	 */
-	public static final double DEFAULT_CPU_THRESHOLD = 0.1;
+	public static final double DEFAULT_CPU_THRESHOLD = 0.01;
 	
 	/**
 	 * The default threshold for the memory load as percentage.
