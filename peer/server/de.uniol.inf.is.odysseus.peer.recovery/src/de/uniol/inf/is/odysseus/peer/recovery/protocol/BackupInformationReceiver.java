@@ -27,8 +27,7 @@ public class BackupInformationReceiver extends AbtractRepeatingMessageReceiver {
 	/**
 	 * The logger instance for this class.
 	 */
-	private static final Logger LOG = LoggerFactory
-			.getLogger(BackupInformationReceiver.class);
+	private static final Logger LOG = LoggerFactory.getLogger(BackupInformationReceiver.class);
 
 	/**
 	 * The single instance of this class.
@@ -59,23 +58,22 @@ public class BackupInformationReceiver extends AbtractRepeatingMessageReceiver {
 		serv.unregisterMessageType(BackupInformationMessage.class);
 		serv.removeListener(this, BackupInformationMessage.class);
 	}
-	
+
 	@Override
-	public void receivedMessage(IPeerCommunicator communicator,
-			PeerID senderPeer, IMessage message) {
+	public void receivedMessage(IPeerCommunicator communicator, PeerID senderPeer, IMessage message) {
 		Preconditions.checkNotNull(message);
 		Preconditions.checkNotNull(senderPeer);
 		Preconditions.checkNotNull(communicator);
 
 		if (message instanceof BackupInformationMessage) {
 			BackupInformationMessage biMessage = (BackupInformationMessage) message;
-			if(!mReceivedUUIDs.contains(biMessage.getUUID())) {
+			if (!mReceivedUUIDs.contains(biMessage.getUUID())) {
 				mReceivedUUIDs.add(biMessage.getUUID());
 			} else {
 				return;
 			}
-			
-			if(biMessage.isUpdate()) {
+
+			if (biMessage.isUpdate()) {
 				handleUpdateInformation(senderPeer, biMessage.getInfo());
 			} else {
 				handleNewInformation(biMessage.getInfo());
@@ -84,9 +82,7 @@ public class BackupInformationReceiver extends AbtractRepeatingMessageReceiver {
 			try {
 				communicator.send(senderPeer, new BackupInformationResponseMessage(biMessage.getUUID()));
 			} catch (PeerCommunicationException e) {
-				LOG.error(
-						"Could not send tuple send instruction response message!",
-						e);
+				LOG.error("Could not send backup-information response message!", e);
 			}
 		}
 	}
@@ -102,23 +98,19 @@ public class BackupInformationReceiver extends AbtractRepeatingMessageReceiver {
 	}
 
 	/**
-	 * Handles updated information. Checks, if we already have information about
-	 * this peer with this shared query id and if so, updates this information
+	 * Handles updated information. Checks, if we already have information about this peer with this shared query id and
+	 * if so, updates this information
 	 * 
 	 * @param sender
 	 *            Sender of this message
 	 * @param info
 	 *            The informationMessage to handle
 	 */
-	private void handleUpdateInformation(PeerID sender,
-			IRecoveryBackupInformation info) {
+	private void handleUpdateInformation(PeerID sender, IRecoveryBackupInformation info) {
 		// Just save the info, if we already have information about this
-		if (LocalBackupInformationAccess.getStoredPQLStatements(
-				info.getSharedQuery(), sender) != null) {
-
-			LocalBackupInformationAccess.updateInfo(info.getSharedQuery(),
-					info.getAboutPeer(), info.getPQL(), info.getLocationPeer(),
-					info.getLocalPQL());
+		if (LocalBackupInformationAccess.hasInformation(info.getSharedQuery(), sender)) {
+			LocalBackupInformationAccess.updateInfo(info.getSharedQuery(), info.getAboutPeer(), info.getPQL(),
+					info.getLocationPeer(), info.getLocalPQL());
 		}
 	}
 }

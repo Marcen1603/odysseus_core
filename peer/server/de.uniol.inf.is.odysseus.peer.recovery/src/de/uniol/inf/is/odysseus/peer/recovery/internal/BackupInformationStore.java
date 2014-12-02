@@ -144,6 +144,14 @@ public class BackupInformationStore implements IRecoveryBackupInformationStore {
 		return ImmutableSet.copyOf(this.mInfos.get(sharedQuery));
 
 	}
+	
+	@Override
+	public boolean hasInformationAbout(ID sharedQuery) {
+		Preconditions.checkNotNull(sharedQuery);
+		if (!this.mInfos.containsKey(sharedQuery))
+			return false;
+		return true;
+	}
 
 	@Override
 	public void remove(ID sharedQuery) {

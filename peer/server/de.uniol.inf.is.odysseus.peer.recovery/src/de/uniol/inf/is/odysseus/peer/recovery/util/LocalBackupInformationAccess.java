@@ -184,10 +184,8 @@ public class LocalBackupInformationAccess {
 		Preconditions.checkNotNull(peerId);
 
 		if (!cInfoStore.isPresent()) {
-
 			LOG.error("No backup information store for recovery bound!");
 			return null;
-
 		}
 
 		Set<String> pqlStatements = getStoredPQLStatements(sharedQueryId);
@@ -207,6 +205,45 @@ public class LocalBackupInformationAccess {
 
 		return ImmutableSet.copyOf(out);
 
+	}
+
+	/**
+	 * Gives information, if the store has information about the given shared query id and in this info about the given
+	 * peer
+	 * 
+	 * @param sharedQueryId
+	 *            The id of the shared query you want to know if this store has information about it
+	 * @param peerId
+	 *            The id of the peer for which you want to know if there is information in the information about the
+	 *            given shared query id (looks for info in store for shared query id -> gets this info -> searches in
+	 *            this info for an entry about the given peer)
+	 * @return true, if there is information, false, if not
+	 */
+	public static boolean hasInformation(ID sharedQueryId, PeerID peerId) {
+		Preconditions.checkNotNull(sharedQueryId);
+		Preconditions.checkNotNull(peerId);
+
+		if (!cInfoStore.isPresent()) {
+			LOG.error("No backup information store for recovery bound!");
+			return false;
+		}
+
+		if (!cInfoStore.get().hasInformationAbout(sharedQueryId)) {
+			return false;
+		}
+
+		Set<String> pqlStatements = getStoredPQLStatements(sharedQueryId);
+
+		for (String pql : pqlStatements) {
+			Optional<IRecoveryBackupInformation> info = cInfoStore.get().get(pql);
+			Preconditions.checkArgument(info.isPresent());
+
+			if (info.get().getAboutPeer() != null && info.get().getAboutPeer().equals(peerId)) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 	/**

@@ -155,4 +155,13 @@ public interface IRecoveryBackupInformationStore {
 	 */
 	public Map<PeerID, List<ID>> getMyBuddyList();
 
+	/**
+	 * Gives information, if the store has information about the given shared query id
+	 * 
+	 * @param sharedQuery
+	 *            The id of the shared query you want to know if this store has information about it
+	 * @return true, if the store has information, false, if not
+	 */
+	boolean hasInformationAbout(ID sharedQuery);
+
 }
