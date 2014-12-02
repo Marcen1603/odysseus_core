@@ -195,7 +195,7 @@ public class WsClient implements IExecutor, IClientExecutor, IOperatorOwner {
 		List<IUpdateEventListener> list = updateEventListener.get(type);
 		if (list != null) {
 			for (IUpdateEventListener l : list) {
-				l.eventOccured();
+				l.eventOccured(type);
 			}
 		}
 	}

@@ -8,6 +8,6 @@ public interface IUpdateEventListener {
 	static final String QUERY = "QUERY";
 	static final String SCHEDULING = "SCHEDULING";
 	
-	void eventOccured();
+	void eventOccured(String type);
 
 }

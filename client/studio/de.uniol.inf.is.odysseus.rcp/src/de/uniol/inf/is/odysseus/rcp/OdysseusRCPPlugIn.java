@@ -24,7 +24,8 @@ import de.uniol.inf.is.odysseus.core.planmanagement.executor.exception.PlanManag
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.rcp.l10n.OdysseusNLS;
 
-public class OdysseusRCPPlugIn extends AbstractUIPlugin implements IUpdateEventListener {
+public class OdysseusRCPPlugIn extends AbstractUIPlugin implements
+		IUpdateEventListener {
 
 	public static final String PLUGIN_ID = "de.uniol.inf.is.odysseus.rcp";
 
@@ -127,14 +128,18 @@ public class OdysseusRCPPlugIn extends AbstractUIPlugin implements IUpdateEventL
 		synchronized (OdysseusRCPPlugIn.class) {
 			executor = ex;
 			String name = executor.getName();
-			if (name == null){
+			if (name == null) {
 				name = "";
 			}
-			StatusBarManager.getInstance().setMessage(StatusBarManager.EXECUTOR_ID, name + " " + OdysseusNLS.Ready);
-			
-			executor.addUpdateEventListener(this, IUpdateEventListener.SCHEDULING, null);
-			executor.addUpdateEventListener(this, IUpdateEventListener.QUERY, null);
-			
+			StatusBarManager.getInstance().setMessage(
+					StatusBarManager.EXECUTOR_ID,
+					name + " " + OdysseusNLS.Ready);
+
+			executor.addUpdateEventListener(this,
+					IUpdateEventListener.SCHEDULING, null);
+			executor.addUpdateEventListener(this, IUpdateEventListener.QUERY,
+					null);
+
 			OdysseusRCPPlugIn.class.notifyAll();
 		}
 
@@ -149,21 +154,25 @@ public class OdysseusRCPPlugIn extends AbstractUIPlugin implements IUpdateEventL
 	}
 
 	public void unbindExecutor(IExecutor ex) {
-		if( executor == ex ) {
-			executor.removeUpdateEventListener(this, IUpdateEventListener.SCHEDULING, null);
-			executor.removeUpdateEventListener(this, IUpdateEventListener.QUERY, null);
+		if (executor == ex) {
+			executor.removeUpdateEventListener(this,
+					IUpdateEventListener.SCHEDULING, null);
+			executor.removeUpdateEventListener(this,
+					IUpdateEventListener.QUERY, null);
 			executor = null;
 		}
 	}
 
 	@Override
-	public void eventOccured() {
-		try {
-			StatusBarManager.getInstance().setMessage(
-					StatusBarManager.SCHEDULER_ID,
-					determineStatusManagerExecutorInfo());
-		} catch (PlanManagementException e) {
-			e.printStackTrace();
+	public void eventOccured(String type) {
+		if (type == IUpdateEventListener.SCHEDULING) {
+			try {
+				StatusBarManager.getInstance().setMessage(
+						StatusBarManager.SCHEDULER_ID,
+						determineStatusManagerExecutorInfo());
+			} catch (PlanManagementException e) {
+				e.printStackTrace();
+			}
 		}
 	}
 
@@ -171,9 +180,7 @@ public class OdysseusRCPPlugIn extends AbstractUIPlugin implements IUpdateEventL
 		return executor.getCurrentSchedulerID(OdysseusRCPPlugIn
 				.getActiveSession())
 				+ " ("
-				+ executor
-						.getCurrentSchedulingStrategyID(OdysseusRCPPlugIn
-								.getActiveSession()) + ") "
-		;
+				+ executor.getCurrentSchedulingStrategyID(OdysseusRCPPlugIn
+						.getActiveSession()) + ") ";
 	}
 }

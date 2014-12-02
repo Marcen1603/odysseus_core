@@ -150,7 +150,8 @@ public abstract class AbstractExecutor implements IServerExecutor,
 	 */
 	private ICompiler compiler;
 
-	private static Map<String, Class<? extends IPreTransformationHandler>> preTransformationHandlerMap = Maps.newHashMap();
+	private static Map<String, Class<? extends IPreTransformationHandler>> preTransformationHandlerMap = Maps
+			.newHashMap();
 	private IQueryDistributor queryDistributor;
 
 	/**
@@ -330,7 +331,6 @@ public abstract class AbstractExecutor implements IServerExecutor,
 		}
 	}
 
-
 	public void bindUserManagement(IUserManagement mgmt) {
 		// do nothing --> use UserManagement instead
 	}
@@ -348,27 +348,42 @@ public abstract class AbstractExecutor implements IServerExecutor,
 			distributor = null;
 		}
 	}
-	
+
 	// called by OSGi-DS
-	public static void bindPreTransformationHandler(IPreTransformationHandler serv) {
-		Preconditions.checkArgument(!Strings.isNullOrEmpty(serv.getName()), "preTransformationHandler's name must not be null or empty!");
-		Preconditions.checkArgument(!preTransformationHandlerMap.containsKey(serv.getName().toUpperCase()), "There is already a preTransformationHandler called '%s'", serv.getName().toUpperCase());
-		Preconditions.checkArgument(canCreateInstance(serv.getClass()), "Could not create instance of IPreTransformationHandler-class '%s'", serv.getClass());
-		
-		LOG.trace("Bound preTransformationHandler called '{}': {}", serv.getName().toUpperCase(), serv.getClass());
-		preTransformationHandlerMap.put(serv.getName().toUpperCase(), serv.getClass());
+	public static void bindPreTransformationHandler(
+			IPreTransformationHandler serv) {
+		Preconditions.checkArgument(!Strings.isNullOrEmpty(serv.getName()),
+				"preTransformationHandler's name must not be null or empty!");
+		Preconditions.checkArgument(!preTransformationHandlerMap
+				.containsKey(serv.getName().toUpperCase()),
+				"There is already a preTransformationHandler called '%s'", serv
+						.getName().toUpperCase());
+		Preconditions
+				.checkArgument(
+						canCreateInstance(serv.getClass()),
+						"Could not create instance of IPreTransformationHandler-class '%s'",
+						serv.getClass());
+
+		LOG.trace("Bound preTransformationHandler called '{}': {}", serv
+				.getName().toUpperCase(), serv.getClass());
+		preTransformationHandlerMap.put(serv.getName().toUpperCase(),
+				serv.getClass());
 	}
 
 	// called by OSGi-DS
-	public static void unbindPreTransformationHandler(IPreTransformationHandler serv) {
-		if( preTransformationHandlerMap.containsKey(serv.getName().toUpperCase())) {
+	public static void unbindPreTransformationHandler(
+			IPreTransformationHandler serv) {
+		if (preTransformationHandlerMap.containsKey(serv.getName()
+				.toUpperCase())) {
 			preTransformationHandlerMap.remove(serv.getName().toUpperCase());
-			
-			LOG.trace("Unbound preTransformationHandler called '{}' : {}", serv.getName().toUpperCase(), serv.getClass());
+
+			LOG.trace("Unbound preTransformationHandler called '{}' : {}", serv
+					.getName().toUpperCase(), serv.getClass());
 		}
 	}
-	
-	private static boolean canCreateInstance( Class<? extends IPreTransformationHandler> handler ) {
+
+	private static boolean canCreateInstance(
+			Class<? extends IPreTransformationHandler> handler) {
 		try {
 			handler.newInstance();
 			return true;
@@ -376,23 +391,27 @@ public abstract class AbstractExecutor implements IServerExecutor,
 			return false;
 		}
 	}
-	
-	public IPreTransformationHandler getPreTransformationHandler( String name ) throws InstantiationException, IllegalAccessException {
-		Preconditions.checkNotNull(Strings.isNullOrEmpty(name), "Name of PreTransformationHandler must not be null or empty!");
-		
-		Class<? extends IPreTransformationHandler> clazz = preTransformationHandlerMap.get(name.toUpperCase());
-		if( clazz != null ) {
+
+	public IPreTransformationHandler getPreTransformationHandler(String name)
+			throws InstantiationException, IllegalAccessException {
+		Preconditions.checkNotNull(Strings.isNullOrEmpty(name),
+				"Name of PreTransformationHandler must not be null or empty!");
+
+		Class<? extends IPreTransformationHandler> clazz = preTransformationHandlerMap
+				.get(name.toUpperCase());
+		if (clazz != null) {
 			return clazz.newInstance();
 		}
-		
-		throw new InstantiationException("IPreTransformationHandler '" + name.toUpperCase() + "' is not known!");
+
+		throw new InstantiationException("IPreTransformationHandler '"
+				+ name.toUpperCase() + "' is not known!");
 	}
-	
+
 	@Override
-	public boolean hasPreTransformationHandler( String name ) {
+	public boolean hasPreTransformationHandler(String name) {
 		return preTransformationHandlerMap.containsKey(name.toUpperCase());
 	}
-	
+
 	@Override
 	public Collection<String> getPreTransformationHandlerNames() {
 		return Lists.newArrayList(preTransformationHandlerMap.keySet());
@@ -508,8 +527,8 @@ public abstract class AbstractExecutor implements IServerExecutor,
 	public void unbindQueryBuildConfiguration(
 			IQueryBuildConfigurationTemplate config) {
 		queryBuildConfigs.remove(config.getName());
-	}	
-	
+	}
+
 	// ----------------------------------------------------------------------------------------
 	// Getter/Setter
 	// ----------------------------------------------------------------------------------------
@@ -697,7 +716,7 @@ public abstract class AbstractExecutor implements IServerExecutor,
 		LOG.trace("Scheduler started.");
 
 		fireGenericEvent(IUpdateEventListener.SCHEDULING);
-		
+
 		firePlanExecutionEvent(new PlanExecutionEvent(this,
 				PlanExecutionEventType.EXECUTION_STARTED));
 	}
@@ -780,7 +799,7 @@ public abstract class AbstractExecutor implements IServerExecutor,
 			}
 			return lq;
 		}
-		
+
 		return null;
 	}
 
@@ -794,7 +813,7 @@ public abstract class AbstractExecutor implements IServerExecutor,
 		}
 		return lq;
 	}
-	
+
 	@Override
 	public QueryState getQueryState(int queryID) {
 		IPhysicalQuery pq = executionPlan.getQueryById(queryID);
@@ -808,17 +827,17 @@ public abstract class AbstractExecutor implements IServerExecutor,
 	}
 
 	private QueryState getQueryState(IPhysicalQuery pq) {
-		if (pq != null){
+		if (pq != null) {
 			return pq.getState();
-		}else{
+		} else {
 			return QueryState.UNDEF;
 		}
 	}
-	
+
 	@Override
 	public List<QueryState> getQueryStates(List<Integer> id) {
 		List<QueryState> ret = new ArrayList<QueryState>();
-		for (Integer qid:id){
+		for (Integer qid : id) {
 			ret.add(getQueryState(qid));
 		}
 		return ret;
@@ -902,81 +921,89 @@ public abstract class AbstractExecutor implements IServerExecutor,
 	// ----------------------------------------------------------------------------------------------------------
 
 	@Override
-	public synchronized void addUpdateEventListener(IUpdateEventListener listener,
+	public void addUpdateEventListener(IUpdateEventListener listener,
 			String type, ISession session) {
-		// Remember Listener (must be different for dd and other, because each
-		// session could have another dd)
-		List<IUpdateEventListener> l;
-		if (type != IUpdateEventListener.DATADICTIONARY) {
-			l = updateEventListener.get(type);
-		} else {
-			l = dataDictEventListener.get(session);
-		}
-		if (l == null) {
-			l = new CopyOnWriteArrayList<>();
+		synchronized (updateEventListener) {
+			// Remember Listener (must be different for dd and other, because
+			// each
+			// session could have another dd)
+			List<IUpdateEventListener> l;
 			if (type != IUpdateEventListener.DATADICTIONARY) {
-				this.updateEventListener.put(type, l);
+				l = updateEventListener.get(type);
 			} else {
 				IDataDictionary dd = getDataDictionary(session);
-				dataDictEventListener.put(dd, l);
+				l = dataDictEventListener.get(dd);
 			}
-		}
-		l.add(listener);
+			if (l == null) {
+				l = new CopyOnWriteArrayList<>();
+				if (type != IUpdateEventListener.DATADICTIONARY) {
+					this.updateEventListener.put(type, l);
+				} else {
+					IDataDictionary dd = getDataDictionary(session);
+					dataDictEventListener.put(dd, l);
+				}
+			}
+			l.add(listener);
 
-		// Register for remote events (if first listener)
-		if (l.size() == 1) {
-			switch (type) {
-			case IUpdateEventListener.DATADICTIONARY:
-				getDataDictionary(session).addListener(this);
-				break;
-			case IUpdateEventListener.QUERY:
-			case IUpdateEventListener.SCHEDULING:
-				// Nothing to do. Is already listener
-				break;
-			case IUpdateEventListener.SESSION:
-				UserManagementProvider.getSessionmanagement().subscribe(this);
-				break;
-			case IUpdateEventListener.USER:
-				break;
+			// Register for remote events (if first listener)
+			if (l.size() == 1) {
+				switch (type) {
+				case IUpdateEventListener.DATADICTIONARY:
+					getDataDictionary(session).addListener(this);
+					break;
+				case IUpdateEventListener.QUERY:
+				case IUpdateEventListener.SCHEDULING:
+					// Nothing to do. Is already listener
+					break;
+				case IUpdateEventListener.SESSION:
+					UserManagementProvider.getSessionmanagement().subscribe(
+							this);
+					break;
+				case IUpdateEventListener.USER:
+					break;
+				}
 			}
 		}
 	}
 
 	@Override
-	public synchronized void removeUpdateEventListener(IUpdateEventListener listener,
+	public void removeUpdateEventListener(IUpdateEventListener listener,
 			String type, ISession session) {
-		List<IUpdateEventListener> l;
-		if (type != IUpdateEventListener.DATADICTIONARY) {
-			l = updateEventListener.get(type);
-		} else {
-			l = dataDictEventListener.get(session);
-		}
-		if (l != null) {
-			l.remove(listener);
-			if (l.isEmpty()) {
-				if (type != IUpdateEventListener.DATADICTIONARY){
-					updateEventListener.remove(l);
-				}else{
-					dataDictEventListener.remove(l);
+		synchronized (updateEventListener) {
+			List<IUpdateEventListener> l;
+			if (type != IUpdateEventListener.DATADICTIONARY) {
+				l = updateEventListener.get(type);
+			} else {
+				l = dataDictEventListener.get(session);
+			}
+			if (l != null) {
+				l.remove(listener);
+				if (l.isEmpty()) {
+					if (type != IUpdateEventListener.DATADICTIONARY) {
+						updateEventListener.remove(l);
+					} else {
+						dataDictEventListener.remove(l);
+					}
 				}
 			}
-		}
-		
-		// Deregister from remote events
-		if (l != null && l.isEmpty()) {
-			switch (type) {
-			case IUpdateEventListener.DATADICTIONARY:
-				getDataDictionary(session).removeListener(this);
-				break;
-			case IUpdateEventListener.QUERY:
-			case IUpdateEventListener.SCHEDULING:
-			// Nothing to do. Stays listener
-				break;
-			case IUpdateEventListener.SESSION:
-				UserManagementProvider.getSessionmanagement().unsubscribe(this);
-				break;
-			case IUpdateEventListener.USER:
-				break;
+
+			// Deregister from remote events
+			if (l != null && l.isEmpty()) {
+				switch (type) {
+				case IUpdateEventListener.DATADICTIONARY:
+					getDataDictionary(session).removeListener(this);
+					break;
+				case IUpdateEventListener.QUERY:
+				case IUpdateEventListener.SCHEDULING:
+					// Nothing to do. Stays listener
+					break;
+				case IUpdateEventListener.SESSION:
+					UserManagementProvider.getSessionmanagement().unsubscribe(
+							this);
+					break;
+				case IUpdateEventListener.USER:
+					break;
+				}
 			}
 		}
 	}
@@ -997,26 +1024,32 @@ public abstract class AbstractExecutor implements IServerExecutor,
 	public void dataDictionaryChanged(IDataDictionary sender) {
 		fireDataDictionaryEvent(sender);
 	}
-	
+
 	@Override
-	public void sessionEventOccured(ISessionEvent event){
+	public void sessionEventOccured(ISessionEvent event) {
 		fireGenericEvent(IUpdateEventListener.SESSION);
 	}
-	
-	public void fireDataDictionaryEvent(IDataDictionary dd){
-		List<IUpdateEventListener> list = dataDictEventListener.get(dd);			
-		if (list != null) {
-			for (IUpdateEventListener l : list) {
-				l.eventOccured();
+
+	public void fireDataDictionaryEvent(IDataDictionary dd) {
+		synchronized (updateEventListener) {
+			List<IUpdateEventListener> list = dataDictEventListener.get(dd);
+			LOG.trace("Fire to " + list);
+			if (list != null) {
+				for (IUpdateEventListener l : list) {
+					l.eventOccured(IUpdateEventListener.DATADICTIONARY);
+				}
 			}
-		}	
+		}
 	}
-	
+
 	public void fireGenericEvent(String type) {
-		List<IUpdateEventListener> list = updateEventListener.get(type);			
-		if (list != null) {
-			for (IUpdateEventListener l : list) {
-				l.eventOccured();
+		synchronized (updateEventListener) {
+			List<IUpdateEventListener> list = updateEventListener.get(type);
+			LOG.trace("Fire " + type + " to " + list);
+			if (list != null) {
+				for (IUpdateEventListener l : list) {
+					l.eventOccured(type);
+				}
 			}
 		}
 	}
@@ -1165,17 +1198,15 @@ public abstract class AbstractExecutor implements IServerExecutor,
 				password, tenantObj);
 	}
 
-	
 	@Override
 	public void logout(ISession caller) {
 		UserManagementProvider.getSessionmanagement().logout(caller);
 	}
-	
+
 	@Override
 	public boolean isValid(ISession session) {
 		return UserManagementProvider.getSessionmanagement().isValid(session);
 	}
-	
 
 	// Compiler Facade
 	@Override
@@ -1213,12 +1244,13 @@ public abstract class AbstractExecutor implements IServerExecutor,
 	public void removeViewOrStream(Resource name, ISession caller) {
 		getDataDictionary(caller).removeViewOrStream(name, caller);
 	}
-	
+
 	@Override
 	public List<ViewInformation> getStreamsAndViewsInformation(ISession caller) {
-		Set<Entry<Resource, ILogicalOperator>> source = getDataDictionary(caller).getStreamsAndViews(caller);
+		Set<Entry<Resource, ILogicalOperator>> source = getDataDictionary(
+				caller).getStreamsAndViews(caller);
 		List<ViewInformation> ret = new ArrayList<>();
-		for (Entry<Resource, ILogicalOperator> s: source){
+		for (Entry<Resource, ILogicalOperator> s : source) {
 			ViewInformation vi = new ViewInformation();
 			vi.setName(s.getKey());
 			vi.setOutputSchema(s.getValue().getOutputSchema());
@@ -1229,9 +1261,10 @@ public abstract class AbstractExecutor implements IServerExecutor,
 
 	@Override
 	public List<SinkInformation> getSinks(ISession caller) {
-		Set<Entry<Resource, ILogicalOperator>> sinks = getDataDictionary(caller).getSinks(caller);
+		Set<Entry<Resource, ILogicalOperator>> sinks = getDataDictionary(caller)
+				.getSinks(caller);
 		List<SinkInformation> ret = new ArrayList<>();
-		for (Entry<Resource, ILogicalOperator> s: sinks){
+		for (Entry<Resource, ILogicalOperator> s : sinks) {
 			SinkInformation si = new SinkInformation();
 			si.setName(s.getKey());
 			si.setOutputSchema(s.getValue().getOutputSchema());
@@ -1301,7 +1334,8 @@ public abstract class AbstractExecutor implements IServerExecutor,
 	public LogicalOperatorInformation getOperatorInformation(String name,
 			ISession caller) {
 		IOperatorBuilder builder = OperatorBuilderFactory
-				.createOperatorBuilder(name, caller, getDataDictionary(caller), Context.empty());
+				.createOperatorBuilder(name, caller, getDataDictionary(caller),
+						Context.empty());
 		LogicalOperatorInformation loi = new LogicalOperatorInformation();
 		loi.setOperatorName(builder.getName());
 		LogicalOperator annotation = builder.getOperatorClass().getAnnotation(
@@ -1316,7 +1350,7 @@ public abstract class AbstractExecutor implements IServerExecutor,
 		loi.setMaxPorts(builder.getMaxInputOperatorCount());
 		loi.setMinPorts(builder.getMinInputOperatorCount());
 		loi.setDoc(builder.getDoc());
-        loi.setUrl(builder.getUrl());
+		loi.setUrl(builder.getUrl());
 		loi.setCategories(builder.getCategories());
 
 		for (IParameter<?> param : builder.getParameters()) {
@@ -1448,9 +1482,10 @@ public abstract class AbstractExecutor implements IServerExecutor,
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<IUser> getUsers(ISession caller) {
-		return (List<IUser>) UserManagementProvider.getUsermanagement(true).getUsers(caller);
+		return (List<IUser>) UserManagementProvider.getUsermanagement(true)
+				.getUsers(caller);
 	}
-	
+
 	@Override
 	public Collection<String> getUdfs() {
 		return OperatorBuilderFactory.getUdfs();

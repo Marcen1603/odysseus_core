@@ -73,7 +73,7 @@ public class UserView extends ViewPart implements IUpdateEventListener{
 	}
 
 	@Override
-	public void eventOccured() {
+	public void eventOccured(String type) {
 		refresh();
 	}
 		

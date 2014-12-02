@@ -53,10 +53,9 @@ public class LogicalQueryViewDataProvider implements IQueryViewDataProvider,
 	}
 
 	private void listenToExecutor() {
-		IExecutor executor = LogicalQueryViewDataProviderPlugIn
-				.getExecutor();
+		IExecutor executor = LogicalQueryViewDataProviderPlugIn.getExecutor();
 		executor.addUpdateEventListener(this, IUpdateEventListener.QUERY, null);
-		
+
 		view.refreshTable();
 	}
 
@@ -128,8 +127,10 @@ public class LogicalQueryViewDataProvider implements IQueryViewDataProvider,
 	}
 
 	@Override
-	public void eventOccured() {
-		view.refreshTable();
+	public void eventOccured(String type) {
+		if (type == IUpdateEventListener.QUERY) {
+			view.refreshTable();
+		}
 	}
 
 }

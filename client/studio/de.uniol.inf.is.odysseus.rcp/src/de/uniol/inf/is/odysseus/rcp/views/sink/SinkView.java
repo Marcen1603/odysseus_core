@@ -136,8 +136,12 @@ public class SinkView extends ViewPart implements IUpdateEventListener {
 	}
 
 	@Override
-	public void eventOccured() {
-		refresh();
+	public void eventOccured(String type) {
+		if (type == IUpdateEventListener.DATADICTIONARY) {
+			refresh();
+		}else if (type == IUpdateEventListener.SESSION){
+			// TODO:
+		}
 	}
 
 	@Override

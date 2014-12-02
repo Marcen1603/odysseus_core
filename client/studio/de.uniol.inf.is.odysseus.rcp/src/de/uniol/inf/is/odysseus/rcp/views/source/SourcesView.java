@@ -45,9 +45,11 @@ import de.uniol.inf.is.odysseus.rcp.views.ResourceInformationLabelProvider;
 
 public class SourcesView extends ViewPart implements IUpdateEventListener {
 
-	private static final Logger LOG = LoggerFactory.getLogger(SourcesView.class);
-	private static final InfoService INFO = InfoServiceFactory.getInfoService(SourcesView.class);
-	
+	private static final Logger LOG = LoggerFactory
+			.getLogger(SourcesView.class);
+	private static final InfoService INFO = InfoServiceFactory
+			.getInfoService(SourcesView.class);
+
 	private Composite parent;
 	private TreeViewer viewer;
 	private StackLayout stackLayout;
@@ -58,47 +60,71 @@ public class SourcesView extends ViewPart implements IUpdateEventListener {
 
 	@Override
 	public void createPartControl(Composite parent) {
-		this.parent = parent;
+		try {
+			this.parent = parent;
 
-		stackLayout = new StackLayout();
-		parent.setLayout(stackLayout);
+			stackLayout = new StackLayout();
+			parent.setLayout(stackLayout);
 
-		setTreeViewer(new TreeViewer(parent, SWT.V_SCROLL | SWT.H_SCROLL | SWT.MULTI));
-		getTreeViewer().setContentProvider(new ResourceInformationContentProvider());
-		getTreeViewer().setLabelProvider(new ResourceInformationLabelProvider("source"));
+			setTreeViewer(new TreeViewer(parent, SWT.V_SCROLL | SWT.H_SCROLL
+					| SWT.MULTI));
+			getTreeViewer().setContentProvider(
+					new ResourceInformationContentProvider());
+			getTreeViewer().setLabelProvider(
+					new ResourceInformationLabelProvider("source"));
 
-		int operations = DND.DROP_MOVE;
-		Transfer[] transferTypes = new Transfer[] { LocalSelectionTransfer.getTransfer() };
-		getTreeViewer().addDragSupport(operations, transferTypes, new OperatorDragListener(getTreeViewer(), "STREAM"));
+			int operations = DND.DROP_MOVE;
+			Transfer[] transferTypes = new Transfer[] { LocalSelectionTransfer
+					.getTransfer() };
+			getTreeViewer().addDragSupport(operations, transferTypes,
+					new OperatorDragListener(getTreeViewer(), "STREAM"));
 
-		refresh();
-		OdysseusRCPPlugIn.getExecutor().addUpdateEventListener(this, IUpdateEventListener.DATADICTIONARY, OdysseusRCPPlugIn.getActiveSession());
-		OdysseusRCPPlugIn.getExecutor().addUpdateEventListener(this, IUpdateEventListener.SESSION, null);
-		LOG.trace("Registered update event listener for sources View");
-		
-		// UserManagement.getInstance().addUserManagementListener(this);
-		getSite().setSelectionProvider(getTreeViewer());
+			refresh();
+			registerForDatadictionaryEvents();
+			OdysseusRCPPlugIn.getExecutor().addUpdateEventListener(this,
+					IUpdateEventListener.SESSION, null);
+			LOG.trace("Registered update event listener for sources View");
 
-		// Contextmenu
-		MenuManager menuManager = new MenuManager();
-		Menu contextMenu = menuManager.createContextMenu(getTreeViewer().getControl());
-		// Set the MenuManager
-		getTreeViewer().getControl().setMenu(contextMenu);
-		getSite().registerContextMenu(menuManager, getTreeViewer());
+			// UserManagement.getInstance().addUserManagementListener(this);
+			getSite().setSelectionProvider(getTreeViewer());
 
-		label = new Label(parent, SWT.NONE);
-		label.setText("No sources available");
+			// Contextmenu
+			MenuManager menuManager = new MenuManager();
+			Menu contextMenu = menuManager.createContextMenu(getTreeViewer()
+					.getControl());
+			// Set the MenuManager
+			getTreeViewer().getControl().setMenu(contextMenu);
+			getSite().registerContextMenu(menuManager, getTreeViewer());
 
-		stackLayout.topControl = label;
-		parent.layout();
-		
-		LOG.trace("SourcesView created");
+			label = new Label(parent, SWT.NONE);
+			label.setText("No sources available");
+
+			stackLayout.topControl = label;
+			parent.layout();
+
+			LOG.trace("SourcesView created");
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw e;
+		}
+	}
+
+	private void registerForDatadictionaryEvents() {
+		if (OdysseusRCPPlugIn.getActiveSession() != null) {
+			LOG.trace("REGISTER FOR DATADICT EVENTS "+OdysseusRCPPlugIn.getActiveSession());
+			OdysseusRCPPlugIn.getExecutor().addUpdateEventListener(this,
+					IUpdateEventListener.DATADICTIONARY,
+					OdysseusRCPPlugIn.getActiveSession());
+		}
 	}
 
 	@Override
 	public void dispose() {
-		OdysseusRCPPlugIn.getExecutor().removeUpdateEventListener(this, IUpdateEventListener.DATADICTIONARY, OdysseusRCPPlugIn.getActiveSession());
-		OdysseusRCPPlugIn.getExecutor().removeUpdateEventListener(this, IUpdateEventListener.SESSION, null);
+		OdysseusRCPPlugIn.getExecutor().removeUpdateEventListener(this,
+				IUpdateEventListener.DATADICTIONARY,
+				OdysseusRCPPlugIn.getActiveSession());
+		OdysseusRCPPlugIn.getExecutor().removeUpdateEventListener(this,
+				IUpdateEventListener.SESSION, null);
 		LOG.trace("Deregistered update event listener for sources View");
 		super.dispose();
 	}
@@ -131,15 +157,15 @@ public class SourcesView extends ViewPart implements IUpdateEventListener {
 				LOG.trace("Already refreshing... abort");
 				return;
 			}
-			
-			if( PlatformUI.getWorkbench().getDisplay().isDisposed() ) {
+
+			if (PlatformUI.getWorkbench().getDisplay().isDisposed()) {
 				LOG.trace("Sources View is disposed... abort");
 				return;
 			}
-			
+
 			isRefreshing.set(true);
 			LOG.trace("Begin refreshing async");
-			
+
 			PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
 
 				@Override
@@ -149,21 +175,28 @@ public class SourcesView extends ViewPart implements IUpdateEventListener {
 						isRefreshing.set(false);
 
 						if (!getTreeViewer().getTree().isDisposed()) {
-							List<ViewInformation> streamsAndViews = OdysseusRCPPlugIn.getExecutor().getStreamsAndViewsInformation(OdysseusRCPPlugIn.getActiveSession());
+							List<ViewInformation> streamsAndViews = OdysseusRCPPlugIn
+									.getExecutor()
+									.getStreamsAndViewsInformation(
+											OdysseusRCPPlugIn
+													.getActiveSession());
 							if (streamsAndViews != null) {
-								LOG.trace("Got {} streams and Views.", streamsAndViews.size() );
+								LOG.trace("Got {} streams and Views.",
+										streamsAndViews.size());
 								getTreeViewer().setInput(streamsAndViews);
 								if (!streamsAndViews.isEmpty()) {
-									stackLayout.topControl = getTreeViewer().getTree();
+									stackLayout.topControl = getTreeViewer()
+											.getTree();
 								}
-								setPartName("Sources (" + streamsAndViews.size() + ")");
+								setPartName("Sources ("
+										+ streamsAndViews.size() + ")");
 							} else {
 								LOG.trace("Got no streams and views");
 								stackLayout.topControl = label;
 								setPartName("Sources (0)");
 							}
 							parent.layout();
-							
+
 							LOG.trace("Doing refresh now!");
 							getTreeViewer().refresh();
 						} else {
@@ -171,8 +204,12 @@ public class SourcesView extends ViewPart implements IUpdateEventListener {
 						}
 						LOG.trace("Refresh finished");
 					} catch (Exception e) {
-						LOG.error("Exception during setting input for treeViewer in sourcesView", e);
-						INFO.error("Exception during setting input for treeViewer in sourcesView", e);
+						LOG.error(
+								"Exception during setting input for treeViewer in sourcesView",
+								e);
+						INFO.error(
+								"Exception during setting input for treeViewer in sourcesView",
+								e);
 					}
 				}
 
@@ -187,9 +224,11 @@ public class SourcesView extends ViewPart implements IUpdateEventListener {
 	}
 
 	@Override
-	public void eventOccured() {
-		LOG.trace("Got update event");
-		
+	public void eventOccured(String type) {
+		LOG.trace("Got update event "+type);
+		if (type == IUpdateEventListener.SESSION){
+			registerForDatadictionaryEvents();
+		}
 		refresh();
 	}
 
@@ -202,11 +241,11 @@ public class SourcesView extends ViewPart implements IUpdateEventListener {
 		LOG.trace("Refresh enabled = {}", refreshEnabled);
 		refresh();
 	}
-	
-	public void switchRefreshEnabled(){
+
+	public void switchRefreshEnabled() {
 		refreshEnabled = !refreshEnabled;
 		LOG.trace("Switch Refresh enabled to {}", refreshEnabled);
-		
+
 		refresh();
 	}
 

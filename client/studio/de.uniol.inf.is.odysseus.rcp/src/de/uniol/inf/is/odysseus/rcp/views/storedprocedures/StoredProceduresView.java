@@ -95,7 +95,7 @@ public class StoredProceduresView extends ViewPart implements
 	}
 
 	@Override
-	public void eventOccured() {
+	public void eventOccured(String type) {
 		refresh();
 	}
 
