@@ -60,26 +60,25 @@ import de.uniol.inf.is.odysseus.test.context.BasicTestContext;
  */
 public class CheatSheetGenerator {
     static final Logger LOG = LoggerFactory.getLogger(CheatSheetGenerator.class);
-    private static final String LATEX_CMD = "/usr/bin/pdflatex";
+    private static final String PDFLATEX_CMD = "/usr/bin/pdflatex";
 
     public static void execute(final String file) throws FileNotFoundException, IOException {
-
+        final String cmd = (System.getProperty("latex") != null) ? System.getProperty("latex") : PDFLATEX_CMD;
         final StringBuilder builder = new StringBuilder();
         CheatSheetGenerator.build(builder);
+        Path path = (new File(file)).toPath();
+        Path directory = path.getParent();
+        if (!Files.exists(directory)) {
+            Files.createDirectory(directory);
+        }
         try (FileOutputStream out = new FileOutputStream(file)) {
             try (PrintStream print = new PrintStream(out)) {
                 print.println(builder.toString());
                 final String[] env = new String[] {};
-                if ((new File(CheatSheetGenerator.LATEX_CMD)).exists()) {
-                    Path path = (new File(file)).toPath();
-                    Path directory = path.getParent();
-                    if (!Files.exists(directory)) {
-                        Files.createDirectory(directory);
-                    }
-                    CheatSheetGenerator.LOG.info("Executing '{} -synctex=1 -interaction nonstopmode -output-directory {} {}'",
-                            new String[] { CheatSheetGenerator.LATEX_CMD, directory.toString(), path.toString() });
-                    System.out.println(String.format("Executing '%s -synctex=1 -interaction nonstopmode -output-directory %s %s'", LATEX_CMD, directory.toString(), path.toString()));
-                    final Process process = Runtime.getRuntime().exec("/usr/bin/pdflatex -synctex=1 -interaction nonstopmode -output-directory " + directory + " " + file, env);
+                if ((new File(cmd)).exists()) {
+                    CheatSheetGenerator.LOG.info("Executing '{} -synctex=1 -interaction nonstopmode -output-directory {} {}'", new String[] { cmd, directory.toString(), path.toString() });
+                    System.out.println(String.format("Executing '%s -synctex=1 -interaction nonstopmode -output-directory %s %s'", cmd, directory.toString(), path.toString()));
+                    final Process process = Runtime.getRuntime().exec(cmd + " -synctex=1 -interaction nonstopmode -output-directory " + directory + " " + file, env);
                     try {
                         process.waitFor();
                         final BufferedReader reader = new BufferedReader(new InputStreamReader(process.getErrorStream()));
@@ -93,7 +92,7 @@ public class CheatSheetGenerator {
                     }
                 }
                 else {
-                    CheatSheetGenerator.LOG.warn("Unable to execute {} to generate cheatsheet PDF", CheatSheetGenerator.LATEX_CMD);
+                    CheatSheetGenerator.LOG.warn("Unable to execute {} to generate cheatsheet PDF", cmd);
                 }
             }
         }
