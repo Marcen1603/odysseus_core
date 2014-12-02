@@ -78,6 +78,7 @@ public class CheatSheetGenerator {
                     }
                     CheatSheetGenerator.LOG.info("Executing '{} -synctex=1 -interaction nonstopmode -output-directory {} {}'",
                             new String[] { CheatSheetGenerator.LATEX_CMD, directory.toString(), path.toString() });
+                    System.out.println(String.format("Executing '%s -synctex=1 -interaction nonstopmode -output-directory %s %s'", LATEX_CMD, directory.toString(), path.toString()));
                     final Process process = Runtime.getRuntime().exec("/usr/bin/pdflatex -synctex=1 -interaction nonstopmode -output-directory " + directory + " " + file, env);
                     try {
                         process.waitFor();
