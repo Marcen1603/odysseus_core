@@ -111,7 +111,6 @@ public class SourcesView extends ViewPart implements IUpdateEventListener {
 
 	private void registerForDatadictionaryEvents() {
 		if (OdysseusRCPPlugIn.getActiveSession() != null) {
-			LOG.trace("REGISTER FOR DATADICT EVENTS "+OdysseusRCPPlugIn.getActiveSession());
 			OdysseusRCPPlugIn.getExecutor().addUpdateEventListener(this,
 					IUpdateEventListener.DATADICTIONARY,
 					OdysseusRCPPlugIn.getActiveSession());

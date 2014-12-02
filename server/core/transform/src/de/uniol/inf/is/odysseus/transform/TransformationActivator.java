@@ -69,7 +69,8 @@ public class TransformationActivator implements BundleActivator, BundleListener 
 		WrapperRegistry.registerWrapper(Constants.GENERIC_PULL);
 
 		context.addBundleListener(this);
-		searchBundles(context.getBundles(), Mode.ADD);
+		final Bundle[] b = context.getBundles();
+		searchBundles(b, Mode.ADD);	
 	}
 
 	private void searchBundles(Bundle[] bundles, Mode mode) {
@@ -100,7 +101,7 @@ public class TransformationActivator implements BundleActivator, BundleListener 
 		}
 	}
 
-	private void searchBundle(Bundle bundle, Mode mode) {
+	private synchronized void searchBundle(Bundle bundle, Mode mode) {
 //		String[] pathes = new String[] { "/de/uniol/inf/is/odysseus" };
 		String[] pathes = new String[] { "" };
 		String[] prefixes = new String[] { "", "/bin" };
@@ -126,16 +127,19 @@ public class TransformationActivator implements BundleActivator, BundleListener 
 								&& !Modifier.isAbstract(classObject
 										.getModifiers()))
 							try {
-								logger.trace("Found Rule " + classObject);
 								@SuppressWarnings("rawtypes")
 								IRule rule = (IRule) classObject.newInstance();
 								if (mode == Mode.ADD) {
 									TransformationInventory.getInstance()
 											.addRule(rule);
+									logger.trace("Added Rule " + classObject);
 								} else {
 									TransformationInventory.getInstance()
 											.removeRule(rule);
+									logger.trace("Removed Rule " + classObject);
+
 								}
+
 							} catch (Exception e) {
 								logger.error("Error loading rule "
 										+ classObject, e);
@@ -161,9 +165,10 @@ public class TransformationActivator implements BundleActivator, BundleListener 
 			// name
 			className = file.substring(start, file.length() - 6).replace('/',
 					'.');
-			logger.trace("Trying to load class " + className);
+			//logger.trace("Trying to load class " + className);
 			Class<?> classObject = bundle.loadClass(className);
 			if (ITransformationRule.class.isAssignableFrom(classObject)) {
+				//logger.trace(className+" loaded");
 				return (Class<? extends ITransformationRule>) classObject;
 			}
 		} catch (Exception e) {
