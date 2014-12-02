@@ -1033,7 +1033,7 @@ public abstract class AbstractExecutor implements IServerExecutor,
 	public void fireDataDictionaryEvent(IDataDictionary dd) {
 		synchronized (updateEventListener) {
 			List<IUpdateEventListener> list = dataDictEventListener.get(dd);
-			LOG.trace("Fire to " + list);
+			//LOG.trace("Fire to " + list);
 			if (list != null) {
 				for (IUpdateEventListener l : list) {
 					l.eventOccured(IUpdateEventListener.DATADICTIONARY);
@@ -1045,7 +1045,7 @@ public abstract class AbstractExecutor implements IServerExecutor,
 	public void fireGenericEvent(String type) {
 		synchronized (updateEventListener) {
 			List<IUpdateEventListener> list = updateEventListener.get(type);
-			LOG.trace("Fire " + type + " to " + list);
+		//	LOG.trace("Fire " + type + " to " + list);
 			if (list != null) {
 				for (IUpdateEventListener l : list) {
 					l.eventOccured(type);
