@@ -2,11 +2,14 @@ package de.uniol.inf.is.odysseus.p2p_new.data.socket;
 
 import java.nio.ByteBuffer;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.uniol.inf.is.odysseus.p2p_new.activator.P2PNewPlugIn;
 
 public class MessageByteBuffer {
 
-	
+	private static final Logger LOG = LoggerFactory.getLogger(MessageByteBuffer.class);
 	
 	private final ByteBuffer buffer = ByteBuffer.allocate(P2PNewPlugIn.TRANSPORT_BUFFER_SIZE);
 	private final ByteBuffer sizeBuffer = ByteBuffer.allocate(4);
@@ -39,14 +42,21 @@ public class MessageByteBuffer {
 			if (size != -1) {
 
 				if (currentSize + message.remaining() < size) {
+					LOG.debug("CurrentSize+remaining<size");
+					LOG.debug("Size:"+size+"CurrentSize:"+currentSize+" Remaining:"+message.remaining());
 					currentSize = currentSize + message.remaining();
-					buffer.put(message.get());
+					buffer.put(message);
+					
+					
 				} else {
+					LOG.debug("CurrentSize+remaining>size");
+					LOG.debug("Size:"+size+"CurrentSize:"+currentSize+" Remaining:"+message.remaining()+" Message-Position:"+message.position());
 					buffer.put(message.array(), message.position(), size - currentSize);
 					message.position(message.position() + ( size - currentSize) );
 					
 					// 2. das fertige Objekt erstellen
 					buffer.flip();
+					LOG.debug("Creating object. Size:" + size + " buffer.remaining():" +buffer.remaining());
 					packet = new byte[size];
 					buffer.get(packet);
 					buffer.clear();

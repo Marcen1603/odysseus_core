@@ -229,6 +229,7 @@ public class ActiveLoadbalancingConsole implements CommandProvider {
 		sb.append("    testInjectState <pipeID> <LocalQueryId>              - Injects received state from pipe to first statefol Operator in query.\n");
 		sb.append("    listStatefolOperators <queryID>                      - Lists all statefol Operators in a query (useful to determine order)\n");
 		sb.append("    printSubscriptions <queryId>                         - Prints detais about all Subscriptions in a query.\n");
+		sb.append("    sendLongString <pipeID>                              - Sends a 100MB big String to test Buffers.\n");
 		return sb.toString();
 	}
 
@@ -498,6 +499,8 @@ public class ActiveLoadbalancingConsole implements CommandProvider {
 		ci.println("Data sent.");
 
 	}
+	
+	
 
 	/***
 	 * Prints all downstream Subscriptions of a Query (Can be used to track
@@ -727,6 +730,51 @@ public class ActiveLoadbalancingConsole implements CommandProvider {
 			return;
 		}
 		ci.println("Sent: " + message);
+	}
+	
+	
+	public void _sendLongString(CommandInterpreter ci) {
+		final String ERROR_USAGE = "Usage: sendLongString <pipeID>";
+		final String ERROR_NOTFOUND = "Error: No sender found with pipe ";
+		String pipeID = ci.nextArgument();
+		if (Strings.isNullOrEmpty(pipeID)) {
+
+			ci.println(ERROR_USAGE);
+			return;
+		}
+		
+		//Create 100MB of Data.
+		
+		StringBuilder sb = new StringBuilder();
+		StringBuilder kbString = new StringBuilder();
+		//Create 1kB
+		for (int i=0;i<1024;i++) {
+			kbString.append('A');
+		}
+		StringBuilder mbString = new StringBuilder();
+		//Creat 1Mb
+		for (int i=0;i<1024;i++) {
+			mbString.append(kbString);
+		}
+		//Create 100Mb
+		for (int i=0;i<100;i++) {
+			sb.append(mbString);
+		}
+		String message = sb.toString();
+
+		MovingStateSender sender = MovingStateManager.getInstance().getSender(
+				pipeID);
+		if (sender == null) {
+			ci.println(ERROR_NOTFOUND + pipeID);
+			return;
+		}
+		try {
+			sender.sendData(message);
+		} catch (de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.common.LoadBalancingException e) {
+			ci.println("ERROR:" + e.getMessage());
+			return;
+		}
+		ci.println("Sent.");
 	}
 
 	/***
