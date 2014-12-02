@@ -70,9 +70,9 @@ public class Constant<T> implements IExpression<T> {
 		// }
 		if (type == SDFDatatype.STRING
 				|| type == SDFDatatype.START_TIMESTAMP_STRING) {
-			return "\"" + value.toString() + "\"";
+			return "\"" + value + "\"";
 		} else {
-			return value.toString();
+			return  ""+value;
 		}
 	}
 
