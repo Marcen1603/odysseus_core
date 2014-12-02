@@ -186,7 +186,6 @@ public class CheatSheetGenerator {
     }
 
     private static void buildPQLOperators(final StringBuilder builder) {
-        builder.append("\\section{Operators}\n");
         if (ExecutorProvider.getExeuctor() != null) {
             final BasicTestContext context = new BasicTestContext();
             context.setPassword("manager");
@@ -194,40 +193,61 @@ public class CheatSheetGenerator {
             final ISession session = UserManagementProvider.getSessionmanagement().login(context.getUsername(), context.getPassword().getBytes(), UserManagementProvider.getDefaultTenant());
 
             final List<LogicalOperatorInformation> operators = ExecutorProvider.getExeuctor().getOperatorInformations(session);
-            Collections.sort(operators, new Comparator<LogicalOperatorInformation>() {
-
-                @Override
-                public int compare(final LogicalOperatorInformation o1, final LogicalOperatorInformation o2) {
-                    return o1.getOperatorName().compareTo(o2.getOperatorName());
-                }
-
-            });
+            Map<String, List<LogicalOperatorInformation>> categories = new HashMap<>();
             for (final LogicalOperatorInformation operator : operators) {
-                builder.append("\\subsection{").append(CheatSheetGenerator.sanitize(operator.getOperatorName().toUpperCase())).append("}\n");
-                builder.append(CheatSheetGenerator.sanitize(operator.getDoc())).append("\n");
-                String len = "";
-                for (final LogicalParameterInformation parameter : operator.getParameters()) {
-                    if (parameter.getName().length() > len.length()) {
-                        len = CheatSheetGenerator.sanitize(parameter.getName());
+                if (!operator.isHidden()) {
+                    for (String category : operator.getCategories()) {
+                        if (!categories.containsKey(category)) {
+                            categories.put(category, new ArrayList<LogicalOperatorInformation>());
+                        }
+                        categories.get(category).add(operator);
                     }
                 }
-                builder.append("\\settowidth{\\MyLen}{\\texttt{").append(len).append("} }\n");
-                builder.append("\\begin{tabular}{@{}p{\\the\\MyLen}@{}p{\\linewidth-\\the\\MyLen}@{}}\n");
+            }
+            List<String> sortedCategories = new ArrayList<>(categories.keySet());
+            Collections.sort(sortedCategories);
+            for (String category : sortedCategories) {
+                builder.append("\\section{").append(category.substring(0, 1).toUpperCase()).append(category.substring(1).toLowerCase()).append(" Operators}\n");
 
-                // name, id und destination rausfiltern
-                for (final LogicalParameterInformation parameter : operator.getParameters()) {
-                    if ((!parameter.getName().equalsIgnoreCase("NAME")) && (!parameter.getName().equalsIgnoreCase("ID")) && (!parameter.getName().equalsIgnoreCase("DESTINATION"))) {
-                        if (!parameter.getDoc().equalsIgnoreCase("No description")) {
-                            builder.append("\\texttt{").append(CheatSheetGenerator.sanitize(parameter.getName())).append("}  & ").append(CheatSheetGenerator.sanitize(parameter.getDoc()))
-                                    .append(" \\\\\n");
-                        }
-                        else {
-                            builder.append("\\texttt{").append(CheatSheetGenerator.sanitize(parameter.getName())).append("}  & -- \\\\\n");
+                Collections.sort(categories.get(category), new Comparator<LogicalOperatorInformation>() {
+
+                    @Override
+                    public int compare(final LogicalOperatorInformation o1, final LogicalOperatorInformation o2) {
+                        return o1.getOperatorName().compareTo(o2.getOperatorName());
+                    }
+
+                });
+                for (final LogicalOperatorInformation operator : categories.get(category)) {
+                    builder.append("\\subsection{").append(CheatSheetGenerator.sanitize(operator.getOperatorName().toUpperCase()));
+                    if (operator.isDeprecated()) {
+                        builder.append(" \\textit{(Deprecated)}");
+                    }
+                    builder.append("}\n");
+                    builder.append(CheatSheetGenerator.sanitize(operator.getDoc())).append("\n");
+                    String len = "";
+                    for (final LogicalParameterInformation parameter : operator.getParameters()) {
+                        if (parameter.getName().length() > len.length()) {
+                            len = CheatSheetGenerator.sanitize(parameter.getName());
                         }
                     }
-                }
+                    builder.append("\\settowidth{\\MyLen}{\\texttt{").append(len).append("} }\n");
+                    builder.append("\\begin{tabular}{@{}p{\\the\\MyLen}@{}p{\\linewidth-\\the\\MyLen}@{}}\n");
 
-                builder.append("\\end{tabular}\n");
+                    // name, id und destination rausfiltern
+                    for (final LogicalParameterInformation parameter : operator.getParameters()) {
+                        if ((!parameter.getName().equalsIgnoreCase("NAME")) && (!parameter.getName().equalsIgnoreCase("ID")) && (!parameter.getName().equalsIgnoreCase("DESTINATION"))) {
+                            if (!parameter.getDoc().equalsIgnoreCase("No description")) {
+                                builder.append("\\texttt{").append(CheatSheetGenerator.sanitize(parameter.getName())).append("}  & ").append(CheatSheetGenerator.sanitize(parameter.getDoc()))
+                                        .append(" \\\\\n");
+                            }
+                            else {
+                                builder.append("\\texttt{").append(CheatSheetGenerator.sanitize(parameter.getName())).append("}  & -- \\\\\n");
+                            }
+                        }
+                    }
+
+                    builder.append("\\end{tabular}\n");
+                }
             }
         }
     }
