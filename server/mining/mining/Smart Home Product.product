@@ -18,9 +18,12 @@ http://odysseus.informatik.uni-oldenburg.de/
    </configIni>
 
    <launcherArgs>
-      <programArgs>-console -debug debug.options -nl ${target.nl} -data @noDefault</programArgs>
-      <vmArgs>-Xms8000M -Xmx12000M -Declipse.p2.mirrors=false</vmArgs>
-      <vmArgsMac>-XstartOnFirstThread -Dorg.eclipse.swt.internal.carbon.smallFonts</vmArgsMac>
+      <programArgs>-console -debug debug.options -nl ${target.nl} -data @noDefault
+      </programArgs>
+      <vmArgs>-Xms8000M -Xmx12000M -Declipse.p2.mirrors=false
+      </vmArgs>
+      <vmArgsMac>-XstartOnFirstThread -Dorg.eclipse.swt.internal.carbon.smallFonts
+      </vmArgsMac>
    </launcherArgs>
 
    <windowImages i16="icons/16_16.gif" i32="icons/32_32.gif" i48="icons/48_48.gif" i64="icons/64_64.gif" i128="icons/128_128.gif"/>
@@ -116,7 +119,6 @@ http://odysseus.informatik.uni-oldenburg.de/
       <feature id="de.uniol.inf.is.odysseus.spatial.feature" version="1.0.0.qualifier"/>
       <feature id="de.uniol.inf.is.odysseus.database.feature" version="1.0.0.qualifier"/>
       <feature id="de.uniol.inf.is.odysseus.wrapper.facebook.feature" version="1.0.0.qualifier"/>
-      <feature id="de.uniol.inf.is.odysseus.wrapper.ivef.feature" version="1.0.0.qualifier"/>
       <feature id="de.uniol.inf.is.odysseus.wrapper.mail.feature" version="1.0.0.qualifier"/>
       <feature id="de.uniol.inf.is.odysseus.wrapper.ncsa_hdf.feature" version="1.0.0.qualifier"/>
       <feature id="de.uniol.inf.is.odysseus.wrapper.opcda.feature" version="1.0.0.qualifier"/>
