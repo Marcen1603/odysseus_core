@@ -41,26 +41,33 @@ public abstract class AbstractInventory implements IRuleFlow {
 	}
 
 	protected AbstractInventory(AbstractInventory inventory) {
-		this.ruleBase = new LinkedHashMap<IRuleFlowGroup, PriorityQueue<IRule<?, ?>>>(inventory.getCopyOfRuleBase());
-		this.workFlow = new LinkedList<IRuleFlowGroup>(inventory.getCopyOfWorkFlow());
+		this.ruleBase = new LinkedHashMap<IRuleFlowGroup, PriorityQueue<IRule<?, ?>>>(
+				inventory.getCopyOfRuleBase());
+		this.workFlow = new LinkedList<IRuleFlowGroup>(
+				inventory.getCopyOfWorkFlow());
 	}
 
-	protected AbstractInventory(AbstractInventory inventory, Set<String> rulesToApply) {
-		if (rulesToApply == null){
-			this.ruleBase = new LinkedHashMap<IRuleFlowGroup, PriorityQueue<IRule<?, ?>>>(inventory.getCopyOfRuleBase());
-		}else{
-			LinkedHashMap<IRuleFlowGroup, PriorityQueue<IRule<?, ?>>> copy = inventory.getCopyOfRuleBase();
-			for (Entry<IRuleFlowGroup, PriorityQueue<IRule<?, ?>>> e : copy.entrySet()){
+	protected AbstractInventory(AbstractInventory inventory,
+			Set<String> rulesToApply) {
+		if (rulesToApply == null) {
+			this.ruleBase = new LinkedHashMap<IRuleFlowGroup, PriorityQueue<IRule<?, ?>>>(
+					inventory.getCopyOfRuleBase());
+		} else {
+			LinkedHashMap<IRuleFlowGroup, PriorityQueue<IRule<?, ?>>> copy = inventory
+					.getCopyOfRuleBase();
+			for (Entry<IRuleFlowGroup, PriorityQueue<IRule<?, ?>>> e : copy
+					.entrySet()) {
 				Iterator<IRule<?, ?>> iter = e.getValue().iterator();
-				while (iter.hasNext()){
-					if (!rulesToApply.contains(iter.next().getName())){
+				while (iter.hasNext()) {
+					if (!rulesToApply.contains(iter.next().getName())) {
 						iter.remove();
 					}
 				}
 			}
 			this.ruleBase = new LinkedHashMap<>(copy);
 		}
-		this.workFlow = new LinkedList<IRuleFlowGroup>(inventory.getCopyOfWorkFlow());
+		this.workFlow = new LinkedList<IRuleFlowGroup>(
+				inventory.getCopyOfWorkFlow());
 	}
 
 	private LinkedList<IRuleFlowGroup> getCopyOfWorkFlow() {
@@ -69,7 +76,8 @@ public abstract class AbstractInventory implements IRuleFlow {
 
 	private LinkedHashMap<IRuleFlowGroup, PriorityQueue<IRule<?, ?>>> getCopyOfRuleBase() {
 		LinkedHashMap<IRuleFlowGroup, PriorityQueue<IRule<?, ?>>> copyflow = new LinkedHashMap<IRuleFlowGroup, PriorityQueue<IRule<?, ?>>>();
-		for (Entry<IRuleFlowGroup, PriorityQueue<IRule<?, ?>>> entry : this.ruleBase.entrySet()) {
+		for (Entry<IRuleFlowGroup, PriorityQueue<IRule<?, ?>>> entry : this.ruleBase
+				.entrySet()) {
 			IRuleFlowGroup group = entry.getKey();
 			PriorityQueue<IRule<?, ?>> newQueue = new PriorityQueue<IRule<?, ?>>();
 			for (IRule<?, ?> rule : entry.getValue()) {
@@ -94,24 +102,30 @@ public abstract class AbstractInventory implements IRuleFlow {
 			this.ruleBase.put(group, new PriorityQueue<IRule<?, ?>>());
 		}
 		workFlow.add(group);
-		WorkingMemory.LOGGER.debug(this.getInventoryName() + " - Group added to workflow: " + group + ". New workflow is: " + workFlow.toString());
+		WorkingMemory.LOGGER.debug(this.getInventoryName()
+				+ " - Group added to workflow: " + group
+				+ ". New workflow is: " + workFlow.toString());
 	}
 
 	public synchronized void addRule(IRule<?, ?> rule) {
 		IRuleFlowGroup group = rule.getRuleFlowGroup();
-		if (!containsRule(rule)){
-			WorkingMemory.LOGGER.debug(this.getInventoryName() + " - Loading rule - " + rule.getClass().getSimpleName() + ": \"" + rule.getName() + "\" for group: \"" + group + "\"");
+		if (!containsRule(rule)) {
+			WorkingMemory.LOGGER.debug(this.getInventoryName()
+					+ " - Loading rule - " + rule.getClass().getSimpleName()
+					+ ": \"" + rule.getName() + "\" for group: \"" + group
+					+ "\"");
 			this.ruleBase.get(group).offer(rule);
-		} else{
+		} else {
 			// For DEBUGGING ONLY
 			@SuppressWarnings("unused")
 			int a = 0;
 		}
 	}
-	
-	public synchronized boolean containsRule(IRule<?,?> rule){
+
+	public synchronized boolean containsRule(IRule<?, ?> rule) {
 		IRuleFlowGroup group = rule.getRuleFlowGroup();
-		return ruleBase.containsKey(group) && ruleBase.get(group).contains(rule);
+		return ruleBase.containsKey(group)
+				&& ruleBase.get(group).contains(rule);
 	}
 
 	public void removeRule(IRule<?, ?> rule) {
@@ -119,15 +133,26 @@ public abstract class AbstractInventory implements IRuleFlow {
 		if (this.ruleBase.containsKey(group)) {
 			if (this.ruleBase.get(group).contains(rule)) {
 				if (this.ruleBase.get(group).remove(rule)) {
-					WorkingMemory.LOGGER.debug(this.getInventoryName() + " - Rule removed - " + rule.getClass().getSimpleName() + ": \"" + rule.getName() + "\" for group: \"" + group + "\"");
+					WorkingMemory.LOGGER.debug(this.getInventoryName()
+							+ " - Rule removed - "
+							+ rule.getClass().getSimpleName() + ": \""
+							+ rule.getName() + "\" for group: \"" + group
+							+ "\"");
 				} else {
-					WorkingMemory.LOGGER.warn(this.getInventoryName() + " - Removing rule \"" + rule + "\" failed!");
+					WorkingMemory.LOGGER.warn(this.getInventoryName()
+							+ " - Removing rule \"" + rule + "\" failed!");
 				}
 			} else {
-				WorkingMemory.LOGGER.warn(this.getInventoryName() + " - Unable to remove rule \"" + rule + "\", because it does not exists in the inventory!");
+				WorkingMemory.LOGGER.warn(this.getInventoryName()
+						+ " - Unable to remove rule \"" + rule
+						+ "\", because it does not exists in the inventory!");
 			}
 		} else {
-			WorkingMemory.LOGGER.warn(this.getInventoryName() + " - Unable to remove rule \"" + rule + "\", because the given group does not exists in the inventory!");
+			WorkingMemory.LOGGER
+					.warn(this.getInventoryName()
+							+ " - Unable to remove rule \""
+							+ rule
+							+ "\", because the given group does not exists in the inventory!");
 		}
 	}
 
@@ -137,16 +162,18 @@ public abstract class AbstractInventory implements IRuleFlow {
 	}
 
 	@Override
-	public Iterator<IRule<?, ?>> iteratorRules(IRuleFlowGroup group, Collection<Class<?>> filter) {
+	public Iterator<IRule<?, ?>> iteratorRules(IRuleFlowGroup group,
+			Collection<Class<?>> filter) {
 		// A PriorityQueue does not guaranty a particular order for the iterator
 		// (like workFlow.get(group).iterator())!!
 		// thus, here comes a order-safe version...
-		
-		PriorityQueue<IRule<?, ?>> rules = new PriorityQueue<>(this.ruleBase.get(group));
+
+		PriorityQueue<IRule<?, ?>> rules = new PriorityQueue<>(
+				this.ruleBase.get(group));
 		if (!filter.isEmpty()) {
-			Iterator<IRule<?,?>> iter = rules.iterator();
-			while(iter.hasNext()){
-				if(!filter.contains(iter.next().getConditionClass())){
+			Iterator<IRule<?, ?>> iter = rules.iterator();
+			while (iter.hasNext()) {
+				if (!filter.contains(iter.next().getConditionClass())) {
 					iter.remove();
 				}
 			}
@@ -185,7 +212,8 @@ public abstract class AbstractInventory implements IRuleFlow {
 	}
 
 	public void bindRuleProvider(IRuleProvider provider) {
-		WorkingMemory.LOGGER.debug(getInventoryName() + " - Loading rules for... " + provider);
+		WorkingMemory.LOGGER.debug(getInventoryName()
+				+ " - Loading rules for... " + provider);
 		List<IRule<?, ?>> rules = provider.getRules();
 		for (IRule<?, ?> rule : rules) {
 			this.getCurrentInstance().addRule(rule);
@@ -195,9 +223,12 @@ public abstract class AbstractInventory implements IRuleFlow {
 	public abstract AbstractInventory getCurrentInstance();
 
 	public void unbindRuleProvider(IRuleProvider provider) {
-		WorkingMemory.LOGGER.debug(getInventoryName() + " - Removing rules for... " + provider);
+		WorkingMemory.LOGGER.debug(getInventoryName()
+				+ " - Removing rules for... " + provider);
 		for (IRule<?, ?> rule : provider.getRules()) {
-			this.getCurrentInstance().removeRule(rule);
+			if (this.getCurrentInstance().containsRule(rule)) {
+				this.getCurrentInstance().removeRule(rule);
+			}
 		}
 	}
 
