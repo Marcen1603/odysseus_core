@@ -42,11 +42,13 @@ import de.uniol.inf.is.odysseus.test.context.BasicTestContext;
  */
 public class TestRunnerApplication implements IApplication {
 
-	private static List<ITestComponent<BasicTestContext>> components = Lists.newArrayList();
+	private static List<ITestComponent<BasicTestContext>> components = Lists
+			.newArrayList();
 	private final Object lock = new Object();
 	private long lastadded = System.currentTimeMillis();
 
-	private static final Logger LOG = LoggerFactory.getLogger(TestRunnerApplication.class);
+	private static final Logger LOG = LoggerFactory
+			.getLogger(TestRunnerApplication.class);
 
 	@Override
 	public Object start(IApplicationContext context) throws Exception {
@@ -55,22 +57,23 @@ public class TestRunnerApplication implements IApplication {
 		startBundles(context.getBrandingBundle().getBundleContext());
 
 		LOG.debug("Odysseus is up and running!");
-		LOG.debug("Starting component tests...");
 
-		oneFailed = executeComponents(context);
-		LOG.debug("All tests were run.");
+		if (System.getProperty("cheatsheet") != null) {
+			String file = System.getProperty("cheatsheet");
+			CheatSheetGenerator.execute(file);
+		} else {
 
-        if (System.getProperty("cheatsheet") != null) {
-            String file = System.getProperty("cheatsheet");
-            CheatSheetGenerator.execute(file);
-        }
+			LOG.debug("Starting component tests...");
 
-		if (oneFailed) {
-			LOG.debug("At least one test failed!");
-			return -1;
+			oneFailed = executeComponents(context);
+			LOG.debug("All tests were run.");
+
+			if (oneFailed) {
+				LOG.debug("At least one test failed!");
+				return -1;
+			}
+			LOG.debug("All tests finished with no errors.");
 		}
-		LOG.debug("All tests finished with no errors.");
-
 		return IApplication.EXIT_OK;
 	}
 
@@ -80,25 +83,30 @@ public class TestRunnerApplication implements IApplication {
 		while ((current - lastadded) < 10000) {
 			synchronized (components) {
 				for (ITestComponent<BasicTestContext> component : components) {
-					TestComponentRunner<BasicTestContext> runner = new TestComponentRunner<BasicTestContext>(component);					
-					LOG.debug("Starting a new component test: " + component.getName());		
+					TestComponentRunner<BasicTestContext> runner = new TestComponentRunner<BasicTestContext>(
+							component);
+					LOG.debug("Starting a new component test: "
+							+ component.getName());
 					LOG.debug("#######################################################################################");
 					List<StatusCode> results = runner.run();
-					LOG.debug("Total results for component \"" + component.getName()+"\"");
-					int i=1;
+					LOG.debug("Total results for component \""
+							+ component.getName() + "\"");
+					int i = 1;
 					for (StatusCode code : results) {
-						LOG.debug("Sub test "+i+": "+code.name());
+						LOG.debug("Sub test " + i + ": " + code.name());
 						if (code != StatusCode.OK) {
 							oneFailed = true;
 						}
 						i++;
-					}					
+					}
 					LOG.debug("#######################################################################################");
 				}
 				components.clear();
 			}
 			synchronized (lock) {
-				LOG.debug("no components were added since "+(current - lastadded) + "ms. Waiting... " + Thread.currentThread().getName());
+				LOG.debug("no components were added since "
+						+ (current - lastadded) + "ms. Waiting... "
+						+ Thread.currentThread().getName());
 				try {
 					lock.wait(1000);
 					current = System.currentTimeMillis();
@@ -115,7 +123,7 @@ public class TestRunnerApplication implements IApplication {
 
 	}
 
-	public void addTestComponent(ITestComponent<BasicTestContext> component) {		
+	public void addTestComponent(ITestComponent<BasicTestContext> component) {
 		synchronized (components) {
 			components.add(component);
 			lastadded = System.currentTimeMillis();
@@ -132,10 +140,13 @@ public class TestRunnerApplication implements IApplication {
 
 	private void startBundles(final BundleContext context) {
 		for (Bundle bundle : context.getBundles()) {
-			boolean isFragment = bundle.getHeaders().get(Constants.FRAGMENT_HOST) != null;
-			if (bundle != context.getBundle() && !isFragment && bundle.getState() == Bundle.RESOLVED) {
+			boolean isFragment = bundle.getHeaders().get(
+					Constants.FRAGMENT_HOST) != null;
+			if (bundle != context.getBundle() && !isFragment
+					&& bundle.getState() == Bundle.RESOLVED) {
 				try {
-					if (bundle.getSymbolicName().startsWith("de.uniol.inf.is.odysseus")) {
+					if (bundle.getSymbolicName().startsWith(
+							"de.uniol.inf.is.odysseus")) {
 						bundle.start();
 					}
 				} catch (BundleException e) {
