@@ -7,7 +7,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Paramete
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.BooleanParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.PredicateParameter;
 
-@LogicalOperator(minInputPorts = 1, maxInputPorts = 1, name = "PREDICATEWINDOW", category = { LogicalOperatorCategory.BASE }, doc = "This is an predicated based window, set start and end condition with predicates.", url = "http://odysseus.offis.uni-oldenburg.de:8090/display/ODYSSEUS/PredicateWindow", hidden = true)
+@LogicalOperator(minInputPorts = 1, maxInputPorts = 1, name = "PREDICATEWINDOW", category = { LogicalOperatorCategory.BASE }, doc = "This is a predicated based window, set start and end condition with predicates.", url = "http://odysseus.offis.uni-oldenburg.de:8090/display/ODYSSEUS/PredicateWindow", hidden = true)
 public class PredicateWindowAO extends AbstractWindowAO {
 
 	private static final long serialVersionUID = 8834015972527486443L;
