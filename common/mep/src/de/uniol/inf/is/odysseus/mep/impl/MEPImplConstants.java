@@ -21,23 +21,25 @@ public interface MEPImplConstants {
   /** RegularExpression Id. */
   int BOOLEAN = 9;
   /** RegularExpression Id. */
-  int DIGIT = 10;
+  int NULL = 10;
   /** RegularExpression Id. */
-  int CHAR_LITERAL = 11;
+  int DIGIT = 11;
   /** RegularExpression Id. */
-  int IDENTIFIER = 12;
+  int CHAR_LITERAL = 12;
   /** RegularExpression Id. */
-  int LETTER = 13;
+  int IDENTIFIER = 13;
   /** RegularExpression Id. */
-  int SPECIAL_CHARS = 14;
+  int LETTER = 14;
   /** RegularExpression Id. */
-  int RRND = 15;
+  int SPECIAL_CHARS = 15;
   /** RegularExpression Id. */
-  int LRND = 16;
+  int RRND = 16;
   /** RegularExpression Id. */
-  int OPEN_ARRAY = 17;
+  int LRND = 17;
   /** RegularExpression Id. */
-  int CLOSE_ARRAY = 18;
+  int OPEN_ARRAY = 18;
+  /** RegularExpression Id. */
+  int CLOSE_ARRAY = 19;
 
   /** Lexical state. */
   int DEFAULT = 0;
@@ -54,6 +56,7 @@ public interface MEPImplConstants {
     "<INTEGER>",
     "<FLOAT>",
     "<BOOLEAN>",
+    "\"null\"",
     "<DIGIT>",
     "<CHAR_LITERAL>",
     "<IDENTIFIER>",

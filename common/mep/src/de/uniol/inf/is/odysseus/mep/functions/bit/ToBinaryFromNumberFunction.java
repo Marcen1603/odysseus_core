@@ -15,8 +15,6 @@
  ******************************************************************************/
 package de.uniol.inf.is.odysseus.mep.functions.bit;
 
-import java.nio.ByteBuffer;
-
 import de.uniol.inf.is.odysseus.core.collection.BitVector;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.mep.AbstractFunction;

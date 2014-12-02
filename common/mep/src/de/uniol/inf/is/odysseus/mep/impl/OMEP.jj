@@ -63,6 +63,8 @@ TOKEN :
 | < BOOLEAN :
     "false"
   | "true" >
+| < NULL :
+    "null" >
 | < #DIGIT : [ "0"-"9" ] >
 | < CHAR_LITERAL :
     (
@@ -563,7 +565,15 @@ void Constant() :
 /*@egen*/
   {
     jjtn000.setValue(Boolean.parseBoolean(t.image));
-  }/*@bgen(jjtree)*/
+  }
+| t = < NULL >/*@bgen(jjtree)*/
+{
+  jjtree.closeNodeScope(jjtn000, true);
+  jjtc000 = false;
+}
+/*@egen*/
+{
+  	jjtn000.setValue(null);}/*@bgen(jjtree)*/
   } finally {
     if (jjtc000) {
       jjtree.closeNodeScope(jjtn000, true);

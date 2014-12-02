@@ -59,6 +59,8 @@ TOKEN :
 | < BOOLEAN :
     "false"
   | "true" >
+| < NULL :
+    "null" >
 | < #DIGIT : [ "0"-"9" ] >
 | < CHAR_LITERAL :
     (
@@ -305,6 +307,9 @@ void Constant() :
   {
     jjtThis.setValue(Boolean.parseBoolean(t.image));
   }
+| t = < NULL >
+{
+  	jjtThis.setValue(null);}
 }
 
 void Function() :

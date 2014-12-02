@@ -51,6 +51,15 @@ public class IfFunction extends AbstractFunction<Object> {
 		// if then and else arguments have the same type, we are sure to return
 		// a value of that type
 		if (args != null && args.length == 3) {
+
+			// New one param value could be null
+			if (args[1].getValue() == null){
+				return args[2] != null?args[2].getReturnType():SDFDatatype.OBJECT;
+			}
+			if (args[2].getValue() == null){
+				return args[1] != null?args[1].getReturnType():SDFDatatype.OBJECT;				
+			}
+			
 			SDFDatatype type1 = args[1].getReturnType();
 			SDFDatatype type2 = args[2].getReturnType();
 			if (type1 == type2) {
