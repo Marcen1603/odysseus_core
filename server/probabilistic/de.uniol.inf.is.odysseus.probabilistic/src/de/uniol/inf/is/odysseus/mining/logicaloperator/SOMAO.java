@@ -18,18 +18,18 @@ package de.uniol.inf.is.odysseus.mining.logicaloperator;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnaryLogicalOp;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.DoubleParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.LongParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.ResolvedSDFAttributeParameter;
-import de.uniol.inf.is.odysseus.probabilistic.logicaloperator.LogicalOperatorCategory;
 
 /**
  * @author Christian Kuka <christian@kuka.cc>
  * 
  */
-@LogicalOperator(maxInputPorts = 1, minInputPorts = 1, doc = "A self organizing map", name = "SOMP", category = { LogicalOperatorCategory.PROBABILISTIC })
+// @LogicalOperator(maxInputPorts = 1, minInputPorts = 1, doc =
+// "A self organizing map", name = "SOMP", category = {
+// LogicalOperatorCategory.PROBABILISTIC })
 public class SOMAO extends UnaryLogicalOp {
 
     /**

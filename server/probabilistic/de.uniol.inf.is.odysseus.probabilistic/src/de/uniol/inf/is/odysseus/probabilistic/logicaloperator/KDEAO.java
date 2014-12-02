@@ -43,7 +43,7 @@ import de.uniol.inf.is.odysseus.probabilistic.common.sdf.schema.SDFProbabilistic
  * @author Christian Kuka <christian@kuka.cc>
  * 
  */
-@LogicalOperator(maxInputPorts = 1, minInputPorts = 1, name = "KDE", category = { LogicalOperatorCategory.PROBABILISTIC }, doc = "Estimate the distribution of the given attributes using a Gaussian mixture model")
+@LogicalOperator(maxInputPorts = 1, minInputPorts = 1, name = "KDE", deprecation = true, category = { LogicalOperatorCategory.PROBABILISTIC }, doc = "Estimate the distribution of the given attributes using a Gaussian mixture model")
 public class KDEAO extends UnaryLogicalOp {
 
     /**

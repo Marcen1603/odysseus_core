@@ -23,7 +23,7 @@ import de.uniol.inf.is.odysseus.probabilistic.common.SchemaUtils;
  * 
  * @author Christian Kuka <christian@kuka.cc>
  */
-@LogicalOperator(maxInputPorts = 1, minInputPorts = 1, name = "SAMPLEFROM", doc = "Create samples from a given distribution", category = { LogicalOperatorCategory.PROBABILISTIC })
+@LogicalOperator(maxInputPorts = 1, minInputPorts = 1, deprecation = true, name = "SAMPLEFROM", doc = "Create samples from a given distribution", category = { LogicalOperatorCategory.PROBABILISTIC })
 public class SampleAO extends UnaryLogicalOp {
     /**
 	 * 

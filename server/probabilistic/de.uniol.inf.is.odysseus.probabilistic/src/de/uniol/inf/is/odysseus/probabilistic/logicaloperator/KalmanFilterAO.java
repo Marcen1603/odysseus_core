@@ -36,7 +36,7 @@ import de.uniol.inf.is.odysseus.probabilistic.common.sdf.schema.SDFProbabilistic
  * @author Christian Kuka <christian@kuka.cc>
  * 
  */
-@LogicalOperator(maxInputPorts = 1, minInputPorts = 1, name = "KALMAN", category = { "Probabilistic" }, doc = "Kalman filter operator")
+@LogicalOperator(maxInputPorts = 1, minInputPorts = 1, name = "KALMAN", deprecation = true, category = { "Probabilistic" }, doc = "Kalman filter operator")
 public class KalmanFilterAO extends UnaryLogicalOp {
     /**
 	 * 

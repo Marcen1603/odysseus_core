@@ -32,7 +32,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalO
  * @author Christian Kuka <christian@kuka.cc>
  * 
  */
-@LogicalOperator(name = "ExistenceToPayload", minInputPorts = 1, maxInputPorts = 1, doc = "The input object gets one new field with tuple existence.", category = { LogicalOperatorCategory.PROBABILISTIC })
+@LogicalOperator(name = "ExistenceToPayload", minInputPorts = 1, maxInputPorts = 1, deprecation = true, doc = "The input object gets one new field with tuple existence.", category = { LogicalOperatorCategory.PROBABILISTIC })
 public class ExistenceToPayloadAO extends UnaryLogicalOp {
     /** */
     private static final long serialVersionUID = -3582366102984336742L;
