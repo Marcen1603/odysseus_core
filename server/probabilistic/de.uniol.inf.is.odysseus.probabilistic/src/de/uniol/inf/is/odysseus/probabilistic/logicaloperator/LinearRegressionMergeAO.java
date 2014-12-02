@@ -20,7 +20,7 @@ import de.uniol.inf.is.odysseus.probabilistic.common.SchemaUtils;
  * @author Christian Kuka <christian@kuka.cc>
  * 
  */
-@LogicalOperator(maxInputPorts = 1, minInputPorts = 1, deprecation = true, doc = "TODO", name = "LinearRegressionMerge", category = { LogicalOperatorCategory.PROBABILISTIC })
+@LogicalOperator(maxInputPorts = 1, minInputPorts = 1, hidden = true, deprecation = true, doc = "TODO", name = "LinearRegressionMerge", category = { LogicalOperatorCategory.PROBABILISTIC })
 public class LinearRegressionMergeAO extends UnaryLogicalOp {
 
     /**
