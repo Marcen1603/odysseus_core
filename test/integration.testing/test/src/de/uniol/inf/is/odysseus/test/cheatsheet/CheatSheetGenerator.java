@@ -22,6 +22,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -68,9 +70,14 @@ public class CheatSheetGenerator {
             try (PrintStream print = new PrintStream(out)) {
                 print.println(builder.toString());
                 final String[] env = new String[] {};
-                final String directory = (new File(file)).getParent();
                 if ((new File(CheatSheetGenerator.LATEX_CMD)).exists()) {
-                    CheatSheetGenerator.LOG.info("Executing '{} -synctex=1 -interaction nonstopmode -output-directory {} {}'", new String[] { CheatSheetGenerator.LATEX_CMD, directory, file });
+                    Path path = (new File(file)).toPath();
+                    Path directory = path.getParent();
+                    if (!Files.exists(directory)) {
+                        Files.createDirectory(directory);
+                    }
+                    CheatSheetGenerator.LOG.info("Executing '{} -synctex=1 -interaction nonstopmode -output-directory {} {}'",
+                            new String[] { CheatSheetGenerator.LATEX_CMD, directory.toString(), path.toString() });
                     final Process process = Runtime.getRuntime().exec("/usr/bin/pdflatex -synctex=1 -interaction nonstopmode -output-directory " + directory + " " + file, env);
                     try {
                         process.waitFor();
