@@ -169,6 +169,7 @@ public class CheatSheetGenerator {
 
         builder.append("\\newlength{\\MyLen}\n");
         builder.append("\\settowidth{\\MyLen}{\\texttt{letterpaper}/\\texttt{a4paper} \\ }\n\n");
+        CheatSheetGenerator.buildPQLGrammar(builder);
         CheatSheetGenerator.buildPQLOperators(builder);
         CheatSheetGenerator.buildAggregationFunctions(builder);
         CheatSheetGenerator.buildMEPFunctions(builder);
@@ -236,22 +237,11 @@ public class CheatSheetGenerator {
 
         final List<String> functions = new ArrayList<>(AggregateFunctionBuilderRegistry.getFunctionNames(Tuple.class));
         Collections.sort(functions);
-        builder.append("\\begin{tabular}{@{}l@{\\hspace{1em}}l@{\\hspace{1em}}l@{}}\n");
-        int i = 0;
+        builder.append("\\begin{multicols}{2}\n");
         for (final String function : functions) {
-            if (i > 0) {
-                builder.append(" & ");
-            }
-            builder.append(CheatSheetGenerator.sanitize(function));
-            if (i == 1) {
-                builder.append(" \\\\\n");
-                i = 0;
-            }
-            else {
-                i++;
-            }
+            builder.append("\\texttt{").append(CheatSheetGenerator.sanitize(function.toUpperCase())).append("}\\\\\n");
         }
-        builder.append("\\end{tabular}\n\n");
+        builder.append("\\end{multicols}\n\n");
 
     }
 
@@ -345,77 +335,48 @@ public class CheatSheetGenerator {
         builder.append("\\subsection{Data Handlers}\n");
         final List<String> datas = new ArrayList<>(DataHandlerRegistry.getHandlerNames());
         Collections.sort(datas);
-        builder.append("\\begin{tabular}{@{}l@{\\hspace{1em}}l@{\\hspace{1em}}l@{}}\n");
-        int i = 0;
+        builder.append("\\begin{multicols}{2}\n");
         for (final String data : datas) {
-            if (i > 0) {
-                builder.append(" & ");
-            }
-            builder.append(CheatSheetGenerator.sanitize(data.toUpperCase()));
-            if (i == 1) {
-                builder.append(" \\\\\n");
-                i = 0;
-            }
-            else {
-                i++;
-            }
+            builder.append("\\texttt{").append(CheatSheetGenerator.sanitize(data.toUpperCase())).append("}\\\\\n");
         }
-        builder.append("\\end{tabular}\n\n");
+        builder.append("\\end{multicols}\n\n");
     }
 
     private static void buildProtocolHandlers(final StringBuilder builder) {
         builder.append("\\subsection{Protocol Handlers}\n");
         final List<String> protocols = new ArrayList<>(ProtocolHandlerRegistry.getHandlerNames());
         Collections.sort(protocols);
-        builder.append("\\begin{tabular}{@{}l@{\\hspace{1em}}l@{\\hspace{1em}}l@{}}\n");
-        int i = 0;
+        builder.append("\\begin{multicols}{2}\n");
         for (final String protocol : protocols) {
-            if (i > 0) {
-                builder.append(" & ");
-            }
-            builder.append(CheatSheetGenerator.sanitize(protocol.toUpperCase()));
-            if (i == 1) {
-                builder.append(" \\\\\n");
-                i = 0;
-            }
-            else {
-                i++;
-            }
+            builder.append("\\texttt{").append(CheatSheetGenerator.sanitize(protocol.toUpperCase())).append("}\\\\\n");
         }
-        builder.append("\\end{tabular}\n\n");
+        builder.append("\\end{multicols}\n\n");
     }
 
     private static void buildTransportHandlers(final StringBuilder builder) {
         builder.append("\\subsection{Transport Handlers}\n");
         final List<String> transports = new ArrayList<>(TransportHandlerRegistry.getHandlerNames());
         Collections.sort(transports);
-        builder.append("\\begin{tabular}{@{}l@{\\hspace{1em}}l@{\\hspace{1em}}l@{}}\n");
-        int i = 0;
+        builder.append("\\begin{multicols}{2}\n");
         for (final String transport : transports) {
-            if (i > 0) {
-                builder.append(" & ");
-            }
-            builder.append(CheatSheetGenerator.sanitize(transport.toUpperCase()));
-            if (i == 1) {
-                builder.append(" \\\\\n");
-                i = 0;
-            }
-            else {
-                i++;
-            }
+            builder.append("\\texttt{").append(CheatSheetGenerator.sanitize(transport.toUpperCase())).append("}\\\\\n");
         }
-        builder.append("\\end{tabular}\n\n");
+        builder.append("\\end{multicols}\n\n");
     }
 
     private static void buildOdysseusScript(final StringBuilder builder) {
         builder.append("\\section{Odysseus Script}\n");
-        final OdysseusScriptParser parser = new OdysseusScriptParser();
+
         builder.append("\\subsection{Commands}\n");
+        final OdysseusScriptParser parser = new OdysseusScriptParser();
         final List<String> commands = new ArrayList<>(parser.getKeywordNames());
         Collections.sort(commands);
+        builder.append("\\begin{multicols}{2}\n");
         for (final String command : commands) {
-            builder.append(" ").append(CheatSheetGenerator.sanitize(command.toUpperCase())).append("\\\\\n");
+            builder.append("\\texttt{").append(CheatSheetGenerator.sanitize(command.toUpperCase())).append("}\\\\\n");
         }
+        builder.append("\\end{multicols}\n\n");
+
         builder.append("\\subsection{Constants}\n");
         final List<String> constants = new ArrayList<>();
         for (final String key : ReplacementProviderManager.generateProviderMap().keySet()) {
@@ -423,7 +384,7 @@ public class CheatSheetGenerator {
         }
         Collections.sort(constants);
         for (final String constant : constants) {
-            builder.append(" ").append(CheatSheetGenerator.sanitize(constant.toUpperCase())).append("\\\\\n");
+            builder.append("\\texttt{").append(CheatSheetGenerator.sanitize(constant.toUpperCase())).append("}\\\\\n");
         }
     }
 
@@ -443,6 +404,28 @@ public class CheatSheetGenerator {
         builder.append("output = MAP({expressions = ['value + 3']}, input)\n");
         builder.append("\\end{verbatim}\n\n");
 
+    }
+
+    private static void buildPQLGrammar(final StringBuilder builder) {
+        builder.append("\\section{Full Grammar of PQL}\n");
+        builder.append("\\settowidth{\\MyLen}{\\texttt{PARAMETERVALUE} }\n");
+        builder.append("\\begin{tabular}{@{}p{\\the\\MyLen}@{}p{\\linewidth-\\the\\MyLen}@{}}\n");
+        builder.append("\\texttt{QUERY}           & \\texttt{= ").append(sanitize("(STREAM | VIEW | SOURCE)+")).append("}\\\\\n");
+        builder.append("\\texttt{STREAM}          & \\texttt{= ").append(sanitize("STREAM \"=\" OPERATOR")).append("}\\\\\n");
+        builder.append("\\texttt{VIEW}            & \\texttt{= ").append(sanitize("VIEWNAME \":=\" OPERATOR")).append("}\\\\\n");
+        builder.append("\\texttt{SOURCE}          & \\texttt{= ").append(sanitize("SOURCENAME \"::=\" OPERATOR")).append("}\\\\\n");
+        builder.append("\\texttt{OPERATOR}        & \\texttt{= ").append(sanitize("QUERY | [OUTPUTPORT \":\"] OPERATORTYPE \"(\" (PARAMETERLIST [ \",\" OPERATORLIST ] | OPERATORLIST) \")\""))
+                .append("}\\\\\n");
+        builder.append("\\texttt{OPERATORLIST}    & \\texttt{= ").append(sanitize("[ OPERATOR (\",\" OPERATOR)* ]")).append("}\\\\\n");
+        builder.append("\\texttt{PARAMETERLIST}   & \\texttt{= ").append(sanitize("\"{\" PARAMETER (\",\" PARAMETER)* \"}\"")).append("}\\\\\n");
+        builder.append("\\texttt{PARAMETER}       & \\texttt{= ").append(sanitize("NAME \"=\" PARAMETERVALUE")).append("}\\\\\n");
+        builder.append("\\texttt{PARAMETERVALUE}  & \\texttt{= ").append(sanitize("LONG | DOUBLE | STRING | PREDICATE | LIST | MAP")).append("}\\\\\n");
+        builder.append("\\texttt{LIST}            & \\texttt{= ").append(sanitize("\"[\" [PARAMETERVALUE (\",\" PARAMETERVALUE)*] \"]\"")).append("}\\\\\n");
+        builder.append("\\texttt{MAP}             & \\texttt{= ").append(sanitize("\"[\" [MAPENTRY (\",\" MAPENTRY*] \"]\"")).append("}\\\\\n");
+        builder.append("\\texttt{MAPENTRY}        & \\texttt{= ").append(sanitize("PARAMETERVALUE \"=\" PARAMETERVALUE")).append("}\\\\\n");
+        builder.append("\\texttt{STRING}          & \\texttt{= ").append(sanitize("\"'\" [~']* \"'\"")).append("}\\\\\n");
+        builder.append("\\texttt{PREDICATE}       & \\texttt{= ").append(sanitize("PREDICATETYPE \"(\" STRING \")\"")).append("}\\\\\n");
+        builder.append("\\end{tabular}\n");
     }
 
     private static String sanitize(final String string) {
