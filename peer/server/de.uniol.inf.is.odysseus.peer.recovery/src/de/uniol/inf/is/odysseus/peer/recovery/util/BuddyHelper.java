@@ -24,8 +24,8 @@ import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryBackupInformation;
 public class BuddyHelper {
 
 	/**
-	 * Determines, if we need a buddy for the part with the given PQL TODO
-	 * Redefine with respect to the issue Michael found
+	 * Determines, if we need a buddy for the part with the given PQL TODO Redefine with respect to the issue Michael
+	 * found
 	 * 
 	 * @param pql
 	 *            The PQL of the part of the shared query on this peer
@@ -50,7 +50,14 @@ public class BuddyHelper {
 		return false;
 	}
 
-	// TODO JavaDoc
+	/**
+	 * Returns the backup-information which was located on the failed peer (if this peer has this information, e.g. if
+	 * this peer was a buddy of the failed peer)
+	 * 
+	 * @param failedPeer
+	 *            The id of the failed peer (where the backup-info was previously located)
+	 * @return A list of backup-information which was located on the failed peer
+	 */
 	public static List<IRecoveryBackupInformation> findBackupInfoForBuddy(PeerID failedPeer) {
 		List<IRecoveryBackupInformation> infoList = new ArrayList<IRecoveryBackupInformation>();
 		ImmutableMap<ID, Collection<IRecoveryBackupInformation>> infoStore = LocalBackupInformationAccess.getStore()

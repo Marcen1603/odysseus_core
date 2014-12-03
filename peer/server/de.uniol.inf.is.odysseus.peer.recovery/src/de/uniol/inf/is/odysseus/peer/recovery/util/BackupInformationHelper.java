@@ -162,7 +162,7 @@ public class BackupInformationHelper implements IPlanModificationListener {
 	}
 
 	/**
-	 * Updates the backup information store (of this and other affected peers) after a take over.
+	 * Updates the backup information store (of this and the new peer) after a take over.
 	 * 
 	 * @param oldPeer
 	 *            The former peer, which has executed <code>pqlCode</code>. <br />
@@ -175,7 +175,7 @@ public class BackupInformationHelper implements IPlanModificationListener {
 	 *            Must be not null.
 	 * @param pqlCode
 	 *            The PQL code, which has been taken over. <br />
-	 *            Must be null.
+	 *            Must be not null.
 	 */
 	public static void updateInfoStores(PeerID oldPeer, PeerID newPeer, ID sharedQueryId, String pqlCode) {
 
