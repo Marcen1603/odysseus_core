@@ -110,6 +110,8 @@ public class RecoveryInstructionHandler {
 		}
 		// installing query was successful, send ACK
 		recoveryCommunicator.sendAddQueryAck(senderPeer, instructionMessage);
+		
+		LOG.debug("Installed query for recovery.");
 
 		// Call "receiveFromNewPeer" on the subsequent receiver so that that
 		// peer creates a socket-connection to us
@@ -158,7 +160,7 @@ public class RecoveryInstructionHandler {
 		backupInfo.setPQL("");
 		LocalBackupInformationAccess.getStore().add(backupInfo);
 
-		// TODO Test this. For now, we always need a buddy, cause the previous peers fon't have updated
+		// TODO Test this. For now, we always need a buddy, cause the previous peers won't have updated
 		// backup-information.
 
 		// if (BuddyHelper.needBuddy(instructionMessage.getPQLCode())) {

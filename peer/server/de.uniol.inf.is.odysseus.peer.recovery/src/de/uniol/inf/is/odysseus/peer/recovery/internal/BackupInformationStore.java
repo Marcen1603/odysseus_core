@@ -29,12 +29,10 @@ import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryBackupInformationStore;
  * - id of the distributed query <br />
  * - the PQL code of the query part <br />
  * - the id of the peer, where the query part is executed <br />
- * - information about subsequent parts (relative to the query part): PQL code
- * and peer, where it is executed <br />
+ * - information about subsequent parts (relative to the query part): PQL code and peer, where it is executed <br />
  * - the PQL code of the local part for which the backup information are.
  * 
- * The stored information are about query parts, which are subsequent to query
- * parts executed on the local peer.
+ * The stored information are about query parts, which are subsequent to query parts executed on the local peer.
  * 
  * @author Michael Brand
  *
@@ -54,36 +52,47 @@ public class BackupInformationStore implements IRecoveryBackupInformationStore {
 		if (this.mInfos.containsKey(info.getSharedQuery())) {
 
 			for (IRecoveryBackupInformation backupInfo : this.mInfos.get(info.getSharedQuery())) {
-				
+
+				// Is it exactly the same info we already have?
 				if (backupInfo.equals(info))
 					return;
-				
-				if (info.getPQL() != null && backupInfo.getPQL() != null) {
+
+				// Is the "aboutPQL" the same and about the same peer?
+				if (info.getAboutPeer() != null && backupInfo.getAboutPeer() != null
+						&& info.getAboutPeer().equals(backupInfo.getAboutPeer()) && info.getPQL() != null
+						&& backupInfo.getPQL() != null) {
 					String comparePQL1 = backupInfo.getPQL().trim().toLowerCase();
 					String comparePQL2 = info.getPQL().trim().toLowerCase();
 
 					if (comparePQL1.equals(comparePQL2)) {
-						// If we already have this PQl -> don't save it twice
-						
-						// But maybe the other information which is in this message has to be merges into this backupInfo
-						if (Strings.isNullOrEmpty(backupInfo.getLocalPQL()) && !Strings.isNullOrEmpty(info.getLocalPQL())) {
+						// If we already have this PQL -> don't save it twice
+
+						// But maybe the other information which is in this message has to be merged into this
+						// backupInfo
+						if (Strings.isNullOrEmpty(backupInfo.getLocalPQL())
+								&& !Strings.isNullOrEmpty(info.getLocalPQL())) {
 							if (backupInfo.getLocationPeer() == null && info.getLocationPeer() != null) {
 								backupInfo.setLocalPQL(info.getLocalPQL());
 								backupInfo.setLocationPeer(info.getLocationPeer());
 							}
 						}
-							
+
 						return;
 					}
 				}
-				if (info.getLocalPQL() != null && backupInfo.getLocalPQL() != null) {
+				
+				// Is the "locationPQL" the same and is it the same peer?
+				if (info.getLocationPeer() != null && backupInfo.getLocationPeer() != null
+						&& info.getLocationPeer().equals(backupInfo.getLocationPeer()) && info.getLocalPQL() != null
+						&& backupInfo.getLocalPQL() != null) {
 					String comparePQL1 = backupInfo.getLocalPQL().trim().toLowerCase();
 					String comparePQL2 = info.getLocalPQL().trim().toLowerCase();
 
 					if (comparePQL1.equals(comparePQL2)) {
 						// If we already have this local PQL -> don't save it twice
-						
-						// But maybe the other information which is in this message has to be merges into this backupInfo
+
+						// But maybe the other information which is in this message has to be merged into this
+						// backupInfo
 						if (Strings.isNullOrEmpty(backupInfo.getPQL()) && !Strings.isNullOrEmpty(info.getPQL())) {
 							if (backupInfo.getAboutPeer() == null && info.getAboutPeer() != null) {
 								backupInfo.setPQL(info.getPQL());
@@ -144,7 +153,7 @@ public class BackupInformationStore implements IRecoveryBackupInformationStore {
 		return ImmutableSet.copyOf(this.mInfos.get(sharedQuery));
 
 	}
-	
+
 	@Override
 	public boolean hasInformationAbout(ID sharedQuery) {
 		Preconditions.checkNotNull(sharedQuery);
@@ -194,7 +203,7 @@ public class BackupInformationStore implements IRecoveryBackupInformationStore {
 		}
 
 	}
-	
+
 	@Override
 	public void remove(ID sharedQueryId, PeerID aboutPeerId) {
 		Preconditions.checkNotNull(sharedQueryId);
@@ -211,8 +220,7 @@ public class BackupInformationStore implements IRecoveryBackupInformationStore {
 	 */
 
 	/**
-	 * The stored information, for which peers and which shared query (it's id)
-	 * we are the buddy
+	 * The stored information, for which peers and which shared query (it's id) we are the buddy
 	 */
 	private final Map<PeerID, List<ID>> mBuddyMap = Maps.newHashMap();
 
