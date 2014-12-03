@@ -13,7 +13,6 @@ import org.slf4j.LoggerFactory;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IStatefulPO;
-import de.uniol.inf.is.odysseus.core.planmanagement.IOperatorOwner;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IPipe;
 import de.uniol.inf.is.odysseus.p2p_new.data.DataTransmissionException;
 import de.uniol.inf.is.odysseus.p2p_new.data.DataTransmissionManager;
@@ -183,24 +182,15 @@ public class MovingStateReceiver implements ITransmissionReceiverListener {
 		}
 		if (operator instanceof IPipe) {
 			IPipe physicalOp = (IPipe) operator;
-			for (IOperatorOwner owner : physicalOp.getOwner()) {
-				physicalOp.suspend(owner);
-			}
+			MovingStateHelper.startBuffering(physicalOp);
 			operator.setState(receivedState);
-			for (IOperatorOwner owner : physicalOp.getOwner()) {
-				physicalOp.resume(owner);
-			}
+			MovingStateHelper.stopBuffering(physicalOp);
 		} else if (operator instanceof ISink) {
 			ISink physicalOp = (ISink) operator;
-			for (IOperatorOwner owner : physicalOp.getOwner()) {
-				physicalOp.suspend(owner);
-			}
+			MovingStateHelper.startBuffering(physicalOp);
 			operator.setState(receivedState);
-			for (IOperatorOwner owner : physicalOp.getOwner()) {
-				physicalOp.resume(owner);
-			}
+			MovingStateHelper.stopBuffering(physicalOp);
 		}
-		// TODO Source has no suspend method.
 	}
 
 	/***

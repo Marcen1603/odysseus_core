@@ -418,6 +418,7 @@ public class ActiveLoadbalancingConsole implements CommandProvider {
 
 		final String ERROR_USAGE = "Usage: installStateSender <peerName>";
 		final String ERROR_NOTFOUND = "Error: No peer found with name ";
+		
 
 		String peerName = ci.nextArgument();
 		if (Strings.isNullOrEmpty(peerName)) {
@@ -443,7 +444,8 @@ public class ActiveLoadbalancingConsole implements CommandProvider {
 		final String ERROR_USAGE = "Usage: testSendStatus <pipeID> <LocalQueryId>";
 		final String ERROR_LOCALOP = "ERROR: Local Query does not contain stateful Operator.";
 		final String ERROR_NOTFOUND = "ERROR: No Sender found for pipe:";
-
+		final String ERROR_NO_STATE ="Error: Could not get state.";
+		
 		String pipeId = ci.nextArgument();
 		if (Strings.isNullOrEmpty(pipeId)) {
 
@@ -482,14 +484,27 @@ public class ActiveLoadbalancingConsole implements CommandProvider {
 			ci.println(ERROR_LOCALOP);
 			return;
 		}
-		Serializable state = statefulOp.getState();
-
+		IPhysicalOperator physicalOp = (IPhysicalOperator)statefulOp;
+		Serializable state = null;
+		
+		try {
+			MovingStateHelper.startBuffering(physicalOp);
+			state = statefulOp.getState();
+			MovingStateHelper.stopBuffering(physicalOp);
+		} catch (de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.common.LoadBalancingException e1) {
+			ci.print("Error while Stopping or Starting Buffering.");
+		}
 		MovingStateSender sender = MovingStateManager.getInstance().getSender(
 				pipeId);
 		if (sender == null) {
 			ci.println(ERROR_NOTFOUND + pipeId);
 			return;
 		}
+		
+		if(state==null) {
+			ci.println(ERROR_NO_STATE);
+		}
+		
 		try {
 			sender.sendData(state);
 		} catch (de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.common.LoadBalancingException e) {
