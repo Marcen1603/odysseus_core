@@ -3,7 +3,14 @@ package de.uniol.inf.is.odysseus.peer.recovery.messages;
 import java.net.URI;
 import java.nio.ByteBuffer;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.google.common.base.Preconditions;
+
 import net.jxta.id.ID;
+import net.jxta.impl.id.UUID.UUID;
+import net.jxta.impl.id.UUID.UUIDFactory;
 import net.jxta.peer.PeerID;
 import de.uniol.inf.is.odysseus.p2p_new.IMessage;
 
@@ -12,13 +19,49 @@ import de.uniol.inf.is.odysseus.p2p_new.IMessage;
  * wants to do the recovery for a failed peer. (It's always send if a peer
  * detects a failure)
  * 
- * @author Tobias Brandt
+ * @author Tobias Brandt, Michael Brand
  *
  */
 public class RecoveryAgreementMessage implements IMessage {
+	
+	/**
+	 * The logger instance for this class.
+	 */
+	private static final Logger LOG = LoggerFactory
+			.getLogger(RecoveryAgreementMessage.class);
 
-	private PeerID failedPeer;
-	private ID sharedQueryId;
+	/**
+	 * The id of the message.
+	 */
+	private UUID mID = UUIDFactory.newUUID();
+
+	/**
+	 * The id of the message.
+	 * 
+	 * @return A unique identifier.
+	 */
+	public UUID getUUID() {
+		return this.mID;
+	}
+
+	private PeerID mFailedPeer;
+	
+	public PeerID getFailedPeer() {
+		return mFailedPeer;
+	}
+	
+	private ID mSharedQueryId;
+	
+	public ID getSharedQueryId() {
+		return mSharedQueryId;
+	}
+	
+	/**
+	 * Empty default constructor.
+	 */
+	public RecoveryAgreementMessage() {
+		// Empty default constructor.
+	}
 
 	/**
 	 * Creates a new message to agree with other peers who will do the recovery
@@ -28,31 +71,35 @@ public class RecoveryAgreementMessage implements IMessage {
 	 *            The peerId from the failed peer
 	 * @param sharedQueryId
 	 *            The query for which the sending peer wants to do the recovery
-	 * @return
 	 */
-	public static RecoveryAgreementMessage createRecoveryAgreementMessage(
+	public RecoveryAgreementMessage(
 			PeerID failedPeer, ID sharedQueryId) {
-		RecoveryAgreementMessage message = new RecoveryAgreementMessage();
-		message.setFailedPeer(failedPeer);
-		message.setSharedQueryId(sharedQueryId);
-		return message;
+		Preconditions.checkNotNull(failedPeer);
+		Preconditions.checkNotNull(sharedQueryId);
+		
+		this.mFailedPeer = failedPeer;
+		this.mSharedQueryId = sharedQueryId;
 	}
 
 	@Override
 	public byte[] toBytes() {
 		ByteBuffer bb = null;
 		int bbsize;
-		int peerIdLength = failedPeer.toString().getBytes().length;
-		int sharedQueryIdLength = sharedQueryId.toString().getBytes().length;
+		int peerIdLength = mFailedPeer.toString().getBytes().length;
+		int sharedQueryIdLength = mSharedQueryId.toString().getBytes().length;
+		byte[] idBytes = this.mID.toString().getBytes();
 
-		bbsize = 4 + peerIdLength + 4 + sharedQueryIdLength;
+		bbsize = 4 + idBytes.length + 4 + peerIdLength + 4 + sharedQueryIdLength;
 		bb = ByteBuffer.allocate(bbsize);
 
+		bb.putInt(idBytes.length);
+		bb.put(idBytes);
+		
 		bb.putInt(peerIdLength);
-		bb.put(failedPeer.toString().getBytes(), 0, peerIdLength);
+		bb.put(mFailedPeer.toString().getBytes(), 0, peerIdLength);
 
 		bb.putInt(sharedQueryIdLength);
-		bb.put(sharedQueryId.toString().getBytes(), 0, sharedQueryIdLength);
+		bb.put(mSharedQueryId.toString().getBytes(), 0, sharedQueryIdLength);
 		
 		bb.flip();
 		return bb.array();
@@ -61,6 +108,11 @@ public class RecoveryAgreementMessage implements IMessage {
 	@Override
 	public void fromBytes(byte[] data) {
 		ByteBuffer bb = ByteBuffer.wrap(data);
+		
+		int idBytesLength = bb.getInt();
+		byte[] idBytes = new byte[idBytesLength];
+		bb.get(idBytes);
+		this.mID = new UUID(new String(idBytes));
 		
 		int peerIdLength = bb.getInt();
 		byte[] peerIdByte = new byte[peerIdLength];
@@ -74,30 +126,14 @@ public class RecoveryAgreementMessage implements IMessage {
 		
 		try {
 			URI peerIdUri = new URI(peerIdString);
-			failedPeer = PeerID.create(peerIdUri);
+			mFailedPeer = PeerID.create(peerIdUri);
 			
 			URI sharedQueryIdUri = new URI(sharedQueryIdString);
-			sharedQueryId = ID.create(sharedQueryIdUri);
+			mSharedQueryId = ID.create(sharedQueryIdUri);
 		} catch (Exception e) {
-			e.printStackTrace();
+			LOG.error("Could not create failed peer id from bytes!", e);
 		}
 
-	}
-
-	public PeerID getFailedPeer() {
-		return failedPeer;
-	}
-
-	public void setFailedPeer(PeerID failedPeer) {
-		this.failedPeer = failedPeer;
-	}
-
-	public ID getSharedQueryId() {
-		return sharedQueryId;
-	}
-
-	public void setSharedQueryId(ID sharedQueryId) {
-		this.sharedQueryId = sharedQueryId;
 	}
 
 }

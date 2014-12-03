@@ -59,10 +59,10 @@ public interface IRecoveryCommunicator {
 	 * @param sharedQueryId
 	 *            The shared query id, for which this peer wants to do the
 	 *            recovery
-	 * @param recoveryStateIdentifier
 	 */
-	public void sendRecoveryAgreementMessage(PeerID failedPeer,
-			ID sharedQueryId, UUID recoveryStateIdentifier);
+	// TODO handle result. M.B.
+	public boolean sendRecoveryAgreementMessage(PeerID failedPeer,
+			ID sharedQueryId);
 
 	/**
 	 * Sends a message with backup information to another peer.

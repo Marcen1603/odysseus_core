@@ -42,7 +42,7 @@ import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryCommunicator;
 import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryDynamicBackup;
 import de.uniol.inf.is.odysseus.peer.recovery.internal.RecoveryProcessState;
 import de.uniol.inf.is.odysseus.peer.recovery.internal.SharedQuery;
-import de.uniol.inf.is.odysseus.peer.recovery.protocol.RecoveryAgreementHandler;
+import de.uniol.inf.is.odysseus.peer.recovery.util.AgreementHelper;
 import de.uniol.inf.is.odysseus.peer.recovery.util.LocalBackupInformationAccess;
 import de.uniol.inf.is.odysseus.peer.recovery.util.RecoveryHelper;
 
@@ -361,7 +361,7 @@ public class RecoveryDynamicBackup implements IRecoveryDynamicBackup {
 	@Override
 	public void initiateAgreement(PeerID failedPeer, ID sharedQueryId, PeerID newPeer, ILogicalQueryPart queryPart,
 			UUID recoveryStateIdentifier, UUID subprocessID) {
-		RecoveryAgreementHandler.waitForAndDoRecovery(failedPeer, sharedQueryId, newPeer, queryPart,
+		AgreementHelper.waitForAndDoRecovery(failedPeer, sharedQueryId, newPeer, queryPart,
 				recoveryStateIdentifier, subprocessID);
 	}
 
