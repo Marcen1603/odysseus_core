@@ -5,6 +5,7 @@ import java.util.UUID;
 import net.jxta.id.ID;
 import net.jxta.peer.PeerID;
 import net.jxta.pipe.PipeID;
+import de.uniol.inf.is.odysseus.p2p_new.dictionary.IPeerDictionaryListener;
 import de.uniol.inf.is.odysseus.peer.recovery.internal.RecoveryProcessState;
 import de.uniol.inf.is.odysseus.peer.recovery.messages.RecoveryAddQueryMessage;
 
@@ -15,7 +16,7 @@ import de.uniol.inf.is.odysseus.peer.recovery.messages.RecoveryAddQueryMessage;
  * @author Tobias Brandt & Michael Brand & Simon Kuespert
  * 
  */
-public interface IRecoveryCommunicator {
+public interface IRecoveryCommunicator extends IPeerDictionaryListener {
 
 	/**
 	 * Experimental: Sends a message to all given peers, that they should hold
@@ -110,7 +111,8 @@ public interface IRecoveryCommunicator {
 	 */
 	// TODO Better way: allocate each single query part new. M.B.
 	public void installQueriesOnNewPeer(PeerID failedPeer, PeerID newPeer,
-			ID sharedQueryId, String pql, UUID recoveryStateIdentifier, UUID subprocessID);
+			ID sharedQueryId, String pql, UUID recoveryStateIdentifier,
+			UUID subprocessID);
 
 	/**
 	 * The RecoveryCommunicator will search for a buddy peer which will save
@@ -140,12 +142,6 @@ public interface IRecoveryCommunicator {
 
 	/**
 	 * 
-	 * @param peer
-	 */
-	void peerRemoved(PeerID peer);
-
-	/**
-	 * 
 	 * @param identifier
 	 * @return
 	 */
@@ -158,12 +154,12 @@ public interface IRecoveryCommunicator {
 			RecoveryAddQueryMessage instructionMessage);
 
 	void removeRecoveryProcessState(UUID identifier);
-	
+
 	void setRecoveryStrategyManager(IRecoveryStrategyManager strategyManager);
-	
+
 	/**
-	 * Removes a shared query id from the list of the ids, for which this peer needs a buddy but was not able to find
-	 * one
+	 * Removes a shared query id from the list of the ids, for which this peer
+	 * needs a buddy but was not able to find one
 	 * 
 	 * @param sharedQueryId
 	 *            The id of the shared query to remove

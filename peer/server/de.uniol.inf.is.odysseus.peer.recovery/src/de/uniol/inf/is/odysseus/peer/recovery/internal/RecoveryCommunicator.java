@@ -27,7 +27,6 @@ import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicator;
 import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicatorListener;
 import de.uniol.inf.is.odysseus.p2p_new.PeerCommunicationException;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.IPeerDictionary;
-import de.uniol.inf.is.odysseus.p2p_new.dictionary.IPeerDictionaryListener;
 import de.uniol.inf.is.odysseus.parser.pql.generator.IPQLGenerator;
 import de.uniol.inf.is.odysseus.peer.distribute.message.RemoveQueryMessage;
 import de.uniol.inf.is.odysseus.peer.recovery.IAddQueryResponseHandler;
@@ -53,7 +52,7 @@ import de.uniol.inf.is.odysseus.peer.recovery.util.LocalBackupInformationAccess;
  * 
  */
 public class RecoveryCommunicator implements IRecoveryCommunicator,
-		IPeerCommunicatorListener, IPeerDictionaryListener {
+		IPeerCommunicatorListener {
 
 	/**
 	 * The logger instance for this class.
@@ -639,6 +638,7 @@ public class RecoveryCommunicator implements IRecoveryCommunicator,
 	 * @param message
 	 *            The message which you want to send
 	 */
+	// TODO remove, when RecoveryAddQueryMessage is handled by repeating sender/receiver pair. M.B.
 	public void sendMessage(PeerID receiverPeer, IMessage message) {
 
 		// Preconditions
