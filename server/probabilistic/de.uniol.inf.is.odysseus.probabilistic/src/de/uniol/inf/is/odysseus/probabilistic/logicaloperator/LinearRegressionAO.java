@@ -39,7 +39,7 @@ import de.uniol.inf.is.odysseus.probabilistic.common.sdf.schema.SDFProbabilistic
  * @author Christian Kuka <christian@kuka.cc>
  * 
  */
-@LogicalOperator(maxInputPorts = 1, minInputPorts = 1, name = "LinearRegression", deprecation = true, doc = "This operator performs a linear regression on the given set of explanatory attributes to explain the given set of dependent attributes", category = { LogicalOperatorCategory.PROBABILISTIC })
+@LogicalOperator(maxInputPorts = 1, minInputPorts = 1, name = "LinearRegression", hidden = true, deprecation = true, doc = "This operator performs a linear regression on the given set of explanatory attributes to explain the given set of dependent attributes", category = { LogicalOperatorCategory.PROBABILISTIC })
 public class LinearRegressionAO extends UnaryLogicalOp {
 
     /**

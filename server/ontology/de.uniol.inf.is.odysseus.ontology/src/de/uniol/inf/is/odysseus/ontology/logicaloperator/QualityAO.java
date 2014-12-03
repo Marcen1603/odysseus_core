@@ -48,7 +48,7 @@ import de.uniol.inf.is.odysseus.ontology.utils.SDFUtils;
  * @author Christian Kuka <christian@kuka.cc>
  * 
  */
-@LogicalOperator(maxInputPorts = 1, minInputPorts = 1, doc = "Append quality information to the incoming stream object.", name = "Quality", category = { LogicalOperatorCategory.ONTOLOGY })
+@LogicalOperator(maxInputPorts = 1, minInputPorts = 1, deprecation = true, doc = "Append quality information to the incoming stream object.", name = "Quality", category = { LogicalOperatorCategory.ONTOLOGY })
 public class QualityAO extends UnaryLogicalOp {
 
     /**

@@ -39,7 +39,7 @@ import de.uniol.inf.is.odysseus.probabilistic.common.sdf.schema.SDFProbabilistic
  * 
  * 
  */
-@LogicalOperator(maxInputPorts = 1, minInputPorts = 1, name = "DISTRIBUTION", category = { "Probabilistic" }, doc = "Assign a distribution to the given attributes")
+@LogicalOperator(maxInputPorts = 1, minInputPorts = 1, deprecation = true, name = "DISTRIBUTION", category = { "Probabilistic" }, doc = "Assign a distribution to the given attributes")
 public class AssignDistributionAO extends UnaryLogicalOp {
 
     /**
