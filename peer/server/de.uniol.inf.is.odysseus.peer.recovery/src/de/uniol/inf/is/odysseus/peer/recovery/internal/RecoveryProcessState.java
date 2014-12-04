@@ -11,9 +11,21 @@ import de.uniol.inf.is.odysseus.peer.distribute.ILogicalQueryPart;
 import net.jxta.id.ID;
 import net.jxta.peer.PeerID;
 
+/**
+ * The RecoveryProcessState handles data for a given recovery process. These
+ * Data are needed for reallocation. Every RecoveryProcessState has Substates.
+ * These SubStates represents the allocation of a single QueryPart. If the
+ * allocation of a queryPart is successful, the corresponding subProcess will be
+ * removed. 
+ * 
+ * @author ChrisToenjesDeye
+ * 
+ */
 public class RecoveryProcessState {
-
+	// identifier of the process
 	private UUID identifier;
+	
+	// the failed peer, which need to be recovered
 	private PeerID failedPeerID;
 
 	// maps the subprocessIdentifier to the subprocess
@@ -51,15 +63,16 @@ public class RecoveryProcessState {
 	}
 
 	public List<PeerID> getInadequatePeers(UUID subprocessIdentifier) {
-		if (!subProcesses.containsKey(subprocessIdentifier)){
+		if (!subProcesses.containsKey(subprocessIdentifier)) {
 			return new ArrayList<PeerID>();
 		}
 		return subProcesses.get(subprocessIdentifier).getInadequatePeers();
 	}
 
 	public void addInadequatePeer(PeerID peerId, UUID subprocessIdentifier) {
-		if (subProcesses.containsKey(subprocessIdentifier)){			
-			subProcesses.get(subprocessIdentifier).getInadequatePeers().add(peerId);
+		if (subProcesses.containsKey(subprocessIdentifier)) {
+			subProcesses.get(subprocessIdentifier).getInadequatePeers()
+					.add(peerId);
 		}
 	}
 

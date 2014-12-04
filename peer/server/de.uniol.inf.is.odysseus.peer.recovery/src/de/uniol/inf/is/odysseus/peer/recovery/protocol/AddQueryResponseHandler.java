@@ -29,6 +29,13 @@ import de.uniol.inf.is.odysseus.peer.recovery.util.BuddyHelper;
 import de.uniol.inf.is.odysseus.peer.recovery.util.LocalBackupInformationAccess;
 import de.uniol.inf.is.odysseus.peer.recovery.util.RecoveryHelper;
 
+/**
+ * A Handler for working with AddQueryResponse Messages. This messages could be
+ * an ack or fail message. Both types need to be handled here.
+ * 
+ * @author ChrisToenjesDeye
+ * 
+ */
 public class AddQueryResponseHandler implements IAddQueryResponseHandler {
 
 	/**
@@ -76,6 +83,12 @@ public class AddQueryResponseHandler implements IAddQueryResponseHandler {
 		}
 	}
 
+	/**
+	 * Handles an fail response. Starts reallocation of the queryPart
+	 * @param senderPeer
+	 * @param addQueryFailResponse
+	 * @param recoveryCommunicator
+	 */
 	private void handleAddQueryFail(PeerID senderPeer, AddQueryResponseMessage addQueryFailResponse,
 			IRecoveryCommunicator recoveryCommunicator) {
 
@@ -97,6 +110,12 @@ public class AddQueryResponseHandler implements IAddQueryResponseHandler {
 		}
 	}
 
+	/**
+	 * Handles an ACK response. Removes recoverySubProcess.
+	 * @param senderPeer
+	 * @param addQueryAckResponse
+	 * @param recoveryCommunicator
+	 */
 	private void handleAddQueryAck(PeerID senderPeer, AddQueryResponseMessage addQueryAckResponse,
 			IRecoveryCommunicator recoveryCommunicator) {
 		if (addQueryAckResponse.getRecoveryProcessStateId() != null) {

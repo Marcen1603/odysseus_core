@@ -9,6 +9,15 @@ import net.jxta.id.ID;
 import net.jxta.pipe.PipeID;
 import de.uniol.inf.is.odysseus.p2p_new.IMessage;
 
+/**
+ * Response Message for AddQuery Messages. The Response could be an ACK or a
+ * fail. If the queryPart could not installed a fail response is send and the
+ * query Part need to be reallocated. The response also contains most of the
+ * information from the message.
+ * 
+ * @author ChrisToenjesDeye
+ * 
+ */
 public class AddQueryResponseMessage implements IMessage {
 	public static final int FAIL = 0;
 	public static final int ACK = 1;
@@ -31,12 +40,12 @@ public class AddQueryResponseMessage implements IMessage {
 			RecoveryAddQueryMessage instruction) {
 		return createAddQueryAckMessage(instruction.getSharedQueryId(),
 				instruction.getRecoveryProcessId(),
-				instruction.getmSubprocessId(),
-				instruction.getPQLCode());
+				instruction.getmSubprocessId(), instruction.getPQLCode());
 	}
 
 	public static AddQueryResponseMessage createAddQueryAckMessage(
-			ID sharedQueryId, UUID recoveryProcessStateId, UUID subprocessId, String pqlQueryPart) {
+			ID sharedQueryId, UUID recoveryProcessStateId, UUID subprocessId,
+			String pqlQueryPart) {
 		AddQueryResponseMessage addQueryAckMessage = new AddQueryResponseMessage();
 		addQueryAckMessage.setMessageType(ACK);
 		addQueryAckMessage.setRecoveryProcessStateId(recoveryProcessStateId);
@@ -50,12 +59,12 @@ public class AddQueryResponseMessage implements IMessage {
 			RecoveryAddQueryMessage instruction) {
 		return createAddQueryFailMessage(instruction.getSharedQueryId(),
 				instruction.getRecoveryProcessId(),
-				instruction.getmSubprocessId(),
-				instruction.getPQLCode());
+				instruction.getmSubprocessId(), instruction.getPQLCode());
 	}
 
 	public static AddQueryResponseMessage createAddQueryFailMessage(
-			ID sharedQueryId, UUID recoveryProcessStateId, UUID subprocessId, String pqlQueryPart) {
+			ID sharedQueryId, UUID recoveryProcessStateId, UUID subprocessId,
+			String pqlQueryPart) {
 		AddQueryResponseMessage addQueryFailMessage = new AddQueryResponseMessage();
 		addQueryFailMessage.setMessageType(FAIL);
 		addQueryFailMessage.setRecoveryProcessStateId(recoveryProcessStateId);
@@ -76,7 +85,8 @@ public class AddQueryResponseMessage implements IMessage {
 		byte[] processIdAsBytes = recoveryProcessStateId.toString().getBytes();
 		byte[] subprocessIdAsBytes = subprocessId.toString().getBytes();
 
-		bbsize = 4 + 4 + processIdAsBytes.length + 4 + subprocessIdAsBytes.length + 4 + pqlAsBytes.length + 4
+		bbsize = 4 + 4 + processIdAsBytes.length + 4
+				+ subprocessIdAsBytes.length + 4 + pqlAsBytes.length + 4
 				+ sharedQueryIdLength;
 		bb = ByteBuffer.allocate(bbsize);
 		bb.putInt(this.mMessageType);
@@ -110,7 +120,7 @@ public class AddQueryResponseMessage implements IMessage {
 		byte[] subprocessIdAsBytes = new byte[subprocessIdLength];
 		bb.get(subprocessIdAsBytes);
 		subprocessId = UUID.fromString(new String(subprocessIdAsBytes));
-		
+
 		int pqlLength = bb.getInt();
 		byte[] pqlAsByte = new byte[pqlLength];
 		bb.get(pqlAsByte);

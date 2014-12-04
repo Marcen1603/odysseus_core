@@ -82,15 +82,28 @@ public interface IRecoveryDynamicBackup {
 	 *            PeerID of the failed peer
 	 * @return Map<ILogicalQueryPart, PeerID> of the new peers to allocate to
 	 */
-
 	public Map<ILogicalQueryPart, PeerID> allocateToNewPeer(PeerID failedPeer,
 			ID sharedQueryId, IRecoveryAllocator recoveryAllocator)
 			throws QueryPartAllocationException;
 
+	/**
+	 * Reallocates QueryParts of a failed peer to a new peer.
+	 * 
+	 * @param allocationMap - the previous allocation map
+	 * @param inadequatePeers - peers which cannot install the querypart
+	 * @param recoveryAllocator - an allocator
+	 * @return new allocationMap
+	 * @throws QueryPartAllocationException
+	 */
 	public Map<ILogicalQueryPart, PeerID> reallocateToNewPeer(
 			Map<ILogicalQueryPart, PeerID> allocationMap,
 			List<PeerID> inadequatePeers, IRecoveryAllocator recoveryAllocator)
 			throws QueryPartAllocationException;
 
+	/**
+	 * Returns a RecoveryProcessState by identifier
+	 * @param recoveryProcessStateId
+	 * @return RecoveryProcessState
+	 */
 	RecoveryProcessState getRecoveryProcessState(UUID recoveryProcessStateId);
 }

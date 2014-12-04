@@ -141,20 +141,43 @@ public interface IRecoveryCommunicator extends IPeerDictionaryListener {
 	public boolean sendGoOnMessage(PeerID receiverPeer, PipeID pipeId);
 
 	/**
+	 * Returns the RecoveryProcessState for a given identifier
 	 * 
 	 * @param identifier
-	 * @return
+	 * @return RecoveryProcessState
 	 */
 	RecoveryProcessState getRecoveryProcessState(UUID identifier);
 
+	/**
+	 * Sends an ADDQueryResponse with messageType FAIL, with the data from an
+	 * existing instruction message
+	 * 
+	 * @param senderPeer - the sender of the instruction message
+	 * @param instructionMessage - the instruction message
+	 */
 	void sendAddQueryFail(PeerID senderPeer,
 			RecoveryAddQueryMessage instructionMessage);
 
+	/**
+	 * Sends an ADDQueryResponse with messageType ACK, with the data from an
+	 * existing instruction message
+	 * 
+	 * @param senderPeer - the sender of the instruction message
+	 * @param instructionMessage - the instruction message
+	 */
 	void sendAddQueryAck(PeerID senderPeer,
 			RecoveryAddQueryMessage instructionMessage);
 
+	/**
+	 * Removes an active recoveryProcessState for a given identifier
+	 * @param identifier of the processState
+	 */
 	void removeRecoveryProcessState(UUID identifier);
 
+	/**
+	 * TODO
+	 * @param strategyManager
+	 */
 	void setRecoveryStrategyManager(IRecoveryStrategyManager strategyManager);
 
 	/**
