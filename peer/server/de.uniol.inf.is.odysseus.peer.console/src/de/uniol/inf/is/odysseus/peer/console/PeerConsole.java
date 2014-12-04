@@ -961,28 +961,38 @@ public class PeerConsole implements CommandProvider, IPeerCommunicatorListener {
 		String parameters = splitted.length > 1 ? splitted[1] : null;
 		LOG.debug("Got command message: " + command);
 		
-		Optional<Method> optMethod = determineCommandMethod(command);
-		Optional<CommandProvider> optProvider = determineProvider(command);
 		StringBuilderCommandInterpreter delegateCi = new StringBuilderCommandInterpreter(parameters != null ? parameters.split("\\ ") : new String[0]);
-
-		if (!optMethod.isPresent()) {
-			delegateCi.println("No such command: " + command);
+		if( command.equals("help")) {
+			printHelp(delegateCi);
 		} else {
-			try {
-				optMethod.get().invoke(optProvider.get(), delegateCi);
-				// delegateCi contains output of command now
-			} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-				LOG.error("Could not execute command {}", command, e);
-				delegateCi.println("Could not execute command " + command + " : " + e.getMessage());
+			Optional<Method> optMethod = determineCommandMethod(command);
+			Optional<CommandProvider> optProvider = determineProvider(command);
+	
+			if (!optMethod.isPresent()) {
+				delegateCi.println("No such command: " + command);
+			} else {
+				try {
+					optMethod.get().invoke(optProvider.get(), delegateCi);
+					// delegateCi contains output of command now
+				} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+					LOG.error("Could not execute command {}", command, e);
+					delegateCi.println("Could not execute command " + command + " : " + e.getMessage());
+				}
 			}
 		}
-
+		
 		CommandOutputMessage out = new CommandOutputMessage(delegateCi.getText());
 		try {
 			LOG.debug("Command executed. Send results back");
 			peerCommunicator.send(senderPeer, out);
 		} catch (PeerCommunicationException e) {
 			LOG.debug("Could not send console output", e);
+		}
+	}
+	
+	private static void printHelp(CommandInterpreter ci) {
+		for (CommandProvider provider : COMMAND_PROVIDERS) {
+			ci.println(provider.getHelp());
 		}
 	}
 
