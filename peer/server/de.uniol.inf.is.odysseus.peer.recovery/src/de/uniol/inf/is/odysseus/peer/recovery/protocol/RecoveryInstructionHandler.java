@@ -90,6 +90,7 @@ public class RecoveryInstructionHandler {
 	 */
 	@SuppressWarnings("rawtypes")
 	private static void addQuery(PeerID senderPeer, RecoveryAddQueryMessage instructionMessage) {
+		Preconditions.checkNotNull(recoveryCommunicator);
 		if (!RecoveryCommunicator.getExecutor().isPresent()) {
 			LOG.error("No executor bound!");
 			return;
@@ -110,7 +111,7 @@ public class RecoveryInstructionHandler {
 		}
 		// installing query was successful, send ACK
 		recoveryCommunicator.sendAddQueryAck(senderPeer, instructionMessage);
-		
+
 		LOG.debug("Installed query for recovery.");
 
 		// Call "receiveFromNewPeer" on the subsequent receiver so that that

@@ -164,4 +164,24 @@ public interface IRecoveryBackupInformationStore {
 	 */
 	boolean hasInformationAbout(ID sharedQuery);
 
+	/**
+	 * Removes a shared query from the list of peers where we are the buddy for. Searches through all saved peers we are
+	 * the buddy for and deletes the shared query id. This is useful, if a shared query is deleted. Attention:
+	 * This does not changes anything at the buddies them self.
+	 * 
+	 * @param sharedQueryID
+	 *            The id of the shared query which has to be removed
+	 */
+	void removeSharedQueryFromBuddyList(ID sharedQueryId);
+
+	/**
+	 * Removes a shared query from the list of my buddies. Searches through all saved buddies and deletes the shared
+	 * query id. This is useful, if a shared query is deleted. Attention: This does not changes anything at the buddies
+	 * them self.
+	 * 
+	 * @param sharedQueryID
+	 *            The id of the shared query which has to be removed
+	 */
+	void removeSharedQueryFromMyBuddyList(ID sharedQueryID);
+
 }

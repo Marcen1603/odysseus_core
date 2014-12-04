@@ -80,7 +80,7 @@ public class BackupInformationStore implements IRecoveryBackupInformationStore {
 						return;
 					}
 				}
-				
+
 				// Is the "locationPQL" the same and is it the same peer?
 				if (info.getLocationPeer() != null && backupInfo.getLocationPeer() != null
 						&& info.getLocationPeer().equals(backupInfo.getLocationPeer()) && info.getLocalPQL() != null
@@ -238,17 +238,22 @@ public class BackupInformationStore implements IRecoveryBackupInformationStore {
 	}
 
 	@Override
+	public void removeSharedQueryFromBuddyList(ID sharedQueryID) {
+		for (PeerID pId : mBuddyMap.keySet()) {
+			List<ID> sharedQueryIDs = mBuddyMap.get(pId);
+			sharedQueryIDs.remove(sharedQueryID);
+		}
+	}
+
+	@Override
 	public Map<PeerID, List<ID>> getBuddyList() {
 		ImmutableMap<PeerID, List<ID>> copyMap = ImmutableMap.copyOf(mBuddyMap);
 		return copyMap;
 	}
 
-	/*
-	 * My buddies (the peers which are my buddies)
-	 */
-
 	/**
-	 * The stored information which peers are my buddies
+	 * The stored information which peers are my buddies ID of the peer -> List of shared query IDs where this peer is
+	 * my buddy for
 	 */
 	private final Map<PeerID, List<ID>> mMyBuddyMap = Maps.newHashMap();
 
@@ -268,6 +273,14 @@ public class BackupInformationStore implements IRecoveryBackupInformationStore {
 	@Override
 	public List<ID> removeMyBuddy(PeerID peerId) {
 		return mMyBuddyMap.remove(peerId);
+	}
+
+	@Override
+	public void removeSharedQueryFromMyBuddyList(ID sharedQueryID) {
+		for (PeerID pId : mMyBuddyMap.keySet()) {
+			List<ID> sharedQueryIDs = mMyBuddyMap.get(pId);
+			sharedQueryIDs.remove(sharedQueryID);
+		}
 	}
 
 	@Override
