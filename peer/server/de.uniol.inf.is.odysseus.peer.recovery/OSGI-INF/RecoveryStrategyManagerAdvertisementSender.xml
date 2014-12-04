@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="de.uniol.inf.is.odysseus.peer.recovery.advertisement.RecoveryStrategyManagerAdvertisementSender">
+   <implementation class="de.uniol.inf.is.odysseus.peer.recovery.advertisement.RecoveryStrategyManagerAdvertisementSender"/>
+   <reference bind="bindJxtaServicesProvider" cardinality="1..1" interface="de.uniol.inf.is.odysseus.p2p_new.IJxtaServicesProvider" name="IJxtaServicesProvider" policy="static" unbind="unbindJxtaServicesProvider"/>
+   <reference bind="bindP2PNetworkManager" cardinality="1..1" interface="de.uniol.inf.is.odysseus.p2p_new.IP2PNetworkManager" name="IP2PNetworkManager" policy="static" unbind="unbindP2PNetworkManager"/>
+</scr:component>

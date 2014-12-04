@@ -15,7 +15,6 @@ public class RecoveryPreParserKeywordProvider implements IPreParserKeywordProvid
 		
 		keywords.put(RecoveryAllocatorPreParserKeyword.KEYWORD, RecoveryAllocatorPreParserKeyword.class);
 		keywords.put(RecoveryStrategyManagerPreParserKeyword.KEYWORD, RecoveryStrategyManagerPreParserKeyword.class);
-		keywords.put(RecoveryStrategyPreParserKeyword.KEYWORD, RecoveryStrategyPreParserKeyword.class);
 		return keywords;
 	}
 

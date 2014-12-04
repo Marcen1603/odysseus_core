@@ -14,6 +14,7 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.IExe
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryAllocator;
 import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryStrategy;
+import de.uniol.inf.is.odysseus.peer.recovery.advertisement.RecoveryAllocatorAdvertisementSender;
 import de.uniol.inf.is.odysseus.peer.recovery.registry.RecoveryAllocatorRegistry;
 import de.uniol.inf.is.odysseus.peer.recovery.registry.RecoveryStrategyRegistry;
 import de.uniol.inf.is.odysseus.script.parser.AbstractPreParserKeyword;
@@ -47,6 +48,7 @@ public class RecoveryAllocatorPreParserKeyword extends AbstractPreParserKeyword 
 		for (IRecoveryStrategy strategy : RecoveryStrategyRegistry.getInstance().getInterfaceContributions()) {
 			strategy.setAllocator(allocator);
 		}
+		RecoveryAllocatorAdvertisementSender.publish(allocator.getName());
 		return null;
 	}
 

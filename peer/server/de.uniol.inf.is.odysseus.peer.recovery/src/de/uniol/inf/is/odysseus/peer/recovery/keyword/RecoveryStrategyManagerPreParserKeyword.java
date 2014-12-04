@@ -14,6 +14,7 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.IExe
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryCommunicator;
 import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryStrategyManager;
+import de.uniol.inf.is.odysseus.peer.recovery.advertisement.RecoveryStrategyManagerAdvertisementSender;
 import de.uniol.inf.is.odysseus.peer.recovery.registry.RecoveryCommunicatorRegistry;
 import de.uniol.inf.is.odysseus.peer.recovery.registry.RecoveryStrategyManagerRegistry;
 import de.uniol.inf.is.odysseus.script.parser.AbstractPreParserKeyword;
@@ -47,6 +48,7 @@ public class RecoveryStrategyManagerPreParserKeyword extends AbstractPreParserKe
 		for (IRecoveryCommunicator communicator : RecoveryCommunicatorRegistry.getRecoveryCommunicators()) {
 			communicator.setRecoveryStrategyManager(strategyManager);
 		}
+		RecoveryStrategyManagerAdvertisementSender.publish(parameter);
 		return null;
 
 	}
