@@ -236,7 +236,7 @@ public class GPSToLocalCoordFunction extends AbstractFunction<Double>{
 		double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 		double distance = R * c;
 
-		return distance*1000;
+		return distance*1000*100*10;//mm
 	}
 	
 	private static double toRad(double value) {

@@ -34,8 +34,11 @@ import de.uniol.inf.is.odysseus.sports.sportsql.parser.parameter.SportsQLTimePar
  * 
  * Example Query:
  * 
- * { "statisticType": "global", "gameType": "soccer", "name": "gameTime",
- * "parameters": { "startts": 10753295594424116, "endts": 14879639146403495 } };
+ * 	{ 	
+ * 		"statisticType": "global",
+ * 		"gameType": "soccer", 
+ * 		"name": "gameTime"
+ * 	}
  * 
  * @author Thore Stratmann
  *
@@ -46,9 +49,6 @@ import de.uniol.inf.is.odysseus.sports.sportsql.parser.parameter.SportsQLTimePar
 		@SportsQLParameter(name = "isSelectDataBetweenTimestamps", parameterClass = SportsQLBooleanParameter.class, mandatory = false),
 		@SportsQLParameter(name = "addMilliseconds", parameterClass = SportsQLBooleanParameter.class, mandatory = false),})
 public class GameTimeSportsQLParser implements ISportsQLParser {
-
-//	private static final String ATTRIBUTE_NEW_TS = "newts";
-//	private static final String ATTRIBUTE_MILLISECOND = "milliseconds";
 
 	@Override
 	public ILogicalQuery parse(ISession session,SportsQLQuery sportsQL)
@@ -75,9 +75,6 @@ public class GameTimeSportsQLParser implements ISportsQLParser {
 			gameTimeSelect = soccerGameStreamAO;
 		}
 
-		//long test3 = TimeUnitHelper.getBTUtoMinutesFactor(TimeUnit.valueOf(AbstractSportsDDCAccess.getBasetimeunit().toLowerCase()));
-		//double test4 = TimeUnitHelper.getBTUtoSecondsFactor(TimeUnit.valueOf(AbstractSportsDDCAccess.getBasetimeunit().toLowerCase()));
-		//System.out.println(test3 + " " + test4 + " " + AbstractSportsDDCAccess.getBasetimeunit().toLowerCase() + " " + AbstractSportsDDCAccess.getBasetimeunit().toLowerCase());
 		// 3. Convert decimal minutes to minute, second and millisecond
 		List<SDFExpressionParameter> expressions = new ArrayList<SDFExpressionParameter>();
 		expressions.add(OperatorBuildHelper
@@ -88,7 +85,8 @@ public class GameTimeSportsQLParser implements ISportsQLParser {
 			expressions.add(OperatorBuildHelper.
 					createExpressionParameter("DoubleToInteger((ts/"+TimeUnitHelper.getBTUtoMillisecondsFactor(TimeUnit.valueOf(AbstractSportsDDCAccess.getBasetimeunit().toLowerCase()))+") % 1000)", OperatorBuildHelper.ATTRIBUTE_MILLISECOND, gameTimeSelect));
 		}
-			MapAO timeMap = OperatorBuildHelper.createMapAO(expressions, gameTimeSelect,
+		
+		MapAO timeMap = OperatorBuildHelper.createMapAO(expressions, gameTimeSelect,
 				0, 0, false);
 		timeMap.initialize();
 		allOperators.add(timeMap);
