@@ -1,8 +1,9 @@
 package de.uniol.inf.is.odysseus.report.executor;
 
-import java.util.Collection;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
-import java.util.Set;
 
 import de.uniol.inf.is.odysseus.core.planmanagement.SinkInformation;
 import de.uniol.inf.is.odysseus.core.planmanagement.ViewInformation;
@@ -39,48 +40,78 @@ public class ExecutorReportProvider implements IReportProvider {
 			report.append("\n");
 			
 			report.append("\n### Queries:\n");
-			Collection<Integer> logicalQueries = executor.getLogicalQueryIds(session);
+            List<Integer> logicalQueries = new ArrayList<>(executor.getLogicalQueryIds(session));
+            Collections.sort(logicalQueries);
 			for (Integer id : logicalQueries) {
 				ILogicalQuery logicalQuery = executor.getLogicalQueryById(id.intValue(), session);
 				report.append("\t* ").append(logicalQuery.getID()).append("\t").append(logicalQuery.getQueryText().replace('\n', ' ').replace('\r', ' ')).append("\n");
 			}
 			report.append("\n### Sinks:\n");
 			List<SinkInformation> sinks = executor.getSinks(session);
+            Collections.sort(sinks, new Comparator<SinkInformation>() {
+
+                @Override
+                public int compare(SinkInformation o1, SinkInformation o2) {
+                    return o1.getName().compareTo(o2.getName());
+                }
+
+            });
 			for (SinkInformation sink : sinks) {
 				report.append("\t* ").append(sink.getName()).append(" (").append(sink.getOutputSchema()).append(")\n");
 			}
 			report.append("\n### Streams and Views:\n");
 			List<ViewInformation> streams = executor.getStreamsAndViewsInformation(session);
+            Collections.sort(streams, new Comparator<ViewInformation>() {
+
+                @Override
+                public int compare(ViewInformation o1, ViewInformation o2) {
+                    return o1.getName().compareTo(o2.getName());
+                }
+
+            });
 			for (ViewInformation stream : streams) {
 				report.append("\t* ").append(stream.getName()).append(" (").append(stream.getOutputSchema()).append(")\n");
 			}
 			report.append("\n### Datatypes:\n");
-			Set<SDFDatatype> datatypes = executor.getRegisteredDatatypes(session);
+            List<SDFDatatype> datatypes = new ArrayList<>(executor.getRegisteredDatatypes(session));
+            Collections.sort(datatypes, new Comparator<SDFDatatype>() {
+
+                @Override
+                public int compare(SDFDatatype o1, SDFDatatype o2) {
+                    return o1.getQualName().compareTo(o2.getQualName());
+                }
+
+            });
 			for (SDFDatatype datatype : datatypes) {
 				report.append("\t* ").append(datatype).append("\n");
 			}
 			report.append("\n### Wrappers:\n");
-			Set<String> wrappers = executor.getRegisteredWrapperNames(session);
+            List<String> wrappers = new ArrayList<>(executor.getRegisteredWrapperNames(session));
+            Collections.sort(wrappers);
 			for (String wrapper : wrappers) {
 				report.append("\t* ").append(wrapper).append("\n");
 			}
 			report.append("\n### Schedulers:\n");
-			Set<String> schedulers = executor.getRegisteredSchedulers(session);
+            List<String> schedulers = new ArrayList<>(executor.getRegisteredSchedulers(session));
+            Collections.sort(schedulers);
 			for (String scheduler : schedulers) {
 				report.append("\t* ").append(scheduler).append("\n");
 			}
 			report.append("\n### Scheduling Strategies:\n");
-			Set<String> schedulingStrategies = executor.getRegisteredSchedulingStrategies(session);
+            List<String> schedulingStrategies = new ArrayList<>(executor.getRegisteredSchedulingStrategies(session));
+            Collections.sort(schedulingStrategies);
 			for (String schedulingStrategy : schedulingStrategies) {
 				report.append("\t* ").append(schedulingStrategy).append("\n");
 			}
 			report.append("\n### Parsers:\n");
-			Set<String> parsers = executor.getSupportedQueryParsers(session);
+            List<String> parsers = new ArrayList<>(executor.getSupportedQueryParsers(session));
+            Collections.sort(parsers);
 			for (String parser : parsers) {
 				report.append("\t* ").append(parser).append("\n");
 			}
 			report.append("\n### Operators:\n");
 			List<String> operators = executor.getOperatorNames(session);
+            Collections.sort(operators);
 			for (String operator : operators) {
 				report.append("\t* ").append(operator).append("\n");
 			}
