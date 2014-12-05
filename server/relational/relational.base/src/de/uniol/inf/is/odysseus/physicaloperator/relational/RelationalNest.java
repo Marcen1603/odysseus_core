@@ -56,9 +56,15 @@ public class RelationalNest extends AbstractListAggregation<Tuple<? extends IMet
 	@Override
 	public IPartialAggregate<Tuple<? extends IMetaAttribute>> merge(IPartialAggregate<Tuple<? extends IMetaAttribute>> p, Tuple<? extends IMetaAttribute> toMerge,
 			boolean createNew) {
+		final ListPartialAggregate<Tuple<? extends IMetaAttribute>> ret;
+		if (createNew){
+			ret = new ListPartialAggregate<Tuple<? extends IMetaAttribute>>((ListPartialAggregate<Tuple<? extends IMetaAttribute>>)p);
+		}else{
+			ret = (ListPartialAggregate<Tuple<? extends IMetaAttribute>>)p;
+		}
 		Tuple<? extends IMetaAttribute> t = toMerge.restrict(restrictList, true);
 		t.setMetadata(null);
-		return ((ListPartialAggregate)p).addElem(t);
+		return ret.addElem(t);
 	}
 	
 	
