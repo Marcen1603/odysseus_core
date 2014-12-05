@@ -160,7 +160,7 @@ public class RecoveryHelper {
 	 * @param pql
 	 *            PQL to execute.
 	 */
-	public static Collection<Integer> installAndRunQueryPartFromPql(String pql) {
+	public static Collection<Integer> installAndRunQueryPartFromPql(String pql) throws QueryParseException {
 
 		Collection<Integer> installedQueries = Lists.newArrayList();
 
@@ -171,6 +171,16 @@ public class RecoveryHelper {
 
 		ISession session = RecoveryCommunicator.getActiveSession();
 
+		/*
+		 * TODO LSOP-367 first intent to keep distributed query running, if a sink-part has been recovered. Not ready for submission, yet. M.B.
+		StringBuffer odScript = new StringBuffer();
+		odScript.append("#PARSER PQL\n");
+		odScript.append("#RUNQUERY\n");
+		odScript.append(pql);
+		installedQueries = cExecutor.get().addQuery(odScript.toString(), "OdysseusScript", session,
+				"Standard", Context.empty());
+		*/		
+				
 		installedQueries = cExecutor.get().addQuery(pql, "PQL", session,
 				"Standard", Context.empty());
 
