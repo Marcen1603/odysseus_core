@@ -85,7 +85,6 @@ abstract public class AbstractWindowAO extends UnaryLogicalOp implements
 		return windowSize;
 	}
 
-	@Parameter(type = TimeParameter.class, name = "SIZE", optional = true)
 	public void setWindowSize(TimeValueItem windowSize) {
 		this.windowSize = windowSize;
 	}
