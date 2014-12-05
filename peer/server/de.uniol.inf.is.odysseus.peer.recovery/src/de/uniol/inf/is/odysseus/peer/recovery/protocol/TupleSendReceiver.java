@@ -22,7 +22,7 @@ import de.uniol.inf.is.odysseus.peer.recovery.util.RecoveryHelper;
  * @author Michael Brand
  *
  */
-public class TupleSendReceiver extends AbtractRepeatingMessageReceiver {
+public class TupleSendReceiver extends AbstractRepeatingMessageReceiver {
 
 	/**
 	 * The logger instance for this class.

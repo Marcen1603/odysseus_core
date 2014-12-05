@@ -7,7 +7,6 @@ import net.jxta.peer.PeerID;
 import net.jxta.pipe.PipeID;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.IPeerDictionaryListener;
 import de.uniol.inf.is.odysseus.peer.recovery.internal.RecoveryProcessState;
-import de.uniol.inf.is.odysseus.peer.recovery.messages.RecoveryAddQueryMessage;
 
 /**
  * A recovery communicator handles the communication between peers for recovery
@@ -149,33 +148,16 @@ public interface IRecoveryCommunicator extends IPeerDictionaryListener {
 	RecoveryProcessState getRecoveryProcessState(UUID identifier);
 
 	/**
-	 * Sends an ADDQueryResponse with messageType FAIL, with the data from an
-	 * existing instruction message
-	 * 
-	 * @param senderPeer - the sender of the instruction message
-	 * @param instructionMessage - the instruction message
-	 */
-	void sendAddQueryFail(PeerID senderPeer,
-			RecoveryAddQueryMessage instructionMessage);
-
-	/**
-	 * Sends an ADDQueryResponse with messageType ACK, with the data from an
-	 * existing instruction message
-	 * 
-	 * @param senderPeer - the sender of the instruction message
-	 * @param instructionMessage - the instruction message
-	 */
-	void sendAddQueryAck(PeerID senderPeer,
-			RecoveryAddQueryMessage instructionMessage);
-
-	/**
 	 * Removes an active recoveryProcessState for a given identifier
-	 * @param identifier of the processState
+	 * 
+	 * @param identifier
+	 *            of the processState
 	 */
 	void removeRecoveryProcessState(UUID identifier);
 
 	/**
 	 * TODO
+	 * 
 	 * @param strategyManager
 	 */
 	void setRecoveryStrategyManager(IRecoveryStrategyManager strategyManager);

@@ -21,7 +21,7 @@ import de.uniol.inf.is.odysseus.peer.recovery.util.AgreementHelper;
  * @author Michael Brand
  *
  */
-public class AgreementReceiver extends AbtractRepeatingMessageReceiver {
+public class AgreementReceiver extends AbstractRepeatingMessageReceiver {
 
 	/**
 	 * The logger instance for this class.

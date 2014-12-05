@@ -9,16 +9,18 @@ import net.jxta.pipe.PipeID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
+import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.p2p_new.IMessage;
 import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicator;
 import de.uniol.inf.is.odysseus.p2p_new.PeerCommunicationException;
 import de.uniol.inf.is.odysseus.p2p_new.data.DataTransmissionException;
 import de.uniol.inf.is.odysseus.p2p_new.physicaloperator.JxtaReceiverPO;
-import de.uniol.inf.is.odysseus.peer.recovery.internal.RecoveryCommunicator;
 import de.uniol.inf.is.odysseus.peer.recovery.messages.RecoveryUpdatePipeMessage;
 import de.uniol.inf.is.odysseus.peer.recovery.messages.RecoveryUpdatePipeResponseMessage;
 
@@ -29,7 +31,7 @@ import de.uniol.inf.is.odysseus.peer.recovery.messages.RecoveryUpdatePipeRespons
  * @author Michael Brand
  *
  */
-public class UpdatePipeReceiver extends AbtractRepeatingMessageReceiver {
+public class UpdatePipeReceiver extends AbstractRepeatingMessageReceiver {
 
 	/**
 	 * The logger instance for this class.
@@ -49,6 +51,51 @@ public class UpdatePipeReceiver extends AbtractRepeatingMessageReceiver {
 	 */
 	public static UpdatePipeReceiver getInstance() {
 		return cInstance;
+	}
+	
+	/**
+	 * The executor, if there is one bound.
+	 */
+	private static Optional<IServerExecutor> cExecutor = Optional.absent();
+
+	/**
+	 * Binds an executor. <br />
+	 * Called by OSGi-DS.
+	 * 
+	 * @param serv
+	 *            The executor to bind. <br />
+	 *            Must be not null.
+	 */
+	public static void bindExecutor(IExecutor serv) {
+
+		Preconditions.checkNotNull(serv);
+		Preconditions.checkArgument(serv instanceof IServerExecutor);
+		cExecutor = Optional.of((IServerExecutor) serv);
+		LOG.debug("Bound {} as an executor.", serv.getClass().getSimpleName());
+
+	}
+
+	/**
+	 * Unbinds an executor, if it's the bound one. <br />
+	 * Called by OSGi-DS.
+	 * 
+	 * @param serv
+	 *            The executor to unbind. <br />
+	 *            Must be not null.
+	 */
+	public static void unbindExecutor(IExecutor serv) {
+
+		Preconditions.checkNotNull(serv);
+		Preconditions.checkArgument(serv instanceof IServerExecutor);
+
+		if (cExecutor.isPresent() && cExecutor.get() == (IServerExecutor) serv) {
+
+			cExecutor = Optional.absent();
+			LOG.debug("Unbound {} as an executor.", serv.getClass()
+					.getSimpleName());
+
+		}
+
 	}
 
 	@Override
@@ -111,7 +158,7 @@ public class UpdatePipeReceiver extends AbtractRepeatingMessageReceiver {
 	private void updateReceiver(PeerID newSender, PipeID pipeId,
 			ID sharedQueryId) throws DataTransmissionException {
 
-		if (!RecoveryCommunicator.getExecutor().isPresent()) {
+		if (!cExecutor.isPresent()) {
 
 			LOG.error("No executor bound!");
 			return;
@@ -119,8 +166,7 @@ public class UpdatePipeReceiver extends AbtractRepeatingMessageReceiver {
 		}
 
 		// 1. Get the receiver, which we have to update
-		Collection<IPhysicalQuery> queries = RecoveryCommunicator.getExecutor()
-				.get().getExecutionPlan().getQueries();
+		Collection<IPhysicalQuery> queries = cExecutor.get().getExecutionPlan().getQueries();
 		for (IPhysicalQuery query : queries) {
 			for (IPhysicalOperator op : query.getAllOperators()) {
 				if (op instanceof JxtaReceiverPO) {

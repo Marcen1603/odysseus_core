@@ -21,14 +21,14 @@ import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicatorListener;
  * @author Michael Brand
  *
  */
-public abstract class AbtractRepeatingMessageReceiver implements
+public abstract class AbstractRepeatingMessageReceiver implements
 		IPeerCommunicatorListener {
 
 	/**
 	 * The logger instance for this class.
 	 */
 	private static final Logger LOG = LoggerFactory
-			.getLogger(AbtractRepeatingMessageReceiver.class);
+			.getLogger(AbstractRepeatingMessageReceiver.class);
 
 	/**
 	 * The result code for successes.

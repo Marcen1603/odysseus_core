@@ -17,8 +17,6 @@ import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableCollection;
 
-import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
-import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvider;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.p2p_new.IMessage;
@@ -29,16 +27,13 @@ import de.uniol.inf.is.odysseus.p2p_new.PeerCommunicationException;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.IPeerDictionary;
 import de.uniol.inf.is.odysseus.parser.pql.generator.IPQLGenerator;
 import de.uniol.inf.is.odysseus.peer.distribute.message.RemoveQueryMessage;
-import de.uniol.inf.is.odysseus.peer.recovery.IAddQueryResponseHandler;
 import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryBackupInformation;
 import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryCommunicator;
 import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryStrategyManager;
-import de.uniol.inf.is.odysseus.peer.recovery.messages.AddQueryResponseMessage;
-import de.uniol.inf.is.odysseus.peer.recovery.messages.RecoveryAddQueryMessage;
+import de.uniol.inf.is.odysseus.peer.recovery.protocol.AddQuerySender;
 import de.uniol.inf.is.odysseus.peer.recovery.protocol.AgreementSender;
 import de.uniol.inf.is.odysseus.peer.recovery.protocol.BackupInformationSender;
 import de.uniol.inf.is.odysseus.peer.recovery.protocol.BuddySender;
-import de.uniol.inf.is.odysseus.peer.recovery.protocol.RecoveryInstructionHandler;
 import de.uniol.inf.is.odysseus.peer.recovery.protocol.TupleSendSender;
 import de.uniol.inf.is.odysseus.peer.recovery.protocol.UpdatePipeSender;
 import de.uniol.inf.is.odysseus.peer.recovery.util.BuddyHelper;
@@ -192,15 +187,6 @@ public class RecoveryCommunicator implements IRecoveryCommunicator,
 	 */
 	private void registerMessagesAndAddListeners() {
 		Preconditions.checkArgument(cPeerCommunicator.isPresent());
-		cPeerCommunicator.get().registerMessageType(
-				RecoveryAddQueryMessage.class);
-		cPeerCommunicator.get()
-				.addListener(this, RecoveryAddQueryMessage.class);
-
-		cPeerCommunicator.get().registerMessageType(
-				AddQueryResponseMessage.class);
-		cPeerCommunicator.get()
-				.addListener(this, AddQueryResponseMessage.class);
 
 		cPeerCommunicator.get().registerMessageType(RemoveQueryMessage.class);
 		cPeerCommunicator.get().addListener(this, RemoveQueryMessage.class);
@@ -211,15 +197,6 @@ public class RecoveryCommunicator implements IRecoveryCommunicator,
 	 */
 	private void unregisterMessagesAndAddListeners() {
 		Preconditions.checkArgument(cPeerCommunicator.isPresent());
-		cPeerCommunicator.get().removeListener(this,
-				RecoveryAddQueryMessage.class);
-		cPeerCommunicator.get().unregisterMessageType(
-				RecoveryAddQueryMessage.class);
-
-		cPeerCommunicator.get().removeListener(this,
-				AddQueryResponseMessage.class);
-		cPeerCommunicator.get().unregisterMessageType(
-				AddQueryResponseMessage.class);
 
 		cPeerCommunicator.get().removeListener(this, RemoveQueryMessage.class);
 		// cPeerCommunicator.get().unregisterMessageType(RemoveQueryMessage.class);
@@ -329,84 +306,6 @@ public class RecoveryCommunicator implements IRecoveryCommunicator,
 	}
 
 	/**
-	 * The executor, if there is one bound.
-	 */
-	private static Optional<IServerExecutor> cExecutor = Optional.absent();
-
-	/**
-	 * Binds an executor. <br />
-	 * Called by OSGi-DS.
-	 * 
-	 * @param serv
-	 *            The executor to bind. <br />
-	 *            Must be not null.
-	 */
-	public static void bindExecutor(IExecutor serv) {
-
-		Preconditions.checkNotNull(serv);
-		Preconditions.checkArgument(serv instanceof IServerExecutor);
-		cExecutor = Optional.of((IServerExecutor) serv);
-		LOG.debug("Bound {} as an executor.", serv.getClass().getSimpleName());
-
-	}
-
-	/**
-	 * Unbinds an executor, if it's the bound one. <br />
-	 * Called by OSGi-DS.
-	 * 
-	 * @param serv
-	 *            The executor to unbind. <br />
-	 *            Must be not null.
-	 */
-	public static void unbindExecutor(IExecutor serv) {
-
-		Preconditions.checkNotNull(serv);
-		Preconditions.checkArgument(serv instanceof IServerExecutor);
-
-		if (cExecutor.isPresent() && cExecutor.get() == (IServerExecutor) serv) {
-
-			cExecutor = Optional.absent();
-			LOG.debug("Unbound {} as an executor.", serv.getClass()
-					.getSimpleName());
-
-		}
-
-	}
-
-	private static Optional<IAddQueryResponseHandler> cAddQueryResponseHandler = Optional
-			.absent();
-
-	public static void bindAddQueryResponseHandler(IAddQueryResponseHandler serv) {
-		Preconditions.checkNotNull(serv);
-		cAddQueryResponseHandler = Optional.of(serv);
-		LOG.debug("Bound {} as an AddQueryResponseHandler.", serv.getClass()
-				.getSimpleName());
-	}
-
-	public static void unbindAddQueryResponseHandler(
-			IAddQueryResponseHandler serv) {
-		Preconditions.checkNotNull(serv);
-		if (cAddQueryResponseHandler.isPresent()
-				&& cAddQueryResponseHandler.get() == serv) {
-			cAddQueryResponseHandler = Optional.absent();
-			LOG.debug("Unbound {} as an AddQueryResponseHandler.", serv
-					.getClass().getSimpleName());
-		}
-	}
-
-	/**
-	 * Gets the executor.
-	 * 
-	 * @return The bound executor or {@link Optional#absent()}, if there is none
-	 *         bound.
-	 */
-	public static Optional<IServerExecutor> getExecutor() {
-
-		return cExecutor;
-
-	}
-
-	/**
 	 * The active Session. <br />
 	 * Only to be used by {@link #getActiveSession()}.
 	 */
@@ -459,26 +358,18 @@ public class RecoveryCommunicator implements IRecoveryCommunicator,
 		}
 
 		// Send the add query message
-		RecoveryAddQueryMessage takeOverMessage = new RecoveryAddQueryMessage(
-				pql, sharedQueryId, recoveryStateIdentifier, subprocessID);
-		sendMessage(newPeer, takeOverMessage);
+		AddQuerySender.getInstance().sendAddQueryPart(newPeer, pql,
+				sharedQueryId, recoveryStateIdentifier, subprocessID,
+				cPeerCommunicator.get());
 	}
 
 	@Override
 	public void receivedMessage(IPeerCommunicator communicator,
 			PeerID senderPeer, IMessage message) {
-		if (message instanceof RecoveryAddQueryMessage) {
-			RecoveryInstructionHandler.handleAddQueryInstruction(
-					(RecoveryAddQueryMessage) message, senderPeer);
-		} else if (message instanceof RemoveQueryMessage) {
+		if (message instanceof RemoveQueryMessage) {
 			// Remove stored backup information
 			LocalBackupInformationAccess.getStore().remove(
 					((RemoveQueryMessage) message).getSharedQueryID());
-		} else if (message instanceof AddQueryResponseMessage) {
-			AddQueryResponseMessage responseMessage = (AddQueryResponseMessage) message;
-			cAddQueryResponseHandler.get().handleAddQueryResponse(senderPeer,
-					responseMessage, this);
-
 		}
 	}
 
@@ -519,11 +410,14 @@ public class RecoveryCommunicator implements IRecoveryCommunicator,
 			LOG.error("No peer communicator bound!");
 			return false;
 		}
-		
+
 		boolean allFailed = true;
 		for (PeerID destination : cPeerDictionary.get().getRemotePeerIDs()) {
-			allFailed = allFailed && !AgreementSender.getInstance().sendAgreement(destination, failedPeer, sharedQueryId, cPeerCommunicator.get());
-		}		
+			allFailed = allFailed
+					&& !AgreementSender.getInstance().sendAgreement(
+							destination, failedPeer, sharedQueryId,
+							cPeerCommunicator.get());
+		}
 		return !allFailed;
 	}
 
@@ -555,23 +449,6 @@ public class RecoveryCommunicator implements IRecoveryCommunicator,
 
 		return TupleSendSender.getInstance().sendGoOnInstruction(receiverPeer,
 				pipeId, cPeerCommunicator.get());
-	}
-
-	@Override
-	public void sendAddQueryFail(PeerID senderPeer,
-			RecoveryAddQueryMessage instructionMessage) {
-		AddQueryResponseMessage failResponse = AddQueryResponseMessage
-				.createAddQueryFailMessage(instructionMessage);
-		sendMessage(senderPeer, failResponse);
-
-	}
-
-	@Override
-	public void sendAddQueryAck(PeerID senderPeer,
-			RecoveryAddQueryMessage instructionMessage) {
-		AddQueryResponseMessage ackResponse = AddQueryResponseMessage
-				.createAddQueryAckMessage(instructionMessage);
-		sendMessage(senderPeer, ackResponse);
 	}
 
 	@Override
@@ -638,7 +515,8 @@ public class RecoveryCommunicator implements IRecoveryCommunicator,
 	 * @param message
 	 *            The message which you want to send
 	 */
-	// TODO remove, when RecoveryAddQueryMessage is handled by repeating sender/receiver pair. M.B.
+	// TODO remove, when RecoveryAddQueryMessage is handled by repeating
+	// sender/receiver pair. M.B.
 	public void sendMessage(PeerID receiverPeer, IMessage message) {
 
 		// Preconditions

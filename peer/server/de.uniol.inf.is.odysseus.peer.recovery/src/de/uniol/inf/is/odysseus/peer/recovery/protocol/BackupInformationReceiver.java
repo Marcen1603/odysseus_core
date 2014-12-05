@@ -22,7 +22,7 @@ import de.uniol.inf.is.odysseus.peer.recovery.util.LocalBackupInformationAccess;
  * @author Michael Brand
  *
  */
-public class BackupInformationReceiver extends AbtractRepeatingMessageReceiver {
+public class BackupInformationReceiver extends AbstractRepeatingMessageReceiver {
 
 	/**
 	 * The logger instance for this class.

@@ -104,14 +104,17 @@ public class RecoveryAddQueryMessage implements IMessage {
 	 *            Must be not null.
 	 * @param processId
 	 *            The id of the recovery process. <br />
-	 *            Must be not null,
+	 *            Must be not null.
 	 * @param subprocessID
+	 *            The id of the recovery subprocess. <br />
+	 *            Must be not null.
 	 */
 	public RecoveryAddQueryMessage(String pql, ID sharedQuery,
 			java.util.UUID processId, java.util.UUID subprocessID) {
 		Preconditions.checkNotNull(pql);
 		Preconditions.checkNotNull(sharedQuery);
 		Preconditions.checkNotNull(processId);
+		Preconditions.checkNotNull(subprocessID);
 
 		this.mPQL = pql;
 		this.mSharedQuery = sharedQuery;
@@ -175,12 +178,13 @@ public class RecoveryAddQueryMessage implements IMessage {
 		byte[] processIdBytes = new byte[processIdBytesLength];
 		buffer.get(processIdBytes);
 		this.mProcessId = java.util.UUID.fromString(new String(processIdBytes));
-		
+
 		int subprocessIdBytesLength = buffer.getInt();
 		byte[] subprocessIdBytes = new byte[subprocessIdBytesLength];
 		buffer.get(subprocessIdBytes);
-		this.mSubprocessId = java.util.UUID.fromString(new String(subprocessIdBytes));
-		
+		this.mSubprocessId = java.util.UUID.fromString(new String(
+				subprocessIdBytes));
+
 	}
 
 	public java.util.UUID getmSubprocessId() {
