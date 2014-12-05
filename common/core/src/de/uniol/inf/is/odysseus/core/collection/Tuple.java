@@ -313,19 +313,18 @@ public class Tuple<T extends IMetaAttribute> extends AbstractStreamObject<T>
 		this.attributes = newAttrs;
 		return this;
 	}
-	
-	
+
 	public Tuple<T> appendList(List<?> objects, boolean createNew) {
 		Object[] newAttrs = null;
 		if (this.attributes != null) {
-			newAttrs = Arrays.copyOf(this.attributes,
-					this.attributes.length + objects.size());
-			for (int i=0;i<objects.size();i++){
-				newAttrs[this.attributes.length+i] = objects.get(i);
+			newAttrs = Arrays.copyOf(this.attributes, this.attributes.length
+					+ objects.size());
+			for (int i = 0; i < objects.size(); i++) {
+				newAttrs[this.attributes.length + i] = objects.get(i);
 			}
 		} else {
 			newAttrs = new Object[objects.size()];
-			for (int i=0;i<objects.size();i++){
+			for (int i = 0; i < objects.size(); i++) {
 				newAttrs[i] = objects.get(i);
 			}
 		}
@@ -403,7 +402,9 @@ public class Tuple<T extends IMetaAttribute> extends AbstractStreamObject<T>
 		Object[] newAttributes = mergeAttributes(
 				left != null ? left.getAttributes() : null,
 				right != null ? right.getAttributes() : null);
-        Tuple<T> r = new Tuple<T>(newAttributes, ((left != null) && (left.requiresDeepClone())) || ((right != null) && (right.requiresDeepClone())));
+		Tuple<T> r = new Tuple<T>(newAttributes,
+				((left != null) && (left.requiresDeepClone()))
+						|| ((right != null) && (right.requiresDeepClone())));
 		return r;
 	}
 
@@ -545,7 +546,7 @@ public class Tuple<T extends IMetaAttribute> extends AbstractStreamObject<T>
 		}
 		return compare;
 	}
-	
+
 	/**
 	 * Liefert 0 wenn die beiden Attributlisten gleich sind ansonsten das erste
 	 * Element an denen sich die Attributlisten unterscheiden. Die
@@ -556,7 +557,7 @@ public class Tuple<T extends IMetaAttribute> extends AbstractStreamObject<T>
 	 */
 	@SuppressWarnings("unchecked")
 	public final int compareTo(Tuple<?> c, int[] restricted) {
-		int compare = 0;		
+		int compare = 0;
 		int i = 0;
 		for (int j = 0; j < restricted.length && compare == 0; j++) {
 			i = restricted[j];
@@ -595,9 +596,11 @@ public class Tuple<T extends IMetaAttribute> extends AbstractStreamObject<T>
 			retBuff.append(curAttribute == null ? "<NULL>" : curAttribute
 					.toString());
 		}
-		retBuff.append(" | META | " + getMetadata());
-		if (getAdditionalContent().size() > 0) {
-			retBuff.append("|ADD|" + getAdditionalContent());
+		if (getMetadata() != null) {
+			retBuff.append(" | META | " + getMetadata());
+			if (getAdditionalContent().size() > 0) {
+				retBuff.append("|ADD|" + getAdditionalContent());
+			}
 		}
 		return retBuff.toString();
 	}
@@ -637,13 +640,14 @@ public class Tuple<T extends IMetaAttribute> extends AbstractStreamObject<T>
 						}
 					} else if (curAttribute instanceof double[]) {
 						double[] values = (double[]) curAttribute;
-						for (int iValue=0; iValue < values.length; iValue++) {
+						for (int iValue = 0; iValue < values.length; iValue++) {
 							if (iValue > 0) {
 								retBuff.append(delimiter);
 							}
 							if (floatingFormatter != null) {
-								retBuff.append(floatingFormatter.format(values[iValue]));
-							} else{
+								retBuff.append(floatingFormatter
+										.format(values[iValue]));
+							} else {
 								retBuff.append(values[iValue]);
 							}
 						}
@@ -667,20 +671,22 @@ public class Tuple<T extends IMetaAttribute> extends AbstractStreamObject<T>
 			retBuff.append(delimiter).append(
 					getMetadata().csvToString(delimiter, textSeperator,
 							floatingFormatter, numberFormatter, withMetadata));
-			if(getMetadataMap() != null && getMetadataMap().size() > 0) {
-				for(Entry<String, Object> e : getMetadataMap().entrySet()) {
-					if(e.getValue() == null) {
+			if (getMetadataMap() != null && getMetadataMap().size() > 0) {
+				for (Entry<String, Object> e : getMetadataMap().entrySet()) {
+					if (e.getValue() == null) {
 						// add empty value
 						retBuff.append(delimiter);
-					} else if(e.getValue() instanceof IMetaAttribute) {
+					} else if (e.getValue() instanceof IMetaAttribute) {
 						IMetaAttribute m = (IMetaAttribute) e.getValue();
 						retBuff.append(delimiter).append(
-							m.csvToString(delimiter, textSeperator,
-									floatingFormatter, numberFormatter, withMetadata));
+								m.csvToString(delimiter, textSeperator,
+										floatingFormatter, numberFormatter,
+										withMetadata));
 					} else {
 						String value = e.getValue().toString();
-						if(value.indexOf(delimiter) != -1) {
-							retBuff.append(delimiter).append(textSeperator).append(e.getValue()).append(textSeperator);
+						if (value.indexOf(delimiter) != -1) {
+							retBuff.append(delimiter).append(textSeperator)
+									.append(e.getValue()).append(textSeperator);
 						} else {
 							retBuff.append(delimiter).append(e.getValue());
 						}
