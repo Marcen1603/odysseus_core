@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.UUID;
 
 import net.jxta.id.ID;
@@ -32,7 +31,6 @@ import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.p2p_new.IP2PNetworkManager;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.IPeerDictionary;
 import de.uniol.inf.is.odysseus.p2p_new.logicaloperator.JxtaReceiverAO;
-import de.uniol.inf.is.odysseus.p2p_new.physicaloperator.JxtaSenderPO;
 import de.uniol.inf.is.odysseus.peer.distribute.ILogicalQueryPart;
 import de.uniol.inf.is.odysseus.peer.distribute.LogicalQueryPart;
 import de.uniol.inf.is.odysseus.peer.distribute.QueryPartAllocationException;
@@ -41,7 +39,6 @@ import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryAllocator;
 import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryCommunicator;
 import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryDynamicBackup;
 import de.uniol.inf.is.odysseus.peer.recovery.internal.RecoveryProcessState;
-import de.uniol.inf.is.odysseus.peer.recovery.internal.SharedQuery;
 import de.uniol.inf.is.odysseus.peer.recovery.util.AgreementHelper;
 import de.uniol.inf.is.odysseus.peer.recovery.util.LocalBackupInformationAccess;
 import de.uniol.inf.is.odysseus.peer.recovery.util.RecoveryHelper;
@@ -265,6 +262,11 @@ public class RecoveryDynamicBackup implements IRecoveryDynamicBackup {
 			// We don't have any information about that failed peer
 			return sharedQueryIdsForRecovery;
 		}
+		sharedQueryIdsForRecovery.addAll(sharedQueryIdsForPeer);
+
+		// Comment: I'm not sure why I searched for queries where we are the direct sender. Maybe because of the
+		// receiver, which has to be updated? Well - let's try it like it is now: We do recoery if we have information,
+		// not just if we are a direct sender
 
 		// 2. Check, if we were a direct sender to that failed peer
 
@@ -272,29 +274,29 @@ public class RecoveryDynamicBackup implements IRecoveryDynamicBackup {
 		// are not the direct sender, so we have to save for which queries we
 		// are the direct sender
 
-		List<JxtaSenderPO<?>> senders = RecoveryHelper.getJxtaSenders();
-
-		for (JxtaSenderPO<?> sender : senders) {
-			if (sender.getPeerIDString() != null && sender.getPeerIDString().equals(failedPeer.toString())) {
-				// We were a direct sender to the failed peer
-
-				// Determine for which shared query id we are the direct
-				// sender: Search in the saved backup information for
-				// that pipe id and look, which shared query id belongs
-				// to the operator which has this pipeId
-				Set<SharedQuery> pqls = LocalBackupInformationAccess.getStoredPQLStatements(failedPeer);
-				for (SharedQuery sharedQuery : pqls) {
-					List<String> pqlParts = sharedQuery.getPqlParts();
-					for (String pql : pqlParts) {
-						if (pql.contains(sender.getPipeIDString())) {
-							// This is the shared query id we search for
-							if (!sharedQueryIdsForRecovery.contains(sharedQuery.getSharedQueryID()))
-								sharedQueryIdsForRecovery.add(sharedQuery.getSharedQueryID());
-						}
-					}
-				}
-			}
-		}
+		// List<JxtaSenderPO<?>> senders = RecoveryHelper.getJxtaSenders();
+		//
+		// for (JxtaSenderPO<?> sender : senders) {
+		// if (sender.getPeerIDString() != null && sender.getPeerIDString().equals(failedPeer.toString())) {
+		// // We were a direct sender to the failed peer
+		//
+		// // Determine for which shared query id we are the direct
+		// // sender: Search in the saved backup information for
+		// // that pipe id and look, which shared query id belongs
+		// // to the operator which has this pipeId
+		// Set<SharedQuery> pqls = LocalBackupInformationAccess.getStoredPQLStatements(failedPeer);
+		// for (SharedQuery sharedQuery : pqls) {
+		// List<String> pqlParts = sharedQuery.getPqlParts();
+		// for (String pql : pqlParts) {
+		// if (pql.contains(sender.getPipeIDString())) {
+		// // This is the shared query id we search for
+		// if (!sharedQueryIdsForRecovery.contains(sharedQuery.getSharedQueryID()))
+		// sharedQueryIdsForRecovery.add(sharedQuery.getSharedQueryID());
+		// }
+		// }
+		// }
+		// }
+		// }
 
 		// 3. Check, if we are the buddy of that peer
 		Map<PeerID, List<ID>> buddyMap = LocalBackupInformationAccess.getBuddyList();
@@ -361,8 +363,8 @@ public class RecoveryDynamicBackup implements IRecoveryDynamicBackup {
 	@Override
 	public void initiateAgreement(PeerID failedPeer, ID sharedQueryId, PeerID newPeer, ILogicalQueryPart queryPart,
 			UUID recoveryStateIdentifier, UUID subprocessID) {
-		AgreementHelper.waitForAndDoRecovery(failedPeer, sharedQueryId, newPeer, queryPart,
-				recoveryStateIdentifier, subprocessID);
+		AgreementHelper.waitForAndDoRecovery(failedPeer, sharedQueryId, newPeer, queryPart, recoveryStateIdentifier,
+				subprocessID);
 	}
 
 	@Override

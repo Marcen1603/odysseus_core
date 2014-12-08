@@ -25,7 +25,7 @@ import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryCommunicator;
 /**
  * Helper class for recovery agreements.
  * 
- * @author Michael Brand
+ * @author Michael Brand & Tobias Brandt
  *
  */
 public class AgreementHelper {
@@ -291,8 +291,10 @@ public class AgreementHelper {
 		}
 
 		// 1. Check, if another peer detected the failure earlier and will do the recovery
-		if (otherPeerDoesRecovery(failedPeer, sharedQueryId))
+		if (otherPeerDoesRecovery(failedPeer, sharedQueryId)) {
+			LOG.debug("Another peer was faster - he can do recovery, I won't do it.");
 			return;
+		}
 
 		// 2. Check, if we already want to do recovery for another query for
 		// that failed peer
@@ -318,7 +320,9 @@ public class AgreementHelper {
 				// recovery: Do the recovery
 				if (cRecoveryPeers.containsKey(failedPeer) && cRecoveryPeers.get(failedPeer).contains(sharedQueryId)) {
 					// We still want to do recovery for that peer for that query id
-
+					LOG.debug("Now I start with the revoery for {}", failedPeer);
+					
+					
 					// get PQL from query part
 					String pql = LogicalQueryHelper.generatePQLStatementFromQueryPart(queryPart);
 
@@ -327,6 +331,8 @@ public class AgreementHelper {
 
 					// Now we did this, so remove that we want to do this recovery
 					removeBackupQueueEntry(failedPeer, sharedQueryId);
+				} else {
+					LOG.debug("Another peer won the peerId-battle for this peer, I won't do recovery for {}", failedPeer);
 				}
 			}
 		}, WAIT_MS);

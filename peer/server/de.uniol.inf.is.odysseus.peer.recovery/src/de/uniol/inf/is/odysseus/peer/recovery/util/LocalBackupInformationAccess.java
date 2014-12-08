@@ -118,9 +118,19 @@ public class LocalBackupInformationAccess {
 		Set<String> pqls = Sets.newHashSet();
 
 		for (IRecoveryBackupInformation info : cInfoStore.get().get(sharedQueryId)) {
-			if (!Strings.isNullOrEmpty(info.getPQL()))
-				pqls.add(info.getPQL());
-
+			if (info.getLocationPeer().equals(RecoveryCommunicator.getP2PNetworkManager().get().getLocalPeerID())) {
+				if (!Strings.isNullOrEmpty(info.getPQL()))
+					pqls.add(info.getPQL());
+				
+				// Maybe we have some information from the subsequent parts
+				if (info.getSubsequentPartsInformation() != null) {
+					for (IRecoveryBackupInformation subInfo : info.getSubsequentPartsInformation()) {
+						if (!Strings.isNullOrEmpty(subInfo.getPQL())) {
+							pqls.add(subInfo.getPQL());
+						}
+					}
+				}				
+			}
 		}
 
 		return ImmutableSet.copyOf(pqls);
@@ -254,15 +264,16 @@ public class LocalBackupInformationAccess {
 	 * @param aboutPeerId
 	 *            The peer the information is about
 	 */
-	public static void removeInformation(ID sharedQueryId, PeerID aboutPeecrId) {
+	public static void removeInformation(ID sharedQueryId, PeerID aboutPeerId) {
 		Preconditions.checkNotNull(sharedQueryId);
-		Preconditions.checkNotNull(aboutPeecrId);
+		Preconditions.checkNotNull(aboutPeerId);
 
 		if (!cInfoStore.isPresent()) {
 			LOG.error("No backup information store for recovery bound!");
 			return;
 		}
-		cInfoStore.get().remove(sharedQueryId, aboutPeecrId);
+		cInfoStore.get().remove(sharedQueryId, aboutPeerId);
+
 	}
 
 	/**
@@ -308,9 +319,16 @@ public class LocalBackupInformationAccess {
 		for (IRecoveryBackupInformation info : cInfoStore.get().get(sharedQueryId)) {
 
 			if (info.getAboutPeer() != null && !peers.contains(info.getAboutPeer())) {
-
 				peers.add(info.getAboutPeer());
+			}
 
+			// Search within the subsequent information
+			if (info.getSubsequentPartsInformation() != null) {
+				for (IRecoveryBackupInformation subInfo : info.getSubsequentPartsInformation()) {
+					if (subInfo.getAboutPeer() != null && !peers.contains(subInfo.getAboutPeer())) {
+						peers.add(subInfo.getAboutPeer());
+					}
+				}
 			}
 
 		}
@@ -349,6 +367,18 @@ public class LocalBackupInformationAccess {
 					// sharedQueryId
 					sharedQueryIds.add(queryId);
 					break;
+				}
+
+				// Search within the subsequent information
+				if (info.getSubsequentPartsInformation() != null) {
+					for (IRecoveryBackupInformation subInfo : info.getSubsequentPartsInformation()) {
+						if (subInfo.getAboutPeer() != null && subInfo.getAboutPeer().equals(peerId)) {
+							// This is what we search: For this peer we have a
+							// sharedQueryId
+							sharedQueryIds.add(queryId);
+							break;
+						}
+					}
 				}
 			}
 		}
