@@ -95,7 +95,6 @@ public class OdysseusConsole implements CommandProvider,
 	// TODOO: CREATE SESSION!!
 	private ISession currentUser = null;
 
-	private String defaultBuildConfiguration = "Standard";
 	private IQueryBuildConfigurationTemplate originalBuildConfig;
 
 	/**
@@ -746,19 +745,6 @@ public class OdysseusConsole implements CommandProvider,
 		}
 	}
 
-	// TODO: noch ein hack, damit man die config auch zur laufzeit �ndern
-	// kann.
-	// Sollte sp�ter nur auf statischen
-	// gemacht werden
-	private void resetBuildConfig() {
-		IQueryBuildConfigurationTemplate qbc = this.originalBuildConfig;
-		QueryBuildConfiguration buildConfiguration = new QueryBuildConfiguration(
-				qbc.getConfiguration(), qbc.getName());
-		buildConfiguration.set(this.trafoConfigParam);
-		this.executor.getQueryBuildConfigurations().put(
-				defaultBuildConfiguration, qbc);
-	}
-
 	@Help(parameter = "-f <filename> ", description = "run query from <filename> for current parser (Hint set Parser to OdysseusScript before executing .qry-Files) [with console-output-sink] [filepath automatically read from user.files] \n"
 			+ "[with restructure or not] [with|without metadata set in physical operators]")
 	public void _runscript(CommandInterpreter ci) {
@@ -887,7 +873,7 @@ public class OdysseusConsole implements CommandProvider,
 		}
 
 		this.executor.addQuery(query, parser(), currentUser,
-				defaultBuildConfiguration, Context.empty());
+				 Context.empty());
 		return;
 	}
 
@@ -1215,11 +1201,8 @@ public class OdysseusConsole implements CommandProvider,
 			// Object ecs = eclipseConsoleSink.newInstance();
 			// IPhysicalOperator ecSink = (IPhysicalOperator) ecs;
 
-			resetBuildConfig();
-			// this.executor.getQueryBuildConfiguration(defaultBuildConfiguration)
-			// .getConfiguration().add(new ParameterDefaultRoot(ecSink));
 			this.executor.addQuery(query, parser(), currentUser,
-					defaultBuildConfiguration, Context.empty());
+					 Context.empty());
 		} catch (ClassNotFoundException e) {
 			System.err.println("Eclipse Console Plugin is missing!");
 		} catch (Exception e) {

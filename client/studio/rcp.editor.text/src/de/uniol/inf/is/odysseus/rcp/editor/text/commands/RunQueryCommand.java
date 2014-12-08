@@ -150,7 +150,7 @@ public class RunQueryCommand extends AbstractHandler implements IHandler {
                 try {
                     String text = readLinesFromFile(scriptFile);
                     IExecutor executor = OdysseusRCPEditorTextPlugIn.getExecutor();
-                    executor.addQuery(text, "OdysseusScript", OdysseusRCPPlugIn.getActiveSession(), "Standard", ParserClientUtil.createRCPContext(scriptFile));
+                    executor.addQuery(text, "OdysseusScript", OdysseusRCPPlugIn.getActiveSession(), ParserClientUtil.createRCPContext(scriptFile));
                 }
                 catch (final Throwable ex) {
                     ExceptionErrorDialog.open(new Status(IStatus.ERROR, IEditorTextParserConstants.PLUGIN_ID, "'Parsing and Executing Query' has encountered a problem.\n\nScript Execution Error: "

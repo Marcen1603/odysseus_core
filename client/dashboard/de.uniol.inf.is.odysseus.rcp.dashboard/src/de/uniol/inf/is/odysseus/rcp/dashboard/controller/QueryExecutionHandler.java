@@ -97,7 +97,7 @@ public class QueryExecutionHandler {
 					query = query + System.lineSeparator() + line;
 				}
 				Context context = createContext(scriptFile, dashboardPart);
-				Collection<Integer> ids = OdysseusRCPPlugIn.getExecutor().addQuery(query, "OdysseusScript", caller, "Standard", context);
+				Collection<Integer> ids = OdysseusRCPPlugIn.getExecutor().addQuery(query, "OdysseusScript", caller, context);
 				queryIDs = ids;
 			} else {
 				Optional<ILogicalQuery> optQuery = determineQueryByName(queryName, caller);

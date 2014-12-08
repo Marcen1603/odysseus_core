@@ -35,7 +35,7 @@ public class AutostartExecuteThread extends Thread {
 
 		while (true) {
 			try {
-				executor.addQuery(queryText, "OdysseusScript", user, "Standard", Context.empty());
+				executor.addQuery(queryText, "OdysseusScript", user, Context.empty());
 				LOG.trace("Autostart script executed");
 				break;
 			} catch (Throwable t) {

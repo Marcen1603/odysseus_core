@@ -223,6 +223,7 @@ public class WebserviceServer {
 		return new Response(false);
 	}
 
+	@Deprecated
 	public IntegerCollectionResponse addQuery(
 			@WebParam(name = "securitytoken") String securityToken,
 			@WebParam(name = "parser") String parser,
@@ -242,6 +243,25 @@ public class WebserviceServer {
 		}
 	}
 
+	public IntegerCollectionResponse addQuery2(
+			@WebParam(name = "securitytoken") String securityToken,
+			@WebParam(name = "parser") String parser,
+			@WebParam(name = "query") String query,
+			@WebParam(name = "context") Context context)
+			throws CreateQueryException, InvalidUserDataException {
+		ISession user = loginWithSecurityToken(securityToken);
+		try {
+			IntegerCollectionResponse response = new IntegerCollectionResponse(
+					ExecutorServiceBinding.getExecutor().addQuery(query,
+							parser, user, context), true);
+			return response;
+		} catch (Throwable e) {
+			e.printStackTrace();
+			throw new CreateQueryException(e.toString());
+		}
+	}
+
+	
 	public StringListResponse getInstalledSources(
 			@WebParam(name = "securitytoken") String securityToken)
 			throws InvalidUserDataException {

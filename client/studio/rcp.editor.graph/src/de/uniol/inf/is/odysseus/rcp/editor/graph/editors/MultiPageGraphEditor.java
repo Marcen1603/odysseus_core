@@ -443,7 +443,7 @@ public class MultiPageGraphEditor extends MultiPageEditorPart implements IResour
 		IFile file = ((FileEditorInput) getEditorInput()).getFile();
 		String pql = this.graphEditor.createFullHeading();
 		pql = pql+getPQLString();
-		Activator.getDefault().getExecutor().addQuery(pql, "OdysseusScript", Activator.getDefault().getCaller(), "Standard", ParserClientUtil.createRCPContext(file));
+		Activator.getDefault().getExecutor().addQuery(pql, "OdysseusScript", Activator.getDefault().getCaller(), ParserClientUtil.createRCPContext(file));
 	}
 	
 	

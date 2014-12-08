@@ -40,6 +40,7 @@ import javax.xml.ws.Endpoint;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.core.collection.Context;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.planmanagement.executor.webservice.server.ExecutorServiceBinding;
 import de.uniol.inf.is.odysseus.planmanagement.executor.webservice.server.webservice.WebserviceServer;
@@ -57,7 +58,6 @@ public class SensorRegistryService extends WebserviceServer {
 
 
 	private static Logger LOG = LoggerFactory.getLogger(SensorRegistryService.class); 
-	private static final String TRANSFORMATION_CONFIGURATION = "Standard";
 
 	public static void startServer() {
 		SensorRegistryService server = new SensorRegistryService();
@@ -86,7 +86,7 @@ public class SensorRegistryService extends WebserviceServer {
 				LOG.debug("Sensor " + name + " registered");
 				String query = "CREATE STREAM " + name + "(" + buildParamList(schema) + ") CHANNEL " + host + " : " + port;
 				LOG.debug("Creating Stream in Odysseus: " + query);
-				ExecutorServiceBinding.getExecutor().addQuery(query, "CQL", session, TRANSFORMATION_CONFIGURATION, null);				
+				ExecutorServiceBinding.getExecutor().addQuery(query, "CQL", session, Context.empty());				
 			}else{
 				LOG.debug("Sensor "+name+" was already registered");
 			}
@@ -116,7 +116,7 @@ public class SensorRegistryService extends WebserviceServer {
 				LOG.debug("Sensor " + name + " unregistered");
 				String query = "DROP STREAM " + name;
 				LOG.debug("Creating Stream in Odysseus: " + query);
-				ExecutorServiceBinding.getExecutor().addQuery(query, "CQL", session, TRANSFORMATION_CONFIGURATION, null);				
+				ExecutorServiceBinding.getExecutor().addQuery(query, "CQL", session, Context.empty());				
 			}else{
 				LOG.debug("Sensor "+name+" was never registered");
 			}

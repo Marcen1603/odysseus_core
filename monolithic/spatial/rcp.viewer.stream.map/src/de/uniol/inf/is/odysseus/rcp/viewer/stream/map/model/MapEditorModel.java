@@ -528,7 +528,7 @@ public class MapEditorModel extends ModelObject {
 	public static void execute(final String[] text) {
 		try {
 			ISession user = OdysseusRCPPlugIn.getActiveSession();
-			OdysseusRCPEditorTextPlugIn.getExecutor().addQuery(concat(text), "OdysseusScript", user, null, Context.empty());					
+			OdysseusRCPEditorTextPlugIn.getExecutor().addQuery(concat(text), "OdysseusScript", user, Context.empty());					
 		} catch (PlanManagementException ex) {
 			LOG.error("Exception during executing script", ex);
 			if (!ex.getRootMessage().contains("multiple")) {

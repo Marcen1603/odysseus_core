@@ -169,7 +169,7 @@ public class EvaluationJob extends Job implements IPlanModificationListener {
 			evaluationRunContainer.getRuns().add(evaluationRun);
 			context.put(EvaluationRun.class.getName(), evaluationRun);
 			
-			ids  = executor.addQuery(querytext, "OdysseusScript", caller, "Standard", context);
+			ids  = executor.addQuery(querytext, "OdysseusScript", caller, context);
 			monitor.subTask(prefix + "Running query and waiting for stop...");
 			for (int id : ids) {
 				executor.startQuery(id, caller);

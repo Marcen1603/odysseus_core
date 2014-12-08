@@ -109,9 +109,34 @@ public interface IExecutor extends IClientPlanManager {
 	 * 
 	 * @return A (potential empty) list of the IDs of the installed queries
 	 * @throws PlanManagementException
+	 * @deprecated Use addQuery without queryBuildConfigurationName instead
 	 */
+	@Deprecated
 	public Collection<Integer> addQuery(String query, String parserID,
 			ISession user, String queryBuildConfigurationName, Context context)
+			throws PlanManagementException;
+
+	/**
+	 * Adds a new query
+	 * 
+	 * @param query
+	 *            The query defined as a string
+	 * @param parserID
+	 *            The ID of the parser that should be used to translate the
+	 *            query
+	 * @param queryBuildConfigurationName
+	 *            The name of the the build configuration that should be used
+	 *            during the query processing
+	 * 
+	 * @param context
+	 *            Allows to pass some context based information to the query
+	 *            processing, e.g. current directories.
+	 * 
+	 * @return A (potential empty) list of the IDs of the installed queries
+	 * @throws PlanManagementException
+	 */
+	public Collection<Integer> addQuery(String query, String parserID,
+			ISession user, Context context)
 			throws PlanManagementException;
 
 	/**

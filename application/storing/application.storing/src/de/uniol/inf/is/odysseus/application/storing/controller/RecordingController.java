@@ -42,6 +42,7 @@ import de.uniol.inf.is.odysseus.application.storing.RecordingException;
 import de.uniol.inf.is.odysseus.application.storing.controller.RecordEntry.PlayingState;
 import de.uniol.inf.is.odysseus.application.storing.controller.RecordEntry.State;
 import de.uniol.inf.is.odysseus.application.storing.model.RecordingStore;
+import de.uniol.inf.is.odysseus.core.collection.Context;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.exception.PlanManagementException;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.database.connection.DatabaseConnectionDictionary;
@@ -143,8 +144,8 @@ public class RecordingController {
 		String createSink = "CREATE SINK " + sinkName + " AS DATABASE " + record.getDatabaseConnection() + " TABLE " + record.getTableName() + " AND DROP";
 		String createStreamTo = "STREAM TO " + sinkName + " SELECT * FROM " + record.getFromStream();
 		ISession user = OdysseusRCPPlugIn.getActiveSession();
-		Collection<Integer> sinkQueries = OdysseusRCPPlugIn.getExecutor().addQuery(createSink, "CQL", user, "Standard", null);
-		Collection<Integer> streamToQueries = OdysseusRCPPlugIn.getExecutor().addQuery(createStreamTo, "CQL", user, "Standard", null);
+		Collection<Integer> sinkQueries = OdysseusRCPPlugIn.getExecutor().addQuery(createSink, "CQL", user, Context.empty());
+		Collection<Integer> streamToQueries = OdysseusRCPPlugIn.getExecutor().addQuery(createStreamTo, "CQL", user, Context.empty());
 		record.clearQueries();
 		record.setSinkQueries(sinkQueries);
 		record.setStreamToQueries(streamToQueries);

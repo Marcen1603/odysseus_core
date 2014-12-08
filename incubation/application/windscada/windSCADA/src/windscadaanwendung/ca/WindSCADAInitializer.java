@@ -353,7 +353,7 @@ public class WindSCADAInitializer {
 	 */
 	private static void executeQuery(String query) {
 		OdysseusRCPPlugIn.getExecutor().addQuery(query, "OdysseusScript",
-				OdysseusRCPPlugIn.getActiveSession(), "Standard",
+				OdysseusRCPPlugIn.getActiveSession(),
 				Context.empty());
 	}
 

@@ -77,7 +77,7 @@ public class DropSourceCommand extends AbstractHandler implements IHandler {
 					protected IStatus run(IProgressMonitor monitor) {
 						try {
 							ISession user = OdysseusRCPPlugIn.getActiveSession();
-							executor.addQuery("DROP STREAM " + sourceName, "CQL", user, "Standard", null);
+							executor.addQuery("DROP STREAM " + sourceName, "CQL", user, null);
 							StatusBarManager.getInstance().setMessage("Source dropped");
 						} catch (PlanManagementException e) {
 							return new Status(IStatus.ERROR, OdysseusRCPPlugIn.PLUGIN_ID, "Cannot remove source:\n See error log for details", e);

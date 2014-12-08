@@ -566,6 +566,24 @@ public class WsClient implements IExecutor, IClientExecutor, IOperatorOwner {
 		return "WebServiceExecutor";
 	}
 
+	public Collection<Integer> addQuery(String query, String parserID,
+			ISession user, Context context)
+			throws PlanManagementException{
+		try {
+			Collection<Integer> response = getWebserviceServer(
+					user.getConnectionName()).addQuery2(user.getToken(),
+					parserID, query, context)
+					.getResponseValue();
+			fireUpdateEvent(IUpdateEventListener.QUERY);
+			// Query could create schema information ... fire events
+			fireUpdateEvent(IUpdateEventListener.DATADICTIONARY);
+			return response;
+		} catch (InvalidUserDataException_Exception
+				| CreateQueryException_Exception e) {
+			throw new PlanManagementException(e);
+		}
+	}
+	
 	@Override
 	public Collection<Integer> addQuery(String query, String parserID,
 			ISession user, String queryBuildConfigurationName, Context context)
