@@ -19,10 +19,10 @@ package de.uniol.inf.is.odysseus.mep.matrix;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.math.util.MathUtils;
 import org.apache.commons.math3.linear.Array2DRowRealMatrix;
 import org.apache.commons.math3.linear.NonSquareMatrixException;
 import org.apache.commons.math3.linear.RealMatrix;
+import org.apache.commons.math3.util.ArithmeticUtils;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.mep.AbstractFunction;
@@ -61,7 +61,9 @@ public class PermanentFunction extends AbstractFunction<Double> {
             for (int i = 0; i < order; i++) {
                 indexes[i] = i;
             }
-            final long factorial = MathUtils.factorial(order);
+            // factorial function is moved to CombinatoricsUtils in future
+            // versions
+            final long factorial = ArithmeticUtils.factorial(order);
             final List<int[]> permutations = new ArrayList<>((int) factorial);
             PermanentFunction.calcHeapPermutation(permutations, indexes, order);
 

@@ -18,7 +18,7 @@ package de.uniol.inf.is.odysseus.mep.matrix;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.math.util.MathUtils;
+import org.apache.commons.math3.util.ArithmeticUtils;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.mep.AbstractFunction;
@@ -45,7 +45,8 @@ public class PermsFunction extends AbstractFunction<double[][]> {
     }
 
     protected static double[][] getValueInternal(final double[] a) {
-        final long factorial = MathUtils.factorial(a.length);
+        // factorial function is moved to CombinatoricsUtils in future versions
+        final long factorial = ArithmeticUtils.factorial(a.length);
         final List<double[]> out = new ArrayList<>((int) factorial);
         PermsFunction.calcHeapPermutation(out, a, a.length);
         return out.toArray(new double[][] {});
