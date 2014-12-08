@@ -231,7 +231,8 @@ public class PeerDictionary implements IPeerDictionary, IAdvertisementDiscoverer
 		
 		synchronized (currentPeerIDs) {
 			Collection<PeerID> oldPeers = Lists.newArrayList(currentPeerIDs);
-
+			currentPeerIDs = newPeers;
+			
 			Collection<PeerID> addedPeers = Lists.newLinkedList();
 			for (PeerID newPeer : newPeers) {
 				if (!oldPeers.contains(newPeer)) {
@@ -248,8 +249,6 @@ public class PeerDictionary implements IPeerDictionary, IAdvertisementDiscoverer
 			for (PeerID oldPeer : oldPeers) {
 				firePeerRemovedEvent(oldPeer);
 			}
-
-			currentPeerIDs = newPeers;
 		}
 	}
 
