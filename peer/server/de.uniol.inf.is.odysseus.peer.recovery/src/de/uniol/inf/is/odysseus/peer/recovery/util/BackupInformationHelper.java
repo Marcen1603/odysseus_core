@@ -255,6 +255,11 @@ public class BackupInformationHelper implements IPlanModificationListener {
 				cCommunicator.get().removeSharedQueryIdFromNoBuddyList(sharedQueryID);
 			}
 
+		} else if (PlanModificationEventType.QUERY_ADDED.equals(eventArgs.getEventType())) {
+			// TODO A query was added -> we have to update our local information
+			
+			
+			// ... and have to update the peers which have information about us
 		}
 
 	}

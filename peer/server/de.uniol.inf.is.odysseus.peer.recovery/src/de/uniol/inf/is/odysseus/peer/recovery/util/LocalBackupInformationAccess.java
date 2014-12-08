@@ -121,7 +121,7 @@ public class LocalBackupInformationAccess {
 			if (info.getLocationPeer().equals(RecoveryCommunicator.getP2PNetworkManager().get().getLocalPeerID())) {
 				if (!Strings.isNullOrEmpty(info.getPQL()))
 					pqls.add(info.getPQL());
-				
+
 				// Maybe we have some information from the subsequent parts
 				if (info.getSubsequentPartsInformation() != null) {
 					for (IRecoveryBackupInformation subInfo : info.getSubsequentPartsInformation()) {
@@ -129,7 +129,7 @@ public class LocalBackupInformationAccess {
 							pqls.add(subInfo.getPQL());
 						}
 					}
-				}				
+				}
 			}
 		}
 
@@ -250,6 +250,14 @@ public class LocalBackupInformationAccess {
 
 			if (info.get().getAboutPeer() != null && info.get().getAboutPeer().equals(peerId)) {
 				return true;
+			}
+
+			if (info.get().getSubsequentPartsInformation() != null) {
+				for (IRecoveryBackupInformation subInfo : info.get().getSubsequentPartsInformation()) {
+					if (subInfo.getAboutPeer() != null && subInfo.getAboutPeer().equals(peerId)) {
+						return true;
+					}
+				}
 			}
 		}
 
@@ -427,6 +435,17 @@ public class LocalBackupInformationAccess {
 			}
 			if (locationPeer != null && info.getLocationPeer() != null && info.getLocationPeer().equals(locationPeer)) {
 				info.setLocalPQL(localPQL);
+			}
+			if (info.getSubsequentPartsInformation() != null) {
+				for (IRecoveryBackupInformation subInfo : info.getSubsequentPartsInformation()) {
+					if (aboutPeer != null && subInfo.getAboutPeer() != null && subInfo.getAboutPeer().equals(aboutPeer)) {
+						subInfo.setPQL(aboutPeerPQL);
+					}
+					if (locationPeer != null && subInfo.getLocationPeer() != null
+							&& subInfo.getLocationPeer().equals(locationPeer)) {
+						subInfo.setLocalPQL(localPQL);
+					}
+				}
 			}
 		}
 	}

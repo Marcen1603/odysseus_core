@@ -737,7 +737,7 @@ public class RecoveryHelper {
 
 	/**
 	 * Updates the local backup-information with the given new backup-PQL and
-	 * prepares a list with information for all the other peer which may have
+	 * prepares a list with information for all the other peers which may have
 	 * interest in this information. In opposite to the same method with the
 	 * sharedQueryId this method searches within the whole backup-information,
 	 * hence it's less efficient
