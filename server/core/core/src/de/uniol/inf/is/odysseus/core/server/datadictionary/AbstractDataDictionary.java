@@ -83,6 +83,7 @@ abstract public class AbstractDataDictionary implements IDataDictionary,
 	private IStore<String, SDFDatatype> datatypes;
 	private IStore<Integer, ILogicalQuery> savedQueries;
 	private IStore<Integer, IUser> savedQueriesForUser;
+	
 	private IStore<Integer, String> savedQueriesBuildParameterName;
 
 	private IStore<Resource, ILogicalOperator> sinkDefinitions;

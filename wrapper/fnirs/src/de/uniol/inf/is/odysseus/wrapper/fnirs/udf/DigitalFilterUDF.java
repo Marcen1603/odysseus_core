@@ -1,5 +1,7 @@
 package de.uniol.inf.is.odysseus.wrapper.fnirs.udf;
 
+import java.io.Serializable;
+
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.UserDefinedFunction;
@@ -67,7 +69,7 @@ class Filter implements IFilter
 
 
 @UserDefinedFunction(name = "DigitalFilter")
-public class DigitalFilterUDF implements IUserDefinedFunction<Tuple<? extends IMetaAttribute>, Tuple<? extends IMetaAttribute>> 
+public class DigitalFilterUDF implements IUserDefinedFunction<Tuple<? extends IMetaAttribute>, Tuple<? extends IMetaAttribute>>, Serializable
 {
 	private static final long serialVersionUID = 4077769822100028025L;
 	private int index;

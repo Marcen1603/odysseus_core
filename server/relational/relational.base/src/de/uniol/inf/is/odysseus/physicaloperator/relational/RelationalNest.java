@@ -23,12 +23,9 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.functions
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.functions.ListPartialAggregate;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 
-@SuppressWarnings({"unchecked","rawtypes"})
+@SuppressWarnings({"rawtypes"})
 public class RelationalNest extends AbstractListAggregation<Tuple<? extends IMetaAttribute>, Tuple<? extends IMetaAttribute>> {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = -9172869315418294224L;
 	private int[] restrictList;
 

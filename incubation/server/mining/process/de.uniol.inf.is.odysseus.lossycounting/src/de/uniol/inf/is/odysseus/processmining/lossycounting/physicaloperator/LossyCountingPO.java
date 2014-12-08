@@ -169,6 +169,7 @@ public class LossyCountingPO <T extends IMetaAttribute> extends AbstractPipe<Tup
 			return newMap;
 		}
 		
+		@SuppressWarnings("unused")
 		private void printActivities(String name){
 			System.out.println("++++++++++++++ Activities ++++++++++++++");
 			System.out.println("Actual Activity: "+ name);

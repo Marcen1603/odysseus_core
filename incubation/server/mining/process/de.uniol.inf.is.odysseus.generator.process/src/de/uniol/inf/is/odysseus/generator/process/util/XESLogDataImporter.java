@@ -1,6 +1,7 @@
 package de.uniol.inf.is.odysseus.generator.process.util;
 
 import java.io.File;
+
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
@@ -19,6 +20,8 @@ import org.xml.sax.SAXException;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
+
+@SuppressWarnings("all")
 public class XESLogDataImporter {
 	
 	public final static String TRACE = "trace";
