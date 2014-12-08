@@ -20,7 +20,6 @@ import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
@@ -52,7 +51,7 @@ public class PeerDictionary implements IPeerDictionary, IAdvertisementDiscoverer
 		return instance != null;
 	}
 
-	private Collection<PeerID> toPeerIDs(Collection<PeerAdvertisement> peerAdvs) {
+	private Collection<PeerID> toValidPeerIDs(Collection<PeerAdvertisement> peerAdvs) {
 		// TODO: Die Methode macht mehr als der Name aussagt
 		Collection<PeerID> ids = Lists.newLinkedList();
 		PeerID localPeerID = P2PNetworkManager.getInstance().getLocalPeerID();
@@ -77,13 +76,14 @@ public class PeerDictionary implements IPeerDictionary, IAdvertisementDiscoverer
 
 	}
 
-	private static void tryFlushAdvertisement(Advertisement srcAdvertisement) {
+	private static void tryFlushAdvertisement(Advertisement advertisement) {
 		try {
 			if (JxtaServicesProvider.isActivated()) {
-				JxtaServicesProvider.getInstance().flushAdvertisement(srcAdvertisement);
+				JxtaServicesProvider.getInstance().flushAdvertisement(advertisement);
+				LOG.debug("Flushed advertisement {}", advertisement.getClass().getName());
 			}
 		} catch (IOException e) {
-			LOG.error("Could not flush advertisement {}", srcAdvertisement, e);
+			LOG.error("Could not flush advertisement {}", advertisement, e);
 		}
 	}
 
@@ -96,6 +96,8 @@ public class PeerDictionary implements IPeerDictionary, IAdvertisementDiscoverer
 	}
 
 	private void firePeerAddedEvent(PeerID peer) {
+		LOG.debug("Peer added : " + peer);
+
 		for (IPeerDictionaryListener listener : this.listeners) {
 			try {
 				listener.peerAdded(peer);
@@ -106,6 +108,8 @@ public class PeerDictionary implements IPeerDictionary, IAdvertisementDiscoverer
 	}
 
 	private void firePeerRemovedEvent(PeerID peer) {
+		LOG.debug("Peer removed : " + peer);
+
 		for (IPeerDictionaryListener listener : this.listeners) {
 			try {
 				listener.peerRemoved(peer);
@@ -121,7 +125,7 @@ public class PeerDictionary implements IPeerDictionary, IAdvertisementDiscoverer
 			public void run() {
 				P2PNetworkManager.waitFor();
 				P2PNetworkManager.getInstance().addAdvertisementListener(PeerDictionary.this);
-				
+
 				instance = PeerDictionary.this;
 			}
 		});
@@ -223,25 +227,29 @@ public class PeerDictionary implements IPeerDictionary, IAdvertisementDiscoverer
 
 	@Override
 	public void updateAdvertisements() {
-		Collection<PeerID> peers = toPeerIDs(JxtaServicesProvider.getInstance().getPeerAdvertisements());
-		Collection<PeerID> oldPeers = ImmutableSet.copyOf(currentPeerIDs);
-
+		Collection<PeerID> newPeers = toValidPeerIDs(JxtaServicesProvider.getInstance().getPeerAdvertisements());
+		
 		synchronized (currentPeerIDs) {
-			currentPeerIDs = peers;
-		}
+			Collection<PeerID> oldPeers = Lists.newArrayList(currentPeerIDs);
 
-		// Check for peers to add
-		for (PeerID peer : peers) {
-			if (!oldPeers.contains(peer)) {
-				this.firePeerAddedEvent(peer);
+			Collection<PeerID> addedPeers = Lists.newLinkedList();
+			for (PeerID newPeer : newPeers) {
+				if (!oldPeers.contains(newPeer)) {
+					addedPeers.add(newPeer);
+				} else {
+					oldPeers.remove(newPeer);
+				}
 			}
-		}
 
-		// Check for peers to remove
-		for (PeerID peer : oldPeers) {
-			if (!peers.contains(peer)) {
-				this.firePeerRemovedEvent(peer);
+			for (PeerID addedPeer : addedPeers) {
+				firePeerAddedEvent(addedPeer);
 			}
+
+			for (PeerID oldPeer : oldPeers) {
+				firePeerRemovedEvent(oldPeer);
+			}
+
+			currentPeerIDs = newPeers;
 		}
 	}
 
