@@ -18,9 +18,11 @@ package de.uniol.inf.is.odysseus.mep.functions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.core.mep.Constant;
 import de.uniol.inf.is.odysseus.core.mep.IExpression;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.mep.AbstractFunction;
+import de.uniol.inf.is.odysseus.mep.functions.string.ConcatFunction;
 
 public class IfFunction extends AbstractFunction<Object> {
 
@@ -53,13 +55,15 @@ public class IfFunction extends AbstractFunction<Object> {
 		if (args != null && args.length == 3) {
 
 			// New one param value could be null
-			if (args[1].getValue() == null){
-				return args[2] != null?args[2].getReturnType():SDFDatatype.OBJECT;
+			if (args[1] instanceof Constant && args[1].getValue() == null) {
+				return args[2] != null ? args[2].getReturnType()
+						: SDFDatatype.OBJECT;
 			}
-			if (args[2].getValue() == null){
-				return args[1] != null?args[1].getReturnType():SDFDatatype.OBJECT;				
+			if (args[2] instanceof Constant && args[2].getValue() == null) {
+				return args[1] != null ? args[1].getReturnType()
+						: SDFDatatype.OBJECT;
 			}
-			
+
 			SDFDatatype type1 = args[1].getReturnType();
 			SDFDatatype type2 = args[2].getReturnType();
 			if (type1 == type2) {
