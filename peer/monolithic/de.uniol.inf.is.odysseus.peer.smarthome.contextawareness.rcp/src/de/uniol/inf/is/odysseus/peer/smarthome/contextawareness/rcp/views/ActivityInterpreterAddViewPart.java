@@ -19,7 +19,7 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Lists;
 
-import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.activityinterpreter.ActivityInterpreter;
+import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.activityinterpreter.AbstractActivityInterpreter;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.sensor.AbstractSensor;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.rcp.SmartHomeRCPActivator;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.smartdevice.ASmartDevice;
@@ -64,130 +64,130 @@ public class ActivityInterpreterAddViewPart extends ViewPart {
 		final Composite tableComposite = new Composite(parent, SWT.NONE);
 		tableComposite.setLayout(new GridLayout(2, false));
 
-		Label lblSmartdevice = new Label(tableComposite, SWT.NONE);
-		lblSmartdevice.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false,
-				false, 1, 1));
-		lblSmartdevice.setText("SmartDevice:");
-
 		/* if the current person is selected, show text */
+		
+				Label lblSmartdevice = new Label(tableComposite, SWT.NONE);
+				lblSmartdevice.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false,
+						false, 1, 1));
+				lblSmartdevice.setText("SmartDevice:");
+				
+						smartDeviceComboViewer = new ComboViewer(tableComposite, SWT.READ_ONLY);
+						Combo combo = smartDeviceComboViewer.getCombo();
+						GridData gd_combo = new GridData(SWT.FILL, SWT.CENTER, false, false, 1,
+								1);
+						gd_combo.widthHint = 485;
+						combo.setLayoutData(gd_combo);
+						Combo smartDeviceCombo = smartDeviceComboViewer.getCombo();
+						smartDeviceCombo.addSelectionListener(new SelectionListener() {
+							@Override
+							public void widgetSelected(SelectionEvent e) {
+								refreshActivityNamesCombo();
+								refreshSensorsComboItems();
+								refreshSensorConditionsCombo();
+							}
 
-		smartDeviceComboViewer = new ComboViewer(tableComposite, SWT.READ_ONLY);
-		Combo combo = smartDeviceComboViewer.getCombo();
-		GridData gd_combo = new GridData(SWT.FILL, SWT.CENTER, false, false, 1,
-				1);
-		gd_combo.widthHint = 485;
-		combo.setLayoutData(gd_combo);
-		Combo smartDeviceCombo = smartDeviceComboViewer.getCombo();
-		smartDeviceCombo.addSelectionListener(new SelectionListener() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				refreshActivityNamesCombo();
-				refreshSensorsComboItems();
-				refreshSensorConditionsCombo();
-			}
+							@Override
+							public void widgetDefaultSelected(SelectionEvent e) {
+							}
+						});
+						// smartDeviceComboViewer.setLayoutData(new GridData(SWT.FILL,
+						// SWT.CENTER, true, false, 1, 1));
+						smartDeviceComboViewer.setContentProvider(ArrayContentProvider
+								.getInstance());
+						smartDeviceComboViewer.setLabelProvider(new LabelProvider() {
+							@Override
+							public String getText(Object element) {
+								if (element instanceof PeerID) {
+									PeerID current = (PeerID) element;
 
-			@Override
-			public void widgetDefaultSelected(SelectionEvent e) {
-			}
-		});
-		// smartDeviceComboViewer.setLayoutData(new GridData(SWT.FILL,
-		// SWT.CENTER, true, false, 1, 1));
-		smartDeviceComboViewer.setContentProvider(ArrayContentProvider
-				.getInstance());
-		smartDeviceComboViewer.setLabelProvider(new LabelProvider() {
-			@Override
-			public String getText(Object element) {
-				if (element instanceof PeerID) {
-					PeerID current = (PeerID) element;
+									if (SmartHomeRCPActivator.getP2PNetworkManager()
+											.getLocalPeerID() == current) {
+										return "<local>"
+												+ SmartHomeRCPActivator.getP2PNetworkManager()
+														.getLocalPeerName();
+									}
 
-					if (SmartHomeRCPActivator.getP2PNetworkManager()
-							.getLocalPeerID() == current) {
-						return "<local>"
-								+ SmartHomeRCPActivator.getP2PNetworkManager()
-										.getLocalPeerName();
+									return SmartHomeRCPActivator.getPeerDictionary()
+											.getRemotePeerName(current);
+								}
+								return super.getText(element);
+							}
+						});
+						smartDeviceComboViewer.setInput(foundPeerIDs);
+				
+						Label lblAaad = new Label(tableComposite, SWT.NONE);
+						lblAaad.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false,
+								1, 1));
+						lblAaad.setText("Sensor:");
+		
+				sensorsCombo = new Combo(tableComposite, SWT.READ_ONLY);
+				sensorsCombo.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true,
+						false, 1, 1));
+				sensorsCombo.addSelectionListener(new SelectionListener() {
+					@Override
+					public void widgetSelected(SelectionEvent e) {
+						refreshSensorConditionsCombo();
 					}
 
-					return SmartHomeRCPActivator.getPeerDictionary()
-							.getRemotePeerName(current);
-				}
-				return super.getText(element);
-			}
-		});
-		smartDeviceComboViewer.setInput(foundPeerIDs);
+					@Override
+					public void widgetDefaultSelected(SelectionEvent e) {
 
-		// smartDeviceCombo = new Combo(tableComposite, SWT.READ_ONLY);
-		// smartDeviceCombo.setItems(new String[] {"Raspberry", "banana"});
-		// refreshSmartDevicesCombo();
-		// smartDeviceCombo.setLayoutData(new GridData(SWT.FILL, SWT.CENTER,
-		// true, false, 1, 1));
-
-		Label lblAaaaaa = new Label(tableComposite, SWT.NONE);
-		lblAaaaaa.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false,
-				false, 1, 1));
-		lblAaaaaa.setText("ActivityName:");
-
-		activityNamesCombo = new Combo(tableComposite, SWT.NONE);
-		activityNamesCombo.setLayoutData(new GridData(SWT.FILL, SWT.CENTER,
-				true, false, 1, 1));
-
-		Label lblAaad = new Label(tableComposite, SWT.NONE);
-		lblAaad.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false,
-				1, 1));
-		lblAaad.setText("Sensor:");
-
-		sensorsCombo = new Combo(tableComposite, SWT.READ_ONLY);
-		sensorsCombo.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true,
-				false, 1, 1));
-		sensorsCombo.addSelectionListener(new SelectionListener() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				refreshSensorConditionsCombo();
-			}
-
-			@Override
-			public void widgetDefaultSelected(SelectionEvent e) {
-
-			}
-		});
-
-		Label lblAction = new Label(tableComposite, SWT.NONE);
-		lblAction.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false,
-				false, 1, 1));
-		lblAction.setText("PossibleAttributes:");
-
-		sensorsPossibleAttributesCombo = new Combo(tableComposite,
-				SWT.READ_ONLY);
-		sensorsPossibleAttributesCombo.setLayoutData(new GridData(SWT.FILL,
-				SWT.CENTER, true, false, 1, 1));
-
-		Label lblCondition = new Label(tableComposite, SWT.NONE);
-		lblCondition.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false,
-				false, 1, 1));
-		lblCondition.setAlignment(SWT.RIGHT);
-		lblCondition.setText("Condition:");
-
-		activityInterpreterConditionTextView = new Text(tableComposite,
-				SWT.BORDER);
-		activityInterpreterConditionTextView.setLayoutData(new GridData(
-				SWT.FILL, SWT.CENTER, true, false, 1, 1));
-
-		Button btnCreate = new Button(tableComposite, SWT.NONE);
-		btnCreate.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				createActivityInterpreter();
-			}
-		});
-		btnCreate.setText("Create");
-
-		Button btnCancel = new Button(tableComposite, SWT.NONE);
-		btnCancel.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				System.out.println("Cancel");
-			}
-		});
-		btnCancel.setText("Cancel");
+					}
+				});
+		
+				Label lblAction = new Label(tableComposite, SWT.NONE);
+				lblAction.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false,
+						false, 1, 1));
+				lblAction.setText("PossibleAttributes:");
+		
+				sensorsPossibleAttributesCombo = new Combo(tableComposite,
+						SWT.READ_ONLY);
+				sensorsPossibleAttributesCombo.setLayoutData(new GridData(SWT.FILL,
+						SWT.CENTER, true, false, 1, 1));
+		
+				Label lblCondition = new Label(tableComposite, SWT.NONE);
+				lblCondition.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false,
+						false, 1, 1));
+				lblCondition.setAlignment(SWT.RIGHT);
+				lblCondition.setText("Condition:");
+		
+				activityInterpreterConditionTextView = new Text(tableComposite,
+						SWT.BORDER);
+				activityInterpreterConditionTextView.setLayoutData(new GridData(
+						SWT.FILL, SWT.CENTER, true, false, 1, 1));
+				
+						// smartDeviceCombo = new Combo(tableComposite, SWT.READ_ONLY);
+						// smartDeviceCombo.setItems(new String[] {"Raspberry", "banana"});
+						// refreshSmartDevicesCombo();
+						// smartDeviceCombo.setLayoutData(new GridData(SWT.FILL, SWT.CENTER,
+						// true, false, 1, 1));
+				
+						Label lblAaaaaa = new Label(tableComposite, SWT.NONE);
+						lblAaaaaa.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false,
+								false, 1, 1));
+						lblAaaaaa.setText("ActivityName:");
+				
+						activityNamesCombo = new Combo(tableComposite, SWT.NONE);
+						activityNamesCombo.setLayoutData(new GridData(SWT.FILL, SWT.CENTER,
+								true, false, 1, 1));
+				
+						Button btnCreate = new Button(tableComposite, SWT.NONE);
+						btnCreate.addSelectionListener(new SelectionAdapter() {
+							@Override
+							public void widgetSelected(SelectionEvent e) {
+								createActivityInterpreter();
+							}
+						});
+						btnCreate.setText("Create");
+				
+						Button btnCancel = new Button(tableComposite, SWT.NONE);
+						btnCancel.addSelectionListener(new SelectionAdapter() {
+							@Override
+							public void widgetSelected(SelectionEvent e) {
+								System.out.println("Cancel");
+							}
+						});
+						btnCancel.setText("Cancel");
 
 		refreshAll();
 
@@ -269,7 +269,7 @@ public class ActivityInterpreterAddViewPart extends ViewPart {
 		ArrayList<String> list = new ArrayList<>();
 		for (AbstractSensor sensor : getLocalSmartDevice()
 				.getConnectedSensors()) {
-			for (ActivityInterpreter interpreter : sensor
+			for (AbstractActivityInterpreter interpreter : sensor
 					.getActivityInterpreters()) {
 				list.add(interpreter.getActivityName());
 			}

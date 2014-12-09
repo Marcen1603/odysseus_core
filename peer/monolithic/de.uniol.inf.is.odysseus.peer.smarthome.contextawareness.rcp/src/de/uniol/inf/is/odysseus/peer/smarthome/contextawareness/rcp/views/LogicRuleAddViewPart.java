@@ -112,68 +112,68 @@ public class LogicRuleAddViewPart extends ViewPart {
 			}
 		});
 		smartDeviceComboViewer.setInput(foundPeerIDs);
+		
+				Label lblAaad = new Label(tableComposite, SWT.NONE);
+				lblAaad.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false,
+						1, 1));
+				lblAaad.setText("Actor:");
+		
+				actorsCombo = new Combo(tableComposite, SWT.READ_ONLY);
+				actorsCombo.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true,
+						false, 1, 1));
+				actorsCombo.addSelectionListener(new SelectionListener() {
+					@Override
+					public void widgetSelected(SelectionEvent e) {
+						refreshActorActionsCombo();
+					}
 
-		// smartDeviceCombo = new Combo(tableComposite, SWT.READ_ONLY);
-		// smartDeviceCombo.setItems(new String[] {"Raspberry", "banana"});
-		// refreshSmartDevicesCombo();
-		// smartDeviceCombo.setLayoutData(new GridData(SWT.FILL, SWT.CENTER,
-		// true, false, 1, 1));
+					@Override
+					public void widgetDefaultSelected(SelectionEvent e) {
 
-		Label lblAaaaaa = new Label(tableComposite, SWT.NONE);
-		lblAaaaaa.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false,
-				false, 1, 1));
-		lblAaaaaa.setText("ActivityName:");
-
-		activityNamesCombo = new Combo(tableComposite, SWT.NONE);
-		activityNamesCombo.setLayoutData(new GridData(SWT.FILL, SWT.CENTER,
-				true, false, 1, 1));
-
-		Label lblAaad = new Label(tableComposite, SWT.NONE);
-		lblAaad.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false,
-				1, 1));
-		lblAaad.setText("Actor:");
-
-		actorsCombo = new Combo(tableComposite, SWT.READ_ONLY);
-		actorsCombo.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true,
-				false, 1, 1));
-		actorsCombo.addSelectionListener(new SelectionListener() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				refreshActorActionsCombo();
-			}
-
-			@Override
-			public void widgetDefaultSelected(SelectionEvent e) {
-
-			}
-		});
-
-		Label lblAction = new Label(tableComposite, SWT.NONE);
-		lblAction.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false,
-				false, 1, 1));
-		lblAction.setText("Action:");
-
-		actorActionsCombo = new Combo(tableComposite, SWT.READ_ONLY);
-		actorActionsCombo.setLayoutData(new GridData(SWT.FILL, SWT.CENTER,
-				true, false, 1, 1));
-
-		Button btnCreate = new Button(tableComposite, SWT.NONE);
-		btnCreate.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				createLogicRule();
-			}
-		});
-		btnCreate.setText("Create rule");
-
-		Button btnCancel = new Button(tableComposite, SWT.NONE);
-		btnCancel.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				System.out.println("Cancel");
-			}
-		});
-		btnCancel.setText("Cancel");
+					}
+				});
+		
+				Label lblAction = new Label(tableComposite, SWT.NONE);
+				lblAction.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false,
+						false, 1, 1));
+				lblAction.setText("Action:");
+		
+				actorActionsCombo = new Combo(tableComposite, SWT.READ_ONLY);
+				actorActionsCombo.setLayoutData(new GridData(SWT.FILL, SWT.CENTER,
+						true, false, 1, 1));
+				
+						// smartDeviceCombo = new Combo(tableComposite, SWT.READ_ONLY);
+						// smartDeviceCombo.setItems(new String[] {"Raspberry", "banana"});
+						// refreshSmartDevicesCombo();
+						// smartDeviceCombo.setLayoutData(new GridData(SWT.FILL, SWT.CENTER,
+						// true, false, 1, 1));
+				
+						Label lblAaaaaa = new Label(tableComposite, SWT.NONE);
+						lblAaaaaa.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false,
+								false, 1, 1));
+						lblAaaaaa.setText("ActivityName:");
+				
+						activityNamesCombo = new Combo(tableComposite, SWT.NONE);
+						activityNamesCombo.setLayoutData(new GridData(SWT.FILL, SWT.CENTER,
+								true, false, 1, 1));
+				
+						Button btnCreate = new Button(tableComposite, SWT.NONE);
+						btnCreate.addSelectionListener(new SelectionAdapter() {
+							@Override
+							public void widgetSelected(SelectionEvent e) {
+								createLogicRule();
+							}
+						});
+						btnCreate.setText("Create rule");
+				
+						Button btnCancel = new Button(tableComposite, SWT.NONE);
+						btnCancel.addSelectionListener(new SelectionAdapter() {
+							@Override
+							public void widgetSelected(SelectionEvent e) {
+								System.out.println("Cancel");
+							}
+						});
+						btnCancel.setText("Cancel");
 
 
 		refreshAll();

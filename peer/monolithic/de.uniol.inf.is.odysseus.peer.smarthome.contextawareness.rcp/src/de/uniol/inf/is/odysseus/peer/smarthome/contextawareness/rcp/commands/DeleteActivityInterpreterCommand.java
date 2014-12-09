@@ -11,7 +11,7 @@ import org.eclipse.swt.widgets.Display;
 import com.google.common.base.Optional;
 
 import de.uniol.inf.is.odysseus.p2p_new.PeerCommunicationException;
-import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.activityinterpreter.ActivityInterpreter;
+import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.activityinterpreter.AbstractActivityInterpreter;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.rcp.views.ActivityInterpreterShowView;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.server.SmartDevicePublisher;
 import de.uniol.inf.is.odysseus.rcp.StatusBarManager;
@@ -25,7 +25,7 @@ public class DeleteActivityInterpreterCommand extends AbstractHandler {
 		if (optView.isPresent()) {
 			ActivityInterpreterShowView view = optView.get();
 
-			List<ActivityInterpreter> selectedLogicRules = view.getSelectedActivityInterpreters();
+			List<AbstractActivityInterpreter> selectedLogicRules = view.getSelectedActivityInterpreters();
 			if (!selectedLogicRules.isEmpty()) {
 				MessageDialog msgDialog = new MessageDialog(Display
 						.getCurrent().getActiveShell(), null, null,
@@ -36,7 +36,7 @@ public class DeleteActivityInterpreterCommand extends AbstractHandler {
 
 				if (msgDialog.getReturnCode() == 0) {
 					int okCount = 0;
-					for (ActivityInterpreter rule : selectedLogicRules) {
+					for (AbstractActivityInterpreter rule : selectedLogicRules) {
 						if (removeActivityInterpreter(rule)) {
 							okCount++;
 						}
@@ -50,7 +50,7 @@ public class DeleteActivityInterpreterCommand extends AbstractHandler {
 		return null;
 	}
 
-	private boolean removeActivityInterpreter(ActivityInterpreter interpreter) {
+	private boolean removeActivityInterpreter(AbstractActivityInterpreter interpreter) {
 		System.out.println("removeActivityInterpreter ActivityName:"+interpreter.getActivityName()+" Sensor:"+interpreter.getSensor().getName());
 		
 		if(SmartDevicePublisher.isLocalPeer(interpreter.getSensor().getSmartDevice().getPeerID())){

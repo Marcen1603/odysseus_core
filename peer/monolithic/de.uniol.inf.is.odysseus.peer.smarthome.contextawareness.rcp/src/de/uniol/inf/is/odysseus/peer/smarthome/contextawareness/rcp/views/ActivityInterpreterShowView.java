@@ -23,7 +23,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.FieldDevice;
-import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.activityinterpreter.ActivityInterpreter;
+import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.activityinterpreter.AbstractActivityInterpreter;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.actor.AbstractActor;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.sensor.AbstractSensor;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.rcp.SmartHomeRCPActivator;
@@ -210,16 +210,16 @@ public class ActivityInterpreterShowView extends ViewPart {
 		return Optional.fromNullable(instance);
 	}
 
-	public List<ActivityInterpreter> getSelectedActivityInterpreters() {
-		ImmutableList.Builder<ActivityInterpreter> resultBuilder = new ImmutableList.Builder<>();
+	public List<AbstractActivityInterpreter> getSelectedActivityInterpreters() {
+		ImmutableList.Builder<AbstractActivityInterpreter> resultBuilder = new ImmutableList.Builder<>();
 
 		IStructuredSelection selection = (IStructuredSelection) treeViewer
 				.getSelection();
 		if (!selection.isEmpty()) {
 			for (Object selectedObj : selection.toList()) {
-				if (selectedObj instanceof ActivityInterpreter) {
+				if (selectedObj instanceof AbstractActivityInterpreter) {
 					// selection.getFirstElement();
-					resultBuilder.add(((ActivityInterpreter) selectedObj));
+					resultBuilder.add(((AbstractActivityInterpreter) selectedObj));
 				}
 			}
 		}
@@ -263,10 +263,10 @@ public class ActivityInterpreterShowView extends ViewPart {
 				return list;
 			} else if (inputElement instanceof AbstractSensor) {
 				AbstractSensor sensor = (AbstractSensor) inputElement;
-				Collection<? extends ActivityInterpreter> activityInterpreter = sensor.getActivityInterpreters();
-				ActivityInterpreter[] list = new ActivityInterpreter[activityInterpreter.size()];
+				Collection<? extends AbstractActivityInterpreter> activityInterpreter = sensor.getActivityInterpreters();
+				AbstractActivityInterpreter[] list = new AbstractActivityInterpreter[activityInterpreter.size()];
 				int i = 0;
-				for (ActivityInterpreter interpret : activityInterpreter) {
+				for (AbstractActivityInterpreter interpret : activityInterpreter) {
 					list[i++] = interpret;
 				}
 				LOG.error("getElements return ActivityInterpreter[].length:"+list.length);
@@ -290,14 +290,14 @@ public class ActivityInterpreterShowView extends ViewPart {
 				return list;
 			} else if (parentElement instanceof AbstractSensor) {
 				AbstractSensor sensor = (AbstractSensor) parentElement;
-				Collection<? extends ActivityInterpreter> activityInterpreters = sensor.getActivityInterpreters();
-				ActivityInterpreter[] list = new ActivityInterpreter[activityInterpreters.size()];
+				Collection<? extends AbstractActivityInterpreter> activityInterpreters = sensor.getActivityInterpreters();
+				AbstractActivityInterpreter[] list = new AbstractActivityInterpreter[activityInterpreters.size()];
 				int i = 0;
-				for (ActivityInterpreter interpr : activityInterpreters) {
+				for (AbstractActivityInterpreter interpr : activityInterpreters) {
 					list[i++] = interpr;
 				}
 				return list;
-			} else if (parentElement instanceof ActivityInterpreter) {
+			} else if (parentElement instanceof AbstractActivityInterpreter) {
 				return null;
 			}
 
@@ -313,8 +313,8 @@ public class ActivityInterpreterShowView extends ViewPart {
 			} else if (element instanceof AbstractSensor) {
 				AbstractSensor sensor = (AbstractSensor) element;
 				return sensor.getSmartDevice();
-			} else if (element instanceof ActivityInterpreter) {
-				ActivityInterpreter interpret = (ActivityInterpreter) element;
+			} else if (element instanceof AbstractActivityInterpreter) {
+				AbstractActivityInterpreter interpret = (AbstractActivityInterpreter) element;
 				return interpret.getSensor();
 			}
 			return null;
@@ -356,14 +356,14 @@ public class ActivityInterpreterShowView extends ViewPart {
 				}
 				break;
 			case 1:// Activity
-				if (cell.getElement() instanceof ActivityInterpreter) {
-					ActivityInterpreter interpreter = (ActivityInterpreter) cell.getElement();
+				if (cell.getElement() instanceof AbstractActivityInterpreter) {
+					AbstractActivityInterpreter interpreter = (AbstractActivityInterpreter) cell.getElement();
 					text.append(interpreter.getActivityName());
 				}
 				break;
 			case 2:// ActivityInterpreter
-				if (cell.getElement() instanceof ActivityInterpreter) {
-					ActivityInterpreter interpret = (ActivityInterpreter) cell.getElement();
+				if (cell.getElement() instanceof AbstractActivityInterpreter) {
+					AbstractActivityInterpreter interpret = (AbstractActivityInterpreter) cell.getElement();
 					text.append(interpret.getActivityInterpreterDescription());
 				}
 				break;
