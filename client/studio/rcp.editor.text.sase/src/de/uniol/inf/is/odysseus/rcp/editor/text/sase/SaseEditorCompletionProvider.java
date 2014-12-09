@@ -68,7 +68,7 @@ public class SaseEditorCompletionProvider implements IEditorLanguagePropertiesPr
 						token = token.substring(0, token.length() - 1);
 					}
 					if (token.length() > 1 && !token.startsWith("\\")) {
-						liste.add(new Terminal(token, true));
+						liste.add(new Terminal(token, false));
 					}
 				}
 			}
