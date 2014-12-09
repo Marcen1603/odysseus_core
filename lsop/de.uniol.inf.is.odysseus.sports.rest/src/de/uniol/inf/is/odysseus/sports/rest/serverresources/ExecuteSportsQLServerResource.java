@@ -11,7 +11,6 @@ import org.restlet.resource.Post;
 
 import de.uniol.inf.is.odysseus.core.collection.Context;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
-import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
 import de.uniol.inf.is.odysseus.rest.serverresources.AbstractSessionServerResource;
 import de.uniol.inf.is.odysseus.rest.service.RestService;
 import de.uniol.inf.is.odysseus.rest.socket.SocketInfo;
@@ -60,7 +59,7 @@ public class ExecuteSportsQLServerResource extends AbstractSessionServerResource
 			
 			Collection<Integer> queryIDs = ExecutorServiceBinding.getExecutor().addQuery(sportsQL.toString(), "OdysseusScript", session, executeSportsQLRequestDTO.getTransformationConfig(), Context.empty());
 			int queryId = queryIDs.iterator().next();	
-			ExecutorServiceBinding.getExecutor().startQuery(queryId, OdysseusRCPPlugIn.getActiveSession());
+			ExecutorServiceBinding.getExecutor().startQuery(queryId, session);
 			SocketInfo peerSocket = SocketService.getInstance().getConnectionInformation(session, queryId,0);
 			return new ExecuteSportsQLResponseDTO(session.getToken(), peerSocket, queryIDs.iterator().next(), RestService.getPort());
 		}

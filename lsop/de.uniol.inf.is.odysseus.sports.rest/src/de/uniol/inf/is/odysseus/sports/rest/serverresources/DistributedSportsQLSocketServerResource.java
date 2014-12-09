@@ -10,7 +10,6 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvider;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.core.usermanagement.ITenant;
-import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
 import de.uniol.inf.is.odysseus.rest.serverresources.AbstractServerResource;
 import de.uniol.inf.is.odysseus.rest.socket.SocketInfo;
 import de.uniol.inf.is.odysseus.rest.socket.SocketService;
@@ -32,7 +31,7 @@ public class DistributedSportsQLSocketServerResource extends AbstractServerResou
 		ITenant tenant = UserManagementProvider.getDefaultTenant();
 		ISession session = UserManagementProvider.getSessionmanagement().login(username, password.getBytes(), tenant);
 		Integer queryId = DistributedQueryHelper.getQueryIdWithTopOperator(sharedQueryId, session);
-		ExecutorServiceBinding.getExecutor().startQuery(queryId, OdysseusRCPPlugIn.getActiveSession());
+		ExecutorServiceBinding.getExecutor().startQuery(queryId, session);
 		IPhysicalOperator operator = DistributedQueryHelper.getTopOperatorOfQuery(queryId, session);
 		SocketInfo peerSocket = SocketService.getInstance().getConnectionInformation(session,queryId, operator);
 
