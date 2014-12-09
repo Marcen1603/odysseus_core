@@ -63,21 +63,21 @@ import de.uniol.inf.is.odysseus.sports.sportsql.parser.parameter.SportsQLTimePar
 		)
 public class PassesTeamSportsQLParser implements ISportsQLParser {
 	
-	// labels
-			private static final String SHORT_PASS = "short";
-			private static final String LONG_PASS = "long";
-			private static final String FORWARDS_PASS = "forwards";
-			private static final String BACK_PASS = "back";
-			private static final String CROSS_PASS = "cross";
-			
-			//Attributes
-			private static String ATTRIBUTE_P1_TEAM_ID = "p1_team_id";
-			private static String ATTRIBUTE_P2_TEAM_ID = "p2_team_id";
-			private static String ATTRIBUTE_TEAM_ID = "team_id";
-			private static String ATTRIBUTE_PASS_DIRECTION= "pass_direction";
-			private static String ATTRIBUTE_PASS_LENGTH= "pass_length";
-			private static String ATTRIBUTE_DIRECT_PASS= "direct_pass";
-			private static String ATTRIBUTE_DOUBLE_PASS= "double_pass";
+
+		private static String ATTRIBUTE_P1_TEAM_ID = PassesSportsQLParser.ATTRIBUTE_PLAYER_TEAM_ID+"_1";	
+		private static String ATTRIBUTE_P2_TEAM_ID = PassesSportsQLParser.ATTRIBUTE_PLAYER_TEAM_ID+"_2";
+		private static String ATTRIBUTE_TEAM_ID = "team_id";
+
+		private static String ATTRIBUTE_PASS_DIRECTION = "pass_direction";
+		private static String ATTRIBUTE_PASS_LENGTH = "pass_length";
+		private static String ATTRIBUTE_DIRECT_PASS = "direct_pass";
+		private static String ATTRIBUTE_DOUBLE_PASS = "double_pass";
+
+		private static final String SHORT_PASS = "short";
+		private static final String LONG_PASS = "long";
+		private static final String FORWARDS_PASS = "forwards";
+		private static final String BACK_PASS = "back";
+		private static final String CROSS_PASS = "cross";
 				
 		private static String ATTRIBUTE_PASS_SUCCESS = "passes_successful";
 		private static String ATTRIBUTE_PASS_FAIL = "passes_misplaced";
