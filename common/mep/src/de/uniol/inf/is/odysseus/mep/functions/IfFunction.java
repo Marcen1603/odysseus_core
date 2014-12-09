@@ -55,11 +55,11 @@ public class IfFunction extends AbstractFunction<Object> {
 		if (args != null && args.length == 3) {
 
 			// New one param value could be null
-			if (args[1] instanceof Constant && args[1].getValue() == null) {
+			if (args[1].isConstant() && args[1].getValue() == null) {
 				return args[2] != null ? args[2].getReturnType()
 						: SDFDatatype.OBJECT;
 			}
-			if (args[2] instanceof Constant && args[2].getValue() == null) {
+			if (args[2].isConstant() && args[2].getValue() == null) {
 				return args[1] != null ? args[1].getReturnType()
 						: SDFDatatype.OBJECT;
 			}
