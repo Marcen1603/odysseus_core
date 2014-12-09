@@ -186,7 +186,7 @@ public class QueryPartSender implements IPeerCommunicatorListener {
 		insertJxtaOperators(allocationMap);
 		replaceAccessAOsOfExportedViews(allocationMap.keySet());
 
-		distributeToRemotePeers(sharedQueryID, serverExecutor, caller, allocationMap, config);
+		distributeToRemotePeers(sharedQueryID, serverExecutor, caller, allocationMap, config, queryName);
 
 		Collection<ILogicalQueryPart> localQueryParts = determineLocalQueryParts(allocationMap);
 
@@ -372,7 +372,7 @@ public class QueryPartSender implements IPeerCommunicatorListener {
 		}
 	}
 
-	private void distributeToRemotePeers(ID sharedQueryID, IServerExecutor serverExecutor, ISession caller, Map<ILogicalQueryPart, PeerID> correctedAllocationMap, QueryBuildConfiguration parameters) throws QueryPartTransmissionException {
+	private void distributeToRemotePeers(ID sharedQueryID, IServerExecutor serverExecutor, ISession caller, Map<ILogicalQueryPart, PeerID> correctedAllocationMap, QueryBuildConfiguration parameters, String queryName) throws QueryPartTransmissionException {
 		senderMap.clear();
 		sendDestinationMap.clear();
 		sendResultMap.clear();
@@ -384,7 +384,7 @@ public class QueryPartSender implements IPeerCommunicatorListener {
 			if (!peerID.equals(p2pNetworkManager.getLocalPeerID())) {
 				ParameterTransformationConfiguration paramConfiguration = parameters.get(ParameterTransformationConfiguration.class);
 				Collection<String> metaTypes = paramConfiguration.getValue().getMetaTypes();
-				AddQueryPartMessage msg = new AddQueryPartMessage(sharedQueryID, LogicalQueryHelper.generatePQLStatementFromQueryPart(part), parameters.getName(), queryPartIDCounter++, metaTypes);
+				AddQueryPartMessage msg = new AddQueryPartMessage(sharedQueryID, LogicalQueryHelper.generatePQLStatementFromQueryPart(part), parameters.getName(), queryPartIDCounter++, metaTypes, queryName);
 
 				RepeatingMessageSend msgSender = new RepeatingMessageSend(peerCommunicator, msg, peerID);
 				senderMap.put(msg.getQueryPartID(), msgSender);

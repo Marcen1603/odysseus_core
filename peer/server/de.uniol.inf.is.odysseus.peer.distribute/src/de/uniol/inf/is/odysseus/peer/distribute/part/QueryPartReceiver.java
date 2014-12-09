@@ -11,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Optional;
+import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
@@ -311,9 +312,24 @@ public class QueryPartReceiver implements IPeerCommunicatorListener {
 			params.get().getValue().addTypes(Sets.newHashSet(message.getMetadataTypes()));
 		}
 
-		Collection<Integer> ids = executor.addQuery(message.getPqlStatement(), "PQL", PeerDistributePlugIn.getActiveSession(), message.getTransCfgName(), Context.empty(), configuration);
-
+		String script = buildOdysseusScriptText(message);
+		Collection<Integer> ids = executor.addQuery(script, "OdysseusScript", PeerDistributePlugIn.getActiveSession(), message.getTransCfgName(), Context.empty(), configuration);
+		
 		((QueryPartController)controller).registerAsSlave(ids, message.getSharedQueryID());
+	}
+
+	private static String buildOdysseusScriptText(AddQueryPartMessage message) {
+		StringBuilder sb = new StringBuilder();
+		
+		sb.append("#PARSER PQL").append("\n");
+		
+		String queryName = message.getQueryName();
+		if( !Strings.isNullOrEmpty(queryName)) {
+			sb.append("#QNAME ").append(queryName).append("\n");
+		}
+		sb.append("#RUNQUERY").append("\n");
+		sb.append(message.getPqlStatement()).append("\n");
+		return sb.toString();
 	}
 
 	private static Optional<ParameterTransformationConfiguration> getParameterTransformationConfiguration(List<IQueryBuildSetting<?>> settings) {

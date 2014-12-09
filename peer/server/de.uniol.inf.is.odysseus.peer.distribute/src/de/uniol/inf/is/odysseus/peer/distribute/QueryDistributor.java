@@ -75,10 +75,13 @@ public class QueryDistributor implements IQueryDistributor {
 			LOG.debug("Following operators are condidered during distribution: {}", operators);
 
 			QueryDistributorHelper.tryCheckDistribution(config, query, operators);
+			
 			Collection<ILogicalQueryPart> queryParts = QueryDistributorHelper.tryPartitionQuery(config, partitioners, operators, query);
 			QueryDistributionNotifier.tryNotifyAfterPartitioning(query, queryParts);
+			
 			Collection<ILogicalQueryPart> modifiedQueryParts = QueryDistributorHelper.tryModifyQueryParts(config, modificators, queryParts, query);
 			QueryDistributionNotifier.tryNotifyAfterModification(query, queryParts, modifiedQueryParts);
+			
 			Map<ILogicalQueryPart, PeerID> allocationMap = QueryDistributorHelper.tryAllocate(config, allocators, modifiedQueryParts, query);
 			QueryDistributionNotifier.tryNotifyAfterAllocation(query, allocationMap);
 			
