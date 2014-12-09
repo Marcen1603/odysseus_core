@@ -974,7 +974,8 @@ public abstract class AbstractExecutor implements IServerExecutor,
 			if (type != IUpdateEventListener.DATADICTIONARY) {
 				l = updateEventListener.get(type);
 			} else {
-				l = dataDictEventListener.get(session);
+				IDataDictionary dd = getDataDictionary(session);
+				l = dataDictEventListener.get(dd);
 			}
 			if (l != null) {
 				l.remove(listener);
