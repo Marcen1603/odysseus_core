@@ -238,26 +238,27 @@ public class SelectorThread implements Runnable, UncaughtExceptionHandler {
 	@Override
 	public void run() {
 		while (!Thread.interrupted()) {
-			this.doInvocations();
-			if (this.closeRequested) {
-				return;
-			}
-			int selectedKeys = 0;
 			try {
-				selectedKeys = this.selector.select();
-			} catch (final IOException e) {
-				LOG.error(e.getMessage(), e);
-				continue;
-			}
-			if (selectedKeys == 0) {
-				continue;
-			}
-			final Iterator<SelectionKey> iter = this.selector.selectedKeys()
-					.iterator();
-			while (iter.hasNext()) {
-				final SelectionKey sk = iter.next();
-				iter.remove();
+				this.doInvocations();
+				if (this.closeRequested) {
+					return;
+				}
+				int selectedKeys = 0;
 				try {
+					selectedKeys = this.selector.select();
+				} catch (final IOException e) {
+					LOG.error(e.getMessage(), e);
+					continue;
+				}
+				if (selectedKeys == 0) {
+					continue;
+				}
+				final Iterator<SelectionKey> iter = this.selector
+						.selectedKeys().iterator();
+				while (iter.hasNext()) {
+					final SelectionKey sk = iter.next();
+					iter.remove();
+
 					final int readyOps = sk.readyOps();
 					sk.interestOps(sk.interestOps() & ~readyOps);
 					final SelectorHandler handler = (SelectorHandler) sk
@@ -276,13 +277,14 @@ public class SelectorThread implements Runnable, UncaughtExceptionHandler {
 							rwHandler.onWrite();
 						}
 					}
-				} catch (final Throwable t) {
-					if (!(t instanceof CancelledKeyException)) {
-						LOG.error(t.getMessage(), t);
-						INFO_SERVICE.warning(t.getMessage(), t);
-						// Do not terminate this thread!
-						//return;
-					}
+
+				}
+			} catch (final Throwable t) {
+				if (!(t instanceof CancelledKeyException)) {
+					LOG.error(t.getMessage(), t);
+					INFO_SERVICE.warning(t.getMessage(), t);
+					// Do not terminate this thread!
+					// return;
 				}
 			}
 		}
