@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.activityinterpreter.ActivityInterpreter;
+import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.activityinterpreter.AbstractActivityInterpreter;
 
 public class TemperSensor extends AbstractSensor {
 	private static final long serialVersionUID = 1L;
@@ -48,7 +48,7 @@ public class TemperSensor extends AbstractSensor {
 		return list;
 	}
 	
-	class TemperSensorActivityInterpreter extends ActivityInterpreter {
+	class TemperSensorActivityInterpreter extends AbstractActivityInterpreter {
 		private static final long serialVersionUID = 1L;
 		private String condition;
 

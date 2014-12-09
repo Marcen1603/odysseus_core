@@ -11,7 +11,7 @@ import com.google.common.collect.Lists;
 import de.uniol.inf.is.odysseus.p2p_new.PeerCommunicationException;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.FieldDevice;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.SmartHomeServerPlugIn;
-import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.activityinterpreter.ActivityInterpreter;
+import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.activityinterpreter.AbstractActivityInterpreter;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.activityinterpreter.IActivityInterpreterListener;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.actor.AbstractActor;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.logicrule.ILogicRuleListener;
@@ -259,14 +259,14 @@ public class SmartDevice extends ASmartDevice implements Serializable {
 	private class ActivityInterpreterListener implements IActivityInterpreterListener {
 		@Override
 		public void activityInterpreterAdded(
-				ActivityInterpreter activityInterpreter) {
+				AbstractActivityInterpreter activityInterpreter) {
 			System.out.println("SmartDevice activityInterpreterAdded:"+activityInterpreter.getActivityName());
 			
 		}
 		
 		@Override
 		public void activityInterpreterRemoved(
-				ActivityInterpreter activityInterpreter) {
+				AbstractActivityInterpreter activityInterpreter) {
 			System.out.println("SmartDevice activityInterpreterRemoved:"+activityInterpreter.getActivityName());
 			
 		}
@@ -323,7 +323,7 @@ public class SmartDevice extends ASmartDevice implements Serializable {
 		
 		for(AbstractSensor sensor : getConnectedSensors()){
 			
-			for(ActivityInterpreter activityInterpreter : sensor.getActivityInterpreters()){
+			for(AbstractActivityInterpreter activityInterpreter : sensor.getActivityInterpreters()){
 				String activityName = activityInterpreter.getActivityName();
 				String activitySourceName = activityInterpreter.getActivitySourceName();
 				
@@ -361,7 +361,7 @@ public class SmartDevice extends ASmartDevice implements Serializable {
 		for(FieldDevice device : getConnectedFieldDevices()){
 			if(device instanceof AbstractSensor){
 				AbstractSensor sensor = (AbstractSensor)device;
-				for(ActivityInterpreter interpreter : sensor.getActivityInterpreters()){
+				for(AbstractActivityInterpreter interpreter : sensor.getActivityInterpreters()){
 					map.put(interpreter.getActivityName(), getMergedActivitySourceName(interpreter.getActivityName()));
 				}
 			}

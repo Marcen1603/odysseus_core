@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 
-import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.activityinterpreter.ActivityInterpreter;
+import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.activityinterpreter.AbstractActivityInterpreter;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.actor.AbstractActor;
 
 public abstract class AbstractLogicRule implements Serializable {
@@ -14,8 +14,8 @@ public abstract class AbstractLogicRule implements Serializable {
 	private String prefix;
 	private String postfix;
 	private ArrayList<String> activitySourceNameList;
-	private ArrayList<ActivityInterpreter> activityInterpreterList;
-	private ArrayList<ActivityInterpreter> runningRules;
+	private ArrayList<AbstractActivityInterpreter> activityInterpreterList;
+	private ArrayList<AbstractActivityInterpreter> runningRules;
 
 	public AbstractLogicRule(AbstractActor actor, String activityName, String prefix,
 			String postfix) {
@@ -76,18 +76,18 @@ public abstract class AbstractLogicRule implements Serializable {
 	 * @return <String,String> <viewName,Query>
 	 */
 	public abstract LinkedHashMap<String, String> getLogicRuleQueries(
-			ActivityInterpreter activityInterpreter);
+			AbstractActivityInterpreter activityInterpreter);
 
-	public void addActivityInterpreter(ActivityInterpreter activityInterpreter) {
+	public void addActivityInterpreter(AbstractActivityInterpreter activityInterpreter) {
 		addActivitySourceName(activityInterpreter.getActivitySourceName());
 		if (!getActivityInterpreterList().contains(activityInterpreter)) {
 			getActivityInterpreterList().add(activityInterpreter);
 		}
 	}
 
-	private ArrayList<ActivityInterpreter> getActivityInterpreterList() {
+	private ArrayList<AbstractActivityInterpreter> getActivityInterpreterList() {
 		if (activityInterpreterList == null) {
-			activityInterpreterList = new ArrayList<ActivityInterpreter>();
+			activityInterpreterList = new ArrayList<AbstractActivityInterpreter>();
 		}
 		return activityInterpreterList;
 	}
@@ -116,24 +116,24 @@ public abstract class AbstractLogicRule implements Serializable {
 		return n.toString();
 	}
 
-	public void addRunningWith(ActivityInterpreter activityInterpreter) {
+	public void addRunningWith(AbstractActivityInterpreter activityInterpreter) {
 		if (!getActivityInterpretersWithRunningRules().contains(activityInterpreter)) {
 			getActivityInterpretersWithRunningRules().add(activityInterpreter);
 		}
 	}
 	
-	public void removeRunningWith(ActivityInterpreter activityInterpreter) {
+	public void removeRunningWith(AbstractActivityInterpreter activityInterpreter) {
 		getActivityInterpretersWithRunningRules().remove(activityInterpreter);
 	}
 
-	public ArrayList<ActivityInterpreter> getActivityInterpretersWithRunningRules() {
+	public ArrayList<AbstractActivityInterpreter> getActivityInterpretersWithRunningRules() {
 		if (runningRules == null) {
-			runningRules = new ArrayList<ActivityInterpreter>();
+			runningRules = new ArrayList<AbstractActivityInterpreter>();
 		}
 		return runningRules;
 	}
 
-	public boolean isRunningWith(ActivityInterpreter activityInterpreter) {
+	public boolean isRunningWith(AbstractActivityInterpreter activityInterpreter) {
 		return getActivityInterpretersWithRunningRules().contains(activityInterpreter);
 	}
 

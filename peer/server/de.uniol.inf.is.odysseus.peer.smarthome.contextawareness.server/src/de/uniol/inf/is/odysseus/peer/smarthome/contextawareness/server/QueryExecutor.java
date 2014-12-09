@@ -25,7 +25,7 @@ import de.uniol.inf.is.odysseus.p2p_new.dictionary.IP2PDictionaryListener;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.MultipleSourceAdvertisement;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.SourceAdvertisement;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.SmartHomeServerPlugIn;
-import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.activityinterpreter.ActivityInterpreter;
+import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.activityinterpreter.AbstractActivityInterpreter;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.actor.AbstractActor;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.logicrule.AbstractLogicRule;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.sensor.AbstractSensor;
@@ -90,7 +90,7 @@ public class QueryExecutor implements IP2PDictionaryListener,
 			for (AbstractLogicRule rule : actor.getLogicRules()) {
 				for (AbstractSensor remoteSensor : remoteSmartDevice
 						.getConnectedSensors()) {
-					for (ActivityInterpreter activityInterpreter : remoteSensor
+					for (AbstractActivityInterpreter activityInterpreter : remoteSensor
 							.getActivityInterpreters()) {
 						if (rule.isRunningWith(activityInterpreter)) {
 
@@ -126,7 +126,7 @@ public class QueryExecutor implements IP2PDictionaryListener,
 			for (AbstractLogicRule rule : localActor.getLogicRules()) {
 				for (AbstractSensor remoteSensor : remoteSmartDevice
 						.getConnectedSensors()) {
-					for (ActivityInterpreter activityInterpreter : remoteSensor
+					for (AbstractActivityInterpreter activityInterpreter : remoteSensor
 							.getActivityInterpreters()) {
 						if (rule.isRunningWith(activityInterpreter)) {
 							return true;
@@ -225,7 +225,7 @@ public class QueryExecutor implements IP2PDictionaryListener,
 	 * @param sourcNameToWaitFor
 	 */
 	public void executeQueriesAsync(final AbstractLogicRule rule,
-			final ActivityInterpreter activityInterpreter,
+			final AbstractActivityInterpreter activityInterpreter,
 			final LinkedHashMap<String, String> logicRuleQueries,
 			final String sourcNameToWaitFor) {
 		Thread t = new Thread(new Runnable() {
@@ -262,7 +262,7 @@ public class QueryExecutor implements IP2PDictionaryListener,
 		for (AbstractActor actor : SmartDevicePublisher.getInstance()
 				.getLocalSmartDevice().getConnectedActors()) {
 			for (AbstractLogicRule rule : actor.getLogicRules()) {
-				for (ActivityInterpreter activityInterpreter : rule
+				for (AbstractActivityInterpreter activityInterpreter : rule
 						.getActivityInterpretersWithRunningRules()) {
 					if (rule.isRunningWith(activityInterpreter)) {
 						@SuppressWarnings({ "rawtypes", "unchecked" })
@@ -567,7 +567,7 @@ public class QueryExecutor implements IP2PDictionaryListener,
 		}
 		
 		
-		for(ActivityInterpreter activityInterpreter : rule.getActivityInterpretersWithRunningRules()){
+		for(AbstractActivityInterpreter activityInterpreter : rule.getActivityInterpretersWithRunningRules()){
 			@SuppressWarnings({ "rawtypes", "unchecked" })
 			ListIterator<Map.Entry<String, String>> iter = new ArrayList(
 					rule.getLogicRuleQueries(activityInterpreter)

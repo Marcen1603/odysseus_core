@@ -6,13 +6,13 @@ import java.util.Map;
 
 import de.uniol.inf.is.odysseus.p2p_new.PeerCommunicationException;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.FieldDevice;
-import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.activityinterpreter.ActivityInterpreter;
+import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.activityinterpreter.AbstractActivityInterpreter;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.activityinterpreter.IActivityInterpreterListener;
 
 public abstract class AbstractSensor extends FieldDevice implements Serializable {
 	private static final long serialVersionUID = 1L;
 	private String rawSourceName;
-	private ArrayList<ActivityInterpreter> activityInterpreterList;
+	private ArrayList<AbstractActivityInterpreter> activityInterpreterList;
 	private transient ArrayList<IActivityInterpreterListener> activityInterpreterListeners;
 
 	/**
@@ -48,7 +48,7 @@ public abstract class AbstractSensor extends FieldDevice implements Serializable
 		this.rawSourceName = rawSourceName;
 	}
 
-	public boolean addActivityInterpreter(ActivityInterpreter activityInterpreter) {
+	public boolean addActivityInterpreter(AbstractActivityInterpreter activityInterpreter) {
 		if(activityInterpreterForActivityNameExist(activityInterpreter.getActivityName())){
 			return false;
 		}
@@ -63,7 +63,7 @@ public abstract class AbstractSensor extends FieldDevice implements Serializable
 	}
 
 	private boolean activityInterpreterForActivityNameExist(String activityName) {
-		for(ActivityInterpreter interpreter : getActivityInterpreters()){
+		for(AbstractActivityInterpreter interpreter : getActivityInterpreters()){
 			if(interpreter.getActivityName().equals(activityName)){
 				return true;
 			}
@@ -72,7 +72,7 @@ public abstract class AbstractSensor extends FieldDevice implements Serializable
 	}
 
 	public boolean removeActivityInterpreter(
-			ActivityInterpreter activityInterpreter) {
+			AbstractActivityInterpreter activityInterpreter) {
 		if(getActivityInterpreters().remove(activityInterpreter)){
 			getSmartDevice().updateActivitiesSources();
 			fireActivityInterpreterRemoved(activityInterpreter);
@@ -83,29 +83,29 @@ public abstract class AbstractSensor extends FieldDevice implements Serializable
 	}
 
 	private void fireActivityInterpreterAdded(
-			ActivityInterpreter activityInterpreter) {
+			AbstractActivityInterpreter activityInterpreter) {
 		for(IActivityInterpreterListener listener : getActivityInterpreterListeners()){
 			listener.activityInterpreterAdded(activityInterpreter);
 		}
 	}
 	
 	private void fireActivityInterpreterRemoved(
-			ActivityInterpreter activityInterpreter) {
+			AbstractActivityInterpreter activityInterpreter) {
 		for(IActivityInterpreterListener listener : getActivityInterpreterListeners()){
 			listener.activityInterpreterRemoved(activityInterpreter);
 		}
 	}
 
 
-	public ArrayList<ActivityInterpreter> getActivityInterpreters() {
+	public ArrayList<AbstractActivityInterpreter> getActivityInterpreters() {
 		if (activityInterpreterList == null) {
-			activityInterpreterList = new ArrayList<ActivityInterpreter>();
+			activityInterpreterList = new ArrayList<AbstractActivityInterpreter>();
 		}
 		return activityInterpreterList;
 	}
 
 	public String getActivitySourceName(String activityName) {
-		for (ActivityInterpreter inter : getActivityInterpreters()) {
+		for (AbstractActivityInterpreter inter : getActivityInterpreters()) {
 			if (inter.getActivityName().equals(activityName)) {
 				return inter.getActivitySourceName();
 			}

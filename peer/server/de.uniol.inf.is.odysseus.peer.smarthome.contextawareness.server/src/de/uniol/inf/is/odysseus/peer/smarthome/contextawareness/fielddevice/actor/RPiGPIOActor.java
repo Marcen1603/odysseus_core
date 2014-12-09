@@ -2,7 +2,7 @@ package de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.act
 
 import java.util.LinkedHashMap;
 
-import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.activityinterpreter.ActivityInterpreter;
+import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.activityinterpreter.AbstractActivityInterpreter;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.logicrule.AbstractLogicRule;
 
 public class RPiGPIOActor extends AbstractActor {
@@ -111,7 +111,7 @@ public class RPiGPIOActor extends AbstractActor {
 
 		@Override
 		public LinkedHashMap<String, String> getLogicRuleQueries(
-				ActivityInterpreter activityInterpreter) {
+				AbstractActivityInterpreter activityInterpreter) {
 			System.out.println("  !!!!!!!!  ");
 			
 			LinkedHashMap<String, String> map = new LinkedHashMap<>();

@@ -9,7 +9,7 @@ import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.FieldDevice;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.SmartHomeServerPlugIn;
-import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.activityinterpreter.ActivityInterpreter;
+import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.activityinterpreter.AbstractActivityInterpreter;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.activityinterpreter.IActivityInterpreterListener;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.sensor.AbstractSensor;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.server.service.SmartDeviceService;
@@ -31,7 +31,7 @@ public class ActivityInterpreterProcessor implements ISmartDeviceListener {
 		activityInterpreterListener = new IActivityInterpreterListener() {
 			@Override
 			public void activityInterpreterRemoved(
-					ActivityInterpreter activityInterpreter) {
+					AbstractActivityInterpreter activityInterpreter) {
 				LOG.debug("activityInterpreterRemoved:"
 						+ activityInterpreter.getActivityName());
 
@@ -51,7 +51,7 @@ public class ActivityInterpreterProcessor implements ISmartDeviceListener {
 
 			@Override
 			public void activityInterpreterAdded(
-					ActivityInterpreter activityInterpreter) {
+					AbstractActivityInterpreter activityInterpreter) {
 				LOG.debug(" activityInterpreterAdded:"
 						+ activityInterpreter.getActivityName());
 
@@ -188,7 +188,7 @@ public class ActivityInterpreterProcessor implements ISmartDeviceListener {
 
 			// TODO: Stop activity interpreters
 			for (@SuppressWarnings("unused")
-			ActivityInterpreter interpreter : sensor.getActivityInterpreters()) {
+			AbstractActivityInterpreter interpreter : sensor.getActivityInterpreters()) {
 				// interpreter.getActivityInterpreterQueries(activityName)
 
 			}
@@ -211,7 +211,7 @@ public class ActivityInterpreterProcessor implements ISmartDeviceListener {
 		
 		//Start new activity interpreters:
 		for(AbstractSensor sensor : newSmartDevice.getConnectedSensors()){
-			for(ActivityInterpreter interpreter : sensor.getActivityInterpreters()){
+			for(AbstractActivityInterpreter interpreter : sensor.getActivityInterpreters()){
 				if(!SmartHomeServerPlugIn.getP2PDictionary().isSourceNameAlreadyInUse(interpreter.getActivitySourceName())){
 					startActivityInterpreter(interpreter);
 				}
@@ -223,10 +223,10 @@ public class ActivityInterpreterProcessor implements ISmartDeviceListener {
 			
 			for(AbstractSensor newSensor : newSmartDevice.getConnectedSensors()){
 				if(sensor.getName().equals(newSensor.getName())){
-					for(ActivityInterpreter interpreter : sensor.getActivityInterpreters()){
+					for(AbstractActivityInterpreter interpreter : sensor.getActivityInterpreters()){
 				
 						boolean interpreterExist=false;
-						for(ActivityInterpreter newInterpreter : newSensor.getActivityInterpreters()){
+						for(AbstractActivityInterpreter newInterpreter : newSensor.getActivityInterpreters()){
 							if(interpreter.equals(newInterpreter)){
 								interpreterExist=true;;
 								break;
@@ -242,7 +242,7 @@ public class ActivityInterpreterProcessor implements ISmartDeviceListener {
 		}
 	}
 
-	private void stopActivityInterpreter(ActivityInterpreter activityInterpreter) {
+	private void stopActivityInterpreter(AbstractActivityInterpreter activityInterpreter) {
 		String activityName = activityInterpreter.getActivityName();
 		// String activitySourceName = activityInterpreter
 		// .getActivitySourceName();
@@ -264,7 +264,7 @@ public class ActivityInterpreterProcessor implements ISmartDeviceListener {
 	}
 	
 	private void startActivityInterpreter(
-			ActivityInterpreter activityInterpreter) {
+			AbstractActivityInterpreter activityInterpreter) {
 		String activityName = activityInterpreter.getActivityName();
 		// String activitySourceName = activityInterpreter
 		// .getActivitySourceName();

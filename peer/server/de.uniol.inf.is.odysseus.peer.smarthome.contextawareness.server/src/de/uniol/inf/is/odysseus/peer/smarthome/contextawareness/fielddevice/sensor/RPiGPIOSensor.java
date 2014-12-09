@@ -9,7 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.SmartHomeServerPlugIn;
-import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.activityinterpreter.ActivityInterpreter;
+import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.activityinterpreter.AbstractActivityInterpreter;
 
 public class RPiGPIOSensor extends AbstractSensor {
 	private static final Logger LOG = LoggerFactory
@@ -93,7 +93,7 @@ public class RPiGPIOSensor extends AbstractSensor {
 		return list;
 	}
 
-	class RPiGPIOActivityInterpreter extends ActivityInterpreter {
+	class RPiGPIOActivityInterpreter extends AbstractActivityInterpreter {
 		private static final long serialVersionUID = 1L;
 		private int inputPin;
 		private GPIO_SENSOR_STATE pinState;
