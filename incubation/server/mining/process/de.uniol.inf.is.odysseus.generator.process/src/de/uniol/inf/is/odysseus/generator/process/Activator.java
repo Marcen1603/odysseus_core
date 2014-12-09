@@ -18,7 +18,6 @@ public class Activator implements BundleActivator {
 	 */
 	public void start(BundleContext bundleContext) throws Exception {
 		Activator.context = bundleContext;
-		Activator.context = bundleContext;
 		System.out.println("Starting an example generator server on port 54330...");
 		StreamServer eventlogServer = new StreamServer(54330, new ProcessGenerator());
 		eventlogServer.start();
