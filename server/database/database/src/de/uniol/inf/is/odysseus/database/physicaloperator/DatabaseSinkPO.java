@@ -68,7 +68,7 @@ public class DatabaseSinkPO extends AbstractSink<Tuple<ITimeInterval>>
 	private PreparedStatement preparedStatement;
 	private IDataTypeMappingHandler<?>[] dtMappings;
 
-	private int counter = 1;
+	private int counter = 0;
 	final private IDatabaseConnection connection;
 	final private String tablename;
 	final private boolean truncate;
@@ -222,8 +222,9 @@ public class DatabaseSinkPO extends AbstractSink<Tuple<ITimeInterval>>
 				// }
 				this.preparedStatement.addBatch();
 				counter++;
-				if ((counter % batchSize) == 0) {
+				if (counter == batchSize) {
 					writeToDB();
+					counter = 0;
 				}
 				// calcLatency(tuple);
 				// logger.debug("Inserted "+count+" rows in database");
