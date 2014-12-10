@@ -37,10 +37,10 @@ public class PointInTime implements Comparable<PointInTime>, Cloneable,
 	 */
 	protected final long point;
 
-//	/**
-//	 * A marker if this point has not time, but is infinite
-//	 */
-//	protected final boolean isInfinite;
+	/**
+	 * A marker if this point has not time, but is infinite
+	 */
+	protected final boolean isInfinite;
 
 	/**
 	 * Constant for infinityTime
@@ -59,6 +59,7 @@ public class PointInTime implements Comparable<PointInTime>, Cloneable,
 	 */
 	public PointInTime(long point) {
 		this.point = point;
+		this.isInfinite = false;
 	}
 
 	/**
@@ -68,18 +69,21 @@ public class PointInTime implements Comparable<PointInTime>, Cloneable,
 	 */
 	public PointInTime(Number point) {
 		this.point = point.longValue();
+		this.isInfinite = false;
 	}
 
 	private PointInTime() {
+		isInfinite = true;
 		point = -1;
 	}
 
 	protected PointInTime(PointInTime time) {
 		this.point = time.point;
+		this.isInfinite = time.isInfinite;
 	}
 
 	public boolean isInfinite() {
-		return this == INFINITY;
+		return isInfinite;
 	}
 
 	public static PointInTime getInfinityTime() {
@@ -169,13 +173,13 @@ public class PointInTime implements Comparable<PointInTime>, Cloneable,
 
 	public static boolean equals(PointInTime left, PointInTime right) {
 		// Entweder gleich in den Werten oder unendlich
-		if (left.isInfinite()) {
-			if (right.isInfinite()) {
+		if (left.isInfinite) {
+			if (right.isInfinite) {
 				return true;
 			}
 			return false;
 		}
-		if (right.isInfinite()) {
+		if (right.isInfinite) {
 			return false;
 		}
 		return (left.point == right.point);
@@ -246,13 +250,13 @@ public class PointInTime implements Comparable<PointInTime>, Cloneable,
 	}
 
 	public PointInTime minus(PointInTime time) {
-		if (isInfinite())
+		if (isInfinite)
 			return this;
 		return new PointInTime(this.point - time.point);
 	}
 
 	public PointInTime plus(PointInTime time) {
-		if (isInfinite())
+		if (isInfinite)
 			return this;
 		return new PointInTime(this.point + time.point);
 	}
@@ -262,7 +266,7 @@ public class PointInTime implements Comparable<PointInTime>, Cloneable,
 	}
 
 	public PointInTime plus(long time) {
-		if (isInfinite())
+		if (isInfinite)
 			return this;
 		return new PointInTime(this.point + time);
 	}
@@ -271,7 +275,7 @@ public class PointInTime implements Comparable<PointInTime>, Cloneable,
 	public int hashCode() {
 		final int PRIME = 31;
 		int result = 1;
-		result = PRIME * result + (isInfinite() ? 1231 : 1237);
+		result = PRIME * result + (isInfinite ? 1231 : 1237);
 		result = PRIME * result + (int) (point ^ (point >>> 32));
 		return result;
 	}
