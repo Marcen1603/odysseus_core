@@ -96,7 +96,7 @@ public class Temper1TransportHandler extends
 			// TODO: get it working on windows!
 
 			methodToGetTemperature = METHOD_SIMULATED_TEMPER;
-			LOG.error("Currently the temper1 is not working on windows. The temperature values are simulated!");
+			LOG.warn("Currently the temper1 is not working on windows. The temperature values are simulated!");
 			return;
 		} else if (OS.indexOf("nux") >= 0) {
 
