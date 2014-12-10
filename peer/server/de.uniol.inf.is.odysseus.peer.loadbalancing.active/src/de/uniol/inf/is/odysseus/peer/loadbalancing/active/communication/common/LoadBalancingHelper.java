@@ -367,8 +367,7 @@ public class LoadBalancingHelper {
 		IServerExecutor executor = ActiveLoadBalancingActivator.getExecutor();
 		ISession session = ActiveLoadBalancingActivator.getActiveSession();
 
-		Collection<Integer> installedQueries = executor.addQuery(pql, "PQL", session, "Standard",
-				context);
+		Collection<Integer> installedQueries = executor.addQuery(pql, "PQL", session, context);
 		for (int query : installedQueries) {
 			executor.startQuery(query, session);
 		}
