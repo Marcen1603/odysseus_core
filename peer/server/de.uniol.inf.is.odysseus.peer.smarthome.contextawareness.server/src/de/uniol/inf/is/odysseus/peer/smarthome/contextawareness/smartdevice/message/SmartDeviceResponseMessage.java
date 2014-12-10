@@ -10,6 +10,7 @@ public class SmartDeviceResponseMessage extends SmartDeviceMessage {
 	
 	private ASmartDevice smartDevice;
 	
+	@Override
 	public synchronized byte[] toBytes() {
 		try {
 			return serialize(smartDevice);
@@ -19,6 +20,7 @@ public class SmartDeviceResponseMessage extends SmartDeviceMessage {
 		return null;
 	}
 	
+	@Override
 	public synchronized void fromBytes(byte[] data) {
 		try {
 			this.smartDevice = (ASmartDevice) deserialize(data);

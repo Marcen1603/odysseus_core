@@ -56,9 +56,9 @@ public class Temper1TransportHandler extends
 	private long DELTATIME_FOR_DEVICE_UPDATE_MS = 10000;
 	private HIDManager hidManager;
 
-	private Float savedTemperature;
+	// private Float savedTemperature;
 
-	private long savedTemperatureTime_MS;
+	// private long savedTemperatureTime_MS;
 
 	private static Float lastTemperature = null;
 	private static long simulatedValueReturnedLastTime = 0;
@@ -79,6 +79,9 @@ public class Temper1TransportHandler extends
 	private static boolean errorNr3Shown;
 
 	private static boolean errorNr2Shown;
+
+	ArrayList<Float> svdTemperature = new ArrayList<>();
+	ArrayList<Long> svdTemperatureTime_MS = new ArrayList<>();
 
 	static {
 		// TODO:Enabling components of bundle
@@ -117,10 +120,6 @@ public class Temper1TransportHandler extends
 		} catch (IOException ex) {
 			LOG.error(ex.getMessage(), ex);
 		}
-	}
-
-	public Temper1TransportHandler(Temper1TransportHandler other) {
-
 	}
 
 	@Override
@@ -204,30 +203,30 @@ public class Temper1TransportHandler extends
 			lastTemperature = new Float(
 					getTemperatureFromHIDManager(temperaturSensors
 							.get(deviceNumber)));
-			saveTemperature(lastTemperature);
+			saveTemperature(deviceNumber, lastTemperature);
 			return lastTemperature;
 		case METHOD_RPI_TEMPER:
 			lastTemperature = new Float(
 					getTemperatureFromRPiTemperBinary(deviceNumber));
-			saveTemperature(lastTemperature);
+			saveTemperature(deviceNumber, lastTemperature);
 			return lastTemperature;
 		case METHOD_SIMULATED_TEMPER:
 			lastTemperature = null;
-			saveTemperature(null);
+			saveTemperature(-1, null);
 			return getSimulatedTemperature(deviceNumber);
-		}
+		default:
+			Float r = null;
+			try {
+				r = getSavedTemperature(deviceNumber);
+				if (r != null) {
+					return r.floatValue();
+				}
+			} catch (Exception e) {
 
-		Float r = null;
-		try {
-			r = getSavedTemperature(deviceNumber);
-			if (r != null) {
-				return r.floatValue();
 			}
-		} catch (Exception e) {
 
+			throw new IOException("No temperature sensor available.");
 		}
-
-		throw new IOException("No temperature sensor available.");
 	}
 
 	/*****************************************************************/
@@ -505,9 +504,8 @@ public class Temper1TransportHandler extends
 		Matcher matcher = pattern.matcher(line);
 		if (matcher.matches()) {
 			return matcher.group(1);
-		} else {
-			throw new IllegalStateException("No match found");
 		}
+		throw new IllegalStateException("No match found");
 	}
 
 	public static String getRpiTemper1TempPath() {
@@ -555,6 +553,7 @@ public class Temper1TransportHandler extends
 	/**
 	 * get simulated temperature values
 	 *****************************************************************/
+	@SuppressWarnings("unused")
 	private static float getSimulatedTemperature(int deviceNumber) {
 		// TODO: Extend method for multiple devices.
 
@@ -586,22 +585,26 @@ public class Temper1TransportHandler extends
 	 * get saved temperature values
 	 *****************************************************************/
 	private Float getSavedTemperature(int deviceNumber) {
-		long delta = System.currentTimeMillis() - savedTemperatureTime_MS;
-		if (savedTemperature != null
-				&& delta <= DELTA_TIME_RETURN_SAVED_TEMPERATURE_WHILE_ERROR_MS) {
-			LOG.debug("A saved temperature value was returned. deltatime:"
-					+ delta);
-			return savedTemperature;
+		if (svdTemperatureTime_MS.get(deviceNumber) != null) {
+			long delta = System.currentTimeMillis()
+					- svdTemperatureTime_MS.get(deviceNumber);
+			if (svdTemperature.get(deviceNumber) != null
+					&& delta <= DELTA_TIME_RETURN_SAVED_TEMPERATURE_WHILE_ERROR_MS) {
+				LOG.debug("A saved temperature value was returned. deltatime:"
+						+ delta);
+				return svdTemperature.get(deviceNumber);
+			}
 		}
 		return null;
 	}
 
-	private void saveTemperature(Float temp) {
+	private void saveTemperature(int deviceNumber, Float temp) {
 		if (temp != null) {
-			savedTemperature = temp;
-			savedTemperatureTime_MS = System.currentTimeMillis();
+			svdTemperature.set(deviceNumber, temp);
+			svdTemperatureTime_MS.set(deviceNumber,
+					Long.valueOf(System.currentTimeMillis()));
 		} else {
-			savedTemperatureTime_MS = 0;
+			svdTemperatureTime_MS.set(deviceNumber, Long.valueOf(0));
 		}
 	}
 }

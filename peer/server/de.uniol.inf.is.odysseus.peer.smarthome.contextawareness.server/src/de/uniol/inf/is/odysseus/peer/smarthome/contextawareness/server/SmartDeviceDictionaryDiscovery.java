@@ -198,12 +198,11 @@ public class SmartDeviceDictionaryDiscovery implements
 		}
 	}
 
-	private boolean isLocalSmartDevice(ASmartDevice smartDevice) {
+	private static boolean isLocalSmartDevice(ASmartDevice smartDevice) {
 		if(smartDevice.getPeerID().equals(SmartDevicePublisher.getInstance().getLocalSmartDevice().getPeerID())){
 			return true;
-		}else{
-			return false;			
 		}
+		return false;
 	}
 
 	public void addSmartDevice(ASmartDevice newSmartDevice) {
@@ -363,7 +362,7 @@ public class SmartDeviceDictionaryDiscovery implements
 		} else if (SmartDevicePublisher.isLocalPeer(peerID.intern().toString())) {
 			// LOG.debug("peerID is LocalPeer: " + peerID.intern().toString());
 			return false;
-		} else if (foundPeerIDs == null || peerID == null
+		} else if (foundPeerIDs == null 
 				|| peerID.intern() == null
 				|| peerID.intern().toString().isEmpty()) {
 			// LOG.debug("peerID is null or empty");

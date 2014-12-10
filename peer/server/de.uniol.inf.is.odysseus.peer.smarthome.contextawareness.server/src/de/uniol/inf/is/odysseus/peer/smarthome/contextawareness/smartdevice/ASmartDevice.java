@@ -17,6 +17,7 @@ import net.jxta.peer.PeerID;
 public abstract class ASmartDevice implements Serializable, Cloneable { // ISmartDevice,
 	private static final long serialVersionUID = 1L;
 	
+	@Override
 	public boolean equals(Object obj) {
 		if (obj instanceof PeerID) {
 			String peerID = this.getPeerID().intern().toString();
@@ -25,12 +26,10 @@ public abstract class ASmartDevice implements Serializable, Cloneable { // ISmar
 
 			if (peerID != null && objPeerIDString != null) {
 				return peerID.equals(objPeerIDString);
-			} else {
-				return false;
 			}
-		} else {
-			return super.equals(obj);
+			return false;
 		}
+		return super.equals(obj);
 	}
 
 	public abstract List<FieldDevice> getConnectedFieldDevices();
@@ -73,7 +72,9 @@ public abstract class ASmartDevice implements Serializable, Cloneable { // ISmar
 
 	public AbstractSensor getSensor(String sensorName) {
 		for(AbstractSensor sensor : getConnectedSensors()){
-			return sensor;
+			if(sensor.getName().equals(sensorName)){
+				return sensor;
+			}
 		}
 		return null;
 	}

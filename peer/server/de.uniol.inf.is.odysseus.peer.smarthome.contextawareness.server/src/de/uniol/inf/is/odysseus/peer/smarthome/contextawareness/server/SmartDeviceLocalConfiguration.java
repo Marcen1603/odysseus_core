@@ -94,6 +94,7 @@ public class SmartDeviceLocalConfiguration {
 		}
 	}
 
+	@SuppressWarnings("unused")
 	private static void setDefaultValues(Hashtable<Object, Object> props) {
 		setDefaultValue(SMART_DEVICE_KEY_CONTEXT_NAME, "");
 

@@ -336,7 +336,7 @@ public class LogicRuleAddViewPart extends ViewPart {
 		}
 	}
 
-	private String[] convertToArray(ArrayList<String> list) {
+	private static String[] convertToArray(ArrayList<String> list) {
 		String[] newList = new String[list.size()];
 
 		for (int i = 0; i < list.size(); i++) {
@@ -476,7 +476,7 @@ public class LogicRuleAddViewPart extends ViewPart {
 		return smartDevice;
 	}
 
-	private void refreshLogicRuleViewPart() {
+	private static void refreshLogicRuleViewPart() {
 		Optional<LogicRuleShowViewPart> optView = LogicRuleShowViewPart
 				.getInstance();
 		if (optView.isPresent()) {

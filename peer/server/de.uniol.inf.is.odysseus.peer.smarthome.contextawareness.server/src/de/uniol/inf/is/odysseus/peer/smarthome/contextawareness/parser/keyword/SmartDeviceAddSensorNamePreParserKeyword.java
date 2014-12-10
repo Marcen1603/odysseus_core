@@ -54,7 +54,7 @@ public class SmartDeviceAddSensorNamePreParserKeyword extends
 		variables.put(KEYWORD, parameter);
 	}
 
-	private List<String> generateParameterList(String[] splitted) {
+	private static List<String> generateParameterList(String[] splitted) {
 		ArrayList<String> list = new ArrayList<>();
 
 		for (int i = 0; i < splitted.length; i++) {

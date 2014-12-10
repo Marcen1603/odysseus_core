@@ -50,19 +50,19 @@ public class DeleteActivityInterpreterCommand extends AbstractHandler {
 		return null;
 	}
 
-	private boolean removeActivityInterpreter(AbstractActivityInterpreter interpreter) {
+	private static boolean removeActivityInterpreter(AbstractActivityInterpreter interpreter) {
 		System.out.println("removeActivityInterpreter ActivityName:"+interpreter.getActivityName()+" Sensor:"+interpreter.getSensor().getName());
 		
 		if(SmartDevicePublisher.isLocalPeer(interpreter.getSensor().getSmartDevice().getPeerID())){
 			return interpreter.getSensor().removeActivityInterpreter(interpreter);
-		}else{
-			try {
-				interpreter.getSensor().removeActivityInterpreter(interpreter);
-				interpreter.getSensor().save();
-				return true;
-			} catch (PeerCommunicationException e) {
-				e.printStackTrace();
-			}
+		}
+		
+		try {
+			interpreter.getSensor().removeActivityInterpreter(interpreter);
+			interpreter.getSensor().save();
+			return true;
+		} catch (PeerCommunicationException e) {
+			e.printStackTrace();
 		}
 		return false;
 	}

@@ -60,14 +60,17 @@ public class SmartDeviceService implements ISmartDeviceService {
 			return instance;
 		}
 
+		@Override
 		public ASmartDevice getLocalSmartDevice() {
 			return SmartDevicePublisher.getInstance().getLocalSmartDevice();
 		}
 
+		@Override
 		public SmartDevicePublisher getSmartDevicePublisher() {
 			return SmartDevicePublisher.getInstance();
 		}
 
+		@Override
 		public SmartDeviceDictionaryDiscovery getSmartDeviceDictionaryDiscovery() {
 			return SmartDeviceDictionaryDiscovery.getInstance();
 		}

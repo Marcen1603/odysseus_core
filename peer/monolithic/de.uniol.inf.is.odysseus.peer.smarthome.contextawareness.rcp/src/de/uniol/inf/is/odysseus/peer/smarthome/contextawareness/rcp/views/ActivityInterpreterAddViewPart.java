@@ -352,7 +352,7 @@ public class ActivityInterpreterAddViewPart extends ViewPart {
 		}
 	}
 
-	private String[] convertToArray(ArrayList<String> list) {
+	private static String[] convertToArray(ArrayList<String> list) {
 		String[] newList = new String[list.size()];
 
 		for (int i = 0; i < list.size(); i++) {
@@ -499,7 +499,7 @@ public class ActivityInterpreterAddViewPart extends ViewPart {
 		return smartDevice;
 	}
 
-	private void refreshActivityInterpreterViewPart() {
+	private static void refreshActivityInterpreterViewPart() {
 		Optional<ActivityInterpreterShowView> optView = ActivityInterpreterShowView
 				.getInstance();
 		if (optView.isPresent()) {

@@ -1,6 +1,5 @@
 package de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.smartdevice;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -27,7 +26,7 @@ import org.slf4j.LoggerFactory;
 
 import net.jxta.peer.PeerID;
 
-public class SmartDevice extends ASmartDevice implements Serializable {
+public class SmartDevice extends ASmartDevice {
 	private static final Logger LOG = LoggerFactory
 			.getLogger(SmartHomeServerPlugIn.class);
 	private static final long serialVersionUID = 1L;
@@ -41,13 +40,15 @@ public class SmartDevice extends ASmartDevice implements Serializable {
 	private transient LogicRuleListener logicRuleListener;
 	private transient ActivityInterpreterListener activityInterpreterListener;
 	private transient HashMap<String, ArrayList<String>> activitySourceMap = new HashMap<String, ArrayList<String>>();
-	
+
 	private static SmartDevice instance;
 
+	@Override
 	public List<FieldDevice> getConnectedFieldDevices() {
 		return connectedFieldDevices;
 	}
 
+	@Override
 	public ArrayList<AbstractSensor> getConnectedSensors() {
 		ArrayList<AbstractSensor> sensors = new ArrayList<AbstractSensor>();
 		for (FieldDevice fieldDevice : getConnectedFieldDevices()) {
@@ -58,6 +59,7 @@ public class SmartDevice extends ASmartDevice implements Serializable {
 		return sensors;
 	}
 
+	@Override
 	public ArrayList<AbstractActor> getConnectedActors() {
 		ArrayList<AbstractActor> actors = new ArrayList<AbstractActor>();
 		for (FieldDevice fieldDevice : getConnectedFieldDevices()) {
@@ -76,15 +78,18 @@ public class SmartDevice extends ASmartDevice implements Serializable {
 	@Override
 	public synchronized void addConnectedFieldDevice(FieldDevice device) {
 		LOG.debug("addConnectedFieldDevice");
-		
-		if (!this.connectedFieldDevices.contains(device) && this.connectedFieldDevices.add(device)) {
+
+		if (!this.connectedFieldDevices.contains(device)
+				&& this.connectedFieldDevices.add(device)) {
 			device.setSmartDevice(this);
-			if(device instanceof AbstractSensor){
-				((AbstractSensor) device).addActivityInterpreterListener(getActivityInterpreterListener());
-			}else if(device instanceof AbstractActor){
-				((AbstractActor) device).addLogicRuleListener(getLogicRuleListener());
+			if (device instanceof AbstractSensor) {
+				((AbstractSensor) device)
+						.addActivityInterpreterListener(getActivityInterpreterListener());
+			} else if (device instanceof AbstractActor) {
+				((AbstractActor) device)
+						.addLogicRuleListener(getLogicRuleListener());
 			}
-			
+
 			updateActivitiesSources();
 			fireFieldDeviceConnected(device);
 		}
@@ -93,13 +98,15 @@ public class SmartDevice extends ASmartDevice implements Serializable {
 	@Override
 	public synchronized void removeConnectedFieldDevice(FieldDevice device) {
 		if (this.connectedFieldDevices.remove(device)) {
-			
-			if(device instanceof AbstractSensor){
-				((AbstractSensor) device).removeActivityInterpreterListener(getActivityInterpreterListener());
-			}else if(device instanceof AbstractActor){
-				((AbstractActor) device).removeLogicRuleListener(getLogicRuleListener());
+
+			if (device instanceof AbstractSensor) {
+				((AbstractSensor) device)
+						.removeActivityInterpreterListener(getActivityInterpreterListener());
+			} else if (device instanceof AbstractActor) {
+				((AbstractActor) device)
+						.removeLogicRuleListener(getLogicRuleListener());
 			}
-			
+
 			updateActivitiesSources();
 			fireFieldDeviceRemoved(device);
 		}
@@ -111,22 +118,25 @@ public class SmartDevice extends ASmartDevice implements Serializable {
 		}
 		return logicRuleListener;
 	}
-	
-	private IActivityInterpreterListener getActivityInterpreterListener(){
+
+	private IActivityInterpreterListener getActivityInterpreterListener() {
 		if (activityInterpreterListener == null) {
 			activityInterpreterListener = new ActivityInterpreterListener();
 		}
 		return activityInterpreterListener;
 	}
 
+	@Override
 	public String getContextName() {
 		return contextName;
 	}
 
+	@Override
 	public void setContextName(String contextName) {
 		this.contextName = contextName;
 	}
 
+	@Override
 	public void setSmartDeviceConfig(SmartDeviceConfig config) {
 		if (config.getContextname() != null) {
 			setContextName(config.getContextname());
@@ -135,14 +145,17 @@ public class SmartDevice extends ASmartDevice implements Serializable {
 
 	}
 
+	@Override
 	public void setPeerID(String peerID) {
 		this.smartDevicePeerID = peerID;
 	}
 
+	@Override
 	public String getPeerID() {
 		return this.smartDevicePeerID;
 	}
 
+	@Override
 	public void overwriteWith(ASmartDevice smartDevice) {
 		ASmartDevice oldDevice = null;
 		try {
@@ -150,31 +163,36 @@ public class SmartDevice extends ASmartDevice implements Serializable {
 		} catch (CloneNotSupportedException e) {
 			LOG.debug(e.getMessage(), e);
 		}
-		
+
 		if (smartDevice != null) {
 			this.setContextName(smartDevice.getContextName());
 		}
 
-		if (smartDevice.getConnectedFieldDevices() != null) {
+		if (smartDevice != null
+				&& smartDevice.getConnectedFieldDevices() != null) {
 			this.setConnectedFieldDevices(smartDevice
 					.getConnectedFieldDevices());
 			fireSmartDevicesUpdated(oldDevice);
 		}
 	}
-	
+
+	@Override
 	public boolean isReady() {
 		return this.state;
 	}
 
+	@Override
 	public void setReady(boolean state) {
 		this.state = state;
 		fireReadyStateChanged(state);
 	}
 
+	@Override
 	public String getPeerName() {
 		return this.peerName;
 	}
 
+	@Override
 	public void setPeerName(String peerName) {
 		this.peerName = peerName;
 	}
@@ -191,16 +209,18 @@ public class SmartDevice extends ASmartDevice implements Serializable {
 	}
 
 	@Override
-	public synchronized void addSmartDeviceListener(ISmartDeviceListener listener) {
+	public synchronized void addSmartDeviceListener(
+			ISmartDeviceListener listener) {
 		LOG.debug("addSmartDeviceListener!!!!!");
-		
-		if(!getSmartDeviceListener().contains(listener)){
+
+		if (!getSmartDeviceListener().contains(listener)) {
 			getSmartDeviceListener().add(listener);
 		}
 	}
 
 	@Override
-	public synchronized void removeSmartDeviceListener(ISmartDeviceListener listener) {
+	public synchronized void removeSmartDeviceListener(
+			ISmartDeviceListener listener) {
 		getSmartDeviceListener().remove(listener);
 	}
 
@@ -212,8 +232,8 @@ public class SmartDevice extends ASmartDevice implements Serializable {
 	}
 
 	private void fireFieldDeviceConnected(FieldDevice device) {
-		LOG.error("fireFieldDeviceConnected:"+device.getName());
-		
+		LOG.debug("fireFieldDeviceConnected:" + device.getName());
+
 		for (ISmartDeviceListener listener : getSmartDeviceListener()) {
 			listener.fieldDeviceConnected(this, device);
 		}
@@ -245,40 +265,44 @@ public class SmartDevice extends ASmartDevice implements Serializable {
 	private class LogicRuleListener implements ILogicRuleListener {
 		@Override
 		public void logicRuleAdded(AbstractLogicRule rule) {
-			LOG.debug("SmartDevice logicRuleAdded:"+rule.getActivityName());
-			
+			LOG.debug("SmartDevice logicRuleAdded:" + rule.getActivityName());
+
 		}
-		
+
 		@Override
 		public void logicRuleRemoved(AbstractLogicRule rule) {
-			LOG.debug("SmartDevice logicRuleRemoved:"+rule.getActivityName());
-			
+			LOG.debug("SmartDevice logicRuleRemoved:" + rule.getActivityName());
+
 		}
 	}
-	
-	private class ActivityInterpreterListener implements IActivityInterpreterListener {
+
+	private class ActivityInterpreterListener implements
+			IActivityInterpreterListener {
 		@Override
 		public void activityInterpreterAdded(
 				AbstractActivityInterpreter activityInterpreter) {
-			System.out.println("SmartDevice activityInterpreterAdded:"+activityInterpreter.getActivityName());
-			
+			LOG.debug("SmartDevice activityInterpreterAdded:"
+					+ activityInterpreter.getActivityName());
+
 		}
-		
+
 		@Override
 		public void activityInterpreterRemoved(
 				AbstractActivityInterpreter activityInterpreter) {
-			System.out.println("SmartDevice activityInterpreterRemoved:"+activityInterpreter.getActivityName());
-			
+			LOG.debug("SmartDevice activityInterpreterRemoved:"
+					+ activityInterpreter.getActivityName());
+
 		}
 	}
-	
+
 	/**
 	 * 
-	 * return HashMap<String, ArrayList<String>> (HashMap<ActivityName, ArrayList<ActivitySourceName>>)
+	 * return HashMap<String, ArrayList<String>> (HashMap<ActivityName,
+	 * ArrayList<ActivitySourceName>>)
 	 */
 	@Override
 	public synchronized HashMap<String, ArrayList<String>> getActivitySourceMap() {
-		if(activitySourceMap==null){
+		if (activitySourceMap == null) {
 			activitySourceMap = new HashMap<String, ArrayList<String>>();
 		}
 		return activitySourceMap;
@@ -286,68 +310,75 @@ public class SmartDevice extends ASmartDevice implements Serializable {
 
 	@Override
 	public boolean save() throws PeerCommunicationException {
-		if(!SmartDevicePublisher.isLocalPeer(this.getPeerID())){
+		if (!SmartDevicePublisher.isLocalPeer(this.getPeerID())) {
 			SmartDeviceResponseMessage smartDeviceResponse = new SmartDeviceResponseMessage();
 			smartDeviceResponse.setSmartDevice(this);
-			
-			PeerID peer = SmartDeviceDictionaryDiscovery.getPeerIDOfString(getPeerID());
-			
-			LOG.debug("save() send to peer: "+this.getPeerName());
-			
-				SmartDevicePublisher.getInstance().getPeerCommunicator()
-						.send(peer, smartDeviceResponse);
-				return true;
-		}else{
-			//SmartDeviceServer.getInstance().getLocalSmartDevice().overwriteWith(this);
-			
-			//TODO: save local
-			
-			return false;
-		}		
+
+			PeerID peer = SmartDeviceDictionaryDiscovery
+					.getPeerIDOfString(getPeerID());
+
+			LOG.debug("save() send to peer: " + this.getPeerName());
+
+			SmartDevicePublisher.getInstance().getPeerCommunicator()
+					.send(peer, smartDeviceResponse);
+			return true;
+		}
+		// SmartDeviceServer.getInstance().getLocalSmartDevice().overwriteWith(this);
+
+		// TODO: save local
+
+		return false;
 	}
-	
+
 	private void fireSmartDevicesUpdated(ASmartDevice oldDevice) {
 		for (ISmartDeviceListener listener : getSmartDeviceListener()) {
 			listener.smartDevicesUpdated(this, oldDevice);
 		}
 	}
 
+	@Override
 	public String getMergedActivitySourceName(String activitySourceName) {
-		return getPeerName()+"_Activities_"+activitySourceName+"_source";
+		return getPeerName() + "_Activities_" + activitySourceName + "_source";
 	}
 
+	@Override
 	public synchronized void updateActivitiesSources() {
 		LOG.debug("-----updateActivitiesSources------");
-		
+
 		getActivitySourceMap().clear();
-		
-		for(AbstractSensor sensor : getConnectedSensors()){
-			
-			for(AbstractActivityInterpreter activityInterpreter : sensor.getActivityInterpreters()){
+
+		for (AbstractSensor sensor : getConnectedSensors()) {
+
+			for (AbstractActivityInterpreter activityInterpreter : sensor
+					.getActivityInterpreters()) {
 				String activityName = activityInterpreter.getActivityName();
-				String activitySourceName = activityInterpreter.getActivitySourceName();
-				
-				LOG.debug("Sensor:"+sensor.getName()+" activityName:"+activityName+" activitySourceName:"+activitySourceName);
-				
-				
+				String activitySourceName = activityInterpreter
+						.getActivitySourceName();
+
+				LOG.debug("Sensor:" + sensor.getName() + " activityName:"
+						+ activityName + " activitySourceName:"
+						+ activitySourceName);
+
 				addActivitySourceToMap(activityName, activitySourceName);
 			}
 		}
 	}
 
-	private synchronized void addActivitySourceToMap(String activityName, String activitySourceName) {
-		if(getActivitySourceMap().get(activityName)!=null){//this activity exist!
+	private synchronized void addActivitySourceToMap(String activityName,
+			String activitySourceName) {
+		if (getActivitySourceMap().get(activityName) != null) {// this activity
+																// exist!
 			ArrayList<String> list = getActivitySourceMap().get(activityName);
-			if(list == null){
+			if (list == null) {
 				list = new ArrayList<String>();
 			}
-			
-			if(!list.contains(activitySourceName)){
+
+			if (!list.contains(activitySourceName)) {
 				list.add(activitySourceName);
 			}
-			
+
 			getActivitySourceMap().put(activityName, list);
-		}else{
+		} else {
 			ArrayList<String> list = new ArrayList<String>();
 			list.add(activitySourceName);
 			getActivitySourceMap().put(activityName, list);
@@ -357,23 +388,25 @@ public class SmartDevice extends ASmartDevice implements Serializable {
 	@Override
 	public HashMap<String, String> getActivityViewNameOfMergedActivities() {
 		HashMap<String, String> map = new HashMap<>();
-		
-		for(FieldDevice device : getConnectedFieldDevices()){
-			if(device instanceof AbstractSensor){
-				AbstractSensor sensor = (AbstractSensor)device;
-				for(AbstractActivityInterpreter interpreter : sensor.getActivityInterpreters()){
-					map.put(interpreter.getActivityName(), getMergedActivitySourceName(interpreter.getActivityName()));
+
+		for (FieldDevice device : getConnectedFieldDevices()) {
+			if (device instanceof AbstractSensor) {
+				AbstractSensor sensor = (AbstractSensor) device;
+				for (AbstractActivityInterpreter interpreter : sensor
+						.getActivityInterpreters()) {
+					map.put(interpreter.getActivityName(),
+							getMergedActivitySourceName(interpreter
+									.getActivityName()));
 				}
 			}
 		}
-		
+
 		return map;
 	}
 
 	@Override
 	public String getMergedImportedActivitiesSourceName(String activityName) {
-		return "Imported_Activities_"+activityName;
+		return "Imported_Activities_" + activityName;
 	}
-	
 
 }

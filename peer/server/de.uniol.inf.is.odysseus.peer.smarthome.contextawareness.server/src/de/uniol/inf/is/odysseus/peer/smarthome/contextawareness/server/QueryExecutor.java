@@ -46,7 +46,7 @@ public class QueryExecutor implements IP2PDictionaryListener,
 	private QueryExecutor(){
 	}
 	
-	private void waitForServerExecutorService() {
+	private static void waitForServerExecutorService() {
 		while(ServerExecutorService.getServerExecutor()==null || !ServerExecutorService.getServerExecutor().isRunning()){
 			try {
 				Thread.sleep(100);
@@ -294,7 +294,7 @@ public class QueryExecutor implements IP2PDictionaryListener,
 				.getQueryState(viewName+"_query");
 		//queryState.equals(QueryState.UNDEF);
 		
-		LOG.error("executeQueryNow() viewName:'"+viewName+"_query' queryState:'"+queryState+"' query:\n"+query+"\n");
+		LOG.debug("executeQueryNow() viewName:'"+viewName+"_query' queryState:'"+queryState+"' query:\n"+query+"\n");
 		
 		
 		//&& queryState.equals(QueryState.UNDEF)
@@ -337,7 +337,7 @@ public class QueryExecutor implements IP2PDictionaryListener,
 	}
 
 	//TODO:
-	private boolean queryIsRunning(String queryName) {
+	private static boolean queryIsRunning(String queryName) {
 		QueryState queryState = ServerExecutorService.getServerExecutor()
 				.getQueryState(queryName);
 		return queryState.equals(QueryState.RUNNING);
@@ -364,7 +364,7 @@ public class QueryExecutor implements IP2PDictionaryListener,
 		}
 	}
 
-	private LinkedHashMap<String, String> getSourcesNeededForImport() {
+	private static LinkedHashMap<String, String> getSourcesNeededForImport() {
 		if (sourcesNeededForImport == null) {
 			sourcesNeededForImport = new LinkedHashMap<String, String>();
 		}
@@ -393,7 +393,7 @@ public class QueryExecutor implements IP2PDictionaryListener,
 		}
 	}
 
-	private void stopQueryImmediately(String queryName) {
+	private static void stopQueryImmediately(String queryName) {
 		LOG.debug("stopQueryImmediately:"+queryName);
 		QueryState queryState = ServerExecutorService.getServerExecutor()
 				.getQueryState(queryName);
@@ -420,7 +420,7 @@ public class QueryExecutor implements IP2PDictionaryListener,
 				SessionManagementService.getActiveSession());
 	}
 
-	private void removeViewImmediately(String queryName) {
+	private static void removeViewImmediately(String queryName) {
 		LOG.debug("removeViewImmediately:"+queryName);
 		ServerExecutorService.getServerExecutor().removeViewOrStream(queryName,
 				SessionManagementService.getActiveSession());
@@ -595,9 +595,8 @@ public class QueryExecutor implements IP2PDictionaryListener,
 	public boolean isImportedSource(String source) {
 		if(getP2PDictionary()!=null){
 			return getP2PDictionary().isImported(source);
-		}else{
-			return false;
 		}
+		return false;
 	}
 
 	public void executeQueryAsync(final String queryName, final String query, final String sourceNameToWaitFor) {

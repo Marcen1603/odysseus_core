@@ -185,9 +185,8 @@ public class RPiGPIOSensor extends AbstractSensor {
 		public String getActivityInterpreterDescription() {
 			if(this.condition!=null && !this.condition.equals("")){
 				return "Condition: "+this.condition;
-			}else{
-				return "Pin:" + getInputPin() + " PinState:" + getPinState();				
 			}
+			return "Pin:" + getInputPin() + " PinState:" + getPinState();
 		}
 	}
 

@@ -160,7 +160,7 @@ public class LogicRuleProcessor implements ISmartDeviceDictionaryListener,
 		}
 	}
 
-	private void startLogicRuleAsync(AbstractLogicRule rule) {
+	private static void startLogicRuleAsync(AbstractLogicRule rule) {
 		
 		String importedMergedActivitySourceName = SmartDeviceService
 				.getInstance()
@@ -228,7 +228,7 @@ public class LogicRuleProcessor implements ISmartDeviceDictionaryListener,
 		}
 	}
 
-	private void runQueriesNow(String activityName,
+	private static void runQueriesNow(String activityName,
 			ArrayList<String> activitySourceNames) {
 		String importedMergedActivitySourceName = SmartDeviceService
 				.getInstance().getLocalSmartDevice()
@@ -321,24 +321,24 @@ public class LogicRuleProcessor implements ISmartDeviceDictionaryListener,
 		return activitySourceMap;
 	}
 
-	private HashMap<AbstractActivityInterpreter, AbstractLogicRule> getRelatedActivityNamesWithSourceName(
+	private static HashMap<AbstractActivityInterpreter, AbstractLogicRule> getRelatedActivityNamesWithSourceName(
 			ASmartDevice newSmartDevice) {
 		HashMap<AbstractActivityInterpreter, AbstractLogicRule> map = new HashMap<>();
 
 		String smartDeviceContextName = "";
 		if (SmartDevicePublisher.getInstance().getLocalSmartDevice() == null) {
 			return map;
-		} else {
-			smartDeviceContextName = SmartDevicePublisher.getInstance()
-					.getLocalSmartDevice().getContextName();
-			LOG.debug("smartDeviceCtx:" + smartDeviceContextName
-					+ " newSmartDeviceCtx:" + newSmartDevice.getContextName());
-			// TODO: comment out next line
-			smartDeviceContextName = "Office";
 		}
+		
+		smartDeviceContextName = SmartDevicePublisher.getInstance()
+				.getLocalSmartDevice().getContextName();
+		LOG.debug("smartDeviceCtx:" + smartDeviceContextName
+				+ " newSmartDeviceCtx:" + newSmartDevice.getContextName());
+		// TODO: comment out next line
+		smartDeviceContextName = "Office";
+		
 
-		if (smartDeviceContextName != null
-				&& newSmartDevice.getContextName().equals(
+		if (newSmartDevice.getContextName().equals(
 						smartDeviceContextName)) {
 			for (AbstractSensor remoteSensor : newSmartDevice
 					.getConnectedSensors()) {
@@ -367,7 +367,8 @@ public class LogicRuleProcessor implements ISmartDeviceDictionaryListener,
 		return map;
 	}
 
-	private void importRelatedSourcesFromActivityInterpreter(
+	@SuppressWarnings("unused")
+	private static void importRelatedSourcesFromActivityInterpreter(
 			HashMap<AbstractActivityInterpreter, AbstractLogicRule> relatedActivityInterpreterWithLogicRule,
 			ASmartDevice newSmartDevice) {
 
@@ -381,7 +382,8 @@ public class LogicRuleProcessor implements ISmartDeviceDictionaryListener,
 		}
 	}
 
-	private void insertActivitySourceNamesToLogicRules(
+	@SuppressWarnings("unused")
+	private static void insertActivitySourceNamesToLogicRules(
 			ASmartDevice newSmartDevice) {
 		HashMap<AbstractActivityInterpreter, AbstractLogicRule> relatedSensorsWithActors = getRelatedSensorsWithActorsWithLogic(newSmartDevice);
 		for (Entry<AbstractActivityInterpreter, AbstractLogicRule> entry : relatedSensorsWithActors
@@ -399,24 +401,24 @@ public class LogicRuleProcessor implements ISmartDeviceDictionaryListener,
 		}
 	}
 
-	private HashMap<AbstractActivityInterpreter, AbstractLogicRule> getRelatedSensorsWithActorsWithLogic(
+	private static HashMap<AbstractActivityInterpreter, AbstractLogicRule> getRelatedSensorsWithActorsWithLogic(
 			ASmartDevice newSmartDevice) {
 		HashMap<AbstractActivityInterpreter, AbstractLogicRule> map = new HashMap<AbstractActivityInterpreter, AbstractLogicRule>();
 
 		String smartDeviceContextName = "";
 		if (SmartDevicePublisher.getInstance().getLocalSmartDevice() == null) {
 			return map;
-		} else {
-			smartDeviceContextName = SmartDevicePublisher.getInstance()
-					.getLocalSmartDevice().getContextName();
-			LOG.debug("smartDeviceCtx:" + smartDeviceContextName
-					+ " newSmartDeviceCtx:" + newSmartDevice.getContextName());
-			// TODO: comment out next line
-			smartDeviceContextName = "Office";
 		}
+		
+		smartDeviceContextName = SmartDevicePublisher.getInstance()
+				.getLocalSmartDevice().getContextName();
+		LOG.debug("smartDeviceCtx:" + smartDeviceContextName
+				+ " newSmartDeviceCtx:" + newSmartDevice.getContextName());
+		// TODO: comment out next line
+		smartDeviceContextName = "Office";
+		
 
-		if (smartDeviceContextName != null
-				&& newSmartDevice.getContextName().equals(
+		if (newSmartDevice.getContextName().equals(
 						smartDeviceContextName)) {
 
 			fillMapWithRelatedActivityInterpreterAndLogicRules(newSmartDevice,
@@ -426,7 +428,7 @@ public class LogicRuleProcessor implements ISmartDeviceDictionaryListener,
 		return map;
 	}
 
-	private void fillMapWithRelatedActivityInterpreterAndLogicRules(
+	private static void fillMapWithRelatedActivityInterpreterAndLogicRules(
 			ASmartDevice newSmartDevice,
 			HashMap<AbstractActivityInterpreter, AbstractLogicRule> map) {
 		for (AbstractSensor remoteSensor : newSmartDevice.getConnectedSensors()) {
@@ -468,18 +470,18 @@ public class LogicRuleProcessor implements ISmartDeviceDictionaryListener,
 		LOG.debug("map.size():" + map.size());
 	}
 
-	private void removeRelevantLogicRules(ASmartDevice removedSmartDevice) {
+	private static void removeRelevantLogicRules(ASmartDevice removedSmartDevice) {
 		LOG.debug("removeRelevantLogicRules");
 		stopRunningLogicRules(removedSmartDevice);
 		removeMarkerForSourceNeedToImport(removedSmartDevice);
 	}
 
-	private void stopRunningLogicRules(ASmartDevice removedSmartDevice) {
+	private static void stopRunningLogicRules(ASmartDevice removedSmartDevice) {
 		LOG.debug("stopRunningLogicRules");
 		QueryExecutor.getInstance().removeAllLogicRules(removedSmartDevice);
 	}
 
-	private void removeMarkerForSourceNeedToImport(
+	private static void removeMarkerForSourceNeedToImport(
 			ASmartDevice removedSmartDevice) {
 		LOG.debug("removeMarkerForSourceNeedToImport:"
 				+ removedSmartDevice.getPeerName());
@@ -502,6 +504,7 @@ public class LogicRuleProcessor implements ISmartDeviceDictionaryListener,
 		}
 	}
 
+	@SuppressWarnings("unused")
 	private void updateLogicRulesIfNeeded(ASmartDevice updatedSmartDevice) {
 		// TODO:
 		// LOG.debug("smartDeviceUpdated: " +
@@ -516,7 +519,8 @@ public class LogicRuleProcessor implements ISmartDeviceDictionaryListener,
 
 	}
 
-	private void executeRelatedLogicRules(ASmartDevice newSmartDevice) {
+	@SuppressWarnings("unused")
+	private static void executeRelatedLogicRules(ASmartDevice newSmartDevice) {
 		LOG.debug("executeRelatedLogicRules:" + newSmartDevice.getPeerName());
 
 		for (AbstractActor localActor : SmartDevicePublisher.getInstance()
@@ -777,19 +781,20 @@ public class LogicRuleProcessor implements ISmartDeviceDictionaryListener,
 		}
 	}
 
-	private void stopLogicRuleAsync(AbstractLogicRule rule) {
+	@SuppressWarnings("unused")
+	private static void stopLogicRuleAsync(AbstractLogicRule rule) {
 		// TODO Auto-generated method stub
 		LOG.debug("stopLogicRuleAsync() -> currently not implemented!");
 		
 		
 	}
 
-	private boolean isLocalPeer(ASmartDevice newSmartDevice) {
+	private static boolean isLocalPeer(ASmartDevice newSmartDevice) {
 		return SmartDeviceService.getInstance().getLocalSmartDevice()
 				.equals(newSmartDevice);
 	}
 
-	private ArrayList<AbstractLogicRule> getRemovedLogicRules(
+	private static ArrayList<AbstractLogicRule> getRemovedLogicRules(
 			ASmartDevice newSmartDevice, ASmartDevice oldSmartDevice) {
 		ArrayList<AbstractLogicRule> list = new ArrayList<>();
 
@@ -798,7 +803,7 @@ public class LogicRuleProcessor implements ISmartDeviceDictionaryListener,
 		return list;
 	}
 
-	private ArrayList<AbstractLogicRule> getNewLogicRules(
+	private static ArrayList<AbstractLogicRule> getNewLogicRules(
 			ASmartDevice newSmartDevice, ASmartDevice oldSmartDevice) {
 		ArrayList<AbstractLogicRule> list = new ArrayList<>();
 
@@ -807,7 +812,7 @@ public class LogicRuleProcessor implements ISmartDeviceDictionaryListener,
 		return list;
 	}
 
-	private void getLeftIntersection(ASmartDevice leftSmartDevice,
+	private static void getLeftIntersection(ASmartDevice leftSmartDevice,
 			ASmartDevice rightSmartDevice, ArrayList<AbstractLogicRule> list) {
 		for (AbstractActor actor : leftSmartDevice.getConnectedActors()) {
 			for (AbstractActor rightActor : rightSmartDevice

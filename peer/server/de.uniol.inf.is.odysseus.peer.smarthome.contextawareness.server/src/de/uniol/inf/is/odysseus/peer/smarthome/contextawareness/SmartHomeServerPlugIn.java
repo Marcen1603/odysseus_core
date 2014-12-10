@@ -37,12 +37,14 @@ public class SmartHomeServerPlugIn implements BundleActivator {
 
 	private static IPeerDictionary peerDictionary;
 
+	@Override
 	public void start(BundleContext bundleContext) throws Exception {
 		SmartDeviceDictionaryDiscovery.getInstance().addListener(LogicRuleProcessor.getInstance());
 
 		bundle = bundleContext.getBundle();
 	}
 
+	@Override
 	public void stop(BundleContext context) throws Exception {
 		SmartDeviceDictionaryDiscovery.getInstance().removeListener(LogicRuleProcessor.getInstance());
 

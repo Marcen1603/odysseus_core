@@ -1,6 +1,5 @@
 package de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.actor;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 
 import de.uniol.inf.is.odysseus.p2p_new.PeerCommunicationException;
@@ -9,7 +8,7 @@ import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.acto
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.logicrule.ILogicRuleListener;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.logicrule.AbstractLogicRule;
 
-public abstract class AbstractActor extends FieldDevice implements Serializable {
+public abstract class AbstractActor extends FieldDevice {
 	private static final long serialVersionUID = 1L;
 	private ArrayList<AbstractLogicRule> logicRulesList;
 	private ArrayList<AbstractActorAction> actorActions;
@@ -23,9 +22,8 @@ public abstract class AbstractActor extends FieldDevice implements Serializable 
 		if(getLogicRules().add(rule)){
 			fireLogicRuleAdded(rule);
 			return true;
-		}else{
-			return false;
 		}
+		return false;
 	}
 
 	public ArrayList<AbstractLogicRule> getLogicRules() {
@@ -40,9 +38,8 @@ public abstract class AbstractActor extends FieldDevice implements Serializable 
 			
 			fireLogicRuleRemoved(rule);
 			return true;
-		} else {
-			return false;
 		}
+		return false;
 	}
 	
 	private void fireLogicRuleAdded(AbstractLogicRule rule) {

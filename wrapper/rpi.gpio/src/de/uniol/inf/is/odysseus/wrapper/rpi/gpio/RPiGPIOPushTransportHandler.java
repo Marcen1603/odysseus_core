@@ -51,7 +51,7 @@ public class RPiGPIOPushTransportHandler extends AbstractTransportHandler {
 			final IProtocolHandler<?> protocolHandler, final OptionMap options) {
 		super(protocolHandler, options);
 		this.init(options);
-		this.init();
+		init();
 	}
 
 	private void init(OptionMap options) {
@@ -84,7 +84,7 @@ public class RPiGPIOPushTransportHandler extends AbstractTransportHandler {
 		}
 	}
 
-	private void init() {
+	private static void init() {
 		OS os = OSInvestigator.getCurrentOS();
 
 		switch (os) {
@@ -94,14 +94,11 @@ public class RPiGPIOPushTransportHandler extends AbstractTransportHandler {
 		case MAC:
 		case UNKNOWN:
 			LOG.warn("The RPiGPIOPushTransportHandler works only on raspberry pi with linux and pi4j library!");
-			//startRepeatedTestValues();
+			// startRepeatedTestValues();
 			return;
 		default:
 			break;
 		}
-
-		
-
 	}
 
 	private void startRepeatedTestValues() {
@@ -113,7 +110,7 @@ public class RPiGPIOPushTransportHandler extends AbstractTransportHandler {
 				while (true) {
 					@SuppressWarnings("rawtypes")
 					Tuple<?> tuple = new Tuple(2, false);
-					tuple.setAttribute(0, "pinNumber"+pin.getAddress());
+					tuple.setAttribute(0, "pinNumber" + pin.getAddress());
 					tuple.setAttribute(1, 1);
 
 					fireProcess(tuple);
@@ -136,30 +133,32 @@ public class RPiGPIOPushTransportHandler extends AbstractTransportHandler {
 		}
 
 		if (myButton == null) {
-			try{
+			try {
 				myButton = gpioController.provisionDigitalInputPin(this.pin,
 						"MyButton");
-				
-			}catch(Exception ex){
+
+			} catch (Exception ex) {
 				LOG.debug(ex.getMessage(), ex);
-				
-				while(gpioController.getProvisionedPins().iterator().hasNext()){
-					GpioPin _pin = gpioController.getProvisionedPins().iterator().next();
-					
-					if(_pin.getPin().getAddress() == this.pin.getAddress()){
-						//GpioPin[] pins = new GpioPin[1];
-						//pins[0] = _pin;
-						
-						LOG.debug("unprovisionPin:"+_pin.getPin().getAddress());
+
+				while (gpioController.getProvisionedPins().iterator().hasNext()) {
+					GpioPin _pin = gpioController.getProvisionedPins()
+							.iterator().next();
+
+					if (_pin.getPin().getAddress() == this.pin.getAddress()) {
+						// GpioPin[] pins = new GpioPin[1];
+						// pins[0] = _pin;
+
+						LOG.debug("unprovisionPin:"
+								+ _pin.getPin().getAddress());
 						gpioController.unprovisionPin(_pin);
 						break;
 					}
 				}
-				
-				LOG.debug("provisionPin:"+this.pin.getAddress());
+
+				LOG.debug("provisionPin:" + this.pin.getAddress());
 				myButton = gpioController.provisionDigitalInputPin(this.pin,
 						"MyButton");
-				
+
 			}
 		}
 	}
@@ -173,16 +172,14 @@ public class RPiGPIOPushTransportHandler extends AbstractTransportHandler {
 	public void processInOpen() throws IOException {
 		LOG.debug("processInOpen");
 
-		
-		
 		OS os = OSInvestigator.getCurrentOS();
 
 		switch (os) {
 		case NUX:
 			initIfNeeded();
-			
+
 			fireButtonState();
-			
+
 			myButton.addListener(new GpioPinListenerDigital() {
 				@Override
 				public void handleGpioPinDigitalStateChangeEvent(
@@ -202,10 +199,10 @@ public class RPiGPIOPushTransportHandler extends AbstractTransportHandler {
 		case UNKNOWN:
 			@SuppressWarnings("rawtypes")
 			Tuple<?> tuple = new Tuple(2, false);
-			tuple.setAttribute(0, "pinNumber"+pin.getAddress());
+			tuple.setAttribute(0, "pinNumber" + pin.getAddress());
 			tuple.setAttribute(1, 0);
 			fireProcess(tuple);
-			
+
 			startRepeatedTestValues();
 			return;
 		default:
@@ -213,11 +210,10 @@ public class RPiGPIOPushTransportHandler extends AbstractTransportHandler {
 		}
 
 	}
-	
+
 	private void fireButtonState() {
 		@SuppressWarnings("rawtypes")
-		final
-		Tuple<?> tuple = new Tuple(2, false);
+		final Tuple<?> tuple = new Tuple(2, false);
 
 		try {
 			boolean buttonPressed = myButton.isHigh();
@@ -229,8 +225,7 @@ public class RPiGPIOPushTransportHandler extends AbstractTransportHandler {
 				buttonState = "0";
 			}
 
-			tuple.setAttribute(0, "pinNumber"
-					+ myButton.getPin().getAddress());
+			tuple.setAttribute(0, "pinNumber" + myButton.getPin().getAddress());
 			tuple.setAttribute(1, Long.parseLong(buttonState));
 			// TODO:
 			// tuple.setAttribute(2, System.currentTimeMillis());
@@ -243,13 +238,13 @@ public class RPiGPIOPushTransportHandler extends AbstractTransportHandler {
 				flagExceptionThrown = true;
 			}
 
-			tuple.setAttribute(0, "pinNumber"+pin.getAddress());
+			tuple.setAttribute(0, "pinNumber" + pin.getAddress());
 			tuple.setAttribute(1, 1);
 		}
 
-		try{
+		try {
 			fireProcess(tuple);
-		}catch(Exception ex){
+		} catch (Exception ex) {
 			LOG.error(ex.getMessage(), ex);
 		}
 	}
@@ -263,16 +258,16 @@ public class RPiGPIOPushTransportHandler extends AbstractTransportHandler {
 	@Override
 	public void processInClose() throws IOException {
 		LOG.debug("processInClose");
-		
-		if(myButton!=null){
-		myButton.removeAllListeners();
+
+		if (myButton != null) {
+			myButton.removeAllListeners();
 		}
-		if(gpioController!=null){
-		gpioController.removeAllListeners();
+		if (gpioController != null) {
+			gpioController.removeAllListeners();
 		}
-				
-		myButton=null;
-		gpioController=null;
+
+		myButton = null;
+		gpioController = null;
 	}
 
 	@Override
@@ -317,6 +312,5 @@ public class RPiGPIOPushTransportHandler extends AbstractTransportHandler {
 	public boolean isSemanticallyEqualImpl(ITransportHandler other) {
 		return false;
 	}
-	
 
 }

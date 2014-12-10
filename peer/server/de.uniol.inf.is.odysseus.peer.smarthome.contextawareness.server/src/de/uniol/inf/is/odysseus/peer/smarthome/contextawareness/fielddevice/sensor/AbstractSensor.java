@@ -1,6 +1,5 @@
 package de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.sensor;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Map;
 
@@ -9,7 +8,7 @@ import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.FieldDevice;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.activityinterpreter.AbstractActivityInterpreter;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.activityinterpreter.IActivityInterpreterListener;
 
-public abstract class AbstractSensor extends FieldDevice implements Serializable {
+public abstract class AbstractSensor extends FieldDevice {
 	private static final long serialVersionUID = 1L;
 	private String rawSourceName;
 	private ArrayList<AbstractActivityInterpreter> activityInterpreterList;
@@ -57,9 +56,8 @@ public abstract class AbstractSensor extends FieldDevice implements Serializable
 			getSmartDevice().updateActivitiesSources();
 			fireActivityInterpreterAdded(activityInterpreter);
 			return true;
-		}else{
-			return false;
 		}
+		return false;
 	}
 
 	private boolean activityInterpreterForActivityNameExist(String activityName) {
@@ -77,9 +75,8 @@ public abstract class AbstractSensor extends FieldDevice implements Serializable
 			getSmartDevice().updateActivitiesSources();
 			fireActivityInterpreterRemoved(activityInterpreter);
 			return true;
-		}else{
-			return false;
 		}
+		return false;
 	}
 
 	private void fireActivityInterpreterAdded(

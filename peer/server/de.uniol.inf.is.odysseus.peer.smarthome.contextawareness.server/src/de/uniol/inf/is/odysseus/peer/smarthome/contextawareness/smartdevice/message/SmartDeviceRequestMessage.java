@@ -16,6 +16,7 @@ public class SmartDeviceRequestMessage extends SmartDeviceMessage {
 		return text;
 	}
 	
+	@Override
 	public byte[] toBytes() {
 		byte[] textBytes = text.getBytes();
 		byte[] data = new byte[1 + textBytes.length];
@@ -23,6 +24,7 @@ public class SmartDeviceRequestMessage extends SmartDeviceMessage {
 		return data;
 	}
 
+	@Override
 	public void fromBytes(byte[] data) {
 		byte[] textBytes = new byte[data.length - 1];
 		System.arraycopy(data, 1, textBytes, 0, textBytes.length);

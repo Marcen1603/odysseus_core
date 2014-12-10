@@ -19,6 +19,7 @@ public class SmartDeviceConfigurationResponseMessage extends SmartDeviceConfigur
 		return text;
 	}
 	
+	@Override
 	public byte[] toBytes() {
 		try {
 			return serialize(smartDeviceConfig);
@@ -28,6 +29,7 @@ public class SmartDeviceConfigurationResponseMessage extends SmartDeviceConfigur
 		return null;
 	}
 	
+	@Override
 	public void fromBytes(byte[] data) {
 		try {
 			this.smartDeviceConfig = (SmartDeviceConfig) deserialize(data);

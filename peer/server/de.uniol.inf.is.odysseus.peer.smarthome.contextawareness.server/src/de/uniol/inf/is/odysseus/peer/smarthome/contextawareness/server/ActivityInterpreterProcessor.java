@@ -67,7 +67,7 @@ public class ActivityInterpreterProcessor implements ISmartDeviceListener {
 
 	// TODO 1:
 	@SuppressWarnings("unused")
-	private synchronized void refreshActivitySourceMergedExport() {
+	private synchronized static void refreshActivitySourceMergedExport() {
 		LOG.debug("refreshActivitySourceMergedExport(...) map.size:");
 
 		HashMap<String, ArrayList<String>> map = SmartDevicePublisher
@@ -242,7 +242,7 @@ public class ActivityInterpreterProcessor implements ISmartDeviceListener {
 		}
 	}
 
-	private void stopActivityInterpreter(AbstractActivityInterpreter activityInterpreter) {
+	private static void stopActivityInterpreter(AbstractActivityInterpreter activityInterpreter) {
 		String activityName = activityInterpreter.getActivityName();
 		// String activitySourceName = activityInterpreter
 		// .getActivitySourceName();
@@ -263,7 +263,7 @@ public class ActivityInterpreterProcessor implements ISmartDeviceListener {
 		}
 	}
 	
-	private void startActivityInterpreter(
+	private static void startActivityInterpreter(
 			AbstractActivityInterpreter activityInterpreter) {
 		String activityName = activityInterpreter.getActivityName();
 		// String activitySourceName = activityInterpreter

@@ -252,6 +252,7 @@ public class SmartDeviceShowView extends ViewPart implements
 		}
 		refreshTableAsync();
 
+		if(foundPeerIDsCopy!=null){
 		for (final PeerID remotePeerID : foundPeerIDsCopy) {
 
 			synchronized (refreshing) {
@@ -281,6 +282,7 @@ public class SmartDeviceShowView extends ViewPart implements
 			 * t.setDaemon(true); t.setName("PeerView update for peer " +
 			 * p2pDictionary.getRemotePeerName(remotePeerID)); t.start();
 			 */
+		}
 		}
 
 		synchronized (usageMap) {
@@ -314,7 +316,7 @@ public class SmartDeviceShowView extends ViewPart implements
 		}
 	}
 
-	private String determinePeerName(PeerID id) {
+	private static String determinePeerName(PeerID id) {
 		try {
 			if (isLocalID(id)) {
 				return "<local>"+SmartHomeRCPActivator.getP2PNetworkManager().getLocalPeerName();
@@ -325,7 +327,8 @@ public class SmartDeviceShowView extends ViewPart implements
 		return SmartHomeRCPActivator.getPeerDictionary().getRemotePeerName(id);
 	}
 
-	private String determinePeerContextName(PeerID pid) {
+	@SuppressWarnings("unused")
+	private static String determinePeerContextName(PeerID pid) {
 		// TODO:
 		return "none";
 	}
@@ -345,7 +348,7 @@ public class SmartDeviceShowView extends ViewPart implements
 		return value;
 	}
 
-	private void hideSelectionIfNeeded(final TableViewer tableViewer) {
+	private static void hideSelectionIfNeeded(final TableViewer tableViewer) {
 		tableViewer.getTable().addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseDown(MouseEvent e) {
@@ -364,7 +367,6 @@ public class SmartDeviceShowView extends ViewPart implements
 	@Override
 	public void sourceAdded(IP2PDictionary sender,
 			SourceAdvertisement advertisement) {
-		// TODO Auto-generated method stub
 		LOG.debug("sourceAdded");
 
 	}
@@ -372,7 +374,6 @@ public class SmartDeviceShowView extends ViewPart implements
 	@Override
 	public void sourceRemoved(IP2PDictionary sender,
 			SourceAdvertisement advertisement) {
-		// TODO Auto-generated method stub
 		LOG.debug("sourceRemoved");
 
 	}
@@ -380,7 +381,6 @@ public class SmartDeviceShowView extends ViewPart implements
 	@Override
 	public void sourceImported(IP2PDictionary sender,
 			SourceAdvertisement advertisement, String sourceName) {
-		// TODO Auto-generated method stub
 		LOG.debug("sourceImported");
 
 	}
@@ -388,7 +388,6 @@ public class SmartDeviceShowView extends ViewPart implements
 	@Override
 	public void sourceImportRemoved(IP2PDictionary sender,
 			SourceAdvertisement advertisement, String sourceName) {
-		// TODO Auto-generated method stub
 		LOG.debug("sourceImportRemoved");
 
 	}
@@ -396,7 +395,6 @@ public class SmartDeviceShowView extends ViewPart implements
 	@Override
 	public void sourceExported(IP2PDictionary sender,
 			SourceAdvertisement advertisement, String sourceName) {
-		// TODO Auto-generated method stub
 		LOG.debug("sourceExported");
 
 	}
@@ -404,34 +402,29 @@ public class SmartDeviceShowView extends ViewPart implements
 	@Override
 	public void sourceExportRemoved(IP2PDictionary sender,
 			SourceAdvertisement advertisement, String sourceName) {
-		// TODO Auto-generated method stub
 		LOG.debug("sourceExportRemoved");
 
 	}
 
 	@Override
 	public void addSelectionChangedListener(ISelectionChangedListener listener) {
-		// TODO Auto-generated method stub
 
 	}
 
 	@Override
 	public ISelection getSelection() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public void removeSelectionChangedListener(
 			ISelectionChangedListener listener) {
-		// TODO Auto-generated method stub
 
 	}
 
 	@Override
 	public void setSelection(ISelection selection) {
-		// TODO Auto-generated method stub
-
+		
 	}
 	
 	public static Optional<SmartDeviceShowView> getInstance(){

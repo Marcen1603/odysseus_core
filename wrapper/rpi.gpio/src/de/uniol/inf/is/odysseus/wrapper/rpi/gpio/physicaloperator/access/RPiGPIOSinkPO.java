@@ -131,17 +131,17 @@ public class RPiGPIOSinkPO extends AbstractSink<Tuple<?>> {
 	protected void process_next(Tuple<?> tuple, int port) {
 		try {
 			String m = "RPiGPIOSinkPO process_next:";
-			if(tuple!=null){
+			if (tuple != null) {
 				String value;
 				if (this.pinStateIndex >= 0) {
 					value = tuple.getAttribute(this.pinStateIndex).toString();
 				} else {
 					value = tuple.getAttribute(1).toString();
 				}
-				
-				m+=" tuple pinvalue:"+value;
+
+				m += " tuple pinvalue:" + value;
 			}
-			
+
 			LOG.debug(m);
 
 			if (!pinStateMessageFlag) {
@@ -152,38 +152,34 @@ public class RPiGPIOSinkPO extends AbstractSink<Tuple<?>> {
 
 			if (tuple == null || this.myLED == null) {
 				if (!messageWasShownTupleLedNUll) {
-					if(tuple == null){
+					if (tuple == null) {
 						LOG.error("tuple is null!");
 					}
-					if(this.myLED == null){
+					if (this.myLED == null) {
 						LOG.error("this.myLED is null!");
-						
+
 					}
-					
+
 					messageWasShownTupleLedNUll = true;
 				}
 				return;
-			} else {
-				messageWasShownTupleLedNUll = false;
 			}
+			messageWasShownTupleLedNUll = false;
 
-			if (tuple != null) {
-				String value;
-				if (this.pinStateIndex >= 0) {
-					value = tuple.getAttribute(this.pinStateIndex).toString();
-				} else {
-					value = tuple.getAttribute(1).toString();
-				}
+			String value;
+			if (this.pinStateIndex >= 0) {
+				value = tuple.getAttribute(this.pinStateIndex).toString();
+			} else {
+				value = tuple.getAttribute(1).toString();
+			}
+			//TODO: make it possible to use low pinstates.
 
-				
-				
-				String compareValue = (String) "1";
+			String compareValue = "1";
 
-				if (value.equals(compareValue)) {
-					this.myLED.high();
-				} else {
-					this.myLED.low();
-				}
+			if (value.equals(compareValue)) {
+				this.myLED.high();
+			} else {
+				this.myLED.low();
 			}
 		} catch (Exception ex) {
 			if (!flagExceptionProcessNext) {

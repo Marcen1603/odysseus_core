@@ -42,6 +42,7 @@ public class SmartDeviceConfigurationEditViewPart extends ViewPart implements IP
 	}
 	
 	private ISelectionListener listener = new ISelectionListener() {
+		@Override
 		public void selectionChanged(IWorkbenchPart sourcepart, ISelection selection) {
 			
 			if(sourcepart instanceof SmartDeviceShowView){
@@ -215,7 +216,8 @@ public class SmartDeviceConfigurationEditViewPart extends ViewPart implements IP
 	
 	public void setPeerContextName(final PeerID senderPeer, final String contextName){
 		Display.getDefault().syncExec(new Runnable() {
-		    public void run() {
+		    @Override
+			public void run() {
 		    	if(isSelectedPeer(senderPeer)){
 		    		SmartDeviceConfigurationEditViewPart.this.peerContextNameText.setText(contextName);
 		    	}

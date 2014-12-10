@@ -104,7 +104,7 @@ public class SmartDevicePublisher {
 		thread.start();
 	}
 
-	private SmartDeviceAdvertisement getLocalSmartDeviceAdvertisement() {
+	private static SmartDeviceAdvertisement getLocalSmartDeviceAdvertisement() {
 		String advType = SmartDeviceAdvertisement.getAdvertisementType();
 		ID advID = IDFactory.newPipeID(getP2PNetworkManager()
 				.getLocalPeerGroupID());
@@ -118,7 +118,7 @@ public class SmartDevicePublisher {
 		return smartDeviceAdv;
 	}
 
-	private void threadSleep(int i) {
+	private static void threadSleep(int i) {
 		try {
 			Thread.sleep(i);
 		} catch (InterruptedException e) {
@@ -254,7 +254,7 @@ public class SmartDevicePublisher {
 		getLocalSmartDevice().addSmartDeviceListener(LogicRuleProcessor.getInstance());
 	}
 
-	private void waitForTemper() {
+	private static void waitForTemper() {
 		boolean loop=true;
 		while(loop){
 			java.util.List<String> list = ServerExecutorService.getServerExecutor().getOperatorNames(SessionManagementService.getActiveSession());

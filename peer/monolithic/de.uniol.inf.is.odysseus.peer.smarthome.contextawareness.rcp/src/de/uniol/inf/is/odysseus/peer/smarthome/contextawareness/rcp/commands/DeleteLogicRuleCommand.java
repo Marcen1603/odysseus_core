@@ -50,19 +50,20 @@ public class DeleteLogicRuleCommand extends AbstractHandler {
 		return null;
 	}
 
-	private boolean removeLogicRule(AbstractLogicRule rule) {
+	private static boolean removeLogicRule(AbstractLogicRule rule) {
 		// System.out.println("DeleteLogicRule ActivityName:"+rule.getActivityName()+" Actor:"+rule.getActor().getName());
 		
 		if(SmartDevicePublisher.isLocalPeer(rule.getActor().getSmartDevice().getPeerID())){
 			return rule.getActor().deleteLogicRule(rule);
-		}else{
-			rule.getActor().deleteLogicRule(rule);
-			try {
-				rule.getActor().save();
-				return true;
-			} catch (PeerCommunicationException e) {
-				e.printStackTrace();
-			}
+		}
+		
+		rule.getActor().deleteLogicRule(rule);
+		
+		try {
+			rule.getActor().save();
+			return true;
+		} catch (PeerCommunicationException e) {
+			e.printStackTrace();
 		}
 		return false;
 	}

@@ -51,6 +51,8 @@ public abstract class FieldDevice implements Serializable {
 	public String getPostfix() {
 		return this.postfix;
 	}
+	
+	@Override
 	public String toString() {
 		return getName();
 	}
