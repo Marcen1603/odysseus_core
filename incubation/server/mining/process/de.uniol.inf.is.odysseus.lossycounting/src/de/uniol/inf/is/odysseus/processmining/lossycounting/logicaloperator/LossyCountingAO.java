@@ -30,7 +30,6 @@ public class LossyCountingAO extends UnaryLogicalOp{
 	public LossyCountingAO(LossyCountingAO lossyCountingAO){
 		super(lossyCountingAO);
 		this.error = lossyCountingAO.getError();
-		System.out.print("ERROR AO: "+this.error +"\n");
 	}
 
 	@Override

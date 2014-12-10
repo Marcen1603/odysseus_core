@@ -189,17 +189,9 @@ public class LoopCutter2 extends AbstractCutter {
 			endNodes = Maps.newHashMap();
 		}
 
-		LoopPath(Set<String> p, Map<String, PathPosition> s,
-				Map<String, PathPosition> e) {
-			this.path = p;
-			this.startnodes = s;
-			this.endNodes = e;
-		}
-
 		public Set<String> getPath() {
 			return path;
 		}
-
 		public void setPath(Set<String> path) {
 			this.path = path;
 		}
@@ -207,23 +199,23 @@ public class LoopCutter2 extends AbstractCutter {
 		public void putStartNode(String node, PathPosition position) {
 			this.startnodes.put(node, position);
 		}
-
 		public void putEndNode(String node, PathPosition position) {
 			this.endNodes.put(node, position);
 		}
 
+		@SuppressWarnings("unused")
 		public Map<String, PathPosition> getStartnodes() {
 			return startnodes;
 		}
-
+		@SuppressWarnings("unused")
 		public void setStartnodes(Map<String, PathPosition> startnodes) {
 			this.startnodes = startnodes;
 		}
-
+		@SuppressWarnings("unused")
 		public Map<String, PathPosition> getEndNodes() {
 			return endNodes;
 		}
-
+		@SuppressWarnings("unused")
 		public void setEndNodes(Map<String, PathPosition> endNodes) {
 			this.endNodes = endNodes;
 		}

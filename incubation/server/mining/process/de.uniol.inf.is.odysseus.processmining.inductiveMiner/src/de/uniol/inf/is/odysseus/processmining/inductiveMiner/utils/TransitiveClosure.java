@@ -2,7 +2,6 @@ package de.uniol.inf.is.odysseus.processmining.inductiveMiner.utils;
 
 import java.util.Set;
 
-import org.jgrapht.alg.StrongConnectivityInspector;
 import org.jgrapht.graph.DefaultWeightedEdge;
 import org.jgrapht.graph.DirectedWeightedPseudograph;
 
@@ -33,19 +32,13 @@ public class TransitiveClosure {
 	 */
 	public static Multimap<String, String> getTransitiveClosureOf(
 			DirectedWeightedPseudograph<String, DefaultWeightedEdge> graph) {
-
-		StrongConnectivityInspector<String, DefaultWeightedEdge> sci = new StrongConnectivityInspector<String, DefaultWeightedEdge>(graph);
-		
-		
 		// Create transitive closure
 		Multimap<String, String> reachabilityFromToMap = HashMultimap.create();
 		Multimap<String, String> reachabilityToMap = HashMultimap.create();
 
-		
 		// Create Directly Follower Multimap
 		for (String graphNode : graph.vertexSet()) {
-			for (DefaultWeightedEdge edge : graph
-					.outgoingEdgesOf(graphNode)) {
+			for (DefaultWeightedEdge edge : graph.outgoingEdgesOf(graphNode)) {
 				if (edge != null) {
 					String followerNode = graph.getEdgeTarget(edge);
 					reachabilityToMap.put(graphNode, followerNode);
@@ -58,7 +51,7 @@ public class TransitiveClosure {
 			reachabilityFromToMap.putAll(node,
 					getTransitivNodes(node, reachabilityToMap));
 		}
-		
+
 		for (String e : reachabilityFromToMap.keySet()) {
 			System.out.print(e);
 			for (String fol : reachabilityFromToMap.get(e)) {
@@ -86,7 +79,7 @@ public class TransitiveClosure {
 						reachability));
 			}
 		}
-		
+
 		return transReachAbleNodes;
 	}
 }

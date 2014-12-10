@@ -9,61 +9,67 @@ import org.jgrapht.graph.DirectedWeightedPseudograph;
 
 import com.google.common.collect.Sets;
 
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
+import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.processmining.common.AbstractLCTuple;
 import de.uniol.inf.is.odysseus.processmining.common.DFRTuple;
-import de.uniol.inf.is.odysseus.processmining.common.InductiveMinerTransferTuple;
+import de.uniol.inf.is.odysseus.processmining.common.InductiveMinerTransferTupleHelper;
 import de.uniol.inf.is.odysseus.processmining.dataanalyser.models.InvariantAnalysisResult;
 
-public class InvariantStrategyTypOne implements IInvariantStrategy {
-	InductiveMinerTransferTuple mostRecentModel = null;
-	InductiveMinerTransferTuple currentModel = null;
+public class InvariantStrategyTypOne<T extends IMetaAttribute> implements IInvariantStrategy {
+	Tuple<T> mostRecentModel = null;
+	Tuple<T> currentModel = null;
+	InductiveMinerTransferTupleHelper<T> transferHelper = new InductiveMinerTransferTupleHelper<T>();
+	public InvariantStrategyTypOne() {
 
-	public InvariantStrategyTypOne(){
-		
 	}
-	public InvariantStrategyTypOne(InductiveMinerTransferTuple mostRecentModel,
-			InductiveMinerTransferTuple currentModel) {
+
+	public InvariantStrategyTypOne(Tuple<T> mostRecentModel, Tuple<T> currentModel) {
 		this.mostRecentModel = mostRecentModel;
 		this.currentModel = currentModel;
 	}
 
 	public InvariantAnalysisResult calculateStrategy() {
-		if(mostRecentModel != null && currentModel != null){
-		InvariantAnalysisResult result = new InvariantAnalysisResult();
-		DirectedWeightedPseudograph<String, DefaultWeightedEdge> mostRecentDFG = getGraph(mostRecentModel
-				.getDirectlyFollowRelations());
-		DirectedWeightedPseudograph<String, DefaultWeightedEdge> currentDFG = getGraph(currentModel
-				.getDirectlyFollowRelations());
-		
-		result.setAlmostEqualStartNodes(areNodesAlmostEqual(
-				mostRecentModel.getStartActivites(),
-				currentModel.getStartActivites()));
-		result.setAlmostEqualEndNodes(areNodesAlmostEqual(
-				mostRecentModel.getEndActivities(),
-				currentModel.getEndActivities()));
-		result.setNodeCountDistinction(calculateNodeCountDistinction(mostRecentDFG, currentDFG));
-		result.setEdgeCountDistinction(calculateEdgeCountDistinction(mostRecentDFG, currentDFG));
-		result.setDegreeDistinction(calculateDegreeDistinct(mostRecentDFG, currentDFG));
+		if (mostRecentModel != null && currentModel != null) {
+			InvariantAnalysisResult result = new InvariantAnalysisResult();
+			DirectedWeightedPseudograph<String, DefaultWeightedEdge> mostRecentDFG = getGraph(transferHelper
+					.getDirectlyFollowRelations(mostRecentModel));
+			DirectedWeightedPseudograph<String, DefaultWeightedEdge> currentDFG = getGraph(transferHelper
+					.getDirectlyFollowRelations(currentModel));
 
-		return result;
+			result.setAlmostEqualStartNodes(areNodesAlmostEqual(
+					transferHelper.getActivities(mostRecentModel),
+					transferHelper.getActivities(currentModel)));
+			result.setAlmostEqualEndNodes(areNodesAlmostEqual(
+					transferHelper.getEndActivities(mostRecentModel),
+					transferHelper.getEndActivities(currentModel)));
+			result.setNodeCountDistinction(calculateNodeCountDistinction(
+					mostRecentDFG, currentDFG));
+			result.setEdgeCountDistinction(calculateEdgeCountDistinction(
+					mostRecentDFG, currentDFG));
+			result.setDegreeDistinction(calculateDegreeDistinct(mostRecentDFG,
+					currentDFG));
+
+			return result;
 		}
 		return null;
 	}
 
-	
 	/**
-	 * Creates a directly follow graph base on the given directly follow relations
+	 * Creates a directly follow graph base on the given directly follow
+	 * relations
+	 * 
 	 * @param dfrel
 	 * @return
 	 */
 	private DirectedWeightedPseudograph<String, DefaultWeightedEdge> getGraph(
-			HashMap<Object, AbstractLCTuple> dfrel) {
+			HashMap<Object, AbstractLCTuple<T>> dfrel) {
 
 		DirectedWeightedPseudograph<String, DefaultWeightedEdge> dfg = new DirectedWeightedPseudograph<String, DefaultWeightedEdge>(
 				DefaultWeightedEdge.class);
 
-		for (Map.Entry entry : dfrel.entrySet()) {
-			DFRTuple t = (DFRTuple) entry.getValue();
+		for (Map.Entry<Object, AbstractLCTuple<T>> entry : dfrel.entrySet()) {
+			DFRTuple<T> t = (DFRTuple<T>) entry.getValue();
 			String startNode = t.getActivity();
 			String endNode = t.getFollowActivity();
 			// Graph
@@ -76,39 +82,43 @@ public class InvariantStrategyTypOne implements IInvariantStrategy {
 		return dfg;
 	}
 
-	
-	private double calculateDegreeDistinct(DirectedWeightedPseudograph<String, DefaultWeightedEdge> mostRecentDFG,
-			DirectedWeightedPseudograph<String, DefaultWeightedEdge> currentDFG){
-		
-		Set<String> mostRecentNodes = Sets.newHashSet(mostRecentDFG.vertexSet());
+	private double calculateDegreeDistinct(
+			DirectedWeightedPseudograph<String, DefaultWeightedEdge> mostRecentDFG,
+			DirectedWeightedPseudograph<String, DefaultWeightedEdge> currentDFG) {
+
+		Set<String> mostRecentNodes = Sets
+				.newHashSet(mostRecentDFG.vertexSet());
 		Set<String> currentNodes = Sets.newHashSet(currentDFG.vertexSet());
-		
+
 		mostRecentNodes.retainAll(currentNodes);
 		int differentDegrees = 0;
-		int edgeCounter =0;
-		for(String node : currentNodes){
-			if(mostRecentDFG.degreeOf(node) != currentDFG.degreeOf(node)){
+		int edgeCounter = 0;
+		for (String node : currentNodes) {
+			if (mostRecentDFG.degreeOf(node) != currentDFG.degreeOf(node)) {
 				differentDegrees += 1;
 			}
 			edgeCounter += currentDFG.degreeOf(node);
 		}
-		
-		return differentDegrees / edgeCounter ;
+
+		return differentDegrees / edgeCounter;
 	}
-	
+
 	/**
 	 * Calculates the percentaged distinct between the edges of the given graphs
+	 * 
 	 * @param mostRecentDFG
 	 * @param currentDFG
 	 * @return
 	 */
-	private double calculateEdgeCountDistinction(DirectedWeightedPseudograph<String, DefaultWeightedEdge> mostRecentDFG,
-			DirectedWeightedPseudograph<String, DefaultWeightedEdge> currentDFG){
+	private double calculateEdgeCountDistinction(
+			DirectedWeightedPseudograph<String, DefaultWeightedEdge> mostRecentDFG,
+			DirectedWeightedPseudograph<String, DefaultWeightedEdge> currentDFG) {
 		return currentDFG.edgeSet().size() / mostRecentDFG.edgeSet().size();
 	}
-	
+
 	/**
 	 * Calculates the percentaged distinct between the node of the given graphs
+	 * 
 	 * @param mostRecentDFG
 	 * @param currentDFG
 	 * @return
@@ -127,12 +137,12 @@ public class InvariantStrategyTypOne implements IInvariantStrategy {
 	 * @return
 	 */
 	private boolean areNodesAlmostEqual(
-			HashMap<Object, AbstractLCTuple> mostRecentNodes,
-			HashMap<Object, AbstractLCTuple> currentNodes) {
-		if (!mostRecentModel.getEndActivities().equals(
-				currentModel.getEndActivities())) {
-			mostRecentNodes = mostRecentModel.getEndActivities();
-			currentNodes = currentModel.getEndActivities();
+			HashMap<Object, AbstractLCTuple<T>> mostRecentNodes,
+			HashMap<Object, AbstractLCTuple<T>> currentNodes) {
+		if (!transferHelper.getEndActivities(mostRecentModel).equals(
+				transferHelper.getEndActivities(currentModel))) {
+			mostRecentNodes = transferHelper.getEndActivities(mostRecentModel);
+			currentNodes = transferHelper.getEndActivities(currentModel);
 			if (getMostFrequentItemOf(mostRecentNodes).equals(
 					getMostFrequentItemOf(currentNodes))) {
 				return true;
@@ -145,30 +155,35 @@ public class InvariantStrategyTypOne implements IInvariantStrategy {
 	/**
 	 * Gets returns the string of the key with the highest frequency
 	 * 
-	 * @param map
+	 * @param mostRecentNodes
 	 * @return
 	 */
-	private String getMostFrequentItemOf(HashMap<Object, AbstractLCTuple> map) {
+	private String getMostFrequentItemOf(HashMap<Object, AbstractLCTuple<T>> mostRecentNodes) {
 		String mostFreqItem = null;
 		int freq = 0;
-		for (Object key : map.keySet()) {
-			if (freq < map.get(key).getFrequency()) {
+		for (Object key : mostRecentNodes.keySet()) {
+			if (freq < mostRecentNodes.get(key).getFrequency()) {
 				mostFreqItem = (String) key;
-				freq = map.get(key).getFrequency();
+				freq = mostRecentNodes.get(key).getFrequency();
 			}
 		}
 		return mostFreqItem;
 	}
-	public InductiveMinerTransferTuple getMostRecentModel() {
+
+	public Tuple<T> getMostRecentModel() {
 		return mostRecentModel;
 	}
-	public void setMostRecentModel(InductiveMinerTransferTuple mostRecentModel) {
+
+	public void setMostRecentModel(
+			Tuple<T> mostRecentModel) {
 		this.mostRecentModel = mostRecentModel;
 	}
-	public InductiveMinerTransferTuple getCurrentModel() {
+
+	public Tuple<T> getCurrentModel() {
 		return currentModel;
 	}
-	public void setCurrentModel(InductiveMinerTransferTuple currentModel) {
+
+	public void setCurrentModel(Tuple<T> currentModel) {
 		this.currentModel = currentModel;
 	}
 

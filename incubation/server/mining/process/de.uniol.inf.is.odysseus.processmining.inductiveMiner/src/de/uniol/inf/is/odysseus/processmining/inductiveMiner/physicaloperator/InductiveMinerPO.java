@@ -20,8 +20,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.processmining.common.AbstractLCTuple;
 import de.uniol.inf.is.odysseus.processmining.common.DFRTuple;
-import de.uniol.inf.is.odysseus.processmining.common.InductiveMinerTransferTuple;
-import de.uniol.inf.is.odysseus.processmining.dataanalyser.strategies.InvariantStrategyTypOne;
+import de.uniol.inf.is.odysseus.processmining.common.InductiveMinerTransferTupleHelper;
 import de.uniol.inf.is.odysseus.processmining.inductiveMiner.models.Cut;
 import de.uniol.inf.is.odysseus.processmining.inductiveMiner.utils.Cutter;
 import de.uniol.inf.is.odysseus.processmining.inductiveMiner.utils.Partition;
@@ -29,35 +28,28 @@ import de.uniol.inf.is.odysseus.processmining.inductiveMiner.utils.Partition;
 public class InductiveMinerPO<T extends IMetaAttribute> extends
 		AbstractPipe<Tuple<T>, Tuple<T>> {
 
-	HashMap<Object, AbstractLCTuple> relations;
+	HashMap<Object, AbstractLCTuple<T>> relations;
 	Set<String> shortLoops;
 	HashMap<String, Integer> startActivities;
 	HashMap<String, Integer> endActivities;
 	Multimap<String, String> transitiveClosure = HashMultimap.create();
 	private Multimap<Cut, Cut> cutMap = HashMultimap.create();
-	InvariantStrategyTypOne ist = new InvariantStrategyTypOne();
-	InductiveMinerTransferTuple mostRecentData = null;
-
+//	InvariantStrategyTypOne ist = new InvariantStrategyTypOne();
+	Tuple<T> mostRecentTuple;
+	InductiveMinerTransferTupleHelper<T> transferHelper = new InductiveMinerTransferTupleHelper<T>();
 	public InductiveMinerPO() {
 		super();
 	}
 
 	@Override
 	protected void process_next(Tuple<T> object, int port) {
-
-		InductiveMinerTransferTuple currentData = ((InductiveMinerTransferTuple) object);
-		if (mostRecentData != null) {
-			InvariantStrategyTypOne ist = new InvariantStrategyTypOne(
-					mostRecentData, currentData);
-			ist.calculateStrategy().print();
-		}
-		startActivities = convertStartActivities(currentData
-				.getStartActivites());
-		shortLoops = convertShortLoops(currentData.getShortLoops());
-		relations = currentData.getDirectlyFollowRelations();
+		startActivities = convertStartActivities(transferHelper
+				.getStartActivites(object));
+		shortLoops = convertShortLoops(transferHelper.getShortLoops(object));
+		relations = transferHelper.getDirectlyFollowRelations(object);
 		DirectedWeightedPseudograph<String, DefaultWeightedEdge> graph = getGraph(relations);
 		endActivities = (HashMap<String, Integer>) calculateStartPartitionEndNodes(
-				graph, currentData.getEndActivities());
+				graph, transferHelper.getEndActivities(object));
 
 		// ReachabilityMatrix tClosure = new ReachabilityMatrix(graph);
 
@@ -65,7 +57,6 @@ public class InductiveMinerPO<T extends IMetaAttribute> extends
 				endActivities, shortLoops);
 
 		cutMap = Cutter.getCutMapOf(startPartition);
-		System.out.println("CUTMAP: " + cutMap);
 		System.out.println("TREESTART");
 		DirectedWeightedPseudograph<String, DefaultWeightedEdge> startgraph = startPartition
 				.getGraph();
@@ -83,7 +74,7 @@ public class InductiveMinerPO<T extends IMetaAttribute> extends
 			}
 		}
 		System.out.println("TREEEND");
-		mostRecentData = currentData.getDeepClone();
+		mostRecentTuple = object;
 	}
 
 	@Override
@@ -92,16 +83,16 @@ public class InductiveMinerPO<T extends IMetaAttribute> extends
 	}
 
 	private HashMap<String, Integer> convertStartActivities(
-			HashMap<Object, AbstractLCTuple> startActivities) {
+			HashMap<Object, AbstractLCTuple<T>> startActivities) {
 		HashMap<String, Integer> startNodes = Maps.newHashMap();
-		for (Map.Entry e : startActivities.entrySet()) {
-			startNodes.put(((AbstractLCTuple) e.getValue()).getActivity(),
-					((AbstractLCTuple) e.getValue()).getFrequency());
+		for (Map.Entry<Object, AbstractLCTuple<T>>e : startActivities.entrySet()) {
+			startNodes.put(((AbstractLCTuple<T>) e.getValue()).getActivity(),
+					((AbstractLCTuple<T>) e.getValue()).getFrequency());
 		}
 		return startNodes;
 	}
 
-	private Set<String> convertShortLoops(HashMap<Object, AbstractLCTuple> sl) {
+	private Set<String> convertShortLoops(HashMap<Object, AbstractLCTuple<T>> sl) {
 		Set<String> shortLoopSet = Sets.newHashSet();
 		Set<Object> loops = sl.keySet();
 		for (Object l : loops) {
@@ -122,14 +113,14 @@ public class InductiveMinerPO<T extends IMetaAttribute> extends
 	}
 
 	private DirectedWeightedPseudograph<String, DefaultWeightedEdge> getGraph(
-			HashMap<Object, AbstractLCTuple> dfrel) {
+			HashMap<Object, AbstractLCTuple<T>> dfrel) {
 
 		DirectedWeightedPseudograph<String, DefaultWeightedEdge> dfg = new DirectedWeightedPseudograph<String, DefaultWeightedEdge>(
 				DefaultWeightedEdge.class);
 
-		for (Map.Entry entry : dfrel.entrySet()) {
+		for (Map.Entry<Object, AbstractLCTuple<T>> entry : dfrel.entrySet()) {
 
-			DFRTuple t = (DFRTuple) entry.getValue();
+			DFRTuple<T> t = (DFRTuple<T>) entry.getValue();
 			String startNode = t.getActivity();
 			String endNode = t.getFollowActivity();
 			// Graph
@@ -144,7 +135,7 @@ public class InductiveMinerPO<T extends IMetaAttribute> extends
 
 	private Map<String, Integer> calculateStartPartitionEndNodes(
 			DirectedWeightedPseudograph<String, DefaultWeightedEdge> dfg,
-			HashMap<Object, AbstractLCTuple> endActivities) {
+			HashMap<Object, AbstractLCTuple<T>> endActivities) {
 		System.out.println(endActivities);
 		Map<String, Integer> endings = Maps.newHashMap();
 		for (String node : dfg.vertexSet()) {

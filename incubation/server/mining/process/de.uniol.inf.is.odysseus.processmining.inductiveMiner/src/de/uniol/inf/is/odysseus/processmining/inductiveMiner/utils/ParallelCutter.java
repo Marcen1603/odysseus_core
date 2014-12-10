@@ -8,8 +8,6 @@ import org.jgrapht.alg.ConnectivityInspector;
 import org.jgrapht.graph.DefaultWeightedEdge;
 import org.jgrapht.graph.DirectedWeightedPseudograph;
 
-import com.google.common.collect.Lists;
-
 import de.uniol.inf.is.odysseus.processmining.inductiveMiner.models.Cut;
 import de.uniol.inf.is.odysseus.processmining.inductiveMiner.models.OperatorType;
 
@@ -29,53 +27,8 @@ public class ParallelCutter extends AbstractCutter {
 		List<Set<String>> partitions = nGraphconnectivityInspector
 				.connectedSets();
 
-		return new Cut(getNewPartitionList(partitions,
-				partition), OperatorType.PARALLEL);
-	}
-
-	private static List<DirectedWeightedPseudograph<String, DefaultWeightedEdge>> createPartitionlist(
-			List<Set<String>> stringPartitions,
-			DirectedWeightedPseudograph<String, DefaultWeightedEdge> dGraph) {
-
-		// TODO Neue Knoten und kanten
-
-		List<DirectedWeightedPseudograph<String, DefaultWeightedEdge>> partitions = Lists
-				.newLinkedList();
-
-		for (Set<String> strPartition : stringPartitions) {
-			partitions.add(createPartitionGraph(strPartition, dGraph));
-		}
-
-		return partitions;
-	}
-
-	private static DirectedWeightedPseudograph<String, DefaultWeightedEdge> createPartitionGraph(
-			Set<String> nodes,
-			DirectedWeightedPseudograph<String, DefaultWeightedEdge> graph) {
-
-		DirectedWeightedPseudograph<String, DefaultWeightedEdge> partition = new DirectedWeightedPseudograph<String, DefaultWeightedEdge>(
-				DefaultWeightedEdge.class);
-
-		Graphs.addAllVertices(partition, nodes);
-		for (String node : partition.vertexSet()) {
-			for (DefaultWeightedEdge edge : graph.edgesOf(node)) {
-				String src = graph.getEdgeSource(edge);
-				String target = graph.getEdgeTarget(edge);
-				if (isPartitionInternalEdge(partition, node, src, target)) {
-					// Erzeuge nur interne Kanten
-					partition.addEdge(node, graph.getEdgeTarget(edge));
-				}
-			}
-		}
-		System.out.println("P: " + partition);
-
-		return partition;
-	}
-
-	private static boolean isPartitionInternalEdge(
-			DirectedWeightedPseudograph<String, DefaultWeightedEdge> partition,
-			String actualNode, String src, String target) {
-		return partition.containsVertex(target) && src.equals(actualNode);
+		return new Cut(getNewPartitionList(partitions, partition),
+				OperatorType.PARALLEL);
 	}
 
 	/**

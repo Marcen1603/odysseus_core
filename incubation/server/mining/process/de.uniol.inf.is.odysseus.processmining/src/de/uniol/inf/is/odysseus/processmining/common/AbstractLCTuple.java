@@ -1,12 +1,10 @@
 package de.uniol.inf.is.odysseus.processmining.common;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
+import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 
-public abstract class AbstractLCTuple extends Tuple{
+public abstract class AbstractLCTuple<T extends IMetaAttribute> extends Tuple<T>{
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 7033989005670834137L;
 	protected final int ACTIVITY = 0;
 	protected final int FREQUENCE = 1;
@@ -61,6 +59,4 @@ public abstract class AbstractLCTuple extends Tuple{
 	public void setActivity(String activity){
 		this.setAttribute(ACTIVITY, activity);
 	}
-	
-	
 }

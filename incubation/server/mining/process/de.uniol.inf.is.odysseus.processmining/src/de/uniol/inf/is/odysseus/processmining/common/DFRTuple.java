@@ -1,7 +1,9 @@
 package de.uniol.inf.is.odysseus.processmining.common;
 
+import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 
-public class DFRTuple extends AbstractLCTuple{
+
+public class DFRTuple<T extends IMetaAttribute>  extends AbstractLCTuple<T>{
 
 	/**
 	 * 

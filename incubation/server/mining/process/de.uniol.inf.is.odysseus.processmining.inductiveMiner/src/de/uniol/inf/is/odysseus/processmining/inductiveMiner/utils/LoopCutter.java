@@ -153,8 +153,6 @@ public class LoopCutter extends AbstractCutter {
 
 					sortedNodes.addAll(connectedComponent);
 				}
-				TopologicalOrderIterator<String, DefaultWeightedEdge> topsort = new TopologicalOrderIterator<String, DefaultWeightedEdge>(
-						graphOfSet);
 			}
 			return sortedNodes;
 		}

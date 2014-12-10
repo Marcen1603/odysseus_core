@@ -57,9 +57,6 @@ public class SequenceCutter extends AbstractCutter {
 
 	private LinkedList<Partition> createPartitionLists(
 			List<Set<Set<String>>> finalNodeSets, Partition partition) {
-		LinkedList<Partition> newSubPartitions = Lists.newLinkedList();
-		DirectedWeightedPseudograph<String, DefaultWeightedEdge> dwGraph = partition
-				.getGraph();
 		List<Set<String>> flattenedNodeSet = Lists.newArrayList();
 
 		for (Set<Set<String>> partition2 : finalNodeSets) {

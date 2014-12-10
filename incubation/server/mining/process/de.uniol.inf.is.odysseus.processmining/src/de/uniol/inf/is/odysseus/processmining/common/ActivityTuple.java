@@ -1,11 +1,10 @@
 package de.uniol.inf.is.odysseus.processmining.common;
 
+import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 
-public class ActivityTuple extends AbstractLCTuple{
-	
-	/**
-	 * 
-	 */
+
+public class ActivityTuple<T extends IMetaAttribute>  extends AbstractLCTuple<T>{
+
 	private static final long serialVersionUID = -7351974444983332480L;
 
 

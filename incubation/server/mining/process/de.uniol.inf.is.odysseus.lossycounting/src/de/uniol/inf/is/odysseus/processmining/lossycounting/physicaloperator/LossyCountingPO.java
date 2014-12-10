@@ -15,7 +15,7 @@ import de.uniol.inf.is.odysseus.processmining.common.AbstractLCTuple;
 import de.uniol.inf.is.odysseus.processmining.common.CaseTuple;
 import de.uniol.inf.is.odysseus.processmining.common.DFRTuple;
 import de.uniol.inf.is.odysseus.processmining.common.DirectlyFollowLoopTuple;
-import de.uniol.inf.is.odysseus.processmining.common.InductiveMinerTransferTuple;
+import de.uniol.inf.is.odysseus.processmining.common.InductiveMinerTransferTupleHelper;
 import de.uniol.inf.is.odysseus.processmining.common.LCTupleType;
 import de.uniol.inf.is.odysseus.processmining.common.LCTuplesFactory;
 
@@ -23,20 +23,20 @@ public class LossyCountingPO<T extends IMetaAttribute> extends
 		AbstractPipe<Tuple<T>, Tuple<T>> {
 
 	private int error = 100; // corresponds to w
-	private HashMap<Object, AbstractLCTuple> activities = Maps.newHashMap();
-	private HashMap<Object, AbstractLCTuple> endActivities = Maps.newHashMap();
-	private HashMap<Object, AbstractLCTuple> cases = Maps.newHashMap();
-	private HashMap<Object, AbstractLCTuple> directlyFollowRelations = Maps
+	private HashMap<Object, AbstractLCTuple<T>> activities = Maps.newHashMap();
+	private HashMap<Object, AbstractLCTuple<T>> endActivities = Maps.newHashMap();
+	private HashMap<Object, AbstractLCTuple<T>> cases = Maps.newHashMap();
+	private HashMap<Object, AbstractLCTuple<T>> directlyFollowRelations = Maps
 			.newHashMap();
-	private Multimap<Object, AbstractLCTuple> directlyFollowRelationLoops = ArrayListMultimap
+	private Multimap<Object, AbstractLCTuple<T>> directlyFollowRelationLoops = ArrayListMultimap
 			.create();
-	private HashMap<Object, AbstractLCTuple> shortLoops = Maps.newHashMap();
-	private HashMap<Object, AbstractLCTuple> starts = Maps.newHashMap();
+	private HashMap<Object, AbstractLCTuple<T>> shortLoops = Maps.newHashMap();
+	private HashMap<Object, AbstractLCTuple<T>> starts = Maps.newHashMap();
 	private int iterations = 0; // corresponds to N
 	private int currentBucket = 1;
 	private String caseId;
 	private String activityName;
-
+	InductiveMinerTransferTupleHelper<T> transferHelper = new InductiveMinerTransferTupleHelper<T>();
 	public LossyCountingPO() {
 		super();
 	}
@@ -49,6 +49,7 @@ public class LossyCountingPO<T extends IMetaAttribute> extends
 		System.out.print("ERROR PO: " + this.error + "\n");
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	protected void process_next(Tuple<T> object, int port) {
 		if (object instanceof Tuple) {
@@ -57,9 +58,9 @@ public class LossyCountingPO<T extends IMetaAttribute> extends
 			caseId = (String) attributes[0];
 			activityName = (String) attributes[1];
 
-			AbstractLCTuple aTuple = LCTuplesFactory.createActivityTuple(
+			AbstractLCTuple<T> aTuple = LCTuplesFactory.createActivityTuple(
 					activityName, currentBucket - 1);
-			AbstractLCTuple cTuple = LCTuplesFactory.createCaseTuple(caseId,
+			AbstractLCTuple<T> cTuple = LCTuplesFactory.createCaseTuple(caseId,
 					activityName, currentBucket - 1);
 			accumulate(aTuple, activities);
 			accumulate(cTuple, cases);
@@ -67,20 +68,19 @@ public class LossyCountingPO<T extends IMetaAttribute> extends
 			iterations++;
 			if (iterations % 1000 == 0) {
 				dataCleansing();
-				InductiveMinerTransferTuple iMTransferTuple = new InductiveMinerTransferTuple();
-				iMTransferTuple
-						.setDirectlyFollowRelations(directlyFollowRelations);
-				iMTransferTuple.setStartActivites(starts);
-				iMTransferTuple.setShortLoops(shortLoops);
+				Tuple<T> transferTuple = new Tuple<T>(5,true);
+				transferHelper.setDirectlyFollowRelations(transferTuple,directlyFollowRelations);
+				transferHelper.setStartActivites(transferTuple,starts);
+				transferHelper.setShortLoops(transferTuple,shortLoops);
 				System.out.println("Transfering...");
 				calculateEndActivities();
-				iMTransferTuple.setEndActivities(endActivities);
-				iMTransferTuple.setMetadata(object.getMetadata().clone());
-				transfer(iMTransferTuple);
+				transferHelper.setEndActivities(transferTuple,endActivities);
+				transfer(transferTuple);
 			}
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	private void calculateEndActivities(){
 		
 		for(Object key : cases.keySet()){
@@ -100,12 +100,12 @@ public class LossyCountingPO<T extends IMetaAttribute> extends
 	 * @param key
 	 * @param map
 	 */
-	private void accumulate(AbstractLCTuple tuple,
-			HashMap<Object, AbstractLCTuple> tupleMap) {
+	private void accumulate(AbstractLCTuple<T> tuple,
+			HashMap<Object, AbstractLCTuple<T>> tupleMap) {
 		if (tupleMap.containsKey(tuple.getIdentifier())) {
 			tupleMap.get(tuple.getIdentifier()).incrementFrequency();
 			if (tuple.getType().equals(LCTupleType.Case)) {
-				checkForDFGCreationAndLoopCheck((CaseTuple) tuple);
+				checkForDFGCreationAndLoopCheck((CaseTuple<T>) tuple);
 			}
 		} else {
 			tupleMap.put(tuple.getIdentifier(), tuple);
@@ -114,7 +114,8 @@ public class LossyCountingPO<T extends IMetaAttribute> extends
 				if (starts.containsKey(activityName)) {
 					starts.get(activityName).incrementFrequency();
 				} else {
-					AbstractLCTuple newInstance = LCTuplesFactory.createActivityTuple(tuple.getActivity(), tuple.getMaxError());
+					@SuppressWarnings("unchecked")
+					AbstractLCTuple<T> newInstance = LCTuplesFactory.createActivityTuple(tuple.getActivity(), tuple.getMaxError());
 					starts.put(activityName, newInstance);
 				}
 			}
@@ -128,42 +129,44 @@ public class LossyCountingPO<T extends IMetaAttribute> extends
 	 * 
 	 * @param caseTuple
 	 */
-	private void checkForDFGCreationAndLoopCheck(CaseTuple caseTuple) {
+	@SuppressWarnings("unchecked")
+	private void checkForDFGCreationAndLoopCheck(CaseTuple<T> caseTuple) {
 		// Create directly follow Relation and add or increment it
 		// temporary variables
-		AbstractLCTuple tempCase = cases.get(caseTuple.getIdentifier());
+		AbstractLCTuple<T> tempCase = cases.get(caseTuple.getIdentifier());
 		String activity = tempCase.getActivity();
 		String newerActivity = caseTuple.getActivity();
 
 		// create directly follow Relation and accumulate
-		AbstractLCTuple rTuple = LCTuplesFactory.createDFRTuple(activity,
+		
+		AbstractLCTuple<T> rTuple = LCTuplesFactory.createDFRTuple(activity,
 				newerActivity, currentBucket - 1);
 		accumulate(rTuple, directlyFollowRelations);
 
 		// check for loops of length 1 and add them to shortLoops if needed
-		if (directlyFollowRelationLoops.containsKey(((DFRTuple) rTuple)
+		if (directlyFollowRelationLoops.containsKey(((DFRTuple<T>) rTuple)
 				.getFollowActivity())) {
-			String loopIdentifier = ((DFRTuple) rTuple).getFollowActivity();
-			Multimap<Object, AbstractLCTuple> tempMultiMap = ArrayListMultimap
+			String loopIdentifier = ((DFRTuple<T>) rTuple).getFollowActivity();
+			Multimap<Object, AbstractLCTuple<T>> tempMultiMap = ArrayListMultimap
 					.create(directlyFollowRelationLoops);
 
-			for (AbstractLCTuple loopTuple : tempMultiMap.get(loopIdentifier)) {
+			for (AbstractLCTuple<T> loopTuple : tempMultiMap.get(loopIdentifier)) {
 				String loopStart = loopTuple.getActivity();
-				String loopEnd = ((DFRTuple) rTuple).getFollowActivity();
+				String loopEnd = ((DFRTuple<T>) rTuple).getFollowActivity();
 				boolean hasSameMiddle = rTuple.getActivity().equals(
-						((DirectlyFollowLoopTuple) loopTuple)
+						((DirectlyFollowLoopTuple<T>) loopTuple)
 								.getFollowActivity()) ? true : false;
 				
 				if (loopStart.equals(loopEnd)
 						&& hasSameMiddle
-						&& ((DirectlyFollowLoopTuple) loopTuple).getCaseID()
+						&& ((DirectlyFollowLoopTuple<T>) loopTuple).getCaseID()
 								.equals(caseTuple.getCaseID())) {
 
-					String loopBody = ((DFRTuple) rTuple).getFollowActivity()
+					String loopBody = ((DFRTuple<T>) rTuple).getFollowActivity()
 							+ rTuple.getActivity();
 					// Add a new DFRTuple representing a Loop
 					shortLoops.put(loopBody, LCTuplesFactory.createDFRTuple(
-							((DFRTuple) rTuple).getFollowActivity(),
+							((DFRTuple<T>) rTuple).getFollowActivity(),
 							rTuple.getActivity(), currentBucket - 1));
 					directlyFollowRelationLoops.remove(loopIdentifier,
 							loopTuple);
@@ -172,9 +175,9 @@ public class LossyCountingPO<T extends IMetaAttribute> extends
 
 		} else {
 			// Add directly follow relation with the associated case id
-			DirectlyFollowLoopTuple loopTuple = (DirectlyFollowLoopTuple) LCTuplesFactory
+			DirectlyFollowLoopTuple<T> loopTuple = (DirectlyFollowLoopTuple<T>) LCTuplesFactory
 					.createDFRLoopTuple(caseId, rTuple.getActivity(),
-							((DFRTuple) rTuple).getFollowActivity(),
+							((DFRTuple<T>) rTuple).getFollowActivity(),
 							currentBucket - 1);
 			directlyFollowRelationLoops.put(activity, loopTuple);
 		}
@@ -199,10 +202,10 @@ public class LossyCountingPO<T extends IMetaAttribute> extends
 	 * @param map
 	 * @return
 	 */
-	private HashMap<Object, AbstractLCTuple> cleanMap(
-			HashMap<Object, AbstractLCTuple> map) {
-		HashMap<Object, AbstractLCTuple> newMap = Maps.newHashMap();
-		for (Map.Entry<Object, AbstractLCTuple> entry : map.entrySet()) {
+	private HashMap<Object, AbstractLCTuple<T>> cleanMap(
+			HashMap<Object, AbstractLCTuple<T>> map) {
+		HashMap<Object, AbstractLCTuple<T>> newMap = Maps.newHashMap();
+		for (Map.Entry<Object, AbstractLCTuple<T>> entry : map.entrySet()) {
 			int actualFrequenz = entry.getValue().getFrequency();
 			int actualBucket = entry.getValue().getMaxError();
 			if (!(actualFrequenz + actualBucket <= currentBucket)) {
@@ -217,12 +220,12 @@ public class LossyCountingPO<T extends IMetaAttribute> extends
 	 * @param map
 	 * @return
 	 */
-	private Multimap<Object, AbstractLCTuple> cleanMap(
-			Multimap<Object, AbstractLCTuple> map) {
-		Multimap<Object, AbstractLCTuple> newMap = ArrayListMultimap.create();
+	private Multimap<Object, AbstractLCTuple<T>> cleanMap(
+			Multimap<Object, AbstractLCTuple<T>> map) {
+		Multimap<Object, AbstractLCTuple<T>> newMap = ArrayListMultimap.create();
 
 		for (Object key : map.keySet()) {
-			for (AbstractLCTuple tuple : map.get(key)) {
+			for (AbstractLCTuple<T> tuple : map.get(key)) {
 				int actualFrequenz = tuple.getFrequency();
 				int actualBucket = tuple.getMaxError();
 				if (!(actualFrequenz + actualBucket <= currentBucket)) {

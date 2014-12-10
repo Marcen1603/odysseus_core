@@ -1,6 +1,8 @@
 package de.uniol.inf.is.odysseus.processmining.common;
 
-public class DirectlyFollowLoopTuple extends AbstractLCTuple{
+import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
+
+public class DirectlyFollowLoopTuple<T extends IMetaAttribute>  extends AbstractLCTuple<T>{
 	
 	/**
 	 * 
