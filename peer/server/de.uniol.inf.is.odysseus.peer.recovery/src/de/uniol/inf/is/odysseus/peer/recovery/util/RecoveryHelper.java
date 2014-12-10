@@ -178,11 +178,10 @@ public class RecoveryHelper {
 		odScript.append("#RUNQUERY\n");
 		odScript.append(pql);
 		installedQueries = cExecutor.get().addQuery(odScript.toString(), "OdysseusScript", session,
-				"Standard", Context.empty());
+				Context.empty());
 		*/		
 				
-		installedQueries = cExecutor.get().addQuery(pql, "PQL", session,
-				"Standard", Context.empty());
+		installedQueries = cExecutor.get().addQuery(pql, "PQL", session, Context.empty());
 
 		// TODO send success message
 
