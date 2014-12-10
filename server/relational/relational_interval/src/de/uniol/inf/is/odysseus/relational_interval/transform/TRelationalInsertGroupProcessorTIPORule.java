@@ -16,38 +16,41 @@
 package de.uniol.inf.is.odysseus.relational_interval.transform;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractWindowAO;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.WindowType;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.physicaloperator.relational.RelationalGroupProcessor;
 import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
-import de.uniol.inf.is.odysseus.server.intervalapproach.window.SlidingElementWindowTIPO;
+import de.uniol.inf.is.odysseus.server.intervalapproach.window.AbstractPartitionedWindowTIPO;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
+import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
-public class TRelationalSlidingElementWindowTIPORule extends
-		AbstractRelationalIntervalTransformationRule<AbstractWindowAO> {
+public class TRelationalInsertGroupProcessorTIPORule
+		extends
+		AbstractTransformationRule<AbstractPartitionedWindowTIPO<IStreamObject<ITimeInterval>>> {
 
+	@SuppressWarnings("unchecked")
 	@Override
-	public void execute(AbstractWindowAO windowAO,
+	public void execute(
+			AbstractPartitionedWindowTIPO<IStreamObject<ITimeInterval>> windowPO,
 			TransformationConfiguration transformConfig) throws RuleException {
-		SlidingElementWindowTIPO<Tuple<ITimeInterval>> windowPO = new SlidingElementWindowTIPO<>(
-				windowAO);
-		RelationalGroupProcessor<ITimeInterval> r = new RelationalGroupProcessor<>(
-				windowAO.getInputSchema(), windowAO.getOutputSchema(),
-				windowAO.getPartitionBy(), null, false);
+		AbstractWindowAO ao = windowPO.getWindowAO();
+		@SuppressWarnings("rawtypes")
+		RelationalGroupProcessor r = new RelationalGroupProcessor<>(
+				ao.getInputSchema(), ao.getOutputSchema(), ao.getPartitionBy(),
+				null, false);
 		windowPO.setGroupProcessor(r);
-		defaultExecute(windowAO, windowPO, transformConfig, true, true);
-		insert(windowPO);
+		update(windowPO);
 	}
 
 	@Override
-	public boolean isExecutable(AbstractWindowAO operator,
+	public boolean isExecutable(
+			AbstractPartitionedWindowTIPO<IStreamObject<ITimeInterval>> operator,
 			TransformationConfiguration transformConfig) {
-		if (super.isExecutable(operator, transformConfig)) {
-			return operator.getWindowType() == WindowType.TUPLE
-					&& operator.isPartitioned();
+		if (operator.getOutputSchema().getType() == Tuple.class) {
+			return operator.getWindowAO().isPartitioned();
 		}
 		return false;
 	}
@@ -58,8 +61,8 @@ public class TRelationalSlidingElementWindowTIPORule extends
 	}
 
 	@Override
-	public Class<? super AbstractWindowAO> getConditionClass() {
-		return AbstractWindowAO.class;
+	public Class<? super AbstractPartitionedWindowTIPO<IStreamObject<ITimeInterval>>> getConditionClass() {
+		return AbstractPartitionedWindowTIPO.class;
 	}
 
 }

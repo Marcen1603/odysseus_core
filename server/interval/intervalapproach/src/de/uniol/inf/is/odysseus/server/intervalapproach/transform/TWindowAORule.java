@@ -13,16 +13,13 @@ import de.uniol.inf.is.odysseus.server.intervalapproach.window.SlidingTimeWindow
 import de.uniol.inf.is.odysseus.server.intervalapproach.window.UnboundedWindowTIPO;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 
-@SuppressWarnings({ "rawtypes", "unchecked" })
+@SuppressWarnings({ "rawtypes" })
 public class TWindowAORule extends
 		AbstractIntervalTransformationRule<AbstractWindowAO> {
 
 	public void executePredicateWindowAO(AbstractWindowAO operator,
 			TransformationConfiguration config) {
-		PredicateWindowTIPO window = new PredicateWindowTIPO(
-				operator.getStartCondition(), operator.getEndCondition(),
-				operator.getWindowSize(), operator.isSameStarttime(),
-				operator.getBaseTimeUnit());
+		PredicateWindowTIPO window = new PredicateWindowTIPO(operator);
 		defaultExecute(operator, window, config, true, true);
 	}
 

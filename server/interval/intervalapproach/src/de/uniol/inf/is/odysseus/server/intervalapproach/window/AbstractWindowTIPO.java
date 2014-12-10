@@ -33,10 +33,14 @@ public abstract class AbstractWindowTIPO<T extends IStreamObject<? extends ITime
 	protected final WindowType windowType;
 	protected final boolean partitioned;
 	final boolean usesSlideParam;
+	
+	protected final AbstractWindowAO ao;
 
 	private final TimeUnit baseTimeUnit;
 
 	public AbstractWindowTIPO(AbstractWindowAO ao) {
+		this.ao = ao;
+		
 		this.baseTimeUnit = ao.getBaseTimeUnit();
 
 		if (ao.getWindowSize() != null) {
@@ -73,6 +77,7 @@ public abstract class AbstractWindowTIPO<T extends IStreamObject<? extends ITime
 
 	public AbstractWindowTIPO(AbstractWindowTIPO<T> window) {
 		super(window);
+		this.ao = window.ao;
 		this.baseTimeUnit = window.baseTimeUnit;
 		this.windowSize = window.windowSize;
 		this.windowAdvance = window.windowAdvance;
@@ -102,6 +107,10 @@ public abstract class AbstractWindowTIPO<T extends IStreamObject<? extends ITime
 	@Override
 	public WindowType getWindowType() {
 		return this.windowType;
+	}
+	
+	public AbstractWindowAO getWindowAO() {
+		return ao;
 	}
 
 	@SuppressWarnings("unchecked")
