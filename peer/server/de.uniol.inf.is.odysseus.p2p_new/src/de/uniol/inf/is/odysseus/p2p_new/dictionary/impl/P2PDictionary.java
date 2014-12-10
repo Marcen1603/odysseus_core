@@ -787,7 +787,7 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 		sb.append("\n");
 		String scriptText = sb.toString();
 
-		Collection<Integer> queryIDs = ServerExecutorService.getServerExecutor().addQuery(scriptText, "OdysseusScript", SessionManagementService.getActiveSession(), "Standard", Context.empty());
+		Collection<Integer> queryIDs = ServerExecutorService.getServerExecutor().addQuery(scriptText, "OdysseusScript", SessionManagementService.getActiveSession(), Context.empty());
 		Integer queryID = queryIDs.iterator().next();
 
 		IPhysicalQuery physicalQuery = ServerExecutorService.getServerExecutor().getExecutionPlan().getQueryById(queryID);
