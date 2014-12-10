@@ -57,7 +57,7 @@ public class ExecuteSportsQLServerResource extends AbstractSessionServerResource
 		
 			
 			
-			Collection<Integer> queryIDs = ExecutorServiceBinding.getExecutor().addQuery(sportsQL.toString(), "OdysseusScript", session, executeSportsQLRequestDTO.getTransformationConfig(), Context.empty());
+			Collection<Integer> queryIDs = ExecutorServiceBinding.getExecutor().addQuery(sportsQL.toString(), "OdysseusScript", session, Context.empty());
 			int queryId = queryIDs.iterator().next();	
 			ExecutorServiceBinding.getExecutor().startQuery(queryId, session);
 			SocketInfo peerSocket = SocketService.getInstance().getConnectionInformation(session, queryId,0);
