@@ -9,6 +9,11 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalO
 doc="Inductive Miner", category={LogicalOperatorCategory.MINING})
 public class InductiveMinerAO extends UnaryLogicalOp {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -5812923839972330744L;
+
 	public InductiveMinerAO(){
 		super();
 	}

@@ -2,12 +2,7 @@ package de.uniol.inf.is.odysseus.processmining.inductiveMiner.models;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Set;
-
-import org.jgrapht.Graphs;
-import org.jgrapht.graph.DefaultWeightedEdge;
-import org.jgrapht.graph.DirectedPseudograph;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;

@@ -1,16 +1,15 @@
 package de.uniol.inf.is.odysseus.processmining.common;
 
 import java.util.HashMap;
-import java.util.Set;
-
 import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
-
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
-import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 
 public class InductiveMinerTransferTuple extends Tuple {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -7748619300306184037L;
 	private final int ACTIVITY_MAP = 0;
 	private final int DFR_MAP = 1;
 	private final int SHORTLOOPS = 2;

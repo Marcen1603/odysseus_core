@@ -2,6 +2,10 @@ package de.uniol.inf.is.odysseus.processmining.common;
 
 public class DirectlyFollowLoopTuple extends AbstractLCTuple{
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 498780440247191676L;
 	private final int FOLLOW_ACTIVITY = 3;
 	private final int CASE_ID = 4;
 	

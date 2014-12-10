@@ -4,6 +4,10 @@ import de.uniol.inf.is.odysseus.core.collection.Tuple;
 
 public abstract class AbstractLCTuple extends Tuple{
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 7033989005670834137L;
 	protected final int ACTIVITY = 0;
 	protected final int FREQUENCE = 1;
 	protected final int MAXERROR = 2;

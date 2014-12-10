@@ -3,6 +3,12 @@ package de.uniol.inf.is.odysseus.processmining.common;
 
 public class ActivityTuple extends AbstractLCTuple{
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -7351974444983332480L;
+
+
 	ActivityTuple(){
 		super(LCTupleType.Activity);
 		create();

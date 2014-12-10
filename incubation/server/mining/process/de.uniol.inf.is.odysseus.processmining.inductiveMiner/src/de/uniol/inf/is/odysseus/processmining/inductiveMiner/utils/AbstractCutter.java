@@ -1,22 +1,15 @@
 package de.uniol.inf.is.odysseus.processmining.inductiveMiner.utils;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
-import org.jgrapht.DirectedGraph;
 import org.jgrapht.Graphs;
-import org.jgrapht.alg.CycleDetector;
-import org.jgrapht.alg.StrongConnectivityInspector;
 import org.jgrapht.graph.DefaultWeightedEdge;
 import org.jgrapht.graph.DirectedPseudograph;
 import org.jgrapht.graph.DirectedWeightedPseudograph;
-import org.jgrapht.traverse.TopologicalOrderIterator;
-
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;

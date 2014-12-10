@@ -18,11 +18,9 @@ package de.uniol.inf.is.odysseus.mep.functions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniol.inf.is.odysseus.core.mep.Constant;
 import de.uniol.inf.is.odysseus.core.mep.IExpression;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.mep.AbstractFunction;
-import de.uniol.inf.is.odysseus.mep.functions.string.ConcatFunction;
 
 public class IfFunction extends AbstractFunction<Object> {
 

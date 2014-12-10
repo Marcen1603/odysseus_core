@@ -3,6 +3,10 @@ package de.uniol.inf.is.odysseus.processmining.common;
 
 public class DFRTuple extends AbstractLCTuple{
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 6700319117413751639L;
 	private final int FOLLOW_ACTIVITY = 3;
 	
 	DFRTuple(){

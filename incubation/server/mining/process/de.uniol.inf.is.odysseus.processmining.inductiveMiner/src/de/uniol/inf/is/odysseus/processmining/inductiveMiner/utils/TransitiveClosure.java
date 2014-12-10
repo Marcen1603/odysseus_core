@@ -1,8 +1,5 @@
 package de.uniol.inf.is.odysseus.processmining.inductiveMiner.utils;
 
-import java.util.Collection;
-import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 
 import org.jgrapht.alg.StrongConnectivityInspector;
@@ -12,8 +9,6 @@ import org.jgrapht.graph.DirectedWeightedPseudograph;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
-
-import de.uniol.inf.is.odysseus.processmining.inductiveMiner.models.Cut;
 
 public class TransitiveClosure {
 

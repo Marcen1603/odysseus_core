@@ -1,12 +1,10 @@
 package de.uniol.inf.is.odysseus.processmining.inductiveMiner.utils;
 
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
 import org.jgrapht.Graphs;
 import org.jgrapht.alg.ConnectivityInspector;
-import org.jgrapht.alg.StrongConnectivityInspector;
 import org.jgrapht.graph.DefaultWeightedEdge;
 import org.jgrapht.graph.DirectedWeightedPseudograph;
 

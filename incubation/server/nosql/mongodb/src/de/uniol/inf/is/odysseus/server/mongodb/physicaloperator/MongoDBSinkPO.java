@@ -1,7 +1,6 @@
 package de.uniol.inf.is.odysseus.server.mongodb.physicaloperator;
 
 import com.google.gson.Gson;
-import com.google.gson.JsonNull;
 import com.google.gson.JsonObject;
 import com.mongodb.DBCollection;
 import com.mongodb.DBObject;

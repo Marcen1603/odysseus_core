@@ -2,6 +2,10 @@ package de.uniol.inf.is.odysseus.processmining.common;
 
 public class CaseTuple extends AbstractLCTuple{
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 3794834480004730196L;
 	private final int CASE_ID = 3;
 	
 	CaseTuple(){
