@@ -48,6 +48,9 @@ public interface IRecoveryCommunicator extends IPeerDictionaryListener {
 	// TODO handle result. M.B.
 	public boolean sendUpdateReceiverMessage(PeerID receiverPeer,
 			PeerID newSenderPeer, PipeID pipeId, ID sharedQueryId);
+	
+	// TODO handle result
+	public boolean requestQueryState(PeerID receiver, ID sharedQueryId);
 
 	/**
 	 * Sends a recovery-agreement message to all known peers. This message tells

@@ -34,6 +34,7 @@ import de.uniol.inf.is.odysseus.peer.recovery.protocol.AddQuerySender;
 import de.uniol.inf.is.odysseus.peer.recovery.protocol.AgreementSender;
 import de.uniol.inf.is.odysseus.peer.recovery.protocol.BackupInformationSender;
 import de.uniol.inf.is.odysseus.peer.recovery.protocol.BuddySender;
+import de.uniol.inf.is.odysseus.peer.recovery.protocol.RequestQueryStateSender;
 import de.uniol.inf.is.odysseus.peer.recovery.protocol.TupleSendSender;
 import de.uniol.inf.is.odysseus.peer.recovery.protocol.UpdatePipeSender;
 import de.uniol.inf.is.odysseus.peer.recovery.util.BuddyHelper;
@@ -436,6 +437,18 @@ public class RecoveryCommunicator implements IRecoveryCommunicator,
 		return UpdatePipeSender.getInstance().sendReceiverUpdateInstruction(
 				receiverPeer, pipeId, newSenderPeer, sharedQueryId,
 				cPeerCommunicator.get());
+	}
+	
+	@Override
+	public boolean requestQueryState(PeerID receiver, ID sharedQueryId) {
+		Preconditions.checkNotNull(receiver);
+		Preconditions.checkNotNull(sharedQueryId);
+		if (!cPeerCommunicator.isPresent()) {
+			LOG.error("No peer communicator bound!");
+			return false;
+		}
+
+		return RequestQueryStateSender.getInstance().sendRequest(receiver, sharedQueryId, cPeerCommunicator.get());
 	}
 
 	@Override

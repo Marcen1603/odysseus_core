@@ -289,9 +289,12 @@ public class AddQueryReceiver extends AbstractRepeatingMessageReceiver {
 						PipeID pipe = RecoveryHelper.convertToPipeId(sender.getPipeIDString());
 						PeerID ownPeerId = cP2PNetworkManager.get().getLocalPeerID();
 
-						if (peer != null && pipe != null)
+						if (peer != null && pipe != null) {
 							cRecoveryCommunicator.get().sendUpdateReceiverMessage(peer, ownPeerId, pipe,
 									sharedQueryId);
+							// We don't know, if the query is running or not. The subsequent peer knows it!
+							cRecoveryCommunicator.get().requestQueryState(peer, sharedQueryId);
+						}
 
 					} else if (operator instanceof JxtaReceiverPO) {
 						// GO ON
@@ -303,8 +306,11 @@ public class AddQueryReceiver extends AbstractRepeatingMessageReceiver {
 						PeerID peer = RecoveryHelper.convertToPeerId(receiver.getPeerIDString());
 						PipeID pipe = RecoveryHelper.convertToPipeId(receiver.getPipeIDString());
 
-						if (peer != null && pipe != null)
+						if (peer != null && pipe != null) {
 							cRecoveryCommunicator.get().sendGoOnMessage(peer, pipe);
+							// We don't know, if the query is running or not. The previous peer knows it!
+							cRecoveryCommunicator.get().requestQueryState(peer, sharedQueryId);
+						}
 					}
 				}
 			}
