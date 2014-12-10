@@ -36,8 +36,8 @@ public final class P2PNetworkManager implements IP2PNetworkManager, RendezvousLi
 
 	private static final Logger LOG = LoggerFactory.getLogger(P2PNetworkManager.class);
 	private static final String LOG_PROPERTIES_FILENAME = "log4j.properties";
-	private static final String JXTA_LOGGER_NAME = "net.jxta";
-	private static final java.util.logging.Level JXTA_LOG_LEVEL = java.util.logging.Level.SEVERE;
+	private static final String[] JXTA_LOGGER_NAMES = new String[] { "net.jxta", "net.jxta.impl" };
+	private static final java.util.logging.Level JXTA_LOG_LEVEL = java.util.logging.Level.OFF;
 
 	private static P2PNetworkManager instance;
 
@@ -213,8 +213,10 @@ public final class P2PNetworkManager implements IP2PNetworkManager, RendezvousLi
 	}
 
 	private static void configureLogging(Bundle bundle) {
-		java.util.logging.Logger jxtaLogger = java.util.logging.Logger.getLogger(JXTA_LOGGER_NAME);
-		jxtaLogger.setLevel(JXTA_LOG_LEVEL);
+		for( String loggerName : JXTA_LOGGER_NAMES ) {
+			java.util.logging.Logger jxtaLogger = java.util.logging.Logger.getLogger(loggerName);
+			jxtaLogger.setLevel(JXTA_LOG_LEVEL);
+		}
 
 		PropertyConfigurator.configure(bundle.getResource(LOG_PROPERTIES_FILENAME));
 	}
