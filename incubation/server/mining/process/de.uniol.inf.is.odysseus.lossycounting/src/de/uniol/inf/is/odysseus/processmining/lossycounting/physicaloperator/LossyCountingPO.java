@@ -75,6 +75,7 @@ public class LossyCountingPO<T extends IMetaAttribute> extends
 				System.out.println("Transfering...");
 				calculateEndActivities();
 				iMTransferTuple.setEndActivities(endActivities);
+				iMTransferTuple.setMetadata(object.getMetadata().clone());
 				transfer(iMTransferTuple);
 			}
 		}
@@ -235,7 +236,7 @@ public class LossyCountingPO<T extends IMetaAttribute> extends
 
 	@Override
 	public OutputMode getOutputMode() {
-		return OutputMode.NEW_ELEMENT;
+		return OutputMode.INPUT;
 	}
 
 	@Override

@@ -7,6 +7,7 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
+import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 
 public class InductiveMinerTransferTuple extends Tuple {
 	
@@ -18,6 +19,16 @@ public class InductiveMinerTransferTuple extends Tuple {
 	
 	public InductiveMinerTransferTuple(){
 		super(5, true);
+	}
+	
+	public InductiveMinerTransferTuple( InductiveMinerTransferTuple copy ) {
+		super(copy);
+		
+		this.activities = Maps.newHashMap(copy.activities);
+		this.directlyFollowRelations = Maps.newHashMap(copy.directlyFollowRelations);
+		this.shortLoops = Maps.newHashMap(copy.shortLoops);
+		this.startActivites = Maps.newHashMap(copy.startActivites);
+		this.endActivities = Maps.newHashMap(copy.endActivities);
 	}
 	
 	private HashMap<Object, AbstractLCTuple> activities = Maps.newHashMap();
@@ -68,4 +79,8 @@ public class InductiveMinerTransferTuple extends Tuple {
 		return clone;
 	}
 
+	@Override
+	public InductiveMinerTransferTuple clone() {
+		return new InductiveMinerTransferTuple(this);
+	}
 }

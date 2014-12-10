@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: InductiveMiner
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.processmining.inductiveMiner
 Bundle-Version: 1.0.0.qualifier
-Bundle-Activator: de.uniol.inf.is.odysseus.processmining.inductiveminer.Activator
+Bundle-Activator: de.uniol.inf.is.odysseus.processmining.inductiveMiner.Activator
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Import-Package: de.uniol.inf.is.odysseus.processmining.common,
  de.uniol.inf.is.odysseus.ruleengine.rule,
@@ -15,7 +15,6 @@ Require-Bundle: de.uniol.inf.is.odysseus.core.server,
  com.google.guava,
  de.uniol.inf.is.odysseus.transform,
  de.uniol.inf.is.odysseus.processmining.dataanalyser
-Service-Component: OSGI-INF/component.xml
 Bundle-ClassPath: .,
  jgrapht-core-0.9.0.jar
 Export-Package: org.jgrapht
