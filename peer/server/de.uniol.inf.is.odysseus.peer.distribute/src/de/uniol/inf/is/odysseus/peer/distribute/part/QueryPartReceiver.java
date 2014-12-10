@@ -327,7 +327,8 @@ public class QueryPartReceiver implements IPeerCommunicatorListener {
 		if( !Strings.isNullOrEmpty(queryName)) {
 			sb.append("#QNAME ").append(queryName).append("\n");
 		}
-		sb.append("#RUNQUERY").append("\n");
+		// TODO should not be set that way
+		sb.append("#ADDQUERY").append("\n");
 		sb.append(message.getPqlStatement()).append("\n");
 		return sb.toString();
 	}
