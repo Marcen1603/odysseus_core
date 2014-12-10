@@ -192,7 +192,7 @@ public class SmartDevice extends ASmartDevice implements Serializable {
 
 	@Override
 	public synchronized void addSmartDeviceListener(ISmartDeviceListener listener) {
-		LOG.error("addSmartDeviceListener!!!!!");
+		LOG.debug("addSmartDeviceListener!!!!!");
 		
 		if(!getSmartDeviceListener().contains(listener)){
 			getSmartDeviceListener().add(listener);

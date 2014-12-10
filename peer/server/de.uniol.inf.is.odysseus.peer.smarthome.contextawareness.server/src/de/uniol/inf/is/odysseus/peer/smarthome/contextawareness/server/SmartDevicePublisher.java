@@ -67,7 +67,7 @@ public class SmartDevicePublisher {
 
 				// printLocalPeerID();
 
-				LOG.error("publishSmartDeviceAdvertisementAsync() in 5 sec.");
+				LOG.debug("publishSmartDeviceAdvertisementAsync() in 5 sec.");
 				threadSleep(5000);
 
 				try {
@@ -248,7 +248,7 @@ public class SmartDevicePublisher {
 	}
 
 	public void initForLocalSmartDevice() {
-		LOG.error("initForLocalSmartDevice add listener...");
+		LOG.debug("initForLocalSmartDevice add listener...");
 		
 		getLocalSmartDevice().addSmartDeviceListener(ActivityInterpreterProcessor.getInstance());
 		getLocalSmartDevice().addSmartDeviceListener(LogicRuleProcessor.getInstance());
