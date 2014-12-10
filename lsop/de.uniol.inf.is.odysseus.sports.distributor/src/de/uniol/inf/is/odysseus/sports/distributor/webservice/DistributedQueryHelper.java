@@ -68,7 +68,7 @@ public class DistributedQueryHelper {
 	 */
 	public static DistributedQueryInfo executeQuery(String query,String parser,
 			ISession activeSession, String queryBuildConfigurationName) {
-		serverExecutor.addQuery(query, parser, activeSession, queryBuildConfigurationName, Context.empty());
+		serverExecutor.addQuery(query, parser, activeSession, Context.empty());
 		return queryDistributionListener.getNextDistributedQueryInfo();
 	}
 
