@@ -3,7 +3,7 @@ package de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.server.service;
 import java.util.ArrayList;
 
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.server.SmartDevicePublisher;
-import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.server.SmartDeviceDictionaryDiscovery;
+import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.server.SmartDeviceDiscovery;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.smartdevice.ASmartDevice;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.smartdevice.ISmartDeviceListener;
 
@@ -71,7 +71,7 @@ public class SmartDeviceService implements ISmartDeviceService {
 		}
 
 		@Override
-		public SmartDeviceDictionaryDiscovery getSmartDeviceDictionaryDiscovery() {
-			return SmartDeviceDictionaryDiscovery.getInstance();
+		public SmartDeviceDiscovery getSmartDeviceDictionaryDiscovery() {
+			return SmartDeviceDiscovery.getInstance();
 		}
 }

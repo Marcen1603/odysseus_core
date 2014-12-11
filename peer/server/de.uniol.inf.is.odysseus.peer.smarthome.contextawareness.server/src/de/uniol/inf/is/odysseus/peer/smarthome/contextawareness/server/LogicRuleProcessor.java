@@ -573,7 +573,7 @@ public class LogicRuleProcessor implements ISmartDeviceDictionaryListener,
 
 		HashMap<String, ArrayList<String>> map = new HashMap<String, ArrayList<String>>();
 
-		for (ASmartDevice device : SmartDeviceDictionaryDiscovery.getInstance()
+		for (ASmartDevice device : SmartDeviceDiscovery.getInstance()
 				.getFoundSmartDeviceList()) {
 			for (AbstractSensor sensor : device.getConnectedSensors()) {
 				for (AbstractActivityInterpreter interpreter : sensor
@@ -661,7 +661,7 @@ public class LogicRuleProcessor implements ISmartDeviceDictionaryListener,
 	protected void importSourcesIfKnown(AbstractLogicRule rule) {
 		LOG.debug("importSourcesIfKnown for activity:" + rule.getActivityName());
 
-		ArrayList<ASmartDevice> foundSmartDevices = SmartDeviceDictionaryDiscovery
+		ArrayList<ASmartDevice> foundSmartDevices = SmartDeviceDiscovery
 				.getInstance().getFoundSmartDeviceList();
 
 		for (ASmartDevice device : foundSmartDevices) {
@@ -759,7 +759,7 @@ public class LogicRuleProcessor implements ISmartDeviceDictionaryListener,
 
 				// TODO:
 				
-				for(ASmartDevice smartDevice : SmartDeviceDictionaryDiscovery.getInstance().getFoundSmartDeviceList()){
+				for(ASmartDevice smartDevice : SmartDeviceDiscovery.getInstance().getFoundSmartDeviceList()){
 					if(updateLogicRuleWithActivityInterpreters(smartDevice)){
 						updateActivitySourceUnionImports();
 					}

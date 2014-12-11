@@ -17,7 +17,7 @@ import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.logi
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.logicrule.AbstractLogicRule;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.sensor.AbstractSensor;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.server.SmartDevicePublisher;
-import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.server.SmartDeviceDictionaryDiscovery;
+import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.server.SmartDeviceDiscovery;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.server.config.SmartDeviceConfig;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.smartdevice.message.SmartDeviceResponseMessage;
 
@@ -314,7 +314,7 @@ public class SmartDevice extends ASmartDevice {
 			SmartDeviceResponseMessage smartDeviceResponse = new SmartDeviceResponseMessage();
 			smartDeviceResponse.setSmartDevice(this);
 
-			PeerID peer = SmartDeviceDictionaryDiscovery
+			PeerID peer = SmartDeviceDiscovery
 					.getPeerIDOfString(getPeerID());
 
 			LOG.debug("save() send to peer: " + this.getPeerName());

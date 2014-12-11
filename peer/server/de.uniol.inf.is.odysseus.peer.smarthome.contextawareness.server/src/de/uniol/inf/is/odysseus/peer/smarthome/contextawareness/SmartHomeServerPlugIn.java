@@ -16,7 +16,7 @@ import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.server.LogicRule
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.server.QueryExecutor;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.server.SmartDeviceLocalConfigurationServer;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.server.SmartDevicePublisher;
-import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.server.SmartDeviceDictionaryDiscovery;
+import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.server.SmartDeviceDiscovery;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.server.config.SmartDeviceConfigurationRequestMessage;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.server.config.SmartDeviceConfigurationResponseMessage;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.smartdevice.message.SmartDeviceRequestMessage;
@@ -39,14 +39,14 @@ public class SmartHomeServerPlugIn implements BundleActivator {
 
 	@Override
 	public void start(BundleContext bundleContext) throws Exception {
-		SmartDeviceDictionaryDiscovery.getInstance().addListener(LogicRuleProcessor.getInstance());
+		SmartDeviceDiscovery.getInstance().addListener(LogicRuleProcessor.getInstance());
 
 		bundle = bundleContext.getBundle();
 	}
 
 	@Override
 	public void stop(BundleContext context) throws Exception {
-		SmartDeviceDictionaryDiscovery.getInstance().removeListener(LogicRuleProcessor.getInstance());
+		SmartDeviceDiscovery.getInstance().removeListener(LogicRuleProcessor.getInstance());
 
 		bundle = null;
 	}
@@ -68,7 +68,7 @@ public class SmartHomeServerPlugIn implements BundleActivator {
 		p2pNetworkManager = serv;
 
 		p2pNetworkManager
-		.addAdvertisementListener(SmartDeviceDictionaryDiscovery
+		.addAdvertisementListener(SmartDeviceDiscovery
 				.getInstance());
 		
 		SmartDevicePublisher.getInstance().bindP2PNetworkManager(serv);
@@ -87,7 +87,7 @@ public class SmartHomeServerPlugIn implements BundleActivator {
 
 			
 			p2pNetworkManager
-			.removeAdvertisementListener(SmartDeviceDictionaryDiscovery
+			.removeAdvertisementListener(SmartDeviceDiscovery
 					.getInstance());
 			p2pNetworkManager = null;
 		}

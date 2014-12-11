@@ -435,20 +435,20 @@ public class SmartDevicePublisher {
 		_peerCommunicator.registerMessageType(SmartDeviceResponseMessage.class);
 
 		_peerCommunicator.addListener(
-				SmartDeviceDictionaryDiscovery.getInstance(),
+				SmartDeviceDiscovery.getInstance(),
 				SmartDeviceRequestMessage.class);
 		_peerCommunicator.addListener(
-				SmartDeviceDictionaryDiscovery.getInstance(),
+				SmartDeviceDiscovery.getInstance(),
 				SmartDeviceResponseMessage.class);
 	}
 
 	public void unbindPeerCommunicator(IPeerCommunicator _peerCommunicator) {
 		if (peerCommunicator == _peerCommunicator) {
 			_peerCommunicator.removeListener(
-					SmartDeviceDictionaryDiscovery.getInstance(),
+					SmartDeviceDiscovery.getInstance(),
 					SmartDeviceRequestMessage.class);
 			_peerCommunicator.removeListener(
-					SmartDeviceDictionaryDiscovery.getInstance(),
+					SmartDeviceDiscovery.getInstance(),
 					SmartDeviceResponseMessage.class);
 
 			peerCommunicator = null;
