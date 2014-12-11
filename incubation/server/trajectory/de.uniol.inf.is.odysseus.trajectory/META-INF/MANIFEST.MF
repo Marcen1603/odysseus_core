@@ -1,0 +1,21 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Trajectory
+Bundle-SymbolicName: de.uniol.inf.is.odysseus.trajectory;singleton:=true
+Bundle-Version: 1.0.0.qualifier
+Bundle-Activator: de.uniol.inf.is.odysseus.trajectory.Activator
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Import-Package: com.vividsolutions.jts.geom,
+ de.uniol.inf.is.odysseus.intervalapproach.sweeparea,
+ de.uniol.inf.is.odysseus.ruleengine.rule,
+ de.uniol.inf.is.odysseus.ruleengine.ruleflow,
+ de.uniol.inf.is.odysseus.server.intervalapproach,
+ de.uniol.inf.is.odysseus.spatial.sourcedescription.sdf.schema,
+ de.uniol.inf.is.odysseus.transform.flow,
+ de.uniol.inf.is.odysseus.transform.rule,
+ org.osgeo.proj4j,
+ org.osgi.framework;version="1.6.0"
+Require-Bundle: de.uniol.inf.is.odysseus.core;bundle-version="1.0.0",
+ de.uniol.inf.is.odysseus.core.server;bundle-version="1.0.0",
+ de.uniol.inf.is.odysseus.slf4j;bundle-version="1.0.0"
+Bundle-Vendor: Marcus Behrendt
