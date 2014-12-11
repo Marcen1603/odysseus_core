@@ -169,6 +169,9 @@ abstract public class AbstractPartitionedWindowTIPO<T extends IStreamObject<ITim
 		PointInTime minTs = getMinTs();
 		if (minTs != null) {
 			transferArea.newHeartbeat(minTs, 0);
+		} else {
+			// No elements in any buffer
+			transferArea.newHeartbeat(lastTs, 0);
 		}
 	}
 
