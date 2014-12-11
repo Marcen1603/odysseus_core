@@ -33,7 +33,8 @@ public class RSplitSelectionRule extends AbstractRewriteRule<SelectAO> {
 
 	@Override
 	public int getPriority() {
-		return 4;
+		// Should have the highest priority
+		return 6;
 	}
 
 	@Override
@@ -41,12 +42,7 @@ public class RSplitSelectionRule extends AbstractRewriteRule<SelectAO> {
 		List<IPredicate> preds = splitPredicate(sel.getPredicate());
 		
 		for (int i = 0; i < preds.size() - 1; i++) {
-			SelectAO newSel = new SelectAO(sel);
-			for (IOperatorOwner owner:sel.getOwner()){
-				newSel.addOwner(owner);
-			}
-			newSel.setPredicate(preds.get(i));
-			
+			SelectAO newSel = createNewSelect(sel, preds.get(i));
 			RestructParameterInfoUtil.updatePredicateParameterInfo(newSel);
 			
 			RestructHelper.insertOperator(newSel, sel, 0, 0, 0);
@@ -56,6 +52,15 @@ public class RSplitSelectionRule extends AbstractRewriteRule<SelectAO> {
 		RestructParameterInfoUtil.updatePredicateParameterInfo(sel);
 		
 		update(sel);
+	}
+
+	private static SelectAO createNewSelect(SelectAO sel, IPredicate pred) {
+		SelectAO newSel = new SelectAO(sel);
+		for (IOperatorOwner owner:sel.getOwner()){
+			newSel.addOwner(owner);
+		}
+		newSel.setPredicate(pred);
+		return newSel;
 	}
 
 	private static List<IPredicate> splitPredicate(IPredicate sel) {
