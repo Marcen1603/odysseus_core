@@ -90,6 +90,10 @@ public class PredicateWindowTIPO<T extends IStreamObject<ITimeInterval>>
 	protected void process(T object, List<T> buffer, Long bufferId, PointInTime ts) {
 		// Test if elements need to be written
 		boolean startEval = start.evaluate(object);
+		Boolean opened = openedWindow.get(bufferId);
+		if (opened == null){
+			openedWindow.put(bufferId, false);
+		}
 		if (openedWindow.get(bufferId)) {
 			// Two cases: end is set --> use end predicate
 			// end is not set --> use negated start predicate
