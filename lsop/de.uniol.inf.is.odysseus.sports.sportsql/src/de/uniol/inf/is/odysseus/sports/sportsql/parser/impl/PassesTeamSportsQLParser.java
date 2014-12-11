@@ -6,6 +6,7 @@ import java.util.List;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AggregateAO;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.ChangeDetectAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.MergeAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.StateMapAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TimeWindowAO;
@@ -322,8 +323,33 @@ public class PassesTeamSportsQLParser implements ISportsQLParser {
 
 		allOperators.add(aggregate2);
 		
+		List<String> changeDetectAttributes = new ArrayList<String>();
+		changeDetectAttributes.add(ATTRIBUTE_PASS_SUCCESS);
+		changeDetectAttributes.add(ATTRIBUTE_PASS_FAIL);
+		changeDetectAttributes.add(ATTRIBUTE_PASS_RECEIVED);
+		changeDetectAttributes.add(ATTRIBUTE_PASS_INTERCEPTED);
+		changeDetectAttributes.add(ATTRIBUTE_PASS_SUCC_SHORT);
+		changeDetectAttributes.add(ATTRIBUTE_PASS_FAIL_SHORT);
+		changeDetectAttributes.add(ATTRIBUTE_PASS_SUCC_LONG);
+		changeDetectAttributes.add(ATTRIBUTE_PASS_FAIL_LONG);
+		changeDetectAttributes.add(ATTRIBUTE_PASS_SUCC_FORWARD);
+		changeDetectAttributes.add(ATTRIBUTE_PASS_FAIL_FORWARD);
+		changeDetectAttributes.add(ATTRIBUTE_PASS_SUCC_CROSS);
+		changeDetectAttributes.add(ATTRIBUTE_PASS_FAIL_CROSS);
+		changeDetectAttributes.add(ATTRIBUTE_PASS_SUCC_BACK);
+		changeDetectAttributes.add(ATTRIBUTE_PASS_FAIL_BACK);
+		changeDetectAttributes.add(ATTRIBUTE_PASS_SUCC_DIRECT);
+		changeDetectAttributes.add(ATTRIBUTE_PASS_FAIL_DIRECT);
+		changeDetectAttributes.add(ATTRIBUTE_PASS_SUCC_DOUBLE);
+		changeDetectAttributes.add(ATTRIBUTE_PASS_FAIL_DOUBLE);
+		List<String> changeDetectGroupBy = new ArrayList<String>();
+		changeDetectGroupBy.add(ATTRIBUTE_TEAM_ID);
+		
+		ChangeDetectAO changeDetect = OperatorBuildHelper.createChangeDetectAO(OperatorBuildHelper.createAttributeList(changeDetectAttributes,aggregate2), 0.1, true, OperatorBuildHelper.createAttributeList(changeDetectGroupBy,aggregate2), aggregate2);
+		allOperators.add(changeDetect);
+
 		// 28. Finish		
-		return OperatorBuildHelper.finishQuery(aggregate2, allOperators, sportsQL.getDisplayName());		
+		return OperatorBuildHelper.finishQuery(changeDetect, allOperators, sportsQL.getDisplayName());		
 	}
 
 }
