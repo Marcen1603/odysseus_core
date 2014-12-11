@@ -259,6 +259,20 @@ public class MovingStateHelper {
 
 	}
 	
+	@SuppressWarnings("rawtypes")
+	public static void addChangeInformation(String pipeID, MovingStateSlaveStatus status, boolean isSender) {
+		IPhysicalOperator operator = LoadBalancingHelper
+				.getPhysicalJxtaOperator(isSender, pipeID);
+		if(operator!=null) {
+			if(isSender) {
+				status.addChangedPipe(pipeID,((JxtaSenderPO)operator).getPeerIDString());
+			}
+			else {
+				status.addChangedPipe(pipeID,((JxtaReceiverPO)operator).getPeerIDString());
+			}
+		}
+	}
+	
 	
 	/***
 	 * Starts Buffering before a given Operator

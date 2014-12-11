@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" activate="activate" deactivate="deactivate" immediate="true" name="de.uniol.inf.is.odysseus.peer.loadbalancing.active.InactiveQueryCommunicator">
+   <implementation class="de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.inactivequery.communicator.InactiveQueryCommunicatorImpl"/>
+   <service>
+      <provide interface="de.uniol.inf.is.odysseus.peer.loadbalancing.active.ILoadBalancingCommunicator"/>
+   </service>
+   <reference bind="bindPeerCommunicator" cardinality="1..1" interface="de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicator" name="IPeerCommunicator" policy="static" unbind="unbindPeerCommunicator"/>
+</scr:component>

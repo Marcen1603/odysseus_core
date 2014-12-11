@@ -138,6 +138,7 @@ public class InstructionHandler {
 				dispatcher = status.getMessageDispatcher();
 
 				try {
+					MovingStateHelper.addChangeInformation(pipe, status, true);
 					MovingStateHelper.startBuffering(pipe);
 					MovingStateHelper.setNewPeerId(pipe, peer, true);
 					dispatcher.sendDuplicateSenderSuccess(status.getMasterPeer(),
@@ -175,6 +176,7 @@ public class InstructionHandler {
 				status.addKnownPipe(pipe);
 				dispatcher = status.getMessageDispatcher();
 				try {
+					MovingStateHelper.addChangeInformation(pipe, status, false);
 					MovingStateHelper.setNewPeerId(pipe, peer, false);
 					dispatcher.sendDuplicateReceiverSuccess(status.getMasterPeer(),
 							pipe);

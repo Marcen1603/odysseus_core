@@ -374,6 +374,15 @@ public class LoadBalancingHelper {
 		return installedQueries;
 
 	}
+	
+	public static Collection<Integer> installQueryPartFromPql(Context context, String pql) {
+		IServerExecutor executor = ActiveLoadBalancingActivator.getExecutor();
+		ISession session = ActiveLoadBalancingActivator.getActiveSession();
+		
+		Collection<Integer> installedQueries = executor.addQuery(pql, "PQL", session, context);
+		return installedQueries;
+		
+	}
 
 	/**
 	 * Gets a (logical) Copy of a single Query Part.

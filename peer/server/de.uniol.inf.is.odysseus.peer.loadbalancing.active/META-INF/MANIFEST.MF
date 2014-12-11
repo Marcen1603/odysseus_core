@@ -18,6 +18,7 @@ Require-Bundle: de.uniol.inf.is.odysseus.core;bundle-version="1.0.0",
  de.uniol.inf.is.odysseus.intervalapproach;bundle-version="1.0.0",
  de.uniol.inf.is.odysseus.relational.base;bundle-version="1.0.0"
 Export-Package: de.uniol.inf.is.odysseus.peer.loadbalancing.active,
+ de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.inactivequery.communicator,
  de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.paralleltrack.communicator,
  de.uniol.inf.is.odysseus.peer.loadbalancing.active.movingstate.communicator
 Import-Package: de.uniol.inf.is.odysseus.peer.distribute.util,
@@ -26,5 +27,5 @@ Import-Package: de.uniol.inf.is.odysseus.peer.distribute.util,
  de.uniol.inf.is.odysseus.transform.flow,
  de.uniol.inf.is.odysseus.transform.rule
 Service-Component: OSGI-INF/LoadBalancingRuleProvider.xml,OSGI-INF/ParallelTrackCommunicator.xml,OSGI-INF/LoadBalancingConsole.xml,OSGI-INF/Executor.xml,OSGI-INF/NetworkManager.xml,
- OSGI-INF/MovingStateCommunicator.xml
+ OSGI-INF/MovingStateCommunicator.xml,OSGI-INF/InactiveQueryCommunicator.xml
 Bundle-Activator: de.uniol.inf.is.odysseus.peer.loadbalancing.active.ActiveLoadBalancingActivator
