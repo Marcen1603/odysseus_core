@@ -20,6 +20,7 @@ import com.google.common.collect.Sets;
 
 import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryBackupInformation;
 import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryBackupInformationStore;
+import de.uniol.inf.is.odysseus.peer.recovery.internal.BackupInformation;
 import de.uniol.inf.is.odysseus.peer.recovery.internal.RecoveryCommunicator;
 import de.uniol.inf.is.odysseus.peer.recovery.internal.SharedQuery;
 
@@ -480,6 +481,45 @@ public class LocalBackupInformationAccess {
 
 		return ImmutableSet.copyOf(pqls);
 
+	}
+
+	/**
+	 * Adds local PQL to the store to the given shared query id. This is useful, if you add a query on this peer.
+	 * 
+	 * @param sharedQueryId
+	 *            The shared query id where this PQL belongs to
+	 * @param pql
+	 *            The PQL String of the query which was added
+	 */
+	public static void addLocalPQL(ID sharedQueryId, String pql) {
+		Preconditions.checkNotNull(sharedQueryId);
+		Preconditions.checkNotNull(pql);
+
+		if (!cInfoStore.isPresent()) {
+			LOG.error("No backup information store for recovery bound!");
+			return;
+		}
+
+		PeerID localPeerId = RecoveryCommunicator.getP2PNetworkManager().get().getLocalPeerID();
+
+		// Maybe we don't have any information about this shared query
+		if (cInfoStore.get().get(sharedQueryId) == null) {
+			IRecoveryBackupInformation info = new BackupInformation();
+			info.setLocationPeer(localPeerId);
+			info.setLocalPQL(pql);
+			cInfoStore.get().add(info);
+		}
+
+		for (IRecoveryBackupInformation info : cInfoStore.get().get(sharedQueryId)) {
+			if (info.getLocalPQL() != null && info.getLocationPeer() != null
+					&& info.getLocationPeer().equals(localPeerId)) {
+				// TODO Local PQL as a list?
+				if (!info.getLocalPQL().toLowerCase().trim().contains(pql.toLowerCase().trim())) {
+					// Maybe we already had this information stored.
+					info.setLocalPQL(info.getLocalPQL() + " \n " + pql);
+				}
+			}
+		}
 	}
 
 	/**

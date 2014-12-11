@@ -1,6 +1,8 @@
 package de.uniol.inf.is.odysseus.peer.recovery.util;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import net.jxta.id.ID;
 import net.jxta.peer.PeerID;
@@ -34,6 +36,12 @@ public class BackupInformationHelper implements IPlanModificationListener {
 	 * The logger instance for this class.
 	 */
 	private static Logger LOG = LoggerFactory.getLogger(BackupInformationHelper.class);
+
+	/**
+	 * This list contains all the IDs of queries, where we did not find a shared query ID for. If we later know the
+	 * corresponding shared query ID, we can react.
+	 */
+	public static List<Integer> unknownIds = new ArrayList<Integer>();
 
 	/**
 	 * The recovery communicator, if there is one bound.
@@ -239,6 +247,12 @@ public class BackupInformationHelper implements IPlanModificationListener {
 
 		if (PlanModificationEventType.QUERY_REMOVE.equals(eventArgs.getEventType())) {
 
+			// Question to think about later: If we have two queries with the same shared query id running on this peer,
+			// we will have a problem, cause we will remove all the information, even if we just delete one of these two
+			// queries
+			// I guess this problem would be solved if we merge query parts which belong to one shared query (if this is
+			// possible ... hmm the query parts maybe are not direct successors :( )
+
 			int queryID = ((IPhysicalQuery) eventArgs.getValue()).getID();
 			ID sharedQueryID = cController.get().getSharedQueryID(queryID);
 			if (sharedQueryID == null) {
@@ -257,9 +271,24 @@ public class BackupInformationHelper implements IPlanModificationListener {
 
 		} else if (PlanModificationEventType.QUERY_ADDED.equals(eventArgs.getEventType())) {
 			// TODO A query was added -> we have to update our local information
-			
-			
-			// ... and have to update the peers which have information about us
+			// if the query was added by recovery, this should already been done, but if it was added by something else
+			// (e.g. loadbalancing), we have to do this. Problem: We don't know the shared query id. Hmpf ...
+			int queryID = ((IPhysicalQuery) eventArgs.getValue()).getID();
+			ID sharedQueryID = cController.get().getSharedQueryID(queryID);
+
+			if (sharedQueryID != null) {
+				// If the shared query id would be null, the query was not distributes yet. Hence, the
+				// QueryDistributionListener will save the info.
+				String pql = RecoveryHelper.getPQLFromRunningQuery(queryID);
+
+				LocalBackupInformationAccess.addLocalPQL(sharedQueryID, pql);
+
+			} else {
+				// We don't know the corresponding shared query id (yet). Maybe we will find out later. So save this id
+				// so we can react later.
+				unknownIds.add(queryID);
+			}
+
 		}
 
 	}

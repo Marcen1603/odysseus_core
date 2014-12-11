@@ -46,7 +46,9 @@ import de.uniol.inf.is.odysseus.p2p_new.logicaloperator.JxtaReceiverAO;
 import de.uniol.inf.is.odysseus.p2p_new.logicaloperator.JxtaSenderAO;
 import de.uniol.inf.is.odysseus.p2p_new.physicaloperator.JxtaReceiverPO;
 import de.uniol.inf.is.odysseus.p2p_new.physicaloperator.JxtaSenderPO;
+import de.uniol.inf.is.odysseus.parser.pql.generator.IPQLGenerator;
 import de.uniol.inf.is.odysseus.peer.distribute.ILogicalQueryPart;
+import de.uniol.inf.is.odysseus.peer.distribute.IQueryPartController;
 import de.uniol.inf.is.odysseus.peer.distribute.LogicalQueryPart;
 import de.uniol.inf.is.odysseus.peer.distribute.util.LogicalQueryHelper;
 import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryBackupInformation;
@@ -62,13 +64,15 @@ import de.uniol.inf.is.odysseus.peer.recovery.physicaloperator.RecoveryBufferPO;
  */
 public class RecoveryHelper {
 
-	private static final Logger LOG = LoggerFactory
-			.getLogger(RecoveryHelper.class);
+	private static final Logger LOG = LoggerFactory.getLogger(RecoveryHelper.class);
 
 	/**
 	 * The PQL parser, if there is one bound.
 	 */
 	private static Optional<IQueryParser> cPQLParser = Optional.absent();
+
+	private static Optional<IPQLGenerator> cPQLGenerator = Optional.absent();
+	private static Optional<IQueryPartController> cQueryPartController = Optional.absent();
 
 	/**
 	 * Binds a query parser. <br />
@@ -83,8 +87,7 @@ public class RecoveryHelper {
 		Preconditions.checkNotNull(serv);
 		if (serv.getLanguage().equals("PQL")) {
 			cPQLParser = Optional.of(serv);
-			LOG.debug("Bound {} as a pql parser.", serv.getClass()
-					.getSimpleName());
+			LOG.debug("Bound {} as a pql parser.", serv.getClass().getSimpleName());
 		}
 
 	}
@@ -103,10 +106,29 @@ public class RecoveryHelper {
 
 		if (cPQLParser.isPresent() && cPQLParser.get() == serv) {
 			cPQLParser = Optional.absent();
-			LOG.debug("Unbound {} as a pql parser.", serv.getClass()
-					.getSimpleName());
+			LOG.debug("Unbound {} as a pql parser.", serv.getClass().getSimpleName());
 		}
 
+	}
+
+	public static void bindPQLGenerator(IPQLGenerator generator) {
+		cPQLGenerator = Optional.of(generator);
+	}
+
+	public static void unbindPQLGenerator(IPQLGenerator generator) {
+		if (cPQLGenerator.isPresent() && cPQLGenerator.get().equals(generator)) {
+			cPQLGenerator = Optional.absent();
+		}
+	}
+
+	public static void bindQueryPartController(IQueryPartController controller) {
+		cQueryPartController = Optional.of(controller);
+	}
+
+	public static void unbindQueryPartController(IQueryPartController controller) {
+		if (cQueryPartController.isPresent() && cQueryPartController.get().equals(controller)) {
+			cQueryPartController = Optional.absent();
+		}
 	}
 
 	/**
@@ -147,8 +169,7 @@ public class RecoveryHelper {
 		if (cExecutor.isPresent() && cExecutor.get() == (IServerExecutor) serv) {
 
 			cExecutor = Optional.absent();
-			LOG.debug("Unbound {} as an executor.", serv.getClass()
-					.getSimpleName());
+			LOG.debug("Unbound {} as an executor.", serv.getClass().getSimpleName());
 
 		}
 
@@ -159,8 +180,11 @@ public class RecoveryHelper {
 	 * 
 	 * @param pql
 	 *            PQL to execute.
+	 * @param sharedQueryId
+	 *            The id of the shared query where this PQL belongs to. To save, that this is a shared query.
 	 */
-	public static Collection<Integer> installAndRunQueryPartFromPql(String pql) throws QueryParseException {
+	public static Collection<Integer> installAndRunQueryPartFromPql(String pql, ID sharedQueryId)
+			throws QueryParseException {
 
 		Collection<Integer> installedQueries = Lists.newArrayList();
 
@@ -172,20 +196,29 @@ public class RecoveryHelper {
 		ISession session = RecoveryCommunicator.getActiveSession();
 
 		/*
-		 * TODO LSOP-367 first intent to keep distributed query running, if a sink-part has been recovered. Not ready for submission, yet. M.B.
-		StringBuffer odScript = new StringBuffer();
-		odScript.append("#PARSER PQL\n");
-		odScript.append("#RUNQUERY\n");
-		odScript.append(pql);
-		installedQueries = cExecutor.get().addQuery(odScript.toString(), "OdysseusScript", session,
-				Context.empty());
-		*/		
-				
+		 * TODO LSOP-367 first intent to keep distributed query running, if a sink-part has been recovered. Not ready
+		 * for submission, yet. M.B. StringBuffer odScript = new StringBuffer(); odScript.append("#PARSER PQL\n");
+		 * odScript.append("#RUNQUERY\n"); odScript.append(pql); installedQueries =
+		 * cExecutor.get().addQuery(odScript.toString(), "OdysseusScript", session, Context.empty());
+		 */
+
 		installedQueries = cExecutor.get().addQuery(pql, "PQL", session, Context.empty());
+
+		// Save, that this is a shared query
+		cQueryPartController.get().registerAsSlave(installedQueries, sharedQueryId);
 
 		// TODO send success message
 
 		return installedQueries;
+	}
+
+	public static String getPQLFromRunningQuery(int queryId) {
+		Preconditions.checkArgument(cPQLGenerator.isPresent());
+
+		ILogicalQuery query = cExecutor.get().getLogicalQueryById(queryId, RecoveryCommunicator.getActiveSession());
+		String pql = cPQLGenerator.get().generatePQLStatement(query.getLogicalPlan());
+
+		return pql;
 	}
 
 	/**
@@ -202,10 +235,8 @@ public class RecoveryHelper {
 			return Optional.absent();
 		}
 
-		for (PeerID pid : RecoveryCommunicator.getPeerDictionary().get()
-				.getRemotePeerIDs()) {
-			if (RecoveryCommunicator.getPeerDictionary().get()
-					.getRemotePeerName(pid).equals(peerName)) {
+		for (PeerID pid : RecoveryCommunicator.getPeerDictionary().get().getRemotePeerIDs()) {
+			if (RecoveryCommunicator.getPeerDictionary().get().getRemotePeerName(pid).equals(peerName)) {
 				return Optional.of(pid);
 			}
 		}
@@ -220,13 +251,11 @@ public class RecoveryHelper {
 	 * @return Name of the peer
 	 */
 	public static String determinePeerName(PeerID peerId) {
-		return RecoveryCommunicator.getPeerDictionary().get()
-				.getRemotePeerName(peerId);
+		return RecoveryCommunicator.getPeerDictionary().get().getRemotePeerName(peerId);
 	}
 
 	/**
-	 * Get Physical JxtaOperator (Sender or Receiver) by PipeID. Copied from
-	 * LoadBalancingHelper
+	 * Get Physical JxtaOperator (Sender or Receiver) by PipeID. Copied from LoadBalancingHelper
 	 * 
 	 * @param lookForSender
 	 *            true if we look for a sender, false if we look for receiver.
@@ -234,16 +263,14 @@ public class RecoveryHelper {
 	 *            Pipe id of Sender we look for.
 	 * @return Operator (if found) or null.
 	 */
-	public static IPhysicalOperator getPhysicalJxtaOperator(
-			boolean lookForSender, String pipeID) {
+	public static IPhysicalOperator getPhysicalJxtaOperator(boolean lookForSender, String pipeID) {
 
 		if (!cExecutor.isPresent()) {
 			LOG.error("No executor bound!");
 			return null;
 		}
 
-		for (IPhysicalQuery query : cExecutor.get().getExecutionPlan()
-				.getQueries()) {
+		for (IPhysicalQuery query : cExecutor.get().getExecutionPlan().getQueries()) {
 			for (IPhysicalOperator operator : query.getAllOperators()) {
 				if (lookForSender) {
 					if (operator instanceof JxtaSenderPO) {
@@ -266,8 +293,7 @@ public class RecoveryHelper {
 	}
 
 	/**
-	 * Get Logical JxtaOperator (Sender or Receiver) by PipeID. Copied from
-	 * LoadBalancingHelper
+	 * Get Logical JxtaOperator (Sender or Receiver) by PipeID. Copied from LoadBalancingHelper
 	 * 
 	 * @param lookForSender
 	 *            true if we look for a sender, false if we look for receiver.
@@ -275,8 +301,7 @@ public class RecoveryHelper {
 	 *            Pipe id of Sender we look for.
 	 * @return Operator (if found) or null.
 	 */
-	public static ILogicalOperator getLogicalJxtaOperator(
-			boolean lookForSender, String pipeID) {
+	public static ILogicalOperator getLogicalJxtaOperator(boolean lookForSender, String pipeID) {
 
 		for (ILogicalQueryPart part : getInstalledQueryParts()) {
 			for (ILogicalOperator operator : part.getOperators()) {
@@ -304,8 +329,7 @@ public class RecoveryHelper {
 	}
 
 	/**
-	 * Get all currently Installed Queries as Query Parts. Copied from
-	 * LoadBalancingHelper
+	 * Get all currently Installed Queries as Query Parts. Copied from LoadBalancingHelper
 	 * 
 	 * @return List of installed LogicalQueryParts.
 	 */
@@ -322,8 +346,7 @@ public class RecoveryHelper {
 		ISession session = RecoveryCommunicator.getActiveSession();
 
 		for (int queryId : executor.getLogicalQueryIds(session)) {
-			ILogicalQuery query = executor
-					.getLogicalQueryById(queryId, session);
+			ILogicalQuery query = executor.getLogicalQueryById(queryId, session);
 
 			ArrayList<ILogicalOperator> operators = new ArrayList<ILogicalOperator>();
 			RestructHelper.collectOperators(query.getLogicalPlan(), operators);
@@ -334,8 +357,7 @@ public class RecoveryHelper {
 
 	/**
 	 * 
-	 * @return All JxtaSenderPOs which can be found in the execution plan on
-	 *         this peer
+	 * @return All JxtaSenderPOs which can be found in the execution plan on this peer
 	 */
 	public static List<JxtaSenderPO<?>> getJxtaSenders() {
 
@@ -346,8 +368,7 @@ public class RecoveryHelper {
 			return senders;
 		}
 
-		Iterator<IPhysicalQuery> queryIterator = cExecutor.get()
-				.getExecutionPlan().getQueries().iterator();
+		Iterator<IPhysicalQuery> queryIterator = cExecutor.get().getExecutionPlan().getQueries().iterator();
 		// Iterate through all queries we have installed
 		while (queryIterator.hasNext()) {
 			IPhysicalQuery query = queryIterator.next();
@@ -368,8 +389,7 @@ public class RecoveryHelper {
 
 	/**
 	 * 
-	 * @return A list of all RecoveryBufferPOs which are currently in the
-	 *         execution plan
+	 * @return A list of all RecoveryBufferPOs which are currently in the execution plan
 	 */
 	public static List<RecoveryBufferPO<?>> getRecoveryBuffers() {
 		List<RecoveryBufferPO<?>> buffers = new ArrayList<RecoveryBufferPO<?>>();
@@ -379,8 +399,7 @@ public class RecoveryHelper {
 			return buffers;
 		}
 
-		Iterator<IPhysicalQuery> queryIterator = cExecutor.get()
-				.getExecutionPlan().getQueries().iterator();
+		Iterator<IPhysicalQuery> queryIterator = cExecutor.get().getExecutionPlan().getQueries().iterator();
 		// Iterate through all queries we have installed
 		while (queryIterator.hasNext()) {
 			IPhysicalQuery query = queryIterator.next();
@@ -400,8 +419,7 @@ public class RecoveryHelper {
 	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public static List<ControllablePhysicalSubscription> getSubscriptions(
-			PipeID pipeId) {
+	public static List<ControllablePhysicalSubscription> getSubscriptions(PipeID pipeId) {
 		List<ControllablePhysicalSubscription> subscriptions = new ArrayList<ControllablePhysicalSubscription>();
 
 		if (!cExecutor.isPresent()) {
@@ -411,8 +429,7 @@ public class RecoveryHelper {
 
 		}
 
-		Iterator<IPhysicalQuery> queryIterator = cExecutor.get()
-				.getExecutionPlan().getQueries().iterator();
+		Iterator<IPhysicalQuery> queryIterator = cExecutor.get().getExecutionPlan().getQueries().iterator();
 		// Iterate through all queries we have installed
 		while (queryIterator.hasNext()) {
 			IPhysicalQuery query = queryIterator.next();
@@ -424,8 +441,7 @@ public class RecoveryHelper {
 				if (op instanceof JxtaSenderPO) {
 					JxtaSenderPO sender = (JxtaSenderPO) op;
 					if (sender.getPipeIDString().equals(pipeId.toString())) {
-						List<AbstractPhysicalSubscription> subs = sender
-								.getSubscribedToSource();
+						List<AbstractPhysicalSubscription> subs = sender.getSubscribedToSource();
 						for (AbstractPhysicalSubscription sub : subs) {
 							if (sub instanceof ControllablePhysicalSubscription) {
 								ControllablePhysicalSubscription subscription = (ControllablePhysicalSubscription) sub;
@@ -443,8 +459,7 @@ public class RecoveryHelper {
 	/**
 	 * 
 	 * @param pipeId
-	 * @return The buffer which is before the sender with the given pipeId.
-	 *         Null, if there is no such buffer.
+	 * @return The buffer which is before the sender with the given pipeId. Null, if there is no such buffer.
 	 */
 	public static RecoveryBufferPO<?> getRecoveryBuffer(PipeID pipeId) {
 		for (RecoveryBufferPO<?> buffer : getRecoveryBuffers()) {
@@ -455,8 +470,7 @@ public class RecoveryHelper {
 	}
 
 	/**
-	 * Inserts an operator between a sink and its sources on a specific port.
-	 * Copied from LoadBalancingHelper.
+	 * Inserts an operator between a sink and its sources on a specific port. Copied from LoadBalancingHelper.
 	 * 
 	 * @param sink
 	 *            Operator after operator to insert
@@ -466,24 +480,20 @@ public class RecoveryHelper {
 	 *            input port of sink
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public static void insertOperatorBefore(ISink sink,
-			AbstractPipe operatorToInsert, int port) {
+	public static void insertOperatorBefore(ISink sink, AbstractPipe operatorToInsert, int port) {
 
-		AbstractPhysicalSubscription subscription = (AbstractPhysicalSubscription) sink
-				.getSubscribedToSource(port);
+		AbstractPhysicalSubscription subscription = (AbstractPhysicalSubscription) sink.getSubscribedToSource(port);
 		ArrayList<IPhysicalOperator> emptyCallPath = new ArrayList<IPhysicalOperator>();
 
 		sink.unsubscribeFromSource(subscription);
-		operatorToInsert.subscribeToSource(subscription.getTarget(),
-				subscription.getSinkInPort(), subscription.getSourceOutPort(),
-				subscription.getSchema());
-		operatorToInsert.subscribeSink(sink, subscription.getSinkInPort(),
-				subscription.getSinkInPort(), subscription.getSchema(), true,
-				subscription.getOpenCalls());
+		operatorToInsert.subscribeToSource(subscription.getTarget(), subscription.getSinkInPort(),
+				subscription.getSourceOutPort(), subscription.getSchema());
+		operatorToInsert.subscribeSink(sink, subscription.getSinkInPort(), subscription.getSinkInPort(),
+				subscription.getSchema(), true, subscription.getOpenCalls());
 		operatorToInsert.setOutputSchema(subscription.getSchema());
 		operatorToInsert.addOwner(sink.getOwner());
-		operatorToInsert.open(sink, subscription.getSinkInPort(),
-				subscription.getSinkInPort(), emptyCallPath, sink.getOwner());
+		operatorToInsert.open(sink, subscription.getSinkInPort(), subscription.getSinkInPort(), emptyCallPath,
+				sink.getOwner());
 
 	}
 
@@ -491,20 +501,16 @@ public class RecoveryHelper {
 	 * Suspends or resumes the subscription to a sink.
 	 * 
 	 * @param sink
-	 *            The sink where the subscription goes to which has to be
-	 *            suspended
+	 *            The sink where the subscription goes to which has to be suspended
 	 * @param suspend
 	 *            true, if you want to suspend, false, if you want to resume
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public static void suspendOrResumeSink(ISink sink, boolean suspend)
-			throws Exception {
-		Collection<AbstractPhysicalSubscription> subscriptions = sink
-				.getSubscribedToSource();
+	public static void suspendOrResumeSink(ISink sink, boolean suspend) throws Exception {
+		Collection<AbstractPhysicalSubscription> subscriptions = sink.getSubscribedToSource();
 		for (AbstractPhysicalSubscription subscription : subscriptions) {
 			ISource test = ((ISource) subscription.getTarget());
-			Collection<AbstractPhysicalSubscription> col = test
-					.getSubscriptions();
+			Collection<AbstractPhysicalSubscription> col = test.getSubscriptions();
 			for (AbstractPhysicalSubscription sub : col) {
 				if (sub instanceof ControllablePhysicalSubscription) {
 					ControllablePhysicalSubscription controlSub = (ControllablePhysicalSubscription) sub;
@@ -544,8 +550,7 @@ public class RecoveryHelper {
 	}
 
 	/**
-	 * Resumes the buffer and goes on to send tuples over the JxtaSender with
-	 * the given pipeID
+	 * Resumes the buffer and goes on to send tuples over the JxtaSender with the given pipeID
 	 * 
 	 * @param pipeID
 	 *            The pipeID to search for
@@ -580,7 +585,7 @@ public class RecoveryHelper {
 	}
 
 	/**
-	 * Coverts a string to a peerID
+	 * Converts a string to a peerID
 	 * 
 	 * @param peerId
 	 *            The peerID as a string
@@ -621,12 +626,8 @@ public class RecoveryHelper {
 
 		try {
 
-			cmds = cPQLParser.get().parse(
-					pql,
-					RecoveryCommunicator.getActiveSession(),
-					DataDictionaryProvider
-							.getDataDictionary(RecoveryCommunicator
-									.getActiveSession().getTenant()),
+			cmds = cPQLParser.get().parse(pql, RecoveryCommunicator.getActiveSession(),
+					DataDictionaryProvider.getDataDictionary(RecoveryCommunicator.getActiveSession().getTenant()),
 					Context.empty());
 
 		} catch (QueryParseException e) {
@@ -655,9 +656,8 @@ public class RecoveryHelper {
 	}
 
 	/**
-	 * This method is deprecated. Try to use
-	 * {@link #convertToLogicalQueries(String)} if you just need the operators
-	 * and not exact the physical ones. <br />
+	 * This method is deprecated. Try to use {@link #convertToLogicalQueries(String)} if you just need the operators and
+	 * not exact the physical ones. <br />
 	 * 
 	 * Converts a PQL-String to a physical query.
 	 * 
@@ -668,59 +668,44 @@ public class RecoveryHelper {
 	@Deprecated
 	public static List<IPhysicalQuery> convertToPhysicalPlan(String pql) {
 
-		TransformationConfiguration trafoConfig = new TransformationConfiguration(
-				ITimeInterval.class.getName());
+		TransformationConfiguration trafoConfig = new TransformationConfiguration(ITimeInterval.class.getName());
 		trafoConfig.setVirtualTransformation(true);
 		List<IPhysicalQuery> physicalQueries = cExecutor
 				.get()
 				.getCompiler()
-				.translateAndTransformQuery(
-						pql,
-						"PQL",
-						RecoveryCommunicator.getActiveSession(),
-						DataDictionaryProvider
-								.getDataDictionary(RecoveryCommunicator
-										.getActiveSession().getTenant()),
+				.translateAndTransformQuery(pql, "PQL", RecoveryCommunicator.getActiveSession(),
+						DataDictionaryProvider.getDataDictionary(RecoveryCommunicator.getActiveSession().getTenant()),
 						trafoConfig, Context.empty());
 		return physicalQueries;
 	}
 
 	/**
-	 * Updates the local backup-information with the given new backup-PQL and
-	 * prepares a list with information for all the other peer which may have
-	 * interest in this information
+	 * Updates the local backup-information with the given new backup-PQL and prepares a list with information for all
+	 * the other peer which may have interest in this information
 	 * 
 	 * @param newBackupPQL
 	 * @param pipeId
 	 * @param sharedQueryId
 	 * @return
 	 */
-	public static List<IRecoveryBackupInformation> updateLocalPQL(
-			String newBackupPQL, PipeID pipeId, ID sharedQueryId) {
+	public static List<IRecoveryBackupInformation> updateLocalPQL(String newBackupPQL, PipeID pipeId, ID sharedQueryId) {
 		List<IRecoveryBackupInformation> infosToDistribute = new ArrayList<IRecoveryBackupInformation>();
 
-		ImmutableCollection<String> localPQLs = LocalBackupInformationAccess
-				.getLocalPQL(sharedQueryId);
+		ImmutableCollection<String> localPQLs = LocalBackupInformationAccess.getLocalPQL(sharedQueryId);
 		sharedQueryId.toString();
 		for (String localPQL : localPQLs) {
-			for (ILogicalQuery logicalQuery : RecoveryHelper
-					.convertToLogicalQueries(localPQL)) {
-				for (ILogicalOperator logicalOp : LogicalQueryHelper
-						.getAllOperators(logicalQuery.getLogicalPlan())) {
+			for (ILogicalQuery logicalQuery : RecoveryHelper.convertToLogicalQueries(localPQL)) {
+				for (ILogicalOperator logicalOp : LogicalQueryHelper.getAllOperators(logicalQuery.getLogicalPlan())) {
 					if (logicalOp instanceof JxtaReceiverAO) {
-						if (((JxtaReceiverAO) logicalOp).getPipeID().equals(
-								pipeId.toString())) {
+						if (((JxtaReceiverAO) logicalOp).getPipeID().equals(pipeId.toString())) {
 							// This is the information we search for
-							IRecoveryBackupInformation updatedInfo = LocalBackupInformationAccess
-									.updateLocalPQL(sharedQueryId, localPQL,
-											newBackupPQL);
+							IRecoveryBackupInformation updatedInfo = LocalBackupInformationAccess.updateLocalPQL(
+									sharedQueryId, localPQL, newBackupPQL);
 
 							// Distribute to other peers
 							IRecoveryBackupInformation infoToDistribute = new BackupInformation();
-							infoToDistribute.setSharedQuery(updatedInfo
-									.getSharedQuery());
-							infoToDistribute.setAboutPeer(RecoveryCommunicator
-									.getP2PNetworkManager().get()
+							infoToDistribute.setSharedQuery(updatedInfo.getSharedQuery());
+							infoToDistribute.setAboutPeer(RecoveryCommunicator.getP2PNetworkManager().get()
 									.getLocalPeerID());
 							infoToDistribute.setPQL(updatedInfo.getLocalPQL());
 
@@ -735,38 +720,31 @@ public class RecoveryHelper {
 	}
 
 	/**
-	 * Updates the local backup-information with the given new backup-PQL and
-	 * prepares a list with information for all the other peers which may have
-	 * interest in this information. In opposite to the same method with the
-	 * sharedQueryId this method searches within the whole backup-information,
-	 * hence it's less efficient
+	 * Updates the local backup-information with the given new backup-PQL and prepares a list with information for all
+	 * the other peers which may have interest in this information. In opposite to the same method with the
+	 * sharedQueryId this method searches within the whole backup-information, hence it's less efficient
 	 * 
 	 * @param newBackupPQL
 	 * @param pipeId
 	 * @return
 	 */
-	public static List<IRecoveryBackupInformation> updateLocalPQL(
-			String newBackupPQL, PipeID pipeId) {
+	public static List<IRecoveryBackupInformation> updateLocalPQL(String newBackupPQL, PipeID pipeId) {
 		List<IRecoveryBackupInformation> infosToDistribute = new ArrayList<IRecoveryBackupInformation>();
 		for (ID sharedQueryId : LocalBackupInformationAccess.getStoredIDs()) {
-			infosToDistribute.addAll(updateLocalPQL(newBackupPQL, pipeId,
-					sharedQueryId));
+			infosToDistribute.addAll(updateLocalPQL(newBackupPQL, pipeId, sharedQueryId));
 		}
 		return infosToDistribute;
 	}
 
 	/**
-	 * Finds an installed JxtaReceiverPO by the given PipeID (searches for a
-	 * JxtaReceiverPO with this pipeID)
+	 * Finds an installed JxtaReceiverPO by the given PipeID (searches for a JxtaReceiverPO with this pipeID)
 	 * 
 	 * @param pipeId
 	 *            The pipeId which identifies the JxtareceiverPO
-	 * @return The JxtaReceiverPO with the given pipeId or null, if such a
-	 *         receiver can't be found
+	 * @return The JxtaReceiverPO with the given pipeId or null, if such a receiver can't be found
 	 */
 	public static JxtaReceiverPO<?> findInstalledJxtaReceiverPO(PipeID pipeId) {
-		Collection<IPhysicalQuery> queries = cExecutor.get().getExecutionPlan()
-				.getQueries();
+		Collection<IPhysicalQuery> queries = cExecutor.get().getExecutionPlan().getQueries();
 		for (IPhysicalQuery query : queries) {
 			for (IPhysicalOperator op : query.getAllOperators()) {
 				if (op instanceof JxtaReceiverPO) {
@@ -781,28 +759,23 @@ public class RecoveryHelper {
 	}
 
 	/**
-	 * Searches for an installed query with an JxtaReceiverPO or JxtaSenderPO
-	 * which has this pipeId
+	 * Searches for an installed query with an JxtaReceiverPO or JxtaSenderPO which has this pipeId
 	 * 
 	 * @param pipeId
 	 *            The pipeId to search for in the JxtaReceiverPOs
 	 * @param searchForReceiver
-	 *            If true, this method will search for a receiver with the given
-	 *            pipeId, if false, for a sender
+	 *            If true, this method will search for a receiver with the given pipeId, if false, for a sender
 	 * @return The query with an JxtaReceicerPO with the given pipeId
 	 */
 	@SuppressWarnings("rawtypes")
-	public static IPhysicalQuery findInstalledQueryWithJxtaOperator(
-			PipeID pipeId, boolean searchForReceiver) {
-		Collection<IPhysicalQuery> queries = cExecutor.get().getExecutionPlan()
-				.getQueries();
+	public static IPhysicalQuery findInstalledQueryWithJxtaOperator(PipeID pipeId, boolean searchForReceiver) {
+		Collection<IPhysicalQuery> queries = cExecutor.get().getExecutionPlan().getQueries();
 		for (IPhysicalQuery query : queries) {
 			for (IPhysicalOperator op : query.getAllOperators()) {
 				if (searchForReceiver) {
 					if (op instanceof JxtaReceiverPO) {
 						JxtaReceiverPO receiver = (JxtaReceiverPO) op;
-						if (receiver.getPipeIDString()
-								.equals(pipeId.toString())) {
+						if (receiver.getPipeIDString().equals(pipeId.toString())) {
 							return query;
 						}
 					}

@@ -217,6 +217,7 @@ public class QueryPartController implements IPlanModificationListener, IPeerComm
 		}
 	}
 
+	@Override
 	public void registerAsMaster(ILogicalQuery query, int queryID, final ID sharedQueryID, Collection<PeerID> otherPeers) {
 		Preconditions.checkNotNull(query, "Logical query must not be null!");
 		Preconditions.checkNotNull(sharedQueryID, "sharedQueryID must not be null!");
@@ -228,6 +229,7 @@ public class QueryPartController implements IPlanModificationListener, IPeerComm
 		LOG.debug("Registered sharedqueryID as master : {}", sharedQueryID);
 	}
 
+	@Override
 	public void registerAsSlave(Collection<Integer> ids, ID sharedQueryID) {
 		Preconditions.checkNotNull(ids, "List of logical query ids must not be null!");
 		Preconditions.checkNotNull(sharedQueryID, "sharedQueryID must not be null!");

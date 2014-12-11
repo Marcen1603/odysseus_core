@@ -22,9 +22,7 @@ import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicator;
 import de.uniol.inf.is.odysseus.p2p_new.PeerCommunicationException;
 import de.uniol.inf.is.odysseus.p2p_new.physicaloperator.JxtaReceiverPO;
 import de.uniol.inf.is.odysseus.p2p_new.physicaloperator.JxtaSenderPO;
-import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryBackupInformation;
 import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryCommunicator;
-import de.uniol.inf.is.odysseus.peer.recovery.internal.BackupInformation;
 import de.uniol.inf.is.odysseus.peer.recovery.messages.RecoveryAddQueryMessage;
 import de.uniol.inf.is.odysseus.peer.recovery.messages.RecoveryAddQueryResponseMessage;
 import de.uniol.inf.is.odysseus.peer.recovery.util.LocalBackupInformationAccess;
@@ -264,7 +262,7 @@ public class AddQueryReceiver extends AbstractRepeatingMessageReceiver {
 			throw new IllegalArgumentException("No recovery communicator bound!");
 		}
 
-		Collection<Integer> installedQueries = RecoveryHelper.installAndRunQueryPartFromPql(pql);
+		Collection<Integer> installedQueries = RecoveryHelper.installAndRunQueryPartFromPql(pql, sharedQueryId);
 		if (installedQueries == null || installedQueries.size() == 0) {
 			throw new IllegalArgumentException("Installing QueryPart on Peer failed. Searching for other peers.");
 		}
@@ -317,12 +315,7 @@ public class AddQueryReceiver extends AbstractRepeatingMessageReceiver {
 		}
 
 		// Add this info to the local-backup-info
-		IRecoveryBackupInformation backupInfo = new BackupInformation();
-		backupInfo.setSharedQuery(sharedQueryId);
-		backupInfo.setLocalPQL(pql);
-		backupInfo.setLocationPeer(cP2PNetworkManager.get().getLocalPeerID());
-		backupInfo.setPQL("");
-		LocalBackupInformationAccess.getStore().add(backupInfo);
+		LocalBackupInformationAccess.addLocalPQL(sharedQueryId, pql);
 
 		// TODO Test this. For now, we always need a buddy, cause the previous peers won't have updated
 		// backup-information.
