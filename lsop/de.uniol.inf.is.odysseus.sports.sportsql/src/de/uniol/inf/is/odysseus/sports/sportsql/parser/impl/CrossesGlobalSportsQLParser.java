@@ -22,7 +22,7 @@ import de.uniol.inf.is.odysseus.sports.sportsql.parser.SportsQLParseException;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.SportsQLQuery;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.annotations.SportsQL;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.buildhelper.OperatorBuildHelper;
-import de.uniol.inf.is.odysseus.sports.sportsql.parser.buildhelper.SoccerGameAttributes;
+import de.uniol.inf.is.odysseus.sports.sportsql.parser.buildhelper.IntermediateSchemaAttributes;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.buildhelper.SportsQLParameterHelper;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.ddcaccess.AbstractSportsDDCAccess;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.enums.GameType;
@@ -89,7 +89,7 @@ public class CrossesGlobalSportsQLParser implements ISportsQLParser{
 //			]}, ball_in_game_field)
 		
 		ArrayList<SDFExpressionParameter> expressions = new ArrayList<SDFExpressionParameter>();
-		expressions.add(OperatorBuildHelper.createExpressionParameter(SoccerGameAttributes.TS, "cts", selectBallInField));
+		expressions.add(OperatorBuildHelper.createExpressionParameter(IntermediateSchemaAttributes.TS, "cts", selectBallInField));
 		expressions.add(OperatorBuildHelper
 				.createExpressionParameter("eif((x < " + CENTER_LINE
 						+ ") AND ((y < " + CROSSINGZONE_RIGHT_SIDE + ") OR (y > "
@@ -130,7 +130,7 @@ public class CrossesGlobalSportsQLParser implements ISportsQLParser{
 //			]}, ball_in_game_field)
 		
 		expressions = new ArrayList<>();
-		expressions.add(OperatorBuildHelper.createExpressionParameter(SoccerGameAttributes.TS, "cross_ball_ts", selectBallInField));
+		expressions.add(OperatorBuildHelper.createExpressionParameter(IntermediateSchemaAttributes.TS, "cross_ball_ts", selectBallInField));
 		
 		expressions.add(OperatorBuildHelper.createExpressionParameter("eif( (x <" + TARGETZONE_LEFT_HALF + ") AND ( y > " + CROSSINGZONE_RIGHT_SIDE +") AND (y <" + CROSSINGZONE_LEFT_SIDE +") AND (z >" + MIN_BALL_HEIGHT +"),1,0)","in_target_zone_left", selectBallInField));
 		expressions.add(OperatorBuildHelper.createExpressionParameter("eif( (x >" + TARGETZONE_RIGHT_HALF + ") AND ( y > " + CROSSINGZONE_RIGHT_SIDE +") AND (y <" + CROSSINGZONE_LEFT_SIDE +") AND (z >" + MIN_BALL_HEIGHT +"),1,0)","in_target_zone_right", selectBallInField));

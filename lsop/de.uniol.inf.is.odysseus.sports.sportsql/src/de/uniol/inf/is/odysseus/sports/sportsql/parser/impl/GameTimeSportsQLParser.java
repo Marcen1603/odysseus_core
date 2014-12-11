@@ -17,7 +17,7 @@ import de.uniol.inf.is.odysseus.sports.sportsql.parser.SportsQLQuery;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.annotations.SportsQL;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.annotations.SportsQLParameter;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.buildhelper.OperatorBuildHelper;
-import de.uniol.inf.is.odysseus.sports.sportsql.parser.buildhelper.SoccerGameAttributes;
+import de.uniol.inf.is.odysseus.sports.sportsql.parser.buildhelper.IntermediateSchemaAttributes;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.ddcaccess.AbstractSportsDDCAccess;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.enums.GameType;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.enums.StatisticType;
@@ -65,8 +65,8 @@ public class GameTimeSportsQLParser implements ISportsQLParser {
 			String endts = getEndTimestamp(sportsQL);
 
 			List<String> gameTimeSelectPredicates = new ArrayList<String>();
-			gameTimeSelectPredicates.add(SoccerGameAttributes.TS + ">= " + startts);
-			gameTimeSelectPredicates.add(SoccerGameAttributes.TS + "<= " + endts);
+			gameTimeSelectPredicates.add(IntermediateSchemaAttributes.TS + ">= " + startts);
+			gameTimeSelectPredicates.add(IntermediateSchemaAttributes.TS + "<= " + endts);
 
 			gameTimeSelect = OperatorBuildHelper.createSelectAO(gameTimeSelectPredicates, soccerGameStreamAO);
 			allOperators.add(gameTimeSelect);

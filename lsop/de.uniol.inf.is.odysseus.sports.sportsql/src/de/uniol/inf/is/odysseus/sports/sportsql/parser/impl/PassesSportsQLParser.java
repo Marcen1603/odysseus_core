@@ -22,9 +22,10 @@ import de.uniol.inf.is.odysseus.peer.ddc.MissingDDCEntryException;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.SportsQLParseException;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.SportsQLQuery;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.buildhelper.OperatorBuildHelper;
-import de.uniol.inf.is.odysseus.sports.sportsql.parser.buildhelper.SoccerGameAttributes;
+import de.uniol.inf.is.odysseus.sports.sportsql.parser.buildhelper.IntermediateSchemaAttributes;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.buildhelper.SportsQLParameterHelper;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.ddcaccess.AbstractSportsDDCAccess;
+import de.uniol.inf.is.odysseus.sports.sportsql.parser.ddcaccess.SoccerDDCAccess;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.helper.SpaceUnitHelper;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.model.Space;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.parameter.ISportsQLParameter;
@@ -100,7 +101,7 @@ public class PassesSportsQLParser {
 			List<ILogicalOperator> allOperators) throws SportsQLParseException,
 			NumberFormatException, MissingDDCEntryException {
 
-StreamAO soccerGameStreamAO = OperatorBuildHelper.createGameStreamAO(session);
+		StreamAO soccerGameStreamAO = OperatorBuildHelper.createGameStreamAO(session);
 		
 		// 1. Time Parameter
 		SportsQLTimeParameter timeParameter = SportsQLParameterHelper.getTimeParameter(sportsQL);
@@ -114,10 +115,10 @@ StreamAO soccerGameStreamAO = OperatorBuildHelper.createGameStreamAO(session);
 
 		// 3. Create ball position map
 		ArrayList<SDFExpressionParameter> ballPosExpressions = new ArrayList<SDFExpressionParameter>();
-		ballPosExpressions.add(OperatorBuildHelper.createExpressionParameter(SoccerGameAttributes.TS, ATTRIBUTE_BALL_TS, splitSoccerDataRoute));
-		ballPosExpressions.add(OperatorBuildHelper.createExpressionParameter(SoccerGameAttributes.X, ATTRIBUTE_BALL_X, splitSoccerDataRoute));
-		ballPosExpressions.add(OperatorBuildHelper.createExpressionParameter(SoccerGameAttributes.Y, ATTRIBUTE_BALL_Y, splitSoccerDataRoute));
-		ballPosExpressions.add(OperatorBuildHelper.createExpressionParameter(SoccerGameAttributes.Z, ATTRIBUTE_BALL_Z, splitSoccerDataRoute));
+		ballPosExpressions.add(OperatorBuildHelper.createExpressionParameter(IntermediateSchemaAttributes.TS, ATTRIBUTE_BALL_TS, splitSoccerDataRoute));
+		ballPosExpressions.add(OperatorBuildHelper.createExpressionParameter(IntermediateSchemaAttributes.X, ATTRIBUTE_BALL_X, splitSoccerDataRoute));
+		ballPosExpressions.add(OperatorBuildHelper.createExpressionParameter(IntermediateSchemaAttributes.Y, ATTRIBUTE_BALL_Y, splitSoccerDataRoute));
+		ballPosExpressions.add(OperatorBuildHelper.createExpressionParameter(IntermediateSchemaAttributes.Z, ATTRIBUTE_BALL_Z, splitSoccerDataRoute));
 
 		MapAO ballPosMap = OperatorBuildHelper.createMapAO(ballPosExpressions, splitSoccerDataRoute, 0, 0, false);
 		allOperators.add(ballPosMap);
@@ -128,11 +129,11 @@ StreamAO soccerGameStreamAO = OperatorBuildHelper.createGameStreamAO(session);
 
 		// 5.  Create player position map
 		ArrayList<SDFExpressionParameter> playerPosExpressions = new ArrayList<SDFExpressionParameter>();
-		playerPosExpressions.add(OperatorBuildHelper.createExpressionParameter(SoccerGameAttributes.ENTITY_ID,ATTRIBUTE_PLAYER_ENTITY_ID, splitSoccerDataRoute));
-		playerPosExpressions.add(OperatorBuildHelper.createExpressionParameter(SoccerGameAttributes.TEAM_ID,ATTRIBUTE_PLAYER_TEAM_ID, splitSoccerDataRoute));
-		playerPosExpressions.add(OperatorBuildHelper.createExpressionParameter(SoccerGameAttributes.X, ATTRIBUTE_PLAYER_X, splitSoccerDataRoute));
-		playerPosExpressions.add(OperatorBuildHelper.createExpressionParameter(SoccerGameAttributes.Y, ATTRIBUTE_PLAYER_Y, splitSoccerDataRoute));
-		playerPosExpressions.add(OperatorBuildHelper.createExpressionParameter(SoccerGameAttributes.Z, ATTRIBUTE_PLAYER_Z, splitSoccerDataRoute));
+		playerPosExpressions.add(OperatorBuildHelper.createExpressionParameter(IntermediateSchemaAttributes.ENTITY_ID,ATTRIBUTE_PLAYER_ENTITY_ID, splitSoccerDataRoute));
+		playerPosExpressions.add(OperatorBuildHelper.createExpressionParameter(IntermediateSchemaAttributes.TEAM_ID,ATTRIBUTE_PLAYER_TEAM_ID, splitSoccerDataRoute));
+		playerPosExpressions.add(OperatorBuildHelper.createExpressionParameter(IntermediateSchemaAttributes.X, ATTRIBUTE_PLAYER_X, splitSoccerDataRoute));
+		playerPosExpressions.add(OperatorBuildHelper.createExpressionParameter(IntermediateSchemaAttributes.Y, ATTRIBUTE_PLAYER_Y, splitSoccerDataRoute));
+		playerPosExpressions.add(OperatorBuildHelper.createExpressionParameter(IntermediateSchemaAttributes.Z, ATTRIBUTE_PLAYER_Z, splitSoccerDataRoute));
 		
 		MapAO playerPosMap = OperatorBuildHelper.createMapAO(playerPosExpressions, splitSoccerDataRoute, 0, 1, false);
 		allOperators.add(playerPosMap);
@@ -253,13 +254,10 @@ StreamAO soccerGameStreamAO = OperatorBuildHelper.createGameStreamAO(session);
 		passesResultsStateMapExpressions.add(OperatorBuildHelper.createExpressionParameter(ATTRIBUTE_PLAYER_TEAM_ID+"_2", ATTRIBUTE_PLAYER_TEAM_ID+"_2", passesDetailsStateMap));
 		passesResultsStateMapExpressions.add(OperatorBuildHelper.createExpressionParameter(ATTRIBUTE_PASS_DISTANCE, ATTRIBUTE_PASS_DISTANCE, passesDetailsStateMap));
 
+		int leftgoalteamId = SoccerDDCAccess.getLeftGoalTeamId();
 		
-		// Specifies in which direction the teams play
-		// TODO Find a better way to determine this (e.g. with the metadata stream)
-		int teamIdLeftGoal = 1;
-				
 		// pass direction is dependent on pass angle and in which direction the teams play
-		passesResultsStateMapExpressions.add(OperatorBuildHelper.createExpressionParameter("eif("+ATTRIBUTE_PASS_ANGLE+" >= "+FORWARD_A_1+" AND "+ATTRIBUTE_PASS_ANGLE+" <= "+FORWARD_A_2+" , eif("+ATTRIBUTE_PLAYER_TEAM_ID+"_1 = "+teamIdLeftGoal+",'"+FORWARDS_PASS+"','"+BACK_PASS+"'), eif(("+ATTRIBUTE_PASS_ANGLE+" >= "+CROSS_A_1+" AND "+ATTRIBUTE_PASS_ANGLE+" <= "+CROSS_A_2+") OR ("+ATTRIBUTE_PASS_ANGLE+" <= "+CROSS_A_3+" AND "+ATTRIBUTE_PASS_ANGLE+" >= "+CROSS_A_4+"), '"+CROSS_PASS+"', eif("+ATTRIBUTE_PLAYER_TEAM_ID+"_1 = "+teamIdLeftGoal+",'"+BACK_PASS+"','"+FORWARDS_PASS+"')))", ATTRIBUTE_PASS_DIRECTION, passesDetailsStateMap));
+		passesResultsStateMapExpressions.add(OperatorBuildHelper.createExpressionParameter("eif("+ATTRIBUTE_PASS_ANGLE+" >= "+FORWARD_A_1+" AND "+ATTRIBUTE_PASS_ANGLE+" <= "+FORWARD_A_2+" , eif("+ATTRIBUTE_PLAYER_TEAM_ID+"_1 = "+leftgoalteamId+",'"+BACK_PASS+"','"+FORWARDS_PASS+"'), eif(("+ATTRIBUTE_PASS_ANGLE+" >= "+CROSS_A_1+" AND "+ATTRIBUTE_PASS_ANGLE+" <= "+CROSS_A_2+") OR ("+ATTRIBUTE_PASS_ANGLE+" <= "+CROSS_A_3+" AND "+ATTRIBUTE_PASS_ANGLE+" >= "+CROSS_A_4+"), '"+CROSS_PASS+"', eif("+ATTRIBUTE_PLAYER_TEAM_ID+"_1 = "+leftgoalteamId+",'"+FORWARDS_PASS+"','"+BACK_PASS+"')))", ATTRIBUTE_PASS_DIRECTION, passesDetailsStateMap));
 				
 		// Long pass if distance > MAX_DISTANCE_SHORT_PASS, otherwise short pass
 		passesResultsStateMapExpressions.add(OperatorBuildHelper.createExpressionParameter("eif("+ATTRIBUTE_PASS_DISTANCE+" > "+MAX_DISTANCE_SHORT_PASS+" ,'"+LONG_PASS+"' ,'"+SHORT_PASS+"')", ATTRIBUTE_PASS_LENGTH, passesDetailsStateMap));
@@ -428,7 +426,7 @@ StreamAO soccerGameStreamAO = OperatorBuildHelper.createGameStreamAO(session);
 		Iterator<Integer> ballSensorIterator = AbstractSportsDDCAccess.getBallEntityIds().iterator();
 		while(ballSensorIterator.hasNext()) {
 			int sensorId = ballSensorIterator.next();
-			predicateSb.append(SoccerGameAttributes.ENTITY_ID + " = " + sensorId);
+			predicateSb.append(IntermediateSchemaAttributes.ENTITY_ID + " = " + sensorId);
 			if(ballSensorIterator.hasNext()) {
 				predicateSb.append(" OR ");
 			}

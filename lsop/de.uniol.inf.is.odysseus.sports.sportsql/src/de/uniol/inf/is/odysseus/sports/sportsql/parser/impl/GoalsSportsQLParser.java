@@ -21,7 +21,7 @@ import de.uniol.inf.is.odysseus.sports.sportsql.parser.SportsQLParseException;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.SportsQLQuery;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.annotations.SportsQL;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.buildhelper.OperatorBuildHelper;
-import de.uniol.inf.is.odysseus.sports.sportsql.parser.buildhelper.SoccerGameAttributes;
+import de.uniol.inf.is.odysseus.sports.sportsql.parser.buildhelper.IntermediateSchemaAttributes;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.ddcaccess.AbstractSportsDDCAccess;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.ddcaccess.SoccerDDCAccess;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.enums.GameType;
@@ -53,7 +53,7 @@ public class GoalsSportsQLParser implements ISportsQLParser {
 		// get only ball
 		List<IPredicate> ballPredicates = new ArrayList<IPredicate>();
 		for(int entityId : AbstractSportsDDCAccess.getBallEntityIds()) {
-			IPredicate ballPredicate = OperatorBuildHelper.createRelationalPredicate(SoccerGameAttributes.ENTITY_ID + " = " + entityId);
+			IPredicate ballPredicate = OperatorBuildHelper.createRelationalPredicate(IntermediateSchemaAttributes.ENTITY_ID + " = " + entityId);
 			ballPredicates.add(ballPredicate);
 		}		
 		

@@ -10,7 +10,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.SDFExpressio
 import de.uniol.inf.is.odysseus.peer.ddc.MissingDDCEntryException;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.SportsQLQuery;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.buildhelper.OperatorBuildHelper;
-import de.uniol.inf.is.odysseus.sports.sportsql.parser.buildhelper.SoccerGameAttributes;
+import de.uniol.inf.is.odysseus.sports.sportsql.parser.buildhelper.IntermediateSchemaAttributes;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.buildhelper.SportsQLParameterHelper;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.ddcaccess.AbstractSportsDDCAccess;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.helper.TimeUnitHelper;
@@ -227,39 +227,39 @@ public class BallContactGlobalOutput {
 	private StateMapAO addXVYVZV(ILogicalOperator source) throws MissingDDCEntryException{
 		List<SDFExpressionParameter> statemapExpressions = new ArrayList<SDFExpressionParameter>();
 		statemapExpressions.add(OperatorBuildHelper.createExpressionParameter(
-				SoccerGameAttributes.ENTITY_ID, source));
+				IntermediateSchemaAttributes.ENTITY_ID, source));
 		statemapExpressions.add(OperatorBuildHelper.createExpressionParameter(
 				OperatorBuildHelper.ATTRIBUTE_MINUTE, source));
 		statemapExpressions.add(OperatorBuildHelper.createExpressionParameter(
 				OperatorBuildHelper.ATTRIBUTE_SECOND, source));
 		statemapExpressions.add(OperatorBuildHelper.createExpressionParameter(
-				SoccerGameAttributes.X, source));
+				IntermediateSchemaAttributes.X, source));
 		statemapExpressions.add(OperatorBuildHelper.createExpressionParameter(
-				SoccerGameAttributes.Y, source));
+				IntermediateSchemaAttributes.Y, source));
 		statemapExpressions.add(OperatorBuildHelper.createExpressionParameter(
-				SoccerGameAttributes.Z, source));
+				IntermediateSchemaAttributes.Z, source));
 		statemapExpressions.add(OperatorBuildHelper.createExpressionParameter(
-				SoccerGameAttributes.V, source));
+				IntermediateSchemaAttributes.V, source));
 		statemapExpressions.add(OperatorBuildHelper.createExpressionParameter(
-				SoccerGameAttributes.A, source));
+				IntermediateSchemaAttributes.A, source));
 		statemapExpressions.add(OperatorBuildHelper.createExpressionParameter(
-				SoccerGameAttributes.TS, source));
+				IntermediateSchemaAttributes.TS, source));
 		statemapExpressions.add(OperatorBuildHelper.createExpressionParameter(
-				SoccerGameAttributes.TEAM_ID, source));
+				IntermediateSchemaAttributes.TEAM_ID, source));
 		
 		// new attributes
 		statemapExpressions.add(OperatorBuildHelper.createExpressionParameter(
-				"(" + SoccerGameAttributes.X + "/1000) / ((" + SoccerGameAttributes.TS + "- __last_1." + SoccerGameAttributes.TS + ")/" + TimeUnitHelper.getBTUtoSecondsFactor(TimeUnit.valueOf(AbstractSportsDDCAccess.getBasetimeunit().toLowerCase())) + ")",
+				"(" + IntermediateSchemaAttributes.X + "/1000) / ((" + IntermediateSchemaAttributes.TS + "- __last_1." + IntermediateSchemaAttributes.TS + ")/" + TimeUnitHelper.getBTUtoSecondsFactor(TimeUnit.valueOf(AbstractSportsDDCAccess.getBasetimeunit().toLowerCase())) + ")",
 				ATTRIBUTE_VX, source));
 		statemapExpressions.add(OperatorBuildHelper.createExpressionParameter(
-				"(" + SoccerGameAttributes.Y + "/1000) / ((" + SoccerGameAttributes.TS + "- __last_1." + SoccerGameAttributes.TS + ")/" + TimeUnitHelper.getBTUtoSecondsFactor(TimeUnit.valueOf(AbstractSportsDDCAccess.getBasetimeunit().toLowerCase())) + ")",
+				"(" + IntermediateSchemaAttributes.Y + "/1000) / ((" + IntermediateSchemaAttributes.TS + "- __last_1." + IntermediateSchemaAttributes.TS + ")/" + TimeUnitHelper.getBTUtoSecondsFactor(TimeUnit.valueOf(AbstractSportsDDCAccess.getBasetimeunit().toLowerCase())) + ")",
 				ATTRIBUTE_VY, source));
 		statemapExpressions.add(OperatorBuildHelper.createExpressionParameter(
-				"(" + SoccerGameAttributes.Z + "/1000) / ((" + SoccerGameAttributes.TS + "- __last_1." + SoccerGameAttributes.TS + ")/" + TimeUnitHelper.getBTUtoSecondsFactor(TimeUnit.valueOf(AbstractSportsDDCAccess.getBasetimeunit().toLowerCase())) + ")",
+				"(" + IntermediateSchemaAttributes.Z + "/1000) / ((" + IntermediateSchemaAttributes.TS + "- __last_1." + IntermediateSchemaAttributes.TS + ")/" + TimeUnitHelper.getBTUtoSecondsFactor(TimeUnit.valueOf(AbstractSportsDDCAccess.getBasetimeunit().toLowerCase())) + ")",
 				ATTRIBUTE_VZ, source));
 		
 		StateMapAO addAttributesStateMapAO = OperatorBuildHelper
-				.createStateMapAO(statemapExpressions, SoccerGameAttributes.ENTITY_ID, source);
+				.createStateMapAO(statemapExpressions, IntermediateSchemaAttributes.ENTITY_ID, source);
 		return addAttributesStateMapAO;
 	}
 }

@@ -28,9 +28,8 @@ import de.uniol.inf.is.odysseus.sports.sportsql.parser.SportsQLParseException;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.SportsQLQuery;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.annotations.SportsQL;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.annotations.SportsQLParameter;
-import de.uniol.inf.is.odysseus.sports.sportsql.parser.buildhelper.MetadataAttributes;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.buildhelper.OperatorBuildHelper;
-import de.uniol.inf.is.odysseus.sports.sportsql.parser.buildhelper.SoccerGameAttributes;
+import de.uniol.inf.is.odysseus.sports.sportsql.parser.buildhelper.IntermediateSchemaAttributes;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.buildhelper.SportsQLParameterHelper;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.ddcaccess.AbstractSportsDDCAccess;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.enums.GameType;
@@ -109,11 +108,11 @@ public class SprintsPlayerSportsQLParser implements ISportsQLParser {
 
 		// 2. GameStream: Project
 		List<String> streamAttributes = new ArrayList<String>();
-		streamAttributes.add(SoccerGameAttributes.ENTITY_ID);
+		streamAttributes.add(IntermediateSchemaAttributes.ENTITY_ID);
 		streamAttributes.add(ATTRIBUTE_second);
-		streamAttributes.add(SoccerGameAttributes.X);
-		streamAttributes.add(SoccerGameAttributes.Y);
-		streamAttributes.add(SoccerGameAttributes.V);
+		streamAttributes.add(IntermediateSchemaAttributes.X);
+		streamAttributes.add(IntermediateSchemaAttributes.Y);
+		streamAttributes.add(IntermediateSchemaAttributes.V);
 
 		ProjectAO streamProject = OperatorBuildHelper.createProjectAO(
 				streamAttributes, gameTimeSelect);
@@ -126,16 +125,16 @@ public class SprintsPlayerSportsQLParser implements ISportsQLParser {
 
 		// 4. Enrich
 		EnrichAO dataStreamEnrichAO = OperatorBuildHelper.createEnrichAO(
-				SoccerGameAttributes.ENTITY_ID + "=" + MetadataAttributes.SENSOR_ID,
+				IntermediateSchemaAttributes.ENTITY_ID + "= sid",
 				streamProject, metadataSelect);
 		allOperators.add(dataStreamEnrichAO);
 
 		// 5. Project
 		List<String> streamAttributes2 = new ArrayList<String>();
 		streamAttributes2.add(ATTRIBUTE_second);
-		streamAttributes2.add(SoccerGameAttributes.X);
-		streamAttributes2.add(SoccerGameAttributes.Y);
-		streamAttributes2.add(SoccerGameAttributes.V);
+		streamAttributes2.add(IntermediateSchemaAttributes.X);
+		streamAttributes2.add(IntermediateSchemaAttributes.Y);
+		streamAttributes2.add(IntermediateSchemaAttributes.V);
 
 		ProjectAO streamProject2 = OperatorBuildHelper.createProjectAO(
 				streamAttributes2, dataStreamEnrichAO);
@@ -155,16 +154,16 @@ public class SprintsPlayerSportsQLParser implements ISportsQLParser {
 		functions.add("LAST");
 
 		List<String> inputAttributeNames = new ArrayList<String>();
-		inputAttributeNames.add(SoccerGameAttributes.V);
+		inputAttributeNames.add(IntermediateSchemaAttributes.V);
 		inputAttributeNames.add(ATTRIBUTE_second);
-		inputAttributeNames.add(SoccerGameAttributes.X);
-		inputAttributeNames.add(SoccerGameAttributes.Y);
+		inputAttributeNames.add(IntermediateSchemaAttributes.X);
+		inputAttributeNames.add(IntermediateSchemaAttributes.Y);
 
 		List<String> outputAttributeNames = new ArrayList<String>();
-		outputAttributeNames.add(SoccerGameAttributes.V);
+		outputAttributeNames.add(IntermediateSchemaAttributes.V);
 		outputAttributeNames.add(ATTRIBUTE_second);
-		outputAttributeNames.add(SoccerGameAttributes.X);
-		outputAttributeNames.add(SoccerGameAttributes.Y);
+		outputAttributeNames.add(IntermediateSchemaAttributes.X);
+		outputAttributeNames.add(IntermediateSchemaAttributes.Y);
 
 		AggregateAO aggregate = OperatorBuildHelper.createAggregateAO(
 				functions, null, inputAttributeNames, outputAttributeNames,
@@ -176,11 +175,11 @@ public class SprintsPlayerSportsQLParser implements ISportsQLParser {
 		mapExpressions.add(OperatorBuildHelper.createExpressionParameter(
 				ATTRIBUTE_second, aggregate));
 		mapExpressions.add(OperatorBuildHelper.createExpressionParameter("v / "
-				+ MICROMS_TO_KMH_FACTOR, SoccerGameAttributes.V, aggregate));
+				+ MICROMS_TO_KMH_FACTOR, IntermediateSchemaAttributes.V, aggregate));
 		mapExpressions.add(OperatorBuildHelper.createExpressionParameter(
-				SoccerGameAttributes.X, aggregate));
+				IntermediateSchemaAttributes.X, aggregate));
 		mapExpressions.add(OperatorBuildHelper.createExpressionParameter(
-				SoccerGameAttributes.Y, aggregate));
+				IntermediateSchemaAttributes.Y, aggregate));
 
 		MapAO toKmhMap = OperatorBuildHelper.createMapAO(mapExpressions,
 				aggregate, 0, 0, false);
@@ -191,77 +190,77 @@ public class SprintsPlayerSportsQLParser implements ISportsQLParser {
 		statemapExpressions.add(OperatorBuildHelper.createExpressionParameter(
 				ATTRIBUTE_second, toKmhMap));
 		statemapExpressions.add(OperatorBuildHelper.createExpressionParameter(
-				SoccerGameAttributes.V, toKmhMap));
+				IntermediateSchemaAttributes.V, toKmhMap));
 		statemapExpressions.add(OperatorBuildHelper.createExpressionParameter(
-				SoccerGameAttributes.X, toKmhMap));
+				IntermediateSchemaAttributes.X, toKmhMap));
 		statemapExpressions.add(OperatorBuildHelper.createExpressionParameter(
-				SoccerGameAttributes.Y, toKmhMap));
+				IntermediateSchemaAttributes.Y, toKmhMap));
 		statemapExpressions.add(OperatorBuildHelper.createExpressionParameter(
-				"eif(" + SoccerGameAttributes.V + " <= "
+				"eif(" + IntermediateSchemaAttributes.V + " <= "
 						+ STANDING_SPEED_UPPERBORDER + ", 1, 0)",
 				"Standing_Time", toKmhMap));
 		statemapExpressions.add(OperatorBuildHelper.createExpressionParameter(
-				"eif(" + SoccerGameAttributes.V + " <= "
+				"eif(" + IntermediateSchemaAttributes.V + " <= "
 						+ STANDING_SPEED_UPPERBORDER + ", "
-						+ SoccerGameAttributes.V + " /3.6, 0)",
+						+ IntermediateSchemaAttributes.V + " /3.6, 0)",
 				"Standing_Distance", toKmhMap));
 		statemapExpressions.add(OperatorBuildHelper.createExpressionParameter(
-				"eif(" + SoccerGameAttributes.V + " > "
+				"eif(" + IntermediateSchemaAttributes.V + " > "
 						+ STANDING_SPEED_UPPERBORDER + " AND "
-						+ SoccerGameAttributes.V + " <= "
+						+ IntermediateSchemaAttributes.V + " <= "
 						+ TROT_SPEED_UPPERBORDER + ", 1, 0)", "Trot_Time",
 				toKmhMap));
 		statemapExpressions.add(OperatorBuildHelper.createExpressionParameter(
-				"eif(" + SoccerGameAttributes.V + " > "
+				"eif(" + IntermediateSchemaAttributes.V + " > "
 						+ STANDING_SPEED_UPPERBORDER + " AND "
-						+ SoccerGameAttributes.V + " <= "
+						+ IntermediateSchemaAttributes.V + " <= "
 						+ TROT_SPEED_UPPERBORDER + ", "
-						+ SoccerGameAttributes.V + " /3.6, 0)",
+						+ IntermediateSchemaAttributes.V + " /3.6, 0)",
 				"Trot_Distance", toKmhMap));
 		statemapExpressions.add(OperatorBuildHelper.createExpressionParameter(
-				"eif(" + SoccerGameAttributes.V + " > "
+				"eif(" + IntermediateSchemaAttributes.V + " > "
 						+ TROT_SPEED_UPPERBORDER + " AND "
-						+ SoccerGameAttributes.V + " <= "
+						+ IntermediateSchemaAttributes.V + " <= "
 						+ LOW_SPEED_UPPERBORDER + ", 1, 0)", "Low_Time",
 				toKmhMap));
 		statemapExpressions.add(OperatorBuildHelper.createExpressionParameter(
-				"eif(" + SoccerGameAttributes.V + " > "
+				"eif(" + IntermediateSchemaAttributes.V + " > "
 						+ TROT_SPEED_UPPERBORDER + " AND "
-						+ SoccerGameAttributes.V + " <= "
-						+ LOW_SPEED_UPPERBORDER + ", " + SoccerGameAttributes.V
+						+ IntermediateSchemaAttributes.V + " <= "
+						+ LOW_SPEED_UPPERBORDER + ", " + IntermediateSchemaAttributes.V
 						+ " /3.6, 0)", "Low_Distance", toKmhMap));
 		statemapExpressions.add(OperatorBuildHelper.createExpressionParameter(
-				"eif(" + SoccerGameAttributes.V + " > " + LOW_SPEED_UPPERBORDER
-						+ " AND " + SoccerGameAttributes.V + " <= "
+				"eif(" + IntermediateSchemaAttributes.V + " > " + LOW_SPEED_UPPERBORDER
+						+ " AND " + IntermediateSchemaAttributes.V + " <= "
 						+ MEDIUM_SPEED_UPPERBORDER + ", 1, 0)", "Medium_Time",
 				toKmhMap));
 		statemapExpressions.add(OperatorBuildHelper.createExpressionParameter(
-				"eif(" + SoccerGameAttributes.V + " > " + LOW_SPEED_UPPERBORDER
-						+ " AND " + SoccerGameAttributes.V + " <= "
+				"eif(" + IntermediateSchemaAttributes.V + " > " + LOW_SPEED_UPPERBORDER
+						+ " AND " + IntermediateSchemaAttributes.V + " <= "
 						+ MEDIUM_SPEED_UPPERBORDER + ", "
-						+ SoccerGameAttributes.V + " /3.6, 0)",
+						+ IntermediateSchemaAttributes.V + " /3.6, 0)",
 				"Medium_Distance", toKmhMap));
 		statemapExpressions.add(OperatorBuildHelper.createExpressionParameter(
-				"eif(" + SoccerGameAttributes.V + " > "
+				"eif(" + IntermediateSchemaAttributes.V + " > "
 						+ MEDIUM_SPEED_UPPERBORDER + " AND "
-						+ SoccerGameAttributes.V + " <= "
+						+ IntermediateSchemaAttributes.V + " <= "
 						+ HIGH_SPEED_UPPERBORDER + ", 1, 0)", "High_Time",
 				toKmhMap));
 		statemapExpressions.add(OperatorBuildHelper.createExpressionParameter(
-				"eif(" + SoccerGameAttributes.V + " > "
+				"eif(" + IntermediateSchemaAttributes.V + " > "
 						+ MEDIUM_SPEED_UPPERBORDER + " AND "
-						+ SoccerGameAttributes.V + " <= "
+						+ IntermediateSchemaAttributes.V + " <= "
 						+ HIGH_SPEED_UPPERBORDER + ", "
-						+ SoccerGameAttributes.V + " /3.6, 0)",
+						+ IntermediateSchemaAttributes.V + " /3.6, 0)",
 				"High_Distance", toKmhMap));
 		statemapExpressions.add(OperatorBuildHelper.createExpressionParameter(
-				"eif(" + SoccerGameAttributes.V + " > "
+				"eif(" + IntermediateSchemaAttributes.V + " > "
 						+ HIGH_SPEED_UPPERBORDER + ", 1, 0)", "Sprint_Time",
 				toKmhMap));
 		statemapExpressions.add(OperatorBuildHelper.createExpressionParameter(
-				"eif(" + SoccerGameAttributes.V + " > "
+				"eif(" + IntermediateSchemaAttributes.V + " > "
 						+ HIGH_SPEED_UPPERBORDER + ", "
-						+ SoccerGameAttributes.V + " /3.6, 0)",
+						+ IntermediateSchemaAttributes.V + " /3.6, 0)",
 				"Sprint_Distance", toKmhMap));
 
 		StateMapAO divideSpeedStateMapAO = OperatorBuildHelper
@@ -588,7 +587,7 @@ public class SprintsPlayerSportsQLParser implements ISportsQLParser {
 
 		List<String> inputAttributeNames2 = new ArrayList<String>();
 		inputAttributeNames2.add(ATTRIBUTE_second);
-		inputAttributeNames2.add(SoccerGameAttributes.V);
+		inputAttributeNames2.add(IntermediateSchemaAttributes.V);
 		inputAttributeNames2.add("Standing_Time");
 		inputAttributeNames2.add("Standing_Distance");
 		inputAttributeNames2.add("Trot_Time");
@@ -604,7 +603,7 @@ public class SprintsPlayerSportsQLParser implements ISportsQLParser {
 
 		List<String> outputAttributeNames2 = new ArrayList<String>();
 		outputAttributeNames2.add(ATTRIBUTE_second);
-		outputAttributeNames2.add(SoccerGameAttributes.V);
+		outputAttributeNames2.add(IntermediateSchemaAttributes.V);
 		outputAttributeNames2.add("Standing_Time");
 		outputAttributeNames2.add("Standing_Distance");
 		outputAttributeNames2.add("Trot_Time");
@@ -644,7 +643,7 @@ public class SprintsPlayerSportsQLParser implements ISportsQLParser {
 		speedClassificationChangeDetectAttributes.add("Sprint_Time");
 
 		List<String> ballVelocityChangeDetectGroupByAttributes = new ArrayList<String>();
-		ballVelocityChangeDetectGroupByAttributes.add(SoccerGameAttributes.ENTITY_ID);
+		ballVelocityChangeDetectGroupByAttributes.add(IntermediateSchemaAttributes.ENTITY_ID);
 
 		ChangeDetectAO speedClassificationChangeDetect = OperatorBuildHelper
 				.createChangeDetectAO(
@@ -659,36 +658,36 @@ public class SprintsPlayerSportsQLParser implements ISportsQLParser {
 		statemapExpressions2.add(OperatorBuildHelper.createExpressionParameter(
 				ATTRIBUTE_second, speedClassificationChangeDetect));
 		statemapExpressions2.add(OperatorBuildHelper.createExpressionParameter(
-				SoccerGameAttributes.V, speedClassificationChangeDetect));
+				IntermediateSchemaAttributes.V, speedClassificationChangeDetect));
 		statemapExpressions2.add(OperatorBuildHelper.createExpressionParameter(
-				"eif(" + SoccerGameAttributes.V + " <= "
+				"eif(" + IntermediateSchemaAttributes.V + " <= "
 						+ STANDING_SPEED_UPPERBORDER + ", 1, 0)",
 				"Standing_Count", speedClassificationChangeDetect));
 		statemapExpressions2.add(OperatorBuildHelper.createExpressionParameter(
-				"eif(" + SoccerGameAttributes.V + " > "
+				"eif(" + IntermediateSchemaAttributes.V + " > "
 						+ STANDING_SPEED_UPPERBORDER + " AND "
-						+ SoccerGameAttributes.V + " <= "
+						+ IntermediateSchemaAttributes.V + " <= "
 						+ TROT_SPEED_UPPERBORDER + ", 1, 0)", "Trot_Count",
 				speedClassificationChangeDetect));
 		statemapExpressions2.add(OperatorBuildHelper.createExpressionParameter(
-				"eif(" + SoccerGameAttributes.V + " > "
+				"eif(" + IntermediateSchemaAttributes.V + " > "
 						+ TROT_SPEED_UPPERBORDER + " AND "
-						+ SoccerGameAttributes.V + " <= "
+						+ IntermediateSchemaAttributes.V + " <= "
 						+ LOW_SPEED_UPPERBORDER + ", 1, 0)", "Low_Count",
 				speedClassificationChangeDetect));
 		statemapExpressions2.add(OperatorBuildHelper.createExpressionParameter(
-				"eif(" + SoccerGameAttributes.V + " > " + LOW_SPEED_UPPERBORDER
-						+ " AND " + SoccerGameAttributes.V + " <= "
+				"eif(" + IntermediateSchemaAttributes.V + " > " + LOW_SPEED_UPPERBORDER
+						+ " AND " + IntermediateSchemaAttributes.V + " <= "
 						+ MEDIUM_SPEED_UPPERBORDER + ", 1, 0)", "Medium_Count",
 				speedClassificationChangeDetect));
 		statemapExpressions2.add(OperatorBuildHelper.createExpressionParameter(
-				"eif(" + SoccerGameAttributes.V + " > "
+				"eif(" + IntermediateSchemaAttributes.V + " > "
 						+ MEDIUM_SPEED_UPPERBORDER + " AND "
-						+ SoccerGameAttributes.V + " <= "
+						+ IntermediateSchemaAttributes.V + " <= "
 						+ HIGH_SPEED_UPPERBORDER + ", 1, 0)", "High_Count",
 				speedClassificationChangeDetect));
 		statemapExpressions2.add(OperatorBuildHelper.createExpressionParameter(
-				"eif(" + SoccerGameAttributes.V + " > "
+				"eif(" + IntermediateSchemaAttributes.V + " > "
 						+ HIGH_SPEED_UPPERBORDER + ", 1, 0)", "Sprint_Count",
 				speedClassificationChangeDetect));
 
@@ -717,7 +716,7 @@ public class SprintsPlayerSportsQLParser implements ISportsQLParser {
 
 		List<String> inputAttributeNames3 = new ArrayList<String>();
 		inputAttributeNames3.add(ATTRIBUTE_second);
-		inputAttributeNames3.add(SoccerGameAttributes.V);
+		inputAttributeNames3.add(IntermediateSchemaAttributes.V);
 		inputAttributeNames3.add("Standing_Count");
 		inputAttributeNames3.add("Trot_Count");
 		inputAttributeNames3.add("Low_Count");
@@ -727,7 +726,7 @@ public class SprintsPlayerSportsQLParser implements ISportsQLParser {
 
 		List<String> outputAttributeNames3 = new ArrayList<String>();
 		outputAttributeNames3.add(ATTRIBUTE_second);
-		outputAttributeNames3.add(SoccerGameAttributes.V);
+		outputAttributeNames3.add(IntermediateSchemaAttributes.V);
 		outputAttributeNames3.add("Standing_Count");
 		outputAttributeNames3.add("Trot_Count");
 		outputAttributeNames3.add("Low_Count");
@@ -753,34 +752,34 @@ public class SprintsPlayerSportsQLParser implements ISportsQLParser {
 		statemapExpressions3.add(OperatorBuildHelper.createExpressionParameter(
 				ATTRIBUTE_second, source));
 		statemapExpressions3.add(OperatorBuildHelper.createExpressionParameter(
-				"eif(" + SoccerGameAttributes.V + "<= "
+				"eif(" + IntermediateSchemaAttributes.V + "<= "
 						+ STANDING_SPEED_UPPERBORDER + ", \"Standing\", eif("
-						+ SoccerGameAttributes.V + " > "
+						+ IntermediateSchemaAttributes.V + " > "
 						+ STANDING_SPEED_UPPERBORDER + " AND "
-						+ SoccerGameAttributes.V + " <= "
+						+ IntermediateSchemaAttributes.V + " <= "
 						+ TROT_SPEED_UPPERBORDER + ", \"Trot\", eif("
-						+ SoccerGameAttributes.V + " > "
+						+ IntermediateSchemaAttributes.V + " > "
 						+ TROT_SPEED_UPPERBORDER + " AND "
-						+ SoccerGameAttributes.V + " <= "
+						+ IntermediateSchemaAttributes.V + " <= "
 						+ LOW_SPEED_UPPERBORDER + ", \"Low\", eif("
-						+ SoccerGameAttributes.V + " > "
+						+ IntermediateSchemaAttributes.V + " > "
 						+ LOW_SPEED_UPPERBORDER + " AND "
-						+ SoccerGameAttributes.V + " <= "
+						+ IntermediateSchemaAttributes.V + " <= "
 						+ MEDIUM_SPEED_UPPERBORDER + ", \"Medium\", eif("
-						+ SoccerGameAttributes.V + " > "
+						+ IntermediateSchemaAttributes.V + " > "
 						+ MEDIUM_SPEED_UPPERBORDER + " AND "
-						+ SoccerGameAttributes.V + " <="
+						+ IntermediateSchemaAttributes.V + " <="
 						+ HIGH_SPEED_UPPERBORDER
 						+ ", \"High\", \"Sprint\")))))", "Classification",
 				source));
 		statemapExpressions3.add(OperatorBuildHelper.createExpressionParameter(
-				"__last_1." + SoccerGameAttributes.X, "Start_x", source));
+				"__last_1." + IntermediateSchemaAttributes.X, "Start_x", source));
 		statemapExpressions3.add(OperatorBuildHelper.createExpressionParameter(
-				"__last_1." + SoccerGameAttributes.Y, "Start_y", source));
+				"__last_1." + IntermediateSchemaAttributes.Y, "Start_y", source));
 		statemapExpressions3.add(OperatorBuildHelper.createExpressionParameter(
-				SoccerGameAttributes.X, "End_x", source));
+				IntermediateSchemaAttributes.X, "End_x", source));
 		statemapExpressions3.add(OperatorBuildHelper.createExpressionParameter(
-				SoccerGameAttributes.Y, "End_y", source));
+				IntermediateSchemaAttributes.Y, "End_y", source));
 
 		StateMapAO pathStateMapAO = OperatorBuildHelper.createStateMapAO(
 				statemapExpressions3, "", source);
