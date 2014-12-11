@@ -63,6 +63,30 @@ public class DDCEntry {
 	}
 
 	/**
+	 * True, if the entry should outstay the run-time of the Odyseus instance.
+	 */
+	private boolean mPersistent = false;
+
+	/**
+	 * Checks, if the entry should outstay the run-time of the Odyseus instance.
+	 */
+	public boolean isPersistent() {
+		return this.mPersistent;
+	}
+
+	/**
+	 * Determines, if the entry should outstay the run-time of the Odyseus
+	 * instance.
+	 * 
+	 * @param persistent
+	 *            True, if the entry should outstay the run-time of the Odyseus
+	 *            instance.
+	 */
+	public void setPersistent(boolean persistent) {
+		this.mPersistent = persistent;
+	}
+
+	/**
 	 * Creates a new DDC entry.
 	 * 
 	 * @param key

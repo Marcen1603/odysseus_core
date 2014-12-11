@@ -66,7 +66,7 @@ public class DDCFileHandler {
 	 * The DDC.
 	 */
 	private static IDistributedDataContainer ddc;
-	
+
 	/**
 	 * True, if the DDC entries has already been loaded from file.
 	 */
@@ -436,11 +436,15 @@ public class DDCFileHandler {
 
 			try {
 
-				content.append(DDCFileHandler.determineFullKey(key));
-				content.append(" = ");
-				content.append(DDCFileHandler
-						.determineFullValue(DDCFileHandler.ddc.get(key)));
-				content.append("\n");
+				DDCEntry entry = DDCFileHandler.ddc.get(key);
+				if (entry.isPersistent()) {
+
+					content.append(DDCFileHandler.determineFullKey(key));
+					content.append(" = ");
+					content.append(DDCFileHandler.determineFullValue(entry));
+					content.append("\n");
+
+				}
 
 			} catch (MissingDDCEntryException e) {
 
