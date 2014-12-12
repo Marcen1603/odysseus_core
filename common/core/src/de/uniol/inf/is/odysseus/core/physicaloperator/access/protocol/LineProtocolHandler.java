@@ -55,6 +55,7 @@ public class LineProtocolHandler<T> extends AbstractProtocolHandler<T> {
 	private int nanodelay;
 	private int delayeach = 0;
 	private long delayCounter = 0L;
+	private long checkDelay;
 
 	protected boolean readFirstLine = true;
 	protected boolean firstLineSkipped = false;
@@ -78,7 +79,7 @@ public class LineProtocolHandler<T> extends AbstractProtocolHandler<T> {
 	// private Map<String, String> optionsMap;
 
 	public static final String DELAY = "delay";
-	public static final String NANODELAY = "delay";
+	public static final String NANODELAY = "nanodelay";
 	public static final String DELAYEACH = "delayeach";
 	public static final String READFIRSTLINE = "readfirstline";
 	public static final String DUMP_EACH_LINE = "dumpeachline";
@@ -89,6 +90,7 @@ public class LineProtocolHandler<T> extends AbstractProtocolHandler<T> {
 	public static final String DUMPFILE = "dumpfile";
 	public static final String DUMPMEMORY = "dumpmemory";
 	public static final String NODONE = "nodone";
+	public static final String CHECKDELAY = "checkdelay";
 
 	public LineProtocolHandler() {
 		super();
@@ -146,6 +148,9 @@ public class LineProtocolHandler<T> extends AbstractProtocolHandler<T> {
 		if (options.get(NODONE) != null) {
 			noDone = Boolean.parseBoolean(options.get(NODONE));
 		}
+	
+		checkDelay = options.getLong(CHECKDELAY, 0);
+		
 		lastDumpTime = System.currentTimeMillis();
 
 	}
@@ -203,7 +208,23 @@ public class LineProtocolHandler<T> extends AbstractProtocolHandler<T> {
 
 	@Override
 	public boolean hasNext() throws IOException {
-		return hasNext(reader);
+		if (hasNext(reader)) {
+			return true;
+		}
+		else
+		{
+			if (checkDelay > 0)
+			{
+				try {
+					Thread.sleep(checkDelay);
+				} catch (InterruptedException e) {
+					// interrupting the delay might be correct
+					// e.printStackTrace();
+				}				
+			}
+			
+			return false;
+		}
 	}
 
 	private boolean hasNext(BufferedReader reader) {

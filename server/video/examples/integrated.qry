@@ -10,6 +10,9 @@ video  = ACCESS({source='Video',
 				 datahandler='Tuple',
 				 options=[
 							['id', '0']
-					     ]})
+					     ],
+				 schema= [	
+        					['image', 		'IMAGEJCV']
+        				 ]})
 					     
 output = UDO({class='ShowImageJCV', init='0'}, video)
