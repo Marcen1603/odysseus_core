@@ -112,7 +112,7 @@ public class PredicateWindowTIPO<T extends IStreamObject<ITimeInterval>>
 			if (startEval) {
 				appendData(object, bufferId, buffer);
 			} else {
-				transfer(object, 1);
+				transferArea.transfer(object, 1);
 			}
 		}
 		
