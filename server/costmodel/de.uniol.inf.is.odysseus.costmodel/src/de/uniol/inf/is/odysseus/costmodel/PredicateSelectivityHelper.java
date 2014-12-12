@@ -87,8 +87,10 @@ public class PredicateSelectivityHelper {
 			return evaluateRelationalPredicate((RelationalPredicate) predicate);
 		} else if (predicate instanceof ComplexPredicate) {
 			return evaluateComplexPredicate((ComplexPredicate<?>) predicate);
-		} else {
+		} else if (predicate != null) {
 			LOG.warn("Unsupported PredicateType :" + predicate.getClass());
+			return Optional.absent();
+		} else {
 			return Optional.absent();
 		}
 
