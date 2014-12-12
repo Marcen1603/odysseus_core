@@ -35,7 +35,7 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
  * 
  * The start predicates opens a window and collects elements until a) the end
  * predicate is true or b) if the end predicate is not set, the start predicate
- * gets false, optionally respects a partition condition 
+ * gets false, optionally respects a partition condition with attributes 
  * 
  * A optional size information can be used to set the maximum time to wait until
  * a window closes. 
