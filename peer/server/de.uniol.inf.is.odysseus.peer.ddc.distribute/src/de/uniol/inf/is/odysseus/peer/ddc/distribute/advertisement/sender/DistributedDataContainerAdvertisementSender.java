@@ -61,8 +61,9 @@ public class DistributedDataContainerAdvertisementSender {
 				waitForJxtaServicesProvider();
 				jxtaServicesProvider.publish(adv, WAIT_TIME_MILLIS, WAIT_TIME_MILLIS);
 				jxtaServicesProvider.remotePublish(adv, WAIT_TIME_MILLIS);
+				LOG.debug("Published DDC advertisment.");
 			} catch (IOException e) {
-				LOG.error("Could not publish ddc advertisement", e);
+				LOG.error("Could not publish DDC advertisement", e);
 			}
 		}
 	}

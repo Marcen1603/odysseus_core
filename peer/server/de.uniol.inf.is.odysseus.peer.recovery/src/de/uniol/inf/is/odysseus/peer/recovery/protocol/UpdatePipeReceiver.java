@@ -2,7 +2,6 @@ package de.uniol.inf.is.odysseus.peer.recovery.protocol;
 
 import java.util.Collection;
 
-import net.jxta.id.ID;
 import net.jxta.peer.PeerID;
 import net.jxta.pipe.PipeID;
 
@@ -36,8 +35,7 @@ public class UpdatePipeReceiver extends AbstractRepeatingMessageReceiver {
 	/**
 	 * The logger instance for this class.
 	 */
-	private static final Logger LOG = LoggerFactory
-			.getLogger(UpdatePipeReceiver.class);
+	private static final Logger LOG = LoggerFactory.getLogger(UpdatePipeReceiver.class);
 
 	/**
 	 * The single instance of this class.
@@ -52,7 +50,7 @@ public class UpdatePipeReceiver extends AbstractRepeatingMessageReceiver {
 	public static UpdatePipeReceiver getInstance() {
 		return cInstance;
 	}
-	
+
 	/**
 	 * The executor, if there is one bound.
 	 */
@@ -91,8 +89,7 @@ public class UpdatePipeReceiver extends AbstractRepeatingMessageReceiver {
 		if (cExecutor.isPresent() && cExecutor.get() == (IServerExecutor) serv) {
 
 			cExecutor = Optional.absent();
-			LOG.debug("Unbound {} as an executor.", serv.getClass()
-					.getSimpleName());
+			LOG.debug("Unbound {} as an executor.", serv.getClass().getSimpleName());
 
 		}
 
@@ -115,48 +112,41 @@ public class UpdatePipeReceiver extends AbstractRepeatingMessageReceiver {
 	}
 
 	@Override
-	public void receivedMessage(IPeerCommunicator communicator,
-			PeerID senderPeer, IMessage message) {
+	public void receivedMessage(IPeerCommunicator communicator, PeerID senderPeer, IMessage message) {
 		Preconditions.checkNotNull(message);
 		Preconditions.checkNotNull(senderPeer);
 		Preconditions.checkNotNull(communicator);
 
 		if (message instanceof RecoveryUpdatePipeMessage) {
 			RecoveryUpdatePipeMessage upMessage = (RecoveryUpdatePipeMessage) message;
-			if(!mReceivedUUIDs.contains(upMessage.getUUID())) {
+			if (!mReceivedUUIDs.contains(upMessage.getUUID())) {
 				mReceivedUUIDs.add(upMessage.getUUID());
 			} else {
 				return;
 			}
-			
+
 			RecoveryUpdatePipeResponseMessage response = null;
 			try {
 				if (upMessage.isSenderUpdateInstruction()) {
 					// TODO nothing to do?
 				} else {
-					updateReceiver(upMessage.getNewPeerId(),
-							upMessage.getPipeId(), upMessage.getSharedQueryId());
+					updateReceiver(upMessage.getNewPeerId(), upMessage.getPipeId());
 				}
-				response = new RecoveryUpdatePipeResponseMessage(
-						upMessage.getUUID());
+				response = new RecoveryUpdatePipeResponseMessage(upMessage.getUUID());
 			} catch (DataTransmissionException e) {
-				response = new RecoveryUpdatePipeResponseMessage(
-						upMessage.getUUID(), e.getMessage());
+				response = new RecoveryUpdatePipeResponseMessage(upMessage.getUUID(), e.getMessage());
 			}
 
 			try {
 				communicator.send(senderPeer, response);
 			} catch (PeerCommunicationException e) {
-				LOG.error(
-						"Could not send tuple send instruction response message!",
-						e);
+				LOG.error("Could not send tuple send instruction response message!", e);
 			}
-		
+
 		}
 	}
 
-	private void updateReceiver(PeerID newSender, PipeID pipeId,
-			ID sharedQueryId) throws DataTransmissionException {
+	private void updateReceiver(PeerID newSender, PipeID pipeId) throws DataTransmissionException {
 
 		if (!cExecutor.isPresent()) {
 

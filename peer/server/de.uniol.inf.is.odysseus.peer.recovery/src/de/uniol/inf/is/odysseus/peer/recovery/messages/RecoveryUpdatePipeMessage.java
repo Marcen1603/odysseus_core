@@ -4,7 +4,6 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.ByteBuffer;
 
-import net.jxta.id.ID;
 import net.jxta.impl.id.UUID.UUID;
 import net.jxta.impl.id.UUID.UUIDFactory;
 import net.jxta.peer.PeerID;
@@ -75,15 +74,15 @@ public class RecoveryUpdatePipeMessage implements IMessage {
 	/**
 	 * The affected shared query.
 	 */
-	private ID mSharedQuery;
+	private int mLocalQuery;
 
 	/**
 	 * The affected shared query.
 	 * 
 	 * @return The id of a shared query.
 	 */
-	public ID getSharedQueryId() {
-		return this.mSharedQuery;
+	public int getLocalQueryId() {
+		return this.mLocalQuery;
 	}
 
 	/**
@@ -125,15 +124,14 @@ public class RecoveryUpdatePipeMessage implements IMessage {
 	 *            True for a sender update message; false for a receiver update
 	 *            message.
 	 */
-	public RecoveryUpdatePipeMessage(PipeID pipe, PeerID peer, ID sharedQuery,
+	public RecoveryUpdatePipeMessage(PipeID pipe, PeerID peer, int localQuery,
 			boolean senderUpdate) {
 		Preconditions.checkNotNull(pipe);
 		Preconditions.checkNotNull(peer);
-		Preconditions.checkNotNull(sharedQuery);
 
 		this.mPipe = pipe;
 		this.mPeer = peer;
-		this.mSharedQuery = sharedQuery;
+		this.mLocalQuery = localQuery;
 		this.mSenderUpdate = senderUpdate;
 	}
 
@@ -142,21 +140,23 @@ public class RecoveryUpdatePipeMessage implements IMessage {
 		byte[] idBytes = this.mID.toString().getBytes();
 		byte[] pipeBytes = this.mPipe.toString().getBytes();
 		byte[] peerBytes = this.mPeer.toString().getBytes();
-		byte[] sharedQueryBytes = this.mSharedQuery.toString().getBytes();
 
 		int bufferSize = 4 + idBytes.length + 4 + pipeBytes.length + 4
-				+ peerBytes.length + 4 + sharedQueryBytes.length + 4;
+				+ peerBytes.length + 4 + 4;
 		// last size for mSenderUpdate
 		ByteBuffer buffer = ByteBuffer.allocate(bufferSize);
 
 		buffer.putInt(idBytes.length);
 		buffer.put(idBytes);
+		
 		buffer.putInt(pipeBytes.length);
 		buffer.put(pipeBytes);
+		
 		buffer.putInt(peerBytes.length);
 		buffer.put(peerBytes);
-		buffer.putInt(sharedQueryBytes.length);
-		buffer.put(sharedQueryBytes);
+		
+		buffer.putInt(mLocalQuery);
+		
 		buffer.putInt((this.mSenderUpdate) ? 1 : 0);
 
 		buffer.flip();
@@ -192,15 +192,7 @@ public class RecoveryUpdatePipeMessage implements IMessage {
 			LOG.error("Could not create peer id from bytes!", e);
 		}
 		
-		try {
-			int sharedQueryBytesLength = buffer.getInt();
-			byte[] sharedQueryBytes = new byte[sharedQueryBytesLength];
-			buffer.get(sharedQueryBytes);
-			URI sharedQueryURI = new URI(new String(sharedQueryBytes));
-			this.mSharedQuery = ID.create(sharedQueryURI);
-		} catch (URISyntaxException e) {
-			LOG.error("Could not create shared query id from bytes!", e);
-		}
+		mLocalQuery = buffer.getInt();
 
 		this.mSenderUpdate = (buffer.getInt() == 1) ? true : false;
 	}

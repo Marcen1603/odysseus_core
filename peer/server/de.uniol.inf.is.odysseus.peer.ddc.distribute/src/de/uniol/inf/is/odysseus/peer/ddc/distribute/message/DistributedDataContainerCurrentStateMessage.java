@@ -17,11 +17,9 @@ import de.uniol.inf.is.odysseus.p2p_new.IMessage;
 import de.uniol.inf.is.odysseus.peer.ddc.DDCEntry;
 import de.uniol.inf.is.odysseus.peer.ddc.DDCKey;
 
-
 public class DistributedDataContainerCurrentStateMessage implements IMessage {
-	private static final Logger LOG = LoggerFactory
-			.getLogger(DistributedDataContainerCurrentStateMessage.class);
-	
+	private static final Logger LOG = LoggerFactory.getLogger(DistributedDataContainerCurrentStateMessage.class);
+
 	private List<DDCEntry> ddcEntries = new ArrayList<DDCEntry>();
 	private UUID ddcAdvertisementUUID;
 	private PeerID volunteerPeerID;
@@ -31,8 +29,9 @@ public class DistributedDataContainerCurrentStateMessage implements IMessage {
 	 */
 	public DistributedDataContainerCurrentStateMessage() {
 	}
-	
-	public static DistributedDataContainerCurrentStateMessage createMessage(PeerID volunteerPeerID, UUID ddcAdvertisementUUID, List<DDCEntry> ddcEntries) {
+
+	public static DistributedDataContainerCurrentStateMessage createMessage(PeerID volunteerPeerID,
+			UUID ddcAdvertisementUUID, List<DDCEntry> ddcEntries) {
 		DistributedDataContainerCurrentStateMessage message = new DistributedDataContainerCurrentStateMessage();
 		message.setVolunteerPeerID(volunteerPeerID);
 		message.setDdcAdvertisementUUID(ddcAdvertisementUUID);
@@ -40,7 +39,6 @@ public class DistributedDataContainerCurrentStateMessage implements IMessage {
 		return message;
 	}
 
-	
 	@Override
 	/**
 	 * Returns message as byte array.
@@ -48,10 +46,11 @@ public class DistributedDataContainerCurrentStateMessage implements IMessage {
 	public byte[] toBytes() {
 		byte[] ddcAdvertisementUUIDBytes = ddcAdvertisementUUID.toString().getBytes();
 		byte[] volunteerPeerIDBytes = volunteerPeerID.toString().getBytes();
-		
-		int bbsize = 4 + ddcAdvertisementUUIDBytes.length + 4 + volunteerPeerIDBytes.length + calculateSizeOfDDCEntries();	
+
+		int bbsize = 4 + ddcAdvertisementUUIDBytes.length + 4 + volunteerPeerIDBytes.length
+				+ calculateSizeOfDDCEntries();
 		ByteBuffer bb = ByteBuffer.allocate(bbsize);
-		
+
 		// advertisment uuid
 		bb.putInt(ddcAdvertisementUUIDBytes.length);
 		bb.put(ddcAdvertisementUUIDBytes);
@@ -59,7 +58,7 @@ public class DistributedDataContainerCurrentStateMessage implements IMessage {
 		// volunteer peerId
 		bb.putInt(volunteerPeerIDBytes.length);
 		bb.put(volunteerPeerIDBytes);
-		
+
 		// ddc entries
 		bb.putInt(ddcEntries.size());
 		for (DDCEntry ddcEntry : ddcEntries) {
@@ -67,16 +66,22 @@ public class DistributedDataContainerCurrentStateMessage implements IMessage {
 			byte[] keyBytes = StringUtils.join(ddcEntry.getKey().get(), ",").getBytes();
 			bb.putInt(keyBytes.length);
 			bb.put(keyBytes);
-			
+
 			// value
 			byte[] valueBytes = ddcEntry.getValue().getBytes();
 			bb.putInt(valueBytes.length);
 			bb.put(valueBytes);
-			
+
+			// isPersistent
+			if (ddcEntry.isPersistent())
+				bb.putInt(1);
+			else
+				bb.putInt(0);
+
 			// ts
 			bb.putLong(ddcEntry.getTimeStamp());
 		}
-		
+
 		bb.flip();
 		return bb.array();
 	}
@@ -84,16 +89,19 @@ public class DistributedDataContainerCurrentStateMessage implements IMessage {
 	private int calculateSizeOfDDCEntries() {
 		// number of entries
 		int size = 4;
-		
+
 		for (DDCEntry ddcEntry : ddcEntries) {
 			// size for key
 			size += 4;
 			size += StringUtils.join(ddcEntry.getKey().get(), ",").getBytes().length;
-			
+
 			// size for value
 			size += 4;
 			size += ddcEntry.getValue().getBytes().length;
 			
+			// size for persistent-flag
+			size += 4;
+
 			// timestamp as long
 			size += 8;
 		}
@@ -106,7 +114,7 @@ public class DistributedDataContainerCurrentStateMessage implements IMessage {
 	 */
 	public void fromBytes(byte[] data) {
 		ByteBuffer bb = ByteBuffer.wrap(data);
-		
+
 		// advertisement id
 		int sizeOfDDCAdvertisementUUID = bb.getInt();
 		byte[] ddcAdvertisementUUIDBytes = new byte[sizeOfDDCAdvertisementUUID];
@@ -118,7 +126,7 @@ public class DistributedDataContainerCurrentStateMessage implements IMessage {
 		byte[] volunteerPeerIDBytes = new byte[sizeOfvolunteerPeerID];
 		bb.get(volunteerPeerIDBytes);
 		this.volunteerPeerID = convertToPeerID(new String(volunteerPeerIDBytes));
-		
+
 		// DDC entries
 		int numberOfDDCEntries = bb.getInt();
 		ddcEntries.clear();
@@ -135,13 +143,17 @@ public class DistributedDataContainerCurrentStateMessage implements IMessage {
 				int sizeOfValue = bb.getInt();
 				byte[] valueBytes = new byte[sizeOfValue];
 				bb.get(valueBytes);
-				String value = new String (valueBytes);
+				String value = new String(valueBytes);
 				
+				// persistence
+				int isPersistent = bb.getInt();
+				boolean persistent = isPersistent == 1;
+
 				// timestamp
 				long ts = bb.getLong();
-				
+
 				// create and add DDCEntry
-				ddcEntries.add(new DDCEntry(ddcKey, value, ts));
+				ddcEntries.add(new DDCEntry(ddcKey, value, ts, persistent));
 			} catch (BufferUnderflowException bue) {
 				LOG.debug("More DDCEntries in byte-stream expected");
 			}
@@ -164,7 +176,7 @@ public class DistributedDataContainerCurrentStateMessage implements IMessage {
 			return null;
 		}
 	}
-	
+
 	public List<DDCEntry> getDdcEntries() {
 		return ddcEntries;
 	}
@@ -188,6 +200,5 @@ public class DistributedDataContainerCurrentStateMessage implements IMessage {
 	public void setVolunteerPeerID(PeerID volunteerPeerID) {
 		this.volunteerPeerID = volunteerPeerID;
 	}
-		
-		
+
 }

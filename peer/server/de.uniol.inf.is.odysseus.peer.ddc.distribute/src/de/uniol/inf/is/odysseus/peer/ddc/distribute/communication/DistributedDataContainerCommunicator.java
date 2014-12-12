@@ -24,8 +24,8 @@ import de.uniol.inf.is.odysseus.peer.ddc.IDistributedDataContainer;
 import de.uniol.inf.is.odysseus.peer.ddc.MissingDDCEntryException;
 import de.uniol.inf.is.odysseus.peer.ddc.distribute.advertisement.DistributedDataContainerAdvertisement;
 import de.uniol.inf.is.odysseus.peer.ddc.distribute.advertisement.sender.DistributedDataContainerAdvertisementGenerator;
-import de.uniol.inf.is.odysseus.peer.ddc.distribute.message.DistributedDataContainerCurrentStateMessage;
 import de.uniol.inf.is.odysseus.peer.ddc.distribute.message.DistributedDataContainerCurrentStateAcknowledgement;
+import de.uniol.inf.is.odysseus.peer.ddc.distribute.message.DistributedDataContainerCurrentStateMessage;
 import de.uniol.inf.is.odysseus.peer.ddc.distribute.message.RepeatingMessageSend;
 
 /**
@@ -124,6 +124,7 @@ public class DistributedDataContainerCommunicator implements
 	@Override
 	public void advertisementDiscovered(Advertisement advertisement) {
 		if (advertisement instanceof DistributedDataContainerAdvertisement) {
+			LOG.debug("Got DDC advertisment.");
 			DistributedDataContainerAdvertisement ddcAdvertisement = (DistributedDataContainerAdvertisement) advertisement;
 			// check if listener already received this ddc advertisement
 			if (!receivedDDCAdvertisements.contains(ddcAdvertisement
@@ -175,6 +176,7 @@ public class DistributedDataContainerCommunicator implements
 				case changeDistribution:
 					// write added entries in DDC
 					if (ddcAdvertisement.getAddedDDCEntires() != null) {
+						LOG.debug("Got {}  change distribution entries", ddcAdvertisement.getAddedDDCEntires().size());
 						for (DDCEntry addedDdcEntry : ddcAdvertisement
 								.getAddedDDCEntires()) {
 							DistributedDataContainerCommunicator.ddc

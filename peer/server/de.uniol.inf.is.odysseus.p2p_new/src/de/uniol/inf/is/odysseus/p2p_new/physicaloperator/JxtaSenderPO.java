@@ -282,10 +282,13 @@ public class JxtaSenderPO<T extends IStreamObject<?>> extends AbstractSink<T> im
 	 * @throws DataTransmissionException
 	 */
 	public void sendToNewPeer(String peerId) throws DataTransmissionException {
+		// Info for the observers
+		List<String> infoList = new ArrayList<String>();
+		infoList.add(this.peerIDString);
+		
 		this.peerIDString = peerId;
 
 		// Notify the observers with the new peerId so that they can update the backup-information
-		List<String> infoList = new ArrayList<String>();
 		infoList.add(peerId);
 		infoList.add(this.pipeIDString);
 		notifyObservers(infoList);

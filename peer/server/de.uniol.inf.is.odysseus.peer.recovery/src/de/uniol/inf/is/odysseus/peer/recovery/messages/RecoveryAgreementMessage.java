@@ -3,15 +3,15 @@ package de.uniol.inf.is.odysseus.peer.recovery.messages;
 import java.net.URI;
 import java.nio.ByteBuffer;
 
+import net.jxta.impl.id.UUID.UUID;
+import net.jxta.impl.id.UUID.UUIDFactory;
+import net.jxta.peer.PeerID;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Preconditions;
 
-import net.jxta.id.ID;
-import net.jxta.impl.id.UUID.UUID;
-import net.jxta.impl.id.UUID.UUIDFactory;
-import net.jxta.peer.PeerID;
 import de.uniol.inf.is.odysseus.p2p_new.IMessage;
 
 /**
@@ -50,10 +50,10 @@ public class RecoveryAgreementMessage implements IMessage {
 		return mFailedPeer;
 	}
 	
-	private ID mSharedQueryId;
+	private int mLocalQueryId;
 	
-	public ID getSharedQueryId() {
-		return mSharedQueryId;
+	public int getLocalQueryId() {
+		return mLocalQueryId;
 	}
 	
 	/**
@@ -73,12 +73,11 @@ public class RecoveryAgreementMessage implements IMessage {
 	 *            The query for which the sending peer wants to do the recovery
 	 */
 	public RecoveryAgreementMessage(
-			PeerID failedPeer, ID sharedQueryId) {
+			PeerID failedPeer, int localQueryId) {
 		Preconditions.checkNotNull(failedPeer);
-		Preconditions.checkNotNull(sharedQueryId);
 		
 		this.mFailedPeer = failedPeer;
-		this.mSharedQueryId = sharedQueryId;
+		this.mLocalQueryId = localQueryId;
 	}
 
 	@Override
@@ -86,10 +85,9 @@ public class RecoveryAgreementMessage implements IMessage {
 		ByteBuffer bb = null;
 		int bbsize;
 		int peerIdLength = mFailedPeer.toString().getBytes().length;
-		int sharedQueryIdLength = mSharedQueryId.toString().getBytes().length;
 		byte[] idBytes = this.mID.toString().getBytes();
 
-		bbsize = 4 + idBytes.length + 4 + peerIdLength + 4 + sharedQueryIdLength;
+		bbsize = 4 + idBytes.length + 4 + peerIdLength + 4;
 		bb = ByteBuffer.allocate(bbsize);
 
 		bb.putInt(idBytes.length);
@@ -98,8 +96,7 @@ public class RecoveryAgreementMessage implements IMessage {
 		bb.putInt(peerIdLength);
 		bb.put(mFailedPeer.toString().getBytes(), 0, peerIdLength);
 
-		bb.putInt(sharedQueryIdLength);
-		bb.put(mSharedQueryId.toString().getBytes(), 0, sharedQueryIdLength);
+		bb.putInt(mLocalQueryId);
 		
 		bb.flip();
 		return bb.array();
@@ -119,17 +116,11 @@ public class RecoveryAgreementMessage implements IMessage {
 		bb.get(peerIdByte, 0, peerIdLength);
 		String peerIdString = new String(peerIdByte);
 		
-		int sharedQueryIdLength = bb.getInt();
-		byte[] sharedQueryIdByte = new byte[sharedQueryIdLength];
-		bb.get(sharedQueryIdByte, 0, sharedQueryIdLength);
-		String sharedQueryIdString = new String(sharedQueryIdByte);
+		mLocalQueryId = bb.getInt();
 		
 		try {
 			URI peerIdUri = new URI(peerIdString);
 			mFailedPeer = PeerID.create(peerIdUri);
-			
-			URI sharedQueryIdUri = new URI(sharedQueryIdString);
-			mSharedQueryId = ID.create(sharedQueryIdUri);
 		} catch (Exception e) {
 			LOG.error("Could not create failed peer id from bytes!", e);
 		}

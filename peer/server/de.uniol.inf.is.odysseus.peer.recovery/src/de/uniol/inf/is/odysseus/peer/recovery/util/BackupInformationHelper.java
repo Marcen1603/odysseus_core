@@ -1,27 +1,22 @@
 package de.uniol.inf.is.odysseus.peer.recovery.util;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
-
-import net.jxta.id.ID;
-import net.jxta.peer.PeerID;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
-import com.google.common.collect.Sets;
 
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
+import de.uniol.inf.is.odysseus.core.planmanagement.query.QueryState;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.planmodification.IPlanModificationListener;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.planmodification.event.AbstractPlanModificationEvent;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.planmodification.event.PlanModificationEventType;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.peer.distribute.IQueryPartController;
-import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryBackupInformation;
 import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryCommunicator;
 
 /**
@@ -169,72 +164,6 @@ public class BackupInformationHelper implements IPlanModificationListener {
 
 	}
 
-	/**
-	 * Updates the backup information store (of this and the new peer) after a take over.
-	 * 
-	 * @param oldPeer
-	 *            The former peer, which has executed <code>pqlCode</code>. <br />
-	 *            Must be not null.
-	 * @param newPeer
-	 *            The new peer, which executes <code>pqlCode</code> from now on. <br />
-	 *            Must be not null.
-	 * @param sharedQueryId
-	 *            The id of the distributed query. <br />
-	 *            Must be not null.
-	 * @param pqlCode
-	 *            The PQL code, which has been taken over. <br />
-	 *            Must be not null.
-	 */
-	public static void updateInfoStores(PeerID oldPeer, PeerID newPeer, ID sharedQueryId, String pqlCode) {
-
-		Preconditions.checkNotNull(oldPeer);
-		Preconditions.checkNotNull(newPeer);
-		Preconditions.checkNotNull(sharedQueryId);
-		Preconditions.checkNotNull(pqlCode);
-
-		if (!cCommunicator.isPresent()) {
-
-			LOG.error("No communicator for recovery bound!");
-			return;
-
-		}
-
-		// The affected backup information
-		Optional<IRecoveryBackupInformation> affectedInfo = LocalBackupInformationAccess.getStore().get(pqlCode);
-
-		Collection<IRecoveryBackupInformation> subsequentInfos = Sets.newHashSet();
-		if (affectedInfo.isPresent()) {
-
-			// Determine, which backup information have to be sent to the new
-			// peer
-			subsequentInfos = affectedInfo.get().getSubsequentPartsInformation();
-
-		}
-
-		// Send these information
-		for (IRecoveryBackupInformation info : subsequentInfos) {
-
-			// TODO may return false. M.B.
-			cCommunicator.get().sendBackupInformation(newPeer, info, true);
-
-		}
-
-		if (affectedInfo.isPresent()) {
-
-			// Update the local backup information due to the take over
-
-			// 1. Remove info that we saved about the failed peer
-			LocalBackupInformationAccess.getStore().remove(affectedInfo.get());
-
-			// 2. Save the information about the new peer
-			IRecoveryBackupInformation updatedInfo = affectedInfo.get();
-			updatedInfo.setAboutPeer(newPeer);
-			LocalBackupInformationAccess.getStore().add(updatedInfo);
-
-		}
-
-	}
-
 	@Override
 	public void planModificationEvent(AbstractPlanModificationEvent<?> eventArgs) {
 
@@ -246,49 +175,17 @@ public class BackupInformationHelper implements IPlanModificationListener {
 		}
 
 		if (PlanModificationEventType.QUERY_REMOVE.equals(eventArgs.getEventType())) {
-
-			// Question to think about later: If we have two queries with the same shared query id running on this peer,
-			// we will have a problem, cause we will remove all the information, even if we just delete one of these two
-			// queries
-			// I guess this problem would be solved if we merge query parts which belong to one shared query (if this is
-			// possible ... hmm the query parts maybe are not direct successors :( )
-
+			
 			int queryID = ((IPhysicalQuery) eventArgs.getValue()).getID();
-			ID sharedQueryID = cController.get().getSharedQueryID(queryID);
-			if (sharedQueryID == null) {
-				return; // query was not shared
-			}
-
-			// Remove backup information
-			LocalBackupInformationAccess.getStore().remove(sharedQueryID);
-			LocalBackupInformationAccess.getStore().removeSharedQueryFromBuddyList(sharedQueryID);
-			LocalBackupInformationAccess.getStore().removeSharedQueryFromMyBuddyList(sharedQueryID);
-
-			// Remove, that we need a buddy for this
-			if (cCommunicator.isPresent()) {
-				cCommunicator.get().removeSharedQueryIdFromNoBuddyList(sharedQueryID);
-			}
-
+			BackupInformationAccess.removeBackupInformation(queryID);
+			
 		} else if (PlanModificationEventType.QUERY_ADDED.equals(eventArgs.getEventType())) {
-			// TODO A query was added -> we have to update our local information
-			// if the query was added by recovery, this should already been done, but if it was added by something else
-			// (e.g. loadbalancing), we have to do this. Problem: We don't know the shared query id. Hmpf ...
+			
 			int queryID = ((IPhysicalQuery) eventArgs.getValue()).getID();
-			ID sharedQueryID = cController.get().getSharedQueryID(queryID);
-
-			if (sharedQueryID != null) {
-				// If the shared query id would be null, the query was not distributes yet. Hence, the
-				// QueryDistributionListener will save the info.
-				String pql = RecoveryHelper.getPQLFromRunningQuery(queryID);
-
-				LocalBackupInformationAccess.addLocalPQL(sharedQueryID, pql);
-
-			} else {
-				// We don't know the corresponding shared query id (yet). Maybe we will find out later. So save this id
-				// so we can react later.
-				unknownIds.add(queryID);
-			}
-
+			QueryState state = ((IPhysicalQuery) eventArgs.getValue()).getState();
+			String pql = RecoveryHelper.getPQLFromRunningQuery(queryID);
+			BackupInformationAccess.saveBackupInformation(queryID, pql, state.toString());
+			
 		}
 
 	}

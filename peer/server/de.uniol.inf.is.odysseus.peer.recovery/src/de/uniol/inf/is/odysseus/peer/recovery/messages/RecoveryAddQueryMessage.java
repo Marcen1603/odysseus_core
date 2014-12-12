@@ -1,15 +1,9 @@
 package de.uniol.inf.is.odysseus.peer.recovery.messages;
 
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.nio.ByteBuffer;
 
-import net.jxta.id.ID;
 import net.jxta.impl.id.UUID.UUID;
 import net.jxta.impl.id.UUID.UUIDFactory;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Preconditions;
 
@@ -21,12 +15,6 @@ import de.uniol.inf.is.odysseus.p2p_new.IMessage;
  * @author Michael Brand, Tobias Brandt
  */
 public class RecoveryAddQueryMessage implements IMessage {
-
-	/**
-	 * The logger instance for this class.
-	 */
-	private static final Logger LOG = LoggerFactory
-			.getLogger(RecoveryUpdatePipeMessage.class);
 
 	/**
 	 * The id of the message.
@@ -57,17 +45,17 @@ public class RecoveryAddQueryMessage implements IMessage {
 	}
 
 	/**
-	 * The affected shared query.
+	 * The affected local query.
 	 */
-	private ID mSharedQuery;
+	private int mLocalQuery;
 
 	/**
 	 * The affected shared query.
 	 * 
 	 * @return The id of a shared query.
 	 */
-	public ID getSharedQueryId() {
-		return this.mSharedQuery;
+	public int getLocalQueryId() {
+		return this.mLocalQuery;
 	}
 
 	/**
@@ -109,15 +97,13 @@ public class RecoveryAddQueryMessage implements IMessage {
 	 *            The id of the recovery subprocess. <br />
 	 *            Must be not null.
 	 */
-	public RecoveryAddQueryMessage(String pql, ID sharedQuery,
-			java.util.UUID processId, java.util.UUID subprocessID) {
+	public RecoveryAddQueryMessage(String pql, int localQuery, java.util.UUID processId, java.util.UUID subprocessID) {
 		Preconditions.checkNotNull(pql);
-		Preconditions.checkNotNull(sharedQuery);
 		Preconditions.checkNotNull(processId);
 		Preconditions.checkNotNull(subprocessID);
 
 		this.mPQL = pql;
-		this.mSharedQuery = sharedQuery;
+		this.mLocalQuery = localQuery;
 		this.mProcessId = processId;
 		this.mSubprocessId = subprocessID;
 	}
@@ -126,23 +112,24 @@ public class RecoveryAddQueryMessage implements IMessage {
 	public byte[] toBytes() {
 		byte[] idBytes = this.mID.toString().getBytes();
 		byte[] pqlBytes = this.mPQL.getBytes();
-		byte[] sharedQueryBytes = this.mSharedQuery.toString().getBytes();
 		byte[] processIdBytes = this.mProcessId.toString().getBytes();
 		byte[] subprocessIdBytes = this.mSubprocessId.toString().getBytes();
 
-		int bufferSize = 4 + idBytes.length + 4 + pqlBytes.length + 4
-				+ sharedQueryBytes.length + 4 + processIdBytes.length + 4
-				+ subprocessIdBytes.length;
+		int bufferSize = 4 + idBytes.length + 4 + pqlBytes.length + 4 + 4
+				+ processIdBytes.length + 4 + subprocessIdBytes.length;
 		ByteBuffer buffer = ByteBuffer.allocate(bufferSize);
 
 		buffer.putInt(idBytes.length);
 		buffer.put(idBytes);
+		
 		buffer.putInt(pqlBytes.length);
 		buffer.put(pqlBytes);
-		buffer.putInt(sharedQueryBytes.length);
-		buffer.put(sharedQueryBytes);
+		
+		buffer.putInt(mLocalQuery);
+		
 		buffer.putInt(processIdBytes.length);
 		buffer.put(processIdBytes);
+		
 		buffer.putInt(subprocessIdBytes.length);
 		buffer.put(subprocessIdBytes);
 
@@ -164,15 +151,7 @@ public class RecoveryAddQueryMessage implements IMessage {
 		buffer.get(pqlBytes);
 		this.mPQL = new String(pqlBytes);
 
-		try {
-			int sharedQueryBytesLength = buffer.getInt();
-			byte[] sharedQueryBytes = new byte[sharedQueryBytesLength];
-			buffer.get(sharedQueryBytes);
-			URI sharedQueryURI = new URI(new String(sharedQueryBytes));
-			this.mSharedQuery = ID.create(sharedQueryURI);
-		} catch (URISyntaxException e) {
-			LOG.error("Could not create shared query id from bytes!", e);
-		}
+		mLocalQuery = buffer.getInt();
 
 		int processIdBytesLength = buffer.getInt();
 		byte[] processIdBytes = new byte[processIdBytesLength];
@@ -182,8 +161,7 @@ public class RecoveryAddQueryMessage implements IMessage {
 		int subprocessIdBytesLength = buffer.getInt();
 		byte[] subprocessIdBytes = new byte[subprocessIdBytesLength];
 		buffer.get(subprocessIdBytes);
-		this.mSubprocessId = java.util.UUID.fromString(new String(
-				subprocessIdBytes));
+		this.mSubprocessId = java.util.UUID.fromString(new String(subprocessIdBytes));
 
 	}
 

@@ -26,8 +26,7 @@ public class AgreementReceiver extends AbstractRepeatingMessageReceiver {
 	/**
 	 * The logger instance for this class.
 	 */
-	private static final Logger LOG = LoggerFactory
-			.getLogger(AgreementReceiver.class);
+	private static final Logger LOG = LoggerFactory.getLogger(AgreementReceiver.class);
 
 	/**
 	 * The single instance of this class.
@@ -60,39 +59,33 @@ public class AgreementReceiver extends AbstractRepeatingMessageReceiver {
 	}
 
 	@Override
-	public void receivedMessage(IPeerCommunicator communicator,
-			PeerID senderPeer, IMessage message) {
+	public void receivedMessage(IPeerCommunicator communicator, PeerID senderPeer, IMessage message) {
 		Preconditions.checkNotNull(message);
 		Preconditions.checkNotNull(senderPeer);
 		Preconditions.checkNotNull(communicator);
 
 		if (message instanceof RecoveryAgreementMessage) {
 			RecoveryAgreementMessage agMessage = (RecoveryAgreementMessage) message;
-			if(!mReceivedUUIDs.contains(agMessage.getUUID())) {
+			if (!mReceivedUUIDs.contains(agMessage.getUUID())) {
 				mReceivedUUIDs.add(agMessage.getUUID());
 			} else {
 				return;
 			}
 
-			boolean wantToRecover = AgreementHelper.decideToRecover(
-					agMessage.getFailedPeer(), agMessage.getSharedQueryId(),
-					senderPeer);
+			boolean wantToRecover = AgreementHelper.decideToRecover(agMessage.getFailedPeer(),
+					agMessage.getLocalQueryId(), senderPeer);
 
 			RecoveryAgreementResponseMessage response = null;
 			if (wantToRecover) {
-				response = new RecoveryAgreementResponseMessage(
-						agMessage.getUUID());
+				response = new RecoveryAgreementResponseMessage(agMessage.getUUID());
 			} else {
-				response = new RecoveryAgreementResponseMessage(
-						agMessage.getUUID(), "Don't want to do recovery");
+				response = new RecoveryAgreementResponseMessage(agMessage.getUUID(), "Don't want to do recovery");
 			}
 
 			try {
 				communicator.send(senderPeer, response);
 			} catch (PeerCommunicationException e) {
-				LOG.error(
-						"Could not send tuple send instruction response message!",
-						e);
+				LOG.error("Could not send tuple send instruction response message!", e);
 			}
 		}
 	}

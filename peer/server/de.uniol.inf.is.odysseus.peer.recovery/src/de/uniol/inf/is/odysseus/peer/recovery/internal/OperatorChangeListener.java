@@ -1,6 +1,5 @@
 package de.uniol.inf.is.odysseus.peer.recovery.internal;
 
-import java.util.Collection;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -8,9 +7,7 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
-import com.google.common.base.Strings;
 
-import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.planmodification.IPlanModificationListener;
@@ -18,16 +15,13 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandlin
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.planmodification.event.PlanModificationEventType;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.PhysicalQuery;
-import de.uniol.inf.is.odysseus.p2p_new.logicaloperator.JxtaReceiverAO;
-import de.uniol.inf.is.odysseus.p2p_new.logicaloperator.JxtaSenderAO;
 import de.uniol.inf.is.odysseus.p2p_new.physicaloperator.JxtaReceiverPO;
 import de.uniol.inf.is.odysseus.p2p_new.physicaloperator.JxtaSenderPO;
 import de.uniol.inf.is.odysseus.p2p_new.util.IObservableOperator;
 import de.uniol.inf.is.odysseus.p2p_new.util.IOperatorObserver;
 import de.uniol.inf.is.odysseus.parser.pql.generator.IPQLGenerator;
-import de.uniol.inf.is.odysseus.peer.distribute.util.LogicalQueryHelper;
-import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryBackupInformation;
 import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryCommunicator;
+import de.uniol.inf.is.odysseus.peer.recovery.util.BackupInformationAccess;
 import de.uniol.inf.is.odysseus.peer.recovery.util.RecoveryHelper;
 
 public class OperatorChangeListener implements IOperatorObserver, IPlanModificationListener {
@@ -141,36 +135,22 @@ public class OperatorChangeListener implements IOperatorObserver, IPlanModificat
 		if (observable instanceof JxtaReceiverPO || observable instanceof JxtaSenderPO) {
 			if (arg instanceof List) {
 				List<String> infoList = (List<String>) arg;
-				if (infoList.size() >= 2) {
-					String newPeerId = infoList.get(0);
-					String pipeId = infoList.get(1);
+				if (infoList.size() >= 3) {
+					String oldPeerId = infoList.get(0);
+					String newPeerId = infoList.get(1);
+					String pipeId = infoList.get(2);
 
+					// Find the query and get the local id
 					IPhysicalQuery query = RecoveryHelper.findInstalledQueryWithJxtaOperator(
 							RecoveryHelper.convertToPipeId(pipeId), updateReceiver);
-
-					// Change the logical plan to update the
-					// backup-information
-					Collection<ILogicalOperator> logicalOps = LogicalQueryHelper.getAllOperators(query
-							.getLogicalQuery().getLogicalPlan());
-					for (ILogicalOperator logicalOp : logicalOps) {
-						if (updateReceiver && logicalOp instanceof JxtaReceiverAO) {
-							JxtaReceiverAO logicalReceiver = (JxtaReceiverAO) logicalOp;
-							logicalReceiver.setPeerID(newPeerId);
-						} else if (!updateReceiver && logicalOp instanceof JxtaSenderAO) {
-							JxtaSenderAO logicalSender = (JxtaSenderAO) logicalOp;
-							logicalSender.setPeerID(newPeerId);
-						}
-					}
-					String newBackupPQL = pqlGenerator.generatePQLStatement(query.getLogicalQuery().getLogicalPlan());
-
-					// Update the local backup-information and send it to other peers
-					if (!Strings.isNullOrEmpty(newBackupPQL)) {
-						List<IRecoveryBackupInformation> infosToDistribute = RecoveryHelper.updateLocalPQL(
-								newBackupPQL, RecoveryHelper.convertToPipeId(pipeId));
-						for (IRecoveryBackupInformation backupInfo : infosToDistribute) {
-							recoveryCommunicator.distributeUpdatedBackupInfo(backupInfo);
-						}
-					}
+					int queryId = query.getID();
+					
+					// Old peer-id is replaced by the new one ...
+					String pql = BackupInformationAccess.getBackupPQL(queryId);
+					String newPQL = pql.replace(oldPeerId, newPeerId);
+					
+					// Save this new information
+					BackupInformationAccess.saveBackupInformation(queryId, newPQL, query.getState().toString());
 				}
 			}
 		}

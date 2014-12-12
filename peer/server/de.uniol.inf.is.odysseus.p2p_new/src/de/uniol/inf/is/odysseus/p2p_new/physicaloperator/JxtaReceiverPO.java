@@ -218,6 +218,11 @@ public class JxtaReceiverPO<T extends IStreamObject> extends AbstractSource<T> i
 	 * @throws DataTransmissionException
 	 */
 	public void receiveFromNewPeer(String peerId) throws DataTransmissionException {
+		// Info for the observers
+		List<String> infoList = new ArrayList<String>();
+		// The old peer id
+		infoList.add(this.peerIDString);
+		
 		this.peerIDString = peerId;
 
 		// Update transmission
@@ -232,7 +237,6 @@ public class JxtaReceiverPO<T extends IStreamObject> extends AbstractSource<T> i
 			process_open();
 
 		// Notify the observers with the new peerId so that they can update the backup-information
-		List<String> infoList = new ArrayList<String>();
 		infoList.add(peerId);
 		infoList.add(this.pipeIDString);
 		notifyObservers(infoList);

@@ -1,6 +1,5 @@
 package de.uniol.inf.is.odysseus.peer.recovery.protocol;
 
-import net.jxta.id.ID;
 import net.jxta.peer.PeerID;
 import net.jxta.pipe.PipeID;
 
@@ -13,8 +12,7 @@ import de.uniol.inf.is.odysseus.peer.recovery.messages.RecoveryUpdatePipeRespons
 
 /**
  * Entity to send pipe update instructions. <br />
- * Uses repeating message send routines and informs by boolean return values
- * about success/fails.
+ * Uses repeating message send routines and informs by boolean return values about success/fails.
  * 
  * @author Michael Brand
  *
@@ -36,8 +34,7 @@ public class UpdatePipeSender extends AbstractRepeatingMessageSender {
 	}
 
 	/**
-	 * Sends given update sender instruction to a given peer by using a
-	 * repeating message send process.
+	 * Sends given update sender instruction to a given peer by using a repeating message send process.
 	 * 
 	 * @param destination
 	 *            The ID of the given peer. <br />
@@ -54,47 +51,40 @@ public class UpdatePipeSender extends AbstractRepeatingMessageSender {
 	 * @param communicator
 	 *            An active peer communicator. <br />
 	 *            Must be not null.
-	 * @return True, if an acknowledge returned from the given peer; false,
-	 *         else.
+	 * @return True, if an acknowledge returned from the given peer; false, else.
 	 */
-	public boolean sendSenderUpdateInstruction(PeerID destination, PipeID pipe,
-			PeerID peer, ID sharedQuery, IPeerCommunicator communicator) {
-		return sendInstruction(destination, pipe, peer, sharedQuery, true,
-				communicator);
-	}
-
-	/**
-	 * Sends given update receiver instruction to a given peer by using a
-	 * repeating message send process.
-	 * 
-	 * @param destination
-	 *            The ID of the given peer. <br />
-	 *            Must be not null.
-	 * @param pipe
-	 *            The affected pipe. <br />
-	 *            Must be not null.
-	 * @param peer
-	 *            The new sending or receiving peer. <br />
-	 *            Must be not null.
-	 * @param sharedQuery
-	 *            The affected shared query. <br />
-	 *            Must be not null.
-	 * @param communicator
-	 *            An active peer communicator. <br />
-	 *            Must be not null.
-	 * @return True, if an acknowledge returned from the given peer; false,
-	 *         else.
-	 */
-	public boolean sendReceiverUpdateInstruction(PeerID destination,
-			PipeID pipe, PeerID peer, ID sharedQuery,
+	public boolean sendSenderUpdateInstruction(PeerID destination, PipeID pipe, PeerID peer, int localQuery,
 			IPeerCommunicator communicator) {
-		return sendInstruction(destination, pipe, peer, sharedQuery, false,
-				communicator);
+		return sendInstruction(destination, pipe, peer, localQuery, true, communicator);
 	}
 
 	/**
-	 * Sends given update receiver instruction to a given peer by using a
-	 * repeating message send process.
+	 * Sends given update receiver instruction to a given peer by using a repeating message send process.
+	 * 
+	 * @param destination
+	 *            The ID of the given peer. <br />
+	 *            Must be not null.
+	 * @param pipe
+	 *            The affected pipe. <br />
+	 *            Must be not null.
+	 * @param peer
+	 *            The new sending or receiving peer. <br />
+	 *            Must be not null.
+	 * @param sharedQuery
+	 *            The affected shared query. <br />
+	 *            Must be not null.
+	 * @param communicator
+	 *            An active peer communicator. <br />
+	 *            Must be not null.
+	 * @return True, if an acknowledge returned from the given peer; false, else.
+	 */
+	public boolean sendReceiverUpdateInstruction(PeerID destination, PipeID pipe, PeerID peer, int localQuery,
+			IPeerCommunicator communicator) {
+		return sendInstruction(destination, pipe, peer, localQuery, false, communicator);
+	}
+
+	/**
+	 * Sends given update receiver instruction to a given peer by using a repeating message send process.
 	 * 
 	 * @param destination
 	 *            The ID of the given peer. <br />
@@ -112,27 +102,21 @@ public class UpdatePipeSender extends AbstractRepeatingMessageSender {
 	 *            An active peer communicator. <br />
 	 *            Must be not null.
 	 * @param senderUpdate
-	 *            True for a sender update message; false for a receiver update
-	 *            message.
-	 * @return True, if an acknowledge returned from the given peer; false,
-	 *         else.
+	 *            True for a sender update message; false for a receiver update message.
+	 * @return True, if an acknowledge returned from the given peer; false, else.
 	 */
-	private boolean sendInstruction(PeerID destination, PipeID pipe,
-			PeerID peer, ID sharedQuery, boolean senderUpdate,
+	private boolean sendInstruction(PeerID destination, PipeID pipe, PeerID peer, int localQuery, boolean senderUpdate,
 			IPeerCommunicator communicator) {
 		Preconditions.checkNotNull(destination);
 		Preconditions.checkNotNull(pipe);
 		Preconditions.checkNotNull(peer);
-		Preconditions.checkNotNull(sharedQuery);
 		Preconditions.checkNotNull(communicator);
 
-		RecoveryUpdatePipeMessage message = new RecoveryUpdatePipeMessage(pipe,
-				peer, sharedQuery, senderUpdate);
-		return repeatingSend(destination, message, message.getUUID(),
-				communicator);
+		RecoveryUpdatePipeMessage message = new RecoveryUpdatePipeMessage(pipe, peer, localQuery, senderUpdate);
+		return repeatingSend(destination, message, message.getUUID(), communicator);
 
 	}
-	
+
 	@Override
 	public void bindPeerCommunicator(IPeerCommunicator serv) {
 		super.bindPeerCommunicator(serv);
@@ -150,13 +134,12 @@ public class UpdatePipeSender extends AbstractRepeatingMessageSender {
 	}
 
 	@Override
-	public void receivedMessage(IPeerCommunicator communicator,
-			PeerID senderPeer, IMessage message) {
+	public void receivedMessage(IPeerCommunicator communicator, PeerID senderPeer, IMessage message) {
 		Preconditions.checkNotNull(communicator);
 		Preconditions.checkNotNull(senderPeer);
 		Preconditions.checkNotNull(message);
-		
-		if(message instanceof RecoveryUpdatePipeMessage) {
+
+		if (message instanceof RecoveryUpdatePipeMessage) {
 			RecoveryUpdatePipeResponseMessage response = (RecoveryUpdatePipeResponseMessage) message;
 			handleResponseMessage(response.getUUID(), response.getErrorMessage());
 		}

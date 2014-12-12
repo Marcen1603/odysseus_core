@@ -3,11 +3,9 @@ package de.uniol.inf.is.odysseus.peer.ddc;
 import com.google.common.base.Preconditions;
 
 /**
- * A DDC entry is an ADT for a key value pair of Strings with an additional
- * timestamp indicating the point in time of the generation or change of the key
- * value pair. <br />
- * A key for a DDC entry can be multidimensional String to represent table
- * entries.
+ * A DDC entry is an ADT for a key value pair of Strings with an additional timestamp indicating the point in time of
+ * the generation or change of the key value pair. <br />
+ * A key for a DDC entry can be multidimensional String to represent table entries.
  * 
  * @author Michael Brand
  *
@@ -75,12 +73,10 @@ public class DDCEntry {
 	}
 
 	/**
-	 * Determines, if the entry should outstay the run-time of the Odyseus
-	 * instance.
+	 * Determines, if the entry should outstay the run-time of the Odyseus instance.
 	 * 
 	 * @param persistent
-	 *            True, if the entry should outstay the run-time of the Odyseus
-	 *            instance.
+	 *            True, if the entry should outstay the run-time of the Odyseus instance.
 	 */
 	public void setPersistent(boolean persistent) {
 		this.mPersistent = persistent;
@@ -96,24 +92,40 @@ public class DDCEntry {
 	 *            The value. <br />
 	 *            The value must be not null.
 	 * @param ts
-	 *            The timestamp indicating the point in time of creation or last
-	 *            change. <br />
+	 *            The timestamp indicating the point in time of creation or last change. <br />
 	 *            The timestamp must be greater zero.
 	 */
 	public DDCEntry(DDCKey key, String value, long ts) {
+		this(key, value, ts, true);
+	}
 
-		Preconditions.checkNotNull(key,
-				"The key for a DDC entry must be not null!");
+	/**
+	 * Creates a new DDC entry.
+	 * 
+	 * @param key
+	 *            The multidimensional key. <br />
+	 *            Must be not null.
+	 * @param value
+	 *            The value. <br />
+	 *            The value must be not null.
+	 * @param ts
+	 *            The timestamp indicating the point in time of creation or last change. <br />
+	 *            The timestamp must be greater zero.
+	 * @param persistent
+	 *            Set to true, if you want this entry to be saved within a file. Set to false, if this entry should not
+	 *            be persistent -> it will be gone when the instance is shut down
+	 */
+	public DDCEntry(DDCKey key, String value, long ts, boolean persistent) {
+		Preconditions.checkNotNull(key, "The key for a DDC entry must be not null!");
 		this.mKey = key;
 
-		Preconditions.checkNotNull(value,
-				"The value for a DDC entry must be not null!");
+		Preconditions.checkNotNull(value, "The value for a DDC entry must be not null!");
 		this.mValue = value;
 
-		Preconditions.checkArgument(ts > 0,
-				"The timestamp for a DDC entry must be greater zero!");
+		Preconditions.checkArgument(ts > 0, "The timestamp for a DDC entry must be greater zero!");
 		this.mTS = ts;
 
+		this.mPersistent = persistent;
 	}
 
 	/**
@@ -125,7 +137,7 @@ public class DDCEntry {
 	 */
 	public DDCEntry(DDCEntry entry) {
 
-		this(entry.mKey, entry.mValue, entry.mTS);
+		this(entry.mKey, entry.mValue, entry.mTS, entry.mPersistent);
 
 	}
 
@@ -146,28 +158,24 @@ public class DDCEntry {
 		}
 
 		DDCEntry entry = (DDCEntry) obj;
-		return this.mKey.equals(entry.mKey) && this.mValue.equals(entry.mValue)
-				&& this.mTS == entry.mTS;
+		return this.mKey.equals(entry.mKey) && this.mValue.equals(entry.mValue) && this.mTS == entry.mTS;
 
 	}
 
 	/**
-	 * Compares the timestamp of the DDC entry with the timestamp of another DDC
-	 * entry.
+	 * Compares the timestamp of the DDC entry with the timestamp of another DDC entry.
 	 * 
 	 * @param entry
 	 *            The other DDC entry. <br />
 	 *            Must be not null and the key must be same.
-	 * @return A value lower zero, if <code>entry</code> has a younger
-	 *         timestamp, a value greater zero, if <code>entry</code> has an
-	 *         older timestamp or zero, if bothe timestamps are the same.
+	 * @return A value lower zero, if <code>entry</code> has a younger timestamp, a value greater zero, if
+	 *         <code>entry</code> has an older timestamp or zero, if bothe timestamps are the same.
 	 */
 	public long compareTimeStamps(DDCEntry entry) {
 
 		Preconditions.checkNotNull(entry, "DDCEntry must be not null!");
-		Preconditions
-				.checkArgument(this.mKey.equals(entry.mKey),
-						"To compare timestamps of DDC entries, both entries must have the same key!");
+		Preconditions.checkArgument(this.mKey.equals(entry.mKey),
+				"To compare timestamps of DDC entries, both entries must have the same key!");
 
 		return this.mTS - entry.mTS;
 
@@ -187,8 +195,7 @@ public class DDCEntry {
 	@Override
 	public String toString() {
 
-		return this.mKey.toString() + " = " + this.mValue + " [ts: "
-				+ String.valueOf(this.mTS) + "]";
+		return this.mKey.toString() + " = " + this.mValue + " [ts: " + String.valueOf(this.mTS) + "]";
 
 	}
 

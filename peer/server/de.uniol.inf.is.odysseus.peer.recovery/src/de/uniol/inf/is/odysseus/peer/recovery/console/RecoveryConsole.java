@@ -1,11 +1,10 @@
 package de.uniol.inf.is.odysseus.peer.recovery.console;
 
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.Collection;
-import java.util.Set;
+import java.util.HashMap;
+import java.util.List;
 
-import net.jxta.id.ID;
 import net.jxta.peer.PeerID;
 import net.jxta.pipe.PipeID;
 
@@ -17,7 +16,6 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
-import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.Lists;
 
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
@@ -28,8 +26,9 @@ import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryAllocator;
 import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryCommunicator;
 import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryStrategy;
 import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryStrategyManager;
+import de.uniol.inf.is.odysseus.peer.recovery.internal.BackupInfo;
 import de.uniol.inf.is.odysseus.peer.recovery.internal.RecoveryCommunicator;
-import de.uniol.inf.is.odysseus.peer.recovery.util.LocalBackupInformationAccess;
+import de.uniol.inf.is.odysseus.peer.recovery.util.BackupInformationAccess;
 import de.uniol.inf.is.odysseus.peer.recovery.util.RecoveryHelper;
 
 /**
@@ -44,7 +43,7 @@ public class RecoveryConsole implements CommandProvider {
 	private static IP2PNetworkManager p2pNetworkManager;
 	private static IPeerDictionary peerDictionary;
 	private static Collection<IRecoveryAllocator> recoveryAllocators = Lists.newArrayList();
-	
+
 	/**
 	 * The recovery communicator, if there is one bound.
 	 */
@@ -56,8 +55,6 @@ public class RecoveryConsole implements CommandProvider {
 	private static Collection<IRecoveryStrategy> recoveryStrategies = Lists.newArrayList();
 	private static Collection<IRecoveryStrategyManager> recoveryStrategyManagers = Lists.newArrayList();
 
-	
-	
 	// called by OSGi-DS
 	public static void bindP2PNetworkManager(IP2PNetworkManager serv) {
 		p2pNetworkManager = serv;
@@ -151,7 +148,7 @@ public class RecoveryConsole implements CommandProvider {
 			RecoveryConsole.recoveryAllocators.remove(allocator);
 		}
 	}
-	
+
 	// called by OSGi-DS
 	public static void bindRecoveryStrategy(IRecoveryStrategy recoveryStrategy) {
 		RecoveryConsole.recoveryStrategies.add(recoveryStrategy);
@@ -163,7 +160,7 @@ public class RecoveryConsole implements CommandProvider {
 			RecoveryConsole.recoveryStrategies.remove(recoveryStrategy);
 		}
 	}
-	
+
 	// called by OSGi-DS
 	public static void bindRecoveryStrategyManager(IRecoveryStrategyManager recoveryStrategyManager) {
 		RecoveryConsole.recoveryStrategyManagers.add(recoveryStrategyManager);
@@ -197,13 +194,11 @@ public class RecoveryConsole implements CommandProvider {
 		sb.append("	lsRecoveryAllocators - Lists the available recovery allocators.\n");
 		sb.append("	lsRecoveryStrategies - Lists the available recovery strategies.\n");
 		sb.append("	lsRecoveryStrategyManagers - Lists the available recovery strategy managers.\n");
-		sb.append("	showPeerPQL <PeerName> - Shows the PQL that this peer knows from <PeerName>.\n");
 		sb.append("	sendHoldOn <PeerName from receiver> <sharedQueryId> - Send a hold-on message to <PeerName from receiver>, so that this should stop sending the tuples from query <sharedQueryId> further.\n");
 		sb.append("	sendUpdateReceiver <PeerName from receiver> <PeerName from new sender> <pipeId> <sharedQueryId> - Send an updateReceiver-message to <PeerName from receiver>, so that this should receive the tuples fir pipe <pipeId> from the new sender <PeerName from new sender>.\n");
 		sb.append("	sendAddQueriesFromPeer <PeerName from receiver> <PeerName from failed peer> <sharedQueryId> - The <PeerName from receiver> will get a message which tells that the peer has to install the query <sharedQueryId> from <PeerName from failed peer>. \n");
 		sb.append("	holdOn <PipeId> - Let this peer hold on\n");
 		sb.append("	goOn <PipeId> - Let this peer go on\n");
-		sb.append("	beBuddy <sharedQueryId> - Sends a random peer a message that he is the buddy for the <sharedQueryId> and the necessary backup-infos\n");
 		return sb.toString();
 	}
 
@@ -223,30 +218,6 @@ public class RecoveryConsole implements CommandProvider {
 		}
 
 		cCommunicator.get().peerRemoved(failedPeer);
-	}
-
-	public void _showPeerPQL(CommandInterpreter ci) {
-		Preconditions.checkNotNull(ci, "Command interpreter must not be null!");
-
-		String peerName = ci.nextArgument();
-		Optional<PeerID> peerId = RecoveryHelper.determinePeerID(peerName);
-
-		if (peerId.isPresent()) {
-			Set<ID> queryIds = LocalBackupInformationAccess.getStoredSharedQueryIdsForPeer(peerId.get());
-			ci.println("PQL-Queries for peer with peerId " + peerId.get());
-			for (ID queryId : queryIds) {
-				ci.println("Shared Query ID: " + queryId);
-				ImmutableCollection<String> pqls = LocalBackupInformationAccess.getStoredPQLStatements(queryId,
-						peerId.get());
-
-				for (String pql : pqls) {
-					ci.println("Query: ");
-					ci.println("-------");
-					ci.println(pql);
-				}
-			}
-		}
-
 	}
 
 	public void _sendHoldOn(CommandInterpreter ci) {
@@ -270,17 +241,17 @@ public class RecoveryConsole implements CommandProvider {
 			LOG.error("No recovery communicator bound!");
 			return;
 
-		} else if(!RecoveryCommunicator.getP2PNetworkManager().isPresent()) {
-			
+		} else if (!RecoveryCommunicator.getP2PNetworkManager().isPresent()) {
+
 			LOG.error("No P2P network manager bound!");
 			return;
-			
+
 		}
 
 		PeerID receiverPeerId = getPeerIdFromCi(ci);
 		PeerID newSendrePeerId = getPeerIdFromCi(ci);
 		PipeID pipeId = getPipeIDFromCi(ci);
-		ID sharesQueryID = getSharedQueryIdFromCi(ci);
+		int localQueryId = Integer.parseInt(ci.nextArgument());
 
 		if (receiverPeerId == null) {
 			ci.println("Don't know new receiver peer. Take myself insead.");
@@ -292,45 +263,27 @@ public class RecoveryConsole implements CommandProvider {
 			newSendrePeerId = RecoveryCommunicator.getP2PNetworkManager().get().getLocalPeerID();
 		}
 
-		cCommunicator.get().sendUpdateReceiverMessage(receiverPeerId, newSendrePeerId, pipeId, sharesQueryID);
+		cCommunicator.get().sendUpdateReceiverMessage(receiverPeerId, newSendrePeerId, pipeId, localQueryId);
 	}
 
 	public void _lsBackupStore(CommandInterpreter ci) {
-		StringBuilder sb = new StringBuilder();
-
-		ImmutableCollection<ID> storedIds = LocalBackupInformationAccess.getStoredIDs();
-
-		if (storedIds.isEmpty()) {
-			ci.println("No shared query ids stored.");
-			return;
+		List<String> backupPeerIds = BackupInformationAccess.getBackupPeerIds();
+		if (backupPeerIds.isEmpty()) {
+			System.out.println("No information about any peer");
 		}
-
-		sb.append("Information about other peers:\n");
-		for (ID id : storedIds) {
-			sb.append(id.toString() + " : ");
-			ImmutableCollection<PeerID> peersForThisQueryId = LocalBackupInformationAccess
-					.getStoredPeersForSharedQueryId(id);
-			boolean isFirst = true;
-			for (PeerID peer : peersForThisQueryId) {
-				if (!isFirst)
-					sb.append(", ");
-				isFirst = false;
-				String peerName = RecoveryHelper.determinePeerName(peer);
-				sb.append(peerName);
+		for (String peerId : backupPeerIds) {
+			System.out.println("Information about " + peerId + "\n");
+			HashMap<Integer, BackupInfo> infoMap = BackupInformationAccess.getBackupInformation(peerId);
+			if (infoMap != null) {
+				for (Integer key : infoMap.keySet()) {
+					BackupInfo info = infoMap.get(key);
+					System.out.println(key + " : " + info.pql + " : " + info.state);
+				}
+			} else {
+				System.out.println("No Backup-Information about " + peerId);
 			}
-
-			sb.append("\n");
+			System.out.println("\n\n");
 		}
-		
-		sb.append("\nInformation about me:\n");
-		for (ID id : storedIds) {
-			ImmutableCollection<String> pqls = LocalBackupInformationAccess.getLocalPQL(id);
-			for (String pql : pqls) {
-				sb.append(pql + "\n");
-			}
-		}
-
-		ci.println(sb.toString());
 	}
 
 	/**
@@ -349,7 +302,7 @@ public class RecoveryConsole implements CommandProvider {
 		}
 
 	}
-	
+
 	/**
 	 * Lists all available {@link IRecoveryStrategyManager}s bound via OSGI-DS.
 	 * 
@@ -366,7 +319,7 @@ public class RecoveryConsole implements CommandProvider {
 		}
 
 	}
-	
+
 	/**
 	 * Lists all available {@link IRecoveryStrategy}s bound via OSGI-DS.
 	 * 
@@ -388,7 +341,7 @@ public class RecoveryConsole implements CommandProvider {
 		PipeID pipe = getPipeIDFromCi(ci);
 		try {
 			RecoveryHelper.startBuffering(pipe.toString());
-		} catch(Exception e) {
+		} catch (Exception e) {
 			LOG.error("Error while holdOn.", e);
 		}
 	}
@@ -397,25 +350,13 @@ public class RecoveryConsole implements CommandProvider {
 		PipeID pipe = getPipeIDFromCi(ci);
 		try {
 			RecoveryHelper.resumeFromBuffering(pipe.toString());
-		} catch(Exception e) {
+		} catch (Exception e) {
 			LOG.error("Error while goOn.", e);
 		}
 	}
 
-	public void _beBuddy(CommandInterpreter ci) {
-		ID sharedQueryId = getSharedQueryIdFromCi(ci);
-		
-		if (!cCommunicator.isPresent()) {
-			LOG.error("No recovery communicator bound!");
-			return;
-		}
-		
-		cCommunicator.get().chooseBuddyForQuery(sharedQueryId);
-	}
-
 	/**
-	 * If your next argument should be the PeerName, you can get the PeerID it
-	 * with this method
+	 * If your next argument should be the PeerName, you can get the PeerID it with this method
 	 * 
 	 * @param ci
 	 * @return PeerID which is made from the next argument from the ci
@@ -432,8 +373,7 @@ public class RecoveryConsole implements CommandProvider {
 	}
 
 	/**
-	 * If your next argument should be the PipeId, you can get the PipeId with
-	 * this method
+	 * If your next argument should be the PipeId, you can get the PipeId with this method
 	 * 
 	 * @param ci
 	 * @return
@@ -454,35 +394,11 @@ public class RecoveryConsole implements CommandProvider {
 	}
 
 	/**
-	 * If your next argument should be the sharedQueryID, you can get it with
-	 * this method
-	 * 
-	 * @param ci
-	 * @return SharedQueryId which is made from the next argument from the ci
-	 */
-	private ID getSharedQueryIdFromCi(CommandInterpreter ci) {
-		String sharedQueryIdString = ci.nextArgument();
-		ID sharedQueryId = null;
-		if (!Strings.isNullOrEmpty(sharedQueryIdString)) {
-			URI sharedIdUri;
-			try {
-				sharedIdUri = new URI(sharedQueryIdString);
-				sharedQueryId = ID.create(sharedIdUri);
-			} catch (URISyntaxException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-		return sharedQueryId;
-	}
-
-	/**
 	 * Determines the {@link IRecoveryAllocator} by name.
 	 * 
 	 * @param allocatorName
 	 *            The name of the allocator.
-	 * @return An {@link IRecoveryAllocator}, if there is one bound with
-	 *         <code>allocatorName</code> as name.
+	 * @return An {@link IRecoveryAllocator}, if there is one bound with <code>allocatorName</code> as name.
 	 */
 	@SuppressWarnings("unused")
 	private static Optional<IRecoveryAllocator> determineAllocator(String allocatorName) {

@@ -8,7 +8,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import net.jxta.id.ID;
 import net.jxta.peer.PeerID;
 import net.jxta.pipe.PipeID;
 
@@ -17,7 +16,6 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.Lists;
 
 import de.uniol.inf.is.odysseus.core.collection.Context;
@@ -50,9 +48,6 @@ import de.uniol.inf.is.odysseus.parser.pql.generator.IPQLGenerator;
 import de.uniol.inf.is.odysseus.peer.distribute.ILogicalQueryPart;
 import de.uniol.inf.is.odysseus.peer.distribute.IQueryPartController;
 import de.uniol.inf.is.odysseus.peer.distribute.LogicalQueryPart;
-import de.uniol.inf.is.odysseus.peer.distribute.util.LogicalQueryHelper;
-import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryBackupInformation;
-import de.uniol.inf.is.odysseus.peer.recovery.internal.BackupInformation;
 import de.uniol.inf.is.odysseus.peer.recovery.internal.RecoveryCommunicator;
 import de.uniol.inf.is.odysseus.peer.recovery.physicaloperator.RecoveryBufferPO;
 
@@ -183,8 +178,7 @@ public class RecoveryHelper {
 	 * @param sharedQueryId
 	 *            The id of the shared query where this PQL belongs to. To save, that this is a shared query.
 	 */
-	public static Collection<Integer> installAndRunQueryPartFromPql(String pql, ID sharedQueryId)
-			throws QueryParseException {
+	public static Collection<Integer> installAndRunQueryPartFromPql(String pql) throws QueryParseException {
 
 		Collection<Integer> installedQueries = Lists.newArrayList();
 
@@ -203,9 +197,6 @@ public class RecoveryHelper {
 		 */
 
 		installedQueries = cExecutor.get().addQuery(pql, "PQL", session, Context.empty());
-
-		// Save, that this is a shared query
-		cQueryPartController.get().registerAsSlave(installedQueries, sharedQueryId);
 
 		// TODO send success message
 
@@ -677,63 +668,6 @@ public class RecoveryHelper {
 						DataDictionaryProvider.getDataDictionary(RecoveryCommunicator.getActiveSession().getTenant()),
 						trafoConfig, Context.empty());
 		return physicalQueries;
-	}
-
-	/**
-	 * Updates the local backup-information with the given new backup-PQL and prepares a list with information for all
-	 * the other peer which may have interest in this information
-	 * 
-	 * @param newBackupPQL
-	 * @param pipeId
-	 * @param sharedQueryId
-	 * @return
-	 */
-	public static List<IRecoveryBackupInformation> updateLocalPQL(String newBackupPQL, PipeID pipeId, ID sharedQueryId) {
-		List<IRecoveryBackupInformation> infosToDistribute = new ArrayList<IRecoveryBackupInformation>();
-
-		ImmutableCollection<String> localPQLs = LocalBackupInformationAccess.getLocalPQL(sharedQueryId);
-		sharedQueryId.toString();
-		for (String localPQL : localPQLs) {
-			for (ILogicalQuery logicalQuery : RecoveryHelper.convertToLogicalQueries(localPQL)) {
-				for (ILogicalOperator logicalOp : LogicalQueryHelper.getAllOperators(logicalQuery.getLogicalPlan())) {
-					if (logicalOp instanceof JxtaReceiverAO) {
-						if (((JxtaReceiverAO) logicalOp).getPipeID().equals(pipeId.toString())) {
-							// This is the information we search for
-							IRecoveryBackupInformation updatedInfo = LocalBackupInformationAccess.updateLocalPQL(
-									sharedQueryId, localPQL, newBackupPQL);
-
-							// Distribute to other peers
-							IRecoveryBackupInformation infoToDistribute = new BackupInformation();
-							infoToDistribute.setSharedQuery(updatedInfo.getSharedQuery());
-							infoToDistribute.setAboutPeer(RecoveryCommunicator.getP2PNetworkManager().get()
-									.getLocalPeerID());
-							infoToDistribute.setPQL(updatedInfo.getLocalPQL());
-
-							infosToDistribute.add(infoToDistribute);
-
-						}
-					}
-				}
-			}
-		}
-		return infosToDistribute;
-	}
-
-	/**
-	 * Updates the local backup-information with the given new backup-PQL and prepares a list with information for all
-	 * the other peers which may have interest in this information. In opposite to the same method with the
-	 * sharedQueryId this method searches within the whole backup-information, hence it's less efficient
-	 * 
-	 * @param newBackupPQL
-	 * @param pipeId
-	 * @return
-	 */
-	public static List<IRecoveryBackupInformation> updateLocalPQL(String newBackupPQL, PipeID pipeId) {
-		List<IRecoveryBackupInformation> infosToDistribute = new ArrayList<IRecoveryBackupInformation>();
-		for (ID sharedQueryId : LocalBackupInformationAccess.getStoredIDs()) {
-			infosToDistribute.addAll(updateLocalPQL(newBackupPQL, pipeId, sharedQueryId));
-		}
-		return infosToDistribute;
 	}
 
 	/**

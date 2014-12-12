@@ -7,9 +7,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import de.uniol.inf.is.odysseus.peer.distribute.ILogicalQueryPart;
-import net.jxta.id.ID;
 import net.jxta.peer.PeerID;
+import de.uniol.inf.is.odysseus.peer.distribute.ILogicalQueryPart;
 
 /**
  * The RecoveryProcessState handles data for a given recovery process. These
@@ -32,13 +31,13 @@ public class RecoveryProcessState {
 	private Map<UUID, RecoverySubProcessState> subProcesses;
 
 	// maps sharedQueryId to allocationMap, needed for reallocation
-	private Map<ID, Map<ILogicalQueryPart, PeerID>> allocationMaps;
+	private Map<Integer, Map<ILogicalQueryPart, PeerID>> allocationMaps;
 
 	public RecoveryProcessState(PeerID failedPeerID) {
 		this.failedPeerID = failedPeerID;
 		identifier = UUID.randomUUID();
 		subProcesses = new HashMap<UUID, RecoverySubProcessState>();
-		allocationMaps = new HashMap<ID, Map<ILogicalQueryPart, PeerID>>();
+		allocationMaps = new HashMap<Integer, Map<ILogicalQueryPart, PeerID>>();
 	}
 
 	public UUID getIdentifier() {
@@ -49,10 +48,10 @@ public class RecoveryProcessState {
 		return failedPeerID;
 	}
 
-	public UUID createNewSubprocess(ID sharedQueryId,
+	public UUID createNewSubprocess(int localQueryId,
 			ILogicalQueryPart queryPart) {
 		RecoverySubProcessState subprocess = new RecoverySubProcessState(
-				sharedQueryId, queryPart);
+				localQueryId, queryPart);
 		subProcesses.put(subprocess.getIdentifier(), subprocess);
 		return subprocess.getIdentifier();
 	}
@@ -88,18 +87,18 @@ public class RecoveryProcessState {
 		return subProcesses.isEmpty();
 	}
 
-	public Map<ILogicalQueryPart, PeerID> getAllocationMap(ID sharedQueryId) {
+	public Map<ILogicalQueryPart, PeerID> getAllocationMap(int localQueryId) {
 		if (allocationMaps.isEmpty()) {
 			return null;
 		}
-		if (allocationMaps.containsKey(sharedQueryId)) {
-			return allocationMaps.get(sharedQueryId);
+		if (allocationMaps.containsKey(localQueryId)) {
+			return allocationMaps.get(localQueryId);
 		}
 		return null;
 	}
 
-	public void setAllocationMap(ID sharedQueryId,
+	public void setAllocationMap(int localQueryId,
 			Map<ILogicalQueryPart, PeerID> allocationMap) {
-		this.allocationMaps.put(sharedQueryId, allocationMap);
+		this.allocationMaps.put(localQueryId, allocationMap);
 	}
 }

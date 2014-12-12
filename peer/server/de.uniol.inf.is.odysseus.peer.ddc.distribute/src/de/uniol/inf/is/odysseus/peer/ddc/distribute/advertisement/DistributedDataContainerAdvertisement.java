@@ -31,15 +31,13 @@ import de.uniol.inf.is.odysseus.peer.ddc.DDCEntry;
 import de.uniol.inf.is.odysseus.peer.ddc.DDCKey;
 
 /**
- * The JXTA Advertisement for DistributedDataContainer to distribute keys and
- * corresponding values to other peers
+ * The JXTA Advertisement for DistributedDataContainer to distribute keys and corresponding values to other peers
  * 
  * @author ChrisToenjesDeye
  * 
  */
 public class DistributedDataContainerAdvertisement extends Advertisement {
-	private static final Logger LOG = LoggerFactory
-			.getLogger(DistributedDataContainerAdvertisement.class);
+	private static final Logger LOG = LoggerFactory.getLogger(DistributedDataContainerAdvertisement.class);
 
 	// Tag constants for document
 	private static final String ADVERTISEMENT_TYPE = "jxta:DDCAdvertisement";
@@ -52,9 +50,9 @@ public class DistributedDataContainerAdvertisement extends Advertisement {
 	private static final String TS = "ts";
 	private static final String VALUE = "value";
 	private static final String MULTI_KEY = "multiKey";
+	private static final String PERSISTENT = "persistent";
 
-	private static final String[] INDEX_FIELDS = new String[] { ID_TAG,
-			INITIATING_PEER_ID_TAG, ADVERTISEMENT_UID };
+	private static final String[] INDEX_FIELDS = new String[] { ID_TAG, INITIATING_PEER_ID_TAG, ADVERTISEMENT_UID };
 
 	// advertisement attributes
 	private ID id;
@@ -82,15 +80,12 @@ public class DistributedDataContainerAdvertisement extends Advertisement {
 	 *            - the xml-Root-Element
 	 */
 	public DistributedDataContainerAdvertisement(Element<?> root) {
-		final TextElement<?> doc = (TextElement<?>) Preconditions.checkNotNull(
-				root, "Root element must not be null!");
+		final TextElement<?> doc = (TextElement<?>) Preconditions.checkNotNull(root, "Root element must not be null!");
 		determineFields(doc);
 	}
 
-	public DistributedDataContainerAdvertisement(InputStream stream)
-			throws IOException {
-		this(StructuredDocumentFactory.newStructuredDocument(
-				MimeMediaType.XMLUTF8,
+	public DistributedDataContainerAdvertisement(InputStream stream) throws IOException {
+		this(StructuredDocumentFactory.newStructuredDocument(MimeMediaType.XMLUTF8,
 				Preconditions.checkNotNull(stream, "Stream must not be null!")));
 	}
 
@@ -100,10 +95,8 @@ public class DistributedDataContainerAdvertisement extends Advertisement {
 	 * @param adv
 	 *            - The @DDCAdvertisement to copy from
 	 */
-	public DistributedDataContainerAdvertisement(
-			DistributedDataContainerAdvertisement adv) {
-		Preconditions.checkNotNull(adv,
-				"Advertisement to copy must not be null!");
+	public DistributedDataContainerAdvertisement(DistributedDataContainerAdvertisement adv) {
+		Preconditions.checkNotNull(adv, "Advertisement to copy must not be null!");
 		this.id = adv.id;
 		this.initiatingPeerId = adv.initiatingPeerId;
 		this.advertisementUid = adv.advertisementUid;
@@ -115,16 +108,15 @@ public class DistributedDataContainerAdvertisement extends Advertisement {
 	}
 
 	/**
-	 * Creates the content document for the advertisement based on existing
-	 * values
+	 * Creates the content document for the advertisement based on existing values
 	 * 
 	 * @param asMimeType
 	 * @return Document with advertisement content
 	 */
 	@Override
 	public Document getDocument(MimeMediaType asMimeType) {
-		final StructuredDocument<?> doc = StructuredDocumentFactory
-				.newStructuredDocument(asMimeType, getAdvertisementType());
+		final StructuredDocument<?> doc = StructuredDocumentFactory.newStructuredDocument(asMimeType,
+				getAdvertisementType());
 		if (doc instanceof Attributable) {
 			((Attributable) doc).addAttribute("xmlns:jxta", "http://jxta.org");
 		}
@@ -164,8 +156,7 @@ public class DistributedDataContainerAdvertisement extends Advertisement {
 	 * @return created element
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	private static Element appendElement(StructuredDocument appendTo,
-			String tag, String value) {
+	private static Element appendElement(StructuredDocument appendTo, String tag, String value) {
 		Element createElement = appendTo.createElement(tag, value);
 		appendTo.appendChild(createElement);
 		return createElement;
@@ -183,19 +174,21 @@ public class DistributedDataContainerAdvertisement extends Advertisement {
 	 * @return created element
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	private static Element appendAddedDDCEntry(StructuredDocument appendTo,
-			String tag, DDCEntry ddcEntry) {
+	private static Element appendAddedDDCEntry(StructuredDocument appendTo, String tag, DDCEntry ddcEntry) {
 		Element baseDDCElement = appendTo.createElement(tag);
 		appendTo.appendChild(baseDDCElement);
 
-		Element keyDDCElement = appendTo.createElement(MULTI_KEY,
-				StringUtils.join(ddcEntry.getKey(), ","));
+		Element keyDDCElement = appendTo.createElement(MULTI_KEY, StringUtils.join(ddcEntry.getKey(), ","));
 		baseDDCElement.appendChild(keyDDCElement);
-		Element valueDDCElement = appendTo.createElement(VALUE,
-				ddcEntry.getValue());
+
+		Element valueDDCElement = appendTo.createElement(VALUE, ddcEntry.getValue());
 		baseDDCElement.appendChild(valueDDCElement);
-		Element tsDDCElement = appendTo.createElement(TS,
-				String.valueOf(ddcEntry.getTimeStamp()));
+
+		Element persistenceDDCElement = appendTo.createElement(PERSISTENT,
+				String.valueOf(ddcEntry.isPersistent() ? 1 : 0));
+		baseDDCElement.appendChild(persistenceDDCElement);
+		
+		Element tsDDCElement = appendTo.createElement(TS, String.valueOf(ddcEntry.getTimeStamp()));
 		baseDDCElement.appendChild(tsDDCElement);
 
 		return baseDDCElement;
@@ -205,7 +198,7 @@ public class DistributedDataContainerAdvertisement extends Advertisement {
 	 * Appends an DDC key to given StructuredDocuement
 	 * 
 	 * @param appendTo
-	 *            - Structured Docuement to append
+	 *            - Structured document to append
 	 * @param tag
 	 *            - Name of the tag
 	 * @param ddcEntryKey
@@ -213,13 +206,11 @@ public class DistributedDataContainerAdvertisement extends Advertisement {
 	 * @return created element
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	private static Element appendDeletedDDCEntry(StructuredDocument appendTo,
-			String tag, String[] ddcEntryKey) {
+	private static Element appendDeletedDDCEntry(StructuredDocument appendTo, String tag, String[] ddcEntryKey) {
 		Element baseDDCElement = appendTo.createElement(tag);
 		appendTo.appendChild(baseDDCElement);
 
-		Element keyDDCElement = appendTo.createElement(MULTI_KEY,
-				StringUtils.join(ddcEntryKey, ","));
+		Element keyDDCElement = appendTo.createElement(MULTI_KEY, StringUtils.join(ddcEntryKey, ","));
 		baseDDCElement.appendChild(keyDDCElement);
 
 		return baseDDCElement;
@@ -243,34 +234,34 @@ public class DistributedDataContainerAdvertisement extends Advertisement {
 			} else if (elem.getName().equals(ADVERTISEMENT_UID)) {
 				setDDCAdvertisementUid(UUID.fromString(elem.getTextValue()));
 			} else if (elem.getName().equals(TYPE)) {
-				setType(DistributedDataContainerAdvertisementType.parse(elem
-						.getTextValue()));
+				setType(DistributedDataContainerAdvertisementType.parse(elem.getTextValue()));
 			} else if (elem.getName().equals(ADDED_DDC_ENTRY)) {
 				// Getting added DDCEntries
 				Enumeration<?> children = elem.getChildren();
 				String[] key = null;
 				String value = "";
+				boolean persistent = true;
 				long ts = 0;
 
 				while (children.hasMoreElements()) {
-					final TextElement<?> child = (TextElement<?>) children
-							.nextElement();
+					final TextElement<?> child = (TextElement<?>) children.nextElement();
 					if (child.getName().equals(MULTI_KEY)) {
 						key = child.getValue().split(",");
 					} else if (child.getName().equals(VALUE)) {
 						value = child.getValue();
+					} else if (child.getName().equals(PERSISTENT)) {
+						persistent = Integer.parseInt(child.getValue()) == 1;
 					} else if (child.getName().equals(TS)) {
 						ts = Long.parseLong(child.getValue());
 					}
 				}
-				DDCEntry entry = new DDCEntry(new DDCKey(key), value, ts);
+				DDCEntry entry = new DDCEntry(new DDCKey(key), value, ts, persistent);
 				addAddedEntry(entry);
 			} else if (elem.getName().equals(REMOVED_DDC_ENTRY)) {
 				// Getting deleted DDC keys
 				Enumeration<?> children = elem.getChildren();
 				while (children.hasMoreElements()) {
-					final TextElement<?> child = (TextElement<?>) children
-							.nextElement();
+					final TextElement<?> child = (TextElement<?>) children.nextElement();
 					if (child.getName().equals(MULTI_KEY)) {
 						addRemovedEntry(child.getValue().split(","));
 					}
