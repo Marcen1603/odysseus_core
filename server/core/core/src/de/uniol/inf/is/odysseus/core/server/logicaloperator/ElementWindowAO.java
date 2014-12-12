@@ -39,6 +39,34 @@ public class ElementWindowAO extends AbstractWindowAO {
 		super.setWindowAdvance(windowSizeToSet);
 	}
 	
+	public Long getWindowSizeE() {
+		TimeValueItem item =  super.getWindowSize();
+		if (item != null) {
+			return item.getTime();
+		} else {
+			return null;
+		}
+	}
+	
+	public Long getWindowAdvanceE() {
+		TimeValueItem item =  super.getWindowAdvance();
+		if (item != null) {
+			return item.getTime();
+		} else {
+			return null;
+		}
+	}
+
+	public Long getWindowSlideE() {		
+		TimeValueItem item =  super.getWindowSlide();
+		if (item != null) {
+			return item.getTime();
+		} else {
+			return null;
+		}
+	}
+	
+	
 	public ElementWindowAO(ElementWindowAO windowPO) {
 		super(windowPO);
 	}
