@@ -21,7 +21,7 @@ public class Activator implements BundleActivator {
 		Activator.context = bundleContext;
 		try 
 		{
-			System.loadLibrary("BaslerJava");
+			System.loadLibrary("OptrisJava");
 		}
 		catch(Exception e) 
 		{
