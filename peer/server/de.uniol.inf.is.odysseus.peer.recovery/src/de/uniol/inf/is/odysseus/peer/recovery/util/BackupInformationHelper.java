@@ -179,8 +179,9 @@ public class BackupInformationHelper implements IPlanModificationListener {
 			int queryID = ((IPhysicalQuery) eventArgs.getValue()).getID();
 			BackupInformationAccess.removeBackupInformation(queryID);
 			
-		} else if (PlanModificationEventType.QUERY_ADDED.equals(eventArgs.getEventType())) {
-			
+		} else {
+			// either QUERY_ADDED -> save backup info
+			// or query state changed -> update backup info
 			int queryID = ((IPhysicalQuery) eventArgs.getValue()).getID();
 			QueryState state = ((IPhysicalQuery) eventArgs.getValue()).getState();
 			String pql = RecoveryHelper.getPQLFromRunningQuery(queryID);
