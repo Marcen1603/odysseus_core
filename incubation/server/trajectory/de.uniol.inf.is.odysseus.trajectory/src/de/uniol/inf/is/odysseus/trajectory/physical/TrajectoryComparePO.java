@@ -13,6 +13,7 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 // 
 public class TrajectoryComparePO<T extends Tuple<ITimeInterval>> extends AbstractPipe<T, T> {
 
+	@SuppressWarnings("unused")
 	private static final Logger LOGGER = LoggerFactory.getLogger(TrajectoryComparePO.class);
 	
 	public TrajectoryComparePO(int k, List<String> queryTrajectory, String referenceSystem) {

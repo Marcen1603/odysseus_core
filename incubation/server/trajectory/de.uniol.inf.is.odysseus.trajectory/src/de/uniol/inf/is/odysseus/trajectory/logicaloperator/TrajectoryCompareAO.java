@@ -28,6 +28,7 @@ public class TrajectoryCompareAO extends UnaryLogicalOp {
 	 */
 	private static final long serialVersionUID = 2522194934279154977L;
 	
+	@SuppressWarnings("unused")
 	private static final Logger LOGGER = LoggerFactory.getLogger(TrajectoryCompareAO.class);
 
 	// die Anzahl der k-ähnlichsten Routen
