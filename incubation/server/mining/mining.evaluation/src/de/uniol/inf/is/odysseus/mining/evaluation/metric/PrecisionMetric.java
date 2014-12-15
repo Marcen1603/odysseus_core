@@ -22,34 +22,35 @@ public class PrecisionMetric extends ClassificationMetric {
 	}
 
 	@Override
-	public Double calculateMetric(Object classValue, Double clazzValue, double fadingFactor) {
+	public String calculateMetric(Object classValue, Double clazzValue, double fadingFactor) {
 		//interpret clazzValue as index of class-nominals
 		String clazz = nominals.get(clazzValue.intValue());
 		//manipulate hits- and n-values for the predicted class
 		classHits[clazzValue.intValue()] = classHits[clazzValue.intValue()] * fadingFactor + (clazz.equals(classValue) ? 1 - loss : loss);
 		n[clazzValue.intValue()] = n[clazzValue.intValue()] * fadingFactor + 1.0;
 
-		double nSum = 0.0;
-		double classHitsSum = 0.0;
-		//sum up hits- and n-values
+		//better: use separate attributes for class-precision values
+		String returnString = "";
 		for (int i = 0; i < classHits.length; i++) {
-			classHitsSum += classHits[i];
-			nSum += n[i];
+			if(n[i] == 0) {
+				continue;
+			}
+			returnString += "\"" + nominals.get(i) + "\":" + String.format("%.3f", (classHits[i] / n[i])) + "; ";
 		}
-
-		if(nSum == 0.0){
-			return 0.0;
-		}
-		return classHitsSum / nSum ;
+		return returnString;
 		
-		//alternative solution for printing every class-precision:
-//		String returnString = "";
+		//the weigthed average is equal to accuracy of model
+//		double nSum = 0.0;
+//		double classHitsSum = 0.0;
+//		//sum up hits- and n-values
 //		for (int i = 0; i < classHits.length; i++) {
-//			if(n[i] == 0) {
-//				continue;
-//			}
-//			returnString += "Precision \"" + nominals.get(i) + "\" : " + (classHits[i] / n[i]) + "; ";
+//			classHitsSum += classHits[i];
+//			nSum += n[i];
 //		}
-//		return returnString;
+//
+//		if(nSum == 0.0){
+//			return 0.0;
+//		}
+//		return classHitsSum / nSum ;
 	}
 }

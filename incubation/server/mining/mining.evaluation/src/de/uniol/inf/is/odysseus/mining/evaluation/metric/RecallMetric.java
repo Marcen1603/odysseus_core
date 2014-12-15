@@ -22,7 +22,7 @@ public class RecallMetric extends ClassificationMetric {
 	}
 
 	@Override
-	public Double calculateMetric(Object classValue, Double clazzValue, double fadingFactor) {
+	public String calculateMetric(Object classValue, Double clazzValue, double fadingFactor) {
 		//interpret clazzValue as index of class-nominals
 		String clazz = nominals.get(clazzValue.intValue());
 		//manipulate hits- and n-values for the true class
@@ -30,18 +30,29 @@ public class RecallMetric extends ClassificationMetric {
 		classHits[classIndex] = classHits[classIndex] * fadingFactor + (clazz.equals(classValue) ? 1 - loss : loss);
 		n[classIndex] = n[classIndex] * fadingFactor + 1.0;
 		
-		double nSum = 0.0;
-		double classHitsSum = 0.0;
-		//sum up hits- and n-values
+		//better: use separate attributes for class-recall values
+		String returnString = "";
 		for (int i = 0; i < classHits.length; i++) {
-			classHitsSum += classHits[i];
-			nSum += n[i];
+			if(n[i] == 0) {
+				continue;
+			}
+			returnString += "\"" + nominals.get(i) + "\":" + String.format("%.3f", (classHits[i] / n[i])) + "; ";
 		}
+		return returnString;
 		
-		if(nSum == 0.0){
-			return 0.0;
-		}
-		return classHitsSum / nSum ;
+		//the weigthed average is equal to accuracy of model
+//		double nSum = 0.0;
+//		double classHitsSum = 0.0;
+//		//sum up hits- and n-values
+//		for (int i = 0; i < classHits.length; i++) {
+//			classHitsSum += classHits[i];
+//			nSum += n[i];
+//		}
+//		
+//		if(nSum == 0.0){
+//			return 0.0;
+//		}
+//		return classHitsSum / nSum ;
 	}
 
 }
