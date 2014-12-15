@@ -225,9 +225,11 @@ public class DDCFileHandler {
 		}
 
 		Properties properties = DDCFileHandler.loadFromFile();
-		DDCFileHandler.writeIntoDDC(properties);
-		DDCFileHandler.setChanged();
-		DDCFileHandler.loaded = true;
+		if(!properties.isEmpty()) {
+			DDCFileHandler.writeIntoDDC(properties);
+			DDCFileHandler.setChanged();
+			DDCFileHandler.loaded = true;
+		}
 
 	}
 
