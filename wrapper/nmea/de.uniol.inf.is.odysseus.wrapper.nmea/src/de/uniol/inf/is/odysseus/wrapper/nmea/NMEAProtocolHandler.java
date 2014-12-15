@@ -44,7 +44,7 @@ import de.uniol.inf.is.odysseus.wrapper.nmea.sentence.aissentences.AISSentenceHa
 import de.uniol.inf.is.odysseus.wrapper.nmea.util.SentenceUtils;
 
 /**
- * This wrapper can be used as a ProtocolHandler (NMEA) with GenericPush or
+ * This wrapper can be used as a ProtocolHandler (NMEA 0183) with GenericPush or
  * GenericPull. The DataHandler (KeyValueObject) should be used with this
  * ProtocolHandler.
  * 
