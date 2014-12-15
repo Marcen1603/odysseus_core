@@ -29,9 +29,6 @@ import de.uniol.inf.is.odysseus.sports.sportsql.parser.ddcaccess.SoccerDDCAccess
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.helper.SpaceUnitHelper;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.model.Space;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.parameter.ISportsQLParameter;
-import de.uniol.inf.is.odysseus.sports.sportsql.parser.parameter.SportsQLArrayParameter;
-import de.uniol.inf.is.odysseus.sports.sportsql.parser.parameter.SportsQLBooleanParameter;
-import de.uniol.inf.is.odysseus.sports.sportsql.parser.parameter.SportsQLDistanceParameter;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.parameter.SportsQLSpaceParameter;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.parameter.SportsQLSpaceParameter.SpaceType;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.parameter.SportsQLSpaceParameter.SpaceUnit;
@@ -92,7 +89,8 @@ public class PassesSportsQLParser {
 
 	private static String ATTRIBUTE_PASS_ANGLE = "pass_angle";
 	private static String ATTRIBUTE_PASS_DISTANCE = "pass_distance";
-	private static String ATTRIBUTE_PASS_DIRECTION = "pass_direction";
+	
+	public static String ATTRIBUTE_PASS_DIRECTION = "pass_direction";	
 	public static String ATTRIBUTE_PASS_LENGTH = "pass_length";
 	public static String ATTRIBUTE_DIRECT_PASS = "direct_pass";
 	public static String ATTRIBUTE_DOUBLE_PASS = "double_pass";
@@ -211,7 +209,7 @@ public class PassesSportsQLParser {
 		StateMapAO passesStateMap = OperatorBuildHelper.createStateMapAO(passesStateMapExpressions, ballContactProject);
 		allOperators.add(passesStateMap);
 
-		// 11. Select Tuple with different entity_ids		
+		// 11. Select Tuple with different entity_ids
 		SelectAO passesSelect = OperatorBuildHelper.createSelectAO(ATTRIBUTE_PLAYER_ENTITY_ID+"_1 != "+ATTRIBUTE_PLAYER_ENTITY_ID+"_2", passesStateMap);
 		allOperators.add(passesSelect);
 		
@@ -270,97 +268,25 @@ public class PassesSportsQLParser {
 
 		
 		StateMapAO passesResultsStateMap = OperatorBuildHelper.createStateMapAO(passesResultsStateMapExpressions, passesDetailsStateMap);
-		allOperators.add(passesResultsStateMap);
-
-		//14. Select pass distance	
-		ILogicalOperator passDistanceSelect = createPassDistanceSelectAO(passesResultsStateMap, sportsQL);
-		if (passDistanceSelect != null) {
-			allOperators.add(passDistanceSelect);		
-		} else {
-			passDistanceSelect = passesResultsStateMap;
-		}				
-				
-		//17. Select space
-		ILogicalOperator spaceSelect = createSpaceSelectAO(passDistanceSelect, sportsQL);
+		allOperators.add(passesResultsStateMap);	
+		
+		// 17. Select passes with distance > MIN_DISTANCE_SHORT_PASS
+		SelectAO passesDistanceSelect = OperatorBuildHelper.createSelectAO(ATTRIBUTE_PASS_DISTANCE + " > " + MIN_DISTANCE_SHORT_PASS, passesResultsStateMap);
+		allOperators.add(passesDistanceSelect);
+		
+		//18. Select space
+		ILogicalOperator spaceSelect = createSpaceSelectAO(passesDistanceSelect, sportsQL);
 		if (spaceSelect != null) {
 			allOperators.add(spaceSelect);		
 		} else {
-			spaceSelect = passDistanceSelect;
+			spaceSelect = passesDistanceSelect;
 		}
 
-				
-		//19. Select pass direction
-		ILogicalOperator passDirectionSelect = createPassDirectionSelectAO(spaceSelect, sportsQL);
-		if (passDirectionSelect != null) {
-			allOperators.add(passDirectionSelect);		
-		} else {
-			passDirectionSelect = spaceSelect;
-		}
-				
-		//20. Select direct passes
-		ILogicalOperator directPassSelect = createDirectPassSelectAO(passDirectionSelect, sportsQL);
-		if (directPassSelect != null) {
-			allOperators.add(directPassSelect);		
-		} else {
-			directPassSelect = passDirectionSelect;
-		}
-				
-		//21. Select double passes
-		ILogicalOperator doublePassSelect = createDoublePassSelectAO(directPassSelect, sportsQL);
-		if (doublePassSelect != null) {
-			allOperators.add(doublePassSelect);		
-		} else {
-			doublePassSelect = directPassSelect;
-		}
 
-		return doublePassSelect;
+
+		return spaceSelect;
 	}
 
-	private ILogicalOperator createDoublePassSelectAO(ILogicalOperator source, SportsQLQuery query) {
-		Map<String, ISportsQLParameter> parameters = query.getParameters();
-		SportsQLBooleanParameter parameter = (SportsQLBooleanParameter) parameters.get("doublePasses");
-		if (parameter != null) {
-			ArrayList<String> selectPredicates = new ArrayList<String>();
-			selectPredicates.add(ATTRIBUTE_DOUBLE_PASS +" = "+parameter.getValue());
-			return OperatorBuildHelper.createSelectAO(selectPredicates, source);
-		}else {
-			return null;	
-		}
-	}
-
-	private ILogicalOperator createDirectPassSelectAO(ILogicalOperator source, SportsQLQuery query) {
-		Map<String, ISportsQLParameter> parameters = query.getParameters();
-		SportsQLBooleanParameter parameter = (SportsQLBooleanParameter) parameters.get("directPasses");
-		if (parameter != null) {
-			ArrayList<String> selectPredicates = new ArrayList<String>();
-			selectPredicates.add(ATTRIBUTE_DIRECT_PASS +" = "+parameter.getValue());
-			return OperatorBuildHelper.createSelectAO(selectPredicates, source);
-		}else {
-			return null;	
-		}
-	}
-
-	private ILogicalOperator createPassDirectionSelectAO(ILogicalOperator source, SportsQLQuery query) {
-		Map<String, ISportsQLParameter> parameters = query.getParameters();
-		SportsQLArrayParameter parameter = (SportsQLArrayParameter) parameters.get("passDirection");
-		if (parameter != null) {
-			ArrayList<String> selectPredicates = new ArrayList<String>();
-			StringBuilder predicateBuilder = new StringBuilder();
-			for (int i = 0; i < parameter.getValue().length; i++) {
-				String passDir = parameter.getValue()[i].toString();
-				if (i == 0) {
-					predicateBuilder.append(ATTRIBUTE_PASS_DIRECTION +" = '" + passDir+"'");
-				} else {
-					predicateBuilder.append(" OR " + ATTRIBUTE_PASS_DIRECTION +" = '" + passDir+"'");
-				}
-			}
-			String predicate = predicateBuilder.toString();
-			selectPredicates.add(predicate);
-			return OperatorBuildHelper.createSelectAO(selectPredicates, source);
-		}else {
-			return null;	
-		}
-	}
 
 	
 	private SelectAO createSpaceSelectAO(ILogicalOperator source, SportsQLQuery query) throws SportsQLParseException, NumberFormatException, MissingDDCEntryException {	
@@ -398,25 +324,6 @@ public class PassesSportsQLParser {
 		
 		SelectAO spaceSelect = OperatorBuildHelper.createSelectAO(spaceSelectPredicates, source);
 		return spaceSelect;
-	}
-	
-	private SelectAO createPassDistanceSelectAO(ILogicalOperator source, SportsQLQuery query) throws SportsQLParseException {	
-		Map<String, ISportsQLParameter> parameters = query.getParameters();
-		SportsQLDistanceParameter distanceParameter = (SportsQLDistanceParameter) parameters.get("distance");
-		ArrayList<String> passesDistancePredicates = new ArrayList<String>();
-		if (distanceParameter != null && distanceParameter.getDistance() != null && distanceParameter.getDistance().equals(SportsQLDistanceParameter.DISTANCE_PARAMETER_SHORT)) {
-			passesDistancePredicates.add(ATTRIBUTE_PASS_DISTANCE +" >= "+MIN_DISTANCE_SHORT_PASS +" AND " + ATTRIBUTE_PASS_DISTANCE +" <= " + MAX_DISTANCE_SHORT_PASS);
-		} else if (distanceParameter != null && distanceParameter.getDistance() != null && distanceParameter.getDistance().equals(SportsQLDistanceParameter.DISTANCE_PARAMETER_LONG)) {
-			passesDistancePredicates.add(ATTRIBUTE_PASS_DISTANCE +" > "+MAX_DISTANCE_SHORT_PASS);
-		} else if (distanceParameter == null || (distanceParameter.getDistance() != null && distanceParameter.getDistance().equals(SportsQLDistanceParameter.DISTANCE_PARAMETER_ALL))) {
-			passesDistancePredicates.add(ATTRIBUTE_PASS_DISTANCE +" > "+MIN_DISTANCE_SHORT_PASS);
-		}else if (distanceParameter != null) {
-			int minDistance = distanceParameter.getMinDistance();
-			int maxDistance = distanceParameter.getMaxDistance();
-			passesDistancePredicates.add(ATTRIBUTE_PASS_DISTANCE +" >= "+minDistance +" AND " + ATTRIBUTE_PASS_DISTANCE +" <= " + maxDistance);
-		} 		
-		SelectAO passesDistanceSelect = OperatorBuildHelper.createSelectAO(passesDistancePredicates, source);
-		return passesDistanceSelect;			
 	}
 	
 	
