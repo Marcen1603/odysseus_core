@@ -124,11 +124,11 @@ public class DistributedDataContainerCommunicator implements
 	@Override
 	public void advertisementDiscovered(Advertisement advertisement) {
 		if (advertisement instanceof DistributedDataContainerAdvertisement) {
-			LOG.debug("Got DDC advertisment.");
 			DistributedDataContainerAdvertisement ddcAdvertisement = (DistributedDataContainerAdvertisement) advertisement;
 			// check if listener already received this ddc advertisement
 			if (!receivedDDCAdvertisements.contains(ddcAdvertisement
-					.getAdvertisementUid())) {
+					.getAdvertisementUid()) && !ddcAdvertisement.getInitiatingPeerId().equals(p2pNetworkManager.getLocalPeerID())) {
+				LOG.debug("Got new DDC advertisment.");
 				receivedDDCAdvertisements.add(ddcAdvertisement
 						.getAdvertisementUid());
 
