@@ -17,7 +17,9 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITranspor
 public class RabbitMQTransportHandler extends AbstractTransportHandler {
 
 	public static final String QUEUE_NAME = "queue_name";
+	public static final String EXCHANGE_NAME = "exchange_name";
 	public static final String CONSUMER_TAG = "consumer_tag";
+	public static final String PUBLISH_STYLE = "publish_style";
 	public static final String HOST = "host";
 	public static final String USERNAME = "username";
 	public static final String PASSWORD = "password";
@@ -25,13 +27,20 @@ public class RabbitMQTransportHandler extends AbstractTransportHandler {
 	public static final String PORT = "port";
 	public static final String NAME = "RabbitMQ";
 
+	public enum PublishStyle
+	{
+		WorkQueue, PublishSubscribe
+	};	
+	
 	private String queueName;
+	private String exchangeName;
 	private String consumerTag;
 	private String host;
 	private String username;
 	private String password;
 	private String virtualhost;
 	private int port;
+	private PublishStyle publishStyle;	
 
 	Channel channel;
 	Connection connection;
@@ -47,9 +56,9 @@ public class RabbitMQTransportHandler extends AbstractTransportHandler {
 
 	private void init(OptionMap options) {
 		// TODO: Check which options are optional and which one are required
-		if (options.containsKey(QUEUE_NAME)) {
-			queueName = options.get(QUEUE_NAME);
-		}
+		queueName = options.get(QUEUE_NAME, "");
+		exchangeName = options.get(EXCHANGE_NAME, "");
+		
 		if (options.containsKey(HOST)) {
 			host = options.get(HOST);
 		}
@@ -69,12 +78,21 @@ public class RabbitMQTransportHandler extends AbstractTransportHandler {
 			port = Integer.parseInt(options.get(PORT));
 		} else {
 			port = -1;
-		}
+		}		
+		
+		String publishStyleOption = options.get(PUBLISH_STYLE, "workqueue");
+		if (publishStyleOption.equals("workqueue"))
+			publishStyle = PublishStyle.WorkQueue;
+		else
+		if (publishStyleOption.equals("publishsubscribe"))
+			publishStyle = PublishStyle.PublishSubscribe;
+		else
+			throw new IllegalArgumentException("Option PUBLISH_STYLE contains invalid value \"" + publishStyleOption + "\"");
 	}
 
 	@Override
 	public void send(byte[] message) throws IOException {
-		channel.basicPublish("", queueName, null, message);
+		channel.basicPublish(exchangeName, queueName, null, message);
 	}
 
 	@Override
@@ -101,6 +119,13 @@ public class RabbitMQTransportHandler extends AbstractTransportHandler {
 	@Override
 	public void processInOpen() throws IOException {
 		internalOpen();
+		
+		if (publishStyle == PublishStyle.PublishSubscribe)
+		{
+			String queueName = channel.queueDeclare().getQueue();
+			channel.queueBind(queueName, exchangeName, "");
+		}
+		
 		// Create Consumer
 		boolean autoAck = false;
 		channel.basicConsume(queueName, autoAck, consumerTag,
@@ -150,7 +175,17 @@ public class RabbitMQTransportHandler extends AbstractTransportHandler {
 		}
 		connection = factory.newConnection();
 		channel = connection.createChannel();
-		channel.queueDeclare(queueName, false, false, false, null);
+		
+		switch (publishStyle)
+		{
+		case WorkQueue:
+			channel.queueDeclare(queueName, false, false, false, null);
+			break;
+			
+		case PublishSubscribe:			
+			channel.exchangeDeclare(exchangeName, "fanout");
+			break;
+		}
 	}
 
 	@Override
