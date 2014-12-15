@@ -2,10 +2,11 @@ package de.uniol.inf.is.odysseus.server.mongodb.logicaloperator;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnaryLogicalOp;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
+import de.uniol.inf.is.odysseus.server.nosql.base.logicaloperator.AbstractNoSQLSinkAO;
+
 
 /**
  * Erstellt von RoBeaT
@@ -13,7 +14,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParame
  */
 @LogicalOperator(name = "MONGODBSINK", minInputPorts = 1, maxInputPorts = 1, doc = "This operator can write data to a MongoDB.", category = {
         LogicalOperatorCategory.SINK, LogicalOperatorCategory.DATABASE })
-public class MongoDBSinkAO extends UnaryLogicalOp {
+public class MongoDBSinkAO extends AbstractNoSQLSinkAO {
 
     /**
 	 * 
