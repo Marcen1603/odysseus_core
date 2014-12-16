@@ -1,0 +1,34 @@
+#PARSER PQL
+#RUNQUERY
+
+input = ACCESS({            
+            source= 'FromFile',
+            wrapper='GenericPull',
+            transport='File',
+            protocol='NMEA2000',
+            datahandler='KeyValueObject',
+            options=[
+              ['filename','C:\Offis\odysseus\wrapper\nmea\de.uniol.inf.is.odysseus.wrapper.nmea\Example\NMEA2000GPS.dat'],
+              ['delay', '0']
+            ]                      
+          }               
+        )		 		
+        
+gpsMsg = SELECT({predicate='PGN = 129025'}, input)
+
+gpsTuple = KEYVALUETOTUPLE({schema=[['Longitude','Double'], ['Latitude', 'Double']], type='Tuple', keepinput='false'}, gpsMsg)
+				
+SENDER = SENDER({
+              transport='RabbitMQ',
+              wrapper='GenericPush',
+              protocol='SimpleByteBuffer',
+              datahandler='Tuple',
+              SINK='SendRabbitMQ',
+              options=[
+                ['EXCHANGE_NAME','service_bus'],
+                ['PUBLISH_STYLE','publishsubscribe'],
+                ['CONSUMER_TAG','tag'],
+                ['HOST','localhost'],
+                ['ByteOrder', 'LittleEndian']
+              ]                       
+            }, gpsTuple)
