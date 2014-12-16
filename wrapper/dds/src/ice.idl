@@ -1,0 +1,8 @@
+module ice {
+
+  struct Time_t {
+    long sec;
+    long nanosec;
+  }; //@top-level false
+
+};
