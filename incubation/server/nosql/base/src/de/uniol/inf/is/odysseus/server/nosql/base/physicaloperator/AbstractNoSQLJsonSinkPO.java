@@ -65,4 +65,9 @@ public abstract class AbstractNoSQLJsonSinkPO extends AbstractNoSQLSinkPO {
 
         return jsonObject;
     }
+
+    protected String toJsonString(Tuple<ITimeInterval> tuple){
+        JsonObject jsonObject = toJsonObject(tuple);
+        return gson.toJson(jsonObject);
+    }
 }

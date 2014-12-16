@@ -49,8 +49,8 @@ public class MongoDBSinkPO extends AbstractNoSQLJsonSinkPO {
 
         for (Tuple<ITimeInterval> tuple : tupleToWrite) {
 
-            JsonObject jsonObject = toJsonObject(tuple);
-            transferToMongoDB(jsonObject);
+            String json = toJsonString(tuple);
+            transferToMongoDB(json);
         }
     }
 
@@ -59,9 +59,7 @@ public class MongoDBSinkPO extends AbstractNoSQLJsonSinkPO {
         mongoClient.close();
     }
 
-    private void transferToMongoDB(JsonObject jsonObject) {
-
-        String json = gson.toJson(jsonObject);
+    private void transferToMongoDB(String json) {
 
         DBObject dbObject = (DBObject) JSON.parse(json);
 
