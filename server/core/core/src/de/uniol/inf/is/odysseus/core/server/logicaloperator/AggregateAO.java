@@ -252,7 +252,7 @@ public class AggregateAO extends UnaryLogicalOp {
 	}
 	
 
-	@Parameter(name = "drainAtClose", type = BooleanParameter.class, optional = true, doc = "If set to true (default), elements are not yet written will be written at close. ")
+	@Parameter(name = "drainAtClose", type = BooleanParameter.class, optional = true, doc = "If set to true (default is false), elements are not yet written will be written at close. ")
 	public void setDrainAtClose(boolean drainAtClose) {
 		this.drainAtClose = drainAtClose;
 	}
