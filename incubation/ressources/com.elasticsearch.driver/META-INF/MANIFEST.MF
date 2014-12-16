@@ -1,6 +1,0 @@
-Manifest-Version: 1.0
-Bundle-ManifestVersion: 2
-Bundle-Name: Driver
-Bundle-SymbolicName: org.elasticsearch.driver
-Bundle-Version: 1.0.0.qualifier
-Bundle-ClassPath: elasticsearch-1.3.1.jar
