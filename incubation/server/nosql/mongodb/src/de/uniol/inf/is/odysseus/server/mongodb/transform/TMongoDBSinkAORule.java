@@ -10,21 +10,12 @@ import de.uniol.inf.is.odysseus.server.nosql.base.transform.AbstractTNoSQLSinkAO
  * Erstellt von RoBeaT
  * Date: 01.12.14
  */
+@SuppressWarnings("UnusedDeclaration")
 public class TMongoDBSinkAORule extends AbstractTNoSQLSinkAORule<MongoDBSinkAO> {
-	
-    @Override
-    public void execute(MongoDBSinkAO mongoDBSink, TransformationConfiguration config) throws RuleException {
-        MongoDBSinkPO physical = new MongoDBSinkPO(mongoDBSink);
-        defaultExecute(mongoDBSink, physical, config, true, true);
-    }
 
-    @Override
-    public String getName() {
-        return "MongoDBSinkAO -> MongoDBSinkPO";
-    }
-
-    @Override
-    public Class<? super MongoDBSinkAO> getConditionClass() {
-        return MongoDBSinkAO.class;
+    public TMongoDBSinkAORule() {
+        super();
+        logicalOperatorClass  = MongoDBSinkAO.class;
+        physicalOperatorClass = MongoDBSinkPO.class;
     }
 }
