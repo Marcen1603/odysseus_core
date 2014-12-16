@@ -17,6 +17,7 @@ package de.uniol.inf.is.odysseus.wrapper.nmea;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
 import java.util.HashMap;
@@ -58,12 +59,12 @@ class N2KMessage
 	public Map<String, Object> headerToMap()
 	{
 		Map<String, Object> result = new HashMap<>();
-		result.put("timestamp", timeStamp);
+		result.put("Timestamp", timeStamp);
 		result.put("PGN", PGN);
-		result.put("priority", priority);
-		result.put("sourceAddress", sourceAddress);
-		result.put("destinationAddress", destinationAddress);
-		result.put("length", length);
+		result.put("Priority", priority);
+		result.put("SourceAddress", sourceAddress);
+		result.put("DestinationAddress", destinationAddress);
+//		result.put("Length", length);
 		
 		return result;
 	}
@@ -139,7 +140,6 @@ public class NMEA2000ProtocolHandler extends AbstractProtocolHandler<KeyValueObj
 			if (inStream != null) 
 			{
 				inStream.close();
-				inStream = null;
 			}
 		} catch (Exception e) 
 		{
@@ -161,9 +161,16 @@ public class NMEA2000ProtocolHandler extends AbstractProtocolHandler<KeyValueObj
 			{
 				Thread.currentThread().interrupt();				
 			}
-		}		
+		}	
 		
-		return inStream.available() > 0;
+		try
+		{
+			return inStream.available() > 0;
+		}
+		catch (IOException e)
+		{
+			return false;
+		}
 	}
 	
 	@Override
@@ -177,17 +184,23 @@ public class NMEA2000ProtocolHandler extends AbstractProtocolHandler<KeyValueObj
 	@Override
 	public void process(ByteBuffer message) 
 	{
-		LittleEndianDataInputStream stream = null;
+		InputStream stream = null;
 		if (message.hasArray())
-			stream = new LittleEndianDataInputStream(new ByteArrayInputStream(message.array()));
+			stream = new ByteArrayInputStream(message.array());
 		else
 		{
 			// TODO: Implement a ByteBufferInputStream
 		}
 		
+		process(stream);
+	}
+	
+	@Override
+	public void process(InputStream stream)
+	{
 		try 
 		{
-			N2KMessage msg = N2KMessage.fromStream(stream);
+			N2KMessage msg = N2KMessage.fromStream(new LittleEndianDataInputStream(stream));
 			getTransfer().transfer(new KeyValueObject<>(parseMessage(msg)));
 		} catch (IOException e) 
 		{
@@ -215,8 +228,8 @@ public class NMEA2000ProtocolHandler extends AbstractProtocolHandler<KeyValueObj
 			int lon = payloadStream.readInt();
 			int lat = payloadStream.readInt();
 			
-			msgMap.put("longitude", (double)(lon) * 1.0e-7);
-			msgMap.put("latitude",  (double)(lat) * 1.0e-7);
+			msgMap.put("Longitude", (double)(lon) * 1.0e-7);
+			msgMap.put("Latitude",  (double)(lat) * 1.0e-7);
 		}
 		
 		payloadStream.close();
