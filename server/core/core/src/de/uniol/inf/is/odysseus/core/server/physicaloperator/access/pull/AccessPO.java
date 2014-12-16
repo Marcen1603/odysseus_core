@@ -75,7 +75,7 @@ public class AccessPO<R, W> extends AbstractIterableSource<W> {
 			}
 		} catch (Exception e) {
 			LOG.error("Exception during input", e);
-			sendError("Ececotion reading input",e);
+			sendError("Exception reading input",e);
 		}
 
 		// TODO: We should think about propagate done ... maybe its better
