@@ -43,6 +43,8 @@ public class ParseUtils {
 	 * @return Two digit nmea representation.
 	 */
 	public static String toString(TargetNumber number) {
+		if (number == null) return "";
+		
 		return number.toString();
 	}
 	
@@ -73,6 +75,8 @@ public class ParseUtils {
 	 * @return String representation in nmea.
 	 */
 	public static String toString(Date value) {
+		if (value == null) return "";
+		
 		return String.format("%02d%02d%02d", value.getYear(), value.getMonth(), value.getDay());
 	}
 	
@@ -111,6 +115,8 @@ public class ParseUtils {
 	 * @return String representation in nmea.
 	 */
 	public static String toString(Time value) {
+		if (value == null) return "";
+		
 		if (value.getMilliSeconds() > 0) { 
 			return String.format("%02d%02d%02d.%02d", value.getHours(), value.getMinutes(), value.getSeconds(), (value.getMilliSeconds() / 10));
 		} else {
@@ -149,6 +155,8 @@ public class ParseUtils {
 	 * @return String representation in nmea.
 	 */
 	public static String toString(Double value, int coordLength) {
+		if (value == null) return "";
+		
 		double val = value;
 		int i1 = (int) val;
 		double f1 = (val - i1) * 60;
@@ -223,6 +231,8 @@ public class ParseUtils {
 	}
 	
 	public static String toString(Reference value) {
+		if (value == null) return "";
+		
 		return value.getShortName();
 	}
 	
@@ -235,6 +245,8 @@ public class ParseUtils {
 	}
 	
 	public static String toString(TemperatureUnit value) {
+		if (value == null) return "";
+		
 		return value.getShortName();
 	}
 	
@@ -247,6 +259,8 @@ public class ParseUtils {
 	}
 	
 	public static String toString(SpeedUnit value) {
+		if (value == null) return "";
+		
 		return value.getShortName();
 	}
 	
@@ -259,6 +273,8 @@ public class ParseUtils {
 	}
 	
 	public static String toString(Source value) {
+		if (value == null) return "";
+		
 		return value.getShortName();
 	}
 	
@@ -271,6 +287,8 @@ public class ParseUtils {
 	}
 	
 	public static String toString(Acquisition value) {
+		if (value == null) return "";
+		
 		return value.getShortName();
 	}
 	
@@ -283,6 +301,8 @@ public class ParseUtils {
 	}
 	
 	public static String toString(TargetStatus value) {
+		if (value == null) return "";
+		
 		return value.getShortName();
 	}
 	
@@ -295,6 +315,8 @@ public class ParseUtils {
 	}
 	
 	public static String toString(TargetReference value) {
+		if (value == null) return "";
+		
 		return value.getShortName();
 	}
 	
@@ -315,22 +337,32 @@ public class ParseUtils {
 	}
 	
 	public static String toString(Hemisphere value) {
+		if (value == null) return "";
+		
 		return value.getShortName();
 	}
 	
 	public static String toString(Unit value) {
+		if (value == null) return "";
+		
 		return value.getShortName();
 	}
 	
 	public static String toString(SignalIntegrity value) {
+		if (value == null) return "";
+		
 		return value.getShortName();
 	}
 	
 	public static String toString(GpsQuality value) {
+		if (value == null) return "";
+		
 		return String.valueOf(value.getValue());
 	}
 	
 	public static String toString(Status value) {
+		if (value == null) return "";
+		
 		return value.getShortName();
 	}
 }

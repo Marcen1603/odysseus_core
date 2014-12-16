@@ -36,8 +36,10 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.AbstractPr
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.IAccessPattern;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportDirection;
+import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportExchangePattern;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandler;
 import de.uniol.inf.is.odysseus.wrapper.nmea.sentence.AISSentence;
+import de.uniol.inf.is.odysseus.wrapper.nmea.sentence.GGASentence;
 import de.uniol.inf.is.odysseus.wrapper.nmea.sentence.Sentence;
 import de.uniol.inf.is.odysseus.wrapper.nmea.sentence.SentenceFactory;
 import de.uniol.inf.is.odysseus.wrapper.nmea.sentence.aissentences.AISSentenceHandler;
@@ -220,12 +222,17 @@ public class NMEAProtocolHandler extends
 			throws IOException {
 		try {
 			Object obj = object.getMetadata("originalNMEA");
-			if (!(obj instanceof Sentence)) {
-				return;
-			}
-			Sentence sentence = (Sentence) obj;// System.out.println("wrtten nmea: "
+			if (obj instanceof Sentence)
+			{
+				Sentence sentence = (Sentence) obj;// System.out.println("wrtten nmea: "
 												// + sentence.getNmeaString());
-			getTransportHandler().send(sentence.toNMEA().getBytes());
+				getTransportHandler().send(sentence.toNMEA().getBytes());
+			}
+			else
+			{
+				Sentence sentence = SentenceFactory.getInstance().createSentence(object.getAttributes());
+				getTransportHandler().send(sentence.toNMEA().getBytes());
+			}
 		} catch (Exception e) {
 			LOG.error(e.getMessage(), e);
 		}
@@ -268,4 +275,13 @@ public class NMEAProtocolHandler extends
 			return true;
 		}
 	}
+	
+	@Override
+	public ITransportExchangePattern getExchangePattern() {
+		if (this.getDirection().equals(ITransportDirection.IN)) {
+			return ITransportExchangePattern.InOnly;
+		} else {
+			return ITransportExchangePattern.OutOnly;
+		}
+	}	
 }

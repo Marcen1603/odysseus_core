@@ -136,4 +136,18 @@ public class SentenceFactory {
 			throw new IllegalArgumentException(msg, e);
 		}
 	}
+
+	public Sentence createSentence(Map<String, Object> source) 
+	{
+		try 
+		{
+			Class<? extends Sentence> c = sentenceTypes.get(source.get("sentenceId"));
+			Constructor<? extends Sentence> co = c.getConstructor(Map.class);
+			return co.newInstance(source);
+		} 
+		catch (Exception e) 
+		{
+			throw new IllegalStateException("Unable to instanciate sentence.", e);
+		}
+	}
 }

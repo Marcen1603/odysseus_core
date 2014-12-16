@@ -54,6 +54,13 @@ public abstract class Sentence {
 		sentenceId = SentenceUtils.getSentenceId(nmea);
 	}
 
+	private void createFields(int fieldCount)
+	{
+		this.fields = new ArrayList<String>(fieldCount);
+		for (int i = 0; i < fieldCount; i++)
+			this.fields.add("");
+	}
+	
 	/**
 	 * Constructs a sentence for the output.
 	 * 
@@ -71,10 +78,21 @@ public abstract class Sentence {
 		this.beginChar = beginChar;
 		this.talkerId = talkerId;
 		this.sentenceId = sentenceId;
-		this.fields = new ArrayList<String>(fieldCount);
-		for (int i = 0; i < fieldCount; i++) {
-			this.fields.add("");
-		}
+		createFields(fieldCount);
+	}
+	
+	public Sentence(Map<String, Object> source, int fieldCount)
+	{
+		sentenceId = (String) source.get("sentenceId");
+		talkerId = (String) source.get("talkerId");
+		
+		Object beginChar = source.get("beginChar");
+		if (beginChar instanceof String)
+			this.beginChar = ((String) beginChar).charAt(0);
+		else
+			this.beginChar = (char) beginChar;
+		
+		createFields(fieldCount);
 	}
 
 	/**
@@ -213,6 +231,7 @@ public abstract class Sentence {
 		res.put("sentenceId", sentenceId);
 		res.put("talkerId", talkerId);
 		res.put("beginChar", beginChar);
+
 		fillMap(res);
 		return res;
 	}
