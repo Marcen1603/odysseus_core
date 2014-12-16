@@ -33,7 +33,6 @@ package de.uniol.inf.is.odysseus.database.connection;
 import java.lang.reflect.Field;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
-import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -52,6 +51,7 @@ import de.uniol.inf.is.odysseus.core.infoservice.InfoServiceFactory;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.database.DataSourceFactoryRegistry;
 
 /**
  * 
@@ -325,7 +325,7 @@ public class DatabaseConnection implements IDatabaseConnection {
 	private void assertConnection() throws SQLException {
 		try {
 			if (!this.connected) {
-				this.connection = DriverManager.getConnection(connString,
+				this.connection = DataSourceFactoryRegistry.getConnection(connString,
 						connectionProps);
 				this.connected = true;
 			}
@@ -338,7 +338,7 @@ public class DatabaseConnection implements IDatabaseConnection {
 
 	@Override
 	public void checkProperties() throws SQLException {
-		Connection con = DriverManager.getConnection(connString,
+		Connection con = DataSourceFactoryRegistry.getConnection(connString,
 				connectionProps);
 		con.close();
 	}

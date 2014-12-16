@@ -1,0 +1,10 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Oracle Datasource
+Bundle-SymbolicName: de.uniol.inf.is.odysseus.database.datasource.oracle
+Bundle-Version: 1.0.0.qualifier
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-ClassPath: lib/ojdbc6.jar,
+ .
+Require-Bundle: de.uniol.inf.is.odysseus.database;bundle-version="1.0.0"
+Service-Component: OSGI-INF/oracle.xml

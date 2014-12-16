@@ -34,14 +34,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-//import java.util.Map.Entry;
 import java.util.Set;
 
-//import org.osgi.framework.Bundle;
-//import org.osgi.framework.BundleActivator;
-//import org.osgi.framework.BundleContext;
-//
-//import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.SDFDatatype;
 
 /**
  * 
@@ -51,9 +45,7 @@ import java.util.Set;
 public class DatabaseConnectionDictionary {
 	
 	
-//	public enum DatabaseType {
-//		Integer, String, Float, Long, Double, Boolean
-//	};	
+
 	
 	private static DatabaseConnectionDictionary instance;
 	
@@ -69,40 +61,9 @@ public class DatabaseConnectionDictionary {
 	}
 
 	private HashMap<String, IDatabaseConnectionFactory> factories = new HashMap<String, IDatabaseConnectionFactory>();
-//	private Map<SDFDatatype, DatabaseType> datatypeMappings = new HashMap<SDFDatatype, DatabaseType>();
 	private Map<String, IDatabaseConnection> connections = new HashMap<String, IDatabaseConnection>();
 	private List<IDatabaseConnectionDictionaryListener> listeners = new ArrayList<IDatabaseConnectionDictionaryListener>();
 	
-//	private void initMappings() {
-//		this.datatypeMappings.put(SDFDatatype.INTEGER, DatabaseType.Integer);
-//		this.datatypeMappings.put(SDFDatatype.BOOLEAN, DatabaseType.Boolean);
-//		this.datatypeMappings.put(SDFDatatype.END_TIMESTAMP, DatabaseType.Long);
-//		this.datatypeMappings.put(SDFDatatype.FLOAT, DatabaseType.Float);
-//		this.datatypeMappings.put(SDFDatatype.LONG, DatabaseType.Long);
-//		this.datatypeMappings.put(SDFDatatype.POINT_IN_TIME, DatabaseType.Long);
-//		this.datatypeMappings.put(SDFDatatype.START_TIMESTAMP, DatabaseType.Long);
-//		this.datatypeMappings.put(SDFDatatype.STRING, DatabaseType.String);
-//		this.datatypeMappings.put(SDFDatatype.TIMESTAMP, DatabaseType.Long);
-//		this.datatypeMappings.put(SDFDatatype.DOUBLE, DatabaseType.Double);
-//	}
-//	
-//	public DatabaseType getDatabaseType(SDFDatatype datatype){
-//		return this.datatypeMappings.get(datatype);
-//	}
-	
-//	public List<SDFDatatype> getSDFDatatype(DatabaseType dbType){
-//		List<SDFDatatype> dts = new ArrayList<SDFDatatype>();
-//		for(Entry<SDFDatatype, DatabaseType> e : this.datatypeMappings.entrySet()){
-//			if(e.getValue().equals(dbType)){
-//				dts.add(e.getKey());
-//			}
-//		}
-//		return dts;
-//	}
-			
-//	public Map<SDFDatatype, DatabaseType> getDatatypeMappings() {
-//		return datatypeMappings;
-//	}
 
 	public IDatabaseConnectionFactory getFactory(String dbms){
 		dbms = dbms.toUpperCase();
