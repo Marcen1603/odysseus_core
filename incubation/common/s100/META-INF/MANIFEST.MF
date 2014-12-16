@@ -1,0 +1,14 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: S 100
+Bundle-SymbolicName: de.uniol.inf.is.odysseus.s100
+Bundle-Version: 1.0.0.qualifier
+Bundle-Vendor: University of Oldenburg
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Require-Bundle: de.uniol.inf.is.odysseus.core;bundle-version="1.0.0",
+ de.uniol.inf.is.odysseus.core.server;bundle-version="1.0.0"
+Bundle-Activator: de.uniol.inf.is.odysseus.s100.Activator
+Service-Component: OSGI-INF/*
+Import-Package: org.osgi.framework;version="1.6.0",
+ org.slf4j
+

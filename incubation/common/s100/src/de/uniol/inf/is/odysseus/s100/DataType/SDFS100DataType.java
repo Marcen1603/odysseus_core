@@ -1,0 +1,44 @@
+package de.uniol.inf.is.odysseus.s100.DataType;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+
+
+public class SDFS100DataType extends SDFDatatype {
+	
+	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -5267386900216831975L;
+
+	public SDFS100DataType (final String URI) {
+		super(URI);
+	}
+	
+	public SDFS100DataType (final SDFDatatype sdfDatatype) {
+		super(sdfDatatype);
+	}
+	
+	public SDFS100DataType (final String datatypeName, final KindOfDatatype type, final SDFSchema schema) {
+		super(datatypeName, type, schema);
+	}
+	
+	public static final SDFDatatype S100 = new SDFDatatype("S100");
+	
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	
+	public static List<SDFDatatype> getTypes() {
+		final List<SDFDatatype> types = new ArrayList<>();
+		types.addAll(SDFDatatype.getTypes());
+		types.add(SDFS100DataType.S100);
+		
+		return types;
+	}
+}
