@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.UUID;
 
 import net.jxta.peer.PeerID;
+import de.uniol.inf.is.odysseus.core.planmanagement.query.QueryState;
 import de.uniol.inf.is.odysseus.peer.distribute.ILogicalQueryPart;
 
 /**
@@ -49,9 +50,9 @@ public class RecoveryProcessState {
 	}
 
 	public UUID createNewSubprocess(int localQueryId,
-			ILogicalQueryPart queryPart) {
+			ILogicalQueryPart queryPart, QueryState queryState) {
 		RecoverySubProcessState subprocess = new RecoverySubProcessState(
-				localQueryId, queryPart);
+				localQueryId, queryPart, queryState);
 		subProcesses.put(subprocess.getIdentifier(), subprocess);
 		return subprocess.getIdentifier();
 	}

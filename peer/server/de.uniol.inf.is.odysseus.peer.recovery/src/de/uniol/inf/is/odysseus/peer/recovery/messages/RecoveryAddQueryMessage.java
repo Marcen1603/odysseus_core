@@ -7,6 +7,7 @@ import net.jxta.impl.id.UUID.UUIDFactory;
 
 import com.google.common.base.Preconditions;
 
+import de.uniol.inf.is.odysseus.core.planmanagement.query.QueryState;
 import de.uniol.inf.is.odysseus.p2p_new.IMessage;
 
 /**
@@ -59,6 +60,18 @@ public class RecoveryAddQueryMessage implements IMessage {
 	}
 
 	/**
+	 * The state of the query.
+	 */
+	private QueryState mQueryState;
+
+	/**
+	 * The state of the query.
+	 */
+	public QueryState getQueryState() {
+		return this.mQueryState;
+	}
+
+	/**
 	 * The id of the recovery process.
 	 */
 	private java.util.UUID mProcessId;
@@ -87,8 +100,10 @@ public class RecoveryAddQueryMessage implements IMessage {
 	 * @param pqls
 	 *            The PQL code to execute. <br />
 	 *            Must be not null.
-	 * @param sharedQuery
-	 *            The affected shared query. <br />
+	 * @param localQueryId
+	 *            The affected local query id.
+	 * @param queryState
+	 *            The state of the query. <br />
 	 *            Must be not null.
 	 * @param processId
 	 *            The id of the recovery process. <br />
@@ -97,13 +112,17 @@ public class RecoveryAddQueryMessage implements IMessage {
 	 *            The id of the recovery subprocess. <br />
 	 *            Must be not null.
 	 */
-	public RecoveryAddQueryMessage(String pql, int localQuery, java.util.UUID processId, java.util.UUID subprocessID) {
+	public RecoveryAddQueryMessage(String pql, int localQueryId,
+			QueryState queryState, java.util.UUID processId,
+			java.util.UUID subprocessID) {
 		Preconditions.checkNotNull(pql);
+		Preconditions.checkNotNull(queryState);
 		Preconditions.checkNotNull(processId);
 		Preconditions.checkNotNull(subprocessID);
 
 		this.mPQL = pql;
-		this.mLocalQuery = localQuery;
+		this.mLocalQuery = localQueryId;
+		this.mQueryState = queryState;
 		this.mProcessId = processId;
 		this.mSubprocessId = subprocessID;
 	}
@@ -115,21 +134,22 @@ public class RecoveryAddQueryMessage implements IMessage {
 		byte[] processIdBytes = this.mProcessId.toString().getBytes();
 		byte[] subprocessIdBytes = this.mSubprocessId.toString().getBytes();
 
-		int bufferSize = 4 + idBytes.length + 4 + pqlBytes.length + 4 + 4
+		int bufferSize = 4 + idBytes.length + 4 + pqlBytes.length + 4 + 4 + 4
 				+ processIdBytes.length + 4 + subprocessIdBytes.length;
 		ByteBuffer buffer = ByteBuffer.allocate(bufferSize);
 
 		buffer.putInt(idBytes.length);
 		buffer.put(idBytes);
-		
+
 		buffer.putInt(pqlBytes.length);
 		buffer.put(pqlBytes);
-		
+
+		buffer.putInt(this.mQueryState.ordinal());
 		buffer.putInt(mLocalQuery);
-		
+
 		buffer.putInt(processIdBytes.length);
 		buffer.put(processIdBytes);
-		
+
 		buffer.putInt(subprocessIdBytes.length);
 		buffer.put(subprocessIdBytes);
 
@@ -151,6 +171,7 @@ public class RecoveryAddQueryMessage implements IMessage {
 		buffer.get(pqlBytes);
 		this.mPQL = new String(pqlBytes);
 
+		this.mQueryState = QueryState.values()[buffer.getInt()];
 		mLocalQuery = buffer.getInt();
 
 		int processIdBytesLength = buffer.getInt();
@@ -161,7 +182,8 @@ public class RecoveryAddQueryMessage implements IMessage {
 		int subprocessIdBytesLength = buffer.getInt();
 		byte[] subprocessIdBytes = new byte[subprocessIdBytesLength];
 		buffer.get(subprocessIdBytes);
-		this.mSubprocessId = java.util.UUID.fromString(new String(subprocessIdBytes));
+		this.mSubprocessId = java.util.UUID.fromString(new String(
+				subprocessIdBytes));
 
 	}
 

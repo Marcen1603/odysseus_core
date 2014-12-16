@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.UUID;
 
 import net.jxta.peer.PeerID;
+import de.uniol.inf.is.odysseus.core.planmanagement.query.QueryState;
 import de.uniol.inf.is.odysseus.peer.distribute.ILogicalQueryPart;
 import de.uniol.inf.is.odysseus.peer.distribute.QueryPartAllocationException;
 import de.uniol.inf.is.odysseus.peer.recovery.internal.RecoveryProcessState;
@@ -30,7 +31,7 @@ public interface IRecoveryDynamicBackup {
 	 * @param queryPart
 	 * @param recoveryStateIdentifier
 	 */
-	public void initiateAgreement(PeerID failedPeer, int localQueryId, PeerID newPeer, ILogicalQueryPart queryPart,
+	public void initiateAgreement(PeerID failedPeer, int localQueryId, QueryState queryState, PeerID newPeer, ILogicalQueryPart queryPart,
 			UUID recoveryStateIdentifier, UUID subprocessID);
 
 	/**

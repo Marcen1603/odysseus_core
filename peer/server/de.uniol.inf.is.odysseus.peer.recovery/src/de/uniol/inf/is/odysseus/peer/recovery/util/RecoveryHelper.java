@@ -28,6 +28,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
+import de.uniol.inf.is.odysseus.core.planmanagement.query.QueryState;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.DataDictionaryProvider;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.RestructHelper;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
@@ -178,7 +179,7 @@ public class RecoveryHelper {
 	 * @param sharedQueryId
 	 *            The id of the shared query where this PQL belongs to. To save, that this is a shared query.
 	 */
-	public static Collection<Integer> installAndRunQueryPartFromPql(String pql) throws QueryParseException {
+	public static Collection<Integer> installAndRunQueryPartFromPql(String pql, QueryState queryState) throws QueryParseException {
 
 		Collection<Integer> installedQueries = Lists.newArrayList();
 
@@ -189,14 +190,21 @@ public class RecoveryHelper {
 
 		ISession session = RecoveryCommunicator.getActiveSession();
 
-		/*
-		 * TODO LSOP-367 first intent to keep distributed query running, if a sink-part has been recovered. Not ready
-		 * for submission, yet. M.B. StringBuffer odScript = new StringBuffer(); odScript.append("#PARSER PQL\n");
-		 * odScript.append("#RUNQUERY\n"); odScript.append(pql); installedQueries =
-		 * cExecutor.get().addQuery(odScript.toString(), "OdysseusScript", session, Context.empty());
-		 */
-
 		installedQueries = cExecutor.get().addQuery(pql, "PQL", session, Context.empty());
+		for(int query : installedQueries) {
+			switch(queryState) {
+				case RUNNING:
+					cExecutor.get().startQuery(query, session);
+					break;
+				case SUSPENDED:
+					cExecutor.get().suspendQuery(query, session);
+					break;
+				default:
+					// PARTIAL_SUSPENDED:
+					// PARTIAL:
+					// nothing to do
+			}
+		}
 
 		// TODO send success message
 

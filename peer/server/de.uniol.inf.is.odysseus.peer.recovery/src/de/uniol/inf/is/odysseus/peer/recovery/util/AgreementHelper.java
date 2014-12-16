@@ -16,6 +16,7 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 
+import de.uniol.inf.is.odysseus.core.planmanagement.query.QueryState;
 import de.uniol.inf.is.odysseus.p2p_new.IP2PNetworkManager;
 import de.uniol.inf.is.odysseus.peer.distribute.ILogicalQueryPart;
 import de.uniol.inf.is.odysseus.peer.distribute.util.LogicalQueryHelper;
@@ -32,7 +33,8 @@ public class AgreementHelper {
 	/**
 	 * The logger instance for this class.
 	 */
-	private static final Logger LOG = LoggerFactory.getLogger(AgreementHelper.class);
+	private static final Logger LOG = LoggerFactory
+			.getLogger(AgreementHelper.class);
 
 	/**
 	 * Seconds we wait until we will just do the recovery
@@ -44,7 +46,8 @@ public class AgreementHelper {
 	/**
 	 * The P2P network manager, if there is one bound.
 	 */
-	private static Optional<IP2PNetworkManager> cP2PNetworkManager = Optional.absent();
+	private static Optional<IP2PNetworkManager> cP2PNetworkManager = Optional
+			.absent();
 
 	/**
 	 * Binds a P2P network manager. <br />
@@ -58,7 +61,8 @@ public class AgreementHelper {
 
 		Preconditions.checkNotNull(serv);
 		cP2PNetworkManager = Optional.of(serv);
-		LOG.debug("Bound {} as a P2P network manager.", serv.getClass().getSimpleName());
+		LOG.debug("Bound {} as a P2P network manager.", serv.getClass()
+				.getSimpleName());
 
 	}
 
@@ -77,7 +81,8 @@ public class AgreementHelper {
 		if (cP2PNetworkManager.isPresent() && cP2PNetworkManager.get() == serv) {
 
 			cP2PNetworkManager = Optional.absent();
-			LOG.debug("Unbound {} as a P2P network manager.", serv.getClass().getSimpleName());
+			LOG.debug("Unbound {} as a P2P network manager.", serv.getClass()
+					.getSimpleName());
 
 		}
 
@@ -86,7 +91,8 @@ public class AgreementHelper {
 	/**
 	 * The recovery communicator, if there is one bound.
 	 */
-	private static Optional<IRecoveryCommunicator> cCommunicator = Optional.absent();
+	private static Optional<IRecoveryCommunicator> cCommunicator = Optional
+			.absent();
 
 	/**
 	 * Binds a recovery communicator. <br />
@@ -100,7 +106,8 @@ public class AgreementHelper {
 
 		Preconditions.checkNotNull(serv);
 		cCommunicator = Optional.of(serv);
-		LOG.debug("Bound {} as a recovery communicator.", serv.getClass().getSimpleName());
+		LOG.debug("Bound {} as a recovery communicator.", serv.getClass()
+				.getSimpleName());
 
 	}
 
@@ -119,25 +126,28 @@ public class AgreementHelper {
 		if (cCommunicator.isPresent() && cCommunicator.get() == serv) {
 
 			cCommunicator = Optional.absent();
-			LOG.debug("Unbound {} as a recovery communicator.", serv.getClass().getSimpleName());
+			LOG.debug("Unbound {} as a recovery communicator.", serv.getClass()
+					.getSimpleName());
 
 		}
 
 	}
 
 	/**
-	 * Peers and the (maybe multiple) shared queries we want to do the recovery for
+	 * Peers and the (maybe multiple) shared queries we want to do the recovery
+	 * for
 	 */
 	private static Map<PeerID, List<Integer>> cRecoveryPeers = new HashMap<PeerID, List<Integer>>();
 
 	/**
-	 * Failed peers and the (maybe multiple) shared queries other peers have detected earlier and want to do the
-	 * recovery for
+	 * Failed peers and the (maybe multiple) shared queries other peers have
+	 * detected earlier and want to do the recovery for
 	 */
 	private static Map<PeerID, List<Integer>> cOtherRecoveryPeers = new HashMap<PeerID, List<Integer>>();
 
 	/**
-	 * Checks, if this peer wants to recover parts of a given shared query of a given failed peer.
+	 * Checks, if this peer wants to recover parts of a given shared query of a
+	 * given failed peer.
 	 * 
 	 * @param failedPeer
 	 *            The given failed peer. <br />
@@ -148,9 +158,11 @@ public class AgreementHelper {
 	 * @param sender
 	 *            The peer, which has send the request. <br />
 	 *            Must be not null.
-	 * @return True, if this peer is able and willing to recover the given failed peer; false, else.
+	 * @return True, if this peer is able and willing to recover the given
+	 *         failed peer; false, else.
 	 */
-	public static boolean decideToRecover(PeerID failedPeer, int localQuery, PeerID sender) {
+	public static boolean decideToRecover(PeerID failedPeer, int localQuery,
+			PeerID sender) {
 		Preconditions.checkNotNull(failedPeer);
 		Preconditions.checkNotNull(sender);
 
@@ -195,8 +207,8 @@ public class AgreementHelper {
 	}
 
 	/**
-	 * Saves, that another peer wants to do the recovery for this shared query. Use this, if this peer doesn't want to
-	 * to recovery for this so far.
+	 * Saves, that another peer wants to do the recovery for this shared query.
+	 * Use this, if this peer doesn't want to to recovery for this so far.
 	 * 
 	 * @param failedPeer
 	 *            The given failed peer. <br />
@@ -205,7 +217,8 @@ public class AgreementHelper {
 	 *            The given shared query. <br />
 	 *            Must be not null.
 	 */
-	private static void saveToOtherRecoveryPeersList(PeerID failedPeer, int localQueryId) {
+	private static void saveToOtherRecoveryPeersList(PeerID failedPeer,
+			int localQueryId) {
 		Preconditions.checkNotNull(failedPeer);
 
 		List<Integer> localQueryIds = new ArrayList<Integer>();
@@ -235,13 +248,15 @@ public class AgreementHelper {
 
 		}
 
-		return cP2PNetworkManager.get().getLocalPeerID().toString().compareTo(peer.toString()) >= 0;
+		return cP2PNetworkManager.get().getLocalPeerID().toString()
+				.compareTo(peer.toString()) >= 0;
 	}
 
 	/**
 	 * Removes an entry that we want (or have to do) this recovery
 	 */
-	private static void removeBackupQueueEntry(PeerID failedPeer, Integer localQueryId) {
+	private static void removeBackupQueueEntry(PeerID failedPeer,
+			Integer localQueryId) {
 		Preconditions.checkNotNull(failedPeer);
 
 		List<Integer> queries = cRecoveryPeers.get(failedPeer);
@@ -255,24 +270,29 @@ public class AgreementHelper {
 	}
 
 	/**
-	 * Saves, that we want to do recovery for the given query on the given peer, tells the other peers that we want to
-	 * do this, waits and finally (if no other one wants to do the recovery), does the recovery
+	 * Saves, that we want to do recovery for the given query on the given peer,
+	 * tells the other peers that we want to do this, waits and finally (if no
+	 * other one wants to do the recovery), does the recovery
 	 * 
 	 * @param failedPeer
 	 * @param sharedQueryId
 	 * @param newPeer
-	 *            The peer where we want to install the parts of the query from the failed peer
+	 *            The peer where we want to install the parts of the query from
+	 *            the failed peer
 	 * @param recoveryStateIdentifier
 	 */
-	public static void waitForAndDoRecovery(final PeerID failedPeer, final int localQueryId, final PeerID newPeer,
-			final ILogicalQueryPart queryPart, final UUID recoveryStateIdentifier, final UUID subprocessID) {
+	public static void waitForAndDoRecovery(final PeerID failedPeer,
+			final int localQueryId, final QueryState queryState,
+			final PeerID newPeer, final ILogicalQueryPart queryPart,
+			final UUID recoveryStateIdentifier, final UUID subprocessID) {
 
 		if (!cCommunicator.isPresent()) {
 			LOG.error("No recovery communicator bound!");
 			return;
 		}
 
-		// 1. Check, if another peer detected the failure earlier and will do the recovery
+		// 1. Check, if another peer detected the failure earlier and will do
+		// the recovery
 		if (otherPeerDoesRecovery(failedPeer, localQueryId)) {
 			LOG.debug("Another peer was faster - he can do recovery, I won't do it.");
 			return;
@@ -290,7 +310,8 @@ public class AgreementHelper {
 		cRecoveryPeers.put(failedPeer, queriesForPeer);
 
 		// 4. Send to all other peers that we want to do the recovery
-		cCommunicator.get().sendRecoveryAgreementMessage(failedPeer, localQueryId);
+		cCommunicator.get().sendRecoveryAgreementMessage(failedPeer,
+				localQueryId);
 
 		// 5. Wait a few seconds until we just do the recovery
 		Timer timer = new Timer();
@@ -300,20 +321,27 @@ public class AgreementHelper {
 			public void run() {
 				// 6. If the time is over and we still think we should do the
 				// recovery: Do the recovery
-				if (cRecoveryPeers.containsKey(failedPeer) && cRecoveryPeers.get(failedPeer).contains(localQueryId)) {
-					// We still want to do recovery for that peer for that query id
+				if (cRecoveryPeers.containsKey(failedPeer)
+						&& cRecoveryPeers.get(failedPeer)
+								.contains(localQueryId)) {
+					// We still want to do recovery for that peer for that query
+					// id
 					LOG.debug("Now I start with the revoery for {}", failedPeer);
 
 					// get PQL from query part
-					String pql = LogicalQueryHelper.generatePQLStatementFromQueryPart(queryPart);
+					String pql = LogicalQueryHelper
+							.generatePQLStatementFromQueryPart(queryPart);
 
-					cCommunicator.get().installQueriesOnNewPeer(failedPeer, newPeer, localQueryId, pql,
+					cCommunicator.get().installQueriesOnNewPeer(failedPeer,
+							newPeer, localQueryId, queryState, pql,
 							recoveryStateIdentifier, subprocessID);
 
-					// Now we did this, so remove that we want to do this recovery
+					// Now we did this, so remove that we want to do this
+					// recovery
 					removeBackupQueueEntry(failedPeer, localQueryId);
 				} else {
-					LOG.debug("Another peer won the peerId-battle for this peer, I won't do recovery for {}",
+					LOG.debug(
+							"Another peer won the peerId-battle for this peer, I won't do recovery for {}",
 							failedPeer);
 				}
 			}
@@ -322,26 +350,32 @@ public class AgreementHelper {
 	}
 
 	/**
-	 * Checks, if another peer already detected the failed peer earlier. Returns true, if so (this peer shouldn't do
-	 * recovery then) and false, if not. Removes the sharedQueryId from the list cause we won't detect a failure twice
-	 * and don't want to save unnecessary information. Thus, this method has side-effects: If you call it the second
-	 * time with the same parameters and it first returned true, it will return false!
+	 * Checks, if another peer already detected the failed peer earlier. Returns
+	 * true, if so (this peer shouldn't do recovery then) and false, if not.
+	 * Removes the sharedQueryId from the list cause we won't detect a failure
+	 * twice and don't want to save unnecessary information. Thus, this method
+	 * has side-effects: If you call it the second time with the same parameters
+	 * and it first returned true, it will return false!
 	 * 
 	 * @param failedPeer
 	 *            The failed peer this peer detected
 	 * @param sharedQueryId
-	 *            The shared query id this peer now (maybe) wants to do recovery for
-	 * @return true, if another peer already detected this and will do the recovery. False, if not (in this case you can
-	 *         try to do recovery)
+	 *            The shared query id this peer now (maybe) wants to do recovery
+	 *            for
+	 * @return true, if another peer already detected this and will do the
+	 *         recovery. False, if not (in this case you can try to do recovery)
 	 */
-	private static boolean otherPeerDoesRecovery(PeerID failedPeer, int localQueryId) {
+	private static boolean otherPeerDoesRecovery(PeerID failedPeer,
+			int localQueryId) {
 		Preconditions.checkNotNull(failedPeer);
 
 		if (cOtherRecoveryPeers.containsKey(failedPeer)) {
 			List<Integer> localQueryIds = cOtherRecoveryPeers.get(failedPeer);
 			if (localQueryIds.contains(localQueryId)) {
-				// Another peer already detected this failure - and maybe already begun or finished the recovery. So
-				// don't do anything but to delete this entry from the list (cause we won't detect the failure twice and
+				// Another peer already detected this failure - and maybe
+				// already begun or finished the recovery. So
+				// don't do anything but to delete this entry from the list
+				// (cause we won't detect the failure twice and
 				// thus we don't need to save it longer than necessary)
 				localQueryIds.remove(new Integer(localQueryId));
 				if (localQueryIds.isEmpty()) {

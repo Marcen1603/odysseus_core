@@ -13,6 +13,7 @@ import com.google.common.base.Preconditions;
 
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
+import de.uniol.inf.is.odysseus.core.planmanagement.query.QueryState;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.p2p_new.IMessage;
@@ -216,7 +217,7 @@ public class AddQueryReceiver extends AbstractRepeatingMessageReceiver {
 
 			RecoveryAddQueryResponseMessage response = null;
 			try {
-				addQuery(addMessage.getPQLCode(), addMessage.getLocalQueryId());
+				addQuery(addMessage.getPQLCode(), addMessage.getLocalQueryId(), addMessage.getQueryState());
 				response = new RecoveryAddQueryResponseMessage(addMessage.getUUID());
 			} catch (Exception e) {
 				response = new RecoveryAddQueryResponseMessage(addMessage.getUUID(), e.getMessage());
@@ -238,7 +239,7 @@ public class AddQueryReceiver extends AbstractRepeatingMessageReceiver {
 	 * @param sharedQueryId
 	 *            The id of the shared query where this PQL belongs to
 	 */
-	private static void addQuery(String pql, int localQueryId) throws Exception {
+	private static void addQuery(String pql, int localQueryId, QueryState queryState) throws Exception {
 		Preconditions.checkNotNull(pql);
 
 		if (!cExecutor.isPresent()) {
@@ -249,7 +250,7 @@ public class AddQueryReceiver extends AbstractRepeatingMessageReceiver {
 			throw new IllegalArgumentException("No recovery communicator bound!");
 		}
 
-		Collection<Integer> installedQueries = RecoveryHelper.installAndRunQueryPartFromPql(pql);
+		Collection<Integer> installedQueries = RecoveryHelper.installAndRunQueryPartFromPql(pql, queryState);
 		if (installedQueries == null || installedQueries.size() == 0) {
 			throw new IllegalArgumentException("Installing QueryPart on Peer failed. Searching for other peers.");
 		}

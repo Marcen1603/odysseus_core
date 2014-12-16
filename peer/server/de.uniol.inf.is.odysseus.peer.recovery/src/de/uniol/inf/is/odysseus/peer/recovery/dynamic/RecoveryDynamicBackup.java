@@ -21,6 +21,7 @@ import com.google.common.collect.Lists;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
+import de.uniol.inf.is.odysseus.core.planmanagement.query.QueryState;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvider;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
@@ -294,9 +295,9 @@ public class RecoveryDynamicBackup implements IRecoveryDynamicBackup {
 	}
 
 	@Override
-	public void initiateAgreement(PeerID failedPeer, int localQueryId, PeerID newPeer, ILogicalQueryPart queryPart,
+	public void initiateAgreement(PeerID failedPeer, int localQueryId, QueryState queryState, PeerID newPeer, ILogicalQueryPart queryPart,
 			UUID recoveryStateIdentifier, UUID subprocessID) {
-		AgreementHelper.waitForAndDoRecovery(failedPeer, localQueryId, newPeer, queryPart, recoveryStateIdentifier,
+		AgreementHelper.waitForAndDoRecovery(failedPeer, localQueryId, queryState, newPeer, queryPart, recoveryStateIdentifier,
 				subprocessID);
 	}
 

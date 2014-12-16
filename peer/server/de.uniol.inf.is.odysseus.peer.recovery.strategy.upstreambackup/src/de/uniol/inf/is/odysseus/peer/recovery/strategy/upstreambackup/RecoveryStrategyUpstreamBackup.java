@@ -15,6 +15,7 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 
+import de.uniol.inf.is.odysseus.core.planmanagement.query.QueryState;
 import de.uniol.inf.is.odysseus.p2p_new.IP2PNetworkManager;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.IPeerDictionary;
 import de.uniol.inf.is.odysseus.peer.distribute.ILogicalQueryPart;
@@ -249,6 +250,7 @@ public class RecoveryStrategyUpstreamBackup implements IRecoveryStrategy {
 			RecoverySubProcessState subState = state.getRecoverySubprocess(recoverySubStateIdentifier);
 
 			int localQueryId = subState.getLocalQueryId();
+			QueryState queryState = subState.getQueryState();
 			Map<ILogicalQueryPart, PeerID> previousAllocationMap = state.getAllocationMap(localQueryId);
 			if (previousAllocationMap == null) {
 				LOG.error("Recovery Process State has not enough information (SharedQueryID or "
@@ -268,7 +270,7 @@ public class RecoveryStrategyUpstreamBackup implements IRecoveryStrategy {
 				if (allocationMap != null && !allocationMap.isEmpty()) {
 					for (ILogicalQueryPart queryPartForAllocation : allocationMap.keySet()) {
 						sendRecoveryMessages(localQueryId, failedPeer, allocationMap.get(queryPartForAllocation),
-								queryPartForAllocation, recoveryStateIdentifier, recoverySubStateIdentifier);
+								queryPartForAllocation, queryState, recoveryStateIdentifier, recoverySubStateIdentifier);
 					}
 				} else {
 					LOG.debug("Unable to find Peer ID for reallocation.");
@@ -314,6 +316,7 @@ public class RecoveryStrategyUpstreamBackup implements IRecoveryStrategy {
 			LOG.debug("Have info for {} -> I can do recovery.", cPeerDictionary.get().getRemotePeerName(failedPeer));
 			// Search for another peer who can take the parts from the failed peer
 
+			QueryState queryState = QueryState.valueOf(infoMap.get(localQueryId).state);
 			Map<ILogicalQueryPart, PeerID> allocationMap = null;
 
 			try {
@@ -327,9 +330,9 @@ public class RecoveryStrategyUpstreamBackup implements IRecoveryStrategy {
 					Iterator<ILogicalQueryPart> iterator = allocationMap.keySet().iterator();
 					while (iterator.hasNext()) {
 						ILogicalQueryPart queryPart = iterator.next();
-						UUID subprocessID = state.createNewSubprocess(localQueryId, queryPart);
+						UUID subprocessID = state.createNewSubprocess(localQueryId, queryPart, queryState);
 
-						sendRecoveryMessages(localQueryId, failedPeer, allocationMap.get(queryPart), queryPart,
+						sendRecoveryMessages(localQueryId, failedPeer, allocationMap.get(queryPart), queryPart, queryState,
 								recoveryStateIdentifier, subprocessID);
 					}
 				} else {
@@ -344,12 +347,12 @@ public class RecoveryStrategyUpstreamBackup implements IRecoveryStrategy {
 
 	}
 
-	private void sendRecoveryMessages(int localQueryId, PeerID failedPeer, PeerID newPeer, ILogicalQueryPart queryPart,
-			UUID recoveryStateIdentifier, UUID subprocessID) {
+	private void sendRecoveryMessages(int localQueryId, PeerID failedPeer, PeerID newPeer, ILogicalQueryPart queryPart, 
+			QueryState queryState, UUID recoveryStateIdentifier, UUID subprocessID) {
 		cRecoveryDynamicBackup.get().determineAndSendHoldOnMessages(localQueryId, failedPeer, recoveryStateIdentifier);
 
 		// Tell the new peer to install the parts from the failed peer
-		cRecoveryDynamicBackup.get().initiateAgreement(failedPeer, localQueryId, newPeer, queryPart,
+		cRecoveryDynamicBackup.get().initiateAgreement(failedPeer, localQueryId, queryState, newPeer, queryPart,
 				recoveryStateIdentifier, subprocessID);
 	}
 
