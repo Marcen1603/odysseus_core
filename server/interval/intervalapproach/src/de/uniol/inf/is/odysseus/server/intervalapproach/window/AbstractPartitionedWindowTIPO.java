@@ -188,10 +188,12 @@ abstract public class AbstractPartitionedWindowTIPO<T extends IStreamObject<ITim
 	@Override
 	public Serializable getState() {
 		SlidingElementWindowTIPOState<T> state = new SlidingElementWindowTIPOState<T>();
-		state.setBuffers(buffers);
-		state.setGroupProcessor(groupProcessor);
-		state.setLastTs(lastTs);
-		state.setTransferArea(transferArea);
+		synchronized (buffers) {
+			state.setBuffers(buffers);
+			state.setGroupProcessor(groupProcessor);
+			state.setLastTs(lastTs);
+			state.setTransferArea(transferArea);			
+		}
 		return state;
 	}
 
@@ -200,11 +202,13 @@ abstract public class AbstractPartitionedWindowTIPO<T extends IStreamObject<ITim
 	public void setState(Serializable serializable) {
 		try {
 			SlidingElementWindowTIPOState<T> state = (SlidingElementWindowTIPOState<T>) serializable;
-			buffers = state.getBuffers();
-			groupProcessor = state.getGroupProcessor();
-			lastTs = state.getLastTs();
-			transferArea = state.getTransferArea();
-			transferArea.setTransfer(this);
+			synchronized (buffers) {
+				buffers = state.getBuffers();
+				groupProcessor = state.getGroupProcessor();
+				lastTs = state.getLastTs();
+				transferArea = state.getTransferArea();
+				transferArea.setTransfer(this);				
+			}
 		} catch (Throwable T) {
 			LOG.error("The serializable state to set for the SlidingElementWindowTIPO is not a valid SlidingElementWindowTIPOState!");
 		}
