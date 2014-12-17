@@ -5,6 +5,7 @@ import javax.xml.bind.annotation.adapters.XmlAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import de.uniol.inf.is.odysseus.s100.common.geometry.DirectPosition;
+import de.uniol.inf.is.odysseus.s100.common.geometry.SC_CRS;
 
 class DirectPositionXmlAdapter extends XmlAdapter<String,DirectPosition> 
 {
@@ -43,18 +44,23 @@ public class GM_Point
 	@XmlJavaTypeAdapter(DirectPositionXmlAdapter.class)
 	public DirectPosition position;
 	
+	public SC_CRS coordinateReferenceSystem;
+	
 	public GM_Point()
 	{
+		coordinateReferenceSystem = new SC_CRS();
 		position = new DirectPosition();
 	}
 	
 	public GM_Point(double longitude, double latitude)
 	{
+		coordinateReferenceSystem = new SC_CRS();
 		position = new DirectPosition(longitude, latitude);
 	}
 	
 	public GM_Point(double longitude, double latitude, double altitude)
 	{
+		coordinateReferenceSystem = new SC_CRS();
 		position = new DirectPosition(longitude, latitude, altitude);
 	}
 }
