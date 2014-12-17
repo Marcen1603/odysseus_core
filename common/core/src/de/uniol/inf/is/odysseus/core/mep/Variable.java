@@ -49,7 +49,7 @@ public class Variable implements IExpression<Object> {
 	/**
 	 * The name of the variable
 	 */
-	private final String identifier;
+	private String identifier;
 	/**
 	 * The type of the variable
 	 */
@@ -92,6 +92,10 @@ public class Variable implements IExpression<Object> {
 	 */
 	public String getIdentifier() {
 		return identifier;
+	}
+	
+	public void rename(String newName){
+		this.identifier = newName;
 	}
 
 	/**
@@ -272,11 +276,4 @@ public class Variable implements IExpression<Object> {
 		return false;
 	}
 
-	// public Integer getArrayIndex() {
-	// return arrayIndex;
-	// }
-	//
-	// public void setArrayIndex(Integer arrayIndex) {
-	// this.arrayIndex = arrayIndex;
-	// }
 }
