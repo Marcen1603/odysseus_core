@@ -49,7 +49,7 @@ public class Variable implements IExpression<Object> {
 	/**
 	 * The name of the variable
 	 */
-	private String identifier;
+	final private String identifier;
 	/**
 	 * The type of the variable
 	 */
@@ -94,9 +94,6 @@ public class Variable implements IExpression<Object> {
 		return identifier;
 	}
 	
-	public void rename(String newName){
-		this.identifier = newName;
-	}
 
 	/**
 	 * Bind the value to the variable
