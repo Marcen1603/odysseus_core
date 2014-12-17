@@ -11,3 +11,8 @@ Bundle-ActivationPolicy: lazy
 Require-Bundle: de.uniol.inf.is.odysseus.core;bundle-version="1.0.0",
  de.uniol.inf.is.odysseus.core.server;bundle-version="1.0.0",
  org.antlr4;bundle-version="1.0.0"
+Bundle-ClassPath: lib/log4j-1.2.17.jar,
+ lib/nddsjava-5.1-mdpnp-000005.jar,
+ lib/slf4j-api-1.7.5.jar,
+ lib/slf4j-log4j12-1.7.5.jar,
+ .
