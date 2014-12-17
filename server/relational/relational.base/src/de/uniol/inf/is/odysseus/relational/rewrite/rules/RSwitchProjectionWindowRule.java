@@ -18,20 +18,12 @@ package de.uniol.inf.is.odysseus.relational.rewrite.rules;
 import java.util.Collection;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.ProjectAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractWindowAO;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.ProjectAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.RewriteConfiguration;
 import de.uniol.inf.is.odysseus.relational.rewrite.RelationalRestructHelper;
-import de.uniol.inf.is.odysseus.rewrite.flow.RewriteRuleFlowGroup;
-import de.uniol.inf.is.odysseus.rewrite.rule.AbstractRewriteRule;
-import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 
-public class RSwitchProjectionWindowRule extends AbstractRewriteRule<AbstractWindowAO> {
-
-	@Override
-	public int getPriority() {
-		return 3;
-	}
+public class RSwitchProjectionWindowRule extends AbstractSwitchProjectionRule<AbstractWindowAO> {
 
 	@Override
 	public void execute(AbstractWindowAO win, RewriteConfiguration config) {
@@ -59,11 +51,6 @@ public class RSwitchProjectionWindowRule extends AbstractRewriteRule<AbstractWin
 		}
 		return false;
 
-	}
-
-	@Override
-	public IRuleFlowGroup getRuleFlowGroup() {
-		return RewriteRuleFlowGroup.SWITCH;
 	}
 
 	@Override

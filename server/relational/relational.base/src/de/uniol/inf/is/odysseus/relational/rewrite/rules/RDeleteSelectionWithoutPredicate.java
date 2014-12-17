@@ -29,7 +29,7 @@ public class RDeleteSelectionWithoutPredicate extends AbstractRewriteRule<Select
 
 	@Override
 	public int getPriority() {
-		return 5;
+		return 0;
 	}
 
 	@Override

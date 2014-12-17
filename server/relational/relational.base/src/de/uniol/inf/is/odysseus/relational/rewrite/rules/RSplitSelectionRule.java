@@ -1,5 +1,5 @@
 /********************************************************************************** 
-  * Copyright 2011 The Odysseus Team
+ * Copyright 2011 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,35 +28,37 @@ import de.uniol.inf.is.odysseus.rewrite.flow.RewriteRuleFlowGroup;
 import de.uniol.inf.is.odysseus.rewrite.rule.AbstractRewriteRule;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 
-@SuppressWarnings({"rawtypes"})
+@SuppressWarnings({ "rawtypes" })
 public class RSplitSelectionRule extends AbstractRewriteRule<SelectAO> {
 
 	@Override
 	public int getPriority() {
-		// Should have the highest priority
-		return 6;
+		// Should be the highest priority
+		return 50;
 	}
 
 	@Override
 	public void execute(SelectAO sel, RewriteConfiguration config) {
 		List<IPredicate> preds = splitPredicate(sel.getPredicate());
-		
+
 		for (int i = 0; i < preds.size() - 1; i++) {
 			SelectAO newSel = createNewSelect(sel, preds.get(i));
-			RestructParameterInfoUtil.updatePredicateParameterInfo(newSel);
-			
+			RestructParameterInfoUtil.updatePredicateParameterInfo(
+					newSel.getParameterInfos(), newSel.getPredicate());
+
 			RestructHelper.insertOperator(newSel, sel, 0, 0, 0);
 			insert(newSel);
 		}
 		sel.setPredicate(preds.get(preds.size() - 1));
-		RestructParameterInfoUtil.updatePredicateParameterInfo(sel);
-		
+		RestructParameterInfoUtil.updatePredicateParameterInfo(
+				sel.getParameterInfos(), sel.getPredicate());
+
 		update(sel);
 	}
 
 	private static SelectAO createNewSelect(SelectAO sel, IPredicate pred) {
 		SelectAO newSel = new SelectAO(sel);
-		for (IOperatorOwner owner:sel.getOwner()){
+		for (IOperatorOwner owner : sel.getOwner()) {
 			newSel.addOwner(owner);
 		}
 		newSel.setPredicate(pred);
@@ -67,8 +69,8 @@ public class RSplitSelectionRule extends AbstractRewriteRule<SelectAO> {
 		List<IPredicate> preds;
 		if (ComplexPredicateHelper.isAndPredicate(sel)) {
 			preds = ComplexPredicateHelper.splitPredicate(sel);
-		} else { 
-			preds = ((RelationalPredicate)sel).splitPredicate(false);
+		} else {
+			preds = ((RelationalPredicate) sel).splitPredicate(false);
 		}
 		return preds;
 	}
@@ -90,9 +92,9 @@ public class RSplitSelectionRule extends AbstractRewriteRule<SelectAO> {
 	public IRuleFlowGroup getRuleFlowGroup() {
 		return RewriteRuleFlowGroup.SPLIT;
 	}
-	
+
 	@Override
-	public Class<? super SelectAO> getConditionClass() {	
+	public Class<? super SelectAO> getConditionClass() {
 		return SelectAO.class;
 	}
 

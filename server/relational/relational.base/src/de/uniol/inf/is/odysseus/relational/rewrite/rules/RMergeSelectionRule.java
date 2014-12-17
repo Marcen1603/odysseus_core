@@ -1,18 +1,18 @@
 /********************************************************************************** 
-  * Copyright 2011 The Odysseus Team
-  *
-  * Licensed under the Apache License, Version 2.0 (the "License");
-  * you may not use this file except in compliance with the License.
-  * You may obtain a copy of the License at
-  *
-  *     http://www.apache.org/licenses/LICENSE-2.0
-  *
-  * Unless required by applicable law or agreed to in writing, software
-  * distributed under the License is distributed on an "AS IS" BASIS,
-  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  * See the License for the specific language governing permissions and
-  * limitations under the License.
-  */
+ * Copyright 2011 The Odysseus Team
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package de.uniol.inf.is.odysseus.relational.rewrite.rules;
 
 import java.util.Collection;
@@ -30,22 +30,27 @@ public class RMergeSelectionRule extends AbstractRewriteRule<SelectAO> {
 
 	@Override
 	public int getPriority() {
-		return 0;
+		return 30;
 	}
 
 	@Override
 	public void execute(SelectAO operator, RewriteConfiguration config) {
 		for (SelectAO sel : getAllOfSameTyp(new SelectAO())) {
-			if (sel.getInputAO() !=null && sel.getInputAO()== operator) {
+			if (sel.getInputAO() != null && sel.getInputAO() == operator) {
 				if (sel.getPredicate() != null) {
 					if (operator.getPredicate() != null) {
-						operator.setPredicate(ComplexPredicateHelper.createAndPredicate(operator.getPredicate(), sel.getPredicate()));
+						operator.setPredicate(ComplexPredicateHelper
+								.createAndPredicate(operator.getPredicate(),
+										sel.getPredicate()));
 					} else {
-						operator.setPredicate(sel.getPredicate());	
+						operator.setPredicate(sel.getPredicate());
 					}
-					RestructParameterInfoUtil.updatePredicateParameterInfo(operator);
-					
-					Collection<ILogicalOperator> toUpdate = RelationalRestructHelper.removeOperator(sel);
+					RestructParameterInfoUtil.updatePredicateParameterInfo(
+							operator.getParameterInfos(),
+							operator.getPredicate());
+
+					Collection<ILogicalOperator> toUpdate = RelationalRestructHelper
+							.removeOperator(sel);
 					for (ILogicalOperator o : toUpdate) {
 						update(o);
 					}
@@ -53,17 +58,16 @@ public class RMergeSelectionRule extends AbstractRewriteRule<SelectAO> {
 					retract(sel);
 				}
 			}
-		}		
+		}
 	}
 
-	
 	@Override
 	public boolean isExecutable(SelectAO operator, RewriteConfiguration config) {
 		if (operator.getSubscriptions().size() > 1) {
 			return false;
 		}
 		for (SelectAO sel : getAllOfSameTyp(new SelectAO())) {
-			if (sel.getInputAO() !=null &&  sel.getInputAO()== operator) {
+			if (sel.getInputAO() != null && sel.getInputAO() == operator) {
 				return true;
 			}
 		}
@@ -74,9 +78,9 @@ public class RMergeSelectionRule extends AbstractRewriteRule<SelectAO> {
 	public IRuleFlowGroup getRuleFlowGroup() {
 		return RewriteRuleFlowGroup.CLEANUP;
 	}
-	
+
 	@Override
-	public Class<?  super SelectAO> getConditionClass() {	
+	public Class<? super SelectAO> getConditionClass() {
 		return SelectAO.class;
 	}
 

@@ -18,21 +18,13 @@ package de.uniol.inf.is.odysseus.relational.rewrite.rules;
 import java.util.Collection;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.SelectAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractWindowAO;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.SelectAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.WindowType;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.RewriteConfiguration;
 import de.uniol.inf.is.odysseus.relational.rewrite.RelationalRestructHelper;
-import de.uniol.inf.is.odysseus.rewrite.flow.RewriteRuleFlowGroup;
-import de.uniol.inf.is.odysseus.rewrite.rule.AbstractRewriteRule;
-import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 
-public class RSwitchSelectionWindowRule extends AbstractRewriteRule<AbstractWindowAO> {
-
-	@Override
-	public int getPriority() {
-		return 3;
-	}
+public class RSwitchSelectionWindowRule extends AbstractSwitchSelectionRule<AbstractWindowAO> {
 
 	@Override
 	public void execute(AbstractWindowAO win, RewriteConfiguration config) {
@@ -56,18 +48,6 @@ public class RSwitchSelectionWindowRule extends AbstractRewriteRule<AbstractWind
 			return false;
 		}
 		return win.getWindowType() == WindowType.TIME;
-	}
-
-	private static boolean isValidSelect(SelectAO sel, AbstractWindowAO win) {
-		if (sel.getInputAO() != null && sel.getInputAO().equals(win)) {
-			return true;
-		}
-		return false;
-	}
-
-	@Override
-	public IRuleFlowGroup getRuleFlowGroup() {
-		return RewriteRuleFlowGroup.SWITCH;
 	}
 
 	@Override

@@ -114,7 +114,8 @@ public abstract class AbstractRelationalPredicate<T extends Tuple<?>> extends Ab
 
         int i = 0;
         for (SDFAttribute curAttr : neededAttributes) {
-            SDFAttribute curAttribute = leftSchema.findAttribute(curAttr.getURI());
+        	SDFAttribute replOfCurAttr = this.getReplacement(curAttr);
+            SDFAttribute curAttribute = leftSchema.findAttribute(replOfCurAttr.getURI());
             if (curAttribute == null && !checkRightSchema){
             	logger.error("Attribute "+curAttr.getURI()+" not found in "+leftSchema);
             	 throw new IllegalArgumentException("Attribute "+curAttr.getURI()+" not found in "+leftSchema);
@@ -129,7 +130,7 @@ public abstract class AbstractRelationalPredicate<T extends Tuple<?>> extends Ab
                     // in the predicate that does not exist
                     // in the left schema, so there must also be
                     // a right schema
-                	curAttribute = rightSchema.findAttribute(curAttr.getURI());
+                	curAttribute = rightSchema.findAttribute(replOfCurAttr.getURI());
                     pos = rightSchema.indexOf(curAttribute);
                     if (pos == -1) {
                         throw new IllegalArgumentException("Attribute " + curAttribute + " not in " + rightSchema);
@@ -608,12 +609,12 @@ public abstract class AbstractRelationalPredicate<T extends Tuple<?>> extends Ab
 //        return -1;
 //    }
 
-//    private SDFAttribute getReplacement(SDFAttribute a) {
-//        SDFAttribute ret = a;
-//        SDFAttribute tmp = null;
-//        while ((tmp = replacementMap.get(ret)) != null) {
-//            ret = tmp;
-//        }
-//        return ret;
-//    }
+    private SDFAttribute getReplacement(SDFAttribute a) {
+        SDFAttribute ret = a;
+        SDFAttribute tmp = null;
+        while ((tmp = replacementMap.get(ret)) != null) {
+            ret = getReplacement(tmp);
+        }
+        return ret;
+    }
 }
