@@ -13,7 +13,7 @@ public class S100DataTypeProvider implements IDatatypeProvider {
 	@Override
 	public List<SDFDatatype> getDatatypes() {
 		List<SDFDatatype> ret = new ArrayList<>();
-		ret.add(SDFS100DataType.S100);
+		ret.add(SDFS100DataType.GM_POINT);
 		return ret;
 	}
 }

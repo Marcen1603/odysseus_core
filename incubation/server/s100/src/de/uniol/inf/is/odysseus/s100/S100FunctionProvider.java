@@ -31,7 +31,8 @@ public class S100FunctionProvider implements IFunctionProvider {
 	@Override
 	public List<IFunction<?>> getFunctions() {
 		final List<IFunction<?>> functions = new ArrayList<IFunction<?>>();
-		functions.add(new ToGPSPoint2D());
+		functions.add(new ToGMPoint());
+		functions.add(new GetGMPointCoordinate());
 		S100FunctionProvider.LOG.info(String.format("Register functions: %s", functions));
 		return functions;
 	}

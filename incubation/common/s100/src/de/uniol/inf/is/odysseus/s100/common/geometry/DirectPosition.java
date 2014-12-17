@@ -7,16 +7,15 @@ public class DirectPosition
 	public double longitude, latitude, altitude;
 	public boolean useAltitude;
 	
-	DirectPosition()
+	public DirectPosition()
 	{
 		longitude = 0;
 		latitude = 0;
 		altitude = 0;
 		useAltitude = false;
 	}
-
 	
-	DirectPosition(double longitude, double latitude)
+	public DirectPosition(double longitude, double latitude)
 	{
 		this.longitude = longitude;
 		this.latitude = latitude;
@@ -24,7 +23,7 @@ public class DirectPosition
 		this.useAltitude = false;
 	}
 	
-	DirectPosition(double longitude, double latitude, double altitude)
+	public DirectPosition(double longitude, double latitude, double altitude)
 	{
 		this.longitude = longitude;
 		this.latitude = latitude;
@@ -42,5 +41,4 @@ public class DirectPosition
 		
 		return result;
 	}	
-	
 }

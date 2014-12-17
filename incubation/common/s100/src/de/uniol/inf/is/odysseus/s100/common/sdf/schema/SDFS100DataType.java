@@ -27,7 +27,7 @@ public class SDFS100DataType extends SDFDatatype {
 		super(datatypeName, type, schema);
 	}
 	
-	public static final SDFDatatype S100 = new SDFDatatype("S100");
+	public static final SDFDatatype GM_POINT = new SDFDatatype("GM_Point");
 	
 	
 	/**
@@ -37,7 +37,7 @@ public class SDFS100DataType extends SDFDatatype {
 	public static List<SDFDatatype> getTypes() {
 		final List<SDFDatatype> types = new ArrayList<>();
 		types.addAll(SDFDatatype.getTypes());
-		types.add(SDFS100DataType.S100);
+		types.add(SDFS100DataType.GM_POINT);
 		
 		return types;
 	}
