@@ -1,11 +1,11 @@
 package de.uniol.inf.is.odysseus.sports.sportsql.parser.impl;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
-import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AggregateAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.ChangeDetectAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.JoinAO;
@@ -13,76 +13,88 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.MapAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.SelectAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.StreamAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TimeWindowAO;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.TimestampAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.SDFExpressionParameter;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.peer.ddc.MissingDDCEntryException;
+import de.uniol.inf.is.odysseus.server.intervalapproach.logicaloperator.AssureHeartbeatAO;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.ISportsQLParser;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.SportsQLParseException;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.SportsQLQuery;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.annotations.SportsQL;
-import de.uniol.inf.is.odysseus.sports.sportsql.parser.buildhelper.OperatorBuildHelper;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.buildhelper.IntermediateSchemaAttributes;
+import de.uniol.inf.is.odysseus.sports.sportsql.parser.buildhelper.OperatorBuildHelper;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.ddcaccess.AbstractSportsDDCAccess;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.ddcaccess.SoccerDDCAccess;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.enums.GameType;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.enums.StatisticType;
+import de.uniol.inf.is.odysseus.sports.sportsql.parser.helper.TimeUnitHelper;
+import de.uniol.inf.is.odysseus.sports.sportsql.parser.parameter.SportsQLTimeParameter.TimeUnit;
 
 @SportsQL(gameTypes = { GameType.SOCCER }, statisticTypes = { StatisticType.GLOBAL }, name = "goals", parameters = {})
 public class GoalsSportsQLParser implements ISportsQLParser {
 
-	// / time (seconds) between goal and kickoff
+	// / Goal values
 	private static final int GOAL_DEPTH = 2400;
-	
+	private final int GOAL_HEIGHT = 2300;
+
+	// time in seconds between goal and kickoff
+	private final BigInteger TIME_BETWEEN = new BigInteger("30");
+
 	// TODO:
 	// this is the kickoff area around the center spot
-	// usually it has a size of 400mm but in DEBS data stream they lay the ball in a area of 2m around the center
+	// usually it has a size of 400mm but in DEBS data stream they lay the ball
+	// in a area of 2m around the center
 	private static final int KICKOFF_AREA_RADIUS = 2000;
-	
 
-	@SuppressWarnings("rawtypes")
+	private final String ATT_INGOAL1 = "inGoal1";
+	private final String ATT_INGOAL2 = "inGoal2";
+	private final String ATT_ONCENTRESPOT = "onCentreSpot";
+
 	@Override
-	public ILogicalQuery parse(ISession session,SportsQLQuery sportsQL)
-			throws SportsQLParseException, NumberFormatException, MissingDDCEntryException {
+	public ILogicalQuery parse(ISession session, SportsQLQuery sportsQL)
+			throws SportsQLParseException, NumberFormatException,
+			MissingDDCEntryException {
 
 		List<ILogicalOperator> allOperators = new ArrayList<ILogicalOperator>();
 		ArrayList<String> predicates = new ArrayList<String>();
 		ArrayList<String> attributes = new ArrayList<String>();
 
-		StreamAO soccerGameStreamAO = OperatorBuildHelper.createGameStreamAO(session);
+		StreamAO soccerGameStreamAO = OperatorBuildHelper
+				.createGameStreamAO(session);
+		allOperators.add(soccerGameStreamAO);
 
-		// get only ball
-		List<IPredicate> ballPredicates = new ArrayList<IPredicate>();
-		for(int entityId : AbstractSportsDDCAccess.getBallEntityIds()) {
-			IPredicate ballPredicate = OperatorBuildHelper.createRelationalPredicate(IntermediateSchemaAttributes.ENTITY_ID + " = " + entityId);
-			ballPredicates.add(ballPredicate);
-		}		
-		
-		SelectAO ball = OperatorBuildHelper.createSelectAO(OperatorBuildHelper.createOrPredicate(ballPredicates),
+		SelectAO ball = OperatorBuildHelper.createEntityIDSelect(100,
 				soccerGameStreamAO);
-		ball.setHeartbeatRate(10);
 		allOperators.add(ball);
-		predicates.clear();
 
-		// ball in game field
-		String predicate = " y > " + AbstractSportsDDCAccess.getFieldYMin() + " AND y < " + AbstractSportsDDCAccess.getFieldYMax() + " AND x > " + SoccerDDCAccess.getGoalareaLeftX()
-				+ " AND x < " + SoccerDDCAccess.getGoalareaRightX() + " ";
-		SelectAO ball_in_game_field = OperatorBuildHelper.createSelectAO(
-				predicate, ball);
-		allOperators.add(ball_in_game_field);
-		predicates.clear();
-
-
-		// ball in goal or field stream	
-		String predicateGoalAndField = "(y > " + AbstractSportsDDCAccess.getFieldYMin() + " AND y < " + AbstractSportsDDCAccess.getFieldYMax() + " AND x > "
-				+ SoccerDDCAccess.getGoalareaLeftX() + " AND x < " + SoccerDDCAccess.getGoalareaRightX() + ")";
-		predicateGoalAndField +=  " OR (x < " + SoccerDDCAccess.getGoalareaLeftX()
-				+ " AND x > ((" + (SoccerDDCAccess.getGoalareaLeftX() - GOAL_DEPTH)
-				+ ")) AND y > " + SoccerDDCAccess.getGoalareaLeftYMin() + " AND y < "
+		// ball in goal or field stream
+		String predicateGoalAndField = "(" + IntermediateSchemaAttributes.Y
+				+ " > " + AbstractSportsDDCAccess.getFieldYMin() + " AND "
+				+ IntermediateSchemaAttributes.Y + " < "
+				+ AbstractSportsDDCAccess.getFieldYMax() + " AND "
+				+ IntermediateSchemaAttributes.X + "> "
+				+ SoccerDDCAccess.getGoalareaLeftX() + " AND "
+				+ IntermediateSchemaAttributes.X + "< "
+				+ SoccerDDCAccess.getGoalareaRightX() + ")";
+		predicateGoalAndField += " OR (" + IntermediateSchemaAttributes.X
+				+ " < " + SoccerDDCAccess.getGoalareaLeftX() + " AND "
+				+ IntermediateSchemaAttributes.X + " > (("
+				+ (SoccerDDCAccess.getGoalareaLeftX() - GOAL_DEPTH) + ")) AND "
+				+ IntermediateSchemaAttributes.Y + " > "
+				+ SoccerDDCAccess.getGoalareaLeftYMin() + " AND "
+				+ IntermediateSchemaAttributes.Y + " < "
 				+ SoccerDDCAccess.getGoalareaLeftYMax() + ")";
-		predicateGoalAndField += " OR (x > " + SoccerDDCAccess.getGoalareaRightX() + " AND x < (("
-				+ (SoccerDDCAccess.getGoalareaRightX() + GOAL_DEPTH) + ")) AND y < "
-				+ SoccerDDCAccess.getGoalareaRightYMax() + " AND y > " + SoccerDDCAccess.getGoalareaRightYMin() + ")";
+		predicateGoalAndField += " OR (" + IntermediateSchemaAttributes.X
+				+ " > " + SoccerDDCAccess.getGoalareaRightX() + " AND "
+				+ IntermediateSchemaAttributes.X + " < (("
+				+ (SoccerDDCAccess.getGoalareaRightX() + GOAL_DEPTH)
+				+ ")) AND " + IntermediateSchemaAttributes.Y + " < "
+				+ SoccerDDCAccess.getGoalareaRightYMax() + " AND "
+				+ IntermediateSchemaAttributes.Y + " > "
+				+ SoccerDDCAccess.getGoalareaRightYMin() + ")";
 		
+
 		SelectAO ball_in_goal_or_field = OperatorBuildHelper.createSelectAO(
 				predicateGoalAndField, ball);
 		allOperators.add(ball_in_goal_or_field);
@@ -95,8 +107,8 @@ public class GoalsSportsQLParser implements ISportsQLParser {
 		allOperators.add(inGoal);
 
 		// inGoal filter: remove duplicates
-		attributes.add("inGoal1");
-		attributes.add("inGoal2");
+		attributes.add(ATT_INGOAL1);
+		attributes.add(ATT_INGOAL2);
 		// Create ChangeDetectAO with HEARTBEATRATE = 100
 		ChangeDetectAO inGoal_filter = OperatorBuildHelper
 				.createChangeDetectAO(OperatorBuildHelper.createAttributeList(
@@ -106,98 +118,121 @@ public class GoalsSportsQLParser implements ISportsQLParser {
 
 		// onCentreSpot: Ball inside centre spot region
 		MapAO onCentreSpot = OperatorBuildHelper.createMapAO(
-				getExpressionForOnCentreSpot(ball_in_game_field),
-				ball_in_game_field, 0, 0, false);
+				getExpressionForOnCentreSpot(ball_in_goal_or_field),
+				ball_in_goal_or_field, 0, 0, false);
 		allOperators.add(onCentreSpot);
 
 		// onCentreSpot_filter: filter duplicates
-		attributes.add("onCentreSpot");
+		attributes.add(ATT_ONCENTRESPOT);
 		// Create ChangeDetectAO with HEARTBEATRATE = 100
 		ChangeDetectAO onCentreSpot_filter = OperatorBuildHelper
 				.createChangeDetectAO(OperatorBuildHelper.createAttributeList(
 						attributes, onCentreSpot), 0.0, 100, onCentreSpot);
 		allOperators.add(onCentreSpot_filter);
 		attributes.clear();
-		
-		// 
-		SelectAO inGoalSelect = OperatorBuildHelper.createSelectAO("inGoal1 = 1 OR inGoal2 = 1", inGoal_filter);
+
+		//
+		SelectAO inGoalSelect = OperatorBuildHelper.createSelectAO(ATT_INGOAL1
+				+ " = 1 OR " + ATT_INGOAL2 + "= 1", inGoal_filter);
 		allOperators.add(inGoalSelect);
 
-		SelectAO onSpotSelect = OperatorBuildHelper.createSelectAO("onCentreSpot = 1", onCentreSpot_filter);
+		SelectAO onSpotSelect = OperatorBuildHelper.createSelectAO(
+				ATT_ONCENTRESPOT + "= 1", onCentreSpot_filter);
 		allOperators.add(onSpotSelect);
-		
+
 		// window for goals and spot
-		TimeWindowAO goalWindow = OperatorBuildHelper.createTimeWindowAO(30, "SECONDS", inGoalSelect);
+		TimeWindowAO goalWindow = OperatorBuildHelper.createTimeWindowAO(30,
+				"SECONDS", inGoalSelect);
 		allOperators.add(goalWindow);
-		
-		TimeWindowAO spotWindow = OperatorBuildHelper.createTimeWindowAO(5, "SECONDS", onSpotSelect);
+
+		TimeWindowAO spotWindow = OperatorBuildHelper.createTimeWindowAO(5,
+				"SECONDS", onSpotSelect);
 		allOperators.add(spotWindow);
-		
-		
+
 		// join goals of last x seconds with centre spot stream
-		JoinAO goals_join = OperatorBuildHelper.createJoinAO("true", "MANY_MANY", goalWindow, spotWindow);
+		JoinAO goals_join = OperatorBuildHelper.createJoinAO("true",
+				"ONE_ONE", goalWindow, spotWindow);
+
 		allOperators.add(goals_join);
-		
-		
-		attributes.add("goal_ts");
-		ChangeDetectAO goal_changedetect = OperatorBuildHelper
-				.createChangeDetectAO(OperatorBuildHelper.createAttributeList(
-						attributes, goals_join), 0.0, 100, goals_join);
-		goal_changedetect.setDeliverFirstElement(true);
-		allOperators.add(goal_changedetect);
-		attributes.clear();
-		
+
+
+		 TimestampAO clearEndTS = OperatorBuildHelper.clearEndTimestamp(goals_join);
+		 allOperators.add(clearEndTS);
+	
+		 AssureHeartbeatAO heart = OperatorBuildHelper.createHeartbeat(5000, clearEndTS);
+		 allOperators.add(heart);
+
 		// aggregate goals
-		AggregateAO goals_aggregate = createGoalsAggregate(goal_changedetect);
+		AggregateAO goals_aggregate = createGoalsAggregate(heart);
+		goals_aggregate.setOutputPA(true);
 		allOperators.add(goals_aggregate);
 		
 		return OperatorBuildHelper.finishQuery(goals_aggregate, allOperators,
 				sportsQL.getDisplayName());
 	}
-	
+
 	private AggregateAO createGoalsAggregate(ILogicalOperator input) {
+		
 		List<String> functions3 = new ArrayList<String>();
 		functions3.add("SUM");
 		functions3.add("SUM");
 
 		List<String> inputAttributeNames3 = new ArrayList<String>();
-		inputAttributeNames3.add("inGoal1");
-		inputAttributeNames3.add("inGoal2");
+		inputAttributeNames3.add(ATT_INGOAL1);
+		inputAttributeNames3.add(ATT_INGOAL2);
 
 		List<String> outputAttributeNames3 = new ArrayList<String>();
 		outputAttributeNames3.add("sum_inGoal1");
 		outputAttributeNames3.add("sum_inGoal2");
-		
+
 		List<String> outputTypes = new ArrayList<String>();
 		outputTypes.add("Integer");
 		outputTypes.add("Integer");
 
-		return OperatorBuildHelper.createAggregateAO(
-				functions3, null, inputAttributeNames3, outputAttributeNames3,
-				outputTypes, input, -1);
+		return OperatorBuildHelper.createAggregateAO(functions3, null,
+				inputAttributeNames3, outputAttributeNames3, outputTypes,
+				input, 1);
 	}
 
 	private List<SDFExpressionParameter> getExpressionForInGoal(
-			ILogicalOperator source) throws NumberFormatException, MissingDDCEntryException {
+			ILogicalOperator source) throws NumberFormatException,
+			MissingDDCEntryException {
 		List<SDFExpressionParameter> expressions = new ArrayList<SDFExpressionParameter>();
 		SDFExpressionParameter ex1 = OperatorBuildHelper
-				.createExpressionParameter("toInteger(ts)", "goal_ts", source);
+				.createExpressionParameter("toDouble("
+						+ IntermediateSchemaAttributes.TS + ")", "goal_ts",
+						source);
 		SDFExpressionParameter ex2 = OperatorBuildHelper
-				.createExpressionParameter("x", "goal_x", source);
+				.createExpressionParameter(IntermediateSchemaAttributes.X,
+						"goal_x", source);
 		SDFExpressionParameter ex3 = OperatorBuildHelper
-				.createExpressionParameter("y", "goal_y", source);
+				.createExpressionParameter(IntermediateSchemaAttributes.Y,
+						"goal_y", source);
 		SDFExpressionParameter ex4 = OperatorBuildHelper
-				.createExpressionParameter("z", "goal_z", source);
+				.createExpressionParameter(IntermediateSchemaAttributes.Z,
+						"goal_z", source);
 		SDFExpressionParameter ex5 = OperatorBuildHelper
-				.createExpressionParameter("toInteger(eif( x < " + SoccerDDCAccess.getGoalareaLeftX()
-						+ " AND x > " + (SoccerDDCAccess.getGoalareaLeftX() - GOAL_DEPTH)
-						+ " AND y > " + SoccerDDCAccess.getGoalareaLeftYMin()+ " AND y < "
-						+ SoccerDDCAccess.getGoalareaLeftYMax() + " , 1, 0))", "inGoal1", source);
+				.createExpressionParameter("toInteger(eif( x < "
+						+ SoccerDDCAccess.getGoalareaLeftX() + " AND "
+						+ IntermediateSchemaAttributes.X + " > "
+						+ (SoccerDDCAccess.getGoalareaLeftX() - GOAL_DEPTH)
+						+ " AND " + IntermediateSchemaAttributes.Y + " > "
+						+ SoccerDDCAccess.getGoalareaLeftYMin() + " AND "
+						+ IntermediateSchemaAttributes.Y + " < "
+						+ SoccerDDCAccess.getGoalareaLeftYMax() + "AND "
+						+ IntermediateSchemaAttributes.Z + " < " + GOAL_HEIGHT
+						+ " , 1, 0))", ATT_INGOAL1, source);
 		SDFExpressionParameter ex6 = OperatorBuildHelper
-				.createExpressionParameter("toInteger(eif( x > " + SoccerDDCAccess.getGoalareaRightX()
-						+ " AND x < " + (SoccerDDCAccess.getGoalareaRightX() + GOAL_DEPTH)
-						+ " AND y < " + SoccerDDCAccess.getGoalareaRightYMax() + " AND y > "
-						+ SoccerDDCAccess.getGoalareaRightYMin() + " , 1, 0))", "inGoal2", source);
+				.createExpressionParameter("toInteger(eif( "
+						+ IntermediateSchemaAttributes.X + " > "
+						+ SoccerDDCAccess.getGoalareaRightX() + " AND x < "
+						+ (SoccerDDCAccess.getGoalareaRightX() + GOAL_DEPTH)
+						+ " AND " + IntermediateSchemaAttributes.Y + " < "
+						+ SoccerDDCAccess.getGoalareaRightYMax() + " AND "
+						+ IntermediateSchemaAttributes.Y + " > "
+						+ SoccerDDCAccess.getGoalareaRightYMin() + "AND "
+						+ IntermediateSchemaAttributes.Z + " < " + GOAL_HEIGHT
+						+ " , 1, 0))", ATT_INGOAL2, source);
 		expressions.add(ex1);
 		expressions.add(ex2);
 		expressions.add(ex3);
@@ -209,26 +244,37 @@ public class GoalsSportsQLParser implements ISportsQLParser {
 	}
 
 	private List<SDFExpressionParameter> getExpressionForOnCentreSpot(
-			ILogicalOperator source) throws NumberFormatException, MissingDDCEntryException {
-		
+			ILogicalOperator source) throws NumberFormatException,
+			MissingDDCEntryException {
+
 		double centerX = AbstractSportsDDCAccess.calculateCenterX();
 		double centerY = AbstractSportsDDCAccess.calculateCenterY();
-		
+
 		double spotTopX = centerX - KICKOFF_AREA_RADIUS;
 		double spotTopY = centerY - KICKOFF_AREA_RADIUS;
 		double spotBottomX = centerX + KICKOFF_AREA_RADIUS;
 		double spotBottomY = centerY + KICKOFF_AREA_RADIUS;
-		
+
 		List<SDFExpressionParameter> expressions = new ArrayList<SDFExpressionParameter>();
 		SDFExpressionParameter ex1 = OperatorBuildHelper
 				.createExpressionParameter("ts", "spot_ball_ts", source);
 		SDFExpressionParameter ex2 = OperatorBuildHelper
-				.createExpressionParameter("eif( x >= " + spotTopX
-						+ " AND x <= " + spotBottomX + " AND y >= "
-						+ spotTopY + " AND y <= " + spotBottomY
-						+ " , 1, 0)", "onCentreSpot", source);
+				.createExpressionParameter("eif( "
+						+ IntermediateSchemaAttributes.X + " >= " + spotTopX
+						+ " AND " + IntermediateSchemaAttributes.X + " <= "
+						+ spotBottomX + " AND "
+						+ IntermediateSchemaAttributes.Y + " >= " + spotTopY
+						+ " AND " + IntermediateSchemaAttributes.Y + " <= "
+						+ spotBottomY + " , 1, 0)", ATT_ONCENTRESPOT, source);
 		SDFExpressionParameter ex3 = OperatorBuildHelper
-				.createExpressionParameter("toInteger(ts - 30000000)", "n_ts", source);	
+				.createExpressionParameter(
+						"toDouble("
+								+ IntermediateSchemaAttributes.TS
+								+ " - "
+								+ String.valueOf(TimeUnitHelper
+										.getMicroseconds(TIME_BETWEEN,
+												TimeUnit.seconds)) + ")",
+						"n_ts", source);
 		expressions.add(ex1);
 		expressions.add(ex2);
 		expressions.add(ex3);

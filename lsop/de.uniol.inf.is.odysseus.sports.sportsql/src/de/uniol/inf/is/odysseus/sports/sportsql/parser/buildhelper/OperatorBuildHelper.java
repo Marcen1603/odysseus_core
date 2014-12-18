@@ -59,6 +59,7 @@ import de.uniol.inf.is.odysseus.core.usermanagement.ITenant;
 import de.uniol.inf.is.odysseus.mep.MEP;
 import de.uniol.inf.is.odysseus.peer.ddc.MissingDDCEntryException;
 import de.uniol.inf.is.odysseus.relational.base.predicate.RelationalPredicate;
+import de.uniol.inf.is.odysseus.server.intervalapproach.logicaloperator.AssureHeartbeatAO;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.ddcaccess.AbstractSportsDDCAccess;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.helper.SpaceUnitHelper;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.helper.TimeUnitHelper;
@@ -847,7 +848,7 @@ public class OperatorBuildHelper {
 			param.setAttributeResolver(resolver);
 			IDataDictionary dataDict = OperatorBuildHelper.getDataDictionary();
 			param.setDataDictionary(dataDict);
-
+				
 			aggregateItems.add(param.getValue());
 		}
 
@@ -1913,6 +1914,22 @@ public class OperatorBuildHelper {
 		RelationalPredicate finishedPredicate = new RelationalPredicate(
 				predicateExpression);
 		return finishedPredicate;
+	}
+	
+	
+	/**
+	 * Returns AssuredHeartbeatAO
+	 * 
+	 * @param rate Timedelay between heartbeats in milliseconds
+	 * @param source
+	 * @return
+	 */
+	public static AssureHeartbeatAO createHeartbeat(int rate, ILogicalOperator source){
+		 AssureHeartbeatAO heartbeatAO = new AssureHeartbeatAO();
+		 heartbeatAO.setApplicationTimeDelay(rate);
+		 heartbeatAO.setRealTimeDelay(rate);
+		 heartbeatAO.subscribeTo(source, source.getOutputSchema());
+		return heartbeatAO;
 	}
 
 }
