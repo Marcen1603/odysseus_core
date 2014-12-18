@@ -14,7 +14,6 @@ import de.uniol.inf.is.odysseus.wrapper.dds.dds.TypeCodeMapper;
 import de.uniol.inf.is.odysseus.wrapper.dds.idl.IDLParser.Const_declContext;
 import de.uniol.inf.is.odysseus.wrapper.dds.idl.IDLParser.DeclaratorContext;
 import de.uniol.inf.is.odysseus.wrapper.dds.idl.IDLParser.Enum_typeContext;
-import de.uniol.inf.is.odysseus.wrapper.dds.idl.IDLParser.ModuleContext;
 import de.uniol.inf.is.odysseus.wrapper.dds.idl.IDLParser.Simple_type_specContext;
 import de.uniol.inf.is.odysseus.wrapper.dds.idl.IDLParser.Struct_typeContext;
 import de.uniol.inf.is.odysseus.wrapper.dds.idl.IDLParser.Type_declaratorContext;

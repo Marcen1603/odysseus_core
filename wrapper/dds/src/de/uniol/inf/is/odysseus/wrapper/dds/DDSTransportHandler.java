@@ -50,14 +50,18 @@ public class DDSTransportHandler extends AbstractPushTransportHandler {
 
 	static final String QOS_FILE = "qosfile";
 	static final String IDL_FILE = "idlfile";
-
+	static final String TOPIC_TYPE = "topictype";
+	static final String TOPIC = "topic";
+	static final String QOS_LIB = "qoslibrary";
+	static final String QOS_PROFILE = "qosprofile";
+	
 	Thread reader;
 
 	private DomainParticipant participant;
 	private String topicType;
 	private String topicName;
-	private String qosProfiles_ice_library;
-	private String qosProfiles_waveform_data;
+	private String qosLibrary;
+	private String qosProfile;
 
 	@Override
 	public ITransportHandler createInstance(
@@ -80,8 +84,18 @@ public class DDSTransportHandler extends AbstractPushTransportHandler {
 
 	private void init(OptionMap options) throws FileNotFoundException {
 
-		options.checkRequired(QOS_FILE, IDL_FILE);
+		options.checkRequired(QOS_FILE, IDL_FILE, TOPIC, TOPIC_TYPE, QOS_LIB, QOS_PROFILE);
 
+		// ToDo allow multiple topics?
+		topicType = options.get(TOPIC_TYPE);
+		topicName = options.get(TOPIC);
+		
+//		qosLibrary = "ice_library";
+//		qosProfile = "waveform_data";
+		qosLibrary = options.get(QOS_LIB);
+		qosProfile = options.get(QOS_PROFILE);
+
+		
 		String qosFile = options.get(QOS_FILE);
 		String idlFileName = options.get(IDL_FILE);
 
@@ -136,11 +150,7 @@ public class DDSTransportHandler extends AbstractPushTransportHandler {
 
 		int domainId = 0;
 
-		topicType = "SampleArray";
-		topicName = "SampleArray";
 
-		qosProfiles_ice_library = "ice_library";
-		qosProfiles_waveform_data = "waveform_data";
 
 		// Here we use 'default' Quality of Service settings where QoS settings
 		// are configured via the USER_QOS_PROFILES.xml
@@ -183,8 +193,8 @@ public class DDSTransportHandler extends AbstractPushTransportHandler {
 				// Create a reader endpoint for samplearray data
 				DynamicDataReader reader = (DynamicDataReader) participant
 						.create_datareader_with_profile(thisTopic,
-								qosProfiles_ice_library,
-								qosProfiles_waveform_data, null,
+								qosLibrary,
+								qosProfile, null,
 								StatusKind.STATUS_MASK_NONE);
 
 				// A waitset allows us to wait for various status changes in

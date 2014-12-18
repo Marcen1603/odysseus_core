@@ -293,6 +293,10 @@ public class SDFDatatype extends SDFElement implements Serializable {
 		List<SDFDatatype> types = new ArrayList<>();
 
 		types.add(SDFDatatype.OBJECT);
+		
+		types.add(SDFDatatype.TUPLE);
+		types.add(SDFDatatype.NTUPLE);
+		
 		types.add(SDFDatatype.DATE);
 		types.add(SDFDatatype.DOUBLE);
 		types.add(SDFDatatype.END_TIMESTAMP);
