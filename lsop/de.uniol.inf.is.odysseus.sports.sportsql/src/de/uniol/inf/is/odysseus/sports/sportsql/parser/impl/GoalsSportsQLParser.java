@@ -46,15 +46,22 @@ public class GoalsSportsQLParser implements ISportsQLParser {
 	// usually it has a size of 400mm but in DEBS data stream they lay the ball
 	// in a area of 2m around the center
 	private static final int KICKOFF_AREA_RADIUS = 2000;
+	private String ATT_TEAM1;
+	private String ATT_TEAM2;
 
-	private final String ATT_INGOAL1 = "inGoal1";
-	private final String ATT_INGOAL2 = "inGoal2";
+	private final String ATT_GOALTS = "goal_ts";
+	private final String ATT_N_TS = "n_ts";
 	private final String ATT_ONCENTRESPOT = "onCentreSpot";
+
 
 	@Override
 	public ILogicalQuery parse(ISession session, SportsQLQuery sportsQL)
 			throws SportsQLParseException, NumberFormatException,
 			MissingDDCEntryException {
+
+		ATT_TEAM1 = "GoalsTeam" + SoccerDDCAccess.getLeftGoalTeamId();
+		ATT_TEAM2 = "GoalsTeam" + SoccerDDCAccess.getRightGoalTeamId();
+
 
 		List<ILogicalOperator> allOperators = new ArrayList<ILogicalOperator>();
 		ArrayList<String> predicates = new ArrayList<String>();
@@ -93,7 +100,7 @@ public class GoalsSportsQLParser implements ISportsQLParser {
 				+ SoccerDDCAccess.getGoalareaRightYMax() + " AND "
 				+ IntermediateSchemaAttributes.Y + " > "
 				+ SoccerDDCAccess.getGoalareaRightYMin() + ")";
-		
+
 
 		SelectAO ball_in_goal_or_field = OperatorBuildHelper.createSelectAO(
 				predicateGoalAndField, ball);
@@ -107,8 +114,8 @@ public class GoalsSportsQLParser implements ISportsQLParser {
 		allOperators.add(inGoal);
 
 		// inGoal filter: remove duplicates
-		attributes.add(ATT_INGOAL1);
-		attributes.add(ATT_INGOAL2);
+		attributes.add(ATT_TEAM1);
+		attributes.add(ATT_TEAM2);
 		// Create ChangeDetectAO with HEARTBEATRATE = 100
 		ChangeDetectAO inGoal_filter = OperatorBuildHelper
 				.createChangeDetectAO(OperatorBuildHelper.createAttributeList(
@@ -132,8 +139,8 @@ public class GoalsSportsQLParser implements ISportsQLParser {
 		attributes.clear();
 
 		//
-		SelectAO inGoalSelect = OperatorBuildHelper.createSelectAO(ATT_INGOAL1
-				+ " = 1 OR " + ATT_INGOAL2 + "= 1", inGoal_filter);
+		SelectAO inGoalSelect = OperatorBuildHelper.createSelectAO(ATT_TEAM1
+				+ " = 1 OR " + ATT_TEAM2 + "= 1", inGoal_filter);
 		allOperators.add(inGoalSelect);
 
 		SelectAO onSpotSelect = OperatorBuildHelper.createSelectAO(
@@ -156,34 +163,33 @@ public class GoalsSportsQLParser implements ISportsQLParser {
 		allOperators.add(goals_join);
 
 
-		 TimestampAO clearEndTS = OperatorBuildHelper.clearEndTimestamp(goals_join);
-		 allOperators.add(clearEndTS);
-	
-		 AssureHeartbeatAO heart = OperatorBuildHelper.createHeartbeat(5000, clearEndTS);
-		 allOperators.add(heart);
+		TimestampAO clearEndTS = OperatorBuildHelper.clearEndTimestamp(goals_join);
+		allOperators.add(clearEndTS);
+
+		AssureHeartbeatAO heart = OperatorBuildHelper.createHeartbeat(5000, clearEndTS);
+		allOperators.add(heart);
 
 		// aggregate goals
 		AggregateAO goals_aggregate = createGoalsAggregate(heart);
-		goals_aggregate.setOutputPA(true);
 		allOperators.add(goals_aggregate);
-		
+
 		return OperatorBuildHelper.finishQuery(goals_aggregate, allOperators,
 				sportsQL.getDisplayName());
 	}
 
 	private AggregateAO createGoalsAggregate(ILogicalOperator input) {
-		
+
 		List<String> functions3 = new ArrayList<String>();
 		functions3.add("SUM");
 		functions3.add("SUM");
 
 		List<String> inputAttributeNames3 = new ArrayList<String>();
-		inputAttributeNames3.add(ATT_INGOAL1);
-		inputAttributeNames3.add(ATT_INGOAL2);
+		inputAttributeNames3.add(ATT_TEAM1);
+		inputAttributeNames3.add(ATT_TEAM2);
 
 		List<String> outputAttributeNames3 = new ArrayList<String>();
-		outputAttributeNames3.add("sum_inGoal1");
-		outputAttributeNames3.add("sum_inGoal2");
+		outputAttributeNames3.add("sum_" + ATT_TEAM1);
+		outputAttributeNames3.add("sum_" + ATT_TEAM2);
 
 		List<String> outputTypes = new ArrayList<String>();
 		outputTypes.add("Integer");
@@ -200,7 +206,7 @@ public class GoalsSportsQLParser implements ISportsQLParser {
 		List<SDFExpressionParameter> expressions = new ArrayList<SDFExpressionParameter>();
 		SDFExpressionParameter ex1 = OperatorBuildHelper
 				.createExpressionParameter("toDouble("
-						+ IntermediateSchemaAttributes.TS + ")", "goal_ts",
+						+ IntermediateSchemaAttributes.TS + ")", ATT_GOALTS,
 						source);
 		SDFExpressionParameter ex2 = OperatorBuildHelper
 				.createExpressionParameter(IntermediateSchemaAttributes.X,
@@ -221,7 +227,7 @@ public class GoalsSportsQLParser implements ISportsQLParser {
 						+ IntermediateSchemaAttributes.Y + " < "
 						+ SoccerDDCAccess.getGoalareaLeftYMax() + "AND "
 						+ IntermediateSchemaAttributes.Z + " < " + GOAL_HEIGHT
-						+ " , 1, 0))", ATT_INGOAL1, source);
+						+ " , 1, 0))", ATT_TEAM2, source);
 		SDFExpressionParameter ex6 = OperatorBuildHelper
 				.createExpressionParameter("toInteger(eif( "
 						+ IntermediateSchemaAttributes.X + " > "
@@ -232,7 +238,7 @@ public class GoalsSportsQLParser implements ISportsQLParser {
 						+ IntermediateSchemaAttributes.Y + " > "
 						+ SoccerDDCAccess.getGoalareaRightYMin() + "AND "
 						+ IntermediateSchemaAttributes.Z + " < " + GOAL_HEIGHT
-						+ " , 1, 0))", ATT_INGOAL2, source);
+						+ " , 1, 0))", ATT_TEAM1, source);
 		expressions.add(ex1);
 		expressions.add(ex2);
 		expressions.add(ex3);
@@ -274,7 +280,7 @@ public class GoalsSportsQLParser implements ISportsQLParser {
 								+ String.valueOf(TimeUnitHelper
 										.getMicroseconds(TIME_BETWEEN,
 												TimeUnit.seconds)) + ")",
-						"n_ts", source);
+												ATT_N_TS, source);
 		expressions.add(ex1);
 		expressions.add(ex2);
 		expressions.add(ex3);

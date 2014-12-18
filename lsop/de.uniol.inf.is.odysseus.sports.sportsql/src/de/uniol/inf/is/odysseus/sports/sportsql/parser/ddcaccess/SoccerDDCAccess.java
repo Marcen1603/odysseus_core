@@ -74,6 +74,7 @@ public class SoccerDDCAccess extends AbstractSportsDDCAccess {
 					"zmax" });
 	
 	private static final DDCKey LEFT_GOAL_TEAM_ID = new DDCKey("leftgoalteamid");
+	private static final DDCKey RIGHT_GOAL_TEAM_ID = new DDCKey("rightgoalteamid");
 	
 	/**
 	 * The lowest y coordinate of the left goalarea.
@@ -182,6 +183,11 @@ public class SoccerDDCAccess extends AbstractSportsDDCAccess {
 	public static int getLeftGoalTeamId() throws MissingDDCEntryException, NumberFormatException {
 		Preconditions.checkNotNull(AbstractSportsDDCAccess.ddc, "No DDC bound!");
 		return Integer.valueOf(AbstractSportsDDCAccess.ddc.getValue(LEFT_GOAL_TEAM_ID));
+	}
+	
+	public static int getRightGoalTeamId() throws MissingDDCEntryException, NumberFormatException {
+		Preconditions.checkNotNull(AbstractSportsDDCAccess.ddc, "No DDC bound!");
+		return Integer.valueOf(AbstractSportsDDCAccess.ddc.getValue(RIGHT_GOAL_TEAM_ID));
 	}
 	
 }
