@@ -219,7 +219,6 @@ public class DDSTransportHandler extends AbstractPushTransportHandler {
 										Tuple<IMetaAttribute> result = complexTypeReader
 												.getValue(data);
 
-										System.out.println(result);
 										fireProcess(result);
 									}
 
