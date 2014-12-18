@@ -11,25 +11,21 @@ import de.uniol.inf.is.odysseus.mep.IFunctionProvider;
 import de.uniol.inf.is.odysseus.s100.functions.*;
 
 /**
- * Functions that registrates imagejcv functions in ODYSSEUS.
+ * Functions that registers S100 functions in ODYSSEUS.
  * 
- * @author Kristian Bruns
+ * @author Henrik Surm
  */
-public class S100FunctionProvider implements IFunctionProvider {
+public class S100FunctionProvider implements IFunctionProvider 
+{
 	private static final Logger LOG = LoggerFactory.getLogger(S100FunctionProvider.class);
 	
-	public S100FunctionProvider() {
+	public S100FunctionProvider() 
+	{
 	}
 	
-	/**
-	 * Returns all Functions are available for bundle imagejcv.
-	 * 
-	 * @author Kristian Bruns
-	 * 
-	 * @return List<IFunction<?>> List of available functions.
-	 */
 	@Override
-	public List<IFunction<?>> getFunctions() {
+	public List<IFunction<?>> getFunctions() 
+	{
 		final List<IFunction<?>> functions = new ArrayList<IFunction<?>>();
 		functions.add(new ToGMPoint());
 		functions.add(new GetGMPointCoordinate());

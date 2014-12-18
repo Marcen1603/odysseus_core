@@ -5,14 +5,13 @@ import de.uniol.inf.is.odysseus.mep.AbstractFunction;
 import de.uniol.inf.is.odysseus.s100.common.datatype.GM_Point;
 import de.uniol.inf.is.odysseus.s100.common.sdf.schema.SDFS100DataType;
 
-public class GetGMPointCoordinate extends AbstractFunction<Double> {
-	/**
-	 * 
-	 */
+public class GetGMPointCoordinate extends AbstractFunction<Double> 
+{
 	private static final long serialVersionUID = 282271378681582656L;
 	private static final SDFDatatype[][] ACC_TYPES = new SDFDatatype[][] {{SDFS100DataType.GM_POINT}, {SDFDatatype.INTEGER}};
 	
-	public GetGMPointCoordinate() {
+	public GetGMPointCoordinate() 
+	{
 		super("GetGMPointCoordinate", 2, GetGMPointCoordinate.ACC_TYPES, SDFDatatype.DOUBLE);
 	}
 	

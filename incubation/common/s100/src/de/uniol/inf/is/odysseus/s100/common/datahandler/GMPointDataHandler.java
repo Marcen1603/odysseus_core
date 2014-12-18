@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.s100.common.datahandler;
 
+import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringReader;
@@ -24,7 +25,8 @@ import de.uniol.inf.is.odysseus.s100.common.sdf.schema.SDFS100DataType;
  * 
  * @author Henrik Surm
  */
-public class GMPointDataHandler extends AbstractDataHandler<GM_Point> {
+public class GMPointDataHandler extends AbstractDataHandler<GM_Point> 
+{
 	static protected List<String> 	types = new ArrayList<String>();
 	static protected Marshaller 	xmlMarshaller;
 	static protected Unmarshaller 	xmlUnmarshaller;
@@ -34,7 +36,6 @@ public class GMPointDataHandler extends AbstractDataHandler<GM_Point> {
 			    
 		try 
 		{
-			// create JAXB context and instantiate marshaller			
 			JAXBContext context = JAXBContext.newInstance(GM_Point.class);
 			xmlMarshaller = context.createMarshaller();
 			xmlMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
@@ -47,61 +48,79 @@ public class GMPointDataHandler extends AbstractDataHandler<GM_Point> {
 	}
 	
 	@Override
-	public IDataHandler<GM_Point> getInstance(final SDFSchema schema) {
+	public IDataHandler<GM_Point> getInstance(final SDFSchema schema) 
+	{
 		return new GMPointDataHandler();
 	}
 	
-	public GMPointDataHandler() {
+	public GMPointDataHandler() 
+	{
 		super(null);
 	}
 	
 	@Override
 	public GM_Point readData(final String string) 
 	{
-		return null;//this.readData(ByteBuffer.wrap(string.getBytes()));
+		try 
+		{
+			return (GM_Point) xmlUnmarshaller.unmarshal(new StringReader(string));
+		} 
+		catch (JAXBException e) 
+		{
+			e.printStackTrace();
+			return null;
+		}
 	}
 	
 	@Override
 	public GM_Point readData(InputStream inputStream) throws IOException 
 	{
-//		IplImage image = IplImage.createFrom(ImageIO.read(inputStream));
-		return null; //new ImageJCV(image);
+		try
+		{
+			DataInputStream dis = new DataInputStream(inputStream);
+			
+			int len = dis.readInt();
+			byte[] buf = new byte[len];
+			dis.read(buf);
+			
+			String s = new String(buf, 4, len, "UTF-8");
+			
+			return readData(s);
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+			return null;
+		}		
 	}
 	
 	@Override
 	public GM_Point readData(final ByteBuffer buffer) 
 	{
-		GM_Point point = null;
-		
 		try
 		{
 			int len = buffer.getInt();			
 			String s = new String(buffer.array(), 4, len, "UTF-8");
 			buffer.position(buffer.position() + len);
-			point = (GM_Point) xmlUnmarshaller.unmarshal(new StringReader(s));
+			
+			return readData(s);
 		}
 		catch (Exception e)
 		{
 			e.printStackTrace();
-		}
-				
-		return point;//new GM_Point(buffer.getDouble(), buffer.getDouble(), buffer.getDouble());
+			return null;
+		}		
 	}
 	
 	@Override
 	public void writeData(final ByteBuffer buffer, final Object data) 
 	{
 		GM_Point point = (GM_Point) data;
-/*		buffer.putDouble(point.position.longitude);
-		buffer.putDouble(point.position.latitude);
-		buffer.putDouble(point.position.altitude);*/
-		
 	    StringWriter sw = new StringWriter();
 	    try 
 	    {
 			xmlMarshaller.marshal(point, sw);
 			String s = sw.toString();
-			int len = s.length();
 			byte[] buf = s.getBytes("UTF-8");
 			
 			buffer.putInt(buf.length);
@@ -109,25 +128,26 @@ public class GMPointDataHandler extends AbstractDataHandler<GM_Point> {
 		} 
 	    catch (Exception e) 
 	    {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
 	
 	@Override
-	final public List<String> getSupportedDataTypes() {
+	final public List<String> getSupportedDataTypes() 
+	{
 		return GMPointDataHandler.types;
 	}
 	
 	@Override
-	public int memSize(final Object attribute) {
-//		final ImageJCV image = (ImageJCV) attribute;
-		// TODO: Has this been updates since the change to IplImage?
-		return 0; //(2* Integer.SIZE + image.getWidth() * image.getHeight() * Double.SIZE) / 8;
+	public int memSize(final Object attribute) 
+	{
+		// TODO: Implement memSize
+		return 0;
 	}
 	
 	@Override
-	public Class<?> createsType() {
+	public Class<?> createsType() 
+	{
 		return GM_Point.class;
 	}
 }
