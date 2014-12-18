@@ -10,9 +10,15 @@ import com.rti.dds.typecode.TCKind;
 import com.rti.dds.typecode.TypeCode;
 import com.rti.dds.typecode.TypeCodeFactory;
 
+import de.uniol.inf.is.odysseus.core.infoservice.InfoService;
+import de.uniol.inf.is.odysseus.core.infoservice.InfoServiceFactory;
+import de.uniol.inf.is.odysseus.wrapper.dds.dds.simple.DDSLongDataReader;
+
 
 public class TypeCodeMapper {
 
+	static final InfoService INFO = InfoServiceFactory.getInfoService(TypeCodeMapper.class);
+	
 	static final Map<String, TypeCode> nameToCode = new HashMap<>();
 	static{
 	
@@ -52,6 +58,9 @@ public class TypeCodeMapper {
 	}
 	
 	public static void add(TypeCode code, IDDSDataReader<?> dataReader){
+		if (dataReader == null){
+			INFO.error("dataReader for "+code+" is null! Will not read any data of type code!", new IllegalArgumentException());
+		}
 		add(code.get_type_as_string(), dataReader);
 	}
 	
@@ -70,7 +79,10 @@ public class TypeCodeMapper {
 		return val;
 	}
 
+
 	public static TypeCode createTypeCode(String type) {
+		// TODO: Move assignment of DataReader somewhere else?
+		
 		// Test if type is simple or complex
 		final TypeCode tc;
 		int pos = type.indexOf("<");
@@ -80,9 +92,11 @@ public class TypeCodeMapper {
 			if (typePart.equalsIgnoreCase("string")){
 				int size = getSize(type, pos); 
 				tc = new TypeCode(TCKind.TK_STRING, size);
+				add(tc,DDSDataReaderFactory.getKindReader(TCKind.TK_STRING.name()));
 			}else if (typePart.equalsIgnoreCase("wstring")){
 				int size = getSize(type, pos); 
-				tc = new TypeCode(TCKind.TK_WSTRING, size);	
+				tc = new TypeCode(TCKind.TK_WSTRING, size);
+				add(tc,DDSDataReaderFactory.getKindReader(TCKind.TK_WSTRING.name()));
 			}else if (typePart.equalsIgnoreCase("sequence")){
 				// sequence<Type,size>
 				int pos2 = type.indexOf(",");
@@ -96,6 +110,7 @@ public class TypeCodeMapper {
 				// ToDo: Check const
 				int size = Integer.parseInt(sizeStr);
 				tc = new TypeCode(size,subTypeCode);
+				add(tc,DDSDataReaderFactory.getSequenceReader(subTypeCode.get_type_as_string()));
 			}else{
 				throw new IllegalArgumentException("Type "+type+" not known");
 			}
@@ -123,6 +138,15 @@ public class TypeCodeMapper {
 		return size;
 	}
 
+	public static TypeCode createTypeAlias(String name, TypeCode typeCode){
+		TypeCode typeAlias = TypeCodeFactory.TheTypeCodeFactory
+				.create_alias_tc(name, typeCode, false);
+		add(typeAlias);
+		addAlias(name,typeCode);
+		add(typeAlias, getDataReader(typeCode));
+		return typeAlias;
+	}
+	
 	public static TypeCode createComplexType(String name, List<String> attributes,
 			List<TypeCode> types, List<Boolean> isKey) {
 

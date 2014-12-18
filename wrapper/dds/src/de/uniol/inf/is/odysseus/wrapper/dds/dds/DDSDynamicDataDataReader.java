@@ -10,13 +10,22 @@ import com.rti.dds.typecode.TypeCode;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 
-// TODO: Make Tuple instead of Object
 public class DDSDynamicDataDataReader extends
 		AbstractDDSDataReader<Tuple<IMetaAttribute>> {
 
 	final List<String> attributes;
 	final Map<String, IDDSDataReader<?>> readers = new HashMap<String, IDDSDataReader<?>>();
 
+	@Override
+	public TypeCode getTypeCode() {
+		return null;
+	}
+	
+	@Override
+	public TypeCode getSubTypeCode() {
+		return null;
+	}
+	
 	public DDSDynamicDataDataReader(List<String> attributes, List<TypeCode> types) {	
 		this.attributes = new ArrayList<>(attributes);
 		for (int pos = 0;pos<types.size();pos++) {
@@ -35,7 +44,15 @@ public class DDSDynamicDataDataReader extends
 		Tuple<IMetaAttribute> ret = new Tuple<IMetaAttribute>(attributes.size(), false);
 		int pos = 0;
 		for (String attr: attributes){
-			ret.setAttribute(pos++, readers.get(attr).getValue(dynData,attr, 0));
+			IDDSDataReader<?> reader = readers.get(attr);
+			Object value = null;
+			if (reader == null){
+				System.err.println("No reader for "+attr);
+			}else{
+				value = reader.getValue(dynData, attr, 0);
+			}
+			
+			ret.setAttribute(pos++, value);
 		}		
 		return ret;
 	}
