@@ -27,6 +27,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.io.LittleEndianDataInputStream;
+import com.google.common.io.LittleEndianDataOutputStream;
 
 import de.uniol.inf.is.odysseus.core.collection.KeyValueObject;
 import de.uniol.inf.is.odysseus.core.collection.OptionMap;
@@ -36,7 +37,6 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.AbstractPr
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.IAccessPattern;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportDirection;
-import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandler;
 
 /**
  * This wrapper can be used as a ProtocolHandler (NMEA 2000) with GenericPush or
@@ -46,6 +46,34 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITranspor
  * 
  */
 
+class ByteBufferBackedInputStream extends InputStream 
+{
+    ByteBuffer buf;
+
+    public ByteBufferBackedInputStream(ByteBuffer buf) 
+    {
+        this.buf = buf;
+    }
+
+    public int read() throws IOException 
+    {
+        if (!buf.hasRemaining()) 
+        	return -1;
+        
+        return buf.get() & 0xFF;
+    }
+
+    public int read(byte[] bytes, int off, int len) throws IOException 
+    {
+        if (!buf.hasRemaining())
+        	return -1;
+
+        len = Math.min(len, buf.remaining());
+        buf.get(bytes, off, len);
+        return len;
+    }
+}
+
 class N2KMessage
 {
 	public long timeStamp;
@@ -53,22 +81,9 @@ class N2KMessage
 	public int priority;
 	public int sourceAddress;
 	public int destinationAddress;
-	public long length;		
+	public int length;		
 	public byte[] payload;
 
-	public Map<String, Object> headerToMap()
-	{
-		Map<String, Object> result = new HashMap<>();
-		result.put("Timestamp", timeStamp);
-		result.put("PGN", PGN);
-		result.put("Priority", priority);
-		result.put("SourceAddress", sourceAddress);
-		result.put("DestinationAddress", destinationAddress);
-//		result.put("Length", length);
-		
-		return result;
-	}
-	
 	public static N2KMessage fromStream(LittleEndianDataInputStream inStream) throws IOException
 	{
 		N2KMessage result = new N2KMessage();
@@ -79,20 +94,100 @@ class N2KMessage
 		result.priority = inStream.readUnsignedByte();
 		result.sourceAddress = inStream.readUnsignedByte();
 		result.destinationAddress = inStream.readUnsignedByte();
-		result.length = readUnsignedInt(inStream);
+		result.length = (int)readUnsignedInt(inStream);
 		
 		// Read payload
-		result.payload = new byte[(int)result.length];
+		result.payload = new byte[result.length];
 		if (inStream.read(result.payload) != result.length) throw new IOException("Not enough input data for payload");
 		
 		return result;
+	}	
+	
+	public static N2KMessage fromMap(Map<String, Object> inMap) throws IOException
+	{
+		N2KMessage result = new N2KMessage();
+		
+		result.timeStamp 			= (long) inMap.get("Timestamp");
+		result.PGN 					= (long) inMap.get("PGN");
+		result.priority 			= (int)  inMap.get("Priority");
+		result.sourceAddress 		= (int)  inMap.get("SourceAddress");
+		result.destinationAddress 	= (int)  inMap.get("DestinationAddress");		
+		
+		if (result.PGN == 129025)
+		{
+			result.length = 8;
+			result.payload = new byte[result.length];
+			
+			ByteBuffer buffer = ByteBuffer.wrap(result.payload);
+			
+			int lon = (int) ((double) inMap.get("Longitude") * 1.0e7);
+			int lat = (int) ((double) inMap.get("Latitude") * 1.0e7);
+			
+			buffer.putInt(lon); 
+			buffer.putInt(lat);
+		}
+		else
+			throw new UnsupportedOperationException("Serialization of PGN " + result.PGN + " not implemented!");
+		
+		return result;
 	}
-
 	
+	public void toStream(LittleEndianDataOutputStream outStream) throws IOException 
+	{
+		writeUnsignedInt(outStream, timeStamp);
+		writeUnsignedInt(outStream, PGN);
+		writeUnsignedByte(outStream, priority);
+		writeUnsignedByte(outStream, sourceAddress);
+		writeUnsignedByte(outStream, destinationAddress);
+		writeUnsignedInt(outStream, length);
+		outStream.write(payload);
+	}		
 	
+	public Map<String, Object> toMap() throws IOException 
+	{		
+		Map<String, Object> resultMap = new HashMap<>();
+		resultMap.put("Timestamp", timeStamp);
+		resultMap.put("PGN", PGN);
+		resultMap.put("Priority", priority);
+		resultMap.put("SourceAddress", sourceAddress);
+		resultMap.put("DestinationAddress", destinationAddress);
+//		resultMap.put("Length", length);
+		
+		LittleEndianDataInputStream payloadStream = new LittleEndianDataInputStream(new ByteArrayInputStream(payload));
+		
+		if (PGN == 129025)
+		{
+			int lon = payloadStream.readInt();
+			int lat = payloadStream.readInt();
+			
+			resultMap.put("Longitude", (double)(lon) * 1.0e-7);
+			resultMap.put("Latitude",  (double)(lat) * 1.0e-7);
+		}
+		
+		payloadStream.close();
+		
+		return resultMap;
+	}	
+		
 	private static long readUnsignedInt(LittleEndianDataInputStream inStream) throws IOException 
 	{
 		return inStream.readInt() & 0xffffffffL;
+	}
+	
+	private static void writeUnsignedByte(LittleEndianDataOutputStream outStream, int unsignedByte) throws IOException
+	{
+		outStream.writeByte(unsignedByte);
+	}
+
+	@SuppressWarnings("unused")
+	private static void writeUnsignedShort(LittleEndianDataOutputStream outStream, int unsignedShort) throws IOException
+	{
+		outStream.writeShort(unsignedShort);
+	}
+
+	private static void writeUnsignedInt(LittleEndianDataOutputStream outStream, long unsignedInt) throws IOException
+	{
+		outStream.writeInt((int) unsignedInt);
 	}	
 };
 
@@ -100,11 +195,12 @@ public class NMEA2000ProtocolHandler extends AbstractProtocolHandler<KeyValueObj
 {
 	private final Logger LOG = LoggerFactory.getLogger(NMEA2000ProtocolHandler.class);
 	
-	/** Input stream as BufferedReader (Only in GenericPull). */
-	private LittleEndianDataInputStream inStream; 
+	public final String NAME = "NMEA2000";
+	public final String DELAY = "delay";
 	
-	/** Delay on GenericPull. */
-	private long delay = 0;
+	private LittleEndianDataInputStream 	inStream;	// InputStream for GenericPull 
+	private LittleEndianDataOutputStream 	outStream;
+	private long delay = 0;	// Delay on GenericPull
 	
 	public NMEA2000ProtocolHandler() 
 	{
@@ -113,7 +209,7 @@ public class NMEA2000ProtocolHandler extends AbstractProtocolHandler<KeyValueObj
 	public NMEA2000ProtocolHandler(ITransportDirection direction, IAccessPattern access, IDataHandler<KeyValueObject<? extends IMetaAttribute>> dataHandler, OptionMap optionsMap) 
 	{
 		super(direction, access, dataHandler, optionsMap);
-		delay = optionsMap.getInt("delay", 0);
+		delay = optionsMap.getInt(DELAY, 0);
 	}
 
 	@Override
@@ -123,12 +219,11 @@ public class NMEA2000ProtocolHandler extends AbstractProtocolHandler<KeyValueObj
 		if (getDirection().equals(ITransportDirection.IN)) 
 		{
 			if (getAccessPattern().equals(IAccessPattern.PULL) || getAccessPattern().equals(IAccessPattern.ROBUST_PULL))
-			{
 				inStream = new LittleEndianDataInputStream(getTransportHandler().getInputStream());
-			}
-		} else {
-			// TODO: Implement output NMEA
-			// this.output = this.getTransportHandler().getOutputStream();
+		} 
+		else 
+		{
+			outStream = new LittleEndianDataOutputStream(getTransportHandler().getOutputStream());
 		}
 	}
 
@@ -138,10 +233,11 @@ public class NMEA2000ProtocolHandler extends AbstractProtocolHandler<KeyValueObj
 		try 
 		{
 			if (inStream != null) 
-			{
 				inStream.close();
-			}
-		} catch (Exception e) 
+			if (outStream != null)
+				outStream.close();
+		} 
+		catch (Exception e) 
 		{
 			LOG.error(e.getMessage(), e);
 		}
@@ -178,7 +274,7 @@ public class NMEA2000ProtocolHandler extends AbstractProtocolHandler<KeyValueObj
 	{
 		N2KMessage msg = N2KMessage.fromStream(inStream);
 		
-		return new KeyValueObject<>(parseMessage(msg));
+		return new KeyValueObject<>(msg.toMap());
 	}
 
 	@Override
@@ -188,9 +284,7 @@ public class NMEA2000ProtocolHandler extends AbstractProtocolHandler<KeyValueObj
 		if (message.hasArray())
 			stream = new ByteArrayInputStream(message.array());
 		else
-		{
-			// TODO: Implement a ByteBufferInputStream
-		}
+			stream = new ByteBufferBackedInputStream(message);
 		
 		process(stream);
 	}
@@ -201,45 +295,18 @@ public class NMEA2000ProtocolHandler extends AbstractProtocolHandler<KeyValueObj
 		try 
 		{
 			N2KMessage msg = N2KMessage.fromStream(new LittleEndianDataInputStream(stream));
-			getTransfer().transfer(new KeyValueObject<>(parseMessage(msg)));
+			getTransfer().transfer(new KeyValueObject<>(msg.toMap()));
 		} catch (IOException e) 
 		{
-			LOG.error("Error while processing NMEA2K message", e);
-		}
-		
-		try 
-		{
-			stream.close();
-		} 
-		catch (IOException e) 
-		{
-			e.printStackTrace();
+			LOG.error(e.getMessage(), e);
 		}
 	}
 
-	private Map<String, Object> parseMessage(N2KMessage msg) throws IOException 
-	{		
-		Map<String, Object> msgMap = msg.headerToMap();
-		
-		LittleEndianDataInputStream payloadStream = new LittleEndianDataInputStream(new ByteArrayInputStream(msg.payload));
-		
-		if (msg.PGN == 129025)
-		{
-			int lon = payloadStream.readInt();
-			int lat = payloadStream.readInt();
-			
-			msgMap.put("Longitude", (double)(lon) * 1.0e-7);
-			msgMap.put("Latitude",  (double)(lat) * 1.0e-7);
-		}
-		
-		payloadStream.close();
-		
-		return msgMap;
-	}
 	@Override
 	public void write(KeyValueObject<? extends IMetaAttribute> object) throws IOException 
 	{
-		// TODO
+		N2KMessage msg = N2KMessage.fromMap(object.getAttributes());
+		msg.toStream(outStream);
 	}
 
 	@Override
@@ -250,28 +317,14 @@ public class NMEA2000ProtocolHandler extends AbstractProtocolHandler<KeyValueObj
 	}
 
 	@Override
-	public String getName() { return "NMEA2000"; }
+	public String getName() { return NAME; }
 
 	@Override
-	public void onConnect(ITransportHandler caller) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void onDisonnect(ITransportHandler caller) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public boolean isSemanticallyEqualImpl(IProtocolHandler<?> o) {
-		if (!(o instanceof NMEA2000ProtocolHandler)) {
+	public boolean isSemanticallyEqualImpl(IProtocolHandler<?> o) 
+	{
+		if (o instanceof NMEA2000ProtocolHandler) 
+			return ((NMEA2000ProtocolHandler) o).delay == delay;
+		else
 			return false;
-		} else {
-			// the datahandler was already checked in the
-			// isSemanticallyEqual-Method of AbstractProtocolHandler
-			return true;
-		}
 	}
 }
