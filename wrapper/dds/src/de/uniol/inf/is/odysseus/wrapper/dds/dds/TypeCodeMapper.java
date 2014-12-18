@@ -59,7 +59,7 @@ public class TypeCodeMapper {
 	
 	public static void add(TypeCode code, IDDSDataReader<?> dataReader){
 		if (dataReader == null){
-			INFO.error("dataReader for "+code+" is null! Will not read any data of type code!", new IllegalArgumentException());
+			INFO.warning("dataReader for "+code+" is null! Will not read any data of type code!");
 		}
 		add(code.get_type_as_string(), dataReader);
 	}
