@@ -119,12 +119,12 @@ class N2KMessage
 			result.payload = new byte[result.length];
 			
 			ByteBuffer buffer = ByteBuffer.wrap(result.payload);
-			
-			int lon = (int) ((double) inMap.get("Longitude") * 1.0e7);
+						
 			int lat = (int) ((double) inMap.get("Latitude") * 1.0e7);
-			
-			buffer.putInt(lon); 
+			int lon = (int) ((double) inMap.get("Longitude") * 1.0e7);
+						 
 			buffer.putInt(lat);
+			buffer.putInt(lon);
 		}
 		else
 			throw new UnsupportedOperationException("Serialization of PGN " + result.PGN + " not implemented!");
@@ -157,11 +157,11 @@ class N2KMessage
 		
 		if (PGN == 129025)
 		{
-			int lon = payloadStream.readInt();
 			int lat = payloadStream.readInt();
+			int lon = payloadStream.readInt();
 			
-			resultMap.put("Longitude", (double)(lon) * 1.0e-7);
 			resultMap.put("Latitude",  (double)(lat) * 1.0e-7);
+			resultMap.put("Longitude", (double)(lon) * 1.0e-7);			
 		}
 		
 		payloadStream.close();
