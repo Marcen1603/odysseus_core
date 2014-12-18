@@ -37,8 +37,9 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
  */
 public class TupleDataHandler extends AbstractDataHandler<Tuple<?>> {
 
-	static final private Logger logger = LoggerFactory.getLogger(TupleDataHandler.class);
-	
+	static final private Logger logger = LoggerFactory
+			.getLogger(TupleDataHandler.class);
+
 	static protected List<String> types = new ArrayList<String>();
 	static {
 		types.add(SDFDatatype.TUPLE.getURI());
@@ -93,18 +94,18 @@ public class TupleDataHandler extends AbstractDataHandler<Tuple<?>> {
 					"TupleDataHandler is immutable. Values already set");
 		}
 	}
-	
+
 	@Override
 	public Tuple<?> readData(InputStream inputStream) throws IOException {
 		Object[] attributes = new Object[dataHandlers.length];
 		for (int i = 0; i < this.dataHandlers.length; i++) {
-            try {
-                attributes[i] = dataHandlers[i].readData(inputStream);
-            }
-            catch (Exception e) {
-                logger.warn("Error parsing stream with " + dataHandlers[i].getClass() + " " + e.getMessage());
-                attributes[i] = null;
-            }
+			try {
+				attributes[i] = dataHandlers[i].readData(inputStream);
+			} catch (Exception e) {
+				logger.warn("Error parsing stream with "
+						+ dataHandlers[i].getClass() + " " + e.getMessage());
+				attributes[i] = null;
+			}
 		}
 		return new Tuple<IMetaAttribute>(attributes, false);
 	}
@@ -114,13 +115,13 @@ public class TupleDataHandler extends AbstractDataHandler<Tuple<?>> {
 		Object[] attributes = new Object[dataHandlers.length];
 		int min = Math.min(dataHandlers.length, input.length);
 		for (int i = 0; i < min; i++) {
-            try {
-                attributes[i] = dataHandlers[i].readData(input[i]);
-            }
-            catch (Exception e) {
-                logger.warn("Error parsing " + input[i] + " with " + dataHandlers[i].getClass() + " " + e.getMessage());
-                attributes[i] = null;
-            }
+			try {
+				attributes[i] = dataHandlers[i].readData(input[i]);
+			} catch (Exception e) {
+				logger.warn("Error parsing " + input[i] + " with "
+						+ dataHandlers[i].getClass() + " " + e.getMessage());
+				attributes[i] = null;
+			}
 		}
 		return new Tuple<IMetaAttribute>(attributes, false);
 	}
@@ -130,17 +131,18 @@ public class TupleDataHandler extends AbstractDataHandler<Tuple<?>> {
 		Tuple<IMetaAttribute> tuple = new Tuple<IMetaAttribute>(input.size(),
 				false);
 		for (int i = 0; i < input.size(); i++) {
-            try {
-                tuple.setAttribute(i, this.dataHandlers[i].readData(input.get(i)));
-            }
-            catch (Exception e) {
-                logger.warn("Error parsing " + input.get(i) + " with " + dataHandlers[i].getClass() + " " + e.getMessage());
-                tuple.setAttribute(i, (Object) null);
-            }
+			try {
+				tuple.setAttribute(i,
+						this.dataHandlers[i].readData(input.get(i)));
+			} catch (Exception e) {
+				logger.warn("Error parsing " + input.get(i) + " with "
+						+ dataHandlers[i].getClass() + " " + e.getMessage());
+				tuple.setAttribute(i, (Object) null);
+			}
 		}
 		return tuple;
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -162,13 +164,14 @@ public class TupleDataHandler extends AbstractDataHandler<Tuple<?>> {
 					type = buffer.get();
 				}
 				if (!nullMode || type != 0) {
-                    try {
-                        attributes[i] = dataHandlers[i].readData(buffer);
-                    }
-                    catch (Exception e) {
-                        logger.warn("Error parsing stream with " + dataHandlers[i].getClass() + " " + e.getMessage());
-                        attributes[i] = null;
-                    }
+					try {
+						attributes[i] = dataHandlers[i].readData(buffer);
+					} catch (Exception e) {
+						logger.warn("Error parsing stream with "
+								+ dataHandlers[i].getClass() + " "
+								+ e.getMessage());
+						attributes[i] = null;
+					}
 				}
 			}
 			r = new Tuple<IMetaAttribute>(attributes, false);
@@ -212,7 +215,7 @@ public class TupleDataHandler extends AbstractDataHandler<Tuple<?>> {
 	 */
 	@Override
 	public void writeData(StringBuilder string, Object data) {
-	//	super.writeData(string, data);
+		// super.writeData(string, data);
 		Tuple<?> r = (Tuple<?>) data;
 
 		synchronized (string) {
@@ -237,12 +240,12 @@ public class TupleDataHandler extends AbstractDataHandler<Tuple<?>> {
 		// Denn im Falle eines zu großen Objekts wird ein
 		// temporärer ByteBuffer erzeugt und beschrieben. Der BYteBuffer
 		// des aufrufers wäre gar nicht angefasst worden
-		
-//		int size = memSize(r);
-//		
-//		if (size > buffer.capacity()) {
-//			buffer = ByteBuffer.allocate(size * 2);
-//		}
+
+		// int size = memSize(r);
+		//
+		// if (size > buffer.capacity()) {
+		// buffer = ByteBuffer.allocate(size * 2);
+		// }
 
 		synchronized (buffer) {
 			for (int i = 0; i < dataHandlers.length; i++) {
@@ -273,8 +276,9 @@ public class TupleDataHandler extends AbstractDataHandler<Tuple<?>> {
 	}
 
 	private void createDataHandler(SDFSchema schema) {
-		if (schema == null) return;
-		
+		if (schema == null)
+			return;
+
 		this.dataHandlers = new IDataHandler<?>[schema.size()];
 		int i = 0;
 		for (SDFAttribute attribute : schema) {
@@ -294,9 +298,14 @@ public class TupleDataHandler extends AbstractDataHandler<Tuple<?>> {
 				throw new IllegalArgumentException("Unregistered datatype "
 						+ uri);
 			}
+			SDFSchema subSchema;
+			if (type.isTuple()) {
+				subSchema = attribute.getSubSchema();
+			} else {
+				subSchema = new SDFSchema("", Tuple.class, attribute);
+			}
 
-			dataHandlers[i++] = DataHandlerRegistry.getDataHandler(uri,
-					new SDFSchema("", Tuple.class, attribute));
+			dataHandlers[i++] = DataHandlerRegistry.getDataHandler(uri, subSchema);
 
 		}
 	}
@@ -326,12 +335,12 @@ public class TupleDataHandler extends AbstractDataHandler<Tuple<?>> {
 			size += dataHandlers[i].memSize(r.getAttribute(i));
 		}
 		// Marker for null or not null values
-		if (nullMode){
+		if (nullMode) {
 			size += dataHandlers.length;
 		}
 		return size;
 	}
-	
+
 	@Override
 	public Class<?> createsType() {
 		return Tuple.class;

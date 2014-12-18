@@ -2,6 +2,7 @@ package de.uniol.inf.is.odysseus.mep.functions.tuple;
 
 import de.uniol.inf.is.odysseus.core.IHasAlias;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
+import de.uniol.inf.is.odysseus.core.mep.IExpression;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.mep.AbstractFunction;
 
@@ -12,7 +13,7 @@ public class TupleAccessFunction extends AbstractFunction<Object> implements IHa
 	private static final SDFDatatype[][] accTypes = new SDFDatatype[][] { new SDFDatatype[]{SDFDatatype.TUPLE},SDFDatatype.NUMBERS};
 
 	public TupleAccessFunction() {
-		super("[]", 2, accTypes, SDFDatatype.OBJECT, false);
+		super("[]", 2, accTypes, null, false);
 	}
 
 	@Override
@@ -23,6 +24,18 @@ public class TupleAccessFunction extends AbstractFunction<Object> implements IHa
 		return l.getAttribute(pos);
 	}
 
+	@Override
+	public boolean determineTypeFromInput() {
+		return true;
+	}
+	
+	@Override
+	public SDFDatatype determineType(IExpression<?>[] args) {
+		//SDFDatatype dt = args[0].getReturnType();
+		//System.out.println(dt);
+		return SDFDatatype.OBJECT;
+	}
+	
 	@Override
 	public String getAliasName() {
 		return "elementAt";

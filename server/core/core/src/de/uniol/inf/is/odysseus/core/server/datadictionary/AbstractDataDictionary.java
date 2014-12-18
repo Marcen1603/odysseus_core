@@ -83,7 +83,7 @@ abstract public class AbstractDataDictionary implements IDataDictionary,
 	private IStore<String, SDFDatatype> datatypes;
 	private IStore<Integer, ILogicalQuery> savedQueries;
 	private IStore<Integer, IUser> savedQueriesForUser;
-	
+
 	private IStore<Integer, String> savedQueriesBuildParameterName;
 
 	private IStore<Resource, ILogicalOperator> sinkDefinitions;
@@ -783,17 +783,25 @@ abstract public class AbstractDataDictionary implements IDataDictionary,
 				datatype = new SDFDatatype("List", KindOfDatatype.LIST, subType);
 				datatypes.put(key, datatype);
 			} else {
+				final KindOfDatatype kind;
+				if (type == SDFDatatype.TUPLE || type == SDFDatatype.NTUPLE) {
+					kind = KindOfDatatype.TUPLE;
+				} else {
+					kind = KindOfDatatype.GENERIC;
+				}
 				if (subTypes.size() != 1) {
 					// Create schema from list of types
 					List<SDFAttribute> attributes = new LinkedList<SDFAttribute>();
-					for (int i=0;i<subTypes.size();i++){
-						attributes.add(new SDFAttribute("", "_"+i, subTypes.get(0),(SDFUnit)null,(Collection<SDFConstraint>)null));
+					for (int i = 0; i < subTypes.size(); i++) {
+						attributes.add(new SDFAttribute("", "_" + i, subTypes
+								.get(0), (SDFUnit) null,
+								(Collection<SDFConstraint>) null));
 					}
-					datatype = new SDFDatatype(type.getURI(),
-							KindOfDatatype.GENERIC,new SDFSchema("", Tuple.class, attributes));
+					datatype = new SDFDatatype(type.getURI(), kind,
+							new SDFSchema("", Tuple.class, attributes));
 				} else {
-					datatype = new SDFDatatype(type.getURI(),
-							KindOfDatatype.GENERIC, subTypes.get(0));
+					datatype = new SDFDatatype(type.getURI(), kind,
+							subTypes.get(0));
 				}
 			}
 		}
@@ -1018,8 +1026,10 @@ abstract public class AbstractDataDictionary implements IDataDictionary,
 		synchronized (listeners) {
 			for (IDataDictionaryListener listener : listeners) {
 				try {
-					LOG.trace("Fire data dictionary changed event listener : {}", listener);
-					
+					LOG.trace(
+							"Fire data dictionary changed event listener : {}",
+							listener);
+
 					listener.dataDictionaryChanged(this);
 				} catch (Throwable throwable) {
 					LOG.error("Exception in listener of data dictionary",
