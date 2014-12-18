@@ -111,7 +111,10 @@ abstract public class AbstractFileHandler extends AbstractTransportHandler {
 	@Override
 	public void processOutClose() throws IOException {
 		fireOnDisconnect();
-		dumpBuffer();
+		
+		if (writeDelaySize > 0)
+			dumpBuffer();
+		
 		out.flush();
 		out.close();
 	}
