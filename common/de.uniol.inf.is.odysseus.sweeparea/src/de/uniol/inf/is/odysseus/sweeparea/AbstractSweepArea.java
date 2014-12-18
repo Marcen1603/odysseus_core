@@ -44,9 +44,9 @@ public abstract class AbstractSweepArea<T extends IStreamObject<?>> implements
 
 	protected Comparator<? super T> comparator;
 
-	private IPredicate<? super T> queryPredicate;
+	private transient IPredicate<? super T> queryPredicate;
 
-	private IPredicate<? super T> removePredicate;
+	private transient IPredicate<? super T> removePredicate;
 
 	/**
 	 * Creates query results on the fly by iterating over the elements and
