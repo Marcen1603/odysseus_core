@@ -1,8 +1,9 @@
 #PARSER PQL
 #RUNQUERY
+///Your first pql-query here
 
 input = ACCESS({            
-            source= 'FromFile',
+            source= 'Receiver',
             wrapper='GenericPull',
             transport='File',
             protocol='NMEA2000',
@@ -10,14 +11,21 @@ input = ACCESS({
             options=[
               ['filename','C:\Offis\odysseus\wrapper\nmea\de.uniol.inf.is.odysseus.wrapper.nmea\Example\NMEA2000GPS.dat'],
               ['delay', '0']
-            ]                      
-          }               
-        )		 		
+            ]
+          }
+        )
         
 gpsMsg = SELECT({predicate='PGN = 129025'}, input)
 
 gpsTuple = KEYVALUETOTUPLE({schema=[['Longitude','Double'], ['Latitude', 'Double']], type='Tuple', keepinput='false'}, gpsMsg)
-				
+
+s100 = MAP({
+              expressions = [
+              					['toGMPoint(Longitude, Latitude, 0)','gpsPoint'],
+              					['streamtime()','starttimestamp']                               
+                            ]
+             }, gpsTuple)
+             
 SENDER = SENDER({
               transport='RabbitMQ',
               wrapper='GenericPush',
@@ -31,4 +39,4 @@ SENDER = SENDER({
                 ['HOST','localhost'],
                 ['ByteOrder', 'LittleEndian']
               ]                       
-            }, gpsTuple)
+            }, s100)             

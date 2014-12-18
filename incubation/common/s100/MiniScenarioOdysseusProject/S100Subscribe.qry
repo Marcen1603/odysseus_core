@@ -15,23 +15,31 @@ input = ACCESS({
               ['HOST','localhost'],
               ['ByteOrder', 'LittleEndian']
             ],
-            schema=[['Longitude', 'Double'], ['Latitude', 'Double']]                      
-          }               
+            schema=[['gpsPoint', 'GM_Point'], ['starttimestamp', 'STARTTIMESTAMP']]                      
+          }
         )
 
 gpsTuple = MAP({
               expressions = [
-              					['"GGA"','sentenceId'],              			
-              					['"GP"','talkerId'],
-              					['"$"','beginChar'],
-                                ['Abs(Latitude)','latitude'],
-                                ['eif(Sign(Latitude)>0, "N", "S")','latitudeHem'],
-                                ['Abs(Longitude)','longitude'],
-                                ['eif(Sign(Longitude)>0, "E", "W")','longitudeHem']                               
+              					['GetGMPointCoordinate(gpsPoint, 0)', 'longitude'],              			
+              					['GetGMPointCoordinate(gpsPoint, 1)', 'latitude']                               
                             ]
              }, input)
 
-gpsMsg2 = TUPLETOKEYVALUE(gpsTuple)
+        
+nmea0183Tuple = MAP({
+              expressions = [
+              					['"GGA"','sentenceId'],              			
+              					['"GP"','talkerId'],
+              					['"$"','beginChar'],
+                                ['Abs(latitude)','latitude'],
+                                ['eif(latitude>=0, "N", "S")','latitudeHem'],
+                                ['Abs(longitude)','longitude'],
+                                ['eif(longitude>=0, "E", "W")','longitudeHem']                               
+                            ]
+             }, gpsTuple)
+
+nmea0183 = TUPLETOKEYVALUE(nmea0183Tuple)
 
 
 SENDER = SENDER({
@@ -45,5 +53,5 @@ SENDER = SENDER({
                 ['filename', 'D:\nmea0183.txt']
               ]                       
             },
-            gpsMsg2
-          )
+            nmea0183
+          )        
