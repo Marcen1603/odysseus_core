@@ -70,9 +70,13 @@ public class GoalsSportsQLParser implements ISportsQLParser {
 		StreamAO soccerGameStreamAO = OperatorBuildHelper
 				.createGameStreamAO(session);
 		allOperators.add(soccerGameStreamAO);
+		
+		for(Integer ballId : AbstractSportsDDCAccess.getBallEntityIds()){
+			predicates.add("entity_id = " + ballId);
+		}
+		
+		SelectAO ball = OperatorBuildHelper.createSelectAO(predicates, soccerGameStreamAO);
 
-		SelectAO ball = OperatorBuildHelper.createEntityIDSelect(100,
-				soccerGameStreamAO);
 		allOperators.add(ball);
 
 		// ball in goal or field stream
@@ -184,12 +188,23 @@ public class GoalsSportsQLParser implements ISportsQLParser {
 		functions3.add("SUM");
 
 		List<String> inputAttributeNames3 = new ArrayList<String>();
-		inputAttributeNames3.add(ATT_TEAM1);
-		inputAttributeNames3.add(ATT_TEAM2);
-
 		List<String> outputAttributeNames3 = new ArrayList<String>();
-		outputAttributeNames3.add("sum_" + ATT_TEAM1);
-		outputAttributeNames3.add("sum_" + ATT_TEAM2);
+		
+		Integer nr1 = Integer.valueOf(ATT_TEAM1.substring(ATT_TEAM1.length()-1));
+		Integer nr2 = Integer.valueOf(ATT_TEAM2.substring(ATT_TEAM2.length()-1));
+		
+		if(nr1 < nr2){
+			outputAttributeNames3.add("sum_" + ATT_TEAM1);
+			outputAttributeNames3.add("sum_" + ATT_TEAM2);
+			inputAttributeNames3.add(ATT_TEAM1);
+			inputAttributeNames3.add(ATT_TEAM2);
+		}else{
+			outputAttributeNames3.add("sum_" + ATT_TEAM2);
+			outputAttributeNames3.add("sum_" + ATT_TEAM1);
+			inputAttributeNames3.add(ATT_TEAM2);
+			inputAttributeNames3.add(ATT_TEAM1);
+		}
+		
 
 		List<String> outputTypes = new ArrayList<String>();
 		outputTypes.add("Integer");
