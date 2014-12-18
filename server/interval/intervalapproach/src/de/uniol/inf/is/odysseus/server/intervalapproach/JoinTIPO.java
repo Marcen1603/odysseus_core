@@ -165,14 +165,14 @@ public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>>
 		this.card = card;
 	}
 
-	public void setSweepAreaName(String name){
+	public void setSweepAreaName(String name) {
 		this.sweepAreaName = name;
 	}
-	
+
 	public String getSweepAreaName() {
 		return sweepAreaName;
 	}
-	
+
 	public void setTransferFunction(ITransferArea<T, T> transferFunction) {
 		this.transferFunction = transferFunction;
 	}
@@ -229,14 +229,15 @@ public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>>
 
 			// depending on card, delete hits from areas
 			// deleting if port is ONE-side
-			// cases for ONE_MANY, MANY_ONE: 
-			// ONE side element is earlier than MANY side elements, nothing will be found 
+			// cases for ONE_MANY, MANY_ONE:
+			// ONE side element is earlier than MANY side elements, nothing will
+			// be found
 			// and nothing will be removed
 			// ONE side element is later than some MANY side elements, find all
 			// corresponding elements and remove them
 			boolean extract = false;
 			if (card != null) {
-				switch(card){
+				switch (card) {
 				case ONE_ONE:
 					extract = true;
 					break;
@@ -286,7 +287,7 @@ public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>>
 					// element not found now)
 					if (port == 1 || (port == 0 && !hit)) {
 						areas[port].insert(object);
-					}					
+					}
 					break;
 				default:
 					areas[port].insert(object);
@@ -393,7 +394,7 @@ public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>>
 						.equals(jtipo.creationFunction.getClass().toString())) {
 			return false;
 		}
-		
+
 		// Vergleichen des Join-Pr�dikats und des Output-Schemas
 		if (this.getJoinPredicate().equals(jtipo.getJoinPredicate())
 				&& this.getOutputSchema().compareTo(jtipo.getOutputSchema()) == 0) {
@@ -422,7 +423,7 @@ public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>>
 						.equals(jtipo.creationFunction.getClass().toString())) {
 			return false;
 		}
-		
+
 		// Vergleichen des Join-Pr�dikats
 		if (this.getJoinPredicate().isContainedIn(jtipo.getJoinPredicate())) {
 			return true;
@@ -478,11 +479,38 @@ public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>>
 	public void setState(Serializable s) {
 		try {
 			JoinTIPOState<K, T> state = (JoinTIPOState<K, T>) s;
-			this.areas = state.getSweepAreas();
+
+			// set sweep area from state
+			synchronized (this.areas) {
+				for (int i = 0; i < state.getSweepAreas().length; i++) {
+					// save the remove predicate
+					IPredicate<? super IStreamObject<? extends ITimeInterval>> tempRemovePredicate = null;
+					if (this.areas[i] instanceof DefaultTISweepArea) {
+						tempRemovePredicate = ((DefaultTISweepArea<IStreamObject<? extends ITimeInterval>>) this.areas[i])
+								.getRemovePredicate();
+					} else {
+						throw new IllegalArgumentException("sweepArea type "+ this.areas[i].getName() +" is not supported");
+					}
+
+					// set the sweep area from the state
+					this.areas[i] = state.getSweepAreas()[i];
+
+					// set and initialize query and remove predicate
+					if (this.joinPredicate != null && tempRemovePredicate != null){
+						this.areas[i].setQueryPredicate(this.joinPredicate);
+						this.areas[i].setRemovePredicate(tempRemovePredicate);
+						this.areas[i].init();						
+					} else {
+						throw new IllegalArgumentException("query predicate or remove predicate must not be null");
+					}
+				}
+			}
+
+			// set transfer area from state
 			this.transferFunction = state.getTransferArea();
 			this.transferFunction.setTransfer(this);
-		} catch(Throwable T) {
-			_logger.error("The serializable state to set for the AggregateTIPO is not a valid AggregateTIPOState!");
+		} catch (Exception e) {
+			_logger.error("Error setting state for JoinTIPO. Error: " + e);
 		}
 	}
 
