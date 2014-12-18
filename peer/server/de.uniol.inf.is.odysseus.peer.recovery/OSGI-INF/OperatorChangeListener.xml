@@ -4,4 +4,5 @@
    <reference bind="bindPQLGenerator" cardinality="1..1" interface="de.uniol.inf.is.odysseus.parser.pql.generator.IPQLGenerator" name="IPQLGenerator" policy="static" unbind="unbindPQLGenerator"/>
    <reference bind="bindExecutor" cardinality="1..1" interface="de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor" name="IExecutor" policy="static" unbind="unbindExecutor"/>
    <reference bind="bindRecoveryCommunicator" cardinality="1..1" interface="de.uniol.inf.is.odysseus.peer.recovery.IRecoveryCommunicator" name="IRecoveryCommunicator" policy="static" unbind="unbindRecoveryCommunicator"/>
+   <reference bind="bindBackupInformationAccess" cardinality="1..1" interface="de.uniol.inf.is.odysseus.peer.recovery.IBackupInformationAccess" name="IBackupInformationAccess" policy="static" unbind="unbindBackupInformationAccess"/>
 </scr:component>

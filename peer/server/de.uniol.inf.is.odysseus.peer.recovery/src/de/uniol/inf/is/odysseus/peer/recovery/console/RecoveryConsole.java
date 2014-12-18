@@ -22,16 +22,18 @@ import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.p2p_new.IP2PNetworkManager;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.IPeerDictionary;
+import de.uniol.inf.is.odysseus.peer.recovery.IBackupInformationAccess;
 import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryAllocator;
 import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryCommunicator;
 import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryStrategy;
 import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryStrategyManager;
 import de.uniol.inf.is.odysseus.peer.recovery.internal.BackupInfo;
 import de.uniol.inf.is.odysseus.peer.recovery.internal.RecoveryCommunicator;
-import de.uniol.inf.is.odysseus.peer.recovery.util.BackupInformationAccess;
 import de.uniol.inf.is.odysseus.peer.recovery.util.RecoveryHelper;
 
 /**
+ * 
+ * Console commands for Backup-Related things
  * 
  * @author Tobias Brandt, Simon Kuespert
  *
@@ -43,6 +45,7 @@ public class RecoveryConsole implements CommandProvider {
 	private static IP2PNetworkManager p2pNetworkManager;
 	private static IPeerDictionary peerDictionary;
 	private static Collection<IRecoveryAllocator> recoveryAllocators = Lists.newArrayList();
+	private static IBackupInformationAccess backupInformationAccess;
 
 	/**
 	 * The recovery communicator, if there is one bound.
@@ -64,6 +67,16 @@ public class RecoveryConsole implements CommandProvider {
 	public static void unbindP2PNetworkManager(IP2PNetworkManager serv) {
 		if (p2pNetworkManager == serv) {
 			p2pNetworkManager = null;
+		}
+	}
+	
+	public static void bindBackupInformationAccess(IBackupInformationAccess infoAccess) {
+		backupInformationAccess = infoAccess;
+	}
+	
+	public static void unbindBackupInformationAccess(IBackupInformationAccess infoAccess) {
+		if (backupInformationAccess == infoAccess) {
+			backupInformationAccess = null;
 		}
 	}
 
@@ -267,13 +280,17 @@ public class RecoveryConsole implements CommandProvider {
 	}
 
 	public void _lsBackupStore(CommandInterpreter ci) {
-		List<String> backupPeerIds = BackupInformationAccess.getBackupPeerIds();
+		List<String> backupPeerIds = backupInformationAccess.getBackupPeerIds();
 		if (backupPeerIds.isEmpty()) {
 			System.out.println("No information about any peer");
 		}
 		for (String peerId : backupPeerIds) {
-			System.out.println("Information about " + peerId + "\n");
-			HashMap<Integer, BackupInfo> infoMap = BackupInformationAccess.getBackupInformation(peerId);
+			String peerName = peerDictionary.getRemotePeerName(peerId);
+			if (peerId.equals(p2pNetworkManager.getLocalPeerID().toString())) {
+				peerName = peerName + " (me)";
+			}
+			System.out.println("Information about " + peerName + "\n");
+			HashMap<Integer, BackupInfo> infoMap = backupInformationAccess.getBackupInformation(peerId);
 			if (infoMap != null) {
 				for (Integer key : infoMap.keySet()) {
 					BackupInfo info = infoMap.get(key);

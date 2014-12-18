@@ -1,8 +1,5 @@
 package de.uniol.inf.is.odysseus.peer.recovery.util;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,6 +14,7 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandlin
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.planmodification.event.PlanModificationEventType;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.peer.distribute.IQueryPartController;
+import de.uniol.inf.is.odysseus.peer.recovery.IBackupInformationAccess;
 import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryCommunicator;
 
 /**
@@ -32,11 +30,7 @@ public class BackupInformationHelper implements IPlanModificationListener {
 	 */
 	private static Logger LOG = LoggerFactory.getLogger(BackupInformationHelper.class);
 
-	/**
-	 * This list contains all the IDs of queries, where we did not find a shared query ID for. If we later know the
-	 * corresponding shared query ID, we can react.
-	 */
-	public static List<Integer> unknownIds = new ArrayList<Integer>();
+	private static IBackupInformationAccess backupInformationAccess;
 
 	/**
 	 * The recovery communicator, if there is one bound.
@@ -77,6 +71,16 @@ public class BackupInformationHelper implements IPlanModificationListener {
 
 		}
 
+	}
+	
+	public static void bindBackupInformationAccess(IBackupInformationAccess infoAccess) {
+		backupInformationAccess = infoAccess;
+	}
+	
+	public static void unbindBackupInformationAccess(IBackupInformationAccess infoAccess) {
+		if (backupInformationAccess == infoAccess) {
+			backupInformationAccess = null;
+		}
 	}
 
 	/**
@@ -177,7 +181,7 @@ public class BackupInformationHelper implements IPlanModificationListener {
 		if (PlanModificationEventType.QUERY_REMOVE.equals(eventArgs.getEventType())) {
 			
 			int queryID = ((IPhysicalQuery) eventArgs.getValue()).getID();
-			BackupInformationAccess.removeBackupInformation(queryID);
+			backupInformationAccess.removeBackupInformation(queryID);
 			
 		} else {
 			// either QUERY_ADDED -> save backup info
@@ -185,7 +189,7 @@ public class BackupInformationHelper implements IPlanModificationListener {
 			int queryID = ((IPhysicalQuery) eventArgs.getValue()).getID();
 			QueryState state = ((IPhysicalQuery) eventArgs.getValue()).getState();
 			String pql = RecoveryHelper.getPQLFromRunningQuery(queryID);
-			BackupInformationAccess.saveBackupInformation(queryID, pql, state.toString());
+			backupInformationAccess.saveBackupInformation(queryID, pql, state.toString());
 			
 		}
 

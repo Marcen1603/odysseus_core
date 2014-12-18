@@ -20,8 +20,8 @@ import de.uniol.inf.is.odysseus.p2p_new.physicaloperator.JxtaSenderPO;
 import de.uniol.inf.is.odysseus.p2p_new.util.IObservableOperator;
 import de.uniol.inf.is.odysseus.p2p_new.util.IOperatorObserver;
 import de.uniol.inf.is.odysseus.parser.pql.generator.IPQLGenerator;
+import de.uniol.inf.is.odysseus.peer.recovery.IBackupInformationAccess;
 import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryCommunicator;
-import de.uniol.inf.is.odysseus.peer.recovery.util.BackupInformationAccess;
 import de.uniol.inf.is.odysseus.peer.recovery.util.RecoveryHelper;
 
 public class OperatorChangeListener implements IOperatorObserver, IPlanModificationListener {
@@ -31,6 +31,7 @@ public class OperatorChangeListener implements IOperatorObserver, IPlanModificat
 	private static IPQLGenerator pqlGenerator;
 	private static IRecoveryCommunicator recoveryCommunicator;
 	private static IServerExecutor executor;
+	private static IBackupInformationAccess backupInformationAccess;
 
 	// called by OSGi-DS
 	public static void bindPQLGenerator(IPQLGenerator generator) {
@@ -57,6 +58,16 @@ public class OperatorChangeListener implements IOperatorObserver, IPlanModificat
 		if (recoveryCommunicator == communicator) {
 			recoveryCommunicator = null;
 			LOG.debug("Unbound recoveryCommunicator.");
+		}
+	}
+
+	public static void bindBackupInformationAccess(IBackupInformationAccess infoAccess) {
+		backupInformationAccess = infoAccess;
+	}
+
+	public static void unbindBackupInformationAccess(IBackupInformationAccess infoAccess) {
+		if (backupInformationAccess == infoAccess) {
+			backupInformationAccess = null;
 		}
 	}
 
@@ -144,13 +155,13 @@ public class OperatorChangeListener implements IOperatorObserver, IPlanModificat
 					IPhysicalQuery query = RecoveryHelper.findInstalledQueryWithJxtaOperator(
 							RecoveryHelper.convertToPipeId(pipeId), updateReceiver);
 					int queryId = query.getID();
-					
+
 					// Old peer-id is replaced by the new one ...
-					String pql = BackupInformationAccess.getBackupPQL(queryId);
+					String pql = backupInformationAccess.getBackupPQL(queryId);
 					String newPQL = pql.replace(oldPeerId, newPeerId);
-					
+
 					// Save this new information
-					BackupInformationAccess.saveBackupInformation(queryId, newPQL, query.getState().toString());
+					backupInformationAccess.saveBackupInformation(queryId, newPQL, query.getState().toString());
 				}
 			}
 		}

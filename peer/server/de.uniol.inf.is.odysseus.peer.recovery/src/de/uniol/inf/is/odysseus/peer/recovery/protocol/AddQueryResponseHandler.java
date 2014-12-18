@@ -15,11 +15,11 @@ import com.google.common.base.Preconditions;
 import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicator;
 import de.uniol.inf.is.odysseus.p2p_new.physicaloperator.JxtaSenderPO;
 import de.uniol.inf.is.odysseus.peer.recovery.IAddQueryResponseHandler;
+import de.uniol.inf.is.odysseus.peer.recovery.IBackupInformationAccess;
 import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryCommunicator;
 import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryStrategyManager;
 import de.uniol.inf.is.odysseus.peer.recovery.internal.RecoveryProcessState;
 import de.uniol.inf.is.odysseus.peer.recovery.messages.RecoveryAddQueryResponseMessage;
-import de.uniol.inf.is.odysseus.peer.recovery.util.BackupInformationAccess;
 import de.uniol.inf.is.odysseus.peer.recovery.util.RecoveryHelper;
 
 /**
@@ -37,6 +37,7 @@ public class AddQueryResponseHandler implements IAddQueryResponseHandler {
 	private static final Logger LOG = LoggerFactory.getLogger(AddQueryResponseHandler.class);
 	private static Optional<IRecoveryStrategyManager> recoveryStrategyManager = Optional.absent();
 	private Optional<IPeerCommunicator> peerCommunicator = Optional.absent();
+	private static IBackupInformationAccess backupInformationAccess;
 
 	public void bindPeerCommunicator(IPeerCommunicator serv) {
 		Preconditions.checkNotNull(serv);
@@ -63,6 +64,16 @@ public class AddQueryResponseHandler implements IAddQueryResponseHandler {
 		if (recoveryStrategyManager.isPresent() && recoveryStrategyManager.get() == serv) {
 			recoveryStrategyManager = Optional.absent();
 			LOG.debug("Unbound {} as a recovery strategy manager.", serv.getClass().getSimpleName());
+		}
+	}
+
+	public static void bindBackupInformationAccess(IBackupInformationAccess infoAccess) {
+		backupInformationAccess = infoAccess;
+	}
+
+	public static void unbindBackupInformationAccess(IBackupInformationAccess infoAccess) {
+		if (backupInformationAccess == infoAccess) {
+			backupInformationAccess = null;
 		}
 	}
 
@@ -129,7 +140,7 @@ public class AddQueryResponseHandler implements IAddQueryResponseHandler {
 				}
 
 				// Update the DDC -> This is recovered, remove the old entry from the DDC
-				BackupInformationAccess.removeBackupInformation(state.getFailedPeerId().toString(), localQueryId);
+				backupInformationAccess.removeBackupInformation(state.getFailedPeerId().toString(), localQueryId);
 
 				// Remove recovery process state if all queryParts are processed
 				if (state.allSubprocessesDone()) {
@@ -161,7 +172,7 @@ public class AddQueryResponseHandler implements IAddQueryResponseHandler {
 				affectedSenders.add(sender);
 			}
 		}
-		
+
 		return affectedSenders;
 	}
 }

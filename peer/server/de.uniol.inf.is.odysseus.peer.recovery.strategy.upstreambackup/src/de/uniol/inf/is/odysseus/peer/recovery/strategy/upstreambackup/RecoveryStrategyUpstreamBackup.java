@@ -20,18 +20,18 @@ import de.uniol.inf.is.odysseus.p2p_new.IP2PNetworkManager;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.IPeerDictionary;
 import de.uniol.inf.is.odysseus.peer.distribute.ILogicalQueryPart;
 import de.uniol.inf.is.odysseus.peer.distribute.QueryPartAllocationException;
+import de.uniol.inf.is.odysseus.peer.recovery.IBackupInformationAccess;
 import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryAllocator;
 import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryDynamicBackup;
 import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryStrategy;
 import de.uniol.inf.is.odysseus.peer.recovery.internal.BackupInfo;
 import de.uniol.inf.is.odysseus.peer.recovery.internal.RecoveryProcessState;
 import de.uniol.inf.is.odysseus.peer.recovery.internal.RecoverySubProcessState;
-import de.uniol.inf.is.odysseus.peer.recovery.util.BackupInformationAccess;
 
 /**
  * Implementation of the Upstream-Backup {@link IRecoveryStrategy}.
  * 
- * @author Simo
+ * @author Simon Küspert
  * 
  */
 public class RecoveryStrategyUpstreamBackup implements IRecoveryStrategy {
@@ -41,6 +41,8 @@ public class RecoveryStrategyUpstreamBackup implements IRecoveryStrategy {
 	 */
 	private static final Logger LOG = LoggerFactory.getLogger(RecoveryStrategyUpstreamBackup.class);
 
+	private static IBackupInformationAccess backupInformationAccess;
+
 	// called by OSGi-DS
 	public void activate() {
 		LOG.debug("Recovery strategy Upstream-Backup activated.");
@@ -49,6 +51,16 @@ public class RecoveryStrategyUpstreamBackup implements IRecoveryStrategy {
 	// called by OSGi-DS
 	public void deactivate() {
 		LOG.debug("Recovery strategy Upstream-Backup deactivated.");
+	}
+
+	public static void bindBackupInformationAccess(IBackupInformationAccess infoAccess) {
+		backupInformationAccess = infoAccess;
+	}
+
+	public static void unbindBackupInformationAccess(IBackupInformationAccess infoAccess) {
+		if (backupInformationAccess == infoAccess) {
+			backupInformationAccess = null;
+		}
 	}
 
 	/**
@@ -302,7 +314,7 @@ public class RecoveryStrategyUpstreamBackup implements IRecoveryStrategy {
 		LOG.debug("Want to start recovery for {}", cPeerDictionary.get().getRemotePeerName(failedPeer));
 
 		// Let's see what we know about this peer
-		HashMap<Integer, BackupInfo> infoMap = BackupInformationAccess.getBackupInformation(failedPeer.toString());
+		HashMap<Integer, BackupInfo> infoMap = backupInformationAccess.getBackupInformation(failedPeer.toString());
 
 		if (infoMap.isEmpty()) {
 			LOG.debug("Can't do recovery for {}. Don't have the information.",
@@ -332,8 +344,8 @@ public class RecoveryStrategyUpstreamBackup implements IRecoveryStrategy {
 						ILogicalQueryPart queryPart = iterator.next();
 						UUID subprocessID = state.createNewSubprocess(localQueryId, queryPart, queryState);
 
-						sendRecoveryMessages(localQueryId, failedPeer, allocationMap.get(queryPart), queryPart, queryState,
-								recoveryStateIdentifier, subprocessID);
+						sendRecoveryMessages(localQueryId, failedPeer, allocationMap.get(queryPart), queryPart,
+								queryState, recoveryStateIdentifier, subprocessID);
 					}
 				} else {
 					LOG.debug("Unable to find Peer ID for recovery allocation.");
@@ -347,7 +359,7 @@ public class RecoveryStrategyUpstreamBackup implements IRecoveryStrategy {
 
 	}
 
-	private void sendRecoveryMessages(int localQueryId, PeerID failedPeer, PeerID newPeer, ILogicalQueryPart queryPart, 
+	private void sendRecoveryMessages(int localQueryId, PeerID failedPeer, PeerID newPeer, ILogicalQueryPart queryPart,
 			QueryState queryState, UUID recoveryStateIdentifier, UUID subprocessID) {
 		cRecoveryDynamicBackup.get().determineAndSendHoldOnMessages(localQueryId, failedPeer, recoveryStateIdentifier);
 

@@ -32,12 +32,12 @@ import de.uniol.inf.is.odysseus.peer.distribute.ILogicalQueryPart;
 import de.uniol.inf.is.odysseus.peer.distribute.LogicalQueryPart;
 import de.uniol.inf.is.odysseus.peer.distribute.QueryPartAllocationException;
 import de.uniol.inf.is.odysseus.peer.distribute.util.LogicalQueryHelper;
+import de.uniol.inf.is.odysseus.peer.recovery.IBackupInformationAccess;
 import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryAllocator;
 import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryCommunicator;
 import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryDynamicBackup;
 import de.uniol.inf.is.odysseus.peer.recovery.internal.RecoveryProcessState;
 import de.uniol.inf.is.odysseus.peer.recovery.util.AgreementHelper;
-import de.uniol.inf.is.odysseus.peer.recovery.util.BackupInformationAccess;
 import de.uniol.inf.is.odysseus.peer.recovery.util.RecoveryHelper;
 
 /**
@@ -58,6 +58,8 @@ public class RecoveryDynamicBackup implements IRecoveryDynamicBackup {
 	 * The recovery communicator, if there is one bound.
 	 */
 	private static Optional<IRecoveryCommunicator> cRecoveryCommunicator = Optional.absent();
+
+	private static IBackupInformationAccess backupInformationAccess;
 
 	/**
 	 * Binds a recovery communicator. <br />
@@ -94,6 +96,16 @@ public class RecoveryDynamicBackup implements IRecoveryDynamicBackup {
 
 		}
 
+	}
+
+	public static void bindBackupInformationAccess(IBackupInformationAccess infoAccess) {
+		backupInformationAccess = infoAccess;
+	}
+
+	public static void unbindBackupInformationAccess(IBackupInformationAccess infoAccess) {
+		if (backupInformationAccess == infoAccess) {
+			backupInformationAccess = null;
+		}
 	}
 
 	/**
@@ -265,7 +277,7 @@ public class RecoveryDynamicBackup implements IRecoveryDynamicBackup {
 		}
 
 		// Test: Tell the peers which sent tuples to the failed peer that they have to hold on
-		String backupPQL = BackupInformationAccess.getBackupPQL(failedPeer.toString(), localPeerId);
+		String backupPQL = backupInformationAccess.getBackupPQL(failedPeer.toString(), localPeerId);
 		List<ILogicalQuery> logicalQueries = RecoveryHelper.convertToLogicalQueries(backupPQL);
 		// Search for the receiver
 		for (ILogicalQuery query : logicalQueries) {
@@ -295,10 +307,10 @@ public class RecoveryDynamicBackup implements IRecoveryDynamicBackup {
 	}
 
 	@Override
-	public void initiateAgreement(PeerID failedPeer, int localQueryId, QueryState queryState, PeerID newPeer, ILogicalQueryPart queryPart,
-			UUID recoveryStateIdentifier, UUID subprocessID) {
-		AgreementHelper.waitForAndDoRecovery(failedPeer, localQueryId, queryState, newPeer, queryPart, recoveryStateIdentifier,
-				subprocessID);
+	public void initiateAgreement(PeerID failedPeer, int localQueryId, QueryState queryState, PeerID newPeer,
+			ILogicalQueryPart queryPart, UUID recoveryStateIdentifier, UUID subprocessID) {
+		AgreementHelper.waitForAndDoRecovery(failedPeer, localQueryId, queryState, newPeer, queryPart,
+				recoveryStateIdentifier, subprocessID);
 	}
 
 	@Override
@@ -329,7 +341,7 @@ public class RecoveryDynamicBackup implements IRecoveryDynamicBackup {
 		}
 
 		// Get the logical query for the PQL statement and convert it to query parts for allocation
-		String backupPQL = BackupInformationAccess.getBackupPQL(failedPeer.toString(), localQueryId);
+		String backupPQL = backupInformationAccess.getBackupPQL(failedPeer.toString(), localQueryId);
 		List<ILogicalQuery> logicalQueries = RecoveryHelper.convertToLogicalQueries(backupPQL);
 		// allocate the query
 		for (ILogicalQuery query : logicalQueries) {

@@ -25,14 +25,16 @@ import de.uniol.inf.is.odysseus.peer.ddc.IDistributedDataContainer;
 import de.uniol.inf.is.odysseus.peer.ddc.distribute.advertisement.DistributedDataContainerAdvertisement;
 import de.uniol.inf.is.odysseus.peer.ddc.distribute.advertisement.sender.DistributedDataContainerAdvertisementGenerator;
 import de.uniol.inf.is.odysseus.peer.ddc.distribute.advertisement.sender.DistributedDataContainerAdvertisementSender;
+import de.uniol.inf.is.odysseus.peer.recovery.IBackupInformationAccess;
 import de.uniol.inf.is.odysseus.peer.recovery.internal.BackupInfo;
 
 /**
+ * This class gives you access to the backup-information which is saved in the DDC.
  * 
  * @author Tobias Brandt
  *
  */
-public class BackupInformationAccess {
+public class BackupInformationAccess implements IBackupInformationAccess {
 
 	private static final Logger LOG = LoggerFactory.getLogger(BackupInformationAccess.class);
 
@@ -68,7 +70,8 @@ public class BackupInformationAccess {
 			peerDictionary = null;
 	}
 
-	public static void saveBackupInformation(int queryId, String pql, String state) {
+	@Override
+	public void saveBackupInformation(int queryId, String pql, String state) {
 		LOG.debug("Save backup-info for query {}", queryId);
 
 		String localPeerId = p2pNetworkManager.getLocalPeerID().toString();
@@ -93,12 +96,14 @@ public class BackupInformationAccess {
 		saveToDDC(infoMap, key);
 	}
 
-	public static void removeBackupInformation(int queryId) {
+	@Override
+	public void removeBackupInformation(int queryId) {
 		String localPeerId = p2pNetworkManager.getLocalPeerID().toString();
 		removeBackupInformation(localPeerId, queryId);
 	}
 
-	public static void removeBackupInformation(String peerId, int queryId) {
+	@Override
+	public void removeBackupInformation(String peerId, int queryId) {
 		LOG.debug("Remove backup-info for query {} for peer {}", queryId, peerId);
 
 		DDCKey key = new DDCKey(peerId);
@@ -116,7 +121,8 @@ public class BackupInformationAccess {
 		}
 	}
 
-	public static ArrayList<String> getBackupPeerIds() {
+	@Override
+	public ArrayList<String> getBackupPeerIds() {
 		ImmutableCollection<PeerID> peerIds = peerDictionary.getRemotePeerIDs();
 		ArrayList<String> peers = new ArrayList<String>(peerIds.size() + 1);
 
@@ -135,7 +141,8 @@ public class BackupInformationAccess {
 	}
 
 	@SuppressWarnings("unchecked")
-	public static HashMap<Integer, BackupInfo> getBackupInformation(String peerId) {
+	@Override
+	public HashMap<Integer, BackupInfo> getBackupInformation(String peerId) {
 		DDCKey key = new DDCKey(peerId);
 
 		try {
@@ -154,7 +161,8 @@ public class BackupInformationAccess {
 		return new HashMap<Integer, BackupInfo>();
 	}
 
-	public static String getBackupPQL(String peerId, int queryId) {
+	@Override
+	public String getBackupPQL(String peerId, int queryId) {
 		HashMap<Integer, BackupInfo> infoMap = getBackupInformation(peerId);
 		if (infoMap.containsKey(queryId)) {
 			BackupInfo info = infoMap.get(queryId);
@@ -163,7 +171,8 @@ public class BackupInformationAccess {
 		return null;
 	}
 
-	public static String getBackupPQL(int queryId) {
+	@Override
+	public String getBackupPQL(int queryId) {
 		HashMap<Integer, BackupInfo> infoMap = getBackupInformation();
 		if (infoMap.containsKey(queryId)) {
 			BackupInfo info = infoMap.get(queryId);
@@ -172,7 +181,8 @@ public class BackupInformationAccess {
 		return null;
 	}
 
-	public static HashMap<Integer, BackupInfo> getBackupInformation() {
+	@Override
+	public HashMap<Integer, BackupInfo> getBackupInformation() {
 		return getBackupInformation(p2pNetworkManager.getLocalPeerID().toString());
 	}
 
@@ -206,10 +216,6 @@ public class BackupInformationAccess {
 		DistributedDataContainerAdvertisement ddcAdvertisement = DistributedDataContainerAdvertisementGenerator
 				.getInstance().generateChanges();
 		DistributedDataContainerAdvertisementSender.getInstance().publishDDCAdvertisement(ddcAdvertisement);
-
-		// DistributedDataContainerAdvertisement ddcAdvertisement = DistributedDataContainerAdvertisementGenerator
-		// .getInstance().generate();
-		// DistributedDataContainerAdvertisementSender.getInstance().publishDDCAdvertisement(ddcAdvertisement);
 	}
 
 	private static void saveToDDC(Serializable o, DDCKey key) {

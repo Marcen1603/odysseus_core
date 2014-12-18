@@ -31,7 +31,7 @@ public class RecoveryProcessState {
 	// maps the subprocessIdentifier to the subprocess
 	private Map<UUID, RecoverySubProcessState> subProcesses;
 
-	// maps sharedQueryId to allocationMap, needed for reallocation
+	// maps local query id to allocationMap, needed for reallocation
 	private Map<Integer, Map<ILogicalQueryPart, PeerID>> allocationMaps;
 
 	public RecoveryProcessState(PeerID failedPeerID) {
