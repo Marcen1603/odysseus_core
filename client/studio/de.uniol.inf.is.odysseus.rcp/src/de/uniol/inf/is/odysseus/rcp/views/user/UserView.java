@@ -24,12 +24,16 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
 
+import de.uniol.inf.is.odysseus.core.infoservice.InfoService;
+import de.uniol.inf.is.odysseus.core.infoservice.InfoServiceFactory;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IUpdateEventListener;
 import de.uniol.inf.is.odysseus.core.usermanagement.IUser;
 import de.uniol.inf.is.odysseus.core.usermanagement.PermissionException;
 import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
 
 public class UserView extends ViewPart implements IUpdateEventListener{
+	
+	static final InfoService INFO = InfoServiceFactory.getInfoService(UserView.class);
 	
 	private TreeViewer viewer;
 
@@ -42,7 +46,11 @@ public class UserView extends ViewPart implements IUpdateEventListener{
                     List<Object> l = new ArrayList<>();
                     try {
                         List<? extends IUser> users = OdysseusRCPPlugIn.getExecutor().getUsers(OdysseusRCPPlugIn.getActiveSession());
+                        if (users!=null){
                         l.addAll(users);
+                        }else{
+                        	INFO.error("Problems with the user management!",new RuntimeException("Found no users!"));
+                        }
                     }
                     catch (PermissionException e) {
                         // If user has no rights to view all users, only the
