@@ -24,7 +24,7 @@ public class DataSourceFactoryRegistry {
 
 	public static Connection getConnection(String connString,
 			Properties connectionProps) throws SQLException {
-
+		
 		for (DataSourceFactory f : factories) {
 			Driver driver = f.createDriver(connectionProps);
 			Connection conn = driver.connect(connString, connectionProps);
@@ -34,13 +34,8 @@ public class DataSourceFactoryRegistry {
 		}
 
 		// Fall back to old driver manager
-		try {
-			return DriverManager.getConnection(connString, connectionProps);
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
+		return DriverManager.getConnection(connString, connectionProps);
 
-		return null;
 	}
 
 }
