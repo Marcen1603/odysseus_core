@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import net.jxta.id.ID;
 import net.jxta.peer.PeerID;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.QueryState;
 import de.uniol.inf.is.odysseus.peer.distribute.ILogicalQueryPart;
@@ -28,11 +29,13 @@ public class RecoverySubProcessState {
 	private List<PeerID> inadequatePeers;
 	private ILogicalQueryPart queryPart;
 	private QueryState queryState;
+	private ID sharedQuery;
 
-	public RecoverySubProcessState(int localQueryId, ILogicalQueryPart queryPart, QueryState queryState) {
+	public RecoverySubProcessState(int localQueryId, ILogicalQueryPart queryPart, QueryState queryState, ID sharedQuery) {
 		this.localQueryId = localQueryId;
 		this.queryPart = queryPart;
 		this.queryState = queryState;
+		this.sharedQuery = sharedQuery;
 		this.identifier = UUID.randomUUID();
 		this.inadequatePeers = new ArrayList<PeerID>();
 	}
@@ -51,6 +54,14 @@ public class RecoverySubProcessState {
 
 	public void setLocalQueryId(int localQueryId) {
 		this.localQueryId = localQueryId;
+	}
+	
+	public ID getSharedQueryId() {
+		return sharedQuery;
+	}
+
+	public void setSharedQueryId(ID sharedQueryId) {
+		this.sharedQuery = sharedQueryId;
 	}
 
 	public ILogicalQueryPart getQueryPart() {

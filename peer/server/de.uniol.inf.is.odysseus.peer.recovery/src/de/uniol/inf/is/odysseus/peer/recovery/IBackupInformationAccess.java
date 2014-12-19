@@ -22,8 +22,11 @@ public interface IBackupInformationAccess {
 	 *            The PQL string of this query
 	 * @param state
 	 *            The state of the query, e.g. "running".
+	 * @param sharedQuery
+	 *            The shared query id as a string.
 	 */
-	public void saveBackupInformation(int queryId, String pql, String state);
+	public void saveBackupInformation(int queryId, String pql, String state,
+			String sharedQuery);
 
 	/**
 	 * Removes a backup-information for this peer by the query id.
@@ -37,7 +40,8 @@ public interface IBackupInformationAccess {
 	 * Removes a backup-information about the given peer and the given peer id
 	 * 
 	 * @param peerId
-	 *            The peer id for which the backup-information needs to be removed
+	 *            The peer id for which the backup-information needs to be
+	 *            removed
 	 * @param queryId
 	 *            The local query id of the query (local on the other peer)
 	 */
@@ -53,8 +57,9 @@ public interface IBackupInformationAccess {
 	 * 
 	 * @param peerId
 	 *            The peer id you want to have all the backup-information about
-	 * @return A Map of all backup-information we have about this peer. The key is the local query id and be value is
-	 *         the detailed information about that query.
+	 * @return A Map of all backup-information we have about this peer. The key
+	 *         is the local query id and be value is the detailed information
+	 *         about that query.
 	 */
 	public HashMap<Integer, BackupInfo> getBackupInformation(String peerId);
 
@@ -63,7 +68,8 @@ public interface IBackupInformationAccess {
 	 * @param peerId
 	 *            The peer you want to know the PQL about
 	 * @param queryId
-	 *            The local query id on that peer for the query you want to know the PQL about
+	 *            The local query id on that peer for the query you want to know
+	 *            the PQL about
 	 * @return The PQL code as String for the given query id for the given peer
 	 */
 	public String getBackupPQL(String peerId, int queryId);
@@ -75,6 +81,8 @@ public interface IBackupInformationAccess {
 	 * @return The PQL String for the query with the given id on this peer
 	 */
 	public String getBackupPQL(int queryId);
+	
+	public String getBackupSharedQuery(int queryId);
 
 	/**
 	 * 
