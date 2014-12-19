@@ -44,6 +44,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
+import de.uniol.inf.is.odysseus.core.infoservice.InfoService;
+import de.uniol.inf.is.odysseus.core.infoservice.InfoServiceFactory;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
@@ -61,8 +63,10 @@ import de.uniol.inf.is.odysseus.database.physicaloperator.access.IDataTypeMappin
 public class DatabaseSinkPO extends AbstractSink<Tuple<ITimeInterval>>
 		implements ActionListener {
 
-	private static Logger logger = LoggerFactory
+	final private static Logger logger = LoggerFactory
 			.getLogger(DatabaseSinkPO.class);
+	final private static InfoService INFO = InfoServiceFactory
+			.getInfoService(DatabaseSinkPO.class);
 
 	private Connection jdbcConnection;
 	private PreparedStatement preparedStatement;
@@ -230,28 +234,31 @@ public class DatabaseSinkPO extends AbstractSink<Tuple<ITimeInterval>>
 				// logger.debug("Inserted "+count+" rows in database");
 			} catch (SQLException e) {
 				e.printStackTrace();
+				INFO.error("ERROR WRTING TO DATABASE "+preparedStatement,e.getNextException());
 			}
 		}
 	}
 
-	public synchronized void writeToDB() throws SQLException {
+	public synchronized void writeToDB() {
+		int count = 0;
 		if (timer != null) {
 			timer.restart();
 		}
-		int count = this.preparedStatement.executeBatch().length;
+		try{
+		count = this.preparedStatement.executeBatch().length;
 		this.jdbcConnection.commit();
+		}catch(SQLException e){
+			e.printStackTrace();
+			INFO.error("ERROR WRTING TO DATABASE "+preparedStatement,e.getNextException());
+		}
 		logger.debug("Inserted " + count + " rows in database");
 	}
 
 	@Override
 	protected void process_close() {
-		try {
-			writeToDB();
-			if (timer != null) {
-				timer.stop();
-			}
-		} catch (SQLException e) {
-			e.printStackTrace();
+		writeToDB();
+		if (timer != null) {
+			timer.stop();
 		}
 	}
 
@@ -262,11 +269,7 @@ public class DatabaseSinkPO extends AbstractSink<Tuple<ITimeInterval>>
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		try {
-			writeToDB();
-		} catch (SQLException e1) {
-			e1.printStackTrace();
-		}
+		writeToDB();
 	}
 
 }
