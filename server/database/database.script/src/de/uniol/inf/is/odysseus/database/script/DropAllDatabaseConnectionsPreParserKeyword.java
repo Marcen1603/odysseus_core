@@ -27,7 +27,7 @@ public class DropAllDatabaseConnectionsPreParserKeyword extends
 	public List<IExecutorCommand> execute(Map<String, Object> variables,
 			String parameter, ISession caller, Context context)
 			throws OdysseusScriptException {
-		DatabaseConnectionDictionary.getInstance().removeAllConnections();
+		DatabaseConnectionDictionary.removeAllConnections();
 		return null;
 	}
 

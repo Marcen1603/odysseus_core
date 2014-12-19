@@ -45,88 +45,76 @@ import java.util.Set;
 public class DatabaseConnectionDictionary {
 	
 	
-
-	
-	private static DatabaseConnectionDictionary instance;
-	
-	private DatabaseConnectionDictionary(){
-//		initMappings();
+	public DatabaseConnectionDictionary(){
 	}
 	
-	public static synchronized DatabaseConnectionDictionary getInstance(){
-		if(instance == null){
-			instance = new DatabaseConnectionDictionary();
-		}
-		return instance;
-	}
 
-	private HashMap<String, IDatabaseConnectionFactory> factories = new HashMap<String, IDatabaseConnectionFactory>();
-	private Map<String, IDatabaseConnection> connections = new HashMap<String, IDatabaseConnection>();
-	private List<IDatabaseConnectionDictionaryListener> listeners = new ArrayList<IDatabaseConnectionDictionaryListener>();
+	static private HashMap<String, IDatabaseConnectionFactory> factories = new HashMap<String, IDatabaseConnectionFactory>();
+	static private Map<String, IDatabaseConnection> connections = new HashMap<String, IDatabaseConnection>();
+	static private List<IDatabaseConnectionDictionaryListener> listeners = new ArrayList<IDatabaseConnectionDictionaryListener>();
 	
 
-	public IDatabaseConnectionFactory getFactory(String dbms){
+	static public IDatabaseConnectionFactory getFactory(String dbms){
 		dbms = dbms.toUpperCase();
-		return this.factories.get(dbms);		
+		return factories.get(dbms);		
 	}
 
-	public void addFactory(String dbms, IDatabaseConnectionFactory factory) {
-		dbms = dbms.toUpperCase();
-		this.factories.put(dbms, factory);
-		this.fireChangeEvent();
+	public void add(IDatabaseConnectionFactory factory) {
+		factories.put(factory.getDatabase().toUpperCase(), factory);
+		fireChangeEvent();
 	}
 	
-	public void removeFactory(String dbms){
-		dbms = dbms.toUpperCase();
-		this.factories.remove(dbms);
-		this.fireChangeEvent();
+	public void removeFactory(IDatabaseConnectionFactory factory){
+
+		factories.remove(factory.getDatabase().toUpperCase());
+		fireChangeEvent();
 	}
 	
-	public Set<String> getConnectionFactoryNames(){
-		return this.factories.keySet();
+	static public Set<String> getConnectionFactoryNames(){
+		return factories.keySet();
 	}
 
-	public Map<String, IDatabaseConnection> getConnections() {
+	static public Map<String, IDatabaseConnection> getConnections() {
 		return connections;
 	}
 
-	public void addConnection(String name, IDatabaseConnection connection){		
+	static public void addConnection(String name, IDatabaseConnection connection){		
 		name = name.toUpperCase();
-		this.connections.put(name, connection);
-		this.fireChangeEvent();
+		connections.put(name, connection);
+		fireChangeEvent();
 	}
 	
-	public void removeConnection(String name){
+	static public void removeConnection(String name){
 		name = name.toUpperCase();
-		this.connections.remove(name);
-		this.fireChangeEvent();
+		connections.remove(name);
+		fireChangeEvent();
 	}
 	
-	public void removeAllConnections(){
-		this.connections.clear();
-		this.fireChangeEvent();
+	static public void removeAllConnections(){
+		connections.clear();
+		fireChangeEvent();
 	}
 	
-	public boolean isConnectionExisting(String name){
+	static public boolean isConnectionExisting(String name){
 		name = name.toUpperCase();
-		return this.connections.containsKey(name);
+		return connections.containsKey(name);
 	}
 	
-	public IDatabaseConnection getDatabaseConnection(String name){
+	static public IDatabaseConnection getDatabaseConnection(String name){
 		name = name.toUpperCase();
-		return this.connections.get(name);
+		return connections.get(name);
 	}
 	
-	public void addListener(IDatabaseConnectionDictionaryListener listener){
-		this.listeners .add(listener);
+	static public void addListener(IDatabaseConnectionDictionaryListener listener){
+		listeners .add(listener);
 	}
 	
-	public void removeListener(IDatabaseConnectionDictionaryListener listener){
-		this.listeners.remove(listener);
+	static public void removeListener(IDatabaseConnectionDictionaryListener listener){
+		listeners.remove(listener);
 	}
 	
-	private void fireChangeEvent(){
-		for(IDatabaseConnectionDictionaryListener listener : this.listeners){
+	static private void fireChangeEvent(){
+		for(IDatabaseConnectionDictionaryListener listener : listeners){
 			listener.databaseConnectionDictionaryChanged();
 		}
 	}

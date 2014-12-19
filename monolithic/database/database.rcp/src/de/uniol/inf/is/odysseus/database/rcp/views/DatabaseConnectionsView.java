@@ -63,7 +63,7 @@ public class DatabaseConnectionsView extends ViewPart implements IDatabaseConnec
 	 */
 	@Override
     public void createPartControl(Composite parent) {
-		DatabaseConnectionDictionary.getInstance().addListener(this);
+		DatabaseConnectionDictionary.addListener(this);
 		viewer = new TreeViewer(parent, SWT.V_SCROLL | SWT.H_SCROLL | SWT.SINGLE);
 		viewer.setContentProvider(new DatabaseConnectionsViewContentProvider());
 		viewer.setLabelProvider(new DatabaseConnectionsViewLabelProvider());		
@@ -86,7 +86,7 @@ public class DatabaseConnectionsView extends ViewPart implements IDatabaseConnec
 	
 	@Override
 	public void dispose() {
-		DatabaseConnectionDictionary.getInstance().removeListener(this);
+		DatabaseConnectionDictionary.removeListener(this);
 		super.dispose();
 	}
 

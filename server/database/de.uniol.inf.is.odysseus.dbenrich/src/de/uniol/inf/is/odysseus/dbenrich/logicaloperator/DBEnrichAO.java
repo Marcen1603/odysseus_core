@@ -65,7 +65,7 @@ public class DBEnrichAO extends AbstractEnrichAO {
 		 */
 
 		IDatabaseConnection iDatabaseConnection = DatabaseConnectionDictionary
-				.getInstance().getDatabaseConnection(connectionName);
+				.getDatabaseConnection(connectionName);
 		if (iDatabaseConnection == null) {
 			throw new RuntimeException("Could not find the connection '"
 					+ connectionName + "'");

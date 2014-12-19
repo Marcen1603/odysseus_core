@@ -7,4 +7,5 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Require-Bundle: de.uniol.inf.is.odysseus.database;bundle-version="1.0.0"
 Bundle-ClassPath: lib/postgresql-9.1-901.jdbc4.jar,
  .
-Service-Component: OSGI-INF/postgresssource.xml
+Service-Component: OSGI-INF/postgresssource.xml,
+ OSGI-INF/ConnectionFactory.xml

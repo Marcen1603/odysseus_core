@@ -10,8 +10,8 @@ import java.util.Map;
 
 import windscadaanwendung.ca.WKA;
 import windscadaanwendung.ca.WindFarm;
-import de.uniol.inf.is.odysseus.database.connection.DatabaseConnection;
-import de.uniol.inf.is.odysseus.database.drivers.MySQLConnectionFactory;
+import de.uniol.inf.is.odysseus.database.connection.DatabaseConnectionDictionary;
+import de.uniol.inf.is.odysseus.database.connection.IDatabaseConnection;
 
 /**
  * This class manages the Connection to the Config-Database which contains the
@@ -36,7 +36,7 @@ public class DBConnectionCA {
 			credentials = DBConnectionCredentials
 					.load("config/CADBConnCredentials.txt");
 			credentials.get("server");
-			DatabaseConnection dbconn = (DatabaseConnection) (new MySQLConnectionFactory())
+			IDatabaseConnection dbconn = (DatabaseConnectionDictionary.getFactory("MYSQL"))
 					.createConnection(credentials.get("server"),
 							Integer.parseInt(credentials.get("port")),
 							credentials.get("database"),

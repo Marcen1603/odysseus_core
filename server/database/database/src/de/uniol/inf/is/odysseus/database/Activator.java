@@ -18,11 +18,6 @@ package de.uniol.inf.is.odysseus.database;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 
-import de.uniol.inf.is.odysseus.database.connection.DatabaseConnectionDictionary;
-import de.uniol.inf.is.odysseus.database.drivers.MySQLConnectionFactory;
-import de.uniol.inf.is.odysseus.database.drivers.OracleConnectionFactory;
-import de.uniol.inf.is.odysseus.database.drivers.PostgresConnectionFactory;
-
 public class Activator implements BundleActivator {
 
 	private static BundleContext context;
@@ -37,11 +32,7 @@ public class Activator implements BundleActivator {
 	 */
 	@Override
     public void start(BundleContext bundleContext) throws Exception {
-		Activator.context = bundleContext;
-		DatabaseConnectionDictionary.getInstance().addFactory("mysql", new MySQLConnectionFactory());
-		DatabaseConnectionDictionary.getInstance().addFactory("postgresql", new PostgresConnectionFactory());
-		DatabaseConnectionDictionary.getInstance().addFactory("oracle", new OracleConnectionFactory());
-		
+		Activator.context = bundleContext;		
 	}
 
 	/*
@@ -51,8 +42,5 @@ public class Activator implements BundleActivator {
 	@Override
     public void stop(BundleContext bundleContext) throws Exception {
 		Activator.context = null;
-		DatabaseConnectionDictionary.getInstance().removeFactory("mysql");
-		DatabaseConnectionDictionary.getInstance().removeFactory("postgresql");
-		DatabaseConnectionDictionary.getInstance().removeFactory("oracle");
 	}
 }

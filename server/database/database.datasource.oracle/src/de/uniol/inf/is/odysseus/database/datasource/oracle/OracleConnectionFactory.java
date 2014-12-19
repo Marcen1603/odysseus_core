@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.database.drivers;
+package de.uniol.inf.is.odysseus.database.datasource.oracle;
 
 import java.util.Properties;
 
@@ -13,6 +13,11 @@ public class OracleConnectionFactory extends AbstractDatabaseConnectionFactory {
 		Properties connectionProps = getCredentials(user, password);
 		String connString = "jdbc:oracle:thin:@" + server + ":" + port + ":" + database;
 		return new DatabaseConnection(connString, connectionProps);
+	}
+	
+	@Override
+	public String getDatabase() {
+		return "oracle";
 	}
 
 }

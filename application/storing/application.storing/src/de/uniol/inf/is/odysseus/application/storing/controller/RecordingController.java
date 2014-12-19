@@ -160,7 +160,7 @@ public class RecordingController {
 			stopPlaying(name);
 		}
 		if (dropTable) {
-			IDatabaseConnection connection = DatabaseConnectionDictionary.getInstance().getDatabaseConnection(record.getDatabaseConnection());
+			IDatabaseConnection connection = DatabaseConnectionDictionary.getDatabaseConnection(record.getDatabaseConnection());
 			if (connection != null) {
 				try {
 					if (connection.tableExists(record.getTableName())) {

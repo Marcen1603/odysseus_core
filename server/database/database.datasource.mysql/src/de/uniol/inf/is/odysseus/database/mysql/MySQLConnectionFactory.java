@@ -28,7 +28,7 @@
  * limitations under the License.
  */
 
-package de.uniol.inf.is.odysseus.database.drivers;
+package de.uniol.inf.is.odysseus.database.mysql;
 
 import java.util.Properties;
 
@@ -55,4 +55,8 @@ public class MySQLConnectionFactory extends AbstractDatabaseConnectionFactory {
 		return new DatabaseConnection(connString, connectionProps);
 	}
 
+	@Override
+	public String getDatabase() {
+		return "mysql";
+	}
 }

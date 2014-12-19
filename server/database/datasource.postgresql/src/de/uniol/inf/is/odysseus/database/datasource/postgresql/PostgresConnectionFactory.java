@@ -28,7 +28,7 @@
   * limitations under the License.
   */
 
-package de.uniol.inf.is.odysseus.database.drivers;
+package de.uniol.inf.is.odysseus.database.datasource.postgresql;
 
 import java.util.Properties;
 
@@ -48,6 +48,11 @@ public class PostgresConnectionFactory extends AbstractDatabaseConnectionFactory
 		Properties connectionProps = getCredentials(user, password);
 		String connString = "jdbc:postgresql://" + server + ":" + port + "/" + database;		
 		return new DatabaseConnection(connString, connectionProps);		
+	}
+	
+	@Override
+	public String getDatabase() {
+		return "postgresql";
 	}
 
 }

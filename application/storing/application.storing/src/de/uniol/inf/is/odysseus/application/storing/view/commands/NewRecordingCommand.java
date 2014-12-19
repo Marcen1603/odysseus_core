@@ -56,7 +56,7 @@ public class NewRecordingCommand extends AbstractRecordingCommand {
 		Shell shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
 		ISession user = OdysseusRCPPlugIn.getActiveSession();
 
-		if (DatabaseConnectionDictionary.getInstance().getConnections().isEmpty()) {
+		if (DatabaseConnectionDictionary.getConnections().isEmpty()) {
 			MessageBox mb = new MessageBox(shell);
 			mb.setText("No database found");
 			mb.setMessage("There are no database connections!\nCreate one first!");

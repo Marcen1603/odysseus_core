@@ -38,5 +38,6 @@ package de.uniol.inf.is.odysseus.database.connection;
  */
 public interface IDatabaseConnectionFactory {
 	
-	public IDatabaseConnection createConnection(String server, int port, String database, String user, String password);	
+	public IDatabaseConnection createConnection(String server, int port, String database, String user, String password);
+	public String getDatabase();
 }

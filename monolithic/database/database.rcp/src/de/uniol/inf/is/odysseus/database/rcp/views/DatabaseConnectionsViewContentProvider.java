@@ -71,7 +71,7 @@ public class DatabaseConnectionsViewContentProvider implements ITreeContentProvi
 
 		if (parentElement instanceof IViewSite) {
 			List<Object> objects = new ArrayList<Object>();
-			for (Entry<String, IDatabaseConnection> c : DatabaseConnectionDictionary.getInstance().getConnections().entrySet()) {
+			for (Entry<String, IDatabaseConnection> c : DatabaseConnectionDictionary.getConnections().entrySet()) {
 				objects.add(new DatabaseConnectionViewEntry(c.getKey(), c.getValue()));
 			}
 			return objects.toArray();

@@ -193,14 +193,14 @@ public abstract class AbstractDatabaseOperator extends AbstractLogicalOperator {
 	}
 
 	private void createWithReusingConnection() {
-		this.databaseconnection = DatabaseConnectionDictionary.getInstance().getDatabaseConnection(connectionName);
+		this.databaseconnection = DatabaseConnectionDictionary.getDatabaseConnection(connectionName);
 	}
 
 	@Override
 	public boolean isValid() {
 		boolean isValid = true;
 		if (!this.connectionName.isEmpty()) {
-			if (DatabaseConnectionDictionary.getInstance().isConnectionExisting(connectionName)) {
+			if (DatabaseConnectionDictionary.isConnectionExisting(connectionName)) {
 				if (!this.host.isEmpty()) {
 					logger.warn("Host is ignored when existing connection is used!");
 				}
@@ -240,7 +240,7 @@ public abstract class AbstractDatabaseOperator extends AbstractLogicalOperator {
 					isValid = false;
 					addError("type must be set");
 				} else {
-					Set<String> names = DatabaseConnectionDictionary.getInstance().getConnectionFactoryNames();
+					Set<String> names = DatabaseConnectionDictionary.getConnectionFactoryNames();
 					if (!names.contains(this.type)) {
 						isValid = false;
 						addError("type must be a valid value, one of: " + names);
@@ -256,7 +256,7 @@ public abstract class AbstractDatabaseOperator extends AbstractLogicalOperator {
 				
 			}
 			if(!this.lazyConnectionCheck){
-				IDatabaseConnection connection = DatabaseConnectionDictionary.getInstance().getDatabaseConnection(connectionName);
+				IDatabaseConnection connection = DatabaseConnectionDictionary.getDatabaseConnection(connectionName);
 				try {
 					connection.checkProperties();
 				} catch (SQLException e) {

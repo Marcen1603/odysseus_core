@@ -16,8 +16,8 @@ import windscadaanwendung.hd.HitWKAData;
 import windscadaanwendung.hd.HitWindFarmData;
 import windscadaanwendung.hd.ae.AEEntry;
 import windscadaanwendung.hd.ae.HitAEData;
-import de.uniol.inf.is.odysseus.database.connection.DatabaseConnection;
-import de.uniol.inf.is.odysseus.database.drivers.MySQLConnectionFactory;
+import de.uniol.inf.is.odysseus.database.connection.DatabaseConnectionDictionary;
+import de.uniol.inf.is.odysseus.database.connection.IDatabaseConnection;
 
 /**
  * This class manages the Connection to the Database which contains the
@@ -42,7 +42,7 @@ public class DBConnectionHD {
 			credentials = DBConnectionCredentials
 					.load("config/HDDBConnCredentials.txt");
 			credentials.get("server");
-			DatabaseConnection dbconn = (DatabaseConnection) (new MySQLConnectionFactory())
+			IDatabaseConnection dbconn = (DatabaseConnectionDictionary.getFactory("MYSQL"))
 					.createConnection(credentials.get("server"),
 							Integer.parseInt(credentials.get("port")),
 							credentials.get("database"),

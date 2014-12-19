@@ -136,7 +136,7 @@ public class StartNewRecordingDialog extends TitleAreaDialog {
 		label3.setText("Use Database:");
 
 		comboDropDownDatabases = new Combo(parent, SWT.DROP_DOWN | SWT.BORDER | SWT.READ_ONLY);
-		for (String s : DatabaseConnectionDictionary.getInstance().getConnections().keySet()) {
+		for (String s : DatabaseConnectionDictionary.getConnections().keySet()) {
 			comboDropDownDatabases.add(s);
 		}
 
@@ -286,7 +286,7 @@ public class StartNewRecordingDialog extends TitleAreaDialog {
 		}
 		if (comboDropDownDatabases.getSelectionIndex() != -1) {
 			String db = comboDropDownDatabases.getItem(comboDropDownDatabases.getSelectionIndex());
-			IDatabaseConnection con = DatabaseConnectionDictionary.getInstance().getDatabaseConnection(db);
+			IDatabaseConnection con = DatabaseConnectionDictionary.getDatabaseConnection(db);
 			String currentTableName = tableNameBox.getText();
 			if (sameAsRecording.getSelection()) {
 				currentTableName = nameOfTheRecordingBox.getText();

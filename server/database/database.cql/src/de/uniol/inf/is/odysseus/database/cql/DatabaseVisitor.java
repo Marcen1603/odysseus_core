@@ -78,7 +78,7 @@ public class DatabaseVisitor extends CQLParser {
 	@Override
 	public Object visit(ASTDropDatabaseConnection node, Object data) throws QueryParseException {	
 		String connectionName = ((ASTIdentifier) node.jjtGetChild(0)).getName();
-		DatabaseConnectionDictionary.getInstance().removeConnection(connectionName);
+		DatabaseConnectionDictionary.removeConnection(connectionName);
 		return null;
 	}
 
@@ -184,7 +184,7 @@ public class DatabaseVisitor extends CQLParser {
 	@Override
 	public Object visit(ASTCreateDatabaseConnection node, Object data) throws QueryParseException {
 		String connectionName = ((ASTIdentifier) node.jjtGetChild(0)).getName();
-		if(DatabaseConnectionDictionary.getInstance().isConnectionExisting(connectionName)){
+		if(DatabaseConnectionDictionary.isConnectionExisting(connectionName)){
 			throw new QueryParseException("Connection with name \""+connectionName+"\" already exists!");
 		}
 		try {
@@ -209,18 +209,18 @@ public class DatabaseVisitor extends CQLParser {
 					}
 				}
 				
-				IDatabaseConnectionFactory factory = DatabaseConnectionDictionary.getInstance().getFactory(dbms);
+				IDatabaseConnectionFactory factory = DatabaseConnectionDictionary.getFactory(dbms);
 				if (factory == null) {
 					String currentInstalled = "";
 					String sep = "";
-					for (String n : DatabaseConnectionDictionary.getInstance().getConnectionFactoryNames()) {
+					for (String n : DatabaseConnectionDictionary.getConnectionFactoryNames()) {
 						currentInstalled = currentInstalled + sep + n;
 						sep = ", ";
 					}
 					throw new QueryParseException("DBMS \"" + dbms + "\" not supported! Currently available: " + currentInstalled);
 				}				
 				IDatabaseConnection con = factory.createConnection(host, port, dbname, user, pass);
-				DatabaseConnectionDictionary.getInstance().addConnection(connectionName, con);				
+				DatabaseConnectionDictionary.addConnection(connectionName, con);				
 			}
 			// otherwise, we have a JDBC based connection
 			if (node.jjtGetChild(1) instanceof ASTJDBCConnection) {
@@ -236,7 +236,7 @@ public class DatabaseVisitor extends CQLParser {
 					props.setProperty("password", pass);
 				}				
 				IDatabaseConnection connection = new DatabaseConnection(str, props);
-				DatabaseConnectionDictionary.getInstance().addConnection(connectionName, connection);
+				DatabaseConnectionDictionary.addConnection(connectionName, connection);
 			}
 		} catch (Exception e) {
 			throw new QueryParseException("Error creating connection",e);
@@ -245,7 +245,7 @@ public class DatabaseVisitor extends CQLParser {
 		// is check option used?
 		if(node.jjtGetChild(node.jjtGetNumChildren()-1) instanceof ASTDatabaseConnectionCheck){
 			// check options
-			IDatabaseConnection con = DatabaseConnectionDictionary.getInstance().getDatabaseConnection(connectionName);
+			IDatabaseConnection con = DatabaseConnectionDictionary.getDatabaseConnection(connectionName);
 			try {
 				con.checkProperties();
 			} catch (SQLException e) {				
