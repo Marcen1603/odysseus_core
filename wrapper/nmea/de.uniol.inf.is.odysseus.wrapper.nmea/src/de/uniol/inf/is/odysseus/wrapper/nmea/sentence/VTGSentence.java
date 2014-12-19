@@ -76,6 +76,26 @@ public class VTGSentence extends Sentence{
 		super(nmea);
 	}
 	
+	/**
+	 * Constructor for creating a message from a map. Reverse function of fillMap()
+	 * 
+	 * @param source
+	 *            Map containing specific keys.
+	 */		
+	public VTGSentence(Map<String, Object> source)	
+	{
+		super(source, FIELD_COUNT);
+
+		if (source.containsKey("headingTrack")) headingTrack = (double) source.get("headingTrack");
+		if (source.containsKey("trackReference")) trackReference = ParseUtils.parseReference((String) source.get("trackReference"));
+		if (source.containsKey("headingMagnetic")) headingMagnetic = (double) source.get("headingMagnetic");
+		if (source.containsKey("magneticReference")) magneticReference = ParseUtils.parseReference((String) source.get("magneticReference"));
+		if (source.containsKey("speedKnots")) speedKnots = (double) source.get("speedKnots");
+		if (source.containsKey("speedKnotsUnits")) speedKnotsUnits = ParseUtils.parseUnit((String) source.get("speedKnotsUnits"));
+		if (source.containsKey("speedKilometers")) speedKilometers = (double) source.get("speedKilometers");
+		if (source.containsKey("speedKilometersUnits")) speedKilometersUnits = ParseUtils.parseUnit((String) source.get("speedKilometersUnits"));
+	}				
+	
 	@Override
 	protected void decode() {
 		int index = 0;

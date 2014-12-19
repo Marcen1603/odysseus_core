@@ -90,6 +90,30 @@ public class RMCSentence extends Sentence {
 		super(BEGIN_CHAR, DEFAULT_TALKER, SENTENCE_ID, FIELD_COUNT);
 	}
 
+	/**
+	 * Constructor for creating a message from a map. Reverse function of fillMap()
+	 * 
+	 * @param source
+	 *            Map containing specific keys.
+	 */		
+	public RMCSentence(Map<String, Object> source)	
+	{
+		super(source, FIELD_COUNT);
+		
+		if (source.containsKey("time"))	time = ParseUtils.parseTime((String) source.get("time"));
+		if (source.containsKey("status")) status = ParseUtils.parseStatus((String) source.get("status"));
+		if (source.containsKey("latitude")) latitude = ParseUtils.parseCoordinate((String) source.get("latitude"));
+		if (source.containsKey("latitudeHem")) latitudeHem = ParseUtils.parseHemisphere((String) source.get("latitudeHem"));
+		if (source.containsKey("longitude")) longitude = ParseUtils.parseCoordinate((String) source.get("longitude"));
+		if (source.containsKey("longitudeHem")) longitudeHem = ParseUtils.parseHemisphere((String) source.get("longitudeHem"));
+		if (source.containsKey("speedOverGround")) speedOverGround = (double) source.get("speedOverGround");		
+		if (source.containsKey("date")) date = ParseUtils.parseDate((String) source.get("date"));
+		if (source.containsKey("magneticHem")) magneticHem = ParseUtils.parseHemisphere((String) source.get("magneticHem"));
+		if (source.containsKey("signalIntegrity")) signalIntegrity = ParseUtils.parseSignalIntegrity((String) source.get("signalIntegrity"));		
+		if (source.containsKey("trackMadeGood")) trackMadeGood = (double) source.get("trackMadeGood");
+		if (source.containsKey("magneticVariation")) magneticVariation = (double) source.get("magneticVariation");		
+	}				
+	
 	@Override
 	protected void decode() {
 		int index = 0;

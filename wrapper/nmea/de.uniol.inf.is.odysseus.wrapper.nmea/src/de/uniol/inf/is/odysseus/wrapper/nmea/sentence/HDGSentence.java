@@ -65,6 +65,23 @@ public class HDGSentence extends Sentence {
 	public HDGSentence(String nmea) {
 		super(nmea);
 	}
+	
+	/**
+	 * Constructor for creating a message from a map. Reverse function of fillMap()
+	 * 
+	 * @param source
+	 *            Map containing specific keys.
+	 */		
+	public HDGSentence(Map<String, Object> source)	
+	{
+		super(source, FIELD_COUNT);
+		
+		if (source.containsKey("heading")) heading = (double) source.get("heading");
+		if (source.containsKey("deviation")) deviation = (double) source.get("deviation");		
+		if (source.containsKey("variation")) variation = (double) source.get("variation");
+		if (source.containsKey("deviationDir")) deviationDir = ParseUtils.parseHemisphere((String) source.get("deviationDir"));
+		if (source.containsKey("variationDir")) variationDir = ParseUtils.parseHemisphere((String) source.get("variationDir"));
+	}				
 
 	@Override
 	protected void decode() {

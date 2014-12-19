@@ -59,6 +59,20 @@ public class MTWSentence extends Sentence{
 		super(nmea);
 	}
 	
+	/**
+	 * Constructor for creating a message from a map. Reverse function of fillMap()
+	 * 
+	 * @param source
+	 *            Map containing specific keys.
+	 */		
+	public MTWSentence(Map<String, Object> source)	
+	{
+		super(source, FIELD_COUNT);
+		
+		if (source.containsKey("unit")) unit = ParseUtils.parseTemperatureUnit((String) source.get("unit"));
+		if (source.containsKey("degrees")) degrees = (double) source.get("degrees");
+	}				
+	
 	@Override
 	protected void decode() {
 		int index = 0;

@@ -83,6 +83,28 @@ public class OSDSentence extends Sentence {
 		super(nmea);
 	}
 
+	/**
+	 * Constructor for creating a message from a map. Reverse function of fillMap()
+	 * 
+	 * @param source
+	 *            Map containing specific keys.
+	 */		
+	public OSDSentence(Map<String, Object> source)	
+	{
+		super(source, FIELD_COUNT);
+		
+		if (source.containsKey("heading")) heading = (double) source.get("heading");		
+		if (source.containsKey("course")) course = (double) source.get("course");
+		if (source.containsKey("vesselSpeed")) vesselSpeed = (double) source.get("vesselSpeed");
+		if (source.containsKey("vesselSet")) vesselSet = (double) source.get("vesselSet");
+		if (source.containsKey("vesselDrift")) vesselDrift = (double) source.get("vesselDrift");		
+		if (source.containsKey("status")) status = ParseUtils.parseStatus((String) source.get("status"));
+		if (source.containsKey("courseReference")) courseReference = ParseUtils.parseReference((String) source.get("courseReference"));		
+		if (source.containsKey("vesselSpeedReference"))	vesselSpeedReference = ParseUtils.parseReference((String) source.get("vesselSpeedReference"));		
+		if (source.containsKey("speedKnotsUnits")) speedKnotsUnits = ParseUtils.parseUnit((String) source.get("speedKnotsUnits"));
+		if (source.containsKey("signalIntegrity")) signalIntegrity = ParseUtils.parseSignalIntegrity((String) source.get("signalIntegrity"));
+	}				
+	
 	@Override
 	protected void decode() {
 		int index = 0;

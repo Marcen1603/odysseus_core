@@ -73,6 +73,24 @@ public class GLLSentence extends Sentence {
 		super(nmea);
 	}
 
+	/**
+	 * Constructor for creating a message from a map. Reverse function of fillMap()
+	 * 
+	 * @param source
+	 *            Map containing specific keys.
+	 */	
+	public GLLSentence(Map<String, Object> source)	
+	{
+		super(source, FIELD_COUNT);
+		
+		if (source.containsKey("time")) time = ParseUtils.parseTime((String) source.get("time"));
+		if (source.containsKey("latitudeHem")) latitudeHem = ParseUtils.parseHemisphere((String) source.get("latitudeHem"));
+		if (source.containsKey("longitudeHem")) longitudeHem = ParseUtils.parseHemisphere((String) source.get("longitudeHem"));
+		if (source.containsKey("status")) status = ParseUtils.parseStatus((String) source.get("status"));
+		if (source.containsKey("latitude"))	latitude = (Double) source.get("latitude");
+		if (source.containsKey("longitude")) longitude = (Double) source.get("longitude");		
+	}		
+	
 	@Override
 	protected void decode() {
 		int index = 0;

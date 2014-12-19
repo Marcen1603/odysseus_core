@@ -72,6 +72,24 @@ public class RPMSentence extends Sentence{
 		super(nmea);
 	}
 	
+	/**
+	 * Constructor for creating a message from a map. Reverse function of fillMap()
+	 * 
+	 * @param sourceMap
+	 *            Map containing specific keys.
+	 */		
+	public RPMSentence(Map<String, Object> sourceMap)	
+	{
+		super(sourceMap, FIELD_COUNT);
+		
+		if (sourceMap.containsKey("source")) source = ParseUtils.parseSource((String) sourceMap.get("source"));
+		if (sourceMap.containsKey("number")) number = (int) sourceMap.get("number");
+		if (sourceMap.containsKey("speed")) speed = (double) sourceMap.get("speed");
+		if (sourceMap.containsKey("pitch")) pitch = (double) sourceMap.get("pitch");
+		if (sourceMap.containsKey("status")) status = ParseUtils.parseStatus((String) sourceMap.get("status"));	
+		if (sourceMap.containsKey("signalIntegrity")) signalIntegrity = ParseUtils.parseSignalIntegrity((String) sourceMap.get("signalIntegrity"));	
+	}				
+	
 	@Override
 	protected void decode() {
 		int index = 0;

@@ -69,6 +69,23 @@ public class RSASentence extends Sentence{
 		super(nmea);
 	}
 	
+	/**
+	 * Constructor for creating a message from a map. Reverse function of fillMap()
+	 * 
+	 * @param source
+	 *            Map containing specific keys.
+	 */		
+	public RSASentence(Map<String, Object> source)	
+	{
+		super(source, FIELD_COUNT);
+		
+		if (source.containsKey("starboardside")) starboardside = (double) source.get("starboardside");
+		if (source.containsKey("sbStatus")) sbStatus = ParseUtils.parseStatus((String) source.get("sbStatus"));
+		if (source.containsKey("portside")) portside = (double) source.get("portside");
+		if (source.containsKey("pbStatus")) pbStatus = ParseUtils.parseStatus((String) source.get("pbStatus"));
+		if (source.containsKey("signalIntegrity")) signalIntegrity = ParseUtils.parseSignalIntegrity((String) source.get("signalIntegrity"));	
+	}				
+	
 	@Override
 	protected void decode() {
 		int index = 0;

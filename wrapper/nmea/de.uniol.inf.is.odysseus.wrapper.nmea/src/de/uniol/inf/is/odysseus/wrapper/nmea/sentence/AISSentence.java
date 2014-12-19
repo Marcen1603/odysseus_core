@@ -75,6 +75,26 @@ public class AISSentence extends Sentence{
 	public AISSentence(String nmea) {
 		super(nmea);
 	}
+	
+	/**
+	 * Constructor for creating a message from a map. Reverse function of fillMap()
+	 * 
+	 * @param source
+	 *            Map containing specific keys.
+	 */		
+	public AISSentence(Map<String, Object> source)	
+	{
+		super(source, FIELD_COUNT);
+		
+		if (source.containsKey("fragmentsCount")) fragmentsCount = (int) source.get("fragmentsCount");
+		if (source.containsKey("fragmentId")) fragmentId = (int) source.get("fragmentId");
+		if (source.containsKey("messageId")) messageId = (int) source.get("messageId");
+		if (source.containsKey("channel")) channel = (String) source.get("channel");
+		if (source.containsKey("message")) message = (String) source.get("message");
+		if (source.containsKey("fillBits")) fillBits = (int) source.get("fillBits");
+	}		
+	
+	
 	@Override
 	protected void decode() {
 		int index = 0;

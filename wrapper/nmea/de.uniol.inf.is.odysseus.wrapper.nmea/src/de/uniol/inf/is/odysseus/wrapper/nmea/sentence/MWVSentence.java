@@ -70,6 +70,23 @@ public class MWVSentence extends Sentence{
 		super(nmea);
 	}
 	
+	/**
+	 * Constructor for creating a message from a map. Reverse function of fillMap()
+	 * 
+	 * @param source
+	 *            Map containing specific keys.
+	 */		
+	public MWVSentence(Map<String, Object> source)	
+	{
+		super(source, FIELD_COUNT);
+		
+		if (source.containsKey("angle")) angle = (double) source.get("angle");
+		if (source.containsKey("speed")) speed = (double) source.get("speed");
+		if (source.containsKey("reference")) reference = ParseUtils.parseReference((String) source.get("reference"));		
+		if (source.containsKey("speedUnit")) speedUnit = ParseUtils.parseSpeedUnit((String) source.get("speedUnit"));
+		if (source.containsKey("status")) status = ParseUtils.parseStatus((String) source.get("status"));			
+	}				
+	
 	@Override
 	protected void decode() {
 		int index = 0;

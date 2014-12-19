@@ -58,6 +58,21 @@ public class HDTSentence extends Sentence{
 	public HDTSentence(String nmea) {
 		super(nmea);
 	}
+	
+	/**
+	 * Constructor for creating a message from a map. Reverse function of fillMap()
+	 * 
+	 * @param source
+	 *            Map containing specific keys.
+	 */		
+	public HDTSentence(Map<String, Object> source)	
+	{
+		super(source, FIELD_COUNT);
+				
+		if (source.containsKey("degrees")) degrees = (double) source.get("degrees");
+		if (source.containsKey("reference")) reference = ParseUtils.parseReference((String) source.get("reference"));
+	}				
+	
 	@Override
 	protected void decode() {
 		int index = 0;

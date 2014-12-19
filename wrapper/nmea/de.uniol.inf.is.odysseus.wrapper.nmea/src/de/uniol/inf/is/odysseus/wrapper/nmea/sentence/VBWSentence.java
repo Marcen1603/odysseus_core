@@ -69,6 +69,24 @@ public class VBWSentence extends Sentence{
 		super(nmea);
 	}
 	
+	/**
+	 * Constructor for creating a message from a map. Reverse function of fillMap()
+	 * 
+	 * @param source
+	 *            Map containing specific keys.
+	 */		
+	public VBWSentence(Map<String, Object> source)	
+	{
+		super(source, FIELD_COUNT);
+		
+		if (source.containsKey("waterSpeedLongitudinal")) waterSpeedLongitudinal = (double) source.get("waterSpeedLongitudinal");
+		if (source.containsKey("waterSpeedTransverse")) waterSpeedTransverse = (double) source.get("waterSpeedTransverse");		
+		if (source.containsKey("statusWaterSpeed")) statusWaterSpeed = ParseUtils.parseStatus((String) source.get("statusWaterSpeed"));
+		if (source.containsKey("groundSpeedLongitudinal")) groundSpeedLongitudinal = (double) source.get("groundSpeedLongitudinal");
+		if (source.containsKey("groundSpeedTransverse")) groundSpeedTransverse = (double) source.get("groundSpeedTransverse");
+		if (source.containsKey("statusGroundSpeed")) statusGroundSpeed = ParseUtils.parseStatus((String) source.get("statusGroundSpeed"));
+	}				
+	
 	@Override
 	protected void decode() {
 		int index = 0;

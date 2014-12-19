@@ -102,6 +102,33 @@ public class TTMSentence extends Sentence {
 		super(nmea);
 	}
 
+	/**
+	 * Constructor for creating a message from a map. Reverse function of fillMap()
+	 * 
+	 * @param source
+	 *            Map containing specific keys.
+	 */		
+	public TTMSentence(Map<String, Object> source)	
+	{
+		super(source, FIELD_COUNT);
+		
+		if (source.containsKey("targetNumber")) targetNumber = ParseUtils.parseTargetNumber((String) source.get("targetNumber"));
+		if (source.containsKey("targetDistance")) targetDistance = (double) source.get("targetDistance");
+		if (source.containsKey("bearing")) bearing = (double) source.get("bearing");
+		if (source.containsKey("bearingUnit")) bearingUnit = ParseUtils.parseReference((String) source.get("bearingUnit"));
+		if (source.containsKey("targetSpeed")) targetSpeed = (double) source.get("targetSpeed");
+		if (source.containsKey("targetCourse")) targetCourse = (double) source.get("targetCourse");
+		if (source.containsKey("courseUnit")) courseUnit = ParseUtils.parseReference((String) source.get("courseUnit"));
+		if (source.containsKey("closestPointOfApproach")) closestPointOfApproach = (double) source.get("closestPointOfApproach");
+		if (source.containsKey("timeUntilClosestPoint")) timeUntilClosestPoint = (double) source.get("timeUntilClosestPoint");
+		if (source.containsKey("distanceUnit")) distanceUnit = ParseUtils.parseUnit((String) source.get("distanceUnit"));
+		if (source.containsKey("targetLabel")) targetLabel = (String) source.get("targetLabel");
+		if (source.containsKey("targetStatus")) targetStatus = ParseUtils.parseTargetStatus((String) source.get("targetStatus"));
+		if (source.containsKey("referenceTarget")) referenceTarget = ParseUtils.parseTargetReference((String) source.get("referenceTarget"));
+		if (source.containsKey("time")) time = ParseUtils.parseTime((String) source.get("time"));
+		if (source.containsKey("typeAcquisition")) typeAcquisition = ParseUtils.parseAcquisition((String) source.get("typeAcquisition"));
+	}				
+	
 	@Override
 	protected void decode() {
 		int index = 0;

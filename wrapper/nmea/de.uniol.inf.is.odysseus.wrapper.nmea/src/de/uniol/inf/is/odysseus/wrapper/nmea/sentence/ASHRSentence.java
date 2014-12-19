@@ -87,6 +87,30 @@ public class ASHRSentence extends Sentence {
 		super(BEGIN_CHAR, DEFAULT_TALKER, SENTENCE_ID, FIELD_COUNT);
 	}
 
+	/**
+	 * Constructor for creating a message from a map. Reverse function of fillMap()
+	 * 
+	 * @param source
+	 *            Map containing specific keys.
+	 */		
+	public ASHRSentence(Map<String, Object> source)	
+	{
+		super(source, FIELD_COUNT);
+		
+		if (source.containsKey("time")) time = ParseUtils.parseTime((String) source.get("time"));
+		if (source.containsKey("heading")) heading = (double) source.get("heading");
+		if (source.containsKey("trueHeading")) trueHeading = (String) source.get("trueHeading");
+		if (source.containsKey("rollAngle")) rollAngle = (double) source.get("rollAngle");
+		if (source.containsKey("pitchAngle")) pitchAngle = (double) source.get("pitchAngle");
+		if (source.containsKey("heave")) heave = (double) source.get("heave");
+		if (source.containsKey("rollAccuracy"))	rollAccuracy = (double) source.get("rollAccuracy");
+		if (source.containsKey("pitchAccuracy")) pitchAccuracy = (double) source.get("pitchAccuracy");
+		if (source.containsKey("headingAccuracy")) headingAccuracy = (double) source.get("headingAccuracy");
+		if (source.containsKey("aidingStatus")) aidingStatus = (String) source.get("aidingStatus");
+		if (source.containsKey("IMUStatus")) IMUStatus = (String) source.get("IMUStatus");
+		if (source.containsKey("signalIntegrity")) signalIntegrity = ParseUtils.parseSignalIntegrity((String) source.get("signalIntegrity"));	
+	}			
+	
 	@Override
 	protected void decode() {
 		int index = 0;

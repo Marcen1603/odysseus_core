@@ -63,6 +63,22 @@ public class EXTSentence extends Sentence {
 		super(nmea);
 	}
 
+	/**
+	 * Constructor for creating a message from a map. Reverse function of fillMap()
+	 * 
+	 * @param source
+	 *            Map containing specific keys.
+	 */		
+	public EXTSentence(Map<String, Object> source)	
+	{
+		super(source, FIELD_COUNT);
+		
+		if (source.containsKey("accX")) accX = (double) source.get("accX");
+		if (source.containsKey("accY")) accY = (double) source.get("accY");
+		if (source.containsKey("accZ")) accZ = (double) source.get("accZ");
+		if (source.containsKey("signalIntegrity")) signalIntegrity = ParseUtils.parseSignalIntegrity((String) source.get("signalIntegrity"));	
+	}				
+	
 	@Override
 	protected void decode() {
 		int index = 0;

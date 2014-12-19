@@ -109,21 +109,20 @@ public class GGASentence extends Sentence {
 	{
 		super(source, FIELD_COUNT);
 		
-		if (source.containsKey("time")) 				time 			= ParseUtils.parseTime((String) source.get("time"));
-		if (source.containsKey("latitudeHem")) 			latitudeHem 	= ParseUtils.parseHemisphere((String) source.get("latitudeHem"));
-		if (source.containsKey("longitudeHem")) 		longitudeHem 	= ParseUtils.parseHemisphere((String) source.get("longitudeHem"));
-		if (source.containsKey("gpsQuality")) 			gpsQuality 		= ParseUtils.parseGpsQuality((String) source.get("gpsQuality"));
-		if (source.containsKey("antennaAltUnits")) 		antennaAltUnits = ParseUtils.parseUnit((String) source.get("antennaAltUnits"));
-		if (source.containsKey("geoidalSepUnits")) 		geoidalSepUnits = ParseUtils.parseUnit((String) source.get("geoidalSepUnits"));
-		
-		if (source.containsKey("latitude")) 			latitude 			= (Double)  source.get("latitude");
-		if (source.containsKey("longitude")) 			longitude 			= (Double)  source.get("longitude");				
-		if (source.containsKey("numberOfSattelites")) 	numberOfSattelites 	= (Integer) source.get("numberOfSattelites");
-		if (source.containsKey("horizontalDilution")) 	horizontalDilution 	= (Double)  source.get("horizontalDilution");
-		if (source.containsKey("antennaAltitude")) 		antennaAltitude 	= (Double)  source.get("antennaAltitude");
-		if (source.containsKey("geoidalSeparation")) 	geoidalSeparation 	= (Double)  source.get("geoidalSeparation");		
-		if (source.containsKey("ageOfDgps")) 			ageOfDgps 			= (Double)  source.get("ageOfDgps");
-		if (source.containsKey("differentialRefId")) 	differentialRefId 	= (Integer) source.get("differentialRefId");		
+		if (source.containsKey("time")) time = ParseUtils.parseTime((String) source.get("time"));
+		if (source.containsKey("latitudeHem")) latitudeHem = ParseUtils.parseHemisphere((String) source.get("latitudeHem"));
+		if (source.containsKey("longitudeHem")) longitudeHem = ParseUtils.parseHemisphere((String) source.get("longitudeHem"));
+		if (source.containsKey("gpsQuality")) gpsQuality = ParseUtils.parseGpsQuality((String) source.get("gpsQuality"));
+		if (source.containsKey("antennaAltUnits")) antennaAltUnits = ParseUtils.parseUnit((String) source.get("antennaAltUnits"));
+		if (source.containsKey("geoidalSepUnits")) geoidalSepUnits = ParseUtils.parseUnit((String) source.get("geoidalSepUnits"));		
+		if (source.containsKey("latitude")) latitude = (Double) source.get("latitude");
+		if (source.containsKey("longitude")) longitude = (Double) source.get("longitude");				
+		if (source.containsKey("numberOfSattelites")) numberOfSattelites = (Integer) source.get("numberOfSattelites");
+		if (source.containsKey("horizontalDilution")) horizontalDilution = (Double) source.get("horizontalDilution");
+		if (source.containsKey("antennaAltitude")) antennaAltitude = (Double) source.get("antennaAltitude");
+		if (source.containsKey("geoidalSeparation")) geoidalSeparation = (Double) source.get("geoidalSeparation");		
+		if (source.containsKey("ageOfDgps")) ageOfDgps = (Double)  source.get("ageOfDgps");
+		if (source.containsKey("differentialRefId")) differentialRefId = (Integer) source.get("differentialRefId");		
 	}	
 	
 	@Override

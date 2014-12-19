@@ -62,6 +62,20 @@ public class DPTSentence extends Sentence{
 		super(nmea);
 	}
 	
+	/**
+	 * Constructor for creating a message from a map. Reverse function of fillMap()
+	 * 
+	 * @param source
+	 *            Map containing specific keys.
+	 */		
+	public DPTSentence(Map<String, Object> source)	
+	{
+		super(source, FIELD_COUNT);
+		
+		if (source.containsKey("depth"))  depth  = (double) source.get("depth");
+		if (source.containsKey("offset")) offset = (double) source.get("offset");
+	}				
+	
 	@Override
 	protected void decode() {
 		int index = 0;
