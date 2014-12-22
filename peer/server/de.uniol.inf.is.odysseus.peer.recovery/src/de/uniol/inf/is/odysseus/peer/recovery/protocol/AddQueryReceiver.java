@@ -1,7 +1,11 @@
 package de.uniol.inf.is.odysseus.peer.recovery.protocol;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Collection;
+import java.util.Map;
 
+import net.jxta.id.ID;
 import net.jxta.peer.PeerID;
 import net.jxta.pipe.PipeID;
 
@@ -10,6 +14,7 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
+import com.google.common.collect.Lists;
 
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
@@ -22,7 +27,11 @@ import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicator;
 import de.uniol.inf.is.odysseus.p2p_new.PeerCommunicationException;
 import de.uniol.inf.is.odysseus.p2p_new.physicaloperator.JxtaReceiverPO;
 import de.uniol.inf.is.odysseus.p2p_new.physicaloperator.JxtaSenderPO;
+import de.uniol.inf.is.odysseus.peer.distribute.IQueryPartController;
+import de.uniol.inf.is.odysseus.peer.recovery.IBackupInformationAccess;
 import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryCommunicator;
+import de.uniol.inf.is.odysseus.peer.recovery.internal.BackupInfo;
+import de.uniol.inf.is.odysseus.peer.recovery.internal.RecoveryCommunicator;
 import de.uniol.inf.is.odysseus.peer.recovery.messages.RecoveryAddQueryMessage;
 import de.uniol.inf.is.odysseus.peer.recovery.messages.RecoveryAddQueryResponseMessage;
 import de.uniol.inf.is.odysseus.peer.recovery.util.RecoveryHelper;
@@ -39,7 +48,8 @@ public class AddQueryReceiver extends AbstractRepeatingMessageReceiver {
 	/**
 	 * The logger instance for this class.
 	 */
-	private static final Logger LOG = LoggerFactory.getLogger(AddQueryReceiver.class);
+	private static final Logger LOG = LoggerFactory
+			.getLogger(AddQueryReceiver.class);
 
 	/**
 	 * The single instance of this class.
@@ -93,7 +103,8 @@ public class AddQueryReceiver extends AbstractRepeatingMessageReceiver {
 		if (cExecutor.isPresent() && cExecutor.get() == (IServerExecutor) serv) {
 
 			cExecutor = Optional.absent();
-			LOG.debug("Unbound {} as an executor.", serv.getClass().getSimpleName());
+			LOG.debug("Unbound {} as an executor.", serv.getClass()
+					.getSimpleName());
 
 		}
 
@@ -102,7 +113,8 @@ public class AddQueryReceiver extends AbstractRepeatingMessageReceiver {
 	/**
 	 * The P2P network manager, if there is one bound.
 	 */
-	private static Optional<IP2PNetworkManager> cP2PNetworkManager = Optional.absent();
+	private static Optional<IP2PNetworkManager> cP2PNetworkManager = Optional
+			.absent();
 
 	/**
 	 * Binds a P2P network manager. <br />
@@ -116,7 +128,8 @@ public class AddQueryReceiver extends AbstractRepeatingMessageReceiver {
 
 		Preconditions.checkNotNull(serv);
 		cP2PNetworkManager = Optional.of(serv);
-		LOG.debug("Bound {} as a P2P network manager.", serv.getClass().getSimpleName());
+		LOG.debug("Bound {} as a P2P network manager.", serv.getClass()
+				.getSimpleName());
 
 	}
 
@@ -135,7 +148,8 @@ public class AddQueryReceiver extends AbstractRepeatingMessageReceiver {
 		if (cP2PNetworkManager.isPresent() && cP2PNetworkManager.get() == serv) {
 
 			cP2PNetworkManager = Optional.absent();
-			LOG.debug("Unbound {} as a P2P network manager.", serv.getClass().getSimpleName());
+			LOG.debug("Unbound {} as a P2P network manager.", serv.getClass()
+					.getSimpleName());
 
 		}
 
@@ -144,7 +158,8 @@ public class AddQueryReceiver extends AbstractRepeatingMessageReceiver {
 	/**
 	 * The recovery communicator, if there is one bound.
 	 */
-	private static Optional<IRecoveryCommunicator> cRecoveryCommunicator = Optional.absent();
+	private static Optional<IRecoveryCommunicator> cRecoveryCommunicator = Optional
+			.absent();
 
 	/**
 	 * Binds a recovery communicator. <br />
@@ -159,7 +174,8 @@ public class AddQueryReceiver extends AbstractRepeatingMessageReceiver {
 		Preconditions.checkNotNull(serv);
 		Preconditions.checkArgument(serv instanceof IRecoveryCommunicator);
 		cRecoveryCommunicator = Optional.of((IRecoveryCommunicator) serv);
-		LOG.debug("Bound {} as a recovery communicator.", serv.getClass().getSimpleName());
+		LOG.debug("Bound {} as a recovery communicator.", serv.getClass()
+				.getSimpleName());
 
 	}
 
@@ -176,10 +192,12 @@ public class AddQueryReceiver extends AbstractRepeatingMessageReceiver {
 		Preconditions.checkNotNull(serv);
 		Preconditions.checkArgument(serv instanceof IRecoveryCommunicator);
 
-		if (cRecoveryCommunicator.isPresent() && cRecoveryCommunicator.get() == (IRecoveryCommunicator) serv) {
+		if (cRecoveryCommunicator.isPresent()
+				&& cRecoveryCommunicator.get() == (IRecoveryCommunicator) serv) {
 
 			cRecoveryCommunicator = Optional.absent();
-			LOG.debug("Unbound {} as a recovery communicator.", serv.getClass().getSimpleName());
+			LOG.debug("Unbound {} as a recovery communicator.", serv.getClass()
+					.getSimpleName());
 
 		}
 
@@ -201,8 +219,69 @@ public class AddQueryReceiver extends AbstractRepeatingMessageReceiver {
 		serv.removeListener(this, RecoveryAddQueryMessage.class);
 	}
 
+	/**
+	 * The query part controller, if there is one bound.
+	 */
+	private static Optional<IQueryPartController> cController = Optional
+			.absent();
+
+	/**
+	 * Binds a query part controller. <br />
+	 * Called by OSGI-DS.
+	 * 
+	 * @param controller
+	 *            The query part controller to bind. <br />
+	 *            Must be not null.
+	 */
+	public static void bindController(IQueryPartController controller) {
+
+		Preconditions.checkNotNull(controller,
+				"The query part controller to bind must be not null!");
+		cController = Optional.of(controller);
+		LOG.debug("Bound {} as a query part controller.", controller.getClass()
+				.getSimpleName());
+
+	}
+
+	/**
+	 * Unbinds a query part controller. <br />
+	 * Called by OSGI-DS.
+	 * 
+	 * @param controller
+	 *            The query part controller to unbind. <br />
+	 *            Must be not null.
+	 */
+	public static void unbindController(IQueryPartController controller) {
+
+		Preconditions.checkNotNull(controller,
+				"The query part controller to unbind must be not null!");
+		if (cController.isPresent() && cController.get().equals(controller)) {
+
+			cController = Optional.absent();
+			LOG.debug("Unbound {} as a query part controller.", controller
+					.getClass().getSimpleName());
+
+		}
+
+	}
+
+	private static IBackupInformationAccess backupInformationAccess;
+
+	public static void bindBackupInformationAccess(
+			IBackupInformationAccess infoAccess) {
+		backupInformationAccess = infoAccess;
+	}
+
+	public static void unbindBackupInformationAccess(
+			IBackupInformationAccess infoAccess) {
+		if (backupInformationAccess == infoAccess) {
+			backupInformationAccess = null;
+		}
+	}
+
 	@Override
-	public void receivedMessage(IPeerCommunicator communicator, PeerID senderPeer, IMessage message) {
+	public void receivedMessage(IPeerCommunicator communicator,
+			PeerID senderPeer, IMessage message) {
 		Preconditions.checkNotNull(message);
 		Preconditions.checkNotNull(senderPeer);
 		Preconditions.checkNotNull(communicator);
@@ -217,10 +296,14 @@ public class AddQueryReceiver extends AbstractRepeatingMessageReceiver {
 
 			RecoveryAddQueryResponseMessage response = null;
 			try {
-				addQuery(addMessage.getPQLCode(), addMessage.getLocalQueryId(), addMessage.getQueryState());
-				response = new RecoveryAddQueryResponseMessage(addMessage.getUUID());
+				addQuery(addMessage.getPQLCode(), addMessage.getLocalQueryId(),
+						addMessage.getQueryState(),
+						addMessage.getSharedQueryId(), addMessage.isMaster());
+				response = new RecoveryAddQueryResponseMessage(
+						addMessage.getUUID());
 			} catch (Exception e) {
-				response = new RecoveryAddQueryResponseMessage(addMessage.getUUID(), e.getMessage());
+				response = new RecoveryAddQueryResponseMessage(
+						addMessage.getUUID(), e.getMessage());
 			}
 
 			try {
@@ -232,14 +315,17 @@ public class AddQueryReceiver extends AbstractRepeatingMessageReceiver {
 	}
 
 	/**
-	 * Adds a query (installs and runs it) and saves the new backup-information. If necessary, searches for a buddy
+	 * Adds a query (installs and runs it) and saves the new backup-information.
+	 * If necessary, searches for a buddy
 	 * 
 	 * @param pql
 	 *            The PQL String to install
 	 * @param sharedQueryId
 	 *            The id of the shared query where this PQL belongs to
 	 */
-	private static void addQuery(String pql, int localQueryId, QueryState queryState) throws Exception {
+	private static void addQuery(String pql, int localQueryId,
+			QueryState queryState, ID sharedQuery, boolean master)
+			throws Exception {
 		Preconditions.checkNotNull(pql);
 
 		if (!cExecutor.isPresent()) {
@@ -247,15 +333,28 @@ public class AddQueryReceiver extends AbstractRepeatingMessageReceiver {
 		} else if (!cP2PNetworkManager.isPresent()) {
 			throw new IllegalArgumentException("No P2P network manager bound!");
 		} else if (!cRecoveryCommunicator.isPresent()) {
-			throw new IllegalArgumentException("No recovery communicator bound!");
+			throw new IllegalArgumentException(
+					"No recovery communicator bound!");
 		}
 
-		Collection<Integer> installedQueries = RecoveryHelper.installAndRunQueryPartFromPql(pql, queryState);
+		Collection<Integer> installedQueries = RecoveryHelper
+				.installAndRunQueryPartFromPql(pql, queryState);
 		if (installedQueries == null || installedQueries.size() == 0) {
-			throw new IllegalArgumentException("Installing QueryPart on Peer failed. Searching for other peers.");
+			throw new IllegalArgumentException(
+					"Installing QueryPart on Peer failed. Searching for other peers.");
 		}
 
 		LOG.debug("Installed query for recovery.");
+		if (master && sharedQuery != null) {
+			Collection<PeerID> otherPeers = determineOtherPeers(sharedQuery);
+			cController.get().registerAsMaster(
+					cExecutor.get().getLogicalQueryById(
+							installedQueries.iterator().next(),
+							RecoveryCommunicator.getActiveSession()),
+					localQueryId, sharedQuery, otherPeers);
+		} else if (sharedQuery != null) {
+			cController.get().registerAsSlave(installedQueries, sharedQuery);
+		}
 
 		// Call "receiveFromNewPeer" on the subsequent receiver so that that
 		// peer creates a socket-connection to us
@@ -269,14 +368,19 @@ public class AddQueryReceiver extends AbstractRepeatingMessageReceiver {
 						// For this sender we want to get the peer to which
 						// it sends to update the receiver on the other peer
 
-						PeerID peer = RecoveryHelper.convertToPeerId(sender.getPeerIDString());
+						PeerID peer = RecoveryHelper.convertToPeerId(sender
+								.getPeerIDString());
 						// To this peer we have to send an "UPDATE_RECEIVER"
 						// message
-						PipeID pipe = RecoveryHelper.convertToPipeId(sender.getPipeIDString());
-						PeerID ownPeerId = cP2PNetworkManager.get().getLocalPeerID();
+						PipeID pipe = RecoveryHelper.convertToPipeId(sender
+								.getPipeIDString());
+						PeerID ownPeerId = cP2PNetworkManager.get()
+								.getLocalPeerID();
 
 						if (peer != null && pipe != null) {
-							cRecoveryCommunicator.get().sendUpdateReceiverMessage(peer, ownPeerId, pipe, localQueryId);
+							cRecoveryCommunicator.get()
+									.sendUpdateReceiverMessage(peer, ownPeerId,
+											pipe, localQueryId);
 						}
 
 					} else if (operator instanceof JxtaReceiverPO) {
@@ -286,16 +390,47 @@ public class AddQueryReceiver extends AbstractRepeatingMessageReceiver {
 
 						// For this receiver, we want to tell the sender that he
 						// can go on
-						PeerID peer = RecoveryHelper.convertToPeerId(receiver.getPeerIDString());
-						PipeID pipe = RecoveryHelper.convertToPipeId(receiver.getPipeIDString());
+						PeerID peer = RecoveryHelper.convertToPeerId(receiver
+								.getPeerIDString());
+						PipeID pipe = RecoveryHelper.convertToPipeId(receiver
+								.getPipeIDString());
 
 						if (peer != null && pipe != null) {
-							cRecoveryCommunicator.get().sendGoOnMessage(peer, pipe);
+							cRecoveryCommunicator.get().sendGoOnMessage(peer,
+									pipe);
 						}
 					}
 				}
 			}
 		}
+	}
+
+	private static Collection<PeerID> determineOtherPeers(ID sharedQuery) {
+		final PeerID ownID = cP2PNetworkManager.get().getLocalPeerID();
+		final Collection<PeerID> otherPeers = Lists.newArrayList();
+		for (String peerID_str : backupInformationAccess.getBackupPeerIds()) {
+			PeerID id = null;
+			try {
+				final URI uri = new URI(peerID_str);
+				id = PeerID.create(uri);
+			} catch (URISyntaxException | ClassCastException ex) {
+				LOG.error("Could not get id from text {}", peerID_str, ex);
+				continue;
+			}
+			if (ownID.equals(id)) {
+				continue;
+			}
+			Map<Integer, BackupInfo> infos = backupInformationAccess
+					.getBackupInformation(peerID_str);
+			for (int localId : infos.keySet()) {
+				String sharedQuery_str = infos.get(localId).sharedQuery;
+				if (sharedQuery.toString().equals(sharedQuery_str)) {
+					otherPeers.add(id);
+					break;
+				}
+			}
+		}
+		return otherPeers;
 	}
 
 }

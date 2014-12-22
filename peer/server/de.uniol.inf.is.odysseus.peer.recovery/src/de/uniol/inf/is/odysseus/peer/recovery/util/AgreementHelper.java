@@ -8,6 +8,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.UUID;
 
+import net.jxta.id.ID;
 import net.jxta.peer.PeerID;
 
 import org.slf4j.Logger;
@@ -282,9 +283,9 @@ public class AgreementHelper {
 	 * @param recoveryStateIdentifier
 	 */
 	public static void waitForAndDoRecovery(final PeerID failedPeer,
-			final int localQueryId, final QueryState queryState,
+			final int localQueryId, final QueryState queryState, final ID sharedQuery, 
 			final PeerID newPeer, final ILogicalQueryPart queryPart,
-			final UUID recoveryStateIdentifier, final UUID subprocessID) {
+			final UUID recoveryStateIdentifier, final UUID subprocessID, final boolean master) {
 
 		if (!cCommunicator.isPresent()) {
 			LOG.error("No recovery communicator bound!");
@@ -334,7 +335,7 @@ public class AgreementHelper {
 
 					cCommunicator.get().installQueriesOnNewPeer(failedPeer,
 							newPeer, localQueryId, queryState, pql,
-							recoveryStateIdentifier, subprocessID);
+							recoveryStateIdentifier, subprocessID, sharedQuery, master);
 
 					// Now we did this, so remove that we want to do this
 					// recovery

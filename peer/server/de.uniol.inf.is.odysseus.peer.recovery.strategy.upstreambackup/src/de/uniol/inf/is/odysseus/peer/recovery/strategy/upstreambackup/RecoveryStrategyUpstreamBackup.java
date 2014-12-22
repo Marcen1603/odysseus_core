@@ -58,11 +58,13 @@ public class RecoveryStrategyUpstreamBackup implements IRecoveryStrategy {
 		LOG.debug("Recovery strategy Upstream-Backup deactivated.");
 	}
 
-	public static void bindBackupInformationAccess(IBackupInformationAccess infoAccess) {
+	public static void bindBackupInformationAccess(
+			IBackupInformationAccess infoAccess) {
 		backupInformationAccess = infoAccess;
 	}
 
-	public static void unbindBackupInformationAccess(IBackupInformationAccess infoAccess) {
+	public static void unbindBackupInformationAccess(
+			IBackupInformationAccess infoAccess) {
 		if (backupInformationAccess == infoAccess) {
 			backupInformationAccess = null;
 		}
@@ -286,6 +288,8 @@ public class RecoveryStrategyUpstreamBackup implements IRecoveryStrategy {
 
 			int localQueryId = subState.getLocalQueryId();
 			QueryState queryState = subState.getQueryState();
+			boolean master = subState.isMaster();
+			ID sharedQuery = subState.getSharedQueryId();
 			Map<ILogicalQueryPart, PeerID> previousAllocationMap = state
 					.getAllocationMap(localQueryId);
 			if (previousAllocationMap == null) {
@@ -309,9 +313,9 @@ public class RecoveryStrategyUpstreamBackup implements IRecoveryStrategy {
 							.keySet()) {
 						sendRecoveryMessages(localQueryId, failedPeer,
 								allocationMap.get(queryPartForAllocation),
-								queryPartForAllocation, queryState,
+								queryPartForAllocation, queryState, sharedQuery, 
 								recoveryStateIdentifier,
-								recoverySubStateIdentifier);
+								recoverySubStateIdentifier, master);
 					}
 				} else {
 					LOG.debug("Unable to find Peer ID for reallocation.");
@@ -344,7 +348,8 @@ public class RecoveryStrategyUpstreamBackup implements IRecoveryStrategy {
 				.getRemotePeerName(failedPeer));
 
 		// Let's see what we know about this peer
-		HashMap<Integer, BackupInfo> infoMap = backupInformationAccess.getBackupInformation(failedPeer.toString());
+		HashMap<Integer, BackupInfo> infoMap = backupInformationAccess
+				.getBackupInformation(failedPeer.toString());
 
 		if (infoMap.isEmpty()) {
 			LOG.debug("Can't do recovery for {}. Don't have the information.",
@@ -364,6 +369,7 @@ public class RecoveryStrategyUpstreamBackup implements IRecoveryStrategy {
 			QueryState queryState = QueryState.valueOf(infoMap
 					.get(localQueryId).state);
 			ID sharedQuery = idFromString(infoMap.get(localQueryId).sharedQuery);
+			boolean master = infoMap.get(localQueryId).master;
 			Map<ILogicalQueryPart, PeerID> allocationMap = null;
 
 			try {
@@ -380,9 +386,11 @@ public class RecoveryStrategyUpstreamBackup implements IRecoveryStrategy {
 						ILogicalQueryPart queryPart = iterator.next();
 						UUID subprocessID = state.createNewSubprocess(
 								localQueryId, queryPart, queryState,
-								sharedQuery);
-						sendRecoveryMessages(localQueryId, failedPeer, allocationMap.get(queryPart), queryPart,
-								queryState, recoveryStateIdentifier, subprocessID);
+								sharedQuery, master);
+						sendRecoveryMessages(localQueryId, failedPeer,
+								allocationMap.get(queryPart), queryPart,
+								queryState,  sharedQuery, recoveryStateIdentifier,
+								subprocessID, master);
 					}
 				} else {
 					LOG.debug("Unable to find Peer ID for recovery allocation.");
@@ -397,11 +405,11 @@ public class RecoveryStrategyUpstreamBackup implements IRecoveryStrategy {
 	}
 
 	private static ID idFromString(String str) {
-		
+
 		if (str == null) {
 			return null;
 		}
-		
+
 		try {
 			final URI id = new URI(str);
 			return IDFactory.fromURI(id);
@@ -413,14 +421,15 @@ public class RecoveryStrategyUpstreamBackup implements IRecoveryStrategy {
 
 	private void sendRecoveryMessages(int localQueryId, PeerID failedPeer,
 			PeerID newPeer, ILogicalQueryPart queryPart, QueryState queryState,
-			UUID recoveryStateIdentifier, UUID subprocessID) {
+			ID sharedQuery, UUID recoveryStateIdentifier, UUID subprocessID,
+			boolean master) {
 		cRecoveryDynamicBackup.get().determineAndSendHoldOnMessages(
 				localQueryId, failedPeer, recoveryStateIdentifier);
 
 		// Tell the new peer to install the parts from the failed peer
 		cRecoveryDynamicBackup.get().initiateAgreement(failedPeer,
-				localQueryId, queryState, newPeer, queryPart,
-				recoveryStateIdentifier, subprocessID);
+				localQueryId, queryState, sharedQuery, newPeer, queryPart,
+				recoveryStateIdentifier, subprocessID, master);
 	}
 
 	@Override

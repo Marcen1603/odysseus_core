@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
+import net.jxta.id.ID;
 import net.jxta.peer.PeerID;
 import net.jxta.pipe.PipeID;
 
@@ -320,7 +321,7 @@ public class RecoveryCommunicator implements IRecoveryCommunicator {
 	@Override
 	public void installQueriesOnNewPeer(PeerID failedPeer, PeerID newPeer,
 			int localQueryId, QueryState queryState, String pql,
-			UUID recoveryStateIdentifier, UUID subprocessID) {
+			UUID recoveryStateIdentifier, UUID subprocessID, ID sharedQuery, boolean master) {
 
 		Preconditions.checkNotNull(failedPeer);
 		Preconditions.checkNotNull(newPeer);
@@ -333,7 +334,7 @@ public class RecoveryCommunicator implements IRecoveryCommunicator {
 
 		// Send the add query message
 		AddQuerySender.getInstance().sendAddQueryPart(newPeer, pql,
-				localQueryId, queryState, recoveryStateIdentifier, subprocessID,
+				localQueryId, queryState, sharedQuery, master, recoveryStateIdentifier, subprocessID,
 				cPeerCommunicator.get());
 	}
 

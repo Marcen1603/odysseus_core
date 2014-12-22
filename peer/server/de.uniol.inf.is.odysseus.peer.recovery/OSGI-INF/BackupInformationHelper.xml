@@ -5,4 +5,7 @@
    <reference bind="bindController" cardinality="1..1" interface="de.uniol.inf.is.odysseus.peer.distribute.IQueryPartController" name="IQueryPartController" policy="static" unbind="unbindController"/>
    <reference bind="bindExecutor" cardinality="1..1" interface="de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor" name="IExecutor" policy="static" unbind="unbindExecutor"/>
    <reference bind="bindBackupInformationAccess" cardinality="1..1" interface="de.uniol.inf.is.odysseus.peer.recovery.IBackupInformationAccess" name="IBackupInformationAccess" policy="static" unbind="unbindBackupInformationAccess"/>
+   <service>
+      <provide interface="de.uniol.inf.is.odysseus.peer.distribute.IQueryDistributionListener"/>
+   </service>
 </scr:component>

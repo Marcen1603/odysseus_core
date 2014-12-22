@@ -30,12 +30,14 @@ public class RecoverySubProcessState {
 	private ILogicalQueryPart queryPart;
 	private QueryState queryState;
 	private ID sharedQuery;
+	private boolean master;
 
-	public RecoverySubProcessState(int localQueryId, ILogicalQueryPart queryPart, QueryState queryState, ID sharedQuery) {
+	public RecoverySubProcessState(int localQueryId, ILogicalQueryPart queryPart, QueryState queryState, ID sharedQuery, boolean master) {
 		this.localQueryId = localQueryId;
 		this.queryPart = queryPart;
 		this.queryState = queryState;
 		this.sharedQuery = sharedQuery;
+		this.master = master;
 		this.identifier = UUID.randomUUID();
 		this.inadequatePeers = new ArrayList<PeerID>();
 	}
@@ -62,6 +64,14 @@ public class RecoverySubProcessState {
 
 	public void setSharedQueryId(ID sharedQueryId) {
 		this.sharedQuery = sharedQueryId;
+	}
+	
+	public boolean isMaster() {
+		return this.master;
+	}
+	
+	public void setMaster(boolean master) {
+		this.master = master;
 	}
 
 	public ILogicalQueryPart getQueryPart() {

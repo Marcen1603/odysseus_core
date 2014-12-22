@@ -71,7 +71,7 @@ public class BackupInformationAccess implements IBackupInformationAccess {
 	}
 
 	@Override
-	public void saveBackupInformation(int queryId, String pql, String state, String sharedQuery) {
+	public void saveBackupInformation(int queryId, String pql, String state, String sharedQuery, boolean master) {
 		LOG.debug("Save backup-info for query {}", queryId);
 
 		String localPeerId = p2pNetworkManager.getLocalPeerID().toString();
@@ -85,6 +85,7 @@ public class BackupInformationAccess implements IBackupInformationAccess {
 			info.pql = pql;
 			info.state = state;
 			info.sharedQuery = sharedQuery;
+			info.master = master;
 		} else {
 			// No -> New information
 			BackupInfo info = new BackupInfo();
@@ -92,6 +93,7 @@ public class BackupInformationAccess implements IBackupInformationAccess {
 			info.state = state;
 			info.sharedQuery = sharedQuery;
 			infoMap.put(queryId, info);
+			info.master = master;
 		}
 
 		// Save the information in the DDC
@@ -191,6 +193,16 @@ public class BackupInformationAccess implements IBackupInformationAccess {
 			return info.sharedQuery;
 		}
 		return null;
+	}
+	
+	@Override
+	public boolean isBackupMaster(int queryId) {
+		HashMap<Integer, BackupInfo> infoMap = getBackupInformation();
+		if (infoMap.containsKey(queryId)) {
+			BackupInfo info = infoMap.get(queryId);
+			return info.master;
+		}
+		return true;
 	}
 
 	@Override

@@ -2,6 +2,7 @@ package de.uniol.inf.is.odysseus.peer.recovery.protocol;
 
 import java.util.Map;
 
+import net.jxta.id.ID;
 import net.jxta.impl.id.UUID.UUID;
 import net.jxta.peer.PeerID;
 
@@ -150,7 +151,7 @@ public class AddQuerySender extends AbstractRepeatingMessageSender {
 	 *         else.
 	 */
 	public boolean sendAddQueryPart(PeerID destination, String pql,
-			int localQuery, QueryState queryState, java.util.UUID processId,
+			int localQuery, QueryState queryState, ID sharedQuery, boolean master, java.util.UUID processId,
 			java.util.UUID subprocessId, IPeerCommunicator communicator) {
 		Preconditions.checkNotNull(destination);
 		Preconditions.checkNotNull(pql);
@@ -159,7 +160,7 @@ public class AddQuerySender extends AbstractRepeatingMessageSender {
 		Preconditions.checkNotNull(communicator);
 
 		RecoveryAddQueryMessage message = new RecoveryAddQueryMessage(pql,
-				localQuery, queryState, processId, subprocessId);
+				localQuery, queryState, sharedQuery, master, processId, subprocessId);
 		this.mSentMessages.put(message.getUUID(), message);
 		return repeatingSend(destination, message, message.getUUID(),
 				communicator);

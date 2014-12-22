@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import net.jxta.id.ID;
 import net.jxta.peer.PeerID;
 import net.jxta.pipe.PipeID;
 
@@ -307,10 +308,10 @@ public class RecoveryDynamicBackup implements IRecoveryDynamicBackup {
 	}
 
 	@Override
-	public void initiateAgreement(PeerID failedPeer, int localQueryId, QueryState queryState, PeerID newPeer,
-			ILogicalQueryPart queryPart, UUID recoveryStateIdentifier, UUID subprocessID) {
-		AgreementHelper.waitForAndDoRecovery(failedPeer, localQueryId, queryState, newPeer, queryPart,
-				recoveryStateIdentifier, subprocessID);
+	public void initiateAgreement(PeerID failedPeer, int localQueryId, QueryState queryState, ID sharedQuery, PeerID newPeer,
+			ILogicalQueryPart queryPart, UUID recoveryStateIdentifier, UUID subprocessID, boolean master) {
+		AgreementHelper.waitForAndDoRecovery(failedPeer, localQueryId, queryState, sharedQuery, newPeer, queryPart,
+				recoveryStateIdentifier, subprocessID, master);
 	}
 
 	@Override

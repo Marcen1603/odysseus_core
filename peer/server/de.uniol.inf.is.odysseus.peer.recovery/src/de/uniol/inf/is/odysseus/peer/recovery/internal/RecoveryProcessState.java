@@ -51,9 +51,9 @@ public class RecoveryProcessState {
 	}
 
 	public UUID createNewSubprocess(int localQueryId,
-			ILogicalQueryPart queryPart, QueryState queryState, ID sharedQuery) {
+			ILogicalQueryPart queryPart, QueryState queryState, ID sharedQuery, boolean master) {
 		RecoverySubProcessState subprocess = new RecoverySubProcessState(
-				localQueryId, queryPart, queryState, sharedQuery);
+				localQueryId, queryPart, queryState, sharedQuery, master);
 		subProcesses.put(subprocess.getIdentifier(), subprocess);
 		return subprocess.getIdentifier();
 	}

@@ -294,7 +294,7 @@ public class RecoveryConsole implements CommandProvider {
 			if (infoMap != null) {
 				for (Integer key : infoMap.keySet()) {
 					BackupInfo info = infoMap.get(key);
-					System.out.println(key + " : " + info.sharedQuery + "\n" + info.pql + " : " + info.state);
+					System.out.println(key + " : " + info.master + " : " + info.sharedQuery + "\n" + info.pql + " : " + info.state);
 				}
 			} else {
 				System.out.println("No Backup-Information about " + peerId);

@@ -2,6 +2,7 @@ package de.uniol.inf.is.odysseus.peer.recovery;
 
 import java.util.UUID;
 
+import net.jxta.id.ID;
 import net.jxta.peer.PeerID;
 import net.jxta.pipe.PipeID;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.QueryState;
@@ -86,7 +87,7 @@ public interface IRecoveryCommunicator extends IPeerDictionaryListener {
 	// TODO Better way: allocate each single query part new. M.B.
 	public void installQueriesOnNewPeer(PeerID failedPeer, PeerID newPeer,
 			int localQueryId, QueryState queryState, String pql, UUID recoveryStateIdentifier,
-			UUID subprocessID);
+			UUID subprocessID, ID sharedQuery, boolean master);
 
 	/**
 	 * Sends a message to the given peer that it has to go on sending the tuples

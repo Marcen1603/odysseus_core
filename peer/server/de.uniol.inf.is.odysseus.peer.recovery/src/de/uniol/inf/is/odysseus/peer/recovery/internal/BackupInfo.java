@@ -8,4 +8,5 @@ public class BackupInfo implements Serializable {
 	public String pql;
 	public String state;
 	public String sharedQuery;
+	public boolean master;
 }

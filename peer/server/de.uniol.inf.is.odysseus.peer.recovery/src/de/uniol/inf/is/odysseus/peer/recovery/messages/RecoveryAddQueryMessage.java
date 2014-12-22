@@ -1,7 +1,11 @@
 package de.uniol.inf.is.odysseus.peer.recovery.messages;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.nio.ByteBuffer;
 
+import net.jxta.id.ID;
+import net.jxta.id.IDFactory;
 import net.jxta.impl.id.UUID.UUID;
 import net.jxta.impl.id.UUID.UUIDFactory;
 
@@ -87,6 +91,18 @@ public class RecoveryAddQueryMessage implements IMessage {
 		return this.mProcessId;
 	}
 
+	private ID mSharedQuery;
+
+	public ID getSharedQueryId() {
+		return this.mSharedQuery;
+	}
+
+	private boolean mMaster;
+
+	public boolean isMaster() {
+		return this.mMaster;
+	}
+
 	/**
 	 * Empty default constructor.
 	 */
@@ -113,8 +129,8 @@ public class RecoveryAddQueryMessage implements IMessage {
 	 *            Must be not null.
 	 */
 	public RecoveryAddQueryMessage(String pql, int localQueryId,
-			QueryState queryState, java.util.UUID processId,
-			java.util.UUID subprocessID) {
+			QueryState queryState, ID sharedQuery, boolean master,
+			java.util.UUID processId, java.util.UUID subprocessID) {
 		Preconditions.checkNotNull(pql);
 		Preconditions.checkNotNull(queryState);
 		Preconditions.checkNotNull(processId);
@@ -123,6 +139,8 @@ public class RecoveryAddQueryMessage implements IMessage {
 		this.mPQL = pql;
 		this.mLocalQuery = localQueryId;
 		this.mQueryState = queryState;
+		this.mSharedQuery = sharedQuery;
+		this.mMaster = master;
 		this.mProcessId = processId;
 		this.mSubprocessId = subprocessID;
 	}
@@ -133,9 +151,14 @@ public class RecoveryAddQueryMessage implements IMessage {
 		byte[] pqlBytes = this.mPQL.getBytes();
 		byte[] processIdBytes = this.mProcessId.toString().getBytes();
 		byte[] subprocessIdBytes = this.mSubprocessId.toString().getBytes();
+		byte[] sharedQueryBytes = null;
 
 		int bufferSize = 4 + idBytes.length + 4 + pqlBytes.length + 4 + 4 + 4
-				+ processIdBytes.length + 4 + subprocessIdBytes.length;
+				+ processIdBytes.length + 4 + subprocessIdBytes.length + 4;
+		if (this.mSharedQuery != null) {
+			sharedQueryBytes = this.mSharedQuery.toString().getBytes();
+			bufferSize += sharedQueryBytes.length;
+		}
 		ByteBuffer buffer = ByteBuffer.allocate(bufferSize);
 
 		buffer.putInt(idBytes.length);
@@ -152,6 +175,13 @@ public class RecoveryAddQueryMessage implements IMessage {
 
 		buffer.putInt(subprocessIdBytes.length);
 		buffer.put(subprocessIdBytes);
+
+		if (this.mSharedQuery != null) {
+			buffer.putInt(sharedQueryBytes.length);
+			buffer.put(sharedQueryBytes);
+		} else {
+			buffer.putInt(0);
+		}
 
 		buffer.flip();
 		return buffer.array();
@@ -184,6 +214,18 @@ public class RecoveryAddQueryMessage implements IMessage {
 		buffer.get(subprocessIdBytes);
 		this.mSubprocessId = java.util.UUID.fromString(new String(
 				subprocessIdBytes));
+
+		int sharedQueryIdBytesLength = buffer.getInt();
+		if (sharedQueryIdBytesLength > 0) {
+			byte[] sharedQueryIdBytes = new byte[sharedQueryIdBytesLength];
+			buffer.get(sharedQueryIdBytes);
+			try {
+				final URI id = new URI(new String(sharedQueryIdBytes));
+				this.mSharedQuery = IDFactory.fromURI(id);
+			} catch (URISyntaxException | ClassCastException ex) {
+				this.mSharedQuery = null;
+			}
+		}
 
 	}
 
