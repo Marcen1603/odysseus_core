@@ -19,6 +19,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import de.uniol.inf.is.odysseus.core.collection.KeyValueObject;
+import de.uniol.inf.is.odysseus.core.collection.NestedKeyValueObject;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
 import de.uniol.inf.is.odysseus.core.mep.IExpression;
 import de.uniol.inf.is.odysseus.core.sdf.SDFElement;
@@ -31,7 +33,9 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Paramete
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.BooleanParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IntegerParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.NamedExpressionItem;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.ResolvedSDFAttributeParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.SDFExpressionParameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.UncheckedExpressionParamter;
 
 /**
  * @author Jonas Jacobi
@@ -41,6 +45,8 @@ public class MapAO extends UnaryLogicalOp {
 
 	private static final long serialVersionUID = -2120387285754464451L;
 	private List<NamedExpressionItem> namedExpressions;
+	//Expressions used for KeyValueMap
+	private List<String[]> kvExpressions;
 	private List<SDFExpression> expressions;
 	/** The number of threads used for processing the expressions. */
 	private int threads = 0;
@@ -53,6 +59,7 @@ public class MapAO extends UnaryLogicalOp {
 	public MapAO(MapAO ao) {
 		super(ao);
 		this.setExpressions(ao.namedExpressions);
+		this.kvExpressions = ao.kvExpressions;
 		this.threads = ao.threads;
 		this.evaluateOnPunctuation = ao.evaluateOnPunctuation;
 	}
@@ -186,15 +193,20 @@ public class MapAO extends UnaryLogicalOp {
 			SDFSchema s = SDFSchema.changeSourceName(new SDFSchema(
 					getInputSchema(), attrs), getInputSchema().getURI(), false);
 			setOutputSchema(s);
+		} else if(kvExpressions != null) {
+			SDFSchema s = new SDFSchema(getInputSchema(), null);
+			setOutputSchema(s);
 		}
 	}
 
-	@Parameter(type = SDFExpressionParameter.class, isList = true)
+	@Parameter(type = SDFExpressionParameter.class, name = "EXPRESSIONS", isList = true, optional = true, doc ="A list of expressions.")
 	public void setExpressions(List<NamedExpressionItem> namedExpressions) {
 		this.namedExpressions = namedExpressions;
 		expressions = new ArrayList<>();
-		for (NamedExpressionItem e : namedExpressions) {
-			expressions.add(e.expression);
+		if(namedExpressions != null) {
+			for (NamedExpressionItem e : namedExpressions) {
+				expressions.add(e.expression);
+			}
 		}
 		setOutputSchema(null);
 	}
@@ -203,6 +215,16 @@ public class MapAO extends UnaryLogicalOp {
 		return this.namedExpressions;
 	}
 
+	@Parameter(type = UncheckedExpressionParamter.class, name = "KVEXPRESSIONS", isList = true, optional = true, doc ="A list of expressions for use with key value objects.")
+	public void setKVExpressions(List<String[]> kvExpressions) {
+		this.kvExpressions = kvExpressions;
+		setOutputSchema(null);
+	}
+
+	public List<String[]> getKVExpressions() {
+		return this.kvExpressions;
+	}
+	
 	/**
 	 * Sets the number of threads used for processing the expressions. A value
 	 * greater than 1 indicates the number of simultaneous processing. A value
@@ -240,6 +262,23 @@ public class MapAO extends UnaryLogicalOp {
 	public SDFSchema getOutputSchemaIntern(int pos) {
 		calcOutputSchema();
 		return getOutputSchema();
+	}
+
+	@Override
+	public boolean isValid() {
+		if((getInputSchema().getType() == KeyValueObject.class || getInputSchema().getType() == NestedKeyValueObject.class)) {
+			if((this.kvExpressions != null && !this.kvExpressions.isEmpty())) {
+				return true;
+			} else {
+				addError("Parameter KVEXPRESSIONS has to be set.");
+				return false;
+			}
+		} else if((this.namedExpressions != null && !this.namedExpressions.isEmpty())) {
+			return true;
+		} else {
+			addError("Parameter EXPRESSIONS has to be set.");
+			return false;
+		}
 	}
 
 	@Override
