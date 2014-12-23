@@ -206,7 +206,7 @@ public abstract class AbstractRepeatingMessageSender implements
 	 * Handling of a received response message.
 	 * 
 	 * @param messageID
-	 *            The id of thereceived message. <br />
+	 *            The id of the received message. <br />
 	 *            Must be not null.
 	 * @param errorMessage
 	 *            The error message, if the response is a fail or

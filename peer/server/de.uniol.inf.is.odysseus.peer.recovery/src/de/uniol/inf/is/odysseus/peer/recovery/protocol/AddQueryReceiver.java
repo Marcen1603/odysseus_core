@@ -355,21 +355,20 @@ public class AddQueryReceiver extends AbstractRepeatingMessageReceiver {
 						// I installed a receiver
 						JxtaReceiverPO<?> receiver = (JxtaReceiverPO<?>) operator;
 
-						// I want to tell the sender on the other side that he has to update his peerId he sends to
+						
 						PeerID peer = RecoveryHelper.convertToPeerId(receiver.getPeerIDString());
 						PipeID pipe = RecoveryHelper.convertToPipeId(receiver.getPipeIDString());
 
 						PeerID ownPeerId = cP2PNetworkManager.get().getLocalPeerID();
 
 						if (peer != null && pipe != null) {
+							// I want to tell the sender on the other side that he has to update his peerId he sends to
 							cRecoveryCommunicator.get().sendUpdateSenderMessage(peer, ownPeerId, pipe, localQueryId);
-						}
-
-						// And now he can GO ON
-						// --------------------
-
-						// For this receiver, we want to tell the sender that he can go on
-						if (peer != null && pipe != null) {
+							
+							// Cause the call is blocking it can take a while (1 minute) to get here, so don't hurry ... or
+							// TODO Make this call non-blocking
+							
+							// And now he can GO ON
 							cRecoveryCommunicator.get().sendGoOnMessage(peer, pipe);
 						}
 					}

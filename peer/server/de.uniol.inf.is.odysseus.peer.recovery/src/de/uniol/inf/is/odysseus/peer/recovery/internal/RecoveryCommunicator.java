@@ -368,7 +368,7 @@ public class RecoveryCommunicator implements IRecoveryCommunicator {
 			LOG.error("No peer communicator bound!");
 			return false;
 		}
-
+		LOG.debug("Send Go-on instruction.");
 		return TupleSendSender.getInstance().sendGoOnInstruction(receiverPeer, pipeId, cPeerCommunicator.get());
 	}
 
