@@ -1,6 +1,7 @@
 package de.uniol.inf.is.odysseus.keyvalue.transform;
 
 import de.uniol.inf.is.odysseus.core.collection.KeyValueObject;
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
@@ -39,7 +40,12 @@ public class TTupleToKeyValueRule extends AbstractTransformationRule<TupleToKeyV
 
 	@Override
 	public boolean isExecutable(TupleToKeyValueAO operator, TransformationConfiguration config) {
-		return operator.getInputSchema().getType().getSimpleName().equals("Tuple") && operator.isAllPhysicalInputSet();
+		if (operator.getInputSchema().getType() == Tuple.class &&
+				operator.getPhysSubscriptionTo() != null) {
+			return true;
+			
+		}
+		return false;
 	}
 
 }

@@ -1,5 +1,7 @@
 package de.uniol.inf.is.odysseus.keyvalue.transform;
 
+import de.uniol.inf.is.odysseus.core.collection.KeyValueObject;
+import de.uniol.inf.is.odysseus.core.collection.NestedKeyValueObject;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.keyvalue.logicaloperator.KeyValueToTupleAO;
@@ -23,8 +25,12 @@ public class TKeyValueToTupleRule extends AbstractTransformationRule<KeyValueToT
 
 	@Override
 	public boolean isExecutable(KeyValueToTupleAO operator, TransformationConfiguration config) {
-		String type = operator.getInputSchema().getType().getSimpleName();
-		return (type.equals("KeyValueObject") || type.equals("NestedKeyValueObject")) && operator.isAllPhysicalInputSet();
+		if ((operator.getInputSchema().getType() == KeyValueObject.class || 
+				operator.getInputSchema().getType() == NestedKeyValueObject.class) &&
+				operator.isAllPhysicalInputSet()) {
+			return true;
+		}
+		return false;
 	}
 
 	@Override
