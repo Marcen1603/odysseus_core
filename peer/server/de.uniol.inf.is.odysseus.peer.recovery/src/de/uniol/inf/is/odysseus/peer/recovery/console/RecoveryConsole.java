@@ -69,11 +69,11 @@ public class RecoveryConsole implements CommandProvider {
 			p2pNetworkManager = null;
 		}
 	}
-	
+
 	public static void bindBackupInformationAccess(IBackupInformationAccess infoAccess) {
 		backupInformationAccess = infoAccess;
 	}
-	
+
 	public static void unbindBackupInformationAccess(IBackupInformationAccess infoAccess) {
 		if (backupInformationAccess == infoAccess) {
 			backupInformationAccess = null;
@@ -294,7 +294,7 @@ public class RecoveryConsole implements CommandProvider {
 			if (infoMap != null) {
 				for (Integer key : infoMap.keySet()) {
 					BackupInfo info = infoMap.get(key);
-					System.out.println(key + " : " + info.master + " : " + info.sharedQuery + "\n" + info.pql + " : " + info.state);
+					System.out.println("Local query id: " + key + " | Is master: " + info.master + " | " + info.sharedQuery + "\n" + info.pql + " (" + info.state + ") \n");
 				}
 			} else {
 				System.out.println("No Backup-Information about " + peerId);

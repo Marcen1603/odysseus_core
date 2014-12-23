@@ -49,6 +49,21 @@ public interface IRecoveryCommunicator extends IPeerDictionaryListener {
 	// TODO handle result. M.B.
 	public boolean sendUpdateReceiverMessage(PeerID receiverPeer,
 			PeerID newSenderPeer, PipeID pipeId, int localQueryId);
+	
+	/**
+	 * Sends a message to the receiverPeer, that this peer has to update it's
+	 * JxtaSenderPO with the given pipeId, so that this peer sends the tuples
+	 * to newReceiver. (Attention: You have to update the receiver to actually update the socket-connection)
+	 * 
+	 * @param receiverPeer
+	 *            The peer on which the sender is installed which has to be
+	 *            updated
+	 * @param newReceiver
+	 *            The peer with the new receiver
+	 * @param pipeId
+	 *            The pipeId which is affected
+	 */
+	public boolean sendUpdateSenderMessage(PeerID receiverPeer, PeerID newReceiver, PipeID pipeId, int localQueryId);
 
 	/**
 	 * Sends a recovery-agreement message to all known peers. This message tells

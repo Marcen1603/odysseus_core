@@ -20,6 +20,7 @@ import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicator;
 import de.uniol.inf.is.odysseus.p2p_new.PeerCommunicationException;
 import de.uniol.inf.is.odysseus.p2p_new.data.DataTransmissionException;
 import de.uniol.inf.is.odysseus.p2p_new.physicaloperator.JxtaReceiverPO;
+import de.uniol.inf.is.odysseus.p2p_new.physicaloperator.JxtaSenderPO;
 import de.uniol.inf.is.odysseus.peer.recovery.messages.RecoveryUpdatePipeMessage;
 import de.uniol.inf.is.odysseus.peer.recovery.messages.RecoveryUpdatePipeResponseMessage;
 
@@ -128,7 +129,7 @@ public class UpdatePipeReceiver extends AbstractRepeatingMessageReceiver {
 			RecoveryUpdatePipeResponseMessage response = null;
 			try {
 				if (upMessage.isSenderUpdateInstruction()) {
-					// TODO nothing to do?
+					updateSender(upMessage.getNewPeerId(), upMessage.getPipeId());
 				} else {
 					updateReceiver(upMessage.getNewPeerId(), upMessage.getPipeId());
 				}
@@ -155,7 +156,7 @@ public class UpdatePipeReceiver extends AbstractRepeatingMessageReceiver {
 
 		}
 
-		// 1. Get the receiver, which we have to update
+		// 1. Get the receiver which we have to update
 		Collection<IPhysicalQuery> queries = cExecutor.get().getExecutionPlan().getQueries();
 		for (IPhysicalQuery query : queries) {
 			for (IPhysicalOperator op : query.getAllOperators()) {
@@ -164,6 +165,31 @@ public class UpdatePipeReceiver extends AbstractRepeatingMessageReceiver {
 					if (receiver.getPipeIDString().equals(pipeId.toString())) {
 						// This should be the receiver we have to update
 						receiver.receiveFromNewPeer(newSender.toString());
+						break;
+					}
+				}
+			}
+		}
+	}
+	
+	private void updateSender(PeerID newReceiver, PipeID pipeId) throws DataTransmissionException {
+		
+		if (!cExecutor.isPresent()) {
+
+			LOG.error("No executor bound!");
+			return;
+
+		}
+
+		// 1. Get the sender which we have to update
+		Collection<IPhysicalQuery> queries = cExecutor.get().getExecutionPlan().getQueries();
+		for (IPhysicalQuery query : queries) {
+			for (IPhysicalOperator op : query.getAllOperators()) {
+				if (op instanceof JxtaSenderPO) {
+					JxtaSenderPO<?> sender = (JxtaSenderPO<?>) op;
+					if (sender.getPipeIDString().equals(pipeId.toString())) {
+						// This should be the receiver we have to update
+						sender.sendToNewPeer(newReceiver.toString());
 						break;
 					}
 				}

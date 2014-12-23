@@ -48,8 +48,7 @@ public class AddQueryReceiver extends AbstractRepeatingMessageReceiver {
 	/**
 	 * The logger instance for this class.
 	 */
-	private static final Logger LOG = LoggerFactory
-			.getLogger(AddQueryReceiver.class);
+	private static final Logger LOG = LoggerFactory.getLogger(AddQueryReceiver.class);
 
 	/**
 	 * The single instance of this class.
@@ -103,8 +102,7 @@ public class AddQueryReceiver extends AbstractRepeatingMessageReceiver {
 		if (cExecutor.isPresent() && cExecutor.get() == (IServerExecutor) serv) {
 
 			cExecutor = Optional.absent();
-			LOG.debug("Unbound {} as an executor.", serv.getClass()
-					.getSimpleName());
+			LOG.debug("Unbound {} as an executor.", serv.getClass().getSimpleName());
 
 		}
 
@@ -113,8 +111,7 @@ public class AddQueryReceiver extends AbstractRepeatingMessageReceiver {
 	/**
 	 * The P2P network manager, if there is one bound.
 	 */
-	private static Optional<IP2PNetworkManager> cP2PNetworkManager = Optional
-			.absent();
+	private static Optional<IP2PNetworkManager> cP2PNetworkManager = Optional.absent();
 
 	/**
 	 * Binds a P2P network manager. <br />
@@ -128,8 +125,7 @@ public class AddQueryReceiver extends AbstractRepeatingMessageReceiver {
 
 		Preconditions.checkNotNull(serv);
 		cP2PNetworkManager = Optional.of(serv);
-		LOG.debug("Bound {} as a P2P network manager.", serv.getClass()
-				.getSimpleName());
+		LOG.debug("Bound {} as a P2P network manager.", serv.getClass().getSimpleName());
 
 	}
 
@@ -148,8 +144,7 @@ public class AddQueryReceiver extends AbstractRepeatingMessageReceiver {
 		if (cP2PNetworkManager.isPresent() && cP2PNetworkManager.get() == serv) {
 
 			cP2PNetworkManager = Optional.absent();
-			LOG.debug("Unbound {} as a P2P network manager.", serv.getClass()
-					.getSimpleName());
+			LOG.debug("Unbound {} as a P2P network manager.", serv.getClass().getSimpleName());
 
 		}
 
@@ -158,8 +153,7 @@ public class AddQueryReceiver extends AbstractRepeatingMessageReceiver {
 	/**
 	 * The recovery communicator, if there is one bound.
 	 */
-	private static Optional<IRecoveryCommunicator> cRecoveryCommunicator = Optional
-			.absent();
+	private static Optional<IRecoveryCommunicator> cRecoveryCommunicator = Optional.absent();
 
 	/**
 	 * Binds a recovery communicator. <br />
@@ -174,8 +168,7 @@ public class AddQueryReceiver extends AbstractRepeatingMessageReceiver {
 		Preconditions.checkNotNull(serv);
 		Preconditions.checkArgument(serv instanceof IRecoveryCommunicator);
 		cRecoveryCommunicator = Optional.of((IRecoveryCommunicator) serv);
-		LOG.debug("Bound {} as a recovery communicator.", serv.getClass()
-				.getSimpleName());
+		LOG.debug("Bound {} as a recovery communicator.", serv.getClass().getSimpleName());
 
 	}
 
@@ -192,12 +185,10 @@ public class AddQueryReceiver extends AbstractRepeatingMessageReceiver {
 		Preconditions.checkNotNull(serv);
 		Preconditions.checkArgument(serv instanceof IRecoveryCommunicator);
 
-		if (cRecoveryCommunicator.isPresent()
-				&& cRecoveryCommunicator.get() == (IRecoveryCommunicator) serv) {
+		if (cRecoveryCommunicator.isPresent() && cRecoveryCommunicator.get() == (IRecoveryCommunicator) serv) {
 
 			cRecoveryCommunicator = Optional.absent();
-			LOG.debug("Unbound {} as a recovery communicator.", serv.getClass()
-					.getSimpleName());
+			LOG.debug("Unbound {} as a recovery communicator.", serv.getClass().getSimpleName());
 
 		}
 
@@ -222,8 +213,7 @@ public class AddQueryReceiver extends AbstractRepeatingMessageReceiver {
 	/**
 	 * The query part controller, if there is one bound.
 	 */
-	private static Optional<IQueryPartController> cController = Optional
-			.absent();
+	private static Optional<IQueryPartController> cController = Optional.absent();
 
 	/**
 	 * Binds a query part controller. <br />
@@ -235,11 +225,9 @@ public class AddQueryReceiver extends AbstractRepeatingMessageReceiver {
 	 */
 	public static void bindController(IQueryPartController controller) {
 
-		Preconditions.checkNotNull(controller,
-				"The query part controller to bind must be not null!");
+		Preconditions.checkNotNull(controller, "The query part controller to bind must be not null!");
 		cController = Optional.of(controller);
-		LOG.debug("Bound {} as a query part controller.", controller.getClass()
-				.getSimpleName());
+		LOG.debug("Bound {} as a query part controller.", controller.getClass().getSimpleName());
 
 	}
 
@@ -253,13 +241,11 @@ public class AddQueryReceiver extends AbstractRepeatingMessageReceiver {
 	 */
 	public static void unbindController(IQueryPartController controller) {
 
-		Preconditions.checkNotNull(controller,
-				"The query part controller to unbind must be not null!");
+		Preconditions.checkNotNull(controller, "The query part controller to unbind must be not null!");
 		if (cController.isPresent() && cController.get().equals(controller)) {
 
 			cController = Optional.absent();
-			LOG.debug("Unbound {} as a query part controller.", controller
-					.getClass().getSimpleName());
+			LOG.debug("Unbound {} as a query part controller.", controller.getClass().getSimpleName());
 
 		}
 
@@ -267,21 +253,18 @@ public class AddQueryReceiver extends AbstractRepeatingMessageReceiver {
 
 	private static IBackupInformationAccess backupInformationAccess;
 
-	public static void bindBackupInformationAccess(
-			IBackupInformationAccess infoAccess) {
+	public static void bindBackupInformationAccess(IBackupInformationAccess infoAccess) {
 		backupInformationAccess = infoAccess;
 	}
 
-	public static void unbindBackupInformationAccess(
-			IBackupInformationAccess infoAccess) {
+	public static void unbindBackupInformationAccess(IBackupInformationAccess infoAccess) {
 		if (backupInformationAccess == infoAccess) {
 			backupInformationAccess = null;
 		}
 	}
 
 	@Override
-	public void receivedMessage(IPeerCommunicator communicator,
-			PeerID senderPeer, IMessage message) {
+	public void receivedMessage(IPeerCommunicator communicator, PeerID senderPeer, IMessage message) {
 		Preconditions.checkNotNull(message);
 		Preconditions.checkNotNull(senderPeer);
 		Preconditions.checkNotNull(communicator);
@@ -296,14 +279,11 @@ public class AddQueryReceiver extends AbstractRepeatingMessageReceiver {
 
 			RecoveryAddQueryResponseMessage response = null;
 			try {
-				addQuery(addMessage.getPQLCode(), addMessage.getLocalQueryId(),
-						addMessage.getQueryState(),
+				addQuery(addMessage.getPQLCode(), addMessage.getLocalQueryId(), addMessage.getQueryState(),
 						addMessage.getSharedQueryId(), addMessage.isMaster());
-				response = new RecoveryAddQueryResponseMessage(
-						addMessage.getUUID());
+				response = new RecoveryAddQueryResponseMessage(addMessage.getUUID());
 			} catch (Exception e) {
-				response = new RecoveryAddQueryResponseMessage(
-						addMessage.getUUID(), e.getMessage());
+				response = new RecoveryAddQueryResponseMessage(addMessage.getUUID(), e.getMessage());
 			}
 
 			try {
@@ -315,16 +295,14 @@ public class AddQueryReceiver extends AbstractRepeatingMessageReceiver {
 	}
 
 	/**
-	 * Adds a query (installs and runs it) and saves the new backup-information.
-	 * If necessary, searches for a buddy
+	 * Adds a query (installs and runs it) and saves the new backup-information. If necessary, searches for a buddy
 	 * 
 	 * @param pql
 	 *            The PQL String to install
 	 * @param sharedQueryId
 	 *            The id of the shared query where this PQL belongs to
 	 */
-	private static void addQuery(String pql, int localQueryId,
-			QueryState queryState, ID sharedQuery, boolean master)
+	private static void addQuery(String pql, int localQueryId, QueryState queryState, ID sharedQuery, boolean master)
 			throws Exception {
 		Preconditions.checkNotNull(pql);
 
@@ -333,25 +311,20 @@ public class AddQueryReceiver extends AbstractRepeatingMessageReceiver {
 		} else if (!cP2PNetworkManager.isPresent()) {
 			throw new IllegalArgumentException("No P2P network manager bound!");
 		} else if (!cRecoveryCommunicator.isPresent()) {
-			throw new IllegalArgumentException(
-					"No recovery communicator bound!");
+			throw new IllegalArgumentException("No recovery communicator bound!");
 		}
 
-		Collection<Integer> installedQueries = RecoveryHelper
-				.installAndRunQueryPartFromPql(pql, queryState);
+		Collection<Integer> installedQueries = RecoveryHelper.installAndRunQueryPartFromPql(pql, queryState);
 		if (installedQueries == null || installedQueries.size() == 0) {
-			throw new IllegalArgumentException(
-					"Installing QueryPart on Peer failed. Searching for other peers.");
+			throw new IllegalArgumentException("Installing QueryPart on Peer failed. Searching for other peers.");
 		}
 
 		LOG.debug("Installed query for recovery.");
 		if (master && sharedQuery != null) {
 			Collection<PeerID> otherPeers = determineOtherPeers(sharedQuery);
 			cController.get().registerAsMaster(
-					cExecutor.get().getLogicalQueryById(
-							installedQueries.iterator().next(),
-							RecoveryCommunicator.getActiveSession()),
-					localQueryId, sharedQuery, otherPeers);
+					cExecutor.get().getLogicalQueryById(installedQueries.iterator().next(),
+							RecoveryCommunicator.getActiveSession()), localQueryId, sharedQuery, otherPeers);
 		} else if (sharedQuery != null) {
 			cController.get().registerAsSlave(installedQueries, sharedQuery);
 		}
@@ -363,41 +336,41 @@ public class AddQueryReceiver extends AbstractRepeatingMessageReceiver {
 			if (installedQueries.contains(query.getID())) {
 				for (IPhysicalOperator operator : query.getAllOperators()) {
 					if (operator instanceof JxtaSenderPO) {
+						// I installed a sender
 						JxtaSenderPO<?> sender = (JxtaSenderPO<?>) operator;
 
 						// For this sender we want to get the peer to which
 						// it sends to update the receiver on the other peer
 
-						PeerID peer = RecoveryHelper.convertToPeerId(sender
-								.getPeerIDString());
-						// To this peer we have to send an "UPDATE_RECEIVER"
-						// message
-						PipeID pipe = RecoveryHelper.convertToPipeId(sender
-								.getPipeIDString());
-						PeerID ownPeerId = cP2PNetworkManager.get()
-								.getLocalPeerID();
+						PeerID peer = RecoveryHelper.convertToPeerId(sender.getPeerIDString());
+						// To this peer we have to send an "UPDATE_RECEIVER" message
+						PipeID pipe = RecoveryHelper.convertToPipeId(sender.getPipeIDString());
+						PeerID ownPeerId = cP2PNetworkManager.get().getLocalPeerID();
 
 						if (peer != null && pipe != null) {
-							cRecoveryCommunicator.get()
-									.sendUpdateReceiverMessage(peer, ownPeerId,
-											pipe, localQueryId);
+							cRecoveryCommunicator.get().sendUpdateReceiverMessage(peer, ownPeerId, pipe, localQueryId);
 						}
 
 					} else if (operator instanceof JxtaReceiverPO) {
-						// GO ON
-						// -----
+						// I installed a receiver
 						JxtaReceiverPO<?> receiver = (JxtaReceiverPO<?>) operator;
 
-						// For this receiver, we want to tell the sender that he
-						// can go on
-						PeerID peer = RecoveryHelper.convertToPeerId(receiver
-								.getPeerIDString());
-						PipeID pipe = RecoveryHelper.convertToPipeId(receiver
-								.getPipeIDString());
+						// I want to tell the sender on the other side that he has to update his peerId he sends to
+						PeerID peer = RecoveryHelper.convertToPeerId(receiver.getPeerIDString());
+						PipeID pipe = RecoveryHelper.convertToPipeId(receiver.getPipeIDString());
+
+						PeerID ownPeerId = cP2PNetworkManager.get().getLocalPeerID();
 
 						if (peer != null && pipe != null) {
-							cRecoveryCommunicator.get().sendGoOnMessage(peer,
-									pipe);
+							cRecoveryCommunicator.get().sendUpdateSenderMessage(peer, ownPeerId, pipe, localQueryId);
+						}
+
+						// And now he can GO ON
+						// --------------------
+
+						// For this receiver, we want to tell the sender that he can go on
+						if (peer != null && pipe != null) {
+							cRecoveryCommunicator.get().sendGoOnMessage(peer, pipe);
 						}
 					}
 				}
@@ -420,8 +393,7 @@ public class AddQueryReceiver extends AbstractRepeatingMessageReceiver {
 			if (ownID.equals(id)) {
 				continue;
 			}
-			Map<Integer, BackupInfo> infos = backupInformationAccess
-					.getBackupInformation(peerID_str);
+			Map<Integer, BackupInfo> infos = backupInformationAccess.getBackupInformation(peerID_str);
 			for (int localId : infos.keySet()) {
 				String sharedQuery_str = infos.get(localId).sharedQuery;
 				if (sharedQuery.toString().equals(sharedQuery_str)) {
