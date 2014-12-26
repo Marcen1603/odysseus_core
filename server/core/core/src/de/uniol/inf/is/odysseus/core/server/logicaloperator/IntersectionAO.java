@@ -29,7 +29,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalO
  * @author Marco Grawunder
  *
  */
-@LogicalOperator(maxInputPorts = 2, minInputPorts = 2, name = "INTERSECTION", doc = "This operator does not exist anymore.", url = "http://odysseus.offis.uni-oldenburg.de:8090/display/ODYSSEUS/Intersection+operator", category = { LogicalOperatorCategory.BASE })
+@LogicalOperator(maxInputPorts = 2, minInputPorts = 2, name = "INTERSECTION", doc = "This operator does not exist anymore.", url = "http://odysseus.offis.uni-oldenburg.de:8090/display/ODYSSEUS/Intersection+operator", category = { LogicalOperatorCategory.BASE }, deprecation = true)
 public class IntersectionAO extends BinaryLogicalOp {
 
 	private static final long serialVersionUID = -3649143474548582941L;

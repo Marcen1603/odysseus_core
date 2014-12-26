@@ -19,7 +19,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.ResolvedSDFA
  * @author Christian Kuka <christian@kuka.cc>
  * 
  */
-@LogicalOperator(maxInputPorts = 1, minInputPorts = 1, name = "ADWIN", doc = "Change detection window operator.", category = { LogicalOperatorCategory.PROCESSING })
+@LogicalOperator(maxInputPorts = 1, minInputPorts = 1, name = "ADWIN", doc = "Change detection window operator.", category = { LogicalOperatorCategory.PROCESSING }, deprecation = true)
 public class AdaptiveWindowAO extends UnaryLogicalOp {
     /**
      * 
