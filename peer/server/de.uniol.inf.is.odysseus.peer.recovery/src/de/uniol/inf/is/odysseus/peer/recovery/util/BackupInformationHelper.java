@@ -1,9 +1,8 @@
 package de.uniol.inf.is.odysseus.peer.recovery.util;
 
 import java.util.Collections;
-import java.util.HashSet;
+import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
 import net.jxta.id.ID;
 import net.jxta.peer.PeerID;
@@ -27,6 +26,7 @@ import de.uniol.inf.is.odysseus.peer.distribute.IQueryPartController;
 import de.uniol.inf.is.odysseus.peer.distribute.listener.AbstractQueryDistributionListener;
 import de.uniol.inf.is.odysseus.peer.recovery.IBackupInformationAccess;
 import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryCommunicator;
+import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryPreprocessorListener;
 import de.uniol.inf.is.odysseus.peer.recovery.internal.BackupInfo;
 
 /**
@@ -36,7 +36,7 @@ import de.uniol.inf.is.odysseus.peer.recovery.internal.BackupInfo;
  *
  */
 public class BackupInformationHelper extends AbstractQueryDistributionListener
-		implements IPlanModificationListener {
+		implements IPlanModificationListener, IRecoveryPreprocessorListener {
 
 	/**
 	 * The logger instance for this class.
@@ -46,8 +46,11 @@ public class BackupInformationHelper extends AbstractQueryDistributionListener
 
 	private static IBackupInformationAccess backupInformationAccess;
 
-	private static final Set<ID> cIdsForMaster = Collections
-			.synchronizedSet(new HashSet<ID>());
+	private static final Map<ID, ILogicalQuery> cSharedQueryIds = Collections
+			.synchronizedMap(new HashMap<ID, ILogicalQuery>());
+
+	private static final Map<ILogicalQuery, String> cStrategies = Collections
+			.synchronizedMap(new HashMap<ILogicalQuery, String>());
 
 	private class WaitForSharedQueryIdThread extends Thread {
 
@@ -72,24 +75,39 @@ public class BackupInformationHelper extends AbstractQueryDistributionListener
 
 			ID sharedQuery = null;
 			Boolean master = null;
-			for (int i = 0; i < NUM_RUNS; i++) {				
+			String strategy = null;
+			for (int i = 0; i < NUM_RUNS; i++) {
 				if (sharedQuery == null) {
 					synchronized (cController.get()) {
 						sharedQuery = cController.get().getSharedQueryID(
 								this.mQueryId);
 					}
-				} 
-				
-				if (master == null) {
-					synchronized (cIdsForMaster) {
-						master = cIdsForMaster.contains(sharedQuery);
+				}
+
+				if (sharedQuery != null && master == null) {
+					synchronized (cSharedQueryIds) {
+						master = cSharedQueryIds.keySet().contains(sharedQuery);
 					}
 				}
-				
-				if(sharedQuery != null && master != null) {
+
+				if (sharedQuery != null && strategy == null) {
+					ILogicalQuery query = null;
+					synchronized (cSharedQueryIds) {
+						query = cSharedQueryIds.get(sharedQuery);
+						cSharedQueryIds.remove(sharedQuery);
+					}
+					if (query != null) {
+						synchronized (cStrategies) {
+							strategy = cStrategies.get(query);
+							cStrategies.remove(query);
+						}
+					}
+				}
+
+				if (sharedQuery != null && master != null) {
 					break;
 				}
-				
+
 				try {
 					Thread.sleep(WAIT);
 				} catch (InterruptedException e) {
@@ -97,9 +115,9 @@ public class BackupInformationHelper extends AbstractQueryDistributionListener
 					break;
 				}
 			}
-			backupInformationAccess.saveBackupInformation(
-					this.mQueryId, this.mInfo.pql, this.mInfo.state,
-					sharedQuery.toString(), master, null);
+			backupInformationAccess.saveBackupInformation(this.mQueryId,
+					this.mInfo.pql, this.mInfo.state, sharedQuery.toString(),
+					master, strategy);
 		}
 
 	}
@@ -291,8 +309,9 @@ public class BackupInformationHelper extends AbstractQueryDistributionListener
 			String sharedQuery = backupInformationAccess
 					.getBackupSharedQuery(queryID);
 			boolean master = backupInformationAccess.isBackupMaster(queryID);
+			String strategy = backupInformationAccess.getBackupStrategy(queryID);
 			backupInformationAccess.saveBackupInformation(queryID, pql,
-					state.toString(), sharedQuery, master, null);
+					state.toString(), sharedQuery, master, strategy);
 
 		}
 
@@ -301,8 +320,17 @@ public class BackupInformationHelper extends AbstractQueryDistributionListener
 	@Override
 	public void afterTransmission(ILogicalQuery query,
 			Map<ILogicalQueryPart, PeerID> allocationMap, ID sharedQueryId) {
-		synchronized (cIdsForMaster) {
-			cIdsForMaster.add(sharedQueryId);
+		// Called after setRecoveryStrategy
+		synchronized (cSharedQueryIds) {
+			cSharedQueryIds.put(sharedQueryId, query);
+		}
+	}
+
+	@Override
+	public void setRecoveryStrategy(String name, ILogicalQuery query) {
+		// Called before afterTransmission
+		synchronized (cStrategies) {
+			cStrategies.put(query, name);
 		}
 	}
 }

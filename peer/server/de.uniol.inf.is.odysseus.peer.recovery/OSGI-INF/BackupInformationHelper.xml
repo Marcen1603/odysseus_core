@@ -7,5 +7,6 @@
    <reference bind="bindBackupInformationAccess" cardinality="1..1" interface="de.uniol.inf.is.odysseus.peer.recovery.IBackupInformationAccess" name="IBackupInformationAccess" policy="static" unbind="unbindBackupInformationAccess"/>
    <service>
       <provide interface="de.uniol.inf.is.odysseus.peer.distribute.IQueryDistributionListener"/>
+      <provide interface="de.uniol.inf.is.odysseus.peer.recovery.IRecoveryPreprocessorListener"/>
    </service>
 </scr:component>
