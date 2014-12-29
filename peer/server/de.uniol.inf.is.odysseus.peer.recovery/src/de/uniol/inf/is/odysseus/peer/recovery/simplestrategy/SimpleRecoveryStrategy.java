@@ -64,7 +64,7 @@ public class SimpleRecoveryStrategy implements IRecoveryStrategy {
 	/**
 	 * The P2P network manager, if there is one bound.
 	 */
-	protected static Optional<IP2PNetworkManager> cP2PNetworkManager = Optional
+	private static Optional<IP2PNetworkManager> cP2PNetworkManager = Optional
 			.absent();
 
 	/**

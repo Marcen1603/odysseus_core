@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.peer.recovery.util;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -12,6 +13,7 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
+import com.google.common.collect.Maps;
 
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
@@ -21,6 +23,8 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandlin
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.planmodification.event.AbstractPlanModificationEvent;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.planmodification.event.PlanModificationEventType;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
+import de.uniol.inf.is.odysseus.p2p_new.IP2PNetworkManager;
+import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicator;
 import de.uniol.inf.is.odysseus.peer.distribute.ILogicalQueryPart;
 import de.uniol.inf.is.odysseus.peer.distribute.IQueryPartController;
 import de.uniol.inf.is.odysseus.peer.distribute.listener.AbstractQueryDistributionListener;
@@ -28,6 +32,7 @@ import de.uniol.inf.is.odysseus.peer.recovery.IBackupInformationAccess;
 import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryCommunicator;
 import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryPreprocessorListener;
 import de.uniol.inf.is.odysseus.peer.recovery.internal.BackupInfo;
+import de.uniol.inf.is.odysseus.peer.recovery.protocol.RecoveryStrategySender;
 
 /**
  * A helper class for backup information (e.g., update of multiple stores).
@@ -46,11 +51,31 @@ public class BackupInformationHelper extends AbstractQueryDistributionListener
 
 	private static IBackupInformationAccess backupInformationAccess;
 
+	/**
+	 * Keep those query ids in mind, for which the local peer is the master
+	 */
 	private static final Map<ID, ILogicalQuery> cSharedQueryIds = Collections
 			.synchronizedMap(new HashMap<ID, ILogicalQuery>());
 
-	private static final Map<ILogicalQuery, String> cStrategies = Collections
-			.synchronizedMap(new HashMap<ILogicalQuery, String>());
+	/**
+	 * Keep the chosen recovery strategies for those query parts in mind, for
+	 * which a strategy has been set.
+	 */
+	private static final Map<ILogicalQueryPart, String> cStrategiesToPart = Maps
+			.newHashMap();
+
+	/**
+	 * Keep the chosen recovery strategies for those shared query ids in mind,
+	 * for which a strategy has been set and which are to be executed locally.
+	 */
+	private static final Map<ID, String> cStrategiesToID = Collections
+			.synchronizedMap(new HashMap<ID, String>());
+
+	/**
+	 * Keep the local query ids in mind.
+	 */
+	private static final Map<String, Integer> cLocalQueryIdToPQL = Maps
+			.newHashMap();
 
 	private class WaitForSharedQueryIdThread extends Thread {
 
@@ -87,24 +112,29 @@ public class BackupInformationHelper extends AbstractQueryDistributionListener
 				if (sharedQuery != null && master == null) {
 					synchronized (cSharedQueryIds) {
 						master = cSharedQueryIds.keySet().contains(sharedQuery);
-					}
-				}
-
-				if (sharedQuery != null && strategy == null) {
-					ILogicalQuery query = null;
-					synchronized (cSharedQueryIds) {
-						query = cSharedQueryIds.get(sharedQuery);
-						cSharedQueryIds.remove(sharedQuery);
-					}
-					if (query != null) {
-						synchronized (cStrategies) {
-							strategy = cStrategies.get(query);
-							cStrategies.remove(query);
+						if(master) {
+							cSharedQueryIds.remove(sharedQuery);
 						}
 					}
 				}
 
+				if (sharedQuery != null && strategy == null) {
+					synchronized (cStrategiesToID) {
+						strategy = cStrategiesToID.get(sharedQuery);
+						cStrategiesToID.remove(sharedQuery);
+					}
+				}
+
 				if (sharedQuery != null && master != null) {
+					LOG.debug("Found shared query id for local query {}: {}",
+							this.mQueryId, sharedQuery);
+					LOG.debug(
+							"Found master/slave information for local query {}: Is master = {}",
+							this.mQueryId, master);
+					if (strategy != null)
+						LOG.debug(
+								"Found recovery strategy for local query {}: {}",
+								this.mQueryId, strategy);
 					break;
 				}
 
@@ -123,26 +153,26 @@ public class BackupInformationHelper extends AbstractQueryDistributionListener
 	}
 
 	/**
-	 * The recovery communicator, if there is one bound.
+	 * The peer communicator, if there is one bound.
 	 */
-	private static Optional<IRecoveryCommunicator> cCommunicator = Optional
+	private static Optional<IPeerCommunicator> cCommunicator = Optional
 			.absent();
 
 	/**
-	 * Binds a recovery communicator. <br />
+	 * Binds a peer communicator. <br />
 	 * Called by OSGI-DS.
 	 * 
 	 * @param communicator
-	 *            The recovery communicator to bind. <br />
+	 *            The peer communicator to bind. <br />
 	 *            Must be not null.
 	 */
-	public static void bindCommunicator(IRecoveryCommunicator communicator) {
+	public static void bindCommunicator(IPeerCommunicator communicator) {
 
 		Preconditions.checkNotNull(communicator,
-				"The recovery communicator to bind must be not null!");
+				"The peer communicator to bind must be not null!");
 		cCommunicator = Optional.of(communicator);
-		LOG.debug("Bound {} as a recovery communicator.", communicator
-				.getClass().getSimpleName());
+		LOG.debug("Bound {} as a peer communicator.", communicator.getClass()
+				.getSimpleName());
 
 	}
 
@@ -275,6 +305,51 @@ public class BackupInformationHelper extends AbstractQueryDistributionListener
 
 	}
 
+	/**
+	 * The P2P network manager, if there is one bound.
+	 */
+	private static Optional<IP2PNetworkManager> cP2PNetworkManager = Optional
+			.absent();
+
+	/**
+	 * Binds a P2P network manager. <br />
+	 * Called by OSGi-DS.
+	 * 
+	 * @param serv
+	 *            The P2P network manager to bind. <br />
+	 *            Must be not null.
+	 */
+	public static void bindP2PNetworkManager(IP2PNetworkManager serv) {
+
+		Preconditions.checkNotNull(serv);
+		cP2PNetworkManager = Optional.of(serv);
+		LOG.debug("Bound {} as a P2P network manager.", serv.getClass()
+				.getSimpleName());
+
+	}
+
+	/**
+	 * Unbinds a P2P network manager, if it's the bound one. <br />
+	 * Called by OSGi-DS.
+	 * 
+	 * @param serv
+	 *            The P2P network manager to unbind. <br />
+	 *            Must be not null.
+	 */
+	public static void unbindP2PNetworkManager(IP2PNetworkManager serv) {
+
+		Preconditions.checkNotNull(serv);
+
+		if (cP2PNetworkManager.isPresent() && cP2PNetworkManager.get() == serv) {
+
+			cP2PNetworkManager = Optional.absent();
+			LOG.debug("Unbound {} as a P2P network manager.", serv.getClass()
+					.getSimpleName());
+
+		}
+
+	}
+
 	@Override
 	public void planModificationEvent(AbstractPlanModificationEvent<?> eventArgs) {
 
@@ -298,6 +373,7 @@ public class BackupInformationHelper extends AbstractQueryDistributionListener
 			info.pql = RecoveryHelper.getPQLFromRunningQuery(queryID);
 			info.state = ((IPhysicalQuery) eventArgs.getValue()).getState()
 					.toString();
+			cLocalQueryIdToPQL.put(info.pql, queryID);
 			WaitForSharedQueryIdThread thread = new WaitForSharedQueryIdThread(
 					queryID, info);
 			thread.start();
@@ -309,7 +385,8 @@ public class BackupInformationHelper extends AbstractQueryDistributionListener
 			String sharedQuery = backupInformationAccess
 					.getBackupSharedQuery(queryID);
 			boolean master = backupInformationAccess.isBackupMaster(queryID);
-			String strategy = backupInformationAccess.getBackupStrategy(queryID);
+			String strategy = backupInformationAccess
+					.getBackupStrategy(queryID);
 			backupInformationAccess.saveBackupInformation(queryID, pql,
 					state.toString(), sharedQuery, master, strategy);
 
@@ -324,13 +401,46 @@ public class BackupInformationHelper extends AbstractQueryDistributionListener
 		synchronized (cSharedQueryIds) {
 			cSharedQueryIds.put(sharedQueryId, query);
 		}
+
+		for (ILogicalQueryPart part : cStrategiesToPart.keySet()) {
+			if (allocationMap.containsKey(part)
+					&& allocationMap.get(part).equals(
+							cP2PNetworkManager.get().getLocalPeerID())) {
+				// Local part
+				synchronized (cStrategiesToID) {
+					cStrategiesToID.put(sharedQueryId,
+							cStrategiesToPart.get(part));
+				}
+				cStrategiesToPart.remove(part);
+			} else if (allocationMap.containsKey(part)) {
+				// Remote part
+				RecoveryStrategySender.getInstance().sendRecoveryStrategy(
+						allocationMap.get(part), part,
+						cStrategiesToPart.get(part), cCommunicator.get());
+				cStrategiesToPart.remove(part);
+			}
+		}
 	}
 
 	@Override
-	public void setRecoveryStrategy(String name, ILogicalQuery query) {
+	public void setRecoveryStrategy(String name,
+			Collection<ILogicalQueryPart> queryParts) {
 		// Called before afterTransmission
-		synchronized (cStrategies) {
-			cStrategies.put(query, name);
+		for (ILogicalQueryPart part : queryParts) {
+			cStrategiesToPart.put(part, name);
 		}
 	}
+
+	public static void setRecoveryStrategy(String name, String pql) {
+		// Called from another peer via message
+		if (cLocalQueryIdToPQL.containsKey(pql)) {
+			int queryId = cLocalQueryIdToPQL.get(pql);
+			BackupInfo info = backupInformationAccess.getBackupInformation()
+					.get(queryId);
+			backupInformationAccess.saveBackupInformation(queryId, pql,
+					info.state, info.sharedQuery, info.master, name);
+			cLocalQueryIdToPQL.remove(pql);
+		}
+	}
+
 }
