@@ -14,9 +14,13 @@ Require-Bundle: de.uniol.inf.is.odysseus.core,
  de.uniol.inf.is.odysseus.slf4j,
  org.eclipse.osgi;bundle-version="3.7.2",
  de.uniol.inf.is.odysseus.script.parser
-Service-Component: OSGI-INF/RecoveryConsole.xml,OSGI-INF/RecoveryCommunicator.xml,OSGI-INF/BackupInformationHelper.xml,OSGI-INF/RecoveryDynamicBackup.xml,OSGI-INF/RecoveryHelper.xml,OSGI-INF/OperatorChangeListener.xml,OSGI-INF/AddQueryResponseHandler.xml,OSGI-INF/RecoveryAllocatorService.xml,OSGI-INF/RecoveryStrategyService.xml,
- OSGI-INF/RecoveryStrategyManagerService.xml,OSGI-INF/RecoveryPreParserKeywordProvider.xml,OSGI-INF/TupleSendSender.xml,OSGI-INF/TupleSendReceiver.xml,OSGI-INF/UpdatePipeReceiver.xml,OSGI-INF/UpdatePipeSender.xml,OSGI-INF/RecoveryCommunicatorRegistry.xml,OSGI-INF/AgreementHelper.xml,OSGI-INF/AgreementReceiver.xml,OSGI-INF/AgreementSender.xml,
- OSGI-INF/RecoveryAllocatorAdvertisementSender.xml,OSGI-INF/RecoveryStrategyManagerAdvertisementSender.xml,OSGI-INF/RecoveryAllocatorAdvertisementListener.xml,OSGI-INF/RecoveryStrategyManagerAdvertisementListener.xml,OSGI-INF/AddQuerySender.xml,OSGI-INF/AddQueryReceiver.xml,OSGI-INF/BackupInformationAccess.xml
+Service-Component: OSGI-INF/RecoveryConsole.xml,OSGI-INF/RecoveryCommunicator.xml,OSGI-INF/BackupInformationHelper.xml,OSGI-INF/RecoveryDynamicBackup.xml,OSGI-INF/RecoveryHelper.xml,
+ OSGI-INF/OperatorChangeListener.xml,OSGI-INF/AddQueryResponseHandler.xml,OSGI-INF/RecoveryAllocatorService.xml,OSGI-INF/RecoveryStrategyService.xml,
+ OSGI-INF/RecoveryStrategyManagerService.xml,OSGI-INF/RecoveryPreParserKeywordProvider.xml,OSGI-INF/TupleSendSender.xml,OSGI-INF/TupleSendReceiver.xml,OSGI-INF/UpdatePipeReceiver.xml,
+ OSGI-INF/UpdatePipeSender.xml,OSGI-INF/RecoveryCommunicatorRegistry.xml,OSGI-INF/AgreementHelper.xml,OSGI-INF/AgreementReceiver.xml,OSGI-INF/AgreementSender.xml,
+ OSGI-INF/RecoveryAllocatorAdvertisementSender.xml,OSGI-INF/RecoveryStrategyManagerAdvertisementSender.xml,OSGI-INF/RecoveryAllocatorAdvertisementListener.xml,
+ OSGI-INF/RecoveryStrategyManagerAdvertisementListener.xml,OSGI-INF/AddQuerySender.xml,OSGI-INF/AddQueryReceiver.xml,OSGI-INF/BackupInformationAccess.xml,
+ OSGI-INF/SimpleRecoveryStrategy.xml
 Export-Package: de.uniol.inf.is.odysseus.peer.recovery,
  de.uniol.inf.is.odysseus.peer.recovery.internal,
  de.uniol.inf.is.odysseus.peer.recovery.util
