@@ -591,6 +591,7 @@ public class ReplicationQueryPartModificator implements IQueryPartModificator {
 
 		// Create merge operator
 		ILogicalOperator mergeOperator = new ReplicationMergeAO();
+		mergeOperator.addParameterInfo("NAME", "'ReplicationMerge'");
 
 		int sinkInPort = 0;
 		int sourceOutPort = 0;

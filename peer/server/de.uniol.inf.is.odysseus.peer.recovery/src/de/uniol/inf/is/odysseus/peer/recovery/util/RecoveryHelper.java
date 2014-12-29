@@ -17,9 +17,11 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 
 import de.uniol.inf.is.odysseus.core.collection.Context;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
+import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.physicaloperator.AbstractPhysicalSubscription;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ControllablePhysicalSubscription;
@@ -831,4 +833,94 @@ public class RecoveryHelper {
 		return cPQLGenerator.get().generatePQLStatement(
 				part.getOperators().iterator().next());
 	}
+
+	private static boolean sameParameterInfo(ILogicalOperator op1,
+			ILogicalOperator op2) {
+		if (op1.getParameterInfos() == null) {
+			return op2.getParameterInfos() == null;
+		} else if (op1.getParameterInfos().keySet().size() != op2
+				.getParameterInfos().keySet().size()
+				|| !op1.getParameterInfos().keySet()
+						.containsAll(op2.getParameterInfos().keySet())) {
+			return false;
+		}
+		for (String key : op1.getParameterInfos().keySet()) {
+			if (!op1.getParameterInfos().get(key)
+					.equals(op2.getParameterInfos().get(key))) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	private static boolean equalOperatorsRecursive(ILogicalOperator op1,
+			ILogicalOperator op2, Set<ILogicalOperator> operators) {
+		if (operators.contains(op1)) {
+			return true;
+		}
+		operators.add(op1);
+
+		// Check class, parameter info and subscriptions
+		if (op1.getClass() != op2.getClass()
+				|| !sameParameterInfo(op1, op2)
+				|| op1.getSubscribedToSource().size() != op2
+						.getSubscribedToSource().size()
+				|| op1.getSubscriptions().size() != op2.getSubscriptions()
+						.size()) {
+			return false;
+		}
+		for (int index = 0; index < op1.getSubscribedToSource().size(); index++) {
+			if (!equalOperatorsRecursive(op1.getSubscribedToSource(index)
+					.getTarget(), op2.getSubscribedToSource(index).getTarget(),
+					operators)) {
+				return false;
+			}
+		}
+		Iterator<LogicalSubscription> iter1 = op1.getSubscriptions().iterator();
+		Iterator<LogicalSubscription> iter2 = op2.getSubscriptions().iterator();
+		while (iter1.hasNext()) {
+			if (!equalOperatorsRecursive(iter1.next().getTarget(), iter2.next()
+					.getTarget(), operators)) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	public static boolean equalOperators(ILogicalOperator op1,
+			ILogicalOperator op2) {
+		Set<ILogicalOperator> operators = Sets.newHashSet();
+		return equalOperatorsRecursive(op1, op2, operators);
+	}
+
+	public static boolean equalOperators(ILogicalQueryPart part1,
+			ILogicalQueryPart part2) {
+		if (part1.getOperators().size() != part2.getOperators().size()) {
+			return false;
+		}
+		for (ILogicalOperator operator1 : part1.getOperators()) {
+			boolean found = false;
+			for (ILogicalOperator operator2 : part2.getOperators()) {
+				if (equalOperators(operator1, operator2)) {
+					found = true;
+					break;
+				}
+			}
+			if (!found) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	public static ILogicalQueryPart findPart(
+			Collection<ILogicalQueryPart> parts, ILogicalQueryPart searchedPart) {
+		for (ILogicalQueryPart part : parts) {
+			if (equalOperators(part, searchedPart)) {
+				return part;
+			}
+		}
+		return null;
+	}
+
 }

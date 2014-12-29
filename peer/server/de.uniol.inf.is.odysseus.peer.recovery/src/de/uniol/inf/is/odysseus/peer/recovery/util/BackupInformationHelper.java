@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
@@ -33,6 +34,9 @@ import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryCommunicator;
 import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryPreprocessorListener;
 import de.uniol.inf.is.odysseus.peer.recovery.internal.BackupInfo;
 import de.uniol.inf.is.odysseus.peer.recovery.protocol.RecoveryStrategySender;
+
+// TODO Die ganze Klasse gefällt mir nicht. Es ist, glaube ich, nicht zweckmäßig (nur) auf den lokalen Distributor zu horchen. 
+// Es muss auch möglich sein, die Backup Informationen zentral vom Distributor aus zu erstellen. M.B.
 
 /**
  * A helper class for backup information (e.g., update of multiple stores).
@@ -74,13 +78,13 @@ public class BackupInformationHelper extends AbstractQueryDistributionListener
 	/**
 	 * Keep the local query ids in mind.
 	 */
-	private static final Map<String, Integer> cLocalQueryIdToPQL = Maps
-			.newHashMap();
+	private static final Map<String, Integer> cLocalQueryIdToPQL = Collections
+			.synchronizedMap(new HashMap<String, Integer>());
+
+	private static final int NUM_RUNS = 60;
+	private static final long WAIT = 1000;
 
 	private class WaitForSharedQueryIdThread extends Thread {
-
-		private static final int NUM_RUNS = 60;
-		private static final long WAIT = 1000;
 
 		private final int mQueryId;
 		private final BackupInfo mInfo;
@@ -112,7 +116,7 @@ public class BackupInformationHelper extends AbstractQueryDistributionListener
 				if (sharedQuery != null && master == null) {
 					synchronized (cSharedQueryIds) {
 						master = cSharedQueryIds.keySet().contains(sharedQuery);
-						if(master) {
+						if (master) {
 							cSharedQueryIds.remove(sharedQuery);
 						}
 					}
@@ -394,6 +398,20 @@ public class BackupInformationHelper extends AbstractQueryDistributionListener
 
 	}
 
+	private static ILogicalQueryPart findPart(
+			Collection<ILogicalQueryPart> parts, ILogicalQueryPart part) {
+		// Only for parts with id
+		if (part.getID() == -1) {
+			return null;
+		}
+		for (ILogicalQueryPart p : parts) {
+			if (part.getID() == p.getID()) {
+				return p;
+			}
+		}
+		return null;
+	}
+
 	@Override
 	public void afterTransmission(ILogicalQuery query,
 			Map<ILogicalQueryPart, PeerID> allocationMap, ID sharedQueryId) {
@@ -402,23 +420,30 @@ public class BackupInformationHelper extends AbstractQueryDistributionListener
 			cSharedQueryIds.put(sharedQueryId, query);
 		}
 
+		Collection<ILogicalQueryPart> processedParts = Lists.newArrayList();
 		for (ILogicalQueryPart part : cStrategiesToPart.keySet()) {
-			if (allocationMap.containsKey(part)
-					&& allocationMap.get(part).equals(
-							cP2PNetworkManager.get().getLocalPeerID())) {
+			ILogicalQueryPart allocatedPart = findPart(allocationMap.keySet(),
+					part);
+			if (allocatedPart == null) {
+				continue;
+			} else if (allocationMap.get(allocatedPart).equals(
+					cP2PNetworkManager.get().getLocalPeerID())) {
 				// Local part
 				synchronized (cStrategiesToID) {
 					cStrategiesToID.put(sharedQueryId,
 							cStrategiesToPart.get(part));
 				}
-				cStrategiesToPart.remove(part);
-			} else if (allocationMap.containsKey(part)) {
+				processedParts.add(part);
+			} else {
 				// Remote part
 				RecoveryStrategySender.getInstance().sendRecoveryStrategy(
-						allocationMap.get(part), part,
+						allocationMap.get(allocatedPart), allocatedPart,
 						cStrategiesToPart.get(part), cCommunicator.get());
-				cStrategiesToPart.remove(part);
+				processedParts.add(part);
 			}
+		}
+		for (ILogicalQueryPart part : processedParts) {
+			cStrategiesToPart.remove(part);
 		}
 	}
 
@@ -431,16 +456,39 @@ public class BackupInformationHelper extends AbstractQueryDistributionListener
 		}
 	}
 
-	public static void setRecoveryStrategy(String name, String pql) {
+	public static void setRecoveryStrategy(final String name, final String pql) {
 		// Called from another peer via message
-		if (cLocalQueryIdToPQL.containsKey(pql)) {
-			int queryId = cLocalQueryIdToPQL.get(pql);
-			BackupInfo info = backupInformationAccess.getBackupInformation()
-					.get(queryId);
-			backupInformationAccess.saveBackupInformation(queryId, pql,
-					info.state, info.sharedQuery, info.master, name);
-			cLocalQueryIdToPQL.remove(pql);
-		}
+		Thread t = new Thread() {
+			@Override
+			public void run() {
+				for (int i = 0; i < NUM_RUNS; i++) {
+					int queryId = -1;
+					synchronized (cLocalQueryIdToPQL) {
+						if (cLocalQueryIdToPQL.containsKey(pql)) {
+							queryId = cLocalQueryIdToPQL.get(pql);
+						}
+					}
+					if (queryId != -1) {
+						BackupInfo info = backupInformationAccess
+								.getBackupInformation().get(queryId);
+						backupInformationAccess.saveBackupInformation(queryId,
+								pql, info.state, info.sharedQuery, info.master,
+								name);
+						synchronized (cLocalQueryIdToPQL) {
+							cLocalQueryIdToPQL.remove(pql);
+						}
+						break;
+					}
+					try {
+						Thread.sleep(WAIT);
+					} catch (InterruptedException e) {
+						LOG.error("Thread interrupted", e);
+						break;
+					}
+				}
+			}
+		};
+		t.start();
 	}
 
 }

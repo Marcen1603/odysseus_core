@@ -1,0 +1,14 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Activestandby Recovery Strategy
+Bundle-SymbolicName: de.uniol.inf.is.odysseus.peer.recovery.strategy.activestandby
+Bundle-Version: 1.0.0.qualifier
+Bundle-Vendor: Michael Brand
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Require-Bundle: de.uniol.inf.is.odysseus.peer.distribute;bundle-version="1.0.0",
+ de.uniol.inf.is.odysseus.core.server,
+ de.uniol.inf.is.odysseus.core,
+ com.google.guava;bundle-version="14.0.0",
+ de.uniol.inf.is.odysseus.slf4j;bundle-version="1.0.0",
+ de.uniol.inf.is.odysseus.peer.recovery;bundle-version="1.0.0"
+Service-Component: OSGI-INF/ActiveStandbyModificator.xml
