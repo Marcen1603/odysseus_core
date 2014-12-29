@@ -160,10 +160,11 @@ public class OperatorChangeListener implements IOperatorObserver, IPlanModificat
 					String pql = backupInformationAccess.getBackupPQL(queryId);
 					String sharedQuery = backupInformationAccess.getBackupSharedQuery(queryId);
 					boolean master = backupInformationAccess.isBackupMaster(queryId);
+					String strategy = backupInformationAccess.getBackupStrategy(queryId);
 					String newPQL = pql.replace(oldPeerId, newPeerId);
 
 					// Save this new information
-					backupInformationAccess.saveBackupInformation(queryId, newPQL, query.getState().toString(), sharedQuery, master);
+					backupInformationAccess.saveBackupInformation(queryId, newPQL, query.getState().toString(), sharedQuery, master, strategy);
 				}
 			}
 		}

@@ -72,22 +72,24 @@ public class BackupInformationHelper extends AbstractQueryDistributionListener
 
 			ID sharedQuery = null;
 			Boolean master = null;
-			for (int i = 0; i < NUM_RUNS; i++) {
+			for (int i = 0; i < NUM_RUNS; i++) {				
 				if (sharedQuery == null) {
 					synchronized (cController.get()) {
 						sharedQuery = cController.get().getSharedQueryID(
 								this.mQueryId);
 					}
-				} else if (master == null) {
+				} 
+				
+				if (master == null) {
 					synchronized (cIdsForMaster) {
 						master = cIdsForMaster.contains(sharedQuery);
 					}
-				} else {
-					backupInformationAccess.saveBackupInformation(
-							this.mQueryId, this.mInfo.pql, this.mInfo.state,
-							sharedQuery.toString(), master);
-					return;
 				}
+				
+				if(sharedQuery != null && master != null) {
+					break;
+				}
+				
 				try {
 					Thread.sleep(WAIT);
 				} catch (InterruptedException e) {
@@ -95,8 +97,9 @@ public class BackupInformationHelper extends AbstractQueryDistributionListener
 					break;
 				}
 			}
-			backupInformationAccess.saveBackupInformation(this.mQueryId,
-					this.mInfo.pql, this.mInfo.state, null, true);
+			backupInformationAccess.saveBackupInformation(
+					this.mQueryId, this.mInfo.pql, this.mInfo.state,
+					sharedQuery.toString(), master, null);
 		}
 
 	}
@@ -289,7 +292,7 @@ public class BackupInformationHelper extends AbstractQueryDistributionListener
 					.getBackupSharedQuery(queryID);
 			boolean master = backupInformationAccess.isBackupMaster(queryID);
 			backupInformationAccess.saveBackupInformation(queryID, pql,
-					state.toString(), sharedQuery, master);
+					state.toString(), sharedQuery, master, null);
 
 		}
 
