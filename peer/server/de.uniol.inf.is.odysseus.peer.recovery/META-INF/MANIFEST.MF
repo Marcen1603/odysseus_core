@@ -21,8 +21,7 @@ Service-Component: OSGI-INF/RecoveryConsole.xml,OSGI-INF/RecoveryCommunicator.xm
  OSGI-INF/AgreementHelper.xml,OSGI-INF/AgreementReceiver.xml,OSGI-INF/AgreementSender.xml,OSGI-INF/RecoveryAllocatorAdvertisementSender.xml,
  OSGI-INF/RecoveryStrategyManagerAdvertisementSender.xml,OSGI-INF/RecoveryAllocatorAdvertisementListener.xml,
  OSGI-INF/RecoveryStrategyManagerAdvertisementListener.xml,OSGI-INF/AddQuerySender.xml,OSGI-INF/AddQueryReceiver.xml,OSGI-INF/BackupInformationAccess.xml,
- OSGI-INF/SimpleRecoveryStrategy.xml,OSGI-INF/RecoveryStrategySender.xml,
- OSGI-INF/RecoveryStrategyReceiver.xml
+ OSGI-INF/SimpleRecoveryStrategy.xml
 Export-Package: de.uniol.inf.is.odysseus.peer.recovery,
  de.uniol.inf.is.odysseus.peer.recovery.internal,
  de.uniol.inf.is.odysseus.peer.recovery.util

@@ -2,7 +2,6 @@ package de.uniol.inf.is.odysseus.peer.recovery.strategy.activestandby;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,7 +9,6 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
@@ -19,7 +17,6 @@ import de.uniol.inf.is.odysseus.peer.distribute.ILogicalQueryPart;
 import de.uniol.inf.is.odysseus.peer.distribute.IQueryPartModificator;
 import de.uniol.inf.is.odysseus.peer.distribute.QueryPartModificationException;
 import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryPreprocessorListener;
-import de.uniol.inf.is.odysseus.peer.recovery.util.RecoveryHelper;
 
 /**
  * Replicates the given query parts once.
@@ -109,8 +106,6 @@ public class ActiveStandbyModificator implements IQueryPartModificator {
 		cListeners.remove(serv);
 		LOG.debug("Unbound {} as a listener.", serv.getClass().getSimpleName());
 	}
-	
-	private static int cIDCounter = 0;
 
 	/**
 	 * Notifies all listeners.
@@ -128,37 +123,6 @@ public class ActiveStandbyModificator implements IQueryPartModificator {
 				LOG.error("Error while notifying listener!", t);
 			}
 		}
-	}
-
-	/**
-	 * Determines, which query parts are replicated and therefore twice within
-	 * the given collection.
-	 * 
-	 * @param parts
-	 *            The given query parts.
-	 */
-	private static Collection<ILogicalQueryPart> determineReplicatedParts(
-			Collection<ILogicalQueryPart> parts) {
-		Collection<ILogicalQueryPart> seenParts = Sets.newHashSet();
-		Map<ILogicalQueryPart, Long> idToSeenParts = Maps.newHashMap();
-		Collection<ILogicalQueryPart> replicatedParts = Lists.newArrayList();
-		for (ILogicalQueryPart part : parts) {
-			ILogicalQueryPart seenPart = RecoveryHelper.findPart(seenParts,
-					part);
-			if (seenPart != null) {
-				if(RecoveryHelper.findPart(replicatedParts, seenPart) == null) {
-					replicatedParts.add(seenPart);
-				}
-				part.setID(idToSeenParts.get(seenPart));
-				replicatedParts.add(part);
-			} else {
-				long id = cIDCounter++;
-				part.setID(id);
-				seenParts.add(part);
-				idToSeenParts.put(part, id);
-			}
-		}
-		return replicatedParts;
 	}
 
 	@Override
@@ -181,11 +145,8 @@ public class ActiveStandbyModificator implements IQueryPartModificator {
 		Collection<ILogicalQueryPart> replicatedParts = cReplicator.get()
 				.modify(queryParts, query, config, modParamsForReplication);
 
-		// Decide, which parts should be recovered by active-standby
-		Collection<ILogicalQueryPart> partsForActiveStandby = determineReplicatedParts(replicatedParts);
-
 		// Notify, which parts should be recovered by active-standby
-		notifyListeners(partsForActiveStandby);
+		notifyListeners(replicatedParts);
 
 		return replicatedParts;
 	}

@@ -13,7 +13,6 @@ public class LogicalQueryPart implements ILogicalQueryPart {
 
 	private final Collection<ILogicalOperator> operators = Lists.newArrayList();
 	private final Collection<ILogicalQueryPart> avoidedQueryParts = Lists.newArrayList();
-	private long id = -1;
 	
 	public LogicalQueryPart() {
 	}
@@ -66,9 +65,7 @@ public class LogicalQueryPart implements ILogicalQueryPart {
 	
 	@Override
 	public ILogicalQueryPart clone() {
-		LogicalQueryPart copy = new LogicalQueryPart(getOperators(), getAvoidingQueryParts());
-		copy.setID(this.id);
-		return copy;
+		return new LogicalQueryPart(getOperators(), getAvoidingQueryParts());
 	}
 
 	@Override
@@ -182,16 +179,6 @@ public class LogicalQueryPart implements ILogicalQueryPart {
 	@Override
 	public void removeAllAvoidingQueryParts() {
 		avoidedQueryParts.clear();
-	}
-
-	@Override
-	public void setID(long id) {
-		this.id = id;
-	}
-
-	@Override
-	public long getID() {
-		return this.id;
 	}
 }
 	

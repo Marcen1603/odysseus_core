@@ -26,7 +26,4 @@ public interface ILogicalQueryPart {
 	public ImmutableCollection<ILogicalQueryPart> getAvoidingQueryParts();
 	public boolean contains( ILogicalQueryPart queryPart );
 	public void removeAllAvoidingQueryParts();
-	
-	public void setID(long id);
-	public long getID();
 }

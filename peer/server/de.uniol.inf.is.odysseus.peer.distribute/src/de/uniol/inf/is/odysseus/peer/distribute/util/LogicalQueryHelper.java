@@ -610,7 +610,6 @@ public final class LogicalQueryHelper {
 
 			ILogicalQueryPart copyQueryPart = new LogicalQueryPart(
 					copyOperatorsOfCopyPart);
-			copyQueryPart.setID(queryPart.getID());
 			map.put(copyQueryPart, queryPart);
 		}
 
