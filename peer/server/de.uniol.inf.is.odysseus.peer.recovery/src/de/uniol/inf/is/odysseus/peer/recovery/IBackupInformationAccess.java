@@ -29,6 +29,24 @@ public interface IBackupInformationAccess {
 			String sharedQuery, boolean master, String strategy);
 
 	/**
+	 * Saves the backup-information for another peer and shares it with the
+	 * other peers.
+	 * 
+	 * @param peerId
+	 *            The id of the other peer as string.
+	 * @param queryId
+	 *            The local query id of this query
+	 * @param pql
+	 *            The PQL string of this query
+	 * @param state
+	 *            The state of the query, e.g. "running".
+	 * @param sharedQuery
+	 *            The shared query id as a string.
+	 */
+	public void saveBackupInformation(String peerId, int queryId, String pql,
+			String state, String sharedQuery, boolean master, String strategy);
+
+	/**
 	 * Removes a backup-information for this peer by the query id.
 	 * 
 	 * @param queryId
@@ -81,11 +99,11 @@ public interface IBackupInformationAccess {
 	 * @return The PQL String for the query with the given id on this peer
 	 */
 	public String getBackupPQL(int queryId);
-	
+
 	public String getBackupSharedQuery(int queryId);
-	
+
 	public boolean isBackupMaster(int queryId);
-	
+
 	public String getBackupStrategy(int queryId);
 
 	/**

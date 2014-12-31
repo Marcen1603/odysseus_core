@@ -69,14 +69,18 @@ public class BackupInformationAccess implements IBackupInformationAccess {
 		if (peerDictionary == dict)
 			peerDictionary = null;
 	}
-
+	
 	@Override
 	public void saveBackupInformation(int queryId, String pql, String state, String sharedQuery, boolean master, String strategy) {
+		String localPeerId = p2pNetworkManager.getLocalPeerID().toString();
+		this.saveBackupInformation(localPeerId, queryId, pql, state, sharedQuery, master, strategy);
+	}
+
+	@Override
+	public void saveBackupInformation(String peerId, int queryId, String pql, String state, String sharedQuery, boolean master, String strategy) {
 		LOG.debug("Save backup-info for query {}", queryId);
 
-		String localPeerId = p2pNetworkManager.getLocalPeerID().toString();
-
-		DDCKey key = new DDCKey(localPeerId);
+		DDCKey key = new DDCKey(peerId);
 		HashMap<Integer, BackupInfo> infoMap = getBackupInformation();
 
 		if (infoMap.containsKey(queryId)) {
