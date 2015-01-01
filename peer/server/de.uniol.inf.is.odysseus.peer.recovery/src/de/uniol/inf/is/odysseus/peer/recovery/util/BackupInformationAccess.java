@@ -118,7 +118,8 @@ public class BackupInformationAccess implements IBackupInformationAccess {
 
 	@Override
 	public void removeBackupInformation(String peerId, int queryId) {
-		LOG.debug("Remove backup-info for query {} for peer {}", queryId, peerId);
+		String peerName = peerDictionary.getRemotePeerName(peerId);
+		LOG.debug("Remove backup-info for query {} for peer {}", queryId, peerName);
 
 		DDCKey key = new DDCKey(peerId);
 		HashMap<Integer, BackupInfo> infoMap = getBackupInformation();
@@ -130,8 +131,11 @@ public class BackupInformationAccess implements IBackupInformationAccess {
 
 			// Distribute
 			distributeDDC();
-
+			
 			LOG.debug("No more infos about this peer, delete peer from list.");
+		} else {
+			// We still have information about this peer -> keep it, save it
+			saveToDDC(infoMap, key);
 		}
 	}
 

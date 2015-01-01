@@ -13,6 +13,7 @@ import com.google.common.collect.Sets;
 
 import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicator;
 import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicatorListener;
+import de.uniol.inf.is.odysseus.p2p_new.dictionary.IPeerDictionary;
 
 /**
  * Entity to handle received messages. <br />
@@ -40,6 +41,11 @@ public abstract class AbstractRepeatingMessageReceiver implements
 	 */
 	protected Optional<IPeerCommunicator> mPeerCommunicator = Optional.absent();
 
+	/**
+	 * The Peer dictionary, if there is one bound.
+	 */
+	private static Optional<IPeerDictionary> cPeerDictionary = Optional.absent();
+	
 	/**
 	 * Binds a peer communicator. <br />
 	 * Called by OSGi-DS.
@@ -75,6 +81,43 @@ public abstract class AbstractRepeatingMessageReceiver implements
 			LOG.debug("Unbound {} as a peer communicator.", serv.getClass()
 					.getSimpleName());
 		}
+	}
+	
+	/**
+	 * Binds a Peer dictionary. <br />
+	 * Called by OSGi-DS.
+	 * 
+	 * @param serv
+	 *            The Peer dictionary to bind. <br />
+	 *            Must be not null.
+	 */
+	public static void bindPeerDictionary(IPeerDictionary serv) {
+
+		Preconditions.checkNotNull(serv);
+		cPeerDictionary = Optional.of(serv);
+		LOG.debug("Bound {} as a Peer dictionary.", serv.getClass().getSimpleName());
+
+	}
+
+	/**
+	 * Unbinds a Peer dictionary, if it's the bound one. <br />
+	 * Called by OSGi-DS.
+	 * 
+	 * @param serv
+	 *            The Peer dictionary to unbind. <br />
+	 *            Must be not null.
+	 */
+	public static void unbindPeerDictionary(IPeerDictionary serv) {
+
+		Preconditions.checkNotNull(serv);
+
+		if (cPeerDictionary.isPresent() && cPeerDictionary.get() == serv) {
+
+			cPeerDictionary = Optional.absent();
+			LOG.debug("Unbound {} as a Peer dictionary.", serv.getClass().getSimpleName());
+
+		}
+
 	}
 	
 	/**

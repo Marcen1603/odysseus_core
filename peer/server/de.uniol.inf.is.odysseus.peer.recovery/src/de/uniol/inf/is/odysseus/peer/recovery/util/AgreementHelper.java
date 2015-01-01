@@ -327,7 +327,7 @@ public class AgreementHelper {
 								.contains(localQueryId)) {
 					// We still want to do recovery for that peer for that query
 					// id
-					LOG.debug("Now I start with the revoery for {}", failedPeer);
+					LOG.debug("Now I start with the recovery for {}", failedPeer);
 
 					// get PQL from query part
 					String pql = LogicalQueryHelper
