@@ -139,7 +139,7 @@ public class UpdatePipeSender extends AbstractRepeatingMessageSender {
 		Preconditions.checkNotNull(senderPeer);
 		Preconditions.checkNotNull(message);
 
-		if (message instanceof RecoveryUpdatePipeMessage) {
+		if (message instanceof RecoveryUpdatePipeResponseMessage) {
 			RecoveryUpdatePipeResponseMessage response = (RecoveryUpdatePipeResponseMessage) message;
 			handleResponseMessage(response.getUUID(), response.getErrorMessage());
 		}

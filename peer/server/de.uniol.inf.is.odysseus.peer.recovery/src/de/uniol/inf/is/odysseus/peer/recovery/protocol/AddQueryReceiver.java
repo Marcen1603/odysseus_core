@@ -4,6 +4,8 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Collection;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import net.jxta.id.ID;
 import net.jxta.peer.PeerID;
@@ -54,6 +56,9 @@ public class AddQueryReceiver extends AbstractRepeatingMessageReceiver {
 	 * The single instance of this class.
 	 */
 	private static AddQueryReceiver cInstance;
+	
+	// Maximum number of threads in the thread pool.
+	private final static int NUM_THREADS = 4;
 
 	/**
 	 * The single instance of this class.
@@ -329,6 +334,9 @@ public class AddQueryReceiver extends AbstractRepeatingMessageReceiver {
 			cController.get().registerAsSlave(installedQueries, sharedQuery);
 		}
 
+		
+		ExecutorService service = Executors.newFixedThreadPool(NUM_THREADS);
+		
 		// Call "receiveFromNewPeer" on the subsequent receiver so that that
 		// peer creates a socket-connection to us
 		IServerExecutor executor = cExecutor.get();
@@ -348,28 +356,48 @@ public class AddQueryReceiver extends AbstractRepeatingMessageReceiver {
 						PeerID ownPeerId = cP2PNetworkManager.get().getLocalPeerID();
 
 						if (peer != null && pipe != null) {
-							cRecoveryCommunicator.get().sendUpdateReceiverMessage(peer, ownPeerId, pipe, localQueryId);
+							final PeerID finalPeer = peer;
+							final PeerID finalOwnPeer = ownPeerId;
+							final PipeID finalPipe = pipe;
+							final int finalLocalQueryId = localQueryId;
+							
+							service.submit(new Runnable() {
+						        public void run() {
+						        	// I want to tell the sender on the other side that he has to update his peerId he receives from
+						        	cRecoveryCommunicator.get().sendUpdateReceiverMessage(finalPeer, finalOwnPeer, finalPipe, finalLocalQueryId);
+						        }
+						    });
+							
 						}
 
 					} else if (operator instanceof JxtaReceiverPO) {
 						// I installed a receiver
 						JxtaReceiverPO<?> receiver = (JxtaReceiverPO<?>) operator;
 
-						
 						PeerID peer = RecoveryHelper.convertToPeerId(receiver.getPeerIDString());
 						PipeID pipe = RecoveryHelper.convertToPipeId(receiver.getPipeIDString());
 
 						PeerID ownPeerId = cP2PNetworkManager.get().getLocalPeerID();
 
 						if (peer != null && pipe != null) {
-							// I want to tell the sender on the other side that he has to update his peerId he sends to
-							cRecoveryCommunicator.get().sendUpdateSenderMessage(peer, ownPeerId, pipe, localQueryId);
 							
-							// Cause the call is blocking it can take a while (1 minute) to get here, so don't hurry ... or
-							// TODO Make this call non-blocking
+							final PeerID finalPeer = peer;
+							final PeerID finalOwnPeer = ownPeerId;
+							final PipeID finalPipe = pipe;
+							final int finalLocalQueryId = localQueryId;
 							
-							// And now he can GO ON
-							cRecoveryCommunicator.get().sendGoOnMessage(peer, pipe);
+						    service.submit(new Runnable() {
+						        public void run() {
+						        	// I want to tell the sender on the other side that he has to update his peerId he sends to
+									cRecoveryCommunicator.get().sendUpdateSenderMessage(finalPeer, finalOwnPeer, finalPipe, finalLocalQueryId);
+						        }
+						    });
+						    service.submit(new Runnable() {
+						        public void run() {
+						        	// And now he can GO ON
+									cRecoveryCommunicator.get().sendGoOnMessage(finalPeer, finalPipe);
+						        }
+						    });
 						}
 					}
 				}

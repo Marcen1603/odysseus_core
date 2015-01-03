@@ -26,8 +26,7 @@ public class RecoveryUpdatePipeMessage implements IMessage {
 	/**
 	 * The logger instance for this class.
 	 */
-	private static final Logger LOG = LoggerFactory
-			.getLogger(RecoveryUpdatePipeMessage.class);
+	private static final Logger LOG = LoggerFactory.getLogger(RecoveryUpdatePipeMessage.class);
 
 	/**
 	 * The id of the message.
@@ -91,11 +90,9 @@ public class RecoveryUpdatePipeMessage implements IMessage {
 	private boolean mSenderUpdate;
 
 	/**
-	 * Checks, if the instruction is either to update a sender or to update a
-	 * receiver.
+	 * Checks, if the instruction is either to update a sender or to update a receiver.
 	 * 
-	 * @return True for a sender update message; false for a receiver update
-	 *         message.
+	 * @return True for a sender update message; false for a receiver update message.
 	 */
 	public boolean isSenderUpdateInstruction() {
 		return this.mSenderUpdate;
@@ -121,11 +118,9 @@ public class RecoveryUpdatePipeMessage implements IMessage {
 	 *            The affected shared query. <br />
 	 *            Must be not null.
 	 * @param senderUpdate
-	 *            True for a sender update message; false for a receiver update
-	 *            message.
+	 *            True for a sender update message; false for a receiver update message.
 	 */
-	public RecoveryUpdatePipeMessage(PipeID pipe, PeerID peer, int localQuery,
-			boolean senderUpdate) {
+	public RecoveryUpdatePipeMessage(PipeID pipe, PeerID peer, int localQuery, boolean senderUpdate) {
 		Preconditions.checkNotNull(pipe);
 		Preconditions.checkNotNull(peer);
 
@@ -141,22 +136,21 @@ public class RecoveryUpdatePipeMessage implements IMessage {
 		byte[] pipeBytes = this.mPipe.toString().getBytes();
 		byte[] peerBytes = this.mPeer.toString().getBytes();
 
-		int bufferSize = 4 + idBytes.length + 4 + pipeBytes.length + 4
-				+ peerBytes.length + 4 + 4;
+		int bufferSize = 4 + idBytes.length + 4 + pipeBytes.length + 4 + peerBytes.length + 4 + 4;
 		// last size for mSenderUpdate
 		ByteBuffer buffer = ByteBuffer.allocate(bufferSize);
 
 		buffer.putInt(idBytes.length);
 		buffer.put(idBytes);
-		
+
 		buffer.putInt(pipeBytes.length);
 		buffer.put(pipeBytes);
-		
+
 		buffer.putInt(peerBytes.length);
 		buffer.put(peerBytes);
-		
+
 		buffer.putInt(mLocalQuery);
-		
+
 		buffer.putInt((this.mSenderUpdate) ? 1 : 0);
 
 		buffer.flip();
@@ -191,7 +185,7 @@ public class RecoveryUpdatePipeMessage implements IMessage {
 		} catch (URISyntaxException e) {
 			LOG.error("Could not create peer id from bytes!", e);
 		}
-		
+
 		mLocalQuery = buffer.getInt();
 
 		this.mSenderUpdate = (buffer.getInt() == 1) ? true : false;

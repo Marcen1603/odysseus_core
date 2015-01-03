@@ -28,6 +28,9 @@ import de.uniol.inf.is.odysseus.peer.recovery.messages.RecoveryUpdatePipeRespons
  * Entity to handle received pipe update instructions. <br />
  * Handles incoming instructions and sends acknowledge/failure messages.
  * 
+ * Update a pipe: This means, that the peer has to update a JxtaSender or JxtaReceiver with the given pipeId (from the
+ * message). The peer updates the PeerId which he sends to or receives from. The "pipe" itself won't be changed.
+ * 
  * @author Michael Brand
  *
  */
@@ -141,7 +144,7 @@ public class UpdatePipeReceiver extends AbstractRepeatingMessageReceiver {
 			try {
 				communicator.send(senderPeer, response);
 			} catch (PeerCommunicationException e) {
-				LOG.error("Could not send tuple send instruction response message!", e);
+				LOG.error("Could not send UpdatePipeResponse message!", e);
 			}
 
 		}
@@ -165,15 +168,18 @@ public class UpdatePipeReceiver extends AbstractRepeatingMessageReceiver {
 					if (receiver.getPipeIDString().equals(pipeId.toString())) {
 						// This should be the receiver we have to update
 						receiver.receiveFromNewPeer(newSender.toString());
-						break;
+
+						// There should be just one receiver with this pipeId since the ids are unique. We can stop
+						// searching here.
+						return;
 					}
 				}
 			}
 		}
 	}
-	
+
 	private void updateSender(PeerID newReceiver, PipeID pipeId) throws DataTransmissionException {
-		
+
 		if (!cExecutor.isPresent()) {
 
 			LOG.error("No executor bound!");
@@ -190,7 +196,10 @@ public class UpdatePipeReceiver extends AbstractRepeatingMessageReceiver {
 					if (sender.getPipeIDString().equals(pipeId.toString())) {
 						// This should be the receiver we have to update
 						sender.sendToNewPeer(newReceiver.toString());
-						break;
+						
+						// There should be just one sender with this pipeId since the ids are unique. We can stop
+						// searching here.
+						return;
 					}
 				}
 			}

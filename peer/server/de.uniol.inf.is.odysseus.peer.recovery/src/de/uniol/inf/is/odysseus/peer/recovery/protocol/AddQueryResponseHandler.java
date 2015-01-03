@@ -108,7 +108,7 @@ public class AddQueryResponseHandler implements IAddQueryResponseHandler {
 				recoveryStrategyManager.get().restartRecovery(state.getFailedPeerId(), state.getIdentifier(),
 						subprocessId);
 			} else {
-				LOG.error("Could not found RecoveryProcessState with ID: {}", processStateId);
+				LOG.error("Could not find RecoveryProcessState with ID: {}", processStateId);
 			}
 		} else {
 			LOG.error("ADD-Query-Fail has no RecoveryProcessStateId");

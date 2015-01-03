@@ -209,7 +209,6 @@ public class RecoveryConsole implements CommandProvider {
 		sb.append("	lsRecoveryStrategyManagers - Lists the available recovery strategy managers.\n");
 		sb.append("	sendHoldOn <PeerName from receiver> <sharedQueryId> - Send a hold-on message to <PeerName from receiver>, so that this should stop sending the tuples from query <sharedQueryId> further.\n");
 		sb.append("	sendUpdateReceiver <PeerName from receiver> <PeerName from new sender> <pipeId> <sharedQueryId> - Send an updateReceiver-message to <PeerName from receiver>, so that this should receive the tuples fir pipe <pipeId> from the new sender <PeerName from new sender>.\n");
-		sb.append("	sendAddQueriesFromPeer <PeerName from receiver> <PeerName from failed peer> <sharedQueryId> - The <PeerName from receiver> will get a message which tells that the peer has to install the query <sharedQueryId> from <PeerName from failed peer>. \n");
 		sb.append("	holdOn <PipeId> - Let this peer hold on\n");
 		sb.append("	goOn <PipeId> - Let this peer go on\n");
 		return sb.toString();
@@ -282,7 +281,7 @@ public class RecoveryConsole implements CommandProvider {
 	public void _lsBackupStore(CommandInterpreter ci) {
 		List<String> backupPeerIds = backupInformationAccess.getBackupPeerIds();
 		if (backupPeerIds.isEmpty()) {
-			System.out.println("No information about any peer");
+			System.out.println("No information about any known peer.");
 		}
 		for (String peerId : backupPeerIds) {
 			String peerName = peerDictionary.getRemotePeerName(peerId);
@@ -294,7 +293,8 @@ public class RecoveryConsole implements CommandProvider {
 			if (infoMap != null) {
 				for (Integer key : infoMap.keySet()) {
 					BackupInfo info = infoMap.get(key);
-					System.out.println("Local query id: " + key + " | Is master: " + info.master + " | Strategy: " + info.strategy + " | " + info.sharedQuery + "\n" + info.pql + " (" + info.state + ") \n");
+					System.out.println("Local query id: " + key + " | Is master: " + info.master + " | Strategy: "
+							+ info.strategy + " | " + info.sharedQuery + "\n" + info.pql + " (" + info.state + ") \n");
 				}
 			} else {
 				System.out.println("No Backup-Information about " + peerId);
