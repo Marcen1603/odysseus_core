@@ -17,19 +17,24 @@ public abstract class AZMQConnector implements Runnable {
 	public abstract void send(byte[] message);
 	
 	public void start(){
-		if(t==null){
+		if(t == null){
 			t = new Thread(this);
+			t.setName("AZMQConnector");
 			t.start();
 			LOG.debug(this.getClass().toString() + " started.");
+		} else {
+			LOG.debug("Trying to start ZeroMQ - but it was already running");
 		}
 	}
 	
 	public void close(){
-		socket.close();
-		socket = null;
+		if(socket != null) {
+			socket.close();
+		}
 		if(t != null){
 			t.interrupt();
 		}
+		socket = null;
 		t = null;
 		LOG.debug(this.getClass().toString() + " closed.");
 	}

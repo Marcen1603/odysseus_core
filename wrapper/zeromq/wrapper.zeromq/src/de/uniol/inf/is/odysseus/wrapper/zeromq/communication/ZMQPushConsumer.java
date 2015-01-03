@@ -16,27 +16,39 @@ import de.uniol.inf.is.odysseus.wrapper.zeromq.ZeroMQTransportHandler;
 public class ZMQPushConsumer extends AZMQConnector {
 
 	public ZMQPushConsumer(ZeroMQTransportHandler transh){
-		ZMQTH = transh;
-		socket = ZMQTH.getContext().getContext().socket(ZMQ.SUB);
-		socket.setReceiveBufferSize(500); // !!! Set higher if stops working after a few transmissions
-		if (ZMQTH.getHost() != null && ZMQTH.getReadPort() > 0) {
-			socket.connect("tcp://" + ZMQTH.getHost() + ":" + ZMQTH.getReadPort());
-			socket.subscribe(transh.getSubscriptionFilter().getBytes());
-			LOG.debug("ZeroMQ consumer created listening on tcp://" + ZMQTH.getHost() + ":" + ZMQTH.getReadPort() + " with subscription-filter: " + transh.getSubscriptionFilter());
+		try{
+			ZMQTH = transh;
+			socket = ZMQTH.getContext().getContext().socket(ZMQ.SUB);
+			socket.setReceiveBufferSize(500); // !!! Set higher if stops working after a few transmissions
+			if (ZMQTH.getHost() != null && ZMQTH.getReadPort() > 0) {
+				socket.connect("tcp://" + ZMQTH.getHost() + ":" + ZMQTH.getReadPort());
+				socket.subscribe(transh.getSubscriptionFilter().getBytes());
+				LOG.debug("ZeroMQ consumer created listening on tcp://" + ZMQTH.getHost() + ":" + ZMQTH.getReadPort() + " with subscription-filter: " + transh.getSubscriptionFilter());
+			}
+		} catch (Exception e) {
+			LOG.info("Error during creation of ZeroMQ consumer: " + e.getMessage());
 		}
 	}
 	
 	@Override
 	public void run() {
-		while(!t.isInterrupted()){
-			byte[] data = socket.recv(1);
-			if(data != null){
-				try{
+		while(t != null && !t.isInterrupted()){
+			byte[] data = null;
+			try {
+				data = socket.recv(1);
+			} catch(Exception e) {
+				LOG.info("Error during receiving data with zeromq: " + e.getMessage());
+//				e.printStackTrace();
+				t.interrupt();
+			}
+			if(data != null) {
+				try {
 					ByteBuffer wrapped = ByteBuffer.wrap(data);
 					wrapped.position(wrapped.limit());
 					ZMQTH.fireProcess(wrapped);
-				}catch(Exception e){
-					e.printStackTrace();
+				} catch(Exception e){
+					LOG.info("Error during transfering data with zeromq: " + e.getMessage());
+//					e.printStackTrace();
 				}
 			}
 		}

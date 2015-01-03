@@ -39,7 +39,7 @@ public class ZeroMQTransportHandler extends AbstractTransportHandler {
 	public static final String NAME = "ZeroMQ";
 	public static final String PARAMS = "params";
 	public static final String TIMEOUT = "timeout";
-	public static final String SUBSCRIPTIONFILTER = "subscriptionFilter";
+	public static final String SUBSCRIPTIONFILTER = "subscriptionfilter";
 	public static final String MOSAIK = "mosaik";
 
 	private String host;
