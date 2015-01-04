@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="de.uniol.inf.is.odysseus.peer.recovery.strategy.activestandby.ActiveStandbyStrategy">
+   <implementation class="de.uniol.inf.is.odysseus.peer.recovery.strategy.activestandby.ActiveStandbyStrategy"/>
+   <service>
+      <provide interface="de.uniol.inf.is.odysseus.peer.recovery.IRecoveryStrategy"/>
+   </service>
+   <reference bind="bindRecoveryAllocator" cardinality="1..1" interface="de.uniol.inf.is.odysseus.peer.recovery.IRecoveryAllocator" name="IRecoveryAllocator" policy="static" unbind="unbindRecoveryAllocator"/>
+</scr:component>

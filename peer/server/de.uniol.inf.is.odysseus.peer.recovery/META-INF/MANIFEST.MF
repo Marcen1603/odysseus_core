@@ -24,6 +24,7 @@ Service-Component: OSGI-INF/RecoveryConsole.xml,OSGI-INF/RecoveryCommunicator.xm
  OSGI-INF/SimpleRecoveryStrategy.xml
 Export-Package: de.uniol.inf.is.odysseus.peer.recovery,
  de.uniol.inf.is.odysseus.peer.recovery.internal,
+ de.uniol.inf.is.odysseus.peer.recovery.simplestrategy,
  de.uniol.inf.is.odysseus.peer.recovery.util
 Import-Package: com.fasterxml.jackson.dataformat.yaml.snakeyaml.external.biz.base64Coder,
  de.uniol.inf.is.odysseus.core.server.logicaloperator,

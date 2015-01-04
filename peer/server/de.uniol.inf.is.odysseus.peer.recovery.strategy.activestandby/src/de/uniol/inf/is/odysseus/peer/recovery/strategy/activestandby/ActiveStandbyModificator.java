@@ -117,8 +117,8 @@ public class ActiveStandbyModificator implements IQueryPartModificator {
 	private static void notifyListeners(Collection<ILogicalQueryPart> parts) {
 		for (IRecoveryPreprocessorListener listener : cListeners) {
 			try {
-				// TODO use the real name
-				listener.setRecoveryStrategy("activestandby", parts);
+				listener.setRecoveryStrategy(
+						ActiveStandbyStrategy.getStrategyName(), parts);
 			} catch (Throwable t) {
 				LOG.error("Error while notifying listener!", t);
 			}
