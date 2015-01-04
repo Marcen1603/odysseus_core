@@ -12,8 +12,7 @@ import de.uniol.inf.is.odysseus.peer.recovery.messages.RecoveryTupleSendResponse
 
 /**
  * Entity to send tuple send instructions. <br />
- * Uses repeating message send routines and informs by boolean return values
- * about success/fails.
+ * Uses repeating message send routines and informs by boolean return values about success/fails.
  * 
  * @author Michael Brand
  *
@@ -35,8 +34,7 @@ public class TupleSendSender extends AbstractRepeatingMessageSender {
 	}
 
 	/**
-	 * Sends given hold on instruction to a given peer by using a repeating
-	 * message send process.
+	 * Sends given hold on instruction to a given peer by using a repeating message send process.
 	 * 
 	 * @param destination
 	 *            The ID of the given peer. <br />
@@ -44,20 +42,20 @@ public class TupleSendSender extends AbstractRepeatingMessageSender {
 	 * @param pipe
 	 *            The affected pipe. <br />
 	 *            Must be not null.
+	 * @param failedPeer
+	 *            The if of the failed peer
 	 * @param communicator
 	 *            An active peer communicator. <br />
 	 *            Must be not null.
-	 * @return True, if an acknowledge returned from the given peer; false,
-	 *         else.
+	 * @return True, if an acknowledge returned from the given peer; false, else.
 	 */
-	public boolean sendHoldOnInstruction(PeerID destination, PipeID pipe,
+	public boolean sendHoldOnInstruction(PeerID destination, PipeID pipe, PeerID failedPeer,
 			IPeerCommunicator communicator) {
-		return sendInstruction(destination, pipe, true, communicator);
+		return sendInstruction(destination, pipe, failedPeer, true, communicator);
 	}
 
 	/**
-	 * Sends given go on instruction to a given peer by using a repeating
-	 * message send process.
+	 * Sends given go on instruction to a given peer by using a repeating message send process.
 	 * 
 	 * @param destination
 	 *            The ID of the given peer. <br />
@@ -65,20 +63,19 @@ public class TupleSendSender extends AbstractRepeatingMessageSender {
 	 * @param pipe
 	 *            The affected pipe. <br />
 	 *            Must be not null.
+	 * @param failedPeer
+	 *            The if of the failed peer
 	 * @param communicator
 	 *            An active peer communicator. <br />
 	 *            Must be not null.
-	 * @return True, if an acknowledge returned from the given peer; false,
-	 *         else.
+	 * @return True, if an acknowledge returned from the given peer; false, else.
 	 */
-	public boolean sendGoOnInstruction(PeerID destination, PipeID pipe,
-			IPeerCommunicator communicator) {
-		return sendInstruction(destination, pipe, false, communicator);
+	public boolean sendGoOnInstruction(PeerID destination, PipeID pipe, IPeerCommunicator communicator) {
+		return sendInstruction(destination, pipe, null, false, communicator);
 	}
 
 	/**
-	 * Sends given go on or hold on instruction to a given peer by using a
-	 * repeating message send process.
+	 * Sends given go on or hold on instruction to a given peer by using a repeating message send process.
 	 * 
 	 * @param destination
 	 *            The ID of the given peer. <br />
@@ -86,24 +83,23 @@ public class TupleSendSender extends AbstractRepeatingMessageSender {
 	 * @param pipe
 	 *            The affected pipe. <br />
 	 *            Must be not null.
+	 * @param failedPeer
+	 *            The if of the failed peer
 	 * @param holdOn
 	 *            True for a hold on message; false for a go on message.
 	 * @param communicator
 	 *            An active peer communicator. <br />
 	 *            Must be not null.
-	 * @return True, if an acknowledge returned from the given peer; false,
-	 *         else.
+	 * @return True, if an acknowledge returned from the given peer; false, else.
 	 */
-	private boolean sendInstruction(PeerID destination, PipeID pipe,
-			boolean holdOn, IPeerCommunicator communicator) {
+	private boolean sendInstruction(PeerID destination, PipeID pipe, PeerID failedPeer, boolean holdOn,
+			IPeerCommunicator communicator) {
 		Preconditions.checkNotNull(destination);
 		Preconditions.checkNotNull(pipe);
 		Preconditions.checkNotNull(communicator);
 
-		RecoveryTupleSendMessage message = new RecoveryTupleSendMessage(pipe,
-				holdOn);
-		return repeatingSend(destination, message, message.getUUID(),
-				communicator);
+		RecoveryTupleSendMessage message = new RecoveryTupleSendMessage(pipe, failedPeer, holdOn);
+		return repeatingSend(destination, message, message.getUUID(), communicator);
 
 	}
 
@@ -124,16 +120,14 @@ public class TupleSendSender extends AbstractRepeatingMessageSender {
 	}
 
 	@Override
-	public void receivedMessage(IPeerCommunicator communicator,
-			PeerID senderPeer, IMessage message) {
+	public void receivedMessage(IPeerCommunicator communicator, PeerID senderPeer, IMessage message) {
 		Preconditions.checkNotNull(communicator);
 		Preconditions.checkNotNull(senderPeer);
 		Preconditions.checkNotNull(message);
 
 		if (message instanceof RecoveryTupleSendResponseMessage) {
 			RecoveryTupleSendResponseMessage response = (RecoveryTupleSendResponseMessage) message;
-			handleResponseMessage(response.getUUID(),
-					response.getErrorMessage());
+			handleResponseMessage(response.getUUID(), response.getErrorMessage());
 		}
 	}
 }

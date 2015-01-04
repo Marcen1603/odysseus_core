@@ -300,7 +300,7 @@ public class AddQueryReceiver extends AbstractRepeatingMessageReceiver {
 	}
 
 	/**
-	 * Adds a query (installs and runs it) and saves the new backup-information. If necessary, searches for a buddy
+	 * Adds a query (installs and runs it) and saves the new backup-information.
 	 * 
 	 * @param pql
 	 *            The PQL String to install
@@ -334,7 +334,6 @@ public class AddQueryReceiver extends AbstractRepeatingMessageReceiver {
 			cController.get().registerAsSlave(installedQueries, sharedQuery);
 		}
 
-		
 		ExecutorService service = Executors.newFixedThreadPool(NUM_THREADS);
 		
 		// Call "receiveFromNewPeer" on the subsequent receiver so that that

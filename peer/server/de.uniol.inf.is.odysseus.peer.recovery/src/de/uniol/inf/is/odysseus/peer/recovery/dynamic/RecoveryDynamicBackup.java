@@ -297,7 +297,7 @@ public class RecoveryDynamicBackup implements IRecoveryDynamicBackup {
 						uri = new URI(peerId);
 						PeerID peerToHoldOn = PeerID.create(uri);
 
-						cRecoveryCommunicator.get().sendHoldOnMessage(peerToHoldOn, pipe);
+						cRecoveryCommunicator.get().sendHoldOnMessage(peerToHoldOn, pipe, failedPeer);
 					} catch (URISyntaxException e) {
 						e.printStackTrace();
 					}
@@ -308,8 +308,8 @@ public class RecoveryDynamicBackup implements IRecoveryDynamicBackup {
 	}
 
 	@Override
-	public void initiateAgreement(PeerID failedPeer, int localQueryId, QueryState queryState, ID sharedQuery, PeerID newPeer,
-			ILogicalQueryPart queryPart, UUID recoveryStateIdentifier, UUID subprocessID, boolean master) {
+	public void initiateAgreement(PeerID failedPeer, int localQueryId, QueryState queryState, ID sharedQuery,
+			PeerID newPeer, ILogicalQueryPart queryPart, UUID recoveryStateIdentifier, UUID subprocessID, boolean master) {
 		AgreementHelper.waitForAndDoRecovery(failedPeer, localQueryId, queryState, sharedQuery, newPeer, queryPart,
 				recoveryStateIdentifier, subprocessID, master);
 	}

@@ -1,5 +1,9 @@
 package de.uniol.inf.is.odysseus.peer.recovery.protocol;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
 import net.jxta.peer.PeerID;
 import net.jxta.pipe.PipeID;
 
@@ -27,13 +31,18 @@ public class TupleSendReceiver extends AbstractRepeatingMessageReceiver {
 	/**
 	 * The logger instance for this class.
 	 */
-	private static final Logger LOG = LoggerFactory
-			.getLogger(TupleSendReceiver.class);
+	private static final Logger LOG = LoggerFactory.getLogger(TupleSendReceiver.class);
 
 	/**
 	 * The single instance of this class.
 	 */
 	private static TupleSendReceiver cInstance;
+
+	/**
+	 * This map is used to save, for which pipes and failed Peers we already got holdOns, cause we will only accept one
+	 * holdOn per pipe for a failed peer
+	 */
+	private static HashMap<PipeID, List<PeerID>> holdOnMap = new HashMap<PipeID, List<PeerID>>();
 
 	/**
 	 * The single instance of this class.
@@ -43,7 +52,7 @@ public class TupleSendReceiver extends AbstractRepeatingMessageReceiver {
 	public static TupleSendReceiver getInstance() {
 		return cInstance;
 	}
-	
+
 	@Override
 	public void bindPeerCommunicator(IPeerCommunicator serv) {
 		super.bindPeerCommunicator(serv);
@@ -61,45 +70,62 @@ public class TupleSendReceiver extends AbstractRepeatingMessageReceiver {
 	}
 
 	@Override
-	public void receivedMessage(IPeerCommunicator communicator,
-			PeerID senderPeer, IMessage message) {
+	public void receivedMessage(IPeerCommunicator communicator, PeerID senderPeer, IMessage message) {
 		Preconditions.checkNotNull(message);
 		Preconditions.checkNotNull(senderPeer);
 		Preconditions.checkNotNull(communicator);
-		
+
 		if (message instanceof RecoveryTupleSendMessage) {
 			RecoveryTupleSendMessage tsMessage = (RecoveryTupleSendMessage) message;
-			if(!mReceivedUUIDs.contains(tsMessage.getUUID())) {
+			if (!mReceivedUUIDs.contains(tsMessage.getUUID())) {
 				mReceivedUUIDs.add(tsMessage.getUUID());
 			} else {
 				return;
 			}
-			
+
 			RecoveryTupleSendResponseMessage response = null;
 			try {
 				if (tsMessage.isHoldOnInstruction()) {
-					this.holdOn(tsMessage.getPipeId());
+					LOG.debug("Got HoldOn-message. Will hold on now ... (for pipe {})", tsMessage.getPipeId()
+							.toString());
+					this.holdOn(tsMessage.getPipeId(), tsMessage.getFailedPeerId());
 				} else {
+					LOG.debug("Got GoOn-message. Will go on now ... (for pipe {})", tsMessage.getPipeId().toString());
 					this.goOn(tsMessage.getPipeId());
 				}
 				response = new RecoveryTupleSendResponseMessage(tsMessage.getUUID());
 			} catch (Exception e) {
-				response = new RecoveryTupleSendResponseMessage(tsMessage.getUUID(),
-						e.getMessage());
+				response = new RecoveryTupleSendResponseMessage(tsMessage.getUUID(), e.getMessage());
 			}
 
 			try {
 				communicator.send(senderPeer, response);
 			} catch (PeerCommunicationException e) {
-				LOG.error(
-						"Could not send tuple send instruction response message!",
-						e);
+				LOG.error("Could not send tuple send instruction response message!", e);
 			}
 		}
 	}
 
-	private void holdOn(PipeID pipeId) throws Exception {
+	private void holdOn(PipeID pipeId, PeerID failedPeer) throws Exception {
 		// Here we want to store the tuples
+		if (holdOnMap.containsKey(pipeId)) {
+			List<PeerID> failedPeersForPipeId = holdOnMap.get(pipeId);
+			if (failedPeersForPipeId.contains(failedPeer)) {
+				// We already got a holdOn for this pipe for this failed peer -> Don't hold on
+				LOG.debug("Won't hold on, cause I already got a holdOn for this pipe for this failed peer.");
+				return;
+			} else {
+				// Save, that we got a holdOn for this failed peer
+				failedPeersForPipeId.add(failedPeer);
+			}
+		} else {
+			// Save, that we got a holdOn for this failed peer
+			List<PeerID> failedPeersForPipeId = new ArrayList<PeerID>();
+			failedPeersForPipeId.add(failedPeer);
+			holdOnMap.put(pipeId, failedPeersForPipeId);
+		}
+		
+		// Start buffering ("hold on")
 		RecoveryHelper.startBuffering(pipeId.toString());
 	}
 

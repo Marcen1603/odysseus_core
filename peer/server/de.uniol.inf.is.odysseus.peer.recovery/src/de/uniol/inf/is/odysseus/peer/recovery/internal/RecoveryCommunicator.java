@@ -286,7 +286,7 @@ public class RecoveryCommunicator implements IRecoveryCommunicator {
 	}
 
 	@Override
-	public boolean sendHoldOnMessage(PeerID receiverPeer, PipeID pipeId) {
+	public boolean sendHoldOnMessage(PeerID receiverPeer, PipeID pipeId, PeerID failedPeer) {
 		Preconditions.checkNotNull(receiverPeer);
 		Preconditions.checkNotNull(pipeId);
 		if (!cPeerCommunicator.isPresent()) {
@@ -294,7 +294,8 @@ public class RecoveryCommunicator implements IRecoveryCommunicator {
 			return false;
 		}
 
-		return TupleSendSender.getInstance().sendHoldOnInstruction(receiverPeer, pipeId, cPeerCommunicator.get());
+		return TupleSendSender.getInstance().sendHoldOnInstruction(receiverPeer, pipeId, failedPeer,
+				cPeerCommunicator.get());
 	}
 
 	@Override
@@ -355,7 +356,7 @@ public class RecoveryCommunicator implements IRecoveryCommunicator {
 			LOG.error("No peer communicator bound!");
 			return false;
 		}
-		
+
 		return UpdatePipeSender.getInstance().sendSenderUpdateInstruction(receiverPeer, pipeId, newReceiver,
 				localQueryId, cPeerCommunicator.get());
 	}
