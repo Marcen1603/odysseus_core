@@ -44,18 +44,15 @@ public class SimpleRecoveryStrategy implements IRecoveryStrategy {
 	/**
 	 * The logger instance for this class.
 	 */
-	private static final Logger LOG = LoggerFactory
-			.getLogger(SimpleRecoveryStrategy.class);
+	private static final Logger LOG = LoggerFactory.getLogger(SimpleRecoveryStrategy.class);
 
 	private static IBackupInformationAccess backupInformationAccess;
 
-	public static void bindBackupInformationAccess(
-			IBackupInformationAccess infoAccess) {
+	public static void bindBackupInformationAccess(IBackupInformationAccess infoAccess) {
 		backupInformationAccess = infoAccess;
 	}
 
-	public static void unbindBackupInformationAccess(
-			IBackupInformationAccess infoAccess) {
+	public static void unbindBackupInformationAccess(IBackupInformationAccess infoAccess) {
 		if (backupInformationAccess == infoAccess) {
 			backupInformationAccess = null;
 		}
@@ -64,8 +61,7 @@ public class SimpleRecoveryStrategy implements IRecoveryStrategy {
 	/**
 	 * The P2P network manager, if there is one bound.
 	 */
-	private static Optional<IP2PNetworkManager> cP2PNetworkManager = Optional
-			.absent();
+	private static Optional<IP2PNetworkManager> cP2PNetworkManager = Optional.absent();
 
 	/**
 	 * Binds a P2P network manager. <br />
@@ -79,8 +75,7 @@ public class SimpleRecoveryStrategy implements IRecoveryStrategy {
 
 		Preconditions.checkNotNull(serv);
 		cP2PNetworkManager = Optional.of(serv);
-		LOG.debug("Bound {} as a P2P network manager.", serv.getClass()
-				.getSimpleName());
+		LOG.debug("Bound {} as a P2P network manager.", serv.getClass().getSimpleName());
 
 	}
 
@@ -99,8 +94,7 @@ public class SimpleRecoveryStrategy implements IRecoveryStrategy {
 		if (cP2PNetworkManager.isPresent() && cP2PNetworkManager.get() == serv) {
 
 			cP2PNetworkManager = Optional.absent();
-			LOG.debug("Unbound {} as a P2P network manager.", serv.getClass()
-					.getSimpleName());
+			LOG.debug("Unbound {} as a P2P network manager.", serv.getClass().getSimpleName());
 
 		}
 
@@ -109,8 +103,7 @@ public class SimpleRecoveryStrategy implements IRecoveryStrategy {
 	/**
 	 * The Peer dictionary, if there is one bound.
 	 */
-	private static Optional<IPeerDictionary> cPeerDictionary = Optional
-			.absent();
+	private static Optional<IPeerDictionary> cPeerDictionary = Optional.absent();
 
 	/**
 	 * Binds a Peer dictionary. <br />
@@ -124,8 +117,7 @@ public class SimpleRecoveryStrategy implements IRecoveryStrategy {
 
 		Preconditions.checkNotNull(serv);
 		cPeerDictionary = Optional.of(serv);
-		LOG.debug("Bound {} as a Peer dictionary.", serv.getClass()
-				.getSimpleName());
+		LOG.debug("Bound {} as a Peer dictionary.", serv.getClass().getSimpleName());
 
 	}
 
@@ -144,8 +136,7 @@ public class SimpleRecoveryStrategy implements IRecoveryStrategy {
 		if (cPeerDictionary.isPresent() && cPeerDictionary.get() == serv) {
 
 			cPeerDictionary = Optional.absent();
-			LOG.debug("Unbound {} as a Peer dictionary.", serv.getClass()
-					.getSimpleName());
+			LOG.debug("Unbound {} as a Peer dictionary.", serv.getClass().getSimpleName());
 
 		}
 
@@ -154,8 +145,7 @@ public class SimpleRecoveryStrategy implements IRecoveryStrategy {
 	/**
 	 * The recovery allocator, if there is one bound.
 	 */
-	private static Optional<IRecoveryAllocator> cRecoveryAllocator = Optional
-			.absent();
+	private static Optional<IRecoveryAllocator> cRecoveryAllocator = Optional.absent();
 
 	/**
 	 * Binds a recovery allocator. <br />
@@ -169,14 +159,11 @@ public class SimpleRecoveryStrategy implements IRecoveryStrategy {
 
 		Preconditions.checkNotNull(serv);
 
-		if (cRecoveryAllocator.isPresent()
-				&& cRecoveryAllocator.get().getName()
-						.equals("roundrobinwithlocal")) {
+		if (cRecoveryAllocator.isPresent() && cRecoveryAllocator.get().getName().equals("roundrobinwithlocal")) {
 			// use local as default so do nothing here
 		} else {
 			cRecoveryAllocator = Optional.of(serv);
-			LOG.debug("Bound {} as a recovery allocator.", serv.getClass()
-					.getSimpleName());
+			LOG.debug("Bound {} as a recovery allocator.", serv.getClass().getSimpleName());
 		}
 
 	}
@@ -196,8 +183,7 @@ public class SimpleRecoveryStrategy implements IRecoveryStrategy {
 		if (cRecoveryAllocator.isPresent() && cRecoveryAllocator.get() == serv) {
 
 			cRecoveryAllocator = Optional.absent();
-			LOG.debug("Unbound {} as a recovery allocator.", serv.getClass()
-					.getSimpleName());
+			LOG.debug("Unbound {} as a recovery allocator.", serv.getClass().getSimpleName());
 
 		}
 
@@ -206,8 +192,7 @@ public class SimpleRecoveryStrategy implements IRecoveryStrategy {
 	/**
 	 * The recovery dynamic backup, if there is one bound.
 	 */
-	private static Optional<IRecoveryDynamicBackup> cRecoveryDynamicBackup = Optional
-			.absent();
+	private static Optional<IRecoveryDynamicBackup> cRecoveryDynamicBackup = Optional.absent();
 
 	/**
 	 * Binds a recovery dynamic backup. <br />
@@ -221,8 +206,7 @@ public class SimpleRecoveryStrategy implements IRecoveryStrategy {
 
 		Preconditions.checkNotNull(serv);
 		cRecoveryDynamicBackup = Optional.of(serv);
-		LOG.debug("Bound {} as a recovery dynamic backup.", serv.getClass()
-				.getSimpleName());
+		LOG.debug("Bound {} as a recovery dynamic backup.", serv.getClass().getSimpleName());
 
 	}
 
@@ -238,20 +222,17 @@ public class SimpleRecoveryStrategy implements IRecoveryStrategy {
 
 		Preconditions.checkNotNull(serv);
 
-		if (cRecoveryDynamicBackup.isPresent()
-				&& cRecoveryDynamicBackup.get() == serv) {
+		if (cRecoveryDynamicBackup.isPresent() && cRecoveryDynamicBackup.get() == serv) {
 
 			cRecoveryDynamicBackup = Optional.absent();
-			LOG.debug("Unbound {} as a recovery dynamic backup.", serv
-					.getClass().getSimpleName());
+			LOG.debug("Unbound {} as a recovery dynamic backup.", serv.getClass().getSimpleName());
 
 		}
 
 	}
 
 	@Override
-	public void recoverSingleQueryPart(PeerID failedPeer,
-			UUID recoveryStateIdentifier, UUID recoverySubStateIdentifier) {
+	public void recoverSingleQueryPart(PeerID failedPeer, UUID recoveryStateIdentifier, UUID recoverySubStateIdentifier) {
 		// Preconditions
 		if (!cRecoveryAllocator.isPresent()) {
 			LOG.error("No recovery allocator bound!");
@@ -267,22 +248,19 @@ public class SimpleRecoveryStrategy implements IRecoveryStrategy {
 		if (!cRecoveryAllocator.isPresent()) {
 			LOG.error("No allocator for recovery allocation set.");
 		} else {
-			RecoveryProcessState state = cRecoveryDynamicBackup.get()
-					.getRecoveryProcessState(recoveryStateIdentifier);
+			RecoveryProcessState state = cRecoveryDynamicBackup.get().getRecoveryProcessState(recoveryStateIdentifier);
 			if (state == null) {
 				LOG.error("Recovery Process State not found. Reallocation aborted");
 				return;
 			}
 
-			RecoverySubProcessState subState = state
-					.getRecoverySubprocess(recoverySubStateIdentifier);
+			RecoverySubProcessState subState = state.getRecoverySubprocess(recoverySubStateIdentifier);
 
 			int localQueryId = subState.getLocalQueryId();
 			QueryState queryState = subState.getQueryState();
 			boolean master = subState.isMaster();
 			ID sharedQuery = subState.getSharedQueryId();
-			Map<ILogicalQueryPart, PeerID> previousAllocationMap = state
-					.getAllocationMap(localQueryId);
+			Map<ILogicalQueryPart, PeerID> previousAllocationMap = state.getAllocationMap(localQueryId);
 			if (previousAllocationMap == null) {
 				LOG.error("Recovery Process State has not enough information (SharedQueryID or "
 						+ "previous AllocationMap is missing). Reallocation is aborted.");
@@ -296,16 +274,12 @@ public class SimpleRecoveryStrategy implements IRecoveryStrategy {
 			}
 
 			try {
-				allocationMap = cRecoveryDynamicBackup.get()
-						.reallocateToNewPeer(previousAllocationMap,
-								inadequatePeers, cRecoveryAllocator.get());
+				allocationMap = cRecoveryDynamicBackup.get().reallocateToNewPeer(previousAllocationMap,
+						inadequatePeers, cRecoveryAllocator.get());
 				if (allocationMap != null && !allocationMap.isEmpty()) {
-					for (ILogicalQueryPart queryPartForAllocation : allocationMap
-							.keySet()) {
-						sendRecoveryMessages(localQueryId, failedPeer,
-								allocationMap.get(queryPartForAllocation),
-								queryPartForAllocation, queryState,
-								sharedQuery, recoveryStateIdentifier,
+					for (ILogicalQueryPart queryPartForAllocation : allocationMap.keySet()) {
+						sendRecoveryMessages(localQueryId, failedPeer, allocationMap.get(queryPartForAllocation),
+								queryPartForAllocation, queryState, sharedQuery, recoveryStateIdentifier,
 								recoverySubStateIdentifier, master);
 					}
 				} else {
@@ -335,53 +309,44 @@ public class SimpleRecoveryStrategy implements IRecoveryStrategy {
 			return;
 		}
 
-		LOG.debug("Want to start recovery for {}", cPeerDictionary.get()
-				.getRemotePeerName(failedPeer));
+		LOG.debug("Want to start recovery for {}", cPeerDictionary.get().getRemotePeerName(failedPeer));
 
 		// Let's see what we know about this peer
-		HashMap<Integer, BackupInfo> infoMap = backupInformationAccess
-				.getBackupInformation(failedPeer.toString());
+		HashMap<Integer, BackupInfo> infoMap = backupInformationAccess.getBackupInformation(failedPeer.toString());
 
 		if (infoMap.isEmpty()) {
 			LOG.debug("Can't do recovery for {}. Don't have the information.",
 					cPeerDictionary.get().getRemotePeerName(failedPeer));
 		}
 
-		RecoveryProcessState state = cRecoveryDynamicBackup.get()
-				.getRecoveryProcessState(recoveryStateIdentifier);
+		RecoveryProcessState state = cRecoveryDynamicBackup.get().getRecoveryProcessState(recoveryStateIdentifier);
 
 		// Reallocate each query to another peer
 		for (int localQueryId : infoMap.keySet()) {
-			LOG.debug("Have info for {} -> I can do recovery.", cPeerDictionary
-					.get().getRemotePeerName(failedPeer));
+			LOG.debug("Have info for {} -> I can do recovery.", cPeerDictionary.get().getRemotePeerName(failedPeer));
 			// Search for another peer who can take the parts from the failed
 			// peer
 
-			QueryState queryState = QueryState.valueOf(infoMap
-					.get(localQueryId).state);
+			QueryState queryState = QueryState.valueOf(infoMap.get(localQueryId).state);
 			ID sharedQuery = idFromString(infoMap.get(localQueryId).sharedQuery);
 			boolean master = infoMap.get(localQueryId).master;
 			Map<ILogicalQueryPart, PeerID> allocationMap = null;
 
 			try {
 				// get a PeerID for allocation
-				allocationMap = cRecoveryDynamicBackup.get().allocateToNewPeer(
-						failedPeer, localQueryId, cRecoveryAllocator.get());
+				allocationMap = cRecoveryDynamicBackup.get().allocateToNewPeer(failedPeer, localQueryId,
+						cRecoveryAllocator.get());
 				state.setAllocationMap(localQueryId, allocationMap);
 
 				if (allocationMap != null && allocationMap.values() != null) {
 					LOG.debug("Peer ID for recovery allocation found.");
-					Iterator<ILogicalQueryPart> iterator = allocationMap
-							.keySet().iterator();
+					Iterator<ILogicalQueryPart> iterator = allocationMap.keySet().iterator();
 					while (iterator.hasNext()) {
 						ILogicalQueryPart queryPart = iterator.next();
-						UUID subprocessID = state.createNewSubprocess(
-								localQueryId, queryPart, queryState,
-								sharedQuery, master);
-						sendRecoveryMessages(localQueryId, failedPeer,
-								allocationMap.get(queryPart), queryPart,
-								queryState, sharedQuery,
-								recoveryStateIdentifier, subprocessID, master);
+						UUID subprocessID = state.createNewSubprocess(localQueryId, queryPart, queryState, sharedQuery,
+								master);
+						sendRecoveryMessages(localQueryId, failedPeer, allocationMap.get(queryPart), queryPart,
+								queryState, sharedQuery, recoveryStateIdentifier, subprocessID, master);
 					}
 				} else {
 					LOG.debug("Unable to find Peer ID for recovery allocation.");
@@ -410,17 +375,13 @@ public class SimpleRecoveryStrategy implements IRecoveryStrategy {
 		}
 	}
 
-	private void sendRecoveryMessages(int localQueryId, PeerID failedPeer,
-			PeerID newPeer, ILogicalQueryPart queryPart, QueryState queryState,
-			ID sharedQuery, UUID recoveryStateIdentifier, UUID subprocessID,
-			boolean master) {
-		cRecoveryDynamicBackup.get().determineAndSendHoldOnMessages(
-				localQueryId, failedPeer, recoveryStateIdentifier);
+	private void sendRecoveryMessages(int localQueryId, PeerID failedPeer, PeerID newPeer, ILogicalQueryPart queryPart,
+			QueryState queryState, ID sharedQuery, UUID recoveryStateIdentifier, UUID subprocessID, boolean master) {
+		cRecoveryDynamicBackup.get().determineAndSendHoldOnMessages(localQueryId, failedPeer, recoveryStateIdentifier);
 
 		// Tell the new peer to install the parts from the failed peer
-		cRecoveryDynamicBackup.get().initiateAgreement(failedPeer,
-				localQueryId, queryState, sharedQuery, newPeer, queryPart,
-				recoveryStateIdentifier, subprocessID, master);
+		cRecoveryDynamicBackup.get().initiateAgreement(failedPeer, localQueryId, queryState, sharedQuery, newPeer,
+				queryPart, recoveryStateIdentifier, subprocessID, master);
 	}
 
 	@Override

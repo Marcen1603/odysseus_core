@@ -15,8 +15,7 @@ import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryStrategy;
 import de.uniol.inf.is.odysseus.peer.recovery.simplestrategy.SimpleRecoveryStrategy;
 
 /**
- * The active standby strategy uses already existing replicas of the query parts
- * to recover. <br />
+ * The active standby strategy uses already existing replicas of the query parts to recover. <br />
  * It calls {@link SimpleRecoveryStrategy#recover(PeerID, UUID)} or
  * {@link SimpleRecoveryStrategy#recoverSingleQueryPart(PeerID, UUID, UUID)}.
  * 
@@ -28,14 +27,12 @@ public class ActiveStandbyStrategy implements IRecoveryStrategy {
 	/**
 	 * The logger instance for this class.
 	 */
-	private static final Logger LOG = LoggerFactory
-			.getLogger(ActiveStandbyStrategy.class);
+	private static final Logger LOG = LoggerFactory.getLogger(ActiveStandbyStrategy.class);
 
 	/**
 	 * The recovery allocator, if there is one bound.
 	 */
-	private static Optional<IRecoveryAllocator> cRecoveryAllocator = Optional
-			.absent();
+	private static Optional<IRecoveryAllocator> cRecoveryAllocator = Optional.absent();
 
 	/**
 	 * Binds a recovery allocator. <br />
@@ -49,14 +46,11 @@ public class ActiveStandbyStrategy implements IRecoveryStrategy {
 
 		Preconditions.checkNotNull(serv);
 
-		if (cRecoveryAllocator.isPresent()
-				&& cRecoveryAllocator.get().getName()
-						.equals("roundrobinwithlocal")) {
+		if (cRecoveryAllocator.isPresent() && cRecoveryAllocator.get().getName().equals("roundrobinwithlocal")) {
 			// use local as default so do nothing here
 		} else {
 			cRecoveryAllocator = Optional.of(serv);
-			LOG.debug("Bound {} as a recovery allocator.", serv.getClass()
-					.getSimpleName());
+			LOG.debug("Bound {} as a recovery allocator.", serv.getClass().getSimpleName());
 		}
 
 	}
@@ -76,8 +70,7 @@ public class ActiveStandbyStrategy implements IRecoveryStrategy {
 		if (cRecoveryAllocator.isPresent() && cRecoveryAllocator.get() == serv) {
 
 			cRecoveryAllocator = Optional.absent();
-			LOG.debug("Unbound {} as a recovery allocator.", serv.getClass()
-					.getSimpleName());
+			LOG.debug("Unbound {} as a recovery allocator.", serv.getClass().getSimpleName());
 
 		}
 
@@ -102,15 +95,13 @@ public class ActiveStandbyStrategy implements IRecoveryStrategy {
 
 	@Override
 	public void recover(PeerID failedPeer, UUID recoveryStateIdentifier) {
-		new SimpleRecoveryStrategy().recover(failedPeer,
-				recoveryStateIdentifier);
+		new SimpleRecoveryStrategy().recover(failedPeer, recoveryStateIdentifier);
 	}
 
 	@Override
-	public void recoverSingleQueryPart(PeerID failedPeer,
-			UUID recoveryStateIdentifier, UUID recoverySubStateIdentifier) {
-		new SimpleRecoveryStrategy().recoverSingleQueryPart(failedPeer,
-				recoveryStateIdentifier, recoverySubStateIdentifier);
+	public void recoverSingleQueryPart(PeerID failedPeer, UUID recoveryStateIdentifier, UUID recoverySubStateIdentifier) {
+		new SimpleRecoveryStrategy().recoverSingleQueryPart(failedPeer, recoveryStateIdentifier,
+				recoverySubStateIdentifier);
 	}
 
 }
