@@ -11,8 +11,13 @@ import de.uniol.inf.is.odysseus.server.nosql.elasticsearch.physicaloperator.Elas
 @SuppressWarnings("UnusedDeclaration")
 public class TElasticSearchSinkAORule extends AbstractTNoSQLSinkAORule<ElasticSearchSinkAO> {
 
-    public TElasticSearchSinkAORule(){
-        logicalOperatorClass = ElasticSearchSinkAO.class;
-        physicalOperatorClass = ElasticSearchSinkPO.class;
+    @Override
+    protected Class getLogicalOperatorClass() {
+        return ElasticSearchSinkAO.class;
+    }
+
+    @Override
+    protected Class getPhysicalOperatorClass() {
+        return ElasticSearchSinkPO.class;
     }
 }

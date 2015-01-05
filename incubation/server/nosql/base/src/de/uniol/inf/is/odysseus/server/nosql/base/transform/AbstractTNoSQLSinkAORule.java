@@ -17,8 +17,13 @@ import java.lang.reflect.InvocationTargetException;
  */
 public abstract class AbstractTNoSQLSinkAORule<A extends AbstractNoSQLSinkAO> extends AbstractTransformationRule<A> {
 
-    protected Class logicalOperatorClass;
-    protected Class physicalOperatorClass;
+    private Class logicalOperatorClass;
+    private Class physicalOperatorClass;
+
+    public AbstractTNoSQLSinkAORule() {
+        logicalOperatorClass = getLogicalOperatorClass();
+        physicalOperatorClass = getPhysicalOperatorClass();
+    }
 
     @Override
     public final void execute(AbstractNoSQLSinkAO logicalOperator, TransformationConfiguration config) throws RuleException {
@@ -26,6 +31,7 @@ public abstract class AbstractTNoSQLSinkAORule<A extends AbstractNoSQLSinkAO> ex
         AbstractNoSQLSinkPO physical;
 
         try {
+            // creates a new instance of the specified physicalOperatorClass with the logicalOperatorClass as parameter
             physical = (AbstractNoSQLSinkPO) physicalOperatorClass.getDeclaredConstructor(logicalOperatorClass).newInstance(logicalOperator);
         } catch (Exception e) {
            throw new RuleException(e);
@@ -33,6 +39,10 @@ public abstract class AbstractTNoSQLSinkAORule<A extends AbstractNoSQLSinkAO> ex
 
         defaultExecute(logicalOperator, physical, config, true, true);
     }
+
+    protected abstract Class getLogicalOperatorClass();
+
+    protected abstract Class getPhysicalOperatorClass();
 
     @Override
     public boolean isExecutable(A operator, TransformationConfiguration config) {
@@ -54,5 +64,4 @@ public abstract class AbstractTNoSQLSinkAORule<A extends AbstractNoSQLSinkAO> ex
     public Class<? super A> getConditionClass() {
         return logicalOperatorClass;
     }
-
 }
