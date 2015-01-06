@@ -341,6 +341,9 @@ public class PassesSportsQLParser {
 		
 		ArrayList<String> splitBallRoutePredicates = new ArrayList<String>();
 		splitBallRoutePredicates.add(predicateSb.toString());
+		
+		String teamPred = IntermediateSchemaAttributes.TEAM_ID + " = " + SoccerDDCAccess.getLeftGoalTeamId() + " OR " + IntermediateSchemaAttributes.TEAM_ID + " = " +SoccerDDCAccess.getRightGoalTeamId();
+		splitBallRoutePredicates.add(teamPred);
 		RouteAO splitRoute = OperatorBuildHelper.createRouteAO(splitBallRoutePredicates, source);
 		return splitRoute;
 	}
