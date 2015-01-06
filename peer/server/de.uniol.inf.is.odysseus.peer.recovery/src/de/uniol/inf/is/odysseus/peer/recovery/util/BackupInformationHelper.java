@@ -5,7 +5,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
@@ -17,12 +16,8 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
 
-import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
-import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.QueryState;
@@ -33,13 +28,10 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandlin
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.p2p_new.IP2PNetworkManager;
 import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicator;
-import de.uniol.inf.is.odysseus.p2p_new.logicaloperator.JxtaReceiverAO;
-import de.uniol.inf.is.odysseus.p2p_new.logicaloperator.JxtaSenderAO;
 import de.uniol.inf.is.odysseus.peer.ddc.DDCEntry;
 import de.uniol.inf.is.odysseus.peer.ddc.IDDCListener;
 import de.uniol.inf.is.odysseus.peer.distribute.ILogicalQueryPart;
 import de.uniol.inf.is.odysseus.peer.distribute.IQueryPartController;
-import de.uniol.inf.is.odysseus.peer.distribute.LogicalQueryPart;
 import de.uniol.inf.is.odysseus.peer.distribute.listener.AbstractQueryDistributionListener;
 import de.uniol.inf.is.odysseus.peer.distribute.util.LogicalQueryHelper;
 import de.uniol.inf.is.odysseus.peer.recovery.IBackupInformationAccess;
@@ -76,10 +68,11 @@ public class BackupInformationHelper extends AbstractQueryDistributionListener
 			.synchronizedSet(new HashSet<ID>());
 
 	/**
-	 * Keep in mind, if there has been a strategy set for any query part.
+	 * Keep in mind, if there has been a strategy set for any query part (its
+	 * PQL).
 	 */
-	private static final Map<ILogicalQueryPart, String> cStrategyToQueryPart = Collections
-			.synchronizedMap(new HashMap<ILogicalQueryPart, String>());
+	private static final Map<String, String> cStrategyToPQL = Collections
+			.synchronizedMap(new HashMap<String, String>());
 
 	/**
 	 * Keep in mind, if there has been a strategy set for any query part on
@@ -364,10 +357,18 @@ public class BackupInformationHelper extends AbstractQueryDistributionListener
 		Map<ILogicalQueryPart, Collection<ILogicalQueryPart>> copiedParts = LogicalQueryHelper
 				.copyAndCutQueryParts(queryParts, 1);
 		for (ILogicalQueryPart part : copiedParts.keySet()) {
-			synchronized (cStrategyToQueryPart) {
-				cStrategyToQueryPart.put(copiedParts.get(part).iterator()
-						.next(), name);
+			String pql = LogicalQueryHelper
+					.generatePQLStatementFromQueryPart(copiedParts.get(part)
+							.iterator().next());
+			pql = cleanPQLFromOperatorNumbers(pql);
+			synchronized (cStrategyToPQL) {
+				cStrategyToPQL.put(pql, name);
 			}
+
+			// synchronized (cStrategyToQueryPart) {
+			// cStrategyToQueryPart.put(copiedParts.get(part).iterator()
+			// .next(), name);
+			// }
 		}
 	}
 
@@ -379,16 +380,13 @@ public class BackupInformationHelper extends AbstractQueryDistributionListener
 	 */
 	private void afterQueryAdded(IPhysicalQuery physQuery) {
 		int queryID = physQuery.getID();
-		ILogicalQuery logQuery = LogicalQueryHelper.copyLogicalQuery(physQuery
-				.getLogicalQuery());
-		Collection<ILogicalOperator> operators = LogicalQueryHelper
-				.getAllOperators(logQuery);
-		LogicalQueryHelper.removeTopAOs(operators);
-		ILogicalQueryPart searchedPart = new LogicalQueryPart(operators);
-		Optional<String> optStrategy = findStrategy(searchedPart);
 		BackupInfo info = new BackupInfo();
 		info.pql = RecoveryHelper.getPQLFromRunningQuery(queryID);
 		info.state = physQuery.getState().toString();
+		Optional<String> optStrategy = Optional.absent();
+		synchronized (cStrategyToPQL) {
+			optStrategy = findStrategy(info.pql, cStrategyToPQL);
+		}
 		if (optStrategy.isPresent()) {
 			info.strategy = optStrategy.get();
 			LOG.debug("Found recovery strategy for local query {}: {}",
@@ -422,10 +420,14 @@ public class BackupInformationHelper extends AbstractQueryDistributionListener
 		for (ILogicalQueryPart part : allocationMap.keySet()) {
 			PeerID peer = allocationMap.get(part);
 			if (!peer.equals(cP2PNetworkManager.get().getLocalPeerID())) {
-				Optional<String> optStrategy = findStrategy(part);
+				String pql = LogicalQueryHelper
+						.generatePQLStatementFromQueryPart(part);
+				Optional<String> optStrategy = Optional.absent();
+				synchronized (cStrategyToPQL) {
+					optStrategy = findStrategy(pql, cStrategyToPQL);
+				}
 				if (optStrategy.isPresent()) {
 					String strategy = optStrategy.get();
-					String pql = RecoveryHelper.convertToPQL(part);
 					synchronized (cPQLAndStrategyToRemotePeer) {
 						if (cPQLAndStrategyToRemotePeer.containsKey(peer)) {
 							cPQLAndStrategyToRemotePeer.get(peer).put(pql,
@@ -466,48 +468,30 @@ public class BackupInformationHelper extends AbstractQueryDistributionListener
 			// Not a peer id
 			return;
 		}
-
-		Optional<Map<String, String>> optStrategyToPQL = Optional.absent();
 		synchronized (cPQLAndStrategyToRemotePeer) {
-			if (cPQLAndStrategyToRemotePeer.containsKey(optPeer.get())) {
-				optStrategyToPQL = Optional.of(cPQLAndStrategyToRemotePeer
-						.get(optPeer.get()));
+			if (!cPQLAndStrategyToRemotePeer.containsKey(optPeer.get())) {
+				// Not a wanted entry
+				return;
 			}
-		}
-		if (!optStrategyToPQL.isPresent()) {
-			// Not a wanted entry
-			return;
 		}
 
 		Map<Integer, BackupInfo> backupInfoMap = backupInformationAccess
 				.getBackupInformation(key);
-		Set<String> foundPQLs = Sets.newHashSet();
 		for (int queryId : backupInfoMap.keySet()) {
 			BackupInfo info = backupInfoMap.get(queryId);
-			for (String pql : optStrategyToPQL.get().keySet()) {
-				if(foundPQLs.contains(pql)) {
-					continue;
-				} else if (equalPQLIgnoringOperatorNumbersAndJxtaOperators(pql, info.pql)) {
-					// Update strategy info
-					backupInformationAccess.saveBackupInformation(key, queryId, info.pql,
-							info.state, info.sharedQuery, info.master,
-							optStrategyToPQL.get().get(pql));
-					LOG.debug("Found recovery strategy for remote part {}: {}",
-							pql, optStrategyToPQL.get().get(pql));
-					foundPQLs.add(pql);
-				}
-			}
-		}
-
-		if (foundPQLs.size() == optStrategyToPQL.get().keySet().size()) {
+			Optional<String> optStrategy = Optional.absent();
 			synchronized (cPQLAndStrategyToRemotePeer) {
-				cPQLAndStrategyToRemotePeer.remove(optPeer.get());
+				optStrategy = findStrategy(info.pql,
+						cPQLAndStrategyToRemotePeer.get(optPeer.get()));
 			}
-		} else {
-			for (String pql : foundPQLs) {
-				synchronized (cPQLAndStrategyToRemotePeer) {
-					cPQLAndStrategyToRemotePeer.get(optPeer.get()).remove(pql);
-				}
+			if (optStrategy.isPresent()) {
+				// Update strategy info
+				backupInformationAccess.saveBackupInformation(key, queryId,
+						info.pql, info.state, info.sharedQuery, info.master,
+						optStrategy.get());
+				LOG.debug(
+						"Found recovery strategy for local query {} of peer {}: {}",
+						new Object[] { queryId, key, optStrategy.get() });
 			}
 		}
 	}
@@ -541,30 +525,11 @@ public class BackupInformationHelper extends AbstractQueryDistributionListener
 		}
 	}
 
-	private static boolean equalPQLIgnoringOperatorNumbersAndJxtaOperators(
-			String pql1, String pql2) {
-		String cleanedPQL1 = cleanPQLFromJxtaOperators(pql1);
-		String cleanedPQL2 = cleanPQLFromJxtaOperators(pql2);
-		cleanedPQL1 = cleanPQLFromOperatorNumbers(cleanedPQL1);
-		cleanedPQL2 = cleanPQLFromOperatorNumbers(cleanedPQL2);
+	private static boolean equalPQLIgnoringOperatorNumbers(String pql1,
+			String pql2) {
+		String cleanedPQL1 = cleanPQLFromOperatorNumbers(pql1);
+		String cleanedPQL2 = cleanPQLFromOperatorNumbers(pql2);
 		return cleanedPQL1.equals(cleanedPQL2);
-	}
-
-	private static String cleanPQLFromJxtaOperators(String pql) {
-		String cleanedPQL = pql;
-		while (true) {
-			int indexOfJxtaStart = cleanedPQL.indexOf("Jxta");
-			if (indexOfJxtaStart == -1) {
-				break;
-			}
-
-			int indexOfJxtaEnd = cleanedPQL.indexOf(")",
-					indexOfJxtaStart + 1);
-			cleanedPQL = cleanedPQL.substring(0, indexOfJxtaStart)
-					+ cleanedPQL.substring(indexOfJxtaEnd + 1,
-							cleanedPQL.length());
-		}
-		return cleanedPQL;
 	}
 
 	private static String cleanPQLFromOperatorNumbers(String pql) {
@@ -591,118 +556,25 @@ public class BackupInformationHelper extends AbstractQueryDistributionListener
 		return cleanedPQL;
 	}
 
-	private static Optional<String> findStrategy(ILogicalQueryPart searchedPart) {
-		Collection<ILogicalQueryPart> partsToScan;
-		synchronized (cStrategyToQueryPart) {
-			partsToScan = cStrategyToQueryPart.keySet();
-		}
-		Optional<ILogicalQueryPart> foundKey = Optional.absent();
+	private static Optional<String> findStrategy(String pqlWithJxta,
+			Map<String, String> strategiesToPQLWithoutJxta) {
+		String pqlWithoutJxta = pqlWithJxta;
+//		String pqlWithoutJxta = cleanPQLFromJxta(pqlWithJxta);
+		// TODO Remove occurrence of JXTA operators within the PQL
+		// TODO 1. idea: parse to logical query -> collect all operators except JXTA operators -> generate query part -> call copy and cut -> generate PQL
+		Optional<String> foundKey = Optional.absent();
 		Optional<String> foundStrategy = Optional.absent();
-		for (ILogicalQueryPart part : partsToScan) {
-			if (equalPartsIgnoringJxtaOperators(part, searchedPart)) {
-				synchronized (cStrategyToQueryPart) {
-					foundStrategy = Optional.of(cStrategyToQueryPart.get(part));
-				}
+		for (String pql : strategiesToPQLWithoutJxta.keySet()) {
+			if (equalPQLIgnoringOperatorNumbers(pql, pqlWithoutJxta)) {
+				foundKey = Optional.of(pql);
+				foundStrategy = Optional
+						.of(strategiesToPQLWithoutJxta.get(pql));
 			}
 		}
 		if (foundKey.isPresent()) {
-			synchronized (cStrategyToQueryPart) {
-				cStrategyToQueryPart.remove(foundKey.get());
-			}
+			strategiesToPQLWithoutJxta.remove(foundKey.get());
 		}
 		return foundStrategy;
-	}
-
-	private static boolean equalPartsIgnoringJxtaOperators(
-			ILogicalQueryPart partWithoutJxtaOperators,
-			ILogicalQueryPart partWithJxtaOperators) {
-		for (ILogicalOperator operator1 : partWithJxtaOperators.getOperators()) {
-			if (isJxtaOperator(operator1)) {
-				continue;
-			}
-			boolean found = false;
-			for (ILogicalOperator operator2 : partWithoutJxtaOperators
-					.getOperators()) {
-				if (equalOperatorsIngoringJxtaOperators(operator1, operator2)) {
-					found = true;
-					break;
-				}
-			}
-			if (!found) {
-				return false;
-			}
-		}
-		return true;
-	}
-
-	private static boolean equalOperatorsIngoringJxtaOperators(
-			ILogicalOperator operator1, ILogicalOperator operator2) {
-		Collection<ILogicalOperator> visitedOperators = Lists.newArrayList();
-		return equalOperatorsIngoringJxtaOperatorsImpl(operator1, operator2,
-				visitedOperators);
-	}
-
-	private static boolean equalOperatorsIngoringJxtaOperatorsImpl(
-			ILogicalOperator operator1, ILogicalOperator operator2,
-			Collection<ILogicalOperator> visitedOperators) {
-		if (visitedOperators.contains(operator1)) {
-			return true;
-		}
-		visitedOperators.add(operator1);
-		if (operator1 instanceof JxtaReceiverAO) {
-			return operator2.getSubscribedToSource().isEmpty();
-		} else if (operator1 instanceof JxtaSenderAO) {
-			return operator2.getSubscriptions().isEmpty();
-		}
-		return operator1.getClass() == operator2.getClass()
-				&& sameParameterInfo(operator1, operator2)
-				&& checkSubscriptions(operator1.getSubscribedToSource(),
-						operator2.getSubscribedToSource(), visitedOperators)
-				&& checkSubscriptions(operator1.getSubscriptions(),
-						operator2.getSubscriptions(), visitedOperators);
-	}
-
-	private static boolean checkSubscriptions(
-			Collection<LogicalSubscription> subs1,
-			Collection<LogicalSubscription> subs2,
-			Collection<ILogicalOperator> visitedOperators) {
-		Iterator<LogicalSubscription> iter1 = subs1.iterator();
-		Iterator<LogicalSubscription> iter2 = subs2.iterator();
-		while (iter1.hasNext()) {
-			ILogicalOperator target1 = iter1.next().getTarget();
-			if (!iter2.hasNext()) {
-				if (!isJxtaOperator(target1)) {
-					return false;
-				}
-			} else if (!equalOperatorsIngoringJxtaOperatorsImpl(target1, iter2
-					.next().getTarget(), visitedOperators)) {
-				return false;
-			}
-		}
-		return true;
-	}
-
-	private static boolean sameParameterInfo(ILogicalOperator operator1,
-			ILogicalOperator operator2) {
-		Map<String, String> info1 = operator1.getParameterInfos();
-		Map<String, String> info2 = operator2.getParameterInfos();
-		if (info1 == null) {
-			return info2 == null;
-		} else if (info1.size() != info2.size()) {
-			return false;
-		}
-		for (String key : info1.keySet()) {
-			if (!info2.keySet().contains(key)
-					|| !info1.get(key).equals(info2.get(key))) {
-				return false;
-			}
-		}
-		return true;
-	}
-
-	private static boolean isJxtaOperator(ILogicalOperator operator) {
-		return operator instanceof JxtaReceiverAO
-				|| operator instanceof JxtaSenderAO;
 	}
 
 	@Override
