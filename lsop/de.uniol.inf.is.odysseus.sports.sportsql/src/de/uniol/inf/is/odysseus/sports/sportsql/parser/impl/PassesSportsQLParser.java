@@ -56,10 +56,6 @@ public class PassesSportsQLParser {
 	private static final int CROSS_A_2 = 105;
 	private static final int CROSS_A_3 = -75;
 	private static final int CROSS_A_4 = -105;
-	// private static final int BACK_A_1 = 105;
-	// private static final int BACK_A_2 = 180;
-	// private static final int BACK_A_3 = -105;
-	// private static final int BACK_A_4 = -180;
 
 	// Radius to detect a ball contact
 	private static final int RADIUS = 800;
