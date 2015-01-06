@@ -40,6 +40,7 @@ public class DDSTransportHandler extends AbstractPushTransportHandler {
 	static final String IDL_FILE = "idlfile";
 	static final String TOPIC_TYPE = "topictype";
 	static final String TOPIC = "topic";
+	static final String DOMAIN = "domain";
 	static final String QOS_LIB = "qoslibrary";
 	static final String QOS_PROFILE = "qosprofile";
 	
@@ -98,9 +99,7 @@ public class DDSTransportHandler extends AbstractPushTransportHandler {
 
 		domFactory.set_qos(factoryQos);
 
-		int domainId = 0;
-
-
+		int domainId = options.getInt(DOMAIN, 0);
 
 		// Here we use 'default' Quality of Service settings where QoS settings
 		// are configured via the USER_QOS_PROFILES.xml
