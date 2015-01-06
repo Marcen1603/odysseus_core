@@ -137,4 +137,8 @@ public class UnNestAO extends UnaryLogicalOp {
     public boolean isMultiValue() {
         return this.attribute.getDatatype().isMultiValue();
     }
+    
+    public boolean isListValue(){
+    	return this.attribute.getDatatype().isListValue();
+    }
 }
