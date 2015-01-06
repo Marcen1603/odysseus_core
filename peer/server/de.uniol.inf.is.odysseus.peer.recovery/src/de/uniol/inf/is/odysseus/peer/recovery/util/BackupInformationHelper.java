@@ -361,9 +361,6 @@ public class BackupInformationHelper extends AbstractQueryDistributionListener
 	@Override
 	public void setRecoveryStrategy(String name,
 			Collection<ILogicalQueryPart> queryParts) {
-		synchronized (cStrategyToQueryPart) {
-			cStrategyToQueryPart.clear();
-		}
 		Map<ILogicalQueryPart, Collection<ILogicalQueryPart>> copiedParts = LogicalQueryHelper
 				.copyAndCutQueryParts(queryParts, 1);
 		for (ILogicalQueryPart part : copiedParts.keySet()) {
