@@ -21,6 +21,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
+
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpException;
 import org.apache.http.HttpResponse;
@@ -66,7 +67,8 @@ public class HTTPTransportHandler extends AbstractPullTransportHandler {
         public static Method fromString(final String method) {
             try {
                 return Method.valueOf(method.toUpperCase());
-            } catch (final Exception e) {
+            }
+            catch (final Exception e) {
                 return GET;
             }
         }
@@ -89,41 +91,40 @@ public class HTTPTransportHandler extends AbstractPullTransportHandler {
 
     @Override
     public void send(final byte[] message) throws IOException {
-		try {
-			HttpRequestBase request = null;
-			switch (this.method) {
-			case PUT:
-				request = new HttpPut(this.uri);
-				final InputStreamEntity putRequestEntity = new InputStreamEntity(
-						new ByteArrayInputStream(message), -1);
-				putRequestEntity.setContentType("binary/octet-stream");
-				putRequestEntity.setChunked(true);
-				((HttpPut) request).setEntity(putRequestEntity);
-				break;
-			case DELETE:
-				request = new HttpDelete(this.uri);
-				break;
-			case HEAD:
-				request = new HttpHead(this.uri);
-				break;
-			case GET:
-				request = new HttpGet(this.uri);
-				break;
-			case POST:
-			default:
-				request = new HttpPost(this.uri);
-				final InputStreamEntity postRequestEntity = new InputStreamEntity(
-						new ByteArrayInputStream(message), -1);
-				postRequestEntity.setContentType("binary/octet-stream");
-				postRequestEntity.setChunked(true);
-				((HttpPost) request).setEntity(postRequestEntity);
-			}
-			this.client.execute(request);
-		} finally {
+        try {
+            HttpRequestBase request = null;
+            switch (this.method) {
+                case PUT:
+                    request = new HttpPut(this.uri);
+                    final InputStreamEntity putRequestEntity = new InputStreamEntity(new ByteArrayInputStream(message), -1);
+                    putRequestEntity.setContentType("binary/octet-stream");
+                    putRequestEntity.setChunked(true);
+                    ((HttpPut) request).setEntity(putRequestEntity);
+                    break;
+                case DELETE:
+                    request = new HttpDelete(this.uri);
+                    break;
+                case HEAD:
+                    request = new HttpHead(this.uri);
+                    break;
+                case GET:
+                    request = new HttpGet(this.uri);
+                    break;
+                case POST:
+                default:
+                    request = new HttpPost(this.uri);
+                    final InputStreamEntity postRequestEntity = new InputStreamEntity(new ByteArrayInputStream(message), -1);
+                    postRequestEntity.setContentType("binary/octet-stream");
+                    postRequestEntity.setChunked(true);
+                    ((HttpPost) request).setEntity(postRequestEntity);
+            }
+            this.client.execute(request);
+        }
+        finally {
 
-			client.getConnectionManager().shutdown();
-		}
-       
+            client.getConnectionManager().shutdown();
+        }
+
     }
 
     @Override
@@ -138,12 +139,14 @@ public class HTTPTransportHandler extends AbstractPullTransportHandler {
         }
         if (options.get("method") != null) {
             setMethod(Method.fromString(options.get("method")));
-        } else {
+        }
+        else {
             setMethod(Method.GET);
         }
         if (options.get("body") != null) {
             setBody(options.get("body"));
-        } else {
+        }
+        else {
             setBody("");
         }
     }
@@ -222,7 +225,8 @@ public class HTTPTransportHandler extends AbstractPullTransportHandler {
             this.uri = uri;
             try {
                 fetch();
-            } catch (HttpException | IOException e) {
+            }
+            catch (HttpException | IOException e) {
                 LOG.error(e.getMessage(), e);
             }
         }
@@ -233,7 +237,8 @@ public class HTTPTransportHandler extends AbstractPullTransportHandler {
                 try {
                     setRefetch(false);
                     this.fetch();
-                } catch (HttpException e) {
+                }
+                catch (HttpException e) {
                     LOG.error(e.getMessage(), e);
                     throw new IOException(e);
                 }
@@ -252,7 +257,8 @@ public class HTTPTransportHandler extends AbstractPullTransportHandler {
                 try {
                     setRefetch(false);
                     this.fetch();
-                } catch (HttpException e) {
+                }
+                catch (HttpException e) {
                     LOG.error(e.getMessage(), e);
                     throw new IOException(e);
                 }
@@ -272,10 +278,12 @@ public class HTTPTransportHandler extends AbstractPullTransportHandler {
         public void close() throws IOException {
             try {
                 buffer.clear();
-            } catch (Exception e) {
+            }
+            catch (Exception e) {
                 LOG.error(e.getMessage(), e);
-            } finally {
-                this.client.getConnectionManager().shutdown();
+            }
+            finally {
+                // this.client.getConnectionManager().shutdown();
             }
         }
 
@@ -295,33 +303,34 @@ public class HTTPTransportHandler extends AbstractPullTransportHandler {
         private void fetch() throws HttpException, IOException {
             HttpRequestBase request = null;
             switch (this.method) {
-            case POST:
-                request = new HttpPost(this.uri);
-                final InputStreamEntity postRequestEntity = new InputStreamEntity(new ByteArrayInputStream(body.getBytes()), -1);
-                postRequestEntity.setContentType("binary/octet-stream");
-                postRequestEntity.setChunked(true);
-                ((HttpPost) request).setEntity(postRequestEntity);
-                break;
-            case PUT:
-                request = new HttpPut(this.uri);
-                final InputStreamEntity putRequestEntity = new InputStreamEntity(new ByteArrayInputStream(body.getBytes()), -1);
-                putRequestEntity.setContentType("binary/octet-stream");
-                putRequestEntity.setChunked(true);
-                ((HttpPut) request).setEntity(putRequestEntity);
-                break;
-            case DELETE:
-                request = new HttpDelete(this.uri);
-                break;
-            case HEAD:
-                request = new HttpHead(this.uri);
-                break;
-            case GET:
-            default:
-                request = new HttpGet(this.uri);
+                case POST:
+                    request = new HttpPost(this.uri);
+                    final InputStreamEntity postRequestEntity = new InputStreamEntity(new ByteArrayInputStream(body.getBytes()), -1);
+                    postRequestEntity.setContentType("binary/octet-stream");
+                    postRequestEntity.setChunked(true);
+                    ((HttpPost) request).setEntity(postRequestEntity);
+                    break;
+                case PUT:
+                    request = new HttpPut(this.uri);
+                    final InputStreamEntity putRequestEntity = new InputStreamEntity(new ByteArrayInputStream(body.getBytes()), -1);
+                    putRequestEntity.setContentType("binary/octet-stream");
+                    putRequestEntity.setChunked(true);
+                    ((HttpPut) request).setEntity(putRequestEntity);
+                    break;
+                case DELETE:
+                    request = new HttpDelete(this.uri);
+                    break;
+                case HEAD:
+                    request = new HttpHead(this.uri);
+                    break;
+                case GET:
+                default:
+                    request = new HttpGet(this.uri);
             }
             try {
                 HttpResponse response = this.client.execute(request);
                 HttpEntity entity = response.getEntity();
+                this.buffer.clear();
                 if (entity != null) {
                     byte[] b = EntityUtils.toByteArray(entity);
                     if (b.length + 1 > this.buffer.capacity()) {
@@ -329,14 +338,14 @@ public class HTTPTransportHandler extends AbstractPullTransportHandler {
                         this.buffer = newBuffer;
                         HTTPTransportHandler.this.LOG.debug("Extending buffer to " + this.buffer.capacity());
                     }
-                    this.buffer.clear();
                     this.buffer.put(b);
-                    this.buffer.flip();
                 }
                 if (LOG.isDebugEnabled()) {
                     LOG.debug(request.getRequestLine().toString());
                 }
-            } catch (Exception e) {
+                this.buffer.flip();
+            }
+            catch (Exception e) {
                 LOG.error(e.getMessage(), e);
             }
         }
@@ -373,29 +382,29 @@ public class HTTPTransportHandler extends AbstractPullTransportHandler {
             this.buffer.flip();
             HttpRequestBase request = null;
             switch (this.method) {
-            case POST:
-                request = new HttpPost(this.uri);
-                InputStreamEntity postRequestEntity = new InputStreamEntity(new ByteArrayInputStream(this.buffer.array()), -1);
-                postRequestEntity.setContentType("binary/octet-stream");
-                postRequestEntity.setChunked(true);
-                ((HttpPost) request).setEntity(postRequestEntity);
-                break;
-            case PUT:
-                request = new HttpPut(this.uri);
-                InputStreamEntity putRequestEntity = new InputStreamEntity(new ByteArrayInputStream(this.buffer.array()), -1);
-                putRequestEntity.setContentType("binary/octet-stream");
-                putRequestEntity.setChunked(true);
-                ((HttpPut) request).setEntity(putRequestEntity);
-                break;
-            case DELETE:
-                request = new HttpDelete(this.uri);
-                break;
-            case HEAD:
-                request = new HttpHead(this.uri);
-                break;
-            case GET:
-            default:
-                request = new HttpGet(this.uri);
+                case POST:
+                    request = new HttpPost(this.uri);
+                    InputStreamEntity postRequestEntity = new InputStreamEntity(new ByteArrayInputStream(this.buffer.array()), -1);
+                    postRequestEntity.setContentType("binary/octet-stream");
+                    postRequestEntity.setChunked(true);
+                    ((HttpPost) request).setEntity(postRequestEntity);
+                    break;
+                case PUT:
+                    request = new HttpPut(this.uri);
+                    InputStreamEntity putRequestEntity = new InputStreamEntity(new ByteArrayInputStream(this.buffer.array()), -1);
+                    putRequestEntity.setContentType("binary/octet-stream");
+                    putRequestEntity.setChunked(true);
+                    ((HttpPut) request).setEntity(putRequestEntity);
+                    break;
+                case DELETE:
+                    request = new HttpDelete(this.uri);
+                    break;
+                case HEAD:
+                    request = new HttpHead(this.uri);
+                    break;
+                case GET:
+                default:
+                    request = new HttpGet(this.uri);
             }
             this.client.execute(request);
             if (LOG.isTraceEnabled()) {
@@ -412,21 +421,22 @@ public class HTTPTransportHandler extends AbstractPullTransportHandler {
 
     @Override
     public boolean isSemanticallyEqualImpl(ITransportHandler o) {
-    	if(!(o instanceof HTTPTransportHandler)) {
-    		return false;
-    	}
-    	HTTPTransportHandler other = (HTTPTransportHandler)o;
-    	if(this.getURI() == null && other.getURI() != null ||
-    			this.getURI() != null && other.getURI() == null) {
-    		return false;
-    	} else if(this.getURI() != null && other.getURI() != null &&
-    			!this.getURI().equals(other.getURI())) {
-    		return false;
-    	} else if(!this.getMethod().equals(other.getMethod())) {
-    		return false;
-    	} else if(!this.getBody().equals(other.getBody())) {
-    		return false;
-    	}
-    	return true;
+        if (!(o instanceof HTTPTransportHandler)) {
+            return false;
+        }
+        HTTPTransportHandler other = (HTTPTransportHandler) o;
+        if (this.getURI() == null && other.getURI() != null || this.getURI() != null && other.getURI() == null) {
+            return false;
+        }
+        else if (this.getURI() != null && other.getURI() != null && !this.getURI().equals(other.getURI())) {
+            return false;
+        }
+        else if (!this.getMethod().equals(other.getMethod())) {
+            return false;
+        }
+        else if (!this.getBody().equals(other.getBody())) {
+            return false;
+        }
+        return true;
     }
 }

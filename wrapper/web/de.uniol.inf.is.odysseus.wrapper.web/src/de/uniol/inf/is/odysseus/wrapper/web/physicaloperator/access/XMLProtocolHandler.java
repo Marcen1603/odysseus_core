@@ -180,6 +180,7 @@ public class XMLProtocolHandler<T extends Tuple<?>> extends
 				final DocumentBuilder db = this.documentBuilderFactory
 						.newDocumentBuilder();
 				final Document dom = db.parse(this.input);
+                this.input.skip(this.input.available());
 				final XPathFactory factory = XPathFactory.newInstance();
 				final XPath xpath = factory.newXPath();
 				final SDFSchema schema = this.getDataHandler().getSchema();
