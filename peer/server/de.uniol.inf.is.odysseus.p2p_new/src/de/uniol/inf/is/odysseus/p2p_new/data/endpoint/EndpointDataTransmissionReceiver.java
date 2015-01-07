@@ -40,7 +40,7 @@ public class EndpointDataTransmissionReceiver extends AbstractTransmissionReceiv
 		this.peerCommunicator.addListener(this, DataMessage.class);
 		this.peerCommunicator.addListener(this, PunctuationMessage.class);
 		this.peerCommunicator.addListener(this, OpenAckMessage.class);
-		this.peerCommunicator.addListener(this, CloseAckMessage.class);
+//		this.peerCommunicator.addListener(this, CloseAckMessage.class);
 		this.peerCommunicator.addListener(this, DoneMessage.class);
 	}
 	
@@ -112,6 +112,8 @@ public class EndpointDataTransmissionReceiver extends AbstractTransmissionReceiv
 	public void sendClose() throws DataTransmissionException {
 		LOG.debug("Send close to peer '{}'", PeerDictionary.getInstance().getRemotePeerName(pid));
 
+		peerCommunicator.addListener(this, CloseAckMessage.class);
+		
 		CloseMessage closeMessage = new CloseMessage(idHash);
 		closeRepeater = new RepeatingMessageSend(peerCommunicator, closeMessage, pid);
 		closeRepeater.start();
