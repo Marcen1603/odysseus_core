@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -16,8 +17,10 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
+import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.QueryState;
@@ -28,15 +31,17 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandlin
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.p2p_new.IP2PNetworkManager;
 import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicator;
+import de.uniol.inf.is.odysseus.p2p_new.logicaloperator.JxtaReceiverAO;
+import de.uniol.inf.is.odysseus.p2p_new.logicaloperator.JxtaSenderAO;
 import de.uniol.inf.is.odysseus.peer.ddc.DDCEntry;
 import de.uniol.inf.is.odysseus.peer.ddc.IDDCListener;
 import de.uniol.inf.is.odysseus.peer.distribute.ILogicalQueryPart;
 import de.uniol.inf.is.odysseus.peer.distribute.IQueryPartController;
+import de.uniol.inf.is.odysseus.peer.distribute.LogicalQueryPart;
 import de.uniol.inf.is.odysseus.peer.distribute.listener.AbstractQueryDistributionListener;
 import de.uniol.inf.is.odysseus.peer.distribute.util.LogicalQueryHelper;
 import de.uniol.inf.is.odysseus.peer.recovery.IBackupInformationAccess;
 import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryCommunicator;
-import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryPreprocessorListener;
 import de.uniol.inf.is.odysseus.peer.recovery.internal.BackupInfo;
 
 // TODO Die ganze Klasse gefällt mir nicht. Es ist, glaube ich, nicht zweckmäßig (nur) auf den lokalen Distributor zu horchen. 
@@ -49,8 +54,7 @@ import de.uniol.inf.is.odysseus.peer.recovery.internal.BackupInfo;
  *
  */
 public class BackupInformationHelper extends AbstractQueryDistributionListener
-		implements IPlanModificationListener, IRecoveryPreprocessorListener,
-		IDDCListener {
+		implements IPlanModificationListener, IDDCListener {
 
 	/**
 	 * The logger instance for this class.
@@ -343,36 +347,6 @@ public class BackupInformationHelper extends AbstractQueryDistributionListener
 	}
 
 	/*
-	 * 1. Step: modifier sets strategy -> Keep in mind
-	 * 
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * de.uniol.inf.is.odysseus.peer.recovery.IRecoveryPreprocessorListener#
-	 * setRecoveryStrategy(java.lang.String, java.util.Collection)
-	 */
-	@Override
-	public void setRecoveryStrategy(String name,
-			Collection<ILogicalQueryPart> queryParts) {
-		Map<ILogicalQueryPart, Collection<ILogicalQueryPart>> copiedParts = LogicalQueryHelper
-				.copyAndCutQueryParts(queryParts, 1);
-		for (ILogicalQueryPart part : copiedParts.keySet()) {
-			String pql = LogicalQueryHelper
-					.generatePQLStatementFromQueryPart(copiedParts.get(part)
-							.iterator().next());
-			pql = cleanPQLFromOperatorNumbers(pql);
-			synchronized (cStrategyToPQL) {
-				cStrategyToPQL.put(pql, name);
-			}
-
-			// synchronized (cStrategyToQueryPart) {
-			// cStrategyToQueryPart.put(copiedParts.get(part).iterator()
-			// .next(), name);
-			// }
-		}
-	}
-
-	/*
 	 * 2. Step: executor installs query -> (1) check, if there is a strategy set
 	 * for that query (cStrategyToQueryPart) (2) create backup information with
 	 * queryID, PQL, state and strategy (3) wait, if there is a shared query id
@@ -430,11 +404,11 @@ public class BackupInformationHelper extends AbstractQueryDistributionListener
 					String strategy = optStrategy.get();
 					synchronized (cPQLAndStrategyToRemotePeer) {
 						if (cPQLAndStrategyToRemotePeer.containsKey(peer)) {
-							cPQLAndStrategyToRemotePeer.get(peer).put(pql,
-									optStrategy.get());
+							cPQLAndStrategyToRemotePeer.get(peer).put(
+									cleanPQLFromJxta(pql), optStrategy.get());
 						} else {
 							Map<String, String> map = Maps.newHashMap();
-							map.put(pql, strategy);
+							map.put(cleanPQLFromJxta(pql), strategy);
 							cPQLAndStrategyToRemotePeer.put(peer, map);
 						}
 					}
@@ -558,10 +532,7 @@ public class BackupInformationHelper extends AbstractQueryDistributionListener
 
 	private static Optional<String> findStrategy(String pqlWithJxta,
 			Map<String, String> strategiesToPQLWithoutJxta) {
-		String pqlWithoutJxta = pqlWithJxta;
-//		String pqlWithoutJxta = cleanPQLFromJxta(pqlWithJxta);
-		// TODO Remove occurrence of JXTA operators within the PQL
-		// TODO 1. idea: parse to logical query -> collect all operators except JXTA operators -> generate query part -> call copy and cut -> generate PQL
+		String pqlWithoutJxta = cleanPQLFromJxta(pqlWithJxta);
 		Optional<String> foundKey = Optional.absent();
 		Optional<String> foundStrategy = Optional.absent();
 		for (String pql : strategiesToPQLWithoutJxta.keySet()) {
@@ -569,12 +540,47 @@ public class BackupInformationHelper extends AbstractQueryDistributionListener
 				foundKey = Optional.of(pql);
 				foundStrategy = Optional
 						.of(strategiesToPQLWithoutJxta.get(pql));
+				break;
 			}
 		}
 		if (foundKey.isPresent()) {
 			strategiesToPQLWithoutJxta.remove(foundKey.get());
 		}
 		return foundStrategy;
+	}
+
+	private static String cleanPQLFromJxta(String pql) {
+		// parse to logical query
+		List<ILogicalQuery> queries = RecoveryHelper
+				.convertToLogicalQueries(pql);
+
+		// collect all operators except JXTA operators
+		Collection<ILogicalOperator> operatorsExceptJxta = Lists.newArrayList();
+		for (ILogicalQuery query : queries) {
+			Collection<ILogicalOperator> operators = LogicalQueryHelper
+					.getAllOperators(query);
+			LogicalQueryHelper.removeTopAOs(operators);
+			for (ILogicalOperator operator : operators) {
+				if (!(operator instanceof JxtaSenderAO)
+						&& !(operator instanceof JxtaReceiverAO)) {
+					operatorsExceptJxta.add(operator);
+				}
+			}
+		}
+
+		// generate query part
+		ILogicalQueryPart originalPart = new LogicalQueryPart(
+				operatorsExceptJxta);
+
+		// call copy and cut
+		Collection<ILogicalQueryPart> originalPartAsList = Lists
+				.newArrayList(originalPart);
+		ILogicalQueryPart copiedPart = LogicalQueryHelper
+				.copyAndCutQueryParts(originalPartAsList, 1).get(originalPart)
+				.iterator().next();
+
+		// generate PQL
+		return LogicalQueryHelper.generatePQLStatementFromQueryPart(copiedPart);
 	}
 
 	@Override

@@ -9,14 +9,12 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.QueryBuildConfiguration;
 import de.uniol.inf.is.odysseus.peer.distribute.ILogicalQueryPart;
 import de.uniol.inf.is.odysseus.peer.distribute.IQueryPartModificator;
 import de.uniol.inf.is.odysseus.peer.distribute.QueryPartModificationException;
-import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryPreprocessorListener;
 
 /**
  * Replicates the given query parts once.
@@ -73,58 +71,6 @@ public class ActiveStandbyModificator implements IQueryPartModificator {
 		}
 	}
 
-	/**
-	 * The listeners.
-	 */
-	private static final Collection<IRecoveryPreprocessorListener> cListeners = Sets
-			.newHashSet();
-
-	/**
-	 * Binds a listener. <br />
-	 * Called by OSGI-DS.
-	 * 
-	 * @param serv
-	 *            The listener to bind. <br />
-	 *            Must be not null.
-	 */
-	public static void bindListener(IRecoveryPreprocessorListener serv) {
-		Preconditions.checkNotNull(serv);
-		cListeners.add(serv);
-		LOG.debug("Bound {} as a listener.", serv.getClass().getSimpleName());
-	}
-
-	/**
-	 * Unbinds a listener. <br />
-	 * Called by OSGI-DS.
-	 * 
-	 * @param serv
-	 *            The listener to unbind. <br />
-	 *            Must be not null.
-	 */
-	public static void unbindListener(IRecoveryPreprocessorListener serv) {
-		Preconditions.checkNotNull(serv);
-		cListeners.remove(serv);
-		LOG.debug("Unbound {} as a listener.", serv.getClass().getSimpleName());
-	}
-
-	/**
-	 * Notifies all listeners.
-	 * 
-	 * @param parts
-	 *            The query parts, which should be recovered by the active
-	 *            standby strategy.
-	 */
-	private static void notifyListeners(Collection<ILogicalQueryPart> parts) {
-		for (IRecoveryPreprocessorListener listener : cListeners) {
-			try {
-				listener.setRecoveryStrategy(
-						ActiveStandbyStrategy.getStrategyName(), parts);
-			} catch (Throwable t) {
-				LOG.error("Error while notifying listener!", t);
-			}
-		}
-	}
-
 	@Override
 	public String getName() {
 		return "recovery_activestandby";
@@ -144,9 +90,6 @@ public class ActiveStandbyModificator implements IQueryPartModificator {
 		List<String> modParamsForReplication = Lists.newArrayList("2");
 		Collection<ILogicalQueryPart> replicatedParts = cReplicator.get()
 				.modify(queryParts, query, config, modParamsForReplication);
-
-		// Notify, which parts should be recovered by active-standby
-		notifyListeners(replicatedParts);
 
 		return replicatedParts;
 	}
