@@ -109,5 +109,11 @@ public interface IBackupInformationAccess {
 	 * @return The Map of backup-information for this peer
 	 */
 	public HashMap<Integer, BackupInfo> getBackupInformation();
+	
+	/**
+	 * 
+	 * @return The Map of backup-information for this peer for a given query id
+	 */
+	public BackupInfo getBackupInformation(int queryId);
 
 }

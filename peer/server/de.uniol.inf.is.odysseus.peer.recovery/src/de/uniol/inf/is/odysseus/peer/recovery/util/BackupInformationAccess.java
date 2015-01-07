@@ -274,4 +274,9 @@ public class BackupInformationAccess implements IBackupInformationAccess {
 		}
 	}
 
+	@Override
+	public BackupInfo getBackupInformation(int queryId) {
+		return getBackupInformation().get(queryId);
+	}
+
 }
