@@ -34,6 +34,7 @@ import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicatorListener;
 import de.uniol.inf.is.odysseus.p2p_new.PeerCommunicationException;
 import de.uniol.inf.is.odysseus.p2p_new.RepeatingMessageSend;
 import de.uniol.inf.is.odysseus.peer.distribute.IQueryPartController;
+import de.uniol.inf.is.odysseus.peer.distribute.IQueryPartControllerListener;
 import de.uniol.inf.is.odysseus.peer.distribute.PeerDistributePlugIn;
 import de.uniol.inf.is.odysseus.peer.distribute.message.RemoveQueryAckMessage;
 import de.uniol.inf.is.odysseus.peer.distribute.message.RemoveQueryMessage;
@@ -52,6 +53,7 @@ public class QueryPartController implements IPlanModificationListener, IPeerComm
 	private static IJxtaServicesProvider jxtaServicesProvider;
 	private static IP2PNetworkManager p2pNetworkManager;
 	private static IPeerCommunicator peerCommunicator;
+	private static final Collection<IQueryPartControllerListener> listeners = Lists.newArrayList();
 
 	private final Map<Integer, ID> sharedQueryIDMap = Maps.newHashMap();
 	private final Map<ID, Collection<PeerID>> peerIDMap = Maps.newHashMap();
@@ -131,6 +133,18 @@ public class QueryPartController implements IPlanModificationListener, IPeerComm
 		instance = null;
 
 		LOG.debug("Query part controller deactivated");
+	}
+	
+	// called by OSGi-DS
+	public static void bindListener(IQueryPartControllerListener listener) {
+		listeners.add(listener);
+	}
+
+	// called by OSGi-DS
+	public static void unbindListener(IQueryPartControllerListener listener) {
+		if(listeners.contains(listener)) {
+			listeners.remove(listener);
+		}
 	}
 
 	@Override
@@ -227,6 +241,16 @@ public class QueryPartController implements IPlanModificationListener, IPeerComm
 		peerIDMap.put(sharedQueryID, otherPeers);
 
 		LOG.debug("Registered sharedqueryID as master : {}", sharedQueryID);
+		
+		// notify listeners
+			for(IQueryPartControllerListener listener : listeners) {
+				try {
+					listener.afterRegisterAsMaster(query, queryID, sharedQueryID, otherPeers);
+				} catch(Throwable t) {
+					LOG.error("Error while calling afterRegisterAsMaster of a listener!");
+					continue;
+				}
+			}
 	}
 
 	@Override
@@ -236,6 +260,16 @@ public class QueryPartController implements IPlanModificationListener, IPeerComm
 
 		for (Integer id : ids) {
 			sharedQueryIDMap.put(id, sharedQueryID);
+		}
+		
+		// notify listeners
+		for(IQueryPartControllerListener listener : listeners) {
+			try {
+				listener.afterRegisterAsSlave(ids, sharedQueryID);
+			} catch(Throwable t) {
+				LOG.error("Error while calling afterRegisterAsSlave of a listener!");
+				continue;
+			}
 		}
 	}
 	

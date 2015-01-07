@@ -8,4 +8,5 @@
    <service>
       <provide interface="de.uniol.inf.is.odysseus.peer.distribute.IQueryPartController"/>
    </service>
+   <reference bind="bindListener" cardinality="0..n" interface="de.uniol.inf.is.odysseus.peer.distribute.IQueryPartControllerListener" name="IQueryPartControllerListener" policy="static" unbind="unbindListener"/>
 </scr:component>
