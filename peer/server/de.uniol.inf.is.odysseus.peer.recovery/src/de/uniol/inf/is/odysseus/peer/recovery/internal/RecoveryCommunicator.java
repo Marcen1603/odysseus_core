@@ -17,10 +17,8 @@ import com.google.common.base.Preconditions;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.QueryState;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvider;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
-import de.uniol.inf.is.odysseus.p2p_new.IMessage;
 import de.uniol.inf.is.odysseus.p2p_new.IP2PNetworkManager;
 import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicator;
-import de.uniol.inf.is.odysseus.p2p_new.PeerCommunicationException;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.IPeerDictionary;
 import de.uniol.inf.is.odysseus.parser.pql.generator.IPQLGenerator;
 import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryCommunicator;
@@ -371,31 +369,6 @@ public class RecoveryCommunicator implements IRecoveryCommunicator {
 		}
 		LOG.debug("Send Go-on instruction.");
 		return TupleSendSender.getInstance().sendGoOnInstruction(receiverPeer, pipeId, cPeerCommunicator.get());
-	}
-
-	/**
-	 * Sends a message to the given peer
-	 * 
-	 * @param receiverPeer
-	 *            The peer which has to receive the message
-	 * @param message
-	 *            The message which you want to send
-	 */
-	// TODO remove, when RecoveryAddQueryMessage is handled by repeating
-	// sender/receiver pair. M.B.
-	public void sendMessage(PeerID receiverPeer, IMessage message) {
-
-		// Preconditions
-		if (!cPeerCommunicator.isPresent()) {
-			LOG.error("No peer communicator bound!");
-			return;
-		}
-
-		try {
-			cPeerCommunicator.get().send(receiverPeer, message);
-		} catch (PeerCommunicationException e) {
-			e.printStackTrace();
-		}
 	}
 
 	@Override
