@@ -21,5 +21,7 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-ActivationPolicy: lazy
 Export-Package: de.uniol.inf.is.odysseus.rcp.dashboard,
  de.uniol.inf.is.odysseus.rcp.dashboard.editors,
+ de.uniol.inf.is.odysseus.rcp.dashboard.handler,
+ de.uniol.inf.is.odysseus.rcp.dashboard.queryprovider,
  de.uniol.inf.is.odysseus.rcp.dashboard.views
 Service-Component: OSGI-INF/executor.xml
