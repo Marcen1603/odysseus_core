@@ -39,7 +39,9 @@ public class ZMQPushConsumer extends AZMQConnector {
 			} catch(Exception e) {
 				LOG.info("Error during receiving data with zeromq: " + e.getMessage());
 //				e.printStackTrace();
-				t.interrupt();
+				if(t!=null) {
+					t.interrupt();
+				}
 			}
 			if(data != null) {
 				try {
