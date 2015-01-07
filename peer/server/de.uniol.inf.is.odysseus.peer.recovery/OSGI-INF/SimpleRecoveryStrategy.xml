@@ -6,7 +6,4 @@
    <reference bind="bindPeerDictionary" cardinality="1..1" interface="de.uniol.inf.is.odysseus.p2p_new.dictionary.IPeerDictionary" name="IPeerDictionary" policy="static" unbind="unbindPeerDictionary"/>
    <reference bind="bindRecoveryAllocator" cardinality="0..n" interface="de.uniol.inf.is.odysseus.peer.recovery.IRecoveryAllocator" name="IRecoveryAllocator" policy="static" unbind="unbindRecoveryAllocator"/>
    <reference bind="bindRecoveryDynamicBackup" cardinality="1..1" interface="de.uniol.inf.is.odysseus.peer.recovery.IRecoveryDynamicBackup" name="IRecoveryDynamicBackup" policy="static" unbind="unbindRecoveryDynamicBackup"/>
-   <service>
-      <provide interface="de.uniol.inf.is.odysseus.peer.recovery.IRecoveryStrategy"/>
-   </service>
 </scr:component>

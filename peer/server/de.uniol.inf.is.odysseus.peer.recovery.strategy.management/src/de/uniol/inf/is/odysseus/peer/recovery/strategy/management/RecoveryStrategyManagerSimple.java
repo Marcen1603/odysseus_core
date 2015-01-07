@@ -1,6 +1,5 @@
 package de.uniol.inf.is.odysseus.peer.recovery.strategy.management;
 
-import java.util.Collection;
 import java.util.UUID;
 
 import net.jxta.peer.PeerID;
@@ -9,10 +8,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Preconditions;
-import com.google.common.collect.Lists;
 
 import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryStrategy;
 import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryStrategyManager;
+import de.uniol.inf.is.odysseus.peer.recovery.simplestrategy.SimpleRecoveryStrategy;
 
 public class RecoveryStrategyManagerSimple implements IRecoveryStrategyManager {
 
@@ -30,10 +29,9 @@ public class RecoveryStrategyManagerSimple implements IRecoveryStrategyManager {
 	}
 
 	/**
-	 * The collection for the recovery strategies, if there is one bound.
+	 * The recovery strategy, if there is one bound.
 	 */
-	private static Collection<IRecoveryStrategy> recoveryStrategies = Lists
-			.newArrayList();
+	private static IRecoveryStrategy recoveryStrategy;
 
 	/**
 	 * Binds a recovery strategy. <br />
@@ -46,7 +44,7 @@ public class RecoveryStrategyManagerSimple implements IRecoveryStrategyManager {
 	public static void bindRecoveryStrategy(IRecoveryStrategy serv) {
 
 		Preconditions.checkNotNull(serv);
-		recoveryStrategies.add(serv);
+		recoveryStrategy = serv;
 		LOG.debug("Bound {} as a recovery strategy.", serv.getClass()
 				.getSimpleName());
 
@@ -64,8 +62,8 @@ public class RecoveryStrategyManagerSimple implements IRecoveryStrategyManager {
 
 		Preconditions.checkNotNull(serv);
 
-		if (recoveryStrategies.contains(serv)) {
-			recoveryStrategies.remove(serv);
+		if (serv != null && serv == recoveryStrategy) {
+			recoveryStrategy = null;
 			LOG.debug("Unbound {} as a recovery strategy.", serv.getClass()
 					.getSimpleName());
 
@@ -75,25 +73,24 @@ public class RecoveryStrategyManagerSimple implements IRecoveryStrategyManager {
 
 	@Override
 	public void startRecovery(PeerID failedPeer, UUID recoveryStateIdentifier) {
-		if (recoveryStrategies.size() > 0) {
-			recoveryStrategies.iterator().next()
-					.recover(failedPeer, recoveryStateIdentifier);
+		if (recoveryStrategy != null) {
+			recoveryStrategy.recover(failedPeer, recoveryStateIdentifier);
 		} else {
-			LOG.error("No recovery strategy bound");
+			LOG.warn("No recovery strategy bound");
+			new SimpleRecoveryStrategy().recover(failedPeer,
+					recoveryStateIdentifier);
 		}
 	}
 
 	@Override
 	public void restartRecovery(PeerID failedPeer,
 			UUID recoveryStateIdentifier, UUID recoverySubStateIdentifier) {
-		if (recoveryStrategies.size() > 0) {
-			recoveryStrategies
-					.iterator()
-					.next()
-					.recoverSingleQueryPart(failedPeer,
-							recoveryStateIdentifier, recoverySubStateIdentifier);
+		if (recoveryStrategy != null) {
+			recoveryStrategy.recover(failedPeer, recoveryStateIdentifier);
 		} else {
-			LOG.error("No recovery strategy bound");
+			LOG.warn("No recovery strategy bound");
+			new SimpleRecoveryStrategy().recoverSingleQueryPart(failedPeer,
+					recoveryStateIdentifier, recoverySubStateIdentifier);
 		}
 	}
 
