@@ -24,7 +24,7 @@ public class ProcessGenerator extends AbstractDataGenerator{
 		} catch (InterruptedException e) {		
 			e.printStackTrace();
 		}
-				
+		// Durchläuft die Liste immer wieder
 		if(elementCounter%eventTuples.size() == 0 && elementCounter != 0){
 			elementCounter = 0;
 			caseIdAppendix++;

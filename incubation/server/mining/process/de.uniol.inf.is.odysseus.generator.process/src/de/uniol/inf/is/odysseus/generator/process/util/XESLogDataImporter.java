@@ -28,16 +28,16 @@ public class XESLogDataImporter {
 	public final static String STRING = "string";
 	public final static String VALUE = "value";
 	public final static String EVENT = "event";
-	private final static String FILEPATH = "/home/phil/Documents/eventlogs/Chapter_7/Lfull.xes"; // checked
-	private final static String FILEPATH2 = "/home/phil/Documents/eventlogs/inductiveminer_log_double_ending.xes"; //checked
-	private final static String FILEPATH3 = "/home/phil/Documents/eventlogs/singleTrace.xes";
-	private final static String FILE_LOSSY_TEST = "/home/phil/Documents/eventlogs/lossycounter_testlog.xes";
-	private final static String FILE_FINANCIAL_LOG = "/home/phil/Documents/eventlogs/financial_log.xes";
-	private final static String FILE_PRINTER_LOG = "/home/phil/Documents/eventlogs/drucker.xes";
-	private final static String FILE_ETM_LOG = "/home/phil/Documents/eventlogs/ETM_Configuration1.xes";
+	public final static String EVENTLOG_PATH =".../eventlogs/";
+	private final static String FILEPATH = EVENTLOG_PATH + "Lfull.xes"; 
+	private final static String FILEPATH2 = EVENTLOG_PATH + "inductiveminer_log_double_ending.xes"; 
+	private final static String FILE_PRINTER_LOG = EVENTLOG_PATH  + "drucker.xes";
 	private static Map<String,Integer> traceCounter = new HashMap();
 	
-	
+	/**
+	 * Erzeugt eine Eventliste aus einem Event-Log im XES Format
+	 * @return List<DataTuple> 
+	 */
 	public static List<DataTuple> getEvents(){
 		List<DataTuple> eventTuples = Lists.newArrayList();
 		
@@ -57,11 +57,16 @@ public class XESLogDataImporter {
 	        	StringBuilder caseBuilder = new StringBuilder();
 	        	Element element = (Element)nlist.item(i);
 	        	
-	        	Element caseID = (Element)element.getElementsByTagName(STRING).item(0);
 	        	String caze =null;
-	        	if(caseID != null) {
-	        		caze = caseID.getAttribute(VALUE);
-	        		
+	        	NodeList stringTags = element.getElementsByTagName(STRING);
+	        	for(int j =0; j<stringTags.getLength();j++){
+	        		Element caseID = ((Element)stringTags.item(j));
+	        		if(caseID.getAttribute("key").equals("concept:name")){
+	        			if(caseID != null) {
+	        				caze = caseID.getAttribute(VALUE);
+	        				break;
+	        			}
+	        		}
 	        	}
 	        	
 	        	NodeList eventTags = element.getElementsByTagName(EVENT);
@@ -87,10 +92,9 @@ public class XESLogDataImporter {
 
 	        } 
 	        int count=0;
-//	        for(Map.Entry e : traceCounter.entrySet()){
-//	        	System.out.println(e.getKey()+ ": "+e.getValue());
-//	        	count++;
-//	        }
+	        for(Map.Entry e : traceCounter.entrySet()){
+	        	count++;
+	        }
 	        System.out.println(traceCounter);
 			 System.out.println("Gesamt: "+ count);
 
