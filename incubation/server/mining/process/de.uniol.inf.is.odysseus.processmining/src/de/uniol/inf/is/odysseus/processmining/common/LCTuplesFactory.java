@@ -18,21 +18,17 @@ public class LCTuplesFactory<T extends IMetaAttribute>{
 	// Uses SuppressWarnings(rawtypes) for static methods
 	@SuppressWarnings("rawtypes")
 	public static AbstractLCTuple createLCTuple(LCTupleType type) {
-		AbstractLCTuple<?> tuple = null;
+		AbstractLCTuple tuple = null;
 		
 		switch(type){
 		case Activity:
-			tuple = new ActivityTuple();
-			break;
+			return new ActivityTuple();
 		case Case:
-			tuple = new CaseTuple();
-			break;
+			return new CaseTuple();
 		case DirectlyFollowRelation:
-			tuple = new DFRTuple();
-			break;
+			return new DFRTuple();
 		case DirectlyFollowRelationLoop:
-			tuple = new DirectlyFollowLoopTuple();
-			break;
+			return new DirectlyFollowLoopTuple();
 		default:
 			break;
 		}
@@ -41,7 +37,7 @@ public class LCTuplesFactory<T extends IMetaAttribute>{
 	
 	@SuppressWarnings("rawtypes")
 	public static AbstractLCTuple createCaseTuple(String id, String activity, Integer maxError) {
-		AbstractLCTuple<?> tuple = new CaseTuple();
+		AbstractLCTuple tuple = new CaseTuple();
 		tuple.setActivity(activity);
 		tuple.setMaxError(maxError);
 		((CaseTuple)tuple).setCaseID(id);

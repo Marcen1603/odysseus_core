@@ -11,9 +11,10 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOpera
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnaryLogicalOp;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.DoubleParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IntegerParameter;
 
-@LogicalOperator( name = "LOSSY", maxInputPorts = 1, minInputPorts = 0,
+@LogicalOperator( name = "LOSSY", maxInputPorts = 1, minInputPorts = 1,
 doc="Adapted Lossy Counting for Process Mining", category={LogicalOperatorCategory.MINING})
 public class LossyCountingAO extends UnaryLogicalOp{
 	
@@ -21,7 +22,8 @@ public class LossyCountingAO extends UnaryLogicalOp{
 	 * 
 	 */
 	private static final long serialVersionUID = -8222141477680554470L;
-	private int error;
+	private int bucketWidth;
+	private double minFrequence = 0.01;
 	
 	public LossyCountingAO(){
 		super();
@@ -29,7 +31,8 @@ public class LossyCountingAO extends UnaryLogicalOp{
     	
 	public LossyCountingAO(LossyCountingAO lossyCountingAO){
 		super(lossyCountingAO);
-		this.error = lossyCountingAO.getError();
+		this.bucketWidth = lossyCountingAO.getBucketWidth();
+		this.minFrequence = lossyCountingAO.getMinFrequence();
 	}
 
 	@Override
@@ -39,13 +42,27 @@ public class LossyCountingAO extends UnaryLogicalOp{
 	
 	// Setter and Getter
 
-	@Parameter(type = IntegerParameter.class, name = "error", optional = true)
-	public void setError(int error) {
-		this.error = error;
+	@Parameter(type = IntegerParameter.class, name = "bucketWidth", optional = false)
+	public void setBucketWidth(int bucketWidth) {
+		this.bucketWidth = bucketWidth;
+	}
+	
+	@Parameter(type = DoubleParameter.class, name = "minFrequence", optional = true)
+	public void setMinFreqBoundary(double minFrequence) {
+		this.minFrequence = minFrequence;
+	}
+	
+
+	public double getMinFrequence() {
+		return minFrequence;
 	}
 
-	public int getError() {
-		return error;
+	public void setMinFrequence(double minFrequence) {
+		this.minFrequence = minFrequence;
+	}
+
+	public int getBucketWidth() {
+		return bucketWidth;
 	}
 	
 	@Override

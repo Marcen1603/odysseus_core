@@ -14,8 +14,8 @@ public class TLossyCountingAORule extends AbstractTransformationRule<LossyCounti
 	@Override
 	public void execute(LossyCountingAO logicalOp, TransformationConfiguration transformConfig)
 			throws RuleException {
-		defaultExecute(logicalOp, new LossyCountingPO(), transformConfig, true, true);
-		
+		defaultExecute(logicalOp, new LossyCountingPO(logicalOp.getBucketWidth(),logicalOp.getMinFrequence()),
+				transformConfig, true, true);
 	}
 
 	@Override
