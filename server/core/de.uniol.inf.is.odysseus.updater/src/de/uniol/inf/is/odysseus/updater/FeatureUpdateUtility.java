@@ -64,9 +64,9 @@ public class FeatureUpdateUtility {
 			List<IInstallableUnit> units = getInstallableUnits(id, caller);
 
 			if (units != null && !units.isEmpty()) {
-				LOG.debug("Found following features that will be installed now: ");
+				LOG.info("Found following features that will be installed now: ");
 				for (IInstallableUnit unit : units) {
-					LOG.debug("\t" + unit.getId());
+					LOG.info("\t" + unit.getId());
 				}
 				BundleContext context = Activator.getContext();
 				IProvisioningAgent agent = getAgent(context);
@@ -77,7 +77,7 @@ public class FeatureUpdateUtility {
 
 				operation.getProvisioningContext().setArtifactRepositories(new URI[] { REPOSITORY_LOC });
 				operation.getProvisioningContext().setMetadataRepositories(new URI[] { REPOSITORY_LOC });
-				LOG.debug("Starting install process...");
+				LOG.info("Starting install process...");
 				IStatus status = operation.resolveModal(getDefaultMonitor());
 				if (status.isOK()) {
 					final ProvisioningJob provisioningJob = operation.getProvisioningJob(getDefaultMonitor());
@@ -95,7 +95,7 @@ public class FeatureUpdateUtility {
 							if (event.getResult().isOK()) {
 								boolean restart = true;
 								if (restart) {
-									LOG.debug("Features were installed. You have to restart Odysseus for the changed to take effekt!");
+									LOG.info("Features were installed. You have to restart Odysseus for the changed to take effekt!");
 									restart(caller);
 								}
 
@@ -263,11 +263,11 @@ public class FeatureUpdateUtility {
 						for (Update update : possibleUpdates) {
 							updates += update + "\n";
 						}
-						LOG.debug("Following updates found: \n" + updates);
+						LOG.info("Following updates found: \n" + updates);
 
 						return true;
 					}
-					LOG.debug("No updates found.");
+					LOG.info("No updates found.");
 					return false;
 				}
 			} catch (Exception e) {
@@ -315,7 +315,7 @@ public class FeatureUpdateUtility {
 							if (event.getResult().isOK()) {
 								boolean restart = true;
 								if (restart) {
-									LOG.debug("Updates were installed. You have to restart Odysseus for the changed to take effekt!");
+									LOG.info("Updates were installed. You have to restart Odysseus for the changed to take effekt!");
 									restart(caller);
 								}
 
@@ -382,7 +382,7 @@ public class FeatureUpdateUtility {
 
 				@Override
 				public void run() {
-					LOG.debug("Sending restart event");
+					LOG.info("Sending restart event");
 					Map<String, String> hashMap = new HashMap<>();
 					hashMap.put("TYPE", "RESTART");
 					eventAdmin.sendEvent(new Event("de/uniol/inf/odysseus/application/" + System.currentTimeMillis(), hashMap));
