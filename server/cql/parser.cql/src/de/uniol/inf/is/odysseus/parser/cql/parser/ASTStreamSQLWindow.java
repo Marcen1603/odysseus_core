@@ -48,7 +48,7 @@ public class ASTStreamSQLWindow extends ASTWindow {
 
 	@Override
 	public ASTPartition getPartition() {
-		return (ASTPartition) jjtGetChild(2);
+		return (ASTPartition) jjtGetChild(jjtGetNumChildren()-1);
 
 	}
 
@@ -103,10 +103,7 @@ public class ASTStreamSQLWindow extends ASTWindow {
 
 	@Override
 	public boolean isPartitioned() {
-		if (jjtGetNumChildren() > 2) {
-			return jjtGetChild(2) instanceof ASTPartition;
-		}
-		return false;
+		return jjtGetChild(jjtGetNumChildren()-1) instanceof ASTPartition;
 	}
 
 	@Override

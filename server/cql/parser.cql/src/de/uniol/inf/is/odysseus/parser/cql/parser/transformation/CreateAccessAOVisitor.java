@@ -152,19 +152,19 @@ public class CreateAccessAOVisitor extends AbstractDefaultVisitor {
 			// }
 			ASTPartition partition = windowNode.getPartition();
 			ArrayList<SDFAttribute> partitionAttributes = new ArrayList<SDFAttribute>();
+			SDFSchema inputSchema = inputOp.getOutputSchema();
 			for (int i = 0; i < partition.jjtGetNumChildren(); ++i) {
 				String attributeName = partition.jjtGetChild(i).toString();
 				boolean found = false;
-				for (SDFAttribute curAttribute : inputOp.getOutputSchema()) {
-					if (curAttribute.getURI().equals(attributeName)) {
-						partitionAttributes.add(curAttribute);
+				
+				SDFAttribute pAttr = inputSchema.findAttribute(attributeName);
+				if (pAttr != null){	
+						partitionAttributes.add(pAttr);
 						found = true;
-						break;
-					}
 				}
 				if (!found) {
 					throw new IllegalArgumentException(
-							"invalid partioning attribute");
+							"partioning attribute "+attributeName+" not found in input "+inputOp.getName());
 				}
 			}
 			window.setPartitionBy(partitionAttributes);
