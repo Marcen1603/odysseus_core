@@ -7,36 +7,32 @@ import java.util.Set;
 import org.jgrapht.graph.DefaultWeightedEdge;
 import org.jgrapht.graph.DirectedWeightedPseudograph;
 
+import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.processmining.common.AbstractLCTuple;
-import de.uniol.inf.is.odysseus.processmining.common.DFRTuple;
-import de.uniol.inf.is.odysseus.processmining.common.InductiveMinerTransferTupleHelper;
-import de.uniol.inf.is.odysseus.processmining.dataanalyser.models.InvariantAnalysisResult;
+import de.uniol.inf.is.odysseus.processmining.dataanalyser.models.IInvariantResult;
+import de.uniol.inf.is.odysseus.processmining.dataanalyser.models.InvariantResultTypOne;
 
-public class InvariantStrategyTypOne<T extends IMetaAttribute> implements IInvariantStrategy {
-	Tuple<T> mostRecentModel = null;
-	Tuple<T> currentModel = null;
-	InductiveMinerTransferTupleHelper<T> transferHelper = new InductiveMinerTransferTupleHelper<T>();
+public class InvariantStrategyTypOne<T extends IMetaAttribute> extends InvariantStategyBase<T> {
+
+	
 	public InvariantStrategyTypOne() {
-
+		super();
 	}
-
-	public InvariantStrategyTypOne(Tuple<T> mostRecentModel, Tuple<T> currentModel) {
-		this.mostRecentModel = mostRecentModel;
-		this.currentModel = currentModel;
-	}
-
-	public InvariantAnalysisResult calculateStrategy() {
-		if (mostRecentModel != null && currentModel != null) {
-			InvariantAnalysisResult result = new InvariantAnalysisResult();
+	
+	@Override
+	public IInvariantResult calculateStrategy(Tuple<T> mostRecent, Tuple<T> current) {
+		updateData(mostRecent, current);
+		if (this.mostRecentModel != null && this.currentModel != null) {
+			InvariantResultTypOne result = new InvariantResultTypOne();
 			DirectedWeightedPseudograph<String, DefaultWeightedEdge> mostRecentDFG = getGraph(transferHelper
 					.getDirectlyFollowRelations(mostRecentModel));
 			DirectedWeightedPseudograph<String, DefaultWeightedEdge> currentDFG = getGraph(transferHelper
 					.getDirectlyFollowRelations(currentModel));
-
+			
 			result.setAlmostEqualStartNodes(areNodesAlmostEqual(
 					transferHelper.getActivities(mostRecentModel),
 					transferHelper.getActivities(currentModel)));
@@ -49,62 +45,49 @@ public class InvariantStrategyTypOne<T extends IMetaAttribute> implements IInvar
 					mostRecentDFG, currentDFG));
 			result.setDegreeDistinction(calculateDegreeDistinct(mostRecentDFG,
 					currentDFG));
-
+			result.setCurrentNodesCount(currentDFG.vertexSet().size());
+			result.setCurrentEdgeCount(currentDFG.edgeSet().size());
+			result.setMostRecentNodesCount(mostRecentDFG.vertexSet().size());
+			result.setMostRecentEdgeCount(mostRecentDFG.edgeSet().size());
 			return result;
 		}
 		return null;
 	}
 
-	/**
-	 * Creates a directly follow graph base on the given directly follow
-	 * relations
-	 * 
-	 * @param dfrel
-	 * @return
-	 */
-	private DirectedWeightedPseudograph<String, DefaultWeightedEdge> getGraph(
-			HashMap<Object, AbstractLCTuple<T>> dfrel) {
 
-		DirectedWeightedPseudograph<String, DefaultWeightedEdge> dfg = new DirectedWeightedPseudograph<String, DefaultWeightedEdge>(
-				DefaultWeightedEdge.class);
-
-		for (Map.Entry<Object, AbstractLCTuple<T>> entry : dfrel.entrySet()) {
-			DFRTuple<T> t = (DFRTuple<T>) entry.getValue();
-			String startNode = t.getActivity();
-			String endNode = t.getFollowActivity();
-			// Graph
-			dfg.addVertex(startNode);
-			dfg.addVertex(endNode);
-			DefaultWeightedEdge e = dfg.addEdge(t.getActivity(),
-					t.getFollowActivity());
-			dfg.setEdgeWeight(e, t.getFrequency());
-		}
-		return dfg;
-	}
 
 	private double calculateDegreeDistinct(
 			DirectedWeightedPseudograph<String, DefaultWeightedEdge> mostRecentDFG,
 			DirectedWeightedPseudograph<String, DefaultWeightedEdge> currentDFG) {
 
-		Set<String> mostRecentNodes = Sets
-				.newHashSet(mostRecentDFG.vertexSet());
-		Set<String> currentNodes = Sets.newHashSet(currentDFG.vertexSet());
-
-		mostRecentNodes.retainAll(currentNodes);
-		int differentDegrees = 0;
-		int edgeCounter = 0;
-		for (String node : currentNodes) {
-			if (mostRecentDFG.degreeOf(node) != currentDFG.degreeOf(node)) {
+		Map<String, Integer> mostRecentDegreeMap = Maps.newHashMap();
+		Map<String, Integer> currentDegreeMap = Maps.newHashMap();
+		
+		for(String key : mostRecentDFG.vertexSet()){
+			mostRecentDegreeMap.put(key, 
+					mostRecentDFG.incomingEdgesOf(key).size()+mostRecentDFG.outgoingEdgesOf(key).size());
+		}
+		
+		for(String key : currentDFG.vertexSet()){
+			currentDegreeMap.put(key, 
+					currentDFG.incomingEdgesOf(key).size()+currentDFG.outgoingEdgesOf(key).size());
+		}
+		Set<String> commonNodes = Sets.newHashSet(mostRecentDFG.vertexSet());
+		commonNodes.retainAll(currentDFG.vertexSet());
+		double differentDegrees = 0;
+		double edgeCounter = 0;
+		for (String node : commonNodes) {
+			if (currentDegreeMap.get(node) != currentDegreeMap.get(node)) {
 				differentDegrees += 1;
 			}
-			edgeCounter += currentDFG.degreeOf(node);
+			edgeCounter +=currentDegreeMap.get(node);
 		}
-
-		return differentDegrees / edgeCounter;
+		
+		return differentDegrees == 0 ? 1.0 : differentDegrees / edgeCounter ;
 	}
 
 	/**
-	 * Calculates the percentaged distinct between the edges of the given graphs
+	 * Calculates the percental distinct between the edges of the given graphs
 	 * 
 	 * @param mostRecentDFG
 	 * @param currentDFG
@@ -113,11 +96,11 @@ public class InvariantStrategyTypOne<T extends IMetaAttribute> implements IInvar
 	private double calculateEdgeCountDistinction(
 			DirectedWeightedPseudograph<String, DefaultWeightedEdge> mostRecentDFG,
 			DirectedWeightedPseudograph<String, DefaultWeightedEdge> currentDFG) {
-		return currentDFG.edgeSet().size() / mostRecentDFG.edgeSet().size();
+		return ((double)currentDFG.edgeSet().size()) / ((double)mostRecentDFG.edgeSet().size());
 	}
 
 	/**
-	 * Calculates the percentaged distinct between the node of the given graphs
+	 * Calculates the percental distinct between the node of the given graphs
 	 * 
 	 * @param mostRecentDFG
 	 * @param currentDFG
@@ -126,7 +109,7 @@ public class InvariantStrategyTypOne<T extends IMetaAttribute> implements IInvar
 	private double calculateNodeCountDistinction(
 			DirectedWeightedPseudograph<String, DefaultWeightedEdge> mostRecentDFG,
 			DirectedWeightedPseudograph<String, DefaultWeightedEdge> currentDFG) {
-		return currentDFG.vertexSet().size() / mostRecentDFG.vertexSet().size();
+		return ((double)currentDFG.vertexSet().size()) / ((double)mostRecentDFG.vertexSet().size());
 	}
 
 	/**
@@ -169,22 +152,4 @@ public class InvariantStrategyTypOne<T extends IMetaAttribute> implements IInvar
 		}
 		return mostFreqItem;
 	}
-
-	public Tuple<T> getMostRecentModel() {
-		return mostRecentModel;
-	}
-
-	public void setMostRecentModel(
-			Tuple<T> mostRecentModel) {
-		this.mostRecentModel = mostRecentModel;
-	}
-
-	public Tuple<T> getCurrentModel() {
-		return currentModel;
-	}
-
-	public void setCurrentModel(Tuple<T> currentModel) {
-		this.currentModel = currentModel;
-	}
-
 }
