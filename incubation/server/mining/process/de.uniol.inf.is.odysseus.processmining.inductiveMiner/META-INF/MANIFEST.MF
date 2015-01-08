@@ -17,4 +17,4 @@ Require-Bundle: de.uniol.inf.is.odysseus.core.server,
  de.uniol.inf.is.odysseus.processmining.dataanalyser
 Bundle-ClassPath: .,
  jgrapht-core-0.9.0.jar
-Export-Package: org.jgrapht
+Export-Package: de.uniol.inf.is.odysseus.processmining.inductiveMiner.models
