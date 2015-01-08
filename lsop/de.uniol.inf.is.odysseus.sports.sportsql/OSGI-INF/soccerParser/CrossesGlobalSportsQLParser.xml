@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="de.uniol.inf.is.odysseus.sports.sportsql.parser.impl.soccer.CrossesGlobalSportsQLParser.xml">
+   <implementation class="de.uniol.inf.is.odysseus.sports.sportsql.parser.impl.soccer.CrossesGlobalSportsQLParser"/>
+   <service>
+      <provide interface="de.uniol.inf.is.odysseus.sports.sportsql.parser.ISportsQLParser"/>
+   </service>
+</scr:component>
