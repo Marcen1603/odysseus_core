@@ -51,7 +51,7 @@ public class SequenceCutter extends AbstractCutter {
 
 		List<Set<Set<String>>> finalNodeSets = finalPartitioning
 				.stronglyConnectedSets();
-		return new Cut(createPartitionLists(finalNodeSets, partition),
+		return new Cut(createPartitionLists(finalNodeSets, partition),partition,
 				OperatorType.SEQUENCE);
 	}
 
@@ -259,7 +259,7 @@ public class SequenceCutter extends AbstractCutter {
 			return singleNode;
 
 		} else {
-			DirectedWeightedPseudograph<String, DefaultWeightedEdge> mergedPartitionGraph = createPartitionedGraph(
+			DirectedWeightedPseudograph<String, DefaultWeightedEdge> mergedPartitionGraph = PartitionUtils.createPartitionedGraph(
 					mergedSet, dwGraph);
 			// Check Single Activities without Edges
 			ConnectivityInspector<String, DefaultWeightedEdge> ci = new ConnectivityInspector<String, DefaultWeightedEdge>(

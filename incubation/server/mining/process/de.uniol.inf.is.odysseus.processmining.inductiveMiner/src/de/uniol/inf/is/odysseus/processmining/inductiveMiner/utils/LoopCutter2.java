@@ -55,7 +55,7 @@ public class LoopCutter2 extends AbstractCutter {
 		
 		if(loopPathsMap.get(PathType.NotValid).size() == 0){
 			// Cut is Valid
-		DirectedWeightedPseudograph<String, DefaultWeightedEdge> loopbodyGraph =createPartitionedGraph(bodyPartPaths, dwGraph);
+		DirectedWeightedPseudograph<String, DefaultWeightedEdge> loopbodyGraph =PartitionUtils.createPartitionedGraph(bodyPartPaths, dwGraph);
 		Set<String> bodyShortLoops = Sets.newHashSet();
 		for (DefaultWeightedEdge edge : loopbodyGraph.edgeSet()) {
 			String src = loopbodyGraph.getEdgeSource(edge);
@@ -71,13 +71,13 @@ public class LoopCutter2 extends AbstractCutter {
 		
 		//Add the rest redo part
 		partitions.addAll(getNewPartitionList(loopPartPaths, partition));
-		return new Cut(partitions, OperatorType.LOOP);	
+		return new Cut(partitions,partition, OperatorType.LOOP);	
 			
 		} else {
 			// Cut is not valid to the assumptions -> flower modell
 			
 			partitions.add(partition);
-			return new Cut(partitions, OperatorType.FLOWER);	
+			return new Cut(partitions,partition, OperatorType.FLOWER);	
 		}
 		
 	}

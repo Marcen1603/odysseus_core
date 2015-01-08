@@ -1,6 +1,5 @@
 package de.uniol.inf.is.odysseus.processmining.inductiveMiner.models;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Set;
 
@@ -12,17 +11,29 @@ import de.uniol.inf.is.odysseus.processmining.inductiveMiner.utils.Partition;
 public class Cut{
 	
 	private LinkedList<Partition> cutPartitions;
-	private ArrayList<Partition> cutArrayListPartitions;
 	private OperatorType operator;
 	boolean isLeaf = false;
 	
-	public Cut(LinkedList<Partition> partitions,OperatorType type){
+	public Cut(LinkedList<Partition> partitions,Partition cutAssociatedPartition,OperatorType type){
 		this.operator = type;
 		this.cutPartitions = partitions;
-		this.cutArrayListPartitions = Lists.newArrayList(partitions);
 		this.isLeaf = false;
+		
 	}
-
+	
+	public Set<String>getAllNodes(){
+		Set<String> allNodesOfCutPartitions = Sets.newHashSet();
+		for(Partition p : cutPartitions){
+			allNodesOfCutPartitions.addAll(p.getGraph().vertexSet());
+		}
+		
+		return allNodesOfCutPartitions;
+	}
+	private Cut(){
+		//Empty cut
+		this.operator = OperatorType.SILENT_ENDING;
+		this.cutPartitions = Lists.newLinkedList();
+	}
 	public OperatorType getOperator() {
 		return operator;
 	}
@@ -46,30 +57,29 @@ public class Cut{
 	public void setLeaf(boolean isLeaf) {
 		this.isLeaf = isLeaf;
 	}
+	
+
 	public static Cut createLeaf(Partition p){
 		LinkedList<Partition> leafList = Lists.newLinkedList();
 		leafList.add(p);
-		Cut leaf = new Cut(leafList, OperatorType.SILENT);
+		Cut leaf = new Cut(leafList,p, OperatorType.SILENT);
 		leaf.setLeaf(true);
 		return leaf;
 	}
-
-	public Set<String> getSetofCutPartitionNodes(){
-		Set<String> partitionNodes = Sets.newHashSet();
-		for(Partition p : cutArrayListPartitions){
-			partitionNodes.addAll(p.getGraph().vertexSet());
-		}
-		return partitionNodes;
+	
+	public static Cut getEmptyCut(){
+		Cut done = new Cut();
+		return done;
 	}
 
-	public String print(){
+	public void print(){
 		StringBuilder sb = new StringBuilder();
 		sb.append(this.operator+": ");
 		for(Partition p : cutPartitions){
 			sb.append("   pGraph: "+p.getGraph()+"edges: "+p.getGraph().edgeSet());
 		}
-		sb.append("cutEnd;\n");
-		return sb.toString();
+		sb.append("cutEnd;");
+		System.out.println(sb.toString());
 	}
 
 	@Override
@@ -102,6 +112,13 @@ public class Cut{
 		return true;
 	}
 	
-	
-	
+	@Override public String toString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append(operator + " ");
+		for(Partition p :cutPartitions){
+			sb.append(p.getGraph().vertexSet()+",");	
+		}
+		return sb.toString();
+	}
+		
 }

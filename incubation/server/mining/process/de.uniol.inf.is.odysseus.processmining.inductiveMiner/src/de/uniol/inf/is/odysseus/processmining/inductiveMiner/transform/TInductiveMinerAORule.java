@@ -14,7 +14,7 @@ public class TInductiveMinerAORule extends AbstractTransformationRule<InductiveM
 	@Override
 	public void execute(InductiveMinerAO logicalOp, TransformationConfiguration transformConfig)
 			throws RuleException {
-		defaultExecute(logicalOp, new InductiveMinerPO(), transformConfig, true, true);
+		defaultExecute(logicalOp, new InductiveMinerPO(logicalOp.getInvariantType(),logicalOp.getGeneratingStrategy()), transformConfig, true, true);
 		
 	}
 

@@ -9,6 +9,12 @@ import org.jgrapht.graph.DirectedWeightedPseudograph;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
+
+/**
+ * Calculates the transivite Closure of a graph with warshalls algorithm
+ * @author phil
+ *
+ */
 public class ReachabilityMatrix {
 	
 	Map <Integer,String> numberToNodeMapping;
@@ -105,4 +111,59 @@ public class ReachabilityMatrix {
 	public Map<String,Set<String>> getMapDFR(){
 		return this.directlyFollow;
 	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime
+				* result
+				+ ((NodeToNumerMapping == null) ? 0 : NodeToNumerMapping
+						.hashCode());
+		result = prime * result
+				+ ((directlyFollow == null) ? 0 : directlyFollow.hashCode());
+		result = prime * result + elementcounter;
+		result = prime
+				* result
+				+ ((numberToNodeMapping == null) ? 0 : numberToNodeMapping
+						.hashCode());
+		result = prime * result
+				+ ((reachabilityMap == null) ? 0 : reachabilityMap.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		ReachabilityMatrix other = (ReachabilityMatrix) obj;
+		if (NodeToNumerMapping == null) {
+			if (other.NodeToNumerMapping != null)
+				return false;
+		} else if (!NodeToNumerMapping.equals(other.NodeToNumerMapping))
+			return false;
+		if (directlyFollow == null) {
+			if (other.directlyFollow != null)
+				return false;
+		} else if (!directlyFollow.equals(other.directlyFollow))
+			return false;
+		if (elementcounter != other.elementcounter)
+			return false;
+		if (numberToNodeMapping == null) {
+			if (other.numberToNodeMapping != null)
+				return false;
+		} else if (!numberToNodeMapping.equals(other.numberToNodeMapping))
+			return false;
+		if (reachabilityMap == null) {
+			if (other.reachabilityMap != null)
+				return false;
+		} else if (!reachabilityMap.equals(other.reachabilityMap))
+			return false;
+		return true;
+	}
+	
 }

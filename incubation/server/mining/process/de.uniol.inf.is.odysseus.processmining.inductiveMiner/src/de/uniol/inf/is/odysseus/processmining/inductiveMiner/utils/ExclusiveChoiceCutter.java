@@ -26,6 +26,6 @@ public class ExclusiveChoiceCutter extends AbstractCutter {
 		List<Set<String>> connectedSets = connectivityInspector
 				.connectedSets();
 		
-		return new Cut(getNewPartitionList(connectedSets, partition), OperatorType.XOR);
+		return new Cut(getNewPartitionList(connectedSets, partition), partition,OperatorType.XOR);
 	}
 }

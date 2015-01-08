@@ -27,7 +27,7 @@ public class ParallelCutter extends AbstractCutter {
 		List<Set<String>> partitions = nGraphconnectivityInspector
 				.connectedSets();
 
-		return new Cut(getNewPartitionList(partitions, partition),
+		return new Cut(getNewPartitionList(partitions, partition),partition,
 				OperatorType.PARALLEL);
 	}
 

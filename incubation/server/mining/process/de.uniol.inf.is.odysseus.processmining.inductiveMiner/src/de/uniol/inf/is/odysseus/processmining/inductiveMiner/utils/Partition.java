@@ -87,6 +87,13 @@ public class Partition {
 
 		return true;
 	}
+	
+	@Override public String toString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append(graph.vertexSet());
+		return sb.toString();
+	}
+		
 
 
 
