@@ -10,6 +10,7 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecu
 import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvider;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.p2p_new.IP2PNetworkManager;
+import de.uniol.inf.is.odysseus.peer.distribute.IQueryPartController;
 
 /**
  * Bundle Activator for Active LoadBalancing Bundle.
@@ -29,6 +30,7 @@ public class ActiveLoadBalancingActivator implements BundleActivator{
 	 */
 	private static final Logger LOG = LoggerFactory
 			.getLogger(ActiveLoadBalancingActivator.class);
+	
 
 	/**
 	 * OSGi-Start function.
@@ -50,6 +52,7 @@ public class ActiveLoadBalancingActivator implements BundleActivator{
 		
 	}
 	
+	private static IQueryPartController queryPartController;
 	
 	/**
 	 * Executor to get queries
@@ -83,6 +86,18 @@ public class ActiveLoadBalancingActivator implements BundleActivator{
 		return p2pNetworkManager;
 	}
 	
+	
+	public static void bindQueryPartController(IQueryPartController controller) {
+		LOG.debug("Boung Query Part Controller");
+		queryPartController = controller;
+	}
+	
+	public static void unbindQueryPartController(IQueryPartController controller) {
+		LOG.debug("Unbinding Query Part Controller");
+		if(queryPartController == controller) {
+			queryPartController=null;
+		}
+	}
 	/**
 	 * called by OSGi-DS to bind Executor
 	 * 
@@ -131,7 +146,9 @@ public class ActiveLoadBalancingActivator implements BundleActivator{
 		}
 	}
 	
-	
+	public static IQueryPartController getQueryPartController() {
+		return queryPartController;
+	}
 	
 
 	/**

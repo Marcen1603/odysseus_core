@@ -268,9 +268,7 @@ public class InstructionHandler {
 					status.getMessageDispatcher().sendStopBufferingFinished(
 							status.getMasterPeer());
 				} else {
-					// TODO What if it fails?
-					// Rollback doesn't make any more sense at this point. 
-					
+					LOG.error("STOP_BUFFERING failed. Ignoring error.");
 				}
 			}
 

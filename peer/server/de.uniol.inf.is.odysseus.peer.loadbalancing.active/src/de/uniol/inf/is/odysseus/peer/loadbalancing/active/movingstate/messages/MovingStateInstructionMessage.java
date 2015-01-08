@@ -1,7 +1,9 @@
 package de.uniol.inf.is.odysseus.peer.loadbalancing.active.movingstate.messages;
 
 import java.nio.ByteBuffer;
+import java.util.ArrayList;
 
+import net.jxta.peer.PeerID;
 import de.uniol.inf.is.odysseus.p2p_new.IMessage;
 
 /**
@@ -53,6 +55,19 @@ public class MovingStateInstructionMessage implements IMessage {
 	 * Operator Index used in INITIATE_STATE_COPY Message
 	 */
 	private int operatorIndex;
+	
+	/**
+	 * True if current Query is Master for shared Query.
+	 */
+	@SuppressWarnings("unused")
+	private boolean isMasterForQuery;
+	
+	/**
+	 * Needed if query Part was Master for shared Query.
+	 */
+	@SuppressWarnings("unused")
+	private ArrayList<PeerID> otherPeers;
+	
 
 	/**
 	 * Default constructor.

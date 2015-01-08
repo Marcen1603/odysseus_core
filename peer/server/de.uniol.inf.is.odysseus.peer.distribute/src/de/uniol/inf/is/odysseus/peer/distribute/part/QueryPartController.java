@@ -193,7 +193,7 @@ public class QueryPartController implements IPlanModificationListener, IPeerComm
 			inEvent = false;
 		}
 	}
-
+	
 	@Override
 	public void receivedMessage(IPeerCommunicator communicator, PeerID senderPeer, IMessage message) {
 		if (message instanceof RemoveQueryMessage) {
@@ -231,6 +231,7 @@ public class QueryPartController implements IPlanModificationListener, IPeerComm
 		}
 	}
 
+	
 	@Override
 	public void registerAsMaster(ILogicalQuery query, int queryID, final ID sharedQueryID, Collection<PeerID> otherPeers) {
 		Preconditions.checkNotNull(query, "Logical query must not be null!");
@@ -299,6 +300,19 @@ public class QueryPartController implements IPlanModificationListener, IPeerComm
 		return out;
 		
 	}
+	
+	public boolean isMasterForQuery(int queryID) {
+		if (!sharedQueryIDMap.containsKey(queryID)) {
+			return false;
+		}
+		ID sharedQueryID = sharedQueryIDMap.get(queryID);
+		if(peerIDMap.containsKey(sharedQueryID)) {
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
 
 	public static QueryPartController getInstance() {
 		return instance;
@@ -337,4 +351,29 @@ public class QueryPartController implements IPlanModificationListener, IPeerComm
 			}
 		}
 	}
+
+	@Override
+	public void unregisterAsMaster(ID sharedQueryId) {
+		if(peerIDMap.containsKey(sharedQueryId)) {
+			Collection<Integer> ids = determineLocalIDs(sharedQueryIDMap, sharedQueryId);
+			if (!ids.isEmpty()) {
+					for (Integer id : ids) {
+						sharedQueryIDMap.remove(id);
+				}
+			}
+			peerIDMap.remove(sharedQueryId);
+		}
+		
+	}
+
+	@Override
+	public Collection<PeerID> getOtherPeers(ID sharedQueryId) {
+		if(this.peerIDMap.containsKey(sharedQueryId)) {
+			return peerIDMap.get(sharedQueryId);
+		}
+		return null;
+	}
+	
+	
+	
 }

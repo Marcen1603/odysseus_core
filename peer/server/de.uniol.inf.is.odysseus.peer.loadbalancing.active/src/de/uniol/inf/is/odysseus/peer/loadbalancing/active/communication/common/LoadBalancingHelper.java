@@ -74,7 +74,7 @@ public class LoadBalancingHelper {
 	 * @param queryId
 	 */
 	public static void deleteQuery(int queryId) {
-
+		LOG.debug("Deleting Query " + queryId);
 		ISession session = ActiveLoadBalancingActivator.getActiveSession();
 		IServerExecutor executor = ActiveLoadBalancingActivator.getExecutor();
 		executor.removeQuery(queryId, session);
@@ -87,17 +87,92 @@ public class LoadBalancingHelper {
 	 * 
 	 * @param queryID
 	 */
-	@SuppressWarnings({ "rawtypes" })
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public static void cutReceiversFromQuery(int queryID) {
+
+		IServerExecutor executor = ActiveLoadBalancingActivator.getExecutor();
+		LOG.debug("Cutting physical Query " + queryID);
+			
+		IPhysicalQuery query = executor.getExecutionPlan().getQueryById(queryID);
+		
+		
+		for (IPhysicalOperator operator : query.getAllOperators()) {
+
+			if (operator instanceof JxtaReceiverPO) {
+				JxtaReceiverPO receiver = (JxtaReceiverPO) operator;
+				for (Object subscriptionObject : receiver.getSubscriptions()) {
+					AbstractPhysicalSubscription subscription = (AbstractPhysicalSubscription) subscriptionObject;
+					ISink target = (ISink)subscription.getTarget();
+					ArrayList<AbstractPhysicalSubscription> toUnsubscribe = new ArrayList<AbstractPhysicalSubscription>();
+					for (Object reverseSubscriptionObj : target.getSubscribedToSource()) {
+						AbstractPhysicalSubscription reverseSubscription = (AbstractPhysicalSubscription) reverseSubscriptionObj;
+						if(reverseSubscription.getTarget().equals(receiver)) {
+							toUnsubscribe.add(reverseSubscription);
+						}
+					}
+					for (AbstractPhysicalSubscription revSubscription : toUnsubscribe) {
+						target.unsubscribeFromSource(revSubscription);
+					}
+				}
+				
+				receiver.unsubscribeFromAllSinks();
+			}
+			
+		}
+	}
+	
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	public static void cutSendersFromPhysicalQuery(int queryID) {
+		IServerExecutor executor = ActiveLoadBalancingActivator.getExecutor();
+		LOG.debug("Cutting Senders from physical Query " + queryID);
+			
+		IPhysicalQuery query = executor.getExecutionPlan().getQueryById(queryID);
+		HashMap<IPhysicalOperator,IPhysicalOperator> toReplace = new HashMap<IPhysicalOperator,IPhysicalOperator>();
+		
+		for (IPhysicalOperator root : query.getRoots()) {
+			if(root instanceof JxtaSenderPO) {
+				JxtaSenderPO sender = (JxtaSenderPO) root;
+				AbstractPhysicalSubscription subscription = sender.getSubscribedToSource(0);
+				ISource target = (ISource)subscription.getTarget();
+				ArrayList<AbstractPhysicalSubscription> toUnsubscribe = new ArrayList<AbstractPhysicalSubscription>();
+				for (Object reverseSubscriptionObj : target.getSubscriptions()) {
+					AbstractPhysicalSubscription reverseSubscription = (AbstractPhysicalSubscription) reverseSubscriptionObj;
+					if(reverseSubscription.getTarget().equals(sender)) {
+						toUnsubscribe.add(reverseSubscription);
+					}
+				}
+				for (AbstractPhysicalSubscription revSubscription : toUnsubscribe) {
+					target.unsubscribeSink(revSubscription);
+				}
+				toReplace.put(sender, target);
+				
+			}
+		}
+		
+		for (IPhysicalOperator sender : toReplace.keySet()) {
+			query.replaceRoot(sender, toReplace.get(sender));
+		}
+		
+	}
+	
+	/**
+	 * Takes a QueryPart and cut's all senders from it. Used so that, when
+	 * deleting a Query the other Parts won't be influenced (e.g. stopped) by
+	 * the executor.
+	 * 
+	 * @param queryID
+	 */
+	@SuppressWarnings({ "rawtypes" })
+	public static void cutSendersFromQuery(int queryID) {
 
 		IServerExecutor executor = ActiveLoadBalancingActivator.getExecutor();
 		IPhysicalQuery query = executor.getExecutionPlan().getQueryById(queryID);
 
 		for (IPhysicalOperator operator : query.getAllOperators()) {
 
-			if (operator instanceof JxtaReceiverPO) {
-				JxtaReceiverPO receiver = (JxtaReceiverPO) operator;
-				receiver.unsubscribeFromAllSinks();
+			if (operator instanceof JxtaSenderPO) {
+				JxtaSenderPO sender = (JxtaSenderPO) operator;
+				sender.unsubscribeFromAllSources();
 			}
 		}
 	}
@@ -126,36 +201,6 @@ public class LoadBalancingHelper {
 		LOG.debug("Created SENDER with PeerID " + connection.remotePeerID);
 		return sender;
 	}
-
-	/**
-	 * Inserts an operator between a sink and its sources on a specific port
-	 * 
-	 * @param sink
-	 *            Operator after operator to insert
-	 * @param operatorToInsert
-	 *            Operator to insert before sink
-	 * @param port
-	 *            input port of sink
-	 */
-	@SuppressWarnings({ "rawtypes", "unchecked" })
-	@Deprecated
-	public static void insertOperatorBefore(ISink sink, AbstractPipe operatorToInsert, int port) {
-
-		AbstractPhysicalSubscription subscription = (AbstractPhysicalSubscription) sink.getSubscribedToSource(port);
-		ArrayList<IPhysicalOperator> emptyCallPath = new ArrayList<IPhysicalOperator>();
-
-		sink.unsubscribeFromSource(subscription);
-		operatorToInsert.subscribeToSource(subscription.getTarget(), subscription.getSinkInPort(),
-				subscription.getSourceOutPort(), subscription.getSchema());
-		operatorToInsert.subscribeSink(sink, subscription.getSinkInPort(),
-				subscription.getSinkInPort(), subscription.getSchema(), true,
-				subscription.getOpenCalls()-1);
-		operatorToInsert.open(sink, subscription.getSinkInPort(), subscription.getSinkInPort(),
-				emptyCallPath, sink.getOwner());
-		operatorToInsert.addOwner(sink.getOwner());
-
-	}
-	
 	
 	@SuppressWarnings("rawtypes")
 	public static void setNewPeerID(JxtaSenderPO sender,String peerID) throws LoadBalancingException {

@@ -8,12 +8,14 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
+import net.jxta.id.IDFactory;
 import net.jxta.peer.PeerID;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
+import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
 import de.uniol.inf.is.odysseus.core.physicaloperator.AbstractPhysicalSubscription;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ControllablePhysicalSubscription;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
@@ -23,6 +25,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.IStatefulPO;
 import de.uniol.inf.is.odysseus.core.planmanagement.IOperatorOwner;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IPipe;
+import de.uniol.inf.is.odysseus.p2p_new.data.DataTransmissionException;
 import de.uniol.inf.is.odysseus.p2p_new.logicaloperator.JxtaReceiverAO;
 import de.uniol.inf.is.odysseus.p2p_new.logicaloperator.JxtaSenderAO;
 import de.uniol.inf.is.odysseus.p2p_new.physicaloperator.JxtaReceiverPO;
@@ -30,14 +33,14 @@ import de.uniol.inf.is.odysseus.p2p_new.physicaloperator.JxtaSenderPO;
 import de.uniol.inf.is.odysseus.peer.distribute.ILogicalQueryPart;
 import de.uniol.inf.is.odysseus.peer.distribute.util.LogicalQueryHelper;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.ActiveLoadBalancingActivator;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.common.DownstreamConnection;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.common.IMessageDeliveryFailedListener;
-import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.common.UpstreamConnection;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.common.LoadBalancingException;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.common.LoadBalancingHelper;
-import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.common.DownstreamConnection;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.common.UpstreamConnection;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.movingstate.status.MovingStateMasterStatus;
-import de.uniol.inf.is.odysseus.peer.loadbalancing.active.movingstate.status.MovingStateSlaveStatus;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.movingstate.status.MovingStateMasterStatus.LB_PHASES;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.active.movingstate.status.MovingStateSlaveStatus;
 
 /***
  * Helper class for MovingState Strategy
@@ -258,6 +261,8 @@ public class MovingStateHelper {
 		startBuffering(operator);
 
 	}
+	
+	
 	
 	@SuppressWarnings("rawtypes")
 	public static void addChangeInformation(String pipeID, MovingStateSlaveStatus status, boolean isSender) {
@@ -538,6 +543,8 @@ public class MovingStateHelper {
 					modifiedPart.addOperator(receiver);
 
 				}
+			} else {
+				LOG.debug("Found real source " + relativeSource.getName());
 			}
 		}
 
@@ -581,6 +588,34 @@ public class MovingStateHelper {
 		}
 		return false;
 	}
+	
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	public static String installNewPhysicalJxtaSender(ISource operatorBefore, String peerID, int port) throws DataTransmissionException {
+		String pipeID = IDFactory.newPipeID(
+				ActiveLoadBalancingActivator.getP2pNetworkManager().getLocalPeerGroupID()).toString();
+		JxtaSenderAO sender = new JxtaSenderAO();
+		sender.setPeerID(peerID);
+		sender.setPipeID(pipeID);
+		sender.setOutputSchema(operatorBefore.getOutputSchema());
+		JxtaSenderPO senderPO;
+		senderPO = new JxtaSenderPO(sender);
+		operatorBefore.subscribeSink(senderPO, 0, port, operatorBefore.getOutputSchema());
+		LOG.debug("Created SENDER with Pipe " + pipeID);
+		return pipeID;
+	}
+	
+	
+	public static void replaceSourceWithLogicalReceiver(ILogicalOperator sourceOperator, String pipeID, String peerID) {
+		JxtaReceiverAO receiver = new JxtaReceiverAO();
+		receiver.setPeerID(peerID);
+		receiver.setPipeID(pipeID);
+		receiver.setSchema(sourceOperator.getOutputSchema().getAttributes());
+		
+		for (LogicalSubscription subscription : sourceOperator.getSubscriptions()) {
+			sourceOperator.unsubscribeSink(subscription);
+			receiver.subscribeSink(subscription.getTarget(), subscription.getSinkInPort(), subscription.getSourceOutPort(), subscription.getSchema());
+		}
+	}
 
 	/**
 	 * Gets Stateful PO from Queries
@@ -617,5 +652,12 @@ public class MovingStateHelper {
 			// TODO Error Handling
 		}
 
+	}
+
+
+
+	public static void startBufferingLocalSenders(MovingStateMasterStatus status) {
+		status.getAllSenderPipes();
+		
 	}
 }

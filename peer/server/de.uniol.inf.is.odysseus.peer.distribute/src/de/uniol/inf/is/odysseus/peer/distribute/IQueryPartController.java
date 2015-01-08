@@ -15,5 +15,11 @@ public interface IQueryPartController {
 	public void registerAsSlave(Collection<Integer> ids, ID sharedQueryID);
 
 	public void registerAsMaster(ILogicalQuery query, int queryID, final ID sharedQueryID, Collection<PeerID> otherPeers);
-
+	
+	public void unregisterAsMaster(ID sharedQueryId);
+	
+	public boolean isMasterForQuery(int queryID);
+	
+	public Collection<PeerID> getOtherPeers(ID sharedQueryId);
+	
 }

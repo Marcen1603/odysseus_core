@@ -390,7 +390,7 @@ public class MovingStateMessageDispatcher {
 	/**
 	 * Stops all Messages.
 	 */
-	public void stopAllMessages() {
+	public synchronized void stopAllMessages() {
 		if (this.currentJobs != null) {
 			LOG.debug("Stopping repeating Message Jobs.");
 			for (RepeatingMessageSend job : currentJobs.values()) {

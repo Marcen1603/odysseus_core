@@ -7,7 +7,9 @@ import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.physicaloperator.IStatefulPO;
 import de.uniol.inf.is.odysseus.peer.distribute.ILogicalQueryPart;
+import de.uniol.inf.is.odysseus.peer.distribute.IQueryPartController;
 import de.uniol.inf.is.odysseus.peer.distribute.util.LogicalQueryHelper;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.active.ActiveLoadBalancingActivator;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.common.LoadBalancingException;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.common.LoadBalancingHelper;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.common.LoadBalancingStatusCache;
@@ -91,6 +93,14 @@ public class ResponseHandler {
 			if (status.getPhase().equals(
 					MovingStateMasterStatus.LB_PHASES.COPYING_QUERY) && !status.isLocked()) {
 				status.lock();
+				
+				IQueryPartController queryPartController = ActiveLoadBalancingActivator.getQueryPartController();
+				if(queryPartController.isMasterForQuery(status.getLogicalQuery())) {
+					LOG.debug("Peer is Master for Balanced Query Part.");
+					queryPartController.unregisterAsMaster(queryPartController.getSharedQueryID(status.getLogicalQuery()));
+				}
+				
+				
 				dispatcher.sendMsgReceived(senderPeer);
 				dispatcher.stopRunningJob();
 				status.setPhase(MovingStateMasterStatus.LB_PHASES.RELINKING_SENDERS);
@@ -132,7 +142,6 @@ public class ResponseHandler {
 				LOG.debug("Jobs left:" + dispatcher.getNumberOfRunningJobs());
 				if (dispatcher.getNumberOfRunningJobs() == 0) {
 					status.lock();
-					// All success messages received. Yay!
 					status.setPhase(LB_PHASES.COPYING_STATES);
 					LOG.debug("INITIATING COPYING STATES");
 					MovingStateHelper.initiateStateCopy(status);
@@ -217,6 +226,7 @@ public class ResponseHandler {
 				dispatcher.stopRunningJob(senderPeer.toString());
 				dispatcher.sendMsgReceived(senderPeer);
 				if (dispatcher.getNumberOfRunningJobs() == 0) {
+					//TODO Prevent that this stops queries before our query.
 					LoadBalancingHelper.deleteQuery(status.getLogicalQuery());
 					status.setPhase(LB_PHASES.FINISHED);
 					loadBalancingSuccessfullyFinished(status);

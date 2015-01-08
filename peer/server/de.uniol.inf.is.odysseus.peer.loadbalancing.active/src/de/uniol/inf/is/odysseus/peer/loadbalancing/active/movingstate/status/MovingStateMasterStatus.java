@@ -25,6 +25,12 @@ public class MovingStateMasterStatus implements ILoadBalancingMasterStatus {
 	 * Name of Communicator
 	 */
 	private final String COMMUNCIATOR_NAME = "MovingState";
+	
+	/**
+	 * List of Pipes which are buffering
+	 */
+	private ArrayList<String> bufferedPipes = new ArrayList<String>();
+
 
 	private volatile boolean locked=false;
 	
@@ -48,6 +54,40 @@ public class MovingStateMasterStatus implements ILoadBalancingMasterStatus {
 	 */
 	public boolean isLocked() {
 		return locked;
+	}
+	
+
+	/***
+	 * Gets List of buffered Pipes
+	 * 
+	 * @return List of buffered Pipes
+	 */
+	public ArrayList<String> getBufferedPipes() {
+		return bufferedPipes;
+	}
+
+	/***
+	 * Sets list of buffered Pipes
+	 * 
+	 * @param bufferedPipes
+	 *            List of buffered Pipes
+	 */
+	public void setBufferedPipes(ArrayList<String> bufferedPipes) {
+		this.bufferedPipes = bufferedPipes;
+	}
+
+	/**
+	 * Adds a pipe to List of buffered Pipes
+	 * 
+	 * @param pipe
+	 *            Pipe-to-add
+	 */
+	public synchronized void addBufferedPipe(String pipe) {
+		if (bufferedPipes == null) {
+			bufferedPipes = new ArrayList<String>();
+		}
+		if (!bufferedPipes.contains(pipe))
+			bufferedPipes.add(pipe);
 	}
 	
 	
@@ -80,6 +120,8 @@ public class MovingStateMasterStatus implements ILoadBalancingMasterStatus {
 	public void setUpstreamPeers(ArrayList<PeerID> peers) {
 		this.upstreamPeers = peers;
 	}
+	
+	
 
 	/**
 	 * Gets list of upstream Peers
@@ -170,6 +212,10 @@ public class MovingStateMasterStatus implements ILoadBalancingMasterStatus {
 	 */
 	public void setPipesToSync(ArrayList<String> pipesToSync) {
 		this.pipesToSync = pipesToSync;
+	}
+	
+	public ArrayList<String> getPipesToSync() {
+		return pipesToSync;
 	}
 
 	/***
