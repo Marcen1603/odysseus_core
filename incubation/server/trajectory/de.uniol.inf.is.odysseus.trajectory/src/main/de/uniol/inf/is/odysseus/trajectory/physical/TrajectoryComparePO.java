@@ -28,8 +28,6 @@ public class TrajectoryComparePO<T extends Tuple<ITimeInterval>> extends Abstrac
 	// Ein beliebiges Tupel
 	@Override
 	protected void process_next(T object, int port) {
-	
-		
 		this.transfer((T) object, port);
 	}
 }

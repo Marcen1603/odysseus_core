@@ -23,18 +23,18 @@ import de.uniol.inf.is.odysseus.trajectory.logicaloperator.builder.NestAggregate
  * @author marcus
  *
  */
-@LogicalOperator(name = "TRAJECTORYCONSTRUCT", minInputPorts = 1, maxInputPorts = 1, doc="Construct Trajectories", category={LogicalOperatorCategory.ADVANCED})
-public class TrajectoryConstructAO extends AggregateAO {
+@LogicalOperator(name = "TTT", minInputPorts = 1, maxInputPorts = 1, doc="Construct Trajectories", category={LogicalOperatorCategory.ADVANCED})
+public class AggregateTrajectoryConstructAO extends AggregateAO {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 6402497964848377680L;
 	
-	public TrajectoryConstructAO() {
+	public AggregateTrajectoryConstructAO() {
 	}
 	
-	public TrajectoryConstructAO(TrajectoryConstructAO trajectoryConstructAO) {
+	public AggregateTrajectoryConstructAO(AggregateTrajectoryConstructAO trajectoryConstructAO) {
 		super(trajectoryConstructAO);
 	}
 	
@@ -82,6 +82,6 @@ public class TrajectoryConstructAO extends AggregateAO {
 	
 	@Override
 	public AggregateAO clone() {
-		return new TrajectoryConstructAO(this);
+		return new AggregateTrajectoryConstructAO(this);
 	}
 }

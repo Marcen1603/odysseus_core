@@ -13,9 +13,13 @@ Import-Package: com.vividsolutions.jts.geom,
  de.uniol.inf.is.odysseus.spatial.sourcedescription.sdf.schema,
  de.uniol.inf.is.odysseus.transform.flow,
  de.uniol.inf.is.odysseus.transform.rule,
+ org.hamcrest.core;version="1.1.0";resolution:=optional,
+ org.hamcrest.internal;version="1.1.0";resolution:=optional,
+ org.junit;version="4.8.2",
  org.osgeo.proj4j,
  org.osgi.framework;version="1.6.0"
 Require-Bundle: de.uniol.inf.is.odysseus.core;bundle-version="1.0.0",
  de.uniol.inf.is.odysseus.core.server;bundle-version="1.0.0",
- de.uniol.inf.is.odysseus.slf4j;bundle-version="1.0.0"
+ de.uniol.inf.is.odysseus.slf4j;bundle-version="1.0.0",
+ org.hamcrest.core;resolution:=optional
 Bundle-Vendor: Marcus Behrendt

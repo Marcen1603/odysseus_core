@@ -5,18 +5,19 @@ import de.uniol.inf.is.odysseus.core.server.metadata.CombinedMergeFunction;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
-import de.uniol.inf.is.odysseus.trajectory.logicaloperator.TrajectoryConstructAO;
-import de.uniol.inf.is.odysseus.trajectory.physical.TrajectoryConstructPO;
+import de.uniol.inf.is.odysseus.trajectory.logicaloperator.AggregateTrajectoryConstructAO;
+import de.uniol.inf.is.odysseus.trajectory.physical.AggregateTrajectoryConstructPO;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
-public class TTrajectoryConstructAORule extends AbstractTransformationRule<TrajectoryConstructAO> {
+public class TAggregateTrajectoryConstructAORule extends AbstractTransformationRule<AggregateTrajectoryConstructAO> {
 
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
-	public void execute(TrajectoryConstructAO operator,
+	public void execute(AggregateTrajectoryConstructAO operator,
 			TransformationConfiguration config) throws RuleException {
 
-		TrajectoryConstructPO trajectoryConstructPO = new TrajectoryConstructPO<>(
+		AggregateTrajectoryConstructPO trajectoryConstructPO = new AggregateTrajectoryConstructPO<>(
 				operator.getInputSchema(), 
 				operator.getOutputSchema(0), 
 				operator.getGroupingAttributes(), 
@@ -32,7 +33,7 @@ public class TTrajectoryConstructAORule extends AbstractTransformationRule<Traje
 	}
 
 	@Override
-	public boolean isExecutable(TrajectoryConstructAO operator,
+	public boolean isExecutable(AggregateTrajectoryConstructAO operator,
 			TransformationConfiguration config) {
 		return operator.isAllPhysicalInputSet();
 	}

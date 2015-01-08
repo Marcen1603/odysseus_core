@@ -31,6 +31,7 @@ public class NestAggregateItemParameter extends AbstractParameter<NestAggregateI
 		super(name, requirement, USAGE.RECENT);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	protected void internalAssignment() {
 		final List<String> value = (List<String>) this.inputValue;
