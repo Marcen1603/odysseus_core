@@ -28,7 +28,7 @@ public class OdysseusServerApplication implements IApplication {
 		synchronized (OdysseusServerApplication.class) {
 //			Activator.waitForExecutor();					
 			registerEventHandler(Activator.getContext());
-			logger.debug("Odysseus application is fully started!");
+			logger.info("Odysseus application is fully started!");
 			while (stopRequested == StopRequest.NO) {
 				OdysseusServerApplication.class.wait(5000);
 			}
