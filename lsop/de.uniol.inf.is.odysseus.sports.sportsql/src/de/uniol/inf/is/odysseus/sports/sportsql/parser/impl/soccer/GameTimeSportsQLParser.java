@@ -39,7 +39,7 @@ import de.uniol.inf.is.odysseus.sports.sportsql.parser.parameter.SportsQLTimePar
  * @author Thore Stratmann
  *
  */
-@SportsQL(gameTypes = { GameType.SOCCER }, statisticTypes = { StatisticType.GLOBAL }, name = "gameTime", parameters = {
+@SportsQL(gameTypes = { GameType.ALL }, statisticTypes = { StatisticType.GLOBAL }, name = "gameTime", parameters = {
 		@SportsQLParameter(name = "startts", parameterClass = SportsQLLongParameter.class, mandatory = false),
 		@SportsQLParameter(name = "endts", parameterClass = SportsQLLongParameter.class, mandatory = false),
 		@SportsQLParameter(name = "isSelectDataBetweenTimestamps", parameterClass = SportsQLBooleanParameter.class, mandatory = false),

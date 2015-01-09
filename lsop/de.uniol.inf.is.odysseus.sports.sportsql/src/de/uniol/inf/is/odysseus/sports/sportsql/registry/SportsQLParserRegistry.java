@@ -60,21 +60,39 @@ public class SportsQLParserRegistry {
 				sportsQLParserMap.put(statisticType, statisticTypeMap);
 			}
 			for (GameType game : games) {
-				Map<String, ISportsQLParser> gameMap = statisticTypeMap
-						.get(game);
-				if (gameMap == null) {
-					gameMap = Maps.newHashMap();
-					statisticTypeMap.put(game, gameMap);
-				}
-				if (gameMap.containsKey(name)) {
-					throw new RuntimeException(
-							"Duplicate statistic name was found in "
-									+ parser.getClass().getSimpleName()
-									+ " and "
-									+ statisticTypeMap.get(name).getClass()
-											.getSimpleName());
-				}
-				gameMap.put(name, parser);
+				if (game == GameType.ALL) {
+					for (GameType gameType : GameType.values()) {
+						Map<String, ISportsQLParser> gameMap = statisticTypeMap.get(gameType);
+						if (gameMap == null) {
+							gameMap = Maps.newHashMap();
+							statisticTypeMap.put(gameType, gameMap);
+						}
+						if (gameMap.containsKey(name)) {
+							throw new RuntimeException(
+									"Duplicate statistic name was found in "
+											+ parser.getClass().getSimpleName()
+											+ " and "
+											+ statisticTypeMap.get(name).getClass()
+													.getSimpleName());
+						}
+						gameMap.put(name, parser);
+					}
+				} else {
+					Map<String, ISportsQLParser> gameMap = statisticTypeMap.get(game);
+					if (gameMap == null) {
+						gameMap = Maps.newHashMap();
+						statisticTypeMap.put(game, gameMap);
+					}
+					if (gameMap.containsKey(name)) {
+						throw new RuntimeException(
+								"Duplicate statistic name was found in "
+										+ parser.getClass().getSimpleName()
+										+ " and "
+										+ statisticTypeMap.get(name).getClass()
+												.getSimpleName());
+					}
+					gameMap.put(name, parser);
+				}				
 			}
 		}
 	}
@@ -94,8 +112,7 @@ public class SportsQLParserRegistry {
 
 	public static ISportsQLParser getSportsQLParser(StatisticType type,
 			GameType game, String name) {
-		ISportsQLParser parser = sportsQLParserMap.get(type).get(game)
-				.get(name.trim().toUpperCase());
+		ISportsQLParser parser = sportsQLParserMap.get(type).get(game).get(name.trim().toUpperCase());
 		Preconditions.checkNotNull(parser,
 				"No SportsQLParser was found for statistic name " + name);
 		return parser;
@@ -147,7 +164,7 @@ public class SportsQLParserRegistry {
 			JSONObject obj = new JSONObject(sportsQL);
 			game = obj.getString("gameType");		
 		} catch (JSONException e) {
-			throw new RuntimeException("Game type is missing in sportsql query");
+			game = "all";
 		}
 		
 		try {
