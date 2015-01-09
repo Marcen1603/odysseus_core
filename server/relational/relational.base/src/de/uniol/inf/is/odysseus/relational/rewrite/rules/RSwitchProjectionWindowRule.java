@@ -20,16 +20,19 @@ import java.util.Collection;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractWindowAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.ProjectAO;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.WindowType;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.RewriteConfiguration;
 import de.uniol.inf.is.odysseus.relational.rewrite.RelationalRestructHelper;
 
-public class RSwitchProjectionWindowRule extends AbstractSwitchProjectionRule<AbstractWindowAO> {
+public class RSwitchProjectionWindowRule extends
+		AbstractSwitchProjectionRule<AbstractWindowAO> {
 
 	@Override
 	public void execute(AbstractWindowAO win, RewriteConfiguration config) {
 		for (ProjectAO proj : this.getAllOfSameTyp(new ProjectAO())) {
 			if (proj.getInputAO().equals(win)) {
-				Collection<ILogicalOperator> toUpdate = RelationalRestructHelper.switchOperator(proj, win);
+				Collection<ILogicalOperator> toUpdate = RelationalRestructHelper
+						.switchOperator(proj, win);
 				for (ILogicalOperator o : toUpdate) {
 					update(o);
 				}
@@ -40,17 +43,28 @@ public class RSwitchProjectionWindowRule extends AbstractSwitchProjectionRule<Ab
 	}
 
 	@Override
-	public boolean isExecutable(AbstractWindowAO win, RewriteConfiguration config) {
+	public boolean isExecutable(AbstractWindowAO win,
+			RewriteConfiguration config) {
 		if (win.getSubscriptions().size() > 1) {
 			return false;
 		}
-		for (ProjectAO proj : this.getAllOfSameTyp(new ProjectAO())) {
-			if (proj.getInputAO().equals(win)) {
+		for (ProjectAO proj : getAllOfSameTyp(new ProjectAO())) {
+			if (isValidProject(proj, win)) {
 				return true;
 			}
 		}
 		return false;
 
+	}
+
+	@Override
+	protected boolean isValidProject(ProjectAO proj, AbstractWindowAO win) {
+		if (super.isValidProject(proj, win)
+				&& (win.getWindowType() == WindowType.TIME || win
+						.getWindowType() == WindowType.TUPLE)) {
+			return true;
+		}
+		return false;
 	}
 
 	@Override

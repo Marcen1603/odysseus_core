@@ -44,10 +44,24 @@ public class RSwitchSelectionWindowRule extends AbstractSwitchSelectionRule<Abst
 
 	@Override
 	public boolean isExecutable(AbstractWindowAO win, RewriteConfiguration config) {
-		if (win.getSubscriptions().size() > 1) {
+		if (win.getSubscriptions().size() > 1 || win.getWindowType() != WindowType.TIME) {
 			return false;
 		}
-		return win.getWindowType() == WindowType.TIME;
+		for (SelectAO sel : getAllOfSameTyp(new SelectAO())) {
+			if (isValidSelect(sel, win)) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	@Override
+	protected boolean isValidSelect(SelectAO sel, AbstractWindowAO win) {
+		if (super.isValidSelect(sel, win)
+				&& win.getWindowType() == WindowType.TIME) {
+			return true;
+		}
+		return false;
 	}
 
 	@Override
