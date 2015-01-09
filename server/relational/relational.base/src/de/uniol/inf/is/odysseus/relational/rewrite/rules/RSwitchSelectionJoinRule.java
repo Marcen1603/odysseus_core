@@ -52,14 +52,14 @@ public class RSwitchSelectionJoinRule extends
 
 	@Override
 	public boolean isExecutable(JoinAO join, RewriteConfiguration config) {
-		if (join.getSubscriptions().size() > 1) {
-			return false;
-		}
-		for (SelectAO sel : getAllOfSameTyp(new SelectAO())) {
-			if (isValidSelect(sel, join)) {
-				return true;
-			}
-		}
+//		if (join.getSubscriptions().size() > 1) {
+//			return false;
+//		}
+//		for (SelectAO sel : getAllOfSameTyp(new SelectAO())) {
+//			if (isValidSelect(sel, join)) {
+//				return true;
+//			}
+//		}
 		return false;
 	}
 
