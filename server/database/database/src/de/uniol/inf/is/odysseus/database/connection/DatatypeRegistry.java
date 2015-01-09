@@ -117,7 +117,11 @@ public class DatatypeRegistry {
 	 * @return the handler for dataType
 	 */
 	public static IDataTypeMappingHandler getDataHandler(SDFDatatype dataType) {
-		IDataTypeMappingHandler ret = sdfdataHandlers.get(dataType).getE2();
+		Pair<Integer, IDataTypeMappingHandler> handler = sdfdataHandlers.get(dataType);
+		IDataTypeMappingHandler ret = null; 
+		if (handler != null){
+			ret = handler.getE2();
+		}
 		if (ret == null) {
 			throw new IllegalArgumentException("No mapping for Odysseus type "
 					+ dataType + " defined!");
