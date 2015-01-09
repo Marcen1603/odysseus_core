@@ -4,6 +4,13 @@ Bundle-Name: Mosaik
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.wrapper.mosaik
 Bundle-Version: 1.0.0.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Service-Component: OSGI-INF/MosaikTransportHandler.xml, OSGI-INF/MosaikProtocolHandler.xml
 Require-Bundle: de.uniol.inf.is.odysseus.core.server,
- de.uniol.inf.is.odysseus.core
-Import-Package: de.uniol.inf.is.odysseus.core.collection
+ de.uniol.inf.is.odysseus.core,
+ com.fasterxml.jackson
+Import-Package: de.uniol.inf.is.odysseus.core.collection,
+ org.slf4j,
+ org.osgi.framework
+Bundle-ClassPath: org.json.simple,
+ lib/json-simple-1.1.1.jar,
+ .

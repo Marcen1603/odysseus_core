@@ -49,7 +49,7 @@ public class SimProcess {
         LogManager.getLogManager().addLogger(SimProcess.logger);
         SimProcess.logger.setLevel(Level.FINE);
         try {
-            SimProcess.logger.info("Starting " + sim.getSimName() + " ...");
+//            SimProcess.logger.info("Starting " + sim.getSimName() + " ...");
             final SimProcess server = new SimProcess(sock, sim);
             server.run();
         } catch (final Exception e) {
@@ -103,6 +103,10 @@ public class SimProcess {
         eventloop: while (!this.stop) {
             req = this.sock.recvRequest();
 
+            System.out.println("");
+            System.out.println("receive: " + req.method);
+            System.out.println("");
+    		
             switch (req.method) {
             case "init":
                 final String sid = (String) req.args.get(0);
