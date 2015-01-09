@@ -22,6 +22,8 @@ import org.simpleframework.xml.Root;
 import org.simpleframework.xml.core.Persister;
 
 import de.uniol.inf.is.odysseus.benchmark.result.AbstractBenchmarkResult;
+import de.uniol.inf.is.odysseus.core.metadata.AbstractStreamObject;
+import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.server.monitoring.DescriptiveStatistics;
 import de.uniol.inf.is.odysseus.core.server.monitoring.IDescriptiveStatistics;
 import de.uniol.inf.is.odysseus.interval_latency_priority.ILatencyPriority;
@@ -69,5 +71,12 @@ public class PriorityBenchmarkResult<T extends ILatencyPriority> extends
 	public PriorityBenchmarkResult<T> clone() {
 		return new PriorityBenchmarkResult<T>(getStatistics());
 	}
-	
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public AbstractStreamObject<ITimeInterval> newInstance() {
+        throw new UnsupportedOperationException("Not implemented");
+    }
 }

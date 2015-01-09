@@ -103,6 +103,13 @@ public interface IStreamObject<M extends IMetaAttribute> extends
     @Override
     public int hashCode();
 
+    /**
+     * Creates a new instance of the current streaming object.
+     * 
+     * @return A new instance of the streaming object class.
+     */
+    IStreamable newInstance();
+
 	int restrictedHashCode(int[] attributeNumbers);
 
 	/**

@@ -171,6 +171,13 @@ public class Pattern<M extends ITimeInterval> extends AbstractStreamObject<M> {
 		return new Pattern<M>(this);
 	}
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public AbstractStreamObject<M> newInstance() {
+        return new Pattern<M>();
+    }
 	/*
 	 * (non-Javadoc)
 	 * 

@@ -19,7 +19,15 @@ public class Document<T extends IMetaAttribute> extends AbstractStreamObject<T>
 	public String getContent() {
 		return content;
 	}
-	
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public AbstractStreamObject<T> newInstance() {
+        return new Document("");
+    }
+
 	@Override
 	public AbstractStreamObject<T> clone() {
 		// Document is immutable

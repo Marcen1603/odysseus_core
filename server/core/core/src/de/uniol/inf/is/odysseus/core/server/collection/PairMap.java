@@ -25,7 +25,7 @@ import de.uniol.inf.is.odysseus.core.collection.FESortedClonablePair;
 import de.uniol.inf.is.odysseus.core.metadata.AbstractStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 
-public class PairMap<K1 extends IClone,K2 extends IClone,V extends IClone,M extends IMetaAttribute> extends AbstractStreamObject<M>{
+public class PairMap<K1 extends IClone, K2 extends IClone, V extends IClone, M extends IMetaAttribute> extends AbstractStreamObject<M> {
 	/**
 	 * 
 	 */
@@ -79,6 +79,13 @@ public class PairMap<K1 extends IClone,K2 extends IClone,V extends IClone,M exte
 	public PairMap<K1,K2,V,M> clone() {
 		return new PairMap<K1, K2, V, M>(this, false);
 	}
-
 	
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public AbstractStreamObject<M> newInstance() {
+        return new PairMap<>();
+    }
+
 }

@@ -50,7 +50,7 @@ public class Tuple<T extends IMetaAttribute> extends AbstractStreamObject<T>
 	private boolean valueChanged = true;
 
 	private boolean requiresDeepClone;
-	private final Cloner cloner;
+    private Cloner cloner;
 
 	// -----------------------------------------------------------------
 	// Konstruktoren
@@ -189,6 +189,13 @@ public class Tuple<T extends IMetaAttribute> extends AbstractStreamObject<T>
 		return t;
 	}
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public AbstractStreamObject<T> newInstance() {
+        return new Tuple();
+    }
 	// -----------------------------------------------------------------
 	// Attributzugriffsmethoden
 	// -----------------------------------------------------------------
@@ -382,6 +389,12 @@ public class Tuple<T extends IMetaAttribute> extends AbstractStreamObject<T>
 
 	public void setRequiresDeepClone(boolean requiresDeepClone) {
 		this.requiresDeepClone = requiresDeepClone;
+        if (this.requiresDeepClone) {
+            this.cloner = new Cloner();
+        }
+        else {
+            this.cloner = null;
+        }
 	}
 
 	public boolean requiresDeepClone() {

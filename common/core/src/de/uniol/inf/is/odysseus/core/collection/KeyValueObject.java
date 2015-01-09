@@ -152,6 +152,14 @@ public class KeyValueObject <T extends IMetaAttribute> extends AbstractStreamObj
 		return new KeyValueObject<T>(this);
 	}
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public AbstractStreamObject<T> newInstance() {
+        return new KeyValueObject<>();
+    }
+
 	@SuppressWarnings("unchecked")
 	public Map<String, Object> getAttributesAsNestedMap() {
 		Map<String, Object> map = new LinkedHashMap<String, Object>();

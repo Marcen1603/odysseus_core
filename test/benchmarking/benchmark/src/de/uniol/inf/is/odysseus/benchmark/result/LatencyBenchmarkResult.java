@@ -15,6 +15,8 @@
   */
 package de.uniol.inf.is.odysseus.benchmark.result;
 
+import de.uniol.inf.is.odysseus.core.metadata.AbstractStreamObject;
+import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.server.metadata.ILatency;
 import de.uniol.inf.is.odysseus.core.server.monitoring.IDescriptiveStatistics;
 
@@ -39,5 +41,12 @@ public class LatencyBenchmarkResult extends AbstractBenchmarkResult<ILatency> {
 	public LatencyBenchmarkResult clone() {
 		return new LatencyBenchmarkResult(getStatistics());
 	}
-			
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public AbstractStreamObject<ITimeInterval> newInstance() {
+        throw new UnsupportedOperationException("Not implemented");
+    }
 }
