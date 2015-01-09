@@ -12,10 +12,9 @@ import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import de.offis.mosaik.api.Simulator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.AbstractProtocolHandler;
 
-public class OdysseusSimulator extends Simulator {
+public class OdysseusSimulator {
 
 	static Logger LOG = LoggerFactory.getLogger(OdysseusSimulator.class);
 	
@@ -29,7 +28,7 @@ public class OdysseusSimulator extends Simulator {
 	// Alternatively, put all the JSON into a .json file and read meta data from
     // that.
     private static final JSONObject meta = (JSONObject) JSONValue.parse(("{"
-            + "    'api_version': " + Simulator.API_VERSION + ","
+            + "    'api_version': 2.0,"
             + "    'models': {"
             + "        'Odysseus': {" + "            'public': true,"
             + "			   'any_inputs': true,"
@@ -38,12 +37,10 @@ public class OdysseusSimulator extends Simulator {
             + "    }" + "}").replace("'", "\""));
 
 	public OdysseusSimulator(AbstractProtocolHandler<?> pHandler, String name) {
-		super(name);
 		this.pHandler = pHandler;
 	}
 
 	@SuppressWarnings("unchecked")
-	@Override
 	public List<Map<String, Object>> create(int num, String model, Map<String, Object> modelParams) throws Exception {
 		LOG.debug("create");
 		
@@ -61,7 +58,6 @@ public class OdysseusSimulator extends Simulator {
         return entities;
 	}
 
-	@Override
 	public Map<String, Object> getData(Map<String, List<String>> arg0)
 			throws Exception {
 		LOG.debug("getData");
@@ -72,7 +68,6 @@ public class OdysseusSimulator extends Simulator {
 	}
 
 	@SuppressWarnings("unchecked")
-	@Override
 	public Map<String, Object> init(String sid, Map<String, Object> simParams) throws Exception {
 		LOG.debug("init");
 		
@@ -84,7 +79,6 @@ public class OdysseusSimulator extends Simulator {
         return OdysseusSimulator.meta;
 	}
 
-	@Override
 	public long step(long arg0, Map<String, Object> input) throws Exception {
 		LOG.debug("step");
 		
