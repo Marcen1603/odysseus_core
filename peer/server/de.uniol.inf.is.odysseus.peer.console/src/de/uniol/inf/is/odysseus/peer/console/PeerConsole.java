@@ -1,5 +1,7 @@
 package de.uniol.inf.is.odysseus.peer.console;
 
+import java.lang.management.ManagementFactory;
+import java.lang.management.ThreadMXBean;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.InetAddress;
@@ -728,10 +730,13 @@ public class PeerConsole implements CommandProvider, IPeerCommunicatorListener {
 		int threadCount = Thread.activeCount();
 		Thread[] tarray = new Thread[threadCount];
 		Thread.enumerate(tarray);
-
+		
+		ThreadMXBean bean = ManagementFactory.getThreadMXBean();
+		
 		List<String> output = Lists.newLinkedList();
 		for (Thread t : tarray) {
-			String text = t.getName() + ": " + t.getState();
+			long threadTimeNanos = bean.getThreadCpuTime(t.getId());
+			String text = t.getName() + ": " + t.getState() + "[ " + threadTimeNanos + " ns ]";
 			if (Strings.isNullOrEmpty(filter) || text.contains(filter)) {
 				output.add(text);
 			}
@@ -744,7 +749,7 @@ public class PeerConsole implements CommandProvider, IPeerCommunicatorListener {
 	public void _listThreads(CommandInterpreter ci) {
 		_lsThreads(ci);
 	}
-
+	
 	public void _listPeerAddresses(CommandInterpreter ci) {
 		Collection<PeerID> remotePeerIDs = peerDictionary.getRemotePeerIDs();
 		ci.println("Remote peers known: " + remotePeerIDs.size());
