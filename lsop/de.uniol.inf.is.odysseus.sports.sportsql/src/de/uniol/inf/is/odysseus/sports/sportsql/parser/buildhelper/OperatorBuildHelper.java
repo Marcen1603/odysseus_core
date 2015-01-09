@@ -917,6 +917,56 @@ public class OperatorBuildHelper {
 
 		return coalesceAO;
 	}
+	
+	
+	public static CoalesceAO createCoalesceAO(List<String> attributes,
+			List<String>  aggregationFunctions, List<String>  inputAttributeNames,
+			List<String>  outputAttributeNames,IPredicate<?> startPredicate, IPredicate<?> endPredicate, ILogicalOperator source) {
+		CoalesceAO coalesceAO = new CoalesceAO();
+
+		// Grouping attributes
+		List<ResolvedSDFAttributeParameter> params = new ArrayList<ResolvedSDFAttributeParameter>();
+		for (String attribute : attributes) {
+			ResolvedSDFAttributeParameter param = new ResolvedSDFAttributeParameter();
+			param.setAttributeResolver(OperatorBuildHelper.createAttributeResolver(source));
+			param.setInputValue(attribute);
+			params.add(param);
+		}
+
+		List<SDFAttribute> finishedParams = new ArrayList<SDFAttribute>();
+		for (ResolvedSDFAttributeParameter resAttrParam : params) {
+			finishedParams.add(resAttrParam.getValue());
+		}
+		coalesceAO.setGroupingAttributes(finishedParams);
+
+		// Aggregations
+		List<AggregateItem> aggregateItems = new ArrayList<AggregateItem>();
+		
+		for (int i = 0; i<aggregationFunctions.size(); i++) {
+			AggregateItemParameter param = new AggregateItemParameter();
+			List<String> aggregateOptions = new ArrayList<String>();
+			aggregateOptions.add(aggregationFunctions.get(i));
+			aggregateOptions.add(inputAttributeNames.get(i));
+			aggregateOptions.add(outputAttributeNames.get(i));
+			param.setInputValue(aggregateOptions);
+			
+			IAttributeResolver resolver = OperatorBuildHelper.createAttributeResolver(source);
+			param.setAttributeResolver(resolver);
+			IDataDictionary dataDict = OperatorBuildHelper.getDataDictionary();
+			param.setDataDictionary(dataDict);
+
+			aggregateItems.add(param.getValue());
+		}
+
+		coalesceAO.setAggregationItems(aggregateItems);
+		
+		coalesceAO.setStartPredicate(startPredicate);
+		coalesceAO.setEndPredicate(endPredicate);
+
+		coalesceAO.subscribeTo(source, source.getOutputSchema());
+
+		return coalesceAO;
+	}
 
 	/**
 	 * 

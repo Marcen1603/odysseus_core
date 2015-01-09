@@ -31,14 +31,12 @@ import de.uniol.inf.is.odysseus.sports.sportsql.parser.buildhelper.OperatorBuild
  * @author Simon Küspert, Pascal Schmedt, Thore Stratmann
  * 
  */
-@SportsQL(gameTypes = { GameType.SOCCER }, statisticTypes = { StatisticType.PLAYER }, name = "sprints", parameters = {
+@SportsQL(gameTypes = { GameType.SOCCER }, statisticTypes = { StatisticType.TEAM }, name = "sprints", parameters = {
 		@SportsQLParameter(name = "time", parameterClass = SportsQLTimeParameter.class, mandatory = false),
 		@SportsQLParameter(name = "space", parameterClass = SportsQLSpaceParameter.class, mandatory = false) })
-public class SprintsPlayerSportsQLParser implements ISportsQLParser {
+public class SprintsTeamSportsQLParser implements ISportsQLParser {
 	
 	private static String ATTRIBUTE_SPRINTS_COUNT = "count";
-	private static String ATTRIBUTE_SPRINTS_AVG_DISTANCE = "avg_distance";
-	private static String ATTRIBUTE_SPRINTS_MAX_SPEED = "max_speed";
 
 	@Override
 	public ILogicalQuery parse(ISession session, SportsQLQuery sportsQL)
@@ -54,28 +52,20 @@ public class SprintsPlayerSportsQLParser implements ISportsQLParser {
 		allOperators.add(timestampAO);
 
 		// 9. Heatbeat every 5 seconds
-		AssureHeartbeatAO assureHeartbeatAO = OperatorBuildHelper
-				.createHeartbeat(5000, timestampAO);
+		AssureHeartbeatAO assureHeartbeatAO = OperatorBuildHelper.createHeartbeat(5000, timestampAO);
 		allOperators.add(assureHeartbeatAO);
 
-		// 10. Calulate sprints count, average sprint distance and max speed
+		// 10. Calulate sprints count
 		List<String> resultAggregateFunctions = new ArrayList<String>();
 		resultAggregateFunctions.add("COUNT");
-		resultAggregateFunctions.add("AVG");
-		resultAggregateFunctions.add("MAX");
 
 		List<String> resultAggregateInputAttributeNames = new ArrayList<String>();
 		resultAggregateInputAttributeNames.add(SprintsSportsQLParser.ATTRIBUTE_SPRINT_TIME);
-		resultAggregateInputAttributeNames.add(SprintsSportsQLParser.ATTRIBUTE_SPRINT_DISTANCE);
-		resultAggregateInputAttributeNames.add(SprintsSportsQLParser.ATTRIBUTE_SPEED);
 
 		List<String> resultAggregateOutputAttributeNames = new ArrayList<String>();
 		resultAggregateOutputAttributeNames.add(ATTRIBUTE_SPRINTS_COUNT);
-		resultAggregateOutputAttributeNames.add(ATTRIBUTE_SPRINTS_AVG_DISTANCE);
-		resultAggregateOutputAttributeNames.add(ATTRIBUTE_SPRINTS_MAX_SPEED);
 
 		List<String> resultAggregateGroupBys = new ArrayList<String>();
-		resultAggregateGroupBys.add(IntermediateSchemaAttributes.ENTITY_ID);
 		resultAggregateGroupBys.add(IntermediateSchemaAttributes.TEAM_ID);
 
 		AggregateAO resultAggregate = OperatorBuildHelper
@@ -85,14 +75,12 @@ public class SprintsPlayerSportsQLParser implements ISportsQLParser {
 						resultAggregateOutputAttributeNames, null,
 						assureHeartbeatAO, 1);
 		allOperators.add(resultAggregate);
-
 		
 		// 11. Ignore referee
 		String selectAOPredicate = IntermediateSchemaAttributes.TEAM_ID + " = " + SoccerDDCAccess.getLeftGoalTeamId() + " OR " + IntermediateSchemaAttributes.TEAM_ID + " = " +SoccerDDCAccess.getRightGoalTeamId();
 		SelectAO selectAO = OperatorBuildHelper.createSelectAO(selectAOPredicate, resultAggregate);
 
-		return OperatorBuildHelper.finishQuery(selectAO, allOperators,
-				sportsQL.getDisplayName());
+		return OperatorBuildHelper.finishQuery(selectAO, allOperators,	sportsQL.getDisplayName());
 	}
 
 }
