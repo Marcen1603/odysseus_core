@@ -61,6 +61,8 @@ public class RepeatingJobThread extends StoppableThread {
 
 	@Override
 	public final void run() {
+		Thread.currentThread().setName("RepeatingThread: " + threadName);
+		
 		beforeJob();
 		while (isRunning()) {
 			lastExecutionTimestamp = System.currentTimeMillis();
