@@ -347,7 +347,7 @@ public class LineProtocolHandler<T> extends AbstractProtocolHandler<T> {
 	}
 
 	@Override
-	public void process(ByteBuffer message) {
+	public synchronized void process(ByteBuffer message) {
 		String strMsg = bb_to_str(message);
 		String data = lastRunRemaining + strMsg;
 		StringTokenizer t = new StringTokenizer(data, "\n\r");
