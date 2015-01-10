@@ -24,6 +24,7 @@ import de.uniol.inf.is.odysseus.relational.rewrite.rules.RMergeSelectionJoinRule
 import de.uniol.inf.is.odysseus.relational.rewrite.rules.RMergeSelectionRule;
 import de.uniol.inf.is.odysseus.relational.rewrite.rules.RSplitSelectionRule;
 import de.uniol.inf.is.odysseus.relational.rewrite.rules.RSwitchProjectionRenameRule;
+import de.uniol.inf.is.odysseus.relational.rewrite.rules.RSwitchProjectionUnionRule;
 import de.uniol.inf.is.odysseus.relational.rewrite.rules.RSwitchProjectionWindowRule;
 import de.uniol.inf.is.odysseus.relational.rewrite.rules.RSwitchSelectionJoinRule;
 import de.uniol.inf.is.odysseus.relational.rewrite.rules.RSwitchSelectionProjectionRule;
@@ -44,12 +45,13 @@ public class RuleProvider implements IRewriteRuleProvider {
 		rules.add(new RMergeSelectionRule());
 		rules.add(new RSplitSelectionRule());
 		rules.add(new RSwitchProjectionRenameRule());
+		rules.add(new RSwitchProjectionUnionRule());
 		rules.add(new RSwitchProjectionWindowRule());
 		rules.add(new RSwitchSelectionJoinRule());
 		rules.add(new RSwitchSelectionProjectionRule());
 		rules.add(new RSwitchSelectionRenameRule());
-		rules.add(new RSwitchSelectionWindowRule());
 		rules.add(new RSwitchSelectionUnionRule());
+		rules.add(new RSwitchSelectionWindowRule());
 		return rules;
 	}
 

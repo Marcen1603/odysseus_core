@@ -227,8 +227,26 @@ public class RelationalRestructHelper {
 		ret.addAll(RestructHelper.insertOperator(selRight, son, 1, 0, 0));
 		return ret;
 	}
+	
+	private static Collection<ILogicalOperator> switchOperatorInternal(ProjectAO father, BinaryLogicalOp son, Collection<ILogicalOperator> toInsert) {
+		ProjectAO projLeft = father;
+		ProjectAO projRight = new ProjectAO();
+		projRight.setOutputSchemaWithList(father.getOutputSchemaWithList());
+		toInsert.add(projRight);
+
+		Collection<ILogicalOperator> ret = removeOperator(father);
+		ret.add(projLeft);
+
+		ret.addAll(RestructHelper.insertOperator(projLeft, son, 0, 0, 0));
+		ret.addAll(RestructHelper.insertOperator(projRight, son, 1, 0, 0));
+		return ret;
+	}
 
 	public static Collection<ILogicalOperator> switchOperator(SelectAO father, UnionAO son, Collection<ILogicalOperator> toInsert) {
+		return switchOperatorInternal(father, son, toInsert);
+	}
+	
+	public static Collection<ILogicalOperator> switchOperator(ProjectAO father, UnionAO son, Collection<ILogicalOperator> toInsert) {
 		return switchOperatorInternal(father, son, toInsert);
 	}
 
