@@ -4,7 +4,6 @@ import static org.junit.Assert.*;
 import static org.junit.matchers.JUnitMatchers.hasItems;
 
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
 
 import org.junit.After;
@@ -35,6 +34,7 @@ public class FulltrajectoryConstructStrategyTest {
 		this.instance = null;
 	}
 	
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Test
 	public void testGetResultsToTransfer_60_20() {
 		/* create Tuples for tumpling TimeWindows (Size=60s) (range=20s) */
@@ -137,6 +137,7 @@ public class FulltrajectoryConstructStrategyTest {
 		assertTrue(this.instance.getResultsToTransfer(t_4_4).isEmpty());
 	}
 	
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Test
 	public void testGetResultsToTransfer_60_60() {
 		/* create Tuples for tumpling TimeWindows (Size=60s) (range=60s) */
@@ -228,6 +229,7 @@ public class FulltrajectoryConstructStrategyTest {
 		assertTrue(this.instance.getResultsToTransfer(t_4_4).isEmpty());
 	}
 		
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Test
 	public void testGetResultsToTransfer_Inf() {
 		/* create Tuples for tumpling TimeWindows (Size=60s) (range=60s) */

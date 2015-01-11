@@ -73,6 +73,4 @@ public class TrajectoryConstructAO extends UnaryLogicalOp {
 		return new TrajectoryConstructAO(this);
 	}
 	
-	
-
 }

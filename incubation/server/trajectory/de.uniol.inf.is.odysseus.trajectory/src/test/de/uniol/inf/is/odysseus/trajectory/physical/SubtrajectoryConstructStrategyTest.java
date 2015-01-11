@@ -1,11 +1,11 @@
 package de.uniol.inf.is.odysseus.trajectory.physical;
 
-import static org.hamcrest.CoreMatchers.*;
-import static org.junit.Assert.*;
-import static org.junit.matchers.JUnitMatchers.*;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
+import static org.junit.matchers.JUnitMatchers.hasItems;
 
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
 
 import org.junit.After;
@@ -36,6 +36,7 @@ public class SubtrajectoryConstructStrategyTest {
 		this.instance = null;
 	}
 	
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Test
 	public void testGetResultsToTransfer_60_20() {
 		/* create Tuples for tumpling TimeWindows (Size=60s) (range=20s) */
@@ -166,6 +167,7 @@ public class SubtrajectoryConstructStrategyTest {
 		assertSame(r.size(), 4);
 	}
 	
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Test
 	public void testGetResultsToTransfer_60_60() {
 		/* create Tuples for tumpling TimeWindows (Size=60s) (range=60s) */
@@ -276,6 +278,7 @@ public class SubtrajectoryConstructStrategyTest {
 		assertSame(r.size(), 2);
 	}
 		
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Test
 	public void testGetResultsToTransfer_Inf() {
 		/* create Tuples for tumpling TimeWindows (Size=60s) (range=60s) */
