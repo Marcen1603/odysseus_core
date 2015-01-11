@@ -23,7 +23,7 @@ public class TTrajectoryContructAORule extends AbstractTransformationRule<Trajec
 	@Override
 	public void execute(TrajectoryConstructAO operator, TransformationConfiguration config) {
 		
-		ITrajectoryConstructStrategy strategy = operator.getSubtrajectories() ?
+		final ITrajectoryConstructStrategy strategy = operator.getSubtrajectories() ?
 				new SubtrajectoryConstructStrategy() : new FulltrajectoryConstructStrategy();
 		this.defaultExecute(operator, new TrajectoryConstructPO<Tuple<ITimeInterval>>(strategy), config, true, true);
 	}

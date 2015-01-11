@@ -19,10 +19,8 @@ import it.polito.appeal.traci.SumoTraciConnection;
 import it.polito.appeal.traci.Vehicle;
 import it.polito.appeal.traci.VehicleLifecycleObserver;
 
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.slf4j.Logger;

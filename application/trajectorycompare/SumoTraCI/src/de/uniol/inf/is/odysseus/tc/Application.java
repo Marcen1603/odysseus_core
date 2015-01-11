@@ -24,7 +24,7 @@ import com.google.inject.Guice;
  */
 public class Application {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws InterruptedException {
     	System.out.println(new File("Scenario/").getAbsolutePath());
         Guice.createInjector(new SumoZeroMQExposerModule(args)).getInstance(ApplicationLoop.class).run();
     }

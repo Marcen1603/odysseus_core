@@ -20,6 +20,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.uniol.inf.is.odysseus.tc.interaction.ISumoInteraction.VehicleNextResult;
 import de.uniol.inf.is.odysseus.tc.vehicle.VehicleInfo;
 
@@ -28,19 +31,30 @@ import de.uniol.inf.is.odysseus.tc.vehicle.VehicleInfo;
  */
 public class PeriodicVehicleChooser implements IVehicleChooser {
 
+	private final Logger LOGGER = LoggerFactory.getLogger(PeriodicVehicleChooser.class);
+	
     private final Map<String, Integer> map = new HashMap<>();
 
     @Override
     public List<VehicleInfo> choose(VehicleNextResult vehicleNextResult) {
     	final List<VehicleInfo> result = new LinkedList<>();
+    	
+    	// choose all finished routes
     	vehicleNextResult.getRemoved().stream().forEach(vi -> {
     		vi.setState(-1);
     		this.map.remove(vi.getId());
     		result.add(vi);
+    		LOGGER.info("finished: " + vi.getId());
     	});
+    	
     	vehicleNextResult.getNext().stream().forEach(vi -> {
     		this.map.put(vi.getId(), vi.setState(this.map.getOrDefault(vi.getId(), -1) + 1));
-    		result.add(vi);
+    		if(vi.getState() == 0) {
+    			LOGGER.info("begin: " + vi.getId());
+    		}
+    		if(vi.getState() % 5 == 0) {
+    			result.add(vi);
+    		}
     	});
     	return result;
     }

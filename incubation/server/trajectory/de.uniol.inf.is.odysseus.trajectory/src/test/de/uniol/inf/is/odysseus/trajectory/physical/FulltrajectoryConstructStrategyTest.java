@@ -1,8 +1,7 @@
 package de.uniol.inf.is.odysseus.trajectory.physical;
 
-import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.*;
-import static org.junit.matchers.JUnitMatchers.*;
+import static org.junit.matchers.JUnitMatchers.hasItems;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -20,15 +19,15 @@ import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.metadata.TimeInterval;
 
-public class SubtrajectoryConstructStrategyTest {
+public class FulltrajectoryConstructStrategyTest {
 
-	private SubtrajectoryConstructStrategy instance;
+	private FulltrajectoryConstructStrategy instance;
 	
 	private GeometryFactory gf = new GeometryFactory();
 	
 	@Before
 	public void setUp() {
-		this.instance = new SubtrajectoryConstructStrategy();
+		this.instance = new FulltrajectoryConstructStrategy();
 	}
 	
 	@After
@@ -106,22 +105,10 @@ public class SubtrajectoryConstructStrategyTest {
 		assertTrue(this.instance.getResultsToTransfer(t_1_8).isEmpty());
 		assertTrue(this.instance.getResultsToTransfer(t_1_9).isEmpty());
 		/* Start New Window */
-		r = (List)this.instance.getResultsToTransfer(t_1_10);
-		assertThat(r, 
-				hasItems(new List[] {
-							Arrays.asList(t_1_1, t_1_2, t_1_3, t_1_4, t_1_5, t_1_6, t_1_7, t_1_8, t_1_9)
-						}
-				));
-		assertSame(r.size(), 1);
+		assertTrue(this.instance.getResultsToTransfer(t_1_10).isEmpty());
 		assertTrue(this.instance.getResultsToTransfer(t_1_11).isEmpty());
 		assertTrue(this.instance.getResultsToTransfer(t_3_1).isEmpty());
-		r = (List)this.instance.getResultsToTransfer(t_1_12);
-		assertThat(r, 
-				hasItems(new List[] {
-							Arrays.asList(t_1_5, t_1_6, t_1_7, t_1_8, t_1_9, t_1_10, t_1_11, t_1_12)
-						}
-				));
-		assertSame(r.size(), 1);
+		assertTrue(this.instance.getResultsToTransfer(t_1_12).isEmpty());
 		assertTrue(this.instance.getResultsToTransfer(t_3_2).isEmpty());
 		assertTrue(this.instance.getResultsToTransfer(t_3_3).isEmpty());
 		assertTrue(this.instance.getResultsToTransfer(t_4_1).isEmpty());
@@ -129,14 +116,11 @@ public class SubtrajectoryConstructStrategyTest {
 		r = (List)this.instance.getResultsToTransfer(t_3_4);
 		assertThat(r,
 				hasItems(new List[] {
-							Arrays.asList(t_2_4),
-							Arrays.asList(t_3_1, t_3_2, t_3_3, t_3_4),
-							Arrays.asList(t_3_1, t_3_2, t_3_3),
-							Arrays.asList(t_4_1)
+							Arrays.asList(t_3_1, t_3_2, t_3_3, t_3_4)
 						}
 						
 				));
-		assertSame(r.size(), 4);
+		assertSame(r.size(), 1);
 		assertTrue(this.instance.getResultsToTransfer(t_4_2).isEmpty());
 		assertTrue(this.instance.getResultsToTransfer(t_3_5).isEmpty());
 		assertTrue(this.instance.getResultsToTransfer(t_3_6).isEmpty());
@@ -145,25 +129,12 @@ public class SubtrajectoryConstructStrategyTest {
 		assertThat(r, 
 				hasItems(new List[] {
 							Arrays.asList(t_3_5, t_3_6, t_3_7),
-							Arrays.asList(t_3_5, t_3_6),
-							Arrays.asList(t_1_7, t_1_8, t_1_9, t_1_10, t_1_11, t_1_12),
-							Arrays.asList(t_4_1, t_4_2)
 						}
 				));
-		assertSame(r.size(), 4);
+		assertSame(r.size(), 1);
 		assertTrue(this.instance.getResultsToTransfer(t_4_3).isEmpty());
 		/* Start New Window */
-		r = (List)this.instance.getResultsToTransfer(t_4_4);
-		assertThat(r, 
-				hasItems(new List[] {
-							Arrays.asList(t_1_10, t_1_11, t_1_12),
-							Arrays.asList(t_4_1, t_4_2, t_4_3),
-							Arrays.asList(t_4_2, t_4_3, t_4_4),
-							Arrays.asList(t_3_1, t_3_2, t_3_3, t_3_4)
-							//Arrays.asList(t_3_5, t_3_6, t_3_7)
-						}						
-				));
-		assertSame(r.size(), 4);
+		assertTrue(this.instance.getResultsToTransfer(t_4_4).isEmpty());
 	}
 	
 	@Test
@@ -229,22 +200,10 @@ public class SubtrajectoryConstructStrategyTest {
 		assertTrue(this.instance.getResultsToTransfer(t_1_7).isEmpty());
 		assertTrue(this.instance.getResultsToTransfer(t_1_8).isEmpty());
 		assertTrue(this.instance.getResultsToTransfer(t_1_9).isEmpty());
-		r = (List)this.instance.getResultsToTransfer(t_1_10);
-		assertThat(r, 
-				hasItems(new List[] {
-							Arrays.asList(t_1_1, t_1_2, t_1_3, t_1_4, t_1_5, t_1_6, t_1_7, t_1_8, t_1_9)
-						}
-				));
-		assertSame(r.size(), 1);
+		assertTrue(this.instance.getResultsToTransfer(t_1_10).isEmpty());
 		assertTrue(this.instance.getResultsToTransfer(t_1_11).isEmpty());
 		assertTrue(this.instance.getResultsToTransfer(t_3_1).isEmpty());
-		r = (List)this.instance.getResultsToTransfer(t_1_12);
-		assertThat(r, 
-				hasItems(new List[] {
-							Arrays.asList(t_1_10, t_1_11, t_1_12)
-						}
-				));
-		assertSame(r.size(), 1);
+		assertTrue(this.instance.getResultsToTransfer(t_1_12).isEmpty());
 		assertTrue(this.instance.getResultsToTransfer(t_3_2).isEmpty());
 		assertTrue(this.instance.getResultsToTransfer(t_3_3).isEmpty());
 		assertTrue(this.instance.getResultsToTransfer(t_4_1).isEmpty());
@@ -266,14 +225,7 @@ public class SubtrajectoryConstructStrategyTest {
 				));
 		assertSame(r.size(), 1);
 		assertTrue(this.instance.getResultsToTransfer(t_4_3).isEmpty());
-		r = (List)this.instance.getResultsToTransfer(t_4_4);
-		assertThat(r, 
-				hasItems(new List[] {
-							Arrays.asList(t_4_1, t_4_2, t_4_3),
-							Arrays.asList(t_4_4)
-					}
-				));
-		assertSame(r.size(), 2);
+		assertTrue(this.instance.getResultsToTransfer(t_4_4).isEmpty());
 	}
 		
 	@Test
@@ -384,4 +336,5 @@ public class SubtrajectoryConstructStrategyTest {
 		result.setMetadata(new TimeInterval(new PointInTime(start), new PointInTime(end)));
 		return result;
 	}
+
 }

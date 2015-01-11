@@ -1,7 +1,10 @@
 package de.uniol.inf.is.odysseus.trajectory.physical;
 
+import java.util.Deque;
 import java.util.LinkedList;
-import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.vividsolutions.jts.geom.Point;
 
@@ -15,6 +18,8 @@ public class TrajectoryConstructPO<T extends Tuple<ITimeInterval>> extends
 	final static int VEHICLE_ID_POS = 2;
 	final static int POINT_POS = 3;
 	final static int STATE_POS = 4;
+
+	private final static Logger LOGGER = LoggerFactory.getLogger(TrajectoryConstructPO.class);
 	
 	private ITrajectoryConstructStrategy strategy;
 
@@ -30,56 +35,25 @@ public class TrajectoryConstructPO<T extends Tuple<ITimeInterval>> extends
 	@SuppressWarnings("unchecked")
 	@Override
 	protected void process_next(T object, int port) {
-		for (RouteConstructResult result : this.strategy.getResultsToTransfer(object)) {
-			final Tuple<ITimeInterval> route = new Tuple<>(new Object[] {
-					result.vehicleId, result.points }, true);
-			route.setMetadata(object.getMetadata());
-			this.transfer((T) route);
+		
+		if((int)object.getAttribute(STATE_POS) == 0) {
+			System.out.println(object);
 		}
-	}
-}
-
-final class RouteConstructResult {
-
-	final String vehicleId;
-	final List<Point> points = new LinkedList<>();
-
-	RouteConstructResult(final String vehicleId) {
-		this.vehicleId = vehicleId;
-	}
-
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((points == null) ? 0 : points.hashCode());
-		result = prime * result
-				+ ((vehicleId == null) ? 0 : vehicleId.hashCode());
-		return result;
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		RouteConstructResult other = (RouteConstructResult) obj;
-		if(this.vehicleId != other.vehicleId) {
-			return false;
-		}
-		if(this.points.size() != other.points.size()) {
-			return false;
-		}
-
-		for(int i = 0; i < this.points.size(); i++) {
-			if(!this.points.get(i).getCoordinate().equals(other.points.get(i).getCoordinate())) {
-				return false;
+		
+		for(final Deque<Tuple<ITimeInterval>> trajectory : this.strategy.getResultsToTransfer(object)) {
+			final Deque<Point> points = new LinkedList<>();
+			for(final Tuple<ITimeInterval> t : trajectory) {
+				points.addLast(t.getAttribute(POINT_POS));
 			}
+			final Tuple<ITimeInterval> tupleResult = 
+					new Tuple<ITimeInterval>(new Object[] { trajectory.peekFirst().getAttribute(VEHICLE_ID_POS), points }, true);
+			this.transfer((T)tupleResult, port);
 		}
-
-		return true;
+	}
+	
+	@Override
+	protected void process_close() {
+		super.process_close();
+		this.strategy.process_close();
 	}
 }

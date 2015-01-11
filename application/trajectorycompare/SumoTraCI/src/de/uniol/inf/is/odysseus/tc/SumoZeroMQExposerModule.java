@@ -35,6 +35,7 @@ import de.uniol.inf.is.odysseus.tc.service.IXMLService;
 import de.uniol.inf.is.odysseus.tc.service.XPathXMLService;
 import de.uniol.inf.is.odysseus.tc.shuffle.IVehicleShuffler;
 import de.uniol.inf.is.odysseus.tc.shuffle.NoVehicleShuffler;
+import de.uniol.inf.is.odysseus.tc.shuffle.RandomVehicleSchuffler;
 
 /**
  * Created by marcus on 28.11.14.
@@ -51,7 +52,7 @@ public class SumoZeroMQExposerModule extends AbstractModule {
     protected void configure() {
 
         this.bind(ISumoInteraction.class).to(SumoInteraction.class).asEagerSingleton();
-        this.bind(IVehicleShuffler.class).to(NoVehicleShuffler.class);
+        this.bind(IVehicleShuffler.class).to(RandomVehicleSchuffler.class);
         this.bind(IGeoConverter.class).to(DefGeoConverter.class);
         this.bind(ISendDecision.class).to(MinimumSendDecision.class);
         this.bind(IErrorGenerator.class).to(NoErrorGenerator.class);

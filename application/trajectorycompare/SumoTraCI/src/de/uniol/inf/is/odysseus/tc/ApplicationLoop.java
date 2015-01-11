@@ -15,7 +15,11 @@
 
 package de.uniol.inf.is.odysseus.tc;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.google.inject.Inject;
+
 import de.uniol.inf.is.odysseus.tc.chooser.IVehicleChooser;
 import de.uniol.inf.is.odysseus.tc.error.IErrorGenerator;
 import de.uniol.inf.is.odysseus.tc.geoconvert.IGeoConverter;
@@ -29,6 +33,8 @@ import de.uniol.inf.is.odysseus.tc.shuffle.IVehicleShuffler;
  * Created by marcus on 29.11.14.
  */
 public class ApplicationLoop {
+	
+	private final static Logger LOGGER = LoggerFactory.getLogger(ApplicationLoop.class);
 
     private final ISumoInteraction sumoInteraction;
     private final IVehicleChooser vehicleChoser;
@@ -51,31 +57,34 @@ public class ApplicationLoop {
         this.sender = sender;
     }
 
-    public void run() {
+    public void run() throws InterruptedException {
+    	long start = 0;
+    	long end = 1000;
+    	int count = 0;
         while(true) {
-                sender.send(
-                        //
-                        messageCreator.create(
-                                //
-                                sendDecision.getValuesToSend(
-                                        // Decorate
-                                        errorService.accumulate(
-                                                //
-                                                geoConverter.convert(
-                                                        //Decorate
-                                                        vehicleShuffler.shuffle(
-                                                                //
-                                                                vehicleChoser.choose(
-                                                                        //
-                                                                        sumoInteraction.next()
-                                                                )
-                                                        )
-                                                )
-                                        )
-                                )
-                        )
-                );
-
+        	long timeToSleep = 1000 - (end - start);
+        	if(timeToSleep >= 0) {
+				Thread.sleep(timeToSleep);
+			}
+			start = System.currentTimeMillis();
+			sender.send(
+			
+			messageCreator.create(
+			//
+					sendDecision.getValuesToSend(
+					// Decorate
+							errorService.accumulate(
+							//
+									geoConverter.convert(
+									// Decorate
+											vehicleShuffler.shuffle(
+											//
+													vehicleChoser.choose(
+													//
+															sumoInteraction
+																	.next())))))));
+			end = System.currentTimeMillis();
+			LOGGER.info(count++ + "");
         }
     }
 }
