@@ -25,7 +25,8 @@ import java.io.PrintWriter;
 import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
-import java.util.StringTokenizer;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,7 +48,8 @@ public class LineProtocolHandler<T> extends AbstractProtocolHandler<T> {
 	static final Runtime RUNTIME = Runtime.getRuntime();
 
 	Logger LOG = LoggerFactory.getLogger(LineProtocolHandler.class);
-	InfoService INFOSERVICE = InfoServiceFactory.getInfoService(LineProtocolHandler.class);
+	InfoService INFOSERVICE = InfoServiceFactory
+			.getInfoService(LineProtocolHandler.class);
 
 	protected BufferedReader reader;
 	protected BufferedWriter writer;
@@ -74,7 +76,7 @@ public class LineProtocolHandler<T> extends AbstractProtocolHandler<T> {
 	private PrintWriter dumpOut;
 	private boolean dumpMemory;
 
-	private String lastRunRemaining = "";
+	private Map<Long,StringBuffer> currentInputStringMap = new HashMap<>();
 
 	// private Map<String, String> optionsMap;
 
@@ -148,9 +150,9 @@ public class LineProtocolHandler<T> extends AbstractProtocolHandler<T> {
 		if (options.get(NODONE) != null) {
 			noDone = Boolean.parseBoolean(options.get(NODONE));
 		}
-	
+
 		checkDelay = options.getLong(CHECKDELAY, 0);
-		
+
 		lastDumpTime = System.currentTimeMillis();
 
 	}
@@ -210,19 +212,16 @@ public class LineProtocolHandler<T> extends AbstractProtocolHandler<T> {
 	public boolean hasNext() throws IOException {
 		if (hasNext(reader)) {
 			return true;
-		}
-		else
-		{
-			if (checkDelay > 0)
-			{
+		} else {
+			if (checkDelay > 0) {
 				try {
 					Thread.sleep(checkDelay);
 				} catch (InterruptedException e) {
 					// interrupting the delay might be correct
 					// e.printStackTrace();
-				}				
+				}
 			}
-			
+
 			return false;
 		}
 	}
@@ -347,35 +346,29 @@ public class LineProtocolHandler<T> extends AbstractProtocolHandler<T> {
 	}
 
 	@Override
-	public synchronized void process(ByteBuffer message) {
+	public synchronized void process(long callerId, ByteBuffer message) {
+		
 		String strMsg = bb_to_str(message);
-		String data = lastRunRemaining + strMsg;
-		StringTokenizer t = new StringTokenizer(data, "\n\r");
-		boolean process = true;
-
-		while (process && t.hasMoreTokens()) {
-			// Read current token
-			String token = t.nextToken();
-			// The last token could be incomplete --> process next time if it not ends with \n or \r
-			if (t.hasMoreTokens()) {
-
-				if (!firstLineSkipped && !readFirstLine) {
-					firstLineSkipped = true;
-					continue;
-				} else {
-					process(token);
+		StringBuffer currentInputString = currentInputStringMap.get(callerId);
+		if (currentInputString == null){
+			currentInputString = new StringBuffer();
+			currentInputStringMap.put(callerId, currentInputString);
+		}
+		
+		String data = currentInputString + strMsg;
+		for (char s: data.toCharArray()){
+			if (s == '\n' || s == 'r'){
+				if (currentInputString.length() > 0){
+					if (!firstLineSkipped && !readFirstLine) {
+						firstLineSkipped = true;
+						continue;
+					} else {
+						process(currentInputString.toString());
+					}
 				}
-
-			} else {
-				// There are some cases, where the last token contains the
-				// whole line
-				if (data.endsWith("\n") || data.endsWith("\r")) {
-					process(token);
-					lastRunRemaining = "";
-				} else {
-					lastRunRemaining = token;
-				}
-				process = false;
+				currentInputStringMap.remove(callerId);
+			}else{
+				currentInputString.append(s);
 			}
 		}
 	}
@@ -385,7 +378,7 @@ public class LineProtocolHandler<T> extends AbstractProtocolHandler<T> {
 			T retValue = getDataHandler().readData(token);
 			getTransfer().transfer(retValue);
 		} catch (Exception e) {
-			INFOSERVICE.warning("Cannot read line "+token,e);
+			INFOSERVICE.warning("Cannot read line " + token, e);
 		}
 	}
 

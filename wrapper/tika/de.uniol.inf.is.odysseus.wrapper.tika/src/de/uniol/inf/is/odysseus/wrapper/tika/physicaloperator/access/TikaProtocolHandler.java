@@ -160,7 +160,8 @@ public class TikaProtocolHandler extends LineProtocolHandler<KeyValueObject<? ex
      * {@inheritDoc}
      */
     @Override
-    public void process(final ByteBuffer message) {
+    public void process(long callerId, final ByteBuffer message) {
+		// TODO: check if callerId is relevant
         KeyValueObject<? extends IMetaAttribute> object = null;
         final Map<String, Object> event = new HashMap<>();
         final Metadata metadata = new Metadata();

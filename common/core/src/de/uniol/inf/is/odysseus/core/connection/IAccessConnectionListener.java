@@ -16,7 +16,7 @@
 package de.uniol.inf.is.odysseus.core.connection;
 
 public interface IAccessConnectionListener<T> {
-    public void process(T buffer) throws ClassNotFoundException;
+    public void process(long callerId, T buffer) throws ClassNotFoundException;
 
     public void done();
 

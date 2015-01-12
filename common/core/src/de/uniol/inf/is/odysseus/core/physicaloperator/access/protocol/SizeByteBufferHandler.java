@@ -130,7 +130,8 @@ public class SizeByteBufferHandler<T> extends AbstractByteBufferHandler<T> {
 	}
 
 	@Override
-	public void process(ByteBuffer message) {
+	public void process(long callerId, ByteBuffer message) {
+		// TODO: handle callerId
 		try {
 			while (message.remaining() > 0) {
 

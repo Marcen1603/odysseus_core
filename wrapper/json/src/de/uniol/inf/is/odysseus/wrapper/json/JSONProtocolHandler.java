@@ -69,7 +69,8 @@ public class JSONProtocolHandler<T extends KeyValueObject<? extends IMetaAttribu
 	}
 
 	@Override
-	public void process(ByteBuffer message) {
+	public void process(long callerId, ByteBuffer message) {
+		// TODO: check if callerId is relevant
 		ArrayList<T> objects = new ArrayList<T>();
 		try {
 			// LOG.debug("process(ByteBuffer message): " + message);

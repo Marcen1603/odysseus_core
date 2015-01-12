@@ -4,6 +4,7 @@ import io.netty.bootstrap.ServerBootstrap;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.UnpooledUnsafeDirectByteBuf;
 import io.netty.channel.ChannelFuture;
+import io.netty.channel.ChannelHandler.Sharable;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.channel.ChannelInitializer;
@@ -13,6 +14,7 @@ import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.util.ReferenceCountUtil;
+import io.netty.handler.codec.*;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -74,8 +76,8 @@ public class NonBlockingTcpServerHandler_Netty extends AbstractTransportHandler
 	public NonBlockingTcpServerHandler_Netty(
 			IProtocolHandler<?> protocolHandler, OptionMap options) {
 		super(protocolHandler, options);
-		port = options.containsKey(PORT) ? Integer.parseInt(options
-				.get(PORT)) : 8080;
+		port = options.containsKey(PORT) ? Integer.parseInt(options.get(PORT))
+				: 8080;
 		maxBufferSize = options.containsKey(MAX_BUFFER_SIZE) ? Integer
 				.parseInt(options.get(MAX_BUFFER_SIZE)) : 0;
 	}
@@ -218,8 +220,8 @@ public class NonBlockingTcpServerHandler_Netty extends AbstractTransportHandler
 	}
 
 	@Override
-	public void process(ByteBuffer buffer) throws ClassNotFoundException {
-		super.fireProcess(buffer);
+	public void process(long callerId, ByteBuffer buffer) throws ClassNotFoundException {
+		super.fireProcess(callerId, buffer);
 	}
 
 	@Override
@@ -294,8 +296,7 @@ class MyTCPServer extends ChannelInboundHandlerAdapter {
 						@Override
 						protected void initChannel(SocketChannel ch)
 								throws Exception {
-							ServerHandler handler = new ServerHandler(
-									MyTCPServer.this);
+							final ServerHandler handler = new ServerHandler(MyTCPServer.this);
 							ch.pipeline().addLast(handler);
 						}
 					}).option(ChannelOption.SO_BACKLOG, 128)
@@ -361,19 +362,28 @@ class MyTCPServer extends ChannelInboundHandlerAdapter {
 	 * .ChannelHandlerContext, java.lang.Object)
 	 */
 	@Override
-	public void channelRead(ChannelHandlerContext ctx, Object msg)
+	public synchronized void channelRead(ChannelHandlerContext ctx, Object msg)
 			throws Exception {
 		try {
-			ByteBuffer buffer = ((UnpooledUnsafeDirectByteBuf) msg).nioBuffer();
+			ByteBuf input = ((UnpooledUnsafeDirectByteBuf) msg);
+//			System.err.println("Context "+ctx);
+//			System.err.println("ChannelRead "+msg);
+//			System.err.println("Content "+input.toString(io.netty.util.CharsetUtil.UTF_8));
+			ByteBuf copy = input.copy();
+
+			
+			ByteBuffer buffer = copy.nioBuffer();
 			buffer.position(buffer.limit());
-			getHandler(ctx).process(buffer);
-		}catch(Exception e){
+
+			getHandler(ctx).process(ctx.hashCode(),buffer);
+			
+		} catch (Exception e) {
 			e.printStackTrace();
-		}
-		finally {
+		} finally {
 			ReferenceCountUtil.release(msg);
 		}
 	}
+
 
 }
 
@@ -383,6 +393,7 @@ class MyTCPServer extends ChannelInboundHandlerAdapter {
  * @author Marco Grawunder
  * 
  */
+
 class ServerHandler extends ChannelInboundHandlerAdapter {
 
 	private MyTCPServer instance;
@@ -392,13 +403,17 @@ class ServerHandler extends ChannelInboundHandlerAdapter {
 	 */
 	public ServerHandler(MyTCPServer instance) {
 		this.instance = instance;
-		// System.err.println("New Server Handler created for " + instance);
 	}
 
 	@Override
 	public void channelRead(ChannelHandlerContext ctx, Object msg)
 			throws Exception {
 		instance.channelRead(ctx, msg);
+	}
+	
+	@Override
+	public void channelReadComplete(ChannelHandlerContext ctx) throws Exception {
+		instance.channelReadComplete(ctx);
 	}
 
 	@Override
@@ -409,6 +424,15 @@ class ServerHandler extends ChannelInboundHandlerAdapter {
 	@Override
 	public void channelInactive(ChannelHandlerContext ctx) throws Exception {
 		instance.channelInactive(ctx);
+	}
+	
+	@Override
+	public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause)
+			throws Exception {
+		//System.err.println("ERROR");
+		cause.printStackTrace();
+		
+		super.exceptionCaught(ctx, cause);
 	}
 
 }

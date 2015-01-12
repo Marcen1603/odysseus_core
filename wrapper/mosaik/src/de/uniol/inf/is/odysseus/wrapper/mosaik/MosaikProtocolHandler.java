@@ -71,7 +71,8 @@ public class MosaikProtocolHandler<T extends KeyValueObject<IMetaAttribute>> ext
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public void process(ByteBuffer message) {
+	public void process(long callerId, ByteBuffer message) {
+		// TODO: check if callerId is relevant
 		try {     
 			int size;
 			if(!dividedMsg) {

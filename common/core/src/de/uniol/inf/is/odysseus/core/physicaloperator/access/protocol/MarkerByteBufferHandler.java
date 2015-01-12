@@ -105,7 +105,8 @@ public class MarkerByteBufferHandler<T> extends AbstractByteBufferHandler<T> {
 	}
 
 	@Override
-	public void process(ByteBuffer message) {
+	public void process(long callerId, ByteBuffer message) {
+		// TODO: handle callerId 
 		int startPosition = 0;
 		while (message.remaining() > 0) {
 			byte value = message.get();

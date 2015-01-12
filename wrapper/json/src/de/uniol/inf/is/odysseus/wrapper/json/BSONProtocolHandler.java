@@ -47,7 +47,8 @@ public class BSONProtocolHandler<T extends KeyValueObject<?>> extends AbstractJS
 	}
 	
 	@Override
-	public void process(ByteBuffer buffer) {
+	public void process(long callerId, ByteBuffer buffer) {
+		// TODO: check if callerId is relevant
 		ArrayList<T> objects = new ArrayList<T>();
 		try {
 			byte[] message = null;

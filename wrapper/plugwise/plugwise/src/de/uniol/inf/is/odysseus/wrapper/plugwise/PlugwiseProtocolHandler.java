@@ -139,7 +139,8 @@ public class PlugwiseProtocolHandler<T> extends AbstractProtocolHandler<T> {
 	}
 
 	@Override
-	public void process(ByteBuffer message) {
+	public void process(long callerId, ByteBuffer message) {
+		// TODO: check if callerId is relevant
 		int size = message.limit();
 		byte[] out = new byte[size];
 		message.get(out, 0,	size);

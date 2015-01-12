@@ -749,7 +749,7 @@ public class ClientReceiver<R, W> implements ISource<W>,
 	}
 
 	@Override
-	public void process(R buffer) throws ClassNotFoundException {
+	public void process(long callerId, R buffer) throws ClassNotFoundException {
 		// TODO Auto-generated method stub
 	}
 	

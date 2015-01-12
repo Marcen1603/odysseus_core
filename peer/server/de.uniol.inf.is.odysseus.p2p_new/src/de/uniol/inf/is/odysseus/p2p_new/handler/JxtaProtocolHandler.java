@@ -109,7 +109,8 @@ public class JxtaProtocolHandler<T extends IStreamObject<?>> extends AbstractByt
 	}
 
 	@Override
-	public void process(ByteBuffer message) {
+	public void process(long callerId, ByteBuffer message) {
+		// TODO: check if callerId is relevant
 		try {
 			while (message.remaining() > 0) {
 				if (currentTypeByte == NONE_BYTE) {

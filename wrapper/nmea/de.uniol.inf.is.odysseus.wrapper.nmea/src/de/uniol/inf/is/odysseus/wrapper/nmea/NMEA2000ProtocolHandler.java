@@ -278,7 +278,8 @@ public class NMEA2000ProtocolHandler extends AbstractProtocolHandler<KeyValueObj
 	}
 
 	@Override
-	public void process(ByteBuffer message) 
+	public void process(long callerId, ByteBuffer message)
+			// TODO: check if callerId is relevant
 	{
 		InputStream stream = null;
 		if (message.hasArray())

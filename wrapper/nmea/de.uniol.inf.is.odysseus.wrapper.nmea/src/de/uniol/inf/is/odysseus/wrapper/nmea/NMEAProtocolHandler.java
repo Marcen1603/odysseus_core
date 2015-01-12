@@ -133,7 +133,8 @@ public class NMEAProtocolHandler extends
 	}
 
 	@Override
-	public void process(ByteBuffer message) {
+	public void process(long callerId, ByteBuffer message) {
+		// TODO: check if callerId is relevant
 		byte[] m = new byte[message.limit()];
 		message.get(m);
 		String msgStr = (new String(m));// .trim();

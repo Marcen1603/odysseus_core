@@ -112,8 +112,8 @@ public class NonBlockingUdpServerHandler extends AbstractTransportHandler
 	}
 
 	@Override
-	public void process(final ByteBuffer buffer) throws ClassNotFoundException {
-		super.fireProcess(buffer);
+	public void process(long callerId, final ByteBuffer buffer) throws ClassNotFoundException {
+		super.fireProcess(callerId, buffer);
 	}
 
 	@Override

@@ -99,10 +99,14 @@ abstract public class AbstractTransportHandler implements ITransportHandler{
 		return delegate.getOptionsMap();
 	}
 		
-	final public void fireProcess(ByteBuffer message) {
-		delegate.fireProcess(message);
+	final public void fireProcess(long callerId, ByteBuffer message) {
+		delegate.fireProcess(callerId, message);
 	}
 
+	final public void fireProcess(ByteBuffer message) {
+		delegate.fireProcess(0, message);
+	}
+	
 	final public void fireProcess(InputStream message){
 		delegate.fireProcess(message);
 	}

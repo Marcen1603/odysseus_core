@@ -156,7 +156,7 @@ public class NioUdpConnection implements IConnection, ReadWriteSelectorHandler {
 	}
 
 	private void processInBuffer() throws IOException, ClassNotFoundException {
-		this.listener.process(this.readBuffer);
+		this.listener.process(0,this.readBuffer);
 		readBuffer.clear();
 		this.reactivateReading();
 	}

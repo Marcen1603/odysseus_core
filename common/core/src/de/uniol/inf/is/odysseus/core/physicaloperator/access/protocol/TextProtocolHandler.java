@@ -176,7 +176,8 @@ public class TextProtocolHandler<T> extends AbstractProtocolHandler<T> {
 	}
 
 	@Override
-	public void process(ByteBuffer message) {
+	public void process(long callerId, ByteBuffer message) {
+		// TODO: check if callerId is relevant
 		Scanner scanner = new Scanner(
 				new ByteArrayInputStream(message.array()), charset);
 		scanner.useDelimiter(objectDelimiter);

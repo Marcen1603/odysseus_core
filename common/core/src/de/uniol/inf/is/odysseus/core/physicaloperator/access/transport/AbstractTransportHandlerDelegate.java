@@ -49,7 +49,7 @@ public class AbstractTransportHandlerDelegate<T> {
 		this.transportHandlerListener.remove(listener);
 	}
 
-	public void fireProcess(ByteBuffer message) {
+	public void fireProcess(long callerId, ByteBuffer message) {
 		try {
 			for (ITransportHandlerListener<T> l : transportHandlerListener) {
 				// TODO: flip() erases the contents of the message if
@@ -57,7 +57,7 @@ public class AbstractTransportHandlerDelegate<T> {
 				// In other words: This method expects that the byte buffer
 				// is not fully prepared
 				message.flip();
-				l.process(message);
+				l.process(callerId, message);
 			}
 		} catch (Exception e) {
 			INFO.warning("Error processing message",e);

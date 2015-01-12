@@ -239,7 +239,8 @@ public class HTMLProtocolHandler<T extends Tuple<?>> extends AbstractProtocolHan
     }
 
     @Override
-    public void process(ByteBuffer message) {
+    public void process(long callerId, ByteBuffer message) {
+		// TODO: check if callerId is relevant
         Reader in = new InputStreamReader(new ByteArrayInputStream(message.array()));
         final HTMLDocument document = new HTMLDocumentImpl();
         final DocumentFragment fragment = document.createDocumentFragment();

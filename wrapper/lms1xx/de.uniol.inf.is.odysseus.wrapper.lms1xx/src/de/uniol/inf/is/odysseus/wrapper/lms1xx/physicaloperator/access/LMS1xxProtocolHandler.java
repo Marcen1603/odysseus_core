@@ -270,7 +270,8 @@ public class LMS1xxProtocolHandler extends
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void process(final ByteBuffer message) {
+	public void process(long callerId, final ByteBuffer message) {
+		// TODO: check if callerId is relevant
 		int startPosition = 0;
 		while (message.remaining() > 0) {
 			final byte value = message.get();

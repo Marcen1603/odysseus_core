@@ -251,12 +251,12 @@ public class NioConnection extends Thread implements IConnection {
                     // this first flip is done by the handler
                     // (AbstractTransportHandler)
                     // buffer.flip();
-                    os.process(buffer);
+                    os.process(socketChannel.hashCode(),buffer);
                     buffer.clear();
                 }
                 buffer.flip(); // Wie geht das denn?
                 while (buffer.hasRemaining()) {
-                    os.process(buffer);
+                    os.process(socketChannel.hashCode(), buffer);
                 }
             }
             if (count < 0) {

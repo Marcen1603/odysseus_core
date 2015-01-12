@@ -64,7 +64,8 @@ public class SimpleByteBufferHandler<T> extends AbstractByteBufferHandler<T> {
 	}
 
 	@Override
-	public void process(ByteBuffer message) {
+	public void process(long callerId, ByteBuffer message) {
+		// TODO: check if callerId is relevant
 		objectHandler.clear();
 		try {
 			objectHandler.put(message);

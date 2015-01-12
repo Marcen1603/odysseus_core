@@ -114,7 +114,7 @@ abstract public class AbstractProtocolHandler<T> implements IProtocolHandler<T> 
 	}
 	
 	@Override
-	public void process(ByteBuffer message) {
+	public void process(long callerId, ByteBuffer message) {
 		getTransfer().transfer(getDataHandler().readData(message));
 	}
 

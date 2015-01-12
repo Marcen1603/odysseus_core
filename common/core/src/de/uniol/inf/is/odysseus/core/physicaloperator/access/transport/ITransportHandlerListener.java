@@ -39,7 +39,7 @@ public interface ITransportHandlerListener<T> {
 	 * Implement this method to process the message
 	 * @param message as ByteBuffer
 	 */
-	void process(ByteBuffer message);
+	void process(long callerId, ByteBuffer message);
 	
 	/**
 	 * Implement this method to process the message as InputStream
