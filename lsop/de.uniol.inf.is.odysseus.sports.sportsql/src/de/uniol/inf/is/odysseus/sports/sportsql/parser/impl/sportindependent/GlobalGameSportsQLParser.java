@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.sports.sportsql.parser.impl.soccer;
+package de.uniol.inf.is.odysseus.sports.sportsql.parser.impl.sportindependent;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,7 +29,7 @@ import de.uniol.inf.is.odysseus.sports.sportsql.parser.parameter.SportsQLTimePar
  * @since 24.07.2014
  *
  */
-@SportsQL(gameTypes = GameType.SOCCER, statisticTypes = { StatisticType.GLOBAL }, name = "game", parameters = {
+@SportsQL(gameTypes = GameType.ALL, statisticTypes = { StatisticType.GLOBAL }, name = "game", parameters = {
 		@SportsQLParameter(name = "time", parameterClass = SportsQLTimeParameter.class, mandatory = false),
 		@SportsQLParameter(name = "space", parameterClass = SportsQLSpaceParameter.class, mandatory = false) })
 public class GlobalGameSportsQLParser implements ISportsQLParser {

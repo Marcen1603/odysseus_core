@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.sports.sportsql.parser.impl.soccer;
+package de.uniol.inf.is.odysseus.sports.sportsql.parser.impl.sportindependent;
 
 import java.util.ArrayList;
 import java.util.List;
