@@ -1366,6 +1366,30 @@ public class OperatorBuildHelper {
 
 		return timeWindowAO;
 	}
+	
+	public static TimeWindowAO createTimeWindowAOWithAdvance(long size, long advance,
+			String timeUnit, ILogicalOperator source) {
+		// TODO timeUnit with static finals
+		TimeWindowAO timeWindowAO = new TimeWindowAO();
+		TimeParameter timeParamenter = new TimeParameter();
+		List<String> parameterInputValue = new ArrayList<String>();
+		parameterInputValue.add(String.valueOf(size));
+		parameterInputValue.add(timeUnit);
+		timeParamenter.setInputValue(parameterInputValue);
+		timeWindowAO.setWindowSize(timeParamenter.getValue());
+
+		TimeParameter timeParamenter2 = new TimeParameter();
+		List<String> parameterInputValue2 = new ArrayList<String>();
+		parameterInputValue2.add(String.valueOf(advance));
+		parameterInputValue2.add(timeUnit);
+		timeParamenter2.setInputValue(parameterInputValue2);
+		timeWindowAO.setWindowAdvance(timeParamenter2.getValue());
+
+		timeWindowAO.subscribeTo(source, source.getOutputSchema());
+
+		return timeWindowAO;
+	}
+	
 
 	/**
 	 * Creates a PredicateWindowAO

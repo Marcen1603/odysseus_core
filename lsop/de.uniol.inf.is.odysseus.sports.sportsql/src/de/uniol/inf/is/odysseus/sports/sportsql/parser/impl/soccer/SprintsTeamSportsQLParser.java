@@ -60,7 +60,7 @@ public class SprintsTeamSportsQLParser implements ISportsQLParser {
 		resultAggregateFunctions.add("COUNT");
 
 		List<String> resultAggregateInputAttributeNames = new ArrayList<String>();
-		resultAggregateInputAttributeNames.add(SprintsSportsQLParser.ATTRIBUTE_SPRINT_TIME);
+		resultAggregateInputAttributeNames.add(SprintsSportsQLParser.ATTRIBUTE_SPRINT_DISTANCE);
 
 		List<String> resultAggregateOutputAttributeNames = new ArrayList<String>();
 		resultAggregateOutputAttributeNames.add(ATTRIBUTE_SPRINTS_COUNT);

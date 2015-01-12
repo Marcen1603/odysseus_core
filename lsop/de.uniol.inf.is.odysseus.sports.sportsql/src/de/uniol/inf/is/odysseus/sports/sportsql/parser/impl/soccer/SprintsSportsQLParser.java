@@ -10,7 +10,6 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.CoalesceAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.MapAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.ProjectAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.SelectAO;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.StateMapAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.StreamAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TimeWindowAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.SDFExpressionParameter;
@@ -32,30 +31,24 @@ import de.uniol.inf.is.odysseus.sports.sportsql.parser.buildhelper.SportsQLParam
  * 
  */
 public class SprintsSportsQLParser  {
-
+	
+	// in milliseconds
+	private static long MEASSURE_INTERVALL = 1000;
+	private static long MEASSURE_INTERVALL_ADVANCE = 200;
+	private static int SPRINT_MIN_DISTANCE = 8;
+	private static int SPRINT_SPEED = 24;
+	
 	private static String ATTRIBUTE_AVG_V = "avg_v";
-
-	private static String ATTRIBUTE_STANDING_TIME = "standing_time";
-	private static String ATTRIBUTE_STANDING_DISTANCE = "standing_distance";
-	private static String ATTRIBUTE_TROT_TIME = "trot_time";
-	private static String ATTRIBUTE_TROT_DISTANCE = "trot_distance";
-	private static String ATTRIBUTE_LOW_TIME = "low_time";
-	private static String ATTRIBUTE_LOW_DISTANCE = "low_distance";
-	private static String ATTRIBUTE_MEDIUM_TIME = "medium_time";
-	private static String ATTRIBUTE_MEDIUM_DISTANCE = "medium_distance";
-	private static String ATTRIBUTE_HIGH_TIME = "hight_time";
-	private static String ATTRIBUTE_HIGH_DISTANCE = "high_distance";
+	private static String ATTRIBUTE_MIN_TS = "min_ts";
+	private static String ATTRIBUTE_MAX_TS = "max_ts";
+	private static String ATTRIBUTE_AVG_SPEED = "avg_speed";
 
 	public static String ATTRIBUTE_SPEED = "speed";
 	public static String ATTRIBUTE_SPRINT_DISTANCE = "sprint_distance";
-	public static String ATTRIBUTE_SPRINT_TIME = "sprint_time";
+	public static String ATTRIBUTE_AVG_DISTANCE = "avg_distance";
+	public static String ATTRIBUTE_SPRINTS_COUNT = "count";
+	public static String ATTRIBUTE_MAX_SPEED = "max_speed";
 
-
-	private static final String STANDING_SPEED_UPPERBORDER = "1";
-	private static final String TROT_SPEED_UPPERBORDER = "11";
-	private static final String LOW_SPEED_UPPERBORDER = "14";
-	private static final String MEDIUM_SPEED_UPPERBORDER = "17";
-	private static final String HIGH_SPEED_UPPERBORDER = "24";
 
 	public ILogicalOperator getSprints(ISession session,
 			SportsQLQuery sportsQL, List<ILogicalOperator> allOperators)
@@ -84,25 +77,31 @@ public class SprintsSportsQLParser  {
 		streamProjectAttributes.add(IntermediateSchemaAttributes.ENTITY_ID);
 		streamProjectAttributes.add(IntermediateSchemaAttributes.TEAM_ID);
 		streamProjectAttributes.add(IntermediateSchemaAttributes.V);
+		streamProjectAttributes.add(IntermediateSchemaAttributes.TS);
 
 		ProjectAO streamProject = OperatorBuildHelper.createProjectAO(
 				streamProjectAttributes, spaceSelect);
 		allOperators.add(streamProject);
 
 		// 3. TimeWindow 1 second
-		TimeWindowAO timeWindow = OperatorBuildHelper.createTimeWindowAO(1, 1,
-				"SECONDS", streamProject);
+		TimeWindowAO timeWindow = OperatorBuildHelper.createTimeWindowAOWithAdvance(MEASSURE_INTERVALL, MEASSURE_INTERVALL_ADVANCE,"MILLISECONDS", streamProject);
 		allOperators.add(timeWindow);
 
 		// 4. Aggregate to calculate average velocity of 1 second
 		List<String> aggregateFunctions = new ArrayList<String>();
 		aggregateFunctions.add("AVG");
+		aggregateFunctions.add("MIN");
+		aggregateFunctions.add("MAX");
 
 		List<String> aggregateInputAttributeNames = new ArrayList<String>();
 		aggregateInputAttributeNames.add(IntermediateSchemaAttributes.V);
+		aggregateInputAttributeNames.add(IntermediateSchemaAttributes.TS);
+		aggregateInputAttributeNames.add(IntermediateSchemaAttributes.TS);
 
 		List<String> aggregateOutputAttributeNames = new ArrayList<String>();
 		aggregateOutputAttributeNames.add(ATTRIBUTE_AVG_V);
+		aggregateOutputAttributeNames.add(ATTRIBUTE_MIN_TS);
+		aggregateOutputAttributeNames.add(ATTRIBUTE_MAX_TS);
 
 		List<String> aggregateGroupBys = new ArrayList<String>();
 		aggregateGroupBys.add(IntermediateSchemaAttributes.ENTITY_ID);
@@ -121,114 +120,69 @@ public class SprintsSportsQLParser  {
 		toKmhMapExpressions.add(OperatorBuildHelper.createExpressionParameter(
 				IntermediateSchemaAttributes.TEAM_ID, aggregate));
 		toKmhMapExpressions.add(OperatorBuildHelper.createExpressionParameter(
-				ATTRIBUTE_AVG_V + " / 1000000000 * 360", ATTRIBUTE_SPEED,
+				ATTRIBUTE_MIN_TS, aggregate));
+		toKmhMapExpressions.add(OperatorBuildHelper.createExpressionParameter(
+				ATTRIBUTE_MAX_TS, aggregate));
+		toKmhMapExpressions.add(OperatorBuildHelper.createExpressionParameter(
+				ATTRIBUTE_AVG_V + " * 360  / 1000000000", ATTRIBUTE_SPEED,
 				aggregate));
 
 		MapAO toKmhMap = OperatorBuildHelper.createMapAO(toKmhMapExpressions,
 				aggregate, 0, 0, false);
 		allOperators.add(toKmhMap);
+		
 
-		// 6. Set speed category (standing, trot, low, medium, high, sprint) and
-		// calculate sprint distance
-		List<SDFExpressionParameter> statemapExpressions = new ArrayList<SDFExpressionParameter>();
-		statemapExpressions.add(OperatorBuildHelper.createExpressionParameter(
-				IntermediateSchemaAttributes.ENTITY_ID, toKmhMap));
-		statemapExpressions.add(OperatorBuildHelper.createExpressionParameter(
-				IntermediateSchemaAttributes.TEAM_ID, toKmhMap));
-		statemapExpressions.add(OperatorBuildHelper.createExpressionParameter(
-				ATTRIBUTE_SPEED, toKmhMap));
-		statemapExpressions.add(OperatorBuildHelper.createExpressionParameter(
-				"eif(" + ATTRIBUTE_SPEED + " <= " + STANDING_SPEED_UPPERBORDER
-						+ ", 1, 0)", ATTRIBUTE_STANDING_TIME, toKmhMap));
-		statemapExpressions.add(OperatorBuildHelper.createExpressionParameter(
-				"eif(" + ATTRIBUTE_SPEED + " <= " + STANDING_SPEED_UPPERBORDER
-						+ ", " + ATTRIBUTE_SPEED + " /3.6, 0)",
-				ATTRIBUTE_STANDING_DISTANCE, toKmhMap));
-		statemapExpressions.add(OperatorBuildHelper.createExpressionParameter(
-				"eif(" + ATTRIBUTE_SPEED + " > " + STANDING_SPEED_UPPERBORDER
-						+ " AND " + ATTRIBUTE_SPEED + " <= "
-						+ TROT_SPEED_UPPERBORDER + ", 1, 0)",
-				ATTRIBUTE_TROT_TIME, toKmhMap));
-		statemapExpressions.add(OperatorBuildHelper.createExpressionParameter(
-				"eif(" + ATTRIBUTE_SPEED + " > " + STANDING_SPEED_UPPERBORDER
-						+ " AND " + ATTRIBUTE_SPEED + " <= "
-						+ TROT_SPEED_UPPERBORDER + ", " + ATTRIBUTE_SPEED
-						+ " /3.6, 0)", ATTRIBUTE_TROT_DISTANCE, toKmhMap));
-		statemapExpressions.add(OperatorBuildHelper.createExpressionParameter(
-				"eif(" + ATTRIBUTE_SPEED + " > " + TROT_SPEED_UPPERBORDER
-						+ " AND " + ATTRIBUTE_SPEED + " <= "
-						+ LOW_SPEED_UPPERBORDER + ", 1, 0)",
-				ATTRIBUTE_LOW_TIME, toKmhMap));
-		statemapExpressions.add(OperatorBuildHelper.createExpressionParameter(
-				"eif(" + ATTRIBUTE_SPEED + " > " + TROT_SPEED_UPPERBORDER
-						+ " AND " + ATTRIBUTE_SPEED + " <= "
-						+ LOW_SPEED_UPPERBORDER + ", " + ATTRIBUTE_SPEED
-						+ " /3.6, 0)", ATTRIBUTE_LOW_DISTANCE, toKmhMap));
-		statemapExpressions.add(OperatorBuildHelper.createExpressionParameter(
-				"eif(" + ATTRIBUTE_SPEED + " > " + LOW_SPEED_UPPERBORDER
-						+ " AND " + ATTRIBUTE_SPEED + " <= "
-						+ MEDIUM_SPEED_UPPERBORDER + ", 1, 0)",
-				ATTRIBUTE_MEDIUM_TIME, toKmhMap));
-		statemapExpressions.add(OperatorBuildHelper.createExpressionParameter(
-				"eif(" + ATTRIBUTE_SPEED + " > " + LOW_SPEED_UPPERBORDER
-						+ " AND " + ATTRIBUTE_SPEED + " <= "
-						+ MEDIUM_SPEED_UPPERBORDER + ", " + ATTRIBUTE_SPEED
-						+ " /3.6, 0)", ATTRIBUTE_MEDIUM_DISTANCE, toKmhMap));
-		statemapExpressions.add(OperatorBuildHelper.createExpressionParameter(
-				"eif(" + ATTRIBUTE_SPEED + " > " + MEDIUM_SPEED_UPPERBORDER
-						+ " AND " + ATTRIBUTE_SPEED + " <= "
-						+ HIGH_SPEED_UPPERBORDER + ", 1, 0)",
-				ATTRIBUTE_HIGH_TIME, toKmhMap));
-		statemapExpressions.add(OperatorBuildHelper.createExpressionParameter(
-				"eif(" + ATTRIBUTE_SPEED + " > " + MEDIUM_SPEED_UPPERBORDER
-						+ " AND " + ATTRIBUTE_SPEED + " <= "
-						+ HIGH_SPEED_UPPERBORDER + ", " + ATTRIBUTE_SPEED
-						+ " /3.6, 0)", ATTRIBUTE_HIGH_DISTANCE, toKmhMap));
-		statemapExpressions.add(OperatorBuildHelper.createExpressionParameter(
-				"eif(" + ATTRIBUTE_SPEED + " > " + HIGH_SPEED_UPPERBORDER
-						+ ", 1, 0)", ATTRIBUTE_SPRINT_TIME, toKmhMap));
-		statemapExpressions.add(OperatorBuildHelper.createExpressionParameter(
-				"eif(" + ATTRIBUTE_SPEED + " > " + HIGH_SPEED_UPPERBORDER
-						+ ", " + ATTRIBUTE_SPEED + " /3.6, 0)",
-				ATTRIBUTE_SPRINT_DISTANCE, toKmhMap));
-
-		StateMapAO divideSpeedStateMapAO = OperatorBuildHelper
-				.createStateMapAO(statemapExpressions, "", toKmhMap);
-		allOperators.add(divideSpeedStateMapAO);
-
-		// 7.
+		// 6.
 		List<String> coalesceAOAttributes = new ArrayList<String>();
 		coalesceAOAttributes.add(IntermediateSchemaAttributes.ENTITY_ID);
 		coalesceAOAttributes.add(IntermediateSchemaAttributes.TEAM_ID);
 
 		List<String> coalesceAOFunctions = new ArrayList<String>();
-		coalesceAOFunctions.add("SUM");
-		coalesceAOFunctions.add("SUM");
+		coalesceAOFunctions.add("AVG");
+		coalesceAOFunctions.add("MIN");
+		coalesceAOFunctions.add("MAX");
 		coalesceAOFunctions.add("MAX");
 
 		List<String> coalesceAOInputAttributes = new ArrayList<String>();
-		coalesceAOInputAttributes.add(ATTRIBUTE_SPRINT_TIME);
-		coalesceAOInputAttributes.add(ATTRIBUTE_SPRINT_DISTANCE);
+		coalesceAOInputAttributes.add(ATTRIBUTE_SPEED);
+		coalesceAOInputAttributes.add(ATTRIBUTE_MIN_TS);
+		coalesceAOInputAttributes.add(ATTRIBUTE_MAX_TS);
 		coalesceAOInputAttributes.add(ATTRIBUTE_SPEED);
 
 		List<String> coalesceAOOutputAttributes = new ArrayList<String>();
-		coalesceAOOutputAttributes.add(ATTRIBUTE_SPRINT_TIME);
-		coalesceAOOutputAttributes.add(ATTRIBUTE_SPRINT_DISTANCE);
-		coalesceAOOutputAttributes.add(ATTRIBUTE_SPEED);
+		coalesceAOOutputAttributes.add(ATTRIBUTE_AVG_SPEED);
+		coalesceAOOutputAttributes.add(ATTRIBUTE_MIN_TS);
+		coalesceAOOutputAttributes.add(ATTRIBUTE_MAX_TS);
+		coalesceAOOutputAttributes.add(ATTRIBUTE_MAX_SPEED);
 
 		IPredicate<?> startPredicate = OperatorBuildHelper
-				.createRelationalPredicate(ATTRIBUTE_SPRINT_TIME + "> 0");
+				.createRelationalPredicate(ATTRIBUTE_SPEED + "> "+SPRINT_SPEED);
 		IPredicate<?> endPredicate = OperatorBuildHelper
-				.createRelationalPredicate(ATTRIBUTE_SPRINT_TIME + "= 0");
+				.createRelationalPredicate(ATTRIBUTE_SPEED + "< "+(SPRINT_SPEED-5));
 
 		CoalesceAO coalesceAO = OperatorBuildHelper.createCoalesceAO(
 				coalesceAOAttributes, coalesceAOFunctions,
 				coalesceAOInputAttributes, coalesceAOOutputAttributes,
-				startPredicate, endPredicate, divideSpeedStateMapAO);
+				startPredicate, endPredicate, toKmhMap);
 		allOperators.add(coalesceAO);
+		
+		// 7		
+		ArrayList<SDFExpressionParameter> resultMapExpressions = new ArrayList<SDFExpressionParameter>();
+		resultMapExpressions.add(OperatorBuildHelper.createExpressionParameter(IntermediateSchemaAttributes.ENTITY_ID, coalesceAO));
+		resultMapExpressions.add(OperatorBuildHelper.createExpressionParameter(IntermediateSchemaAttributes.TEAM_ID, coalesceAO));
+		resultMapExpressions.add(OperatorBuildHelper.createExpressionParameter(ATTRIBUTE_AVG_SPEED, coalesceAO));
+		resultMapExpressions.add(OperatorBuildHelper.createExpressionParameter(ATTRIBUTE_MAX_SPEED, coalesceAO));
+		resultMapExpressions.add(OperatorBuildHelper.createExpressionParameter("(("+ATTRIBUTE_AVG_SPEED+"*1000) / 60 / 60 / 1000 / 1000) * ("+ATTRIBUTE_MAX_TS+"-"+ATTRIBUTE_MIN_TS+")", ATTRIBUTE_SPRINT_DISTANCE,coalesceAO));
 
+		MapAO resultMap = OperatorBuildHelper.createMapAO(resultMapExpressions,	coalesceAO, 0, 0, false);
+		allOperators.add(resultMap);
+		
+		// 8
+		String selectPredicate = ATTRIBUTE_SPRINT_DISTANCE+">"+SPRINT_MIN_DISTANCE;
+		SelectAO selectAO = OperatorBuildHelper.createSelectAO(selectPredicate, resultMap);
+		allOperators.add(resultMap);
 
-		return coalesceAO;
+		return selectAO;
 	}
 
 }

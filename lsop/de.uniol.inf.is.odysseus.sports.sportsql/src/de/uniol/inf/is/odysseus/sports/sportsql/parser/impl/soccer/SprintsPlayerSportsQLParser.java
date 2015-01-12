@@ -36,9 +36,6 @@ import de.uniol.inf.is.odysseus.sports.sportsql.parser.buildhelper.OperatorBuild
 		@SportsQLParameter(name = "space", parameterClass = SportsQLSpaceParameter.class, mandatory = false) })
 public class SprintsPlayerSportsQLParser implements ISportsQLParser {
 	
-	private static String ATTRIBUTE_SPRINTS_COUNT = "count";
-	private static String ATTRIBUTE_SPRINTS_AVG_DISTANCE = "avg_distance";
-	private static String ATTRIBUTE_SPRINTS_MAX_SPEED = "max_speed";
 
 	@Override
 	public ILogicalQuery parse(ISession session, SportsQLQuery sportsQL)
@@ -65,14 +62,14 @@ public class SprintsPlayerSportsQLParser implements ISportsQLParser {
 		resultAggregateFunctions.add("MAX");
 
 		List<String> resultAggregateInputAttributeNames = new ArrayList<String>();
-		resultAggregateInputAttributeNames.add(SprintsSportsQLParser.ATTRIBUTE_SPRINT_TIME);
 		resultAggregateInputAttributeNames.add(SprintsSportsQLParser.ATTRIBUTE_SPRINT_DISTANCE);
-		resultAggregateInputAttributeNames.add(SprintsSportsQLParser.ATTRIBUTE_SPEED);
+		resultAggregateInputAttributeNames.add(SprintsSportsQLParser.ATTRIBUTE_SPRINT_DISTANCE);
+		resultAggregateInputAttributeNames.add(SprintsSportsQLParser.ATTRIBUTE_MAX_SPEED);
 
 		List<String> resultAggregateOutputAttributeNames = new ArrayList<String>();
-		resultAggregateOutputAttributeNames.add(ATTRIBUTE_SPRINTS_COUNT);
-		resultAggregateOutputAttributeNames.add(ATTRIBUTE_SPRINTS_AVG_DISTANCE);
-		resultAggregateOutputAttributeNames.add(ATTRIBUTE_SPRINTS_MAX_SPEED);
+		resultAggregateOutputAttributeNames.add(SprintsSportsQLParser.ATTRIBUTE_SPRINTS_COUNT);
+		resultAggregateOutputAttributeNames.add(SprintsSportsQLParser.ATTRIBUTE_AVG_DISTANCE);
+		resultAggregateOutputAttributeNames.add(SprintsSportsQLParser.ATTRIBUTE_MAX_SPEED);
 
 		List<String> resultAggregateGroupBys = new ArrayList<String>();
 		resultAggregateGroupBys.add(IntermediateSchemaAttributes.ENTITY_ID);
