@@ -18,9 +18,9 @@ http://odysseus.informatik.uni-oldenburg.de/
    </configIni>
 
    <launcherArgs>
-      <programArgs>-clean -console -debug -nl en -data @noDefault
+      <programArgs>-console -debug -nl ${target.nl} -data @noDefault -clean -debug
       </programArgs>
-      <vmArgs>-Xms1000M -Xmx1000M -XX:+HeapDumpOnOutOfMemoryError
+      <vmArgs>-Xms1000M -Xmx1000M -XX:+UseConcMarkSweepGC -Dorg.osgi.framework.bootdelegation=org.netbeans.lib.profiler,org.netbeans.lib.profiler.* -Dpeer.autoimport=true -Dpeer.autoexport=true
       </vmArgs>
       <vmArgsMac>-XstartOnFirstThread -Dorg.eclipse.swt.internal.carbon.smallFonts
       </vmArgsMac>
@@ -75,6 +75,9 @@ limitations under the License.
       <feature id="de.uniol.inf.is.odysseus.client.platform.feature" version="1.0.0.qualifier"/>
       <feature id="de.uniol.inf.is.odysseus.sports.feature" version="1.0.0.qualifier"/>
       <feature id="de.uniol.inf.is.odysseus.spatial.feature" version="1.0.0.qualifier"/>
+      <feature id="de.uniol.inf.is.odysseus.peer.loadbalancing.active.feature" version="1.0.0.qualifier"/>
+      <feature id="de.uniol.inf.is.odysseus.core.server.feature" version="1.0.0.qualifier"/>
+      <feature id="de.uniol.inf.is.odysseus.peer.recovery.feature" version="1.0.0.qualifier"/>
    </features>
 
    <configurations>

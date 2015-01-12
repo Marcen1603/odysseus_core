@@ -15,5 +15,5 @@ Import-Package: com.google.common.base,
  de.uniol.inf.is.odysseus.physicaloperator.relational,
  de.uniol.inf.is.odysseus.sports.sportsql.parser.ddcaccess,
  org.slf4j
-Service-Component: OSGI-INF/SportsRuleProvider.xml,OSGI-INF/AccessToDDCFunction.xml,OSGI-INF/MepFunctionProvider.xml,OSGI-INF/IsSensorBallFunction.xml,OSGI-INF/CoordCalculationFunction.xml,
- OSGI-INF/GPSToLocalCoordFunction.xml
+Service-Component: OSGI-INF/SportsRuleProvider.xml,OSGI-INF/AccessToDDCFunction.xml,OSGI-INF/MepFunctionProvider.xml,OSGI-INF/IsSensorBallFunction.xml,OSGI-INF/CoordCalculationFunction.xml,OSGI-INF/GPSToLocalCoordFunction.xml,
+ OSGI-INF/IsSensorLegFunction.xml

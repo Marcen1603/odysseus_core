@@ -7,9 +7,12 @@
    </configIni>
 
    <launcherArgs>
-      <programArgs>-console -debug -nl en -data @noDefault -clean -debug -profile OdysseusProfile</programArgs>
-      <vmArgs>-Xms1000M -Xmx1000M -XX:+UseConcMarkSweepGC</vmArgs>
-      <vmArgsMac>-XstartOnFirstThread -Dorg.eclipse.swt.internal.carbon.smallFonts</vmArgsMac>
+      <programArgs>-console -debug -nl en -data @noDefault -clean -debug -profile OdysseusProfile
+      </programArgs>
+      <vmArgs>-Xms1000M -Xmx1000M -XX:+UseConcMarkSweepGC
+      </vmArgs>
+      <vmArgsMac>-XstartOnFirstThread -Dorg.eclipse.swt.internal.carbon.smallFonts
+      </vmArgsMac>
    </launcherArgs>
 
    <windowImages/>
@@ -51,9 +54,12 @@
    </plugins>
 
    <features>
-      <feature id="de.uniol.inf.is.odysseus.server.feature" version="1.0.0.qualifier"/>
       <feature id="de.uniol.inf.is.odysseus.server.platform.feature" version="1.0.0.qualifier"/>
       <feature id="de.uniol.inf.is.odysseus.sports.feature" version="1.0.0.qualifier"/>
+      <feature id="de.uniol.inf.is.odysseus.peer.feature" version="1.0.0.qualifier"/>
+      <feature id="de.uniol.inf.is.odysseus.spatial.feature" version="1.0.0.qualifier"/>
+      <feature id="de.uniol.inf.is.odysseus.peer.loadbalancing.active.feature" version="1.0.0.qualifier"/>
+      <feature id="de.uniol.inf.is.odysseus.peer.recovery.feature" version="1.0.0.qualifier"/>
    </features>
 
    <configurations>
