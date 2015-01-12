@@ -101,6 +101,10 @@ public class AbstractSportsDDCAccess {
 	private static final DDCKey KEY_SENSORS_BASETIMEUNIT = new DDCKey(new String[] {
 			"sensors", "basetimeunit" });
 	
+	
+	private static final DDCKey LEFT_GOAL_TEAM_ID = new DDCKey("leftgoalteamid");
+	private static final DDCKey RIGHT_GOAL_TEAM_ID = new DDCKey("rightgoalteamid");
+	
 	/**
 	 * The key for the entity_id for a given sensor_id.
 	 * 
@@ -461,5 +465,18 @@ public class AbstractSportsDDCAccess {
 		
 		return ImmutableList.copyOf(ballEntityIds);
 	}
+	
+	
+	
+	public static int getLeftGoalTeamId() throws MissingDDCEntryException, NumberFormatException {
+		Preconditions.checkNotNull(AbstractSportsDDCAccess.ddc, "No DDC bound!");
+		return Integer.valueOf(AbstractSportsDDCAccess.ddc.getValue(LEFT_GOAL_TEAM_ID));
+	}
+	
+	public static int getRightGoalTeamId() throws MissingDDCEntryException, NumberFormatException {
+		Preconditions.checkNotNull(AbstractSportsDDCAccess.ddc, "No DDC bound!");
+		return Integer.valueOf(AbstractSportsDDCAccess.ddc.getValue(RIGHT_GOAL_TEAM_ID));
+	}
+	
 	
 }
