@@ -23,45 +23,49 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.SelectAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.WindowType;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.RewriteConfiguration;
 import de.uniol.inf.is.odysseus.relational.rewrite.RelationalRestructHelper;
+import de.uniol.inf.is.odysseus.rewrite.flow.RewriteRuleFlowGroup;
+import de.uniol.inf.is.odysseus.rewrite.rule.AbstractRewriteRule;
+import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 
-public class RSwitchSelectionWindowRule extends AbstractSwitchSelectionRule<AbstractWindowAO> {
+public class RSwitchSelectionWindowRule extends
+		AbstractRewriteRule<AbstractWindowAO> {
+
+	@Override
+	public int getPriority() {
+		return 20;
+	}
+
+	@Override
+	public IRuleFlowGroup getRuleFlowGroup() {
+		return RewriteRuleFlowGroup.SWITCH;
+	}
 
 	@Override
 	public void execute(AbstractWindowAO win, RewriteConfiguration config) {
-		for (SelectAO sel : getAllOfSameTyp(new SelectAO())) {
-			if (isValidSelect(sel, win)) {
-				Collection<ILogicalOperator> toUpdate = RelationalRestructHelper.switchOperator(sel, win);
-				for (ILogicalOperator o : toUpdate) {
-					update(o);
-				}
-
-				update(win);
-				update(sel);
+		SelectAO sel = (SelectAO) getSubscribingOperatorAndCheckType(win,
+				SelectAO.class);
+		if (sel != null) {
+			Collection<ILogicalOperator> toUpdate = RelationalRestructHelper
+					.switchOperator(sel, win);
+			for (ILogicalOperator o : toUpdate) {
+				update(o);
 			}
+
+			update(win);
+			update(sel);
 		}
 
 	}
 
 	@Override
-	public boolean isExecutable(AbstractWindowAO win, RewriteConfiguration config) {
-		if (win.getSubscriptions().size() > 1 || win.getWindowType() != WindowType.TIME) {
-			return false;
-		}
-		for (SelectAO sel : getAllOfSameTyp(new SelectAO())) {
-			if (isValidSelect(sel, win)) {
-				return true;
-			}
-		}
-		return false;
+	public boolean isExecutable(AbstractWindowAO win,
+			RewriteConfiguration config) {
+		return (SelectAO) getSubscribingOperatorAndCheckType(win,
+				SelectAO.class) != null && checkWindowType(win);
 	}
-	
-	@Override
-	protected boolean isValidSelect(SelectAO sel, AbstractWindowAO win) {
-		if (super.isValidSelect(sel, win)
-				&& win.getWindowType() == WindowType.TIME) {
-			return true;
-		}
-		return false;
+
+	private static boolean checkWindowType(AbstractWindowAO win) {
+		return win.getWindowType() == WindowType.TIME;
 	}
 
 	@Override

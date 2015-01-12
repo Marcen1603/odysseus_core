@@ -37,48 +37,39 @@ public class RMergeSelectionJoinRule extends AbstractRewriteRule<JoinAO> {
 
 	@Override
 	public void execute(JoinAO join, RewriteConfiguration config) {
-		for (SelectAO sel : getAllOfSameTyp(new SelectAO())) {
-			if (isValidSelectAO(sel, join)) {
-				if (sel.getPredicate() != null) {
-					if (join.getPredicate() != null) {
-						join.setPredicate(ComplexPredicateHelper
-								.createAndPredicate(join.getPredicate(),
-										sel.getPredicate()));
-					} else {
-						join.setPredicate(sel.getPredicate());
-					}
-					RestructParameterInfoUtil.updatePredicateParameterInfo(
-							join.getParameterInfos(), join.getPredicate());
-
-					Collection<ILogicalOperator> toUpdate = RelationalRestructHelper
-							.removeOperator(sel);
-					for (ILogicalOperator o : toUpdate) {
-						update(o);
-					}
-					update(join);
-					retract(sel);
+		SelectAO sel = (SelectAO) getSubscribingOperatorAndCheckType(join,
+				SelectAO.class);
+		if (sel != null) {
+			if (sel.getPredicate() != null) {
+				if (join.getPredicate() != null) {
+					join.setPredicate(ComplexPredicateHelper
+							.createAndPredicate(join.getPredicate(),
+									sel.getPredicate()));
+				} else {
+					join.setPredicate(sel.getPredicate());
 				}
+				RestructParameterInfoUtil.updatePredicateParameterInfo(
+						join.getParameterInfos(), join.getPredicate());
+
+				Collection<ILogicalOperator> toUpdate = RelationalRestructHelper
+						.removeOperator(sel);
+				for (ILogicalOperator o : toUpdate) {
+					update(o);
+				}
+				update(join);
+				retract(sel);
 			}
 		}
-
 	}
 
 	@Override
 	public boolean isExecutable(JoinAO join, RewriteConfiguration config) {
-
-		if (join.getSubscriptions().size() > 1) {
-			return false;
-		}
-
-		for (SelectAO sel : getAllOfSameTyp(new SelectAO())) {
-			if (isValidSelectAO(sel, join)) {
-				return true;
-			}
-		}
-		return false;
+		SelectAO sel = (SelectAO) getSubscribingOperatorAndCheckType(join,
+				SelectAO.class);
+		return sel != null && canMerge(sel, join);
 	}
 
-	private static boolean isValidSelectAO(SelectAO sel, JoinAO join) {
+	private static boolean canMerge(SelectAO sel, JoinAO join) {
 		if (sel.getPredicate() != null) {
 			Set<?> sources = RelationalRestructHelper.sourcesOfPredicate(sel
 					.getPredicate());

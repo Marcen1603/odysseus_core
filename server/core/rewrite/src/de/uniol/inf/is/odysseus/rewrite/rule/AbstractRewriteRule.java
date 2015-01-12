@@ -15,6 +15,7 @@
  */
 package de.uniol.inf.is.odysseus.rewrite.rule;
 
+import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionaryWritable;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.RewriteConfiguration;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
@@ -38,4 +39,26 @@ public abstract class AbstractRewriteRule<T> extends
 	final public String getName() {
 		return getClass().getName();
 	}
+
+	/*
+	 * Returns null, if there is not exactly one operator subscribing the
+	 * operator or if it's not the correct type.
+	 */
+	protected ILogicalOperator getSubscribingOperatorAndCheckType(T t,
+			Class<? extends ILogicalOperator> desiredClass) {
+		if (!ILogicalOperator.class.isInstance(t)) {
+			return null;
+		}
+		ILogicalOperator operator = (ILogicalOperator) t;
+		if (operator.getSubscriptions().size() != 1) {
+			return null;
+		}
+		ILogicalOperator target = operator.getSubscriptions().iterator().next()
+				.getTarget();
+		if (desiredClass.isInstance(target)) {
+			return target;
+		}
+		return null;
+	}
+
 }

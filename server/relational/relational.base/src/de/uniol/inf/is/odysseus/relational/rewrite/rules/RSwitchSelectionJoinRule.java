@@ -23,56 +23,57 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.JoinAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.SelectAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.RewriteConfiguration;
 import de.uniol.inf.is.odysseus.relational.rewrite.RelationalRestructHelper;
+import de.uniol.inf.is.odysseus.rewrite.flow.RewriteRuleFlowGroup;
+import de.uniol.inf.is.odysseus.rewrite.rule.AbstractRewriteRule;
+import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 
-public class RSwitchSelectionJoinRule extends
-		AbstractSwitchSelectionRule<JoinAO> {
+public class RSwitchSelectionJoinRule extends AbstractRewriteRule<JoinAO> {
+
+	@Override
+	public int getPriority() {
+		return 20;
+	}
+
+	@Override
+	public IRuleFlowGroup getRuleFlowGroup() {
+		return RewriteRuleFlowGroup.SWITCH;
+	}
 
 	@Override
 	public void execute(JoinAO join, RewriteConfiguration config) {
-		for (SelectAO sel : getAllOfSameTyp(new SelectAO())) {
-			if (isValidSelect(sel, join)) {
-				Collection<ILogicalOperator> toInsert = new ArrayList<ILogicalOperator>();
-				Collection<ILogicalOperator> toRemove = new ArrayList<ILogicalOperator>();
-				Collection<ILogicalOperator> toUpdate = RelationalRestructHelper
-						.switchOperator(sel, join, toInsert, toRemove);
-				for (ILogicalOperator o : toInsert) {
-					insert(o);
-				}
-				for (ILogicalOperator o : toUpdate) {
-					update(o);
-				}
-				for (ILogicalOperator o : toRemove) {
-					retract(o);
-				}
-				update(join);
+		SelectAO sel = (SelectAO) getSubscribingOperatorAndCheckType(join,
+				SelectAO.class);
+		if (sel != null) {
+			Collection<ILogicalOperator> toInsert = new ArrayList<ILogicalOperator>();
+			Collection<ILogicalOperator> toRemove = new ArrayList<ILogicalOperator>();
+			Collection<ILogicalOperator> toUpdate = RelationalRestructHelper
+					.switchOperator(sel, join, toInsert, toRemove);
+			for (ILogicalOperator o : toInsert) {
+				insert(o);
 			}
+			for (ILogicalOperator o : toUpdate) {
+				update(o);
+			}
+			for (ILogicalOperator o : toRemove) {
+				retract(o);
+			}
+			update(join);
 		}
 
 	}
 
 	@Override
 	public boolean isExecutable(JoinAO join, RewriteConfiguration config) {
-		if (join.getSubscriptions().size() > 1) {
-			return false;
-		}
-		for (SelectAO sel : getAllOfSameTyp(new SelectAO())) {
-			if (isValidSelect(sel, join)) {
-				return true;
-			}
-		}
-		return false;
+		SelectAO sel = (SelectAO) getSubscribingOperatorAndCheckType(join,
+				SelectAO.class);
+		return sel != null && canSwitch(sel, join);
 	}
 
-	@Override
-	protected boolean isValidSelect(SelectAO sel, JoinAO join) {
-		if (super.isValidSelect(sel, join)
-				&& (RelationalRestructHelper.subsetPredicate(
-						sel.getPredicate(), join.getInputSchema(0)) || RelationalRestructHelper
-						.subsetPredicate(sel.getPredicate(),
-								join.getInputSchema(1)))) {
-			return true;
-		}
-		return false;
+	private static boolean canSwitch(SelectAO sel, JoinAO join) {
+		return RelationalRestructHelper.subsetPredicate(sel.getPredicate(),
+				join.getInputSchema(0))
+				|| RelationalRestructHelper.subsetPredicate(sel.getPredicate(),
+						join.getInputSchema(1));
 	}
 
 	@Override

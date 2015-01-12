@@ -22,37 +22,41 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.RenameAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.SelectAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.RewriteConfiguration;
 import de.uniol.inf.is.odysseus.relational.rewrite.RelationalRestructHelper;
+import de.uniol.inf.is.odysseus.rewrite.flow.RewriteRuleFlowGroup;
+import de.uniol.inf.is.odysseus.rewrite.rule.AbstractRewriteRule;
+import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 
-public class RSwitchSelectionRenameRule extends AbstractSwitchSelectionRule<RenameAO> {
-	
+public class RSwitchSelectionRenameRule extends AbstractRewriteRule<RenameAO> {
+
+	@Override
+	public int getPriority() {
+		return 20;
+	}
+
+	@Override
+	public IRuleFlowGroup getRuleFlowGroup() {
+		return RewriteRuleFlowGroup.SWITCH;
+	}
+
 	@Override
 	public void execute(RenameAO rename, RewriteConfiguration config) {
-		for (SelectAO sel : getAllOfSameTyp(new SelectAO())) {
-			if (isValidSelect(sel, rename)) {
-				Collection<ILogicalOperator> toUpdate = RelationalRestructHelper
-						.switchOperator(sel, rename);
-				for (ILogicalOperator o : toUpdate) {
-					update(o);
-				}
-				update(sel);
-				update(rename);
+		SelectAO sel = (SelectAO) getSubscribingOperatorAndCheckType(rename,
+				SelectAO.class);
+		if (sel != null) {
+			Collection<ILogicalOperator> toUpdate = RelationalRestructHelper
+					.switchOperator(sel, rename);
+			for (ILogicalOperator o : toUpdate) {
+				update(o);
 			}
+			update(sel);
+			update(rename);
 		}
 
 	}
 
 	@Override
 	public boolean isExecutable(RenameAO ren, RewriteConfiguration config) {
-		if (ren.getSubscriptions().size() > 1) {
-			return false;
-		}
-
-		for (SelectAO sel : getAllOfSameTyp(new SelectAO())) {
-			if (isValidSelect(sel, ren)) {
-				return true;
-			}
-		}
-		return false;
+		return getSubscribingOperatorAndCheckType(ren, SelectAO.class) != null;
 	}
 
 	@Override

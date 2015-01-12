@@ -52,18 +52,6 @@ public abstract class AbstractRule<T, U> implements IRule<T, U> {
         this.currentWorkingMemory = wm;
     }
 
-    protected <K> List<K> getAllOfSameTyp(K k) {
-        List<K> liste = new ArrayList<K>();
-        for (Object object : getCollection()) {
-            if (k.getClass().isInstance(object)) {
-                @SuppressWarnings("unchecked")
-                K o = (K) object;
-                liste.add(o);
-            }
-        }
-        return liste;
-    }
-
     protected List<?> getCollection() {
         List<Object> liste = new ArrayList<Object>(this.getCurrentWorkingMemory().getCurrentContent());
         return liste;

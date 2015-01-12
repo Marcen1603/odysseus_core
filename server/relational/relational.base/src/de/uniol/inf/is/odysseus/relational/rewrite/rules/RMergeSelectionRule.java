@@ -35,43 +35,34 @@ public class RMergeSelectionRule extends AbstractRewriteRule<SelectAO> {
 
 	@Override
 	public void execute(SelectAO operator, RewriteConfiguration config) {
-		for (SelectAO sel : getAllOfSameTyp(new SelectAO())) {
-			if (sel.getInputAO() != null && sel.getInputAO() == operator) {
-				if (sel.getPredicate() != null) {
-					if (operator.getPredicate() != null) {
-						operator.setPredicate(ComplexPredicateHelper
-								.createAndPredicate(operator.getPredicate(),
-										sel.getPredicate()));
-					} else {
-						operator.setPredicate(sel.getPredicate());
-					}
-					RestructParameterInfoUtil.updatePredicateParameterInfo(
-							operator.getParameterInfos(),
-							operator.getPredicate());
-
-					Collection<ILogicalOperator> toUpdate = RelationalRestructHelper
-							.removeOperator(sel);
-					for (ILogicalOperator o : toUpdate) {
-						update(o);
-					}
-					update(operator);
-					retract(sel);
+		SelectAO sel = (SelectAO) getSubscribingOperatorAndCheckType(operator,
+				SelectAO.class);
+		if (sel != null) {
+			if (sel.getPredicate() != null) {
+				if (operator.getPredicate() != null) {
+					operator.setPredicate(ComplexPredicateHelper
+							.createAndPredicate(operator.getPredicate(),
+									sel.getPredicate()));
+				} else {
+					operator.setPredicate(sel.getPredicate());
 				}
+				RestructParameterInfoUtil.updatePredicateParameterInfo(
+						operator.getParameterInfos(), operator.getPredicate());
+
+				Collection<ILogicalOperator> toUpdate = RelationalRestructHelper
+						.removeOperator(sel);
+				for (ILogicalOperator o : toUpdate) {
+					update(o);
+				}
+				update(operator);
+				retract(sel);
 			}
 		}
 	}
 
 	@Override
-	public boolean isExecutable(SelectAO operator, RewriteConfiguration config) {
-		if (operator.getSubscriptions().size() > 1) {
-			return false;
-		}
-		for (SelectAO sel : getAllOfSameTyp(new SelectAO())) {
-			if (sel.getInputAO() != null && sel.getInputAO() == operator) {
-				return true;
-			}
-		}
-		return false;
+	public boolean isExecutable(SelectAO sel, RewriteConfiguration config) {
+		return getSubscribingOperatorAndCheckType(sel, SelectAO.class) != null;
 	}
 
 	@Override

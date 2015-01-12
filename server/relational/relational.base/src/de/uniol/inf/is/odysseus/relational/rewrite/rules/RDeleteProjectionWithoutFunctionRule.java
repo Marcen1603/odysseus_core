@@ -41,7 +41,6 @@ public class RDeleteProjectionWithoutFunctionRule extends
 		for (ILogicalOperator o : toUpdate) {
 			update(o);
 		}
-		// Den ProjectAO aus dem working memory l�schen
 		retract(proj);
 
 	}

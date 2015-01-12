@@ -34,16 +34,12 @@ public class RDeleteSelectionWithoutPredicate extends AbstractRewriteRule<Select
 
 	@Override
 	public void execute(SelectAO sel, RewriteConfiguration transformConfig) {
-		// Wenn der Vorg�nger nicht AggregateAO ist, dann		
-		// Ausgabeelemente des Vorg�ngers auf die Ausgabeelemente des selects setzen.
 		Collection<ILogicalOperator> toUpdate = RelationalRestructHelper.removeOperator(sel);		
 		for (ILogicalOperator o:toUpdate){
 			update(o);
 		}
 	
-		// Den SelectAO aus dem working memory l�schen
-		retract(sel);
-		
+		retract(sel);	
 	}
 
 	@Override
