@@ -26,13 +26,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Preconditions;
+import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractAccessAO;
-import de.uniol.inf.is.odysseus.p2p_new.dictionary.sources.AccessAOConverter;
 import de.uniol.inf.is.odysseus.p2p_new.network.P2PNetworkManager;
 import de.uniol.inf.is.odysseus.p2p_new.service.ServerExecutorService;
 import de.uniol.inf.is.odysseus.p2p_new.service.SessionManagementService;
@@ -48,10 +47,10 @@ public class SourceAdvertisement extends Advertisement implements Serializable {
 	private static final String NAME_TAG = "name";
 	private static final String PEER_ID_TAG = "originalPeerID";
 	
-	// external sources
-	private static final String ACCESS_AO_TAG = "accessAO";
+	// external streams
+	private static final String PQL_TAG = "pql";
 	
-	// internal sources
+	// internal view
 	private static final String PIPEID_TAG = "pipeid";
 	private static final String OUTPUTSCHEMA_TAG = "outputSchema";
 
@@ -62,8 +61,7 @@ public class SourceAdvertisement extends Advertisement implements Serializable {
 	private PipeID pipeID;
 	private PeerID peerID;
 	private SDFSchema outputSchema;
-	
-	private AbstractAccessAO accessAO;
+	private String pqlText;
 
 	public SourceAdvertisement(Element<?> root) {
 		final TextElement<?> doc = (TextElement<?>) Preconditions.checkNotNull(root, "Root element must not be null!");
@@ -79,15 +77,15 @@ public class SourceAdvertisement extends Advertisement implements Serializable {
 		this(StructuredDocumentFactory.newStructuredDocument(MimeMediaType.XMLUTF8, Preconditions.checkNotNull(stream, "Stream must not be null!")));
 	}
 
-	public SourceAdvertisement(SourceAdvertisement viewAdvertisement) {
-		Preconditions.checkNotNull(viewAdvertisement, "Advertisement to copy must not be null!");
+	public SourceAdvertisement(SourceAdvertisement srcAdvertisement) {
+		Preconditions.checkNotNull(srcAdvertisement, "Advertisement to copy must not be null!");
 
-		id = viewAdvertisement.id;
-		name = viewAdvertisement.name;
-		pipeID = viewAdvertisement.pipeID;
-		peerID = viewAdvertisement.peerID;
-		outputSchema = viewAdvertisement.outputSchema;
-		accessAO = viewAdvertisement.accessAO;
+		id = srcAdvertisement.id;
+		name = srcAdvertisement.name;
+		pipeID = srcAdvertisement.pipeID;
+		peerID = srcAdvertisement.peerID;
+		outputSchema = srcAdvertisement.outputSchema;
+		pqlText = srcAdvertisement.pqlText;
 	}
 
 	public SourceAdvertisement() {
@@ -116,13 +114,10 @@ public class SourceAdvertisement extends Advertisement implements Serializable {
 		appendElement(doc, NAME_TAG, name);
 		appendElement(doc, PEER_ID_TAG, peerID.toString());
 		
-		if( accessAO != null ) {
-			// external source
-			final Element<?> element = appendElement(doc, ACCESS_AO_TAG);
-			AccessAOConverter.toDocument(element, accessAO);
+		if( isStream() ) {
+			appendElement(doc, PQL_TAG, pqlText);
 			
 		} else {
-			// internal source
 			appendElement(doc, PIPEID_TAG, pipeID.toString());
 		}
 		
@@ -162,7 +157,7 @@ public class SourceAdvertisement extends Advertisement implements Serializable {
 	}
 	
 	public boolean isStream() {
-		return accessAO != null;
+		return !Strings.isNullOrEmpty(pqlText);
 	}
 	
 	public boolean isView() {
@@ -185,12 +180,12 @@ public class SourceAdvertisement extends Advertisement implements Serializable {
 		this.name = name;
 	}
 	
-	public AbstractAccessAO getAccessAO() {
-		return accessAO;
+	public String getPQLText() {
+		return pqlText;
 	}
 	
-	public void setAccessAO(AbstractAccessAO accessAO) {
-		this.accessAO = accessAO;
+	public void setPQLText(String text) {
+		this.pqlText = text;
 	}
 
 	@Override
@@ -232,8 +227,8 @@ public class SourceAdvertisement extends Advertisement implements Serializable {
 		} else if (elem.getName().equals(PEER_ID_TAG)) {
 			setPeerID((PeerID) toID(elem));
 
-		} else if( elem.getName().equals(ACCESS_AO_TAG)) {
-			accessAO = AccessAOConverter.toAccessAO(elem);
+		} else if( elem.getName().equals(PQL_TAG)) {
+			pqlText = elem.getTextValue();
 			
 		} else if (elem.getName().equals(PIPEID_TAG)) {
 			setPipeID((PipeID) toID(elem));
@@ -265,13 +260,6 @@ public class SourceAdvertisement extends Advertisement implements Serializable {
 		return ele;
 	}
 	
-	@SuppressWarnings({ "rawtypes", "unchecked" })
-	private static Element appendElement(Element appendTo, String tag) {
-		final Element ele = appendTo.getRoot().createElement(tag);
-		appendTo.appendChild(ele);
-		return ele;
-	}
-
 	private static SDFSchema handleOutputSchemaTag(TextElement<?> root, String viewName) {
 		final Enumeration<?> children = root.getChildren();
 		final List<SDFAttribute> attributes = Lists.newArrayList();
