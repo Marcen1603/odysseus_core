@@ -20,18 +20,24 @@ public class TrajectoryConstructAO extends UnaryLogicalOp {
 	 */
 	private static final long serialVersionUID = 8226843002104428660L;
 	
+	public final static String VEHICLE_ID_ATTR_NAME = "VehicleId";
 	
-	private boolean subtrajectories = false;
+	public final static String POINTS_ATTR_NAME = "Points";
+	
 	
 	/**
 	 * Output schema
 	 */
-	private static final SDFSchema OUTPUT_SCHEMA = new SDFSchema(
+	private final static SDFSchema OUTPUT_SCHEMA = new SDFSchema(
 			TrajectoryConstructAO.class.getName(), 
 			Tuple.class, 
-			new SDFAttribute(null, "VehicleId", SDFDatatype.STRING, null),
-			new SDFAttribute(null, "Points", SDFSpatialDatatype.LIST , null)
+			new SDFAttribute(null, VEHICLE_ID_ATTR_NAME, SDFDatatype.STRING, null),
+			new SDFAttribute(null, POINTS_ATTR_NAME, SDFSpatialDatatype.LIST , null)
 	);
+	
+	
+	private boolean subtrajectories = false;
+	
 	
 	public TrajectoryConstructAO() {
 	}

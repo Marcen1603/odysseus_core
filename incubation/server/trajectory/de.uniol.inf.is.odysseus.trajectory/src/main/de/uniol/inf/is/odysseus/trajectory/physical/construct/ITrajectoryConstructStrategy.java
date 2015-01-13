@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.trajectory.physical;
+package de.uniol.inf.is.odysseus.trajectory.physical.construct;
 
 import java.util.Deque;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;

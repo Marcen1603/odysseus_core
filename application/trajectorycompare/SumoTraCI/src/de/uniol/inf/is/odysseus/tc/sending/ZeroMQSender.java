@@ -36,7 +36,9 @@ public class ZeroMQSender implements ISender {
 
     @Override
     public void send(List<byte[]> data) {
-        data.forEach(b -> this.socket.send(b));
+    	for(final byte[] bArr : data) {
+    		this.socket.send(bArr);
+    	}
     }
 
 }

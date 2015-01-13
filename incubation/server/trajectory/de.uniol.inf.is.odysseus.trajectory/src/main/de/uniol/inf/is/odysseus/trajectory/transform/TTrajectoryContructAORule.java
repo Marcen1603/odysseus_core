@@ -5,10 +5,10 @@ import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.trajectory.logicaloperator.TrajectoryConstructAO;
-import de.uniol.inf.is.odysseus.trajectory.physical.FulltrajectoryConstructStrategy;
-import de.uniol.inf.is.odysseus.trajectory.physical.ITrajectoryConstructStrategy;
-import de.uniol.inf.is.odysseus.trajectory.physical.SubtrajectoryConstructStrategy;
 import de.uniol.inf.is.odysseus.trajectory.physical.TrajectoryConstructPO;
+import de.uniol.inf.is.odysseus.trajectory.physical.construct.FulltrajectoryConstructStrategy;
+import de.uniol.inf.is.odysseus.trajectory.physical.construct.ITrajectoryConstructStrategy;
+import de.uniol.inf.is.odysseus.trajectory.physical.construct.SubtrajectoryConstructStrategy;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 

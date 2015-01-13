@@ -19,6 +19,7 @@ import it.polito.appeal.traci.SumoTraciConnection;
 import it.polito.appeal.traci.Vehicle;
 import it.polito.appeal.traci.VehicleLifecycleObserver;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -78,9 +79,11 @@ public class SumoInteraction implements ISumoInteraction {
     public VehicleNextResult next() {
     	try {
             this.conn.nextSimStep();
-            final VehicleNextResult result = new VehicleNextResult(this.conn.getVehicleRepository().getAll().values().stream().map(
-            		v -> new VehicleInfo(v)
-            ).collect(Collectors.toList()), vehicleRemovedList);
+            final List<VehicleInfo> vehicleList = new ArrayList<VehicleInfo>();
+            for(final Vehicle v : this.conn.getVehicleRepository().getAll().values()) {
+            	vehicleList.add(new VehicleInfo(v));
+            }
+            final VehicleNextResult result = new VehicleNextResult(vehicleList, vehicleRemovedList);
             this.vehicleRemovedList = new LinkedList<VehicleInfo>();
             return result;
     	} catch(Exception e) {  }

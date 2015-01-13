@@ -63,7 +63,7 @@ public class ApplicationLoop {
     	int count = 0;
         while(true) {
         	long timeToSleep = 1000 - (end - start);
-        	if(timeToSleep >= 0) {
+        	if(timeToSleep >= 0 && false) {
 				Thread.sleep(timeToSleep);
 			}
 			start = System.currentTimeMillis();

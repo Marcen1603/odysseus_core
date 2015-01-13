@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.trajectory.physical;
+package de.uniol.inf.is.odysseus.trajectory.physical.construct;
 
 import java.util.Collection;
 import java.util.Deque;
@@ -13,6 +13,7 @@ import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.metadata.TimeInterval;
+import de.uniol.inf.is.odysseus.trajectory.physical.TrajectoryConstructPO;
 
 public class FulltrajectoryConstructStrategy implements ITrajectoryConstructStrategy {
 
@@ -43,7 +44,7 @@ private final static Logger LOGGER = LoggerFactory.getLogger(SubtrajectoryConstr
 				LOGGER.debug("Window end detected at: " + this.windows.pollFirst().getEnd());
 				
 				/* remove invalid tuples after */
-				final Collection<String> keysToRemove = new LinkedList<String>();
+				final Collection<String> keysToRemove = new LinkedList<>();
 				for(final String key : this.vehTrajMap.keySet()) {
 					if(this.vehTrajMap.get(key).peekFirst().getMetadata().getEnd().beforeOrEquals(incomingTI.getStart())) {
 						keysToRemove.add(key);

@@ -15,6 +15,7 @@
 
 package de.uniol.inf.is.odysseus.tc.sendec;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -37,12 +38,16 @@ public class MinimumSendDecision implements ISendDecision {
 
     @Override
     public List<Object[]> getValuesToSend(List<VehicleInfo> vList) {
-        return vList.stream().map(vi -> new Object[]{
-                this.sumoInteraction.step(),
-                vi.getType(),
-                vi.getId(),
-                vi.getP(),//null
-                vi.getState()//null
-        }).collect(Collectors.toList());
+    	List<Object[]> result = new ArrayList<>(vList.size());
+    	for(final VehicleInfo vi : vList) {
+    		result.add(new Object[] {
+                    this.sumoInteraction.step(),
+                    vi.getType(),
+                    vi.getId(),
+                    vi.getP(),//null
+                    vi.getState()//null
+    		});
+    	}
+        return result;
     }
 }

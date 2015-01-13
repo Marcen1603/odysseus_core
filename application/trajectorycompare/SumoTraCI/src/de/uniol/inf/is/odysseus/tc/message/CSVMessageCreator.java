@@ -27,7 +27,7 @@ public class CSVMessageCreator implements IMessageCreator {
     @Override
     public List<byte[]> create(List<Object[]> oList) {
         final List<byte[]> result = new ArrayList<>();
-        oList.stream().forEach(oArr -> {
+        for(final Object[] oArr : oList) {
             final StringBuilder strBuilder = new StringBuilder();
             for (int i = 0; i < oArr.length - 1; i++) {
                 strBuilder.append(oArr[i].toString() + ",");
@@ -35,7 +35,7 @@ public class CSVMessageCreator implements IMessageCreator {
             strBuilder.append(oArr[oArr.length - 1].toString());
             result.add(strBuilder.toString().getBytes());
             System.out.println(strBuilder.toString());
-        });
+        }
         return result;
     }
 }

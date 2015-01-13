@@ -83,11 +83,11 @@ public abstract class AbstractGeoConverter implements IGeoConverter {
 
     @Override
     public List<VehicleInfo> convert(List<VehicleInfo> vList) {
-        final ArrayList result = new ArrayList<VehicleInfo>(vList.size());
-        vList.stream().forEach(v -> {
-            final Point p = this.transform(v.getInternX(), v.getInternY());
-            result.add(v.setP(p));
-        });
+        final ArrayList<VehicleInfo> result = new ArrayList<VehicleInfo>(vList.size());
+        for(VehicleInfo vi : vList) {
+        	final Point p = this.transform(vi.getInternX(), vi.getInternY());
+            result.add(vi.setP(p));
+        }
         return result;
     }
 

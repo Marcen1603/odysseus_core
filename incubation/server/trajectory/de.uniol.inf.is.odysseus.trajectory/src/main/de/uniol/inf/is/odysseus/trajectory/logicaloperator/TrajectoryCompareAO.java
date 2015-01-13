@@ -15,10 +15,10 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOpera
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnaryLogicalOp;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.BooleanParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IntegerParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
 import de.uniol.inf.is.odysseus.spatial.sourcedescription.sdf.schema.SDFSpatialDatatype;
+import de.uniol.inf.is.odysseus.trajectory.SDFTrajectoryDataType;
 
 @LogicalOperator(name = "TRAJECTORYCOMPARE", minInputPorts = 1, maxInputPorts = 1, doc="Compare Trajectories", category={LogicalOperatorCategory.ADVANCED})
 public class TrajectoryCompareAO extends UnaryLogicalOp {
@@ -31,12 +31,11 @@ public class TrajectoryCompareAO extends UnaryLogicalOp {
 	@SuppressWarnings("unused")
 	private static final Logger LOGGER = LoggerFactory.getLogger(TrajectoryCompareAO.class);
 
-	// die Anzahl der k-ähnlichsten Routen
+	/** the number of the k nearest routes to find */
 	private int k;
 	
-	private boolean start;
-	
-	private boolean end;
+	/** the algorithm to use */
+	private String algorithm;
 	
 	// the query route
 	private List<String> queryTrajectory;
@@ -47,41 +46,38 @@ public class TrajectoryCompareAO extends UnaryLogicalOp {
 	 * Output schema
 	 */
 	private final SDFSchema outputSchema = new SDFSchema(
-			"Dummy", 
+			TrajectoryCompareAO.class.getName(), 
 			Tuple.class, 
+			new SDFAttribute(null, "QTId", SDFDatatype.STRING, null),
 			new SDFAttribute(null, "k", SDFDatatype.INTEGER, null),
-			new SDFAttribute(null, "VehicleId", SDFDatatype.STRING, null),
-			new SDFAttribute(null, "Distance", SDFDatatype.DOUBLE, null),
-			new SDFAttribute(null, "Points", SDFSpatialDatatype.LIST , null),
-			new SDFAttribute(null, "State", SDFDatatype.INTEGER, null)
+			new SDFAttribute(null, "Total", SDFDatatype.INTEGER, null),
+			new SDFAttribute(null, "Contains", SDFSpatialDatatype.INTEGER , null),
+			new SDFAttribute(null, "tet", SDFTrajectoryDataType.OBJECT, new SDFSchema("", Tuple.class, 
+					new SDFAttribute(null, "id", SDFDatatype.STRING, null),
+					new SDFAttribute(null, "points", SDFDatatype.STRING, null)))
+			
+			// id, list<Points>
+//			new SDFAttribute(null, "trajectories", SDFDatatype.LIST_FLOAT, new SDFSchema("", Tuple.class, 
+//					new SDFAttribute(null, "id", SDFDatatype.STRING, null),
+//					new SDFAttribute(null, "points", SDFDatatype.LIST, null)))
 	);
 	
 	public TrajectoryCompareAO() {
-		this(1);
+		this(1, "OWD");
 	}
 	
 	// hier nur optionale Parameter im Konstruktor
-	public TrajectoryCompareAO(int k) {
+	public TrajectoryCompareAO(final int k, final String algorithm) {
 		this.k = k;
+		this.algorithm = algorithm;
 	}
 	
 	public TrajectoryCompareAO(TrajectoryCompareAO trajectoryCompareAO) {
 		super(trajectoryCompareAO);
 		this.k = trajectoryCompareAO.k;
+		this.algorithm = trajectoryCompareAO.algorithm;
 		this.queryTrajectory = trajectoryCompareAO.queryTrajectory;
 		this.referenceSystem = trajectoryCompareAO.referenceSystem;
-	}
-	
-    
-	@Override
-	public SDFSchema getOutputSchemaIntern(int port) {
-		return this.outputSchema;
-	}
-	
-	
-	@Override
-	public AbstractLogicalOperator clone() {
-		return new TrajectoryCompareAO(this);
 	}
 
 	@Parameter(type = IntegerParameter.class, name = "K", optional=true)
@@ -93,8 +89,17 @@ public class TrajectoryCompareAO extends UnaryLogicalOp {
 		return k;
 	}
 	
-	@Parameter(type = StringParameter.class, name = "REFERENCESYSTEM", optional=false)
-	public void setReferenceSystem(String referenceSystem) {
+	@Parameter(type = StringParameter.class, name = "ALGORITHM", optional=false)
+	public void setAlgorithm(final String algorithm) {
+		this.algorithm = algorithm;
+	}
+	
+	public String getAlgorithm() {
+		return this.algorithm;
+	}
+	
+	@Parameter(type = StringParameter.class, name = "REFERENCESYSTEM", optional=true)
+	public void setReferenceSystem(final String referenceSystem) {
 		this.referenceSystem = referenceSystem;
 	}
 	
@@ -103,7 +108,7 @@ public class TrajectoryCompareAO extends UnaryLogicalOp {
 	}
 	
 	@Parameter(type = StringParameter.class, name = "QUERYTRAJECTORY", isList = true, optional = false)
-	public void setQueryTrajectory(List<String> queryTrajectory) {
+	public void setQueryTrajectory(final List<String> queryTrajectory) {
 		this.queryTrajectory = queryTrajectory;
 	}
 	
@@ -111,21 +116,16 @@ public class TrajectoryCompareAO extends UnaryLogicalOp {
 		return this.queryTrajectory;
 	}
 	
-	@Parameter(type = BooleanParameter.class, name = "START", optional = true)
-	public void setStart(boolean start) {
-		this.start = start;
+	
+	
+	@Override
+	public SDFSchema getOutputSchemaIntern(int port) {
+		return this.outputSchema;
 	}
 	
-	public boolean getStart() {
-		return this.start;
-	}
-
-	@Parameter(type = BooleanParameter.class, name = "END", optional = true)
-	public void setEnd(boolean end) {
-		this.end = end;
-	}
 	
-	public boolean getEnd() {
-		return end;
+	@Override
+	public AbstractLogicalOperator clone() {
+		return new TrajectoryCompareAO(this);
 	}
 }

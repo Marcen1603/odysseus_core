@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.trajectory.physical;
+package de.uniol.inf.is.odysseus.trajectory.physical.construct;
 
 import java.util.Deque;
 import java.util.HashMap;
@@ -14,6 +14,7 @@ import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.metadata.TimeInterval;
+import de.uniol.inf.is.odysseus.trajectory.physical.TrajectoryConstructPO;
 
 /**
  * 
@@ -86,7 +87,7 @@ public class SubtrajectoryConstructStrategy implements ITrajectoryConstructStrat
 			this.vehTrajMap.put(vehicleId, vehicleTrajectories = new LinkedList<>());			
 		}
 		if(vehicleTrajectories.isEmpty()) {
-			vehicleTrajectories.addLast(new LinkedList<>());
+			vehicleTrajectories.addLast(new LinkedList<Tuple<ITimeInterval>>());
 		}
 		
 		vehicleTrajectories.peekLast().addLast(incoming);

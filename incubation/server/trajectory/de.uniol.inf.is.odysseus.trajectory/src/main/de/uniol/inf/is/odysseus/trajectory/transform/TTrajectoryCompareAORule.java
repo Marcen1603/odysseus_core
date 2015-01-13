@@ -1,25 +1,36 @@
 package de.uniol.inf.is.odysseus.trajectory.transform;
 
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
+import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.trajectory.logicaloperator.TrajectoryCompareAO;
 import de.uniol.inf.is.odysseus.trajectory.physical.TrajectoryComparePO;
+import de.uniol.inf.is.odysseus.trajectory.physical.compare.TrajectoryCompareAlgorithmFactory;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
 
 public class TTrajectoryCompareAORule extends AbstractTransformationRule<TrajectoryCompareAO> {
 
+	private final TrajectoryCompareAlgorithmFactory factory = 
+			new TrajectoryCompareAlgorithmFactory();
+	
 	 @Override
 	 public int getPriority() {
 		 return 0;
 	 }
 	 
-	  
-	 @SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	 public void execute(TrajectoryCompareAO trajectoryAO, TransformationConfiguration config) {
-		 this.defaultExecute(trajectoryAO, new TrajectoryComparePO(trajectoryAO.getK(), trajectoryAO.getQueryTrajectory(), trajectoryAO.getReferenceSystem()), config, true ,true);
+		 
+		 this.defaultExecute(
+				 trajectoryAO, 
+				 new TrajectoryComparePO<Tuple<ITimeInterval>>(
+						 this.factory.create(trajectoryAO.getAlgorithm(), trajectoryAO.getK())), 
+				 config, 
+				 true,
+				 true);
 	 }
 	 
 	 @Override

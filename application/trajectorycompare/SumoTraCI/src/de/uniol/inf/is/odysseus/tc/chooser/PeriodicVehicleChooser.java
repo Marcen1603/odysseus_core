@@ -39,23 +39,25 @@ public class PeriodicVehicleChooser implements IVehicleChooser {
     public List<VehicleInfo> choose(VehicleNextResult vehicleNextResult) {
     	final List<VehicleInfo> result = new LinkedList<>();
     	
-    	// choose all finished routes
-    	vehicleNextResult.getRemoved().stream().forEach(vi -> {
+    	// gegegeg
+    	for(VehicleInfo vi : vehicleNextResult.getRemoved()) {
     		vi.setState(-1);
     		this.map.remove(vi.getId());
     		result.add(vi);
     		LOGGER.info("finished: " + vi.getId());
-    	});
+    	}
     	
-    	vehicleNextResult.getNext().stream().forEach(vi -> {
+    	
+    	for(VehicleInfo vi : vehicleNextResult.getNext()) {
     		this.map.put(vi.getId(), vi.setState(this.map.getOrDefault(vi.getId(), -1) + 1));
     		if(vi.getState() == 0) {
     			LOGGER.info("begin: " + vi.getId());
     		}
-    		if(vi.getState() % 5 == 0) {
+    		if(vi.getState() % 1000000 == 0) {
     			result.add(vi);
     		}
-    	});
+    	}
+
     	return result;
     }
 }
