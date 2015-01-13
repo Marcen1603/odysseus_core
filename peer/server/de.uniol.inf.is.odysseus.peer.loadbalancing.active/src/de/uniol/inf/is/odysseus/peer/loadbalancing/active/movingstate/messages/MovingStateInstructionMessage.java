@@ -2,8 +2,8 @@ package de.uniol.inf.is.odysseus.peer.loadbalancing.active.movingstate.messages;
 
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
+import java.util.List;
 
-import net.jxta.peer.PeerID;
 import de.uniol.inf.is.odysseus.p2p_new.IMessage;
 
 /**
@@ -30,6 +30,18 @@ public class MovingStateInstructionMessage implements IMessage {
 
 	private int loadBalancingProcessId;
 	private int msgType;
+	
+	public List<String> getOtherPeerIDs() {
+		return this.otherPeers;
+	}
+	
+	public String getSharedQueryID() {
+		return this.sharedQueryID;
+	}
+	
+	public boolean isMasterForQuery() {
+		return this.isMasterForQuery;
+	}
 
 	/**
 	 * PQLQuery for ADD_QUERY Message
@@ -59,15 +71,17 @@ public class MovingStateInstructionMessage implements IMessage {
 	/**
 	 * True if current Query is Master for shared Query.
 	 */
-	@SuppressWarnings("unused")
 	private boolean isMasterForQuery;
 	
 	/**
 	 * Needed if query Part was Master for shared Query.
 	 */
-	@SuppressWarnings("unused")
-	private ArrayList<PeerID> otherPeers;
+	private List<String> otherPeers;
 	
+	/**
+	 * Needed if query part was Master for shared Query.
+	 */
+	private String sharedQueryID;
 
 	/**
 	 * Default constructor.
@@ -160,6 +174,18 @@ public class MovingStateInstructionMessage implements IMessage {
 		MovingStateInstructionMessage message = new MovingStateInstructionMessage();
 		message.loadBalancingProcessId = lbProcessId;
 		message.PQLQuery = PQLQuery;
+		message.isMasterForQuery = false;
+		message.msgType = ADD_QUERY;
+		return message;
+	}
+	
+	public static MovingStateInstructionMessage createAddQueryMsgForMasterQuery(int lbProcessId, String PQLQuery, List<String> otherPeers, String sharedQueryID) {
+		MovingStateInstructionMessage message = new MovingStateInstructionMessage();
+		message.loadBalancingProcessId = lbProcessId;
+		message.PQLQuery = PQLQuery;
+		message.isMasterForQuery = true;
+		message.otherPeers = otherPeers;
+		message.sharedQueryID = sharedQueryID;
 		message.msgType = ADD_QUERY;
 		return message;
 	}
@@ -253,18 +279,41 @@ public class MovingStateInstructionMessage implements IMessage {
 			/*
 			 * Allocate byte Buffer: 4 Bytes for integer msgType 4 Bytes for
 			 * integer loadBalancingProcessId 4 Bytes for Size of PQL String PQL
+			 * 1 Bytes for byte-coded boolean.
 			 * String
 			 */
+			
+			if(!isMasterForQuery) {
 
-			byte[] pqlAsBytes = PQLQuery.getBytes();
-
-			bbsize = 4 + 4 + 4 + pqlAsBytes.length;
-			bb = ByteBuffer.allocate(bbsize);
-			bb.putInt(msgType);
-			bb.putInt(loadBalancingProcessId);
-			bb.putInt(pqlAsBytes.length);
-			bb.put(pqlAsBytes);
-			break;
+				byte[] pqlAsBytes = PQLQuery.getBytes();
+	
+				bbsize = 4 + 4 + 4 + pqlAsBytes.length + 1;
+				bb = ByteBuffer.allocate(bbsize);
+				bb.putInt(msgType);
+				bb.putInt(loadBalancingProcessId);
+				bb.putInt(pqlAsBytes.length);
+				bb.put(pqlAsBytes);
+				bb.put((byte)0);
+				break;
+			}
+			
+			else {
+				byte[] sharedQueryIDAsBytes = sharedQueryID.getBytes();
+				byte[] pqlAsBytes = PQLQuery.getBytes();
+				byte[] otherPeersAsBytes = stringListToBytes(this.getOtherPeerIDs());
+				
+				bbsize = 4 + 4 + 4 + pqlAsBytes.length + 1 + otherPeersAsBytes.length + 4 + sharedQueryIDAsBytes.length;
+				bb = ByteBuffer.allocate(bbsize);
+				bb.putInt(msgType);
+				bb.putInt(loadBalancingProcessId);
+				bb.putInt(pqlAsBytes.length);
+				bb.put(pqlAsBytes);
+				bb.put((byte)1);
+				bb.put(otherPeersAsBytes);
+				bb.putInt(sharedQueryIDAsBytes.length);
+				bb.put(sharedQueryIDAsBytes);
+				break;
+			}
 
 		case REPLACE_RECEIVER:
 		case INSTALL_BUFFER_AND_REPLACE_SENDER:
@@ -354,7 +403,30 @@ public class MovingStateInstructionMessage implements IMessage {
 			byte[] pqlAsBytes = new byte[sizeOfPql];
 			bb.get(pqlAsBytes);
 			this.PQLQuery = new String(pqlAsBytes);
-			break;
+			
+			byte masterFlag = bb.get();
+			if(masterFlag==0) {
+				isMasterForQuery = false;
+				break;
+			}
+			else {
+				isMasterForQuery = true;
+				this.otherPeers = new ArrayList<String>();
+				int numberOfOtherPeers = bb.getInt();
+				for (int i=0;i<numberOfOtherPeers;i++) {
+					int sizeOfPeerID = bb.getInt();
+					byte[] peerIDStringAsBytes = new byte[sizeOfPeerID];
+					bb.get(peerIDStringAsBytes);
+					otherPeers.add(new String(peerIDStringAsBytes));
+				}
+				int sizeOfSharedQueryID = bb.getInt();
+				byte[] sharedQueryIDAsBytes = new byte[sizeOfSharedQueryID];
+				bb.get(sharedQueryIDAsBytes);
+				this.sharedQueryID = new String(sharedQueryIDAsBytes);
+				break;
+			}
+			
+			
 
 		case REPLACE_RECEIVER:
 		case INSTALL_BUFFER_AND_REPLACE_SENDER:
@@ -544,6 +616,26 @@ public class MovingStateInstructionMessage implements IMessage {
 		message.setLoadBalancingProcessId(lbProcessId);
 		message.setMsgType(STOP_BUFFERING);
 		return message;
+	}
+	
+	private byte[] stringListToBytes(List<String> strings) {
+		int numberOfBytesNeeded = 4;
+		
+		//Calculate Buffer Size.
+		for (String element : strings) {
+			int numberOfBytesForElement = element.getBytes().length;
+			numberOfBytesNeeded += 4;
+			numberOfBytesNeeded +=numberOfBytesForElement;
+		}
+		
+		ByteBuffer bb = ByteBuffer.allocate(numberOfBytesNeeded);
+		bb.putInt(strings.size());
+		for (String element : strings) {
+			bb.putInt(element.getBytes().length);
+			bb.put(element.getBytes());
+		}
+		
+		return bb.array();
 	}
 
 }

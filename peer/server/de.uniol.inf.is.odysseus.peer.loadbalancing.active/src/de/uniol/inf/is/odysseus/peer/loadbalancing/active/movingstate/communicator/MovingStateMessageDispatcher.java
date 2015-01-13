@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.peer.loadbalancing.active.movingstate.communicator;
 
+import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
 import net.jxta.peer.PeerID;
@@ -241,6 +242,17 @@ public class MovingStateMessageDispatcher {
 				.createAddQueryMsg(lbProcessId, queryPartPql);
 		this.currentJob = new RepeatingMessageSend(peerCommunicator, message,
 				destinationPeer);
+		currentJob.addListener(listener);
+		currentJob.start();
+	}
+	
+	public void sendAddQueryForMasterQuery(PeerID destinationPeer, String queryPartPql, IMessageDeliveryFailedListener listener, List<String> peerIDs, String sharedQueryID) {
+		LOG.debug("Send AddQuery for Master Peer:");
+		LOG.debug("Shared Query ID:" + sharedQueryID);
+		LOG.debug("Number of other Peers:" + peerIDs.size());
+		
+		MovingStateInstructionMessage message = MovingStateInstructionMessage.createAddQueryMsgForMasterQuery(lbProcessId, queryPartPql,peerIDs, sharedQueryID);
+		this.currentJob = new RepeatingMessageSend(peerCommunicator,message,destinationPeer);
 		currentJob.addListener(listener);
 		currentJob.start();
 	}

@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import net.jxta.id.ID;
 import net.jxta.id.IDFactory;
 import net.jxta.peer.PeerID;
 
@@ -66,6 +67,15 @@ public class LoadBalancingHelper {
 		} catch (URISyntaxException | ClassCastException ex) {
 			return null;
 		}
+	}
+	
+	public static Collection<PeerID> toPeerIDCollection(List<String> peerIDStrings ) {
+		ArrayList<PeerID> resultList = new ArrayList<PeerID>();
+		for (String peerString : peerIDStrings) {
+			resultList.add(toPeerID(peerString));
+		}
+		return resultList;
+		
 	}
 
 	/**
@@ -451,6 +461,17 @@ public class LoadBalancingHelper {
 
 		return result;
 	}
+	
+	public static ID toID(String text) {
+		try {
+			final URI id = new URI(text);
+			return IDFactory.fromURI(id);
+		} catch (URISyntaxException | ClassCastException ex) {
+			return null;
+		}
+	}
+	
+	
 
 	/**
 	 * Removes all JxtaSenders from a QueryPart.

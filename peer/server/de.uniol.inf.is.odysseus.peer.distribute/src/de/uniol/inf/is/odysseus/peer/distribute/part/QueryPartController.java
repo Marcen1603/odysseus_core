@@ -237,7 +237,7 @@ public class QueryPartController implements IPlanModificationListener, IPeerComm
 		Preconditions.checkNotNull(query, "Logical query must not be null!");
 		Preconditions.checkNotNull(sharedQueryID, "sharedQueryID must not be null!");
 		Preconditions.checkNotNull(otherPeers, "otherPeers must not be null!");
-
+		
 		sharedQueryIDMap.put(queryID, sharedQueryID);
 		peerIDMap.put(sharedQueryID, otherPeers);
 
@@ -253,6 +253,8 @@ public class QueryPartController implements IPlanModificationListener, IPeerComm
 				}
 			}
 	}
+	
+	
 
 	@Override
 	public void registerAsSlave(Collection<Integer> ids, ID sharedQueryID) {
@@ -262,6 +264,8 @@ public class QueryPartController implements IPlanModificationListener, IPeerComm
 		for (Integer id : ids) {
 			sharedQueryIDMap.put(id, sharedQueryID);
 		}
+		
+		
 		
 		// notify listeners
 		for(IQueryPartControllerListener listener : listeners) {
@@ -274,12 +278,13 @@ public class QueryPartController implements IPlanModificationListener, IPeerComm
 		}
 	}
 	
+	
+	
 	@Override
 	public ID getSharedQueryID(int queryId) {
 		
 		Preconditions.checkNotNull(queryId);
 		return this.sharedQueryIDMap.get(queryId);
-		
 	}
 	
 	@Override
@@ -362,6 +367,7 @@ public class QueryPartController implements IPlanModificationListener, IPeerComm
 				}
 			}
 			peerIDMap.remove(sharedQueryId);
+			
 		}
 		
 	}

@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import net.jxta.id.ID;
 import net.jxta.peer.PeerID;
 
 import org.eclipse.osgi.framework.console.CommandInterpreter;
@@ -32,6 +33,7 @@ import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.p2p_new.IP2PNetworkManager;
 import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicator;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.IPeerDictionary;
+import de.uniol.inf.is.odysseus.peer.distribute.IQueryPartController;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.ActiveLoadBalancingActivator;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.ILoadBalancingAllocator;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.ILoadBalancingCommunicator;
@@ -265,6 +267,34 @@ public class ActiveLoadbalancingConsole implements CommandProvider {
 		for (IStatefulPO statefulOp : statefulList) {
 			IPhysicalOperator operator = (IPhysicalOperator) statefulOp;
 			ci.println("[" + i + "] " + operator.getName());
+		}
+	}
+	
+	public void _printQPController(CommandInterpreter ci) {
+		IQueryPartController controller = ActiveLoadBalancingActivator.getQueryPartController();
+		for (int query : executor.getLogicalQueryIds(ActiveLoadBalancingActivator.getActiveSession())) {
+			ci.println();
+			ID sharedQueryID = controller.getSharedQueryID(query);
+			boolean isMaster = controller.isMasterForQuery(query);
+			
+			if(isMaster) {
+				ci.println("["+query+"] ***MASTER*** SharedQueryID" + sharedQueryID);
+			}
+			else {
+				ci.println("["+query+"] ***SLAVE*** SharedQueryID" + sharedQueryID);
+			}
+			
+			if(isMaster) {
+				for (PeerID other : controller.getOtherPeers(sharedQueryID)) {
+					ci.println("        -> Slave: "+ peerDictionary.getRemotePeerName(other));
+				}
+			}
+			ci.print("        -> Local Queries:");
+			for (int queryNum : controller.getLocalIds(sharedQueryID)) {
+				ci.print(queryNum+",");
+			}
+			
+			
 		}
 	}
 

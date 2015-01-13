@@ -1,5 +1,10 @@
 package de.uniol.inf.is.odysseus.peer.loadbalancing.active.movingstate.protocol;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
+import net.jxta.id.ID;
 import net.jxta.peer.PeerID;
 
 import org.slf4j.Logger;
@@ -81,6 +86,20 @@ public class ResponseHandler {
 				String pqlFromQueryPart = LogicalQueryHelper
 						.generatePQLStatementFromQueryPart(modifiedQueryPart);
 				LOG.debug("Generated PQL Statement:" + pqlFromQueryPart);
+
+				IQueryPartController queryPartController = ActiveLoadBalancingActivator.getQueryPartController();
+				if(queryPartController.isMasterForQuery(status.getLogicalQuery())) {
+					LOG.debug("Peer is Master for Balanced Query Part.");
+					ID sharedQueryID = queryPartController.getSharedQueryID(status.getLogicalQuery());
+					Collection<PeerID> otherPeers = queryPartController.getOtherPeers(sharedQueryID);
+					List<String> otherPeerIDStrings = new ArrayList<String>();
+					for (PeerID peer : otherPeers) {
+						otherPeerIDStrings.add(peer.toString());
+					}
+					dispatcher.sendAddQueryForMasterQuery(status.getVolunteeringPeer(), pqlFromQueryPart, communicationListener, otherPeerIDStrings, sharedQueryID.toString());
+					break;
+				}
+				
 				dispatcher.sendAddQuery(status.getVolunteeringPeer(),
 						pqlFromQueryPart, communicationListener);
 			}
@@ -96,7 +115,7 @@ public class ResponseHandler {
 				
 				IQueryPartController queryPartController = ActiveLoadBalancingActivator.getQueryPartController();
 				if(queryPartController.isMasterForQuery(status.getLogicalQuery())) {
-					LOG.debug("Peer is Master for Balanced Query Part.");
+					LOG.debug("Unregistering peer as Master Peer.");
 					queryPartController.unregisterAsMaster(queryPartController.getSharedQueryID(status.getLogicalQuery()));
 				}
 				

@@ -3,6 +3,7 @@ package de.uniol.inf.is.odysseus.peer.loadbalancing.active.movingstate.protocol;
 import java.util.Collection;
 import java.util.List;
 
+import net.jxta.id.ID;
 import net.jxta.peer.PeerID;
 
 import org.slf4j.Logger;
@@ -10,7 +11,10 @@ import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.collection.Context;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IStatefulPO;
+import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicator;
+import de.uniol.inf.is.odysseus.peer.distribute.IQueryPartController;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.active.ActiveLoadBalancingActivator;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.common.LoadBalancingException;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.common.LoadBalancingHelper;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.common.LoadBalancingStatusCache;
@@ -102,11 +106,35 @@ public class InstructionHandler {
 							.installAndRunQueryPartFromPql(Context.empty(),
 									instruction.getPQLQuery());
 					status.setInstalledQueries(queryIDs);
+					
+					int installedQuery = (int)(queryIDs.toArray()[0]);
+					ILogicalQuery query = ActiveLoadBalancingActivator.getExecutor().getLogicalQueryById(installedQuery, ActiveLoadBalancingActivator.getActiveSession());
+					
+					//Register as new Master when Query is Master Query
+					if(instruction.isMasterForQuery()) {
+						LOG.debug("Received Query is Master Query");
+						List<String> otherPeerIDStrings = instruction.getOtherPeerIDs();
+						String sharedQueryIDString = instruction.getSharedQueryID();
+						LOG.debug("Received {} other peer IDs.",otherPeerIDStrings.size());
+						LOG.debug("Shared Query ID is {}",sharedQueryIDString);
+						Collection<PeerID> otherPeers = LoadBalancingHelper.toPeerIDCollection(otherPeerIDStrings);
+						ID sharedQueryID = LoadBalancingHelper.toID(sharedQueryIDString);
+						
+						IQueryPartController queryPartController = ActiveLoadBalancingActivator.getQueryPartController();
+						
+						
+						queryPartController.registerAsMaster(query,installedQuery, sharedQueryID, otherPeers);
+						
+					}
+					
+					
 					dispatcher.sendInstallSuccess(senderPeer);
 				} catch (Exception e) {
 					dispatcher.sendInstallFailure(senderPeer);
 				}
 			}
+			
+			
 			break;
 
 		case MovingStateInstructionMessage.INSTALL_BUFFER_AND_REPLACE_SENDER:
