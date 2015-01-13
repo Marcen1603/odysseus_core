@@ -219,7 +219,14 @@ public class ReplicationMergePO<T extends IStreamObject<? extends ITimeInterval>
 		
 		while(!this.inputQueue.isEmpty() && continuePeeking) {
 			
-			IStreamable elem = this.inputQueue.peek().getE1();
+			IPair<IStreamable, Integer> pair = this.inputQueue.peek();
+			// TODO why can that be null?
+			if(pair == null) {
+				log.error("Element to purge is null!");
+				this.inputQueue.poll();
+				continue;
+			}
+			IStreamable elem = pair.getE1();
 			PointInTime endTS_elem = this.getTS(elem, true);
 			if(endTS_elem.before(deadline))
 				this.inputQueue.poll();
@@ -248,6 +255,11 @@ public class ReplicationMergePO<T extends IStreamObject<? extends ITimeInterval>
 		while(queueIter.hasNext()) {
 			
 			IPair<IStreamable, Integer> pair = queueIter.next();
+			// TODO why can that be null?
+			if(pair == null) {
+				log.error("Element to merge is null!");
+				continue;
+			}
 			IStreamable elem = pair.getE1();
 			Integer elemPort = pair.getE2();
 			

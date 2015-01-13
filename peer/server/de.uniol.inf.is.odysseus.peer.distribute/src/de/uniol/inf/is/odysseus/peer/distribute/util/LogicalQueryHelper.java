@@ -886,4 +886,15 @@ public final class LogicalQueryHelper {
 		}
 
 	}
+
+	public Optional<ILogicalQueryPart> determineQueryPart(
+			ILogicalOperator operator, Collection<ILogicalQueryPart> queryParts) {
+		for (ILogicalQueryPart part : queryParts) {
+			if (part.getOperators().contains(operator)) {
+				return Optional.of(part);
+			}
+		}
+		return Optional.absent();
+	}
+
 }
