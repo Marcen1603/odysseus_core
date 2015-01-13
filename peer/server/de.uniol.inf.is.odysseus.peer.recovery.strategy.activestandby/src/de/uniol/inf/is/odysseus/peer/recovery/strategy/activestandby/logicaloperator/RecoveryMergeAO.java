@@ -1,5 +1,7 @@
 package de.uniol.inf.is.odysseus.peer.recovery.strategy.activestandby.logicaloperator;
 
+import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.peer.distribute.modify.replication.logicaloperator.ReplicationMergeAO;
 
 /**
@@ -12,6 +14,7 @@ import de.uniol.inf.is.odysseus.peer.distribute.modify.replication.logicaloperat
  * @author Michael Brand
  *
  */
+@LogicalOperator(name="RECOVERYMERGE", minInputPorts=2, maxInputPorts=Integer.MAX_VALUE, doc="Merge input from semantically equal queries for active standy recovery.", category = {LogicalOperatorCategory.PROCESSING})
 public class RecoveryMergeAO extends ReplicationMergeAO {
 
 	/**
