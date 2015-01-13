@@ -271,7 +271,7 @@ public final class Dashboard implements PaintListener, MouseListener, MouseMoveL
 		base.removeKeyListener(keyHandler);
 		if (base instanceof Composite) {
 			for (final Control ctrl : ((Composite) base).getChildren()) {
-				addListenersRecursive(ctrl);
+				removeListenersRecursive(ctrl);
 			}
 		}
 	}
