@@ -7,10 +7,11 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Lists;
 
+import de.uniol.inf.is.odysseus.core.collection.Pair;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
+import de.uniol.inf.is.odysseus.core.metadata.IStreamable;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
-import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.peer.distribute.modify.replication.physicaloperator.ReplicationMergePO;
 import de.uniol.inf.is.odysseus.peer.recovery.strategy.activestandby.logicaloperator.RecoveryMergeAO;
@@ -35,18 +36,13 @@ public class RecoveryMergePO<T extends IStreamObject<? extends ITimeInterval>>
 			.getLogger(RecoveryMergePO.class);
 
 	/**
-	 * The number of inputs.
-	 */
-	private final int mNumInputPorts;
-
-	/**
 	 * A sorted list of the input ports. A lower index means that a port was
 	 * last recovered earlier.
 	 */
 	private final List<Integer> mSortedPorts = Lists.newArrayList();
 
-	private void initSortedPorts() {
-		for (int inPort = 0; inPort < this.mNumInputPorts; inPort++) {
+	private void initSortedPorts(int numInputPorts) {
+		for (int inPort = 0; inPort < numInputPorts; inPort++) {
 			this.mSortedPorts.add(new Integer(inPort));
 		}
 	}
@@ -56,7 +52,7 @@ public class RecoveryMergePO<T extends IStreamObject<? extends ITimeInterval>>
 			this.mSortedPorts.add(new Integer(inPort));
 		}
 	}
-	
+
 	private void updateSortedPorts(int port) {
 		this.mSortedPorts.remove(new Integer(port));
 		this.mSortedPorts.add(new Integer(port));
@@ -71,10 +67,12 @@ public class RecoveryMergePO<T extends IStreamObject<? extends ITimeInterval>>
 	 * The input port to use, if {@link #mReplicaRecovered} is true.
 	 */
 	private int mPortToUse = 0;
-	
+
 	/**
 	 * Sets the input of a given port as recovered.
-	 * @param port The input port.
+	 * 
+	 * @param port
+	 *            The input port.
 	 */
 	public void setInputAsRecovered(int port) {
 		updateSortedPorts(port);
@@ -88,7 +86,7 @@ public class RecoveryMergePO<T extends IStreamObject<? extends ITimeInterval>>
 	 */
 	public RecoveryMergePO(RecoveryMergeAO mergeAO) {
 		super();
-		this.mNumInputPorts = mergeAO.getNumberOfInputs();
+		initSortedPorts(mergeAO.getNumberOfInputs());
 	}
 
 	/**
@@ -99,7 +97,6 @@ public class RecoveryMergePO<T extends IStreamObject<? extends ITimeInterval>>
 	 */
 	public RecoveryMergePO(RecoveryMergePO<T> mergePO) {
 		super(mergePO);
-		this.mNumInputPorts = mergePO.mNumInputPorts;
 		initSortedPorts(mergePO.mSortedPorts);
 		this.mPortToUse = mergePO.mPortToUse;
 		this.mReplicaRecovered = mergePO.mReplicaRecovered;
@@ -113,14 +110,11 @@ public class RecoveryMergePO<T extends IStreamObject<? extends ITimeInterval>>
 	}
 
 	@Override
-	protected synchronized void process_open() throws OpenFailedException {
-		initSortedPorts();
-	}
-
-	@Override
 	protected void process_next(T object, int port) {
-		if (!this.mReplicaRecovered || port == this.mPortToUse) {
+		if (!this.mReplicaRecovered) {
 			super.process_next(object, port);
+		} else if (port == this.mPortToUse) {
+			this.inputQueue.add(new Pair<IStreamable, Integer>(object, port));
 		} else {
 			LOG.debug("Discarding {} from port {}", object, port);
 		}
