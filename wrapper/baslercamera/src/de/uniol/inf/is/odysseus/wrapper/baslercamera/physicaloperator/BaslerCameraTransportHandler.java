@@ -5,6 +5,7 @@ import static org.bytedeco.javacpp.opencv_core.*;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 
+import org.bytedeco.javacpp.BytePointer;
 import org.bytedeco.javacpp.opencv_core.IplImage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,7 +17,6 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.AbstractS
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandler;
 import de.uniol.inf.is.odysseus.imagejcv.common.datatype.ImageJCV;
 import de.uniol.inf.is.odysseus.wrapper.baslercamera.swig.BaslerCamera;
-import de.uniol.inf.is.odysseus.wrapper.baslercamera.swig.intArray;
 
 public class BaslerCameraTransportHandler extends AbstractSimplePullTransportHandler<Tuple<?>> 
 {
@@ -27,7 +27,7 @@ public class BaslerCameraTransportHandler extends AbstractSimplePullTransportHan
 	private String ethernetAddress;
 	private BaslerCamera cameraCapture;
 	
-	private intArray 		imageData;	
+	private ImageJCV currentImage;
 	
 	public BaslerCameraTransportHandler() 
 	{
@@ -54,10 +54,6 @@ public class BaslerCameraTransportHandler extends AbstractSimplePullTransportHan
 
 	@Override public String getName() { return "BaslerCamera"; }
 
-	private int getImageWidth() { return cameraCapture.getImageWidth(); }
-	private int getImageHeight() { return cameraCapture.getImageHeight(); }
-	private int getImageNumPixels() { return getImageWidth() * getImageHeight(); }	
-	
 	@Override public void processInOpen() throws IOException 
 	{
 		synchronized (processLock)
@@ -71,6 +67,7 @@ public class BaslerCameraTransportHandler extends AbstractSimplePullTransportHan
 				
 		 		cameraCapture = new BaslerCamera(ethernetAddress);
 				cameraCapture.start();
+				currentImage = null;
 			}
 			catch (RuntimeException e) 
 			{
@@ -78,8 +75,6 @@ public class BaslerCameraTransportHandler extends AbstractSimplePullTransportHan
 				throw new IOException(e.getMessage());
 			}
 			
-	        imageData = new intArray(getImageNumPixels());
-	        
 	        System.out.println("processInOpen");
 		}
 	}
@@ -93,15 +88,13 @@ public class BaslerCameraTransportHandler extends AbstractSimplePullTransportHan
 			cameraCapture.stop();
 			cameraCapture = null;
 			
-			imageData = null;
-			
 //			instanceCount--;
 //			if (instanceCount == 0)
 				BaslerCamera.shutDownSystem();						
 		}
 	}
 
-	public static ImageJCV createFromBuffer(intArray buffer, int width, int height)
+/*	public static ImageJCV createFromBuffer(intArray buffer, int width, int height)
 	{
 		int channels = 4;
 		
@@ -124,7 +117,7 @@ public class BaslerCameraTransportHandler extends AbstractSimplePullTransportHan
 		}		
 				
 		return new ImageJCV(img);		
-	}	
+	}*/	
 	
 	private long lastTime = 0;
 	
@@ -132,15 +125,12 @@ public class BaslerCameraTransportHandler extends AbstractSimplePullTransportHan
 	{
 		long now = System.nanoTime();
 		double dt = (now - lastTime) / 1.0e9;
-		System.out.println("getNext " + now / 1.0e9 + ", dt = " + dt + " = " + 1.0/dt + " FPS");
-	
+		System.out.println("getNext " + now / 1.0e9 + ", dt = " + dt + " = " + 1.0/dt + " FPS");	
 		lastTime = now;
 		
-		ImageJCV image = createFromBuffer(imageData, getImageWidth(), getImageHeight());
-			
 		@SuppressWarnings("rawtypes")
 		Tuple<?> tuple = new Tuple(1, false);
-        tuple.setAttribute(0, image);
+        tuple.setAttribute(0, currentImage);
         return tuple;					
 	}
     
@@ -148,13 +138,21 @@ public class BaslerCameraTransportHandler extends AbstractSimplePullTransportHan
 	{
 		synchronized (processLock)
 		{
-			if (cameraCapture == null) return false;		
-			boolean success = cameraCapture.grabRGB8(1000);		
+			if (cameraCapture == null) return false;
 			
-			if (success)
-				cameraCapture.getImageData(imageData.cast());
+			IplImage img = cvCreateImage(cvSize(cameraCapture.getImageWidth(), cameraCapture.getImageHeight()), IPL_DEPTH_8U, cameraCapture.getImageChannels());			
+			ByteBuffer imageData = img.getByteBuffer();
 			
-			return success;
+			// Is it possible for an IplImage to be backed by a non-direct byte buffer?
+			assert(imageData.isDirect());
+
+			if (!cameraCapture.grabRGB8(imageData, 1000))
+				return false;
+			else
+			{
+				currentImage = new ImageJCV(img);			
+				return true;
+			}
 		}
 	}
 		

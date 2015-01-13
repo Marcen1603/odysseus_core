@@ -1,20 +1,21 @@
-#ifndef BASLER_CAMERA_H
-#define BASLER_CAMERA_H
-
+#pragma once
 #include <exception>
 
 namespace Pylon
 {
 	class CBaslerGigEInstantCamera;
-	class CPylonImage;
 };
 
 class BaslerCamera
 {
 	typedef Pylon::CBaslerGigEInstantCamera Camera;
 
-	Camera*					camera;
-	Pylon::CPylonImage*		currentImage;
+	Camera*	camera;
+
+	bool supportsRGBAConversion;
+	int imageWidth;
+	int imageHeight;
+	int bufferSize;
 
 public:
 	BaslerCamera(std::string ethernetAddress) throw(std::exception);
@@ -23,16 +24,11 @@ public:
 	void	start();
 	void	stop();
 
-	bool	grabRGB8(unsigned int timeOutMs) throw(std::exception);
-	int		getImageSize();
-	int		getImageWidth();
-	int		getImageHeight();
-//	void	getImageData(char *BYTE);
-	void	getImageData(int data[]);
-
-
-
-
+	bool	grabRGB8(void *buffer, long size, unsigned int timeOutMs) throw(std::exception);
+	int		getBufferSize() const { return bufferSize; }
+	int		getImageWidth() const { return imageWidth; }
+	int		getImageHeight() const { return imageHeight; }
+	int		getImageChannels() const { return 4; }
 
 public:
 	static void initializeSystem() throw(std::exception);
@@ -42,5 +38,3 @@ public:
 private:
 	static bool isInitialized;
 };
-
-#endif

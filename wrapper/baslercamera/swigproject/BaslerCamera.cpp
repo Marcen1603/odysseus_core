@@ -43,9 +43,10 @@ BaslerCamera::BaslerCamera(std::string ethernetAddress)
 	// Create an instant camera object with the camera device found first.
 	camera = new Camera(CTlFactory::GetInstance().CreateFirstDevice(info));	
 
-	currentImage = new CPylonImage;
+	supportsRGBAConversion = CImageFormatConverter::IsSupportedOutputFormat(PixelType_RGBA8packed);
+
 	start();
-	grabRGB8(1000);
+	grabRGB8(NULL, 0, 1000);
 	stop();
 }
 
@@ -61,7 +62,7 @@ void BaslerCamera::stop()
 	camera->Close();
 }
 
-bool BaslerCamera::grabRGB8(unsigned int timeOutMs)
+bool BaslerCamera::grabRGB8(void *buffer, long size, unsigned int timeOutMs)
 {
 	if (!camera->IsGrabbing()) return false;
 
@@ -69,55 +70,58 @@ bool BaslerCamera::grabRGB8(unsigned int timeOutMs)
 	if (!camera->RetrieveResult(timeOutMs, result, TimeoutHandling_Return)) return false;
 	if (!result->GrabSucceeded()) return false;
 
-	CImageFormatConverter converter;
+	bufferSize = (int)result->GetImageSize();
+	imageWidth = result->GetWidth();
+	imageHeight = result->GetHeight();
 
-	converter.OutputPixelFormat = PixelType_RGB8packed;
-	converter.OutputBitAlignment = OutputBitAlignment_MsbAligned;
-	converter.Convert(*currentImage, result);
+	if (buffer != NULL)
+	{
+		if (size < bufferSize) return false;
+
+		CImageFormatConverter converter;
+		if (supportsRGBAConversion)
+		{
+			converter.OutputPixelFormat = PixelType_RGBA8packed;
+			converter.OutputBitAlignment = OutputBitAlignment_LsbAligned; // OutputBitAlignment_MsbAligned;
+			converter.OutputPaddingX = 0;
+			converter.Convert(buffer, size, result);
+		}
+		else
+		{
+			CPylonImage image;
+			converter.OutputPixelFormat = PixelType_RGB8packed;
+			converter.OutputBitAlignment = OutputBitAlignment_LsbAligned; // OutputBitAlignment_MsbAligned;
+			converter.OutputPaddingX = 0;
+			converter.Convert(image, result);
+
+			struct Pixel
+			{
+				BYTE r, g, b;
+			};
+
+			int bytesLeft = bufferSize;	
+
+			Pixel* inBuffer = (Pixel*)image.GetBuffer();
+			DWORD* outBuffer = (DWORD*)buffer;
+
+			while (bytesLeft > 0)
+			{
+				Pixel* cur = inBuffer++;
+
+				DWORD curDWORD = *((DWORD*)cur);
+				curDWORD |= 0xFF000000;
+
+				*(outBuffer++) = curDWORD; //_byteswap_ulong(curDWORD);
+
+				bytesLeft -= 3;
+			}
+		}
+	}
 
 	return true;
-}
-
-int BaslerCamera::getImageSize()
-{
-	return (int)currentImage->GetAllocatedBufferSize();
-}
-
-int BaslerCamera::getImageWidth()
-{
-	return currentImage->GetWidth();
-}
-
-int BaslerCamera::getImageHeight()
-{
-	return currentImage->GetHeight();
-}
-
-void BaslerCamera::getImageData(int data[])
-{
-	struct Pixel
-	{
-		BYTE r, g, b;
-	};
-
-	int size = getImageSize();		
-	Pixel* buffer = (Pixel*)currentImage->GetBuffer();
-
-	while (size > 0)
-	{
-		Pixel* cur = buffer++;
-
-		DWORD curDWORD = *((DWORD*)cur);
-		curDWORD |= 0xFF000000;
-
-		*(data++) = _byteswap_ulong(curDWORD);
-
-		size -= 3;
-	}
 }
 
 BaslerCamera::~BaslerCamera()
 {		
 	delete camera;
-	delete currentImage;
 }
