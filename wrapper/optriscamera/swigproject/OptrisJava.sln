@@ -1,7 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "BaslerJava", "OptrisJava.vcxproj", "{9CE2A9A4-2EFB-4EF7-B54D-6B44317D4B59}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "OptrisJava", "OptrisJava.vcxproj", "{9CE2A9A4-2EFB-4EF7-B54D-6B44317D4B59}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "OptrisTest", "Test\OptrisTest.vcxproj", "{0F017503-E1B7-4842-B923-6AF393DE94C1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -19,6 +21,13 @@ Global
 		{9CE2A9A4-2EFB-4EF7-B54D-6B44317D4B59}.Release|Win32.Build.0 = Release|Win32
 		{9CE2A9A4-2EFB-4EF7-B54D-6B44317D4B59}.Release|x64.ActiveCfg = Release|x64
 		{9CE2A9A4-2EFB-4EF7-B54D-6B44317D4B59}.Release|x64.Build.0 = Release|x64
+		{0F017503-E1B7-4842-B923-6AF393DE94C1}.Debug|Win32.ActiveCfg = Debug|Win32
+		{0F017503-E1B7-4842-B923-6AF393DE94C1}.Debug|Win32.Build.0 = Debug|Win32
+		{0F017503-E1B7-4842-B923-6AF393DE94C1}.Debug|x64.ActiveCfg = Debug|x64
+		{0F017503-E1B7-4842-B923-6AF393DE94C1}.Debug|x64.Build.0 = Debug|x64
+		{0F017503-E1B7-4842-B923-6AF393DE94C1}.Release|Win32.ActiveCfg = Release|Win32
+		{0F017503-E1B7-4842-B923-6AF393DE94C1}.Release|Win32.Build.0 = Release|Win32
+		{0F017503-E1B7-4842-B923-6AF393DE94C1}.Release|x64.ActiveCfg = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

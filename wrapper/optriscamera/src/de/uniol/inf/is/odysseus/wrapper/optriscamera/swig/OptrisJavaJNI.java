@@ -9,16 +9,12 @@
 package de.uniol.inf.is.odysseus.wrapper.optriscamera.swig;
 
 public class OptrisJavaJNI {
-  public final static native long new_intArray(int jarg1);
-  public final static native void delete_intArray(long jarg1);
-  public final static native int intArray_getitem(long jarg1, intArray jarg1_, int jarg2);
-  public final static native void intArray_setitem(long jarg1, intArray jarg1_, int jarg2, int jarg3);
-  public final static native long intArray_cast(long jarg1, intArray jarg1_);
-  public final static native long intArray_frompointer(long jarg1);
   public final static native long new_OptrisCamera(String jarg1, String jarg2) throws java.lang.RuntimeException;
   public final static native void delete_OptrisCamera(long jarg1);
-  public final static native void OptrisCamera_start(long jarg1, OptrisCamera jarg1_);
+  public final static native void OptrisCamera_start(long jarg1, OptrisCamera jarg1_) throws java.lang.RuntimeException;
   public final static native void OptrisCamera_stop(long jarg1, OptrisCamera jarg1_);
+  public final static native boolean OptrisCamera_grabImage(long jarg1, OptrisCamera jarg1_, java.nio.ByteBuffer jarg2, long jarg4) throws java.lang.RuntimeException;
+  public final static native int OptrisCamera_getBufferSize(long jarg1, OptrisCamera jarg1_);
   public final static native int OptrisCamera_getImageWidth(long jarg1, OptrisCamera jarg1_);
   public final static native int OptrisCamera_getImageHeight(long jarg1, OptrisCamera jarg1_);
 }

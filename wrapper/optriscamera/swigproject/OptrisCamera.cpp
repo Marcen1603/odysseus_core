@@ -59,10 +59,23 @@ template <int IDX> OptrisCamera* IPCCallbackFunctions<IDX>::Camera = NULL;
 wstring string2wstring(const string& str)
 {
 	size_t len = str.length();
-	std::wstring wc(len, L'#');
-	mbstowcs(&wc[0], str.c_str(), len);
 
-	return wc;
+	if (len > 0)
+	{
+		std::wstring wc(len, L'#');
+		mbstowcs(&wc[0], str.c_str(), len);
+		return wc;
+	}
+	else
+		return L"";
+}
+
+OptrisCamera::OptrisCamera(const std::string& instanceName, const std::string& ethernetAddr) throw(std::exception)
+{
+	this->instanceName = instanceName;
+	this->ethernetAddr = ethernetAddr;
+
+	instanceID = 0;
 }
 
 void OptrisCamera::start()
@@ -121,17 +134,12 @@ void OptrisCamera::start()
 		throw exception(msg.c_str());
 	}	
 
-	// Call GetMessage several times, otherwise PI Connect hangs
-	MSG msg;
-	for (int i=0;i<5;i++)
-	GetMessage(&msg, NULL, 0, 0);
-
 	bool frameInit = false;
 	bool initCompleted = false;
 	
 	while (!frameInit || !initCompleted)
 	{
-		WORD State = GetIPCState(0, true);
+		WORD State = GetIPCState(instanceID, true);
 
 		if (!initCompleted && (State & IPC_EVENT_INIT_COMPLETED))
 		{
@@ -140,22 +148,48 @@ void OptrisCamera::start()
 
 		if (!frameInit && (State & IPC_EVENT_FRAME_INIT))
 		{			
-			HRESULT hr = GetFrameConfig(0, &Width, &Height, &Depth);
+			HRESULT hr = GetFrameConfig(instanceID, &Width, &Height, &Depth);
 			if(SUCCEEDED(hr))
 				frameInit = true;
 		}
 
-		// TODO: Implement sleep, when both conditions aren't met, and a timeout after which an exception is thrown
-
+		if (!initCompleted && !frameInit)
+		{
+			Sleep(200);
+			// TODO: Implement timeout after which an exception is thrown
+		}
+		ImagerIPCProcessMessages(instanceID);
 	}
+
+	if (TIPCMode(GetIPCMode(0)) != ipcTemps)
+		throw exception("IPC Mode must be set to \"Temperatures\"");
+
+	if (Depth != 2)
+		throw exception("Depth != 2, not implemented!");
+
+
 	cout << "IPC initialized" << endl;
+
+	char* buffer = new char[getBufferSize()];
+	for (int i=0;i<2;i++)
+	{
+		bool success = grabImage(buffer, getBufferSize(), 1000);	
+
+		if (success) 
+			cout << "Test grabbing successful: " << ((short*)buffer)[0] << endl;
+		else
+			cout << "Test grabbing failed!" << endl;
+	}
+	delete buffer;
 }
 
 void OptrisCamera::stop()
 {
 	ReleaseImagerIPC(instanceID);
 
-	string imagerExe = imagerPath + imagerExeName;
+//	CloseApplication(instanceID);
+
+/*	string imagerExe = imagerPath + imagerExeName;
 
 	char stopParameters[256];
 	sprintf(stopParameters, "%s%s /Close", parameters.c_str(), instanceName.c_str());
@@ -165,93 +199,29 @@ void OptrisCamera::stop()
 
     ZeroMemory( &si, sizeof(si));
     si.cb = sizeof(si);
-    ZeroMemory( &pi, sizeof(pi));
+    ZeroMemory( &pi, sizeof(pi));*/
 
 //	CreateProcess(imagerExe.c_str(), stopParameters, NULL, NULL, false, 0, NULL, imagerPath.c_str(), &si, &pi);
 }
 
-void OptrisCamera::OnServerStopped(int reason)
+bool OptrisCamera::grabImage(void *buffer, long size, unsigned int timeOutMs)
 {
-	cout << "OnServerStopped reason = " << reason << endl;
+//	cout << "Current Thread: " << GetCurrentThreadId() << endl;
+
+	if (size < getBufferSize()) return false;
+
+	WORD State = GetIPCState(instanceID, true);
+	if(State & IPC_EVENT_SERVER_STOPPED) return false;
+
+	bool success = false;
+	FrameMetadata metadata;
+	if(GetFrameQueue(instanceID))
+		success = SUCCEEDED(GetFrame(instanceID, (WORD)timeOutMs, buffer, getBufferSize(), &metadata));
+
+	ImagerIPCProcessMessages(instanceID);
+
+	return success;
 }
-
-void OptrisCamera::OnInitCompleted()
-{
-	cout << "OnInitCompleted" << endl;
-}
-
-void OptrisCamera::OnFrameInit(int frameWidth, int frameHeight, int frameDepth)
-{
-	cout << "OnFrameInit w = " << frameWidth << ", h = " << frameHeight << ", d = " << frameDepth << endl;
-}
-
-void OptrisCamera::OnNewFrame(void* pBuffer, FrameMetadata* pMetaData)
-{
-	cout << "OnNewFrame" << endl;
-}
-
-/*bool OptrisCamera::grabRGB8(unsigned int timeOutMs)
-{
-	if (!camera->IsGrabbing()) return false;
-
-	WORD State = GetIPCState(0, true);
-	if(State & IPC_EVENT_SERVER_STOPPED)
-		OnServerStopped(0);
-
-
-	CBaslerGigEGrabResultPtr result;
-	if (!camera->RetrieveResult(timeOutMs, result, TimeoutHandling_Return)) return false;
-	if (!result->GrabSucceeded()) return false;
-
-	CImageFormatConverter converter;
-
-	converter.OutputPixelFormat = PixelType_RGB8packed;
-	converter.OutputBitAlignment = OutputBitAlignment_MsbAligned;
-	converter.Convert(*currentImage, result);
-
-	return true;
-}
-
-int BaslerCamera::getImageSize()
-{
-	return (int)currentImage->GetAllocatedBufferSize();
-}*/
-
-int OptrisCamera::getImageWidth()
-{
-	return 0; //currentImage->GetWidth();
-}
-
-int OptrisCamera::getImageHeight()
-{
-	return 0; //currentImage->GetHeight();
-}
-
-/*void OptrisCamera::getImageData(int data[])
-{
-	struct Pixel
-	{
-		BYTE r, g, b;
-	};
-
-	int size = getImageSize();		
-	Pixel* buffer = (Pixel*)currentImage->GetBuffer();
-
-	while (size > 0)
-	{
-		Pixel* cur = buffer++;
-
-		DWORD curDWORD = *((DWORD*)cur);
-		curDWORD &= 0x00FFFFFF;
-
-		*(data++) = curDWORD;
-
-//		*(data++) = *((DWORD*)(buffer++)) >> 8;
-		size -= 3;
-	}
-
-//	memcpy(data, currentImage->GetBuffer(), getImageSize());
-} */
 
 OptrisCamera::~OptrisCamera()
 {		

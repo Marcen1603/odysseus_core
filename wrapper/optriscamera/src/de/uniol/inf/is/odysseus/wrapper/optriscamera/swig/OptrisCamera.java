@@ -39,12 +39,20 @@ public class OptrisCamera {
     this(OptrisJavaJNI.new_OptrisCamera(instanceName, ethernetAddr), true);
   }
 
-  public void start() {
+  public void start() throws java.lang.RuntimeException {
     OptrisJavaJNI.OptrisCamera_start(swigCPtr, this);
   }
 
   public void stop() {
     OptrisJavaJNI.OptrisCamera_stop(swigCPtr, this);
+  }
+
+  public boolean grabImage(java.nio.ByteBuffer buffer, long timeOutMs) throws java.lang.RuntimeException {
+    return OptrisJavaJNI.OptrisCamera_grabImage(swigCPtr, this, buffer, timeOutMs);
+  }
+
+  public int getBufferSize() {
+    return OptrisJavaJNI.OptrisCamera_getBufferSize(swigCPtr, this);
   }
 
   public int getImageWidth() {

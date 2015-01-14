@@ -13,37 +13,24 @@ private:
 	std::string		instanceName;
 	std::string		ethernetAddr;
 
-private:
-	void OnServerStopped(int reason);
-	void OnInitCompleted();
-	void OnFrameInit(int frameWidth, int frameHeight, int frameDepth);
-	void OnNewFrame(void* pBuffer, FrameMetadata* pMetaData);
-
 	int Width;
 	int Height;
 	int Depth;
 
 public:
-	OptrisCamera(const std::string& instanceName, const std::string& ethernetAddr) throw(std::exception)
-	{
-		this->instanceName = instanceName;
-		this->ethernetAddr = ethernetAddr;
-
-		instanceID = 0;
-	}
-
+	OptrisCamera(const std::string& instanceName, const std::string& ethernetAddr) throw(std::exception);
 	~OptrisCamera();
 
-	void	start();
-	void	stop();
+	void start() throw(std::exception);
+	void stop();
 
-//	bool	grabRGB8(unsigned int timeOutMs) throw(std::exception);
-//	int		getImageSize();
-	int		getImageWidth();
-	int		getImageHeight();
-//	void	getImageData(int data[]);
+	bool grabImage(void *buffer, long size, unsigned int timeOutMs) throw(std::exception);
 
-	template <int IDX> friend class IPCCallbackFunctions;
+	int		getBufferSize() const { return Width * Height * Depth; }
+	int		getImageWidth() const { return Width; }
+	int		getImageHeight() const { return Height; }
+
+//	template <int IDX> friend class IPCCallbackFunctions;
 };
 
 #endif

@@ -1,8 +1,6 @@
 package de.uniol.inf.is.odysseus.wrapper.optriscamera.physicaloperator;
 
-import static org.bytedeco.javacpp.opencv_core.IPL_DEPTH_8U;
-import static org.bytedeco.javacpp.opencv_core.cvCreateImage;
-import static org.bytedeco.javacpp.opencv_core.cvSize;
+import static org.bytedeco.javacpp.opencv_core.*;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -18,7 +16,6 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.AbstractS
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandler;
 import de.uniol.inf.is.odysseus.imagejcv.common.datatype.ImageJCV;
 import de.uniol.inf.is.odysseus.wrapper.optriscamera.swig.OptrisCamera;
-import de.uniol.inf.is.odysseus.wrapper.optriscamera.swig.intArray;
 
 public class OptrisCameraTransportHandler extends AbstractSimplePullTransportHandler<Tuple<?>> 
 {
@@ -29,8 +26,8 @@ public class OptrisCameraTransportHandler extends AbstractSimplePullTransportHan
 	private String 			ethernetAddress;
 	private OptrisCamera 	cameraCapture;
 	
-	private intArray 		imageData; 	
-	
+	private ImageJCV currentImage;
+		
 	public OptrisCameraTransportHandler() 
 	{
 		super();
@@ -54,10 +51,6 @@ public class OptrisCameraTransportHandler extends AbstractSimplePullTransportHan
 
 	@Override public String getName() { return "OptrisCamera"; }
 
-	public int getImageWidth() { return cameraCapture.getImageWidth(); }
-	public int getImageHeight() { return cameraCapture.getImageHeight(); }
-	public int getImageNumPixels() { return getImageWidth() * getImageHeight(); }	
-	
 	@Override public void processInOpen() throws IOException 
 	{
 		synchronized (processLock)
@@ -66,16 +59,13 @@ public class OptrisCameraTransportHandler extends AbstractSimplePullTransportHan
 			{
 		 		cameraCapture = new OptrisCamera("", ethernetAddress);
 				cameraCapture.start();
+				currentImage = null;
 			}
 			catch (RuntimeException e) 
 			{
 				cameraCapture = null;
 				throw new IOException(e.getMessage());
 			}
-			
-	        imageData = new intArray(getImageNumPixels());
-	        
-	        System.out.println("processInOpen");
 		}
 	}
 	
@@ -83,47 +73,16 @@ public class OptrisCameraTransportHandler extends AbstractSimplePullTransportHan
 	{
 		synchronized (processLock)
 		{
-			System.out.println("processInClose");
-			
 			cameraCapture.stop();
 			cameraCapture = null;
-			
-			imageData = null;
 		}
 	}
 
-	public static ImageJCV createFromBuffer(intArray buffer, int width, int height)
-	{
-		int channels = 4;
-		
-		IplImage img = cvCreateImage(cvSize(width, height), IPL_DEPTH_8U, channels);
-		ByteBuffer buf = img.getByteBuffer();
-		
-		int wfill = img.widthStep() - width*channels;
-		
-		int src=0;
-		int dst=0;
-		for(int y=0; y<height; y++)
-		{
-            for(int x=0; x<width; x++)
-            {
-            	buf.putInt(dst, buffer.getitem(src++));            	
-            	dst += channels;
-            }
-            
-            dst += wfill;
-		}		
-				
-		return new ImageJCV(img);		
-	}	
-	
 	@Override public Tuple<?> getNext() 
 	{
-		ImageJCV image = createFromBuffer(imageData, getImageWidth(), getImageHeight());
-			
 		@SuppressWarnings("rawtypes")
 		Tuple<?> tuple = new Tuple(1, false);
-        tuple.setAttribute(0, image);
+        tuple.setAttribute(0, currentImage);
         return tuple;					
 	}
     
@@ -131,13 +90,21 @@ public class OptrisCameraTransportHandler extends AbstractSimplePullTransportHan
 	{
 		synchronized (processLock)
 		{
-			if (cameraCapture == null) return false;		
-			boolean success = true;/*cameraCapture.grabRGB8(1000);		
+			if (cameraCapture == null) return false;
 			
-			if (success)
-				cameraCapture.getImageData(imageData.cast());*/
+			IplImage img = cvCreateImage(cvSize(cameraCapture.getImageWidth(), cameraCapture.getImageHeight()), IPL_DEPTH_16S, 1);			
+			ByteBuffer imageData = img.getByteBuffer();
 			
-			return success;
+			// Is it possible for an IplImage to be backed by a non-direct byte buffer?
+			assert(imageData.isDirect());
+
+			if (!cameraCapture.grabImage(imageData, 1000))
+				return false;
+			else
+			{
+				currentImage = new ImageJCV(img);			
+				return true;
+			}
 		}
 	}
 		
