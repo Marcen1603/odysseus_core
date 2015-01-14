@@ -1,19 +1,20 @@
 package de.uniol.inf.is.odysseus.core.server.logicaloperator;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFExpression;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.BooleanParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IntegerParameter;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.ResolvedSDFAttributeParameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.NamedExpressionItem;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.SDFExpressionParameter;
 
 @LogicalOperator(name="TOPK", maxInputPorts=1,minInputPorts=1,category={ LogicalOperatorCategory.ADVANCED }, doc = "Calculate the top k elements of the input")
 public class TopKAO extends AbstractLogicalOperator {
 
 	private static final long serialVersionUID = 8852471127806000337L;
 
-	private SDFAttribute attribute;
+	private SDFExpression scoringFunction;
 	private int k;
 	private boolean descending;
 	private boolean writeOnlyOnChange;
@@ -23,19 +24,19 @@ public class TopKAO extends AbstractLogicalOperator {
 
 	TopKAO(TopKAO other) {
 		super(other);
-		this.attribute = other.attribute;
+		this.scoringFunction = other.scoringFunction.clone();
 		this.k = other.k;
 		this.descending = other.descending;
 		this.writeOnlyOnChange = other.writeOnlyOnChange;
 	}
 
-	public SDFAttribute getAttribute() {
-		return attribute;
+	public SDFExpression getScoringFunction() {
+		return scoringFunction;
 	}
 
-	@Parameter(name="Attribute", optional = false, type = ResolvedSDFAttributeParameter.class, doc ="The attribute for ordering")
-	public void setAttribute(SDFAttribute attribute) {
-		this.attribute = attribute;
+	@Parameter(name="scoringFunction", optional = false, type = SDFExpressionParameter.class, doc ="The scoring function for ordering")
+	public void setAttribute(NamedExpressionItem scoringFunction) {
+		this.scoringFunction = scoringFunction.expression;
 	}
 
 	public int getK() {
