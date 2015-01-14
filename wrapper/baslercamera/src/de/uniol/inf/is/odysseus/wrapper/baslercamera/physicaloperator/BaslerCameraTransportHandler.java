@@ -5,7 +5,6 @@ import static org.bytedeco.javacpp.opencv_core.*;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 
-import org.bytedeco.javacpp.BytePointer;
 import org.bytedeco.javacpp.opencv_core.IplImage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

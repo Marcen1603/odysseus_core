@@ -25,7 +25,7 @@ public class Document<T extends IMetaAttribute> extends AbstractStreamObject<T>
      */
     @Override
     public AbstractStreamObject<T> newInstance() {
-        return new Document("");
+        return new Document<>("");
     }
 
 	@Override

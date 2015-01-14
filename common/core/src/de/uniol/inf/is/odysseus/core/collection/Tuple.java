@@ -194,7 +194,7 @@ public class Tuple<T extends IMetaAttribute> extends AbstractStreamObject<T>
      */
     @Override
     public AbstractStreamObject<T> newInstance() {
-        return new Tuple();
+        return new Tuple<>();
     }
 	// -----------------------------------------------------------------
 	// Attributzugriffsmethoden

@@ -2,17 +2,11 @@ package de.uniol.inf.is.odysseus.wrapper.baslercamera;
 
 import static org.bytedeco.javacpp.opencv_core.IPL_DEPTH_8U;
 import static org.bytedeco.javacpp.opencv_core.cvCreateImage;
-import static org.bytedeco.javacpp.opencv_core.cvCreateImageHeader;
 import static org.bytedeco.javacpp.opencv_core.cvSize;
-
-import java.nio.ByteBuffer;
-import java.nio.IntBuffer;
 
 import org.bytedeco.javacpp.opencv_core.IplImage;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
-
-import de.uniol.inf.is.odysseus.wrapper.baslercamera.swig.BaslerJavaJNI;
 
 public class Activator implements BundleActivator {
 
