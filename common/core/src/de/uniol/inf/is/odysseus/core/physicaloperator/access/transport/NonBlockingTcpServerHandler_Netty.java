@@ -220,7 +220,8 @@ public class NonBlockingTcpServerHandler_Netty extends AbstractTransportHandler
 	}
 
 	@Override
-	public void process(long callerId, ByteBuffer buffer) throws ClassNotFoundException {
+	public void process(long callerId, ByteBuffer buffer)
+			throws ClassNotFoundException {
 		super.fireProcess(callerId, buffer);
 	}
 
@@ -243,13 +244,7 @@ public class NonBlockingTcpServerHandler_Netty extends AbstractTransportHandler
 
 }
 
-class MyTCPServer extends ChannelInboundHandlerAdapter {
-
-	// private static MyTCPServer instance = new MyTCPServer();
-	//
-	// static synchronized MyTCPServer getInstance() {
-	// return instance;
-	// }
+class MyTCPServer {
 
 	public MyTCPServer() {
 	}
@@ -296,7 +291,8 @@ class MyTCPServer extends ChannelInboundHandlerAdapter {
 						@Override
 						protected void initChannel(SocketChannel ch)
 								throws Exception {
-							final ServerHandler handler = new ServerHandler(MyTCPServer.this);
+							final ServerHandler handler = new ServerHandler(
+									caller);
 							ch.pipeline().addLast(handler);
 						}
 					}).option(ChannelOption.SO_BACKLOG, 128)
@@ -309,82 +305,6 @@ class MyTCPServer extends ChannelInboundHandlerAdapter {
 		handlerMapping.put(port, caller);
 	}
 
-	private int getPort(ChannelHandlerContext ctx) {
-		return ((InetSocketAddress) ctx.channel().localAddress()).getPort();
-	}
-
-	private NonBlockingTcpServerHandler_Netty getHandler(
-			ChannelHandlerContext ctx) {
-		return handlerMapping.get(getPort(ctx));
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * io.netty.channel.ChannelInboundHandlerAdapter#channelActive(io.netty.
-	 * channel.ChannelHandlerContext)
-	 */
-	@Override
-	public void channelActive(ChannelHandlerContext ctx) throws Exception {
-		// System.err.println("Channel active " + ctx.channel().localAddress());
-		// Send cache elements to new connected receiver
-		if (getHandler(ctx).maxBufferSize > 0) {
-			synchronized (getHandler(ctx).buffer) {
-				for (byte[] message : getHandler(ctx).buffer) {
-					getHandler(ctx).send(message, ctx);
-				}
-			}
-		}
-
-		getHandler(ctx).channels.add(ctx);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * io.netty.channel.ChannelInboundHandlerAdapter#channelInactive(io.netty
-	 * .channel.ChannelHandlerContext)
-	 */
-	@Override
-	public void channelInactive(ChannelHandlerContext ctx) throws Exception {
-		// System.err.println("Channel inactive " +
-		// ctx.channel().localAddress());
-		getHandler(ctx).channels.remove(ctx);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * io.netty.channel.ChannelInboundHandlerAdapter#channelRead(io.netty.channel
-	 * .ChannelHandlerContext, java.lang.Object)
-	 */
-	@Override
-	public synchronized void channelRead(ChannelHandlerContext ctx, Object msg)
-			throws Exception {
-		try {
-			ByteBuf input = ((UnpooledUnsafeDirectByteBuf) msg);
-//			System.err.println("Context "+ctx);
-//			System.err.println("ChannelRead "+msg);
-//			System.err.println("Content "+input.toString(io.netty.util.CharsetUtil.UTF_8));
-			ByteBuf copy = input.copy();
-
-			
-			ByteBuffer buffer = copy.nioBuffer();
-			buffer.position(buffer.limit());
-
-			getHandler(ctx).process(ctx.hashCode(),buffer);
-			
-		} catch (Exception e) {
-			e.printStackTrace();
-		} finally {
-			ReferenceCountUtil.release(msg);
-		}
-	}
-
-
 }
 
 /**
@@ -394,44 +314,73 @@ class MyTCPServer extends ChannelInboundHandlerAdapter {
  * 
  */
 
-class ServerHandler extends ChannelInboundHandlerAdapter {
+class ServerHandler extends ByteToMessageDecoder {
 
-	private MyTCPServer instance;
+	private NonBlockingTcpServerHandler_Netty handler;
 
 	/**
 	 * @param instance
+	 * @param caller
 	 */
-	public ServerHandler(MyTCPServer instance) {
-		this.instance = instance;
+	public ServerHandler(NonBlockingTcpServerHandler_Netty handler) {
+		this.handler = handler;
 	}
 
 	@Override
-	public void channelRead(ChannelHandlerContext ctx, Object msg)
-			throws Exception {
-		instance.channelRead(ctx, msg);
-	}
-	
-	@Override
-	public void channelReadComplete(ChannelHandlerContext ctx) throws Exception {
-		instance.channelReadComplete(ctx);
+	protected void decode(ChannelHandlerContext ctx, ByteBuf in,
+			List<Object> out) throws Exception {
+		sendToServer(ctx, in.readBytes(in.readableBytes()), this);
 	}
 
-	@Override
+	public synchronized void sendToServer(ChannelHandlerContext ctx,
+			ByteBuf msg, ServerHandler serverHandler) throws Exception {
+		try {
+//			System.err.println("ChannelRead " + msg);
+//			System.err.println("Context " + ctx);
+//			System.err.println("ServerHandler " + serverHandler);
+//			System.err.println("Content "
+//					+ msg.toString(io.netty.util.CharsetUtil.UTF_8));
+
+			ByteBuffer buffer = msg.nioBuffer();
+			buffer.position(buffer.limit());
+			handler.process(ctx.hashCode(), buffer);
+			buffer.clear();
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+
+			// Called from decode
+			// ReferenceCountUtil.release(msg);
+		}
+	}
+
 	public void channelActive(ChannelHandlerContext ctx) throws Exception {
-		instance.channelActive(ctx);
+		// System.err.println("Channel active " + ctx.channel().localAddress());
+		// Send cache elements to new connected receiver
+		if (handler.maxBufferSize > 0) {
+			synchronized (handler.buffer) {
+				for (byte[] message : handler.buffer) {
+					handler.send(message, ctx);
+				}
+			}
+		}
+
+		handler.channels.add(ctx);
 	}
 
-	@Override
 	public void channelInactive(ChannelHandlerContext ctx) throws Exception {
-		instance.channelInactive(ctx);
+		// System.err.println("Channel inactive " +
+		// ctx.channel().localAddress());
+		handler.channels.remove(ctx);
 	}
-	
+
 	@Override
 	public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause)
 			throws Exception {
-		//System.err.println("ERROR");
+		// System.err.println("ERROR");
 		cause.printStackTrace();
-		
+
 		super.exceptionCaught(ctx, cause);
 	}
 

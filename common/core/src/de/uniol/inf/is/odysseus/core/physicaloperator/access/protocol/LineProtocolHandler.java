@@ -350,27 +350,34 @@ public class LineProtocolHandler<T> extends AbstractProtocolHandler<T> {
 		
 		String strMsg = bb_to_str(message);
 		StringBuffer currentInputString = currentInputStringMap.get(callerId);
-		if (currentInputString == null){
-			currentInputString = new StringBuffer();
-			currentInputStringMap.put(callerId, currentInputString);
-		}
-		
-		String data = currentInputString + strMsg;
+		String data = currentInputString != null? currentInputString + strMsg:strMsg;
+
+		currentInputString = new StringBuffer();
+		currentInputStringMap.put(callerId, currentInputString);
+
 		for (char s: data.toCharArray()){
-			if (s == '\n' || s == 'r'){
+			if (s == '\n' || s == '\r'){
 				if (currentInputString.length() > 0){
 					if (!firstLineSkipped && !readFirstLine) {
 						firstLineSkipped = true;
 						continue;
 					} else {
-						process(currentInputString.toString());
+						String token = currentInputString.toString();
+						process(token);
 					}
 				}
-				currentInputStringMap.remove(callerId);
+				currentInputString = new StringBuffer();
 			}else{
 				currentInputString.append(s);
 			}
 		}
+		if (currentInputString.length() > 0){
+			currentInputStringMap.put(callerId, currentInputString);
+		}else{
+			currentInputStringMap.remove(callerId);
+		}
+
+		
 	}
 
 	protected void process(String token) {
