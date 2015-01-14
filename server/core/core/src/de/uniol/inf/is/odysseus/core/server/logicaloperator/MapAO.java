@@ -51,6 +51,7 @@ public class MapAO extends UnaryLogicalOp {
 	private int threads = 0;
 	private boolean evaluateOnPunctuation = false;
 	private boolean allowNullValue = false;
+	private boolean suppressErrors = false;
 
 	public MapAO() {
 		super();
@@ -63,6 +64,7 @@ public class MapAO extends UnaryLogicalOp {
 		this.threads = ao.threads;
 		this.evaluateOnPunctuation = ao.evaluateOnPunctuation;
 		this.allowNullValue = ao.allowNullValue;
+		this.suppressErrors = ao.suppressErrors;
 	}
 
 	public List<SDFExpression> getExpressionList() {
@@ -267,7 +269,17 @@ public class MapAO extends UnaryLogicalOp {
 	public boolean isAllowNullValue() {
 		return allowNullValue;
 	}
+
 	
+	public boolean isSuppressErrors() {
+		return suppressErrors;
+	}
+
+	@Parameter(type = BooleanParameter.class, name = "suppressErrors", optional = true, doc = "If set to true calculation errors will not appear in log or console. Could be helpful in scenarios where null values are allowed.")	
+	public void setSuppressErrors(boolean suppressErrors) {
+		this.suppressErrors = suppressErrors;
+	}
+
 	@Override
 	public SDFSchema getOutputSchemaIntern(int pos) {
 		calcOutputSchema();

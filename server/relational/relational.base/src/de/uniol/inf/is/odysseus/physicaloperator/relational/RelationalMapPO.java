@@ -47,23 +47,26 @@ public class RelationalMapPO<T extends IMetaAttribute> extends
 	private SDFExpression[] expressions;
 	private final SDFSchema inputSchema;
 	final private boolean allowNull;
+	final private boolean suppressErrors;
 
 	final private boolean evaluateOnPunctuation;
 	private Tuple<T> lastTuple;
 
 	public RelationalMapPO(SDFSchema inputSchema, SDFExpression[] expressions,
-			boolean allowNullInOutput, boolean evaluateOnPunctuation) {
+			boolean allowNullInOutput, boolean evaluateOnPunctuation, boolean suppressErrors) {
 		this.inputSchema = inputSchema;
 		this.allowNull = allowNullInOutput;
 		this.evaluateOnPunctuation = evaluateOnPunctuation;
+		this.suppressErrors = suppressErrors;
 		init(inputSchema, expressions);
 	}
 
 	protected RelationalMapPO(SDFSchema inputSchema, boolean allowNullInOutput,
-			boolean evaluateOnPunctuation) {
+			boolean evaluateOnPunctuation, boolean suppressErrors) {
 		this.inputSchema = inputSchema;
 		this.allowNull = allowNullInOutput;
 		this.evaluateOnPunctuation = evaluateOnPunctuation;
+		this.suppressErrors = suppressErrors;
 	}
 
 	protected void init(SDFSchema schema, SDFExpression[] expressions) {
@@ -167,13 +170,15 @@ public class RelationalMapPO<T extends IMetaAttribute> extends
 					// }
 				} catch (Exception e) {
 					nullValueOccured = true;
-					if (!(e instanceof NullPointerException)) {
-						logger.warn("Cannot calc result for " + object
-								+ " with expression " + expressions[i], e);
-						// Not needed. Value is null, if not set!
-						// outputVal.setAttribute(i, null);
-						sendWarning("Cannot calc result for " + object
-								+ " with expression " + expressions[i], e);
+					if (!suppressErrors) {
+						if (!(e instanceof NullPointerException)) {
+							logger.warn("Cannot calc result for " + object
+									+ " with expression " + expressions[i], e);
+							// Not needed. Value is null, if not set!
+							// outputVal.setAttribute(i, null);
+							sendWarning("Cannot calc result for " + object
+									+ " with expression " + expressions[i], e);
+						}
 					}
 				}
 				if (this.expressions[i].getType().requiresDeepClone()) {
@@ -255,20 +260,4 @@ public class RelationalMapPO<T extends IMetaAttribute> extends
 		return inputSchema;
 	}
 
-}
-
-class VarHelper {
-	int pos;
-	int objectPosToUse;
-
-	public VarHelper(int pos, int objectPosToUse) {
-		super();
-		this.pos = pos;
-		this.objectPosToUse = objectPosToUse;
-	}
-
-	@Override
-	public String toString() {
-		return pos + " " + objectPosToUse;
-	}
 }

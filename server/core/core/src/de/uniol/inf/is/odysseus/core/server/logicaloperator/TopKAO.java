@@ -1,7 +1,13 @@
 package de.uniol.inf.is.odysseus.core.server.logicaloperator;
 
+import java.util.LinkedList;
+import java.util.List;
+
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFExpression;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.BooleanParameter;
@@ -17,17 +23,15 @@ public class TopKAO extends AbstractLogicalOperator {
 	private SDFExpression scoringFunction;
 	private int k;
 	private boolean descending;
-	private boolean writeOnlyOnChange;
 
-	TopKAO() {
+	public TopKAO() {
 	}
 
-	TopKAO(TopKAO other) {
+	public TopKAO(TopKAO other) {
 		super(other);
 		this.scoringFunction = other.scoringFunction.clone();
 		this.k = other.k;
 		this.descending = other.descending;
-		this.writeOnlyOnChange = other.writeOnlyOnChange;
 	}
 
 	public SDFExpression getScoringFunction() {
@@ -57,13 +61,14 @@ public class TopKAO extends AbstractLogicalOperator {
 		this.descending = ascending;
 	}
 
-	public boolean isWriteOnlyOnChange() {
-		return writeOnlyOnChange;
-	}
-
-	@Parameter(name="WriteOnlyOnChange", optional = true, type = BooleanParameter.class, doc ="Output only if the top k elements change, else output for every new input")
-	public void setWriteOnlyOnChange(boolean writeOnlyOnChange) {
-		this.writeOnlyOnChange = writeOnlyOnChange;
+	
+	@Override
+	protected SDFSchema getOutputSchemaIntern(int pos) {
+		SDFSchema subSchema = getInputSchema(0);
+		List<SDFAttribute> attributes = new LinkedList<SDFAttribute>();
+		attributes.add(new SDFAttribute(subSchema.getURI(), "topk", SDFDatatype.LIST_TUPLE, subSchema));
+		SDFSchema outputSchema = new SDFSchema(subSchema, attributes);
+		return outputSchema;
 	}
 	
 	@Override

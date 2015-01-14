@@ -37,8 +37,11 @@ public class TupleAccessFunction extends AbstractFunction<Object> implements
 		int pos = Integer.parseInt(args[1].getValue().toString());
 		SDFDatatype dt = args[0].getReturnType();
 		SDFSchema schema = dt.getSchema();
-		
-		return schema.get(pos).getDatatype();
+		if (schema != null) {
+			return schema.get(pos).getDatatype();
+		}
+				
+		return SDFDatatype.OBJECT;
 	}
 
 	@Override

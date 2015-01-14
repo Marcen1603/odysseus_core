@@ -58,7 +58,7 @@ public class TStateMapAORule extends AbstractTransformationRule<StateMapAO> {
 		RelationalMapPO<?> mapPO = new RelationalStateMapPO<IMetaAttribute>(
 				mapAO.getInputSchema(), mapAO.getExpressionList().toArray(
 						new SDFExpression[0]), mapAO.isAllowNullInOutput(), gp,
-				mapAO.isEvaluateOnPunctuation());
+				mapAO.isEvaluateOnPunctuation(), mapAO.isSuppressErrors());
 		defaultExecute(mapAO, mapPO, transformConfig, true, true);
 	}
 

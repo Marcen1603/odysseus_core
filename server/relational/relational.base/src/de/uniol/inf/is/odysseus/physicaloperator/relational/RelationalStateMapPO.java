@@ -30,9 +30,9 @@ public class RelationalStateMapPO<T extends IMetaAttribute> extends
 	public RelationalStateMapPO(SDFSchema inputSchema,
 			SDFExpression[] expressions, boolean allowNullInOutput,
 			IGroupProcessor<Tuple<T>, Tuple<T>> groupProcessor,
-			boolean evaluateOnPunctuation) {
+			boolean evaluateOnPunctuation, boolean suppressErrors) {
 		// MUST USE THIS WAY, else maxHistoryElements is always 0 :-)
-		super(inputSchema, allowNullInOutput, evaluateOnPunctuation);
+		super(inputSchema, allowNullInOutput, evaluateOnPunctuation, suppressErrors);
 		this.groupProcessor = groupProcessor;
 		init(inputSchema, expressions);
 	}
