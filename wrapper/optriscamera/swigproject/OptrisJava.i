@@ -1,5 +1,5 @@
 /* File : OptrisJava.i */
-%module OptrisJava
+%module(directors="1") OptrisJava
 
 %include "std_string.i"
 %include "various.i"
@@ -15,7 +15,6 @@
 /* %typemap(javabase) std::ios_base::failure "java.lang.Exception"; */
 
 %typemap(in) (void *buffer, long size) { 
-  /* %typemap(in) void * */ 
   $1 = jenv->GetDirectBufferAddress($input); 
   $2 = (long)(jenv->GetDirectBufferCapacity($input)); 
 } 
@@ -32,5 +31,7 @@
 %{
 #include "OptrisCamera.h"
 %}
+
+%feature("director") FrameCallback;
 
 %include "OptrisCamera.h"

@@ -56,6 +56,28 @@ public:
 
 template <int IDX> OptrisCamera* IPCCallbackFunctions<IDX>::Camera = NULL;
 
+
+// This template will count down from "Cur" to 0 to find "index" and set the right callback functions.
+// This avoids a big switch-case statement
+template <int Cur> struct SetCameraCallbackTemplate
+{
+	static void Set(int index, OptrisCamera* camera)
+	{
+		if (index == Cur)
+			IPCCallbackFunctions<Cur>::SetCamera(camera);
+		else
+			SetCameraCallbackTemplate<Cur-1>::Set(index, camera);
+	}
+};
+
+template <> struct SetCameraCallbackTemplate<0>
+{
+	static void Set(int index, OptrisCamera* camera)
+	{
+		IPCCallbackFunctions<0>::SetCamera(camera);
+	}
+};
+
 wstring string2wstring(const string& str)
 {
 	size_t len = str.length();
@@ -70,159 +92,213 @@ wstring string2wstring(const string& str)
 		return L"";
 }
 
+class IPCThread
+{
+	bool running;
+	HANDLE threadHandle;
+	OptrisCamera* camera;
+	string instanceName;
+	WORD instanceID;
+
+	void ThreadInit()
+	{
+		// Start application
+		string imagerExe = imagerPath + imagerExeName;
+
+		char startParameters[256];
+		sprintf(startParameters, "%s%s", parameters.c_str(), instanceName.c_str());
+
+		STARTUPINFO si;
+		PROCESS_INFORMATION pi;
+
+		ZeroMemory( &si, sizeof(si));
+		si.cb = sizeof(si);
+		ZeroMemory( &pi, sizeof(pi));
+
+	//	CreateProcess(imagerExe.c_str(), startParameters, NULL, NULL, FALSE, 0, NULL, imagerPath.c_str(), &si, &pi);
+
+		// Connect IPC	#
+		wstring wc = string2wstring(instanceName);
+
+		int tries = 20;
+
+		cout << "Initialize IPC..." << endl;
+		HRESULT hr;
+		do
+		{
+			Sleep(500);
+			hr = InitNamedImagerIPC(instanceID, (wchar_t*)wc.c_str());
+			tries--;
+			cout << tries << " tries left..." << endl;
+		}
+		while (FAILED(hr) && (tries > 0));
+
+		if(FAILED(hr))
+		{
+			string msg = "InitImagerIPC failed: hr " + to_string((long long)hr);
+			throw exception(msg.c_str());
+		}
+
+		SetCameraCallbackTemplate<32>::Set(instanceID, camera);
+
+		hr = RunImagerIPC(instanceID);
+		if(FAILED(hr))
+		{
+			string msg = "RunImagerIPC failed: hr " + to_string((long long)hr);
+			throw exception(msg.c_str());
+		}	
+
+		cout << "IPC initialized" << endl;
+	}
+
+	void ThreadExit()
+	{
+		ReleaseImagerIPC(instanceID);
+		//	CloseApplication(instanceID);
+	/*	string imagerExe = imagerPath + imagerExeName;
+
+		char stopParameters[256];
+		sprintf(stopParameters, "%s%s /Close", parameters.c_str(), instanceName.c_str());
+
+		STARTUPINFO si;
+		PROCESS_INFORMATION pi;
+
+		ZeroMemory( &si, sizeof(si));
+		si.cb = sizeof(si);
+		ZeroMemory( &pi, sizeof(pi));*/
+
+	//	CreateProcess(imagerExe.c_str(), stopParameters, NULL, NULL, false, 0, NULL, imagerPath.c_str(), &si, &pi);
+
+	}
+
+	static DWORD WINAPI ThreadProc(LPVOID param)
+	{
+		IPCThread* ipcThread = (IPCThread*)param;
+
+		ipcThread->ThreadInit();
+
+		ipcThread->running = true;
+		while (ipcThread->running)
+		{
+			ImagerIPCProcessMessages(ipcThread->instanceID);
+		}
+
+		ipcThread->ThreadExit();
+
+		return 0;
+	}
+
+public:
+	IPCThread(OptrisCamera* camera, string instanceName, WORD instanceID) : camera(camera), instanceName(instanceName), instanceID(instanceID)
+	{
+		running = false;
+		threadHandle = CreateThread(NULL, 0, ThreadProc, this, 0, NULL);
+	}
+
+	~IPCThread()
+	{
+		running = false;
+		WaitForSingleObject(threadHandle, 1000);
+	}
+
+	bool isRunning() const { return running; }
+};
+
 OptrisCamera::OptrisCamera(const std::string& instanceName, const std::string& ethernetAddr) throw(std::exception)
 {
 	this->instanceName = instanceName;
 	this->ethernetAddr = ethernetAddr;
 
 	instanceID = 0;
+	frameCallback = NULL;
+	frameBuffer = NULL;
+}
+
+OptrisCamera::~OptrisCamera()
+{	
+	delFrameCallback();
 }
 
 void OptrisCamera::start()
 {
-	// Start application
-	string imagerExe = imagerPath + imagerExeName;
+	// TODO: Can start take the frameCallback as a parameter?
+	// Find out how GC works with java Directors
+	if (!frameCallback) throw exception("setFrameCallback() must be called prior to start()");
 
-	char startParameters[256];
-	sprintf(startParameters, "%s%s", parameters.c_str(), instanceName.c_str());
+	initCompleted = false;
+	frameInit = false;
 
-	STARTUPINFO si;
-    PROCESS_INFORMATION pi;
+	// Start IPC thread
+	ipcThread = new IPCThread(this, instanceName, instanceID);
 
-    ZeroMemory( &si, sizeof(si));
-    si.cb = sizeof(si);
-    ZeroMemory( &pi, sizeof(pi));
-
-//	CreateProcess(imagerExe.c_str(), startParameters, NULL, NULL, FALSE, 0, NULL, imagerPath.c_str(), &si, &pi);
-	
-	// Connect IPC	#
-	wstring wc = string2wstring(instanceName);
-
-	int tries = 20;
-
-	cout << "Initialize IPC..." << endl;
-	HRESULT hr;
-	do
+	while (!initCompleted || !frameInit)
 	{
-		Sleep(500);
-		hr = InitNamedImagerIPC(instanceID, (wchar_t*)wc.c_str());
-		tries--;
-		cout << tries << " tries left..." << endl;
-	}
-	while (FAILED(hr) && (tries > 0));
-
-	if(FAILED(hr))
-	{
-		string msg = "InitImagerIPC failed: hr " + to_string((long long)hr);
-		throw exception(msg.c_str());
 	}
 
-	// Add additional cameras here if necessary
-/*	switch (instanceID)
-	{
-	case 0: IPCCallbackFunctions<0>::SetCamera(this); break;
-	case 1: IPCCallbackFunctions<0>::SetCamera(this); break;
-	case 2: IPCCallbackFunctions<0>::SetCamera(this); break;
-	case 3: IPCCallbackFunctions<0>::SetCamera(this); break;
-	default: throw exception("instanceID > 3");
-	}*/
-
-	hr = RunImagerIPC(instanceID);
-	if(FAILED(hr))
-	{
-		string msg = "RunImagerIPC failed: hr " + to_string((long long)hr);
-		throw exception(msg.c_str());
-	}	
-
-	bool frameInit = false;
-	bool initCompleted = false;
-	
-	while (!frameInit || !initCompleted)
-	{
-		WORD State = GetIPCState(instanceID, true);
-
-		if (!initCompleted && (State & IPC_EVENT_INIT_COMPLETED))
-		{
-			initCompleted = true;
-		}
-
-		if (!frameInit && (State & IPC_EVENT_FRAME_INIT))
-		{			
-			HRESULT hr = GetFrameConfig(instanceID, &Width, &Height, &Depth);
-			if(SUCCEEDED(hr))
-				frameInit = true;
-		}
-
-		if (!initCompleted && !frameInit)
-		{
-			Sleep(200);
-			// TODO: Implement timeout after which an exception is thrown
-		}
-		ImagerIPCProcessMessages(instanceID);
-	}
-
-	if (TIPCMode(GetIPCMode(0)) != ipcTemps)
+	if (TIPCMode(GetIPCMode(instanceID)) != ipcTemps)
 		throw exception("IPC Mode must be set to \"Temperatures\"");
 
 	if (Depth != 2)
 		throw exception("Depth != 2, not implemented!");
-
-
-	cout << "IPC initialized" << endl;
-
-	char* buffer = new char[getBufferSize()];
-	for (int i=0;i<2;i++)
-	{
-		bool success = grabImage(buffer, getBufferSize(), 1000);	
-
-		if (success) 
-			cout << "Test grabbing successful: " << ((short*)buffer)[0] << endl;
-		else
-			cout << "Test grabbing failed!" << endl;
-	}
-	delete buffer;
 }
 
 void OptrisCamera::stop()
 {
-	ReleaseImagerIPC(instanceID);
-
-//	CloseApplication(instanceID);
-
-/*	string imagerExe = imagerPath + imagerExeName;
-
-	char stopParameters[256];
-	sprintf(stopParameters, "%s%s /Close", parameters.c_str(), instanceName.c_str());
-
-	STARTUPINFO si;
-    PROCESS_INFORMATION pi;
-
-    ZeroMemory( &si, sizeof(si));
-    si.cb = sizeof(si);
-    ZeroMemory( &pi, sizeof(pi));*/
-
-//	CreateProcess(imagerExe.c_str(), stopParameters, NULL, NULL, false, 0, NULL, imagerPath.c_str(), &si, &pi);
+	delete ipcThread;
+	ipcThread = NULL;	
 }
 
-bool OptrisCamera::grabImage(void *buffer, long size, unsigned int timeOutMs)
+void OptrisCamera::delFrameCallback() 
+{ 
+	FrameCallback* cb = frameCallback;
+	frameCallback = NULL;
+	delete cb; 
+}
+
+void OptrisCamera::setFrameCallback(FrameCallback* frameCallback) 
+{ 
+	delFrameCallback(); 
+	this->frameCallback = frameCallback; 
+}
+
+void OptrisCamera::OnServerStopped(int reason)
 {
-//	cout << "Current Thread: " << GetCurrentThreadId() << endl;
-
-	if (size < getBufferSize()) return false;
-
-	WORD State = GetIPCState(instanceID, true);
-	if(State & IPC_EVENT_SERVER_STOPPED) return false;
-
-	bool success = false;
-	FrameMetadata metadata;
-	if(GetFrameQueue(instanceID))
-		success = SUCCEEDED(GetFrame(instanceID, (WORD)timeOutMs, buffer, getBufferSize(), &metadata));
-
-	ImagerIPCProcessMessages(instanceID);
-
-	return success;
+	stop();
 }
 
-OptrisCamera::~OptrisCamera()
-{		
+void OptrisCamera::OnInitCompleted()
+{
+	initCompleted = true;
+}
+
+void OptrisCamera::setFrameBuffer(void *buffer, long size)
+{
+	if (size < getBufferSize()) throw std::exception("Buffer is too small");
+
+	frameBuffer = buffer;
+}
+
+void OptrisCamera::OnFrameInit(int frameWidth, int frameHeight, int frameDepth)
+{
+	Width = frameWidth;
+	Height = frameHeight;
+	Depth = frameDepth;
+
+	frameInit = true;
+
+	if (frameCallback)
+		frameCallback->onFrameInit(frameWidth, frameHeight, getBufferSize());
+}
+
+void OptrisCamera::OnNewFrame(void * pBuffer, FrameMetadata *pMetaData)
+{
+	if (!initCompleted || !frameInit) return;
+
+	cout << "Frame " << *((short*)pBuffer) << endl;
+
+	if (frameBuffer)
+		memcpy(frameBuffer, pBuffer, getBufferSize());
+
+	if (frameCallback)
+		frameCallback->onNewFrame();
 }
