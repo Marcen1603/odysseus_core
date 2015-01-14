@@ -20,11 +20,13 @@ public class DistributedDataContainerAdvertisementInstantiator implements
 
 	@Override
 	public Advertisement newInstance() {
+//		System.out.println("newInstance()");
 		return new DistributedDataContainerAdvertisement();
 	}
 
 	@Override
 	public Advertisement newInstance(Element<?> root) {
+//		System.out.println("newInstance(Element)");
 		return new DistributedDataContainerAdvertisement(root);
 	}
 

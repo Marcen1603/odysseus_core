@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.p2p_new.IJxtaServicesProvider;
 import de.uniol.inf.is.odysseus.peer.ddc.distribute.advertisement.DistributedDataContainerAdvertisement;
+import de.uniol.inf.is.odysseus.peer.ddc.distribute.advertisement.DistributedDataContainerAdvertisementType;
 
 /**
  * DDCAdvertisementSender publishes created DDCAdvertisements to other peers
@@ -20,7 +21,7 @@ public class DistributedDataContainerAdvertisementSender {
 
 	private static final Logger LOG = LoggerFactory
 			.getLogger(DistributedDataContainerAdvertisementSender.class);
-//	private static final long WAIT_TIME_MILLIS = 21 * 1000;
+	private static final long WAIT_TIME_MILLIS = 60 * 1000;
 
 	private static IJxtaServicesProvider jxtaServicesProvider;
 	private static DistributedDataContainerAdvertisementSender instance;
@@ -63,9 +64,16 @@ public class DistributedDataContainerAdvertisementSender {
 				waitForJxtaServicesProvider();
 //				jxtaServicesProvider.publish(adv, WAIT_TIME_MILLIS, WAIT_TIME_MILLIS);
 //				jxtaServicesProvider.remotePublish(adv, WAIT_TIME_MILLIS);
-				jxtaServicesProvider.publish(adv, DiscoveryService.DEFAULT_LIFETIME, DiscoveryService.DEFAULT_EXPIRATION);
-				jxtaServicesProvider.remotePublish(adv, DiscoveryService.DEFAULT_EXPIRATION);
-				LOG.debug("Published DDC advertisment.");
+				if( adv.getType() == DistributedDataContainerAdvertisementType.changeDistribution) {
+					jxtaServicesProvider.publish(adv, DiscoveryService.DEFAULT_LIFETIME, DiscoveryService.DEFAULT_EXPIRATION);
+					jxtaServicesProvider.remotePublish(adv, DiscoveryService.DEFAULT_EXPIRATION);
+					LOG.debug("Published DDC change advertisment.");
+				} else {
+					jxtaServicesProvider.publish(adv, WAIT_TIME_MILLIS, WAIT_TIME_MILLIS);
+					jxtaServicesProvider.remotePublish(adv, WAIT_TIME_MILLIS);
+					LOG.debug("Published DDC init advertisment.");
+				}
+				
 			} catch (IOException e) {
 				LOG.error("Could not publish DDC advertisement", e);
 			}
