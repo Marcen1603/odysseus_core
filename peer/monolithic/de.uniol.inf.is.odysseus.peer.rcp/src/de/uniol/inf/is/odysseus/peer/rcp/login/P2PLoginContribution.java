@@ -145,10 +145,29 @@ public class P2PLoginContribution implements ILoginContribution {
 	private static Optional<String> determinePeerName() {
 		String peerName = System.getProperty(PEER_NAME_SYS_PROPERTY);
 		if (!Strings.isNullOrEmpty(peerName)) {
+			if( peerName.equalsIgnoreCase("ip_address") ) {
+				try {
+					return Optional.of(InetAddress.getLocalHost().getHostAddress());
+				} catch (UnknownHostException e) {
+				}
+			} 
+				
 			return Optional.of(peerName);
 		}
 
-		return PeerConfiguration.get(PEER_NAME_SYS_PROPERTY);
+		Optional<String> optName = PeerConfiguration.get(PEER_NAME_SYS_PROPERTY);
+		
+		if (optName.isPresent()) {
+			String peer = optName.get();
+			if( peer.equalsIgnoreCase("ip_address") ) {
+				try {
+					return Optional.of(InetAddress.getLocalHost().getHostAddress());
+				} catch (UnknownHostException e) {
+				}
+			}
+		}
+
+		return optName;
 	}
 
 	private static Optional<String> determinePeerGroupName() {

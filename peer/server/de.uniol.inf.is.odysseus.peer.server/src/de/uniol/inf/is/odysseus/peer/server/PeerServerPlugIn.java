@@ -97,12 +97,22 @@ public class PeerServerPlugIn implements BundleActivator {
 	private static String determinePeerName() {
 		String peerName = System.getProperty(PEER_NAME_SYS_PROPERTY);
 		if (!Strings.isNullOrEmpty(peerName)) {
-			return peerName;
+			if( !peerName.equalsIgnoreCase("ip_address") ) {
+				return peerName;
+			} 
+			
+			try {
+				return InetAddress.getLocalHost().getHostAddress();
+			} catch (UnknownHostException e) {
+			}
 		}
 
 		Optional<String> optPeer = PeerConfiguration.get(PEER_NAME_SYS_PROPERTY);
 		if (optPeer.isPresent()) {
-			return optPeer.get();
+			String peer = optPeer.get();
+			if( !peer.equalsIgnoreCase("ip_address") ) {
+				return peer;
+			}
 		}
 
 		try {
