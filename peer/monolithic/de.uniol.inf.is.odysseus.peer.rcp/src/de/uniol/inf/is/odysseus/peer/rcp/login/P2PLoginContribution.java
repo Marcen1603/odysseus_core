@@ -27,6 +27,7 @@ import com.google.common.collect.Maps;
 
 import de.uniol.inf.is.odysseus.p2p_new.IP2PNetworkManager;
 import de.uniol.inf.is.odysseus.p2p_new.P2PNetworkException;
+import de.uniol.inf.is.odysseus.p2p_new.util.InetAddressUtil;
 import de.uniol.inf.is.odysseus.peer.config.PeerConfiguration;
 import de.uniol.inf.is.odysseus.peer.rcp.RCPP2PNewPlugIn;
 import de.uniol.inf.is.odysseus.rcp.login.ILoginContribution;
@@ -145,29 +146,17 @@ public class P2PLoginContribution implements ILoginContribution {
 	private static Optional<String> determinePeerName() {
 		String peerName = System.getProperty(PEER_NAME_SYS_PROPERTY);
 		if (!Strings.isNullOrEmpty(peerName)) {
-			if( peerName.equalsIgnoreCase("ip_address") ) {
-				try {
-					return Optional.of(InetAddress.getLocalHost().getHostAddress());
-				} catch (UnknownHostException e) {
-				}
-			} 
-				
-			return Optional.of(peerName);
+			return Optional.of(InetAddressUtil.replaceWithIPAddressIfNeeded(peerName));
 		}
 
 		Optional<String> optName = PeerConfiguration.get(PEER_NAME_SYS_PROPERTY);
 		
 		if (optName.isPresent()) {
 			String peer = optName.get();
-			if( peer.equalsIgnoreCase("ip_address") ) {
-				try {
-					return Optional.of(InetAddress.getLocalHost().getHostAddress());
-				} catch (UnknownHostException e) {
-				}
-			}
+			return Optional.of(InetAddressUtil.replaceWithIPAddressIfNeeded(peer));
 		}
 
-		return optName;
+		return Optional.absent();
 	}
 
 	private static Optional<String> determinePeerGroupName() {

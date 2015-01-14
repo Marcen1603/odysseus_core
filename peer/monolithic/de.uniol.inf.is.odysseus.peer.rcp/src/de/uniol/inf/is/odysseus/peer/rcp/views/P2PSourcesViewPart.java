@@ -253,8 +253,8 @@ public class P2PSourcesViewPart extends ViewPart implements IP2PDictionaryListen
 		Optional<TableEntry> optEntry = findEntry(advertisement);
 		if (optEntry.isPresent()) {
 			optEntry.get().portedName = IMPORT_TAG + " " + sourceName;
-			updateTable();
 		}
+		refreshTable();
 	}
 
 	// called by p2pDictionary
@@ -263,8 +263,8 @@ public class P2PSourcesViewPart extends ViewPart implements IP2PDictionaryListen
 		Optional<TableEntry> optEntry = findEntry(advertisement);
 		if (optEntry.isPresent()) {
 			optEntry.get().portedName = "";
-			updateTable();
 		}
+		refreshTable();
 	}
 
 	// called by p2pDictionary
@@ -273,8 +273,8 @@ public class P2PSourcesViewPart extends ViewPart implements IP2PDictionaryListen
 		Optional<TableEntry> optEntry = findEntry(advertisement);
 		if (optEntry.isPresent()) {
 			optEntry.get().portedName = EXPORT_TAG + " " + sourceName;
-			updateTable();
 		}
+		refreshTable();
 
 	}
 
@@ -284,8 +284,8 @@ public class P2PSourcesViewPart extends ViewPart implements IP2PDictionaryListen
 		Optional<TableEntry> optEntry = findEntry(advertisement);
 		if (optEntry.isPresent()) {
 			optEntry.get().portedName = "";
-			updateTable();
 		}
+		refreshTable();
 	}
 
 	public void refreshTable() {

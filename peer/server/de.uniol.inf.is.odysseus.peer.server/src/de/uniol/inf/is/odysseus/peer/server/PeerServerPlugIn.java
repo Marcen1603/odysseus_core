@@ -1,9 +1,7 @@
 package de.uniol.inf.is.odysseus.peer.server;
 
-import java.net.InetAddress;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.UnknownHostException;
 import java.util.Random;
 
 import org.osgi.framework.BundleActivator;
@@ -16,6 +14,7 @@ import com.google.common.base.Strings;
 
 import de.uniol.inf.is.odysseus.p2p_new.IP2PNetworkManager;
 import de.uniol.inf.is.odysseus.p2p_new.P2PNetworkException;
+import de.uniol.inf.is.odysseus.p2p_new.util.InetAddressUtil;
 import de.uniol.inf.is.odysseus.peer.config.PeerConfiguration;
 
 public class PeerServerPlugIn implements BundleActivator {
@@ -97,29 +96,21 @@ public class PeerServerPlugIn implements BundleActivator {
 	private static String determinePeerName() {
 		String peerName = System.getProperty(PEER_NAME_SYS_PROPERTY);
 		if (!Strings.isNullOrEmpty(peerName)) {
-			if( !peerName.equalsIgnoreCase("ip_address") ) {
-				return peerName;
-			} 
-			
-			try {
-				return InetAddress.getLocalHost().getHostAddress();
-			} catch (UnknownHostException e) {
-			}
+			return InetAddressUtil.replaceWithIPAddressIfNeeded(peerName);
 		}
 
 		Optional<String> optPeer = PeerConfiguration.get(PEER_NAME_SYS_PROPERTY);
 		if (optPeer.isPresent()) {
 			String peer = optPeer.get();
-			if( !peer.equalsIgnoreCase("ip_address") ) {
-				return peer;
-			}
+			return InetAddressUtil.replaceWithIPAddressIfNeeded(peer);
 		}
 
-		try {
-			return InetAddress.getLocalHost().getHostAddress();
-		} catch (UnknownHostException e) {
-			return "OdysseusPeer";
+		Optional<String> optName = InetAddressUtil.getRealInetAddress();
+		if( optName.isPresent() ) {
+			return optName.get();
 		}
+		
+		return "OdysseusPeer";
 	}
 
 	private static String determinePeerGroupName() {
