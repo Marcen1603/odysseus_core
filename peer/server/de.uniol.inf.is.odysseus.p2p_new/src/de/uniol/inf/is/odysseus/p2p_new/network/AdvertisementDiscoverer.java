@@ -72,6 +72,8 @@ public class AdvertisementDiscoverer extends RepeatingJobThread implements Disco
 	public void discoveryEvent(DiscoveryEvent event) {
 		synchronized( discovering ) {
 			Collection<Advertisement> advertisements = toCollection(event.getResponse().getAdvertisements());
+			LOG.debug("Found {} advertisements", advertisements.size());
+			
 			for (Advertisement advertisement : advertisements) {
 				if (!foundPeer) {
 					checkIfPeerFound(advertisement);
