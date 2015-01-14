@@ -73,8 +73,6 @@ public class BaslerCameraTransportHandler extends AbstractSimplePullTransportHan
 				cameraCapture = null;
 				throw new IOException(e.getMessage());
 			}
-			
-	        System.out.println("processInOpen");
 		}
 	}
 	
@@ -82,8 +80,6 @@ public class BaslerCameraTransportHandler extends AbstractSimplePullTransportHan
 	{
 		synchronized (processLock)
 		{
-			System.out.println("processInClose");
-			
 			cameraCapture.stop();
 			cameraCapture = null;
 			
