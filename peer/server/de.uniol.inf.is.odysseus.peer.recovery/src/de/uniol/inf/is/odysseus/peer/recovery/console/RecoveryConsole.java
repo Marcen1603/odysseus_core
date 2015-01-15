@@ -1,6 +1,7 @@
 package de.uniol.inf.is.odysseus.peer.recovery.console;
 
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -22,6 +23,8 @@ import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.p2p_new.IP2PNetworkManager;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.IPeerDictionary;
+import de.uniol.inf.is.odysseus.peer.ddc.DDCKey;
+import de.uniol.inf.is.odysseus.peer.ddc.IDistributedDataContainer;
 import de.uniol.inf.is.odysseus.peer.recovery.IBackupInformationAccess;
 import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryAllocator;
 import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryCommunicator;
@@ -29,6 +32,7 @@ import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryStrategy;
 import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryStrategyManager;
 import de.uniol.inf.is.odysseus.peer.recovery.internal.BackupInfo;
 import de.uniol.inf.is.odysseus.peer.recovery.internal.RecoveryCommunicator;
+import de.uniol.inf.is.odysseus.peer.recovery.util.BackupInformationAccess;
 import de.uniol.inf.is.odysseus.peer.recovery.util.RecoveryHelper;
 
 /**
@@ -40,28 +44,21 @@ import de.uniol.inf.is.odysseus.peer.recovery.util.RecoveryHelper;
  */
 public class RecoveryConsole implements CommandProvider {
 
-	private static final Logger LOG = LoggerFactory
-			.getLogger(RecoveryConsole.class);
+	private static final Logger LOG = LoggerFactory.getLogger(RecoveryConsole.class);
 
+	private static IDistributedDataContainer ddc;
 	private static IP2PNetworkManager p2pNetworkManager;
 	private static IPeerDictionary peerDictionary;
-	private static Collection<IRecoveryAllocator> recoveryAllocators = Lists
-			.newArrayList();
+	private static Collection<IRecoveryAllocator> recoveryAllocators = Lists.newArrayList();
 	private static IBackupInformationAccess backupInformationAccess;
 
-	/**
-	 * The recovery communicator, if there is one bound.
-	 */
-	private static Optional<IRecoveryCommunicator> cCommunicator = Optional
-			.absent();
-	/**
-	 * Executor to get queries
-	 */
+	// The recovery communicator, if there is one bound.
+	private static Optional<IRecoveryCommunicator> cCommunicator = Optional.absent();
+
+	// Executor to get queries
 	private static IServerExecutor executor;
-	private static Collection<IRecoveryStrategy> recoveryStrategies = Lists
-			.newArrayList();
-	private static Collection<IRecoveryStrategyManager> recoveryStrategyManagers = Lists
-			.newArrayList();
+	private static Collection<IRecoveryStrategy> recoveryStrategies = Lists.newArrayList();
+	private static Collection<IRecoveryStrategyManager> recoveryStrategyManagers = Lists.newArrayList();
 
 	// called by OSGi-DS
 	public static void bindP2PNetworkManager(IP2PNetworkManager serv) {
@@ -75,34 +72,24 @@ public class RecoveryConsole implements CommandProvider {
 		}
 	}
 
-	public static void bindBackupInformationAccess(
-			IBackupInformationAccess infoAccess) {
+	// called by OSGi-DS
+	public static void bindBackupInformationAccess(IBackupInformationAccess infoAccess) {
 		backupInformationAccess = infoAccess;
 	}
 
-	public static void unbindBackupInformationAccess(
-			IBackupInformationAccess infoAccess) {
+	// called by OSGi-DS
+	public static void unbindBackupInformationAccess(IBackupInformationAccess infoAccess) {
 		if (backupInformationAccess == infoAccess) {
 			backupInformationAccess = null;
 		}
 	}
 
-	/**
-	 * called by OSGi-DS to bind Executor
-	 * 
-	 * @param exe
-	 *            Executor to bind.
-	 */
+	// Called by OSGi-DS
 	public static void bindExecutor(IExecutor exe) {
 		executor = (IServerExecutor) exe;
 	}
 
-	/**
-	 * called by OSGi-DS to unbind Executor
-	 * 
-	 * @param exe
-	 *            Executor to unbind.
-	 */
+	// Called by OSGi-DS
 	public static void unbindExecutor(IExecutor exe) {
 		if (executor == exe) {
 			executor = null;
@@ -121,6 +108,18 @@ public class RecoveryConsole implements CommandProvider {
 		}
 	}
 
+	// called by OSGi-DS
+	public static void bindDDC(IDistributedDataContainer ddcService) {
+		ddc = ddcService;
+	}
+
+	// called by OSGi-DS
+	public static void unbindDDC(IDistributedDataContainer ddcService) {
+		if (ddc == ddcService) {
+			ddc = null;
+		}
+	}
+
 	/**
 	 * Binds a recovery communicator. <br />
 	 * Called by OSGI-DS.
@@ -131,11 +130,9 @@ public class RecoveryConsole implements CommandProvider {
 	 */
 	public static void bindCommunicator(IRecoveryCommunicator communicator) {
 
-		Preconditions.checkNotNull(communicator,
-				"The recovery communicator to bind must be not null!");
+		Preconditions.checkNotNull(communicator, "The recovery communicator to bind must be not null!");
 		cCommunicator = Optional.of(communicator);
-		LOG.debug("Bound {} as a recovery communicator.", communicator
-				.getClass().getSimpleName());
+		LOG.debug("Bound {} as a recovery communicator.", communicator.getClass().getSimpleName());
 
 	}
 
@@ -149,14 +146,11 @@ public class RecoveryConsole implements CommandProvider {
 	 */
 	public static void unbindCommunicator(IRecoveryCommunicator communicator) {
 
-		Preconditions.checkNotNull(communicator,
-				"The recovery communicator to unbind must be not null!");
-		if (cCommunicator.isPresent()
-				&& cCommunicator.get().equals(communicator)) {
+		Preconditions.checkNotNull(communicator, "The recovery communicator to unbind must be not null!");
+		if (cCommunicator.isPresent() && cCommunicator.get().equals(communicator)) {
 
 			cCommunicator = Optional.absent();
-			LOG.debug("Unbound {} as a recovery communicator.", communicator
-					.getClass().getSimpleName());
+			LOG.debug("Unbound {} as a recovery communicator.", communicator.getClass().getSimpleName());
 
 		}
 
@@ -187,17 +181,14 @@ public class RecoveryConsole implements CommandProvider {
 	}
 
 	// called by OSGi-DS
-	public static void bindRecoveryStrategyManager(
-			IRecoveryStrategyManager recoveryStrategyManager) {
+	public static void bindRecoveryStrategyManager(IRecoveryStrategyManager recoveryStrategyManager) {
 		RecoveryConsole.recoveryStrategyManagers.add(recoveryStrategyManager);
 	}
 
 	// called by OSGi-DS
-	public static void unbindRecoveryStrategyManager(
-			IRecoveryStrategyManager recoveryStrategyManager) {
+	public static void unbindRecoveryStrategyManager(IRecoveryStrategyManager recoveryStrategyManager) {
 		if (recoveryStrategyManager != null) {
-			RecoveryConsole.recoveryStrategyManagers
-					.remove(recoveryStrategyManager);
+			RecoveryConsole.recoveryStrategyManagers.remove(recoveryStrategyManager);
 		}
 	}
 
@@ -218,7 +209,8 @@ public class RecoveryConsole implements CommandProvider {
 		StringBuilder sb = new StringBuilder();
 		sb.append("---Recovery commands---\n");
 		sb.append("	recover <PeerID from failed peer> - Starts recovery for the peer <PeerID from failed peer>\n");
-		sb.append("	lsBackupStore - Lists the stored sharedQueryIds with a list of peers which have parts of this sharedQuery. sharedQueryId: peer1, peer2, peer3\n");
+		sb.append("	lsBackupStore - Shows the backup-information of the known peers (the peers which are in the network)\n");
+		sb.append("	lsFullBackupStore - Shows the backup-information of all peers (even if not known)\n");
 		sb.append("	lsRecoveryAllocators - Lists the available recovery allocators.\n");
 		sb.append("	lsRecoveryStrategies - Lists the available recovery strategies.\n");
 		sb.append("	lsRecoveryStrategyManagers - Lists the available recovery strategy managers.\n");
@@ -282,18 +274,15 @@ public class RecoveryConsole implements CommandProvider {
 
 		if (receiverPeerId == null) {
 			ci.println("Don't know new receiver peer. Take myself insead.");
-			receiverPeerId = RecoveryCommunicator.getP2PNetworkManager().get()
-					.getLocalPeerID();
+			receiverPeerId = RecoveryCommunicator.getP2PNetworkManager().get().getLocalPeerID();
 		}
 
 		if (newSendrePeerId == null) {
 			ci.println("Don't know new sender peer. Take myself insead.");
-			newSendrePeerId = RecoveryCommunicator.getP2PNetworkManager().get()
-					.getLocalPeerID();
+			newSendrePeerId = RecoveryCommunicator.getP2PNetworkManager().get().getLocalPeerID();
 		}
 
-		cCommunicator.get().sendUpdateReceiverMessage(receiverPeerId,
-				newSendrePeerId, pipeId, localQueryId);
+		cCommunicator.get().sendUpdateReceiverMessage(receiverPeerId, newSendrePeerId, pipeId, localQueryId);
 	}
 
 	public void _lsBackupStore(CommandInterpreter ci) {
@@ -307,16 +296,53 @@ public class RecoveryConsole implements CommandProvider {
 				peerName = peerName + " (me)";
 			}
 			System.out.println("Information about " + peerName + "\n");
-			HashMap<Integer, BackupInfo> infoMap = backupInformationAccess
-					.getBackupInformation(peerId);
+			HashMap<Integer, BackupInfo> infoMap = backupInformationAccess.getBackupInformation(peerId);
 			if (infoMap != null) {
 				for (Integer key : infoMap.keySet()) {
 					BackupInfo info = infoMap.get(key);
-					System.out.println("Local query id: " + key
-							+ " | Is master: " + info.master + "("
-							+ info.masterID + ") | Shared Query ID: "
-							+ info.sharedQuery + "\n" + info.pql + "("
-							+ info.state + ") \n");
+					System.out.println("Local query id: " + key + " | Is master: " + info.master
+							+ " | Shared Query ID: " + info.sharedQuery + "\n" + info.pql + "(" + info.state + ") \n");
+				}
+			} else {
+				System.out.println("No Backup-Information about " + peerId);
+			}
+			System.out.println("\n\n");
+		}
+	}
+
+	public void _lsFullBackupStore(CommandInterpreter ci) {
+
+		// Search for backup-information
+		List<DDCKey> keys = ddc.getSortedKeys();
+		List<DDCKey> peerKeys = new ArrayList<DDCKey>();
+		
+		
+		for (DDCKey key : keys) {
+			if (key.toString().startsWith(BackupInformationAccess.KEY_PREFIX)) {
+				peerKeys.add(key);
+			}
+		}
+
+		if (peerKeys.isEmpty()) {
+			System.out.println("No information about any known peer.");
+		}
+
+		// Now we have all keys with backup-information (not just from the known peers)
+		for (DDCKey peerIdWithPrefix : peerKeys) {
+			String peerId = peerIdWithPrefix.toString().replaceFirst(BackupInformationAccess.KEY_PREFIX, "");
+			HashMap<Integer, BackupInfo> infoMap = backupInformationAccess.getBackupInformation(peerId);
+
+			String peerName = peerDictionary.getRemotePeerName(peerId);
+			if (peerId.equals(p2pNetworkManager.getLocalPeerID().toString())) {
+				peerName = peerName + " (me)";
+			}
+			System.out.println("Information about " + peerName + "\n");
+
+			if (infoMap != null) {
+				for (Integer key : infoMap.keySet()) {
+					BackupInfo info = infoMap.get(key);
+					System.out.println("Local query id: " + key + " | Is master: " + info.master
+							+ " | Shared Query ID: " + info.sharedQuery + "\n" + info.pql + "(" + info.state + ") \n");
 				}
 			} else {
 				System.out.println("No Backup-Information about " + peerId);
@@ -395,8 +421,7 @@ public class RecoveryConsole implements CommandProvider {
 	}
 
 	/**
-	 * If your next argument should be the PeerName, you can get the PeerID it
-	 * with this method
+	 * If your next argument should be the PeerName, you can get the PeerID it with this method
 	 * 
 	 * @param ci
 	 * @return PeerID which is made from the next argument from the ci
@@ -405,16 +430,15 @@ public class RecoveryConsole implements CommandProvider {
 		String peerNameString = ci.nextArgument();
 		PeerID peerId = null;
 		if (!Strings.isNullOrEmpty(peerNameString)) {
-			peerId = RecoveryHelper.determinePeerID(peerNameString).isPresent() ? RecoveryHelper
-					.determinePeerID(peerNameString).get() : null;
+			peerId = RecoveryHelper.determinePeerID(peerNameString).isPresent() ? RecoveryHelper.determinePeerID(
+					peerNameString).get() : null;
 		}
 
 		return peerId;
 	}
 
 	/**
-	 * If your next argument should be the PipeId, you can get the PipeId with
-	 * this method
+	 * If your next argument should be the PipeId, you can get the PipeId with this method
 	 * 
 	 * @param ci
 	 * @return
@@ -439,15 +463,12 @@ public class RecoveryConsole implements CommandProvider {
 	 * 
 	 * @param allocatorName
 	 *            The name of the allocator.
-	 * @return An {@link IRecoveryAllocator}, if there is one bound with
-	 *         <code>allocatorName</code> as name.
+	 * @return An {@link IRecoveryAllocator}, if there is one bound with <code>allocatorName</code> as name.
 	 */
 	@SuppressWarnings("unused")
-	private static Optional<IRecoveryAllocator> determineAllocator(
-			String allocatorName) {
+	private static Optional<IRecoveryAllocator> determineAllocator(String allocatorName) {
 
-		Preconditions.checkNotNull(allocatorName,
-				"The name of the recovery allocator must be not null!");
+		Preconditions.checkNotNull(allocatorName, "The name of the recovery allocator must be not null!");
 
 		for (IRecoveryAllocator allocator : RecoveryConsole.recoveryAllocators) {
 

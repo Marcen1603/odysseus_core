@@ -43,6 +43,9 @@ public class BackupInformationAccess implements IBackupInformationAccess {
 	private static IDistributedDataContainer ddc;
 	private static IP2PNetworkManager p2pNetworkManager;
 	private static IPeerDictionary peerDictionary;
+	
+	// The prefix which is before every key (peerId) to identify, that it's recovery backup information
+	public static String KEY_PREFIX = "rbi_";
 
 	public static void bindDDC(IDistributedDataContainer ddcService) {
 		ddc = ddcService;
@@ -85,7 +88,7 @@ public class BackupInformationAccess implements IBackupInformationAccess {
 			String state, String sharedQuery, boolean master, String masterId) {
 		LOG.debug("Save backup-info for query {}", queryId);
 
-		DDCKey key = new DDCKey(peerId);
+		DDCKey key = getKeyForPeerId(peerId);
 		HashMap<Integer, BackupInfo> infoMap = getBackupInformation();
 
 		if (infoMap.containsKey(queryId)) {
@@ -123,8 +126,8 @@ public class BackupInformationAccess implements IBackupInformationAccess {
 		LOG.debug("Remove backup-info for query {} for peer {}", queryId,
 				peerName);
 
-		DDCKey key = new DDCKey(peerId);
-		HashMap<Integer, BackupInfo> infoMap = getBackupInformation();
+		DDCKey key = getKeyForPeerId(peerId);
+		HashMap<Integer, BackupInfo> infoMap = getBackupInformation(peerId);
 		infoMap.remove(queryId);
 
 		if (infoMap.isEmpty()) {
@@ -148,13 +151,13 @@ public class BackupInformationAccess implements IBackupInformationAccess {
 		ArrayList<String> peers = new ArrayList<String>(peerIds.size() + 1);
 
 		for (PeerID peer : peerIds) {
-			if (ddc.containsKey(new DDCKey(peer.toString()))) {
+			if (ddc.containsKey(getKeyForPeerId(peer.toString()))) {
 				peers.add(peer.toString());
 			}
 		}
 
 		String localPeerId = p2pNetworkManager.getLocalPeerID().toString();
-		if (ddc.containsKey(new DDCKey(localPeerId))) {
+		if (ddc.containsKey(getKeyForPeerId(localPeerId))) {
 			peers.add(localPeerId);
 		}
 
@@ -164,7 +167,7 @@ public class BackupInformationAccess implements IBackupInformationAccess {
 	@SuppressWarnings("unchecked")
 	@Override
 	public HashMap<Integer, BackupInfo> getBackupInformation(String peerId) {
-		DDCKey key = new DDCKey(peerId);
+		DDCKey key = getKeyForPeerId(peerId);
 
 		try {
 			if (ddc.containsKey(key)) {
@@ -284,6 +287,15 @@ public class BackupInformationAccess implements IBackupInformationAccess {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+	
+	/**
+	 * 
+	 * @param peerId The peerId you want to have the backup-information-key for
+	 * @return the key for this peer
+	 */
+	private static DDCKey getKeyForPeerId(String peerId) {
+		return new DDCKey(KEY_PREFIX + peerId);
 	}
 
 	@Override

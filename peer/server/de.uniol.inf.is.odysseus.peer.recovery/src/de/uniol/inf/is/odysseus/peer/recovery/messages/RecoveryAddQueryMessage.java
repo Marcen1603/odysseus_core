@@ -222,7 +222,7 @@ public class RecoveryAddQueryMessage implements IMessage {
 		this.mPQL = new String(pqlBytes);
 
 		this.mQueryState = QueryState.values()[buffer.getInt()];
-		mLocalQuery = buffer.getInt();
+		this.mLocalQuery = buffer.getInt();
 
 		int processIdBytesLength = buffer.getInt();
 		byte[] processIdBytes = new byte[processIdBytesLength];
