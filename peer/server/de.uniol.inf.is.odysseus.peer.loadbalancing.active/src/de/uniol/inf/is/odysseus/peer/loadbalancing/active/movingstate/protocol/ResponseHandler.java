@@ -90,13 +90,17 @@ public class ResponseHandler {
 				// Update Query part Controller.
 				IQueryPartController queryPartController = ActiveLoadBalancingActivator.getQueryPartController();
 				ID sharedQueryID = queryPartController.getSharedQueryID(status.getLogicalQuery());
+				boolean isMaster = queryPartController.isMasterForQuery(status.getLogicalQuery());
 				Collection<Integer> toRemove = new ArrayList<Integer>();
 				toRemove.add(status.getLogicalQuery());
 				queryPartController.unregisterLocalQueriesFromSharedQuery(sharedQueryID, toRemove);
 				Collection<Integer> remainingQueries = queryPartController.getLocalIds(sharedQueryID);
 				
-				if(queryPartController.isMasterForQuery(status.getLogicalQuery()) && remainingQueries.size()==0) {
-					LOG.debug("Peer is Master for Balanced Query Part and just removed last Query.");
+				LOG.debug("IsMaster: {}",isMaster);
+				LOG.debug("Number of remaining Queries: {}",remainingQueries.size());
+				
+				
+				if(isMaster && remainingQueries.size()==0) {
 					
 					Collection<PeerID> otherPeers = queryPartController.getOtherPeers(sharedQueryID);
 					
