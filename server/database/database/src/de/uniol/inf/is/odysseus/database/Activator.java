@@ -18,6 +18,8 @@ package de.uniol.inf.is.odysseus.database;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 
+import de.uniol.inf.is.odysseus.database.connection.DatabaseConnectionDictionary;
+
 public class Activator implements BundleActivator {
 
 	private static BundleContext context;
@@ -42,5 +44,6 @@ public class Activator implements BundleActivator {
 	@Override
     public void stop(BundleContext bundleContext) throws Exception {
 		Activator.context = null;
+		DatabaseConnectionDictionary.removeAllConnections();
 	}
 }

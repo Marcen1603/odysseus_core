@@ -260,11 +260,6 @@ public class DatabaseSinkPO extends AbstractSink<Tuple<ITimeInterval>>
 		if (timer != null) {
 			timer.stop();
 		}
-		try {
-			this.jdbcConnection.close();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
 	}
 
 	@Override

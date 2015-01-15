@@ -34,6 +34,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 
@@ -41,6 +42,7 @@ import java.util.Set;
  * 
  * @author Dennis Geesen
  * Created at: 20.10.2011
+ * @author Marco Grawunder 
  */
 public class DatabaseConnectionDictionary {
 	
@@ -86,11 +88,23 @@ public class DatabaseConnectionDictionary {
 	
 	static public void removeConnection(String name){
 		name = name.toUpperCase();
-		connections.remove(name);
+		IDatabaseConnection con = connections.remove(name);
+		try {
+			con.getConnection().close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		fireChangeEvent();
 	}
 	
 	static public void removeAllConnections(){
+		for (Entry<String, IDatabaseConnection> c: connections.entrySet()){
+			try {
+				c.getValue().getConnection().close();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
 		connections.clear();
 		fireChangeEvent();
 	}
