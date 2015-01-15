@@ -25,7 +25,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnaryLogicalOp;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.GetParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.NamedExpressionItem;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.NamedExpression;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.ResolvedSDFAttributeParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.SDFExpressionParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
@@ -47,19 +47,19 @@ public class KalmanFilterAO extends UnaryLogicalOp {
     /** The variable names. */
     private List<String> variables;
     /** The state transition matrix. */
-    private NamedExpressionItem stateTransitionExpression;
+    private NamedExpression stateTransitionExpression;
     /** The control matrix. */
-    private NamedExpressionItem controlExpression;
+    private NamedExpression controlExpression;
     /** The measurement matrix. */
-    private NamedExpressionItem measurementExpression;
+    private NamedExpression measurementExpression;
     /** The noise of the process. */
-    private NamedExpressionItem processNoiseExpression;
+    private NamedExpression processNoiseExpression;
     /** The noise of the measurement. */
-    private NamedExpressionItem measurementNoiseExpression;
+    private NamedExpression measurementNoiseExpression;
     /** The initial state. */
-    private NamedExpressionItem initialStateExpression;
+    private NamedExpression initialStateExpression;
     /** The initial error. */
-    private NamedExpressionItem initialErrorExpression;
+    private NamedExpression initialErrorExpression;
 
     /**
      * Creates a new Kalman Filter logical operator.
@@ -142,7 +142,7 @@ public class KalmanFilterAO extends UnaryLogicalOp {
      *            The state transition
      */
     @Parameter(type = SDFExpressionParameter.class, name = "TRANSITION", isList = false, optional = false)
-    public final void setStateTransitionExpression(final NamedExpressionItem stateTransitionExpression) {
+    public final void setStateTransitionExpression(final NamedExpression stateTransitionExpression) {
         this.stateTransitionExpression = stateTransitionExpression;
     }
 
@@ -152,7 +152,7 @@ public class KalmanFilterAO extends UnaryLogicalOp {
      * @return The state transition
      */
     @GetParameter(name = "TRANSITION")
-    public final NamedExpressionItem getStateTransitionExpression() {
+    public final NamedExpression getStateTransitionExpression() {
         return this.stateTransitionExpression;
     }
 
@@ -175,7 +175,7 @@ public class KalmanFilterAO extends UnaryLogicalOp {
      *            The control
      */
     @Parameter(type = SDFExpressionParameter.class, name = "CONTROL", isList = false, optional = true)
-    public final void setControlExpression(final NamedExpressionItem controlExpression) {
+    public final void setControlExpression(final NamedExpression controlExpression) {
         this.controlExpression = controlExpression;
     }
 
@@ -185,7 +185,7 @@ public class KalmanFilterAO extends UnaryLogicalOp {
      * @return The control
      */
     @GetParameter(name = "CONTROL")
-    public final NamedExpressionItem getControlExpression() {
+    public final NamedExpression getControlExpression() {
         return this.controlExpression;
     }
 
@@ -211,7 +211,7 @@ public class KalmanFilterAO extends UnaryLogicalOp {
      *            The process noise
      */
     @Parameter(type = SDFExpressionParameter.class, name = "PROCESSNOISE", isList = false, optional = false)
-    public final void setProcessNoiseExpression(final NamedExpressionItem processNoiseExpression) {
+    public final void setProcessNoiseExpression(final NamedExpression processNoiseExpression) {
         this.processNoiseExpression = processNoiseExpression;
     }
 
@@ -221,7 +221,7 @@ public class KalmanFilterAO extends UnaryLogicalOp {
      * @return The state transition
      */
     @GetParameter(name = "PROCESSNOISE")
-    public final NamedExpressionItem getProcessNoiseExpression() {
+    public final NamedExpression getProcessNoiseExpression() {
         return this.processNoiseExpression;
     }
 
@@ -244,7 +244,7 @@ public class KalmanFilterAO extends UnaryLogicalOp {
      *            The measurement
      */
     @Parameter(type = SDFExpressionParameter.class, name = "MEASUREMENT", isList = false, optional = false)
-    public final void setMeasurementExpression(final NamedExpressionItem measurementExpression) {
+    public final void setMeasurementExpression(final NamedExpression measurementExpression) {
         this.measurementExpression = measurementExpression;
     }
 
@@ -254,7 +254,7 @@ public class KalmanFilterAO extends UnaryLogicalOp {
      * @return The measurement
      */
     @GetParameter(name = "MEASUREMENT")
-    public final NamedExpressionItem getMeasurementExpression() {
+    public final NamedExpression getMeasurementExpression() {
         return this.measurementExpression;
     }
 
@@ -277,7 +277,7 @@ public class KalmanFilterAO extends UnaryLogicalOp {
      *            The measurement noise
      */
     @Parameter(type = SDFExpressionParameter.class, name = "MEASUREMENTNOISE", isList = false, optional = false)
-    public final void setMeasurementNoiseExpression(final NamedExpressionItem measurementNoiseExpression) {
+    public final void setMeasurementNoiseExpression(final NamedExpression measurementNoiseExpression) {
         this.measurementNoiseExpression = measurementNoiseExpression;
     }
 
@@ -287,7 +287,7 @@ public class KalmanFilterAO extends UnaryLogicalOp {
      * @return The measurement noise
      */
     @GetParameter(name = "MEASUREMENTNOISE")
-    public final NamedExpressionItem getMeasurementNoiseExpression() {
+    public final NamedExpression getMeasurementNoiseExpression() {
         return this.measurementNoiseExpression;
     }
 
@@ -310,7 +310,7 @@ public class KalmanFilterAO extends UnaryLogicalOp {
      *            The initial state
      */
     @Parameter(type = SDFExpressionParameter.class, name = "INITIALSTATE", isList = false, optional = true)
-    public final void setInitialStateExpression(final NamedExpressionItem initialStateExpression) {
+    public final void setInitialStateExpression(final NamedExpression initialStateExpression) {
         this.initialStateExpression = initialStateExpression;
     }
 
@@ -320,7 +320,7 @@ public class KalmanFilterAO extends UnaryLogicalOp {
      * @return The initial state
      */
     @GetParameter(name = "INITIALSTATE")
-    public final NamedExpressionItem getInitialStateExpression() {
+    public final NamedExpression getInitialStateExpression() {
         return this.initialStateExpression;
     }
 
@@ -335,7 +335,7 @@ public class KalmanFilterAO extends UnaryLogicalOp {
      *            The initial error
      */
     @Parameter(type = SDFExpressionParameter.class, name = "INITIALERROR", isList = false, optional = true)
-    public final void setInitialErrorExpression(final NamedExpressionItem initialErrorExpression) {
+    public final void setInitialErrorExpression(final NamedExpression initialErrorExpression) {
         this.initialErrorExpression = initialErrorExpression;
     }
 
@@ -345,7 +345,7 @@ public class KalmanFilterAO extends UnaryLogicalOp {
      * @return The initial error
      */
     @GetParameter(name = "INITIALERROR")
-    public final NamedExpressionItem getInitialErrorExpression() {
+    public final NamedExpression getInitialErrorExpression() {
         return this.initialErrorExpression;
     }
 

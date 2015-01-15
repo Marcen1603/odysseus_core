@@ -11,7 +11,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalO
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.BooleanParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IntegerParameter;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.NamedExpressionItem;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.NamedExpression;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.SDFExpressionParameter;
 
 @LogicalOperator(name="TOPK", maxInputPorts=1,minInputPorts=1,category={ LogicalOperatorCategory.ADVANCED }, doc = "Calculate the top k elements of the input")
@@ -19,7 +19,7 @@ public class TopKAO extends AbstractLogicalOperator {
 
 	private static final long serialVersionUID = 8852471127806000337L;
 
-	private NamedExpressionItem scoringFunction;
+	private NamedExpression scoringFunction;
 	private int k;
 	private boolean descending;
 
@@ -33,12 +33,12 @@ public class TopKAO extends AbstractLogicalOperator {
 		this.descending = other.descending;
 	}
 
-	public NamedExpressionItem getScoringFunction() {
+	public NamedExpression getScoringFunction() {
 		return scoringFunction;
 	}
 
 	@Parameter(name="scoringFunction", optional = false, type = SDFExpressionParameter.class, doc ="The scoring function for ordering")
-	public void setScoringFunction(NamedExpressionItem scoringFunction) {
+	public void setScoringFunction(NamedExpression scoringFunction) {
 		this.scoringFunction = scoringFunction;
 	}
 

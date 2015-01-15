@@ -44,7 +44,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.AggregateIte
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.AggregateItemParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.BooleanParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.EnumParameter;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.NamedExpressionItem;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.NamedExpression;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.PredicateParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.ResolvedSDFAttributeParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.SDFExpressionParameter;
@@ -128,7 +128,7 @@ public class OperatorBuildHelper {
 			boolean evaluateOnPunctuation) {
 		MapAO mapAO = new MapAO();
 
-		List<NamedExpressionItem> expressionItems = new ArrayList<NamedExpressionItem>();
+		List<NamedExpression> expressionItems = new ArrayList<NamedExpression>();
 		for (SDFExpressionParameter param : expressions) {
 			expressionItems.add(param.getValue());
 		}
@@ -201,7 +201,7 @@ public class OperatorBuildHelper {
 		StateMapAO stateMapAO = new StateMapAO();
 
 		// Expressions
-		List<NamedExpressionItem> expressionItems = new ArrayList<NamedExpressionItem>();
+		List<NamedExpression> expressionItems = new ArrayList<NamedExpression>();
 		for (SDFExpressionParameter param : expressions) {
 			expressionItems.add(param.getValue());
 		}

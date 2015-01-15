@@ -24,7 +24,7 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.Aggregate
 import de.uniol.inf.is.odysseus.mep.MEP;
 
 public class SDFExpressionParameter extends
-		AbstractParameter<NamedExpressionItem> {
+		AbstractParameter<NamedExpression> {
 
 	private static final long serialVersionUID = -3129785072529123574L;
 
@@ -42,8 +42,8 @@ public class SDFExpressionParameter extends
 				throw new RuntimeException(
 						" Could not determine name/expression pair!");
 			}
-		} else if( inputValue instanceof NamedExpressionItem) {
-			setValue((NamedExpressionItem)inputValue);
+		} else if( inputValue instanceof NamedExpression) {
+			setValue((NamedExpression)inputValue);
 			return;
 			
 		} else {
@@ -51,7 +51,7 @@ public class SDFExpressionParameter extends
 			expression = (String) inputValue;
 		}
 		if (getAttributeResolver() != null) {
-			setValue(new NamedExpressionItem(name, new SDFExpression("",
+			setValue(new NamedExpression(name, new SDFExpression("",
 					expression, getAttributeResolver(), MEP.getInstance(), AggregateFunctionBuilderRegistry.getAggregatePattern())));
 		} else {
 			throw new RuntimeException(
@@ -70,8 +70,8 @@ public class SDFExpressionParameter extends
 			} 
 			throw new RuntimeException("Could not determine name/expression pair!");
 			
-		} else if( inputValue instanceof NamedExpressionItem) {
-			NamedExpressionItem namedExpressionItem = (NamedExpressionItem)inputValue;
+		} else if( inputValue instanceof NamedExpression) {
+			NamedExpression namedExpressionItem = (NamedExpression)inputValue;
 			if( !Strings.isNullOrEmpty(namedExpressionItem.name)) {
 				return namedExpressionItem.toString();
 			}

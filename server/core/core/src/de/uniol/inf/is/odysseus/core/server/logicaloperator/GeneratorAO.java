@@ -16,7 +16,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalO
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.BooleanParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IntegerParameter;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.NamedExpressionItem;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.NamedExpression;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.PredicateParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.ResolvedSDFAttributeParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.SDFExpressionParameter;
@@ -33,7 +33,7 @@ public class GeneratorAO extends UnaryLogicalOp implements IHasPredicate{
      * 
      */
     private static final long serialVersionUID = 101908321734981396L;
-    private List<NamedExpressionItem> namedExpressions;
+    private List<NamedExpression> namedExpressions;
     private List<SDFExpression> expressions;
     private boolean allowNull = false;
     private List<SDFAttribute> groupingAttributes;
@@ -118,10 +118,10 @@ public class GeneratorAO extends UnaryLogicalOp implements IHasPredicate{
     }
 
     @Parameter(type = SDFExpressionParameter.class, isList = true)
-    public void setExpressions(final List<NamedExpressionItem> namedExpressions) {
+    public void setExpressions(final List<NamedExpression> namedExpressions) {
         this.namedExpressions = namedExpressions;
         this.expressions = new ArrayList<>();
-        for (final NamedExpressionItem e : namedExpressions) {
+        for (final NamedExpression e : namedExpressions) {
             this.expressions.add(e.expression);
         }
     }

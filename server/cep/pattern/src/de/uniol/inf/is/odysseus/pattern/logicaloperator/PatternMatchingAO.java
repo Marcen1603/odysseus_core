@@ -34,7 +34,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalO
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.EnumParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IntegerParameter;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.NamedExpressionItem;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.NamedExpression;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.SDFExpressionParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFExpression;
@@ -68,7 +68,7 @@ public class PatternMatchingAO extends AbstractLogicalOperator {
 	// Bedingung
 	private List<SDFExpression> assertions;
 	// Expressions fürs Ausgabeschema
-	private List<NamedExpressionItem> returnExpressions;
+	private List<NamedExpression> returnExpressions;
 	private Integer count;
 	
 	public PatternMatchingAO() {
@@ -93,9 +93,9 @@ public class PatternMatchingAO extends AbstractLogicalOperator {
     }
 	
     @Parameter(type=SDFExpressionParameter.class, optional=true, isList=true)
-    public void setAssertions(List<NamedExpressionItem> exprs) {
+    public void setAssertions(List<NamedExpression> exprs) {
         this.assertions = new ArrayList<SDFExpression>();
-        for (NamedExpressionItem expr : exprs) {
+        for (NamedExpression expr : exprs) {
         	assertions.add(expr.expression);
         }
     }
@@ -186,7 +186,7 @@ public class PatternMatchingAO extends AbstractLogicalOperator {
     }
     
     @Parameter(name = "return", type = SDFExpressionParameter.class, isList = true, optional = true)
-    public void setReturnExpressions(List<NamedExpressionItem> namedReturnExpressions) {
+    public void setReturnExpressions(List<NamedExpression> namedReturnExpressions) {
 		returnExpressions = namedReturnExpressions;
 		setOutputSchema(null);
     }
@@ -194,7 +194,7 @@ public class PatternMatchingAO extends AbstractLogicalOperator {
     public List<SDFExpression> getReturnExpressions() {
     	if (returnExpressions == null) return null;
     	List<SDFExpression> expressions = new ArrayList<SDFExpression>();
-    	for (NamedExpressionItem expr : returnExpressions) {
+    	for (NamedExpression expr : returnExpressions) {
     		expressions.add(expr.expression);
     	}
     	return expressions;
@@ -233,7 +233,7 @@ public class PatternMatchingAO extends AbstractLogicalOperator {
 		} else if (outputMode == PatternOutput.EXPRESSIONS && returnExpressions != null) {
 			// EXPRESSIONS: Ausgabe hängt vom return-Parameter ab
 			List<SDFAttribute> attrs = new ArrayList<SDFAttribute>();
-			for (NamedExpressionItem expr : returnExpressions) {
+			for (NamedExpression expr : returnExpressions) {
 				
 				// TODO: Maybe here should an attribute resolver be used?
 				

@@ -32,7 +32,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalO
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.BooleanParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IntegerParameter;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.NamedExpressionItem;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.NamedExpression;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.SDFExpressionParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.UncheckedExpressionParamter;
 
@@ -43,7 +43,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.UncheckedExp
 public class MapAO extends UnaryLogicalOp {
 
 	private static final long serialVersionUID = -2120387285754464451L;
-	private List<NamedExpressionItem> namedExpressions;
+	private List<NamedExpression> namedExpressions;
 	//Expressions used for KeyValueMap
 	private List<String[]> kvExpressions;
 	private List<SDFExpression> expressions;
@@ -74,7 +74,7 @@ public class MapAO extends UnaryLogicalOp {
 	private void calcOutputSchema() {
 		if (namedExpressions != null) {
 			List<SDFAttribute> attrs = new ArrayList<SDFAttribute>();
-			for (NamedExpressionItem expr : namedExpressions) {
+			for (NamedExpression expr : namedExpressions) {
 
 				// TODO: Maybe here should an attribute resolver be used?
 
@@ -203,18 +203,18 @@ public class MapAO extends UnaryLogicalOp {
 	}
 
 	@Parameter(type = SDFExpressionParameter.class, name = "EXPRESSIONS", isList = true, optional = true, doc ="A list of expressions.")
-	public void setExpressions(List<NamedExpressionItem> namedExpressions) {
+	public void setExpressions(List<NamedExpression> namedExpressions) {
 		this.namedExpressions = namedExpressions;
 		expressions = new ArrayList<>();
 		if(namedExpressions != null) {
-			for (NamedExpressionItem e : namedExpressions) {
+			for (NamedExpression e : namedExpressions) {
 				expressions.add(e.expression);
 			}
 		}
 		setOutputSchema(null);
 	}
 
-	public List<NamedExpressionItem> getExpressions() {
+	public List<NamedExpression> getExpressions() {
 		return this.namedExpressions;
 	}
 
