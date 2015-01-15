@@ -6,4 +6,5 @@
    <service>
       <provide interface="de.uniol.inf.is.odysseus.peer.distribute.IQueryPartControllerListener"/>
    </service>
+   <reference bind="bindP2PNetworkManager" cardinality="1..1" interface="de.uniol.inf.is.odysseus.p2p_new.IP2PNetworkManager" name="IP2PNetworkManager" policy="dynamic" unbind="unbindP2PNetworkManager"/>
 </scr:component>

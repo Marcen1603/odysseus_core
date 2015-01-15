@@ -260,6 +260,7 @@ public class SimpleRecoveryStrategy implements IRecoveryStrategy {
 			QueryState queryState = subState.getQueryState();
 			boolean master = subState.isMaster();
 			ID sharedQuery = subState.getSharedQueryId();
+			PeerID masterId = subState.getMasterId();
 			Map<ILogicalQueryPart, PeerID> previousAllocationMap = state.getAllocationMap(localQueryId);
 			if (previousAllocationMap == null) {
 				LOG.error("Recovery Process State has not enough information (SharedQueryID or "
@@ -280,7 +281,7 @@ public class SimpleRecoveryStrategy implements IRecoveryStrategy {
 					for (ILogicalQueryPart queryPartForAllocation : allocationMap.keySet()) {
 						sendRecoveryMessages(localQueryId, failedPeer, allocationMap.get(queryPartForAllocation),
 								queryPartForAllocation, queryState, sharedQuery, recoveryStateIdentifier,
-								recoverySubStateIdentifier, master);
+								recoverySubStateIdentifier, master, masterId);
 					}
 				} else {
 					LOG.debug("Unable to find Peer ID for reallocation.");
@@ -330,6 +331,7 @@ public class SimpleRecoveryStrategy implements IRecoveryStrategy {
 			QueryState queryState = QueryState.valueOf(infoMap.get(localQueryId).state);
 			ID sharedQuery = idFromString(infoMap.get(localQueryId).sharedQuery);
 			boolean master = infoMap.get(localQueryId).master;
+			PeerID masterId = peerIdFromString(infoMap.get(localQueryId).masterID);
 			Map<ILogicalQueryPart, PeerID> allocationMap = null;
 
 			try {
@@ -344,9 +346,9 @@ public class SimpleRecoveryStrategy implements IRecoveryStrategy {
 					while (iterator.hasNext()) {
 						ILogicalQueryPart queryPart = iterator.next();
 						UUID subprocessID = state.createNewSubprocess(localQueryId, queryPart, queryState, sharedQuery,
-								master);
+								master, masterId);
 						sendRecoveryMessages(localQueryId, failedPeer, allocationMap.get(queryPart), queryPart,
-								queryState, sharedQuery, recoveryStateIdentifier, subprocessID, master);
+								queryState, sharedQuery, recoveryStateIdentifier, subprocessID, master ,masterId);
 					}
 				} else {
 					LOG.debug("Unable to find Peer ID for recovery allocation.");
@@ -358,6 +360,20 @@ public class SimpleRecoveryStrategy implements IRecoveryStrategy {
 
 		}
 
+	}
+
+	private PeerID peerIdFromString(String str) {
+		if (str == null) {
+			return null;
+		}
+
+		try {
+			final URI id = new URI(str);
+			return PeerID.create(id);
+		} catch (URISyntaxException | ClassCastException ex) {
+			LOG.error("Could not get peer id from text {}", str, ex);
+			return null;
+		}
 	}
 
 	private static ID idFromString(String str) {
@@ -376,12 +392,12 @@ public class SimpleRecoveryStrategy implements IRecoveryStrategy {
 	}
 
 	private void sendRecoveryMessages(int localQueryId, PeerID failedPeer, PeerID newPeer, ILogicalQueryPart queryPart,
-			QueryState queryState, ID sharedQuery, UUID recoveryStateIdentifier, UUID subprocessID, boolean master) {
+			QueryState queryState, ID sharedQuery, UUID recoveryStateIdentifier, UUID subprocessID, boolean master, PeerID masterId) {
 		cRecoveryDynamicBackup.get().determineAndSendHoldOnMessages(localQueryId, failedPeer, recoveryStateIdentifier);
 
 		// Tell the new peer to install the parts from the failed peer
 		cRecoveryDynamicBackup.get().initiateAgreement(failedPeer, localQueryId, queryState, sharedQuery, newPeer,
-				queryPart, recoveryStateIdentifier, subprocessID, master);
+				queryPart, recoveryStateIdentifier, subprocessID, master, masterId);
 	}
 
 	@Override

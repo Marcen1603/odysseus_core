@@ -173,12 +173,13 @@ public class OperatorChangeListener implements IOperatorObserver,
 							.getBackupSharedQuery(queryId);
 					boolean master = backupInformationAccess
 							.isBackupMaster(queryId);
+					String masterId = backupInformationAccess.getBackupMasterId(queryId);
 					String newPQL = pql.replace(oldPeerId, newPeerId);
 
 					// Save this new information
 					backupInformationAccess.saveBackupInformation(queryId,
 							newPQL, query.getState().toString(), sharedQuery,
-							master);
+							master, masterId);
 				}
 			}
 		}

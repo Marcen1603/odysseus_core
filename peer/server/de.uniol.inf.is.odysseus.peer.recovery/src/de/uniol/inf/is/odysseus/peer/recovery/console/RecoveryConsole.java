@@ -313,9 +313,10 @@ public class RecoveryConsole implements CommandProvider {
 				for (Integer key : infoMap.keySet()) {
 					BackupInfo info = infoMap.get(key);
 					System.out.println("Local query id: " + key
-							+ " | Is master: " + info.master
-							+ " | Shared Query ID: " + info.sharedQuery + "\n"
-							+ info.pql + "(" + info.state + ") \n");
+							+ " | Is master: " + info.master + "("
+							+ info.masterID + ") | Shared Query ID: "
+							+ info.sharedQuery + "\n" + info.pql + "("
+							+ info.state + ") \n");
 				}
 			} else {
 				System.out.println("No Backup-Information about " + peerId);

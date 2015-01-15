@@ -9,4 +9,5 @@ public class BackupInfo implements Serializable {
 	public String state;
 	public String sharedQuery;
 	public boolean master;
+	public String masterID;
 }

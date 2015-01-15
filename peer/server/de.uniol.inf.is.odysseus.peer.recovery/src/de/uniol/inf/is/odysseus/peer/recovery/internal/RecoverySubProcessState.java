@@ -31,13 +31,17 @@ public class RecoverySubProcessState {
 	private QueryState queryState;
 	private ID sharedQuery;
 	private boolean master;
+	private PeerID masterId;
 
-	public RecoverySubProcessState(int localQueryId, ILogicalQueryPart queryPart, QueryState queryState, ID sharedQuery, boolean master) {
+	public RecoverySubProcessState(int localQueryId,
+			ILogicalQueryPart queryPart, QueryState queryState, ID sharedQuery,
+			boolean master, PeerID masterId) {
 		this.localQueryId = localQueryId;
 		this.queryPart = queryPart;
 		this.queryState = queryState;
 		this.sharedQuery = sharedQuery;
 		this.master = master;
+		this.masterId = masterId;
 		this.identifier = UUID.randomUUID();
 		this.inadequatePeers = new ArrayList<PeerID>();
 	}
@@ -57,7 +61,7 @@ public class RecoverySubProcessState {
 	public void setLocalQueryId(int localQueryId) {
 		this.localQueryId = localQueryId;
 	}
-	
+
 	public ID getSharedQueryId() {
 		return sharedQuery;
 	}
@@ -65,13 +69,21 @@ public class RecoverySubProcessState {
 	public void setSharedQueryId(ID sharedQueryId) {
 		this.sharedQuery = sharedQueryId;
 	}
-	
+
 	public boolean isMaster() {
 		return this.master;
 	}
-	
+
 	public void setMaster(boolean master) {
 		this.master = master;
+	}
+
+	public PeerID getMasterId() {
+		return this.masterId;
+	}
+
+	public void setMasterId(PeerID id) {
+		this.masterId = id;
 	}
 
 	public ILogicalQueryPart getQueryPart() {
@@ -89,7 +101,7 @@ public class RecoverySubProcessState {
 	public void setInadequatePeers(List<PeerID> inadequatePeers) {
 		this.inadequatePeers = inadequatePeers;
 	}
-	
+
 	public QueryState getQueryState() {
 		return this.queryState;
 	}

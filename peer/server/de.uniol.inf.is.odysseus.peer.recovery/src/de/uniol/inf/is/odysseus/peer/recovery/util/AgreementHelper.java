@@ -285,7 +285,7 @@ public class AgreementHelper {
 	public static void waitForAndDoRecovery(final PeerID failedPeer,
 			final int localQueryId, final QueryState queryState, final ID sharedQuery, 
 			final PeerID newPeer, final ILogicalQueryPart queryPart,
-			final UUID recoveryStateIdentifier, final UUID subprocessID, final boolean master) {
+			final UUID recoveryStateIdentifier, final UUID subprocessID, final boolean master, final PeerID masterId) {
 
 		if (!cCommunicator.isPresent()) {
 			LOG.error("No recovery communicator bound!");
@@ -335,7 +335,7 @@ public class AgreementHelper {
 
 					cCommunicator.get().installQueriesOnNewPeer(failedPeer,
 							newPeer, localQueryId, queryState, pql,
-							recoveryStateIdentifier, subprocessID, sharedQuery, master);
+							recoveryStateIdentifier, subprocessID, sharedQuery, master, masterId);
 
 					// Now we did this, so remove that we want to do this
 					// recovery

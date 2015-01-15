@@ -15,6 +15,7 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandlin
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.planmodification.event.AbstractPlanModificationEvent;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.planmodification.event.PlanModificationEventType;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
+import de.uniol.inf.is.odysseus.p2p_new.IP2PNetworkManager;
 import de.uniol.inf.is.odysseus.peer.distribute.IQueryPartControllerListener;
 import de.uniol.inf.is.odysseus.peer.recovery.IBackupInformationAccess;
 import de.uniol.inf.is.odysseus.peer.recovery.internal.BackupInfo;
@@ -25,7 +26,8 @@ import de.uniol.inf.is.odysseus.peer.recovery.internal.BackupInfo;
  * @author Michael Brand
  *
  */
-public class BackupInformationHelper implements IPlanModificationListener, IQueryPartControllerListener {
+public class BackupInformationHelper implements IPlanModificationListener,
+		IQueryPartControllerListener {
 
 	private static IBackupInformationAccess backupInformationAccess;
 
@@ -39,6 +41,45 @@ public class BackupInformationHelper implements IPlanModificationListener, IQuer
 		if (backupInformationAccess == infoAccess) {
 			backupInformationAccess = null;
 		}
+	}
+
+	/**
+	 * The P2P network manager, if there is one bound.
+	 */
+	private static IP2PNetworkManager cNetworkManager;
+
+	/**
+	 * Binds a P2P network manager. <br />
+	 * Called by OSGI-DS.
+	 * 
+	 * @param manager
+	 *            The P2P network manager to bind. <br />
+	 *            Must be not null.
+	 */
+	public static void bindP2PNetworkManager(IP2PNetworkManager manager) {
+
+		Preconditions.checkNotNull(manager,
+				"The P2P network manager to bind must be not null!");
+		cNetworkManager = manager;
+
+	}
+
+	/**
+	 * Unbinds a P2P network manager. <br />
+	 * Called by OSGI-DS.
+	 * 
+	 * @param manager
+	 *            The P2P network manager to unbind. <br />
+	 *            Must be not null.
+	 */
+	public static void unbindP2PNetworkManager(IP2PNetworkManager manager) {
+
+		Preconditions.checkNotNull(manager,
+				"The P2P network manager to unbind must be not null!");
+		if (cNetworkManager != null && cNetworkManager.equals(manager)) {
+			cNetworkManager = null;
+		}
+
 	}
 
 	/**
@@ -87,7 +128,7 @@ public class BackupInformationHelper implements IPlanModificationListener, IQuer
 
 	@Override
 	public void planModificationEvent(AbstractPlanModificationEvent<?> eventArgs) {
-		
+
 		if (PlanModificationEventType.QUERY_REMOVE.equals(eventArgs
 				.getEventType())) {
 			int queryID = ((IPhysicalQuery) eventArgs.getValue()).getID();
@@ -98,8 +139,8 @@ public class BackupInformationHelper implements IPlanModificationListener, IQuer
 			int queryID = physQuery.getID();
 			String pql = RecoveryHelper.getPQLFromRunningQuery(queryID);
 			String state = physQuery.getState().toString();
-			backupInformationAccess.saveBackupInformation(queryID, pql,
-					state, null, false);
+			backupInformationAccess.saveBackupInformation(queryID, pql, state,
+					null, false, null);
 		} else {
 			int queryID = ((IPhysicalQuery) eventArgs.getValue()).getID();
 			QueryState state = ((IPhysicalQuery) eventArgs.getValue())
@@ -108,8 +149,10 @@ public class BackupInformationHelper implements IPlanModificationListener, IQuer
 			String sharedQuery = backupInformationAccess
 					.getBackupSharedQuery(queryID);
 			boolean master = backupInformationAccess.isBackupMaster(queryID);
+			String masterId = backupInformationAccess
+					.getBackupMasterId(queryID);
 			backupInformationAccess.saveBackupInformation(queryID, pql,
-					state.toString(), sharedQuery, master);
+					state.toString(), sharedQuery, master, masterId);
 		}
 	}
 
@@ -118,18 +161,19 @@ public class BackupInformationHelper implements IPlanModificationListener, IQuer
 		for (int queryId : ids) {
 			BackupInfo info = backupInformationAccess
 					.getBackupInformation(queryId);
+			// TODO get masterId as argument
 			backupInformationAccess.saveBackupInformation(queryId, info.pql,
-					info.state, sharedQueryID.toString(), false);
+					info.state, sharedQueryID.toString(), false, null);
 		}
 	}
 
 	@Override
 	public void afterRegisterAsMaster(ILogicalQuery query, int queryID,
 			ID sharedQueryID, Collection<PeerID> otherPeers) {
-		BackupInfo info = backupInformationAccess
-				.getBackupInformation(queryID);
+		BackupInfo info = backupInformationAccess.getBackupInformation(queryID);
 		backupInformationAccess.saveBackupInformation(queryID, info.pql,
-				info.state, sharedQueryID.toString(), true);
+				info.state, sharedQueryID.toString(), true, cNetworkManager
+						.getLocalPeerID().toString());
 	}
 
 }

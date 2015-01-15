@@ -90,7 +90,7 @@ public interface IRecoveryCommunicator extends IPeerDictionaryListener {
 	 */
 	// TODO Better way: allocate each single query part new. M.B.
 	public void installQueriesOnNewPeer(PeerID failedPeer, PeerID newPeer, int localQueryId, QueryState queryState,
-			String pql, UUID recoveryStateIdentifier, UUID subprocessID, ID sharedQuery, boolean master);
+			String pql, UUID recoveryStateIdentifier, UUID subprocessID, ID sharedQuery, boolean master, PeerID masterId);
 
 	/**
 	 * Sends a message to the given peer that it has to go on sending the tuples for the given pipeId. (Stop buffering)
