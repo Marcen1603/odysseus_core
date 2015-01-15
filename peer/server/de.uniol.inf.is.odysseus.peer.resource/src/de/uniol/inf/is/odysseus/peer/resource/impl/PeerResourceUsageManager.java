@@ -24,7 +24,7 @@ import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicator;
 import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicatorListener;
 import de.uniol.inf.is.odysseus.p2p_new.PeerCommunicationException;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.IPeerDictionary;
-import de.uniol.inf.is.odysseus.p2p_new.util.RepeatingJobThread;
+import de.uniol.inf.is.odysseus.p2p_new.dictionary.impl.PeerDictionary;
 import de.uniol.inf.is.odysseus.peer.resource.IPeerResourceUsageManager;
 import de.uniol.inf.is.odysseus.peer.resource.IResourceUsage;
 
@@ -34,11 +34,12 @@ public final class PeerResourceUsageManager implements IPeerResourceUsageManager
 
 	private static final int RESOURCE_USAGE_UPDATE_INTERVAL_MILLIS = 7000;
 	private static final SigarWrapper SIGAR_WRAPPER = new SigarWrapper();
-	
+
 	private static final Runtime RUNTIME = Runtime.getRuntime();
 	private static final ExecutorService FUTURE_SERVICE = Executors.newCachedThreadPool();
 	private static final long MAX_WAIT = 5000;
 	private static final long MAX_WAIT_STEP = 200;
+	private static final long MAX_ASK_WAITING_TIME = 3000;
 	private static final Callable<Optional<IResourceUsage>> EMPTY_RESOURCE_USAGE = new Callable<Optional<IResourceUsage>>() {
 		@Override
 		public Optional<IResourceUsage> call() throws Exception {
@@ -53,9 +54,11 @@ public final class PeerResourceUsageManager implements IPeerResourceUsageManager
 	private static IPeerDictionary peerDictionary;
 
 	private final Map<PeerID, IResourceUsage> usageMap = Maps.newHashMap();
+	private final Map<PeerID, Long> timestampMap = Maps.newHashMap();
 	private final UsageStatisticCollector usageCollector = new UsageStatisticCollector();
-
-	private RepeatingJobThread localUsageChecker;
+	private final Map<PeerID, Long> askingPeerMap = Maps.newHashMap();
+	
+	private long lastUsageUpdateTimestamp;
 
 	// called by OSGi-DS
 	public static void bindP2PNetworkManager(IP2PNetworkManager serv) {
@@ -72,7 +75,7 @@ public final class PeerResourceUsageManager implements IPeerResourceUsageManager
 	// called by OSGi-DS
 	public static void bindPeerCommunicator(IPeerCommunicator serv) {
 		peerCommunicator = serv;
-		
+
 		peerCommunicator.registerMessageType(AskUsageMessage.class);
 		peerCommunicator.registerMessageType(AnswerUsageMessage.class);
 	}
@@ -82,7 +85,7 @@ public final class PeerResourceUsageManager implements IPeerResourceUsageManager
 		if (peerCommunicator == serv) {
 			peerCommunicator.unregisterMessageType(AskUsageMessage.class);
 			peerCommunicator.unregisterMessageType(AnswerUsageMessage.class);
-			
+
 			peerCommunicator = null;
 		}
 	}
@@ -98,7 +101,7 @@ public final class PeerResourceUsageManager implements IPeerResourceUsageManager
 			serverExecutor = null;
 		}
 	}
-	
+
 	// called by OSGi-DS
 	public static void bindPeerDictionary(IPeerDictionary serv) {
 		peerDictionary = serv;
@@ -118,20 +121,10 @@ public final class PeerResourceUsageManager implements IPeerResourceUsageManager
 
 		peerCommunicator.addListener(this, AskUsageMessage.class);
 		peerCommunicator.addListener(this, AnswerUsageMessage.class);
-
-		localUsageChecker = new RepeatingJobThread(RESOURCE_USAGE_UPDATE_INTERVAL_MILLIS, "Local usage checker") {
-			@Override
-			public void doJob() {
-				updateLocalUsage();
-			};
-		};
-		localUsageChecker.start();
 	}
 
 	// called by OSGi-DS
 	public void deactivate() {
-		localUsageChecker.stopRunning();
-
 		instance = null;
 		LOG.debug("Deactivated");
 
@@ -146,16 +139,72 @@ public final class PeerResourceUsageManager implements IPeerResourceUsageManager
 	@Override
 	public Future<Optional<IResourceUsage>> getRemoteResourceUsage(final PeerID peerID) {
 		Preconditions.checkNotNull(peerID, "PeerID to get current resource usage must not be null!");
+
+		LOG.debug("Getting remote usage of peer {}", PeerDictionary.getInstance().getRemotePeerName(peerID));
+
 		if (peerCommunicator == null) {
 			return FUTURE_SERVICE.submit(EMPTY_RESOURCE_USAGE);
 		}
 
-		try {
-			usageMap.remove(peerID);
-			peerCommunicator.send(peerID, new AskUsageMessage());
-		} catch (PeerCommunicationException e) {
-			LOG.error("Could not send message for asking for remote resource usage", e);
-			return FUTURE_SERVICE.submit(EMPTY_RESOURCE_USAGE);
+		synchronized (askingPeerMap) {
+			Long askTS = askingPeerMap.get(peerID);
+			if (askTS != null && System.currentTimeMillis() - askTS < MAX_ASK_WAITING_TIME) {
+				LOG.debug("Already asking...");
+				
+				IResourceUsage usage = null;
+				synchronized (usageMap) {
+					usage = usageMap.get(peerID);
+				}
+				
+				if (usage == null) {
+					return FUTURE_SERVICE.submit(EMPTY_RESOURCE_USAGE);
+				}
+				final IResourceUsage finalUsage = usage;
+				return FUTURE_SERVICE.submit(new Callable<Optional<IResourceUsage>>() {
+					@Override
+					public Optional<IResourceUsage> call() throws Exception {
+						return Optional.of(finalUsage);
+					}
+				});
+			}
+
+			try {
+				Long ts = null;
+				synchronized (timestampMap) {
+					ts = timestampMap.get(peerID);
+				}
+
+				IResourceUsage usage = null;
+				synchronized (usageMap) {
+					usage = usageMap.get(peerID);
+				}
+
+				if (usage == null || ts == null || System.currentTimeMillis() - ts > RESOURCE_USAGE_UPDATE_INTERVAL_MILLIS) {
+					LOG.debug("Remote resource usage is too old");
+
+					synchronized (askingPeerMap) {
+						askingPeerMap.put(peerID, System.currentTimeMillis());
+					}
+					
+					LOG.debug("ASKING PEER {}", PeerDictionary.getInstance().getRemotePeerName(peerID));
+					
+					peerCommunicator.send(peerID, new AskUsageMessage());
+				} else {
+					LOG.debug("Use cached resource usage");
+
+					final IResourceUsage finalUsage = usage;
+					return FUTURE_SERVICE.submit(new Callable<Optional<IResourceUsage>>() {
+						@Override
+						public Optional<IResourceUsage> call() throws Exception {
+							return Optional.of(finalUsage);
+						}
+					});
+				}
+
+			} catch (PeerCommunicationException e) {
+				LOG.error("Could not send message for asking for remote resource usage", e);
+				return FUTURE_SERVICE.submit(EMPTY_RESOURCE_USAGE);
+			}
 		}
 
 		return FUTURE_SERVICE.submit(new Callable<Optional<IResourceUsage>>() {
@@ -189,6 +238,8 @@ public final class PeerResourceUsageManager implements IPeerResourceUsageManager
 	@Override
 	public void receivedMessage(IPeerCommunicator communicator, PeerID senderPeer, IMessage message) {
 		if (message instanceof AskUsageMessage) {
+			LOG.debug("Getting local resource usage for remote peer");
+			
 			IResourceUsage localUsage = getLocalResourceUsage();
 			AnswerUsageMessage answer = new AnswerUsageMessage(localUsage);
 
@@ -198,17 +249,29 @@ public final class PeerResourceUsageManager implements IPeerResourceUsageManager
 				LOG.error("Could not send aswer to resource usage asking", e);
 			}
 		} else if (message instanceof AnswerUsageMessage) {
-			AnswerUsageMessage answer = (AnswerUsageMessage)message;
+			AnswerUsageMessage answer = (AnswerUsageMessage) message;
 
 			synchronized (usageMap) {
 				usageMap.put(senderPeer, answer.getResourceUsage());
+			}
+			synchronized (askingPeerMap) {
+				askingPeerMap.remove(senderPeer);
+			}
+			synchronized (timestampMap) {
+				timestampMap.put(senderPeer, System.currentTimeMillis());
 			}
 		}
 	}
 
 	@Override
 	public IResourceUsage getLocalResourceUsage() {
-		synchronized( usageCollector ) {
+		synchronized (usageCollector) {
+
+			if( System.currentTimeMillis() - lastUsageUpdateTimestamp > RESOURCE_USAGE_UPDATE_INTERVAL_MILLIS ) {
+				lastUsageUpdateTimestamp = System.currentTimeMillis();
+				updateLocalUsage();
+			}
+		
 			return usageCollector.getCurrentResourceUsage();
 		}
 	}
@@ -237,10 +300,10 @@ public final class PeerResourceUsageManager implements IPeerResourceUsageManager
 					stoppedQueries++;
 				}
 			}
-			
+
 			int remotePeerCount = peerDictionary.getRemotePeerIDs().size();
-			
-			synchronized( usageCollector ) {
+
+			synchronized (usageCollector) {
 				usageCollector.addStatistics(freeMemory, totalMemory, SIGAR_WRAPPER.getCpuFree(), SIGAR_WRAPPER.getCpuMax(), runningQueries, stoppedQueries, remotePeerCount, SIGAR_WRAPPER.getNetMax(), SIGAR_WRAPPER.getNetOutputRate(), SIGAR_WRAPPER.getNetInputRate());
 			}
 		} catch (Throwable t) {
