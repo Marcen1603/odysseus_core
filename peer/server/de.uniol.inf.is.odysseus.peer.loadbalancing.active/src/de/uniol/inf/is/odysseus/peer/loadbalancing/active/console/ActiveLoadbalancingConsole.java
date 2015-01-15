@@ -282,6 +282,7 @@ public class ActiveLoadbalancingConsole implements CommandProvider {
 			}
 			else {
 				ci.println("["+query+"] ***SLAVE*** SharedQueryID" + sharedQueryID);
+				ci.println("(Master is " + peerDictionary.getRemotePeerName(controller.getMasterForQuery(sharedQueryID))+")");
 			}
 			
 			if(isMaster) {

@@ -12,14 +12,18 @@ public interface IQueryPartController {
 
 	public Collection<Integer> getLocalIds(ID sharedQueryId);
 
-	public void registerAsSlave(Collection<Integer> ids, ID sharedQueryID);
-
+	public void registerAsSlave(Collection<Integer> ids, ID sharedQueryID, PeerID masterPeer);
+	
 	public void registerAsMaster(ILogicalQuery query, int queryID, final ID sharedQueryID, Collection<PeerID> otherPeers);
 	
 	public void unregisterAsMaster(ID sharedQueryId);
 	
 	public boolean isMasterForQuery(int queryID);
 	
+	public PeerID getMasterForQuery(ID sharedQueryID);
+	
 	public Collection<PeerID> getOtherPeers(ID sharedQueryId);
+	
+	public void unregisterLocalQueriesFromSharedQuery(ID sharedQueryID, Collection<Integer> toRemove);
 	
 }

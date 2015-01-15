@@ -8,7 +8,7 @@ import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 
 public interface IQueryPartControllerListener {
 
-	public void afterRegisterAsSlave(Collection<Integer> ids, ID sharedQueryID);
+	public void afterRegisterAsSlave(Collection<Integer> ids, ID sharedQueryID, PeerID masterPeerID);
 
 	public void afterRegisterAsMaster(ILogicalQuery query, int queryID, final ID sharedQueryID, Collection<PeerID> otherPeers);
 	

@@ -45,7 +45,6 @@ public class InstructionHandler {
 	 */
 	public static void handleInstruction(
 			MovingStateInstructionMessage instruction, PeerID senderPeer) {
-		// TODO normal sources
 
 		int lbProcessId = instruction.getLoadBalancingProcessId();
 		MovingStateMessageDispatcher dispatcher = null;

@@ -77,7 +77,7 @@ public class LoadBalancingHelper {
 		return resultList;
 		
 	}
-
+	
 	/**
 	 * Removes a query from current Peer.
 	 * 

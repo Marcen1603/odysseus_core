@@ -192,7 +192,7 @@ public class QueryPartReceiver implements IPeerCommunicatorListener {
 				}
 
 				try {
-					addQueryPart(addQueryPartMessage);
+					addQueryPart(addQueryPartMessage,senderPeer);
 					ackedQueryPartIDs.add(addQueryPartMessage.getQueryPartID());
 
 					sendQueryAddAck(senderPeer, addQueryPartMessage);
@@ -240,12 +240,12 @@ public class QueryPartReceiver implements IPeerCommunicatorListener {
 		}
 	}
 
-	public void addQueryPart(AddQueryPartMessage message) throws QueryDistributionException {
+	public void addQueryPart(AddQueryPartMessage message, PeerID senderPeer) throws QueryDistributionException {
 		LOG.debug("PQL statement to be executed: {}", message.getPqlStatement());
 
 		try {
 			checkNeededSources(message);
-			callExecutor(message);
+			callExecutor(message,senderPeer);
 		} catch (Throwable t) {
 			throw new QueryDistributionException("Could not execute query: " + t.getMessage(), t);
 		}
@@ -305,7 +305,7 @@ public class QueryPartReceiver implements IPeerCommunicatorListener {
 		return Optional.absent();
 	}
 
-	private void callExecutor(AddQueryPartMessage message) {
+	private void callExecutor(AddQueryPartMessage message, PeerID senderPeer) {
 		List<IQueryBuildSetting<?>> configuration = determineQueryBuildSettings(executor, message.getTransCfgName());
 		Optional<ParameterTransformationConfiguration> params = getParameterTransformationConfiguration(configuration);
 		if (params.isPresent()) {
@@ -315,7 +315,7 @@ public class QueryPartReceiver implements IPeerCommunicatorListener {
 		String script = buildOdysseusScriptText(message);
 		Collection<Integer> ids = executor.addQuery(script, "OdysseusScript", PeerDistributePlugIn.getActiveSession(), message.getTransCfgName(), Context.empty(), configuration);
 		
-		((QueryPartController)controller).registerAsSlave(ids, message.getSharedQueryID());
+		((QueryPartController)controller).registerAsSlave(ids, message.getSharedQueryID(),senderPeer);
 	}
 
 	private static String buildOdysseusScriptText(AddQueryPartMessage message) {

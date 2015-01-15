@@ -285,7 +285,7 @@ public class AddQueryReceiver extends AbstractRepeatingMessageReceiver {
 			RecoveryAddQueryResponseMessage response = null;
 			try {
 				addQuery(addMessage.getPQLCode(), addMessage.getLocalQueryId(), addMessage.getQueryState(),
-						addMessage.getSharedQueryId(), addMessage.isMaster());
+						addMessage.getSharedQueryId(), addMessage.isMaster(),addMessage.getMasterId());
 				response = new RecoveryAddQueryResponseMessage(addMessage.getUUID());
 			} catch (Exception e) {
 				response = new RecoveryAddQueryResponseMessage(addMessage.getUUID(), e.getMessage());
@@ -307,7 +307,7 @@ public class AddQueryReceiver extends AbstractRepeatingMessageReceiver {
 	 * @param sharedQueryId
 	 *            The id of the shared query where this PQL belongs to
 	 */
-	private static void addQuery(String pql, int localQueryId, QueryState queryState, ID sharedQuery, boolean master)
+	private static void addQuery(String pql, int localQueryId, QueryState queryState, ID sharedQuery, boolean master, PeerID masterPeer)
 			throws Exception {
 		Preconditions.checkNotNull(pql);
 
@@ -331,7 +331,7 @@ public class AddQueryReceiver extends AbstractRepeatingMessageReceiver {
 					cExecutor.get().getLogicalQueryById(installedQueries.iterator().next(),
 							RecoveryCommunicator.getActiveSession()), localQueryId, sharedQuery, otherPeers);
 		} else if (sharedQuery != null) {
-			cController.get().registerAsSlave(installedQueries, sharedQuery);
+			cController.get().registerAsSlave(installedQueries, sharedQuery,masterPeer);
 		}
 
 		ExecutorService service = Executors.newFixedThreadPool(NUM_THREADS);

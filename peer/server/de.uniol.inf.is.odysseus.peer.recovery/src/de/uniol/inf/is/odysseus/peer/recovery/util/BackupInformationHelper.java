@@ -157,13 +157,13 @@ public class BackupInformationHelper implements IPlanModificationListener,
 	}
 
 	@Override
-	public void afterRegisterAsSlave(Collection<Integer> ids, ID sharedQueryID) {
+	public void afterRegisterAsSlave(Collection<Integer> ids, ID sharedQueryID, PeerID masterPeerID) {
 		for (int queryId : ids) {
 			BackupInfo info = backupInformationAccess
 					.getBackupInformation(queryId);
-			// TODO get masterId as argument
+			
 			backupInformationAccess.saveBackupInformation(queryId, info.pql,
-					info.state, sharedQueryID.toString(), false, null);
+					info.state, sharedQueryID.toString(), false, masterPeerID.toString());
 		}
 	}
 

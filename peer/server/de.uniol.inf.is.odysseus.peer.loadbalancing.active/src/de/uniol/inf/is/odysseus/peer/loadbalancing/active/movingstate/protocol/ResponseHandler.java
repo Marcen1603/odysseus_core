@@ -87,12 +87,27 @@ public class ResponseHandler {
 						.generatePQLStatementFromQueryPart(modifiedQueryPart);
 				LOG.debug("Generated PQL Statement:" + pqlFromQueryPart);
 
+				// Update Query part Controller.
 				IQueryPartController queryPartController = ActiveLoadBalancingActivator.getQueryPartController();
-				if(queryPartController.isMasterForQuery(status.getLogicalQuery())) {
-					LOG.debug("Peer is Master for Balanced Query Part.");
-					ID sharedQueryID = queryPartController.getSharedQueryID(status.getLogicalQuery());
+				ID sharedQueryID = queryPartController.getSharedQueryID(status.getLogicalQuery());
+				Collection<Integer> toRemove = new ArrayList<Integer>();
+				toRemove.add(status.getLogicalQuery());
+				queryPartController.unregisterLocalQueriesFromSharedQuery(sharedQueryID, toRemove);
+				Collection<Integer> remainingQueries = queryPartController.getLocalIds(sharedQueryID);
+				
+				if(queryPartController.isMasterForQuery(status.getLogicalQuery()) && remainingQueries.size()==0) {
+					LOG.debug("Peer is Master for Balanced Query Part and just removed last Query.");
+					
 					Collection<PeerID> otherPeers = queryPartController.getOtherPeers(sharedQueryID);
+					
+					//If new Master is in otherPeers list-> Remove new Master.
+					if(otherPeers.contains(status.getVolunteeringPeer())) {
+						otherPeers.remove(status.getVolunteeringPeer());
+					}
+					
 					List<String> otherPeerIDStrings = new ArrayList<String>();
+					
+					
 					for (PeerID peer : otherPeers) {
 						otherPeerIDStrings.add(peer.toString());
 					}
@@ -112,14 +127,6 @@ public class ResponseHandler {
 			if (status.getPhase().equals(
 					MovingStateMasterStatus.LB_PHASES.COPYING_QUERY) && !status.isLocked()) {
 				status.lock();
-				
-				IQueryPartController queryPartController = ActiveLoadBalancingActivator.getQueryPartController();
-				if(queryPartController.isMasterForQuery(status.getLogicalQuery())) {
-					LOG.debug("Unregistering peer as Master Peer.");
-					queryPartController.unregisterAsMaster(queryPartController.getSharedQueryID(status.getLogicalQuery()));
-				}
-				
-				
 				dispatcher.sendMsgReceived(senderPeer);
 				dispatcher.stopRunningJob();
 				status.setPhase(MovingStateMasterStatus.LB_PHASES.RELINKING_SENDERS);
