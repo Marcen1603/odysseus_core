@@ -141,6 +141,11 @@ public class DatabaseSourcePO extends AbstractSource<Tuple<?>> {
 	protected void process_close() {
 		super.process_close();
 		thread.interrupt();
+		try {
+			this.jdbcConnection.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 	}
 
 	private class TransferThread extends Thread {
