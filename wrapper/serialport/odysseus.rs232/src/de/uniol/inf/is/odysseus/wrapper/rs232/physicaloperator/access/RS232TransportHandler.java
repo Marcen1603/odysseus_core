@@ -127,7 +127,7 @@ public class RS232TransportHandler extends AbstractTransportHandler implements S
             this.stopbits = SerialPort.STOPBITS_1;
         }
         if (options.containsKey(RS232TransportHandler.READLINES)) {
-            this.readLines = Boolean.parseBoolean(RS232TransportHandler.READLINES);
+            this.readLines = Boolean.parseBoolean(options.get(RS232TransportHandler.READLINES));
         }
         else {
             this.readLines = true;
@@ -169,7 +169,13 @@ public class RS232TransportHandler extends AbstractTransportHandler implements S
                     if (this.readLines) {
                         String message = "";
                         message = this.input.readLine();
-                        super.fireProcess(ByteBuffer.wrap(message.getBytes()));
+                        ///
+                        byte[] byteArray = message.getBytes();
+                        ByteBuffer byteBufer = ByteBuffer.allocate(byteArray.length);
+                        byteBufer.put(byteArray);
+                        super.fireProcess(byteBufer);
+                        //super.fireProcess(ByteBuffer.wrap(message.getBytes()));
+                        ///
                     }
                     else {
                         final ByteBuffer buffer = ByteBuffer.allocate(1024);
