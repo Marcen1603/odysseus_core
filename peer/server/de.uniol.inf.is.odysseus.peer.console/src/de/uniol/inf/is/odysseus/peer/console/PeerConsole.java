@@ -46,6 +46,7 @@ import de.uniol.inf.is.odysseus.p2p_new.PeerException;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.IP2PDictionary;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.IPeerDictionary;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.SourceAdvertisement;
+import de.uniol.inf.is.odysseus.p2p_new.util.InetAddressUtil;
 import de.uniol.inf.is.odysseus.peer.logging.JXTALoggingPlugIn;
 import de.uniol.inf.is.odysseus.peer.logging.JxtaLoggingDestinations;
 import de.uniol.inf.is.odysseus.peer.ping.IPingMap;
@@ -357,10 +358,14 @@ public class PeerConsole implements CommandProvider, IPeerCommunicatorListener {
 		ci.println("PeerID: " + p2pNetworkManager.getLocalPeerID());
 		ci.println("Peergroup: " + p2pNetworkManager.getLocalPeerGroupName());
 		ci.println("PeergroupID: " + p2pNetworkManager.getLocalPeerGroupID());
-		try {
-			ci.println("Address: " + InetAddress.getLocalHost().getHostAddress());
-		} catch (UnknownHostException e) {
+		
+		Optional<String> optAddress = InetAddressUtil.getRealInetAddress();
+		if (optAddress.isPresent()) {
+			ci.println("Address: " + optAddress.get());
+		} else {
+			ci.println("Address: <not available>");
 		}
+		
 		ci.println("Port: " + p2pNetworkManager.getPort());
 	}
 
@@ -730,9 +735,9 @@ public class PeerConsole implements CommandProvider, IPeerCommunicatorListener {
 		int threadCount = Thread.activeCount();
 		Thread[] tarray = new Thread[threadCount];
 		Thread.enumerate(tarray);
-		
+
 		ThreadMXBean bean = ManagementFactory.getThreadMXBean();
-		
+
 		List<String> output = Lists.newLinkedList();
 		for (Thread t : tarray) {
 			long threadTimeNanos = bean.getThreadCpuTime(t.getId());
@@ -749,7 +754,7 @@ public class PeerConsole implements CommandProvider, IPeerCommunicatorListener {
 	public void _listThreads(CommandInterpreter ci) {
 		_lsThreads(ci);
 	}
-	
+
 	public void _listPeerAddresses(CommandInterpreter ci) {
 		Collection<PeerID> remotePeerIDs = peerDictionary.getRemotePeerIDs();
 		ci.println("Remote peers known: " + remotePeerIDs.size());
@@ -965,14 +970,14 @@ public class PeerConsole implements CommandProvider, IPeerCommunicatorListener {
 		String command = splitted[0];
 		String parameters = splitted.length > 1 ? splitted[1] : null;
 		LOG.debug("Got command message: " + command);
-		
+
 		StringBuilderCommandInterpreter delegateCi = new StringBuilderCommandInterpreter(parameters != null ? parameters.split("\\ ") : new String[0]);
-		if( command.equals("help")) {
+		if (command.equals("help")) {
 			printHelp(delegateCi);
 		} else {
 			Optional<Method> optMethod = determineCommandMethod(command);
 			Optional<CommandProvider> optProvider = determineProvider(command);
-	
+
 			if (!optMethod.isPresent()) {
 				delegateCi.println("No such command: " + command);
 			} else {
@@ -985,7 +990,7 @@ public class PeerConsole implements CommandProvider, IPeerCommunicatorListener {
 				}
 			}
 		}
-		
+
 		CommandOutputMessage out = new CommandOutputMessage(delegateCi.getText());
 		try {
 			LOG.debug("Command executed. Send results back");
@@ -994,7 +999,7 @@ public class PeerConsole implements CommandProvider, IPeerCommunicatorListener {
 			LOG.debug("Could not send console output", e);
 		}
 	}
-	
+
 	private static void printHelp(CommandInterpreter ci) {
 		for (CommandProvider provider : COMMAND_PROVIDERS) {
 			ci.println(provider.getHelp());
