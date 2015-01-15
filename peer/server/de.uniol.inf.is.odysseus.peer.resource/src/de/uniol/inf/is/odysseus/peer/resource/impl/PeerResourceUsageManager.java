@@ -32,7 +32,7 @@ public final class PeerResourceUsageManager implements IPeerResourceUsageManager
 
 	private static final Logger LOG = LoggerFactory.getLogger(PeerResourceUsageManager.class);
 
-	private static final int RESOURCE_USAGE_UPDATE_INTERVAL_MILLIS = 15000;
+	private static final int RESOURCE_USAGE_UPDATE_INTERVAL_MILLIS = 7000;
 	private static final SigarWrapper SIGAR_WRAPPER = new SigarWrapper();
 	
 	private static final Runtime RUNTIME = Runtime.getRuntime();
@@ -208,7 +208,6 @@ public final class PeerResourceUsageManager implements IPeerResourceUsageManager
 
 	@Override
 	public IResourceUsage getLocalResourceUsage() {
-		updateLocalUsage();
 		synchronized( usageCollector ) {
 			return usageCollector.getCurrentResourceUsage();
 		}
@@ -216,6 +215,7 @@ public final class PeerResourceUsageManager implements IPeerResourceUsageManager
 
 	private void updateLocalUsage() {
 		try {
+			LOG.debug("Updating local resource usage");
 			if (!p2pNetworkManager.isStarted() || serverExecutor == null) {
 				return;
 			}
