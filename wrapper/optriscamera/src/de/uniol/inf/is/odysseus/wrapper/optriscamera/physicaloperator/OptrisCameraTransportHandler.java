@@ -1,11 +1,12 @@
 package de.uniol.inf.is.odysseus.wrapper.optriscamera.physicaloperator;
 
-import static org.bytedeco.javacpp.opencv_core.*;
+import static org.bytedeco.javacpp.opencv_core.IPL_DEPTH_16S;
+import static org.bytedeco.javacpp.opencv_core.cvCreateImage;
+import static org.bytedeco.javacpp.opencv_core.cvSize;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
 
-import org.bytedeco.javacpp.BytePointer;
 import org.bytedeco.javacpp.opencv_core.IplImage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -97,14 +98,14 @@ public class OptrisCameraTransportHandler extends AbstractPushTransportHandler
 		{		
 			System.out.println("Frame received in java: ");// + frameBuffer.asShortBuffer().get(0));
 			
-/*			IplImage img = cvCreateImageHeader(cvSize(cameraCapture.getImageWidth(), cameraCapture.getImageHeight()), IPL_DEPTH_16S, 1);
-			img.imageData(new BytePointer(buffer));
+			IplImage img = cvCreateImage(cvSize(cameraCapture.getImageWidth(), cameraCapture.getImageHeight()), IPL_DEPTH_16S, 1);
+			img.getByteBuffer().put(frameBuffer);
 			
 			@SuppressWarnings("rawtypes")
 			Tuple<?> tuple = new Tuple(1, false);
 	        tuple.setAttribute(0, new ImageJCV(img));
 			
-			fireProcess(tuple);*/
+			fireProcess(tuple);
 		}
 	}
 	
