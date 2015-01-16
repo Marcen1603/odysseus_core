@@ -1,18 +1,18 @@
 /********************************************************************************** 
-  * Copyright 2011 The Odysseus Team
-  *
-  * Licensed under the Apache License, Version 2.0 (the "License");
-  * you may not use this file except in compliance with the License.
-  * You may obtain a copy of the License at
-  *
-  *     http://www.apache.org/licenses/LICENSE-2.0
-  *
-  * Unless required by applicable law or agreed to in writing, software
-  * distributed under the License is distributed on an "AS IS" BASIS,
-  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  * See the License for the specific language governing permissions and
-  * limitations under the License.
-  */
+ * Copyright 2011 The Odysseus Team
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package de.uniol.inf.is.odysseus.core.server.physicaloperator;
 
 import java.io.Serializable;
@@ -28,8 +28,8 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFMetaAttributeList;
 /**
  * @author Jonas Jacobi
  */
-public class MetadataCreationPO<M extends IMetaAttribute, In extends IStreamObject<M>> extends
-		AbstractPipe<In, In> implements Serializable{
+public class MetadataCreationPO<M extends IMetaAttribute, In extends IStreamObject<M>>
+		extends AbstractPipe<In, In> implements Serializable {
 
 	private static final long serialVersionUID = 3783851208646530940L;
 
@@ -50,12 +50,16 @@ public class MetadataCreationPO<M extends IMetaAttribute, In extends IStreamObje
 
 	@Override
 	public void process_next(In object, int port) {
-		try {
-			object.setMetadata(type.newInstance());
-		} catch (Exception e) {
-			throw new RuntimeException(e);
+		if (object == null) {
+			propagateDone();
+		} else {
+			try {
+				object.setMetadata(type.newInstance());
+			} catch (Exception e) {
+				throw new RuntimeException(e);
+			}
+			this.transfer(object);
 		}
-		this.transfer(object);
 	}
 
 	@Override
@@ -66,31 +70,35 @@ public class MetadataCreationPO<M extends IMetaAttribute, In extends IStreamObje
 	public Class<M> getType() {
 		return type;
 	}
-	
+
 	@Override
-	public MetadataCreationPO<M, In> clone()  {
-		return new MetadataCreationPO<M,In>(this);
+	public MetadataCreationPO<M, In> clone() {
+		return new MetadataCreationPO<M, In>(this);
 	}
-	
+
 	@Override
 	public boolean process_isSemanticallyEqual(IPhysicalOperator ipo) {
-		if(!(ipo instanceof MetadataCreationPO)) {
+		if (!(ipo instanceof MetadataCreationPO)) {
 			return false;
 		}
-		MetadataCreationPO<?,?> mdcpo = (MetadataCreationPO<?,?>) ipo;
-		if(this.getSubscribedToSource().equals(mdcpo.getSubscribedToSource()) && (this.getType().toString().equals(mdcpo.getType().toString()))) {
+		MetadataCreationPO<?, ?> mdcpo = (MetadataCreationPO<?, ?>) ipo;
+		if (this.getSubscribedToSource().equals(mdcpo.getSubscribedToSource())
+				&& (this.getType().toString()
+						.equals(mdcpo.getType().toString()))) {
 			return true;
 		}
 		return false;
 	}
-		
+
 	@Override
 	public SDFMetaAttributeList getMetaAttributeSchema() {
-		List<SDFMetaAttribute> metalist = new ArrayList<SDFMetaAttribute>(super.getMetaAttributeSchema().getAttributes());
+		List<SDFMetaAttribute> metalist = new ArrayList<SDFMetaAttribute>(super
+				.getMetaAttributeSchema().getAttributes());
 		SDFMetaAttribute mataAttribute = new SDFMetaAttribute(type);
-		if(!metalist.contains(mataAttribute)){
+		if (!metalist.contains(mataAttribute)) {
 			metalist.add(mataAttribute);
 		}
-		return new SDFMetaAttributeList(super.getMetaAttributeSchema().getURI(), metalist);
-	}		
+		return new SDFMetaAttributeList(
+				super.getMetaAttributeSchema().getURI(), metalist);
+	}
 }
