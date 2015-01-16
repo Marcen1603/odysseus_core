@@ -9,11 +9,13 @@ import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.AbstractCSVHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.CSVProtocolHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.SimpleCSVProtocolHandler;
+import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.AbstractFileHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.FileHandler;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.BooleanParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.FileNameParameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IntegerParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.Option;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.OptionParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
@@ -99,6 +101,11 @@ public class CSVFileSink extends AbstractSenderAO {
 	
 	public String getNumberFormatter() {
 		return getOption(AbstractCSVHandler.CSV_NUMBER_FORMATTER);
+	}
+	
+	@Parameter(type = IntegerParameter.class, name = AbstractFileHandler.WRITEDELAYSIZE, optional = true, doc = "Write only every nth element")
+	public void setWriteDelaySize(int value){
+		addOption(AbstractFileHandler.WRITEDELAYSIZE, ""+value);
 	}
 	
 	@Parameter(type = BooleanParameter.class, name = AbstractCSVHandler.CSV_WRITE_METADATA, optional = true, doc = "Write metadata.")
