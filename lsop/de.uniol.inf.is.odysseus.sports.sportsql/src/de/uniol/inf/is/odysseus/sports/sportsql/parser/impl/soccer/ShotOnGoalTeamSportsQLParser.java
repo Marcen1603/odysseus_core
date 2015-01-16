@@ -13,6 +13,7 @@ import de.uniol.inf.is.odysseus.sports.sportsql.parser.SportsQLParseException;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.SportsQLQuery;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.annotations.SportsQL;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.annotations.SportsQLParameter;
+import de.uniol.inf.is.odysseus.sports.sportsql.parser.buildhelper.IntermediateSchemaAttributes;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.buildhelper.OperatorBuildHelper;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.enums.GameType;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.enums.StatisticType;
@@ -22,8 +23,13 @@ import de.uniol.inf.is.odysseus.sports.sportsql.parser.parameter.SportsQLTimePar
 /**
  * Counts the number of shots on the goal from a whole team
  * 
- * SportsQL could be { "statisticType": "team", "gameType": "soccer", "entityId"
- * : 8, "name": "shotongoal" }
+ * SportsQL could be 
+ * { 
+ * "statisticType": "team", 
+ * "gameType": "soccer", 
+ * "entityId": 8, 
+ * "name": "shotongoal" 
+ * }
  * 
  * @author Michael (all the hard PQL stuff), Tobias (only the translation into
  *         logical query)
@@ -60,14 +66,12 @@ public class ShotOnGoalTeamSportsQLParser implements ISportsQLParser {
 		TimeWindowAO timeWindow = OperatorBuildHelper.createTimeWindowAO(
 				GAME_LENGTH, "Minutes",
 				forecastCriteria);
-
-		List<String> groupCount = new ArrayList<String>();
-		groupCount.add("team_id");
-		
-		ILogicalOperator out = OperatorBuildHelper.createAggregateAO("sum", groupCount, "shot", "shots", "Integer", timeWindow, 1);
-
-		// Add to list
 		allOperators.add(timeWindow);
+
+		// 2. Aggregate
+		List<String> groupCount = new ArrayList<String>();
+		groupCount.add(IntermediateSchemaAttributes.TEAM_ID);
+		ILogicalOperator out = OperatorBuildHelper.createAggregateAO("sum", groupCount, ShotOnGoalGlobalOutput.ATTRIBUTE_SHOT, ShotOnGoalGlobalOutput.ATTRIBUTE_SHOTS, "Integer", timeWindow, 1);
 		allOperators.add(out);
 		
 		return OperatorBuildHelper.finishQuery(out, allOperators,

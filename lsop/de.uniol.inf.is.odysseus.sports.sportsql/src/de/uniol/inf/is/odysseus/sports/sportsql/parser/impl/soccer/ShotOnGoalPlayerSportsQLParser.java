@@ -5,7 +5,6 @@ import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.SelectAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TimeWindowAO;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.peer.ddc.MissingDDCEntryException;
@@ -14,6 +13,7 @@ import de.uniol.inf.is.odysseus.sports.sportsql.parser.SportsQLParseException;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.SportsQLQuery;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.annotations.SportsQL;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.annotations.SportsQLParameter;
+import de.uniol.inf.is.odysseus.sports.sportsql.parser.buildhelper.IntermediateSchemaAttributes;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.buildhelper.OperatorBuildHelper;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.enums.GameType;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.enums.StatisticType;
@@ -23,8 +23,13 @@ import de.uniol.inf.is.odysseus.sports.sportsql.parser.parameter.SportsQLTimePar
 /**
  * Counts the number of shots on the goal from a player
  * 
- * SportsQL could be { "statisticType": "player", "gameType": "soccer",
- * "entityId" : 8, "name": "shotongoal" }
+ * SportsQL could be 
+ * { 
+ * "statisticType": "player", 
+ * "gameType": "soccer",
+ * "entityId" : 8, 
+ * "name": "shotongoal" 
+ * }
  * 
  * @author Michael (all the hard PQL stuff), Tobias (only the translation into
  *         logical query)
@@ -60,20 +65,17 @@ public class ShotOnGoalPlayerSportsQLParser implements ISportsQLParser {
 		// 1. Time window
 		TimeWindowAO timeWindow = OperatorBuildHelper.createTimeWindowAO(
 				GAME_LENGTH, "Minutes", forecastCriteria);
+		allOperators.add(timeWindow);
 
 		// 2. Select for correct entity
-		SelectAO entitySelect = OperatorBuildHelper.createEntityIDSelect(
-				sportsQL.getEntityId(), timeWindow);
+		//SelectAO entitySelect = OperatorBuildHelper.createEntityIDSelect(
+		//		sportsQL.getEntityId(), timeWindow);
+		//allOperators.add(entitySelect);
 
+		// 3. Aggregate
 		List<String> groupCount = new ArrayList<String>();
-		groupCount.add("entity_id");
-		
-		ILogicalOperator out = OperatorBuildHelper.createAggregateAO("sum", groupCount, "shot", "shots", "Integer", entitySelect, 1);
-		
-
-		// Add to list
-		allOperators.add(timeWindow);
-		allOperators.add(entitySelect);
+		groupCount.add(IntermediateSchemaAttributes.ENTITY_ID);
+		ILogicalOperator out = OperatorBuildHelper.createAggregateAO("sum", groupCount, ShotOnGoalGlobalOutput.ATTRIBUTE_SHOT, ShotOnGoalGlobalOutput.ATTRIBUTE_SHOTS, "Integer", timeWindow, 1);
 		allOperators.add(out);
 
 		return OperatorBuildHelper.finishQuery(out, allOperators,
