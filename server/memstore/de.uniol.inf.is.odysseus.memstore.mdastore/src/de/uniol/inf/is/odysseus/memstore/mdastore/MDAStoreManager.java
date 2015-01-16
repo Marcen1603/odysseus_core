@@ -24,8 +24,11 @@ public class MDAStoreManager {
 	 * @param name
 	 *            The name for the MDAStore.
 	 */
-	public static <T extends Comparable<? super T>> void create(String name) {
-		stores.put(name, new MDAStore<T>());
+	public static <T extends Comparable<? super T>> MDAStore<T> create(
+			String name) {
+		MDAStore<T> store = new MDAStore<T>();
+		stores.put(name, store);
+		return store;
 	}
 
 	/**
