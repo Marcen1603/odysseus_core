@@ -1,7 +1,5 @@
 package de.uniol.inf.is.odysseus.memstore.mdastore;
 
-import java.lang.reflect.Array;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -28,20 +26,13 @@ public class MDAStore<T extends Comparable<? super T>> {
 	private int numDims;
 
 	/**
-	 * The class of T.
-	 */
-	private Class<T> cls;
-
-	/**
 	 * A sorted, multidimensional array of the values.
 	 */
-	private List<T[]> values;
+	private List<List<T>> values;
 
 	/**
 	 * Initializes the MDAStore.
 	 * 
-	 * @param The
-	 *            class of the values to store.
 	 * @param vals
 	 *            The values for the MDAStore.
 	 * @throws NullPointerException
@@ -51,10 +42,9 @@ public class MDAStore<T extends Comparable<? super T>> {
 	 *             dimensions of <code>vals</code> have different numbers of
 	 *             values.
 	 */
-	public void initialize(Class<T> classOfValues, List<T[]> vals)
-			throws NullPointerException, IllegalArgumentException {
+	public void initialize(List<List<T>> vals) throws NullPointerException,
+			IllegalArgumentException {
 		validateValues(vals);
-		this.cls = classOfValues;
 		this.values = vals;
 		this.numDims = this.values.size();
 		sortValues();
@@ -70,8 +60,8 @@ public class MDAStore<T extends Comparable<? super T>> {
 	 * @throws IllegalArgumentException
 	 *             if <code>vals</code> contains only one dimension.
 	 */
-	private void validateValues(List<T[]> vals) throws NullPointerException,
-			IllegalArgumentException {
+	private void validateValues(List<List<T>> vals)
+			throws NullPointerException, IllegalArgumentException {
 		if (vals == null) {
 			throw new NullPointerException(
 					"Values to initialize MDAStore must be not null!");
@@ -86,9 +76,7 @@ public class MDAStore<T extends Comparable<? super T>> {
 	 */
 	private void sortValues() {
 		for (int dim = 0; dim < this.numDims; dim++) {
-			List<T> valsAsList = Arrays.asList(this.values.get(dim));
-			Collections.sort(valsAsList);
-			valsAsList.toArray(this.values.get(dim));
+			Collections.sort(this.values.get(dim));
 		}
 	}
 
@@ -101,12 +89,11 @@ public class MDAStore<T extends Comparable<? super T>> {
 	 * @throws NullPointerException
 	 *             if <code>val</code> is null.
 	 */
-	public T[] getCellValues(T[] val) throws NullPointerException {
+	public List<T> getCellValues(List<T> val) throws NullPointerException {
 		int[] indizes = getCellIndices(val);
-		@SuppressWarnings("unchecked")
-		T[] retValue = (T[]) Array.newInstance(this.cls, indizes.length);
+		List<T> retValue = Lists.newArrayList();
 		for (int dim = 0; dim < indizes.length; dim++) {
-			retValue[dim] = this.values.get(dim)[indizes[dim]];
+			retValue.add(this.values.get(dim).get(indizes[dim]));
 		}
 		return retValue;
 	}
@@ -120,15 +107,15 @@ public class MDAStore<T extends Comparable<? super T>> {
 	 * @throws NullPointerException
 	 *             if <code>val</code> is null.
 	 */
-	public int[] getCellIndices(T[] val) throws NullPointerException {
+	public int[] getCellIndices(List<T> val) throws NullPointerException {
 		if (this.values == null) {
 			throw new NullPointerException("The MDAStore is not initialized!");
 		}
 		validateValue(val, this.numDims);
 		int[] indices = new int[this.numDims];
 		for (int dim = 0; dim < this.numDims; dim++) {
-			indices[dim] = binSearch(this.values.get(dim), val[dim], 0,
-					this.values.get(dim).length - 1);
+			indices[dim] = binSearch(this.values.get(dim), val.get(dim), 0,
+					this.values.get(dim).size() - 1);
 		}
 		return indices;
 	}
@@ -146,12 +133,12 @@ public class MDAStore<T extends Comparable<? super T>> {
 	 *             if the dimensions of <code>val</code> do not fit
 	 *             <code>sizeReference</code>.
 	 */
-	private void validateValue(T[] val, int sizeReference)
+	private void validateValue(List<T> val, int sizeReference)
 			throws NullPointerException, IllegalArgumentException {
 		if (val == null) {
 			throw new NullPointerException(
 					"Values for the MDAStore must be not null!");
-		} else if (val.length != sizeReference) {
+		} else if (val.size() != sizeReference) {
 			throw new IllegalArgumentException(
 					"The number of dimensions does not fit the dimensions of the MDAStore!");
 		}
@@ -172,25 +159,25 @@ public class MDAStore<T extends Comparable<? super T>> {
 	 *         search area or -1, if the search area does not contain
 	 *         <coce>val</code>.
 	 */
-	private int binSearch(T[] vals, T val, int start, int end) {
+	private int binSearch(List<T> vals, T val, int start, int end) {
 		int mid = start + (end - start) / 2;
-		if (val.compareTo(vals[mid]) == 0
-				|| (mid == start && val.compareTo(vals[mid]) < 0)
-				|| (mid == end && val.compareTo(vals[mid]) > 0)) {
+		if (val.compareTo(vals.get(mid)) == 0
+				|| (mid == start && val.compareTo(vals.get(mid)) < 0)
+				|| (mid == end && val.compareTo(vals.get(mid)) > 0)) {
 			return mid;
-		} else if (val.compareTo(vals[mid]) < 0) {
-			if (mid > start && val.compareTo(vals[mid - 1]) > 0) {
-				double distance = vals[mid].compareTo(vals[mid - 1]);
-				if (val.compareTo(vals[mid - 1]) < distance / 2) {
+		} else if (val.compareTo(vals.get(mid)) < 0) {
+			if (mid > start && val.compareTo(vals.get(mid - 1)) > 0) {
+				double distance = vals.get(mid).compareTo(vals.get(mid - 1));
+				if (val.compareTo(vals.get(mid - 1)) < distance / 2) {
 					return mid - 1;
 				}
 				return mid;
 			}
 			return binSearch(vals, val, 0, mid - 1);
 		}
-		if (mid < end && val.compareTo(vals[mid + 1]) < 0) {
-			double distance = vals[mid + 1].compareTo(vals[mid]);
-			if (val.compareTo(vals[mid]) < distance / 2) {
+		if (mid < end && val.compareTo(vals.get(mid + 1)) < 0) {
+			double distance = vals.get(mid + 1).compareTo(vals.get(mid));
+			if (val.compareTo(vals.get(mid)) < distance / 2) {
 				return mid;
 			}
 			return mid + 1;
@@ -203,43 +190,54 @@ public class MDAStore<T extends Comparable<? super T>> {
 	 */
 	public static void main(String[] args) {
 		MDAStore<Double> store = new MDAStore<>();
-		List<Double[]> values = Lists.newArrayList();
-		values.add(new Double[] { 10.0, 5.0, 0.0, 20.0, 15.0 });
-		store.initialize(Double.class, values);
+		List<List<Double>> values = Lists.newArrayList();
+		List<Double> values_firstdim = Lists.newArrayList(10.0, 5.0, 0.0, 20.0,
+				15.0);
+		values.add(values_firstdim);
+		store.initialize(values);
 
-		int[] cell = store.getCellIndices(new Double[] { 15.0 });
-		Double[] val = store.getCellValues(new Double[] { 15.0 });
-		System.out.println("Cell1 = " + cell[0] + ", Value = " + val[0]);
-		cell = store.getCellIndices(new Double[] { 12.0 });
-		val = store.getCellValues(new Double[] { 12.0 });
-		System.out.println("Cell2 = " + cell[0] + ", Value = " + val[0]);
-		cell = store.getCellIndices(new Double[] { -5.0 });
-		val = store.getCellValues(new Double[] { -5.0 });
-		System.out.println("Cell3 = " + cell[0] + ", Value = " + val[0]);
-		cell = store.getCellIndices(new Double[] { 100.0 });
-		val = store.getCellValues(new Double[] { 100.0 });
-		System.out.println("Cell4 = " + cell[0] + ", Value = " + val[0]);
+		int[] cell = store.getCellIndices((List<Double>) Lists
+				.newArrayList(15.0));
+		List<Double> val = store.getCellValues((List<Double>) Lists
+				.newArrayList(15.0));
+		System.out.println("Cell1 = " + cell[0] + ", Value = " + val.get(0));
+		cell = store.getCellIndices((List<Double>) Lists.newArrayList(12.0));
+		val = store.getCellValues((List<Double>) Lists.newArrayList(12.0));
+		System.out.println("Cell2 = " + cell[0] + ", Value = " + val.get(0));
+		cell = store.getCellIndices((List<Double>) Lists.newArrayList(-5.0));
+		val = store.getCellValues((List<Double>) Lists.newArrayList(-5.0));
+		System.out.println("Cell3 = " + cell[0] + ", Value = " + val.get(0));
+		cell = store.getCellIndices((List<Double>) Lists.newArrayList(100.0));
+		val = store.getCellValues((List<Double>) Lists.newArrayList(100.0));
+		System.out.println("Cell4 = " + cell[0] + ", Value = " + val.get(0));
 
 		System.out.println("---");
-		values.add(new Double[] { 0.0, 1.0, 2.0 });
-		store.initialize(Double.class, values);
+		List<Double> values_snddim = Lists.newArrayList(0.0, 1.0, 2.0);
+		values.add(values_snddim);
+		store.initialize(values);
 
-		cell = store.getCellIndices(new Double[] { 15.0, 2.0 });
-		val = store.getCellValues(new Double[] { 15.0, 2.0 });
+		cell = store.getCellIndices((List<Double>) Lists
+				.newArrayList(15.0, 2.0));
+		val = store.getCellValues((List<Double>) Lists.newArrayList(15.0, 2.0));
 		System.out.println("Cell1 = " + cell[0] + ", " + cell[1] + ", Value = "
-				+ val[0] + ", " + val[1]);
-		cell = store.getCellIndices(new Double[] { 12.0, 0.5 });
-		val = store.getCellValues(new Double[] { 12.0, 0.5 });
+				+ val.get(0) + ", " + val.get(1));
+		cell = store.getCellIndices((List<Double>) Lists
+				.newArrayList(12.0, 0.5));
+		val = store.getCellValues((List<Double>) Lists.newArrayList(12.0, 0.5));
 		System.out.println("Cell2 = " + cell[0] + ", " + cell[1] + ", Value = "
-				+ val[0] + ", " + val[1]);
-		cell = store.getCellIndices(new Double[] { -5.0, 1.25 });
-		val = store.getCellValues(new Double[] { -5.0, 1.25 });
+				+ val.get(0) + ", " + val.get(1));
+		cell = store.getCellIndices((List<Double>) Lists.newArrayList(-5.0,
+				1.25));
+		val = store
+				.getCellValues((List<Double>) Lists.newArrayList(-5.0, 1.25));
 		System.out.println("Cell3 = " + cell[0] + ", " + cell[1] + ", Value = "
-				+ val[0] + ", " + val[1]);
-		cell = store.getCellIndices(new Double[] { 100.0, 0.0 });
-		val = store.getCellValues(new Double[] { 100.0, 0.0 });
+				+ val.get(0) + ", " + val.get(1));
+		cell = store.getCellIndices((List<Double>) Lists.newArrayList(100.0,
+				0.0));
+		val = store
+				.getCellValues((List<Double>) Lists.newArrayList(100.0, 0.0));
 		System.out.println("Cell4 = " + cell[0] + ", " + cell[1] + ", Value = "
-				+ val[0] + ", " + val[1]);
+				+ val.get(0) + ", " + val.get(1));
 	}
 
 }
