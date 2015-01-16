@@ -73,7 +73,15 @@ public class SoccerDDCAccess extends AbstractSportsDDCAccess {
 			new String[] { SoccerDDCAccess.KEY_GOALAREA_PREFIX + "right",
 					"zmax" });
 	
-
+	/**
+	 * The key for the team, which is playing from left to right
+	 */
+	private static final DDCKey LEFT_GOAL_TEAM_ID = new DDCKey("leftgoalteamid");
+	
+	/**
+	 * The key for the team, which is playing from right to left
+	 */
+	private static final DDCKey RIGHT_GOAL_TEAM_ID = new DDCKey("rightgoalteamid");
 	
 	/**
 	 * The lowest y coordinate of the left goalarea.
@@ -178,5 +186,25 @@ public class SoccerDDCAccess extends AbstractSportsDDCAccess {
 		return Double.valueOf(AbstractSportsDDCAccess.ddc.getValue(KEY_GOALAREA_RIGHT_ZMAX)).doubleValue();
 		
 	}
-
+	
+	/**
+	 * Team ID of the team, which is playing from left to right.
+	 * @throws MissingDDCEntryException if "leftgoalteamid" is not a key of the DDC.
+	 * @throws NumberFormatException if the value of "leftgoalteamid" could no be cast to int.
+	 */
+	public static int getLeftGoalTeamId() throws MissingDDCEntryException, NumberFormatException {
+		Preconditions.checkNotNull(AbstractSportsDDCAccess.ddc, "No DDC bound!");
+		return Integer.valueOf(AbstractSportsDDCAccess.ddc.getValue(LEFT_GOAL_TEAM_ID));
+	}
+	
+	/**
+	 * Team ID of the team, which is playing from right to left.
+	 * @throws MissingDDCEntryException if "rightgoalteamid" is not a key of the DDC.
+	 * @throws NumberFormatException if the value of "rightgoalteamid" could no be cast to int.
+	 */
+	public static int getRightGoalTeamId() throws MissingDDCEntryException, NumberFormatException {
+		Preconditions.checkNotNull(AbstractSportsDDCAccess.ddc, "No DDC bound!");
+		return Integer.valueOf(AbstractSportsDDCAccess.ddc.getValue(RIGHT_GOAL_TEAM_ID));
+	}
+	
 }

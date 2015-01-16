@@ -60,6 +60,7 @@ import de.uniol.inf.is.odysseus.mep.MEP;
 import de.uniol.inf.is.odysseus.peer.ddc.MissingDDCEntryException;
 import de.uniol.inf.is.odysseus.relational.base.predicate.RelationalPredicate;
 import de.uniol.inf.is.odysseus.server.intervalapproach.logicaloperator.AssureHeartbeatAO;
+import de.uniol.inf.is.odysseus.sports.sportsql.parser.SportsQLParseException;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.ddcaccess.AbstractSportsDDCAccess;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.helper.SpaceUnitHelper;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.helper.TimeUnitHelper;
@@ -105,9 +106,14 @@ public class OperatorBuildHelper {
 	 */
 	public static final int CONVERSION_DIVIDEND_POSITION_TO_METERS = 1000;
 
+	//Attributes
 	public static final String ATTRIBUTE_MINUTE = "minute";
 	public static final String ATTRIBUTE_SECOND = "second";
 	public static final String ATTRIBUTE_MILLISECOND = "milliseconds";
+	public static final String ATTRIBUTE_X_METER = "x_meter";
+	public static final String ATTRIBUTE_Y_METER = "y_meter";
+
+	
 
 	/**
 	 * Creates a MapAP with a list of expressions. To create such expressions,
@@ -295,10 +301,10 @@ public class OperatorBuildHelper {
 		// Predicate we want to produce:
 		// x >= startX AND x <= endX AND y>= startY AND y<= startY
 
-		String firstPredicateString = "x >= " + startX;
-		String secondPredicateString = "x <= " + endX;
-		String thirdPredicateString = "y >= " + startY;
-		String fourthPredicateString = "y <= " + endY;
+		String firstPredicateString = IntermediateSchemaAttributes.X + " >= " + startX;
+		String secondPredicateString = IntermediateSchemaAttributes.X + " <= " + endX;
+		String thirdPredicateString = IntermediateSchemaAttributes.Y + " >= " + startY;
+		String fourthPredicateString = IntermediateSchemaAttributes.Y + " <= " + endY;
 
 		SelectAO selectAO = new SelectAO();
 		
@@ -308,31 +314,31 @@ public class OperatorBuildHelper {
 			// Calculate meters from input stream
 			List<SDFExpressionParameter> meterExpressions = new ArrayList<SDFExpressionParameter>();
 			SDFExpressionParameter param1 = OperatorBuildHelper
-					.createExpressionParameter("entity_id", source);
+					.createExpressionParameter(IntermediateSchemaAttributes.ENTITY_ID, source);
 			SDFExpressionParameter param2 = OperatorBuildHelper
-					.createExpressionParameter("x / 1000 - "
+					.createExpressionParameter(IntermediateSchemaAttributes.X + " / 1000 - "
 							+ AbstractSportsDDCAccess.getFieldXMin() + "/"
 							+ CONVERSION_DIVIDEND_POSITION_TO_METERS,
-							"x_meter", source);
+							ATTRIBUTE_X_METER, source);
 			SDFExpressionParameter param3 = OperatorBuildHelper
-					.createExpressionParameter("y / 1000 - "
+					.createExpressionParameter(IntermediateSchemaAttributes.Y + " / 1000 - "
 							+ AbstractSportsDDCAccess.getFieldYMin() + "/"
 							+ CONVERSION_DIVIDEND_POSITION_TO_METERS,
-							"y_meter", source);
+							ATTRIBUTE_Y_METER, source);
 			SDFExpressionParameter param4 = OperatorBuildHelper
-					.createExpressionParameter("x", source);
+					.createExpressionParameter(IntermediateSchemaAttributes.X , source);
 			SDFExpressionParameter param5 = OperatorBuildHelper
-					.createExpressionParameter("y", source);
+					.createExpressionParameter(IntermediateSchemaAttributes.Y, source);
 			SDFExpressionParameter param6 = OperatorBuildHelper
-					.createExpressionParameter("z", source);
+					.createExpressionParameter(IntermediateSchemaAttributes.Z, source);
 			SDFExpressionParameter param7 = OperatorBuildHelper
-					.createExpressionParameter("v", source);
+					.createExpressionParameter(IntermediateSchemaAttributes.V, source);
 			SDFExpressionParameter param8 = OperatorBuildHelper
-					.createExpressionParameter("a", source);
+					.createExpressionParameter(IntermediateSchemaAttributes.A, source);
 			SDFExpressionParameter param14 = OperatorBuildHelper
-					.createExpressionParameter("ts", source);
+					.createExpressionParameter(IntermediateSchemaAttributes.TS, source);
 			SDFExpressionParameter param15 = OperatorBuildHelper
-					.createExpressionParameter("team_id", source);
+					.createExpressionParameter(IntermediateSchemaAttributes.TEAM_ID, source);
 
 			meterExpressions.add(param1);
 			meterExpressions.add(param2);
@@ -347,13 +353,13 @@ public class OperatorBuildHelper {
 			MapAO metersMap = OperatorBuildHelper.createMapAO(meterExpressions,
 					source, 0, 0, false);
 
-			firstPredicateString = "x_meter >= "
+			firstPredicateString = ATTRIBUTE_X_METER + " >= "
 					+ SpaceUnitHelper.getMeters(startX, SpaceUnit.millimeters);
-			secondPredicateString = "x_meter <= "
+			secondPredicateString = ATTRIBUTE_X_METER + " <= "
 					+ SpaceUnitHelper.getMeters(endX, SpaceUnit.millimeters);
-			thirdPredicateString = "y_meter >= "
+			thirdPredicateString = ATTRIBUTE_Y_METER + " >= "
 					+ SpaceUnitHelper.getMeters(startY, SpaceUnit.millimeters);
-			fourthPredicateString = "y_meter <= "
+			fourthPredicateString = ATTRIBUTE_Y_METER + " <= "
 					+ SpaceUnitHelper.getMeters(endY, SpaceUnit.millimeters);
 
 			selectAO.subscribeTo(metersMap, metersMap.getOutputSchema());
@@ -411,7 +417,7 @@ public class OperatorBuildHelper {
 			ILogicalOperator source) {
 		SelectAO teamSelectAO = new SelectAO();
 
-		String predicateString = "team_id = " + teamId;
+		String predicateString = IntermediateSchemaAttributes.TEAM_ID + " = " + teamId;
 		SDFExpression predicateExpression = new SDFExpression(predicateString,
 				MEP.getInstance());
 
@@ -434,7 +440,7 @@ public class OperatorBuildHelper {
 	public static SelectAO createBothTeamSelectAO(ILogicalOperator source) {
 		SelectAO teamSelectAO = new SelectAO();
 
-		String predicateString = "(team_id = 1) OR (team_id = 2)";
+		String predicateString = "(" + IntermediateSchemaAttributes.TEAM_ID + " = 1) OR (" + IntermediateSchemaAttributes.TEAM_ID + " = 2)";
 		SDFExpression predicateExpression = new SDFExpression(predicateString,
 				MEP.getInstance());
 
@@ -498,21 +504,21 @@ public class OperatorBuildHelper {
 		}
 
 		// 1. minute >= ${parameterTimeStart_minute}
-		String firstPredicateString = "minute >= " + startMinute;
+		String firstPredicateString = ATTRIBUTE_MINUTE + " >= " + startMinute;
 		SDFExpression firstPredicateExpression = new SDFExpression(
 				firstPredicateString, MEP.getInstance());
 		RelationalPredicate firstPredicate = new RelationalPredicate(
 				firstPredicateExpression);
 
 		// 2. minute <= ${parameterTimeEnd_minute}
-		String secondPredicateString = "minute <= " + endMinute;
+		String secondPredicateString = ATTRIBUTE_MINUTE + " <= " + endMinute;
 		SDFExpression secondPredicateExpression = new SDFExpression(
 				secondPredicateString, MEP.getInstance());
 		RelationalPredicate secondPredicate = new RelationalPredicate(
 				secondPredicateExpression);
 
 		// 3. second >= 0
-		String thirdPredicateString = "second >= 0";
+		String thirdPredicateString = ATTRIBUTE_SECOND + " >= 0";
 		SDFExpression thirdPredicateExpression = new SDFExpression(
 				thirdPredicateString, MEP.getInstance());
 		RelationalPredicate thirdPredicate = new RelationalPredicate(
@@ -557,39 +563,43 @@ public class OperatorBuildHelper {
 	 *         timeParameter.
 	 */
 	public static SelectAO createTimeMapAndSelect(
-			SportsQLTimeParameter timeParameter, ILogicalOperator source) {
+			SportsQLTimeParameter timeParameter, ILogicalOperator source) throws MissingDDCEntryException{
 		return createTimeSelect(timeParameter, createTimeMap(source));
 
 	}
 
-	public static MapAO createTimeMap(ILogicalOperator source) {
+	public static MapAO createTimeMap(ILogicalOperator source) throws MissingDDCEntryException{
 		List<SDFExpressionParameter> expressions = new ArrayList<SDFExpressionParameter>();
 
 		SDFExpressionParameter ex1 = OperatorBuildHelper
-				.createExpressionParameter("entity_id", source);
+				.createExpressionParameter(IntermediateSchemaAttributes.ENTITY_ID, source);
 
 		SDFExpressionParameter ex2 = OperatorBuildHelper
-				.createExpressionParameter("DoubleToInteger(ts/60000000)",
+				.createExpressionParameter("DoubleToInteger(ts/"
+						+ TimeUnitHelper.getBTUtoMinutesFactor(de.uniol.inf.is.odysseus.sports.sportsql.parser.parameter.SportsQLTimeParameter.TimeUnit.valueOf(AbstractSportsDDCAccess
+								.getBasetimeunit().toLowerCase())) + ")",
 						ATTRIBUTE_MINUTE, source);
 		SDFExpressionParameter ex3 = OperatorBuildHelper
 				.createExpressionParameter(
-						"DoubleToInteger((ts/1000000) % 60)", ATTRIBUTE_SECOND,
+						"DoubleToInteger((ts/"
+								+ TimeUnitHelper.getBTUtoSecondsFactor(de.uniol.inf.is.odysseus.sports.sportsql.parser.parameter.SportsQLTimeParameter.TimeUnit.valueOf(AbstractSportsDDCAccess
+										.getBasetimeunit().toLowerCase())) + ") % 60)", ATTRIBUTE_SECOND,
 						source);
 
 		SDFExpressionParameter ex5 = OperatorBuildHelper
-				.createExpressionParameter("x", source);
+				.createExpressionParameter(IntermediateSchemaAttributes.X, source);
 		SDFExpressionParameter ex6 = OperatorBuildHelper
-				.createExpressionParameter("y", source);
+				.createExpressionParameter(IntermediateSchemaAttributes.Y, source);
 		SDFExpressionParameter ex7 = OperatorBuildHelper
-				.createExpressionParameter("z", source);
+				.createExpressionParameter(IntermediateSchemaAttributes.Z, source);
 		SDFExpressionParameter ex8 = OperatorBuildHelper
-				.createExpressionParameter("v", source);
+				.createExpressionParameter(IntermediateSchemaAttributes.V, source);
 		SDFExpressionParameter ex9 = OperatorBuildHelper
-				.createExpressionParameter("a", source);
+				.createExpressionParameter(IntermediateSchemaAttributes.A, source);
 		SDFExpressionParameter ex10 = OperatorBuildHelper
-				.createExpressionParameter("ts", source);
+				.createExpressionParameter(IntermediateSchemaAttributes.TS, source);
 		SDFExpressionParameter ex11 = OperatorBuildHelper
-				.createExpressionParameter("team_id", source);
+				.createExpressionParameter(IntermediateSchemaAttributes.TEAM_ID, source);
 
 		expressions.add(ex1);
 		expressions.add(ex2);
@@ -627,7 +637,7 @@ public class OperatorBuildHelper {
 		// 'entity_id = ${entity_id}'
 
 		// 1. minute >= ${parameterTimeStart_minute}
-		String predicateString = "entity_id = " + entityId;
+		String predicateString = IntermediateSchemaAttributes.ENTITY_ID + " = " + entityId;
 		SDFExpression predicateExpression = new SDFExpression(predicateString,
 				MEP.getInstance());
 		RelationalPredicate predicate = new RelationalPredicate(
