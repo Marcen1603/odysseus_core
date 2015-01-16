@@ -20,6 +20,8 @@ public class MDAStorePreParserKeyword extends AbstractPreParserKeyword {
 
 	private static final String PATTERN = "Name ClassName ValuesOfFirstDimension ... ValuesOfNthDimension";
 
+	private static final String COLON_PATTERN = "SmallestValue:GreatestValue:IncreasingValue";
+
 	@Override
 	public void validate(Map<String, Object> variables, String parameter,
 			ISession caller, Context context) throws OdysseusScriptException {
@@ -54,26 +56,68 @@ public class MDAStorePreParserKeyword extends AbstractPreParserKeyword {
 
 		List values = Lists.newArrayList();
 		for (int i = 2; i < splitted.length; i++) {
-			String[] splitted_intern = splitted[i].trim().split(",");
-			List values_intern = Lists.newArrayList();
-			for (int j = 0; j < splitted_intern.length; j++) {
-				try {
-					if (Number.class.isAssignableFrom(clz)) {
-						values_intern.add(clz.cast(Double.valueOf(
-								splitted_intern[j]).doubleValue()));
-					} else {
-						values_intern.add(clz.cast(splitted_intern[j]));
-					}
-				} catch (Throwable e) {
-					throw new OdysseusScriptException("Could not cast "
-							+ splitted_intern[j] + " to " + className);
-				}
+			if (splitted[i].contains(":")) {
+				values.add(getValuesSplittedByColon(splitted[i], clz));
+			} else {
+				values.add(getValuesSplittedByComma(splitted[i], clz));
 			}
-			values.add(values_intern);
 		}
 
 		store.initialize(values);
 		return null;
+	}
+
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	private static List getValuesSplittedByComma(String strValues, Class<?> clz)
+			throws OdysseusScriptException {
+		String[] splitted_intern = strValues.trim().split(",");
+		List values = Lists.newArrayList();
+		for (int i = 0; i < splitted_intern.length; i++) {
+			try {
+				if (Number.class.isAssignableFrom(clz)) {
+					values.add(clz.cast(Double.valueOf(splitted_intern[i])
+							.doubleValue()));
+				} else {
+					values.add(clz.cast(splitted_intern[i]));
+				}
+			} catch (Throwable e) {
+				throw new OdysseusScriptException("Could not cast "
+						+ splitted_intern[i] + " to " + clz.getCanonicalName());
+			}
+		}
+		return values;
+	}
+
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	private static List getValuesSplittedByColon(String strValues, Class<?> clz)
+			throws OdysseusScriptException {
+		String[] strValues_intern = strValues.trim().split(":");
+		if (strValues_intern.length != 3) {
+			throw new OdysseusScriptException(strValues
+					+ " is not a valid input for a MDA dimension: "
+					+ COLON_PATTERN);
+		}
+
+		String strFirst = strValues_intern[0];
+		String strLast = strValues_intern[1];
+		String strIncrease = strValues_intern[2];
+
+		List values = Lists.newArrayList();
+		double firstValue = Double.valueOf(strFirst);
+		double lastValue = Double.valueOf(strLast);
+		double increaseValue = Double.valueOf(strIncrease);
+		double curValue = firstValue;
+
+		while (curValue <= lastValue) {
+			try {
+				values.add(clz.cast(Double.valueOf(curValue)));
+			} catch (Throwable e) {
+				throw new OdysseusScriptException("Could not cast "
+						+ firstValue + " to " + clz.getCanonicalName());
+			}
+			curValue += increaseValue;
+		}
+		return values;
 	}
 
 }
