@@ -6,14 +6,14 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 
-import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.core.server.util.FileUtils;
 
-public class MeasureThroughputPO<M extends IMetaAttribute> extends AbstractPipe<Tuple<M>, Tuple<M>> {
+public class MeasureThroughputPO<T extends IStreamObject<? extends IMetaAttribute>> extends AbstractPipe<T, T> {
 
 	private int each;
 	private String filename;
@@ -33,7 +33,7 @@ public class MeasureThroughputPO<M extends IMetaAttribute> extends AbstractPipe<
 		this.dump = dump;
 	}
 
-	public MeasureThroughputPO(MeasureThroughputPO<M> po) {
+	public MeasureThroughputPO(MeasureThroughputPO<T> po) {
 		this.each = po.each;
 		this.filename = po.filename;
 		this.active = po.active;
@@ -82,7 +82,7 @@ public class MeasureThroughputPO<M extends IMetaAttribute> extends AbstractPipe<
 	}
 
 	@Override
-	protected void process_next(Tuple<M> object, int port) {
+	protected void process_next(T object, int port) {
 		if (active) {
 
 			counter++;
@@ -96,8 +96,8 @@ public class MeasureThroughputPO<M extends IMetaAttribute> extends AbstractPipe<
 	}
 
 	@Override
-	public MeasureThroughputPO<M> clone() {
-		return new MeasureThroughputPO<M>(this);
+	public MeasureThroughputPO<T> clone() {
+		return new MeasureThroughputPO<T>(this);
 	}
 
 	@Override

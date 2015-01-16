@@ -15,6 +15,7 @@
  */
 package de.uniol.inf.is.odysseus.rcp.evaluation.processing.transform;
 
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.rcp.evaluation.processing.logicaloperator.MeasureThroughputAO;
@@ -36,8 +37,8 @@ public class TMeasureThroughputAORule extends AbstractTransformationRule<Measure
 	}
 
 	@Override
-	public void execute(MeasureThroughputAO operator, TransformationConfiguration config) throws RuleException {	
-		MeasureThroughputPO<ITimeInterval> po = new MeasureThroughputPO<>(operator.getEach(), operator.getFilename(), operator.isActive(), operator.isDump());
+	public void execute(MeasureThroughputAO operator, TransformationConfiguration config) throws RuleException {
+		MeasureThroughputPO<IStreamObject<ITimeInterval>> po = new MeasureThroughputPO<IStreamObject<ITimeInterval>>(operator.getEach(), operator.getFilename(), operator.isActive(), operator.isDump());
 		defaultExecute(operator, po, config, true, false);
 	}
 
