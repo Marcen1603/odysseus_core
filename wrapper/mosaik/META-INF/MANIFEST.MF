@@ -11,6 +11,5 @@ Require-Bundle: de.uniol.inf.is.odysseus.core.server,
 Import-Package: de.uniol.inf.is.odysseus.core.collection,
  org.slf4j,
  org.osgi.framework
-Bundle-ClassPath: org.json.simple,
- lib/json-simple-1.1.1.jar,
+Bundle-ClassPath: lib/json-simple-1.1.1.jar,
  .
