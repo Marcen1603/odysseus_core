@@ -116,7 +116,6 @@ public class MosaikProtocolHandler<T extends KeyValueObject<IMetaAttribute>> ext
 			if(messageByteArray.length == size) {
 				//handle complete message
 				final String messageSring = new String(messageByteArray, "UTF-8");
-				System.out.println("messageString: " + messageSring);
 				final JSONArray payload = (JSONArray) parser.parse(messageSring);    
 		        
 				// Expand payload
@@ -157,6 +156,7 @@ public class MosaikProtocolHandler<T extends KeyValueObject<IMetaAttribute>> ext
 					stop = true;
 					result = null;
 					this.close();
+					getTransfer().transfer(null);
 					break;
 				default:
 					throw new RuntimeException("Unkown method: " + method);

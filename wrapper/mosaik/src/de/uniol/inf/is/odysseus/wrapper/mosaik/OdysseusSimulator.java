@@ -42,8 +42,6 @@ public class OdysseusSimulator {
 
 	@SuppressWarnings("unchecked")
 	public List<Map<String, Object>> create(int num, String model, Map<String, Object> modelParams) throws Exception {
-		LOG.debug("create");
-		
         JSONArray entities = new JSONArray();
         for (int i = 0; i < num; i++) {
             String eid = "odysseus_" + (this.idCounter + i);
@@ -60,17 +58,12 @@ public class OdysseusSimulator {
 
 	public Map<String, Object> getData(Map<String, List<String>> arg0)
 			throws Exception {
-		LOG.debug("getData");
-		
 		Map<String, Object> result = new HashMap<String, Object>();
 		return result;
-//		throw new Exception("Odysseus has no data");
 	}
 
 	@SuppressWarnings("unchecked")
 	public Map<String, Object> init(String sid, Map<String, Object> simParams) throws Exception {
-		LOG.debug("init");
-		
 		this.sid = sid;
         if (simParams.containsKey("step_size")) {
             this.stepSize = ((Number) simParams.get("step_size")).intValue();
@@ -80,16 +73,10 @@ public class OdysseusSimulator {
 	}
 
 	public long step(long arg0, Map<String, Object> input) throws Exception {
-		LOG.debug("step");
-		
 		String[] inputString = new String[1];
+		input.put("timestamp", time);
 		inputString[0] = new ObjectMapper().writeValueAsString(input);
 		pHandler.process(inputString);
-//		String mapAsJson = new ObjectMapper().writeValueAsString(input);
-//		ByteBuffer wrapped = ByteBuffer.wrap(mapAsJson.getBytes());
-//		wrapped.position(wrapped.limit());
-//		pHandler.process(wrapped);
-//		tHandler.fireProcess(wrapped);
 		time += stepSize;
 		return time;
 	}
