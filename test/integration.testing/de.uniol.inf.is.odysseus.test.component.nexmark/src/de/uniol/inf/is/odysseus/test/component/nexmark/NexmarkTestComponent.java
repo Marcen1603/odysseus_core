@@ -14,9 +14,10 @@ public class NexmarkTestComponent extends AbstractQueryExpectedOutputTestCompone
 	@Override
 	public List<ExpectedOutputTestSet> createTestSets(BasicTestContext context) {
 		List<ExpectedOutputTestSet> sets = new ArrayList<>();
-		for (int i = 1; i <= 4; i++) {
-			URL query = getURL("query"+i+".qry");
-			URL result = getURL("query"+i+".csv");
+		String[] tests = new String[]{"1","2","3","3a","4","4a"};
+		for (String t:tests) {
+			URL query = getURL("query"+t+".qry");
+			URL result = getURL("query"+t+".csv");
 			ExpectedOutputTestSet set = TestSetFactory.createExpectedOutputTestSetFromFile(query, result, context.getDataRootPath(), "TUPLE");
 			sets.add(set);
 		}

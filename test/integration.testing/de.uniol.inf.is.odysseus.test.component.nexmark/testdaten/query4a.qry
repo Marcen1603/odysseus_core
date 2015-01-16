@@ -1,0 +1,11 @@
+///OdysseusScript
+#PARSER CQL
+#DOREWRITE false
+#ADDQUERY
+DROP STREAM nexmark:bid2 if exists;
+#ADDQUERY
+ATTACH STREAM nexmark:bid2 (timestamp STARTTIMESTAMP,	auction INTEGER, bidder INTEGER, datetime LONG,	price DOUBLE) FILE '${BUNDLE-ROOT}/testdaten/daten/nexmark_bid2.csv' AS SimpleCSV;
+
+#ADDQUERY
+SELECT auction, price FROM nexmark:bid2 WHERE auction=7 OR auction=20 OR auction=21 OR auction=59 OR auction=87;
+
