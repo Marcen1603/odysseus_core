@@ -37,9 +37,17 @@ public class KeyValueToTupleAO extends UnaryLogicalOp{
 		this.attributes = attributes;
 	}
 	
+	public List<SDFAttribute> getAttributes() {
+		return this.attributes;
+	}
+	
 	@Parameter(name = "type", type=StringParameter.class, optional= false )
 	public void setType(String type){
 		this.type = type;
+	}
+	
+	public String getType() {
+		return this.type;
 	}
 	
 	@Parameter(name = "keepInput", type=BooleanParameter.class )
