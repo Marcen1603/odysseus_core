@@ -1,0 +1,19 @@
+package de.uniol.inf.is.odysseus.memstore.mdastore;
+
+import java.util.Map;
+
+import com.google.common.collect.Maps;
+
+import de.uniol.inf.is.odysseus.script.parser.IPreParserKeyword;
+import de.uniol.inf.is.odysseus.script.parser.IPreParserKeywordProvider;
+
+public class MDAPreParserKeywordProvider implements IPreParserKeywordProvider {
+
+	@Override
+	public Map<String, Class<? extends IPreParserKeyword>> getKeywords() {
+		Map<String, Class<? extends IPreParserKeyword>> keywords = Maps.newHashMap();
+		keywords.put(MDAStorePreParserKeyword.KEYWORD, MDAStorePreParserKeyword.class);
+		return keywords;
+	}
+
+}
