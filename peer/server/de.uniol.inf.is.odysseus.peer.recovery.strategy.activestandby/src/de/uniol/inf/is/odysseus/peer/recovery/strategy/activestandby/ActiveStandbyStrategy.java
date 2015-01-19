@@ -3,8 +3,6 @@ package de.uniol.inf.is.odysseus.peer.recovery.strategy.activestandby;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Collection;
-import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 
 import net.jxta.peer.PeerID;
@@ -17,24 +15,15 @@ import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 
-import de.uniol.inf.is.odysseus.core.collection.Context;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
-import de.uniol.inf.is.odysseus.core.server.datadictionary.DataDictionaryProvider;
-import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.IQueryParser;
-import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.IExecutorCommand;
-import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.dd.CreateQueryCommand;
-import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvider;
-import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.p2p_new.logicaloperator.JxtaSenderAO;
 import de.uniol.inf.is.odysseus.peer.distribute.util.LogicalQueryHelper;
 import de.uniol.inf.is.odysseus.peer.recovery.IBackupInformationAccess;
 import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryAllocator;
 import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryStrategy;
-import de.uniol.inf.is.odysseus.peer.recovery.internal.BackupInfo;
 import de.uniol.inf.is.odysseus.peer.recovery.simplestrategy.SimpleRecoveryStrategy;
-import de.uniol.inf.is.odysseus.peer.recovery.strategy.activestandby.protocol.UpdateMergerSender;
 
 /**
  * The active standby strategy uses already existing replicas of the query parts
@@ -45,6 +34,7 @@ import de.uniol.inf.is.odysseus.peer.recovery.strategy.activestandby.protocol.Up
  * @author Michael Brand
  *
  */
+@SuppressWarnings(value = { "unused" })
 public class ActiveStandbyStrategy implements IRecoveryStrategy {
 
 	/**
@@ -247,38 +237,38 @@ public class ActiveStandbyStrategy implements IRecoveryStrategy {
 
 	@Override
 	public void recover(PeerID failedPeer, UUID recoveryStateIdentifier) {
-		if (!cPQLParser.isPresent()) {
-			LOG.error("No PQL parser bound");
-			return;
-		} else if (!cBackupInfoAccess.isPresent()) {
-			LOG.error("No backup information access bound");
-			return;
-		}
-		ISession session = UserManagementProvider.getSessionmanagement()
-				.loginSuperUser(null,
-						UserManagementProvider.getDefaultTenant().getName());
-		IDataDictionary datadict = DataDictionaryProvider
-				.getDataDictionary(UserManagementProvider.getDefaultTenant());
-
-		// Update recovery mergers
-		Map<Integer, BackupInfo> infoMap = cBackupInfoAccess.get()
-				.getBackupInformation(failedPeer.toString());
-		for (int queryId : infoMap.keySet()) {
-			String pql = infoMap.get(queryId).pql;
-			List<IExecutorCommand> cmds = cPQLParser.get().parse(pql, session,
-					datadict, Context.empty());
-			for (IExecutorCommand cmd : cmds) {
-				if (CreateQueryCommand.class.isInstance(cmd)) {
-					Collection<JxtaSenderAO> senders = findSender(((CreateQueryCommand) cmd)
-							.getQuery());
-					for (JxtaSenderAO sender : senders) {
-						UpdateMergerSender.getInstance().sendInstruction(
-								toPeerID(sender.getPeerID()),
-								toPipeID(sender.getPipeID()));
-					}
-				}
-			}
-		}
+//		if (!cPQLParser.isPresent()) {
+//			LOG.error("No PQL parser bound");
+//			return;
+//		} else if (!cBackupInfoAccess.isPresent()) {
+//			LOG.error("No backup information access bound");
+//			return;
+//		}
+//		ISession session = UserManagementProvider.getSessionmanagement()
+//				.loginSuperUser(null,
+//						UserManagementProvider.getDefaultTenant().getName());
+//		IDataDictionary datadict = DataDictionaryProvider
+//				.getDataDictionary(UserManagementProvider.getDefaultTenant());
+//
+//		// Update recovery mergers
+//		Map<Integer, BackupInfo> infoMap = cBackupInfoAccess.get()
+//				.getBackupInformation(failedPeer.toString());
+//		for (int queryId : infoMap.keySet()) {
+//			String pql = infoMap.get(queryId).pql;
+//			List<IExecutorCommand> cmds = cPQLParser.get().parse(pql, session,
+//					datadict, Context.empty());
+//			for (IExecutorCommand cmd : cmds) {
+//				if (CreateQueryCommand.class.isInstance(cmd)) {
+//					Collection<JxtaSenderAO> senders = findSender(((CreateQueryCommand) cmd)
+//							.getQuery());
+//					for (JxtaSenderAO sender : senders) {
+//						UpdateMergerSender.getInstance().sendInstruction(
+//								toPeerID(sender.getPeerID()),
+//								toPipeID(sender.getPipeID()));
+//					}
+//				}
+//			}
+//		}
 
 		new SimpleRecoveryStrategy().recover(failedPeer,
 				recoveryStateIdentifier);
