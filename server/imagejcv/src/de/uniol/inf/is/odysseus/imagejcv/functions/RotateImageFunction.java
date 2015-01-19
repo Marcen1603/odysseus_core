@@ -42,7 +42,8 @@ public class RotateImageFunction extends AbstractFunction<ImageJCV> {
 		
 		Objects.requireNonNull(image);
 		
-		final IplImage iplImage = image.getImage();
+		// TODO: Just create an image with the same dimensions etc. instead of performing a full copy
+		final IplImage iplImage = image.getImage().clone();
 		
 		final CvPoint2D32f center = new CvPoint2D32f();
 		center.x(iplImage.width() / 2);
@@ -52,8 +53,6 @@ public class RotateImageFunction extends AbstractFunction<ImageJCV> {
 		cv2DRotationMatrix(center, angle, 1.0, mapMatrix);
 		
 		cvWarpAffine(iplImage, iplImage, mapMatrix);
-		
-		image.setImage(iplImage);
-		return image;
+		return new ImageJCV(iplImage);
 	}
 }
