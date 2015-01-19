@@ -8,6 +8,9 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Require-Bundle: de.uniol.inf.is.odysseus.core,
  com.google.guava,
  de.uniol.inf.is.odysseus.script.parser;bundle-version="1.0.0",
- de.uniol.inf.is.odysseus.core.server
-Service-Component: OSGI-INF/MDAPreParserKeywordProvider.xml
+ de.uniol.inf.is.odysseus.core.server,
+ de.uniol.inf.is.odysseus.mep,
+ de.uniol.inf.is.odysseus.slf4j;bundle-version="1.0.0"
+Service-Component: OSGI-INF/MDAPreParserKeywordProvider.xml,
+ OSGI-INF/FunctionProvider.xml
 Export-Package: de.uniol.inf.is.odysseus.memstore.mdastore

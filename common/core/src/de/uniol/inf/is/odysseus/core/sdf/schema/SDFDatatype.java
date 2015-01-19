@@ -122,6 +122,8 @@ public class SDFDatatype extends SDFElement implements Serializable {
 
 	public static final SDFDatatype MATRIX_DOUBLE = new SDFDatatype("Matrix",
 			SDFDatatype.KindOfDatatype.BASE, SDFDatatype.DOUBLE);
+	public static final SDFDatatype MATRIX_INTEGER = new SDFDatatype("Matrix",
+			SDFDatatype.KindOfDatatype.BASE, SDFDatatype.INTEGER);
 	public static final SDFDatatype MATRIX_FLOAT = new SDFDatatype(
 			"MatrixFloat", SDFDatatype.KindOfDatatype.BASE, SDFDatatype.FLOAT);
 	public static final SDFDatatype MATRIX_BYTE = new SDFDatatype("MatrixByte",
