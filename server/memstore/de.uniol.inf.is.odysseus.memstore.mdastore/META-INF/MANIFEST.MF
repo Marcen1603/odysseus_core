@@ -10,3 +10,4 @@ Require-Bundle: de.uniol.inf.is.odysseus.core,
  de.uniol.inf.is.odysseus.script.parser;bundle-version="1.0.0",
  de.uniol.inf.is.odysseus.core.server
 Service-Component: OSGI-INF/MDAPreParserKeywordProvider.xml
+Export-Package: de.uniol.inf.is.odysseus.memstore.mdastore
