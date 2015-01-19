@@ -2,6 +2,8 @@ package de.uniol.inf.is.odysseus.video.physicaloperator;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Collection;
+import java.util.concurrent.TimeUnit;
 
 import org.bytedeco.javacpp.opencv_core.IplImage;
 import org.bytedeco.javacv.FFmpegFrameGrabber;
@@ -18,7 +20,11 @@ import de.uniol.inf.is.odysseus.core.metadata.TimeInterval;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.AbstractSimplePullTransportHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandler;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFConstraint;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.imagejcv.common.datatype.ImageJCV;
+import de.uniol.inf.is.odysseus.imagejcv.common.sdf.schema.SDFImageJCVDatatype;
 
 @SuppressWarnings("unused")
 public class VideoFileTransportHandler extends AbstractSimplePullTransportHandler<Tuple<IMetaAttribute>> 
@@ -186,13 +192,29 @@ public class VideoFileTransportHandler extends AbstractSimplePullTransportHandle
 			}
 		}
 	}
+
+	private void setAttributeByDatatype(Tuple<IMetaAttribute> tuple, SDFDatatype type, Object object)
+	{
+		for (int i=0;i<getSchema().size();i++)
+		{
+			if (getSchema().getAttribute(i).getDatatype().equals(type))
+			{
+				tuple.setAttribute(i, object);
+				break;
+			}
+		}		
+	}
 	
 	@Override public Tuple<IMetaAttribute> getNext() 
 	{
 		if (currentImage == null) return null;		
 		
-		Tuple<IMetaAttribute> tuple;        
-	
+		Collection<SDFAttribute> attrs = null;
+		Tuple<IMetaAttribute> tuple = new Tuple<>(getSchema().size(), false);
+		
+		setAttributeByDatatype(tuple, SDFImageJCVDatatype.IMAGEJCV, currentImage);
+		currentImage = null;
+		
 		if (timeStampMode != TimeStampMode.none)
 		{		
 	        long startTimeStamp = (long) (currentTime * 1000.0);        		
@@ -208,21 +230,12 @@ public class VideoFileTransportHandler extends AbstractSimplePullTransportHandle
 	        }
 		        
 	        long endTimeStamp = (long) (currentTime * 1000.0);
-		        
-	        tuple = new Tuple<>(3, false);
-	        tuple.setAttribute(0, currentImage);
-	        tuple.setAttribute(1, startTimeStamp);
-	        tuple.setAttribute(2, endTimeStamp);	        
+
+	        setAttributeByDatatype(tuple, SDFDatatype.START_TIMESTAMP, startTimeStamp);
+	        setAttributeByDatatype(tuple, SDFDatatype.END_TIMESTAMP,   endTimeStamp);
 		}
-		else
-		{
-			tuple = new Tuple<>(1, false);
-			tuple.setAttribute(0, currentImage);
-		}
-			
-		currentImage = null;
-	
-	     return tuple;
+				
+		return tuple;
 	}
     
 	@Override public boolean hasNext() 
@@ -250,10 +263,10 @@ public class VideoFileTransportHandler extends AbstractSimplePullTransportHandle
 						throw new RuntimeException(startupException);
 				}
 				
-				IplImage iplImage = frameGrabber.grab().clone();
+				IplImage iplImage = frameGrabber.grab();
 				if (iplImage == null || iplImage.isNull()) return false;
 				
-				currentImage = new ImageJCV(iplImage);
+				currentImage = new ImageJCV(iplImage.clone());
 				return true;
 			} 
 			catch (Exception e) 

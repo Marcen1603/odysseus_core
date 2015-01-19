@@ -44,6 +44,21 @@ public class ImageJCV implements IClone, Cloneable {
 		}
 	}
 	
+	@Override
+	protected void finalize()
+	{
+		release();
+	}
+	
+	public void release()
+	{
+		if (image != null)
+		{
+			image.release();
+			image = null;
+		}
+	}
+	
 	public int getNumChannels()
 	{
 		return image.nChannels();
