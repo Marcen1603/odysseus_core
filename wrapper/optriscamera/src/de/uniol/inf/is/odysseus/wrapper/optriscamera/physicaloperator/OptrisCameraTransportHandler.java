@@ -13,10 +13,12 @@ import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
+import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.AbstractPushTransportHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandler;
 import de.uniol.inf.is.odysseus.imagejcv.common.datatype.ImageJCV;
+import de.uniol.inf.is.odysseus.imagejcv.common.sdf.schema.SDFImageJCVDatatype;
 import de.uniol.inf.is.odysseus.wrapper.optriscamera.swig.FrameCallback;
 import de.uniol.inf.is.odysseus.wrapper.optriscamera.swig.OptrisCamera;
 
@@ -101,9 +103,9 @@ public class OptrisCameraTransportHandler extends AbstractPushTransportHandler
 			IplImage img = cvCreateImage(cvSize(cameraCapture.getImageWidth(), cameraCapture.getImageHeight()), IPL_DEPTH_16S, 1);
 			img.getByteBuffer().put(frameBuffer);
 			
-			@SuppressWarnings("rawtypes")
-			Tuple<?> tuple = new Tuple(1, false);
-	        tuple.setAttribute(0, new ImageJCV(img));
+			Tuple<IMetaAttribute> tuple = new Tuple<>(getSchema().size(), false);
+			int[] attrs = getSchema().getSDFDatatypeAttributePositions(SDFImageJCVDatatype.IMAGEJCV);
+			if (attrs.length > 0) tuple.setAttribute(attrs[0], new ImageJCV(img));			
 			
 			fireProcess(tuple);
 		}

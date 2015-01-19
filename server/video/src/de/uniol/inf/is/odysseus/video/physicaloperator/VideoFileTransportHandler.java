@@ -209,10 +209,10 @@ public class VideoFileTransportHandler extends AbstractSimplePullTransportHandle
 	{
 		if (currentImage == null) return null;		
 		
-		Collection<SDFAttribute> attrs = null;
 		Tuple<IMetaAttribute> tuple = new Tuple<>(getSchema().size(), false);
-		
-		setAttributeByDatatype(tuple, SDFImageJCVDatatype.IMAGEJCV, currentImage);
+
+		int[] attrs = getSchema().getSDFDatatypeAttributePositions(SDFImageJCVDatatype.IMAGEJCV);
+		if (attrs.length > 0) tuple.setAttribute(attrs[0], currentImage);
 		currentImage = null;
 		
 		if (timeStampMode != TimeStampMode.none)
@@ -231,8 +231,11 @@ public class VideoFileTransportHandler extends AbstractSimplePullTransportHandle
 		        
 	        long endTimeStamp = (long) (currentTime * 1000.0);
 
-	        setAttributeByDatatype(tuple, SDFDatatype.START_TIMESTAMP, startTimeStamp);
-	        setAttributeByDatatype(tuple, SDFDatatype.END_TIMESTAMP,   endTimeStamp);
+			attrs = getSchema().getSDFDatatypeAttributePositions(SDFDatatype.START_TIMESTAMP);
+			if (attrs.length > 0) tuple.setAttribute(attrs[0], startTimeStamp);
+
+			attrs = getSchema().getSDFDatatypeAttributePositions(SDFDatatype.END_TIMESTAMP);
+			if (attrs.length > 0) tuple.setAttribute(attrs[0], endTimeStamp);			
 		}
 				
 		return tuple;

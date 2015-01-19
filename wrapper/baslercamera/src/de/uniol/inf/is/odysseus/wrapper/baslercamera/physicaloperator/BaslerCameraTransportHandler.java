@@ -11,10 +11,12 @@ import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
+import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.AbstractSimplePullTransportHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandler;
 import de.uniol.inf.is.odysseus.imagejcv.common.datatype.ImageJCV;
+import de.uniol.inf.is.odysseus.imagejcv.common.sdf.schema.SDFImageJCVDatatype;
 import de.uniol.inf.is.odysseus.wrapper.baslercamera.swig.BaslerCamera;
 
 public class BaslerCameraTransportHandler extends AbstractSimplePullTransportHandler<Tuple<?>> 
@@ -123,9 +125,9 @@ public class BaslerCameraTransportHandler extends AbstractSimplePullTransportHan
 		System.out.println("getNext " + now / 1.0e9 + ", dt = " + dt + " = " + 1.0/dt + " FPS");	
 		lastTime = now;
 		
-		@SuppressWarnings("rawtypes")
-		Tuple<?> tuple = new Tuple(1, false);
-        tuple.setAttribute(0, currentImage);
+		Tuple<IMetaAttribute> tuple = new Tuple<>(getSchema().size(), false);
+		int[] attrs = getSchema().getSDFDatatypeAttributePositions(SDFImageJCVDatatype.IMAGEJCV);
+		if (attrs.length > 0) tuple.setAttribute(attrs[0], currentImage);
         return tuple;					
 	}
     

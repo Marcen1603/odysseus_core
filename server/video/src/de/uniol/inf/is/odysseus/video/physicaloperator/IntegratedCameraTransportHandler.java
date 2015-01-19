@@ -16,6 +16,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolH
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.AbstractSimplePullTransportHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandler;
 import de.uniol.inf.is.odysseus.imagejcv.common.datatype.ImageJCV;
+import de.uniol.inf.is.odysseus.imagejcv.common.sdf.schema.SDFImageJCVDatatype;
 
 public class IntegratedCameraTransportHandler extends AbstractSimplePullTransportHandler<Tuple<IMetaAttribute>> 
 {
@@ -97,8 +98,11 @@ public class IntegratedCameraTransportHandler extends AbstractSimplePullTranspor
 		{
 			if (currentImage == null) return null;
 		
-			Tuple<IMetaAttribute> tuple = new Tuple<>(1, false);
-	        tuple.setAttribute(0, currentImage);
+			Tuple<IMetaAttribute> tuple = new Tuple<>(getSchema().size(), false);
+			int[] attrs = getSchema().getSDFDatatypeAttributePositions(SDFImageJCVDatatype.IMAGEJCV);
+			if (attrs.length > 0) 
+				tuple.setAttribute(attrs[0], currentImage);
+			
 	        currentImage = null;
 	        return tuple;
 		}
