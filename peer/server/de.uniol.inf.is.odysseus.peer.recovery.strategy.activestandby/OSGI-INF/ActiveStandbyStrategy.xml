@@ -4,5 +4,7 @@
    <service>
       <provide interface="de.uniol.inf.is.odysseus.peer.recovery.IRecoveryStrategy"/>
    </service>
-   <reference bind="bindRecoveryAllocator" cardinality="1..1" interface="de.uniol.inf.is.odysseus.peer.recovery.IRecoveryAllocator" name="IRecoveryAllocator" policy="static" unbind="unbindRecoveryAllocator"/>
+   <reference bind="bindRecoveryAllocator" cardinality="1..1" interface="de.uniol.inf.is.odysseus.peer.recovery.IRecoveryAllocator" name="IRecoveryAllocator" policy="dynamic" unbind="unbindRecoveryAllocator"/>
+   <reference bind="bindPQLParser" cardinality="1..n" interface="de.uniol.inf.is.odysseus.core.server.planmanagement.IQueryParser" name="IQueryParser" policy="dynamic" unbind="unbindPQLParser"/>
+   <reference bind="bindBackupInfoAccess" cardinality="1..1" interface="de.uniol.inf.is.odysseus.peer.recovery.IBackupInformationAccess" name="IBackupInformationAccess" policy="dynamic" unbind="unbindBackupInfoAccess"/>
 </scr:component>
