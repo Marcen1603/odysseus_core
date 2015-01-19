@@ -27,13 +27,19 @@ public class RepeatingMessageSend extends RepeatingJobThread {
 
 	private int sendingTime;
 	private boolean warned;
+	private boolean quietOnError;
 	
 	public RepeatingMessageSend( IPeerCommunicator communicator, IMessage message, PeerID destination ) {
+		this(communicator, message, destination, false);
+	}
+	
+	public RepeatingMessageSend( IPeerCommunicator communicator, IMessage message, PeerID destination, boolean quietOnError ) {
 		super(REPEAT_SEND_INTERVAL_MILLIS, "Repeating message thread: " + message.getClass().getName());
 		
 		this.communicator = communicator;
 		this.message = message;
 		this.peerID = destination;
+		this.quietOnError = quietOnError;
 	}
 	
 	@Override
@@ -45,15 +51,27 @@ public class RepeatingMessageSend extends RepeatingJobThread {
 			
 			sendingTime += getIntervalMillis();
 			if( !warned && sendingTime >= WARNING_TIME_INTERVAL_MILLIS ) {
-				LOG.error("RepeatingMessageThread runs more than " + WARNING_TIME_INTERVAL_MILLIS + " ms now! Message: {}", message.getClass().getName());
+				if( quietOnError ) {
+					LOG.debug("RepeatingMessageThread runs more than " + WARNING_TIME_INTERVAL_MILLIS + " ms now! Message: {}", message.getClass().getName());
+				} else {				
+					LOG.error("RepeatingMessageThread runs more than " + WARNING_TIME_INTERVAL_MILLIS + " ms now! Message: {}", message.getClass().getName());
+				}
 				warned = true;
 			} else if( sendingTime > ABORT_MILLIS ) {
-				LOG.error("RepeatingMessageThread runs now more than " + ABORT_MILLIS + " ms now. Abort sending message {}", message.getClass().getName());
+				if( quietOnError ) {
+					LOG.debug("RepeatingMessageThread runs now more than " + ABORT_MILLIS + " ms now. Abort sending message {}", message.getClass().getName());
+				} else {
+					LOG.error("RepeatingMessageThread runs now more than " + ABORT_MILLIS + " ms now. Abort sending message {}", message.getClass().getName());
+				}
 				stopRunning();
 			}
 			
 		} catch (PeerCommunicationException e) {
-			LOG.error("Could not repeatedly send message of type {}", message.getClass().getName(), e);
+			if( quietOnError ) {
+				LOG.debug("Could not repeatedly send message of type {}", message.getClass().getName(), e);
+			} else {
+				LOG.error("Could not repeatedly send message of type {}", message.getClass().getName(), e);
+			}
 			stopRunning();
 		}
 	}
