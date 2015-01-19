@@ -30,7 +30,7 @@ public class PeerConfiguration {
 	private static final String ODYSSEUS_HOME_ENV = "ODYSSEUS_HOME";
 	public static final String ODYSSEUS_DEFAULT_HOME_DIR = determineOdysseusDefaultHome();
 	public static final String ODYSSEUS_HOME_DIR = determineOdysseusHome();
-	public static final String ODYSSEUS_RCP_CONFIGURATION_FILE = ODYSSEUS_HOME_DIR + "odysseusP2P.conf";
+	public static final String ODYSSEUS_P2P_CONFIGURATION_FILE = ODYSSEUS_HOME_DIR + "odysseusP2P.conf";
 
 	private static final Properties properties = new Properties();
 	private static boolean isFirstLoaded = false;
@@ -70,20 +70,27 @@ public class PeerConfiguration {
 
 	private static void loadConfiguration() {
 		try {
-			File confFile = openOrCreateFile(ODYSSEUS_RCP_CONFIGURATION_FILE);
+			File confFile = openOrCreateFile(ODYSSEUS_P2P_CONFIGURATION_FILE);
 			
 			FileInputStream in = new FileInputStream(confFile);
 			try {
 				setDefaultValues(properties);
-				properties.loadFromXML(in);
+				try {
+					properties.loadFromXML(in);
+				} catch( Throwable t ) {
+					LOG.debug("Could not load configuration contents", t);
+				}
 				save();
+				
 			} finally {
 				in.close();
+				
+				LOG.info("Loaded p2p configuration file");
 			}
 		} catch( InvalidPropertiesFormatException ex ) {
-			LOG.warn("Could not load configuration file '" + ODYSSEUS_RCP_CONFIGURATION_FILE + "'", ex);
+			LOG.warn("Could not load configuration file '" + ODYSSEUS_P2P_CONFIGURATION_FILE + "'", ex);
 		} catch (IOException ex) {
-			LOG.warn("Could not load configuration file '" + ODYSSEUS_RCP_CONFIGURATION_FILE + "'", ex);
+			LOG.warn("Could not load configuration file '" + ODYSSEUS_P2P_CONFIGURATION_FILE + "'", ex);
 		} 
 	}
 
@@ -129,7 +136,7 @@ public class PeerConfiguration {
 
 	public static void save() {
 		try {
-			FileOutputStream out = new FileOutputStream(ODYSSEUS_RCP_CONFIGURATION_FILE);
+			FileOutputStream out = new FileOutputStream(ODYSSEUS_P2P_CONFIGURATION_FILE);
 			try {
 				properties.storeToXML(out, "Odysseus Property File edit only if you know what you are doing");
 			} finally {
@@ -140,7 +147,7 @@ public class PeerConfiguration {
 			}
 			
 		} catch (IOException ex) {
-			LOG.error("Could not save configuration file '" + ODYSSEUS_RCP_CONFIGURATION_FILE + "'", ex);
+			LOG.error("Could not save configuration file '" + ODYSSEUS_P2P_CONFIGURATION_FILE + "'", ex);
 		} 
 	}
 	
@@ -154,7 +161,7 @@ public class PeerConfiguration {
 			}
 			success = f.createNewFile();
 			if (success) {
-				LOG.debug("Created new File " + f.getAbsolutePath());
+				LOG.debug("Created new p2p configuration file " + f.getAbsolutePath());
 			}
 		} else {
 			LOG.debug("Read from file " + f.getAbsolutePath());
