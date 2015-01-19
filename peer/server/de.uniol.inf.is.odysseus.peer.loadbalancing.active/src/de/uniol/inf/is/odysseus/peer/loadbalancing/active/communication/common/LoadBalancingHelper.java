@@ -40,7 +40,7 @@ import de.uniol.inf.is.odysseus.p2p_new.physicaloperator.JxtaSenderPO;
 import de.uniol.inf.is.odysseus.peer.distribute.ILogicalQueryPart;
 import de.uniol.inf.is.odysseus.peer.distribute.LogicalQueryPart;
 import de.uniol.inf.is.odysseus.peer.distribute.util.LogicalQueryHelper;
-import de.uniol.inf.is.odysseus.peer.loadbalancing.active.ActiveLoadBalancingActivator;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.active.OsgiServiceManager;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.physicaloperator.LoadBalancingSynchronizerPO;
 
 /**
@@ -85,8 +85,8 @@ public class LoadBalancingHelper {
 	 */
 	public static void deleteQuery(int queryId) {
 		LOG.debug("Deleting Query " + queryId);
-		ISession session = ActiveLoadBalancingActivator.getActiveSession();
-		IServerExecutor executor = ActiveLoadBalancingActivator.getExecutor();
+		ISession session = OsgiServiceManager.getActiveSession();
+		IServerExecutor executor = OsgiServiceManager.getExecutor();
 		executor.removeQuery(queryId, session);
 	}
 
@@ -100,7 +100,7 @@ public class LoadBalancingHelper {
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public static void cutReceiversFromQuery(int queryID) {
 
-		IServerExecutor executor = ActiveLoadBalancingActivator.getExecutor();
+		IServerExecutor executor = OsgiServiceManager.getExecutor();
 		LOG.debug("Cutting physical Query " + queryID);
 			
 		IPhysicalQuery query = executor.getExecutionPlan().getQueryById(queryID);
@@ -133,7 +133,7 @@ public class LoadBalancingHelper {
 	
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public static void cutSendersFromPhysicalQuery(int queryID) {
-		IServerExecutor executor = ActiveLoadBalancingActivator.getExecutor();
+		IServerExecutor executor = OsgiServiceManager.getExecutor();
 		LOG.debug("Cutting Senders from physical Query " + queryID);
 			
 		IPhysicalQuery query = executor.getExecutionPlan().getQueryById(queryID);
@@ -175,7 +175,7 @@ public class LoadBalancingHelper {
 	@SuppressWarnings({ "rawtypes" })
 	public static void cutSendersFromQuery(int queryID) {
 
-		IServerExecutor executor = ActiveLoadBalancingActivator.getExecutor();
+		IServerExecutor executor = OsgiServiceManager.getExecutor();
 		IPhysicalQuery query = executor.getExecutionPlan().getQueryById(queryID);
 
 		for (IPhysicalOperator operator : query.getAllOperators()) {
@@ -351,7 +351,7 @@ public class LoadBalancingHelper {
 	 */
 	public static IPhysicalOperator getPhysicalJxtaOperator(boolean lookForSender, String pipeID) {
 
-		IServerExecutor executor = ActiveLoadBalancingActivator.getExecutor();
+		IServerExecutor executor = OsgiServiceManager.getExecutor();
 
 		for (IPhysicalQuery query : executor.getExecutionPlan().getQueries()) {
 			for (IPhysicalOperator operator : query.getAllOperators()) {
@@ -419,8 +419,8 @@ public class LoadBalancingHelper {
 	 */
 	public static Collection<Integer> installAndRunQueryPartFromPql(Context context, String pql) {
 
-		IServerExecutor executor = ActiveLoadBalancingActivator.getExecutor();
-		ISession session = ActiveLoadBalancingActivator.getActiveSession();
+		IServerExecutor executor = OsgiServiceManager.getExecutor();
+		ISession session = OsgiServiceManager.getActiveSession();
 
 		Collection<Integer> installedQueries = executor.addQuery(pql, "PQL", session, context);
 		for (int query : installedQueries) {
@@ -431,8 +431,8 @@ public class LoadBalancingHelper {
 	}
 	
 	public static Collection<Integer> installQueryPartFromPql(Context context, String pql) {
-		IServerExecutor executor = ActiveLoadBalancingActivator.getExecutor();
-		ISession session = ActiveLoadBalancingActivator.getActiveSession();
+		IServerExecutor executor = OsgiServiceManager.getExecutor();
+		ISession session = OsgiServiceManager.getActiveSession();
 		
 		Collection<Integer> installedQueries = executor.addQuery(pql, "PQL", session, context);
 		return installedQueries;
@@ -585,8 +585,8 @@ public class LoadBalancingHelper {
 	 */
 	public static Collection<ILogicalQueryPart> getInstalledQueryParts() {
 
-		IServerExecutor executor = ActiveLoadBalancingActivator.getExecutor();
-		ISession session = ActiveLoadBalancingActivator.getActiveSession();
+		IServerExecutor executor = OsgiServiceManager.getExecutor();
+		ISession session = OsgiServiceManager.getActiveSession();
 
 		ArrayList<ILogicalQueryPart> parts = new ArrayList<ILogicalQueryPart>();
 		for (int queryId : executor.getLogicalQueryIds(session)) {
@@ -609,8 +609,8 @@ public class LoadBalancingHelper {
 	 */
 	public static ILogicalQueryPart getInstalledQueryPart(int queryId) {
 
-		IServerExecutor executor = ActiveLoadBalancingActivator.getExecutor();
-		ISession session = ActiveLoadBalancingActivator.getActiveSession();
+		IServerExecutor executor = OsgiServiceManager.getExecutor();
+		ISession session = OsgiServiceManager.getActiveSession();
 
 		ILogicalQuery query = executor.getLogicalQueryById(queryId, session);
 		ArrayList<ILogicalOperator> operators = new ArrayList<ILogicalOperator>();

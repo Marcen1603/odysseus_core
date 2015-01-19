@@ -82,6 +82,7 @@ public class MovingStateInstructionMessage implements IMessage {
 	 * Needed if query part was Master for shared Query.
 	 */
 	private String sharedQueryID;
+	private String masterPeerID;
 
 	/**
 	 * Default constructor.
@@ -170,11 +171,13 @@ public class MovingStateInstructionMessage implements IMessage {
 	 * @return Message with ADD_QUERY msgType
 	 */
 	public static MovingStateInstructionMessage createAddQueryMsg(
-			int lbProcessId, String PQLQuery) {
+			int lbProcessId, String PQLQuery, String sharedQueryID, String masterPeerID) {
 		MovingStateInstructionMessage message = new MovingStateInstructionMessage();
 		message.loadBalancingProcessId = lbProcessId;
 		message.PQLQuery = PQLQuery;
 		message.isMasterForQuery = false;
+		message.sharedQueryID = sharedQueryID;
+		message.setMasterPeerID(masterPeerID);
 		message.msgType = ADD_QUERY;
 		return message;
 	}
@@ -286,21 +289,29 @@ public class MovingStateInstructionMessage implements IMessage {
 			if(!isMasterForQuery) {
 
 				byte[] pqlAsBytes = PQLQuery.getBytes();
+
+				byte[] sharedQueryIDAsBytes = sharedQueryID.getBytes();
+				byte[] masterPeerIDAsBytes = masterPeerID.getBytes();
+
 	
-				bbsize = 4 + 4 + 4 + pqlAsBytes.length + 1;
+				bbsize = 4 + 4 + 4 + pqlAsBytes.length + 4 + sharedQueryIDAsBytes.length + 1 + 4 + masterPeerIDAsBytes.length;
 				bb = ByteBuffer.allocate(bbsize);
 				bb.putInt(msgType);
 				bb.putInt(loadBalancingProcessId);
 				bb.putInt(pqlAsBytes.length);
 				bb.put(pqlAsBytes);
+				bb.putInt(sharedQueryIDAsBytes.length);
+				bb.put(sharedQueryIDAsBytes);
 				bb.put((byte)0);
+				bb.putInt(masterPeerIDAsBytes.length);
+				bb.put(masterPeerIDAsBytes);
 				break;
 			}
 			
 			else {
-				byte[] sharedQueryIDAsBytes = sharedQueryID.getBytes();
 				byte[] pqlAsBytes = PQLQuery.getBytes();
 				byte[] otherPeersAsBytes = stringListToBytes(this.getOtherPeerIDs());
+				byte[] sharedQueryIDAsBytes = sharedQueryID.getBytes();
 				
 				bbsize = 4 + 4 + 4 + pqlAsBytes.length + 1 + otherPeersAsBytes.length + 4 + sharedQueryIDAsBytes.length;
 				bb = ByteBuffer.allocate(bbsize);
@@ -308,10 +319,10 @@ public class MovingStateInstructionMessage implements IMessage {
 				bb.putInt(loadBalancingProcessId);
 				bb.putInt(pqlAsBytes.length);
 				bb.put(pqlAsBytes);
-				bb.put((byte)1);
-				bb.put(otherPeersAsBytes);
 				bb.putInt(sharedQueryIDAsBytes.length);
 				bb.put(sharedQueryIDAsBytes);
+				bb.put((byte)1);
+				bb.put(otherPeersAsBytes);
 				break;
 			}
 
@@ -404,9 +415,20 @@ public class MovingStateInstructionMessage implements IMessage {
 			bb.get(pqlAsBytes);
 			this.PQLQuery = new String(pqlAsBytes);
 			
+			int sizeOfSharedQueryID = bb.getInt();
+			byte[] sharedQueryIDAsBytes = new byte[sizeOfSharedQueryID];
+			bb.get(sharedQueryIDAsBytes);
+			this.sharedQueryID = new String(sharedQueryIDAsBytes);
+			
+			
 			byte masterFlag = bb.get();
 			if(masterFlag==0) {
 				isMasterForQuery = false;
+				int sizeOfMasterPeerID = bb.getInt();
+				byte[] masterPeerIDBytes = new byte[sizeOfMasterPeerID];
+				bb.get(masterPeerIDBytes);
+				this.masterPeerID = new String(masterPeerIDBytes);
+				
 				break;
 			}
 			else {
@@ -419,10 +441,6 @@ public class MovingStateInstructionMessage implements IMessage {
 					bb.get(peerIDStringAsBytes);
 					otherPeers.add(new String(peerIDStringAsBytes));
 				}
-				int sizeOfSharedQueryID = bb.getInt();
-				byte[] sharedQueryIDAsBytes = new byte[sizeOfSharedQueryID];
-				bb.get(sharedQueryIDAsBytes);
-				this.sharedQueryID = new String(sharedQueryIDAsBytes);
 				break;
 			}
 			
@@ -636,6 +654,14 @@ public class MovingStateInstructionMessage implements IMessage {
 		}
 		
 		return bb.array();
+	}
+
+	public String getMasterPeerID() {
+		return masterPeerID;
+	}
+
+	public void setMasterPeerID(String masterPeerID) {
+		this.masterPeerID = masterPeerID;
 	}
 
 }

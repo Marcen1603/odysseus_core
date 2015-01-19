@@ -6,7 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.p2p_new.data.DataTransmissionException;
-import de.uniol.inf.is.odysseus.peer.loadbalancing.active.ActiveLoadBalancingActivator;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.active.OsgiServiceManager;
 import net.jxta.id.IDFactory;
 
 /**
@@ -64,7 +64,7 @@ public class MovingStateManager {
 	public String addSender(String peerID) {
 		
 		String newPipeID = IDFactory.newPipeID(
-				ActiveLoadBalancingActivator.getP2pNetworkManager().getLocalPeerGroupID()).toString();
+				OsgiServiceManager.getP2pNetworkManager().getLocalPeerGroupID()).toString();
 		
 		try {
 			MovingStateSender sender = new MovingStateSender(peerID,newPipeID);

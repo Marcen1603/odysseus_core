@@ -1,7 +1,5 @@
 package de.uniol.inf.is.odysseus.peer.loadbalancing.active;
 
-import org.osgi.framework.BundleActivator;
-import org.osgi.framework.BundleContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -11,6 +9,7 @@ import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvide
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.p2p_new.IP2PNetworkManager;
 import de.uniol.inf.is.odysseus.peer.distribute.IQueryPartController;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.common.ILoadBalancingQueryManager;
 
 /**
  * Bundle Activator for Active LoadBalancing Bundle.
@@ -18,7 +17,7 @@ import de.uniol.inf.is.odysseus.peer.distribute.IQueryPartController;
  * @author Carsten Cordes
  *
  */
-public class ActiveLoadBalancingActivator implements BundleActivator{
+public class OsgiServiceManager {
 	
 	/**
 	 * Size of Transport Buffer needed to transfer states in MovingState Strategy
@@ -29,28 +28,10 @@ public class ActiveLoadBalancingActivator implements BundleActivator{
 	 * Logger
 	 */
 	private static final Logger LOG = LoggerFactory
-			.getLogger(ActiveLoadBalancingActivator.class);
-	
+			.getLogger(OsgiServiceManager.class);
 
-	/**
-	 * OSGi-Start function.
-	 * Does nothing.
-	 */
-	@Override
-	public void start(BundleContext context) throws Exception {
-		//Nothing to do here
-		
-	}
+	private static ILoadBalancingQueryManager queryManager;
 
-	/**
-	 * OSGi-Stop Function
-	 * does nothing.
-	 */
-	@Override
-	public void stop(BundleContext context) throws Exception {
-		//Nothing to do here
-		
-	}
 	
 	private static IQueryPartController queryPartController;
 	
@@ -165,8 +146,22 @@ public class ActiveLoadBalancingActivator implements BundleActivator{
 		}
 		return activeSession;
 	}
+	
+	public static void bindLBQueryManager(ILoadBalancingQueryManager serv) {
+		LOG.debug("Bound LB Query Manager");
+		queryManager = serv;
+	}
+	
+	public static void unbindLBQueryManager(ILoadBalancingQueryManager serv) {
+		LOG.debug("Unbound LB Query Manager");
+		if(queryManager==serv) {
+			queryManager = null;
+		}
+	}
 
 	
-
+	public static ILoadBalancingQueryManager getQueryManager() {
+		return queryManager;
+	}
 
 }

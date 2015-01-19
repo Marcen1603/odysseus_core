@@ -20,9 +20,15 @@ public interface IQueryPartController {
 	
 	public boolean isMasterForQuery(int queryID);
 	
+	public boolean isSharedQueryKnown(ID sharedQueryID);
+	
 	public PeerID getMasterForQuery(ID sharedQueryID);
 	
 	public Collection<PeerID> getOtherPeers(ID sharedQueryId);
+	
+	public PeerID addOtherPeer(ID sharedQueryId, PeerID peerID);
+	
+	public void removeOtherPeer(ID sharedQueryId, PeerID peerID);
 	
 	public void unregisterLocalQueriesFromSharedQuery(ID sharedQueryID, Collection<Integer> toRemove);
 	

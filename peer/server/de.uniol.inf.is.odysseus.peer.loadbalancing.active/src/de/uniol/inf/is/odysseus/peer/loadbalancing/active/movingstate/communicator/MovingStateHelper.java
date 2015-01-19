@@ -32,7 +32,7 @@ import de.uniol.inf.is.odysseus.p2p_new.physicaloperator.JxtaReceiverPO;
 import de.uniol.inf.is.odysseus.p2p_new.physicaloperator.JxtaSenderPO;
 import de.uniol.inf.is.odysseus.peer.distribute.ILogicalQueryPart;
 import de.uniol.inf.is.odysseus.peer.distribute.util.LogicalQueryHelper;
-import de.uniol.inf.is.odysseus.peer.loadbalancing.active.ActiveLoadBalancingActivator;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.active.OsgiServiceManager;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.common.DownstreamConnection;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.common.IMessageDeliveryFailedListener;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.common.LoadBalancingException;
@@ -101,9 +101,9 @@ public class MovingStateHelper {
 	 */
 	public static List<IStatefulPO> getStatefulOperatorList(int queryId) {
 
-		IExecutor executor = ActiveLoadBalancingActivator.getExecutor();
+		IExecutor executor = OsgiServiceManager.getExecutor();
 		List<IPhysicalOperator> roots = executor.getPhysicalRoots(queryId,
-				ActiveLoadBalancingActivator.getActiveSession());
+				OsgiServiceManager.getActiveSession());
 		List<IStatefulPO> statefulPOs = new ArrayList<IStatefulPO>();
 		for (IPhysicalOperator root : roots) {
 			LOG.debug(("Found root for Query " + queryId + ": " + root
@@ -592,7 +592,7 @@ public class MovingStateHelper {
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public static String installNewPhysicalJxtaSender(ISource operatorBefore, String peerID, int port) throws DataTransmissionException {
 		String pipeID = IDFactory.newPipeID(
-				ActiveLoadBalancingActivator.getP2pNetworkManager().getLocalPeerGroupID()).toString();
+				OsgiServiceManager.getP2pNetworkManager().getLocalPeerGroupID()).toString();
 		JxtaSenderAO sender = new JxtaSenderAO();
 		sender.setPeerID(peerID);
 		sender.setPipeID(pipeID);

@@ -34,7 +34,7 @@ import de.uniol.inf.is.odysseus.p2p_new.IP2PNetworkManager;
 import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicator;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.IPeerDictionary;
 import de.uniol.inf.is.odysseus.peer.distribute.IQueryPartController;
-import de.uniol.inf.is.odysseus.peer.loadbalancing.active.ActiveLoadBalancingActivator;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.active.OsgiServiceManager;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.ILoadBalancingAllocator;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.ILoadBalancingCommunicator;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.ILoadBalancingStrategy;
@@ -232,6 +232,8 @@ public class ActiveLoadbalancingConsole implements CommandProvider {
 		sb.append("    listStatefolOperators <queryID>                      - Lists all statefol Operators in a query (useful to determine order)\n");
 		sb.append("    printSubscriptions <queryId>                         - Prints detais about all Subscriptions in a query.\n");
 		sb.append("    sendLongString <pipeID>                              - Sends a 100MB big String to test Buffers.\n");
+		sb.append("    printQPController									- Prints Current Content of Query Part Controller\n");
+		sb.append("    verifyDependencies									- Verifies if all Dependencies are available\n");
 		return sb.toString();
 	}
 
@@ -270,9 +272,22 @@ public class ActiveLoadbalancingConsole implements CommandProvider {
 		}
 	}
 	
+	public void _verifyDependencies(CommandInterpreter ci) {
+		boolean executorAvailable = (OsgiServiceManager.getExecutor()!=null);
+		boolean networkManagerAvailable = (OsgiServiceManager.getP2pNetworkManager()!=null);
+		boolean queryManagerAvailable = (OsgiServiceManager.getQueryManager()!=null);
+		boolean queryPartControllerAvailable = (OsgiServiceManager.getQueryPartController()!=null);
+		
+		ci.println("Executor: " + executorAvailable);
+		ci.println("P2PNetworkManager: " + networkManagerAvailable);
+		ci.println("LoadBalancingQueryManager: " + queryManagerAvailable);
+		ci.println("QueryPartController: " + queryPartControllerAvailable);
+				
+	}
+	
 	public void _printQPController(CommandInterpreter ci) {
-		IQueryPartController controller = ActiveLoadBalancingActivator.getQueryPartController();
-		for (int query : executor.getLogicalQueryIds(ActiveLoadBalancingActivator.getActiveSession())) {
+		IQueryPartController controller = OsgiServiceManager.getQueryPartController();
+		for (int query : executor.getLogicalQueryIds(OsgiServiceManager.getActiveSession())) {
 			ci.println();
 			ID sharedQueryID = controller.getSharedQueryID(query);
 			boolean isMaster = controller.isMasterForQuery(query);
@@ -574,9 +589,9 @@ public class ActiveLoadbalancingConsole implements CommandProvider {
 			return;
 		}
 
-		IExecutor executor = ActiveLoadBalancingActivator.getExecutor();
+		IExecutor executor = OsgiServiceManager.getExecutor();
 		List<IPhysicalOperator> roots = executor.getPhysicalRoots(localQueryId,
-				ActiveLoadBalancingActivator.getActiveSession());
+				OsgiServiceManager.getActiveSession());
 
 		ArrayList<IPhysicalOperator> sourcesOfQuery = new ArrayList<IPhysicalOperator>();
 		for (IPhysicalOperator root : roots) {

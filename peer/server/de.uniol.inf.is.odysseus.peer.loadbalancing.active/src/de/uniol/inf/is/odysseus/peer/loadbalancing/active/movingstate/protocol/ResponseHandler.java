@@ -14,7 +14,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.IStatefulPO;
 import de.uniol.inf.is.odysseus.peer.distribute.ILogicalQueryPart;
 import de.uniol.inf.is.odysseus.peer.distribute.IQueryPartController;
 import de.uniol.inf.is.odysseus.peer.distribute.util.LogicalQueryHelper;
-import de.uniol.inf.is.odysseus.peer.loadbalancing.active.ActiveLoadBalancingActivator;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.active.OsgiServiceManager;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.common.LoadBalancingException;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.common.LoadBalancingHelper;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.common.LoadBalancingStatusCache;
@@ -88,11 +88,12 @@ public class ResponseHandler {
 				LOG.debug("Generated PQL Statement:" + pqlFromQueryPart);
 
 				// Update Query part Controller.
-				IQueryPartController queryPartController = ActiveLoadBalancingActivator.getQueryPartController();
+				IQueryPartController queryPartController = OsgiServiceManager.getQueryPartController();
 				ID sharedQueryID = queryPartController.getSharedQueryID(status.getLogicalQuery());
 				boolean isMaster = queryPartController.isMasterForQuery(status.getLogicalQuery());
 				Collection<Integer> toRemove = new ArrayList<Integer>();
 				toRemove.add(status.getLogicalQuery());
+				
 				queryPartController.unregisterLocalQueriesFromSharedQuery(sharedQueryID, toRemove);
 				Collection<Integer> remainingQueries = queryPartController.getLocalIds(sharedQueryID);
 				
@@ -100,27 +101,50 @@ public class ResponseHandler {
 				LOG.debug("Number of remaining Queries: {}",remainingQueries.size());
 				
 				
-				if(isMaster && remainingQueries.size()==0) {
-					
-					Collection<PeerID> otherPeers = queryPartController.getOtherPeers(sharedQueryID);
-					
-					//If new Master is in otherPeers list-> Remove new Master.
-					if(otherPeers.contains(status.getVolunteeringPeer())) {
-						otherPeers.remove(status.getVolunteeringPeer());
-					}
-					
-					List<String> otherPeerIDStrings = new ArrayList<String>();
-					
-					
-					for (PeerID peer : otherPeers) {
-						otherPeerIDStrings.add(peer.toString());
-					}
-					dispatcher.sendAddQueryForMasterQuery(status.getVolunteeringPeer(), pqlFromQueryPart, communicationListener, otherPeerIDStrings, sharedQueryID.toString());
-					break;
+				//3 different Cases:
+				// 1. Peer is Master and whole query is moved. -> New Master 
+				// 2. Peer is Master and part of query remains -> Stay Master
+				// 3. Peer is Slave
+				//
+				
+				if(isMaster && remainingQueries.size()<=0) {
+						
+						// 1. Peer is Master and whole query is moved. -> New Master 
+						
+						LOG.debug("Registering {} as new Master Peer.",status.getVolunteeringPeer());
+						//Deregister As Master, update other Peers List and send to new Master.
+						
+						Collection<PeerID> otherPeers = queryPartController.getOtherPeers(sharedQueryID);
+						
+						//If new Master is in otherPeers list-> Remove new Master.
+						if(otherPeers.contains(status.getVolunteeringPeer())) {
+							otherPeers.remove(status.getVolunteeringPeer());
+						}
+						
+						List<String> otherPeerIDStrings = new ArrayList<String>();
+						
+						for (PeerID peer : otherPeers) {
+							otherPeerIDStrings.add(peer.toString());
+						}
+						
+						dispatcher.sendAddQueryForMasterQuery(status.getVolunteeringPeer(), pqlFromQueryPart, communicationListener, otherPeerIDStrings, sharedQueryID.toString());
+						
+						
+				} else {
+						String masterPeerIDString = "";
+						// 2. Peer is Master and part of query remains -> Stay Master
+						if(isMaster) {
+							masterPeerIDString = OsgiServiceManager.getP2pNetworkManager().getLocalPeerID().toString();
+						}
+						else {
+						// 3. Peer is Slave
+							masterPeerIDString = queryPartController.getMasterForQuery(sharedQueryID).toString();
+						}
+						dispatcher.sendAddQuery(status.getVolunteeringPeer(),
+								pqlFromQueryPart, communicationListener,sharedQueryID.toString(),masterPeerIDString);
+						
 				}
 				
-				dispatcher.sendAddQuery(status.getVolunteeringPeer(),
-						pqlFromQueryPart, communicationListener);
 			}
 			break;
 

@@ -11,7 +11,7 @@ import org.slf4j.LoggerFactory;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicator;
 import de.uniol.inf.is.odysseus.p2p_new.PeerCommunicationException;
-import de.uniol.inf.is.odysseus.peer.loadbalancing.active.ActiveLoadBalancingActivator;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.active.OsgiServiceManager;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.common.IMessageDeliveryFailedListener;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.common.RepeatingMessageSend;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.movingstate.messages.MovingStateAbortMessage;
@@ -64,7 +64,7 @@ public class MovingStateMessageDispatcher {
 	public MovingStateMessageDispatcher(IPeerCommunicator peerCommunicator,
 			int lbProcessId) {
 		this.peerCommunicator = peerCommunicator;
-		this.session = ActiveLoadBalancingActivator.getActiveSession();
+		this.session = OsgiServiceManager.getActiveSession();
 		this.lbProcessId = lbProcessId;
 	}
 
@@ -235,11 +235,11 @@ public class MovingStateMessageDispatcher {
 	 *            messages.
 	 */
 	public void sendAddQuery(PeerID destinationPeer, String queryPartPql,
-			IMessageDeliveryFailedListener listener) {
+			IMessageDeliveryFailedListener listener,String sharedQueryID, String masterPeerID) {
 
 		LOG.debug("Send AddQuery");
 		MovingStateInstructionMessage message = MovingStateInstructionMessage
-				.createAddQueryMsg(lbProcessId, queryPartPql);
+				.createAddQueryMsg(lbProcessId, queryPartPql, sharedQueryID, masterPeerID);
 		this.currentJob = new RepeatingMessageSend(peerCommunicator, message,
 				destinationPeer);
 		currentJob.addListener(listener);

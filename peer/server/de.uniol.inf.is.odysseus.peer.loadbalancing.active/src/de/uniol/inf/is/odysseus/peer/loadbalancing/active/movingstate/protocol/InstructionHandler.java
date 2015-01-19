@@ -14,7 +14,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.IStatefulPO;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicator;
 import de.uniol.inf.is.odysseus.peer.distribute.IQueryPartController;
-import de.uniol.inf.is.odysseus.peer.loadbalancing.active.ActiveLoadBalancingActivator;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.active.OsgiServiceManager;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.common.LoadBalancingException;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.common.LoadBalancingHelper;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.common.LoadBalancingStatusCache;
@@ -107,22 +107,44 @@ public class InstructionHandler {
 					status.setInstalledQueries(queryIDs);
 					
 					int installedQuery = (int)(queryIDs.toArray()[0]);
-					ILogicalQuery query = ActiveLoadBalancingActivator.getExecutor().getLogicalQueryById(installedQuery, ActiveLoadBalancingActivator.getActiveSession());
+					ILogicalQuery query = OsgiServiceManager.getExecutor().getLogicalQueryById(installedQuery, OsgiServiceManager.getActiveSession());
+					IQueryPartController queryPartController = OsgiServiceManager.getQueryPartController();
 					
 					//Register as new Master when Query is Master Query
 					if(instruction.isMasterForQuery()) {
+						
 						LOG.debug("Received Query is Master Query");
+						
 						List<String> otherPeerIDStrings = instruction.getOtherPeerIDs();
 						String sharedQueryIDString = instruction.getSharedQueryID();
+						
 						LOG.debug("Received {} other peer IDs.",otherPeerIDStrings.size());
 						LOG.debug("Shared Query ID is {}",sharedQueryIDString);
 						Collection<PeerID> otherPeers = LoadBalancingHelper.toPeerIDCollection(otherPeerIDStrings);
 						ID sharedQueryID = LoadBalancingHelper.toID(sharedQueryIDString);
 						
-						IQueryPartController queryPartController = ActiveLoadBalancingActivator.getQueryPartController();
-						
-						
 						queryPartController.registerAsMaster(query,installedQuery, sharedQueryID, otherPeers);
+						
+						//TODO Notify other Peers.
+						
+					}
+					else {
+						LOG.debug("Received Query is Slave Query.");
+						ID sharedQueryID = LoadBalancingHelper.toID(instruction.getSharedQueryID());
+						PeerID masterPeerID = LoadBalancingHelper.toPeerID(instruction.getMasterPeerID());
+						
+						if(queryPartController.isSharedQueryKnown(sharedQueryID)) {
+							//No need to inform Master as he already knows this Peer, just add local Query to sharedID...
+							Collection<Integer> localQueriesForSharedQuery = queryPartController.getLocalIds(sharedQueryID);
+							localQueriesForSharedQuery.addAll(queryIDs);
+							queryPartController.registerAsSlave(localQueriesForSharedQuery, sharedQueryID, masterPeerID);
+						}
+						else {
+							queryPartController.registerAsSlave(queryIDs,sharedQueryID,masterPeerID);
+							//TODO Tell Master Peer.
+							
+						}
+						
 						
 					}
 					

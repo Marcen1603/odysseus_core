@@ -424,4 +424,46 @@ public class QueryPartController implements IPlanModificationListener,
 		return this.masterIDMap.get(sharedQueryID);
 	}
 
+	@Override
+	public PeerID addOtherPeer(ID sharedQueryID, PeerID peerID) {
+		Preconditions.checkNotNull(sharedQueryID,
+				"sharedQueryID must not be null!");
+		Preconditions.checkNotNull(peerID,
+				"peerID must not be null!");
+		
+		if(this.peerIDMap.containsKey(sharedQueryID)) {
+			Collection<PeerID> otherPeers = peerIDMap.get(sharedQueryID);
+			if(!otherPeers.contains(peerID)) {
+				otherPeers.add(peerID);
+				peerIDMap.put(sharedQueryID, otherPeers);
+			}
+		}
+		
+		return null;
+	}
+
+	@Override
+	public boolean isSharedQueryKnown(ID sharedQueryID) {
+		Preconditions.checkNotNull(sharedQueryID,
+				"sharedQueryID must not be null!");
+		return sharedQueryIDMap.containsKey(sharedQueryID);
+	}
+
+	@Override
+	public void removeOtherPeer(ID sharedQueryId, PeerID peerID) {
+		Preconditions.checkNotNull(sharedQueryId,
+				"sharedQueryID must not be null!");
+		Preconditions.checkNotNull(peerID,
+				"peerID must not be null!");
+		
+		if(this.peerIDMap.containsKey(sharedQueryId)) {
+			Collection<PeerID> otherPeers = peerIDMap.get(sharedQueryId);
+			if(!otherPeers.contains(peerID)) {
+				otherPeers.add(peerID);
+				peerIDMap.put(sharedQueryId, otherPeers);
+			}
+		}
+		
+	}
+
 }

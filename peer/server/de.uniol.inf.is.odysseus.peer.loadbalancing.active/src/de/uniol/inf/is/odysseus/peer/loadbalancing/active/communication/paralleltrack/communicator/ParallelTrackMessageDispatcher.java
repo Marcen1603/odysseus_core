@@ -10,7 +10,7 @@ import org.slf4j.LoggerFactory;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicator;
 import de.uniol.inf.is.odysseus.p2p_new.PeerCommunicationException;
-import de.uniol.inf.is.odysseus.peer.loadbalancing.active.ActiveLoadBalancingActivator;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.active.OsgiServiceManager;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.common.IMessageDeliveryFailedListener;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.common.LoadBalancingHelper;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.common.RepeatingMessageSend;
@@ -63,7 +63,7 @@ public class ParallelTrackMessageDispatcher {
 	 */
 	public ParallelTrackMessageDispatcher(IPeerCommunicator peerCommunicator, int lbProcessId) {
 		this.peerCommunicator = peerCommunicator;
-		this.session = ActiveLoadBalancingActivator.getActiveSession();
+		this.session = OsgiServiceManager.getActiveSession();
 		this.lbProcessId = lbProcessId;
 	}
 	

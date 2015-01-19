@@ -29,7 +29,7 @@ import de.uniol.inf.is.odysseus.p2p_new.physicaloperator.JxtaReceiverPO;
 import de.uniol.inf.is.odysseus.p2p_new.physicaloperator.JxtaSenderPO;
 import de.uniol.inf.is.odysseus.peer.distribute.ILogicalQueryPart;
 import de.uniol.inf.is.odysseus.peer.distribute.util.LogicalQueryHelper;
-import de.uniol.inf.is.odysseus.peer.loadbalancing.active.ActiveLoadBalancingActivator;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.active.OsgiServiceManager;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.common.IMessageDeliveryFailedListener;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.common.UpstreamConnection;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.common.LoadBalancingException;
@@ -286,7 +286,7 @@ public class ParallelTrackHelper {
 	 */
 	public static HashMap<String, String> relinkQueryPart(ILogicalQueryPart modifiedPart,ParallelTrackMasterStatus status) {
 		
-		IP2PNetworkManager p2pNetworkManager = ActiveLoadBalancingActivator.getP2pNetworkManager();
+		IP2PNetworkManager p2pNetworkManager = OsgiServiceManager.getP2pNetworkManager();
 		
 		LoadBalancingHelper.removeTopAOs(modifiedPart);
 		
