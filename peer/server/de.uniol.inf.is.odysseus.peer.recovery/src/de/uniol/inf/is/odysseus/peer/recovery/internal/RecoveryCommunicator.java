@@ -310,7 +310,7 @@ public class RecoveryCommunicator implements IRecoveryCommunicator {
 		}
 
 		// Send the add query message
-		AddQuerySender.getInstance().sendAddQueryPart(newPeer, pql, localQueryId, queryState, sharedQuery, master, masterId,
+		AddQuerySender.getInstance().sendAddQueryPart(newPeer, pql, localQueryId, queryState, sharedQuery, master, masterId, failedPeer,
 				recoveryStateIdentifier, subprocessID, cPeerCommunicator.get());
 	}
 

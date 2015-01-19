@@ -218,6 +218,7 @@ public class RecoveryConsole implements CommandProvider {
 		sb.append("	sendUpdateReceiver <PeerName from receiver> <PeerName from new sender> <pipeId> <sharedQueryId> - Send an updateReceiver-message to <PeerName from receiver>, so that this should receive the tuples fir pipe <pipeId> from the new sender <PeerName from new sender>.\n");
 		sb.append("	holdOn <PipeId> - Let this peer hold on\n");
 		sb.append("	goOn <PipeId> - Let this peer go on\n");
+		sb.append("	updateBI <failedPeerId> <pipeId> - Updates backup-info for other peer.");
 		return sb.toString();
 	}
 
@@ -315,8 +316,7 @@ public class RecoveryConsole implements CommandProvider {
 		// Search for backup-information
 		List<DDCKey> keys = ddc.getSortedKeys();
 		List<DDCKey> peerKeys = new ArrayList<DDCKey>();
-		
-		
+
 		for (DDCKey key : keys) {
 			if (key.toString().startsWith(BackupInformationAccess.KEY_PREFIX)) {
 				peerKeys.add(key);
@@ -418,6 +418,13 @@ public class RecoveryConsole implements CommandProvider {
 		} catch (Exception e) {
 			LOG.error("Error while goOn.", e);
 		}
+	}
+
+	public void _updateBI(CommandInterpreter ci) {
+		String failedPeer = ci.nextArgument();
+		String pipeId = ci.nextArgument();
+
+		backupInformationAccess.updateBackupInfoForPipe(failedPeer, pipeId);
 	}
 
 	/**

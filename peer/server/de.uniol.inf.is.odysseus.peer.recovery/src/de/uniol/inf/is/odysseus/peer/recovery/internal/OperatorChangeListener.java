@@ -24,11 +24,9 @@ import de.uniol.inf.is.odysseus.peer.recovery.IBackupInformationAccess;
 import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryCommunicator;
 import de.uniol.inf.is.odysseus.peer.recovery.util.RecoveryHelper;
 
-public class OperatorChangeListener implements IOperatorObserver,
-		IPlanModificationListener {
+public class OperatorChangeListener implements IOperatorObserver, IPlanModificationListener {
 
-	private static final Logger LOG = LoggerFactory
-			.getLogger(OperatorChangeListener.class);
+	private static final Logger LOG = LoggerFactory.getLogger(OperatorChangeListener.class);
 
 	private static IPQLGenerator pqlGenerator;
 	private static IRecoveryCommunicator recoveryCommunicator;
@@ -50,28 +48,24 @@ public class OperatorChangeListener implements IOperatorObserver,
 	}
 
 	// called by OSGi-DS
-	public static void bindRecoveryCommunicator(
-			IRecoveryCommunicator communicator) {
+	public static void bindRecoveryCommunicator(IRecoveryCommunicator communicator) {
 		recoveryCommunicator = communicator;
 		LOG.debug("Bound recoveryCommunicator.");
 	}
 
 	// called by OSGi-DS
-	public static void unbindRecoveryCommunicator(
-			IRecoveryCommunicator communicator) {
+	public static void unbindRecoveryCommunicator(IRecoveryCommunicator communicator) {
 		if (recoveryCommunicator == communicator) {
 			recoveryCommunicator = null;
 			LOG.debug("Unbound recoveryCommunicator.");
 		}
 	}
 
-	public static void bindBackupInformationAccess(
-			IBackupInformationAccess infoAccess) {
+	public static void bindBackupInformationAccess(IBackupInformationAccess infoAccess) {
 		backupInformationAccess = infoAccess;
 	}
 
-	public static void unbindBackupInformationAccess(
-			IBackupInformationAccess infoAccess) {
+	public static void unbindBackupInformationAccess(IBackupInformationAccess infoAccess) {
 		if (backupInformationAccess == infoAccess) {
 			backupInformationAccess = null;
 		}
@@ -109,8 +103,7 @@ public class OperatorChangeListener implements IOperatorObserver,
 
 		if (executor != null && executor == (IServerExecutor) serv) {
 			executor = null;
-			LOG.debug("Unbound {} as an executor.", serv.getClass()
-					.getSimpleName());
+			LOG.debug("Unbound {} as an executor.", serv.getClass().getSimpleName());
 		}
 
 	}
@@ -118,8 +111,7 @@ public class OperatorChangeListener implements IOperatorObserver,
 	/**
 	 * Gets the executor.
 	 * 
-	 * @return The bound executor or {@link Optional#absent()}, if there is none
-	 *         bound.
+	 * @return The bound executor or {@link Optional#absent()}, if there is none bound.
 	 */
 	public static IServerExecutor getExecutor() {
 		return executor;
@@ -151,8 +143,7 @@ public class OperatorChangeListener implements IOperatorObserver,
 		else if (observable instanceof JxtaSenderPO)
 			updateReceiver = false;
 
-		if (observable instanceof JxtaReceiverPO
-				|| observable instanceof JxtaSenderPO) {
+		if (observable instanceof JxtaReceiverPO || observable instanceof JxtaSenderPO) {
 			if (arg instanceof List) {
 				List<String> infoList = (List<String>) arg;
 				if (infoList.size() >= 3) {
@@ -161,25 +152,20 @@ public class OperatorChangeListener implements IOperatorObserver,
 					String pipeId = infoList.get(2);
 
 					// Find the query and get the local id
-					IPhysicalQuery query = RecoveryHelper
-							.findInstalledQueryWithJxtaOperator(
-									RecoveryHelper.convertToPipeId(pipeId),
-									updateReceiver);
+					IPhysicalQuery query = RecoveryHelper.findInstalledQueryWithJxtaOperator(
+							RecoveryHelper.convertToPipeId(pipeId), updateReceiver);
 					int queryId = query.getID();
 
 					// Old peer-id is replaced by the new one ...
 					String pql = backupInformationAccess.getBackupPQL(queryId);
-					String sharedQuery = backupInformationAccess
-							.getBackupSharedQuery(queryId);
-					boolean master = backupInformationAccess
-							.isBackupMaster(queryId);
+					String sharedQuery = backupInformationAccess.getBackupSharedQuery(queryId);
+					boolean master = backupInformationAccess.isBackupMaster(queryId);
 					String masterId = backupInformationAccess.getBackupMasterId(queryId);
 					String newPQL = pql.replace(oldPeerId, newPeerId);
 
 					// Save this new information
-					backupInformationAccess.saveBackupInformation(queryId,
-							newPQL, query.getState().toString(), sharedQuery,
-							master, masterId);
+					backupInformationAccess.saveBackupInformation(queryId, newPQL, query.getState().toString(),
+							sharedQuery, master, masterId);
 				}
 			}
 		}
@@ -189,14 +175,12 @@ public class OperatorChangeListener implements IOperatorObserver,
 	@Override
 	public void planModificationEvent(AbstractPlanModificationEvent<?> eventArgs) {
 		// The plan was modified
-		if (eventArgs.getEventType().equals(
-				PlanModificationEventType.QUERY_ADDED)) {
-			LOG.debug("A query was added - search for JxtaReceiverPO to observe.");
+		if (eventArgs.getEventType().equals(PlanModificationEventType.QUERY_ADDED)) {
+			LOG.debug("A query was added - search for JxtaReceiverPO or JxtaSenderPO to observe.");
 			if (eventArgs.getValue() instanceof PhysicalQuery) {
 				PhysicalQuery query = (PhysicalQuery) eventArgs.getValue();
-				// Search for the JXTA-Sender
-				JxtaReceiverPO receiver = RecoveryHelper
-						.findJxtaReceiverPO(query);
+				// Search for the JxtaReceiver and JxtaSender
+				JxtaReceiverPO receiver = RecoveryHelper.findJxtaReceiverPO(query);
 				if (receiver != null)
 					receiver.addObserver(this);
 

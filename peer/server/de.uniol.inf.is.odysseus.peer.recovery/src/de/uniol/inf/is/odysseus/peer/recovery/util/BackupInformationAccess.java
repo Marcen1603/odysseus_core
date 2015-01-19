@@ -29,21 +29,19 @@ import de.uniol.inf.is.odysseus.peer.recovery.IBackupInformationAccess;
 import de.uniol.inf.is.odysseus.peer.recovery.internal.BackupInfo;
 
 /**
- * This class gives you access to the backup-information which is saved in the
- * DDC.
+ * This class gives you access to the backup-information which is saved in the DDC.
  * 
  * @author Tobias Brandt
  *
  */
 public class BackupInformationAccess implements IBackupInformationAccess {
 
-	private static final Logger LOG = LoggerFactory
-			.getLogger(BackupInformationAccess.class);
+	private static final Logger LOG = LoggerFactory.getLogger(BackupInformationAccess.class);
 
 	private static IDistributedDataContainer ddc;
 	private static IP2PNetworkManager p2pNetworkManager;
 	private static IPeerDictionary peerDictionary;
-	
+
 	// The prefix which is before every key (peerId) to identify, that it's recovery backup information
 	public static String KEY_PREFIX = "rbi_";
 
@@ -76,19 +74,17 @@ public class BackupInformationAccess implements IBackupInformationAccess {
 	}
 
 	@Override
-	public void saveBackupInformation(int queryId, String pql, String state,
-			String sharedQuery, boolean master, String masterId) {
+	public void saveBackupInformation(int queryId, String pql, String state, String sharedQuery, boolean master,
+			String masterId) {
 		String localPeerId = p2pNetworkManager.getLocalPeerID().toString();
-		this.saveBackupInformation(localPeerId, queryId, pql, state,
-				sharedQuery, master, masterId);
+		this.saveBackupInformation(localPeerId, queryId, pql, state, sharedQuery, master, masterId);
 	}
 
 	@Override
-	public void saveBackupInformation(String peerId, int queryId, String pql,
-			String state, String sharedQuery, boolean master, String masterId) {
+	public void saveBackupInformation(String peerId, int queryId, String pql, String state, String sharedQuery,
+			boolean master, String masterId) {
 		LOG.debug("Save backup-info for query {}", queryId);
 
-		DDCKey key = getKeyForPeerId(peerId);
 		HashMap<Integer, BackupInfo> infoMap = getBackupInformation();
 
 		if (infoMap.containsKey(queryId)) {
@@ -105,12 +101,13 @@ public class BackupInformationAccess implements IBackupInformationAccess {
 			info.pql = pql;
 			info.state = state;
 			info.sharedQuery = sharedQuery;
-			infoMap.put(queryId, info);
 			info.master = master;
 			info.masterID = masterId;
+			infoMap.put(queryId, info);
 		}
 
 		// Save the information in the DDC
+		DDCKey key = getKeyForPeerId(peerId);
 		saveToDDC(infoMap, key);
 	}
 
@@ -123,8 +120,7 @@ public class BackupInformationAccess implements IBackupInformationAccess {
 	@Override
 	public void removeBackupInformation(String peerId, int queryId) {
 		String peerName = peerDictionary.getRemotePeerName(peerId);
-		LOG.debug("Remove backup-info for query {} for peer {}", queryId,
-				peerName);
+		LOG.debug("Remove backup-info for query {} for peer {}", queryId, peerName);
 
 		DDCKey key = getKeyForPeerId(peerId);
 		HashMap<Integer, BackupInfo> infoMap = getBackupInformation(peerId);
@@ -142,6 +138,27 @@ public class BackupInformationAccess implements IBackupInformationAccess {
 		} else {
 			// We still have information about this peer -> keep it, save it
 			saveToDDC(infoMap, key);
+		}
+	}
+
+	@Override
+	public void updateBackupInfoForPipe(String failedPeer, String pipeId) {
+		String localPeerId = p2pNetworkManager.getLocalPeerID().toString();
+
+		HashMap<Integer, BackupInfo> infoMap = getBackupInformation(failedPeer);
+
+		for (int key : infoMap.keySet()) {
+			BackupInfo info = infoMap.get(key);
+			// Check, if the pipeId is in the PQL. If it's the case, replace the old peerId (from the failed peer) with
+			// our peerId
+			if (info.pql.contains(pipeId) && info.pql.contains(failedPeer)) {
+				LOG.debug("Replaced peerId {} in Backup-Store.", failedPeer);
+				info.pql = info.pql.replaceAll(failedPeer, localPeerId);
+				
+				// Save it to the DDC
+				DDCKey ddcKey = getKeyForPeerId(failedPeer);
+				saveToDDC(infoMap, ddcKey);
+			}
 		}
 	}
 
@@ -224,7 +241,7 @@ public class BackupInformationAccess implements IBackupInformationAccess {
 		}
 		return true;
 	}
-	
+
 	@Override
 	public String getBackupMasterId(int queryId) {
 		HashMap<Integer, BackupInfo> infoMap = getBackupInformation();
@@ -237,8 +254,7 @@ public class BackupInformationAccess implements IBackupInformationAccess {
 
 	@Override
 	public HashMap<Integer, BackupInfo> getBackupInformation() {
-		return getBackupInformation(p2pNetworkManager.getLocalPeerID()
-				.toString());
+		return getBackupInformation(p2pNetworkManager.getLocalPeerID().toString());
 	}
 
 	/**
@@ -250,11 +266,9 @@ public class BackupInformationAccess implements IBackupInformationAccess {
 	 * @throws IOException
 	 * @throws ClassNotFoundException
 	 */
-	private static Object fromString(String s) throws IOException,
-			ClassNotFoundException {
+	private static Object fromString(String s) throws IOException, ClassNotFoundException {
 		byte[] data = Base64Coder.decode(s);
-		ObjectInputStream ois = new ObjectInputStream(new ByteArrayInputStream(
-				data));
+		ObjectInputStream ois = new ObjectInputStream(new ByteArrayInputStream(data));
 		Object o = ois.readObject();
 		ois.close();
 		return o;
@@ -272,15 +286,13 @@ public class BackupInformationAccess implements IBackupInformationAccess {
 	private static void distributeDDC() {
 		DistributedDataContainerAdvertisement ddcAdvertisement = DistributedDataContainerAdvertisementGenerator
 				.getInstance().generateChanges();
-		DistributedDataContainerAdvertisementSender.getInstance()
-				.publishDDCAdvertisement(ddcAdvertisement);
+		DistributedDataContainerAdvertisementSender.getInstance().publishDDCAdvertisement(ddcAdvertisement);
 	}
 
 	private static void saveToDDC(Serializable o, DDCKey key) {
 		try {
 			String serializedList = toString(o);
-			DDCEntry newListEntry = new DDCEntry(key, serializedList,
-					System.currentTimeMillis(), false);
+			DDCEntry newListEntry = new DDCEntry(key, serializedList, System.currentTimeMillis(), false);
 			ddc.add(newListEntry);
 			distributeDDC();
 		} catch (IOException e) {
@@ -288,10 +300,11 @@ public class BackupInformationAccess implements IBackupInformationAccess {
 			e.printStackTrace();
 		}
 	}
-	
+
 	/**
 	 * 
-	 * @param peerId The peerId you want to have the backup-information-key for
+	 * @param peerId
+	 *            The peerId you want to have the backup-information-key for
 	 * @return the key for this peer
 	 */
 	private static DDCKey getKeyForPeerId(String peerId) {

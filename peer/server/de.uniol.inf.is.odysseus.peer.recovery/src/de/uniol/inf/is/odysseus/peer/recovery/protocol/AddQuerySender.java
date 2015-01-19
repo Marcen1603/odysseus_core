@@ -152,7 +152,7 @@ public class AddQuerySender extends AbstractRepeatingMessageSender {
 	 */
 	public boolean sendAddQueryPart(PeerID destination, String pql,
 			int localQuery, QueryState queryState, ID sharedQuery,
-			boolean master, PeerID masterId, java.util.UUID processId,
+			boolean master, PeerID masterId, PeerID failedPeerId, java.util.UUID processId,
 			java.util.UUID subprocessId, IPeerCommunicator communicator) {
 		Preconditions.checkNotNull(destination);
 		Preconditions.checkNotNull(pql);
@@ -161,7 +161,7 @@ public class AddQuerySender extends AbstractRepeatingMessageSender {
 		Preconditions.checkNotNull(communicator);
 
 		RecoveryAddQueryMessage message = new RecoveryAddQueryMessage(pql,
-				localQuery, queryState, sharedQuery, master, masterId,
+				localQuery, queryState, sharedQuery, master, masterId, failedPeerId,
 				processId, subprocessId);
 		this.mSentMessages.put(message.getUUID(), message);
 		return repeatingSend(destination, message, message.getUUID(),

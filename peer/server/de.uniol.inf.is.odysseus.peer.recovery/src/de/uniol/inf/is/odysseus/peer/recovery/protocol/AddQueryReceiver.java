@@ -56,7 +56,7 @@ public class AddQueryReceiver extends AbstractRepeatingMessageReceiver {
 	 * The single instance of this class.
 	 */
 	private static AddQueryReceiver cInstance;
-	
+
 	// Maximum number of threads in the thread pool.
 	private final static int NUM_THREADS = 4;
 
@@ -285,9 +285,11 @@ public class AddQueryReceiver extends AbstractRepeatingMessageReceiver {
 			RecoveryAddQueryResponseMessage response = null;
 			try {
 				addQuery(addMessage.getPQLCode(), addMessage.getLocalQueryId(), addMessage.getQueryState(),
-						addMessage.getSharedQueryId(), addMessage.isMaster(),addMessage.getMasterId());
+						addMessage.getSharedQueryId(), addMessage.isMaster(), addMessage.getMasterId(),
+						addMessage.getFailedPeerId());
 				response = new RecoveryAddQueryResponseMessage(addMessage.getUUID());
 			} catch (Exception e) {
+				LOG.error("Could not install query from add query message!", e);
 				response = new RecoveryAddQueryResponseMessage(addMessage.getUUID(), e.getMessage());
 			}
 
@@ -307,8 +309,8 @@ public class AddQueryReceiver extends AbstractRepeatingMessageReceiver {
 	 * @param sharedQueryId
 	 *            The id of the shared query where this PQL belongs to
 	 */
-	private static void addQuery(String pql, int localQueryId, QueryState queryState, ID sharedQuery, boolean master, PeerID masterPeer)
-			throws Exception {
+	private static void addQuery(String pql, int localQueryId, QueryState queryState, ID sharedQuery, boolean master,
+			PeerID masterPeer, PeerID failedPeerId) throws Exception {
 		Preconditions.checkNotNull(pql);
 
 		if (!cExecutor.isPresent()) {
@@ -327,15 +329,17 @@ public class AddQueryReceiver extends AbstractRepeatingMessageReceiver {
 		LOG.debug("Installed query for recovery.");
 		if (master && sharedQuery != null) {
 			Collection<PeerID> otherPeers = determineOtherPeers(sharedQuery);
+			// TODO I think this is not correct. The "localQueryId" is the localQueryId on the OLD peer, not in this
+			// peer (T.B.)
 			cController.get().registerAsMaster(
 					cExecutor.get().getLogicalQueryById(installedQueries.iterator().next(),
 							RecoveryCommunicator.getActiveSession()), localQueryId, sharedQuery, otherPeers);
 		} else if (sharedQuery != null) {
-			cController.get().registerAsSlave(installedQueries, sharedQuery,masterPeer);
+			cController.get().registerAsSlave(installedQueries, sharedQuery, masterPeer);
 		}
 
 		ExecutorService service = Executors.newFixedThreadPool(NUM_THREADS);
-		
+
 		// Call "receiveFromNewPeer" on the subsequent receiver so that that
 		// peer creates a socket-connection to us
 		IServerExecutor executor = cExecutor.get();
@@ -359,14 +363,24 @@ public class AddQueryReceiver extends AbstractRepeatingMessageReceiver {
 							final PeerID finalOwnPeer = ownPeerId;
 							final PipeID finalPipe = pipe;
 							final int finalLocalQueryId = localQueryId;
-							
+
 							service.submit(new Runnable() {
-						        public void run() {
-						        	// I want to tell the sender on the other side that he has to update his peerId he receives from
-						        	cRecoveryCommunicator.get().sendUpdateReceiverMessage(finalPeer, finalOwnPeer, finalPipe, finalLocalQueryId);
-						        }
-						    });
-							
+								public void run() {
+									// I want to tell the sender on the other side that he has to update his peerId he
+									// receives from
+									cRecoveryCommunicator.get().sendUpdateReceiverMessage(finalPeer, finalOwnPeer,
+											finalPipe, finalLocalQueryId);
+
+								}
+							});
+							// TODO Test this - just experimental
+							// We will, in every case, change the backup-information of that other peer. The
+							// other one will do this, too, if he still exists. This is for the case, that the
+							// other peer was the failed peer and can't update the JxtaReceiverPO or the
+							// backup-information.
+
+							backupInformationAccess.updateBackupInfoForPipe(failedPeerId.toString(), finalPipe.toString());
+
 						}
 
 					} else if (operator instanceof JxtaReceiverPO) {
@@ -379,24 +393,26 @@ public class AddQueryReceiver extends AbstractRepeatingMessageReceiver {
 						PeerID ownPeerId = cP2PNetworkManager.get().getLocalPeerID();
 
 						if (peer != null && pipe != null) {
-							
+
 							final PeerID finalPeer = peer;
 							final PeerID finalOwnPeer = ownPeerId;
 							final PipeID finalPipe = pipe;
 							final int finalLocalQueryId = localQueryId;
-							
-						    service.submit(new Runnable() {
-						        public void run() {
-						        	// I want to tell the sender on the other side that he has to update his peerId he sends to
-									cRecoveryCommunicator.get().sendUpdateSenderMessage(finalPeer, finalOwnPeer, finalPipe, finalLocalQueryId);
-						        }
-						    });
-						    service.submit(new Runnable() {
-						        public void run() {
-						        	// And now he can GO ON
+
+							service.submit(new Runnable() {
+								public void run() {
+									// I want to tell the sender on the other side that he has to update his peerId he
+									// sends to
+									cRecoveryCommunicator.get().sendUpdateSenderMessage(finalPeer, finalOwnPeer,
+											finalPipe, finalLocalQueryId);
+								}
+							});
+							service.submit(new Runnable() {
+								public void run() {
+									// And now he can GO ON
 									cRecoveryCommunicator.get().sendGoOnMessage(finalPeer, finalPipe);
-						        }
-						    });
+								}
+							});
 						}
 					}
 				}
