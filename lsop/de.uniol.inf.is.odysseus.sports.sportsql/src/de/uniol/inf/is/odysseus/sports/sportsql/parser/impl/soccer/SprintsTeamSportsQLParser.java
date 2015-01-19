@@ -37,6 +37,9 @@ import de.uniol.inf.is.odysseus.sports.sportsql.parser.buildhelper.OperatorBuild
 public class SprintsTeamSportsQLParser implements ISportsQLParser {
 	
 	private static String ATTRIBUTE_SPRINTS_COUNT = "count";
+	
+	private static final int HEARTBEAT = 5000;
+
 
 	@Override
 	public ILogicalQuery parse(ISession session, SportsQLQuery sportsQL)
@@ -47,15 +50,15 @@ public class SprintsTeamSportsQLParser implements ISportsQLParser {
 		ILogicalOperator operator = parser.getSprints(session, sportsQL,
 				allOperators);
 
-		// 8. Clear Endtimestamp
+		// 9. Clear Endtimestamp
 		TimestampAO timestampAO = OperatorBuildHelper.clearEndTimestamp(operator);
 		allOperators.add(timestampAO);
 
-		// 9. Heatbeat every 5 seconds
-		AssureHeartbeatAO assureHeartbeatAO = OperatorBuildHelper.createHeartbeat(5000, timestampAO);
+		// 10. Assure heatbeat every x seconds
+		AssureHeartbeatAO assureHeartbeatAO = OperatorBuildHelper.createHeartbeat(HEARTBEAT, timestampAO);
 		allOperators.add(assureHeartbeatAO);
 
-		// 10. Calulate sprints count
+		// 11. Calculate sprints count
 		List<String> resultAggregateFunctions = new ArrayList<String>();
 		resultAggregateFunctions.add("COUNT");
 

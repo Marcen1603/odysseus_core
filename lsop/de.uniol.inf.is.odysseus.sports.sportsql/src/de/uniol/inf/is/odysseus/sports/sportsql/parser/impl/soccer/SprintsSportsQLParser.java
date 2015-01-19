@@ -33,8 +33,8 @@ import de.uniol.inf.is.odysseus.sports.sportsql.parser.buildhelper.SportsQLParam
 public class SprintsSportsQLParser  {
 	
 	// in milliseconds
-	private static long MEASSURE_INTERVALL = 1000;
-	private static long MEASSURE_INTERVALL_ADVANCE = 200;
+	private static long MEASURE_INTERVALL = 1000;
+	private static long MEASURE_INTERVALL_ADVANCE = 200;
 	private static int SPRINT_MIN_DISTANCE = 8;
 	private static int SPRINT_SPEED = 24;
 	
@@ -42,7 +42,6 @@ public class SprintsSportsQLParser  {
 	private static String ATTRIBUTE_MIN_TS = "min_ts";
 	private static String ATTRIBUTE_MAX_TS = "max_ts";
 	private static String ATTRIBUTE_AVG_SPEED = "avg_speed";
-
 	public static String ATTRIBUTE_SPEED = "speed";
 	public static String ATTRIBUTE_SPRINT_DISTANCE = "sprint_distance";
 	public static String ATTRIBUTE_AVG_DISTANCE = "avg_distance";
@@ -72,7 +71,7 @@ public class SprintsSportsQLParser  {
 				spaceParameter, false, gameTimeSelect);
 		allOperators.add(spaceSelect);
 
-		// 3. Project necessary attributes : entity_id, team_id, velocity
+		// 3. Project necessary attributes: entity_id, team_id, velocity, timestamp
 		List<String> streamProjectAttributes = new ArrayList<String>();
 		streamProjectAttributes.add(IntermediateSchemaAttributes.ENTITY_ID);
 		streamProjectAttributes.add(IntermediateSchemaAttributes.TEAM_ID);
@@ -83,11 +82,11 @@ public class SprintsSportsQLParser  {
 				streamProjectAttributes, spaceSelect);
 		allOperators.add(streamProject);
 
-		// 3. TimeWindow 1 second
-		TimeWindowAO timeWindow = OperatorBuildHelper.createTimeWindowAOWithAdvance(MEASSURE_INTERVALL, MEASSURE_INTERVALL_ADVANCE,"MILLISECONDS", streamProject);
+		// 3. TimeWindow with size = MEASSURE_INTERVALL and advance = MEASSURE_INTERVALL_ADVANCE
+		TimeWindowAO timeWindow = OperatorBuildHelper.createTimeWindowAOWithAdvance(MEASURE_INTERVALL, MEASURE_INTERVALL_ADVANCE,"MILLISECONDS", streamProject);
 		allOperators.add(timeWindow);
 
-		// 4. Aggregate to calculate average velocity of 1 second
+		// 4. Aggregate to calculate average velocity of the time window
 		List<String> aggregateFunctions = new ArrayList<String>();
 		aggregateFunctions.add("AVG");
 		aggregateFunctions.add("MIN");
@@ -166,7 +165,7 @@ public class SprintsSportsQLParser  {
 				startPredicate, endPredicate, toKmhMap);
 		allOperators.add(coalesceAO);
 		
-		// 7		
+		// 7. Calculate sprint distance		
 		ArrayList<SDFExpressionParameter> resultMapExpressions = new ArrayList<SDFExpressionParameter>();
 		resultMapExpressions.add(OperatorBuildHelper.createExpressionParameter(IntermediateSchemaAttributes.ENTITY_ID, coalesceAO));
 		resultMapExpressions.add(OperatorBuildHelper.createExpressionParameter(IntermediateSchemaAttributes.TEAM_ID, coalesceAO));
@@ -177,7 +176,7 @@ public class SprintsSportsQLParser  {
 		MapAO resultMap = OperatorBuildHelper.createMapAO(resultMapExpressions,	coalesceAO, 0, 0, false);
 		allOperators.add(resultMap);
 		
-		// 8
+		// 8. Select sprints with distance > SPRINT_MIN_DISTANCE
 		String selectPredicate = ATTRIBUTE_SPRINT_DISTANCE+">"+SPRINT_MIN_DISTANCE;
 		SelectAO selectAO = OperatorBuildHelper.createSelectAO(selectPredicate, resultMap);
 		allOperators.add(resultMap);

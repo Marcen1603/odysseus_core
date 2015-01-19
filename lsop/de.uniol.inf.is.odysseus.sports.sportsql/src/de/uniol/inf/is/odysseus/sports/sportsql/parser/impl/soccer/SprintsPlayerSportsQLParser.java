@@ -36,6 +36,8 @@ import de.uniol.inf.is.odysseus.sports.sportsql.parser.buildhelper.OperatorBuild
 		@SportsQLParameter(name = "space", parameterClass = SportsQLSpaceParameter.class, mandatory = false) })
 public class SprintsPlayerSportsQLParser implements ISportsQLParser {
 	
+	private static final int HEARTBEAT = 5000;
+	
 
 	@Override
 	public ILogicalQuery parse(ISession session, SportsQLQuery sportsQL)
@@ -46,16 +48,16 @@ public class SprintsPlayerSportsQLParser implements ISportsQLParser {
 		ILogicalOperator operator = parser.getSprints(session, sportsQL,
 				allOperators);
 
-		// 8. Clear Endtimestamp
+		// 9. Clear Endtimestamp
 		TimestampAO timestampAO = OperatorBuildHelper.clearEndTimestamp(operator);
 		allOperators.add(timestampAO);
 
-		// 9. Heatbeat every 5 seconds
+		// 10. Assure heatbeat every x seconds
 		AssureHeartbeatAO assureHeartbeatAO = OperatorBuildHelper
-				.createHeartbeat(5000, timestampAO);
+				.createHeartbeat(HEARTBEAT, timestampAO);
 		allOperators.add(assureHeartbeatAO);
 
-		// 10. Calulate sprints count, average sprint distance and max speed
+		// 111. Calculate sprints count, average sprint distance and max speed
 		List<String> resultAggregateFunctions = new ArrayList<String>();
 		resultAggregateFunctions.add("COUNT");
 		resultAggregateFunctions.add("AVG");
@@ -84,7 +86,7 @@ public class SprintsPlayerSportsQLParser implements ISportsQLParser {
 		allOperators.add(resultAggregate);
 
 		
-		// 11. Ignore referee
+		// 12. Ignore referee
 		String selectAOPredicate = IntermediateSchemaAttributes.TEAM_ID + " = " + SoccerDDCAccess.getLeftGoalTeamId() + " OR " + IntermediateSchemaAttributes.TEAM_ID + " = " +SoccerDDCAccess.getRightGoalTeamId();
 		SelectAO selectAO = OperatorBuildHelper.createSelectAO(selectAOPredicate, resultAggregate);
 
