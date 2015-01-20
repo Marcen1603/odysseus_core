@@ -2,6 +2,7 @@ package de.uniol.inf.is.odysseus.core.server.logicaloperator;
 
 import java.util.List;
 
+import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 
 import de.uniol.inf.is.odysseus.core.datahandler.TupleDataHandler;
@@ -106,6 +107,14 @@ public class CSVFileSink extends AbstractSenderAO {
 	@Parameter(type = IntegerParameter.class, name = AbstractFileHandler.WRITEDELAYSIZE, optional = true, doc = "Write only every nth element")
 	public void setWriteDelaySize(int value){
 		addOption(AbstractFileHandler.WRITEDELAYSIZE, ""+value);
+	}
+	
+	public Integer getWriteDelaySize() {
+		String valueStr = getOption(AbstractFileHandler.WRITEDELAYSIZE);
+		if( Strings.isNullOrEmpty(valueStr)) {
+			return null;
+		}
+		return Integer.valueOf(valueStr);
 	}
 	
 	@Parameter(type = BooleanParameter.class, name = AbstractCSVHandler.CSV_WRITE_METADATA, optional = true, doc = "Write metadata.")
