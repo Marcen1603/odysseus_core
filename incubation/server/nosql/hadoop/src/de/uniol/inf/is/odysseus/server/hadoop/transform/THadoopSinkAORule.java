@@ -1,25 +1,25 @@
-package de.uniol.inf.is.odysseus.server.nosql.elasticsearch.transform;
+package de.uniol.inf.is.odysseus.server.hadoop.transform;
 
+import de.uniol.inf.is.odysseus.server.hadoop.logicaloperator.HadoopSinkAO;
+import de.uniol.inf.is.odysseus.server.hadoop.physicaloperator.HadoopSinkPO;
 import de.uniol.inf.is.odysseus.server.nosql.base.logicaloperator.AbstractNoSQLSinkAO;
 import de.uniol.inf.is.odysseus.server.nosql.base.physicaloperator.AbstractNoSQLSinkPO;
 import de.uniol.inf.is.odysseus.server.nosql.base.transform.AbstractTNoSQLSinkAORule;
-import de.uniol.inf.is.odysseus.server.nosql.elasticsearch.logicaloperator.ElasticSearchSinkAO;
-import de.uniol.inf.is.odysseus.server.nosql.elasticsearch.physicaloperator.ElasticSearchSinkPO;
 
 /**
  * Erstellt von RoBeaT
- * Date: 16.12.2014
+ * Date: 14.01.2015
  */
 @SuppressWarnings("UnusedDeclaration")
-public class TElasticSearchSinkAORule extends AbstractTNoSQLSinkAORule<ElasticSearchSinkAO> {
+public class THadoopSinkAORule extends AbstractTNoSQLSinkAORule<HadoopSinkAO> {
 
     @Override
     protected Class<? extends AbstractNoSQLSinkAO> getLogicalOperatorClass() {
-        return ElasticSearchSinkAO.class;
+        return HadoopSinkAO.class;
     }
 
     @Override
     protected Class<? extends AbstractNoSQLSinkPO> getPhysicalOperatorClass() {
-        return ElasticSearchSinkPO.class;
+        return HadoopSinkPO.class;
     }
 }

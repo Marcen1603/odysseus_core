@@ -29,6 +29,7 @@ public abstract class AbstractTNoSQLSinkAORule<A extends AbstractNoSQLSinkAO> ex
 
         try {
             // creates a new instance of the specified physicalOperatorClass with the logicalOperatorClass as parameter
+            // noinspection unchecked
             physical = (AbstractNoSQLSinkPO) physicalOperatorClass.getDeclaredConstructor(logicalOperatorClass).newInstance(logicalOperator);
         } catch (Exception e) {
            throw new RuleException(e);
@@ -37,9 +38,9 @@ public abstract class AbstractTNoSQLSinkAORule<A extends AbstractNoSQLSinkAO> ex
         defaultExecute(logicalOperator, physical, config, true, true);
     }
 
-    protected abstract Class getLogicalOperatorClass();
+    protected abstract Class<? extends AbstractNoSQLSinkAO> getLogicalOperatorClass();
 
-    protected abstract Class getPhysicalOperatorClass();
+    protected abstract Class<? extends AbstractNoSQLSinkPO> getPhysicalOperatorClass();
 
     @Override
     public boolean isExecutable(A operator, TransformationConfiguration config) {
@@ -57,6 +58,7 @@ public abstract class AbstractTNoSQLSinkAORule<A extends AbstractNoSQLSinkAO> ex
         return logicalOperatorClass.getSimpleName() + " -> " + physicalOperatorClass.getSimpleName();
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public Class<? super A> getConditionClass() {
         return logicalOperatorClass;

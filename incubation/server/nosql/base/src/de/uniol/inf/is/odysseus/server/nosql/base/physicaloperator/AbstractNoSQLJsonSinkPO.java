@@ -33,6 +33,12 @@ public abstract class AbstractNoSQLJsonSinkPO extends AbstractNoSQLSinkPO {
         for (int i = 0, attributesSize = attributes.size(); i < attributesSize; i++) {
             SDFAttribute attribute = attributes.get(i);
             attributeNames[i] = attribute.getAttributeName();
+
+            System.out.println(attribute.getDatatype().getQualName());
+            System.out.println(attribute.getDatatype().getURI());
+            System.out.println(attribute.getDatatype().getURIWithoutQualName());
+
+            System.out.println("----------------------------------------------------------");
         }
 
         process_open_connection();

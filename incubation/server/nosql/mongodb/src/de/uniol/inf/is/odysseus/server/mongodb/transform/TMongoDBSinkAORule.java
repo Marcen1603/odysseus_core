@@ -2,6 +2,8 @@ package de.uniol.inf.is.odysseus.server.mongodb.transform;
 
 import de.uniol.inf.is.odysseus.server.mongodb.logicaloperator.MongoDBSinkAO;
 import de.uniol.inf.is.odysseus.server.mongodb.physicaloperator.MongoDBSinkPO;
+import de.uniol.inf.is.odysseus.server.nosql.base.logicaloperator.AbstractNoSQLSinkAO;
+import de.uniol.inf.is.odysseus.server.nosql.base.physicaloperator.AbstractNoSQLSinkPO;
 import de.uniol.inf.is.odysseus.server.nosql.base.transform.AbstractTNoSQLSinkAORule;
 
 /**
@@ -12,12 +14,12 @@ import de.uniol.inf.is.odysseus.server.nosql.base.transform.AbstractTNoSQLSinkAO
 public class TMongoDBSinkAORule extends AbstractTNoSQLSinkAORule<MongoDBSinkAO> {
 
     @Override
-    protected Class getLogicalOperatorClass() {
+    protected Class<? extends AbstractNoSQLSinkAO> getLogicalOperatorClass() {
         return MongoDBSinkAO.class;
     }
 
     @Override
-    protected Class getPhysicalOperatorClass() {
+    protected Class<? extends AbstractNoSQLSinkPO> getPhysicalOperatorClass() {
         return MongoDBSinkPO.class;
     }
 }

@@ -32,6 +32,7 @@ public abstract class AbstractNoSQLSinkPO extends AbstractSink<Tuple<ITimeInterv
 
     @Override
     protected void process_open() throws OpenFailedException {
+        // just necessary until connection-handling is implemented
         process_open_connection();
     }
 
@@ -48,8 +49,6 @@ public abstract class AbstractNoSQLSinkPO extends AbstractSink<Tuple<ITimeInterv
     protected abstract void process_open_connection() throws OpenFailedException;
 
     protected abstract void process_next_tuple_to_write(List<Tuple<ITimeInterval>> tupleToWrite);
-
-
 
     private class BatchSizeTimerTaskImpl implements BatchSizeTimerTask<Tuple<ITimeInterval>> {
 

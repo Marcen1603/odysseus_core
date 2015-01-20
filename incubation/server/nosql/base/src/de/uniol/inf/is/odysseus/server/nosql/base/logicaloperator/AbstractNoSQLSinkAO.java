@@ -42,7 +42,7 @@ public abstract class AbstractNoSQLSinkAO extends UnaryLogicalOp {
 	@Parameter(name = "BATCHSIZE", type = IntegerParameter.class, optional = true, doc = "Max size of the batch")
 	public void setBatchSize(int batchSize) {
 		if(batchSize <= 0){
-			LOG.warn("Given batchsize was {}. Using default batchsize of {} instead", DEFAULT_BATCHSIZE, batchSize);
+			LOG.warn("Given batchsize was {}. Using default batchsize of {} instead", batchSize, DEFAULT_BATCHSIZE);
 			batchSize = DEFAULT_BATCHSIZE;
 		}
 		this.batchSize = batchSize;
@@ -51,7 +51,7 @@ public abstract class AbstractNoSQLSinkAO extends UnaryLogicalOp {
 	@Parameter(name = "BATCHTIMEOUT", type = IntegerParameter.class, optional = true, doc = "Max expired time in ms before flushing queue")
 	public void setBatchTimeout(int batchTimeout) {
 		if(batchTimeout <= 0){
-			LOG.warn("Given batchTimeout was {}ms. Using default batchTimeout of {}ms instead", DEFAULT_BATCHTIMEOUT, batchTimeout);
+			LOG.warn("Given batchTimeout was {}ms. Using default batchTimeout of {}ms instead", batchTimeout, DEFAULT_BATCHTIMEOUT);
 			batchTimeout = DEFAULT_BATCHTIMEOUT;
 		}
 		this.batchTimeout = batchTimeout;

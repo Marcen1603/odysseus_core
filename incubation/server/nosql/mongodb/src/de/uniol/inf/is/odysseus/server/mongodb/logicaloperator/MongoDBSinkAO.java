@@ -23,6 +23,7 @@ public class MongoDBSinkAO extends AbstractNoSQLSinkAO {
 	private String mongoDBName;
     private String collectionName;
 
+    @SuppressWarnings("UnusedDeclaration")
     public MongoDBSinkAO(){
         super();
     }
