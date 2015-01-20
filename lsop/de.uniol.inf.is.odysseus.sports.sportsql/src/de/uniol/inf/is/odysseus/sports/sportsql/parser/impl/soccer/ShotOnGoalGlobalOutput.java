@@ -61,6 +61,11 @@ public class ShotOnGoalGlobalOutput {
 	 * The maximal shot duration [sec]
 	 */
 	public static final String MAX_SHOT_DURATION = "1.5";
+	
+	/**
+	 * The maximal timeshift to join the active ball to shot-data after the shot [sec]
+	 */
+	public static final String MAX_TIMESHIFT_SHOT_BALL_JOIN = "1.0";
 
 	/**
 	 * The minimal length of a shot [mm]
@@ -71,6 +76,11 @@ public class ShotOnGoalGlobalOutput {
 	 * The minimal acceleration of balls, being shot [m/s�] and [micro m / s�]
 	 */
 	public static final String MIN_ACCELERATION = "55000000.0";
+	
+	/**
+	 * gravity puffer in height-forcast[mm]
+	 */
+	public final static String GRAVITY_HEIGHT_PUFFER = "1000.0";
 
 	
 	// Attributes
@@ -380,7 +390,7 @@ public class ShotOnGoalGlobalOutput {
 				.createRelationalPredicate(IntermediateSchemaAttributes.TS + " >= " + ATTRIBUTE_SHOT_TS);
 		RelationalPredicate joinPredicate2 = OperatorBuildHelper
 				.createRelationalPredicate(IntermediateSchemaAttributes.TS + " < " + ATTRIBUTE_SHOT_TS + " + ("
-						+ MAX_SHOT_DURATION + " * " + TimeUnitHelper.getBTUtoSecondsFactor(TimeUnit.valueOf(AbstractSportsDDCAccess
+						+ MAX_TIMESHIFT_SHOT_BALL_JOIN + " * " + TimeUnitHelper.getBTUtoSecondsFactor(TimeUnit.valueOf(AbstractSportsDDCAccess
 								.getBasetimeunit().toLowerCase())) + ")");
 		RelationalPredicate joinPredicate3 = OperatorBuildHelper
 				.createRelationalPredicate("sqrt((" + IntermediateSchemaAttributes.X + " - " + ATTRIBUTE_SHOT_X + ")^2 + (" + IntermediateSchemaAttributes.Y + " - " + ATTRIBUTE_SHOT_Y + ")^2) >= "
@@ -394,7 +404,7 @@ public class ShotOnGoalGlobalOutput {
 		IPredicate joinAndPredicate = OperatorBuildHelper
 				.createAndPredicate(joinPredicates);
 		JoinAO closestBallActivePlayerJoin = OperatorBuildHelper.createJoinAO(
-				joinAndPredicate, "ONE_MANY", clostestPlayer, activeBall);
+				joinAndPredicate, "MANY_MANY", clostestPlayer, activeBall);
 		closestBallActivePlayerJoin.setName("closestBallActivePlayerJoin");
 
 		allOperators.add(closestBallActivePlayerJoin);
@@ -429,7 +439,7 @@ public class ShotOnGoalGlobalOutput {
 						closestBallActivePlayerJoin);
 		SDFExpressionParameter sdfParam11 = OperatorBuildHelper
 				.createExpressionParameter(
-						"eif(" + ATTRIBUTE_SHOT_TS + " = __last_1." + ATTRIBUTE_SHOT_TS + ", 1, 0)", ATTRIBUTE_SAME_SHOT_TS,
+						"eif(" + ATTRIBUTE_SHOT_TS + " <= __last_1." + ATTRIBUTE_SHOT_TS + " OR " + ATTRIBUTE_SHOT_TS + " <= __last_2." + ATTRIBUTE_SHOT_TS + " OR " + ATTRIBUTE_SHOT_TS + " <= __last_3." + ATTRIBUTE_SHOT_TS + " OR " + ATTRIBUTE_SHOT_TS + " <= __last_4." + ATTRIBUTE_SHOT_TS + ", 1, 0)", ATTRIBUTE_SAME_SHOT_TS,
 						closestBallActivePlayerJoin);
 
 		durationLengthStatemapParams.add(sdfParam1);
@@ -453,22 +463,29 @@ public class ShotOnGoalGlobalOutput {
 
 		// 3. PredicateWindow
 		//TODO: same_shot_ts = 0 eventuell? - als end condition!!!! size -1?? (war vorher shot_ts!)
-		PredicateWindowAO durationLengthPredicateAO = OperatorBuildHelper
-				.createPredicateWindowAO(ATTRIBUTE_SAME_SHOT_TS + " = 1", null, true, 1500L,
-						"Milliseconds", durantionLengthStatemapAO);
-		durationLengthPredicateAO.setName("durationLengthPredicateAO");
-
-		allOperators.add(durationLengthPredicateAO);
+//		long windowsize = (long)(Double.parseDouble(MAX_SHOT_DURATION) * 1000);
+//		PredicateWindowAO durationLengthPredicateAO = OperatorBuildHelper
+//				.createPredicateWindowAO(ATTRIBUTE_SAME_SHOT_TS + " = 0", null, true, -1,
+//						"Milliseconds", durantionLengthStatemapAO);
+//		durationLengthPredicateAO.setName("durationLengthPredicateAO");
+//
+//		allOperators.add(durationLengthPredicateAO);
 
 		// 4. TupleAggregate
 		//TODO: was macht das tupleAggregate hier??
-		TupleAggregateAO durationAndLengthCriteria = OperatorBuildHelper
-				.createTupleAggregateAO("first", ATTRIBUTE_SHOT_TS,
-						durationLengthPredicateAO);
-		durationAndLengthCriteria.setName("durationAndLengthCriteria");
+//		TupleAggregateAO durationAndLengthCriteria = OperatorBuildHelper
+//				.createTupleAggregateAO("first", ATTRIBUTE_SHOT_TS,
+//						durationLengthPredicateAO);
+//		durationAndLengthCriteria.setName("durationAndLengthCriteria");
+//
+//		allOperators.add(durationAndLengthCriteria);
 
-		allOperators.add(durationAndLengthCriteria);
+		// 3. Select first tuple of each shot
+				SelectAO firstTupleSelect = OperatorBuildHelper.createSelectAO(
+						ATTRIBUTE_SAME_SHOT_TS + " = 0", durantionLengthStatemapAO);
+				firstTupleSelect.setName("firstTupleSelect");
 
+				allOperators.add(firstTupleSelect);
 		// -------------------------------------------------------------------
 		// Eighth part
 		// The sign of vx determines the desired goal area
@@ -479,38 +496,49 @@ public class ShotOnGoalGlobalOutput {
 		List<SDFExpressionParameter> goalAreaMapParams = new ArrayList<SDFExpressionParameter>();
 
 		SDFExpressionParameter goalAreaMapParam1 = OperatorBuildHelper
-				.createExpressionParameter(ATTRIBUTE_SHOT_TS, durationAndLengthCriteria);
+				.createExpressionParameter(ATTRIBUTE_SHOT_TS, firstTupleSelect);
+		
+		SDFExpressionParameter goalAreaMapParam14 = OperatorBuildHelper
+				.createExpressionParameter("DoubleToInteger(ts/"
+						+ TimeUnitHelper.getBTUtoMinutesFactor(TimeUnit.valueOf(AbstractSportsDDCAccess
+								.getBasetimeunit().toLowerCase())) + ")", OperatorBuildHelper.ATTRIBUTE_MINUTE, firstTupleSelect);
+		SDFExpressionParameter goalAreaMapParam15 = OperatorBuildHelper
+				.createExpressionParameter("DoubleToInteger((ts/"
+						+ TimeUnitHelper.getBTUtoSecondsFactor(TimeUnit.valueOf(AbstractSportsDDCAccess
+								.getBasetimeunit().toLowerCase())) + ") % 60)",
+				OperatorBuildHelper.ATTRIBUTE_SECOND, firstTupleSelect);
+		
 		SDFExpressionParameter goalAreaMapParam2 = OperatorBuildHelper
-				.createExpressionParameter(ATTRIBUTE_SHOT_X, durationAndLengthCriteria);
+				.createExpressionParameter(ATTRIBUTE_SHOT_X, firstTupleSelect);
 		SDFExpressionParameter goalAreaMapParam3 = OperatorBuildHelper
-				.createExpressionParameter(ATTRIBUTE_SHOT_Y, durationAndLengthCriteria);
+				.createExpressionParameter(ATTRIBUTE_SHOT_Y, firstTupleSelect);
 		SDFExpressionParameter goalAreaMapParam4 = OperatorBuildHelper
-				.createExpressionParameter(ATTRIBUTE_SHOT_Z, durationAndLengthCriteria);
+				.createExpressionParameter(ATTRIBUTE_SHOT_Z, firstTupleSelect);
 		SDFExpressionParameter goalAreaMapParam5 = OperatorBuildHelper
-				.createExpressionParameter(IntermediateSchemaAttributes.TS, durationAndLengthCriteria);
+				.createExpressionParameter(IntermediateSchemaAttributes.TS, firstTupleSelect);
 		SDFExpressionParameter goalAreaMapParam6 = OperatorBuildHelper
-				.createExpressionParameter(IntermediateSchemaAttributes.X, durationAndLengthCriteria);
+				.createExpressionParameter(IntermediateSchemaAttributes.X, firstTupleSelect);
 		SDFExpressionParameter goalAreaMapParam7 = OperatorBuildHelper
-				.createExpressionParameter(IntermediateSchemaAttributes.Y, durationAndLengthCriteria);
+				.createExpressionParameter(IntermediateSchemaAttributes.Y, firstTupleSelect);
 		SDFExpressionParameter goalAreaMapParam8 = OperatorBuildHelper
-				.createExpressionParameter(IntermediateSchemaAttributes.Z, durationAndLengthCriteria);
+				.createExpressionParameter(IntermediateSchemaAttributes.Z, firstTupleSelect);
 		SDFExpressionParameter goalAreaMapParam9 = OperatorBuildHelper
 				.createExpressionParameter(IntermediateSchemaAttributes.ENTITY_ID,
-						durationAndLengthCriteria);
+						firstTupleSelect);
 		SDFExpressionParameter goalAreaMapParam10 = OperatorBuildHelper
-				.createExpressionParameter(IntermediateSchemaAttributes.TEAM_ID, durationAndLengthCriteria);
+				.createExpressionParameter(IntermediateSchemaAttributes.TEAM_ID, firstTupleSelect);
 		SDFExpressionParameter goalAreaMapParam11 = OperatorBuildHelper
 				.createExpressionParameter("((" + IntermediateSchemaAttributes.X + " - " + ATTRIBUTE_SHOT_X + ")/1000) / ((" + IntermediateSchemaAttributes.TS + " - " + ATTRIBUTE_SHOT_TS + ") / " + TimeUnitHelper.getBTUtoSecondsFactor(TimeUnit.valueOf(AbstractSportsDDCAccess
 						.getBasetimeunit().toLowerCase())) + ")",
-						ATTRIBUTE_VX, durationAndLengthCriteria);
+						ATTRIBUTE_VX, firstTupleSelect);
 		SDFExpressionParameter goalAreaMapParam12 = OperatorBuildHelper
 				.createExpressionParameter("((" + IntermediateSchemaAttributes.Y + " - " + ATTRIBUTE_SHOT_Y + ")/1000) / ((" + IntermediateSchemaAttributes.TS + " - " + ATTRIBUTE_SHOT_TS + ") / " + TimeUnitHelper.getBTUtoSecondsFactor(TimeUnit.valueOf(AbstractSportsDDCAccess
 						.getBasetimeunit().toLowerCase())) + ")",
-						ATTRIBUTE_VY, durationAndLengthCriteria);
+						ATTRIBUTE_VY, firstTupleSelect);
 		SDFExpressionParameter goalAreaMapParam13 = OperatorBuildHelper
 				.createExpressionParameter("((" + IntermediateSchemaAttributes.Z + " - " + ATTRIBUTE_SHOT_Z + ")/1000) / ((" + IntermediateSchemaAttributes.TS + " - " + ATTRIBUTE_SHOT_TS + ") / " + TimeUnitHelper.getBTUtoSecondsFactor(TimeUnit.valueOf(AbstractSportsDDCAccess
 						.getBasetimeunit().toLowerCase())) + ")",
-						ATTRIBUTE_VZ, durationAndLengthCriteria);
+						ATTRIBUTE_VZ, firstTupleSelect);
 
 		goalAreaMapParams.add(goalAreaMapParam1);
 		goalAreaMapParams.add(goalAreaMapParam2);
@@ -525,9 +553,12 @@ public class ShotOnGoalGlobalOutput {
 		goalAreaMapParams.add(goalAreaMapParam11);
 		goalAreaMapParams.add(goalAreaMapParam12);
 		goalAreaMapParams.add(goalAreaMapParam13);
+		goalAreaMapParams.add(goalAreaMapParam14);
+		goalAreaMapParams.add(goalAreaMapParam15);
+
 
 		MapAO goalAreaMap = OperatorBuildHelper.createMapAO(goalAreaMapParams,
-				durationAndLengthCriteria, 0, 0,false);
+				firstTupleSelect, 0, 0,false);
 		goalAreaMap.setName("goalAreaMap");
 
 		allOperators.add(goalAreaMap);
@@ -639,6 +670,10 @@ public class ShotOnGoalGlobalOutput {
 
 		SDFExpressionParameter mapParam1 = OperatorBuildHelper
 				.createExpressionParameter(ATTRIBUTE_SHOT_TS, source);
+		SDFExpressionParameter mapParam11 = OperatorBuildHelper
+				.createExpressionParameter(OperatorBuildHelper.ATTRIBUTE_MINUTE, source);
+		SDFExpressionParameter mapParam12 = OperatorBuildHelper
+				.createExpressionParameter(OperatorBuildHelper.ATTRIBUTE_SECOND, source);
 		SDFExpressionParameter mapParam2 = OperatorBuildHelper
 				.createExpressionParameter(ATTRIBUTE_SHOT_X, source);
 		SDFExpressionParameter mapParam3 = OperatorBuildHelper
@@ -670,6 +705,9 @@ public class ShotOnGoalGlobalOutput {
 		mapParams.add(mapParam8);
 		mapParams.add(mapParam9);
 		mapParams.add(mapParam10);
+		mapParams.add(mapParam11);
+		mapParams.add(mapParam12);
+
 
 		return OperatorBuildHelper.createMapAO(mapParams, source, 0, 0, false);
 	}
@@ -685,8 +723,8 @@ public class ShotOnGoalGlobalOutput {
 	@SuppressWarnings("rawtypes")
 	private static SelectAO createTimeToGoalSelectAO(int teamId,
 			ILogicalOperator source) {
-		IPredicate predicate1 = OperatorBuildHelper
-				.createRelationalPredicate(IntermediateSchemaAttributes.TEAM_ID + " = " + teamId);
+		//IPredicate predicate1 = OperatorBuildHelper
+		//		.createRelationalPredicate(IntermediateSchemaAttributes.TEAM_ID + " = " + teamId);
 		IPredicate predicate2 = OperatorBuildHelper
 				.createRelationalPredicate(ATTRIBUTE_TIME_TO_GOALLINE + " >= 0");
 		//TODO: wieso - ts + shot_ts????
@@ -694,7 +732,7 @@ public class ShotOnGoalGlobalOutput {
 				.createRelationalPredicate(ATTRIBUTE_TIME_TO_GOALLINE + " <= "
 						+ MAX_SHOT_DURATION);
 		List<IPredicate> predicates = new ArrayList<IPredicate>();
-		predicates.add(predicate1);
+		//predicates.add(predicate1);
 		predicates.add(predicate2);
 		predicates.add(predicate3);
 		IPredicate andPredicate = OperatorBuildHelper
@@ -716,11 +754,11 @@ public class ShotOnGoalGlobalOutput {
 			double goalAreaZMax, ILogicalOperator source) {
 		//TODO:x,y?!
 		IPredicate predicate1 = OperatorBuildHelper
-				.createRelationalPredicate(ATTRIBUTE_FORECAST_Y + " > " + goalAreaYMin);
+				.createRelationalPredicate(ATTRIBUTE_FORECAST_Y + " >= " + goalAreaYMin);
 		IPredicate predicate2 = OperatorBuildHelper
-				.createRelationalPredicate(ATTRIBUTE_FORECAST_Y + " < " + goalAreaYMax);
+				.createRelationalPredicate(ATTRIBUTE_FORECAST_Y + " <= " + goalAreaYMax);
 		IPredicate predicate3 = OperatorBuildHelper
-				.createRelationalPredicate(ATTRIBUTE_FORECAST_Z + " < " + goalAreaZMax);
+				.createRelationalPredicate(ATTRIBUTE_FORECAST_Z + " <= " + goalAreaZMax + " + " + GRAVITY_HEIGHT_PUFFER);
 		List<IPredicate> predicates = new ArrayList<IPredicate>();
 		predicates.add(predicate1);
 		predicates.add(predicate2);
@@ -745,6 +783,10 @@ public class ShotOnGoalGlobalOutput {
 
 		SDFExpressionParameter goalAreaMapParam1 = OperatorBuildHelper
 				.createExpressionParameter(ATTRIBUTE_SHOT_TS, source);
+		SDFExpressionParameter goalAreaMapParam14 = OperatorBuildHelper
+				.createExpressionParameter(OperatorBuildHelper.ATTRIBUTE_MINUTE, source);
+		SDFExpressionParameter goalAreaMapParam15 = OperatorBuildHelper
+				.createExpressionParameter(OperatorBuildHelper.ATTRIBUTE_SECOND, source);
 		SDFExpressionParameter goalAreaMapParam2 = OperatorBuildHelper
 				.createExpressionParameter(ATTRIBUTE_SHOT_X, source);
 		SDFExpressionParameter goalAreaMapParam3 = OperatorBuildHelper
@@ -784,6 +826,9 @@ public class ShotOnGoalGlobalOutput {
 		mapParams.add(goalAreaMapParam11);
 		mapParams.add(goalAreaMapParam12);
 		mapParams.add(goalAreaMapParam13);
+		mapParams.add(goalAreaMapParam14);
+		mapParams.add(goalAreaMapParam15);
+
 
 		return OperatorBuildHelper.createMapAO(mapParams, source, 0,
 				sourceOutputPort, false);
