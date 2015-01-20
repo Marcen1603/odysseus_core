@@ -57,6 +57,7 @@ public class LBQueryManager implements IPeerCommunicatorListener, ILoadBalancing
 				try {
 					Collection<PeerID> otherPeers = controller.getOtherPeers(sharedQueryID);
 					if(!otherPeers.contains(peerID)) {
+						LOG.debug("Adding Peer ID {} to other Peers ",peerID);
 						controller.addOtherPeer(sharedQueryID, peerID);
 					}
 					//TODO Send Ack.
@@ -76,6 +77,7 @@ public class LBQueryManager implements IPeerCommunicatorListener, ILoadBalancing
 				try {
 					Collection<PeerID> otherPeers = controller.getOtherPeers(sharedQueryID);
 					if(otherPeers.contains(peerID)) {
+						LOG.debug("Removing Peer ID {} from other Peers ",peerID);
 						controller.removeOtherPeer(sharedQueryID, peerID);
 					}
 					//TODO Send Ack.
@@ -131,6 +133,22 @@ public class LBQueryManager implements IPeerCommunicatorListener, ILoadBalancing
 		} catch (PeerCommunicationException e) {
 			LOG.error("Error while sending Message",e);
 		}
+	}
+	
+	public void sendChangeMasterToAllSlaves(ID sharedQueryID) {
+		IQueryPartController controller = OsgiServiceManager.getQueryPartController();
+		Collection<PeerID> slavePeers = controller.getOtherPeers(sharedQueryID);
+		
+		
+		if(slavePeers==null) {
+			LOG.error("Peer does not know any slave peers for Shared Query ID {}",sharedQueryID);
+			return;
+		}
+		LOG.debug("Sending Change Master to {} slave Peers.",slavePeers.size());
+		for (PeerID slave : slavePeers) {
+			sendChangeMaster(slave,sharedQueryID);
+		}
+		
 	}
 	
 	

@@ -11,4 +11,6 @@ public interface ILoadBalancingQueryManager {
 	
 	public void sendChangeMaster(PeerID slavePeer, ID sharedQueryID);
 	
+	public void sendChangeMasterToAllSlaves(ID sharedQueryID);
+	
 }

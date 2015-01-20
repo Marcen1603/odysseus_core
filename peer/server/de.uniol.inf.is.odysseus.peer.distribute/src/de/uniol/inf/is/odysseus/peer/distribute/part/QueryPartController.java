@@ -385,8 +385,8 @@ public class QueryPartController implements IPlanModificationListener,
 
 		if (peerIDMap.containsKey(sharedQueryId)) {
 			peerIDMap.remove(sharedQueryId);
-
 		}
+		
 
 	}
 
@@ -423,6 +423,8 @@ public class QueryPartController implements IPlanModificationListener,
 	public PeerID getMasterForQuery(ID sharedQueryID) {
 		return this.masterIDMap.get(sharedQueryID);
 	}
+	
+	//TODO call listeners when unregistering?
 
 	@Override
 	public PeerID addOtherPeer(ID sharedQueryID, PeerID peerID) {
@@ -446,7 +448,7 @@ public class QueryPartController implements IPlanModificationListener,
 	public boolean isSharedQueryKnown(ID sharedQueryID) {
 		Preconditions.checkNotNull(sharedQueryID,
 				"sharedQueryID must not be null!");
-		return sharedQueryIDMap.containsKey(sharedQueryID);
+		return sharedQueryIDMap.containsValue(sharedQueryID);
 	}
 
 	@Override
@@ -458,8 +460,8 @@ public class QueryPartController implements IPlanModificationListener,
 		
 		if(this.peerIDMap.containsKey(sharedQueryId)) {
 			Collection<PeerID> otherPeers = peerIDMap.get(sharedQueryId);
-			if(!otherPeers.contains(peerID)) {
-				otherPeers.add(peerID);
+			if(otherPeers.contains(peerID)) {
+				otherPeers.remove(peerID);
 				peerIDMap.put(sharedQueryId, otherPeers);
 			}
 		}

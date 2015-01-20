@@ -101,7 +101,7 @@ public class QueryManagementMessage implements IMessage {
 		int peerIDSize = bb.getInt();
 		byte[] peerIDBytes = new byte[peerIDSize];
 		bb.get(peerIDBytes);
-		this.peerID = new String(peerID);
+		this.peerID = new String(peerIDBytes);
 		
 	}
 }

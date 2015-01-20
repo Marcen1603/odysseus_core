@@ -126,22 +126,26 @@ public class ResponseHandler {
 						for (PeerID peer : otherPeers) {
 							otherPeerIDStrings.add(peer.toString());
 						}
-						
+						queryPartController.unregisterAsMaster(sharedQueryID);
 						dispatcher.sendAddQueryForMasterQuery(status.getVolunteeringPeer(), pqlFromQueryPart, communicationListener, otherPeerIDStrings, sharedQueryID.toString());
 						
 						
 				} else {
-						String masterPeerIDString = "";
+						PeerID masterPeerID;
 						// 2. Peer is Master and part of query remains -> Stay Master
 						if(isMaster) {
-							masterPeerIDString = OsgiServiceManager.getP2pNetworkManager().getLocalPeerID().toString();
+							masterPeerID = OsgiServiceManager.getP2pNetworkManager().getLocalPeerID();
 						}
 						else {
 						// 3. Peer is Slave
-							masterPeerIDString = queryPartController.getMasterForQuery(sharedQueryID).toString();
+							masterPeerID = queryPartController.getMasterForQuery(sharedQueryID);
+							if(remainingQueries.size()<=0) {
+								LOG.debug("No queries remaining for shared Query. Deregistering with master Peer.");
+								OsgiServiceManager.getQueryManager().sendUnregisterAsSlave(masterPeerID, sharedQueryID);
+							}
 						}
 						dispatcher.sendAddQuery(status.getVolunteeringPeer(),
-								pqlFromQueryPart, communicationListener,sharedQueryID.toString(),masterPeerIDString);
+								pqlFromQueryPart, communicationListener,sharedQueryID.toString(),masterPeerID.toString());
 						
 				}
 				
