@@ -189,4 +189,12 @@ public class EndpointDataTransmissionSender extends AbstractTransmissionSender i
 		return communicator;
 	}
 
+	@Override
+	public void resetPeerList() {
+		while (pids.iterator().hasNext()) {
+			Object o = pids.iterator().next();
+			pids.remove(o);
+		}
+	}
+
 }

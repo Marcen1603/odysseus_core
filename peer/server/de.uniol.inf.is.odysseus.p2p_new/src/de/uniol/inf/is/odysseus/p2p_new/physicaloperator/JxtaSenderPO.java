@@ -294,6 +294,8 @@ public class JxtaSenderPO<T extends IStreamObject<?>> extends AbstractSink<T> im
 		notifyObservers(infoList);
 
 		// Don't mess with the transmission, as the receiver does all the negotiation.
+		// Just remove all peers in the list, cause open messages would not be used if we don't do this 
+		transmission.resetPeerList();
 	}
 
 	// For the observer-pattern
