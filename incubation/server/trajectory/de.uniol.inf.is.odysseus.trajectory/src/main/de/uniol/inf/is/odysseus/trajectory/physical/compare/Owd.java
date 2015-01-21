@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,10 +28,13 @@ public class Owd implements ITrajectoryCompareAlgorithm {
 	
 	private final int k;
 	
-	private List<Point> q = new LinkedList<>();
+	private List<Point> queryTrajectory = new LinkedList<>();
+	private Map<Integer, OWDTrajectory> owdQs = new HashMap<>();
 	
 	
 	private final Map<Tuple<ITimeInterval>, Double> trajs = new HashMap<>();
+	
+	private Map<OWDTrajectory, Tuple<ITimeInterval>> owds;
 	
 	private final Deque<ITimeInterval> windows = new LinkedList<>();
 
@@ -40,13 +44,13 @@ public class Owd implements ITrajectoryCompareAlgorithm {
 		
 		//Test
 		GeometryFactory gf = new GeometryFactory();
-		q.add(gf.createPoint(new Coordinate(1, 1)));
-		q.add(gf.createPoint(new Coordinate(2, 2)));
-		q.add(gf.createPoint(new Coordinate(3, 3)));
-		q.add(gf.createPoint(new Coordinate(4, 4)));
-		q.add(gf.createPoint(new Coordinate(5, 5)));
-		q.add(gf.createPoint(new Coordinate(6, 6)));
-		q.add(gf.createPoint(new Coordinate(7, 7)));
+		queryTrajectory.add(gf.createPoint(new Coordinate(1, 1)));
+		queryTrajectory.add(gf.createPoint(new Coordinate(2, 2)));
+		queryTrajectory.add(gf.createPoint(new Coordinate(3, 3)));
+		queryTrajectory.add(gf.createPoint(new Coordinate(4, 4)));
+		queryTrajectory.add(gf.createPoint(new Coordinate(5, 5)));
+		queryTrajectory.add(gf.createPoint(new Coordinate(6, 6)));
+		queryTrajectory.add(gf.createPoint(new Coordinate(7, 7)));
 
 	}
 	
@@ -55,33 +59,35 @@ public class Owd implements ITrajectoryCompareAlgorithm {
 		
 		final ITimeInterval incomingTI = incoming.getMetadata();
 
-		/* remove all old trajectories */
-		if (incomingTI.getEnd().after(this.windows.peekLast().getEnd())) {
-			this.windows.addLast(incomingTI);
-
-			LOGGER.debug("Window shift detected by incoming tuple: "+ incomingTI);
-			
-			if (incomingTI.getStart().afterOrEquals(this.windows.peekFirst().getEnd())) {
-
-				LOGGER.debug("Window end detected at: " + this.windows.pollFirst().getEnd());
-				
-				/* remove invalid tuples after */
-				final Collection<Tuple<ITimeInterval>> keysToRemove = new LinkedList<>();
-				for(final Tuple<ITimeInterval> key : this.trajs.keySet()) {
-					if(key.getMetadata().getEnd().beforeOrEquals(incomingTI.getStart())) {
-						keysToRemove.add(key);
-					}
-				}
-				for(final Tuple<ITimeInterval> keyToRemove : keysToRemove) {
-					LOGGER.trace("Remove invalid trajectory: " + this.trajs.remove(keyToRemove));
-				}
-			}
-		}
-		
+//		/* remove all old trajectories */
+//		if (incomingTI.getEnd().after(this.windows.peekLast().getEnd())) {
+//			this.windows.addLast(incomingTI);
+//
+//			LOGGER.debug("Window shift detected by incoming tuple: "+ incomingTI);
+//			
+//			if (incomingTI.getStart().afterOrEquals(this.windows.peekFirst().getEnd())) {
+//
+//				LOGGER.debug("Window end detected at: " + this.windows.pollFirst().getEnd());
+//				
+//				/* remove invalid tuples after */
+//				final Collection<Tuple<ITimeInterval>> keysToRemove = new LinkedList<>();
+//				for(final Tuple<ITimeInterval> key : this.trajs.keySet()) {
+//					if(key.getMetadata().getEnd().beforeOrEquals(incomingTI.getStart())) {
+//						keysToRemove.add(key);
+//					}
+//				}
+//				for(final Tuple<ITimeInterval> keyToRemove : keysToRemove) {
+//					LOGGER.trace("Remove invalid trajectory: " + this.trajs.remove(keyToRemove));
+//				}
+//			}
+//		}
+//		
+		OWDTrajectory hhh = 
+				new OWDTrajectory((List<Point>)incoming.getAttribute(TrajectoryComparePO.POINTS_POS), 1);
 		
 		// berechnen
 		double distance = 0;
-		for(Point p : q) {
+		for(Point p : queryTrajectory) {
 			for(Point t : (Iterable<Point>)incoming.getAttribute(TrajectoryComparePO.POINTS_POS)) {
 				distance += p.distance(t);
 			}
@@ -109,5 +115,12 @@ public class Owd implements ITrajectoryCompareAlgorithm {
 	public int getK() {
 		return this.k;
 	}
+	
+	
+	private void calc() {
+		
+	}
+	
+	
 
 }

@@ -6,6 +6,7 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfigu
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.trajectory.logicaloperator.TrajectoryConstructAO;
 import de.uniol.inf.is.odysseus.trajectory.physical.TrajectoryConstructPO;
+import de.uniol.inf.is.odysseus.trajectory.physical.construct.DefaultTrajectoryConstructStrategy;
 import de.uniol.inf.is.odysseus.trajectory.physical.construct.FulltrajectoryConstructStrategy;
 import de.uniol.inf.is.odysseus.trajectory.physical.construct.ITrajectoryConstructStrategy;
 import de.uniol.inf.is.odysseus.trajectory.physical.construct.SubtrajectoryConstructStrategy;
@@ -24,7 +25,7 @@ public class TTrajectoryContructAORule extends AbstractTransformationRule<Trajec
 	public void execute(TrajectoryConstructAO operator, TransformationConfiguration config) {
 		
 		final ITrajectoryConstructStrategy strategy = operator.getSubtrajectories() ?
-				new SubtrajectoryConstructStrategy() : new FulltrajectoryConstructStrategy();
+				new SubtrajectoryConstructStrategy() : new DefaultTrajectoryConstructStrategy();
 		this.defaultExecute(operator, new TrajectoryConstructPO<Tuple<ITimeInterval>>(strategy), config, true, true);
 	}
 

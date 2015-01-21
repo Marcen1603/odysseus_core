@@ -4,6 +4,7 @@ import java.util.Deque;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -14,7 +15,7 @@ import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.metadata.TimeInterval;
-import de.uniol.inf.is.odysseus.trajectory.physical.TrajectoryConstructPO;
+import de.uniol.inf.is.odysseus.trajectory.physical.Trajectory;
 
 /**
  * 
@@ -36,77 +37,78 @@ public class SubtrajectoryConstructStrategy implements ITrajectoryConstructStrat
 	}
 
 	@Override
-	public Deque<Deque<Tuple<ITimeInterval>>> getResultsToTransfer(Tuple<ITimeInterval> incoming) {
+	public List<Trajectory> getResultsToTransfer(Tuple<ITimeInterval> incoming) {
 
-		final Deque<Deque<Tuple<ITimeInterval>>> result = new LinkedList<>();
-		
-		final ITimeInterval incomingTI = incoming.getMetadata();
-
-		if (incomingTI.getEnd().after(this.windows.peekLast().getEnd())) {
-			this.windows.addLast(incomingTI);
-
-			LOGGER.debug("Window shift detected by incoming tuple: "+ incomingTI);
-			
-			if (incomingTI.getStart().afterOrEquals(this.windows.peekFirst().getEnd())) {
-
-				LOGGER.debug("Window end detected: " + this.windows.pollFirst().getEnd());
-				
-				/* add each tuple included in the closed window to the result */
-				for (final Deque<Deque<Tuple<ITimeInterval>>> vehTrajs : vehTrajMap.values()) {
-					for (Deque<Tuple<ITimeInterval>> trajs : vehTrajs) {
-						if (!trajs.isEmpty() && !this.endedTrajsFirstPnts.remove(trajs.peekFirst())) {
-							result.add(new LinkedList<>(trajs));
-							LOGGER.debug("Add Subtrajectory to Result: " + trajs);
-						}
-					}
-				}
-				
-				/* remove invalid tuples after */
-				for(final Deque<Deque<Tuple<ITimeInterval>>> vehTraj : this.vehTrajMap.values()) {
-					while(!vehTraj.isEmpty()) {
-						final Deque<Tuple<ITimeInterval>> trajPts = vehTraj.peekFirst();
-						while (!trajPts.isEmpty() && trajPts.peekFirst().getMetadata().getEnd().beforeOrEquals(incomingTI.getStart())) {
-							LOGGER.trace("Remove invalid tuple:" + trajPts.peekFirst());
-							trajPts.removeFirst();
-						}
-						if(!trajPts.isEmpty()) {
-							break;
-						}
-						vehTraj.removeFirst();
-					}
-				}
-			}
-		}
-		
-		/* get the vehicle Id */
-		final String vehicleId = incoming.getAttribute(TrajectoryConstructPO.VEHICLE_ID_POS);
-
-		/* add the tuple to its route */
-		Deque<Deque<Tuple<ITimeInterval>>> vehicleTrajectories = this.vehTrajMap.get(vehicleId);
-		if(vehicleTrajectories == null) {
-			this.vehTrajMap.put(vehicleId, vehicleTrajectories = new LinkedList<>());			
-		}
-		if(vehicleTrajectories.isEmpty()) {
-			vehicleTrajectories.addLast(new LinkedList<Tuple<ITimeInterval>>());
-		}
-		
-		vehicleTrajectories.peekLast().addLast(incoming);
-		LOGGER.trace("Add Tuple: " + incoming);
-		
-		/* test whether this tuple marks the end of the route */
-		if(((int)incoming.getAttribute(TrajectoryConstructPO.STATE_POS)) == -1) {
-			
-			final Deque<Tuple<ITimeInterval>> endedTraj = vehicleTrajectories.peekLast();
-			LOGGER.debug("Add ended Trajectory to Result: " + endedTraj);
-			
-			result.add(new LinkedList<>(endedTraj));
-			
-			this.endedTrajsFirstPnts.add(endedTraj.peekFirst());
-			LOGGER.debug("Add first tuple to fullTrajs: " + endedTraj.peekFirst());
-			
-			vehicleTrajectories.addLast(new LinkedList<Tuple<ITimeInterval>>());
-		}
-		return result;
+		return null;
+//		final Deque<Deque<Tuple<ITimeInterval>>> result = new LinkedList<>();
+//		
+//		final ITimeInterval incomingTI = incoming.getMetadata();
+//
+//		if (incomingTI.getEnd().after(this.windows.peekLast().getEnd())) {
+//			this.windows.addLast(incomingTI);
+//
+//			LOGGER.debug("Window shift detected by incoming tuple: "+ incomingTI);
+//			
+//			if (incomingTI.getStart().afterOrEquals(this.windows.peekFirst().getEnd())) {
+//
+//				LOGGER.debug("Window end detected: " + this.windows.pollFirst().getEnd());
+//				
+//				/* add each tuple included in the closed window to the result */
+//				for (final Deque<Deque<Tuple<ITimeInterval>>> vehTrajs : vehTrajMap.values()) {
+//					for (Deque<Tuple<ITimeInterval>> trajs : vehTrajs) {
+//						if (!trajs.isEmpty() && !this.endedTrajsFirstPnts.remove(trajs.peekFirst())) {
+//							result.add(new LinkedList<>(trajs));
+//							LOGGER.debug("Add Subtrajectory to Result: " + trajs);
+//						}
+//					}
+//				}
+//				
+//				/* remove invalid tuples after */
+//				for(final Deque<Deque<Tuple<ITimeInterval>>> vehTraj : this.vehTrajMap.values()) {
+//					while(!vehTraj.isEmpty()) {
+//						final Deque<Tuple<ITimeInterval>> trajPts = vehTraj.peekFirst();
+//						while (!trajPts.isEmpty() && trajPts.peekFirst().getMetadata().getEnd().beforeOrEquals(incomingTI.getStart())) {
+//							LOGGER.trace("Remove invalid tuple:" + trajPts.peekFirst());
+//							trajPts.removeFirst();
+//						}
+//						if(!trajPts.isEmpty()) {
+//							break;
+//						}
+//						vehTraj.removeFirst();
+//					}
+//				}
+//			}
+//		}
+//		
+//		/* get the vehicle Id */
+//		final String vehicleId = incoming.getAttribute(TrajectoryConstructPO.VEHICLE_ID_POS);
+//
+//		/* add the tuple to its route */
+//		Deque<Deque<Tuple<ITimeInterval>>> vehicleTrajectories = this.vehTrajMap.get(vehicleId);
+//		if(vehicleTrajectories == null) {
+//			this.vehTrajMap.put(vehicleId, vehicleTrajectories = new LinkedList<>());			
+//		}
+//		if(vehicleTrajectories.isEmpty()) {
+//			vehicleTrajectories.addLast(new LinkedList<Tuple<ITimeInterval>>());
+//		}
+//		
+//		vehicleTrajectories.peekLast().addLast(incoming);
+//		LOGGER.trace("Add Tuple: " + incoming);
+//		
+//		/* test whether this tuple marks the end of the route */
+//		if(((int)incoming.getAttribute(TrajectoryConstructPO.STATE_POS)) == -1) {
+//			
+//			final Deque<Tuple<ITimeInterval>> endedTraj = vehicleTrajectories.peekLast();
+//			LOGGER.debug("Add ended Trajectory to Result: " + endedTraj);
+//			
+//			result.add(new LinkedList<>(endedTraj));
+//			
+//			this.endedTrajsFirstPnts.add(endedTraj.peekFirst());
+//			LOGGER.debug("Add first tuple to fullTrajs: " + endedTraj.peekFirst());
+//			
+//			vehicleTrajectories.addLast(new LinkedList<Tuple<ITimeInterval>>());
+//		}
+//		return result;
 	}
 
 	@Override

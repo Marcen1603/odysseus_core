@@ -2,6 +2,7 @@ package de.uniol.inf.is.odysseus.trajectory.physical;
 
 import java.util.Deque;
 import java.util.LinkedList;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,6 +17,7 @@ import de.uniol.inf.is.odysseus.trajectory.physical.construct.ITrajectoryConstru
 public class TrajectoryConstructPO<T extends Tuple<ITimeInterval>> extends
 		AbstractPipe<T, T> {
 
+	public final static int TIMESTAMP_POS = 0;
 	public final static int VEHICLE_ID_POS = 2;
 	public final static int POINT_POS = 3;
 	public final static int STATE_POS = 4;
@@ -37,15 +39,10 @@ public class TrajectoryConstructPO<T extends Tuple<ITimeInterval>> extends
 	@SuppressWarnings("unchecked")
 	@Override
 	protected void process_next(T object, int port) {		
-		for(final Deque<Tuple<ITimeInterval>> trajectory : this.strategy.getResultsToTransfer(object)) {
-			final Deque<Point> points = new LinkedList<>();
-			for(final Tuple<ITimeInterval> t : trajectory) {
-				points.add((Point)t.getAttribute(POINT_POS));
-			}
-			final Tuple<ITimeInterval> trajTuple = 
-					new Tuple<ITimeInterval>(new Object[] { trajectory.peekFirst().getAttribute(VEHICLE_ID_POS), points }, true);
-			trajTuple.setMetadata(trajectory.peekFirst().getMetadata());
-			this.transfer((T)trajTuple, port);
+		for(final Trajectory traj : this.strategy.getResultsToTransfer(object)) {
+			this.transfer((T)new Tuple<ITimeInterval>(new Object[] {
+					traj.getId(), traj.getBegin(), traj.getEnd(), traj.getPoints()
+			}, true), port);
 		}
 	}
 	

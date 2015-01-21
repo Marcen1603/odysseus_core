@@ -22,6 +22,10 @@ public class TrajectoryConstructAO extends UnaryLogicalOp {
 	
 	public final static String VEHICLE_ID_ATTR_NAME = "VehicleId";
 	
+	public final static String START_TIMESTAMP_ATTR_NAME = "StartTimestamp";
+	
+	public final static String END_TIMESTAMP_ATTR_NAME = "EndTimestamp";
+	
 	public final static String POINTS_ATTR_NAME = "Points";
 	
 	
@@ -32,6 +36,8 @@ public class TrajectoryConstructAO extends UnaryLogicalOp {
 			TrajectoryConstructAO.class.getName(), 
 			Tuple.class, 
 			new SDFAttribute(null, VEHICLE_ID_ATTR_NAME, SDFDatatype.STRING, null),
+			new SDFAttribute(null, START_TIMESTAMP_ATTR_NAME, SDFDatatype.STRING, null),
+			new SDFAttribute(null, END_TIMESTAMP_ATTR_NAME, SDFDatatype.STRING, null),
 			new SDFAttribute(null, POINTS_ATTR_NAME, SDFSpatialDatatype.LIST , null)
 	);
 	

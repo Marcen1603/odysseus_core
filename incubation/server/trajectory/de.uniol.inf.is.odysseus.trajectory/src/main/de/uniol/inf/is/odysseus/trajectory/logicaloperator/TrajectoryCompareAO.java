@@ -55,11 +55,6 @@ public class TrajectoryCompareAO extends UnaryLogicalOp {
 			new SDFAttribute(null, "tet", SDFTrajectoryDataType.OBJECT, new SDFSchema("", Tuple.class, 
 					new SDFAttribute(null, "id", SDFDatatype.STRING, null),
 					new SDFAttribute(null, "points", SDFDatatype.STRING, null)))
-			
-			// id, list<Points>
-//			new SDFAttribute(null, "trajectories", SDFDatatype.LIST_FLOAT, new SDFSchema("", Tuple.class, 
-//					new SDFAttribute(null, "id", SDFDatatype.STRING, null),
-//					new SDFAttribute(null, "points", SDFDatatype.LIST, null)))
 	);
 	
 	public TrajectoryCompareAO() {
