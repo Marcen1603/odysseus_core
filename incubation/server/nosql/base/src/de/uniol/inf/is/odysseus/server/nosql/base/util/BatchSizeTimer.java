@@ -49,9 +49,8 @@ public class BatchSizeTimer<T>{
     }
 
     private synchronized void ring() {
-        ArrayList<T> fullBufferList = new ArrayList<>(elements);
-        batchSizeTimerTask.onTimerRings(fullBufferList);   // copy the List
-        elements.clear();
+        batchSizeTimerTask.onTimerRings(elements);   // give list to physical operator
+        elements = new ArrayList<>();  // new list for next iteration
         timer.restart();
     }
 
