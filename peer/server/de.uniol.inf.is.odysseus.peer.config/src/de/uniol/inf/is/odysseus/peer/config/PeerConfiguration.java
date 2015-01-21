@@ -130,7 +130,7 @@ public class PeerConfiguration {
 			        }
 			        
 			        if( current_addr instanceof Inet4Address ) {
-			        	return Optional.of(current_addr.getHostAddress());
+			        	return Optional.of(current_addr.getHostName() + " [" + current_addr.getHostAddress() + "]");
 			        }
 			    }
 			}
