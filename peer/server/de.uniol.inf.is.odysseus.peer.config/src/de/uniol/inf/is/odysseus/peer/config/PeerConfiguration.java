@@ -4,11 +4,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.net.Inet4Address;
-import java.net.InetAddress;
-import java.net.NetworkInterface;
 import java.util.Collection;
-import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.InvalidPropertiesFormatException;
 import java.util.List;
@@ -104,42 +100,14 @@ public class PeerConfiguration {
 		
 		setDefaultValue("peer.log", "false");
 		
-		Optional<String> optAddress = getRealInetAddress();
-		setDefaultValue("peer.name", optAddress.isPresent() ? optAddress.get() : "OdysseusPeer"); //
+		String optAddress = InetAddressUtil.generateName();
+		setDefaultValue("peer.name", optAddress); 
 		setDefaultValue("peer.group.name", "OdysseusPeerGroup");
 		setDefaultValue("peer.rdv.address", "");
 		setDefaultValue("peer.rdv.active", "false");
 		setDefaultValue("peer.port", String.valueOf(determineRandomPort()));
 	}
 	
-	// this works even with linux
-	public static Optional<String> getRealInetAddress() {
-		try {
-			Enumeration<NetworkInterface> interfaces = NetworkInterface.getNetworkInterfaces();
-			while (interfaces.hasMoreElements()){
-			    NetworkInterface current = interfaces.nextElement();
-			    if (!current.isUp() || current.isLoopback() || current.isVirtual()) {
-			    	continue;
-			    }
-			    
-			    Enumeration<InetAddress> addresses = current.getInetAddresses();
-			    while (addresses.hasMoreElements()){
-			        InetAddress current_addr = addresses.nextElement();
-			        if (current_addr.isLoopbackAddress()) {
-			        	continue;
-			        }
-			        
-			        if( current_addr instanceof Inet4Address ) {
-			        	return Optional.of(current_addr.getHostName() + " [" + current_addr.getHostAddress() + "]");
-			        }
-			    }
-			}
-		} catch( Throwable t ) {
-			LOG.debug("Could not determine ip-address", t);
-		}
-		
-		return Optional.absent();
-	}
 
 	private static int determineRandomPort() {
 		return new Random().nextInt(20000) + 10000;

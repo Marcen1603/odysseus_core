@@ -44,7 +44,7 @@ import de.uniol.inf.is.odysseus.p2p_new.PeerException;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.IP2PDictionary;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.IPeerDictionary;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.SourceAdvertisement;
-import de.uniol.inf.is.odysseus.p2p_new.util.InetAddressUtil;
+import de.uniol.inf.is.odysseus.peer.config.InetAddressUtil;
 import de.uniol.inf.is.odysseus.peer.logging.JXTALoggingPlugIn;
 import de.uniol.inf.is.odysseus.peer.logging.JxtaLoggingDestinations;
 import de.uniol.inf.is.odysseus.peer.ping.IPingMap;
@@ -365,6 +365,12 @@ public class PeerConsole implements CommandProvider, IPeerCommunicatorListener {
 		}
 		
 		ci.println("Port: " + p2pNetworkManager.getPort());
+		Optional<String> optHostname = InetAddressUtil.getHostName();
+		if( optHostname.isPresent() ) {
+			ci.println("Hostname: " + optHostname.get());
+		} else {
+			ci.println("Hostname : <not known>");
+		}
 	}
 
 	public void _log(CommandInterpreter ci) {
