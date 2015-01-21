@@ -49,20 +49,20 @@ public class SizeByteBufferMessageCreator implements IMessageCreator {
             for(int i = 0; i < oArr.length; i++) {
                 final Object o = oArr[i];
                 if(o instanceof Byte) {
-                    bytesToAlloc += Byte.SIZE;
-                    bytes[i] = ByteBuffer.allocate(Byte.SIZE).putInt((Byte) o).array();
+                    bytesToAlloc += Byte.SIZE / 8;
+                    bytes[i] = ByteBuffer.allocate(Byte.SIZE / 8).putInt((Byte) o).array();
                 } else if(o instanceof Short) {
-                    bytesToAlloc += Short.SIZE;
-                    bytes[i] = ByteBuffer.allocate(Short.SIZE).putInt((Short) o).array();
+                    bytesToAlloc += Short.SIZE / 8;
+                    bytes[i] = ByteBuffer.allocate(Short.SIZE / 8).putInt((Short) o).array();
                 } else if(o instanceof Integer) {
-                    bytesToAlloc += Integer.SIZE;
-                    bytes[i] = ByteBuffer.allocate(Integer.SIZE).putInt((Integer) o).array();
+                    bytesToAlloc += Integer.SIZE / 8;
+                    bytes[i] = ByteBuffer.allocate(Integer.SIZE / 8).putInt((Integer) o).array();
                 } else if(o instanceof Long) {
-                    bytesToAlloc += Long.SIZE;
-                    bytes[i] = ByteBuffer.allocate(Long.SIZE).putLong((Long) o).array();
+                    bytesToAlloc += Long.SIZE / 8;
+                    bytes[i] = ByteBuffer.allocate(Long.SIZE / 8).putLong((Long) o).array();
                 } else if(o instanceof Double) {
-                    bytesToAlloc += Double.SIZE;
-                    bytes[i] = ByteBuffer.allocate(Double.SIZE).putDouble((Double) o).array();
+                    bytesToAlloc += Double.SIZE / 8;
+                    bytes[i] = ByteBuffer.allocate(Double.SIZE / 8).putDouble((Double) o).array();
                 } else if(o instanceof String) {
                     byte[] str = ((String) o).getBytes();
                     bytesToAlloc += MESSAGE_ALLOC_SIZE + str.length;

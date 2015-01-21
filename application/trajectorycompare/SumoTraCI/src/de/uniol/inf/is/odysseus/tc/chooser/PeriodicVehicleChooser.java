@@ -53,11 +53,14 @@ public class PeriodicVehicleChooser implements IVehicleChooser {
     		if(i == null) {
     			i = -1;
     		}
-    		this.map.put(vi.getId(), i + 1);
+    		vi.setState(i + 1);
+    		this.map.put(vi.getId(), vi.getState());;
     		if(vi.getState() == 0) {
     			LOGGER.info("begin: " + vi.getId());
     		}
-    		if(vi.getState() % 1000000 == 0) {
+    		
+    		if(vi.getState() / 1000000 == 0) {
+    			LOGGER.info(vi.getState() + " -> add");
     			result.add(vi);
     		}
     	}
