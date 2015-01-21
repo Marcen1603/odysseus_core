@@ -124,7 +124,7 @@ public class PeerServerPlugIn implements BundleActivator {
 			return optPeerGroupName.get();
 		}
 		
-		return "OdysseusGroup";
+		return "OdysseusPeerGroup";
 	}
 
 	private static String determineRendevousAddress() {
