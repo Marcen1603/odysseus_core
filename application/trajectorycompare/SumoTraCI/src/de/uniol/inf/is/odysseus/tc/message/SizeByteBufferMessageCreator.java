@@ -49,20 +49,20 @@ public class SizeByteBufferMessageCreator implements IMessageCreator {
             for(int i = 0; i < oArr.length; i++) {
                 final Object o = oArr[i];
                 if(o instanceof Byte) {
-                    bytesToAlloc += Byte.BYTES;
-                    bytes[i] = ByteBuffer.allocate(Byte.BYTES).putInt((Byte) o).array();
+                    bytesToAlloc += Byte.SIZE;
+                    bytes[i] = ByteBuffer.allocate(Byte.SIZE).putInt((Byte) o).array();
                 } else if(o instanceof Short) {
-                    bytesToAlloc += Short.BYTES;
-                    bytes[i] = ByteBuffer.allocate(Short.BYTES).putInt((Short) o).array();
+                    bytesToAlloc += Short.SIZE;
+                    bytes[i] = ByteBuffer.allocate(Short.SIZE).putInt((Short) o).array();
                 } else if(o instanceof Integer) {
-                    bytesToAlloc += Integer.BYTES;
-                    bytes[i] = ByteBuffer.allocate(Integer.BYTES).putInt((Integer) o).array();
+                    bytesToAlloc += Integer.SIZE;
+                    bytes[i] = ByteBuffer.allocate(Integer.SIZE).putInt((Integer) o).array();
                 } else if(o instanceof Long) {
-                    bytesToAlloc += Long.BYTES;
-                    bytes[i] = ByteBuffer.allocate(Long.BYTES).putLong((Long) o).array();
+                    bytesToAlloc += Long.SIZE;
+                    bytes[i] = ByteBuffer.allocate(Long.SIZE).putLong((Long) o).array();
                 } else if(o instanceof Double) {
-                    bytesToAlloc += Double.BYTES;
-                    bytes[i] = ByteBuffer.allocate(Double.BYTES).putDouble((Double) o).array();
+                    bytesToAlloc += Double.SIZE;
+                    bytes[i] = ByteBuffer.allocate(Double.SIZE).putDouble((Double) o).array();
                 } else if(o instanceof String) {
                     byte[] str = ((String) o).getBytes();
                     bytesToAlloc += MESSAGE_ALLOC_SIZE + str.length;

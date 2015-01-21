@@ -49,7 +49,11 @@ public class PeriodicVehicleChooser implements IVehicleChooser {
     	
     	
     	for(VehicleInfo vi : vehicleNextResult.getNext()) {
-    		this.map.put(vi.getId(), vi.setState(this.map.getOrDefault(vi.getId(), -1) + 1));
+    		Integer i = this.map.get(vi.getId());
+    		if(i == null) {
+    			i = -1;
+    		}
+    		this.map.put(vi.getId(), i + 1);
     		if(vi.getState() == 0) {
     			LOGGER.info("begin: " + vi.getId());
     		}

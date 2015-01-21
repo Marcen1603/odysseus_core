@@ -17,7 +17,6 @@ package de.uniol.inf.is.odysseus.tc.sendec;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import com.google.inject.Inject;
 
