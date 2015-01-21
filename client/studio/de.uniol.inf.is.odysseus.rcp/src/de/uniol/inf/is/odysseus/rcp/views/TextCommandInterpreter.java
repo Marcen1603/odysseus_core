@@ -4,6 +4,7 @@ import java.util.Dictionary;
 
 import org.eclipse.osgi.framework.console.CommandInterpreter;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.PlatformUI;
 import org.osgi.framework.Bundle;
 
 public class TextCommandInterpreter implements CommandInterpreter {
@@ -32,17 +33,22 @@ public class TextCommandInterpreter implements CommandInterpreter {
 	}
 
 	@Override
-	public void print(Object o) {
+	public void print(final Object o) {
 		if( o == null ) {
 			text.append("null");
 		} else {
-			text.append(o.toString());
+			PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
+				@Override
+				public void run() {
+					text.append(o.toString());
+				}
+			});
 		}
 	}
 
 	@Override
 	public void println() {
-		text.append("\n");
+		print("\n");
 	}
 
 	@Override
