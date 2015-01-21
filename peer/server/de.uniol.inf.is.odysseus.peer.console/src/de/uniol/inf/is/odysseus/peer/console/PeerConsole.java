@@ -1,9 +1,17 @@
 package de.uniol.inf.is.odysseus.peer.console;
 
+import java.io.IOException;
 import java.lang.management.ManagementFactory;
 import java.lang.management.ThreadMXBean;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+import java.net.InetAddress;
+import java.net.InterfaceAddress;
+import java.net.NetworkInterface;
+import java.net.SocketException;
+import java.net.UnknownHostException;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Enumeration;
@@ -57,6 +65,9 @@ public class PeerConsole implements CommandProvider, IPeerCommunicatorListener {
 
 	private static final Logger LOG = LoggerFactory.getLogger(PeerConsole.class);
 	private static final Collection<CommandProvider> COMMAND_PROVIDERS = Lists.newArrayList();
+	private static final String CRYINGTEXT = "REQUEST_INFORMATION";
+	private static final int CRY_PORT = 65211;
+	private static final int CRY_SEND_PORT = 65212;
 
 	private static IP2PDictionary p2pDictionary;
 	private static IPeerDictionary peerDictionary;
@@ -240,6 +251,7 @@ public class PeerConsole implements CommandProvider, IPeerCommunicatorListener {
 		sb.append("    listPeerAddresses/ls...              - Lists all peer addresses (ips)\n");
 		sb.append("    resourceStatus                 		- Current status of local MEM, CPU, NET\n");
 		sb.append("    ping                           		- Lists the current latencies to known peers\n");
+		sb.append("    findPeers <groupfilter>              - Find other peers with UDP broadcast\n");
 		sb.append("    listPingPositions/ls...        		- Lists the current position of known peers in the ping map\n");
 		sb.append("    peerStatus                     		- Summarizes the current peer status (peerName, ids, etc.)\n");
 		sb.append("    listEndpointConnections/ls...  		- Lists all peers which have a true endpoint connection\n");
@@ -356,17 +368,17 @@ public class PeerConsole implements CommandProvider, IPeerCommunicatorListener {
 		ci.println("PeerID: " + p2pNetworkManager.getLocalPeerID());
 		ci.println("Peergroup: " + p2pNetworkManager.getLocalPeerGroupName());
 		ci.println("PeergroupID: " + p2pNetworkManager.getLocalPeerGroupID());
-		
+
 		Optional<String> optAddress = InetAddressUtil.getRealInetAddress();
 		if (optAddress.isPresent()) {
 			ci.println("Address: " + optAddress.get());
 		} else {
 			ci.println("Address: <not available>");
 		}
-		
+
 		ci.println("Port: " + p2pNetworkManager.getPort());
 		Optional<String> optHostname = InetAddressUtil.getHostName();
-		if( optHostname.isPresent() ) {
+		if (optHostname.isPresent()) {
 			ci.println("Hostname: " + optHostname.get());
 		} else {
 			ci.println("Hostname : <not known>");
@@ -1276,6 +1288,83 @@ public class PeerConsole implements CommandProvider, IPeerCommunicatorListener {
 			b.append(source.getClass().getSimpleName());
 			b.append("(").append(source.hashCode()).append(")");
 			b.append("[").append(source.getName()).append("]\n");
+		}
+	}
+	
+	public void _findPeers( CommandInterpreter ci ) {
+		_cryForPeers(ci);
+	}
+
+	public void _cryForPeers(final CommandInterpreter ci) {
+		final String peerGroupFilter = ci.nextArgument();
+
+		try {
+			final DatagramSocket socket = new DatagramSocket(CRY_PORT, InetAddress.getByName("0.0.0.0"));
+			socket.setBroadcast(true);
+			socket.setSoTimeout(10 * 1000);
+
+			WaitForBroadcastAnswerThread waitThread = new WaitForBroadcastAnswerThread(socket, ci, peerGroupFilter);
+			waitThread.start();
+
+			ci.println("Crying for peers..");
+			broadcast(socket, CRYINGTEXT.getBytes());
+
+			ci.println("Waiting 10 Seconds for (additional) responses...");
+			wait10Seconds();
+
+			waitThread.stopRunning();
+			socket.close();
+
+			ci.println("Waiting finished");
+		} catch (IOException e) {
+			ci.println("Could not cry:" + e);
+		}
+	}
+
+	private static void broadcast(DatagramSocket socket, byte[] sendData) throws UnknownHostException, IOException {
+		DatagramPacket packet = new DatagramPacket(sendData, sendData.length, InetAddress.getByName("255.255.255.255"), CRY_SEND_PORT);
+		socket.send(packet);
+
+		Collection<InetAddress> broadcastAddresses = getBroadcastableAddresses();
+		for (InetAddress broadcast : broadcastAddresses) {
+			try {
+				DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, broadcast, CRY_SEND_PORT);
+				socket.send(sendPacket);
+			} catch (Exception e) {
+				// ignore
+			}
+		}
+	}
+
+	private static Collection<InetAddress> getBroadcastableAddresses() {
+		List<InetAddress> result = Lists.newArrayList();
+
+		try {
+			Enumeration<NetworkInterface> interfaces = NetworkInterface.getNetworkInterfaces();
+			while (interfaces.hasMoreElements()) {
+				NetworkInterface networkInterface = interfaces.nextElement();
+				if (networkInterface.isLoopback() || !networkInterface.isUp() || networkInterface.isVirtual()) {
+					continue; // Don't want to broadcast to the loopback
+				}
+
+				for (InterfaceAddress interfaceAddress : networkInterface.getInterfaceAddresses()) {
+					InetAddress broadcast = interfaceAddress.getBroadcast();
+					if (broadcast != null) {
+						result.add(broadcast);
+					}
+				}
+			}
+		} catch (SocketException e) {
+			// ignore
+		}
+
+		return result;
+	}
+
+	private static void wait10Seconds() {
+		try {
+			Thread.sleep(10 * 1000);
+		} catch (InterruptedException e) {
 		}
 	}
 }
