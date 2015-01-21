@@ -20,7 +20,7 @@ public class MDAStorePreParserKeyword extends AbstractPreParserKeyword {
 
 	private static final String PATTERN = "Name ClassName ValuesOfFirstDimension ... ValuesOfNthDimension";
 
-	private static final String COLON_PATTERN = "SmallestValue:GreatestValue:IncreasingValue";
+	private static final String COLON_PATTERN = "SmallestValue:GreatestValue:NumValues";
 
 	@Override
 	public void validate(Map<String, Object> variables, String parameter,
@@ -100,22 +100,42 @@ public class MDAStorePreParserKeyword extends AbstractPreParserKeyword {
 
 		String strFirst = strValues_intern[0];
 		String strLast = strValues_intern[1];
-		String strIncrease = strValues_intern[2];
+		String strCount = strValues_intern[2];
 
 		List values = Lists.newArrayList();
 		double firstValue = Double.valueOf(strFirst);
 		double lastValue = Double.valueOf(strLast);
-		double increaseValue = Double.valueOf(strIncrease);
-		double curValue = firstValue;
-
-		while (curValue <= lastValue) {
+		int count = Integer.valueOf(strCount);
+		if((firstValue == lastValue && count != 1) || (firstValue != lastValue && count <= 1)) {
+			throw new OdysseusScriptException("Illegal number of coordinates for given start and end!");
+		}
+		
+		double increasingValue = (lastValue-firstValue) / count;
+		if(firstValue == lastValue) {
 			try {
-				values.add(clz.cast(Double.valueOf(curValue)));
+				values.add(clz.cast(Double.valueOf(firstValue)));
 			} catch (Throwable e) {
 				throw new OdysseusScriptException("Could not cast "
 						+ firstValue + " to " + clz.getCanonicalName());
 			}
-			curValue += increaseValue;
+		} else if(firstValue < lastValue) {
+			for(double value = firstValue; value <= lastValue; value += increasingValue) {
+				try {
+					values.add(clz.cast(Double.valueOf(value)));
+				} catch (Throwable e) {
+					throw new OdysseusScriptException("Could not cast "
+							+ value + " to " + clz.getCanonicalName());
+				}
+			}
+		} else {
+			for(double value = firstValue; value >= lastValue; value += increasingValue) {
+				try {
+					values.add(clz.cast(Double.valueOf(value)));
+				} catch (Throwable e) {
+					throw new OdysseusScriptException("Could not cast "
+							+ value + " to " + clz.getCanonicalName());
+				}
+			}
 		}
 		return values;
 	}
