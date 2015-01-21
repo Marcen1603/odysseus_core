@@ -18,6 +18,7 @@ import de.uniol.inf.is.odysseus.p2p_new.IP2PNetworkManager;
 import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicator;
 import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicatorListener;
 import de.uniol.inf.is.odysseus.p2p_new.PeerCommunicationException;
+import de.uniol.inf.is.odysseus.p2p_new.dictionary.IPeerDictionary;
 import de.uniol.inf.is.odysseus.peer.ddc.DDCEntry;
 import de.uniol.inf.is.odysseus.peer.ddc.DDCKey;
 import de.uniol.inf.is.odysseus.peer.ddc.IDistributedDataContainer;
@@ -116,6 +117,20 @@ public class DistributedDataContainerCommunicator implements
 			peerCommunicator = null;
 		}
 	}
+	
+	private static IPeerDictionary peerDictionary;
+
+	// called by OSGi-DS
+	public static void bindPeerDictionary(IPeerDictionary serv) {
+		peerDictionary = serv;
+	}
+
+	// called by OSGi-DS
+	public static void unbindPeerDictionary(IPeerDictionary serv) {
+		if (peerDictionary == serv) {
+			peerDictionary = null;
+		}
+	}
 
 	/**
 	 * Processes DDCAdvertisements and writes changes to DDC. If
@@ -166,12 +181,15 @@ public class DistributedDataContainerCommunicator implements
 							.createMessage(volunteerPeerID,
 									ddcAdvertisement.getAdvertisementUid(),
 									ddcEntries);
-					RepeatingMessageSend currentJob = new RepeatingMessageSend(
-							peerCommunicator, currentStateMessage,
-							ddcAdvertisement.getInitiatingPeerId());
-					currentJobs.put(ddcAdvertisement.getAdvertisementUid(), currentJob);
-					currentJob.start();
-
+					PeerID destPeer = ddcAdvertisement.getInitiatingPeerId();
+					if( peerDictionary.getRemotePeerIDs().contains(destPeer)) {
+						RepeatingMessageSend currentJob = new RepeatingMessageSend(
+								peerCommunicator, currentStateMessage,
+								destPeer);
+						currentJobs.put(ddcAdvertisement.getAdvertisementUid(), currentJob);
+						currentJob.start();
+					}
+					
 					break;
 				case changeDistribution:
 					// write added entries in DDC

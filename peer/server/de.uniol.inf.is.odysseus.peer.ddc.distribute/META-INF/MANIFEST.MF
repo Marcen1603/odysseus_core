@@ -14,7 +14,8 @@ Import-Package: com.google.common.base,
 Require-Bundle: de.uniol.inf.is.odysseus.p2p_new,
  de.uniol.inf.is.odysseus.peer.ddc,
  Jxta_2.6_Source,
- de.uniol.inf.is.odysseus.peer.ddc.file;bundle-version="1.0.0"
+ de.uniol.inf.is.odysseus.peer.ddc.file;bundle-version="1.0.0",
+ com.google.guava;bundle-version="14.0.0"
 Export-Package: de.uniol.inf.is.odysseus.peer.ddc.distribute.advertisement,
  de.uniol.inf.is.odysseus.peer.ddc.distribute.advertisement.sender,
  de.uniol.inf.is.odysseus.peer.ddc.distribute.communication
