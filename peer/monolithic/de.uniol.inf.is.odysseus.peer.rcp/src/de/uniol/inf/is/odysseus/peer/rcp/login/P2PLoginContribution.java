@@ -27,7 +27,7 @@ import com.google.common.collect.Maps;
 
 import de.uniol.inf.is.odysseus.p2p_new.IP2PNetworkManager;
 import de.uniol.inf.is.odysseus.p2p_new.P2PNetworkException;
-import de.uniol.inf.is.odysseus.p2p_new.util.InetAddressUtil;
+import de.uniol.inf.is.odysseus.peer.config.InetAddressUtil;
 import de.uniol.inf.is.odysseus.peer.config.PeerConfiguration;
 import de.uniol.inf.is.odysseus.peer.rcp.RCPP2PNewPlugIn;
 import de.uniol.inf.is.odysseus.rcp.login.ILoginContribution;
