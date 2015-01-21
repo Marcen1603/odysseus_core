@@ -50,7 +50,6 @@ public class AggregateTrajectoryConstructPO<Q extends ITimeInterval, R extends I
 	
 	@Override
 	protected void process_next(R object, int port) {
-		this.transferArea.dump();
 		System.out.println("=========================================");
 		super.process_next(object, port);
 	}
