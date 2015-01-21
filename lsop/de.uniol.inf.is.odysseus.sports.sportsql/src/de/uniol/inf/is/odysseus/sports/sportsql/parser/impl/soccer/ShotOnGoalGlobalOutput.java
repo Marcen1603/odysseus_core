@@ -11,14 +11,12 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.CoalesceAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.JoinAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.MapAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.MergeAO;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.PredicateWindowAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.ProjectAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.RenameAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.RouteAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.SelectAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.StateMapAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.StreamAO;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.TupleAggregateAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.SDFExpressionParameter;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.peer.ddc.MissingDDCEntryException;
@@ -42,7 +40,7 @@ import de.uniol.inf.is.odysseus.sports.sportsql.parser.parameter.SportsQLTimePar
  * 
  * 
  * @author Michael (all the hard PQL stuff), Tobias (only the translation into
- *         logical query)
+ *         logical query), Pascal
  *
  */
 public class ShotOnGoalGlobalOutput {
@@ -80,7 +78,7 @@ public class ShotOnGoalGlobalOutput {
 	/**
 	 * gravity puffer in height-forcast[mm]
 	 */
-	public final static String GRAVITY_HEIGHT_PUFFER = "1000.0";
+	public final static String GRAVITY_HEIGHT_PUFFER = "1660.0";
 
 	
 	// Attributes
@@ -105,7 +103,6 @@ public class ShotOnGoalGlobalOutput {
 	
 	//in sec
 	private static String ATTRIBUTE_TIME_TO_GOALLINE = "timeToGoalline";
-
 		
 		
 	@SuppressWarnings({ "rawtypes" })
@@ -211,7 +208,6 @@ public class ShotOnGoalGlobalOutput {
 
 		allOperators.add(accelerationMap);
 
-
 		// 2. ChangeDetect
 		List<String> attr = new ArrayList<String>();
 		attr.add(ATTRIBUTE_ACCELERATED);
@@ -266,7 +262,6 @@ public class ShotOnGoalGlobalOutput {
 		// -------------------------------------------------------------------
 
 		// 1. Join
-		//TODO: zeit-einheiten!
 		RelationalPredicate firstPlayerBallJoinPredicate = OperatorBuildHelper
 				.createRelationalPredicate(IntermediateSchemaAttributes.TS + " >= " + ATTRIBUTE_SHOT_TS + " - ("
 						+ MAX_TIMESHIFT_SHOOTER + "*"
@@ -385,9 +380,8 @@ public class ShotOnGoalGlobalOutput {
 		// -------------------------------------------------------------------
 
 		// 1. Join
-		//TODO: maxshotduration anpassen!!!!!einheit von ps auf sec geändert
 		RelationalPredicate joinPredicate1 = OperatorBuildHelper
-				.createRelationalPredicate(IntermediateSchemaAttributes.TS + " >= " + ATTRIBUTE_SHOT_TS);
+				.createRelationalPredicate(IntermediateSchemaAttributes.TS + " > " + ATTRIBUTE_SHOT_TS);
 		RelationalPredicate joinPredicate2 = OperatorBuildHelper
 				.createRelationalPredicate(IntermediateSchemaAttributes.TS + " < " + ATTRIBUTE_SHOT_TS + " + ("
 						+ MAX_TIMESHIFT_SHOT_BALL_JOIN + " * " + TimeUnitHelper.getBTUtoSecondsFactor(TimeUnit.valueOf(AbstractSportsDDCAccess
@@ -492,22 +486,21 @@ public class ShotOnGoalGlobalOutput {
 		// -------------------------------------------------------------------
 
 		// 1. Map
-		//TODO: einheiten!!!
 		List<SDFExpressionParameter> goalAreaMapParams = new ArrayList<SDFExpressionParameter>();
 
 		SDFExpressionParameter goalAreaMapParam1 = OperatorBuildHelper
 				.createExpressionParameter(ATTRIBUTE_SHOT_TS, firstTupleSelect);
 		
 		SDFExpressionParameter goalAreaMapParam14 = OperatorBuildHelper
-				.createExpressionParameter("DoubleToInteger(ts/"
+				.createExpressionParameter("DoubleToInteger(" + ATTRIBUTE_SHOT_TS + "/"
 						+ TimeUnitHelper.getBTUtoMinutesFactor(TimeUnit.valueOf(AbstractSportsDDCAccess
 								.getBasetimeunit().toLowerCase())) + ")", OperatorBuildHelper.ATTRIBUTE_MINUTE, firstTupleSelect);
 		SDFExpressionParameter goalAreaMapParam15 = OperatorBuildHelper
-				.createExpressionParameter("DoubleToInteger((ts/"
+				.createExpressionParameter("DoubleToInteger((" + ATTRIBUTE_SHOT_TS + "/"
 						+ TimeUnitHelper.getBTUtoSecondsFactor(TimeUnit.valueOf(AbstractSportsDDCAccess
 								.getBasetimeunit().toLowerCase())) + ") % 60)",
 				OperatorBuildHelper.ATTRIBUTE_SECOND, firstTupleSelect);
-		
+
 		SDFExpressionParameter goalAreaMapParam2 = OperatorBuildHelper
 				.createExpressionParameter(ATTRIBUTE_SHOT_X, firstTupleSelect);
 		SDFExpressionParameter goalAreaMapParam3 = OperatorBuildHelper
@@ -556,7 +549,6 @@ public class ShotOnGoalGlobalOutput {
 		goalAreaMapParams.add(goalAreaMapParam14);
 		goalAreaMapParams.add(goalAreaMapParam15);
 
-
 		MapAO goalAreaMap = OperatorBuildHelper.createMapAO(goalAreaMapParams,
 				firstTupleSelect, 0, 0,false);
 		goalAreaMap.setName("goalAreaMap");
@@ -582,7 +574,6 @@ public class ShotOnGoalGlobalOutput {
 
 		// 1. Map
 		// Time in seconds!
-		//TODO: einheiten!!!
 		MapAO timeToGoalLineLeftMapAO = createGoalAreaMapAO(1, goalAreaDetection,
 				"(" + SoccerDDCAccess.getGoalareaLeftX() + " - " + IntermediateSchemaAttributes.X + " ) / (" + ATTRIBUTE_VX + " * 1000)");
 		timeToGoalLineLeftMapAO.setName("timeToGoalLineLeftMapAO");
@@ -590,7 +581,6 @@ public class ShotOnGoalGlobalOutput {
 		allOperators.add(timeToGoalLineLeftMapAO);
 
 		// 2. Select
-		//TODO: team id aus ddc holen
 		SelectAO timeToGoalLeftSelectAO = createTimeToGoalSelectAO(
 				SoccerDDCAccess.getRightGoalTeamId(),
 				timeToGoalLineLeftMapAO);
@@ -598,9 +588,7 @@ public class ShotOnGoalGlobalOutput {
 
 		allOperators.add(timeToGoalLeftSelectAO);
 
-
 		// 3. Map
-		//TODO: sicherstellen, dass zeit-einheiten gleich sind
 		MapAO forecastMapGoalLeft = createForecastMapAO(timeToGoalLeftSelectAO);
 		forecastMapGoalLeft.setName("forecastMapGoalLeft");
 
@@ -708,7 +696,6 @@ public class ShotOnGoalGlobalOutput {
 		mapParams.add(mapParam11);
 		mapParams.add(mapParam12);
 
-
 		return OperatorBuildHelper.createMapAO(mapParams, source, 0, 0, false);
 	}
 
@@ -723,16 +710,15 @@ public class ShotOnGoalGlobalOutput {
 	@SuppressWarnings("rawtypes")
 	private static SelectAO createTimeToGoalSelectAO(int teamId,
 			ILogicalOperator source) {
-		//IPredicate predicate1 = OperatorBuildHelper
-		//		.createRelationalPredicate(IntermediateSchemaAttributes.TEAM_ID + " = " + teamId);
+		IPredicate predicate1 = OperatorBuildHelper
+				.createRelationalPredicate(IntermediateSchemaAttributes.TEAM_ID + " = " + teamId);
 		IPredicate predicate2 = OperatorBuildHelper
 				.createRelationalPredicate(ATTRIBUTE_TIME_TO_GOALLINE + " >= 0");
-		//TODO: wieso - ts + shot_ts????
 		IPredicate predicate3 = OperatorBuildHelper
 				.createRelationalPredicate(ATTRIBUTE_TIME_TO_GOALLINE + " <= "
 						+ MAX_SHOT_DURATION);
 		List<IPredicate> predicates = new ArrayList<IPredicate>();
-		//predicates.add(predicate1);
+		predicates.add(predicate1);
 		predicates.add(predicate2);
 		predicates.add(predicate3);
 		IPredicate andPredicate = OperatorBuildHelper
@@ -752,7 +738,6 @@ public class ShotOnGoalGlobalOutput {
 	@SuppressWarnings("rawtypes")
 	private static SelectAO createForecastSelectAO(double goalAreaYMin, double goalAreaYMax,
 			double goalAreaZMax, ILogicalOperator source) {
-		//TODO:x,y?!
 		IPredicate predicate1 = OperatorBuildHelper
 				.createRelationalPredicate(ATTRIBUTE_FORECAST_Y + " >= " + goalAreaYMin);
 		IPredicate predicate2 = OperatorBuildHelper
@@ -828,7 +813,6 @@ public class ShotOnGoalGlobalOutput {
 		mapParams.add(goalAreaMapParam13);
 		mapParams.add(goalAreaMapParam14);
 		mapParams.add(goalAreaMapParam15);
-
 
 		return OperatorBuildHelper.createMapAO(mapParams, source, 0,
 				sourceOutputPort, false);
