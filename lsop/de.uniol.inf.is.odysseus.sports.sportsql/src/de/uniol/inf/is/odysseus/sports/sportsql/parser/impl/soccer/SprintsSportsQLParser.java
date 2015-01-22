@@ -34,7 +34,7 @@ public class SprintsSportsQLParser  {
 	
 	// in milliseconds
 	private static long MEASURE_INTERVALL = 1000;
-	private static long MEASURE_INTERVALL_ADVANCE = 200;
+	private static long MEASURE_INTERVALL_ADVANCE = 1000;
 	private static int SPRINT_MIN_DISTANCE = 8;
 	private static int SPRINT_SPEED = 24;
 	
@@ -83,7 +83,7 @@ public class SprintsSportsQLParser  {
 		allOperators.add(streamProject);
 
 		// 3. TimeWindow with size = MEASSURE_INTERVALL and advance = MEASSURE_INTERVALL_ADVANCE
-		TimeWindowAO timeWindow = OperatorBuildHelper.createTimeWindowAOWithAdvance(MEASURE_INTERVALL, MEASURE_INTERVALL_ADVANCE,"MILLISECONDS", streamProject);
+		TimeWindowAO timeWindow = OperatorBuildHelper.createTimeWindowAO(MEASURE_INTERVALL, MEASURE_INTERVALL_ADVANCE,"MILLISECONDS", streamProject);
 		allOperators.add(timeWindow);
 
 		// 4. Aggregate to calculate average velocity of the time window
@@ -91,16 +91,19 @@ public class SprintsSportsQLParser  {
 		aggregateFunctions.add("AVG");
 		aggregateFunctions.add("MIN");
 		aggregateFunctions.add("MAX");
+		aggregateFunctions.add("COUNT");
 
 		List<String> aggregateInputAttributeNames = new ArrayList<String>();
 		aggregateInputAttributeNames.add(IntermediateSchemaAttributes.V);
 		aggregateInputAttributeNames.add(IntermediateSchemaAttributes.TS);
 		aggregateInputAttributeNames.add(IntermediateSchemaAttributes.TS);
+		aggregateInputAttributeNames.add(IntermediateSchemaAttributes.V);
 
 		List<String> aggregateOutputAttributeNames = new ArrayList<String>();
 		aggregateOutputAttributeNames.add(ATTRIBUTE_AVG_V);
 		aggregateOutputAttributeNames.add(ATTRIBUTE_MIN_TS);
 		aggregateOutputAttributeNames.add(ATTRIBUTE_MAX_TS);
+		aggregateOutputAttributeNames.add("COUNT_V");
 
 		List<String> aggregateGroupBys = new ArrayList<String>();
 		aggregateGroupBys.add(IntermediateSchemaAttributes.ENTITY_ID);
@@ -123,7 +126,10 @@ public class SprintsSportsQLParser  {
 		toKmhMapExpressions.add(OperatorBuildHelper.createExpressionParameter(
 				ATTRIBUTE_MAX_TS, aggregate));
 		toKmhMapExpressions.add(OperatorBuildHelper.createExpressionParameter(
-				ATTRIBUTE_AVG_V + " * 360  / 1000000000", ATTRIBUTE_SPEED,
+				ATTRIBUTE_AVG_V + " * 3600  / 1000000000", ATTRIBUTE_SPEED,
+				aggregate));
+		toKmhMapExpressions.add(OperatorBuildHelper.createExpressionParameter(
+				ATTRIBUTE_AVG_V, ATTRIBUTE_AVG_V,
 				aggregate));
 
 		MapAO toKmhMap = OperatorBuildHelper.createMapAO(toKmhMapExpressions,
@@ -171,6 +177,7 @@ public class SprintsSportsQLParser  {
 		resultMapExpressions.add(OperatorBuildHelper.createExpressionParameter(IntermediateSchemaAttributes.TEAM_ID, coalesceAO));
 		resultMapExpressions.add(OperatorBuildHelper.createExpressionParameter(ATTRIBUTE_AVG_SPEED, coalesceAO));
 		resultMapExpressions.add(OperatorBuildHelper.createExpressionParameter(ATTRIBUTE_MAX_SPEED, coalesceAO));
+		resultMapExpressions.add(OperatorBuildHelper.createExpressionParameter(ATTRIBUTE_MAX_TS+"-"+ATTRIBUTE_MIN_TS,"ts_diff", coalesceAO));
 		resultMapExpressions.add(OperatorBuildHelper.createExpressionParameter("(("+ATTRIBUTE_AVG_SPEED+"*1000) / 60 / 60 / 1000 / 1000) * ("+ATTRIBUTE_MAX_TS+"-"+ATTRIBUTE_MIN_TS+")", ATTRIBUTE_SPRINT_DISTANCE,coalesceAO));
 
 		MapAO resultMap = OperatorBuildHelper.createMapAO(resultMapExpressions,	coalesceAO, 0, 0, false);
