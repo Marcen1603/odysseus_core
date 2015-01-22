@@ -46,6 +46,7 @@ public class SlidingElementWindowTIPO<T extends IStreamObject<ITimeInterval>>
 	@Override
 	protected void process(T object, List<T> buffer, Long bufferId, PointInTime ts) {
 		synchronized (buffer) {
+			buffer.add(object);
 			// test if buffer has reached limit
 			if (buffer.size() == this.windowSize + 1) {
 

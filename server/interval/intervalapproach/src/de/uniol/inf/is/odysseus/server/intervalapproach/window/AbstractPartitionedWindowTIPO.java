@@ -67,7 +67,7 @@ abstract public class AbstractPartitionedWindowTIPO<T extends IStreamObject<ITim
 				buffer = new LinkedList<T>();
 				buffers.put(bufferId, buffer);
 			}
-			buffer.add(object);
+			//buffer.add(object);
 			process(object, buffer, bufferId, lastTs);
 
 			if (buffer.size() == 0) {
