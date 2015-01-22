@@ -1,6 +1,7 @@
 package de.uniol.inf.is.odysseus.peer.recovery.strategy.activestandby.logicaloperator;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.peer.distribute.modify.replication.logicaloperator.ReplicationMergeAO;
 
@@ -14,7 +15,7 @@ import de.uniol.inf.is.odysseus.peer.distribute.modify.replication.logicaloperat
  * @author Michael Brand
  *
  */
-@LogicalOperator(name="RECOVERYMERGE", minInputPorts=2, maxInputPorts=Integer.MAX_VALUE, doc="Merge input from semantically equal queries for active standy recovery.", category = {LogicalOperatorCategory.PROCESSING})
+@LogicalOperator(name = "RECOVERYMERGE", minInputPorts = 2, maxInputPorts = Integer.MAX_VALUE, doc = "Merge input from semantically equal queries for active standy recovery.", category = { LogicalOperatorCategory.PROCESSING })
 public class RecoveryMergeAO extends ReplicationMergeAO {
 
 	/**
@@ -23,7 +24,7 @@ public class RecoveryMergeAO extends ReplicationMergeAO {
 	private static final long serialVersionUID = -753004855989112068L;
 
 	/**
-	 * Empty default cnstructor
+	 * Empty default constructor
 	 */
 	public RecoveryMergeAO() {
 		super();
@@ -33,10 +34,15 @@ public class RecoveryMergeAO extends ReplicationMergeAO {
 	 * Creates a new recovery merge operator as a copy of an existing one.
 	 * 
 	 * @param mergeAO
-	 *            The mrecovery merge operator to copy.
+	 *            The recovery merge operator to copy.
 	 */
 	public RecoveryMergeAO(ReplicationMergeAO mergeAO) {
 		super(mergeAO);
+	}
+
+	@Override
+	public AbstractLogicalOperator clone() {
+		return new RecoveryMergeAO(this);
 	}
 
 }
