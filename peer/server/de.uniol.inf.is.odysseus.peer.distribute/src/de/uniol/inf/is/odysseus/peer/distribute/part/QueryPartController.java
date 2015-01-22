@@ -350,6 +350,7 @@ public class QueryPartController implements IPlanModificationListener,
 			return null;
 		}
 	}
+	
 
 	protected static Collection<Integer> determineLocalIDs(
 			Map<Integer, ID> sharedQueryIDMap, ID sharedQueryID) {
@@ -466,6 +467,14 @@ public class QueryPartController implements IPlanModificationListener,
 			}
 		}
 		
+	}
+	
+	@Override
+	public void addLocalQueryToShared(ID sharedQueryID, int localQueryID) {
+		Preconditions.checkNotNull(sharedQueryID,
+				"sharedQueryID must not be null!");
+		
+		this.sharedQueryIDMap.put(localQueryID, sharedQueryID);
 	}
 
 }

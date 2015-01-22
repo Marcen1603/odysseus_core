@@ -1,10 +1,12 @@
 package de.uniol.inf.is.odysseus.peer.loadbalancing.active.movingstate.status;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
+import net.jxta.id.ID;
 import net.jxta.peer.PeerID;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IStatefulPO;
 import de.uniol.inf.is.odysseus.peer.distribute.ILogicalQueryPart;
@@ -30,7 +32,41 @@ public class MovingStateMasterStatus implements ILoadBalancingMasterStatus {
 	 * List of Pipes which are buffering
 	 */
 	private ArrayList<String> bufferedPipes = new ArrayList<String>();
+	
+	
+	private boolean isMaster;
+	public boolean isMaster() {
+		return isMaster;
+	}
 
+	public ID getSharedQueryID() {
+		return sharedQueryID;
+	}
+
+	public Collection<Integer> getLocalQueriesForSharedQuery() {
+		return localQueriesForSharedQuery;
+	}
+
+	public Collection<PeerID> getOtherPeersForSharedQuery() {
+		return otherPeersForSharedQuery;
+	}
+
+
+
+	private ID sharedQueryID;
+	private Collection<Integer> localQueriesForSharedQuery;
+	private Collection<PeerID>  otherPeersForSharedQuery;
+	private PeerID sharedQueryMasterPeer;
+
+	
+	public void storeSharedQueryInformation(boolean isMaster, ID sharedQueryID,Collection<Integer> localQueriesForSharedQuery, Collection<PeerID> otherPeers) {
+		this.isMaster = isMaster;
+		this.sharedQueryID = sharedQueryID;
+		this.localQueriesForSharedQuery = localQueriesForSharedQuery;
+		this.otherPeersForSharedQuery = otherPeers;
+	}
+	
+	
 
 	private volatile boolean locked=false;
 	
@@ -419,6 +455,14 @@ public class MovingStateMasterStatus implements ILoadBalancingMasterStatus {
 	@Override
 	public String getCommunicationStrategy() {
 		return COMMUNCIATOR_NAME;
+	}
+
+	public PeerID getSharedQueryMasterPeer() {
+		return sharedQueryMasterPeer;
+	}
+
+	public void setSharedQueryMasterPeer(PeerID sharedQueryMasterPeer) {
+		this.sharedQueryMasterPeer = sharedQueryMasterPeer;
 	}
 
 }

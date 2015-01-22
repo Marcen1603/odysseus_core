@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
+import net.jxta.id.ID;
 import net.jxta.peer.PeerID;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IStatefulPO;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.common.ILoadBalancingSlaveStatus;
@@ -51,8 +52,40 @@ public class MovingStateSlaveStatus implements ILoadBalancingSlaveStatus,
 	 * Holds current LoadBalancing Phase
 	 */
 	private LB_PHASES phase;
+	
+	private boolean registeredAsSlave = false;
+	private boolean registeredAsMaster = false;
+	public boolean isRegisteredAsMaster() {
+		return registeredAsMaster;
+	}
+
+	private PeerID sharedQueryMasterPeer;
+	private ID sharedQueryID;
+	
+	public boolean isRegisteredAsSlave() {
+		return registeredAsSlave;
+	}
+	
+	public PeerID getSharedQueryMaster() {
+		return sharedQueryMasterPeer;
+	}
+	
+	public ID sharedQueryID() {
+		return sharedQueryID;
+	}
 
 	
+	public void setRegisteredAsNewSlave(PeerID masterPeer, ID sharedQueryID) {
+		this.registeredAsSlave = true;
+		this.sharedQueryMasterPeer = masterPeer;
+		this.sharedQueryID = sharedQueryID;
+	}
+	
+	public void setRegisteredAsMaster(ID sharedQueryID) {
+		this.registeredAsMaster = true;
+		this.sharedQueryID = sharedQueryID;
+	}
+
 	private List<IStatefulPO> statefulOperatorList;
 	
 	/**
@@ -297,6 +330,7 @@ public class MovingStateSlaveStatus implements ILoadBalancingSlaveStatus,
 	public ArrayList<String> getBufferedPipes() {
 		return bufferedPipes;
 	}
+	
 
 	/***
 	 * Sets list of buffered Pipes

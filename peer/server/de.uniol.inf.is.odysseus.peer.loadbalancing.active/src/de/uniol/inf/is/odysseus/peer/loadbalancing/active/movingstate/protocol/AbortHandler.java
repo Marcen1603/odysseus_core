@@ -8,6 +8,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicator;
+import de.uniol.inf.is.odysseus.peer.distribute.IQueryPartController;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.active.OsgiServiceManager;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.common.LoadBalancingException;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.common.LoadBalancingHelper;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.common.LoadBalancingStatusCache;
@@ -117,7 +119,17 @@ public class AbortHandler {
 				Collection<Integer> queriesToRemove = status
 						.getInstalledQueries();
 				if (queriesToRemove != null) {
-
+					IQueryPartController controller = OsgiServiceManager.getQueryPartController();
+					//If new Peer registered itself as new Master->Undo.
+					if(status.isRegisteredAsMaster()) {
+						controller.unregisterAsMaster(status.sharedQueryID());
+					}
+					
+					//If new Peer registered itself as new Slave->Undo.
+					if(status.isRegisteredAsSlave()) {
+						OsgiServiceManager.getQueryManager().sendUnregisterAsSlave(status.getSharedQueryMaster(), status.sharedQueryID());
+					}
+					
 					for (int query : queriesToRemove) {
 						LOG.error("Removing Query with ID " + query);
 						LoadBalancingHelper.deleteQuery(query);

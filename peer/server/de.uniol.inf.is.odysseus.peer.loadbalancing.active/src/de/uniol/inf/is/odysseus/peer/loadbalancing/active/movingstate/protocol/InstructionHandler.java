@@ -123,7 +123,9 @@ public class InstructionHandler {
 						Collection<PeerID> otherPeers = LoadBalancingHelper.toPeerIDCollection(otherPeerIDStrings);
 						ID sharedQueryID = LoadBalancingHelper.toID(sharedQueryIDString);
 						
+						
 						queryPartController.registerAsMaster(query,installedQuery, sharedQueryID, otherPeers);
+						status.setRegisteredAsMaster(sharedQueryID);
 						OsgiServiceManager.getQueryManager().sendChangeMasterToAllSlaves(sharedQueryID);
 						
 					}
@@ -140,7 +142,9 @@ public class InstructionHandler {
 						}
 						else {
 							queryPartController.registerAsSlave(queryIDs,sharedQueryID,masterPeerID);
+							status.setRegisteredAsNewSlave(masterPeerID, sharedQueryID);
 							OsgiServiceManager.getQueryManager().sendRegisterAsSlave(masterPeerID, sharedQueryID);
+							
 						}
 						
 						

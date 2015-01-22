@@ -31,5 +31,7 @@ public interface IQueryPartController {
 	public void removeOtherPeer(ID sharedQueryId, PeerID peerID);
 	
 	public void unregisterLocalQueriesFromSharedQuery(ID sharedQueryID, Collection<Integer> toRemove);
+
+	void addLocalQueryToShared(ID sharedQueryID, int localQueryID);
 	
 }

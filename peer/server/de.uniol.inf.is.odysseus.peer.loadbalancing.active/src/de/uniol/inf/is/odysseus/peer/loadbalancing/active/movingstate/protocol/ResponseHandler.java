@@ -11,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.physicaloperator.IStatefulPO;
+import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.peer.distribute.ILogicalQueryPart;
 import de.uniol.inf.is.odysseus.peer.distribute.IQueryPartController;
 import de.uniol.inf.is.odysseus.peer.distribute.util.LogicalQueryHelper;
@@ -89,8 +90,11 @@ public class ResponseHandler {
 
 				// Update Query part Controller.
 				IQueryPartController queryPartController = OsgiServiceManager.getQueryPartController();
+				
 				ID sharedQueryID = queryPartController.getSharedQueryID(status.getLogicalQuery());
 				boolean isMaster = queryPartController.isMasterForQuery(status.getLogicalQuery());
+				Collection<Integer> localQueries = queryPartController.getLocalIds(sharedQueryID);
+				
 				Collection<Integer> toRemove = new ArrayList<Integer>();
 				toRemove.add(status.getLogicalQuery());
 				
@@ -126,6 +130,7 @@ public class ResponseHandler {
 						for (PeerID peer : otherPeers) {
 							otherPeerIDStrings.add(peer.toString());
 						}
+						status.storeSharedQueryInformation(isMaster, sharedQueryID, localQueries, otherPeers);
 						queryPartController.unregisterAsMaster(sharedQueryID);
 						dispatcher.sendAddQueryForMasterQuery(status.getVolunteeringPeer(), pqlFromQueryPart, communicationListener, otherPeerIDStrings, sharedQueryID.toString());
 						
@@ -135,15 +140,19 @@ public class ResponseHandler {
 						// 2. Peer is Master and part of query remains -> Stay Master
 						if(isMaster) {
 							masterPeerID = OsgiServiceManager.getP2pNetworkManager().getLocalPeerID();
+							status.storeSharedQueryInformation(isMaster, sharedQueryID, localQueries, queryPartController.getOtherPeers(sharedQueryID));
 						}
 						else {
 						// 3. Peer is Slave
 							masterPeerID = queryPartController.getMasterForQuery(sharedQueryID);
 							if(remainingQueries.size()<=0) {
 								LOG.debug("No queries remaining for shared Query. Deregistering with master Peer.");
+								status.storeSharedQueryInformation(isMaster, sharedQueryID, localQueries, null);
+								status.setSharedQueryMasterPeer(masterPeerID);
 								OsgiServiceManager.getQueryManager().sendUnregisterAsSlave(masterPeerID, sharedQueryID);
 							}
 						}
+						
 						dispatcher.sendAddQuery(status.getVolunteeringPeer(),
 								pqlFromQueryPart, communicationListener,sharedQueryID.toString(),masterPeerID.toString());
 						
@@ -317,27 +326,33 @@ public class ResponseHandler {
 			MovingStateCommunicatorImpl communicationListener) {
 		MovingStateMessageDispatcher dispatcher = status.getMessageDispatcher();
 		
+		
+		
+		
 		// Handle error depending on current LoadBalancing phase.
 		switch (status.getPhase()) {
 		case INITIATING:
+			break;
 		case COPYING_QUERY:
 			// Send abort only to volunteering Peer
 			dispatcher.stopAllMessages();
 			dispatcher.sendAbortInstruction(status.getVolunteeringPeer(),
 					communicationListener);
+			resetQueryPartController(status);
 			break;
 		case RELINKING_RECEIVERS:
 		case RELINKING_SENDERS:
 			// Send Abort to all Peers involved
 			dispatcher.stopAllMessages();
 			MovingStateHelper.notifyInvolvedPeers(status);
+			resetQueryPartController(status);
 			break;
 		case COPYING_STATES:
 			if(!CONTINUE_ON_STATE_COPY_ERROR) {
 				dispatcher.stopAllMessages();
 				MovingStateHelper.notifyInvolvedPeers(status);
+				resetQueryPartController(status);
 			}
-			//else: Ignore.
 			break;
 		case STOP_BUFFERING:
 			// New query is already running.
@@ -364,6 +379,32 @@ public class ResponseHandler {
 				status.getProcessId());
 		MovingStateCommunicatorImpl.getInstance().notifyFinished();
 
+	}
+	
+	private static void resetQueryPartController(MovingStateMasterStatus status) {
+		IQueryPartController controller = OsgiServiceManager.getQueryPartController();
+		ID sharedQueryID = status.getSharedQueryID();
+		if(sharedQueryID!=null) {
+			if(status.isMaster()) {
+				Collection<Integer> previousLocalQueries = controller.getLocalIds(sharedQueryID);
+				//If Query was master->Re-Set Query in QueryPart Controller with old peer List and old Query parts...
+				ILogicalQuery qry = OsgiServiceManager.getExecutor().getLogicalQueryById(status.getLogicalQuery(), OsgiServiceManager.getActiveSession());
+				controller.registerAsMaster(qry, status.getLogicalQuery(), sharedQueryID, status.getOtherPeersForSharedQuery());
+				OsgiServiceManager.getQueryManager().sendChangeMasterToAllSlaves(sharedQueryID);
+				
+				for (Integer local:previousLocalQueries) {
+					if(controller.getLocalIds(sharedQueryID).contains(local))
+						continue;
+					
+					controller.addLocalQueryToShared(sharedQueryID, local);
+				}
+			}
+			else {
+				//If Query was no master... (Re-)Set as Slave and tell master.
+				Collection<Integer> localQueries = status.getLocalQueriesForSharedQuery();
+				controller.registerAsSlave(localQueries, sharedQueryID, status.getSharedQueryMasterPeer());
+			}
+		}
 	}
 
 }
