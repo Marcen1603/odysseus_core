@@ -107,8 +107,6 @@ public final class QueryView extends ViewPart {
 		Optional<IQueryViewData> optData = getData(id);
 		if( optData.isPresent() ) {
 			data.remove(optData.get());
-		} else {
-			throw new IllegalArgumentException("Element with query id " + id + " is not known in query view");
 		}
 	}
 	
