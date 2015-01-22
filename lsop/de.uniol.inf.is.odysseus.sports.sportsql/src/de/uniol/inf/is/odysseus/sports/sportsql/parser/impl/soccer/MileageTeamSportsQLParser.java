@@ -12,13 +12,16 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.MapAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.SelectAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.StateMapAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.StreamAO;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.TimestampAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.SDFExpressionParameter;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.peer.ddc.MissingDDCEntryException;
+import de.uniol.inf.is.odysseus.server.intervalapproach.logicaloperator.AssureHeartbeatAO;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.ISportsQLParser;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.SportsQLQuery;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.annotations.SportsQL;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.annotations.SportsQLParameter;
+import de.uniol.inf.is.odysseus.sports.sportsql.parser.buildhelper.IntermediateSchemaAttributes;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.buildhelper.OperatorBuildHelper;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.buildhelper.SportsQLParameterHelper;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.enums.GameType;
@@ -37,6 +40,9 @@ import de.uniol.inf.is.odysseus.sports.sportsql.parser.parameter.SportsQLTimePar
 		@SportsQLParameter(name = "time", parameterClass = SportsQLTimeParameter.class, mandatory = false),
 		@SportsQLParameter(name = "space", parameterClass = SportsQLSpaceParameter.class, mandatory = false) })
 public class MileageTeamSportsQLParser implements ISportsQLParser {
+	
+	private static final int HEARTBEAT = 5000;
+	private static final String ATTRIBUTE_MILEAGE = "mileage";
 
 	@Override
 	public ILogicalQuery parse(ISession session, SportsQLQuery sportsQL) throws NumberFormatException, MissingDDCEntryException {
@@ -89,33 +95,63 @@ public class MileageTeamSportsQLParser implements ISportsQLParser {
 		// 3. StateMapAO for mileage calculation
 		List<SDFExpressionParameter> expressions = new ArrayList<SDFExpressionParameter>();
 		SDFExpressionParameter param2 = OperatorBuildHelper
-				.createExpressionParameter("entity_id", teamSelect);
+				.createExpressionParameter(IntermediateSchemaAttributes.ENTITY_ID, teamSelect);
 		SDFExpressionParameter param3 = OperatorBuildHelper
-				.createExpressionParameter("team_id", teamSelect);
+				.createExpressionParameter(IntermediateSchemaAttributes.TEAM_ID, teamSelect);
 		SDFExpressionParameter param4 = OperatorBuildHelper
 				.createExpressionParameter(
-						"((sqrt((x_meter-__last_1.x_meter)^2 + (y_meter-__last_1.y_meter)^2))/1000)",
-						"mileage", teamSelect);
+						"((sqrt(("+OperatorBuildHelper.ATTRIBUTE_X_METER+"-__last_1."+OperatorBuildHelper.ATTRIBUTE_X_METER+")^2 + ("+OperatorBuildHelper.ATTRIBUTE_Y_METER+"-__last_1."+OperatorBuildHelper.ATTRIBUTE_Y_METER+")^2))/1000)",
+						ATTRIBUTE_MILEAGE, teamSelect);
 
 		expressions.add(param2);
 		expressions.add(param3);
 		expressions.add(param4);
 		
 		StateMapAO mileageStateMap = OperatorBuildHelper.createStateMapAO(
-				expressions, "entity_id", teamSelect);
+				expressions, IntermediateSchemaAttributes.ENTITY_ID, teamSelect);
 		allOperators.add(mileageStateMap);
 		
-		// 3. Aggregate for the sum
+		// 4. Aggregate for the sum
 		
 		AggregateAO sumAggregate = OperatorBuildHelper.createAggregateAO(
-				"SUM", "team_id", "mileage", "mileage", null, mileageStateMap);
+				"SUM", IntermediateSchemaAttributes.TEAM_ID, ATTRIBUTE_MILEAGE, ATTRIBUTE_MILEAGE, null, mileageStateMap);
 		allOperators.add(sumAggregate);
 		
-		List<SDFAttribute> attr = OperatorBuildHelper.createAttributeList("mileage", sumAggregate);
-		List<SDFAttribute> groupBy = OperatorBuildHelper.createAttributeList("team_id", sumAggregate);
-		ChangeDetectAO checkDifference = OperatorBuildHelper.createChangeDetectAO(attr, 0.1, true, groupBy, sumAggregate);
+		List<SDFAttribute> attr = OperatorBuildHelper.createAttributeList(ATTRIBUTE_MILEAGE, sumAggregate);
+		List<SDFAttribute> groupBy = OperatorBuildHelper.createAttributeList(IntermediateSchemaAttributes.TEAM_ID, sumAggregate);
+		ChangeDetectAO checkDifference = OperatorBuildHelper.createChangeDetectAO(attr, 0.1, false, groupBy, sumAggregate);
 		
-		return OperatorBuildHelper.finishQuery(checkDifference, allOperators, sportsQL.getDisplayName());
+		// 5. Clear Endtimestamp
+		TimestampAO timestampAO = OperatorBuildHelper.clearEndTimestamp(checkDifference);
+		allOperators.add(timestampAO);
+
+		// 6. Assure heatbeat every x seconds
+		AssureHeartbeatAO assureHeartbeatAO = OperatorBuildHelper.createHeartbeat(HEARTBEAT, timestampAO);
+		allOperators.add(assureHeartbeatAO);
+
+		// 7. Result Aggregate
+		List<String> resultAggregateFunctions = new ArrayList<String>();
+		resultAggregateFunctions.add("MAX");
+
+		List<String> resultAggregateInputAttributeNames = new ArrayList<String>();
+		resultAggregateInputAttributeNames.add(ATTRIBUTE_MILEAGE);
+
+		List<String> resultAggregateOutputAttributeNames = new ArrayList<String>();
+		resultAggregateOutputAttributeNames.add(ATTRIBUTE_MILEAGE);
+
+		List<String> resultAggregateGroupBys = new ArrayList<String>();
+		resultAggregateGroupBys.add(IntermediateSchemaAttributes.TEAM_ID);
+		
+				
+		AggregateAO resultAggregate = OperatorBuildHelper
+				.createAggregateAO(resultAggregateFunctions,
+						resultAggregateGroupBys,
+						resultAggregateInputAttributeNames,
+						resultAggregateOutputAttributeNames, null,
+						assureHeartbeatAO, 1);
+
+		
+		return OperatorBuildHelper.finishQuery(resultAggregate, allOperators, sportsQL.getDisplayName());
 	}
 
 
