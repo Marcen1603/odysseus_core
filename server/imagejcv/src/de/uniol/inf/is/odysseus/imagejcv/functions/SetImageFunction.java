@@ -44,13 +44,16 @@ public class SetImageFunction extends AbstractFunction<ImageJCV> {
 		
 		Objects.requireNonNull(image);
 		
-		IplImage iplImage = image.getImage();
+		// TODO: It is really inefficient to create a whole copy when only one pixel is changed.
+		// Maybe use something else than the Map-Operator which requires that each function which changes an operand creates a copy of it? 
+		IplImage iplImage = image.getImage().clone();
 		
 		int index = y * iplImage.widthStep() + x * iplImage.nChannels();
 		
-		image.set(index, value);
+		ImageJCV result = new ImageJCV(iplImage);
+		result.set(index, value);
 		
-		return image;
+		return result;
 	}
 	
 }

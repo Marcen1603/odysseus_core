@@ -115,10 +115,10 @@ public class IntegratedCameraTransportHandler extends AbstractSimplePullTranspor
 			try 
 			{				
 				if (cameraCapture == null) return false;
-				IplImage iplImage = cameraCapture.grab().clone();
+				IplImage iplImage = cameraCapture.grab();
 				
 				if (iplImage == null || iplImage.isNull()) return false;
-				currentImage = new ImageJCV(iplImage);
+				currentImage = new ImageJCV(iplImage.clone());
 				return true;
 			}
 			catch (Exception e) 

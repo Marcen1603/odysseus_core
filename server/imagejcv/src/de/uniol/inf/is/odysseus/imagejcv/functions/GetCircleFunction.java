@@ -33,7 +33,7 @@ public class GetCircleFunction extends AbstractFunction<ImageJCV> {
 	 * 
 	 * @author Kristian Bruns
 	 * 
-	 * @return ImageJCV Image with circles drawed on it.
+	 * @return ImageJCV Image with circles drawn on it.
 	 */
 	@Override
 	public ImageJCV getValue() {
@@ -65,8 +65,7 @@ public class GetCircleFunction extends AbstractFunction<ImageJCV> {
 			cvCircle(iplResult, center, radius, CV_RGB(125, 125, 125), 1, 8, 0);
 		}
 		
-		image.setImage(iplResult);
-		return image;
+		return new ImageJCV(iplResult);
 	}
 	
 }

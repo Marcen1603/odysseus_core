@@ -52,7 +52,7 @@ public class ThresholdFunction extends AbstractFunction<ImageJCV> {
 		IplImage iplImage = cvCreateImage(cvGetSize( image.getImage()), IPL_DEPTH_8U, 1);
 		IplImage iplResult = cvCreateImage(cvGetSize(image.getImage()), IPL_DEPTH_8U, 1);
 		
-		iplImage = image.getImage();
+		iplImage = image.getImage().clone();
 		
 		if (iplImage.nChannels() > 1) {
 			cvCvtColor(iplImage, iplResult, CV_BGR2GRAY);
@@ -72,9 +72,7 @@ public class ThresholdFunction extends AbstractFunction<ImageJCV> {
 			cvThreshold(iplResult, iplResult, threshold, 255, THRESH_BINARY_INV);
 		}
 		
-		image.setImage(iplResult);
-		
-		return image;
+		return new ImageJCV(iplResult);
 	}
 	
 	protected double getThreshold(IplImage image, boolean dark) {

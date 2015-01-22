@@ -40,7 +40,7 @@ public class InverseImageFunction extends AbstractFunction<ImageJCV> {
 		final ImageJCV image = (ImageJCV) this.getInputValue(0);
 		Objects.requireNonNull(image);
 		
-		final IplImage iplImage = image.getImage();
+		final IplImage iplImage = image.getImage().clone();
 		
 		CvMat matImage = new CvMat();
 		cvGetMat(iplImage, matImage);
@@ -56,8 +56,7 @@ public class InverseImageFunction extends AbstractFunction<ImageJCV> {
 		
 		cvGetImage(matImage, iplImage);
 		
-		image.setImage(iplImage);
-		return image;
+		return new ImageJCV(iplImage);
 	}
 	
 }

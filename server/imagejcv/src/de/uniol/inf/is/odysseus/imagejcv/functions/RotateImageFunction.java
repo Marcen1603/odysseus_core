@@ -53,6 +53,7 @@ public class RotateImageFunction extends AbstractFunction<ImageJCV> {
 		cv2DRotationMatrix(center, angle, 1.0, mapMatrix);
 		
 		cvWarpAffine(iplImage, iplImage, mapMatrix);
+		
 		return new ImageJCV(iplImage);
 	}
 }

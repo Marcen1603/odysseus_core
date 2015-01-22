@@ -45,7 +45,7 @@ public class RaiseContrastFunction extends AbstractFunction<ImageJCV> {
 		
 		Objects.requireNonNull(image);
 		
-		IplImage iplImage = image.getImage();
+		IplImage iplImage = image.getImage().clone();
 		
 		CvMat matImage = new CvMat();
 		cvGetMat(iplImage, matImage);
@@ -54,8 +54,7 @@ public class RaiseContrastFunction extends AbstractFunction<ImageJCV> {
 		
 		cvGetImage(matImage, iplImage);
 		
-		image.setImage(iplImage);
-		return image;
+		return new ImageJCV(iplImage);
 	}
 
 }

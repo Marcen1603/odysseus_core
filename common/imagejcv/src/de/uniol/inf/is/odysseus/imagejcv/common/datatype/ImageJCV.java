@@ -10,7 +10,8 @@ import de.uniol.inf.is.odysseus.core.objecthandler.ObjectByteConverter;
 /**
  * @author Kristian Bruns
  */
-public class ImageJCV implements IClone, Cloneable {
+public class ImageJCV implements IClone, Cloneable 
+{
 	private IplImage image;
 	
 	public ImageJCV() {

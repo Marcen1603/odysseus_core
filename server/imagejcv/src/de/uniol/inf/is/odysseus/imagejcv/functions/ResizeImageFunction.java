@@ -48,14 +48,12 @@ public class ResizeImageFunction extends AbstractFunction<ImageJCV> {
 		Preconditions.checkArgument(width > 0, "Invalid dimension");
 		Preconditions.checkArgument(height > 0, "Invalid dimension");
 		
-		IplImage iplImage = image.getImage();
+		IplImage iplImage = image.getImage().clone();
 		IplImage result = IplImage.create(width, height, IPL_DEPTH_8U, 1);
 		
 		cvResize(iplImage, result);
 		
-		image.setImage(result);
-		
-		return image;
+		return new ImageJCV(result);
 	}
 
 }

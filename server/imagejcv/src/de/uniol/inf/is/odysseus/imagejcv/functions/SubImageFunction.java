@@ -55,6 +55,7 @@ public class SubImageFunction extends AbstractFunction<ImageJCV> {
 		Preconditions.checkArgument(y >= 0 && height > 0 && (y + height) <= image.getHeight(), 
 				                    "Invalid Dimension");
 		
+		// TODO: How does this affect the original image? Maybe we have to create a copy of it
 		final IplImage iplImage = image.getImage();
 		
 		final CvRect roi = new CvRect();

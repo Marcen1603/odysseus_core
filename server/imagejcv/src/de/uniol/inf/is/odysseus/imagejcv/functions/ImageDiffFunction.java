@@ -47,7 +47,6 @@ public class ImageDiffFunction extends AbstractFunction<ImageJCV> {
 		IplImage grayImage1 = cvCreateImage(cvGetSize(iplImage1), IPL_DEPTH_8U, 1);
 		IplImage grayImage2 = cvCreateImage(cvGetSize(iplImage2), IPL_DEPTH_8U, 1);
 		IplImage iplResult = cvCreateImage(cvGetSize(iplImage1), IPL_DEPTH_8U, 1);
-		ImageJCV result = new ImageJCV();
 		
 		if (iplImage1.nChannels() > 1) {
 			cvCvtColor(iplImage1, grayImage1, CV_BGR2GRAY);
@@ -63,9 +62,7 @@ public class ImageDiffFunction extends AbstractFunction<ImageJCV> {
 		
 		cvAbsDiff(grayImage1, grayImage2, iplResult);
 		
-		result.setImage(iplResult);
-		
-		return result;
+		return new ImageJCV(iplResult);
 	}
 
 }
