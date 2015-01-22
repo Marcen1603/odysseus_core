@@ -42,7 +42,7 @@ public class ReplicationMergePO<T extends IStreamObject<? extends ITimeInterval>
 	 * The {@link PriorityQueue} to keep in mind which elements have been seen
 	 * by this {@link ReplicationMergePO}.
 	 */
-	protected PriorityQueue<IPair<IStreamable, Integer>> inputQueue;
+	private PriorityQueue<IPair<IStreamable, Integer>> inputQueue;
 
 	/**
 	 * The youngest start timestamp of all seen objects.

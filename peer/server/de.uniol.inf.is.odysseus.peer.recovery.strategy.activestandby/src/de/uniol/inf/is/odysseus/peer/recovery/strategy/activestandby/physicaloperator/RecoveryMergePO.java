@@ -7,9 +7,7 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Lists;
 
-import de.uniol.inf.is.odysseus.core.collection.Pair;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
-import de.uniol.inf.is.odysseus.core.metadata.IStreamable;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
@@ -114,7 +112,7 @@ public class RecoveryMergePO<T extends IStreamObject<? extends ITimeInterval>>
 		if (!this.mReplicaRecovered) {
 			super.process_next(object, port);
 		} else if (port == this.mPortToUse) {
-			this.inputQueue.add(new Pair<IStreamable, Integer>(object, port));
+			this.transfer(object);
 		} else {
 			LOG.debug("Discarding {} from port {}", object, port);
 		}
