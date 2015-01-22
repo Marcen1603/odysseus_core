@@ -46,7 +46,7 @@ public class AppendFileTransportHandler extends AbstractSimplePullTransportHandl
 	
 	private BufferedReader currentStream = null;
 	private String currentLine = null;
-	private long currentLineNumber = 1;
+	private long currentLineNumber;
 	private double currentTimeStamp; // All timestamps in ms
 	
 	
@@ -83,7 +83,7 @@ public class AppendFileTransportHandler extends AbstractSimplePullTransportHandl
     public void processInOpen() throws IOException 
     {
     	currentLine = null;
-    	currentLineNumber = 0;
+    	currentLineNumber = 1;
     }
 
     @Override
@@ -146,7 +146,7 @@ public class AppendFileTransportHandler extends AbstractSimplePullTransportHandl
 				BasicFileAttributes attr = Files.readAttributes(Paths.get(fileName), BasicFileAttributes.class);
 
 				System.out.println("creationTime: " + attr.creationTime());				
-								
+												
 				currentTimeStamp = attr.creationTime().toMillis();
 			} 
 	    	catch (Exception e)
