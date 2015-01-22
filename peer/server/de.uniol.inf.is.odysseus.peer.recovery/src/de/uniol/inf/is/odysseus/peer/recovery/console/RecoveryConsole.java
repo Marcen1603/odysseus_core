@@ -208,7 +208,7 @@ public class RecoveryConsole implements CommandProvider {
 	public String getHelp() {
 		StringBuilder sb = new StringBuilder();
 		sb.append("---Recovery commands---\n");
-		sb.append("	recover <PeerID from failed peer> - Starts recovery for the peer <PeerID from failed peer>\n");
+		sb.append("	recover <PeerName from failed peer> - Starts recovery for the peer <PeerID from failed peer>\n");
 		sb.append("	lsBackupStore - Shows the backup-information of the known peers (the peers which are in the network)\n");
 		sb.append("	lsFullBackupStore - Shows the backup-information of all peers (even if not known)\n");
 		sb.append("	lsRecoveryAllocators - Lists the available recovery allocators.\n");
