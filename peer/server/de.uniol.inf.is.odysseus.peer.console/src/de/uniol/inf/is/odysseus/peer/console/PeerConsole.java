@@ -1,17 +1,9 @@
 package de.uniol.inf.is.odysseus.peer.console;
 
-import java.io.IOException;
 import java.lang.management.ManagementFactory;
 import java.lang.management.ThreadMXBean;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.net.DatagramPacket;
-import java.net.DatagramSocket;
-import java.net.InetAddress;
-import java.net.InterfaceAddress;
-import java.net.NetworkInterface;
-import java.net.SocketException;
-import java.net.UnknownHostException;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Enumeration;
@@ -46,9 +38,11 @@ import de.uniol.inf.is.odysseus.p2p_new.IMessage;
 import de.uniol.inf.is.odysseus.p2p_new.IP2PNetworkManager;
 import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicator;
 import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicatorListener;
+import de.uniol.inf.is.odysseus.p2p_new.IPeerReachabilityService;
 import de.uniol.inf.is.odysseus.p2p_new.InvalidP2PSource;
 import de.uniol.inf.is.odysseus.p2p_new.PeerCommunicationException;
 import de.uniol.inf.is.odysseus.p2p_new.PeerException;
+import de.uniol.inf.is.odysseus.p2p_new.PeerReachabilityInfo;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.IP2PDictionary;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.IPeerDictionary;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.SourceAdvertisement;
@@ -65,9 +59,6 @@ public class PeerConsole implements CommandProvider, IPeerCommunicatorListener {
 
 	private static final Logger LOG = LoggerFactory.getLogger(PeerConsole.class);
 	private static final Collection<CommandProvider> COMMAND_PROVIDERS = Lists.newArrayList();
-	private static final String CRYINGTEXT = "REQUEST_INFORMATION";
-	private static final int CRY_PORT = 65211;
-	private static final int CRY_SEND_PORT = 65212;
 
 	private static IP2PDictionary p2pDictionary;
 	private static IPeerDictionary peerDictionary;
@@ -77,6 +68,7 @@ public class PeerConsole implements CommandProvider, IPeerCommunicatorListener {
 	private static IPeerCommunicator peerCommunicator;
 	private static IJxtaServicesProvider jxtaServicesProvider;
 	private static IServerExecutor executor;
+	private static IPeerReachabilityService peerReachabilityService;
 
 	private final Collection<PeerID> loggedInPeers = Lists.newArrayList();
 	private final Collection<PeerID> loggedToPeers = Lists.newArrayList();
@@ -211,6 +203,18 @@ public class PeerConsole implements CommandProvider, IPeerCommunicatorListener {
 	// called by OSGi-DS
 	public static void unbindCommandProvider(CommandProvider serv) {
 		COMMAND_PROVIDERS.remove(serv);
+	}
+	
+	// called by OSGi-DS
+	public static void bindPeerReachabilityService(IPeerReachabilityService serv) {
+		peerReachabilityService = serv;
+	}
+
+	// called by OSGi-DS
+	public static void unbindPeerReachabilityService(IPeerReachabilityService serv) {
+		if (peerReachabilityService == serv) {
+			peerReachabilityService = null;
+		}
 	}
 
 	// called by OSGi-DS
@@ -1296,75 +1300,15 @@ public class PeerConsole implements CommandProvider, IPeerCommunicatorListener {
 	}
 
 	public void _cryForPeers(final CommandInterpreter ci) {
-		final String peerGroupFilter = ci.nextArgument();
-
-		try {
-			final DatagramSocket socket = new DatagramSocket(CRY_PORT, InetAddress.getByName("0.0.0.0"));
-			socket.setBroadcast(true);
-			socket.setSoTimeout(10 * 1000);
-
-			WaitForBroadcastAnswerThread waitThread = new WaitForBroadcastAnswerThread(socket, ci, peerGroupFilter);
-			waitThread.start();
-
-			ci.println("Crying for peers..");
-			broadcast(socket, CRYINGTEXT.getBytes());
-
-			ci.println("Waiting 10 Seconds for (additional) responses...");
-			wait10Seconds();
-
-			waitThread.stopRunning();
-			socket.close();
-
-			ci.println("Waiting finished");
-		} catch (IOException e) {
-			ci.println("Could not cry:" + e);
-		}
-	}
-
-	private static void broadcast(DatagramSocket socket, byte[] sendData) throws UnknownHostException, IOException {
-		DatagramPacket packet = new DatagramPacket(sendData, sendData.length, InetAddress.getByName("255.255.255.255"), CRY_SEND_PORT);
-		socket.send(packet);
-
-		Collection<InetAddress> broadcastAddresses = getBroadcastableAddresses();
-		for (InetAddress broadcast : broadcastAddresses) {
-			try {
-				DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, broadcast, CRY_SEND_PORT);
-				socket.send(sendPacket);
-			} catch (Exception e) {
-				// ignore
+		Collection<PeerID> reachablePeers = peerReachabilityService.getReachablePeers();
+		
+		for( PeerID reachablePeer : reachablePeers ) {
+			Optional<PeerReachabilityInfo> optInfo = peerReachabilityService.getReachabilityInfo(reachablePeer);
+			if( optInfo.isPresent() ) {
+				PeerReachabilityInfo info = optInfo.get();
+				
+				ci.println(info.getAddress().getHostAddress() + ":" + info.getJxtaPort() + " = " + info.getPeerName() + "{" + info.getPeerGroupName() + "} (" + info.getPeerID().toString() + ")");
 			}
-		}
-	}
-
-	private static Collection<InetAddress> getBroadcastableAddresses() {
-		List<InetAddress> result = Lists.newArrayList();
-
-		try {
-			Enumeration<NetworkInterface> interfaces = NetworkInterface.getNetworkInterfaces();
-			while (interfaces.hasMoreElements()) {
-				NetworkInterface networkInterface = interfaces.nextElement();
-				if (networkInterface.isLoopback() || !networkInterface.isUp() || networkInterface.isVirtual()) {
-					continue; // Don't want to broadcast to the loopback
-				}
-
-				for (InterfaceAddress interfaceAddress : networkInterface.getInterfaceAddresses()) {
-					InetAddress broadcast = interfaceAddress.getBroadcast();
-					if (broadcast != null) {
-						result.add(broadcast);
-					}
-				}
-			}
-		} catch (SocketException e) {
-			// ignore
-		}
-
-		return result;
-	}
-
-	private static void wait10Seconds() {
-		try {
-			Thread.sleep(10 * 1000);
-		} catch (InterruptedException e) {
 		}
 	}
 }

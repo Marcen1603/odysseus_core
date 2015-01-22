@@ -3,12 +3,11 @@ package de.uniol.inf.is.odysseus.peer.broadcast;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 
-import de.uniol.inf.is.odysseus.peer.broadcast.impl.BroadcastListener;
-
 public class Activator implements BundleActivator {
 
+	
 	private static BundleContext context;
-	BroadcastListener listener;
+	
 
 	static BundleContext getContext() {
 		return context;
@@ -21,11 +20,7 @@ public class Activator implements BundleActivator {
 	@Override
 	public void start(BundleContext bundleContext) throws Exception {
 		Activator.context = bundleContext;
-		listener = new BroadcastListener();
-		Thread t = new Thread(listener);
-		t.setName("Peer Broadcast listener");
-		t.setDaemon(true);
-		t.start();
+		
 	}
 
 	/*
@@ -34,7 +29,6 @@ public class Activator implements BundleActivator {
 	 */
 	@Override
 	public void stop(BundleContext bundleContext) throws Exception {
-		listener.stopListener();
 		Activator.context = null;
 	}
 
