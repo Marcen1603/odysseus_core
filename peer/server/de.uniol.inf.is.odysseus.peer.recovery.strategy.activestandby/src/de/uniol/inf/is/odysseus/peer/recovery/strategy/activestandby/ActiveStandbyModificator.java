@@ -93,29 +93,26 @@ public class ActiveStandbyModificator implements IQueryPartModificator {
 			LOG.error("No replication modifier bound!");
 			return queryParts;
 		}
-
-		// Make one replicate each
-		List<String> modParamsForReplication = Lists.newArrayList("2");
-		Collection<ILogicalQueryPart> replicatedParts = cReplicator.get()
-				.modify(queryParts, query, config, modParamsForReplication);
-
-		// Replace replication merge operators with recovery merge operators
-		return replaceMergers(replicatedParts);
+		return replaceMergers(queryParts);
 	}
 
 	private static Collection<ILogicalQueryPart> replaceMergers(
 			Collection<ILogicalQueryPart> parts) {
 		Map<ILogicalQueryPart, ILogicalQueryPart> copyToOriginal = copyQueryPartsDeep(parts);
 		Collection<ILogicalQueryPart> modifiedParts = Lists.newArrayList();
+		Collection<RecoveryMergeAO> changedMergers = Lists.newArrayList();
 		for (ILogicalQueryPart original : copyToOriginal.keySet()) {
-			modifiedParts.add(replaceMergers(original, copyToOriginal));
+			modifiedParts.add(replaceMergers(original, copyToOriginal, changedMergers));
+		}
+		if(changedMergers.isEmpty()) {
+			LOG.warn("You are using active standby recovery without replication. This may lead to data loss!");
 		}
 		return modifiedParts;
 	}
 
 	private static ILogicalQueryPart replaceMergers(
 			ILogicalQueryPart originalQP,
-			Map<ILogicalQueryPart, ILogicalQueryPart> copyToOriginal) {
+			Map<ILogicalQueryPart, ILogicalQueryPart> copyToOriginal, Collection<RecoveryMergeAO> changedMergers) {
 		ILogicalQueryPart copyQP = copyToOriginal.get(originalQP);
 		for (ILogicalOperator originalOp : originalQP.getOperators()) {
 			if (ReplicationMergeAO.class.isInstance(originalOp)) {
@@ -135,6 +132,8 @@ public class ActiveStandbyModificator implements IQueryPartModificator {
 				copySubscriptions(mergerToInsert,
 						originalMerge.getSubscriptions(), copyToOriginal, false);
 				copyQP.addOperator(mergerToInsert);
+				
+				changedMergers.add(mergerToInsert);
 			}
 		}
 
