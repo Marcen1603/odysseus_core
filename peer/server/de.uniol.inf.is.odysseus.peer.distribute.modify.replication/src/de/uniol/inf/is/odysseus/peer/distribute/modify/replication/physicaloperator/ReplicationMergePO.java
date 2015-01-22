@@ -50,7 +50,10 @@ public class ReplicationMergePO<T extends IStreamObject<? extends ITimeInterval>
 	private PointInTime youngestTS;
 
 	// Is needed to sync youngestTS, since youngest TS may be null
-	private Object dummyForSync = new Object();
+	private Object dummyForYTSSync = new Object();
+	
+	// Is needed to sync transfer
+	private Object dummyForTransferSync = new Object();
 
 	/**
 	 * The comparator for pairs of {@link IStreamable} objects and ports. <br />
@@ -147,7 +150,7 @@ public class ReplicationMergePO<T extends IStreamObject<? extends ITimeInterval>
 		synchronized (this.inputQueue) {
 			this.inputQueue.clear();
 		}
-		synchronized (this.dummyForSync) {
+		synchronized (this.dummyForYTSSync) {
 			this.youngestTS = null;
 		}
 
@@ -159,7 +162,7 @@ public class ReplicationMergePO<T extends IStreamObject<? extends ITimeInterval>
 		synchronized (this.inputQueue) {
 			this.inputQueue.clear();
 		}
-		synchronized (this.dummyForSync) {
+		synchronized (this.dummyForYTSSync) {
 			this.youngestTS = null;
 		}
 
@@ -172,7 +175,7 @@ public class ReplicationMergePO<T extends IStreamObject<? extends ITimeInterval>
 			synchronized (this.inputQueue) {
 				this.inputQueue.clear();
 			}
-			synchronized (this.dummyForSync) {
+			synchronized (this.dummyForYTSSync) {
 				this.youngestTS = null;
 			}
 
@@ -200,7 +203,7 @@ public class ReplicationMergePO<T extends IStreamObject<? extends ITimeInterval>
 	}
 
 	@Override
-	protected void process_next(T object, int port) {
+	protected synchronized void process_next(T object, int port) {
 
 		if (!this.precheck(object))
 			return;
@@ -214,7 +217,7 @@ public class ReplicationMergePO<T extends IStreamObject<? extends ITimeInterval>
 	}
 
 	@Override
-	public void processPunctuation(IPunctuation punctuation, int port) {
+	public synchronized void processPunctuation(IPunctuation punctuation, int port) {
 
 		if (!this.precheck(punctuation))
 			return;
@@ -239,7 +242,7 @@ public class ReplicationMergePO<T extends IStreamObject<? extends ITimeInterval>
 
 		final PointInTime ts = this.getTS(object, true);
 
-		synchronized (this.dummyForSync) {
+		synchronized (this.dummyForYTSSync) {
 			if (this.youngestTS != null && ts.before(this.youngestTS))
 				return false;
 			else if (this.youngestTS == null || ts.after(this.youngestTS)) {
@@ -367,10 +370,15 @@ public class ReplicationMergePO<T extends IStreamObject<? extends ITimeInterval>
 			ReplicationMergePO.log.debug("Transfering object {} from port {}.",
 					object, port);
 
-			if (object.isPunctuation())
-				this.sendPunctuation((IPunctuation) object);
-			else
-				this.transfer((T) object);
+			if (object.isPunctuation()) {
+				synchronized (this.dummyForTransferSync) {
+					this.sendPunctuation((IPunctuation) object);
+				}
+			} else {
+				synchronized (this.dummyForTransferSync) {
+					this.transfer((T) object);
+				}
+			}
 
 		}
 
