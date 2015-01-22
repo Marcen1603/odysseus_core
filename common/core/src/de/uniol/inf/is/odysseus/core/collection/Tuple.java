@@ -664,6 +664,15 @@ public class Tuple<T extends IMetaAttribute> extends AbstractStreamObject<T>
 								retBuff.append(values[iValue]);
 							}
 						}
+					} else if (curAttribute instanceof BitVector){
+						BitVector v = (BitVector) curAttribute;
+						if (numberFormatter != null)
+						{
+							long valAsNum = Long.parseLong(curAttribute.toString());
+							retBuff.append(numberFormatter.format(valAsNum));
+						}
+						else
+							retBuff.append(curAttribute);
 					} else {
 						if (textSeperator != null
 								&& curAttribute instanceof String) {
