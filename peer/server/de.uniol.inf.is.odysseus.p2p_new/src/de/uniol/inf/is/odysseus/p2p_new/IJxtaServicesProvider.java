@@ -9,10 +9,7 @@ import net.jxta.peer.PeerID;
 import net.jxta.pipe.InputPipe;
 import net.jxta.pipe.OutputPipe;
 import net.jxta.pipe.PipeMsgListener;
-import net.jxta.protocol.PeerAdvertisement;
 import net.jxta.protocol.PipeAdvertisement;
-
-import com.google.common.base.Optional;
 
 public interface IJxtaServicesProvider {
 
@@ -41,18 +38,6 @@ public interface IJxtaServicesProvider {
 	public Collection<Advertisement> getLocalAdvertisements();
 	
 	public <T extends Advertisement> Collection<T> getLocalAdvertisements( Class<T> advertisementClass);
-
-	public void getRemotePeerAdvertisements();
-
-	public void getRemotePeerAdvertisements(DiscoveryListener listener);
-	
-	public Collection<PeerAdvertisement> getPeerAdvertisements();
-	
-	public boolean isReachable(PeerID peerID);
-
-	boolean isReachable(PeerID peerID, boolean tryToConnect);
-	
-	public Optional<String> getRemotePeerAddress(PeerID peerID);
 
 	public InputPipe createInputPipe(PipeAdvertisement pipeAdv, PipeMsgListener listener) throws IOException ;
 

@@ -43,6 +43,19 @@ public class PeerReachabilityService implements IPeerReachabilityService {
 		return instance;
 	} 
 	
+	public static void waitFor() {
+		while( !isActivated() ) {
+			waitSomeTime();
+		}
+	}
+	
+	private static void waitSomeTime() {
+		try {
+			Thread.sleep(200);
+		} catch (InterruptedException e) {
+		}
+	}
+	
 	void setReachabilityMap( Map<PeerID, PeerReachabilityInfo> newMap ) {
 		
 		Map<PeerID, PeerReachabilityInfo> oldMap = Maps.newHashMap();
@@ -59,12 +72,16 @@ public class PeerReachabilityService implements IPeerReachabilityService {
 				// already known
 				oldMap.remove(newPeerID);
 			} else {
+				System.err.println("Found peer " + newMap.get(newPeerID).getPeerName());
+				
 				firePeerReachableEvent(newMap.get(newPeerID));
 			}
 		}
 		
 		for( PeerID oldPeerID : oldMap.keySet() ) {
+			System.err.println("Lost peer " + oldMap.get(oldPeerID).getPeerName());
 			firePeerNotReachableEvent(oldMap.get(oldPeerID));
+			
 		}
 	}
 	
@@ -87,6 +104,12 @@ public class PeerReachabilityService implements IPeerReachabilityService {
 	public void addListener(IPeerReachabilityListener listener) {
 		synchronized( listeners ) {
 			listeners.add(listener);
+		}
+		
+		synchronized( infoMap ) {
+			for( PeerID peerID : infoMap.keySet() ) {
+				firePeerReachableEvent(infoMap.get(peerID));
+			}
 		}
 	}
 	
