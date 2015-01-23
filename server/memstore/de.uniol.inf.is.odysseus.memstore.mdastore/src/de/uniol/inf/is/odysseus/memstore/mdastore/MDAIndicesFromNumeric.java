@@ -1,30 +1,28 @@
 package de.uniol.inf.is.odysseus.memstore.mdastore;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
-import com.google.common.primitives.Doubles;
-
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
-import de.uniol.inf.is.odysseus.memstore.mdastore.MDAStore;
-import de.uniol.inf.is.odysseus.memstore.mdastore.MDAStoreManager;
 import de.uniol.inf.is.odysseus.mep.AbstractFunction;
 
-public class MDAIndicesFromNumeric extends AbstractFunction<Integer[]> {
+public class MDAIndicesFromNumeric extends AbstractFunction<List<Integer>> {
 
 	private static final long serialVersionUID = -8148362039305389820L;
-	
+
 	private static final SDFDatatype[][] acceptedTypes = new SDFDatatype[][] {
-			{ SDFDatatype.STRING }, { SDFDatatype.MATRIX_DOUBLE } };
+			{ SDFDatatype.STRING }, { SDFDatatype.LIST_DOUBLE } };
 
 	public MDAIndicesFromNumeric() {
-		super("MDAIndices", 2, acceptedTypes, SDFDatatype.MATRIX_INTEGER);
+		super("MDAIndices", 2, acceptedTypes, SDFDatatype.LIST_INTEGER);
 	}
 
 	@Override
-	public Integer[] getValue() {
+	public List<Integer> getValue() {
 		String name = getInputValue(0);
-		List<Double> value = Doubles.asList(((double[][]) getInputValue(1))[0]);
+		@SuppressWarnings("unchecked")
+		List<Double> value = (List<Double>) getInputValue(1);
 		Objects.requireNonNull(name);
 		Objects.requireNonNull(value);
 		MDAStore<Double> store = MDAStoreManager.get(name);
@@ -35,10 +33,10 @@ public class MDAIndicesFromNumeric extends AbstractFunction<Integer[]> {
 			for (int i = 0; i < indices.length; i++) {
 				out[i] = indices[i] + 1;
 			}
-			return out;
+			return Arrays.asList(out);
 		}
 		Integer[] out = new Integer[0];
-		return out;
+		return Arrays.asList(out);
 	}
 
 }

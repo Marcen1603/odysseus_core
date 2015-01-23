@@ -1,13 +1,22 @@
 package de.uniol.inf.is.odysseus.debsgc2015.geo;
 
+import java.util.Arrays;
+import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.mep.AbstractFunction;
 
 // from http://www.ibm.com/developerworks/library/j-coordconvert/
 
-public class LatLongToUtm extends AbstractFunction<Double[]> {
+public class LatLongToUtm extends AbstractFunction<List<Double>> {
 
 	private static final long serialVersionUID = 2721221748368566272L;
+
+	private static final Logger LOG = LoggerFactory
+			.getLogger(LatLongToUtm.class);
 
 	private static final SDFDatatype[][] acceptedTypes = new SDFDatatype[][] {
 			{ SDFDatatype.DOUBLE }, { SDFDatatype.DOUBLE } };
@@ -17,10 +26,16 @@ public class LatLongToUtm extends AbstractFunction<Double[]> {
 	}
 
 	@Override
-	public Double[] getValue() {
+	public List<Double> getValue() {
 		double lat = getNumericalInputValue(0);
 		double lng = getNumericalInputValue(1);
-		return latLongToUtm(lat, lng);
+		try {
+			return Arrays.asList(latLongToUtm(lat, lng));
+		} catch (IllegalArgumentException e) {
+			// Illegal lat/long values
+			LOG.error(e.getMessage());
+			return Arrays.asList(new Double[] { 0.0, 0.0 });
+		}
 	}
 
 	private static class ConversionVariables {
