@@ -40,7 +40,7 @@ public class ZeroMQTransportHandler extends AbstractTransportHandler {
 	public static final String PARAMS = "params";
 	public static final String TIMEOUT = "timeout";
 	public static final String SUBSCRIPTIONFILTER = "subscriptionfilter";
-	public static final String MOSAIK = "mosaik";
+	public static final String RECEIVE_BUFFER_SIZE = "receivebuffersize";
 
 	private String host;
 	private int writePort;
@@ -50,6 +50,7 @@ public class ZeroMQTransportHandler extends AbstractTransportHandler {
 	private int timeout;
 	private String subscriptionFilter;
 	private String[] params;
+	private long receiveBufferSize;
 	
 	private int delayedMsgCounter = 1;
 	private String delayedMsgs = "";
@@ -73,29 +74,17 @@ public class ZeroMQTransportHandler extends AbstractTransportHandler {
 	}
 
 	private void init(OptionMap options) {
+		
 		if (options.containsKey(HOST)) {
 			host = options.get(HOST);
 		}
-		if (options.containsKey(READPORT)) {
-			readPort = Integer.parseInt(options.get(READPORT));
-		} else {
-			readPort = -1;
-		}
-		if (options.containsKey(WRITEPORT)) {
-			writePort = Integer.parseInt(options.get(WRITEPORT));
-		} else {
-			writePort = -1;
-		}
-		if (options.containsKey(DELAYOFMSG)) {
-			delayOfMsg = Integer.parseInt(options.get(DELAYOFMSG));
-		} else {
-			delayOfMsg = 0;
-		}
-		if (options.containsKey(THREADS)) {
-			communicationThreads = Integer.parseInt(options.get(THREADS));
-		} else {
-			communicationThreads = 1;
-		}
+		receiveBufferSize = options.getLong(RECEIVE_BUFFER_SIZE, -1);
+		readPort = options.getInt(READPORT,-1);
+		writePort = options.getInt(WRITEPORT, -1);
+		delayOfMsg = options.getInt(DELAYOFMSG, -1);
+		
+		communicationThreads = options.getInt(THREADS, 1);
+	
 		if (options.containsKey(PARAMS)) {
 			String paramString = options.get(PARAMS);
 			params = paramString.split(",");
@@ -103,16 +92,9 @@ public class ZeroMQTransportHandler extends AbstractTransportHandler {
 			params = new String[1];
 			params[0] = "";
 		}
-		if (options.containsKey(TIMEOUT)) {
-			timeout = Integer.parseInt(options.get(TIMEOUT));
-		} else {
-			timeout = 10;
-		}
-		if(options.containsKey(SUBSCRIPTIONFILTER)) {
-			subscriptionFilter = options.get(SUBSCRIPTIONFILTER);
-		} else {
-			subscriptionFilter = "";
-		}
+		timeout = options.getInt(TIMEOUT, 10);
+		subscriptionFilter = options.get(SUBSCRIPTIONFILTER, "");
+		
 		createContext();
 	}
 	
@@ -207,7 +189,7 @@ public class ZeroMQTransportHandler extends AbstractTransportHandler {
 			input = new ByteArrayInputStream(new byte[0]);
 		}
 		if(consumer == null){
-			consumer = new ZMQPushConsumer(this);	
+			consumer = new ZMQPushConsumer(this, receiveBufferSize);	
 			consumer.start();
 		}
 	}
