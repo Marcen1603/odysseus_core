@@ -48,6 +48,7 @@ public class BroadcastRequestListener implements IBroadcastListener {
 						json.put("PeerID", P2PNetworkManager.getInstance().getLocalPeerID().toString());
 						json.put("PeerName", P2PNetworkManager.getInstance().getLocalPeerName());
 						json.put("GroupName", P2PNetworkManager.getInstance().getLocalPeerGroupName());
+						json.put("GroupID", P2PNetworkManager.getInstance().getLocalPeerGroupID().toString());
 						json.put("Port", P2PNetworkManager.getInstance().getPort());
 
 						byte[] sendData = json.toString().getBytes();

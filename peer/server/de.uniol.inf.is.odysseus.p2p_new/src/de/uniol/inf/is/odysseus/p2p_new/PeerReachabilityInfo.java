@@ -3,21 +3,24 @@ package de.uniol.inf.is.odysseus.p2p_new;
 import java.net.InetAddress;
 
 import net.jxta.peer.PeerID;
+import net.jxta.peergroup.PeerGroupID;
 
 public class PeerReachabilityInfo {
 
 	private final PeerID peerID;
 	private final String peerName;
 	private final String peerGroupName;
+	private final PeerGroupID peerGroupID;
 	private final InetAddress address;
 	private final int jxtaPort;
 	
-	public PeerReachabilityInfo(PeerID peerID, String peerName, InetAddress address, int jxtaPort, String peerGroupName) {
+	public PeerReachabilityInfo(PeerID peerID, String peerName, InetAddress address, int jxtaPort, String peerGroupName, PeerGroupID peerGroupID) {
 		this.peerName = peerName;
 		this.peerID = peerID;
 		this.address = address;
 		this.jxtaPort = jxtaPort;
 		this.peerGroupName = peerGroupName;
+		this.peerGroupID = peerGroupID;
 	}
 	
 	public InetAddress getAddress() {
@@ -38,5 +41,9 @@ public class PeerReachabilityInfo {
 	
 	public String getPeerGroupName() {
 		return peerGroupName;
+	}
+	
+	public PeerGroupID getPeerGroupID() {
+		return peerGroupID;
 	}
 }

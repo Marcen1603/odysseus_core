@@ -13,4 +13,6 @@ public interface IPeerReachabilityService {
 	public Collection<PeerID> getReachablePeers();
 	public Optional<PeerReachabilityInfo> getReachabilityInfo( PeerID peerID );
 	
+	public void addListener( IPeerReachabilityListener listener );
+	public void removeListener( IPeerReachabilityListener listener );
 }

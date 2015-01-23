@@ -12,6 +12,7 @@ import java.util.Map;
 import net.jxta.id.ID;
 import net.jxta.id.IDFactory;
 import net.jxta.peer.PeerID;
+import net.jxta.peergroup.PeerGroupID;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -69,6 +70,7 @@ public class BroadcastAnswerReceiver extends RepeatingJobThread {
 					if( peerID != null ) {
 						String peerName = obj.getString("PeerName");
 						String peerGroup = obj.getString("GroupName");
+						PeerGroupID peerGroupID = (PeerGroupID) toID(obj.getString("GroupID"));
 						String addressStr = address.getHostAddress();
 						int port = obj.getInt("Port");
 	
@@ -76,7 +78,7 @@ public class BroadcastAnswerReceiver extends RepeatingJobThread {
 						LOG.debug("\tpeerID = " + peerID.toString());
 	
 						if( !peerID.equals(P2PNetworkManager.getInstance().getLocalPeerID())) {
-							PeerReachabilityInfo info = new PeerReachabilityInfo(peerID, peerName, address, port, peerGroup);
+							PeerReachabilityInfo info = new PeerReachabilityInfo(peerID, peerName, address, port, peerGroup, peerGroupID);
 							synchronized (reachabilityMap) {
 								reachabilityMap.put(peerID, info);
 								LOG.debug("Added PeerReachabilityInfo");

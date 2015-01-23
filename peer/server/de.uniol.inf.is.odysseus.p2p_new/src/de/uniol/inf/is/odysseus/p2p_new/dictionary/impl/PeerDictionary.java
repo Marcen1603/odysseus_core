@@ -24,6 +24,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 import de.uniol.inf.is.odysseus.p2p_new.IAdvertisementDiscovererListener;
+import de.uniol.inf.is.odysseus.p2p_new.broadcast.PeerReachabilityService;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.IPeerDictionary;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.IPeerDictionaryListener;
 import de.uniol.inf.is.odysseus.p2p_new.network.P2PNetworkManager;
@@ -59,7 +60,7 @@ public class PeerDictionary implements IPeerDictionary, IAdvertisementDiscoverer
 		LOG.debug("Determining peers");
 		for (PeerAdvertisement adv : peerAdvs) {
 			if (!localPeerID.equals(adv.getPeerID())) {
-				if (JxtaServicesProvider.getInstance().isReachable(adv.getPeerID())) {
+				if (JxtaServicesProvider.getInstance().isReachable(adv.getPeerID()) || PeerReachabilityService.getInstance().isPeerReachable(adv.getPeerID())) {
 					ids.add(adv.getPeerID());
 					LOG.debug("Peer " + adv.getName() + " is reachable");
 					toFlushMap.remove(adv);
