@@ -12,6 +12,7 @@ public class FunctionProvider implements IFunctionProvider {
 	public List<IFunction<?>> getFunctions() {
 		List<IFunction<?>> funcs = new LinkedList<>();
 		funcs.add(new MDAIndicesFromNumeric());
+		funcs.add(new MDAIndicesFromList());
 		return funcs;
 	}
 

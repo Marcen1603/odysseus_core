@@ -22,7 +22,7 @@ public class LatLongToUtm extends AbstractFunction<List<Double>> {
 			{ SDFDatatype.DOUBLE }, { SDFDatatype.DOUBLE } };
 
 	public LatLongToUtm() {
-		super("latLongToUTM", 2, acceptedTypes, SDFDatatype.MATRIX_DOUBLE);
+		super("latLongToUTM", 2, acceptedTypes, SDFDatatype.LIST_DOUBLE);
 	}
 
 	@Override
