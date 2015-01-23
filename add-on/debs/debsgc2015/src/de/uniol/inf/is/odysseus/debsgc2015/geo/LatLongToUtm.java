@@ -87,7 +87,7 @@ public class LatLongToUtm extends AbstractFunction<Double[]> {
 		double var2 = (6 * var1) - 183;
 		double var3 = longitude - var2;
 		vars.p = var3 * 3600 / 10000;
-		vars.S = ConversionVariables.A0 * latitude - ConversionVariables.B0
+		vars.S = ConversionVariables.A0 * lat_rad - ConversionVariables.B0
 				* Math.sin(2 * lat_rad) + ConversionVariables.C0
 				* Math.sin(4 * lat_rad) - ConversionVariables.D0
 				* Math.sin(6 * lat_rad) + ConversionVariables.E0
