@@ -110,7 +110,7 @@ public class MDAStorePreParserKeyword extends AbstractPreParserKeyword {
 			throw new OdysseusScriptException("Illegal number of coordinates for given start and end!");
 		}
 		
-		double increasingValue = (lastValue-firstValue) / count;
+		double increasingValue = (lastValue-firstValue) / (count-1);	// first and last value included
 		if(firstValue == lastValue) {
 			try {
 				values.add(clz.cast(Double.valueOf(firstValue)));
