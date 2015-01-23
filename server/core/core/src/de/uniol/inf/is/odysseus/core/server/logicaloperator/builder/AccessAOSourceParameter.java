@@ -20,6 +20,11 @@ public class AccessAOSourceParameter extends AbstractParameter<Resource> {
 
 	@Override
 	protected String getPQLStringInternal() {
+		if( inputValue instanceof Resource ) {
+			Resource res = (Resource) inputValue;
+			return "'" + res.getResourceName() + "'";
+		}
+		
 		return "'" + inputValue + "'";
 	}
 }

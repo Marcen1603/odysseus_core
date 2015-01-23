@@ -19,6 +19,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 
+import com.google.common.base.Strings;
+
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
@@ -264,7 +266,12 @@ public class TimestampAO extends UnaryLogicalOp {
 
 	@Parameter(type = StringParameter.class, name = "dateFormat", isList = false, optional = true, doc="If using a string for date information, use this format to parse the date (in Java syntax).")
 	public void setDateFormat(String dateFormat) {
-		addParameterInfo("DATEFORMAT", "'" + dateFormat + "'");
+		if( !Strings.isNullOrEmpty(dateFormat)) {
+			addParameterInfo("DATEFORMAT", "'" + dateFormat + "'");
+		} else {
+			removeParameterInfo("DATEFORMAT");
+		}
+		
 		this.dateFormat = dateFormat;
 	}
 
