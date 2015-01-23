@@ -48,6 +48,8 @@ public class BroadcastAnswerReceiver extends RepeatingJobThread {
 
 	@Override
 	public void doJob() {
+		P2PNetworkManager.waitForStart();
+		
 		try {
 			byte[] buffer = new byte[1024];
 			DatagramPacket p = new DatagramPacket(buffer, buffer.length);
@@ -64,19 +66,21 @@ public class BroadcastAnswerReceiver extends RepeatingJobThread {
 
 				if (obj.has("PeerID")) {
 					PeerID peerID = (PeerID) toID(obj.getString("PeerID"));
-					String peerName = obj.getString("PeerName");
-					String peerGroup = obj.getString("GroupName");
-					String addressStr = address.getHostAddress();
-					int port = obj.getInt("Port");
-
-					LOG.debug("Received udp answer: " + addressStr + " = " + peerName + " { " + peerGroup + " }");
-					LOG.debug("\tpeerID = " + peerID.toString());
-
-					if( !peerID.equals(P2PNetworkManager.getInstance().getLocalPeerID())) {
-						PeerReachabilityInfo info = new PeerReachabilityInfo(peerID, peerName, address, port, peerGroup);
-						synchronized (reachabilityMap) {
-							reachabilityMap.put(peerID, info);
-							LOG.debug("Added PeerReachabilityInfo");
+					if( peerID != null ) {
+						String peerName = obj.getString("PeerName");
+						String peerGroup = obj.getString("GroupName");
+						String addressStr = address.getHostAddress();
+						int port = obj.getInt("Port");
+	
+						LOG.debug("Received udp answer: " + addressStr + " = " + peerName + " { " + peerGroup + " }");
+						LOG.debug("\tpeerID = " + peerID.toString());
+	
+						if( !peerID.equals(P2PNetworkManager.getInstance().getLocalPeerID())) {
+							PeerReachabilityInfo info = new PeerReachabilityInfo(peerID, peerName, address, port, peerGroup);
+							synchronized (reachabilityMap) {
+								reachabilityMap.put(peerID, info);
+								LOG.debug("Added PeerReachabilityInfo");
+							}
 						}
 					}
 				}
