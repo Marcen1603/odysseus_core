@@ -12,6 +12,7 @@ public class FunctionProvider implements IFunctionProvider {
 	public List<IFunction<?>> getFunctions() {
 		List<IFunction<?>> funcs = new LinkedList<>();
 		funcs.add(new LatLongDistance());
+		funcs.add(new LatLongToUtm());
 		return funcs;
 	}
 
