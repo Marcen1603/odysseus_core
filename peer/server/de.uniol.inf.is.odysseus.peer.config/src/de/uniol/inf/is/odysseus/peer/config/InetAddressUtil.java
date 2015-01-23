@@ -51,7 +51,7 @@ public class InetAddressUtil {
 		}
 		
 		if( optName.isPresent() ) {
-			return optName.get();
+			return optName.get() + " [ <unknownIP> ]";
 		}
 		
 		return "OdysseusPeer";
