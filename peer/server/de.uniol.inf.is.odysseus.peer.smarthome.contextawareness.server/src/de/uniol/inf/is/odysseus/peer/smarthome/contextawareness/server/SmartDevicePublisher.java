@@ -303,6 +303,11 @@ public class SmartDevicePublisher {
 		if (propertySensors != null && propertySensors.equals("true")) {
 			initSensors(peerName);
 		}
+		
+		String propActors = System.getProperty(INIT_ACTORS_SYS_PROPERTY);
+		if (propActors != null && propActors.equals("true")) {
+			initActors(peerName);
+		}
 
 		String propActivityInterpreters = System
 				.getProperty(INIT_EXAMPLE_ACTIVITY_INTERPRETERS_SYS_PROPERTY);
@@ -317,10 +322,7 @@ public class SmartDevicePublisher {
 			addExampleLogicRules(peerName);
 		}
 
-		String propActors = System.getProperty(INIT_ACTORS_SYS_PROPERTY);
-		if (propActors != null && propActors.equals("true")) {
-			initActors(peerName);
-		}
+		
 
 		// SmartDevice is ready for advertisement now:
 		getLocalSmartDevice().setReady(true);
@@ -345,10 +347,23 @@ public class SmartDevicePublisher {
 		gpioTaste3.setInputPin(3);
 
 		// getLocalSmartDevice().addConnectedFieldDevice(temper1);
-		getLocalSmartDevice().addConnectedFieldDevice(temper);
+		//getLocalSmartDevice().addConnectedFieldDevice(temper);
 		getLocalSmartDevice().addConnectedFieldDevice(gpioTaste7);
 		getLocalSmartDevice().addConnectedFieldDevice(gpioTaste3);
 		
+		
+		
+		
+		
+		// LED GPIO_11
+		gpioLED11 = new RPiGPIOActor("RPiLED11", peerName, "");
+		gpioLED11.setPin(11);
+		getLocalSmartDevice().addConnectedFieldDevice(gpioLED11);
+		
+		
+		gpioLED10 = new RPiGPIOActor("RPiLED10", peerName, "");
+		gpioLED10.setPin(10);
+		getLocalSmartDevice().addConnectedFieldDevice(gpioLED10);
 	}
 
 	private void addExampleActivityInterpreters(String peerName) {
