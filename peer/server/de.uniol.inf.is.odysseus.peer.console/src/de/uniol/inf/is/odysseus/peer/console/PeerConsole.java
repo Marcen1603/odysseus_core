@@ -796,7 +796,7 @@ public class PeerConsole implements CommandProvider, IPeerCommunicatorListener {
 		String filter = ci.nextArgument();
 
 		Collection<Advertisement> advs = jxtaServicesProvider.getLocalAdvertisements();
-		advs.addAll(peerDictionary.getPeerAdvertisements());
+		advs.addAll(jxtaServicesProvider.getPeerAdvertisements());
 
 		List<String> output = Lists.newLinkedList();
 		for (Advertisement adv : advs) {

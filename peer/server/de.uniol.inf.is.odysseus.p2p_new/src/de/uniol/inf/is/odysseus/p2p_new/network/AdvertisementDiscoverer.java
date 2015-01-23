@@ -62,7 +62,7 @@ public class AdvertisementDiscoverer extends RepeatingJobThread implements Disco
 			
 			JxtaServicesProvider jxta = JxtaServicesProvider.getInstance();
 			jxta.getRemoteAdvertisements(this);
-//			jxta.getRemotePeerAdvertisements(this);
+			jxta.getRemotePeerAdvertisements(this);
 			
 			fireUpdateEvent();
 		}

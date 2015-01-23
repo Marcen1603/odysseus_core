@@ -3,24 +3,32 @@ package de.uniol.inf.is.odysseus.p2p_new.provider;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Enumeration;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 import net.jxta.discovery.DiscoveryListener;
 import net.jxta.discovery.DiscoveryService;
 import net.jxta.document.Advertisement;
+import net.jxta.endpoint.EndpointAddress;
 import net.jxta.endpoint.EndpointService;
+import net.jxta.endpoint.MessageTransport;
+import net.jxta.endpoint.router.RouteController;
+import net.jxta.impl.endpoint.router.EndpointRouter;
 import net.jxta.peer.PeerID;
 import net.jxta.peergroup.PeerGroup;
 import net.jxta.pipe.InputPipe;
 import net.jxta.pipe.OutputPipe;
 import net.jxta.pipe.PipeMsgListener;
 import net.jxta.pipe.PipeService;
+import net.jxta.protocol.PeerAdvertisement;
 import net.jxta.protocol.PipeAdvertisement;
+import net.jxta.protocol.RouteAdvertisement;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -29,6 +37,7 @@ import de.uniol.inf.is.odysseus.p2p_new.IJxtaServicesProvider;
 import de.uniol.inf.is.odysseus.p2p_new.IMessage;
 import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicator;
 import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicatorListener;
+import de.uniol.inf.is.odysseus.p2p_new.PeerCommunicationException;
 import de.uniol.inf.is.odysseus.p2p_new.RepeatingMessageSend;
 import de.uniol.inf.is.odysseus.p2p_new.network.P2PNetworkManager;
 
@@ -118,30 +127,30 @@ public class JxtaServicesProvider implements IJxtaServicesProvider, IPeerCommuni
 	}
 
 	private void sendCloseMessageToRemotePeers() {
-//		LOG.debug("Sending close message since we close gracefully.");
-//
-//		Collection<PeerAdvertisement> connectedPeers = getPeerAdvertisements();
-//		PeerCloseMessage msg = new PeerCloseMessage();
-//		for (PeerAdvertisement connectedPeer : connectedPeers) {
-//			PeerID pid = connectedPeer.getPeerID();
-//			if( !pid.equals(P2PNetworkManager.getInstance().getLocalPeerID())) {
-//				LOG.debug("Send close message to {}", connectedPeer.getName());
-//				
-//				RepeatingMessageSend sender = new RepeatingMessageSend(peerCommunicator, msg, pid, true);
-//				closeSenderMap.put(pid, sender);
-//				sender.start();
-//			}
-//		}
-//
-//		try {
-//			Thread.sleep(4000);
-//		} catch (InterruptedException e) {
-//		}
-//
-//		for (RepeatingMessageSend closeSender : closeSenderMap.values()) {
-//			closeSender.stopRunning();
-//		}
-//		closeSenderMap.clear();
+		LOG.debug("Sending close message since we close gracefully.");
+
+		Collection<PeerAdvertisement> connectedPeers = getPeerAdvertisements();
+		PeerCloseMessage msg = new PeerCloseMessage();
+		for (PeerAdvertisement connectedPeer : connectedPeers) {
+			PeerID pid = connectedPeer.getPeerID();
+			if( !pid.equals(P2PNetworkManager.getInstance().getLocalPeerID())) {
+				LOG.debug("Send close message to {}", connectedPeer.getName());
+				
+				RepeatingMessageSend sender = new RepeatingMessageSend(peerCommunicator, msg, pid, true);
+				closeSenderMap.put(pid, sender);
+				sender.start();
+			}
+		}
+
+		try {
+			Thread.sleep(4000);
+		} catch (InterruptedException e) {
+		}
+
+		for (RepeatingMessageSend closeSender : closeSenderMap.values()) {
+			closeSender.stopRunning();
+		}
+		closeSenderMap.clear();
 	}
 
 	public static void waitFor() {
@@ -257,46 +266,76 @@ public class JxtaServicesProvider implements IJxtaServicesProvider, IPeerCommuni
 		return list;
 	}
 
-//	private static Collection<PeerAdvertisement> toPeerAdvCollection(Enumeration<Advertisement> advs) {
-//		List<PeerAdvertisement> list = Lists.newLinkedList();
-//		while (advs.hasMoreElements()) {
-//			list.add((PeerAdvertisement) advs.nextElement());
-//		}
-//		return list;
-//	}
+	@Override
+	public void getRemotePeerAdvertisements() {
+		discoveryService.getRemoteAdvertisements(null, DiscoveryService.PEER, null, null, 0);
+	}
 
-//	@Override
-//	public Optional<String> getRemotePeerAddress(PeerID peerID) {
-//		Preconditions.checkNotNull(peerID, "PeerID to get address from must not be null!");
-//		
-//		try {
-//			Iterator<MessageTransport> allMessageTransports = endpointService.getAllMessageTransports();
-//			while (allMessageTransports.hasNext()) {
-//				MessageTransport next = allMessageTransports.next();
-//				if (next instanceof EndpointRouter) {
-//					RouteController routeController = ((EndpointRouter) next).getRouteController();
-//
-//					Collection<RouteAdvertisement> routes = routeController.getRoutes(peerID);
-//					for (RouteAdvertisement route : routes) {
-//						if (peerID.equals(route.getDestPeerID())) {
-//							List<EndpointAddress> destEndpointAddresses = route.getDestEndpointAddresses();
-//							for (EndpointAddress destEndpointAddress : destEndpointAddresses) {
-//								String protocolName = destEndpointAddress.getProtocolName();
-//								if( protocolName.equals("tcp") || protocolName.equals("http")) {
-//									String address = destEndpointAddress.getProtocolAddress();
-//									return Optional.of(address);
-//								} 
-//								LOG.debug("Found destEndpoint not equal to tcp-format: protocol={}, address={} ", protocolName, destEndpointAddress.getProtocolAddress() );
-//							}
-//						}
-//					}
-//				}
-//			}
-//		} catch (Throwable t) {
-//			LOG.debug("Could not determine address of peerid {}", peerID, t);
-//		}
-//		return Optional.absent();
-//	}
+	@Override
+	public void getRemotePeerAdvertisements(DiscoveryListener listener) {
+		discoveryService.getRemoteAdvertisements(null, DiscoveryService.PEER, null, null, 0, listener);
+	}
+
+	@Override
+	public Collection<PeerAdvertisement> getPeerAdvertisements() {
+		try {
+			return toPeerAdvCollection(discoveryService.getLocalAdvertisements(DiscoveryService.PEER, null, null));
+		} catch (IOException e) {
+			LOG.error("Could not get peer advertisements", e);
+			return Lists.newArrayList();
+		}
+	}
+
+	private static Collection<PeerAdvertisement> toPeerAdvCollection(Enumeration<Advertisement> advs) {
+		List<PeerAdvertisement> list = Lists.newLinkedList();
+		while (advs.hasMoreElements()) {
+			list.add((PeerAdvertisement) advs.nextElement());
+		}
+		return list;
+	}
+
+	@Override
+	public boolean isReachable(PeerID peerID) {
+		return isReachable(peerID, false);
+	}
+
+	@Override
+	public boolean isReachable(PeerID peerID, boolean tryToConnect) {
+		return endpointService.isReachable(peerID, tryToConnect);
+	}
+
+	@Override
+	public Optional<String> getRemotePeerAddress(PeerID peerID) {
+		Preconditions.checkNotNull(peerID, "PeerID to get address from must not be null!");
+		
+		try {
+			Iterator<MessageTransport> allMessageTransports = endpointService.getAllMessageTransports();
+			while (allMessageTransports.hasNext()) {
+				MessageTransport next = allMessageTransports.next();
+				if (next instanceof EndpointRouter) {
+					RouteController routeController = ((EndpointRouter) next).getRouteController();
+
+					Collection<RouteAdvertisement> routes = routeController.getRoutes(peerID);
+					for (RouteAdvertisement route : routes) {
+						if (peerID.equals(route.getDestPeerID())) {
+							List<EndpointAddress> destEndpointAddresses = route.getDestEndpointAddresses();
+							for (EndpointAddress destEndpointAddress : destEndpointAddresses) {
+								String protocolName = destEndpointAddress.getProtocolName();
+								if( protocolName.equals("tcp") || protocolName.equals("http")) {
+									String address = destEndpointAddress.getProtocolAddress();
+									return Optional.of(address);
+								} 
+								LOG.debug("Found destEndpoint not equal to tcp-format: protocol={}, address={} ", protocolName, destEndpointAddress.getProtocolAddress() );
+							}
+						}
+					}
+				}
+			}
+		} catch (Throwable t) {
+			LOG.debug("Could not determine address of peerid {}", peerID, t);
+		}
+		return Optional.absent();
+	}
 
 	@Override
 	public InputPipe createInputPipe(PipeAdvertisement pipeAdv, PipeMsgListener listener) throws IOException {
@@ -333,27 +372,27 @@ public class JxtaServicesProvider implements IJxtaServicesProvider, IPeerCommuni
 	}
 
 	private static void processRemotePeerClose(IPeerCommunicator communicator, PeerID senderPeer) {
-//		LOG.debug("Got close message from {}", senderPeer.toString());
-//
-//		Collection<PeerAdvertisement> peerAdvertisements = JxtaServicesProvider.getInstance().getPeerAdvertisements();
-//		for (PeerAdvertisement peerAdvertisement : peerAdvertisements) {
-//			if (peerAdvertisement.getPeerID().equals(senderPeer)) {
-//				try {
-//					JxtaServicesProvider.getInstance().flushAdvertisement(peerAdvertisement);
-//					LOG.debug("Removed peer advertisement from {}", peerAdvertisement.getName());
-//
-//				} catch (IOException e) {
-//					LOG.error("Could not flush peer advertisement due to peer close from {}", peerAdvertisement.getName(), e);
-//				}
-//				break;
-//			}
-//		}
-//		
-//		try {
-//			LOG.debug("Send peer close ack");
-//			communicator.send(senderPeer, new PeerCloseAckMessage());
-//		} catch (PeerCommunicationException e) {
-//			LOG.error("Could not send ack message", e);
-//		}
+		LOG.debug("Got close message from {}", senderPeer.toString());
+
+		Collection<PeerAdvertisement> peerAdvertisements = JxtaServicesProvider.getInstance().getPeerAdvertisements();
+		for (PeerAdvertisement peerAdvertisement : peerAdvertisements) {
+			if (peerAdvertisement.getPeerID().equals(senderPeer)) {
+				try {
+					JxtaServicesProvider.getInstance().flushAdvertisement(peerAdvertisement);
+					LOG.debug("Removed peer advertisement from {}", peerAdvertisement.getName());
+
+				} catch (IOException e) {
+					LOG.error("Could not flush peer advertisement due to peer close from {}", peerAdvertisement.getName(), e);
+				}
+				break;
+			}
+		}
+		
+		try {
+			LOG.debug("Send peer close ack");
+			communicator.send(senderPeer, new PeerCloseAckMessage());
+		} catch (PeerCommunicationException e) {
+			LOG.error("Could not send ack message", e);
+		}
 	}
 }
