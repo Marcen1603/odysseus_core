@@ -149,14 +149,18 @@ public class MDAStore<T extends Comparable<? super T>> {
 		} else if (val.compareTo(vals.get(mid)) < 0) {
 			// left side
 			if(mid == start) {
-				return -1;
+				if(mid == 0) {
+					return -1;
+				}
+				return mid-1;
 			}
 			return binSearch(vals, val, start, mid - 1);
 		}
 		// right side
-		if(mid+1 == vals.size()) {
-			return -1;
-		} else if(val.compareTo(vals.get(mid+1)) < 0) {
+		if(mid == end) {
+			if(mid == vals.size()-1) {
+				return -1;
+			}
 			return mid;
 		}
 		return binSearch(vals, val, mid + 1, end);
