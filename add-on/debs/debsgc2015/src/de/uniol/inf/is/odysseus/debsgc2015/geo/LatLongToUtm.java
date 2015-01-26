@@ -67,22 +67,15 @@ public class LatLongToUtm extends AbstractFunction<List<Double>> {
 
 	}
 
-	public static Double[] latLongToUtm(double latitude, double longitude)
-			throws IllegalArgumentException {
-		validate(latitude, longitude);
+	public static Double[] latLongToUtm(double latitude, double longitude) {
+		if (latitude < -90.0 || latitude > 90.0 || longitude < -180.0
+				|| longitude >= 180.0) {
+			return null;
+		}
 		ConversionVariables vars = setVariables(latitude, longitude);
 		double easting = getEasting(vars);
 		double northing = getNorthing(latitude, vars);
 		return new Double[] { easting, northing };
-	}
-
-	private static void validate(double latitude, double longitude)
-			throws IllegalArgumentException {
-		if (latitude < -90.0 || latitude > 90.0 || longitude < -180.0
-				|| longitude >= 180.0) {
-			throw new IllegalArgumentException("Invalid lat/long values: "
-					+ latitude + ", " + longitude);
-		}
 	}
 
 	private static ConversionVariables setVariables(double latitude,

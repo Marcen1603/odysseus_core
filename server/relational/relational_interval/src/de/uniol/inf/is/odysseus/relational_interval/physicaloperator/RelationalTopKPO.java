@@ -122,7 +122,7 @@ public class RelationalTopKPO<T extends Tuple<M>, M extends ITimeInterval>
 			this.scoringFunction.bindAdditionalContent(object
 					.getAdditionalContent());
 			this.scoringFunction.bindVariables(meta, values);
-			score = this.scoringFunction.getValue();
+			score = ((Number)this.scoringFunction.getValue()).doubleValue();
 
 		} catch (Exception e) {
 			if (!(e instanceof NullPointerException)) {
