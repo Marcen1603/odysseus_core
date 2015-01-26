@@ -91,7 +91,9 @@ public class GroupCoalescePO<M extends ITimeInterval> extends
 	
 	@Override
 	protected void process_done(int port) {
-		createAndSend();
+		if (currentPartialAggregates != null) {
+			createAndSend();
+		}	
 	}
 	
 	@Override
