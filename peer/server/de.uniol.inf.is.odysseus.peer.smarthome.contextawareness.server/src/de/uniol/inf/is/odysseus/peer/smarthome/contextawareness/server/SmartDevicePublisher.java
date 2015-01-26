@@ -55,7 +55,6 @@ public class SmartDevicePublisher {
 
 	SmartDevicePublisher() {
 		initLocalSmartDeviceAsync();
-		registerAdvertisementTypes();
 		createAndPublishSmartDeviceAdvertisementWhenPossibleAsync();
 	}
 	
@@ -77,6 +76,8 @@ public class SmartDevicePublisher {
 				waitForServerExecutorService();
 
 				// printLocalPeerID();
+				registerAdvertisementTypes();
+				
 
 				LOG.debug("publishSmartDeviceAdvertisementAsync() in 5 sec.");
 				threadSleep(5000);
