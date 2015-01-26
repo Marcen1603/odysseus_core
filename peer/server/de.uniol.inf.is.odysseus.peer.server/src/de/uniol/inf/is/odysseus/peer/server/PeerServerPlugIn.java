@@ -105,12 +105,7 @@ public class PeerServerPlugIn implements BundleActivator {
 			return InetAddressUtil.replaceWithIPAddressIfNeeded(peer);
 		}
 
-		Optional<String> optName = InetAddressUtil.getRealInetAddress();
-		if( optName.isPresent() ) {
-			return optName.get();
-		}
-		
-		return "OdysseusPeer";
+		return InetAddressUtil.generateName();
 	}
 
 	private static String determinePeerGroupName() {
