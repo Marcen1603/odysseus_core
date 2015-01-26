@@ -387,7 +387,14 @@ public class QueryPartController implements IPlanModificationListener,
 		if (peerIDMap.containsKey(sharedQueryId)) {
 			peerIDMap.remove(sharedQueryId);
 		}
-		
+		for (IQueryPartControllerListener listener : listeners) {
+			try {
+				listener.afterUnregisterAsMaster(sharedQueryId);
+			} catch (Throwable t) {
+				LOG.error("Error while calling afterUnregisterAsMaster of a listener!");
+				continue;
+			}
+		}
 
 	}
 
@@ -408,7 +415,18 @@ public class QueryPartController implements IPlanModificationListener,
 					sharedQueryIDMap.remove(id);
 				}
 			}
+			for (IQueryPartControllerListener listener : listeners) {
+				try {
+					listener.afterUnregisterAsSlave(sharedQueryID, ids);
+					
+				} catch (Throwable t) {
+					LOG.error("Error while calling afterUnregisterAsMaster of a listener!");
+					continue;
+				}
+			}
 		}
+		
+		
 
 	}
 
@@ -425,8 +443,6 @@ public class QueryPartController implements IPlanModificationListener,
 		return this.masterIDMap.get(sharedQueryID);
 	}
 	
-	//TODO call listeners when unregistering?
-
 	@Override
 	public PeerID addOtherPeer(ID sharedQueryID, PeerID peerID) {
 		Preconditions.checkNotNull(sharedQueryID,

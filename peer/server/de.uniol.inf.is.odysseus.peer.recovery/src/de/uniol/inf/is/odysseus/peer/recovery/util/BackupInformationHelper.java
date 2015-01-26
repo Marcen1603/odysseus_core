@@ -176,4 +176,17 @@ public class BackupInformationHelper implements IPlanModificationListener,
 						.getLocalPeerID().toString());
 	}
 
+	@Override
+	public void afterUnregisterAsMaster(ID sharedQueryID) {
+		// TODO Auto-generated method stub
+		//TODO Implement Me :)
+		
+	}
+
+	@Override
+	public void afterUnregisterAsSlave(ID sharedQueryID, Collection<Integer> ids) {
+		// TODO Auto-generated method stub
+		//TODO Implement Me :)
+	}
+
 }
