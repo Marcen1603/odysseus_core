@@ -1,8 +1,8 @@
 package de.uniol.inf.is.odysseus.relational_interval.physicaloperator;
 
-import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.TreeSet;
 
@@ -43,6 +43,7 @@ public class RelationalTopKPO<T extends Tuple<M>, M extends ITimeInterval>
 	final private SDFExpression scoringFunction;
 	final private int k;
 	final private TreeSet<SerializablePair<Double, T>> topK;
+	private LinkedList<T> lastResult;
 
 	private VarHelper[] variables;
 
@@ -84,22 +85,48 @@ public class RelationalTopKPO<T extends Tuple<M>, M extends ITimeInterval>
 	private void addObject(SerializablePair<Double, T> scoredObject) {
 		topK.add(scoredObject);
 	}
-	
+
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	private void produceResult(T object) {
 		// Produce result
-		T result = (T) new Tuple(1, false);
+		T result = (T) new Tuple(2, false);
 		Iterator<SerializablePair<Double, T>> iter = topK.descendingIterator();
-		List<T> resultList = new ArrayList<T>();
+		List<T> resultList = new LinkedList<T>();
 		for (int i = 0; i < k && iter.hasNext(); i++) {
 			T out = (T) iter.next().getE2().clone();
 			out.setMetadata(null);
 			resultList.add(out);
 		}
-		result.setAttribute(0, resultList);
-		M meta = (M) object.getMetadata().clone();
-		result.setMetadata(meta);
-		transfer(result);
+		boolean sameAsLastResult = compareWithLastResult(resultList);
+
+		if (!sameAsLastResult) {
+			lastResult = new LinkedList<T>(resultList);
+			result.setAttribute(0, resultList);
+			result.setAttribute(1, object);
+			M meta = (M) object.getMetadata().clone();
+			result.setMetadata(meta);
+			transfer(result);
+		}
+	}
+
+	private boolean compareWithLastResult(List<T> resultList) {
+		if (lastResult == null) {
+			return false;
+		}
+
+		if (lastResult.size() != resultList.size()) {
+			return false;
+		}
+
+		Iterator<T> iter = resultList.iterator();
+		for (T e : lastResult) {
+			if ((!e.equals(iter.next()))) {
+				return false;
+			}
+		}
+
+		return true;
+
 	}
 
 	private SerializablePair<Double, T> calcScore(T object) {
@@ -122,7 +149,7 @@ public class RelationalTopKPO<T extends Tuple<M>, M extends ITimeInterval>
 			this.scoringFunction.bindAdditionalContent(object
 					.getAdditionalContent());
 			this.scoringFunction.bindVariables(meta, values);
-			score = ((Number)this.scoringFunction.getValue()).doubleValue();
+			score = ((Number) this.scoringFunction.getValue()).doubleValue();
 
 		} catch (Exception e) {
 			if (!(e instanceof NullPointerException)) {
