@@ -81,24 +81,6 @@ public class MDAStore<T extends Comparable<? super T>> {
 	}
 
 	/**
-	 * Gets the values of the cell.
-	 * 
-	 * @param val
-	 *            The searches value.
-	 * @return The value of the cell center spot.
-	 * @throws NullPointerException
-	 *             if <code>val</code> is null.
-	 */
-	public List<T> getCellValues(List<T> val) throws NullPointerException {
-		int[] indizes = getCellIndices(val);
-		List<T> retValue = Lists.newArrayList();
-		for (int dim = 0; dim < indizes.length; dim++) {
-			retValue.add(this.values.get(dim).get(indizes[dim]));
-		}
-		return retValue;
-	}
-
-	/**
 	 * Gets the indices of the cell.
 	 * 
 	 * @param val
@@ -161,26 +143,21 @@ public class MDAStore<T extends Comparable<? super T>> {
 	 */
 	private int binSearch(List<T> vals, T val, int start, int end) {
 		int mid = start + (end - start) / 2;
-		if (val.compareTo(vals.get(mid)) == 0
-				|| (mid == start && val.compareTo(vals.get(mid)) < 0)
-				|| (mid == end && val.compareTo(vals.get(mid)) > 0)) {
+		
+		if (val.compareTo(vals.get(mid)) == 0) {
 			return mid;
 		} else if (val.compareTo(vals.get(mid)) < 0) {
-			if (mid > start && val.compareTo(vals.get(mid - 1)) > 0) {
-				double distance = vals.get(mid).compareTo(vals.get(mid - 1));
-				if (val.compareTo(vals.get(mid - 1)) < distance / 2) {
-					return mid - 1;
-				}
-				return mid;
+			// left side
+			if(mid == start) {
+				return -1;
 			}
-			return binSearch(vals, val, 0, mid - 1);
+			return binSearch(vals, val, start, mid - 1);
 		}
-		if (mid < end && val.compareTo(vals.get(mid + 1)) < 0) {
-			double distance = vals.get(mid + 1).compareTo(vals.get(mid));
-			if (val.compareTo(vals.get(mid)) < distance / 2) {
-				return mid;
-			}
-			return mid + 1;
+		// right side
+		if(mid+1 == vals.size()) {
+			return -1;
+		} else if(val.compareTo(vals.get(mid+1)) < 0) {
+			return mid;
 		}
 		return binSearch(vals, val, mid + 1, end);
 	}
@@ -198,18 +175,13 @@ public class MDAStore<T extends Comparable<? super T>> {
 
 		int[] cell = store.getCellIndices((List<Double>) Lists
 				.newArrayList(15.0));
-		List<Double> val = store.getCellValues((List<Double>) Lists
-				.newArrayList(15.0));
-		System.out.println("Cell1 = " + cell[0] + ", Value = " + val.get(0));
+		System.out.println("Cell1 = " + cell[0]);
 		cell = store.getCellIndices((List<Double>) Lists.newArrayList(12.0));
-		val = store.getCellValues((List<Double>) Lists.newArrayList(12.0));
-		System.out.println("Cell2 = " + cell[0] + ", Value = " + val.get(0));
+		System.out.println("Cell2 = " + cell[0]);
 		cell = store.getCellIndices((List<Double>) Lists.newArrayList(-5.0));
-		val = store.getCellValues((List<Double>) Lists.newArrayList(-5.0));
-		System.out.println("Cell3 = " + cell[0] + ", Value = " + val.get(0));
+		System.out.println("Cell3 = " + cell[0]);
 		cell = store.getCellIndices((List<Double>) Lists.newArrayList(100.0));
-		val = store.getCellValues((List<Double>) Lists.newArrayList(100.0));
-		System.out.println("Cell4 = " + cell[0] + ", Value = " + val.get(0));
+		System.out.println("Cell4 = " + cell[0]);
 
 		System.out.println("---");
 		List<Double> values_snddim = Lists.newArrayList(0.0, 1.0, 2.0);
@@ -218,26 +190,16 @@ public class MDAStore<T extends Comparable<? super T>> {
 
 		cell = store.getCellIndices((List<Double>) Lists
 				.newArrayList(15.0, 2.0));
-		val = store.getCellValues((List<Double>) Lists.newArrayList(15.0, 2.0));
-		System.out.println("Cell1 = " + cell[0] + ", " + cell[1] + ", Value = "
-				+ val.get(0) + ", " + val.get(1));
+		System.out.println("Cell1 = " + cell[0] + ", " + cell[1]);
 		cell = store.getCellIndices((List<Double>) Lists
 				.newArrayList(12.0, 0.5));
-		val = store.getCellValues((List<Double>) Lists.newArrayList(12.0, 0.5));
-		System.out.println("Cell2 = " + cell[0] + ", " + cell[1] + ", Value = "
-				+ val.get(0) + ", " + val.get(1));
+		System.out.println("Cell2 = " + cell[0] + ", " + cell[1]);
 		cell = store.getCellIndices((List<Double>) Lists.newArrayList(-5.0,
 				1.25));
-		val = store
-				.getCellValues((List<Double>) Lists.newArrayList(-5.0, 1.25));
-		System.out.println("Cell3 = " + cell[0] + ", " + cell[1] + ", Value = "
-				+ val.get(0) + ", " + val.get(1));
+		System.out.println("Cell3 = " + cell[0] + ", " + cell[1]);
 		cell = store.getCellIndices((List<Double>) Lists.newArrayList(100.0,
 				0.0));
-		val = store
-				.getCellValues((List<Double>) Lists.newArrayList(100.0, 0.0));
-		System.out.println("Cell4 = " + cell[0] + ", " + cell[1] + ", Value = "
-				+ val.get(0) + ", " + val.get(1));
+		System.out.println("Cell4 = " + cell[0] + ", " + cell[1]);
 	}
 
 }
