@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Zeromq Wrapper
+Bundle-Name: SNET Wrapper
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.wrapper.snet
 Bundle-Version: 1.0.0.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
