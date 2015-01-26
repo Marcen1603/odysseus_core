@@ -5,6 +5,7 @@ import java.util.Map;
 
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
@@ -114,6 +115,16 @@ public class GroupCoalescePO<M extends ITimeInterval> extends
 	
 	public void setCreateOnHeartbeat(boolean createOnHeartbeat) {
 		this.createOnHeartbeat = createOnHeartbeat;
+	}
+	
+	@Override
+	public boolean isSemanticallyEqual(IPhysicalOperator ipo) {
+		
+		if (! (ipo instanceof GroupCoalescePO)){
+			return false;
+		}
+		
+		return super.isSemanticallyEqual(ipo);
 	}
 
 }

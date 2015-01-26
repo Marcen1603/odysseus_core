@@ -1,6 +1,7 @@
 package de.uniol.inf.is.odysseus.server.intervalapproach;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -8,6 +9,7 @@ import java.util.Map.Entry;
 
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
@@ -119,5 +121,29 @@ public class StartStopPredicateCoalescePO<M extends ITimeInterval> extends
 			}
 			currentPAs.clear();
 		}
+	}
+	
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@Override
+	public boolean isSemanticallyEqual(IPhysicalOperator ipo) {
+		if (!(ipo instanceof StartStopPredicateCoalescePO)){
+			return false;
+		}
+		
+		StartStopPredicateCoalescePO po = (StartStopPredicateCoalescePO) ipo;
+		
+		if (this.predicates.size() != po.predicates.size()){
+			return false;
+		}
+		
+		Iterator<IPredicate> otherIter = po.predicates.iterator();
+		for (IPredicate p: predicates){
+			if (!p.equals(otherIter.next())){
+				return false;
+			}
+		}
+		
+		
+		return super.isSemanticallyEqual(ipo);
 	}
 }

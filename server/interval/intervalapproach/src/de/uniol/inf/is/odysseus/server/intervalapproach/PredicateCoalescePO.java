@@ -5,6 +5,7 @@ import java.util.Map;
 
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
@@ -104,4 +105,21 @@ public class PredicateCoalescePO<M extends ITimeInterval> extends
 		return predicate;
 	}
 
+	@Override
+	public boolean isSemanticallyEqual(IPhysicalOperator ipo) {
+		
+		if (! (ipo instanceof PredicateCoalescePO)){
+			return false;
+		}
+		
+		@SuppressWarnings("rawtypes")
+		PredicateCoalescePO po = (PredicateCoalescePO) ipo;
+		
+		if (! this.predicate.equals(po)){
+			return false;
+		}
+		
+		return super.isSemanticallyEqual(ipo);
+	}
+	
 }
