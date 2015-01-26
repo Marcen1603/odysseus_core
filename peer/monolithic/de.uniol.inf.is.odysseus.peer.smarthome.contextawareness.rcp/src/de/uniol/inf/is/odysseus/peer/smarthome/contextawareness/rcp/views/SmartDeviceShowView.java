@@ -327,7 +327,6 @@ public class SmartDeviceShowView extends ViewPart implements
 		return SmartHomeRCPActivator.getPeerDictionary().getRemotePeerName(id);
 	}
 
-	@SuppressWarnings("unused")
 	private static String determinePeerContextName(PeerID pid) {
 		// TODO:
 		return "none";

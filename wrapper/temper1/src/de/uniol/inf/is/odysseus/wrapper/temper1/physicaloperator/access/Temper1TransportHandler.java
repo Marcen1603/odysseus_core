@@ -553,7 +553,6 @@ public class Temper1TransportHandler extends
 	/**
 	 * get simulated temperature values
 	 *****************************************************************/
-	@SuppressWarnings("unused")
 	private static float getSimulatedTemperature(int deviceNumber) {
 		// TODO: Extend method for multiple devices.
 

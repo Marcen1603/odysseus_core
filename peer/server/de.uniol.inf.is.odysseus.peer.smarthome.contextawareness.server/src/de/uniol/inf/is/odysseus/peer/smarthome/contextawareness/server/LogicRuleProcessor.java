@@ -367,7 +367,6 @@ public class LogicRuleProcessor implements ISmartDeviceDictionaryListener,
 		return map;
 	}
 
-	@SuppressWarnings("unused")
 	private static void importRelatedSourcesFromActivityInterpreter(
 			HashMap<AbstractActivityInterpreter, AbstractLogicRule> relatedActivityInterpreterWithLogicRule,
 			ASmartDevice newSmartDevice) {
@@ -504,7 +503,6 @@ public class LogicRuleProcessor implements ISmartDeviceDictionaryListener,
 		}
 	}
 
-	@SuppressWarnings("unused")
 	private void updateLogicRulesIfNeeded(ASmartDevice updatedSmartDevice) {
 		// TODO:
 		// LOG.debug("smartDeviceUpdated: " +
@@ -781,7 +779,6 @@ public class LogicRuleProcessor implements ISmartDeviceDictionaryListener,
 		}
 	}
 
-	@SuppressWarnings("unused")
 	private static void stopLogicRuleAsync(AbstractLogicRule rule) {
 		// TODO Auto-generated method stub
 		LOG.debug("stopLogicRuleAsync() -> currently not implemented!");
