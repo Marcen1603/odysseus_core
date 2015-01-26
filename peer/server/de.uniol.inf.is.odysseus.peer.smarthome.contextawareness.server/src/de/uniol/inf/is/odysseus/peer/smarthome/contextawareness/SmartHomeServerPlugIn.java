@@ -1,5 +1,7 @@
 package de.uniol.inf.is.odysseus.peer.smarthome.contextawareness;
 
+import net.jxta.document.AdvertisementFactory;
+
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
@@ -17,14 +19,14 @@ import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.server.QueryExec
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.server.SmartDeviceLocalConfigurationServer;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.server.SmartDevicePublisher;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.server.SmartDeviceDiscovery;
+import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.server.advertisement.SmartDeviceAdvertisement;
+import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.server.advertisement.SmartDeviceAdvertisementInstantiator;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.server.config.SmartDeviceConfigurationRequestMessage;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.server.config.SmartDeviceConfigurationResponseMessage;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.smartdevice.message.SmartDeviceRequestMessage;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.smartdevice.message.SmartDeviceResponseMessage;
 
 public class SmartHomeServerPlugIn implements BundleActivator {
-
-	@SuppressWarnings("unused")
 	private static final Logger LOG = LoggerFactory
 			.getLogger(SmartHomeServerPlugIn.class);
 
@@ -39,6 +41,8 @@ public class SmartHomeServerPlugIn implements BundleActivator {
 
 	@Override
 	public void start(BundleContext bundleContext) throws Exception {
+		registerAdvertisementTypes();
+		
 		SmartDeviceDiscovery.getInstance().addListener(LogicRuleProcessor.getInstance());
 		SmartDevicePublisher.getInstance();
 
@@ -50,6 +54,15 @@ public class SmartHomeServerPlugIn implements BundleActivator {
 		SmartDeviceDiscovery.getInstance().removeListener(LogicRuleProcessor.getInstance());
 
 		bundle = null;
+	}
+	
+	private static void registerAdvertisementTypes() {
+		if (!AdvertisementFactory.registerAdvertisementInstance(
+				SmartDeviceAdvertisement.getAdvertisementType(),
+				new SmartDeviceAdvertisementInstantiator())) {
+			LOG.error("Couldn't register advertisement type: "
+					+ SmartDeviceAdvertisement.getAdvertisementType());
+		}
 	}
 
 	// called by OSGi-DS
