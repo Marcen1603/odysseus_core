@@ -268,7 +268,7 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 		Iterator<SourceAdvertisement> it = srcAdvs.iterator();
 		while (it.hasNext()) {
 			SourceAdvertisement srcAdv = it.next();
-			if (!srcAdv.isLocal() && !peerDictionary.getRemotePeerIDs().contains(srcAdv.getPeerID())) {
+			if (!srcAdv.isLocal() && ( srcAdv.isView() && !peerDictionary.getRemotePeerIDs().contains(srcAdv.getPeerID()))) {
 				removeSourceImport(srcAdv);
 				tryFlushAdvertisement(srcAdv);
 				it.remove();
