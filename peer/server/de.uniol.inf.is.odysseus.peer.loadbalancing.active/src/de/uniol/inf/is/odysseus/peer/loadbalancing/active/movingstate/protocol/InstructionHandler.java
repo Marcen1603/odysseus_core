@@ -192,6 +192,7 @@ public class InstructionHandler {
 					MovingStateHelper.addChangeInformation(pipe, status, true);
 					MovingStateHelper.startBuffering(pipe);
 					MovingStateHelper.setNewPeerId(pipe, peer, true);
+					
 					dispatcher.sendDuplicateSenderSuccess(status.getMasterPeer(),
 							pipe);
 				} catch (Exception e) {
