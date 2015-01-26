@@ -11,7 +11,6 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.UnmodifiableIterator;
 
 import net.jxta.document.Advertisement;
-import net.jxta.document.AdvertisementFactory;
 import net.jxta.peer.PeerID;
 
 import org.slf4j.Logger;
@@ -25,7 +24,6 @@ import de.uniol.inf.is.odysseus.p2p_new.PeerCommunicationException;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.SourceAdvertisement;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.SmartHomeServerPlugIn;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.server.advertisement.SmartDeviceAdvertisement;
-import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.server.advertisement.SmartDeviceAdvertisementInstantiator;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.smartdevice.ASmartDevice;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.smartdevice.message.SmartDeviceMessage;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.smartdevice.message.SmartDeviceRequestMessage;
@@ -53,16 +51,6 @@ public class SmartDeviceDiscovery implements
 	public SmartDeviceDiscovery() {
 		cleanupAsync();
 		refreshFoundPeerIDsAsync();
-		registerAdvertisementTypes();
-	}
-
-	private static void registerAdvertisementTypes() {
-		if (!AdvertisementFactory.registerAdvertisementInstance(
-				SmartDeviceAdvertisement.getAdvertisementType(),
-				new SmartDeviceAdvertisementInstantiator())) {
-			LOG.error("Couldn't register advertisement type: "
-					+ SmartDeviceAdvertisement.getAdvertisementType());
-		}
 	}
 
 	protected void cleanupAsync() {

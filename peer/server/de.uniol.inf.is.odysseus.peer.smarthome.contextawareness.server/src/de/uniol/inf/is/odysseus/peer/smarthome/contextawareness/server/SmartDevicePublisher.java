@@ -21,7 +21,6 @@ import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.logi
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.sensor.RPiGPIOSensor;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.sensor.TemperSensor;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.server.advertisement.SmartDeviceAdvertisement;
-import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.server.advertisement.SmartDeviceAdvertisementInstantiator;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.server.service.ServerExecutorService;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.server.service.SessionManagementService;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.smartdevice.ASmartDevice;
@@ -54,22 +53,10 @@ public class SmartDevicePublisher {
 	private RPiGPIOSensor gpioTaste3;
 
 	SmartDevicePublisher() {
-		registerAdvertisementTypes();
-		
 		initLocalSmartDeviceAsync();
 		createAndPublishSmartDeviceAdvertisementWhenPossibleAsync();
 	}
-	
-	private static void registerAdvertisementTypes() {
-		if (!AdvertisementFactory.registerAdvertisementInstance(
-				SmartDeviceAdvertisement.getAdvertisementType(),
-				new SmartDeviceAdvertisementInstantiator())) {
-			LOG.error("Couldn't register advertisement type: "
-					+ SmartDeviceAdvertisement.getAdvertisementType());
-		}
-	}
 
-	@SuppressWarnings("unused")
 	private void createAndPublishSmartDeviceAdvertisementWhenPossibleAsync() {
 		Thread thread = new Thread(new Runnable() {
 			@Override
@@ -79,7 +66,6 @@ public class SmartDevicePublisher {
 				waitForServerExecutorService();
 
 				// printLocalPeerID();
-				registerAdvertisementTypes();
 				
 
 				LOG.debug("publishSmartDeviceAdvertisementAsync() in 5 sec.");
@@ -248,8 +234,6 @@ public class SmartDevicePublisher {
 				waitForP2PNetworkManager();
 				waitForLogicProcessor();
 				waitForTemper();
-				
-				registerAdvertisementTypes();
 				
 				try {
 					initForLocalSmartDevice();
