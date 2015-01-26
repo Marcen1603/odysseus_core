@@ -21,6 +21,7 @@ import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.logi
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.sensor.RPiGPIOSensor;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.sensor.TemperSensor;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.server.advertisement.SmartDeviceAdvertisement;
+import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.server.advertisement.SmartDeviceAdvertisementInstantiator;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.server.service.ServerExecutorService;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.server.service.SessionManagementService;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.smartdevice.ASmartDevice;
@@ -54,7 +55,17 @@ public class SmartDevicePublisher {
 
 	SmartDevicePublisher() {
 		initLocalSmartDeviceAsync();
+		registerAdvertisementTypes();
 		createAndPublishSmartDeviceAdvertisementWhenPossibleAsync();
+	}
+	
+	private static void registerAdvertisementTypes() {
+		if (!AdvertisementFactory.registerAdvertisementInstance(
+				SmartDeviceAdvertisement.getAdvertisementType(),
+				new SmartDeviceAdvertisementInstantiator())) {
+			LOG.error("Couldn't register advertisement type: "
+					+ SmartDeviceAdvertisement.getAdvertisementType());
+		}
 	}
 
 	private void createAndPublishSmartDeviceAdvertisementWhenPossibleAsync() {
