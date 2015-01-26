@@ -4,8 +4,10 @@ import java.lang.management.ManagementFactory;
 import java.lang.management.ThreadMXBean;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.text.DateFormat;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Date;
 import java.util.Enumeration;
 import java.util.List;
 
@@ -59,6 +61,7 @@ public class PeerConsole implements CommandProvider, IPeerCommunicatorListener {
 
 	private static final Logger LOG = LoggerFactory.getLogger(PeerConsole.class);
 	private static final Collection<CommandProvider> COMMAND_PROVIDERS = Lists.newArrayList();
+	private static final DateFormat DATE_FORMAT = DateFormat.getDateInstance(DateFormat.MEDIUM);
 
 	private static IP2PDictionary p2pDictionary;
 	private static IPeerDictionary peerDictionary;
@@ -312,6 +315,7 @@ public class PeerConsole implements CommandProvider, IPeerCommunicatorListener {
 		IResourceUsage u = peerResourceUsageManager.getLocalResourceUsage();
 
 		ci.println("Version " + toVersionString(u.getVersion()));
+		ci.println("Startup timestamp is " + convertTimestampToDate(u.getStartupTimestamp()));
 		ci.println("MEM: " + u.getMemFreeBytes() + " of " + u.getMemMaxBytes() + " Bytes free ( " + (((double) u.getMemFreeBytes() / u.getMemMaxBytes()) * 100.0) + " %)");
 		ci.println("CPU: " + u.getCpuFree() + " of " + u.getCpuMax() + " free ( " + ((u.getCpuFree() / u.getCpuMax()) * 100.0) + " %)");
 		ci.println("NET: Max   = " + u.getNetBandwidthMax());
@@ -323,6 +327,9 @@ public class PeerConsole implements CommandProvider, IPeerCommunicatorListener {
 
 	private static String toVersionString(int[] version) {
 		return version[0] + "." + version[1] + "." + version[2] + "." + version[3];
+	}
+	private static String convertTimestampToDate(long startupTimestamp) {
+		return DATE_FORMAT.format(new Date(startupTimestamp));
 	}
 
 	public void _ping(CommandInterpreter ci) {

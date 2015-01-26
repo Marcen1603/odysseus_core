@@ -39,19 +39,15 @@ public class InetAddressUtil {
 	}
 	
 	public static String generateName() {
-		Optional<String> optAddress = getRealInetAddress();
 		Optional<String> optName = getHostName();
 		
-		if( optAddress.isPresent() ) {
-			if( optName.isPresent() ) {
-				return optName.get() + " [" + optAddress.get() + "]";
-			} 
-			
-			return "UnknownHostName [" + optAddress.get() + "]";
+		if( optName.isPresent() ) {
+			return optName.get();
 		}
 		
-		if( optName.isPresent() ) {
-			return optName.get() + " [ <unknownIP> ]";
+		Optional<String> optAddress = getRealInetAddress();
+		if( optAddress.isPresent() ) {
+			return optAddress.get();
 		}
 		
 		return "OdysseusPeer";
