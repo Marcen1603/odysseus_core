@@ -2,7 +2,9 @@ package de.uniol.inf.is.odysseus.peer.rcp.views;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.text.DateFormat;
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
@@ -52,6 +54,7 @@ public class PeerView extends ViewPart implements IP2PDictionaryListener, IPeerD
 	private static final Logger LOG = LoggerFactory.getLogger(PeerView.class);
 
 	private static final long REFRESH_INTERVAL_MILLIS = 5000;
+	private static final DateFormat DATE_FORMAT = DateFormat.getDateInstance(DateFormat.MEDIUM);
 
 	private static PeerView instance;
 	private static Image[] warnImages;
@@ -162,6 +165,35 @@ public class PeerView extends ViewPart implements IP2PDictionaryListener, IPeerD
 			}
 		});
 		tableColumnLayout.setColumnData(versionColumn.getColumn(), new ColumnWeightData(5, 25, true));
+		new ColumnViewerSorter(peersTable, versionColumn) {
+			@Override
+			protected int doCompare(Viewer viewer, Object e1, Object e2) {
+				return 0;
+			}
+		};
+		
+		/************* Starttime ****************/
+		TableViewerColumn startTimeColumn = new TableViewerColumn(peersTable, SWT.NONE);
+		startTimeColumn.getColumn().setText("Starttime");
+		startTimeColumn.setLabelProvider(new CellLabelProvider() {
+			@Override
+			public void update(ViewerCell cell) {
+				PeerID pid = (PeerID) cell.getElement();
+				Optional<IResourceUsage> optUsage = determineResourceUsage(pid);
+				if (optUsage.isPresent()) {
+					IResourceUsage usage = optUsage.get();
+					cell.setText(convertTimestampToDate(usage.getStartupTimestamp()));
+				} else {
+					cell.setText("<unknown>");
+				}
+
+				if (isLocalID(pid)) {
+					cell.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_GRAY));
+				}
+			}
+		});
+		tableColumnLayout.setColumnData(startTimeColumn.getColumn(), new ColumnWeightData(5, 25, true));
+		
 		new ColumnViewerSorter(peersTable, versionColumn) {
 			@Override
 			protected int doCompare(Viewer viewer, Object e1, Object e2) {
@@ -443,6 +475,10 @@ public class PeerView extends ViewPart implements IP2PDictionaryListener, IPeerD
 		warnImages = createWarnImages();
 
 		instance = this;
+	}
+	
+	private static String convertTimestampToDate(long startupTimestamp) {
+		return DATE_FORMAT.format(new Date(startupTimestamp));
 	}
 
 	private static boolean isLocalID(PeerID pid) {

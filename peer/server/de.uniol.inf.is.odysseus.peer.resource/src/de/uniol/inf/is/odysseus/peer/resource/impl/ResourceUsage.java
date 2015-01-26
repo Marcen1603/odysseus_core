@@ -21,9 +21,10 @@ public final class ResourceUsage implements IResourceUsage {
 	private final double netInputRate;
 	
 	private final int[] version;
+	private final long startupTimestamp;
 
 	ResourceUsage(long memFreeBytes, long memMaxBytes, double cpuFree, double cpuMax, int runningQueriesCount, int stoppedQueriesCount, int remotePeerCount,
-			double netBandwidthMax, double netOutputRate, double netInputRate, int[] version ) {
+			double netBandwidthMax, double netOutputRate, double netInputRate, int[] version, long startupTimestamp ) {
 		
 		Preconditions.checkArgument(memFreeBytes >= 0, "Memory free bytes cannot be negative: %s", memFreeBytes);
 		Preconditions.checkArgument(memMaxBytes >= 0, "Memory max bytes cannot be negative: %s", memMaxBytes);
@@ -40,6 +41,7 @@ public final class ResourceUsage implements IResourceUsage {
 		Preconditions.checkArgument(remotePeerCount >= 0, "Count of remote peers must be non-negative!");
 		
 		Preconditions.checkNotNull(version, "Version must not be null!");
+		Preconditions.checkArgument(startupTimestamp > 0, "StartupTimestamp must be positive!");
 
 		this.memFreeBytes = memFreeBytes;
 		this.memMaxBytes = memMaxBytes;
@@ -55,6 +57,7 @@ public final class ResourceUsage implements IResourceUsage {
 		this.netInputRate = netInputRate;
 		
 		this.version = version;
+		this.startupTimestamp = startupTimestamp;
 	}
 	
 	private ResourceUsage( ResourceUsage copy ) {
@@ -72,6 +75,7 @@ public final class ResourceUsage implements IResourceUsage {
 		netOutputRate = copy.netOutputRate;
 		version = copy.version;
 		remotePeerCount = copy.remotePeerCount;
+		startupTimestamp = copy.startupTimestamp;
 	}
 	
 	@Override
@@ -141,5 +145,10 @@ public final class ResourceUsage implements IResourceUsage {
 	@Override
 	public int getRemotePeerCount() {
 		return remotePeerCount;
+	}
+	
+	@Override
+	public long getStartupTimestamp() {
+		return startupTimestamp;
 	}
 }

@@ -31,6 +31,7 @@ public class UsageStatisticCollector {
 	private double netBandwidthMax;
 	
 	private int[] version;
+	private long startupTimestamp = -1;
 	
 	public static ISession getActiveSession() {
 		if( currentSession == null || !currentSession.isValid()) {
@@ -89,6 +90,10 @@ public class UsageStatisticCollector {
 			}
 		}
 		
+		if( startupTimestamp == -1 ) {
+			startupTimestamp = System.currentTimeMillis();
+		}
+		
 		return new ResourceUsage((long) memFree.getAverage(), 
 				memMaxBytes, cpuFree.getAverage(), 
 				cpuMax, 
@@ -98,7 +103,8 @@ public class UsageStatisticCollector {
 				netBandwidthMax, 
 				netOutputRate.getAverage(), 
 				netInputRate.getAverage(), 
-				version);
+				version,
+				startupTimestamp);
 	}
 
 	private static int[] toVersionDigits(String versionString) {

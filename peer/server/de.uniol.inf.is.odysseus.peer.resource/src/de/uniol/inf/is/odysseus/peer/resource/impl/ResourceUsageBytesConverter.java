@@ -10,7 +10,7 @@ public final class ResourceUsageBytesConverter {
 	}
 	
 	public static ByteBuffer toByteBuffer(IResourceUsage resourceUsage) {
-		ByteBuffer bb = ByteBuffer.allocate(84);
+		ByteBuffer bb = ByteBuffer.allocate(92);
 		bb.putLong(resourceUsage.getMemFreeBytes());
 		bb.putLong(resourceUsage.getMemMaxBytes());
 		bb.putDouble(resourceUsage.getCpuFree());
@@ -27,6 +27,7 @@ public final class ResourceUsageBytesConverter {
 		bb.putInt(version[1]);
 		bb.putInt(version[2]);
 		bb.putInt(version[3]);
+		bb.putLong(resourceUsage.getStartupTimestamp());
 		
 		bb.flip();
 		return bb;
@@ -49,7 +50,9 @@ public final class ResourceUsageBytesConverter {
 		version[1] = bb.getInt();
 		version[2] = bb.getInt();
 		version[3] = bb.getInt();
+		
+		long startupTimestamp = bb.getLong();
 
-		return new ResourceUsage(memFree, memMax, cpuFree, cpuMax, runQ, stopQ, remotePeerCount, netMax, netOut, netIn, version);
+		return new ResourceUsage(memFree, memMax, cpuFree, cpuMax, runQ, stopQ, remotePeerCount, netMax, netOut, netIn, version, startupTimestamp);
 	}
 }

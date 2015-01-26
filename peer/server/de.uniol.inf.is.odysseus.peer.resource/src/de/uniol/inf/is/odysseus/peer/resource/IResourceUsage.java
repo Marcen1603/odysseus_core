@@ -17,6 +17,7 @@ public interface IResourceUsage {
 	public double getNetOutputRate();
 	
 	public int[] getVersion();
+	public long getStartupTimestamp();
 	
 	public IResourceUsage clone();
 }
