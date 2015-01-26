@@ -54,8 +54,10 @@ public class SmartDevicePublisher {
 	private RPiGPIOSensor gpioTaste3;
 
 	SmartDevicePublisher() {
+		registerAdvertisementTypes();
+		
 		initLocalSmartDeviceAsync();
-		//createAndPublishSmartDeviceAdvertisementWhenPossibleAsync();
+		createAndPublishSmartDeviceAdvertisementWhenPossibleAsync();
 	}
 	
 	private static void registerAdvertisementTypes() {
@@ -246,7 +248,9 @@ public class SmartDevicePublisher {
 				waitForP2PNetworkManager();
 				waitForLogicProcessor();
 				waitForTemper();
-					
+				
+				registerAdvertisementTypes();
+				
 				try {
 					initForLocalSmartDevice();
 					initLocalSmartDevice();

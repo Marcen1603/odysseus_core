@@ -40,6 +40,7 @@ public class SmartHomeServerPlugIn implements BundleActivator {
 	@Override
 	public void start(BundleContext bundleContext) throws Exception {
 		SmartDeviceDiscovery.getInstance().addListener(LogicRuleProcessor.getInstance());
+		SmartDevicePublisher.getInstance();
 
 		bundle = bundleContext.getBundle();
 	}
