@@ -351,6 +351,14 @@ public class P2PLoginContribution implements ILoginContribution {
 
 	@Override
 	public Map<String, String> onSave() {
+		
+		PeerConfiguration.set(PEER_NAME_SYS_PROPERTY, peerName);
+		PeerConfiguration.set(PEER_PORT_SYS_PROPERTY, String.valueOf(peerPort));
+		PeerConfiguration.set(PEER_GROUP_NAME_SYS_PROPERTY, groupName);
+		PeerConfiguration.set(RENDEVOUS_ADDRESS_SYS_PROPERTY, rendevousAddress);
+		PeerConfiguration.set(RENDEVOUS_ACTIVE_SYS_PROPERTY, String.valueOf(rendevousActive) );
+		PeerConfiguration.save();
+		
 		Map<String, String> saved = Maps.newHashMap();
 		saved.put(PEER_NAME_SYS_PROPERTY, peerName);
 		saved.put(PEER_PORT_SYS_PROPERTY, String.valueOf(peerPort));
