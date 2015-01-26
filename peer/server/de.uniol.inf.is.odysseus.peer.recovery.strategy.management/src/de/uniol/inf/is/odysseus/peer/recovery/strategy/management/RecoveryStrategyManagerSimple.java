@@ -15,8 +15,7 @@ import de.uniol.inf.is.odysseus.peer.recovery.simplestrategy.SimpleRecoveryStrat
 
 public class RecoveryStrategyManagerSimple implements IRecoveryStrategyManager {
 
-	private static final Logger LOG = LoggerFactory
-			.getLogger(RecoveryStrategyManagerSimple.class);
+	private static final Logger LOG = LoggerFactory.getLogger(RecoveryStrategyManagerSimple.class);
 
 	// called by OSGi-DS
 	public void activate() {
@@ -45,8 +44,7 @@ public class RecoveryStrategyManagerSimple implements IRecoveryStrategyManager {
 
 		Preconditions.checkNotNull(serv);
 		recoveryStrategy = serv;
-		LOG.debug("Bound {} as a recovery strategy.", serv.getClass()
-				.getSimpleName());
+		LOG.debug("Bound {} as a recovery strategy.", serv.getClass().getSimpleName());
 
 	}
 
@@ -64,8 +62,7 @@ public class RecoveryStrategyManagerSimple implements IRecoveryStrategyManager {
 
 		if (serv != null && serv == recoveryStrategy) {
 			recoveryStrategy = null;
-			LOG.debug("Unbound {} as a recovery strategy.", serv.getClass()
-					.getSimpleName());
+			LOG.debug("Unbound {} as a recovery strategy.", serv.getClass().getSimpleName());
 
 		}
 
@@ -77,20 +74,18 @@ public class RecoveryStrategyManagerSimple implements IRecoveryStrategyManager {
 			recoveryStrategy.recover(failedPeer, recoveryStateIdentifier);
 		} else {
 			LOG.warn("No recovery strategy bound");
-			new SimpleRecoveryStrategy().recover(failedPeer,
-					recoveryStateIdentifier);
+			new SimpleRecoveryStrategy().recover(failedPeer, recoveryStateIdentifier);
 		}
 	}
 
 	@Override
-	public void restartRecovery(PeerID failedPeer,
-			UUID recoveryStateIdentifier, UUID recoverySubStateIdentifier) {
+	public void restartRecovery(PeerID failedPeer, UUID recoveryStateIdentifier, UUID recoverySubStateIdentifier) {
 		if (recoveryStrategy != null) {
-			recoveryStrategy.recover(failedPeer, recoveryStateIdentifier);
+			recoveryStrategy.recoverSingleQueryPart(failedPeer, recoveryStateIdentifier, recoverySubStateIdentifier);
 		} else {
 			LOG.warn("No recovery strategy bound");
-			new SimpleRecoveryStrategy().recoverSingleQueryPart(failedPeer,
-					recoveryStateIdentifier, recoverySubStateIdentifier);
+			new SimpleRecoveryStrategy().recoverSingleQueryPart(failedPeer, recoveryStateIdentifier,
+					recoverySubStateIdentifier);
 		}
 	}
 

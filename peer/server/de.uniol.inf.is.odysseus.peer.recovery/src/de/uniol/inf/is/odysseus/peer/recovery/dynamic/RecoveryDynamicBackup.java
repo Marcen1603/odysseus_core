@@ -2,6 +2,8 @@ package de.uniol.inf.is.odysseus.peer.recovery.dynamic;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -309,7 +311,8 @@ public class RecoveryDynamicBackup implements IRecoveryDynamicBackup {
 
 	@Override
 	public void initiateAgreement(PeerID failedPeer, int localQueryId, QueryState queryState, ID sharedQuery,
-			PeerID newPeer, ILogicalQueryPart queryPart, UUID recoveryStateIdentifier, UUID subprocessID, boolean master, PeerID masterId) {
+			PeerID newPeer, ILogicalQueryPart queryPart, UUID recoveryStateIdentifier, UUID subprocessID,
+			boolean master, PeerID masterId) {
 		AgreementHelper.waitForAndDoRecovery(failedPeer, localQueryId, queryState, sharedQuery, newPeer, queryPart,
 				recoveryStateIdentifier, subprocessID, master, masterId);
 	}
@@ -346,10 +349,14 @@ public class RecoveryDynamicBackup implements IRecoveryDynamicBackup {
 		List<ILogicalQuery> logicalQueries = RecoveryHelper.convertToLogicalQueries(backupPQL);
 		// allocate the query
 		for (ILogicalQuery query : logicalQueries) {
+			// Don't accidently recover to the failed peer (e.g. with "recover" console command)
+			ImmutableCollection<PeerID> imPeerIds = cPeerDictionary.get().getRemotePeerIDs();
+			Collection<PeerID> peerIds = new ArrayList<PeerID>(imPeerIds);
+			peerIds.remove(failedPeer);
+
 			ILogicalQueryPart queryPart = new LogicalQueryPart(LogicalQueryHelper.getAllOperators(query));
 			ImmutableCollection<ILogicalQueryPart> queryParts = ImmutableList.copyOf(Lists.newArrayList(queryPart));
-			return recoveryAllocator.allocate(queryParts, query, cPeerDictionary.get().getRemotePeerIDs(),
-					cP2PNetworkManager.get().getLocalPeerID());
+			return recoveryAllocator.allocate(queryParts, query, peerIds, cP2PNetworkManager.get().getLocalPeerID());
 		}
 
 		return null;

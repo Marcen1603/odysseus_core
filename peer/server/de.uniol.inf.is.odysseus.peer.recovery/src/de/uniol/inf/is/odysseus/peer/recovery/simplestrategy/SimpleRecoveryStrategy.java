@@ -348,7 +348,7 @@ public class SimpleRecoveryStrategy implements IRecoveryStrategy {
 						UUID subprocessID = state.createNewSubprocess(localQueryId, queryPart, queryState, sharedQuery,
 								master, masterId);
 						sendRecoveryMessages(localQueryId, failedPeer, allocationMap.get(queryPart), queryPart,
-								queryState, sharedQuery, recoveryStateIdentifier, subprocessID, master ,masterId);
+								queryState, sharedQuery, recoveryStateIdentifier, subprocessID, master, masterId);
 					}
 				} else {
 					LOG.debug("Unable to find Peer ID for recovery allocation.");
@@ -392,7 +392,8 @@ public class SimpleRecoveryStrategy implements IRecoveryStrategy {
 	}
 
 	private void sendRecoveryMessages(int localQueryId, PeerID failedPeer, PeerID newPeer, ILogicalQueryPart queryPart,
-			QueryState queryState, ID sharedQuery, UUID recoveryStateIdentifier, UUID subprocessID, boolean master, PeerID masterId) {
+			QueryState queryState, ID sharedQuery, UUID recoveryStateIdentifier, UUID subprocessID, boolean master,
+			PeerID masterId) {
 		cRecoveryDynamicBackup.get().determineAndSendHoldOnMessages(localQueryId, failedPeer, recoveryStateIdentifier);
 
 		// Tell the new peer to install the parts from the failed peer

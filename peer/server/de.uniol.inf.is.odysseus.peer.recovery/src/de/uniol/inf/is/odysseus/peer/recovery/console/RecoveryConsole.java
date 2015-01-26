@@ -236,7 +236,7 @@ public class RecoveryConsole implements CommandProvider {
 			return;
 
 		}
-
+		
 		cCommunicator.get().peerRemoved(failedPeer);
 	}
 
