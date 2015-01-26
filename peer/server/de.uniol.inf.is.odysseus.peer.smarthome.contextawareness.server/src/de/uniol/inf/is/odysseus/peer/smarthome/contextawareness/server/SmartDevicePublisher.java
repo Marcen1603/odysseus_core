@@ -55,7 +55,7 @@ public class SmartDevicePublisher {
 
 	SmartDevicePublisher() {
 		initLocalSmartDeviceAsync();
-		createAndPublishSmartDeviceAdvertisementWhenPossibleAsync();
+		//createAndPublishSmartDeviceAdvertisementWhenPossibleAsync();
 	}
 	
 	private static void registerAdvertisementTypes() {
@@ -67,6 +67,7 @@ public class SmartDevicePublisher {
 		}
 	}
 
+	@SuppressWarnings("unused")
 	private void createAndPublishSmartDeviceAdvertisementWhenPossibleAsync() {
 		Thread thread = new Thread(new Runnable() {
 			@Override
