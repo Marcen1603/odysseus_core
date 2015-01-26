@@ -301,7 +301,12 @@ public class PeerConsole implements CommandProvider, IPeerCommunicatorListener {
 
 		List<String> output = Lists.newLinkedList();
 		for (PeerID remotePeerID : remotePeerIDs) {
-			output.add(peerDictionary.getRemotePeerName(remotePeerID) + " = " + remotePeerID);
+			Optional<String> optAddress = peerDictionary.getRemotePeerAddress(remotePeerID);
+			if( optAddress.isPresent() ) {
+				output.add(peerDictionary.getRemotePeerName(remotePeerID) + " [ " + optAddress + "] = " + remotePeerID);
+			} else {
+				output.add(peerDictionary.getRemotePeerName(remotePeerID) + " [ <unknown IP> ] = " + remotePeerID);
+			}
 		}
 
 		sortAndPrintList(ci, output);
