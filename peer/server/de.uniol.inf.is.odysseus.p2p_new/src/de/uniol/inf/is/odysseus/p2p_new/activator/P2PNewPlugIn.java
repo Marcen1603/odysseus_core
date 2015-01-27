@@ -22,7 +22,7 @@ import de.uniol.inf.is.odysseus.p2p_new.dictionary.sources.SourceAdvertisementIn
 public class P2PNewPlugIn implements BundleActivator {
 
 	public static final int TRANSPORT_BUFFER_SIZE = 640*480*3+(1+4);
-	private static final int BROADCAST_INTERVAL = 5000;
+	private static final int BROADCAST_INTERVAL = 20000;
 
 	private static Bundle bundle;
 
