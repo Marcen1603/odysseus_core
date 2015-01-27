@@ -35,9 +35,9 @@ import de.uniol.inf.is.odysseus.sports.sportsql.parser.buildhelper.OperatorBuild
 		@SportsQLParameter(name = "time", parameterClass = SportsQLTimeParameter.class, mandatory = false),
 		@SportsQLParameter(name = "space", parameterClass = SportsQLSpaceParameter.class, mandatory = false) })
 public class SprintsPlayerSportsQLParser implements ISportsQLParser {
-	
+		
 	private static final int HEARTBEAT = 5000;
-	
+
 
 	@Override
 	public ILogicalQuery parse(ISession session, SportsQLQuery sportsQL)
@@ -45,33 +45,46 @@ public class SprintsPlayerSportsQLParser implements ISportsQLParser {
 			MissingDDCEntryException {
 		List<ILogicalOperator> allOperators = new ArrayList<ILogicalOperator>();
 		SprintsSportsQLParser parser = new SprintsSportsQLParser();
-		ILogicalOperator operator = parser.getSprints(session, sportsQL,
-				allOperators);
-
-		// 9. Clear Endtimestamp
+		ILogicalOperator operator = parser.getSprints(session, sportsQL,allOperators);
+		
+		//
 		TimestampAO timestampAO = OperatorBuildHelper.clearEndTimestamp(operator);
 		allOperators.add(timestampAO);
 
-		// 10. Assure heatbeat every x seconds
-		AssureHeartbeatAO assureHeartbeatAO = OperatorBuildHelper
-				.createHeartbeat(HEARTBEAT, timestampAO);
+		//
+		AssureHeartbeatAO assureHeartbeatAO = OperatorBuildHelper.createHeartbeat(HEARTBEAT, timestampAO);
 		allOperators.add(assureHeartbeatAO);
-
-		// 111. Calculate sprints count, average sprint distance and max speed
+		
+		//
 		List<String> resultAggregateFunctions = new ArrayList<String>();
-		resultAggregateFunctions.add("COUNT");
+		resultAggregateFunctions.add("AVG");
 		resultAggregateFunctions.add("AVG");
 		resultAggregateFunctions.add("MAX");
+		resultAggregateFunctions.add("SUM");
+		resultAggregateFunctions.add("SUM");
+		resultAggregateFunctions.add("SUM");
+		resultAggregateFunctions.add("SUM");
+		resultAggregateFunctions.add("SUM");
 
 		List<String> resultAggregateInputAttributeNames = new ArrayList<String>();
 		resultAggregateInputAttributeNames.add(SprintsSportsQLParser.ATTRIBUTE_SPRINT_DISTANCE);
-		resultAggregateInputAttributeNames.add(SprintsSportsQLParser.ATTRIBUTE_SPRINT_DISTANCE);
+		resultAggregateInputAttributeNames.add(SprintsSportsQLParser.ATTRIBUTE_AVG_SPEED);
 		resultAggregateInputAttributeNames.add(SprintsSportsQLParser.ATTRIBUTE_MAX_SPEED);
+		resultAggregateInputAttributeNames.add(SprintsSportsQLParser.ATTRIBUTE_DIST_1_10);
+		resultAggregateInputAttributeNames.add(SprintsSportsQLParser.ATTRIBUTE_DIST_11_20);
+		resultAggregateInputAttributeNames.add(SprintsSportsQLParser.ATTRIBUTE_DIST_21_30);
+		resultAggregateInputAttributeNames.add(SprintsSportsQLParser.ATTRIBUTE_DIST_31_40);
+		resultAggregateInputAttributeNames.add(SprintsSportsQLParser.ATTRIBUTE_DIST_41_X);
 
 		List<String> resultAggregateOutputAttributeNames = new ArrayList<String>();
-		resultAggregateOutputAttributeNames.add(SprintsSportsQLParser.ATTRIBUTE_SPRINTS_COUNT);
 		resultAggregateOutputAttributeNames.add(SprintsSportsQLParser.ATTRIBUTE_AVG_DISTANCE);
+		resultAggregateOutputAttributeNames.add(SprintsSportsQLParser.ATTRIBUTE_AVG_SPEED);
 		resultAggregateOutputAttributeNames.add(SprintsSportsQLParser.ATTRIBUTE_MAX_SPEED);
+		resultAggregateOutputAttributeNames.add(SprintsSportsQLParser.ATTRIBUTE_DIST_1_10);
+		resultAggregateOutputAttributeNames.add(SprintsSportsQLParser.ATTRIBUTE_DIST_11_20);
+		resultAggregateOutputAttributeNames.add(SprintsSportsQLParser.ATTRIBUTE_DIST_21_30);
+		resultAggregateOutputAttributeNames.add(SprintsSportsQLParser.ATTRIBUTE_DIST_31_40);
+		resultAggregateOutputAttributeNames.add(SprintsSportsQLParser.ATTRIBUTE_DIST_41_X);
 
 		List<String> resultAggregateGroupBys = new ArrayList<String>();
 		resultAggregateGroupBys.add(IntermediateSchemaAttributes.ENTITY_ID);
@@ -84,14 +97,12 @@ public class SprintsPlayerSportsQLParser implements ISportsQLParser {
 						resultAggregateOutputAttributeNames, null,
 						assureHeartbeatAO, 1);
 		allOperators.add(resultAggregate);
-
 		
 		// 12. Ignore referee
 		String selectAOPredicate = IntermediateSchemaAttributes.TEAM_ID + " = " + SoccerDDCAccess.getLeftGoalTeamId() + " OR " + IntermediateSchemaAttributes.TEAM_ID + " = " +SoccerDDCAccess.getRightGoalTeamId();
 		SelectAO selectAO = OperatorBuildHelper.createSelectAO(selectAOPredicate, resultAggregate);
 
-		return OperatorBuildHelper.finishQuery(selectAO, allOperators,
-				sportsQL.getDisplayName());
+		return OperatorBuildHelper.finishQuery(selectAO, allOperators,sportsQL.getDisplayName());
 	}
 
 }

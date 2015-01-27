@@ -10,6 +10,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.CoalesceAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.MapAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.ProjectAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.SelectAO;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.StateMapAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.StreamAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TimeWindowAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.SDFExpressionParameter;
@@ -35,18 +36,23 @@ public class SprintsSportsQLParser  {
 	// in milliseconds
 	private static long MEASURE_INTERVALL = 1000;
 	private static long MEASURE_INTERVALL_ADVANCE = 1000;
-	private static int SPRINT_MIN_DISTANCE = 8;
 	private static int SPRINT_SPEED = 24;
 	
 	private static String ATTRIBUTE_AVG_V = "avg_v";
 	private static String ATTRIBUTE_MIN_TS = "min_ts";
 	private static String ATTRIBUTE_MAX_TS = "max_ts";
-	private static String ATTRIBUTE_AVG_SPEED = "avg_speed";
+	public static String ATTRIBUTE_AVG_SPEED = "avg_speed";
 	public static String ATTRIBUTE_SPEED = "speed";
 	public static String ATTRIBUTE_SPRINT_DISTANCE = "sprint_distance";
 	public static String ATTRIBUTE_AVG_DISTANCE = "avg_distance";
 	public static String ATTRIBUTE_SPRINTS_COUNT = "count";
 	public static String ATTRIBUTE_MAX_SPEED = "max_speed";
+	public static String ATTRIBUTE_TS_DIFF = "ts_diff";
+	public static String ATTRIBUTE_DIST_1_10 = "dist_1_10";
+	public static String ATTRIBUTE_DIST_11_20 = "dist_11_20";
+	public static String ATTRIBUTE_DIST_21_30 = "dist_21_30";
+	public static String ATTRIBUTE_DIST_31_40 = "dist_31_40";
+	public static String ATTRIBUTE_DIST_41_X = "dist_40_x";
 
 
 	public ILogicalOperator getSprints(ISession session,
@@ -183,12 +189,26 @@ public class SprintsSportsQLParser  {
 		MapAO resultMap = OperatorBuildHelper.createMapAO(resultMapExpressions,	coalesceAO, 0, 0, false);
 		allOperators.add(resultMap);
 		
-		// 8. Select sprints with distance > SPRINT_MIN_DISTANCE
-		String selectPredicate = ATTRIBUTE_SPRINT_DISTANCE+">"+SPRINT_MIN_DISTANCE;
-		SelectAO selectAO = OperatorBuildHelper.createSelectAO(selectPredicate, resultMap);
-		allOperators.add(resultMap);
+		
+		// 		
+		ArrayList<SDFExpressionParameter> stateMapExpressions = new ArrayList<SDFExpressionParameter>();
+		stateMapExpressions.add(OperatorBuildHelper.createExpressionParameter(IntermediateSchemaAttributes.ENTITY_ID, resultMap));
+		stateMapExpressions.add(OperatorBuildHelper.createExpressionParameter(IntermediateSchemaAttributes.TEAM_ID, resultMap));
+		stateMapExpressions.add(OperatorBuildHelper.createExpressionParameter(ATTRIBUTE_AVG_SPEED, resultMap));
+		stateMapExpressions.add(OperatorBuildHelper.createExpressionParameter(ATTRIBUTE_MAX_SPEED, resultMap));
+		stateMapExpressions.add(OperatorBuildHelper.createExpressionParameter(ATTRIBUTE_TS_DIFF, resultMap));
+		stateMapExpressions.add(OperatorBuildHelper.createExpressionParameter(ATTRIBUTE_SPRINT_DISTANCE, resultMap));
+		stateMapExpressions.add(OperatorBuildHelper.createExpressionParameter("eif("+ATTRIBUTE_SPRINT_DISTANCE+" >= 1 AND "+ATTRIBUTE_SPRINT_DISTANCE+" < 11, 1, 0)",ATTRIBUTE_DIST_1_10,resultMap));
+		stateMapExpressions.add(OperatorBuildHelper.createExpressionParameter("eif("+ATTRIBUTE_SPRINT_DISTANCE+" >= 11 AND "+ATTRIBUTE_SPRINT_DISTANCE+" < 21, 1, 0)",ATTRIBUTE_DIST_11_20,resultMap));
+		stateMapExpressions.add(OperatorBuildHelper.createExpressionParameter("eif("+ATTRIBUTE_SPRINT_DISTANCE+" >= 21 AND "+ATTRIBUTE_SPRINT_DISTANCE+" < 31, 1, 0)",ATTRIBUTE_DIST_21_30,resultMap));
+		stateMapExpressions.add(OperatorBuildHelper.createExpressionParameter("eif("+ATTRIBUTE_SPRINT_DISTANCE+" >= 31 AND "+ATTRIBUTE_SPRINT_DISTANCE+" < 41, 1, 0)",ATTRIBUTE_DIST_31_40,resultMap));
+		stateMapExpressions.add(OperatorBuildHelper.createExpressionParameter("eif("+ATTRIBUTE_SPRINT_DISTANCE+" > 40, 1, 0)",ATTRIBUTE_DIST_41_X,resultMap));
 
-		return selectAO;
+		StateMapAO stateMap = OperatorBuildHelper.createStateMapAO(stateMapExpressions, resultMap);
+		allOperators.add(stateMap);	
+
+
+		return stateMap;
 	}
 
 }
