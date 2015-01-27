@@ -2,8 +2,6 @@ package de.uniol.inf.is.odysseus.peer.ddc.distribute.advertisement.sender;
 
 import java.io.IOException;
 
-import net.jxta.discovery.DiscoveryService;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,7 +19,7 @@ public class DistributedDataContainerAdvertisementSender {
 
 	private static final Logger LOG = LoggerFactory
 			.getLogger(DistributedDataContainerAdvertisementSender.class);
-	private static final long WAIT_TIME_MILLIS = 60 * 1000;
+	private static final long WAIT_TIME_MILLIS = 10 * 1000;
 
 	private static IJxtaServicesProvider jxtaServicesProvider;
 	private static DistributedDataContainerAdvertisementSender instance;
@@ -65,8 +63,8 @@ public class DistributedDataContainerAdvertisementSender {
 //				jxtaServicesProvider.publish(adv, WAIT_TIME_MILLIS, WAIT_TIME_MILLIS);
 //				jxtaServicesProvider.remotePublish(adv, WAIT_TIME_MILLIS);
 				if( adv.getType() == DistributedDataContainerAdvertisementType.changeDistribution) {
-					jxtaServicesProvider.publish(adv, DiscoveryService.DEFAULT_LIFETIME, DiscoveryService.DEFAULT_EXPIRATION);
-					jxtaServicesProvider.remotePublish(adv, DiscoveryService.DEFAULT_EXPIRATION);
+					jxtaServicesProvider.publish(adv, WAIT_TIME_MILLIS, WAIT_TIME_MILLIS);
+					jxtaServicesProvider.remotePublish(adv, WAIT_TIME_MILLIS);
 					LOG.debug("Published DDC change advertisment.");
 				} else {
 					jxtaServicesProvider.publish(adv, WAIT_TIME_MILLIS, WAIT_TIME_MILLIS);
