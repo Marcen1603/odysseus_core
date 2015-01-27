@@ -23,7 +23,6 @@ public class MDAIndicesFromList extends AbstractFunction<List<Integer>> {
 		String name = getInputValue(0);
 		List<?> value = getInputValue(1);
 		Objects.requireNonNull(name);
-		Objects.requireNonNull(value);
 		MDAStore<?> store = MDAStoreManager.get(name);
 		return getValue(store, value);
 	}
