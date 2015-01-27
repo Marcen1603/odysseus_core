@@ -203,7 +203,7 @@ public class ReplicationMergePO<T extends IStreamObject<? extends ITimeInterval>
 	}
 
 	@Override
-	protected synchronized void process_next(T object, int port) {
+	protected void process_next(T object, int port) {
 
 		if (!this.precheck(object))
 			return;
@@ -217,7 +217,7 @@ public class ReplicationMergePO<T extends IStreamObject<? extends ITimeInterval>
 	}
 
 	@Override
-	public synchronized void processPunctuation(IPunctuation punctuation, int port) {
+	public void processPunctuation(IPunctuation punctuation, int port) {
 
 		if (!this.precheck(punctuation))
 			return;
