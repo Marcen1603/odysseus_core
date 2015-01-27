@@ -5,6 +5,7 @@ import java.lang.management.ThreadMXBean;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
@@ -61,7 +62,7 @@ public class PeerConsole implements CommandProvider, IPeerCommunicatorListener {
 
 	private static final Logger LOG = LoggerFactory.getLogger(PeerConsole.class);
 	private static final Collection<CommandProvider> COMMAND_PROVIDERS = Lists.newArrayList();
-	private static final DateFormat DATE_FORMAT = DateFormat.getDateInstance(DateFormat.MEDIUM);
+	private static final DateFormat DATE_FORMAT = new SimpleDateFormat();
 
 	private static IP2PDictionary p2pDictionary;
 	private static IPeerDictionary peerDictionary;
