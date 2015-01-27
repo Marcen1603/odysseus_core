@@ -3,6 +3,7 @@ package de.uniol.inf.is.odysseus.peer.rcp.views;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
@@ -54,7 +55,7 @@ public class PeerView extends ViewPart implements IP2PDictionaryListener, IPeerD
 	private static final Logger LOG = LoggerFactory.getLogger(PeerView.class);
 
 	private static final long REFRESH_INTERVAL_MILLIS = 5000;
-	private static final DateFormat DATE_FORMAT = DateFormat.getDateInstance(DateFormat.MEDIUM);
+	private static final DateFormat DATE_FORMAT = new SimpleDateFormat();
 
 	private static PeerView instance;
 	private static Image[] warnImages;
@@ -478,6 +479,7 @@ public class PeerView extends ViewPart implements IP2PDictionaryListener, IPeerD
 	}
 	
 	private static String convertTimestampToDate(long startupTimestamp) {
+		
 		return DATE_FORMAT.format(new Date(startupTimestamp));
 	}
 
