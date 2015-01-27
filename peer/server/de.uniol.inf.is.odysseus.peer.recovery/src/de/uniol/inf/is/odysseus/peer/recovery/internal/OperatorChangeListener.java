@@ -181,12 +181,17 @@ public class OperatorChangeListener implements IOperatorObserver, IPlanModificat
 				PhysicalQuery query = (PhysicalQuery) eventArgs.getValue();
 				// Search for the JxtaReceiver and JxtaSender
 				JxtaReceiverPO receiver = RecoveryHelper.findJxtaReceiverPO(query);
-				if (receiver != null)
+				if (receiver != null) {
 					receiver.addObserver(this);
+					LOG.debug("Added observer for JxtaReceiverPO.");
+				}
+					
 
 				JxtaSenderPO sender = RecoveryHelper.findJxtaSenderPO(query);
-				if (sender != null)
+				if (sender != null) {
 					sender.addObserver(this);
+					LOG.debug("Added observer for JxtaSenderPO.");
+				}
 
 			}
 		}

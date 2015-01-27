@@ -321,6 +321,19 @@ public class AddQueryReceiver extends AbstractRepeatingMessageReceiver {
 			throw new IllegalArgumentException("No recovery communicator bound!");
 		}
 
+		if (pql.contains(failedPeerId.toString())) {
+			// Well, we have to install something that probably doesn't work, because probably a JxtaSender or
+			// JxtaReceier want to connect to the failed peer
+			// If we assume, that we get the other half of the JxtaSender - JxtaReceiver - pair, too, we can just insert
+			// our own peerId instead of the failed one
+			// IF we don't get the other half, the recovery-leading peer will tell us to change the sender or receiver
+			// to a new peerId so that this case should work, too.
+			// Attention: Just experimental for now (T.B.)
+			String localPeerId = cP2PNetworkManager.get().getLocalPeerID().toString();
+			pql = pql.replaceAll(failedPeerId.toString(), localPeerId);
+			LOG.debug("Replaced peerId of failed peer in PQL to install with my own peerId. (failed peer was {})", failedPeerId.toString());
+
+		}
 		Collection<Integer> installedQueries = RecoveryHelper.installAndRunQueryPartFromPql(pql, queryState);
 		if (installedQueries == null || installedQueries.size() == 0) {
 			throw new IllegalArgumentException("Installing QueryPart on Peer failed. Searching for other peers.");
@@ -373,13 +386,12 @@ public class AddQueryReceiver extends AbstractRepeatingMessageReceiver {
 
 								}
 							});
-							// TODO Test this - just experimental
 							// We will, in every case, change the backup-information of that other peer. The
 							// other one will do this, too, if he still exists. This is for the case, that the
 							// other peer was the failed peer and can't update the JxtaReceiverPO or the
 							// backup-information.
-
-							backupInformationAccess.updateBackupInfoForPipe(failedPeerId.toString(), finalPipe.toString());
+							backupInformationAccess.updateBackupInfoForPipe(failedPeerId.toString(),
+									finalPipe.toString());
 
 						}
 
