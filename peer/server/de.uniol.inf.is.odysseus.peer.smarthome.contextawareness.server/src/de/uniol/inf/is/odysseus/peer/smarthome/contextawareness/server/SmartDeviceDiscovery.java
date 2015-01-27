@@ -36,6 +36,7 @@ public class SmartDeviceDiscovery implements
 	private static SmartDeviceDiscovery instance;
 	private long GARBAGE_COLLECTOR_REPEAT_TIME_MS = 30000;
 	private long SMART_DEVICE_AVAILABLE_AFTER_LAST_HEARTBEAT_MS = 30000;
+	private static final String ACTIVATE_SMART_DEVICE = "smartdevice.activate";
 
 	private static final Logger LOG = LoggerFactory
 			.getLogger(SmartHomeServerPlugIn.class);
@@ -50,8 +51,11 @@ public class SmartDeviceDiscovery implements
 	private static Collection<PeerID> refreshing = Lists.newLinkedList();
 
 	public SmartDeviceDiscovery() {
-		cleanupAsync();
-		refreshFoundPeerIDsAsync();
+		String propertySensors = System.getProperty(ACTIVATE_SMART_DEVICE);
+		if (propertySensors != null && propertySensors.equals("true")) {
+			cleanupAsync();
+			refreshFoundPeerIDsAsync();
+		}
 	}
 
 	protected void cleanupAsync() {

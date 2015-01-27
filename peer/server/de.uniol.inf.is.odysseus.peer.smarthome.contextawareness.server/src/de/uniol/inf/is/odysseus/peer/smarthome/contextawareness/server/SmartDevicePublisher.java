@@ -35,6 +35,7 @@ public class SmartDevicePublisher {
 	private static final String INIT_ACTORS_SYS_PROPERTY = "smartdevice.init.actors";
 	private static final String INIT_EXAMPLE_ACTIVITY_INTERPRETERS_SYS_PROPERTY = "smartdevice.example.activityinterpreters";
 	private static final String INIT_EXAMPLE_LOGIC_RULES_SYS_PROPERTY = "smartdevice.example.logicrules";
+	private static final String ACTIVATE_SMART_DEVICE = "smartdevice.activate";
 	
 	private static SmartDevicePublisher instance;
 	
@@ -53,8 +54,11 @@ public class SmartDevicePublisher {
 	private RPiGPIOSensor gpioTaste3;
 
 	SmartDevicePublisher() {
-		initLocalSmartDeviceAsync();
-		createAndPublishSmartDeviceAdvertisementWhenPossibleAsync();
+		String propertySensors = System.getProperty(ACTIVATE_SMART_DEVICE);
+		if (propertySensors != null && propertySensors.equals("true")) {
+			initLocalSmartDeviceAsync();
+			createAndPublishSmartDeviceAdvertisementWhenPossibleAsync();
+		}
 	}
 
 	private void createAndPublishSmartDeviceAdvertisementWhenPossibleAsync() {
