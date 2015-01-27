@@ -2,6 +2,7 @@ package de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.server;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -81,6 +82,7 @@ public class SmartDeviceDiscovery implements
 				lastGarbageCollectorTime = System.currentTimeMillis();
 
 				synchronized (getSmartDevicesHeartBeat()) {
+					List<String> toRemove = new LinkedList<String>();
 					for (Entry<String, Long> smartDeviceEntry : getSmartDevicesHeartBeat()
 							.entrySet()) {
 						String peerId = smartDeviceEntry.getKey();
@@ -93,8 +95,11 @@ public class SmartDeviceDiscovery implements
 						// " delta:" + delta);
 
 						if (heartBeat < delta) {
-							removeSmartDevice(peerId);
+							toRemove.add(peerId);
 						}
+					}
+					for (String peerId: toRemove){
+						removeSmartDevice(peerId);
 					}
 				}
 			} else if (lastGarbageCollectorTime == 0) {
