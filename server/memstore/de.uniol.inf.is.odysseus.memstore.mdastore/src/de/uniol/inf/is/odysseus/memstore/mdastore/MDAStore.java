@@ -9,10 +9,9 @@ import com.google.common.collect.Lists;
  * The multidimensional array (MDA) store works as follows: <br />
  * 1. Initialize the storage with n arrays, where n is the number of dimensions,
  * and the class of the values. <br />
- * 2. Request the n-dimensional cell of a given n-dimensional value or the
- * n-dimensional value of the cell. A n-dimensional value is within a cell, if
- * it's closer to the n-dimensional value of the cell than to the n-dimensional
- * values of every other cell.
+ * 2. An arrays consists of the cell borders, so there is one cell less than the array contains elements. <br />
+ * 2. Request the n-dimensional cell of a given n-dimensional value. A n-dimensional value is within a cell, if
+ * it's between two subsequent borders.
  * 
  * @author Michael
  *
@@ -26,57 +25,55 @@ public class MDAStore<T extends Comparable<? super T>> {
 	private int numDims;
 
 	/**
-	 * A sorted, multidimensional array of the values.
+	 * A sorted, multidimensional array of the borders.
 	 */
-	private List<List<T>> values;
+	private List<List<T>> borders;
 
 	/**
 	 * Initializes the MDAStore.
 	 * 
-	 * @param vals
-	 *            The values for the MDAStore.
+	 * @param borders
+	 *            The borders for the MDAStore.
 	 * @throws NullPointerException
-	 *             if <code>vals</code> is null.
+	 *             if <code>borders</code> is null.
 	 * @throws IllegalArgumentException
-	 *             if <code>vals</code> contains only one dimension or if the
-	 *             dimensions of <code>vals</code> have different numbers of
-	 *             values.
+	 *             if <code>borders</code> is empty.
 	 */
-	public void initialize(List<List<T>> vals) throws NullPointerException,
+	public void initialize(List<List<T>> borders) throws NullPointerException,
 			IllegalArgumentException {
-		validateValues(vals);
-		this.values = vals;
-		this.numDims = this.values.size();
-		sortValues();
+		validateBorders(borders);
+		this.borders = borders;
+		this.numDims = this.borders.size();
+		sortBorders();
 	}
 
 	/**
-	 * Checks values for the MDAStore.
+	 * Checks borders for the MDAStore.
 	 * 
-	 * @param vals
+	 * @param borders
 	 *            The given values.
 	 * @throws NullPointerException
-	 *             if <code>vals</code> is null.
+	 *             if <code>borders</code> is null.
 	 * @throws IllegalArgumentException
-	 *             if <code>vals</code> contains only one dimension.
+	 *             if <code>borders</code> is empty.
 	 */
-	private void validateValues(List<List<T>> vals)
+	private void validateBorders(List<List<T>> borders)
 			throws NullPointerException, IllegalArgumentException {
-		if (vals == null) {
+		if (borders == null) {
 			throw new NullPointerException(
 					"Values to initialize MDAStore must be not null!");
-		} else if (vals.size() < 1) {
+		} else if (borders.size() < 1) {
 			throw new IllegalArgumentException(
 					"There must be at least one dimension for the MDAStore!");
 		}
 	}
 
 	/**
-	 * Sorts the values.
+	 * Sorts the borders.
 	 */
-	private void sortValues() {
+	private void sortBorders() {
 		for (int dim = 0; dim < this.numDims; dim++) {
-			Collections.sort(this.values.get(dim));
+			Collections.sort(this.borders.get(dim));
 		}
 	}
 
@@ -85,52 +82,33 @@ public class MDAStore<T extends Comparable<? super T>> {
 	 * 
 	 * @param val
 	 *            The searches value.
-	 * @return The indices of the cell.
+	 * @return The indices of the cell. -1 is the index for invalid values (e.g., null or outlier)
 	 * @throws NullPointerException
-	 *             if <code>val</code> is null.
+	 *             if {@link #initialize(List)} has not been called before.
 	 */
 	public int[] getCellIndices(List<T> val) throws NullPointerException {
-		if (this.values == null) {
+		if (this.borders == null) {
 			throw new NullPointerException("The MDAStore is not initialized!");
 		}
-		validateValue(val, this.numDims);
 		int[] indices = new int[this.numDims];
-		for (int dim = 0; dim < this.numDims; dim++) {
-			indices[dim] = binSearch(this.values.get(dim), val.get(dim), 0,
-					this.values.get(dim).size() - 1);
+		if(val == null || val.size() != this.numDims) {
+			for(int i = 0; i < this.numDims; i++) {
+				indices[i] = -1;
+			}
+		} else {
+			for (int dim = 0; dim < this.numDims; dim++) {
+				indices[dim] = binSearch(this.borders.get(dim), val.get(dim), 0,
+						this.borders.get(dim).size() - 1);
+			}
 		}
 		return indices;
 	}
 
 	/**
-	 * Checks values for the MDAStore.
-	 * 
-	 * @param val
-	 *            The given values.
-	 * @param sizeReference
-	 *            The number of dimensions <code>val</code> must fit.
-	 * @throws NullPointerException
-	 *             if <code>val</code> is null.
-	 * @throws IllegalArgumentException
-	 *             if the dimensions of <code>val</code> do not fit
-	 *             <code>sizeReference</code>.
-	 */
-	private void validateValue(List<T> val, int sizeReference)
-			throws NullPointerException, IllegalArgumentException {
-		if (val == null) {
-			throw new NullPointerException(
-					"Values for the MDAStore must be not null!");
-		} else if (val.size() != sizeReference) {
-			throw new IllegalArgumentException(
-					"The number of dimensions does not fit the dimensions of the MDAStore!");
-		}
-	}
-
-	/**
 	 * Binary search for a value.
 	 * 
-	 * @param vals
-	 *            The sorted search area.
+	 * @param borders
+	 *            The sorted search area as borders.
 	 * @param val
 	 *            The searched value.
 	 * @param start
@@ -141,29 +119,40 @@ public class MDAStore<T extends Comparable<? super T>> {
 	 *         search area or -1, if the search area does not contain
 	 *         <coce>val</code>.
 	 */
-	private int binSearch(List<T> vals, T val, int start, int end) {
-		int mid = start + (end - start) / 2;
+	private int binSearch(List<T> borders, T val, int start, int end) {
+		final int mid = start + (end - start) / 2;
+		final int diff = val.compareTo(borders.get(mid));
+		final int minIndex = 0;
+		final int maxIndex = borders.size() -1;
 		
-		if (val.compareTo(vals.get(mid)) == 0) {
+		if(diff == 0) {
+			if(mid == maxIndex) {
+				return mid-1;
+			}
 			return mid;
-		} else if (val.compareTo(vals.get(mid)) < 0) {
+		} else if (diff < 0) {
 			// left side
 			if(mid == start) {
-				if(mid == 0) {
+				// it's the cell to the left
+				if(start == minIndex) {
+					// outlier
 					return -1;
 				}
 				return mid-1;
 			}
-			return binSearch(vals, val, start, mid - 1);
-		}
-		// right side
-		if(mid == end) {
-			if(mid == vals.size()-1) {
-				return -1;
+			return binSearch(borders, val, start, mid-1);
+		} else {
+			// right side
+			if(mid == end) {
+				// it's the cell to the right
+				if(end == maxIndex) {
+					// outlier
+					return -1;
+				}
+				return mid;
 			}
-			return mid;
+			return binSearch(borders, val, mid+1, end);
 		}
-		return binSearch(vals, val, mid + 1, end);
 	}
 
 	/*
