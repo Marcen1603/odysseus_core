@@ -53,6 +53,8 @@ public class PeerDictionary implements IPeerDictionary, IAdvertisementDiscoverer
 	}
 
 	private Collection<PeerID> toValidPeerIDs(Collection<PeerAdvertisement> peerAdvs) {
+		PeerReachabilityService.waitFor();
+		
 		// TODO: Die Methode macht mehr als der Name aussagt
 		Collection<PeerID> ids = Lists.newLinkedList();
 		PeerID localPeerID = P2PNetworkManager.getInstance().getLocalPeerID();
