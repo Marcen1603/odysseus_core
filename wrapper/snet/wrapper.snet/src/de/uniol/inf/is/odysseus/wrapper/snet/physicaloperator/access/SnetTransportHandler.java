@@ -1,5 +1,6 @@
-package de.uniol.inf.is.odysseus.wrapper.snet;
+package de.uniol.inf.is.odysseus.wrapper.snet.physicaloperator.access;
 
+import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -30,6 +31,8 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolH
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.AbstractTransportHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandler;
 import de.uniol.inf.is.odysseus.wrapper.snet.communication.WSNCommunicator;
+import de.uniol.inf.is.odysseus.wrapper.snet.communication.util.BlockingInputStreamReader;
+import de.uniol.inf.is.odysseus.wrapper.snet.communication.util.TcpOutputStream;
 
 /**
  * 
@@ -51,45 +54,8 @@ public class SnetTransportHandler extends AbstractTransportHandler implements
 			.getLogger(SnetTransportHandler.class);
 
 	private WSNCommunicator communicator;
-
-	private class TcpOutputStream extends OutputStream {
-		private ByteBuffer buffer = ByteBuffer.allocate(1024);
-
-		public TcpOutputStream() {
-
-		}
-
-		@Override
-		public void close() throws IOException {
-			this.buffer.clear();
-		}
-
-		@Override
-		public void flush() throws IOException {
-			this.buffer.flip();
-			if (SnetTransportHandler.this.connection != null) {
-				SnetTransportHandler.this.connection.write(this.buffer);
-			}
-			this.buffer.clear();
-		}
-
-		@Override
-		public void write(final int b) throws IOException {
-			if ((1 + this.buffer.position()) >= this.buffer.capacity()) {
-				final ByteBuffer newBuffer = ByteBuffer
-						.allocate((1 + this.buffer.position()) * 2);
-				final int pos = this.buffer.position();
-				this.buffer.flip();
-				newBuffer.put(this.buffer);
-				this.buffer = newBuffer;
-				this.buffer.position(pos);
-				SnetTransportHandler.LOG.debug("Extending buffer to "
-						+ this.buffer.capacity());
-			}
-			this.buffer.put((byte) b);
-		}
-	}
-
+	private BlockingInputStreamReader isReader;
+	
 	public static final String NAME = "SNetClient";
 	// The host name
 	public static final String HOST = "host";
@@ -119,11 +85,13 @@ public class SnetTransportHandler extends AbstractTransportHandler implements
 	private List<Integer> ports = new LinkedList<Integer>();
 	private int currentHost = -1;
 	private byte[] initializeCommand;
+	
 	/** In and output for data transfer */
-	@SuppressWarnings("unused")
-	private InputStream input;
-
-	private OutputStream output;
+	// InputStream from S-Net-TCP-Server
+	private DataInputStream unprocessedInput;
+	// Separate delivering extracted HDLC Frames for corresponding handler
+	private InputStream HDLCInputStream;
+	private TcpOutputStream output; 
 	private int readBufferSize;
 	private SelectorThread selector;
 	private int writeBufferSize;
@@ -208,7 +176,7 @@ public class SnetTransportHandler extends AbstractTransportHandler implements
 
 	@Override
 	public InputStream getInputStream() {
-		throw new IllegalArgumentException("Currently not implemented");
+		return unprocessedInput;
 	}
 
 	@Override
@@ -273,6 +241,8 @@ public class SnetTransportHandler extends AbstractTransportHandler implements
 
 	@Override
 	public void processInClose() throws IOException {
+		unprocessedInput.close();
+		isReader.close();
 		this.connector.disconnect();
 		if (this.connection != null) {
 			this.connection.close();
@@ -288,6 +258,11 @@ public class SnetTransportHandler extends AbstractTransportHandler implements
 			infoService.error(e.getMessage(), e);
 			throw new OpenFailedException(e);
 		}
+		try {
+	       unprocessedInput = new DataInputStream(connection.getSocketChannel().socket().getInputStream());
+	    } catch (IOException e) {
+	       System.out.println(e);
+	    }
 	}
 
 	@Override
@@ -306,7 +281,7 @@ public class SnetTransportHandler extends AbstractTransportHandler implements
 			SnetTransportHandler.LOG.error(e.getMessage(), e);
 			throw new OpenFailedException(e);
 		}
-		this.output = new TcpOutputStream();
+		this.output = new TcpOutputStream(connection);
 	}
 
 	@Override
@@ -468,8 +443,12 @@ public class SnetTransportHandler extends AbstractTransportHandler implements
 					.get(SnetTransportHandler.INITIALIZE));
 		}
 		
+		if(isReader == null){
+			isReader = new BlockingInputStreamReader(unprocessedInput);
+		}
+
 		if(communicator == null){
-			communicator = new WSNCommunicator(NAME);
+			communicator = new WSNCommunicator(NAME, isReader, output);
 		}
 	}
 }
