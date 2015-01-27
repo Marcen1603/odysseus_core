@@ -43,6 +43,15 @@ public class PeerReachabilityService implements IPeerReachabilityService {
 		return instance;
 	} 
 	
+	public static void waitFor() {
+		while( !isActivated ()) {
+			try {
+				Thread.sleep(200);
+			} catch (InterruptedException e) {
+			}
+		}
+	}
+	
 	void setReachabilityMap( Map<PeerID, PeerReachabilityInfo> newMap ) {
 		
 		Map<PeerID, PeerReachabilityInfo> oldMap = Maps.newHashMap();
