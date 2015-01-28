@@ -24,7 +24,6 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 import de.uniol.inf.is.odysseus.p2p_new.IAdvertisementDiscovererListener;
-import de.uniol.inf.is.odysseus.p2p_new.broadcast.PeerReachabilityService;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.IPeerDictionary;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.IPeerDictionaryListener;
 import de.uniol.inf.is.odysseus.p2p_new.network.P2PNetworkManager;
@@ -53,8 +52,6 @@ public class PeerDictionary implements IPeerDictionary, IAdvertisementDiscoverer
 	}
 
 	private Collection<PeerID> toValidPeerIDs(Collection<PeerAdvertisement> peerAdvs) {
-		PeerReachabilityService.waitFor();
-		
 		// TODO: Die Methode macht mehr als der Name aussagt
 		Collection<PeerID> ids = Lists.newLinkedList();
 		PeerID localPeerID = P2PNetworkManager.getInstance().getLocalPeerID();
