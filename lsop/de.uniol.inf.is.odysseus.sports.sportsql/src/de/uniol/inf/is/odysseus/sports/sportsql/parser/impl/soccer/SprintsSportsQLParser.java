@@ -35,8 +35,8 @@ import de.uniol.inf.is.odysseus.sports.sportsql.parser.ddcaccess.SoccerDDCAccess
 public class SprintsSportsQLParser  {
 	
 	// in milliseconds
-	private static long MEASURE_INTERVALL = 1000;
-	private static long MEASURE_INTERVALL_ADVANCE = 1000;
+	private static long MEASURE_INTERVALL = 500;
+	private static long MEASURE_INTERVALL_ADVANCE = 500;
 	
 	// in km/h
 	private static int SPRINT_SPEED = 24;
