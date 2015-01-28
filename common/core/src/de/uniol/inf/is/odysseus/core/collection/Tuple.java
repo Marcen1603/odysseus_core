@@ -16,6 +16,7 @@
 package de.uniol.inf.is.odysseus.core.collection;
 
 import java.io.Serializable;
+import java.lang.reflect.Array;
 import java.nio.CharBuffer;
 import java.text.NumberFormat;
 import java.util.ArrayList;
@@ -27,6 +28,7 @@ import java.util.Map.Entry;
 import com.rits.cloning.Cloner;
 
 import de.uniol.inf.is.odysseus.core.ICSVToString;
+import de.uniol.inf.is.odysseus.core.IClone;
 import de.uniol.inf.is.odysseus.core.Order;
 import de.uniol.inf.is.odysseus.core.metadata.AbstractStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
@@ -52,9 +54,19 @@ public class Tuple<T extends IMetaAttribute> extends AbstractStreamObject<T>
 	private boolean requiresDeepClone;
     private Cloner cloner;
 
-	// -----------------------------------------------------------------
-	// Konstruktoren
-	// -----------------------------------------------------------------
+    private static List<Class<?>> immutables = new ArrayList<>();
+    static {
+        immutables.add(String.class);
+        immutables.add(Integer.class);
+        immutables.add(Long.class);
+        immutables.add(Boolean.class);
+        immutables.add(Float.class);
+        immutables.add(Double.class);
+        immutables.add(Character.class);
+        immutables.add(Byte.class);
+        immutables.add(Short.class);
+    }
+    // private Cloner cloner;
 
 	/**
 	 * Allows subclasses to call the implicit super constructor. To not allow
@@ -77,11 +89,11 @@ public class Tuple<T extends IMetaAttribute> extends AbstractStreamObject<T>
 	public Tuple(int attributeCount, boolean requiresDeepClone) {
 		this.attributes = new Object[attributeCount];
 		this.requiresDeepClone = requiresDeepClone;
-		if (this.requiresDeepClone) {
-			this.cloner = new Cloner();
-		} else {
-			this.cloner = null;
-		}
+		//if (this.requiresDeepClone) {
+			//this.cloner = new Cloner();
+		//} else {
+			//this.cloner = null;
+		//}
 	}
 
 	public Tuple(Tuple<T> copy) {
@@ -100,11 +112,11 @@ public class Tuple<T extends IMetaAttribute> extends AbstractStreamObject<T>
 			boolean requiresDeepClone) {
 		super(copy);
 		this.requiresDeepClone = requiresDeepClone;
-		if (this.requiresDeepClone) {
-			this.cloner = new Cloner();
-		} else {
-			this.cloner = null;
-		}
+		//if (this.requiresDeepClone) {
+			//this.cloner = new Cloner();
+		//} else {
+			//this.cloner = null;
+		//}
 		if (newAttributes != null) {
 			this.attributes = newAttributes;
 		} else {
@@ -114,7 +126,7 @@ public class Tuple<T extends IMetaAttribute> extends AbstractStreamObject<T>
 				System.arraycopy(copy.attributes, 0, this.attributes, 0,
 						attributeLength);
 			} else {
-				this.attributes = cloner.deepClone(copy.attributes);
+				this.attributes = cloneAttributes(copy.attributes);
 			}
 		}
 		this.valueChanged = copy.valueChanged;
@@ -130,11 +142,11 @@ public class Tuple<T extends IMetaAttribute> extends AbstractStreamObject<T>
 	protected Tuple(Tuple<T> copy, boolean requiresDeepClone) {
 		super(copy);
 		this.requiresDeepClone = requiresDeepClone;
-		if (this.requiresDeepClone) {
-			this.cloner = new Cloner();
-		} else {
-			this.cloner = null;
-		}
+		//if (this.requiresDeepClone) {
+			//this.cloner = new Cloner();
+		//} else {
+			//this.cloner = null;
+		//}
 		this.valueChanged = copy.valueChanged;
 		this.containsNull = copy.containsNull;
 	}
@@ -152,11 +164,11 @@ public class Tuple<T extends IMetaAttribute> extends AbstractStreamObject<T>
 		this.attributes = attributes.clone();
 		this.requiresDeepClone = requiresDeepClone;
 		// calcSize();
-		if (this.requiresDeepClone) {
-			this.cloner = new Cloner();
-		} else {
-			this.cloner = null;
-		}
+		//if (this.requiresDeepClone) {
+			//this.cloner = new Cloner();
+		//} else {
+			//this.cloner = null;
+		//}
 	}
 
 	/**
@@ -173,11 +185,11 @@ public class Tuple<T extends IMetaAttribute> extends AbstractStreamObject<T>
 		attributes[0] = attribute;
 		this.requiresDeepClone = requiresDeepClone;
 		// calcSize();
-		if (this.requiresDeepClone) {
-			this.cloner = new Cloner();
-		} else {
-			this.cloner = null;
-		}
+		//if (this.requiresDeepClone) {
+			//this.cloner = new Cloner();
+		//} else {
+			//this.cloner = null;
+		//}
 	}
 
 	// -----------------------------------------------------------------
@@ -196,6 +208,85 @@ public class Tuple<T extends IMetaAttribute> extends AbstractStreamObject<T>
     public AbstractStreamObject<T> newInstance() {
         return new Tuple<>();
     }
+
+    /**
+     * Creates a clone of all attribute values.
+     * Handles primitive types, matrix/vectors, list, and complex types.
+     * Currently also supports unknown object by using Cloner lib to perform a
+     * deep clone. This behavior will be removed in future versions and prints
+     * a warning about not supporting IClone interface.
+     * 
+     * @param attr
+     *            The attribute array
+     * @return clone attribute array
+     */
+    private static Object[] cloneAttributes(Object[] attr) {
+        Object[] clone = new Object[attr.length];
+        for (int i = 0; i < clone.length; i++) {
+            // TODO Optimize: Collect positions of primitive datatypes and
+            // perform System arraycopy on them (CKu)
+            if (immutables.contains(attr[i].getClass())) {
+                clone[i] = attr[i];
+            }
+            // Handle Matrix/Vector datatype.
+            // Assumption: Matrix/Vector contains only immutable types
+            else if (attr[i].getClass().isArray()) {
+                int length = Array.getLength(attr[i]);
+                clone[i] = Array.newInstance(attr[i].getClass().getComponentType(), length);
+                System.arraycopy(attr[i], 0, clone[i], 0, length);
+            }
+            // Handle List datatype
+            else if ((attr[i].getClass() == ArrayList.class)) {
+                clone[i] = cloneList((List<?>) attr[i]);
+            }
+            // Handle the rest
+            else {
+                try {
+                    clone[i] = ((IClone) attr[i]).clone();
+                }
+                catch (Throwable t) {
+                    System.err.println(String.format("Instance of %s does not implement IClone interface", attr[i].getClass()));
+                    Cloner cloner = new Cloner();
+                    clone[i] = cloner.deepClone(attr[i]);
+                }
+            }
+        }
+        return clone;
+    }
+
+    /**
+     * Creates a clone of a List attribute.
+     * 
+     * @param list
+     *            The list
+     * @return cloned list
+     */
+    private static List<?> cloneList(List<?> list) {
+        List<Object> clone = new ArrayList<>(list.size());
+        for (Object element : list) {
+            if (immutables.contains(element.getClass())) {
+                clone.add(element);
+            }
+            else if (element.getClass().isArray()) {
+                int length = Array.getLength(element);
+                Object array = Array.newInstance(element.getClass().getComponentType(), length);
+                System.arraycopy(element, 0, array, 0, length);
+                clone.add(array);
+            }
+            else {
+                try {
+                    clone.add(((IClone) element).clone());
+                }
+                catch (Throwable t) {
+                    System.err.println(String.format("Instance of %s does not implement IClone interface", element.getClass()));
+                    Cloner cloner = new Cloner();
+                    clone.add(cloner.deepClone(element));
+                }
+            }
+        }
+        return clone;
+    }
+
 	// -----------------------------------------------------------------
 	// Attributzugriffsmethoden
 	// -----------------------------------------------------------------
@@ -389,12 +480,12 @@ public class Tuple<T extends IMetaAttribute> extends AbstractStreamObject<T>
 
 	public void setRequiresDeepClone(boolean requiresDeepClone) {
 		this.requiresDeepClone = requiresDeepClone;
-        if (this.requiresDeepClone) {
-            this.cloner = new Cloner();
-        }
-        else {
-            this.cloner = null;
-        }
+        //if (this.requiresDeepClone) {
+            //this.cloner = new Cloner();
+        //}
+        //else {
+            //this.cloner = null;
+        //}
 	}
 
 	public boolean requiresDeepClone() {
