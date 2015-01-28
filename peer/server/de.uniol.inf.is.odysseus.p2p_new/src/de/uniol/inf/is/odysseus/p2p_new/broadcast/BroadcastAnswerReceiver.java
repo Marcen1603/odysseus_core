@@ -92,7 +92,7 @@ public class BroadcastAnswerReceiver extends RepeatingJobThread {
 			}
 			
 		} catch (SocketException e) {
-			if (!e.getMessage().equals("socket closed")) {
+			if (!e.getMessage().equalsIgnoreCase("socket closed")) {
 				LOG.error("Could not process broadcast answer", e);
 			} else {
 				stopRunning();
