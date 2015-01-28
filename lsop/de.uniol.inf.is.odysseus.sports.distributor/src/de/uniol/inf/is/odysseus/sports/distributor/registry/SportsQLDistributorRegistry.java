@@ -106,16 +106,15 @@ public class SportsQLDistributorRegistry {
 				ISportsQLDistributor distributor = sportsQLDistributorMap
 						.get("default");
 				return distributor;
-			} else {
-				ISportsQLDistributor distributor = sportsQLDistributorMap
-						.get(type + "_" + game + "_" + name);
-				return distributor;
-			}
-		} else {
-			// no peer found --> no distribution
+			} 
 			ISportsQLDistributor distributor = sportsQLDistributorMap
-					.get("nodistribution");
+						.get(type + "_" + game + "_" + name);
 			return distributor;
-		}
+			
+		} 
+		// no peer found --> no distribution
+		ISportsQLDistributor distributor = sportsQLDistributorMap
+			.get("nodistribution");
+		return distributor;
 	}
 }

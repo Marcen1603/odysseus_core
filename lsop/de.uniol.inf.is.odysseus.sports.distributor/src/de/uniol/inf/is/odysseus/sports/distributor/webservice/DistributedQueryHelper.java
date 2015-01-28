@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import net.jxta.document.AdvertisementFactory;
 import net.jxta.id.ID;
 import net.jxta.id.IDFactory;
 import net.jxta.peer.PeerID;
@@ -179,23 +178,16 @@ public class DistributedQueryHelper {
 
 		@Override
 		public void networkStarted(IP2PNetworkManager sender) {
-			registerAdvertisementTypes();
 			p2pNetworkManager.addAdvertisementListener(webserviceAdvListener);
 			webserviceAdvSender.publishWebserviceAdvertisement(jxtaServicesProvider, p2pNetworkManager.getLocalPeerID(),p2pNetworkManager.getLocalPeerGroupID());
 			QueryDistributionNotifier.bindListener(queryDistributionListener);
 		}
 		
-		private void registerAdvertisementTypes() {
-			AdvertisementFactory.registerAdvertisementInstance(
-					WebserviceAdvertisement.getAdvertisementType(),
-					new WebserviceAdvertisementInstantiator());
-		}
 
 		@Override
 		public void networkStopped(IP2PNetworkManager p2pNetworkManager) {
 			QueryDistributionNotifier.unbindListener(queryDistributionListener);
 		}
-		
 	}
 	
 	private static class QueryDistributionListener extends AbstractQueryDistributionListener {
@@ -228,9 +220,8 @@ public class DistributedQueryHelper {
 		private String removePort(String address) {
 			if (address.contains(":")) {
 				return address.substring(0, address.indexOf(':'));
-			} else {
-				return address;
-			}
+			} 
+			return address;
 		}
 		
 		public synchronized DistributedQueryInfo getNextDistributedQueryInfo() {			
@@ -245,9 +236,9 @@ public class DistributedQueryHelper {
 			}
 			if (distributedQueryInfoList.size()>0) {
 				return distributedQueryInfoList.remove(0);
-			} else {
-				return null;
-			}
+			} 
+			
+			return null;
 		}
 	}
 

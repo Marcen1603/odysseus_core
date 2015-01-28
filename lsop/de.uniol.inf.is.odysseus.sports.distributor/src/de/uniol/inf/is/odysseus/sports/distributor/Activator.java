@@ -1,7 +1,12 @@
 package de.uniol.inf.is.odysseus.sports.distributor;
 
+import net.jxta.document.AdvertisementFactory;
+
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
+
+import de.uniol.inf.is.odysseus.sports.distributor.webservice.WebserviceAdvertisement;
+import de.uniol.inf.is.odysseus.sports.distributor.webservice.WebserviceAdvertisementInstantiator;
 
 public class Activator implements BundleActivator {
 
@@ -11,20 +16,20 @@ public class Activator implements BundleActivator {
 		return context;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.osgi.framework.BundleActivator#start(org.osgi.framework.BundleContext)
-	 */
+	@Override
 	public void start(BundleContext bundleContext) throws Exception {
 		Activator.context = bundleContext;
+		
+		registerAdvertisementTypes();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.osgi.framework.BundleActivator#stop(org.osgi.framework.BundleContext)
-	 */
+	@Override
 	public void stop(BundleContext bundleContext) throws Exception {
 		Activator.context = null;
+	}
+
+	private void registerAdvertisementTypes() {
+		AdvertisementFactory.registerAdvertisementInstance(WebserviceAdvertisement.getAdvertisementType(), new WebserviceAdvertisementInstantiator());
 	}
 
 }
