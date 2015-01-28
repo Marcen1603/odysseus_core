@@ -4,16 +4,12 @@ import java.util.Collection;
 
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 
 public class PeerBundlesStatusChecker extends Thread {
 
-	private static final Logger LOG = LoggerFactory.getLogger(PeerBundlesStatusChecker.class);
-	
 	private final BundleContext context;
 	
 	public PeerBundlesStatusChecker(BundleContext context) {
@@ -30,12 +26,10 @@ public class PeerBundlesStatusChecker extends Thread {
 		Collection<Bundle> peerBundles = determinePeerBundles(context);
 		
 		while( true ) {
-			LOG.debug("Check if all {} peer-bundles are active...", peerBundles.size());
 			if( !areAllBundlesActive(peerBundles) ) {
-				LOG.debug("No. Waiting...");
 				waitOneSecond();
 			} else {
-				LOG.info("All {} peerBundles are active. OdysseusP2P is ready.", peerBundles.size());
+				System.out.println("All " + peerBundles.size() + " peerBundles are active. OdysseusP2P is ready.");
 				return;
 			}
 		}
@@ -44,7 +38,6 @@ public class PeerBundlesStatusChecker extends Thread {
 	private static boolean areAllBundlesActive(Collection<Bundle> peerBundles) {
 		for( Bundle peerBundle : peerBundles ) {
 			if( peerBundle.getState() != Bundle.ACTIVE ) {
-				LOG.debug("PeerBundle {} is not active at the moment", peerBundle.getSymbolicName());
 				return false;
 			}
 		}
