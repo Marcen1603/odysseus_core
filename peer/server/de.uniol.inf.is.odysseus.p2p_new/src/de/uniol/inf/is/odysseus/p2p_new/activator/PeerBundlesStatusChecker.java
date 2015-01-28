@@ -28,7 +28,7 @@ public class PeerBundlesStatusChecker extends Thread {
 			if( !areAllBundlesActive(peerBundles) ) {
 				waitOneSecond();
 			} else {
-				System.out.println("All " + peerBundles.size() + " peerBundles are active.");
+				System.out.println("All " + peerBundles.size() + " peerBundles are active (services NOT included!).");
 				return;
 			}
 		}
