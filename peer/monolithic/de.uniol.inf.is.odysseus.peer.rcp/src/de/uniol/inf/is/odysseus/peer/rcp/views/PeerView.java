@@ -117,28 +117,23 @@ public class PeerView extends ViewPart implements IP2PDictionaryListener, IPeerD
 		addressColumn.setLabelProvider(new CellLabelProvider() {
 			@Override
 			public void update(ViewerCell cell) {
-				if (isLocalID((PeerID) cell.getElement())) {
-					try {
-						cell.setText(InetAddress.getLocalHost().getHostAddress() + ":" + RCPP2PNewPlugIn.getP2PNetworkManager().getPort());
-					} catch (UnknownHostException e) {
-						cell.setText(UNKNOWN_TEXT);
-					}
+				PeerID peerID = (PeerID) cell.getElement();
+				String addressString = determineAddressString(peerID);
+				
+				cell.setText(addressString);
+				if (isLocalID(peerID)) {
 					cell.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_GRAY));
-				} else {
-					Optional<String> optAddress = RCPP2PNewPlugIn.getPeerDictionary().getRemotePeerAddress((PeerID) cell.getElement());
-					if (optAddress.isPresent()) {
-						cell.setText(optAddress.get());
-					} else {
-						cell.setText(UNKNOWN_TEXT);
-					}
-				}
+				} 
 			}
 		});
 		tableColumnLayout.setColumnData(addressColumn.getColumn(), new ColumnWeightData(10, 25, true));
 		new ColumnViewerSorter(peersTable, addressColumn) {
 			@Override
 			protected int doCompare(Viewer viewer, Object e1, Object e2) {
-				return 0;
+				String addr1 = determineAddressString( (PeerID) e1 );
+				String addr2 = determineAddressString( (PeerID) e2 );
+				
+				return addr1.compareTo(addr2);
 			}
 		};
 
@@ -149,28 +144,22 @@ public class PeerView extends ViewPart implements IP2PDictionaryListener, IPeerD
 			@Override
 			public void update(ViewerCell cell) {
 				PeerID pid = (PeerID) cell.getElement();
-				Optional<IResourceUsage> optUsage = determineResourceUsage(pid);
-				if (optUsage.isPresent()) {
-					IResourceUsage usage = optUsage.get();
-					cell.setText(toVersionString(usage.getVersion()));
-				} else {
-					cell.setText(UNKNOWN_TEXT);
-				}
-
+				
+				cell.setText(determineVersionString( pid ));
 				if (isLocalID(pid)) {
 					cell.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_GRAY));
 				}
 			}
 
-			private String toVersionString(int[] version) {
-				return version[0] + "." + version[1] + "." + version[2] + "." + version[3];
-			}
 		});
 		tableColumnLayout.setColumnData(versionColumn.getColumn(), new ColumnWeightData(5, 25, true));
 		new ColumnViewerSorter(peersTable, versionColumn) {
 			@Override
 			protected int doCompare(Viewer viewer, Object e1, Object e2) {
-				return 0;
+				String versionString1 = determineVersionString((PeerID)e1);
+				String versionString2 = determineVersionString((PeerID)e2);
+				
+				return versionString1.compareTo(versionString2);
 			}
 		};
 		
@@ -181,14 +170,7 @@ public class PeerView extends ViewPart implements IP2PDictionaryListener, IPeerD
 			@Override
 			public void update(ViewerCell cell) {
 				PeerID pid = (PeerID) cell.getElement();
-				Optional<IResourceUsage> optUsage = determineResourceUsage(pid);
-				if (optUsage.isPresent()) {
-					IResourceUsage usage = optUsage.get();
-					cell.setText(convertTimestampToDate(usage.getStartupTimestamp()));
-				} else {
-					cell.setText(UNKNOWN_TEXT);
-				}
-
+				cell.setText(determineStarttimeString(pid));
 				if (isLocalID(pid)) {
 					cell.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_GRAY));
 				}
@@ -196,10 +178,12 @@ public class PeerView extends ViewPart implements IP2PDictionaryListener, IPeerD
 		});
 		tableColumnLayout.setColumnData(startTimeColumn.getColumn(), new ColumnWeightData(5, 25, true));
 		
-		new ColumnViewerSorter(peersTable, versionColumn) {
+		new ColumnViewerSorter(peersTable, startTimeColumn) {
 			@Override
 			protected int doCompare(Viewer viewer, Object e1, Object e2) {
-				return 0;
+				String str1 = determineStarttimeString((PeerID)e1);
+				String str2 = determineStarttimeString((PeerID)e2);
+				return str1.compareTo(str2);
 			}
 		};
 
@@ -480,8 +464,46 @@ public class PeerView extends ViewPart implements IP2PDictionaryListener, IPeerD
 	}
 	
 	private static String convertTimestampToDate(long startupTimestamp) {
-		
 		return DATE_FORMAT.format(new Date(startupTimestamp));
+	}
+	
+	private static String determineAddressString( PeerID peerID ) {
+		if( isLocalID(peerID )) {
+			try {
+				return InetAddress.getLocalHost().getHostAddress() + ":" + RCPP2PNewPlugIn.getP2PNetworkManager().getPort();
+			} catch (UnknownHostException e) {
+				return UNKNOWN_TEXT;
+			}
+		}
+		
+		Optional<String> optAddress = RCPP2PNewPlugIn.getPeerDictionary().getRemotePeerAddress(peerID);
+		if (optAddress.isPresent()) {
+			return optAddress.get();
+		} 
+		return UNKNOWN_TEXT;
+	}
+	
+	private String determineVersionString( PeerID pid ) {
+		Optional<IResourceUsage> optUsage = determineResourceUsage(pid);
+		if (optUsage.isPresent()) {
+			IResourceUsage usage = optUsage.get();
+			return toVersionString(usage.getVersion());
+		} 
+		return UNKNOWN_TEXT;
+	}
+	
+	private String determineStarttimeString( PeerID pid ) {
+		Optional<IResourceUsage> optUsage = determineResourceUsage(pid);
+		if (optUsage.isPresent()) {
+			IResourceUsage usage = optUsage.get();
+			return convertTimestampToDate(usage.getStartupTimestamp());
+		} 
+		
+		return UNKNOWN_TEXT;
+	}
+	
+	private static String toVersionString(int[] version) {
+		return version[0] + "." + version[1] + "." + version[2] + "." + version[3];
 	}
 
 	private static boolean isLocalID(PeerID pid) {
