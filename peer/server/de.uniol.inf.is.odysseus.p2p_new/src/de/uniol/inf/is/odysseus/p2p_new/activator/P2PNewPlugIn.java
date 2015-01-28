@@ -43,6 +43,9 @@ public class P2PNewPlugIn implements BundleActivator {
 		
 		broadcastSender = new BroadcastRequestSender(BROADCAST_INTERVAL);
 		broadcastSender.start();
+		
+		PeerBundlesStatusChecker checker = new PeerBundlesStatusChecker(bundleContext);
+		checker.start(); // fire-and-forget
 	}
 
 	@Override
