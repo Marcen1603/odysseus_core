@@ -56,6 +56,7 @@ public class PeerView extends ViewPart implements IP2PDictionaryListener, IPeerD
 
 	private static final long REFRESH_INTERVAL_MILLIS = 5000;
 	private static final DateFormat DATE_FORMAT = new SimpleDateFormat();
+	private static final String UNKNOWN_TEXT = "";
 
 	private static PeerView instance;
 	private static Image[] warnImages;
@@ -120,7 +121,7 @@ public class PeerView extends ViewPart implements IP2PDictionaryListener, IPeerD
 					try {
 						cell.setText(InetAddress.getLocalHost().getHostAddress() + ":" + RCPP2PNewPlugIn.getP2PNetworkManager().getPort());
 					} catch (UnknownHostException e) {
-						cell.setText("<unknown>");
+						cell.setText(UNKNOWN_TEXT);
 					}
 					cell.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_GRAY));
 				} else {
@@ -128,7 +129,7 @@ public class PeerView extends ViewPart implements IP2PDictionaryListener, IPeerD
 					if (optAddress.isPresent()) {
 						cell.setText(optAddress.get());
 					} else {
-						cell.setText("<unknown>");
+						cell.setText(UNKNOWN_TEXT);
 					}
 				}
 			}
@@ -153,7 +154,7 @@ public class PeerView extends ViewPart implements IP2PDictionaryListener, IPeerD
 					IResourceUsage usage = optUsage.get();
 					cell.setText(toVersionString(usage.getVersion()));
 				} else {
-					cell.setText("<unknown>");
+					cell.setText(UNKNOWN_TEXT);
 				}
 
 				if (isLocalID(pid)) {
@@ -185,7 +186,7 @@ public class PeerView extends ViewPart implements IP2PDictionaryListener, IPeerD
 					IResourceUsage usage = optUsage.get();
 					cell.setText(convertTimestampToDate(usage.getStartupTimestamp()));
 				} else {
-					cell.setText("<unknown>");
+					cell.setText(UNKNOWN_TEXT);
 				}
 
 				if (isLocalID(pid)) {
@@ -217,7 +218,7 @@ public class PeerView extends ViewPart implements IP2PDictionaryListener, IPeerD
 					cell.setImage(img);
 
 				} else {
-					cell.setText("<unknown>");
+					cell.setText(UNKNOWN_TEXT);
 				}
 				if (isLocalID((PeerID) cell.getElement())) {
 					cell.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_GRAY));
@@ -260,7 +261,7 @@ public class PeerView extends ViewPart implements IP2PDictionaryListener, IPeerD
 					cell.setImage(img);
 
 				} else {
-					cell.setText("<unknown>");
+					cell.setText(UNKNOWN_TEXT);
 					cell.setImage(null);
 				}
 
@@ -301,7 +302,7 @@ public class PeerView extends ViewPart implements IP2PDictionaryListener, IPeerD
 					IResourceUsage usage = optUsage.get();
 					cell.setText(usage.getRunningQueriesCount() + " / " + (usage.getRunningQueriesCount() + usage.getStoppedQueriesCount()));
 				} else {
-					cell.setText("<unknown>");
+					cell.setText(UNKNOWN_TEXT);
 				}
 
 				if (isLocalID((PeerID) cell.getElement())) {
@@ -341,7 +342,7 @@ public class PeerView extends ViewPart implements IP2PDictionaryListener, IPeerD
 					IResourceUsage usage = optUsage.get();
 					cell.setText(String.format("%-3.1f", (usage.getNetInputRate() + usage.getNetOutputRate())) + " / " + usage.getNetBandwidthMax());
 				} else {
-					cell.setText("<unknown>");
+					cell.setText(UNKNOWN_TEXT);
 				}
 
 				if (isLocalID((PeerID) cell.getElement())) {
@@ -371,7 +372,7 @@ public class PeerView extends ViewPart implements IP2PDictionaryListener, IPeerD
 					Image img = getWarnImage((ping / 10.0));
 					cell.setImage(img);
 				} else {
-					cell.setText("<unknown>");
+					cell.setText(UNKNOWN_TEXT);
 				}
 
 				if (isLocalID((PeerID) cell.getElement())) {
@@ -411,7 +412,7 @@ public class PeerView extends ViewPart implements IP2PDictionaryListener, IPeerD
 					IResourceUsage usage = optUsage.get();
 					cell.setText(String.valueOf(usage.getRemotePeerCount()));
 				} else {
-					cell.setText("<unknown>");
+					cell.setText(UNKNOWN_TEXT);
 				}
 
 				if (isLocalID((PeerID) cell.getElement())) {
