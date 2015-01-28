@@ -449,6 +449,7 @@ public class MovingStateHelper {
 
 		HashMap<String, PeerID> peersForPipe = new HashMap<String, PeerID>();
 
+		ArrayList<PeerID> downstreamPeers = new ArrayList<PeerID>();
 		for (ILogicalOperator operator : modifiedQueryPart.getOperators()) {
 			if (operator instanceof JxtaSenderAO) {
 				JxtaSenderAO sender = (JxtaSenderAO) operator;
@@ -456,6 +457,9 @@ public class MovingStateHelper {
 				String pipe = sender.getPipeID();
 				PeerID destinationPeer = LoadBalancingHelper.toPeerID(sender
 						.getPeerID());
+				if (!downstreamPeers .contains(destinationPeer)) {
+					downstreamPeers.add(destinationPeer);
+				}
 				peersForPipe.put(pipe, destinationPeer);
 
 				dispatcher.sendReplaceReceiverMessage(destinationPeer,
@@ -463,7 +467,7 @@ public class MovingStateHelper {
 			}
 		}
 		status.setPeersForPipe(peersForPipe);
-
+		status.setDownstramPeers(downstreamPeers);
 	}
 
 	/***

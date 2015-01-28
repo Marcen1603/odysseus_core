@@ -147,6 +147,8 @@ public class MovingStateMasterStatus implements ILoadBalancingMasterStatus {
 	 */
 	private ArrayList<PeerID> upstreamPeers;
 
+	private ArrayList<PeerID> downstramPeers;
+	
 	/**
 	 * Sets list of upstream Peers
 	 * 
@@ -463,6 +465,14 @@ public class MovingStateMasterStatus implements ILoadBalancingMasterStatus {
 
 	public void setSharedQueryMasterPeer(PeerID sharedQueryMasterPeer) {
 		this.sharedQueryMasterPeer = sharedQueryMasterPeer;
+	}
+
+	public ArrayList<PeerID> getDownstramPeers() {
+		return downstramPeers;
+	}
+
+	public void setDownstramPeers(ArrayList<PeerID> downstramPeers) {
+		this.downstramPeers = downstramPeers;
 	}
 
 }

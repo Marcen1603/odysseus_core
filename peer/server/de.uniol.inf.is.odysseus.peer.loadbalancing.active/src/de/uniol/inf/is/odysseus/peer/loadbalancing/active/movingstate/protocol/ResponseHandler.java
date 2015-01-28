@@ -173,6 +173,18 @@ public class ResponseHandler {
 				status.setPhase(MovingStateMasterStatus.LB_PHASES.RELINKING_SENDERS);
 				LOG.debug("Relinking Senders.");
 				MovingStateHelper.notifyUpstreamPeers(status);
+				//No Upstream Peers? -> Skip Step
+				if(status.getUpstreamPeers().size()==0) {
+					status.setPhase(LB_PHASES.RELINKING_RECEIVERS);
+					MovingStateHelper.notifyDownstreamPeers(status);
+					LOG.debug("No Upstream Peers. Skipping...");
+					if(status.getDownstramPeers().size()==0) {
+						LOG.debug("No downstream Peers. Skipping...");
+						status.setPhase(LB_PHASES.COPYING_STATES);
+						LOG.debug("INITIATING COPYING STATES");
+						MovingStateHelper.initiateStateCopy(status);
+					}
+				}
 				status.unlock();
 			}
 			break;
@@ -194,6 +206,12 @@ public class ResponseHandler {
 					status.setPhase(LB_PHASES.RELINKING_RECEIVERS);
 					MovingStateHelper.notifyDownstreamPeers(status);
 					LOG.debug("Status Relinking Receivers.");
+					if(status.getDownstramPeers().size()==0) {
+						LOG.debug("No downstream Peers. Skipping...");
+						status.setPhase(LB_PHASES.COPYING_STATES);
+						LOG.debug("INITIATING COPYING STATES");
+						MovingStateHelper.initiateStateCopy(status);
+					}
 					status.unlock();
 				}
 			}
@@ -284,6 +302,12 @@ public class ResponseHandler {
 				LoadBalancingHelper.cutReceiversFromQuery(status
 						.getLogicalQuery());
 				MovingStateHelper.sendStopBufferingToUpstreamPeers(status);
+				if(status.getUpstreamPeers().size()==0) {
+					LOG.debug("No Upstream Peers... Skipping");
+					LoadBalancingHelper.deleteQuery(status.getLogicalQuery());
+					status.setPhase(LB_PHASES.FINISHED);
+					loadBalancingSuccessfullyFinished(status);
+				}
 			}
 			break;
 
@@ -293,7 +317,6 @@ public class ResponseHandler {
 				dispatcher.stopRunningJob(senderPeer.toString());
 				dispatcher.sendMsgReceived(senderPeer);
 				if (dispatcher.getNumberOfRunningJobs() == 0) {
-					//TODO Prevent that this stops queries before our query.
 					LoadBalancingHelper.deleteQuery(status.getLogicalQuery());
 					status.setPhase(LB_PHASES.FINISHED);
 					loadBalancingSuccessfullyFinished(status);
