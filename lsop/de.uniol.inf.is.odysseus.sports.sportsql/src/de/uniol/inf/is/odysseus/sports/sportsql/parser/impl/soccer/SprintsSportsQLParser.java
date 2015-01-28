@@ -23,6 +23,7 @@ import de.uniol.inf.is.odysseus.sports.sportsql.parser.parameter.SportsQLTimePar
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.buildhelper.IntermediateSchemaAttributes;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.buildhelper.OperatorBuildHelper;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.buildhelper.SportsQLParameterHelper;
+import de.uniol.inf.is.odysseus.sports.sportsql.parser.ddcaccess.SoccerDDCAccess;
 
 /**
  * Parser for Query sprints.
@@ -36,6 +37,8 @@ public class SprintsSportsQLParser  {
 	// in milliseconds
 	private static long MEASURE_INTERVALL = 1000;
 	private static long MEASURE_INTERVALL_ADVANCE = 1000;
+	
+	// in km/h
 	private static int SPRINT_SPEED = 24;
 	
 	private static String ATTRIBUTE_AVG_V = "avg_v";
@@ -60,21 +63,21 @@ public class SprintsSportsQLParser  {
 			throws SportsQLParseException, NumberFormatException,
 			MissingDDCEntryException {
 
-		StreamAO soccerGameStreamAO = OperatorBuildHelper
-				.createGameStreamAO(session);
+		StreamAO soccerGameStreamAO = OperatorBuildHelper.createGameStreamAO(session);
+		
+		// 0. Ignore referee
+		String selectAOPredicate = IntermediateSchemaAttributes.TEAM_ID + " = " + SoccerDDCAccess.getLeftGoalTeamId() + " OR " + IntermediateSchemaAttributes.TEAM_ID + " = " +SoccerDDCAccess.getRightGoalTeamId();
+		SelectAO selectAO = OperatorBuildHelper.createSelectAO(selectAOPredicate, soccerGameStreamAO);
+
 
 		// 1. Time Parameter
-		SportsQLTimeParameter gameTimeSelectParameter = SportsQLParameterHelper
-				.getTimeParameter(sportsQL);
-		SelectAO gameTimeSelect = OperatorBuildHelper.createTimeMapAndSelect(
-				gameTimeSelectParameter, soccerGameStreamAO);
+		SportsQLTimeParameter gameTimeSelectParameter = SportsQLParameterHelper.getTimeParameter(sportsQL);
+		SelectAO gameTimeSelect = OperatorBuildHelper.createTimeMapAndSelect(gameTimeSelectParameter, selectAO);
 		allOperators.add(gameTimeSelect);
 
 		// 2. Space Parameter
-		SportsQLSpaceParameter spaceParameter = SportsQLParameterHelper
-				.getSpaceParameter(sportsQL);
-		SelectAO spaceSelect = OperatorBuildHelper.createSpaceSelect(
-				spaceParameter, false, gameTimeSelect);
+		SportsQLSpaceParameter spaceParameter = SportsQLParameterHelper.getSpaceParameter(sportsQL);
+		SelectAO spaceSelect = OperatorBuildHelper.createSpaceSelect(spaceParameter, false, gameTimeSelect);
 		allOperators.add(spaceSelect);
 
 		// 3. Project necessary attributes: entity_id, team_id, velocity, timestamp
@@ -84,11 +87,12 @@ public class SprintsSportsQLParser  {
 		streamProjectAttributes.add(IntermediateSchemaAttributes.V);
 		streamProjectAttributes.add(IntermediateSchemaAttributes.TS);
 
-		ProjectAO streamProject = OperatorBuildHelper.createProjectAO(
-				streamProjectAttributes, spaceSelect);
+		ProjectAO streamProject = OperatorBuildHelper.createProjectAO(streamProjectAttributes, spaceSelect);
 		allOperators.add(streamProject);
+		
+		
 
-		// 3. TimeWindow with size = MEASSURE_INTERVALL and advance = MEASSURE_INTERVALL_ADVANCE
+		// 3. Sliding TimeWindow with size = MEASSURE_INTERVALL and advance = MEASSURE_INTERVALL_ADVANCE
 		TimeWindowAO timeWindow = OperatorBuildHelper.createTimeWindowAO(MEASURE_INTERVALL, MEASURE_INTERVALL_ADVANCE,"MILLISECONDS", streamProject);
 		allOperators.add(timeWindow);
 
@@ -97,19 +101,16 @@ public class SprintsSportsQLParser  {
 		aggregateFunctions.add("AVG");
 		aggregateFunctions.add("MIN");
 		aggregateFunctions.add("MAX");
-		aggregateFunctions.add("COUNT");
 
 		List<String> aggregateInputAttributeNames = new ArrayList<String>();
 		aggregateInputAttributeNames.add(IntermediateSchemaAttributes.V);
 		aggregateInputAttributeNames.add(IntermediateSchemaAttributes.TS);
 		aggregateInputAttributeNames.add(IntermediateSchemaAttributes.TS);
-		aggregateInputAttributeNames.add(IntermediateSchemaAttributes.V);
 
 		List<String> aggregateOutputAttributeNames = new ArrayList<String>();
 		aggregateOutputAttributeNames.add(ATTRIBUTE_AVG_V);
 		aggregateOutputAttributeNames.add(ATTRIBUTE_MIN_TS);
 		aggregateOutputAttributeNames.add(ATTRIBUTE_MAX_TS);
-		aggregateOutputAttributeNames.add("COUNT_V");
 
 		List<String> aggregateGroupBys = new ArrayList<String>();
 		aggregateGroupBys.add(IntermediateSchemaAttributes.ENTITY_ID);
@@ -143,7 +144,7 @@ public class SprintsSportsQLParser  {
 		allOperators.add(toKmhMap);
 		
 
-		// 6.
+		// 6. Coalesce operator to detect tuples in a row with speed > SPRINT_SPEED
 		List<String> coalesceAOAttributes = new ArrayList<String>();
 		coalesceAOAttributes.add(IntermediateSchemaAttributes.ENTITY_ID);
 		coalesceAOAttributes.add(IntermediateSchemaAttributes.TEAM_ID);
@@ -190,7 +191,7 @@ public class SprintsSportsQLParser  {
 		allOperators.add(resultMap);
 		
 		
-		// 		
+		// 8. Set sprint category
 		ArrayList<SDFExpressionParameter> stateMapExpressions = new ArrayList<SDFExpressionParameter>();
 		stateMapExpressions.add(OperatorBuildHelper.createExpressionParameter(IntermediateSchemaAttributes.ENTITY_ID, resultMap));
 		stateMapExpressions.add(OperatorBuildHelper.createExpressionParameter(IntermediateSchemaAttributes.TEAM_ID, resultMap));
@@ -206,7 +207,6 @@ public class SprintsSportsQLParser  {
 
 		StateMapAO stateMap = OperatorBuildHelper.createStateMapAO(stateMapExpressions, resultMap);
 		allOperators.add(stateMap);	
-
 
 		return stateMap;
 	}

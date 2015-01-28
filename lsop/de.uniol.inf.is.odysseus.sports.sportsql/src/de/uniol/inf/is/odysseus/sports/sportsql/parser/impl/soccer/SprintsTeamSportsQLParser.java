@@ -6,7 +6,6 @@ import java.util.List;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AggregateAO;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.SelectAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TimestampAO;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.peer.ddc.MissingDDCEntryException;
@@ -17,7 +16,6 @@ import de.uniol.inf.is.odysseus.sports.sportsql.parser.SportsQLQuery;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.annotations.SportsQLParameter;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.parameter.SportsQLSpaceParameter;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.parameter.SportsQLTimeParameter;
-import de.uniol.inf.is.odysseus.sports.sportsql.parser.ddcaccess.SoccerDDCAccess;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.enums.GameType;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.enums.StatisticType;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.annotations.SportsQL;
@@ -47,15 +45,15 @@ public class SprintsTeamSportsQLParser implements ISportsQLParser {
 		SprintsSportsQLParser parser = new SprintsSportsQLParser();
 		ILogicalOperator operator = parser.getSprints(session, sportsQL,allOperators);
 		
-		//
+		// 9. Clear EndTimeStamp
 		TimestampAO timestampAO = OperatorBuildHelper.clearEndTimestamp(operator);
 		allOperators.add(timestampAO);
 
-		//
+		// 10. Assure that tuples are sent every x seconds
 		AssureHeartbeatAO assureHeartbeatAO = OperatorBuildHelper.createHeartbeat(HEARTBEAT, timestampAO);
 		allOperators.add(assureHeartbeatAO);
 		
-		//
+		// 11. Final aggregate
 		List<String> resultAggregateFunctions = new ArrayList<String>();
 		resultAggregateFunctions.add("AVG");
 		resultAggregateFunctions.add("AVG");
@@ -95,13 +93,9 @@ public class SprintsTeamSportsQLParser implements ISportsQLParser {
 						resultAggregateInputAttributeNames,
 						resultAggregateOutputAttributeNames, null,
 						assureHeartbeatAO, 1);
-		allOperators.add(resultAggregate);
+		allOperators.add(resultAggregate);		
 		
-		// 12. Ignore referee
-		String selectAOPredicate = IntermediateSchemaAttributes.TEAM_ID + " = " + SoccerDDCAccess.getLeftGoalTeamId() + " OR " + IntermediateSchemaAttributes.TEAM_ID + " = " +SoccerDDCAccess.getRightGoalTeamId();
-		SelectAO selectAO = OperatorBuildHelper.createSelectAO(selectAOPredicate, resultAggregate);
-
-		return OperatorBuildHelper.finishQuery(selectAO, allOperators,sportsQL.getDisplayName());
+		return OperatorBuildHelper.finishQuery(resultAggregate, allOperators,sportsQL.getDisplayName());
 	}
 
 }
