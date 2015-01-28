@@ -24,12 +24,11 @@ public class PeerBundlesStatusChecker extends Thread {
 	@Override
 	public void run() {
 		Collection<Bundle> peerBundles = determinePeerBundles(context);
-		
 		while( true ) {
 			if( !areAllBundlesActive(peerBundles) ) {
 				waitOneSecond();
 			} else {
-				System.out.println("All " + peerBundles.size() + " peerBundles are active. OdysseusP2P is ready.");
+				System.out.println("All " + peerBundles.size() + " peerBundles are active.");
 				return;
 			}
 		}
