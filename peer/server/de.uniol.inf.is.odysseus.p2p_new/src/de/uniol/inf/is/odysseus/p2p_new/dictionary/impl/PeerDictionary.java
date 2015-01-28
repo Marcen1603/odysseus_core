@@ -59,10 +59,10 @@ public class PeerDictionary implements IPeerDictionary, IAdvertisementDiscoverer
 		Collection<PeerID> ids = Lists.newLinkedList();
 		PeerID localPeerID = P2PNetworkManager.getInstance().getLocalPeerID();
 
-		LOG.debug("Determining peers");
+		LOG.debug("Determining peers out of {} potencial peers", peerAdvs.size());
 		for (PeerAdvertisement adv : peerAdvs) {
 			if (!localPeerID.equals(adv.getPeerID())) {
-				if (JxtaServicesProvider.getInstance().isReachable(adv.getPeerID()) || PeerReachabilityService.getInstance().isPeerReachable(adv.getPeerID())) {
+				if (JxtaServicesProvider.getInstance().isReachable(adv.getPeerID())) {
 					ids.add(adv.getPeerID());
 					LOG.debug("Peer " + adv.getName() + " is reachable");
 					toFlushMap.remove(adv);

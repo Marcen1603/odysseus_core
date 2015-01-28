@@ -24,7 +24,7 @@ public class AdvertisementDiscoverer extends RepeatingJobThread implements Disco
 
 	private static final Logger LOG = LoggerFactory.getLogger(AdvertisementDiscoverer.class);
 
-	private static final int DEFAULT_DISCOVERY_INTERVAL_MILLIS = 6000;
+	private static final int DEFAULT_DISCOVERY_INTERVAL_MILLIS = 10 * 1000;
 	private static final int DEFAULT_DISCOVERY_WITH_PEER_INTERVAL_MILLIS = 30000;
 
 	private static final String DISCOVERY_INTERVAL_SYSPROPERTY = "peer.discovery.startinterval";
@@ -61,8 +61,13 @@ public class AdvertisementDiscoverer extends RepeatingJobThread implements Disco
 		JxtaServicesProvider jxta = JxtaServicesProvider.getInstance();
 		jxta.getRemoteAdvertisements(this);
 		jxta.getRemotePeerAdvertisements(this);
-
-		fireUpdateEvent();
+		
+		AdvertisementDiscovererListenerUpdater updater = null;
+		synchronized( listenerMap ) {
+			updater = new AdvertisementDiscovererListenerUpdater(listenerMap);
+		}
+		
+		updater.start(); // calls listener async
 	}
 
 	@Override
@@ -107,18 +112,6 @@ public class AdvertisementDiscoverer extends RepeatingJobThread implements Disco
 		} catch (Throwable t) {
 		}
 		return DEFAULT_DISCOVERY_WITH_PEER_INTERVAL_MILLIS;
-	}
-
-	private void fireUpdateEvent() {
-		synchronized (listenerMap) {
-			for (IAdvertisementDiscovererListener listener : listenerMap) {
-				try {
-					listener.updateAdvertisements();
-				} catch (Throwable t) {
-					LOG.error("Exception in advertisement discoverer listener", t);
-				}
-			}
-		}
 	}
 
 	private static Collection<Advertisement> toCollection(Enumeration<Advertisement> advs) {
