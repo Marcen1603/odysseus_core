@@ -26,26 +26,25 @@ public class AdvertisementDiscoverer extends RepeatingJobThread implements Disco
 
 	private static final int DEFAULT_DISCOVERY_INTERVAL_MILLIS = 6000;
 	private static final int DEFAULT_DISCOVERY_WITH_PEER_INTERVAL_MILLIS = 30000;
-	
+
 	private static final String DISCOVERY_INTERVAL_SYSPROPERTY = "peer.discovery.startinterval";
 	private static final String DISCOVERY_INTERVAL_WITH_PEERS_SYSPROPERTY = "peer.discovery.interval";
-	
+
 	private final Collection<IAdvertisementDiscovererListener> listenerMap = Lists.newLinkedList();
 
 	private boolean foundPeer = false;
-	private Object discovering = new Object();
 
 	public AdvertisementDiscoverer() {
 		super(determineDiscoveryInterval(), "Advertisement discoverer");
 	}
-	
+
 	private static long determineDiscoveryInterval() {
 		Optional<String> discoverIntervalString = PeerConfiguration.get(DISCOVERY_INTERVAL_SYSPROPERTY);
 		try {
-			if( discoverIntervalString.isPresent() ) {
+			if (discoverIntervalString.isPresent()) {
 				return Integer.valueOf(discoverIntervalString.get());
 			}
-		} catch( Throwable t ) {
+		} catch (Throwable t) {
 		}
 		return DEFAULT_DISCOVERY_INTERVAL_MILLIS;
 	}
@@ -57,31 +56,34 @@ public class AdvertisementDiscoverer extends RepeatingJobThread implements Disco
 
 	@Override
 	public void doJob() {
-		synchronized( discovering ) {
-			LOG.debug("Discovering advertisements... (interval is {} ms)", getIntervalMillis());
-			
-			JxtaServicesProvider jxta = JxtaServicesProvider.getInstance();
-			jxta.getRemoteAdvertisements(this);
-			jxta.getRemotePeerAdvertisements(this);
-			
-			fireUpdateEvent();
-		}
+		LOG.debug("Discovering advertisements... (interval is {} ms)", getIntervalMillis());
+
+		JxtaServicesProvider jxta = JxtaServicesProvider.getInstance();
+		jxta.getRemoteAdvertisements(this);
+		jxta.getRemotePeerAdvertisements(this);
+
+		fireUpdateEvent();
 	}
 
 	@Override
 	public void discoveryEvent(DiscoveryEvent event) {
-		synchronized( discovering ) {
-			Collection<Advertisement> advertisements = toCollection(event.getResponse().getAdvertisements());
-			LOG.debug("Found {} advertisements", advertisements.size());
-			
-			for (Advertisement advertisement : advertisements) {
-				if (!foundPeer) {
-					checkIfPeerFound(advertisement);
-				}
-	
-				fireAdvertisementListeners(advertisement);
+		Collection<Advertisement> advertisements = toCollection(event.getResponse().getAdvertisements());
+		LOG.debug("Found {} advertisements", advertisements.size());
+
+		for (Advertisement advertisement : advertisements) {
+			if (!foundPeer) {
+				checkIfPeerFound(advertisement);
+			} else {
+				break;
 			}
 		}
+		
+		AdvertisementDiscovererListenerHandler handler = null;
+		synchronized( listenerMap ) {
+			handler = new AdvertisementDiscovererListenerHandler(listenerMap, advertisements);
+		}
+		
+		handler.start(); // calls listener async
 	}
 
 	private void checkIfPeerFound(Advertisement advertisement) {
@@ -99,24 +101,12 @@ public class AdvertisementDiscoverer extends RepeatingJobThread implements Disco
 	private static long determineSlowDiscoveryInterval() {
 		Optional<String> discoverIntervalString = PeerConfiguration.get(DISCOVERY_INTERVAL_WITH_PEERS_SYSPROPERTY);
 		try {
-			if( discoverIntervalString.isPresent() ) {
+			if (discoverIntervalString.isPresent()) {
 				return Integer.valueOf(discoverIntervalString.get());
 			}
-		} catch( Throwable t ) {
+		} catch (Throwable t) {
 		}
 		return DEFAULT_DISCOVERY_WITH_PEER_INTERVAL_MILLIS;
-	}
-
-	private void fireAdvertisementListeners(Advertisement advertisement) {
-		synchronized (listenerMap) {
-			for (IAdvertisementDiscovererListener listener : listenerMap) {
-				try {
-					listener.advertisementDiscovered(advertisement);
-				} catch (Throwable t) {
-					LOG.error("Exception in advertisement discoverer listener", t);
-				}
-			}
-		}
 	}
 
 	private void fireUpdateEvent() {
