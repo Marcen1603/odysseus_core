@@ -123,7 +123,7 @@ public class ShotOnGoalGlobalOutput {
 		// Filter the sensor data stream for events on the field
 		// -------------------------------------------------------------------
 
-		// 1. Select for time
+		// 1a. Select for time
 		SportsQLTimeParameter timeParam = SportsQLParameterHelper
 				.getTimeParameter(sportsQL);
 		SelectAO timeSelect = OperatorBuildHelper.createTimeMapAndSelect(
@@ -131,26 +131,19 @@ public class ShotOnGoalGlobalOutput {
 		timeSelect.setName("timeSelect");
 		allOperators.add(timeSelect);
 		
-		// 1. Select for time
+		// 1b. Select for time (second time to prevent odysseus combine operators and destroy the query
 		SportsQLTimeParameter timeParam2 = SportsQLParameterHelper.getTimeParameter(sportsQL);
 		SelectAO timeSelect2 = OperatorBuildHelper.createTimeMapAndSelect(timeParam2, gameStream);
 		timeSelect2.setName("timeSelect2");
 		allOperators.add(timeSelect2);
 		
-		// 2. Select for space
-//		SportsQLSpaceParameter spaceParam = SportsQLParameterHelper
-//				.getSpaceParameter(sportsQL);
-//		SelectAO spaceSelect = OperatorBuildHelper.createSpaceSelect(
-//				spaceParam, false, timeSelect);
-//		spaceSelect.setName("spaceSelect");
-
-		//allOperators.add(spaceSelect);
 
 		// -------------------------------------------------------------------
 		// Second part
 		// Filter the sensor data stream for ball events
 		// -------------------------------------------------------------------
-		// get only ball sensors
+		
+		// 2. get only ball sensors
 		List<IPredicate> ballPredicates = new ArrayList<IPredicate>();
 		for (int sensorId : AbstractSportsDDCAccess.getBallEntityIds()) {
 			IPredicate ballPredicate = OperatorBuildHelper
@@ -164,7 +157,7 @@ public class ShotOnGoalGlobalOutput {
 
 		allOperators.add(ballSelect);
 
-		// 2. Project for important variables
+		// 3. Project for important variables
 		List<String> ballProjectList = new ArrayList<String>();
 		ballProjectList.add(IntermediateSchemaAttributes.TS);
 		ballProjectList.add(IntermediateSchemaAttributes.X);
@@ -182,7 +175,7 @@ public class ShotOnGoalGlobalOutput {
 		// Shots begin with a minimal acceleration of 55 m/s
 		// -------------------------------------------------------------------
 
-		// 1. Map for acceleration
+		// 4. Map for acceleration
 		List<SDFExpressionParameter> mapExpressions = new ArrayList<SDFExpressionParameter>();
 		SDFExpressionParameter mapParam1 = OperatorBuildHelper
 				.createExpressionParameter(IntermediateSchemaAttributes.TS, ATTRIBUTE_SHOT_TS, activeBall);
@@ -208,7 +201,7 @@ public class ShotOnGoalGlobalOutput {
 
 		allOperators.add(accelerationMap);
 
-		// 2. ChangeDetect
+		// 5. ChangeDetect
 		List<String> attr = new ArrayList<String>();
 		attr.add(ATTRIBUTE_ACCELERATED);
 
@@ -224,7 +217,7 @@ public class ShotOnGoalGlobalOutput {
 
 		allOperators.add(accelerationChanged);
 
-		// 3. Select for accelerated tuples
+		// 6. Select for accelerated tuples
 		SelectAO accelerationCriteria = OperatorBuildHelper.createSelectAO(
 				ATTRIBUTE_ACCELERATED + " = 1", accelerationChanged);
 		accelerationCriteria.setName("accelerationCriteria");
@@ -236,12 +229,12 @@ public class ShotOnGoalGlobalOutput {
 		// Filter the sensor data stream for player feet events
 		// -------------------------------------------------------------------
 	
-		// 1. Select only team 1 and team 2
+		// 7. Select only team 1 and team 2
 		SelectAO teamSelect = OperatorBuildHelper.createBothTeamSelectAO(timeSelect2);
 		teamSelect.setName("teamSelect");
 		allOperators.add(teamSelect);
 
-		// 2. Project
+		// 8. Project
 		List<String> feetProjectList = new ArrayList<String>();
 		feetProjectList.add(IntermediateSchemaAttributes.TS);
 		feetProjectList.add(IntermediateSchemaAttributes.X);
@@ -261,7 +254,7 @@ public class ShotOnGoalGlobalOutput {
 		// Calculate the distance of the players to the ball
 		// -------------------------------------------------------------------
 
-		// 1. Join
+		// 9. Join
 		RelationalPredicate firstPlayerBallJoinPredicate = OperatorBuildHelper
 				.createRelationalPredicate(IntermediateSchemaAttributes.TS + " >= " + ATTRIBUTE_SHOT_TS + " - ("
 						+ MAX_TIMESHIFT_SHOOTER + "*"
@@ -291,7 +284,7 @@ public class ShotOnGoalGlobalOutput {
 		playerBallJoinAO.setName("Player Ball Join");
 		allOperators.add(playerBallJoinAO);
 
-		// 2. Map
+		// 10. Map
 		SDFExpressionParameter playerBallJoinExp1 = OperatorBuildHelper
 				.createExpressionParameter(ATTRIBUTE_SHOT_TS, playerBallJoinAO);
 		SDFExpressionParameter playerBallJoinExp2 = OperatorBuildHelper
@@ -329,7 +322,7 @@ public class ShotOnGoalGlobalOutput {
 		// Determine the player closest to the ball
 		// -------------------------------------------------------------------
 
-		// 1. Rename
+		// 11. Rename
 		List<String> renameAliases = new ArrayList<String>();
 		renameAliases.add(ATTRIBUTE_SHOT_TS);
 		renameAliases.add(ATTRIBUTE_SHOT_TS2);
@@ -340,7 +333,7 @@ public class ShotOnGoalGlobalOutput {
 
 		allOperators.add(renameAO);
 
-		// 2. Coalesce
+		// 12. Coalesce
 		List<String> coalesceAttributes = new ArrayList<String>();
 		coalesceAttributes.add(ATTRIBUTE_SHOT_TS);
 		
@@ -351,15 +344,15 @@ public class ShotOnGoalGlobalOutput {
 
 		allOperators.add(clostestPlayerCoalesce);
 
-		// 3. Join
+		// 13. Join
 		JoinAO clostedPlayerJoin = OperatorBuildHelper.createJoinAO(
-				ATTRIBUTE_DISTANCE + " = " + ATTRIBUTE_MIN_DISTANCE, "ONE_ONE", clostestPlayerCoalesce,
+				ATTRIBUTE_DISTANCE + " = " + ATTRIBUTE_MIN_DISTANCE, "MANY_ONE", clostestPlayerCoalesce,
 				renameAO);
 		clostedPlayerJoin.setName("clostedPlayerJoin");
 
 		allOperators.add(clostedPlayerJoin);
 
-		// 4. Project
+		// 14. Project
 		List<String> clostestPlayerProjectAttributes = new ArrayList<String>();
 		clostestPlayerProjectAttributes.add(ATTRIBUTE_SHOT_TS);
 		clostestPlayerProjectAttributes.add(ATTRIBUTE_SHOT_X);
@@ -379,7 +372,7 @@ public class ShotOnGoalGlobalOutput {
 		// Shots have a maximal duration and a minimal length
 		// -------------------------------------------------------------------
 
-		// 1. Join
+		// 15. Join
 		RelationalPredicate joinPredicate1 = OperatorBuildHelper
 				.createRelationalPredicate(IntermediateSchemaAttributes.TS + " > " + ATTRIBUTE_SHOT_TS);
 		RelationalPredicate joinPredicate2 = OperatorBuildHelper
@@ -403,7 +396,7 @@ public class ShotOnGoalGlobalOutput {
 
 		allOperators.add(closestBallActivePlayerJoin);
 
-		// 2. StateMap
+		// 16. StateMap
 		List<SDFExpressionParameter> durationLengthStatemapParams = new ArrayList<SDFExpressionParameter>();
 		SDFExpressionParameter sdfParam1 = OperatorBuildHelper
 				.createExpressionParameter(ATTRIBUTE_SHOT_TS,
@@ -455,37 +448,19 @@ public class ShotOnGoalGlobalOutput {
 
 		allOperators.add(durantionLengthStatemapAO);
 
-		// 3. PredicateWindow
-		//TODO: same_shot_ts = 0 eventuell? - als end condition!!!! size -1?? (war vorher shot_ts!)
-//		long windowsize = (long)(Double.parseDouble(MAX_SHOT_DURATION) * 1000);
-//		PredicateWindowAO durationLengthPredicateAO = OperatorBuildHelper
-//				.createPredicateWindowAO(ATTRIBUTE_SAME_SHOT_TS + " = 0", null, true, -1,
-//						"Milliseconds", durantionLengthStatemapAO);
-//		durationLengthPredicateAO.setName("durationLengthPredicateAO");
-//
-//		allOperators.add(durationLengthPredicateAO);
+		// 17. Select first tuple of each shot
+		SelectAO firstTupleSelect = OperatorBuildHelper.createSelectAO(
+				ATTRIBUTE_SAME_SHOT_TS + " = 0", durantionLengthStatemapAO);
+		firstTupleSelect.setName("firstTupleSelect");
 
-		// 4. TupleAggregate
-		//TODO: was macht das tupleAggregate hier??
-//		TupleAggregateAO durationAndLengthCriteria = OperatorBuildHelper
-//				.createTupleAggregateAO("first", ATTRIBUTE_SHOT_TS,
-//						durationLengthPredicateAO);
-//		durationAndLengthCriteria.setName("durationAndLengthCriteria");
-//
-//		allOperators.add(durationAndLengthCriteria);
-
-		// 3. Select first tuple of each shot
-				SelectAO firstTupleSelect = OperatorBuildHelper.createSelectAO(
-						ATTRIBUTE_SAME_SHOT_TS + " = 0", durantionLengthStatemapAO);
-				firstTupleSelect.setName("firstTupleSelect");
-
-				allOperators.add(firstTupleSelect);
+		allOperators.add(firstTupleSelect);
+		
 		// -------------------------------------------------------------------
 		// Eighth part
 		// The sign of vx determines the desired goal area
 		// -------------------------------------------------------------------
 
-		// 1. Map
+		// 18. Map
 		List<SDFExpressionParameter> goalAreaMapParams = new ArrayList<SDFExpressionParameter>();
 
 		SDFExpressionParameter goalAreaMapParam1 = OperatorBuildHelper
@@ -555,7 +530,7 @@ public class ShotOnGoalGlobalOutput {
 
 		allOperators.add(goalAreaMap);
 
-		// 2. Route
+		// 19. Route
 		List<String> goalDetectionPredicates = new ArrayList<String>();
 		goalDetectionPredicates.add(ATTRIBUTE_VX + " >= 0");
 		RouteAO goalAreaDetection = OperatorBuildHelper.createRouteAO(
@@ -572,15 +547,14 @@ public class ShotOnGoalGlobalOutput {
 		// LOWER PART (in PQL): GOAL AREA 2
 		// --------------------------------
 
-		// 1. Map
-		// Time in seconds!
+		// 20a. Map
 		MapAO timeToGoalLineLeftMapAO = createGoalAreaMapAO(1, goalAreaDetection,
 				"(" + SoccerDDCAccess.getGoalareaLeftX() + " - " + IntermediateSchemaAttributes.X + " ) / (" + ATTRIBUTE_VX + " * 1000)");
 		timeToGoalLineLeftMapAO.setName("timeToGoalLineLeftMapAO");
 
 		allOperators.add(timeToGoalLineLeftMapAO);
 
-		// 2. Select
+		// 21a. Select
 		SelectAO timeToGoalLeftSelectAO = createTimeToGoalSelectAO(
 				SoccerDDCAccess.getRightGoalTeamId(),
 				timeToGoalLineLeftMapAO);
@@ -588,13 +562,13 @@ public class ShotOnGoalGlobalOutput {
 
 		allOperators.add(timeToGoalLeftSelectAO);
 
-		// 3. Map
+		// 22a. Map
 		MapAO forecastMapGoalLeft = createForecastMapAO(timeToGoalLeftSelectAO);
 		forecastMapGoalLeft.setName("forecastMapGoalLeft");
 
 		allOperators.add(forecastMapGoalLeft);
 
-		// 4. Select
+		// 23a. Select
 		SelectAO foreCastSelectGoalLeft = createForecastSelectAO(
 				SoccerDDCAccess.getGoalareaLeftYMin(),
 				SoccerDDCAccess.getGoalareaLeftYMax(),
@@ -606,14 +580,14 @@ public class ShotOnGoalGlobalOutput {
 		// UPPER PART (in PQL): GOAL AREA 1
 		// --------------------------------
 
-		// 1. Map
+		// 20b. Map
 		MapAO timeToGoalLineRightMapAO = createGoalAreaMapAO(0, goalAreaDetection,
 				"(" + SoccerDDCAccess.getGoalareaRightX() + " - " + IntermediateSchemaAttributes.X + ") / (" + ATTRIBUTE_VX + " * 1000)");
 		timeToGoalLineRightMapAO.setName("timeToGoalLineRightMapAO");
 
 		allOperators.add(timeToGoalLineRightMapAO);
 
-		// 2. Select
+		// 21b. Select
 		SelectAO timeToGoalRightSelectAO = createTimeToGoalSelectAO(
 				SoccerDDCAccess.getLeftGoalTeamId(),
 				timeToGoalLineRightMapAO);
@@ -621,13 +595,13 @@ public class ShotOnGoalGlobalOutput {
 
 		allOperators.add(timeToGoalRightSelectAO);
 
-		// 3. Map
+		// 22b. Map
 		MapAO forecastMapGoalRight = createForecastMapAO(timeToGoalRightSelectAO);
 		forecastMapGoalRight.setName("forecastMapGoalRight");
 
 		allOperators.add(forecastMapGoalRight);
 
-		// 4. Select
+		// 23b. Select
 		SelectAO foreCastSelectGoalRight = createForecastSelectAO(
 				SoccerDDCAccess.getGoalareaRightYMin(),
 				SoccerDDCAccess.getGoalareaRightYMax(),
@@ -638,6 +612,8 @@ public class ShotOnGoalGlobalOutput {
 
 		// MERGE BOTH PARTS
 		// ----------------
+		
+		// 24. merge
 		MergeAO forecastCriteria = OperatorBuildHelper.createMergeAO(
 				foreCastSelectGoalRight, foreCastSelectGoalLeft);
 		forecastCriteria.setName("forecastCriteria");
@@ -647,6 +623,9 @@ public class ShotOnGoalGlobalOutput {
 		return forecastCriteria;
 	}
 
+	
+	
+	
 	/**
 	 * Calculates the x and z coordinates of the forecast
 	 * 

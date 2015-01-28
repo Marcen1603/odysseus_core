@@ -5,9 +5,10 @@ import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.TimeWindowAO;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.TimestampAO;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.peer.ddc.MissingDDCEntryException;
+import de.uniol.inf.is.odysseus.server.intervalapproach.logicaloperator.AssureHeartbeatAO;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.ISportsQLParser;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.SportsQLParseException;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.SportsQLQuery;
@@ -27,12 +28,11 @@ import de.uniol.inf.is.odysseus.sports.sportsql.parser.parameter.SportsQLTimePar
  * { 
  * "statisticType": "team", 
  * "gameType": "soccer", 
- * "entityId": 8, 
  * "name": "shotongoal" 
  * }
  * 
  * @author Michael (all the hard PQL stuff), Tobias (only the translation into
- *         logical query)
+ *         logical query), Pascal
  *
  */
 @SportsQL(gameTypes = { GameType.SOCCER }, statisticTypes = { StatisticType.TEAM }, name = "shotongoal", parameters = {
@@ -40,11 +40,8 @@ import de.uniol.inf.is.odysseus.sports.sportsql.parser.parameter.SportsQLTimePar
 		@SportsQLParameter(name = "space", parameterClass = SportsQLSpaceParameter.class, mandatory = false) })
 public class ShotOnGoalTeamSportsQLParser implements ISportsQLParser {
 
-	/**
-	 * Length of game in minutes
-	 */
-	private static final int GAME_LENGTH = 90;
-	
+	private static final int HEARTBEAT = 5000;
+
 	@Override
 	public ILogicalQuery parse(ISession session,SportsQLQuery sportsQL)
 			throws SportsQLParseException, NumberFormatException, MissingDDCEntryException {
@@ -61,17 +58,20 @@ public class ShotOnGoalTeamSportsQLParser implements ISportsQLParser {
 		// count the shots
 		// output schema: shots [Integer]
 		// -------------------------------------------------------------------
+		
+		// 1. Clear Endtimestamp
+		TimestampAO timestampAO = OperatorBuildHelper.clearEndTimestamp(forecastCriteria);
+		allOperators.add(timestampAO);
 
-		// 1. Time window
-		TimeWindowAO timeWindow = OperatorBuildHelper.createTimeWindowAO(
-				GAME_LENGTH, "Minutes",
-				forecastCriteria);
-		allOperators.add(timeWindow);
+		// 2. Assure heatbeat every x seconds
+		AssureHeartbeatAO assureHeartbeatAO = OperatorBuildHelper
+			.createHeartbeat(HEARTBEAT, timestampAO);
+		allOperators.add(assureHeartbeatAO);
 
-		// 2. Aggregate
+		// 3. Aggregate
 		List<String> groupCount = new ArrayList<String>();
 		groupCount.add(IntermediateSchemaAttributes.TEAM_ID);
-		ILogicalOperator out = OperatorBuildHelper.createAggregateAO("sum", groupCount, ShotOnGoalGlobalOutput.ATTRIBUTE_SHOT, ShotOnGoalGlobalOutput.ATTRIBUTE_SHOTS, "Integer", timeWindow, 1);
+		ILogicalOperator out = OperatorBuildHelper.createAggregateAO("sum", groupCount, ShotOnGoalGlobalOutput.ATTRIBUTE_SHOT, ShotOnGoalGlobalOutput.ATTRIBUTE_SHOTS, "Integer", assureHeartbeatAO, 1);
 		allOperators.add(out);
 		
 		return OperatorBuildHelper.finishQuery(out, allOperators,
