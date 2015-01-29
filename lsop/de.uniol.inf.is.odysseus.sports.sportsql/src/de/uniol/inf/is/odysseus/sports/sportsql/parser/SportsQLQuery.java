@@ -23,7 +23,6 @@ public class SportsQLQuery implements Serializable {
 	private String name;
 	private StatisticType statisticType;
 	private GameType gameType;
-	private long entityId;
 	private Map<String, ISportsQLParameter> parameters;
 	private String displayName;
 	
@@ -38,14 +37,6 @@ public class SportsQLQuery implements Serializable {
 
 	public void setParameters(Map<String, ISportsQLParameter> parameters) {
 		this.parameters = parameters;
-	}
-
-	public long getEntityId() {
-		return entityId;
-	}
-
-	public void setEntityId(long entityId) {
-		this.entityId = entityId;
 	}
 
 	public String getName() {

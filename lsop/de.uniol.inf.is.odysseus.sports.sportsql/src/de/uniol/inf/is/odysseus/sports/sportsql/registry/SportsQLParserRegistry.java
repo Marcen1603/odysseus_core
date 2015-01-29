@@ -150,7 +150,6 @@ public class SportsQLParserRegistry {
 		
 		String displayName = null;
 		
-		Long entityId = null;
 		Map<String, ISportsQLParameter> parametersMap = new HashMap<String, ISportsQLParameter>();
 
 		try {
@@ -174,12 +173,6 @@ public class SportsQLParserRegistry {
 			throw new RuntimeException("Name of statstic is missing in sportsql query");
 		}
 		
-		try {
-			JSONObject obj = new JSONObject(sportsQL);
-			entityId = obj.getLong("entityId");
-		} catch (JSONException e) {
-			// optional
-		}
 		
 		try {
 			JSONObject obj = new JSONObject(sportsQL);
@@ -238,10 +231,7 @@ public class SportsQLParserRegistry {
 		SportsQLQuery query = new SportsQLQuery();
 		query.setStatisticType(StatisticType.valueOf(type.trim().toUpperCase()));
 		query.setGameType(GameType.valueOf(game.trim().toUpperCase()));
-		query.setName(name.trim().toUpperCase());
-		if (entityId != null) {
-			query.setEntityId(entityId);
-		}
+		query.setName(name.trim().toUpperCase());		
 		
 		if(displayName != null){
 			query.setDisplayName(displayName.toUpperCase());

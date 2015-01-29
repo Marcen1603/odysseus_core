@@ -619,60 +619,6 @@ public class OperatorBuildHelper {
 		return firstMap;
 	}
 
-	/**
-	 * Creates a Select Operator to filter Entity by Id.
-	 * 
-	 * @param entityId
-	 *            Id to filter for.
-	 * @param source
-	 *            Source Operator
-	 * @return
-	 */
-	public static SelectAO createEntityIDSelect(long entityId,
-			ILogicalOperator source) {
-		SelectAO selectAO = new SelectAO();
-
-		// Predicate we want to produce:
-		// 'entity_id = ${entity_id}'
-
-		// 1. minute >= ${parameterTimeStart_minute}
-		String predicateString = IntermediateSchemaAttributes.ENTITY_ID + " = " + entityId;
-		SDFExpression predicateExpression = new SDFExpression(predicateString,
-				MEP.getInstance());
-		RelationalPredicate predicate = new RelationalPredicate(
-				predicateExpression);
-
-		selectAO.setPredicate(predicate);
-		selectAO.subscribeTo(source, source.getOutputSchema());
-		return selectAO;
-	}
-
-	/**
-	 * Creates Select Operator to Filter by entity name.
-	 * 
-	 * @param entityName
-	 *            Name of Entity to Filter, e.g. 'Ball'
-	 * @param source
-	 *            Source Operator which is the source for this operator
-	 * @return
-	 */
-	public static SelectAO createEntitySelectByName(String entityName,
-			ILogicalOperator source) {
-		SelectAO selectAO = new SelectAO();
-
-		// Predicate we want to produce:
-		// 'entity = ${entity_name}'
-
-		String predicateString = "entity = " + "\"" + entityName + "\"";
-		SDFExpression predicateExpression = new SDFExpression(predicateString,
-				MEP.getInstance());
-		RelationalPredicate predicate = new RelationalPredicate(
-				predicateExpression);
-
-		selectAO.setPredicate(predicate);
-		selectAO.subscribeTo(source, source.getOutputSchema());
-		return selectAO;
-	}
 
 	/**
 	 * 

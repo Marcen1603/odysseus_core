@@ -28,7 +28,6 @@ import de.uniol.inf.is.odysseus.sports.sportsql.parser.parameter.SportsQLTimePar
  * "statisticType": "player",
  *   "gameType": "soccer", 
  *   "name": "ball_contact",
- *   "entity_id": "4"
  *   "parameters": {
  *       "time": {
  *           "start": 10753295594424116,

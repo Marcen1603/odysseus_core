@@ -17,7 +17,6 @@ import de.uniol.inf.is.odysseus.sports.sportsql.parser.annotations.SportsQL;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.annotations.SportsQLParameter;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.buildhelper.OperatorBuildHelper;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.buildhelper.SportsQLParameterHelper;
-import de.uniol.inf.is.odysseus.sports.sportsql.parser.ddcaccess.AbstractSportsDDCAccess;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.enums.GameType;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.enums.StatisticType;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.parameter.ISportsQLParameter;
@@ -32,7 +31,7 @@ import de.uniol.inf.is.odysseus.sports.sportsql.parser.parameter.SportsQLTimePar
  * 
  * Example Query:
  * 
- * { "statisticType": "player", "gameType": "soccer", "entityId": 16, "name":
+ * { "statisticType": "player", "gameType": "soccer", "name":
  * "pathwithball" }
  * 
  * @author Carsten Cordes
@@ -55,10 +54,6 @@ public class PathWithBallSportsQLParser implements ISportsQLParser {
 			throws SportsQLParseException, NumberFormatException, MissingDDCEntryException {
 		List<ILogicalOperator> allOperators = new ArrayList<ILogicalOperator>();
 
-		/**
-		 * Entity id we look for.
-		 */
-		long entityId = sportsQL.getEntityId();
 
 		/**
 		 * Accuracy (in mm): To reduce load. Movements with distance < accuracy
@@ -127,8 +122,7 @@ public class PathWithBallSportsQLParser implements ISportsQLParser {
 
 		// /balls_filtered =
 		// SELECT({predicate='entity = "ball"'},soccergame_after_start)
-		ILogicalOperator ballsFiltered = OperatorBuildHelper
-				.createEntitySelectByName(AbstractSportsDDCAccess.ENTITY_BALL, enrichedStream);
+		ILogicalOperator ballsFiltered = null;
 		allOperators.add(ballsFiltered);
 
 		// / MAP({EXPRESSIONS = [
@@ -145,8 +139,7 @@ public class PathWithBallSportsQLParser implements ISportsQLParser {
 
 		// player_stream = SELECT({predicate='entity_id = ${entity_id}'},
 		// enriched_stream)
-		ILogicalOperator playerStream = OperatorBuildHelper
-				.createEntityIDSelect(entityId, enrichedStream);
+		ILogicalOperator playerStream = null;
 		allOperators.add(playerStream);
 
 		// /player_stream_changes = CHANGEDETECT({ATTR = ['x','y'],TOLERANCE =
