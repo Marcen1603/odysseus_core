@@ -188,7 +188,7 @@ public class Pinger extends RepeatingJobThread implements IPeerCommunicatorListe
 			try {
 				communicator.send(senderPeer, pongMessage);
 			} catch (PeerCommunicationException e) {
-				LOG.error("Could not send pong-message", e);
+				LOG.warn("Could not send pong-message", e);
 			}
 		} else if (message instanceof PongMessage) {
 			LOG.debug("Got pong message from {}", dictionary.getRemotePeerName(senderPeer));
