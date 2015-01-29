@@ -73,7 +73,7 @@ public class ShotOnGoalGlobalOutput {
 	/**
 	 * The minimal acceleration of balls, being shot [m/s�] and [micro m / s�]
 	 */
-	public static final String MIN_ACCELERATION = "55000000.0";
+	public static final String MIN_ACCELERATION = "55000000";
 	
 	/**
 	 * gravity puffer in height-forcast[mm]
