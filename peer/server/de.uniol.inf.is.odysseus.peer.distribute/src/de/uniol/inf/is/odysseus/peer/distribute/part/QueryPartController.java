@@ -325,16 +325,13 @@ public class QueryPartController implements IPlanModificationListener,
 
 	}
 
+	@Override
 	public boolean isMasterForQuery(int queryID) {
 		if (!sharedQueryIDMap.containsKey(queryID)) {
 			return false;
 		}
 		ID sharedQueryID = sharedQueryIDMap.get(queryID);
-		if (peerIDMap.containsKey(sharedQueryID)) {
-			return true;
-		} else {
-			return false;
-		}
+		return peerIDMap.containsKey(sharedQueryID);
 	}
 
 	public static QueryPartController getInstance() {
