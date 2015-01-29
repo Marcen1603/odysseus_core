@@ -8,6 +8,8 @@ import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.IHandler;
+import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.ui.PlatformUI;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,6 +44,7 @@ public class ExportAllCommand extends AbstractHandler implements IHandler {
 			RCPP2PNewPlugIn.getP2PDictionary().exportSources(sourceNames);
 		} catch (PeerException e) {
 			LOG.error("Could not export source {}", sourceNames, e);
+			MessageDialog.openInformation(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), "Invalid source", "Could not export source " + sourceNames + ":\n" + e.getMessage());
 		}
 		
 		if( !sourceNames.isEmpty() ) {
