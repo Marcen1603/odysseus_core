@@ -179,6 +179,9 @@ public class RecoveryAddQueryMessage implements IMessage {
 			bufferSize += sharedQueryBytes.length;
 		}
 		
+		// boolean master
+		bufferSize += 4;
+		
 		bufferSize += 4;
 		if (this.mMasterId != null) {
 			masterIdBytes = this.mMasterId.toString().getBytes();
@@ -211,6 +214,13 @@ public class RecoveryAddQueryMessage implements IMessage {
 		if (this.mSharedQuery != null) {
 			buffer.putInt(sharedQueryBytes.length);
 			buffer.put(sharedQueryBytes);
+		} else {
+			buffer.putInt(0);
+		}
+		
+		// boolean master
+		if (this.mMaster) {
+			buffer.putInt(1);
 		} else {
 			buffer.putInt(0);
 		}
@@ -271,6 +281,14 @@ public class RecoveryAddQueryMessage implements IMessage {
 			} catch (URISyntaxException | ClassCastException ex) {
 				this.mSharedQuery = null;
 			}
+		}
+		
+		// boolean master
+		int booleanMaster = buffer.getInt();
+		if (booleanMaster == 1) {
+			this.mMaster = true;
+		} else {
+			this.mMaster = false;
 		}
 		
 		int masterIdBytesLength = buffer.getInt();

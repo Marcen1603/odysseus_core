@@ -342,11 +342,10 @@ public class AddQueryReceiver extends AbstractRepeatingMessageReceiver {
 		LOG.debug("Installed query for recovery.");
 		if (master && sharedQuery != null) {
 			Collection<PeerID> otherPeers = determineOtherPeers(sharedQuery);
-			// TODO I think this is not correct. The "localQueryId" is the localQueryId on the OLD peer, not in this
-			// peer (T.B.)
+			int hereLocalQueryId = installedQueries.iterator().next();
 			cController.get().registerAsMaster(
-					cExecutor.get().getLogicalQueryById(installedQueries.iterator().next(),
-							RecoveryCommunicator.getActiveSession()), localQueryId, sharedQuery, otherPeers);
+					cExecutor.get().getLogicalQueryById(hereLocalQueryId,
+							RecoveryCommunicator.getActiveSession()), hereLocalQueryId, sharedQuery, otherPeers);
 		} else if (sharedQuery != null) {
 			cController.get().registerAsSlave(installedQueries, sharedQuery, masterPeer);
 		}

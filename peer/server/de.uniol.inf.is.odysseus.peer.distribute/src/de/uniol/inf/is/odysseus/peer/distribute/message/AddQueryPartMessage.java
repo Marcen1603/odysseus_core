@@ -44,6 +44,8 @@ public class AddQueryPartMessage implements IMessage {
 		byte[] pqlStatementBytes = pqlStatement.getBytes();
 		byte[] sharedQueryIDBytes = sharedQueryID.toString().getBytes();
 		byte[] transCfgNameBytes = transCfgName.getBytes();
+		if (queryName == null) 
+			queryName = "<QueryName>";
 		byte[] queryNameBytes = queryName.getBytes();
 
 		int bbSize = 4 + 4 + pqlStatementBytes.length + 4 + sharedQueryIDBytes.length + 4 + transCfgNameBytes.length + 4 + queryNameBytes.length;
