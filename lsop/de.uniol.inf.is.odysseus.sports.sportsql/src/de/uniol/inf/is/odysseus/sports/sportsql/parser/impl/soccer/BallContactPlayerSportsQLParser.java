@@ -18,31 +18,19 @@ import de.uniol.inf.is.odysseus.sports.sportsql.parser.enums.StatisticType;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.parameter.SportsQLTimeParameter;
 /**
  * Parser for SportsQL:
- * Query: Ball contacts of specific player.
+ * Query: Ball contacts of players.
  * 
  * SportsQL:
  * 
  * Example Query:
  * 
  * {
- * "statisticType": "player",
- *   "gameType": "soccer", 
- *   "name": "ball_contact",
- *   "parameters": {
- *       "time": {
- *           "start": 10753295594424116,
- *           "end" : 9999999999999999,   
- *       }
- *    "space": {
- *      	"startx":-50,
- *          "starty":-33960
- *      	"endx":52489
- *     		"endy":33965
- *   }
- *  }
- *}
- * 
- * @author Thomas Prünie
+	    "displayName":"Ball_Contact_Player",
+	    "statisticType":"PLAYER",
+	    "gameType":"SOCCER",
+	    "name":"ball_contact"
+ * }
+ * @author Thomas Prünie, Marc Wilken
  *
  */
 @SportsQL(
@@ -54,6 +42,8 @@ import de.uniol.inf.is.odysseus.sports.sportsql.parser.parameter.SportsQLTimePar
 				}
 		)
 public class BallContactPlayerSportsQLParser implements ISportsQLParser {
+	
+	private final int dumpAtValueCount = 1;
 
 	@Override
 	public ILogicalQuery parse(ISession session, SportsQLQuery sportsQL)
@@ -69,9 +59,8 @@ public class BallContactPlayerSportsQLParser implements ISportsQLParser {
 		groupCount.add("entity_id");
 		groupCount.add("team_id");
 		
-		ILogicalOperator countOutput = OperatorBuildHelper.createAggregateAO("count", groupCount, "entity_id", "ballContactCount", "Integer", globalOutput, 1);
-		allOperators.add(countOutput);
-		
+		ILogicalOperator countOutput = OperatorBuildHelper.createAggregateAO("count", groupCount, "entity_id", "ballContactCount", "Integer", globalOutput, dumpAtValueCount);
+		allOperators.add(countOutput);		
 		
 		return OperatorBuildHelper.finishQuery(countOutput, allOperators, sportsQL.getDisplayName());
 	}
