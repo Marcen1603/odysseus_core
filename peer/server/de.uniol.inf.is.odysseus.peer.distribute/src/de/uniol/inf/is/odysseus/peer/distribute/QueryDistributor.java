@@ -11,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Preconditions;
+import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
@@ -97,7 +98,7 @@ public class QueryDistributor implements IQueryDistributor {
 			
 			while( true ) {
 				try {
-					ID sharedQueryId = QueryPartSender.getInstance().transmit(allocationMapCopy, serverExecutor, caller, query.getName(), config);
+					ID sharedQueryId = QueryPartSender.getInstance().transmit(allocationMapCopy, serverExecutor, caller, determineQueryName(query), config);
 					QueryDistributionNotifier.tryNotifyAfterTransmission(query, allocationMapCopy, sharedQueryId);
 					break;
 				} catch( QueryPartTransmissionException ex ) {
@@ -125,6 +126,14 @@ public class QueryDistributor implements IQueryDistributor {
 				}
 			}
 		}
+	}
+
+	private static String determineQueryName(ILogicalQuery query) {
+		String queryName = query.getName();
+		if( Strings.isNullOrEmpty(queryName)) {
+			return "Query " + query.getID();
+		}
+		return queryName;
 	}
 
 	private static Map<ILogicalQueryPart, PeerID> copyAllocationMap(Map<ILogicalQueryPart, PeerID> allocationMap) {
