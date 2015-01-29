@@ -389,11 +389,13 @@ public class MEP implements IExpressionParser {
 		FunctionSignature signature = new FunctionSignature(symbol, parameters);
 		if (functionStore.containsSignature(signature)) {
 			functionStore.remove(signature);
-		} else {
-			getLogger()
-					.warn("Tried to unregister function {}, which was not registered before",
-							symbol);
-		}
+		} 
+		// can be ignored
+		//		else {
+//			getLogger()
+//					.warn("Tried to unregister function {}, which was not registered before",
+//							symbol);
+//		}
 	}
 
 	public static boolean containsFunction(String symbol) {
