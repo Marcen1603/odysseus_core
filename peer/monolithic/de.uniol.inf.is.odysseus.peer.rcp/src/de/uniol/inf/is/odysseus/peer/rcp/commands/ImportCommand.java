@@ -50,9 +50,10 @@ public class ImportCommand extends AbstractHandler implements IHandler {
 					okCount++;
 				} catch (PeerException e) {
 					LOG.error("Could not import source {}", sourceName, e);
+					MessageDialog.openInformation(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), "Invalid source", "Could not import source " + sourceName + " since\nit is invalid (e.g. peer is not reachable or files are not available).");
 				} catch (InvalidP2PSource e) {
 					LOG.error("Could not import source {}", sourceName, e);
-					MessageDialog.openInformation(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), "Invalid source", "Could not import source " + sourceName + " since\nit is invalid (e.g. peer is not reachable).");
+					MessageDialog.openInformation(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), "Invalid source", "Could not import source " + sourceName + " since\nit is invalid (e.g. peer is not reachable or files are not available).");
 				}
 			}
 			StatusBarManager.getInstance().setMessage(okCount + " source(s) successfully imported");
