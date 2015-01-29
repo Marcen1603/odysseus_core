@@ -6,6 +6,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.google.common.collect.Lists;
+
 import de.uniol.inf.is.odysseus.core.collection.Context;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
@@ -44,16 +46,12 @@ public class SportsQLParser implements IQueryParser {
 			exeCommands.add(exeCommand);
 			return exeCommands;
 		} catch (SportsQLParseException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			throw new QueryParseException("Could not parse sportsQLQuery: " + query, e);
 		} catch (NumberFormatException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			throw new QueryParseException("Could not parse sportsQLQuery: " + query, e);
 		} catch (MissingDDCEntryException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			throw new QueryParseException("Could not parse sportsQLQuery: " + query, e);
 		}
-		return null;
 	}
 
 	@Override
