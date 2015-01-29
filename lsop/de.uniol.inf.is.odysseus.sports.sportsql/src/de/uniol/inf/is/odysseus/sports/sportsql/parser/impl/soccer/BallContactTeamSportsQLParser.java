@@ -78,10 +78,9 @@ public class BallContactTeamSportsQLParser implements ISportsQLParser{
 		passesStateMapExpressions.add(OperatorBuildHelper.createExpressionParameter("ballContactCount", "ballContactCountAbs", sumAndCount));
 		
 		MapAO percentageMap = OperatorBuildHelper.createMapAO(passesStateMapExpressions, sumAndCount, 0, 0, true);
-
 		allOperators.add(percentageMap);
 		
-		return OperatorBuildHelper.finishQuery(countOutput, allOperators, sportsQL.getDisplayName());
+		return OperatorBuildHelper.finishQuery(percentageMap, allOperators, sportsQL.getDisplayName());
 	}
 
 }
