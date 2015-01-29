@@ -15,7 +15,9 @@
  */
 package de.uniol.inf.is.odysseus.core.mep;
 
+import java.text.NumberFormat;
 import java.util.Collections;
+import java.util.Locale;
 import java.util.Set;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
@@ -33,12 +35,18 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 public class Constant<T> implements IExpression<T> {
 
 	private static final long serialVersionUID = 504053838249636471L;
+	private static final NumberFormat DOUBLE_FORMATTER = NumberFormat.getNumberInstance(Locale.ENGLISH); // '.' instead of ',' 
+	
 	/**
 	 * The value of this
 	 */
 	private final T value;
 	private SDFDatatype type;
 
+	static {
+		DOUBLE_FORMATTER.setGroupingUsed(false);
+	}
+	
 	/**
 	 * Create a new constant
 	 * 
@@ -64,16 +72,15 @@ public class Constant<T> implements IExpression<T> {
 
 	@Override
 	public String toString() {
-		// if( type.isNumeric() ){
-		// NumberFormat f = new DecimalFormat("#");
-		// return f.format(value);
-		// }
-		if (type == SDFDatatype.STRING
-				|| type == SDFDatatype.START_TIMESTAMP_STRING) {
-			return "\"" + value + "\"";
-		} else {
-			return  ""+value;
+		if( type.isDouble() ) {
+			return DOUBLE_FORMATTER.format(value);
 		}
+		
+		if (type == SDFDatatype.STRING || type == SDFDatatype.START_TIMESTAMP_STRING) {
+			return "\"" + value + "\"";
+		}
+		
+		return  ""+value;
 	}
 
 	@SuppressWarnings("unchecked")
