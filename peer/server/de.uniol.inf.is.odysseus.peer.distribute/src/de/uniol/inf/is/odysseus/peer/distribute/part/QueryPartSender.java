@@ -42,10 +42,12 @@ import de.uniol.inf.is.odysseus.p2p_new.RepeatingMessageSend;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.IP2PDictionary;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.IPeerDictionary;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.SourceAdvertisement;
+import de.uniol.inf.is.odysseus.p2p_new.logicaloperator.DistributedQueryRepresentationAO;
 import de.uniol.inf.is.odysseus.p2p_new.logicaloperator.JxtaReceiverAO;
 import de.uniol.inf.is.odysseus.p2p_new.logicaloperator.JxtaSenderAO;
 import de.uniol.inf.is.odysseus.parser.pql.generator.IPQLGenerator;
 import de.uniol.inf.is.odysseus.peer.distribute.ILogicalQueryPart;
+import de.uniol.inf.is.odysseus.peer.distribute.LogicalQueryPart;
 import de.uniol.inf.is.odysseus.peer.distribute.PeerDistributePlugIn;
 import de.uniol.inf.is.odysseus.peer.distribute.QueryPartTransmissionException;
 import de.uniol.inf.is.odysseus.peer.distribute.message.AbortQueryPartAddAckMessage;
@@ -99,7 +101,7 @@ public class QueryPartSender implements IPeerCommunicatorListener {
 			p2pDictionary = null;
 		}
 	}
-	
+
 	// called by OSGi-DS
 	public static void bindPeerDictionary(IPeerDictionary serv) {
 		peerDictionary = serv;
@@ -190,41 +192,45 @@ public class QueryPartSender implements IPeerCommunicatorListener {
 
 		Collection<ILogicalQueryPart> localQueryParts = determineLocalQueryParts(allocationMap);
 
-		if (!localQueryParts.isEmpty()) {
-			LOG.debug("Building local logical query out of {} local query parts", localQueryParts.size());
+		if (localQueryParts.isEmpty()) {
+			LOG.debug("There is no local query. Building a representation operator.");
 
-			ILogicalQuery localQuery = buildLocalQuery(localQueryParts);
-			localQuery.setName(queryName);
-			localQuery.setUser(caller);
-
-			try {
-				callExecutorToAddLocalQueries(localQuery, sharedQueryID, serverExecutor, caller, config, determineSlavePeers(allocationMap));
-			} catch (Throwable t) {			
-				LOG.error("Exception during placing local query part. Query is {}", localQuery.getQueryText());
-				LOG.error("Exception is ", t);
-				removeDistributedQueryParts(sharedQueryID);
-			}
-		} else {
-			LOG.debug("No local query part of query remains.");
+			LogicalQueryPart part = new LogicalQueryPart(new DistributedQueryRepresentationAO(sharedQueryID));
+			localQueryParts.add(part);
 		}
+
+		LOG.debug("Building local logical query out of {} local query parts", localQueryParts.size());
+
+		ILogicalQuery localQuery = buildLocalQuery(localQueryParts);
+		localQuery.setName(queryName);
+		localQuery.setUser(caller);
+
+		try {
+			callExecutorToAddLocalQueries(localQuery, sharedQueryID, serverExecutor, caller, config, determineSlavePeers(allocationMap));
+		} catch (Throwable t) {
+			LOG.error("Exception during placing local query part. Query is {}", localQuery.getQueryText());
+			LOG.error("Exception is ", t);
+			removeDistributedQueryParts(sharedQueryID);
+		}
+		
 		LOG.debug("Transmission finished");
 		return sharedQueryID;
 	}
 
-	private static void appendPeerIDToStreamAO(Map<ILogicalQueryPart, PeerID> allocationMap ) throws QueryDistributionException {
-		for( ILogicalQueryPart queryPart : allocationMap.keySet() ) {
-			
-			if( !allocationMap.get(queryPart).equals(p2pNetworkManager.getLocalPeerID())) {
+	private static void appendPeerIDToStreamAO(Map<ILogicalQueryPart, PeerID> allocationMap) throws QueryDistributionException {
+		for (ILogicalQueryPart queryPart : allocationMap.keySet()) {
+
+			if (!allocationMap.get(queryPart).equals(p2pNetworkManager.getLocalPeerID())) {
 				// QueryPart wird verteilt
-				for( ILogicalOperator operator : queryPart.getOperators() ) {
-					if( operator instanceof StreamAO ) {
-						StreamAO streamAO = (StreamAO)operator;
-						
+				for (ILogicalOperator operator : queryPart.getOperators()) {
+					if (operator instanceof StreamAO) {
+						StreamAO streamAO = (StreamAO) operator;
+
 						String sourceName = streamAO.getStreamname().getResourceName();
-						if( p2pDictionary.isExported(sourceName) ) {
+						if (p2pDictionary.isExported(sourceName)) {
 							SourceAdvertisement srcAdv = p2pDictionary.getExportedSource(sourceName).get();
 							streamAO.setNode(srcAdv.getPeerID().toString());
-						} else if( p2pDictionary.isImported(sourceName)) {
+						} else if (p2pDictionary.isImported(sourceName)) {
 							SourceAdvertisement srcAdv = p2pDictionary.getImportedSource(sourceName).get();
 							streamAO.setNode(srcAdv.getPeerID().toString());
 						} else {
@@ -232,7 +238,7 @@ public class QueryPartSender implements IPeerCommunicatorListener {
 						}
 					}
 				}
-			} 
+			}
 		}
 	}
 
