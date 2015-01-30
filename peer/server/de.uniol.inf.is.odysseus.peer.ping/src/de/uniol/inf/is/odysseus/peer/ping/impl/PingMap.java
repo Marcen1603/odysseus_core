@@ -160,7 +160,7 @@ public class PingMap extends P2PDictionaryAdapter implements IPingMap  {
 	private void addLatencyData(PeerID peerID, long latency) {
 		NumberAverager numberAverager = ownPings.get(peerID);
 		if( numberAverager == null ) {
-			numberAverager = new NumberAverager(6);
+			numberAverager = new NumberAverager(1);
 			ownPings.put(peerID, numberAverager);
 		}
 		numberAverager.addValue(latency);

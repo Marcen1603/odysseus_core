@@ -25,7 +25,8 @@ public class Pinger extends RepeatingJobThread implements IPeerCommunicatorListe
 
 	private static final Logger LOG = LoggerFactory.getLogger(Pinger.class);
 	private static final Random RAND = new Random();
-	private static final int MAX_PEERS_TO_PING = 5;
+	private static final int MIN_PEERS_TO_PING = 5;
+	private static final double PEERS_TO_PING_PERCENTAGE = 0.70; 
 
 	private static final int PING_INTERVAL = 10000;
 	private static final int MAX_PONG_WAIT_MILLIS = 30000;
@@ -164,12 +165,15 @@ public class Pinger extends RepeatingJobThread implements IPeerCommunicatorListe
 		synchronized (waitingPongMap) {
 			availablePeers.removeAll(waitingPongMap.keySet());
 		}
-		if (availablePeers.size() <= MAX_PEERS_TO_PING) {
+		
+		int peersToPingCount = Math.max(MIN_PEERS_TO_PING, (int)(availablePeers.size() * PEERS_TO_PING_PERCENTAGE)); 
+				
+		if (availablePeers.size() <= peersToPingCount) {
 			return Lists.newArrayList(availablePeers);
 		}
 
 		Collection<PeerID> selectedPeers = Lists.newArrayList();
-		while (!availablePeers.isEmpty() && selectedPeers.size() < MAX_PEERS_TO_PING) {
+		while (!availablePeers.isEmpty() && selectedPeers.size() < peersToPingCount) {
 			int index = RAND.nextInt(availablePeers.size());
 
 			selectedPeers.add(availablePeers.remove(index));
