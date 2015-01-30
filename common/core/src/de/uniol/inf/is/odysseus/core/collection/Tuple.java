@@ -25,6 +25,9 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map.Entry;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.rits.cloning.Cloner;
 
 import de.uniol.inf.is.odysseus.core.ICSVToString;
@@ -46,6 +49,9 @@ public class Tuple<T extends IMetaAttribute> extends AbstractStreamObject<T>
 
 	private static final long serialVersionUID = 7119095568322125441L;
 
+    private static final Logger LOG = LoggerFactory
+			.getLogger(Tuple.class);
+	
 	protected Object[] attributes;
 
 	private boolean containsNull = false;
@@ -245,7 +251,7 @@ public class Tuple<T extends IMetaAttribute> extends AbstractStreamObject<T>
                     clone[i] = ((IClone) attr[i]).clone();
                 }
                 catch (Throwable t) {
-                    System.err.println(String.format("Instance of %s does not implement IClone interface", attr[i].getClass()));
+                    LOG.warn(String.format("Instance of %s does not implement IClone interface", attr[i].getClass()));
                     Cloner cloner = new Cloner();
                     clone[i] = cloner.deepClone(attr[i]);
                 }
