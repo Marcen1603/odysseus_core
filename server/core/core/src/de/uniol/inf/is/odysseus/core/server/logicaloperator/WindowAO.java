@@ -19,6 +19,11 @@ public class WindowAO extends AbstractWindowWithWidthAO {
 	}
 	
 	@Override
+	public WindowType getWindowType() {
+		return super.getWindowType();
+	}
+	
+	@Override
 	public List<String> getWindowTypes(){
 		return WindowType.getValues();
 	}
