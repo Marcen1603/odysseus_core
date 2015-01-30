@@ -42,22 +42,24 @@ public class BroadcastRequestListener implements IBroadcastListener {
 
 				if (message.equalsIgnoreCase("REQUEST_INFORMATION")) {
 					LOG.debug("Received udp broadcast message from address {}:{} at own port {}", new Object[] { packet.getAddress(), packet.getPort(), port });
-
-					try {
-						JSONObject json = new JSONObject();
-						json.put("PeerID", P2PNetworkManager.getInstance().getLocalPeerID().toString());
-						json.put("PeerName", P2PNetworkManager.getInstance().getLocalPeerName());
-						json.put("GroupName", P2PNetworkManager.getInstance().getLocalPeerGroupName());
-						json.put("GroupID", P2PNetworkManager.getInstance().getLocalPeerGroupID().toString());
-						json.put("Port", P2PNetworkManager.getInstance().getPort());
-
-						byte[] sendData = json.toString().getBytes();
-						DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, packet.getAddress(), packet.getPort());
-						socket.send(sendPacket);
-						LOG.debug("Answer " + json.toString() + " send to {}:{}", packet.getAddress(), packet.getPort());
-
-					} catch (JSONException e) {
-						LOG.error("Could not create JSON object for udp broadcast answer: {}", e.getMessage());
+					
+					if( P2PNetworkManager.isActivated() ) {
+						try {
+							JSONObject json = new JSONObject();
+							json.put("PeerID", P2PNetworkManager.getInstance().getLocalPeerID().toString());
+							json.put("PeerName", P2PNetworkManager.getInstance().getLocalPeerName());
+							json.put("GroupName", P2PNetworkManager.getInstance().getLocalPeerGroupName());
+							json.put("GroupID", P2PNetworkManager.getInstance().getLocalPeerGroupID().toString());
+							json.put("Port", P2PNetworkManager.getInstance().getPort());
+	
+							byte[] sendData = json.toString().getBytes();
+							DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, packet.getAddress(), packet.getPort());
+							socket.send(sendPacket);
+							LOG.debug("Answer " + json.toString() + " send to {}:{}", packet.getAddress(), packet.getPort());
+	
+						} catch (JSONException e) {
+							LOG.error("Could not create JSON object for udp broadcast answer: {}", e.getMessage());
+						}
 					}
 				}
 			}
