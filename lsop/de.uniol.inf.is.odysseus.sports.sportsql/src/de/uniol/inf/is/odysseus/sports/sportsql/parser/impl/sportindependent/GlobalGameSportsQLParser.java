@@ -27,7 +27,7 @@ import de.uniol.inf.is.odysseus.sports.sportsql.parser.parameter.SportsQLTimePar
  * 
  * @author Tobias Brandt
  * @since 24.07.2014
- *
+ * 
  */
 @SportsQL(gameTypes = GameType.ALL, statisticTypes = { StatisticType.GLOBAL }, name = "game", parameters = {
 		@SportsQLParameter(name = "time", parameterClass = SportsQLTimeParameter.class, mandatory = false),
@@ -35,8 +35,9 @@ import de.uniol.inf.is.odysseus.sports.sportsql.parser.parameter.SportsQLTimePar
 public class GlobalGameSportsQLParser implements ISportsQLParser {
 
 	@Override
-	public ILogicalQuery parse(ISession session,SportsQLQuery sportsQL)
-			throws SportsQLParseException, NumberFormatException, MissingDDCEntryException {
+	public ILogicalQuery parse(ISession session, SportsQLQuery sportsQL)
+			throws SportsQLParseException, NumberFormatException,
+			MissingDDCEntryException {
 
 		// We need this list to initialize all operators
 		List<ILogicalOperator> allOperators = new ArrayList<ILogicalOperator>();
@@ -46,18 +47,14 @@ public class GlobalGameSportsQLParser implements ISportsQLParser {
 		// ---------------------------
 
 		// 1. Game-Stream
-		StreamAO soccerGameAccessAO = OperatorBuildHelper.createGameStreamAO(session);
+		StreamAO soccerGameAccessAO = OperatorBuildHelper
+				.createGameStreamAO(session);
 		allOperators.add(soccerGameAccessAO);
 
 		// Time parameter
 		SelectAO timeSelect = OperatorBuildHelper.createTimeMapAndSelect(
 				SportsQLParameterHelper.getTimeParameter(sportsQL),
 				soccerGameAccessAO);
-
-		// Space parameter
-		SelectAO spaceSelect = OperatorBuildHelper.createSpaceSelect(
-				SportsQLParameterHelper.getSpaceParameter(sportsQL), false,
-				timeSelect);
 
 		List<String> attributes = new ArrayList<String>();
 		attributes.add("x");
@@ -66,10 +63,9 @@ public class GlobalGameSportsQLParser implements ISportsQLParser {
 		attributes.add("team_id");
 
 		ProjectAO projectAO = OperatorBuildHelper.createProjectAO(attributes,
-				spaceSelect);
+				timeSelect);
 		allOperators.add(projectAO);
-		
-	
+
 		return OperatorBuildHelper.finishQuery(projectAO, allOperators,
 				sportsQL.getDisplayName());
 	}
