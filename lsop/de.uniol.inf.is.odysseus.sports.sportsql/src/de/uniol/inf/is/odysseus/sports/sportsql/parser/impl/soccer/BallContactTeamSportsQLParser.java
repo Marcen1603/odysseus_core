@@ -74,7 +74,7 @@ public class BallContactTeamSportsQLParser implements ISportsQLParser{
 		//countOutput / allOutput = percentOutput
 		List<SDFExpressionParameter> passesStateMapExpressions = new ArrayList<SDFExpressionParameter>();
 		passesStateMapExpressions.add(OperatorBuildHelper.createExpressionParameter("team_id", "team_id", sumAndCount));
-		passesStateMapExpressions.add(OperatorBuildHelper.createExpressionParameter("DoubleToFloat(ROUND((ballContactCount"+"/"+"ballContactCountAll),2)*100)", "ballContactCount", sumAndCount));
+		passesStateMapExpressions.add(OperatorBuildHelper.createExpressionParameter("DoubleToFloat(ROUND((ballContactCount"+"/"+"ballContactCountAll),4)*100)", "ballContactCount", sumAndCount));
 		passesStateMapExpressions.add(OperatorBuildHelper.createExpressionParameter("ballContactCount", "ballContactCountAbs", sumAndCount));
 		
 		MapAO percentageMap = OperatorBuildHelper.createMapAO(passesStateMapExpressions, sumAndCount, 0, 0, true);
