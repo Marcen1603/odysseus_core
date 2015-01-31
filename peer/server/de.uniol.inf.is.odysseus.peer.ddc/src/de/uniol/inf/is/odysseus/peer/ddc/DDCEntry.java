@@ -195,7 +195,7 @@ public class DDCEntry {
 	@Override
 	public String toString() {
 
-		return this.mKey.toString() + " = " + this.mValue + " [ts: " + String.valueOf(this.mTS) + "]";
+		return this.mKey.toString() + " = " + this.mValue + " [ts: " + String.valueOf(this.mTS) + "], persistent: " + Boolean.toString(this.mPersistent);
 
 	}
 

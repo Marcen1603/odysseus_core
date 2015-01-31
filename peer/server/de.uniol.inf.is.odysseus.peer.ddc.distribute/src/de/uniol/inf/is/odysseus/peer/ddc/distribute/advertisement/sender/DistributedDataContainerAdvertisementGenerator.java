@@ -1,7 +1,7 @@
 package de.uniol.inf.is.odysseus.peer.ddc.distribute.advertisement.sender;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 import net.jxta.document.AdvertisementFactory;
@@ -11,42 +11,43 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 
 import de.uniol.inf.is.odysseus.p2p_new.IP2PNetworkManager;
 import de.uniol.inf.is.odysseus.peer.ddc.DDCEntry;
-import de.uniol.inf.is.odysseus.peer.ddc.DDCKey;
 import de.uniol.inf.is.odysseus.peer.ddc.IDDCListener;
 import de.uniol.inf.is.odysseus.peer.ddc.IDistributedDataContainer;
-import de.uniol.inf.is.odysseus.peer.ddc.MissingDDCEntryException;
 import de.uniol.inf.is.odysseus.peer.ddc.distribute.advertisement.DistributedDataContainerAdvertisement;
-import de.uniol.inf.is.odysseus.peer.ddc.distribute.advertisement.DistributedDataContainerAdvertisementType;
+import de.uniol.inf.is.odysseus.peer.ddc.distribute.advertisement.DistributedDataContainerChangeAdvertisement;
+import de.uniol.inf.is.odysseus.peer.ddc.distribute.advertisement.DistributedDataContainerRequestAdvertisement;
 import de.uniol.inf.is.odysseus.peer.ddc.distribute.advertisement.sender.DistributedDataContainerChange.DistributedDataContainerChangeType;
 
 /**
  * DDCAdvertisementGenerator generates DDCAdvertisements for distributing
  * DDCEntries to other peers
  * 
- * @author ChrisToenjesDeye
+ * @author ChrisToenjesDeye, Michael Brand
  * 
  */
 public class DistributedDataContainerAdvertisementGenerator implements
 		IDDCListener {
+
 	private static final Logger LOG = LoggerFactory
 			.getLogger(DistributedDataContainerAdvertisementGenerator.class);
+
 	private static DistributedDataContainerAdvertisementGenerator instance;
 
 	private static final int TIMEOUT_SECONDS = 300;
 	private static final int WAITING_TIME_SECONDS = 1;
-	private IP2PNetworkManager p2pNetworkManager;
-
-	private List<DistributedDataContainerChange> ddcChanges = new ArrayList<DistributedDataContainerChange>();
-
-	private boolean listeningForChanges = true;
-
-	/**
-	 * The DDC.
-	 */
 	private static IDistributedDataContainer ddc;
+
+	private IP2PNetworkManager p2pNetworkManager;
+	private Set<DistributedDataContainerChange> ddcChanges = Sets.newHashSet();
+	private Map<UUID, ImmutableSet<DistributedDataContainerChange>> ddcChangesToSentAdv = Maps
+			.newHashMap();
+	private boolean listeningForChanges = true;
 
 	/**
 	 * Binds a DDC. <br />
@@ -126,21 +127,10 @@ public class DistributedDataContainerAdvertisementGenerator implements
 							.getAdvertisementType());
 			ddcAdvertisement.setID(IDFactory.newPipeID(p2pNetworkManager
 					.getLocalPeerGroupID()));
-			ddcAdvertisement.setInitiatingPeerId(p2pNetworkManager.getLocalPeerID());
+			ddcAdvertisement.setInitiatingPeerId(p2pNetworkManager
+					.getLocalPeerID());
 			UUID advertisementUid = UUID.randomUUID();
 			ddcAdvertisement.setDDCAdvertisementUid(advertisementUid);
-			ddcAdvertisement
-					.setType(DistributedDataContainerAdvertisementType.initialDistribution);
-
-			// get all entries from DDC and add them to DDCAdvertisement
-			for (DDCKey key : DistributedDataContainerAdvertisementGenerator.ddc
-					.getKeys()) {
-				try {
-					ddcAdvertisement.addAddedEntry(ddc.get(key));
-				} catch (MissingDDCEntryException e) {
-					// do nothing
-				}
-			}
 			ddcChanges.clear();
 			return ddcAdvertisement;
 		}
@@ -154,20 +144,19 @@ public class DistributedDataContainerAdvertisementGenerator implements
 	 * @return DDCAdvertisement or null if network is not available after
 	 *         timeout or no changes in DDC
 	 */
-	public DistributedDataContainerAdvertisement generateChanges() {
+	public DistributedDataContainerChangeAdvertisement generateChanges() {
 		// P2P Network need to be available, before local PeerID can be detected
 		// and DDCAdvertisement created
 		if (p2pNetworkAvailable()) {
-			DistributedDataContainerAdvertisement ddcAdvertisement = (DistributedDataContainerAdvertisement) AdvertisementFactory
-					.newAdvertisement(DistributedDataContainerAdvertisement
+			DistributedDataContainerChangeAdvertisement ddcAdvertisement = (DistributedDataContainerChangeAdvertisement) AdvertisementFactory
+					.newAdvertisement(DistributedDataContainerChangeAdvertisement
 							.getAdvertisementType());
 			ddcAdvertisement.setID(IDFactory.newPipeID(p2pNetworkManager
 					.getLocalPeerGroupID()));
-			ddcAdvertisement.setInitiatingPeerId(p2pNetworkManager.getLocalPeerID());
+			ddcAdvertisement.setInitiatingPeerId(p2pNetworkManager
+					.getLocalPeerID());
 			UUID advertisementUid = UUID.randomUUID();
 			ddcAdvertisement.setDDCAdvertisementUid(advertisementUid);
-			ddcAdvertisement
-					.setType(DistributedDataContainerAdvertisementType.changeDistribution);
 
 			if (ddcChanges.isEmpty()) {
 				// no need to send an advertisement if no changes exists
@@ -175,22 +164,36 @@ public class DistributedDataContainerAdvertisementGenerator implements
 				return null;
 			}
 
-			// get all ddc changes and add them to DDCAdvertisement
-			for (DistributedDataContainerChange ddcChange : ddcChanges) {
-				switch (ddcChange.getDdcChangeType()) {
-				case ddcEntryAdded:
-					ddcAdvertisement.addAddedEntry(ddcChange.getDdcEntry());
-					break;
-				case ddcEntryRemoved:
-					ddcAdvertisement.addRemovedEntry(ddcChange.getDdcEntry()
-							.getKey().get());
-					break;
-				}
-			}
+			ddcChangesToSentAdv.put(advertisementUid,
+					ImmutableSet.copyOf(ddcChanges));
 			ddcChanges.clear();
 			return ddcAdvertisement;
 		}
 		return null;
+	}
+
+	/**
+	 * Generate @DDCRequestAdvertisement.
+	 * 
+	 * @return DDCRequestAdvertisement
+	 */
+	public DistributedDataContainerRequestAdvertisement generateRequest() {
+		// P2P Network need to be available, before local PeerID can be detected
+		// and DDCAdvertisement created
+		if (p2pNetworkAvailable()) {
+			DistributedDataContainerRequestAdvertisement ddcAdvertisement = (DistributedDataContainerRequestAdvertisement) AdvertisementFactory
+					.newAdvertisement(DistributedDataContainerRequestAdvertisement
+							.getAdvertisementType());
+			ddcAdvertisement.setID(IDFactory.newPipeID(p2pNetworkManager
+					.getLocalPeerGroupID()));
+			ddcAdvertisement.setInitiatingPeerId(p2pNetworkManager
+					.getLocalPeerID());
+			UUID advertisementUid = UUID.randomUUID();
+			ddcAdvertisement.setDDCAdvertisementUid(advertisementUid);
+			return ddcAdvertisement;
+		}
+		return null;
+
 	}
 
 	/**
@@ -228,10 +231,6 @@ public class DistributedDataContainerAdvertisementGenerator implements
 		}
 	}
 
-	public List<DistributedDataContainerChange> getDDCChanges() {
-		return ddcChanges;
-	}
-
 	private void waitSomeTime(int milliSeconds) {
 		try {
 			Thread.sleep(milliSeconds);
@@ -245,5 +244,12 @@ public class DistributedDataContainerAdvertisementGenerator implements
 
 	public void enableListeningForChanges() {
 		listeningForChanges = true;
+	}
+
+	public Set<DistributedDataContainerChange> getDDCChanges(UUID advId) {
+		if (ddcChangesToSentAdv.containsKey(advId)) {
+			return ddcChangesToSentAdv.get(advId);
+		}
+		return Sets.newHashSet();
 	}
 }

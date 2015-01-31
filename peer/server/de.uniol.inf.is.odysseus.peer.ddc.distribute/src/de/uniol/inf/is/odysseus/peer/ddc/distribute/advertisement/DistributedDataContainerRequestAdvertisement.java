@@ -25,18 +25,18 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Preconditions;
 
 /**
- * The JXTA Advertisement for DistributedDataContainer to tell other peers, that
- * a DDC is available.
+ * The JXTA Advertisement for DistributedDataContainer to ask other peers for
+ * their DDC (for the scenario, that a peer entered the network)
  * 
  * @author ChrisToenjesDeye, Michael Brand
  * 
  */
-public class DistributedDataContainerAdvertisement extends Advertisement {
+public class DistributedDataContainerRequestAdvertisement extends Advertisement {
 	private static final Logger LOG = LoggerFactory
-			.getLogger(DistributedDataContainerAdvertisement.class);
+			.getLogger(DistributedDataContainerRequestAdvertisement.class);
 
 	// Tag constants for document
-	private static final String ADVERTISEMENT_TYPE = "jxta:DDCAdvertisement";
+	private static final String ADVERTISEMENT_TYPE = "jxta:DDCRequestAdvertisement";
 	private static final String ID_TAG = "id";
 	private static final String INITIATING_PEER_ID_TAG = "initiatingPeerId";
 	private static final String ADVERTISEMENT_UID = "advertisementUid";
@@ -56,7 +56,7 @@ public class DistributedDataContainerAdvertisement extends Advertisement {
 	/**
 	 * Default Constructor for @DDCAdvertisementInstantiator
 	 */
-	public DistributedDataContainerAdvertisement() {
+	public DistributedDataContainerRequestAdvertisement() {
 
 	}
 
@@ -66,13 +66,13 @@ public class DistributedDataContainerAdvertisement extends Advertisement {
 	 * @param root
 	 *            - the xml-Root-Element
 	 */
-	public DistributedDataContainerAdvertisement(Element<?> root) {
+	public DistributedDataContainerRequestAdvertisement(Element<?> root) {
 		final TextElement<?> doc = (TextElement<?>) Preconditions.checkNotNull(
 				root, "Root element must not be null!");
 		determineFields(doc);
 	}
 
-	public DistributedDataContainerAdvertisement(InputStream stream)
+	public DistributedDataContainerRequestAdvertisement(InputStream stream)
 			throws IOException {
 		this(StructuredDocumentFactory.newStructuredDocument(
 				MimeMediaType.XMLUTF8,
@@ -85,8 +85,8 @@ public class DistributedDataContainerAdvertisement extends Advertisement {
 	 * @param adv
 	 *            - The @DDCAdvertisement to copy from
 	 */
-	public DistributedDataContainerAdvertisement(
-			DistributedDataContainerAdvertisement adv) {
+	public DistributedDataContainerRequestAdvertisement(
+			DistributedDataContainerRequestAdvertisement adv) {
 		Preconditions.checkNotNull(adv,
 				"Advertisement to copy must not be null!");
 		this.id = adv.id;
@@ -224,11 +224,11 @@ public class DistributedDataContainerAdvertisement extends Advertisement {
 		if (this == obj) {
 			return true;
 		}
-		if (!(obj instanceof DistributedDataContainerAdvertisement)) {
+		if (!(obj instanceof DistributedDataContainerRequestAdvertisement)) {
 			return false;
 		}
 
-		final DistributedDataContainerAdvertisement other = (DistributedDataContainerAdvertisement) obj;
+		final DistributedDataContainerRequestAdvertisement other = (DistributedDataContainerRequestAdvertisement) obj;
 		return id.equals(other.id);
 	}
 

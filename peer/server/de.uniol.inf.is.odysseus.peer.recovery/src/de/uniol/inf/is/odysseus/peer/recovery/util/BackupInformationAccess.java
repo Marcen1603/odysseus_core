@@ -22,7 +22,7 @@ import de.uniol.inf.is.odysseus.p2p_new.dictionary.IPeerDictionary;
 import de.uniol.inf.is.odysseus.peer.ddc.DDCEntry;
 import de.uniol.inf.is.odysseus.peer.ddc.DDCKey;
 import de.uniol.inf.is.odysseus.peer.ddc.IDistributedDataContainer;
-import de.uniol.inf.is.odysseus.peer.ddc.distribute.advertisement.DistributedDataContainerAdvertisement;
+import de.uniol.inf.is.odysseus.peer.ddc.distribute.advertisement.DistributedDataContainerChangeAdvertisement;
 import de.uniol.inf.is.odysseus.peer.ddc.distribute.advertisement.sender.DistributedDataContainerAdvertisementGenerator;
 import de.uniol.inf.is.odysseus.peer.ddc.distribute.advertisement.sender.DistributedDataContainerAdvertisementSender;
 import de.uniol.inf.is.odysseus.peer.recovery.IBackupInformationAccess;
@@ -284,9 +284,9 @@ public class BackupInformationAccess implements IBackupInformationAccess {
 	}
 
 	private static void distributeDDC() {
-		DistributedDataContainerAdvertisement ddcAdvertisement = DistributedDataContainerAdvertisementGenerator
+		DistributedDataContainerChangeAdvertisement ddcAdvertisement = DistributedDataContainerAdvertisementGenerator
 				.getInstance().generateChanges();
-		DistributedDataContainerAdvertisementSender.getInstance().publishDDCAdvertisement(ddcAdvertisement);
+		DistributedDataContainerAdvertisementSender.getInstance().publishDDCChangeAdvertisement(ddcAdvertisement);
 	}
 
 	private static void saveToDDC(Serializable o, DDCKey key) {

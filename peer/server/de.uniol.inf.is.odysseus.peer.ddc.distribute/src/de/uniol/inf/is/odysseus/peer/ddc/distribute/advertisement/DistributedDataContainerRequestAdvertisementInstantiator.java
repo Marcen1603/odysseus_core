@@ -5,27 +5,28 @@ import net.jxta.document.AdvertisementFactory;
 import net.jxta.document.Element;
 
 /**
- * Instantiator Class to create DDCAdvertisements. Needed for JXTA
+ * Instantiator Class to create DDCRequestAdvertisements. Needed for JXTA
  * 
  * @author ChrisToenjesDeye
  * 
  */
-public class DistributedDataContainerAdvertisementInstantiator implements
+public class DistributedDataContainerRequestAdvertisementInstantiator implements
 		AdvertisementFactory.Instantiator {
 
 	@Override
 	public String getAdvertisementType() {
-		return DistributedDataContainerAdvertisement.getAdvertisementType();
+		return DistributedDataContainerRequestAdvertisement
+				.getAdvertisementType();
 	}
 
 	@Override
 	public Advertisement newInstance() {
-		return new DistributedDataContainerAdvertisement();
+		return new DistributedDataContainerRequestAdvertisement();
 	}
 
 	@Override
 	public Advertisement newInstance(Element<?> root) {
-		return new DistributedDataContainerAdvertisement(root);
+		return new DistributedDataContainerRequestAdvertisement(root);
 	}
 
 }

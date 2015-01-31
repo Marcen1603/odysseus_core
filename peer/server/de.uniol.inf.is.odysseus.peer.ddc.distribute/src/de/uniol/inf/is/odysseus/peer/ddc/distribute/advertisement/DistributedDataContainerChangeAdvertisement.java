@@ -26,17 +26,17 @@ import com.google.common.base.Preconditions;
 
 /**
  * The JXTA Advertisement for DistributedDataContainer to tell other peers, that
- * a DDC is available.
+ * changes of a DDC are available.
  * 
  * @author ChrisToenjesDeye, Michael Brand
  * 
  */
-public class DistributedDataContainerAdvertisement extends Advertisement {
+public class DistributedDataContainerChangeAdvertisement extends Advertisement {
 	private static final Logger LOG = LoggerFactory
-			.getLogger(DistributedDataContainerAdvertisement.class);
+			.getLogger(DistributedDataContainerChangeAdvertisement.class);
 
 	// Tag constants for document
-	private static final String ADVERTISEMENT_TYPE = "jxta:DDCAdvertisement";
+	private static final String ADVERTISEMENT_TYPE = "jxta:DDCChangeAdvertisement";
 	private static final String ID_TAG = "id";
 	private static final String INITIATING_PEER_ID_TAG = "initiatingPeerId";
 	private static final String ADVERTISEMENT_UID = "advertisementUid";
@@ -56,7 +56,7 @@ public class DistributedDataContainerAdvertisement extends Advertisement {
 	/**
 	 * Default Constructor for @DDCAdvertisementInstantiator
 	 */
-	public DistributedDataContainerAdvertisement() {
+	public DistributedDataContainerChangeAdvertisement() {
 
 	}
 
@@ -66,13 +66,13 @@ public class DistributedDataContainerAdvertisement extends Advertisement {
 	 * @param root
 	 *            - the xml-Root-Element
 	 */
-	public DistributedDataContainerAdvertisement(Element<?> root) {
+	public DistributedDataContainerChangeAdvertisement(Element<?> root) {
 		final TextElement<?> doc = (TextElement<?>) Preconditions.checkNotNull(
 				root, "Root element must not be null!");
 		determineFields(doc);
 	}
 
-	public DistributedDataContainerAdvertisement(InputStream stream)
+	public DistributedDataContainerChangeAdvertisement(InputStream stream)
 			throws IOException {
 		this(StructuredDocumentFactory.newStructuredDocument(
 				MimeMediaType.XMLUTF8,
@@ -85,8 +85,8 @@ public class DistributedDataContainerAdvertisement extends Advertisement {
 	 * @param adv
 	 *            - The @DDCAdvertisement to copy from
 	 */
-	public DistributedDataContainerAdvertisement(
-			DistributedDataContainerAdvertisement adv) {
+	public DistributedDataContainerChangeAdvertisement(
+			DistributedDataContainerChangeAdvertisement adv) {
 		Preconditions.checkNotNull(adv,
 				"Advertisement to copy must not be null!");
 		this.id = adv.id;
@@ -224,11 +224,11 @@ public class DistributedDataContainerAdvertisement extends Advertisement {
 		if (this == obj) {
 			return true;
 		}
-		if (!(obj instanceof DistributedDataContainerAdvertisement)) {
+		if (!(obj instanceof DistributedDataContainerChangeAdvertisement)) {
 			return false;
 		}
 
-		final DistributedDataContainerAdvertisement other = (DistributedDataContainerAdvertisement) obj;
+		final DistributedDataContainerChangeAdvertisement other = (DistributedDataContainerChangeAdvertisement) obj;
 		return id.equals(other.id);
 	}
 

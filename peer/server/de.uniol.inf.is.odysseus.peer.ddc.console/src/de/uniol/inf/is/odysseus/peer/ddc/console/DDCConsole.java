@@ -16,6 +16,7 @@ import de.uniol.inf.is.odysseus.peer.ddc.DDCKey;
 import de.uniol.inf.is.odysseus.peer.ddc.IDistributedDataContainer;
 import de.uniol.inf.is.odysseus.peer.ddc.MissingDDCEntryException;
 import de.uniol.inf.is.odysseus.peer.ddc.distribute.advertisement.DistributedDataContainerAdvertisement;
+import de.uniol.inf.is.odysseus.peer.ddc.distribute.advertisement.DistributedDataContainerChangeAdvertisement;
 import de.uniol.inf.is.odysseus.peer.ddc.distribute.advertisement.sender.DistributedDataContainerAdvertisementGenerator;
 import de.uniol.inf.is.odysseus.peer.ddc.distribute.advertisement.sender.DistributedDataContainerAdvertisementSender;
 
@@ -690,10 +691,10 @@ public class DDCConsole implements CommandProvider {
 
 		}
 
-		DistributedDataContainerAdvertisement ddcAdvertisement = DistributedDataContainerAdvertisementGenerator
+		DistributedDataContainerChangeAdvertisement ddcAdvertisement = DistributedDataContainerAdvertisementGenerator
 				.getInstance().generateChanges();
 		DistributedDataContainerAdvertisementSender.getInstance()
-				.publishDDCAdvertisement(ddcAdvertisement);
+				.publishDDCChangeAdvertisement(ddcAdvertisement);
 		ci.println("Change distribution started");
 
 	}

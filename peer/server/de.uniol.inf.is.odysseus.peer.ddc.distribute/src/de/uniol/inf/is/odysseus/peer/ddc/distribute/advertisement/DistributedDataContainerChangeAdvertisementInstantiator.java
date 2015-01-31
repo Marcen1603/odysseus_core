@@ -10,22 +10,23 @@ import net.jxta.document.Element;
  * @author ChrisToenjesDeye
  * 
  */
-public class DistributedDataContainerAdvertisementInstantiator implements
+public class DistributedDataContainerChangeAdvertisementInstantiator implements
 		AdvertisementFactory.Instantiator {
 
 	@Override
 	public String getAdvertisementType() {
-		return DistributedDataContainerAdvertisement.getAdvertisementType();
+		return DistributedDataContainerChangeAdvertisement
+				.getAdvertisementType();
 	}
 
 	@Override
 	public Advertisement newInstance() {
-		return new DistributedDataContainerAdvertisement();
+		return new DistributedDataContainerChangeAdvertisement();
 	}
 
 	@Override
 	public Advertisement newInstance(Element<?> root) {
-		return new DistributedDataContainerAdvertisement(root);
+		return new DistributedDataContainerChangeAdvertisement(root);
 	}
 
 }
