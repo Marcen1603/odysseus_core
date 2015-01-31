@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.sports.distributor.webservice;
+package de.uniol.inf.is.odysseus.peer.rest.webservice;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -7,6 +7,9 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Enumeration;
 import java.util.Objects;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import net.jxta.document.Advertisement;
 import net.jxta.document.Attributable;
@@ -20,8 +23,8 @@ import net.jxta.id.ID;
 import net.jxta.id.IDFactory;
 import net.jxta.peer.PeerID;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
+
 
 import com.google.common.base.Preconditions;
 

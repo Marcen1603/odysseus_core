@@ -15,7 +15,8 @@ Require-Bundle: de.uniol.inf.is.odysseus.core;bundle-version="1.0.0",
  Jxta_2.6_Source,
  de.uniol.inf.is.odysseus.peer.distribute,
  de.uniol.inf.is.odysseus.peer.logging,
- de.uniol.inf.is.odysseus.rest
+ de.uniol.inf.is.odysseus.rest,
+ de.uniol.inf.is.odysseus.peer.rest
 Export-Package: de.uniol.inf.is.odysseus.sports.distributor.helper,
  de.uniol.inf.is.odysseus.sports.distributor.registry,
  de.uniol.inf.is.odysseus.sports.distributor.webservice

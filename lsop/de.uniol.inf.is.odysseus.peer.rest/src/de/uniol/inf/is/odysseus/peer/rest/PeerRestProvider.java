@@ -2,6 +2,9 @@ package de.uniol.inf.is.odysseus.peer.rest;
 
 import org.restlet.routing.Router;
 
+import de.uniol.inf.is.odysseus.peer.rest.serverresources.GetLocalQueriesServerResource;
+import de.uniol.inf.is.odysseus.peer.rest.serverresources.GetSharedQueryIdsServerResource;
+import de.uniol.inf.is.odysseus.peer.rest.serverresources.GetSharedQueryServerResource;
 import de.uniol.inf.is.odysseus.peer.rest.serverresources.PingMapServerResource;
 import de.uniol.inf.is.odysseus.rest.provider.IRestProvider;
 
@@ -15,6 +18,10 @@ public class PeerRestProvider implements IRestProvider {
 	@Override
 	public void attachServerResources(Router router) {
 		router.attach("/"+PingMapServerResource.PATH, PingMapServerResource.class);
+		router.attach("/"+GetLocalQueriesServerResource.PATH, GetLocalQueriesServerResource.class);
+		router.attach("/"+GetSharedQueryIdsServerResource.PATH, GetSharedQueryIdsServerResource.class);
+		router.attach("/"+GetSharedQueryServerResource.PATH, GetSharedQueryServerResource.class);
+
 	}
 
 }

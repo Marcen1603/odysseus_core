@@ -106,5 +106,12 @@ public interface IQueryPartController {
 	 * @param localQueryID local Query ID to add.
 	 */
 	void addLocalQueryToShared(ID sharedQueryID, int localQueryID);
+
+	
+	/**
+	 * Returns all shared query IDs
+	 * @return
+	 */
+	Collection<ID> getSharedQueryIds();
 	
 }

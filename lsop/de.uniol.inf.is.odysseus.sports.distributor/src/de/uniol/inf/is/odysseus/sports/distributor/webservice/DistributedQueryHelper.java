@@ -36,6 +36,8 @@ import de.uniol.inf.is.odysseus.peer.distribute.ILogicalQueryPart;
 import de.uniol.inf.is.odysseus.peer.distribute.IQueryPartController;
 import de.uniol.inf.is.odysseus.peer.distribute.listener.AbstractQueryDistributionListener;
 import de.uniol.inf.is.odysseus.peer.distribute.util.QueryDistributionNotifier;
+import de.uniol.inf.is.odysseus.peer.rest.webservice.WebserviceAdvertisementListener;
+import de.uniol.inf.is.odysseus.peer.rest.webservice.WebserviceAdvertisementSender;
 import de.uniol.inf.is.odysseus.rest.service.RestService;
 
 /**

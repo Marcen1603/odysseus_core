@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.sports.distributor.webservice;
+package de.uniol.inf.is.odysseus.peer.rest.webservice;
 
 import net.jxta.document.Advertisement;
 import net.jxta.document.AdvertisementFactory;

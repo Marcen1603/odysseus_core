@@ -584,4 +584,9 @@ public class QueryPartController implements IPlanModificationListener, IPeerComm
 		this.sharedQueryIDMap.put(localQueryID, sharedQueryID);
 	}
 
+	@Override
+	public Collection<ID> getSharedQueryIds() {
+		return this.peerIDMap.keySet();
+	}
+
 }
