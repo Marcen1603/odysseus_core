@@ -69,6 +69,12 @@ public class SportsHeatMapPO<T extends Tuple<?>> extends AbstractPipe<T, Tuple> 
 			xArray = numTilesX - 1;
 		if (yArray >= numTilesY)
 			yArray = numTilesY - 1;
+		
+		if (xArray < 0)
+			xArray = 0;
+		if (yArray < 0)
+			yArray = 0;
+			
 
 		if (!sportsHeatmap.heatmaps.containsKey(entityId)) {
 			// We don't have values for this entity
