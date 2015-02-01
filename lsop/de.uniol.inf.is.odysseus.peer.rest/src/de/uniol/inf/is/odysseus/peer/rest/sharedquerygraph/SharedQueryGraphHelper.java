@@ -108,9 +108,12 @@ public class SharedQueryGraphHelper {
 		if (operator instanceof JxtaReceiverAO) {
 			JxtaReceiverAO receiver = (JxtaReceiverAO) operator;
 			op.setSenderPeerId(receiver.getPeerID());
+			op.setPipeID(receiver.getPipeID());
+		
 		} else if(operator instanceof JxtaSenderAO) {
 			JxtaSenderAO sender = (JxtaSenderAO) operator;
 			op.setReceiverPeerId(sender.getPeerID());
+			op.setPipeID(sender.getPipeID());
 		}
 
 		if (operator instanceof StreamAO) {
@@ -127,7 +130,7 @@ public class SharedQueryGraphHelper {
 			if (!logOperators.contains(targetOp)) {
 				addOperator(logOperators, operators, targetOp);
 			} 
-			childs.put(subs.getSourceOutPort(), logOperators.indexOf(targetOp));
+			childs.put(logOperators.indexOf(targetOp), subs.getSourceOutPort());
 		}
 	}
 	

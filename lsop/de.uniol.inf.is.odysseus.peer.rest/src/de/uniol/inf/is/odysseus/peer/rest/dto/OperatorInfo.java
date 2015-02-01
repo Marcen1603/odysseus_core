@@ -15,6 +15,7 @@ public class OperatorInfo {
 	private String destinationName;
 	private String senderPeerId;
 	private String receiverPeerId;
+	private String pipeID;
 	
 	public OperatorInfo() {
 		
@@ -183,6 +184,16 @@ public class OperatorInfo {
 	public String getDestinationName() {
 		return destinationName;
 	}
+
+	public String getPipeID() {
+		return pipeID;
+	}
+
+	public void setPipeID(String pipeID) {
+		this.pipeID = pipeID;
+	}
+
+	
 	
 	
 	
