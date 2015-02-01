@@ -93,44 +93,47 @@ public class SharedQueryGraphHelper {
 		return queryInfo;
 	}
 	
-	private static void addOperator(List<ILogicalOperator> logOperators, List<OperatorInfo> operators, ILogicalOperator operator) {
-		logOperators.add(operator);
-		OperatorInfo op = new OperatorInfo();
-		op.setName(operator.getName());
-		op.setDestinationName(operator.getDestinationName());
-		op.setParameterInfos(operator.getParameterInfos());
-		op.setOutputSchema(createSchemaMap(operator.getOutputSchema()));
-		op.setClassName(operator.getClass().getSimpleName());
-		op.setHash(operator.hashCode());
-		op.setSource(operator.isSourceOperator());
-		op.setPipe(operator.isPipeOperator());
-		op.setSink(operator.isSinkOperator());
+	private static void addOperator(List<ILogicalOperator> logicalOperators, List<OperatorInfo> operatorInfos, ILogicalOperator operator) {
+		logicalOperators.add(operator);		
+		
+		OperatorInfo operatorInfo = new OperatorInfo();
 		if (operator instanceof JxtaReceiverAO) {
 			JxtaReceiverAO receiver = (JxtaReceiverAO) operator;
-			op.setSenderPeerId(receiver.getPeerID());
-			op.setPipeID(receiver.getPipeID());
+			operatorInfo.setPipeId(receiver.getPipeID());
+			operatorInfo.setReceiver(true);
 		
 		} else if(operator instanceof JxtaSenderAO) {
 			JxtaSenderAO sender = (JxtaSenderAO) operator;
-			op.setReceiverPeerId(sender.getPeerID());
-			op.setPipeID(sender.getPipeID());
-		}
+			operatorInfo.setPipeId(sender.getPipeID());
+			operatorInfo.setSender(true);			
+		} 
+		operatorInfo.setName(operator.getName());
+		operatorInfo.setDestinationName(operator.getDestinationName());
+		operatorInfo.setParameterInfos(operator.getParameterInfos());
+		operatorInfo.setOutputSchema(createSchemaMap(operator.getOutputSchema()));
+		operatorInfo.setClassName(operator.getClass().getSimpleName());
+		operatorInfo.setHash(operator.hashCode());
+		operatorInfo.setSource(operator.isSourceOperator());
+		operatorInfo.setPipe(operator.isPipeOperator());
+		operatorInfo.setSink(operator.isSinkOperator());		
+		operatorInfo.setOwnerIDs(operator.getOwnerIDs());	
+		operatorInfo.setPeerName(p2pNetworkManager.getLocalPeerName());		
 
 		if (operator instanceof StreamAO) {
-			op.setSource(true);
-			op.setPipe(false);
-			op.setSink(false);
+			operatorInfo.setSource(true);
+			operatorInfo.setPipe(false);
+			operatorInfo.setSink(false);
 		}
 
 		Map<Integer, Integer> childs = new HashMap<Integer, Integer>();
-		op.setChildOperators(childs);
-		operators.add(op);		
+		operatorInfo.setChildOperators(childs);
+		operatorInfos.add(operatorInfo);		
 		for (LogicalSubscription subs : operator.getSubscribedToSource()) {
 			ILogicalOperator targetOp = subs.getTarget();
-			if (!logOperators.contains(targetOp)) {
-				addOperator(logOperators, operators, targetOp);
+			if (!logicalOperators.contains(targetOp)) {
+				addOperator(logicalOperators, operatorInfos, targetOp);
 			} 
-			childs.put(logOperators.indexOf(targetOp), subs.getSourceOutPort());
+			childs.put(logicalOperators.indexOf(targetOp), subs.getSourceOutPort());
 		}
 	}
 	

@@ -13,36 +13,57 @@ public class OperatorInfo {
 	private String className;
 	private Map<String, String> parameters;
 	private String destinationName;
-	private String senderPeerId;
-	private String receiverPeerId;
-	private String pipeID;
+	private String pipeId;
+	private boolean sender;
+	private boolean receiver;
+	private String ownerIDs;
+	private String peerName;
 	
 	public OperatorInfo() {
 		
 	}
+	
+	
 
-	public String getSenderPeerId() {
-		return senderPeerId;
+
+	public String getPipeId() {
+		return pipeId;
 	}
 
 
 
-	public void setSenderPeerId(String senderPeerId) {
-		this.senderPeerId = senderPeerId;
+
+	public void setPipeId(String pipeId) {
+		this.pipeId = pipeId;
 	}
 
 
 
-	public String getReceiverPeerId() {
-		return receiverPeerId;
+
+	public boolean isSender() {
+		return sender;
 	}
 
 
 
-	public void setReceiverPeerId(String receiverPeerId) {
-		this.receiverPeerId = receiverPeerId;
+
+	public void setSender(boolean sender) {
+		this.sender = sender;
 	}
 
+
+
+
+	public boolean isReceiver() {
+		return receiver;
+	}
+
+
+
+
+	public void setReceiver(boolean receiver) {
+		this.receiver = receiver;
+	}
 
 
 
@@ -185,15 +206,30 @@ public class OperatorInfo {
 		return destinationName;
 	}
 
-	public String getPipeID() {
-		return pipeID;
-	}
 
-	public void setPipeID(String pipeID) {
-		this.pipeID = pipeID;
-	}
 
+
+	public void setOwnerIDs(String ownerIDs) {
+		this.ownerIDs = ownerIDs;
+	}	
 	
+	public String getOwnerIDs() {
+		return this.ownerIDs;
+	}
+
+
+
+
+	public void setPeerName(String peerName) {
+		this.peerName = peerName;
+	}
+
+
+
+
+	public String getPeerName() {
+		return peerName;
+	}
 	
 	
 	
