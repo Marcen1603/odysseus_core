@@ -60,6 +60,7 @@ import de.uniol.inf.is.odysseus.mep.MEP;
 import de.uniol.inf.is.odysseus.peer.ddc.MissingDDCEntryException;
 import de.uniol.inf.is.odysseus.relational.base.predicate.RelationalPredicate;
 import de.uniol.inf.is.odysseus.server.intervalapproach.logicaloperator.AssureHeartbeatAO;
+import de.uniol.inf.is.odysseus.sports.sportsql.logicaloperator.SportsHeatMapAO;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.ddcaccess.AbstractSportsDDCAccess;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.helper.SpaceUnitHelper;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.helper.TimeUnitHelper;
@@ -1229,6 +1230,12 @@ public class OperatorBuildHelper {
 		projectAo.setOutputSchemaWithList(sdfAttributes);
 
 		return projectAo;
+	}
+	
+	public static SportsHeatMapAO createHetMapAO(ILogicalOperator source) {
+		SportsHeatMapAO heatmap = new SportsHeatMapAO();
+		heatmap.subscribeToSource(source, 0, 0, source.getOutputSchema());
+		return heatmap;
 	}
 
 	/**
