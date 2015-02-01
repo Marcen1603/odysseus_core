@@ -299,7 +299,10 @@ public class RecoveryDynamicBackup implements IRecoveryDynamicBackup {
 						uri = new URI(peerId);
 						PeerID peerToHoldOn = PeerID.create(uri);
 
-						cRecoveryCommunicator.get().sendHoldOnMessage(peerToHoldOn, pipe, failedPeer);
+						boolean successfulSent = cRecoveryCommunicator.get().sendHoldOnMessage(peerToHoldOn, pipe, failedPeer);
+						if(!successfulSent){
+							LOG.error("Sending HoldOnMessage failed for peer " + peerToHoldOn + " while recovering " + failedPeer);
+						}
 					} catch (URISyntaxException e) {
 						e.printStackTrace();
 					}
