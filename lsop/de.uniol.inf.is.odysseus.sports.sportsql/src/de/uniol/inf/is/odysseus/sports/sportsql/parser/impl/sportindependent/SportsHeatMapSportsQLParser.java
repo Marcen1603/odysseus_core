@@ -14,11 +14,17 @@ import de.uniol.inf.is.odysseus.sports.sportsql.parser.ISportsQLParser;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.SportsQLParseException;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.SportsQLQuery;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.annotations.SportsQL;
+import de.uniol.inf.is.odysseus.sports.sportsql.parser.annotations.SportsQLParameter;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.buildhelper.OperatorBuildHelper;
+import de.uniol.inf.is.odysseus.sports.sportsql.parser.buildhelper.SportsQLParameterHelper;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.enums.GameType;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.enums.StatisticType;
+import de.uniol.inf.is.odysseus.sports.sportsql.parser.parameter.SportsQLIntegerParameter;
 
-@SportsQL(gameTypes = GameType.ALL, statisticTypes = { StatisticType.GLOBAL }, name = "heatmap", parameters = {})
+@SportsQL(gameTypes = GameType.ALL, statisticTypes = { StatisticType.GLOBAL }, name = "heatmap", parameters = {
+		@SportsQLParameter(name = "reduceLoadFactor", parameterClass = SportsQLIntegerParameter.class, mandatory = false),
+		@SportsQLParameter(name = "numTilesHorizontal", parameterClass = SportsQLIntegerParameter.class, mandatory = false),
+		@SportsQLParameter(name = "numTilesVertical", parameterClass = SportsQLIntegerParameter.class, mandatory = false) })
 public class SportsHeatMapSportsQLParser implements ISportsQLParser {
 
 	@Override
@@ -46,7 +52,25 @@ public class SportsHeatMapSportsQLParser implements ISportsQLParser {
 		allOperators.add(projectAO);
 
 		// 3. HeatMap
-		SportsHeatMapAO heatmap = OperatorBuildHelper.createHetMapAO(projectAO);
+		SportsQLIntegerParameter reduceLoadFactor = SportsQLParameterHelper.getIntegerParameter(sportsQL,
+				"reduceLoadFactor");
+		int reduceFactor = SportsHeatMapAO.REDUCE_LOAD_STANDARD_FACTOR;
+		if (reduceLoadFactor != null)
+			reduceFactor = reduceLoadFactor.getValue();
+
+		SportsQLIntegerParameter numTilesHorizontal = SportsQLParameterHelper.getIntegerParameter(sportsQL,
+				"numTilesHorizontal");
+		int numTilesX = SportsHeatMapAO.NUM_TIMES_HORIZONTAL_STANDARD;
+		if (numTilesHorizontal != null)
+			numTilesX = numTilesHorizontal.getValue();
+
+		SportsQLIntegerParameter numTilesVertical = SportsQLParameterHelper.getIntegerParameter(sportsQL,
+				"numTilesVertical");
+		int numTilesY = SportsHeatMapAO.NUM_TIMES_VERTICAL_STANDARD;
+		if (numTilesVertical != null)
+			numTilesY = numTilesVertical.getValue();
+
+		SportsHeatMapAO heatmap = OperatorBuildHelper.createHeatMapAO(projectAO, reduceFactor, numTilesX, numTilesY);
 		allOperators.add(heatmap);
 
 		return OperatorBuildHelper.finishQuery(heatmap, allOperators, sportsQL.getDisplayName());

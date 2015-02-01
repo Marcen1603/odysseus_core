@@ -27,8 +27,20 @@ public class SportsHeatMapPO<T extends Tuple<?>> extends AbstractPipe<T, Tuple> 
 	int pixelsPerSquareVertical = 100;
 
 	int reduceSendLoadCounter = 0;
+	int reduceLoadFacor = 1000;
 
 	public SportsHeatMapPO() {
+		initialize();
+	}
+
+	public SportsHeatMapPO(int reduceLoadFactor, int numTilesHorizontal, int numTilesVertical) {
+		this.reduceLoadFacor = reduceLoadFactor;
+		this.numTilesX = numTilesHorizontal;
+		this.numTilesY = numTilesVertical;
+		initialize();
+	}
+
+	private void initialize() {
 		try {
 			minX = (int) AbstractSportsDDCAccess.getFieldXMin();
 			minY = (int) AbstractSportsDDCAccess.getFieldYMin();
@@ -51,7 +63,7 @@ public class SportsHeatMapPO<T extends Tuple<?>> extends AbstractPipe<T, Tuple> 
 		return OutputMode.INPUT;
 	}
 
-	@SuppressWarnings({ "unchecked"})
+	@SuppressWarnings({ "unchecked" })
 	@Override
 	protected void process_next(T object, int port) {
 		int entityId = object.getAttribute(0);
@@ -63,18 +75,17 @@ public class SportsHeatMapPO<T extends Tuple<?>> extends AbstractPipe<T, Tuple> 
 
 		int xArray = (int) (newX / pixelsPerSquareHorizontal);
 		int yArray = (int) (newY / pixelsPerSquareVertical);
-		
+
 		// If the players leave the field (I guess)
 		if (xArray >= numTilesX)
 			xArray = numTilesX - 1;
 		if (yArray >= numTilesY)
 			yArray = numTilesY - 1;
-		
+
 		if (xArray < 0)
 			xArray = 0;
 		if (yArray < 0)
 			yArray = 0;
-			
 
 		if (!sportsHeatmap.heatmaps.containsKey(entityId)) {
 			// We don't have values for this entity
@@ -100,7 +111,7 @@ public class SportsHeatMapPO<T extends Tuple<?>> extends AbstractPipe<T, Tuple> 
 		}
 
 		reduceSendLoadCounter++;
-		if (reduceSendLoadCounter >= 1000) {
+		if (reduceSendLoadCounter >= reduceLoadFacor) {
 			try {
 				String serializedHeatMap = toString(sportsHeatmap.heatmaps);
 				String serializedMaxHeatMap = toString(sportsHeatmap.maxHeatValues);
@@ -114,13 +125,13 @@ public class SportsHeatMapPO<T extends Tuple<?>> extends AbstractPipe<T, Tuple> 
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			
+
 			reduceSendLoadCounter = 0;
 		}
 
 	}
 
-	@SuppressWarnings({"unchecked" })
+	@SuppressWarnings({ "unchecked" })
 	@Override
 	public AbstractPipe<T, T> clone() {
 		return new SportsHeatMapPO(this);

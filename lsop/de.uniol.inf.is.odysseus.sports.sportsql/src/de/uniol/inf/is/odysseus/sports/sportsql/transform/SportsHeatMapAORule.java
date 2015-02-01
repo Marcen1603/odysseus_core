@@ -14,7 +14,7 @@ public class SportsHeatMapAORule extends AbstractTransformationRule<SportsHeatMa
 	@Override
 	public void execute(SportsHeatMapAO operator, TransformationConfiguration config) throws RuleException {
 
-		SportsHeatMapPO<Tuple<?>> heatmap = new SportsHeatMapPO<Tuple<?>>();
+		SportsHeatMapPO<Tuple<?>> heatmap = new SportsHeatMapPO<Tuple<?>>(operator.getReduceLoadFacor(), operator.getNumTilesX(), operator.getNumTilesY());
 		defaultExecute(operator, heatmap, config, true, true);
 	}
 

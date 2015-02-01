@@ -4,6 +4,7 @@ import java.util.Map;
 
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.SportsQLQuery;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.parameter.ISportsQLParameter;
+import de.uniol.inf.is.odysseus.sports.sportsql.parser.parameter.SportsQLIntegerParameter;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.parameter.SportsQLSpaceParameter;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.parameter.SportsQLSpaceParameter.SpaceUnit;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.parameter.SportsQLTimeParameter;
@@ -45,6 +46,15 @@ public class SportsQLParameterHelper {
 		
 		// There was no space parameter: We want to get the whole space
 		return new SportsQLSpaceParameter(0, 0, 0, 0, SportsQLSpaceParameter.SpaceType.field, SpaceUnit.millimeters);
+	}
+	
+	public static SportsQLIntegerParameter getIntegerParameter(SportsQLQuery query, String paramName) {
+		for (Map.Entry<String, ISportsQLParameter> param : query.getParameters().entrySet()) {
+			if (param.getKey().equals(paramName)) {	
+				return (SportsQLIntegerParameter) param.getValue();
+			}
+		}
+		return null;
 	}
 	
 

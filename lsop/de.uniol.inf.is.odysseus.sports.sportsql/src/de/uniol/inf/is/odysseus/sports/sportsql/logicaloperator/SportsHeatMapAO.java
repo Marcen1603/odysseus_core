@@ -18,12 +18,37 @@ public class SportsHeatMapAO extends AbstractLogicalOperator {
 	 */
 	private static final long serialVersionUID = -5048701632775540705L;
 
+	public final static int REDUCE_LOAD_STANDARD_FACTOR = 1000;
+	public final static int NUM_TIMES_HORIZONTAL_STANDARD = 15;
+	public final static int NUM_TIMES_VERTICAL_STANDARD = 15;
+	
+	int reduceLoadFacor = REDUCE_LOAD_STANDARD_FACTOR;
+	int numTilesX = NUM_TIMES_HORIZONTAL_STANDARD;
+	int numTilesY = NUM_TIMES_VERTICAL_STANDARD;
+	
+	/**
+	 * Creates a heatmap with standard settings
+	 */
 	public SportsHeatMapAO() {
 
 	}
+	
+	/**
+	 * 
+	 * @param reduceLoadFactor The factor by which the load is reduced. If "1000", the map is only send every 1000 tuples of input
+	 * @param numTilesHorizontal The number of tiles used horizontal
+	 * @param numTilesVertical The number of tiles used vertical
+	 */
+	public SportsHeatMapAO(int reduceLoadFactor, int numTilesHorizontal, int numTilesVertical) {
+		this.reduceLoadFacor = reduceLoadFactor;
+		this.numTilesX = numTilesHorizontal;
+		this.numTilesY = numTilesVertical;
+	}
 
 	public SportsHeatMapAO(SportsHeatMapAO heatmap) {
-		// TODO Auto-generated constructor stub
+		this.reduceLoadFacor = heatmap.reduceLoadFacor;
+		this.numTilesX = heatmap.numTilesX;
+		this.numTilesY = heatmap.numTilesY;
 	}
 
 	@Override
@@ -46,5 +71,31 @@ public class SportsHeatMapAO extends AbstractLogicalOperator {
 
 		return getOutputSchema();
 	}
+
+	public int getReduceLoadFacor() {
+		return reduceLoadFacor;
+	}
+
+	public void setReduceLoadFacor(int reduceLoadFacor) {
+		this.reduceLoadFacor = reduceLoadFacor;
+	}
+
+	public int getNumTilesX() {
+		return numTilesX;
+	}
+
+	public void setNumTilesX(int numTilesX) {
+		this.numTilesX = numTilesX;
+	}
+
+	public int getNumTilesY() {
+		return numTilesY;
+	}
+
+	public void setNumTilesY(int numTilesY) {
+		this.numTilesY = numTilesY;
+	}
+	
+	
 
 }
