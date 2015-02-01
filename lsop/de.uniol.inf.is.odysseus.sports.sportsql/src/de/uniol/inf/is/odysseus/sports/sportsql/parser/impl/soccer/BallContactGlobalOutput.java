@@ -86,7 +86,7 @@ public class BallContactGlobalOutput {
 	 */
 	private final String radius = "400";
 	
-	private static String ATTRIBUTE_V= "v";
+	private static String ATTRIBUTE_V = "v";
 
 	/**
 	 * Return list of expressions for the ball
@@ -132,13 +132,11 @@ public class BallContactGlobalOutput {
 	 * 
 	 * @param soccerGameStreamAO
 	 *            Stream of the game
-	 * @param metadataStreamAO
-	 *            Stream of the metadata
 	 * @param sportsQL
 	 * @param allOperators
 	 * @return
-	 * @throws MissingDDCEntryException
 	 * @throws NumberFormatException
+	 * @throws MissingDDCEntryException
 	 */
 	@SuppressWarnings("rawtypes")
 	public ILogicalOperator getOutputOperator(
@@ -169,7 +167,7 @@ public class BallContactGlobalOutput {
 				.createSpaceSelect(spaceParameter, false, game_after_start);
 		allOperators.add(game_space);
 
-		// get only ball sensors
+		// get only ball sensors (route)
 		List<IPredicate> ballPredicates = new ArrayList<IPredicate>();
 		for (int sensorId : AbstractSportsDDCAccess.getBallEntityIds()) {
 			IPredicate ballPredicate = OperatorBuildHelper
@@ -185,6 +183,7 @@ public class BallContactGlobalOutput {
 		allOperators.add(split_balls);
 		predicates.clear();
 
+		// change detect
 		ArrayList<String> groupBy = new ArrayList<String>();
 		groupBy.add("entity_id");
 		
@@ -203,7 +202,7 @@ public class BallContactGlobalOutput {
 						ball_velocity_changes, sinkInPort, sinkOutPortBall, true);
 		allOperators.add(ball_position_map);
 
-		// window size = 1, advance = 1
+		// window
 		ILogicalOperator ball_window = OperatorBuildHelper
 				.createElementWindowAO(windowSize, windowAdvance, ball_position_map);
 		allOperators.add(ball_window);
@@ -214,7 +213,7 @@ public class BallContactGlobalOutput {
 						split_balls, sinkInPort, sinkOutPortPlayer, false);
 		allOperators.add(players_position_map);
 
-		// window size = 1, advance = 1
+		// window
 		ILogicalOperator players_window = OperatorBuildHelper
 				.createElementWindowAO(windowSize, windowAdvance, players_position_map);
 		allOperators.add(players_window);
@@ -244,6 +243,7 @@ public class BallContactGlobalOutput {
 		allOperators.add(ballContactDetected);
 		attributes.clear();
 
+		// clear timestamp
 		ILogicalOperator clearEndTimestamp = OperatorBuildHelper
 				.clearEndTimestamp(ballContactDetected);
 		allOperators.add(clearEndTimestamp);

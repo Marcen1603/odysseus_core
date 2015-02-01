@@ -5,15 +5,18 @@ import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.AggregateAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.MapAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.SDFExpressionParameter;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.peer.ddc.MissingDDCEntryException;
+import de.uniol.inf.is.odysseus.server.intervalapproach.logicaloperator.AssureHeartbeatAO;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.ISportsQLParser;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.SportsQLParseException;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.SportsQLQuery;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.annotations.SportsQL;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.annotations.SportsQLParameter;
+import de.uniol.inf.is.odysseus.sports.sportsql.parser.buildhelper.IntermediateSchemaAttributes;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.buildhelper.OperatorBuildHelper;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.enums.GameType;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.enums.StatisticType;
@@ -43,6 +46,7 @@ import de.uniol.inf.is.odysseus.sports.sportsql.parser.parameter.SportsQLTimePar
 		@SportsQLParameter(name = "space", parameterClass = SportsQLSpaceParameter.class, mandatory = false) })
 public class BallContactTeamSportsQLParser implements ISportsQLParser{
 	
+	private static final int HEARTBEAT = 5000;
 	private final int dumpAtValueCount = 1;
 	 
 	@Override
@@ -80,7 +84,38 @@ public class BallContactTeamSportsQLParser implements ISportsQLParser{
 		MapAO percentageMap = OperatorBuildHelper.createMapAO(passesStateMapExpressions, sumAndCount, 0, 0, true);
 		allOperators.add(percentageMap);
 		
-		return OperatorBuildHelper.finishQuery(percentageMap, allOperators, sportsQL.getDisplayName());
+		// clear timestamp
+		ILogicalOperator clearEndTimestamp = OperatorBuildHelper
+				.clearEndTimestamp(percentageMap);
+		allOperators.add(clearEndTimestamp);
+
+		// Assure heatbeat every x seconds
+		AssureHeartbeatAO assureHeartbeatAO = OperatorBuildHelper
+				.createHeartbeat(HEARTBEAT, clearEndTimestamp);
+		allOperators.add(assureHeartbeatAO);
+
+		// Result Aggregate
+		List<String> resultAggregateFunctions = new ArrayList<String>();
+		resultAggregateFunctions.add("LAST");
+
+		List<String> resultAggregateInputAttributeNames = new ArrayList<String>();
+		resultAggregateInputAttributeNames.add("ballContactCount");
+
+		List<String> resultAggregateOutputAttributeNames = new ArrayList<String>();
+		resultAggregateOutputAttributeNames.add("ballContactCount");
+
+		List<String> resultAggregateGroupBys = new ArrayList<String>();
+		resultAggregateGroupBys.add(IntermediateSchemaAttributes.TEAM_ID);
+
+		AggregateAO resultAggregate = OperatorBuildHelper
+				.createAggregateAO(resultAggregateFunctions,
+						resultAggregateGroupBys,
+						resultAggregateInputAttributeNames,
+						resultAggregateOutputAttributeNames, null,
+						assureHeartbeatAO, 1);
+
+		return OperatorBuildHelper.finishQuery(resultAggregate, allOperators,
+				sportsQL.getDisplayName());
 	}
 
 }

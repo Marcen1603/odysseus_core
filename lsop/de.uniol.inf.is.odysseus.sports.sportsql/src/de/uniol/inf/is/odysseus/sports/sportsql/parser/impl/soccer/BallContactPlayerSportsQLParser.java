@@ -7,6 +7,7 @@ import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.peer.ddc.MissingDDCEntryException;
+import de.uniol.inf.is.odysseus.server.intervalapproach.logicaloperator.AssureHeartbeatAO;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.ISportsQLParser;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.SportsQLParseException;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.SportsQLQuery;
@@ -43,23 +44,35 @@ import de.uniol.inf.is.odysseus.sports.sportsql.parser.parameter.SportsQLTimePar
 		)
 public class BallContactPlayerSportsQLParser implements ISportsQLParser {
 	
+	private static final int HEARTBEAT = 5000;
 	private final int dumpAtValueCount = 1;
 
 	@Override
 	public ILogicalQuery parse(ISession session, SportsQLQuery sportsQL)
 			throws SportsQLParseException, NumberFormatException, MissingDDCEntryException {
 		
-	ArrayList<ILogicalOperator> allOperators = new ArrayList<ILogicalOperator>();
-		
+		ArrayList<ILogicalOperator> allOperators = new ArrayList<ILogicalOperator>();
+	
 		//Get all ball contacts of every player by using the global parser
-		BallContactGlobalOutput ballcontactsGlobal = new BallContactGlobalOutput();	
-		ILogicalOperator globalOutput = ballcontactsGlobal.getOutputOperator(OperatorBuildHelper.createGameStreamAO(session), sportsQL, allOperators);
+		BallContactGlobalOutput globalParser = new BallContactGlobalOutput();
+		ILogicalOperator globalOutput = globalParser.getOutputOperator(OperatorBuildHelper.createGameStreamAO(session), sportsQL, allOperators);
+
+		// clear timestamp
+		ILogicalOperator clearEndTimestamp = OperatorBuildHelper
+				.clearEndTimestamp(globalOutput);
+		allOperators.add(clearEndTimestamp);
+	
+		// 2. Assure heatbeat every x seconds
+		AssureHeartbeatAO assureHeartbeatAO = OperatorBuildHelper
+				.createHeartbeat(HEARTBEAT, clearEndTimestamp);
+		allOperators.add(assureHeartbeatAO);
 		
+		// 3. aggregate
 		List<String> groupCount = new ArrayList<String>();
 		groupCount.add("entity_id");
 		groupCount.add("team_id");
 		
-		ILogicalOperator countOutput = OperatorBuildHelper.createAggregateAO("count", groupCount, "entity_id", "ballContactCount", "Integer", globalOutput, dumpAtValueCount);
+		ILogicalOperator countOutput = OperatorBuildHelper.createAggregateAO("count", groupCount, "entity_id", "ballContactCount", "Integer", assureHeartbeatAO, dumpAtValueCount);
 		allOperators.add(countOutput);		
 		
 		return OperatorBuildHelper.finishQuery(countOutput, allOperators, sportsQL.getDisplayName());
