@@ -46,6 +46,7 @@ public class CSVFileSource extends AbstractAccessAO {
 		return getOption(FileHandler.FILENAME);
 	}
 	
+	@Override
 	@Parameter(type = CreateSDFAttributeParameter.class, name = "Schema", isList = true, optional = false, doc = "The output schema.")
 	public void setAttributes(List<SDFAttribute> attributes) {
 		super.setAttributes(attributes);
