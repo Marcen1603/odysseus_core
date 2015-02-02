@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 
 import net.jxta.peer.PeerID;
@@ -33,6 +34,10 @@ public class SocketDataTransmissionSender extends EndpointDataTransmissionSender
 
 	private final Map<PeerID, ServerSocket> serverSocketMap = Maps.newConcurrentMap();
 	private final Map<PeerID, Socket> clientSocketMap = Maps.newConcurrentMap();
+	private final List<PeerID> openCallers = Lists.newArrayList();
+	private final Map<PeerID, List<byte[]>> waitingBuffer = Maps.newConcurrentMap();
+	private final List<byte[]> globalBuffer = Lists.newArrayList();
+
 	private final Collection<PeerID> toRemoveList = Lists.newArrayList();
 	private Object semaphore = new Object();
 
@@ -48,6 +53,9 @@ public class SocketDataTransmissionSender extends EndpointDataTransmissionSender
 	protected void processOpenMessage(final PeerID senderPeer, OpenMessage message) {
 		super.processOpenMessage(senderPeer, message);
 
+		openCallers.add(senderPeer);
+		waitingBuffer.put(senderPeer, Lists.<byte[]> newArrayList());
+
 		Thread acceptThread = new Thread(new Runnable() {
 			@Override
 			public void run() {
@@ -55,12 +63,12 @@ public class SocketDataTransmissionSender extends EndpointDataTransmissionSender
 					ServerSocket serverSocket = new ServerSocket(0);
 					serverSocketMap.put(senderPeer, serverSocket);
 
-					LOG.debug("Opened (unaccepted) server socket for {} on port {}.", PeerDictionary.getInstance()
-							.getRemotePeerName(senderPeer), serverSocket.getLocalPort());
+					LOG.debug("Opened (unaccepted) server socket for {} on port {}.", PeerDictionary.getInstance().getRemotePeerName(senderPeer), serverSocket.getLocalPort());
 					sendPortMessage(serverSocket.getLocalPort(), senderPeer);
+
 					Socket clientSocket = serverSocket.accept();
-					LOG.debug("Server socket on port {} was accepted from peer {}", serverSocket.getLocalPort(),
-							PeerDictionary.getInstance().getRemotePeerName(senderPeer));
+					LOG.debug("Server socket on port {} was accepted from peer {}", serverSocket.getLocalPort(), PeerDictionary.getInstance().getRemotePeerName(senderPeer));
+
 					clientSocketMap.put(senderPeer, clientSocket);
 					for (PeerID peerID : clientSocketMap.keySet()) {
 						LOG.debug("clientSocketMap contains " + peerID.toString());
@@ -82,8 +90,7 @@ public class SocketDataTransmissionSender extends EndpointDataTransmissionSender
 		// Repeat this message until we get an PortAckMessage
 		portMessageRepeater = new RepeatingMessageSend(peerCommunicator, msg, senderPeer);
 		portMessageRepeater.start();
-		LOG.debug("Startet to send port-messages for port " + msg.getPort() + " to {}", PeerDictionary.getInstance()
-				.getRemotePeerName(senderPeer));
+		LOG.debug("Startet to send port-messages for port " + msg.getPort() + " to {}", PeerDictionary.getInstance().getRemotePeerName(senderPeer));
 	}
 
 	@Override
@@ -93,8 +100,7 @@ public class SocketDataTransmissionSender extends EndpointDataTransmissionSender
 			synchronized (semaphore) {
 				if (portMessageRepeater != null) {
 					if (portAckMessage.getId() == getId() && portMessageRepeater != null) {
-						LOG.debug("Received portAckMessage for port " + portAckMessage.getPort() + "  from {}",
-								PeerDictionary.getInstance().getRemotePeerName(senderPeer));
+						LOG.debug("Received portAckMessage for port " + portAckMessage.getPort() + "  from {}", PeerDictionary.getInstance().getRemotePeerName(senderPeer));
 						portMessageRepeater.stopRunning();
 						portMessageRepeater = null;
 					}
@@ -123,6 +129,8 @@ public class SocketDataTransmissionSender extends EndpointDataTransmissionSender
 			}
 		}
 		clientSocketMap.clear();
+		openCallers.remove(senderPeer);
+		waitingBuffer.remove(senderPeer);
 
 		super.processCloseMessage(senderPeer, message);
 	}
@@ -139,21 +147,54 @@ public class SocketDataTransmissionSender extends EndpointDataTransmissionSender
 	}
 
 	private void sendImpl(byte[] data, byte flag) {
-		toRemoveList.clear();
 		byte[] rawData = new byte[data.length + 5];
 		insertInt(rawData, 0, data.length + 1);
 		rawData[4] = flag;
 		System.arraycopy(data, 0, rawData, 5, data.length);
 
-		for (PeerID pid : clientSocketMap.keySet()) {
-			try {
-				Socket cs = clientSocketMap.get(pid);
-				cs.getOutputStream().write(rawData);
-				cs.getOutputStream().flush();
+		sendDirect(rawData);
+	}
 
-			} catch (IOException e) {
-				LOG.error("Could not send data", e);
-				toRemoveList.add(pid);
+	private void sendDirect(byte[] rawData) {
+
+		if (openCallers.isEmpty()) {
+			globalBuffer.add(rawData);
+			return;
+		}
+
+		toRemoveList.clear();
+		for (PeerID pid : openCallers) {
+
+			if (clientSocketMap.containsKey(pid)) {
+
+				try {
+					Socket cs = clientSocketMap.get(pid);
+					
+					if (!globalBuffer.isEmpty()) {
+						for (byte[] bufferedData : globalBuffer) {
+							cs.getOutputStream().write(bufferedData);
+							cs.getOutputStream().flush();
+						}
+						globalBuffer.clear();
+					}
+
+					if (waitingBuffer.containsKey(pid)) {
+						for (byte[] bufferedData : waitingBuffer.remove(pid)) {
+							cs.getOutputStream().write(bufferedData);
+							cs.getOutputStream().flush();
+						}
+					}
+
+
+					cs.getOutputStream().write(rawData);
+					cs.getOutputStream().flush();
+
+				} catch (IOException e) {
+					LOG.error("Could not send data", e);
+					toRemoveList.add(pid);
+				}
+			} else {
+				waitingBuffer.get(pid).add(rawData);
 			}
 		}
 
@@ -174,6 +215,9 @@ public class SocketDataTransmissionSender extends EndpointDataTransmissionSender
 					} catch (IOException e) {
 					}
 				}
+
+				openCallers.remove(pid);
+				waitingBuffer.remove(pid);
 			}
 		}
 	}

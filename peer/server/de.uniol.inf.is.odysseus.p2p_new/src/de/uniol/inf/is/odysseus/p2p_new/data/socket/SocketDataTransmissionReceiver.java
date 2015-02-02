@@ -35,7 +35,7 @@ public class SocketDataTransmissionReceiver extends EndpointDataTransmissionRece
 	private Socket socket;
 	private InetAddress address;
 	private Boolean receiving = false;
-
+	
 	public SocketDataTransmissionReceiver(IPeerCommunicator communicator, String peerID, String id) throws DataTransmissionException {
 		super(communicator, peerID, id);
 
@@ -118,6 +118,7 @@ public class SocketDataTransmissionReceiver extends EndpointDataTransmissionRece
 										LOG.debug("Reached end of data stream. Socket closed...");
 										break;
 									} else if (bytesRead > 0) {
+
 										byte[] msg = new byte[bytesRead];
 										System.arraycopy(buffer, 0, msg, 0, bytesRead);
 
@@ -187,6 +188,7 @@ public class SocketDataTransmissionReceiver extends EndpointDataTransmissionRece
 	private void processBytes(byte[] msg) {
 		byte[] realMsg = new byte[msg.length - 1];
 		System.arraycopy(msg, 1, realMsg, 0, realMsg.length);
+
 
 		byte flag = msg[0];
 		if (flag == 0) {
