@@ -16,6 +16,7 @@ import de.uniol.inf.is.odysseus.core.monitoring.IMonitoringData;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.monitoring.physicaloperator.MonitoringDataTypes;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.push.ReceiverPO;
 import de.uniol.inf.is.odysseus.core.streamconnection.DefaultStreamConnection;
@@ -48,7 +49,13 @@ public class DataSourceManager {
 		if (!connectionMap.containsKey(source)) {
 			LOG.debug("Source {} is new", source);
 
-			ISampling[] samplers = new ISampling[source.getOutputSchema().size()];
+			SDFSchema outputSchema = source.getOutputSchema();
+			if( outputSchema == null ) {
+				LOG.warn("Operator {} has no output schema.", source);
+				return;
+			}
+			
+			ISampling[] samplers = new ISampling[outputSchema.size()];
 			List<Integer> validIndicesList = Lists.newArrayList();
 			for (int index = 0; index < source.getOutputSchema().size(); index++) {
 				SDFAttribute attribute = source.getOutputSchema().get(index);
