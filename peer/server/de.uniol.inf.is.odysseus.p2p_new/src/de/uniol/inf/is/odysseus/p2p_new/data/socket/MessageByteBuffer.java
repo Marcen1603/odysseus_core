@@ -1,9 +1,12 @@
 package de.uniol.inf.is.odysseus.p2p_new.data.socket;
 
 import java.nio.ByteBuffer;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.collect.Lists;
 
 import de.uniol.inf.is.odysseus.p2p_new.activator.P2PNewPlugIn;
 
@@ -17,7 +20,9 @@ public class MessageByteBuffer {
 	private int currentSize = 0;
 	private int size = -1;
 	
-	private byte[] packet = null;
+	private final List<byte[]> packets1 = Lists.newLinkedList();
+	private final List<byte[]> packets2 = Lists.newLinkedList();
+	private List<byte[]> packetsPointer = packets1;
 	
 	public MessageByteBuffer() {
 
@@ -57,8 +62,10 @@ public class MessageByteBuffer {
 					// 2. das fertige Objekt erstellen
 					buffer.flip();
 					LOG.debug("Creating object. Size:" + size + " buffer.remaining():" +buffer.remaining());
-					packet = new byte[size];
+					byte[] packet = new byte[size];
 					buffer.get(packet);
+					packetsPointer.add(packet);
+					
 					buffer.clear();
 					
 					size = -1;
@@ -70,13 +77,16 @@ public class MessageByteBuffer {
 		}
 	}
 
-	public byte[] getPacket() {
-		if( packet != null ) {
-			byte[] p = packet;
-			packet = null;
-			return p;
-		}
+	public List<byte[]> getPackets() {
+		List<byte[]> result = packetsPointer;
 		
-		return null;
+		if( packetsPointer == packets1 ) {
+			packetsPointer = packets2;
+		} else {
+			packetsPointer = packets1;
+		}
+		packetsPointer.clear();
+		
+		return result;
 	}
 }

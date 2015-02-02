@@ -6,6 +6,7 @@ import java.net.InetAddress;
 import java.net.Socket;
 import java.net.SocketException;
 import java.net.UnknownHostException;
+import java.util.List;
 
 import net.jxta.peer.PeerID;
 
@@ -35,6 +36,8 @@ public class SocketDataTransmissionReceiver extends EndpointDataTransmissionRece
 	private Socket socket;
 	private InetAddress address;
 	private Boolean receiving = false;
+//	private int receivedBytes = 0;
+//	private int packageCount = 0;
 	
 	public SocketDataTransmissionReceiver(IPeerCommunicator communicator, String peerID, String id) throws DataTransmissionException {
 		super(communicator, peerID, id);
@@ -118,14 +121,18 @@ public class SocketDataTransmissionReceiver extends EndpointDataTransmissionRece
 										LOG.debug("Reached end of data stream. Socket closed...");
 										break;
 									} else if (bytesRead > 0) {
-
+//										receivedBytes +=  bytesRead;
+										
+//										System.err.println("Received package : " + bytesRead + " --> " + receivedBytes);
+//										System.err.println("Packages : " + (packageCount++));
+										
 										byte[] msg = new byte[bytesRead];
 										System.arraycopy(buffer, 0, msg, 0, bytesRead);
 
 										mb.put(msg);
 
-										byte[] packet = mb.getPacket();
-										if (packet != null) {
+										List<byte[]> packets = mb.getPackets();
+										for (byte[] packet : packets ) {
 											processBytes(packet);
 										}
 									}
@@ -189,6 +196,7 @@ public class SocketDataTransmissionReceiver extends EndpointDataTransmissionRece
 		byte[] realMsg = new byte[msg.length - 1];
 		System.arraycopy(msg, 1, realMsg, 0, realMsg.length);
 
+//		System.err.println("Received packages " + (packageCount++));
 
 		byte flag = msg[0];
 		if (flag == 0) {

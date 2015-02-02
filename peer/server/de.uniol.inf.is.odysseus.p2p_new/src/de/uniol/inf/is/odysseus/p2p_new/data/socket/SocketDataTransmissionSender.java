@@ -42,6 +42,8 @@ public class SocketDataTransmissionSender extends EndpointDataTransmissionSender
 	private Object semaphore = new Object();
 
 	private RepeatingMessageSend portMessageRepeater;
+	
+//	private int sendBytes = 0;
 
 	public SocketDataTransmissionSender(IPeerCommunicator communicator, String peerID, String id) {
 		super(communicator, peerID, id);
@@ -174,6 +176,9 @@ public class SocketDataTransmissionSender extends EndpointDataTransmissionSender
 						for (byte[] bufferedData : globalBuffer) {
 							cs.getOutputStream().write(bufferedData);
 							cs.getOutputStream().flush();
+							
+//							sendBytes += bufferedData.length;
+//							System.err.println("Send bytes " + bufferedData.length + " --> " + sendBytes);
 						}
 						globalBuffer.clear();
 					}
@@ -182,12 +187,17 @@ public class SocketDataTransmissionSender extends EndpointDataTransmissionSender
 						for (byte[] bufferedData : waitingBuffer.remove(pid)) {
 							cs.getOutputStream().write(bufferedData);
 							cs.getOutputStream().flush();
+//							sendBytes += bufferedData.length;
+//							System.err.println("Send bytes " + bufferedData.length + " --> " + sendBytes);
 						}
 					}
 
 
 					cs.getOutputStream().write(rawData);
 					cs.getOutputStream().flush();
+					
+//					sendBytes += rawData.length;
+//					System.err.println("Send bytes " + rawData.length + " --> " + sendBytes);
 
 				} catch (IOException e) {
 					LOG.error("Could not send data", e);
