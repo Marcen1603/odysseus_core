@@ -1,7 +1,7 @@
 package de.uniol.inf.is.odysseus.peer.ddc.distribute.communication;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
@@ -13,13 +13,17 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
+import de.uniol.inf.is.odysseus.core.collection.IPair;
+import de.uniol.inf.is.odysseus.core.collection.Pair;
 import de.uniol.inf.is.odysseus.p2p_new.IAdvertisementDiscovererListener;
 import de.uniol.inf.is.odysseus.p2p_new.IMessage;
 import de.uniol.inf.is.odysseus.p2p_new.IP2PNetworkManager;
 import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicator;
 import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicatorListener;
 import de.uniol.inf.is.odysseus.p2p_new.PeerCommunicationException;
+import de.uniol.inf.is.odysseus.p2p_new.RepeatingMessageSend;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.IPeerDictionary;
 import de.uniol.inf.is.odysseus.peer.ddc.DDCEntry;
 import de.uniol.inf.is.odysseus.peer.ddc.DDCKey;
@@ -30,6 +34,7 @@ import de.uniol.inf.is.odysseus.peer.ddc.distribute.advertisement.DistributedDat
 import de.uniol.inf.is.odysseus.peer.ddc.distribute.advertisement.DistributedDataContainerRequestAdvertisement;
 import de.uniol.inf.is.odysseus.peer.ddc.distribute.advertisement.sender.DistributedDataContainerAdvertisementGenerator;
 import de.uniol.inf.is.odysseus.peer.ddc.distribute.advertisement.sender.DistributedDataContainerChange;
+import de.uniol.inf.is.odysseus.peer.ddc.distribute.message.DDCAckMessage;
 import de.uniol.inf.is.odysseus.peer.ddc.distribute.message.DDCMessage;
 import de.uniol.inf.is.odysseus.peer.ddc.distribute.message.DDCRequest;
 
@@ -49,9 +54,15 @@ public class DistributedDataContainerCommunicator implements
 	private static IDistributedDataContainer ddc;
 
 	private IP2PNetworkManager p2pNetworkManager;
-	private List<UUID> receivedDDCAdvertisements = new ArrayList<UUID>();
-	private List<UUID> receivedRequests = new ArrayList<UUID>();
-	private List<UUID> receivedMessages = new ArrayList<UUID>();
+
+	private final Map<IPair<UUID, PeerID>, RepeatingMessageSend> requestSenderMap = Maps
+			.newHashMap();
+	private final Map<IPair<UUID, PeerID>, RepeatingMessageSend> ddcSenderMap = Maps
+			.newHashMap();
+	private final List<UUID> receivedDDCAdvertisements = Lists.newArrayList();
+	private final List<IPair<UUID, PeerID>> receivedRequests = Lists.newArrayList();
+	private final List<IPair<UUID, PeerID>> receivedMessages = Lists.newArrayList();
+	private final List<IPair<UUID, PeerID>> receivedAcks = Lists.newArrayList();
 	private static IPeerCommunicator peerCommunicator;
 
 	// called by OSGi-DS
@@ -94,9 +105,11 @@ public class DistributedDataContainerCommunicator implements
 		peerCommunicator = serv;
 		peerCommunicator.registerMessageType(DDCRequest.class);
 		peerCommunicator.registerMessageType(DDCMessage.class);
+		peerCommunicator.registerMessageType(DDCAckMessage.class);
 
 		peerCommunicator.addListener(this, DDCRequest.class);
 		peerCommunicator.addListener(this, DDCMessage.class);
+		peerCommunicator.addListener(this, DDCAckMessage.class);
 	}
 
 	// called by OSGi-DS
@@ -141,14 +154,18 @@ public class DistributedDataContainerCommunicator implements
 			if (!receivedDDCAdvertisements.contains(advId)
 					&& !peerId.equals(p2pNetworkManager.getLocalPeerID())) {
 				LOG.debug("Got new DDC advertisment.");
-				receivedDDCAdvertisements.add(advId);
+				synchronized (receivedDDCAdvertisements) {
+					receivedDDCAdvertisements.add(advId);
+				}
 				DDCRequest request = new DDCRequest();
 				request.setAdvertisementId(advId);
-				try {
-					peerCommunicator.send(peerId, request);
-				} catch (PeerCommunicationException e) {
-					LOG.error("Could not send DDC request!", e);
+
+				RepeatingMessageSend sender = new RepeatingMessageSend(
+						peerCommunicator, request, peerId);
+				synchronized (this.requestSenderMap) {
+					this.requestSenderMap.put(new Pair<UUID, PeerID>(advId, peerId), sender);
 				}
+				sender.start();
 			}
 		} else if (advertisement instanceof DistributedDataContainerChangeAdvertisement) {
 			DistributedDataContainerChangeAdvertisement ddcAdvertisement = (DistributedDataContainerChangeAdvertisement) advertisement;
@@ -158,15 +175,19 @@ public class DistributedDataContainerCommunicator implements
 			if (!receivedDDCAdvertisements.contains(advId)
 					&& !peerId.equals(p2pNetworkManager.getLocalPeerID())) {
 				LOG.debug("Got new DDC change advertisment.");
-				receivedDDCAdvertisements.add(advId);
+				synchronized (receivedDDCAdvertisements) {
+					receivedDDCAdvertisements.add(advId);
+				}
 				DDCRequest request = new DDCRequest();
 				request.setAdvertisementId(advId);
 				request.setChangeRequest(true);
-				try {
-					peerCommunicator.send(peerId, request);
-				} catch (PeerCommunicationException e) {
-					LOG.error("Could not send DDC change request!", e);
+
+				RepeatingMessageSend sender = new RepeatingMessageSend(
+						peerCommunicator, request, peerId);
+				synchronized (this.requestSenderMap) {
+					this.requestSenderMap.put(new Pair<UUID, PeerID>(advId, peerId), sender);
 				}
+				sender.start();
 			}
 		} else if (advertisement instanceof DistributedDataContainerRequestAdvertisement) {
 			DistributedDataContainerRequestAdvertisement ddcAdvertisement = (DistributedDataContainerRequestAdvertisement) advertisement;
@@ -176,7 +197,9 @@ public class DistributedDataContainerCommunicator implements
 			if (!receivedDDCAdvertisements.contains(advId)
 					&& !peerId.equals(p2pNetworkManager.getLocalPeerID())) {
 				LOG.debug("Got new DDC request advertisment.");
-				receivedDDCAdvertisements.add(advId);
+				synchronized (receivedDDCAdvertisements) {
+					receivedDDCAdvertisements.add(advId);
+				}
 				DistributedDataContainerAdvertisementGenerator.getInstance()
 						.disableListeningForChanges();
 				DDCMessage response = new DDCMessage();
@@ -190,14 +213,17 @@ public class DistributedDataContainerCommunicator implements
 					}
 				}
 				response.setEntriesAdded(entries_added);
-				try {
-					peerCommunicator.send(peerId, response);
-				} catch (PeerCommunicationException e) {
-					LOG.error("Could not send DDC message!", e);
-				}
 				// enable listening for changes after changes are written to ddc
 				DistributedDataContainerAdvertisementGenerator.getInstance()
 						.enableListeningForChanges();
+
+				RepeatingMessageSend sender = new RepeatingMessageSend(
+						peerCommunicator, response, peerId);
+				synchronized (this.ddcSenderMap) {
+					this.ddcSenderMap.put(new Pair<UUID, PeerID>(advId, peerId),
+							sender);
+				}
+				sender.start();
 			}
 		}
 	}
@@ -213,9 +239,12 @@ public class DistributedDataContainerCommunicator implements
 		if (message instanceof DDCRequest) {
 			DDCRequest ddcRequest = (DDCRequest) message;
 			UUID advId = ddcRequest.getAdvertisementId();
-			if (!receivedRequests.contains(advId)) {
+			IPair<UUID, PeerID> pair = new Pair<UUID, PeerID>(advId, senderPeer);
+			if (!receivedRequests.contains(pair)) {
 				LOG.debug("Got new DDC request.");
-				receivedRequests.add(advId);
+				synchronized (receivedRequests) {
+					receivedRequests.add(pair);
+				}
 				DistributedDataContainerAdvertisementGenerator.getInstance()
 						.disableListeningForChanges();
 				DDCMessage response = new DDCMessage();
@@ -249,11 +278,14 @@ public class DistributedDataContainerCommunicator implements
 					}
 				}
 				response.setEntriesAdded(entries_added);
-				try {
-					peerCommunicator.send(senderPeer, response);
-				} catch (PeerCommunicationException e) {
-					LOG.error("Could not send DDC message!", e);
+
+				RepeatingMessageSend sender = new RepeatingMessageSend(
+						peerCommunicator, response, senderPeer);
+				synchronized (this.ddcSenderMap) {
+					this.ddcSenderMap.put(pair, sender);
 				}
+				sender.start();
+
 				// enable listening for changes after changes are written to ddc
 				DistributedDataContainerAdvertisementGenerator.getInstance()
 						.enableListeningForChanges();
@@ -261,9 +293,31 @@ public class DistributedDataContainerCommunicator implements
 		} else if (message instanceof DDCMessage) {
 			DDCMessage ddcMessage = (DDCMessage) message;
 			UUID advId = ddcMessage.getAdvertisementId();
-			if (!receivedMessages.contains(advId)) {
+			IPair<UUID, PeerID> pair = new Pair<UUID, PeerID>(advId, senderPeer);
+			if (!receivedMessages.contains(pair)) {
 				LOG.debug("Got new DDC message.");
-				receivedMessages.add(advId);
+				synchronized (receivedMessages) {
+					receivedMessages.add(pair);
+				}
+
+				// stop sending requests
+				synchronized (this.requestSenderMap) {
+					if (this.requestSenderMap.containsKey(pair)) {
+						RepeatingMessageSend sender = this.requestSenderMap
+								.remove(pair);
+						sender.stopRunning();
+					}
+				}
+
+				// send ack
+				try {
+					DDCAckMessage response = new DDCAckMessage();
+					response.setAdvertisementId(advId);
+					peerCommunicator.send(senderPeer, response);
+				} catch (PeerCommunicationException e) {
+					LOG.error("Could not send DDC ack!");
+				}
+
 				DistributedDataContainerAdvertisementGenerator.getInstance()
 						.disableListeningForChanges();
 				for (DDCEntry entry : ddcMessage.getEntriesAdded()) {
@@ -275,6 +329,24 @@ public class DistributedDataContainerCommunicator implements
 				// enable listening for changes after changes are written to ddc
 				DistributedDataContainerAdvertisementGenerator.getInstance()
 						.enableListeningForChanges();
+			}
+		} else if (message instanceof DDCAckMessage) {
+			DDCAckMessage ddcMessage = (DDCAckMessage) message;
+			UUID advId = ddcMessage.getAdvertisementId();
+			IPair<UUID, PeerID> pair = new Pair<UUID, PeerID>(advId, senderPeer);
+			if (!receivedAcks.contains(pair)) {
+				synchronized (receivedAcks) {
+					receivedAcks.add(pair);
+				}
+
+				// stop sending ddc
+				synchronized (this.ddcSenderMap) {
+					if (this.ddcSenderMap.containsKey(pair)) {
+						RepeatingMessageSend sender = this.ddcSenderMap
+								.remove(pair);
+						sender.stopRunning();
+					}
+				}
 			}
 		}
 	}
