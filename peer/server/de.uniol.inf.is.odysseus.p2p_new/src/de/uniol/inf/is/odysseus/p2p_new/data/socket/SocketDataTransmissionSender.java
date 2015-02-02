@@ -29,6 +29,10 @@ import de.uniol.inf.is.odysseus.p2p_new.util.ObjectByteConverter;
 public class SocketDataTransmissionSender extends EndpointDataTransmissionSender {
 
 	private static final Logger LOG = LoggerFactory.getLogger(SocketDataTransmissionSender.class);
+	
+	private static final byte DATA_FLAG = 0;
+	private static final byte PUNC_FLAG = 1;
+	private static final byte DONE_FLAG = 2;
 
 	private final IPeerCommunicator peerCommunicator;
 
@@ -139,13 +143,18 @@ public class SocketDataTransmissionSender extends EndpointDataTransmissionSender
 
 	@Override
 	public final void sendData(byte[] data) throws DataTransmissionException {
-		sendImpl(data, (byte) 0);
+		sendImpl(data, DATA_FLAG);
 	}
 
 	@Override
 	public void sendPunctuation(IPunctuation punctuation) throws DataTransmissionException {
 		byte[] data = ObjectByteConverter.objectToBytes(punctuation);
-		sendImpl(data, (byte) 1);
+		sendImpl(data, PUNC_FLAG);
+	}
+	
+	@Override
+	public void sendDone() throws DataTransmissionException {
+		sendImpl( new byte[0], DONE_FLAG );
 	}
 
 	private void sendImpl(byte[] data, byte flag) {

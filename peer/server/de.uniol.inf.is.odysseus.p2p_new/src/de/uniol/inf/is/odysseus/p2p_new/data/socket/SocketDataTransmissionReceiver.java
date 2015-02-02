@@ -205,6 +205,8 @@ public class SocketDataTransmissionReceiver extends EndpointDataTransmissionRece
 		} else if (flag == 1) {
 			IPunctuation punc = (IPunctuation) ObjectByteConverter.bytesToObject(realMsg);
 			firePunctuation(punc);
+		} else if( flag == 2 ) {
+			fireDoneEvent();
 		} else {
 			LOG.error("Unknown flag {}", flag);
 		}
