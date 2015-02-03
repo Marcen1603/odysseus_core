@@ -144,7 +144,9 @@ public class BaslerCameraTransportHandler extends AbstractSimplePullTransportHan
 			assert(imageData.isDirect());
 
 			if (!cameraCapture.grabRGB8(imageData, 1000))
+			{
 				return false;
+			}
 			else
 			{
 				currentImage = new ImageJCV(img);			

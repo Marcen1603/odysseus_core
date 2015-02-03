@@ -43,6 +43,7 @@ public class ImageJCVFunctionProvider implements IFunctionProvider {
 		functions.add(new ResizeImageFunction());
 		functions.add(new RotateImageFunction());
 		functions.add(new SetImageFunction());
+		functions.add(new StretchContrastFunction());
 		functions.add(new SubImageFunction());
 		functions.add(new ThresholdFunction());
 		functions.add(new ToImageFunction());
