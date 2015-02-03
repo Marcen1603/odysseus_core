@@ -9,34 +9,13 @@
 package de.uniol.inf.is.odysseus.wrapper.optriscamera.swig;
 
 public class OptrisJavaJNI {
-  public final static native void delete_FrameCallback(long jarg1);
-  public final static native void FrameCallback_onFrameInit(long jarg1, FrameCallback jarg1_, int jarg2, int jarg3, int jarg4);
-  public final static native void FrameCallback_onFrameInitSwigExplicitFrameCallback(long jarg1, FrameCallback jarg1_, int jarg2, int jarg3, int jarg4);
-  public final static native void FrameCallback_onNewFrame(long jarg1, FrameCallback jarg1_);
-  public final static native void FrameCallback_onNewFrameSwigExplicitFrameCallback(long jarg1, FrameCallback jarg1_);
-  public final static native long new_FrameCallback();
-  public final static native void FrameCallback_director_connect(FrameCallback obj, long cptr, boolean mem_own, boolean weak_global);
-  public final static native void FrameCallback_change_ownership(FrameCallback obj, long cptr, boolean take_or_release);
   public final static native long new_OptrisCamera(String jarg1, String jarg2) throws java.lang.RuntimeException;
   public final static native void delete_OptrisCamera(long jarg1);
   public final static native void OptrisCamera_start(long jarg1, OptrisCamera jarg1_) throws java.lang.RuntimeException;
   public final static native void OptrisCamera_stop(long jarg1, OptrisCamera jarg1_);
-  public final static native void OptrisCamera_setFrameBuffer(long jarg1, OptrisCamera jarg1_, java.nio.ByteBuffer jarg2);
-  public final static native void OptrisCamera_delFrameCallback(long jarg1, OptrisCamera jarg1_);
-  public final static native void OptrisCamera_setFrameCallback(long jarg1, OptrisCamera jarg1_, long jarg2, FrameCallback jarg2_);
+  public final static native boolean OptrisCamera_grabImage(long jarg1, OptrisCamera jarg1_, java.nio.ByteBuffer jarg2, long jarg4) throws java.lang.RuntimeException;
+  public final static native int OptrisCamera_getImageChannels(long jarg1, OptrisCamera jarg1_);
   public final static native int OptrisCamera_getBufferSize(long jarg1, OptrisCamera jarg1_);
   public final static native int OptrisCamera_getImageWidth(long jarg1, OptrisCamera jarg1_);
   public final static native int OptrisCamera_getImageHeight(long jarg1, OptrisCamera jarg1_);
-
-  public static void SwigDirector_FrameCallback_onFrameInit(FrameCallback self, int width, int height, int bufferSize) {
-    self.onFrameInit(width, height, bufferSize);
-  }
-  public static void SwigDirector_FrameCallback_onNewFrame(FrameCallback self) {
-    self.onNewFrame();
-  }
-
-  private final static native void swig_module_init();
-  static {
-    swig_module_init();
-  }
 }

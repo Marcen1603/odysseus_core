@@ -3,29 +3,28 @@
 #include <exception>
 #include <string>
 #include <iostream>
+#include <Windows.h>
 
 class IPCThread;
 struct FrameMetadata;
 
-class FrameCallback 
-{
-public:
-	virtual ~FrameCallback(){}
-	virtual void onFrameInit(int width, int height, int bufferSize) {}
-	virtual void onNewFrame() {}
-};
-
 class OptrisCamera
 {
 private:
+	enum GrabState
+	{
+		IDLE = 0,
+		AVAILABLE
+	};
+
+	volatile GrabState state;
+
+
 	IPCThread* ipcThread;
 
 	unsigned short	instanceID;
 	std::string		instanceName;
 	std::string		ethernetAddr;
-
-	void* frameBuffer;
-	FrameCallback* frameCallback;
 
 	bool initCompleted;
 	bool frameInit;
@@ -33,6 +32,8 @@ private:
 	int Width;
 	int Height;
 	int Depth;
+
+	void* currentBuffer;
 
 	void OnServerStopped(int reason);
 	void OnInitCompleted();
@@ -45,11 +46,9 @@ public:
 
 	void start() throw(std::exception);
 	void stop();
-	void setFrameBuffer(void *buffer, long size);
 
-	void delFrameCallback();
-	void setFrameCallback(FrameCallback* frameCallback);
-
+	bool	grabImage(void *buffer, long size, unsigned int timeOutMs) throw(std::exception);
+	int		getImageChannels() const { return 1; }
 	int		getBufferSize() const { return Width * Height * Depth; }
 	int		getImageWidth() const { return Width; }
 	int		getImageHeight() const { return Height; }

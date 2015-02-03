@@ -612,12 +612,6 @@ namespace Swig {
 
 }
 
-namespace Swig {
-  namespace {
-    jclass jclass_OptrisJavaJNI = NULL;
-    jmethodID director_methids[2];
-  }
-}
 
 #include <string>
 
@@ -669,209 +663,10 @@ SWIGINTERN void SWIG_JavaException(JNIEnv *jenv, int code, const char *msg) {
 
 #include "OptrisJava_wrap.h"
 
-SwigDirector_FrameCallback::SwigDirector_FrameCallback(JNIEnv *jenv) : FrameCallback(), Swig::Director(jenv) {
-}
-
-SwigDirector_FrameCallback::~SwigDirector_FrameCallback() {
-  swig_disconnect_director_self("swigDirectorDisconnect");
-}
-
-
-void SwigDirector_FrameCallback::onFrameInit(int width, int height, int bufferSize) {
-  JNIEnvWrapper swigjnienv(this) ;
-  JNIEnv * jenv = swigjnienv.getJNIEnv() ;
-  jobject swigjobj = (jobject) NULL ;
-  jint jwidth  ;
-  jint jheight  ;
-  jint jbufferSize  ;
-  
-  if (!swig_override[0]) {
-    FrameCallback::onFrameInit(width,height,bufferSize);
-    return;
-  }
-  swigjobj = swig_get_self(jenv);
-  if (swigjobj && jenv->IsSameObject(swigjobj, NULL) == JNI_FALSE) {
-    jwidth = (jint) width;
-    jheight = (jint) height;
-    jbufferSize = (jint) bufferSize;
-    jenv->CallStaticVoidMethod(Swig::jclass_OptrisJavaJNI, Swig::director_methids[0], swigjobj, jwidth, jheight, jbufferSize);
-    jthrowable swigerror = jenv->ExceptionOccurred();
-    if (swigerror) {
-      jenv->ExceptionClear();
-      throw Swig::DirectorException(jenv, swigerror);
-    }
-    
-  } else {
-    SWIG_JavaThrowException(jenv, SWIG_JavaNullPointerException, "null upcall object in FrameCallback::onFrameInit ");
-  }
-  if (swigjobj) jenv->DeleteLocalRef(swigjobj);
-}
-
-void SwigDirector_FrameCallback::onNewFrame() {
-  JNIEnvWrapper swigjnienv(this) ;
-  JNIEnv * jenv = swigjnienv.getJNIEnv() ;
-  jobject swigjobj = (jobject) NULL ;
-  
-  if (!swig_override[1]) {
-    FrameCallback::onNewFrame();
-    return;
-  }
-  swigjobj = swig_get_self(jenv);
-  if (swigjobj && jenv->IsSameObject(swigjobj, NULL) == JNI_FALSE) {
-    jenv->CallStaticVoidMethod(Swig::jclass_OptrisJavaJNI, Swig::director_methids[1], swigjobj);
-    jthrowable swigerror = jenv->ExceptionOccurred();
-    if (swigerror) {
-      jenv->ExceptionClear();
-      throw Swig::DirectorException(jenv, swigerror);
-    }
-    
-  } else {
-    SWIG_JavaThrowException(jenv, SWIG_JavaNullPointerException, "null upcall object in FrameCallback::onNewFrame ");
-  }
-  if (swigjobj) jenv->DeleteLocalRef(swigjobj);
-}
-
-void SwigDirector_FrameCallback::swig_connect_director(JNIEnv *jenv, jobject jself, jclass jcls, bool swig_mem_own, bool weak_global) {
-  static struct {
-    const char *mname;
-    const char *mdesc;
-    jmethodID base_methid;
-  } methods[] = {
-    {
-      "onFrameInit", "(III)V", NULL 
-    },
-    {
-      "onNewFrame", "()V", NULL 
-    }
-  };
-  
-  static jclass baseclass = 0 ;
-  
-  if (swig_set_self(jenv, jself, swig_mem_own, weak_global)) {
-    if (!baseclass) {
-      baseclass = jenv->FindClass("de/uniol/inf/is/odysseus/wrapper/optriscamera/swig/FrameCallback");
-      if (!baseclass) return;
-      baseclass = (jclass) jenv->NewGlobalRef(baseclass);
-    }
-    bool derived = (jenv->IsSameObject(baseclass, jcls) ? false : true);
-    for (int i = 0; i < 2; ++i) {
-      if (!methods[i].base_methid) {
-        methods[i].base_methid = jenv->GetMethodID(baseclass, methods[i].mname, methods[i].mdesc);
-        if (!methods[i].base_methid) return;
-      }
-      swig_override[i] = false;
-      if (derived) {
-        jmethodID methid = jenv->GetMethodID(jcls, methods[i].mname, methods[i].mdesc);
-        swig_override[i] = (methid != methods[i].base_methid);
-        jenv->ExceptionClear();
-      }
-    }
-  }
-}
-
-
 
 #ifdef __cplusplus
 extern "C" {
 #endif
-
-SWIGEXPORT void JNICALL Java_de_uniol_inf_is_odysseus_wrapper_optriscamera_swig_OptrisJavaJNI_delete_1FrameCallback(JNIEnv *jenv, jclass jcls, jlong jarg1) {
-  FrameCallback *arg1 = (FrameCallback *) 0 ;
-  
-  (void)jenv;
-  (void)jcls;
-  arg1 = *(FrameCallback **)&jarg1; 
-  delete arg1;
-}
-
-
-SWIGEXPORT void JNICALL Java_de_uniol_inf_is_odysseus_wrapper_optriscamera_swig_OptrisJavaJNI_FrameCallback_1onFrameInit(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jint jarg2, jint jarg3, jint jarg4) {
-  FrameCallback *arg1 = (FrameCallback *) 0 ;
-  int arg2 ;
-  int arg3 ;
-  int arg4 ;
-  
-  (void)jenv;
-  (void)jcls;
-  (void)jarg1_;
-  arg1 = *(FrameCallback **)&jarg1; 
-  arg2 = (int)jarg2; 
-  arg3 = (int)jarg3; 
-  arg4 = (int)jarg4; 
-  (arg1)->onFrameInit(arg2,arg3,arg4);
-}
-
-
-SWIGEXPORT void JNICALL Java_de_uniol_inf_is_odysseus_wrapper_optriscamera_swig_OptrisJavaJNI_FrameCallback_1onFrameInitSwigExplicitFrameCallback(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jint jarg2, jint jarg3, jint jarg4) {
-  FrameCallback *arg1 = (FrameCallback *) 0 ;
-  int arg2 ;
-  int arg3 ;
-  int arg4 ;
-  
-  (void)jenv;
-  (void)jcls;
-  (void)jarg1_;
-  arg1 = *(FrameCallback **)&jarg1; 
-  arg2 = (int)jarg2; 
-  arg3 = (int)jarg3; 
-  arg4 = (int)jarg4; 
-  (arg1)->FrameCallback::onFrameInit(arg2,arg3,arg4);
-}
-
-
-SWIGEXPORT void JNICALL Java_de_uniol_inf_is_odysseus_wrapper_optriscamera_swig_OptrisJavaJNI_FrameCallback_1onNewFrame(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
-  FrameCallback *arg1 = (FrameCallback *) 0 ;
-  
-  (void)jenv;
-  (void)jcls;
-  (void)jarg1_;
-  arg1 = *(FrameCallback **)&jarg1; 
-  (arg1)->onNewFrame();
-}
-
-
-SWIGEXPORT void JNICALL Java_de_uniol_inf_is_odysseus_wrapper_optriscamera_swig_OptrisJavaJNI_FrameCallback_1onNewFrameSwigExplicitFrameCallback(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
-  FrameCallback *arg1 = (FrameCallback *) 0 ;
-  
-  (void)jenv;
-  (void)jcls;
-  (void)jarg1_;
-  arg1 = *(FrameCallback **)&jarg1; 
-  (arg1)->FrameCallback::onNewFrame();
-}
-
-
-SWIGEXPORT jlong JNICALL Java_de_uniol_inf_is_odysseus_wrapper_optriscamera_swig_OptrisJavaJNI_new_1FrameCallback(JNIEnv *jenv, jclass jcls) {
-  jlong jresult = 0 ;
-  FrameCallback *result = 0 ;
-  
-  (void)jenv;
-  (void)jcls;
-  result = (FrameCallback *)new SwigDirector_FrameCallback(jenv);
-  *(FrameCallback **)&jresult = result; 
-  return jresult;
-}
-
-
-SWIGEXPORT void JNICALL Java_de_uniol_inf_is_odysseus_wrapper_optriscamera_swig_OptrisJavaJNI_FrameCallback_1director_1connect(JNIEnv *jenv, jclass jcls, jobject jself, jlong objarg, jboolean jswig_mem_own, jboolean jweak_global) {
-  FrameCallback *obj = *((FrameCallback **)&objarg);
-  (void)jcls;
-  SwigDirector_FrameCallback *director = dynamic_cast<SwigDirector_FrameCallback *>(obj);
-  if (director) {
-    director->swig_connect_director(jenv, jself, jenv->GetObjectClass(jself), (jswig_mem_own == JNI_TRUE), (jweak_global == JNI_TRUE));
-  }
-}
-
-
-SWIGEXPORT void JNICALL Java_de_uniol_inf_is_odysseus_wrapper_optriscamera_swig_OptrisJavaJNI_FrameCallback_1change_1ownership(JNIEnv *jenv, jclass jcls, jobject jself, jlong objarg, jboolean jtake_or_release) {
-  FrameCallback *obj = *((FrameCallback **)&objarg);
-  SwigDirector_FrameCallback *director = dynamic_cast<SwigDirector_FrameCallback *>(obj);
-  (void)jcls;
-  if (director) {
-    director->swig_java_change_ownership(jenv, jself, jtake_or_release ? true : false);
-  }
-}
-
 
 SWIGEXPORT jlong JNICALL Java_de_uniol_inf_is_odysseus_wrapper_optriscamera_swig_OptrisJavaJNI_new_1OptrisCamera(JNIEnv *jenv, jclass jcls, jstring jarg1, jstring jarg2) {
   jlong jresult = 0 ;
@@ -959,45 +754,53 @@ SWIGEXPORT void JNICALL Java_de_uniol_inf_is_odysseus_wrapper_optriscamera_swig_
 }
 
 
-SWIGEXPORT void JNICALL Java_de_uniol_inf_is_odysseus_wrapper_optriscamera_swig_OptrisJavaJNI_OptrisCamera_1setFrameBuffer(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jobject jarg2) {
+SWIGEXPORT jboolean JNICALL Java_de_uniol_inf_is_odysseus_wrapper_optriscamera_swig_OptrisJavaJNI_OptrisCamera_1grabImage(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jobject jarg2, jlong jarg4) {
+  jboolean jresult = 0 ;
   OptrisCamera *arg1 = (OptrisCamera *) 0 ;
   void *arg2 = (void *) 0 ;
   long arg3 ;
+  unsigned int arg4 ;
+  bool result;
   
   (void)jenv;
   (void)jcls;
   (void)jarg1_;
   arg1 = *(OptrisCamera **)&jarg1; 
   {
+    /* %typemap(in) void * */ 
     arg2 = jenv->GetDirectBufferAddress(jarg2); 
     arg3 = (long)(jenv->GetDirectBufferCapacity(jarg2)); 
   }
-  (arg1)->setFrameBuffer(arg2,arg3);
+  arg4 = (unsigned int)jarg4; 
+  try {
+    result = (bool)(arg1)->grabImage(arg2,arg3,arg4);
+  }
+  catch(std::exception &_e) {
+    {
+      jclass excep = jenv->FindClass("java/lang/RuntimeException");
+      if (excep)
+      jenv->ThrowNew(excep, (&_e)->what());
+      return 0;
+    }
+  }
+  
+  jresult = (jboolean)result; 
+  return jresult;
 }
 
 
-SWIGEXPORT void JNICALL Java_de_uniol_inf_is_odysseus_wrapper_optriscamera_swig_OptrisJavaJNI_OptrisCamera_1delFrameCallback(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
+SWIGEXPORT jint JNICALL Java_de_uniol_inf_is_odysseus_wrapper_optriscamera_swig_OptrisJavaJNI_OptrisCamera_1getImageChannels(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
+  jint jresult = 0 ;
   OptrisCamera *arg1 = (OptrisCamera *) 0 ;
+  int result;
   
   (void)jenv;
   (void)jcls;
   (void)jarg1_;
   arg1 = *(OptrisCamera **)&jarg1; 
-  (arg1)->delFrameCallback();
-}
-
-
-SWIGEXPORT void JNICALL Java_de_uniol_inf_is_odysseus_wrapper_optriscamera_swig_OptrisJavaJNI_OptrisCamera_1setFrameCallback(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jobject jarg2_) {
-  OptrisCamera *arg1 = (OptrisCamera *) 0 ;
-  FrameCallback *arg2 = (FrameCallback *) 0 ;
-  
-  (void)jenv;
-  (void)jcls;
-  (void)jarg1_;
-  (void)jarg2_;
-  arg1 = *(OptrisCamera **)&jarg1; 
-  arg2 = *(FrameCallback **)&jarg2; 
-  (arg1)->setFrameCallback(arg2);
+  result = (int)((OptrisCamera const *)arg1)->getImageChannels();
+  jresult = (jint)result; 
+  return jresult;
 }
 
 
@@ -1043,29 +846,6 @@ SWIGEXPORT jint JNICALL Java_de_uniol_inf_is_odysseus_wrapper_optriscamera_swig_
   result = (int)((OptrisCamera const *)arg1)->getImageHeight();
   jresult = (jint)result; 
   return jresult;
-}
-
-
-SWIGEXPORT void JNICALL Java_de_uniol_inf_is_odysseus_wrapper_optriscamera_swig_OptrisJavaJNI_swig_1module_1init(JNIEnv *jenv, jclass jcls) {
-  int i;
-  
-  static struct {
-    const char *method;
-    const char *signature;
-  } methods[2] = {
-    {
-      "SwigDirector_FrameCallback_onFrameInit", "(Lde/uniol/inf/is/odysseus/wrapper/optriscamera/swig/FrameCallback;III)V" 
-    },
-    {
-      "SwigDirector_FrameCallback_onNewFrame", "(Lde/uniol/inf/is/odysseus/wrapper/optriscamera/swig/FrameCallback;)V" 
-    }
-  };
-  Swig::jclass_OptrisJavaJNI = (jclass) jenv->NewGlobalRef(jcls);
-  if (!Swig::jclass_OptrisJavaJNI) return;
-  for (i = 0; i < (int) (sizeof(methods)/sizeof(methods[0])); ++i) {
-    Swig::director_methids[i] = jenv->GetStaticMethodID(jcls, methods[i].method, methods[i].signature);
-    if (!Swig::director_methids[i]) return;
-  }
 }
 
 

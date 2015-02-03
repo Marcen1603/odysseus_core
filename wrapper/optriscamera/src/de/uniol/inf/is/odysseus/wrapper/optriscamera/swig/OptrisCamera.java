@@ -47,16 +47,12 @@ public class OptrisCamera {
     OptrisJavaJNI.OptrisCamera_stop(swigCPtr, this);
   }
 
-  public void setFrameBuffer(java.nio.ByteBuffer buffer) {
-    OptrisJavaJNI.OptrisCamera_setFrameBuffer(swigCPtr, this, buffer);
+  public boolean grabImage(java.nio.ByteBuffer buffer, long timeOutMs) throws java.lang.RuntimeException {
+    return OptrisJavaJNI.OptrisCamera_grabImage(swigCPtr, this, buffer, timeOutMs);
   }
 
-  public void delFrameCallback() {
-    OptrisJavaJNI.OptrisCamera_delFrameCallback(swigCPtr, this);
-  }
-
-  public void setFrameCallback(FrameCallback frameCallback) {
-    OptrisJavaJNI.OptrisCamera_setFrameCallback(swigCPtr, this, FrameCallback.getCPtr(frameCallback), frameCallback);
+  public int getImageChannels() {
+    return OptrisJavaJNI.OptrisCamera_getImageChannels(swigCPtr, this);
   }
 
   public int getBufferSize() {

@@ -94,7 +94,8 @@ wstring string2wstring(const string& str)
 
 class IPCThread
 {
-	bool running;
+	std::string errorStr;
+	bool running, error;
 	HANDLE threadHandle;
 	OptrisCamera* camera;
 	string instanceName;
@@ -175,7 +176,16 @@ class IPCThread
 	{
 		IPCThread* ipcThread = (IPCThread*)param;
 
-		ipcThread->ThreadInit();
+		try
+		{
+			ipcThread->ThreadInit();
+		}
+		catch (std::exception& e)
+		{
+			ipcThread->errorStr = e.what();
+			ipcThread->error = true;
+			return -1;
+		}
 
 		ipcThread->running = true;
 		while (ipcThread->running)
@@ -192,7 +202,15 @@ public:
 	IPCThread(OptrisCamera* camera, string instanceName, WORD instanceID) : camera(camera), instanceName(instanceName), instanceID(instanceID)
 	{
 		running = false;
+		error = false;
 		threadHandle = CreateThread(NULL, 0, ThreadProc, this, 0, NULL);
+
+		while (!running && !error)
+		{
+		}
+
+		if (error)
+			throw std::exception(errorStr.c_str());
 	}
 
 	~IPCThread()
@@ -210,23 +228,18 @@ OptrisCamera::OptrisCamera(const std::string& instanceName, const std::string& e
 	this->ethernetAddr = ethernetAddr;
 
 	instanceID = 0;
-	frameCallback = NULL;
-	frameBuffer = NULL;
+	currentBuffer = NULL;
 }
 
 OptrisCamera::~OptrisCamera()
 {	
-	delFrameCallback();
 }
 
 void OptrisCamera::start()
 {
-	// TODO: Can start take the frameCallback as a parameter?
-	// Find out how GC works with java Directors
-	if (!frameCallback) throw exception("setFrameCallback() must be called prior to start()");
-
 	initCompleted = false;
 	frameInit = false;
+	state = IDLE;
 
 	// Start IPC thread
 	ipcThread = new IPCThread(this, instanceName, instanceID);
@@ -248,19 +261,6 @@ void OptrisCamera::stop()
 	ipcThread = NULL;	
 }
 
-void OptrisCamera::delFrameCallback() 
-{ 
-	FrameCallback* cb = frameCallback;
-	frameCallback = NULL;
-	delete cb; 
-}
-
-void OptrisCamera::setFrameCallback(FrameCallback* frameCallback) 
-{ 
-	delFrameCallback(); 
-	this->frameCallback = frameCallback; 
-}
-
 void OptrisCamera::OnServerStopped(int reason)
 {
 	stop();
@@ -271,34 +271,45 @@ void OptrisCamera::OnInitCompleted()
 	initCompleted = true;
 }
 
-void OptrisCamera::setFrameBuffer(void *buffer, long size)
-{
-	if (size < getBufferSize()) throw std::exception("Buffer is too small");
-
-	frameBuffer = buffer;
-}
-
 void OptrisCamera::OnFrameInit(int frameWidth, int frameHeight, int frameDepth)
 {
 	Width = frameWidth;
 	Height = frameHeight;
 	Depth = frameDepth;
 
-	frameInit = true;
+	currentBuffer = NULL;
 
-	if (frameCallback)
-		frameCallback->onFrameInit(frameWidth, frameHeight, getBufferSize());
+	frameInit = true;	
 }
 
-void OptrisCamera::OnNewFrame(void * pBuffer, FrameMetadata *pMetaData)
+void OptrisCamera::OnNewFrame(void* pBuffer, FrameMetadata *pMetaData)
 {
 	if (!initCompleted || !frameInit) return;
 
-	cout << "Frame " << *((short*)pBuffer) << endl;
+	while (state != IDLE)
+	{
+	}
 
-	if (frameBuffer)
-		memcpy(frameBuffer, pBuffer, getBufferSize());
+//	cout << "Frame " << *((short*)pBuffer) << " in buffer " << std::hex << pBuffer << std::dec << endl;
+	currentBuffer = pBuffer;
 
-	if (frameCallback)
-		frameCallback->onNewFrame();
+	state = AVAILABLE;
+	while (state != IDLE)
+	{
+	}
+}
+
+bool OptrisCamera::grabImage(void *buffer, long size, unsigned int timeOutMs) throw(std::exception)
+{
+	if (size < getBufferSize()) throw std::exception("Buffer is too small");
+	if (!initCompleted || !frameInit) return false;
+
+	while (state != AVAILABLE)
+	{
+	}
+
+	memcpy(buffer, currentBuffer, getBufferSize());
+	state = IDLE;
+
+	return true;
 }
