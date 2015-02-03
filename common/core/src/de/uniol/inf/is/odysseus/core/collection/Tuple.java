@@ -251,7 +251,7 @@ public class Tuple<T extends IMetaAttribute> extends AbstractStreamObject<T>
                     clone[i] = ((IClone) attr[i]).clone();
                 }
                 catch (Throwable t) {
-                    LOG.warn(String.format("Instance of %s does not implement IClone interface", attr[i].getClass()));
+                    LOG.debug(String.format("Instance of %s does not implement IClone interface", attr[i].getClass()));
                     Cloner cloner = new Cloner();
                     clone[i] = cloner.deepClone(attr[i]);
                 }
