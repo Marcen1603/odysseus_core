@@ -1,12 +1,9 @@
 package de.uniol.inf.is.odysseus.imagejcv.functions;
 
 import org.bytedeco.javacpp.opencv_core.IplImage;
-import org.bytedeco.javacpp.opencv_core.CvMat;
-
 import static org.bytedeco.javacpp.opencv_core.*;
 
 import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
 import java.util.Objects;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
@@ -58,12 +55,14 @@ public class StretchContrastFunction extends AbstractFunction<ImageJCV> {
 			int newIndex = y * newImage.widthStep() + x * newImage.nChannels();
 
 			double value = oldBuffer.getShort(oldIndex);
-			int newVal = (int)( (double)(value - oldMin) / (oldMax - oldMin) * (newMax - newMin) + newMin);			
+			int newVal = (int)( (double)(value - oldMin) / (oldMax - oldMin) * (newMax - newMin) + newMin);
+			if (newVal < 0) newVal = 0;
+			if (newVal > 255) newVal = 255;
 			
 	        // Sets the pixel to a value (RGB, stored in BGR order).
-	        newBuffer.put(newIndex, 		(byte) (newVal & 0xFF));
-	        newBuffer.put(newIndex + 1, 	(byte) (newVal & 0xFF));
-	        newBuffer.put(newIndex + 2, 	(byte) (newVal & 0xFF));
+	        newBuffer.put(newIndex, 		(byte) (newVal));
+	        newBuffer.put(newIndex + 1, 	(byte) (newVal));
+	        newBuffer.put(newIndex + 2, 	(byte) (newVal));
 		}		
 		
 		long curTime = System.nanoTime();

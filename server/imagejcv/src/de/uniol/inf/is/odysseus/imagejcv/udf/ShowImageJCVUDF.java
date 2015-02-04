@@ -4,7 +4,6 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
-import java.awt.image.BufferedImage;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.bytedeco.javacv.CanvasFrame;
@@ -94,7 +93,6 @@ public class ShowImageJCVUDF extends CanvasFrame implements IUserDefinedFunction
 		ImageJCV image = (ImageJCV) in.getAttribute(this.pos);
 		synchronized (syncObj) 
 		{
-			BufferedImage bufImg = image.getImage().getBufferedImage();
 			showImage(image.getImage());
 			repaint();
 		}
