@@ -25,6 +25,7 @@ import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 public class ByteBufferHandler<T> implements
 		IObjectHandler<T> {
 
+	private static final int BYTEBUF_INIT = 2048;
 	ByteBuffer byteBuffer = null;
 	private IDataHandler<?> dataHandler;
 	
@@ -37,7 +38,7 @@ public class ByteBufferHandler<T> implements
 	}
 	
 	public ByteBufferHandler(IDataHandler<?> dataHandler) {
-		byteBuffer = ByteBuffer.allocate(1024);
+		byteBuffer = ByteBuffer.allocate(BYTEBUF_INIT);
 		this.dataHandler = dataHandler;		
 	}
 	
@@ -118,7 +119,7 @@ public class ByteBufferHandler<T> implements
 	public void put(T value, boolean withMetadata) {
 
 		synchronized(byteBuffer){
-			
+			checkOverflow(byteBuffer, byteBuffer.remaining());
 			byteBuffer.clear();
 			ByteBufferUtil.toBuffer(byteBuffer, (IStreamObject) value, dataHandler, withMetadata);
 			//this.dataHandler.writeData(byteBuffer, value);
