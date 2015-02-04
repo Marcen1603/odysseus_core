@@ -53,7 +53,7 @@ public class OptrisCameraTransportHandler extends AbstractSimplePullTransportHan
 		return new OptrisCameraTransportHandler(protocolHandler, options);
 	}
 
-	@Override public String getName() { return "OptrisCameraPull"; }
+	@Override public String getName() { return "OptrisCamera"; }
 
 	@Override public void processInOpen() throws IOException 
 	{
@@ -74,6 +74,8 @@ public class OptrisCameraTransportHandler extends AbstractSimplePullTransportHan
 				throw new IOException(e.getMessage());
 			}
 		}
+		
+		fireOnConnect();
 	}
 	
 	@Override public void processInClose() throws IOException 
@@ -83,6 +85,8 @@ public class OptrisCameraTransportHandler extends AbstractSimplePullTransportHan
 			cameraCapture.stop();
 			cameraCapture = null;
 		}
+		
+		fireOnDisconnect();
 	}
 
 	@Override public Tuple<?> getNext() 

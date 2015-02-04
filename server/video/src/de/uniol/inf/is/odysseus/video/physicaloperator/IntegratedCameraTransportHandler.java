@@ -67,6 +67,8 @@ public class IntegratedCameraTransportHandler extends AbstractSimplePullTranspor
 				throw new IOException(e.getMessage());
 			}
 		}
+		
+		fireOnConnect();
 	}
 	
 	@Override public void processInClose() throws IOException 
@@ -90,6 +92,8 @@ public class IntegratedCameraTransportHandler extends AbstractSimplePullTranspor
 				}
 			}
 		}
+		
+		fireOnDisconnect();
 	}	
 	
 	@Override public Tuple<IMetaAttribute> getNext() 
