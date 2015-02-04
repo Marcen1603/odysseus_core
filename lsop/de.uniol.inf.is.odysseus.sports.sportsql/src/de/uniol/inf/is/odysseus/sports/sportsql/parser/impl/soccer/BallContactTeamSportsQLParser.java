@@ -46,7 +46,7 @@ import de.uniol.inf.is.odysseus.sports.sportsql.parser.parameter.SportsQLTimePar
 		@SportsQLParameter(name = "space", parameterClass = SportsQLSpaceParameter.class, mandatory = false) })
 public class BallContactTeamSportsQLParser implements ISportsQLParser{
 	
-	private static final int HEARTBEAT = 5000;
+	private static final int HEARTBEAT = 5000;//in milliseconds
 	private final int dumpAtValueCount = 1;
 	 
 	@Override
@@ -63,11 +63,11 @@ public class BallContactTeamSportsQLParser implements ISportsQLParser{
 		List<String> groupCount = new ArrayList<String>();
 		groupCount.add("team_id");
 		
-		ILogicalOperator countOutput = OperatorBuildHelper.createAggregateAO("count", groupCount, "team_id", "ballContactCount", "Integer", globalOutput, dumpAtValueCount);
+		ILogicalOperator countOutput = OperatorBuildHelper.createAggregateAO("count", groupCount, "team_id", "ballContactCount", "Double", globalOutput, dumpAtValueCount);
 		tempOperators.add(countOutput);
 		groupCount.clear();
 		
-		ILogicalOperator allOutput = OperatorBuildHelper.createAggregateAO("SUM", groupCount, "ballContactCount", "ballContactCountAll", "Integer", countOutput, dumpAtValueCount);
+		ILogicalOperator allOutput = OperatorBuildHelper.createAggregateAO("SUM", groupCount, "ballContactCount", "ballContactCountAll", "Double", countOutput, dumpAtValueCount);
 		tempOperators.add(allOutput);
 		
 		List<String> predicates=new ArrayList<>();
@@ -79,7 +79,7 @@ public class BallContactTeamSportsQLParser implements ISportsQLParser{
 		List<SDFExpressionParameter> passesStateMapExpressions = new ArrayList<SDFExpressionParameter>();
 		passesStateMapExpressions.add(OperatorBuildHelper.createExpressionParameter("team_id", "team_id", sumAndCount));
 		passesStateMapExpressions.add(OperatorBuildHelper.createExpressionParameter("DoubleToFloat(ROUND((ballContactCount"+"/"+"ballContactCountAll),4)*100)", "ballContactCount", sumAndCount));
-		passesStateMapExpressions.add(OperatorBuildHelper.createExpressionParameter("ballContactCount", "ballContactCountAbs", sumAndCount));
+		passesStateMapExpressions.add(OperatorBuildHelper.createExpressionParameter("ballContactCount", "ballContactCountAbs", sumAndCount));//For debug
 		
 		MapAO percentageMap = OperatorBuildHelper.createMapAO(passesStateMapExpressions, sumAndCount, 0, 0, true);
 		allOperators.add(percentageMap);
@@ -95,6 +95,7 @@ public class BallContactTeamSportsQLParser implements ISportsQLParser{
 		allOperators.add(assureHeartbeatAO);
 
 		// Result Aggregate
+		//Every @HEARTBEAT seconds the last tupel is send
 		List<String> resultAggregateFunctions = new ArrayList<String>();
 		resultAggregateFunctions.add("LAST");
 
@@ -112,7 +113,7 @@ public class BallContactTeamSportsQLParser implements ISportsQLParser{
 						resultAggregateGroupBys,
 						resultAggregateInputAttributeNames,
 						resultAggregateOutputAttributeNames, null,
-						assureHeartbeatAO, 1);
+						assureHeartbeatAO, dumpAtValueCount);
 
 		return OperatorBuildHelper.finishQuery(resultAggregate, allOperators,
 				sportsQL.getDisplayName());

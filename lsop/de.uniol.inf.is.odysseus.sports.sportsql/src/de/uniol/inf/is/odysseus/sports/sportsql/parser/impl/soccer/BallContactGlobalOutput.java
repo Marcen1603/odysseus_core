@@ -33,12 +33,13 @@ public class BallContactGlobalOutput {
 	/**
 	 * String of the ball position from input schema
 	 */
-	private final String ball_pos = "ball_pos";
-	
+	private final String ball_pos_x = "ball_pos_x";
+	private final String ball_pos_y = "ball_pos_y";
 	/**
 	 * String of the player position from input schema
 	 */
-	private final String player_pos = "player_pos";
+	private final String player_pos_x = "player_pos_x";
+	private final String player_pos_y = "player_pos_y";
 	
 	/**
 	 * Heartbeat for changedetect
@@ -97,9 +98,12 @@ public class BallContactGlobalOutput {
 	private List<SDFExpressionParameter> getMapExpressionForBallPosition(
 			ILogicalOperator source) {
 		List<SDFExpressionParameter> expressions = new ArrayList<SDFExpressionParameter>();
-		SDFExpressionParameter ex = OperatorBuildHelper
-				.createExpressionParameter("ToPoint(x,y,z)", ball_pos, source);
-		expressions.add(ex);
+		SDFExpressionParameter ex1 = OperatorBuildHelper
+				.createExpressionParameter("x", ball_pos_x, source);
+		SDFExpressionParameter ex2 = OperatorBuildHelper
+				.createExpressionParameter("y", ball_pos_y, source);
+		expressions.add(ex1);
+		expressions.add(ex2);
 		return expressions;
 	}
 
@@ -113,17 +117,21 @@ public class BallContactGlobalOutput {
 			ILogicalOperator source) {
 		List<SDFExpressionParameter> expressions = new ArrayList<SDFExpressionParameter>();
 		SDFExpressionParameter ex1 = OperatorBuildHelper
-				.createExpressionParameter("ToPoint(x,y,z)", player_pos,
+				.createExpressionParameter("x", player_pos_x,
 						source);
 		SDFExpressionParameter ex2 = OperatorBuildHelper
+				.createExpressionParameter("y", player_pos_y,
+						source);
+		SDFExpressionParameter ex3 = OperatorBuildHelper
 				.createExpressionParameter("entity_id", "entity_id", source);
 
-		SDFExpressionParameter ex3 = OperatorBuildHelper
+		SDFExpressionParameter ex4 = OperatorBuildHelper
 				.createExpressionParameter("team_id", "team_id", source);
 
 		expressions.add(ex1);
 		expressions.add(ex2);
 		expressions.add(ex3);
+		expressions.add(ex4);
 		return expressions;
 	}
 
@@ -219,12 +227,13 @@ public class BallContactGlobalOutput {
 		allOperators.add(players_window);
 
 		// Join the sources and show only values if ball is near to a player
-		predicates.add("SpatialDistance(ball_pos,player_pos)<" + radius);
+		//A^2 + B^2 = C^2
+		predicates.add("Sqrt((Abs(player_pos_y-ball_pos_y)^2)+(Abs(player_pos_x-ball_pos_x)^2))<" + radius);
 		ILogicalOperator proximity_join = OperatorBuildHelper
 				.createJoinAO(predicates, players_window, ball_window);
 		allOperators.add(proximity_join);
 		predicates.clear();
-
+		
 		// Delete duplicates
 		attributes.add("entity_id");
 		ILogicalOperator delete_duplicates = OperatorBuildHelper
