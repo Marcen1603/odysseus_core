@@ -239,7 +239,13 @@ void OptrisCamera::start()
 {
 	initCompleted = false;
 	frameInit = false;
+
+#ifdef BUSY_WAIT
 	state = IDLE;
+#else
+	frameReadEvent = CreateEvent(NULL, false, true, "FrameReadEvent");
+	newFrameEvent = CreateEvent(NULL, false, false, "NewFrameEvent");
+#endif
 
 	// Start IPC thread
 	ipcThread = new IPCThread(this, instanceName, instanceID);
@@ -259,6 +265,11 @@ void OptrisCamera::stop()
 {
 	delete ipcThread;
 	ipcThread = NULL;	
+
+#ifndef BUSY_WAIT
+	CloseHandle(frameReadEvent);
+	CloseHandle(newFrameEvent);
+#endif
 }
 
 void OptrisCamera::OnServerStopped(int reason)
@@ -286,17 +297,27 @@ void OptrisCamera::OnNewFrame(void* pBuffer, FrameMetadata *pMetaData)
 {
 	if (!initCompleted || !frameInit) return;
 
+#ifdef BUSY_WAIT
 	while (state != IDLE)
 	{
 	}
+#else
+	WaitForSingleObject(frameReadEvent, INFINITE);
+	ResetEvent(frameReadEvent);
+#endif
 
 //	cout << "Frame " << *((short*)pBuffer) << " in buffer " << std::hex << pBuffer << std::dec << endl;
 	currentBuffer = pBuffer;
 
+#ifdef BUSY_WAIT
 	state = AVAILABLE;
 	while (state != IDLE)
 	{
 	}
+#else
+	SetEvent(newFrameEvent);
+	WaitForSingleObject(frameReadEvent, INFINITE);
+#endif
 }
 
 bool OptrisCamera::grabImage(void *buffer, long size, unsigned int timeOutMs) throw(std::exception)
@@ -304,12 +325,22 @@ bool OptrisCamera::grabImage(void *buffer, long size, unsigned int timeOutMs) th
 	if (size < getBufferSize()) throw std::exception("Buffer is too small");
 	if (!initCompleted || !frameInit) return false;
 
+#ifdef BUSY_WAIT
 	while (state != AVAILABLE)
 	{
-	}
+	}	
+#else
+	if (WaitForSingleObject(newFrameEvent, timeOutMs) == WAIT_TIMEOUT) return false;
+	ResetEvent(newFrameEvent);
+#endif
 
 	memcpy(buffer, currentBuffer, getBufferSize());
+
+#ifdef BUSY_WAIT
 	state = IDLE;
+#else
+	SetEvent(frameReadEvent);
+#endif
 
 	return true;
 }
