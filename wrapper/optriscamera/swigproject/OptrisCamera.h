@@ -8,24 +8,9 @@
 class IPCThread;
 struct FrameMetadata;
 
-//#define BUSY_WAIT
-
 class OptrisCamera
 {
 private:
-
-#ifdef BUSY_WAIT
-	enum GrabState
-	{
-		IDLE = 0,
-		AVAILABLE
-	};
-	volatile GrabState state;
-#else
-	HANDLE newFrameEvent;
-	HANDLE frameReadEvent;
-#endif
-
 	IPCThread* ipcThread;
 
 	unsigned short	instanceID;
@@ -39,6 +24,7 @@ private:
 	int Height;
 	int Depth;
 
+	CRITICAL_SECTION bufferMutex;
 	void* currentBuffer;
 
 	void OnServerStopped(int reason);

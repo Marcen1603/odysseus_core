@@ -116,7 +116,12 @@ class IPCThread
 		si.cb = sizeof(si);
 		ZeroMemory( &pi, sizeof(pi));
 
-	//	CreateProcess(imagerExe.c_str(), startParameters, NULL, NULL, FALSE, 0, NULL, imagerPath.c_str(), &si, &pi);
+/*		cout << "CreateProcess " << imagerExe << " " << startParameters << endl;
+		if (!CreateProcess(imagerExe.c_str(), startParameters, NULL, NULL, FALSE, 0, NULL, imagerPath.c_str(), &si, &pi))
+		{
+			string msg = "CreateProcess Error " + to_string((long long)GetLastError());
+			throw std::exception(msg.c_str());
+		}*/
 
 		// Connect IPC	#
 		wstring wc = string2wstring(instanceName);
@@ -155,7 +160,7 @@ class IPCThread
 	void ThreadExit()
 	{
 		ReleaseImagerIPC(instanceID);
-		//	CloseApplication(instanceID);
+//		CloseApplication(instanceID);
 	/*	string imagerExe = imagerPath + imagerExeName;
 
 		char stopParameters[256];
@@ -193,6 +198,7 @@ class IPCThread
 			ImagerIPCProcessMessages(ipcThread->instanceID);
 		}
 
+		cout << "Exiting thread..." << endl;
 		ipcThread->ThreadExit();
 
 		return 0;
@@ -216,7 +222,13 @@ public:
 	~IPCThread()
 	{
 		running = false;
-		WaitForSingleObject(threadHandle, 1000);
+		if (WaitForSingleObject(threadHandle, 2000) == WAIT_TIMEOUT)
+		{
+			cout << "TerminateThread!" << endl;
+			TerminateThread(threadHandle, -1);
+		}
+
+		CloseHandle(threadHandle);
 	}
 
 	bool isRunning() const { return running; }
@@ -239,13 +251,9 @@ void OptrisCamera::start()
 {
 	initCompleted = false;
 	frameInit = false;
+	currentBuffer = NULL;
 
-#ifdef BUSY_WAIT
-	state = IDLE;
-#else
-	frameReadEvent = CreateEvent(NULL, false, true, "FrameReadEvent");
-	newFrameEvent = CreateEvent(NULL, false, false, "NewFrameEvent");
-#endif
+	InitializeCriticalSectionAndSpinCount(&bufferMutex, 1000);
 
 	// Start IPC thread
 	ipcThread = new IPCThread(this, instanceName, instanceID);
@@ -262,14 +270,14 @@ void OptrisCamera::start()
 }
 
 void OptrisCamera::stop()
-{
+{	
+	initCompleted = false;
+
 	delete ipcThread;
 	ipcThread = NULL;	
 
-#ifndef BUSY_WAIT
-	CloseHandle(frameReadEvent);
-	CloseHandle(newFrameEvent);
-#endif
+	DeleteCriticalSection(&bufferMutex);
+	delete currentBuffer;
 }
 
 void OptrisCamera::OnServerStopped(int reason)
@@ -288,7 +296,7 @@ void OptrisCamera::OnFrameInit(int frameWidth, int frameHeight, int frameDepth)
 	Height = frameHeight;
 	Depth = frameDepth;
 
-	currentBuffer = NULL;
+	currentBuffer = new char[frameWidth*frameHeight*frameDepth];
 
 	frameInit = true;	
 }
@@ -297,27 +305,9 @@ void OptrisCamera::OnNewFrame(void* pBuffer, FrameMetadata *pMetaData)
 {
 	if (!initCompleted || !frameInit) return;
 
-#ifdef BUSY_WAIT
-	while (state != IDLE)
-	{
-	}
-#else
-	WaitForSingleObject(frameReadEvent, INFINITE);
-	ResetEvent(frameReadEvent);
-#endif
-
-//	cout << "Frame " << *((short*)pBuffer) << " in buffer " << std::hex << pBuffer << std::dec << endl;
-	currentBuffer = pBuffer;
-
-#ifdef BUSY_WAIT
-	state = AVAILABLE;
-	while (state != IDLE)
-	{
-	}
-#else
-	SetEvent(newFrameEvent);
-	WaitForSingleObject(frameReadEvent, INFINITE);
-#endif
+	EnterCriticalSection(&bufferMutex);
+	memcpy(currentBuffer, pBuffer, getBufferSize());
+	LeaveCriticalSection(&bufferMutex);
 }
 
 bool OptrisCamera::grabImage(void *buffer, long size, unsigned int timeOutMs) throw(std::exception)
@@ -325,22 +315,9 @@ bool OptrisCamera::grabImage(void *buffer, long size, unsigned int timeOutMs) th
 	if (size < getBufferSize()) throw std::exception("Buffer is too small");
 	if (!initCompleted || !frameInit) return false;
 
-#ifdef BUSY_WAIT
-	while (state != AVAILABLE)
-	{
-	}	
-#else
-	if (WaitForSingleObject(newFrameEvent, timeOutMs) == WAIT_TIMEOUT) return false;
-	ResetEvent(newFrameEvent);
-#endif
-
+	EnterCriticalSection(&bufferMutex);
 	memcpy(buffer, currentBuffer, getBufferSize());
-
-#ifdef BUSY_WAIT
-	state = IDLE;
-#else
-	SetEvent(frameReadEvent);
-#endif
+	LeaveCriticalSection(&bufferMutex);
 
 	return true;
 }
