@@ -272,6 +272,15 @@ public class ActiveStandbyStrategy implements IRecoveryStrategy {
 					Collection<JxtaSenderAO> senders = findSender(((CreateQueryCommand) cmd)
 							.getQuery());
 					for (JxtaSenderAO sender : senders) {
+						String pipeId = sender.getPipeID();
+						String peerId = sender.getPeerID();
+						
+						// One or both strings may be null.
+						if(pipeId == null || peerId == null) {
+							LOG.warn("Could not update sender {}, since pipeId is null!", sender);
+							continue;
+						}
+						
 						UpdateMergerSender.getInstance().sendInstruction(
 								toPeerID(sender.getPeerID()),
 								toPipeID(sender.getPipeID()));
