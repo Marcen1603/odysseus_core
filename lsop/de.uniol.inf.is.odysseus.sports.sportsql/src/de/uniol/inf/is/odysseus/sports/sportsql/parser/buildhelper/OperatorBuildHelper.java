@@ -1495,23 +1495,16 @@ public class OperatorBuildHelper {
 	 * @return
 	 */
 	public static ILogicalOperator getLogicalOperatorsFromSource(ISession session, String sourceName) {
-//		IDataDictionary dataDict = OperatorBuildHelper.getDataDictionary();
-//		ILogicalOperator stream = dataDict.getStreamForTransformation(sourceName, session);
-//		
-//		if( stream == null ) {
-//			throw new RuntimeException("Could not find stream " + sourceName + "!");
-//		}
-//		
-//		ILogicalOperator streamCopy = copyLogicalPlan(stream);
-//
-//		return streamCopy;
-		StreamAO streamAO = new StreamAO();
+		IDataDictionary dataDict = OperatorBuildHelper.getDataDictionary();
+		ILogicalOperator stream = dataDict.getStreamForTransformation(sourceName, session);
 		
-		AccessAO access = createAccessAO(session, sourceName);
-		streamAO.setSource(access);
-		streamAO.setName(sourceName);
+		if( stream == null ) {
+			throw new RuntimeException("Could not find stream " + sourceName + "!");
+		}
 		
-		return streamAO;
+		ILogicalOperator streamCopy = copyLogicalPlan(stream);
+
+		return streamCopy;
 	}
 
 	private static ILogicalOperator copyLogicalPlan(ILogicalOperator originPlan) {
