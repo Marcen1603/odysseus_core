@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.core.server.console;
+package de.uniol.inf.is.odysseus.core.server.physicaloperator.sink;
  
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
@@ -22,12 +22,12 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSink;
 
 
 
-public class ConsoleSink extends AbstractSink<IStreamObject<?>> {
+public class ConsoleSinkPO extends AbstractSink<IStreamObject<?>> {
 
-	public ConsoleSink(){
+	public ConsoleSinkPO(){
 	}
 	
-	public ConsoleSink(ConsoleSink original){
+	public ConsoleSinkPO(ConsoleSinkPO original){
 		super();
 	}
 	
@@ -41,8 +41,8 @@ public class ConsoleSink extends AbstractSink<IStreamObject<?>> {
 	}
 
 	@Override
-	public ConsoleSink clone()  {
-		return new ConsoleSink(this);
+	public ConsoleSinkPO clone()  {
+		return new ConsoleSinkPO(this);
 	}
 
 	@Override
