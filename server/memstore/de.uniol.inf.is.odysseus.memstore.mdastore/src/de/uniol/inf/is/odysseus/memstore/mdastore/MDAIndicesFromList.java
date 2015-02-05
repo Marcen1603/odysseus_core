@@ -1,6 +1,5 @@
 package de.uniol.inf.is.odysseus.memstore.mdastore;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
@@ -26,20 +25,11 @@ public class MDAIndicesFromList extends AbstractFunction<List<Integer>> {
 		MDAStore<?> store = MDAStoreManager.get(name);
 		return getValue(store, value);
 	}
-	
+
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public static List<Integer> getValue(MDAStore<?> store, List values) {
-		if (store != null) {
-			int[] indices = store.getCellIndices(values);
-			Integer[] out = new Integer[indices.length];
-			// internal start 0; external start 1
-			for (int i = 0; i < indices.length; i++) {
-				out[i] = indices[i] + 1;
-			}
-			return Arrays.asList(out);
-		}
-		Integer[] out = new Integer[0];
-		return Arrays.asList(out);
+		Objects.requireNonNull(store);
+		return store.getCellIndices(values);
 	}
 
 }
