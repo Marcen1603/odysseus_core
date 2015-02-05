@@ -15,7 +15,6 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.RenameAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.RouteAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.SelectAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.StateMapAO;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.StreamAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.SDFExpressionParameter;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.peer.ddc.MissingDDCEntryException;
@@ -148,8 +147,9 @@ public class PassesSportsQLParser {
 		ballContactStateMapExpressions.add(OperatorBuildHelper.createExpressionParameter(ATTRIBUTE_BALL_Z, ballContactJoin));
 		ballContactStateMapExpressions.add(OperatorBuildHelper.createExpressionParameter(ATTRIBUTE_PLAYER_ENTITY_ID, ballContactJoin));
 		ballContactStateMapExpressions.add(OperatorBuildHelper.createExpressionParameter(ATTRIBUTE_PLAYER_TEAM_ID, ballContactJoin));
-		ballContactStateMapExpressions.add(OperatorBuildHelper.createExpressionParameter("SpatialDistance(ToPoint("+ATTRIBUTE_BALL_X+","+ATTRIBUTE_BALL_Y+","+ATTRIBUTE_BALL_Z+"), ToPoint("+ATTRIBUTE_PLAYER_X+","+ATTRIBUTE_PLAYER_Y+","+ATTRIBUTE_PLAYER_Z+"))", ATTRIBUTE_BALL_CONTACT_DISTANCE,ballContactJoin));
+		ballContactStateMapExpressions.add(OperatorBuildHelper.createExpressionParameter("Sqrt((Abs("+ATTRIBUTE_BALL_X+"-"+ATTRIBUTE_PLAYER_X+")^2)+(Abs("+ATTRIBUTE_BALL_Y+"-"+ATTRIBUTE_PLAYER_Y+")^2))", ATTRIBUTE_BALL_CONTACT_DISTANCE,ballContactJoin));
 
+		
 		StateMapAO ballContactStateMap = OperatorBuildHelper.createStateMapAO(ballContactStateMapExpressions, ballContactJoin);
 		allOperators.add(ballContactStateMap);
 
@@ -224,7 +224,8 @@ public class PassesSportsQLParser {
 		passesDetailsStateMapExpressions.add(OperatorBuildHelper.createExpressionParameter(ATTRIBUTE_PLAYER_ENTITY_ID+"_2", ATTRIBUTE_PLAYER_ENTITY_ID+"_2", passesSelect));
 		passesDetailsStateMapExpressions.add(OperatorBuildHelper.createExpressionParameter(ATTRIBUTE_PLAYER_TEAM_ID+"_2", ATTRIBUTE_PLAYER_TEAM_ID+"_2", passesSelect));
 		passesDetailsStateMapExpressions.add(OperatorBuildHelper.createExpressionParameter(ATTRIBUTE_PLAYER_TEAM_ID+"_2", ATTRIBUTE_PLAYER_TEAM_ID+"_2", passesSelect));
-		passesDetailsStateMapExpressions.add(OperatorBuildHelper.createExpressionParameter("SpatialDistance(ToPoint("+ATTRIBUTE_BALL_X+"_2,"+ATTRIBUTE_BALL_Y+"_2,"+ATTRIBUTE_BALL_Z+"_2),ToPoint("+ATTRIBUTE_BALL_X+"_1,"+ATTRIBUTE_BALL_Y+"_1,"+ATTRIBUTE_BALL_Z+"_1))" , ATTRIBUTE_PASS_DISTANCE, passesSelect));
+		passesDetailsStateMapExpressions.add(OperatorBuildHelper.createExpressionParameter("Sqrt((Abs("+ATTRIBUTE_BALL_X+"_2-"+ATTRIBUTE_BALL_X+"_1)^2)+(Abs("+ATTRIBUTE_BALL_Y+"_2-"+ATTRIBUTE_BALL_Y+"_1)^2))" , ATTRIBUTE_PASS_DISTANCE, passesSelect));
+		
 		passesDetailsStateMapExpressions.add(OperatorBuildHelper.createExpressionParameter("ATan2("+ATTRIBUTE_BALL_X+"_2 -"+ATTRIBUTE_BALL_X+"_1,"+ATTRIBUTE_BALL_Y+"_2 -"+ATTRIBUTE_BALL_Y+"_1)*180/PI()" , ATTRIBUTE_PASS_ANGLE, passesSelect));
 		passesDetailsStateMapExpressions.add(OperatorBuildHelper.createExpressionParameter(ATTRIBUTE_BALL_TS+"_1 - __last_1."+ATTRIBUTE_BALL_TS+"_2" , ATTRIBUTE_TIME_BETWEEN, passesSelect));
 
