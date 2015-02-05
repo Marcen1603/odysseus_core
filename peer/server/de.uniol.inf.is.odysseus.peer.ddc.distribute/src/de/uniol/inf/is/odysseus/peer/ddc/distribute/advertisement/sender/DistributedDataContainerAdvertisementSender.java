@@ -24,7 +24,7 @@ public class DistributedDataContainerAdvertisementSender {
 			.getLogger(DistributedDataContainerAdvertisementSender.class);
 
 	private static final long WAIT_TIME_MILLIS = 60 * 1000;
-	private static final long WAIT_TIME_MILLIS_REQUEST = 60 * 1000;
+	private static final long WAIT_TIME_MILLIS_REQUEST = 12 * 1000;
 
 	private static IJxtaServicesProvider jxtaServicesProvider;
 	private static DistributedDataContainerAdvertisementSender instance;
