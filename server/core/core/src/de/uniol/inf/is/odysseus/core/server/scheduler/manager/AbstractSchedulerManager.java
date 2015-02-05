@@ -156,7 +156,7 @@ public abstract class AbstractSchedulerManager implements ISchedulerManager {
 	 */
 	public void bindSchedulerFactory(ISchedulerFactory schedulerFactory) {
 		String sName = schedulerFactory.getName();
-		logger.info("bind Scheduler " + sName);
+		logger.trace("bind Scheduler " + sName);
 		if (this.schedulerFactoryMap.get(sName) == null) {
 			this.schedulerFactoryMap.put(sName, schedulerFactory);
 		} else {
@@ -188,7 +188,7 @@ public abstract class AbstractSchedulerManager implements ISchedulerManager {
 	public void bindSchedulingStrategyFactory(
 			ISchedulingFactory schedulingStrategyFactory) {
 		String stratName = schedulingStrategyFactory.getName();
-		logger.info("activate Strategy " + stratName);
+		logger.trace("activate Strategy " + stratName);
 		if (this.schedulingStrategyFactoryMap.get(stratName) == null) {
 			this.schedulingStrategyFactoryMap.put(stratName,
 					schedulingStrategyFactory);

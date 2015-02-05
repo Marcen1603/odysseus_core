@@ -49,7 +49,7 @@ public class ImageJCVFunctionProvider implements IFunctionProvider {
 		functions.add(new ToImageFunction());
 		functions.add(new ToImageMatrixFunction());
 		functions.add(new ToMatrixFunction());
-		ImageJCVFunctionProvider.LOG.info(String.format("Register functions: %s", functions));
+		ImageJCVFunctionProvider.LOG.trace(String.format("Register functions: %s", functions));
 		return functions;
 	}
 }

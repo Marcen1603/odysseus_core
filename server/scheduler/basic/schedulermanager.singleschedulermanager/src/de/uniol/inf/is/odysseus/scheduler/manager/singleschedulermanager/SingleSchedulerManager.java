@@ -91,7 +91,7 @@ public class SingleSchedulerManager extends AbstractSchedulerManager implements
 	 */
 	@SuppressWarnings("unused")
 	private void activate() {
-		logger.info("Activate schedulererManager.");
+		logger.trace("Activate schedulererManager.");
 		Set<String> schedulers = getScheduler();
 		Set<String> strats = getSchedulingStrategy();
 		String defaultScheduler = null;

@@ -608,7 +608,7 @@ public class StandardExecutor extends AbstractExecutor implements IQueryStarter 
 			ISession user, String buildConfigurationName, Context context,
 			List<IQueryBuildSetting<?>> overwriteSetting)
 			throws PlanManagementException {
-		LOG.info("Adding textual query using " + parserID + " for user "
+		LOG.debug("Adding textual query using " + parserID + " for user "
 				+ user.getUser().getName() + "...");
 		LOG.debug("Adding following query: " + query);
 		validateUserRight(user, ExecutorPermission.ADD_QUERY);
