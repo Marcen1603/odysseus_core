@@ -1196,7 +1196,7 @@ public class StandardExecutor extends AbstractExecutor implements IQueryStarter 
 					if (queryToStop.getState() != QueryState.INACTIVE) {
 						queryToStop.stop();
 					}
-					LOG.info("Query " + queryToStop.getID() + " stopped.");
+					LOG.info("Query " + queryToStop.getID() + " stopped. Execution time "+(System.currentTimeMillis()-queryToStop.getQueryStartTS()) + " ms");
 					firePlanModificationEvent(new QueryPlanModificationEvent(
 							this, PlanModificationEventType.QUERY_STOP,
 							queryToStop));
