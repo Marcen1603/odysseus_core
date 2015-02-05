@@ -7,7 +7,6 @@ import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.ProjectAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.SelectAO;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.StreamAO;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.peer.ddc.MissingDDCEntryException;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.ISportsQLParser;
@@ -47,8 +46,8 @@ public class GlobalGameSportsQLParser implements ISportsQLParser {
 		// ---------------------------
 
 		// 1. Game-Stream
-		StreamAO soccerGameAccessAO = OperatorBuildHelper
-				.createGameStreamAO(session);
+		ILogicalOperator soccerGameAccessAO = OperatorBuildHelper
+				.createGameSource(session);
 		allOperators.add(soccerGameAccessAO);
 
 		// Time parameter

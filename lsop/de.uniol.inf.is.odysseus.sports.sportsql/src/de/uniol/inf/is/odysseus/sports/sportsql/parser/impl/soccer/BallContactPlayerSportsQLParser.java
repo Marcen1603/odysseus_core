@@ -31,7 +31,7 @@ import de.uniol.inf.is.odysseus.sports.sportsql.parser.parameter.SportsQLTimePar
 	    "gameType":"SOCCER",
 	    "name":"ball_contact"
  * }
- * @author Thomas Prünie, Marc Wilken
+ * @author Thomas Prï¿½nie, Marc Wilken
  *
  */
 @SportsQL(
@@ -55,7 +55,7 @@ public class BallContactPlayerSportsQLParser implements ISportsQLParser {
 	
 		//Get all ball contacts of every player by using the global parser
 		BallContactGlobalOutput globalParser = new BallContactGlobalOutput();
-		ILogicalOperator globalOutput = globalParser.getOutputOperator(OperatorBuildHelper.createGameStreamAO(session), sportsQL, allOperators);
+		ILogicalOperator globalOutput = globalParser.getOutputOperator(OperatorBuildHelper.createGameSource(session), sportsQL, allOperators);
 
 		// clear timestamp
 		ILogicalOperator clearEndTimestamp = OperatorBuildHelper

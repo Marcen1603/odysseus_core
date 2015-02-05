@@ -12,7 +12,6 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.JoinAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.MapAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.ProjectAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.SelectAO;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.StreamAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TimeWindowAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TimestampAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.SDFExpressionParameter;
@@ -76,7 +75,7 @@ public class CornerKickGlobalSportsQLParser implements ISportsQLParser {
 		ArrayList<ILogicalOperator> operatorList = new ArrayList<ILogicalOperator>();
 		ArrayList<String> attributes = new ArrayList<String>();
 		
-		StreamAO source = OperatorBuildHelper.createGameStreamAO(session);
+		ILogicalOperator source = OperatorBuildHelper.createGameSource(session);
 		operatorList.add(source);
 
 		ArrayList<String> projectionAttributes = new ArrayList<String>();

@@ -11,7 +11,6 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.ChangeDetectAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.JoinAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.MapAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.SelectAO;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.StreamAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TimeWindowAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TimestampAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.SDFExpressionParameter;
@@ -67,8 +66,8 @@ public class GoalsSportsQLParser implements ISportsQLParser {
 		ArrayList<String> predicates = new ArrayList<String>();
 		ArrayList<String> attributes = new ArrayList<String>();
 
-		StreamAO soccerGameStreamAO = OperatorBuildHelper
-				.createGameStreamAO(session);
+		ILogicalOperator soccerGameStreamAO = OperatorBuildHelper
+				.createGameSource(session);
 		allOperators.add(soccerGameStreamAO);
 		
 		for(Integer ballId : AbstractSportsDDCAccess.getBallEntityIds()){

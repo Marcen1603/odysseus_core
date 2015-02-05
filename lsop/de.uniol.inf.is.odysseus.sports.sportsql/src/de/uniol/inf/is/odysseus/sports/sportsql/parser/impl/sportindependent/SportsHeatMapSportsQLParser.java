@@ -6,7 +6,6 @@ import java.util.List;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.ProjectAO;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.StreamAO;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.peer.ddc.MissingDDCEntryException;
 import de.uniol.inf.is.odysseus.sports.sportsql.logicaloperator.SportsHeatMapAO;
@@ -39,7 +38,7 @@ public class SportsHeatMapSportsQLParser implements ISportsQLParser {
 		// ---------------------------
 
 		// 1. Game-Stream
-		StreamAO soccerGameAccessAO = OperatorBuildHelper.createGameStreamAO(session);
+		ILogicalOperator soccerGameAccessAO = OperatorBuildHelper.createGameSource(session);
 		allOperators.add(soccerGameAccessAO);
 
 		// 2. Project

@@ -16,7 +16,6 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.RenameAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.RouteAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.SelectAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.StateMapAO;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.StreamAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.SDFExpressionParameter;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.peer.ddc.MissingDDCEntryException;
@@ -114,7 +113,7 @@ public class ShotOnGoalGlobalOutput {
 		// ---------------------
 
 		// GameStream
-		StreamAO gameStream = OperatorBuildHelper.createGameStreamAO(session);
+		ILogicalOperator gameStream = OperatorBuildHelper.createGameSource(session);
 		gameStream.setName("start");
 		allOperators.add(gameStream);
 

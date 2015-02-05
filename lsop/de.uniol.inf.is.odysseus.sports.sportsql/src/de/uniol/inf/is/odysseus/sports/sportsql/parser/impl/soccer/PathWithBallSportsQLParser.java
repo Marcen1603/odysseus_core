@@ -6,7 +6,6 @@ import java.util.Map;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.StreamAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.SDFExpressionParameter;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.peer.ddc.MissingDDCEntryException;
@@ -102,8 +101,8 @@ public class PathWithBallSportsQLParser implements ISportsQLParser {
 		// /Beginning of QueryPlan.
 
 		// Create AccessAOs for sources.
-		StreamAO source = OperatorBuildHelper.createGameStreamAO(session);
-		StreamAO metadata = OperatorBuildHelper.createMetadataStreamAO(session);
+		ILogicalOperator source = OperatorBuildHelper.createGameSource(session);
+		ILogicalOperator metadata = OperatorBuildHelper.createMetadataSource(session);
 
 		// Filter by Time
 		ILogicalOperator selectedTime = OperatorBuildHelper

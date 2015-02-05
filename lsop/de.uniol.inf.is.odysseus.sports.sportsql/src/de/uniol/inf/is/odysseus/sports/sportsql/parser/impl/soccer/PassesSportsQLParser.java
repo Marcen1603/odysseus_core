@@ -95,7 +95,7 @@ public class PassesSportsQLParser {
 			List<ILogicalOperator> allOperators) throws SportsQLParseException,
 			NumberFormatException, MissingDDCEntryException {
 
-		StreamAO soccerGameStreamAO = OperatorBuildHelper.createGameStreamAO(session);
+		ILogicalOperator soccerGameStreamAO = OperatorBuildHelper.createGameSource(session);
 		
 		// 1. Time Parameter
 		SportsQLTimeParameter timeParameter = SportsQLParameterHelper.getTimeParameter(sportsQL);

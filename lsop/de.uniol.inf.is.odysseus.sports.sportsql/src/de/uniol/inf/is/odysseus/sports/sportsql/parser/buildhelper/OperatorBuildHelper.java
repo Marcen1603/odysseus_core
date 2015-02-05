@@ -5,6 +5,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import com.google.common.base.Preconditions;
+
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.LogicalQuery;
@@ -54,6 +56,8 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.TimeParamete
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.TimeValueItem;
 import de.uniol.inf.is.odysseus.core.server.predicate.ComplexPredicateHelper;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvider;
+import de.uniol.inf.is.odysseus.core.server.util.CopyLogicalGraphVisitor;
+import de.uniol.inf.is.odysseus.core.server.util.GenericGraphWalker;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.core.usermanagement.ITenant;
 import de.uniol.inf.is.odysseus.mep.MEP;
@@ -1490,15 +1494,28 @@ public class OperatorBuildHelper {
 	 * @param sourceName
 	 * @return
 	 */
-	public static StreamAO createStreamAO(ISession session, String sourceName) {
-		StreamAO streamAO = new StreamAO();
+	public static ILogicalOperator getLogicalOperatorsFromSource(ISession session, String sourceName) {
+		IDataDictionary dataDict = OperatorBuildHelper.getDataDictionary();
+		ILogicalOperator stream = dataDict.getStreamForTransformation(sourceName, session);
+		
+		if( stream == null ) {
+			throw new RuntimeException("Could not find stream " + sourceName + "!");
+		}
+		
+		ILogicalOperator streamCopy = copyLogicalPlan(stream);
 
-		AccessAO access = createAccessAO(session, sourceName);
-		streamAO.setSource(access);
+		return streamCopy;
+	}
 
-		streamAO.setName(sourceName);
+	private static ILogicalOperator copyLogicalPlan(ILogicalOperator originPlan) {
+		Preconditions.checkNotNull(originPlan, "Logical plan to copy must not be null!");
 
-		return streamAO;
+		CopyLogicalGraphVisitor<ILogicalOperator> copyVisitor = new CopyLogicalGraphVisitor<ILogicalOperator>(originPlan.getOwner());
+
+		GenericGraphWalker<ILogicalOperator> walker = new GenericGraphWalker<>();
+
+		walker.prefixWalk(originPlan, copyVisitor);
+		return copyVisitor.getResult();
 	}
 
 	/**
@@ -1506,9 +1523,9 @@ public class OperatorBuildHelper {
 	 * 
 	 * @return
 	 */
-	public static StreamAO createGameStreamAO(ISession session) {
+	public static ILogicalOperator createGameSource(ISession session) {
 		String gameSourceName = OperatorBuildHelper.MAIN_STREAM_NAME;
-		return createStreamAO(session, gameSourceName);
+		return getLogicalOperatorsFromSource(session, gameSourceName);
 	}
 
 	/**
@@ -1516,9 +1533,9 @@ public class OperatorBuildHelper {
 	 * 
 	 * @return
 	 */
-	public static StreamAO createMetadataStreamAO(ISession session) {
+	public static ILogicalOperator createMetadataSource(ISession session) {
 		String gameSourceName = OperatorBuildHelper.METADATA_STREAM_NAME;
-		return createStreamAO(session, gameSourceName);
+		return getLogicalOperatorsFromSource(session, gameSourceName);
 	}
 
 	/**

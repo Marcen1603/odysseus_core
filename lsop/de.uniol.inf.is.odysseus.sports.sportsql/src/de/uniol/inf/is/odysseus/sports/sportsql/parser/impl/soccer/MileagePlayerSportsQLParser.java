@@ -10,7 +10,6 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.AggregateAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.ChangeDetectAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.SelectAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.StateMapAO;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.StreamAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TimestampAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.SDFExpressionParameter;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
@@ -49,7 +48,7 @@ public class MileagePlayerSportsQLParser implements ISportsQLParser {
 		// We need this list to initialize all operators
 		List<ILogicalOperator> allOperators = new ArrayList<ILogicalOperator>();
 
-		StreamAO soccerGameStreamAO = OperatorBuildHelper.createGameStreamAO(session);
+		ILogicalOperator soccerGameStreamAO = OperatorBuildHelper.createGameSource(session);
 		allOperators.add(soccerGameStreamAO);
 
 		// ----------------------------------------------------
