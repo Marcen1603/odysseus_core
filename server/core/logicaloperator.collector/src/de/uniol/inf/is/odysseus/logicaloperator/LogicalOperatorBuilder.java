@@ -229,7 +229,7 @@ public class LogicalOperatorBuilder implements BundleActivator, BundleListener {
 					
 					// security check
 					if( curProperty.getReadMethod() == null ) {
-						logger.info("[Missing Get #{}] There is no getter-method for parameter '{}' of operator {}", new Object[]{++missingGetterMethodCount, parameterAnnotation.name(), curOp.getName()});
+						logger.trace("[Missing Get #{}] There is no getter-method for parameter '{}' of operator {}", new Object[]{++missingGetterMethodCount, parameterAnnotation.name(), curOp.getName()});
 					}
 				}
 			}
