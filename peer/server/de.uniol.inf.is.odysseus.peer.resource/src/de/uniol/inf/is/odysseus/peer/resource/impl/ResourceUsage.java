@@ -22,9 +22,10 @@ public final class ResourceUsage implements IResourceUsage {
 	
 	private final int[] version;
 	private final long startupTimestamp;
+	private final long timestamp;
 
 	ResourceUsage(long memFreeBytes, long memMaxBytes, double cpuFree, double cpuMax, int runningQueriesCount, int stoppedQueriesCount, int remotePeerCount,
-			double netBandwidthMax, double netOutputRate, double netInputRate, int[] version, long startupTimestamp ) {
+			double netBandwidthMax, double netOutputRate, double netInputRate, int[] version, long startupTimestamp, long timestamp ) {
 		
 		Preconditions.checkArgument(memFreeBytes >= 0, "Memory free bytes cannot be negative: %s", memFreeBytes);
 		Preconditions.checkArgument(memMaxBytes >= 0, "Memory max bytes cannot be negative: %s", memMaxBytes);
@@ -42,6 +43,7 @@ public final class ResourceUsage implements IResourceUsage {
 		
 		Preconditions.checkNotNull(version, "Version must not be null!");
 		Preconditions.checkArgument(startupTimestamp > 0, "StartupTimestamp must be positive!");
+		Preconditions.checkArgument(timestamp > 0, "Timestamp must be positive!");
 
 		this.memFreeBytes = memFreeBytes;
 		this.memMaxBytes = memMaxBytes;
@@ -58,6 +60,7 @@ public final class ResourceUsage implements IResourceUsage {
 		
 		this.version = version;
 		this.startupTimestamp = startupTimestamp;
+		this.timestamp = timestamp;
 	}
 	
 	private ResourceUsage( ResourceUsage copy ) {
@@ -76,6 +79,7 @@ public final class ResourceUsage implements IResourceUsage {
 		version = copy.version;
 		remotePeerCount = copy.remotePeerCount;
 		startupTimestamp = copy.startupTimestamp;
+		timestamp = copy.timestamp;
 	}
 	
 	@Override
@@ -150,5 +154,10 @@ public final class ResourceUsage implements IResourceUsage {
 	@Override
 	public long getStartupTimestamp() {
 		return startupTimestamp;
+	}
+	
+	@Override
+	public long getTimestamp() {
+		return timestamp;
 	}
 }

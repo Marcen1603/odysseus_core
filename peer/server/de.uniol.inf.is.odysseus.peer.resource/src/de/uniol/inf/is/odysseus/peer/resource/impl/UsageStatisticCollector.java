@@ -104,7 +104,8 @@ public class UsageStatisticCollector {
 				netOutputRate.getAverage(), 
 				netInputRate.getAverage(), 
 				version,
-				startupTimestamp);
+				startupTimestamp,
+				System.currentTimeMillis());
 	}
 
 	private static int[] toVersionDigits(String versionString) {

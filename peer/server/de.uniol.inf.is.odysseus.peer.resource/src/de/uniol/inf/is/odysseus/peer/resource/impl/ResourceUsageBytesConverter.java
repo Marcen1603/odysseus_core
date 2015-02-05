@@ -53,6 +53,7 @@ public final class ResourceUsageBytesConverter {
 		
 		long startupTimestamp = bb.getLong();
 
-		return new ResourceUsage(memFree, memMax, cpuFree, cpuMax, runQ, stopQ, remotePeerCount, netMax, netOut, netIn, version, startupTimestamp);
+		// TODO: transport timestamp over network
+		return new ResourceUsage(memFree, memMax, cpuFree, cpuMax, runQ, stopQ, remotePeerCount, netMax, netOut, netIn, version, startupTimestamp, System.currentTimeMillis());
 	}
 }

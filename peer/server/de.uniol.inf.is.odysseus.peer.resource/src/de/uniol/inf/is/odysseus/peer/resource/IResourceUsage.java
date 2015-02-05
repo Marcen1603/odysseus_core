@@ -18,6 +18,7 @@ public interface IResourceUsage {
 	
 	public int[] getVersion();
 	public long getStartupTimestamp();
+	public long getTimestamp();
 	
 	public IResourceUsage clone();
 }
