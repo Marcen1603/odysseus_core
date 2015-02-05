@@ -76,7 +76,7 @@ public class PeerUpdatePlugIn implements BundleActivator, IPeerCommunicatorListe
 	
 	public static void sendUpdateMessageToRemotePeers(Collection<PeerID> remotePeers) {
 		Preconditions.checkNotNull(remotePeers, "List of remote peer ids must not be null!");
-		LOG.debug("Sending update message to {} remote peers", remotePeers.size());
+		LOG.info("Sending update message to {} remote peers", remotePeers.size());
 		sendMessageToPeers(remotePeers, new DoUpdateMessage());
 	}
 	
@@ -86,7 +86,7 @@ public class PeerUpdatePlugIn implements BundleActivator, IPeerCommunicatorListe
 
 	public static void sendRestartMessageToRemotePeers(Collection<PeerID> remotePeerIDs) {
 		Preconditions.checkNotNull(remotePeerIDs, "List of remote peer ids must not be null!");
-		LOG.debug("Sending restart message to {} remote peers", remotePeerIDs.size());
+		LOG.info("Sending restart message to {} remote peers", remotePeerIDs.size());
 		
 		sendMessageToPeers(remotePeerIDs, new DoRestartMessage());
 	}
@@ -104,7 +104,7 @@ public class PeerUpdatePlugIn implements BundleActivator, IPeerCommunicatorListe
 	@Override
 	public void receivedMessage(IPeerCommunicator communicator, PeerID senderPeer, IMessage message) {
 		if( message instanceof DoUpdateMessage ) {
-			LOG.debug("Got message to update");
+			LOG.info("Got message to update");
 			
 			try {
 				if( FeatureUpdateUtility.checkForUpdates(getActiveSession()) ) {
@@ -116,7 +116,7 @@ public class PeerUpdatePlugIn implements BundleActivator, IPeerCommunicatorListe
 				LOG.error("Cannot update", t);
 			}
 		} else if( message instanceof DoRestartMessage ) {
-			LOG.debug("Got message to restart");
+			LOG.info("Got message to restart");
 			
 			try {
 				FeatureUpdateUtility.restart(getActiveSession());
