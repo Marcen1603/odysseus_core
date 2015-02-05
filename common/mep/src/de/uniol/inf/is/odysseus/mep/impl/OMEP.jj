@@ -54,11 +54,12 @@ TOKEN :
 {
 < K_AND : "AND">
 | < K_OR : "OR">
-| < INTEGER : (< DIGIT >)+ >
+| < DIGITS : (< DIGIT >)+ >
+| < INTEGER : ("-")? <DIGITS> >
 | < FLOAT :
     (
-      < INTEGER > "." < INTEGER >
-    | "." < INTEGER >
+      < INTEGER > "." < DIGITS >
+    | "." < DIGITS >
     ) >
 | < BOOLEAN :
     "false"

@@ -21,7 +21,7 @@ import de.uniol.inf.is.odysseus.mep.AbstractUnaryOperator;
 public class UnaryMinusOperator extends AbstractUnaryOperator<Double> {
 
 	private static final long serialVersionUID = 5934608915212061886L;
-	public static final SDFDatatype[][] accTypes = new SDFDatatype[][] { SDFDatatype.NUMBERS};
+	public static final SDFDatatype[][] accTypes = new SDFDatatype[][] { SDFDatatype.FLOATING_NUMBERS};
 	
 	public UnaryMinusOperator() {
 		super("UnaryMinus", accTypes, SDFDatatype.DOUBLE);
