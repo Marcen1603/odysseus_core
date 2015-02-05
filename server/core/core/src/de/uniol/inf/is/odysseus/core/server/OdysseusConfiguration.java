@@ -220,7 +220,7 @@ public class OdysseusConfiguration {
 			props.storeToXML(out,
 					"Odysseus Property File edit only if you know what you are doing");
 			out.close();
-			getLogger().info("New Odysseus-Config-File created");
+			getLogger().trace("New Odysseus-Config-File created");
 		} catch (Exception e2) {
 			e2.printStackTrace();
 		}
@@ -340,19 +340,19 @@ public class OdysseusConfiguration {
 		os = os.toLowerCase();
 		if ((os.indexOf("win") >= 0)) {
 			// Windows
-			getLogger().info("OS: Windows");
+			getLogger().trace("OS: Windows");
 			return "";
 		} else if ((os.indexOf("mac") >= 0)) {
 			// Macintosh
-			getLogger().info("OS: MacOS");
+			getLogger().trace("OS: MacOS");
 			return ".";
 		} else if ((os.indexOf("nix") >= 0 || os.indexOf("nux") >= 0)) {
 			// Unix
-			getLogger().info("OS: Unix/Linux");
+			getLogger().trace("OS: Unix/Linux");
 			return ".";
 		} else {
 			// All other
-			getLogger().info("OS: not Supported");
+			getLogger().error("OS: not Supported");
 			return "";
 		}
 	}
