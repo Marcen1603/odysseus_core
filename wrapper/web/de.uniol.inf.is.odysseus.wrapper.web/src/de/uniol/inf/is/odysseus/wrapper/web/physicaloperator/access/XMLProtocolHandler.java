@@ -19,6 +19,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.UnknownHostException;
+import java.nio.ByteBuffer;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -53,6 +55,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITranspor
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportExchangePattern;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandler;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.util.ByteBufferBackedInputStream;
 
 /**
  * Data Handler for XML documents The schema attribute names define the XPath
@@ -168,62 +171,91 @@ public class XMLProtocolHandler<T extends Tuple<?>> extends
 	}
 
 	@Override
-	public T getNext() throws IOException {
-		this.delay();
+	public void process(InputStream message)
+	{
+		try {
+			getTransfer().transfer(parseXml(message));
+		} catch (IOException e) {
+			XMLProtocolHandler.LOG.error(e.getMessage(), e);
+		}
+	}
+
+	@Override
+	public void process(long callerId, ByteBuffer message)
+	{
+		String msg = new String(message.array(), Charset.forName("UTF-8"));
+		System.out.println(msg);
+		
+		try {
+			getTransfer().transfer(parseXml(new ByteBufferBackedInputStream(message)));
+		} catch (IOException e) {
+			XMLProtocolHandler.LOG.error(e.getMessage(), e);
+		}		
+	}
+		
+	private T parseXml(InputStream input) throws IOException
+	{
 		// Deliver Input from former runs
 		if (result.size() > 0) {
 			return result.remove(0);
-		}
-
-		if (this.input.available() > 0) {
-			try {
-				final DocumentBuilder db = this.documentBuilderFactory
-						.newDocumentBuilder();
-				final Document dom = db.parse(this.input);
-                this.input.skip(this.input.available());
-				final XPathFactory factory = XPathFactory.newInstance();
-				final XPath xpath = factory.newXPath();
-				final SDFSchema schema = this.getDataHandler().getSchema();
-				final Map<String, NodeList> nodesMap = new HashMap<String, NodeList>();
-				for (int i = 0; i < this.getXPaths().size(); i++) {
-					final String path = this.getXPaths().get(i);
-					try {
-						final XPathExpression expr = xpath.compile(path);
-						final NodeList nodes = (NodeList) expr.evaluate(dom,
-								XPathConstants.NODESET);
-						nodesMap.put(path, nodes);
-					} catch (final XPathExpressionException e) {
-						XMLProtocolHandler.LOG.error(e.getMessage(), e);
-					}
+		}		
+		
+		if (input.available() == 0) return null; 
+		
+		try {
+			final DocumentBuilder db = this.documentBuilderFactory
+					.newDocumentBuilder();
+			final Document dom = db.parse(input);
+            input.skip(input.available());
+			final XPathFactory factory = XPathFactory.newInstance();
+			final XPath xpath = factory.newXPath();
+			final SDFSchema schema = this.getDataHandler().getSchema();
+			final Map<String, NodeList> nodesMap = new HashMap<String, NodeList>();
+			for (int i = 0; i < this.getXPaths().size(); i++) {
+				final String path = this.getXPaths().get(i);
+				try {
+					final XPathExpression expr = xpath.compile(path);
+					final NodeList nodes = (NodeList) expr.evaluate(dom,
+							XPathConstants.NODESET);
+					nodesMap.put(path, nodes);
+				} catch (final XPathExpressionException e) {
+					XMLProtocolHandler.LOG.error(e.getMessage(), e);
 				}
-				
-				int xPathCount = nodesMap.get(getXPaths().get(0)).getLength();
-				for (int jj = 0; jj < xPathCount; jj++) {
-					int pos = jj;
-					if (reverse){
-						pos = (xPathCount - jj)-1;
-					}
-					final String[] tuple = new String[schema.size()];
-					for (int i = 0; i < this.getXPaths().size(); i++) {
-						NodeList nodes = nodesMap.get(getXPaths().get(i));
-						if (nodes.getLength() > pos) {
-							final Node node = nodes.item(pos);
-							final String content = node.getTextContent();
-							tuple[i] = content;
-						}
-					}
-					result.add(this.getDataHandler().readData(tuple));
-				}
-				if (result.size() > 0) {
-					return result.remove(0);
-				} else {
-					return null;
-				}
-			} catch (ParserConfigurationException | SAXException e) {
-				XMLProtocolHandler.LOG.error(e.getMessage(), e);
 			}
-		}
-		return null;
+			
+			int xPathCount = nodesMap.get(getXPaths().get(0)).getLength();
+			for (int jj = 0; jj < xPathCount; jj++) {
+				int pos = jj;
+				if (reverse){
+					pos = (xPathCount - jj)-1;
+				}
+				final String[] tuple = new String[schema.size()];
+				for (int i = 0; i < this.getXPaths().size(); i++) {
+					NodeList nodes = nodesMap.get(getXPaths().get(i));
+					if (nodes.getLength() > pos) {
+						final Node node = nodes.item(pos);
+						final String content = node.getTextContent();
+						tuple[i] = content;
+					}
+				}
+				result.add(this.getDataHandler().readData(tuple));
+			}
+			if (result.size() > 0) {
+				return result.remove(0);
+			} else {
+				return null;
+			}
+		} catch (ParserConfigurationException | SAXException e) {
+			XMLProtocolHandler.LOG.error(e.getMessage(), e);
+			return null;
+		}		
+	}
+	
+	@Override
+	public T getNext() throws IOException {
+		this.delay();
+
+		return parseXml(input);
 	}
 
 	@Override
