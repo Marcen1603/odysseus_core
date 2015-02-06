@@ -94,7 +94,7 @@ public class ThreadedBufferPO<R extends IStreamObject<? extends IMetaAttribute>>
 		// Create new thread and start
 		runner = new Thread("ThreadedBuffer " + getName()) {
 			public void run() {
-				while (isOpen()) {
+				while (isOpen() & !isDone()) {
 					synchronized (this) {
 						try {
 							if (inputBuffer.isEmpty()) {
@@ -115,7 +115,6 @@ public class ThreadedBufferPO<R extends IStreamObject<? extends IMetaAttribute>>
 						transferNext(outIter.next());
 						outIter.remove();
 					}
-					outputBuffer.clear();
 				}
 			};
 
