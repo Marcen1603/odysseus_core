@@ -27,7 +27,7 @@ public class WaitForQueryPreParserKeyword extends AbstractPreParserKeyword {
 		String[] para = getSimpleParameters(parameter);
 		String name = para[0];
 		long testPeriod = 1000;
-		if (para.length > 1){
+		if (para.length > 1&&  para[1].length() > 0){
 			testPeriod = Long.parseLong(para[1]);
 		}
 		long maxWaitingTime = -1;
