@@ -35,6 +35,11 @@ public class ThreadedBufferPO<R extends IStreamObject<? extends IMetaAttribute>>
 	public OutputMode getOutputMode() {
 		return OutputMode.INPUT;
 	}
+	
+	@Override
+	public long getElementsStored1(){
+		return buffer.size();
+	}
 
 	@Override
 	protected void process_next(R object, int port) {
