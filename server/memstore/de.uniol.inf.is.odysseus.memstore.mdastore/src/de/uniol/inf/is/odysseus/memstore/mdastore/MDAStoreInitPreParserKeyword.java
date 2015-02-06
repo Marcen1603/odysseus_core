@@ -12,7 +12,7 @@ import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.script.parser.AbstractPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptException;
 
-public class MDAStorePreParserKeyword extends AbstractPreParserKeyword {
+public class MDAStoreInitPreParserKeyword extends AbstractPreParserKeyword {
 
 	public static final String KEYWORD = "MDASTORE_INIT";
 

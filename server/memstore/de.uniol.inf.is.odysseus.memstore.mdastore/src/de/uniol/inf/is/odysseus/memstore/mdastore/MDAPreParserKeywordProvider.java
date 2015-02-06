@@ -12,7 +12,8 @@ public class MDAPreParserKeywordProvider implements IPreParserKeywordProvider {
 	@Override
 	public Map<String, Class<? extends IPreParserKeyword>> getKeywords() {
 		Map<String, Class<? extends IPreParserKeyword>> keywords = Maps.newHashMap();
-		keywords.put(MDAStorePreParserKeyword.KEYWORD, MDAStorePreParserKeyword.class);
+		keywords.put(MDAStoreInitPreParserKeyword.KEYWORD, MDAStoreInitPreParserKeyword.class);
+		keywords.put(MDAStoreDropPreParserKeyword.KEYWORD, MDAStoreDropPreParserKeyword.class);
 		return keywords;
 	}
 
