@@ -69,4 +69,10 @@ public class PeerView extends ViewPart {
 	public void refresh() {
 		usageContainer.refreshAllPeers();
 	}
+
+	public void clear() {
+		usageContainer.clear();
+		
+		usageContainer.refreshAllPeers();
+	}
 }

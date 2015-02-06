@@ -116,12 +116,23 @@
             id="de.uniol.inf.is.odysseus.rcp.commands.RestartRemotePeers"
             name="Restart remote peers">
       </command>
+      <command
+            defaultHandler="de.uniol.inf.is.odysseus.peer.rcp.commands.CleanPeerViewCommand"
+            id="de.uniol.inf.is.odysseus.rcp.commands.CleanPeerViewCommand"
+            name="Clean Peer View">
+      </command>
    </extension>
    <extension
          point="org.eclipse.ui.menus">
       <menuContribution
             allPopups="false"
             locationURI="toolbar:de.uniol.inf.is.odysseus.rcp.peer.PeerView">
+         <command
+               commandId="de.uniol.inf.is.odysseus.rcp.commands.CleanPeerViewCommand"
+               icon="icons/clear.gif"
+               label="Clean from Inactive Peers"
+               style="push">
+         </command>
          <command
                commandId="de.uniol.inf.is.odysseus.rcp.commands.RefreshPeerViewCommand"
                icon="icons/refresh.gif"

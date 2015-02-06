@@ -44,16 +44,18 @@ public abstract class PeerViewCellLabelProviderAndSorter<T> extends CellLabelPro
 				cell.setImage(img);
 			}
 		}
-		
-		if (isLocalID(pid)) {
+			
+		if (isLocalID(pid) || !isActive(pid)) {
 			cell.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_GRAY));
-		}
-		
-
+		}		
 	}
 	
 	private static boolean isLocalID(PeerID pid) {
 		return RCPP2PNewPlugIn.getP2PNetworkManager().getLocalPeerID().equals(pid);
+	}
+	
+	private static boolean isActive(PeerID pid) {
+		return RCPP2PNewPlugIn.getPeerDictionary().getRemotePeerIDs().contains(pid);
 	}
 
 	protected abstract T getValue( PeerID pid );

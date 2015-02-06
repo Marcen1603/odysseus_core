@@ -50,13 +50,39 @@ public class PeerTableViewer {
 		tableViewer.getTable().setLinesVisible(true);
 		tableViewer.setContentProvider(ArrayContentProvider.getInstance());
 
+		/************ Activity *************/
+		TableViewerColumn activityColumn = new TableViewerColumn(tableViewer, SWT.NONE);
+		activityColumn.getColumn().setText("Act");
+		tableColumnLayout.setColumnData(activityColumn.getColumn(), new ColumnWeightData(3, 15, true));
+		activityColumn.setLabelProvider(new PeerViewCellLabelProviderAndSorter<Boolean>(tableViewer, activityColumn) {
+			@Override
+			protected Boolean getValue(PeerID pid) {
+				return usageContainer.isPeerActive(pid);
+			}
+			
+			@Override
+			protected String toString(Boolean value) {
+				return ""; // image only
+			}
+			
+			@Override
+			protected Image getImage(Boolean value) {
+				return warnImages.getWarnImage(value == true ? 0 : 100); // 0 = blue, 100 = red
+			}
+			
+			@Override
+			protected int compareValues(Boolean a, Boolean b) {
+				return Boolean.compare(a, b);
+			}
+		});
+		
 		/************* Name ****************/
 		TableViewerColumn nameColumn = new TableViewerColumn(tableViewer, SWT.NONE);
 		nameColumn.getColumn().setText("Name");
 		nameColumn.setLabelProvider(new PeerViewCellLabelProviderAndSorter<String>(tableViewer, nameColumn) {
 			@Override
 			protected String getValue(PeerID pid) {
-				return determinePeerName(pid);
+				return determinePeerName(usageContainer, pid);
 			}
 		});
 		tableColumnLayout.setColumnData(nameColumn.getColumn(), new ColumnWeightData(10, 15, true));
@@ -160,7 +186,8 @@ public class PeerTableViewer {
 		queriesColumn.setLabelProvider(new CellLabelProvider() {
 			@Override
 			public void update(ViewerCell cell) {
-				Optional<IResourceUsage> optUsage = usageContainer.determineResourceUsage((PeerID) cell.getElement());
+				PeerID pid = (PeerID) cell.getElement();
+				Optional<IResourceUsage> optUsage = usageContainer.determineResourceUsage(pid);
 				if (optUsage.isPresent()) {
 					IResourceUsage usage = optUsage.get();
 					cell.setText(usage.getRunningQueriesCount() + " / " + (usage.getRunningQueriesCount() + usage.getStoppedQueriesCount()));
@@ -168,7 +195,7 @@ public class PeerTableViewer {
 					cell.setText(UNKNOWN_TEXT);
 				}
 
-				if (isLocalID((PeerID) cell.getElement())) {
+				if (isLocalID(pid) || !usageContainer.isPeerActive(pid)) {
 					cell.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_GRAY));
 				}
 			}
@@ -200,7 +227,8 @@ public class PeerTableViewer {
 		netColumn.setLabelProvider(new CellLabelProvider() {
 			@Override
 			public void update(ViewerCell cell) {
-				Optional<IResourceUsage> optUsage = usageContainer.determineResourceUsage((PeerID) cell.getElement());
+				PeerID pid = (PeerID) cell.getElement();
+				Optional<IResourceUsage> optUsage = usageContainer.determineResourceUsage(pid);
 				if (optUsage.isPresent()) {
 					IResourceUsage usage = optUsage.get();
 					cell.setText(String.format("%-3.1f", (usage.getNetInputRate() + usage.getNetOutputRate())) + " / " + usage.getNetBandwidthMax());
@@ -208,7 +236,7 @@ public class PeerTableViewer {
 					cell.setText(UNKNOWN_TEXT);
 				}
 
-				if (isLocalID((PeerID) cell.getElement())) {
+				if (isLocalID(pid)  || !usageContainer.isPeerActive(pid)) {
 					cell.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_GRAY));
 				}
 			}
@@ -372,8 +400,13 @@ public class PeerTableViewer {
 		});
 	}
 
-	private String determinePeerName(PeerID id) {
-		return RCPP2PNewPlugIn.getPeerDictionary().getRemotePeerName(id);
+	private String determinePeerName(PeerViewUsageContainer usageContainer, PeerID pid) {
+		Optional<String> optName = usageContainer.getPeerName(pid);
+		if( optName.isPresent() ) {
+			return optName.get();
+		}
+		
+		return "<unknown>";
 	}
 
 	private static double calcMemPercentage(IResourceUsage resourceUsage) {
