@@ -101,11 +101,10 @@ public abstract class AbstractTimeSeriesChart extends
 	public void reloadChart() {
         if (!autoadjust) {
             if (!Double.isNaN(min)) {
-                getChart().getXYPlot().getRangeAxis().setLowerBound(min * (1.0 - margin));
+                getChart().getXYPlot().getRangeAxis().setLowerBound(min - ((max - min) * margin));
             }
             if (!Double.isNaN(max)) {
-
-                getChart().getXYPlot().getRangeAxis().setUpperBound(max * (1.0 + margin));
+                getChart().getXYPlot().getRangeAxis().setUpperBound(max + ((max - min) * margin));
             }
         }
 	       
@@ -332,8 +331,8 @@ public abstract class AbstractTimeSeriesChart extends
             else if (value < min) {
                 min = value;
             }
-            getChart().getXYPlot().getRangeAxis().setLowerBound(min * (1.0 - margin));
-            getChart().getXYPlot().getRangeAxis().setUpperBound(max * (1.0 + margin));
+            getChart().getXYPlot().getRangeAxis().setLowerBound(min - ((max - min) * margin));
+            getChart().getXYPlot().getRangeAxis().setUpperBound(max + ((max - min) * margin));
         }
     }
 
