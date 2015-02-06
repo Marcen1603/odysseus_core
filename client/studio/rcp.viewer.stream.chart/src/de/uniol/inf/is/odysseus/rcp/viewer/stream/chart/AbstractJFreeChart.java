@@ -546,6 +546,10 @@ public abstract class AbstractJFreeChart<T, M extends IMetaAttribute> extends
 	public void onUnlock() {
 
 	}
+	
+	public void open() {
+		this.opened = true;
+	}
 
 	@Override
 	public void setQueryTextProvider(IDashboardPartQueryTextProvider provider) {
