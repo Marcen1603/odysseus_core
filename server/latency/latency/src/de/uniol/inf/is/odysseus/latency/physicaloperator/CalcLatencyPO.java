@@ -17,6 +17,7 @@ package de.uniol.inf.is.odysseus.latency.physicaloperator;
 
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.server.metadata.ILatency;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 
@@ -43,6 +44,12 @@ public class CalcLatencyPO<T extends IStreamObject<? extends ILatency>> extends
 		
 		transfer(object);
 	}
+	
+	@Override
+	public void processPunctuation(IPunctuation punctuation, int port) {
+		sendPunctuation(punctuation);
+	}
+
 
 	@Override
 	public CalcLatencyPO<T> clone() {

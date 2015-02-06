@@ -23,6 +23,7 @@ import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.IGroupProcessor;
 
@@ -101,6 +102,10 @@ public class ChangeDetectPO<R extends IStreamObject<?>> extends
 		}
 	}
 
+	@Override
+	public void processPunctuation(IPunctuation punctuation, int port) {
+		sendPunctuation(punctuation);
+	}
 
 	private void transferInternal(R object) {
 		transfer(enrichObject(object, suppressedElements));

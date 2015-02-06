@@ -11,6 +11,7 @@ import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFExpression;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
@@ -70,6 +71,12 @@ public class RelationalTopKPO<T extends Tuple<M>, M extends ITimeInterval>
 		addObject(calcScore(object));
 
 		produceResult(object);
+	}
+	
+	@Override
+	public void processPunctuation(IPunctuation punctuation, int port) {
+		// TODO: how to handle punctuations
+		//sendPunctuation(punctuation);
 	}
 
 	private void cleanUp(PointInTime start) {

@@ -22,6 +22,7 @@ import org.apache.commons.math3.util.Pair;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.probabilistic.common.base.ProbabilisticTuple;
 import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.IMultivariateDistribution;
@@ -124,6 +125,12 @@ public class AssignDistributionPO<T extends ITimeInterval> extends AbstractPipe<
         // KTHXBYE
         this.transfer(outputVal);
     }
+    
+	@Override
+	public void processPunctuation(IPunctuation punctuation, int port) {
+		sendPunctuation(punctuation);
+	}
+
 
     /*
      * (non-Javadoc)

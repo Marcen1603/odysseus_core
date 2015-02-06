@@ -19,6 +19,7 @@ import com.google.common.collect.Sets;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.processmining.common.AbstractLCTuple;
 import de.uniol.inf.is.odysseus.processmining.common.DFRTuple;
@@ -199,6 +200,11 @@ public class InductiveMinerPO<T extends IMetaAttribute> extends
 		Tuple<T> transferTuple = new Tuple<T>(1, true);
 		transferTuple.setAttribute(0, mostRecentModel);
 		transfer(transferTuple);
+	}
+	
+	@Override
+	public void processPunctuation(IPunctuation punctuation, int port) {
+		sendPunctuation(punctuation);
 	}
 
 	private void getDifferentModells() {

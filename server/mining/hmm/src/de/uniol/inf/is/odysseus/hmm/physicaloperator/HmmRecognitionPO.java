@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.hmm.FileHandlerHMM;
@@ -126,6 +127,11 @@ public class HmmRecognitionPO<M extends ITimeInterval> extends AbstractPipe<Tupl
 		// int timeWindow = 10000;
 		// hmmWindow.checkTimestamps(timeWindow, timestamp);
 
+	}
+	
+	@Override
+	public void processPunctuation(IPunctuation punctuation, int port) {
+		sendPunctuation(punctuation);
 	}
 
 	@Override

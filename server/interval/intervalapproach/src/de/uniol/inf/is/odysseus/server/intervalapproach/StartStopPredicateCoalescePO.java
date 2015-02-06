@@ -10,6 +10,7 @@ import java.util.Map.Entry;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
@@ -94,6 +95,12 @@ public class StartStopPredicateCoalescePO<M extends ITimeInterval> extends
 			}
 		}
 
+	}
+	
+	@Override
+	public void processPunctuation(IPunctuation punctuation, int port) {
+		// TODO handle punctuations correclty
+		//	sendPunctuation(punctuation);
 	}
 
 	@Override

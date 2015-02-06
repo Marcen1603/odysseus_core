@@ -16,6 +16,7 @@
 package de.uniol.inf.is.odysseus.core.server.physicaloperator;
 
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 
 /**
  * This operator is only needed as the top operator, if the output of
@@ -46,6 +47,11 @@ public class TopPO<R extends IStreamObject<?>> extends AbstractPipe<R, R> {
 	@Override
 	protected void process_next(R object, int port) {
 		transfer(object);
+	}
+	
+	@Override
+	public void processPunctuation(IPunctuation punctuation, int port) {
+		sendPunctuation(punctuation);
 	}
 
 	@Override

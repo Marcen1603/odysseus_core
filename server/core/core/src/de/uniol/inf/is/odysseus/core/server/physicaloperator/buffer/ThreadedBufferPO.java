@@ -20,11 +20,12 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 public class ThreadedBufferPO<R extends IStreamObject<? extends IMetaAttribute>>
 		extends AbstractPipe<R, R> {
 
-	protected LinkedList<IStreamable> buffer = new LinkedList<>();
+	final protected LinkedList<IStreamable> buffer = new LinkedList<>();
 
 	Thread runner;
+	boolean started = false;
 
-	private long limit;
+	final private long limit;
 
 	public ThreadedBufferPO(long l) {
 		this.limit = l;
@@ -37,6 +38,20 @@ public class ThreadedBufferPO<R extends IStreamObject<? extends IMetaAttribute>>
 
 	@Override
 	protected void process_next(R object, int port) {
+		// Start thread
+		if (!started){
+			runner.start();
+			started = true;
+		}
+		addObjectToBuffer(object);
+	}
+
+	@Override
+	public void processPunctuation(IPunctuation punctuation, int port) {
+		addObjectToBuffer(punctuation);
+	}
+	
+	private void addObjectToBuffer(IStreamable object) {
 		synchronized (this) {
 			if (limit > 0) {
 				while (buffer.size() > limit) {
@@ -46,11 +61,15 @@ public class ThreadedBufferPO<R extends IStreamObject<? extends IMetaAttribute>>
 					}
 				}
 			}
-			buffer.add(object);
+			synchronized (buffer) {
+				buffer.add(object);
+			}
 			notifyAll();
 		}
 	}
 
+	
+	
 	@Override
 	protected void process_open() throws OpenFailedException {
 		buffer.clear();
@@ -95,8 +114,7 @@ public class ThreadedBufferPO<R extends IStreamObject<? extends IMetaAttribute>>
 				// an real element, send punctuations immediately
 
 				IStreamable peek;
-				while ((peek = buffer.peek()) != null
-						&& peek.isPunctuation()) {
+				while ((peek = buffer.peek()) != null && peek.isPunctuation()) {
 					sendPunctuation((IPunctuation) buffer.pop());
 				}
 
@@ -106,7 +124,6 @@ public class ThreadedBufferPO<R extends IStreamObject<? extends IMetaAttribute>>
 			}
 		};
 		runner.setDaemon(true);
-		runner.start();
 	}
 
 }

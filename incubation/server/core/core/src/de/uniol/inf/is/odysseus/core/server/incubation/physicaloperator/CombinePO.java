@@ -158,7 +158,7 @@ public class CombinePO<M extends ITimeInterval> extends
 	@Override
 	public void processPunctuation(IPunctuation punctuation, int port) {
 		// TODO clean up queues
-		super.processPunctuation(punctuation, port);
+		sendPunctuation(punctuation, port);
 	}
 
 }

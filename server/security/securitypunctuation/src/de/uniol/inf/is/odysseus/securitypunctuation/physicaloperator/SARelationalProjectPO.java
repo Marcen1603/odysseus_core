@@ -99,7 +99,7 @@ public class SARelationalProjectPO<T extends IStreamObject<? extends ITimeInterv
 		if (punctuation instanceof SecurityPunctuation){
 			processSecurityPunctuation((ISecurityPunctuation)punctuation, port);
 		}
-		super.processPunctuation(punctuation, port);
+		sendPunctuation(punctuation, port);
 	}
 	
 	private void processSecurityPunctuation(ISecurityPunctuation sp, int port) {

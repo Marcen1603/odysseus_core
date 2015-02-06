@@ -3,6 +3,7 @@ package de.uniol.inf.is.odysseus.core.server.physicaloperator;
 import de.uniol.inf.is.odysseus.core.metadata.AbstractStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 
 public class TimeshiftPO<M extends ITimeInterval> extends AbstractPipe<AbstractStreamObject<M>, AbstractStreamObject<M>> {
 
@@ -30,6 +31,12 @@ public class TimeshiftPO<M extends ITimeInterval> extends AbstractPipe<AbstractS
 		transfer(object);		
 	}
 
+	@Override
+	public void processPunctuation(IPunctuation punctuation, int port) {
+		// TODO: handle punctations
+		//sendPunctuation(punctuation);
+	}
+	
 	@Override
 	public TimeshiftPO<M> clone() {
 		return new TimeshiftPO<M>(this);

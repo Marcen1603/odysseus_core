@@ -26,6 +26,7 @@ import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.metadata.TimeInterval;
 import de.uniol.inf.is.odysseus.core.physicaloperator.Heartbeat;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.intervalapproach.sweeparea.DefaultTISweepArea;
 import de.uniol.inf.is.odysseus.recommendation.learner.RecommendationLearner;
@@ -34,7 +35,7 @@ import de.uniol.inf.is.odysseus.sweeparea.FastArrayList;
 
 /**
  * @author Cornelius Ludmann
- * 
+ *
  */
 public class RecommendationLearnPO<M extends ITimeInterval> extends
 AbstractPipe<Tuple<M>, Tuple<M>> {
@@ -52,7 +53,7 @@ AbstractPipe<Tuple<M>, Tuple<M>> {
 
 	/**
 	 * The learner that should be used by this PO.
-	 * 
+	 *
 	 * @param learner
 	 *            The learner that should be used.
 	 */
@@ -65,7 +66,7 @@ AbstractPipe<Tuple<M>, Tuple<M>> {
 
 	/**
 	 * Copy constructor.
-	 * 
+	 *
 	 * @param recommendationLearnPO
 	 */
 	public RecommendationLearnPO(
@@ -75,7 +76,7 @@ AbstractPipe<Tuple<M>, Tuple<M>> {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe#
 	 * getOutputMode()
 	 */
@@ -86,7 +87,7 @@ AbstractPipe<Tuple<M>, Tuple<M>> {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe#clone
 	 * ()
@@ -98,7 +99,7 @@ AbstractPipe<Tuple<M>, Tuple<M>> {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe#
 	 * process_next(de.uniol.inf.is.odysseus.core.metadata.IStreamObject, int)
 	 */
@@ -158,9 +159,15 @@ AbstractPipe<Tuple<M>, Tuple<M>> {
 		}
 	}
 
+	@Override
+	public void processPunctuation(final IPunctuation punctuation,
+			final int port) {
+		sendPunctuation(punctuation);
+	}
+
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe#
 	 * process_close()
 	 */

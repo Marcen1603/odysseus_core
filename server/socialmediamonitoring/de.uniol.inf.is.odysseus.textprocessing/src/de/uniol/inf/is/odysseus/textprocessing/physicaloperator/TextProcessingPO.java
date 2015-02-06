@@ -11,6 +11,7 @@ import java.util.Vector;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
@@ -75,6 +76,11 @@ public class TextProcessingPO<M extends ITimeInterval, R extends Tuple<M>> exten
 		manageTextProcessing(object);		
 	}
 
+	@Override
+	public void processPunctuation(IPunctuation punctuation, int port) {
+		sendPunctuation(punctuation);
+	}
+	
 	private void manageTextProcessing(R object) 
 	{
 		synchronized (object) 

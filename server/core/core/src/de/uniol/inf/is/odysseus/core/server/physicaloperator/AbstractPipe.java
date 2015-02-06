@@ -228,11 +228,13 @@ public abstract class AbstractPipe<R extends IStreamObject<?>, W extends IStream
 	}
 
 	abstract protected void process_next(R object, int port);
+	
+	// MUST BE OVERWRITTEN IN EVERY OPERATOR --> ELSE OUT OF ORDER ELEMENTS COULD OCCUR TO EASY
 
-	@Override
-	public void processPunctuation(IPunctuation punctuation, int port) {
-		sendPunctuation(punctuation);
-	}
+//	@Override
+//	public void processPunctuation(IPunctuation punctuation, int port) {
+//		sendPunctuation(punctuation);
+//	}
 
 	// ------------------------------------------------------------------------
 	// CLOSE and DONE

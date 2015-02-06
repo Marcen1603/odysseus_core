@@ -208,7 +208,7 @@ public class RelationalMapPO<T extends IMetaAttribute> extends
 			}
 			process_next(lastTuple, port);
 		}
-		super.processPunctuation(punctuation, port);
+		sendPunctuation(punctuation, port);
 	}
 
 	public Tuple<T> determineObjectForExpression(Tuple<T> object,

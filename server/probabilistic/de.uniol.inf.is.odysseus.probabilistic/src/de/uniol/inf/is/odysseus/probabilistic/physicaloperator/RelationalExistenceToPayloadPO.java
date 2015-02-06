@@ -15,6 +15,7 @@
  */
 package de.uniol.inf.is.odysseus.probabilistic.physicaloperator;
 
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.probabilistic.common.base.ProbabilisticTuple;
 import de.uniol.inf.is.odysseus.probabilistic.metadata.IProbabilistic;
 
@@ -56,6 +57,11 @@ public class RelationalExistenceToPayloadPO extends ExistenceToPayloadPO<IProbab
         out.setAttribute(inputSize, object.getMetadata().getExistence());
         this.transfer(out);
     }
+    
+	@Override
+	public void processPunctuation(IPunctuation punctuation, int port) {
+		sendPunctuation(punctuation);
+	}
 
     /*
      * 

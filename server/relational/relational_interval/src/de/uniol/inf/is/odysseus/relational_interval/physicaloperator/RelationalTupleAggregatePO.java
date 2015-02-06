@@ -6,6 +6,7 @@ import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.intervalapproach.sweeparea.DefaultTISweepArea;
@@ -43,6 +44,12 @@ public class RelationalTupleAggregatePO extends AbstractPipe<Tuple<? extends ITi
 		method.process(elems, pos, retList);
 		transfer(retList);
 		sa.insert(object);
+	}
+	
+	@Override
+	public void processPunctuation(IPunctuation punctuation, int port) {
+		// TODO: How to handle punctuations
+		//	sendPunctuation(punctuation);
 	}
 	
 	@Override

@@ -12,6 +12,7 @@ import java.util.Set;
 
 import de.uniol.inf.is.odysseus.billingmodel.BillingHelper;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.planmanagement.IOperatorOwner;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
@@ -83,6 +84,11 @@ public class TupleCostCalculationPipe<T extends IStreamObject<?>> extends Abstra
 					BillingHelper.getBillingManager().persistBillingInformations();
 			}
 		}
+	}
+	
+	@Override
+	public void processPunctuation(IPunctuation punctuation, int port) {
+		sendPunctuation(punctuation);
 	}
 	
 	/**

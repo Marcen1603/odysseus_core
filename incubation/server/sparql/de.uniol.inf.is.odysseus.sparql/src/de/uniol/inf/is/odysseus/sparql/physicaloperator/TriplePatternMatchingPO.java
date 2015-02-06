@@ -17,6 +17,7 @@ package de.uniol.inf.is.odysseus.sparql.physicaloperator;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.sparql.logicaloperator.TriplePatternMatching;
@@ -87,6 +88,11 @@ public class TriplePatternMatchingPO<M extends IMetaAttribute> extends AbstractP
 			this.transfer(this.transform(preprocessed));
 		}
 
+	}
+	
+	@Override
+	public void processPunctuation(IPunctuation punctuation, int port) {
+		sendPunctuation(punctuation);
 	}
 	
 	private Tuple<M> preprocess(Tuple<M> element){

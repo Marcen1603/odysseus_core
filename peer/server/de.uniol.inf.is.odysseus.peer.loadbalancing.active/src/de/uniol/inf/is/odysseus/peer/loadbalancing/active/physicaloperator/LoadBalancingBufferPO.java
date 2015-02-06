@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.movingstate.buffer.ArrayDequeLoadBalancingBuffer;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.movingstate.buffer.ILoadBalancingBuffer;
@@ -55,6 +56,12 @@ public class LoadBalancingBufferPO<T extends IStreamObject<? extends ITimeInterv
 		else {
 			transfer(object,port);
 		}
+	}
+	
+	@Override
+	public void processPunctuation(IPunctuation punctuation, int port) {
+		// TODO: Seems to be, that punctuations needs to be treated!
+		//	sendPunctuation(punctuation);
 	}
 	
 	public void startBuffering() {

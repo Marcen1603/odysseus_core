@@ -1,6 +1,7 @@
 package de.uniol.inf.is.odysseus.latency_relational;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.server.metadata.ILatency;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.logicaloperator.latency.LatencyToPayloadAO;
@@ -63,6 +64,11 @@ public class LatencyToPayloadPO<M extends ILatency, T extends Tuple<M>> extends
 		out.setRequiresDeepClone(object.requiresDeepClone());
 		transfer((T) out);
 
+	}
+	
+	@Override
+	public void processPunctuation(IPunctuation punctuation, int port) {
+		sendPunctuation(punctuation);
 	}
 
 }

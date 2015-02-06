@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.peer.recovery.tuplestore.ArrayDequeRecoveryTupleStore;
 import de.uniol.inf.is.odysseus.peer.recovery.tuplestore.IRecoveryTupleStore;
@@ -42,6 +43,12 @@ public class RecoveryBufferPO<T extends IStreamObject<? extends ITimeInterval>> 
 		} else {
 			transfer(object, port);
 		}
+	}
+	
+	@Override
+	public void processPunctuation(IPunctuation punctuation, int port) {
+		// TODO: Handle punctuations
+		//		sendPunctuation(punctuation);
 	}
 
 	public void startBuffering() {

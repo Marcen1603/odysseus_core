@@ -26,6 +26,7 @@ import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFExpression;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
@@ -286,6 +287,11 @@ public class ProbabilisticMapPO<T extends IProbabilistic> extends AbstractPipe<P
         }
     }
 
+	@Override
+	public void processPunctuation(IPunctuation punctuation, int port) {
+		sendPunctuation(punctuation);
+	}
+    
     public ProbabilisticTuple<T> determineObjectForExpression(final ProbabilisticTuple<T> object, final LinkedList<ProbabilisticTuple<T>> preProcessResult, final int i, final int j) {
         return object;
     }

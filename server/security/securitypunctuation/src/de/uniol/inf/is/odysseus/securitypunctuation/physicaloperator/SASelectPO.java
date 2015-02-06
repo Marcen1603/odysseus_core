@@ -41,7 +41,7 @@ public class SASelectPO<T extends IStreamObject<? extends ITimeInterval>> extend
 			Long ts = object.getMetadata().getStart().getMainPoint();
 			ISecurityPunctuation sp = spCache.getMatchingSP(ts);
 			if(sp != null) {
-				super.processPunctuation(sp, port);
+				sendPunctuation(sp, port);
 				spCache.cleanCache(sp.getLongAttribute("ts"));
 			}
 			transfer(object);
@@ -57,7 +57,7 @@ public class SASelectPO<T extends IStreamObject<? extends ITimeInterval>> extend
 		if (punctuation instanceof ISecurityPunctuation){
 			spCache.add((ISecurityPunctuation)punctuation);			
 		}
-		super.processPunctuation(punctuation, port);
+		sendPunctuation(punctuation, port);
 	}
 	
 	

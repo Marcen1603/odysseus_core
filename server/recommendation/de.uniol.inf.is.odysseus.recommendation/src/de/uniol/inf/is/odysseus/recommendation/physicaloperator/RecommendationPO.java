@@ -28,6 +28,7 @@ import de.uniol.inf.is.odysseus.core.metadata.IMetadataMergeFunction;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.physicaloperator.Heartbeat;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ITransferArea;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
@@ -36,7 +37,7 @@ import de.uniol.inf.is.odysseus.recommendation.recommender.Recommender;
 
 /**
  * @author Cornelius Ludmann
- * 
+ *
  */
 public class RecommendationPO<M extends ITimeInterval> extends
 AbstractPipe<Tuple<M>, Tuple<M>> {
@@ -77,7 +78,7 @@ AbstractPipe<Tuple<M>, Tuple<M>> {
 
 	/**
 	 * Copy constructor.
-	 * 
+	 *
 	 * @param recommendationPO
 	 */
 	public RecommendationPO(final RecommendationPO<M> recommendationPO) {
@@ -130,6 +131,12 @@ AbstractPipe<Tuple<M>, Tuple<M>> {
 					.queryOverlapsAsList(tuple.getMetadata());
 			recommend(tuple, port, qualifies);
 		}
+	}
+
+	@Override
+	public void processPunctuation(final IPunctuation punctuation,
+			final int port) {
+		sendPunctuation(punctuation);
 	}
 
 	private void recommend(final Tuple<M> tuple, final int port,
@@ -193,11 +200,11 @@ AbstractPipe<Tuple<M>, Tuple<M>> {
 	/**
 	 * <p>
 	 * Creates tuples of the predicted ratings.
-	 * 
+	 *
 	 * <p>
 	 * The items list and predicted ratings list need to have the same size (and
 	 * of course the same order).
-	 * 
+	 *
 	 * @param tuple
 	 *            The input tuple with the user ID.
 	 * @param afterLearn

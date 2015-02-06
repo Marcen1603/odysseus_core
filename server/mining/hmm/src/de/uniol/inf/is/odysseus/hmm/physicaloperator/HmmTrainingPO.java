@@ -7,6 +7,7 @@ import java.util.TimerTask;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.hmm.FileHandlerHMM;
 import de.uniol.inf.is.odysseus.hmm.Gesture;
@@ -163,6 +164,11 @@ public class HmmTrainingPO<M extends ITimeInterval> extends	AbstractPipe<Tuple<M
 	}
 	
 
+	@Override
+	public void processPunctuation(IPunctuation punctuation, int port) {
+		sendPunctuation(punctuation);
+	}
+	
 	@Override
 	protected void process_close() {
 		// startTimer.cancel();

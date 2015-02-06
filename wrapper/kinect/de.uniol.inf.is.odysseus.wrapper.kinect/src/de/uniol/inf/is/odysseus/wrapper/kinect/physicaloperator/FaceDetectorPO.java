@@ -23,6 +23,7 @@ import com.googlecode.javacv.cpp.opencv_objdetect.CascadeClassifier;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
@@ -141,6 +142,11 @@ public class FaceDetectorPO
 		}
 	}
 
+	@Override
+	public void processPunctuation(IPunctuation punctuation, int port) {
+		sendPunctuation(punctuation);
+	}
+	
 	private void detectFacesAndSendTuples(BufferedImage img,
 			Tuple<? extends ITimeInterval> object) {
 		byte[] pixels = ((DataBufferByte) img.getRaster().getDataBuffer())

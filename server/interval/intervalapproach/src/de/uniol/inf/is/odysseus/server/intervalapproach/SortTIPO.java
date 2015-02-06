@@ -24,6 +24,7 @@ import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.sweeparea.ITimeIntervalSweepArea;
 
@@ -74,6 +75,11 @@ public class SortTIPO<T extends IStreamObject<? extends ITimeInterval>> extends 
 
     }
 
+	@Override
+	public void processPunctuation(IPunctuation punctuation, int port) {
+		sendPunctuation(punctuation);
+	}
+    
     /**
      * @param area
      *            the area to set

@@ -284,15 +284,12 @@ public abstract class AbstractLogicalOperator implements Serializable, ILogicalO
 		this.name = name;
 	}
 	
-	@Parameter(name = "debug", type = BooleanParameter.class, optional = true, doc = "Flag, that this operator should be debuged.")
-	public void setDebug2(Boolean debug) {
+	@Override
+	@Parameter(name = "Debug", type = BooleanParameter.class, optional = true, doc = "Flag, that this operator should be debuged.")
+	public void setDebug(boolean debug) {
 		this.debug = debug;
 	}
 	
-	public boolean getDebug2() {
-		return this.debug;
-	}
-
 	@Override
 	public boolean isDebug() {
 		return debug;

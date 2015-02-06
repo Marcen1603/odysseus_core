@@ -508,5 +508,11 @@ public abstract class PatternMatchingPO<T extends ITimeInterval> extends
 		}
 		return values;
 	}
+	
+	@Override
+	public void processPunctuation(IPunctuation punctuation, int port) {
+		process_punctuation_intern(punctuation, port);
+	}
+
 
 }

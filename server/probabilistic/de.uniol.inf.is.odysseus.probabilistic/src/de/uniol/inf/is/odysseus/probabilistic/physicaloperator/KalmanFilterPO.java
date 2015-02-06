@@ -37,6 +37,7 @@ import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFExpression;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
@@ -346,6 +347,11 @@ public class KalmanFilterPO<T extends ITimeInterval> extends AbstractPipe<Probab
         this.transfer(outputVal);
     }
 
+    
+	@Override
+	public void processPunctuation(IPunctuation punctuation, int port) {
+		sendPunctuation(punctuation);
+	}
     private void initStateTransition(final SDFSchema schema, final SDFExpression stateTransitionExpression) {
         final List<SDFAttribute> neededAttributes = stateTransitionExpression.getAllAttributes();
         final VarHelper[] stateTransitionVariables = new VarHelper[neededAttributes.size()];

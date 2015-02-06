@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.hmm.CoordinatesCalculator;
 
@@ -90,6 +91,11 @@ public class VectorquantizationOrientationPO<M extends ITimeInterval> extends
 		// System.out.println(aa[i]);
 		// }
 
+	}
+	
+	@Override
+	public void processPunctuation(IPunctuation punctuation, int port) {
+		sendPunctuation(punctuation);
 	}
 
 	@Override

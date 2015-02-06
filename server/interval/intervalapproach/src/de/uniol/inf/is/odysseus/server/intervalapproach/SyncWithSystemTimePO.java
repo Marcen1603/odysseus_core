@@ -4,6 +4,7 @@ import java.util.concurrent.TimeUnit;
 
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 
@@ -63,6 +64,11 @@ public class SyncWithSystemTimePO<R extends IStreamObject<? extends ITimeInterva
 		lastSystemtime = System.currentTimeMillis();
 		lastApplicationTime = object.getMetadata().getStart().getMainPoint();
 		transfer(object);
+	}
+	
+	@Override
+	public void processPunctuation(IPunctuation punctuation, int port) {
+		sendPunctuation(punctuation);
 	}
 
 	private long convertApplicationTimeToMillis(long time) {

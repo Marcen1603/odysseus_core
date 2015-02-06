@@ -34,6 +34,7 @@ import java.util.Iterator;
 
 import org.apache.commons.math3.stat.regression.SimpleRegression;
 
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
@@ -125,7 +126,11 @@ public class RegressionPO<M extends ITimeInterval, R extends Tuple<M>> extends A
 		// }
 	}
 
-
+	@Override
+	public void processPunctuation(IPunctuation punctuation, int port) {
+		sendPunctuation(punctuation);
+	}
+	
 	@Override
 	public RegressionPO<M, R> clone() {
 		return new RegressionPO<M, R>(this);

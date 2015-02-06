@@ -18,6 +18,7 @@ package de.uniol.inf.is.odysseus.probabilistic.physicaloperator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.probabilistic.common.base.ProbabilisticTuple;
 import de.uniol.inf.is.odysseus.probabilistic.metadata.IProbabilisticTimeInterval;
@@ -98,4 +99,9 @@ public class ProbabilisticDiscreteUnNestPO<T extends IProbabilisticTimeInterval>
         }
     }
 
+	@Override
+	public void processPunctuation(IPunctuation punctuation, int port) {
+		sendPunctuation(punctuation);
+	}
+    
 }

@@ -3,6 +3,7 @@ package de.uniol.inf.is.odysseus.probabilistic.physicaloperator;
 import com.google.common.primitives.Ints;
 
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.probabilistic.common.base.ProbabilisticTuple;
 import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.MultivariateMixtureDistribution;
@@ -78,6 +79,11 @@ public class SamplePO<T extends ITimeInterval> extends AbstractPipe<Probabilisti
         }
     }
 
+	@Override
+	public void processPunctuation(IPunctuation punctuation, int port) {
+		sendPunctuation(punctuation);
+	}
+    
     /*
      * (non-Javadoc)
      * 

@@ -20,6 +20,7 @@ import java.util.LinkedList;
 
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
@@ -133,6 +134,11 @@ public class DuplicateEliminationTIPO<T extends IStreamObject<? extends ITimeInt
 //			}
 //			System.out.println("=========================================");
 //			// <<<<<<<<<<<<<<<<<<<<<<<<<<
+	}
+	
+	@Override
+	public void processPunctuation(IPunctuation punctuation, int port) {
+		sendPunctuation(punctuation);
 	}
 	
 	@Override

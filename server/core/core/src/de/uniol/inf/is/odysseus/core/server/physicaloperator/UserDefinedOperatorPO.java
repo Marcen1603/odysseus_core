@@ -16,6 +16,7 @@
 package de.uniol.inf.is.odysseus.core.server.physicaloperator;
 
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 
 public class UserDefinedOperatorPO<R  extends IStreamObject<?>,W  extends IStreamObject<?>> extends AbstractPipe<R, W> {
@@ -60,6 +61,11 @@ public class UserDefinedOperatorPO<R  extends IStreamObject<?>,W  extends IStrea
 		if (result != null){
 			transfer(result);
 		}
+	}
+	
+	@Override
+	public void processPunctuation(IPunctuation punctuation, int port) {
+		sendPunctuation(punctuation);
 	}
 
 	@Override

@@ -59,6 +59,8 @@ public interface ILogicalOperator extends IOwnedOperator, ISubscribable<ILogical
 	 *            The name of the operator to set
 	 */
 	public void setName(String name);
+	
+	public void setDebug(boolean debug);
 
 	/**
 	 * Name of the place to execute the logical operator (e.g. peer name). The
@@ -150,49 +152,6 @@ public interface ILogicalOperator extends IOwnedOperator, ISubscribable<ILogical
 	 * @return The Schema
 	 */
 	public SDFSchema getInputSchema(int pos);
-
-//	/**
-//	 * If this logical operator provides a predicate (e.g. a join or a
-//	 * selection) this is delivered with this method
-//	 * 
-//	 * @return the predicate, could be null
-//	 */
-//	public IPredicate<?> getPredicate();
-//
-//	/**
-//	 * Set the predicate for this logical operator
-//	 * 
-//	 * @param predicate
-//	 */
-//	public void setPredicate(IPredicate<?> predicate);
-//
-//	/**
-//	 * Set predicates if operator has more than one predicate
-//	 * 
-//	 * @param predicates
-//	 */
-//	void setPredicates(List<IPredicate<?>> predicates);
-//
-//	/**
-//	 * Adds a new predicate to the list of existing predicates
-//	 * 
-//	 * @param predicate
-//	 */
-//	void addPredicate(IPredicate<?> predicate);
-//
-//	/**
-//	 * Get list of all predicates
-//	 * 
-//	 * @return
-//	 */
-//	List<IPredicate<?>> getPredicates();
-//
-//	/**
-//	 * Return true if this operator provides predicates
-//	 * 
-//	 * @return
-//	 */
-//	boolean providesPredicates();
 
 	/**
 	 * Find the subscription where the logical operator is the source

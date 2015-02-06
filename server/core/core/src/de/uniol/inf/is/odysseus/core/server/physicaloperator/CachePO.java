@@ -7,6 +7,7 @@ import java.util.ListIterator;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.physicaloperator.AbstractPhysicalSubscription;
@@ -52,6 +53,12 @@ public class CachePO<R extends IStreamObject<IMetaAttribute>> extends AbstractPi
 			transfer(object);
 		}
 	}
+	
+	@Override
+	public void processPunctuation(IPunctuation punctuation, int port) {
+		// TODO: What to do with punctuations
+	}
+
 	
 	@Override
 	protected void process_close() {

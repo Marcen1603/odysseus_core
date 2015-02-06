@@ -20,6 +20,7 @@ import java.util.Iterator;
 
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.intervalapproach.sweeparea.DefaultTISweepArea;
 
@@ -68,6 +69,11 @@ public class DistinctTIPO<T extends IStreamObject<? extends ITimeInterval>> exte
         this.area.insert(object);
     }
 
+	@Override
+	public void processPunctuation(IPunctuation punctuation, int port) {
+		sendPunctuation(punctuation);
+	}
+    
     public void setArea(DefaultTISweepArea<T> area) {
         this.area = area;
     }

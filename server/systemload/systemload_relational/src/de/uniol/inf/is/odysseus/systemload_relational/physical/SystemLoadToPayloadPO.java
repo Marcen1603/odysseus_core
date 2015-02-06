@@ -1,6 +1,7 @@
 package de.uniol.inf.is.odysseus.systemload_relational.physical;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.systemload.ISystemLoad;
 import de.uniol.inf.is.odysseus.systemload.logicaloperator.SystemLoadToPayloadAO;;
@@ -49,6 +50,11 @@ public class SystemLoadToPayloadPO<M extends ISystemLoad, T extends Tuple<M>>
 		out.setMetadata(object.getMetadata().clone());
 		out.setRequiresDeepClone(object.requiresDeepClone());
 		transfer((T) out);
+	}
+	
+	@Override
+	public void processPunctuation(IPunctuation punctuation, int port) {
+		sendPunctuation(punctuation);
 	}
 
 }

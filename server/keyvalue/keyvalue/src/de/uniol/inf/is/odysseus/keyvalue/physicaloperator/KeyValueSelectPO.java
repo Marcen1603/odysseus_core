@@ -16,6 +16,7 @@
 package de.uniol.inf.is.odysseus.keyvalue.physicaloperator;
 
 import de.uniol.inf.is.odysseus.core.collection.KeyValueObject;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
@@ -61,6 +62,11 @@ public class KeyValueSelectPO<T extends KeyValueObject<?>> extends AbstractPipe<
 			//transfer(object,1);
 			heartbeatGenerationStrategy.generateHeartbeat(object, this);
 		}
+	}
+	
+	@Override
+	public void processPunctuation(IPunctuation punctuation, int port) {
+		sendPunctuation(punctuation);
 	}
 	
 	@Override

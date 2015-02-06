@@ -23,6 +23,7 @@ import java.util.Observer;
 import java.util.UUID;
 
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
@@ -151,6 +152,11 @@ public class SubscribePO<T extends IStreamObject<?>> extends AbstractPipe<T, T> 
 	protected void process_next(T object, int port) {
 		// subscriber operator is like a source. Objects will send by observer
 		// from brokers in publish/Subscribe systems. See update() Method.
+	}
+	
+	@Override
+	public void processPunctuation(IPunctuation punctuation, int port) {
+	//	sendPunctuation(punctuation);
 	}
 	
 

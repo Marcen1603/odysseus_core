@@ -1,7 +1,8 @@
 package de.uniol.inf.is.odysseus.benchmark.physical;
 
-import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.collection.Document;
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 
@@ -60,7 +61,11 @@ public class DatarateCalcPO<R extends IStreamObject<?>> extends AbstractPipe<R, 
 			lastTimestamp = now;
 		}
 	}
-
+	
+	@Override
+	public void processPunctuation(IPunctuation punctuation, int port) {
+		sendPunctuation(punctuation);
+	}
 
 	@Override
 	public AbstractPipe<R, Document<?>> clone() {

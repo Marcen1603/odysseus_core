@@ -88,5 +88,15 @@ public abstract class AbstractFragmentAO extends UnaryLogicalOp {
 		return super.getOutputSchemaIntern(0);
 		
 	}
+	
+	@Override
+	public boolean isValid() {
+		boolean isValid = true;
+		if (numFragments <= 0){
+			addError("Number of fragmenents must be greater than 0");
+			isValid = false;
+		}
+		return super.isValid() && isValid;
+	}
 
 }
