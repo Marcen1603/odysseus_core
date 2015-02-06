@@ -5,7 +5,7 @@
          point="org.eclipse.ui.views">
       <view
             category="de.uniol.inf.is.odysseus.rcp.peer.PeerCategory"
-            class="de.uniol.inf.is.odysseus.peer.rcp.views.PeerView"
+            class="de.uniol.inf.is.odysseus.peer.rcp.views.peer.PeerView"
             icon="icons/peer.png"
             id="de.uniol.inf.is.odysseus.rcp.peer.PeerView"
             name="Peers"

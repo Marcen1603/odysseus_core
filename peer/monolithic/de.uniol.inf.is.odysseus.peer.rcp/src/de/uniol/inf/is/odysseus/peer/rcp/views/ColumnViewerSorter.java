@@ -23,7 +23,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 
-abstract class ColumnViewerSorter extends ViewerComparator {
+public abstract class ColumnViewerSorter extends ViewerComparator {
     public static final int ASC = 1;
 
     public static final int NONE = 0;

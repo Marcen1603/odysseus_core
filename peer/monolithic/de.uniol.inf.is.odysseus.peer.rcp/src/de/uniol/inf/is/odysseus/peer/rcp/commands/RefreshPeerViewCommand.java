@@ -6,7 +6,7 @@ import org.eclipse.core.commands.ExecutionException;
 
 import com.google.common.base.Optional;
 
-import de.uniol.inf.is.odysseus.peer.rcp.views.PeerView;
+import de.uniol.inf.is.odysseus.peer.rcp.views.peer.PeerView;
 
 public class RefreshPeerViewCommand extends AbstractHandler {
 

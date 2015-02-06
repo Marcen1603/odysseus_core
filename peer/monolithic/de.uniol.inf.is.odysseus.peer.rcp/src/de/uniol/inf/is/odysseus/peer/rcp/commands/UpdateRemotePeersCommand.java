@@ -13,7 +13,7 @@ import org.eclipse.ui.PlatformUI;
 
 import com.google.common.base.Optional;
 
-import de.uniol.inf.is.odysseus.peer.rcp.views.PeerView;
+import de.uniol.inf.is.odysseus.peer.rcp.views.peer.PeerView;
 import de.uniol.inf.is.odysseus.peer.update.PeerUpdatePlugIn;
 
 public class UpdateRemotePeersCommand extends AbstractHandler implements IHandler {
