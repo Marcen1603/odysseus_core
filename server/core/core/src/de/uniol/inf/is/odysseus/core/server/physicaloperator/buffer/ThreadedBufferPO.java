@@ -26,7 +26,8 @@ public class ThreadedBufferPO<R extends IStreamObject<? extends IMetaAttribute>>
 
 	private List<IStreamable> inputBuffer = new ArrayList<>();
 	private List<IStreamable> outputBuffer = new ArrayList<>();
-	final private ReentrantLock lock = new ReentrantLock(true);
+	final private ReentrantLock lockInput = new ReentrantLock(true);
+	final private ReentrantLock lockOutput = new ReentrantLock(true);
 
 	Thread runner;
 	boolean started = false;
@@ -82,9 +83,9 @@ public class ThreadedBufferPO<R extends IStreamObject<? extends IMetaAttribute>>
 			}
 			notifyAll();
 		}
-		lock.lock();
+		lockInput.lock();
 		inputBuffer.add(object);
-		lock.unlock();
+		lockInput.unlock();
 	}
 
 	@Override
@@ -105,16 +106,18 @@ public class ThreadedBufferPO<R extends IStreamObject<? extends IMetaAttribute>>
 						}
 					}
 					// inputBuffer to outputBuffer
-					lock.lock();
+					lockInput.lock();
 					List<IStreamable> tmp = outputBuffer;
 					outputBuffer = inputBuffer;
 					inputBuffer = tmp;
-					lock.unlock();
+					lockInput.unlock();
+					lockOutput.lock();
 					Iterator<IStreamable> outIter = outputBuffer.iterator();
-					while(outIter.hasNext()){
+					while (outIter.hasNext()) {
 						transferNext(outIter.next());
 						outIter.remove();
 					}
+					lockOutput.unlock();
 				}
 			};
 
@@ -124,15 +127,15 @@ public class ThreadedBufferPO<R extends IStreamObject<? extends IMetaAttribute>>
 
 	@Override
 	protected void process_close() {
-		synchronized (inputBuffer) {
-			drainBuffers();
-		}
+		lockOutput.lock();
+		drainBuffers();
+		lockOutput.unlock();
 	}
 
 	protected void process_done(int port) {
-		synchronized (inputBuffer) {
-			drainBuffers();
-		}
+		lockOutput.lock();
+		drainBuffers();
+		lockOutput.unlock();
 	};
 
 	@SuppressWarnings("unchecked")
@@ -154,10 +157,10 @@ public class ThreadedBufferPO<R extends IStreamObject<? extends IMetaAttribute>>
 	private void drainBuffers() {
 		// drain buffer at done/close
 		// Copy everything from inputBuffer to outputBuffer
-		synchronized (inputBuffer) {
-			outputBuffer.addAll(inputBuffer);
-			inputBuffer.clear();
-		}
+		lockInput.lock();
+		outputBuffer.addAll(inputBuffer);
+		inputBuffer.clear();
+		lockInput.unlock();
 		for (int i = 0; i < outputBuffer.size(); i++) {
 			transferNext(outputBuffer.get(i));
 		}
