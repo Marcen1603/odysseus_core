@@ -1,5 +1,6 @@
-package de.uniol.inf.is.odysseus.memstore.mdastore;
+package de.uniol.inf.is.odysseus.memstore.mdastore.keywords;
 
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -8,6 +9,7 @@ import com.google.common.base.Strings;
 import de.uniol.inf.is.odysseus.core.collection.Context;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.IExecutorCommand;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
+import de.uniol.inf.is.odysseus.memstore.mdastore.commands.DropMDAStoreCommand;
 import de.uniol.inf.is.odysseus.script.parser.AbstractPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptException;
 
@@ -28,11 +30,9 @@ public class MDAStoreDropPreParserKeyword extends AbstractPreParserKeyword {
 	public List<IExecutorCommand> execute(Map<String, Object> variables,
 			String parameter, ISession caller, Context context)
 			throws OdysseusScriptException {
-		if (!MDAStoreManager.exists(parameter)){
-			throw new OdysseusScriptException("Store with name "+parameter+" not defined");
-		}
-		MDAStoreManager.remove(parameter);
-		return null;
+		List<IExecutorCommand> cmds = new LinkedList<>();
+		cmds.add(new DropMDAStoreCommand(caller, parameter));
+		return cmds;
 	}
 
 }
