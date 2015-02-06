@@ -23,7 +23,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParame
 public class MosaikAccessAO extends AbstractAccessAO {
 	private static final long serialVersionUID = -6949561307060489773L;
 	
-	private String version;
+	private String type;
 
 	public MosaikAccessAO() {
 		super();
@@ -40,15 +40,15 @@ public class MosaikAccessAO extends AbstractAccessAO {
 		this.init();
 	}
 	
-	@Parameter(type = StringParameter.class, name = "VERSION", optional = true, isList = false, doc = "use zeromq or simapi")
-	public void setVersion(String version) {
-		this.version = version;
+	@Parameter(type = StringParameter.class, name = "TYPE", optional = true, isList = false, doc = "use zeromq or simapi")
+	public void setType(String version) {
+		this.type = version;
 		this.init();
 	}
 
-	@GetParameter(name = "VERSION")
-	public String getVersion() {
-		return this.version;
+	@GetParameter(name = "TYPE")
+	public String getType() {
+		return this.type;
 	}
 	
 	@Override
@@ -58,28 +58,46 @@ public class MosaikAccessAO extends AbstractAccessAO {
 	
 	private void init() {
 		Map<String, String> options = new HashMap<String, String>();
-		if(this.version != null && this.version.equalsIgnoreCase("simapi")) {
+		if(this.type != null && this.type.equalsIgnoreCase("simapi")) {
 			this.setWrapper("GenericPush");
 			this.setTransportHandler("TCPServer");
 			this.setProtocolHandler("Mosaik");
 			this.setDataHandler("KeyValueObject");
 			
-			options.put("port", "5554");
+			if(!options.containsKey("port")) {
+				options.put("port", "5554");
+			}
 		} else {
 			this.setWrapper("GenericPush");
 			this.setTransportHandler("ZeroMQ");
 			this.setProtocolHandler("JSON");
 			this.setDataHandler("KeyValueObject");
-			
-			options.put("host","127.0.0.1");
-			options.put("readport", "5558");
-			options.put("writeport", "5559");
-			options.put("delayofmsg", "0");
-			options.put("threads", "1");
-			options.put("subscriptionfilter", "");
-			options.put("basetimeunit", "seconds");
+
+			if(!options.containsKey("host")) {
+				options.put("host","127.0.0.1");
+			}
+			if(!options.containsKey("readport")) {
+				options.put("readport", "5558");
+			}
+			if(!options.containsKey("writeport")) {
+				options.put("writeport", "5559");
+			}
+			if(!options.containsKey("delayofmsg")) {
+				options.put("delayofmsg", "0");
+			}
+			if(!options.containsKey("threads")) {
+				options.put("threads", "1");
+			}
+			if(!options.containsKey("subscriptionfilter")) {
+				options.put("subscriptionfilter", "");
+			}
+			if(!options.containsKey("basetimeunit")) {
+				options.put("basetimeunit", "seconds");
+			}
 		}
-		options.put("byteorder", "LittleEndian");		
+		if(!options.containsKey("byteorder")) {
+			options.put("byteorder", "LittleEndian");		
+		}
 		this.setOptionMap(options);
 		
 		List<SDFAttribute> schemaAttributes = new ArrayList<>();

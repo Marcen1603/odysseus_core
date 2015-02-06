@@ -21,6 +21,15 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolH
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.IAccessPattern;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportDirection;
 
+/**
+ * Is based on: https://bitbucket.org/mosaik/mosaik-api-java
+ * 
+ * Documentation of the used API: http://mosaik.readthedocs.org/en/latest/mosaik-api/low-level.html
+ * 
+ * @author Jan Sören Schwarz
+ *
+ * @param <T>
+ */
 public class MosaikProtocolHandler<T extends KeyValueObject<IMetaAttribute>> extends AbstractProtocolHandler<T> {
 
 	static Logger LOG = LoggerFactory.getLogger(MosaikProtocolHandler.class);
