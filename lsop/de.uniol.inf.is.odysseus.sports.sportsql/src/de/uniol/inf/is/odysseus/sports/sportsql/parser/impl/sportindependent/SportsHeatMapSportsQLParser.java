@@ -39,7 +39,7 @@ public class SportsHeatMapSportsQLParser implements ISportsQLParser {
 
 		// 1. Game-Stream
 		ILogicalOperator soccerGameAccessAO = OperatorBuildHelper.createGameSource(session);
-		allOperators.add(soccerGameAccessAO);
+		//allOperators.add(soccerGameAccessAO);
 
 		// 2. Project
 		List<String> attributes = new ArrayList<String>();

@@ -48,7 +48,6 @@ public class GlobalGameSportsQLParser implements ISportsQLParser {
 		// 1. Game-Stream
 		ILogicalOperator soccerGameAccessAO = OperatorBuildHelper
 				.createGameSource(session);
-		allOperators.add(soccerGameAccessAO);
 
 		// Time parameter
 		SelectAO timeSelect = OperatorBuildHelper.createTimeMapAndSelect(

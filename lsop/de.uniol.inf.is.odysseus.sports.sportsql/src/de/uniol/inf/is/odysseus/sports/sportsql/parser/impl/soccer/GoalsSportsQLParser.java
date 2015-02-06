@@ -68,7 +68,7 @@ public class GoalsSportsQLParser implements ISportsQLParser {
 
 		ILogicalOperator soccerGameStreamAO = OperatorBuildHelper
 				.createGameSource(session);
-		allOperators.add(soccerGameStreamAO);
+		//allOperators.add(soccerGameStreamAO);
 		
 		for(Integer ballId : AbstractSportsDDCAccess.getBallEntityIds()){
 			predicates.add("entity_id = " + ballId);

@@ -49,7 +49,7 @@ public class MileagePlayerSportsQLParser implements ISportsQLParser {
 		List<ILogicalOperator> allOperators = new ArrayList<ILogicalOperator>();
 
 		ILogicalOperator soccerGameStreamAO = OperatorBuildHelper.createGameSource(session);
-		allOperators.add(soccerGameStreamAO);
+		//allOperators.add(soccerGameStreamAO);
 
 		// ----------------------------------------------------
 		// First part of the query (Select for questioned time)

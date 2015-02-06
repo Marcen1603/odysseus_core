@@ -76,7 +76,7 @@ public class CornerKickGlobalSportsQLParser implements ISportsQLParser {
 		ArrayList<String> attributes = new ArrayList<String>();
 		
 		ILogicalOperator source = OperatorBuildHelper.createGameSource(session);
-		operatorList.add(source);
+		//operatorList.add(source);
 
 		ArrayList<String> projectionAttributes = new ArrayList<String>();
 		projectionAttributes.add(IntermediateSchemaAttributes.ENTITY_ID);

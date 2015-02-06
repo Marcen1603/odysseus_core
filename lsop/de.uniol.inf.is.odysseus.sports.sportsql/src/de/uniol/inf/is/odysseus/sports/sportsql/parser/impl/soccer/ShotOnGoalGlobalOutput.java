@@ -115,7 +115,7 @@ public class ShotOnGoalGlobalOutput {
 		// GameStream
 		ILogicalOperator gameStream = OperatorBuildHelper.createGameSource(session);
 		gameStream.setName("start");
-		allOperators.add(gameStream);
+		//allOperators.add(gameStream);
 
 		// -------------------------------------------------------------------
 		// First part
