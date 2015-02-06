@@ -18,6 +18,8 @@ public class ThreadedBufferOperatorDetailProvider extends
 	protected Map<String, String> getKeyValuePairs(ThreadedBufferPO<?> operator) {
 		Map<String, String> map = new HashMap<>();
 		map.put("CurrentSize", operator.getElementsStored1()+"");
+		map.put("InputQueue", operator.getInputBufferSize()+"");
+		map.put("OutputQueue", operator.getOutputBufferSize()+"");
 		return map;
 	}
 

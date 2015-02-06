@@ -20,7 +20,8 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 public class ThreadedBufferPO<R extends IStreamObject<? extends IMetaAttribute>>
 		extends AbstractPipe<R, R> {
 
-	final protected LinkedList<IStreamable> buffer = new LinkedList<>();
+	final protected LinkedList<IStreamable> inputBuffer = new LinkedList<>();
+	final protected LinkedList<IStreamable> outputBuffer = new LinkedList<>();
 
 	Thread runner;
 	boolean started = false;
@@ -35,16 +36,24 @@ public class ThreadedBufferPO<R extends IStreamObject<? extends IMetaAttribute>>
 	public OutputMode getOutputMode() {
 		return OutputMode.INPUT;
 	}
-	
+
 	@Override
-	public long getElementsStored1(){
-		return buffer.size();
+	public long getElementsStored1() {
+		return inputBuffer.size() + outputBuffer.size();
+	}
+
+	public long getInputBufferSize() {
+		return inputBuffer.size();
+	}
+
+	public long getOutputBufferSize() {
+		return outputBuffer.size();
 	}
 
 	@Override
 	protected void process_next(R object, int port) {
 		// Start thread
-		if (!started){
+		if (!started) {
 			runner.start();
 			started = true;
 		}
@@ -55,80 +64,106 @@ public class ThreadedBufferPO<R extends IStreamObject<? extends IMetaAttribute>>
 	public void processPunctuation(IPunctuation punctuation, int port) {
 		addObjectToBuffer(punctuation);
 	}
-	
+
 	private void addObjectToBuffer(IStreamable object) {
 		synchronized (this) {
 			if (limit > 0) {
-				while (buffer.size() > limit) {
+				while (getElementsStored1() > limit) {
 					try {
 						wait(1000);
-					} catch (InterruptedException e) {
+					} catch (InterruptedException e) {						
 					}
 				}
 			}
-			synchronized (buffer) {
-				buffer.add(object);
+			synchronized (inputBuffer) {
+				inputBuffer.add(object);
 			}
 			notifyAll();
 		}
 	}
 
-	
-	
 	@Override
 	protected void process_open() throws OpenFailedException {
-		buffer.clear();
+		inputBuffer.clear();
+		outputBuffer.clear();
 		// Create new thread and start
 		runner = new Thread("ThreadedBuffer " + getName()) {
 			public void run() {
 				while (isOpen()) {
-					synchronized (buffer) {
-						while (!(buffer.peek() == null)) {
-							transferNext(buffer.pop());
-						}
+					// Copy everything from inputBuffer to outputBuffer
+					synchronized (inputBuffer) {
+						outputBuffer.addAll(inputBuffer);
+						inputBuffer.clear();
+					}
+					while (!(outputBuffer.peek() == null)) {
+						transferNext(outputBuffer.pop());
 					}
 					synchronized (this) {
 						try {
-							wait(1000);
+							if (inputBuffer.peek() == null) {
+								wait(1000);
+							}
 						} catch (InterruptedException e) {
 							e.printStackTrace();
 						}
 					}
 				}
-				// drain buffer at done/close
-				while (!(buffer.peek() == null)) {
-					transferNext(buffer.pop());
-				}
 			};
 
-			@SuppressWarnings("unchecked")
-			private void transferNext(IStreamable element) {
-
-				if (element.isPunctuation()) {
-					sendPunctuation((IPunctuation) element);
-				} else {
-					transfer((R) element);
-					if (limit > 0) {
-						synchronized (this) {
-							notifyAll();
-						}
-					}
-				}
-
-				// the top element of a buffer must always be
-				// an real element, send punctuations immediately
-
-				IStreamable peek;
-				while ((peek = buffer.peek()) != null && peek.isPunctuation()) {
-					sendPunctuation((IPunctuation) buffer.pop());
-				}
-
-				if (isDone()) {
-					propagateDone();
-				}
-			}
 		};
 		runner.setDaemon(true);
+	}
+
+	@Override
+	protected void process_close() {
+		synchronized (inputBuffer) {
+			drainBuffers();
+		}
+	}
+
+	protected void process_done(int port) {
+		synchronized (inputBuffer) {
+			drainBuffers();
+		}
+	};
+
+	@SuppressWarnings("unchecked")
+	private void transferNext(IStreamable element) {
+
+		if (element.isPunctuation()) {
+			sendPunctuation((IPunctuation) element);
+		} else {
+			transfer((R) element);
+			if (limit > 0) {
+				synchronized (this) {
+					notifyAll();
+				}
+			}
+		}
+
+		// the top element of a buffer must always be
+		// an real element, send punctuations immediately
+
+		IStreamable peek;
+		while ((peek = outputBuffer.peek()) != null && peek.isPunctuation()) {
+			sendPunctuation((IPunctuation) outputBuffer.pop());
+		}
+
+		if (isDone()) {
+			propagateDone();
+		}
+	}
+
+	private void drainBuffers() {
+		// drain buffer at done/close
+		// Copy everything from inputBuffer to outputBuffer
+		synchronized (inputBuffer) {
+			outputBuffer.addAll(inputBuffer);
+			inputBuffer.clear();
+		}
+		while (!(outputBuffer.peek() == null)) {
+			transferNext(outputBuffer.pop());
+		}
 	}
 
 }

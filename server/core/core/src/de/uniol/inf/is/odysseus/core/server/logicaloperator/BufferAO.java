@@ -52,6 +52,7 @@ public class BufferAO extends UnaryLogicalOp {
 		super(ao);
 		this.type = ao.type;
 		this.threaded = ao.threaded;
+		this.maxBufferSize = ao.maxBufferSize;
 	}
 
 	public BufferAO() {
