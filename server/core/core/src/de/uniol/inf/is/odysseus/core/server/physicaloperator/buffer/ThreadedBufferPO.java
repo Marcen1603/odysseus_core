@@ -58,8 +58,10 @@ public class ThreadedBufferPO<R extends IStreamObject<? extends IMetaAttribute>>
 		runner = new Thread("ThreadedBuffer " + getName()) {
 			public void run() {
 				while (isOpen()) {
-					while (!buffer.isEmpty()) {
-						transferNext();
+					synchronized (buffer) {
+						while (!(buffer.peek() == null)) {
+							transferNext(buffer.pop());
+						}
 					}
 					synchronized (this) {
 						try {
@@ -69,65 +71,42 @@ public class ThreadedBufferPO<R extends IStreamObject<? extends IMetaAttribute>>
 						}
 					}
 				}
+				// drain buffer at done/close
+				while (!(buffer.peek() == null)) {
+					transferNext(buffer.pop());
+				}
 			};
-		};
-		runner.setDaemon(true);
 
-	}
+			@SuppressWarnings("unchecked")
+			private void transferNext(IStreamable element) {
 
-	@SuppressWarnings("unchecked")
-	private void transferNext() {
-		// Copy from BufferPO ...
-		if (!this.buffer.isEmpty()) {
-			// the transfer might take some time, so pop element first and
-			// release lock on buffer instead of transfer(buffer.pop())
-			IStreamable element;
-			synchronized (this.buffer) {
-				element = buffer.pop();
-			}
-
-			if (element.isPunctuation()) {
-				sendPunctuation((IPunctuation) element);
-			} else {
-				transfer((R) element);
-				if (limit > 0) {
-					synchronized (this) {
-						notifyAll();
+				if (element.isPunctuation()) {
+					sendPunctuation((IPunctuation) element);
+				} else {
+					transfer((R) element);
+					if (limit > 0) {
+						synchronized (this) {
+							notifyAll();
+						}
 					}
 				}
-			}
 
-			// the top element of a buffer must always be
-			// an real element, send punctuations immediately
-			synchronized (buffer) {
-				while (!buffer.isEmpty() && buffer.peek().isPunctuation()) {
+				// the top element of a buffer must always be
+				// an real element, send punctuations immediately
+
+				IStreamable peek;
+				while ((peek = buffer.peek()) != null
+						&& peek.isPunctuation()) {
 					sendPunctuation((IPunctuation) buffer.pop());
 				}
+
+				if (isDone()) {
+					propagateDone();
+				}
 			}
-
-			if (isDone()) {
-				propagateDone();
-			}
-		}
-	}
-
-	@Override
-	protected void process_close() {
-		drainBuffer();
-
-	}
-
-	@Override
-	protected void process_done(int port) {
-		drainBuffer();
-	}
-
-	private void drainBuffer() {
-		synchronized (buffer) {
-			while (!buffer.isEmpty()) {
-				transferNext();
-			}
-		}
+		};
+		runner.setDaemon(true);
+		runner.start();
 	}
 
 }
