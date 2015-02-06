@@ -35,7 +35,6 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.RouteAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.SampleAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.SelectAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.StateMapAO;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.StreamAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TimeWindowAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TimestampAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TopAO;
@@ -1499,7 +1498,11 @@ public class OperatorBuildHelper {
 		ILogicalOperator stream = dataDict.getStreamForTransformation(sourceName, session);
 		
 		if( stream == null ) {
-			throw new RuntimeException("Could not find stream " + sourceName + "!");
+			stream = dataDict.getView(sourceName, session);
+			
+			if( stream == null ) {
+				throw new RuntimeException("Could not find stream or view '" + sourceName + "'!");
+			}
 		}
 		
 		ILogicalOperator streamCopy = copyLogicalPlan(stream);
