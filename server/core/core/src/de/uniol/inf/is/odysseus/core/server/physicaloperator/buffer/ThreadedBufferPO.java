@@ -1,6 +1,7 @@
 package de.uniol.inf.is.odysseus.core.server.physicaloperator.buffer;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
+import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
@@ -20,8 +21,8 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 public class ThreadedBufferPO<R extends IStreamObject<? extends IMetaAttribute>>
 		extends AbstractPipe<R, R> {
 
-	final protected LinkedList<IStreamable> inputBuffer = new LinkedList<>();
-	final protected LinkedList<IStreamable> outputBuffer = new LinkedList<>();
+	private List<IStreamable> inputBuffer = new ArrayList<>();
+	private List<IStreamable> outputBuffer = new ArrayList<>();
 
 	Thread runner;
 	boolean started = false;
@@ -90,23 +91,25 @@ public class ThreadedBufferPO<R extends IStreamObject<? extends IMetaAttribute>>
 		runner = new Thread("ThreadedBuffer " + getName()) {
 			public void run() {
 				while (isOpen()) {
-					// Copy everything from inputBuffer to outputBuffer
-					synchronized (inputBuffer) {
-						outputBuffer.addAll(inputBuffer);
-						inputBuffer.clear();
-					}
-					while (!(outputBuffer.peek() == null)) {
-						transferNext(outputBuffer.pop());
-					}
 					synchronized (this) {
 						try {
-							if (inputBuffer.peek() == null) {
+							if (inputBuffer.isEmpty()) {
 								wait(1000);
 							}
 						} catch (InterruptedException e) {
 							e.printStackTrace();
 						}
 					}
+					// inputBuffer to outputBuffer
+					synchronized (inputBuffer) {
+						List<IStreamable> tmp = outputBuffer;
+						outputBuffer = inputBuffer;						
+						inputBuffer = tmp;
+					}
+					for (int i=0;i<outputBuffer.size();i++){
+						transferNext(outputBuffer.get(i));
+					}
+					outputBuffer.clear();
 				}
 			};
 
@@ -140,18 +143,7 @@ public class ThreadedBufferPO<R extends IStreamObject<? extends IMetaAttribute>>
 				}
 			}
 		}
-
-		// the top element of a buffer must always be
-		// an real element, send punctuations immediately
-
-		IStreamable peek;
-		while ((peek = outputBuffer.peek()) != null && peek.isPunctuation()) {
-			sendPunctuation((IPunctuation) outputBuffer.pop());
-		}
-
-		if (isDone()) {
-			propagateDone();
-		}
+		
 	}
 
 	private void drainBuffers() {
@@ -161,9 +153,10 @@ public class ThreadedBufferPO<R extends IStreamObject<? extends IMetaAttribute>>
 			outputBuffer.addAll(inputBuffer);
 			inputBuffer.clear();
 		}
-		while (!(outputBuffer.peek() == null)) {
-			transferNext(outputBuffer.pop());
+		for (int i=0;i<outputBuffer.size();i++){
+			transferNext(outputBuffer.get(i));
 		}
+		outputBuffer.clear();
 	}
 
 }
