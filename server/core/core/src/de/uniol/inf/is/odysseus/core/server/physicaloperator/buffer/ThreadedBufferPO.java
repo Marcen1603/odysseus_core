@@ -1,8 +1,11 @@
 package de.uniol.inf.is.odysseus.core.server.physicaloperator.buffer;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.locks.ReentrantLock;
 
+import sun.nio.cs.StreamEncoder;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamable;
@@ -23,6 +26,7 @@ public class ThreadedBufferPO<R extends IStreamObject<? extends IMetaAttribute>>
 
 	private List<IStreamable> inputBuffer = new ArrayList<>();
 	private List<IStreamable> outputBuffer = new ArrayList<>();
+	final private ReentrantLock lock = new ReentrantLock(true);
 
 	Thread runner;
 	boolean started = false;
@@ -72,15 +76,15 @@ public class ThreadedBufferPO<R extends IStreamObject<? extends IMetaAttribute>>
 				while (getElementsStored1() > limit) {
 					try {
 						wait(1000);
-					} catch (InterruptedException e) {						
+					} catch (InterruptedException e) {
 					}
 				}
 			}
-			synchronized (inputBuffer) {
-				inputBuffer.add(object);
-			}
 			notifyAll();
 		}
+		lock.lock();
+		inputBuffer.add(object);
+		lock.unlock();
 	}
 
 	@Override
@@ -101,13 +105,15 @@ public class ThreadedBufferPO<R extends IStreamObject<? extends IMetaAttribute>>
 						}
 					}
 					// inputBuffer to outputBuffer
-					synchronized (inputBuffer) {
-						List<IStreamable> tmp = outputBuffer;
-						outputBuffer = inputBuffer;						
-						inputBuffer = tmp;
-					}
-					for (int i=0;i<outputBuffer.size();i++){
-						transferNext(outputBuffer.get(i));
+					lock.lock();
+					List<IStreamable> tmp = outputBuffer;
+					outputBuffer = inputBuffer;
+					inputBuffer = tmp;
+					lock.unlock();
+					Iterator<IStreamable> outIter = outputBuffer.iterator();
+					while(outIter.hasNext()){
+						transferNext(outIter.next());
+						outIter.remove();
 					}
 					outputBuffer.clear();
 				}
@@ -143,7 +149,7 @@ public class ThreadedBufferPO<R extends IStreamObject<? extends IMetaAttribute>>
 				}
 			}
 		}
-		
+
 	}
 
 	private void drainBuffers() {
@@ -153,7 +159,7 @@ public class ThreadedBufferPO<R extends IStreamObject<? extends IMetaAttribute>>
 			outputBuffer.addAll(inputBuffer);
 			inputBuffer.clear();
 		}
-		for (int i=0;i<outputBuffer.size();i++){
+		for (int i = 0; i < outputBuffer.size(); i++) {
 			transferNext(outputBuffer.get(i));
 		}
 		outputBuffer.clear();
