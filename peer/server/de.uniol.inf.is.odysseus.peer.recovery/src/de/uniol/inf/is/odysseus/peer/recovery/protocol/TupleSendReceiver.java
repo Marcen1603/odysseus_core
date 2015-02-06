@@ -1,8 +1,10 @@
 package de.uniol.inf.is.odysseus.peer.recovery.protocol;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import net.jxta.peer.PeerID;
 import net.jxta.pipe.PipeID;
@@ -18,6 +20,7 @@ import de.uniol.inf.is.odysseus.p2p_new.PeerCommunicationException;
 import de.uniol.inf.is.odysseus.peer.recovery.messages.RecoveryTupleSendMessage;
 import de.uniol.inf.is.odysseus.peer.recovery.messages.RecoveryTupleSendResponseMessage;
 import de.uniol.inf.is.odysseus.peer.recovery.util.RecoveryHelper;
+import de.uniol.inf.is.odysseus.peer.recovery.util.TimeoutTask;
 
 /**
  * Entity to handle received tuple send instructions. <br />
@@ -27,7 +30,7 @@ import de.uniol.inf.is.odysseus.peer.recovery.util.RecoveryHelper;
  *
  */
 public class TupleSendReceiver extends AbstractRepeatingMessageReceiver {
-
+	
 	/**
 	 * The logger instance for this class.
 	 */
@@ -44,6 +47,18 @@ public class TupleSendReceiver extends AbstractRepeatingMessageReceiver {
 	 */
 	private static HashMap<PipeID, List<PeerID>> holdOnMap = new HashMap<PipeID, List<PeerID>>();
 
+	
+	/**
+	 * Delay in milliseconds until hold on timeout
+	 */
+	private static final long HOLD_ON_TIMEOUT_IN_MS= 60*1000;
+
+	/**
+	 * This map contains TimeoutTasks for each pipeId that got a holdOn
+	 */
+	private Map<String, TimeoutTask> holdOnTimeoutTasks = Collections.synchronizedMap(new HashMap<String, TimeoutTask>());
+
+	
 	/**
 	 * The single instance of this class.
 	 * 
@@ -127,12 +142,45 @@ public class TupleSendReceiver extends AbstractRepeatingMessageReceiver {
 		
 		// Start buffering ("hold on")
 		RecoveryHelper.startBuffering(pipeId.toString());
+		
+		// Start timeout for buffering
+		startHoldOnTimeout(pipeId.toString());
 	}
 
 	private void goOn(PipeID pipeId) throws Exception {
 		// Here we want to empty the buffer and go on sending the tuples to the
 		// next peer
 		RecoveryHelper.resumeFromBuffering(pipeId.toString());
+		
+		// Stop timeout for buffering
+		stopHoldOnTimeout(pipeId.toString());
+	}
+	
+
+	private void startHoldOnTimeout(final String pipeID) {
+		TimeoutTask timeOutTask = new TimeoutTask() {
+			
+			@Override
+			public void runAfterTimeout() {
+				try {
+					holdOnTimeoutTasks.remove(pipeID);
+					LOG.debug("Start resuming from buffer after timeout, pipeId = {}",pipeID);
+					RecoveryHelper.resumeFromBuffering(pipeID);
+				} catch (Exception e) {
+					LOG.error("Exception while resuming from buffer after timeout, pipeId = {} ", pipeID, e);
+				}
+			}
+		};
+		holdOnTimeoutTasks.put(pipeID, timeOutTask);
+		timeOutTask.start(HOLD_ON_TIMEOUT_IN_MS);
+	}
+	
+
+	private void stopHoldOnTimeout(final String pipeID) {
+		TimeoutTask timeOutTask = holdOnTimeoutTasks.remove(pipeID);
+		if (timeOutTask != null) {
+			timeOutTask.setActive(false);
+		}
 	}
 
 }
