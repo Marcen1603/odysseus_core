@@ -55,7 +55,7 @@ public class SWTSymbolRenderer<C> extends SimpleSymbolRenderer<C>  {
 		breakSymbol.add( new SWTSelectionSymbolElement< C >( Display.getCurrent().getSystemColor( SWT.COLOR_GREEN )) );
 		breakEndSymbol.add( new SWTSelectionSymbolElement< C >( Display.getCurrent().getSystemColor( SWT.COLOR_GRAY )) );
 		
-		logger.info( "SWTSymbolRenderer created" );
+		logger.trace( "SWTSymbolRenderer created" );
 	}
 	
 	public void setGC( GC gc ) {

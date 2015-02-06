@@ -69,12 +69,12 @@ public final class OdysseusModelProviderMultipleSinkOneWay implements IModelProv
 		
 		graphModel = new OdysseusGraphModel();
 		
-		logger.info( "reading operator-tree from ODYSSEUS" );
+		logger.trace( "reading operator-tree from ODYSSEUS" );
 		for( IPhysicalOperator operator: operators ) {
 			parse( operator, graphModel, null);
 		}
 		
-		logger.info( "reading operator-tree finished successfully!" );
+		logger.trace( "reading operator-tree finished successfully!" );
 		
 		SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
 		String time = sdf.format(new Date());
