@@ -20,6 +20,7 @@ public class OsmGraphLoader implements IGraphLoader<String, Integer> {
 	
 	private final static String AP_NODES = "//node";
 	private final static String AP_WAYS = "//way";
+	private final static String AP_REFS = "child::nd";
 	
 	private final static String NODE_ELEM_NAME = "node";
 	private final static String NODE_LON_ATTR_NAME = "lon";
@@ -27,6 +28,9 @@ public class OsmGraphLoader implements IGraphLoader<String, Integer> {
 	private final static String NODE_ID_ATTR_NAME = "id";
 	
 	private final static String WAY_ELEM_NAME = "way";
+	
+	private final static String ND_ELEM_NAME = "nd";
+	private final static String ND_REF_ATTR_NAME = "ref";
 	
 	
 	@Override
@@ -63,20 +67,20 @@ public class OsmGraphLoader implements IGraphLoader<String, Integer> {
 			while(apWays.evalXPath() != -1) {
 			    vn.toElement(VTDNav.FIRST_CHILD, WAY_ELEM_NAME);
 			    
-			    apNds.selectXPath("child::nd");
+			    apNds.selectXPath(AP_REFS);
 			    if(apNds.evalXPath() != -1) {
-			    	vn.toElement(VTDNav.FIRST_CHILD, "nd");
-			    	String firstPoint = vn.toNormalizedString(vn.getAttrVal("ref"));
+			    	vn.toElement(VTDNav.FIRST_CHILD, ND_ELEM_NAME);
+			    	String firstPoint = vn.toNormalizedString(vn.getAttrVal(ND_REF_ATTR_NAME));
 			    	Point point1 = pointsMap.get(firstPoint);
 			    	while(apNds.evalXPath() != -1) {
-			    		vn.toElement(VTDNav.FIRST_CHILD, "nd");
-			    		final Point point2 = pointsMap.get(vn.toNormalizedString(vn.getAttrVal("ref")));
+			    		vn.toElement(VTDNav.FIRST_CHILD, ND_ELEM_NAME);
+			    		final Point point2 = pointsMap.get(vn.toNormalizedString(vn.getAttrVal(ND_REF_ATTR_NAME)));
 			    		graph.addEdge(new LineSegment(point1.getCoordinate(), point2.getCoordinate()), point1, point1 = point2);
 				    }
 			    }
 			}			
 		} catch(Exception e) {
-			LOGGER.error("", e);
+			LOGGER.error(e.getMessage(), e);
 			throw new RuntimeException(e);
 		}
 		
