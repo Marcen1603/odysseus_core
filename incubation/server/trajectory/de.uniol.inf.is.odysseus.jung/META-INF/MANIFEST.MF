@@ -4,3 +4,4 @@ Bundle-Name: Jung
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.jung
 Bundle-Version: 1.0.0
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Export-Package: edu.uci.ics.jung.graph;uses:="org.apache.commons.collections15,edu.uci.ics.jung.graph.util,edu.uci.ics.jung.graph.event"
