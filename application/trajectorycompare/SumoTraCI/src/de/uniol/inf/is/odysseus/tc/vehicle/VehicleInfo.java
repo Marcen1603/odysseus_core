@@ -35,7 +35,7 @@ public class VehicleInfo {
     private String type;
 
     private String id = null;
-
+    
     private int state = -1;
 
     public VehicleInfo(final Vehicle vehicle) {
@@ -67,7 +67,7 @@ public class VehicleInfo {
         return this.id;
     }
 
-    public double getInternX() {
+	public double getInternX() {
         return this.internX;
     }
 

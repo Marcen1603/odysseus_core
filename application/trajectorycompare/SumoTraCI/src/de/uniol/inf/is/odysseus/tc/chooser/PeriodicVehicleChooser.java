@@ -60,7 +60,6 @@ public class PeriodicVehicleChooser implements IVehicleChooser {
     		}
     		
     		if(vi.getState() / 1000000 == 0) {
-    			LOGGER.info(vi.getState() + " -> add");
     			result.add(vi);
     		}
     	}

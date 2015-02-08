@@ -21,8 +21,9 @@ import de.uniol.inf.is.odysseus.tc.chooser.IVehicleChooser;
 import de.uniol.inf.is.odysseus.tc.chooser.PeriodicVehicleChooser;
 import de.uniol.inf.is.odysseus.tc.error.IErrorGenerator;
 import de.uniol.inf.is.odysseus.tc.error.NoErrorGenerator;
-import de.uniol.inf.is.odysseus.tc.geoconvert.DefGeoConverter;
+import de.uniol.inf.is.odysseus.tc.geoconvert.GpsGeoConverter;
 import de.uniol.inf.is.odysseus.tc.geoconvert.IGeoConverter;
+import de.uniol.inf.is.odysseus.tc.geoconvert.NoGeoConverter;
 import de.uniol.inf.is.odysseus.tc.interaction.ISumoInteraction;
 import de.uniol.inf.is.odysseus.tc.interaction.SumoInteraction;
 import de.uniol.inf.is.odysseus.tc.message.IMessageCreator;
@@ -53,7 +54,7 @@ public class SumoZeroMQExposerModule extends AbstractModule {
 
         this.bind(ISumoInteraction.class).to(SumoInteraction.class).asEagerSingleton();
         this.bind(IVehicleShuffler.class).to(RandomVehicleSchuffler.class);
-        this.bind(IGeoConverter.class).to(DefGeoConverter.class);
+        this.bind(IGeoConverter.class).to(GpsGeoConverter.class);
         this.bind(ISendDecision.class).to(MinimumSendDecision.class);
         this.bind(IErrorGenerator.class).to(NoErrorGenerator.class);
 

@@ -23,6 +23,7 @@ import org.osgeo.proj4j.BasicCoordinateTransform;
 import org.osgeo.proj4j.CRSFactory;
 import org.osgeo.proj4j.CoordinateReferenceSystem;
 import org.osgeo.proj4j.ProjCoordinate;
+import org.osgeo.proj4j.UnknownAuthorityCodeException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -48,7 +49,7 @@ public abstract class AbstractGeoConverter implements IGeoConverter {
     private BasicCoordinateTransform basicTransform;
 
     private Pair<Double, Double> netOffset = null;
-    private String projParameter;
+    protected String projParameter;
 
     protected abstract String getToReference();
 
@@ -63,8 +64,6 @@ public abstract class AbstractGeoConverter implements IGeoConverter {
                                 "//configuration/input/net-file",
                                 "value"
             ));
-
-            System.err.println(pat);
             final String[] v = xmlService.getValue(pat, "//net/location" ,"netOffset").split(",");
             this.netOffset = Pair.with(
                     Double.parseDouble(v[0]),
@@ -75,7 +74,11 @@ public abstract class AbstractGeoConverter implements IGeoConverter {
             LOGGER.error(e.getMessage(), e);
         }
         this.crsSrc = this.cf.createFromParameters("Sumo", this.projParameter);
-        this.crsDest = this.cf.createFromName(this.getToReference());
+        try {
+        	this.crsDest = this.cf.createFromName(this.getToReference());
+        } catch(UnknownAuthorityCodeException e) {
+        	this.crsDest = this.cf.createFromParameters("Sumo", this.getToReference());
+        }
         this.basicTransform = new BasicCoordinateTransform(this.crsSrc, this.crsDest);
 
 

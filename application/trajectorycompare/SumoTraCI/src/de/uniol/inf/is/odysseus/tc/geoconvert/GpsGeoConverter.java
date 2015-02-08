@@ -23,10 +23,10 @@ import de.uniol.inf.is.odysseus.tc.service.IXMLService;
 /**
  * Created by marcus on 30.11.14.
  */
-public class DefGeoConverter extends AbstractGeoConverter {
+public class GpsGeoConverter extends AbstractGeoConverter {
 
     @Inject
-    public DefGeoConverter(IXMLService xmlService, ISumoParams sumoParams) {
+    public GpsGeoConverter(IXMLService xmlService, ISumoParams sumoParams) {
         super(xmlService, sumoParams);
     }
 
