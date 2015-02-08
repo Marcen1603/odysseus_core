@@ -18,12 +18,15 @@ public class OsmGraphLoader implements IGraphLoader<String, Integer> {
 
 	private final static Logger LOGGER = LoggerFactory.getLogger(OsmGraphLoader.class);
 	
-	private final static String AP_NODE = "//node";
+	private final static String AP_NODES = "//node";
+	private final static String AP_WAYS = "//way";
 	
 	private final static String NODE_ELEM_NAME = "node";
 	private final static String NODE_LON_ATTR_NAME = "lon";
 	private final static String NODE_LAT_ATTR_NAME = "lat";
 	private final static String NODE_ID_ATTR_NAME = "id";
+	
+	private final static String WAY_ELEM_NAME = "way";
 	
 	
 	@Override
@@ -37,13 +40,13 @@ public class OsmGraphLoader implements IGraphLoader<String, Integer> {
 		vg.parseFile(filepath, false);
 		
 		final VTDNav vn = vg.getNav();
-		final AutoPilot apNode = new AutoPilot(vn);
+		final AutoPilot apNodes = new AutoPilot(vn);
 		
 		final Map<String, Point> pointsMap = new HashMap<>();
 		
 		try {
-			apNode.selectXPath(AP_NODE);
-			while (apNode.evalXPath() != -1) {
+			apNodes.selectXPath(AP_NODES);
+			while(apNodes.evalXPath() != -1) {
 			    vn.toElement(VTDNav.FIRST_CHILD, NODE_ELEM_NAME);
 			    final Point point = pointCreator.createPoint(
 			    		Double.parseDouble(vn.toNormalizedString(vn.getAttrVal(NODE_LON_ATTR_NAME))), 
@@ -51,12 +54,33 @@ public class OsmGraphLoader implements IGraphLoader<String, Integer> {
 			    graph.addVertex(point);
 			    pointsMap.put(vn.toNormalizedString(vn.getAttrVal(NODE_ID_ATTR_NAME)), point);
 			}
+			
+			final AutoPilot apWays = new AutoPilot(vn);
+			apWays.selectXPath(AP_WAYS);
+			
+			final AutoPilot apNds = new AutoPilot(vn);
+			
+			while(apWays.evalXPath() != -1) {
+			    vn.toElement(VTDNav.FIRST_CHILD, WAY_ELEM_NAME);
+			    
+			    apNds.selectXPath("child::nd");
+			    if(apNds.evalXPath() != -1) {
+			    	vn.toElement(VTDNav.FIRST_CHILD, "nd");
+			    	String firstPoint = vn.toNormalizedString(vn.getAttrVal("ref"));
+			    	Point point1 = pointsMap.get(firstPoint);
+			    	while(apNds.evalXPath() != -1) {
+			    		vn.toElement(VTDNav.FIRST_CHILD, "nd");
+			    		final Point point2 = pointsMap.get(vn.toNormalizedString(vn.getAttrVal("ref")));
+			    		graph.addEdge(new LineSegment(point1.getCoordinate(), point2.getCoordinate()), point1, point1 = point2);
+				    }
+			    }
+			}			
 		} catch(Exception e) {
 			LOGGER.error("", e);
 			throw new RuntimeException(e);
 		}
 		
-		return null;
+		return graph;
 	}
 
 }
