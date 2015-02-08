@@ -5,15 +5,16 @@ import com.vividsolutions.jts.geom.Point;
 
 import edu.uci.ics.jung.graph.UndirectedSparseGraph;
 
-public class GraphLoaderFactory extends AbstractObjectLoaderFactory<IGraphLoader<String>, UndirectedSparseGraph<Point, LineSegment>, String> {
+public class GraphLoaderFactory extends AbstractObjectLoaderFactory<IGraphLoader<String, Integer>, UndirectedSparseGraph<Point, LineSegment>, String, Integer> {
 
 	@Override
 	protected String convertKey(String key) {
 		return key.substring(key.lastIndexOf(".") + 1).toUpperCase();
 	}
 
+
 	@Override
-	protected IGraphLoader<String> createLoader(String convertedKey) {
+	protected IGraphLoader<String, Integer> createLoader(String convertedKey) {
 		switch(convertedKey) {
 		case "OSM" : return new OsmGraphLoader();
 		}

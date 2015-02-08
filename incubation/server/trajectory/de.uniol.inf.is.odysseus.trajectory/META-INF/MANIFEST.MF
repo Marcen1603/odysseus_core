@@ -6,6 +6,7 @@ Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: de.uniol.inf.is.odysseus.trajectory.Activator
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Import-Package: com.vividsolutions.jts.geom,
+ com.ximpleware,
  de.uniol.inf.is.odysseus.intervalapproach.sweeparea,
  de.uniol.inf.is.odysseus.ruleengine.rule,
  de.uniol.inf.is.odysseus.ruleengine.ruleflow,

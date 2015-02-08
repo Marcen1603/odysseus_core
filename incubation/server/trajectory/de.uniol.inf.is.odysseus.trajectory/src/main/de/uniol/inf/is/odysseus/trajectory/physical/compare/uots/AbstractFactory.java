@@ -8,7 +8,9 @@ public abstract class AbstractFactory<P, K> {
 	
 	private final Map<K, P> products = new HashMap<>();
 	
-	public void P create(K key) {
+	protected AbstractFactory() {}
+	
+	public P create(K key) {
 		key = this.convertKey(key);
 		P product = this.products.get(key);
 		if(product == null) {

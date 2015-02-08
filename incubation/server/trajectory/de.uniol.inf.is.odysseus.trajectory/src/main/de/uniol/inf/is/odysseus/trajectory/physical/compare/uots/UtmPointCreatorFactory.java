@@ -2,9 +2,9 @@ package de.uniol.inf.is.odysseus.trajectory.physical.compare.uots;
 
 public class UtmPointCreatorFactory extends AbstractFactory<UtmPointCreator, Integer>{
 
-	private static final UtmPointCreatorFactory INSTANCE;
+	private static final UtmPointCreatorFactory INSTANCE = new UtmPointCreatorFactory();
 	
-	public UtmPointCreatorFactory getInstance() {
+	public static UtmPointCreatorFactory getInstance() {
 		return INSTANCE;
 	}
 	

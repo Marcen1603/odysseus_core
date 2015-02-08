@@ -4,3 +4,4 @@ Bundle-Name: Vtd-xml
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.vtd-xml
 Bundle-Version: 1.0.0
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Export-Package: com.ximpleware

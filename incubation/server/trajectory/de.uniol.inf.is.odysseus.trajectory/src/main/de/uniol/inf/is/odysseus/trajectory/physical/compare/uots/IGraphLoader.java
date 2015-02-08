@@ -5,6 +5,6 @@ import com.vividsolutions.jts.geom.Point;
 
 import edu.uci.ics.jung.graph.UndirectedSparseGraph;
 
-public interface IGraphLoader<K> extends IObjectLoader<UndirectedSparseGraph<Point, LineSegment>, K> {
+public interface IGraphLoader<K, A> extends IObjectLoader<UndirectedSparseGraph<Point, LineSegment>, K, A> {
 
 }
