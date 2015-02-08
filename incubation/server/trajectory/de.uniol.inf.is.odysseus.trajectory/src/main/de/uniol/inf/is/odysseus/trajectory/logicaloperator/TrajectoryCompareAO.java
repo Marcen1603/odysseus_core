@@ -1,7 +1,10 @@
 package de.uniol.inf.is.odysseus.trajectory.logicaloperator;
 
 
+import java.io.File;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,7 +18,10 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOpera
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnaryLogicalOp;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.FileParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IntegerParameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.Option;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.OptionParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
 import de.uniol.inf.is.odysseus.spatial.sourcedescription.sdf.schema.SDFSpatialDatatype;
 import de.uniol.inf.is.odysseus.trajectory.SDFTrajectoryDataType;
@@ -38,9 +44,13 @@ public class TrajectoryCompareAO extends UnaryLogicalOp {
 	private String algorithm;
 	
 	// the query route
-	private List<String> queryTrajectory;
+	private File queryTrajectory;
 	
-	private String referenceSystem;
+	/** the utm zone */
+	private int utmZone;
+
+	
+	private final Map<String, String> optionsMap = new HashMap<>();
 	
 	/**
 	 * Output schema
@@ -72,43 +82,54 @@ public class TrajectoryCompareAO extends UnaryLogicalOp {
 		this.k = trajectoryCompareAO.k;
 		this.algorithm = trajectoryCompareAO.algorithm;
 		this.queryTrajectory = trajectoryCompareAO.queryTrajectory;
-		this.referenceSystem = trajectoryCompareAO.referenceSystem;
+		this.utmZone = trajectoryCompareAO.utmZone;
 	}
 
-	@Parameter(type = IntegerParameter.class, name = "K", optional=true)
+	@Parameter(type = IntegerParameter.class, name = "K")
 	public void setK(int k) {
 		this.k = k;
 	}
-
-	public int getK() {
-		return k;
-	}
 	
-	@Parameter(type = StringParameter.class, name = "ALGORITHM", optional=false)
+	@Parameter(type = StringParameter.class, name = "ALGORITHM")
 	public void setAlgorithm(final String algorithm) {
 		this.algorithm = algorithm;
+	}
+	
+	@Parameter(type = IntegerParameter.class, name = "UTMZONE")
+	public void setUtmZone(final int utmZone) {
+		this.utmZone = utmZone;
+	}
+	
+	@Parameter(type = FileParameter.class, name = "QUERYTRAJECTORY")
+	public void setQueryTrajectory(final File queryTrajectory) {
+		this.queryTrajectory = queryTrajectory;
+	}
+	
+	@Parameter(type = OptionParameter.class, name = "OPTIONS", isList = true, doc = "Special options for algorithm.")
+	public void setOptions(List<Option> value) {
+		for(final Option option : value) {
+			this.optionsMap.put(option.getName().toLowerCase(), option.getValue());
+		}
+	}
+	
+	public int getK() {
+		return this.k;
 	}
 	
 	public String getAlgorithm() {
 		return this.algorithm;
 	}
 	
-	@Parameter(type = StringParameter.class, name = "REFERENCESYSTEM", optional=true)
-	public void setReferenceSystem(final String referenceSystem) {
-		this.referenceSystem = referenceSystem;
-	}
-	
-	public String getReferenceSystem() {
-		return this.referenceSystem;
-	}
-	
-	@Parameter(type = StringParameter.class, name = "QUERYTRAJECTORY", isList = true, optional = false)
-	public void setQueryTrajectory(final List<String> queryTrajectory) {
-		this.queryTrajectory = queryTrajectory;
-	}
-	
-	public List<String> getQueryTrajectory() {
+	public File getQueryTrajectory() {
 		return this.queryTrajectory;
+	}
+
+	public int getUtmZone() {
+		return this.utmZone;
+	}
+	
+	public Map<String, String> getOptionsMap() {
+		return this.optionsMap;
 	}
 	
 	

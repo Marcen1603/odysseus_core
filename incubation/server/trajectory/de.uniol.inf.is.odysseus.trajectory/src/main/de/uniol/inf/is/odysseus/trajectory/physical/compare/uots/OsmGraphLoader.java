@@ -32,6 +32,7 @@ public class OsmGraphLoader implements IGraphLoader<String, Integer> {
 	private final static String ND_ELEM_NAME = "nd";
 	private final static String ND_REF_ATTR_NAME = "ref";
 	
+	OsmGraphLoader() { }
 	
 	@Override
 	public UndirectedSparseGraph<Point, LineSegment> load(String filepath, Integer utmZone) {

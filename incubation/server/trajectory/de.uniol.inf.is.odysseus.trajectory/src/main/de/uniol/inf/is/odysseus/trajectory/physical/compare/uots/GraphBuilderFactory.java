@@ -5,8 +5,16 @@ import com.vividsolutions.jts.geom.Point;
 
 import edu.uci.ics.jung.graph.UndirectedSparseGraph;
 
-public class GraphLoaderFactory extends AbstractObjectLoaderFactory<IGraphLoader<String, Integer>, UndirectedSparseGraph<Point, LineSegment>, String, Integer> {
+public class GraphBuilderFactory extends AbstractObjectLoaderFactory<IGraphLoader<String, Integer>, UndirectedSparseGraph<Point, LineSegment>, String, Integer> {
 
+	private final static GraphBuilderFactory INSTANCE = new GraphBuilderFactory();
+	
+	public static GraphBuilderFactory getInstance() {
+		return INSTANCE;
+	}
+	
+	private GraphBuilderFactory() { }
+	
 	@Override
 	protected String convertKey(String key) {
 		return key.substring(key.lastIndexOf(".") + 1).toUpperCase();
