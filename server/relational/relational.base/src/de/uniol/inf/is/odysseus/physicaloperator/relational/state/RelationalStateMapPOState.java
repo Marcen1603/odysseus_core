@@ -7,8 +7,9 @@ import java.util.Map;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IOperatorState;
 
-public class RelationalStateMapPOState<T extends IMetaAttribute> implements Serializable {
+public class RelationalStateMapPOState<T extends IMetaAttribute> implements Serializable, IOperatorState {
 	
 	private static final long serialVersionUID = 3107458255925732610L;
 	

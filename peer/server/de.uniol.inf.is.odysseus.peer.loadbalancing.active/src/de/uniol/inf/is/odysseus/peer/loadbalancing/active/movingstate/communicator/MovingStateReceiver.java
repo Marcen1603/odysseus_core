@@ -6,10 +6,13 @@ import java.io.ObjectInput;
 import java.io.ObjectInputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.zip.CRC32;
+import java.util.zip.Checksum;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.core.physicaloperator.IOperatorState;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IStatefulPO;
@@ -56,15 +59,29 @@ public class MovingStateReceiver implements ITransmissionReceiverListener {
 	private Serializable receivedState;
 
 	/**
+	 * Flag that indicates if we already received the announcement
+	 */
+	private boolean announcementReceived = false;
+
+	/**
 	 * Flag that indicates if receiving is finished
 	 */
-	private boolean receivingFinished = false;
+	private boolean stateReceived = false;
+
+	private StateAnnouncement announcement;
+
+	private int messagePartCounter;
+
+	private byte[] stateBytes;
+
+	private Object semaphore = new Object();
 
 	/***
 	 * Clears receiving finished Flag.
 	 */
 	public void resetFinished() {
-		this.receivingFinished = false;
+		this.announcementReceived = false;
+		this.stateReceived = false;
 	}
 
 	/***
@@ -123,36 +140,127 @@ public class MovingStateReceiver implements ITransmissionReceiverListener {
 	 * EventHandler that fires if Transmission receives data.
 	 */
 	public void onReceiveData(ITransmissionReceiver receiver, byte[] data) {
-		if (!receivingFinished) {
-			ByteArrayInputStream bis = new ByteArrayInputStream(data);
-			ObjectInput in = null;
+		if (!announcementReceived) {
+			stateReceived = false;
 
-			try {
-				in = new ObjectInputStream(bis);
-				receivedState = (Serializable) in.readObject();
-				receivingFinished = true;
-				LOG.debug("Received: ");
-				LOG.debug(receivedState.toString());
-				notifyListeners();
-			} catch (IOException e) {
-				LOG.error("Error while deserializing bytes.");
-				e.printStackTrace();
-			} catch (ClassNotFoundException e) {
-				LOG.error("Class not found.");
-				e.printStackTrace();
-			} finally {
-				try {
-					bis.close();
-				} catch (IOException ex) {
-					// ignore close exception
-				}
-				try {
-					if (in != null) {
-						in.close();
+			Serializable temp = convertBytesToSerializable(data);
+			if (temp instanceof StateAnnouncement) {
+				announcement = (StateAnnouncement) temp;
+				announcementReceived = true;
+
+				// set message counter to zero and initialize array
+				messagePartCounter = 0;
+				stateBytes = new byte[announcement.getArrayLenght()];
+				LOG.error(String
+						.format("State Transmission: StateAnnouncement received. %d messages need to be processed.",
+								announcement.getNumberOfMessages()));
+			}
+			return;
+		}
+
+		if (announcementReceived && !stateReceived) {
+			if (data.length <= StateAnnouncement.MAX_MESSAGE_SIZE) {
+				synchronized (semaphore) {
+					int index = 0;
+					try {
+						for (int i = 0; i < data.length; i++) {
+							index = messagePartCounter
+									* StateAnnouncement.MAX_MESSAGE_SIZE + i;
+							stateBytes[index] = data[i];
+						}
+						messagePartCounter++;
+						LOG.debug(String.format("State Transmission: Message %d of %d received.",
+								messagePartCounter,
+								announcement.getNumberOfMessages()));
+					} catch (IndexOutOfBoundsException e) {
+						LOG.error(String
+								.format("State Transmission: Maximum index of array is %d but requested index is %d. Transmission aborted.",
+										stateBytes.length - 1, index));
+						resetOnError();
 					}
-				} catch (IOException ex) {
-					// ignore close exception
 				}
+			} else {
+				LOG.error(String
+						.format("State Transmission: Message %d is too long. Maximum size is: %d byte. Aktual size is %d byte. Transmission aborted.",
+								messagePartCounter,
+								StateAnnouncement.MAX_MESSAGE_SIZE, data.length));
+				resetOnError();
+			}
+
+			if (messagePartCounter == announcement.getNumberOfMessages()) {
+				// if all message parts are received, we can convert it to
+				// serializable
+
+				Checksum checksum = new CRC32();
+				checksum.update(stateBytes, 0, stateBytes.length);
+				long checksumValue = checksum.getValue();
+
+				if (checksumValue == announcement.getChecksum()) {
+					LOG.debug("State Transmission: CRC Checksum Validation successful");
+					receivedState = convertBytesToSerializable(stateBytes);
+
+					if (receivedState instanceof IOperatorState) {
+						LOG.error("State Transmission: Received object is an instance of IOperatorState. Transmission completed");
+						stateReceived = true;
+						notifyListeners();
+					} else {
+						LOG.error("State Transmission: Received object is no instance of IOperatorState. Transmission aborted");
+						resetOnError();
+					}
+
+					announcementReceived = false;
+				} else {
+					LOG.error("State Transmission: CRC Checksum Validation failed. Transmission aborted.");
+					resetOnError();
+				}
+
+			}
+		}
+	}
+
+	/**
+	 * Resets the internal state of transmission. Needed if receiver receives new state
+	 */
+	private void resetOnError() {
+		announcementReceived = false;
+		stateReceived = false;
+		receivedState = null;
+		messagePartCounter = 0;
+	}
+
+	/**
+	 * converts the given byte array into serializable object
+	 * 
+	 * @param data byte array of an serializable object
+	 * @return serializable object
+	 */
+	private Serializable convertBytesToSerializable(byte[] data) {
+		ByteArrayInputStream bis = new ByteArrayInputStream(data);
+		ObjectInput in = null;
+
+		try {
+			in = new ObjectInputStream(bis);
+			return (Serializable) in.readObject();
+		} catch (IOException e) {
+			LOG.error("Error while deserializing bytes.");
+			e.printStackTrace();
+			return null;
+		} catch (ClassNotFoundException e) {
+			LOG.error("Class not found.");
+			e.printStackTrace();
+			return null;
+		} finally {
+			try {
+				bis.close();
+			} catch (IOException ex) {
+				// ignore close exception
+			}
+			try {
+				if (in != null) {
+					in.close();
+				}
+			} catch (IOException ex) {
+				// ignore close exception
 			}
 		}
 	}

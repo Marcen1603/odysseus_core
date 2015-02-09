@@ -7,11 +7,12 @@ import java.util.Map;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IOperatorState;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ITransferArea;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.IGroupProcessor;
 
 public class SlidingElementWindowTIPOState<T extends IStreamObject<ITimeInterval>>
-		implements Serializable {
+		implements Serializable, IOperatorState {
 
 	private static final long serialVersionUID = -3048670939120301707L;
 
