@@ -8,12 +8,16 @@ import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
-public class TConsoleSinkAORule extends AbstractTransformationRule<ConsoleSinkAO> {
+public class TConsoleSinkAORule extends
+		AbstractTransformationRule<ConsoleSinkAO> {
 
 	@Override
 	public void execute(ConsoleSinkAO operator,
-			TransformationConfiguration config) throws RuleException {	
-		defaultExecute(operator, new ConsoleSinkPO(), config, true, true);
+			TransformationConfiguration config) throws RuleException {
+		ConsoleSinkPO physical = new ConsoleSinkPO();
+		physical.setDumpPunctuation(operator.isDumpPunctuation());
+		physical.setPrintPort(operator.isPrintPort());
+		defaultExecute(operator, physical, config, true, true);
 	}
 
 	@Override
