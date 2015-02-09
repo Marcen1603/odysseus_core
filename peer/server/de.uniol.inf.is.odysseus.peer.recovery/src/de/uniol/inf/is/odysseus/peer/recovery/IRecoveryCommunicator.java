@@ -42,7 +42,6 @@ public interface IRecoveryCommunicator extends IPeerDictionaryListener {
 	 * @param pipeId
 	 *            The pipeId which is affected
 	 */
-	// TODO handle result. M.B.
 	public boolean sendUpdateReceiverMessage(PeerID receiverPeer, PeerID newSenderPeer, PipeID pipeId, int localQueryId);
 
 	/**
