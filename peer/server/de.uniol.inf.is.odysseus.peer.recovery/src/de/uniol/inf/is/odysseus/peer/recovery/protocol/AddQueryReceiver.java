@@ -382,6 +382,15 @@ public class AddQueryReceiver extends AbstractRepeatingMessageReceiver {
 									// receives from
 									cRecoveryCommunicator.get().sendUpdateReceiverMessage(finalPeer, finalOwnPeer,
 											finalPipe, finalLocalQueryId);
+									// TODO handle possible failures
+									/*
+									 * If the message fails, the receiver will not establish a correct pipe.
+									 * Possible solutions:
+									 * 1. Do nothing -> The complete query (if not replicated) will produce no more results.
+									 * 2. Wait for a while and try again -> All tuple within that time will be lost. 
+									 *    No guarantee that a  message can be send afterwards.
+									 * 3. Uninstall the query, cancel the recovery process, and restart on another peer.
+									 */
 
 								}
 							});
