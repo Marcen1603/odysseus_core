@@ -6,7 +6,6 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.TreeMap;
 
 import de.uniol.inf.is.odysseus.core.collection.SerializablePair;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
@@ -21,10 +20,19 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.physicaloperator.relational.VarHelper;
 
+/**
+ * This operator calculates the top k elements from the input with a scoring
+ * function
+ * 
+ * @author Marco Grawunder
+ *
+ * @param <T>
+ * @param <M>
+ */
 public class RelationalTopKPO<T extends Tuple<M>, M extends ITimeInterval>
 		extends AbstractPipe<T, T> {
 
-	private class TopKComparatorDesc implements
+	private class TopKComparatorAsc implements
 			Comparator<SerializablePair<Double, T>> {
 
 		@Override
@@ -34,7 +42,7 @@ public class RelationalTopKPO<T extends Tuple<M>, M extends ITimeInterval>
 		}
 	}
 
-	private class TopKComparatorAsc implements
+	private class TopKComparatorDesc implements
 			Comparator<SerializablePair<Double, T>> {
 
 		@Override
@@ -51,15 +59,19 @@ public class RelationalTopKPO<T extends Tuple<M>, M extends ITimeInterval>
 	private LinkedList<T> lastResult;
 
 	private VarHelper[] variables;
+	private boolean suppressDuplicates;
 
 	public RelationalTopKPO(SDFSchema inputSchema,
-			SDFExpression scoringFunction, int k, boolean descending) {
+			SDFExpression scoringFunction, int k, boolean descending,
+			boolean suppressDuplicates) {
 		super();
 		this.scoringFunction = scoringFunction;
 		initScoringFunction(inputSchema);
 		this.k = k;
 		topK = new ArrayList<SerializablePair<Double, T>>();
-		comparator = descending?new TopKComparatorDesc():new TopKComparatorAsc();
+		comparator = descending ? new TopKComparatorDesc()
+				: new TopKComparatorAsc();
+		this.suppressDuplicates = suppressDuplicates;
 	}
 
 	@Override
@@ -72,7 +84,7 @@ public class RelationalTopKPO<T extends Tuple<M>, M extends ITimeInterval>
 		topK.clear();
 		lastResult = null;
 	}
-	
+
 	@Override
 	protected synchronized void process_next(T object, int port) {
 
@@ -82,11 +94,11 @@ public class RelationalTopKPO<T extends Tuple<M>, M extends ITimeInterval>
 
 		produceResult(object);
 	}
-	
+
 	@Override
 	public void processPunctuation(IPunctuation punctuation, int port) {
 		// TODO: how to handle punctuations
-		//sendPunctuation(punctuation);
+		// sendPunctuation(punctuation);
 	}
 
 	private void cleanUp(PointInTime start) {
@@ -102,12 +114,12 @@ public class RelationalTopKPO<T extends Tuple<M>, M extends ITimeInterval>
 	private void addObject(SerializablePair<Double, T> scoredObject) {
 		// add object to list
 		// 1. find position to insert with binary search
-		
+
 		int pos = Collections.binarySearch(topK, scoredObject, comparator);
-		if (pos < 0){
+		if (pos < 0) {
 			topK.add((-(pos) - 1), scoredObject);
-		}else{
-			topK.add(pos,scoredObject);
+		} else {
+			topK.add(pos, scoredObject);
 		}
 	}
 
@@ -122,7 +134,8 @@ public class RelationalTopKPO<T extends Tuple<M>, M extends ITimeInterval>
 			out.setMetadata(null);
 			resultList.add(out);
 		}
-		boolean sameAsLastResult = compareWithLastResult(resultList);
+		boolean sameAsLastResult = suppressDuplicates ? compareWithLastResult(resultList)
+				: false;
 
 		if (!sameAsLastResult) {
 			lastResult = new LinkedList<T>(resultList);

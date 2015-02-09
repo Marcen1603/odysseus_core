@@ -21,8 +21,9 @@ public class TopKAO extends AbstractLogicalOperator {
 
 	private NamedExpression scoringFunction;
 	private int k;
-	private boolean descending;
-
+	private boolean descending = true;
+	private boolean suppressDuplicates = true;
+	
 	public TopKAO() {
 	}
 
@@ -31,6 +32,7 @@ public class TopKAO extends AbstractLogicalOperator {
 		this.scoringFunction = other.scoringFunction;
 		this.k = other.k;
 		this.descending = other.descending;
+		this.setSuppressDuplicates(other.isSuppressDuplicates());
 	}
 
 	public NamedExpression getScoringFunction() {
@@ -61,6 +63,21 @@ public class TopKAO extends AbstractLogicalOperator {
 	}
 
 	
+	/**
+	 * @return the suppressDuplicates
+	 */
+	public boolean isSuppressDuplicates() {
+		return suppressDuplicates;
+	}
+
+	/**
+	 * @param suppressDuplicates the suppressDuplicates to set
+	 */
+	@Parameter(name="suppressDuplicates", optional = true, type = BooleanParameter.class, doc ="If set to true (defaul), output is only generated when a new top k set is available")
+	public void setSuppressDuplicates(boolean suppressDuplicates) {
+		this.suppressDuplicates = suppressDuplicates;
+	}
+
 	@Override
 	protected SDFSchema getOutputSchemaIntern(int pos) {
 		SDFSchema subSchema = getInputSchema(0);

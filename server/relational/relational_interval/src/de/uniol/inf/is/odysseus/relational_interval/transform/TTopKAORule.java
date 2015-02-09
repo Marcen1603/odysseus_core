@@ -17,7 +17,7 @@ public class TTopKAORule extends
 			throws RuleException {
 		RelationalTopKPO<Tuple<ITimeInterval>,ITimeInterval> po = new RelationalTopKPO<>(
 				operator.getInputSchema(0), operator.getScoringFunction().expression,
-				operator.getK(), operator.isDescending());
+				operator.getK(), operator.isDescending(), operator.isSuppressDuplicates());
 		defaultExecute(operator, po, config, true, true);
 	}
 
