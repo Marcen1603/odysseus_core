@@ -29,7 +29,6 @@ public interface IRecoveryCommunicator extends IPeerDictionaryListener {
 	 *            the id of the failed peer
 	 * @return
 	 */
-	// TODO handle result. M.B.
 	public boolean sendHoldOnMessage(PeerID receiverPeer, PipeID pipeId, PeerID failedPeer);
 
 	/**
@@ -69,7 +68,6 @@ public interface IRecoveryCommunicator extends IPeerDictionaryListener {
 	 * @param localQueryId
 	 *            The local query id, for which this peer wants to do the recovery
 	 */
-	// TODO handle result. M.B.
 	public boolean sendRecoveryAgreementMessage(PeerID failedPeer, int localQueryId);
 
 	/**

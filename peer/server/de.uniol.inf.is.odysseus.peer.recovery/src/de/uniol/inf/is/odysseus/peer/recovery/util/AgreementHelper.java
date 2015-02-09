@@ -311,8 +311,19 @@ public class AgreementHelper {
 		cRecoveryPeers.put(failedPeer, queriesForPeer);
 
 		// 4. Send to all other peers that we want to do the recovery
-		cCommunicator.get().sendRecoveryAgreementMessage(failedPeer,
-				localQueryId);
+		if(!cCommunicator.get().sendRecoveryAgreementMessage(failedPeer,
+				localQueryId)) {
+			/*
+			 * If the message could not be send, there are different possible scenarios:
+			 * 1. Another peer wants to do recovery and did not get the message -> decideToRecover will be called as normal
+			 * 2. If no other peer wants to recover -> this peer has to do it.
+			 * 3. More RecoveryAgreementMessages from other peers fail too -> No one knows, if another peer may want to recover.
+			 * 		a) Doing nothing leads to the scenario, that the running queries from the failed peer are lost.
+			 * 		b) Doing the recovery may lead to the scenario, that the queries from the failed peer are reinstalled several times.
+			 * Since the third scenario is not as probable as the other ones, the best solution is to do nothing.
+			 */
+			LOG.error("Sending RecoveryAgreementMessage failed while recovering {}! Queries may be installed twice!" + failedPeer);
+		}
 
 		// 5. Wait a few seconds until we just do the recovery
 		Timer timer = new Timer();
