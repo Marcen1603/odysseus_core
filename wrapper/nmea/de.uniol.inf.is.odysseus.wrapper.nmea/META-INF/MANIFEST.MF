@@ -22,4 +22,5 @@ Export-Package: de.uniol.inf.is.odysseus.wrapper.nmea.sentence,
  de.uniol.inf.is.odysseus.wrapper.nmea.sentence.aissentences.payload.types,
  de.uniol.inf.is.odysseus.wrapper.nmea.util,
  de.uniol.inf.is.odysseus.wrapper.nmea.data
-Require-Bundle: com.google.guava
+Require-Bundle: com.google.guava,
+ de.uniol.inf.is.odysseus.core
