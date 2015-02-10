@@ -30,7 +30,7 @@ public class DropMDAStoreCommand extends AbstractExecutorCommand {
 	public void execute(IDataDictionaryWritable dd, IUserManagementWritable um,
 			IServerExecutor executor) {
 		if (!MDAStoreManager.exists(name)) {
-			INFO.warning("Store with name " + name + " not defined");
+			INFO.warning("Drop store: Store with name " + name + " not defined");
 		}
 		MDAStoreManager.remove(name);
 		LOG.info("MDAStore " + name + " removed");
