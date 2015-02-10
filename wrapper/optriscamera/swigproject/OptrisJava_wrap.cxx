@@ -612,6 +612,12 @@ namespace Swig {
 
 }
 
+namespace Swig {
+  namespace {
+    jclass jclass_OptrisJavaJNI = NULL;
+    jmethodID director_methids[1];
+  }
+}
 
 #include <string>
 
@@ -663,6 +669,78 @@ SWIGINTERN void SWIG_JavaException(JNIEnv *jenv, int code, const char *msg) {
 
 #include "OptrisJava_wrap.h"
 
+SwigDirector_OptrisCamera::SwigDirector_OptrisCamera(JNIEnv *jenv, std::string const &instanceName, std::string const &ethernetAddr) : OptrisCamera(instanceName, ethernetAddr), Swig::Director(jenv) {
+}
+
+SwigDirector_OptrisCamera::~SwigDirector_OptrisCamera() {
+  swig_disconnect_director_self("swigDirectorDisconnect");
+}
+
+
+void SwigDirector_OptrisCamera::onNewFrame(void *buffer, long size) {
+  JNIEnvWrapper swigjnienv(this) ;
+  JNIEnv * jenv = swigjnienv.getJNIEnv() ;
+  jobject swigjobj = (jobject) NULL ;
+  jobject jbuffer = 0 ;
+  
+  if (!swig_override[0]) {
+    OptrisCamera::onNewFrame(buffer,size);
+    return;
+  }
+  swigjobj = swig_get_self(jenv);
+  if (swigjobj && jenv->IsSameObject(swigjobj, NULL) == JNI_FALSE) {
+    {
+      jbuffer = (jenv)->NewDirectByteBuffer(buffer, size); 
+    }
+    jenv->CallStaticVoidMethod(Swig::jclass_OptrisJavaJNI, Swig::director_methids[0], swigjobj, jbuffer);
+    jthrowable swigerror = jenv->ExceptionOccurred();
+    if (swigerror) {
+      jenv->ExceptionClear();
+      throw Swig::DirectorException(jenv, swigerror);
+    }
+    
+  } else {
+    SWIG_JavaThrowException(jenv, SWIG_JavaNullPointerException, "null upcall object in OptrisCamera::onNewFrame ");
+  }
+  if (swigjobj) jenv->DeleteLocalRef(swigjobj);
+}
+
+void SwigDirector_OptrisCamera::swig_connect_director(JNIEnv *jenv, jobject jself, jclass jcls, bool swig_mem_own, bool weak_global) {
+  static struct {
+    const char *mname;
+    const char *mdesc;
+    jmethodID base_methid;
+  } methods[] = {
+    {
+      "onNewFrame", "(Ljava/nio/ByteBuffer;)V", NULL 
+    }
+  };
+  
+  static jclass baseclass = 0 ;
+  
+  if (swig_set_self(jenv, jself, swig_mem_own, weak_global)) {
+    if (!baseclass) {
+      baseclass = jenv->FindClass("de/uniol/inf/is/odysseus/wrapper/optriscamera/swig/OptrisCamera");
+      if (!baseclass) return;
+      baseclass = (jclass) jenv->NewGlobalRef(baseclass);
+    }
+    bool derived = (jenv->IsSameObject(baseclass, jcls) ? false : true);
+    for (int i = 0; i < 1; ++i) {
+      if (!methods[i].base_methid) {
+        methods[i].base_methid = jenv->GetMethodID(baseclass, methods[i].mname, methods[i].mdesc);
+        if (!methods[i].base_methid) return;
+      }
+      swig_override[i] = false;
+      if (derived) {
+        jmethodID methid = jenv->GetMethodID(jcls, methods[i].mname, methods[i].mdesc);
+        swig_override[i] = (methid != methods[i].base_methid);
+        jenv->ExceptionClear();
+      }
+    }
+  }
+}
+
+
 
 #ifdef __cplusplus
 extern "C" {
@@ -695,7 +773,7 @@ SWIGEXPORT jlong JNICALL Java_de_uniol_inf_is_odysseus_wrapper_optriscamera_swig
   arg2 = &arg2_str;
   jenv->ReleaseStringUTFChars(jarg2, arg2_pstr); 
   try {
-    result = (OptrisCamera *)new OptrisCamera((std::string const &)*arg1,(std::string const &)*arg2);
+    result = (OptrisCamera *)new SwigDirector_OptrisCamera(jenv,(std::string const &)*arg1,(std::string const &)*arg2);
   }
   catch(std::exception &_e) {
     {
@@ -754,13 +832,10 @@ SWIGEXPORT void JNICALL Java_de_uniol_inf_is_odysseus_wrapper_optriscamera_swig_
 }
 
 
-SWIGEXPORT jboolean JNICALL Java_de_uniol_inf_is_odysseus_wrapper_optriscamera_swig_OptrisJavaJNI_OptrisCamera_1grabImage(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jobject jarg2, jlong jarg4) {
-  jboolean jresult = 0 ;
+SWIGEXPORT void JNICALL Java_de_uniol_inf_is_odysseus_wrapper_optriscamera_swig_OptrisJavaJNI_OptrisCamera_1onNewFrame(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jobject jarg2) {
   OptrisCamera *arg1 = (OptrisCamera *) 0 ;
   void *arg2 = (void *) 0 ;
   long arg3 ;
-  unsigned int arg4 ;
-  bool result;
   
   (void)jenv;
   (void)jcls;
@@ -771,21 +846,25 @@ SWIGEXPORT jboolean JNICALL Java_de_uniol_inf_is_odysseus_wrapper_optriscamera_s
     arg2 = jenv->GetDirectBufferAddress(jarg2); 
     arg3 = (long)(jenv->GetDirectBufferCapacity(jarg2)); 
   }
-  arg4 = (unsigned int)jarg4; 
-  try {
-    result = (bool)(arg1)->grabImage(arg2,arg3,arg4);
-  }
-  catch(std::exception &_e) {
-    {
-      jclass excep = jenv->FindClass("java/lang/RuntimeException");
-      if (excep)
-      jenv->ThrowNew(excep, (&_e)->what());
-      return 0;
-    }
-  }
+  (arg1)->onNewFrame(arg2,arg3);
+}
+
+
+SWIGEXPORT void JNICALL Java_de_uniol_inf_is_odysseus_wrapper_optriscamera_swig_OptrisJavaJNI_OptrisCamera_1onNewFrameSwigExplicitOptrisCamera(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jobject jarg2) {
+  OptrisCamera *arg1 = (OptrisCamera *) 0 ;
+  void *arg2 = (void *) 0 ;
+  long arg3 ;
   
-  jresult = (jboolean)result; 
-  return jresult;
+  (void)jenv;
+  (void)jcls;
+  (void)jarg1_;
+  arg1 = *(OptrisCamera **)&jarg1; 
+  {
+    /* %typemap(in) void * */ 
+    arg2 = jenv->GetDirectBufferAddress(jarg2); 
+    arg3 = (long)(jenv->GetDirectBufferCapacity(jarg2)); 
+  }
+  (arg1)->OptrisCamera::onNewFrame(arg2,arg3);
 }
 
 
@@ -846,6 +925,46 @@ SWIGEXPORT jint JNICALL Java_de_uniol_inf_is_odysseus_wrapper_optriscamera_swig_
   result = (int)((OptrisCamera const *)arg1)->getImageHeight();
   jresult = (jint)result; 
   return jresult;
+}
+
+
+SWIGEXPORT void JNICALL Java_de_uniol_inf_is_odysseus_wrapper_optriscamera_swig_OptrisJavaJNI_OptrisCamera_1director_1connect(JNIEnv *jenv, jclass jcls, jobject jself, jlong objarg, jboolean jswig_mem_own, jboolean jweak_global) {
+  OptrisCamera *obj = *((OptrisCamera **)&objarg);
+  (void)jcls;
+  SwigDirector_OptrisCamera *director = dynamic_cast<SwigDirector_OptrisCamera *>(obj);
+  if (director) {
+    director->swig_connect_director(jenv, jself, jenv->GetObjectClass(jself), (jswig_mem_own == JNI_TRUE), (jweak_global == JNI_TRUE));
+  }
+}
+
+
+SWIGEXPORT void JNICALL Java_de_uniol_inf_is_odysseus_wrapper_optriscamera_swig_OptrisJavaJNI_OptrisCamera_1change_1ownership(JNIEnv *jenv, jclass jcls, jobject jself, jlong objarg, jboolean jtake_or_release) {
+  OptrisCamera *obj = *((OptrisCamera **)&objarg);
+  SwigDirector_OptrisCamera *director = dynamic_cast<SwigDirector_OptrisCamera *>(obj);
+  (void)jcls;
+  if (director) {
+    director->swig_java_change_ownership(jenv, jself, jtake_or_release ? true : false);
+  }
+}
+
+
+SWIGEXPORT void JNICALL Java_de_uniol_inf_is_odysseus_wrapper_optriscamera_swig_OptrisJavaJNI_swig_1module_1init(JNIEnv *jenv, jclass jcls) {
+  int i;
+  
+  static struct {
+    const char *method;
+    const char *signature;
+  } methods[1] = {
+    {
+      "SwigDirector_OptrisCamera_onNewFrame", "(Lde/uniol/inf/is/odysseus/wrapper/optriscamera/swig/OptrisCamera;Ljava/nio/ByteBuffer;)V" 
+    }
+  };
+  Swig::jclass_OptrisJavaJNI = (jclass) jenv->NewGlobalRef(jcls);
+  if (!Swig::jclass_OptrisJavaJNI) return;
+  for (i = 0; i < (int) (sizeof(methods)/sizeof(methods[0])); ++i) {
+    Swig::director_methids[i] = jenv->GetStaticMethodID(jcls, methods[i].method, methods[i].signature);
+    if (!Swig::director_methids[i]) return;
+  }
 }
 
 

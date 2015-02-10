@@ -30,8 +30,16 @@
     return $jnicall; 
 } 
 
+%typemap(directorin, descriptor="Ljava/nio/ByteBuffer;") (void *buffer, long size) {
+$input = (jenv)->NewDirectByteBuffer($1, $2); } 
+
+%typemap(javadirectorin) (void *buffer, long size) "$jniinput"
+%typemap(javadirectorout) (void *buffer, long size) "$javacall"
+
 %{
 #include "OptrisCamera.h"
 %}
+
+%feature("director") OptrisCamera;
 
 %include "OptrisCamera.h"

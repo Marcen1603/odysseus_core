@@ -15,13 +15,13 @@ import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
-import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.AbstractSimplePullTransportHandler;
+import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.AbstractPushTransportHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandler;
 import de.uniol.inf.is.odysseus.imagejcv.common.datatype.ImageJCV;
 import de.uniol.inf.is.odysseus.imagejcv.common.sdf.schema.SDFImageJCVDatatype;
 import de.uniol.inf.is.odysseus.wrapper.optriscamera.swig.OptrisCamera;
 
-public class OptrisCameraTransportHandler extends AbstractSimplePullTransportHandler<Tuple<?>> 
+public class OptrisCameraTransportHandler extends AbstractPushTransportHandler 
 {
 	@SuppressWarnings("unused")
 	private final Logger logger = LoggerFactory.getLogger(OptrisCameraTransportHandler.class);
@@ -30,8 +30,6 @@ public class OptrisCameraTransportHandler extends AbstractSimplePullTransportHan
 	private String 			ethernetAddress;
 	private OptrisCamera 	cameraCapture;
 	
-	private ImageJCV currentImage;
-		
 	public OptrisCameraTransportHandler() 
 	{
 		super();
@@ -63,9 +61,23 @@ public class OptrisCameraTransportHandler extends AbstractSimplePullTransportHan
 		{
 			try
 			{
-		 		cameraCapture = new OptrisCamera("", ethernetAddress);
+		 		cameraCapture = new OptrisCamera("", ethernetAddress)
+		 						{
+		 							@Override public void onNewFrame(ByteBuffer buffer)
+		 							{
+		 								Tuple<IMetaAttribute> tuple = new Tuple<>(getSchema().size(), false);
+		 								int[] attrs = getSchema().getSDFDatatypeAttributePositions(SDFImageJCVDatatype.IMAGEJCV);
+		 								if (attrs.length > 0)
+		 								{
+			 								IplImage img = cvCreateImage(cvSize(cameraCapture.getImageWidth(), cameraCapture.getImageHeight()), IPL_DEPTH_16S, cameraCapture.getImageChannels());			
+			 								img.getByteBuffer().put(buffer);		 									
+		 									tuple.setAttribute(attrs[0], new ImageJCV(img));
+		 								}
+		 								
+		 								fireProcess(tuple);
+		 							}
+		 						};
 				cameraCapture.start();
-				currentImage = null;
 							
 			}
 			catch (RuntimeException e) 
@@ -87,39 +99,6 @@ public class OptrisCameraTransportHandler extends AbstractSimplePullTransportHan
 		}
 		
 		fireOnDisconnect();
-	}
-
-	@Override public Tuple<?> getNext() 
-	{
-		Tuple<IMetaAttribute> tuple = new Tuple<>(getSchema().size(), false);
-		int[] attrs = getSchema().getSDFDatatypeAttributePositions(SDFImageJCVDatatype.IMAGEJCV);
-		if (attrs.length > 0) tuple.setAttribute(attrs[0], currentImage);
-        return tuple;					
-	}
-    
-	@Override public boolean hasNext() 
-	{
-		synchronized (processLock)
-		{
-			if (cameraCapture == null) return false;
-			
-			IplImage img = cvCreateImage(cvSize(cameraCapture.getImageWidth(), cameraCapture.getImageHeight()), IPL_DEPTH_16S, cameraCapture.getImageChannels());			
-			ByteBuffer imageData = img.getByteBuffer();
-			
-			// Is it possible for an IplImage to be backed by a non-direct byte buffer?
-			assert(imageData.isDirect());
-
-			if (!cameraCapture.grabImage(imageData, 1000))
-			{
-				return false;
-			}
-			else
-			{
-				currentImage = new ImageJCV(img);
-				
-				return true;
-			}
-		}
 	}
 	
     @Override

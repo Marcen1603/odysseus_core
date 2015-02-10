@@ -35,8 +35,24 @@ public class OptrisCamera {
     }
   }
 
+  protected void swigDirectorDisconnect() {
+    swigCMemOwn = false;
+    delete();
+  }
+
+  public void swigReleaseOwnership() {
+    swigCMemOwn = false;
+    OptrisJavaJNI.OptrisCamera_change_ownership(this, swigCPtr, false);
+  }
+
+  public void swigTakeOwnership() {
+    swigCMemOwn = true;
+    OptrisJavaJNI.OptrisCamera_change_ownership(this, swigCPtr, true);
+  }
+
   public OptrisCamera(String instanceName, String ethernetAddr) throws java.lang.RuntimeException {
     this(OptrisJavaJNI.new_OptrisCamera(instanceName, ethernetAddr), true);
+    OptrisJavaJNI.OptrisCamera_director_connect(this, swigCPtr, swigCMemOwn, true);
   }
 
   public void start() throws java.lang.RuntimeException {
@@ -47,8 +63,8 @@ public class OptrisCamera {
     OptrisJavaJNI.OptrisCamera_stop(swigCPtr, this);
   }
 
-  public boolean grabImage(java.nio.ByteBuffer buffer, long timeOutMs) throws java.lang.RuntimeException {
-    return OptrisJavaJNI.OptrisCamera_grabImage(swigCPtr, this, buffer, timeOutMs);
+  public void onNewFrame(java.nio.ByteBuffer buffer) {
+    if (getClass() == OptrisCamera.class) OptrisJavaJNI.OptrisCamera_onNewFrame(swigCPtr, this, buffer); else OptrisJavaJNI.OptrisCamera_onNewFrameSwigExplicitOptrisCamera(swigCPtr, this, buffer);
   }
 
   public int getImageChannels() {

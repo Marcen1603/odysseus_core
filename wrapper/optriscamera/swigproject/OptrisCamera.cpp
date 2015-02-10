@@ -40,7 +40,7 @@ public:
 
 	static HRESULT WINAPI OnNewFrame(void * pBuffer, FrameMetadata *pMetaData)
 	{
-		Camera->OnNewFrame(pBuffer, pMetaData);
+		Camera->OnNewFrameCallback(pBuffer, pMetaData);
 		return 0;
 	}
 
@@ -95,7 +95,7 @@ wstring string2wstring(const string& str)
 class IPCThread
 {
 	std::string errorStr;
-	bool running, error;
+	volatile bool running, error;
 	HANDLE threadHandle;
 	OptrisCamera* camera;
 	string instanceName;
@@ -114,7 +114,6 @@ class IPCThread
 
 		ZeroMemory( &si, sizeof(si));
 		si.cb = sizeof(si);
-		ZeroMemory( &pi, sizeof(pi));
 
 /*		cout << "CreateProcess " << imagerExe << " " << startParameters << endl;
 		if (!CreateProcess(imagerExe.c_str(), startParameters, NULL, NULL, FALSE, 0, NULL, imagerPath.c_str(), &si, &pi))
@@ -240,7 +239,6 @@ OptrisCamera::OptrisCamera(const std::string& instanceName, const std::string& e
 	this->ethernetAddr = ethernetAddr;
 
 	instanceID = 0;
-	currentBuffer = NULL;
 }
 
 OptrisCamera::~OptrisCamera()
@@ -251,9 +249,6 @@ void OptrisCamera::start()
 {
 	initCompleted = false;
 	frameInit = false;
-	currentBuffer = NULL;
-
-	InitializeCriticalSectionAndSpinCount(&bufferMutex, 1000);
 
 	// Start IPC thread
 	ipcThread = new IPCThread(this, instanceName, instanceID);
@@ -275,9 +270,6 @@ void OptrisCamera::stop()
 
 	delete ipcThread;
 	ipcThread = NULL;	
-
-	DeleteCriticalSection(&bufferMutex);
-	delete currentBuffer;
 }
 
 void OptrisCamera::OnServerStopped(int reason)
@@ -287,37 +279,26 @@ void OptrisCamera::OnServerStopped(int reason)
 
 void OptrisCamera::OnInitCompleted()
 {
+	cout << "OnInitCompleted" << endl;
 	initCompleted = true;
 }
 
 void OptrisCamera::OnFrameInit(int frameWidth, int frameHeight, int frameDepth)
 {
+	cout << "OnFrameInit" << endl;
+
 	Width = frameWidth;
 	Height = frameHeight;
 	Depth = frameDepth;
 
-	currentBuffer = new char[frameWidth*frameHeight*frameDepth];
-
 	frameInit = true;	
 }
 
-void OptrisCamera::OnNewFrame(void* pBuffer, FrameMetadata *pMetaData)
+void OptrisCamera::OnNewFrameCallback(void * pBuffer, FrameMetadata *pMetaData)
 {
-	if (!initCompleted || !frameInit) return;
-
-	EnterCriticalSection(&bufferMutex);
-	memcpy(currentBuffer, pBuffer, getBufferSize());
-	LeaveCriticalSection(&bufferMutex);
+	onNewFrame(pBuffer, getBufferSize());
 }
 
-bool OptrisCamera::grabImage(void *buffer, long size, unsigned int timeOutMs) throw(std::exception)
+void OptrisCamera::onNewFrame(void *buffer, long size)
 {
-	if (size < getBufferSize()) throw std::exception("Buffer is too small");
-	if (!initCompleted || !frameInit) return false;
-
-	EnterCriticalSection(&bufferMutex);
-	memcpy(buffer, currentBuffer, getBufferSize());
-	LeaveCriticalSection(&bufferMutex);
-
-	return true;
 }
