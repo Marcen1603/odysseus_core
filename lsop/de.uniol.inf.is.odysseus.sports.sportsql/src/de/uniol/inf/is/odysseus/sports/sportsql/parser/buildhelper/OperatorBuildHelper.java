@@ -35,6 +35,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.RouteAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.SampleAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.SelectAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.StateMapAO;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.StreamAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TimeWindowAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TimestampAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TopAO;
@@ -1528,7 +1529,13 @@ public class OperatorBuildHelper {
 	 */
 	public static ILogicalOperator createGameSource(ISession session) {
 		String gameSourceName = OperatorBuildHelper.MAIN_STREAM_NAME;
-		return getLogicalOperatorsFromSource(session, gameSourceName);
+//		return getLogicalOperatorsFromSource(session, gameSourceName);
+		
+		StreamAO streamAO = new StreamAO();
+		AccessAO accessAO = createAccessAO(session, gameSourceName);
+		streamAO.setSource(accessAO);
+		streamAO.setName(gameSourceName);
+		return streamAO;
 	}
 
 	/**
