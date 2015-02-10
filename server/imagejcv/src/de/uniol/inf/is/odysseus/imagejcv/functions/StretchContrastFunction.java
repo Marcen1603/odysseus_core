@@ -41,12 +41,10 @@ public class StretchContrastFunction extends AbstractFunction<ImageJCV> {
 		
 		IplImage newImage = IplImage.create(cvSize(oldImage.width(), oldImage.height()), IPL_DEPTH_8U, 3);		
 
-		long lastTime = System.nanoTime();
+//		long lastTime = System.nanoTime();
 		
 		ByteBuffer oldBuffer = oldImage.getByteBuffer();
 		ByteBuffer newBuffer = newImage.getByteBuffer();
-		
-	//	oldBuffer.order(ByteOrder.BIG_ENDIAN);
 		
 		for(int y = 0; y < newImage.height(); y++)
 		for(int x = 0; x < newImage.width(); x++) 
@@ -65,8 +63,8 @@ public class StretchContrastFunction extends AbstractFunction<ImageJCV> {
 	        newBuffer.put(newIndex + 2, 	(byte) (newVal));
 		}		
 		
-		long curTime = System.nanoTime();
-		System.out.println("dt = " + (curTime - lastTime) / 1.0e6 + "ms");		
+/*		long curTime = System.nanoTime();
+		System.out.println("dt = " + (curTime - lastTime) / 1.0e6 + "ms");*/		
 
 		return new ImageJCV(newImage);
 	}
