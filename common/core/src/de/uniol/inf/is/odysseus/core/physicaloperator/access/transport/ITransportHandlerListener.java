@@ -63,5 +63,12 @@ public interface ITransportHandlerListener<T> {
 	 * Implement this method to process the message
 	 * @param message as T
 	 */
+	void process(IStreamObject<?> m, int port);
+
+	
+	/**
+	 * Implement this method to process the message
+	 * @param message as T
+	 */
 	void process(T m);
 }

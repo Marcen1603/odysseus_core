@@ -83,6 +83,12 @@ public class AbstractTransportHandlerDelegate<T> {
 		}
 	}
 	
+	public void fireProcess(IStreamObject<?> m, int port) {
+		for (ITransportHandlerListener<T> l : transportHandlerListener) {
+			l.process(m, port);
+		}
+	}
+	
 	public void fireProcess(String[] message) {
 		for (ITransportHandlerListener<T> l : transportHandlerListener) {
 			l.process(message);

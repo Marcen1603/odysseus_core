@@ -123,6 +123,13 @@ abstract public class AbstractProtocolHandler<T> implements IProtocolHandler<T> 
 	public void process(IStreamObject<?> message) {
 		getTransfer().transfer((T)message);
 	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public void process(IStreamObject<?> message, int port) {
+		getTransfer().transfer((T)message, port);
+	}
+	
 
 	@Override
 	public void process(T m) {
