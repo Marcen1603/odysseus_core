@@ -94,6 +94,12 @@ public class RelationalTopKPO<T extends Tuple<M>, M extends ITimeInterval>
 
 		produceResult(object);
 	}
+	
+	@Override
+	protected void process_close() {
+		topK.clear();
+		lastResult = null;
+	}
 
 	@Override
 	public void processPunctuation(IPunctuation punctuation, int port) {
