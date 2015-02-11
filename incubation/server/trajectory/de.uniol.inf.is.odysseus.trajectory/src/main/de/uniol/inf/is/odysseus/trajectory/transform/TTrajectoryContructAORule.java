@@ -6,35 +6,21 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniol.inf.is.odysseus.core.collection.Tuple;
-import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
-import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.sdf.schema.DirectAttributeResolver;
 import de.uniol.inf.is.odysseus.core.sdf.schema.IAttributeResolver;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFExpression;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AggregateAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.PredicateWindowAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.RestructHelper;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.SelectAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TimestampAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnaryLogicalOp;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.AggregateItem;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.AggregateFunction;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
-import de.uniol.inf.is.odysseus.core.server.predicate.TruePredicate;
-import de.uniol.inf.is.odysseus.mep.MEP;
 import de.uniol.inf.is.odysseus.parser.pql.relational.RelationalPredicateBuilder;
 import de.uniol.inf.is.odysseus.relational.base.predicate.RelationalPredicate;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.trajectory.logicaloperator.TrajectoryConstructAO;
 import de.uniol.inf.is.odysseus.trajectory.logicaloperator.TrajectoryIdEnricherAO;
-import de.uniol.inf.is.odysseus.trajectory.logicaloperator.builder.NestAggregateItem;
-import de.uniol.inf.is.odysseus.trajectory.physical.construct.DefaultTrajectoryConstructStrategy;
-import de.uniol.inf.is.odysseus.trajectory.physical.construct.FulltrajectoryConstructStrategy;
-import de.uniol.inf.is.odysseus.trajectory.physical.construct.ITrajectoryConstructStrategy;
-import de.uniol.inf.is.odysseus.trajectory.physical.construct.SubtrajectoryConstructStrategy;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
@@ -46,6 +32,7 @@ import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
  */
 public class TTrajectoryContructAORule extends AbstractTransformationRule<TrajectoryConstructAO> {
 
+	@SuppressWarnings("unused")
 	private final static Logger LOGGER = LoggerFactory.getLogger(TTrajectoryContructAORule.class);
 	
 	
@@ -123,24 +110,8 @@ public class TTrajectoryContructAORule extends AbstractTransformationRule<Trajec
 	private final UnaryLogicalOp insertSystemTimeAO(final UnaryLogicalOp operatorBefore) {
 		final TimestampAO timestampAO = new TimestampAO();
 		timestampAO.setName(timestampAO.getStandardName());
-		
-		for (SDFAttribute attr : operatorBefore.getOutputSchema()) {
-			if (SDFDatatype.START_TIMESTAMP.toString().equalsIgnoreCase(
-					attr.getDatatype().getURI())
-					|| SDFDatatype.START_TIMESTAMP_STRING.toString()
-							.equalsIgnoreCase(attr.getDatatype().getURI())) {
-				timestampAO.setStartTimestamp(attr);
-			}
-
-			if (SDFDatatype.END_TIMESTAMP.toString().equalsIgnoreCase(
-					attr.getDatatype().getURI())
-					|| SDFDatatype.END_TIMESTAMP_STRING.toString()
-							.equalsIgnoreCase(attr.getDatatype().getURI())) {
-				timestampAO.setEndTimestamp(attr);
-			}
-
-		}
-		
+		timestampAO.setClearEnd(true);
+				
 		RestructHelper.insertOperatorBefore(timestampAO, operatorBefore);
 		this.insert(timestampAO);
 		
