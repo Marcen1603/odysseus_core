@@ -15,6 +15,10 @@
  ******************************************************************************/
 package de.uniol.inf.is.odysseus.wrapper.protobuf;
 
+/**
+ * A registry for protobuf types
+ */
+
 import java.util.HashMap;
 
 import org.slf4j.Logger;

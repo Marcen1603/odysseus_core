@@ -15,6 +15,10 @@
  ******************************************************************************/
 package de.uniol.inf.is.odysseus.wrapper.protobuf;
 
+/**
+ * This class transforms a given input from google protobuf classes to Odysseus tuples
+ */
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;

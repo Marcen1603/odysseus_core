@@ -15,7 +15,12 @@
  ******************************************************************************/
 package de.uniol.inf.is.odysseus.wrapper.protobuf;
 
+/**
+ * This is a transport handler that opens a tcp server on a distinct port and receives messages coded with the google protobuf format
+ */
+
 import java.io.IOException;
+
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.InetSocketAddress;

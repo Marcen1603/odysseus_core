@@ -15,11 +15,24 @@
  ******************************************************************************/
 package de.uniol.inf.is.odysseus.wrapper.protobuf;
 
+/**
+ * This interface encapsulates classes generated with the google protobuf tool protoc 
+ * to be added to the ProtobufTypeRegistry
+ * 
+ */
 import com.google.protobuf.GeneratedMessage;
 
 public interface IProtobufDatatypeProvider {
-
+	/**
+	 * A unique type name reference in the type option 
+	 * @return
+	 */
 	String getName();
+	
+	/**
+	 * The generated type class
+	 * @return
+	 */
 	GeneratedMessage getMessageType();
 	
 }
