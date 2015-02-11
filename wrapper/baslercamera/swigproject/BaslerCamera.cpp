@@ -69,12 +69,12 @@ bool BaslerCamera::grabRGB8(void *buffer, long size, unsigned int timeOutMs)
 	CBaslerGigEGrabResultPtr result;
 	if (!camera->RetrieveResult(timeOutMs, result, TimeoutHandling_Return)) return false;
 	if (!result->GrabSucceeded()) return false;
-
-	bufferSize = (int)result->GetImageSize();
+	
 	imageWidth = result->GetWidth();
 	imageHeight = result->GetHeight();
+	bufferSize = imageWidth*imageHeight*4;
 
-	if (size < imageWidth*imageHeight*4) return false;
+	if (size < bufferSize) return false;
 
 	if (buffer != NULL)
 	{
