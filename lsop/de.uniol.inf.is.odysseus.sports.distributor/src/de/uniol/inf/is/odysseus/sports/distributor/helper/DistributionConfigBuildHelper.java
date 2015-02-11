@@ -1,6 +1,7 @@
 package de.uniol.inf.is.odysseus.sports.distributor.helper;
 
 import de.uniol.inf.is.odysseus.sports.distributor.helper.enums.Allocate;
+import de.uniol.inf.is.odysseus.sports.distributor.helper.enums.Modification;
 import de.uniol.inf.is.odysseus.sports.distributor.helper.enums.Parser;
 import de.uniol.inf.is.odysseus.sports.distributor.helper.enums.Partition;
 import de.uniol.inf.is.odysseus.sports.distributor.helper.enums.Postprocessor;
@@ -65,5 +66,14 @@ public class DistributionConfigBuildHelper {
 	public static String createPeerPostProcessor(Postprocessor postprocessor){
 	 return "#PEER_POSTPROCESSOR "+postprocessor.toString()+"\n";
 	}
+	
+	public static String createPeerModification(Modification modification, String parameter){
+		return "#PEER_MODIFICATION "+modification.toString()+" "+parameter +"\n";
+	}
+	
+	public static String createPeerModification(Modification modification){
+		return "#PEER_MODIFICATION "+modification.toString() +"\n";
+	}
+		
 	
 }

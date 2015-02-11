@@ -32,8 +32,8 @@ public class ExecuteSportsQLServerResource extends AbstractSessionServerResource
 	public ExecuteSportsQLResponseDTO executeSportsQL(ExecuteSportsQLRequestDTO executeSportsQLRequestDTO) {
 				ISession session = loginWithToken(executeSportsQLRequestDTO.getToken());
 		
-		if (DistributedQueryHelper.isDistributionPossible()) {
-			String sportsQL = SportsQLDistributorRegistry.addSportsQLDistributorConfig(executeSportsQLRequestDTO.getSportsQL());	
+		if (DistributedQueryHelper.isDistributionPossible() && executeSportsQLRequestDTO.getDistributor() != null && !executeSportsQLRequestDTO.getDistributor().toLowerCase().equals("no_distribution") ) {
+			String sportsQL = SportsQLDistributorRegistry.addSportsQLDistributorConfig(executeSportsQLRequestDTO.getSportsQL(), executeSportsQLRequestDTO.getDistributor());	
 			DistributedQueryInfo info = DistributedQueryHelper.executeQuery(sportsQL, "OdysseusScript", session, executeSportsQLRequestDTO.getTransformationConfig());
 			
 			String url = "http://"+info.getTopOperatorPeerIP()+":"+info.getTopOperatorPeerRestPort()+"/sports/"+DistributedSportsQLSocketServerResource.PATH;
@@ -53,9 +53,7 @@ public class ExecuteSportsQLServerResource extends AbstractSessionServerResource
 			sportsQL.append("#PARSER SportsQL\n");
 			sportsQL.append("#DOREWRITE false\n");
 			sportsQL.append("#ADDQUERY \n");
-			sportsQL.append(executeSportsQLRequestDTO.getSportsQL());
-		
-			
+			sportsQL.append(executeSportsQLRequestDTO.getSportsQL());			
 			
 			Collection<Integer> queryIDs = ExecutorServiceBinding.getExecutor().addQuery(sportsQL.toString(), "OdysseusScript", session, Context.empty());
 			int queryId = queryIDs.iterator().next();	
@@ -63,7 +61,6 @@ public class ExecuteSportsQLServerResource extends AbstractSessionServerResource
 			SocketInfo peerSocket = SocketService.getInstance().getConnectionInformation(session, queryId,0);
 			return new ExecuteSportsQLResponseDTO(session.getToken(), peerSocket, queryIDs.iterator().next(), RestService.getPort());
 		}
-	}
-	
+	}	
 
 }

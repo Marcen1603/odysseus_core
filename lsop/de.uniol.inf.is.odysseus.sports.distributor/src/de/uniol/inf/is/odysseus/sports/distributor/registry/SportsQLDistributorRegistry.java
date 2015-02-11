@@ -2,8 +2,6 @@ package de.uniol.inf.is.odysseus.sports.distributor.registry;
 
 import java.util.Map;
 
-import org.json.JSONException;
-import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -13,7 +11,6 @@ import de.uniol.inf.is.odysseus.p2p_new.dictionary.IPeerDictionary;
 import de.uniol.inf.is.odysseus.sports.distributor.helper.DistributionConfigBuildHelper;
 import de.uniol.inf.is.odysseus.sports.distributor.helper.enums.Parser;
 import de.uniol.inf.is.odysseus.sports.distributor.impl.ISportsQLDistributor;
-import de.uniol.inf.is.odysseus.sports.distributor.impl.NoDistributionDistributor;
 
 /**
  * This class represents a registry for @link ISportsQLDistributor. SportsQL
@@ -65,14 +62,11 @@ public class SportsQLDistributorRegistry {
 		}
 	}
 
-	public static String addSportsQLDistributorConfig(String sportsQL) {
+	public static String addSportsQLDistributorConfig(String sportsQL, String distributorName) {
 
-		ISportsQLDistributor distributor = getSportsQLDistributor(sportsQL);
-		String outputConfig = DistributionConfigBuildHelper
-				.createParser(Parser.SportsQL);
-		if (!(distributor instanceof NoDistributionDistributor)) {
-			outputConfig += DistributionConfigBuildHelper.createDistribute();
-		}
+		ISportsQLDistributor distributor = getSportsQLDistributor(sportsQL, distributorName);
+		String outputConfig = DistributionConfigBuildHelper.createParser(Parser.SportsQL);
+		outputConfig += DistributionConfigBuildHelper.createDistribute();
 		outputConfig += distributor.getDistributionConfig();
 		outputConfig += DistributionConfigBuildHelper.createRunQuery();
 		outputConfig += sportsQL;
@@ -82,39 +76,13 @@ public class SportsQLDistributorRegistry {
 	
 	
 
-	public static ISportsQLDistributor getSportsQLDistributor(String sportsQL) {
-		String type = null;
-		String game = null;
-		String name = null;
-
-		try {
-			JSONObject obj = new JSONObject(sportsQL);
-			type = obj.getString("statisticType");
-			game = obj.getString("gameType");
-			name = obj.getString("name");
-		} catch (JSONException e) {
-			throw new RuntimeException("error");
-		}
-
-		// check if any peer is online
-		if (peerDictionary.getRemotePeerIDs().size() > 0) {
-			if (!sportsQLDistributorMap.containsKey(type + "_" + game + "_"
-					+ name)) {
-				logger.info("Distributor for: " + type + "_" + game + "_"
-						+ name
-						+ " is not valid. You get the default distributor!");
-				ISportsQLDistributor distributor = sportsQLDistributorMap
-						.get("default");
-				return distributor;
-			} 
-			ISportsQLDistributor distributor = sportsQLDistributorMap
-						.get(type + "_" + game + "_" + name);
+	public static ISportsQLDistributor getSportsQLDistributor(String sportsQL, String distributorName) {
+		if (!sportsQLDistributorMap.containsKey(distributorName.toLowerCase())) {
+			logger.info("Distributor for: "+  distributorName	+ " is not valid. You get the default distributor!");
+			ISportsQLDistributor distributor = sportsQLDistributorMap.get("default");
 			return distributor;
-			
 		} 
-		// no peer found --> no distribution
-		ISportsQLDistributor distributor = sportsQLDistributorMap
-			.get("nodistribution");
+		ISportsQLDistributor distributor = sportsQLDistributorMap.get(distributorName.toLowerCase());
 		return distributor;
 	}
 }

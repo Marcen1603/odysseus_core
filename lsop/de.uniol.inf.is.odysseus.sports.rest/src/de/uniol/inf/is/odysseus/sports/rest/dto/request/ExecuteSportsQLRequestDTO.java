@@ -12,17 +12,19 @@ public class ExecuteSportsQLRequestDTO extends AbstractRequestDTO {
 	private String transformationConfig;
 	private String username;
 	private String password;
+	private String distributor;
 
 	public ExecuteSportsQLRequestDTO() {
 
 	}
 		
-	public ExecuteSportsQLRequestDTO(String sportsQL, String transformationConfig, String username, String password, String token) {
+	public ExecuteSportsQLRequestDTO(String sportsQL, String transformationConfig, String username, String password, String token, String distributor) {
 		this.sportsQL = sportsQL;
 		this.token = token;
 		this.transformationConfig = transformationConfig;
 		this.username = username;
 		this.password = password;
+		this.distributor = distributor;
 	}
 
 	
@@ -66,6 +68,15 @@ public class ExecuteSportsQLRequestDTO extends AbstractRequestDTO {
 	public void setToken(String token) {
 		this.token = token;
 	}
+
+	public String getDistributor() {
+		return this.distributor;
+	}
+
+	public void setDistributor(String distributor) {
+		this.distributor = distributor;
+	}
+	
 	
 	
 	
