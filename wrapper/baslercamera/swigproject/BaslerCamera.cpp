@@ -74,10 +74,10 @@ bool BaslerCamera::grabRGB8(void *buffer, long size, unsigned int timeOutMs)
 	imageWidth = result->GetWidth();
 	imageHeight = result->GetHeight();
 
+	if (size < imageWidth*imageHeight*4) return false;
+
 	if (buffer != NULL)
 	{
-		if (size < bufferSize) return false;
-
 		CImageFormatConverter converter;
 		if (supportsRGBAConversion)
 		{
@@ -90,16 +90,16 @@ bool BaslerCamera::grabRGB8(void *buffer, long size, unsigned int timeOutMs)
 		{
 			CPylonImage image;
 			converter.OutputPixelFormat = PixelType_RGB8packed;
-			converter.OutputBitAlignment = OutputBitAlignment_LsbAligned; // OutputBitAlignment_MsbAligned;
+			converter.OutputBitAlignment = OutputBitAlignment_MsbAligned;
 			converter.OutputPaddingX = 0;
 			converter.Convert(image, result);
+
+			int bytesLeft = image.GetImageSize();//bufferSize;				
 
 			struct Pixel
 			{
 				BYTE r, g, b;
 			};
-
-			int bytesLeft = bufferSize;	
 
 			Pixel* inBuffer = (Pixel*)image.GetBuffer();
 			DWORD* outBuffer = (DWORD*)buffer;
@@ -111,7 +111,7 @@ bool BaslerCamera::grabRGB8(void *buffer, long size, unsigned int timeOutMs)
 				DWORD curDWORD = *((DWORD*)cur);
 				curDWORD |= 0xFF000000;
 
-				*(outBuffer++) = curDWORD; //_byteswap_ulong(curDWORD);
+				*(outBuffer++) = _byteswap_ulong(curDWORD);
 
 				bytesLeft -= 3;
 			}
