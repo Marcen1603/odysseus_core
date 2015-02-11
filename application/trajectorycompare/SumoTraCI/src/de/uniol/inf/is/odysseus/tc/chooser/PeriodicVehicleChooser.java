@@ -29,41 +29,20 @@ import de.uniol.inf.is.odysseus.tc.vehicle.VehicleInfo;
 /**
  * Created by marcus on 08.12.14.
  */
-public class PeriodicVehicleChooser implements IVehicleChooser {
+public class PeriodicVehicleChooser extends AbstractVehicleChooser {
 
 	private final Logger LOGGER = LoggerFactory.getLogger(PeriodicVehicleChooser.class);
 	
-    private final Map<String, Integer> map = new HashMap<>();
+	@Override
+	protected boolean choose(VehicleInfo vi) {
+		return vi.getState() % 10 == 0;
+	}
 
-    @Override
-    public List<VehicleInfo> choose(VehicleNextResult vehicleNextResult) {
-    	final List<VehicleInfo> result = new LinkedList<>();
-    	
-    	// gegegeg
-    	for(VehicleInfo vi : vehicleNextResult.getRemoved()) {
-    		vi.setState(-1);
-    		this.map.remove(vi.getId());
-    		result.add(vi);
-    		LOGGER.info("finished: " + vi.getId());
-    	}
-    	
-    	
-    	for(VehicleInfo vi : vehicleNextResult.getNext()) {
-    		Integer i = this.map.get(vi.getId());
-    		if(i == null) {
-    			i = -1;
-    		}
-    		vi.setState(i + 1);
-    		this.map.put(vi.getId(), vi.getState());;
-    		if(vi.getState() == 0) {
-    			LOGGER.info("begin: " + vi.getId());
-    		}
-    		
-    		if(vi.getState() / 1000000 == 0) {
-    			result.add(vi);
-    		}
-    	}
+	@Override
+	protected void onFirstAdded(VehicleInfo vi) {
+	}
 
-    	return result;
-    }
+	@Override
+	protected void onRemoved(VehicleInfo vi) {
+	}
 }

@@ -19,6 +19,8 @@ import java.io.IOException;
 
 import it.polito.appeal.traci.Vehicle;
 
+import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.Point;
 
 /**
@@ -26,11 +28,9 @@ import com.vividsolutions.jts.geom.Point;
  */
 public class VehicleInfo {
 
+	private static final GeometryFactory GF = new GeometryFactory();
+	
     private Point p;
-
-    private double internX;
-
-    private double internY;
 
     private String type;
 
@@ -40,8 +40,7 @@ public class VehicleInfo {
 
     public VehicleInfo(final Vehicle vehicle) {
             try {
-				this.internX = vehicle.getPosition().getX();
-	            this.internY = vehicle.getPosition().getY();
+				this.p = GF.createPoint(new Coordinate(vehicle.getPosition().getX(), vehicle.getPosition().getY()));
 	            this.type = vehicle.getType();
 	            this.id = vehicle.getID();
 			} catch (IOException e) {
@@ -50,12 +49,12 @@ public class VehicleInfo {
 			}
     }
 
-    public VehicleInfo setP(Point p) {
+    public VehicleInfo setPosition(Point p) {
         this.p = p;
         return this;
     }
 
-    public Point getP() {
+    public Point getPosition() {
         return p;
     }
 
@@ -65,14 +64,6 @@ public class VehicleInfo {
 
     public String getId() {
         return this.id;
-    }
-
-	public double getInternX() {
-        return this.internX;
-    }
-
-    public double getInternY() {
-        return this.internY;
     }
 
     public int getState() {

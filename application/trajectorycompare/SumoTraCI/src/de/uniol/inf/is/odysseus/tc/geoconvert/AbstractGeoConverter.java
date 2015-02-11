@@ -86,23 +86,19 @@ public abstract class AbstractGeoConverter implements IGeoConverter {
 
     @Override
     public List<VehicleInfo> convert(List<VehicleInfo> vList) {
-        final ArrayList<VehicleInfo> result = new ArrayList<VehicleInfo>(vList.size());
         for(VehicleInfo vi : vList) {
-        	final Point p = this.transform(vi.getInternX(), vi.getInternY());
-            result.add(vi.setP(p));
+            vi.setPosition(this.transform(vi.getPosition()));
         }
-        return result;
+        return vList;
     }
 
-    private Point transform(double posX, double posY) {
-        posX -= this.netOffset.getValue0();
-        posY -= this.netOffset.getValue1();
-
-        final ProjCoordinate pcSrc = new ProjCoordinate(posX, posY);
+    private Point transform(Point point) {
+        final ProjCoordinate pcSrc = 
+        		new ProjCoordinate(point.getX() - this.netOffset.getValue0(), point.getY() - this.netOffset.getValue1());
         final ProjCoordinate pcDest = this.basicTransform.transform(
                 pcSrc, new ProjCoordinate()
         );
 
-        return gf.createPoint(new Coordinate(pcDest.x, pcDest.y));
+        return gf.createPoint(new Coordinate(pcDest.y, pcDest.x));
     }
 }

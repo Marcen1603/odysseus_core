@@ -17,6 +17,7 @@ package de.uniol.inf.is.odysseus.tc;
 
 import com.google.inject.AbstractModule;
 
+import de.uniol.inf.is.odysseus.tc.chooser.DistanceVehicleChooser;
 import de.uniol.inf.is.odysseus.tc.chooser.IVehicleChooser;
 import de.uniol.inf.is.odysseus.tc.chooser.PeriodicVehicleChooser;
 import de.uniol.inf.is.odysseus.tc.error.IErrorGenerator;
@@ -58,7 +59,7 @@ public class SumoZeroMQExposerModule extends AbstractModule {
         this.bind(ISendDecision.class).to(MinimumSendDecision.class);
         this.bind(IErrorGenerator.class).to(NoErrorGenerator.class);
 
-        this.bind(IVehicleChooser.class).to(PeriodicVehicleChooser.class);
+        this.bind(IVehicleChooser.class).to(DistanceVehicleChooser.class);
         this.bind(IMessageCreator.class).to(SizeByteBufferMessageCreator.class);
         this.bind(ISender.class).to(ZeroMQSender.class);
 

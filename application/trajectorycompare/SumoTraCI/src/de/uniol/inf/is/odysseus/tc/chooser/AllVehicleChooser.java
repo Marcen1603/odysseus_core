@@ -23,11 +23,19 @@ import de.uniol.inf.is.odysseus.tc.vehicle.VehicleInfo;
 /**
  * Created by marcus on 03.12.14.
  */
-public class AllVehicleChooser implements IVehicleChooser {
+public class AllVehicleChooser extends AbstractVehicleChooser {
 
 	@Override
-	public List<VehicleInfo> choose(VehicleNextResult vehicleNextResult) {
-		// TODO Auto-generated method stub
-		return null;
+	protected boolean choose(VehicleInfo vi) {
+		return true;
 	}
+
+	@Override
+	protected void onFirstAdded(VehicleInfo vi) {		
+	}
+
+	@Override
+	protected void onRemoved(VehicleInfo vi) {		
+	}
+
 }

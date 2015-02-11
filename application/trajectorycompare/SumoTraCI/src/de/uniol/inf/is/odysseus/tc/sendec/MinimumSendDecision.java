@@ -43,7 +43,7 @@ public class MinimumSendDecision implements ISendDecision {
                     this.sumoInteraction.step(),
                     vi.getType(),
                     vi.getId(),
-                    vi.getP(),//null
+                    vi.getPosition(),//null
                     vi.getState()//null
     		});
     	}
