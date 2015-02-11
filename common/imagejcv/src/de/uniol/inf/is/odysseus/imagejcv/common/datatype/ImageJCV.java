@@ -1,5 +1,7 @@
 package de.uniol.inf.is.odysseus.imagejcv.common.datatype;
 
+import static org.bytedeco.javacpp.opencv_core.*;
+
 import org.bytedeco.javacpp.opencv_core.IplImage;
 
 import java.nio.ByteBuffer;
@@ -25,20 +27,20 @@ public class ImageJCV implements IClone, Cloneable
 		this.image = (IplImage) ObjectByteConverter.bytesToObject(buffer.array());
 	}
 	
-	public ImageJCV(ImageJCV other) {
-		this.image = other.image.clone();
+	public ImageJCV(ImageJCV other) 
+	{
+		image = cvCreateImage(cvSize(other.image.width(), other.image.height()), other.image.depth(), other.image.nChannels());
+		image.getByteBuffer().put(other.image.getByteBuffer());
 	}
 	
-	public ImageJCV(int width, int height){
-		this.image = new IplImage();
-		this.image.width(width);
-		this.image.height(height);
+	public ImageJCV(int width, int height)
+	{
+		image = cvCreateImage(cvSize(width, height), IPL_DEPTH_8U, 4);
 	}
 	
-	public ImageJCV(double[][] data) {
-		this.image = new IplImage();
-		this.image.width(data[0].length);
-		this.image.height(data.length);
+	public ImageJCV(double[][] data) 
+	{
+		image = cvCreateImage(cvSize(data[0].length, data.length), IPL_DEPTH_8U, 4);
 		ByteBuffer buffer = image.getByteBuffer();
 		for (int i=0; i < data.length; i++) {
 			buffer.putDouble(i, data[i][0]);
@@ -55,7 +57,7 @@ public class ImageJCV implements IClone, Cloneable
 	{
 		if (image != null)
 		{
-			image.release();
+			cvReleaseImage(image);
 			image = null;
 		}
 	}

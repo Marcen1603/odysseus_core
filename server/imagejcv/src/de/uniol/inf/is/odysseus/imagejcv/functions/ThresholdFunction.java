@@ -52,6 +52,7 @@ public class ThresholdFunction extends AbstractFunction<ImageJCV> {
 		IplImage iplImage = cvCreateImage(cvGetSize( image.getImage()), IPL_DEPTH_8U, 1);
 		IplImage iplResult = cvCreateImage(cvGetSize(image.getImage()), IPL_DEPTH_8U, 1);
 		
+		// TODO: iplImage is created with cvCreateImage, and immediately overridden by image.getImage...
 		iplImage = image.getImage().clone();
 		
 		if (iplImage.nChannels() > 1) {

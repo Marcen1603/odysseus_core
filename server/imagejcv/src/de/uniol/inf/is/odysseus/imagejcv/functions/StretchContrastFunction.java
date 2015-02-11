@@ -39,7 +39,8 @@ public class StretchContrastFunction extends AbstractFunction<ImageJCV> {
 		int newMin = this.getNumericalInputValue(3).intValue();
 		int newMax = this.getNumericalInputValue(4).intValue();
 		
-		IplImage newImage = IplImage.create(cvSize(oldImage.width(), oldImage.height()), IPL_DEPTH_8U, 3);		
+		// TODO: 4-channel RGBA
+		IplImage newImage = cvCreateImage(cvSize(oldImage.width(), oldImage.height()), IPL_DEPTH_8U, 3);		
 
 //		long lastTime = System.nanoTime();
 		
