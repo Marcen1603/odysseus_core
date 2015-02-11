@@ -18,11 +18,10 @@ public class TrajectoryComparePO<T extends Tuple<ITimeInterval>> extends Abstrac
 
 	@SuppressWarnings("unused")
 	private static final Logger LOGGER = LoggerFactory.getLogger(TrajectoryComparePO.class);
-	
+		
 	public static final int VEHICLE_ID_POS = 0;
 	
-	public static final int POINTS_POS = 1;
-	
+	public static final int POINTS_POS = 2;
 
 	private final ITrajectoryCompareAlgorithm algorithm;
 	

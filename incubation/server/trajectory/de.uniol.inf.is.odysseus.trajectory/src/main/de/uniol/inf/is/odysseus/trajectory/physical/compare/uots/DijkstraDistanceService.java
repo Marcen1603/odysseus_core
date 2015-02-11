@@ -2,7 +2,11 @@ package de.uniol.inf.is.odysseus.trajectory.physical.compare.uots;
 
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
+import java.util.SortedMap;
+import java.util.SortedSet;
+import java.util.TreeMap;
 
 import org.apache.commons.collections15.Transformer;
 import org.javatuples.Pair;
@@ -23,6 +27,13 @@ public class DijkstraDistanceService implements IDistanceService {
 	
 	private final DijkstraDistance<Point, LineSegment> dijkstraDistance;
 	
+	///für jede route endpunkt + distance merken
+	/// ------------------------------        x
+	///     ?    -----------------------------------------
+	///                ----------------------------------------
+	
+	SortedSet<UotsTrajectory> kNearest;
+	
 	private final Map<UotsTrajectory, Foo> trajectoryMap = new HashMap<>();
 	
 	private double max;
@@ -38,7 +49,7 @@ public class DijkstraDistanceService implements IDistanceService {
 	
 	
 	@Override
-	public double getDistance(UotsTrajectory queryTrajectory,
+	public List<UotsTrajectory> getDistance(UotsTrajectory queryTrajectory,
 			UotsTrajectory dataTrajectory, double upperBound, int k) {
 				
 		double distance = 0;
@@ -54,7 +65,6 @@ public class DijkstraDistanceService implements IDistanceService {
 			}
 			distance += minDistance;
 			
-			
 			for(final UotsTrajectory old : this.trajectoryMap.keySet()) {
 				final Iterator<Point> oldIt = this.trajectoryMap.get(old).it;
 				while(oldIt.hasNext()) {
@@ -62,7 +72,7 @@ public class DijkstraDistanceService implements IDistanceService {
 				}
 			}
 		}
-		return distance;
+		return null;
 	}
 
 

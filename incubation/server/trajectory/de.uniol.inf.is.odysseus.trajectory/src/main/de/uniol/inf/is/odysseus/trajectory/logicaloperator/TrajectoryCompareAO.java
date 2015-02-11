@@ -37,6 +37,12 @@ public class TrajectoryCompareAO extends UnaryLogicalOp {
 	@SuppressWarnings("unused")
 	private static final Logger LOGGER = LoggerFactory.getLogger(TrajectoryCompareAO.class);
 
+	
+	public static final int VEHICLE_ID_POS = 0;
+	
+	public static final int POINTS_POS = 2;
+	
+	
 	/** the number of the k nearest routes to find */
 	private int k;
 	
@@ -51,24 +57,9 @@ public class TrajectoryCompareAO extends UnaryLogicalOp {
 
 	
 	private Map<String, String> optionsMap = new HashMap<>();
-	
-	/**
-	 * Output schema
-	 */
-	private final SDFSchema outputSchema = new SDFSchema(
-			TrajectoryCompareAO.class.getName(), 
-			Tuple.class, 
-			new SDFAttribute(null, "QTId", SDFDatatype.STRING, null),
-			new SDFAttribute(null, "k", SDFDatatype.INTEGER, null),
-			new SDFAttribute(null, "Total", SDFDatatype.INTEGER, null),
-			new SDFAttribute(null, "Contains", SDFSpatialDatatype.INTEGER , null),
-			new SDFAttribute(null, "tet", SDFTrajectoryDataType.OBJECT, new SDFSchema("", Tuple.class, 
-					new SDFAttribute(null, "id", SDFDatatype.STRING, null),
-					new SDFAttribute(null, "points", SDFDatatype.STRING, null)))
-	);
+
 	
 	public TrajectoryCompareAO() {
-		this(1, "OWD");
 	}
 	
 	// hier nur optionale Parameter im Konstruktor
@@ -133,11 +124,24 @@ public class TrajectoryCompareAO extends UnaryLogicalOp {
 		return this.optionsMap;
 	}
 	
-	
+	/**
+	 * Output schema
+	 */
+	private final static SDFSchema OUTPUT_SCHEMA = new SDFSchema(
+			TrajectoryCompareAO.class.getName(), 
+			Tuple.class, 
+			new SDFAttribute(null, "QTId", SDFDatatype.STRING, null),
+			new SDFAttribute(null, "k", SDFDatatype.INTEGER, null),
+			new SDFAttribute(null, "Total", SDFDatatype.INTEGER, null),
+			new SDFAttribute(null, "Contains", SDFSpatialDatatype.INTEGER , null),
+			new SDFAttribute(null, "tet", SDFTrajectoryDataType.OBJECT, new SDFSchema("", Tuple.class, 
+					new SDFAttribute(null, "id", SDFDatatype.STRING, null),
+					new SDFAttribute(null, "points", SDFDatatype.STRING, null)))
+	);
 	
 	@Override
 	public SDFSchema getOutputSchemaIntern(int port) {
-		return this.outputSchema;
+		return OUTPUT_SCHEMA;
 	}
 	
 	

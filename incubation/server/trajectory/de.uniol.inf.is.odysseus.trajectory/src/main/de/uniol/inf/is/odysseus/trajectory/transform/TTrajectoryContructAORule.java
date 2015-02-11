@@ -18,6 +18,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.AggregateAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.PredicateWindowAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.RestructHelper;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.SelectAO;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.TimestampAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnaryLogicalOp;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.AggregateItem;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.AggregateFunction;
@@ -28,8 +29,8 @@ import de.uniol.inf.is.odysseus.parser.pql.relational.RelationalPredicateBuilder
 import de.uniol.inf.is.odysseus.relational.base.predicate.RelationalPredicate;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.trajectory.logicaloperator.TrajectoryConstructAO;
+import de.uniol.inf.is.odysseus.trajectory.logicaloperator.TrajectoryIdEnricherAO;
 import de.uniol.inf.is.odysseus.trajectory.logicaloperator.builder.NestAggregateItem;
-import de.uniol.inf.is.odysseus.trajectory.physical.TrajectoryConstructPO;
 import de.uniol.inf.is.odysseus.trajectory.physical.construct.DefaultTrajectoryConstructStrategy;
 import de.uniol.inf.is.odysseus.trajectory.physical.construct.FulltrajectoryConstructStrategy;
 import de.uniol.inf.is.odysseus.trajectory.physical.construct.ITrajectoryConstructStrategy;
@@ -56,16 +57,21 @@ public class TTrajectoryContructAORule extends AbstractTransformationRule<Trajec
 		
 		if(!operator.getSubtrajectories()) {
 			op = this.insertPredicateWindowAO(op, groupOrPartitionBy);
+			op = this.insertAggregateAO(op, groupOrPartitionBy, Arrays.asList((AggregateItem)operator.getPositionMapping()));
+			op = this.insertTrajectoryIdEnricherAO(op);
+			op = this.insertSystemTimeAO(op);
+		} else {
+			op = this.insertAggregateAO(op, groupOrPartitionBy, Arrays.asList((AggregateItem)operator.getPositionMapping()));
+			op = this.insertTrajectoryIdEnricherAO(op);
 		}
 		
-		this.insertAggregateAO(op, groupOrPartitionBy, Arrays.asList((AggregateItem)operator.getPositionMapping()));
-	
 		RestructHelper.removeOperator(operator, false);
 		this.retract(operator);
 	}
 
 	private final UnaryLogicalOp insertPredicateWindowAO(final UnaryLogicalOp operatorBefore, List<SDFAttribute> groupOrPartitionBy) {
 		final PredicateWindowAO predicateWindowAO = new PredicateWindowAO();
+				
 		predicateWindowAO.setSameStarttime(true);
 		predicateWindowAO.setPartitionBy(groupOrPartitionBy);
 		
@@ -79,7 +85,6 @@ public class TTrajectoryContructAORule extends AbstractTransformationRule<Trajec
 		final RelationalPredicate predEnd = (RelationalPredicate)builder.createPredicate(attributeResolver, "State = -1");
 		predEnd.init(operatorBefore.getInputSchema(), operatorBefore.getInputSchema());
 		predicateWindowAO.setEndCondition(predEnd);
-		
 		predicateWindowAO.setOutputSchema(operatorBefore.getInputSchema());
 		
 		RestructHelper.insertOperatorBefore(predicateWindowAO, operatorBefore);
@@ -88,7 +93,11 @@ public class TTrajectoryContructAORule extends AbstractTransformationRule<Trajec
 		return predicateWindowAO;
 	}
 	
-	private final void insertAggregateAO(final ILogicalOperator operatorBefore, List<SDFAttribute> groupBy, List<AggregateItem> aggregates) {
+	private final UnaryLogicalOp insertAggregateAO(
+			final UnaryLogicalOp operatorBefore, 
+			final List<SDFAttribute> groupBy, 
+			final List<AggregateItem> aggregates) {
+		
 		final AggregateAO aggregateAO = new AggregateAO();
 		
 		RestructHelper.insertOperatorBefore(aggregateAO, operatorBefore);
@@ -97,6 +106,45 @@ public class TTrajectoryContructAORule extends AbstractTransformationRule<Trajec
 		aggregateAO.setAggregationItems(aggregates);
 		
 		this.insert(aggregateAO);
+		
+		return aggregateAO;
+	}
+	
+	private final UnaryLogicalOp insertTrajectoryIdEnricherAO(final UnaryLogicalOp operatorBefore) {
+		final UnaryLogicalOp trajectoryConstructAO = new TrajectoryIdEnricherAO();
+		//trajectoryConstructAO.setPredicate(TruePredicate.getInstance());
+		
+		RestructHelper.insertOperatorBefore(trajectoryConstructAO, operatorBefore);
+		this.insert(trajectoryConstructAO);
+		
+		return trajectoryConstructAO;
+	}
+	
+	private final UnaryLogicalOp insertSystemTimeAO(final UnaryLogicalOp operatorBefore) {
+		final TimestampAO timestampAO = new TimestampAO();
+		timestampAO.setName(timestampAO.getStandardName());
+		
+		for (SDFAttribute attr : operatorBefore.getOutputSchema()) {
+			if (SDFDatatype.START_TIMESTAMP.toString().equalsIgnoreCase(
+					attr.getDatatype().getURI())
+					|| SDFDatatype.START_TIMESTAMP_STRING.toString()
+							.equalsIgnoreCase(attr.getDatatype().getURI())) {
+				timestampAO.setStartTimestamp(attr);
+			}
+
+			if (SDFDatatype.END_TIMESTAMP.toString().equalsIgnoreCase(
+					attr.getDatatype().getURI())
+					|| SDFDatatype.END_TIMESTAMP_STRING.toString()
+							.equalsIgnoreCase(attr.getDatatype().getURI())) {
+				timestampAO.setEndTimestamp(attr);
+			}
+
+		}
+		
+		RestructHelper.insertOperatorBefore(timestampAO, operatorBefore);
+		this.insert(timestampAO);
+		
+		return timestampAO;
 	}
 	
 	

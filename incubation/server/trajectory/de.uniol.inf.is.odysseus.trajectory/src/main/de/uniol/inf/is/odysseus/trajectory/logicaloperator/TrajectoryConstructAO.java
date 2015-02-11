@@ -22,29 +22,8 @@ public class TrajectoryConstructAO extends UnaryLogicalOp {
 	 * 
 	 */
 	private static final long serialVersionUID = 8226843002104428660L;
-	
-	public final static String VEHICLE_ID_ATTR_NAME = "VehicleId";
-	
-	public final static String START_TIMESTAMP_ATTR_NAME = "StartTimestamp";
-	
-	public final static String END_TIMESTAMP_ATTR_NAME = "EndTimestamp";
-	
-	public final static String POINTS_ATTR_NAME = "Points";
-	
-	
-	/**
-	 * Output schema
-	 */
-	private final static SDFSchema OUTPUT_SCHEMA = new SDFSchema(
-			TrajectoryConstructAO.class.getName(), 
-			Tuple.class, 
-			new SDFAttribute(null, VEHICLE_ID_ATTR_NAME, SDFDatatype.STRING, null),
-//			new SDFAttribute(null, START_TIMESTAMP_ATTR_NAME, SDFDatatype.STRING, null),
-//			new SDFAttribute(null, END_TIMESTAMP_ATTR_NAME, SDFDatatype.STRING, null),
-			new SDFAttribute(null, POINTS_ATTR_NAME, SDFSpatialDatatype.LIST , null)
-	);
-	
-	
+		
+		
 	private boolean subtrajectories = false;
 	
 	private SDFAttribute trajectoryId;
@@ -53,10 +32,6 @@ public class TrajectoryConstructAO extends UnaryLogicalOp {
 	
 	
 	public TrajectoryConstructAO() {
-	}
-	
-	public TrajectoryConstructAO(boolean subtrajectories) {
-		this.subtrajectories = subtrajectories;
 	}
 	
 	public TrajectoryConstructAO(TrajectoryConstructAO trajectoryConstructAO) {
@@ -99,6 +74,17 @@ public class TrajectoryConstructAO extends UnaryLogicalOp {
 		return this.positionMapping;
 	}
 	
+	
+	/**
+	 * Output schema
+	 */
+	public final static SDFSchema OUTPUT_SCHEMA = new SDFSchema(
+			TrajectoryConstructAO.class.getName(), 
+			Tuple.class, 
+			new SDFAttribute(null, "VehicleId", SDFDatatype.STRING, null),
+			new SDFAttribute(null, "TrajectoryId", SDFDatatype.INTEGER, null),
+			new SDFAttribute(null, "Positions", SDFSpatialDatatype.LIST , null)
+	);
 	
 	@Override
 	protected SDFSchema getOutputSchemaIntern(int pos) {
