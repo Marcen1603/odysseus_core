@@ -1,5 +1,7 @@
 package de.uniol.inf.is.odysseus.peer.loadbalancing.active;
 
+import java.util.List;
+
 import net.jxta.peer.PeerID;
 
 /**
@@ -32,4 +34,12 @@ public interface ILoadBalancingCommunicator {
 	 * @return Name of Communcator
 	 */
 	public String getName();
+	
+	
+	/**
+	 * Returns list of Peers involved in LoadBalancing. (Usually neighbors).
+	 * @param query
+	 * @return
+	 */
+	public List<PeerID> getInvolvedPeers(int queryID);
 }

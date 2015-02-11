@@ -1,6 +1,7 @@
 package de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.inactivequery.communicator;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import net.jxta.peer.PeerID;
 
@@ -127,6 +128,12 @@ public class InactiveQueryCommunicatorImpl implements IPeerCommunicatorListener,
 
 			peerCommunicator = null;
 		}
+	}
+	
+
+
+	public List<PeerID> getInvolvedPeers(int queryID) {
+		return LoadBalancingHelper.getInvolvedPeers(queryID);
 	}
 
 	/**

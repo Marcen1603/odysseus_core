@@ -1,6 +1,7 @@
 package de.uniol.inf.is.odysseus.peer.loadbalancing.active.movingstate.communicator;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import net.jxta.peer.PeerID;
 
@@ -233,6 +234,11 @@ public class MovingStateCommunicatorImpl implements IPeerCommunicatorListener,
 		}
 
 	}
+	
+
+	public List<PeerID> getInvolvedPeers(int queryID) {
+		return LoadBalancingHelper.getInvolvedPeers(queryID);
+	}
 
 	/**
 	 * Called when Message delivery on Master Peer failed. Decides whether to
@@ -297,16 +303,7 @@ public class MovingStateCommunicatorImpl implements IPeerCommunicatorListener,
 				ResponseHandler.handleError(status, this);
 			}
 			break;
-		// TODO Redo this for Moving State Strategy.
-		/**
-		 * case MovingStateInstructionMessage.COPY_SENDER:
-		 * if(status.getPhase().equals(LB_PHASES.RELINKING_SENDERS)) {
-		 * ResponseHandler.handleError(status,this); } break; case
-		 * MovingStateInstructionMessage.DELETE_RECEIVER: case
-		 * MovingStateInstructionMessage.DELETE_SENDER:
-		 * if(status.getPhase().equals(LB_PHASES.INITIATING)) {
-		 * ResponseHandler.handleError(status,this); } break;
-		 */
+		
 		}
 
 	}

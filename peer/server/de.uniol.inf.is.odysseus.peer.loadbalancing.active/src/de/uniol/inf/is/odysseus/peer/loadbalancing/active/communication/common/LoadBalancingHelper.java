@@ -78,6 +78,38 @@ public class LoadBalancingHelper {
 		
 	}
 	
+	public static List<PeerID> getInvolvedPeers(int queryID) {
+		
+		List<PeerID> involvedPeers = new ArrayList<PeerID>();
+		
+		ILogicalQueryPart part = getInstalledQueryPart(queryID);
+		
+		for(ILogicalOperator operator : part.getOperators()) {
+			if(operator instanceof JxtaSenderAO) {
+				String peerIDString = ((JxtaSenderAO)operator).getPeerID();
+				PeerID peerID = toPeerID(peerIDString);
+				if(!involvedPeers.contains(peerID)) {
+					involvedPeers.add(peerID);
+				}
+			}
+			if(operator instanceof JxtaReceiverAO) {
+				String peerIDString = ((JxtaReceiverAO)operator).getPeerID();
+				PeerID peerID = toPeerID(peerIDString);
+				if(!involvedPeers.contains(peerID)) {
+					involvedPeers.add(peerID);
+				}
+			}
+		}
+		
+		//Delete local Peer ID if it is in List as this would cause problem while trying to lock them.
+		PeerID localPeerID = OsgiServiceManager.getP2pNetworkManager().getLocalPeerID();
+		if(involvedPeers.contains(localPeerID)) {
+			involvedPeers.remove(localPeerID);
+		}
+		
+		return involvedPeers;
+	}
+	
 	/**
 	 * Removes a query from current Peer.
 	 * 

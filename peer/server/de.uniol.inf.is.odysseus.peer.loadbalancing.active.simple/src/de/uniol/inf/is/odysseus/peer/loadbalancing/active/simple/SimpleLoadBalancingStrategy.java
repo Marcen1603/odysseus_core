@@ -1,5 +1,7 @@
 package de.uniol.inf.is.odysseus.peer.loadbalancing.active.simple;
 
+import java.util.List;
+
 import net.jxta.peer.PeerID;
 
 import org.slf4j.Logger;
@@ -37,7 +39,7 @@ import de.uniol.inf.is.odysseus.peer.resource.IResourceUsage;
  * allocates it using the allocator set by {@link #setAllocator(ILoadBalancingAllocator)}.
  * @author Michael Brand
  */
-public class SimpleLoadBalancingStrategy implements ILoadBalancingStrategy, ILoadBalancingListener {
+public class SimpleLoadBalancingStrategy implements ILoadBalancingStrategy, ILoadBalancingListener, IPeerLockContainerListener {
 	
 	/**
 	 * The logger for this class.
@@ -240,15 +242,24 @@ public class SimpleLoadBalancingStrategy implements ILoadBalancingStrategy, ILoa
 			
 			if(this.loadBalancingNeeded(usage)) {
 				
+				//Lock Self.
+				this.mCurrentlyBalancing = true;
+				
 				// Get the query
 				IPair<ILogicalQuery, Integer> queryAndID = this.getQueryToRemove();
 				
-				// Get the peer
+				// Get the peer and the involved peers.
 				PeerID peerID = this.getPeerIDToAllocate(queryAndID.getE1());
+				List<PeerID> otherPeers = this.mCommunicator.getInvolvedPeers(queryAndID.getE2());
+				if(!otherPeers.contains(peerID))
+					otherPeers.add(peerID);
+				
+				//TODO Lock all involved peers and implement callbacks :)
+				
 				
 				// Initialize the load balancing
 				this.mCommunicator.initiateLoadBalancing(peerID, queryAndID.getE2());
-				this.mCurrentlyBalancing = true;
+				
 				
 			}
 			
@@ -458,6 +469,24 @@ public class SimpleLoadBalancingStrategy implements ILoadBalancingStrategy, ILoa
 		
 		this.mLookupThread.mCurrentlyBalancing = false;
 		LOG.debug("Load balancing process finished. Continue monitoring");
+		
+	}
+
+	@Override
+	public void notifyLockingFailed() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void notifyLockingSuccessfull() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void notifyReleasingFinished() {
+		// TODO Auto-generated method stub
 		
 	}
 
