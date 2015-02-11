@@ -28,7 +28,7 @@ public class BaslerCameraTransportHandler extends AbstractSimplePullTransportHan
 	private String ethernetAddress;
 	private BaslerCamera cameraCapture;
 	
-	private ImageJCV currentImage;
+	Tuple<IMetaAttribute> currentTuple;
 	
 	public BaslerCameraTransportHandler() 
 	{
@@ -68,7 +68,7 @@ public class BaslerCameraTransportHandler extends AbstractSimplePullTransportHan
 				
 		 		cameraCapture = new BaslerCamera(ethernetAddress);
 				cameraCapture.start();
-				currentImage = null;
+				currentTuple = null;
 			}
 			catch (RuntimeException e) 
 			{
@@ -91,31 +91,6 @@ public class BaslerCameraTransportHandler extends AbstractSimplePullTransportHan
 		}
 	}
 
-/*	public static ImageJCV createFromBuffer(intArray buffer, int width, int height)
-	{
-		int channels = 4;
-		
-		IplImage img = cvCreateImage(cvSize(width, height), IPL_DEPTH_8U, channels);
-		ByteBuffer buf = img.getByteBuffer();
-		
-		int wfill = img.widthStep() - width*channels;
-		
-		int src=0;
-		int dst=0;
-		for(int y=0; y<height; y++)
-		{
-            for(int x=0; x<width; x++)
-            {
-            	buf.putInt(dst, buffer.getitem(src++));            	
-            	dst += channels;
-            }
-            
-            dst += wfill;
-		}		
-				
-		return new ImageJCV(img);		
-	}*/	
-	
 	private long lastTime = 0;
 	
 	@Override public Tuple<?> getNext() 
@@ -125,10 +100,7 @@ public class BaslerCameraTransportHandler extends AbstractSimplePullTransportHan
 		System.out.println("getNext " + now / 1.0e9 + ", dt = " + dt + " = " + 1.0/dt + " FPS");	
 		lastTime = now;
 		
-		Tuple<IMetaAttribute> tuple = new Tuple<>(getSchema().size(), false);
-		int[] attrs = getSchema().getSDFDatatypeAttributePositions(SDFImageJCVDatatype.IMAGEJCV);
-		if (attrs.length > 0) tuple.setAttribute(attrs[0], currentImage);
-        return tuple;					
+        return currentTuple;					
 	}
     
 	@Override public boolean hasNext() 
@@ -149,8 +121,11 @@ public class BaslerCameraTransportHandler extends AbstractSimplePullTransportHan
 			}
 			else
 			{
-				currentImage = new ImageJCV(img);			
-				return true;
+				currentTuple = new Tuple<>(getSchema().size(), false);
+				int[] attrs = getSchema().getSDFDatatypeAttributePositions(SDFImageJCVDatatype.IMAGEJCV);
+				if (attrs.length > 0) currentTuple.setAttribute(attrs[0], new ImageJCV(img));
+				
+				return true;				
 			}
 		}
 	}

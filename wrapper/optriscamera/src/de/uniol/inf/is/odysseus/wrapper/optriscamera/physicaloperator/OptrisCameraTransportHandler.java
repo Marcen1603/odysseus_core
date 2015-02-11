@@ -1,8 +1,6 @@
 package de.uniol.inf.is.odysseus.wrapper.optriscamera.physicaloperator;
 
-import static org.bytedeco.javacpp.opencv_core.IPL_DEPTH_16S;
-import static org.bytedeco.javacpp.opencv_core.cvCreateImage;
-import static org.bytedeco.javacpp.opencv_core.cvSize;
+import static org.bytedeco.javacpp.opencv_core.*;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
