@@ -55,7 +55,7 @@ abstract public class AbstractAccessAO extends AbstractLogicalOperator {
 	private List<Option> optionsList;
 
 	private String dateFormat;
-	private List<SDFAttribute> attributes;
+	private Map<Integer,List<SDFAttribute>> outputSchema = new HashMap<Integer, List<SDFAttribute>>();
 	private List<String> inputSchema = null;
 	private long maxTimeToWaitForNewEventMS;
 
@@ -75,10 +75,8 @@ abstract public class AbstractAccessAO extends AbstractLogicalOperator {
 		dataHandler = po.dataHandler;
 		protocolHandler = po.protocolHandler;
 		transportHandler = po.transportHandler;
-		accessAOResource = po.accessAOResource;
-		if (po.attributes != null) {
-			this.attributes = new ArrayList<>(po.attributes);
-		}
+		accessAOResource = po.accessAOResource;	
+		this.outputSchema.putAll(po.outputSchema);
 		this.maxTimeToWaitForNewEventMS = po.maxTimeToWaitForNewEventMS;
 		this.dateFormat = po.dateFormat;
 	}
@@ -198,13 +196,41 @@ abstract public class AbstractAccessAO extends AbstractLogicalOperator {
 
 	@Parameter(type = CreateSDFAttributeParameter.class, name = "Schema", isList = true, optional = true, doc = "The output schema.")
 	public void setAttributes(List<SDFAttribute> attributes) {
-		this.attributes = attributes;
+		this.outputSchema.put(0,attributes);
 	}
 
 	public List<SDFAttribute> getAttributes() {
-		return attributes;
+		return outputSchema.get(0);
 	}
 
+	@Parameter(type = CreateSDFAttributeParameter.class, name = "Schema1", isList = true, optional = true, doc = "The output schema for port 1.")
+	public void setAttributes1(List<SDFAttribute> attributes) {
+		this.outputSchema.put(1,attributes);
+	}
+
+	public List<SDFAttribute> getAttributes1() {
+		return outputSchema.get(1);
+	}
+
+	@Parameter(type = CreateSDFAttributeParameter.class, name = "Schema2", isList = true, optional = true, doc = "The output schema for port 2.")
+	public void setAttributes2(List<SDFAttribute> attributes) {
+		this.outputSchema.put(2,attributes);
+	}
+
+	public List<SDFAttribute> getAttributes2() {
+		return outputSchema.get(2);
+	}
+
+	@Parameter(type = CreateSDFAttributeParameter.class, name = "Schema3", isList = true, optional = true, doc = "The output schema for port 3.")
+	public void setAttributes3(List<SDFAttribute> attributes) {
+		this.outputSchema.put(3,attributes);
+	}
+
+	public List<SDFAttribute> getAttributes3() {
+		return outputSchema.get(1);
+	}
+
+	
 	@Override
 	protected SDFSchema getOutputSchemaIntern(int pos) {
 		SDFSchema schema = null;
@@ -230,6 +256,7 @@ abstract public class AbstractAccessAO extends AbstractLogicalOperator {
 		}
 		constraints.put(SDFConstraint.BASE_TIME_UNIT, new SDFConstraint(SDFConstraint.BASE_TIME_UNIT,timeUnit));
 
+		List<SDFAttribute> attributes = outputSchema.get(pos);
 		if (attributes != null && attributes.size() > 0) {
 			List<SDFAttribute> s2 = new ArrayList<>();
 			// Add source name to attributes
@@ -267,13 +294,13 @@ abstract public class AbstractAccessAO extends AbstractLogicalOperator {
 	@Override
 	public boolean isValid() {
 
-		if (accessAOResource.isMarked() && this.attributes != null){
+		if (accessAOResource.isMarked() && this.outputSchema.size() > 0){
 			addError("Source "+accessAOResource+" already defined!");
 			return false;
 		}
 		
 		if (this.inputSchema != null) {
-			if (this.attributes.size() != this.inputSchema.size()) {
+			if (this.outputSchema.get(0).size() != this.inputSchema.size()) {
 				addError(
 						"For each attribute there must be at least one reader in the input schema");
 				return false;
