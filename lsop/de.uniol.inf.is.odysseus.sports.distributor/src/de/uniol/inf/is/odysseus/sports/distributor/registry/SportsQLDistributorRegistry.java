@@ -2,6 +2,8 @@ package de.uniol.inf.is.odysseus.sports.distributor.registry;
 
 import java.util.Map;
 
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -64,6 +66,9 @@ public class SportsQLDistributorRegistry {
 
 	public static String addSportsQLDistributorConfig(String sportsQL, String distributorName) {
 
+		if (distributorName.toLowerCase().equals("individual")) {
+			distributorName = createIndividualDistributorName(sportsQL);
+		}
 		ISportsQLDistributor distributor = getSportsQLDistributor(sportsQL, distributorName);
 		String outputConfig = DistributionConfigBuildHelper.createParser(Parser.SportsQL);
 		outputConfig += DistributionConfigBuildHelper.createDistribute();
@@ -74,7 +79,24 @@ public class SportsQLDistributorRegistry {
 		return outputConfig;
 	}
 	
-	
+	public static String createIndividualDistributorName(String sportsQL) {
+		String type = null;
+		String game = null;
+		String name = null;
+
+		try {
+			JSONObject obj = new JSONObject(sportsQL);
+			type = obj.getString("statisticType");
+			game = obj.getString("gameType");
+			name = obj.getString("name");
+		} catch (JSONException e) {
+			throw new RuntimeException("error");
+		}
+		
+		String result = type + "_" + game + "_"	+ name;
+		return result;
+	}
+		
 
 	public static ISportsQLDistributor getSportsQLDistributor(String sportsQL, String distributorName) {
 		if (!sportsQLDistributorMap.containsKey(distributorName.toLowerCase())) {
