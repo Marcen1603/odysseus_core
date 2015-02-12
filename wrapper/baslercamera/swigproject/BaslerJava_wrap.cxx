@@ -290,18 +290,7 @@ SWIGEXPORT jlong JNICALL Java_de_uniol_inf_is_odysseus_wrapper_baslercamera_swig
   if (!arg1_pstr) return 0;
   (&arg1)->assign(arg1_pstr);
   jenv->ReleaseStringUTFChars(jarg1, arg1_pstr); 
-  try {
-    result = (BaslerCamera *)new BaslerCamera(arg1);
-  }
-  catch(std::exception &_e) {
-    {
-      jclass excep = jenv->FindClass("java/lang/RuntimeException");
-      if (excep)
-      jenv->ThrowNew(excep, (&_e)->what());
-      return 0;
-    }
-  }
-  
+  result = (BaslerCamera *)new BaslerCamera(arg1);
   *(BaslerCamera **)&jresult = result; 
   return jresult;
 }
@@ -324,7 +313,18 @@ SWIGEXPORT void JNICALL Java_de_uniol_inf_is_odysseus_wrapper_baslercamera_swig_
   (void)jcls;
   (void)jarg1_;
   arg1 = *(BaslerCamera **)&jarg1; 
-  (arg1)->start();
+  try {
+    (arg1)->start();
+  }
+  catch(std::exception &_e) {
+    {
+      jclass excep = jenv->FindClass("java/lang/RuntimeException");
+      if (excep)
+      jenv->ThrowNew(excep, (&_e)->what());
+      return ;
+    }
+  }
+  
 }
 
 

@@ -109,7 +109,7 @@
       <FunctionLevelLinking>false</FunctionLevelLinking>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>D:\Optris SDK\ImagerIPC2.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(PYLON_ROOT)\lib\Win32;$(PYLON_GENICAM_ROOT)\library\CPP\Lib\Win32_i86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <DelayLoadDLLs>PylonBase_MD_VC100.dll;GCBase_MD_VC100_$(PYLON_GENICAM_VERSION).dll;%(DelayLoadDLLs)</DelayLoadDLLs>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -141,7 +141,7 @@
       <FunctionLevelLinking>false</FunctionLevelLinking>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>D:\Optris SDK\ImagerIPC2x64.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(PYLON_ROOT)\lib\x64;$(PYLON_GENICAM_ROOT)\library\CPP\Lib\Win64_x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <DelayLoadDLLs>PylonBase_MD_VC100.dll;GCBase_MD_VC100_$(PYLON_GENICAM_VERSION).dll;%(DelayLoadDLLs)</DelayLoadDLLs>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -172,7 +172,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>D:\Optris SDK\ImagerIPC2.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(PYLON_ROOT)\lib\Win32;$(PYLON_GENICAM_ROOT)\library\CPP\Lib\Win32_i86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <DelayLoadDLLs>PylonBase_MD_VC100.dll;GCBase_MD_VC100_$(PYLON_GENICAM_VERSION).dll;%(DelayLoadDLLs)</DelayLoadDLLs>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -206,7 +206,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>D:\Optris SDK\ImagerIPC2x64.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(PYLON_ROOT)\lib\x64;$(PYLON_GENICAM_ROOT)\library\CPP\Lib\Win64_x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <DelayLoadDLLs>PylonBase_MD_VC100.dll;GCBase_MD_VC100_$(PYLON_GENICAM_VERSION).dll;%(DelayLoadDLLs)</DelayLoadDLLs>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -241,7 +241,7 @@ echo In order to function correctly, please ensure the following environment var
 echo JAVA_INCLUDE: %JAVA_INCLUDE% 
 echo SWIG_BIN: %SWIG_BIN% 
 echo on 
-%SWIG_BIN%\swig.exe -c++ -java -package %package% "%(FullPath)" 
+"%SWIG_BIN%\swig.exe" -c++ -java -package %package% "%(FullPath)" 
 copy *.java "%javadir%"</Command>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">set package=de.uniol.inf.is.odysseus.wrapper.baslercamera.swig
 set javadir=..\src\de\uniol\inf\is\odysseus\wrapper\baslercamera\swig\
@@ -250,7 +250,7 @@ echo In order to function correctly, please ensure the following environment var
 echo JAVA_INCLUDE: %JAVA_INCLUDE% 
 echo SWIG_BIN: %SWIG_BIN% 
 echo on 
-%SWIG_BIN%\swig.exe -c++ -java -package %package% "%(FullPath)" 
+"%SWIG_BIN%\swig.exe" -c++ -java -package %package% "%(FullPath)" 
 copy *.java "%javadir%"</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(InputName)_wrap.cxx;%(Outputs)</Outputs>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(InputName)_wrap.cxx;%(Outputs)</Outputs>
@@ -262,7 +262,7 @@ echo In order to function correctly, please ensure the following environment var
 echo JAVA_INCLUDE: %JAVA_INCLUDE% 
 echo SWIG_BIN: %SWIG_BIN% 
 echo on 
-%SWIG_BIN%\swig.exe -c++ -java -package %package% "%(FullPath)" 
+"%SWIG_BIN%\swig.exe" -c++ -java -package %package% "%(FullPath)" 
 copy *.java "%javadir%"</Command>
       <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">set package=de.uniol.inf.is.odysseus.wrapper.baslercamera.swig
 set javadir=..\src\de\uniol\inf\is\odysseus\wrapper\baslercamera\swig\
@@ -271,7 +271,7 @@ echo In order to function correctly, please ensure the following environment var
 echo JAVA_INCLUDE: %JAVA_INCLUDE% 
 echo SWIG_BIN: %SWIG_BIN% 
 echo on 
-%SWIG_BIN%\swig.exe -c++ -java -package %package% "%(FullPath)" 
+"%SWIG_BIN%\swig.exe" -c++ -java -package %package% "%(FullPath)" 
 copy *.java "%javadir%"</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(InputName)_wrap.cxx;%(Outputs)</Outputs>
     </CustomBuild>

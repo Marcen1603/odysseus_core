@@ -9,9 +9,9 @@
 package de.uniol.inf.is.odysseus.wrapper.baslercamera.swig;
 
 public class BaslerJavaJNI {
-  public final static native long new_BaslerCamera(String jarg1) throws java.lang.RuntimeException;
+  public final static native long new_BaslerCamera(String jarg1);
   public final static native void delete_BaslerCamera(long jarg1);
-  public final static native void BaslerCamera_start(long jarg1, BaslerCamera jarg1_);
+  public final static native void BaslerCamera_start(long jarg1, BaslerCamera jarg1_) throws java.lang.RuntimeException;
   public final static native void BaslerCamera_stop(long jarg1, BaslerCamera jarg1_);
   public final static native boolean BaslerCamera_grabRGB8(long jarg1, BaslerCamera jarg1_, java.nio.ByteBuffer jarg2, long jarg4) throws java.lang.RuntimeException;
   public final static native int BaslerCamera_getBufferSize(long jarg1, BaslerCamera jarg1_);

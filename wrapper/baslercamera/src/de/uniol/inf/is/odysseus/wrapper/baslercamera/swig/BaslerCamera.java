@@ -35,11 +35,11 @@ public class BaslerCamera {
     }
   }
 
-  public BaslerCamera(String serialNumber) throws java.lang.RuntimeException {
+  public BaslerCamera(String serialNumber) {
     this(BaslerJavaJNI.new_BaslerCamera(serialNumber), true);
   }
 
-  public void start() {
+  public void start() throws java.lang.RuntimeException {
     BaslerJavaJNI.BaslerCamera_start(swigCPtr, this);
   }
 

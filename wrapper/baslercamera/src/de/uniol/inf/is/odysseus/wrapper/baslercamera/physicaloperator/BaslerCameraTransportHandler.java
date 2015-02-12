@@ -25,7 +25,7 @@ public class BaslerCameraTransportHandler extends AbstractSimplePullTransportHan
 	private final Logger logger = LoggerFactory.getLogger(BaslerCameraTransportHandler.class);
 	private final Object processLock = new Object();
 
-	private String ethernetAddress;
+	private String serialNumber;
 	private BaslerCamera cameraCapture;
 	
 	Tuple<IMetaAttribute> currentTuple;
@@ -42,7 +42,7 @@ public class BaslerCameraTransportHandler extends AbstractSimplePullTransportHan
 	{
 		super(protocolHandler, options);
 		
-		ethernetAddress = options.get("ethernetaddress", "");
+		serialNumber = options.get("serialnumber", "");
 	}
 	
 
@@ -61,12 +61,7 @@ public class BaslerCameraTransportHandler extends AbstractSimplePullTransportHan
 		{
 			try
 			{
-				// TODO: Count active instances of basler cameras
-//				if (instanceCount == 0)
-					BaslerCamera.initializeSystem();
-//				instanceCount++;
-				
-		 		cameraCapture = new BaslerCamera(ethernetAddress);
+		 		cameraCapture = new BaslerCamera(serialNumber);
 				cameraCapture.start();
 				currentTuple = null;
 			}
@@ -84,10 +79,6 @@ public class BaslerCameraTransportHandler extends AbstractSimplePullTransportHan
 		{
 			cameraCapture.stop();
 			cameraCapture = null;
-			
-//			instanceCount--;
-//			if (instanceCount == 0)
-				BaslerCamera.shutDownSystem();						
 		}
 	}
 
@@ -97,7 +88,8 @@ public class BaslerCameraTransportHandler extends AbstractSimplePullTransportHan
 	{
 		long now = System.nanoTime();
 		double dt = (now - lastTime) / 1.0e9;
-		System.out.println("getNext " + now / 1.0e9 + ", dt = " + dt + " = " + 1.0/dt + " FPS");	
+//		System.out.println("getNext " + now / 1.0e9 + ", dt = " + dt + " = " + 1.0/dt + " FPS");
+		System.out.println(serialNumber + ": " +  1.0/dt + " FPS");
 		lastTime = now;
 		
         return currentTuple;					
@@ -136,7 +128,7 @@ public class BaslerCameraTransportHandler extends AbstractSimplePullTransportHan
     		return false;
     	}
     	BaslerCameraTransportHandler other = (BaslerCameraTransportHandler)o;
-    	if(!this.ethernetAddress.equals(other.ethernetAddress))
+    	if(!this.serialNumber.equals(other.serialNumber))
     		return false;
     	
     	return true;

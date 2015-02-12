@@ -12,16 +12,17 @@ class BaslerCamera
 
 	Camera*	camera;
 
+	std::string serialNumber;
 	bool supportsRGBAConversion;
 	int imageWidth;
 	int imageHeight;
 	int bufferSize;
 
 public:
-	BaslerCamera(std::string serialNumber) throw(std::exception);
-	~BaslerCamera();
+	BaslerCamera(std::string serialNumber) : serialNumber(serialNumber), camera(NULL) {}
+	~BaslerCamera() {}
 
-	void	start();
+	void	start() throw(std::exception);
 	void	stop();
 
 	bool	grabRGB8(void *buffer, long size, unsigned int timeOutMs) throw(std::exception);

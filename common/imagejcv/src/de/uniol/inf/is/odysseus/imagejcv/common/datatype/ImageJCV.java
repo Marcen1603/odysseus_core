@@ -54,7 +54,7 @@ public class ImageJCV implements IClone, Cloneable
 	
 	@Override
 	protected void finalize()
-	{
+	{		
 		release();
 	}
 	

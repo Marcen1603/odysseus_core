@@ -34,8 +34,10 @@ bool BaslerCamera::isSystemInitialized()
 
 // ******************************************************************
 
-BaslerCamera::BaslerCamera(std::string serialNumber)
+void BaslerCamera::start()
 {
+	if (camera != NULL) stop();
+
 	CTlFactory& tlFactory = CTlFactory::GetInstance();
 
 	if (serialNumber == "")
@@ -67,21 +69,22 @@ BaslerCamera::BaslerCamera(std::string serialNumber)
 
 	supportsRGBAConversion = CImageFormatConverter::IsSupportedOutputFormat(PixelType_RGBA8packed);
 
-	start();
-	grabRGB8(NULL, 0, 1000);
-	stop();
-}
-
-void BaslerCamera::start()
-{
 	camera->Open();
 	camera->StartGrabbing();
+
+	grabRGB8(NULL, 0, 1000);
 }
 
 void BaslerCamera::stop()
 {
-	camera->StopGrabbing();
-	camera->Close();
+	if (camera != NULL)
+	{
+		camera->StopGrabbing();
+		camera->Close();
+
+		delete camera;
+		camera = NULL;
+	}
 }
 
 bool BaslerCamera::grabRGB8(void *buffer, long size, unsigned int timeOutMs)
@@ -139,9 +142,4 @@ bool BaslerCamera::grabRGB8(void *buffer, long size, unsigned int timeOutMs)
 	}
 
 	return true;
-}
-
-BaslerCamera::~BaslerCamera()
-{		
-	delete camera;
 }
