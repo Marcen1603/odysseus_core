@@ -3,9 +3,11 @@ package de.uniol.inf.is.odysseus.relational_interval.physicaloperator;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import de.uniol.inf.is.odysseus.core.collection.SerializablePair;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
@@ -18,6 +20,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFExpression;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.IGroupProcessor;
 import de.uniol.inf.is.odysseus.physicaloperator.relational.VarHelper;
 
 /**
@@ -54,24 +57,26 @@ public class RelationalTopKPO<T extends Tuple<M>, M extends ITimeInterval>
 
 	final private SDFExpression scoringFunction;
 	final private int k;
-	final private ArrayList<SerializablePair<Double, T>> topK;
+	final private Map<Long,ArrayList<SerializablePair<Double, T>>> topKMap = new HashMap<Long, ArrayList<SerializablePair<Double,T>>>();
 	final private Comparator<SerializablePair<Double, T>> comparator;
-	private LinkedList<T> lastResult;
+	final private IGroupProcessor<T, T> groupProcessor;
+
+	private Map<Long,LinkedList<T>> lastResultMap = new HashMap<>();
 
 	private VarHelper[] variables;
 	private boolean suppressDuplicates;
 
 	public RelationalTopKPO(SDFSchema inputSchema,
 			SDFExpression scoringFunction, int k, boolean descending,
-			boolean suppressDuplicates) {
+			boolean suppressDuplicates, IGroupProcessor<T, T> groupProcessor) {
 		super();
 		this.scoringFunction = scoringFunction;
 		initScoringFunction(inputSchema);
 		this.k = k;
-		topK = new ArrayList<SerializablePair<Double, T>>();
 		comparator = descending ? new TopKComparatorDesc()
 				: new TopKComparatorAsc();
 		this.suppressDuplicates = suppressDuplicates;
+		this.groupProcessor = groupProcessor;
 	}
 
 	@Override
@@ -81,24 +86,33 @@ public class RelationalTopKPO<T extends Tuple<M>, M extends ITimeInterval>
 
 	@Override
 	protected void process_open() throws OpenFailedException {
-		topK.clear();
-		lastResult = null;
+		topKMap.clear();
+		lastResultMap.clear();
+		groupProcessor.init();
 	}
 
 	@Override
 	protected synchronized void process_next(T object, int port) {
+		
+		Long gId = groupProcessor.getGroupID(object);
+		
+		ArrayList<SerializablePair<Double, T>> topK  = topKMap.get(gId);
+		if (topK == null){
+			topK = new ArrayList<SerializablePair<Double, T>>();
+			topKMap.put(gId, topK);
+		}
+		
+		cleanUp(object.getMetadata().getStart(), topK);
 
-		cleanUp(object.getMetadata().getStart());
+		addObject(calcScore(object), topK);
 
-		addObject(calcScore(object));
-
-		produceResult(object);
+		produceResult(object, topK, gId);
 	}
 	
 	@Override
 	protected void process_close() {
-		topK.clear();
-		lastResult = null;
+		topKMap.clear();
+		lastResultMap.clear();
 	}
 
 	@Override
@@ -107,7 +121,7 @@ public class RelationalTopKPO<T extends Tuple<M>, M extends ITimeInterval>
 		// sendPunctuation(punctuation);
 	}
 
-	private void cleanUp(PointInTime start) {
+	private void cleanUp(PointInTime start, ArrayList<SerializablePair<Double, T>> topK ) {
 		Iterator<SerializablePair<Double, T>> iter = topK.iterator();
 		while (iter.hasNext()) {
 			if (iter.next().getE2().getMetadata().getEnd()
@@ -117,7 +131,7 @@ public class RelationalTopKPO<T extends Tuple<M>, M extends ITimeInterval>
 		}
 	}
 
-	private void addObject(SerializablePair<Double, T> scoredObject) {
+	private void addObject(SerializablePair<Double, T> scoredObject, ArrayList<SerializablePair<Double, T>> topK) {
 		// add object to list
 		// 1. find position to insert with binary search
 
@@ -130,7 +144,7 @@ public class RelationalTopKPO<T extends Tuple<M>, M extends ITimeInterval>
 	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	private void produceResult(T object) {
+	private void produceResult(T object, ArrayList<SerializablePair<Double, T>> topK, Long groupID) {
 		// Produce result
 		T result = (T) new Tuple(2, false);
 		Iterator<SerializablePair<Double, T>> iter = topK.iterator();
@@ -140,11 +154,11 @@ public class RelationalTopKPO<T extends Tuple<M>, M extends ITimeInterval>
 			out.setMetadata(null);
 			resultList.add(out);
 		}
-		boolean sameAsLastResult = suppressDuplicates ? compareWithLastResult(resultList)
+		boolean sameAsLastResult = suppressDuplicates ? compareWithLastResult(resultList, groupID)
 				: false;
 
 		if (!sameAsLastResult) {
-			lastResult = new LinkedList<T>(resultList);
+			lastResultMap.put(groupID, new LinkedList<T>(resultList));
 			result.setAttribute(0, resultList);
 			result.setAttribute(1, object);
 			M meta = (M) object.getMetadata().clone();
@@ -152,8 +166,8 @@ public class RelationalTopKPO<T extends Tuple<M>, M extends ITimeInterval>
 			transfer(result);
 		}
 	}
-
-	private boolean compareWithLastResult(List<T> resultList) {
+	private boolean compareWithLastResult(List<T> resultList, Long groupID) {
+		LinkedList<T> lastResult = lastResultMap.get(groupID);
 		if (lastResult == null) {
 			return false;
 		}

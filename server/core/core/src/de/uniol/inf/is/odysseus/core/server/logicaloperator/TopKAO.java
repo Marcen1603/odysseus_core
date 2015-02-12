@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.core.server.logicaloperator;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -12,6 +13,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Paramete
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.BooleanParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IntegerParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.NamedExpression;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.ResolvedSDFAttributeParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.SDFExpressionParameter;
 
 @LogicalOperator(name="TOPK", maxInputPorts=1,minInputPorts=1,category={ LogicalOperatorCategory.ADVANCED }, doc = "Calculate the top k elements of the input")
@@ -23,6 +25,8 @@ public class TopKAO extends AbstractLogicalOperator {
 	private int k;
 	private boolean descending = true;
 	private boolean suppressDuplicates = true;
+	private List<SDFAttribute> groupingAttributes;
+	private boolean fastGrouping = false;
 	
 	public TopKAO() {
 	}
@@ -33,6 +37,10 @@ public class TopKAO extends AbstractLogicalOperator {
 		this.k = other.k;
 		this.descending = other.descending;
 		this.setSuppressDuplicates(other.isSuppressDuplicates());
+		if (other.groupingAttributes != null){
+			this.groupingAttributes = new ArrayList<SDFAttribute>(other.groupingAttributes);
+		}
+		this.fastGrouping = other.fastGrouping;
 	}
 
 	public NamedExpression getScoringFunction() {
@@ -77,13 +85,40 @@ public class TopKAO extends AbstractLogicalOperator {
 	public void setSuppressDuplicates(boolean suppressDuplicates) {
 		this.suppressDuplicates = suppressDuplicates;
 	}
+	
+	@Parameter(name = "GROUP_BY", optional = true, type = ResolvedSDFAttributeParameter.class, isList = true)
+	public void setGroupingAttributes(List<SDFAttribute> attributes) {
+		this.groupingAttributes = attributes;
+	}
+	
+	public List<SDFAttribute> getGroupingAttributes() {
+		return groupingAttributes;
+	}
+
+	/**
+	 * @return the fastGrouping
+	 */
+	public boolean isFastGrouping() {
+		return fastGrouping;
+	}
+
+	/**
+	 * @param fastGrouping the fastGrouping to set
+	 */
+	@Parameter(name = "fastGrouping", type = BooleanParameter.class, optional = true, doc = "Use hash code instead of tuple compare to create group. Potentially unsafe!")
+	public void setFastGrouping(boolean fastGrouping) {
+		this.fastGrouping = fastGrouping;
+	}
 
 	@Override
 	protected SDFSchema getOutputSchemaIntern(int pos) {
 		SDFSchema subSchema = getInputSchema(0);
 		List<SDFAttribute> attributes = new LinkedList<SDFAttribute>();
 		attributes.add(new SDFAttribute(subSchema.getURI(), "topk", SDFDatatype.LIST_TUPLE, subSchema));
-		attributes.add(new SDFAttribute(subSchema.getURI(), "trigger", SDFDatatype.TUPLE, subSchema));		
+		attributes.add(new SDFAttribute(subSchema.getURI(), "trigger", SDFDatatype.TUPLE, subSchema));
+		if (groupingAttributes != null){
+			attributes.addAll(groupingAttributes);
+		}
 		SDFSchema outputSchema = new SDFSchema(subSchema, attributes);
 		return outputSchema;
 	}
