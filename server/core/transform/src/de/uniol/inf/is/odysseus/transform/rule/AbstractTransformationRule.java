@@ -17,6 +17,8 @@ package de.uniol.inf.is.odysseus.transform.rule;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.LinkedList;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,6 +47,8 @@ import de.uniol.inf.is.odysseus.transform.engine.TransformationWorkingMemory;
 public abstract class AbstractTransformationRule<T> extends
 		AbstractRule<T, TransformationConfiguration> implements
 		ITransformationRule {
+
+	public static final String OPERATOR_IDS_SET = "OperatorIDsSet";
 
 	final static Logger LOG = LoggerFactory
 			.getLogger(AbstractTransformationRule.class);
@@ -89,7 +93,8 @@ public abstract class AbstractTransformationRule<T> extends
 
 		if (LOG.isTraceEnabled()) {
 			if (physical instanceof ISubscribable) {
-				LOG.trace("Subscriptions of phyiscal " + ((ISubscribable) physical).getSubscriptions());
+				LOG.trace("Subscriptions of phyiscal "
+						+ ((ISubscribable) physical).getSubscriptions());
 			}
 
 		}
@@ -129,14 +134,25 @@ public abstract class AbstractTransformationRule<T> extends
 							+ " is already registered.");
 				} else {
 					getDataDictionary().setOperator(id, physical);
+					@SuppressWarnings("unchecked")
+					List<Resource> newDefinedRessources = (List<Resource>) this
+							.getCurrentWorkingMemory().getFromKeyValueMap(
+									OPERATOR_IDS_SET);
+					if (newDefinedRessources == null) {
+						newDefinedRessources = new LinkedList<Resource>();
+					}
+					newDefinedRessources.add(id);
+
 					for (IOperatorOwner owner : logical.getOwner()) {
 						physical.addUniqueId(owner, id);
 					}
 				}
 			} else {
 				logger.debug("Virtual Transformation: IDs ignored");
+				id = null;
 			}
 		}
+
 	}
 
 	protected void defaultExecute(ILogicalOperator logical,

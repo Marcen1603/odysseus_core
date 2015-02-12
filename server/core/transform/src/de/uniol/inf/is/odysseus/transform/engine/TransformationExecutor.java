@@ -18,15 +18,18 @@ package de.uniol.inf.is.odysseus.transform.engine;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.core.collection.Resource;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
+import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionaryWritable;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TopAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.ITransformation;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
@@ -37,6 +40,7 @@ import de.uniol.inf.is.odysseus.core.server.util.SimplePlanPrinter;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.core.util.IGraphNodeVisitor;
 import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
+import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
 /**
  * entry point for transformation (is bound by osgi-service)
@@ -86,6 +90,7 @@ public class TransformationExecutor implements ITransformation {
 		try {
 			env.processEnvironment();
 		} catch (RuleException e) {
+			cleanup(env);
 			throw new TransformationException("Error in Transformation: ", e);
 		}
 		LOGGER.trace("Processing rules done.");
@@ -114,6 +119,7 @@ public class TransformationExecutor implements ITransformation {
 					}
 				}
 			}
+			cleanup(env);
 			throw new TransformationException("Error during transformation.\n"
 					+ "Potential problem operator: " + logStillRemain
 					+ "\nAre metadata types (#METADATA) set correctly?");
@@ -159,6 +165,23 @@ public class TransformationExecutor implements ITransformation {
 		LOGGER.info("Transformation of " + logicalOp + " finished");
 		env.getWorkingMemory().clear();
 		return resultPlan;
+	}
+
+	private void cleanup(TransformationEnvironment env) {
+		
+		// Could be a transformation exception, in this case potentially set resources need to be removed 
+		// from dd again
+		@SuppressWarnings("unchecked")
+		List<Resource> idlist = (List<Resource>) env
+				.getWorkingMemory()
+				.getFromKeyValueMap(AbstractTransformationRule.OPERATOR_IDS_SET);
+		if (idlist != null) {
+			for (Resource r : idlist) {
+				((IDataDictionaryWritable) (((TransformationWorkingMemory) env
+						.getWorkingMemory()).getDataDictionary()))
+						.removeOperator(r);
+			}
+		}
 	}
 
 	private void addLogicalOperator(ILogicalOperator op,

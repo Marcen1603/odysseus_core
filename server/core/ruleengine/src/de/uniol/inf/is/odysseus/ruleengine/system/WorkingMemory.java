@@ -44,6 +44,8 @@ public class WorkingMemory {
     private Collection<Object> objects = new HashSet<Object>();
     private volatile boolean hasChanged = false;
     private int executedRules = 0;
+    
+    private Map<String, Object> keyValueMap = new HashMap<String, Object>(); 
 
     private Map<Class<?>, Collection<Object>> objectMap = new HashMap<Class<?>, Collection<Object>>();
 
@@ -209,13 +211,17 @@ public class WorkingMemory {
         }
         return "Please enable debug level";
     }
-    //
-    // public ISession getCaller() {
-    // return caller;
-    // }
-    //
-    // public IDataDictionary getDataDictionary() {
-    // return dd;
-    // }
-
+    
+    public void addToKeyValueMap(String key, Object value){
+    	this.keyValueMap.put(key,value);
+    }
+    
+    public void removeFromKeyValueMap(String key){
+    	this.keyValueMap.remove(key);
+    }
+    
+    public Object getFromKeyValueMap(String key){
+    	return this.keyValueMap.get(key);
+    }
+    
 }
