@@ -47,6 +47,11 @@ public class ImageJCV implements IClone, Cloneable
 		}
 	}
 	
+	@Override public ImageJCV clone()
+	{
+		return new ImageJCV(this);
+	}
+	
 	@Override
 	protected void finalize()
 	{
@@ -57,6 +62,7 @@ public class ImageJCV implements IClone, Cloneable
 	{
 		if (image != null)
 		{
+			System.out.println("Release image");
 			cvReleaseImage(image);
 			image = null;
 		}
@@ -106,12 +112,6 @@ public class ImageJCV implements IClone, Cloneable
 	public void writeData(ByteBuffer buffer) {
 		byte[] bytes = ObjectByteConverter.objectToBytes(this.image);
 		buffer.put(bytes);
-	}
-	
-	@Override
-	public ImageJCV clone() {
-		final ImageJCV image = new ImageJCV(this);
-		return image;
 	}
 	
 	@Override

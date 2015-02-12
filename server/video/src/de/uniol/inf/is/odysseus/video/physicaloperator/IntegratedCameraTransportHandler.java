@@ -1,5 +1,8 @@
 package de.uniol.inf.is.odysseus.video.physicaloperator;
 
+import static org.bytedeco.javacpp.opencv_core.cvCreateImage;
+import static org.bytedeco.javacpp.opencv_core.cvSize;
+
 import java.io.IOException;
 
 import org.bytedeco.javacpp.opencv_core.IplImage;
@@ -119,10 +122,13 @@ public class IntegratedCameraTransportHandler extends AbstractSimplePullTranspor
 			try 
 			{				
 				if (cameraCapture == null) return false;
-				IplImage iplImage = cameraCapture.grab();
-				
+				IplImage iplImage = cameraCapture.grab();				
 				if (iplImage == null || iplImage.isNull()) return false;
-				currentImage = new ImageJCV(iplImage.clone());
+				
+				IplImage copy = cvCreateImage(cvSize(iplImage.width(), iplImage.height()), iplImage.depth(), iplImage.nChannels());
+				copy.getByteBuffer().put(iplImage.getByteBuffer());
+				
+				currentImage = new ImageJCV(copy);
 				return true;
 			}
 			catch (Exception e) 
