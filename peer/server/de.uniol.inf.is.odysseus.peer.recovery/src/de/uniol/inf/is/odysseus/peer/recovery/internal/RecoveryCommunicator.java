@@ -310,8 +310,8 @@ public class RecoveryCommunicator implements IRecoveryCommunicator {
 		}
 
 		// Send the add query message
-		AddQuerySender.getInstance().sendAddQueryPart(newPeer, pql, localQueryId, queryState, sharedQuery, master, masterId, failedPeer,
-				recoveryStateIdentifier, subprocessID, cPeerCommunicator.get());
+		AddQuerySender.getInstance().sendAddQueryPart(newPeer, pql, localQueryId, queryState, sharedQuery, master,
+				masterId, failedPeer, recoveryStateIdentifier, subprocessID, cPeerCommunicator.get());
 	}
 
 	@Override
@@ -369,6 +369,13 @@ public class RecoveryCommunicator implements IRecoveryCommunicator {
 		}
 		LOG.debug("Send Go-on instruction.");
 		return TupleSendSender.getInstance().sendGoOnInstruction(receiverPeer, pipeId, cPeerCommunicator.get());
+	}
+
+	@Override
+	public boolean informClientAboutNewSocket(String newPeerId, String clientIp) {
+		LOG.debug("Want to inform client (e.g. tablet) about new peer. New peerId: {}, Client ip: {}", newPeerId,
+				clientIp);
+		return false;
 	}
 
 	@Override

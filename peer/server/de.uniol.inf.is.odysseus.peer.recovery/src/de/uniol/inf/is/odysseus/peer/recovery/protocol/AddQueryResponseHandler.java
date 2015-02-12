@@ -1,6 +1,7 @@
 package de.uniol.inf.is.odysseus.peer.recovery.protocol;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
@@ -18,6 +19,7 @@ import de.uniol.inf.is.odysseus.peer.recovery.IAddQueryResponseHandler;
 import de.uniol.inf.is.odysseus.peer.recovery.IBackupInformationAccess;
 import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryCommunicator;
 import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryStrategyManager;
+import de.uniol.inf.is.odysseus.peer.recovery.internal.BackupInfo;
 import de.uniol.inf.is.odysseus.peer.recovery.internal.RecoveryProcessState;
 import de.uniol.inf.is.odysseus.peer.recovery.messages.RecoveryAddQueryResponseMessage;
 import de.uniol.inf.is.odysseus.peer.recovery.util.RecoveryHelper;
@@ -38,6 +40,7 @@ public class AddQueryResponseHandler implements IAddQueryResponseHandler {
 	private static Optional<IRecoveryStrategyManager> recoveryStrategyManager = Optional.absent();
 	private Optional<IPeerCommunicator> peerCommunicator = Optional.absent();
 	private static IBackupInformationAccess backupInformationAccess;
+	private static IRecoveryCommunicator communicator;
 
 	public void bindPeerCommunicator(IPeerCommunicator serv) {
 		Preconditions.checkNotNull(serv);
@@ -74,6 +77,20 @@ public class AddQueryResponseHandler implements IAddQueryResponseHandler {
 	public static void unbindBackupInformationAccess(IBackupInformationAccess infoAccess) {
 		if (backupInformationAccess == infoAccess) {
 			backupInformationAccess = null;
+		}
+	}
+
+	public void bindCommunicator(IRecoveryCommunicator serv) {
+		Preconditions.checkNotNull(serv);
+		communicator = serv;
+		LOG.debug("Bound {} as a recovery communicator.", serv.getClass().getSimpleName());
+	}
+
+	public void unbindCommunicator(IRecoveryCommunicator serv) {
+		Preconditions.checkNotNull(serv);
+		if (communicator != null && communicator == serv) {
+			communicator = null;
+			LOG.debug("Unbound {} as a recovery communicator.", serv.getClass().getSimpleName());
 		}
 	}
 
@@ -137,6 +154,17 @@ public class AddQueryResponseHandler implements IAddQueryResponseHandler {
 				List<JxtaSenderPO<?>> affectedSenders = getAffectedSenders(state.getFailedPeerId());
 				for (int i = 0; i < affectedSenders.size(); i++) {
 					affectedSenders.get(i).setPeerIDString(senderPeer.toString());
+				}
+
+				// TODO If the recovered peer had a connection to the tablet, tell the tablet the new peer
+				HashMap<Integer, BackupInfo> infoMap = backupInformationAccess.getBackupInformation(state
+						.getFailedPeerId().toString());
+				if (infoMap.containsKey(localQueryId)) {
+					BackupInfo info = infoMap.get(localQueryId);
+					String clientIp = info.socketIP;
+					if (clientIp != null) {
+						communicator.informClientAboutNewSocket(senderPeer.toString(), clientIp);
+					}
 				}
 
 				// Update the DDC -> This is recovered, remove the old entry from the DDC

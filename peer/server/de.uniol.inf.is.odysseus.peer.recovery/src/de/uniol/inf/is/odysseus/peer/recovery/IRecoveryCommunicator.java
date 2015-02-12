@@ -99,6 +99,13 @@ public interface IRecoveryCommunicator extends IPeerDictionaryListener {
 	 */
 	// TODO handle result. M.B.
 	public boolean sendGoOnMessage(PeerID receiverPeer, PipeID pipeId);
+	
+	/**
+	 * 
+	 * @param clientIp
+	 * @return
+	 */
+	public boolean informClientAboutNewSocket(String newPeerId, String clientIp);
 
 	/**
 	 * Returns the RecoveryProcessState for a given identifier
