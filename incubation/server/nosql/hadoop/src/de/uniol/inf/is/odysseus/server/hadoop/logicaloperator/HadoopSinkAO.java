@@ -14,7 +14,8 @@ import de.uniol.inf.is.odysseus.server.nosql.base.logicaloperator.AbstractNoSQLS
         LogicalOperatorCategory.SINK, LogicalOperatorCategory.DATABASE })
 public class HadoopSinkAO extends AbstractNoSQLSinkAO {
 
-    private String path;
+	private static final long serialVersionUID = -533758138172292374L;
+	private String path;
 
     @SuppressWarnings("UnusedDeclaration")
     public HadoopSinkAO() {

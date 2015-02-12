@@ -19,7 +19,7 @@ public class AddQueryServerResource extends AbstractSessionServerResource  {
 	@Post
 	public GenericResponseDTO<Collection<Integer>> addQuery(AddQueryRequestDTO addQueryRequestDTO) {
 		ISession session = this.loginWithToken(addQueryRequestDTO.getToken());
-		Collection<Integer> result = ExecutorServiceBinding.getExecutor().addQuery(addQueryRequestDTO.getQuery(),addQueryRequestDTO.getParser(), session, addQueryRequestDTO.getTransformationConfig(), new Context());
+		Collection<Integer> result = ExecutorServiceBinding.getExecutor().addQuery(addQueryRequestDTO.getQuery(),addQueryRequestDTO.getParser(), session,  new Context());
 		return new GenericResponseDTO<Collection<Integer>>(result);
 	}
 

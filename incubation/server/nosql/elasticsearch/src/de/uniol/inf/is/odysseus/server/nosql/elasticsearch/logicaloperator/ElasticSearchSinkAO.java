@@ -14,7 +14,11 @@ import de.uniol.inf.is.odysseus.server.nosql.base.logicaloperator.AbstractNoSQLS
         LogicalOperatorCategory.SINK, LogicalOperatorCategory.DATABASE })
 public class ElasticSearchSinkAO extends AbstractNoSQLSinkAO {
 
-    private String indexName;   //like database
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = -3438050552621086690L;
+	private String indexName;   //like database
     private String typeName;    //like table
 
     public ElasticSearchSinkAO(){

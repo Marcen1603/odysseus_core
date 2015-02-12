@@ -14,8 +14,10 @@ import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
  */
 public abstract class AbstractTNoSQLSinkAORule<A extends AbstractNoSQLSinkAO> extends AbstractTransformationRule<A> {
 
-    private Class logicalOperatorClass;
-    private Class physicalOperatorClass;
+    @SuppressWarnings("rawtypes")
+	private Class logicalOperatorClass;
+    @SuppressWarnings("rawtypes")
+	private Class physicalOperatorClass;
 
     public AbstractTNoSQLSinkAORule() {
         logicalOperatorClass = getLogicalOperatorClass();

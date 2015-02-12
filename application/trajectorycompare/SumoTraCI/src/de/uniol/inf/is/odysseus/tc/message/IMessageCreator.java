@@ -16,7 +16,6 @@
 package de.uniol.inf.is.odysseus.tc.message;
 
 import java.util.List;
-import java.util.Objects;
 
 /**
  * Created by marcus on 29.11.14.

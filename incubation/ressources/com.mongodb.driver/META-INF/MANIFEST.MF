@@ -16,3 +16,4 @@ Export-Package: com.mongodb,
  org.bson.types,
  org.bson.util,
  org.bson.util.annotations
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7

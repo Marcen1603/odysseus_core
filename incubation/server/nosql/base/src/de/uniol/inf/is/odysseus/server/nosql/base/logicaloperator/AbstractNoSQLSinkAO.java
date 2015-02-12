@@ -10,6 +10,11 @@ import org.slf4j.LoggerFactory;
 
 public abstract class AbstractNoSQLSinkAO extends UnaryLogicalOp {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 42770418904359282L;
+
 	private static final Logger LOG = LoggerFactory.getLogger(AbstractNoSQLSinkAO.class);
 
 	public static final int DEFAULT_BATCHSIZE = 10;

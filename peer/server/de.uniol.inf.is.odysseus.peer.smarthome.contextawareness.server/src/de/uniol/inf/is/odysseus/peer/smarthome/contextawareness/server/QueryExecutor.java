@@ -302,8 +302,7 @@ public class QueryExecutor implements IP2PDictionaryListener,
 		if (!queryIsRunning(viewName + "_query") ) {
 			Collection<Integer> queryIDs = ServerExecutorService
 					.getServerExecutor().addQuery(query, "OdysseusScript",
-							SessionManagementService.getActiveSession(),
-							"Standard", Context.empty());
+							SessionManagementService.getActiveSession(), Context.empty());
 			LOG.debug("Query added!");
 			
 			Integer queryId;

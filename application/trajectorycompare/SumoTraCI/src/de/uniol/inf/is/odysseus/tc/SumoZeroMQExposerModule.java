@@ -24,7 +24,6 @@ import de.uniol.inf.is.odysseus.tc.error.IErrorGenerator;
 import de.uniol.inf.is.odysseus.tc.error.NoErrorGenerator;
 import de.uniol.inf.is.odysseus.tc.geoconvert.GpsGeoConverter;
 import de.uniol.inf.is.odysseus.tc.geoconvert.IGeoConverter;
-import de.uniol.inf.is.odysseus.tc.geoconvert.NoGeoConverter;
 import de.uniol.inf.is.odysseus.tc.interaction.ISumoInteraction;
 import de.uniol.inf.is.odysseus.tc.interaction.SumoInteraction;
 import de.uniol.inf.is.odysseus.tc.message.IMessageCreator;
@@ -36,7 +35,6 @@ import de.uniol.inf.is.odysseus.tc.sending.ZeroMQSender;
 import de.uniol.inf.is.odysseus.tc.service.IXMLService;
 import de.uniol.inf.is.odysseus.tc.service.XPathXMLService;
 import de.uniol.inf.is.odysseus.tc.shuffle.IVehicleShuffler;
-import de.uniol.inf.is.odysseus.tc.shuffle.NoVehicleShuffler;
 import de.uniol.inf.is.odysseus.tc.shuffle.RandomVehicleSchuffler;
 
 /**

@@ -10,7 +10,6 @@ import com.google.common.collect.Lists;
 import de.uniol.inf.is.odysseus.core.collection.Context;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.IExecutorCommand;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
-import de.uniol.inf.is.odysseus.memstore.mdastore.MDAStoreManager;
 import de.uniol.inf.is.odysseus.memstore.mdastore.commands.CreateMDAStoreCommand;
 import de.uniol.inf.is.odysseus.script.parser.AbstractPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptException;
