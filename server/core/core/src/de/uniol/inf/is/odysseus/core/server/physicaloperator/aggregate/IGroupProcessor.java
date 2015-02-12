@@ -16,24 +16,69 @@
 package de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate;
 
 import de.uniol.inf.is.odysseus.core.IClone;
+
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.collection.PairMap;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.IPartialAggregate;
 
+/**
+ * This interface is used to represent different grouping processors. Its main function is 
+ * a) to create an ID for in input element
+ * b) to create output elements
+ * 
+ * 
+ * @author Marco Grawunder
+ *
+ * @param <R> Elements that should be group
+ * @param <W> Outputs that should be created
+ */
 public interface IGroupProcessor<R, W extends IClone> {
 
-	public Long getGroupID(R elem);
+	/**
+	 * Group processors must be inialized (typically in open phase)
+	 */
+	void init();
 	
-	public R getGroupingPart(R elem);
-
-	public void init();
-
-	public W createOutputElement(Long groupID,
+	/**
+	 * Determine a group id for the given input
+	 * @param elem
+	 * @return
+	 */
+	Long getGroupID(R elem);
+	
+	/**
+	 * Especially for aggregation, this method creates an output element (with real values)
+	 * @param groupID Output for which group ID
+	 * @param r the aggregations for this group
+	 * @return
+	 */
+	W createOutputElement(Long groupID,
 			PairMap<SDFSchema, AggregateFunction, W, ?> r);
 
-	public W createOutputElement2(Long groupID,
+	/**
+	 * Especially for aggregation, this method creates an output element (with partial aggregates)
+	 * @param groupID Output for which group ID
+	 * @param r the aggregations for this group
+	 * @return
+	 */
+
+	W createOutputElement2(Long groupID,
 			PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, ?> e);
 	
-	public String toGroupString(R elem);
+
+	/**
+	 * Retrieve from the input the part that is used to determine the group. 
+	 * Typically, for each group, this value is unique
+	 * @param elem
+	 * @return
+	 */
+	R getGroupingPart(R elem);
+
+	/**
+	 * A string representation of the group part 
+	 * @param elem
+	 * @return
+	 */
+	String toGroupString(R elem);
 
 }
