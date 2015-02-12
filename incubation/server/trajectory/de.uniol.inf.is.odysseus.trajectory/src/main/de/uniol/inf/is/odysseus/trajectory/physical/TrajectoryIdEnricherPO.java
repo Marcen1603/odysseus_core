@@ -5,6 +5,7 @@ import java.util.Map;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 
 public class TrajectoryIdEnricherPO<T extends Tuple<ITimeInterval>> extends AbstractPipe<T, T> {
@@ -25,6 +26,13 @@ public class TrajectoryIdEnricherPO<T extends Tuple<ITimeInterval>> extends Abst
 		Tuple<ITimeInterval> t = new Tuple<ITimeInterval>(new Object[] { vehicleId, ++id[0], object.getAttribute(1)}, true);
 		t.setMetadata(object.getMetadata());
 		this.transfer((T)t);
+	}
+	
+	@Override
+	public void processPunctuation(IPunctuation punctuation, int port) {
+		
+		// TODO: Implement me!
+		
 	}
 	
 	
