@@ -256,6 +256,12 @@ abstract public class AbstractAccessAO extends AbstractLogicalOperator {
 		}
 		constraints.put(SDFConstraint.BASE_TIME_UNIT, new SDFConstraint(SDFConstraint.BASE_TIME_UNIT,timeUnit));
 
+		boolean strictOrder = false; 
+		if (optionsMap.containsKey(SDFConstraint.STRICT_ORDER)){
+			String sorder = optionsMap.get(SDFConstraint.STRICT_ORDER);
+			strictOrder = Boolean.parseBoolean(sorder);
+		}
+		
 		List<SDFAttribute> attributes = outputSchema.get(pos);
 		if (attributes != null && attributes.size() > 0) {
 			List<SDFAttribute> s2 = new ArrayList<>();
@@ -278,6 +284,8 @@ abstract public class AbstractAccessAO extends AbstractLogicalOperator {
 			schema = new SDFSchema(getName(), type, constraints, null);
 		}
 
+		schema.setStrictOrder(strictOrder);
+		
 		return schema;
 	}
 

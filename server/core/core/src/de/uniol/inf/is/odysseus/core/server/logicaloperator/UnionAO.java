@@ -22,6 +22,8 @@ package de.uniol.inf.is.odysseus.core.server.logicaloperator;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.BooleanParameter;
 
 /**
  * @author Marco Grawunder
@@ -34,6 +36,8 @@ public class UnionAO extends BinaryLogicalOp {
 	private static final long serialVersionUID = 2828756253165671692L;
 
 	protected boolean useInputPortAsOutputPort = false; 
+	
+	private boolean strictOrder = false;
 	
 	/**
 	 * @param unionPO
@@ -56,6 +60,23 @@ public class UnionAO extends BinaryLogicalOp {
 		return useInputPortAsOutputPort;
 	}
 	
+	
+	
+	/**
+	 * @return the strictOrder
+	 */
+	public boolean isStrictOrder() {
+		return strictOrder;
+	}
+
+	/**
+	 * @param strictOrder the strictOrder to set
+	 */
+	@Parameter(name="strictOrder", type = BooleanParameter.class, doc="Set to true to garantee, that for each element with same start timestamp the order remains the same. Default is false. Leads potentially to higher latency!")
+	public void setStrictOrder(boolean strictOrder) {
+		this.strictOrder = strictOrder;
+	}
+
 	public @Override
 	UnionAO clone() {
 		return new UnionAO(this);

@@ -46,9 +46,10 @@ public class SDFSchema extends SDFSchemaElementSet<SDFAttribute> implements
 
 	final private Map<String, SDFConstraint> constraints;
 
+	private boolean strictOrder;
 	private Boolean outOfOrder;
 
-	protected SDFSchema(String URI, Class<? extends IStreamObject> type,
+	private SDFSchema(String URI, Class<? extends IStreamObject> type,
 			Map<String, SDFConstraint> constraints) {
 		super(URI);
 		this.type = type;
@@ -90,10 +91,12 @@ public class SDFSchema extends SDFSchemaElementSet<SDFAttribute> implements
 			type = null;
 			this.outOfOrder = null;
 		}
+		
+		this.strictOrder = schema.strictOrder;
 
 	}
 
-	public SDFSchema(String uri, Class<? extends IStreamObject> type,
+	private SDFSchema(String uri, Class<? extends IStreamObject> type,
 			Map<String, SDFConstraint> constraints, SDFAttribute attribute,
 			SDFAttribute... attributes1) {
 		super(uri);
@@ -163,6 +166,20 @@ public class SDFSchema extends SDFSchemaElementSet<SDFAttribute> implements
 
 	public boolean isInOrder() {
 		return (outOfOrder == null) || (outOfOrder == false);
+	}
+
+	/**
+	 * @return the strictOrder
+	 */
+	public boolean isStrictOrder() {
+		return strictOrder;
+	}
+
+	/**
+	 * @param strictOrder the strictOrder to set
+	 */
+	public void setStrictOrder(boolean strictOrder) {
+		this.strictOrder = strictOrder;
 	}
 
 	@Override

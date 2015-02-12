@@ -20,6 +20,8 @@ import de.uniol.inf.is.odysseus.core.sdf.SDFElement;
 public class SDFConstraint extends SDFElement {
 	
 	final static public String BASE_TIME_UNIT = "basetimeunit"; 
+	final static public String STRICT_ORDER = "strictorder"; 
+	
 	
 	/**
 	 * 
