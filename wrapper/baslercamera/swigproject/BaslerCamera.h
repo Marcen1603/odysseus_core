@@ -18,7 +18,7 @@ class BaslerCamera
 	int bufferSize;
 
 public:
-	BaslerCamera(std::string ethernetAddress) throw(std::exception);
+	BaslerCamera(std::string serialNumber) throw(std::exception);
 	~BaslerCamera();
 
 	void	start();

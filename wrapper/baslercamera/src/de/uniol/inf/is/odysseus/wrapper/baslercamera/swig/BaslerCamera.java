@@ -35,8 +35,8 @@ public class BaslerCamera {
     }
   }
 
-  public BaslerCamera(String ethernetAddress) throws java.lang.RuntimeException {
-    this(BaslerJavaJNI.new_BaslerCamera(ethernetAddress), true);
+  public BaslerCamera(String serialNumber) throws java.lang.RuntimeException {
+    this(BaslerJavaJNI.new_BaslerCamera(serialNumber), true);
   }
 
   public void start() {

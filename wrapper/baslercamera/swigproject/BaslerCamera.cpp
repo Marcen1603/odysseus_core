@@ -34,14 +34,36 @@ bool BaslerCamera::isSystemInitialized()
 
 // ******************************************************************
 
-BaslerCamera::BaslerCamera(std::string ethernetAddress)
+BaslerCamera::BaslerCamera(std::string serialNumber)
 {
-	// TODO: Create camera by ethernet address
-    CDeviceInfo info;
-    info.SetDeviceClass( Camera::DeviceClass());
+	CTlFactory& tlFactory = CTlFactory::GetInstance();
 
-	// Create an instant camera object with the camera device found first.
-	camera = new Camera(CTlFactory::GetInstance().CreateFirstDevice(info));	
+	if (serialNumber == "")
+	{
+		// Create an instant camera object with the camera device found first.
+		CDeviceInfo info;
+		info.SetDeviceClass(Camera::DeviceClass());
+		camera = new Camera(tlFactory.CreateFirstDevice(info));	
+	}
+	else
+	{
+        DeviceInfoList_t devices;
+        if (tlFactory.EnumerateDevices(devices) == 0)
+			throw std::exception("No basler cameras present!");
+
+		camera = NULL;
+		for (int i=0; i<devices.size(); i++)
+		{
+			if (devices[i].GetSerialNumber().c_str() == serialNumber)
+			{
+				camera = new Camera(CTlFactory::GetInstance().CreateDevice(devices[i]));	
+				break;
+			}
+		}
+
+		if (camera == NULL)
+			throw std::exception(("Camera with serial number " + serialNumber + " not present!").c_str());
+	}
 
 	supportsRGBAConversion = CImageFormatConverter::IsSupportedOutputFormat(PixelType_RGBA8packed);
 
