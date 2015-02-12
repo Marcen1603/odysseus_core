@@ -29,31 +29,31 @@ Unless required by applicable law or agreed to in writing, software
    <url>
       <update label="Odysseus Update Site" url="http://odysseus.informatik.uni-oldenburg.de/update"/>
    </url>
+
    <requires>
       <import plugin="de.uniol.inf.is.odysseus.core" version="1.0.0" match="greaterOrEqual"/>
       <import plugin="de.uniol.inf.is.odysseus.core.server" version="1.0.0" match="greaterOrEqual"/>
       <import plugin="com.google.guava" version="12.0.0" match="greaterOrEqual"/>
-      <import plugin="de.uniol.inf.is.odysseus.cep.epa"/>
+      <import plugin="de.uniol.inf.is.odysseus.mep"/>
+      <import plugin="de.uniol.inf.is.odysseus.relational.base"/>
       <import plugin="de.uniol.inf.is.odysseus.intervalapproach"/>
+      <import plugin="de.uniol.inf.is.odysseus.relational_interval"/>
       <import plugin="de.uniol.inf.is.odysseus.ruleengine"/>
       <import plugin="de.uniol.inf.is.odysseus.server.intervalapproach"/>
       <import plugin="de.uniol.inf.is.odysseus.sweeparea"/>
       <import plugin="de.uniol.inf.is.odysseus.transform"/>
       <import plugin="org.eclipse.osgi"/>
       <import plugin="de.uniol.inf.is.odysseus.slf4j"/>
+      <import plugin="org.apache.commons.lang3"/>
+      <import plugin="org.apache.commons.math3"/>
+      <import plugin="org.apache.lucene"/>
+      <import plugin="org.apache.lucene.analysis"/>
       <import plugin="de.uniol.inf.is.odysseus.recommendation" version="1.0.0" match="greaterOrEqual"/>
       <import plugin="com.google.guava" version="14.0.0" match="greaterOrEqual"/>
    </requires>
 
    <plugin
          id="de.uniol.inf.is.odysseus.recommendation"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="de.uniol.inf.is.odysseus.recommendation.mahout"
          download-size="0"
          install-size="0"
          version="0.0.0"
@@ -70,5 +70,19 @@ Unless required by applicable law or agreed to in writing, software
          download-size="0"
          install-size="0"
          version="0.0.0"/>
+
+   <plugin
+         id="de.uniol.inf.is.odysseus.recommendation.moa"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="de.uniol.inf.is.odysseus.recommendation.mahout"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
 
 </feature>

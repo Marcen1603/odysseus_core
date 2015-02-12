@@ -15,96 +15,55 @@
  */
 package de.uniol.inf.is.odysseus.recommendation.mahout.recommender;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import org.apache.mahout.cf.taste.common.NoSuchUserException;
 import org.apache.mahout.cf.taste.common.TasteException;
-import org.apache.mahout.cf.taste.recommender.RecommendedItem;
 import org.apache.mahout.cf.taste.recommender.Recommender;
 
-import de.uniol.inf.is.odysseus.recommendation.util.ObjectIdToLongId;
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
+import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
+import de.uniol.inf.is.odysseus.recommendation.model.rating_predictor.AbstractTupleBasedRatingPredictor;
 
 /**
  * @author Cornelius Ludmann
  * 
  */
-public class MahoutRecommender implements
-de.uniol.inf.is.odysseus.recommendation.recommender.Recommender {
+public class MahoutRecommender
+		extends
+		AbstractTupleBasedRatingPredictor<Tuple<ITimeInterval>, ITimeInterval,Long, Long, Double> {
 
 	private final Recommender recommender;
 
 	public MahoutRecommender(final Recommender recommender) {
+		// TODO: is recommender immutable?
 		this.recommender = recommender;
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * de.uniol.inf.is.odysseus.recommendation.recommender.Recommender#recommend
-	 * (java.lang.Object)
+	 * @see de.uniol.inf.is.odysseus.recommendation.model.rating_predictor.
+	 * AbstractTupleBasedRatingPredictor#predict(java.lang.Object, java.lang.Object)
 	 */
 	@Override
-	public Map<Object, Double> recommend(final Object user) {
-		if (recommender == null) {
-			return null;
-		}
+	public Double predict(Long user, Long item) {
 		try {
-			final List<RecommendedItem> recommendedItems = recommender
-					.recommend(
-							ObjectIdToLongId.getInstance().objectIDAsLong(
-									"user", user), Integer.MAX_VALUE);
-			return recommendedItemsToMap(recommendedItems);
-		} catch (final TasteException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			return null;
+			return (double) recommender.estimatePreference(user, item);
+		} catch (TasteException e) {
+			return 0.0;
 		}
 	}
 
-	/**
-	 * @param recommendedItems
-	 * @return
-	 */
-	private Map<Object, Double> recommendedItemsToMap(
-			final List<RecommendedItem> recommendedItems) {
-		final Map<Object, Double> items = new HashMap<Object, Double>();
-		for (final RecommendedItem recomendedItem : recommendedItems) {
-			items.put(
-					ObjectIdToLongId.getInstance().longAsObjectId("item",
-							recomendedItem.getItemID()),
-							(double) recomendedItem.getValue());
-		}
-		return items;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see de.uniol.inf.is.odysseus.recommendation.recommender.Recommender#
-	 * recommendTopN(java.lang.Object, int)
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
 	 */
 	@Override
-	public Map<Object, Double> recommendTopN(final Object user, final int n) {
-		if (recommender == null) {
-			return null;
-		}
-		try {
-			final List<RecommendedItem> recommendedItems = recommender
-					.recommend(
-							ObjectIdToLongId.getInstance().objectIDAsLong(
-									"user", user), n);
-			return recommendedItemsToMap(recommendedItems);
-		} catch (final NoSuchUserException noSuchUserException) {
-			// TODO: Log?
-			return null;
-		} catch (final TasteException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			return null;
-		}
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("MahoutRecommender [recommender=");
+		builder.append(recommender);
+		builder.append("]");
+		return builder.toString();
 	}
+	
+	
 
 }

@@ -18,9 +18,9 @@ package de.uniol.inf.is.odysseus.recommendation;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 
-import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
-import de.uniol.inf.is.odysseus.recommendation.learner.BaselinePredictionRecommendationLearnerProvider;
-import de.uniol.inf.is.odysseus.recommendation.learner.RecommendationLearnerProvider;
+import de.uniol.inf.is.odysseus.recommendation.learner.TupleBasedRecommendationLearnerProvider;
+import de.uniol.inf.is.odysseus.recommendation.learner.baseline_learner.BaselinePredictionRecommendationLearnerProvider;
+import de.uniol.inf.is.odysseus.recommendation.learner.debug_learner.DebugPredictionRecommendationLearnerProvider;
 import de.uniol.inf.is.odysseus.recommendation.registry.RecommendationLearnerRegistry;
 
 public class Activator implements BundleActivator {
@@ -33,17 +33,24 @@ public class Activator implements BundleActivator {
 
 	/*
 	 * (non-Javadoc)
-	 * @see org.osgi.framework.BundleActivator#start(org.osgi.framework.BundleContext)
+	 *
+	 * @see
+	 * org.osgi.framework.BundleActivator#start(org.osgi.framework.BundleContext
+	 * )
 	 */
 	@Override
 	public void start(final BundleContext bundleContext) throws Exception {
 		Activator.context = bundleContext;
-		bindRecommendationLearner(new BaselinePredictionRecommendationLearnerProvider<ITimeInterval>());
+		bindRecommendationLearner(new BaselinePredictionRecommendationLearnerProvider());
+		// bindRecommendationLearner(new BRISMFLearnerProvider<>());
+		bindRecommendationLearner(new DebugPredictionRecommendationLearnerProvider());
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * @see org.osgi.framework.BundleActivator#stop(org.osgi.framework.BundleContext)
+	 *
+	 * @see
+	 * org.osgi.framework.BundleActivator#stop(org.osgi.framework.BundleContext)
 	 */
 	@Override
 	public void stop(final BundleContext bundleContext) throws Exception {
@@ -51,13 +58,13 @@ public class Activator implements BundleActivator {
 	}
 
 	public void bindRecommendationLearner(
-			final RecommendationLearnerProvider<ITimeInterval> provider) {
+			final TupleBasedRecommendationLearnerProvider<?, ?, ?, ?, ?> provider) {
 		RecommendationLearnerRegistry.getInstance().addRecommendationLearner(
 				provider);
 	}
 
 	public void unbindRecommendationLearner(
-			final RecommendationLearnerProvider<ITimeInterval> provider) {
+			final TupleBasedRecommendationLearnerProvider<?, ?, ?, ?, ?> provider) {
 		RecommendationLearnerRegistry.getInstance()
 				.removeRecommendationLearner(provider);
 	}

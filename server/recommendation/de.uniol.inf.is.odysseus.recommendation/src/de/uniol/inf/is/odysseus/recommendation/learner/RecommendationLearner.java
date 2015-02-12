@@ -1,5 +1,5 @@
 /**
- * Copyright 2014 The Odysseus Team
+ * Copyright 2015 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,27 +15,45 @@
  */
 package de.uniol.inf.is.odysseus.recommendation.learner;
 
-import java.util.List;
-
-import de.uniol.inf.is.odysseus.core.collection.Tuple;
-import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
-import de.uniol.inf.is.odysseus.recommendation.recommender.Recommender;
+import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
+import de.uniol.inf.is.odysseus.machine_learning.learner.Learner;
+import de.uniol.inf.is.odysseus.recommendation.model.rating_predictor.RatingPredictor;
 
 /**
  * A {@code RecommendationLearner} learns a new model for a recommendation task.
- * 
+ *
  * @author Cornelius Ludmann
+ *
+ * @param <T>
+ *            Type of the learning data objects.
+ * @param <M>
+ *            Type of the metadata of the learning data objects.
+ * @param <U>
+ *            The type of the user identifier.
+ * @param <I>
+ *            The type of the item identifier.
+ * @param <P>
+ *            Type of the ratings/predictions.
  */
-public interface RecommendationLearner<M extends ITimeInterval> {
+public interface RecommendationLearner<T extends IStreamObject<M>, M extends IMetaAttribute, U, I, P>
+extends Learner<T, M, P> {
 
-	/**
-	 * Creates a recommender using the given tuples.
-	 * 
-	 * @param tuples
-	 *            The training set. Each tuple need to have a user, item and
-	 *            rating attribute.
-	 * @return A recommender.
+	/*
+	 * (non-Javadoc)
+	 *
+	 * @see de.uniol.inf.is.odysseus.machine_learning.learner.Learner#getModel()
 	 */
-	public Recommender createRecommender(List<Tuple<M>> tuples);
+	@Override
+	public RatingPredictor<T, M, U, I, P> getModel();
 
+	/*
+	 * (non-Javadoc)
+	 *
+	 * @see
+	 * de.uniol.inf.is.odysseus.machine_learning.learner.Learner#getModel(boolean
+	 * )
+	 */
+	@Override
+	public RatingPredictor<T, M, U, I, P> getModel(boolean train);
 }

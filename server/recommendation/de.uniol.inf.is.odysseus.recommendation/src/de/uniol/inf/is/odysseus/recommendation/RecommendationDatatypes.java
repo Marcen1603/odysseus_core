@@ -27,15 +27,22 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
  */
 public class RecommendationDatatypes implements IDatatypeProvider {
 
-	public static final SDFDatatype RECOMMENDER = new SDFDatatype("Recommender");
+	public static final SDFDatatype RATING_PREDICTOR = new SDFDatatype(
+			"RatingPredictor");
+	public static final SDFDatatype RECOMMENDATION_CANDIDATES = new SDFDatatype(
+			"RecommendationCandidates");
 
-	/* (non-Javadoc)
-	 * @see de.uniol.inf.is.odysseus.core.datatype.IDatatypeProvider#getDatatypes()
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * de.uniol.inf.is.odysseus.core.datatype.IDatatypeProvider#getDatatypes()
 	 */
 	@Override
 	public List<SDFDatatype> getDatatypes() {
 		final List<SDFDatatype> ret = new ArrayList<>();
-		ret.add(RECOMMENDER);
+		ret.add(RATING_PREDICTOR);
+		ret.add(RECOMMENDATION_CANDIDATES);
 		return ret;
 	}
 

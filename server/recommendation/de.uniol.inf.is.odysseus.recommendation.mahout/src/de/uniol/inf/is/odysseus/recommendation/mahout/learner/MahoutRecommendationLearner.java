@@ -16,9 +16,10 @@
 package de.uniol.inf.is.odysseus.recommendation.mahout.learner;
 
 import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.mahout.cf.taste.common.TasteException;
 import org.apache.mahout.cf.taste.impl.common.FastByIDMap;
@@ -56,19 +57,19 @@ import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
-import de.uniol.inf.is.odysseus.recommendation.learner.RecommendationLearner;
+import de.uniol.inf.is.odysseus.recommendation.learner.AbstractTupleBasedRecommendationLearner;
 import de.uniol.inf.is.odysseus.recommendation.mahout.recommender.MahoutRecommender;
-import de.uniol.inf.is.odysseus.recommendation.util.ObjectIdToLongId;
+import de.uniol.inf.is.odysseus.recommendation.model.rating_predictor.RatingPredictor;
 
 /**
  * @author Cornelius Ludmann
  * 
  */
-public class MahoutRecommendationLearner<M extends ITimeInterval> implements
-RecommendationLearner<M> {
+public class MahoutRecommendationLearner extends
+		AbstractTupleBasedRecommendationLearner<Tuple<ITimeInterval>, ITimeInterval, Long, Long, Double> {
 
 	/**
-	 * Possible recommender by Mahout (all of type {@link AbstractRecommender}).
+	 * Possible recommenders by Mahout (all of type {@link AbstractRecommender}).
 	 * 
 	 * @author Cornelius Ludmann
 	 */
@@ -129,11 +130,9 @@ RecommendationLearner<M> {
 
 	private static final String NUM_EMPOCHS = "num_empochs";
 
-	private int userAttributeIndex = -1;
-	private int itemAttributeIndex = -1;
-	private int ratingAttributeIndex = -1;
-
 	private Map<String, String> options;
+
+	private MahoutRecommender model;
 
 	/**
 	 * @param inputschema
@@ -151,47 +150,11 @@ RecommendationLearner<M> {
 			final SDFAttribute userAttribute, final SDFAttribute itemAttribute,
 			final SDFAttribute ratingAttribute,
 			final Map<String, String> options) {
-		this.userAttributeIndex = inputschema.indexOf(userAttribute);
-		this.itemAttributeIndex = inputschema.indexOf(itemAttribute);
-		this.ratingAttributeIndex = inputschema.indexOf(ratingAttribute);
+		super(inputschema, userAttribute, itemAttribute, ratingAttribute);
 		if (options == null) {
 			this.options = null;
 		} else {
 			this.options = new HashMap<String, String>(options);
-		}
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * de.uniol.inf.is.odysseus.recommendation.learner.RecommendationLearner
-	 * #createRecommender(java.util.List)
-	 */
-	@Override
-	public de.uniol.inf.is.odysseus.recommendation.recommender.Recommender createRecommender(
-			final List<Tuple<M>> tuples) {
-		if (userAttributeIndex == -1 || itemAttributeIndex == -1
-				|| ratingAttributeIndex == -1) {
-			throw new IllegalStateException(
-					"user, item, or rating attribute index is not set.");
-		}
-
-		if (tuples == null || tuples.size() == 0) {
-			return null;
-		}
-
-		try {
-
-			final DataModel dataModel = toDataModel(tuples);
-			final Recommender recommender = getRecommender(dataModel);
-			System.out.println("RECOMMENDER: " + recommender);
-			return new MahoutRecommender(recommender);
-
-		} catch (final TasteException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			throw new RuntimeException(e);
 		}
 	}
 
@@ -428,17 +391,17 @@ RecommendationLearner<M> {
 	 *            The tuples to convert.
 	 * @return The data model.
 	 */
-	private DataModel toDataModel(final List<Tuple<M>> tuples) {
+	private DataModel toDataModel(final Set<Tuple<ITimeInterval>> tuples) {
 
-		final Map<Object, List<Tuple<M>>> userItemMap = toUserPartition(tuples);
+		final Map<Long, Set<Tuple<ITimeInterval>>> userItemMap = toUserPartition(tuples);
 
 		final FastByIDMap<PreferenceArray> userdata = new FastByIDMap<PreferenceArray>(
 				userItemMap.size());
 		final FastByIDMap<FastByIDMap<Long>> timestamps = new FastByIDMap<FastByIDMap<Long>>(
 				userItemMap.size());
 
-		for (final Object user : userItemMap.keySet()) {
-			final List<Tuple<M>> userItems = userItemMap.get(user);
+		for (final long user : userItemMap.keySet()) {
+			final Set<Tuple<ITimeInterval>> userItems = userItemMap.get(user);
 
 			final PreferenceArray preferenceArray = new GenericUserPreferenceArray(
 					userItems.size());
@@ -446,55 +409,47 @@ RecommendationLearner<M> {
 					userItems.size());
 
 			int itemNo = 0;
-			for (final Tuple<M> tuple : userItems) {
-				assert user.equals(tuple.getAttribute(userAttributeIndex));
-				// assert user == tuple.getAttribute(userAttributeIndex);
-				final Object item = tuple.getAttribute(itemAttributeIndex);
-				final double rating = tuple.getAttribute(ratingAttributeIndex);
+			for (final Tuple<ITimeInterval> tuple : userItems) {
+				assert getUserInTuple(tuple).equals(user);
+				final long item = getItemInTuple(tuple);
+				final double rating = getRatingInTuple(tuple);
 				final long timestamp = tuple.getMetadata().getStart()
 						.getMainPoint();
 
-				preferenceArray.setUserID(itemNo, ObjectIdToLongId
-						.getInstance().objectIDAsLong("user", user));
-				preferenceArray.setItemID(itemNo, ObjectIdToLongId
-						.getInstance().objectIDAsLong("item", item));
+				preferenceArray.setUserID(itemNo, user);
+				preferenceArray.setItemID(itemNo, item);
 				preferenceArray.setValue(itemNo, (float) rating);
 
-				userTimestamps.put(ObjectIdToLongId.getInstance()
-						.objectIDAsLong("item", item), timestamp);
+				userTimestamps.put(item, timestamp);
 
 				++itemNo;
 			}
-			userdata.put(
-					ObjectIdToLongId.getInstance().objectIDAsLong("user", user),
-					preferenceArray);
-			timestamps
-			.put(ObjectIdToLongId.getInstance().objectIDAsLong("user",
-					user), userTimestamps);
+			userdata.put(user, preferenceArray);
+			timestamps.put(user, userTimestamps);
 		}
 
 		return new GenericDataModel(userdata, timestamps);
 	}
 
 	/**
-	 * This method partition the tuples by users.
+	 * This method partitions the tuples by users.
 	 * 
 	 * @param tuples
 	 *            The tuples to partitioned.
 	 * @return The partitioned tuples.
 	 */
-	private Map<Object, List<Tuple<M>>> toUserPartition(
-			final List<Tuple<M>> tuples) {
-		final Map<Object, List<Tuple<M>>> userItemMap = new HashMap<Object, List<Tuple<M>>>();
+	private Map<Long, Set<Tuple<ITimeInterval>>> toUserPartition(
+			final Set<Tuple<ITimeInterval>> tuples) {
+		final Map<Long, Set<Tuple<ITimeInterval>>> userItemMap = new LinkedHashMap<Long, Set<Tuple<ITimeInterval>>>();
 
-		for (final Tuple<M> tuple : tuples) {
-			final Object user = tuple.getAttribute(userAttributeIndex);
+		for (final Tuple<ITimeInterval> tuple : tuples) {
+			final long user = getUserInTuple(tuple);
 
-			List<Tuple<M>> tuplesOfUser;
+			Set<Tuple<ITimeInterval>> tuplesOfUser;
 			if (userItemMap.containsKey(user)) {
 				tuplesOfUser = userItemMap.get(user);
 			} else {
-				tuplesOfUser = new LinkedList<Tuple<M>>();
+				tuplesOfUser = new LinkedHashSet<Tuple<ITimeInterval>>();
 			}
 			tuplesOfUser.add(tuple);
 
@@ -502,6 +457,46 @@ RecommendationLearner<M> {
 		}
 
 		return userItemMap;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * de.uniol.inf.is.odysseus.recommendation.learner.RecommendationLearner
+	 * #getModel(boolean)
+	 */
+	@Override
+	public RatingPredictor<Tuple<ITimeInterval>, ITimeInterval, Long, Long, Double> getModel(
+			boolean train) {
+		if (train && !isTrained()) {
+			trainModel();
+		}
+		return model;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * de.uniol.inf.is.odysseus.machine_learning.learner.Learner#trainModel()
+	 */
+	@Override
+	public void trainModel() {
+		try {
+
+			final DataModel dataModel = toDataModel(learningData);
+			final Recommender recommender = getRecommender(dataModel);
+			System.out.println("RATING_PREDICTOR: " + recommender);
+			model = new MahoutRecommender(recommender);
+			isModelUpToDate = true;
+
+		} catch (final TasteException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			throw new RuntimeException(e);
+		}
+
 	}
 
 }

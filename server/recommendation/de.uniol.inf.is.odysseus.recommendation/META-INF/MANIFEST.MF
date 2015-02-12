@@ -5,8 +5,7 @@ Bundle-SymbolicName: de.uniol.inf.is.odysseus.recommendation
 Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: de.uniol.inf.is.odysseus.recommendation.Activator
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
-Import-Package: de.uniol.inf.is.odysseus.cep.epa.exceptions,
- de.uniol.inf.is.odysseus.intervalapproach.sweeparea,
+Import-Package: de.uniol.inf.is.odysseus.intervalapproach.sweeparea,
  de.uniol.inf.is.odysseus.ruleengine.rule,
  de.uniol.inf.is.odysseus.ruleengine.ruleflow,
  de.uniol.inf.is.odysseus.server.intervalapproach,
@@ -17,24 +16,41 @@ Import-Package: de.uniol.inf.is.odysseus.cep.epa.exceptions,
  org.slf4j
 Require-Bundle: de.uniol.inf.is.odysseus.core;bundle-version="1.0.0",
  de.uniol.inf.is.odysseus.core.server;bundle-version="1.0.0",
- com.google.guava;bundle-version="12.0.0"
+ com.google.guava;bundle-version="12.0.0",
+ de.uniol.inf.is.odysseus.mep,
+ de.uniol.inf.is.odysseus.relational.base
 Service-Component: OSGI-INF/RecommendationRuleService.xml,OSGI-INF/Datatypes.xml, OSGI-INF/RecommendationLearnerRegistry.xml
-Export-Package: de.uniol.inf.is.odysseus.recommendation;uses:="org.osgi.framework,de.uniol.inf.is.odysseus.recommendation.learner",
- de.uniol.inf.is.odysseus.recommendation.learner;uses:="de.uniol.inf.is.odysseus.core.sdf.schema,de.uniol.inf.is.odysseus.recommendation.recommender,org.slf4j",
- de.uniol.inf.is.odysseus.recommendation.logicaloperator;uses:="de.uniol.inf.is.odysseus.core.server.logicaloperator,de.uniol.inf.is.odysseus.core.sdf.schema",
+Export-Package: de.uniol.inf.is.odysseus.machine_learning.learner;uses:="de.uniol.inf.is.odysseus.machine_learning.model",
+ de.uniol.inf.is.odysseus.machine_learning.model,
+ de.uniol.inf.is.odysseus.recommendation;
+  uses:="de.uniol.inf.is.odysseus.core.datatype,
+   de.uniol.inf.is.odysseus.core.sdf.schema,
+   org.osgi.framework,
+   de.uniol.inf.is.odysseus.recommendation.learner",
+ de.uniol.inf.is.odysseus.recommendation.learner;
+  uses:="de.uniol.inf.is.odysseus.core.sdf.schema,
+   de.uniol.inf.is.odysseus.recommendation.physicaloperator,
+   de.uniol.inf.is.odysseus.machine_learning.learner,
+   de.uniol.inf.is.odysseus.recommendation.model.rating_predictor",
+ de.uniol.inf.is.odysseus.recommendation.logicaloperator;uses:="de.uniol.inf.is.odysseus.core.server.logicaloperator,de.uniol.inf.is.odysseus.core.sdf.schema,de.uniol.inf.is.odysseus.core.server.logicaloperator.builder",
+ de.uniol.inf.is.odysseus.recommendation.model.rating_predictor;uses:="de.uniol.inf.is.odysseus.core.sdf.schema,de.uniol.inf.is.odysseus.machine_learning.model",
+ de.uniol.inf.is.odysseus.recommendation.model.recommendation_candidates_model.builder;uses:="de.uniol.inf.is.odysseus.core.collection,de.uniol.inf.is.odysseus.core.sdf.schema,de.uniol.inf.is.odysseus.recommendation.model.recommendation_candidates_model",
  de.uniol.inf.is.odysseus.recommendation.physicaloperator;
-  uses:="de.uniol.inf.is.odysseus.core.collection,
-   de.uniol.inf.is.odysseus.core.metadata,
+  uses:="de.uniol.inf.is.odysseus.recommendation.model.recommendation_candidates_model.builder,
+   de.uniol.inf.is.odysseus.core.collection,
+   de.uniol.inf.is.odysseus.recommendation.util,
+   de.uniol.inf.is.odysseus.core.server.logicaloperator.builder,
    de.uniol.inf.is.odysseus.core.server.physicaloperator,
    org.slf4j,
    de.uniol.inf.is.odysseus.recommendation.learner,
    de.uniol.inf.is.odysseus.core.physicaloperator",
- de.uniol.inf.is.odysseus.recommendation.recommender;uses:="org.slf4j",
  de.uniol.inf.is.odysseus.recommendation.transform;
-  uses:="de.uniol.inf.is.odysseus.transform.rule,
+  uses:="de.uniol.inf.is.odysseus.core.sdf.schema,
+   de.uniol.inf.is.odysseus.core.server.logicaloperator,
+   de.uniol.inf.is.odysseus.transform.rule,
    de.uniol.inf.is.odysseus.ruleengine.rule,
    de.uniol.inf.is.odysseus.core.server.planmanagement,
    de.uniol.inf.is.odysseus.recommendation.logicaloperator,
    de.uniol.inf.is.odysseus.ruleengine.ruleflow",
- de.uniol.inf.is.odysseus.recommendation.util
+ de.uniol.inf.is.odysseus.recommendation.util;uses:="de.uniol.inf.is.odysseus.core.collection"
 Bundle-ClassPath: .

@@ -22,23 +22,23 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
-import de.uniol.inf.is.odysseus.recommendation.learner.BaselinePredictionRecommendationLearner;
 import de.uniol.inf.is.odysseus.recommendation.learner.RecommendationLearner;
-import de.uniol.inf.is.odysseus.recommendation.learner.RecommendationLearnerProvider;
+import de.uniol.inf.is.odysseus.recommendation.learner.TupleBasedRecommendationLearnerProvider;
+import de.uniol.inf.is.odysseus.recommendation.learner.baseline_learner.BaselinePredictionRecommendationLearner;
+import de.uniol.inf.is.odysseus.recommendation.physicaloperator.TrainRecSysModelPO;
 
 /**
  * This class register all recommendation learner.
- * 
+ *
  * @author Cornelius Ludmann
- * 
+ *
  */
-public class RecommendationLearnerRegistry<T extends ITimeInterval> {
-	private static RecommendationLearnerRegistry<? extends ITimeInterval> INSTANCE = null;
+public class RecommendationLearnerRegistry {
+	private static RecommendationLearnerRegistry INSTANCE = null;
 
-	private final Set<RecommendationLearnerProvider<T>> recommendationLearner = new HashSet<RecommendationLearnerProvider<T>>();
+	private final Set<TupleBasedRecommendationLearnerProvider<?, ?, ?, ?, ?>> learnerProvider = new HashSet<TupleBasedRecommendationLearnerProvider<?, ?, ?, ?, ?>>();
 
 	/**
 	 * Singleton.
@@ -46,60 +46,62 @@ public class RecommendationLearnerRegistry<T extends ITimeInterval> {
 	private RecommendationLearnerRegistry() {
 	}
 
-
 	/**
 	 * Returns the instance of the registry.
-	 * 
+	 *
+	 * @return
+	 *
 	 * @return the instance of the registry.
 	 */
-	@SuppressWarnings("unchecked")
-	public static synchronized <T extends ITimeInterval> RecommendationLearnerRegistry<T> getInstance() {
+	public static synchronized RecommendationLearnerRegistry getInstance() {
 		if (INSTANCE == null) {
-			INSTANCE = new RecommendationLearnerRegistry<T>();
+			INSTANCE = new RecommendationLearnerRegistry();
 		}
 
-		return (RecommendationLearnerRegistry<T>) INSTANCE;
+		return INSTANCE;
 	}
 
 	/**
 	 * Adds a recommendation learner to the registry.
-	 * 
+	 *
 	 * @param learner
 	 *            The recommendation learner to add.
 	 */
-	public void addRecommendationLearner(final RecommendationLearnerProvider<T> learner) {
-		recommendationLearner.add(learner);
+	public void addRecommendationLearner(
+			final TupleBasedRecommendationLearnerProvider<?, ?, ?, ?, ?> learner) {
+		this.learnerProvider.add(learner);
 	}
 
 	/**
 	 * Removes a recommendation learner to the registry. Nothing happens if the
 	 * recommendation learner does not exist.
-	 * 
+	 *
 	 * @param learner
 	 *            The learner to remove.
 	 */
 	public void removeRecommendationLearner(
-			final RecommendationLearnerProvider<ITimeInterval> learner) {
-		recommendationLearner.remove(learner);
+			final TupleBasedRecommendationLearnerProvider<?, ?, ?, ?, ?> learner) {
+		this.learnerProvider.remove(learner);
 
 	}
 
 	/**
 	 * Creates an instance of the recommendation learner by the given name.
-	 * 
+	 *
 	 * @param name
 	 *            The name of the recommendation learner.
 	 * @return The instance of the recommendation learner or {@code null} if no
 	 *         recommendation learner with the given name exists.
 	 */
-	public RecommendationLearner<T> createRecommendationLearner(
-			final String name,final SDFSchema inputschema,
+	public RecommendationLearner<?, ?, ?, ?, ?> createRecommendationLearner(
+			final String name, final SDFSchema inputschema,
 			final SDFAttribute userAttribute, final SDFAttribute itemAttribute,
-			final SDFAttribute ratingAttribute, final Map<String, String> options) {
-		for (final RecommendationLearnerProvider<T> learner : recommendationLearner) {
-			if (learner.getLearnerName().equalsIgnoreCase(name)) {
-				return learner.newInstanceOfLearner(inputschema, userAttribute,
-						itemAttribute, ratingAttribute, options);
+			final SDFAttribute ratingAttribute,
+			final Map<String, String> options) {
+		for (final TupleBasedRecommendationLearnerProvider<?, ?, ?, ?, ?> provider : this.learnerProvider) {
+			if (provider.getLearnerName().equalsIgnoreCase(name)) {
+				return provider.newInstanceOfLearner(inputschema,
+						userAttribute, itemAttribute, ratingAttribute, options);
 			}
 		}
 		return null;
@@ -110,15 +112,20 @@ public class RecommendationLearnerRegistry<T extends ITimeInterval> {
 	 */
 	public List<String> getLearnerList() {
 		final List<String> names = new ArrayList<String>();
-		for (final RecommendationLearnerProvider<?> learner : recommendationLearner) {
-			names.add(learner.getLearnerName());
+		for (final TupleBasedRecommendationLearnerProvider<?, ?, ?, ?, ?> provider : this.learnerProvider) {
+			names.add(provider.getLearnerName());
 		}
 		return names;
 	}
 
 	/**
+	 *
+	 * TODO
+	 *
 	 * @param learner
 	 * @return
+	 *
+	 *
 	 */
 	public Map<String, String> getPossibleOptions(final String learner) {
 		if (learner
@@ -130,6 +137,31 @@ public class RecommendationLearnerRegistry<T extends ITimeInterval> {
 			ret.put("abc", "def");
 			return ret;
 		}
+	}
+
+	/**
+	 * @param learner
+	 * @param inputSchema
+	 * @param userAttribute
+	 * @param itemAttribute
+	 * @param ratingAttribute
+	 * @param options
+	 * @param outputRecomCandObj
+	 * @return
+	 */
+	public TrainRecSysModelPO<?, ?, ?, ?> createTrainRecSysModelPO(
+			final String name, final SDFSchema inputschema,
+			final SDFAttribute userAttribute, final SDFAttribute itemAttribute,
+			final SDFAttribute ratingAttribute,
+			final Map<String, String> options, final boolean outputRecomCandObj) {
+		for (final TupleBasedRecommendationLearnerProvider<?, ?, ?, ?, ?> provider : this.learnerProvider) {
+			if (provider.getLearnerName().equalsIgnoreCase(name)) {
+				return provider.newInstanceOfTrainRecSysModelPO(inputschema,
+						userAttribute, itemAttribute, ratingAttribute, options,
+						outputRecomCandObj);
+			}
+		}
+		return null;
 	}
 
 }

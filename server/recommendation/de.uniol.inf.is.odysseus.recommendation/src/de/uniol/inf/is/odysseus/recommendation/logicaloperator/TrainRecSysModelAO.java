@@ -1,5 +1,5 @@
 /**********************************************************************************
- * Copyright 2014 The Odysseus Team
+ * Copyright 2015 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,40 +26,61 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.BooleanParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.ResolvedSDFAttributeParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
+import de.uniol.inf.is.odysseus.recommendation.RecommendationDatatypes;
+import de.uniol.inf.is.odysseus.recommendation.learner.baseline_learner.BaselinePredictionRecommendationLearner;
 import de.uniol.inf.is.odysseus.recommendation.registry.RecommendationLearnerRegistry;
+import de.uniol.inf.is.odysseus.recommendation.transform.FindAttributeHelper;
 
 /**
- * This is the logical operator for creating a new recommender.
- * 
+ * This is the logical operator for creating a new or update a previous
+ * recommender model.
+ *
  * @author Cornelius Ludmann
  */
-@LogicalOperator(name = "RECOMMENDATION_LEARN", minInputPorts = 1, maxInputPorts = 1, category = { LogicalOperatorCategory.MINING }, doc = "This operator learns a recommendation model. The result is a stream of recommendation models.")
-public class RecommendationLearnAO extends AbstractLogicalOperator {
+@LogicalOperator(name = "TRAIN_RECSYS_MODEL", minInputPorts = 1, maxInputPorts = 1, category = { LogicalOperatorCategory.MINING }, doc = "This operator learns a recommendation model. The result is a stream of recommendation models.")
+public class TrainRecSysModelAO extends AbstractLogicalOperator {
 
 	private static final long serialVersionUID = -8415363040870119369L;
 
 	/**
+	 * Default parameters.
+	 */
+	public static final String DEFAULT_USER_ATTRIBUTE_NAME = "user";
+	public static final String DEFAULT_ITEM_ATTRIBUTE_NAME = "item";
+	public static final String DEFAULT_RATING_ATTRIBUTE_NAME = "rating";
+	public static final String DEFAULT_LEARNER_NAME = BaselinePredictionRecommendationLearner.NAME;
+
+	/**
+	 * Output attribute names.
+	 */
+	public static final String MODEL_ATTRIBUTE_NAME = "model";
+	public static final String RATED_ITEMS_INFO_ATTRIBUTE_NAME = "rated_items_info";
+
+	/**
 	 * The ID of the learner. (configuration parameter)
 	 */
-	private String learner;
+	private String learner = DEFAULT_LEARNER_NAME;
 
 	/**
 	 * These attributes store the user, item and rating.
 	 */
 	private SDFAttribute userAttribute, itemAttribute, ratingAttribute;
 
+	private boolean outputUsedItems = true;
+
 	private Map<String, String> options;
 
 	/**
 	 * Default constructor.
 	 */
-	public RecommendationLearnAO() {
+	public TrainRecSysModelAO() {
 		super();
 	}
 
-	public RecommendationLearnAO(final RecommendationLearnAO op) {
+	public TrainRecSysModelAO(final TrainRecSysModelAO op) {
 		super(op);
 		this.learner = op.learner;
 		this.userAttribute = op.userAttribute;
@@ -72,21 +93,21 @@ public class RecommendationLearnAO extends AbstractLogicalOperator {
 	 * @return the learner
 	 */
 	public String getLearner() {
-		return learner;
+		return this.learner;
 	}
 
 	/**
 	 * @param learner
 	 *            the learner to set
 	 */
-	@Parameter(name = "learner", type = StringParameter.class, possibleValues = "getLearnerValues", doc = "The name of the learner that should be used.")
+	@Parameter(name = "learner", type = StringParameter.class, possibleValues = "getLearnerValues", doc = "The name of the learner that should be used.", optional = true)
 	public void setLearner(final String learner) {
 		this.learner = learner;
 	}
 
 	/**
 	 * Returns a list of all registered learners.
-	 * 
+	 *
 	 * @return A list of all registered learners.
 	 */
 	public List<String> getLearnerValues() {
@@ -97,14 +118,18 @@ public class RecommendationLearnAO extends AbstractLogicalOperator {
 	 * @return the userAttribute
 	 */
 	public SDFAttribute getUserAttribute() {
-		return userAttribute;
+		if (this.userAttribute == null) {
+			this.userAttribute = FindAttributeHelper.findAttributeByName(this,
+					DEFAULT_USER_ATTRIBUTE_NAME);
+		}
+		return this.userAttribute;
 	}
 
 	/**
 	 * @param userAttribute
 	 *            the userAttribute to set
 	 */
-	@Parameter(name = "user", type = ResolvedSDFAttributeParameter.class, doc = "The attribute with the user IDs.")
+	@Parameter(name = "user", type = ResolvedSDFAttributeParameter.class, doc = "The attribute with the user IDs.", optional = true)
 	public void setUserAttribute(final SDFAttribute userAttribute) {
 		this.userAttribute = userAttribute;
 	}
@@ -113,30 +138,54 @@ public class RecommendationLearnAO extends AbstractLogicalOperator {
 	 * @return the itemAttribute
 	 */
 	public SDFAttribute getItemAttribute() {
-		return itemAttribute;
+		if (this.itemAttribute == null) {
+			this.itemAttribute = FindAttributeHelper.findAttributeByName(this,
+					DEFAULT_ITEM_ATTRIBUTE_NAME);
+		}
+		return this.itemAttribute;
 	}
 
 	/**
 	 * @param itemAttribute
 	 *            the itemAttribute to set
 	 */
-	@Parameter(name = "item", type = ResolvedSDFAttributeParameter.class, doc = "The attribute with the item IDs.")
+	@Parameter(name = "item", type = ResolvedSDFAttributeParameter.class, doc = "The attribute with the item IDs.", optional = true)
 	public void setItemAttribute(final SDFAttribute itemAttribute) {
 		this.itemAttribute = itemAttribute;
+	}
+
+	/**
+	 * @return outputUsedItems
+	 */
+	public boolean getOutputUsedItems() {
+		return this.outputUsedItems;
+	}
+
+	/**
+	 * @param outputUsedItems
+	 *            outputUsedItems to set
+	 */
+	@Parameter(name = "output_used_items", type = BooleanParameter.class, doc = "true, if the learner should output a list of used items.", optional = true)
+	public void setOutputUsedItems(final boolean outputUsedItems) {
+		this.outputUsedItems = outputUsedItems;
 	}
 
 	/**
 	 * @return the ratingAttribute
 	 */
 	public SDFAttribute getRatingAttribute() {
-		return ratingAttribute;
+		if (this.ratingAttribute == null) {
+			this.ratingAttribute = FindAttributeHelper.findAttributeByName(
+					this, DEFAULT_RATING_ATTRIBUTE_NAME);
+		}
+		return this.ratingAttribute;
 	}
 
 	/**
 	 * @param ratingAttribute
 	 *            the ratingAttribute to set
 	 */
-	@Parameter(name = "rating", type = ResolvedSDFAttributeParameter.class, doc = "The attribute with the rating IDs.")
+	@Parameter(name = "rating", type = ResolvedSDFAttributeParameter.class, doc = "The attribute with the rating IDs.", optional = true)
 	public void setRatingAttribute(final SDFAttribute ratingAttribute) {
 		this.ratingAttribute = ratingAttribute;
 	}
@@ -148,9 +197,9 @@ public class RecommendationLearnAO extends AbstractLogicalOperator {
 
 	/**
 	 * Returns a list of possible option values.
-	 * 
+	 *
 	 * TODO: possible values for map does not work
-	 * 
+	 *
 	 * @return
 	 */
 	public Map<String, String> getOptionValues() {
@@ -160,7 +209,7 @@ public class RecommendationLearnAO extends AbstractLogicalOperator {
 
 	/**
 	 * Returns the options.
-	 * 
+	 *
 	 * @return the options.
 	 */
 	public Map<String, String> getOptions() {
@@ -184,13 +233,32 @@ public class RecommendationLearnAO extends AbstractLogicalOperator {
 	// }
 
 	@Override
-	protected SDFSchema getOutputSchemaIntern(final int pos) {
-		final List<SDFAttribute> attributes = new ArrayList<SDFAttribute>();
-		final SDFAttribute recommender = new SDFAttribute(null, "recommender",
-				new SDFDatatype("Recommender"), null, null, null);
-		attributes.add(recommender);
-		final SDFSchema outSchema = new SDFSchema(getInputSchema(0), attributes);
-		return outSchema;
+	protected SDFSchema getOutputSchemaIntern(final int port) {
+		if (port == 0) {
+			final List<SDFAttribute> attributes = new ArrayList<SDFAttribute>();
+			// final SDFAttribute model = new SDFAttribute(null, "model",
+			// new SDFDatatype("RatingPredictor"), null, null, null);
+			final SDFAttribute model = new SDFAttribute(null,
+					MODEL_ATTRIBUTE_NAME, new SDFDatatype("RatingPredictor"),
+					null, null, null);
+			attributes.add(model);
+			final SDFSchema outSchema = new SDFSchema(getInputSchema(0),
+					attributes);
+			return outSchema;
+		} else {
+			if (getOutputUsedItems()) {
+				final List<SDFAttribute> attributes = new ArrayList<SDFAttribute>();
+				final SDFAttribute usedItemsMap = new SDFAttribute(null,
+						RATED_ITEMS_INFO_ATTRIBUTE_NAME,
+						RecommendationDatatypes.RECOMMENDATION_CANDIDATES,
+						null, null, null);
+				attributes.add(usedItemsMap);
+				final SDFSchema outSchema = new SDFSchema(getInputSchema(0),
+						attributes);
+				return outSchema;
+			}
+		}
+		return null;
 	}
 
 	/*
@@ -202,7 +270,7 @@ public class RecommendationLearnAO extends AbstractLogicalOperator {
 	 */
 	@Override
 	public AbstractLogicalOperator clone() {
-		return new RecommendationLearnAO(this);
+		return new TrainRecSysModelAO(this);
 	}
 
 }

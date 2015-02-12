@@ -31,8 +31,14 @@ public class RecommendationRuleProvider implements IRecommendationRuleProvider {
 	@Override
 	public List<IRule<?, ?>> getRules() {
 		final List<IRule<?, ?>> rules = new ArrayList<IRule<?,?>>();
-		rules.add(new TRecommendationAORule());
-		rules.add(new TRecommendationLearnAORule());
+		//rules.add(new SRecommendationCandidatesAORule());
+		rules.add(new TPredictRatingAORule());
+		rules.add(new TTrainRecSysModelAORule());
+		rules.add(new TRecommendAORule());
+		rules.add(new TRecommendationCandidatesAORule());
+		rules.add(new TSplitLearningTestDataAORule());
+		rules.add(new TTestPredictionAORule());
+		rules.add(new TTrainRecSysModelAORule());
 		return rules;
 	}
 
