@@ -13,6 +13,15 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.peer.ddc.MissingDDCEntryException;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.ddcaccess.AbstractSportsDDCAccess;
 
+/**
+ * An operator for a heatmap. Needs three inputs
+ * (0) entityId
+ * (1) xValue (position of the entity)
+ * (2) yValue (position of the entity)
+ * @author Tobias Brandt
+ *
+ * @param <T>
+ */
 @SuppressWarnings("rawtypes")
 public class SportsHeatMapPO<T extends Tuple<?>> extends AbstractPipe<T, Tuple> {
 
@@ -30,10 +39,19 @@ public class SportsHeatMapPO<T extends Tuple<?>> extends AbstractPipe<T, Tuple> 
 	int reduceSendLoadCounter = 0;
 	int reduceLoadFacor = 1000;
 
+	/**
+	 * Creates a SportsHeatMapPO with standard-Values.
+	 */
 	public SportsHeatMapPO() {
 		initialize();
 	}
 
+	/**
+	 * 
+	 * @param reduceLoadFactor The factor by which the load is reduced. If "1000", the map is only send every 1000 tuples of input
+	 * @param numTilesHorizontal The number of tiles used horizontal
+	 * @param numTilesVertical The number of tiles used vertical
+	 */
 	public SportsHeatMapPO(int reduceLoadFactor, int numTilesHorizontal, int numTilesVertical) {
 		this.reduceLoadFacor = reduceLoadFactor;
 		this.numTilesX = numTilesHorizontal;
@@ -41,6 +59,9 @@ public class SportsHeatMapPO<T extends Tuple<?>> extends AbstractPipe<T, Tuple> 
 		initialize();
 	}
 
+	/**
+	 * Gets the gamefield-size fromt the ddc
+	 */
 	private void initialize() {
 		try {
 			minX = (int) AbstractSportsDDCAccess.getFieldXMin();
@@ -71,8 +92,8 @@ public class SportsHeatMapPO<T extends Tuple<?>> extends AbstractPipe<T, Tuple> 
 		double xValue = object.getAttribute(1);
 		double yValue = object.getAttribute(2);
 
-		int newX = (int) (xValue + Math.abs(minX));
-		int newY = (int) (yValue + Math.abs(minY));
+		int newX = (int) (xValue - minX);
+		int newY = (int) (yValue - minY);
 
 		int xArray = (int) (newX / pixelsPerSquareHorizontal);
 		int yArray = (int) (newY / pixelsPerSquareVertical);
