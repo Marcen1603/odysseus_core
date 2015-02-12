@@ -1474,7 +1474,7 @@ public class OperatorBuildHelper {
 	 *            Name of source
 	 * @return
 	 */
-	public static AccessAO createAccessAO(ISession session, String sourcename) {
+	private static AccessAO createAccessAO(ISession session, String sourcename) {
 		// We need the dataDictionary for this parameter
 		IDataDictionary dataDict = OperatorBuildHelper.getDataDictionary();
 

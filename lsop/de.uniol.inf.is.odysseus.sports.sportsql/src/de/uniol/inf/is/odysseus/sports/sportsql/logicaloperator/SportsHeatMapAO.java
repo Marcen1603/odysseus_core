@@ -10,6 +10,11 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 
+/**
+ * An operator for a heatmap.
+ * @author Tobias Brandt
+ *
+ */
 @LogicalOperator(name = "HEATMAP", minInputPorts = 1, maxInputPorts = 1, doc = "This operator creates a value array for heatmaps", category = { LogicalOperatorCategory.ADVANCED })
 public class SportsHeatMapAO extends AbstractLogicalOperator {
 

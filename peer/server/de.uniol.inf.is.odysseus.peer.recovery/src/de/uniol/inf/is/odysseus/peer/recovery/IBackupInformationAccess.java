@@ -46,6 +46,16 @@ public interface IBackupInformationAccess {
 			boolean master, String masterId);
 
 	/**
+	 * Adds information about a socket connection for that query.
+	 * 
+	 * @param queryId
+	 *            The id of the query for which this socket is there
+	 * @param clientIp
+	 *            The client ip address
+	 */
+	public void addSocketInfoForQuery(int queryId, String clientIp);
+
+	/**
 	 * Removes a backup-information for this peer by the query id.
 	 * 
 	 * @param queryId
@@ -66,7 +76,7 @@ public interface IBackupInformationAccess {
 	/**
 	 * Updates the backup-information of JxtaSender or JxtaReceiver with that pipeId. Replaces the old (failed) peer id
 	 * with the one from this peer. This is necessary for the case that a JxtaSender - JxtaReceiper-pair was on the
-	 * same, failed peer. It wouldn't be possible to install the JxtaReceiver with a peerId which is not reachable. 
+	 * same, failed peer. It wouldn't be possible to install the JxtaReceiver with a peerId which is not reachable.
 	 * 
 	 * @param pipeId
 	 * @param iHaveSender

@@ -40,4 +40,5 @@ Import-Package: com.fasterxml.jackson.dataformat.yaml.snakeyaml.external.biz.bas
  de.uniol.inf.is.odysseus.peer.ddc.distribute.advertisement,
  de.uniol.inf.is.odysseus.peer.ddc.distribute.advertisement.sender,
  de.uniol.inf.is.odysseus.peer.resource,
+ de.uniol.inf.is.odysseus.rest.socket,
  org.eclipse.osgi.framework.console;version="1.1.0"

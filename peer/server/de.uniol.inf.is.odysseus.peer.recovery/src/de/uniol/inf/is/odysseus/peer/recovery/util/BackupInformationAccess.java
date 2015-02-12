@@ -110,6 +110,39 @@ public class BackupInformationAccess implements IBackupInformationAccess {
 		DDCKey key = getKeyForPeerId(peerId);
 		saveToDDC(infoMap, key);
 	}
+	
+	@Override
+	public void updateBackupInfoForPipe(String failedPeer, String pipeId) {
+		String localPeerId = p2pNetworkManager.getLocalPeerID().toString();
+
+		HashMap<Integer, BackupInfo> infoMap = getBackupInformation(failedPeer);
+
+		for (int key : infoMap.keySet()) {
+			BackupInfo info = infoMap.get(key);
+			// Check, if the pipeId is in the PQL. If it's the case, replace the old peerId (from the failed peer) with
+			// our peerId
+			if (info.pql.contains(pipeId) && info.pql.contains(failedPeer)) {
+				LOG.debug("Replaced peerId {} in Backup-Store.", failedPeer);
+				info.pql = info.pql.replaceAll(failedPeer, localPeerId);
+				
+				// Save it to the DDC
+				DDCKey ddcKey = getKeyForPeerId(failedPeer);
+				saveToDDC(infoMap, ddcKey);
+			}
+		}
+	}
+	
+	@Override
+	public void addSocketInfoForQuery(int queryId, String clientIp) {
+		String localPeerId = p2pNetworkManager.getLocalPeerID().toString();
+		HashMap<Integer, BackupInfo> backupInfo = getBackupInformation();
+		BackupInfo info = backupInfo.get(queryId);
+		if (info != null) {
+			info.socketIP = clientIp;
+			DDCKey ddcKey = getKeyForPeerId(localPeerId);
+			saveToDDC(backupInfo, ddcKey);
+		}
+	}
 
 	@Override
 	public void removeBackupInformation(int queryId) {
@@ -138,27 +171,6 @@ public class BackupInformationAccess implements IBackupInformationAccess {
 		} else {
 			// We still have information about this peer -> keep it, save it
 			saveToDDC(infoMap, key);
-		}
-	}
-
-	@Override
-	public void updateBackupInfoForPipe(String failedPeer, String pipeId) {
-		String localPeerId = p2pNetworkManager.getLocalPeerID().toString();
-
-		HashMap<Integer, BackupInfo> infoMap = getBackupInformation(failedPeer);
-
-		for (int key : infoMap.keySet()) {
-			BackupInfo info = infoMap.get(key);
-			// Check, if the pipeId is in the PQL. If it's the case, replace the old peerId (from the failed peer) with
-			// our peerId
-			if (info.pql.contains(pipeId) && info.pql.contains(failedPeer)) {
-				LOG.debug("Replaced peerId {} in Backup-Store.", failedPeer);
-				info.pql = info.pql.replaceAll(failedPeer, localPeerId);
-				
-				// Save it to the DDC
-				DDCKey ddcKey = getKeyForPeerId(failedPeer);
-				saveToDDC(infoMap, ddcKey);
-			}
 		}
 	}
 
