@@ -75,46 +75,44 @@ bool BaslerCamera::grabRGB8(void *buffer, long size, unsigned int timeOutMs)
 	bufferSize = imageWidth*imageHeight*4;
 
 	if (size < bufferSize) return false;
+	if (buffer == NULL) return false;
 
-	if (buffer != NULL)
+	CImageFormatConverter converter;
+	if (supportsRGBAConversion)
 	{
-		CImageFormatConverter converter;
-		if (supportsRGBAConversion)
+		converter.OutputPixelFormat = PixelType_RGBA8packed;
+		converter.OutputBitAlignment = OutputBitAlignment_LsbAligned; // OutputBitAlignment_MsbAligned;
+		converter.OutputPaddingX = 0;
+		converter.Convert(buffer, size, result);
+	}
+	else
+	{
+		CPylonImage image;
+		converter.OutputPixelFormat = PixelType_RGB8packed;
+		converter.OutputBitAlignment = OutputBitAlignment_MsbAligned;
+		converter.OutputPaddingX = 0;
+		converter.Convert(image, result);
+
+		int bytesLeft = image.GetImageSize();//bufferSize;				
+
+		struct Pixel
 		{
-			converter.OutputPixelFormat = PixelType_RGBA8packed;
-			converter.OutputBitAlignment = OutputBitAlignment_LsbAligned; // OutputBitAlignment_MsbAligned;
-			converter.OutputPaddingX = 0;
-			converter.Convert(buffer, size, result);
-		}
-		else
+			BYTE r, g, b;
+		};
+
+		Pixel* inBuffer = (Pixel*)image.GetBuffer();
+		DWORD* outBuffer = (DWORD*)buffer;
+
+		while (bytesLeft > 0)
 		{
-			CPylonImage image;
-			converter.OutputPixelFormat = PixelType_RGB8packed;
-			converter.OutputBitAlignment = OutputBitAlignment_MsbAligned;
-			converter.OutputPaddingX = 0;
-			converter.Convert(image, result);
+			Pixel* cur = inBuffer++;
 
-			int bytesLeft = image.GetImageSize();//bufferSize;				
+			DWORD curDWORD = *((DWORD*)cur);
+			curDWORD |= 0xFF000000;
 
-			struct Pixel
-			{
-				BYTE r, g, b;
-			};
+			*(outBuffer++) = _byteswap_ulong(curDWORD);
 
-			Pixel* inBuffer = (Pixel*)image.GetBuffer();
-			DWORD* outBuffer = (DWORD*)buffer;
-
-			while (bytesLeft > 0)
-			{
-				Pixel* cur = inBuffer++;
-
-				DWORD curDWORD = *((DWORD*)cur);
-				curDWORD |= 0xFF000000;
-
-				*(outBuffer++) = _byteswap_ulong(curDWORD);
-
-				bytesLeft -= 3;
-			}
+			bytesLeft -= 3;
 		}
 	}
 

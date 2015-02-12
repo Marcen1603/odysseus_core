@@ -96,6 +96,7 @@ class IPCThread
 {
 	std::string errorStr;
 	volatile bool running, error;
+
 	HANDLE threadHandle;
 	OptrisCamera* camera;
 	string instanceName;
