@@ -12,8 +12,8 @@ import de.uniol.inf.is.odysseus.peer.distribute.QueryPartAllocationException;
 import de.uniol.inf.is.odysseus.peer.recovery.internal.RecoveryProcessState;
 
 /**
- * This interface describes the actions that are taken, when a new peer needs to
- * be found and queries of failed peers need to be allocated.
+ * This interface describes the actions that are taken, when a new peer needs to be found and queries of failed peers
+ * need to be allocated.
  * 
  * @author Simon Kuespert
  * 
@@ -28,19 +28,16 @@ public interface IRecoveryDynamicBackup {
 	 * @param sharedQueryId
 	 *            ID of the query to be recovered.
 	 * @param newPeer
-	 *            The peer where we want to install the parts of the query from
-	 *            the failed peer
+	 *            The peer where we want to install the parts of the query from the failed peer
 	 * @param queryPart
 	 * @param recoveryStateIdentifier
 	 */
-	public void initiateAgreement(PeerID failedPeer, int localQueryId,
-			QueryState queryState, ID sharedQuery, PeerID newPeer,
-			ILogicalQueryPart queryPart, UUID recoveryStateIdentifier,
-			UUID subprocessID, boolean master, PeerID masterId);
+	public void initiateAgreement(PeerID failedPeer, int localQueryId, QueryState queryState, ID sharedQuery,
+			PeerID newPeer, ILogicalQueryPart queryPart, UUID recoveryStateIdentifier, UUID subprocessID,
+			boolean master, PeerID masterId, String clientIp);
 
 	/**
-	 * Determines which tuples sent to the failed peer have to be hold on and
-	 * sends a message to the affected peer.
+	 * Determines which tuples sent to the failed peer have to be hold on and sends a message to the affected peer.
 	 * 
 	 * @param sharedQueryId
 	 *            ID of the query to be hold on.
@@ -48,8 +45,7 @@ public interface IRecoveryDynamicBackup {
 	 *            PeerID of the failed peer.
 	 * @param recoveryStateIdentifier
 	 */
-	public void determineAndSendHoldOnMessages(int localQueryId,
-			PeerID failedPeer, UUID recoveryStateIdentifier);
+	public void determineAndSendHoldOnMessages(int localQueryId, PeerID failedPeer, UUID recoveryStateIdentifier);
 
 	/**
 	 * Reallocates QueryParts of a failed peer to a new peer.
@@ -63,10 +59,8 @@ public interface IRecoveryDynamicBackup {
 	 * @return new allocationMap
 	 * @throws QueryPartAllocationException
 	 */
-	public Map<ILogicalQueryPart, PeerID> reallocateToNewPeer(
-			Map<ILogicalQueryPart, PeerID> allocationMap,
-			List<PeerID> inadequatePeers, IRecoveryAllocator recoveryAllocator)
-			throws QueryPartAllocationException;
+	public Map<ILogicalQueryPart, PeerID> reallocateToNewPeer(Map<ILogicalQueryPart, PeerID> allocationMap,
+			List<PeerID> inadequatePeers, IRecoveryAllocator recoveryAllocator) throws QueryPartAllocationException;
 
 	/**
 	 * Returns a RecoveryProcessState by identifier
@@ -88,7 +82,6 @@ public interface IRecoveryDynamicBackup {
 	 * @return Map<ILogicalQueryPart, PeerID> of the new peers to allocate to
 	 * @throws QueryPartAllocationException
 	 */
-	public Map<ILogicalQueryPart, PeerID> allocateToNewPeer(PeerID failedPeer,
-			int localQueryId, IRecoveryAllocator recoveryAllocator)
-			throws QueryPartAllocationException;
+	public Map<ILogicalQueryPart, PeerID> allocateToNewPeer(PeerID failedPeer, int localQueryId,
+			IRecoveryAllocator recoveryAllocator) throws QueryPartAllocationException;
 }

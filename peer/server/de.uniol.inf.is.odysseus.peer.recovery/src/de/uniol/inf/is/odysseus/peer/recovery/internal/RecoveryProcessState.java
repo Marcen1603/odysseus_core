@@ -13,11 +13,9 @@ import de.uniol.inf.is.odysseus.core.planmanagement.query.QueryState;
 import de.uniol.inf.is.odysseus.peer.distribute.ILogicalQueryPart;
 
 /**
- * The RecoveryProcessState handles data for a given recovery process. These
- * Data are needed for reallocation. Every RecoveryProcessState has Substates.
- * These SubStates represents the allocation of a single QueryPart. If the
- * allocation of a queryPart is successful, the corresponding subProcess will be
- * removed. 
+ * The RecoveryProcessState handles data for a given recovery process. These Data are needed for reallocation. Every
+ * RecoveryProcessState has Substates. These SubStates represents the allocation of a single QueryPart. If the
+ * allocation of a queryPart is successful, the corresponding subProcess will be removed.
  * 
  * @author ChrisToenjesDeye
  * 
@@ -25,7 +23,7 @@ import de.uniol.inf.is.odysseus.peer.distribute.ILogicalQueryPart;
 public class RecoveryProcessState {
 	// identifier of the process
 	private UUID identifier;
-	
+
 	// the failed peer, which need to be recovered
 	private PeerID failedPeerID;
 
@@ -50,16 +48,15 @@ public class RecoveryProcessState {
 		return failedPeerID;
 	}
 
-	public UUID createNewSubprocess(int localQueryId,
-			ILogicalQueryPart queryPart, QueryState queryState, ID sharedQuery, boolean master, PeerID masterId) {
-		RecoverySubProcessState subprocess = new RecoverySubProcessState(
-				localQueryId, queryPart, queryState, sharedQuery, master, masterId);
+	public UUID createNewSubprocess(int localQueryId, ILogicalQueryPart queryPart, QueryState queryState,
+			ID sharedQuery, boolean master, PeerID masterId, String clientIp) {
+		RecoverySubProcessState subprocess = new RecoverySubProcessState(localQueryId, queryPart, queryState,
+				sharedQuery, master, masterId, clientIp);
 		subProcesses.put(subprocess.getIdentifier(), subprocess);
 		return subprocess.getIdentifier();
 	}
 
-	public RecoverySubProcessState getRecoverySubprocess(
-			UUID subprocessIdentifier) {
+	public RecoverySubProcessState getRecoverySubprocess(UUID subprocessIdentifier) {
 		return subProcesses.get(subprocessIdentifier);
 	}
 
@@ -72,8 +69,7 @@ public class RecoveryProcessState {
 
 	public void addInadequatePeer(PeerID peerId, UUID subprocessIdentifier) {
 		if (subProcesses.containsKey(subprocessIdentifier)) {
-			subProcesses.get(subprocessIdentifier).getInadequatePeers()
-					.add(peerId);
+			subProcesses.get(subprocessIdentifier).getInadequatePeers().add(peerId);
 		}
 	}
 
@@ -99,8 +95,7 @@ public class RecoveryProcessState {
 		return null;
 	}
 
-	public void setAllocationMap(int localQueryId,
-			Map<ILogicalQueryPart, PeerID> allocationMap) {
+	public void setAllocationMap(int localQueryId, Map<ILogicalQueryPart, PeerID> allocationMap) {
 		this.allocationMaps.put(localQueryId, allocationMap);
 	}
 }

@@ -37,6 +37,8 @@ import de.uniol.inf.is.odysseus.peer.recovery.internal.RecoveryCommunicator;
 import de.uniol.inf.is.odysseus.peer.recovery.messages.RecoveryAddQueryMessage;
 import de.uniol.inf.is.odysseus.peer.recovery.messages.RecoveryAddQueryResponseMessage;
 import de.uniol.inf.is.odysseus.peer.recovery.util.RecoveryHelper;
+import de.uniol.inf.is.odysseus.rest.socket.SocketInfo;
+import de.uniol.inf.is.odysseus.rest.socket.SocketService;
 
 /**
  * Entity to handle received query parts to add. <br />
@@ -286,7 +288,7 @@ public class AddQueryReceiver extends AbstractRepeatingMessageReceiver {
 			try {
 				addQuery(addMessage.getPQLCode(), addMessage.getLocalQueryId(), addMessage.getQueryState(),
 						addMessage.getSharedQueryId(), addMessage.isMaster(), addMessage.getMasterId(),
-						addMessage.getFailedPeerId());
+						addMessage.getFailedPeerId(), addMessage.getClientIP());
 				response = new RecoveryAddQueryResponseMessage(addMessage.getUUID());
 			} catch (Exception e) {
 				LOG.error("Could not install query from add query message!", e);
@@ -310,7 +312,7 @@ public class AddQueryReceiver extends AbstractRepeatingMessageReceiver {
 	 *            The id of the shared query where this PQL belongs to
 	 */
 	private static void addQuery(String pql, int localQueryId, QueryState queryState, ID sharedQuery, boolean master,
-			PeerID masterPeer, PeerID failedPeerId) throws Exception {
+			PeerID masterPeer, PeerID failedPeerId, String clientIp) throws Exception {
 		Preconditions.checkNotNull(pql);
 
 		if (!cExecutor.isPresent()) {
@@ -331,23 +333,38 @@ public class AddQueryReceiver extends AbstractRepeatingMessageReceiver {
 			// Attention: Just experimental for now (T.B.)
 			String localPeerId = cP2PNetworkManager.get().getLocalPeerID().toString();
 			pql = pql.replaceAll(failedPeerId.toString(), localPeerId);
-			LOG.debug("Replaced peerId of failed peer in PQL to install with my own peerId. (failed peer was {})", failedPeerId.toString());
+			LOG.debug("Replaced peerId of failed peer in PQL to install with my own peerId. (failed peer was {})",
+					failedPeerId.toString());
 
 		}
 		Collection<Integer> installedQueries = RecoveryHelper.installAndRunQueryPartFromPql(pql, queryState);
 		if (installedQueries == null || installedQueries.size() == 0) {
 			throw new IllegalArgumentException("Installing QueryPart on Peer failed. Searching for other peers.");
 		}
-
 		LOG.debug("Installed query for recovery.");
+
 		if (master && sharedQuery != null) {
 			Collection<PeerID> otherPeers = determineOtherPeers(sharedQuery);
 			int hereLocalQueryId = installedQueries.iterator().next();
 			cController.get().registerAsMaster(
-					cExecutor.get().getLogicalQueryById(hereLocalQueryId,
-							RecoveryCommunicator.getActiveSession()), hereLocalQueryId, sharedQuery, otherPeers);
+					cExecutor.get().getLogicalQueryById(hereLocalQueryId, RecoveryCommunicator.getActiveSession()),
+					hereLocalQueryId, sharedQuery, otherPeers);
 		} else if (sharedQuery != null) {
 			cController.get().registerAsSlave(installedQueries, sharedQuery, masterPeer);
+		}
+
+		// TODO Open new socket connection to tablet, if necessary
+		if (clientIp != null) {
+			for (int queryId : installedQueries) {
+				SocketInfo info = SocketService.getInstance().getConnectionInformation(RecoveryCommunicator.getActiveSession(), queryId,
+						0);
+				
+				// Save in the backup-info
+				backupInformationAccess.addSocketInfoForQuery(queryId, clientIp);
+				
+				// Tell the tablet the new information
+				cRecoveryCommunicator.get().informClientAboutNewSocket(info, clientIp);
+			}
 		}
 
 		ExecutorService service = Executors.newFixedThreadPool(NUM_THREADS);
@@ -384,12 +401,11 @@ public class AddQueryReceiver extends AbstractRepeatingMessageReceiver {
 											finalPipe, finalLocalQueryId);
 									// TODO handle possible failures
 									/*
-									 * If the message fails, the receiver will not establish a correct pipe.
-									 * Possible solutions:
-									 * 1. Do nothing -> The complete query (if not replicated) will produce no more results.
-									 * 2. Wait for a while and try again -> All tuple within that time will be lost. 
-									 *    No guarantee that a  message can be send afterwards.
-									 * 3. Uninstall the query, cancel the recovery process, and restart on another peer.
+									 * If the message fails, the receiver will not establish a correct pipe. Possible
+									 * solutions: 1. Do nothing -> The complete query (if not replicated) will produce
+									 * no more results. 2. Wait for a while and try again -> All tuple within that time
+									 * will be lost. No guarantee that a message can be send afterwards. 3. Uninstall
+									 * the query, cancel the recovery process, and restart on another peer.
 									 */
 
 								}

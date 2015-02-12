@@ -27,6 +27,8 @@ import de.uniol.inf.is.odysseus.peer.recovery.protocol.AddQuerySender;
 import de.uniol.inf.is.odysseus.peer.recovery.protocol.AgreementSender;
 import de.uniol.inf.is.odysseus.peer.recovery.protocol.TupleSendSender;
 import de.uniol.inf.is.odysseus.peer.recovery.protocol.UpdatePipeSender;
+import de.uniol.inf.is.odysseus.peer.recovery.util.SimpleSocketClient;
+import de.uniol.inf.is.odysseus.rest.socket.SocketInfo;
 
 /**
  * A recovery communicator handles the communication between peers for recovery mechanisms.
@@ -298,7 +300,8 @@ public class RecoveryCommunicator implements IRecoveryCommunicator {
 
 	@Override
 	public void installQueriesOnNewPeer(PeerID failedPeer, PeerID newPeer, int localQueryId, QueryState queryState,
-			String pql, UUID recoveryStateIdentifier, UUID subprocessID, ID sharedQuery, boolean master, PeerID masterId) {
+			String pql, UUID recoveryStateIdentifier, UUID subprocessID, ID sharedQuery, boolean master,
+			PeerID masterId, String clientIp) {
 
 		Preconditions.checkNotNull(failedPeer);
 		Preconditions.checkNotNull(newPeer);
@@ -311,7 +314,7 @@ public class RecoveryCommunicator implements IRecoveryCommunicator {
 
 		// Send the add query message
 		AddQuerySender.getInstance().sendAddQueryPart(newPeer, pql, localQueryId, queryState, sharedQuery, master,
-				masterId, failedPeer, recoveryStateIdentifier, subprocessID, cPeerCommunicator.get());
+				masterId, failedPeer, clientIp, recoveryStateIdentifier, subprocessID, cPeerCommunicator.get());
 	}
 
 	@Override
@@ -372,9 +375,15 @@ public class RecoveryCommunicator implements IRecoveryCommunicator {
 	}
 
 	@Override
-	public boolean informClientAboutNewSocket(String newPeerId, String clientIp) {
-		LOG.debug("Want to inform client (e.g. tablet) about new peer. New peerId: {}, Client ip: {}", newPeerId,
-				clientIp);
+	public boolean informClientAboutNewSocket(SocketInfo info, String clientIp) {
+		String newPeerIp = info.getIp();
+		String port = "" + info.getPort();
+		LOG.debug(String.format("Want to inform client (e.g. tablet) about new peer. New peerIp: {}:{}, Client ip: {}",
+				newPeerIp, port, clientIp));
+
+		String infoString = newPeerIp + ":" + port;
+
+		new SimpleSocketClient(clientIp, 53000, infoString);
 		return false;
 	}
 

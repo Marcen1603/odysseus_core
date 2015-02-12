@@ -28,6 +28,33 @@ public class RecoveryAddQueryMessage implements IMessage {
 	private UUID mID = UUIDFactory.newUUID();
 
 	/**
+	 * The PQL code to execute.
+	 */
+	private String mPQL;
+
+	/**
+	 * The affected local query.
+	 */
+	private int mLocalQuery;
+
+	/**
+	 * The state of the query.
+	 */
+	private QueryState mQueryState;
+
+	/**
+	 * The id of the recovery process.
+	 */
+	private java.util.UUID mProcessId;
+
+	private java.util.UUID mSubprocessId;
+	private ID mSharedQuery;
+	private boolean mMaster;
+	private PeerID mMasterId;
+	private PeerID mFailedPeerId;
+	private String clientIp; // IP of the tablet
+
+	/**
 	 * The id of the message.
 	 * 
 	 * @return A unique identifier.
@@ -38,22 +65,12 @@ public class RecoveryAddQueryMessage implements IMessage {
 
 	/**
 	 * The PQL code to execute.
-	 */
-	private String mPQL;
-
-	/**
-	 * The PQL code to execute.
 	 * 
 	 * @return A valid PQL code.
 	 */
 	public String getPQLCode() {
 		return this.mPQL;
 	}
-
-	/**
-	 * The affected local query.
-	 */
-	private int mLocalQuery;
 
 	/**
 	 * The affected local query.
@@ -67,21 +84,9 @@ public class RecoveryAddQueryMessage implements IMessage {
 	/**
 	 * The state of the query.
 	 */
-	private QueryState mQueryState;
-
-	/**
-	 * The state of the query.
-	 */
 	public QueryState getQueryState() {
 		return this.mQueryState;
 	}
-
-	/**
-	 * The id of the recovery process.
-	 */
-	private java.util.UUID mProcessId;
-
-	private java.util.UUID mSubprocessId;
 
 	/**
 	 * The id of the recovery process.
@@ -92,28 +97,24 @@ public class RecoveryAddQueryMessage implements IMessage {
 		return this.mProcessId;
 	}
 
-	private ID mSharedQuery;
-
 	public ID getSharedQueryId() {
 		return this.mSharedQuery;
 	}
 
-	private boolean mMaster;
-
 	public boolean isMaster() {
 		return this.mMaster;
 	}
-	
-	private PeerID mMasterId;
 
 	public PeerID getMasterId() {
 		return this.mMasterId;
 	}
-	
-	private PeerID mFailedPeerId;
-	
+
 	public PeerID getFailedPeerId() {
 		return this.mFailedPeerId;
+	}
+	
+	public String getClientIP() {
+		return this.clientIp;
 	}
 
 	/**
@@ -141,9 +142,8 @@ public class RecoveryAddQueryMessage implements IMessage {
 	 *            The id of the recovery subprocess. <br />
 	 *            Must be not null.
 	 */
-	public RecoveryAddQueryMessage(String pql, int localQueryId,
-			QueryState queryState, ID sharedQuery, boolean master, PeerID masterId, PeerID failedPeerId,
-			java.util.UUID processId, java.util.UUID subprocessID) {
+	public RecoveryAddQueryMessage(String pql, int localQueryId, QueryState queryState, ID sharedQuery, boolean master,
+			PeerID masterId, PeerID failedPeerId, java.util.UUID processId, java.util.UUID subprocessID, String clientIp) {
 		Preconditions.checkNotNull(pql);
 		Preconditions.checkNotNull(queryState);
 		Preconditions.checkNotNull(processId);
@@ -158,6 +158,7 @@ public class RecoveryAddQueryMessage implements IMessage {
 		this.mFailedPeerId = failedPeerId;
 		this.mProcessId = processId;
 		this.mSubprocessId = subprocessID;
+		this.clientIp = clientIp;
 	}
 
 	@Override
@@ -169,31 +170,39 @@ public class RecoveryAddQueryMessage implements IMessage {
 		byte[] sharedQueryBytes = null;
 		byte[] masterIdBytes = null;
 		byte[] failedPeerIdBytes = null;
+		byte[] clientIpBytes = null;
 
-		int bufferSize = 4 + idBytes.length + 4 + pqlBytes.length + 4 + 4
-				+ processIdBytes.length + 4 + subprocessIdBytes.length + 4;
-		
+		int bufferSize = 4 + idBytes.length + 4 + pqlBytes.length + 4 + 4 + processIdBytes.length + 4
+				+ subprocessIdBytes.length + 4;
+
 		bufferSize += 4;
 		if (this.mSharedQuery != null) {
 			sharedQueryBytes = this.mSharedQuery.toString().getBytes();
 			bufferSize += sharedQueryBytes.length;
 		}
-		
+
 		// boolean master
 		bufferSize += 4;
-		
+
 		bufferSize += 4;
 		if (this.mMasterId != null) {
 			masterIdBytes = this.mMasterId.toString().getBytes();
 			bufferSize += masterIdBytes.length;
 		}
-		
+
 		bufferSize += 4;
 		if (this.mFailedPeerId != null) {
 			failedPeerIdBytes = this.mFailedPeerId.toString().getBytes();
 			bufferSize += failedPeerIdBytes.length;
 		}
 		
+		// client IP (tablet)
+		bufferSize += 4;
+		if (this.clientIp != null) {
+			clientIpBytes = this.clientIp.toString().getBytes();
+			bufferSize += clientIpBytes.length;
+		}
+
 		ByteBuffer buffer = ByteBuffer.allocate(bufferSize);
 
 		buffer.putInt(idBytes.length);
@@ -217,24 +226,31 @@ public class RecoveryAddQueryMessage implements IMessage {
 		} else {
 			buffer.putInt(0);
 		}
-		
+
 		// boolean master
 		if (this.mMaster) {
 			buffer.putInt(1);
 		} else {
 			buffer.putInt(0);
 		}
-		
+
 		if (this.mMasterId != null) {
 			buffer.putInt(masterIdBytes.length);
 			buffer.put(masterIdBytes);
 		} else {
 			buffer.putInt(0);
 		}
-		
+
 		if (this.mFailedPeerId != null) {
 			buffer.putInt(failedPeerIdBytes.length);
 			buffer.put(failedPeerIdBytes);
+		} else {
+			buffer.putInt(0);
+		}
+		
+		if (this.clientIp != null) {
+			buffer.putInt(this.clientIp.length());
+			buffer.put(clientIpBytes);
 		} else {
 			buffer.putInt(0);
 		}
@@ -268,8 +284,7 @@ public class RecoveryAddQueryMessage implements IMessage {
 		int subprocessIdBytesLength = buffer.getInt();
 		byte[] subprocessIdBytes = new byte[subprocessIdBytesLength];
 		buffer.get(subprocessIdBytes);
-		this.mSubprocessId = java.util.UUID.fromString(new String(
-				subprocessIdBytes));
+		this.mSubprocessId = java.util.UUID.fromString(new String(subprocessIdBytes));
 
 		int sharedQueryIdBytesLength = buffer.getInt();
 		if (sharedQueryIdBytesLength > 0) {
@@ -282,7 +297,7 @@ public class RecoveryAddQueryMessage implements IMessage {
 				this.mSharedQuery = null;
 			}
 		}
-		
+
 		// boolean master
 		int booleanMaster = buffer.getInt();
 		if (booleanMaster == 1) {
@@ -290,7 +305,7 @@ public class RecoveryAddQueryMessage implements IMessage {
 		} else {
 			this.mMaster = false;
 		}
-		
+
 		int masterIdBytesLength = buffer.getInt();
 		if (masterIdBytesLength > 0) {
 			byte[] masterIdBytes = new byte[masterIdBytesLength];
@@ -302,7 +317,7 @@ public class RecoveryAddQueryMessage implements IMessage {
 				this.mMasterId = null;
 			}
 		}
-		
+
 		int failedPeerIdBytesLength = buffer.getInt();
 		if (failedPeerIdBytesLength > 0) {
 			byte[] failedPeerIdBytes = new byte[failedPeerIdBytesLength];
@@ -313,6 +328,14 @@ public class RecoveryAddQueryMessage implements IMessage {
 			} catch (URISyntaxException | ClassCastException ex) {
 				this.mFailedPeerId = null;
 			}
+		}
+		
+		int clientIpBytesLength = buffer.getInt();
+		if (clientIpBytesLength > 0) {
+			byte[] clientIpBytes = new byte[clientIpBytesLength];
+			buffer.get(clientIpBytes);
+			String clientIpString = new String(clientIpBytes);
+			this.clientIp = clientIpString;
 		}
 
 	}

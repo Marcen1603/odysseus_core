@@ -156,16 +156,16 @@ public class AddQueryResponseHandler implements IAddQueryResponseHandler {
 					affectedSenders.get(i).setPeerIDString(senderPeer.toString());
 				}
 
-				// TODO If the recovered peer had a connection to the tablet, tell the tablet the new peer
-				HashMap<Integer, BackupInfo> infoMap = backupInformationAccess.getBackupInformation(state
-						.getFailedPeerId().toString());
-				if (infoMap.containsKey(localQueryId)) {
-					BackupInfo info = infoMap.get(localQueryId);
-					String clientIp = info.socketIP;
-					if (clientIp != null) {
-						communicator.informClientAboutNewSocket(senderPeer.toString(), clientIp);
-					}
-				}
+//				// If the recovered peer had a connection to the tablet, tell the tablet the new peer
+//				HashMap<Integer, BackupInfo> infoMap = backupInformationAccess.getBackupInformation(state
+//						.getFailedPeerId().toString());
+//				if (infoMap.containsKey(localQueryId)) {
+//					BackupInfo info = infoMap.get(localQueryId);
+//					String clientIp = info.socketIP;
+//					if (clientIp != null) {
+//						communicator.informClientAboutNewSocket(senderPeer.toString(), clientIp);
+//					}
+//				}
 
 				// Update the DDC -> This is recovered, remove the old entry from the DDC
 				backupInformationAccess.removeBackupInformation(state.getFailedPeerId().toString(), localQueryId);

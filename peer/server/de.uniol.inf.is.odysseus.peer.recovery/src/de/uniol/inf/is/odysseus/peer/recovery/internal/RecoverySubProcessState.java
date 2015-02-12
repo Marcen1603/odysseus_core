@@ -32,10 +32,11 @@ public class RecoverySubProcessState {
 	private ID sharedQuery;
 	private boolean master;
 	private PeerID masterId;
+	private String clientIp;
 
 	public RecoverySubProcessState(int localQueryId,
 			ILogicalQueryPart queryPart, QueryState queryState, ID sharedQuery,
-			boolean master, PeerID masterId) {
+			boolean master, PeerID masterId, String clientIp) {
 		this.localQueryId = localQueryId;
 		this.queryPart = queryPart;
 		this.queryState = queryState;
@@ -44,6 +45,7 @@ public class RecoverySubProcessState {
 		this.masterId = masterId;
 		this.identifier = UUID.randomUUID();
 		this.inadequatePeers = new ArrayList<PeerID>();
+		this.clientIp = clientIp;
 	}
 
 	public UUID getIdentifier() {
@@ -104,6 +106,14 @@ public class RecoverySubProcessState {
 
 	public QueryState getQueryState() {
 		return this.queryState;
+	}
+
+	public String getClientIp() {
+		return clientIp;
+	}
+
+	public void setClientIp(String clientIp) {
+		this.clientIp = clientIp;
 	}
 
 }

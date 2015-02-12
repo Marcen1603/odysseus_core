@@ -8,6 +8,7 @@ import net.jxta.pipe.PipeID;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.QueryState;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.IPeerDictionaryListener;
 import de.uniol.inf.is.odysseus.peer.recovery.internal.RecoveryProcessState;
+import de.uniol.inf.is.odysseus.rest.socket.SocketInfo;
 
 /**
  * A recovery communicator handles the communication between peers for recovery mechanisms.
@@ -87,7 +88,7 @@ public interface IRecoveryCommunicator extends IPeerDictionaryListener {
 	 */
 	// TODO Better way: allocate each single query part new. M.B.
 	public void installQueriesOnNewPeer(PeerID failedPeer, PeerID newPeer, int localQueryId, QueryState queryState,
-			String pql, UUID recoveryStateIdentifier, UUID subprocessID, ID sharedQuery, boolean master, PeerID masterId);
+			String pql, UUID recoveryStateIdentifier, UUID subprocessID, ID sharedQuery, boolean master, PeerID masterId, String clientIp);
 
 	/**
 	 * Sends a message to the given peer that it has to go on sending the tuples for the given pipeId. (Stop buffering)
@@ -105,7 +106,7 @@ public interface IRecoveryCommunicator extends IPeerDictionaryListener {
 	 * @param clientIp
 	 * @return
 	 */
-	public boolean informClientAboutNewSocket(String newPeerId, String clientIp);
+	public boolean informClientAboutNewSocket(SocketInfo info, String clientIp);
 
 	/**
 	 * Returns the RecoveryProcessState for a given identifier

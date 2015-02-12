@@ -34,6 +34,7 @@ import de.uniol.inf.is.odysseus.peer.recovery.internal.BackupInfo;
 import de.uniol.inf.is.odysseus.peer.recovery.internal.RecoveryCommunicator;
 import de.uniol.inf.is.odysseus.peer.recovery.util.BackupInformationAccess;
 import de.uniol.inf.is.odysseus.peer.recovery.util.RecoveryHelper;
+import de.uniol.inf.is.odysseus.rest.socket.SocketInfo;
 
 /**
  * 
@@ -218,7 +219,8 @@ public class RecoveryConsole implements CommandProvider {
 		sb.append("	sendUpdateReceiver <PeerName from receiver> <PeerName from new sender> <pipeId> <sharedQueryId> - Send an updateReceiver-message to <PeerName from receiver>, so that this should receive the tuples fir pipe <pipeId> from the new sender <PeerName from new sender>.\n");
 		sb.append("	holdOn <PipeId> - Let this peer hold on\n");
 		sb.append("	goOn <PipeId> - Let this peer go on\n");
-		sb.append("	updateBI <failedPeerId> <pipeId> - Updates backup-info for other peer.");
+		sb.append("	updateBI <failedPeerId> <pipeId> - Updates backup-info for other peer.\n");
+		sb.append("	testSocket <tabletIp> <newPeerId> - tests the socket connection to the tablet. \n");
 		return sb.toString();
 	}
 
@@ -425,6 +427,15 @@ public class RecoveryConsole implements CommandProvider {
 		String pipeId = ci.nextArgument();
 
 		backupInformationAccess.updateBackupInfoForPipe(failedPeer, pipeId);
+	}
+	
+	public void _testSocket(CommandInterpreter ci) {
+		String clientIp = ci.nextArgument();
+		String newPeerIp = ci.nextArgument();
+		
+		SocketInfo info = new SocketInfo(newPeerIp, 53001, null);
+		
+		cCommunicator.get().informClientAboutNewSocket(info, clientIp);
 	}
 
 	/**
