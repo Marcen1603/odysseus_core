@@ -1,12 +1,20 @@
 package de.uniol.inf.is.odysseus.trajectory.physical.compare.uots;
 
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.vividsolutions.jts.geom.LineSegment;
 import com.vividsolutions.jts.geom.Point;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
+import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
+import de.uniol.inf.is.odysseus.trajectory.physical.compare.AbstractAdvancedTrajectory;
 import de.uniol.inf.is.odysseus.trajectory.physical.compare.ITrajectoryCompareAlgorithm;
 import de.uniol.inf.is.odysseus.trajectory.physical.compare.ITupleToRawTrajectoryConverter;
 import de.uniol.inf.is.odysseus.trajectory.physical.compare.RawTrajectory;
@@ -16,7 +24,9 @@ import de.uniol.inf.is.odysseus.trajectory.physical.compare.uots.mapmatch.IMapMa
 import de.uniol.inf.is.odysseus.trajectory.physical.compare.uots.mapmatch.MapMatcherFactory;
 import edu.uci.ics.jung.graph.UndirectedSparseGraph;
 
-public class Uots implements ITrajectoryCompareAlgorithm {
+public class Uots implements ITrajectoryCompareAlgorithm<UotsTrajectory> {
+	
+	private final static Logger LOGGER = LoggerFactory.getLogger(Uots.class);
 	
 	private final static String MAP_FILE_KEY = "mapfile";
 	private final static String MAP_MATCHER_KEY = "mapmatching";
@@ -26,20 +36,19 @@ public class Uots implements ITrajectoryCompareAlgorithm {
 	
 	private final UotsTrajectory queryTrajectory;
 	
-	private final int utmZone;
-	
 	private final UndirectedSparseGraph<Point, LineSegment> graph;
 	
-	private final ITupleToRawTrajectoryConverter tupleToRawTrajectoryConverter;
 	private final IMapMatcher mapMatcher;
 	private final IDistanceService distanceService;
 	
+	
+	
+	private final List<UotsTrajectory> trajectories = new LinkedList<>();
+	
+	
+	
 	public Uots(final int k, final RawTrajectory queryTrajectory, final int utmZone, final Map<String, String> options) {
 		this.k = k;
-		
-		this.utmZone = utmZone;
-		
-		this.tupleToRawTrajectoryConverter = TupleToRawTrajectoryConverterFactory.getInstance().create();
 		
 		// Get the options
 		this.graph = GraphBuilderFactory.getInstance().load(options.get(MAP_FILE_KEY), utmZone);
@@ -48,33 +57,32 @@ public class Uots implements ITrajectoryCompareAlgorithm {
 		this.queryTrajectory = this.mapMatcher.map(queryTrajectory, graph);
 		
 		this.distanceService = DistanceServiceFactory.getInstance().create(this.graph);
+		try {
+			this.distanceService.addQueryTrajectory(this.queryTrajectory, this.k);
+		} catch(IllegalArgumentException e) {
+			LOGGER.error(e.getMessage(), e);
+			throw new RuntimeException(e);
+		}
 	}
 
 	@Override
-	public Tuple<ITimeInterval> getKNearest(Tuple<ITimeInterval> incoming) {
-		
-		final RawTrajectory t = this.tupleToRawTrajectoryConverter.convert(incoming, this.utmZone);
-		final UotsTrajectory uotsTrajectory = this.mapMatcher.map(t, this.graph);
-		
-		double distance = 0;//this.distanceService.getDistance(this.queryTrajectory, uotsTrajectory, Double.MAX_VALUE);
-		
-		Tuple<ITimeInterval> result = new Tuple<ITimeInterval>(
-					new Object[] {
-							uotsTrajectory.getRawTrajectory().getId(),
-							1,
-							1,
-							1,
-							new Object[] {
-									"Hallo" + distance, "werner"
-							}
-					},
-					true
-				);
-		return result;
+	public List<UotsTrajectory> getKNearest(RawTrajectory incoming) {	
+		final UotsTrajectory uotsTrajectory = this.mapMatcher.map(incoming, this.graph);
+		return this.distanceService.getDistance(this.queryTrajectory, uotsTrajectory);
 	}
 	
 	@Override
 	public int getK() {
 		return this.k;
+	}
+
+	@Override
+	public void removeBefore(PointInTime time) {
+		for(final UotsTrajectory traj : this.trajectories) {
+			if(traj.getRawTrajectory().getInterval().getEnd().afterOrEquals(time)) {
+				break;
+			}
+			this.distanceService.removeTrajectory(this.queryTrajectory, traj);
+		}
 	}
 }

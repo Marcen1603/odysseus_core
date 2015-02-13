@@ -25,9 +25,9 @@ public class GraphBuilderFactory extends AbstractObjectLoaderFactory<IGraphLoade
 	@Override
 	protected IGraphLoader<String, Integer> createLoader(String convertedKey) {
 		switch(convertedKey) {
-		case "OSM" : return new OsmGraphLoader();
+		case "OSM" : return OsmGraphLoader.getInstance();
 		}
-		throw new RuntimeException("No GraphLoader found");
+		throw new IllegalArgumentException("No GraphLoader found for file extension: " + convertedKey);
 	}
 
 }

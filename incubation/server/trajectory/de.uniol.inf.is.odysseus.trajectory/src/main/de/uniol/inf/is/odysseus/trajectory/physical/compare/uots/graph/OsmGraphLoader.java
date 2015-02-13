@@ -1,14 +1,20 @@
 package de.uniol.inf.is.odysseus.trajectory.physical.compare.uots.graph;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.codec.digest.DigestUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.vividsolutions.jts.geom.LineSegment;
 import com.vividsolutions.jts.geom.Point;
 import com.ximpleware.AutoPilot;
+import com.ximpleware.IndexReadException;
 import com.ximpleware.VTDGen;
 import com.ximpleware.VTDNav;
 
@@ -34,12 +40,48 @@ public class OsmGraphLoader implements IGraphLoader<String, Integer> {
 	private final static String ND_ELEM_NAME = "nd";
 	private final static String ND_REF_ATTR_NAME = "ref";
 	
-	OsmGraphLoader() { }
+	private final static OsmGraphLoader INSTANCE = new OsmGraphLoader();
+	
+	public final static OsmGraphLoader getInstance() {
+		return INSTANCE;
+	}
+	
+	
+	/**
+	 * md5 sums and already loaded Graph
+	 */
+	private final Map<String, UndirectedSparseGraph<Point, LineSegment>> graphs = new HashMap<>();
+
+	private OsmGraphLoader() { }
 	
 	@Override
 	public UndirectedSparseGraph<Point, LineSegment> load(String filepath, Integer utmZone) {
+		UndirectedSparseGraph<Point, LineSegment> graph = null;
+		InputStream fis = null;
+		String md5 = null;
+		try {
+			fis = new FileInputStream(filepath);
+			md5 = DigestUtils.md5Hex(fis);
+
+			graph = this.graphs.get(md5);
+			if(graph != null) {
+				LOGGER.info("Use cached graph from file \"" + filepath + "\" with MD5 \"" + md5 + "\"");
+				return graph;
+			}
+		} catch(IOException e) {
+			LOGGER.error(e.getMessage(), e);
+			throw new RuntimeException(e);
+		} finally {
+			if(fis != null) {
+				try {
+					fis.close();
+				} catch (IOException e) {
+					LOGGER.error(e.getMessage(), e);
+				}
+			}
+		}
 		
-		final UndirectedSparseGraph<Point, LineSegment> graph = new UndirectedSparseGraph<>();
+		graph = new UndirectedSparseGraph<>();
 		
 		final IPointCreator pointCreator = UtmPointCreatorFactory.getInstance().create(utmZone);
 		
@@ -87,6 +129,7 @@ public class OsmGraphLoader implements IGraphLoader<String, Integer> {
 			throw new RuntimeException(e);
 		}
 		
+		this.graphs.put(md5, graph);
 		return graph;
 	}
 

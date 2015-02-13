@@ -130,13 +130,7 @@ public class TrajectoryCompareAO extends UnaryLogicalOp {
 	private final static SDFSchema OUTPUT_SCHEMA = new SDFSchema(
 			TrajectoryCompareAO.class.getName(), 
 			Tuple.class, 
-			new SDFAttribute(null, "QTId", SDFDatatype.STRING, null),
-			new SDFAttribute(null, "k", SDFDatatype.INTEGER, null),
-			new SDFAttribute(null, "Total", SDFDatatype.INTEGER, null),
-			new SDFAttribute(null, "Contains", SDFSpatialDatatype.INTEGER , null),
-			new SDFAttribute(null, "tet", SDFTrajectoryDataType.OBJECT, new SDFSchema("", Tuple.class, 
-					new SDFAttribute(null, "id", SDFDatatype.STRING, null),
-					new SDFAttribute(null, "points", SDFDatatype.STRING, null)))
+			new SDFAttribute(null, "result", SDFTrajectoryDataType.LIST, null)
 	);
 	
 	@Override
@@ -148,5 +142,5 @@ public class TrajectoryCompareAO extends UnaryLogicalOp {
 	@Override
 	public AbstractLogicalOperator clone() {
 		return new TrajectoryCompareAO(this);
-	}
+	} 
 }

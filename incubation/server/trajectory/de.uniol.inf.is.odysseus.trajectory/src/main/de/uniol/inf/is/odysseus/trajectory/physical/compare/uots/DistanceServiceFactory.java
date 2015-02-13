@@ -15,7 +15,6 @@ public class DistanceServiceFactory extends AbstractFactory<IDistanceService, Un
 		return INSTANCE;
 	}
 	
-	
 	@Override
 	protected UndirectedSparseGraph<Point, LineSegment> convertKey(
 			UndirectedSparseGraph<Point, LineSegment> key) {

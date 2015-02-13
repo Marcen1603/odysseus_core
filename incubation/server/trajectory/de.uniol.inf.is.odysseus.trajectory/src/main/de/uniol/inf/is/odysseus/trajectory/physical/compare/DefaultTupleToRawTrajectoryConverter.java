@@ -23,7 +23,7 @@ public class DefaultTupleToRawTrajectoryConverter implements ITupleToRawTrajecto
 				
 		final IPointCreator pointCreator = UtmPointCreatorFactory.getInstance().create(utmZone);
 		
-		final List<Tuple<?>> tupleList = tuple.getAttribute(1);
+		final List<Tuple<?>> tupleList = tuple.getAttribute(2);
 		
 		final List<Point> points = new ArrayList<Point>(tupleList.size());
 		
@@ -32,6 +32,6 @@ public class DefaultTupleToRawTrajectoryConverter implements ITupleToRawTrajecto
 			points.add(pointCreator.createPoint(p.getX(), p.getY()));
 		}
 		
-		return new RawTrajectory((String)tuple.getAttribute(0), points);
+		return new RawTrajectory((String)tuple.getAttribute(0), (int)tuple.getAttribute(1), points);
 	}
 }

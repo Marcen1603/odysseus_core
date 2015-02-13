@@ -1,38 +1,34 @@
 package de.uniol.inf.is.odysseus.trajectory.physical.compare.uots;
 
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 
 import com.vividsolutions.jts.geom.Point;
 
+import de.uniol.inf.is.odysseus.trajectory.physical.compare.AbstractAdvancedTrajectory;
 import de.uniol.inf.is.odysseus.trajectory.physical.compare.RawTrajectory;
 
-public class UotsTrajectory {
+public class UotsTrajectory extends AbstractAdvancedTrajectory {
 
-	private final RawTrajectory rawTrajectory;
-	
 	private final List<Point> graphPoints;
 	
-	public double distance = -1;
+	private Iterator<Point> iterator;
 	
 	public UotsTrajectory(RawTrajectory rawTrajectory, List<Point> graphPoints) {
-		this.rawTrajectory = rawTrajectory;
+		super(rawTrajectory);
 		this.graphPoints = Collections.unmodifiableList(graphPoints);
-	}
-
-	public RawTrajectory getRawTrajectory() {
-		return this.rawTrajectory;
 	}
 	
 	public List<Point> getGraphPoints() {
 		return this.graphPoints;
 	}
 
-	public double getDistance() {
-		return distance;
+	public Iterator<Point> getIterator() {
+		return iterator;
 	}
 
-	public void setDistance(double distance) {
-		this.distance = distance;
-	}	
+	public void setIterator(Iterator<Point> iterator) {
+		this.iterator = iterator;
+	}
 }

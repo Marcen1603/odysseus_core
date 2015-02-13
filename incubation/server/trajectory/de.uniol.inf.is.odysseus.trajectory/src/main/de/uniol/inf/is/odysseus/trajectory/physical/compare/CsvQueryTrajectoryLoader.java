@@ -61,6 +61,6 @@ public class CsvQueryTrajectoryLoader implements IQueryTrajectoryLoader {
 					Double.parseDouble(record.get(1))));
 		}
 		
-		return new RawTrajectory(null, points);
+		return new RawTrajectory(null, 0, points);
 	}
 }
