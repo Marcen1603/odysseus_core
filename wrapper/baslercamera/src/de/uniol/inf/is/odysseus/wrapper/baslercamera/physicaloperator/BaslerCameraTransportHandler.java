@@ -112,7 +112,7 @@ public class BaslerCameraTransportHandler extends AbstractSimplePullTransportHan
 			// Is it possible for an IplImage to be backed by a non-direct byte buffer?
 			assert(imageData.isDirect());
 
-			if (!cameraCapture.grabRGB8(imageData, 1000))
+			if (!cameraCapture.grabRGB8(imageData, img.widthStep(), 1000))
 			{
 				return false;
 			}
