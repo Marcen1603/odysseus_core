@@ -47,8 +47,8 @@ public class BaslerCamera {
     BaslerJavaJNI.BaslerCamera_stop(swigCPtr, this);
   }
 
-  public boolean grabRGB8(java.nio.ByteBuffer buffer, long timeOutMs) throws java.lang.RuntimeException {
-    return BaslerJavaJNI.BaslerCamera_grabRGB8(swigCPtr, this, buffer, timeOutMs);
+  public boolean grabRGB8(java.nio.ByteBuffer buffer, int lineLength, long timeOutMs) throws java.lang.RuntimeException {
+    return BaslerJavaJNI.BaslerCamera_grabRGB8(swigCPtr, this, buffer, lineLength, timeOutMs);
   }
 
   public int getBufferSize() {

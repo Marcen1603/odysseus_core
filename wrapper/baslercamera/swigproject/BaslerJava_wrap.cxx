@@ -339,12 +339,13 @@ SWIGEXPORT void JNICALL Java_de_uniol_inf_is_odysseus_wrapper_baslercamera_swig_
 }
 
 
-SWIGEXPORT jboolean JNICALL Java_de_uniol_inf_is_odysseus_wrapper_baslercamera_swig_BaslerJavaJNI_BaslerCamera_1grabRGB8(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jobject jarg2, jlong jarg4) {
+SWIGEXPORT jboolean JNICALL Java_de_uniol_inf_is_odysseus_wrapper_baslercamera_swig_BaslerJavaJNI_BaslerCamera_1grabRGB8(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jobject jarg2, jint jarg4, jlong jarg5) {
   jboolean jresult = 0 ;
   BaslerCamera *arg1 = (BaslerCamera *) 0 ;
   void *arg2 = (void *) 0 ;
   long arg3 ;
-  unsigned int arg4 ;
+  int arg4 ;
+  unsigned int arg5 ;
   bool result;
   
   (void)jenv;
@@ -356,9 +357,10 @@ SWIGEXPORT jboolean JNICALL Java_de_uniol_inf_is_odysseus_wrapper_baslercamera_s
     arg2 = jenv->GetDirectBufferAddress(jarg2); 
     arg3 = (long)(jenv->GetDirectBufferCapacity(jarg2)); 
   }
-  arg4 = (unsigned int)jarg4; 
+  arg4 = (int)jarg4; 
+  arg5 = (unsigned int)jarg5; 
   try {
-    result = (bool)(arg1)->grabRGB8(arg2,arg3,arg4);
+    result = (bool)(arg1)->grabRGB8(arg2,arg3,arg4,arg5);
   }
   catch(std::exception &_e) {
     {

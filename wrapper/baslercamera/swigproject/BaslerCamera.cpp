@@ -76,7 +76,7 @@ void BaslerCamera::start()
 	camera->Open();
 	camera->StartGrabbing();
 
-	grabRGB8(NULL, 0, 1000);
+	grabRGB8(NULL, 0, 0, 1000);
 }
 
 void BaslerCamera::stop()
@@ -91,7 +91,7 @@ void BaslerCamera::stop()
 	}
 }
 
-bool BaslerCamera::grabRGB8(void *buffer, long size, unsigned int timeOutMs)
+bool BaslerCamera::grabRGB8(void *buffer, long size, int lineLength, unsigned int timeOutMs)
 {
 	if (!camera->IsGrabbing()) return false;
 
@@ -111,7 +111,7 @@ bool BaslerCamera::grabRGB8(void *buffer, long size, unsigned int timeOutMs)
 	{
 		converter.OutputPixelFormat = PixelType_BGR8packed;
 		converter.OutputBitAlignment = OutputBitAlignment_LsbAligned; // OutputBitAlignment_MsbAligned;
-		converter.OutputPaddingX = 0;
+		converter.OutputPaddingX = lineLength - imageWidth * getImageChannels();
 		converter.Convert(buffer, size, result);
 	}
 /*	else

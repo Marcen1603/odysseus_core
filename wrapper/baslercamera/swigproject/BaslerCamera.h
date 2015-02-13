@@ -25,7 +25,7 @@ public:
 	void	start() throw(std::exception);
 	void	stop();
 
-	bool	grabRGB8(void *buffer, long size, unsigned int timeOutMs) throw(std::exception);
+	bool	grabRGB8(void *buffer, long size, int lineLength, unsigned int timeOutMs) throw(std::exception);
 	int		getBufferSize() const { return bufferSize; }
 	int		getImageWidth() const { return imageWidth; }
 	int		getImageHeight() const { return imageHeight; }
