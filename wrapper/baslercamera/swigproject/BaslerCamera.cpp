@@ -67,8 +67,11 @@ void BaslerCamera::start()
 			throw std::exception(("Camera with serial number " + serialNumber + " not present!").c_str());
 	}
 
-	supportsBGRConversion = CImageFormatConverter::IsSupportedOutputFormat(PixelType_BGR8packed);
-	std::cout << "supportsBGRConversion = " << supportsBGRConversion << std::endl;
+	if (!CImageFormatConverter::IsSupportedOutputFormat(PixelType_BGR8packed))
+		throw std::exception("Conversion to BGR not implemented!");
+
+/*	supportsBGRConversion = CImageFormatConverter::IsSupportedOutputFormat(PixelType_BGR8packed);
+	std::cout << "supportsBGRConversion = " << supportsBGRConversion << std::endl;*/
 
 	camera->Open();
 	camera->StartGrabbing();
@@ -104,15 +107,16 @@ bool BaslerCamera::grabRGB8(void *buffer, long size, unsigned int timeOutMs)
 	if (buffer == NULL) return false;
 
 	CImageFormatConverter converter;
-	if (supportsBGRConversion)
+//	if (supportsBGRConversion)
 	{
 		converter.OutputPixelFormat = PixelType_BGR8packed;
 		converter.OutputBitAlignment = OutputBitAlignment_LsbAligned; // OutputBitAlignment_MsbAligned;
 		converter.OutputPaddingX = 0;
 		converter.Convert(buffer, size, result);
 	}
-	else
+/*	else
 	{
+		// TODO: Code not tested
 		CPylonImage image;
 		converter.OutputPixelFormat = PixelType_RGB8packed;
 		converter.OutputBitAlignment = OutputBitAlignment_LsbAligned; //OutputBitAlignment_MsbAligned;
@@ -146,7 +150,7 @@ bool BaslerCamera::grabRGB8(void *buffer, long size, unsigned int timeOutMs)
 
 			bytesLeft -= 3;
 		}
-	}
+	}*/
 
 	return true;
 }

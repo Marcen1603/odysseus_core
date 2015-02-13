@@ -13,7 +13,7 @@ class BaslerCamera
 	Camera*	camera;
 
 	std::string serialNumber;
-	bool supportsBGRConversion;
+//	bool supportsBGRConversion;
 	int imageWidth;
 	int imageHeight;
 	int bufferSize;
