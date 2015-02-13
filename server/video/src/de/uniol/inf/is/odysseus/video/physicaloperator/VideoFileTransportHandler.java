@@ -209,7 +209,7 @@ public class VideoFileTransportHandler extends AbstractSimplePullTransportHandle
 	{
 		if (currentImage == null) return null;		
 		
-		Tuple<IMetaAttribute> tuple = new Tuple<>(getSchema().size(), false);
+		Tuple<IMetaAttribute> tuple = new Tuple<>(getSchema().size(), true);
 
 		int[] attrs = getSchema().getSDFDatatypeAttributePositions(SDFImageJCVDatatype.IMAGEJCV);
 		if (attrs.length > 0) tuple.setAttribute(attrs[0], currentImage);

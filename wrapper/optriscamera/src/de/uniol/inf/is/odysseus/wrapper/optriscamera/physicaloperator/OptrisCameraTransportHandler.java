@@ -63,7 +63,7 @@ public class OptrisCameraTransportHandler extends AbstractPushTransportHandler
 		 						{
 		 							@Override public void onNewFrame(ByteBuffer buffer)
 		 							{
-		 								Tuple<IMetaAttribute> tuple = new Tuple<>(getSchema().size(), false);
+		 								Tuple<IMetaAttribute> tuple = new Tuple<>(getSchema().size(), true);
 		 								int[] attrs = getSchema().getSDFDatatypeAttributePositions(SDFImageJCVDatatype.IMAGEJCV);
 		 								if (attrs.length > 0)
 		 								{

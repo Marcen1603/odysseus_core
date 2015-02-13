@@ -19,7 +19,7 @@ import de.uniol.inf.is.odysseus.imagejcv.common.datatype.ImageJCV;
 import de.uniol.inf.is.odysseus.imagejcv.common.sdf.schema.SDFImageJCVDatatype;
 import de.uniol.inf.is.odysseus.wrapper.baslercamera.swig.BaslerCamera;
 
-public class BaslerCameraTransportHandler extends AbstractSimplePullTransportHandler<Tuple<?>> 
+public class BaslerCameraTransportHandler extends AbstractSimplePullTransportHandler<Tuple<IMetaAttribute>> 
 {
 	@SuppressWarnings("unused")
 	private final Logger logger = LoggerFactory.getLogger(BaslerCameraTransportHandler.class);
@@ -84,15 +84,18 @@ public class BaslerCameraTransportHandler extends AbstractSimplePullTransportHan
 
 	private long lastTime = 0;
 	
-	@Override public Tuple<?> getNext() 
+	@Override public Tuple<IMetaAttribute> getNext() 
 	{
 		long now = System.nanoTime();
 		double dt = (now - lastTime) / 1.0e9;
 //		System.out.println("getNext " + now / 1.0e9 + ", dt = " + dt + " = " + 1.0/dt + " FPS");
 		System.out.println(serialNumber + ": " +  1.0/dt + " FPS");
 		lastTime = now;
+
+		Tuple<IMetaAttribute> tuple = currentTuple;
+		currentTuple = null;		
 		
-        return currentTuple;					
+        return tuple;					
 	}
     
 	@Override public boolean hasNext() 
@@ -113,7 +116,7 @@ public class BaslerCameraTransportHandler extends AbstractSimplePullTransportHan
 			}
 			else
 			{
-				currentTuple = new Tuple<>(getSchema().size(), false);
+				currentTuple = new Tuple<IMetaAttribute>(getSchema().size(), true);
 				int[] attrs = getSchema().getSDFDatatypeAttributePositions(SDFImageJCVDatatype.IMAGEJCV);
 				if (attrs.length > 0) currentTuple.setAttribute(attrs[0], new ImageJCV(img));
 				

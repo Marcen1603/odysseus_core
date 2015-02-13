@@ -30,7 +30,7 @@ public class IntegratedCameraTransportHandler extends AbstractSimplePullTranspor
 	private int 				cameraId;
 	private OpenCVFrameGrabber 	cameraCapture;
 	
-	private ImageJCV currentImage = null;
+	private Tuple<IMetaAttribute> currentTuple = null;
 	
 	public IntegratedCameraTransportHandler() 
 	{
@@ -101,18 +101,10 @@ public class IntegratedCameraTransportHandler extends AbstractSimplePullTranspor
 	
 	@Override public Tuple<IMetaAttribute> getNext() 
 	{
-		synchronized (processLock)
-		{
-			if (currentImage == null) return null;
+		Tuple<IMetaAttribute> tuple = currentTuple;
+		currentTuple = null;
 		
-			Tuple<IMetaAttribute> tuple = new Tuple<>(getSchema().size(), false);
-			int[] attrs = getSchema().getSDFDatatypeAttributePositions(SDFImageJCVDatatype.IMAGEJCV);
-			if (attrs.length > 0) 
-				tuple.setAttribute(attrs[0], currentImage);
-			
-	        currentImage = null;
-	        return tuple;
-		}
+        return tuple;
 	}
     
 	@Override public boolean hasNext()
@@ -128,7 +120,11 @@ public class IntegratedCameraTransportHandler extends AbstractSimplePullTranspor
 				IplImage copy = cvCreateImage(cvSize(iplImage.width(), iplImage.height()), iplImage.depth(), iplImage.nChannels());
 				copy.getByteBuffer().put(iplImage.getByteBuffer());
 				
-				currentImage = new ImageJCV(copy);
+				currentTuple = new Tuple<>(getSchema().size(), true);
+				int[] attrs = getSchema().getSDFDatatypeAttributePositions(SDFImageJCVDatatype.IMAGEJCV);
+				if (attrs.length > 0) 
+					currentTuple.setAttribute(attrs[0], new ImageJCV(copy));				
+				
 				return true;
 			}
 			catch (Exception e) 
