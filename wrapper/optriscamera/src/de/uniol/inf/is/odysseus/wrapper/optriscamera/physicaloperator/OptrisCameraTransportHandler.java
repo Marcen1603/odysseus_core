@@ -68,7 +68,11 @@ public class OptrisCameraTransportHandler extends AbstractPushTransportHandler
 		 								if (attrs.length > 0)
 		 								{
 			 								IplImage img = cvCreateImage(cvSize(cameraCapture.getImageWidth(), cameraCapture.getImageHeight()), IPL_DEPTH_16S, cameraCapture.getImageChannels());			
-			 								img.getByteBuffer().put(buffer);		 									
+			 								img.getByteBuffer().put(buffer);	
+			 								
+			 								// FIX: Without this, the finalization method of the ImageJCV will not be called... ?!?
+			 								img.getBufferedImage();			 								
+			 								
 		 									tuple.setAttribute(attrs[0], new ImageJCV(img));
 		 								}
 		 								

@@ -60,9 +60,10 @@ public class ImageJCV implements IClone, Cloneable
 	
 	public void release()
 	{
+//		System.out.println("Call finalize...");
 		if (image != null)
 		{
-			System.out.println("Release image");
+//			System.out.println("Release image");
 			cvReleaseImage(image);
 			image = null;
 		}

@@ -104,6 +104,8 @@ public class BaslerCameraTransportHandler extends AbstractSimplePullTransportHan
 		{
 			if (cameraCapture == null) return false;
 			
+//			IplImage img = null;
+			
 			IplImage img = cvCreateImage(cvSize(cameraCapture.getImageWidth(), cameraCapture.getImageHeight()), IPL_DEPTH_8U, cameraCapture.getImageChannels());			
 			ByteBuffer imageData = img.getByteBuffer();
 			
@@ -116,6 +118,9 @@ public class BaslerCameraTransportHandler extends AbstractSimplePullTransportHan
 			}
 			else
 			{
+				// FIX: Without this, the finalization method of the ImageJCV will not be called... ?!?
+				img.getBufferedImage();
+				
 				currentTuple = new Tuple<IMetaAttribute>(getSchema().size(), true);
 				int[] attrs = getSchema().getSDFDatatypeAttributePositions(SDFImageJCVDatatype.IMAGEJCV);
 				if (attrs.length > 0) currentTuple.setAttribute(attrs[0], new ImageJCV(img));
