@@ -67,7 +67,8 @@ void BaslerCamera::start()
 			throw std::exception(("Camera with serial number " + serialNumber + " not present!").c_str());
 	}
 
-	supportsRGBAConversion = CImageFormatConverter::IsSupportedOutputFormat(PixelType_RGBA8packed);
+	supportsBGRConversion = CImageFormatConverter::IsSupportedOutputFormat(PixelType_BGR8packed);
+	std::cout << "supportsBGRConversion = " << supportsBGRConversion << std::endl;
 
 	camera->Open();
 	camera->StartGrabbing();
@@ -97,15 +98,15 @@ bool BaslerCamera::grabRGB8(void *buffer, long size, unsigned int timeOutMs)
 	
 	imageWidth = result->GetWidth();
 	imageHeight = result->GetHeight();
-	bufferSize = imageWidth*imageHeight*4;
+	bufferSize = imageWidth*imageHeight*getImageChannels();
 
 	if (size < bufferSize) return false;
 	if (buffer == NULL) return false;
 
 	CImageFormatConverter converter;
-	if (supportsRGBAConversion)
+	if (supportsBGRConversion)
 	{
-		converter.OutputPixelFormat = PixelType_RGBA8packed;
+		converter.OutputPixelFormat = PixelType_BGR8packed;
 		converter.OutputBitAlignment = OutputBitAlignment_LsbAligned; // OutputBitAlignment_MsbAligned;
 		converter.OutputPaddingX = 0;
 		converter.Convert(buffer, size, result);
@@ -114,28 +115,34 @@ bool BaslerCamera::grabRGB8(void *buffer, long size, unsigned int timeOutMs)
 	{
 		CPylonImage image;
 		converter.OutputPixelFormat = PixelType_RGB8packed;
-		converter.OutputBitAlignment = OutputBitAlignment_MsbAligned;
+		converter.OutputBitAlignment = OutputBitAlignment_LsbAligned; //OutputBitAlignment_MsbAligned;
 		converter.OutputPaddingX = 0;
 		converter.Convert(image, result);
 
-		int bytesLeft = image.GetImageSize();//bufferSize;				
+		int bytesLeft = image.GetImageSize();
 
-		struct Pixel
+		struct PixelRGB
 		{
 			BYTE r, g, b;
 		};
 
-		Pixel* inBuffer = (Pixel*)image.GetBuffer();
-		DWORD* outBuffer = (DWORD*)buffer;
+		struct PixelBGR
+		{
+			BYTE b, g, r;
+		};
+
+		PixelRGB* inBuffer = (PixelRGB*)image.GetBuffer();
+		PixelBGR* outBuffer = (PixelBGR*)buffer;
 
 		while (bytesLeft > 0)
 		{
-			Pixel* cur = inBuffer++;
+			PixelRGB* cur = inBuffer++;
 
-			DWORD curDWORD = *((DWORD*)cur);
-			curDWORD |= 0xFF000000;
+			outBuffer->r = cur->r;
+			outBuffer->g = cur->g;
+			outBuffer->b = cur->b;
 
-			*(outBuffer++) = _byteswap_ulong(curDWORD);
+			outBuffer++;
 
 			bytesLeft -= 3;
 		}
