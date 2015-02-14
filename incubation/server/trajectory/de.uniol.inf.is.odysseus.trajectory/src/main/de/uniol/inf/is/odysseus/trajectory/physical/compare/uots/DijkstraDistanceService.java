@@ -32,7 +32,7 @@ public class DijkstraDistanceService implements IDistanceService {
 		this.dijkstraDistance = new DijkstraDistance<>(graph.getReducedGraph(), new Transformer<Unit<Double>, Number>() {
 			@Override
 			public Number transform(Unit<Double> arg0) {
-				return arg0.getValue0();
+				return arg0.getValue0() / graph.getDiagonalLength();
 			}
 		}, true);
 	}
@@ -76,7 +76,6 @@ public class DijkstraDistanceService implements IDistanceService {
 			for(Point ec : queryTrajectory.getData().getExpansionCenters()) {
 				distance += this.getMinDistance(ec, dataTrajectory);
 			}
-			distance /= 1000.0;
 			dataTrajectory.setDistance(2.0 / (1.0 + Math.pow(Math.E, -distance)) - 1);
 			LOGGER.info(dataTrajectory.getDistance() + "|" + distance + " id: " + dataTrajectory.getRawTrajectory().getVehicleId());
 

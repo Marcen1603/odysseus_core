@@ -13,6 +13,8 @@ import org.javatuples.Unit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.LineSegment;
 import com.vividsolutions.jts.geom.Point;
 
@@ -28,14 +30,15 @@ public class NetGraph {
 	
 	private final UndirectedSparseGraph<Point, Unit<Double>> reducedGraph;
 	
+	private final double diagonalLength;
+		
 	private Map<Point, Point> pointToJunctions = new HashMap<>();
 	
-
 	public NetGraph(UndirectedSparseGraph<Point, LineSegment> complexGraph) {
 		this.complexGraph = complexGraph;
 		this.keepHighestIsolatedGraph();
 		this.reducedGraph = new UndirectedSparseGraph<>();		
-	    this.buildReducedGraph();
+		this.diagonalLength = this.buildReducedGraph();
 	}
 	
 	/**
@@ -86,7 +89,7 @@ public class NetGraph {
 	/**
 	 * 
 	 */
-	private final void buildReducedGraph() {
+	private final double buildReducedGraph() {
 		
 	    for(final LineSegment ls : this.complexGraph.getEdges()) {
 	        this.reducedGraph.addEdge(new Unit<>(ls.getLength()), this.complexGraph.getEndpoints(ls), EdgeType.UNDIRECTED);
@@ -120,6 +123,35 @@ public class NetGraph {
 
 		LOGGER.info("Simple Graph created: reduced vertex count from " + this.complexGraph.getVertexCount() 
 				+ " to " + this.reducedGraph.getVertexCount());
+		
+		
+		final Iterator<Point> it = this.reducedGraph.getVertices().iterator();
+		Point point = it.next();
+		
+		double maxLeft = point.getX();
+		double maxRight = maxLeft;
+		double maxTop = point.getY();
+		double maxBottom = maxTop;
+		
+		while(it.hasNext()) {
+			final Point next = it.next();
+			
+			if(next.getX() < maxLeft) {
+				maxLeft = next.getX();
+			} else if(next.getX() > maxRight) {
+				maxRight = next.getX();
+			}
+			
+			if(next.getY() < maxBottom) {
+				maxBottom = next.getY();
+			} else if(next.getY() > maxTop) {
+				maxTop = next.getY();
+			}
+		}
+		
+		final GeometryFactory gf = new GeometryFactory();
+		
+		return gf.createPoint(new Coordinate(maxLeft, maxTop)).distance(gf.createPoint(new Coordinate(maxRight, maxBottom)));
 	}
 	
 	private Pair<Point, Double> findJunction(Point point, Unit<Double> edge, double distance, double maxDistance) {
@@ -157,6 +189,8 @@ public class NetGraph {
 	public UndirectedSparseGraph<Point, Unit<Double>> getReducedGraph() {
 		return this.reducedGraph;
 	}
-	
-	
+
+	public double getDiagonalLength() {
+		return this.diagonalLength;
+	}
 }
