@@ -3,10 +3,11 @@ package de.uniol.inf.is.odysseus.trajectory.physical.compare.uots;
 import com.vividsolutions.jts.geom.LineSegment;
 import com.vividsolutions.jts.geom.Point;
 
+import de.uniol.inf.is.odysseus.trajectory.physical.compare.uots.graph.NetGraph;
 import de.uniol.inf.is.odysseus.trajectory.util.AbstractFactory;
 import edu.uci.ics.jung.graph.UndirectedSparseGraph;
 
-public class DistanceServiceFactory extends AbstractFactory<IDistanceService, UndirectedSparseGraph<Point, LineSegment>> {
+public class DistanceServiceFactory extends AbstractFactory<IDistanceService, NetGraph> {
 
 	
 	private final static DistanceServiceFactory INSTANCE = new DistanceServiceFactory();
@@ -16,14 +17,12 @@ public class DistanceServiceFactory extends AbstractFactory<IDistanceService, Un
 	}
 	
 	@Override
-	protected UndirectedSparseGraph<Point, LineSegment> convertKey(
-			UndirectedSparseGraph<Point, LineSegment> key) {
+	protected NetGraph convertKey(NetGraph key) {
 		return key;
 	}
 
 	@Override
-	protected IDistanceService createProduct(
-			UndirectedSparseGraph<Point, LineSegment> convertedKey) {
+	protected IDistanceService createProduct(NetGraph convertedKey) {
 		return new DijkstraDistanceService(convertedKey);
 	}
 

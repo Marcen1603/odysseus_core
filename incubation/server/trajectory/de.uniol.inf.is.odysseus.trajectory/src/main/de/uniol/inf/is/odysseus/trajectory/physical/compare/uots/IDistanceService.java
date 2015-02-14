@@ -4,9 +4,9 @@ import java.util.List;
 
 public interface IDistanceService {
 
-	public void addQueryTrajectory(UotsTrajectory queryTrajectory, int k) throws IllegalArgumentException;
+	public void addQueryTrajectory(UotsQueryTrajectory queryTrajectory, int k) throws IllegalArgumentException;
 	
-	public List<UotsTrajectory> getDistance(UotsTrajectory queryTrajectory, UotsTrajectory dataTrajectory);
+	public List<UotsTrajectory> getDistance(UotsQueryTrajectory queryTrajectory, UotsTrajectory dataTrajectory);
 	
-	public void removeTrajectory(UotsTrajectory queryTrajectory, UotsTrajectory dataTrajectory);
+	public void removeTrajectory(UotsQueryTrajectory queryTrajectory, UotsTrajectory dataTrajectory);
 }

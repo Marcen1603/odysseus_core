@@ -11,10 +11,10 @@ import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
-import de.uniol.inf.is.odysseus.trajectory.physical.compare.AbstractAdvancedTrajectory;
+import de.uniol.inf.is.odysseus.trajectory.physical.compare.AbstractDataTrajectory;
 import de.uniol.inf.is.odysseus.trajectory.physical.compare.ITrajectoryCompareAlgorithm;
 import de.uniol.inf.is.odysseus.trajectory.physical.compare.ITupleToRawTrajectoryConverter;
-import de.uniol.inf.is.odysseus.trajectory.physical.compare.RawTrajectory;
+import de.uniol.inf.is.odysseus.trajectory.physical.compare.RawDataTrajectory;
 import de.uniol.inf.is.odysseus.trajectory.physical.compare.TrajectoryCompareAlgorithmFactory;
 import de.uniol.inf.is.odysseus.trajectory.physical.compare.TupleToRawTrajectoryConverterFactory;
 
@@ -45,17 +45,16 @@ public class TrajectoryComparePO<T extends Tuple<ITimeInterval>> extends Abstrac
 	@SuppressWarnings("unchecked")
 	@Override
 	protected void process_next(T object, int port) {
-		final RawTrajectory rawTrajectory = this.tupleToRawTrajectoryConverter.convert(object, this.utmZone);
+		final RawDataTrajectory rawTrajectory = this.tupleToRawTrajectoryConverter.convert(object, this.utmZone);
 		this.algorithm.removeBefore(object.getMetadata().getStart());
 		
-		List<AbstractAdvancedTrajectory> knearest = this.algorithm.getKNearest(rawTrajectory);
+		List<AbstractDataTrajectory> knearest = this.algorithm.getKNearest(rawTrajectory);
 		LOGGER.info(knearest.toString());
 		
-		
-		Tuple<ITimeInterval> result = new Tuple<ITimeInterval>(
+		final Tuple<ITimeInterval> result = new Tuple<ITimeInterval>(
 				knearest,
 				true
-			);
+		);
 		this.transfer((T)result);
 	}
 	

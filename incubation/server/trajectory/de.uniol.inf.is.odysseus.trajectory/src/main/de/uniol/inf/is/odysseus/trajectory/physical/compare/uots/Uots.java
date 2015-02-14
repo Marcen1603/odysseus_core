@@ -1,6 +1,5 @@
 package de.uniol.inf.is.odysseus.trajectory.physical.compare.uots;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -11,15 +10,12 @@ import org.slf4j.LoggerFactory;
 import com.vividsolutions.jts.geom.LineSegment;
 import com.vividsolutions.jts.geom.Point;
 
-import de.uniol.inf.is.odysseus.core.collection.Tuple;
-import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
-import de.uniol.inf.is.odysseus.trajectory.physical.compare.AbstractAdvancedTrajectory;
 import de.uniol.inf.is.odysseus.trajectory.physical.compare.ITrajectoryCompareAlgorithm;
-import de.uniol.inf.is.odysseus.trajectory.physical.compare.ITupleToRawTrajectoryConverter;
-import de.uniol.inf.is.odysseus.trajectory.physical.compare.RawTrajectory;
-import de.uniol.inf.is.odysseus.trajectory.physical.compare.TupleToRawTrajectoryConverterFactory;
+import de.uniol.inf.is.odysseus.trajectory.physical.compare.RawDataTrajectory;
+import de.uniol.inf.is.odysseus.trajectory.physical.compare.RawQueryTrajectory;
 import de.uniol.inf.is.odysseus.trajectory.physical.compare.uots.graph.GraphBuilderFactory;
+import de.uniol.inf.is.odysseus.trajectory.physical.compare.uots.graph.NetGraph;
 import de.uniol.inf.is.odysseus.trajectory.physical.compare.uots.mapmatch.IMapMatcher;
 import de.uniol.inf.is.odysseus.trajectory.physical.compare.uots.mapmatch.MapMatcherFactory;
 import edu.uci.ics.jung.graph.UndirectedSparseGraph;
@@ -34,20 +30,18 @@ public class Uots implements ITrajectoryCompareAlgorithm<UotsTrajectory> {
 
 	private final int k;
 	
-	private final UotsTrajectory queryTrajectory;
+	private final UotsQueryTrajectory queryTrajectory;
 	
-	private final UndirectedSparseGraph<Point, LineSegment> graph;
+	private final NetGraph graph;
 	
 	private final IMapMatcher mapMatcher;
 	private final IDistanceService distanceService;
-	
-	
 	
 	private final List<UotsTrajectory> trajectories = new LinkedList<>();
 	
 	
 	
-	public Uots(final int k, final RawTrajectory queryTrajectory, final int utmZone, final Map<String, String> options) {
+	public Uots(final int k, final RawQueryTrajectory queryTrajectory, final int utmZone, final Map<String, String> options) {
 		this.k = k;
 		
 		// Get the options
@@ -66,7 +60,7 @@ public class Uots implements ITrajectoryCompareAlgorithm<UotsTrajectory> {
 	}
 
 	@Override
-	public List<UotsTrajectory> getKNearest(RawTrajectory incoming) {	
+	public List<UotsTrajectory> getKNearest(RawDataTrajectory incoming) {	
 		final UotsTrajectory uotsTrajectory = this.mapMatcher.map(incoming, this.graph);
 		return this.distanceService.getDistance(this.queryTrajectory, uotsTrajectory);
 	}

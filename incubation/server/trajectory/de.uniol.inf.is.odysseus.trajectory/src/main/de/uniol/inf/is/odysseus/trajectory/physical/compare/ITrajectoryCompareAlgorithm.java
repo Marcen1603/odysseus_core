@@ -11,11 +11,11 @@ import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
  * @author marcus
  *
  */
-public interface ITrajectoryCompareAlgorithm<T extends AbstractAdvancedTrajectory> {
+public interface ITrajectoryCompareAlgorithm<T extends AbstractDataTrajectory> {
 
 	public int getK();
 	
-	public List<T> getKNearest(RawTrajectory incoming);
+	public List<T> getKNearest(RawDataTrajectory incoming);
 	
 	public void removeBefore(PointInTime time);
 }

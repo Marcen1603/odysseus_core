@@ -15,18 +15,18 @@ public class OWDTrajectoryTest {
 	
 	@Test
 	public final void test() {
-		for(Point p : GraphBuilderFactory.getInstance().load("new.osm", 32).getVertices()) {
-			System.out.println(p);
-		}
-		RawTrajectory raw = QueryTrajectoryLoaderFactory.getInstance().load("qT.csv", 32);
-//		for(Point p : raw.getPoints()) {
+//		for(Point p : GraphBuilderFactory.getInstance().load("new.osm", 32).getVertices()) {
 //			System.out.println(p);
 //		}
-		UotsTrajectory uots = MapMatcherFactory.getInstance().create("Point-to-Point").map(raw, GraphBuilderFactory.getInstance().load("new.osm", 32));
-		
-		for(Point p : uots.getGraphPoints()) {
-			System.out.println(p);
-		}
+//		RawDataTrajectory raw = QueryTrajectoryLoaderFactory.getInstance().load("qT.csv", 32);
+////		for(Point p : raw.getPoints()) {
+////			System.out.println(p);
+////		}
+//		UotsTrajectory uots = MapMatcherFactory.getInstance().create("Point-to-Point").map(raw, GraphBuilderFactory.getInstance().load("new.osm", 32));
+//		
+//		for(Point p : uots.getGraphPoints()) {
+//			System.out.println(p);
+//		}
 	}
 
 }

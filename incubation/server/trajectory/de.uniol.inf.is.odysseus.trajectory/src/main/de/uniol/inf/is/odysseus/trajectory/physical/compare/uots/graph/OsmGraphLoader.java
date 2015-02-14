@@ -1,6 +1,5 @@
 package de.uniol.inf.is.odysseus.trajectory.physical.compare.uots.graph;
 
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -14,13 +13,13 @@ import org.slf4j.LoggerFactory;
 import com.vividsolutions.jts.geom.LineSegment;
 import com.vividsolutions.jts.geom.Point;
 import com.ximpleware.AutoPilot;
-import com.ximpleware.IndexReadException;
 import com.ximpleware.VTDGen;
 import com.ximpleware.VTDNav;
 
 import de.uniol.inf.is.odysseus.trajectory.physical.compare.uots.graph.util.IPointCreator;
 import de.uniol.inf.is.odysseus.trajectory.physical.compare.uots.graph.util.UtmPointCreatorFactory;
 import edu.uci.ics.jung.graph.UndirectedSparseGraph;
+import edu.uci.ics.jung.graph.util.EdgeType;
 
 public class OsmGraphLoader implements IGraphLoader<String, Integer> {
 
@@ -50,13 +49,13 @@ public class OsmGraphLoader implements IGraphLoader<String, Integer> {
 	/**
 	 * md5 sums and already loaded Graph
 	 */
-	private final Map<String, UndirectedSparseGraph<Point, LineSegment>> graphs = new HashMap<>();
+	private final Map<String, NetGraph> graphs = new HashMap<>();
 
 	private OsmGraphLoader() { }
 	
 	@Override
-	public UndirectedSparseGraph<Point, LineSegment> load(String filepath, Integer utmZone) {
-		UndirectedSparseGraph<Point, LineSegment> graph = null;
+	public NetGraph load(String filepath, Integer utmZone) {
+		NetGraph graph = null;
 		InputStream fis = null;
 		String md5 = null;
 		try {
@@ -81,7 +80,7 @@ public class OsmGraphLoader implements IGraphLoader<String, Integer> {
 			}
 		}
 		
-		graph = new UndirectedSparseGraph<>();
+		final UndirectedSparseGraph<Point, LineSegment> complexGraph = new UndirectedSparseGraph<>();
 		
 		final IPointCreator pointCreator = UtmPointCreatorFactory.getInstance().create(utmZone);
 		
@@ -100,7 +99,7 @@ public class OsmGraphLoader implements IGraphLoader<String, Integer> {
 			    final Point point = pointCreator.createPoint(
 			    		Double.parseDouble(vn.toNormalizedString(vn.getAttrVal(NODE_LON_ATTR_NAME))), 
 			    		Double.parseDouble(vn.toNormalizedString(vn.getAttrVal(NODE_LAT_ATTR_NAME))));
-			    graph.addVertex(point);
+			    complexGraph.addVertex(point);
 			    pointsMap.put(vn.toNormalizedString(vn.getAttrVal(NODE_ID_ATTR_NAME)), point);
 			}
 			
@@ -120,7 +119,9 @@ public class OsmGraphLoader implements IGraphLoader<String, Integer> {
 			    	while(apNds.evalXPath() != -1) {
 			    		vn.toElement(VTDNav.FIRST_CHILD, ND_ELEM_NAME);
 			    		final Point point2 = pointsMap.get(vn.toNormalizedString(vn.getAttrVal(ND_REF_ATTR_NAME)));
-			    		graph.addEdge(new LineSegment(point1.getCoordinate(), point2.getCoordinate()), point1, point1 = point2);
+			    		if(complexGraph.findEdge(point1, point2) == null) {
+			    			complexGraph.addEdge(new LineSegment(point1.getCoordinate(), point2.getCoordinate()), point1, point1 = point2, EdgeType.UNDIRECTED);
+			    		}
 				    }
 			    }
 			}			
@@ -129,7 +130,7 @@ public class OsmGraphLoader implements IGraphLoader<String, Integer> {
 			throw new RuntimeException(e);
 		}
 		
-		this.graphs.put(md5, graph);
+		this.graphs.put(md5, graph = new NetGraph(complexGraph));
 		return graph;
 	}
 

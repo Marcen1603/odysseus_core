@@ -2,7 +2,7 @@ package de.uniol.inf.is.odysseus.trajectory.physical.compare;
 
 import de.uniol.inf.is.odysseus.trajectory.util.AbstractObjectLoaderFactory;
 
-public class QueryTrajectoryLoaderFactory extends AbstractObjectLoaderFactory<IQueryTrajectoryLoader, RawTrajectory, String, Integer>{
+public class QueryTrajectoryLoaderFactory extends AbstractObjectLoaderFactory<IQueryTrajectoryLoader, RawQueryTrajectory, String, Integer>{
 
 	private final static QueryTrajectoryLoaderFactory INSTANCE = new QueryTrajectoryLoaderFactory();
 	

@@ -19,7 +19,7 @@ public class DefaultTupleToRawTrajectoryConverter implements ITupleToRawTrajecto
 		
 
 	@Override
-	public RawTrajectory convert(Tuple<ITimeInterval> tuple, final int utmZone) {
+	public RawDataTrajectory convert(Tuple<ITimeInterval> tuple, final int utmZone) {
 				
 		final IPointCreator pointCreator = UtmPointCreatorFactory.getInstance().create(utmZone);
 		
@@ -32,6 +32,6 @@ public class DefaultTupleToRawTrajectoryConverter implements ITupleToRawTrajecto
 			points.add(pointCreator.createPoint(p.getX(), p.getY()));
 		}
 		
-		return new RawTrajectory((String)tuple.getAttribute(0), (int)tuple.getAttribute(1), points);
+		return new RawDataTrajectory((String)tuple.getAttribute(0), (int)tuple.getAttribute(1), points);
 	}
 }

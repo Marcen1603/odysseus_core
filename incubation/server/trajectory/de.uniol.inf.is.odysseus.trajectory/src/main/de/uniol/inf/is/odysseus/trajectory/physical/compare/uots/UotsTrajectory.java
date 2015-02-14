@@ -6,29 +6,19 @@ import java.util.List;
 
 import com.vividsolutions.jts.geom.Point;
 
-import de.uniol.inf.is.odysseus.trajectory.physical.compare.AbstractAdvancedTrajectory;
-import de.uniol.inf.is.odysseus.trajectory.physical.compare.RawTrajectory;
+import de.uniol.inf.is.odysseus.trajectory.physical.compare.AbstractDataTrajectory;
+import de.uniol.inf.is.odysseus.trajectory.physical.compare.RawDataTrajectory;
 
-public class UotsTrajectory extends AbstractAdvancedTrajectory {
+public class UotsTrajectory extends AbstractDataTrajectory {
 
 	private final List<Point> graphPoints;
 	
-	private Iterator<Point> iterator;
-	
-	public UotsTrajectory(RawTrajectory rawTrajectory, List<Point> graphPoints) {
+	public UotsTrajectory(RawDataTrajectory rawTrajectory, List<Point> graphPoints) {
 		super(rawTrajectory);
 		this.graphPoints = Collections.unmodifiableList(graphPoints);
 	}
 	
 	public List<Point> getGraphPoints() {
 		return this.graphPoints;
-	}
-
-	public Iterator<Point> getIterator() {
-		return iterator;
-	}
-
-	public void setIterator(Iterator<Point> iterator) {
-		this.iterator = iterator;
 	}
 }

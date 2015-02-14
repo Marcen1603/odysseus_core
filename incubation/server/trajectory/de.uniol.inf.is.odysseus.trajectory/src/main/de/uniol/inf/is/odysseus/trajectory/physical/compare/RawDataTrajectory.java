@@ -1,30 +1,27 @@
 package de.uniol.inf.is.odysseus.trajectory.physical.compare;
 
-import java.util.Collections;
 import java.util.List;
 
 import com.vividsolutions.jts.geom.Point;
 
 import de.uniol.inf.is.odysseus.core.metadata.TimeInterval;
 
-public class RawTrajectory {
+public class RawDataTrajectory extends AbstractRawTrajectory {
 
 	private final String vehicleId;
 	
 	private final int trajectaroyId;
 	
-	private final List<Point> points;
-	
 	private final TimeInterval interval;
 
-	public RawTrajectory(final String id, final int trajectaroyId, final List<Point> points) {
+	public RawDataTrajectory(final String id, final int trajectaroyId, final List<Point> points) {
 		this(id, trajectaroyId, points, null);
 	}
 	
-	public RawTrajectory(final String id, final int trajectaroyId, final List<Point> points, TimeInterval interval) {
+	public RawDataTrajectory(final String id, final int trajectaroyId, final List<Point> points, TimeInterval interval) {
+		super(points);
 		this.vehicleId = id;
 		this.trajectaroyId = trajectaroyId;
-		this.points = Collections.unmodifiableList(points);
 		this.interval = interval;
 	}
 
@@ -34,10 +31,6 @@ public class RawTrajectory {
 
 	public int getTrajectaroyId() {
 		return this.trajectaroyId;
-	}
-
-	public List<Point> getPoints() {
-		return this.points;
 	}
 
 	public TimeInterval getInterval() {

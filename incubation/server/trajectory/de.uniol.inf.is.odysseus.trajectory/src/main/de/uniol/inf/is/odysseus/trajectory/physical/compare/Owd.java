@@ -118,7 +118,7 @@ public class Owd implements ITrajectoryCompareAlgorithm {
 	}
 
 	@Override
-	public List<AbstractAdvancedTrajectory> getKNearest(RawTrajectory incoming) {
+	public List<AbstractDataTrajectory> getKNearest(RawDataTrajectory incoming) {
 		// TODO Auto-generated method stub
 		return null;
 	}

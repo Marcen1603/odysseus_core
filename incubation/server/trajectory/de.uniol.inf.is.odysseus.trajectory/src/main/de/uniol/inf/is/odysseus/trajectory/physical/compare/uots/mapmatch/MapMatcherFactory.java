@@ -10,7 +10,6 @@ public class MapMatcherFactory extends AbstractFactory<IMapMatcher, String> {
 		return INSTANCE;
 	}
 	
-	
 	private MapMatcherFactory() {}
 	
 	@Override

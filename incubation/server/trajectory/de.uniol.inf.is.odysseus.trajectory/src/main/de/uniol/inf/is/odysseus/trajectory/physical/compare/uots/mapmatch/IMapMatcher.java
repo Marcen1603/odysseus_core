@@ -1,15 +1,15 @@
 package de.uniol.inf.is.odysseus.trajectory.physical.compare.uots.mapmatch;
 
-import com.vividsolutions.jts.geom.LineSegment;
-import com.vividsolutions.jts.geom.Point;
-
-import de.uniol.inf.is.odysseus.trajectory.physical.compare.RawTrajectory;
+import de.uniol.inf.is.odysseus.trajectory.physical.compare.RawDataTrajectory;
+import de.uniol.inf.is.odysseus.trajectory.physical.compare.RawQueryTrajectory;
+import de.uniol.inf.is.odysseus.trajectory.physical.compare.uots.UotsQueryTrajectory;
 import de.uniol.inf.is.odysseus.trajectory.physical.compare.uots.UotsTrajectory;
-import edu.uci.ics.jung.graph.UndirectedSparseGraph;
+import de.uniol.inf.is.odysseus.trajectory.physical.compare.uots.graph.NetGraph;
 
 
 public interface IMapMatcher {
 
 	
-	public UotsTrajectory map(final RawTrajectory trajectory, UndirectedSparseGraph<Point, LineSegment> graph);
+	public UotsTrajectory map(final RawDataTrajectory trajectory, NetGraph graph);
+	public UotsQueryTrajectory map(final RawQueryTrajectory trajectory, NetGraph graph);
 }

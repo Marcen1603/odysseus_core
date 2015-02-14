@@ -4,24 +4,21 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.javatuples.Pair;
 
-import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.LineSegment;
 import com.vividsolutions.jts.geom.Point;
 
-import de.uniol.inf.is.odysseus.trajectory.physical.compare.RawTrajectory;
-import de.uniol.inf.is.odysseus.trajectory.physical.compare.uots.UotsTrajectory;
+import de.uniol.inf.is.odysseus.trajectory.physical.compare.IRawTrajectory;
 import edu.uci.ics.jung.graph.UndirectedSparseGraph;
 
-public class PointToArcPointMapMatcher implements IMapMatcher {
+public class PointToArcPointMapMatcher extends AbstractMapMatcher {
 	
 	@Override
-	public UotsTrajectory map(RawTrajectory trajectory,
-			UndirectedSparseGraph<Point, LineSegment> graph) {
-		
+	protected final List<Point> getGraphPoints(IRawTrajectory trajectory, UndirectedSparseGraph<Point, LineSegment> graph) {
 		//ersten finden
 		final Iterator<Point> rawIt = trajectory.getPoints().iterator();
 		Point rawPoint = rawIt.next();
@@ -54,7 +51,7 @@ public class PointToArcPointMapMatcher implements IMapMatcher {
 			minDistance = result.getValue1();
 		}
 		
-		return new UotsTrajectory(trajectory, new ArrayList<>(graphPoints));
+		return new ArrayList<>(graphPoints);
 	}
 
 	private Pair<Point, Double> search(Point lastRawPoint, Point rawPoint, Point lastGraphPoint, double currDistance, 

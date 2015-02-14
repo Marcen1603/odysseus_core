@@ -22,7 +22,7 @@ public class CsvQueryTrajectoryLoader implements IQueryTrajectoryLoader {
 	private final static Logger LOGGER = LoggerFactory.getLogger(CsvQueryTrajectoryLoader.class);
 	
 	@Override
-	public RawTrajectory load(String param, Integer additional) {
+	public RawQueryTrajectory load(String param, Integer additional) {
 		
 		Reader reader = null;
 		CSVParser parser = null;
@@ -61,6 +61,6 @@ public class CsvQueryTrajectoryLoader implements IQueryTrajectoryLoader {
 					Double.parseDouble(record.get(1))));
 		}
 		
-		return new RawTrajectory(null, 0, points);
+		return new RawQueryTrajectory(points);
 	}
 }
