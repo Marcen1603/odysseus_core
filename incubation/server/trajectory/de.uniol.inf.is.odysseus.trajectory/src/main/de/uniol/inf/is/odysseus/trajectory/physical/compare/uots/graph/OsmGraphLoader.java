@@ -119,9 +119,7 @@ public class OsmGraphLoader implements IGraphLoader<String, Integer> {
 			    	while(apNds.evalXPath() != -1) {
 			    		vn.toElement(VTDNav.FIRST_CHILD, ND_ELEM_NAME);
 			    		final Point point2 = pointsMap.get(vn.toNormalizedString(vn.getAttrVal(ND_REF_ATTR_NAME)));
-			    		if(complexGraph.findEdge(point1, point2) == null) {
-			    			complexGraph.addEdge(new LineSegment(point1.getCoordinate(), point2.getCoordinate()), point1, point1 = point2, EdgeType.UNDIRECTED);
-			    		}
+			    		complexGraph.addEdge(new LineSegment(point1.getCoordinate(), point2.getCoordinate()), point1, point1 = point2, EdgeType.UNDIRECTED);
 				    }
 			    }
 			}			

@@ -9,13 +9,13 @@ import java.util.Map;
 import java.util.PriorityQueue;
 
 import org.apache.commons.collections15.Transformer;
+import org.javatuples.Unit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.vividsolutions.jts.geom.Point;
 
 import de.uniol.inf.is.odysseus.trajectory.physical.compare.uots.graph.NetGraph;
-import de.uniol.inf.is.odysseus.trajectory.util.ObjectWrapper;
 import edu.uci.ics.jung.algorithms.shortestpath.DijkstraDistance;
 
 public class DijkstraDistanceService implements IDistanceService {
@@ -23,16 +23,16 @@ public class DijkstraDistanceService implements IDistanceService {
 	@SuppressWarnings("unused")
 	private final static Logger LOGGER = LoggerFactory.getLogger(DijkstraDistanceService.class);
 	
-	private final DijkstraDistance<Point, ObjectWrapper<Double>> dijkstraDistance;
+	private final DijkstraDistance<Point, Unit<Double>> dijkstraDistance;
 
 	private final Map<UotsQueryTrajectory, QueryTrajectoryData> trajectoryMap = new HashMap<>();
 	
 	
 	DijkstraDistanceService(final NetGraph graph) {
-		this.dijkstraDistance = new DijkstraDistance<>(graph.getSimpleGraph(), new Transformer<ObjectWrapper<Double>, Number>() {
+		this.dijkstraDistance = new DijkstraDistance<>(graph.getReducedGraph(), new Transformer<Unit<Double>, Number>() {
 			@Override
-			public Number transform(ObjectWrapper<Double> arg0) {
-				return arg0.getWrapped();
+			public Number transform(Unit<Double> arg0) {
+				return arg0.getValue0();
 			}
 		}, true);
 	}

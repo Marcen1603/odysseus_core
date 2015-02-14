@@ -42,7 +42,6 @@ public abstract class AbstractMapMatcher implements IMapMatcher {
 		LinkedHashSet<Point> result = new LinkedHashSet<>();
 		
 		for(final Point p : points) {
-			LOGGER.info(p + "");
 			result.add(graph.getJunction(p));
 		}
 		
