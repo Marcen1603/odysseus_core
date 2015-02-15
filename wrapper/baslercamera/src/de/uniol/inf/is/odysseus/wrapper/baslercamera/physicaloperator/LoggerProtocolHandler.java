@@ -15,6 +15,8 @@ import de.uniol.inf.is.odysseus.wrapper.baslercamera.KeyValueFile;
 
 public abstract class LoggerProtocolHandler extends AbstractProtocolHandler<Tuple<?>>
 {
+	private Object			processLock = new Object();
+	
 	private boolean 		logSetUp;
 	private KeyValueFile 	logConfigFile;
 	private long 			lastTimeStamp;
@@ -54,23 +56,28 @@ public abstract class LoggerProtocolHandler extends AbstractProtocolHandler<Tupl
 	public long   getLogfileSizeLimit() { return logfileSizeLimit; }
 
 	@Override
-	public void open() throws IOException
+	public final void open() throws IOException
 	{
-		logSetUp = false;
-		lastTimeStamp = 0;
+		synchronized(processLock)
+		{
+			logSetUp = false;
+			lastTimeStamp = 0;
+		}
 	}
 	
 	@Override
-	public void close() throws IOException 
+	public final void close() throws IOException 
 	{
-		if (logSetUp)
+		if (!logSetUp) return;
+
+		synchronized (processLock)
 		{
 			stopLogging(lastTimeStamp);
 			logSetUp = false;
 		}
 	}
 	
-	public void startLogging(Tuple<?> object) throws IOException
+	private void startLogging(Tuple<?> object) throws IOException
 	{
 		if (logSetUp) return;		
 			
@@ -107,7 +114,7 @@ public abstract class LoggerProtocolHandler extends AbstractProtocolHandler<Tupl
 		logSetUp = true;
 	}
 	
-	public void stopLogging(long lastTimeStamp)
+	private void stopLogging(long lastTimeStamp)
 	{
 		if (!logSetUp) return;
 		logSetUp = false;
@@ -132,16 +139,19 @@ public abstract class LoggerProtocolHandler extends AbstractProtocolHandler<Tupl
 	@Override
 	public void write(Tuple<?> object) throws IOException 
 	{
-		if (!logSetUp)
-			startLogging(object);
+		synchronized (processLock)
+		{
+			if (!logSetUp)
+				startLogging(object);
 		
-        TimeInterval timeStamp = (TimeInterval)object.getMetadata();
-        lastTimeStamp = timeStamp.getStart().getMainPoint();		
+			TimeInterval timeStamp = (TimeInterval)object.getMetadata();
+			lastTimeStamp = timeStamp.getStart().getMainPoint();		
 		
-        boolean logFileSizeLimitReached = writeInternal(object, lastTimeStamp) >= getLogfileSizeLimit();
+			boolean logFileSizeLimitReached = writeInternal(object, lastTimeStamp) >= getLogfileSizeLimit();
 		
-		if (logFileSizeLimitReached)
-			stopLogging(lastTimeStamp);
+			if (logFileSizeLimitReached)
+				stopLogging(lastTimeStamp);
+		}
 	}
 	
 	protected abstract void 	startLoggingInternal(KeyValueFile logConfigFile, Tuple<?> object) throws IOException;

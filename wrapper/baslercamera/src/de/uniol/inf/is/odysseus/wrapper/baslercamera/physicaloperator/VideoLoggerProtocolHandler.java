@@ -5,8 +5,6 @@ import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.net.UnknownHostException;
-
 import org.bytedeco.javacv.FFmpegFrameRecorder;
 import org.bytedeco.javacv.FrameRecorder;
 import org.slf4j.Logger;
@@ -54,14 +52,6 @@ public class VideoLoggerProtocolHandler extends LoggerProtocolHandler
 	{
 		return new VideoLoggerProtocolHandler(direction, access, dataHandler, options);
 	}	
-	
-	@Override public void open() throws UnknownHostException, IOException 
-	{
-		super.open();
-		
-		recorder = null;
-		syncFileStream = null;
-	}
 	
 	@Override protected void startLoggingInternal(KeyValueFile logConfigFile, Tuple<?> object) throws IOException 
 	{
@@ -142,12 +132,6 @@ public class VideoLoggerProtocolHandler extends LoggerProtocolHandler
 		return length;
 	}	
 	
-	@Override
-	public void close() throws IOException 
-	{
-		super.close();
-	}
-
 	@Override
 	public boolean hasNext() throws IOException 
 	{
