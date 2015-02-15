@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<attributes>
+	<vehicle id="0">
+		<attr name="travel_style" value="independent"/>
+		<attr name="persons" value="4"/>
+		<attr name="transport" value="bus"/>
+		<attr name="tollway" value="20"/>
+		<attr name="highway" value="80"/>
+	</vehicle>
+	
+	<vehicle id="1">
+		<attr name="travel_style" value="independent"/>
+		<attr name="persons" value="4"/>
+		<attr name="transport" value="bus"/>
+		<attr name="tollway" value="20"/>
+		<attr name="highway" value="80"/>
+	</vehicle>
+	
+	<vehicle id="2">
+		<attr name="travel_style" value="independent"/>
+		<attr name="persons" value="4"/>
+		<attr name="transport" value="bus"/>
+		<attr name="tollway" value="20"/>
+		<attr name="highway" value="80"/>
+	</vehicle>
+	
+	<vehicle id="3">
+		<attr name="travel_style" value="independent"/>
+		<attr name="persons" value="4"/>
+		<attr name="transport" value="bus"/>
+		<attr name="tollway" value="20"/>
+		<attr name="highway" value="80"/>
+	</vehicle>
+	
+	<vehicle id="4">
+		<attr name="travel_style" value="independent"/>
+		<attr name="persons" value="4"/>
+		<attr name="transport" value="bus"/>
+		<attr name="tollway" value="20"/>
+		<attr name="highway" value="80"/>
+	</vehicle>
+	
+</attributes>
