@@ -30,7 +30,7 @@ public class ExecuteSportsQLServerResource extends AbstractSessionServerResource
 	public ExecuteSportsQLResponseDTO executeSportsQL(ExecuteSportsQLRequestDTO executeSportsQLRequestDTO) {
 		ISession session = loginWithToken(executeSportsQLRequestDTO.getToken());
 
-		String address = getRequest().getClientInfo().getAddress();		
+		String address = getRequest().getClientInfo().getAddress();
 
 		if (DistributedQueryHelper.isDistributionPossible() && executeSportsQLRequestDTO.getDistributor() != null
 				&& !executeSportsQLRequestDTO.getDistributor().toLowerCase().equals("no_distribution")) {
@@ -67,9 +67,10 @@ public class ExecuteSportsQLServerResource extends AbstractSessionServerResource
 			int queryId = queryIDs.iterator().next();
 			ExecutorServiceBinding.getExecutor().startQuery(queryId, session);
 			SocketInfo peerSocket = SocketService.getInstance().getConnectionInformation(session, queryId, 0);
-			
-			SocketService.getInstance().informAboutNewClient(queryId, address);
-			
+
+			SocketService.getInstance()
+					.informAboutNewClient(queryId, address, peerSocket.getIp(), peerSocket.getPort());
+
 			return new ExecuteSportsQLResponseDTO(session.getToken(), peerSocket, queryIDs.iterator().next(),
 					RestService.getPort());
 		}

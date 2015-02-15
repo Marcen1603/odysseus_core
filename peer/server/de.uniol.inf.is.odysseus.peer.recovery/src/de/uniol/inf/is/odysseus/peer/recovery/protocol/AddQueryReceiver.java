@@ -288,7 +288,8 @@ public class AddQueryReceiver extends AbstractRepeatingMessageReceiver {
 			try {
 				addQuery(addMessage.getPQLCode(), addMessage.getLocalQueryId(), addMessage.getQueryState(),
 						addMessage.getSharedQueryId(), addMessage.isMaster(), addMessage.getMasterId(),
-						addMessage.getFailedPeerId(), addMessage.getClientIP());
+						addMessage.getFailedPeerId(), addMessage.getClientIP(), addMessage.getHostIP(),
+						addMessage.getHostPort());
 				response = new RecoveryAddQueryResponseMessage(addMessage.getUUID());
 			} catch (Exception e) {
 				LOG.error("Could not install query from add query message!", e);
@@ -312,7 +313,7 @@ public class AddQueryReceiver extends AbstractRepeatingMessageReceiver {
 	 *            The id of the shared query where this PQL belongs to
 	 */
 	private static void addQuery(String pql, int localQueryId, QueryState queryState, ID sharedQuery, boolean master,
-			PeerID masterPeer, PeerID failedPeerId, String clientIp) throws Exception {
+			PeerID masterPeer, PeerID failedPeerId, String clientIp, String hostIP, int hostPort) throws Exception {
 		Preconditions.checkNotNull(pql);
 
 		if (!cExecutor.isPresent()) {
@@ -354,16 +355,16 @@ public class AddQueryReceiver extends AbstractRepeatingMessageReceiver {
 		}
 
 		// TODO Open new socket connection to tablet, if necessary
-		if (clientIp != null) {
+		if (clientIp != null && hostIP != null) {
 			for (int queryId : installedQueries) {
 				SocketInfo info = SocketService.getInstance().getConnectionInformation(RecoveryCommunicator.getActiveSession(), queryId,
 						0);
 				
 				// Save in the backup-info
-				backupInformationAccess.addSocketInfoForQuery(queryId, clientIp);
+				backupInformationAccess.addSocketInfoForQuery(queryId, clientIp, info.getIp(), info.getPort());
 				
 				// Tell the tablet the new information
-				cRecoveryCommunicator.get().informClientAboutNewSocket(info, clientIp);
+				cRecoveryCommunicator.get().informClientAboutNewSocket(info, hostIP, hostPort, clientIp);
 			}
 		}
 

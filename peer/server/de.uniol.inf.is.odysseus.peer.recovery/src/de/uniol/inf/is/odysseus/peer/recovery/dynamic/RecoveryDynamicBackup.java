@@ -315,9 +315,9 @@ public class RecoveryDynamicBackup implements IRecoveryDynamicBackup {
 	@Override
 	public void initiateAgreement(PeerID failedPeer, int localQueryId, QueryState queryState, ID sharedQuery,
 			PeerID newPeer, ILogicalQueryPart queryPart, UUID recoveryStateIdentifier, UUID subprocessID,
-			boolean master, PeerID masterId, String clientIp) {
+			boolean master, PeerID masterId, String clientIp, String hostIP, int hostPort) {
 		AgreementHelper.waitForAndDoRecovery(failedPeer, localQueryId, queryState, sharedQuery, newPeer, queryPart,
-				recoveryStateIdentifier, subprocessID, master, masterId, clientIp);
+				recoveryStateIdentifier, subprocessID, master, masterId, clientIp, hostIP, hostPort);
 	}
 
 	@Override

@@ -194,7 +194,7 @@ public class BackupInformationHelper implements IPlanModificationListener, IQuer
 			SocketService.ClientIpInfo clientIpInfo = (SocketService.ClientIpInfo) arg;
 
 			// Save info
-			backupInformationAccess.addSocketInfoForQuery(clientIpInfo.queryId, clientIpInfo.clientIp);
+			backupInformationAccess.addSocketInfoForQuery(clientIpInfo.queryId, clientIpInfo.clientIP, clientIpInfo.hostIP, clientIpInfo.hostPort);
 		}
 	}
 

@@ -1,7 +1,6 @@
 package de.uniol.inf.is.odysseus.peer.recovery.protocol;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
@@ -19,7 +18,6 @@ import de.uniol.inf.is.odysseus.peer.recovery.IAddQueryResponseHandler;
 import de.uniol.inf.is.odysseus.peer.recovery.IBackupInformationAccess;
 import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryCommunicator;
 import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryStrategyManager;
-import de.uniol.inf.is.odysseus.peer.recovery.internal.BackupInfo;
 import de.uniol.inf.is.odysseus.peer.recovery.internal.RecoveryProcessState;
 import de.uniol.inf.is.odysseus.peer.recovery.messages.RecoveryAddQueryResponseMessage;
 import de.uniol.inf.is.odysseus.peer.recovery.util.RecoveryHelper;

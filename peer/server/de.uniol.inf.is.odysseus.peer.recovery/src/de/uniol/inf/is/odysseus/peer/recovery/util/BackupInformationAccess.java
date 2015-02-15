@@ -133,12 +133,14 @@ public class BackupInformationAccess implements IBackupInformationAccess {
 	}
 	
 	@Override
-	public void addSocketInfoForQuery(int queryId, String clientIp) {
+	public void addSocketInfoForQuery(int queryId, String clientIp, String hostIP, int hostPort) {
 		String localPeerId = p2pNetworkManager.getLocalPeerID().toString();
 		HashMap<Integer, BackupInfo> backupInfo = getBackupInformation();
 		BackupInfo info = backupInfo.get(queryId);
 		if (info != null) {
-			info.socketIP = clientIp;
+			info.clientIP = clientIp;
+			info.hostIP = hostIP;
+			info.hostPort = hostPort;
 			DDCKey ddcKey = getKeyForPeerId(localPeerId);
 			saveToDDC(backupInfo, ddcKey);
 		}

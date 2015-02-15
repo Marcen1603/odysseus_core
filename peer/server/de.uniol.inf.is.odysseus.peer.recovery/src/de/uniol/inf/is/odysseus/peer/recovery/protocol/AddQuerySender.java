@@ -137,7 +137,7 @@ public class AddQuerySender extends AbstractRepeatingMessageSender {
 	 * @return True, if an acknowledge returned from the given peer; false, else.
 	 */
 	public boolean sendAddQueryPart(PeerID destination, String pql, int localQuery, QueryState queryState,
-			ID sharedQuery, boolean master, PeerID masterId, PeerID failedPeerId, String clientIp, java.util.UUID processId,
+			ID sharedQuery, boolean master, PeerID masterId, PeerID failedPeerId, String clientIp, String hostIP, int hostPort, java.util.UUID processId,
 			java.util.UUID subprocessId, IPeerCommunicator communicator) {
 		Preconditions.checkNotNull(destination);
 		Preconditions.checkNotNull(pql);
@@ -146,7 +146,7 @@ public class AddQuerySender extends AbstractRepeatingMessageSender {
 		Preconditions.checkNotNull(communicator);
 
 		RecoveryAddQueryMessage message = new RecoveryAddQueryMessage(pql, localQuery, queryState, sharedQuery, master,
-				masterId, failedPeerId, processId, subprocessId, clientIp);
+				masterId, failedPeerId, processId, subprocessId, clientIp, hostIP, hostPort);
 		this.mSentMessages.put(message.getUUID(), message);
 		return repeatingSend(destination, message, message.getUUID(), communicator);
 

@@ -301,7 +301,7 @@ public class RecoveryCommunicator implements IRecoveryCommunicator {
 	@Override
 	public void installQueriesOnNewPeer(PeerID failedPeer, PeerID newPeer, int localQueryId, QueryState queryState,
 			String pql, UUID recoveryStateIdentifier, UUID subprocessID, ID sharedQuery, boolean master,
-			PeerID masterId, String clientIp) {
+			PeerID masterId, String clientIp, String hostIP, int hostPort) {
 
 		Preconditions.checkNotNull(failedPeer);
 		Preconditions.checkNotNull(newPeer);
@@ -314,7 +314,7 @@ public class RecoveryCommunicator implements IRecoveryCommunicator {
 
 		// Send the add query message
 		AddQuerySender.getInstance().sendAddQueryPart(newPeer, pql, localQueryId, queryState, sharedQuery, master,
-				masterId, failedPeer, clientIp, recoveryStateIdentifier, subprocessID, cPeerCommunicator.get());
+				masterId, failedPeer, clientIp, hostIP, hostPort, recoveryStateIdentifier, subprocessID, cPeerCommunicator.get());
 	}
 
 	@Override
@@ -375,13 +375,14 @@ public class RecoveryCommunicator implements IRecoveryCommunicator {
 	}
 
 	@Override
-	public boolean informClientAboutNewSocket(SocketInfo info, String clientIp) {
+	public boolean informClientAboutNewSocket(SocketInfo info, String oldHostIP, int oldHostPort, String clientIp) {
+		
 		String newPeerIp = info.getIp();
-		String port = "" + info.getPort();
-		LOG.debug(String.format("Want to inform client (e.g. tablet) about new peer. New peerIp: {}:{}, Client ip: {}",
-				newPeerIp, port, clientIp));
+		String newPort = "" + info.getPort();
+		LOG.debug(String.format("Want to inform client (e.g. tablet) about new peer. New peerIP: $s:$s, Client IP: $s",
+				newPeerIp, newPort, clientIp));
 
-		String infoString = newPeerIp + ":" + port;
+		String infoString = oldHostIP + ":" + oldHostPort + "|" + newPeerIp + ":" + newPort;
 
 		new SimpleSocketClient(clientIp, 53000, infoString);
 		return false;

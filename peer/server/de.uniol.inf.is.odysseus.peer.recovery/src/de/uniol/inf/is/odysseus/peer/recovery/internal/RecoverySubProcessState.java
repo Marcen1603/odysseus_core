@@ -32,11 +32,15 @@ public class RecoverySubProcessState {
 	private ID sharedQuery;
 	private boolean master;
 	private PeerID masterId;
+	
+	// Connection Information
 	private String clientIp;
+	private String oldHostIP;
+	private int oldHostPort;
 
 	public RecoverySubProcessState(int localQueryId,
 			ILogicalQueryPart queryPart, QueryState queryState, ID sharedQuery,
-			boolean master, PeerID masterId, String clientIp) {
+			boolean master, PeerID masterId, String clientIp, String oldHostIP, int oldHostPort) {
 		this.localQueryId = localQueryId;
 		this.queryPart = queryPart;
 		this.queryState = queryState;
@@ -46,6 +50,8 @@ public class RecoverySubProcessState {
 		this.identifier = UUID.randomUUID();
 		this.inadequatePeers = new ArrayList<PeerID>();
 		this.clientIp = clientIp;
+		this.oldHostIP = oldHostIP;
+		this.oldHostPort = oldHostPort;
 	}
 
 	public UUID getIdentifier() {
@@ -115,5 +121,23 @@ public class RecoverySubProcessState {
 	public void setClientIp(String clientIp) {
 		this.clientIp = clientIp;
 	}
+
+	public String getOldHostIP() {
+		return oldHostIP;
+	}
+
+	public void setOldHostIP(String oldHostIP) {
+		this.oldHostIP = oldHostIP;
+	}
+
+	public int getOldHostPort() {
+		return oldHostPort;
+	}
+
+	public void setOldHostPort(int oldHostPort) {
+		this.oldHostPort = oldHostPort;
+	}
+	
+	
 
 }

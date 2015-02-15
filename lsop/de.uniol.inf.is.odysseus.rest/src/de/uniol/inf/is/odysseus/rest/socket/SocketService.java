@@ -71,10 +71,12 @@ public class SocketService extends Observable {
 	 * @param clientIp
 	 *            The IP address of the client
 	 */
-	public void informAboutNewClient(int queryId, String clientIp) {
+	public void informAboutNewClient(int queryId, String clientIp, String hostIP, int hostPort) {
 		ClientIpInfo info = new ClientIpInfo();
 		info.queryId = queryId;
-		info.clientIp = clientIp;
+		info.clientIP = clientIp;
+		info.hostIP = hostIP;
+		info.hostPort = hostPort;
 		this.setChanged();
 		this.notifyObservers(info);
 	}
@@ -178,7 +180,9 @@ public class SocketService extends Observable {
 
 	public class ClientIpInfo {
 		public int queryId;
-		public String clientIp;
+		public String clientIP;
+		public String hostIP;
+		public int hostPort;
 	}
 
 }

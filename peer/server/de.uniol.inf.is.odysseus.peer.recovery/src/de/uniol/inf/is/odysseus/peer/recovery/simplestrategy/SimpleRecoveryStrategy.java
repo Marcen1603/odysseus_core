@@ -262,7 +262,11 @@ public class SimpleRecoveryStrategy implements IRecoveryStrategy {
 			ID sharedQuery = subState.getSharedQueryId();
 			PeerID masterId = subState.getMasterId();
 			Map<ILogicalQueryPart, PeerID> previousAllocationMap = state.getAllocationMap(localQueryId);
+			
+			// Connection information
 			String clientIp = subState.getClientIp();
+			String hostIP = subState.getOldHostIP();
+			int hostPort = subState.getOldHostPort();
 
 			if (previousAllocationMap == null) {
 				LOG.error("Recovery Process State has not enough information (SharedQueryID or "
@@ -283,7 +287,7 @@ public class SimpleRecoveryStrategy implements IRecoveryStrategy {
 					for (ILogicalQueryPart queryPartForAllocation : allocationMap.keySet()) {
 						sendRecoveryMessages(localQueryId, failedPeer, allocationMap.get(queryPartForAllocation),
 								queryPartForAllocation, queryState, sharedQuery, recoveryStateIdentifier,
-								recoverySubStateIdentifier, master, masterId, clientIp);
+								recoverySubStateIdentifier, master, masterId, clientIp, hostIP, hostPort);
 					}
 				} else {
 					LOG.debug("Unable to find Peer ID for reallocation.");
@@ -335,7 +339,11 @@ public class SimpleRecoveryStrategy implements IRecoveryStrategy {
 			boolean master = infoMap.get(localQueryId).master;
 			PeerID masterId = peerIdFromString(infoMap.get(localQueryId).masterID);
 			Map<ILogicalQueryPart, PeerID> allocationMap = null;
-			String clientIp = infoMap.get(localQueryId).socketIP;
+			
+			// Connection information
+			String clientIp = infoMap.get(localQueryId).clientIP;
+			String hostIP = infoMap.get(localQueryId).hostIP;
+			int hostPort = infoMap.get(localQueryId).hostPort;
 
 			try {
 				// get a PeerID for allocation
@@ -349,10 +357,10 @@ public class SimpleRecoveryStrategy implements IRecoveryStrategy {
 					while (iterator.hasNext()) {
 						ILogicalQueryPart queryPart = iterator.next();
 						UUID subprocessID = state.createNewSubprocess(localQueryId, queryPart, queryState, sharedQuery,
-								master, masterId, clientIp);
+								master, masterId, clientIp, hostIP, hostPort);
 						sendRecoveryMessages(localQueryId, failedPeer, allocationMap.get(queryPart), queryPart,
 								queryState, sharedQuery, recoveryStateIdentifier, subprocessID, master, masterId,
-								clientIp);
+								clientIp, hostIP, hostPort);
 					}
 				} else {
 					LOG.debug("Unable to find Peer ID for recovery allocation.");
@@ -397,12 +405,12 @@ public class SimpleRecoveryStrategy implements IRecoveryStrategy {
 
 	private void sendRecoveryMessages(int localQueryId, PeerID failedPeer, PeerID newPeer, ILogicalQueryPart queryPart,
 			QueryState queryState, ID sharedQuery, UUID recoveryStateIdentifier, UUID subprocessID, boolean master,
-			PeerID masterId, String clientIp) {
+			PeerID masterId, String clientIp, String hostIP, int hostPort) {
 		cRecoveryDynamicBackup.get().determineAndSendHoldOnMessages(localQueryId, failedPeer, recoveryStateIdentifier);
 
 		// Tell the new peer to install the parts from the failed peer
 		cRecoveryDynamicBackup.get().initiateAgreement(failedPeer, localQueryId, queryState, sharedQuery, newPeer,
-				queryPart, recoveryStateIdentifier, subprocessID, master, masterId, clientIp);
+				queryPart, recoveryStateIdentifier, subprocessID, master, masterId, clientIp, hostIP, hostPort);
 	}
 
 	@Override
