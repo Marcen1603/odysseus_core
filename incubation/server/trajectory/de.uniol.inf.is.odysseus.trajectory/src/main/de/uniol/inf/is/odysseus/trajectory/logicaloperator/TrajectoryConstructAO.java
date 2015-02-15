@@ -83,7 +83,8 @@ public class TrajectoryConstructAO extends UnaryLogicalOp {
 			Tuple.class, 
 			new SDFAttribute(null, "VehicleId", SDFDatatype.STRING, null),
 			new SDFAttribute(null, "TrajectoryId", SDFDatatype.INTEGER, null),
-			new SDFAttribute(null, "Positions", SDFSpatialDatatype.LIST , null)
+			new SDFAttribute(null, "Positions", SDFSpatialDatatype.LIST , null),
+			new SDFAttribute(null, "Textual Attributes", SDFSpatialDatatype.LIST, null)
 	);
 	
 	@Override

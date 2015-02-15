@@ -96,7 +96,7 @@ public class NetGraph {
 	    }
 	    
 		for(final Point point : this.complexGraph.getVertices()) {
-			if(this.complexGraph.getNeighborCount(point) == 2) {
+			if(this.reducedGraph.getNeighborCount(point) == 2) {
 
 				final Iterator<Unit<Double>> it = this.reducedGraph.getIncidentEdges(point).iterator();
 				final Unit<Double> edge1 = it.next();

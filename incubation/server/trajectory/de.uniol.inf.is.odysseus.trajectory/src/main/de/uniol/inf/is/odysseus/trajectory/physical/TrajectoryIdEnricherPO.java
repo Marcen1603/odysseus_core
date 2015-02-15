@@ -23,7 +23,7 @@ public class TrajectoryIdEnricherPO<T extends Tuple<ITimeInterval>> extends Abst
 		if(id == null) {
 			this.vehicleTrajectories.put(vehicleId, id = new int[] { -1 });
 		}
-		Tuple<ITimeInterval> t = new Tuple<ITimeInterval>(new Object[] { vehicleId, ++id[0], object.getAttribute(1)}, true);
+		Tuple<ITimeInterval> t = new Tuple<ITimeInterval>(new Object[] { vehicleId, ++id[0], object.getAttribute(1), null}, true);
 		t.setMetadata(object.getMetadata());
 		this.transfer((T)t);
 	}
