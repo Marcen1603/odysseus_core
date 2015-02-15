@@ -1,5 +1,7 @@
 package de.uniol.inf.is.odysseus.trajectory.logicaloperator;
 
+import java.io.File;
+
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
@@ -10,6 +12,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnaryLogicalOp;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.BooleanParameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.FileParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.ResolvedSDFAttributeParameter;
 import de.uniol.inf.is.odysseus.spatial.sourcedescription.sdf.schema.SDFSpatialDatatype;
 import de.uniol.inf.is.odysseus.trajectory.logicaloperator.builder.NestAggregateItem;
@@ -30,6 +33,8 @@ public class TrajectoryConstructAO extends UnaryLogicalOp {
 	
 	private NestAggregateItem positionMapping;
 	
+	private File levelDBPath;
+	
 	
 	public TrajectoryConstructAO() {
 	}
@@ -40,6 +45,7 @@ public class TrajectoryConstructAO extends UnaryLogicalOp {
 		this.subtrajectories = trajectoryConstructAO.subtrajectories;
 		this.trajectoryId = trajectoryConstructAO.trajectoryId;
 		this.positionMapping = trajectoryConstructAO.positionMapping;
+		this.levelDBPath = trajectoryConstructAO.levelDBPath;
 	}
 	
 	
@@ -61,6 +67,11 @@ public class TrajectoryConstructAO extends UnaryLogicalOp {
 		this.positionMapping = positionMapping;
 	}
 	
+	@Parameter(name = "LEVELDBPATH", type = FileParameter.class, optional = true)
+	public void setLevelDBPath(final File levelDBPath) {
+		this.levelDBPath = levelDBPath;
+	}
+	
 	
 	public boolean getSubtrajectories() {
 		return this.subtrajectories;
@@ -72,6 +83,10 @@ public class TrajectoryConstructAO extends UnaryLogicalOp {
 	
 	public NestAggregateItem getPositionMapping() {
 		return this.positionMapping;
+	}
+	
+	public File getLevelDBPath() {
+		return this.levelDBPath;
 	}
 	
 	

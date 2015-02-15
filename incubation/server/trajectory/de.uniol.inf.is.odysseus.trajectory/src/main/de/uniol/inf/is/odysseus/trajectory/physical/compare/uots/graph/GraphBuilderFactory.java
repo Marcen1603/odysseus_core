@@ -17,7 +17,6 @@ public class GraphBuilderFactory extends AbstractObjectLoaderFactory<IGraphLoade
 		return key.substring(key.lastIndexOf(".") + 1).toUpperCase();
 	}
 
-
 	@Override
 	protected IGraphLoader<String, Integer> createLoader(String convertedKey) {
 		switch(convertedKey) {

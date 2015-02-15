@@ -19,9 +19,11 @@ public class LevelDBEnrichAO extends AbstractEnrichAO {
 	 */
 	private static final long serialVersionUID = -3545605159481674813L;
 	
-	private File dbPath;
+	private File levelDBPath;
 	
-	private SDFAttribute key;
+	private SDFAttribute in;
+	
+	private SDFAttribute out;
 	
 	public LevelDBEnrichAO() {}
 	
@@ -29,29 +31,38 @@ public class LevelDBEnrichAO extends AbstractEnrichAO {
 	public LevelDBEnrichAO(LevelDBEnrichAO levelDBEnrichAO) {
 		super(levelDBEnrichAO);
 		
-		this.dbPath = levelDBEnrichAO.dbPath;
-		this.key = levelDBEnrichAO.key;
+		this.levelDBPath = levelDBEnrichAO.levelDBPath;
+		this.in = levelDBEnrichAO.in;
+		this.out = levelDBEnrichAO.out;
 	}
 	
-	@Parameter(name = "DBPATH", type = FileParameter.class)
-	public void setDBPath(final File dbPath) {
-		this.dbPath = dbPath;
+	@Parameter(name = "LEVELDBPATH", type = FileParameter.class)
+	public void setLevelDBPath(final File levelDBPath) {
+		this.levelDBPath = levelDBPath;
 	}
 
-	@Parameter(name = "KEY", type = ResolvedSDFAttributeParameter.class)
-	public void setKey(final SDFAttribute key) {
-		this.key = key;
+	@Parameter(name = "IN", type = ResolvedSDFAttributeParameter.class)
+	public void setIn(final SDFAttribute in) {
+		this.in = in;
+	}
+	
+	@Parameter(name = "OUT", type = ResolvedSDFAttributeParameter.class)
+	public void setOut(final SDFAttribute out) {
+		this.out = out;
 	}
 	
 	
-	public File getDBPath() {
-		return this.dbPath;
+	public File getLevelDBPath() {
+		return this.levelDBPath;
 	}
 	
-	public SDFAttribute getKey() {
-		return this.key;
+	public SDFAttribute getIn() {
+		return this.in;
 	}
 	
+	public SDFAttribute getOut() {
+		return this.out;
+	}
 
 	@Override
 	public AbstractLogicalOperator clone() {

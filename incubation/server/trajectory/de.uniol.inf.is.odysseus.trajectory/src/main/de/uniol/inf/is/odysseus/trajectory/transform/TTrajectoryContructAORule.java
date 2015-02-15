@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.trajectory.transform;
 
+import java.io.File;
 import java.util.Arrays;
 import java.util.List;
 
@@ -19,6 +20,7 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfigu
 import de.uniol.inf.is.odysseus.parser.pql.relational.RelationalPredicateBuilder;
 import de.uniol.inf.is.odysseus.relational.base.predicate.RelationalPredicate;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
+import de.uniol.inf.is.odysseus.trajectory.logicaloperator.LevelDBEnrichAO;
 import de.uniol.inf.is.odysseus.trajectory.logicaloperator.TrajectoryConstructAO;
 import de.uniol.inf.is.odysseus.trajectory.logicaloperator.TrajectoryIdEnricherAO;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
@@ -46,10 +48,16 @@ public class TTrajectoryContructAORule extends AbstractTransformationRule<Trajec
 			op = this.insertPredicateWindowAO(op, groupOrPartitionBy);
 			op = this.insertAggregateAO(op, groupOrPartitionBy, Arrays.asList((AggregateItem)operator.getPositionMapping()));
 			op = this.insertTrajectoryIdEnricherAO(op);
+			if(operator.getLevelDBPath() != null) {
+				op = this.insertLevelDBEnrichAO(op, operator.getTrajectoryId(), operator.getOutputSchema().getAttribute(3), operator.getLevelDBPath());
+			}
 			op = this.insertSystemTimeAO(op);
 		} else {
 			op = this.insertAggregateAO(op, groupOrPartitionBy, Arrays.asList((AggregateItem)operator.getPositionMapping()));
 			op = this.insertTrajectoryIdEnricherAO(op);
+			if(operator.getLevelDBPath() != null) {
+				op = this.insertLevelDBEnrichAO(op, operator.getTrajectoryId(), operator.getOutputSchema().getAttribute(3), operator.getLevelDBPath());
+			}
 		}
 		
 		RestructHelper.removeOperator(operator, false);
@@ -99,12 +107,24 @@ public class TTrajectoryContructAORule extends AbstractTransformationRule<Trajec
 	
 	private final UnaryLogicalOp insertTrajectoryIdEnricherAO(final UnaryLogicalOp operatorBefore) {
 		final UnaryLogicalOp trajectoryConstructAO = new TrajectoryIdEnricherAO();
-		//trajectoryConstructAO.setPredicate(TruePredicate.getInstance());
 		
 		RestructHelper.insertOperatorBefore(trajectoryConstructAO, operatorBefore);
 		this.insert(trajectoryConstructAO);
 		
 		return trajectoryConstructAO;
+	}
+	
+	private final UnaryLogicalOp insertLevelDBEnrichAO(final UnaryLogicalOp operatorBefore, 
+			final SDFAttribute in, final SDFAttribute out, File levelDBPath) {
+		final LevelDBEnrichAO levelDBEnrichAO = new LevelDBEnrichAO();
+		levelDBEnrichAO.setIn(in);
+		levelDBEnrichAO.setOut(out);
+		levelDBEnrichAO.setLevelDBPath(levelDBPath);
+		
+		RestructHelper.insertOperatorBefore(levelDBEnrichAO, operatorBefore);
+		this.insert(levelDBEnrichAO);
+		
+		return levelDBEnrichAO;
 	}
 	
 	private final UnaryLogicalOp insertSystemTimeAO(final UnaryLogicalOp operatorBefore) {

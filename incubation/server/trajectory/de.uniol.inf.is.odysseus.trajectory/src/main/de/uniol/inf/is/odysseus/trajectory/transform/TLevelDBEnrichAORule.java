@@ -25,13 +25,14 @@ public class TLevelDBEnrichAORule extends AbstractTransformationRule<LevelDBEnri
 				logical.getOutputSchema().size() + 1);
 
 		IMetadataMergeFunction<ITimeInterval> metaMerge = new UseLeftInputMetadata<>();
-		ICache cache = null;
 
 		int[] uniqueKeys = logical.getUniqueKeysAsArray();
 
-		// Maybe check, if operator is already existent (when is it 100% equal?)
 		LevelDBEnrichPO<ITimeInterval> physical = new LevelDBEnrichPO<ITimeInterval>(
-				cache, dataMergeFunction, metaMerge, uniqueKeys, logical.getDBPath());
+				null, dataMergeFunction, metaMerge, uniqueKeys, 
+				logical.getLevelDBPath(), 
+				logical.getInputSchema().findAttributeIndex(logical.getIn().getAttributeName()),
+				logical.getInputSchema().findAttributeIndex(logical.getOut().getAttributeName()));
 
 		physical.setOutputSchema(logical.getOutputSchema());
 		replace(logical, physical, config);

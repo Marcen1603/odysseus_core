@@ -33,9 +33,11 @@ public class LevelDBEnrichPO<T extends IMetaAttribute> extends AbstractEnrichPO<
 		OPTIONS.createIfMissing(false);
 	}
 	
-	private final String key;
-	
 	private final File levelDBPath;
+	
+	private final int in;
+	
+	private final int out;
 	
 	private DB levelDB;
 	
@@ -43,18 +45,20 @@ public class LevelDBEnrichPO<T extends IMetaAttribute> extends AbstractEnrichPO<
 	public LevelDBEnrichPO(LevelDBEnrichPO<T> abstractEnrichPO) {
 		super(abstractEnrichPO);
 		
-		this.key = abstractEnrichPO.key;
 		this.levelDBPath = abstractEnrichPO.levelDBPath;
+		this.in = abstractEnrichPO.in;
+		this.out = abstractEnrichPO.out;
 	}
 
 	public LevelDBEnrichPO(ICache cache,
 			IDataMergeFunction<Tuple<T>, T> dataMergeFunction,
 			IMetadataMergeFunction<T> metaMergeFunction, int[] uniqueKeys,
-			File levelDBPath) {
+			File levelDBPath, int in, int out) {
 		super(cache, dataMergeFunction, metaMergeFunction, uniqueKeys);
 			
-		this.key = null;
 		this.levelDBPath = levelDBPath;
+		this.in = in;
+		this.out = out;
 	}
 
 	@Override
@@ -70,7 +74,7 @@ public class LevelDBEnrichPO<T extends IMetaAttribute> extends AbstractEnrichPO<
 	@Override
 	protected List<IStreamObject<?>> internal_process(Tuple<T> input) {
 		final ByteArrayInputStream arrayInputStream = 
-				new ByteArrayInputStream(this.levelDB.get(bytes((String)input.getAttribute(0))));
+				new ByteArrayInputStream(this.levelDB.get(bytes((String)input.getAttribute(this.in))));
 		ObjectInputStream objectInputStream = null;
 		Object object = null;
 		try {
@@ -93,13 +97,11 @@ public class LevelDBEnrichPO<T extends IMetaAttribute> extends AbstractEnrichPO<
 			}
 		}
 		
-		LOGGER.info(input.toString());
+		input.setAttribute(this.out, object);
 		
-		input.setAttribute(3, object);
-		
-		final List<IStreamObject<?>> l = new ArrayList<>();
-		l.add(input);
-		return l;
+		final List<IStreamObject<?>> tupleList = new ArrayList<>();
+		tupleList.add(input);
+		return tupleList;
 	}
 
 	@Override
