@@ -7,7 +7,6 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.javatuples.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,7 +15,6 @@ import com.vividsolutions.jts.geom.Point;
 
 import de.uniol.inf.is.odysseus.trajectory.physical.compare.IRawTrajectory;
 import edu.uci.ics.jung.graph.UndirectedSparseGraph;
-import edu.uci.ics.jung.graph.UndirectedSparseMultigraph;
 
 public class PointToPointMapMatcher extends AbstractMapMatcher {
 
@@ -45,29 +43,37 @@ public class PointToPointMapMatcher extends AbstractMapMatcher {
 		final LinkedHashSet<Point> graphPoints = new LinkedHashSet<Point>();
 
 		while (rawIt.hasNext()) {
-			final Pair<Point, Double> result = this.search(rawPoint,
-					rawPoint = rawIt.next(), minGraphPoint, minDistance, graph);
-			graphPoints.add(result.getValue0());
-			minDistance = result.getValue1();
+			graphPoints.add(minGraphPoint = this.search(rawPoint,
+					rawPoint = rawIt.next(), minGraphPoint, graph));
+			
+			for(Point test : graph.getVertices()) {
+				if(test.distance(rawPoint) < minGraphPoint.distance(rawPoint)) {
+					if(test != minGraphPoint) {
+						LOGGER.error("FukkdKDKkdkdkdk");
+					}
+				}
+			}
 		}
+		
+		
 		return new ArrayList<Point>(graphPoints);
 	}
 
-	private Pair<Point, Double> search(Point lastRawPoint, Point rawPoint, Point lastGraphPoint, double currDistance, 
+	private Point search(Point lastRawPoint, Point rawPoint, Point lastGraphPoint,
 			UndirectedSparseGraph<Point, LineSegment> graph) {
 		
 		this.globalGraphPoint = null;
 		this.globalMinDistance = Double.MAX_VALUE;
 		
-		this.search(rawPoint, 
-				lastRawPoint,
+		this.search(lastRawPoint, 
+				rawPoint,
 				lastGraphPoint,
-				currDistance,
-				currDistance + rawPoint.distance(lastRawPoint),
+				0,
+				rawPoint.distance(lastGraphPoint) * 100,
 				new HashSet<Point>(),
 				graph);
 		
-		return new Pair<Point, Double>(this.globalGraphPoint, this.globalMinDistance);
+		return this.globalGraphPoint;
 	}
 	
 	private Point globalGraphPoint;
@@ -76,34 +82,22 @@ public class PointToPointMapMatcher extends AbstractMapMatcher {
 	private void search(Point lastRawPoint, Point rawPoint, Point currGraphPoint, double currDistance, double maxDistance, Set<Point> visitedGraphPoints,
 			UndirectedSparseGraph<Point, LineSegment> graph) {
 		
-		if(visitedGraphPoints.contains(currGraphPoint)) {
-			return;
-		}
-		if(currDistance > maxDistance) {
-			return;
-		}
+		visitedGraphPoints.add(currGraphPoint);
+
 		final double distance = rawPoint.distance(currGraphPoint);
 		if(distance < this.globalMinDistance) {
 			this.globalGraphPoint = currGraphPoint;
 			this.globalMinDistance = distance;
 		}
 		
-		visitedGraphPoints.add(currGraphPoint);
+		if(currDistance > maxDistance) {
+			return;
+		}
 		
 		for(final Point neigbor : graph.getNeighbors(currGraphPoint)) {
-			this.search(rawPoint, lastRawPoint, neigbor, lastRawPoint.distance(neigbor) , maxDistance, visitedGraphPoints, graph);
+			if(!visitedGraphPoints.contains(neigbor)) {
+				this.search(lastRawPoint, rawPoint, neigbor, lastRawPoint.distance(neigbor) , maxDistance, visitedGraphPoints, graph);
+			}
 		}
-	}
-	
-	
-	
-	private boolean found;
-	private Point graphJunctionLeft;
-	private Point graphJunctionRight;
-	
-	private void searchJunctionLeft(Point lastRight, Point currRight, Point lastLeft, Point currLeft, 
-			double leftDist, double rightDist, UndirectedSparseGraph<Point, LineSegment> graph) {
-		
-		
 	}
 }

@@ -2,6 +2,7 @@ package de.uniol.inf.is.odysseus.trajectory.physical.compare;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,9 +16,10 @@ import de.uniol.inf.is.odysseus.trajectory.physical.compare.uots.graph.util.UtmP
 
 public class DefaultTupleToRawTrajectoryConverter implements ITupleToRawTrajectoryConverter {
 
+	@SuppressWarnings("unused")
 	private final static Logger LOGGER = LoggerFactory.getLogger(DefaultTupleToRawTrajectoryConverter.class);
-		
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public RawDataTrajectory convert(Tuple<ITimeInterval> tuple, final int utmZone) {
 				
@@ -32,6 +34,6 @@ public class DefaultTupleToRawTrajectoryConverter implements ITupleToRawTrajecto
 			points.add(pointCreator.createPoint(p.getX(), p.getY()));
 		}
 		
-		return new RawDataTrajectory((String)tuple.getAttribute(0), (int)tuple.getAttribute(1), points);
+		return new RawDataTrajectory((String)tuple.getAttribute(0), (int)tuple.getAttribute(1), points, (Map<String, String>)tuple.getAttribute(2));
 	}
 }

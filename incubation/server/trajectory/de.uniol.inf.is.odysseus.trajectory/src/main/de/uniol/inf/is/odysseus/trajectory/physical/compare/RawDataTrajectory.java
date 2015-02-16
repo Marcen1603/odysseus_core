@@ -1,6 +1,7 @@
 package de.uniol.inf.is.odysseus.trajectory.physical.compare;
 
 import java.util.List;
+import java.util.Map;
 
 import com.vividsolutions.jts.geom.Point;
 
@@ -14,12 +15,12 @@ public class RawDataTrajectory extends AbstractRawTrajectory {
 	
 	private final TimeInterval interval;
 
-	public RawDataTrajectory(final String id, final int trajectaroyId, final List<Point> points) {
-		this(id, trajectaroyId, points, null);
+	public RawDataTrajectory(final String id, final int trajectaroyId, final List<Point> points, Map<String, String> textualAttributes) {
+		this(id, trajectaroyId, points, textualAttributes, null);
 	}
 	
-	public RawDataTrajectory(final String id, final int trajectaroyId, final List<Point> points, TimeInterval interval) {
-		super(points);
+	public RawDataTrajectory(final String id, final int trajectaroyId, final List<Point> points, Map<String, String> textualAttributes, TimeInterval interval) {
+		super(points, textualAttributes);
 		this.vehicleId = id;
 		this.trajectaroyId = trajectaroyId;
 		this.interval = interval;

@@ -5,10 +5,12 @@ import java.io.IOException;
 import java.io.Reader;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
+import org.javatuples.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,7 +24,7 @@ public class CsvQueryTrajectoryLoader implements IQueryTrajectoryLoader {
 	private final static Logger LOGGER = LoggerFactory.getLogger(CsvQueryTrajectoryLoader.class);
 	
 	@Override
-	public RawQueryTrajectory load(String param, Integer additional) {
+	public RawQueryTrajectory load(String param, Pair<Integer, Map<String, String>> additional) {
 		
 		Reader reader = null;
 		CSVParser parser = null;
@@ -53,7 +55,7 @@ public class CsvQueryTrajectoryLoader implements IQueryTrajectoryLoader {
 			}
 		}
 		
-		final IPointCreator pointCreator = UtmPointCreatorFactory.getInstance().create(additional);
+		final IPointCreator pointCreator = UtmPointCreatorFactory.getInstance().create(additional.getValue0());
 		final List<Point> points = new LinkedList<Point>();
 		for(final CSVRecord record : records) {
 			points.add(pointCreator.createPoint(
@@ -61,6 +63,6 @@ public class CsvQueryTrajectoryLoader implements IQueryTrajectoryLoader {
 					Double.parseDouble(record.get(1))));
 		}
 		
-		return new RawQueryTrajectory(points);
+		return new RawQueryTrajectory(points, additional.getValue1());
 	}
 }

@@ -29,6 +29,7 @@ public abstract class AbstractMapMatcher implements IMapMatcher {
 		UotsTrajectory t = new UotsTrajectory(
 				trajectory, 
 				this.extractJunctions(this.getGraphPoints(trajectory, graph.getComplexGraph()), graph));
+		LOGGER.info(t.getGraphPoints().toString());
 		return t;
 	}
 	

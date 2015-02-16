@@ -30,9 +30,7 @@ public class TrajectoryIdEnricherPO<T extends Tuple<ITimeInterval>> extends Abst
 	
 	@Override
 	public void processPunctuation(IPunctuation punctuation, int port) {
-		
-		// TODO: Implement me!
-		
+		this.sendPunctuation(punctuation, port);
 	}
 	
 	

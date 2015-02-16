@@ -6,13 +6,14 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.PriorityQueue;
 
 import org.apache.commons.collections15.Transformer;
 import org.javatuples.Unit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.collect.SortedMultiset;
+import com.google.common.collect.TreeMultiset;
 import com.vividsolutions.jts.geom.Point;
 
 import de.uniol.inf.is.odysseus.trajectory.physical.compare.uots.graph.NetGraph;
@@ -20,7 +21,6 @@ import edu.uci.ics.jung.algorithms.shortestpath.DijkstraDistance;
 
 public class DijkstraDistanceService implements IDistanceService {
 
-	@SuppressWarnings("unused")
 	private final static Logger LOGGER = LoggerFactory.getLogger(DijkstraDistanceService.class);
 	
 	private final DijkstraDistance<Point, Unit<Double>> dijkstraDistance;
@@ -89,9 +89,6 @@ public class DijkstraDistanceService implements IDistanceService {
 	
 	private void remove(QueryTrajectoryData qData, UotsTrajectory dataTrajectory) {
 		qData.kNearest.remove(dataTrajectory);
-		if(qData.unfinished == dataTrajectory) {
-			qData.unfinished = null;
-		}
 	}
 		
 	private void addToKNearest(QueryTrajectoryData qData, UotsTrajectory dataTrajectory) {
@@ -113,18 +110,18 @@ public class DijkstraDistanceService implements IDistanceService {
 		
 		private final int k;
 		
-		
-		private UotsTrajectory unfinished;	
-		private final PriorityQueue<UotsTrajectory> kNearest;
+		private final SortedMultiset<UotsTrajectory> kNearest = TreeMultiset.create(new Comparator<UotsTrajectory>() {
+			@Override
+			public int compare(UotsTrajectory o1, UotsTrajectory o2) {
+				if(o1.getDistance() >= o2.getDistance()) {
+					return 1;
+				}
+				return -1;
+			}
+		});
 		
 		private QueryTrajectoryData(final int k) {
 			this.k = k;
-			this.kNearest = new PriorityQueue<>(this.k, new Comparator<UotsTrajectory>() {
-				@Override
-				public int compare(UotsTrajectory o1, UotsTrajectory o2) {
-					return (int)Math.signum(o1.getDistance() - o2.getDistance());
-				}
-			});
 		}
 	}
 }
