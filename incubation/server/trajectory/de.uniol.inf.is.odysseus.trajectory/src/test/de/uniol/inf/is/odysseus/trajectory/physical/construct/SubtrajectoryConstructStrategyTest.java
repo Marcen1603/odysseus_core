@@ -21,20 +21,8 @@ import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.metadata.TimeInterval;
 
 public class SubtrajectoryConstructStrategyTest {
+	
 
-	private SubtrajectoryConstructStrategy instance;
-	
-	private GeometryFactory gf = new GeometryFactory();
-	
-	@Before
-	public void setUp() {
-		this.instance = new SubtrajectoryConstructStrategy();
-	}
-	
-	@After
-	public void tearDown() {
-		this.instance = null;
-	}
 	
 //	@SuppressWarnings({ "rawtypes", "unchecked" })
 //	@Test
@@ -378,13 +366,4 @@ public class SubtrajectoryConstructStrategyTest {
 //				));
 //		assertSame(r.size(), 1);
 //	}
-	
-	
-	private int x,y = 0;
-	private final Tuple<ITimeInterval> create(String id, int state, int start, int end) {
-		final Tuple<ITimeInterval> result = new Tuple<ITimeInterval>(
-				new Object[] {0L, "", id, gf.createPoint(new Coordinate(this.x++, this.y++)), state}, false);
-		result.setMetadata(new TimeInterval(new PointInTime(start), new PointInTime(end)));
-		return result;
-	}
 }

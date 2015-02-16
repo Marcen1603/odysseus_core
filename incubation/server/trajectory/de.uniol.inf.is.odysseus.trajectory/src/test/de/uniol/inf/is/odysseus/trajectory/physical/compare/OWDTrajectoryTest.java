@@ -3,11 +3,6 @@ package de.uniol.inf.is.odysseus.trajectory.physical.compare;
 import org.junit.Test;
 
 import com.vividsolutions.jts.geom.GeometryFactory;
-import com.vividsolutions.jts.geom.Point;
-
-import de.uniol.inf.is.odysseus.trajectory.physical.compare.uots.UotsTrajectory;
-import de.uniol.inf.is.odysseus.trajectory.physical.compare.uots.graph.GraphBuilderFactory;
-import de.uniol.inf.is.odysseus.trajectory.physical.compare.uots.mapmatch.MapMatcherFactory;
 
 public class OWDTrajectoryTest {
 

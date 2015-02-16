@@ -4,9 +4,9 @@ import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
+import de.uniol.inf.is.odysseus.trajectory.compare.TrajectoryCompareAlgorithmFactory;
 import de.uniol.inf.is.odysseus.trajectory.logicaloperator.TrajectoryCompareAO;
-import de.uniol.inf.is.odysseus.trajectory.physical.TrajectoryComparePO;
-import de.uniol.inf.is.odysseus.trajectory.physical.compare.TrajectoryCompareAlgorithmFactory;
+import de.uniol.inf.is.odysseus.trajectory.physicaloperator.TrajectoryComparePO;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
@@ -27,7 +27,9 @@ public class TTrajectoryCompareAORule extends AbstractTransformationRule<Traject
 						 trajectoryAO.getK(),
 						 trajectoryAO.getQueryTrajectory().getAbsolutePath(),
 						 trajectoryAO.getUtmZone(),
+						 trajectoryAO.getLambda(),
 						 trajectoryAO.getAlgorithm(),
+						 trajectoryAO.getTextualAttributes(),
 						 trajectoryAO.getOptionsMap()),
 				 config, 
 				 true,

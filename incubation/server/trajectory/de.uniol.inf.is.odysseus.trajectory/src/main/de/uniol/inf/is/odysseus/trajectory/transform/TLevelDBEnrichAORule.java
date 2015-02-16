@@ -11,7 +11,7 @@ import de.uniol.inf.is.odysseus.physicaloperator.relational.RelationalMergeFunct
 import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.trajectory.logicaloperator.LevelDBEnrichAO;
-import de.uniol.inf.is.odysseus.trajectory.physical.LevelDBEnrichPO;
+import de.uniol.inf.is.odysseus.trajectory.physicaloperator.LevelDBEnrichPO;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 

@@ -20,19 +20,7 @@ import de.uniol.inf.is.odysseus.core.metadata.TimeInterval;
 
 public class FulltrajectoryConstructStrategyTest {
 
-	private FulltrajectoryConstructStrategy instance;
 	
-	private GeometryFactory gf = new GeometryFactory();
-	
-	@Before
-	public void setUp() {
-		this.instance = new FulltrajectoryConstructStrategy();
-	}
-	
-	@After
-	public void tearDown() {
-		this.instance = null;
-	}
 	
 //	@SuppressWarnings({ "unchecked", "rawtypes" })
 //	@Test
@@ -330,13 +318,5 @@ public class FulltrajectoryConstructStrategyTest {
 //		assertSame(r.size(), 1);
 //	}
 //	
-	
-	private int x,y = 0;
-	private final Tuple<ITimeInterval> create(String id, int state, int start, int end) {
-		final Tuple<ITimeInterval> result = new Tuple<ITimeInterval>(
-				new Object[] {0L, "", id, gf.createPoint(new Coordinate(this.x++, this.y++)), state}, false);
-		result.setMetadata(new TimeInterval(new PointInTime(start), new PointInTime(end)));
-		return result;
-	}
 
 }

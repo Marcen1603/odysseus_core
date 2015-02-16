@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnaryLogicalOp;
@@ -22,7 +23,6 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IntegerParam
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.Option;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.OptionParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
-import de.uniol.inf.is.odysseus.trajectory.SDFTrajectoryDataType;
 
 @LogicalOperator(name = "TRAJECTORYCOMPARE", minInputPorts = 1, maxInputPorts = 1, doc="Compare Trajectories", category={LogicalOperatorCategory.ADVANCED})
 public class TrajectoryCompareAO extends UnaryLogicalOp {
@@ -152,7 +152,7 @@ public class TrajectoryCompareAO extends UnaryLogicalOp {
 	private final static SDFSchema OUTPUT_SCHEMA = new SDFSchema(
 			TrajectoryCompareAO.class.getName(), 
 			Tuple.class, 
-			new SDFAttribute(null, "result", SDFTrajectoryDataType.LIST, null)
+			new SDFAttribute(null, "result", SDFDatatype.LIST, null)
 	);
 	
 	@Override
