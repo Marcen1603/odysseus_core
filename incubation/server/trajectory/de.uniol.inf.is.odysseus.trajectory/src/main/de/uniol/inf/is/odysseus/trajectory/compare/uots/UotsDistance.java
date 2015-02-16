@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.trajectory.compare;
+package de.uniol.inf.is.odysseus.trajectory.compare.uots;
 
 import java.util.Map;
 
@@ -8,6 +8,7 @@ import org.javatuples.Unit;
 
 import com.vividsolutions.jts.geom.Point;
 
+import de.uniol.inf.is.odysseus.trajectory.compare.ISpatialDistance;
 import de.uniol.inf.is.odysseus.trajectory.compare.data.ITrajectory;
 import de.uniol.inf.is.odysseus.trajectory.compare.uots.data.UotsData;
 import de.uniol.inf.is.odysseus.trajectory.compare.uots.graph.NetGraph;

@@ -24,7 +24,7 @@ public abstract class AbstractTrajectoryCompareAlgoritm<T extends IDataTrajector
 			final int utmZone, final double lambda) {
 		
 		this.queryTrajectory = this.convert(queryTrajectory, textualAttributes, utmZone, options);
-		this.distanceService = this.createDistanceService();
+		this.distanceService = this.createDistanceService(textualAttributes != null ? VectorTextualDistance.getInstance() : null);
 		this.distanceService.addQueryTrajectory(this.queryTrajectory, k, lambda);
 	}	
 	
@@ -38,12 +38,15 @@ public abstract class AbstractTrajectoryCompareAlgoritm<T extends IDataTrajector
 		}
 	}
 	
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<T> getKNearest(RawIdTrajectory trajectory) {
-		return (List<T>)this.distanceService.getDistance(this.queryTrajectory, this.convert(trajectory));
+		IDataTrajectory<E> converted = this.convert(trajectory);
+		this.trajectories.add(converted);
+		return (List<T>)this.distanceService.getDistance(this.queryTrajectory, converted);
 	}
 	
-	protected abstract IDistanceService<E> createDistanceService();
+	protected abstract IDistanceService<E> createDistanceService(ITextualDistance textualDistance);
 	
 	protected abstract IQueryTrajectory<E> convert(final RawQueryTrajectory trajectory, final Map<String, String> textualAttributes,
 			int utmZone, final Map<String, String> options);

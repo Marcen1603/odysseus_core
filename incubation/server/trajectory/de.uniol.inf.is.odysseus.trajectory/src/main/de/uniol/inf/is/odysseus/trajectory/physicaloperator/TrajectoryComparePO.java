@@ -17,7 +17,12 @@ import de.uniol.inf.is.odysseus.trajectory.compare.util.ITupleToRawTrajectoryCon
 import de.uniol.inf.is.odysseus.trajectory.compare.util.TupleToRawTrajectoryConverterFactory;
 
 
-// 
+/**
+ * 
+ * @author marcus
+ *
+ * @param <T>
+ */
 public class TrajectoryComparePO<T extends Tuple<ITimeInterval>> extends AbstractPipe<T, T> {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(TrajectoryComparePO.class);

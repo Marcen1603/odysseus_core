@@ -29,6 +29,6 @@ public class TrajectoryCompareAlgorithmFactory {
 						utmZone, 
 						lambda);
 		}
-		return null;
+		throw new IllegalArgumentException("No Algorithm '" + name.toUpperCase() + "' found.");
 	}
 }

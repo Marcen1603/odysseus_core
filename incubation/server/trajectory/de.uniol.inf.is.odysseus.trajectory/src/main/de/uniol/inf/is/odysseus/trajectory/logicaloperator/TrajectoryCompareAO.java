@@ -50,7 +50,7 @@ public class TrajectoryCompareAO extends UnaryLogicalOp {
 	private File queryTrajectory;
 	
 	/** map for textual Attributes */
-	private Map<String, String> textualAttributes = new HashMap<>();
+	private Map<String, String> textualAttributes = null;
 	
 	/** importance of spatial difference to textual difference */
 	private double lambda = 0.5;
@@ -98,6 +98,9 @@ public class TrajectoryCompareAO extends UnaryLogicalOp {
 	
 	@Parameter(type = OptionParameter.class, name = "TEXTUALATTR", isList = true, optional = true, doc = "Textual attributes of the query trajectory.")
 	public void setTextualAttributes(final List<Option> value) {
+		if(this.textualAttributes == null) {
+			this.textualAttributes = new HashMap<>();
+		}
 		for(final Option option : value) {
 			this.textualAttributes.put(option.getName().toLowerCase(), option.getValue());
 		}

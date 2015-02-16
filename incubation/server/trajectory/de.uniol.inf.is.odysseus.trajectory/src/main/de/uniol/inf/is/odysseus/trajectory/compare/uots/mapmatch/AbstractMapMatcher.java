@@ -24,12 +24,14 @@ public abstract class AbstractMapMatcher implements IMapMatcher {
 
 	private final static Logger LOGGER = LoggerFactory.getLogger(AbstractMapMatcher.class);
 	
+	protected AbstractMapMatcher() {}
+	
 	@Override
 	public UotsDataTrajectory map(RawIdTrajectory trajectory, NetGraph graph) {
 		return new UotsDataTrajectory(
 				trajectory, 
 				new UotsData(
-						this.extractJunctions(this.getGraphPoints(trajectory, graph.getComplexGraph()), graph)));
+						this.extractJunctions(this.getGraphPoints(trajectory, graph), graph)));
 	}
 	
 	
@@ -37,7 +39,7 @@ public abstract class AbstractMapMatcher implements IMapMatcher {
 	public final UotsQueryTrajectory map(RawQueryTrajectory trajectory, final Map<String, String> textualAttributes, NetGraph graph) {
 		return new UotsQueryTrajectory(
 				trajectory,
-				new UotsData(this.extractJunctions(this.getGraphPoints(trajectory, graph.getComplexGraph()), graph)),
+				new UotsData(this.extractJunctions(this.getGraphPoints(trajectory, graph), graph)),
 				textualAttributes
 				);
 	}
@@ -53,5 +55,5 @@ public abstract class AbstractMapMatcher implements IMapMatcher {
 	}
 	
 	
-	protected abstract List<Point> getGraphPoints(IRawTrajectory trajectory, UndirectedSparseGraph<Point, LineSegment> graph);
+	protected abstract List<Point> getGraphPoints(IRawTrajectory trajectory, NetGraph graph);
 }

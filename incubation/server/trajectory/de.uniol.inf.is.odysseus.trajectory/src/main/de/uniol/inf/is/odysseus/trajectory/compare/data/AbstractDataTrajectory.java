@@ -33,4 +33,11 @@ public abstract class AbstractDataTrajectory<E> extends AbstractTrajectory<E, Ra
 	public Map<String, String> getTextualAttributes() {
 		return this.getRawTrajectory().getTextualAttributes();
 	}
+	
+	@Override
+	public String toString() {
+		return "[VehId: " + this.getRawTrajectory().getVehicleId() + "|" 
+				+ "TrajId: " + this.getRawTrajectory().getTrajectoryNumber() + "|"
+				+ "Dist: " + this.distance + "]";
+	}
 }

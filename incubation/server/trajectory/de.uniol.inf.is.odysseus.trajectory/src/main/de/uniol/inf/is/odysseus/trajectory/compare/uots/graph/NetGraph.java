@@ -14,7 +14,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.LineSegment;
 import com.vividsolutions.jts.geom.Point;
 
@@ -31,6 +30,8 @@ public class NetGraph {
 	private final UndirectedSparseGraph<Point, Unit<Double>> reducedGraph;
 	
 	private final double diagonalLength;
+	
+	private final Pair<Coordinate, Coordinate> bounds;
 		
 	private Map<Point, Point> pointToJunctions = new HashMap<>();
 	
@@ -38,7 +39,8 @@ public class NetGraph {
 		this.complexGraph = complexGraph;
 		this.keepHighestIsolatedGraph();
 		this.reducedGraph = new UndirectedSparseGraph<>();		
-		this.diagonalLength = this.buildReducedGraph();
+		this.bounds = this.buildReducedGraph();
+		this.diagonalLength = bounds.getValue0().distance(bounds.getValue1());
 	}
 	
 	/**
@@ -89,7 +91,7 @@ public class NetGraph {
 	/**
 	 * 
 	 */
-	private final double buildReducedGraph() {
+	private final Pair<Coordinate, Coordinate> buildReducedGraph() {
 		
 	    for(final LineSegment ls : this.complexGraph.getEdges()) {
 	        this.reducedGraph.addEdge(new Unit<>(ls.getLength()), this.complexGraph.getEndpoints(ls), EdgeType.UNDIRECTED);
@@ -148,10 +150,8 @@ public class NetGraph {
 				maxTop = next.getY();
 			}
 		}
-		
-		final GeometryFactory gf = new GeometryFactory();
-		
-		return gf.createPoint(new Coordinate(maxLeft, maxTop)).distance(gf.createPoint(new Coordinate(maxRight, maxBottom)));
+				
+		return new Pair<>(new Coordinate(maxLeft, maxBottom), new Coordinate(maxRight, maxTop));
 	}
 	
 	private Pair<Point, Double> findJunction(Point point, Unit<Double> edge, double distance, double maxDistance) {
@@ -188,6 +188,10 @@ public class NetGraph {
 
 	public UndirectedSparseGraph<Point, Unit<Double>> getReducedGraph() {
 		return this.reducedGraph;
+	}
+	
+	public Pair<Coordinate, Coordinate> getBounds() {
+		return this.bounds;
 	}
 
 	public double getDiagonalLength() {

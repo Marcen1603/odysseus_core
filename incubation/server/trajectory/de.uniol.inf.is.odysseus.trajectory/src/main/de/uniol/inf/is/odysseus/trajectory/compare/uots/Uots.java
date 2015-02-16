@@ -6,7 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.trajectory.compare.AbstractTrajectoryCompareAlgoritm;
-import de.uniol.inf.is.odysseus.trajectory.compare.UotsDistance;
+import de.uniol.inf.is.odysseus.trajectory.compare.ITextualDistance;
 import de.uniol.inf.is.odysseus.trajectory.compare.data.IDataTrajectory;
 import de.uniol.inf.is.odysseus.trajectory.compare.data.IQueryTrajectory;
 import de.uniol.inf.is.odysseus.trajectory.compare.data.RawIdTrajectory;
@@ -32,14 +32,14 @@ public class Uots extends AbstractTrajectoryCompareAlgoritm<IDataTrajectory<Uots
 			RawQueryTrajectory queryTrajectory,
 			Map<String, String> textualAttributes, int utmZone, double lambda) {
 		super(options, k, queryTrajectory, textualAttributes, utmZone, lambda);
-		
 	}
 	
 	
 	@Override
-	protected IDistanceService<UotsData> createDistanceService() {
-		return new SpatialDistanceService<>(UotsDistance.getInstanceFor(this.graph), null);
+	protected IDistanceService<UotsData> createDistanceService(ITextualDistance textualDistance) {
+		return new SpatialDistanceService<>(UotsDistance.getInstanceFor(this.graph), textualDistance);
 	}
+	
 
 	@Override
 	protected IQueryTrajectory<UotsData> convert(RawQueryTrajectory queryTrajectory, final Map<String, String> textualAttributes,
