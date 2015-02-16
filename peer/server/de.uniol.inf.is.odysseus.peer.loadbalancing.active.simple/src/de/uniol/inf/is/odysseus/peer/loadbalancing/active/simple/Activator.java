@@ -12,8 +12,10 @@ import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvider;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.p2p_new.IP2PNetworkManager;
+import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicator;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.IP2PDictionary;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.IPeerDictionary;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.active.lock.ILoadBalancingLock;
 import de.uniol.inf.is.odysseus.peer.resource.IPeerResourceUsageManager;
 
 /**
@@ -53,6 +55,17 @@ public class Activator implements BundleActivator {
 	 * The {@link IP2PNetworkManager}.
 	 */
 	private static IP2PNetworkManager cNetworkmanager;
+	
+	
+	/**
+	 * The {@link IPeerCommunicator}
+	 */
+	private static IPeerCommunicator peerCommunicator;
+	
+	/**
+	 * The {@link LoadBalancingLock}
+	 */
+	private static ILoadBalancingLock lock;
 
 	/**
 	 * Gets the executor.
@@ -185,6 +198,15 @@ public class Activator implements BundleActivator {
 		return Optional.fromNullable(Activator.cPeerDictionary);
 
 	}
+	
+	
+	public static Optional<ILoadBalancingLock> getLoadBalancingLock() {
+		return Optional.fromNullable(Activator.lock);
+	}
+	
+	public static Optional<IPeerCommunicator> getPeerCommunicator() {
+		return Optional.fromNullable(Activator.peerCommunicator);
+	}
 
 	/**
 	 * Binds a peer dictionary. <br />
@@ -272,6 +294,27 @@ public class Activator implements BundleActivator {
 
 		}
 
+	}
+	
+	
+	public static void bindPeerCommunicator(IPeerCommunicator communicator) {
+		peerCommunicator = communicator;
+	}
+	
+	public static void unbindPeerCommunicator(IPeerCommunicator communicator) {
+		if(peerCommunicator==communicator) {
+			peerCommunicator=null;
+		}
+	}
+	
+	public static void bindLoadBalancingLock(ILoadBalancingLock LBLock) {
+		lock = LBLock;
+	}
+	
+	public static void unbindLoadBalancingLock(ILoadBalancingLock LBLock) {
+		if(lock==LBLock) {
+			lock=null;
+		}
 	}
 
 	@Override

@@ -21,6 +21,7 @@ import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.p2p_new.IP2PNetworkManager;
+import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicator;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.IPeerDictionary;
 import de.uniol.inf.is.odysseus.peer.distribute.ILogicalQueryPart;
 import de.uniol.inf.is.odysseus.peer.distribute.LogicalQueryPart;
@@ -30,6 +31,9 @@ import de.uniol.inf.is.odysseus.peer.loadbalancing.active.ILoadBalancingAllocato
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.ILoadBalancingCommunicator;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.ILoadBalancingListener;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.ILoadBalancingStrategy;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.active.lock.ILoadBalancingLock;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.active.lock.IPeerLockContainerListener;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.active.lock.PeerLockContainer;
 import de.uniol.inf.is.odysseus.peer.resource.IPeerResourceUsageManager;
 import de.uniol.inf.is.odysseus.peer.resource.IResourceUsage;
 
@@ -39,7 +43,7 @@ import de.uniol.inf.is.odysseus.peer.resource.IResourceUsage;
  * allocates it using the allocator set by {@link #setAllocator(ILoadBalancingAllocator)}.
  * @author Michael Brand
  */
-public class SimpleLoadBalancingStrategy implements ILoadBalancingStrategy, ILoadBalancingListener, IPeerLockContainerListener {
+public class SimpleLoadBalancingStrategy implements ILoadBalancingStrategy, ILoadBalancingListener {
 	
 	/**
 	 * The logger for this class.
@@ -70,7 +74,7 @@ public class SimpleLoadBalancingStrategy implements ILoadBalancingStrategy, ILoa
 	 * The {@link Thread} to look up the current resource usage. <br />
 	 * It will call {@link ILoadBalancingCommunicator#initiateLoadBalancing(PeerID, int)} if load balancing has to be done.
 	 */
-	private class SimpleLBThread extends Thread {
+	private class SimpleLBThread extends Thread implements IPeerLockContainerListener {
 		
 		/**
 		 * The allocator to use.
@@ -102,6 +106,7 @@ public class SimpleLoadBalancingStrategy implements ILoadBalancingStrategy, ILoa
 		 */
 		protected IResourceUsage mUsage;
 		
+		
 		/**
 		 * True, if a load balancing process is currently running.
 		 */
@@ -111,6 +116,13 @@ public class SimpleLoadBalancingStrategy implements ILoadBalancingStrategy, ILoa
 		 * True, if {@link ILoadBalancingCommunicator#initiateLoadBalancing(PeerID, int)} has been called.
 		 */
 		protected volatile boolean mCurrentlyBalancing = false;
+		
+		protected volatile PeerLockContainer lockContainer = null;
+		
+		protected volatile PeerID volunteer=null;
+		
+		protected volatile int queryID;
+		
 		
 		/**
 		 * Compares the current with the last usage.
@@ -236,30 +248,50 @@ public class SimpleLoadBalancingStrategy implements ILoadBalancingStrategy, ILoa
 				
 				throw new InterruptedException("No network manager set");
 				
+			} 
+			else if(!Activator.getPeerCommunicator().isPresent()) {
+				throw new InterruptedException("No Peer Communicator set");
+			} 
+			else if (!Activator.getLoadBalancingLock().isPresent()) {
+				throw new InterruptedException("No LoadBalancing Lock set");
 			}
+			
+			ILoadBalancingLock lock = Activator.getLoadBalancingLock().get();
+			IPeerCommunicator peerCommunicator = Activator.getPeerCommunicator().get();
 					
 			this.mUsage = usage;
 			
 			if(this.loadBalancingNeeded(usage)) {
+				LOG.debug("LoadBalancing is needed. Trying to acquire Local Lock.");
 				
-				//Lock Self.
-				this.mCurrentlyBalancing = true;
-				
-				// Get the query
-				IPair<ILogicalQuery, Integer> queryAndID = this.getQueryToRemove();
-				
-				// Get the peer and the involved peers.
-				PeerID peerID = this.getPeerIDToAllocate(queryAndID.getE1());
-				List<PeerID> otherPeers = this.mCommunicator.getInvolvedPeers(queryAndID.getE2());
-				if(!otherPeers.contains(peerID))
-					otherPeers.add(peerID);
-				
-				//TODO Lock all involved peers and implement callbacks :)
-				
-				
-				// Initialize the load balancing
-				this.mCommunicator.initiateLoadBalancing(peerID, queryAndID.getE2());
-				
+				//Try to lock peer first.
+				if(lock.requestLocalLock()) {
+
+					LOG.debug("Lock acquired.");
+					//Additional boolean to prevent multiple parallel LoadBalancing Processes.
+					this.mCurrentlyBalancing = true;
+					
+					// Get the query
+					IPair<ILogicalQuery, Integer> queryAndID = this.getQueryToRemove();
+					
+					// Get the peer and the involved peers.
+					PeerID peerID = this.getPeerIDToAllocate(queryAndID.getE1());
+					List<PeerID> otherPeers = this.mCommunicator.getInvolvedPeers(queryAndID.getE2());
+					
+					
+					if(!otherPeers.contains(peerID))
+						otherPeers.add(peerID);
+					
+					this.volunteer = peerID;
+					this.queryID = queryAndID.getE2();
+					
+					//Acquire Locks for other peers
+					PeerLockContainer peerLocks = new PeerLockContainer(peerCommunicator,otherPeers,this);
+					peerLocks.requestLocks();
+					this.lockContainer = peerLocks;
+					
+					
+				}
 				
 			}
 			
@@ -320,6 +352,38 @@ public class SimpleLoadBalancingStrategy implements ILoadBalancingStrategy, ILoa
 			
 			LOG.debug("Stopped monitoring local resources");
 			
+		}
+
+		@Override
+		public void notifyLockingFailed() {
+			LOG.debug("Locking other Peers failed.");
+			lockContainer = null;
+			volunteer = null;
+			Activator.getLoadBalancingLock().get().releaseLocalLock();
+			this.mCurrentlyBalancing = false;
+			
+		}
+
+		@Override
+		public void notifyLockingSuccessfull() {
+			LOG.debug("Locking of other peers successfull.");
+			if(this.mRunning) {
+				mCommunicator.initiateLoadBalancing(volunteer, queryID);
+			}
+			else {
+				//Release if Thread is stopped.
+				lockContainer.releaseLocks();
+			}
+		}
+
+		@Override
+		public void notifyReleasingFinished() {
+			LOG.debug("Releasing locks on other Peers finished.");
+			//Dispose Lock Container
+			lockContainer = null;
+			volunteer = null;
+			Activator.getLoadBalancingLock().get().releaseLocalLock();
+			this.mCurrentlyBalancing = false;
 		}
 		
 	}
@@ -466,27 +530,20 @@ public class SimpleLoadBalancingStrategy implements ILoadBalancingStrategy, ILoa
 
 	@Override
 	public void notifyLoadBalancingFinished() {
-		
-		this.mLookupThread.mCurrentlyBalancing = false;
+
+		//Release Locks.
+		if(this.mLookupThread.lockContainer!=null) {
+			mLookupThread.lockContainer.releaseLocks();
+		}
+		else {
+			//Something went wrong... Make sure we are not locked any more.
+
+			LOG.error("Lock Container is null. Remote Peers could stay locked.");
+			if(Activator.getLoadBalancingLock().isPresent()) {
+				Activator.getLoadBalancingLock().get().releaseLocalLock();
+			}
+		}
 		LOG.debug("Load balancing process finished. Continue monitoring");
-		
-	}
-
-	@Override
-	public void notifyLockingFailed() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void notifyLockingSuccessfull() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void notifyReleasingFinished() {
-		// TODO Auto-generated method stub
 		
 	}
 
