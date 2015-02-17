@@ -8,6 +8,7 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.vividsolutions.jts.geom.LineSegment;
 import com.vividsolutions.jts.geom.Point;
 
 import de.uniol.inf.is.odysseus.trajectory.compare.data.IRawTrajectory;
@@ -17,6 +18,7 @@ import de.uniol.inf.is.odysseus.trajectory.compare.uots.data.UotsData;
 import de.uniol.inf.is.odysseus.trajectory.compare.uots.data.UotsDataTrajectory;
 import de.uniol.inf.is.odysseus.trajectory.compare.uots.data.UotsQueryTrajectory;
 import de.uniol.inf.is.odysseus.trajectory.compare.uots.graph.NetGraph;
+import edu.uci.ics.jung.graph.UndirectedSparseGraph;
 
 public abstract class AbstractMapMatcher implements IMapMatcher {
 
@@ -25,33 +27,37 @@ public abstract class AbstractMapMatcher implements IMapMatcher {
 	protected AbstractMapMatcher() {}
 	
 	@Override
-	public UotsDataTrajectory map(RawIdTrajectory trajectory, NetGraph graph) {
+	public final UotsDataTrajectory map(final RawIdTrajectory trajectory, final NetGraph graph) {
 		return new UotsDataTrajectory(
 				trajectory, 
 				new UotsData(
-						this.extractJunctions(this.getGraphPoints(trajectory, graph), graph)));
+						this.extractJunctions(this.getGraphPoints(trajectory, graph.getComplexGraph()), graph)));
 	}
 	
 	
 	@Override
-	public final UotsQueryTrajectory map(RawQueryTrajectory trajectory, final Map<String, String> textualAttributes, NetGraph graph) {
+	public final UotsQueryTrajectory map(final RawQueryTrajectory trajectory, final Map<String, String> textualAttributes, NetGraph graph) {
 		return new UotsQueryTrajectory(
 				trajectory,
-				new UotsData(this.extractJunctions(this.getGraphPoints(trajectory, graph), graph)),
+				new UotsData(this.extractJunctions(this.getGraphPoints(trajectory, graph.getComplexGraph()), graph)),
 				textualAttributes
 				);
 	}
 	
-	private final List<Point> extractJunctions(List<Point> points, NetGraph graph) {
+	private List<Point> extractJunctions(final List<Point> points, final NetGraph graph) {
 		final LinkedHashSet<Point> result = new LinkedHashSet<>();
 		
 		for(final Point p : points) {
 			result.add(graph.getJunction(p));
 		}
 		
+		if(LOGGER.isDebugEnabled()) {
+			LOGGER.debug("Graph points reduced to junctions.");
+		}
+		
 		return new ArrayList<Point>(result);
 	}
 	
 	
-	protected abstract List<Point> getGraphPoints(IRawTrajectory trajectory, NetGraph graph);
+	protected abstract List<Point> getGraphPoints(final IRawTrajectory trajectory, final UndirectedSparseGraph<Point, LineSegment> graph);
 }

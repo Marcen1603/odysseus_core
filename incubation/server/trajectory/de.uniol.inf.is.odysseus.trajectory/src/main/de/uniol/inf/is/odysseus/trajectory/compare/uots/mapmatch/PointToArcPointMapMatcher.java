@@ -17,7 +17,7 @@ import com.vividsolutions.jts.index.strtree.ItemDistance;
 import com.vividsolutions.jts.index.strtree.STRtree;
 
 import de.uniol.inf.is.odysseus.trajectory.compare.data.IRawTrajectory;
-import de.uniol.inf.is.odysseus.trajectory.compare.uots.graph.NetGraph;
+import edu.uci.ics.jung.graph.UndirectedSparseGraph;
 import edu.uci.ics.jung.graph.util.Pair;
 
 public class PointToArcPointMapMatcher extends AbstractMapMatcher {
@@ -40,36 +40,43 @@ public class PointToArcPointMapMatcher extends AbstractMapMatcher {
 	};
 	
 	
-	private final Map<NetGraph, STRtree> strTrees = new HashMap<>();
+	private final Map<UndirectedSparseGraph<Point, LineSegment>, STRtree> strTrees = new HashMap<>();
 	
 	
 	private PointToArcPointMapMatcher() { }
 	
 	
 	@Override
-	protected final List<Point> getGraphPoints(IRawTrajectory trajectory, NetGraph graph) {
+	protected final List<Point> getGraphPoints(final IRawTrajectory trajectory, final UndirectedSparseGraph<Point, LineSegment> graph) {
 		
 		STRtree strTree = this.strTrees.get(graph);
 		if(strTree == null) {
 			strTree = new STRtree();
 		
-			for(final LineSegment ls : graph.getComplexGraph().getEdges()) {
+			for(final LineSegment ls : graph.getEdges()) {
 				strTree.insert(new Envelope(ls.getCoordinate(0), ls.getCoordinate(1)), ls);
 			}
 			
 			strTree.build();
 			this.strTrees.put(graph, strTree);
 			
-			LOGGER.debug("New STRtree build for NetGraph " + graph);
+			if(LOGGER.isDebugEnabled()) {
+				LOGGER.debug("New STRtree build for Graph " + graph.hashCode());
+			}
 		}
 		
 		final LinkedHashSet<Point> graphPoints = new LinkedHashSet<Point>();
 
 		for(final Point point : trajectory.getPoints()) {
-			final Pair<Point> endpoints = graph.getComplexGraph()
-					.getEndpoints((LineSegment)strTree.nearestNeighbour(point.getEnvelopeInternal(), point, ITEM_DISTANCE));
+			final Pair<Point> endpoints = graph.getEndpoints(
+							(LineSegment)strTree.nearestNeighbour(point.getEnvelopeInternal(), 
+							point, 
+							ITEM_DISTANCE)
+			);
 			
-			graphPoints.add(point.distance(endpoints.getFirst()) < point.distance(endpoints.getSecond()) ? endpoints.getFirst() : endpoints.getSecond());
+			graphPoints.add(
+					point.distance(endpoints.getFirst()) < point.distance(endpoints.getSecond()) ? 
+							endpoints.getFirst() : endpoints.getSecond());
 		}
 		
 		return new ArrayList<>(graphPoints);

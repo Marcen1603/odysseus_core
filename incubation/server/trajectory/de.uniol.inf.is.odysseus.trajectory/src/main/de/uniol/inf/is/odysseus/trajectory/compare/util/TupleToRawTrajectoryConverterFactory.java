@@ -1,6 +1,5 @@
 package de.uniol.inf.is.odysseus.trajectory.compare.util;
 
-import de.uniol.inf.is.odysseus.trajectory.util.AbstractFactory;
 import de.uniol.inf.is.odysseus.trajectory.util.AbstractSimpleFactory;
 
 public class TupleToRawTrajectoryConverterFactory extends AbstractSimpleFactory<ITupleToRawTrajectoryConverter> {

@@ -9,13 +9,14 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.vividsolutions.jts.geom.LineSegment;
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.index.strtree.GeometryItemDistance;
 import com.vividsolutions.jts.index.strtree.ItemDistance;
 import com.vividsolutions.jts.index.strtree.STRtree;
 
 import de.uniol.inf.is.odysseus.trajectory.compare.data.IRawTrajectory;
-import de.uniol.inf.is.odysseus.trajectory.compare.uots.graph.NetGraph;
+import edu.uci.ics.jung.graph.UndirectedSparseGraph;
 
 public class PointToPointMapMatcher extends AbstractMapMatcher {
 
@@ -30,27 +31,29 @@ public class PointToPointMapMatcher extends AbstractMapMatcher {
 	private static final ItemDistance ITEM_DISTANCE = new GeometryItemDistance();
 	
 	
-	private final Map<NetGraph, STRtree> strTrees = new HashMap<>();
+	private final Map<UndirectedSparseGraph<Point, LineSegment>, STRtree> strTrees = new HashMap<>();
 	
 	
 	private PointToPointMapMatcher() {}
 
 	
 	@Override
-	protected List<Point> getGraphPoints(final IRawTrajectory trajectory, final NetGraph graph) {
+	protected List<Point> getGraphPoints(final IRawTrajectory trajectory, final UndirectedSparseGraph<Point, LineSegment> graph) {
 
 		STRtree strTree = this.strTrees.get(graph);
 		if(strTree == null) {
 			strTree = new STRtree();
 		
-			for(final Point graphPoint : graph.getComplexGraph().getVertices()) {
+			for(final Point graphPoint : graph.getVertices()) {
 				strTree.insert(graphPoint.getEnvelopeInternal(), graphPoint);
 			}
 			
 			strTree.build();
 			this.strTrees.put(graph, strTree);
 			
-			LOGGER.debug("New STRtree build for NetGraph " + graph);
+			if(LOGGER.isDebugEnabled()) {
+				LOGGER.debug("New STRtree build for Graph " + graph.hashCode());
+			}
 		}
 
 		final LinkedHashSet<Point> graphPoints = new LinkedHashSet<Point>();

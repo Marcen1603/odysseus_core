@@ -1,7 +1,5 @@
 package de.uniol.inf.is.odysseus.trajectory.compare.owd.data;
 
-import java.util.Map;
-
 import de.uniol.inf.is.odysseus.trajectory.compare.data.AbstractDataTrajectory;
 import de.uniol.inf.is.odysseus.trajectory.compare.data.RawIdTrajectory;
 

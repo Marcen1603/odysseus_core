@@ -31,6 +31,7 @@ public class Uots extends AbstractTrajectoryCompareAlgoritm<IDataTrajectory<Uots
 	public Uots(Map<String, String> options, int k,
 			RawQueryTrajectory queryTrajectory,
 			Map<String, String> textualAttributes, int utmZone, double lambda) {
+		
 		super(options, k, queryTrajectory, textualAttributes, utmZone, lambda);
 	}
 	
@@ -44,6 +45,9 @@ public class Uots extends AbstractTrajectoryCompareAlgoritm<IDataTrajectory<Uots
 	@Override
 	protected IQueryTrajectory<UotsData> convert(RawQueryTrajectory queryTrajectory, final Map<String, String> textualAttributes,
 			int utmZone, final Map<String, String> options) {
+		if(LOGGER.isDebugEnabled()) {
+			LOGGER.debug("Map query trajectory to graph points.");
+		}
 		this.graph = GraphBuilderFactory.getInstance().load(options.get(MAP_FILE_KEY), utmZone);
 		this.mapMatcher = MapMatcherFactory.getInstance().create(options.get(MAP_MATCHER_KEY));
 		return this.mapMatcher.map(queryTrajectory, textualAttributes, graph);
@@ -51,6 +55,9 @@ public class Uots extends AbstractTrajectoryCompareAlgoritm<IDataTrajectory<Uots
 
 	@Override
 	protected IDataTrajectory<UotsData> convert(RawIdTrajectory queryTrajectory) {
+		if(LOGGER.isDebugEnabled()) {
+			LOGGER.debug("Map data trajectory to graph points.");
+		}
 		return this.mapMatcher.map(queryTrajectory, graph);
 	}
 }

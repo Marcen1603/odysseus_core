@@ -2,8 +2,6 @@ package de.uniol.inf.is.odysseus.trajectory.compare;
 
 import java.util.List;
 
-import de.uniol.inf.is.odysseus.core.collection.Tuple;
-import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.trajectory.compare.data.IDataTrajectory;
 import de.uniol.inf.is.odysseus.trajectory.compare.data.RawIdTrajectory;

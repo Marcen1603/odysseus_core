@@ -33,24 +33,26 @@ public class SpatialDistanceService<T> implements IDistanceService<T> {
 	}
 	
 	@Override
-	public synchronized void addQueryTrajectory(IQueryTrajectory<T> queryTrajectory, int k, double lambda)
-			throws IllegalArgumentException {
+	public synchronized void addQueryTrajectory(final IQueryTrajectory<T> queryTrajectory, final int k, 
+			final double lambda) throws IllegalArgumentException {
 		
 		if(this.trajectoryMap.containsKey(queryTrajectory)) {
 			throw new IllegalArgumentException("queryTrajectory already added" );
 		}
 		this.trajectoryMap.put(queryTrajectory, new QueryTrajectoryData(k, lambda));
+		LOGGER.debug("New query trajectory added.");
 	}
 	
 	@Override
-	public void removeTrajectory(IQueryTrajectory<T> queryTrajectory,
-			IDataTrajectory<T> dataTrajectory) {
+	public void removeTrajectory(final IQueryTrajectory<T> queryTrajectory,
+			final IDataTrajectory<T> dataTrajectory) {
 		this.trajectoryMap.get(queryTrajectory).kNearest.remove(dataTrajectory);
 	}
 	
 	
 	@Override
-	public List<IDataTrajectory<T>> getDistance(IQueryTrajectory<T> queryTrajectory, IDataTrajectory<T> dataTrajectory) {
+	public List<IDataTrajectory<T>> getDistance(final IQueryTrajectory<T> queryTrajectory, 
+			final IDataTrajectory<T> dataTrajectory) {
 		
 		final QueryTrajectoryData qData = this.trajectoryMap.get(queryTrajectory);
 
@@ -67,7 +69,7 @@ public class SpatialDistanceService<T> implements IDistanceService<T> {
 		return this.computeResult(qData);
 	}
 
-	private List<IDataTrajectory<T>> computeResult(QueryTrajectoryData qData) {
+	private List<IDataTrajectory<T>> computeResult(final QueryTrajectoryData qData) {
 		final List<IDataTrajectory<T>> result = new ArrayList<>(qData.k);
 		final Iterator<IDataTrajectory<T>> it = qData.kNearest.iterator();
 		result.add(it.next());

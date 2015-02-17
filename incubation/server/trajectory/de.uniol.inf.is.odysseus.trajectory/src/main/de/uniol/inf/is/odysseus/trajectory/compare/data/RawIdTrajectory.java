@@ -6,7 +6,6 @@ import java.util.Map;
 import com.vividsolutions.jts.geom.Point;
 
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
-import de.uniol.inf.is.odysseus.core.metadata.TimeInterval;
 
 public class RawIdTrajectory extends RawQueryTrajectory implements IHasTextualAttributes {
 

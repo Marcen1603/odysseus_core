@@ -1,25 +1,5 @@
 package de.uniol.inf.is.odysseus.trajectory.compare.owd;
 
-import java.util.Collection;
-import java.util.Deque;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.GeometryFactory;
-import com.vividsolutions.jts.geom.Point;
-
-import de.uniol.inf.is.odysseus.core.collection.Tuple;
-import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
-import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
-import de.uniol.inf.is.odysseus.core.metadata.TimeInterval;
-import de.uniol.inf.is.odysseus.trajectory.physicaloperator.TrajectoryComparePO;
 
 public class Owd {//implements ITrajectoryCompareAlgorithm {
 
