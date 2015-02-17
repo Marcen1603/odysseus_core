@@ -16,26 +16,44 @@ public class ImageJCV implements IClone, Cloneable
 {
 	private IplImage image;
 	
+	public static int imageCount = 0;
+	
+	public static void newImage()
+	{
+		imageCount++;
+		
+		if (imageCount > 100)
+		{
+//			System.out.println("imageCount = " + imageCount);
+			System.gc();
+		}
+	}
+	
 	public ImageJCV() {
+		newImage();
 	}
 	
 	public ImageJCV(IplImage image) {
 		this.image = image;
+		newImage();
 	}
 	
 	public ImageJCV(ByteBuffer buffer) {
 		this.image = (IplImage) ObjectByteConverter.bytesToObject(buffer.array());
+		newImage();
 	}
 	
 	public ImageJCV(ImageJCV other) 
 	{
 		image = cvCreateImage(cvSize(other.image.width(), other.image.height()), other.image.depth(), other.image.nChannels());
 		image.getByteBuffer().put(other.image.getByteBuffer());
+		newImage();
 	}
 	
 	public ImageJCV(int width, int height)
 	{
 		image = cvCreateImage(cvSize(width, height), IPL_DEPTH_8U, 4);
+		newImage();
 	}
 	
 	public ImageJCV(double[][] data) 
@@ -45,6 +63,7 @@ public class ImageJCV implements IClone, Cloneable
 		for (int i=0; i < data.length; i++) {
 			buffer.putDouble(i, data[i][0]);
 		}
+		newImage();
 	}
 	
 	@Override public ImageJCV clone()
@@ -55,18 +74,19 @@ public class ImageJCV implements IClone, Cloneable
 	@Override
 	protected void finalize()
 	{		
+		imageCount--;
 		release();
-	}
+	}	
 	
 	public void release()
 	{
 //		System.out.println("Call finalize...");
 		if (image != null)
 		{
-//			System.out.println("Release image");
 			cvReleaseImage(image);
 			image = null;
 		}
+			
 	}
 	
 	public int getNumChannels()

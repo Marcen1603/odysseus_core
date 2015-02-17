@@ -1,6 +1,8 @@
 package de.uniol.inf.is.odysseus.wrapper.baslercamera.physicaloperator;
 
-import static org.bytedeco.javacpp.opencv_core.*;
+import static org.bytedeco.javacpp.opencv_core.IPL_DEPTH_8U;
+import static org.bytedeco.javacpp.opencv_core.cvCreateImage;
+import static org.bytedeco.javacpp.opencv_core.cvSize;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -28,7 +30,10 @@ public class BaslerCameraTransportHandler extends AbstractSimplePullTransportHan
 	private String serialNumber;
 	private BaslerCamera cameraCapture;
 	
-	Tuple<IMetaAttribute> currentTuple;
+	private Tuple<IMetaAttribute> currentTuple;
+	private ImageJCV imageJCV;
+	private IplImage iplImage;
+	private ByteBuffer imageData;
 	
 	public BaslerCameraTransportHandler() 
 	{
@@ -63,12 +68,25 @@ public class BaslerCameraTransportHandler extends AbstractSimplePullTransportHan
 			{
 		 		cameraCapture = new BaslerCamera(serialNumber);
 				cameraCapture.start();
+				iplImage = cvCreateImage(cvSize(cameraCapture.getImageWidth(), cameraCapture.getImageHeight()), IPL_DEPTH_8U, cameraCapture.getImageChannels());
+				imageJCV = new ImageJCV(iplImage);
+				
+				imageData = iplImage.getByteBuffer();
+				assert(imageData.isDirect()); // Is it possible for an IplImage to be backed by a non-direct byte buffer?				
+				
 				currentTuple = null;
 			}
 			catch (RuntimeException e) 
 			{
-				cameraCapture = null;
-				throw new IOException(e.getMessage());
+				try
+				{
+					processInClose();
+				}
+				catch (Exception e2)
+				{
+					e2.printStackTrace();
+				}
+				throw new IOException(e);
 			}
 		}
 	}
@@ -77,19 +95,36 @@ public class BaslerCameraTransportHandler extends AbstractSimplePullTransportHan
 	{
 		synchronized (processLock)
 		{
-			cameraCapture.stop();
-			cameraCapture = null;
+			System.out.println("Stopping...");
+			if (cameraCapture != null)
+			{
+				cameraCapture.stop();
+				cameraCapture = null;
+			}
+			
+			iplImage = null;
+			imageJCV = null;
+			imageData = null;
+			currentTuple = null;
+			System.out.println("Stopped");
 		}
 	}
 
+	private double smoothFPS = 0.0f;
+	private double alpha = 0.95f;
+	
 	private long lastTime = 0;
 	
 	@Override public Tuple<IMetaAttribute> getNext() 
 	{
 		long now = System.nanoTime();
 		double dt = (now - lastTime) / 1.0e9;
+		double fps = 1.0/dt;
+
+		smoothFPS = alpha*smoothFPS + (1.0-alpha)*fps; 
+		
 //		System.out.println("getNext " + now / 1.0e9 + ", dt = " + dt + " = " + 1.0/dt + " FPS");
-		System.out.println(serialNumber + ": " +  1.0/dt + " FPS");
+		System.out.println(String.format("%s: %.4f FPS (%.4f)", serialNumber, smoothFPS, fps));
 		lastTime = now;
 
 		Tuple<IMetaAttribute> tuple = currentTuple;
@@ -103,27 +138,23 @@ public class BaslerCameraTransportHandler extends AbstractSimplePullTransportHan
 		synchronized (processLock)
 		{
 			if (cameraCapture == null) return false;
-			
-//			IplImage img = null;
-			
-			IplImage img = cvCreateImage(cvSize(cameraCapture.getImageWidth(), cameraCapture.getImageHeight()), IPL_DEPTH_8U, cameraCapture.getImageChannels());			
-			ByteBuffer imageData = img.getByteBuffer();
+//			IplImage img = cvCreateImage(cvSize(cameraCapture.getImageWidth(), cameraCapture.getImageHeight()), IPL_DEPTH_8U, cameraCapture.getImageChannels());			
+//			ByteBuffer imageData = img.getByteBuffer();
 			
 			// Is it possible for an IplImage to be backed by a non-direct byte buffer?
-			assert(imageData.isDirect());
+//			assert(imageData.isDirect());
 
-			if (!cameraCapture.grabRGB8(imageData, img.widthStep(), 1000))
+			if (!cameraCapture.grabRGB8(imageData, iplImage.widthStep(), 1000))
 			{
 				return false;
 			}
 			else
 			{
-				// FIX: Without this, the finalization method of the ImageJCV will not be called... ?!?
-				img.getBufferedImage();
+				System.out.println("Frame grabbed");
 				
 				currentTuple = new Tuple<IMetaAttribute>(getSchema().size(), true);
 				int[] attrs = getSchema().getSDFDatatypeAttributePositions(SDFImageJCVDatatype.IMAGEJCV);
-				if (attrs.length > 0) currentTuple.setAttribute(attrs[0], new ImageJCV(img));
+				if (attrs.length > 0) currentTuple.setAttribute(attrs[0], imageJCV);
 				
 				return true;				
 			}
