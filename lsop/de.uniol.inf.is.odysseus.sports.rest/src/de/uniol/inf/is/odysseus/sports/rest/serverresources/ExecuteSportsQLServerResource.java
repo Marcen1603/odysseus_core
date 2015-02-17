@@ -47,7 +47,7 @@ public class ExecuteSportsQLServerResource extends AbstractSessionServerResource
 				res.setNext(client);
 				DistributedSportsQLSocketRequestDTO req = new DistributedSportsQLSocketRequestDTO(
 						info.getSharedQueryId(), executeSportsQLRequestDTO.getUsername(),
-						executeSportsQLRequestDTO.getPassword());
+						executeSportsQLRequestDTO.getPassword(), address);
 				DistributedSportsQLSocketResponseDTO resp = res.post(req, DistributedSportsQLSocketResponseDTO.class);
 				return new ExecuteSportsQLResponseDTO(resp.getToken(), resp.getSocketInfo(), resp.getQueryId(),
 						info.getTopOperatorPeerRestPort());
@@ -68,6 +68,7 @@ public class ExecuteSportsQLServerResource extends AbstractSessionServerResource
 			ExecutorServiceBinding.getExecutor().startQuery(queryId, session);
 			SocketInfo peerSocket = SocketService.getInstance().getConnectionInformation(session, queryId, 0);
 
+			// Save connection information in backup-information for recovery
 			SocketService.getInstance()
 					.informAboutNewClient(queryId, address, peerSocket.getIp(), peerSocket.getPort());
 
