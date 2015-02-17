@@ -8,7 +8,6 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.vividsolutions.jts.geom.LineSegment;
 import com.vividsolutions.jts.geom.Point;
 
 import de.uniol.inf.is.odysseus.trajectory.compare.data.IRawTrajectory;
@@ -18,7 +17,6 @@ import de.uniol.inf.is.odysseus.trajectory.compare.uots.data.UotsData;
 import de.uniol.inf.is.odysseus.trajectory.compare.uots.data.UotsDataTrajectory;
 import de.uniol.inf.is.odysseus.trajectory.compare.uots.data.UotsQueryTrajectory;
 import de.uniol.inf.is.odysseus.trajectory.compare.uots.graph.NetGraph;
-import edu.uci.ics.jung.graph.UndirectedSparseGraph;
 
 public abstract class AbstractMapMatcher implements IMapMatcher {
 

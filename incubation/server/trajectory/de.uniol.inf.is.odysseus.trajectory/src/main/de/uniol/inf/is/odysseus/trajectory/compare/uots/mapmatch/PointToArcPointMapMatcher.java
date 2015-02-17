@@ -1,116 +1,77 @@
 package de.uniol.inf.is.odysseus.trajectory.compare.uots.mapmatch;
 
 import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Iterator;
+import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Set;
+import java.util.Map;
 
-import org.javatuples.Pair;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.LineSegment;
 import com.vividsolutions.jts.geom.Point;
+import com.vividsolutions.jts.index.strtree.ItemBoundable;
+import com.vividsolutions.jts.index.strtree.ItemDistance;
+import com.vividsolutions.jts.index.strtree.STRtree;
 
 import de.uniol.inf.is.odysseus.trajectory.compare.data.IRawTrajectory;
 import de.uniol.inf.is.odysseus.trajectory.compare.uots.graph.NetGraph;
+import edu.uci.ics.jung.graph.util.Pair;
 
 public class PointToArcPointMapMatcher extends AbstractMapMatcher {
 	
+	
+	private final static Logger LOGGER = LoggerFactory.getLogger(PointToArcPointMapMatcher.class);
+
+	private final static PointToArcPointMapMatcher INSTANCE = new PointToArcPointMapMatcher();
+	
+	public static PointToArcPointMapMatcher getInstance() {
+		return INSTANCE;
+	}
+	
+	private static final ItemDistance ITEM_DISTANCE = new ItemDistance() {
+		
+		@Override
+		public double distance(ItemBoundable item1, ItemBoundable item2) {
+			return ((LineSegment)item1.getItem()).distance(((Point)item2.getItem()).getCoordinate());
+		}
+	};
+	
+	
+	private final Map<NetGraph, STRtree> strTrees = new HashMap<>();
+	
+	
+	private PointToArcPointMapMatcher() { }
+	
+	
 	@Override
 	protected final List<Point> getGraphPoints(IRawTrajectory trajectory, NetGraph graph) {
-		//ersten finden
-		final Iterator<Point> rawIt = trajectory.getPoints().iterator();
-		Point rawPoint = rawIt.next();
 		
-		final Iterator<LineSegment> graphEdgeIt = graph.getComplexGraph().getEdges().iterator();
-		LineSegment minEdge = graphEdgeIt.next();
-		double minDistance = minEdge.distance(rawPoint.getCoordinate());
+		STRtree strTree = this.strTrees.get(graph);
+		if(strTree == null) {
+			strTree = new STRtree();
 		
-		while(graphEdgeIt.hasNext()) {
-			LineSegment nextGraphEdge = graphEdgeIt.next();
-			final double nextDistance = nextGraphEdge.distance(rawPoint.getCoordinate());
-			if(nextDistance < minDistance) {
-				minEdge = nextGraphEdge;
-				minDistance = nextDistance;
+			for(final LineSegment ls : graph.getComplexGraph().getEdges()) {
+				strTree.insert(new Envelope(ls.getCoordinate(0), ls.getCoordinate(1)), ls);
 			}
+			
+			strTree.build();
+			this.strTrees.put(graph, strTree);
+			
+			LOGGER.debug("New STRtree build for NetGraph " + graph);
 		}
 		
-		edu.uci.ics.jung.graph.util.Pair<Point> pointPair = graph.getComplexGraph().getEndpoints(minEdge);
-		Point minGraphPoint = rawPoint.distance(pointPair.getFirst()) < rawPoint.distance(pointPair.getSecond()) ?
-				pointPair.getFirst() : pointPair.getSecond();
-		
 		final LinkedHashSet<Point> graphPoints = new LinkedHashSet<Point>();
-		
-		while(rawIt.hasNext()) {
-			final Pair<Point, Double> result = 
-					this.search(rawPoint, rawPoint = rawIt.next(), minGraphPoint, minDistance, graph);
-			
 
-			graphPoints.add(result.getValue0());
-			minDistance = result.getValue1();
+		for(final Point point : trajectory.getPoints()) {
+			final Pair<Point> endpoints = graph.getComplexGraph()
+					.getEndpoints((LineSegment)strTree.nearestNeighbour(point.getEnvelopeInternal(), point, ITEM_DISTANCE));
+			
+			graphPoints.add(point.distance(endpoints.getFirst()) < point.distance(endpoints.getSecond()) ? endpoints.getFirst() : endpoints.getSecond());
 		}
 		
 		return new ArrayList<>(graphPoints);
-	}
-
-	private Pair<Point, Double> search(Point lastRawPoint, Point rawPoint, Point lastGraphPoint, double currDistance, 
-			NetGraph graph) {	
-		this.globalGraphEdge = null;
-		this.globalMinDistance = Double.MAX_VALUE;
-		
-		this.search(rawPoint, 
-				lastRawPoint,
-				lastGraphPoint,
-				currDistance,
-				currDistance + rawPoint.distance(lastRawPoint),
-				new HashSet<Point>(),
-				new HashSet<LineSegment>(),
-				graph);
-		
-		edu.uci.ics.jung.graph.util.Pair<Point> p = graph.getComplexGraph().getEndpoints(this.globalGraphEdge);
-		
-		final Point result = rawPoint.distance(p.getFirst()) < rawPoint.distance(p.getSecond()) ?
-				p.getFirst() : p.getSecond();
-		return new Pair<Point, Double>(result, this.globalMinDistance);
-	}
-	
-	private LineSegment globalGraphEdge;
-	private double globalMinDistance;
-	
-	private void search(Point lastRawPoint, Point rawPoint, Point currGraphPoint, double currDistance, double maxDistance, 
-			Set<Point> visitedGraphPoints, Set<LineSegment> visitedGraphEdges,
-			NetGraph graph) {
-		
-		if(visitedGraphPoints.contains(currGraphPoint)) {
-			return;
-		}
-		if(currDistance > maxDistance) {
-			return;
-		}
-		
-		for(final LineSegment edge : graph.getComplexGraph().getOutEdges(currGraphPoint)) {
-			if(!visitedGraphEdges.contains(edge)) {
-				final double distance = edge.distance(rawPoint.getCoordinate());
-				if(distance < this.globalMinDistance) {
-					this.globalGraphEdge = edge;
-					this.globalMinDistance = distance;
-				}
-				visitedGraphEdges.add(edge);
-			}
-		}
-		
-		visitedGraphPoints.add(currGraphPoint);
-		
-		for(final Point neigbor : graph.getComplexGraph().getNeighbors(currGraphPoint)) {
-			this.search(rawPoint, 
-					lastRawPoint,
-					neigbor, 
-					lastRawPoint.distance(neigbor) , 
-					maxDistance, 
-					visitedGraphPoints, 
-					visitedGraphEdges, 
-					graph);
-		}
 	}
 }
