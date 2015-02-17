@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.trajectory.compare;
 
+import java.util.Locale;
 import java.util.Map;
 
 import de.uniol.inf.is.odysseus.trajectory.compare.uots.Uots;
@@ -18,7 +19,8 @@ public class TrajectoryCompareAlgorithmFactory {
 	public ITrajectoryCompareAlgorithm<?, ?> create(final String name, int k, String queryTrajectoryPath, Map<String, String> textualAttributes,
 			int utmZone, double lambda, Map<String, String> options) {
 		
-		switch(name.toUpperCase()) {
+		final String upperCaseName = name.toUpperCase(Locale.US);
+		switch(upperCaseName) {
 			case "OWD" : 
 				return null;//;new Owd(k);
 			case "UOTS" : 
@@ -29,6 +31,6 @@ public class TrajectoryCompareAlgorithmFactory {
 						utmZone, 
 						lambda);
 		}
-		throw new IllegalArgumentException("No Algorithm '" + name.toUpperCase() + "' found.");
+		throw new IllegalArgumentException("No Algorithm '" + upperCaseName + "' found.");
 	}
 }

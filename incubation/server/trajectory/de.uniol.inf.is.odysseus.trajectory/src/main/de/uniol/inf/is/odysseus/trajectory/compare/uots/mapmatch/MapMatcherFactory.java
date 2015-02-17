@@ -1,5 +1,7 @@
 package de.uniol.inf.is.odysseus.trajectory.compare.uots.mapmatch;
 
+import java.util.Locale;
+
 import de.uniol.inf.is.odysseus.trajectory.util.AbstractFactory;
 
 public class MapMatcherFactory extends AbstractFactory<IMapMatcher, String> {
@@ -14,7 +16,7 @@ public class MapMatcherFactory extends AbstractFactory<IMapMatcher, String> {
 	
 	@Override
 	protected String convertKey(String key) {
-		return key.toUpperCase();
+		return key.toUpperCase(Locale.US);
 	}
 
 	@Override

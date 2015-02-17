@@ -1,5 +1,7 @@
 package de.uniol.inf.is.odysseus.trajectory.compare.util;
 
+import java.util.Locale;
+
 import de.uniol.inf.is.odysseus.trajectory.compare.data.RawQueryTrajectory;
 import de.uniol.inf.is.odysseus.trajectory.util.AbstractObjectLoaderFactory;
 
@@ -16,7 +18,7 @@ public class QueryTrajectoryLoaderFactory extends AbstractObjectLoaderFactory<IQ
 	
 	@Override
 	protected String convertKey(String key) {
-		return key.substring(key.lastIndexOf('.') + 1).toUpperCase();
+		return key.substring(key.lastIndexOf('.') + 1).toUpperCase(Locale.US);
 	}
 
 	@Override

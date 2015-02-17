@@ -4,6 +4,7 @@ package de.uniol.inf.is.odysseus.trajectory.logicaloperator;
 import java.io.File;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import org.slf4j.Logger;
@@ -102,7 +103,7 @@ public class TrajectoryCompareAO extends UnaryLogicalOp {
 			this.textualAttributes = new HashMap<>();
 		}
 		for(final Option option : value) {
-			this.textualAttributes.put(option.getName().toLowerCase(), option.getValue());
+			this.textualAttributes.put(option.getName().toLowerCase(Locale.US), option.getValue());
 		}
 	}
 	
@@ -117,7 +118,7 @@ public class TrajectoryCompareAO extends UnaryLogicalOp {
 	@Parameter(type = OptionParameter.class, name = "OPTIONS", isList = true, doc = "Special options for algorithm.")
 	public void setOptions(final List<Option> value) {
 		for(final Option option : value) {
-			this.optionsMap.put(option.getName().toLowerCase(), option.getValue());
+			this.optionsMap.put(option.getName().toLowerCase(Locale.US), option.getValue());
 		}
 	}
 	

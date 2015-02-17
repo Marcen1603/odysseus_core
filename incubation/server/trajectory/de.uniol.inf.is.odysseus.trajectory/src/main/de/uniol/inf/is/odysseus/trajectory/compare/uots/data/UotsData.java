@@ -8,7 +8,7 @@ public class UotsData {
 
 	private final List<Point> graphPoints;
 	
-	public UotsData(List<Point> grapgPoints) {
+	public UotsData(final List<Point> grapgPoints) {
 		this.graphPoints = grapgPoints;
 	}
 

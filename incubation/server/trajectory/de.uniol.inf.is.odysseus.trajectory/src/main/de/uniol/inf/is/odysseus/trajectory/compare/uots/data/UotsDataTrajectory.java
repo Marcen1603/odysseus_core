@@ -6,7 +6,7 @@ import de.uniol.inf.is.odysseus.trajectory.compare.data.RawIdTrajectory;
 
 public class UotsDataTrajectory extends AbstractDataTrajectory<UotsData> {
 
-	public UotsDataTrajectory(RawIdTrajectory rawTrajectory, UotsData convertedData) {
+	public UotsDataTrajectory(final RawIdTrajectory rawTrajectory, final UotsData convertedData) {
 		super(rawTrajectory, convertedData);
 	}
 }

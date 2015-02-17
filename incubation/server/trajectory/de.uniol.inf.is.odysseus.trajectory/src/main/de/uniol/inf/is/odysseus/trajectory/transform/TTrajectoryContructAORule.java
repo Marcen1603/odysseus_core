@@ -51,12 +51,12 @@ public class TTrajectoryContructAORule extends AbstractTransformationRule<Trajec
 			if(operator.getLevelDBPath() != null) {
 				op = this.insertLevelDBEnrichAO(op, operator.getTrajectoryId(), operator.getOutputSchema().getAttribute(3), operator.getLevelDBPath());
 			}
-			op = this.insertSystemTimeAO(op);
+			this.insertSystemTimeAO(op);
 		} else {
 			op = this.insertAggregateAO(op, groupOrPartitionBy, Arrays.asList((AggregateItem)operator.getPositionMapping()));
 			op = this.insertTrajectoryIdEnricherAO(op);
 			if(operator.getLevelDBPath() != null) {
-				op = this.insertLevelDBEnrichAO(op, operator.getTrajectoryId(), operator.getOutputSchema().getAttribute(3), operator.getLevelDBPath());
+				this.insertLevelDBEnrichAO(op, operator.getTrajectoryId(), operator.getOutputSchema().getAttribute(3), operator.getLevelDBPath());
 			}
 		}
 		

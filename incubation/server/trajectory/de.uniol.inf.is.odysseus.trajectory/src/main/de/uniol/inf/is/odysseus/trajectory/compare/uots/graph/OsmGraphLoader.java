@@ -13,8 +13,11 @@ import org.slf4j.LoggerFactory;
 import com.vividsolutions.jts.geom.LineSegment;
 import com.vividsolutions.jts.geom.Point;
 import com.ximpleware.AutoPilot;
+import com.ximpleware.NavException;
 import com.ximpleware.VTDGen;
 import com.ximpleware.VTDNav;
+import com.ximpleware.XPathEvalException;
+import com.ximpleware.XPathParseException;
 
 import de.uniol.inf.is.odysseus.trajectory.compare.util.IPointCreator;
 import de.uniol.inf.is.odysseus.trajectory.compare.util.UtmPointCreatorFactory;
@@ -123,7 +126,7 @@ public class OsmGraphLoader implements IGraphLoader<String, Integer> {
 				    }
 			    }
 			}			
-		} catch(Exception e) {
+		} catch(NavException | XPathEvalException | XPathParseException e) {
 			LOGGER.error(e.getMessage(), e);
 			throw new RuntimeException(e);
 		}
