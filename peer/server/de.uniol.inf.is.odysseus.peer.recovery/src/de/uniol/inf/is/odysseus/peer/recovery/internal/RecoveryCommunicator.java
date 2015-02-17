@@ -38,6 +38,8 @@ import de.uniol.inf.is.odysseus.rest.socket.SocketInfo;
  */
 public class RecoveryCommunicator implements IRecoveryCommunicator {
 
+	public final static int PEER_INSTRUCTIONS_PORT = 53000;
+	
 	/**
 	 * The logger instance for this class.
 	 */
@@ -384,7 +386,7 @@ public class RecoveryCommunicator implements IRecoveryCommunicator {
 
 		String infoString = oldHostIP + ":" + oldHostPort + "|" + newPeerIp + ":" + newPort;
 
-		new SimpleSocketClient(clientIp, 53000, infoString);
+		new SimpleSocketClient(clientIp, PEER_INSTRUCTIONS_PORT, infoString);
 		return false;
 	}
 
