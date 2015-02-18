@@ -68,6 +68,7 @@ public class SDFDatatype extends SDFElement implements Serializable {
 	public static final SDFDatatype BOOLEAN = new SDFDatatype("Boolean");
 	public static final SDFDatatype SHORT = new SDFDatatype("Short");
 	public static final SDFDatatype BITVECTOR = new SDFDatatype("BitVector");
+	public static final SDFDatatype BYTEBUFFER = new SDFDatatype("ByteBuffer");
 	public static final SDFDatatype HEXSTRING = new SDFDatatype("HexString");
 
 	public static final SDFDatatype KEYVALUEOBJECT = new SDFDatatype(
@@ -315,6 +316,7 @@ public class SDFDatatype extends SDFElement implements Serializable {
 		types.add(SDFDatatype.CHAR);
 		types.add(SDFDatatype.BYTE);
 		types.add(SDFDatatype.BITVECTOR);
+		types.add(SDFDatatype.BYTEBUFFER);
 		types.add(SDFDatatype.HEXSTRING);
 
 		types.add(SDFDatatype.LIST);
@@ -452,6 +454,10 @@ public class SDFDatatype extends SDFElement implements Serializable {
 	public boolean isByte() {
 		return this.getURI().equals(BYTE.getURI());
 	}
+	
+	public boolean isByteBuffer() {
+		return this.getURI().equals(BYTEBUFFER.getURI());
+	}	
 
 	public boolean isString() {
 		return this.getURI().equals(STRING.getURI());
