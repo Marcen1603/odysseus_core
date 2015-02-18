@@ -1,8 +1,10 @@
 package de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.paralleltrack.status;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 
+import net.jxta.id.ID;
 import net.jxta.peer.PeerID;
 import de.uniol.inf.is.odysseus.peer.distribute.ILogicalQueryPart;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.common.ILoadBalancingMasterStatus;
@@ -18,6 +20,14 @@ public class ParallelTrackMasterStatus implements ILoadBalancingMasterStatus {
 	private final String COMMUNICATOR_NAME = "ParallelTrack";
 	
 	
+
+	
+
+	private ID sharedQueryID;
+	private Collection<Integer> localQueriesForSharedQuery;
+	private Collection<PeerID>  otherPeersForSharedQuery;
+	private PeerID sharedQueryMasterPeer;
+	
 	
 	public enum LB_PHASES {
 		INITIATING,COPYING,RELINKING_SENDERS,RELINKING_RECEIVERS,SYNCHRONIZING,DELETING,FAILURE
@@ -32,7 +42,33 @@ public class ParallelTrackMasterStatus implements ILoadBalancingMasterStatus {
 			ParallelTrackMessageDispatcher messageDispatcher) {
 		this.messageDispatcher = messageDispatcher;
 	}
+	
 
+	public PeerID getSharedQueryMasterPeer() {
+		return sharedQueryMasterPeer;
+	}
+
+	public void setSharedQueryMasterPeer(PeerID sharedQueryMasterPeer) {
+		this.sharedQueryMasterPeer = sharedQueryMasterPeer;
+	}
+
+	
+	private boolean isMaster;
+	public boolean isMaster() {
+		return isMaster;
+	}
+
+	public ID getSharedQueryID() {
+		return sharedQueryID;
+	}
+
+	public Collection<Integer> getLocalQueriesForSharedQuery() {
+		return localQueriesForSharedQuery;
+	}
+
+	public Collection<PeerID> getOtherPeersForSharedQuery() {
+		return otherPeersForSharedQuery;
+	}
 
 	private LB_PHASES phase = LB_PHASES.INITIATING;
 	
@@ -52,6 +88,14 @@ public class ParallelTrackMasterStatus implements ILoadBalancingMasterStatus {
 		if(this.pipesToSync.contains(pipeId)) {
 				this.pipesToSync.remove(pipeId);
 		}
+	}
+	
+
+	public void storeSharedQueryInformation(boolean isMaster, ID sharedQueryID,Collection<Integer> localQueriesForSharedQuery, Collection<PeerID> otherPeers) {
+		this.isMaster = isMaster;
+		this.sharedQueryID = sharedQueryID;
+		this.localQueriesForSharedQuery = localQueriesForSharedQuery;
+		this.otherPeersForSharedQuery = otherPeers;
 	}
 	
 	public synchronized int getNumberOfPipesToSync() {

@@ -22,11 +22,75 @@ import de.uniol.inf.is.odysseus.peer.loadbalancing.active.movingstate.communicat
  *
  */
 public class MovingStateMasterStatus implements ILoadBalancingMasterStatus {
+	
 
 	/***
 	 * Name of Communicator
 	 */
 	private final String COMMUNCIATOR_NAME = "MovingState";
+
+	/***
+	 * Different LoadBalancing Phases in MovingState Protocol
+	 * 
+	 * @author Carsten Cordes
+	 *
+	 */
+	public enum LB_PHASES {
+		INITIATING, COPYING_QUERY, RELINKING_SENDERS, RELINKING_RECEIVERS, COPYING_STATES, COPYING_FINISHED, STOP_BUFFERING, FINISHED, FAILURE
+	}
+
+	/***
+	 * Message Dispatcher
+	 */
+	private MovingStateMessageDispatcher messageDispatcher;
+
+	/***
+	 * List of identifies upstream Peers
+	 */
+	private ArrayList<PeerID> upstreamPeers;
+
+	/**
+	 * List of identifiers for downstream Peers.
+	 */
+	private ArrayList<PeerID> downstramPeers;
+
+	
+
+	/**
+	 * Holds current LB Phase
+	 */
+	private LB_PHASES phase = LB_PHASES.INITIATING;
+
+	/**
+	 * Process id for current Loadbalancing Process
+	 */
+	private int processId;
+
+	/**
+	 * Holds Id of local Query
+	 */
+	private int logicalQuery;
+
+	/**
+	 * Holds local QueryPart
+	 */
+	private ILogicalQueryPart originalPart;
+
+	/**
+	 * Holds modified copy of local Query Part
+	 */
+	private ILogicalQueryPart modifiedPart;
+
+	/**
+	 * Map for Senders and the corresponding Operators
+	 */
+	private ConcurrentHashMap<String, IStatefulPO> senderOperatorMapping = new ConcurrentHashMap<String, IStatefulPO>();
+
+	/***
+	 * Pipes that need to be synchronized between different peers
+	 */
+	private ArrayList<String> pipesToSync;
+
 	
 	/**
 	 * List of Pipes which are buffering
@@ -51,7 +115,7 @@ public class MovingStateMasterStatus implements ILoadBalancingMasterStatus {
 		return otherPeersForSharedQuery;
 	}
 
-
+	
 
 	private ID sharedQueryID;
 	private Collection<Integer> localQueriesForSharedQuery;
@@ -127,27 +191,6 @@ public class MovingStateMasterStatus implements ILoadBalancingMasterStatus {
 	}
 	
 	
-	/***
-	 * Different LoadBalancing Phases in MovingState Protocol
-	 * 
-	 * @author Carsten Cordes
-	 *
-	 */
-	public enum LB_PHASES {
-		INITIATING, COPYING_QUERY, RELINKING_SENDERS, RELINKING_RECEIVERS, COPYING_STATES, COPYING_FINISHED, STOP_BUFFERING, FINISHED, FAILURE
-	}
-
-	/***
-	 * Message Dispatcher
-	 */
-	private MovingStateMessageDispatcher messageDispatcher;
-
-	/***
-	 * List of identifies upstream Peers
-	 */
-	private ArrayList<PeerID> upstreamPeers;
-
-	private ArrayList<PeerID> downstramPeers;
 	
 	/**
 	 * Sets list of upstream Peers
@@ -206,41 +249,6 @@ public class MovingStateMasterStatus implements ILoadBalancingMasterStatus {
 		}
 		return counter;
 	}
-
-	/**
-	 * Holds current LB Phase
-	 */
-	private LB_PHASES phase = LB_PHASES.INITIATING;
-
-	/**
-	 * Process id for current Loadbalancing Process
-	 */
-	private int processId;
-
-	/**
-	 * Holds Id of local Query
-	 */
-	private int logicalQuery;
-
-	/**
-	 * Holds local QueryPart
-	 */
-	private ILogicalQueryPart originalPart;
-
-	/**
-	 * Holds modified copy of local Query Part
-	 */
-	private ILogicalQueryPart modifiedPart;
-
-	/**
-	 * Map for Senders and the corresponding Operators
-	 */
-	private ConcurrentHashMap<String, IStatefulPO> senderOperatorMapping = new ConcurrentHashMap<String, IStatefulPO>();
-
-	/***
-	 * Pipes that need to be synchronized between different peers
-	 */
-	private ArrayList<String> pipesToSync;
 
 	/***
 	 * Sets pipesToSyns

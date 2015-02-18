@@ -73,7 +73,7 @@ public class ParallelTrackHelper {
 	 * @param status
 	 *            Status
 	 */
-	public static void notifyOutgoingPeers(ParallelTrackMasterStatus status) {
+	public static void notifyDownstreamPeers(ParallelTrackMasterStatus status) {
 
 		IMessageDeliveryFailedListener deliveryFailedListener = ParallelTrackCommunicatorImpl.getInstance();
 		
@@ -110,7 +110,7 @@ public class ParallelTrackHelper {
 	 * @param status
 	 *            Status
 	 */
-	public static void notifyIncomingPeers(ParallelTrackMasterStatus status) {
+	public static void notifyUpstreamPeers(ParallelTrackMasterStatus status) {
 
 		IMessageDeliveryFailedListener deliveryFailedListener = ParallelTrackCommunicatorImpl.getInstance();
 		

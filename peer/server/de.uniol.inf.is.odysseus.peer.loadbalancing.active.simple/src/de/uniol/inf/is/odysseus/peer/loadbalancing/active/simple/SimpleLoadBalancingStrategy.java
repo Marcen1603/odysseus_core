@@ -247,7 +247,6 @@ public class SimpleLoadBalancingStrategy implements ILoadBalancingStrategy, ILoa
 			} else if(!Activator.getNetworkManager().isPresent()) {
 				
 				throw new InterruptedException("No network manager set");
-				
 			} 
 			else if(!Activator.getPeerCommunicator().isPresent()) {
 				throw new InterruptedException("No Peer Communicator set");
