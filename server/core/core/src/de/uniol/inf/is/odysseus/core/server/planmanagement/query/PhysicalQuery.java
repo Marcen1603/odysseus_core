@@ -592,6 +592,9 @@ public class PhysicalQuery implements IPhysicalQuery {
 				// following sources will not be called any more.
 				if (curRoot.isSink()) {
 					if (((ISink<?>) curRoot).isOpenFor(this)) {
+						if (queryState == QueryState.SUSPENDED || queryState == QueryState.PARTIAL_SUSPENDED){
+							((ISink<?>) curRoot).resume(this);
+						}
 						((ISink<?>) curRoot).close(this);
 					}
 				} else {

@@ -63,6 +63,9 @@ public enum QueryState {
 			if (function == QueryFunction.FULL) {
 				return SUSPENDED;
 			}
+			if (function == QueryFunction.STOP){
+				return INACTIVE;
+			}
 			break;
 		case SUSPENDED:
 			if (function == QueryFunction.RESUME) {
@@ -70,6 +73,9 @@ public enum QueryState {
 			}
 			if (function == QueryFunction.PARTIAL) {
 				return PARTIAL_SUSPENDED;
+			}
+			if (function == QueryFunction.STOP){
+				return INACTIVE;
 			}
 			break;
 		case UNDEF:
