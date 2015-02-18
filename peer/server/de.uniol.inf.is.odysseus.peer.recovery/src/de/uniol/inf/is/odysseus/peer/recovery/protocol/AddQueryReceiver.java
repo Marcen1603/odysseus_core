@@ -354,7 +354,7 @@ public class AddQueryReceiver extends AbstractRepeatingMessageReceiver {
 			cController.get().registerAsSlave(installedQueries, sharedQuery, masterPeer);
 		}
 
-		// TODO Open new socket connection to tablet, if necessary
+		// Open new socket connection to tablet, if necessary
 		if (clientIp != null && hostIP != null) {
 			for (int queryId : installedQueries) {
 				SocketInfo info = SocketService.getInstance().getConnectionInformation(RecoveryCommunicator.getActiveSession(), queryId,

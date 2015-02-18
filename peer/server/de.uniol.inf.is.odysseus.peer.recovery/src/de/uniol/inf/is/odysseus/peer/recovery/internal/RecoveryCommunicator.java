@@ -31,7 +31,8 @@ import de.uniol.inf.is.odysseus.peer.recovery.util.SimpleSocketClient;
 import de.uniol.inf.is.odysseus.rest.socket.SocketInfo;
 
 /**
- * A recovery communicator handles the communication between peers for recovery mechanisms.
+ * A recovery communicator handles the communication between peers for recovery
+ * mechanisms.
  * 
  * @author Tobias Brandt & Michael Brand & Simon Kuespert
  * 
@@ -39,7 +40,7 @@ import de.uniol.inf.is.odysseus.rest.socket.SocketInfo;
 public class RecoveryCommunicator implements IRecoveryCommunicator {
 
 	public final static int PEER_INSTRUCTIONS_PORT = 53000;
-	
+
 	/**
 	 * The logger instance for this class.
 	 */
@@ -92,7 +93,8 @@ public class RecoveryCommunicator implements IRecoveryCommunicator {
 	/**
 	 * Gets the P2P network manager.
 	 * 
-	 * @return The bound P2P network manager or {@link Optional#absent()}, if there is none bound.
+	 * @return The bound P2P network manager or {@link Optional#absent()}, if
+	 *         there is none bound.
 	 */
 	public static Optional<IP2PNetworkManager> getP2PNetworkManager() {
 		return cP2PNetworkManager;
@@ -143,7 +145,8 @@ public class RecoveryCommunicator implements IRecoveryCommunicator {
 	/**
 	 * Gets the Peer dictionary.
 	 * 
-	 * @return The bound Peer dictionary or {@link Optional#absent()}, if there is none bound.
+	 * @return The bound Peer dictionary or {@link Optional#absent()}, if there
+	 *         is none bound.
 	 */
 	public static Optional<IPeerDictionary> getPeerDictionary() {
 
@@ -316,7 +319,8 @@ public class RecoveryCommunicator implements IRecoveryCommunicator {
 
 		// Send the add query message
 		AddQuerySender.getInstance().sendAddQueryPart(newPeer, pql, localQueryId, queryState, sharedQuery, master,
-				masterId, failedPeer, clientIp, hostIP, hostPort, recoveryStateIdentifier, subprocessID, cPeerCommunicator.get());
+				masterId, failedPeer, clientIp, hostIP, hostPort, recoveryStateIdentifier, subprocessID,
+				cPeerCommunicator.get());
 	}
 
 	@Override
@@ -378,11 +382,11 @@ public class RecoveryCommunicator implements IRecoveryCommunicator {
 
 	@Override
 	public boolean informClientAboutNewSocket(SocketInfo info, String oldHostIP, int oldHostPort, String clientIp) {
-		
+
 		String newPeerIp = info.getIp();
 		String newPort = "" + info.getPort();
-		LOG.debug(String.format("Want to inform client (e.g. tablet) about new peer. New peerIP: $s:$s, Client IP: $s",
-				newPeerIp, newPort, clientIp));
+		LOG.debug("Want to inform client (e.g. tablet) about new peer. New peerIP:" + newPeerIp + ":{}, Client IP: {}",
+				newPort, clientIp);
 
 		String infoString = oldHostIP + ":" + oldHostPort + "|" + newPeerIp + ":" + newPort;
 

@@ -322,7 +322,7 @@ public class AgreementHelper {
 			 * 		b) Doing the recovery may lead to the scenario, that the queries from the failed peer are reinstalled several times.
 			 * Since the third scenario is not as probable as the other ones, the best solution is to do nothing.
 			 */
-			LOG.error("Sending RecoveryAgreementMessage failed while recovering {}! Queries may be installed twice!" + failedPeer);
+			LOG.error("Sending RecoveryAgreementMessage failed while recovering {}! Queries may be installed twice!", failedPeer);
 		}
 
 		// 5. Wait a few seconds until we just do the recovery
