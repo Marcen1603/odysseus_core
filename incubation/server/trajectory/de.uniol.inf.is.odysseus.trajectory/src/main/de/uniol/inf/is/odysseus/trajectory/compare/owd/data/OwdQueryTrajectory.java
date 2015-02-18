@@ -7,7 +7,7 @@ import de.uniol.inf.is.odysseus.trajectory.compare.data.RawQueryTrajectory;
 
 public class OwdQueryTrajectory extends AbstractQueryTrajectory<OwdData> {
 
-	protected OwdQueryTrajectory(RawQueryTrajectory rawTrajectory,
+	public OwdQueryTrajectory(RawQueryTrajectory rawTrajectory,
 			OwdData convertedData, Map<String, String> textualAttributes) {
 		super(rawTrajectory, convertedData, textualAttributes);
 	}

@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.trajectory.compare;
+package de.uniol.inf.is.odysseus.trajectory.compare.textual;
 
 import de.uniol.inf.is.odysseus.trajectory.compare.data.IHasTextualAttributes;
 

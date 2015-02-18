@@ -67,7 +67,9 @@ public class NetGraph {
 			}
 		}
 		
-		LOGGER.info("Keep only largest subgraph with vertex count: " + this.complexGraph.getVertexCount());
+		if(LOGGER.isDebugEnabled()) {
+			LOGGER.debug("Keep only largest subgraph with vertex count: " + this.complexGraph.getVertexCount());
+		}
 	}
 	
 	private final Set<Point> createSubset(final Point point, final Set<Point> visited) { 
@@ -123,8 +125,10 @@ public class NetGraph {
 			} 
 		}
 
-		LOGGER.info("Simple Graph created: reduced vertex count from " + this.complexGraph.getVertexCount() 
-				+ " to " + this.reducedGraph.getVertexCount());
+		if(LOGGER.isDebugEnabled()) {
+			LOGGER.debug("Simple Graph created: reduced vertex count from " + this.complexGraph.getVertexCount() 
+					+ " to " + this.reducedGraph.getVertexCount());
+		}
 		
 		
 		final Iterator<Point> it = this.reducedGraph.getVertices().iterator();

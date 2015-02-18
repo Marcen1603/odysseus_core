@@ -11,7 +11,7 @@ import de.uniol.inf.is.odysseus.trajectory.compare.uots.graph.NetGraph;
 
 public interface IMapMatcher {
 
-	public UotsDataTrajectory map(final RawIdTrajectory trajectory, NetGraph graph);
+	public UotsDataTrajectory map(final RawIdTrajectory trajectory, final NetGraph graph);
 	
-	public UotsQueryTrajectory map(final RawQueryTrajectory trajectory, final Map<String, String> textualAttributes, NetGraph graph);
+	public UotsQueryTrajectory map(final RawQueryTrajectory trajectory, final Map<String, String> textualAttributes, final NetGraph graph);
 }

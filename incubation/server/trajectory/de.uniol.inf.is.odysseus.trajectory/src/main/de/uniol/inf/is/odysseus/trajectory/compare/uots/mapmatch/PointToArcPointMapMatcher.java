@@ -1,10 +1,10 @@
 package de.uniol.inf.is.odysseus.trajectory.compare.uots.mapmatch;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,28 +40,30 @@ public class PointToArcPointMapMatcher extends AbstractMapMatcher {
 	};
 	
 	
-	private final Map<UndirectedSparseGraph<Point, LineSegment>, STRtree> strTrees = new HashMap<>();
-	
+	private final Map<UndirectedSparseGraph<Point, LineSegment>, STRtree> strTrees = new ConcurrentHashMap<>();
 	
 	private PointToArcPointMapMatcher() { }
 	
 	
 	@Override
-	protected final List<Point> getGraphPoints(final IRawTrajectory trajectory, final UndirectedSparseGraph<Point, LineSegment> graph) {
+	protected List<Point> getGraphPoints(final IRawTrajectory trajectory, final UndirectedSparseGraph<Point, LineSegment> graph) {
 		
 		STRtree strTree = this.strTrees.get(graph);
 		if(strTree == null) {
-			strTree = new STRtree();
-		
-			for(final LineSegment ls : graph.getEdges()) {
-				strTree.insert(new Envelope(ls.getCoordinate(0), ls.getCoordinate(1)), ls);
-			}
-			
-			strTree.build();
-			this.strTrees.put(graph, strTree);
-			
-			if(LOGGER.isDebugEnabled()) {
-				LOGGER.debug("New STRtree build for Graph " + graph.hashCode());
+			synchronized(graph) {
+				strTree = this.strTrees.get(graph);
+				if(strTree == null) {
+					this.strTrees.put(graph, strTree = new STRtree());
+				
+					for(final LineSegment ls : graph.getEdges()) {
+						strTree.insert(new Envelope(ls.getCoordinate(0), ls.getCoordinate(1)), ls);
+					}
+					strTree.build();
+				
+					if(LOGGER.isDebugEnabled()) {
+						LOGGER.debug("New STRtree build for Graph " + graph.hashCode());
+					}
+				}
 			}
 		}
 		

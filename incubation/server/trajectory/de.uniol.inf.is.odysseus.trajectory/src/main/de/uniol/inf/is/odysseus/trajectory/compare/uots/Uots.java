@@ -6,11 +6,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.trajectory.compare.AbstractTrajectoryCompareAlgoritm;
-import de.uniol.inf.is.odysseus.trajectory.compare.ITextualDistance;
+import de.uniol.inf.is.odysseus.trajectory.compare.IDistanceService;
+import de.uniol.inf.is.odysseus.trajectory.compare.SpatialDistanceService;
 import de.uniol.inf.is.odysseus.trajectory.compare.data.IDataTrajectory;
 import de.uniol.inf.is.odysseus.trajectory.compare.data.IQueryTrajectory;
 import de.uniol.inf.is.odysseus.trajectory.compare.data.RawIdTrajectory;
 import de.uniol.inf.is.odysseus.trajectory.compare.data.RawQueryTrajectory;
+import de.uniol.inf.is.odysseus.trajectory.compare.textual.ITextualDistance;
 import de.uniol.inf.is.odysseus.trajectory.compare.uots.data.UotsData;
 import de.uniol.inf.is.odysseus.trajectory.compare.uots.graph.GraphBuilderFactory;
 import de.uniol.inf.is.odysseus.trajectory.compare.uots.graph.NetGraph;

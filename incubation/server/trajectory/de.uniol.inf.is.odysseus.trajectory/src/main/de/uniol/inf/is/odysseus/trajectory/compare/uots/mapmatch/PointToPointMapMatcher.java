@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,7 +32,7 @@ public class PointToPointMapMatcher extends AbstractMapMatcher {
 	private static final ItemDistance ITEM_DISTANCE = new GeometryItemDistance();
 	
 	
-	private final Map<UndirectedSparseGraph<Point, LineSegment>, STRtree> strTrees = new HashMap<>();
+	private volatile Map<UndirectedSparseGraph<Point, LineSegment>, STRtree> strTrees = new ConcurrentHashMap<>();
 	
 	
 	private PointToPointMapMatcher() {}
@@ -42,17 +43,22 @@ public class PointToPointMapMatcher extends AbstractMapMatcher {
 
 		STRtree strTree = this.strTrees.get(graph);
 		if(strTree == null) {
-			strTree = new STRtree();
+			synchronized (graph) {
+				strTree = this.strTrees.get(graph);
+				if(strTree == null) {
+					strTree = new STRtree();
 		
-			for(final Point graphPoint : graph.getVertices()) {
-				strTree.insert(graphPoint.getEnvelopeInternal(), graphPoint);
-			}
+					for(final Point graphPoint : graph.getVertices()) {
+						strTree.insert(graphPoint.getEnvelopeInternal(), graphPoint);
+					}
 			
-			strTree.build();
-			this.strTrees.put(graph, strTree);
+					strTree.build();
+					this.strTrees.put(graph, strTree);
 			
-			if(LOGGER.isDebugEnabled()) {
-				LOGGER.debug("New STRtree build for Graph " + graph.hashCode());
+					if(LOGGER.isDebugEnabled()) {
+						LOGGER.debug("New STRtree build for Graph " + graph.hashCode());
+					}
+				}
 			}
 		}
 

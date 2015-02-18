@@ -9,7 +9,8 @@ import de.uniol.inf.is.odysseus.trajectory.compare.data.IDataTrajectory;
 import de.uniol.inf.is.odysseus.trajectory.compare.data.IQueryTrajectory;
 import de.uniol.inf.is.odysseus.trajectory.compare.data.RawIdTrajectory;
 import de.uniol.inf.is.odysseus.trajectory.compare.data.RawQueryTrajectory;
-import de.uniol.inf.is.odysseus.trajectory.compare.uots.IDistanceService;
+import de.uniol.inf.is.odysseus.trajectory.compare.textual.ITextualDistance;
+import de.uniol.inf.is.odysseus.trajectory.compare.textual.VectorTextualDistance;
 
 public abstract class AbstractTrajectoryCompareAlgoritm<T extends IDataTrajectory<E>, E> implements ITrajectoryCompareAlgorithm<T, E> {
 

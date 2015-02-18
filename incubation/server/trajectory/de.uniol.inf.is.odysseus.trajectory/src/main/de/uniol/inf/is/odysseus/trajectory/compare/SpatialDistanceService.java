@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.trajectory.compare.uots;
+package de.uniol.inf.is.odysseus.trajectory.compare;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -13,10 +13,9 @@ import org.slf4j.LoggerFactory;
 import com.google.common.collect.SortedMultiset;
 import com.google.common.collect.TreeMultiset;
 
-import de.uniol.inf.is.odysseus.trajectory.compare.ISpatialDistance;
-import de.uniol.inf.is.odysseus.trajectory.compare.ITextualDistance;
 import de.uniol.inf.is.odysseus.trajectory.compare.data.IDataTrajectory;
 import de.uniol.inf.is.odysseus.trajectory.compare.data.IQueryTrajectory;
+import de.uniol.inf.is.odysseus.trajectory.compare.textual.ITextualDistance;
 
 public class SpatialDistanceService<T> implements IDistanceService<T> {
 

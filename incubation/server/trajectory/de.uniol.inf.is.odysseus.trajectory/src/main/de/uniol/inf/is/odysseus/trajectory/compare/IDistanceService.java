@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.trajectory.compare.uots;
+package de.uniol.inf.is.odysseus.trajectory.compare;
 
 import java.util.List;
 
