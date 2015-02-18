@@ -19,25 +19,25 @@ public class OWDTrajectoryTest {
 	public final void test() {
 
 		GridCellList l2 = new GridCellList();
-				l2.add(new GridCell(0, 2));
-				l2.add(new GridCell(1, 2));
-				l2.add(new GridCell(1, 1));
-				l2.add(new GridCell(1, 0));
-				l2.add(new GridCell(2, 0));
-				l2.add(new GridCell(3, 0));
-				l2.add(new GridCell(4, 0));
-				l2.add(new GridCell(5, 0));
-				l2.add(new GridCell(6, 0));
-				l2.add(new GridCell(6, 1));
-				l2.add(new GridCell(6, 2));
-				l2.add(new GridCell(6, 3));
+				l2.addGridCell(0, 2);
+				l2.addGridCell(1, 2);
+				l2.addGridCell(1, 1);
+				l2.addGridCell(1, 0);
+				l2.addGridCell(2, 0);
+				l2.addGridCell(3, 0);
+				l2.addGridCell(4, 0);
+				l2.addGridCell(5, 0);
+				l2.addGridCell(6, 0);
+				l2.addGridCell(6, 1);
+				l2.addGridCell(6, 2);
+				l2.addGridCell(6, 3);
 		
 		GridCellList l1 = new GridCellList();
-				l1.add(new GridCell(4, 10));
-				l1.add(new GridCell(5, 10));
-				l1.add(new GridCell(6, 10));
-				l1.add(new GridCell(7, 10));
-				l1.add(new GridCell(8, 10));
+				l1.addGridCell(4, 10);
+				l1.addGridCell(5, 10);
+				l1.addGridCell(6, 10);
+				l1.addGridCell(7, 10);
+				l1.addGridCell(8, 10);
 
 		
 		System.out.println(new OwdDistance().getDistance(

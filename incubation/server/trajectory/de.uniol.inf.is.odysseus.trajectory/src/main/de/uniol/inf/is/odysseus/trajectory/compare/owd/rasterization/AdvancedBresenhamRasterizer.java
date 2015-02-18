@@ -25,20 +25,15 @@ public class AdvancedBresenhamRasterizer extends AbstractRasterizer {
 		final Iterator<Point> it = trajectory.getPoints().iterator();
 		
 		Point previous = it.next();
-		GridCell lastPolled = null;
 		while(it.hasNext()) {
 			final Point next = it.next();
 			this.rasterize(previous.getX(), previous.getY(), next.getX(), next.getY(), cellSize, result);
 			previous = next;
-			
-			lastPolled = result.pollLast();
 		}
 		
 		if(LOGGER.isDebugEnabled()) {
 			LOGGER.debug("Rasterized trajectory with size " + trajectory.getPoints().size() + " to " + result.size() + " grid cells");
 		}
-		
-		result.addLast(lastPolled);	
 		return result;
 	}
 	
@@ -75,26 +70,26 @@ public class AdvancedBresenhamRasterizer extends AbstractRasterizer {
         if (dy <= dx) {
         	
             for (; ; ) {
-            	gridCellList.add(new GridCell(x1, y1));
+            	gridCellList.addGridCell(x1, y1);
                 if (x1 == x2)
                     break;
                 x1 += ix;
                 d += dy2;
                 if (d > dx) {
-                	gridCellList.add(new GridCell(x1, y1));
+                	gridCellList.addGridCell(x1, y1);
                     y1 += iy;
                     d -= dx2;
                 }
             }
         } else {
             for (; ; ) {
-            	gridCellList.add(new GridCell(x1, y1));
+            	gridCellList.addGridCell(x1, y1);
                 if (y1 == y2)
                     break;
                 y1 += iy;
                 d += dx2;
                 if (d > dy) {
-                	gridCellList.add(new GridCell(x1, y1));
+                	gridCellList.addGridCell(x1, y1);
                     x1 += ix;
                     d -= dy2;
                 }

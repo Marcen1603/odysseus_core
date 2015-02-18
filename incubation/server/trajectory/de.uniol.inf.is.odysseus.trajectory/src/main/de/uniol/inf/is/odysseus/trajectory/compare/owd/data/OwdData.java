@@ -6,37 +6,52 @@ import java.util.NoSuchElementException;
 
 public class OwdData {
 
-	public static class GridCellList extends LinkedList<GridCell> {
+	public static class GridCellList implements Iterable<GridCell> {
 		
-		/**
-		 * 
-		 */
-		private static final long serialVersionUID = -3509667401421124671L;
-				
+		
+		private LinkedList<GridCell> internal = new LinkedList<>();
+		
 		private GridCell tail;
 		
-		@Override
-		public boolean add(GridCell c) {
+		public boolean addGridCell(int x, int y) {
+			final GridCell gridCell = new GridCell(x, y);
 			if(this.tail != null) {
-				this.tail.next = c;
-				c.previous = this.tail;
-				this.tail = c;
+				final int distance = Math.abs(this.tail.getX() - gridCell.getX()) 
+						+ Math.abs(this.tail.getY() - gridCell.getY());
+				
+				if(distance > 1) {
+					throw new IllegalArgumentException("Cell not adjacence to last inserted cell");
+				}
+				
+				if(distance == 0) {
+					return false;
+				}
+						
+				this.tail.next = gridCell;
+				gridCell.previous = this.tail;
+				this.tail = gridCell;
 			} else {
-				this.tail = c;
+				this.tail = gridCell;
 			}
-			return super.add(c);
+			return this.internal.add(gridCell);
 		}
 		
+		public GridCell getFirst() {
+			return this.internal.getFirst();
+		}
+		
+		public GridCell getLast() {
+			return this.internal.getLast();
+		}
+		
+		public int size() {
+			return this.internal.size();
+		}
 
-	    public GridCell pollLast() {
-	    	if(this.size() > 1) {
-	    		this.tail = this.tail.previous;
-	    		this.tail.next = null;
-	    	} else {
-	    		this.tail = null;
-	    	}
-	    	return super.pollLast();
-	    }
+		@Override
+		public Iterator<GridCell> iterator() {
+			return this.internal.iterator();
+		}
 
 	}
 
@@ -48,7 +63,7 @@ public class OwdData {
 		private GridCell previous;
 		private GridCell next;
 		
-		public GridCell(int x, int y) {
+		private GridCell(int x, int y) {
 			this.x = x;
 			this.y = y;
 		}
