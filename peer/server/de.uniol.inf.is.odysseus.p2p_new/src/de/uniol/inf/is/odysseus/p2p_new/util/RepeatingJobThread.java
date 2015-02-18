@@ -72,6 +72,7 @@ public class RepeatingJobThread extends StoppableThread {
 				trySleep(executionIntervalMillis);
 			}
 		}
+		Thread.currentThread().setName(Thread.currentThread().getName() + " (stopped)");
 		afterJob();
 	}
 	
