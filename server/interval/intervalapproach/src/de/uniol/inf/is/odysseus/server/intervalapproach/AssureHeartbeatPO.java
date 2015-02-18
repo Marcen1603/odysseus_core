@@ -86,7 +86,8 @@ public class AssureHeartbeatPO<R extends IStreamObject<? extends ITimeInterval>>
 		}
 	};
 
-	private Runner generateHeartbeat = new Runner();
+	// Thread for creating heartbeats
+	private Runner generateHeartbeat;
 	private boolean startTimerAfterFirstElement = false;
 
 	@Override
@@ -96,6 +97,7 @@ public class AssureHeartbeatPO<R extends IStreamObject<? extends ITimeInterval>>
 
 	@Override
 	protected void process_open() throws OpenFailedException {
+		generateHeartbeat = new Runner();
 		if (!startTimerAfterFirstElement){
 			generateHeartbeat.start();
 		}
@@ -126,6 +128,7 @@ public class AssureHeartbeatPO<R extends IStreamObject<? extends ITimeInterval>>
 	@Override
 	protected void process_close() {
 		generateHeartbeat.terminate();
+		generateHeartbeat = null;
 	}
 
 	@Override
