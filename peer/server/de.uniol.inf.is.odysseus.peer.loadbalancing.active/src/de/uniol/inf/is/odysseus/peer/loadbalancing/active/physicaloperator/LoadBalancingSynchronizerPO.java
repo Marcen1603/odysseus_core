@@ -325,8 +325,11 @@ public class LoadBalancingSynchronizerPO<T extends IStreamObject<? extends ITime
 					this.finishSynchroization();
 
 				} else { // currentTimeShift.getMainPoint() >= 0
-
-					if (currentTimeShift.getMainPoint() > this.lastSeenTimeShift
+					
+					if(lastSeenTimeShift==null) {
+						log.debug("Last seen Timeshift is null.");
+						
+					} else if (currentTimeShift.getMainPoint() > this.lastSeenTimeShift
 							.getMainPoint()) {
 
 						LoadBalancingSynchronizerPO.log
