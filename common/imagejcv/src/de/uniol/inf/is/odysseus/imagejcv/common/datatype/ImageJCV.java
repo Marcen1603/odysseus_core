@@ -13,59 +13,6 @@ import de.uniol.inf.is.odysseus.core.objecthandler.ObjectByteConverter;
 /**
  * @author Kristian Bruns, Henrik Surm
  */
-class ImageGC
-{
-	private static final int startThreshold = 20;	// Only start thread when imageCount>startThreshold. Stop running thread when imageCount<=startThreshold. 
-	private static final int gcThreshold = 200;		// Run System.gc() when imageCount>gcThreshold
-	private static final int checkInterval = 1000;	// Sleep for checkInterval in each iteration
-	
-	private static Thread gcThread = null;
-	private static AtomicInteger imageCount = new AtomicInteger(0);
-	
-	public static void onCreateImage()
-	{		
-		int iCount = imageCount.incrementAndGet();
-		
-		if (gcThread == null && iCount > startThreshold)
-		{			
-			gcThread = 	new Thread()
-						{
-							@Override public void run()
-							{
-								while (imageCount.get() > startThreshold)
-								{
-									try 
-									{
-										int iCount = imageCount.get();
-										if (iCount > gcThreshold)
-										{	
-											long start = System.nanoTime();
-											System.gc();
-											System.out.println("System.gc time = " + (System.nanoTime() - start) / 1.0e6 + " ms. ImageCount before gc = " + iCount);
-										} 
-										Thread.sleep(checkInterval);
-									}
-									catch (InterruptedException e) 
-									{
-										e.printStackTrace();
-									}											
-								}
-
-								gcThread = null;
-								System.out.println(Thread.currentThread().getName() + " stopped");
-							}
-						};
-			gcThread.setPriority(Thread.MIN_PRIORITY);
-			gcThread.setName("ImageJCV native memory GC thread");
-			gcThread.start();
-		}
-	}
-
-	public static void onReleaseImage() 
-	{
-		imageCount.decrementAndGet();
-	}
-}
 
 public class ImageJCV implements IClone, Cloneable 
 {
@@ -182,5 +129,69 @@ public class ImageJCV implements IClone, Cloneable
 	
 	public void fill(int value) {
 		throw new UnsupportedOperationException("Currently not implemented");
+	}
+}
+
+// This static class monitors the number of un-finalized ImageJCV objects. Since native memory allocation will not trigger
+// GC, it has to be done manually. When there are enough un-finalized objects, a thread is started, which monitors the image 
+// count and calls System.gc() when a threshold is reached. If there are only a few objects left, the thread finishes on its own.
+// To monitor the number of images, onCreateImage and onReleaseImage have to be called in constructor/finalize methods.
+//
+// NOTE: If the GC is triggered by normal java heap allocations, native code objects destroyed by java finalizers will also be collected.
+//       If there is enough "other" memory activity, this class may not be needed.
+//
+// TODO: Implement a DirectByteBuffer cache or an IplImage cache, from which old images can be reused? This might be feasible, since
+//       images from the same camera are always the same size (their buffers too)
+class ImageGC
+{
+	private static final int startThreshold = 20;	// Only start thread when imageCount>startThreshold. Stop running thread when imageCount<=startThreshold. 
+	private static final int gcThreshold = 200;		// Run System.gc() when imageCount>gcThreshold. Threshold should be a lot larger than the normal number of concurrent images in the system. 
+	private static final int checkInterval = 1000;	// Sleep for checkInterval in each iteration
+	
+	private static Thread gcThread = null;
+	private static AtomicInteger imageCount = new AtomicInteger(0);
+	
+	public static void onCreateImage()
+	{		
+		int iCount = imageCount.incrementAndGet();
+		
+		if (gcThread == null && iCount > startThreshold)
+		{			
+			gcThread = 	new Thread()
+						{
+							@Override public void run()
+							{
+								while (imageCount.get() > startThreshold)
+								{
+									try 
+									{
+										int iCount = imageCount.get();
+										if (iCount > gcThreshold)
+										{	
+											long start = System.nanoTime();
+											System.gc();
+											System.out.println("System.gc time = " + (System.nanoTime() - start) / 1.0e6 + " ms. ImageCount before gc = " + iCount);
+										} 
+										Thread.sleep(checkInterval);
+									}
+									catch (InterruptedException e) 
+									{
+										e.printStackTrace();
+									}											
+								}
+
+								gcThread = null;
+								System.out.println(Thread.currentThread().getName() + " stopped");
+							}
+						};
+			gcThread.setPriority(Thread.MIN_PRIORITY);
+			gcThread.setName("ImageJCV native memory GC thread");
+			gcThread.start();
+		}
+	}
+
+	public static void onReleaseImage() 
+	{
+		imageCount.decrementAndGet();
 	}
 }
