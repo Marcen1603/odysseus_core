@@ -435,19 +435,20 @@ public class AddQueryReceiver extends AbstractRepeatingMessageReceiver {
 							final PeerID finalOwnPeer = ownPeerId;
 							final PipeID finalPipe = pipe;
 							final int finalLocalQueryId = localQueryId;
-
 							service.submit(new Runnable() {
 								public void run() {
 									// I want to tell the sender on the other side that he has to update his peerId he
 									// sends to
-									cRecoveryCommunicator.get().sendUpdateSenderMessage(finalPeer, finalOwnPeer,
-											finalPipe, finalLocalQueryId);
-								}
-							});
-							service.submit(new Runnable() {
-								public void run() {
-									// And now he can GO ON
-									cRecoveryCommunicator.get().sendGoOnMessage(finalPeer, finalPipe);
+									if(cRecoveryCommunicator.get().sendUpdateSenderMessage(finalPeer, finalOwnPeer,
+											finalPipe, finalLocalQueryId)){
+										if(cRecoveryCommunicator.get().sendGoOnMessage(finalPeer, finalPipe)){
+										}else{
+											LOG.error("GoOnMessage mission failed");
+										}
+									} else {
+										LOG.error("sendUpdateSenderMessage failed");
+									}
+									
 								}
 							});
 						}
