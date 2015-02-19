@@ -8,7 +8,6 @@ public class OwdData {
 
 	public static class GridCellList implements Iterable<GridCell> {
 		
-		
 		private LinkedList<GridCell> internal = new LinkedList<>();
 		
 		private GridCell tail;
@@ -20,7 +19,7 @@ public class OwdData {
 						+ Math.abs(this.tail.getY() - gridCell.getY());
 				
 				if(distance > 1) {
-					throw new IllegalArgumentException("Cell not adjacence to last inserted cell");
+					throw new IllegalArgumentException("Cell not adjacent to last inserted cell");
 				}
 				
 				if(distance == 0) {
@@ -30,9 +29,8 @@ public class OwdData {
 				this.tail.next = gridCell;
 				gridCell.previous = this.tail;
 				this.tail = gridCell;
-			} else {
-				this.tail = gridCell;
-			}
+			} 
+			this.tail = gridCell;
 			return this.internal.add(gridCell);
 		}
 		
@@ -53,6 +51,10 @@ public class OwdData {
 			return this.internal.iterator();
 		}
 
+		@Override
+		public String toString() {
+			return this.internal.toString();
+		}
 	}
 
 	public static class GridCell implements Iterable<GridCell> {
@@ -77,16 +79,26 @@ public class OwdData {
 		}
 
 		public GridCell getPrevious() {
-			return previous;
+			return this.previous;
 		}
 
 		public GridCell getNext() {
-			return next;
+			return this.next;
 		}
 		
 		@Override
 		public String toString() {
 			return "(" + this.x + ", " + this.y + ")";
+		}
+		
+		public boolean isAdjacent(GridCell other) {
+			return (this.previous == other && other.next == this)
+					|| (this.next == other && other.previous == this);
+		}
+		
+		public double distance(GridCell other) {
+			return Math.sqrt(Math.pow(this.getX() - other.getX(), 2) 
+					+ Math.pow(this.getY() - other.getY(), 2));
 		}
 
 		@Override

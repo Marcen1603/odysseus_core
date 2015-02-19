@@ -8,7 +8,6 @@ import org.slf4j.LoggerFactory;
 import com.vividsolutions.jts.geom.Point;
 
 import de.uniol.inf.is.odysseus.trajectory.compare.data.IRawTrajectory;
-import de.uniol.inf.is.odysseus.trajectory.compare.owd.data.OwdData.GridCell;
 import de.uniol.inf.is.odysseus.trajectory.compare.owd.data.OwdData.GridCellList;
 
 public class AdvancedBresenhamRasterizer extends AbstractRasterizer {
@@ -33,6 +32,7 @@ public class AdvancedBresenhamRasterizer extends AbstractRasterizer {
 		
 		if(LOGGER.isDebugEnabled()) {
 			LOGGER.debug("Rasterized trajectory with size " + trajectory.getPoints().size() + " to " + result.size() + " grid cells");
+			LOGGER.debug(result + "");
 		}
 		return result;
 	}
@@ -69,7 +69,7 @@ public class AdvancedBresenhamRasterizer extends AbstractRasterizer {
 
         if (dy <= dx) {
         	
-            for (; ; ) {
+            while(true) {
             	gridCellList.addGridCell(x1, y1);
                 if (x1 == x2)
                     break;
@@ -82,7 +82,7 @@ public class AdvancedBresenhamRasterizer extends AbstractRasterizer {
                 }
             }
         } else {
-            for (; ; ) {
+            while(true) {
             	gridCellList.addGridCell(x1, y1);
                 if (y1 == y2)
                     break;

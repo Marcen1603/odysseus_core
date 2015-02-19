@@ -25,7 +25,7 @@ public class LevelDBEnrichAO extends AbstractEnrichAO {
 	
 	private SDFAttribute out;
 	
-	public LevelDBEnrichAO() {}
+	public LevelDBEnrichAO() { }
 	
 	
 	public LevelDBEnrichAO(LevelDBEnrichAO levelDBEnrichAO) {
