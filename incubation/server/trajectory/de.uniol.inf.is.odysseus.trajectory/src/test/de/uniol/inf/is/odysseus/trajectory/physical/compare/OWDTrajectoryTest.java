@@ -54,14 +54,6 @@ public class OWDTrajectoryTest {
 							gf.createPoint(new Coordinate(4,101)),
 							gf.createPoint(new Coordinate(332,11111))),
 						null, 3, null, null), 1);
-		for(GridCell c : j.getData().getGridCells().getFirst()) {
-			//System.out.println(c);
-		}
-				
-		System.out.println(new OwdDistance().getDistance(
-				new OwdQueryTrajectory(null, new OwdData(l2), null),
-				j));
-		
 
 
 	}

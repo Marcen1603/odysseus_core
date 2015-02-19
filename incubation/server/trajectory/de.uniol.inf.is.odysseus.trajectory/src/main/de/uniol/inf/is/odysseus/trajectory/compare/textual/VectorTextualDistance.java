@@ -7,11 +7,15 @@ import java.util.List;
 import java.util.Map;
 
 import org.javatuples.Triplet;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.trajectory.compare.data.IHasTextualAttributes;
 
 
 public class VectorTextualDistance implements ITextualDistance {
+	
+	private final static Logger LOGGER = LoggerFactory.getLogger(VectorTextualDistance.class);
 	
 	private final static VectorTextualDistance INSTANCE = new VectorTextualDistance();
 	
@@ -99,6 +103,7 @@ public class VectorTextualDistance implements ITextualDistance {
 			Math.pow(listIt1.next() - listIt2.next(), 2);
 		}
 		distance = Math.sqrt(distance);
+		LOGGER.info(distance + "");
 		
 		return distance;
 	}

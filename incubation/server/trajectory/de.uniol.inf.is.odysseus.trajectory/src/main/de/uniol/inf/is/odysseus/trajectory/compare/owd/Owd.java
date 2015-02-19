@@ -1,105 +1,74 @@
 package de.uniol.inf.is.odysseus.trajectory.compare.owd;
 
+import java.util.Map;
 
-public class Owd {//implements ITrajectoryCompareAlgorithm {
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-//	private final static Logger LOGGER = LoggerFactory.getLogger(Owd.class);
-//	
-//	
-//	private final int k;
-//	
-//	private List<Point> queryTrajectory = new LinkedList<>();
-//	private Map<Integer, OWDTrajectory> owdQs = new HashMap<>();
-//	
-//	
-//	private final Map<Tuple<ITimeInterval>, Double> trajs = new HashMap<>();
-//	
-//	private Map<OWDTrajectory, Tuple<ITimeInterval>> owds;
-//	
-//	private final Deque<ITimeInterval> windows = new LinkedList<>();
-//
-//	public Owd(final int k) {
-//		this.k = k;
-//		this.windows.addLast(new TimeInterval(new PointInTime(-2), new PointInTime(-1)));
-//	}
-//	
-////	@Override
-////	public Tuple<ITimeInterval> getKNearest(Tuple<ITimeInterval> incoming) {
-////		
-////		final ITimeInterval incomingTI = incoming.getMetadata();
-////
-//////		/* remove all old trajectories */
-//////		if (incomingTI.getEnd().after(this.windows.peekLast().getEnd())) {
-//////			this.windows.addLast(incomingTI);
-//////
-//////			LOGGER.debug("Window shift detected by incoming tuple: "+ incomingTI);
-//////			
-//////			if (incomingTI.getStart().afterOrEquals(this.windows.peekFirst().getEnd())) {
-//////
-//////				LOGGER.debug("Window end detected at: " + this.windows.pollFirst().getEnd());
-//////				
-//////				/* remove invalid tuples after */
-//////				final Collection<Tuple<ITimeInterval>> keysToRemove = new LinkedList<>();
-//////				for(final Tuple<ITimeInterval> key : this.trajs.keySet()) {
-//////					if(key.getMetadata().getEnd().beforeOrEquals(incomingTI.getStart())) {
-//////						keysToRemove.add(key);
-//////					}
-//////				}
-//////				for(final Tuple<ITimeInterval> keyToRemove : keysToRemove) {
-//////					LOGGER.trace("Remove invalid trajectory: " + this.trajs.remove(keyToRemove));
-//////				}
-//////			}
-//////		}
-//////		
-////		OWDTrajectory hhh = 
-////				new OWDTrajectory((List<Point>)incoming.getAttribute(TrajectoryComparePO.POINTS_POS), 1);
-////		
-////		// berechnen
-////		double distance = 0;
-////		for(Point p : queryTrajectory) {
-////			for(Point t : (Iterable<Point>)incoming.getAttribute(TrajectoryComparePO.POINTS_POS)) {
-////				distance += p.distance(t);
-////			}
-////		}
-////		
-////		this.trajs.put(incoming, 81.0);
-////		
-////		
-////		Object[] ooo = new Object[trajs.size() > k ? k : trajs.size()];
-////		int i = 0;
-////		for(Tuple<ITimeInterval> t : trajs.keySet()) {
-////			if(i > ooo.length) break;
-////			ooo[i++] = new Object[] {
-////					i, 
-////					distance,
-////					t.getAttribute(TrajectoryComparePO.VEHICLE_ID_POS),
-////					t.getAttribute(TrajectoryComparePO.POINTS_POS)
-////				};
-////		}
-////		
-////		return new Tuple<ITimeInterval>(new Object[] {"QTId", this.getK(), 10, 10, ooo }, true);
-////	}
-//	
-//	@Override
-//	public int getK() {
-//		return this.k;
-//	}
-//	
-//	
-//	private void calc() {
-//		
-//	}
-//
-//
-//	@Override
-//	public void removeBefore(PointInTime time) {
-//		// TODO Auto-generated method stub
-//		
-//	}
-//
-//	@Override
-//	public List<AbstractDataTrajectory> getKNearest(RawDataTrajectory incoming) {
-//		// TODO Auto-generated method stub
-//		return null;
-//	}
+import de.uniol.inf.is.odysseus.trajectory.compare.AbstractTrajectoryCompareAlgoritm;
+import de.uniol.inf.is.odysseus.trajectory.compare.ISpatialDistance;
+import de.uniol.inf.is.odysseus.trajectory.compare.data.IDataTrajectory;
+import de.uniol.inf.is.odysseus.trajectory.compare.data.IQueryTrajectory;
+import de.uniol.inf.is.odysseus.trajectory.compare.data.RawIdTrajectory;
+import de.uniol.inf.is.odysseus.trajectory.compare.data.RawQueryTrajectory;
+import de.uniol.inf.is.odysseus.trajectory.compare.owd.data.OwdData;
+import de.uniol.inf.is.odysseus.trajectory.compare.owd.rasterization.AdvancedBresenhamRasterizer;
+import de.uniol.inf.is.odysseus.trajectory.compare.owd.rasterization.IRasterizer;
+
+
+public class Owd extends AbstractTrajectoryCompareAlgoritm<IDataTrajectory<OwdData>, OwdData> {
+
+	private final static Logger LOGGER = LoggerFactory.getLogger(Owd.class);
+	
+	private final static String GRID_CELL_SIZE_KEY = "gridcellsize";
+	private final static String GRID_WIDTH_KEY = "gridwidth";
+	private final static String GRID_HEIGHT_SIZE_KEY = "gridheight";
+	
+	private double gridCellSize;
+	private double diagonalLength;
+	
+	private IRasterizer rasterizer;
+	
+	public Owd(Map<String, String> options, int k,
+			RawQueryTrajectory queryTrajectory,
+			Map<String, String> textualAttributes, int utmZone, double lambda) {
+		
+		super(options, k, queryTrajectory, textualAttributes, utmZone, lambda);
+	}
+
+	@Override
+	protected IQueryTrajectory<OwdData> convert(RawQueryTrajectory trajectory,
+			Map<String, String> textualAttributes, int utmZone,
+			Map<String, String> options) {
+		
+		this.gridCellSize = Double.parseDouble(options.get(GRID_CELL_SIZE_KEY));
+		if(this.gridCellSize <= 0) {
+			throw new IllegalArgumentException("gridCellSize must be positive.");
+		}
+		final double gridWidth = Double.parseDouble(options.get(GRID_WIDTH_KEY));
+		if(gridWidth <= 0) {
+			throw new IllegalArgumentException("gridWidth must be positive.");
+		}
+		final double gridHeight = Double.parseDouble(options.get(GRID_HEIGHT_SIZE_KEY));
+		if(gridHeight <= 0) {
+			throw new IllegalArgumentException("gridWidth must be positive.");
+		}
+		this.diagonalLength = Math.sqrt(Math.pow(gridWidth, 2) + Math.pow(gridHeight, 2));
+		
+		this.rasterizer = new AdvancedBresenhamRasterizer();
+		return this.rasterizer.rasterize(trajectory, textualAttributes, this.gridCellSize);
+	}
+
+	@Override
+	protected IDataTrajectory<OwdData> convert(RawIdTrajectory dataTrajectory) {
+		if(LOGGER.isDebugEnabled()) {
+			LOGGER.debug("Covert data trajectory to owd representation.");
+		}
+		return this.rasterizer.rasterize(dataTrajectory, this.gridCellSize);
+	}
+
+	@Override
+	protected ISpatialDistance<OwdData> createDistanceService() {
+		return new OwdDistance(this.gridCellSize, this.diagonalLength);
+	}
 }

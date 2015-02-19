@@ -17,6 +17,16 @@ public class OwdDistance implements ISpatialDistance<OwdData> {
 	
 	private final static Logger LOGGER = LoggerFactory.getLogger(OwdDistance.class);
 	
+	
+	private final double gridCellSize;
+	
+	private final double diagonalLength;
+	
+	public OwdDistance(final double gridCellSize, final double diagonalLength) {
+		this.gridCellSize = gridCellSize;
+		this.diagonalLength = diagonalLength;
+	}
+	
 
 	@Override
 	public double getDistance(ITrajectory<OwdData, ?> queryTrajectory,
@@ -25,72 +35,72 @@ public class OwdDistance implements ISpatialDistance<OwdData> {
 		final GridCellList t1 = queryTrajectory.getData().getGridCells();
 		final GridCellList t2 = dataTrajectory.getData().getGridCells();
 				
-		final double result = (this.getOwd(t1, t2) + this.getOwd(t2, t1)) * 0.5;
+		final double result = (0.5 * (this.getOwd(t1, t2) + this.getOwd(t2, t1)) * this.gridCellSize) / this.diagonalLength;
 		if(LOGGER.isDebugEnabled()) {
 			LOGGER.debug("OWD distance between query trajectory " + queryTrajectory + " and data trajectory " + dataTrajectory + ": " + result);
 		}
 		return result;
 	}
 	
-	private double getOwd(GridCellList t1, GridCellList t2) {
+	private double getOwd(GridCellList trajectory1, GridCellList trajectory2) {
 
-		final Iterator<GridCell> itT1 = t1.iterator();
-		GridCell g1 = itT1.next();
+		final Iterator<GridCell> it = trajectory1.iterator();
+		GridCell cellBefore = it.next();
 
-		IndexedLinkedHashSet<GridCell> lastMinPoints = this.getLocalMinPoints(g1, t2);
+		IndexedLinkedHashSet<GridCell> minPointsBefore = this.getLocalMinPoints(cellBefore, trajectory2);
 		
-		double owdDistance = this.shortestDistance(g1, lastMinPoints);
+		double owdDistance = this.shortestDistance(cellBefore, minPointsBefore);
 		
-		while(itT1.hasNext()) {
+		while(it.hasNext()) {
 
-			final GridCell newG1 = itT1.next();
-			final IndexedLinkedHashSet<GridCell> newMinPoints = new IndexedLinkedHashSet<>();
+			final GridCell cellCurr = it.next();
+			final IndexedLinkedHashSet<GridCell> minPointsCurr = new IndexedLinkedHashSet<>();
 
-			for(int i = 0; i < lastMinPoints.size(); i++) {
+			for(int i = 0; i < minPointsBefore.size(); i++) {
 				
-				final GridCell gp = lastMinPoints.get(i);
+				final GridCell minPointBefore = minPointsBefore.get(i);
 				
-				if((g1.getY() == newG1.getY() && gp.getX() != g1.getX())
-						|| (g1.getX() == newG1.getX() && gp.getY() != g1.getY())) {
-					newMinPoints.add(gp);
+				if((cellBefore.getY() == cellCurr.getY() && minPointBefore.getX() != cellBefore.getX())
+						|| (cellBefore.getX() == cellCurr.getX() && minPointBefore.getY() != cellBefore.getY())) {
+					minPointsCurr.add(minPointBefore);
 				} else {
 
-					GridCell gp0;
+					GridCell cellFrom;
 					if(i > 0) {
-						gp0 = lastMinPoints.get(i - 1).getNext();
+						cellFrom = minPointsBefore.get(i - 1).getNext();
 					} else {
-						gp0 = t2.getFirst();
+						cellFrom = trajectory2.getFirst();
 					}
 					
-					GridCell gp2;
-					if(i == lastMinPoints.size() - 1) {
-						gp2 = t2.getLast();
+					GridCell cellTo;
+					if(i == minPointsBefore.size() - 1) {
+						cellTo = trajectory2.getLast();
 					} else {
-						gp2 = lastMinPoints.get(i + 1).getPrevious();
+						cellTo = minPointsBefore.get(i + 1).getPrevious();
 					}
 					
-					final Iterator<GridCell> itStrich = gp0.iterator();
-					GridCell gstrich;
+					final Iterator<GridCell> cellIt = cellFrom.iterator();
+					GridCell cellBetween;
 					do {						
-						gstrich = itStrich.next();
+						cellBetween = cellIt.next();
 
-						if(g1.getY() == newG1.getY() || g1.getX() == newG1.getX()) {
-							if(this.isLocalMinPoint(gstrich, newG1)) {
-								newMinPoints.add(gstrich);
+						if(cellBefore.getY() == cellCurr.getY() || cellBefore.getX() == cellCurr.getX()) {
+							if(this.isLocalMinPoint(cellBetween, cellCurr)) {
+								minPointsCurr.add(cellBetween);
 							}
 						}
 						
-					} while(gstrich != gp2);
+					} while(cellBetween != cellTo);
 				}
 			}
 
-			owdDistance += this.shortestDistance(newG1, newMinPoints);	
+			owdDistance += this.shortestDistance(cellCurr, minPointsCurr);	
 			
-			lastMinPoints = newMinPoints;
-			g1 = newG1;
+			cellBefore = cellCurr;
+			minPointsBefore = minPointsCurr;
 		}
 		
-		return owdDistance/ t1.size();
+		return owdDistance / trajectory1.size();
 	}
 	
 	
@@ -119,7 +129,6 @@ public class OwdDistance implements ISpatialDistance<OwdData> {
 				result.add(g1);
 			}
 		}
-		//LOGGER.info(result + "");
 		return result;
 	}
 	

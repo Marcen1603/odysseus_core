@@ -9,7 +9,6 @@ import de.uniol.inf.is.odysseus.trajectory.compare.data.IDataTrajectory;
 import de.uniol.inf.is.odysseus.trajectory.compare.data.IQueryTrajectory;
 import de.uniol.inf.is.odysseus.trajectory.compare.data.RawIdTrajectory;
 import de.uniol.inf.is.odysseus.trajectory.compare.data.RawQueryTrajectory;
-import de.uniol.inf.is.odysseus.trajectory.compare.textual.ITextualDistance;
 import de.uniol.inf.is.odysseus.trajectory.compare.textual.VectorTextualDistance;
 
 public abstract class AbstractTrajectoryCompareAlgoritm<T extends IDataTrajectory<E>, E> implements ITrajectoryCompareAlgorithm<T, E> {
@@ -25,7 +24,8 @@ public abstract class AbstractTrajectoryCompareAlgoritm<T extends IDataTrajector
 			final int utmZone, final double lambda) {
 		
 		this.queryTrajectory = this.convert(queryTrajectory, textualAttributes, utmZone, options);
-		this.distanceService = this.createDistanceService(textualAttributes != null ? VectorTextualDistance.getInstance() : null);
+		this.distanceService = 
+				new SpatialDistanceService<>(this.createDistanceService(), textualAttributes != null ? VectorTextualDistance.getInstance() : null);
 		this.distanceService.addQueryTrajectory(this.queryTrajectory, k, lambda);
 	}	
 	
@@ -47,7 +47,7 @@ public abstract class AbstractTrajectoryCompareAlgoritm<T extends IDataTrajector
 		return (List<T>)this.distanceService.getDistance(this.queryTrajectory, converted);
 	}
 	
-	protected abstract IDistanceService<E> createDistanceService(ITextualDistance textualDistance);
+	protected abstract ISpatialDistance<E> createDistanceService();
 	
 	protected abstract IQueryTrajectory<E> convert(final RawQueryTrajectory trajectory, final Map<String, String> textualAttributes,
 			int utmZone, final Map<String, String> options);

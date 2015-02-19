@@ -16,7 +16,6 @@ import edu.uci.ics.jung.algorithms.shortestpath.DijkstraDistance;
 
 public class UotsDistance implements ISpatialDistance<UotsData> {
 
-	
 	private final static Map<NetGraph, UotsDistance> INSTANCES = new HashedMap<>();
 	
 	public static final UotsDistance getInstanceFor(NetGraph graph) {
@@ -27,16 +26,16 @@ public class UotsDistance implements ISpatialDistance<UotsData> {
 		return instance;
 	}
 	
+	private final static GraphPathLengthTransformer TRANSFORMER = new GraphPathLengthTransformer();
 	
 	private final DijkstraDistance<Point, Unit<Double>> dijkstraDistance;
 	
+	private final double diagonalLength;
+
+	
 	private UotsDistance(final NetGraph graph) {
-		this.dijkstraDistance = new DijkstraDistance<>(graph.getReducedGraph(), new Transformer<Unit<Double>, Number>() {
-			@Override
-			public Number transform(Unit<Double> arg0) {
-				return arg0.getValue0() / graph.getDiagonalLength();
-			}
-		}, true);
+		this.dijkstraDistance = new DijkstraDistance<>(graph.getReducedGraph(), TRANSFORMER, true);
+		this.diagonalLength = graph.getDiagonalLength();
 	}
 	
 	@Override
@@ -52,6 +51,13 @@ public class UotsDistance implements ISpatialDistance<UotsData> {
 			}
 			distance += minDistance;
 		}
-		return distance;
+		return (distance / queryTrajectory.getData().getGraphPoints().size()) / this.diagonalLength;
+	}
+	
+	private final static class GraphPathLengthTransformer implements Transformer<Unit<Double>, Number> {
+		@Override
+		public Number transform(Unit<Double> arg0) {
+			return arg0.getValue0();
+		}
 	}
 }

@@ -55,7 +55,8 @@ public class SpatialDistanceService<T> implements IDistanceService<T> {
 		
 		final QueryTrajectoryData qData = this.trajectoryMap.get(queryTrajectory);
 
-		double result = this.spatialDistance.getDistance(queryTrajectory, dataTrajectory);
+		double result = 2 / (1 + Math.pow(Math.E, -this.spatialDistance.getDistance(queryTrajectory, dataTrajectory))) - 1;
+		
 		if(this.textualDistance != null) {
 			result = qData.lambda * result +
 					(1.0 - qData.lambda) * this.textualDistance.getDistance(queryTrajectory, dataTrajectory);

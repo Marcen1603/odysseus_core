@@ -19,6 +19,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOpera
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnaryLogicalOp;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.DoubleParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.FileParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IntegerParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.Option;
@@ -47,11 +48,11 @@ public class TrajectoryCompareAO extends UnaryLogicalOp {
 	/** the algorithm to use */
 	private String algorithm;
 	
-	// the query route
+	/** the query route */
 	private File queryTrajectory;
 	
 	/** map for textual Attributes */
-	private Map<String, String> textualAttributes = null;
+	private Map<String, String> textualAttributes;
 	
 	/** importance of spatial difference to textual difference */
 	private double lambda = 0.5;
@@ -107,7 +108,7 @@ public class TrajectoryCompareAO extends UnaryLogicalOp {
 		}
 	}
 	
-	@Parameter(type = OptionParameter.class, name = "LAMBDA", optional = true, doc = "Importance of spatial difference to textual difference.")
+	@Parameter(type = DoubleParameter.class, name = "LAMBDA", optional = true, doc = "Importance of spatial difference to textual difference.")
 	public void setLambda(final double lambda) {
 		if(lambda > 1.0 || lambda < 0.0) {
 			throw new IllegalArgumentException("lambda has to be in range [0,1]");
@@ -115,7 +116,7 @@ public class TrajectoryCompareAO extends UnaryLogicalOp {
 		this.lambda = lambda;
 	}
 	
-	@Parameter(type = OptionParameter.class, name = "OPTIONS", isList = true, doc = "Special options for algorithm.")
+	@Parameter(type = OptionParameter.class, name = "OPTIONS", isList = true, doc = "Special options for choosen algorithm.")
 	public void setOptions(final List<Option> value) {
 		for(final Option option : value) {
 			this.optionsMap.put(option.getName().toLowerCase(Locale.US), option.getValue());

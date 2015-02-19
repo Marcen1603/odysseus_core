@@ -3,6 +3,7 @@ package de.uniol.inf.is.odysseus.trajectory.compare;
 import java.util.Locale;
 import java.util.Map;
 
+import de.uniol.inf.is.odysseus.trajectory.compare.owd.Owd;
 import de.uniol.inf.is.odysseus.trajectory.compare.uots.Uots;
 import de.uniol.inf.is.odysseus.trajectory.compare.util.QueryTrajectoryLoaderFactory;
 
@@ -22,7 +23,12 @@ public class TrajectoryCompareAlgorithmFactory {
 		final String upperCaseName = name.toUpperCase(Locale.US);
 		switch(upperCaseName) {
 			case "OWD" : 
-				return null;//;new Owd(k);
+				return new Owd(options, 
+						k, 
+						QueryTrajectoryLoaderFactory.getInstance().load(queryTrajectoryPath, utmZone), 
+						textualAttributes, 
+						utmZone, 
+						lambda);
 			case "UOTS" : 
 				return new Uots(options, 
 						k, 
