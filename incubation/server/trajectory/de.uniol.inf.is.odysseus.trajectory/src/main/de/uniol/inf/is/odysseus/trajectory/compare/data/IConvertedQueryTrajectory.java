@@ -10,6 +10,6 @@ package de.uniol.inf.is.odysseus.trajectory.compare.data;
  * @param <E> the type of the query trajectory data
  * @param <T> the type of the encapsulated <tt>RawQueryTrajectory</tt>
  */
-public interface IQueryTrajectory<E> extends IConvertedTrajectory<E, RawQueryTrajectory> {
+public interface IConvertedQueryTrajectory<E> extends IConvertedTrajectory<E, RawQueryTrajectory> {
 
 }

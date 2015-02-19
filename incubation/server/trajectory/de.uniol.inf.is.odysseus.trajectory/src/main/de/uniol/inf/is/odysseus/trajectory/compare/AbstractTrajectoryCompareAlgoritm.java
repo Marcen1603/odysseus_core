@@ -10,7 +10,7 @@ import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.trajectory.compare.data.IConvertedDataTrajectory;
-import de.uniol.inf.is.odysseus.trajectory.compare.data.IQueryTrajectory;
+import de.uniol.inf.is.odysseus.trajectory.compare.data.IConvertedQueryTrajectory;
 import de.uniol.inf.is.odysseus.trajectory.compare.data.RawDataTrajectory;
 import de.uniol.inf.is.odysseus.trajectory.compare.data.RawQueryTrajectory;
 import de.uniol.inf.is.odysseus.trajectory.compare.textual.VectorTextualDistance;
@@ -26,7 +26,7 @@ public abstract class AbstractTrajectoryCompareAlgoritm<T extends IConvertedData
 
 	private final static Logger LOGGER = LoggerFactory.getLogger(AbstractTrajectoryCompareAlgoritm.class);
 	
-	private final IQueryTrajectory<E> queryTrajectory;
+	private final IConvertedQueryTrajectory<E> queryTrajectory;
 	
 	private final List<IConvertedDataTrajectory<E>> trajectories = new LinkedList<>();
 	
@@ -71,7 +71,7 @@ public abstract class AbstractTrajectoryCompareAlgoritm<T extends IConvertedData
 	
 	protected abstract ISpatialDistance<E> createDistanceService();
 	
-	protected abstract IQueryTrajectory<E> convert(final RawQueryTrajectory trajectory, final Map<String, String> textualAttributes,
+	protected abstract IConvertedQueryTrajectory<E> convert(final RawQueryTrajectory trajectory, final Map<String, String> textualAttributes,
 			int utmZone, final Map<String, String> options);
 	
 	protected abstract IConvertedDataTrajectory<E> convert(final RawDataTrajectory queryTrajectory);

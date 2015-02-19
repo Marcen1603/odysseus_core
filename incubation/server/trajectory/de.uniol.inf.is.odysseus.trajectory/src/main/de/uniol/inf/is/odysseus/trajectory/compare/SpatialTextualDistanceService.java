@@ -14,14 +14,14 @@ import com.google.common.collect.SortedMultiset;
 import com.google.common.collect.TreeMultiset;
 
 import de.uniol.inf.is.odysseus.trajectory.compare.data.IConvertedDataTrajectory;
-import de.uniol.inf.is.odysseus.trajectory.compare.data.IQueryTrajectory;
+import de.uniol.inf.is.odysseus.trajectory.compare.data.IConvertedQueryTrajectory;
 import de.uniol.inf.is.odysseus.trajectory.compare.textual.ITextualDistance;
 
 public class SpatialTextualDistanceService<T> implements IDistanceService<T> {
 
 	private final static Logger LOGGER = LoggerFactory.getLogger(SpatialTextualDistanceService.class);
 	
-	private final Map<IQueryTrajectory<T>, QueryTrajectoryData> trajectoryMap = new HashMap<>();
+	private final Map<IConvertedQueryTrajectory<T>, QueryTrajectoryData> trajectoryMap = new HashMap<>();
 	
 	private final ISpatialDistance<T> spatialDistance;
 	private final ITextualDistance textualDistance;
@@ -32,7 +32,7 @@ public class SpatialTextualDistanceService<T> implements IDistanceService<T> {
 	}
 	
 	@Override
-	public synchronized void addQueryTrajectory(final IQueryTrajectory<T> queryTrajectory, final int k, 
+	public synchronized void addQueryTrajectory(final IConvertedQueryTrajectory<T> queryTrajectory, final int k, 
 			final double lambda) throws IllegalArgumentException {
 		
 		if(this.trajectoryMap.containsKey(queryTrajectory)) {
@@ -43,14 +43,14 @@ public class SpatialTextualDistanceService<T> implements IDistanceService<T> {
 	}
 	
 	@Override
-	public void removeTrajectory(final IQueryTrajectory<T> queryTrajectory,
+	public void removeTrajectory(final IConvertedQueryTrajectory<T> queryTrajectory,
 			final IConvertedDataTrajectory<T> dataTrajectory) {
 		this.trajectoryMap.get(queryTrajectory).kNearest.remove(dataTrajectory);
 	}
 	
 	
 	@Override
-	public List<IConvertedDataTrajectory<T>> getDistance(final IQueryTrajectory<T> queryTrajectory, 
+	public List<IConvertedDataTrajectory<T>> getDistance(final IConvertedQueryTrajectory<T> queryTrajectory, 
 			final IConvertedDataTrajectory<T> dataTrajectory) {
 		
 		final QueryTrajectoryData qData = this.trajectoryMap.get(queryTrajectory);

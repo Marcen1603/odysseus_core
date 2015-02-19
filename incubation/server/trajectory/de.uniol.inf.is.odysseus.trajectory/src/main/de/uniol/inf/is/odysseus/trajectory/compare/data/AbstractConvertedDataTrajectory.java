@@ -9,7 +9,7 @@ import java.util.Map;
  *
  * @param <E> the type of the data trajectory data
  */
-public abstract class AbstractConvertedDataTrajectory<E> extends AbstractTrajectory<E, RawDataTrajectory> implements IConvertedDataTrajectory<E> {
+public abstract class AbstractConvertedDataTrajectory<E> extends AbstractConvertedTrajectory<E, RawDataTrajectory> implements IConvertedDataTrajectory<E> {
 
 	/** the converted data */
 	private final E convertedData;

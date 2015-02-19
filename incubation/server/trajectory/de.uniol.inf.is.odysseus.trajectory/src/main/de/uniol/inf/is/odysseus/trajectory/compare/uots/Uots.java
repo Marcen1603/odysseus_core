@@ -8,7 +8,7 @@ import org.slf4j.LoggerFactory;
 import de.uniol.inf.is.odysseus.trajectory.compare.AbstractTrajectoryCompareAlgoritm;
 import de.uniol.inf.is.odysseus.trajectory.compare.ISpatialDistance;
 import de.uniol.inf.is.odysseus.trajectory.compare.data.IConvertedDataTrajectory;
-import de.uniol.inf.is.odysseus.trajectory.compare.data.IQueryTrajectory;
+import de.uniol.inf.is.odysseus.trajectory.compare.data.IConvertedQueryTrajectory;
 import de.uniol.inf.is.odysseus.trajectory.compare.data.RawDataTrajectory;
 import de.uniol.inf.is.odysseus.trajectory.compare.data.RawQueryTrajectory;
 import de.uniol.inf.is.odysseus.trajectory.compare.uots.data.UotsData;
@@ -37,7 +37,7 @@ public class Uots extends AbstractTrajectoryCompareAlgoritm<IConvertedDataTrajec
 	
 
 	@Override
-	protected IQueryTrajectory<UotsData> convert(RawQueryTrajectory queryTrajectory, final Map<String, String> textualAttributes,
+	protected IConvertedQueryTrajectory<UotsData> convert(RawQueryTrajectory queryTrajectory, final Map<String, String> textualAttributes,
 			int utmZone, final Map<String, String> options) {
 		if(LOGGER.isDebugEnabled()) {
 			LOGGER.debug("Map query trajectory to graph points.");

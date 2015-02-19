@@ -10,19 +10,19 @@ package de.uniol.inf.is.odysseus.trajectory.compare.data;
  * @param <E> the type of the trajectory data
  * @param <T> the type of the encapsulated <tt>RawQueryTrajectory</tt>
  */
-public abstract class AbstractTrajectory<E, T extends RawQueryTrajectory> implements IConvertedTrajectory<E, T> {
+public abstract class AbstractConvertedTrajectory<E, T extends RawQueryTrajectory> implements IConvertedTrajectory<E, T> {
 	
 	/** the encapsulated <tt>RawQueryTrajectory</tt>  */
 	private final T rawTrajectory;
 	
 	/**
-	 * Creates an <tt>AbstractTrajectory</tt>
+	 * Creates an <tt>AbstractConvertedTrajectory</tt>
 	 * 
 	 * @param rawTrajectory the <tt>RawQueryTrajectory</tt> to encapsulate
 	 * 
 	 * @throws IllegalArgumentException if <tt>rawTrajectory == null</tt>
 	 */
-	protected AbstractTrajectory(final T rawTrajectory) {
+	protected AbstractConvertedTrajectory(final T rawTrajectory) {
 		if(rawTrajectory == null) {
 			throw new IllegalArgumentException("rawTrajectory is null");
 		}

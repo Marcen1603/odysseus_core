@@ -8,7 +8,7 @@ import org.slf4j.LoggerFactory;
 import de.uniol.inf.is.odysseus.trajectory.compare.AbstractTrajectoryCompareAlgoritm;
 import de.uniol.inf.is.odysseus.trajectory.compare.ISpatialDistance;
 import de.uniol.inf.is.odysseus.trajectory.compare.data.IConvertedDataTrajectory;
-import de.uniol.inf.is.odysseus.trajectory.compare.data.IQueryTrajectory;
+import de.uniol.inf.is.odysseus.trajectory.compare.data.IConvertedQueryTrajectory;
 import de.uniol.inf.is.odysseus.trajectory.compare.data.RawDataTrajectory;
 import de.uniol.inf.is.odysseus.trajectory.compare.data.RawQueryTrajectory;
 import de.uniol.inf.is.odysseus.trajectory.compare.owd.data.OwdData;
@@ -37,7 +37,7 @@ public class Owd extends AbstractTrajectoryCompareAlgoritm<IConvertedDataTraject
 	}
 
 	@Override
-	protected IQueryTrajectory<OwdData> convert(RawQueryTrajectory trajectory,
+	protected IConvertedQueryTrajectory<OwdData> convert(RawQueryTrajectory trajectory,
 			Map<String, String> textualAttributes, int utmZone,
 			Map<String, String> options) {
 		
