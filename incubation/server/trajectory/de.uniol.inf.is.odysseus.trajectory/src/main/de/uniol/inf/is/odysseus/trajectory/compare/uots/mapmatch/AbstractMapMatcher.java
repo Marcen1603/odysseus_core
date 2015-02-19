@@ -12,7 +12,7 @@ import com.vividsolutions.jts.geom.LineSegment;
 import com.vividsolutions.jts.geom.Point;
 
 import de.uniol.inf.is.odysseus.trajectory.compare.data.IRawTrajectory;
-import de.uniol.inf.is.odysseus.trajectory.compare.data.RawIdTrajectory;
+import de.uniol.inf.is.odysseus.trajectory.compare.data.RawDataTrajectory;
 import de.uniol.inf.is.odysseus.trajectory.compare.data.RawQueryTrajectory;
 import de.uniol.inf.is.odysseus.trajectory.compare.uots.data.UotsData;
 import de.uniol.inf.is.odysseus.trajectory.compare.uots.data.UotsDataTrajectory;
@@ -27,7 +27,7 @@ public abstract class AbstractMapMatcher implements IMapMatcher {
 	protected AbstractMapMatcher() {}
 	
 	@Override
-	public final UotsDataTrajectory map(final RawIdTrajectory trajectory, final NetGraph graph) {
+	public final UotsDataTrajectory map(final RawDataTrajectory trajectory, final NetGraph graph) {
 		return new UotsDataTrajectory(
 				trajectory, 
 				new UotsData(

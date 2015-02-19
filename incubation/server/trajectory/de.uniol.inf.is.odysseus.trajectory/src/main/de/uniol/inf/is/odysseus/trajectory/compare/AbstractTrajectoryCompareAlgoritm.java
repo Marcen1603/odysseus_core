@@ -9,19 +9,26 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
-import de.uniol.inf.is.odysseus.trajectory.compare.data.IDataTrajectory;
+import de.uniol.inf.is.odysseus.trajectory.compare.data.IConvertedDataTrajectory;
 import de.uniol.inf.is.odysseus.trajectory.compare.data.IQueryTrajectory;
-import de.uniol.inf.is.odysseus.trajectory.compare.data.RawIdTrajectory;
+import de.uniol.inf.is.odysseus.trajectory.compare.data.RawDataTrajectory;
 import de.uniol.inf.is.odysseus.trajectory.compare.data.RawQueryTrajectory;
 import de.uniol.inf.is.odysseus.trajectory.compare.textual.VectorTextualDistance;
 
-public abstract class AbstractTrajectoryCompareAlgoritm<T extends IDataTrajectory<E>, E> implements ITrajectoryCompareAlgorithm<T, E> {
+/**
+ * 
+ * @author marcus
+ *
+ * @param <T>
+ * @param <E>
+ */
+public abstract class AbstractTrajectoryCompareAlgoritm<T extends IConvertedDataTrajectory<E>, E> implements ITrajectoryCompareAlgorithm<T, E> {
 
 	private final static Logger LOGGER = LoggerFactory.getLogger(AbstractTrajectoryCompareAlgoritm.class);
 	
 	private final IQueryTrajectory<E> queryTrajectory;
 	
-	private final List<IDataTrajectory<E>> trajectories = new LinkedList<>();
+	private final List<IConvertedDataTrajectory<E>> trajectories = new LinkedList<>();
 	
 	private final IDistanceService<E> distanceService;
 	
@@ -38,9 +45,9 @@ public abstract class AbstractTrajectoryCompareAlgoritm<T extends IDataTrajector
 	@Override
 	public void removeBefore(PointInTime time) {
 		
-		final List<IDataTrajectory<E>> toBeRemoved = new ArrayList<>();
+		final List<IConvertedDataTrajectory<E>> toBeRemoved = new ArrayList<>();
 		
-		for(final IDataTrajectory<E> traj : this.trajectories) {
+		for(final IConvertedDataTrajectory<E> traj : this.trajectories) {
 			if(traj.getRawTrajectory().getTimeInterval().getEnd().before(time)) {
 				this.distanceService.removeTrajectory(this.queryTrajectory, traj);
 				toBeRemoved.add(traj);
@@ -56,8 +63,8 @@ public abstract class AbstractTrajectoryCompareAlgoritm<T extends IDataTrajector
 	
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<T> getKNearest(RawIdTrajectory trajectory) {
-		final IDataTrajectory<E> converted = this.convert(trajectory);
+	public List<T> getKNearest(RawDataTrajectory trajectory) {
+		final IConvertedDataTrajectory<E> converted = this.convert(trajectory);
 		this.trajectories.add(converted);
 		return (List<T>)this.distanceService.getDistance(this.queryTrajectory, converted);
 	}
@@ -67,5 +74,5 @@ public abstract class AbstractTrajectoryCompareAlgoritm<T extends IDataTrajector
 	protected abstract IQueryTrajectory<E> convert(final RawQueryTrajectory trajectory, final Map<String, String> textualAttributes,
 			int utmZone, final Map<String, String> options);
 	
-	protected abstract IDataTrajectory<E> convert(final RawIdTrajectory queryTrajectory);
+	protected abstract IConvertedDataTrajectory<E> convert(final RawDataTrajectory queryTrajectory);
 }

@@ -5,22 +5,22 @@ import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
-import de.uniol.inf.is.odysseus.trajectory.logicaloperator.TrajectoryIdEnricherAO;
-import de.uniol.inf.is.odysseus.trajectory.physicaloperator.TrajectoryIdEnricherPO;
+import de.uniol.inf.is.odysseus.trajectory.logicaloperator.TrajectoryIdEnrichAO;
+import de.uniol.inf.is.odysseus.trajectory.physicaloperator.TrajectoryIdEnrichPO;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
-public class TTrajectoryIdEnricherAORule extends AbstractTransformationRule<TrajectoryIdEnricherAO> {
+public class TTrajectoryIdEnrichAORule extends AbstractTransformationRule<TrajectoryIdEnrichAO> {
 
 	@Override
-	public void execute(TrajectoryIdEnricherAO operator,
+	public void execute(TrajectoryIdEnrichAO operator,
 			TransformationConfiguration config) throws RuleException {
 		
-		this.defaultExecute(operator, new TrajectoryIdEnricherPO<Tuple<ITimeInterval>>(), config, true, true);
+		this.defaultExecute(operator, new TrajectoryIdEnrichPO<Tuple<ITimeInterval>>(), config, true, true);
 	}
 
 	@Override
-	public boolean isExecutable(TrajectoryIdEnricherAO operator,
+	public boolean isExecutable(TrajectoryIdEnrichAO operator,
 			TransformationConfiguration config) {
 		return operator.isAllPhysicalInputSet();
 	}

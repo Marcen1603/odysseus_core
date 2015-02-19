@@ -11,7 +11,7 @@ import com.vividsolutions.jts.geom.Point;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
-import de.uniol.inf.is.odysseus.trajectory.compare.data.RawIdTrajectory;
+import de.uniol.inf.is.odysseus.trajectory.compare.data.RawDataTrajectory;
 
 public class DefaultTupleToRawTrajectoryConverter implements ITupleToRawTrajectoryConverter {
 
@@ -20,7 +20,7 @@ public class DefaultTupleToRawTrajectoryConverter implements ITupleToRawTrajecto
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public RawIdTrajectory convert(Tuple<ITimeInterval> tuple, final int utmZone) {
+	public RawDataTrajectory convert(Tuple<ITimeInterval> tuple, final int utmZone) {
 				
 		final IPointCreator pointCreator = UtmPointCreatorFactory.getInstance().create(utmZone);
 		
@@ -33,7 +33,7 @@ public class DefaultTupleToRawTrajectoryConverter implements ITupleToRawTrajecto
 			points.add(pointCreator.createPoint(p.getX(), p.getY()));
 		}
 		
-		return new RawIdTrajectory(
+		return new RawDataTrajectory(
 				points, 
 				(String)tuple.getAttribute(0), 
 				(int)tuple.getAttribute(1), 

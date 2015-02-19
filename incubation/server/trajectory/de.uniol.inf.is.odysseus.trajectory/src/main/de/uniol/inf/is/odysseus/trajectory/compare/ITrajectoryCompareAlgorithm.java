@@ -3,18 +3,18 @@ package de.uniol.inf.is.odysseus.trajectory.compare;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
-import de.uniol.inf.is.odysseus.trajectory.compare.data.IDataTrajectory;
-import de.uniol.inf.is.odysseus.trajectory.compare.data.RawIdTrajectory;
+import de.uniol.inf.is.odysseus.trajectory.compare.data.IConvertedDataTrajectory;
+import de.uniol.inf.is.odysseus.trajectory.compare.data.RawDataTrajectory;
 
 /**
  * 
  * @author marcus
  *
  */
-public interface ITrajectoryCompareAlgorithm<T extends IDataTrajectory<E>, E> {
+public interface ITrajectoryCompareAlgorithm<T extends IConvertedDataTrajectory<E>, E> {
 
 	
-	public List<T> getKNearest(RawIdTrajectory trajectory);
+	public List<T> getKNearest(RawDataTrajectory trajectory);
 	
 	public void removeBefore(PointInTime time);
 }

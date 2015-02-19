@@ -7,16 +7,16 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnaryLogicalOp;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 
 @LogicalOperator(name = "NONANANA", minInputPorts = 1, maxInputPorts = 1, doc="Enrich Trajectory with Ids", category={LogicalOperatorCategory.ADVANCED})
-public class TrajectoryIdEnricherAO extends UnaryLogicalOp {
+public class TrajectoryIdEnrichAO extends UnaryLogicalOp {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 6559476897670445930L;
 
-	public TrajectoryIdEnricherAO() {	}
+	public TrajectoryIdEnrichAO() {	}
 	
-	public TrajectoryIdEnricherAO(TrajectoryIdEnricherAO trajectoryIdEnricherAO) {	
+	public TrajectoryIdEnrichAO(TrajectoryIdEnrichAO trajectoryIdEnricherAO) {	
 		super(trajectoryIdEnricherAO);
 	}
 	
@@ -28,6 +28,6 @@ public class TrajectoryIdEnricherAO extends UnaryLogicalOp {
 	
 	@Override
 	public AbstractLogicalOperator clone() {
-		return new TrajectoryIdEnricherAO(this);
+		return new TrajectoryIdEnrichAO(this);
 	}
 }

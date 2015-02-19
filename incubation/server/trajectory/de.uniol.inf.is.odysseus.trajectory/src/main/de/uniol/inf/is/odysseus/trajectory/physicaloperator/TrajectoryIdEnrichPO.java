@@ -8,7 +8,7 @@ import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 
-public class TrajectoryIdEnricherPO<T extends Tuple<ITimeInterval>> extends AbstractPipe<T, T> {
+public class TrajectoryIdEnrichPO<T extends Tuple<ITimeInterval>> extends AbstractPipe<T, T> {
 
 	
 	private final Map<String, int[]> vehicleTrajectories = new HashMap<>();

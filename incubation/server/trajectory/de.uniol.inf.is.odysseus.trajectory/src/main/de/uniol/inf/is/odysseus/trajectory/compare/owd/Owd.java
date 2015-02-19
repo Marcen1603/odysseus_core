@@ -7,16 +7,16 @@ import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.trajectory.compare.AbstractTrajectoryCompareAlgoritm;
 import de.uniol.inf.is.odysseus.trajectory.compare.ISpatialDistance;
-import de.uniol.inf.is.odysseus.trajectory.compare.data.IDataTrajectory;
+import de.uniol.inf.is.odysseus.trajectory.compare.data.IConvertedDataTrajectory;
 import de.uniol.inf.is.odysseus.trajectory.compare.data.IQueryTrajectory;
-import de.uniol.inf.is.odysseus.trajectory.compare.data.RawIdTrajectory;
+import de.uniol.inf.is.odysseus.trajectory.compare.data.RawDataTrajectory;
 import de.uniol.inf.is.odysseus.trajectory.compare.data.RawQueryTrajectory;
 import de.uniol.inf.is.odysseus.trajectory.compare.owd.data.OwdData;
 import de.uniol.inf.is.odysseus.trajectory.compare.owd.rasterization.AdvancedBresenhamRasterizer;
 import de.uniol.inf.is.odysseus.trajectory.compare.owd.rasterization.IRasterizer;
 
 
-public class Owd extends AbstractTrajectoryCompareAlgoritm<IDataTrajectory<OwdData>, OwdData> {
+public class Owd extends AbstractTrajectoryCompareAlgoritm<IConvertedDataTrajectory<OwdData>, OwdData> {
 
 	private final static Logger LOGGER = LoggerFactory.getLogger(Owd.class);
 	
@@ -60,7 +60,7 @@ public class Owd extends AbstractTrajectoryCompareAlgoritm<IDataTrajectory<OwdDa
 	}
 
 	@Override
-	protected IDataTrajectory<OwdData> convert(RawIdTrajectory dataTrajectory) {
+	protected IConvertedDataTrajectory<OwdData> convert(RawDataTrajectory dataTrajectory) {
 		if(LOGGER.isDebugEnabled()) {
 			LOGGER.debug("Covert data trajectory to owd representation.");
 		}

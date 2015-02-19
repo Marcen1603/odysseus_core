@@ -12,7 +12,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.trajectory.compare.ITrajectoryCompareAlgorithm;
 import de.uniol.inf.is.odysseus.trajectory.compare.TrajectoryCompareAlgorithmFactory;
-import de.uniol.inf.is.odysseus.trajectory.compare.data.RawIdTrajectory;
+import de.uniol.inf.is.odysseus.trajectory.compare.data.RawDataTrajectory;
 import de.uniol.inf.is.odysseus.trajectory.compare.util.ITupleToRawTrajectoryConverter;
 import de.uniol.inf.is.odysseus.trajectory.compare.util.TupleToRawTrajectoryConverterFactory;
 
@@ -53,7 +53,7 @@ public class TrajectoryComparePO<T extends Tuple<ITimeInterval>> extends Abstrac
 	@Override
 	protected void process_next(T object, int port) {
 		
-		final RawIdTrajectory rawTrajectory = this.tupleToRawTrajectoryConverter.convert(object, this.utmZone);
+		final RawDataTrajectory rawTrajectory = this.tupleToRawTrajectoryConverter.convert(object, this.utmZone);
 		this.algorithm.removeBefore(object.getMetadata().getStart());
 		
 		final Tuple<ITimeInterval> result = new Tuple<ITimeInterval>(

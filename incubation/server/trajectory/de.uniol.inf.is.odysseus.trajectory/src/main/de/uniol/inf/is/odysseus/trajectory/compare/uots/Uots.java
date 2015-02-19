@@ -7,9 +7,9 @@ import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.trajectory.compare.AbstractTrajectoryCompareAlgoritm;
 import de.uniol.inf.is.odysseus.trajectory.compare.ISpatialDistance;
-import de.uniol.inf.is.odysseus.trajectory.compare.data.IDataTrajectory;
+import de.uniol.inf.is.odysseus.trajectory.compare.data.IConvertedDataTrajectory;
 import de.uniol.inf.is.odysseus.trajectory.compare.data.IQueryTrajectory;
-import de.uniol.inf.is.odysseus.trajectory.compare.data.RawIdTrajectory;
+import de.uniol.inf.is.odysseus.trajectory.compare.data.RawDataTrajectory;
 import de.uniol.inf.is.odysseus.trajectory.compare.data.RawQueryTrajectory;
 import de.uniol.inf.is.odysseus.trajectory.compare.uots.data.UotsData;
 import de.uniol.inf.is.odysseus.trajectory.compare.uots.graph.GraphBuilderFactory;
@@ -17,7 +17,7 @@ import de.uniol.inf.is.odysseus.trajectory.compare.uots.graph.NetGraph;
 import de.uniol.inf.is.odysseus.trajectory.compare.uots.mapmatch.IMapMatcher;
 import de.uniol.inf.is.odysseus.trajectory.compare.uots.mapmatch.MapMatcherFactory;
 
-public class Uots extends AbstractTrajectoryCompareAlgoritm<IDataTrajectory<UotsData>, UotsData> {
+public class Uots extends AbstractTrajectoryCompareAlgoritm<IConvertedDataTrajectory<UotsData>, UotsData> {
 	
 
 	private final static Logger LOGGER = LoggerFactory.getLogger(Uots.class);
@@ -48,7 +48,7 @@ public class Uots extends AbstractTrajectoryCompareAlgoritm<IDataTrajectory<Uots
 	}
 
 	@Override
-	protected IDataTrajectory<UotsData> convert(RawIdTrajectory queryTrajectory) {
+	protected IConvertedDataTrajectory<UotsData> convert(RawDataTrajectory queryTrajectory) {
 		if(LOGGER.isDebugEnabled()) {
 			LOGGER.debug("Map data trajectory to graph points.");
 		}

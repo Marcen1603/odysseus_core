@@ -7,7 +7,7 @@ import org.junit.Test;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.GeometryFactory;
 
-import de.uniol.inf.is.odysseus.trajectory.compare.data.RawIdTrajectory;
+import de.uniol.inf.is.odysseus.trajectory.compare.data.RawDataTrajectory;
 import de.uniol.inf.is.odysseus.trajectory.compare.owd.OwdDistance;
 import de.uniol.inf.is.odysseus.trajectory.compare.owd.data.OwdData;
 import de.uniol.inf.is.odysseus.trajectory.compare.owd.data.OwdData.GridCell;
@@ -49,7 +49,7 @@ public class OWDTrajectoryTest {
 				IRasterizer rast = new AdvancedBresenhamRasterizer();
 				
 				GeometryFactory gf = new GeometryFactory();
-				OwdDataTrajectory j = rast.rasterize(new RawIdTrajectory(Arrays.asList(
+				OwdDataTrajectory j = rast.rasterize(new RawDataTrajectory(Arrays.asList(
 						gf.createPoint(new Coordinate(3000,110)),
 							gf.createPoint(new Coordinate(4,101)),
 							gf.createPoint(new Coordinate(332,11111))),

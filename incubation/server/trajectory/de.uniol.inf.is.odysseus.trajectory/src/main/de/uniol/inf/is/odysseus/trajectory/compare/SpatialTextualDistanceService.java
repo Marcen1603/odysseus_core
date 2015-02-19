@@ -13,7 +13,7 @@ import org.slf4j.LoggerFactory;
 import com.google.common.collect.SortedMultiset;
 import com.google.common.collect.TreeMultiset;
 
-import de.uniol.inf.is.odysseus.trajectory.compare.data.IDataTrajectory;
+import de.uniol.inf.is.odysseus.trajectory.compare.data.IConvertedDataTrajectory;
 import de.uniol.inf.is.odysseus.trajectory.compare.data.IQueryTrajectory;
 import de.uniol.inf.is.odysseus.trajectory.compare.textual.ITextualDistance;
 
@@ -44,14 +44,14 @@ public class SpatialTextualDistanceService<T> implements IDistanceService<T> {
 	
 	@Override
 	public void removeTrajectory(final IQueryTrajectory<T> queryTrajectory,
-			final IDataTrajectory<T> dataTrajectory) {
+			final IConvertedDataTrajectory<T> dataTrajectory) {
 		this.trajectoryMap.get(queryTrajectory).kNearest.remove(dataTrajectory);
 	}
 	
 	
 	@Override
-	public List<IDataTrajectory<T>> getDistance(final IQueryTrajectory<T> queryTrajectory, 
-			final IDataTrajectory<T> dataTrajectory) {
+	public List<IConvertedDataTrajectory<T>> getDistance(final IQueryTrajectory<T> queryTrajectory, 
+			final IConvertedDataTrajectory<T> dataTrajectory) {
 		
 		final QueryTrajectoryData qData = this.trajectoryMap.get(queryTrajectory);
 
@@ -69,9 +69,9 @@ public class SpatialTextualDistanceService<T> implements IDistanceService<T> {
 		return this.computeResult(qData);
 	}
 
-	private List<IDataTrajectory<T>> computeResult(final QueryTrajectoryData qData) {
-		final List<IDataTrajectory<T>> result = new ArrayList<>(qData.k);
-		final Iterator<IDataTrajectory<T>> it = qData.kNearest.iterator();
+	private List<IConvertedDataTrajectory<T>> computeResult(final QueryTrajectoryData qData) {
+		final List<IConvertedDataTrajectory<T>> result = new ArrayList<>(qData.k);
+		final Iterator<IConvertedDataTrajectory<T>> it = qData.kNearest.iterator();
 		result.add(it.next());
 		for (int i = 1; i < qData.k && it.hasNext(); i++) {
 			result.add(it.next());
@@ -90,9 +90,9 @@ public class SpatialTextualDistanceService<T> implements IDistanceService<T> {
 		
 		private final double lambda;
 		
-		private final SortedMultiset<IDataTrajectory<T>> kNearest = TreeMultiset.create(new Comparator<IDataTrajectory<T>>() {
+		private final SortedMultiset<IConvertedDataTrajectory<T>> kNearest = TreeMultiset.create(new Comparator<IConvertedDataTrajectory<T>>() {
 			@Override
-			public int compare(IDataTrajectory<T> o1, IDataTrajectory<T> o2) {
+			public int compare(IConvertedDataTrajectory<T> o1, IConvertedDataTrajectory<T> o2) {
 				if(o1.getDistance() >= o2.getDistance()) {
 					return 1;
 				}

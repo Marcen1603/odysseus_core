@@ -8,7 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.trajectory.compare.ISpatialDistance;
-import de.uniol.inf.is.odysseus.trajectory.compare.data.ITrajectory;
+import de.uniol.inf.is.odysseus.trajectory.compare.data.IConvertedTrajectory;
 import de.uniol.inf.is.odysseus.trajectory.compare.owd.data.OwdData;
 import de.uniol.inf.is.odysseus.trajectory.compare.owd.data.OwdData.GridCell;
 import de.uniol.inf.is.odysseus.trajectory.compare.owd.data.OwdData.GridCellList;
@@ -29,8 +29,8 @@ public class OwdDistance implements ISpatialDistance<OwdData> {
 	
 
 	@Override
-	public double getDistance(ITrajectory<OwdData, ?> queryTrajectory,
-			ITrajectory<OwdData, ?> dataTrajectory) {
+	public double getDistance(IConvertedTrajectory<OwdData, ?> queryTrajectory,
+			IConvertedTrajectory<OwdData, ?> dataTrajectory) {
 		
 		final GridCellList t1 = queryTrajectory.getData().getGridCells();
 		final GridCellList t2 = dataTrajectory.getData().getGridCells();

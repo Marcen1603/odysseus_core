@@ -22,7 +22,7 @@ import de.uniol.inf.is.odysseus.relational.base.predicate.RelationalPredicate;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.trajectory.logicaloperator.LevelDBEnrichAO;
 import de.uniol.inf.is.odysseus.trajectory.logicaloperator.TrajectoryConstructAO;
-import de.uniol.inf.is.odysseus.trajectory.logicaloperator.TrajectoryIdEnricherAO;
+import de.uniol.inf.is.odysseus.trajectory.logicaloperator.TrajectoryIdEnrichAO;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
@@ -47,14 +47,14 @@ public class TTrajectoryContructAORule extends AbstractTransformationRule<Trajec
 		if(!operator.getSubtrajectories()) {
 			op = this.insertPredicateWindowAO(op, groupOrPartitionBy);
 			op = this.insertAggregateAO(op, groupOrPartitionBy, Arrays.asList((AggregateItem)operator.getPositionMapping()));
-			op = this.insertTrajectoryIdEnricherAO(op);
+			op = this.insertTrajectoryIdEnrichAO(op);
 			if(operator.getLevelDBPath() != null) {
 				op = this.insertLevelDBEnrichAO(op, operator.getTrajectoryId(), operator.getOutputSchema().getAttribute(3), operator.getLevelDBPath());
 			}
 			this.insertSystemTimeAO(op);
 		} else {
 			op = this.insertAggregateAO(op, groupOrPartitionBy, Arrays.asList((AggregateItem)operator.getPositionMapping()));
-			op = this.insertTrajectoryIdEnricherAO(op);
+			op = this.insertTrajectoryIdEnrichAO(op);
 			if(operator.getLevelDBPath() != null) {
 				this.insertLevelDBEnrichAO(op, operator.getTrajectoryId(), operator.getOutputSchema().getAttribute(3), operator.getLevelDBPath());
 			}
@@ -105,8 +105,8 @@ public class TTrajectoryContructAORule extends AbstractTransformationRule<Trajec
 		return aggregateAO;
 	}
 	
-	private final UnaryLogicalOp insertTrajectoryIdEnricherAO(final UnaryLogicalOp operatorBefore) {
-		final UnaryLogicalOp trajectoryConstructAO = new TrajectoryIdEnricherAO();
+	private final UnaryLogicalOp insertTrajectoryIdEnrichAO(final UnaryLogicalOp operatorBefore) {
+		final UnaryLogicalOp trajectoryConstructAO = new TrajectoryIdEnrichAO();
 		
 		RestructHelper.insertOperatorBefore(trajectoryConstructAO, operatorBefore);
 		this.insert(trajectoryConstructAO);

@@ -9,7 +9,7 @@ import org.javatuples.Unit;
 import com.vividsolutions.jts.geom.Point;
 
 import de.uniol.inf.is.odysseus.trajectory.compare.ISpatialDistance;
-import de.uniol.inf.is.odysseus.trajectory.compare.data.ITrajectory;
+import de.uniol.inf.is.odysseus.trajectory.compare.data.IConvertedTrajectory;
 import de.uniol.inf.is.odysseus.trajectory.compare.uots.data.UotsData;
 import de.uniol.inf.is.odysseus.trajectory.compare.uots.graph.NetGraph;
 import edu.uci.ics.jung.algorithms.shortestpath.DijkstraDistance;
@@ -39,7 +39,7 @@ public class UotsDistance implements ISpatialDistance<UotsData> {
 	}
 	
 	@Override
-	public double getDistance(ITrajectory<UotsData, ?> queryTrajectory, ITrajectory<UotsData, ?> dataTrajectory) {
+	public double getDistance(IConvertedTrajectory<UotsData, ?> queryTrajectory, IConvertedTrajectory<UotsData, ?> dataTrajectory) {
 		double distance = 0;
 		for(final Point ec : queryTrajectory.getData().getGraphPoints()) {
 			double minDistance = Double.MAX_VALUE;

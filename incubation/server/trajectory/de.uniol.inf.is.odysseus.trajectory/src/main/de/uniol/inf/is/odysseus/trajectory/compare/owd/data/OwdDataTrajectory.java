@@ -1,12 +1,12 @@
 package de.uniol.inf.is.odysseus.trajectory.compare.owd.data;
 
-import de.uniol.inf.is.odysseus.trajectory.compare.data.AbstractDataTrajectory;
-import de.uniol.inf.is.odysseus.trajectory.compare.data.RawIdTrajectory;
+import de.uniol.inf.is.odysseus.trajectory.compare.data.AbstractConvertedDataTrajectory;
+import de.uniol.inf.is.odysseus.trajectory.compare.data.RawDataTrajectory;
 
 
-public class OwdDataTrajectory extends AbstractDataTrajectory<OwdData> {
+public class OwdDataTrajectory extends AbstractConvertedDataTrajectory<OwdData> {
 
-	public OwdDataTrajectory(RawIdTrajectory rawTrajectory, OwdData convertedData) {
+	public OwdDataTrajectory(RawDataTrajectory rawTrajectory, OwdData convertedData) {
 		super(rawTrajectory, convertedData);
 	}
 }
