@@ -28,6 +28,8 @@ public class MovingStateSlaveStatus implements ILoadBalancingSlaveStatus,
 	 */
 	private final String COMMUNICATOR_NAME = "MovingState";
 
+	
+	
 	/**
 	 * Constants for different types of peers.
 	 * 

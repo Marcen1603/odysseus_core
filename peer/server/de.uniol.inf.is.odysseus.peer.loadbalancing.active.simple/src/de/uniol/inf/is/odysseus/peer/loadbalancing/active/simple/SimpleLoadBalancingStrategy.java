@@ -1,6 +1,9 @@
 package de.uniol.inf.is.odysseus.peer.loadbalancing.active.simple;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 import net.jxta.peer.PeerID;
 
@@ -13,16 +16,20 @@ import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
+import com.google.common.collect.UnmodifiableIterator;
 
 import de.uniol.inf.is.odysseus.core.collection.IPair;
 import de.uniol.inf.is.odysseus.core.collection.Pair;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.RestructHelper;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.TopAO;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.p2p_new.IP2PNetworkManager;
 import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicator;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.IPeerDictionary;
+import de.uniol.inf.is.odysseus.p2p_new.logicaloperator.JxtaSenderAO;
 import de.uniol.inf.is.odysseus.peer.distribute.ILogicalQueryPart;
 import de.uniol.inf.is.odysseus.peer.distribute.LogicalQueryPart;
 import de.uniol.inf.is.odysseus.peer.distribute.QueryPartAllocationException;
@@ -44,6 +51,9 @@ import de.uniol.inf.is.odysseus.peer.resource.IResourceUsage;
  * @author Michael Brand
  */
 public class SimpleLoadBalancingStrategy implements ILoadBalancingStrategy, ILoadBalancingListener {
+	
+	
+	public static final boolean DO_NOT_MOVE_SINKS = true;
 	
 	/**
 	 * The logger for this class.
@@ -179,13 +189,23 @@ public class SimpleLoadBalancingStrategy implements ILoadBalancingStrategy, ILoa
 			final IExecutor executor = Activator.getExecutor().get();
 			final ISession session = Activator.getSession();
 			final ImmutableCollection<Integer> queryIDs = ImmutableList.copyOf(executor.getLogicalQueryIds(session));
+			
 			if(queryIDs.isEmpty()) {
 				
 				throw new InterruptedException("No query found to be handled over!");
 				
 			}
-			
-			final int queryID = queryIDs.iterator().next();
+			UnmodifiableIterator<Integer> iterator = queryIDs.iterator();
+			int queryID = iterator.next();
+			while(hasRealSinks(queryID) && DO_NOT_MOVE_SINKS) {
+				LOG.debug("Query {} has at least one real sink and DO_NOT_MOVE_SINKS is set. Trying to take next query.",queryID);
+				if(iterator.hasNext()) {
+					queryID = iterator.next();
+				}
+				else {
+					throw new InterruptedException("No query found to be handled over!");
+				}
+			}
 			return new Pair<ILogicalQuery, Integer>(executor.getLogicalQueryById(queryID, session), queryID);
 			
 		}
@@ -265,29 +285,36 @@ public class SimpleLoadBalancingStrategy implements ILoadBalancingStrategy, ILoa
 				
 				//Try to lock peer first.
 				if(lock.requestLocalLock()) {
-
-					LOG.debug("Lock acquired.");
-					//Additional boolean to prevent multiple parallel LoadBalancing Processes.
-					this.mCurrentlyBalancing = true;
-					
-					// Get the query
-					IPair<ILogicalQuery, Integer> queryAndID = this.getQueryToRemove();
-					
-					// Get the peer and the involved peers.
-					PeerID peerID = this.getPeerIDToAllocate(queryAndID.getE1());
-					List<PeerID> otherPeers = this.mCommunicator.getInvolvedPeers(queryAndID.getE2());
-					
-					
-					if(!otherPeers.contains(peerID))
-						otherPeers.add(peerID);
-					
-					this.volunteer = peerID;
-					this.queryID = queryAndID.getE2();
-					
-					//Acquire Locks for other peers
-					PeerLockContainer peerLocks = new PeerLockContainer(peerCommunicator,otherPeers,this);
-					peerLocks.requestLocks();
-					this.lockContainer = peerLocks;
+					try {
+						LOG.debug("Lock acquired.");
+						//Additional boolean to prevent multiple parallel LoadBalancing Processes.
+						this.mCurrentlyBalancing = true;
+						
+						// Get the query
+						IPair<ILogicalQuery, Integer> queryAndID = this.getQueryToRemove();
+						
+						// Get the peer and the involved peers.
+						PeerID peerID = this.getPeerIDToAllocate(queryAndID.getE1());
+						List<PeerID> otherPeers = this.mCommunicator.getInvolvedPeers(queryAndID.getE2());
+						
+						
+						if(!otherPeers.contains(peerID))
+							otherPeers.add(peerID);
+						
+						this.volunteer = peerID;
+						this.queryID = queryAndID.getE2();
+						
+						//Acquire Locks for other peers
+						PeerLockContainer peerLocks = new PeerLockContainer(peerCommunicator,otherPeers,this);
+						peerLocks.requestLocks();
+						this.lockContainer = peerLocks;
+					}
+					catch(Exception e) {
+						LOG.error("An exception occured in LoadBalancing Strategy: {}",e.getMessage());
+						mCurrentlyBalancing = false;
+						lock.releaseLocalLock();
+						
+					}
 					
 					
 				}
@@ -544,6 +571,95 @@ public class SimpleLoadBalancingStrategy implements ILoadBalancingStrategy, ILoa
 		}
 		LOG.debug("Load balancing process finished. Continue monitoring");
 		
+	}
+	
+	private static boolean hasRealSinks(int queryID) {
+		
+		ILogicalQueryPart queryPart = getInstalledQueryPart(queryID);
+		ILogicalQueryPart copy = getCopyOfQueryPart(queryPart);
+		removeTopAOs(copy);
+		
+		Collection<ILogicalOperator> relativeSinks = LogicalQueryHelper
+				.getRelativeSinksOfLogicalQueryPart(copy);
+		
+		for(ILogicalOperator sink : relativeSinks) {
+			
+			//Operator is Sink AND no jxtaSender.
+			if (!(sink instanceof JxtaSenderAO)) {
+				LOG.debug("Found real sink " + sink.toString());
+				return true;
+			};
+			LOG.debug("Rel. Sink: {}",sink.toString());
+		}
+		return false;
+		
+	}
+	
+	
+	
+
+	/**
+	 * Removes all TopAOs from a queryPart.
+	 * 
+	 * @param part
+	 *            Part where TopAOs should be removed.
+	 */
+	private static void removeTopAOs(ILogicalQueryPart part) {
+		ArrayList<ILogicalOperator> toRemove = new ArrayList<>();
+		for (ILogicalOperator operator : part.getOperators()) {
+			if (operator instanceof TopAO) {
+				toRemove.add(operator);
+			}
+		}
+
+		for (ILogicalOperator topAO : toRemove) {
+			topAO.unsubscribeFromAllSinks();
+			topAO.unsubscribeFromAllSources();
+			part.removeOperator(topAO);
+		}
+	}
+	
+	
+	/**
+	 * Get a particular Query as query part.
+	 * 
+	 * @param executor
+	 * @param session
+	 * @param queryId
+	 * @return
+	 */
+	private static ILogicalQueryPart getInstalledQueryPart(int queryId) {
+
+		IExecutor executor = Activator.getExecutor().get();
+		ISession session = Activator.getSession();
+
+		ILogicalQuery query = executor.getLogicalQueryById(queryId, session);
+		ArrayList<ILogicalOperator> operators = new ArrayList<ILogicalOperator>();
+		RestructHelper.collectOperators(query.getLogicalPlan(), operators);
+		return new LogicalQueryPart(operators);
+	}
+	
+	/**
+	 * Gets a (logical) Copy of a single Query Part.
+	 * 
+	 * @param part
+	 *            Part to copy.
+	 * @return Copy of part.
+	 */
+	private static ILogicalQueryPart getCopyOfQueryPart(ILogicalQueryPart part) {
+		ILogicalQueryPart result = null;
+		ArrayList<ILogicalQueryPart> partsList = new ArrayList<ILogicalQueryPart>();
+
+		partsList.add(part);
+
+		Map<ILogicalQueryPart, ILogicalQueryPart> copies = LogicalQueryHelper
+				.copyQueryPartsDeep(partsList);
+
+		for (Map.Entry<ILogicalQueryPart, ILogicalQueryPart> entry : copies.entrySet()) {
+			result = entry.getKey();
+		}
+
+		return result;
 	}
 
 }

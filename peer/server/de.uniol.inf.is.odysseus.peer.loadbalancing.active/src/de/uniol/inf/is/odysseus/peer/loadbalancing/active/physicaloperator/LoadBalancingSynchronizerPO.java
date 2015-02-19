@@ -332,10 +332,9 @@ public class LoadBalancingSynchronizerPO<T extends IStreamObject<? extends ITime
 					} else if (currentTimeShift.getMainPoint() > this.lastSeenTimeShift
 							.getMainPoint()) {
 
-						LoadBalancingSynchronizerPO.log
-								.warn("Time shift between data streams on port {} and {} rises",
-										LoadBalancingSynchronizerPO.old_port,
-										port);
+						//log.warn("Time shift between data streams on port {} and {} rises",
+						//				LoadBalancingSynchronizerPO.old_port,
+						//				port);
 
 						// update elapsed time
 						final long timeElapsed = this.threshold.getUnit()

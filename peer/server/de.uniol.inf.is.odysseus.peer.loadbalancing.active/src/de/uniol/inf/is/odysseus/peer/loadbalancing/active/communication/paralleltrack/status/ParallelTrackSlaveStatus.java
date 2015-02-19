@@ -26,6 +26,7 @@ public class ParallelTrackSlaveStatus implements ILoadBalancingSlaveStatus{
 
 	private final int lbProcessId;
 	private final PeerID initiatingPeer;
+	private PeerID volunteeringPeer = null;
 	
 	private Collection<Integer> installedQueries;
 	
@@ -132,6 +133,14 @@ public class ParallelTrackSlaveStatus implements ILoadBalancingSlaveStatus{
 	@Override
 	public String getCommunicatorName() {
 		return COMMUNICATOR_NAME;
+	}
+
+	public PeerID getVolunteeringPeer() {
+		return volunteeringPeer;
+	}
+
+	public void setVolunteeringPeer(PeerID volunteeringPeer) {
+		this.volunteeringPeer = volunteeringPeer;
 	}
 
 }

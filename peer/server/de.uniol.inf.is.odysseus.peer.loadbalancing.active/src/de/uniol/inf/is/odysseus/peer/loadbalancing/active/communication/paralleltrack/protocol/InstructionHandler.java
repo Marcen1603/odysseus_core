@@ -185,6 +185,11 @@ public class InstructionHandler {
 				
 				status.addReplacedPipe(instruction.getNewPipeId(),
 						instruction.getOldPipeId());
+				if(status.getVolunteeringPeer()==null) {
+					status.setVolunteeringPeer(LoadBalancingHelper.toPeerID((instruction.getNewPeerId())));
+				}
+				
+				
 				dispatcher = status.getMessageDispatcher();
 				try {
 					ParallelTrackHelper.findAndCopyLocalJxtaOperator(status,isSender,
@@ -219,8 +224,11 @@ public class InstructionHandler {
 			//Sync is finished (or we would not be here). So we can stop spamming SYNC_FINISHED Messages now.
 			status.getMessageDispatcher().stopAllMessages();
 			status.getMessageDispatcher().sendDeleteFinished(senderPeer,instruction.getOldPipeId());
-			LoadBalancingHelper.removeDuplicateJxtaOperator(instruction.getOldPipeId());
-			status.getReplacedPipes().remove(instruction.getOldPipeId());
+			if(status.getReplacedPipes().containsKey(instruction.getOldPipeId())) {
+				LoadBalancingHelper.removeDuplicateJxtaOperator(instruction.getOldPipeId());
+				ParallelTrackHelper.updatePipeID(instruction.getOldPipeId(), status.getReplacedPipes().get(instruction.getOldPipeId()), status.getVolunteeringPeer().toString());
+				status.getReplacedPipes().remove(instruction.getOldPipeId());
+			}
 			
 			break;
 

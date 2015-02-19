@@ -26,9 +26,6 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.RestructHelper;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TopAO;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSink;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSource;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
@@ -263,62 +260,6 @@ public class LoadBalancingHelper {
 		}
 	}
 
-
-	/***
-	 * Removes an Operator (which has to have only one incoming or one outgoing
-	 * subscription!)
-	 * 
-	 * @param sink
-	 */
-	@SuppressWarnings({ "rawtypes", "unchecked" })
-	@Deprecated
-	public static void removeOperatorFromStream(AbstractPipe operator) {
-		Collection<AbstractPhysicalSubscription> sourceSubscriptions = operator.getSubscribedToSource();
-		Collection<AbstractPhysicalSubscription> sinkSubscriptions = operator.getSubscriptions();
-
-		// At least one of the sides of the operator can not be more than 1
-		// subscription or else we can not remove Operator without conflicts.
-		if (sourceSubscriptions.size() != 1 && sinkSubscriptions.size() != 1) {
-			LOG.error("To much incoming and outgoing subscriptions for safe removal.");
-			return;
-		}
-
-		operator.unsubscribeFromAllSources();
-		operator.unsubscribeFromAllSinks();
-
-		// Source->Operator is the side with 1 subscription. Hence we can remove
-		// this subscription without substituting it.
-		if (sourceSubscriptions.size() == 1) {
-			AbstractPhysicalSubscription sourceSubscription = sourceSubscriptions.iterator().next();
-			AbstractSource source = (AbstractSource) sourceSubscription.getTarget();
-			for (AbstractPhysicalSubscription subscription : sinkSubscriptions) {
-				ArrayList<IPhysicalOperator> emptyCallPath = new ArrayList<IPhysicalOperator>();
-				ISink sink = (ISink) subscription.getTarget();
-				source.subscribeSink(subscription.getTarget(), subscription.getSinkInPort(),
-						subscription.getSourceOutPort(), subscription.getSchema());
-				source.open(sink, subscription.getSourceOutPort(), subscription.getSinkInPort(),
-						emptyCallPath, sink.getOwner());
-			}
-			return;
-		}
-
-		// Operator->Sink is the side with 1 subscription. Hence we can remove
-		// this subscription without substituting it.
-		if (sinkSubscriptions.size() == 1) {
-			AbstractPhysicalSubscription sinkSubscription = sinkSubscriptions.iterator().next();
-			AbstractSink sink = (AbstractSink) sinkSubscription.getTarget();
-			for (AbstractPhysicalSubscription subscription : sourceSubscriptions) {
-				ArrayList<IPhysicalOperator> emptyCallPath = new ArrayList<IPhysicalOperator>();
-				ISource source = (ISource) subscription.getTarget();
-				source.subscribeSink(sink, subscription.getSinkInPort(),
-						subscription.getSourceOutPort(), subscription.getSchema());
-				source.open(sink, subscription.getSourceOutPort(), subscription.getSinkInPort(),
-						emptyCallPath, sink.getOwner());
-			}
-			return;
-		}
-
-	}
 
 	/**
 	 * Removes a duplicate Jxta Receiver or sender used in LoadBalancing. Called

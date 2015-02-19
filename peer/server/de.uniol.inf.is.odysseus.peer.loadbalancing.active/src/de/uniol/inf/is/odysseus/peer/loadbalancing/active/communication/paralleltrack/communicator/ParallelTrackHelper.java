@@ -16,9 +16,9 @@ import org.slf4j.LoggerFactory;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
+import de.uniol.inf.is.odysseus.core.physicaloperator.AbstractPhysicalSubscription;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
-import de.uniol.inf.is.odysseus.core.physicaloperator.AbstractPhysicalSubscription;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSource;
 import de.uniol.inf.is.odysseus.p2p_new.IP2PNetworkManager;
@@ -30,11 +30,11 @@ import de.uniol.inf.is.odysseus.p2p_new.physicaloperator.JxtaSenderPO;
 import de.uniol.inf.is.odysseus.peer.distribute.ILogicalQueryPart;
 import de.uniol.inf.is.odysseus.peer.distribute.util.LogicalQueryHelper;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.OsgiServiceManager;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.common.DownstreamConnection;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.common.IMessageDeliveryFailedListener;
-import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.common.UpstreamConnection;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.common.LoadBalancingException;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.common.LoadBalancingHelper;
-import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.common.DownstreamConnection;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.common.UpstreamConnection;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.paralleltrack.status.ParallelTrackMasterStatus;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.paralleltrack.status.ParallelTrackSlaveStatus;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.physicaloperator.LoadBalancingSynchronizerPO;
@@ -229,8 +229,6 @@ public class ParallelTrackHelper {
 				
 				LoadBalancingSynchronizerPO<IStreamObject<ITimeInterval>> synchronizer = new LoadBalancingSynchronizerPO<IStreamObject<ITimeInterval>>();
 
-				physicalCopy.addOwner(physicalOriginal.getOwner());
-				
 				LoadBalancingFinishedListener listener = new LoadBalancingFinishedListener(
 						dispatcher,
 						LoadBalancingHelper.toPeerID(physicalOriginal.getPeerIDString()), oldPipeId);
@@ -267,7 +265,6 @@ public class ParallelTrackHelper {
 
 				physicalOriginal.unblock();
 				synchronizer.startSynchronizing();
-				LOG.debug("Installed additional Receiver with PeerID " + physicalCopy.getPeerIDString() + " and PipeID " + physicalCopy.getPipeIDString());
 				
 			}
 			
@@ -276,6 +273,34 @@ public class ParallelTrackHelper {
 		
 		
 
+	}
+	
+	/***
+	 * Updates all operatos with given oldPipeID with new Pipe and PeerID.
+	 * @param oldPipeID
+	 * @param newPipeID
+	 * @param newPeerID
+	 */
+	public static void updatePipeID(String oldPipeID, String newPipeID, String newPeerID) {
+		
+		
+		ILogicalOperator operator = LoadBalancingHelper.getLogicalJxtaOperator(true, oldPipeID);
+		while(operator!=null) {
+			JxtaSenderAO sender = (JxtaSenderAO)operator;
+			sender.setPeerID(newPeerID);
+			sender.setPipeID(newPipeID);
+			operator = LoadBalancingHelper.getLogicalJxtaOperator(true, oldPipeID);
+			}
+		
+		operator = LoadBalancingHelper.getLogicalJxtaOperator(false, oldPipeID);
+		while(operator!=null) {
+			JxtaReceiverAO receiver = (JxtaReceiverAO)operator;
+			receiver.setPeerID(newPeerID);
+			receiver.setPipeID(newPipeID);
+			operator = LoadBalancingHelper.getLogicalJxtaOperator(false, oldPipeID);
+			}
+		
+		
 	}
 	
 	/**
