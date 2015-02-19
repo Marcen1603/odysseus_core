@@ -5,55 +5,97 @@ import static org.bytedeco.javacpp.opencv_core.*;
 import org.bytedeco.javacpp.opencv_core.IplImage;
 
 import java.nio.ByteBuffer;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import de.uniol.inf.is.odysseus.core.IClone;
 import de.uniol.inf.is.odysseus.core.objecthandler.ObjectByteConverter;
 
 /**
- * @author Kristian Bruns
+ * @author Kristian Bruns, Henrik Surm
  */
+class ImageGC
+{
+	private static final int startThreshold = 20;	// Only start thread when imageCount>startThreshold. Stop running thread when imageCount<=startThreshold. 
+	private static final int gcThreshold = 200;		// Run System.gc() when imageCount>gcThreshold
+	private static final int checkInterval = 1000;	// Sleep for checkInterval in each iteration
+	
+	private static Thread gcThread = null;
+	private static AtomicInteger imageCount = new AtomicInteger(0);
+	
+	public static void onCreateImage()
+	{		
+		int iCount = imageCount.incrementAndGet();
+		
+		if (gcThread == null && iCount > startThreshold)
+		{			
+			gcThread = 	new Thread()
+						{
+							@Override public void run()
+							{
+								while (imageCount.get() > startThreshold)
+								{
+									try 
+									{
+										int iCount = imageCount.get();
+										if (iCount > gcThreshold)
+										{	
+											long start = System.nanoTime();
+											System.gc();
+											System.out.println("System.gc time = " + (System.nanoTime() - start) / 1.0e6 + " ms. ImageCount before gc = " + iCount);
+										} 
+										Thread.sleep(checkInterval);
+									}
+									catch (InterruptedException e) 
+									{
+										e.printStackTrace();
+									}											
+								}
+
+								gcThread = null;
+								System.out.println(Thread.currentThread().getName() + " stopped");
+							}
+						};
+			gcThread.setPriority(Thread.MIN_PRIORITY);
+			gcThread.setName("ImageJCV native memory GC thread");
+			gcThread.start();
+		}
+	}
+
+	public static void onReleaseImage() 
+	{
+		imageCount.decrementAndGet();
+	}
+}
+
 public class ImageJCV implements IClone, Cloneable 
 {
 	private IplImage image;
 	
-	public static int imageCount = 0;
-	
-	public static void newImage()
-	{
-		imageCount++;
-		
-		if (imageCount > 100)
-		{
-//			System.out.println("imageCount = " + imageCount);
-			System.gc();
-		}
-	}
-	
 	public ImageJCV() {
-		newImage();
+		ImageGC.onCreateImage();
 	}
 	
 	public ImageJCV(IplImage image) {
 		this.image = image;
-		newImage();
+		ImageGC.onCreateImage();
 	}
 	
 	public ImageJCV(ByteBuffer buffer) {
 		this.image = (IplImage) ObjectByteConverter.bytesToObject(buffer.array());
-		newImage();
+		ImageGC.onCreateImage();
 	}
 	
 	public ImageJCV(ImageJCV other) 
 	{
 		image = cvCreateImage(cvSize(other.image.width(), other.image.height()), other.image.depth(), other.image.nChannels());
 		image.getByteBuffer().put(other.image.getByteBuffer());
-		newImage();
+		ImageGC.onCreateImage();
 	}
 	
 	public ImageJCV(int width, int height)
 	{
 		image = cvCreateImage(cvSize(width, height), IPL_DEPTH_8U, 4);
-		newImage();
+		ImageGC.onCreateImage();
 	}
 	
 	public ImageJCV(double[][] data) 
@@ -63,7 +105,7 @@ public class ImageJCV implements IClone, Cloneable
 		for (int i=0; i < data.length; i++) {
 			buffer.putDouble(i, data[i][0]);
 		}
-		newImage();
+		ImageGC.onCreateImage();
 	}
 	
 	@Override public ImageJCV clone()
@@ -73,20 +115,18 @@ public class ImageJCV implements IClone, Cloneable
 	
 	@Override
 	protected void finalize()
-	{		
-		imageCount--;
+	{
+		ImageGC.onReleaseImage();
 		release();
 	}	
 	
 	public void release()
 	{
-//		System.out.println("Call finalize...");
 		if (image != null)
 		{
 			cvReleaseImage(image);
 			image = null;
-		}
-			
+		}			
 	}
 	
 	public int getNumChannels()

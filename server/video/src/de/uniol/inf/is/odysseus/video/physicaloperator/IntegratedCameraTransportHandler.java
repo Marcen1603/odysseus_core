@@ -120,9 +120,6 @@ public class IntegratedCameraTransportHandler extends AbstractSimplePullTranspor
 				IplImage copy = cvCreateImage(cvSize(iplImage.width(), iplImage.height()), iplImage.depth(), iplImage.nChannels());
 				copy.getByteBuffer().put(iplImage.getByteBuffer());
 				
-				// FIX: Without this, the finalization method of the ImageJCV will not be called... ?!?
-				copy.getBufferedImage();				
-				
 				currentTuple = new Tuple<>(getSchema().size(), true);
 				int[] attrs = getSchema().getSDFDatatypeAttributePositions(SDFImageJCVDatatype.IMAGEJCV);
 				if (attrs.length > 0) 

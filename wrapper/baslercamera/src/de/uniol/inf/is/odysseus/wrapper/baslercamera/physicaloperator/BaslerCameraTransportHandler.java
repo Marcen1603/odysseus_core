@@ -32,7 +32,6 @@ public class BaslerCameraTransportHandler extends AbstractSimplePullTransportHan
 	
 	private Tuple<IMetaAttribute> currentTuple;
 	private ImageJCV imageJCV;
-	private IplImage iplImage;
 	private ByteBuffer imageData;
 	
 	public BaslerCameraTransportHandler() 
@@ -68,7 +67,7 @@ public class BaslerCameraTransportHandler extends AbstractSimplePullTransportHan
 			{
 		 		cameraCapture = new BaslerCamera(serialNumber);
 				cameraCapture.start();
-				iplImage = cvCreateImage(cvSize(cameraCapture.getImageWidth(), cameraCapture.getImageHeight()), IPL_DEPTH_8U, cameraCapture.getImageChannels());
+				IplImage iplImage = cvCreateImage(cvSize(cameraCapture.getImageWidth(), cameraCapture.getImageHeight()), IPL_DEPTH_8U, cameraCapture.getImageChannels());
 				imageJCV = new ImageJCV(iplImage);
 				
 				imageData = iplImage.getByteBuffer();
@@ -102,7 +101,6 @@ public class BaslerCameraTransportHandler extends AbstractSimplePullTransportHan
 				cameraCapture = null;
 			}
 			
-			iplImage = null;
 			imageJCV = null;
 			imageData = null;
 			currentTuple = null;
@@ -144,13 +142,13 @@ public class BaslerCameraTransportHandler extends AbstractSimplePullTransportHan
 			// Is it possible for an IplImage to be backed by a non-direct byte buffer?
 //			assert(imageData.isDirect());
 
-			if (!cameraCapture.grabRGB8(imageData, iplImage.widthStep(), 1000))
+			if (!cameraCapture.grabRGB8(imageData, imageJCV.getImage().widthStep(), 1000))
 			{
 				return false;
 			}
 			else
 			{
-				System.out.println("Frame grabbed");
+//				System.out.println("Frame grabbed from " + serialNumber);
 				
 				currentTuple = new Tuple<IMetaAttribute>(getSchema().size(), true);
 				int[] attrs = getSchema().getSDFDatatypeAttributePositions(SDFImageJCVDatatype.IMAGEJCV);
