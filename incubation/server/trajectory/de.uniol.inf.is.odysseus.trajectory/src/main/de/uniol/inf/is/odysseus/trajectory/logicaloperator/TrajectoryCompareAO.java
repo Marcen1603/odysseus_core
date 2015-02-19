@@ -52,7 +52,7 @@ public class TrajectoryCompareAO extends UnaryLogicalOp {
 	private File queryTrajectory;
 	
 	/** map for textual Attributes */
-	private Map<String, String> textualAttributes;
+	private Map<String, String> textualAttr;
 	
 	/** importance of spatial difference to textual difference */
 	private double lambda = 0.5;
@@ -73,7 +73,7 @@ public class TrajectoryCompareAO extends UnaryLogicalOp {
 		this.algorithm = trajectoryCompareAO.algorithm;
 		this.queryTrajectory = trajectoryCompareAO.queryTrajectory;
 		this.utmZone = trajectoryCompareAO.utmZone;
-		this.textualAttributes = trajectoryCompareAO.textualAttributes;
+		this.textualAttr = trajectoryCompareAO.textualAttr;
 		this.lambda = trajectoryCompareAO.lambda;
 		this.optionsMap = trajectoryCompareAO.optionsMap;
 	}
@@ -98,14 +98,9 @@ public class TrajectoryCompareAO extends UnaryLogicalOp {
 		this.queryTrajectory = queryTrajectory;
 	}
 	
-	@Parameter(type = OptionParameter.class, name = "TEXTUALATTR", isList = true, optional = true, doc = "Textual attributes of the query trajectory.")
-	public void setTextualAttributes(final List<Option> value) {
-		if(this.textualAttributes == null) {
-			this.textualAttributes = new HashMap<>();
-		}
-		for(final Option option : value) {
-			this.textualAttributes.put(option.getName().toLowerCase(Locale.US), option.getValue());
-		}
+	@Parameter(type = StringParameter.class, keytype = StringParameter.class , name = "TEXTUALATTR", isMap = true, optional = true, doc = "Textual attributes of the query trajectory.")
+	public void setTextualAttr(final Map<String, String> textualAttr) {
+		this.textualAttr = textualAttr;
 	}
 	
 	@Parameter(type = DoubleParameter.class, name = "LAMBDA", optional = true, doc = "Importance of spatial difference to textual difference.")
@@ -139,8 +134,8 @@ public class TrajectoryCompareAO extends UnaryLogicalOp {
 		return this.queryTrajectory;
 	}
 	
-	public Map<String, String> getTextualAttributes() {
-		return this.textualAttributes;
+	public Map<String, String> getTextualAttr() {
+		return this.textualAttr;
 	}
 	
 	public double getLambda() {

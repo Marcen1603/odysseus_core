@@ -17,16 +17,16 @@ import de.uniol.inf.is.odysseus.trajectory.compare.data.IDataTrajectory;
 import de.uniol.inf.is.odysseus.trajectory.compare.data.IQueryTrajectory;
 import de.uniol.inf.is.odysseus.trajectory.compare.textual.ITextualDistance;
 
-public class SpatialDistanceService<T> implements IDistanceService<T> {
+public class SpatialTextualDistanceService<T> implements IDistanceService<T> {
 
-	private final static Logger LOGGER = LoggerFactory.getLogger(SpatialDistanceService.class);
+	private final static Logger LOGGER = LoggerFactory.getLogger(SpatialTextualDistanceService.class);
 	
 	private final Map<IQueryTrajectory<T>, QueryTrajectoryData> trajectoryMap = new HashMap<>();
 	
 	private final ISpatialDistance<T> spatialDistance;
 	private final ITextualDistance textualDistance;
 	
-	public SpatialDistanceService(final ISpatialDistance<T> spatialDistance, final ITextualDistance textualDistance) {
+	public SpatialTextualDistanceService(final ISpatialDistance<T> spatialDistance, final ITextualDistance textualDistance) {
 		this.spatialDistance = spatialDistance;
 		this.textualDistance = textualDistance;
 	}
@@ -55,7 +55,7 @@ public class SpatialDistanceService<T> implements IDistanceService<T> {
 		
 		final QueryTrajectoryData qData = this.trajectoryMap.get(queryTrajectory);
 
-		double result = 2 / (1 + Math.pow(Math.E, -this.spatialDistance.getDistance(queryTrajectory, dataTrajectory))) - 1;
+		double result = this.spatialDistance.getDistance(queryTrajectory, dataTrajectory);
 		
 		if(this.textualDistance != null) {
 			result = qData.lambda * result +

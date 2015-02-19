@@ -5,4 +5,6 @@ import java.util.Map;
 public interface IHasTextualAttributes {
 
 	public Map<String, String> getTextualAttributes();
+	
+	public int numAttributes();
 }

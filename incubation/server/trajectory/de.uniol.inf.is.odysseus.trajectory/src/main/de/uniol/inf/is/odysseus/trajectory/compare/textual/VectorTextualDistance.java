@@ -19,6 +19,7 @@ public class VectorTextualDistance implements ITextualDistance {
 	
 	private final static VectorTextualDistance INSTANCE = new VectorTextualDistance();
 	
+	
 	private final static Map<String, Triplet<Map<String, Double>, Double ,Double>> ATTRIBUTES_DEFINITIONS = new HashMap<>();
 	
 	static {
@@ -29,7 +30,7 @@ public class VectorTextualDistance implements ITextualDistance {
 		ATTRIBUTES_DEFINITIONS.put("travel_style", attrDefinition);
 		
 		attrDefinition = 
-				new Triplet<Map<String, Double>, Double, Double>(null, 0d, null);
+				new Triplet<Map<String, Double>, Double, Double>(null, 0d, 10d);
 		ATTRIBUTES_DEFINITIONS.put("persons", attrDefinition);
 		
 		attrDefinition = 
@@ -69,12 +70,37 @@ public class VectorTextualDistance implements ITextualDistance {
 		final Double nVal = Double.parseDouble(value);
 		
 		if(attrDefinition.getValue1() != null && nVal < attrDefinition.getValue1()) {
-			
+			throw new RuntimeException("Attribute value underrun");
 		}
 		if(attrDefinition.getValue2() != null && nVal > attrDefinition.getValue2()) {
-			
+			throw new RuntimeException("Attribute value overrun");
 		}
 		return nVal;
+	}
+	
+	private static double maxDistance(List<String> attributes) {
+		final List<Double> minList = new ArrayList<>(attributes.size());
+		final List<Double> maxList = new ArrayList<>(attributes.size());
+		for(final String attr : attributes) {
+			final Triplet<Map<String, Double>, Double ,Double> tri = 
+					ATTRIBUTES_DEFINITIONS.get(attr);
+			minList.add(tri.getValue1());
+			maxList.add(tri.getValue2());
+		}
+		
+		return distance(minList, maxList);
+	}
+	
+	private static double distance(final List<Double> list1, final List<Double> list2) {
+		final Iterator<Double> listIt1 = list1.iterator();
+		final Iterator<Double> listIt2 = list2.iterator();
+		
+		double distance = 0;
+		while(listIt1.hasNext()) {
+			distance += Math.pow(listIt1.next() - listIt2.next(), 2);
+		}
+		distance = Math.sqrt(distance);		
+		return distance;
 	}
 	
 	private VectorTextualDistance() {}
@@ -84,6 +110,7 @@ public class VectorTextualDistance implements ITextualDistance {
 		// find simular attributes
 		final List<Double> list1 = new ArrayList<>();
 		final List<Double> list2 = new ArrayList<>();
+		final List<String> attributes = new ArrayList<>();
 		
 		for(final String attr : o1.getTextualAttributes().keySet()) {
 			final String valO2 = o2.getTextualAttributes().get(attr);
@@ -92,19 +119,12 @@ public class VectorTextualDistance implements ITextualDistance {
 				
 				list1.add(getValue(attr, valO1));
 				list2.add(getValue(attr, valO2));
+				attributes.add(attr);
 			}
 		}
 		
-		final Iterator<Double> listIt1 = list1.iterator();
-		final Iterator<Double> listIt2 = list2.iterator();
+		LOGGER.info(distance(list1, list2) / maxDistance(attributes) + "");
 		
-		double distance = 0;
-		while(listIt1.hasNext()) {
-			Math.pow(listIt1.next() - listIt2.next(), 2);
-		}
-		distance = Math.sqrt(distance);
-		LOGGER.info(distance + "");
-		
-		return distance;
+		return distance(list1, list2) / maxDistance(attributes);
 	}
 }

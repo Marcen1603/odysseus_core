@@ -43,4 +43,9 @@ public class RawIdTrajectory extends RawQueryTrajectory implements IHasTextualAt
 	public Map<String, String> getTextualAttributes() {
 		return this.textualAttributes;
 	}
+
+	@Override
+	public int numAttributes() {
+		return this.textualAttributes.size();
+	}
 }

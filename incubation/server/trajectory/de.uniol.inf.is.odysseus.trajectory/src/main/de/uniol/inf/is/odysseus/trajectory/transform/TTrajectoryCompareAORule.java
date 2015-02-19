@@ -28,7 +28,7 @@ public class TTrajectoryCompareAORule extends AbstractTransformationRule<Traject
 						 trajectoryAO.getUtmZone(),
 						 trajectoryAO.getLambda(),
 						 trajectoryAO.getAlgorithm(),
-						 trajectoryAO.getTextualAttributes(),
+						 trajectoryAO.getTextualAttr(),
 						 trajectoryAO.getOptionsMap()),
 				 config, 
 				 true,

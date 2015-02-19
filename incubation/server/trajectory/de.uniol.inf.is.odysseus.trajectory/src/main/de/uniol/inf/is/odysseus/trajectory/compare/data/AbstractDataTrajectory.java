@@ -40,4 +40,9 @@ public abstract class AbstractDataTrajectory<E> extends AbstractTrajectory<E, Ra
 				+ "TrajId: " + this.getRawTrajectory().getTrajectoryNumber() + "|"
 				+ "Dist: " + this.distance + "]";
 	}
+
+	@Override
+	public int numAttributes() {
+		return this.getRawTrajectory().numAttributes();
+	}
 }

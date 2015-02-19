@@ -24,4 +24,9 @@ public abstract class AbstractQueryTrajectory<E> extends AbstractTrajectory<E, R
 	public Map<String, String> getTextualAttributes() {
 		return this.textualAttributes;
 	}
+
+	@Override
+	public int numAttributes() {
+		return this.textualAttributes.size();
+	}
 }

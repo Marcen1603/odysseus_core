@@ -32,7 +32,6 @@ public class AdvancedBresenhamRasterizer extends AbstractRasterizer {
 		
 		if(LOGGER.isDebugEnabled()) {
 			LOGGER.debug("Rasterized trajectory with size " + trajectory.getPoints().size() + " to " + result.size() + " grid cells");
-			LOGGER.debug(result + "");
 		}
 		return result;
 	}
