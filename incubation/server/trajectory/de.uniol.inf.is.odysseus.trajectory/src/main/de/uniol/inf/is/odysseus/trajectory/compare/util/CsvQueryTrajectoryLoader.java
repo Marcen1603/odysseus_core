@@ -12,6 +12,7 @@ import org.apache.commons.csv.CSVRecord;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Point;
 
 import de.uniol.inf.is.odysseus.trajectory.compare.data.RawQueryTrajectory;
@@ -56,8 +57,9 @@ public class CsvQueryTrajectoryLoader implements IQueryTrajectoryLoader {
 		final List<Point> points = new LinkedList<Point>();
 		for(final CSVRecord record : records) {
 			points.add(pointCreator.createPoint(
-					Double.parseDouble(record.get(0)), 
-					Double.parseDouble(record.get(1))));
+					new Coordinate(
+							Double.parseDouble(record.get(0)), 
+							Double.parseDouble(record.get(1)))));
 		}
 		
 		return new RawQueryTrajectory(points);

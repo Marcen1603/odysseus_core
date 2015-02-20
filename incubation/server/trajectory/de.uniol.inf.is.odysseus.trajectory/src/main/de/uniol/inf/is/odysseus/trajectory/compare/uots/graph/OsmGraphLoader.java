@@ -10,6 +10,7 @@ import org.apache.commons.codec.digest.DigestUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.LineSegment;
 import com.vividsolutions.jts.geom.Point;
 import com.ximpleware.AutoPilot;
@@ -100,8 +101,9 @@ public class OsmGraphLoader implements IGraphLoader<String, Integer> {
 			while(apNodes.evalXPath() != -1) {
 			    vn.toElement(VTDNav.FIRST_CHILD, NODE_ELEM_NAME);
 			    final Point point = pointCreator.createPoint(
-			    		Double.parseDouble(vn.toNormalizedString(vn.getAttrVal(NODE_LON_ATTR_NAME))), 
-			    		Double.parseDouble(vn.toNormalizedString(vn.getAttrVal(NODE_LAT_ATTR_NAME))));
+			    		new Coordinate(
+			    				Double.parseDouble(vn.toNormalizedString(vn.getAttrVal(NODE_LON_ATTR_NAME))), 
+			    				Double.parseDouble(vn.toNormalizedString(vn.getAttrVal(NODE_LAT_ATTR_NAME)))));
 			    complexGraph.addVertex(point);
 			    pointsMap.put(vn.toNormalizedString(vn.getAttrVal(NODE_ID_ATTR_NAME)), point);
 			}
