@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.peer.recovery.strategy.activestandby;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -102,9 +103,10 @@ public class ActiveStandbyModificator implements IQueryPartModificator {
 		Collection<ILogicalQueryPart> modifiedParts = Lists.newArrayList();
 		Collection<RecoveryMergeAO> changedMergers = Lists.newArrayList();
 		for (ILogicalQueryPart original : copyToOriginal.keySet()) {
-			modifiedParts.add(replaceMergers(original, copyToOriginal, changedMergers));
+			modifiedParts.add(replaceMergers(original, copyToOriginal,
+					changedMergers));
 		}
-		if(changedMergers.isEmpty()) {
+		if (changedMergers.isEmpty()) {
 			LOG.warn("You are using active standby recovery without replication. This may lead to data loss!");
 		}
 		return modifiedParts;
@@ -112,14 +114,16 @@ public class ActiveStandbyModificator implements IQueryPartModificator {
 
 	private static ILogicalQueryPart replaceMergers(
 			ILogicalQueryPart originalQP,
-			Map<ILogicalQueryPart, ILogicalQueryPart> copyToOriginal, Collection<RecoveryMergeAO> changedMergers) {
-		ILogicalQueryPart copyQP = copyToOriginal.get(originalQP);
-		for (ILogicalOperator originalOp : originalQP.getOperators()) {
+			Map<ILogicalQueryPart, ILogicalQueryPart> copyToOriginalQP,
+			Collection<RecoveryMergeAO> changedMergers) {
+		ILogicalQueryPart copyQP = copyToOriginalQP.get(originalQP);
+		Map<ILogicalOperator, ILogicalOperator> copyToOriginalOP = collectOperatorCopies(
+				originalQP, copyQP);
+		for (ILogicalOperator originalOp : copyToOriginalOP.keySet()) {
 			if (ReplicationMergeAO.class.isInstance(originalOp)) {
 				ReplicationMergeAO originalMerge = (ReplicationMergeAO) originalOp;
-				ReplicationMergeAO copyMerge = (ReplicationMergeAO) LogicalQueryHelper
-						.collectCopies(originalQP, Lists.newArrayList(copyQP),
-								originalMerge).iterator().next();
+				ReplicationMergeAO copyMerge = (ReplicationMergeAO) copyToOriginalOP
+						.get(originalMerge);
 				RecoveryMergeAO mergerToInsert = new RecoveryMergeAO();
 
 				copyMerge.unsubscribeFromAllSources();
@@ -127,17 +131,32 @@ public class ActiveStandbyModificator implements IQueryPartModificator {
 				copyQP.removeOperator(copyMerge);
 
 				copySubscriptions(mergerToInsert,
-						originalMerge.getSubscribedToSource(), copyToOriginal,
-						true);
+						originalMerge.getSubscribedToSource(),
+						copyToOriginalQP, true);
 				copySubscriptions(mergerToInsert,
-						originalMerge.getSubscriptions(), copyToOriginal, false);
+						originalMerge.getSubscriptions(), copyToOriginalQP,
+						false);
 				copyQP.addOperator(mergerToInsert);
-				
+
 				changedMergers.add(mergerToInsert);
 			}
 		}
 
 		return copyQP;
+	}
+
+	private static Map<ILogicalOperator, ILogicalOperator> collectOperatorCopies(
+			ILogicalQueryPart originalQP, ILogicalQueryPart copyQP) {
+		Map<ILogicalOperator, ILogicalOperator> copyToOriginalOP = Maps
+				.newHashMap();
+		for (ILogicalOperator originalOP : originalQP.getOperators()) {
+			ILogicalOperator copy = LogicalQueryHelper
+					.collectCopies(originalQP,
+							Arrays.asList(new ILogicalQueryPart[] { copyQP }),
+							originalOP).iterator().next();
+			copyToOriginalOP.put(originalOP, copy);
+		}
+		return copyToOriginalOP;
 	}
 
 	private static void copySubscriptions(ILogicalOperator operator,
@@ -149,7 +168,7 @@ public class ActiveStandbyModificator implements IQueryPartModificator {
 					.determineQueryPart(copyToOriginal.keySet(),
 							sub.getTarget());
 			Preconditions.checkArgument(partOfOriginalTarget.isPresent());
-			
+
 			ILogicalOperator copyTarget = LogicalQueryHelper
 					.collectCopies(
 							partOfOriginalTarget.get(),
