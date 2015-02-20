@@ -80,8 +80,7 @@ public class PointToArcPointMapMatcher extends AbstractMapMatcher {
 		STRtree strTree = this.strTrees.get(graph);
 		if(strTree == null) {
 			synchronized(graph) {
-				strTree = this.strTrees.get(graph);
-				if(strTree == null) {
+				if((strTree = this.strTrees.get(graph)) == null) {
 					this.strTrees.put(graph, strTree = new STRtree());
 				
 					for(final LineSegment ls : graph.getEdges()) {

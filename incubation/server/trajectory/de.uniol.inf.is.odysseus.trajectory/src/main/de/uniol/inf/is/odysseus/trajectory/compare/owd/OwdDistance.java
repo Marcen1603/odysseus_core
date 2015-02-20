@@ -13,21 +13,41 @@ import de.uniol.inf.is.odysseus.trajectory.compare.owd.data.OwdData;
 import de.uniol.inf.is.odysseus.trajectory.compare.owd.data.OwdData.GridCell;
 import de.uniol.inf.is.odysseus.trajectory.compare.owd.data.OwdData.GridCellList;
 
+/**
+ * An implementation of <tt>ISpatialDistance</tt> which calculates the distance 
+ * between a </tt>OwdQueryTrajectory</tt> and a </tt>OwdDataTrajectory</tt> based
+ * on the <i>OWD distance function</i>
+ * 
+ * @author marcus
+ *
+ */
 public class OwdDistance implements ISpatialDistance<OwdData> {
 	
+	/** Logger for debugging purposes */
 	private final static Logger LOGGER = LoggerFactory.getLogger(OwdDistance.class);
 	
-	
+	/** the width and height of a grid cell */
 	private final double gridCellSize;
 	
+	/** the diagonal length of the Euclidean space */
 	private final double diagonalLength;
 	
+	/**
+	 * 
+	 * @param gridCellSize the width and height of a grid cell
+	 * @param diagonalLength the diagonal length of the Euclidean space
+	 */
 	public OwdDistance(final double gridCellSize, final double diagonalLength) {
 		this.gridCellSize = gridCellSize;
 		this.diagonalLength = diagonalLength;
 	}
 	
-
+	/**
+	 * {@inheritDoc}
+	 * Here the distance calculation between a </tt>OwdQueryTrajectory</tt> and a </tt>OwdDataTrajectory</tt> 
+	 * based on the <i>OWD distance function</i>
+	 * 
+	 */
 	@Override
 	public double getDistance(final IConvertedTrajectory<OwdData, ?> queryTrajectory,
 			final IConvertedTrajectory<OwdData, ?> dataTrajectory) {
@@ -42,6 +62,13 @@ public class OwdDistance implements ISpatialDistance<OwdData> {
 		return result;
 	}
 	
+	/**
+	 * The main algorithm.
+	 * 
+	 * @param trajectory1 the first OWD trajectory
+	 * @param trajectory2 the last OWD trajectory
+	 * @return the OWD distance from <tt>trajectory1</i> to </i>trajectory2</i>
+	 */
 	private double getOwd(final GridCellList trajectory1, final GridCellList trajectory2) {
 
 		final Iterator<GridCell> it = trajectory1.iterator();
@@ -103,7 +130,14 @@ public class OwdDistance implements ISpatialDistance<OwdData> {
 		return owdDistance / trajectory1.size();
 	}
 	
-	
+	/**
+	 * Calculates and returns the shortest distance from <tt>GridCell</tt> to its
+	 * <i>local minpoints</i>.
+	 * 
+	 * @param g the <tt>GridCell</tt>
+	 * @param minPoints <i>local minpoints</i> to <i>g</i>
+	 * @return the shortest distance from <i>g</i> to its <i>local minpoints</i>
+	 */
 	private double shortestDistance(final GridCell g, final Iterable<GridCell> minPoints) {
 		
 		final Iterator<GridCell> it = minPoints.iterator();
@@ -122,6 +156,13 @@ public class OwdDistance implements ISpatialDistance<OwdData> {
 		return minDistance;
 	}
 	
+	/**
+	 * Calculates and returns the <i>local minpoints</i> to a <tt>GridCell</t>
+	 * 
+	 * @param g the <tt>GridCell</tt>
+	 * @param trajectory the trajectory where to find the local mnpoints
+	 * @return the <i>local minpoints</i> to a <i>g</i>
+	 */
 	private IndexedLinkedHashSet<GridCell> getLocalMinPoints(final GridCell g, final Iterable<GridCell> trajectory) {
 		final IndexedLinkedHashSet<GridCell> result = new IndexedLinkedHashSet<>();
 		for(final GridCell g1 : trajectory) {
@@ -132,6 +173,14 @@ public class OwdDistance implements ISpatialDistance<OwdData> {
 		return result;
 	}
 	
+	/**
+	 * Checks whether <i>g1</i> is a local minpoint to <i>g</i>.
+	 * 
+	 * @param g1 the cell to check whether it is a local minpoint
+	 * @param g the cell to check whether <i>g1</i> is a local minpoint
+	 * @return <tt>true</tt> if <i>g1</i> is a local minpoint to <i>g</i>,
+	 *         otherwise <tt>false</i>
+	 */
 	private boolean isLocalMinPoint(final GridCell g1, final GridCell g) {
 		if(g1.getPrevious() == null) {
 			if(g1.getNext() == null) {
@@ -146,10 +195,18 @@ public class OwdDistance implements ISpatialDistance<OwdData> {
 				&& this.closer(g1, g1.getPrevious(), g) == g1;
 	}
 	
-	
+	/**
+	 * Returns the <tt>GridCell</tt> which is closer to <i>g</i>. <i>g1</i> and
+	 * <i>g2</i> have to be adjacent.
+	 * 
+	 * @param g1 the first <tt>GridCell</tt> to check
+	 * @param g2 the second <tt>GridCell</tt> to check
+	 * @param g the <tt>GridCell</tt> to check whether <i>g1</i> or <i>g2</i> is closer
+	 * @return <i>g1</i> if it is closer to <i>g</i>, otherwise <i>g2</i>
+	 */
 	private GridCell closer(final GridCell g1, final GridCell g2, final GridCell g) {
 		if(!g1.isAdjacent(g2)) {
-			throw new RuntimeException("");
+			throw new IllegalArgumentException("g1 and g2 are not adjacent");
 		}
 		if(g1.getY() == g2.getY()) {
 			if(Math.abs(g1.getX() - g.getX()) < Math.abs(g2.getX() - g.getX())) {
@@ -163,17 +220,31 @@ public class OwdDistance implements ISpatialDistance<OwdData> {
 		return g2;
 	}
 	
-	public static class IndexedLinkedHashSet<E> extends LinkedHashSet<E> {
+	/**
+	 * An extension to a <tt>LinkedHashSet</tt> which elements can be accessed 
+	 * over an index.
+	 * 
+	 * @author marcus
+	 *
+	 * @param <E> the type of data stored in this <tt>IndexedLinkedHashSet</tt>
+	 */
+	private static class IndexedLinkedHashSet<E> extends LinkedHashSet<E> {
 		
 		/**
 		 * 
 		 */
 		private static final long serialVersionUID = -8977956093819575992L;
 		
-		
+		/** ArrayList for the index */
 		private final ArrayList<E> indexList = new ArrayList<E>();
 		
-		
+	    /**
+	     * Returns the element at the specified position in this set.
+	     *
+	     * @param  index index of the element to return
+	     * @return the element at the specified position in this set
+	     * @throws IndexOutOfBoundsException {@inheritDoc}
+	     */
 		public E get(final int index) {
 			return this.indexList.get(index);
 		}
@@ -187,6 +258,9 @@ public class OwdDistance implements ISpatialDistance<OwdData> {
 			return false;
 		}
 		
+		/**
+		 * Not supported!
+		 */
 		@Override 
 		public boolean remove(final Object elem) {
 			throw new UnsupportedOperationException();

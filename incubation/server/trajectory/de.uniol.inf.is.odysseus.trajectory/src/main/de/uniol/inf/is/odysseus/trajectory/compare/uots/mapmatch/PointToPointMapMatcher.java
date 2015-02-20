@@ -78,9 +78,8 @@ public class PointToPointMapMatcher extends AbstractMapMatcher {
 		
 		STRtree strTree = this.strTrees.get(graph);
 		if(strTree == null) {
-			synchronized (this) {
-				strTree = this.strTrees.get(graph);
-				if(strTree == null) {
+			synchronized(this) {
+				if((strTree = this.strTrees.get(graph)) == null) {
 					strTree = new STRtree();
 		
 					for(final Point graphPoint : graph.getVertices()) {
