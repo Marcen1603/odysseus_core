@@ -4,6 +4,7 @@ import java.util.Map;
 
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.SportsQLQuery;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.parameter.ISportsQLParameter;
+import de.uniol.inf.is.odysseus.sports.sportsql.parser.parameter.SportsQLEvaluationParameter;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.parameter.SportsQLIntegerParameter;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.parameter.SportsQLSpaceParameter;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.parameter.SportsQLSpaceParameter.SpaceUnit;
@@ -55,6 +56,19 @@ public class SportsQLParameterHelper {
 			}
 		}
 		return null;
+	}
+	
+	public static SportsQLEvaluationParameter getEvaluationParameter(SportsQLQuery query){
+		
+
+		for (Map.Entry<String, ISportsQLParameter> param : query.getParameters().entrySet()) {
+			if (param.getKey().equals("evaluation")) {				
+				
+				return (SportsQLEvaluationParameter)param.getValue();
+			}
+		}
+		return null;
+		
 	}
 	
 

@@ -6,7 +6,9 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.Iterables;
 
+import de.uniol.inf.is.odysseus.core.collection.Resource;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.LogicalQuery;
@@ -20,6 +22,7 @@ import de.uniol.inf.is.odysseus.core.server.datadictionary.DataDictionaryProvide
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AccessAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AggregateAO;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.CSVFileSink;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.Cardinalities;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.ChangeDetectAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.CoalesceAO;
@@ -47,6 +50,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.AggregateIte
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.BooleanParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.EnumParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.NamedExpression;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.Option;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.PredicateParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.ResolvedSDFAttributeParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.SDFExpressionParameter;
@@ -65,13 +69,16 @@ import de.uniol.inf.is.odysseus.peer.ddc.MissingDDCEntryException;
 import de.uniol.inf.is.odysseus.relational.base.predicate.RelationalPredicate;
 import de.uniol.inf.is.odysseus.server.intervalapproach.logicaloperator.AssureHeartbeatAO;
 import de.uniol.inf.is.odysseus.sports.sportsql.logicaloperator.SportsHeatMapAO;
+import de.uniol.inf.is.odysseus.sports.sportsql.parser.SportsQLQuery;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.ddcaccess.AbstractSportsDDCAccess;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.helper.SpaceUnitHelper;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.helper.TimeUnitHelper;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.model.Space;
+import de.uniol.inf.is.odysseus.sports.sportsql.parser.parameter.SportsQLEvaluationParameter;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.parameter.SportsQLSpaceParameter;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.parameter.SportsQLSpaceParameter.SpaceUnit;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.parameter.SportsQLTimeParameter;
+import de.uniol.inf.is.odysseus.sports.sportsql.parser.buildhelper.SportsQLParameterHelper;
 
 /**
  * Class with static methods which help you to build the AOs easily.
@@ -903,6 +910,35 @@ public class OperatorBuildHelper {
 		rAO.subscribeTo(source, source.getOutputSchema());
 		return rAO;
 	}
+	
+	
+		
+	public static CSVFileSink createFileSinkAO( String queryName, String fileName, String filePath, String sinkName, List<Option> parameter, ILogicalOperator source){
+		CSVFileSink fAO = new CSVFileSink();
+		
+		if(parameter!= null){
+			fAO.setOptions(parameter);
+		}
+	
+		
+		if(fileName != null && !fileName.equals("")){
+			fAO.setFilename(fileName);
+		}else{
+			fAO.setFilename(queryName+"_"+System.currentTimeMillis());
+		}
+		
+		if(sinkName!=null && !sinkName.equals("")){
+			fAO.setName(sinkName);
+			fAO.setSink(new Resource("system",sinkName));
+		}else{
+			fAO.setName("filesink");
+			fAO.setSink(new Resource("system","filesink"));
+		}
+		
+		fAO.subscribeToSource(source, 0 ,0, source.getOutputSchema());
+	
+		return fAO;
+	}
 
 	/**
 	 * Returns changeDetectAO with list of Attributes, groupBy, relative tolerance and absolute tolerance
@@ -1730,6 +1766,7 @@ public class OperatorBuildHelper {
 		return createAttributeList(groupBy, operators);
 	}
 
+	
 	/**
 	 * Creates an ILogicalQuery with an TopAO on top of the query. Initialized all operators and gives the query a name
 	 * 
@@ -1742,12 +1779,26 @@ public class OperatorBuildHelper {
 	 * @return A finished logical query.
 	 */
 	public static ILogicalQuery finishQuery(ILogicalOperator topSource, List<ILogicalOperator> allOperators,
-			String queryName) {
+			String queryName, SportsQLQuery sportsQL) {
+		
+		SportsQLEvaluationParameter evaluationParameter =SportsQLParameterHelper.getEvaluationParameter(sportsQL);
+		
+		if(evaluationParameter != null && evaluationParameter.isEvaluation()){
+			List<Option> parameter = new ArrayList<Option>();
+			parameter.add(new Option("csv.writemetadata", "true"));
+			
+			CSVFileSink fAO = OperatorBuildHelper.createFileSinkAO(queryName, evaluationParameter.getFileName(),evaluationParameter.getFilePath(),evaluationParameter.getSinkName(), parameter, Iterables.getLast(allOperators) );
+			allOperators.add(fAO);
+		}
+		
 		List<ILogicalOperator> sources = new ArrayList<ILogicalOperator>();
 		sources.add(topSource);
 
 		return finishQuery(sources, allOperators, queryName);
 	}
+	
+	
+	 
 
 	/**
 	 * Creates an ILogicalQuery with an TopAO on top of the query. Initialized all operators and gives the query a name

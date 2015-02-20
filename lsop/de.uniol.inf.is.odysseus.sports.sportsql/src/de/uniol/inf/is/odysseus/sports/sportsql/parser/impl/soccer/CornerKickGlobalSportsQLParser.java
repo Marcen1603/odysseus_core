@@ -22,17 +22,22 @@ import de.uniol.inf.is.odysseus.sports.sportsql.parser.ISportsQLParser;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.SportsQLParseException;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.SportsQLQuery;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.annotations.SportsQL;
+import de.uniol.inf.is.odysseus.sports.sportsql.parser.annotations.SportsQLParameter;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.buildhelper.IntermediateSchemaAttributes;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.buildhelper.OperatorBuildHelper;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.ddcaccess.AbstractSportsDDCAccess;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.ddcaccess.SoccerDDCAccess;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.enums.GameType;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.enums.StatisticType;
+import de.uniol.inf.is.odysseus.sports.sportsql.parser.parameter.SportsQLEvaluationParameter;
 
 /**
  * SportsQL Parser for Corner Kicks
  */
-@SportsQL(gameTypes = { GameType.SOCCER }, statisticTypes = { StatisticType.GLOBAL }, name = "cornerkicks", parameters = {})
+@SportsQL(gameTypes = { GameType.SOCCER }, statisticTypes = { StatisticType.GLOBAL }, name = "cornerkicks", 
+parameters = {
+		@SportsQLParameter(name = "evaluation", parameterClass = SportsQLEvaluationParameter.class, mandatory = false)
+})
 public class CornerKickGlobalSportsQLParser implements ISportsQLParser {
 
 	// corner spot radius in millimeters
@@ -228,7 +233,7 @@ public class CornerKickGlobalSportsQLParser implements ISportsQLParser {
 		
 
 		return OperatorBuildHelper.finishQuery(sideMap, operatorList,
-				sportsQL.getDisplayName());
+				sportsQL.getDisplayName(),sportsQL);
 	}
 	
 	private AggregateAO createAggregate(ILogicalOperator input) {

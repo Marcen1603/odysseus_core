@@ -18,9 +18,11 @@ import de.uniol.inf.is.odysseus.sports.sportsql.parser.buildhelper.OperatorBuild
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.buildhelper.SportsQLParameterHelper;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.enums.GameType;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.enums.StatisticType;
+import de.uniol.inf.is.odysseus.sports.sportsql.parser.parameter.SportsQLEvaluationParameter;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.parameter.SportsQLIntegerParameter;
 
 @SportsQL(gameTypes = GameType.ALL, statisticTypes = { StatisticType.GLOBAL }, name = "heatmap", parameters = {
+		@SportsQLParameter(name = "evaluation", parameterClass = SportsQLEvaluationParameter.class, mandatory = false),
 		@SportsQLParameter(name = "reduceLoadFactor", parameterClass = SportsQLIntegerParameter.class, mandatory = false),
 		@SportsQLParameter(name = "numTilesHorizontal", parameterClass = SportsQLIntegerParameter.class, mandatory = false),
 		@SportsQLParameter(name = "numTilesVertical", parameterClass = SportsQLIntegerParameter.class, mandatory = false) })
@@ -72,7 +74,7 @@ public class SportsHeatMapSportsQLParser implements ISportsQLParser {
 		SportsHeatMapAO heatmap = OperatorBuildHelper.createHeatMapAO(projectAO, reduceFactor, numTilesX, numTilesY);
 		allOperators.add(heatmap);
 
-		return OperatorBuildHelper.finishQuery(heatmap, allOperators, sportsQL.getDisplayName());
+		return OperatorBuildHelper.finishQuery(heatmap, allOperators, sportsQL.getDisplayName(),sportsQL);
 	}
 
 }

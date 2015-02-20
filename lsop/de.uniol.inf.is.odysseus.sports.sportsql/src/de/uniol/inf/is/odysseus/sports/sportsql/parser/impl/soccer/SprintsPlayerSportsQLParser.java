@@ -14,6 +14,7 @@ import de.uniol.inf.is.odysseus.sports.sportsql.parser.ISportsQLParser;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.SportsQLParseException;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.SportsQLQuery;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.annotations.SportsQLParameter;
+import de.uniol.inf.is.odysseus.sports.sportsql.parser.parameter.SportsQLEvaluationParameter;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.parameter.SportsQLSpaceParameter;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.parameter.SportsQLTimeParameter;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.enums.GameType;
@@ -30,6 +31,7 @@ import de.uniol.inf.is.odysseus.sports.sportsql.parser.buildhelper.OperatorBuild
  * 
  */
 @SportsQL(gameTypes = { GameType.SOCCER }, statisticTypes = { StatisticType.PLAYER }, name = "sprints", parameters = {
+		@SportsQLParameter(name = "evaluation", parameterClass = SportsQLEvaluationParameter.class, mandatory = false),
 		@SportsQLParameter(name = "time", parameterClass = SportsQLTimeParameter.class, mandatory = false),
 		@SportsQLParameter(name = "space", parameterClass = SportsQLSpaceParameter.class, mandatory = false) })
 public class SprintsPlayerSportsQLParser implements ISportsQLParser {
@@ -96,7 +98,7 @@ public class SprintsPlayerSportsQLParser implements ISportsQLParser {
 						assureHeartbeatAO, 1);
 		allOperators.add(resultAggregate);		
 		
-		return OperatorBuildHelper.finishQuery(resultAggregate, allOperators,sportsQL.getDisplayName());
+		return OperatorBuildHelper.finishQuery(resultAggregate, allOperators,sportsQL.getDisplayName(),sportsQL);
 	}
 
 }

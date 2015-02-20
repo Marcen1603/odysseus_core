@@ -20,6 +20,7 @@ import de.uniol.inf.is.odysseus.sports.sportsql.parser.ISportsQLParser;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.SportsQLParseException;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.SportsQLQuery;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.annotations.SportsQL;
+import de.uniol.inf.is.odysseus.sports.sportsql.parser.annotations.SportsQLParameter;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.buildhelper.IntermediateSchemaAttributes;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.buildhelper.OperatorBuildHelper;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.buildhelper.SportsQLParameterHelper;
@@ -27,6 +28,7 @@ import de.uniol.inf.is.odysseus.sports.sportsql.parser.ddcaccess.AbstractSportsD
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.enums.GameType;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.enums.StatisticType;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.parameter.SportsQLSpaceParameter.SpaceType;
+import de.uniol.inf.is.odysseus.sports.sportsql.parser.parameter.SportsQLEvaluationParameter;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.parameter.SportsQLTimeParameter;
 
 /***
@@ -36,7 +38,7 @@ import de.uniol.inf.is.odysseus.sports.sportsql.parser.parameter.SportsQLTimePar
  *
  */
 
-@SportsQL(gameTypes = { GameType.SOCCER }, name = "crosses", parameters = {}, statisticTypes = { StatisticType.GLOBAL })
+@SportsQL(gameTypes = { GameType.SOCCER }, name = "crosses", parameters = {@SportsQLParameter(name = "evaluation", parameterClass = SportsQLEvaluationParameter.class, mandatory = false)}, statisticTypes = { StatisticType.GLOBAL })
 public class CrossesGlobalSportsQLParser implements ISportsQLParser{
 
 	public final static String TIME_BETWEEN_TARGETZONE_CROSSINGZONE = "2000000000000";
@@ -183,7 +185,7 @@ public class CrossesGlobalSportsQLParser implements ISportsQLParser{
 		MapAO result = OperatorBuildHelper.createStateMapAO(expressions, checkSelect);
 		allOperators.add(result);
 		
-		return OperatorBuildHelper.finishQuery(result, allOperators, sportsQL.getDisplayName());		
+		return OperatorBuildHelper.finishQuery(result, allOperators, sportsQL.getDisplayName(),sportsQL);		
 	}
 	
 	private RouteAO createSplitSoccerDataRouteAO(ILogicalOperator source) throws NumberFormatException, MissingDDCEntryException {				

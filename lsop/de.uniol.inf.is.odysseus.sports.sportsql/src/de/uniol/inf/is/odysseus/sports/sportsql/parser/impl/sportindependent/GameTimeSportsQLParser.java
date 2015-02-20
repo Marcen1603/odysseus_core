@@ -21,10 +21,12 @@ import de.uniol.inf.is.odysseus.sports.sportsql.parser.ddcaccess.AbstractSportsD
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.enums.GameType;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.enums.StatisticType;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.helper.TimeUnitHelper;
+import de.uniol.inf.is.odysseus.sports.sportsql.parser.parameter.SportsQLEvaluationParameter;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.parameter.ISportsQLParameter;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.parameter.SportsQLBooleanParameter;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.parameter.SportsQLLongParameter;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.parameter.SportsQLTimeParameter.TimeUnit;
+
 
 /**
  * Parser for SportsQL: Query: game time.
@@ -39,6 +41,7 @@ import de.uniol.inf.is.odysseus.sports.sportsql.parser.parameter.SportsQLTimePar
  *
  */
 @SportsQL(gameTypes = { GameType.ALL }, statisticTypes = { StatisticType.GLOBAL }, name = "gameTime", parameters = {
+		@SportsQLParameter(name = "evaluation", parameterClass = SportsQLEvaluationParameter.class, mandatory = false),
 		@SportsQLParameter(name = "startts", parameterClass = SportsQLLongParameter.class, mandatory = false),
 		@SportsQLParameter(name = "endts", parameterClass = SportsQLLongParameter.class, mandatory = false),
 		@SportsQLParameter(name = "isSelectDataBetweenTimestamps", parameterClass = SportsQLBooleanParameter.class, mandatory = false),
@@ -110,7 +113,7 @@ public class GameTimeSportsQLParser implements ISportsQLParser {
 		allOperators.add(gameTimeChangeDetect);
 
 		// 5. Finish
-		return OperatorBuildHelper.finishQuery(gameTimeChangeDetect, allOperators, sportsQL.getDisplayName());
+		return OperatorBuildHelper.finishQuery(gameTimeChangeDetect, allOperators, sportsQL.getDisplayName(), sportsQL);
 	}
 
 	private String getStartTimestamp(SportsQLQuery sportsQL) {

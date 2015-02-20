@@ -21,6 +21,7 @@ import de.uniol.inf.is.odysseus.sports.sportsql.parser.annotations.SportsQLParam
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.buildhelper.OperatorBuildHelper;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.enums.GameType;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.enums.StatisticType;
+import de.uniol.inf.is.odysseus.sports.sportsql.parser.parameter.SportsQLEvaluationParameter;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.parameter.SportsQLSpaceParameter;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.parameter.SportsQLTimeParameter;
 
@@ -38,6 +39,7 @@ import de.uniol.inf.is.odysseus.sports.sportsql.parser.parameter.SportsQLTimePar
  */
 @SportsQL(gameTypes = { GameType.SOCCER }, statisticTypes = { StatisticType.PLAYER }, name = "passes", 
 parameters = {
+		@SportsQLParameter(name = "evaluation", parameterClass = SportsQLEvaluationParameter.class, mandatory = false),
 		@SportsQLParameter(name = "time", parameterClass = SportsQLTimeParameter.class, mandatory = false),
 		@SportsQLParameter(name = "space", parameterClass = SportsQLSpaceParameter.class, mandatory = false)})
 public class PassesPlayerSportsQLParser implements ISportsQLParser {
@@ -206,6 +208,6 @@ public class PassesPlayerSportsQLParser implements ISportsQLParser {
 		
 
 		// 28. Finish
-		return OperatorBuildHelper.finishQuery(aggregate2, allOperators, sportsQL.getDisplayName());
+		return OperatorBuildHelper.finishQuery(aggregate2, allOperators, sportsQL.getDisplayName(),sportsQL);
 	}
 }

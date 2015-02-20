@@ -21,6 +21,7 @@ import de.uniol.inf.is.odysseus.sports.sportsql.parser.ISportsQLParser;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.SportsQLParseException;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.SportsQLQuery;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.annotations.SportsQL;
+import de.uniol.inf.is.odysseus.sports.sportsql.parser.annotations.SportsQLParameter;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.buildhelper.IntermediateSchemaAttributes;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.buildhelper.OperatorBuildHelper;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.ddcaccess.AbstractSportsDDCAccess;
@@ -28,9 +29,12 @@ import de.uniol.inf.is.odysseus.sports.sportsql.parser.ddcaccess.SoccerDDCAccess
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.enums.GameType;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.enums.StatisticType;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.helper.TimeUnitHelper;
+import de.uniol.inf.is.odysseus.sports.sportsql.parser.parameter.SportsQLEvaluationParameter;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.parameter.SportsQLTimeParameter.TimeUnit;
 
-@SportsQL(gameTypes = { GameType.SOCCER }, statisticTypes = { StatisticType.GLOBAL }, name = "goals", parameters = {})
+@SportsQL(gameTypes = { GameType.SOCCER }, statisticTypes = { StatisticType.GLOBAL }, name = "goals", parameters = {
+		@SportsQLParameter(name = "evaluation", parameterClass = SportsQLEvaluationParameter.class, mandatory = false)
+})
 public class GoalsSportsQLParser implements ISportsQLParser {
 
 	// / Goal values
@@ -177,7 +181,7 @@ public class GoalsSportsQLParser implements ISportsQLParser {
 		allOperators.add(goals_aggregate);
 
 		return OperatorBuildHelper.finishQuery(goals_aggregate, allOperators,
-				sportsQL.getDisplayName());
+				sportsQL.getDisplayName(),sportsQL);
 	}
 
 	private AggregateAO createGoalsAggregate(ILogicalOperator input) {

@@ -16,6 +16,7 @@ import de.uniol.inf.is.odysseus.sports.sportsql.parser.annotations.SportsQLParam
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.buildhelper.OperatorBuildHelper;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.enums.GameType;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.enums.StatisticType;
+import de.uniol.inf.is.odysseus.sports.sportsql.parser.parameter.SportsQLEvaluationParameter;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.parameter.SportsQLTimeParameter;
 /**
  * Parser for SportsQL:
@@ -39,6 +40,7 @@ import de.uniol.inf.is.odysseus.sports.sportsql.parser.parameter.SportsQLTimePar
 		statisticTypes = { StatisticType.PLAYER },
 		name = "ball_contact",
 		parameters = { 
+				@SportsQLParameter(name = "evaluation", parameterClass = SportsQLEvaluationParameter.class, mandatory = false),
 				@SportsQLParameter(name = "time", parameterClass = SportsQLTimeParameter.class, mandatory = false)			
 				}
 		)
@@ -75,7 +77,7 @@ public class BallContactPlayerSportsQLParser implements ISportsQLParser {
 		ILogicalOperator countOutput = OperatorBuildHelper.createAggregateAO("count", groupCount, "entity_id", "ballContactCount", "Integer", assureHeartbeatAO, dumpAtValueCount);
 		allOperators.add(countOutput);		
 		
-		return OperatorBuildHelper.finishQuery(countOutput, allOperators, sportsQL.getDisplayName());
+		return OperatorBuildHelper.finishQuery(countOutput, allOperators, sportsQL.getDisplayName(),sportsQL);
 	}
 
 }

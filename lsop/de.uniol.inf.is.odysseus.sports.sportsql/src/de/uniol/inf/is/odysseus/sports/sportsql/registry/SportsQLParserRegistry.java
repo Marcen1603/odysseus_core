@@ -6,6 +6,8 @@ import java.util.Map;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.fasterxml.jackson.core.JsonGenerationException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
@@ -147,6 +149,7 @@ public class SportsQLParserRegistry {
 		String type = null;
 		String game = null;
 		String name = null;
+	
 		
 		String displayName = null;
 		
@@ -188,6 +191,7 @@ public class SportsQLParserRegistry {
 			// optional
 		}
 		
+		
 		ISportsQLParser parser = getSportsQLParser(type, game, name);
 		SportsQL sportsQLAnnotation = parser.getClass().getAnnotation(	SportsQL.class);
 		SportsQLParameter[] sportsQLParameters = sportsQLAnnotation.parameters();
@@ -221,7 +225,12 @@ public class SportsQLParserRegistry {
 			ISportsQLParameter parameter = null;
 			try {
 				parameter = mapper.readValue(value, parameterClass);
-			} catch (Exception e) {
+			}catch (JsonGenerationException e) {
+				e.printStackTrace();
+			} catch (JsonMappingException e) {
+				e.printStackTrace();
+			}
+			catch (Exception e) {
 				throw new RuntimeException("Value of parameter "+ parameterName + " is not valid");
 			}
 			parametersMap.put(parameterName, parameter);
@@ -231,8 +240,9 @@ public class SportsQLParserRegistry {
 		SportsQLQuery query = new SportsQLQuery();
 		query.setStatisticType(StatisticType.valueOf(type.trim().toUpperCase()));
 		query.setGameType(GameType.valueOf(game.trim().toUpperCase()));
-		query.setName(name.trim().toUpperCase());		
-		
+		query.setName(name.trim().toUpperCase());	
+	
+	
 		if(displayName != null){
 			query.setDisplayName(displayName.toUpperCase());
 		}else{

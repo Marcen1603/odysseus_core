@@ -18,6 +18,7 @@ import de.uniol.inf.is.odysseus.sports.sportsql.parser.buildhelper.IntermediateS
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.buildhelper.OperatorBuildHelper;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.enums.GameType;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.enums.StatisticType;
+import de.uniol.inf.is.odysseus.sports.sportsql.parser.parameter.SportsQLEvaluationParameter;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.parameter.SportsQLSpaceParameter;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.parameter.SportsQLTimeParameter;
 
@@ -36,6 +37,7 @@ import de.uniol.inf.is.odysseus.sports.sportsql.parser.parameter.SportsQLTimePar
  *
  */
 @SportsQL(gameTypes = { GameType.SOCCER }, statisticTypes = { StatisticType.TEAM }, name = "shotongoal", parameters = {
+		@SportsQLParameter(name = "evaluation", parameterClass = SportsQLEvaluationParameter.class, mandatory = false),
 		@SportsQLParameter(name = "time", parameterClass = SportsQLTimeParameter.class, mandatory = false),
 		@SportsQLParameter(name = "space", parameterClass = SportsQLSpaceParameter.class, mandatory = false) })
 public class ShotOnGoalTeamSportsQLParser implements ISportsQLParser {
@@ -75,7 +77,7 @@ public class ShotOnGoalTeamSportsQLParser implements ISportsQLParser {
 		allOperators.add(out);
 		
 		return OperatorBuildHelper.finishQuery(out, allOperators,
-				sportsQL.getDisplayName());
+				sportsQL.getDisplayName(),sportsQL);
 	}
 
 }
