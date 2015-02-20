@@ -15,20 +15,42 @@ import de.uniol.inf.is.odysseus.trajectory.compare.owd.data.OwdData;
 import de.uniol.inf.is.odysseus.trajectory.compare.owd.rasterization.AdvancedBresenhamRasterizer;
 import de.uniol.inf.is.odysseus.trajectory.compare.owd.rasterization.IRasterizer;
 
-
+/**
+ * Implementation of <tt>AbstractTrajectoryCompareAlgoritm</tt> which is set up to 
+ * calculate OWD distances.
+ * 
+ * @author marcus
+ *
+ */
 public class Owd extends AbstractTrajectoryCompareAlgoritm<IConvertedDataTrajectory<OwdData>, OwdData> {
 
+	/** Logger for debugging purposes */
 	private final static Logger LOGGER = LoggerFactory.getLogger(Owd.class);
 	
 	private final static String GRID_CELL_SIZE_KEY = "gridcellsize";
 	private final static String GRID_WIDTH_KEY = "gridwidth";
 	private final static String GRID_HEIGHT_SIZE_KEY = "gridheight";
 	
+	/** the size of a <tt>GridCell</tt> */
 	private double gridCellSize;
+	
+	/** the diagonal length of the grid */
 	private double diagonalLength;
 	
+	/** for rasterizing trajectories */
 	private IRasterizer rasterizer;
 	
+	/**
+	 * Creates an instance of <tt>Owd</tt>.
+	 * 
+	 * @param options the options for the algorithm
+	 * @param k the k-nearest trajectories to find
+	 * @param queryTrajectory the raw query trajectory
+	 * @param textualAttributes textual attributes of the query trajectory
+	 * @param utmZone the UTM zone of the trajectories
+	 * @param lambda the importance between spatial and textual distance
+	 * @return a new <tt>ITrajectoryCompareAlgorithm</tt>
+	 */
 	public Owd(final Map<String, String> options, final int k,
 			final RawQueryTrajectory queryTrajectory,
 			final Map<String, String> textualAttributes, final int utmZone, final double lambda) {

@@ -17,15 +17,33 @@ import de.uniol.inf.is.odysseus.trajectory.compare.data.IConvertedDataTrajectory
 import de.uniol.inf.is.odysseus.trajectory.compare.data.IConvertedQueryTrajectory;
 import de.uniol.inf.is.odysseus.trajectory.compare.textual.ITextualDistance;
 
+/**
+ * The default implementation of <tt>IDistanceService</tt>.
+ * 
+ * @author marcus
+ *
+ * @param <T> the type of the data for the trajectories
+ */
 public class SpatialTextualDistanceService<T> implements IDistanceService<T> {
 
+	/** Logger for debugging purposes */
 	private final static Logger LOGGER = LoggerFactory.getLogger(SpatialTextualDistanceService.class);
 	
+	/** the query trajectories and their corresponding data trajectories */
 	private final Map<IConvertedQueryTrajectory<T>, QueryTrajectoryData> trajectoryMap = new HashMap<>();
 	
+	/** for measuring spatial distance -> can be <tt>null</tt> */
 	private final ISpatialDistance<T> spatialDistance;
+	
+	/** for measuring textual distance -> can be <tt>null</tt> */
 	private final ITextualDistance textualDistance;
 	
+	/**
+	 * Creates an instance of <tt>SpatialTextualDistanceService</tt>.
+	 * 
+	 * @param spatialDistance for measuring spatial distance
+	 * @param textualDistance for measuring textual distance -> can be <tt>null</tt>
+	 */
 	public SpatialTextualDistanceService(final ISpatialDistance<T> spatialDistance, final ITextualDistance textualDistance) {
 		this.spatialDistance = spatialDistance;
 		this.textualDistance = textualDistance;
@@ -69,6 +87,11 @@ public class SpatialTextualDistanceService<T> implements IDistanceService<T> {
 		return this.computeResult(qData);
 	}
 
+	/**
+	 * Computes the k-nearest data trajecotries.
+	 * @param qData
+	 * @return
+	 */
 	private List<IConvertedDataTrajectory<T>> computeResult(final QueryTrajectoryData qData) {
 		final List<IConvertedDataTrajectory<T>> result = new ArrayList<>(qData.k);
 		final Iterator<IConvertedDataTrajectory<T>> it = qData.kNearest.iterator();
@@ -81,15 +104,20 @@ public class SpatialTextualDistanceService<T> implements IDistanceService<T> {
 	
 	/**
 	 * 
+	 * Class for holding parameters for a query trajectory.
+	 * 
 	 * @author marcus
 	 *
 	 */
 	private final class QueryTrajectoryData {
 		
+		/** the k-nearest trajectories to find */
 		private final int k;
 		
+		/** the importance between spatial and textual distance */
 		private final double lambda;
 		
+		/** stores the k-nearest data trajectories */
 		private final SortedMultiset<IConvertedDataTrajectory<T>> kNearest = TreeMultiset.create(new Comparator<IConvertedDataTrajectory<T>>() {
 			@Override
 			public int compare(final IConvertedDataTrajectory<T> o1, final IConvertedDataTrajectory<T> o2) {
@@ -100,6 +128,11 @@ public class SpatialTextualDistanceService<T> implements IDistanceService<T> {
 			}
 		});
 		
+		/**
+		 * Creates an instance of <tt>QueryTrajectoryData</tt>.
+		 * @param k the k-nearest trajectories to find
+		 * @param lambda the importance between spatial and textual distance
+		 */
 		private QueryTrajectoryData(final int k, final double lambda) {
 			this.k = k;
 			this.lambda = lambda;

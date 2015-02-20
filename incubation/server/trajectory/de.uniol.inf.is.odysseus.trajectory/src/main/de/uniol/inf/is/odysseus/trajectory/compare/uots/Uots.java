@@ -17,17 +17,38 @@ import de.uniol.inf.is.odysseus.trajectory.compare.uots.graph.NetGraph;
 import de.uniol.inf.is.odysseus.trajectory.compare.uots.mapmatch.IMapMatcher;
 import de.uniol.inf.is.odysseus.trajectory.compare.uots.mapmatch.MapMatcherFactory;
 
+/**
+ * Implementation of <tt>AbstractTrajectoryCompareAlgoritm</tt> which is set up to 
+ * calculate UOTS distances.
+ * 
+ * @author marcus
+ *
+ */
 public class Uots extends AbstractTrajectoryCompareAlgoritm<IConvertedDataTrajectory<UotsData>, UotsData> {
 	
-
+	/** Logger for debugging purposes */
 	private final static Logger LOGGER = LoggerFactory.getLogger(Uots.class);
 	
 	private final static String MAP_FILE_KEY = "mapfile";
 	private final static String MAP_MATCHER_KEY = "mapmatching";
 
+	/** the <tt>NetGraph</tt> */
 	private NetGraph graph;
+	
+	/** for map-matching */
 	private IMapMatcher mapMatcher;
-		
+
+	/**
+	 * Creates an instance of <tt>Uots</tt>.
+	 * 
+	 * @param options the options for the algorithm
+	 * @param k the k-nearest trajectories to find
+	 * @param queryTrajectory the raw query trajectory
+	 * @param textualAttributes textual attributes of the query trajectory
+	 * @param utmZone the UTM zone of the trajectories
+	 * @param lambda the importance between spatial and textual distance
+	 * @return a new <tt>ITrajectoryCompareAlgorithm</tt>
+	 */
 	public Uots(final Map<String, String> options, final int k,
 			final RawQueryTrajectory queryTrajectory,
 			final Map<String, String> textualAttributes, final int utmZone, final double lambda) {

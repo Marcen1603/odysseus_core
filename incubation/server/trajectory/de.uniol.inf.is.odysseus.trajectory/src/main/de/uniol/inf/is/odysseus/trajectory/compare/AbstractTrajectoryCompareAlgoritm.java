@@ -16,7 +16,10 @@ import de.uniol.inf.is.odysseus.trajectory.compare.data.RawQueryTrajectory;
 import de.uniol.inf.is.odysseus.trajectory.compare.textual.VectorTextualDistance;
 
 /**
- * Abstract base implementation of 
+ * Abstract base implementation of <tt>ITrajectoryCompareAlgorithm</tt>.
+ * Subclasses only needs to convert <tt>RawTrajectories<tt> and create an
+ * <tt>ISpatialDistance</tt>,
+ * 
  * @author marcus
  *
  * @param <T>
@@ -24,14 +27,29 @@ import de.uniol.inf.is.odysseus.trajectory.compare.textual.VectorTextualDistance
  */
 public abstract class AbstractTrajectoryCompareAlgoritm<T extends IConvertedDataTrajectory<E>, E> implements ITrajectoryCompareAlgorithm<T, E> {
 
+	/** Logger for debugging purposes */
 	private final static Logger LOGGER = LoggerFactory.getLogger(AbstractTrajectoryCompareAlgoritm.class);
 	
+	/** the query trajectory */
 	private final IConvertedQueryTrajectory<E> queryTrajectory;
 	
+	/** the received data trajectories */
 	private final List<IConvertedDataTrajectory<E>> trajectories = new LinkedList<>();
 	
+	/** the distance service */
 	private final IDistanceService<E> distanceService;
 	
+	/**
+	 * Creates an instance of <tt>AbstractTrajectoryCompareAlgoritm</tt>.
+	 * 
+	 * @param options the options for the algorithm
+	 * @param k the k-nearest trajectories to find
+	 * @param queryTrajectory the raw query trajectory
+	 * @param textualAttributes textual attributes of the query trajectory
+	 * @param utmZone the UTM zone of the trajectories
+	 * @param lambda the importance between spatial and textual distance
+	 * @return a new <tt>ITrajectoryCompareAlgorithm</tt>
+	 */
 	protected AbstractTrajectoryCompareAlgoritm(final Map<String, String> options, final int k,
 			final RawQueryTrajectory queryTrajectory, final Map<String, String> textualAttributes,
 			final int utmZone, final double lambda) {
@@ -69,10 +87,29 @@ public abstract class AbstractTrajectoryCompareAlgoritm<T extends IConvertedData
 		return (List<T>)this.distanceService.getDistance(this.queryTrajectory, converted);
 	}
 	
+	/**
+	 * Creates and returns <tt>ISpatialDistance</tt>.
+	 * 
+	 * @return the spatial <tt>ISpatialDistance</tt>
+	 */
 	protected abstract ISpatialDistance<E> createDistanceService();
 	
+	/**
+	 * 
+	 * @param trajectory
+	 * @param textualAttributes
+	 * @param utmZone
+	 * @param options
+	 * @return
+	 */
 	protected abstract IConvertedQueryTrajectory<E> convert(final RawQueryTrajectory trajectory, final Map<String, String> textualAttributes,
 			int utmZone, final Map<String, String> options);
 	
+	/**
+	 * Converts a <tt>IConvertedDataTrajectory</tt> and returns the converted <tt>RawDataTrajectory</tt>.
+	 * 
+	 * @param queryTrajectory the <tt>IConvertedDataTrajectory</tt> to be converted
+	 * @return the converted <tt>RawDataTrajectory</tt>
+	 */
 	protected abstract IConvertedDataTrajectory<E> convert(final RawDataTrajectory queryTrajectory);
 }
