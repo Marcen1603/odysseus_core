@@ -4,6 +4,7 @@ import java.util.Locale;
 
 import de.uniol.inf.is.odysseus.trajectory.util.AbstractFactory;
 
+
 public class MapMatcherFactory extends AbstractFactory<IMapMatcher, String> {
 
 	private static final MapMatcherFactory INSTANCE = new MapMatcherFactory();

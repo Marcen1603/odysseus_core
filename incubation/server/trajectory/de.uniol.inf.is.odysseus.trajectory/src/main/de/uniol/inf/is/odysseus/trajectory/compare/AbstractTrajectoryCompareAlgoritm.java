@@ -16,7 +16,7 @@ import de.uniol.inf.is.odysseus.trajectory.compare.data.RawQueryTrajectory;
 import de.uniol.inf.is.odysseus.trajectory.compare.textual.VectorTextualDistance;
 
 /**
- * 
+ * Abstract base implementation of 
  * @author marcus
  *
  * @param <T>
