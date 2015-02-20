@@ -1,36 +1,23 @@
 package de.uniol.inf.is.odysseus.video.physicaloperator;
 
-import static org.bytedeco.javacpp.opencv_core.cvCreateImage;
-import static org.bytedeco.javacpp.opencv_core.cvSize;
+
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Collection;
-import java.util.concurrent.TimeUnit;
 
-import org.bytedeco.javacpp.opencv_core.IplImage;
 import org.bytedeco.javacv.FFmpegFrameGrabber;
 import org.bytedeco.javacv.FrameGrabber;
-import org.bytedeco.javacv.FrameGrabber.Exception;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.collection.OptionMap;
-import de.uniol.inf.is.odysseus.core.collection.Tuple;
-import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
-import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
-import de.uniol.inf.is.odysseus.core.metadata.TimeInterval;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
-import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.AbstractSimplePullTransportHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandler;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFConstraint;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
-import de.uniol.inf.is.odysseus.imagejcv.common.datatype.ImageJCV;
-import de.uniol.inf.is.odysseus.imagejcv.common.sdf.schema.SDFImageJCVDatatype;
+
+
 
 @SuppressWarnings("unused")
-public class VideoFileTransportHandler extends AbstractSimplePullTransportHandler<Tuple<IMetaAttribute>> 
+public class VideoFileTransportHandler extends FrameGrabberTransportHandler 
 {
 	private enum TimeStampMode
 	{
@@ -38,23 +25,16 @@ public class VideoFileTransportHandler extends AbstractSimplePullTransportHandle
 	};
 	
 //	@SuppressWarnings("unused")
-	private final Logger logger = LoggerFactory.getLogger(VideoFileTransportHandler.class);
-	private final Object processLock = new Object();
+	private final Logger logger = LoggerFactory.getLogger(VideoFileTransportHandler.class);	
 	
 	private String videoUrl;
 	private TimeStampMode timeStampMode;
-	private double fps;
 	private boolean useDelay;
-
-	private FFmpegFrameGrabber 	frameGrabber;
+	
 	private long startTime;
 	private double currentTime; // Current timestamp in seconds
 	private String syncFileName = null;
-	
-	private ImageJCV 	currentImage;
-	private Thread 		startupThread;
-	protected Exception startupException;
-	
+			
 	public VideoFileTransportHandler() 
 	{
 		super();
@@ -70,8 +50,8 @@ public class VideoFileTransportHandler extends AbstractSimplePullTransportHandle
 
 		options.checkRequiredException("videourl");
 		
-		videoUrl = options.get("videourl");
 		fps = options.getDouble("fps", 0.0);
+		videoUrl = options.get("videourl");		
 		useDelay = options.getBoolean("usedelay",  false);
 		
 		String timeStampModeStr = options.get("timestampmode", "start");
@@ -95,6 +75,8 @@ public class VideoFileTransportHandler extends AbstractSimplePullTransportHandle
 
 	@Override public void processInOpen() throws IOException 
 	{
+		super.processInOpen();
+		
 		switch (timeStampMode)
 		{
 		case start:
@@ -129,98 +111,34 @@ public class VideoFileTransportHandler extends AbstractSimplePullTransportHandle
 			startTime = System.currentTimeMillis();
 		
 		currentTime = startTime / 1000.0;
-
-		currentImage = null;
-		startupException = null;
-		frameGrabber = null;
-		
-		startupThread = new Thread()
-		{
-			@Override public void run()
-			{
-				FFmpegFrameGrabber newFrameGrabber = new FFmpegFrameGrabber(videoUrl);
-				try 
-				{
-					newFrameGrabber.start();
-					if (fps == 0.0)
-						fps = newFrameGrabber.getFrameRate();
-					VideoFileTransportHandler.this.frameGrabber = newFrameGrabber;
-				} 
-				catch (FrameGrabber.Exception e) 
-				{
-					startupException = e;
-				}
-				
-				startupThread = null;
-			}
-		};
-		startupThread.start();
 	}
 	
-	@SuppressWarnings("deprecation")
-	@Override public void processInClose() throws IOException 
+	@Override
+	protected FrameGrabber getFrameGrabber() 
 	{
-		synchronized (processLock)
-		{
-			if (startupThread != null)
-			{
-				try 
-				{
-					startupThread.join(1000);
-				} 
-				catch (InterruptedException e) 
-				{
-					Thread.currentThread().interrupt();
-				}
-
-				startupThread.stop();
-				startupThread = null;
-			}
-			
-			if (frameGrabber != null)
-			{
-				try 
-				{
-					frameGrabber.stop();
-					frameGrabber.release();
-				} 
-				catch (Exception e)
-				{
-					throw new IOException(e.getMessage());
-				}
-				finally 
-				{				
-					frameGrabber = null;
-				}
-			}
-		}
-	}
-
-	private void setAttributeByDatatype(Tuple<IMetaAttribute> tuple, SDFDatatype type, Object object)
+		return new FFmpegFrameGrabber(videoUrl);
+	}	
+	   
+	@Override
+	protected GrabResult getFrame() throws FrameGrabber.Exception 
 	{
-		for (int i=0;i<getSchema().size();i++)
-		{
-			if (getSchema().getAttribute(i).getDatatype().equals(type))
+		if (useDelay)
+			try 
 			{
-				tuple.setAttribute(i, object);
-				break;
-			}
-		}		
-	}
-	
-	@Override public Tuple<IMetaAttribute> getNext() 
-	{
-		if (currentImage == null) return null;		
+				Thread.sleep((long)(1000.0 / fps));
+			} 
+			catch (InterruptedException e) 
+			{
+				e.printStackTrace();
+				Thread.currentThread().interrupt();
+			}		
 		
-		Tuple<IMetaAttribute> tuple = new Tuple<>(getSchema().size(), true);
-
-		int[] attrs = getSchema().getSDFDatatypeAttributePositions(SDFImageJCVDatatype.IMAGEJCV);
-		if (attrs.length > 0) tuple.setAttribute(attrs[0], currentImage);
-		currentImage = null;
+		GrabResult result = new GrabResult();
+		result.image = frameGrabber.grab();
 		
 		if (timeStampMode != TimeStampMode.none)
 		{		
-	        long startTimeStamp = (long) (currentTime * 1000.0);        		
+			result.startTimeStamp = (long) (currentTime * 1000.0);        		
 					        	        
 	        if (syncFileName != null)
 	        {
@@ -232,58 +150,16 @@ public class VideoFileTransportHandler extends AbstractSimplePullTransportHandle
 	        	currentTime += 1.0 / fps;
 	        }
 		        
-	        long endTimeStamp = (long) (currentTime * 1000.0);
-
-			attrs = getSchema().getSDFDatatypeAttributePositions(SDFDatatype.START_TIMESTAMP);
-			if (attrs.length > 0) tuple.setAttribute(attrs[0], startTimeStamp);
-
-			attrs = getSchema().getSDFDatatypeAttributePositions(SDFDatatype.END_TIMESTAMP);
-			if (attrs.length > 0) tuple.setAttribute(attrs[0], endTimeStamp);			
+	        result.endTimeStamp = (long) (currentTime * 1000.0);
 		}
-				
-		return tuple;
-	}
-    
-	@Override public boolean hasNext() 
-	{
-		if (useDelay)
-			try 
-			{
-				Thread.sleep((long)(1000.0 / fps));
-			} 
-			catch (InterruptedException e) 
-			{
-				e.printStackTrace();
-				Thread.currentThread().interrupt();
-			}
-			
-		synchronized (processLock)
-		{		
-			try 
-			{
-				if (frameGrabber == null)
-				{
-					if (startupException == null)
-						return false;
-					else
-						throw new RuntimeException(startupException);
-				}
-				
-				IplImage iplImage = frameGrabber.grab();
-				if (iplImage == null || iplImage.isNull()) return false;
-				
-				IplImage copy = cvCreateImage(cvSize(iplImage.width(), iplImage.height()), iplImage.depth(), iplImage.nChannels());
-				copy.getByteBuffer().put(iplImage.getByteBuffer());				
-				
-				currentImage = new ImageJCV(copy);
-				return true;
-			} 
-			catch (Exception e) 
-			{
-				throw new RuntimeException(e);
-			}		
-		}		
-	}
+		else
+		{
+			result.startTimeStamp = null;
+			result.endTimeStamp = null;
+		}
+		
+		return result;
+	}	
 		
     @Override
     public boolean isSemanticallyEqualImpl(ITransportHandler o) {
