@@ -22,6 +22,8 @@ import de.uniol.inf.is.odysseus.p2p_new.IP2PNetworkManager;
 import de.uniol.inf.is.odysseus.peer.distribute.ILogicalQueryPart;
 import de.uniol.inf.is.odysseus.peer.distribute.util.LogicalQueryHelper;
 import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryCommunicator;
+import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryStrategyManager;
+import de.uniol.inf.is.odysseus.peer.recovery.internal.RecoveryProcessState;
 
 /**
  * Helper class for recovery agreements.
@@ -128,6 +130,51 @@ public class AgreementHelper {
 
 			cCommunicator = Optional.absent();
 			LOG.debug("Unbound {} as a recovery communicator.", serv.getClass()
+					.getSimpleName());
+
+		}
+
+	}
+	
+	/**
+	 * The recovery strategy manager, if there is one bound.
+	 */
+	private static Optional<IRecoveryStrategyManager> cRecoveryStrategyManager = Optional
+			.absent();
+
+	/**
+	 * Binds a recovery strategy manager. <br />
+	 * Called by OSGi-DS.
+	 * 
+	 * @param serv
+	 *            The recovery strategy manager to bind. <br />
+	 *            Must be not null.
+	 */
+	public void bindRecoveryStrategyManager(IRecoveryStrategyManager serv) {
+
+		Preconditions.checkNotNull(serv);
+		cRecoveryStrategyManager = Optional.of(serv);
+		LOG.debug("Bound {} as a recovery strategy manager.", serv.getClass()
+				.getSimpleName());
+
+	}
+
+	/**
+	 * Unbinds a recovery strategy manager, if it's the bound one. <br />
+	 * Called by OSGi-DS.
+	 * 
+	 * @param serv
+	 *            The recovery strategy manager to unbind. <br />
+	 *            Must be not null.
+	 */
+	public void unbindRecoveryStrategyManager(IRecoveryStrategyManager serv) {
+
+		Preconditions.checkNotNull(serv);
+
+		if (cRecoveryStrategyManager.isPresent() && cRecoveryStrategyManager.get() == serv) {
+
+			cRecoveryStrategyManager = Optional.absent();
+			LOG.debug("Unbound {} as a recovery strategy manager.", serv.getClass()
 					.getSimpleName());
 
 		}
@@ -291,6 +338,10 @@ public class AgreementHelper {
 			LOG.error("No recovery communicator bound!");
 			return;
 		}
+		if (!cRecoveryStrategyManager.isPresent()) {
+			LOG.error("No recovery strategy manager bound!");
+			return;
+		}
 
 		// 1. Check, if another peer detected the failure earlier and will do
 		// the recovery
@@ -344,13 +395,32 @@ public class AgreementHelper {
 					String pql = LogicalQueryHelper
 							.generatePQLStatementFromQueryPart(queryPart);
 
-					cCommunicator.get().installQueriesOnNewPeer(failedPeer,
-							newPeer, localQueryId, queryState, pql,
-							recoveryStateIdentifier, subprocessID, sharedQuery, master, masterId, clientIp, hostIP, hostPort);
+					if(cCommunicator.get().installQueriesOnNewPeer(failedPeer,
+						newPeer, localQueryId, queryState, pql,
+						recoveryStateIdentifier, subprocessID, sharedQuery, master, masterId, clientIp, hostIP, hostPort)){
+						// Now we did this, so remove that we want to do this
+						// recovery
+						removeBackupQueueEntry(failedPeer, localQueryId);
+					} else {
+						// install failed, so find another peer for recovery
+						// redo the recovery process without the timeout peer
+						LOG.debug("Install on peer " + newPeer +  "failed,  restarting recovery for query part " + subprocessID.toString(), recoveryStateIdentifier);
+						if (recoveryStateIdentifier != null) {
+							RecoveryProcessState state = cCommunicator.get().getRecoveryProcessState(recoveryStateIdentifier);
+							if (state != null) {
+								// senderPeer is peer that couldn't recover, we need to
+								// reallocate another peer
+								state.addInadequatePeer(newPeer, subprocessID);
+								cRecoveryStrategyManager.get().restartRecovery(state.getFailedPeerId(), state.getIdentifier(),
+										subprocessID);
+							} else {
+								LOG.error("Could not find RecoveryProcessState with ID: {}", recoveryStateIdentifier);
+							}
+						} else {
+							LOG.error("Install-Query-Fail has no RecoveryProcessStateId");
+						}
+					}
 
-					// Now we did this, so remove that we want to do this
-					// recovery
-					removeBackupQueueEntry(failedPeer, localQueryId);
 				} else {
 					LOG.debug(
 							"Another peer won the peerId-battle for this peer, I won't do recovery for {}",
@@ -399,5 +469,6 @@ public class AgreementHelper {
 
 		return false;
 	}
+	
 
 }

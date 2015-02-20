@@ -97,7 +97,7 @@ public interface IRecoveryCommunicator extends IPeerDictionaryListener {
 	 * @param recoveryStateIdentifier
 	 */
 	// TODO Better way: allocate each single query part new. M.B.
-	public void installQueriesOnNewPeer(PeerID failedPeer, PeerID newPeer, int localQueryId, QueryState queryState,
+	public boolean installQueriesOnNewPeer(PeerID failedPeer, PeerID newPeer, int localQueryId, QueryState queryState,
 			String pql, UUID recoveryStateIdentifier, UUID subprocessID, ID sharedQuery, boolean master,
 			PeerID masterId, String clientIp, String hostIP, int hostPort);
 

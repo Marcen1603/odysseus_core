@@ -39,6 +39,8 @@ import de.uniol.inf.is.odysseus.rest.socket.SocketInfo;
  */
 public class RecoveryCommunicator implements IRecoveryCommunicator {
 
+	int r = 0;
+	
 	public final static int PEER_INSTRUCTIONS_PORT = 53000;
 
 	/**
@@ -304,7 +306,7 @@ public class RecoveryCommunicator implements IRecoveryCommunicator {
 	}
 
 	@Override
-	public void installQueriesOnNewPeer(PeerID failedPeer, PeerID newPeer, int localQueryId, QueryState queryState,
+	public boolean installQueriesOnNewPeer(PeerID failedPeer, PeerID newPeer, int localQueryId, QueryState queryState,
 			String pql, UUID recoveryStateIdentifier, UUID subprocessID, ID sharedQuery, boolean master,
 			PeerID masterId, String clientIp, String hostIP, int hostPort) {
 
@@ -314,13 +316,12 @@ public class RecoveryCommunicator implements IRecoveryCommunicator {
 
 		if (!cPeerCommunicator.isPresent()) {
 			LOG.error("No peer communicator bound!");
-			return;
+			return false;
 		}
-
+			
 		// Send the add query message
-		AddQuerySender.getInstance().sendAddQueryPart(newPeer, pql, localQueryId, queryState, sharedQuery, master,
-				masterId, failedPeer, clientIp, hostIP, hostPort, recoveryStateIdentifier, subprocessID,
-				cPeerCommunicator.get());
+		return AddQuerySender.getInstance().sendAddQueryPart(newPeer, pql, localQueryId, queryState, sharedQuery, master, masterId, failedPeer,
+				clientIp, hostIP, hostPort, recoveryStateIdentifier, subprocessID, cPeerCommunicator.get());
 	}
 
 	@Override
