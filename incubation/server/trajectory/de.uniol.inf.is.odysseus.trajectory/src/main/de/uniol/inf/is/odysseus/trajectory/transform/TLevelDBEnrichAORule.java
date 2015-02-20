@@ -14,6 +14,11 @@ import de.uniol.inf.is.odysseus.trajectory.physicaloperator.LevelDBEnrichPO;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
+/**
+ * This Rule creates a <tt>LevelDBEnrichPO</tt> for a <tt>LevelDBEnrichAO</tt>.
+ * @author marcus
+ *
+ */
 public class TLevelDBEnrichAORule extends AbstractTransformationRule<LevelDBEnrichAO> {
 
 	@Override
@@ -53,5 +58,4 @@ public class TLevelDBEnrichAORule extends AbstractTransformationRule<LevelDBEnri
 	public IRuleFlowGroup getRuleFlowGroup() {
 		return TransformRuleFlowGroup.TRANSFORMATION;
 	}
-
 }

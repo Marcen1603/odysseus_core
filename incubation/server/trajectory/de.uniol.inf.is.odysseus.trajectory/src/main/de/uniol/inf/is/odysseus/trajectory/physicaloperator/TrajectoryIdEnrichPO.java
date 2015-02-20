@@ -8,9 +8,18 @@ import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 
+/**
+ * A physical operator for <tt>TrajectoryIdEnrichAO</tt> which keeps <i>vehicleIds</i>
+ * and their <i>trajectoryIds</i> in a <tt>Map</i>. On each time a new <tt>Tuple</tt> arrives
+ * the <i>trajectoryId</i> for the <i>vehicle</i> in the Tuple will be incremented.
+ * 
+ * @author marcus
+ *
+ * @param <T> the type of the processed data
+ */
 public class TrajectoryIdEnrichPO<T extends Tuple<ITimeInterval>> extends AbstractPipe<T, T> {
 
-	
+	/** stores the current trajectoryId for each vehicleId */
 	private final Map<String, int[]> vehicleTrajectories = new HashMap<>();
 	
 	

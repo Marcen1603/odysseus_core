@@ -28,6 +28,8 @@ import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
 
 /**
+ * This Rule substitutes a <tt>TrajectoryConstructAO</tt> by various other logical operators based
+ * on the input.
  * 
  * @author marcus
  *

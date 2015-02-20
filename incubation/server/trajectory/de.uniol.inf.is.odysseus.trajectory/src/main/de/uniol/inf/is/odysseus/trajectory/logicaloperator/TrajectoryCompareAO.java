@@ -26,6 +26,11 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.Option;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.OptionParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
 
+/**
+ * The logical operator for comparing trajectories
+ * @author marcus
+ *
+ */
 @LogicalOperator(name = "TRAJECTORYCOMPARE", minInputPorts = 1, maxInputPorts = 1, doc="Compare Trajectories", category={LogicalOperatorCategory.ADVANCED})
 public class TrajectoryCompareAO extends UnaryLogicalOp {
 	
@@ -34,6 +39,7 @@ public class TrajectoryCompareAO extends UnaryLogicalOp {
 	 */
 	private static final long serialVersionUID = 2522194934279154977L;
 	
+	/** Logger for debugging purposes */
 	@SuppressWarnings("unused")
 	private static final Logger LOGGER = LoggerFactory.getLogger(TrajectoryCompareAO.class);
 

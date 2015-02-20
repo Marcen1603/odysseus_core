@@ -11,16 +11,16 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.trajectory.compare.ITrajectoryCompareAlgorithm;
 import de.uniol.inf.is.odysseus.trajectory.compare.TrajectoryCompareAlgorithmFactory;
-import de.uniol.inf.is.odysseus.trajectory.compare.data.RawDataTrajectory;
 import de.uniol.inf.is.odysseus.trajectory.compare.util.ITupleToRawTrajectoryConverter;
 import de.uniol.inf.is.odysseus.trajectory.compare.util.TupleToRawTrajectoryConverterFactory;
 
 
 /**
+ * A physical operator for <tt>TrajectoryCompareAO</tt>.
  * 
  * @author marcus
  *
- * @param <T>
+ * @param <T> the type of the processed data
  */
 public class TrajectoryComparePO<T extends Tuple<ITimeInterval>> extends AbstractPipe<T, T> {
 
@@ -31,12 +31,26 @@ public class TrajectoryComparePO<T extends Tuple<ITimeInterval>> extends Abstrac
 	
 	public static final int POINTS_POS = 2;
 
+	/** the algorithm to use for comparing trajectories in spatial dimension */
 	private final ITrajectoryCompareAlgorithm<?, ?> algorithm;
 	
+	/** for converting tuples to <tt>RawTrajetories</tt> */
 	private final ITupleToRawTrajectoryConverter tupleToRawTrajectoryConverter;
 	
+	/** the UTM zone of the trajectories */
 	private final int utmZone;
 
+	/**
+	 * Creates an instance of <tt>TrajectoryComparePO</tt>.
+	 * 
+	 * @param k the k-nearest trajectories to find
+	 * @param queryTrajectoryPath the file path to the query trajectory
+	 * @param utmZone the UTM zone of the trajectories
+	 * @param lambda importance between spatial and textual similarity
+	 * @param algorithm the algorithm to use for comparing trajectories in spatial dimension
+	 * @param textualAttributes the textual attributes of the query trajectory
+	 * @param options options for the spatial compare algorithm
+	 */
 	public TrajectoryComparePO(final int k, final String queryTrajectoryPath, final int utmZone, final double lambda, final String algorithm, 
 			final Map<String, String> textualAttributes, final Map<String, String> options) {
 		
@@ -51,12 +65,12 @@ public class TrajectoryComparePO<T extends Tuple<ITimeInterval>> extends Abstrac
 	@SuppressWarnings("unchecked")
 	@Override
 	protected void process_next(final T object, final int port) {
-		
-		final RawDataTrajectory rawTrajectory = this.tupleToRawTrajectoryConverter.convert(object, this.utmZone);
 		this.algorithm.removeBefore(object.getMetadata().getStart());
 		
 		final Tuple<ITimeInterval> result = new Tuple<ITimeInterval>(
-				this.algorithm.getKNearest(rawTrajectory),
+				this.algorithm.getKNearest(
+						this.tupleToRawTrajectoryConverter.convert(object, this.utmZone)
+				),
 				true
 		);
 		

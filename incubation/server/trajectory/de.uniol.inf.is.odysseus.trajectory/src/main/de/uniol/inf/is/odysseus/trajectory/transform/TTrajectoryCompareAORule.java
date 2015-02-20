@@ -9,7 +9,12 @@ import de.uniol.inf.is.odysseus.trajectory.physicaloperator.TrajectoryComparePO;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
-
+/**
+ * This Rule creates a <tt>TrajectoryComparePO</tt> for a <tt>TrajectoryCompareAO</tt>.
+ * 
+ * @author marcus
+ *
+ */
 public class TTrajectoryCompareAORule extends AbstractTransformationRule<TrajectoryCompareAO> {
 	
 	 @Override
@@ -32,7 +37,8 @@ public class TTrajectoryCompareAORule extends AbstractTransformationRule<Traject
 						 trajectoryAO.getOptionsMap()),
 				 config, 
 				 true,
-				 true);
+				 true
+		 );
 	 }
 	 
 	 @Override

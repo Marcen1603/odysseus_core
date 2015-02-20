@@ -18,6 +18,12 @@ import de.uniol.inf.is.odysseus.spatial.sourcedescription.sdf.schema.SDFSpatialD
 import de.uniol.inf.is.odysseus.trajectory.logicaloperator.builder.NestAggregateItem;
 import de.uniol.inf.is.odysseus.trajectory.logicaloperator.builder.NestAggregateItemParameter;
 
+/**
+ * the logical operator for constructing trajectories from GPS sample points.
+ * 
+ * @author marcus
+ *
+ */
 @LogicalOperator(name = "TRAJECTORYCONSTRUCT", minInputPorts = 1, maxInputPorts = 1, doc="Construct Trajectories", category={LogicalOperatorCategory.ADVANCED})
 public class TrajectoryConstructAO extends UnaryLogicalOp {
 	
@@ -26,13 +32,23 @@ public class TrajectoryConstructAO extends UnaryLogicalOp {
 	 */
 	private static final long serialVersionUID = 8226843002104428660L;
 		
-		
+	/** indicates whether subtrajectories shall be constructed */
 	private boolean subtrajectories = false;
 	
-	private SDFAttribute trajectoryId;
+	/**
+	 * the attribute where the vehicle Id is stored.
+	 * Only sample points with same vehicle id may belong to
+	 * a trajectory.
+	 */
+	private SDFAttribute vehicleId;
 	
+	/** the attribute where the vehicle Id is stored */
 	private NestAggregateItem positionMapping;
 	
+	/**
+	 * the path to the LevelDB where textual attributes for
+	 * vehicles are stored.
+	 */
 	private File levelDBPath;
 	
 	
@@ -43,7 +59,7 @@ public class TrajectoryConstructAO extends UnaryLogicalOp {
 		super(trajectoryConstructAO);
 		
 		this.subtrajectories = trajectoryConstructAO.subtrajectories;
-		this.trajectoryId = trajectoryConstructAO.trajectoryId;
+		this.vehicleId = trajectoryConstructAO.vehicleId;
 		this.positionMapping = trajectoryConstructAO.positionMapping;
 		this.levelDBPath = trajectoryConstructAO.levelDBPath;
 	}
@@ -59,7 +75,7 @@ public class TrajectoryConstructAO extends UnaryLogicalOp {
 	
 	@Parameter(name = "TRAJECTORYID", type = ResolvedSDFAttributeParameter.class)
 	public void setTrajectoryId(final SDFAttribute trajectoryId) {
-		this.trajectoryId = trajectoryId;
+		this.vehicleId = trajectoryId;
 	}
 	
 	@Parameter(name = "POSITIONMAP", type = NestAggregateItemParameter.class)
@@ -78,7 +94,7 @@ public class TrajectoryConstructAO extends UnaryLogicalOp {
 	}
 	
 	public SDFAttribute getTrajectoryId() {
-		return this.trajectoryId;
+		return this.vehicleId;
 	}
 	
 	public NestAggregateItem getPositionMapping() {

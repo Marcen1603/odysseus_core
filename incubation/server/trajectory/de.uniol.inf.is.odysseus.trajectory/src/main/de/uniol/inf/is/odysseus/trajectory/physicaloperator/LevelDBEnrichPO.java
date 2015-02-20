@@ -23,20 +23,32 @@ import de.uniol.inf.is.odysseus.core.server.cache.ICache;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractEnrichPO;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IDataMergeFunction;
 
+/**
+ * A physical operator for <tt>LevelDBEnrichAO</tt>.
+ * 
+ * @author marcus
+ *
+ * @param <T> an type of <tt>IMetaAttribute</tt>
+ */
 public class LevelDBEnrichPO<T extends IMetaAttribute> extends AbstractEnrichPO<Tuple<T>, T> {
 
+	/** Logger for debugging purposes */
 	private final static Logger LOGGER = LoggerFactory.getLogger(LevelDBEnrichPO.class);
 	
+	/** options for the LevelDB */
 	private final static Options OPTIONS = new Options();
 	
 	static {
 		OPTIONS.createIfMissing(false);
 	}
 	
+	/** the file path to the LevelDB */
 	private final File levelDBPath;
 	
+	/** the position of the key attribute in the attribute schema */
 	private final int in;
 	
+	/** the position of the attribute in the attribute schema where to write result */
 	private final int out;
 	
 	private DB levelDB;
@@ -73,6 +85,7 @@ public class LevelDBEnrichPO<T extends IMetaAttribute> extends AbstractEnrichPO<
 
 	@Override
 	protected List<IStreamObject<?>> internal_process(final Tuple<T> input) {
+		
 		final ByteArrayInputStream arrayInputStream = 
 				new ByteArrayInputStream(this.levelDB.get(bytes((String)input.getAttribute(this.in))));
 		ObjectInputStream objectInputStream = null;

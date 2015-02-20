@@ -10,6 +10,12 @@ import de.uniol.inf.is.odysseus.trajectory.physicaloperator.TrajectoryIdEnrichPO
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
+/**
+ * This Rule creates a <tt>TrajectoryIdEnrichPO</tt> for a <tt>TrajectoryIdEnrichAO</tt>.
+ * 
+ * @author marcus
+ *
+ */
 public class TTrajectoryIdEnrichAORule extends AbstractTransformationRule<TrajectoryIdEnrichAO> {
 
 	@Override

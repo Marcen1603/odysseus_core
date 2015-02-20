@@ -28,9 +28,10 @@ public class LevelDBEnrichAO extends AbstractEnrichAO {
 	/** the file path to the <i>LevelDB</i> */
 	private File levelDBPath;
 	
-	/** the attribute */
+	/** the key attribute */
 	private SDFAttribute in;
 	
+	/** the attribute to store the data */
 	private SDFAttribute out;
 	
 	public LevelDBEnrichAO() { }
