@@ -3,6 +3,12 @@ package de.uniol.inf.is.odysseus.trajectory;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 
+/**
+ * Entry point for this bundle.
+ * 
+ * @author marcus
+ *
+ */
 public class Activator implements BundleActivator {
 
 	private static BundleContext context;

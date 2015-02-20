@@ -11,6 +11,12 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Paramete
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.FileParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.ResolvedSDFAttributeParameter;
 
+/**
+ * The logical operator for enriching stream elements with information from a <i>LevelDB</i>.
+ * 
+ * @author marcus
+ *
+ */
 @LogicalOperator(maxInputPorts = 1, minInputPorts = 1, name = "LEVELDBENRICH", doc="Enrich stream objects with information from a LevelDB.", category={LogicalOperatorCategory.ENRICH, LogicalOperatorCategory.DATABASE})
 public class LevelDBEnrichAO extends AbstractEnrichAO {
 
@@ -19,8 +25,10 @@ public class LevelDBEnrichAO extends AbstractEnrichAO {
 	 */
 	private static final long serialVersionUID = -3545605159481674813L;
 	
+	/** the file path to the <i>LevelDB</i> */
 	private File levelDBPath;
 	
+	/** the attribute */
 	private SDFAttribute in;
 	
 	private SDFAttribute out;

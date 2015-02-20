@@ -36,7 +36,7 @@ public interface IMapMatcher {
 	 * Maps the raw points of the passed <tt>RawQueryTrajectory</tt> to <i>vertices</i> of 
 	 * the passed <tt>NetGraph's</tt> <i>reduced graph</i> and returns the resulting
 	 * <tt>UotsDataTrajectory</tt>. Additionally, the textual attributes has to be passed
-	 * since an <tt>RawQueryTrajectory</tt> has none.
+	 * since a <tt>RawQueryTrajectory</tt> has none.
 	 * 
 	 * @param trajectory the <tt>RawDataTrajectory</tt> which's raw point will be mapped to
 	 * 		  the <i>vertices</i> of the <tt>NetGraph's</tt> <i>reduced graph</i>

@@ -10,14 +10,34 @@ import com.vividsolutions.jts.geom.Point;
 import de.uniol.inf.is.odysseus.trajectory.compare.data.IRawTrajectory;
 import de.uniol.inf.is.odysseus.trajectory.compare.owd.data.OwdData.GridCellList;
 
+/**
+ * An implementation of <tt>AbstractRasterizer</tt>. The rasterization is done 
+ * by a modified <i>Bresenham algorithm</i>. The modification causes each 
+ * <tt>GridCell</tt> to be adjacent.
+ * 
+ * @author marcus
+ *
+ */
 public class AdvancedBresenhamRasterizer extends AbstractRasterizer {
 
+	/** Logger for debugging purposes */
 	private final static Logger LOGGER = LoggerFactory.getLogger(AdvancedBresenhamRasterizer.class);
 	
+	/**
+	 * {@inheritDoc}
+	 * The rasterization is done by a modified <i>Bresenham algorithm</i>. The modification
+	 * causes each <tt>GridCell</tt> to be adjacent.
+	 * 
+	 */
 	@Override
-	protected GridCellList getGraphPoints(
-			IRawTrajectory trajectory, double cellSize) {
+	protected GridCellList getGraphPoints(IRawTrajectory trajectory, double cellSize) throws IllegalArgumentException {
 		
+		if(trajectory == null) {
+			throw new IllegalArgumentException("trajectory is null");
+		}
+		if(cellSize <= 0) {
+			throw new IllegalArgumentException("cellSize is less or equal 0");
+		}
 		
 		final GridCellList result = new GridCellList();
 		
@@ -37,34 +57,32 @@ public class AdvancedBresenhamRasterizer extends AbstractRasterizer {
 	}
 	
 	/**
-	 * TODO:
-	 * Taken and modified from http://rosettacode.org/wiki/Bitmap/Bresenham%27s_line_algorithm#Java
+	 * Method for the modified <i>Bresenham algorithm</i>
 	 * 
-	 * @param x1d
-	 * @param y1d
-	 * @param x2d
-	 * @param y2d
-	 * @param grid
-	 * @param gridCellList
+	 * @param x1d the x start point
+	 * @param y1d the y start point
+	 * @param x2d the x end point
+	 * @param y2d the y end point
+	 * @param cellSize the width and height of a cell
+	 * @param gridCellList the <tt>GridCellList</tt> where <tt>GridCells</tt> will be stored
 	 */
-	private void rasterize(double x1d, double y1d, double x2d, double y2d, double grid, GridCellList gridCellList) {
+	private void rasterize(double x1d, double y1d, double x2d, double y2d, double cellSize, GridCellList gridCellList) {
         
-        int x1 = (int)(x1d / grid);
-        int y1 = (int)(y1d / grid);
-        int x2 = (int)(x2d / grid);
-        int y2 = (int)(y2d / grid);
+        int x1 = (int)(x1d / cellSize);
+        int y1 = (int)(y1d / cellSize);
+        int x2 = (int)(x2d / cellSize);
+        int y2 = (int)(y2d / cellSize);
 
-        // delta of exact value and rounded value of the dependant variable
         int d = 0;
 
-        int dy = Math.abs(y2 - y1);
-        int dx = Math.abs(x2 - x1);
+        final int dy = Math.abs(y2 - y1);
+        final int dx = Math.abs(x2 - x1);
 
-        int dy2 = (dy << 1); // slope scaling factors to avoid floating
-        int dx2 = (dx << 1); // point
+        final int dy2 = (dy << 1);
+        final int dx2 = (dx << 1);
 
-        int ix = x1 < x2 ? 1 : -1; // increment direction
-        int iy = y1 < y2 ? 1 : -1;
+        final int ix = x1 < x2 ? 1 : -1;
+        final int iy = y1 < y2 ? 1 : -1;
 
         if (dy <= dx) {
         	
