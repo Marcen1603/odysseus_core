@@ -208,9 +208,9 @@ public class ReplicationMergePO<T extends IStreamObject<? extends ITimeInterval>
 		if (!this.precheck(object))
 			return;
 
-		this.purgeElements(this.getTS(object, true));
-		this.mergeElement(object, port);
 		synchronized (this.inputQueue) {
+			this.purgeElements(this.getTS(object, true));
+			this.mergeElement(object, port);
 			this.inputQueue.add(new Pair<IStreamable, Integer>(object, port));
 		}
 
@@ -222,9 +222,9 @@ public class ReplicationMergePO<T extends IStreamObject<? extends ITimeInterval>
 		if (!this.precheck(punctuation))
 			return;
 
-		this.purgeElements(this.getTS(punctuation, true));
-		this.mergeElement(punctuation, port);
 		synchronized (this.inputQueue) {
+			this.purgeElements(this.getTS(punctuation, true));
+			this.mergeElement(punctuation, port);
 			this.inputQueue.add(new Pair<IStreamable, Integer>(punctuation,
 					port));
 		}
@@ -265,18 +265,16 @@ public class ReplicationMergePO<T extends IStreamObject<? extends ITimeInterval>
 
 		boolean continuePeeking = true;
 
-		synchronized (this.inputQueue) {
-			while (!this.inputQueue.isEmpty() && continuePeeking) {
+		while (!this.inputQueue.isEmpty() && continuePeeking) {
 
-				IPair<IStreamable, Integer> pair = this.inputQueue.peek();
-				IStreamable elem = pair.getE1();
-				PointInTime endTS_elem = this.getTS(elem, true);
-				if (endTS_elem.before(deadline))
-					this.inputQueue.poll();
-				else
-					continuePeeking = false;
+			IPair<IStreamable, Integer> pair = this.inputQueue.peek();
+			IStreamable elem = pair.getE1();
+			PointInTime endTS_elem = this.getTS(elem, true);
+			if (endTS_elem.before(deadline))
+				this.inputQueue.poll();
+			else
+				continuePeeking = false;
 
-			}
 		}
 
 	}
@@ -305,58 +303,55 @@ public class ReplicationMergePO<T extends IStreamObject<? extends ITimeInterval>
 		Map<Integer, Integer> countToPortMap = Maps.newHashMap(); // key = port,
 																	// value =
 																	// count
-		synchronized (this.inputQueue) {
-			Iterator<IPair<IStreamable, Integer>> queueIter = this.inputQueue
-					.iterator();
-			while (queueIter.hasNext()) {
+		Iterator<IPair<IStreamable, Integer>> queueIter = this.inputQueue
+				.iterator();
+		while (queueIter.hasNext()) {
 
-				IPair<IStreamable, Integer> pair = queueIter.next();
-				IStreamable elem = pair.getE1();
-				Integer elemPort = pair.getE2();
+			IPair<IStreamable, Integer> pair = queueIter.next();
+			IStreamable elem = pair.getE1();
+			Integer elemPort = pair.getE2();
 
-				if ((elem.isPunctuation() && !object.isPunctuation())
-						|| (!elem.isPunctuation() && object.isPunctuation())) {
+			if ((elem.isPunctuation() && !object.isPunctuation())
+					|| (!elem.isPunctuation() && object.isPunctuation())) {
 
-					// only one element is a punctuation
-					continue;
+				// only one element is a punctuation
+				continue;
 
-				} else if (elem.isPunctuation()
-						&& object.isPunctuation()
-						&& !((IPunctuation) elem).getTime().equals(
-								((IPunctuation) object).getTime())) {
+			} else if (elem.isPunctuation()
+					&& object.isPunctuation()
+					&& !((IPunctuation) elem).getTime().equals(
+							((IPunctuation) object).getTime())) {
 
-					// not the same timestamps of the punctuations
-					continue;
+				// not the same timestamps of the punctuations
+				continue;
 
-				} else if (!elem.isPunctuation()
-						&& !object.isPunctuation()
-						&& (!((T) elem).equals(object) || !((T) elem)
-								.getMetadata().equals(
-										((T) object).getMetadata()))) {
+			} else if (!elem.isPunctuation()
+					&& !object.isPunctuation()
+					&& (!((T) elem).equals(object) || !((T) elem)
+							.getMetadata().equals(
+									((T) object).getMetadata()))) {
 
-					// either the elements or the timestamps are not equal
-					continue;
+				// either the elements or the timestamps are not equal
+				continue;
 
-				} else if (countToPortMap.containsKey(elemPort)) {
+			} else if (countToPortMap.containsKey(elemPort)) {
 
-					// port is already in the map
-					countToPortMap.put(elemPort,
-							countToPortMap.get(elemPort) + 1);
+				// port is already in the map
+				countToPortMap.put(elemPort,
+						countToPortMap.get(elemPort) + 1);
 
-				} else {
+			} else {
 
-					// port isn't in the map yet
-					countToPortMap.put(elemPort, 1);
-
-				}
-
-				// Check for maximum
-				if (countToPortMap.get(elemPort) > foundMax)
-					foundMax = countToPortMap.get(elemPort);
-				if (port == elemPort)
-					foundOwnPort = countToPortMap.get(elemPort);
+				// port isn't in the map yet
+				countToPortMap.put(elemPort, 1);
 
 			}
+
+			// Check for maximum
+			if (countToPortMap.get(elemPort) > foundMax)
+				foundMax = countToPortMap.get(elemPort);
+			if (port == elemPort)
+				foundOwnPort = countToPortMap.get(elemPort);
 
 		}
 
