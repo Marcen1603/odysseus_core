@@ -1,11 +1,21 @@
 package de.uniol.inf.is.odysseus.imagejcv.common.datatype;
 
-import static org.bytedeco.javacpp.opencv_core.*;
-
-import org.bytedeco.javacpp.opencv_core.IplImage;
+import static org.bytedeco.javacpp.opencv_core.IPL_DEPTH_8U;
+import static org.bytedeco.javacpp.opencv_core.cvCreateImageHeader;
+import static org.bytedeco.javacpp.opencv_core.cvReleaseImageHeader;
+import static org.bytedeco.javacpp.opencv_core.cvSize;
+import static org.bytedeco.javacpp.opencv_imgproc.CV_BGR2GRAY;
+import static org.bytedeco.javacpp.opencv_imgproc.cvCvtColor;
 
 import java.nio.ByteBuffer;
+import java.security.InvalidParameterException;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
+
+import org.bytedeco.javacpp.BytePointer;
+import org.bytedeco.javacpp.opencv_core.IplImage;
 
 import de.uniol.inf.is.odysseus.core.IClone;
 import de.uniol.inf.is.odysseus.core.objecthandler.ObjectByteConverter;
@@ -16,44 +26,52 @@ import de.uniol.inf.is.odysseus.core.objecthandler.ObjectByteConverter;
 
 public class ImageJCV implements IClone, Cloneable 
 {
-	private IplImage image;
+	private int			width;
+	private int			height;
+	private int			numChannels;
+	private int			depth;
+	private int			widthStep;
 	
-	public ImageJCV() {
-		ImageGC.onCreateImage();
-	}
+	private IplImage 	image;
+	private ByteBuffer 	imageData;
+
+	public ByteBuffer getImageData()	{ return imageData; }
+	public IplImage   getImage() 		{ return image; }
 	
-	public ImageJCV(IplImage image) {
-		this.image = image;
-		ImageGC.onCreateImage();
-	}
-	
-	public ImageJCV(ByteBuffer buffer) {
-		this.image = (IplImage) ObjectByteConverter.bytesToObject(buffer.array());
-		ImageGC.onCreateImage();
-	}
+	public int 		getNumChannels()	{ return numChannels; }	
+	public int 		getDepth()			{ return depth; }		
+	public int 		getWidth() 			{ return width; }	
+	public int 		getHeight() 		{ return height; }
+	public int 		getWidthStep() 		{ return widthStep; }
 	
 	public ImageJCV(ImageJCV other) 
 	{
-		image = cvCreateImage(cvSize(other.image.width(), other.image.height()), other.image.depth(), other.image.nChannels());
+		this(other.getWidth(), other.getHeight(), other.getDepth(), other.getNumChannels());
 		image.getByteBuffer().put(other.image.getByteBuffer());
-		ImageGC.onCreateImage();
 	}
 	
 	public ImageJCV(int width, int height)
 	{
-		image = cvCreateImage(cvSize(width, height), IPL_DEPTH_8U, 4);
-		ImageGC.onCreateImage();
+		this(width, height, IPL_DEPTH_8U, 4);
 	}
-	
-	public ImageJCV(double[][] data) 
+
+	public ImageJCV(int width, int height, int depth, int channels)
 	{
-		image = cvCreateImage(cvSize(data[0].length, data.length), IPL_DEPTH_8U, 4);
-		ByteBuffer buffer = image.getByteBuffer();
-		for (int i=0; i < data.length; i++) {
-			buffer.putDouble(i, data[i][0]);
-		}
+		// Save these values since each call to image.get... is a native call
+		this.width = width;
+		this.height = height;
+		this.depth = depth;
+		this.numChannels = channels;
+		
+		image = cvCreateImageHeader(cvSize(width, height), depth, channels);
+		
+		imageData = ByteBufferCache.getOrAllocateBuffer(image.imageSize());
+		image.imageData(new BytePointer(imageData));
+		
+		widthStep = image.widthStep();
+		
 		ImageGC.onCreateImage();
-	}
+	}		
 	
 	@Override public ImageJCV clone()
 	{
@@ -71,39 +89,12 @@ public class ImageJCV implements IClone, Cloneable
 	{
 		if (image != null)
 		{
-			cvReleaseImage(image);
-			image = null;
+			cvReleaseImageHeader(image);
+			image = null;		
+			
+			ByteBufferCache.putBuffer(imageData);
+			imageData = null;
 		}			
-	}
-	
-	public int getNumChannels()
-	{
-		return image.nChannels();
-	}
-	
-	public int getChannelDepth()
-	{
-		return image.depth();
-	}
-	
-	public double[][] getMatrix() {
-		throw new UnsupportedOperationException("Currenlty not implemented");
-	}
-	
-	public IplImage getImage() {
-		return image;
-	}
-	
-	public void setImage(IplImage image) {
-		this.image = image;
-	}
-	
-	public int getWidth() {
-		return this.image.width();
-	}
-	
-	public int getHeight() {
-		return this.image.height();
 	}
 	
 	public int get(final int index) {
@@ -118,17 +109,133 @@ public class ImageJCV implements IClone, Cloneable
 	}
 	
 	public void writeData(ByteBuffer buffer) {
-		byte[] bytes = ObjectByteConverter.objectToBytes(this.image);
+		byte[] bytes = ObjectByteConverter.objectToBytes(image);
 		buffer.put(bytes);
 	}
 	
 	@Override
 	public String toString() {
-		return "{Width: " + this.getWidth() + " Height: " + this.getHeight() + "}";
+		return "{Width: " + getWidth() + " Height: " + getHeight() + "}";
 	}
+
+	// Returns this image converted to grayscale. Returns this, when this image already is a grayscale image and doClone = false
+	public ImageJCV toGrayscaleImage(boolean doClone)
+	{
+		int conversion = -1;
+		switch (getNumChannels())
+		{
+			case 1:
+				return doClone ? clone() : this;
+				
+			case 3:
+				conversion = CV_BGR2GRAY; 
+				break;
+			
+			default: 
+				throw new UnsupportedOperationException("toGrayscale not implemented for " + getNumChannels() + " channels!");
+		}
+		
+		ImageJCV result = new ImageJCV(getWidth(), getHeight(), IPL_DEPTH_8U, 1);
+		cvCvtColor(image, result.image, conversion);
+		return result;
+	}
+	
+	// toGrayscaleImage(false)
+	public ImageJCV toGrayscaleImage()
+	{
+		return toGrayscaleImage(false);
+	}
+
 	
 	public void fill(int value) {
 		throw new UnsupportedOperationException("Currently not implemented");
+	}
+	
+	public ImageJCV(ByteBuffer buffer) {
+		throw new UnsupportedOperationException("Not implemented yet!");
+/*		this.image = (IplImage) ObjectByteConverter.bytesToObject(buffer.array());
+		ImageGC.onCreateImage();*/
+	}	
+	
+	public ImageJCV(double[][] data) 
+	{
+		throw new UnsupportedOperationException("Noch nicht überarbeitet!");
+/*		image = cvCreateImage(cvSize(data[0].length, data.length), IPL_DEPTH_8U, 4);
+		ByteBuffer buffer = image.getByteBuffer();
+		for (int i=0; i < data.length; i++) {
+			buffer.putDouble(i, data[i][0]);
+		}
+		ImageGC.onCreateImage();*/
+	}
+	
+	public double[][] getMatrix() {
+		throw new UnsupportedOperationException("Currenlty not implemented");
+	}	
+	
+	private int referenceCount = 1;
+	
+	public void addReference()
+	{
+		referenceCount++;
+	}
+	
+	public void releaseReference()
+	{
+		if (--referenceCount == 0)
+			release();
+	}
+}
+
+class ByteBufferCache
+{
+	@SuppressWarnings("unused")
+	private static long allocatedMemory = 0;
+	private static Map<Integer, LinkedList<ByteBuffer>> cache = new HashMap<>();
+	
+	public synchronized static void putBuffer(ByteBuffer buffer)
+	{
+		if (!buffer.isDirect())
+			throw new InvalidParameterException("buffer must be a direct ByteBuffer!");
+		
+		LinkedList<ByteBuffer> list = cache.get(buffer.capacity());
+		
+		if (list != null)
+		{
+			if (list.size() < 100)
+			{
+				list.add(buffer);
+//				System.out.println("Buffer added to cache, num buffers = " + list.size());
+			}
+			else
+			{
+//				System.out.println("Cache full, buffer dismissed");
+				allocatedMemory -= buffer.capacity();
+			}
+		}
+		else
+		{
+			list = new LinkedList<ByteBuffer>();
+			list.add(buffer);
+			cache.put(buffer.capacity(), list);
+		}		
+	}
+	
+	public synchronized static ByteBuffer getOrAllocateBuffer(int capacity)
+	{
+		LinkedList<ByteBuffer> list = cache.get(capacity);
+		
+		if (list == null || list.isEmpty())
+		{
+			allocatedMemory += capacity;
+//			System.out.println("New buffer created! Total mem = " + allocatedMemory);
+			
+			return ByteBuffer.allocateDirect(capacity);
+		}
+		else
+		{
+//			System.out.println("Buffer recycled! " + (list.size()-1) + " Buffers left");
+			return (ByteBuffer) list.removeFirst();
+		}
 	}
 }
 
@@ -146,7 +253,7 @@ class ImageGC
 {
 	private static final int startThreshold = 20;	// Only start thread when imageCount>startThreshold. Stop running thread when imageCount<=startThreshold. 
 	private static final int gcThreshold = 200;		// Run System.gc() when imageCount>gcThreshold. Threshold should be a lot larger than the normal number of concurrent images in the system. 
-	private static final int checkInterval = 1000;	// Sleep for checkInterval in each iteration
+	private static final int checkInterval = 500;	// Sleep for checkInterval in each iteration
 	
 	private static Thread gcThread = null;
 	private static AtomicInteger imageCount = new AtomicInteger(0);

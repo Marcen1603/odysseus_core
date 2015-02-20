@@ -49,7 +49,7 @@ public class ImageJCVDataHandler extends AbstractDataHandler<ImageJCV> {
 	 * 
 	 * @author Kristian Bruns
 	 * 
-	 * @return ImageJCV Readed Image.
+	 * @return ImageJCV Read image.
 	 */
 	@Override
 	public ImageJCV readData(final String string) {
@@ -61,12 +61,14 @@ public class ImageJCVDataHandler extends AbstractDataHandler<ImageJCV> {
 	 * 
 	 * @author Kristian Bruns
 	 * 
-	 * @return ImageJCV Readed Image.
+	 * @return ImageJCV Read image.
 	 */
 	@Override
-	public ImageJCV readData(InputStream inputStream) throws IOException {
-		IplImage image = IplImage.createFrom(ImageIO.read(inputStream));
-		return new ImageJCV(image);
+	public ImageJCV readData(InputStream inputStream) throws IOException 
+	{
+		throw new UnsupportedOperationException("Not implemented yet!");
+/*		IplImage image = IplImage.createFrom(ImageIO.read(inputStream));
+		return new ImageJCV(image);*/
 	}
 	
 	/**
@@ -74,7 +76,7 @@ public class ImageJCVDataHandler extends AbstractDataHandler<ImageJCV> {
 	 * 
 	 * @author Kristian Bruns
 	 * 
-	 * @return ImageJCV Readed Image.
+	 * @return ImageJCV Read image.
 	 */
 	@Override
 	public ImageJCV readData(final ByteBuffer buffer) {
@@ -114,8 +116,10 @@ public class ImageJCVDataHandler extends AbstractDataHandler<ImageJCV> {
 	 * @return int Memory Size.
 	 */
 	@Override
-	public int memSize(final Object attribute) {
+	public int memSize(final Object attribute) 
+	{
 		final ImageJCV image = (ImageJCV) attribute;
+		
 		// TODO: Has this been updates since the change to IplImage?
 		return (2* Integer.SIZE + image.getWidth() * image.getHeight() * Double.SIZE) / 8;
 	}

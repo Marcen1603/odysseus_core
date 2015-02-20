@@ -1,7 +1,8 @@
 package de.uniol.inf.is.odysseus.imagejcv.functions;
 
-import org.bytedeco.javacpp.opencv_core.IplImage;
-import static org.bytedeco.javacpp.opencv_core.*;
+import static org.bytedeco.javacpp.opencv_core.IPL_DEPTH_8U;
+import static org.bytedeco.javacpp.opencv_core.IPL_DEPTH_16S;
+import static org.bytedeco.javacpp.opencv_core.IPL_DEPTH_16U;
 
 import java.nio.ByteBuffer;
 import java.util.Objects;
@@ -24,34 +25,35 @@ public class StretchContrastFunction extends AbstractFunction<ImageJCV> {
 	}
 	
 	/**
-	 * Stretches the contrast of a 1-channel grayscale image and converts it to a 3-channel RGB image. 
+	 * Stretches the contrast of a 1-channel 16-bit grayscale image and converts it to a 3-channel BGR image. 
 	 * Parameters of the function are (oldMin, oldMax, newMin, newMax)
 	 */
 	@Override
 	public ImageJCV getValue() 
 	{
-		ImageJCV image = (ImageJCV) this.getInputValue(0);
-		Objects.requireNonNull(image);
+		ImageJCV oldImage = (ImageJCV) this.getInputValue(0);
+		Objects.requireNonNull(oldImage);
 		
-		IplImage oldImage = image.getImage();
 		int oldMin = this.getNumericalInputValue(1).intValue();
 		int oldMax = this.getNumericalInputValue(2).intValue();
 		int newMin = this.getNumericalInputValue(3).intValue();
 		int newMax = this.getNumericalInputValue(4).intValue();
 		
-		// TODO: 4-channel RGBA
-		IplImage newImage = cvCreateImage(cvSize(oldImage.width(), oldImage.height()), IPL_DEPTH_8U, 3);		
+		if ((oldImage.getDepth() != IPL_DEPTH_16S) && (oldImage.getDepth() != IPL_DEPTH_16U))
+			throw new UnsupportedOperationException("StretchContrast not implemented for images with depth != 16!");
+		
+		ImageJCV newImage = new ImageJCV(oldImage.getWidth(), oldImage.getHeight(), IPL_DEPTH_8U, 3);		
 
 //		long lastTime = System.nanoTime();
 		
-		ByteBuffer oldBuffer = oldImage.getByteBuffer();
-		ByteBuffer newBuffer = newImage.getByteBuffer();
+		ByteBuffer oldBuffer = oldImage.getImageData();
+		ByteBuffer newBuffer = newImage.getImageData();
 		
-		for(int y = 0; y < newImage.height(); y++)
-		for(int x = 0; x < newImage.width(); x++) 
+		for(int y = 0; y < oldImage.getHeight(); y++)
+		for(int x = 0; x < oldImage.getWidth(); x++) 
 		{
-			int oldIndex = y * oldImage.widthStep() + x * oldImage.nChannels()*2;
-			int newIndex = y * newImage.widthStep() + x * newImage.nChannels();
+			int oldIndex = y * oldImage.getWidthStep() + x * oldImage.getNumChannels()*2;
+			int newIndex = y * newImage.getWidthStep() + x * newImage.getNumChannels();
 
 			double value = oldBuffer.getShort(oldIndex);
 			int newVal = (int)( (double)(value - oldMin) / (oldMax - oldMin) * (newMax - newMin) + newMin);
@@ -67,7 +69,7 @@ public class StretchContrastFunction extends AbstractFunction<ImageJCV> {
 /*		long curTime = System.nanoTime();
 		System.out.println("dt = " + (curTime - lastTime) / 1.0e6 + "ms");*/		
 
-		return new ImageJCV(newImage);
+		return newImage;
 	}
 
 }

@@ -1,13 +1,10 @@
 package de.uniol.inf.is.odysseus.imagejcv.functions;
 
+import static org.bytedeco.javacpp.opencv_imgproc.cvResize;
+
 import java.util.Objects;
 
-import org.bytedeco.javacpp.opencv_core.IplImage;
-
 import com.google.common.base.Preconditions;
-
-import static org.bytedeco.javacpp.opencv_core.*;
-import static org.bytedeco.javacpp.opencv_imgproc.*;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.imagejcv.common.datatype.ImageJCV;
@@ -48,12 +45,10 @@ public class ResizeImageFunction extends AbstractFunction<ImageJCV> {
 		Preconditions.checkArgument(width > 0, "Invalid dimension");
 		Preconditions.checkArgument(height > 0, "Invalid dimension");
 		
-		IplImage iplImage = image.getImage();
-		IplImage result = cvCreateImage(cvSize(width, height), iplImage.depth(), iplImage.nChannels());
+		ImageJCV result = new ImageJCV(width, height, image.getDepth(), image.getNumChannels());		
+		cvResize(image.getImage(), result.getImage());
 		
-		cvResize(iplImage, result);
-		
-		return new ImageJCV(result);
+		return result;
 	}
 
 }

@@ -45,35 +45,19 @@ public class ThresholdFunction extends AbstractFunction<ImageJCV> {
 	public ImageJCV getValue() {
 		final ImageJCV image = (ImageJCV) this.getInputValue(0);
 		double threshold = this.getNumericalInputValue(1);
-		final boolean dark = (boolean) this.getInputValue(2);
-		
+		boolean dark = (boolean) this.getInputValue(2);		
 		Objects.requireNonNull(image);
 		
-		IplImage iplImage = cvCreateImage(cvGetSize( image.getImage()), IPL_DEPTH_8U, 1);
-		IplImage iplResult = cvCreateImage(cvGetSize(image.getImage()), IPL_DEPTH_8U, 1);
+		ImageJCV result = image.toGrayscaleImage(true);
 		
-		// TODO: iplImage is created with cvCreateImage, and immediately overridden by image.getImage...
-		iplImage = image.getImage().clone();
-		
-		if (iplImage.nChannels() > 1) {
-			cvCvtColor(iplImage, iplResult, CV_BGR2GRAY);
-		} else {
-			iplResult = iplImage.clone();
-		}
-		
-		if (threshold < 1) {
-			threshold = this.getThreshold(iplResult, dark);
-		}
+		if (threshold < 1)
+			threshold = getThreshold(result.getImage(), dark);
 		
 		System.out.println("Threshold: " + threshold);
 		
-		if (dark == true) {
-			cvThreshold(iplResult, iplResult, threshold, 255, THRESH_BINARY);
-		} else {
-			cvThreshold(iplResult, iplResult, threshold, 255, THRESH_BINARY_INV);
-		}
+		cvThreshold(result.getImage(), result.getImage(), threshold, 255, dark ? THRESH_BINARY : THRESH_BINARY_INV);
 		
-		return new ImageJCV(iplResult);
+		return result;
 	}
 	
 	protected double getThreshold(IplImage image, boolean dark) {

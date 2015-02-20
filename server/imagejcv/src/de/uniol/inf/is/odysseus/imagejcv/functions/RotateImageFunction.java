@@ -38,23 +38,18 @@ public class RotateImageFunction extends AbstractFunction<ImageJCV> {
 	@Override
 	public ImageJCV getValue() {
 		final ImageJCV image = (ImageJCV) this.getInputValue(0);
-		final double angle = this.getNumericalInputValue(1);
-		
+		final double angle = this.getNumericalInputValue(1);		
 		Objects.requireNonNull(image);
 				
-		// TODO: Just create an image with the same dimensions etc. instead of performing a full copy
-		ImageJCV result = new ImageJCV(image);
-		final IplImage iplImage = result.getImage();
-		
 		final CvPoint2D32f center = new CvPoint2D32f();
-		center.x(iplImage.width() / 2);
-		center.y(iplImage.height() / 2);
+		center.x(image.getWidth() / 2);
+		center.y(image.getHeight() / 2);
 		
 		final CvMat mapMatrix = cvCreateMat(2, 3, CV_32FC1);
 		cv2DRotationMatrix(center, angle, 1.0, mapMatrix);
-		
-		cvWarpAffine(iplImage, iplImage, mapMatrix);
-		
+
+		ImageJCV result = new ImageJCV(image.getWidth(), image.getHeight(), image.getDepth(), image.getNumChannels());
+		cvWarpAffine(image.getImage(), result.getImage(), mapMatrix);		
 		return result;
 	}
 }
