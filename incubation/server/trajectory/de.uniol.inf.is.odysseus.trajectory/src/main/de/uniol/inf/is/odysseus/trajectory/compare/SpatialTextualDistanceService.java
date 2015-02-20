@@ -92,7 +92,7 @@ public class SpatialTextualDistanceService<T> implements IDistanceService<T> {
 		
 		private final SortedMultiset<IConvertedDataTrajectory<T>> kNearest = TreeMultiset.create(new Comparator<IConvertedDataTrajectory<T>>() {
 			@Override
-			public int compare(IConvertedDataTrajectory<T> o1, IConvertedDataTrajectory<T> o2) {
+			public int compare(final IConvertedDataTrajectory<T> o1, final IConvertedDataTrajectory<T> o2) {
 				if(o1.getDistance() >= o2.getDistance()) {
 					return 1;
 				}

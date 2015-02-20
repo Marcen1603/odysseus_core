@@ -21,8 +21,8 @@ public class UotsQueryTrajectory extends AbstractConvertedQueryTrajectory<UotsDa
 	 * 
 	 * @throws IllegalArgumentException if <tt>convertedData == null</tt> or <tt>rawTrajectory == null</tt> 
 	 */
-	public UotsQueryTrajectory(RawQueryTrajectory rawTrajectory,
-			UotsData convertedData, Map<String, String> textualAttributes) {
+	public UotsQueryTrajectory(final RawQueryTrajectory rawTrajectory,
+			final UotsData convertedData, final Map<String, String> textualAttributes) {
 		super(rawTrajectory, convertedData, textualAttributes);
 	}
 

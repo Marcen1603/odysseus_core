@@ -17,30 +17,30 @@ import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 public class TLevelDBEnrichAORule extends AbstractTransformationRule<LevelDBEnrichAO> {
 
 	@Override
-	public void execute(LevelDBEnrichAO logical,
-			TransformationConfiguration config) throws RuleException {
+	public void execute(final LevelDBEnrichAO logical,
+			final TransformationConfiguration config) throws RuleException {
 		
-		IDataMergeFunction<Tuple<ITimeInterval>, ITimeInterval> dataMergeFunction = new RelationalMergeFunction<ITimeInterval>(
+		final IDataMergeFunction<Tuple<ITimeInterval>, ITimeInterval> dataMergeFunction = new RelationalMergeFunction<ITimeInterval>(
 				logical.getOutputSchema().size() + 1);
 
-		IMetadataMergeFunction<ITimeInterval> metaMerge = new UseLeftInputMetadata<>();
+		final IMetadataMergeFunction<ITimeInterval> metaMerge = new UseLeftInputMetadata<>();
 
-		int[] uniqueKeys = logical.getUniqueKeysAsArray();
+		final int[] uniqueKeys = logical.getUniqueKeysAsArray();
 
-		LevelDBEnrichPO<ITimeInterval> physical = new LevelDBEnrichPO<ITimeInterval>(
+		final LevelDBEnrichPO<ITimeInterval> physical = new LevelDBEnrichPO<ITimeInterval>(
 				null, dataMergeFunction, metaMerge, uniqueKeys, 
 				logical.getLevelDBPath(), 
 				logical.getInputSchema().findAttributeIndex(logical.getIn().getAttributeName()),
 				logical.getInputSchema().findAttributeIndex(logical.getOut().getAttributeName()));
 
 		physical.setOutputSchema(logical.getOutputSchema());
-		replace(logical, physical, config);
-		retract(logical);
+		this.replace(logical, physical, config);
+		this.retract(logical);
 	}
 
 	@Override
-	public boolean isExecutable(LevelDBEnrichAO operator,
-			TransformationConfiguration config) {
+	public boolean isExecutable(final LevelDBEnrichAO operator,
+			final TransformationConfiguration config) {
 		return operator.isAllPhysicalInputSet();
 	}
 	

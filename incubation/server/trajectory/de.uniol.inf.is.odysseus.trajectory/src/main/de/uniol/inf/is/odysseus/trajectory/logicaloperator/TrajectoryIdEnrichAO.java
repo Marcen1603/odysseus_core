@@ -16,13 +16,13 @@ public class TrajectoryIdEnrichAO extends UnaryLogicalOp {
 
 	public TrajectoryIdEnrichAO() {	}
 	
-	public TrajectoryIdEnrichAO(TrajectoryIdEnrichAO trajectoryIdEnricherAO) {	
+	public TrajectoryIdEnrichAO(final TrajectoryIdEnrichAO trajectoryIdEnricherAO) {	
 		super(trajectoryIdEnricherAO);
 	}
 	
 	
 	@Override
-	public SDFSchema getOutputSchemaIntern(int port) {
+	public SDFSchema getOutputSchemaIntern(final int port) {
 		return TrajectoryConstructAO.OUTPUT_SCHEMA;
 	}
 	

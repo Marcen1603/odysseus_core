@@ -42,8 +42,8 @@ public class RawDataTrajectory extends RawQueryTrajectory implements IHasTextual
 	 * @throws IllegalArgumentException if <tt>points == null</tt> or <tt>points.size() == 0</tt>
 	 *         <tt>vehicleId == null</tt> or <tt>trajectoryNumber < 0</tt> or <tt>timeInterval == null</tt>
 	 */
-	public RawDataTrajectory(List<Point> points, final String vehicleId, final int trajectoryNumber, final Map<String, String> textualAttributes,
-			ITimeInterval timeInterval) {
+	public RawDataTrajectory(final List<Point> points, final String vehicleId, final int trajectoryNumber, final Map<String, String> textualAttributes,
+			final ITimeInterval timeInterval) {
 		
 		super(points);
 		
@@ -94,7 +94,7 @@ public class RawDataTrajectory extends RawQueryTrajectory implements IHasTextual
 	 * @return the time interval of this trajectory
 	 */
 	public ITimeInterval getTimeInterval() {
-		return timeInterval;
+		return this.timeInterval;
 	}
 	
 	@Override

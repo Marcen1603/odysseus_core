@@ -32,12 +32,12 @@ public class MapMatcherFactory extends AbstractFactory<IMapMatcher, String> {
 	private MapMatcherFactory() {}
 	
 	@Override
-	protected String convertKey(String key) {
+	protected String convertKey(final String key) {
 		return key.toUpperCase(Locale.US);
 	}
 
 	@Override
-	protected IMapMatcher createProduct(String convertedKey) {
+	protected IMapMatcher createProduct(final String convertedKey) {
 		switch(convertedKey) {
 			case "POINT-TO-POINT" : return PointToPointMapMatcher.getInstance();
 			case "POINT-TO-ARCPOINT" : return PointToArcPointMapMatcher.getInstance();

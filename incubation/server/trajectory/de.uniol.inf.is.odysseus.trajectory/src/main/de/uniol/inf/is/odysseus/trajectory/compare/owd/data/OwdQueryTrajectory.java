@@ -21,8 +21,8 @@ public class OwdQueryTrajectory extends AbstractConvertedQueryTrajectory<OwdData
 	 * 
 	 * @throws IllegalArgumentException if <tt>convertedData == null</tt> or <tt>rawTrajectory == null</tt> 
 	 */
-	public OwdQueryTrajectory(RawQueryTrajectory rawTrajectory,
-			OwdData convertedData, Map<String, String> textualAttributes) {
+	public OwdQueryTrajectory(final RawQueryTrajectory rawTrajectory,
+			final OwdData convertedData, final Map<String, String> textualAttributes) {
 		super(rawTrajectory, convertedData, textualAttributes);
 	}
 

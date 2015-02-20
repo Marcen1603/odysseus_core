@@ -52,7 +52,7 @@ public class PointToArcPointMapMatcher extends AbstractMapMatcher {
 	private static final ItemDistance ITEM_DISTANCE = new ItemDistance() {
 		
 		@Override
-		public double distance(ItemBoundable item1, ItemBoundable item2) {
+		public double distance(final ItemBoundable item1, final ItemBoundable item2) {
 			return ((LineSegment)item1.getItem()).distance(((Point)item2.getItem()).getCoordinate());
 		}
 	};

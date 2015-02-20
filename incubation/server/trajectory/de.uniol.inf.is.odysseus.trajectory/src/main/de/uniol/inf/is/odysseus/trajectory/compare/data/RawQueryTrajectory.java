@@ -47,6 +47,7 @@ public class RawQueryTrajectory implements IRawTrajectory {
 	 * 
 	 * @return {@inheritDoc} as an <i>unmodifiable</i> <tt>List</tt>
 	 */
+	@Override
 	public List<Point> getPoints() {
 		return this.points;
 	}

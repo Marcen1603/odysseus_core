@@ -28,7 +28,7 @@ public class DefaultTupleToRawTrajectoryConverter implements ITupleToRawTrajecto
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public RawDataTrajectory convert(Tuple<ITimeInterval> tuple, final int utmZone) {
+	public RawDataTrajectory convert(final Tuple<ITimeInterval> tuple, final int utmZone) {
 				
 		final IPointCreator pointCreator = UtmPointCreatorFactory.getInstance().create(utmZone);
 		

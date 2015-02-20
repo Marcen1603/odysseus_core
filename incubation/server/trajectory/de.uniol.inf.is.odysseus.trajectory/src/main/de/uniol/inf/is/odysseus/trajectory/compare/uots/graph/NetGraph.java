@@ -66,7 +66,7 @@ public class NetGraph {
 	private final Pair<Coordinate, Coordinate> bounds;
 		
 	/** <tt>Map</tt> for finding junctions for removed vertices  */
-	private Map<Point, Point> pointToJunctions = new HashMap<>();
+	private final Map<Point, Point> pointToJunctions = new HashMap<>();
 	
 	/**
 	 * Creates an instance of <tt>NetGraph</tt>.
@@ -74,12 +74,12 @@ public class NetGraph {
 	 * @param complexGraph the complex <tt>UndirectedSparseGraph</tt> 
 	 *        from which this <tt>NetGraph</tt> is built
 	 */
-	public NetGraph(UndirectedSparseGraph<Point, LineSegment> complexGraph) {
+	public NetGraph(final UndirectedSparseGraph<Point, LineSegment> complexGraph) {
 		this.complexGraph = complexGraph;
 		this.keepHighestIsolatedGraph();
 		this.reducedGraph = new UndirectedSparseGraph<>();		
 		this.bounds = this.buildReducedGraph();
-		this.diagonalLength = bounds.getValue0().distance(bounds.getValue1());
+		this.diagonalLength = this.bounds.getValue0().distance(this.bounds.getValue1());
 	}
 	
 	/**
@@ -175,7 +175,7 @@ public class NetGraph {
 		}
 		
 		final Iterator<Point> it = this.reducedGraph.getVertices().iterator();
-		Point point = it.next();
+		final Point point = it.next();
 		
 		double maxLeft = point.getX();
 		double maxRight = maxLeft;
@@ -216,7 +216,7 @@ public class NetGraph {
 	 * @param maxDistance the maximal distance to search
 	 * @return the junction
 	 */
-	private Pair<Point, Double> findJunction(Point point, Unit<Double> edge, double distance, double maxDistance) {
+	private Pair<Point, Double> findJunction(final Point point, final Unit<Double> edge, final double distance, final double maxDistance) {
 	
 		if(distance > maxDistance) {
 			return null;
@@ -243,7 +243,7 @@ public class NetGraph {
 	 * @param point the <tt>Point</tt> to find its nearest junction
 	 * @return the nearest junction to the passed <tt>Point</tt>
 	 */
-	public Point getJunction(Point point) {
+	public Point getJunction(final Point point) {
 		Point junction = this.pointToJunctions.get(point);
 		if(junction == null) {
 			this.pointToJunctions.put(point, junction = point);

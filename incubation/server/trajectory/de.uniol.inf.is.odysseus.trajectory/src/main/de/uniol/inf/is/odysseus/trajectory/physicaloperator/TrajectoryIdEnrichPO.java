@@ -16,20 +16,20 @@ public class TrajectoryIdEnrichPO<T extends Tuple<ITimeInterval>> extends Abstra
 	
 	@SuppressWarnings("unchecked")
 	@Override
-	protected void process_next(T object, int port) {
+	protected void process_next(final T object, final int port) {
 		final String vehicleId = object.getAttribute(0);
 		int[] id = this.vehicleTrajectories.get(vehicleId);
 		
 		if(id == null) {
 			this.vehicleTrajectories.put(vehicleId, id = new int[] { -1 });
 		}
-		Tuple<ITimeInterval> t = new Tuple<ITimeInterval>(new Object[] { vehicleId, ++id[0], object.getAttribute(1), null}, true);
+		final Tuple<ITimeInterval> t = new Tuple<ITimeInterval>(new Object[] { vehicleId, ++id[0], object.getAttribute(1), null}, true);
 		t.setMetadata(object.getMetadata());
 		this.transfer((T)t);
 	}
 	
 	@Override
-	public void processPunctuation(IPunctuation punctuation, int port) {
+	public void processPunctuation(final IPunctuation punctuation, final int port) {
 		this.sendPunctuation(punctuation, port);
 	}
 	

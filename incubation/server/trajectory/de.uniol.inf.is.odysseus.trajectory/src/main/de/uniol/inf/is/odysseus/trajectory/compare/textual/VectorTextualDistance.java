@@ -78,7 +78,7 @@ public class VectorTextualDistance implements ITextualDistance {
 		return nVal;
 	}
 	
-	private static double maxDistance(List<String> attributes) {
+	private static double maxDistance(final List<String> attributes) {
 		final List<Double> minList = new ArrayList<>(attributes.size());
 		final List<Double> maxList = new ArrayList<>(attributes.size());
 		for(final String attr : attributes) {
@@ -106,7 +106,7 @@ public class VectorTextualDistance implements ITextualDistance {
 	private VectorTextualDistance() {}
 	
 	@Override
-	public double getDistance(IHasTextualAttributes o1, IHasTextualAttributes o2) {
+	public double getDistance(final IHasTextualAttributes o1, final IHasTextualAttributes o2) {
 		// find simular attributes
 		final List<Double> list1 = new ArrayList<>();
 		final List<Double> list2 = new ArrayList<>();

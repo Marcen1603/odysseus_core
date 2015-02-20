@@ -37,7 +37,7 @@ public abstract class AbstractObjectLoaderFactory<L extends IObjectLoader<O, K, 
 	 *         loaded by the underneath <tt>IObjectLoader</tt>
 	 *      
 	 */
-	public O load(K key, A additional) {
+	public O load(final K key, final A additional) {
 		final K convertedKey = this.convertKey(key);
 		L loader = this.objectLoaders.get(convertedKey);
 		if(loader == null)  {

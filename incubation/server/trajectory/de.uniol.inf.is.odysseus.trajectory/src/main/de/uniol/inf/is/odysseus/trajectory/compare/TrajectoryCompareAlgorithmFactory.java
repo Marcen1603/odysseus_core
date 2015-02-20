@@ -17,8 +17,8 @@ public class TrajectoryCompareAlgorithmFactory {
 		return INSTANCE;
 	}
 
-	public ITrajectoryCompareAlgorithm<?, ?> create(final String name, int k, String queryTrajectoryPath, Map<String, String> textualAttributes,
-			int utmZone, double lambda, Map<String, String> options) {
+	public ITrajectoryCompareAlgorithm<?, ?> create(final String name, final int k, final String queryTrajectoryPath, final Map<String, String> textualAttributes,
+			final int utmZone, final double lambda, final Map<String, String> options) {
 		
 		final String upperCaseName = name.toUpperCase(Locale.US);
 		switch(upperCaseName) {

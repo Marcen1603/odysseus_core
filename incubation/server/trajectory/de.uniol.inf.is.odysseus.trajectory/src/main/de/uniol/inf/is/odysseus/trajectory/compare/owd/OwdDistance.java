@@ -29,8 +29,8 @@ public class OwdDistance implements ISpatialDistance<OwdData> {
 	
 
 	@Override
-	public double getDistance(IConvertedTrajectory<OwdData, ?> queryTrajectory,
-			IConvertedTrajectory<OwdData, ?> dataTrajectory) {
+	public double getDistance(final IConvertedTrajectory<OwdData, ?> queryTrajectory,
+			final IConvertedTrajectory<OwdData, ?> dataTrajectory) {
 		
 		final GridCellList t1 = queryTrajectory.getData().getGridCells();
 		final GridCellList t2 = dataTrajectory.getData().getGridCells();
@@ -42,7 +42,7 @@ public class OwdDistance implements ISpatialDistance<OwdData> {
 		return result;
 	}
 	
-	private double getOwd(GridCellList trajectory1, GridCellList trajectory2) {
+	private double getOwd(final GridCellList trajectory1, final GridCellList trajectory2) {
 
 		final Iterator<GridCell> it = trajectory1.iterator();
 		GridCell cellBefore = it.next();
@@ -147,7 +147,7 @@ public class OwdDistance implements ISpatialDistance<OwdData> {
 	}
 	
 	
-	private GridCell closer(GridCell g1, GridCell g2, GridCell g) {
+	private GridCell closer(final GridCell g1, final GridCell g2, final GridCell g) {
 		if(!g1.isAdjacent(g2)) {
 			throw new RuntimeException("");
 		}
@@ -174,13 +174,13 @@ public class OwdDistance implements ISpatialDistance<OwdData> {
 		private final ArrayList<E> indexList = new ArrayList<E>();
 		
 		
-		public E get(int index) {
+		public E get(final int index) {
 			return this.indexList.get(index);
 		}
 		
 		
 		@Override
-		public boolean add(E elem) {
+		public boolean add(final E elem) {
 			if(super.add(elem)) {
 				return this.indexList.add(elem);
 			}
@@ -188,7 +188,7 @@ public class OwdDistance implements ISpatialDistance<OwdData> {
 		}
 		
 		@Override 
-		public boolean remove(Object elem) {
+		public boolean remove(final Object elem) {
 			throw new UnsupportedOperationException();
 		}
 	}

@@ -36,7 +36,7 @@ public class LevelDBEnrichAO extends AbstractEnrichAO {
 	public LevelDBEnrichAO() { }
 	
 	
-	public LevelDBEnrichAO(LevelDBEnrichAO levelDBEnrichAO) {
+	public LevelDBEnrichAO(final LevelDBEnrichAO levelDBEnrichAO) {
 		super(levelDBEnrichAO);
 		
 		this.levelDBPath = levelDBEnrichAO.levelDBPath;

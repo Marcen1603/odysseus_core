@@ -28,31 +28,31 @@ public class Uots extends AbstractTrajectoryCompareAlgoritm<IConvertedDataTrajec
 	private NetGraph graph;
 	private IMapMatcher mapMatcher;
 		
-	public Uots(Map<String, String> options, int k,
-			RawQueryTrajectory queryTrajectory,
-			Map<String, String> textualAttributes, int utmZone, double lambda) {
+	public Uots(final Map<String, String> options, final int k,
+			final RawQueryTrajectory queryTrajectory,
+			final Map<String, String> textualAttributes, final int utmZone, final double lambda) {
 		
 		super(options, k, queryTrajectory, textualAttributes, utmZone, lambda);
 	}
 	
 
 	@Override
-	protected IConvertedQueryTrajectory<UotsData> convert(RawQueryTrajectory queryTrajectory, final Map<String, String> textualAttributes,
-			int utmZone, final Map<String, String> options) {
+	protected IConvertedQueryTrajectory<UotsData> convert(final RawQueryTrajectory queryTrajectory, final Map<String, String> textualAttributes,
+			final int utmZone, final Map<String, String> options) {
 		if(LOGGER.isDebugEnabled()) {
 			LOGGER.debug("Map query trajectory to graph points.");
 		}
 		this.graph = GraphBuilderFactory.getInstance().load(options.get(MAP_FILE_KEY), utmZone);
 		this.mapMatcher = MapMatcherFactory.getInstance().create(options.get(MAP_MATCHER_KEY));
-		return this.mapMatcher.map(queryTrajectory, textualAttributes, graph);
+		return this.mapMatcher.map(queryTrajectory, textualAttributes, this.graph);
 	}
 
 	@Override
-	protected IConvertedDataTrajectory<UotsData> convert(RawDataTrajectory queryTrajectory) {
+	protected IConvertedDataTrajectory<UotsData> convert(final RawDataTrajectory queryTrajectory) {
 		if(LOGGER.isDebugEnabled()) {
 			LOGGER.debug("Map data trajectory to graph points.");
 		}
-		return this.mapMatcher.map(queryTrajectory, graph);
+		return this.mapMatcher.map(queryTrajectory, this.graph);
 	}
 
 

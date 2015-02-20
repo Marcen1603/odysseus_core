@@ -25,7 +25,7 @@ public abstract class AbstractConvertedDataTrajectory<E> extends AbstractConvert
 	 * 
 	 * @throws IllegalArgumentException if <tt>convertedData == null</tt>
 	 */
-	protected AbstractConvertedDataTrajectory(RawDataTrajectory rawTrajectory, E convertedData) {
+	protected AbstractConvertedDataTrajectory(final RawDataTrajectory rawTrajectory, final E convertedData) {
 		super(rawTrajectory);
 		
 		if(convertedData == null) {
@@ -45,7 +45,7 @@ public abstract class AbstractConvertedDataTrajectory<E> extends AbstractConvert
 	}
 
 	@Override
-	public void setDistance(double distance) {
+	public void setDistance(final double distance) {
 		this.distance = distance;
 	}
 	

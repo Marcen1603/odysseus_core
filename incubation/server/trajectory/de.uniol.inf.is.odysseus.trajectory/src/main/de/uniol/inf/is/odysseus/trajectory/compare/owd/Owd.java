@@ -29,17 +29,17 @@ public class Owd extends AbstractTrajectoryCompareAlgoritm<IConvertedDataTraject
 	
 	private IRasterizer rasterizer;
 	
-	public Owd(Map<String, String> options, int k,
-			RawQueryTrajectory queryTrajectory,
-			Map<String, String> textualAttributes, int utmZone, double lambda) {
+	public Owd(final Map<String, String> options, final int k,
+			final RawQueryTrajectory queryTrajectory,
+			final Map<String, String> textualAttributes, final int utmZone, final double lambda) {
 		
 		super(options, k, queryTrajectory, textualAttributes, utmZone, lambda);
 	}
 
 	@Override
-	protected IConvertedQueryTrajectory<OwdData> convert(RawQueryTrajectory trajectory,
-			Map<String, String> textualAttributes, int utmZone,
-			Map<String, String> options) {
+	protected IConvertedQueryTrajectory<OwdData> convert(final RawQueryTrajectory trajectory,
+			final Map<String, String> textualAttributes, final int utmZone,
+			final Map<String, String> options) {
 		
 		this.gridCellSize = Double.parseDouble(options.get(GRID_CELL_SIZE_KEY));
 		if(this.gridCellSize <= 0) {
@@ -60,7 +60,7 @@ public class Owd extends AbstractTrajectoryCompareAlgoritm<IConvertedDataTraject
 	}
 
 	@Override
-	protected IConvertedDataTrajectory<OwdData> convert(RawDataTrajectory dataTrajectory) {
+	protected IConvertedDataTrajectory<OwdData> convert(final RawDataTrajectory dataTrajectory) {
 		if(LOGGER.isDebugEnabled()) {
 			LOGGER.debug("Covert data trajectory to owd representation.");
 		}

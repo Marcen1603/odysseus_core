@@ -18,7 +18,7 @@ public class UotsDistance implements ISpatialDistance<UotsData> {
 
 	private final static Map<NetGraph, UotsDistance> INSTANCES = new HashedMap<>();
 	
-	public static final UotsDistance getInstanceFor(NetGraph graph) {
+	public static final UotsDistance getInstanceFor(final NetGraph graph) {
 		UotsDistance instance = INSTANCES.get(graph);
 		if(instance == null) {
 			INSTANCES.put(graph, instance = new UotsDistance(graph));
@@ -39,12 +39,12 @@ public class UotsDistance implements ISpatialDistance<UotsData> {
 	}
 	
 	@Override
-	public double getDistance(IConvertedTrajectory<UotsData, ?> queryTrajectory, IConvertedTrajectory<UotsData, ?> dataTrajectory) {
+	public double getDistance(final IConvertedTrajectory<UotsData, ?> queryTrajectory, final IConvertedTrajectory<UotsData, ?> dataTrajectory) {
 		double distance = 0;
 		for(final Point ec : queryTrajectory.getData().getGraphPoints()) {
 			double minDistance = Double.MAX_VALUE;
 			for(final Point point : dataTrajectory.getData().getGraphPoints()) {
-				double nextDistance = this.dijkstraDistance.getDistance(ec, point).doubleValue();
+				final double nextDistance = this.dijkstraDistance.getDistance(ec, point).doubleValue();
 				if(nextDistance < minDistance) {
 					minDistance = nextDistance;
 				}
@@ -56,7 +56,7 @@ public class UotsDistance implements ISpatialDistance<UotsData> {
 	
 	private final static class GraphPathLengthTransformer implements Transformer<Unit<Double>, Number> {
 		@Override
-		public Number transform(Unit<Double> arg0) {
+		public Number transform(final Unit<Double> arg0) {
 			return arg0.getValue0();
 		}
 	}

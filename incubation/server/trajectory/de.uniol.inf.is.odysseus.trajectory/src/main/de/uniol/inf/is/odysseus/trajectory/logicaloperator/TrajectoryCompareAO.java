@@ -67,7 +67,7 @@ public class TrajectoryCompareAO extends UnaryLogicalOp {
 	public TrajectoryCompareAO() {
 	}
 	
-	public TrajectoryCompareAO(TrajectoryCompareAO trajectoryCompareAO) {
+	public TrajectoryCompareAO(final TrajectoryCompareAO trajectoryCompareAO) {
 		super(trajectoryCompareAO);
 		this.k = trajectoryCompareAO.k;
 		this.algorithm = trajectoryCompareAO.algorithm;
@@ -79,7 +79,7 @@ public class TrajectoryCompareAO extends UnaryLogicalOp {
 	}
 
 	@Parameter(type = IntegerParameter.class, name = "K", doc = "The k-nearest trajectory to be returned.")
-	public void setK(int k) {
+	public void setK(final int k) {
 		this.k = k;
 	}
 	
@@ -156,7 +156,7 @@ public class TrajectoryCompareAO extends UnaryLogicalOp {
 	);
 	
 	@Override
-	public SDFSchema getOutputSchemaIntern(int port) {
+	public SDFSchema getOutputSchemaIntern(final int port) {
 		return OUTPUT_SCHEMA;
 	}
 	

@@ -86,7 +86,7 @@ public class OsmGraphLoader implements IGraphLoader<String, Integer> {
 	 * 
 	 */
 	@Override
-	public NetGraph load(String filepath, Integer utmZone) throws IllegalArgumentException {
+	public NetGraph load(final String filepath, final Integer utmZone) throws IllegalArgumentException {
 		if(filepath == null) {
 			throw new IllegalArgumentException("filepath is null");
 		}
@@ -104,14 +104,14 @@ public class OsmGraphLoader implements IGraphLoader<String, Integer> {
 				}
 				return graph;
 			}
-		} catch(IOException e) {
+		} catch(final IOException e) {
 			LOGGER.error(e.getMessage(), e);
 			throw new RuntimeException(e);
 		} finally {
 			if(fis != null) {
 				try {
 					fis.close();
-				} catch (IOException e) {
+				} catch (final IOException e) {
 					LOGGER.error(e.getMessage(), e);
 				}
 			}
@@ -152,7 +152,7 @@ public class OsmGraphLoader implements IGraphLoader<String, Integer> {
 			    apNds.selectXPath(AP_REFS);
 			    if(apNds.evalXPath() != -1) {
 			    	vn.toElement(VTDNav.FIRST_CHILD, ND_ELEM_NAME);
-			    	String firstPoint = vn.toNormalizedString(vn.getAttrVal(ND_REF_ATTR_NAME));
+			    	final String firstPoint = vn.toNormalizedString(vn.getAttrVal(ND_REF_ATTR_NAME));
 			    	Point point1 = pointsMap.get(firstPoint);
 			    	while(apNds.evalXPath() != -1) {
 			    		vn.toElement(VTDNav.FIRST_CHILD, ND_ELEM_NAME);

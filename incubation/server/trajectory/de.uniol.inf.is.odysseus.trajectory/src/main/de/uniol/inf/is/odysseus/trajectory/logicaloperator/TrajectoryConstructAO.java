@@ -39,7 +39,7 @@ public class TrajectoryConstructAO extends UnaryLogicalOp {
 	public TrajectoryConstructAO() {
 	}
 	
-	public TrajectoryConstructAO(TrajectoryConstructAO trajectoryConstructAO) {
+	public TrajectoryConstructAO(final TrajectoryConstructAO trajectoryConstructAO) {
 		super(trajectoryConstructAO);
 		
 		this.subtrajectories = trajectoryConstructAO.subtrajectories;
@@ -103,7 +103,7 @@ public class TrajectoryConstructAO extends UnaryLogicalOp {
 	);
 	
 	@Override
-	protected SDFSchema getOutputSchemaIntern(int pos) {
+	protected SDFSchema getOutputSchemaIntern(final int pos) {
 		return OUTPUT_SCHEMA;
 	}
 	

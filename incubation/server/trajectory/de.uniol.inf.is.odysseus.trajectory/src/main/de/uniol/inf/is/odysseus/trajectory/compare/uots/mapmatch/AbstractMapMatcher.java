@@ -55,7 +55,7 @@ public abstract class AbstractMapMatcher implements IMapMatcher {
 	
 	
 	@Override
-	public final UotsQueryTrajectory map(final RawQueryTrajectory trajectory, final Map<String, String> textualAttributes, NetGraph graph) {
+	public final UotsQueryTrajectory map(final RawQueryTrajectory trajectory, final Map<String, String> textualAttributes, final NetGraph graph) {
 		if(trajectory == null) {
 			throw new IllegalArgumentException("trajectory is null.");
 		}

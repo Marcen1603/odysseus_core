@@ -31,12 +31,12 @@ public class GraphBuilderFactory extends AbstractObjectLoaderFactory<IGraphLoade
 	private GraphBuilderFactory() { }
 	
 	@Override
-	protected String convertKey(String key) {
+	protected String convertKey(final String key) {
 		return key.substring(key.lastIndexOf('.') + 1).toUpperCase(Locale.US);
 	}
 
 	@Override
-	protected IGraphLoader<String, Integer> createLoader(String convertedKey) {
+	protected IGraphLoader<String, Integer> createLoader(final String convertedKey) {
 		switch(convertedKey) {
 			case "OSM" : return OsmGraphLoader.getInstance();
 		}

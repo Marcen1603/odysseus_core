@@ -42,7 +42,7 @@ public class LevelDBEnrichPO<T extends IMetaAttribute> extends AbstractEnrichPO<
 	private DB levelDB;
 	
 	
-	public LevelDBEnrichPO(LevelDBEnrichPO<T> abstractEnrichPO) {
+	public LevelDBEnrichPO(final LevelDBEnrichPO<T> abstractEnrichPO) {
 		super(abstractEnrichPO);
 		
 		this.levelDBPath = abstractEnrichPO.levelDBPath;
@@ -50,10 +50,10 @@ public class LevelDBEnrichPO<T extends IMetaAttribute> extends AbstractEnrichPO<
 		this.out = abstractEnrichPO.out;
 	}
 
-	public LevelDBEnrichPO(ICache cache,
-			IDataMergeFunction<Tuple<T>, T> dataMergeFunction,
-			IMetadataMergeFunction<T> metaMergeFunction, int[] uniqueKeys,
-			File levelDBPath, int in, int out) {
+	public LevelDBEnrichPO(final ICache cache,
+			final IDataMergeFunction<Tuple<T>, T> dataMergeFunction,
+			final IMetadataMergeFunction<T> metaMergeFunction, final int[] uniqueKeys,
+			final File levelDBPath, final int in, final int out) {
 		super(cache, dataMergeFunction, metaMergeFunction, uniqueKeys);
 			
 		this.levelDBPath = levelDBPath;
@@ -65,14 +65,14 @@ public class LevelDBEnrichPO<T extends IMetaAttribute> extends AbstractEnrichPO<
 	protected void internal_process_open() {
 		try {
 			this.levelDB = factory.open(this.levelDBPath, OPTIONS);
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			LOGGER.error(e.getMessage(), e);
 			throw new RuntimeException(e);
 		}
 	}
 
 	@Override
-	protected List<IStreamObject<?>> internal_process(Tuple<T> input) {
+	protected List<IStreamObject<?>> internal_process(final Tuple<T> input) {
 		final ByteArrayInputStream arrayInputStream = 
 				new ByteArrayInputStream(this.levelDB.get(bytes((String)input.getAttribute(this.in))));
 		ObjectInputStream objectInputStream = null;
@@ -85,13 +85,13 @@ public class LevelDBEnrichPO<T extends IMetaAttribute> extends AbstractEnrichPO<
 		} finally {
 			try {
 				arrayInputStream.close();
-			} catch (IOException e) {
+			} catch (final IOException e) {
 				LOGGER.error(e.getMessage(), e);
 			}
 			if(objectInputStream != null) {
 				try {
 					objectInputStream.close();
-				} catch (IOException e) {
+				} catch (final IOException e) {
 					LOGGER.error(e.getMessage(), e);
 				}
 			}
@@ -110,7 +110,7 @@ public class LevelDBEnrichPO<T extends IMetaAttribute> extends AbstractEnrichPO<
 			if(this.levelDB != null) {
 				this.levelDB.close();
 			}
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			LOGGER.error(e.getMessage(), e);
 		}
 	}

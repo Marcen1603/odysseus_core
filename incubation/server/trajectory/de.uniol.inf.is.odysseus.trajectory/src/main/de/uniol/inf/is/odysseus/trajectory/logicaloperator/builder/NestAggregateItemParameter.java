@@ -18,16 +18,16 @@ public class NestAggregateItemParameter extends AbstractParameter<NestAggregateI
 		super();
 	}
 
-	public NestAggregateItemParameter(String name, REQUIREMENT requirement, USAGE usage,
-			String doc) {
+	public NestAggregateItemParameter(final String name, final REQUIREMENT requirement, final USAGE usage,
+			final String doc) {
 		super(name, requirement, usage, doc);
 	}
 
-	public NestAggregateItemParameter(String name, REQUIREMENT requirement, USAGE usage) {
+	public NestAggregateItemParameter(final String name, final REQUIREMENT requirement, final USAGE usage) {
 		super(name, requirement, usage);
 	}
 
-	public NestAggregateItemParameter(String name, REQUIREMENT requirement) {
+	public NestAggregateItemParameter(final String name, final REQUIREMENT requirement) {
 		super(name, requirement, USAGE.RECENT);
 	}
 
@@ -40,8 +40,8 @@ public class NestAggregateItemParameter extends AbstractParameter<NestAggregateI
 		}
 		this.setValue(
 				new NestAggregateItem(
-						getAttributeResolver().getAttribute(value.get(0)), 
-						new SDFAttribute(null, value.get(1), getDataDictionary().getDatatype("double"), null, null, null)
+						this.getAttributeResolver().getAttribute(value.get(0)), 
+						new SDFAttribute(null, value.get(1), this.getDataDictionary().getDatatype("double"), null, null, null)
 				)
 		);
 	}

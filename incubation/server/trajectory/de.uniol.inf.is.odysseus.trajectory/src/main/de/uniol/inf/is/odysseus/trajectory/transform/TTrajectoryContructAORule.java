@@ -39,7 +39,7 @@ public class TTrajectoryContructAORule extends AbstractTransformationRule<Trajec
 	
 	
 	@Override
-	public void execute(TrajectoryConstructAO operator, TransformationConfiguration config) {
+	public void execute(final TrajectoryConstructAO operator, final TransformationConfiguration config) {
 		
 		UnaryLogicalOp op = operator;
 		final List<SDFAttribute> groupOrPartitionBy = Arrays.asList(operator.getTrajectoryId());
@@ -64,7 +64,7 @@ public class TTrajectoryContructAORule extends AbstractTransformationRule<Trajec
 		this.retract(operator);
 	}
 
-	private final UnaryLogicalOp insertPredicateWindowAO(final UnaryLogicalOp operatorBefore, List<SDFAttribute> groupOrPartitionBy) {
+	private final UnaryLogicalOp insertPredicateWindowAO(final UnaryLogicalOp operatorBefore, final List<SDFAttribute> groupOrPartitionBy) {
 		final PredicateWindowAO predicateWindowAO = new PredicateWindowAO();
 				
 		predicateWindowAO.setSameStarttime(true);
@@ -115,7 +115,7 @@ public class TTrajectoryContructAORule extends AbstractTransformationRule<Trajec
 	}
 	
 	private final UnaryLogicalOp insertLevelDBEnrichAO(final UnaryLogicalOp operatorBefore, 
-			final SDFAttribute in, final SDFAttribute out, File levelDBPath) {
+			final SDFAttribute in, final SDFAttribute out, final File levelDBPath) {
 		final LevelDBEnrichAO levelDBEnrichAO = new LevelDBEnrichAO();
 		levelDBEnrichAO.setIn(in);
 		levelDBEnrichAO.setOut(out);
@@ -140,8 +140,8 @@ public class TTrajectoryContructAORule extends AbstractTransformationRule<Trajec
 	
 	
 	@Override
-	public boolean isExecutable(TrajectoryConstructAO operator,
-			TransformationConfiguration transformConfig) {
+	public boolean isExecutable(final TrajectoryConstructAO operator,
+			final TransformationConfiguration transformConfig) {
 		return true;
 	}
 

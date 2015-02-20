@@ -50,7 +50,7 @@ public class OwdData {
 	public static class GridCellList implements Iterable<GridCell> {
 		
 		/** the backing <tt>List</tt> */
-		private LinkedList<GridCell> internal = new LinkedList<>();
+		private final LinkedList<GridCell> internal = new LinkedList<>();
 		
 		/** the last inserted element */
 		private GridCell tail;
@@ -77,7 +77,7 @@ public class OwdData {
 		 * @throws IllegalArgumentException if the new <tt>GridCell</tt> is not 
 		 *         adjacent to the previously added <tt>GridCell</tt>
 		 */
-		public boolean addGridCell(int x, int y) {
+		public boolean addGridCell(final int x, final int y) {
 			final GridCell gridCell = new GridCell(x, y);
 			if(this.tail != null) {
 				final int distance = Math.abs(this.tail.getX() - gridCell.getX()) 
@@ -166,7 +166,7 @@ public class OwdData {
 		 * @param x the <tt>x</tt> coordinate of this cell in the grid
 		 * @param y the <tt>y</tt> coordinate of this cell in the grid
 		 */
-		private GridCell(int x, int y) {
+		private GridCell(final int x, final int y) {
 			this.x = x;
 			this.y = y;
 		}
@@ -219,7 +219,7 @@ public class OwdData {
 		 * @return <tt>true</tt> if <tt>other</tt> is adjacent to this,
 		 * 	       otherwise <tt>false</tt>
 		 */
-		public boolean isAdjacent(GridCell other) {
+		public boolean isAdjacent(final GridCell other) {
 			return (this.previous == other && other.next == this)
 					|| (this.next == other && other.previous == this);
 		}
@@ -231,7 +231,7 @@ public class OwdData {
 		 *        shall be computed.
 		 * @return the distance from this <tt>GridCell</tt> to <tt>other</tt>
 		 */
-		public double distance(GridCell other) {
+		public double distance(final GridCell other) {
 			return Math.sqrt(Math.pow(this.getX() - other.getX(), 2) 
 					+ Math.pow(this.getY() - other.getY(), 2));
 		}

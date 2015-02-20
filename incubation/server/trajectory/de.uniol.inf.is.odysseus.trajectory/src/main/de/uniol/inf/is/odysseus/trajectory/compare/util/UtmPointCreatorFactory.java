@@ -30,13 +30,13 @@ public class UtmPointCreatorFactory extends AbstractFactory<UtmPointCreator, Int
 	
 	
 	@Override
-	protected Integer convertKey(Integer key) {
+	protected Integer convertKey(final Integer key) {
 		return key;
 	}
 
 
 	@Override
-	protected UtmPointCreator createProduct(Integer convertedKey) {
+	protected UtmPointCreator createProduct(final Integer convertedKey) {
 		return new UtmPointCreator(convertedKey);
 	}
 

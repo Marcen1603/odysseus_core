@@ -13,15 +13,15 @@ import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 public class TTrajectoryIdEnrichAORule extends AbstractTransformationRule<TrajectoryIdEnrichAO> {
 
 	@Override
-	public void execute(TrajectoryIdEnrichAO operator,
-			TransformationConfiguration config) throws RuleException {
+	public void execute(final TrajectoryIdEnrichAO operator,
+			final TransformationConfiguration config) throws RuleException {
 		
 		this.defaultExecute(operator, new TrajectoryIdEnrichPO<Tuple<ITimeInterval>>(), config, true, true);
 	}
 
 	@Override
-	public boolean isExecutable(TrajectoryIdEnrichAO operator,
-			TransformationConfiguration config) {
+	public boolean isExecutable(final TrajectoryIdEnrichAO operator,
+			final TransformationConfiguration config) {
 		return operator.isAllPhysicalInputSet();
 	}
 

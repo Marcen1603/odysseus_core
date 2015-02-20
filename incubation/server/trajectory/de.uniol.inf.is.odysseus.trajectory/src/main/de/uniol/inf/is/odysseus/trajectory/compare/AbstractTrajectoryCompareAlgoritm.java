@@ -43,7 +43,7 @@ public abstract class AbstractTrajectoryCompareAlgoritm<T extends IConvertedData
 	}	
 	
 	@Override
-	public void removeBefore(PointInTime time) {
+	public void removeBefore(final PointInTime time) {
 		
 		final List<IConvertedDataTrajectory<E>> toBeRemoved = new ArrayList<>();
 		
@@ -63,7 +63,7 @@ public abstract class AbstractTrajectoryCompareAlgoritm<T extends IConvertedData
 	
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<T> getKNearest(RawDataTrajectory trajectory) {
+	public List<T> getKNearest(final RawDataTrajectory trajectory) {
 		final IConvertedDataTrajectory<E> converted = this.convert(trajectory);
 		this.trajectories.add(converted);
 		return (List<T>)this.distanceService.getDistance(this.queryTrajectory, converted);

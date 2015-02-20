@@ -33,12 +33,12 @@ public class QueryTrajectoryLoaderFactory extends AbstractObjectLoaderFactory<IQ
 	
 	
 	@Override
-	protected String convertKey(String key) {
+	protected String convertKey(final String key) {
 		return key.substring(key.lastIndexOf('.') + 1).toUpperCase(Locale.US);
 	}
 
 	@Override
-	protected IQueryTrajectoryLoader createLoader(String convertedKey) {
+	protected IQueryTrajectoryLoader createLoader(final String convertedKey) {
 		switch(convertedKey) {
 			case "CSV" : return new CsvQueryTrajectoryLoader();
 		}

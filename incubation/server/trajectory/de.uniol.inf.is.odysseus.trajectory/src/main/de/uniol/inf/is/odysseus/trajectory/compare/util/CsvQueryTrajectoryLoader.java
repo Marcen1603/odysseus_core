@@ -48,14 +48,14 @@ public class CsvQueryTrajectoryLoader implements IQueryTrajectoryLoader {
 			reader = new FileReader(filepath);
 			parser = CSVFormat.DEFAULT.parse(reader);
 			records = parser.getRecords();
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			LOGGER.error(e.getMessage(), e);
 			throw new RuntimeException(e);
 		} finally {
 			if(reader != null) {
 				try {
 					reader.close();
-				} catch (IOException e) {
+				} catch (final IOException e) {
 					LOGGER.error(e.getMessage(), e);
 					throw new RuntimeException(e);
 				}
@@ -63,7 +63,7 @@ public class CsvQueryTrajectoryLoader implements IQueryTrajectoryLoader {
 			if(parser != null) {
 				try {
 					parser.close();
-				} catch (IOException e) {
+				} catch (final IOException e) {
 					LOGGER.error(e.getMessage(), e);
 					throw new RuntimeException(e);
 				}

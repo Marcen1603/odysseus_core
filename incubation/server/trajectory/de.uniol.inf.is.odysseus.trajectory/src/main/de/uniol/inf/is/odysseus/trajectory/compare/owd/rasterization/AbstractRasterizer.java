@@ -21,7 +21,7 @@ import de.uniol.inf.is.odysseus.trajectory.compare.owd.data.OwdQueryTrajectory;
 public abstract class AbstractRasterizer implements IRasterizer {
 
 	@Override
-	public OwdDataTrajectory rasterize(RawDataTrajectory trajectory, double cellSize) throws IllegalArgumentException {
+	public OwdDataTrajectory rasterize(final RawDataTrajectory trajectory, final double cellSize) throws IllegalArgumentException {
 		if(trajectory == null) {
 			throw new IllegalArgumentException("trajectory is null");
 		}
@@ -33,7 +33,7 @@ public abstract class AbstractRasterizer implements IRasterizer {
 	}
 
 	@Override
-	public OwdQueryTrajectory rasterize(RawQueryTrajectory trajectory, Map<String, String> textualAttributes, double cellSize) 
+	public OwdQueryTrajectory rasterize(final RawQueryTrajectory trajectory, final Map<String, String> textualAttributes, final double cellSize) 
 			throws IllegalArgumentException {
 		if(trajectory == null) {
 			throw new IllegalArgumentException("trajectory is null");

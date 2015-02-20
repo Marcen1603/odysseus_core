@@ -18,7 +18,7 @@ public class TTrajectoryCompareAORule extends AbstractTransformationRule<Traject
 	 }
 	 
 	@Override
-	 public void execute(TrajectoryCompareAO trajectoryAO, TransformationConfiguration config) {
+	 public void execute(final TrajectoryCompareAO trajectoryAO, final TransformationConfiguration config) {
 		 
 		 this.defaultExecute(
 				 trajectoryAO, 
@@ -36,7 +36,7 @@ public class TTrajectoryCompareAORule extends AbstractTransformationRule<Traject
 	 }
 	 
 	 @Override
-	 public boolean isExecutable(TrajectoryCompareAO operator, TransformationConfiguration transformConfig) {
+	 public boolean isExecutable(final TrajectoryCompareAO operator, final TransformationConfiguration transformConfig) {
 		 return operator.isAllPhysicalInputSet();
 	 }
 	 

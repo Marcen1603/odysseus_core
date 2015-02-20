@@ -30,7 +30,7 @@ public class AdvancedBresenhamRasterizer extends AbstractRasterizer {
 	 * 
 	 */
 	@Override
-	protected GridCellList getGraphPoints(IRawTrajectory trajectory, double cellSize) throws IllegalArgumentException {
+	protected GridCellList getGraphPoints(final IRawTrajectory trajectory, final double cellSize) throws IllegalArgumentException {
 		
 		if(trajectory == null) {
 			throw new IllegalArgumentException("trajectory is null");
@@ -66,12 +66,12 @@ public class AdvancedBresenhamRasterizer extends AbstractRasterizer {
 	 * @param cellSize the width and height of a cell
 	 * @param gridCellList the <tt>GridCellList</tt> where <tt>GridCells</tt> will be stored
 	 */
-	private void rasterize(double x1d, double y1d, double x2d, double y2d, double cellSize, GridCellList gridCellList) {
+	private void rasterize(final double x1d, final double y1d, final double x2d, final double y2d, final double cellSize, final GridCellList gridCellList) {
         
         int x1 = (int)(x1d / cellSize);
         int y1 = (int)(y1d / cellSize);
-        int x2 = (int)(x2d / cellSize);
-        int y2 = (int)(y2d / cellSize);
+        final int x2 = (int)(x2d / cellSize);
+        final int y2 = (int)(y2d / cellSize);
 
         int d = 0;
 
@@ -88,8 +88,9 @@ public class AdvancedBresenhamRasterizer extends AbstractRasterizer {
         	
             while(true) {
             	gridCellList.addGridCell(x1, y1);
-                if (x1 == x2)
-                    break;
+                if (x1 == x2) {
+					break;
+				}
                 x1 += ix;
                 d += dy2;
                 if (d > dx) {
@@ -101,8 +102,9 @@ public class AdvancedBresenhamRasterizer extends AbstractRasterizer {
         } else {
             while(true) {
             	gridCellList.addGridCell(x1, y1);
-                if (y1 == y2)
-                    break;
+                if (y1 == y2) {
+					break;
+				}
                 y1 += iy;
                 d += dx2;
                 if (d > dy) {

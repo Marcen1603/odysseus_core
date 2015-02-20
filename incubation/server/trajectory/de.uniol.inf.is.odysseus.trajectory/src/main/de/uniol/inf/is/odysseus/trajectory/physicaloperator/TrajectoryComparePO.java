@@ -37,8 +37,8 @@ public class TrajectoryComparePO<T extends Tuple<ITimeInterval>> extends Abstrac
 	
 	private final int utmZone;
 
-	public TrajectoryComparePO(final int k, final String queryTrajectoryPath, final int utmZone, double lambda, final String algorithm, 
-			Map<String, String> textualAttributes, Map<String, String> options) {
+	public TrajectoryComparePO(final int k, final String queryTrajectoryPath, final int utmZone, final double lambda, final String algorithm, 
+			final Map<String, String> textualAttributes, final Map<String, String> options) {
 		
 		this.algorithm = TrajectoryCompareAlgorithmFactory.getInstance().create(
 				algorithm, k, queryTrajectoryPath, textualAttributes, utmZone, lambda, options);
@@ -50,7 +50,7 @@ public class TrajectoryComparePO<T extends Tuple<ITimeInterval>> extends Abstrac
 	
 	@SuppressWarnings("unchecked")
 	@Override
-	protected void process_next(T object, int port) {
+	protected void process_next(final T object, final int port) {
 		
 		final RawDataTrajectory rawTrajectory = this.tupleToRawTrajectoryConverter.convert(object, this.utmZone);
 		this.algorithm.removeBefore(object.getMetadata().getStart());
@@ -65,7 +65,7 @@ public class TrajectoryComparePO<T extends Tuple<ITimeInterval>> extends Abstrac
 	}
 	
 	@Override
-	public void processPunctuation(IPunctuation punctuation, int port) {
+	public void processPunctuation(final IPunctuation punctuation, final int port) {
 		this.sendPunctuation(punctuation);
 	}
 	
