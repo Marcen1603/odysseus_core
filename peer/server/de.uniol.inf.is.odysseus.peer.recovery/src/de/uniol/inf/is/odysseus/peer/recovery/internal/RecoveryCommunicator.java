@@ -38,8 +38,6 @@ import de.uniol.inf.is.odysseus.rest.socket.SocketInfo;
  * 
  */
 public class RecoveryCommunicator implements IRecoveryCommunicator {
-
-	int r = 0;
 	
 	public final static int PEER_INSTRUCTIONS_PORT = 53000;
 
