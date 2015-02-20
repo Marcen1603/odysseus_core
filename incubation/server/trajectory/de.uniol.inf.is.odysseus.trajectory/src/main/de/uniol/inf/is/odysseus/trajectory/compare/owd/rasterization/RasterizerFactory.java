@@ -13,7 +13,7 @@ public class RasterizerFactory extends AbstractSimpleFactory<IRasterizer> {
 	private RasterizerFactory() { }
 	
 	@Override
-	protected IRasterizer internalCreate() {
+	protected IRasterizer create() {
 		return new AdvancedBresenhamRasterizer();
 	}
 

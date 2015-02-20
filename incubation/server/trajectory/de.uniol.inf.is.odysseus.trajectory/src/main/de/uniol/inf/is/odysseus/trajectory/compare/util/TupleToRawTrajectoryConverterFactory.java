@@ -11,7 +11,7 @@ public class TupleToRawTrajectoryConverterFactory extends AbstractSimpleFactory<
 	}
 
 	@Override
-	protected ITupleToRawTrajectoryConverter internalCreate() {
+	protected ITupleToRawTrajectoryConverter create() {
 		return new DefaultTupleToRawTrajectoryConverter();
 	}
 	

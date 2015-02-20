@@ -8,8 +8,8 @@ import java.util.Map;
  * 
  * @author marcus
  *
- * @param <P> the type of the product
- * @param <K> the key for intantiating the product
+ * @param <P> the type of the <i>product</i>
+ * @param <K> the type of the <i>key</i> for intantiating the product
  */
 public abstract class AbstractFactory<P, K> {
 	
@@ -25,7 +25,7 @@ public abstract class AbstractFactory<P, K> {
 	 * Returns a <i>product</i> for the passed <i>key</i>. If there exists
 	 * no product for the key a new one will be created.
 	 * 
-	 * @param key the <i>key</i> for which the product will be returned ore created
+	 * @param key the <i>key</i> for which the product will be returned or created
 	 * @return an already existing <i>product</i> for the passed key or an newly 
 	 *         created if there has not been a product for this key before
 	 *      
@@ -40,16 +40,22 @@ public abstract class AbstractFactory<P, K> {
 	}
 	
 	/**
+	 * Converts the <i>key</i> and returns it. May be used by subclasses
+	 * to return the same <i>product</i> for different keys.
 	 * 
-	 * @param key
-	 * @return
+	 * @param the <i>key</i> to be converted
+	 * @return key the converted <i>key</i>
 	 */
 	protected abstract K convertKey(K key);
 	
 	/**
+	 * Creates and returns a <i>product</i> for the <i>converted key</i>.
+	 * This method is only called if there exists no product for the converted
+	 * key.
 	 * 
-	 * @param convertedKey
-	 * @return
+	 * @param convertedKey the <i>converted key</i> for which the product will be 
+	 *        created
+	 * @return the newly created <i>product</i> for the the <i>converted key</i>
 	 */
 	protected abstract P createProduct(K convertedKey);
 }

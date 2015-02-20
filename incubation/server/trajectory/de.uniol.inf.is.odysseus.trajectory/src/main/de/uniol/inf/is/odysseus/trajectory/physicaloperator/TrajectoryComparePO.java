@@ -7,7 +7,6 @@ import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
-import de.uniol.inf.is.odysseus.core.metadata.TimeInterval;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.trajectory.compare.ITrajectoryCompareAlgorithm;
@@ -44,7 +43,7 @@ public class TrajectoryComparePO<T extends Tuple<ITimeInterval>> extends Abstrac
 		this.algorithm = TrajectoryCompareAlgorithmFactory.getInstance().create(
 				algorithm, k, queryTrajectoryPath, textualAttributes, utmZone, lambda, options);
 		
-		this.tupleToRawTrajectoryConverter = TupleToRawTrajectoryConverterFactory.getInstance().create();
+		this.tupleToRawTrajectoryConverter = TupleToRawTrajectoryConverterFactory.getInstance().getProduct();
 		this.utmZone = utmZone;
 	}
 
