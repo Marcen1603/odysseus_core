@@ -25,8 +25,20 @@ import de.uniol.inf.is.odysseus.trajectory.compare.util.UtmPointCreatorFactory;
 import edu.uci.ics.jung.graph.UndirectedSparseGraph;
 import edu.uci.ics.jung.graph.util.EdgeType;
 
+/**
+ * An implementation of <tt>IGraphLoader</tt> which loads a <tt>NetGraph</tt>
+ * from an <i>OSM file</i>. Due to performance gains <i>vtd-xml</i> is used to 
+ * process the <i>OSM data</i>. Additionally <tt>OsmGraphLoader</tt> stores 
+ * <i>MD5 sums</i> of the files that has been loaded and the corresponding 
+ * <tt>NetGraphs</tt>. In this way the same data does not need to be processed
+ * twice even then if its source is from different files.
+ * 
+ * @author marcus
+ *
+ */
 public class OsmGraphLoader implements IGraphLoader<String, Integer> {
 
+	/** Logger for debugging purposes */
 	private final static Logger LOGGER = LoggerFactory.getLogger(OsmGraphLoader.class);
 	
 	private final static String AP_NODES = "//node";
@@ -43,22 +55,41 @@ public class OsmGraphLoader implements IGraphLoader<String, Integer> {
 	private final static String ND_ELEM_NAME = "nd";
 	private final static String ND_REF_ATTR_NAME = "ref";
 	
+	/** the singleton instance */
 	private final static OsmGraphLoader INSTANCE = new OsmGraphLoader();
 	
+	/**
+	 * Returns the <tt>OsmGraphLoader</tt> as an eager singleton.
+	 * 
+	 * @return the <tt>OsmGraphLoader</tt> as an eager singleton
+	 */
 	public final static OsmGraphLoader getInstance() {
 		return INSTANCE;
 	}
-	
 	
 	/**
 	 * md5 sums and already loaded Graph
 	 */
 	private final Map<String, NetGraph> graphs = new HashMap<>();
 
+	/**
+	 * Beware this class from being instantiated because it is a <i>singleton</i>.
+	 */
 	private OsmGraphLoader() { }
 	
+	/**
+	 * Loads an <tt>NetGraph</tt> from an <i>OSM file</i>.
+	 * 
+	 * @param filepath the path to the OSM file
+	 * @param utmZone the UTM zone of the OSM data
+	 * @throws IllegalArgumentException if <tt>filepath == null</tt>
+	 * 
+	 */
 	@Override
-	public NetGraph load(String filepath, Integer utmZone) {
+	public NetGraph load(String filepath, Integer utmZone) throws IllegalArgumentException {
+		if(filepath == null) {
+			throw new IllegalArgumentException("filepath is null");
+		}
 		NetGraph graph = null;
 		InputStream fis = null;
 		String md5 = null;
@@ -68,7 +99,9 @@ public class OsmGraphLoader implements IGraphLoader<String, Integer> {
 
 			graph = this.graphs.get(md5);
 			if(graph != null) {
-				LOGGER.info("Use cached graph from file \"" + filepath + "\" with MD5 \"" + md5 + "\"");
+				if(LOGGER.isDebugEnabled()) {
+					LOGGER.debug("Use cached graph from file \"" + filepath + "\" with MD5 \"" + md5 + "\"");
+				}
 				return graph;
 			}
 		} catch(IOException e) {
@@ -131,6 +164,10 @@ public class OsmGraphLoader implements IGraphLoader<String, Integer> {
 		} catch(NavException | XPathEvalException | XPathParseException e) {
 			LOGGER.error(e.getMessage(), e);
 			throw new RuntimeException(e);
+		}
+		
+		if(LOGGER.isDebugEnabled()) {
+			LOGGER.debug("New graph created from file \"" + filepath + "\" with MD5 \"" + md5 + "\"");
 		}
 		
 		this.graphs.put(md5, graph = new NetGraph(complexGraph));

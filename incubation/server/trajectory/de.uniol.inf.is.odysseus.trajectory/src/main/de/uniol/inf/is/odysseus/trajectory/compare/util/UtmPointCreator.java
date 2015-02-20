@@ -32,8 +32,10 @@ public class UtmPointCreator implements IPointCreator {
 	private final BasicCoordinateTransform basicTransform;
 	
 	/**
+	 * Creates an instance of <tt>UtmPointCreator</tt> with the passed <i>UTM zone</i> to which the
+	 * <tt>Coordinates</tt> will be converted.
 	 * 
-	 * @param utmZone the utm zone 
+	 * @param utmZone the UTM zone to which the <tt>Coordinates</tt> will be converted
 	 */
 	public UtmPointCreator(final int utmZone) {
 		this.utmZone = utmZone;

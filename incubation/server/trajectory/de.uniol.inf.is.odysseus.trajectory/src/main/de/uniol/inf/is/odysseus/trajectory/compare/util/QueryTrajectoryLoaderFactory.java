@@ -42,8 +42,7 @@ public class QueryTrajectoryLoaderFactory extends AbstractObjectLoaderFactory<IQ
 		switch(convertedKey) {
 			case "CSV" : return new CsvQueryTrajectoryLoader();
 		}
-		
-		return null;
+		throw new IllegalArgumentException("No IQueryTrajectoryLoader found for file extension: " + convertedKey);
 	}
 
 }

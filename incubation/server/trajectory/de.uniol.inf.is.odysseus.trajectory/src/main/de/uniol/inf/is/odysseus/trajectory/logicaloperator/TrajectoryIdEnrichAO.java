@@ -6,7 +6,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOpera
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnaryLogicalOp;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 
-@LogicalOperator(name = "NONANANA", minInputPorts = 1, maxInputPorts = 1, doc="Enrich Trajectory with Ids", category={LogicalOperatorCategory.ADVANCED})
+@LogicalOperator(name = "PLEASEDONTUSEMEBECAUSEIAMANOPERATORONLYFORACERTAINUSECASE", minInputPorts = 1, maxInputPorts = 1, doc="Enrich Trajectory with Ids", category={LogicalOperatorCategory.ADVANCED})
 public class TrajectoryIdEnrichAO extends UnaryLogicalOp {
 
 	/**

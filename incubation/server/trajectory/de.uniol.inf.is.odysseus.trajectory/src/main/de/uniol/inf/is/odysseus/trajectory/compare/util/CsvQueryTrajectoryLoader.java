@@ -17,18 +17,35 @@ import com.vividsolutions.jts.geom.Point;
 
 import de.uniol.inf.is.odysseus.trajectory.compare.data.RawQueryTrajectory;
 
+/**
+ * An implementation of <tt>IQueryTrajectoryLoader</tt> which loads 
+ * <tt>RawQueryTrajectory</tt> from <i>CSV files</i>. The CSV file 
+ * must be comma separated and each line must contain the <i>latitude</i>
+ * and <i>longitude</i>.
+ * 
+ * @author marcus
+ *
+ */
 public class CsvQueryTrajectoryLoader implements IQueryTrajectoryLoader {
 
+	/** Logger for debugging purposes */
 	private final static Logger LOGGER = LoggerFactory.getLogger(CsvQueryTrajectoryLoader.class);
 	
+	/**
+	 * Loads and returns a <tt>RawQueryTrajectory</tt> from a CSV file
+	 * identified by the passed <i>filepath</i> in the passed <i>utmZone</i>.
+	 *  
+	 * @param filepath the path to the CSV file where trajectory data is stored
+	 * @param utmZone
+	 */
 	@Override
-	public RawQueryTrajectory load(String param, Integer additional) {
+	public RawQueryTrajectory load(final String filepath, final Integer utmZone) {
 		
 		Reader reader = null;
 		CSVParser parser = null;
 		List<CSVRecord> records = null;
 		try {
-			reader = new FileReader(param);
+			reader = new FileReader(filepath);
 			parser = CSVFormat.DEFAULT.parse(reader);
 			records = parser.getRecords();
 		} catch (IOException e) {
@@ -53,7 +70,7 @@ public class CsvQueryTrajectoryLoader implements IQueryTrajectoryLoader {
 			}
 		}
 		
-		final IPointCreator pointCreator = UtmPointCreatorFactory.getInstance().create(additional);
+		final IPointCreator pointCreator = UtmPointCreatorFactory.getInstance().create(utmZone);
 		final List<Point> points = new LinkedList<Point>();
 		for(final CSVRecord record : records) {
 			points.add(pointCreator.createPoint(

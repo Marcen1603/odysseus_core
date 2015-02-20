@@ -14,12 +14,15 @@ import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.trajectory.compare.data.RawDataTrajectory;
 
 /**
+ * Default implementation of <tt>ITupleToRawTrajectoryConverter</tt>. There is really no other
+ * opportunity to implement <tt>ITupleToRawTrajectoryConverter</tt>
  * 
  * @author marcus
  *
  */
 public class DefaultTupleToRawTrajectoryConverter implements ITupleToRawTrajectoryConverter {
 
+	/** Logger for debugging purposes */
 	@SuppressWarnings("unused")
 	private final static Logger LOGGER = LoggerFactory.getLogger(DefaultTupleToRawTrajectoryConverter.class);
 
@@ -33,7 +36,7 @@ public class DefaultTupleToRawTrajectoryConverter implements ITupleToRawTrajecto
 		
 		final List<Point> points = new ArrayList<Point>(tupleList.size());
 		
-		for(Tuple<?> inner : tupleList) {
+		for(final Tuple<?> inner : tupleList) {
 			final Point p = inner.getAttribute(0);
 			points.add(pointCreator.createPoint(p.getCoordinate()));
 		}

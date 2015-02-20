@@ -1,5 +1,7 @@
 package de.uniol.inf.is.odysseus.trajectory.compare.uots.graph;
 
+import java.io.Serializable;
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -20,21 +22,58 @@ import com.vividsolutions.jts.geom.Point;
 import edu.uci.ics.jung.graph.UndirectedSparseGraph;
 import edu.uci.ics.jung.graph.util.EdgeType;
 
+/**
+ * A <tt>NetGraph</tt> encapsulated two instances of an <tt>UndirectedSparseGraph<tt>. 
+ * One is a complex and the other one a reduced <tt>UndirectedSparseGraph<tt>. 
+ * 
+ * A <tt>NetGraph</tt> is created from a complex <tt>UndirectedSparseGraph</tt> with 
+ * <tt>Points</tt> as <i>vertices</i> and <tt>LineSegments</tt> as <i>edges</i>. 
+ * 
+ * <p>Firstly the complex <tt>UndirectedSparseGraph</tt> will be processed in a way that only
+ * the <i>largest set of connected vertices</i> will be kept. In this way it is guaranteed that
+ * each vertex can be reached by another vertex.</p>
+ * 
+ * <p>Secondly a new <tt>UndirectedSparseGraph</tt> will be built from the complex 
+ * <tt>UndirectedSparseGraph</tt> as the reduced <tt>UndirectedSparseGraph</tt>. Instead 
+ * of <tt>LineSegments</tt> it will have <tt>Units</tt> of <tt>Double</tt> as <i>edges</i> 
+ * which value are equal to the lengths of the <tt>LineSegments</tt>.
+ * After that each vertex of from the reduced graph that has exactly <i>two edges will be
+ * removed</i>. For each removed vertex the nearest adjacent vertex with exeact one
+ * or more than two edges will be stored.
+ * 
+ * @author marcus
+ *
+ */
 public class NetGraph {
 	
+	/** Logger for debugging purposes */
 	private final static Logger LOGGER = LoggerFactory.getLogger(NetGraph.class);
 	
+	/** used for comparing sizes of <tt>Collections</tt> */
+	private final static CollectionSizeComparator COLLECTION_SIZE_COMPARATOR = 
+			new CollectionSizeComparator();
 	
+	/** the complex <tt>UndirectedSparseGraph</tt> */
 	private final UndirectedSparseGraph<Point, LineSegment> complexGraph;
 	
+	/** the reduced <tt>UndirectedSparseGraph</tt> */
 	private final UndirectedSparseGraph<Point, Unit<Double>> reducedGraph;
 	
+	/** the diagonal length of the <tt>NetGraph</tt> in <i>meters</i> */
 	private final double diagonalLength;
 	
+	/** the bounds of the <tt>NetGraph</tt> in the <i>UTM Coordinate System</i> */
 	private final Pair<Coordinate, Coordinate> bounds;
 		
+	/** <tt>Map</tt> for finding junctions for removed vertices  */
 	private Map<Point, Point> pointToJunctions = new HashMap<>();
 	
+	/**
+	 * Creates an instance of <tt>NetGraph</tt>.
+	 * 
+	 * @param complexGraph the complex <tt>UndirectedSparseGraph</tt> 
+	 *        from which this <tt>NetGraph</tt> is built
+	 */
 	public NetGraph(UndirectedSparseGraph<Point, LineSegment> complexGraph) {
 		this.complexGraph = complexGraph;
 		this.keepHighestIsolatedGraph();
@@ -44,16 +83,13 @@ public class NetGraph {
 	}
 	
 	/**
-	 * 
+	 * Keeps only the <i>largest set of connected vertices</i> for
+	 * the complex <tt>UndirectedSparseGraph</tt>.
 	 */
 	private final void keepHighestIsolatedGraph() {
 		final Set<Point> visited = new HashSet<>();
-		final PriorityQueue<Set<Point>> sets = new PriorityQueue<Set<Point>>(10, new Comparator<Set<Point>>() {
-			@Override
-			public int compare(Set<Point> o1, Set<Point> o2) {
-				return o1.size() - o2.size();
-			}
-		});
+		final PriorityQueue<Set<Point>> sets = 
+				new PriorityQueue<Set<Point>>(10, COLLECTION_SIZE_COMPARATOR);
 		
 		for(final Point point : this.complexGraph.getVertices()) {
 			if(!visited.contains(point)) {
@@ -72,12 +108,25 @@ public class NetGraph {
 		}
 	}
 	
+	/**
+	 * Method for visiting transitive neighbors of a vertex.
+	 * @param point point the starting vertex which's transitive neighbors will be visited
+	 * @param visited a <tt>Set</tt> of already visited vertices of graph
+	 * @return
+	 */
 	private final Set<Point> createSubset(final Point point, final Set<Point> visited) { 
 		final HashSet<Point> subgraphVisited = new HashSet<>();
 		this.createSubset(point, subgraphVisited, visited);
 		return subgraphVisited;
 	}
-		
+	
+	/**
+	 * Recursive method for visiting transitive neighbors of a vertex.
+	 * 
+	 * @param point the starting vertex which's transitive neighbors will be visited
+	 * @param subgraphVisited a <tt>Set</tt> of already visited neighbors of the subgraph
+	 * @param visited a <tt>Set</tt> of already visited vertices of graph
+	 */
 	private final void createSubset(final Point point, final Set<Point> subgraphVisited, final Set<Point> visited) {
 		visited.add(point);
 		subgraphVisited.add(point);
@@ -91,7 +140,7 @@ public class NetGraph {
 	
 	
 	/**
-	 * 
+	 * Builds the reduced <tt>UndirectedSparseGraph</tt> from the complex <tt>UndirectedSparseGraph</tt>.
 	 */
 	private final Pair<Coordinate, Coordinate> buildReducedGraph() {
 		
@@ -124,12 +173,6 @@ public class NetGraph {
 				}
 			} 
 		}
-
-		if(LOGGER.isDebugEnabled()) {
-			LOGGER.debug("Simple Graph created: reduced vertex count from " + this.complexGraph.getVertexCount() 
-					+ " to " + this.reducedGraph.getVertexCount());
-		}
-		
 		
 		final Iterator<Point> it = this.reducedGraph.getVertices().iterator();
 		Point point = it.next();
@@ -154,10 +197,25 @@ public class NetGraph {
 				maxTop = next.getY();
 			}
 		}
+		
+		if(LOGGER.isDebugEnabled()) {
+			LOGGER.debug("Simple Graph created: reduced vertex count from " + this.complexGraph.getVertexCount() 
+					+ " to " + this.reducedGraph.getVertexCount());
+		}
+		
 				
 		return new Pair<>(new Coordinate(maxLeft, maxBottom), new Coordinate(maxRight, maxTop));
 	}
 	
+	/**
+	 * Recursive method for finding a junction point of a removed vertex in one direction.
+	 * 
+	 * @param point the current vertex
+	 * @param edge indicates in which direction shall be searched
+	 * @param distance indicates how far has been searched
+	 * @param maxDistance the maximal distance to search
+	 * @return the junction
+	 */
 	private Pair<Point, Double> findJunction(Point point, Unit<Double> edge, double distance, double maxDistance) {
 	
 		if(distance > maxDistance) {
@@ -178,6 +236,13 @@ public class NetGraph {
 		return this.findJunction(nextPoint, nextEdge, distance + edge.getValue0(), maxDistance);
 	}
 	
+	/**
+	 * Returns the nearest <tt>Point</tt> with exactly one or more than two edges to passed
+	 * <tt>Point</tt>.
+	 * 
+	 * @param point the <tt>Point</tt> to find its nearest junction
+	 * @return the nearest junction to the passed <tt>Point</tt>
+	 */
 	public Point getJunction(Point point) {
 		Point junction = this.pointToJunctions.get(point);
 		if(junction == null) {
@@ -186,19 +251,60 @@ public class NetGraph {
 		return junction;
 	}
 
+	/**
+	 * Returns the complex <tt>UndirectedSparseGraph</tt>.
+	 * 
+	 * @return the complex <tt>UndirectedSparseGraph</tt>
+	 */
 	public UndirectedSparseGraph<Point, LineSegment> getComplexGraph() {
 		return this.complexGraph;
 	}
 
+	/**
+	 * Returns the reduced <tt>UndirectedSparseGraph</tt>.
+	 * 
+	 * @return the reduced <tt>UndirectedSparseGraph</tt>
+	 */
 	public UndirectedSparseGraph<Point, Unit<Double>> getReducedGraph() {
 		return this.reducedGraph;
 	}
 	
+	/**<
+	 * Returns the bounds of the <tt>NetGraph</tt> in the <i>UTM Coordinate System</i>.
+	 * 
+	 * @return the bounds of the <tt>NetGraph</tt> in the <i>UTM Coordinate System</i>
+	 */
 	public Pair<Coordinate, Coordinate> getBounds() {
 		return this.bounds;
 	}
 
+	/**
+	 * Returns the diagonal length of the <tt>NetGraph</tt> in <i>meters</i>.
+	 * 
+	 * @return the diagonal length of the <tt>NetGraph</tt> in <i>meters</i>
+	 */
 	public double getDiagonalLength() {
 		return this.diagonalLength;
+	}
+	
+	/**
+	 * Special implementation of <tt>Comparator</tt> to compare the size of two <tt>Collections</tt>.
+	 * This class is utilized two keep the <i>largest set of connected vertices</i> in the complex
+	 * <tt>UndirectedSparseGraph</tt>.
+	 * 
+	 * @author marcus
+	 *
+	 */
+	private static final class CollectionSizeComparator implements Comparator<Collection<?>>, Serializable {
+
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 534559323981351379L;
+
+		@Override
+		public int compare(final Collection<?> o1, final Collection<?> o2) {
+			return o1.size() - o2.size();
+		}
 	}
 }
