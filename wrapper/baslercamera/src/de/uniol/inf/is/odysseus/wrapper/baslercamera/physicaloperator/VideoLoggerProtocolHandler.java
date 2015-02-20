@@ -129,6 +129,8 @@ public class VideoLoggerProtocolHandler extends LoggerProtocolHandler
 		long length = new File(videoFileName).length();
 		System.out.println("write " + image.toString() + ", video file size = " + length);
 		
+//		image.releaseReference();
+		
 		return length;
 	}	
 	

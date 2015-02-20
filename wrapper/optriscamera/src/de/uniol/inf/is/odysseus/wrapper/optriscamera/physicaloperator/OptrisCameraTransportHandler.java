@@ -1,11 +1,10 @@
 package de.uniol.inf.is.odysseus.wrapper.optriscamera.physicaloperator;
 
-import static org.bytedeco.javacpp.opencv_core.*;
+import static org.bytedeco.javacpp.opencv_core.IPL_DEPTH_16S;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
 
-import org.bytedeco.javacpp.opencv_core.IplImage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,6 +26,7 @@ public class OptrisCameraTransportHandler extends AbstractPushTransportHandler
 
 	private String 			ethernetAddress;
 	private OptrisCamera 	cameraCapture;
+	private ImageJCV 		image;
 	
 	public OptrisCameraTransportHandler() 
 	{
@@ -53,8 +53,6 @@ public class OptrisCameraTransportHandler extends AbstractPushTransportHandler
 
 	@Override public void processInOpen() throws IOException 
 	{
-//		throw new UnsupportedOperationException("Operator can not be run in pull mode");
-		
 		synchronized (processLock)
 		{
 			try
@@ -67,10 +65,12 @@ public class OptrisCameraTransportHandler extends AbstractPushTransportHandler
 		 								int[] attrs = getSchema().getSDFDatatypeAttributePositions(SDFImageJCVDatatype.IMAGEJCV);
 		 								if (attrs.length > 0)
 		 								{
-			 								IplImage img = cvCreateImage(cvSize(cameraCapture.getImageWidth(), cameraCapture.getImageHeight()), IPL_DEPTH_16S, cameraCapture.getImageChannels());			
-			 								img.getByteBuffer().put(buffer);	
-			 								
-		 									tuple.setAttribute(attrs[0], new ImageJCV(img));
+		 									if (image == null)
+		 										image = new ImageJCV(cameraCapture.getImageWidth(), cameraCapture.getImageHeight(), IPL_DEPTH_16S, cameraCapture.getImageChannels());
+		 									
+		 									image.getImageData().rewind();
+			 								image.getImageData().put(buffer);				 								
+		 									tuple.setAttribute(attrs[0], image);
 		 								}
 		 								
 		 								fireProcess(tuple);
@@ -95,6 +95,7 @@ public class OptrisCameraTransportHandler extends AbstractPushTransportHandler
 		{
 			cameraCapture.stop();
 			cameraCapture = null;
+			image = null;
 		}
 		
 		fireOnDisconnect();

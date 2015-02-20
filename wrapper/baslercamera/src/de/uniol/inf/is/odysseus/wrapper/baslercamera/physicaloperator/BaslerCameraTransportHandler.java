@@ -1,13 +1,9 @@
 package de.uniol.inf.is.odysseus.wrapper.baslercamera.physicaloperator;
 
 import static org.bytedeco.javacpp.opencv_core.IPL_DEPTH_8U;
-import static org.bytedeco.javacpp.opencv_core.cvCreateImage;
-import static org.bytedeco.javacpp.opencv_core.cvSize;
 
 import java.io.IOException;
-import java.nio.ByteBuffer;
 
-import org.bytedeco.javacpp.opencv_core.IplImage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,7 +28,6 @@ public class BaslerCameraTransportHandler extends AbstractSimplePullTransportHan
 	
 	private Tuple<IMetaAttribute> currentTuple;
 	private ImageJCV imageJCV;
-	private ByteBuffer imageData;
 	
 	public BaslerCameraTransportHandler() 
 	{
@@ -67,11 +62,8 @@ public class BaslerCameraTransportHandler extends AbstractSimplePullTransportHan
 			{
 		 		cameraCapture = new BaslerCamera(serialNumber);
 				cameraCapture.start();
-				IplImage iplImage = cvCreateImage(cvSize(cameraCapture.getImageWidth(), cameraCapture.getImageHeight()), IPL_DEPTH_8U, cameraCapture.getImageChannels());
-				imageJCV = new ImageJCV(iplImage);
 				
-				imageData = iplImage.getByteBuffer();
-				assert(imageData.isDirect()); // Is it possible for an IplImage to be backed by a non-direct byte buffer?				
+				imageJCV = new ImageJCV(cameraCapture.getImageWidth(), cameraCapture.getImageHeight(), IPL_DEPTH_8U, cameraCapture.getImageChannels());
 				
 				currentTuple = null;
 			}
@@ -102,7 +94,6 @@ public class BaslerCameraTransportHandler extends AbstractSimplePullTransportHan
 			}
 			
 			imageJCV = null;
-			imageData = null;
 			currentTuple = null;
 			System.out.println("Stopped");
 		}
@@ -113,6 +104,8 @@ public class BaslerCameraTransportHandler extends AbstractSimplePullTransportHan
 	
 	private long lastTime = 0;
 	
+	private int imageCount = 0;
+	
 	@Override public Tuple<IMetaAttribute> getNext() 
 	{
 		long now = System.nanoTime();
@@ -122,40 +115,33 @@ public class BaslerCameraTransportHandler extends AbstractSimplePullTransportHan
 		smoothFPS = alpha*smoothFPS + (1.0-alpha)*fps; 
 		
 //		System.out.println("getNext " + now / 1.0e9 + ", dt = " + dt + " = " + 1.0/dt + " FPS");
-		System.out.println(String.format("%s: %.4f FPS (%.4f)", serialNumber, smoothFPS, fps));
+		System.out.println(String.format("%d %s: %.4f FPS (%.4f)", imageCount++, serialNumber, smoothFPS, fps));
 		lastTime = now;
 
 		Tuple<IMetaAttribute> tuple = currentTuple;
-		currentTuple = null;		
-		
+		currentTuple = null;				
         return tuple;					
 	}
-    
+	
 	@Override public boolean hasNext() 
 	{
 		synchronized (processLock)
 		{
 			if (cameraCapture == null) return false;
-//			IplImage img = cvCreateImage(cvSize(cameraCapture.getImageWidth(), cameraCapture.getImageHeight()), IPL_DEPTH_8U, cameraCapture.getImageChannels());			
-//			ByteBuffer imageData = img.getByteBuffer();
-			
-			// Is it possible for an IplImage to be backed by a non-direct byte buffer?
-//			assert(imageData.isDirect());
 
-			if (!cameraCapture.grabRGB8(imageData, imageJCV.getImage().widthStep(), 1000))
-			{
+			if (!cameraCapture.grabRGB8(imageJCV.getImageData(), imageJCV.getImage().widthStep(), 1000))
 				return false;
-			}
-			else
+
+//			System.out.println("Frame grabbed from " + serialNumber);
+				
+			currentTuple = new Tuple<IMetaAttribute>(getSchema().size(), false);
+			int[] attrs = getSchema().getSDFDatatypeAttributePositions(SDFImageJCVDatatype.IMAGEJCV);
+			if (attrs.length > 0)
 			{
-//				System.out.println("Frame grabbed from " + serialNumber);
-				
-				currentTuple = new Tuple<IMetaAttribute>(getSchema().size(), true);
-				int[] attrs = getSchema().getSDFDatatypeAttributePositions(SDFImageJCVDatatype.IMAGEJCV);
-				if (attrs.length > 0) currentTuple.setAttribute(attrs[0], imageJCV);
-				
-				return true;				
+				currentTuple.setAttribute(attrs[0], imageJCV);				
 			}
+				
+			return true;				
 		}
 	}
 		
