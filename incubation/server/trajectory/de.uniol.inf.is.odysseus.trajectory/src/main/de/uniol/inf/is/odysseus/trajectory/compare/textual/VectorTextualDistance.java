@@ -12,14 +12,22 @@ import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.trajectory.compare.data.IHasTextualAttributes;
 
-
+/**
+ * An implementation of <tt>ITextualDistance</tt> which converts the textual attributes
+ * to a point in a high dimensional space. The distance then is based on the Euclidean distance.
+ * 
+ * @author marcus
+ *
+ */
 public class VectorTextualDistance implements ITextualDistance {
 	
+	/** Logger for debugging purposes */
 	private final static Logger LOGGER = LoggerFactory.getLogger(VectorTextualDistance.class);
 	
+	/** the singleton instance */
 	private final static VectorTextualDistance INSTANCE = new VectorTextualDistance();
 	
-	
+	/** the textual attributes with value domain */
 	private final static Map<String, Triplet<Map<String, Double>, Double ,Double>> ATTRIBUTES_DEFINITIONS = new HashMap<>();
 	
 	static {
@@ -49,10 +57,22 @@ public class VectorTextualDistance implements ITextualDistance {
 		ATTRIBUTES_DEFINITIONS.put("highway", attrDefinition);
 	}
 	
+	/**
+	 * Returns the <tt>TupleToRawTrajectoryConverterFactory</tt> as an eager singleton.
+	 * 
+	 * @return the <tt>TupleToRawTrajectoryConverterFactory</tt> as an eager singleton
+	 */
 	public static VectorTextualDistance getInstance() {
 		return INSTANCE;
 	}
 	
+	/**
+	 * Returns the numerical value for an attribute.
+	 * 
+	 * @param attr the attribute
+	 * @param value the textual value
+	 * @return the numerical value for an attribute
+	 */
 	private static double getValue(final String attr, final String value) {
 		final Triplet<Map<String, Double>, Double ,Double> attrDefinition = 
 				ATTRIBUTES_DEFINITIONS.get(attr);
@@ -78,6 +98,12 @@ public class VectorTextualDistance implements ITextualDistance {
 		return nVal;
 	}
 	
+	/**
+	 * Returns the maximal distance for the passed attributes.
+	 * 
+	 * @param attributes the attribues
+	 * @return the maximal distance for the passed attributes
+	 */
 	private static double maxDistance(final List<String> attributes) {
 		final List<Double> minList = new ArrayList<>(attributes.size());
 		final List<Double> maxList = new ArrayList<>(attributes.size());
@@ -91,6 +117,13 @@ public class VectorTextualDistance implements ITextualDistance {
 		return distance(minList, maxList);
 	}
 	
+	/**
+	 * Calculates and returns the distance between the numerical values.
+	 * 
+	 * @param list1 the first attribute values
+	 * @param list2 the first attribute values
+	 * @return the distance between the numerical values
+	 */
 	private static double distance(final List<Double> list1, final List<Double> list2) {
 		final Iterator<Double> listIt1 = list1.iterator();
 		final Iterator<Double> listIt2 = list2.iterator();
@@ -103,8 +136,16 @@ public class VectorTextualDistance implements ITextualDistance {
 		return distance;
 	}
 	
+	/**
+	 * Beware this class from being instantiated because it is a <i>singleton</i>.
+	 */
 	private VectorTextualDistance() {}
 	
+	/**
+	 * {@inheritDoc}
+	 * Here the textual attributes are mapped to a point in a high dimensional space. 
+	 * The distance then is based on the Euclidean distance.
+	 */
 	@Override
 	public double getDistance(final IHasTextualAttributes o1, final IHasTextualAttributes o2) {
 		// find simular attributes

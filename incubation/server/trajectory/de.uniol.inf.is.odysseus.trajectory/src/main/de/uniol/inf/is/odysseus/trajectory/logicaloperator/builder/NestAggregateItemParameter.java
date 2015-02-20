@@ -6,6 +6,13 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.AbstractParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IllegalParameterException;
 
+/**
+ * 
+ * Class for resolving <tt>NestAggregateItem</tt>.
+ * 
+ * @author marcus
+ *
+ */
 public class NestAggregateItemParameter extends AbstractParameter<NestAggregateItem> {
 
 	
@@ -48,7 +55,6 @@ public class NestAggregateItemParameter extends AbstractParameter<NestAggregateI
 
 	@Override
 	protected String getPQLStringInternal() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
