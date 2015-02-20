@@ -166,6 +166,14 @@ public class ResponseHandler {
 				dispatcher.sendMsgReceived(senderPeer);
 				dispatcher.stopRunningJob();
 				status.setPhase(ParallelTrackMasterStatus.LB_PHASES.RELINKING_SENDERS);
+				//TODO Remove.
+				
+				LOG.debug("Replaced Pipes (oldPipe -> newPipe)");
+				for (String newPipe : status.getReplacedPipes().keySet()) {
+					LOG.debug(status.getReplacedPipes().get(newPipe)+" ---> "+newPipe);
+				}
+				
+				
 				LOG.debug("Relinking Senders.");
 				ParallelTrackHelper.notifyDownstreamPeers(status);
 			}

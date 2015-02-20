@@ -164,7 +164,10 @@ public class InstructionHandler {
 			isSender=false;
 			//NO BREAK!
 		case ParallelTrackInstructionMessage.COPY_SENDER:
-			LOG.debug("Got COPY_RECEIVER or COPY_SENDER");
+			LOG.debug("Got COPY_RECEIVER or COPY_SENDER isSender=",isSender);
+			
+			LOG.debug(instruction.getOldPipeId()+ " ----> " + instruction.getNewPipeId());
+			
 			// Create Status if none exist
 			if (status == null) {
 				status = new ParallelTrackSlaveStatus(
@@ -199,8 +202,7 @@ public class InstructionHandler {
 					dispatcher.sendDuplicateSuccess(senderPeer,
 							instruction.getNewPipeId());
 				} catch (Exception e) {
-					LOG.error("Error while copying JxtaOperator:");
-					LOG.error(e.getMessage());
+					LOG.error("Error while copying JxtaOperator:",e);
 					dispatcher.sendDuplicateFailure(senderPeer);
 				}
 			}
@@ -225,6 +227,7 @@ public class InstructionHandler {
 			status.getMessageDispatcher().stopAllMessages();
 			status.getMessageDispatcher().sendDeleteFinished(senderPeer,instruction.getOldPipeId());
 			if(status.getReplacedPipes().containsKey(instruction.getOldPipeId())) {
+				
 				LoadBalancingHelper.removeDuplicateJxtaOperator(instruction.getOldPipeId());
 				ParallelTrackHelper.updatePipeID(instruction.getOldPipeId(), status.getReplacedPipes().get(instruction.getOldPipeId()), status.getVolunteeringPeer().toString());
 				status.getReplacedPipes().remove(instruction.getOldPipeId());

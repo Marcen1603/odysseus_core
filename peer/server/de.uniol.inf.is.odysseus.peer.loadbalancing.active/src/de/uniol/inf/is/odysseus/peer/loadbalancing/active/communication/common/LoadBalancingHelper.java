@@ -15,6 +15,8 @@ import net.jxta.peer.PeerID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Optional;
+
 import de.uniol.inf.is.odysseus.core.collection.Context;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
@@ -23,6 +25,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.AbstractPhysicalSubscripti
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
+import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.RestructHelper;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TopAO;
@@ -271,45 +274,52 @@ public class LoadBalancingHelper {
 	public static void removeDuplicateJxtaOperator(String pipeID) {
 		LOG.debug("Removing Operator with pipe ID " + pipeID);
 
-		IPhysicalOperator operator = getPhysicalJxtaOperator(false, pipeID);
+		
+		IPhysicalOperator operator = getPhysicalJxtaOperator(true, pipeID);
 
-		if (operator instanceof JxtaSenderPO) {
-			JxtaSenderPO sender = (JxtaSenderPO) operator;
-			sender.unsubscribeFromAllSources();
+		if(operator!=null) {
+			if (operator instanceof JxtaSenderPO) {
+				JxtaSenderPO sender = (JxtaSenderPO) operator;
+				sender.unsubscribeFromAllSources();
+			}
 		}
 
-		if (operator instanceof JxtaReceiverPO) {
-			JxtaReceiverPO receiver = (JxtaReceiverPO) operator;
-			AbstractPhysicalSubscription<?> receiverSubscription = (AbstractPhysicalSubscription) receiver
-					.getSubscriptions().get(0);
-
-			if (receiverSubscription.getTarget() instanceof LoadBalancingSynchronizerPO) {
-				LoadBalancingSynchronizerPO sync = (LoadBalancingSynchronizerPO) receiverSubscription
-						.getTarget();
-				int port = receiverSubscription.getSinkInPort();
-				int otherPort = (port + 1) % 2;
-
-				JxtaReceiverPO otherReceiver = (JxtaReceiverPO) sync.getSubscribedToSource(
-						otherPort).getTarget();
-				otherReceiver.unsubscribeFromAllSinks();
-				receiver.unsubscribeFromAllSinks();
-
-				List<AbstractPhysicalSubscription<ISink<? super IStreamObject>>> subscriptionList = sync
-						.getSubscriptions();
-
-				for (AbstractPhysicalSubscription<ISink<? super IStreamObject>> subscription : subscriptionList) {
-
-					sync.unsubscribeSink(subscription);
-
-					otherReceiver.subscribeSink(subscription.getTarget(),
-							subscription.getSinkInPort(), subscription.getSourceOutPort(),
-							subscription.getSchema(), true, subscription.getOpenCalls());
-
-					subscription.getTarget().subscribeToSource(otherReceiver,
-							subscription.getSinkInPort(), subscription.getSourceOutPort(),
-							subscription.getSchema());
+		operator = getPhysicalJxtaOperator(false, pipeID);
+		
+		if(operator!=null) {
+			if (operator instanceof JxtaReceiverPO) {
+				JxtaReceiverPO receiver = (JxtaReceiverPO) operator;
+				AbstractPhysicalSubscription<?> receiverSubscription = (AbstractPhysicalSubscription) receiver
+						.getSubscriptions().get(0);
+	
+				if (receiverSubscription.getTarget() instanceof LoadBalancingSynchronizerPO) {
+					LoadBalancingSynchronizerPO sync = (LoadBalancingSynchronizerPO) receiverSubscription
+							.getTarget();
+					int port = receiverSubscription.getSinkInPort();
+					int otherPort = (port + 1) % 2;
+	
+					JxtaReceiverPO otherReceiver = (JxtaReceiverPO) sync.getSubscribedToSource(
+							otherPort).getTarget();
+					otherReceiver.unsubscribeFromAllSinks();
+					receiver.unsubscribeFromAllSinks();
+	
+					List<AbstractPhysicalSubscription<ISink<? super IStreamObject>>> subscriptionList = sync
+							.getSubscriptions();
+	
+					for (AbstractPhysicalSubscription<ISink<? super IStreamObject>> subscription : subscriptionList) {
+	
+						sync.unsubscribeSink(subscription);
+	
+						otherReceiver.subscribeSink(subscription.getTarget(),
+								subscription.getSinkInPort(), subscription.getSourceOutPort(),
+								subscription.getSchema(), true, subscription.getOpenCalls());
+	
+						subscription.getTarget().subscribeToSource(otherReceiver,
+								subscription.getSinkInPort(), subscription.getSourceOutPort(),
+								subscription.getSchema());
+					}
+	
 				}
-
 			}
 		}
 
@@ -589,6 +599,19 @@ public class LoadBalancingHelper {
 		ArrayList<ILogicalOperator> operators = new ArrayList<ILogicalOperator>();
 		RestructHelper.collectOperators(query.getLogicalPlan(), operators);
 		return new LogicalQueryPart(operators);
+	}
+
+	public static Optional<Integer> getQueryForRoot(IPhysicalOperator operator) {
+		IExecutor executor = OsgiServiceManager.getExecutor();
+		ISession session = OsgiServiceManager.getActiveSession();
+		Collection<Integer> queries = executor.getLogicalQueryIds(session);
+		for (int query: queries) {
+			List<IPhysicalOperator> roots = executor.getPhysicalRoots(query, session);
+			if(roots.contains(operator)) {
+				return Optional.fromNullable(query);
+			}
+		}
+		return Optional.fromNullable(null);
 	}
 
 	

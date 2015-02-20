@@ -79,12 +79,12 @@ public class ParallelTrackSlaveStatus implements ILoadBalancingSlaveStatus{
 	}
 	
 	public boolean isPipeKnown(String pipeId) {
-		return replacedPipes.containsKey(pipeId);
+		return replacedPipes.values().contains(pipeId);
 	}
 	
 	public void addReplacedPipe(String newPipeId, String oldPipeId) {
-		if(!replacedPipes.containsKey(newPipeId)) {
-			replacedPipes.put(newPipeId,oldPipeId);
+		if(!replacedPipes.containsKey(oldPipeId)) {
+			replacedPipes.put(oldPipeId,newPipeId);
 		}
 	}
 

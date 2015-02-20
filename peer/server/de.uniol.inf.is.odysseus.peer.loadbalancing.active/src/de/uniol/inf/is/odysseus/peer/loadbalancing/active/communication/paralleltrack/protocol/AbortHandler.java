@@ -1,8 +1,6 @@
 package de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.paralleltrack.protocol;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 
 import net.jxta.peer.PeerID;
 
@@ -13,12 +11,12 @@ import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicator;
 import de.uniol.inf.is.odysseus.peer.distribute.IQueryPartController;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.OsgiServiceManager;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.common.LoadBalancingHelper;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.common.LoadBalancingStatusCache;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.paralleltrack.communicator.ParallelTrackCommunicatorImpl;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.paralleltrack.communicator.ParallelTrackMessageDispatcher;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.paralleltrack.messages.ParallelTrackAbortMessage;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.paralleltrack.status.ParallelTrackMasterStatus;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.paralleltrack.status.ParallelTrackSlaveStatus;
-import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.common.LoadBalancingStatusCache;
 
 /**
  * Message Handler for Abort Messages. If AbortInstruction -> SlavePeer handles
@@ -93,8 +91,7 @@ public class AbortHandler {
 			case PEER_WITH_SENDER_OR_RECEIVER:
 
 				if (status.getReplacedPipes() != null) {
-					ArrayList<String> installedPipes = Collections.list(status
-							.getReplacedPipes().keys());
+					Collection<String> installedPipes = status.getReplacedPipes().values();
 					for (String pipe : installedPipes) {
 						LOG.error("Removing Operator with Pipe ID " + pipe);
 						LoadBalancingHelper.removeDuplicateJxtaOperator(pipe);
@@ -144,9 +141,10 @@ public class AbortHandler {
 				.getInstance().getStatusForLocalProcess(lbProcessId);
 		if (status != null) {
 			LOG.info("LoadBalancing failed.");
+			ParallelTrackCommunicatorImpl.getInstance().notifyFinished();
+
 			LoadBalancingStatusCache.getInstance().deleteLocalStatus(
 					status.getProcessId());
-			ParallelTrackCommunicatorImpl.getInstance().notifyFinished();
 		}
 	}
 

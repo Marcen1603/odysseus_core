@@ -48,7 +48,7 @@ public class ParallelTrackMessageDispatcher {
 	/**
 	 * used to keep track of a single Repeating Message
 	 */
-	RepeatingMessageSend currentJob;
+	volatile RepeatingMessageSend currentJob;
 	
 	/**
 	 * Used to keep track of multiple repeating messages.
@@ -294,23 +294,32 @@ public class ParallelTrackMessageDispatcher {
 	/**
 	 * Stops all Messages.
 	 */
-	public void stopAllMessages() {
-		if(this.currentJobs!=null) {
-			LOG.debug("Stopping repeating Message Jobs.");
-			for(RepeatingMessageSend job : currentJobs.values()) {
-				job.stopRunning();
-				job.clearListeners();
+	public synchronized void stopAllMessages() {
+			if(this.currentJobs!=null) {
+				try {
+					LOG.debug("Stopping repeating Message Jobs.");
+					for(RepeatingMessageSend job : currentJobs.values()) {
+						job.stopRunning();
+						job.clearListeners();
+					}
+					
+
+					currentJobs.clear();
+					currentJobs=null;
+				}
+				catch(Exception e) {
+					LOG.error("Exception while clearing send jobs:",e);
+				}
+				
 			}
-			currentJobs.clear();
-			currentJobs=null;
-		}
+			
+			if(this.currentJob!=null) {
+				LOG.debug("Stopping repeating Message Job.");
+				this.currentJob.stopRunning();
+				this.currentJob.clearListeners();
+				this.currentJob=null;
+			}
 		
-		if(this.currentJob!=null) {
-			LOG.debug("Stopping repeating Message Job.");
-			this.currentJob.stopRunning();
-			this.currentJob.clearListeners();
-			this.currentJob=null;
-		}
 	}
 
 	/**
