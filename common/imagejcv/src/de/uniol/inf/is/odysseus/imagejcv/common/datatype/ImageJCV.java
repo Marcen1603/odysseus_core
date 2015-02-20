@@ -171,19 +171,6 @@ public class ImageJCV implements IClone, Cloneable
 	public double[][] getMatrix() {
 		throw new UnsupportedOperationException("Currenlty not implemented");
 	}	
-	
-	private int referenceCount = 1;
-	
-	public void addReference()
-	{
-		referenceCount++;
-	}
-	
-	public void releaseReference()
-	{
-		if (--referenceCount == 0)
-			release();
-	}
 }
 
 class ByteBufferCache
