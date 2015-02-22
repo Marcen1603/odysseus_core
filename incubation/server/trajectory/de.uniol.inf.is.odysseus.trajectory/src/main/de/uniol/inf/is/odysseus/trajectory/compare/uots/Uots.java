@@ -5,7 +5,7 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniol.inf.is.odysseus.trajectory.compare.AbstractTrajectoryCompareAlgoritm;
+import de.uniol.inf.is.odysseus.trajectory.compare.AbstractTrajectoryCompareAlgorithm;
 import de.uniol.inf.is.odysseus.trajectory.compare.ISpatialDistance;
 import de.uniol.inf.is.odysseus.trajectory.compare.data.IConvertedDataTrajectory;
 import de.uniol.inf.is.odysseus.trajectory.compare.data.IConvertedQueryTrajectory;
@@ -24,7 +24,7 @@ import de.uniol.inf.is.odysseus.trajectory.compare.uots.mapmatch.MapMatcherFacto
  * @author marcus
  *
  */
-public class Uots extends AbstractTrajectoryCompareAlgoritm<IConvertedDataTrajectory<UotsData>, UotsData> {
+public class Uots extends AbstractTrajectoryCompareAlgorithm<IConvertedDataTrajectory<UotsData>, UotsData> {
 	
 	/** Logger for debugging purposes */
 	private final static Logger LOGGER = LoggerFactory.getLogger(Uots.class);

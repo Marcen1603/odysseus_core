@@ -25,10 +25,10 @@ import de.uniol.inf.is.odysseus.trajectory.compare.textual.VectorTextualDistance
  * @param <T>
  * @param <E>
  */
-public abstract class AbstractTrajectoryCompareAlgoritm<T extends IConvertedDataTrajectory<E>, E> implements ITrajectoryCompareAlgorithm<T, E> {
+public abstract class AbstractTrajectoryCompareAlgorithm<T extends IConvertedDataTrajectory<E>, E> implements ITrajectoryCompareAlgorithm<T, E> {
 
 	/** Logger for debugging purposes */
-	private final static Logger LOGGER = LoggerFactory.getLogger(AbstractTrajectoryCompareAlgoritm.class);
+	private final static Logger LOGGER = LoggerFactory.getLogger(AbstractTrajectoryCompareAlgorithm.class);
 	
 	/** the query trajectory */
 	private final IConvertedQueryTrajectory<E> queryTrajectory;
@@ -50,7 +50,7 @@ public abstract class AbstractTrajectoryCompareAlgoritm<T extends IConvertedData
 	 * @param lambda the importance between spatial and textual distance
 	 * @return a new <tt>ITrajectoryCompareAlgorithm</tt>
 	 */
-	protected AbstractTrajectoryCompareAlgoritm(final Map<String, String> options, final int k,
+	protected AbstractTrajectoryCompareAlgorithm(final Map<String, String> options, final int k,
 			final RawQueryTrajectory queryTrajectory, final Map<String, String> textualAttributes,
 			final int utmZone, final double lambda) {
 		
