@@ -11,8 +11,6 @@ import java.util.Map;
  */
 public abstract class AbstractConvertedDataTrajectory<E> extends AbstractConvertedTrajectory<E, RawDataTrajectory> implements IConvertedDataTrajectory<E> {
 
-	/** the converted data */
-	private final E convertedData;
 	
 	/** the distance */
 	private double distance;
@@ -26,18 +24,9 @@ public abstract class AbstractConvertedDataTrajectory<E> extends AbstractConvert
 	 * @throws IllegalArgumentException if <tt>convertedData == null</tt>
 	 */
 	protected AbstractConvertedDataTrajectory(final RawDataTrajectory rawTrajectory, final E convertedData) {
-		super(rawTrajectory);
-		
-		if(convertedData == null) {
-			throw new IllegalArgumentException("convertedData is null");
-		}
-		this.convertedData = convertedData;
+		super(rawTrajectory, convertedData);
 	}
 	
-	@Override
-	public E getData() {
-		return this.convertedData;
-	}
 
 	@Override
 	public double getDistance() {

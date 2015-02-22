@@ -10,9 +10,6 @@ import java.util.Map;
  * @param <E> the type of the query trajectory data
  */
 public abstract class AbstractConvertedQueryTrajectory<E> extends AbstractConvertedTrajectory<E, RawQueryTrajectory> implements IConvertedQueryTrajectory<E> {
-
-	/** the converted data */
-	private final E convertedData;
 	
 	/** the textual attributes */
 	private final Map<String, String> textualAttributes;
@@ -28,21 +25,12 @@ public abstract class AbstractConvertedQueryTrajectory<E> extends AbstractConver
 	 */
 	protected AbstractConvertedQueryTrajectory(final RawQueryTrajectory rawTrajectory, final E convertedData, 
 			final Map<String, String> textualAttributes) {
-		super(rawTrajectory);
+		super(rawTrajectory, convertedData);
 		
 		if(rawTrajectory == null) {
 			throw new IllegalArgumentException("rawTrajectory is null");
 		}
-		if(convertedData == null) {
-			throw new IllegalArgumentException("convertedData is null");
-		}
-		this.convertedData = convertedData;
 		this.textualAttributes = textualAttributes;
-	}
-	
-	@Override
-	public E getData() {
-		return this.convertedData;
 	}
 	
 	@Override

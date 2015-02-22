@@ -19,4 +19,11 @@ public interface IConvertedTrajectory<E, T extends RawQueryTrajectory> extends I
 	 * @return the data of the converted trajectory
 	 */
 	public E getData();
+	
+	/**
+	 * Returns the encapsulated <tt>RawQueryTrajectory</tt>.
+	 * 
+	 * @return the encapsulated <tt>RawQueryTrajectory</tt>
+	 */
+	public T getRawTrajectory();
 }

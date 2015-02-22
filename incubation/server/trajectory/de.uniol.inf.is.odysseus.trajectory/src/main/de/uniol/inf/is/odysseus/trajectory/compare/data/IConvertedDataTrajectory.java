@@ -13,13 +13,6 @@ package de.uniol.inf.is.odysseus.trajectory.compare.data;
 public interface IConvertedDataTrajectory<E> extends IConvertedTrajectory<E, RawDataTrajectory> {
 
 	/**
-	 * Returns the underlying <tt>RawDataTrajectory</tt>.
-	 * 
-	 * @return the underlying <tt>RawDataTrajectory</tt>
-	 */
-	public RawDataTrajectory getRawTrajectory();
-	
-	/**
 	 * Returns the distance of this <tt>IConvertedDataTrajectory</tt>.
 	 * 
 	 * @return the distance of this <tt>IConvertedDataTrajectory</tt>.
