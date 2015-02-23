@@ -39,23 +39,23 @@ public class DataratePO<T extends IStreamObject<?>> extends AbstractPipe<T, T> {
 	@Override
 	protected void process_next(T object, int port) {
 		IMetaAttribute metadata = object.getMetadata();
-		if( updateRate > 0 && metadata instanceof IDatarate ) {
-			
-			elementsRead++;		
-			if (elementsRead == updateRate) {
-				long now = System.nanoTime();
-				long lastPeriodNano = now - lastTimestamp;
+		if( metadata instanceof IDatarate ) {
+			if( updateRate > 0 ) {
 				
-				double lastDataRateNano = updateRate / (double)lastPeriodNano;
+				elementsRead++;		
+				if (elementsRead == updateRate) {
+					long now = System.nanoTime();
+					long lastPeriodNano = now - lastTimestamp;
+					
+					double lastDataRateNano = updateRate / (double)lastPeriodNano;
+					
+					currentDatarate = lastDataRateNano * 1000000000.0;
+					lastTimestamp = now;
+					elementsRead = 0;
+				}
 				
-				currentDatarate = lastDataRateNano * 1000000000.0;
-				lastTimestamp = now;
-				elementsRead = 0;
 			}
 			
-		}
-		
-		if( metadata instanceof IDatarate ) { 
 			((IDatarate)metadata).setDatarate(currentDatarate);
 		}
 		
