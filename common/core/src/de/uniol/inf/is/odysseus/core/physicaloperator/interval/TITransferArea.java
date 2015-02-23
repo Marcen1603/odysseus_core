@@ -74,9 +74,8 @@ public class TITransferArea<R extends IStreamObject<? extends ITimeInterval>, W 
 			int v = super.compare(left, right);
 			if (v == 0) {
 				return Integer.compare(left.hashCode(), right.hashCode());
-			} else {
-				return v;
-			}
+			} 
+			return v;
 		}
 
 	}
@@ -156,7 +155,7 @@ public class TITransferArea<R extends IStreamObject<? extends ITimeInterval>, W 
 		this.po = po;
 	}
 
-	@Override
+	@Override	
 	public void addNewInput(int port) {
 		this.minTs.put(port, null);
 		this.isDone.put(port, false);
@@ -177,6 +176,7 @@ public class TITransferArea<R extends IStreamObject<? extends ITimeInterval>, W 
 		} else {
 			start = ((R) object).getMetadata().getStart();
 		}
+		
 		// watermark is needed if new sources are connected at runtime
 		// if watermark == null no object has ever been transferred --> init
 		// phase
@@ -184,8 +184,7 @@ public class TITransferArea<R extends IStreamObject<? extends ITimeInterval>, W 
 		if (watermark == null || start.afterOrEquals(watermark)) {
 			newHeartbeat(start, inPort);
 		} else {
-			logger.warn("Removed out of order element!" + object + " - ("
-					+ this.po + ")");
+			logger.warn("Removed out of order element!" + object + " - (" + this.po + ") watermark is " + watermark );
 		}
 	}
 
@@ -359,6 +358,9 @@ public class TITransferArea<R extends IStreamObject<? extends ITimeInterval>, W 
 				if (lastSendObject != null) {
 					// Set marker to time stamp of the last send object
 					watermark = lastSendObject.clone();
+//					if( po.getClass().getName().contains("JoinTIPO")) {
+//						System.err.println("SET " + watermark);
+//					}
 				}
 			}
 		}
