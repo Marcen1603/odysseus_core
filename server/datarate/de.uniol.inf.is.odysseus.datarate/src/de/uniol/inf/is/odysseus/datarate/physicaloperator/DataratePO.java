@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.datarate.physicaloperator;
 
+import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
@@ -37,7 +38,8 @@ public class DataratePO<T extends IStreamObject<?>> extends AbstractPipe<T, T> {
 	
 	@Override
 	protected void process_next(T object, int port) {
-		if( updateRate > 0 && object.getMetadata() instanceof IDatarate ) {
+		IMetaAttribute metadata = object.getMetadata();
+		if( updateRate > 0 && metadata instanceof IDatarate ) {
 			
 			elementsRead++;		
 			if (elementsRead == updateRate) {
@@ -53,7 +55,10 @@ public class DataratePO<T extends IStreamObject<?>> extends AbstractPipe<T, T> {
 			
 		}
 		
-		((IDatarate)object.getMetadata()).setDatarate(currentDatarate);
+		if( metadata instanceof IDatarate ) { 
+			((IDatarate)metadata).setDatarate(currentDatarate);
+		}
+		
 		transfer(object);
 	}
 	
