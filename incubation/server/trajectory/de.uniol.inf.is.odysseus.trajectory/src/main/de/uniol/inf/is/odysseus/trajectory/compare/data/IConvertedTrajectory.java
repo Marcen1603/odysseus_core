@@ -28,7 +28,7 @@ package de.uniol.inf.is.odysseus.trajectory.compare.data;
  * @param <E> the type of the trajectory data
  * @param <T> the type of the encapsulated <tt>RawQueryTrajectory</tt>
  */
-public interface IConvertedTrajectory<E, T extends RawQueryTrajectory> extends IHasTextualAttributes {
+public interface IConvertedTrajectory<E, T extends IRawTrajectory> extends IHasTextualAttributes {
 
 	/**
 	 * Returns the data of the converted trajectory.
