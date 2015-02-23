@@ -32,6 +32,8 @@ package de.uniol.inf.is.odysseus.database.transform;
 
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationException;
+import de.uniol.inf.is.odysseus.database.connection.IDatabaseConnection;
 import de.uniol.inf.is.odysseus.database.logicaloperator.DatabaseSinkAO;
 import de.uniol.inf.is.odysseus.database.physicaloperator.DatabaseSinkPO;
 import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
@@ -52,7 +54,11 @@ public class TDatabaseDatabaseSinkAORule extends AbstractTransformationRule<Data
 
 	@Override
 	public void execute(DatabaseSinkAO operator, TransformationConfiguration config) throws RuleException {
-		ISink<?> sinkPO = new DatabaseSinkPO(operator.getConnection(), operator.getTablename(), operator.isDrop(), operator.isTruncate(), operator.getBatchSize(), operator.getBatchTimeout(), operator.getTableSchema());			
+		IDatabaseConnection conn = operator.getConnection();
+		if (conn == null){
+			throw new TransformationException("Database connection cannot be initialized");
+		}
+		ISink<?> sinkPO = new DatabaseSinkPO(conn, operator.getTablename(), operator.isDrop(), operator.isTruncate(), operator.getBatchSize(), operator.getBatchTimeout(), operator.getTableSchema());			
 		defaultExecute(operator, sinkPO, config, true, true);		
 	}
 

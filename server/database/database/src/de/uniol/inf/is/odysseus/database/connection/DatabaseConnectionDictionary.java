@@ -119,6 +119,10 @@ public class DatabaseConnectionDictionary {
 		return connections.get(name);
 	}
 	
+	public static boolean hasConnection(String connectionName) {
+		return connections.containsKey(connectionName.toUpperCase());
+	}
+	
 	static public void addListener(IDatabaseConnectionDictionaryListener listener){
 		listeners .add(listener);
 	}
@@ -132,4 +136,6 @@ public class DatabaseConnectionDictionary {
 			listener.databaseConnectionDictionaryChanged();
 		}
 	}
+
+
 }

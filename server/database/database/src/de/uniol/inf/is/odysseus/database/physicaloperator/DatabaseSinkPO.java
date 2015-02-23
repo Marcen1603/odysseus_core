@@ -87,6 +87,9 @@ public class DatabaseSinkPO extends AbstractSink<Tuple<ITimeInterval>>
 	public DatabaseSinkPO(IDatabaseConnection connection, String tablename,
 			boolean drop, boolean truncate, long batchSize, int batchTimeout,
 			List<String> tableSchema) {
+		if (connection == null){
+			throw new IllegalArgumentException("Connection must not be null");
+		}
 		this.connection = connection;
 		this.tablename = tablename;
 		this.truncate = truncate;

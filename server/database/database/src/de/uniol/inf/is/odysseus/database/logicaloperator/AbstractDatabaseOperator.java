@@ -27,21 +27,24 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Paramete
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.BooleanParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IntegerParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.QueryParseException;
 import de.uniol.inf.is.odysseus.database.connection.DatabaseConnection;
 import de.uniol.inf.is.odysseus.database.connection.DatabaseConnectionDictionary;
 import de.uniol.inf.is.odysseus.database.connection.IDatabaseConnection;
+import de.uniol.inf.is.odysseus.database.connection.IDatabaseConnectionFactory;
 
 /**
  * @author Dennis Geesen
  * 
  */
 public abstract class AbstractDatabaseOperator extends AbstractLogicalOperator {
-	
-	private static Logger logger = LoggerFactory.getLogger(DatabaseSourceAO.class);
+
+	private static Logger logger = LoggerFactory
+			.getLogger(DatabaseSourceAO.class);
 
 	private static final long serialVersionUID = -7206781357206560261L;
 	private IDatabaseConnection databaseconnection;
-	
+
 	private String jdbc = "";
 	private String password = "";
 	private String user = "";
@@ -51,13 +54,12 @@ public abstract class AbstractDatabaseOperator extends AbstractLogicalOperator {
 	private String host = "";
 	private String connectionName = "";
 	private boolean lazyConnectionCheck = true;
-	
 
 	public AbstractDatabaseOperator() {
 
 	}
 
-	public AbstractDatabaseOperator(AbstractDatabaseOperator ds) {		
+	public AbstractDatabaseOperator(AbstractDatabaseOperator ds) {
 		super(ds);
 		this.jdbc = ds.jdbc;
 		this.password = ds.password;
@@ -79,12 +81,12 @@ public abstract class AbstractDatabaseOperator extends AbstractLogicalOperator {
 	public String getJDBC() {
 		return jdbc;
 	}
-	
+
 	@Parameter(type = StringParameter.class, name = "user", optional = true)
 	public void setUser(String user) {
 		this.user = user;
 	}
-	
+
 	public String getUser() {
 		return user;
 	}
@@ -93,7 +95,7 @@ public abstract class AbstractDatabaseOperator extends AbstractLogicalOperator {
 	public void setPassword(String password) {
 		this.password = password;
 	}
-	
+
 	public String getPassword() {
 		return password;
 	}
@@ -106,12 +108,12 @@ public abstract class AbstractDatabaseOperator extends AbstractLogicalOperator {
 	public String getType() {
 		return type;
 	}
-	
+
 	@Parameter(type = StringParameter.class, name = "db", optional = true)
 	public void setDB(String db) {
 		this.db = db;
 	}
-	
+
 	public String getDB() {
 		return db;
 	}
@@ -120,7 +122,7 @@ public abstract class AbstractDatabaseOperator extends AbstractLogicalOperator {
 	public void setHost(String host) {
 		this.host = host;
 	}
-	
+
 	public String getHost() {
 		return host;
 	}
@@ -129,7 +131,7 @@ public abstract class AbstractDatabaseOperator extends AbstractLogicalOperator {
 	public void setConnectionName(String connection) {
 		this.connectionName = connection;
 	}
-	
+
 	public String getConnectionName() {
 		return connectionName;
 	}
@@ -138,30 +140,28 @@ public abstract class AbstractDatabaseOperator extends AbstractLogicalOperator {
 	public void setPort(int port) {
 		this.port = port;
 	}
-	
+
 	public int getPort() {
 		return port;
 	}
-	
+
 	@Parameter(type = BooleanParameter.class, name = "lazy_connection_check", optional = true)
 	public void setLazyConnCheck(boolean lazyConnCheck) {
 		this.lazyConnectionCheck = lazyConnCheck;
 	}
-	
+
 	public boolean isLazyConnCheck() {
 		return lazyConnectionCheck;
 	}
-	
-	
-	public IDatabaseConnection getConnection(){
+
+	public IDatabaseConnection getConnection() {
 		return this.databaseconnection;
 	}
-	
-	
-		
+
 	@Override
 	public void initialize() {
 		super.initialize();
+
 		// there a 3 possibilities:
 		// 1. we reuse an already created connection
 		if (!this.connectionName.isEmpty()) {
@@ -175,10 +175,30 @@ public abstract class AbstractDatabaseOperator extends AbstractLogicalOperator {
 				creatingNewConnection();
 			}
 		}
+		if (databaseconnection == null) {
+			throw new IllegalArgumentException(
+					"Connection cannot be initialized with these parameters");
+		}
 	}
 
 	private void creatingNewConnection() {
 
+		IDatabaseConnectionFactory factory = DatabaseConnectionDictionary
+				.getFactory(db);
+		if (factory == null) {
+			String currentInstalled = "";
+			String sep = "";
+			for (String n : DatabaseConnectionDictionary
+					.getConnectionFactoryNames()) {
+				currentInstalled = currentInstalled + sep + n;
+				sep = ", ";
+			}
+			throw new QueryParseException("DBMS \"" + db
+					+ "\" not supported! Currently available: "
+					+ currentInstalled);
+		}
+		this.databaseconnection = factory.createConnection(host, port, db,
+				user, password);
 	}
 
 	private void createJDBCConnection() {
@@ -189,18 +209,21 @@ public abstract class AbstractDatabaseOperator extends AbstractLogicalOperator {
 		if (!this.user.isEmpty()) {
 			connectionProps.put("password", password);
 		}
-		this.databaseconnection = new DatabaseConnection(this.jdbc, connectionProps);
+		this.databaseconnection = new DatabaseConnection(this.jdbc,
+				connectionProps);
 	}
 
 	private void createWithReusingConnection() {
-		this.databaseconnection = DatabaseConnectionDictionary.getDatabaseConnection(connectionName);
+		this.databaseconnection = DatabaseConnectionDictionary
+				.getDatabaseConnection(connectionName);
 	}
 
 	@Override
 	public boolean isValid() {
 		boolean isValid = true;
 		if (!this.connectionName.isEmpty()) {
-			if (DatabaseConnectionDictionary.isConnectionExisting(connectionName)) {
+			if (DatabaseConnectionDictionary
+					.isConnectionExisting(connectionName)) {
 				if (!this.host.isEmpty()) {
 					logger.warn("Host is ignored when existing connection is used!");
 				}
@@ -215,9 +238,10 @@ public abstract class AbstractDatabaseOperator extends AbstractLogicalOperator {
 				}
 				if (!this.password.isEmpty()) {
 					logger.warn("Password is ignored when existing connection is used!");
-				}								
+				}
 			} else {
-				addError("Database connection with name \"" + connectionName + "\" not found!");
+				addError("Database connection with name \"" + connectionName
+						+ "\" not found!");
 				isValid = false;
 			}
 		} else {
@@ -233,14 +257,15 @@ public abstract class AbstractDatabaseOperator extends AbstractLogicalOperator {
 				}
 				if (!this.connectionName.isEmpty()) {
 					logger.warn("Connection name is ignored when JDBC string is used!");
-				}				
-			} else {								
+				}
+			} else {
 				// do we have everything for building a connection?
 				if (this.type.isEmpty()) {
 					isValid = false;
 					addError("type must be set");
 				} else {
-					Set<String> names = DatabaseConnectionDictionary.getConnectionFactoryNames();
+					Set<String> names = DatabaseConnectionDictionary
+							.getConnectionFactoryNames();
 					if (!names.contains(this.type)) {
 						isValid = false;
 						addError("type must be a valid value, one of: " + names);
@@ -253,17 +278,18 @@ public abstract class AbstractDatabaseOperator extends AbstractLogicalOperator {
 				if ((!this.password.isEmpty()) && this.user.isEmpty()) {
 					logger.warn("there is a password but no user, root is used!");
 				}
-				
+
 			}
-			if(!this.lazyConnectionCheck){
-				IDatabaseConnection connection = DatabaseConnectionDictionary.getDatabaseConnection(connectionName);
+			if (!this.lazyConnectionCheck) {
+				IDatabaseConnection connection = DatabaseConnectionDictionary
+						.getDatabaseConnection(connectionName);
 				try {
 					connection.checkProperties();
 				} catch (SQLException e) {
 					addError(e.getMessage());
 					isValid = false;
 				}
-			}			
+			}
 		}
 		return isValid;
 	}
