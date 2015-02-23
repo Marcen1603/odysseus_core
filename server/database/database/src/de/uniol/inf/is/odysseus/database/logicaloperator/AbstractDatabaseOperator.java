@@ -224,30 +224,15 @@ public abstract class AbstractDatabaseOperator extends AbstractLogicalOperator {
 	@Override
 	public boolean isValid() {
 		boolean isValid = true;
-//		if (!this.connectionName.isEmpty()) {
-//			if (DatabaseConnectionDictionary
-//					.isConnectionExisting(connectionName)) {
-//				if (!this.host.isEmpty()) {
-//					logger.warn("Host is ignored when existing connection is used!");
-//				}
-//				if (this.port != -1) {
-//					logger.warn("Port is ignored when existing connection is used!");
-//				}
-//				if (!this.type.isEmpty()) {
-//					logger.warn("Type is ignored when existing connection is used!");
-//				}
-//				if (!this.user.isEmpty()) {
-//					logger.warn("User is ignored when existing connection is used!");
-//				}
-//				if (!this.password.isEmpty()) {
-//					logger.warn("Password is ignored when existing connection is used!");
-//				}
-//			} else {
-//				addError("Database connection with name \"" + connectionName
-//						+ "\" not found!");
-//				isValid = false;
-//			}
-//		} else {
+		if (!this.connectionName.isEmpty()) {
+			if (DatabaseConnectionDictionary
+					.isConnectionExisting(connectionName)) {
+			} else {
+				addError("Database connection with name \"" + connectionName
+						+ "\" not found!");
+				isValid = false;
+			}
+		} else {
 			if (!this.jdbc.isEmpty()) {
 				if (!this.host.isEmpty()) {
 					logger.warn("Host is ignored when JDBC string is used!");
