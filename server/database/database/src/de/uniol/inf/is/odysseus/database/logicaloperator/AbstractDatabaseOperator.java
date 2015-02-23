@@ -278,7 +278,7 @@ public abstract class AbstractDatabaseOperator extends AbstractLogicalOperator {
 					isValid = false;
 				}
 			}
-//		}
+		}
 		return isValid;
 	}
 }
