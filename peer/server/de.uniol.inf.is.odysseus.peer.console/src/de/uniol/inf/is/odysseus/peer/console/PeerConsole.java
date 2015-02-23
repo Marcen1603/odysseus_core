@@ -1315,13 +1315,16 @@ public class PeerConsole implements CommandProvider, IPeerCommunicatorListener {
 	public void _cryForPeers(final CommandInterpreter ci) {
 		Collection<PeerID> reachablePeers = peerReachabilityService.getReachablePeers();
 		
+		int peerCount = 0;
 		for( PeerID reachablePeer : reachablePeers ) {
 			Optional<PeerReachabilityInfo> optInfo = peerReachabilityService.getReachabilityInfo(reachablePeer);
 			if( optInfo.isPresent() ) {
 				PeerReachabilityInfo info = optInfo.get();
 				
 				ci.println(info.getAddress().getHostAddress() + ":" + info.getJxtaPort() + " = " + info.getPeerName() + "{" + info.getPeerGroupName() + "} (" + info.getPeerID().toString() + ")");
+				peerCount++;
 			}
 		}
+		ci.println("Summary: Found " + peerCount + " Peers");
 	}
 }
