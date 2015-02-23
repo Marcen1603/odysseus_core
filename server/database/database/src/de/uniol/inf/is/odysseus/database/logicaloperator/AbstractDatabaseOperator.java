@@ -127,7 +127,7 @@ public abstract class AbstractDatabaseOperator extends AbstractLogicalOperator {
 		return host;
 	}
 
-	@Parameter(type = StringParameter.class, name = "connection", optional = true)
+	@Parameter(type = StringParameter.class, name = "connection", optional = false, doc = "A name of an existing connection, or the name that should be used when creating a new connection.")
 	public void setConnectionName(String connection) {
 		this.connectionName = connection;
 	}
@@ -164,9 +164,9 @@ public abstract class AbstractDatabaseOperator extends AbstractLogicalOperator {
 
 		// there a 3 possibilities:
 		// 1. we reuse an already created connection
-		if (!this.connectionName.isEmpty()) {
-			createWithReusingConnection();
-		} else {
+		createWithReusingConnection();
+		// or create a new connection
+		if (databaseconnection == null){
 			// 2. we create a jdbc connection
 			if (!this.jdbc.isEmpty()) {
 				createJDBCConnection();
@@ -199,6 +199,8 @@ public abstract class AbstractDatabaseOperator extends AbstractLogicalOperator {
 		}
 		this.databaseconnection = factory.createConnection(host, port, db,
 				user, password);
+		DatabaseConnectionDictionary.addConnection(connectionName, databaseconnection);
+
 	}
 
 	private void createJDBCConnection() {
@@ -211,6 +213,7 @@ public abstract class AbstractDatabaseOperator extends AbstractLogicalOperator {
 		}
 		this.databaseconnection = new DatabaseConnection(this.jdbc,
 				connectionProps);
+		DatabaseConnectionDictionary.addConnection(connectionName, databaseconnection);
 	}
 
 	private void createWithReusingConnection() {
