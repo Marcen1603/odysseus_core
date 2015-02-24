@@ -28,7 +28,7 @@ abstract public class AbstractCoalescePO<M extends ITimeInterval> extends Aggreg
 			return left.getTime().compareTo(right.getTime());
 		}
 	});
-	private PointInTime lastStart = null;
+	private PointInTime watermark = null;
 
 	private long heartbeatRate = -1;
 
@@ -43,7 +43,7 @@ abstract public class AbstractCoalescePO<M extends ITimeInterval> extends Aggreg
 		// if there is a calculation, we need to keep the punctuations
 		if (currentPartialAggregates != null) {
 			punctuationsOutputQueue.add(punctuation);
-			sendPunctuations();
+			sendPunctuations(currentPartialAggregates.getMetadata().getStart());
 		} else { // else send
 			sendPunctuation(punctuation);
 		}
@@ -51,22 +51,28 @@ abstract public class AbstractCoalescePO<M extends ITimeInterval> extends Aggreg
 
 	@Override
 	protected void process_next(IStreamObject<? extends M> object, int port) {
-		lastStart = object.getMetadata().getStart();
+		watermark = object.getMetadata().getStart();
+	}
+	
+	protected PointInTime getWatermark() {
+		return watermark;
 	}
 
 	protected void createHeartbeat(PointInTime time) {
 		if (heartbeatRate > 0 && counter == heartbeatRate) {
 			counter = 0;
 			punctuationsOutputQueue.add(Heartbeat.createNewHeartbeat(time));
-			sendPunctuations();
+			sendPunctuations(currentPartialAggregates.getMetadata().getStart());
 		}
 		counter++;
 
 	}
 
-	protected void sendPunctuations() {
+	protected void sendPunctuations(PointInTime watermark) {
 		IPunctuation punc = punctuationsOutputQueue.peek();
-		while (punc != null && punc.getTime().before(lastStart)) {
+		while (punc != null && punc.getTime().before(watermark)) {
+//			System.err.println("OUT: PUNC: " + punc.getTime());
+			
 			sendPunctuation(punctuationsOutputQueue.poll());
 			punc = punctuationsOutputQueue.peek();
 		}

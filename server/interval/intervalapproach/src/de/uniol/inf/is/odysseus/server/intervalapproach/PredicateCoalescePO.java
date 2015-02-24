@@ -86,7 +86,7 @@ public class PredicateCoalescePO<M extends ITimeInterval> extends
 			metadata.setStart(currentPartialAggregates.getMetadata().getStart());
 			out.setMetadata(metadata);
 			transfer(out);
-			sendPunctuations();
+			sendPunctuations(getWatermark());
 			currentPartialAggregates = null;
 		} else {
 			createHeartbeat(object.getMetadata().getStart());

@@ -44,6 +44,8 @@ public class GroupCoalescePO<M extends ITimeInterval> extends
 	@SuppressWarnings("unchecked")
 	@Override
 	protected void process_next(IStreamObject<? extends M> object, int port) {
+//		System.err.println("IN [" + port + "] : TUPL: " + object.getMetadata().getStart());
+		
 		super.process_next(object, port);
 		// 1st check if the same group as last one
 		Long currentGroupID = getGroupProcessor().getGroupID(object);
@@ -86,8 +88,10 @@ public class GroupCoalescePO<M extends ITimeInterval> extends
 		IStreamObject<M> out = getGroupProcessor().createOutputElement(
 				lastGroupID, result);
 		out.setMetadata(currentPartialAggregates.getMetadata());
+		 
+//		System.err.println("OUT : TUPL: " + out.getMetadata().getStart());
 		transfer(out);
-		sendPunctuations();
+		sendPunctuations(getWatermark());
 	}
 	
 	@Override
@@ -99,6 +103,8 @@ public class GroupCoalescePO<M extends ITimeInterval> extends
 	
 	@Override
 	public void processPunctuation(IPunctuation punctuation, int port) {
+//		System.err.println("IN [" + port + "]: PUNC: " + punctuation);
+		
 		if (createOnHeartbeat && punctuation.isHeartbeat()) {
 			if (currentPartialAggregates != null) {
 				createAndSend();
