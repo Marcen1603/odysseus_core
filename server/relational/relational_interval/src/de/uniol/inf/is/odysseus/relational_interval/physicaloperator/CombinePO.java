@@ -64,6 +64,7 @@ public class CombinePO<M extends ITimeInterval> extends
 		return OutputMode.NEW_ELEMENT;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	protected void process_next(Tuple<M> tuple, int port) {
 		synchronized (this.changed) {
@@ -77,13 +78,13 @@ public class CombinePO<M extends ITimeInterval> extends
 				if (!this.waitForEachChanged) {
 					for (int i = 0; i < this.tuples.length; i++) {
 						Tuple<M> out = new Tuple<M>(this.tuples[i]);
-						out.setMetadata(tuple.getMetadata());
+						out.setMetadata((M)tuple.getMetadata().clone());
 						transfer(out, i);
 					}
 				} else if (allTrue(this.changed)) {
 					for (int i = 0; i < this.tuples.length; i++) {
 						Tuple<M> out = new Tuple<M>(this.tuples[i]);
-						out.setMetadata(tuple.getMetadata());
+						out.setMetadata((M)tuple.getMetadata().clone());
 						transfer(out, i);
 					}
 					for (int i = 0; i < this.tupleSize; i++) {
