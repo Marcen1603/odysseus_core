@@ -84,33 +84,60 @@ public class Console implements IApplication {
 		}
 
 		if (args.length == 0) {
-			System.out
-					.println("Console mode currently not supported. Please use command line mode: ");
-			System.out
-					.println("Usage: [-url <url>] [-u <username>] [-p <password>] -c <command> <parameter>");
+			
+			boolean stay = true;
+		    InputStreamReader isr = new InputStreamReader(System.in);
+		    BufferedReader br = new BufferedReader(isr);
+			while (stay){
+				System.out.print(">");
+				String eingabe = br.readLine();
+				if (eingabe.equalsIgnoreCase("exit")){
+					stay = false;
+					continue;
+				}
+				if (eingabe.toLowerCase().startsWith("connect")){
+					String[] splitted = eingabe.split(" ");
+					if (splitted.length == 1){
+						connect(getDefaultConnection());
+					}else if (splitted.length == 2){
+						connect(splitted[1]);
+					}else{
+						System.err.println("Wrong number of params. Must be: connect <URL>");
+					}
+					continue;
+				}
+				if (eingabe.toLowerCase().startsWith("login")){
+					String[] splitted = eingabe.split(" ");
+					if (splitted.length == 3){
+						login(splitted[1], splitted[2]);
+					}else{
+						System.err.println("Wrong number of params. Must be: login <user> <password>");
+					}					
+				}
+				if (eingabe.toLowerCase().startsWith("exec")){
+					if (session == null){
+						System.err.println("Must be logged in!");
+					}else{
+						String[] splitted = eingabe.split(" ");
+						if (splitted.length == 2){
+							runExecuteFileCommand(splitted[1]);
+						}else{
+							System.err.println("Wrong number of params. Must be: exec <filename>");
+						}
+						continue;
+					}
+				}
+			}
+			
+			
+//			System.out
+//					.println("Console mode currently not supported. Please use command line mode: ");
+//			System.out
+//					.println("Usage: [-url <url>] [-u <username>] [-p <password>] -c <command> <parameter>");
 
 		} else {
-			String host = "localhost";
-			long port = 9669;
-			String instance = "odysseus";
 
-			String wsdlLocation = "http://" + host + ":" + port + "/"
-					+ instance + "?wsdl";
-
-			String serviceNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/";
-			String service = "WebserviceServerService";
-			boolean connected = false;
-			try {
-				connected = ((IClientExecutor) executor).connect(wsdlLocation
-						+ ";" + serviceNamespace + ";" + service);
-			} catch (Exception e) {
-
-			}
-			if (!connected) {
-				System.err.println("Could not connect to " + wsdlLocation);
-				return IApplicationContext.EXIT_ASYNC_RESULT;
-			}
-
+			String wsdlLocation = null;
 			String username = "System";
 			String password = "manager";
 			String command = "";
@@ -132,11 +159,14 @@ public class Console implements IApplication {
 				}
 			}
 
-			session = executor.login(username, password.getBytes());
-
-			if (session == null){
-				throw new RuntimeException("Login failed!");
+			if (wsdlLocation == null){
+				connect(getDefaultConnection());
+			}else{
+				connect(wsdlLocation);
 			}
+
+			
+			login(username, password);
 			
 			if (command.toLowerCase().startsWith("exec")){
 				runExecuteFileCommand(params[0]);
@@ -144,11 +174,44 @@ public class Console implements IApplication {
 				throw new RuntimeException("Unknown command "+command);
 			}
 			
-//			String file = "E:/workspaces/mgrawunder/WorkspaceMarco1/Nexmark/StreamSourcesSimple.qry";
-
-
+			
 		}
 		return IApplicationContext.EXIT_ASYNC_RESULT;
+	}
+
+	private void login(String username, String password) {
+		session = executor.login(username, password.getBytes());
+
+		if (session == null){
+			throw new RuntimeException("Login failed!");
+		}
+	}
+
+	private String getDefaultConnection(){
+		String host = "localhost";
+		long port = 9669;
+		String instance = "odysseus";
+
+		String wsdlLocation = "http://" + host + ":" + port + "/"
+				+ instance + "?wsdl";
+		return wsdlLocation;
+	}
+	
+	private void connect(String wsdlLocation) {
+
+
+		String serviceNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/";
+		String service = "WebserviceServerService";
+		boolean connected = false;
+		try {
+			connected = ((IClientExecutor) executor).connect(wsdlLocation
+					+ ";" + serviceNamespace + ";" + service);
+		} catch (Exception e) {
+
+		}
+		if (!connected) {
+			System.err.println("Could not connect to " + wsdlLocation);
+		}
 	}
 
 	@Override
