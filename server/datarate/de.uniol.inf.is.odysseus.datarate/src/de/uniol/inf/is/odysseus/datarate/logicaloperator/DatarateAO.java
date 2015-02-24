@@ -1,13 +1,13 @@
 package de.uniol.inf.is.odysseus.datarate.logicaloperator;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnaryLogicalOp;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IntegerParameter;
 
 @LogicalOperator( name = "Datarate", doc = "Calculates the datarate and inserts the results into metadata", minInputPorts = 1, maxInputPorts = 1, category = {LogicalOperatorCategory.BENCHMARK}, hidden = false)
-public class DatarateAO extends AbstractLogicalOperator {
+public class DatarateAO extends UnaryLogicalOp {
 
 	private static final long serialVersionUID = 1L;
 
