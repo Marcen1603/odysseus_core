@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.core.server.incubation.logicaloperator;
+package de.uniol.inf.is.odysseus.relational_interval.logicaloperator;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -1,11 +1,11 @@
 /**
  * 
  */
-package de.uniol.inf.is.odysseus.core.server.incubation.transform;
+package de.uniol.inf.is.odysseus.relational_interval.transform;
 
-import de.uniol.inf.is.odysseus.core.server.incubation.logicaloperator.CombineAO;
-import de.uniol.inf.is.odysseus.core.server.incubation.physicaloperator.CombinePO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
+import de.uniol.inf.is.odysseus.relational_interval.logicaloperator.CombineAO;
+import de.uniol.inf.is.odysseus.relational_interval.physicaloperator.CombinePO;
 import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;

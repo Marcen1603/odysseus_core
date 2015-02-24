@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.core.server.incubation.physicaloperator;
+package de.uniol.inf.is.odysseus.relational_interval.physicaloperator;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
