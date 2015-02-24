@@ -3,12 +3,11 @@
 
 <product name="Odysseus Client Console" uid="Odysseus Client Console" id="de.uniol.inf.is.odysseus.client.console.product1" application="de.uniol.inf.is.odysseus.client.console.application" useFeatures="true" includeLaunchers="true">
 
-
    <configIni use="default">
    </configIni>
 
    <launcherArgs>
-      <programArgs>-console -clean -debug -nl ${target.nl} -data @noDefault -noExit
+      <programArgs>-console -clean -debug -nl ${target.nl} -data @noDefault
       </programArgs>
       <vmArgs>-Dosgi.requiredJavaVersion=1.5 -Xms40m -Xmx512m  -XX:+HeapDumpOnOutOfMemoryError -XX:+UseConcMarkSweepGC
       </vmArgs>
@@ -18,7 +17,6 @@
 
    <windowImages/>
 
-
    <launcher>
       <solaris/>
       <win useIco="false">
@@ -26,10 +24,8 @@
       </win>
    </launcher>
 
-
    <vm>
    </vm>
-
 
    <plugins>
       <plugin id="de.uniol.inf.is.odysseus.client.common"/>
@@ -43,5 +39,16 @@
       <feature id="de.uniol.inf.is.odysseus.client.console.feature" version="1.0.0.qualifier"/>
    </features>
 
+   <configurations>
+      <plugin id="de.uniol.inf.is.odysseus.client.common" autoStart="true" startLevel="0" />
+      <plugin id="de.uniol.inf.is.odysseus.client.console" autoStart="true" startLevel="0" />
+      <plugin id="de.uniol.inf.is.odysseus.core" autoStart="true" startLevel="0" />
+      <plugin id="de.uniol.inf.is.odysseus.planmanagement.executor.webservice.client" autoStart="true" startLevel="0" />
+      <plugin id="org.eclipse.core.runtime" autoStart="true" startLevel="0" />
+      <plugin id="org.eclipse.equinox.common" autoStart="true" startLevel="2" />
+      <plugin id="org.eclipse.equinox.ds" autoStart="true" startLevel="2" />
+      <plugin id="org.eclipse.equinox.event" autoStart="true" startLevel="2" />
+      <plugin id="org.eclipse.equinox.simpleconfigurator" autoStart="true" startLevel="1" />
+   </configurations>
 
 </product>
