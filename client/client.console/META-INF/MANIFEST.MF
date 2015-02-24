@@ -1,0 +1,13 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Odysseus Client Console
+Bundle-SymbolicName: de.uniol.inf.is.odysseus.client.console;singleton:=true
+Bundle-Version: 1.0.0.qualifier
+Bundle-Vendor: Universtiy of Oldenburg
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Require-Bundle: de.uniol.inf.is.odysseus.client.common;bundle-version="1.0.0",
+ de.uniol.inf.is.odysseus.webservice.client;bundle-version="1.0.0",
+ de.uniol.inf.is.odysseus.planmanagement.executor.webservice.client;bundle-version="1.0.0",
+ de.uniol.inf.is.odysseus.core
+Service-Component: OSGI-INF/*
+Import-Package: org.eclipse.equinox.app;version="1.1.0"

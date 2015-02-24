@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?pde version="3.5"?>
+
+<product name="Odysseus Client Console" uid="Odysseus Client Console" id="de.uniol.inf.is.odysseus.client.console.product1" application="de.uniol.inf.is.odysseus.client.console.application" useFeatures="true" includeLaunchers="true">
+
+
+   <configIni use="default">
+   </configIni>
+
+   <launcherArgs>
+      <programArgs>-console -clean -debug -nl ${target.nl} -data @noDefault -noExit
+      </programArgs>
+      <vmArgs>-Dosgi.requiredJavaVersion=1.5 -Xms40m -Xmx512m  -XX:+HeapDumpOnOutOfMemoryError -XX:+UseConcMarkSweepGC
+      </vmArgs>
+      <vmArgsMac>-XstartOnFirstThread -Dorg.eclipse.swt.internal.carbon.smallFonts
+      </vmArgsMac>
+   </launcherArgs>
+
+   <windowImages/>
+
+
+   <launcher>
+      <solaris/>
+      <win useIco="false">
+         <bmp/>
+      </win>
+   </launcher>
+
+
+   <vm>
+   </vm>
+
+
+   <plugins>
+      <plugin id="de.uniol.inf.is.odysseus.client.common"/>
+      <plugin id="de.uniol.inf.is.odysseus.core"/>
+      <plugin id="de.uniol.inf.is.odysseus.planmanagement.executor.webservice.client"/>
+      <plugin id="de.uniol.inf.is.odysseus.webservice.client"/>
+   </plugins>
+
+   <features>
+      <feature id="org.eclipse.platform" version="3.7.2.v20120207-1839-9gF7UHPDFxGjd-PqDr2jX_4yKaumkoHTz04_q-q"/>
+      <feature id="de.uniol.inf.is.odysseus.client.console.feature" version="1.0.0.qualifier"/>
+   </features>
+
+
+</product>
