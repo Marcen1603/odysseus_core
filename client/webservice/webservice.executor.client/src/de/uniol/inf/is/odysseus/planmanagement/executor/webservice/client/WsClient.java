@@ -248,6 +248,9 @@ public class WsClient implements IExecutor, IClientExecutor, IOperatorOwner {
 		// TODO: use real names
 		String securitytoken = getWebserviceServer(REMOVEME).login(username,
 				new String(password), tenant).getResponseValue();
+		if (securitytoken == null){
+			return null;
+		}
 		IUser user = new WsClientUser(username, password, true);
 		WsClientSession session = new WsClientSession(user, null, REMOVEME);
 		session.setToken(securitytoken);
@@ -260,6 +263,9 @@ public class WsClient implements IExecutor, IClientExecutor, IOperatorOwner {
 	public ISession login(String username, byte[] password) {
 		String securitytoken = getWebserviceServer(REMOVEME).login2(username,
 				new String(password)).getResponseValue();
+		if (securitytoken == null){
+			return null;
+		}
 		IUser user = new WsClientUser(username, password, true);
 		WsClientSession session = new WsClientSession(user, null, REMOVEME);
 		session.setToken(securitytoken);
