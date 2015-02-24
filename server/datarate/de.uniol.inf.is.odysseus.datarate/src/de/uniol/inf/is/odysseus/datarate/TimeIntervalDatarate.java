@@ -41,12 +41,12 @@ public class TimeIntervalDatarate extends TimeInterval implements ITimeInterval,
 	
 	@Override
 	public String toString(PointInTime baseTime) {
-		return "( i = " + super.toString() + " | rate = " + datarate.toString() + ")";
+		return "( i = " + super.toString() + " | "+ datarate.toString() + ")";
 	}
 	
 	@Override
 	public String toString() {
-		return "( i = " + super.toString() + " | rate = " + datarate.toString() + ")";
+		return "( i = " + super.toString() + " | " + datarate.toString() + ")";
 	}
 	
 	@Override
