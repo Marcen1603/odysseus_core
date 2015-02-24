@@ -45,6 +45,11 @@ public class TimeIntervalDatarate extends TimeInterval implements ITimeInterval,
 	}
 	
 	@Override
+	public String toString() {
+		return "( i = " + super.toString() + " | rate = " + datarate.toString() + ")";
+	}
+	
+	@Override
 	public String getCSVHeader(char delimiter) {
 		return super.getCSVHeader(delimiter) + delimiter + datarate.getCSVHeader(delimiter);
 	}
