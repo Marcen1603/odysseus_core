@@ -45,7 +45,7 @@ public class Console implements IApplication {
 				executor.addQuery(query, "OdysseusScript", session,
 						Context.empty());
 			}
-		}else{
+		} else {
 			throw new RuntimeException("Not logged in!");
 		}
 	}
@@ -73,10 +73,6 @@ public class Console implements IApplication {
 		String[] args = (String[]) context.getArguments().get(
 				"application.args");
 
-		String host = "localhost";
-		long port = 9669;
-		String instance = "odysseus";
-
 		synchronized (Console.class) {
 			while (executor == null) {
 				try {
@@ -87,51 +83,71 @@ public class Console implements IApplication {
 			}
 		}
 
-		String wsdlLocation = "http://" + host + ":" + port + "/" + instance
-				+ "?wsdl";
+		if (args.length == 0) {
+			System.out
+					.println("Console mode currently not supported. Please use command line mode: ");
+			System.out
+					.println("Usage: [-url <url>] [-u <username>] [-p <password>] -c <command> <parameter>");
 
-		String serviceNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/";
-		String service = "WebserviceServerService";
-		boolean connected = false;
-		try {
-			connected = ((IClientExecutor) executor).connect(wsdlLocation + ";"
-					+ serviceNamespace + ";" + service);
-		} catch (Exception e) {
+		} else {
+			String host = "localhost";
+			long port = 9669;
+			String instance = "odysseus";
+
+			String wsdlLocation = "http://" + host + ":" + port + "/"
+					+ instance + "?wsdl";
+
+			String serviceNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/";
+			String service = "WebserviceServerService";
+			boolean connected = false;
+			try {
+				connected = ((IClientExecutor) executor).connect(wsdlLocation
+						+ ";" + serviceNamespace + ";" + service);
+			} catch (Exception e) {
+
+			}
+			if (!connected) {
+				System.err.println("Could not connect to " + wsdlLocation);
+				return IApplicationContext.EXIT_ASYNC_RESULT;
+			}
+
+			String username = "System";
+			String password = "manager";
+			String command = "";
+			String[] params = null;
+			
+			for (int i = 0; i < args.length; i++) {
+				String a = args[i];
+				if (a.equalsIgnoreCase("-url")) {
+					wsdlLocation = args[++i];
+				}else if (a.equalsIgnoreCase("-u")){
+					username = args[++i];
+				}else if (a.equalsIgnoreCase("-p")){
+					password = args[++i];
+				}else if (a.equalsIgnoreCase("-c")){
+					command = args[++i];
+					i++;
+					params = new String[args.length - i];
+					System.arraycopy(args, i, params, 0, args.length - i);
+				}
+			}
+
+			session = executor.login(username, password.getBytes());
+
+			if (session == null){
+				throw new RuntimeException("Login failed!");
+			}
+			
+			if (command.toLowerCase().startsWith("exec")){
+				runExecuteFileCommand(params[0]);
+			}else{
+				throw new RuntimeException("Unknown command "+command);
+			}
+			
+//			String file = "E:/workspaces/mgrawunder/WorkspaceMarco1/Nexmark/StreamSourcesSimple.qry";
+
 
 		}
-		if (!connected) {
-			System.err.println("Could not connect to " + wsdlLocation);
-			return IApplicationContext.EXIT_ASYNC_RESULT;
-		}
-
-		String username = "System";
-		String password = "manager";
-
-		session = executor.login(username, password.getBytes());
-
-		String file = "E:/workspaces/mgrawunder/WorkspaceMarco1/Nexmark/StreamSourcesSimple.qry";
-		runExecuteFileCommand(file);
-
-		// if (args.length == 0){
-		// System.out.println("Console mode currently not supported. Please use command line mode: ");
-		// System.out.println("Usage: -url <url> -u <username> -p <password> -c <command> <parameter>");
-		// }else if (args.length > 3){
-		// username = args[0];
-		// password = args[1];
-		// command = args[2];
-		// if (command.toLowerCase().equals("exec")){
-		// if (args.length != 2){
-		// System.out.println("Usage: exec filename");
-		// }else{
-		// filename = args[1];
-		// runCommand();
-		// }
-		// }else{
-		// System.err.println("Unknow command "+command);
-		// }
-		// }else{
-		//
-		// }
 		return IApplicationContext.EXIT_ASYNC_RESULT;
 	}
 
