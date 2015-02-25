@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.planmanagement.executor.webservice.server.webservice;
 
+import java.net.BindException;
 import java.net.InetSocketAddress;
 import java.security.SecureRandom;
 
@@ -118,7 +119,11 @@ public class WebserviceStarter {
 							+ +port + contextStr);
 					break;
 				} catch (Exception e) {
-					e.printStackTrace();
+					if (e.getCause() instanceof BindException) {
+						// Ignore if port is already used
+					} else {
+						e.printStackTrace();
+					}
 				}
 				port++;
 			}
