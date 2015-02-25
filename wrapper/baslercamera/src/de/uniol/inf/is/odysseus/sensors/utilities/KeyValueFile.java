@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.wrapper.baslercamera;
+package de.uniol.inf.is.odysseus.sensors.utilities;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;

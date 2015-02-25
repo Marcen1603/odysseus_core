@@ -1,11 +1,13 @@
 
-package de.uniol.inf.is.odysseus.wrapper.baslercamera.physicaloperator;
+package de.uniol.inf.is.odysseus.sensors.logger;
 
-import java.io.BufferedWriter;
+import java.io.DataOutputStream;
 import java.io.File;
-import java.io.FileWriter;
+import java.io.FileOutputStream;
 import java.io.IOException;
 
+import org.bytedeco.javacv.FFmpegFrameRecorder;
+import org.bytedeco.javacv.FrameRecorder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,84 +19,122 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.IAccessPa
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportDirection;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportExchangePattern;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandler;
-import de.uniol.inf.is.odysseus.wrapper.baslercamera.KeyValueFile;
+import de.uniol.inf.is.odysseus.imagejcv.common.datatype.ImageJCV;
+import de.uniol.inf.is.odysseus.sensors.utilities.KeyValueFile;
 
-public class TextFileLoggerProtocolHandler extends LoggerProtocolHandler 
+public class VideoLoggerProtocolHandler extends LoggerProtocolHandler 
 {
-	public static final String NAME = "TextFileLogger";
+	public static final String NAME = "VideoLogger";
 	static final Runtime RUNTIME = Runtime.getRuntime();
 
-	Logger LOG = LoggerFactory.getLogger(TextFileLoggerProtocolHandler.class);
+	Logger LOG = LoggerFactory.getLogger(VideoLoggerProtocolHandler.class);
 
-	private String			logFileName;
-	private BufferedWriter 	logFileStream;
-	private String 			extension;
+	private FrameRecorder 		recorder = null;
+	private DataOutputStream 	syncFileStream = null;	
+	private double				frameRate;
+		
+	private String			videoFileName;
+	private String			syncFileName;
 
-	public TextFileLoggerProtocolHandler() 
+	public VideoLoggerProtocolHandler() 
 	{
 		super();
 	}
 
-	public TextFileLoggerProtocolHandler(ITransportDirection direction, IAccessPattern access, IDataHandler<Tuple<?>> dataHandler, OptionMap options) 
+	public VideoLoggerProtocolHandler(ITransportDirection direction, IAccessPattern access, IDataHandler<Tuple<?>> dataHandler, OptionMap options) 
 	{
 		super(direction, access, dataHandler, options);
 		
-		extension = options.get("extension", "raw");
+		frameRate = options.getDouble("framerate", 30.0);
 	}
-	
+
 	@Override
 	public IProtocolHandler<Tuple<?>> createInstance(ITransportDirection direction, IAccessPattern access, OptionMap options, IDataHandler<Tuple<?>> dataHandler) 
 	{
-		return new TextFileLoggerProtocolHandler(direction, access, dataHandler, options);
+		return new VideoLoggerProtocolHandler(direction, access, dataHandler, options);
 	}	
 	
 	@Override protected void startLoggingInternal(KeyValueFile logConfigFile, Tuple<?> object) throws IOException 
 	{
-		logFileName = getFileNameBase() + "." + extension;
-		logFileStream = new BufferedWriter(new FileWriter(logFileName));
-		logConfigFile.set("RawFile", new File(logFileName).getName());
+		videoFileName = getFileNameBase() + ".mp4";
+		syncFileName = getFileNameBase() + ".sync";		
+		
+		logConfigFile.set("VideoFile", 	new File(videoFileName).getName());
+		logConfigFile.set("SyncFile", 	new File(syncFileName).getName());		
+		
+		ImageJCV image = (ImageJCV) object.getAttribute(0);
+		
+		try
+		{
+			recorder = new FFmpegFrameRecorder(videoFileName, image.getWidth(), image.getHeight());
+	        recorder.setVideoCodec(13);
+	        recorder.setFrameRate(frameRate);
+	        recorder.setFormat("mp4");
+	        recorder.setVideoQuality(0);
+	        recorder.start();
+		}
+		catch (FFmpegFrameRecorder.Exception e)
+		{
+			recorder = null;
+			throw new IOException(e);
+		}		
+	        
+		// Set up sync file
+	    syncFileStream = new DataOutputStream(new FileOutputStream(syncFileName));
 	}
 
 	@Override protected void stopLoggingInternal(KeyValueFile logConfigFile) 
 	{
-		if (logFileStream != null)
+		if (recorder != null)
 		{
 			try
 			{
-				logFileStream.close();
+                recorder.stop();
+                recorder.release();
+			}
+			catch (FrameRecorder.Exception e) 
+			{				
+			} 	
+			
+			recorder = null;
+		}
+		
+		if (syncFileStream != null)
+		{
+			try
+			{
+				syncFileStream.close();
 			}
 			catch (IOException e) 
 			{
 			}
 	
-			logFileStream = null;
+			syncFileStream = null;
 		}		
 	}
 
 	@Override protected long writeInternal(Tuple<?> object, long timeStamp) throws IOException 
 	{
-		
-		
-		String rawString = object.csvToString(',', '\'', null, null, false); //(String) object.getAttribute(0);
+		ImageJCV image = (ImageJCV) object.getAttribute(0);
 
-/*		if (rawString.length() > 40)
-			System.out.println("write " + rawString.substring(0,  40));*/
-		
 		try
-		{
-			logFileStream.write(rawString + "\n");
+		{		
+			recorder.record(image.getImage());
+			syncFileStream.writeDouble(timeStamp / 1000.0);			
 		}		
 		catch (Exception e)
 		{
 			throw new IOException(e);
 		}
 		
-		long length = new File(logFileName).length();
-//		System.out.println("Raw file size = " + length);
+		long length = new File(videoFileName).length();
+		System.out.println("write " + image.toString() + ", video file size = " + length);
+		
+//		image.releaseReference();
 		
 		return length;
 	}	
-
+	
 	@Override
 	public boolean hasNext() throws IOException 
 	{
@@ -138,7 +178,7 @@ public class TextFileLoggerProtocolHandler extends LoggerProtocolHandler
 	@Override
 	public boolean isSemanticallyEqualImpl(IProtocolHandler<?> o) 
 	{
-		if (!(o instanceof TextFileLoggerProtocolHandler)) {
+		if (!(o instanceof VideoLoggerProtocolHandler)) {
 			return false;
 		}
 /*		VideoLogger other = (VideoLogger) o;

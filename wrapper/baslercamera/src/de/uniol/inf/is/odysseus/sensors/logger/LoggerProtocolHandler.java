@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.wrapper.baslercamera.physicaloperator;
+package de.uniol.inf.is.odysseus.sensors.logger;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -11,7 +11,9 @@ import de.uniol.inf.is.odysseus.core.metadata.TimeInterval;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.AbstractProtocolHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.IAccessPattern;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportDirection;
-import de.uniol.inf.is.odysseus.wrapper.baslercamera.KeyValueFile;
+import de.uniol.inf.is.odysseus.sensors.SensorModel;
+import de.uniol.inf.is.odysseus.sensors.utilities.KeyValueFile;
+import de.uniol.inf.is.odysseus.sensors.utilities.XmlMarshalHelper;
 
 public abstract class LoggerProtocolHandler extends AbstractProtocolHandler<Tuple<?>>
 {
@@ -21,10 +23,13 @@ public abstract class LoggerProtocolHandler extends AbstractProtocolHandler<Tupl
 	private KeyValueFile 	logConfigFile;
 	private long 			lastTimeStamp;
 	
+	private SensorModel		sensorModel;
+	
 	private String 			sensorName;
 	private String 			sensorPosition;
 	private String 			sensorEthernetAddr;
 	private String 			sensorType;
+	private String 			sensorSourceName;
 	private String 			filePath;	
 	private String			fileNameBase;
 	private long			logfileSizeLimit;
@@ -42,11 +47,17 @@ public abstract class LoggerProtocolHandler extends AbstractProtocolHandler<Tupl
 		options.checkRequiredException("sensorposition");
 		options.checkRequiredException("sensorethernetaddr");
 		options.checkRequiredException("sensortype");
+		options.checkRequiredException("sensorsourcename");
 		
 		sensorName 			= options.get("sensorname");
 		sensorPosition 		= options.get("sensorposition");
 		sensorEthernetAddr	= options.get("sensorethernetaddr");
-		sensorType			= options.get("sensortype");		
+		sensorType			= options.get("sensortype");
+		sensorSourceName	= options.get("sensorsourcename");
+		
+		String sensorXml = options.get("sensorxml");
+		if (sensorXml != null)
+			sensorModel = new XmlMarshalHelper<>(SensorModel.class).fromXml(sensorXml);
 		
 		filePath  			= options.get("filename", "");
 		logfileSizeLimit	= options.getLong("sizelimit", Long.MAX_VALUE);		
@@ -97,6 +108,7 @@ public abstract class LoggerProtocolHandler extends AbstractProtocolHandler<Tupl
 			logConfigFile.set("Position", 	 	sensorPosition);
 			logConfigFile.set("EthernetAddr", 	sensorEthernetAddr);
 			logConfigFile.set("Type", 		 	sensorType);
+			logConfigFile.set("SourceName", 	sensorSourceName);
 			
 			logConfigFile.set("StartTime", Long.toString(now));
 			logConfigFile.set("EndTime", "0");
