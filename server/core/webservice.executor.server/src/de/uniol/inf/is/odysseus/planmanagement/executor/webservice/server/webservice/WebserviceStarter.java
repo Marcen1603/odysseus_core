@@ -1,6 +1,5 @@
 package de.uniol.inf.is.odysseus.planmanagement.executor.webservice.server.webservice;
 
-
 import java.net.InetSocketAddress;
 import java.security.SecureRandom;
 
@@ -19,114 +18,110 @@ import de.uniol.inf.is.odysseus.core.server.OdysseusConfiguration;
 import de.uniol.inf.is.odysseus.planmanagement.executor.webservice.server.SecurityProviderServiceBinding;
 
 public class WebserviceStarter {
-	
-	private static final Logger LOGGER = LoggerFactory.getLogger(WebserviceStarter.class);
-	
+
+	private static final Logger LOGGER = LoggerFactory
+			.getLogger(WebserviceStarter.class);
+
 	public static void start() {
 		boolean ssl = OdysseusConfiguration.getBoolean("WebService.SSL");
-		if (ssl) {
-			startWithSSL();
-		} else {
-			startWithoutSSL();
-		}
+		startWebService(ssl);
 	}
-	
-	private static void startWithoutSSL() {
-		WebserviceServer server = new WebserviceServer();
-		long port = Integer.parseInt(OdysseusConfiguration.get("WebService.Port"));
-		long maxPort = Integer.parseInt(OdysseusConfiguration.get("WebService.MaxPort"));
-		Endpoint endpoint = null;
-		String webServiceEndpoint = "";
-		Exception ex = null;
-		while (port <= maxPort ){
-			webServiceEndpoint = OdysseusConfiguration
-					.get("WebService.Endpoint1")+":"+port+OdysseusConfiguration
-					.get("WebService.Endpoint2");
-			try {
-				endpoint = Endpoint.publish(webServiceEndpoint, server);
-				// if no exception if thrown, service endpoint could be established
-				// break while
-				break;
-			} catch (Exception e) {
-				ex = e;
-			}
-			port++;
-		}
-		if (endpoint != null && endpoint.isPublished()) {
-			LOGGER.info("Webservice published at " + webServiceEndpoint);
-		}else{
-			LOGGER.error("Webservice could not be published", ex);
-		}
-	}
-	
-	private static void startWithSSL() {
+
+	private static void startWebService(final boolean ssl) {
 
 		// wait for bundle activation
 		Thread t = new Thread(new Runnable() {
 
 			@Override
 			public void run() {
-				while(SecurityProviderServiceBinding.getSecurityProvider() == null) {
-					try {
-						Thread.sleep(1000);
-					} catch (InterruptedException e) {
+				if (ssl) {
+					while (SecurityProviderServiceBinding.getSecurityProvider() == null) {
+						try {
+							Thread.sleep(1000);
+						} catch (InterruptedException e) {
+						}
 					}
 				}
-				startSSL();
-			}			
-		});	
+				start(ssl);
+			}
+		});
 		t.setDaemon(true);
 		t.start();
 	}
-	
-	private static void startSSL() {
-		boolean sslClientAuthentication = OdysseusConfiguration.getBoolean("Webservice.SSL_Client_Authentication");
+
+	private static void start(boolean useSSL) {
+		WebserviceServer implementor = new WebserviceServer();
+		boolean sslClientAuthentication = OdysseusConfiguration
+				.getBoolean("Webservice.SSL_Client_Authentication");
 		try {
-			Endpoint endpoint = Endpoint.create(new WebserviceServer());
-			SSLContext ssl = SSLContext.getInstance("TLS");
+			SSLContext ssl = null;
+			if (useSSL) {
+				ssl = SSLContext.getInstance("TLS");
+			}
 
 			KeyManager[] keyManagers = null;
-			TrustManager[] trustManagers =null;
+			TrustManager[] trustManagers = null;
 			HttpsConfigurator configurator = null;
 
-			keyManagers = SecurityProviderServiceBinding.getSecurityProvider().getKeyManagers();
+			if (useSSL) {
+				keyManagers = SecurityProviderServiceBinding
+						.getSecurityProvider().getKeyManagers();
 
-			
-			if (sslClientAuthentication) {
-				trustManagers = SecurityProviderServiceBinding.getSecurityProvider().getTrustManagers();
-				configurator = new HttpsConfigurator(ssl) {
-				     @Override
-				     public void configure(HttpsParameters params) {
-				         SSLParameters sslParams = getSSLContext().getDefaultSSLParameters();
-				         sslParams.setNeedClientAuth(true);
-				         params.setSSLParameters(sslParams);
-				      }
-				 };	
-			} else {
-				configurator = new HttpsConfigurator(ssl);
+				if (sslClientAuthentication) {
+					trustManagers = SecurityProviderServiceBinding
+							.getSecurityProvider().getTrustManagers();
+					configurator = new HttpsConfigurator(ssl) {
+						@Override
+						public void configure(HttpsParameters params) {
+							SSLParameters sslParams = getSSLContext()
+									.getDefaultSSLParameters();
+							sslParams.setNeedClientAuth(true);
+							params.setSSLParameters(sslParams);
+						}
+					};
+				} else {
+					configurator = new HttpsConfigurator(ssl);
+				}
+
+				ssl.init(keyManagers, trustManagers, new SecureRandom());
 			}
-			
-			ssl.init(keyManagers, trustManagers, new SecureRandom());			
-	
-			
-			
-			int port = Integer.parseInt(OdysseusConfiguration.get("WebService.Port"));
-			int maxPort = Integer.parseInt(OdysseusConfiguration.get("WebService.MaxPort"));
-			
-			while (port <= maxPort ){
+
+			int port = Integer.parseInt(OdysseusConfiguration
+					.get("WebService.Port"));
+			int maxPort = Integer.parseInt(OdysseusConfiguration
+					.get("WebService.MaxPort"));
+
+			String localhost = OdysseusConfiguration.get("WebService.Server");
+
+			String contextStr = OdysseusConfiguration
+					.get("WebService.ExecutorContext");
+
+			while (port <= maxPort) {
 				try {
-					HttpsServer httpsServer = HttpsServer.create(new InetSocketAddress("localhost", port), port);
-					httpsServer.setHttpsConfigurator(configurator);
-					HttpContext context = httpsServer.createContext(OdysseusConfiguration.get("WebService.Endpoint2"));
-					httpsServer.start();
-					endpoint.publish(context);
-					LOGGER.info("Webservice published at https://localhost:" + port+OdysseusConfiguration.get("WebService.Endpoint2"));
+					if (useSSL) {
+						Endpoint endpoint = Endpoint.create(implementor);
+						HttpsServer httpsServer = HttpsServer.create(
+								new InetSocketAddress(localhost, port), port);
+						httpsServer.setHttpsConfigurator(configurator);
+						HttpContext context = httpsServer
+								.createContext(contextStr);
+						httpsServer.start();
+						endpoint.publish(context);
+					} else {
+						String webServiceEndpoint = "http://" + localhost + ":"
+								+ port + contextStr;
+						Endpoint.publish(webServiceEndpoint, implementor);
+					}
+
+					LOGGER.info("Webservice published at http"
+							+ (useSSL ? "s" : "") + "://" + localhost + ":"
+							+ +port + contextStr);
 					break;
 				} catch (Exception e) {
-
+					e.printStackTrace();
 				}
 				port++;
-			}			
+			}
 		} catch (Exception e) {
 			LOGGER.error("Webservice could not be published", e);
 		}

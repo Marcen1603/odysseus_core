@@ -184,9 +184,10 @@ public class OdysseusConfiguration {
 		props.setProperty("adaption_blockingTime", "30000");
 		
 		// Web-Service
-		props.setProperty("WebService.Endpoint1","http://0.0.0.0");
+		props.setProperty("WebService.Server","0.0.0.0");
 		props.setProperty("WebService.Port","9669");
-		props.setProperty("WebService.Endpoint2","/odysseus");
+		props.setProperty("WebService.ExecutorContext","/odysseus");
+		props.setProperty("WebService.CommandContext","/odysseus/command");
 		props.setProperty("WebService.MaxPort","10000");
 		props.setProperty("WebService.SSL", "false");
 		props.setProperty("Webservice.SSL_Client_Authentication", "false");
