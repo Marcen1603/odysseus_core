@@ -10,6 +10,7 @@ import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ITransferHandler;
+import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.StringTransportHandler;
 
@@ -26,6 +27,8 @@ public class ConverterPO<R extends IStreamObject<IMetaAttribute>, W extends IStr
 		this.inputDataHandler = inputDataHandler;
 		this.protocolHandler = protocolHandler;
 		this.options = options;
+		
+//		this.protocolHandler.setTransfer(this);
 	}
 
 
@@ -42,11 +45,22 @@ public class ConverterPO<R extends IStreamObject<IMetaAttribute>, W extends IStr
 	}
 
 	@Override
+	protected void process_open() throws OpenFailedException {
+		super.process_open();
+/*		try {
+			protocolHandler.open();
+		}
+		catch (IOException e) {
+			throw new OpenFailedException(e);
+		}*/
+	}	
+	
+	@Override
 	protected void process_next(R object, int port) {
 		// Take input and generate InputStream/Handler for it
 		List<String> output = new LinkedList<>();
 		inputDataHandler.writeData(output, object);
-		StringTransportHandler handler = StringTransportHandler.getInstance(output, options);
+		StringTransportHandler handler = StringTransportHandler.getInstance(output, options);		
 		protocolHandler.setTransportHandler(handler);
 		try {
 			protocolHandler.open();
@@ -63,6 +77,17 @@ public class ConverterPO<R extends IStreamObject<IMetaAttribute>, W extends IStr
 		}
 					
 	}
+	
+	@Override
+	protected void process_close() {
+		super.process_close();
+/*		try {
+			protocolHandler.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}*/
+	}
+	
 	
 	@Override
 	public void processPunctuation(IPunctuation punctuation, int port) {
