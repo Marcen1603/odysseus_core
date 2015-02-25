@@ -17,7 +17,7 @@ Require-Bundle: org.eclipse.core.runtime,
  de.uniol.inf.is.odysseus.core.server
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-ActivationPolicy: lazy
-Service-Component: OSGI-INF/PingMapServiceBinding.xml,OSGI-INF/PeerRestProvider.xml,
- OSGI-INF/SharedQueryGraphHelper.xml
+Service-Component: OSGI-INF/PingMapServiceBinding.xml,OSGI-INF/PeerRestProvider.xml,OSGI-INF/SharedQueryGraphHelper.xml,
+ OSGI-INF/PeerServiceBinding.xml
 Import-Package: org.slf4j
 Export-Package: de.uniol.inf.is.odysseus.peer.rest.webservice

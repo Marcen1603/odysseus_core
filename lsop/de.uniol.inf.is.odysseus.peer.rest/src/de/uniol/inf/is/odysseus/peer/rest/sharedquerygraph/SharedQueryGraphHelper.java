@@ -20,43 +20,23 @@ import net.jxta.id.IDFactory;
 import net.jxta.peer.PeerID;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
-import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.StreamAO;
-import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
-import de.uniol.inf.is.odysseus.p2p_new.IJxtaServicesProvider;
-import de.uniol.inf.is.odysseus.p2p_new.IP2PNetworkListener;
-import de.uniol.inf.is.odysseus.p2p_new.IP2PNetworkManager;
-import de.uniol.inf.is.odysseus.p2p_new.dictionary.IPeerDictionary;
 import de.uniol.inf.is.odysseus.p2p_new.logicaloperator.JxtaReceiverAO;
 import de.uniol.inf.is.odysseus.p2p_new.logicaloperator.JxtaSenderAO;
-import de.uniol.inf.is.odysseus.peer.distribute.IQueryPartController;
+import de.uniol.inf.is.odysseus.peer.rest.PeerServiceBinding;
 import de.uniol.inf.is.odysseus.peer.rest.dto.LocalQueryInfo;
 import de.uniol.inf.is.odysseus.peer.rest.dto.OperatorInfo;
 import de.uniol.inf.is.odysseus.peer.rest.dto.SharedQueryInfo;
 import de.uniol.inf.is.odysseus.peer.rest.dto.request.GetLocalQueriesRequestDTO;
 import de.uniol.inf.is.odysseus.peer.rest.dto.response.GetLocalQueriesResponseDTO;
 import de.uniol.inf.is.odysseus.peer.rest.serverresources.GetLocalQueriesServerResource;
-import de.uniol.inf.is.odysseus.peer.rest.webservice.WebserviceAdvertisementListener;
-import de.uniol.inf.is.odysseus.peer.rest.webservice.WebserviceAdvertisementSender;
 
 public class SharedQueryGraphHelper {
-	private static IServerExecutor executor;	
-	private static IQueryPartController queryPartController;
-	private static IPeerDictionary peerDictionary;
-	private static IP2PNetworkManager p2pNetworkManager;
-	private static IJxtaServicesProvider jxtaServicesProvider;
 
-	private static WebserviceAdvertisementListener webserviceAdvListener = new WebserviceAdvertisementListener();
-	private static WebserviceAdvertisementSender webserviceAdvSender = new WebserviceAdvertisementSender();
-
-
-	public static IServerExecutor getExecutor() {
-		return executor;
-	}
 	
 	public static Collection<LocalQueryInfo> getLocalQueries(ISession session, String sharedQueryId) {
 		ID sharedQueryID = null;
@@ -65,7 +45,7 @@ public class SharedQueryGraphHelper {
 		} catch (URISyntaxException e) {
 			e.printStackTrace();
 		}
-		Collection<Integer> col = queryPartController.getLocalIds(sharedQueryID);
+		Collection<Integer> col = PeerServiceBinding.getQueryPartController().getLocalIds(sharedQueryID);
 		Collection<LocalQueryInfo> result = new HashSet<LocalQueryInfo>();
 		for (Integer localId : col) {
 			result.add(createLocalQueryInfo(localId, session));
@@ -75,7 +55,7 @@ public class SharedQueryGraphHelper {
 	}
 	
 	private static LocalQueryInfo createLocalQueryInfo(int queryId,ISession session) {
-		ILogicalQuery query = executor.getLogicalQueryById(queryId, session);
+		ILogicalQuery query = PeerServiceBinding.getExecutor().getLogicalQueryById(queryId, session);
 		LocalQueryInfo queryInfo = new LocalQueryInfo();
 		queryInfo.setQueryId(queryId);
 		queryInfo.setName(query.getName());
@@ -117,7 +97,7 @@ public class SharedQueryGraphHelper {
 		operatorInfo.setPipe(operator.isPipeOperator());
 		operatorInfo.setSink(operator.isSinkOperator());		
 		operatorInfo.setOwnerIDs(operator.getOwnerIDs());	
-		operatorInfo.setPeerName(p2pNetworkManager.getLocalPeerName());		
+		operatorInfo.setPeerName(PeerServiceBinding.getP2PNetworkManager().getLocalPeerName());		
 
 		if (operator instanceof StreamAO) {
 			operatorInfo.setSource(true);
@@ -147,7 +127,7 @@ public class SharedQueryGraphHelper {
 	
 
 	public static Collection<SharedQueryInfo> getSharedQueryIds() {
-		Collection<ID> col =  queryPartController.getSharedQueryIds();
+		Collection<ID> col =  PeerServiceBinding.getQueryPartController().getSharedQueryIds();
 		Collection<SharedQueryInfo> result = new HashSet<SharedQueryInfo>();
 		for (ID id : col) {
 			result.add(new SharedQueryInfo(id.toString()));
@@ -164,18 +144,18 @@ public class SharedQueryGraphHelper {
 		}
 		Map<String, Collection<LocalQueryInfo>> result = new HashMap<String, Collection<LocalQueryInfo>>();
 				
-		Collection<Integer> localIds = SharedQueryGraphHelper.getQueryPartController().getLocalIds(sharedQueryID);
+		Collection<Integer> localIds = PeerServiceBinding.getQueryPartController().getLocalIds(sharedQueryID);
 		Collection<LocalQueryInfo> queryCol = new HashSet<LocalQueryInfo>();
 		for (Integer id : localIds) {
 			queryCol.add(createLocalQueryInfo(id, session));
 		}
-		result.put(p2pNetworkManager.getLocalPeerID().toString(), queryCol);
+		result.put(PeerServiceBinding.getP2PNetworkManager().getLocalPeerID().toString(), queryCol);
 
-		Collection<PeerID> col = SharedQueryGraphHelper.getQueryPartController().getOtherPeers(sharedQueryID);
+		Collection<PeerID> col = PeerServiceBinding.getQueryPartController().getOtherPeers(sharedQueryID);
 		for (PeerID peerID : col) {
 			Collection<LocalQueryInfo> queries = null;
-			String address = removePort(peerDictionary.getRemotePeerAddress(peerID).orNull());
-			int port = webserviceAdvListener.getRestPort(peerID);
+			String address = removePort(PeerServiceBinding.getPeerDictionary().getRemotePeerAddress(peerID).orNull());
+			int port = PeerServiceBinding.getWebserviceAdvListener().getRestPort(peerID);
 			String url = "http://"+address+":"+port+"/peer/"+GetLocalQueriesServerResource.PATH;
 			try {
 				Client client = new Client(new org.restlet.Context(), Protocol.HTTP);
@@ -200,77 +180,4 @@ public class SharedQueryGraphHelper {
 		return address.substring(0, address.indexOf(':'));
 	}
 
-	
-	public static void bindP2PNetworkManager(IP2PNetworkManager serv) {
-		p2pNetworkManager = serv;
-		p2pNetworkManager.addListener(P2PNetworkListener.newInstance());
-	}
-
-	public static void unbindP2PNetworkManager(IP2PNetworkManager serv) {
-		peerDictionary = null;
-	}
-	
-	
-	public void bindExecutor(IExecutor ex) {
-		executor = (IServerExecutor) ex;
-	}
-
-	public void unbindExecutor(IExecutor ex) {
-		executor = null;
-	}
-		
-	
-	public static void bindQueryPartController(IQueryPartController controller) {
-		queryPartController = controller;
-	}
-	
-	public static void unbindQueryPartController(IQueryPartController controller) {
-		queryPartController = null;
-	}
-	
-	public static IQueryPartController getQueryPartController() {
-		return queryPartController;
-	}
-	
-	public static void bindPeerDictionary(IPeerDictionary dictionary) {
-		peerDictionary = dictionary;
-	}
-	
-	public static void unbindPeerDictionary(IPeerDictionary dictionary) {
-		peerDictionary = null;
-	}
-	
-	public static IPeerDictionary getPeerDictionary() {
-		return peerDictionary;
-	}
-	
-	public static void bindJxtaServicesProvider(IJxtaServicesProvider serv) {
-		jxtaServicesProvider = serv;
-	}
-
-	public static void unbindJxtaServicesProvider(IJxtaServicesProvider serv) {
-		if (jxtaServicesProvider == serv) {
-			jxtaServicesProvider = null;
-		}
-	}
-
-	
-	private static class P2PNetworkListener implements IP2PNetworkListener {
-		
-		public static P2PNetworkListener newInstance() {
-			return new P2PNetworkListener();
-		}
-
-		@Override
-		public void networkStarted(IP2PNetworkManager sender) {
-			p2pNetworkManager.addAdvertisementListener(webserviceAdvListener);
-			webserviceAdvSender.publishWebserviceAdvertisement(jxtaServicesProvider, p2pNetworkManager.getLocalPeerID(),p2pNetworkManager.getLocalPeerGroupID());
-		}
-		
-
-		@Override
-		public void networkStopped(IP2PNetworkManager p2pNetworkManager) {
-
-		}
-	}
 }

@@ -1,12 +1,7 @@
 package de.uniol.inf.is.odysseus.peer.rest;
 
-import net.jxta.document.AdvertisementFactory;
-
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
-
-import de.uniol.inf.is.odysseus.peer.rest.webservice.WebserviceAdvertisement;
-import de.uniol.inf.is.odysseus.peer.rest.webservice.WebserviceAdvertisementInstantiator;
 
 public class Activator implements BundleActivator {
 
@@ -22,7 +17,6 @@ public class Activator implements BundleActivator {
 	 */
 	public void start(BundleContext bundleContext) throws Exception {
 		Activator.context = bundleContext;
-		registerAdvertisementTypes();
 	}
 
 	/*
@@ -33,8 +27,5 @@ public class Activator implements BundleActivator {
 		Activator.context = null;
 	}
 	
-	private void registerAdvertisementTypes() {
-		AdvertisementFactory.registerAdvertisementInstance(WebserviceAdvertisement.getAdvertisementType(), new WebserviceAdvertisementInstantiator());
-	}
 
 }

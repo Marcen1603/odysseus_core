@@ -26,7 +26,6 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecu
 import de.uniol.inf.is.odysseus.core.server.planmanagement.plan.IExecutionPlan;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
-import de.uniol.inf.is.odysseus.p2p_new.IJxtaServicesProvider;
 import de.uniol.inf.is.odysseus.p2p_new.IP2PNetworkListener;
 import de.uniol.inf.is.odysseus.p2p_new.IP2PNetworkManager;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.IPeerDictionary;
@@ -37,7 +36,6 @@ import de.uniol.inf.is.odysseus.peer.distribute.IQueryPartController;
 import de.uniol.inf.is.odysseus.peer.distribute.listener.AbstractQueryDistributionListener;
 import de.uniol.inf.is.odysseus.peer.distribute.util.QueryDistributionNotifier;
 import de.uniol.inf.is.odysseus.peer.rest.webservice.WebserviceAdvertisementListener;
-import de.uniol.inf.is.odysseus.peer.rest.webservice.WebserviceAdvertisementSender;
 import de.uniol.inf.is.odysseus.rest.service.RestService;
 
 /**
@@ -50,10 +48,8 @@ public class DistributedQueryHelper {
 	private static IQueryPartController queryPartController;
 	private static IServerExecutor serverExecutor;
 	private static IP2PNetworkManager p2pNetworkManager;
-	private static IJxtaServicesProvider jxtaServicesProvider;
 	
 	private static WebserviceAdvertisementListener webserviceAdvListener = new WebserviceAdvertisementListener();
-	private static WebserviceAdvertisementSender webserviceAdvSender = new WebserviceAdvertisementSender();
 	private static QueryDistributionListener queryDistributionListener = new QueryDistributionListener();
 
 	
@@ -137,7 +133,7 @@ public class DistributedQueryHelper {
 	}
 
 	public static void unbindP2PNetworkManager(IP2PNetworkManager serv) {
-		peerDictionary = null;
+		p2pNetworkManager = null;
 	}
 
 	// called by OSGi-DS
@@ -160,18 +156,6 @@ public class DistributedQueryHelper {
 		serverExecutor = null;
 	}
 
-	// called by OSGi-DS
-	public static void bindJxtaServicesProvider(IJxtaServicesProvider serv) {
-		jxtaServicesProvider = serv;
-	}
-
-	// called by OSGi-DS
-	public static void unbindJxtaServicesProvider(IJxtaServicesProvider serv) {
-		if (jxtaServicesProvider == serv) {
-			jxtaServicesProvider = null;
-		}
-	}
-	
 	private static class P2PNetworkListener implements IP2PNetworkListener {
 		
 		public static P2PNetworkListener newInstance() {
@@ -181,7 +165,6 @@ public class DistributedQueryHelper {
 		@Override
 		public void networkStarted(IP2PNetworkManager sender) {
 			p2pNetworkManager.addAdvertisementListener(webserviceAdvListener);
-			webserviceAdvSender.publishWebserviceAdvertisement(jxtaServicesProvider, p2pNetworkManager.getLocalPeerID(),p2pNetworkManager.getLocalPeerGroupID());
 			QueryDistributionNotifier.bindListener(queryDistributionListener);
 		}
 		
