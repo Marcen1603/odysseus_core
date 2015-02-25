@@ -1,14 +1,19 @@
 package de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.inactivequery.protocol;
 
 import java.util.Collection;
+import java.util.List;
 
+import net.jxta.id.ID;
 import net.jxta.peer.PeerID;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.collection.Context;
+import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicator;
+import de.uniol.inf.is.odysseus.peer.distribute.IQueryPartController;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.active.OsgiServiceManager;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.common.LoadBalancingHelper;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.common.LoadBalancingStatusCache;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.inactivequery.communicator.InactiveQueryCommunicatorImpl;
@@ -92,17 +97,66 @@ public class InstructionHandler {
 				status.setPhase(InactiveQuerySlaveStatus.LB_PHASES.WAITING_FOR_FINISH);
 				dispatcher = status.getMessageDispatcher();
 				dispatcher.stopRunningJob();
+				
+				
 				try {
 					Collection<Integer> queryIDs = LoadBalancingHelper
 							.installQueryPartFromPql(Context.empty(),
 									instruction.getPQLQuery());
 					status.setInstalledQueries(queryIDs);
+					
+					int installedQuery = (int)(queryIDs.toArray()[0]);
+					ILogicalQuery query = OsgiServiceManager.getExecutor().getLogicalQueryById(installedQuery, OsgiServiceManager.getActiveSession());
+					IQueryPartController queryPartController = OsgiServiceManager.getQueryPartController();
+					
+					//Register as new Master when Query is Master Query
+					if(instruction.isMasterForQuery()) {
+						
+						LOG.debug("Received Query is Master Query");
+						
+						List<String> otherPeerIDStrings = instruction.getOtherPeerIDs();
+						String sharedQueryIDString = instruction.getSharedQueryID();
+						
+						LOG.debug("Received {} other peer IDs.",otherPeerIDStrings.size());
+						LOG.debug("Shared Query ID is {}",sharedQueryIDString);
+						Collection<PeerID> otherPeers = LoadBalancingHelper.toPeerIDCollection(otherPeerIDStrings);
+						ID sharedQueryID = LoadBalancingHelper.toID(sharedQueryIDString);
+						
+						
+						queryPartController.registerAsMaster(query,installedQuery, sharedQueryID, otherPeers);
+						status.setRegisteredAsMaster(sharedQueryID);
+						OsgiServiceManager.getQueryManager().sendChangeMasterToAllSlaves(sharedQueryID);
+						
+					}
+					else {
+						LOG.debug("Received Query is Slave Query.");
+						ID sharedQueryID = LoadBalancingHelper.toID(instruction.getSharedQueryID());
+						PeerID masterPeerID = LoadBalancingHelper.toPeerID(instruction.getMasterPeerID());
+						
+						if(queryPartController.isSharedQueryKnown(sharedQueryID)) {
+							//No need to inform Master as he already knows this Peer, just add local Query to sharedID...
+							Collection<Integer> localQueriesForSharedQuery = queryPartController.getLocalIds(sharedQueryID);
+							localQueriesForSharedQuery.addAll(queryIDs);
+							queryPartController.registerAsSlave(localQueriesForSharedQuery, sharedQueryID, masterPeerID);
+						}
+						else {
+							queryPartController.registerAsSlave(queryIDs,sharedQueryID,masterPeerID);
+							status.setRegisteredAsNewSlave(masterPeerID, sharedQueryID);
+							OsgiServiceManager.getQueryManager().sendRegisterAsSlave(masterPeerID, sharedQueryID);
+							
+						}
+						
+						
+					}
+					
+					
 					dispatcher.sendInstallSuccess(senderPeer);
 				} catch (Exception e) {
 					dispatcher.sendInstallFailure(senderPeer);
 				}
 			}
 			break;
+
 
 		case InactiveQueryInstructionMessage.REPLACE_SENDER:
 			LOG.debug("Got REPLACE_SENDER.");
@@ -199,4 +253,6 @@ public class InstructionHandler {
 		}
 
 	}
+	
+
 }

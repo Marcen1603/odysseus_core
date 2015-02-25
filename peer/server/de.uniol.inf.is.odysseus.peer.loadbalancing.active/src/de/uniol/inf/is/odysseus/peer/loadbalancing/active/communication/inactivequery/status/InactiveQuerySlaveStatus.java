@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.concurrent.ConcurrentHashMap;
 
+import net.jxta.id.ID;
 import net.jxta.peer.PeerID;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.common.ILoadBalancingSlaveStatus;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.inactivequery.communicator.InactiveQueryMessageDispatcher;
@@ -81,6 +82,40 @@ public class InactiveQuerySlaveStatus implements ILoadBalancingSlaveStatus {
 	 * Message Dispatcher for LoadBalancingProcess
 	 */
 	private final InactiveQueryMessageDispatcher messageDispatcher;
+	
+
+	private boolean registeredAsSlave = false;
+	private boolean registeredAsMaster = false;
+	public boolean isRegisteredAsMaster() {
+		return registeredAsMaster;
+	}
+
+	private PeerID sharedQueryMasterPeer;
+	private ID sharedQueryID;
+	
+	public boolean isRegisteredAsSlave() {
+		return registeredAsSlave;
+	}
+	
+	public PeerID getSharedQueryMaster() {
+		return sharedQueryMasterPeer;
+	}
+	
+	public ID sharedQueryID() {
+		return sharedQueryID;
+	}
+
+	
+	public void setRegisteredAsNewSlave(PeerID masterPeer, ID sharedQueryID) {
+		this.registeredAsSlave = true;
+		this.sharedQueryMasterPeer = masterPeer;
+		this.sharedQueryID = sharedQueryID;
+	}
+	
+	public void setRegisteredAsMaster(ID sharedQueryID) {
+		this.registeredAsMaster = true;
+		this.sharedQueryID = sharedQueryID;
+	}
 
 	public Collection<Integer> getInstalledQueries() {
 		return installedQueries;

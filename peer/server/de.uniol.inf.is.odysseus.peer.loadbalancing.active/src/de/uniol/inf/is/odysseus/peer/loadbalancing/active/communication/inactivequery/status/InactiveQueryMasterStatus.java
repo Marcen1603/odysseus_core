@@ -1,8 +1,10 @@
 package de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.inactivequery.status;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 
+import net.jxta.id.ID;
 import net.jxta.peer.PeerID;
 import de.uniol.inf.is.odysseus.peer.distribute.ILogicalQueryPart;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.common.ILoadBalancingMasterStatus;
@@ -24,6 +26,41 @@ public class InactiveQueryMasterStatus implements ILoadBalancingMasterStatus {
 
 	private volatile boolean locked=false;
 	
+
+	private ID sharedQueryID;
+	private Collection<Integer> localQueriesForSharedQuery;
+	private Collection<PeerID>  otherPeersForSharedQuery;
+	private PeerID sharedQueryMasterPeer;
+	
+	
+
+
+	public PeerID getSharedQueryMasterPeer() {
+		return sharedQueryMasterPeer;
+	}
+
+	public void setSharedQueryMasterPeer(PeerID sharedQueryMasterPeer) {
+		this.sharedQueryMasterPeer = sharedQueryMasterPeer;
+	}
+
+	
+	private boolean isMaster;
+	public boolean isMaster() {
+		return isMaster;
+	}
+
+	public ID getSharedQueryID() {
+		return sharedQueryID;
+	}
+
+	public Collection<Integer> getLocalQueriesForSharedQuery() {
+		return localQueriesForSharedQuery;
+	}
+
+	public Collection<PeerID> getOtherPeersForSharedQuery() {
+		return otherPeersForSharedQuery;
+	}
+
 	/***
 	 * Get a lock (used to coordinate different phases)
 	 */
@@ -311,5 +348,13 @@ public class InactiveQueryMasterStatus implements ILoadBalancingMasterStatus {
 	public String getCommunicationStrategy() {
 		return COMMUNCIATOR_NAME;
 	}
+
+	public void storeSharedQueryInformation(boolean isMaster, ID sharedQueryID,Collection<Integer> localQueriesForSharedQuery, Collection<PeerID> otherPeers) {
+		this.isMaster = isMaster;
+		this.sharedQueryID = sharedQueryID;
+		this.localQueriesForSharedQuery = localQueriesForSharedQuery;
+		this.otherPeersForSharedQuery = otherPeers;
+	}
+
 
 }

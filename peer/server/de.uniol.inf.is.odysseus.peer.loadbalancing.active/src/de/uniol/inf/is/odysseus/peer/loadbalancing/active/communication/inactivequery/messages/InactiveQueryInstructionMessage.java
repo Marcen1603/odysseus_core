@@ -1,6 +1,8 @@
 package de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.inactivequery.messages;
 
 import java.nio.ByteBuffer;
+import java.util.ArrayList;
+import java.util.List;
 
 import de.uniol.inf.is.odysseus.p2p_new.IMessage;
 
@@ -24,6 +26,7 @@ public class InactiveQueryInstructionMessage implements IMessage {
 
 	private int loadBalancingProcessId;
 	private int msgType;
+	
 
 	/**
 	 * PQLQuery for ADD_QUERY Message
@@ -39,6 +42,46 @@ public class InactiveQueryInstructionMessage implements IMessage {
 	 * PeerID used i different Messages
 	 */
 	private String peerId;
+	
+
+	/**
+	 * Needed if query part was Master for shared Query.
+	 */
+	private String sharedQueryID;
+	private String masterPeerID;
+
+
+	public List<String> getOtherPeerIDs() {
+		return this.otherPeers;
+	}
+
+	public void setMasterPeerID(String masterPeerID) {
+		this.masterPeerID = masterPeerID;
+	}
+
+	
+	/**
+	 * True if current Query is Master for shared Query.
+	 */
+	private boolean isMasterForQuery;
+	
+	public boolean isMasterForQuery() {
+		return isMasterForQuery;
+	}
+	
+	/**
+	 * Needed if query Part was Master for shared Query.
+	 */
+	private List<String> otherPeers;
+	
+	
+	public String getSharedQueryID() {
+		return this.sharedQueryID;
+	}
+	
+	public String getMasterPeerID() {
+		return this.masterPeerID;
+	}
 
 	/**
 	 * Default constructor.
@@ -83,11 +126,16 @@ public class InactiveQueryInstructionMessage implements IMessage {
 	 *            LoadBalancingProcess Id
 	 * @param PQLQuery
 	 *            PQL Query to install
+	 * @param masterPeer 
+	 * @param sharedQueryID 
 	 * @return Message with ADD_QUERY msgType
 	 */
 	public static InactiveQueryInstructionMessage createAddQueryMsg(
-			int lbProcessId, String PQLQuery) {
+			int lbProcessId, String PQLQuery, String sharedQueryID, String masterPeer) {
 		InactiveQueryInstructionMessage message = new InactiveQueryInstructionMessage();
+		message.setMasterPeerID(masterPeer);
+		message.sharedQueryID = sharedQueryID;
+		message.isMasterForQuery = false;
 		message.loadBalancingProcessId = lbProcessId;
 		message.PQLQuery = PQLQuery;
 		message.msgType = ADD_QUERY;
@@ -183,16 +231,47 @@ public class InactiveQueryInstructionMessage implements IMessage {
 			 * integer loadBalancingProcessId 4 Bytes for Size of PQL String PQL
 			 * String
 			 */
+			
 
-			byte[] pqlAsBytes = PQLQuery.getBytes();
+			if(!isMasterForQuery) {
 
-			bbsize = 4 + 4 + 4 + pqlAsBytes.length;
-			bb = ByteBuffer.allocate(bbsize);
-			bb.putInt(msgType);
-			bb.putInt(loadBalancingProcessId);
-			bb.putInt(pqlAsBytes.length);
-			bb.put(pqlAsBytes);
-			break;
+				byte[] pqlAsBytes = PQLQuery.getBytes();
+
+				byte[] sharedQueryIDAsBytes = sharedQueryID.getBytes();
+				byte[] masterPeerIDAsBytes = masterPeerID.getBytes();
+
+	
+				bbsize = 4 + 4 + 4 + pqlAsBytes.length + 4 + sharedQueryIDAsBytes.length + 1 + 4 + masterPeerIDAsBytes.length;
+				bb = ByteBuffer.allocate(bbsize);
+				bb.putInt(msgType);
+				bb.putInt(loadBalancingProcessId);
+				bb.putInt(pqlAsBytes.length);
+				bb.put(pqlAsBytes);
+				bb.putInt(sharedQueryIDAsBytes.length);
+				bb.put(sharedQueryIDAsBytes);
+				bb.put((byte)0);
+				bb.putInt(masterPeerIDAsBytes.length);
+				bb.put(masterPeerIDAsBytes);
+				break;
+			}
+			
+			else {
+				byte[] pqlAsBytes = PQLQuery.getBytes();
+				byte[] otherPeersAsBytes = stringListToBytes(this.getOtherPeerIDs());
+				byte[] sharedQueryIDAsBytes = sharedQueryID.getBytes();
+				
+				bbsize = 4 + 4 + 4 + pqlAsBytes.length + 1 + otherPeersAsBytes.length + 4 + sharedQueryIDAsBytes.length;
+				bb = ByteBuffer.allocate(bbsize);
+				bb.putInt(msgType);
+				bb.putInt(loadBalancingProcessId);
+				bb.putInt(pqlAsBytes.length);
+				bb.put(pqlAsBytes);
+				bb.putInt(sharedQueryIDAsBytes.length);
+				bb.put(sharedQueryIDAsBytes);
+				bb.put((byte)1);
+				bb.put(otherPeersAsBytes);
+				break;
+			}
 
 		case REPLACE_RECEIVER:
 		case REPLACE_SENDER:
@@ -259,7 +338,35 @@ public class InactiveQueryInstructionMessage implements IMessage {
 			byte[] pqlAsBytes = new byte[sizeOfPql];
 			bb.get(pqlAsBytes);
 			this.PQLQuery = new String(pqlAsBytes);
-			break;
+			
+			int sizeOfSharedQueryID = bb.getInt();
+			byte[] sharedQueryIDAsBytes = new byte[sizeOfSharedQueryID];
+			bb.get(sharedQueryIDAsBytes);
+			this.sharedQueryID = new String(sharedQueryIDAsBytes);
+			
+			
+			byte masterFlag = bb.get();
+			if(masterFlag==0) {
+				isMasterForQuery = false;
+				int sizeOfMasterPeerID = bb.getInt();
+				byte[] masterPeerIDBytes = new byte[sizeOfMasterPeerID];
+				bb.get(masterPeerIDBytes);
+				this.masterPeerID = new String(masterPeerIDBytes);
+				
+				break;
+			}
+			else {
+				isMasterForQuery = true;
+				this.otherPeers = new ArrayList<String>();
+				int numberOfOtherPeers = bb.getInt();
+				for (int i=0;i<numberOfOtherPeers;i++) {
+					int sizeOfPeerID = bb.getInt();
+					byte[] peerIDStringAsBytes = new byte[sizeOfPeerID];
+					bb.get(peerIDStringAsBytes);
+					otherPeers.add(new String(peerIDStringAsBytes));
+				}
+				break;
+			}
 
 		case REPLACE_RECEIVER:
 		case REPLACE_SENDER:
@@ -381,6 +488,41 @@ public class InactiveQueryInstructionMessage implements IMessage {
 	 */
 	public void setPipeId(String pipeId) {
 		this.pipeId = pipeId;
+	}
+
+	
+
+
+	private byte[] stringListToBytes(List<String> strings) {
+		int numberOfBytesNeeded = 4;
+		
+		//Calculate Buffer Size.
+		for (String element : strings) {
+			int numberOfBytesForElement = element.getBytes().length;
+			numberOfBytesNeeded += 4;
+			numberOfBytesNeeded +=numberOfBytesForElement;
+		}
+		
+		ByteBuffer bb = ByteBuffer.allocate(numberOfBytesNeeded);
+		bb.putInt(strings.size());
+		for (String element : strings) {
+			bb.putInt(element.getBytes().length);
+			bb.put(element.getBytes());
+		}
+		
+		return bb.array();
+	}
+	
+
+	public static InactiveQueryInstructionMessage createAddQueryMsgForMasterQuery(int lbProcessId, String PQLQuery, List<String> otherPeers, String sharedQueryID) {
+		InactiveQueryInstructionMessage message = new InactiveQueryInstructionMessage();
+		message.loadBalancingProcessId = lbProcessId;
+		message.PQLQuery = PQLQuery;
+		message.isMasterForQuery = true;
+		message.otherPeers = otherPeers;
+		message.sharedQueryID = sharedQueryID;
+		message.msgType = ADD_QUERY;
+		return message;
 	}
 
 }

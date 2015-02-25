@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.inactivequery.communicator;
 
+import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
 import net.jxta.peer.PeerID;
@@ -203,28 +204,21 @@ public class InactiveQueryMessageDispatcher {
 		currentJob.start();
 	}
 
+
 	/**
 	 * Send instruction to add Query
-	 * 
 	 * @param destinationPeer
-	 *            Slave Peer (volunteer)
 	 * @param queryPartPql
-	 *            PQL-Query to install
 	 * @param listener
-	 *            IMessageDeliveryFailedListener that listens for failed
-	 *            messages.
 	 */
-	public void sendAddQuery(PeerID destinationPeer, String queryPartPql,
-			IMessageDeliveryFailedListener listener) {
-
+	public void sendAddQuery(PeerID destinationPeer, String queryPartPql,IMessageDeliveryFailedListener listener, String sharedQueryID, String masterPeer) {
 		LOG.debug("Send AddQuery");
-		InactiveQueryInstructionMessage message = InactiveQueryInstructionMessage
-				.createAddQueryMsg(lbProcessId, queryPartPql);
-		this.currentJob = new RepeatingMessageSend(peerCommunicator, message,
-				destinationPeer);
+		InactiveQueryInstructionMessage message = InactiveQueryInstructionMessage.createAddQueryMsg(lbProcessId, queryPartPql,sharedQueryID,masterPeer);
+		this.currentJob = new RepeatingMessageSend(peerCommunicator,message,destinationPeer);
 		currentJob.addListener(listener);
 		currentJob.start();
 	}
+	
 
 	/**
 	 * When installing Query goes wrong.
@@ -436,5 +430,18 @@ public class InactiveQueryMessageDispatcher {
 			LOG.error(e.getMessage());
 		}
 	}
+
+
+	public void sendAddQueryForMasterQuery(PeerID destinationPeer, String queryPartPql, IMessageDeliveryFailedListener listener, List<String> peerIDs, String sharedQueryID) {
+		LOG.debug("Send AddQuery for Master Peer:");
+		LOG.debug("Shared Query ID:" + sharedQueryID);
+		LOG.debug("Number of other Peers:" + peerIDs.size());
+		
+		InactiveQueryInstructionMessage message = InactiveQueryInstructionMessage.createAddQueryMsgForMasterQuery(lbProcessId, queryPartPql,peerIDs, sharedQueryID);
+		this.currentJob = new RepeatingMessageSend(peerCommunicator,message,destinationPeer);
+		currentJob.addListener(listener);
+		currentJob.start();
+	}
+	
 
 }

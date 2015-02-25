@@ -141,6 +141,9 @@ public class AbortHandler {
 		}
 	}
 
+	
+	//TODO: Do logical parts get re-changed to their old self when Abort happens?
+	
 	/**
 	 * Re-Allocates and cleans up status after Abort has been completed.
 	 * 
