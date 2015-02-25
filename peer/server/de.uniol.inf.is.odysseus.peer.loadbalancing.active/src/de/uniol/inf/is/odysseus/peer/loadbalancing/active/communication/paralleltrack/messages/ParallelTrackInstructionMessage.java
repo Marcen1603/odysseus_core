@@ -146,6 +146,7 @@ public class ParallelTrackInstructionMessage implements IMessage {
 
 	public static ParallelTrackInstructionMessage createDeleteOperatorMsg(boolean isSender, int lbProcessId, String pipeId) {
 		ParallelTrackInstructionMessage message = new ParallelTrackInstructionMessage();
+		message.setLoadBalancingProcessId(lbProcessId);
 		message.oldPipeId = pipeId;
 		if(isSender) {
 			message.msgType = DELETE_SENDER;

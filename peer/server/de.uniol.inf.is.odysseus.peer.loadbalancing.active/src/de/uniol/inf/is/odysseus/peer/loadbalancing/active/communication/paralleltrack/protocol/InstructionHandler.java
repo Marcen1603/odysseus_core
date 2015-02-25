@@ -221,6 +221,9 @@ public class InstructionHandler {
 		case ParallelTrackInstructionMessage.DELETE_SENDER:
 			LOG.debug("Got DELETE_SENDER or DELETE_RECEIVER");
 			if(status==null) {
+				LOG.debug("Stauts already null. Sending improvised Stop message.");
+				ParallelTrackMessageDispatcher tmpMessageDispatcher = new ParallelTrackMessageDispatcher(ParallelTrackCommunicatorImpl.getPeerCommunicator(),instruction.getLoadBalancingProcessId());
+				tmpMessageDispatcher.sendDeleteFinished(senderPeer, instruction.getOldPipeId());
 				return;
 			}
 			//Sync is finished (or we would not be here). So we can stop spamming SYNC_FINISHED Messages now.

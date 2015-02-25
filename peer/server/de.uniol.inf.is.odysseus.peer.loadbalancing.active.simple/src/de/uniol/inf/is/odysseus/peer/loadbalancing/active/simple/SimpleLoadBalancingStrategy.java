@@ -346,7 +346,7 @@ public class SimpleLoadBalancingStrategy implements ILoadBalancingStrategy, ILoa
 			Preconditions.checkArgument(Activator.getResourceManager().isPresent(), "No resource manager bound");
 			
 			final IPeerResourceUsageManager resourceManager = Activator.getResourceManager().get();
-			LOG.debug("Started monitoring local resources");
+			LOG.info("Started monitoring local resources");
 			
 			while(this.isAlive() && !this.isInterrupted() && this.mRunning) {
 				
@@ -376,7 +376,7 @@ public class SimpleLoadBalancingStrategy implements ILoadBalancingStrategy, ILoa
 				
 			}
 			
-			LOG.debug("Stopped monitoring local resources");
+			LOG.info("Stopped monitoring local resources");
 			
 		}
 
@@ -569,7 +569,7 @@ public class SimpleLoadBalancingStrategy implements ILoadBalancingStrategy, ILoa
 				Activator.getLoadBalancingLock().get().releaseLocalLock();
 			}
 		}
-		LOG.debug("Load balancing process finished. Continue monitoring");
+		LOG.info("Load balancing process finished. Continue monitoring");
 		
 	}
 	
