@@ -384,6 +384,9 @@ public class MovingStateHelper {
 				JxtaSenderAO senderAO = (JxtaSenderAO) logicalOp;
 				senderAO.setPeerID(peerID);
 			}
+			else {
+				LOG.warn("No according logical operator to existing pyhsical Operator with pipe ID " + pipeID);
+			}
 		}
 		if (operator instanceof JxtaReceiverPO) {
 			LoadBalancingHelper.setNewPeerID((JxtaReceiverPO) operator, peerID);

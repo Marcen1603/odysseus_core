@@ -109,16 +109,33 @@ public class InactiveQueryHelper {
 			boolean isSender) throws LoadBalancingException {
 		IPhysicalOperator operator = LoadBalancingHelper
 				.getPhysicalJxtaOperator(isSender, pipeID);
+		ILogicalOperator logicalOp = LoadBalancingHelper.getLogicalJxtaOperator(isSender, pipeID);
+		
 		if (operator == null) {
 			throw new LoadBalancingException("No Sender with pipeID " + pipeID
 					+ " found.");
 		}
 		if (operator instanceof JxtaSenderPO) {
 			LoadBalancingHelper.setNewPeerID((JxtaSenderPO) operator, peerID);
+			if(logicalOp!=null) {
+				JxtaSenderAO senderAO = (JxtaSenderAO) logicalOp;
+				senderAO.setPeerID(peerID);
+			}
+			else {
+				LOG.warn("No according logical sender to existing pyhsical Operator with pipe ID " + pipeID);
+			}
 		}
 		if (operator instanceof JxtaReceiverPO) {
 			LoadBalancingHelper.setNewPeerID((JxtaReceiverPO) operator, peerID);
+			if(logicalOp!=null) {
+				JxtaReceiverAO receiverAO = (JxtaReceiverAO) logicalOp;
+				receiverAO.setPeerID(peerID);
+			}
+			else {
+				LOG.warn("No according logical receiver to existing pyhsical Operator with pipe ID " + pipeID);
+			}
 		}
+		
 	}
 	
 
