@@ -71,7 +71,7 @@ public class ByteBufferHandler<T> implements
 		return retval;
 	}
 	
-	private void checkOverflow(ByteBuffer buffer, int size) {
+	private void checkAndResizeBuffer(ByteBuffer buffer, int size) {
 		if (size+byteBuffer.position()>=byteBuffer.capacity()){
 			// TODO: Effizientere ?berlaufbehandlung?
 			//logger.warn("ObjectHandler OVERFLOW");
@@ -89,7 +89,7 @@ public class ByteBufferHandler<T> implements
 		synchronized(buffer){
 			synchronized(byteBuffer){
 				//System.out.println("putBuffer "+buffer+" to "+byteBuffer);
-				checkOverflow(buffer, buffer.remaining());
+				checkAndResizeBuffer(byteBuffer, buffer.remaining());
 				byteBuffer.put(buffer);
 				//System.out.println("putBuffer "+buffer+" to "+byteBuffer);
 			}
@@ -101,7 +101,7 @@ public class ByteBufferHandler<T> implements
 		synchronized(buffer){
 			synchronized(byteBuffer){
 				//System.out.println("putBuffer2 "+buffer+" to "+byteBuffer);
-				checkOverflow(buffer, size);
+				checkAndResizeBuffer(byteBuffer, size);
 				// Why copy each single byte?
 //				for (int i=0;i<size;i++){
 //					byteBuffer.put(buffer.get());
@@ -119,7 +119,7 @@ public class ByteBufferHandler<T> implements
 	public void put(T value, boolean withMetadata) {
 
 		synchronized(byteBuffer){
-			checkOverflow(byteBuffer, byteBuffer.remaining());
+			checkAndResizeBuffer(byteBuffer, dataHandler.memSize(value));
 			byteBuffer.clear();
 			ByteBufferUtil.toBuffer(byteBuffer, (IStreamObject) value, dataHandler, withMetadata);
 			//this.dataHandler.writeData(byteBuffer, value);
