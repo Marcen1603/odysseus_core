@@ -10,13 +10,8 @@ import net.jxta.peergroup.PeerGroupID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
-
-
-
-
-
 import de.uniol.inf.is.odysseus.p2p_new.IJxtaServicesProvider;
+import de.uniol.inf.is.odysseus.p2p_new.util.RepeatingJobThread;
 import de.uniol.inf.is.odysseus.rest.service.RestService;
 
 
@@ -29,6 +24,8 @@ public class WebserviceAdvertisementSender {
 
 	private static final Logger LOG = LoggerFactory
 			.getLogger(WebserviceAdvertisementSender.class);
+	private static final long ADVLIFETIME = 180000;
+	private static final long ADVEXPIRATIONTIME = 180000;
 //	private static final long WAIT_TIME_MILLIS = 21 * 1000;
 
 	/**
@@ -42,16 +39,28 @@ public class WebserviceAdvertisementSender {
 		adv.setPeerID(peerId);
 		adv.setID(IDFactory.newPipeID(peerGroupID));
 		if (adv != null) {
-			try {
-				waitForJxtaServicesProvider(provider);
-				provider.publishInfinite(adv);
-				provider.remotePublishInfinite(adv);
-			} catch (IOException e) {
-				LOG.error("Could not publish webservice advertisement", e);
-			}
+			startRepeatedPublish(provider, adv);
 		}
 	}
 	
+	private void startRepeatedPublish(final IJxtaServicesProvider provider, final WebserviceAdvertisement adv) {
+		
+		RepeatingJobThread refresher = new RepeatingJobThread(ADVEXPIRATIONTIME, "Repeatedly send out WebserviceAdvertisement") {
+			@Override
+			public void doJob() {
+				try {
+					waitForJxtaServicesProvider(provider);
+					provider.publish(adv,ADVLIFETIME,ADVEXPIRATIONTIME);
+					provider.remotePublish(adv,ADVEXPIRATIONTIME);
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		};
+		refresher.start();
+		
+	}
+
 	private static void waitForJxtaServicesProvider(IJxtaServicesProvider provider) {
 		while( !provider.isActive() ) {
 			try {
