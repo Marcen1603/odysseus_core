@@ -64,6 +64,7 @@ import de.uniol.inf.is.odysseus.core.server.util.CopyLogicalGraphVisitor;
 import de.uniol.inf.is.odysseus.core.server.util.GenericGraphWalker;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.core.usermanagement.ITenant;
+import de.uniol.inf.is.odysseus.logicaloperator.latency.CalcLatencyAO;
 import de.uniol.inf.is.odysseus.mep.MEP;
 import de.uniol.inf.is.odysseus.peer.ddc.MissingDDCEntryException;
 import de.uniol.inf.is.odysseus.relational.base.predicate.RelationalPredicate;
@@ -920,7 +921,6 @@ public class OperatorBuildHelper {
 			fAO.setOptions(parameter);
 		}
 	
-		
 		if(fileName != null && !fileName.equals("")){
 			fAO.setFilename(fileName);
 		}else{
@@ -1784,9 +1784,14 @@ public class OperatorBuildHelper {
 		SportsQLEvaluationParameter evaluationParameter =SportsQLParameterHelper.getEvaluationParameter(sportsQL);
 		
 		if(evaluationParameter != null && evaluationParameter.isEvaluation()){
+		
+			CalcLatencyAO calcLatencyAO = new CalcLatencyAO();
+			calcLatencyAO.subscribeToSource(Iterables.getLast(allOperators), 0 ,0, Iterables.getLast(allOperators).getOutputSchema());
+			allOperators.add(calcLatencyAO);
+			
+			
 			List<Option> parameter = new ArrayList<Option>();
 			parameter.add(new Option("csv.writemetadata", "true"));
-			
 			CSVFileSink fAO = OperatorBuildHelper.createFileSinkAO(queryName, evaluationParameter.getFileName(),evaluationParameter.getFilePath(),evaluationParameter.getSinkName(), parameter, Iterables.getLast(allOperators) );
 			allOperators.add(fAO);
 		}
