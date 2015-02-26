@@ -600,7 +600,7 @@ public class SimpleLoadBalancingStrategy implements ILoadBalancingStrategy, ILoa
 			if(startTime>0) {
 				long duration = System.nanoTime()-startTime;
 				duration = duration/NANOSECONDS_TO_MILLISECONDS;
-				LOG.info("LoadBalancing took {} ms" + duration);
+				LOG.info("LoadBalancing took {} ms", duration);
 				startTime = 0;
 			}
 			
@@ -612,7 +612,7 @@ public class SimpleLoadBalancingStrategy implements ILoadBalancingStrategy, ILoa
 			if(startTime>0) {
 				long duration = System.nanoTime()-startTime;
 				duration = duration/NANOSECONDS_TO_MILLISECONDS;
-				LOG.info("LoadBalancing took {} ms" + duration);
+				LOG.info("LoadBalancing took {} ms", duration);
 				startTime = 0;
 			}
 		}
