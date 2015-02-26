@@ -7,9 +7,6 @@ import net.jxta.id.IDFactory;
 import net.jxta.peer.PeerID;
 import net.jxta.peergroup.PeerGroupID;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import de.uniol.inf.is.odysseus.p2p_new.IJxtaServicesProvider;
 import de.uniol.inf.is.odysseus.p2p_new.util.RepeatingJobThread;
 import de.uniol.inf.is.odysseus.rest.service.RestService;
@@ -22,8 +19,6 @@ import de.uniol.inf.is.odysseus.rest.service.RestService;
  */
 public class WebserviceAdvertisementSender {
 
-	private static final Logger LOG = LoggerFactory
-			.getLogger(WebserviceAdvertisementSender.class);
 	private static final long ADVLIFETIME = 180000;
 	private static final long ADVEXPIRATIONTIME = 180000;
 //	private static final long WAIT_TIME_MILLIS = 21 * 1000;
