@@ -141,7 +141,7 @@ public class AbortHandler {
 				.getInstance().getStatusForLocalProcess(lbProcessId);
 		if (status != null) {
 			LOG.info("LoadBalancing failed.");
-			ParallelTrackCommunicatorImpl.getInstance().notifyFinished();
+			ParallelTrackCommunicatorImpl.getInstance().notifyFinished(false);
 
 			LoadBalancingStatusCache.getInstance().deleteLocalStatus(
 					status.getProcessId());

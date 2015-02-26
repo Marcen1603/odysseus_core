@@ -228,9 +228,9 @@ public class MovingStateCommunicatorImpl implements IPeerCommunicatorListener,
 	/**
 	 * Notfies Strategy that LoadBalancing is finished.
 	 */
-	public void notifyFinished() {
+	public void notifyFinished(boolean successful) {
 		for (ILoadBalancingListener listener : listeners) {
-			listener.notifyLoadBalancingFinished();
+			listener.notifyLoadBalancingFinished(successful);
 		}
 
 	}

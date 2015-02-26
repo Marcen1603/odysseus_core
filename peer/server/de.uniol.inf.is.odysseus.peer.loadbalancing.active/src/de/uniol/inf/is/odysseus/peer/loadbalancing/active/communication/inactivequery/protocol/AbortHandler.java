@@ -143,7 +143,7 @@ public class AbortHandler {
 			LOG.info("LoadBalancing failed.");
 			LoadBalancingStatusCache.getInstance().deleteLocalStatus(
 					status.getProcessId());
-			InactiveQueryCommunicatorImpl.getInstance().notifyFinished();
+			InactiveQueryCommunicatorImpl.getInstance().notifyFinished(false);
 		}
 	}
 

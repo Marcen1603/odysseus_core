@@ -71,6 +71,17 @@ public class SimpleLoadBalancingStrategy implements ILoadBalancingStrategy, ILoa
 	public static final double DEFAULT_CPU_THRESHOLD = 0.01;
 	
 	/**
+	 * Used to count successes.
+	 */
+	private volatile int successes=0;
+	
+	/**
+	 * Used to count failues
+	 */
+	private volatile int failures=0;
+	
+	
+	/**
 	 * The default threshold for the memory load as percentage.
 	 */
 	public static final double DEFAULT_MEM_THRESHOLD = 0.1;
@@ -79,6 +90,14 @@ public class SimpleLoadBalancingStrategy implements ILoadBalancingStrategy, ILoa
 	 * The default time between look ups of the local resources [ms].
 	 */
 	public static final long DEFAULT_RESOURCE_LOOKUP_TIME = 60000;
+
+	private static final long NANOSECONDS_TO_MILLISECONDS = 1000000;
+	
+
+	/***
+	 * Start time for timer.
+	 */
+	private volatile long startTime;
 	
 	/**
 	 * The {@link Thread} to look up the current resource usage. <br />
@@ -281,8 +300,9 @@ public class SimpleLoadBalancingStrategy implements ILoadBalancingStrategy, ILoa
 			this.mUsage = usage;
 			
 			if(this.loadBalancingNeeded(usage)) {
-				LOG.debug("LoadBalancing is needed. Trying to acquire Local Lock.");
 				
+				LOG.debug("LoadBalancing is needed. Trying to acquire Local Lock.");
+				startTime = System.nanoTime();
 				//Try to lock peer first.
 				if(lock.requestLocalLock()) {
 					try {
@@ -314,10 +334,12 @@ public class SimpleLoadBalancingStrategy implements ILoadBalancingStrategy, ILoa
 						mCurrentlyBalancing = false;
 						lock.releaseLocalLock();
 						
+						
 					}
 					
 					
 				}
+				
 				
 			}
 			
@@ -540,7 +562,7 @@ public class SimpleLoadBalancingStrategy implements ILoadBalancingStrategy, ILoa
 			return;
 			
 		}
-		
+		resetSuccessCounter();
 		this.mLookupThread = new SimpleLBThread(mAllocator, mCommunicator);
 		this.mLookupThread.mRunning = true;
 		this.mLookupThread.start();
@@ -555,7 +577,7 @@ public class SimpleLoadBalancingStrategy implements ILoadBalancingStrategy, ILoa
 	}
 
 	@Override
-	public void notifyLoadBalancingFinished() {
+	public void notifyLoadBalancingFinished(boolean successful) {
 
 		//Release Locks.
 		if(this.mLookupThread.lockContainer!=null) {
@@ -569,7 +591,33 @@ public class SimpleLoadBalancingStrategy implements ILoadBalancingStrategy, ILoa
 				Activator.getLoadBalancingLock().get().releaseLocalLock();
 			}
 		}
-		LOG.info("Load balancing process finished. Continue monitoring");
+		
+		
+		
+		if(successful) {
+			successes +=1;
+			LOG.info("Load balancing process successfully finished. Continue monitoring");
+			if(startTime>0) {
+				long duration = System.nanoTime()-startTime;
+				duration = duration/NANOSECONDS_TO_MILLISECONDS;
+				LOG.info("LoadBalancing took {} ms" + duration);
+				startTime = 0;
+			}
+			
+			
+		}
+		else {
+			failures +=1;
+			LOG.info("Load balancing process failed. Continue monitoring");
+			if(startTime>0) {
+				long duration = System.nanoTime()-startTime;
+				duration = duration/NANOSECONDS_TO_MILLISECONDS;
+				LOG.info("LoadBalancing took {} ms" + duration);
+				startTime = 0;
+			}
+		}
+		LOG.info("Successful LoadBalancing Processes: {}", successes);
+		LOG.info("Failues: {}",failures);
 		
 	}
 	
@@ -660,6 +708,12 @@ public class SimpleLoadBalancingStrategy implements ILoadBalancingStrategy, ILoa
 		}
 
 		return result;
+	}
+	
+	public void resetSuccessCounter() {
+		LOG.info("Resetting success/failure counter");
+		successes = 0;
+		failures = 0;
 	}
 
 }

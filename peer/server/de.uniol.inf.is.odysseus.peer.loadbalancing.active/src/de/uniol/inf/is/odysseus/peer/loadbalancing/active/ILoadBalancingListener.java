@@ -8,8 +8,10 @@ package de.uniol.inf.is.odysseus.peer.loadbalancing.active;
  *
  */
 public interface ILoadBalancingListener {
-	/**
+	
+	/***
 	 * Called when LoadBalancing is finished.
+	 * @param successful true if balancing was successful.
 	 */
-	public void notifyLoadBalancingFinished();
+	public void notifyLoadBalancingFinished(boolean successful);
 }

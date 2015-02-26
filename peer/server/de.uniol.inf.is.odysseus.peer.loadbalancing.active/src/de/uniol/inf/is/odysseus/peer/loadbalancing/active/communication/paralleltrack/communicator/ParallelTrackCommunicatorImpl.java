@@ -231,9 +231,9 @@ public class ParallelTrackCommunicatorImpl implements
 	}
 	
 
-	public void notifyFinished() {
+	public void notifyFinished(boolean successful) {
 		for(ILoadBalancingListener listener : listeners) {
-			listener.notifyLoadBalancingFinished();
+			listener.notifyLoadBalancingFinished(successful);
 		}
 		
 	}

@@ -284,7 +284,7 @@ public class ResponseHandler {
 		LOG.info("LoadBalancing successfully finished.");
 		LoadBalancingStatusCache.getInstance().deleteLocalStatus(
 				status.getProcessId());
-		InactiveQueryCommunicatorImpl.getInstance().notifyFinished();
+		InactiveQueryCommunicatorImpl.getInstance().notifyFinished(true);
 
 	}
 

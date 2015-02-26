@@ -327,7 +327,7 @@ public class ResponseHandler {
 	public static void loadBalancingSuccessfullyFinished(ParallelTrackMasterStatus status) {
 		LOG.info("LoadBalancing successfully finished.");
 		LoadBalancingStatusCache.getInstance().deleteLocalStatus(status.getProcessId());
-		ParallelTrackCommunicatorImpl.getInstance().notifyFinished();
+		ParallelTrackCommunicatorImpl.getInstance().notifyFinished(true);
 		
 	}
 	

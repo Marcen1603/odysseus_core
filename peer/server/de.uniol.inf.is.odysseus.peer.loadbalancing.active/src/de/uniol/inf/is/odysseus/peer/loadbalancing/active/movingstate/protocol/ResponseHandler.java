@@ -400,7 +400,7 @@ public class ResponseHandler {
 		LOG.info("LoadBalancing successfully finished.");
 		LoadBalancingStatusCache.getInstance().deleteLocalStatus(
 				status.getProcessId());
-		MovingStateCommunicatorImpl.getInstance().notifyFinished();
+		MovingStateCommunicatorImpl.getInstance().notifyFinished(true);
 
 	}
 	
