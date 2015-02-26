@@ -20,5 +20,5 @@ Require-Bundle: de.uniol.inf.is.odysseus.core;bundle-version="1.0.0",
 Export-Package: de.uniol.inf.is.odysseus.sports.distributor.helper,
  de.uniol.inf.is.odysseus.sports.distributor.registry,
  de.uniol.inf.is.odysseus.sports.distributor.webservice
-Service-Component: OSGI-INF/SportsQLDistributorRegistry.xml, OSGI-INF/SportsQLDefaultDistributor.xml,OSGI-INF/DistributionConfigBuildHelper.xml,OSGI-INF/DistributedQueryHelper.xml,OSGI-INF/SportsQLRecoveryDistributor.xml,OSGI-INF/RecoverySimpleDistributor.xml,
- OSGI-INF/RecoveryActiveStandbyDistributor.xml
+Service-Component: OSGI-INF/SportsQLDistributorRegistry.xml, OSGI-INF/SportsQLDefaultDistributor.xml,OSGI-INF/DistributionConfigBuildHelper.xml,OSGI-INF/DistributedQueryHelper.xml,OSGI-INF/SportsQLRecoveryDistributor.xml,OSGI-INF/RecoverySimpleDistributor.xml,OSGI-INF/RecoveryActiveStandbyDistributor.xml,
+ OSGI-INF/DefaultDistributor.xml
