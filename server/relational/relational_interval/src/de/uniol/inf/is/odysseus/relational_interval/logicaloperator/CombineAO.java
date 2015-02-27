@@ -3,10 +3,10 @@ package de.uniol.inf.is.odysseus.relational_interval.logicaloperator;
 import java.util.ArrayList;
 import java.util.List;
 
-import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
@@ -65,7 +65,7 @@ public class CombineAO extends AbstractLogicalOperator {
 					getInputSchema(i).getAttribute(pos));
 			attributes.add(attribute);
 		}
-		SDFSchema out = new SDFSchema("", Tuple.class, attributes);
+		SDFSchema out = SDFSchemaFactory.createNewWithAttributes(attributes, getInputSchema(0));
 		return out;
 	}
 

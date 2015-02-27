@@ -57,7 +57,6 @@ import de.uniol.inf.is.odysseus.client.common.ClientSessionStore;
 import de.uniol.inf.is.odysseus.core.collection.Context;
 import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.collection.Resource;
-import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.datahandler.DataHandlerRegistry;
 import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
@@ -87,6 +86,7 @@ import de.uniol.inf.is.odysseus.core.procedure.StoredProcedure;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.core.usermanagement.IUser;
 import de.uniol.inf.is.odysseus.planmanagement.executor.webservice.client.util.WsClientSession;
@@ -809,7 +809,7 @@ public class WsClient implements IExecutor, IClientExecutor, IOperatorOwner {
 			attributes.add(createAttributeFromInformation(attrInfo));
 		}
 		// FIXME: Is this always Tuple?
-		return new SDFSchema(uri, Tuple.class, attributes);
+		return SDFSchemaFactory.createNewTupleSchema(uri, attributes);
 	}
 
 	private SDFAttribute createAttributeFromInformation(
@@ -1143,6 +1143,7 @@ public class WsClient implements IExecutor, IClientExecutor, IOperatorOwner {
 		return null;
 	}
 
+	@SuppressWarnings("unchecked")
 	public SDFSchema toSDFSchema(SdfSchemaInformation si)
 			throws ClassNotFoundException {
 		List<SDFAttribute> attributes = new ArrayList<>();
@@ -1152,10 +1153,10 @@ public class WsClient implements IExecutor, IClientExecutor, IOperatorOwner {
 			attributes.add(new SDFAttribute(sda.getSourcename(), sda
 					.getAttributename(), dt, null, null, null));
 		}
-		@SuppressWarnings({ "rawtypes", "unchecked" })
+		@SuppressWarnings({ "rawtypes"})
 		Class<? extends IStreamObject> type = (Class<? extends IStreamObject>) Class
 				.forName(si.getTypeClass());
-		SDFSchema schema = new SDFSchema(si.getUri(), type, attributes);
+		SDFSchema schema = SDFSchemaFactory.createNewSchema(si.getUri(), (Class<? extends IStreamObject<?>>) type, attributes);
 		return schema;
 	}
 

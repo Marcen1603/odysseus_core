@@ -35,6 +35,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFExpression;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
 import de.uniol.inf.is.odysseus.mep.MEP;
 import de.uniol.inf.is.odysseus.probabilistic.base.common.ProbabilisticBooleanResult;
 import de.uniol.inf.is.odysseus.probabilistic.common.Interval;
@@ -412,7 +413,7 @@ public class ProbabilisticRelationalPredicate extends AbstractRelationalPredicat
 
     public static void main(final String[] args) {
         final SDFAttribute a = new SDFAttribute("", "p_out", SDFDatatype.DOUBLE, null, null, null);
-        final SDFSchema schema = new SDFSchema("", Tuple.class, a);
+        final SDFSchema schema = SDFSchemaFactory.createNewTupleSchema("", a);
         final RelationalPredicate pred = new RelationalPredicate(new SDFExpression("p_out <=0 || isNaN(p_out)", MEP.getInstance()));
 
         System.out.println(pred.toString());

@@ -30,6 +30,7 @@ import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator;
 
 public class PatternDetectAO<T> extends AbstractLogicalOperator{
@@ -206,8 +207,7 @@ public class PatternDetectAO<T> extends AbstractLogicalOperator{
 
 		}
 
-		SDFSchema output = new SDFSchema(outputSchemaIntern,
-				outAttributeList);
+		SDFSchema output = SDFSchemaFactory.createNewWithAttributes(outAttributeList, outputSchemaIntern);
 		setOutputSchema(output);
 
 		return output;

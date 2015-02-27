@@ -26,7 +26,6 @@ import java.util.ListIterator;
 import java.util.Map;
 
 import de.uniol.inf.is.odysseus.core.collection.Resource;
-import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.datahandler.TupleDataHandler;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
@@ -34,6 +33,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFConstraint;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.DataDictionaryException;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractAccessAO;
@@ -273,7 +273,7 @@ public class CreateStreamVisitor extends AbstractDefaultVisitor {
 		options.put("autoconnect", autoReconnect + "");
 		Resource resource = new Resource(caller.getUser(), name);
 		AccessAO source = new AccessAO(resource, wrapperName, "NonBlockingTcp","SizeByteBuffer", new TupleDataHandler().getSupportedDataTypes().get(0), options);
-		source.setOutputSchema(new SDFSchema(resource.toString(), Tuple.class, this.attributes));
+		source.setOutputSchema(SDFSchemaFactory.createNewTupleSchema(resource.toString(), this.attributes));
 		CreateStreamCommand cmd = new CreateStreamCommand(name, source, caller);
 		commands.add(cmd);
 		return cmd;
@@ -295,7 +295,7 @@ public class CreateStreamVisitor extends AbstractDefaultVisitor {
 
 		AccessAO source = new AccessAO(new Resource(caller.getUser(), name), wrapperName, "File", type, new TupleDataHandler().getSupportedDataTypes().get(0), options);
 
-		source.setOutputSchema(new SDFSchema(name, Tuple.class, this.attributes));
+		source.setOutputSchema(SDFSchemaFactory.createNewTupleSchema(name, this.attributes));
 		CreateStreamCommand cmd = new CreateStreamCommand(name, source, caller);
 		commands.add(cmd);
 		return cmd;
@@ -343,7 +343,7 @@ public class CreateStreamVisitor extends AbstractDefaultVisitor {
 	@Override
 	public Object visit(ASTCreateFromDatabase node, Object data) throws QueryParseException {
 		CreateStreamCommand cmd = (CreateStreamCommand) invokeDatabaseVisitor(ASTCreateFromDatabase.class, node, name);
-		cmd.setOutputSchema(new SDFSchema(name, Tuple.class, attributes));
+		cmd.setOutputSchema(SDFSchemaFactory.createNewTupleSchema(name, attributes));
 
 		commands.add(cmd);
 		//return addTimestampAO((ILogicalOperator) ao);

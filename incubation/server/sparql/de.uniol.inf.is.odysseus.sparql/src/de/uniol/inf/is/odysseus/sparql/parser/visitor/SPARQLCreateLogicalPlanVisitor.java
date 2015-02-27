@@ -21,13 +21,13 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
-import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.sdf.schema.IAttributeResolver;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.DataDictionaryException;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AggregateAO;
@@ -309,7 +309,7 @@ public class SPARQLCreateLogicalPlanVisitor implements SPARQLParserVisitor {
 					}
 				}
 
-				projectAO.setOutputSchema(new SDFSchema("", Tuple.class, attrs));
+				projectAO.setOutputSchema(SDFSchemaFactory.createNewTupleSchema("", attrs));
 				logOp = projectAO;
 			} else {
 				AggregateAO aggAO = new AggregateAO();

@@ -17,6 +17,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.Transport
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.push.ReceiverPO;
 
 /**
@@ -121,7 +122,7 @@ public class EventReceiver extends Thread implements ITransferHandler {
 		ArrayList<SDFAttribute> attr = new ArrayList<SDFAttribute>();
 		for(String dataType : sinkEventHandler.getSchema()) 
 			attr.add(new SDFAttribute("", "", new SDFDatatype(dataType), null, null, null));
-		return new SDFSchema("", Tuple.class, attr);
+		return SDFSchemaFactory.createNewTupleSchema("", attr);
 	}
 
 	@Override

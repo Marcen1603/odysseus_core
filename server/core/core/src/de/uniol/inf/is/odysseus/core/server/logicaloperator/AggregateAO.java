@@ -27,9 +27,11 @@ import com.google.common.collect.Lists;
 import de.uniol.inf.is.odysseus.core.collection.Pair;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.GetParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
@@ -89,12 +91,12 @@ public class AggregateAO extends UnaryLogicalOp {
 			AggregateFunction function, SDFAttribute outAttribute) {
 		List<SDFAttribute> attributes = new ArrayList<SDFAttribute>();
 		attributes.add(attribute);
-		SDFSchema schema = new SDFSchema("", Tuple.class, attributes);
-		addAggregation(schema, function, outAttribute);
+		addAggregation(attributes, function, outAttribute);
 	}
 
     public void addAggregation(List<SDFAttribute> attributes, AggregateFunction function, SDFAttribute outAttribute) {
-        SDFSchema schema = new SDFSchema("", Tuple.class, attributes);
+        @SuppressWarnings("unchecked")
+		SDFSchema schema = SDFSchemaFactory.createNewSchema("", (Class<? extends IStreamObject<?>>) Tuple.class, attributes);
         addAggregation(schema, function, outAttribute);
     }
 	   
@@ -183,6 +185,7 @@ public class AggregateAO extends UnaryLogicalOp {
 		return new AggregateAO(this);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public SDFSchema getOutputSchemaIntern(int pos) {
 		SDFSchema outputSchema;
@@ -212,9 +215,9 @@ public class AggregateAO extends UnaryLogicalOp {
 		}
 
 		if (getInputSchema() != null) {
-			outputSchema = new SDFSchema(getInputSchema(), outAttribs);
+			outputSchema = SDFSchemaFactory.createNewWithAttributes(outAttribs, getInputSchema());
 		} else {
-			outputSchema = new SDFSchema("<tmp>", Tuple.class, outAttribs);
+			outputSchema = SDFSchemaFactory.createNewSchema("<tmp>", (Class<? extends IStreamObject<?>>) Tuple.class, outAttribs);
 		}
 		return outputSchema;
 	}

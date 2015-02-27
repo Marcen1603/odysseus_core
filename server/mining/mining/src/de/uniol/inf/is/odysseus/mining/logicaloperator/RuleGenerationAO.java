@@ -22,6 +22,7 @@ import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
@@ -79,7 +80,7 @@ public class RuleGenerationAO extends AbstractLogicalOperator {
 			SDFSchema innerSchema = this.getInputSchema(0).get(itemsetposition).getDatatype().getSchema();			
 			SDFAttribute attributeSet = new SDFAttribute(null, "rule", MiningDatatypes.ASSOCIATION_RULE, innerSchema);			
 			attributes.add(attributeSet);
-			SDFSchema outSchema = new SDFSchema(getInputSchema(0), attributes);
+			SDFSchema outSchema = SDFSchemaFactory.createNewWithAttributes(attributes, getInputSchema(0));
 			return outSchema;
 		} else {
 			List<SDFAttribute> attributes = new ArrayList<SDFAttribute>();
@@ -89,7 +90,7 @@ public class RuleGenerationAO extends AbstractLogicalOperator {
 			attributes.add(attributeNeeded);
 			SDFAttribute attributeTotal = new SDFAttribute(null, "total", SDFDatatype.INTEGER, null, null, null);
 			attributes.add(attributeTotal);
-			SDFSchema outSchema = new SDFSchema(getInputSchema(0), attributes);
+			SDFSchema outSchema = SDFSchemaFactory.createNewWithAttributes(attributes, getInputSchema(0));
 			return outSchema;
 		}
 	}

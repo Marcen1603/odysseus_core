@@ -24,6 +24,7 @@ import de.uniol.inf.is.odysseus.core.datahandler.TupleDataHandler;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.DataDictionaryException;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractAccessAO;
@@ -238,7 +239,7 @@ public class CreateAccessAOVisitor extends AbstractDefaultVisitor {
 			// newAttribute.setSourceName(alias);
 			attributes.add(newAttribute);
 		}
-		SDFSchema schema = new SDFSchema(access.getOutputSchema(), attributes);
+		SDFSchema schema = 	SDFSchemaFactory.createNewWithAttributes(attributes, access.getOutputSchema());
 		return schema;
 	}
 

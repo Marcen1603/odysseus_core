@@ -10,6 +10,7 @@ import com.google.common.collect.ImmutableList;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractEnrichAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
@@ -168,7 +169,7 @@ public class WSEnrichAO extends AbstractEnrichAO {
 
 	@Override
 	public void initialize() {
-		SDFSchema webserviceData = new SDFSchema("", getInputSchema(), receivedData);
+		SDFSchema webserviceData = SDFSchemaFactory.createNewWithAttributes(receivedData, getInputSchema());
 		SDFSchema outputSchema = SDFSchema.union(getInputSchema(),
 				webserviceData);
 		setOutputSchema(outputSchema);

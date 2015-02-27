@@ -26,6 +26,7 @@ import com.google.common.collect.Maps;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.GetParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
@@ -127,7 +128,7 @@ public class RenameAO extends UnaryLogicalOp {
 					attrs.add(attribute);
 				}
 				String uri = typeName != null ? typeName : inputSchema.getURI();
-				setOutputSchema(new SDFSchema(uri, inputSchema, attrs));
+				setOutputSchema(SDFSchemaFactory.createNewWithAttributes(uri, attrs, inputSchema));
 			} else {
 				//
 				if (typeName != null) {
@@ -137,9 +138,9 @@ public class RenameAO extends UnaryLogicalOp {
 						SDFAttribute newOne = new SDFAttribute(typeName, oldAttr.getAttributeName(), oldAttr);
 						attrs.add(newOne);
 					}
-					setOutputSchema(new SDFSchema(typeName, inputSchema, attrs));
+					setOutputSchema(SDFSchemaFactory.createNewWithAttributes(typeName, attrs, inputSchema));
 				} else {
-					setOutputSchema(new SDFSchema(inputSchema.getURI(), inputSchema));
+					setOutputSchema(inputSchema);
 				}
 			}
 		} else {
@@ -164,7 +165,7 @@ public class RenameAO extends UnaryLogicalOp {
 					attrs.add(oldAttr.clone());
 				}
 				String uri = typeName != null ? typeName : inputSchema.getURI();
-				setOutputSchema(new SDFSchema(uri, inputSchema, attrs));
+				setOutputSchema(SDFSchemaFactory.createNewWithAttributes(uri, attrs, inputSchema));
 			}
 		}
 	}

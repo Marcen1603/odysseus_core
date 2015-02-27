@@ -22,10 +22,12 @@ import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.sdf.schema.IAttributeResolver;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnaryLogicalOp;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
@@ -86,15 +88,13 @@ public class SubscribeAO extends UnaryLogicalOp implements IHasPredicates {
 	public boolean isValid() {
 		// If predicates and topics are empty, subscription doesn't make sense
 		if (predicateStrings.isEmpty() && topics.isEmpty()) {
-			addError(
-					"Empty subscription not allowed. Please add Topics or Predicates or both.");
+			addError("Empty subscription not allowed. Please add Topics or Predicates or both.");
 			return false;
 		}
 		// TODO: Why not using predicate parameter directly?
 
 		if (!predicateStrings.isEmpty() && predicateType == null) {
-			addError(
-					"Predicates needs a predicateType.");
+			addError("Predicates needs a predicateType.");
 			return false;
 		}
 
@@ -110,9 +110,8 @@ public class SubscribeAO extends UnaryLogicalOp implements IHasPredicates {
 		}
 
 		for (String predicateString : predicateStrings) {
-			predicates.add(
-					predicateBuilder.createPredicate(attributeResolver,
-							predicateString));
+			predicates.add(predicateBuilder.createPredicate(attributeResolver,
+					predicateString));
 		}
 
 		return true;
@@ -147,7 +146,7 @@ public class SubscribeAO extends UnaryLogicalOp implements IHasPredicates {
 	public void setPredicateStrings(List<String> predicates) {
 		this.predicateStrings = predicates;
 	}
-	
+
 	@Override
 	public List<IPredicate<?>> getPredicates() {
 		return predicates;
@@ -158,14 +157,20 @@ public class SubscribeAO extends UnaryLogicalOp implements IHasPredicates {
 		this.topics = topics;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	protected SDFSchema getOutputSchemaIntern(int pos) {
 		if (source != null) {
-			return new SDFSchema(source, Tuple.class, sdfAttributes);
+			return SDFSchemaFactory.createNewSchema(source,
+					(Class<? extends IStreamObject<?>>) Tuple.class,
+					sdfAttributes);
 		} else if (getInputSchema() != null) {
-			return new SDFSchema(getInputSchema(), sdfAttributes);
+			return SDFSchemaFactory.createNewWithAttributes(sdfAttributes,
+					getInputSchema());
 		} else {
-			return new SDFSchema("", Tuple.class, sdfAttributes);
+			return SDFSchemaFactory.createNewSchema("",
+					(Class<? extends IStreamObject<?>>) Tuple.class,
+					sdfAttributes);
 		}
 	}
 

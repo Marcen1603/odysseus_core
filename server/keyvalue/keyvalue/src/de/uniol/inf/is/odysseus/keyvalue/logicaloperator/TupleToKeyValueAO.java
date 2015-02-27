@@ -20,6 +20,7 @@ import de.uniol.inf.is.odysseus.core.collection.NestedKeyValueObject;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnaryLogicalOp;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.GetParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
@@ -70,9 +71,11 @@ public class TupleToKeyValueAO extends UnaryLogicalOp {
 		return false;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	protected SDFSchema getOutputSchemaIntern(int pos) {
-		SDFSchema newOutputSchema = new SDFSchema(getInputSchema(0).getURI(), this.type, getInputSchema(0).getAttributes());
+		SDFSchema newOutputSchema = SDFSchemaFactory.createNewSchema(getInputSchema(0).getURI(), (Class<? extends IStreamObject<?>>) this.type, getInputSchema(0).getAttributes());
+		
 		setOutputSchema(newOutputSchema);
 		return newOutputSchema;
 	}

@@ -19,7 +19,6 @@ import com.google.inject.AbstractModule;
 
 import de.uniol.inf.is.odysseus.tc.chooser.DistanceVehicleChooser;
 import de.uniol.inf.is.odysseus.tc.chooser.IVehicleChooser;
-import de.uniol.inf.is.odysseus.tc.chooser.PeriodicVehicleChooser;
 import de.uniol.inf.is.odysseus.tc.error.IErrorGenerator;
 import de.uniol.inf.is.odysseus.tc.error.NoErrorGenerator;
 import de.uniol.inf.is.odysseus.tc.geoconvert.GpsGeoConverter;

@@ -11,6 +11,7 @@ import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
 import de.uniol.inf.is.odysseus.mining.classification.IClassifier;
 import de.uniol.inf.is.odysseus.mining.weka.mapping.WekaAttributeResolver;
 import de.uniol.inf.is.odysseus.mining.weka.mapping.WekaConverter;
@@ -47,7 +48,7 @@ public class WekaClassifier<M extends ITimeInterval> implements IClassifier<M> {
 		ArrayList<SDFAttribute> outattributes = new ArrayList<SDFAttribute>(schema.getAttributes());
 		// we add the class attribute (this will be the last one...)
 		outattributes.add(classAttribute);
-		SDFSchema outschema = new SDFSchema(schema, outattributes);
+		SDFSchema outschema = SDFSchemaFactory.createNewWithAttributes(outattributes, schema);
 		this.war = new WekaAttributeResolver(outschema, nominals);
 
 	}

@@ -7,6 +7,7 @@ import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
@@ -57,7 +58,7 @@ public class LatencyToPayloadAO extends AbstractLogicalOperator {
 					SDFDatatype.LONG, null, null, null);
 			attributes.add(a);
 		}
-		SDFSchema schema = new SDFSchema(inputschema, attributes);
+		SDFSchema schema = SDFSchemaFactory.createNewWithAttributes(attributes, inputschema);
 		return schema;
 	}
 

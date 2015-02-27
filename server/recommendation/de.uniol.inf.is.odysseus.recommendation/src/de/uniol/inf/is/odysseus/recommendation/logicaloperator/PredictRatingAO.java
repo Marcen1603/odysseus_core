@@ -22,6 +22,7 @@ import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
@@ -153,8 +154,7 @@ public class PredictRatingAO extends AbstractLogicalOperator {
 				SDFDatatype.DOUBLE, null, null, null);
 		attributes.add(attributeId);
 
-		final SDFSchema outSchema = new SDFSchema(getInputSchema(port),
-				attributes);
+		final SDFSchema outSchema = SDFSchemaFactory.createNewWithAttributes(attributes, getInputSchema(port));
 		return outSchema;
 	}
 

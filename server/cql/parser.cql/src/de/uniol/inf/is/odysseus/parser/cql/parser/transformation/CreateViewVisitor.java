@@ -20,7 +20,7 @@ import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.RenameAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.QueryParseException;
@@ -71,7 +71,7 @@ public class CreateViewVisitor extends AbstractDefaultVisitor {
 				attributes.add(new SDFAttribute(viewName, old
 						.getAttributeName(), old));
 			}
-			rename.setOutputSchema(new SDFSchema(viewName, operator.getOutputSchema(), attributes));
+			rename.setOutputSchema(SDFSchemaFactory.createNewWithAttributes(viewName, attributes, operator.getOutputSchema()));
 			operator = rename;
 
 			CreateViewCommand cmd = new CreateViewCommand(viewName, operator,

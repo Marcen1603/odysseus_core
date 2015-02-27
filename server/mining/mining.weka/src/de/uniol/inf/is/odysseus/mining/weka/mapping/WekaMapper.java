@@ -12,6 +12,7 @@ import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
 
 public final class WekaMapper<M extends ITimeInterval> {
 
@@ -55,7 +56,7 @@ public final class WekaMapper<M extends ITimeInterval> {
 		List<SDFAttribute> attributes = this.schema.getAttributes();
 		if (index != -1) {
 			attributes.remove(index);
-			this.schema = new SDFSchema(this.schema, attributes);
+			this.schema = SDFSchemaFactory.createNewWithAttributes(attributes, schema);
 		}
 	}
 

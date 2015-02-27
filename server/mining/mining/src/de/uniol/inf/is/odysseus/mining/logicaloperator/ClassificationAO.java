@@ -15,13 +15,11 @@
  */
 package de.uniol.inf.is.odysseus.mining.logicaloperator;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
@@ -53,16 +51,17 @@ public class ClassificationAO extends AbstractLogicalOperator {
 
 	@Override
 	protected SDFSchema getOutputSchemaIntern(int pos) {
-
-		List<SDFAttribute> attributes = new ArrayList<>();
-		for(SDFAttribute oldAttribute : this.getInputSchema(0).getAttributes()){
-			attributes.add(new SDFAttribute(null, oldAttribute.getAttributeName(), oldAttribute.getDatatype(), oldAttribute.getUnit(), oldAttribute.getDtConstraints()));
-		}
-		
+//
+//		List<SDFAttribute> attributes = new ArrayList<>();
+//		for(SDFAttribute oldAttribute : this.getInputSchema(0).getAttributes()){
+//			attributes.add(new SDFAttribute(null, oldAttribute.getAttributeName(), oldAttribute.getDatatype(), oldAttribute.getUnit(), oldAttribute.getDtConstraints()));
+//		}
+//		
 		SDFAttribute attributeId = new SDFAttribute(null, className, SDFDatatype.DOUBLE, null, null, null);
-		attributes.add(attributeId);
+//		attributes.add(attributeId);
 		
-		SDFSchema outSchema = new SDFSchema(getInputSchema(0), attributes);
+//		SDFSchema outSchema = SDFSchemaFactory.createNewWithAttributes(attributes, getInputSchema(0));
+		SDFSchema outSchema = SDFSchemaFactory.createNewAddAttribute(attributeId, getInputSchema(0));
 		return outSchema;
 
 	}

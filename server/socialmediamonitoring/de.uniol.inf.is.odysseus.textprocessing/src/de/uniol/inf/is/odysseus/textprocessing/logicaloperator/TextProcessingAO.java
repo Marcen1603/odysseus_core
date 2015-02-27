@@ -7,6 +7,7 @@ import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnaryLogicalOp;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
@@ -58,7 +59,7 @@ public class TextProcessingAO extends UnaryLogicalOp  {
 		SDFAttribute attr = new SDFAttribute("", this.inputText.getAttributeName().toString(), list, null);
 		attrList.set(posi, attr);
 
-		SDFSchema outSchema = new SDFSchema(getInputSchema(0), attrList);
+		SDFSchema outSchema = SDFSchemaFactory.createNewWithAttributes(attrList, getInputSchema(0)); 
 		return outSchema;
 	}
 	

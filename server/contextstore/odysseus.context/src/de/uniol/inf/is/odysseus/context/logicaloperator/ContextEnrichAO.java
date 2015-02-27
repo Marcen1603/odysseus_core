@@ -23,6 +23,7 @@ import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
 import de.uniol.inf.is.odysseus.core.sdf.schema.IAttributeResolver;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
@@ -81,7 +82,8 @@ public class ContextEnrichAO extends AbstractLogicalOperator {
 				}
 				outattribs.add(attribute);
 			}
-			setOutputSchema(new SDFSchema(getInputSchema(0).getURI() + "_ENRICH", getInputSchema(0), outattribs));
+			//setOutputSchema( new SDFSchema(getInputSchema(0).getURI() + "_ENRICH", getInputSchema(0), outattribs));
+			setOutputSchema(SDFSchemaFactory.createNewWithAttributes(outattribs, getInputSchema(0)));
 		}
 	}
 

@@ -12,6 +12,7 @@ import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.CreateSDFAttributeParameter;
@@ -99,6 +100,7 @@ public class ConverterAO extends UnaryLogicalOp {
 		return outputAttributes;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	protected SDFSchema getOutputSchemaIntern(int pos) {
 		if (pos > 0) {
@@ -118,7 +120,7 @@ public class ConverterAO extends UnaryLogicalOp {
 		}else if (getInputSchema() != null){
 			name = getInputSchema().getURI();
 		}
-		return new SDFSchema(name, type, outputAttributes);
+		return SDFSchemaFactory.createNewSchema(name, (Class<? extends IStreamObject<?>>) type, outputAttributes);
 	}
 
 	@Parameter(name = "dateFormat", type = StringParameter.class, optional = true, doc = "Format used if schema contains (Start|End)TimestampString")

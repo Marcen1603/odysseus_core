@@ -24,6 +24,7 @@ import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.collection.KeyValueObject;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.sdf.schema.DirectAttributeResolver;
@@ -32,6 +33,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFExpression;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.AggregateFunctionBuilderRegistry;
 import de.uniol.inf.is.odysseus.mep.MEP;
@@ -123,6 +125,7 @@ public class KeyValueMapPO<K extends IMetaAttribute, T extends KeyValueObject<K>
 		}
 	}
 	
+	@SuppressWarnings("unchecked")
 	private SDFSchema generateSchema(T object) {
 		List<SDFAttribute> schemaAttributes = new ArrayList<SDFAttribute>();
 		for(Entry<String, Object> entry : object.getAttributes().entrySet()) {
@@ -141,7 +144,7 @@ public class KeyValueMapPO<K extends IMetaAttribute, T extends KeyValueObject<K>
 				schemaAttributes.add(new SDFAttribute("", entry.getKey(), SDFDatatype.STRING, null));
 			}
 		}
-		return new SDFSchema("", KeyValueObject.class, null, schemaAttributes);
+		return SDFSchemaFactory.createNewSchema("", (Class<? extends IStreamObject<?>>) KeyValueObject.class, schemaAttributes) ;
 	}
 
 	protected void generateSDFExpressions(SDFSchema schema, List<String[]> expressionStrings) {

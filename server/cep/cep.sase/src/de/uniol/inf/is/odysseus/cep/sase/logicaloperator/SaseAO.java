@@ -5,8 +5,10 @@ import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
@@ -83,16 +85,17 @@ public class SaseAO extends AbstractLogicalOperator {
 		return typeName;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	protected SDFSchema getOutputSchemaIntern(int pos) {
 		// TODO: FIXME: Why is inputSchema == null?
 		SDFSchema schema = null;
 		if (getInputSchema(0) == null) {
-			schema = new SDFSchema(typeName, Tuple.class, attributes);
+			schema = SDFSchemaFactory.createNewSchema(typeName, (Class<? extends IStreamObject<?>>) Tuple.class, attributes);
 		} else {
 			schema = SDFSchema.changeSourceName(getInputSchema(0), typeName,true);
 			schema = SDFSchema.changeType(schema, Tuple.class);
-			schema = new SDFSchema(schema, attributes);
+			schema = SDFSchemaFactory.createNewWithAttributes(attributes, schema);
 		}
 		return schema;
 	}

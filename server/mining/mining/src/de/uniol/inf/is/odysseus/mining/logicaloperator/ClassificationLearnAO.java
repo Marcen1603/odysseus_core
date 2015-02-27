@@ -25,6 +25,7 @@ import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
 import de.uniol.inf.is.odysseus.core.sdf.schema.DirectAttributeResolver;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
@@ -71,7 +72,7 @@ public class ClassificationLearnAO extends AbstractLogicalOperator {
 		List<SDFAttribute> attributes = new ArrayList<SDFAttribute>();
 		SDFAttribute support = new SDFAttribute(null, "classifier", MiningDatatypes.CLASSIFIER, null, null, null);
 		attributes.add(support);
-		SDFSchema outSchema = new SDFSchema(getInputSchema(0), attributes);
+		SDFSchema outSchema = SDFSchemaFactory.createNewWithAttributes(attributes, getInputSchema(0));
 		return outSchema;
 
 	}

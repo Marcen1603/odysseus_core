@@ -20,7 +20,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -38,13 +37,13 @@ import de.uniol.inf.is.odysseus.core.event.IEventType;
 import de.uniol.inf.is.odysseus.core.infoservice.InfoService;
 import de.uniol.inf.is.odysseus.core.infoservice.InfoServiceFactory;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
+import de.uniol.inf.is.odysseus.core.physicaloperator.AbstractPhysicalSubscription;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ControllablePhysicalSubscription;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
-import de.uniol.inf.is.odysseus.core.physicaloperator.AbstractPhysicalSubscription;
 import de.uniol.inf.is.odysseus.core.physicaloperator.event.POEvent;
 import de.uniol.inf.is.odysseus.core.physicaloperator.event.POEventType;
 import de.uniol.inf.is.odysseus.core.planmanagement.IOperatorOwner;
@@ -182,7 +181,7 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 	}
 
 	public AbstractSource(AbstractSource<T> source) {
-		this.outputSchema = createCleanClone(source.outputSchema);
+		this.outputSchema = source.outputSchema;
 		this.blocked = new AtomicBoolean();
 		this.blocked.set(source.blocked.get());
 		this.name = source.name;
@@ -955,15 +954,15 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 		return false;
 	}
 
-	private static Map<Integer, SDFSchema> createCleanClone(
-			Map<Integer, SDFSchema> old) {
-		Map<Integer, SDFSchema> copy = new HashMap<Integer, SDFSchema>();
-		for (Entry<Integer, SDFSchema> e : old.entrySet()) {
-			copy.put(e.getKey(),
-					new SDFSchema(e.getValue().getURI(), e.getValue()));
-		}
-		return copy;
-	}
+//	private static Map<Integer, SDFSchema> createCleanClone(
+//			Map<Integer, SDFSchema> old) {
+//		Map<Integer, SDFSchema> copy = new HashMap<Integer, SDFSchema>();
+//		for (Entry<Integer, SDFSchema> e : old.entrySet()) {
+//			copy.put(e.getKey(),
+//					new SDFSchema(e.getValue().getURI(), e.getValue()));
+//		}
+//		return copy;
+//	}
 
 	@Override
 	public SDFMetaAttributeList getMetaAttributeSchema() {

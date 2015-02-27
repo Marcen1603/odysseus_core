@@ -33,10 +33,10 @@ package de.uniol.inf.is.odysseus.database.logicaloperator;
 import java.sql.SQLException;
 import java.util.List;
 
-import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
@@ -88,7 +88,7 @@ public class DatabaseSourceAO extends AbstractDatabaseOperator {
 	public void setOutputSchemaWithList(List<SDFAttribute> outputSchema) {
 		this.givenSchema = outputSchema;
 		this.fetchAttributes = false;
-		setOutputSchema(new SDFSchema("", Tuple.class, outputSchema));
+		setOutputSchema( SDFSchemaFactory.createNewTupleSchema("", outputSchema));
 	}
 
 	@Parameter(type = BooleanParameter.class, name = "escape_names", optional = true)

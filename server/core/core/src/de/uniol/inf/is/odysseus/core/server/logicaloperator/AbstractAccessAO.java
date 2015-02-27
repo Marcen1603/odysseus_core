@@ -29,6 +29,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFConstraint;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
 import de.uniol.inf.is.odysseus.core.sdf.unit.SDFTimeUnit;
 import de.uniol.inf.is.odysseus.core.sdf.unit.SDFUnit;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
@@ -231,6 +232,7 @@ abstract public class AbstractAccessAO extends AbstractLogicalOperator {
 	}
 
 	
+	@SuppressWarnings("unchecked")
 	@Override
 	protected SDFSchema getOutputSchemaIntern(int pos) {
 		SDFSchema schema = null;
@@ -263,8 +265,8 @@ abstract public class AbstractAccessAO extends AbstractLogicalOperator {
 		}
 		
 		List<SDFAttribute> attributes = outputSchema.get(pos);
+		List<SDFAttribute> s2 = new ArrayList<>();
 		if (attributes != null && attributes.size() > 0) {
-			List<SDFAttribute> s2 = new ArrayList<>();
 			// Add source name to attributes
 			for (SDFAttribute a : attributes) {
 				SDFAttribute newAttr;
@@ -278,13 +280,10 @@ abstract public class AbstractAccessAO extends AbstractLogicalOperator {
 				}
 				s2.add(newAttr);
 			}
-			
-			schema = new SDFSchema(getName(), type, constraints, s2);
-		} else {
-			schema = new SDFSchema(getName(), type, constraints, null);
 		}
-
-		schema.setStrictOrder(strictOrder);
+		schema = SDFSchemaFactory.createNewSchema(getName(), (Class<? extends IStreamObject<?>>) type, s2);
+		schema = SDFSchemaFactory.createNewWithContraints(constraints, schema);
+		schema = SDFSchemaFactory.createNewWithStrictOrder(strictOrder, schema);
 		
 		return schema;
 	}

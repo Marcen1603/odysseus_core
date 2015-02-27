@@ -21,11 +21,11 @@ package de.uniol.inf.is.odysseus.debs2013.heatmap.logicaloperator;
 
 import java.util.ArrayList;
 
-import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnaryLogicalOp;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
@@ -154,7 +154,7 @@ public class FastHeatMapAO extends UnaryLogicalOp {
 				attributes.add(new SDFAttribute("", name, new SDFDatatype("Double"), null, null, null));
 			}
 		}
-		SDFSchema grandChallengeSchema = new  SDFSchema(schemaURI, Tuple.class , attributes);
+		SDFSchema grandChallengeSchema = SDFSchemaFactory.createNewWithAttributes(attributes, getInputSchema());
 //		SDFSchema grandChallengeSchema = new SDFSchema(schemaURI, 
 //				new SDFAttribute("", "ts", new SDFDatatype("Long")), 
 //				new SDFAttribute("", "player_id", new SDFDatatype("Integer")),

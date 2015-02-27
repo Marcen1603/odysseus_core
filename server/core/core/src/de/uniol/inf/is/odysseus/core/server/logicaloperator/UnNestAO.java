@@ -24,6 +24,7 @@ import org.slf4j.LoggerFactory;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.BooleanParameter;
@@ -99,7 +100,7 @@ public class UnNestAO extends UnaryLogicalOp {
             }
         }
         recalcOutputSchemata = false;
-        setOutputSchema(new SDFSchema("UNNEST", getInputSchema(),attrs));
+        setOutputSchema(SDFSchemaFactory.createNewWithAttributes("UNNEST", attrs, getInputSchema()));
         LOG.debug("Set output schema to: {}", getOutputSchema());
         return getOutputSchema();
     }

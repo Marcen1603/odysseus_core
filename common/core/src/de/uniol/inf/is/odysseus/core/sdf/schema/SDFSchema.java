@@ -31,7 +31,7 @@ import com.google.common.base.Preconditions;
 import de.uniol.inf.is.odysseus.core.IClone;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 
-@SuppressWarnings("rawtypes")
+@SuppressWarnings({"rawtypes"})
 public class SDFSchema extends SDFSchemaElementSet<SDFAttribute> implements
 		Comparable<SDFSchema>, Serializable, IClone {
 
@@ -40,11 +40,11 @@ public class SDFSchema extends SDFSchemaElementSet<SDFAttribute> implements
 	/**
 	 * contains the names of all real sources
 	 */
-	private List<String> baseSourceNames = new ArrayList<String>();
+	final private List<String> baseSourceNames = new ArrayList<String>();
 
 	final private Class<? extends IStreamObject> type;
 
-	final private Map<String, SDFConstraint> constraints;
+	private Map<String, SDFConstraint> constraints;
 
 	private boolean strictOrder;
 	private Boolean outOfOrder;
@@ -61,11 +61,21 @@ public class SDFSchema extends SDFSchemaElementSet<SDFAttribute> implements
 
 	/**
 	 * @param schema
+	 * @deprecated use SDFSchemaFactory instead
 	 */
+	@Deprecated
 	public SDFSchema(String uri, SDFSchema schema) {
 		this(uri, schema, (Map<String, SDFConstraint>) null);
 	}
 
+	/**
+	 * 
+	 * @param uri
+	 * @param schema
+	 * @param constraints
+	 * @deprecated use SDFSchemaFactory instead
+	 */
+	@Deprecated
 	public SDFSchema(String uri, SDFSchema schema,
 			Map<String, SDFConstraint> constraints) {
 		super(uri, schema);
@@ -91,7 +101,7 @@ public class SDFSchema extends SDFSchemaElementSet<SDFAttribute> implements
 			type = null;
 			this.outOfOrder = null;
 		}
-		
+
 		this.strictOrder = schema.strictOrder;
 
 	}
@@ -115,11 +125,29 @@ public class SDFSchema extends SDFSchemaElementSet<SDFAttribute> implements
 		this.constraints = constraints;
 	}
 
+	/**
+	 * 
+	 * @param uri
+	 * @param type
+	 * @param attribute
+	 * @param attributes1
+	 * @deprecated use SDFSchemaFactory instead
+	 */
+	@Deprecated
 	public SDFSchema(String uri, Class<? extends IStreamObject> type,
 			SDFAttribute attribute, SDFAttribute... attributes1) {
 		this(uri, type, null, attribute, attributes1);
 	}
 
+	/**
+	 * 
+	 * @param uri
+	 * @param type
+	 * @param constraints
+	 * @param attributes1
+	 * @deprecated use SDFSchemaFactory instead
+	 */
+	@Deprecated
 	public SDFSchema(String uri, Class<? extends IStreamObject> type,
 			Map<String, SDFConstraint> constraints,
 			Collection<SDFAttribute> attributes1) {
@@ -131,16 +159,25 @@ public class SDFSchema extends SDFSchemaElementSet<SDFAttribute> implements
 		this.constraints = constraints;
 	}
 
+	/**
+	 * 
+	 * @param uri
+	 * @param type
+	 * @param attributes1
+ 	 * @deprecated use SDFSchemaFactory instead
+ 	 */
+	@Deprecated
 	public SDFSchema(String uri, Class<? extends IStreamObject> type,
 			Collection<SDFAttribute> attributes1) {
 		this(uri, type, null, attributes1);
 	}
 
-	public SDFSchema(String uri, SDFSchema schema,
-			Collection<SDFAttribute> attributes1) {
+	@Deprecated
+	public SDFSchema(String uri, SDFSchema schema, Collection<SDFAttribute> attributes1) {
 		this(uri, schema.type, schema.constraints, attributes1);
 	}
 
+	@Deprecated
 	public SDFSchema(SDFSchema schema, Collection<SDFAttribute> attributes1) {
 		this(schema.getURI(), schema.type, schema.constraints, attributes1);
 	}
@@ -154,6 +191,10 @@ public class SDFSchema extends SDFSchemaElementSet<SDFAttribute> implements
 			return null;
 		}
 		return this.constraints.get(name);
+	}
+
+	void setContraints(Map<String, SDFConstraint> constraints) {
+		this.constraints = constraints;
 	}
 
 	public Collection<SDFConstraint> getConstraints() {
@@ -176,9 +217,10 @@ public class SDFSchema extends SDFSchemaElementSet<SDFAttribute> implements
 	}
 
 	/**
-	 * @param strictOrder the strictOrder to set
+	 * @param strictOrder
+	 *            the strictOrder to set Use factory to set
 	 */
-	public void setStrictOrder(boolean strictOrder) {
+	void setStrictOrder(boolean strictOrder) {
 		this.strictOrder = strictOrder;
 	}
 
@@ -459,7 +501,8 @@ public class SDFSchema extends SDFSchemaElementSet<SDFAttribute> implements
 			boolean overwriteExisting) {
 		List<SDFAttribute> newattributeList = new ArrayList<SDFAttribute>();
 		for (SDFAttribute a : schema.getAttributes()) {
-			if (overwriteExisting || a.getSourceName() == null || a.getSourceName().equals("")) {
+			if (overwriteExisting || a.getSourceName() == null
+					|| a.getSourceName().equals("")) {
 				newattributeList.add(new SDFAttribute(newName, a
 						.getAttributeName(), a));
 			} else {

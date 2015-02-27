@@ -29,9 +29,9 @@ import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 
-import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
 import de.uniol.inf.is.odysseus.p2p_new.network.P2PNetworkManager;
 import de.uniol.inf.is.odysseus.p2p_new.service.ServerExecutorService;
 import de.uniol.inf.is.odysseus.p2p_new.service.SessionManagementService;
@@ -269,7 +269,7 @@ public class SourceAdvertisement extends Advertisement implements Serializable {
 			attributes.add(attr);
 		}
 
-		return new SDFSchema(root.getTextValue(), Tuple.class, attributes);
+		return SDFSchemaFactory.createNewTupleSchema(root.getTextValue(), attributes);
 	}
 
 }

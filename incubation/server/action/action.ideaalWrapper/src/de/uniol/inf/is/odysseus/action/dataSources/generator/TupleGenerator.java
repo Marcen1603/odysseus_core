@@ -22,6 +22,7 @@ import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 
 public class TupleGenerator {
@@ -115,7 +116,7 @@ public class TupleGenerator {
 		default:
 			throw new GeneratorException("Unknown tuple type");
 		}
-		this.schema = new SDFSchema(type.name(), Tuple.class, attrs);
+		this.schema = SDFSchemaFactory.createNewTupleSchema(type.name(), attrs);
 		
 	}
 	

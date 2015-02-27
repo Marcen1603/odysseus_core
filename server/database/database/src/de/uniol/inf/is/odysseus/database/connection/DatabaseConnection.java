@@ -45,12 +45,12 @@ import java.util.TreeMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.infoservice.InfoService;
 import de.uniol.inf.is.odysseus.core.infoservice.InfoServiceFactory;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
 import de.uniol.inf.is.odysseus.database.DataSourceFactoryRegistry;
 
 /**
@@ -229,7 +229,7 @@ public class DatabaseConnection implements IDatabaseConnection {
 			SDFAttribute a = new SDFAttribute(null, name, dt, null, null, null);
 			attrs.add(a);
 		}
-		SDFSchema schema = new SDFSchema(tablename, Tuple.class, attrs);
+		SDFSchema schema = SDFSchemaFactory.createNewTupleSchema(tablename, attrs);
 		return schema;
 	}
 

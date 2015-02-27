@@ -15,7 +15,6 @@
 
 package de.uniol.inf.is.odysseus.tc.geoconvert;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.javatuples.Pair;

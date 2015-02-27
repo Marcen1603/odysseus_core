@@ -51,7 +51,7 @@ public class TSAJoinAORule extends AbstractTransformationRule<JoinAO> {
 		// So können die Quellen später wieder getrennt werden für die SP
 		String newOutputSchemaName = joinAO.getSubscribedToSource(0).getTarget().getOutputSchema().getURI() + ",";
 		newOutputSchemaName += joinAO.getSubscribedToSource(1).getTarget().getOutputSchema().getURI();
-		SDFSchema tmpSchema = new SDFSchema(newOutputSchemaName, joinAO.getOutputSchema());
+		SDFSchema tmpSchema = SDFSchema.changeSourceName(joinAO.getOutputSchema(), newOutputSchemaName, true);
 		joinAO.setOutputSchema(tmpSchema);	
 		
 		// see TJoinAORule

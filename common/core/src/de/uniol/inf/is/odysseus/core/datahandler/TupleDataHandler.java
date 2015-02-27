@@ -30,6 +30,7 @@ import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
 
 /**
  * @author Andr� Bolles, Marco Grawunder
@@ -302,7 +303,7 @@ public class TupleDataHandler extends AbstractDataHandler<Tuple<?>> {
 			if (type.isTuple()) {
 				subSchema = attribute.getSubSchema();
 			} else {
-				subSchema = new SDFSchema("", Tuple.class, attribute);
+				subSchema = SDFSchemaFactory.createNewTupleSchema("", attribute);
 			}
 
 			dataHandlers[i++] = DataHandlerRegistry.getDataHandler(uri, subSchema);

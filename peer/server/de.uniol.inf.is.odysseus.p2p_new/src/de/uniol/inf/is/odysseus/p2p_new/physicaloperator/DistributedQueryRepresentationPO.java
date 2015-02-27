@@ -5,11 +5,10 @@ import net.jxta.id.ID;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 
-import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSource;
 import de.uniol.inf.is.odysseus.p2p_new.logicaloperator.DistributedQueryRepresentationAO;
 
@@ -21,7 +20,7 @@ public class DistributedQueryRepresentationPO<T extends IStreamObject> extends A
 	public DistributedQueryRepresentationPO( DistributedQueryRepresentationAO ao) {
 		super();
 		Preconditions.checkNotNull(ao, "AO must not be null!");
-		setOutputSchema(new SDFSchema("", Tuple.class, Lists.<SDFAttribute>newArrayList()));
+		setOutputSchema(SDFSchemaFactory.createNewTupleSchema("", Lists.<SDFAttribute>newArrayList()));
 	
 		this.sharedQueryID = ao.getSharedQueryID();
 	}

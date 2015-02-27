@@ -34,6 +34,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFExpression;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
 import de.uniol.inf.is.odysseus.mep.MEP;
 
 /**
@@ -672,7 +673,7 @@ public class RelationalPredicate extends AbstractRelationalPredicate<Tuple<?>> {
 	public static void main(String[] args) {
 		SDFAttribute a = new SDFAttribute("", "p_out", SDFDatatype.DOUBLE,
 				null, null, null);
-		SDFSchema schema = new SDFSchema("", Tuple.class, a);
+		SDFSchema schema = SDFSchemaFactory.createNewTupleSchema("", a);
 		RelationalPredicate pred = new RelationalPredicate(new SDFExpression(
 				"p_out <=0 || isNaN(p_out)", MEP.getInstance()));
 

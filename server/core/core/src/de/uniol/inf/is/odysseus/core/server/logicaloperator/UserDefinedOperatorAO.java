@@ -20,6 +20,7 @@ import java.util.List;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.OperatorBuilderFactory;
@@ -83,7 +84,7 @@ public class UserDefinedOperatorAO extends AbstractLogicalOperator{
 
 	@Override
 	protected SDFSchema getOutputSchemaIntern(int pos) {
-		return new SDFSchema(getInputSchema(0),attributes);
+		return SDFSchemaFactory.createNewWithAttributes(attributes, getInputSchema(0));
 	}
 	
 	@Override

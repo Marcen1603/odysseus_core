@@ -25,6 +25,7 @@ import java.util.List;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.GetParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
@@ -74,7 +75,7 @@ public class ProjectAO extends UnaryLogicalOp {
 	}
 
 	public SDFSchema getOutputSchemaIntern() {
-		return new SDFSchema(getInputSchema(), attributes);
+		return SDFSchemaFactory.createNewWithAttributes(attributes, getInputSchema());
 	}
 
 	@Parameter(type = CreateSDFAttributeParameter.class, name = "PATHS", optional = true, isList = true, doc = "a list of attribute to use with keyvalue objects")
@@ -96,12 +97,13 @@ public class ProjectAO extends UnaryLogicalOp {
 	 */
 	@Override
 	protected SDFSchema getOutputSchemaIntern(int pos) {
-		return new SDFSchema(getInputSchema(), attributes);
+		return SDFSchemaFactory.createNewWithAttributes(attributes, getInputSchema());
 	}
 
 	@Override
 	public void initialize() {
-		setOutputSchema(new SDFSchema(getInputSchema().getURI(), getOutputSchema()));
+		/// WTF ???
+		///setOutputSchema(new SDFSchema(getInputSchema().getURI(), getOutputSchema()));
 	}
 
 	@Override

@@ -6,10 +6,10 @@ import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 
-import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
@@ -102,9 +102,9 @@ public class JxtaReceiverAO extends AbstractLogicalOperator {
 	@Parameter(name="SCHEMA", type = CreateSDFAttributeParameter.class, isList=true,optional=false)
 	public void setSchema(List<SDFAttribute> outputSchema) {
 		if( !Strings.isNullOrEmpty(schemaName)) {
-			assignedSchema = new SDFSchema(schemaName, Tuple.class,outputSchema);
+			assignedSchema = SDFSchemaFactory.createNewTupleSchema(schemaName, outputSchema);
 		} else {
-			assignedSchema = new SDFSchema("", Tuple.class,outputSchema);
+			assignedSchema = SDFSchemaFactory.createNewTupleSchema("", outputSchema);
 		}
 		addParameterInfo("SCHEMA", schemaToString(outputSchema));
 	}
@@ -118,9 +118,14 @@ public class JxtaReceiverAO extends AbstractLogicalOperator {
 	public void setSchemaName( String schemaName ) {
 		this.schemaName = schemaName;
 		
+		// TODO: This must be done inside initialize
 		if( assignedSchema != null ) {
-			assignedSchema = new SDFSchema(schemaName, Tuple.class, assignedSchema.getAttributes());
+			assignedSchema = SDFSchemaFactory.createNewTupleSchema(schemaName, assignedSchema.getAttributes());
 		}
+	}
+	
+	@Override
+	public void initialize() {
 	}
 	
 	public String getSchemaName() {

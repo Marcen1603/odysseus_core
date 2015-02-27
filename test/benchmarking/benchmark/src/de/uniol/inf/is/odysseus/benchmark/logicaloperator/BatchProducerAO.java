@@ -19,10 +19,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.benchmark.logicaloperator.BatchParameter.BatchItem;
-import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
@@ -73,7 +73,7 @@ public class BatchProducerAO extends AbstractLogicalOperator {
 
 	@Override
 	public SDFSchema getOutputSchemaIntern(int pos) {
-		return new SDFSchema("", Tuple.class, new ArrayList<SDFAttribute>());
+		return SDFSchemaFactory.createNewTupleSchema("", new ArrayList<SDFAttribute>());
 	}
 
 	public List<Integer> getElementCounts() {

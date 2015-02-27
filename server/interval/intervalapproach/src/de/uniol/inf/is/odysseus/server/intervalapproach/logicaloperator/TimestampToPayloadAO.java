@@ -23,6 +23,7 @@ import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
@@ -54,6 +55,7 @@ public class TimestampToPayloadAO extends AbstractLogicalOperator {
 		return this.attributes;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public SDFSchema getOutputSchemaIntern(int pos) {
 
@@ -87,9 +89,9 @@ public class TimestampToPayloadAO extends AbstractLogicalOperator {
 		outputAttributes.add(endtimeStamp);
 
 		if (getInputSchema(0) != null) {
-			setOutputSchema(new SDFSchema(getInputSchema(0), outputAttributes));
+			setOutputSchema(SDFSchemaFactory.createNewWithAttributes(outputAttributes, getInputSchema(0)));
 		} else {
-			setOutputSchema(new SDFSchema(name, type, outputAttributes));
+			setOutputSchema(SDFSchemaFactory.createNewSchema(name, (Class<? extends IStreamObject<?>>) type, outputAttributes));
 		}
 		return getOutputSchema();
 	}

@@ -6,6 +6,7 @@ import java.util.List;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnaryLogicalOp;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
@@ -34,7 +35,7 @@ public class FaceDetectorAO extends UnaryLogicalOp {
 			SDFAttribute faces = new SDFAttribute("face",
 					"face", SDFKinectDatatype.BUFFERED_IMAGE, null, null, null);				
 			attrs.add(faces);
-			setOutputSchema(new SDFSchema(getInputSchema(), attrs));
+			setOutputSchema(SDFSchemaFactory.createNewWithAttributes(attrs, getInputSchema()));
 	}
 	
 	@Override

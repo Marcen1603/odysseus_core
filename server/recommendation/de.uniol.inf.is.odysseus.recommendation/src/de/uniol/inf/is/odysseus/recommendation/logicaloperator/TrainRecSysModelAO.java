@@ -23,6 +23,7 @@ import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
@@ -242,8 +243,7 @@ public class TrainRecSysModelAO extends AbstractLogicalOperator {
 					MODEL_ATTRIBUTE_NAME, new SDFDatatype("RatingPredictor"),
 					null, null, null);
 			attributes.add(model);
-			final SDFSchema outSchema = new SDFSchema(getInputSchema(0),
-					attributes);
+			final SDFSchema outSchema = SDFSchemaFactory.createNewWithAttributes(attributes, getInputSchema(0));
 			return outSchema;
 		} else {
 			if (getOutputUsedItems()) {
@@ -253,8 +253,7 @@ public class TrainRecSysModelAO extends AbstractLogicalOperator {
 						RecommendationDatatypes.RECOMMENDATION_CANDIDATES,
 						null, null, null);
 				attributes.add(usedItemsMap);
-				final SDFSchema outSchema = new SDFSchema(getInputSchema(0),
-						attributes);
+				final SDFSchema outSchema = SDFSchemaFactory.createNewWithAttributes(attributes, getInputSchema(0));
 				return outSchema;
 			}
 		}

@@ -5,10 +5,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 
+
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.BinaryLogicalOp;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
@@ -102,15 +104,15 @@ public class SentimentDetectionAO extends BinaryLogicalOp{
 		List<SDFAttribute> outputAttributes = new ArrayList<SDFAttribute>();		
 		outputAttributes.addAll(inSchema.getAttributes());				
 		outputAttributes.add(sentDetection);
-		SDFSchema outSchema = new SDFSchema(inSchema, outputAttributes);
+		SDFSchema outSchema = SDFSchemaFactory.createNewWithAttributes(outputAttributes, inSchema); 
 		setOutputSchema(outSchema);
 		
 		if(totalInputports == 3){
 			List<SDFAttribute> outputAttributesneu = new ArrayList<SDFAttribute>();
 			outputAttributesneu.addAll(getInputSchema(1).getAttributes());
 			outputAttributesneu.add(sentDetection);
-			String nameneu = getInputSchema(1).getURI();
-			setOutputSchema(2,new SDFSchema(nameneu, getInputSchema(1), outputAttributesneu));
+
+			setOutputSchema(2, SDFSchemaFactory.createNewWithAttributes(outputAttributesneu, getInputSchema(1)));
 		}
 		return getOutputSchema();
 	}

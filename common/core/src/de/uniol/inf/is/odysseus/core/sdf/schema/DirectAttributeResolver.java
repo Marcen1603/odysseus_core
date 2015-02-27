@@ -49,7 +49,7 @@ public class DirectAttributeResolver implements IAttributeResolver, IClone {
 					var.getReturnType(), null, null, null);
 			attribs.add(a);
 		}
-		SDFSchema schema = new SDFSchema("", Tuple.class, attribs);
+		SDFSchema schema = SDFSchemaFactory.createNewTupleSchema("", attribs);
 		this.schemas.clear();
 		this.schemas.add(schema);
 	}

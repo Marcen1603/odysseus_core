@@ -40,13 +40,13 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import de.uniol.inf.is.odysseus.core.collection.Resource;
-import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.sdf.schema.AmbiguousAttributeException;
 import de.uniol.inf.is.odysseus.core.sdf.schema.IAttributeResolver;
 import de.uniol.inf.is.odysseus.core.sdf.schema.NoSuchAttributeException;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
 
 /**
  * @author Jonas Jacobi, Marco Grawunder
@@ -78,7 +78,7 @@ public class AttributeResolver implements IAttributeResolver {
 
 	@Override
 	public List<SDFSchema> getSchema() {
-		SDFSchema schema = new SDFSchema("", Tuple.class, this.attributes);
+		SDFSchema schema = SDFSchemaFactory.createNewTupleSchema("", attributes);
 		List<SDFSchema> schemaList = new LinkedList<>();
 		schemaList.add(schema);
 		return schemaList;

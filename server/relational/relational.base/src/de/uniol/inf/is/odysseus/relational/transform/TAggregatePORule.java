@@ -25,6 +25,7 @@ import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.AggregateFunction;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.AggregateFunctionBuilderRegistry;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.AggregatePO;
@@ -112,8 +113,7 @@ public class TAggregatePORule extends AbstractTransformationRule<AggregatePO> {
 
 		}
 		
-		SDFSchema newOutputSchema = new SDFSchema(
-				outputSchema, outAttributes);
+		SDFSchema newOutputSchema = SDFSchemaFactory.createNewWithAttributes(outAttributes, outputSchema); 
 
 		RelationalGroupProcessor r = new RelationalGroupProcessor(
 				aggregatePO.getInputSchema(), newOutputSchema,

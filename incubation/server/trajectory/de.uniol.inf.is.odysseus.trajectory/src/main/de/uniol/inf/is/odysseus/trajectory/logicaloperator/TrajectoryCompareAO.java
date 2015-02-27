@@ -26,11 +26,11 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnaryLogicalOp;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
@@ -171,9 +171,8 @@ public class TrajectoryCompareAO extends UnaryLogicalOp {
 	/**
 	 * Output schema
 	 */
-	private final static SDFSchema OUTPUT_SCHEMA = new SDFSchema(
+	private final static SDFSchema OUTPUT_SCHEMA = SDFSchemaFactory.createNewTupleSchema(
 			TrajectoryCompareAO.class.getName(), 
-			Tuple.class, 
 			new SDFAttribute(null, "result", SDFDatatype.LIST, null)
 	);
 	

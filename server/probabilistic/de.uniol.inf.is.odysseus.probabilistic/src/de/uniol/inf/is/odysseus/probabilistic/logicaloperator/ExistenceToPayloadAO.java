@@ -23,6 +23,7 @@ import com.google.common.base.Preconditions;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnaryLogicalOp;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
@@ -73,7 +74,7 @@ public class ExistenceToPayloadAO extends UnaryLogicalOp {
         }
         outputAttributes.add(existence);
 
-        this.setOutputSchema(new SDFSchema(name, this.getInputSchema(0), outputAttributes));
+        this.setOutputSchema(SDFSchemaFactory.createNewWithAttributes(name, outputAttributes, this.getInputSchema(0)));
 
         return this.getOutputSchema();
     }

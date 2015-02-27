@@ -40,6 +40,7 @@ import de.uniol.inf.is.odysseus.context.store.types.SingleElementStore;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.QueryParseException;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.IExecutorCommand;
@@ -72,8 +73,8 @@ public class ContextVisitor implements IVisitor {
 
 		CreateStreamVisitor csv = new CreateStreamVisitor(session, datadictionary, commands);
 		csv.visit(definitions, null);
-		SDFSchema schema = new SDFSchema("ContextStore:" + name, Tuple.class, csv.getAttributes());
-
+		SDFSchema schema = SDFSchemaFactory.createNewTupleSchema("ContextStore:" + name, csv.getAttributes());
+		
 		int size = visit(typeNode, schema);
         IContextStore<Tuple<? extends ITimeInterval>> store;
         if (size == 1) {

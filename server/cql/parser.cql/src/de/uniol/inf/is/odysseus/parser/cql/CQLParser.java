@@ -37,6 +37,7 @@ import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.sdf.schema.IAttributeResolver;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AccessAO;
@@ -1469,14 +1470,15 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 				.getUnquotedName();
 		String datahandler = ((ASTQuotedIdentifier) node.jjtGetChild(4))
 				.getUnquotedName();
-		List<SDFAttribute> schema = visit(defs, null);
+		List<SDFAttribute> attributes = visit(defs, null);
 		@SuppressWarnings("rawtypes")
 		Class<? extends IStreamObject> type = DataHandlerRegistry
 				.getCreatedType(datahandler);
 		if (type == null) {
 			type = Tuple.class;
 		}
-		SDFSchema outputSchema = new SDFSchema(name, type, schema);
+		@SuppressWarnings("unchecked")
+		SDFSchema outputSchema = SDFSchemaFactory.createNewSchema(name, (Class<? extends IStreamObject<?>>) type, attributes);
 
 		Map<String, String> options = new HashMap<>();
 		if (node.jjtGetChild(node.jjtGetNumChildren() - 1) instanceof ASTOptions) {
@@ -1542,7 +1544,7 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 
 		ASTAttributeDefinitions defs = (ASTAttributeDefinitions) createNode
 				.jjtGetChild(1);
-		List<SDFAttribute> schema = visit(defs, null);
+		List<SDFAttribute> attributes = visit(defs, null);
 
 		String wrapper = ((ASTQuotedIdentifier) node.jjtGetChild(0))
 				.getUnquotedName();
@@ -1559,7 +1561,8 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 		if (type == null) {
 			type = Tuple.class;
 		}
-		SDFSchema outputSchema = new SDFSchema(sourceName, type, schema);
+		@SuppressWarnings("unchecked")
+		SDFSchema outputSchema = SDFSchemaFactory.createNewSchema(sourceName, (Class<? extends IStreamObject<?>>) type, attributes);
 
 		Map<String, String> options = new HashMap<>();
 		if (node.jjtGetChild(node.jjtGetNumChildren() - 1) instanceof ASTOptions) {

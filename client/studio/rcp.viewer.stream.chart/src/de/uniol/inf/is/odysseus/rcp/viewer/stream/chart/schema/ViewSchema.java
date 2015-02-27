@@ -31,6 +31,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFMetaAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFMetaAttributeList;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.schema.datatype.ViewableDatatypeRegistry;
 
 public class ViewSchema<T> {
@@ -187,7 +188,7 @@ public class ViewSchema<T> {
 			groupByAttribs.add(attr);
 		}
 
-		SDFSchema groupBySchema = new SDFSchema("", null, null, groupByAttribs);
+		SDFSchema groupBySchema = SDFSchemaFactory.createNewTupleSchema("", groupByAttribs);
 		this.groupRestrictList = SDFSchema.calcRestrictList(outputSchema,
 				groupBySchema);
 	}

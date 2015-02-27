@@ -33,10 +33,10 @@ package de.uniol.inf.is.odysseus.nexmark.generator;
 import java.util.HashMap;
 import java.util.Map;
 
-import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
 
 public enum NEXMarkStreamType {
 	PERSON("person"), AUCTION("auction"), BID("bid"), CATEGORY("category");
@@ -54,7 +54,7 @@ public enum NEXMarkStreamType {
 		if (schema == null) {
 			switch (type) {
 			case PERSON:
-				schema = new SDFSchema("Person",Tuple.class, new SDFAttribute(null,
+				schema = SDFSchemaFactory.createNewTupleSchema("Person", new SDFAttribute(null,
 						"timestamp", SDFDatatype.LONG, null, null, null), new SDFAttribute(null,
 						"id", SDFDatatype.INTEGER, null, null, null), new SDFAttribute(null,
 						"name", SDFDatatype.STRING, null, null, null), new SDFAttribute(null,
@@ -64,8 +64,8 @@ public enum NEXMarkStreamType {
 						null, "state", SDFDatatype.STRING, null, null, null));
 				break;
 			case AUCTION:
-				schema = new SDFSchema(
-						"Auction",Tuple.class,
+				schema = SDFSchemaFactory.createNewTupleSchema(
+						"Auction",
 						new SDFAttribute(null, "timestamp", SDFDatatype.LONG, null, null, null),
 						new SDFAttribute(null, "id", SDFDatatype.INTEGER, null, null, null),
 						new SDFAttribute(null, "itemname", SDFDatatype.STRING, null, null, null),
@@ -79,7 +79,7 @@ public enum NEXMarkStreamType {
 						new SDFAttribute(null, "category", SDFDatatype.INTEGER, null, null, null));
 				break;
 			case BID:
-				schema = new SDFSchema("Bid",Tuple.class, new SDFAttribute(null,
+				schema = SDFSchemaFactory.createNewTupleSchema("Bid", new SDFAttribute(null,
 						"timestamp", SDFDatatype.LONG, null, null, null), new SDFAttribute(null,
 						"auction", SDFDatatype.INTEGER, null, null, null), new SDFAttribute(null,
 						"bidder", SDFDatatype.INTEGER, null, null, null), new SDFAttribute(null,
@@ -87,7 +87,7 @@ public enum NEXMarkStreamType {
 						"price", SDFDatatype.DOUBLE, null, null, null));
 				break;
 			case CATEGORY:
-				schema = new SDFSchema("Category",Tuple.class, new SDFAttribute(null, "id",
+				schema = SDFSchemaFactory.createNewTupleSchema("Category", new SDFAttribute(null, "id",
 						SDFDatatype.INTEGER, null, null, null), new SDFAttribute(null, "name",
 						SDFDatatype.STRING, null, null, null), new SDFAttribute(null,
 						"description", SDFDatatype.STRING, null, null, null), new SDFAttribute(

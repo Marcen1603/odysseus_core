@@ -20,13 +20,13 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.datahandler.AbstractDataHandler;
 import de.uniol.inf.is.odysseus.core.datahandler.DataHandlerRegistry;
 import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
 import de.uniol.inf.is.odysseus.core.securitypunctuation.ISecurityPunctuation;
 import de.uniol.inf.is.odysseus.securitypunctuation.sp.SecurityPunctuation;
 
@@ -100,9 +100,8 @@ public class SecurityPunctuationHandler extends
 	}
 
 	private void createSecurityPunctuationHandlers() {
-		schema = new SDFSchema(
+		schema = SDFSchemaFactory.createNewTupleSchema(
 				"securityPunctuation",
-				Tuple.class,
 				new SDFAttribute("SP", "streamname", new SDFDatatype("String"), null, null, null),
 				new SDFAttribute("SP", "tupleStartTS", new SDFDatatype("Long"), null, null, null),
 				new SDFAttribute("SP", "tupleEndTS", new SDFDatatype("Long"), null, null, null),
@@ -117,7 +116,7 @@ public class SecurityPunctuationHandler extends
 		for (SDFAttribute attribute : schema) {
 			String uri = attribute.getDatatype().getURI(false);
 			securityPunctuationHandlers[i++] = DataHandlerRegistry
-					.getDataHandler(uri, new SDFSchema("", Tuple.class, attribute));
+					.getDataHandler(uri, SDFSchemaFactory.createNewTupleSchema("", attribute));
 		}
 	}
 	

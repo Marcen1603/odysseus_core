@@ -22,6 +22,7 @@ import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.BooleanParameter;
@@ -158,7 +159,7 @@ public class ChangeDetectAO extends UnaryLogicalOp {
 		SDFSchema inputSchema = getInputSchema();
 		List<SDFAttribute> attributes = new ArrayList<>(inputSchema.getAttributes());
 		attributes.add(suppressCountAttribute);
-		SDFSchema outputSchema = new SDFSchema(inputSchema, attributes);
+		SDFSchema outputSchema = SDFSchemaFactory.createNewWithAttributes(attributes, inputSchema);
 		
 		return outputSchema;
 	}

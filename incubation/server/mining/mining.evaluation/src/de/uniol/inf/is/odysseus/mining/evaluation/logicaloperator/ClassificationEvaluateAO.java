@@ -26,6 +26,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.DirectAttributeResolver;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
@@ -68,15 +69,16 @@ public class ClassificationEvaluateAO extends AbstractLogicalOperator {
 	protected SDFSchema getOutputSchemaIntern(int pos) {
 
 		List<SDFAttribute> attributes = new ArrayList<>();
-		for(SDFAttribute oldAttribute : this.getInputSchema(0).getAttributes()){
-			attributes.add(new SDFAttribute(null, oldAttribute.getAttributeName(), oldAttribute.getDatatype(), oldAttribute.getUnit(), oldAttribute.getDtConstraints()));
-		}
+//		for(SDFAttribute oldAttribute : this.getInputSchema(0).getAttributes()){
+//			attributes.add(new SDFAttribute(null, oldAttribute.getAttributeName(), oldAttribute.getDatatype(), oldAttribute.getUnit(), oldAttribute.getDtConstraints()));
+//		}
 		for (String metric : this.getMetrics()) {
 			SDFAttribute metricAttribute = new SDFAttribute(null, metric, SDFDatatype.DOUBLE, null, null, null);
 			attributes.add(metricAttribute);
 		}
 		
-		SDFSchema outSchema = new SDFSchema(getInputSchema(0), attributes);
+//		SDFSchema outSchema = new SDFSchema(getInputSchema(0), attributes);
+		SDFSchema outSchema = SDFSchemaFactory.createNewAddAttributes(attributes, getInputSchema(0));
 		return outSchema;
 
 	}

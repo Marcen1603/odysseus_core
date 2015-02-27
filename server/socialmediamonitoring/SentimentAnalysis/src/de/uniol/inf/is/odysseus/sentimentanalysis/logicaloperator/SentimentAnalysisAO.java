@@ -8,6 +8,7 @@ import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.BinaryLogicalOp;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
@@ -65,7 +66,7 @@ public class SentimentAnalysisAO extends BinaryLogicalOp{
 		List<SDFAttribute> outputAttributes = new ArrayList<SDFAttribute>();		
 		outputAttributes.addAll(inSchema.getAttributes());				
 		outputAttributes.add(sentAnalysis);
-		SDFSchema outSchema = new SDFSchema(inSchema, outputAttributes);
+		SDFSchema outSchema = SDFSchemaFactory.createNewWithAttributes(outputAttributes, inSchema);
 		setOutputSchema(outSchema);
 		
 		return getOutputSchema();

@@ -15,9 +15,6 @@
 
 package de.uniol.inf.is.odysseus.tc.chooser;
 
-import java.util.List;
-
-import de.uniol.inf.is.odysseus.tc.interaction.ISumoInteraction.VehicleNextResult;
 import de.uniol.inf.is.odysseus.tc.vehicle.VehicleInfo;
 
 /**

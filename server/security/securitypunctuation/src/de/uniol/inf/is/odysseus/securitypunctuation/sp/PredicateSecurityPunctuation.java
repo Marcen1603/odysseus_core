@@ -26,6 +26,7 @@ import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
 import de.uniol.inf.is.odysseus.core.securitypunctuation.ISecurityPunctuation;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFExpression;
 import de.uniol.inf.is.odysseus.mep.MEP;
@@ -84,7 +85,7 @@ public class PredicateSecurityPunctuation extends AbstractSecurityPunctuation {
 	}
 	
 	public IPredicate<?> createPredicate(String exprString) {	
-	       SDFSchema schema = new SDFSchema("tupleToEvaluate", Tuple.class,
+	       SDFSchema schema = SDFSchemaFactory.createNewTupleSchema("tupleToEvaluate", 
 	                new SDFAttribute("", "ts", new SDFDatatype("Long"), null, null, null));
 		RelationalPredicate pred = new RelationalPredicate(new SDFExpression(
 				exprString,  MEP.getInstance()));

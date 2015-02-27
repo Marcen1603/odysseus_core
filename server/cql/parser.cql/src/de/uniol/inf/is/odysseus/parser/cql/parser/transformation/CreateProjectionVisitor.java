@@ -24,6 +24,7 @@ import de.uniol.inf.is.odysseus.core.mep.Constant;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.MapAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.ProjectAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.RenameAO;
@@ -90,7 +91,7 @@ public class CreateProjectionVisitor extends AbstractDefaultVisitor {
 		checkAttributes(aliasAttributes);
 
 		SDFSchema inputSchema = _top.getOutputSchema();
-		_outputSchema = new SDFSchema(inputSchema, outputAttributes);
+		_outputSchema = SDFSchemaFactory.createNewWithAttributes(outputAttributes, inputSchema);
 		// create operator: if there is a need for a project/map operator,
 		// create one and set top operator to it
 		if (!_outputSchema.equals(inputSchema) || projectionMatrix != null) {
@@ -135,7 +136,8 @@ public class CreateProjectionVisitor extends AbstractDefaultVisitor {
 		}
 		RenameAO rename = new RenameAO();
 		rename.subscribeTo(_top, _top.getOutputSchema());
-		rename.setOutputSchema(new SDFSchema(_top.getOutputSchema().getURI(), _top.getOutputSchema().getType(), this.aliasAttributes));
+		
+		rename.setOutputSchema(SDFSchemaFactory.createNewWithAttributes(aliasAttributes, _top.getOutputSchema()));
 
 		_top = rename;
 		return _top;

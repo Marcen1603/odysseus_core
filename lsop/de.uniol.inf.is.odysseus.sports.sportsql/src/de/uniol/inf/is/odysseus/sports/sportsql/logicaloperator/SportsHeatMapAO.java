@@ -7,6 +7,7 @@ import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 
@@ -71,7 +72,7 @@ public class SportsHeatMapAO extends AbstractLogicalOperator {
 		outputAttributes.addAll(inSchema.getAttributes());
 		outputAttributes.add(map);
 		outputAttributes.add(map2);
-		SDFSchema outSchema = new SDFSchema(inSchema, outputAttributes);
+		SDFSchema outSchema = SDFSchemaFactory.createNewWithAttributes(outputAttributes, inSchema);
 		setOutputSchema(outSchema);
 
 		return getOutputSchema();

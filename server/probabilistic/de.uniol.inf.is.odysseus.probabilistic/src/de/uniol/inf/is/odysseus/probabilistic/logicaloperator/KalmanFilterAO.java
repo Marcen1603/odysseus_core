@@ -21,6 +21,7 @@ import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnaryLogicalOp;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.GetParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
@@ -390,7 +391,7 @@ public class KalmanFilterAO extends UnaryLogicalOp {
         for (int i = 0; i < this.getStateTransition().length; i++) {
             outputAttributes.add(new SDFAttribute("", this.getVariables().get(i), SDFProbabilisticDatatype.PROBABILISTIC_DOUBLE, null, null, null));
         }
-        final SDFSchema outputSchema = new SDFSchema(this.getInputSchema(), outputAttributes);
+        final SDFSchema outputSchema = SDFSchemaFactory.createNewWithAttributes(outputAttributes, getInputSchema());
         this.setOutputSchema(outputSchema);
     }
 

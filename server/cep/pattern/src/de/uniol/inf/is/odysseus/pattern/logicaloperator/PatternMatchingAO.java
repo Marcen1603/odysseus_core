@@ -21,7 +21,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
 import de.uniol.inf.is.odysseus.core.mep.IExpression;
@@ -29,6 +28,7 @@ import de.uniol.inf.is.odysseus.core.sdf.SDFElement;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
@@ -229,7 +229,8 @@ public class PatternMatchingAO extends AbstractLogicalOperator {
 		} else if (outputMode == PatternOutput.TUPLE_CONTAINER) {
 			// create tuple container attribute
 			SDFAttribute tuple = new SDFAttribute("PATTERN", "tuple_container", SDFDatatype.TUPLE, null, null, null);
-			schema = new SDFSchema("PATTERN",Tuple.class, tuple);
+			
+			schema = SDFSchemaFactory.createNewTupleSchema("PATTERN", tuple);
 		} else if (outputMode == PatternOutput.EXPRESSIONS && returnExpressions != null) {
 			// EXPRESSIONS: Ausgabe hängt vom return-Parameter ab
 			List<SDFAttribute> attrs = new ArrayList<SDFAttribute>();
@@ -322,13 +323,13 @@ public class PatternMatchingAO extends AbstractLogicalOperator {
 				attrs.add(attr);
 			}
 			// Was ist die URI hier??
-			schema = new SDFSchema("PATTERN", Tuple.class, attrs);
+			schema = SDFSchemaFactory.createNewWithAttributes(attrs, getInputSchema(0));
 		} else {
 			// SIMPLE: einfache Variante (ohne Expressions)
 			SDFAttribute type = new SDFAttribute("PATTERN", "type", SDFDatatype.STRING, null, null, null);
 			SDFAttribute timestamp = new SDFAttribute("PATTERN", "timestamp", SDFDatatype.LONG, null, null, null);
 			SDFAttribute detected = new SDFAttribute("PATTERN", "detected", SDFDatatype.BOOLEAN, null, null, null);
-			schema = new SDFSchema("PATTERN", Tuple.class, type, timestamp, detected);
+			schema =  SDFSchemaFactory.createNewTupleSchema("PATTERN", type, timestamp, detected);
 		}
 		setOutputSchema(schema);
 		return schema;

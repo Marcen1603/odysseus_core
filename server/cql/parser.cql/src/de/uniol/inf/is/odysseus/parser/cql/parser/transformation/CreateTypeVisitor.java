@@ -20,11 +20,11 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
-import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFConstraint;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.DataDictionaryException;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.QueryParseException;
@@ -60,7 +60,7 @@ public class CreateTypeVisitor extends AbstractDefaultVisitor {
 		name = ((ASTIdentifier) node.jjtGetChild(0)).getName();
 		attributes = new ArrayList<SDFAttribute>();
 		node.jjtGetChild(1).jjtAccept(this, data); // ASTAttributeDefinitions
-		SDFSchema typeSchema = new SDFSchema(name, Tuple.class, attributes);
+		SDFSchema typeSchema = SDFSchemaFactory.createNewTupleSchema(name, attributes);
 		SDFDatatype newType = new SDFDatatype(name, SDFDatatype.KindOfDatatype.TUPLE, typeSchema);
 		CreateDatatypeCommand cmd = new CreateDatatypeCommand(newType, caller);
 		commands.add(cmd);

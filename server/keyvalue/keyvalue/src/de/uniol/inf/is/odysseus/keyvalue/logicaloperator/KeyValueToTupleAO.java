@@ -2,10 +2,10 @@ package de.uniol.inf.is.odysseus.keyvalue.logicaloperator;
 
 import java.util.List;
 
-import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnaryLogicalOp;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
@@ -61,7 +61,8 @@ public class KeyValueToTupleAO extends UnaryLogicalOp{
 
 	@Override
 	protected SDFSchema getOutputSchemaIntern(int pos) {
-		SDFSchema schema = new SDFSchema(type, Tuple.class, attributes);
+		SDFSchema schema = SDFSchemaFactory.createNewTupleSchema(type, attributes);
+		// TODO: get constraints from input schema?
 		return schema;
 	}
 	

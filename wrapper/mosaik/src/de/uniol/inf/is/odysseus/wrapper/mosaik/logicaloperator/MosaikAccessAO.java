@@ -9,9 +9,10 @@ import java.util.Map;
 import de.uniol.inf.is.odysseus.core.collection.KeyValueObject;
 import de.uniol.inf.is.odysseus.core.collection.Resource;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractAccessAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.GetParameter;
@@ -56,6 +57,7 @@ public class MosaikAccessAO extends AbstractAccessAO {
 		return new MosaikAccessAO(this);
 	}
 	
+	@SuppressWarnings("unchecked")
 	private void init() {
 		Map<String, String> options = new HashMap<String, String>();
 		if(this.type != null && this.type.equalsIgnoreCase("simapi")) {
@@ -102,7 +104,7 @@ public class MosaikAccessAO extends AbstractAccessAO {
 		
 		List<SDFAttribute> schemaAttributes = new ArrayList<>();
 		schemaAttributes.add(new SDFAttribute("", "timestamp", SDFDatatype.START_TIMESTAMP, null));
-		this.setOutputSchema(new SDFSchema("", KeyValueObject.class , schemaAttributes));
+		this.setOutputSchema(SDFSchemaFactory.createNewSchema("", (Class<? extends IStreamObject<?>>) KeyValueObject.class , schemaAttributes));
 	}
 
 }

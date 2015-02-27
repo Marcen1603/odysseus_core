@@ -19,11 +19,11 @@
 */
 package de.uniol.inf.is.odysseus.debs2013.heatmap.logicaloperator;
 
-import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnaryLogicalOp;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
@@ -132,7 +132,7 @@ public class HeatMapAO extends UnaryLogicalOp {
 	
 	public void initOutputSchema() {
 		String schemaURI = "heatmap";
-		SDFSchema grandChallengeSchema = new SDFSchema(schemaURI,Tuple.class,
+		SDFSchema grandChallengeSchema = SDFSchemaFactory.createNewTupleSchema(schemaURI,
 				new SDFAttribute("", "ts", new SDFDatatype("Long"), null, null, null), 
 				new SDFAttribute("", "player_id", new SDFDatatype("Integer"), null, null, null),
 				new SDFAttribute("", "cell_x1", new SDFDatatype("Integer"), null, null, null),

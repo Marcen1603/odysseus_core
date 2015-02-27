@@ -26,6 +26,7 @@ import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractWindowAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.BinaryLogicalOp;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.JoinAO;
@@ -130,14 +131,14 @@ public class RelationalRestructHelper {
 			newAttributes_proj.add(newAttr);			
 		}
 		father.setOutputSchemaWithList(newAttributes_proj);
-		SDFSchema newOutputSchema_proj = new SDFSchema(father.getOutputSchema(), newAttributes_proj);
+		SDFSchema newOutputSchema_proj = SDFSchemaFactory.createNewWithAttributes(newAttributes_proj, father.getOutputSchema());
 		father.setOutputSchema(newOutputSchema_proj);
 		RestructParameterInfoUtil.updateAttributesParameterInfo(father.getParameterInfos(), newAttributes_proj);
 		
 		// Change the son
 		List<String> oldAliases = son.getAliases();
 		List<String> newAliases = new ArrayList<String>(oldAliases.size());
-		List<SDFAttribute> newOutputSchema = new ArrayList<SDFAttribute>();
+		List<SDFAttribute> newOutputAttributes = new ArrayList<SDFAttribute>();
 		for(String alias : oldAliases) {
 			SDFAttribute correspondingAttr = null;
 			for(SDFAttribute attr : oldAttributes_proj) {
@@ -148,11 +149,11 @@ public class RelationalRestructHelper {
 			}
 			if(correspondingAttr != null) {
 				newAliases.add(alias);
-				newOutputSchema.add(correspondingAttr);
+				newOutputAttributes.add(correspondingAttr);
 			}
 		}
 		son.setAliases(newAliases);
-		son.setOutputSchema(new SDFSchema(son.getOutputSchema(), newOutputSchema));
+		son.setOutputSchema(SDFSchemaFactory.createNewWithAttributes(newOutputAttributes, son.getOutputSchema()));
 		RestructParameterInfoUtil.updateAliasesParameterInfo(son.getParameterInfos(), newAliases);
 		
 		Collection<ILogicalOperator> ret = RestructHelper.simpleOperatorSwitch(father, son);

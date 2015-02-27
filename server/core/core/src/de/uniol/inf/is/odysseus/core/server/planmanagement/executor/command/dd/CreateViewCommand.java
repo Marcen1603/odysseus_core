@@ -6,6 +6,7 @@ import java.util.List;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionaryWritable;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.RenameAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationException;
@@ -38,9 +39,10 @@ public class CreateViewCommand extends AbstractExecutorCommand {
 		for (SDFAttribute old : rootAO.getOutputSchema()) {
 			attributes.add(new SDFAttribute(name, old.getAttributeName(), old));
 		}
-		rename.setOutputSchema(new SDFSchema(name, rootAO.getOutputSchema(),
-				attributes));
-//		for (SDFAttribute old : rootAO.getOutputSchema()) {
+		SDFSchema schema = SDFSchemaFactory.createNewWithAttributes(name, attributes, rootAO.getOutputSchema());
+		rename.setOutputSchema(schema);
+
+		//		for (SDFAttribute old : rootAO.getOutputSchema()) {
 //			attributes.add(new SDFAttribute(old.getSourceName(), old.getAttributeName(), old));
 //		}
 //		rename.setOutputSchema(new SDFSchema(rootAO.getOutputSchema().getURI(), rootAO.getOutputSchema(),

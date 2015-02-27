@@ -28,6 +28,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFExpression;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.BooleanParameter;
@@ -44,7 +45,7 @@ public class MapAO extends UnaryLogicalOp {
 
 	private static final long serialVersionUID = -2120387285754464451L;
 	private List<NamedExpression> namedExpressions;
-	//Expressions used for KeyValueMap
+	// Expressions used for KeyValueMap
 	private List<String[]> kvExpressions;
 	private List<SDFExpression> expressions;
 	/** The number of threads used for processing the expressions. */
@@ -94,15 +95,15 @@ public class MapAO extends UnaryLogicalOp {
 				// name!
 				String lastString = null;
 				String toSplit;
-//				if (exprString.startsWith("__")) {
-//					toSplit = exprString.substring(exprString.indexOf(".") + 1);
-//					if (exprString.indexOf(".") > -1) {
-//						lastString = exprString.substring(0,
-//								exprString.indexOf(".") - 1);
-//					}
-//				} else {
-					toSplit = exprString;
-//				}
+				// if (exprString.startsWith("__")) {
+				// toSplit = exprString.substring(exprString.indexOf(".") + 1);
+				// if (exprString.indexOf(".") > -1) {
+				// lastString = exprString.substring(0,
+				// exprString.indexOf(".") - 1);
+				// }
+				// } else {
+				toSplit = exprString;
+				// }
 				String[] split = SDFElement.splitURI(toSplit);
 				final SDFElement elem;
 				if (split[1] != null && split[1].length() > 0) {
@@ -193,20 +194,21 @@ public class MapAO extends UnaryLogicalOp {
 				}
 
 			}
-			SDFSchema s = SDFSchema.changeSourceName(new SDFSchema(
-					getInputSchema(), attrs), getInputSchema().getURI(), false);
+			SDFSchema s = SDFSchema.changeSourceName(SDFSchemaFactory
+					.createNewWithAttributes(attrs, getInputSchema()),
+					getInputSchema().getURI(), false);
 			setOutputSchema(s);
-		} else if(kvExpressions != null) {
-			SDFSchema s = new SDFSchema(getInputSchema(), null);
+		} else if (kvExpressions != null) {
+			SDFSchema s = SDFSchemaFactory.createNewWithAttributes(null, getInputSchema());
 			setOutputSchema(s);
 		}
 	}
 
-	@Parameter(type = SDFExpressionParameter.class, name = "EXPRESSIONS", isList = true, optional = true, doc ="A list of expressions.")
+	@Parameter(type = SDFExpressionParameter.class, name = "EXPRESSIONS", isList = true, optional = true, doc = "A list of expressions.")
 	public void setExpressions(List<NamedExpression> namedExpressions) {
 		this.namedExpressions = namedExpressions;
 		expressions = new ArrayList<>();
-		if(namedExpressions != null) {
+		if (namedExpressions != null) {
 			for (NamedExpression e : namedExpressions) {
 				expressions.add(e.expression);
 			}
@@ -218,7 +220,7 @@ public class MapAO extends UnaryLogicalOp {
 		return this.namedExpressions;
 	}
 
-	@Parameter(type = UncheckedExpressionParamter.class, name = "KVEXPRESSIONS", isList = true, optional = true, doc ="A list of expressions for use with key value objects.")
+	@Parameter(type = UncheckedExpressionParamter.class, name = "KVEXPRESSIONS", isList = true, optional = true, doc = "A list of expressions for use with key value objects.")
 	public void setKVExpressions(List<String[]> kvExpressions) {
 		this.kvExpressions = kvExpressions;
 		setOutputSchema(null);
@@ -227,7 +229,7 @@ public class MapAO extends UnaryLogicalOp {
 	public List<String[]> getKVExpressions() {
 		return this.kvExpressions;
 	}
-	
+
 	/**
 	 * Sets the number of threads used for processing the expressions. A value
 	 * greater than 1 indicates the number of simultaneous processing. A value
@@ -261,7 +263,7 @@ public class MapAO extends UnaryLogicalOp {
 		this.evaluateOnPunctuation = evaluateOnPunctuation;
 	}
 
-	@Parameter(type = BooleanParameter.class, name = "allowNull", optional = true, doc = "If set to true and an error occurs in calculation a null value is added to the element. Else the element is skipped and no output is produced.")	
+	@Parameter(type = BooleanParameter.class, name = "allowNull", optional = true, doc = "If set to true and an error occurs in calculation a null value is added to the element. Else the element is skipped and no output is produced.")
 	public void setAllowNullValue(boolean allowNullValue) {
 		this.allowNullValue = allowNullValue;
 	}
@@ -270,12 +272,11 @@ public class MapAO extends UnaryLogicalOp {
 		return allowNullValue;
 	}
 
-	
 	public boolean isSuppressErrors() {
 		return suppressErrors;
 	}
 
-	@Parameter(type = BooleanParameter.class, name = "suppressErrors", optional = true, doc = "If set to true calculation errors will not appear in log or console. Could be helpful in scenarios where null values are allowed.")	
+	@Parameter(type = BooleanParameter.class, name = "suppressErrors", optional = true, doc = "If set to true calculation errors will not appear in log or console. Could be helpful in scenarios where null values are allowed.")
 	public void setSuppressErrors(boolean suppressErrors) {
 		this.suppressErrors = suppressErrors;
 	}
@@ -288,14 +289,16 @@ public class MapAO extends UnaryLogicalOp {
 
 	@Override
 	public boolean isValid() {
-		if((getInputSchema().getType() == KeyValueObject.class || getInputSchema().getType() == NestedKeyValueObject.class)) {
-			if((this.kvExpressions != null && !this.kvExpressions.isEmpty())) {
+		if ((getInputSchema().getType() == KeyValueObject.class || getInputSchema()
+				.getType() == NestedKeyValueObject.class)) {
+			if ((this.kvExpressions != null && !this.kvExpressions.isEmpty())) {
 				return true;
 			} else {
 				addError("Parameter KVEXPRESSIONS has to be set.");
 				return false;
 			}
-		} else if((this.namedExpressions != null && !this.namedExpressions.isEmpty())) {
+		} else if ((this.namedExpressions != null && !this.namedExpressions
+				.isEmpty())) {
 			return true;
 		} else {
 			addError("Parameter EXPRESSIONS has to be set.");

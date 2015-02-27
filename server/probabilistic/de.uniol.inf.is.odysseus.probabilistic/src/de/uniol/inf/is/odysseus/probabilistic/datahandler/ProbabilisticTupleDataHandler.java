@@ -29,9 +29,11 @@ import de.uniol.inf.is.odysseus.core.datahandler.AbstractDataHandler;
 import de.uniol.inf.is.odysseus.core.datahandler.DataHandlerRegistry;
 import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
 import de.uniol.inf.is.odysseus.probabilistic.common.SchemaUtils;
 import de.uniol.inf.is.odysseus.probabilistic.common.base.ProbabilisticTuple;
 import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.MultivariateMixtureDistribution;
@@ -397,7 +399,8 @@ public class ProbabilisticTupleDataHandler extends AbstractDataHandler<Probabili
      * @param schema
      *            The schema
      */
-    private void createDataHandler(final SDFSchema schema) {
+    @SuppressWarnings("unchecked")
+	private void createDataHandler(final SDFSchema schema) {
         if (schema == null) {
             return;
         }
@@ -432,7 +435,7 @@ public class ProbabilisticTupleDataHandler extends AbstractDataHandler<Probabili
                 throw new IllegalArgumentException("Unregistered datatype " + uri);
             }
 
-            this.dataHandlers[i++] = DataHandlerRegistry.getDataHandler(uri, new SDFSchema("", ProbabilisticTuple.class, attribute));
+            this.dataHandlers[i++] = DataHandlerRegistry.getDataHandler(uri, SDFSchemaFactory.createNewSchema("", (Class<? extends IStreamObject<?>>) ProbabilisticTuple.class, attribute));
 
         }
     }

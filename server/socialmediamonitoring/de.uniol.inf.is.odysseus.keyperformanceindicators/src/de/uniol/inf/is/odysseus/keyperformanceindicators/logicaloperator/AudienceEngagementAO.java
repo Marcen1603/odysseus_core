@@ -2,11 +2,12 @@ package de.uniol.inf.is.odysseus.keyperformanceindicators.logicaloperator;
 
 import java.util.ArrayList;
 import java.util.List;
-import de.uniol.inf.is.odysseus.core.collection.Tuple;
+
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.BinaryLogicalOp;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
@@ -48,10 +49,8 @@ public class AudienceEngagementAO extends BinaryLogicalOp {
 	public SDFSchema getOutputSchemaIntern(int pos){
 		List<SDFAttribute> outputAttributes = new ArrayList<SDFAttribute>();
 		SDFAttribute output = new SDFAttribute(null, this.nameOfThisKpi, SDFDatatype.DOUBLE, null, null, null);
-		outputAttributes.add(output);
-		setOutputSchema(new SDFSchema("OutputSchema", Tuple.class, outputAttributes));
-		
-		return getOutputSchema();
+		outputAttributes.add(output);		
+		return SDFSchemaFactory.createNewWithAttributes(outputAttributes, getInputSchema(0));
 	}
 	
 	@Parameter(name="concreteTopics", type = StringParameter.class, isList = true, optional = false)

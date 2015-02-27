@@ -15,15 +15,9 @@
 
 package de.uniol.inf.is.odysseus.tc.chooser;
 
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniol.inf.is.odysseus.tc.interaction.ISumoInteraction.VehicleNextResult;
 import de.uniol.inf.is.odysseus.tc.vehicle.VehicleInfo;
 
 /**

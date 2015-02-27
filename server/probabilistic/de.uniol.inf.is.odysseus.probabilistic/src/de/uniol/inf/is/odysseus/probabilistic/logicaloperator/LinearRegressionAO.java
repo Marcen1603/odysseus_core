@@ -25,6 +25,7 @@ import com.google.common.base.Preconditions;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnaryLogicalOp;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.GetParameter;
@@ -175,7 +176,7 @@ public class LinearRegressionAO extends UnaryLogicalOp {
         }
         attributes.add(new SDFAttribute("", "$coefficients", SDFDatatype.MATRIX_DOUBLE, null, null, null));
         attributes.add(new SDFAttribute("", "$residual", SDFDatatype.MATRIX_DOUBLE, null, null, null));
-        final SDFSchema outputSchema = new SDFSchema(this.getInputSchema(), attributes);
+        final SDFSchema outputSchema =  SDFSchemaFactory.createNewWithAttributes(attributes, getInputSchema());
         this.setOutputSchema(outputSchema);
     }
 }

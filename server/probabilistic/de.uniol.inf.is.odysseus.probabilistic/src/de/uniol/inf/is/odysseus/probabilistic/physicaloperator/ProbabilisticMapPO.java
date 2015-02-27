@@ -30,6 +30,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFExpression;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.probabilistic.common.SchemaUtils;
 import de.uniol.inf.is.odysseus.probabilistic.common.VarHelper;
@@ -156,7 +157,7 @@ public class ProbabilisticMapPO<T extends IProbabilistic> extends AbstractPipe<P
         }
 
         this.neededAttributePos = SchemaUtils.getAttributePos(this.inputSchema, newSchemaAttributes);
-        final SDFSchema restrictedSchema = new SDFSchema(schema, newSchemaAttributes);
+        final SDFSchema restrictedSchema = SDFSchemaFactory.createNewWithAttributes(newSchemaAttributes, schema);
         this.variables = new VarHelper[expressionsList.length][];
         int i = 0;
         for (final SDFExpression expression : this.expressions) {
