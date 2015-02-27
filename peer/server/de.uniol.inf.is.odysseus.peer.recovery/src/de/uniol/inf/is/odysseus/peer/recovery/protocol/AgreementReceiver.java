@@ -72,20 +72,28 @@ public class AgreementReceiver extends AbstractRepeatingMessageReceiver {
 				return;
 			}
 
-			boolean wantToRecover = AgreementHelper.decideToRecover(agMessage.getFailedPeer(),
-					agMessage.getLocalQueryId(), senderPeer);
+			// Check, if we want to do recovery (if not or if yes, the other
+			// peer does not need to know)
+			AgreementHelper.decideToRecover(agMessage.getFailedPeer(), agMessage.getLocalQueryId(), senderPeer);
 
-			RecoveryAgreementResponseMessage response = null;
-			if (wantToRecover) {
-				response = new RecoveryAgreementResponseMessage(agMessage.getUUID());
-			} else {
-				response = new RecoveryAgreementResponseMessage(agMessage.getUUID(), "Don't want to do recovery");
-			}
+			// Tell the other peer that we got this message
+			RecoveryAgreementResponseMessage response = new RecoveryAgreementResponseMessage(agMessage.getUUID());
+
+			//
+			// RecoveryAgreementResponseMessage response = null;
+			// if (wantToRecover) {
+			// response = new
+			// RecoveryAgreementResponseMessage(agMessage.getUUID());
+			// } else {
+			// response = new
+			// RecoveryAgreementResponseMessage(agMessage.getUUID(),
+			// "Don't want to do recovery");
+			// }
 
 			try {
 				communicator.send(senderPeer, response);
 			} catch (PeerCommunicationException e) {
-				LOG.error("Could not send tuple send instruction response message!", e);
+				LOG.error("Could not send agreement response message!", e);
 			}
 		}
 	}

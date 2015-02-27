@@ -1,5 +1,8 @@
 package de.uniol.inf.is.odysseus.peer.recovery.protocol;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import net.jxta.peer.PeerID;
 import net.jxta.pipe.PipeID;
 
@@ -12,12 +15,18 @@ import de.uniol.inf.is.odysseus.peer.recovery.messages.RecoveryUpdatePipeRespons
 
 /**
  * Entity to send pipe update instructions. <br />
- * Uses repeating message send routines and informs by boolean return values about success/fails.
+ * Uses repeating message send routines and informs by boolean return values
+ * about success/fails.
  * 
  * @author Michael Brand
  *
  */
 public class UpdatePipeSender extends AbstractRepeatingMessageSender {
+
+	/**
+	 * The logger instance for this class.
+	 */
+	private static final Logger LOG = LoggerFactory.getLogger(UpdatePipeSender.class);
 
 	/**
 	 * The single instance of this class.
@@ -34,7 +43,8 @@ public class UpdatePipeSender extends AbstractRepeatingMessageSender {
 	}
 
 	/**
-	 * Sends given update sender instruction to a given peer by using a repeating message send process.
+	 * Sends given update sender instruction to a given peer by using a
+	 * repeating message send process.
 	 * 
 	 * @param destination
 	 *            The ID of the given peer. <br />
@@ -51,7 +61,8 @@ public class UpdatePipeSender extends AbstractRepeatingMessageSender {
 	 * @param communicator
 	 *            An active peer communicator. <br />
 	 *            Must be not null.
-	 * @return True, if an acknowledge returned from the given peer; false, else.
+	 * @return True, if an acknowledge returned from the given peer; false,
+	 *         else.
 	 */
 	public boolean sendSenderUpdateInstruction(PeerID destination, PipeID pipe, PeerID peer, int localQuery,
 			IPeerCommunicator communicator) {
@@ -59,7 +70,8 @@ public class UpdatePipeSender extends AbstractRepeatingMessageSender {
 	}
 
 	/**
-	 * Sends given update receiver instruction to a given peer by using a repeating message send process.
+	 * Sends given update receiver instruction to a given peer by using a
+	 * repeating message send process.
 	 * 
 	 * @param destination
 	 *            The ID of the given peer. <br />
@@ -76,7 +88,8 @@ public class UpdatePipeSender extends AbstractRepeatingMessageSender {
 	 * @param communicator
 	 *            An active peer communicator. <br />
 	 *            Must be not null.
-	 * @return True, if an acknowledge returned from the given peer; false, else.
+	 * @return True, if an acknowledge returned from the given peer; false,
+	 *         else.
 	 */
 	public boolean sendReceiverUpdateInstruction(PeerID destination, PipeID pipe, PeerID peer, int localQuery,
 			IPeerCommunicator communicator) {
@@ -84,7 +97,8 @@ public class UpdatePipeSender extends AbstractRepeatingMessageSender {
 	}
 
 	/**
-	 * Sends given update receiver instruction to a given peer by using a repeating message send process.
+	 * Sends given update receiver instruction to a given peer by using a
+	 * repeating message send process.
 	 * 
 	 * @param destination
 	 *            The ID of the given peer. <br />
@@ -102,8 +116,10 @@ public class UpdatePipeSender extends AbstractRepeatingMessageSender {
 	 *            An active peer communicator. <br />
 	 *            Must be not null.
 	 * @param senderUpdate
-	 *            True for a sender update message; false for a receiver update message.
-	 * @return True, if an acknowledge returned from the given peer; false, else.
+	 *            True for a sender update message; false for a receiver update
+	 *            message.
+	 * @return True, if an acknowledge returned from the given peer; false,
+	 *         else.
 	 */
 	private boolean sendInstruction(PeerID destination, PipeID pipe, PeerID peer, int localQuery, boolean senderUpdate,
 			IPeerCommunicator communicator) {
@@ -113,8 +129,11 @@ public class UpdatePipeSender extends AbstractRepeatingMessageSender {
 		Preconditions.checkNotNull(communicator);
 
 		RecoveryUpdatePipeMessage message = new RecoveryUpdatePipeMessage(pipe, peer, localQuery, senderUpdate);
-		return repeatingSend(destination, message, message.getUUID(), communicator);
 
+		LOG.debug("Send update pipe message to " + peer + " for local query " + localQuery + " for pipe " + pipe
+				+ " SenderUpdate: " + senderUpdate);
+
+		return repeatingSend(destination, message, message.getUUID(), communicator);
 	}
 
 	@Override

@@ -293,7 +293,10 @@ public class AddQueryReceiver extends AbstractRepeatingMessageReceiver {
 				response = new RecoveryAddQueryResponseMessage(addMessage.getUUID());
 			} catch (Exception e) {
 				LOG.error("Could not install query from add query message!", e);
-				response = new RecoveryAddQueryResponseMessage(addMessage.getUUID(), e.getMessage());
+				String errorMessage = e.getMessage();
+				if (errorMessage == null)
+					errorMessage = "No error message.";
+				response = new RecoveryAddQueryResponseMessage(addMessage.getUUID(), errorMessage);
 			}
 
 			try {
@@ -325,11 +328,14 @@ public class AddQueryReceiver extends AbstractRepeatingMessageReceiver {
 		}
 
 		if (pql.contains(failedPeerId.toString())) {
-			// Well, we have to install something that probably doesn't work, because probably a JxtaSender or
+			// Well, we have to install something that probably doesn't work,
+			// because probably a JxtaSender or
 			// JxtaReceier want to connect to the failed peer
-			// If we assume, that we get the other half of the JxtaSender - JxtaReceiver - pair, too, we can just insert
+			// If we assume, that we get the other half of the JxtaSender -
+			// JxtaReceiver - pair, too, we can just insert
 			// our own peerId instead of the failed one
-			// IF we don't get the other half, the recovery-leading peer will tell us to change the sender or receiver
+			// IF we don't get the other half, the recovery-leading peer will
+			// tell us to change the sender or receiver
 			// to a new peerId so that this case should work, too.
 			// Attention: Just experimental for now (T.B.)
 			String localPeerId = cP2PNetworkManager.get().getLocalPeerID().toString();
@@ -357,12 +363,12 @@ public class AddQueryReceiver extends AbstractRepeatingMessageReceiver {
 		// Open new socket connection to tablet, if necessary
 		if (clientIp != null && hostIP != null) {
 			for (int queryId : installedQueries) {
-				SocketInfo info = SocketService.getInstance().getConnectionInformation(RecoveryCommunicator.getActiveSession(), queryId,
-						0);
-				
+				SocketInfo info = SocketService.getInstance().getConnectionInformation(
+						RecoveryCommunicator.getActiveSession(), queryId, 0);
+
 				// Save in the backup-info
 				backupInformationAccess.addSocketInfoForQuery(queryId, clientIp, info.getIp(), info.getPort());
-				
+
 				// Tell the tablet the new information
 				cRecoveryCommunicator.get().informClientAboutNewSocket(info, hostIP, hostPort, clientIp);
 			}
@@ -384,7 +390,8 @@ public class AddQueryReceiver extends AbstractRepeatingMessageReceiver {
 						// it sends to update the receiver on the other peer
 
 						PeerID peer = RecoveryHelper.convertToPeerId(sender.getPeerIDString());
-						// To this peer we have to send an "UPDATE_RECEIVER" message
+						// To this peer we have to send an "UPDATE_RECEIVER"
+						// message
 						PipeID pipe = RecoveryHelper.convertToPipeId(sender.getPipeIDString());
 						PeerID ownPeerId = cP2PNetworkManager.get().getLocalPeerID();
 
@@ -396,24 +403,33 @@ public class AddQueryReceiver extends AbstractRepeatingMessageReceiver {
 
 							service.submit(new Runnable() {
 								public void run() {
-									// I want to tell the sender on the other side that he has to update his peerId he
+									// I want to tell the sender on the other
+									// side that he has to update his peerId he
 									// receives from
 									cRecoveryCommunicator.get().sendUpdateReceiverMessage(finalPeer, finalOwnPeer,
 											finalPipe, finalLocalQueryId);
 									// TODO handle possible failures
 									/*
-									 * If the message fails, the receiver will not establish a correct pipe. Possible
-									 * solutions: 1. Do nothing -> The complete query (if not replicated) will produce
-									 * no more results. 2. Wait for a while and try again -> All tuple within that time
-									 * will be lost. No guarantee that a message can be send afterwards. 3. Uninstall
-									 * the query, cancel the recovery process, and restart on another peer.
+									 * If the message fails, the receiver will
+									 * not establish a correct pipe. Possible
+									 * solutions: 1. Do nothing -> The complete
+									 * query (if not replicated) will produce no
+									 * more results. 2. Wait for a while and try
+									 * again -> All tuple within that time will
+									 * be lost. No guarantee that a message can
+									 * be send afterwards. 3. Uninstall the
+									 * query, cancel the recovery process, and
+									 * restart on another peer.
 									 */
 
 								}
 							});
-							// We will, in every case, change the backup-information of that other peer. The
-							// other one will do this, too, if he still exists. This is for the case, that the
-							// other peer was the failed peer and can't update the JxtaReceiverPO or the
+							// We will, in every case, change the
+							// backup-information of that other peer. The
+							// other one will do this, too, if he still exists.
+							// This is for the case, that the
+							// other peer was the failed peer and can't update
+							// the JxtaReceiverPO or the
 							// backup-information.
 							backupInformationAccess.updateBackupInfoForPipe(failedPeerId.toString(),
 									finalPipe.toString());
@@ -437,18 +453,19 @@ public class AddQueryReceiver extends AbstractRepeatingMessageReceiver {
 							final int finalLocalQueryId = localQueryId;
 							service.submit(new Runnable() {
 								public void run() {
-									// I want to tell the sender on the other side that he has to update his peerId he
+									// I want to tell the sender on the other
+									// side that he has to update his peerId he
 									// sends to
-									if(cRecoveryCommunicator.get().sendUpdateSenderMessage(finalPeer, finalOwnPeer,
-											finalPipe, finalLocalQueryId)){
-										if(cRecoveryCommunicator.get().sendGoOnMessage(finalPeer, finalPipe)){
-										}else{
+									if (cRecoveryCommunicator.get().sendUpdateSenderMessage(finalPeer, finalOwnPeer,
+											finalPipe, finalLocalQueryId)) {
+										if (cRecoveryCommunicator.get().sendGoOnMessage(finalPeer, finalPipe)) {
+										} else {
 											LOG.error("GoOnMessage mission failed");
 										}
 									} else {
 										LOG.error("sendUpdateSenderMessage failed");
 									}
-									
+
 								}
 							});
 						}

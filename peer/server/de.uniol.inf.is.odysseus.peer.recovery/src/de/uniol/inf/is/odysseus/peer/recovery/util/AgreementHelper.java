@@ -219,7 +219,7 @@ public class AgreementHelper {
 		// that this peer failed -> then we shouldn't do recovery if the other
 		// peer has had a higher number
 
-		// See, if we wanted to do recovery for this peer and this sharedQuery
+		// See, if we wanted to do recovery for this peer and this query
 		if (!cRecoveryPeers.containsKey(failedPeer)) {
 			// No, we don't want to do recovery for this failed peer
 			// Save, that another peer does this recovery -> We don't want to do
