@@ -46,7 +46,7 @@ public class SumoInteraction implements ISumoInteraction {
                 sumoParams.getSumoFilePath(sumoParams.getConfigFilename()),  // config file
                 sumoParams.getSeed()                                 		 // random seed
         );
-        this.conn.setTcpNoDelay(false);
+        this.conn.setTcpNoDelay(true);
         try {
             this.conn.runServer();
         } catch (Exception e) {

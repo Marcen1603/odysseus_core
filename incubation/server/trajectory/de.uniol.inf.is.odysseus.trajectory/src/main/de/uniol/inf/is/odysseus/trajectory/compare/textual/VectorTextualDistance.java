@@ -100,7 +100,7 @@ public class VectorTextualDistance implements ITextualDistance {
 		if(attrDefinition.getValue0() != null) {
 			final Double nVal = attrDefinition.getValue0().get(value);
 			if(nVal == null) {
-				throw new IllegalArgumentException("Value " + value + " for textual attribue \"" + attr + "\" is not defined.");
+				throw new IllegalArgumentException("Value " + value + " for textual attribute \"" + attr + "\" is not defined.");
 			}
 			return nVal;
 		}
@@ -149,8 +149,7 @@ public class VectorTextualDistance implements ITextualDistance {
 		while(listIt1.hasNext()) {
 			distance += Math.pow(listIt1.next() - listIt2.next(), 2);
 		}
-		distance = Math.sqrt(distance);		
-		return distance;
+		return Math.sqrt(distance);
 	}
 	
 	/**
@@ -180,8 +179,6 @@ public class VectorTextualDistance implements ITextualDistance {
 				attributes.add(attr);
 			}
 		}
-		
-		LOGGER.info(distance(list1, list2) / maxDistance(attributes) + "");
 		
 		return distance(list1, list2) / maxDistance(attributes);
 	}

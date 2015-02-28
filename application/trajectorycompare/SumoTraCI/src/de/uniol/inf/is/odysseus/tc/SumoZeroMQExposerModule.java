@@ -17,10 +17,10 @@ package de.uniol.inf.is.odysseus.tc;
 
 import com.google.inject.AbstractModule;
 
-import de.uniol.inf.is.odysseus.tc.chooser.DistanceVehicleChooser;
 import de.uniol.inf.is.odysseus.tc.chooser.IVehicleChooser;
+import de.uniol.inf.is.odysseus.tc.chooser.PeriodicDistanceVehicleChooser;
 import de.uniol.inf.is.odysseus.tc.error.IErrorGenerator;
-import de.uniol.inf.is.odysseus.tc.error.NoErrorGenerator;
+import de.uniol.inf.is.odysseus.tc.error.RandomErrorGenerator;
 import de.uniol.inf.is.odysseus.tc.geoconvert.GpsGeoConverter;
 import de.uniol.inf.is.odysseus.tc.geoconvert.IGeoConverter;
 import de.uniol.inf.is.odysseus.tc.interaction.ISumoInteraction;
@@ -54,9 +54,9 @@ public class SumoZeroMQExposerModule extends AbstractModule {
         this.bind(IVehicleShuffler.class).to(RandomVehicleSchuffler.class);
         this.bind(IGeoConverter.class).to(GpsGeoConverter.class);
         this.bind(ISendDecision.class).to(MinimumSendDecision.class);
-        this.bind(IErrorGenerator.class).to(NoErrorGenerator.class);
+        this.bind(IErrorGenerator.class).to(RandomErrorGenerator.class);
 
-        this.bind(IVehicleChooser.class).to(DistanceVehicleChooser.class);
+        this.bind(IVehicleChooser.class).to(PeriodicDistanceVehicleChooser.class);
         this.bind(IMessageCreator.class).to(SizeByteBufferMessageCreator.class);
         this.bind(ISender.class).to(ZeroMQSender.class);
 

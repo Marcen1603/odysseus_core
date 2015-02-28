@@ -80,7 +80,7 @@ public class SpatialTextualDistanceService<T> implements IDistanceService<T> {
 	@Override
 	public void removeTrajectory(final IConvertedQueryTrajectory<T> queryTrajectory,
 			final IConvertedDataTrajectory<T> dataTrajectory) {
-		this.trajectoryMap.get(queryTrajectory).kNearest.remove(dataTrajectory);
+		LOGGER.info(this.trajectoryMap.get(queryTrajectory).kNearest.remove(dataTrajectory) + "");
 	}
 	
 	
@@ -138,10 +138,7 @@ public class SpatialTextualDistanceService<T> implements IDistanceService<T> {
 		private final SortedMultiset<IConvertedDataTrajectory<T>> kNearest = TreeMultiset.create(new Comparator<IConvertedDataTrajectory<T>>() {
 			@Override
 			public int compare(final IConvertedDataTrajectory<T> o1, final IConvertedDataTrajectory<T> o2) {
-				if(o1.getDistance() >= o2.getDistance()) {
-					return 1;
-				}
-				return -1;
+				return (int) Math.signum(o1.getDistance() - o2.getDistance());
 			}
 		});
 		

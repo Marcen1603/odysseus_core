@@ -57,25 +57,18 @@ public class ApplicationLoop {
         this.sender = sender;
     }
 
+    int c=0;
     public void run() throws InterruptedException {
-    	long start = 0;
-    	long end = 1000;
-    	int count = 0;
         while(true) {
-        	long timeToSleep = 1000 - (end - start);
-        	if(timeToSleep >= 0 && false) {
-				Thread.sleep(timeToSleep);
-			}
-			start = System.currentTimeMillis();
 			sender.send(
 			
 			messageCreator.create(
 			//
 					sendDecision.getValuesToSend(
 					// Decorate
-							errorService.accumulate(
-							//
-									geoConverter.convert(
+							
+							geoConverter.convert(
+									errorService.accumulate(
 									// Decorate
 											vehicleShuffler.shuffle(
 											//
@@ -83,8 +76,7 @@ public class ApplicationLoop {
 													//
 															sumoInteraction
 																	.next())))))));
-			end = System.currentTimeMillis();
-			LOGGER.info(count++ + "");
+			System.out.println(c++);
         }
     }
 }

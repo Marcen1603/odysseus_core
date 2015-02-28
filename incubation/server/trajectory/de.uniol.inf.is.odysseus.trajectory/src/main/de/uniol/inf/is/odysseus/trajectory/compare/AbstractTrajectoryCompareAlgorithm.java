@@ -83,6 +83,7 @@ public abstract class AbstractTrajectoryCompareAlgorithm<T extends IConvertedDat
 		final List<IConvertedDataTrajectory<E>> toBeRemoved = new ArrayList<>();
 		
 		for(final IConvertedDataTrajectory<E> traj : this.trajectories) {
+			//LOGGER.info(traj.getRawTrajectory().getTimeInterval().getEnd() + " -> " + time);
 			if(traj.getRawTrajectory().getTimeInterval().getEnd().before(time)) {
 				this.distanceService.removeTrajectory(this.queryTrajectory, traj);
 				toBeRemoved.add(traj);

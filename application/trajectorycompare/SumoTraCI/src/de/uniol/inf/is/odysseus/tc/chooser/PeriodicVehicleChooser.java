@@ -29,7 +29,7 @@ public class PeriodicVehicleChooser extends AbstractVehicleChooser {
 	
 	@Override
 	protected boolean choose(VehicleInfo vi) {
-		return vi.getState() % 10 == 0;
+		return vi.getState() % 25 == 0;
 	}
 
 	@Override
