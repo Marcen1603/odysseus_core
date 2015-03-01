@@ -112,6 +112,8 @@ public class AggregateItemParameter extends AbstractParameter<AggregateItem> {
 				value.add(attributes);
 			}
 			value.add(a.outAttribute.getURI());
+			value.add(a.outAttribute.getDatatype().getURI());
+
 
 			pql.append(AggregateItemParameter.getPQLString(value));
 			pql.append(",");
