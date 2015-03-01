@@ -1,6 +1,8 @@
 package de.uniol.inf.is.odysseus.sports.rest.serverresources;
 
+import org.restlet.data.Status;
 import org.restlet.resource.Post;
+import org.restlet.resource.ResourceException;
 
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvider;
@@ -25,21 +27,26 @@ public class DistributedSportsQLSocketServerResource extends AbstractServerResou
 		String password = distributedSportsQLSocketRequestDTO.getPassword();
 		String sharedQueryId = distributedSportsQLSocketRequestDTO.getSharedQueryId();
 
-		ITenant tenant = UserManagementProvider.getDefaultTenant();
-		ISession session = UserManagementProvider.getSessionmanagement().login(username, password.getBytes(), tenant);
-		Integer queryId = DistributedQueryHelper.getQueryIdWithTopOperator(sharedQueryId, session);
-		ExecutorServiceBinding.getExecutor().startQuery(queryId, session);
-		IPhysicalOperator operator = DistributedQueryHelper.getTopOperatorOfQuery(queryId, session);
-		SocketInfo peerSocket = SocketService.getInstance().getConnectionInformation(session, queryId, operator);
+		try {
+			ITenant tenant = UserManagementProvider.getDefaultTenant();
+			ISession session = UserManagementProvider.getSessionmanagement().login(username, password.getBytes(), tenant);
+			Integer queryId = DistributedQueryHelper.getQueryIdWithTopOperator(sharedQueryId, session);
+			ExecutorServiceBinding.getExecutor().startQuery(queryId, session);
+			IPhysicalOperator operator = DistributedQueryHelper.getTopOperatorOfQuery(queryId, session);
+			SocketInfo peerSocket = SocketService.getInstance().getConnectionInformation(session, queryId, operator);
 
-		DistributedSportsQLSocketResponseDTO resp = new DistributedSportsQLSocketResponseDTO(session.getToken(),
-				peerSocket, queryId);
+			DistributedSportsQLSocketResponseDTO resp = new DistributedSportsQLSocketResponseDTO(session.getToken(),
+					peerSocket, queryId);
 
-		// Save connection information in backup-information for recovery
-		SocketService.getInstance().informAboutNewClient(resp.getQueryId(), distributedSportsQLSocketRequestDTO.getClientAddress(), resp.getSocketInfo().getIp(),
-				resp.getSocketInfo().getPort());
+			// Save connection information in backup-information for recovery
+			SocketService.getInstance().informAboutNewClient(resp.getQueryId(), distributedSportsQLSocketRequestDTO.getClientAddress(), resp.getSocketInfo().getIp(),
+					resp.getSocketInfo().getPort());
 
-		return resp;
+			return resp;
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new ResourceException(Status.SERVER_ERROR_INTERNAL,"Error while getting socket connection for sportsql query",e);
+		}
 
 	}
 

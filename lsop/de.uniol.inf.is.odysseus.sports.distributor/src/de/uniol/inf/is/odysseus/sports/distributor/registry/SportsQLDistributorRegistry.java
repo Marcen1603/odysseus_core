@@ -90,7 +90,7 @@ public class SportsQLDistributorRegistry {
 			game = obj.getString("gameType");
 			name = obj.getString("name");
 		} catch (JSONException e) {
-			throw new RuntimeException("error");
+			throw new RuntimeException("error while parsing sportsql");
 		}
 		
 		String result = type + "_" + game + "_"	+ name;
@@ -106,5 +106,16 @@ public class SportsQLDistributorRegistry {
 		} 
 		ISportsQLDistributor distributor = sportsQLDistributorMap.get(distributorName.toLowerCase());
 		return distributor;
+	}
+
+	public static String getDisplayName(String sportsQL) {
+		String name = null;
+		try {
+			JSONObject obj = new JSONObject(sportsQL);
+			name = obj.getString("displayName");
+		} catch (JSONException e) {
+			throw new RuntimeException("error while parsing sportsql");
+		}
+		return name;
 	}
 }

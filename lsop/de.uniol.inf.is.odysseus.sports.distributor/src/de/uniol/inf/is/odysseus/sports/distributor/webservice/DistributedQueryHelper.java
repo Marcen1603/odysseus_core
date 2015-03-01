@@ -2,10 +2,9 @@ package de.uniol.inf.is.odysseus.sports.distributor.webservice;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -63,10 +62,10 @@ public class DistributedQueryHelper {
 	 * @param queryBuildConfigurationName
 	 * @return null if query distribution was not successful
 	 */
-	public static DistributedQueryInfo executeQuery(String query,String parser,
+	public static DistributedQueryInfo executeQuery(String displayName, String query,String parser,
 			ISession activeSession, String queryBuildConfigurationName) {
 		serverExecutor.addQuery(query, parser, activeSession, Context.empty());
-		return queryDistributionListener.getNextDistributedQueryInfo();
+		return queryDistributionListener.getDistributedQueryInfo(displayName);
 	}
 
 	/**
@@ -176,7 +175,7 @@ public class DistributedQueryHelper {
 	}
 	
 	private static class QueryDistributionListener extends AbstractQueryDistributionListener {
-		private List<DistributedQueryInfo> distributedQueryInfoList = Collections.synchronizedList(new ArrayList<DistributedQueryInfo>());
+		private Map<String, DistributedQueryInfo> distributedQueryInfoMap = Collections.synchronizedMap(new HashMap<String, DistributedQueryInfo>());
 		
 		@Override
 		public void afterTransmission(ILogicalQuery query,Map<ILogicalQueryPart, PeerID> allocationMap,	ID sharedQueryId) {
@@ -195,7 +194,7 @@ public class DistributedQueryHelper {
 						}
 						info.setSharedQueryId(sharedQueryIdString);
 						info.setTopOperatorPeerIP(ip);
-						distributedQueryInfoList.add(info);
+						distributedQueryInfoMap.put(query.getName(), info);
 						return;
 					}
 				}
@@ -209,21 +208,17 @@ public class DistributedQueryHelper {
 			return address;
 		}
 		
-		public synchronized DistributedQueryInfo getNextDistributedQueryInfo() {			
+		public DistributedQueryInfo getDistributedQueryInfo(String displayName) {			
 			int loops = 10;
-			while (distributedQueryInfoList.size() == 0 && loops > 0) {
+			while (distributedQueryInfoMap.get(displayName.toUpperCase()) == null && loops > 0) {
 				loops--;
 				try {
-					Thread.sleep(500);
+					Thread.sleep(1000);
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
-			}
-			if (distributedQueryInfoList.size()>0) {
-				return distributedQueryInfoList.remove(0);
-			} 
-			
-			return null;
+			}			
+			return distributedQueryInfoMap.remove(displayName.toUpperCase());
 		}
 	}
 
