@@ -16,7 +16,8 @@ Require-Bundle: de.uniol.inf.is.odysseus.core;bundle-version="1.0.0",
  de.uniol.inf.is.odysseus.peer.distribute,
  de.uniol.inf.is.odysseus.peer.logging,
  de.uniol.inf.is.odysseus.rest,
- de.uniol.inf.is.odysseus.peer.rest
+ de.uniol.inf.is.odysseus.peer.rest,
+ org.json
 Export-Package: de.uniol.inf.is.odysseus.sports.distributor.helper,
  de.uniol.inf.is.odysseus.sports.distributor.registry,
  de.uniol.inf.is.odysseus.sports.distributor.webservice

@@ -4,8 +4,7 @@ Bundle-Name: 1
 Bundle-SymbolicName: restlet-osgi-2.2.1
 Bundle-Version: 1.0.0.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
-Bundle-ClassPath: lib/org.json_2.0/org.json.jar,
- .,
+Bundle-ClassPath: .,
  lib/org.restlet.jar,
  lib/org.restlet.ext.json.jar,
  lib/org.restlet.ext.jackson.jar,
@@ -79,7 +78,6 @@ Export-Package: com.fasterxml.jackson.annotation,
  com.fasterxml.jackson.module.jaxb,
  com.fasterxml.jackson.module.jaxb.deser,
  com.fasterxml.jackson.module.jaxb.ser,
- org.json,
  org.restlet,
  org.restlet.data,
  org.restlet.engine,
