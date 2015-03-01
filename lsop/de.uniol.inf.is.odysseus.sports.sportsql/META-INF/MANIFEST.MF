@@ -29,7 +29,7 @@ Require-Bundle: de.uniol.inf.is.odysseus.core,
  de.uniol.inf.is.odysseus.peer.ddc;bundle-version="1.0.0",
  de.uniol.inf.is.odysseus.ruleengine,
  de.uniol.inf.is.odysseus.transform,
- restlet-osgi-2.2.1
+ restlet-osgi-2.3.1
 Service-Component: OSGI-INF/SportsQLParserRegistry.xml,OSGI-INF/soccerParser/PassesPlayerSportsQLParser.xml,OSGI-INF/soccerParser/PassesTeamSportsQLParser.xml,
  OSGI-INF/soccerParser/GoalsSportsQLParser.xml,OSGI-INF/sportindependentParser/GlobalGameSportsQLParser.xml,OSGI-INF/soccerParser/CornerKicksGlobalSportsQLParser.xml,OSGI-INF/sportindependentParser/GameTimeSportsQLParser.xml,OSGI-INF/soccerParser/ShotOnGoalPlayerSportsQLParser.xml,OSGI-INF/soccerParser/ShotOnGoalTeamSportsQLParser.xml,OSGI-INF/SportsQLParser.xml,
  OSGI-INF/soccerParser/MileageTeamSportsQLParser.xml,OSGI-INF/soccerParser/PathWithBallSportsQLParser.xml,OSGI-INF/soccerParser/MileagePlayerSportsQLParser.xml,OSGI-INF/soccerParser/BallContactPlayerSportsQLParser.xml,OSGI-INF/soccerParser/BallContactTeamSportsQLParser.xml,OSGI-INF/soccerParser/SprintsPlayerSportsQLParser.xml,OSGI-INF/AbstractSportsDDCAccess.xml, 

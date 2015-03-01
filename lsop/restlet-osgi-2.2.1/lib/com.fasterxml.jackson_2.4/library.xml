@@ -1,8 +1,8 @@
 <library id="jackson" symbolicName="com.fasterxml.jackson">
 	<name>High-performance JSON processor</name>
 	<description>High-performance JSON processor</description>
-	<version>2.2</version>
-	<release>3</release>
+	<version>2.4</version>
+	<release>4</release>
 	<homeUri>http://jackson.codehaus.org/</homeUri>
 	<downloadUri>http://wiki.fasterxml.com/JacksonDownload</downloadUri>
 	<provider>The Codehaus foundation</provider>
@@ -53,6 +53,12 @@
 		<maven>
 			<groupId>com.fasterxml.jackson.module</groupId>
 			<artifactId>jackson-module-jaxb-annotations</artifactId>
+		</maven>
+	</package>
+	<package id="jackson-jsonschema" name="com.fasterxml.jackson.jsonschema">
+		<maven>
+			<groupId>com.fasterxml.jackson.module</groupId>
+			<artifactId>jackson-module-jsonSchema</artifactId>
 		</maven>
 	</package>
 	<dependency type="library" id="snakeyaml" />

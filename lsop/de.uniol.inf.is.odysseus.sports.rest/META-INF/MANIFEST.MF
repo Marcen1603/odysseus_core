@@ -10,7 +10,7 @@ Import-Package: de.uniol.inf.is.odysseus.relational_interval,
  de.uniol.inf.is.odysseus.sports.sportsql.parser,
  de.uniol.inf.is.odysseus.sports.sportsql.registry,
  org.osgi.framework;version="1.6.0"
-Require-Bundle: restlet-osgi-2.2.1;bundle-version="1.0.0",
+Require-Bundle: restlet-osgi-2.3.1;bundle-version="1.0.0",
  de.uniol.inf.is.odysseus.rest;bundle-version="1.0.0",
  de.uniol.inf.is.odysseus.sports.sportsql;bundle-version="1.0.0",
  de.uniol.inf.is.odysseus.core;bundle-version="1.0.0",

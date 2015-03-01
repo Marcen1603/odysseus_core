@@ -420,13 +420,6 @@ Unless required by applicable law or agreed to in writing, software
          unpack="false"/>
 
    <plugin
-         id="restlet-osgi-2.2.1"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
          id="de.uniol.inf.is.odysseus.sports"
          download-size="0"
          install-size="0"
@@ -456,6 +449,13 @@ Unless required by applicable law or agreed to in writing, software
 
    <plugin
          id="jama"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="restlet-osgi-2.3.1"
          download-size="0"
          install-size="0"
          version="0.0.0"

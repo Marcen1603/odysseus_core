@@ -1,21 +1,22 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: 1
-Bundle-SymbolicName: restlet-osgi-2.2.1
+Bundle-SymbolicName: restlet-osgi-2.3.1
 Bundle-Version: 1.0.0.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-ClassPath: .,
  lib/org.restlet.jar,
  lib/org.restlet.ext.json.jar,
  lib/org.restlet.ext.jackson.jar,
- lib/com.fasterxml.jackson_2.2/com.fasterxml.jackson.annotations.jar,
- lib/com.fasterxml.jackson_2.2/com.fasterxml.jackson.core.jar,
- lib/com.fasterxml.jackson_2.2/com.fasterxml.jackson.csv.jar,
- lib/com.fasterxml.jackson_2.2/com.fasterxml.jackson.databind.jar,
- lib/com.fasterxml.jackson_2.2/com.fasterxml.jackson.jaxb.jar,
- lib/com.fasterxml.jackson_2.2/com.fasterxml.jackson.smile.jar,
- lib/com.fasterxml.jackson_2.2/com.fasterxml.jackson.xml.jar,
- lib/com.fasterxml.jackson_2.2/com.fasterxml.jackson.yaml.jar
+ lib/com.fasterxml.jackson_2.4/com.fasterxml.jackson.annotations.jar,
+ lib/com.fasterxml.jackson_2.4/com.fasterxml.jackson.core.jar,
+ lib/com.fasterxml.jackson_2.4/com.fasterxml.jackson.csv.jar,
+ lib/com.fasterxml.jackson_2.4/com.fasterxml.jackson.databind.jar,
+ lib/com.fasterxml.jackson_2.4/com.fasterxml.jackson.jaxb.jar,
+ lib/com.fasterxml.jackson_2.4/com.fasterxml.jackson.jsonschema.jar,
+ lib/com.fasterxml.jackson_2.4/com.fasterxml.jackson.smile.jar,
+ lib/com.fasterxml.jackson_2.4/com.fasterxml.jackson.xml.jar,
+ lib/com.fasterxml.jackson_2.4/com.fasterxml.jackson.yaml.jar
 Export-Package: com.fasterxml.jackson.annotation,
  com.fasterxml.jackson.core,
  com.fasterxml.jackson.core.base,
@@ -78,6 +79,11 @@ Export-Package: com.fasterxml.jackson.annotation,
  com.fasterxml.jackson.module.jaxb,
  com.fasterxml.jackson.module.jaxb.deser,
  com.fasterxml.jackson.module.jaxb.ser,
+ com.fasterxml.jackson.module.jsonSchema,
+ com.fasterxml.jackson.module.jsonSchema.annotation,
+ com.fasterxml.jackson.module.jsonSchema.customProperties,
+ com.fasterxml.jackson.module.jsonSchema.factories,
+ com.fasterxml.jackson.module.jsonSchema.types,
  org.restlet,
  org.restlet.data,
  org.restlet.engine,
@@ -96,6 +102,7 @@ Export-Package: com.fasterxml.jackson.annotation,
  org.restlet.engine.ssl,
  org.restlet.engine.util,
  org.restlet.ext.jackson,
+ org.restlet.ext.jackson.internal,
  org.restlet.ext.json,
  org.restlet.representation,
  org.restlet.resource,

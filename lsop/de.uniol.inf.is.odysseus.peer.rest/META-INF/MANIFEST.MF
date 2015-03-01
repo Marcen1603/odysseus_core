@@ -11,7 +11,7 @@ Require-Bundle: org.eclipse.core.runtime,
  Commons.Math,
  com.google.guava,
  de.uniol.inf.is.odysseus.rest,
- restlet-osgi-2.2.1,
+ restlet-osgi-2.3.1,
  de.uniol.inf.is.odysseus.core,
  de.uniol.inf.is.odysseus.peer.distribute,
  de.uniol.inf.is.odysseus.core.server

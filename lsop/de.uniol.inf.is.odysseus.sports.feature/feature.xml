@@ -17,13 +17,6 @@
    </license>
 
    <plugin
-         id="restlet-osgi-2.2.1"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-         
-       <plugin
          id="jama"
          download-size="0"
          install-size="0"
@@ -60,6 +53,13 @@
 
    <plugin
          id="de.uniol.inf.is.odysseus.sports.distributor"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="restlet-osgi-2.3.1"
          download-size="0"
          install-size="0"
          version="0.0.0"

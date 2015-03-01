@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry exported="true" kind="lib" path="lib/com.fasterxml.jackson_2.2/com.fasterxml.jackson.annotations.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/com.fasterxml.jackson_2.2/com.fasterxml.jackson.core.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/com.fasterxml.jackson_2.2/com.fasterxml.jackson.csv.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/com.fasterxml.jackson_2.2/com.fasterxml.jackson.databind.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/com.fasterxml.jackson_2.2/com.fasterxml.jackson.jaxb.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/com.fasterxml.jackson_2.2/com.fasterxml.jackson.smile.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/com.fasterxml.jackson_2.2/com.fasterxml.jackson.xml.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/com.fasterxml.jackson_2.2/com.fasterxml.jackson.yaml.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/com.fasterxml.jackson_2.4/com.fasterxml.jackson.annotations.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/com.fasterxml.jackson_2.4/com.fasterxml.jackson.core.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/com.fasterxml.jackson_2.4/com.fasterxml.jackson.csv.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/com.fasterxml.jackson_2.4/com.fasterxml.jackson.databind.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/com.fasterxml.jackson_2.4/com.fasterxml.jackson.jaxb.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/com.fasterxml.jackson_2.4/com.fasterxml.jackson.jsonschema.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/com.fasterxml.jackson_2.4/com.fasterxml.jackson.smile.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/com.fasterxml.jackson_2.4/com.fasterxml.jackson.xml.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/com.fasterxml.jackson_2.4/com.fasterxml.jackson.yaml.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/org.restlet.ext.jackson.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/org.restlet.ext.json.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/org.restlet.jar"/>
