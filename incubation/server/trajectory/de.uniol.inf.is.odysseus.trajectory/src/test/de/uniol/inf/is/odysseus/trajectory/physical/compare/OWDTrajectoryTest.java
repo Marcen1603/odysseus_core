@@ -27,6 +27,7 @@ import de.uniol.inf.is.odysseus.trajectory.compare.owd.data.OwdData.GridCellList
 import de.uniol.inf.is.odysseus.trajectory.compare.owd.data.OwdDataTrajectory;
 import de.uniol.inf.is.odysseus.trajectory.compare.owd.rasterization.AdvancedBresenhamRasterizer;
 import de.uniol.inf.is.odysseus.trajectory.compare.owd.rasterization.IRasterizer;
+import de.uniol.inf.is.odysseus.trajectory.compare.util.UtmPointCreator;
 
 public class OWDTrajectoryTest {
 
@@ -35,38 +36,7 @@ public class OWDTrajectoryTest {
 	@Test
 	public final void test() {
 
-		final GridCellList l2 = new GridCellList();
-				l2.addGridCell(0, 2);
-				l2.addGridCell(1, 2);
-				l2.addGridCell(1, 1);
-				l2.addGridCell(1, 0);
-				l2.addGridCell(2, 0);
-				l2.addGridCell(3, 0);
-				l2.addGridCell(4, 0);
-				l2.addGridCell(5, 0);
-				l2.addGridCell(6, 0);
-				l2.addGridCell(6, 1);
-				l2.addGridCell(6, 2);
-				l2.addGridCell(6, 3);
-		
-		final GridCellList l1 = new GridCellList();
-				l1.addGridCell(1, 0);
-				l1.addGridCell(1, 1);
-				l1.addGridCell(1, 2);
-				l1.addGridCell(2, 2);
-				l1.addGridCell(2, 3);
-				l1.addGridCell(2, 4);
-
-				final IRasterizer rast = new AdvancedBresenhamRasterizer();
-				
-				final GeometryFactory gf = new GeometryFactory();
-				final OwdDataTrajectory j = rast.rasterize(new RawDataTrajectory(Arrays.asList(
-						gf.createPoint(new Coordinate(3000,110)),
-							gf.createPoint(new Coordinate(4,101)),
-							gf.createPoint(new Coordinate(332,11111))),
-						null, 3, null, null), 1);
-
-
+		System.out.println(new UtmPointCreator(32).createPoint(new Coordinate(53.157505,8.221421)));
 	}
 
 }

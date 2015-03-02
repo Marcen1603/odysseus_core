@@ -38,4 +38,5 @@ public class OwdDataTrajectory extends AbstractConvertedDataTrajectory<OwdData> 
 	public OwdDataTrajectory(final RawDataTrajectory rawTrajectory, final OwdData convertedData) {
 		super(rawTrajectory, convertedData);
 	}
+	
 }

@@ -59,7 +59,15 @@ public class ApplicationLoop {
 
     int c=0;
     public void run() throws InterruptedException {
+    	long start = 0;
+    	long end = 1000;
+    	int count = 0;
         while(true) {
+        	long timeToSleep = 1000 - (end - start);
+        	if(timeToSleep >= 0) {
+				Thread.sleep(timeToSleep);
+			}
+			start = System.currentTimeMillis();
 			sender.send(
 			
 			messageCreator.create(
@@ -76,7 +84,8 @@ public class ApplicationLoop {
 													//
 															sumoInteraction
 																	.next())))))));
-			System.out.println(c++);
+			end = System.currentTimeMillis();
+			System.out.println(count++);
         }
     }
 }

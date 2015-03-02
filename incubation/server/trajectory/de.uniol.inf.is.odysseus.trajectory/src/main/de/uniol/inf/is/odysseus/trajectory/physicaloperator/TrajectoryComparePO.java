@@ -13,10 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
-**/
+ **/
 
 package de.uniol.inf.is.odysseus.trajectory.physicaloperator;
 
+import java.util.List;
 import java.util.Map;
 
 import org.slf4j.Logger;
@@ -31,76 +32,91 @@ import de.uniol.inf.is.odysseus.trajectory.compare.TrajectoryCompareAlgorithmFac
 import de.uniol.inf.is.odysseus.trajectory.compare.util.ITupleToRawTrajectoryConverter;
 import de.uniol.inf.is.odysseus.trajectory.compare.util.TupleToRawTrajectoryConverterFactory;
 
-
 /**
  * A physical operator for <tt>TrajectoryCompareAO</tt>.
  * 
  * @author marcus
  *
- * @param <T> the type of the processed data
+ * @param <T>
+ *            the type of the processed data
  */
-public class TrajectoryComparePO<T extends Tuple<ITimeInterval>> extends AbstractPipe<T, T> {
+public class TrajectoryComparePO<T extends Tuple<ITimeInterval>> extends
+		AbstractPipe<T, T> {
 
 	@SuppressWarnings("unused")
-	private static final Logger LOGGER = LoggerFactory.getLogger(TrajectoryComparePO.class);
-		
+	private static final Logger LOGGER = LoggerFactory
+			.getLogger(TrajectoryComparePO.class);
+
 	public static final int VEHICLE_ID_POS = 0;
-	
+
 	public static final int POINTS_POS = 2;
 
 	/** the algorithm to use for comparing trajectories in spatial dimension */
 	private final ITrajectoryCompareAlgorithm<?, ?> algorithm;
-	
+
 	/** for converting tuples to <tt>RawTrajetories</tt> */
 	private final ITupleToRawTrajectoryConverter tupleToRawTrajectoryConverter;
-	
+
 	/** the UTM zone of the trajectories */
 	private final int utmZone;
 
 	/**
 	 * Creates an instance of <tt>TrajectoryComparePO</tt>.
 	 * 
-	 * @param k the k-nearest trajectories to find
-	 * @param queryTrajectoryPath the file path to the query trajectory
-	 * @param utmZone the UTM zone of the trajectories
-	 * @param lambda importance between spatial and textual similarity
-	 * @param algorithm the algorithm to use for comparing trajectories in spatial dimension
-	 * @param textualAttributes the textual attributes of the query trajectory
-	 * @param options options for the spatial compare algorithm
+	 * @param k
+	 *            the k-nearest trajectories to find
+	 * @param queryTrajectoryPath
+	 *            the file path to the query trajectory
+	 * @param utmZone
+	 *            the UTM zone of the trajectories
+	 * @param lambda
+	 *            importance between spatial and textual similarity
+	 * @param algorithm
+	 *            the algorithm to use for comparing trajectories in spatial
+	 *            dimension
+	 * @param textualAttributes
+	 *            the textual attributes of the query trajectory
+	 * @param options
+	 *            options for the spatial compare algorithm
 	 */
-	public TrajectoryComparePO(final int k, final String queryTrajectoryPath, final int utmZone, final double lambda, final String algorithm, 
-			final Map<String, String> textualAttributes, final Map<String, String> options) {
-		
-		this.algorithm = TrajectoryCompareAlgorithmFactory.getInstance().create(
-				algorithm, k, queryTrajectoryPath, textualAttributes, utmZone, lambda, options);
-		
-		this.tupleToRawTrajectoryConverter = TupleToRawTrajectoryConverterFactory.getInstance().getProduct();
+	public TrajectoryComparePO(final int k, final String queryTrajectoryPath,
+			final int utmZone, final double lambda, final String algorithm,
+			final Map<String, String> textualAttributes,
+			final Map<String, String> options) {
+
+		this.algorithm = TrajectoryCompareAlgorithmFactory.getInstance()
+				.create(algorithm, k, queryTrajectoryPath, textualAttributes,
+						utmZone, lambda, options);
+
+		this.tupleToRawTrajectoryConverter = TupleToRawTrajectoryConverterFactory
+				.getInstance().getProduct();
 		this.utmZone = utmZone;
 	}
 
-	
 	@SuppressWarnings("unchecked")
 	@Override
 	protected void process_next(final T object, final int port) {
 		this.algorithm.removeBefore(object.getMetadata().getStart());
-		
+
+		final List<Tuple<?>> tupleList = object.getAttribute(2);
+		if (tupleList.size() <= 1) {
+			return;
+		}
+
 		final Tuple<ITimeInterval> result = new Tuple<ITimeInterval>(
-				this.algorithm.getKNearest(
-						this.tupleToRawTrajectoryConverter.convert(object, this.utmZone)
-				),
-				true
-		);
-		
+				this.algorithm.getKNearest(this.tupleToRawTrajectoryConverter
+						.convert(object, this.utmZone)), false);
+
 		result.setMetadata(object.getMetadata());
-		this.transfer((T)result);
+		this.transfer((T) result);
 	}
-	
+
 	@Override
-	public void processPunctuation(final IPunctuation punctuation, final int port) {
+	public void processPunctuation(final IPunctuation punctuation,
+			final int port) {
 		this.sendPunctuation(punctuation);
 	}
-	
-	
+
 	@Override
 	public OutputMode getOutputMode() {
 		return OutputMode.NEW_ELEMENT;

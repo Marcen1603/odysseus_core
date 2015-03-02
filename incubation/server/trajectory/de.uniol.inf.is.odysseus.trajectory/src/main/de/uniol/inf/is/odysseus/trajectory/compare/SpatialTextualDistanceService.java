@@ -74,13 +74,15 @@ public class SpatialTextualDistanceService<T> implements IDistanceService<T> {
 			throw new IllegalArgumentException("queryTrajectory already added" );
 		}
 		this.trajectoryMap.put(queryTrajectory, new QueryTrajectoryData(k, lambda));
-		LOGGER.debug("New query trajectory added.");
+		if(LOGGER.isDebugEnabled()) {
+			LOGGER.debug("New query trajectory added.");
+		}
 	}
 	
 	@Override
 	public void removeTrajectory(final IConvertedQueryTrajectory<T> queryTrajectory,
 			final IConvertedDataTrajectory<T> dataTrajectory) {
-		LOGGER.info(this.trajectoryMap.get(queryTrajectory).kNearest.remove(dataTrajectory) + "");
+		this.trajectoryMap.get(queryTrajectory).kNearest.remove(dataTrajectory);
 	}
 	
 	
@@ -119,6 +121,10 @@ public class SpatialTextualDistanceService<T> implements IDistanceService<T> {
 		return result;
 	}
 	
+	public QueryTrajectoryData getData(final IConvertedQueryTrajectory<T> queryTrajectory) {
+		return this.trajectoryMap.get(queryTrajectory);
+	}
+	
 	/**
 	 * 
 	 * Class for holding parameters for a query trajectory.
@@ -138,7 +144,15 @@ public class SpatialTextualDistanceService<T> implements IDistanceService<T> {
 		private final SortedMultiset<IConvertedDataTrajectory<T>> kNearest = TreeMultiset.create(new Comparator<IConvertedDataTrajectory<T>>() {
 			@Override
 			public int compare(final IConvertedDataTrajectory<T> o1, final IConvertedDataTrajectory<T> o2) {
-				return (int) Math.signum(o1.getDistance() - o2.getDistance());
+				final int distComp = (int) Math.signum(o1.getDistance() - o2.getDistance());
+				if(distComp == 0) {
+					final int vehIdComp = o1.getRawTrajectory().getVehicleId().compareTo(o2.getRawTrajectory().getVehicleId());
+					if(vehIdComp == 0) {
+						return o1.getRawTrajectory().getTrajectoryNumber() - o2.getRawTrajectory().getTrajectoryNumber();
+					}
+					return vehIdComp;
+				} 
+				return distComp;
 			}
 		});
 		

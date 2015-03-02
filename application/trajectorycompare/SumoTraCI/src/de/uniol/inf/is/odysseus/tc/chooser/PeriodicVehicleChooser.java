@@ -25,6 +25,7 @@ import de.uniol.inf.is.odysseus.tc.vehicle.VehicleInfo;
  */
 public class PeriodicVehicleChooser extends AbstractVehicleChooser {
 
+	@SuppressWarnings("unused")
 	private final Logger LOGGER = LoggerFactory.getLogger(PeriodicVehicleChooser.class);
 	
 	@Override

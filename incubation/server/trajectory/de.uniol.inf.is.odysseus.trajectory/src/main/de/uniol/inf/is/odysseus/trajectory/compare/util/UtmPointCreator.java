@@ -78,11 +78,10 @@ public class UtmPointCreator implements IPointCreator {
 		if(coordinate == null) {
 			throw new IllegalArgumentException("coordinate is null");
 		}
-        final ProjCoordinate pcSrc = new ProjCoordinate(coordinate.x, coordinate.y);
+        final ProjCoordinate pcSrc = new ProjCoordinate(coordinate.y, coordinate.x);
         final ProjCoordinate pcDest = this.basicTransform.transform(
                 pcSrc, new ProjCoordinate()
         );
-
         return GF.createPoint(new Coordinate(pcDest.x, pcDest.y));
 	}
 

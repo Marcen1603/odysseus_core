@@ -42,10 +42,38 @@ public class Program {
 			filename = "oldb";
 		}		
 	
-		randomWrite(filename);
-		read(filename);
+		//randomWrite(filename);
+		read(filename, 371);
 		//createDB(filename);
 		
+	}
+	
+	private static void read(String filename, int id) throws XPathParseException, IOException, ClassNotFoundException {
+		
+		Options options = new Options();
+		options.createIfMissing(false);
+		DB db = factory.open(new File(filename), options);
+		WriteBatch batch = db.createWriteBatch();
+		
+		final VTDGen vg = new VTDGen();
+		vg.parseFile(filename + ".rand.rou.xml", false);
+		
+		final VTDNav vn = vg.getNav();
+		
+		final AutoPilot apVeh = new AutoPilot(vn);
+		apVeh.selectXPath("//routes/vehicle");
+		
+		ByteArrayInputStream in = new ByteArrayInputStream(db.get(bytes(id + "")));
+		ObjectInputStream o = new ObjectInputStream(in);
+		Object unknown = (Map<String, String>)o.readObject();
+		
+		System.out.println(unknown.getClass());
+		
+		Map<String, String> map = (Map<String, String>)unknown;
+		
+		for(String key : map.keySet()) {
+			System.out.println(key + ", " + map.get(key));
+		}
 	}
 	
 	private static void randomWrite(String filename) throws XPathParseException, NavException, IOException, XPathEvalException, ClassNotFoundException {

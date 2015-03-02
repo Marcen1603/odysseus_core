@@ -22,6 +22,8 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.commons.collections15.Transformer;
 import org.javatuples.Unit;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.vividsolutions.jts.geom.Point;
 
@@ -41,6 +43,9 @@ import edu.uci.ics.jung.algorithms.shortestpath.DijkstraDistance;
  */
 public class UotsDistance implements ISpatialDistance<UotsData> {
 
+	/** for debugging */
+	private final static Logger LOGGER = LoggerFactory.getLogger(UotsDistance.class);
+	
 	/** the multiton instances */
 	private volatile static Map<NetGraph, UotsDistance> INSTANCES = new ConcurrentHashMap<>();
 	

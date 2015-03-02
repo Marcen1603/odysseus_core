@@ -152,8 +152,8 @@ public class OsmGraphLoader implements IGraphLoader<String, Integer> {
 			    vn.toElement(VTDNav.FIRST_CHILD, NODE_ELEM_NAME);
 			    final Point point = pointCreator.createPoint(
 			    		new Coordinate(
-			    				Double.parseDouble(vn.toNormalizedString(vn.getAttrVal(NODE_LON_ATTR_NAME))), 
-			    				Double.parseDouble(vn.toNormalizedString(vn.getAttrVal(NODE_LAT_ATTR_NAME)))));
+			    				Double.parseDouble(vn.toNormalizedString(vn.getAttrVal(NODE_LAT_ATTR_NAME))), 
+			    				Double.parseDouble(vn.toNormalizedString(vn.getAttrVal(NODE_LON_ATTR_NAME)))));
 			    complexGraph.addVertex(point);
 			    pointsMap.put(vn.toNormalizedString(vn.getAttrVal(NODE_ID_ATTR_NAME)), point);
 			}

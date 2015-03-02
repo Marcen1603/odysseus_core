@@ -76,14 +76,12 @@ public abstract class AbstractTrajectoryCompareAlgorithm<T extends IConvertedDat
 				new SpatialTextualDistanceService<>(this.createDistanceService(), textualAttributes != null ? VectorTextualDistance.getInstance() : null);
 		this.distanceService.addQueryTrajectory(this.queryTrajectory, k, lambda);
 	}	
-	
+		
 	@Override
 	public void removeBefore(final PointInTime time) {
-		
+				
 		final List<IConvertedDataTrajectory<E>> toBeRemoved = new ArrayList<>();
-		
 		for(final IConvertedDataTrajectory<E> traj : this.trajectories) {
-			//LOGGER.info(traj.getRawTrajectory().getTimeInterval().getEnd() + " -> " + time);
 			if(traj.getRawTrajectory().getTimeInterval().getEnd().before(time)) {
 				this.distanceService.removeTrajectory(this.queryTrajectory, traj);
 				toBeRemoved.add(traj);
@@ -96,12 +94,13 @@ public abstract class AbstractTrajectoryCompareAlgorithm<T extends IConvertedDat
 		
 		this.trajectories.removeAll(toBeRemoved);
 	}
-	
+		
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<T> getKNearest(final RawDataTrajectory trajectory) {
 		final IConvertedDataTrajectory<E> converted = this.convert(trajectory);
 		this.trajectories.add(converted);
+		
 		return (List<T>)this.distanceService.getDistance(this.queryTrajectory, converted);
 	}
 	

@@ -12,6 +12,7 @@ import de.uniol.inf.is.odysseus.tc.vehicle.VehicleInfo;
 
 public class DistanceVehicleChooser extends AbstractVehicleChooser {
 
+	@SuppressWarnings("unused")
 	private static final Logger LOGGER = LoggerFactory.getLogger(DistanceVehicleChooser.class);
 	
 	private final static double MIN_DISTANCE = 30.0;
