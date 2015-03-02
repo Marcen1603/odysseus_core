@@ -57,8 +57,12 @@ public class ExecuteSportsQLServerResource extends AbstractSessionServerResource
 				return new ExecuteSportsQLResponseDTO(resp.getToken(), resp.getSocketInfo(), resp.getQueryId(),
 						info.getTopOperatorPeerRestPort());
 			} catch (Exception e) {
-				e.printStackTrace();
-				throw new ResourceException(Status.SERVER_ERROR_INTERNAL,"Error while executing distributed query+ "+displayName,e);
+				if (!(e instanceof ResourceException)) {
+					e.printStackTrace();
+					throw new ResourceException(Status.SERVER_ERROR_INTERNAL,"Error while executing distributed query+ "+displayName,e);
+				} else {
+					throw e;
+				}
 			}
 		} else {
 			String displayName = SportsQLDistributorRegistry.getDisplayName(executeSportsQLRequestDTO.getSportsQL());

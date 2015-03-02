@@ -83,8 +83,12 @@ public class DistributedQueryHelper {
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
-		}			
-		return distributedQueryInfoMap.remove(displayName.toUpperCase());
+		}	
+		if (distributedQueryInfoMap.get(displayName.toUpperCase()) != null && distributedQueryInfoMap.get(displayName.toUpperCase()).getTopOperatorPeerIP() != null) {
+			return distributedQueryInfoMap.remove(displayName.toUpperCase());
+		} else {
+			return null;
+		}
 	}
 
 	/**
