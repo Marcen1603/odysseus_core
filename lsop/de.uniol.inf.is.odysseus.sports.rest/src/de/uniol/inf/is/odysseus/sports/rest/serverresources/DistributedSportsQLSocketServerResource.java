@@ -31,7 +31,9 @@ public class DistributedSportsQLSocketServerResource extends AbstractServerResou
 			ITenant tenant = UserManagementProvider.getDefaultTenant();
 			ISession session = UserManagementProvider.getSessionmanagement().login(username, password.getBytes(), tenant);
 			Integer queryId = DistributedQueryHelper.getQueryIdWithTopOperator(sharedQueryId, session);
-			ExecutorServiceBinding.getExecutor().startQuery(queryId, session);
+			if (distributedSportsQLSocketRequestDTO.isStartQuery()) {
+				ExecutorServiceBinding.getExecutor().startQuery(queryId, session);
+			}
 			IPhysicalOperator operator = DistributedQueryHelper.getTopOperatorOfQuery(queryId, session);
 			SocketInfo peerSocket = SocketService.getInstance().getConnectionInformation(session, queryId, operator);
 

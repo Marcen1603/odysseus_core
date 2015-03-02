@@ -11,16 +11,18 @@ public class DistributedSportsQLSocketRequestDTO extends AbstractRequestDTO {
 	private String username;
 	private String password;
 	private String clientAddress; // For backup-information only
-
+	private boolean startQuery;
+	
 	public DistributedSportsQLSocketRequestDTO() {
 
 	}
 		
-	public DistributedSportsQLSocketRequestDTO(String sharedQueryId, String username, String password, String clientAddress) {
+	public DistributedSportsQLSocketRequestDTO(String sharedQueryId, String username, String password, String clientAddress, boolean startQuery) {
 		this.username = username;
 		this.password = password;
 		this.sharedQueryId = sharedQueryId;
 		this.clientAddress = clientAddress;
+		this.startQuery = startQuery;
 	}
 
 	
@@ -55,5 +57,15 @@ public class DistributedSportsQLSocketRequestDTO extends AbstractRequestDTO {
 	public void setClientAdress(String clientAddress) {
 		this.clientAddress = clientAddress;
 	}
+
+	public boolean isStartQuery() {
+		return startQuery;
+	}
+
+	public void setStartQuery(boolean startQuery) {
+		this.startQuery = startQuery;
+	}
+	
+	
 	
 }

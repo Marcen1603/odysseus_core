@@ -51,6 +51,8 @@ public class DistributedQueryHelper {
 	private static WebserviceAdvertisementListener webserviceAdvListener = new WebserviceAdvertisementListener();
 	private static QueryDistributionListener queryDistributionListener = new QueryDistributionListener();
 
+	private static Map<String, DistributedQueryInfo> distributedQueryInfoMap = Collections.synchronizedMap(new HashMap<String, DistributedQueryInfo>());
+
 	
 	private static final Logger LOG = LoggerFactory.getLogger(DistributedQueryHelper.class);
 
@@ -63,9 +65,26 @@ public class DistributedQueryHelper {
 	 * @return null if query distribution was not successful
 	 */
 	public static DistributedQueryInfo executeQuery(String displayName, String query,String parser,
-			ISession activeSession, String queryBuildConfigurationName) {
-		serverExecutor.addQuery(query, parser, activeSession, Context.empty());
-		return queryDistributionListener.getDistributedQueryInfo(displayName);
+			ISession activeSession, String queryBuildConfigurationName, boolean addQuery, int timeToWait) {
+		if (!distributedQueryInfoMap.containsKey(displayName.toUpperCase()) || addQuery) {
+			distributedQueryInfoMap.put(displayName.toUpperCase(), new DistributedQueryInfo());
+			serverExecutor.addQuery(query, parser, activeSession, Context.empty());
+		}
+		return waitOfDistributedQueryInfo(displayName, timeToWait);
+	}
+	
+	
+	private static DistributedQueryInfo waitOfDistributedQueryInfo(String displayName, int timeToWait) {			
+		int loops = timeToWait/1000;
+		while ((distributedQueryInfoMap.get(displayName.toUpperCase()) != null && distributedQueryInfoMap.get(displayName.toUpperCase()).getTopOperatorPeerIP() == null) && loops > 0) {
+			loops--;
+			try {
+				Thread.sleep(1000);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}			
+		return distributedQueryInfoMap.remove(displayName.toUpperCase());
 	}
 
 	/**
@@ -175,27 +194,27 @@ public class DistributedQueryHelper {
 	}
 	
 	private static class QueryDistributionListener extends AbstractQueryDistributionListener {
-		private Map<String, DistributedQueryInfo> distributedQueryInfoMap = Collections.synchronizedMap(new HashMap<String, DistributedQueryInfo>());
 		
 		@Override
 		public void afterTransmission(ILogicalQuery query,Map<ILogicalQueryPart, PeerID> allocationMap,	ID sharedQueryId) {
 			for (Entry<ILogicalQueryPart, PeerID> entry : allocationMap.entrySet()) {
 				for (ILogicalOperator op : entry.getKey().getOperators()) {
 					if (op.getSubscriptions().size() == 0 && !(op instanceof JxtaSenderAO) || (op.getSubscriptions().size() ==1 && op.getSubscriptions().iterator().next().getTarget() instanceof TopAO)) {
-						DistributedQueryInfo info = new DistributedQueryInfo();
-						String address = peerDictionary.getRemotePeerAddress(entry.getValue()).orNull();
-						String ip = removePort(address);
-						String sharedQueryIdString = sharedQueryId.toURI().toString();
-						Integer port = webserviceAdvListener.getRestPort(entry.getValue());
-						if (port != null) {
-							info.setTopOperatorPeerRestPort(port);
-						} else {
-							info.setTopOperatorPeerRestPort(RestService.getPort());
+						DistributedQueryInfo info = distributedQueryInfoMap.get(query.getName());
+						if (info != null) {
+							String address = peerDictionary.getRemotePeerAddress(entry.getValue()).orNull();
+							String ip = removePort(address);
+							String sharedQueryIdString = sharedQueryId.toURI().toString();
+							Integer port = webserviceAdvListener.getRestPort(entry.getValue());
+							if (port != null) {
+								info.setTopOperatorPeerRestPort(port);
+							} else {
+								info.setTopOperatorPeerRestPort(RestService.getPort());
+							}
+							info.setSharedQueryId(sharedQueryIdString);
+							info.setTopOperatorPeerIP(ip);
+							return;
 						}
-						info.setSharedQueryId(sharedQueryIdString);
-						info.setTopOperatorPeerIP(ip);
-						distributedQueryInfoMap.put(query.getName(), info);
-						return;
 					}
 				}
 			}
@@ -208,18 +227,7 @@ public class DistributedQueryHelper {
 			return address;
 		}
 		
-		public DistributedQueryInfo getDistributedQueryInfo(String displayName) {			
-			int loops = 10;
-			while (distributedQueryInfoMap.get(displayName.toUpperCase()) == null && loops > 0) {
-				loops--;
-				try {
-					Thread.sleep(1000);
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
-			}			
-			return distributedQueryInfoMap.remove(displayName.toUpperCase());
-		}
+		
 	}
 
 	public static boolean isDistributionPossible() {

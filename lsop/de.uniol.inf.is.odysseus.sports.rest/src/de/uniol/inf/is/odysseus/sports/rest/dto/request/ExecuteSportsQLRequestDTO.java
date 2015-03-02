@@ -13,18 +13,26 @@ public class ExecuteSportsQLRequestDTO extends AbstractRequestDTO {
 	private String username;
 	private String password;
 	private String distributor;
+	private int timeToWait;
+	private boolean addQuery;
+	private boolean startQuery;
 
 	public ExecuteSportsQLRequestDTO() {
 
 	}
 		
-	public ExecuteSportsQLRequestDTO(String sportsQL, String transformationConfig, String username, String password, String token, String distributor) {
+	public ExecuteSportsQLRequestDTO(String sportsQL, String transformationConfig, String username, String password, String token, String distributor, int timeToWait, boolean addQuery, boolean startQuery) {
 		this.sportsQL = sportsQL;
 		this.token = token;
 		this.transformationConfig = transformationConfig;
 		this.username = username;
 		this.password = password;
 		this.distributor = distributor;
+		this.timeToWait = timeToWait;
+		this.addQuery = addQuery;
+		this.startQuery = startQuery;
+
+
 	}
 
 	
@@ -75,6 +83,30 @@ public class ExecuteSportsQLRequestDTO extends AbstractRequestDTO {
 
 	public void setDistributor(String distributor) {
 		this.distributor = distributor;
+	}
+
+	public int getTimeToWait() {
+		return timeToWait;
+	}
+
+	public void setTimeToWait(int timeToWait) {
+		this.timeToWait = timeToWait;
+	}
+
+	public boolean isAddQuery() {
+		return addQuery;
+	}
+
+	public void setAddQuery(boolean addQuery) {
+		this.addQuery = addQuery;
+	}
+
+	public boolean isStartQuery() {
+		return startQuery;
+	}
+
+	public void setStartQuery(boolean startQuery) {
+		this.startQuery = startQuery;
 	}
 	
 	
