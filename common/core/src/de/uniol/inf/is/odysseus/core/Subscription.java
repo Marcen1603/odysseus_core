@@ -67,6 +67,9 @@ public class Subscription<K> implements ISubscription<K>, Serializable{
 		return target;
 	}
 	
+	protected void setTarget(K target) {
+		this.target = target;
+	}	
 	
 	@Override
 	public int getSinkInPort() {

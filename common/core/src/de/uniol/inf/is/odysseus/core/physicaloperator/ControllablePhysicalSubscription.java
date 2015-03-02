@@ -22,6 +22,10 @@ public class ControllablePhysicalSubscription<K> extends AbstractPhysicalSubscri
 		super(target, sinkInPort, sourceOutPort, schema);
 	}
 	
+	public void setTarget(K target){
+		super.setTarget(target);
+	}
+	
 	public boolean isSuspended() {
 		return getOpenCalls() == suspendCalls;
 	}
