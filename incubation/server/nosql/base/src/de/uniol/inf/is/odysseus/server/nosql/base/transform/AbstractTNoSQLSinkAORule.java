@@ -24,7 +24,8 @@ public abstract class AbstractTNoSQLSinkAORule<A extends AbstractNoSQLSinkAO> ex
         physicalOperatorClass = getPhysicalOperatorClass();
     }
 
-    @Override
+    @SuppressWarnings("unchecked")
+	@Override
     public final void execute(AbstractNoSQLSinkAO logicalOperator, TransformationConfiguration config) throws RuleException {
 
         AbstractNoSQLSinkPO physical;

@@ -10,6 +10,7 @@ import com.google.protobuf.GeneratedMessageLite;
 
 import de.uniol.inf.is.odysseus.core.collection.KeyValueObject;
 
+@SuppressWarnings("all")
 public abstract class AXovisEventDataParser implements Runnable  {
 
 	protected final Logger LOG = LoggerFactory.getLogger(XovisEventStreamListener.class);

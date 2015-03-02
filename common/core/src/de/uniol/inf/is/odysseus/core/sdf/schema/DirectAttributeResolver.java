@@ -21,7 +21,6 @@ import java.util.List;
 import java.util.Set;
 
 import de.uniol.inf.is.odysseus.core.IClone;
-import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.mep.Variable;
 
 /**

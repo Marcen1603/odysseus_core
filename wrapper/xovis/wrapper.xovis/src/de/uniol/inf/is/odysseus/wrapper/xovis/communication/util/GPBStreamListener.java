@@ -7,6 +7,7 @@ import com.google.protobuf.GeneratedMessageLite;
 
 import de.uniol.inf.is.odysseus.core.collection.KeyValueObject;
 
+@SuppressWarnings("all")
 public class GPBStreamListener {
 
 	// The camera input stream 

@@ -46,6 +46,7 @@ import java.util.Map;
  *
  * @author kenton@google.com Kenton Varda
  */
+@SuppressWarnings("all")
 public abstract class GeneratedMessageLite extends AbstractMessageLite
     implements Serializable {
   private static final long serialVersionUID = 1L;

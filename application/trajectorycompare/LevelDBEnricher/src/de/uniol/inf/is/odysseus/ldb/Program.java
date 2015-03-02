@@ -28,6 +28,7 @@ import com.ximpleware.XPathEvalException;
 import com.ximpleware.XPathParseException;
 
 
+@SuppressWarnings("all")
 public class Program {
 
 	public static void main(String[] args) throws IOException, XPathParseException, NavException, XPathEvalException, ClassNotFoundException {
@@ -75,7 +76,7 @@ public class Program {
 			System.out.println(key + ", " + map.get(key));
 		}
 	}
-	
+
 	private static void randomWrite(String filename) throws XPathParseException, NavException, IOException, XPathEvalException, ClassNotFoundException {
 		FileUtils.deleteDirectory(new File(filename));
 		

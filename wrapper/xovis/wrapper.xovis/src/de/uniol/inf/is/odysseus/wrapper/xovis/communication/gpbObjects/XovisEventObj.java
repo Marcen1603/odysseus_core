@@ -3,6 +3,7 @@
 
 package de.uniol.inf.is.odysseus.wrapper.xovis.communication.gpbObjects;
 
+@SuppressWarnings("all")
 public final class XovisEventObj {
   private XovisEventObj() {}
   public static void registerAllExtensions(
