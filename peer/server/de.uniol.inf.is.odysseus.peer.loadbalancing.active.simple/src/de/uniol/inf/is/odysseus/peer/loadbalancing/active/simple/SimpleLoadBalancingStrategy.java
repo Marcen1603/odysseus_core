@@ -29,6 +29,7 @@ import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.p2p_new.IP2PNetworkManager;
 import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicator;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.IPeerDictionary;
+import de.uniol.inf.is.odysseus.p2p_new.dictionary.impl.PeerDictionary;
 import de.uniol.inf.is.odysseus.p2p_new.logicaloperator.JxtaSenderAO;
 import de.uniol.inf.is.odysseus.peer.distribute.ILogicalQueryPart;
 import de.uniol.inf.is.odysseus.peer.distribute.LogicalQueryPart;
@@ -416,6 +417,7 @@ public class SimpleLoadBalancingStrategy implements ILoadBalancingStrategy, ILoa
 		public void notifyLockingSuccessfull() {
 			LOG.debug("Locking of other peers successfull.");
 			if(this.mRunning) {
+				LOG.info("Balancing Query {} to Peer {}",queryID,PeerDictionary.getInstance().getRemotePeerName(volunteer));
 				mCommunicator.initiateLoadBalancing(volunteer, queryID);
 			}
 			else {

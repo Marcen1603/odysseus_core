@@ -53,6 +53,16 @@ public class MovingStateInstructionMessage implements IMessage {
 	 */
 	private String pipeId;
 
+	private String newPipe;
+	
+	public String getNewPipe() {
+		return newPipe;
+	}
+
+	public void setNewPipe(String newPipe) {
+		this.newPipe = newPipe;
+	}
+
 	/**
 	 * PeerID used i different Messages
 	 */
@@ -223,10 +233,11 @@ public class MovingStateInstructionMessage implements IMessage {
 	 * @return Message with msgType INSTALL_BUFFER_AND_REPLACE_SENDER
 	 */
 	public static MovingStateInstructionMessage createInstallBufferAndReplaceSenderMsg(
-			int lbProcessId, String newPeerId, String pipeId) {
+			int lbProcessId, String newPeerId, String pipeId,String newPipe) {
 		MovingStateInstructionMessage message = new MovingStateInstructionMessage();
 		message.loadBalancingProcessId = lbProcessId;
 		message.pipeId = pipeId;
+		message.newPipe = newPipe;
 		message.peerId = newPeerId;
 		message.msgType = INSTALL_BUFFER_AND_REPLACE_SENDER;
 		return message;
@@ -244,11 +255,12 @@ public class MovingStateInstructionMessage implements IMessage {
 	 * @return Message with msgType REPLACE_RECEIVER
 	 */
 	public static MovingStateInstructionMessage createReplaceReceiverMsg(
-			int lbProcessId, String peerId, String pipeId) {
+			int lbProcessId, String peerId, String pipeId, String newPipe) {
 		MovingStateInstructionMessage message = new MovingStateInstructionMessage();
 		message.loadBalancingProcessId = lbProcessId;
 		message.pipeId = pipeId;
 		message.peerId = peerId;
+		message.newPipe = newPipe;
 		message.msgType = REPLACE_RECEIVER;
 		return message;
 	}
@@ -336,18 +348,21 @@ public class MovingStateInstructionMessage implements IMessage {
 			 */
 
 			byte[] oldPipeIdBytes = pipeId.getBytes();
+			byte[] newPipeIdBytes = newPipe.getBytes();
 			byte[] newPeerIdBytes = peerId.getBytes();
 
-			bbsize = 4 + 4 + 4 + 4 + oldPipeIdBytes.length
+			bbsize = 4 + 4 + 4 + 4 +4 + oldPipeIdBytes.length + newPipeIdBytes.length
 					+ newPeerIdBytes.length;
 
 			bb = ByteBuffer.allocate(bbsize);
 			bb.putInt(msgType);
 			bb.putInt(loadBalancingProcessId);
 			bb.putInt(oldPipeIdBytes.length);
+			bb.putInt(newPipeIdBytes.length);
 			bb.putInt(newPeerIdBytes.length);
 
 			bb.put(oldPipeIdBytes);
+			bb.put(newPipeIdBytes);
 			bb.put(newPeerIdBytes);
 			break;
 
@@ -449,15 +464,19 @@ public class MovingStateInstructionMessage implements IMessage {
 		case REPLACE_RECEIVER:
 		case INSTALL_BUFFER_AND_REPLACE_SENDER:
 			int sizeOfPipeId = bb.getInt();
+			int sizeOfNewPipeId = bb.getInt();
 			int sizeOfPeerId = bb.getInt();
 
 			byte[] pipeIdAsBytes = new byte[sizeOfPipeId];
+			byte[] newPipeIdAsBytes = new byte[sizeOfNewPipeId];
 			byte[] peerIdAsBytes = new byte[sizeOfPeerId];
 
 			bb.get(pipeIdAsBytes);
+			bb.get(newPipeIdAsBytes);
 			bb.get(peerIdAsBytes);
 
 			this.pipeId = new String(pipeIdAsBytes);
+			this.newPipe = new String(newPipeIdAsBytes);
 			this.peerId = new String(peerIdAsBytes);
 
 			break;

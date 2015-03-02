@@ -434,10 +434,10 @@ public class MovingStateMessageDispatcher {
 	 *            IMessageDeliveryFailed listener
 	 */
 	public void sendReplaceReceiverMessage(PeerID peer, String newPeerId,
-			String oldPipeId, IMessageDeliveryFailedListener listener) {
+			String oldPipeId, String newPipeId, IMessageDeliveryFailedListener listener) {
 
 		MovingStateInstructionMessage message = MovingStateInstructionMessage
-				.createReplaceReceiverMsg(lbProcessId, newPeerId, oldPipeId);
+				.createReplaceReceiverMsg(lbProcessId, newPeerId, oldPipeId,newPipeId);
 		if (this.currentJobs == null) {
 			this.currentJobs = new ConcurrentHashMap<String, RepeatingMessageSend>();
 		}
@@ -460,11 +460,11 @@ public class MovingStateMessageDispatcher {
 	 * @param listener
 	 */
 	public void sendInstallBufferAndReplaceSenderMessage(PeerID peer,
-			String newPeerId, String oldPipeId,
+			String newPeerId, String oldPipeId, String newPipeId,
 			IMessageDeliveryFailedListener listener) {
 		MovingStateInstructionMessage message = MovingStateInstructionMessage
 				.createInstallBufferAndReplaceSenderMsg(lbProcessId, newPeerId,
-						oldPipeId);
+						oldPipeId, newPipeId);
 		if (this.currentJobs == null) {
 			this.currentJobs = new ConcurrentHashMap<String, RepeatingMessageSend>();
 		}

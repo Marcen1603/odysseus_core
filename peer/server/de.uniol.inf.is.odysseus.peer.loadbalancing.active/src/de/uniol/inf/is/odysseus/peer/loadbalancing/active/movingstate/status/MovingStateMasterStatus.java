@@ -92,6 +92,8 @@ public class MovingStateMasterStatus implements ILoadBalancingMasterStatus {
 	private ArrayList<String> pipesToSync;
 
 	
+	private HashMap<String,String> replacedPipes;
+	
 	/**
 	 * List of Pipes which are buffering
 	 */
@@ -132,6 +134,13 @@ public class MovingStateMasterStatus implements ILoadBalancingMasterStatus {
 	
 	
 
+	public HashMap<String, String> getReplacedPipes() {
+		return replacedPipes;
+	}
+	public void setReplacedPipes(HashMap<String, String> replacedPipes) {
+		this.replacedPipes = replacedPipes;
+	}
+	
 	private volatile boolean locked=false;
 	
 	/***

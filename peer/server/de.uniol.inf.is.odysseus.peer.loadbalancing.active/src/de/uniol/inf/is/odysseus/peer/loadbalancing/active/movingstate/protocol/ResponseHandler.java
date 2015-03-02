@@ -82,7 +82,8 @@ public class ResponseHandler {
 
 				ILogicalQueryPart modifiedQueryPart = LoadBalancingHelper
 						.getCopyOfQueryPart(status.getOriginalPart());
-				MovingStateHelper.relinkQueryPart(modifiedQueryPart, status);
+				
+				MovingStateHelper.relinkQueryPartWithNewPipes(modifiedQueryPart, status);
 
 				String pqlFromQueryPart = LogicalQueryHelper
 						.generatePQLStatementFromQueryPart(modifiedQueryPart);

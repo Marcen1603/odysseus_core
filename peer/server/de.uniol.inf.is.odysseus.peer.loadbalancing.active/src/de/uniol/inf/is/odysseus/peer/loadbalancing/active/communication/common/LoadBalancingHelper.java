@@ -32,7 +32,6 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.TopAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
-import de.uniol.inf.is.odysseus.p2p_new.data.DataTransmissionException;
 import de.uniol.inf.is.odysseus.p2p_new.logicaloperator.JxtaReceiverAO;
 import de.uniol.inf.is.odysseus.p2p_new.logicaloperator.JxtaSenderAO;
 import de.uniol.inf.is.odysseus.p2p_new.physicaloperator.JxtaReceiverPO;
@@ -222,7 +221,6 @@ public class LoadBalancingHelper {
 
 	public static JxtaReceiverAO createReceiverAO(UpstreamConnection connection, String pipeID) {
 		JxtaReceiverAO receiver = new JxtaReceiverAO();
-		// TODO more than 1 outgoing connection from Receiver!
 
 		receiver.setPipeID(pipeID);
 		receiver.setPeerID(connection.remotePeerID);
@@ -244,26 +242,6 @@ public class LoadBalancingHelper {
 		return sender;
 	}
 	
-	@SuppressWarnings("rawtypes")
-	public static void setNewPeerID(JxtaSenderPO sender,String peerID) throws LoadBalancingException {
-		try {
-			sender.sendToNewPeer(peerID);
-		} catch (DataTransmissionException e) {
-			throw new LoadBalancingException("Could not set new PeerID to Sender.");
-		}
-	}
-
-	
-	@SuppressWarnings("rawtypes")
-	public static void setNewPeerID(JxtaReceiverPO receiver,String peerID) throws LoadBalancingException {
-		try {
-			receiver.receiveFromNewPeer(peerID);
-		} catch (DataTransmissionException e) {
-			throw new LoadBalancingException("Could not set new PeerID to Receiver.");
-		}
-	}
-
-
 	/**
 	 * Removes a duplicate Jxta Receiver or sender used in LoadBalancing. Called
 	 * during abort and after sync.
@@ -506,7 +484,6 @@ public class LoadBalancingHelper {
 	public static Map<ILogicalOperator, Collection<UpstreamConnection>> stripJxtaReceivers(
 			ILogicalQueryPart part) {
 
-		// TODO More than 1 out Port!
 		HashMap<ILogicalOperator, Collection<UpstreamConnection>> result = new HashMap<ILogicalOperator, Collection<UpstreamConnection>>();
 
 		ArrayList<ILogicalOperator> toRemove = new ArrayList<ILogicalOperator>();

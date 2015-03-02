@@ -13,6 +13,7 @@ import de.uniol.inf.is.odysseus.core.collection.Context;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IStatefulPO;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicator;
+import de.uniol.inf.is.odysseus.p2p_new.dictionary.impl.PeerDictionary;
 import de.uniol.inf.is.odysseus.peer.distribute.IQueryPartController;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.OsgiServiceManager;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.common.LoadBalancingException;
@@ -61,8 +62,9 @@ public class InstructionHandler {
 		case MovingStateInstructionMessage.INITIATE_LOADBALANCING:
 			// Only react to first INITIATE_LOADBALANCING Message, even if sent
 			// more often.
-
+			
 			LOG.debug("Got INITIATE_LOADBALANCING");
+			LOG.info("Load Balancing requested from Peer ",PeerDictionary.getInstance().getRemotePeerName(senderPeer));
 
 			if (status == null) {
 				status = new MovingStateSlaveStatus(
@@ -181,17 +183,19 @@ public class InstructionHandler {
 							.equals(MovingStateSlaveStatus.LB_PHASES.WAITING_FOR_COPY))
 					&& !status.isPipeKnown(instruction.getPipeId())) {
 				String pipe = instruction.getPipeId();
+				String newPipe = instruction.getNewPipe();
 				String peer = instruction.getPeerId();
 
 				status.addKnownPipe(pipe);
 				status.addBufferedPipe(pipe);
+				status.addPipeMapping(pipe, newPipe);
 
 				dispatcher = status.getMessageDispatcher();
 
 				try {
 					MovingStateHelper.addChangeInformation(pipe, status, true);
 					MovingStateHelper.startBuffering(pipe);
-					MovingStateHelper.setNewPeerId(pipe, peer, true);
+					MovingStateHelper.setNewPipe(status,pipe, newPipe, peer, true);
 					
 					dispatcher.sendDuplicateSenderSuccess(status.getMasterPeer(),
 							pipe);
@@ -222,16 +226,19 @@ public class InstructionHandler {
 					|| (status.getPhase()
 							.equals(MovingStateSlaveStatus.LB_PHASES.WAITING_FOR_COPY))
 					&& !status.isPipeKnown(instruction.getPipeId())) {
-				String pipe = instruction.getPipeId();
+				String oldPipe = instruction.getPipeId();
+				String newPipe = instruction.getNewPipe();
 				String peer = instruction.getPeerId();
+				status.addPipeMapping(oldPipe, instruction.getNewPipe());
 
-				status.addKnownPipe(pipe);
+
+				status.addKnownPipe(oldPipe);
 				dispatcher = status.getMessageDispatcher();
 				try {
-					MovingStateHelper.addChangeInformation(pipe, status, false);
-					MovingStateHelper.setNewPeerId(pipe, peer, false);
+					MovingStateHelper.addChangeInformation(oldPipe, status, false);
+					MovingStateHelper.setNewPipe(status,oldPipe, newPipe, peer, false);
 					dispatcher.sendDuplicateReceiverSuccess(status.getMasterPeer(),
-							pipe);
+							oldPipe);
 				} catch (Exception e) {
 					LOG.error("Error while replacing JxtaReceiver:");
 					LOG.error(e.getMessage());
@@ -308,7 +315,8 @@ public class InstructionHandler {
 					MovingStateSlaveStatus.LB_PHASES.WAITING_FOR_FINISH)) {
 				for (String pipe : status.getBufferedPipes()) {
 					try {
-						MovingStateHelper.stopBuffering(pipe);
+						String newPipe = status.getNewPipeForOldPipe(pipe);
+						MovingStateHelper.stopBuffering(newPipe);
 					} catch (LoadBalancingException e) {
 						LOG.error("Error while stopping buffering.");
 						e.printStackTrace();

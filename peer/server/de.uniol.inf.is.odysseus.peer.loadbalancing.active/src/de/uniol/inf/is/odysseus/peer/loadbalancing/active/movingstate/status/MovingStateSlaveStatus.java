@@ -27,7 +27,7 @@ public class MovingStateSlaveStatus implements ILoadBalancingSlaveStatus,
 	 * Name of the corresponding strategy
 	 */
 	private final String COMMUNICATOR_NAME = "MovingState";
-
+	private ConcurrentHashMap<String,String> pipeMapping = new ConcurrentHashMap<String,String>();
 	
 	
 	/**
@@ -38,6 +38,17 @@ public class MovingStateSlaveStatus implements ILoadBalancingSlaveStatus,
 	 */
 	public enum INVOLVEMENT_TYPES {
 		VOLUNTEERING_PEER, PEER_WITH_SENDER_OR_RECEIVER
+	}
+	
+	
+	public void addPipeMapping(String oldPipe, String newPipe) {
+		if(this.pipeMapping.containsKey(oldPipe))
+			return;
+		this.pipeMapping.put(oldPipe, newPipe);
+	}
+	
+	public String getNewPipeForOldPipe(String oldPipe) {
+		return pipeMapping.get(oldPipe);
 	}
 
 	/**
