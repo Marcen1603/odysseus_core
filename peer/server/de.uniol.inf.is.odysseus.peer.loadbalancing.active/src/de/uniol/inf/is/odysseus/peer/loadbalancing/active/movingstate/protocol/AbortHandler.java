@@ -97,11 +97,9 @@ public class AbortHandler {
 				
 				if(status.getPipeOldPeerMapping()!=null) {
 					for (String pipeID : status.getPipeOldPeerMapping().keySet()) {
-						try {
-							MovingStateHelper.setNewPeerId(pipeID, status.getPipeOldPeerMapping().get(pipeID), isSender);
-						} catch (LoadBalancingException e) {
-							//do nothing as there is nothing we can do
-						}
+						//TODO FIX THIS
+						String foo = pipeID;
+						LOG.error(foo);
 					}
 				}
 				if(isSender) {
