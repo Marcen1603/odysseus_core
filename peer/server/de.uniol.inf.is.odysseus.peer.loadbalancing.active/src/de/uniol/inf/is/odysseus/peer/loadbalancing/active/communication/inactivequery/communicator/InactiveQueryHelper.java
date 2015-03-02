@@ -104,6 +104,7 @@ public class InactiveQueryHelper {
 	 *            is Operator sender?
 	 * @throws LoadBalancingException
 	 */
+	@SuppressWarnings("rawtypes")
 	public static void setNewPeerId(String pipeID, String peerID,
 			boolean isSender) throws LoadBalancingException {
 		IPhysicalOperator operator = LoadBalancingHelper
@@ -125,7 +126,7 @@ public class InactiveQueryHelper {
 			}
 		}
 		if (operator instanceof JxtaReceiverPO) {
-			///LoadBalancingHelper.setNewPeerID((JxtaReceiverPO) operator, peerID);
+			LoadBalancingHelper.setNewPeerID((JxtaReceiverPO) operator, peerID);
 			if(logicalOp!=null) {
 				JxtaReceiverAO receiverAO = (JxtaReceiverAO) logicalOp;
 				receiverAO.setPeerID(peerID);

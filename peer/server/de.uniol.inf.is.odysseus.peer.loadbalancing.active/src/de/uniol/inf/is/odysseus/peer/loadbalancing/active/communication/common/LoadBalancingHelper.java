@@ -32,6 +32,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.TopAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
+import de.uniol.inf.is.odysseus.p2p_new.data.DataTransmissionException;
 import de.uniol.inf.is.odysseus.p2p_new.logicaloperator.JxtaReceiverAO;
 import de.uniol.inf.is.odysseus.p2p_new.logicaloperator.JxtaSenderAO;
 import de.uniol.inf.is.odysseus.p2p_new.physicaloperator.JxtaReceiverPO;
@@ -217,6 +218,26 @@ public class LoadBalancingHelper {
 			}
 		}
 	}
+	
+	@SuppressWarnings("rawtypes")
+	public static void setNewPeerID(JxtaReceiverPO receiver,String peerID) {
+		try {
+			receiver.receiveFromNewPeer(peerID);
+		} catch (DataTransmissionException e) {
+			LOG.error("Error while relinking receiver:",e);
+		}
+	}
+	
+
+	@SuppressWarnings("rawtypes")
+	public static void setNewPeerID(JxtaSenderPO sender,String peerID) {
+		try {
+			sender.sendToNewPeer(peerID);
+		} catch (DataTransmissionException e) {
+			LOG.error("Error while relinking sender:",e);
+		}
+	}
+	
 	
 
 	public static JxtaReceiverAO createReceiverAO(UpstreamConnection connection, String pipeID) {
