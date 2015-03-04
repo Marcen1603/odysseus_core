@@ -482,7 +482,7 @@ public class MovingStateHelper {
 		}
 	}
 	
-	@SuppressWarnings({ "rawtypes", "unchecked" })
+	
 	public static void findAndCopyLocalJxtaOperator(MovingStateSlaveStatus status,
 			boolean isSender, String newPeerId, String oldPipeId,
 			String newPipeId) throws DataTransmissionException, LoadBalancingException{
@@ -492,132 +492,161 @@ public class MovingStateHelper {
 			
 			if(operator==null) {
 				LOG.error("No operator with pipe ID " + oldPipeId + " found.");
-				throw new LoadBalancingException("No operator with pipe ID " + oldPipeId + " found.");
 			}
 			
-			if (operator != null) {
-				
-				
-				if (isSender) {
-					JxtaSenderAO logicalSender = (JxtaSenderAO) operator;
-					JxtaSenderAO copy = (JxtaSenderAO) logicalSender.clone();
-					
-					copy.setPipeID(newPipeId);
-					copy.setPeerID(newPeerId);
+			if (isSender) {
+					replaceSender(newPeerId, oldPipeId, newPipeId, operator,status);
 	
-					JxtaSenderPO physicalCopy = new JxtaSenderPO(copy);
-					JxtaSenderPO physicalOriginal = (JxtaSenderPO) LoadBalancingHelper
-							.getPhysicalJxtaOperator(isSender, oldPipeId);
-							
-					if(physicalOriginal==null) {
-						throw new LoadBalancingException("No physical Op with isSender="+isSender+" and Pipe ID " + oldPipeId + " found.");
-					}
-					
-					physicalCopy
-							.setOutputSchema(physicalOriginal.getOutputSchema());
-					physicalCopy.setName(physicalOriginal.getName());
-					physicalCopy.addOwner(physicalOriginal.getOwner());
-					
-	
-					AbstractPhysicalSubscription subscription = physicalOriginal
-							.getSubscribedToSource(0);
-					
-					
-					if (subscription.getTarget() instanceof AbstractSource) {
-						
-						AbstractSource source = (AbstractSource)subscription.getTarget();
-						AbstractPhysicalSubscription subscr=null;
-						
-						for(Object sub : source.getSubscriptions()) {
-							if(sub instanceof AbstractPhysicalSubscription) {
-								if (((AbstractPhysicalSubscription)sub).getTarget().equals(physicalOriginal)) {
-									subscr = (AbstractPhysicalSubscription)sub;
-								}
-							}
-						}
-						
-						if(subscr==null) {
-							throw new LoadBalancingException("No Subscription to Sender found.");
-						}
-						
-						if(subscr instanceof ControllablePhysicalSubscription) {
-							((ControllablePhysicalSubscription)subscr).setTarget(physicalCopy);
-							physicalCopy.subscribeToSource(subscription.getTarget(), subscription.getSinkInPort(), subscription.getSourceOutPort(), subscription.getSchema());
-							physicalOriginal.unsubscribeFromAllSources();
-							
-
-							Optional<Integer> queryId = LoadBalancingHelper.getQueryForRoot(physicalOriginal);
-							if(queryId.isPresent()) {
-								OsgiServiceManager.getExecutor().getExecutionPlan().getQueryById(queryId.get()).replaceRoot(physicalOriginal, physicalCopy);
-							}
-						}
-						else {
-							LOG.error("Subscription not controllable.");
-						}
-						
-					}
-
-			} else {
-				LOG.debug("Trying to clone receiver.");
-				JxtaReceiverAO logicalReceiver = (JxtaReceiverAO) operator;
-				JxtaReceiverAO copy = (JxtaReceiverAO) logicalReceiver.clone();
-				copy.setPipeID(newPipeId);
-				copy.setPeerID(newPeerId);
-				copy.setSchema(logicalReceiver.getSchema());
-				
-				
-				JxtaReceiverPO physicalOriginal = (JxtaReceiverPO) LoadBalancingHelper
-						.getPhysicalJxtaOperator(isSender, oldPipeId);
-				
-				copy.setSchemaName(physicalOriginal.getOutputSchema().getURI());
-				
-				JxtaReceiverPO physicalCopy = new JxtaReceiverPO(copy);
-				
-				physicalCopy
-						.setOutputSchema(physicalOriginal.getOutputSchema());
-				physicalCopy.setName(physicalOriginal.getName());
-				physicalCopy.addOwner(physicalOriginal.getOwner());
-				
-				List<AbstractPhysicalSubscription<ISink<? super IStreamObject>>> subscriptionList = physicalOriginal
-						.getSubscriptions();
-
-
-				ArrayList<IPhysicalOperator> emptyCallPath = new ArrayList<IPhysicalOperator>();
-				for (AbstractPhysicalSubscription<ISink<? super IStreamObject>> subscription : subscriptionList) {
-					ISink sink = subscription.getTarget();
-					int sinkInPort = subscription.getSinkInPort();
-					int sourceOutPort = subscription.getSourceOutPort();
-					SDFSchema schema = subscription.getSchema();
-					int openCalls = subscription.getOpenCalls();
-
-					physicalOriginal.unsubscribeSink(subscription);
-					
-					physicalCopy.subscribeSink(sink,
-							sinkInPort,
-							sourceOutPort,
-							schema, true,
-							openCalls);
-
-
-					sink.unsubscribeFromSource(((AbstractPhysicalSubscription)subscription));
-					sink.subscribeToSource(physicalCopy, sinkInPort, sourceOutPort, schema);
-					
-
-					physicalCopy.open(sink, sourceOutPort, sinkInPort, emptyCallPath,
-							physicalCopy.getOwner());
-					
+			} 
+			else {
+					replaceReceiver(newPeerId, oldPipeId, newPipeId, operator,status);
 				}
+			
+
+			
+		}
 
 
-			}
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	public static void replaceReceiver(String newPeerId, String oldPipeId,
+			String newPipeId, ILogicalOperator logicalOriginal,MovingStateSlaveStatus status)
+			throws DataTransmissionException, LoadBalancingException {
+		JxtaReceiverAO logicalReceiver = (JxtaReceiverAO) logicalOriginal;
+		JxtaReceiverAO copy = (JxtaReceiverAO) logicalReceiver.clone();
+
+		copy.setPipeID(newPipeId);
+		copy.setPeerID(newPeerId);
+		copy.setSchema(logicalReceiver.getSchema());
+
+
+		JxtaReceiverPO physicalOriginal = (JxtaReceiverPO) LoadBalancingHelper.getPhysicalJxtaOperator(false, oldPipeId);
+
+		copy.setSchemaName(physicalOriginal.getOutputSchema().getURI());
+
+		JxtaReceiverPO physicalCopy = new JxtaReceiverPO(copy);
+
+		physicalCopy.setOutputSchema(physicalOriginal.getOutputSchema());
+		physicalCopy.setName(physicalOriginal.getName());
+		physicalCopy.addOwner(physicalOriginal.getOwner());
+
+		replaceReceiver(physicalOriginal,physicalCopy);
+		status.addReplacedOperator(physicalCopy,physicalOriginal);
+	}
+
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	public static void replaceSender(String newPeerId, String oldPipeId,
+			String newPipeId, ILogicalOperator logicalOriginal,MovingStateSlaveStatus status)
+			throws DataTransmissionException, LoadBalancingException {
+		JxtaSenderAO logicalSender = (JxtaSenderAO) logicalOriginal;
+		JxtaSenderAO copy = (JxtaSenderAO) logicalSender.clone();
+		
+		copy.setPipeID(newPipeId);
+		copy.setPeerID(newPeerId);
+
+		JxtaSenderPO physicalCopy = new JxtaSenderPO(copy);
+		JxtaSenderPO physicalOriginal = (JxtaSenderPO) LoadBalancingHelper
+				.getPhysicalJxtaOperator(true, oldPipeId);
+		
+				
+		if(physicalOriginal==null) {
+			throw new LoadBalancingException("No physical Sender with Pipe ID " + oldPipeId + " found.");
+		}
+		
+		physicalCopy.setOutputSchema(physicalOriginal.getOutputSchema());
+		physicalCopy.setName(physicalOriginal.getName());
+		physicalCopy.addOwner(physicalOriginal.getOwner());
+		
+		replaceSender(physicalOriginal,physicalCopy);
+
+		status.addReplacedOperator(physicalCopy,physicalOriginal);
+	}
+		
+		
+		
+
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	public static void replaceReceiver(JxtaReceiverPO original, JxtaReceiverPO replacement) throws LoadBalancingException{
+
+		List<AbstractPhysicalSubscription<ISink<? super IStreamObject>>> subscriptionList = original.getSubscriptions();
+
+		ArrayList<IPhysicalOperator> emptyCallPath = new ArrayList<IPhysicalOperator>();
+		
+		for (AbstractPhysicalSubscription<ISink<? super IStreamObject>> subscription : subscriptionList) {
+			
+			ISink sink = subscription.getTarget();
+			int sinkInPort = subscription.getSinkInPort();
+			int sourceOutPort = subscription.getSourceOutPort();
+			SDFSchema schema = subscription.getSchema();
+			//int openCalls = subscription.getOpenCalls();
+
+			original.unsubscribeSink(subscription);
+			
+			replacement.subscribeSink(sink,
+					sinkInPort,
+					sourceOutPort,
+					schema, true,
+					0);
+
+
+			sink.unsubscribeFromSource(((AbstractPhysicalSubscription)subscription));
+			sink.subscribeToSource(replacement, sinkInPort, sourceOutPort, schema);
+			
+			replacement.open(sink, sourceOutPort, sinkInPort, emptyCallPath,original.getOwner());
 			
 		}
 		
 		
 		
-
-	}
+		Optional<Integer> queryId = LoadBalancingHelper.getQueryForRoot(original);
+		if(queryId.isPresent()) {
+			OsgiServiceManager.getExecutor().getExecutionPlan().getQueryById(queryId.get()).replaceOperator(original, replacement);
+		}
 	
+	}
+
+	
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	public static void replaceSender(JxtaSenderPO original, JxtaSenderPO replacement) throws LoadBalancingException {
+
+		AbstractPhysicalSubscription subscription = original.getSubscribedToSource(0);
+		
+		if (subscription.getTarget() instanceof AbstractSource) {
+			
+			AbstractSource source = (AbstractSource)subscription.getTarget();
+			AbstractPhysicalSubscription subscr=null;
+			
+			for(Object sub : source.getSubscriptions()) {
+				if(sub instanceof AbstractPhysicalSubscription) {
+					if (((AbstractPhysicalSubscription)sub).getTarget().equals(original)) {
+						subscr = (AbstractPhysicalSubscription)sub;
+					}
+				}
+			}
+			
+			if(subscr==null) {
+				throw new LoadBalancingException("No Subscription to Sender found.");
+			}
+			
+			if(subscr instanceof ControllablePhysicalSubscription) {
+				//Just set new Target on Subscription to keep buffer.
+				((ControllablePhysicalSubscription)subscr).setTarget(replacement);
+				
+				replacement.subscribeToSource(subscription.getTarget(), subscription.getSinkInPort(), subscription.getSourceOutPort(), subscription.getSchema());
+				original.unsubscribeFromAllSources();
+				
+
+				Optional<Integer> queryId = LoadBalancingHelper.getQueryForRoot(original);
+				if(queryId.isPresent()) {
+					OsgiServiceManager.getExecutor().getExecutionPlan().getQueryById(queryId.get()).replaceRoot(original, replacement);
+				}
+			}
+			else {
+				LOG.error("Subscription not controllable.");
+				throw new LoadBalancingException("Subscription to sender not controllable.");
+			}
+		}
+			
+	}
 	
 	
 	

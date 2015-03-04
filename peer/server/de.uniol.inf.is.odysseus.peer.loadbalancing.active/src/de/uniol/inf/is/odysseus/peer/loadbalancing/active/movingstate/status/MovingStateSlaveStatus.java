@@ -7,6 +7,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import net.jxta.id.ID;
 import net.jxta.peer.PeerID;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IStatefulPO;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.common.ILoadBalancingSlaveStatus;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.movingstate.communicator.MovingStateHelper;
@@ -27,77 +28,11 @@ public class MovingStateSlaveStatus implements ILoadBalancingSlaveStatus,
 	 * Name of the corresponding strategy
 	 */
 	private final String COMMUNICATOR_NAME = "MovingState";
+	
 	private ConcurrentHashMap<String,String> pipeMapping = new ConcurrentHashMap<String,String>();
 	
+	private ConcurrentHashMap<IPhysicalOperator,IPhysicalOperator> replacedToOriginalOperatorMapping = new ConcurrentHashMap<IPhysicalOperator,IPhysicalOperator>();
 	
-	/**
-	 * Constants for different types of peers.
-	 * 
-	 * @author Carsten Cordes
-	 *
-	 */
-	public enum INVOLVEMENT_TYPES {
-		VOLUNTEERING_PEER, PEER_WITH_SENDER_OR_RECEIVER
-	}
-	
-	
-	public void addPipeMapping(String oldPipe, String newPipe) {
-		if(this.pipeMapping.containsKey(oldPipe))
-			return;
-		this.pipeMapping.put(oldPipe, newPipe);
-	}
-	
-	public String getNewPipeForOldPipe(String oldPipe) {
-		return pipeMapping.get(oldPipe);
-	}
-
-	/**
-	 * Constants for different (slave-side) LoadBalancing Phases.
-	 * 
-	 * @author Carsten Cordes
-	 *
-	 */
-	public enum LB_PHASES {
-		WAITING_FOR_ADD, WAITING_FOR_MSG_RECEIVED, WAITING_FOR_COPY, WAITING_FOR_FINISH, ABORT
-	}
-
-	/***
-	 * Holds current LoadBalancing Phase
-	 */
-	private LB_PHASES phase;
-	
-	private boolean registeredAsSlave = false;
-	private boolean registeredAsMaster = false;
-	public boolean isRegisteredAsMaster() {
-		return registeredAsMaster;
-	}
-
-	private PeerID sharedQueryMasterPeer;
-	private ID sharedQueryID;
-	
-	public boolean isRegisteredAsSlave() {
-		return registeredAsSlave;
-	}
-	
-	public PeerID getSharedQueryMaster() {
-		return sharedQueryMasterPeer;
-	}
-	
-	public ID sharedQueryID() {
-		return sharedQueryID;
-	}
-
-	
-	public void setRegisteredAsNewSlave(PeerID masterPeer, ID sharedQueryID) {
-		this.registeredAsSlave = true;
-		this.sharedQueryMasterPeer = masterPeer;
-		this.sharedQueryID = sharedQueryID;
-	}
-	
-	public void setRegisteredAsMaster(ID sharedQueryID) {
-		this.registeredAsMaster = true;
-		this.sharedQueryID = sharedQueryID;
-	}
 
 	private List<IStatefulPO> statefulOperatorList;
 	
@@ -110,6 +45,8 @@ public class MovingStateSlaveStatus implements ILoadBalancingSlaveStatus,
 	 * LoadBalancing process id
 	 */
 	private final int lbProcessId;
+	
+	
 
 	/**
 	 * ID of Master Peer
@@ -146,6 +83,77 @@ public class MovingStateSlaveStatus implements ILoadBalancingSlaveStatus,
 	 */
 	private final MovingStateMessageDispatcher messageDispatcher;
 
+	
+
+	private boolean registeredAsSlave = false;
+	
+	private boolean registeredAsMaster = false;
+	
+	
+	/**
+	 * Constants for different types of peers.
+	 * 
+	 * @author Carsten Cordes
+	 *
+	 */
+	public enum INVOLVEMENT_TYPES {
+		VOLUNTEERING_PEER, PEER_WITH_SENDER_OR_RECEIVER
+	}
+	
+	/**
+	 * Constants for different (slave-side) LoadBalancing Phases.
+	 * 
+	 * @author Carsten Cordes
+	 *
+	 */
+	public enum LB_PHASES {
+		WAITING_FOR_ADD, WAITING_FOR_MSG_RECEIVED, WAITING_FOR_COPY, WAITING_FOR_FINISH, ABORT
+	}
+
+	/***
+	 * Holds current LoadBalancing Phase
+	 */
+	private LB_PHASES phase;
+	
+	
+	public boolean isRegisteredAsMaster() {
+		return registeredAsMaster;
+	}
+
+	private PeerID sharedQueryMasterPeer;
+	private ID sharedQueryID;
+	
+	public boolean isRegisteredAsSlave() {
+		return registeredAsSlave;
+	}
+	
+	public PeerID getSharedQueryMaster() {
+		return sharedQueryMasterPeer;
+	}
+	
+	public ID sharedQueryID() {
+		return sharedQueryID;
+	}
+	
+	public void addReplacedOperator(IPhysicalOperator original, IPhysicalOperator replacement) {
+		this.replacedToOriginalOperatorMapping.put(replacement,original);
+	}
+
+	public IPhysicalOperator getOriginalOperator(IPhysicalOperator replacement) {
+		return replacedToOriginalOperatorMapping.get(replacement);
+	}
+	
+	public void setRegisteredAsNewSlave(PeerID masterPeer, ID sharedQueryID) {
+		this.registeredAsSlave = true;
+		this.sharedQueryMasterPeer = masterPeer;
+		this.sharedQueryID = sharedQueryID;
+	}
+	
+	public void setRegisteredAsMaster(ID sharedQueryID) {
+		this.registeredAsMaster = true;
+		this.sharedQueryID = sharedQueryID;
+	}
+
 	public Collection<Integer> getInstalledQueries() {
 		return installedQueries;
 	}
@@ -161,6 +169,11 @@ public class MovingStateSlaveStatus implements ILoadBalancingSlaveStatus,
 		}
 	}
 
+	
+	public List<IPhysicalOperator> getReplacedOperators() {
+		return new ArrayList<IPhysicalOperator>(replacedToOriginalOperatorMapping.keySet());
+	}
+	
 	/**
 	 * Adds a pipe to List of buffered Pipes
 	 * 
@@ -370,5 +383,17 @@ public class MovingStateSlaveStatus implements ILoadBalancingSlaveStatus,
 	public synchronized void setStatefulOperatorList(List<IStatefulPO> statefulOperatorList) {
 		this.statefulOperatorList = statefulOperatorList;
 	}
+	
+
+	public void addPipeMapping(String oldPipe, String newPipe) {
+		if(this.pipeMapping.containsKey(oldPipe))
+			return;
+		this.pipeMapping.put(oldPipe, newPipe);
+	}
+	
+	public String getNewPipeForOldPipe(String oldPipe) {
+		return pipeMapping.get(oldPipe);
+	}
+
 
 }

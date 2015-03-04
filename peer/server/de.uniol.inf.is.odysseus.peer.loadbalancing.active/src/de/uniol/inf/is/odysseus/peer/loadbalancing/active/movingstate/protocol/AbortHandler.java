@@ -7,7 +7,10 @@ import net.jxta.peer.PeerID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicator;
+import de.uniol.inf.is.odysseus.p2p_new.physicaloperator.JxtaReceiverPO;
+import de.uniol.inf.is.odysseus.p2p_new.physicaloperator.JxtaSenderPO;
 import de.uniol.inf.is.odysseus.peer.distribute.IQueryPartController;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.OsgiServiceManager;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.common.LoadBalancingException;
@@ -61,6 +64,7 @@ public class AbortHandler {
 	 * @param abortMessage
 	 * @param senderPeer
 	 */
+	@SuppressWarnings("rawtypes")
 	private static void undoLoadBalancing(MovingStateAbortMessage abortMessage,
 			PeerID senderPeer) {
 
@@ -91,43 +95,68 @@ public class AbortHandler {
 
 			case PEER_WITH_SENDER_OR_RECEIVER:
 				boolean isSender = false;
-				if(status.getBufferedPipes()!=null && status.getBufferedPipes().size()>0) {
+				if (status.getBufferedPipes() != null
+						&& status.getBufferedPipes().size() > 0) {
 					isSender = true;
 				}
-				
-				if(status.getPipeOldPeerMapping()!=null) {
-					for (String pipeID : status.getPipeOldPeerMapping().keySet()) {
-						//TODO FIX THIS
-						String foo = pipeID;
-						LOG.error(foo);
+
+				if (status.getPipeOldPeerMapping() != null) {
+					for (IPhysicalOperator replaced : status
+							.getReplacedOperators()) {
+						if (replaced instanceof JxtaSenderPO) {
+							JxtaSenderPO copy = (JxtaSenderPO) replaced;
+							JxtaSenderPO original = (JxtaSenderPO) status
+									.getOriginalOperator(copy);
+							try {
+								MovingStateHelper.replaceSender(copy, original);
+							} catch (LoadBalancingException e) {
+								LOG.error("An error happened during Rollback:",
+										e);
+							}
+						} else {
+							JxtaReceiverPO copy = (JxtaReceiverPO) replaced;
+							JxtaReceiverPO original = (JxtaReceiverPO) status
+									.getOriginalOperator(copy);
+							try {
+								MovingStateHelper.replaceReceiver(copy,
+										original);
+							} catch (LoadBalancingException e) {
+								LOG.error("An error happened during Rollback:",
+										e);
+							}
+						}
 					}
 				}
-				if(isSender) {
+				if (isSender) {
 					for (String pipeID : status.getBufferedPipes()) {
 						try {
 							MovingStateHelper.stopBuffering(pipeID);
 						} catch (LoadBalancingException e) {
-							//do nothing as there is nothing we can do
+							// do nothing as there is nothing we can do
 						}
 					}
 				}
-				//No break.
+				// No break.
 				//$FALL-THROUGH$
 			case VOLUNTEERING_PEER:
 				Collection<Integer> queriesToRemove = status
 						.getInstalledQueries();
 				if (queriesToRemove != null) {
-					IQueryPartController controller = OsgiServiceManager.getQueryPartController();
-					//If new Peer registered itself as new Master->Undo.
-					if(status.isRegisteredAsMaster()) {
+					IQueryPartController controller = OsgiServiceManager
+							.getQueryPartController();
+					// If new Peer registered itself as new Master->Undo.
+					if (status.isRegisteredAsMaster()) {
 						controller.unregisterAsMaster(status.sharedQueryID());
 					}
-					
-					//If new Peer registered itself as new Slave->Undo.
-					if(status.isRegisteredAsSlave()) {
-						OsgiServiceManager.getQueryManager().sendUnregisterAsSlave(status.getSharedQueryMaster(), status.sharedQueryID());
+
+					// If new Peer registered itself as new Slave->Undo.
+					if (status.isRegisteredAsSlave()) {
+						OsgiServiceManager.getQueryManager()
+								.sendUnregisterAsSlave(
+										status.getSharedQueryMaster(),
+										status.sharedQueryID());
 					}
-					
+
 					for (int query : queriesToRemove) {
 						LOG.error("Removing Query with ID " + query);
 						LoadBalancingHelper.deleteQuery(query);
@@ -139,9 +168,9 @@ public class AbortHandler {
 		}
 	}
 
-	
-	//TODO: Do logical parts get re-changed to their old self when Abort happens?
-	
+	// TODO: Do logical parts get re-changed to their old self when Abort
+	// happens?
+
 	/**
 	 * Re-Allocates and cleans up status after Abort has been completed.
 	 * 

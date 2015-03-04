@@ -300,8 +300,10 @@ public class ResponseHandler {
 				status.getMessageDispatcher().stopRunningJob();
 				status.setPhase(LB_PHASES.STOP_BUFFERING);
 				dispatcher.sendMsgReceived(senderPeer);
+				
 				LoadBalancingHelper.cutReceiversFromQuery(status
 						.getLogicalQuery());
+				
 				MovingStateHelper.sendStopBufferingToUpstreamPeers(status);
 				if(status.getUpstreamPeers().size()==0) {
 					LOG.debug("No Upstream Peers... Skipping");
