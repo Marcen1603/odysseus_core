@@ -278,93 +278,91 @@ public class LoadBalancingSynchronizerPO<T extends IStreamObject<? extends ITime
 		//LoadBalancingSynchronizerPO.log.debug(
 		// 	"Input: {} from input port {}", object, port);
 		
-		final PointInTime newTS = object.getMetadata().getStart();
-
-		if (port == this.transferPort && (!this.state.equals(SyncState.timeordering) || this.checkTimeOrder(newTS))) {
-
-			this.transfer(object);
-			//LoadBalancingSynchronizerPO.log.debug(
-				///	"Transfered {} from input port {}", object, port);
-
-		} 
-		
-		
-
-		if (!this.state.equals(SyncState.synchronizing)) {
-
-			return;
-
-		} else if (port == LoadBalancingSynchronizerPO.old_port) {
-
-			this.tsOflastSeenElementOnOldPort = object.getMetadata().getStart();
-
-		} else if (port == LoadBalancingSynchronizerPO.new_port) {
-
-			if (this.tsOflastSeenElementOnOldPort == null) {
-
-				LoadBalancingSynchronizerPO.log
-						.warn("Got element on port {} without seeing any elements on port {}",
-								port, LoadBalancingSynchronizerPO.old_port);
-
-			} else if (newTS.equals(this.tsOflastSeenElementOnOldPort)) {
-
-				// Ideal case
-				// synchronized
-				this.finishSynchroization();
-
-			} else {
-				
-				final PointInTime currentTimeShift = newTS.minus(this.tsOflastSeenElementOnOldPort);
-
-				if (currentTimeShift.getMainPoint() < 0) {
-
-					// new data stream got ahead
+			
+			LoadBalancingSynchronizerPO.log.debug("Port "+port+": ("+this.state+","+this.tsOflastSeenElementOnOldPort+")" +object.toString());
+			final PointInTime newTS = object.getMetadata().getStart();
+	
+			if (port == this.transferPort && (!this.state.equals(SyncState.timeordering) || this.checkTimeOrder(newTS))) {
+	
+				this.transfer(object);
+	
+			} 
+			
+	
+			if (!this.state.equals(SyncState.synchronizing)) {
+	
+				return;
+	
+			} else if (port == LoadBalancingSynchronizerPO.old_port) {
+	
+				this.tsOflastSeenElementOnOldPort = object.getMetadata().getStart();
+	
+			} else if (port == LoadBalancingSynchronizerPO.new_port) {
+	
+				if (this.tsOflastSeenElementOnOldPort == null) {
+	
 					LoadBalancingSynchronizerPO.log
-							.warn("Data stream on port {} got ahead of data stream on port {}",
+							.warn("Got element on port {} without seeing any elements on port {}",
 									port, LoadBalancingSynchronizerPO.old_port);
+	
+				} else if (newTS.equals(this.tsOflastSeenElementOnOldPort)) {
+	
+					// Ideal case
+					// synchronized
 					this.finishSynchroization();
-
-				} else { // currentTimeShift.getMainPoint() >= 0
+	
+				} else {
 					
-					if(lastSeenTimeShift==null) {
-						log.debug("Last seen Timeshift is null.");
+					final PointInTime currentTimeShift = newTS.minus(this.tsOflastSeenElementOnOldPort);
+					
+					if (currentTimeShift.getMainPoint() > 0) {
 						
-					} else if (currentTimeShift.getMainPoint() > this.lastSeenTimeShift
-							.getMainPoint()) {
-
-						//log.warn("Time shift between data streams on port {} and {} rises",
-						//				LoadBalancingSynchronizerPO.old_port,
-						//				port);
-
-						// update elapsed time
-						final long timeElapsed = this.threshold.getUnit()
-								.convert(
-										System.currentTimeMillis()
-												- this.startTime,
-										TimeUnit.MILLISECONDS);
-						if (timeElapsed >= this.threshold.getTime()) {
-
-							// threshold time elapsed
-							LoadBalancingSynchronizerPO.log.warn(
-									"Threshold of {} reached", this.threshold);
-							this.finishSynchroization();
-
+						// new data stream got ahead
+						LoadBalancingSynchronizerPO.log
+								.warn("Data stream on port {} got ahead of data stream on port {}",
+										port, LoadBalancingSynchronizerPO.old_port);
+						LoadBalancingSynchronizerPO.log.debug(object.toString());
+						this.finishSynchroization();
+	
+					} else { // currentTimeShift.getMainPoint() >= 0
+						
+						if(lastSeenTimeShift==null) {
+							log.debug("Last seen Timeshift is null.");
+							
+						} else if (currentTimeShift.getMainPoint() > this.lastSeenTimeShift
+								.getMainPoint()) {
+	
+							log.warn("Time shift between data streams on port {} and {} rises",LoadBalancingSynchronizerPO.old_port,port);
+	
+							// update elapsed time
+							final long timeElapsed = this.threshold.getUnit()
+									.convert(
+											System.currentTimeMillis()
+													- this.startTime,
+											TimeUnit.MILLISECONDS);
+							if (timeElapsed >= this.threshold.getTime()) {
+	
+								// threshold time elapsed
+								LoadBalancingSynchronizerPO.log.warn(
+										"Threshold of {} reached", this.threshold);
+								this.finishSynchroization();
+	
+							}
+	
 						}
-
+	
+						this.lastSeenTimeShift = currentTimeShift;
+	
 					}
-
-					this.lastSeenTimeShift = currentTimeShift;
-
+	
 				}
-
+	
+			} else {
+	
+				LoadBalancingSynchronizerPO.log.error("Invalid input port: {}",
+						port);
+	
 			}
-
-		} else {
-
-			LoadBalancingSynchronizerPO.log.error("Invalid input port: {}",
-					port);
-
-		}
 
 	}
 
@@ -376,6 +374,7 @@ public class LoadBalancingSynchronizerPO<T extends IStreamObject<? extends ITime
 	}
 	
 	public void startSynchronizing() {
+		this.transferPort = old_port;
 		this.startTime = System.currentTimeMillis();
 		this.state = SyncState.synchronizing;
 	}
