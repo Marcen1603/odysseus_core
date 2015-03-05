@@ -1785,9 +1785,11 @@ public class OperatorBuildHelper {
 		
 		if(evaluationParameter != null && evaluationParameter.isEvaluation()){
 		
-			CalcLatencyAO calcLatencyAO = new CalcLatencyAO();
-			calcLatencyAO.subscribeToSource(Iterables.getLast(allOperators), 0 ,0, Iterables.getLast(allOperators).getOutputSchema());
-			allOperators.add(calcLatencyAO);
+			if(evaluationParameter.isCalcLatenzOp()){
+				CalcLatencyAO calcLatencyAO = new CalcLatencyAO();
+				calcLatencyAO.subscribeToSource(Iterables.getLast(allOperators), 0 ,0, Iterables.getLast(allOperators).getOutputSchema());
+				allOperators.add(calcLatencyAO);
+			}
 			
 			
 			List<Option> parameter = new ArrayList<Option>();
