@@ -914,13 +914,14 @@ public class OperatorBuildHelper {
 	
 	
 		
-	public static CSVFileSink createFileSinkAO( String queryName, String fileName, String filePath, String sinkName, List<Option> parameter, ILogicalOperator source){
+	public static CSVFileSink createFileSinkAO( String queryName, String fileName, String sinkName, List<Option> parameter, ILogicalOperator source){
 		CSVFileSink fAO = new CSVFileSink();
 		
 		if(parameter!= null){
 			fAO.setOptions(parameter);
 		}
 	
+		
 		if(fileName != null && !fileName.equals("")){
 			fAO.setFilename(fileName);
 		}else{
@@ -1794,7 +1795,7 @@ public class OperatorBuildHelper {
 			
 			List<Option> parameter = new ArrayList<Option>();
 			parameter.add(new Option("csv.writemetadata", "true"));
-			CSVFileSink fAO = OperatorBuildHelper.createFileSinkAO(queryName, evaluationParameter.getFileName(),evaluationParameter.getFilePath(),evaluationParameter.getSinkName(), parameter, Iterables.getLast(allOperators) );
+			CSVFileSink fAO = OperatorBuildHelper.createFileSinkAO(queryName, evaluationParameter.getFileName(),evaluationParameter.getSinkName(), parameter, Iterables.getLast(allOperators) );
 			allOperators.add(fAO);
 		}
 		
