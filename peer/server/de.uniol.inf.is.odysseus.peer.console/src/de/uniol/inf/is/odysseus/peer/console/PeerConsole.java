@@ -2,8 +2,6 @@ package de.uniol.inf.is.odysseus.peer.console;
 
 import java.lang.management.ManagementFactory;
 import java.lang.management.ThreadMXBean;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Collection;
@@ -26,6 +24,9 @@ import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 
+import de.uniol.inf.is.odysseus.console.executor.ConsoleCommandExecutionException;
+import de.uniol.inf.is.odysseus.console.executor.ConsoleCommandNotFoundException;
+import de.uniol.inf.is.odysseus.console.executor.IConsoleCommandExecutor;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.AbstractPhysicalSubscription;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
@@ -61,7 +62,6 @@ import de.uniol.inf.is.odysseus.peer.update.PeerUpdatePlugIn;
 public class PeerConsole implements CommandProvider, IPeerCommunicatorListener {
 
 	private static final Logger LOG = LoggerFactory.getLogger(PeerConsole.class);
-	private static final Collection<CommandProvider> COMMAND_PROVIDERS = Lists.newArrayList();
 	private static final DateFormat DATE_FORMAT = new SimpleDateFormat();
 
 	private static IP2PDictionary p2pDictionary;
@@ -73,6 +73,7 @@ public class PeerConsole implements CommandProvider, IPeerCommunicatorListener {
 	private static IJxtaServicesProvider jxtaServicesProvider;
 	private static IServerExecutor executor;
 	private static IPeerReachabilityService peerReachabilityService;
+	private static IConsoleCommandExecutor consoleCommandExecutor;
 
 	private final Collection<PeerID> loggedInPeers = Lists.newArrayList();
 	private final Collection<PeerID> loggedToPeers = Lists.newArrayList();
@@ -200,16 +201,6 @@ public class PeerConsole implements CommandProvider, IPeerCommunicatorListener {
 	}
 
 	// called by OSGi-DS
-	public static void bindCommandProvider(CommandProvider serv) {
-		COMMAND_PROVIDERS.add(serv);
-	}
-
-	// called by OSGi-DS
-	public static void unbindCommandProvider(CommandProvider serv) {
-		COMMAND_PROVIDERS.remove(serv);
-	}
-	
-	// called by OSGi-DS
 	public static void bindPeerReachabilityService(IPeerReachabilityService serv) {
 		peerReachabilityService = serv;
 	}
@@ -218,6 +209,18 @@ public class PeerConsole implements CommandProvider, IPeerCommunicatorListener {
 	public static void unbindPeerReachabilityService(IPeerReachabilityService serv) {
 		if (peerReachabilityService == serv) {
 			peerReachabilityService = null;
+		}
+	}
+	
+	// called by OSGi-DS
+	public static void bindConsoleCommandExecutor( IConsoleCommandExecutor executor ) {
+		consoleCommandExecutor = executor;
+	}
+	
+	// called by OSGi-DS
+	public static void unbindConsoleCommandExecutor( IConsoleCommandExecutor executor ) {
+		if( consoleCommandExecutor == executor ) {
+			consoleCommandExecutor = null;
 		}
 	}
 
@@ -999,67 +1002,20 @@ public class PeerConsole implements CommandProvider, IPeerCommunicatorListener {
 	}
 
 	private void processCommandMessage(PeerID senderPeer, CommandMessage cmd) {
-		String[] splitted = cmd.getCommandString().split("\\ ", 2);
-		String command = splitted[0];
-		String parameters = splitted.length > 1 ? splitted[1] : null;
-		LOG.debug("Got command message: " + command);
 
-		StringBuilderCommandInterpreter delegateCi = new StringBuilderCommandInterpreter(parameters != null ? parameters.split("\\ ") : new String[0]);
-		if (command.equals("help")) {
-			printHelp(delegateCi);
-		} else {
-			Optional<Method> optMethod = determineCommandMethod(command);
-			Optional<CommandProvider> optProvider = determineProvider(command);
-
-			if (!optMethod.isPresent()) {
-				delegateCi.println("No such command: " + command);
-			} else {
-				try {
-					optMethod.get().invoke(optProvider.get(), delegateCi);
-					// delegateCi contains output of command now
-				} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-					LOG.error("Could not execute command {}", command, e);
-					delegateCi.println("Could not execute command " + command + " : " + e.getMessage());
-				}
-			}
-		}
-
-		CommandOutputMessage out = new CommandOutputMessage(delegateCi.getText());
+		// TODO: connect to console executor service here...
 		try {
-			LOG.debug("Command executed. Send results back");
-			peerCommunicator.send(senderPeer, out);
-		} catch (PeerCommunicationException e) {
-			LOG.debug("Could not send console output", e);
-		}
-	}
-
-	private static void printHelp(CommandInterpreter ci) {
-		for (CommandProvider provider : COMMAND_PROVIDERS) {
-			ci.println(provider.getHelp());
-		}
-	}
-
-	private static Optional<Method> determineCommandMethod(String command) {
-		for (CommandProvider provider : COMMAND_PROVIDERS) {
+			String outputString = consoleCommandExecutor.executeConsoleCommand(cmd.getCommandString());
+			CommandOutputMessage out = new CommandOutputMessage(outputString);
 			try {
-				return Optional.of(provider.getClass().getMethod("_" + command, CommandInterpreter.class));
-			} catch (NoSuchMethodException e) {
+				LOG.debug("Command executed. Send results back");
+				peerCommunicator.send(senderPeer, out);
+			} catch (PeerCommunicationException e) {
+				LOG.debug("Could not send console output", e);
 			}
+		} catch (ConsoleCommandNotFoundException | ConsoleCommandExecutionException e1) {
 		}
-
-		return Optional.absent();
-	}
-
-	private static Optional<CommandProvider> determineProvider(String command) {
-		for (CommandProvider provider : COMMAND_PROVIDERS) {
-			try {
-				provider.getClass().getMethod("_" + command, CommandInterpreter.class);
-				return Optional.of(provider);
-			} catch (NoSuchMethodException e) {
-			}
-		}
-
-		return Optional.absent();
+		
 	}
 
 	private void processCommandOutputMessage(IPeerCommunicator communicator, PeerID senderPeer, CommandOutputMessage cmd) {
