@@ -14,10 +14,9 @@ import de.uniol.inf.is.odysseus.peer.ddc.MissingDDCEntryException;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.ddcaccess.AbstractSportsDDCAccess;
 
 /**
- * An operator for a heatmap. Needs three inputs
- * (0) entityId
- * (1) xValue (position of the entity)
- * (2) yValue (position of the entity)
+ * An operator for a heatmap. Needs three inputs (0) entityId (1) xValue
+ * (position of the entity) (2) yValue (position of the entity)
+ * 
  * @author Tobias Brandt
  *
  * @param <T>
@@ -48,9 +47,13 @@ public class SportsHeatMapPO<T extends Tuple<?>> extends AbstractPipe<T, Tuple> 
 
 	/**
 	 * 
-	 * @param reduceLoadFactor The factor by which the load is reduced. If "1000", the map is only send every 1000 tuples of input
-	 * @param numTilesHorizontal The number of tiles used horizontal
-	 * @param numTilesVertical The number of tiles used vertical
+	 * @param reduceLoadFactor
+	 *            The factor by which the load is reduced. If "1000", the map is
+	 *            only send every 1000 tuples of input
+	 * @param numTilesHorizontal
+	 *            The number of tiles used horizontal
+	 * @param numTilesVertical
+	 *            The number of tiles used vertical
 	 */
 	public SportsHeatMapPO(int reduceLoadFactor, int numTilesHorizontal, int numTilesVertical) {
 		this.reduceLoadFacor = reduceLoadFactor;
@@ -157,7 +160,7 @@ public class SportsHeatMapPO<T extends Tuple<?>> extends AbstractPipe<T, Tuple> 
 	public void processPunctuation(IPunctuation punctuation, int port) {
 		sendPunctuation(punctuation);
 	}
-	
+
 	@SuppressWarnings({ "unchecked" })
 	@Override
 	public AbstractPipe<T, T> clone() {

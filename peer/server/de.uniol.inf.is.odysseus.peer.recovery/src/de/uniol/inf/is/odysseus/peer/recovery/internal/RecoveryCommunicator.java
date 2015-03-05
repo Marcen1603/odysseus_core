@@ -38,15 +38,15 @@ import de.uniol.inf.is.odysseus.rest.socket.SocketInfo;
  * 
  */
 public class RecoveryCommunicator implements IRecoveryCommunicator {
-	
+
 	public final static int PEER_INSTRUCTIONS_PORT = 53000;
 
 	/**
 	 * The logger instance for this class.
 	 */
 	private static final Logger LOG = LoggerFactory.getLogger(RecoveryCommunicator.class);
-
 	private Map<UUID, RecoveryProcessState> recoveryProcessStates = new HashMap<UUID, RecoveryProcessState>();
+	private Map<ID, Long> recoveryTimeMeasurements = new HashMap<ID, Long>();
 
 	/**
 	 * The P2P network manager, if there is one bound.
@@ -316,10 +316,11 @@ public class RecoveryCommunicator implements IRecoveryCommunicator {
 			LOG.error("No peer communicator bound!");
 			return false;
 		}
-			
+
 		// Send the add query message
-		return AddQuerySender.getInstance().sendAddQueryPart(newPeer, pql, localQueryId, queryState, sharedQuery, master, masterId, failedPeer,
-				clientIp, hostIP, hostPort, recoveryStateIdentifier, subprocessID, cPeerCommunicator.get());
+		return AddQuerySender.getInstance().sendAddQueryPart(newPeer, pql, localQueryId, queryState, sharedQuery,
+				master, masterId, failedPeer, clientIp, hostIP, hostPort, recoveryStateIdentifier, subprocessID,
+				cPeerCommunicator.get());
 	}
 
 	@Override
@@ -402,6 +403,11 @@ public class RecoveryCommunicator implements IRecoveryCommunicator {
 
 	@Override
 	public void peerRemoved(PeerID peer) {
+
+		// Start time measurement
+		long time = System.currentTimeMillis();
+		recoveryTimeMeasurements.put(peer, time);
+
 		Preconditions.checkNotNull(peer);
 		if (!cRecoveryStrategyManager.isPresent()) {
 			LOG.error("No Recovery strategy manager bound!");
@@ -429,6 +435,16 @@ public class RecoveryCommunicator implements IRecoveryCommunicator {
 
 	@Override
 	public void removeRecoveryProcessState(UUID identifier) {
+
+		// Stop time measurement
+		long time = System.currentTimeMillis();
+		long startTime = recoveryTimeMeasurements.remove(recoveryProcessStates.get(identifier).getFailedPeerId());
+		long neededTime = time - startTime;
+		int msToSeconds = 1000;
+		String timeString = neededTime / msToSeconds + "s " + neededTime % msToSeconds + "ms";
+		
+		LOG.debug("Finished recovery for peer " + recoveryProcessStates.get(identifier).getFailedPeerId() + ". Needed " + timeString + " (" + neededTime + " ms).");
+
 		if (recoveryProcessStates.containsKey(identifier)) {
 			recoveryProcessStates.remove(identifier);
 		}
