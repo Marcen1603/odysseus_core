@@ -61,6 +61,7 @@ public class JxtaReceiverPO<T extends IStreamObject> extends AbstractSource<T> i
 	public JxtaReceiverPO(JxtaReceiverAO ao) throws DataTransmissionException {
 		SDFSchema schema = ao.getOutputSchema().clone();
 		setOutputSchema(schema);
+		
 		dataHandler = (NullAwareTupleDataHandler) new NullAwareTupleDataHandler().createInstance(schema);
 
 		pipeIDString = ao.getPipeID();
@@ -152,9 +153,7 @@ public class JxtaReceiverPO<T extends IStreamObject> extends AbstractSource<T> i
 			systemLoad.addSystemLoad(localPeerName);
 		}
 
-		if (streamObject != null) {
-			transfer(streamObject);
-		}
+		transfer(streamObject);
 	}
 
 	@Override

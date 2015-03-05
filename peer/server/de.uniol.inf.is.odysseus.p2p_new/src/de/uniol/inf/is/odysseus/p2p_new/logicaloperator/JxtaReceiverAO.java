@@ -1,13 +1,17 @@
 package de.uniol.inf.is.odysseus.p2p_new.logicaloperator;
 
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
+import com.google.common.collect.Maps;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFConstraint;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator;
@@ -27,6 +31,7 @@ public class JxtaReceiverAO extends AbstractLogicalOperator {
 	
 	private SDFSchema assignedSchema;
 	private String schemaName;
+	private String basetimeUnit;
 	private SourceAdvertisement importedSrcAdvertisement;
 
 	public JxtaReceiverAO() {
@@ -40,6 +45,7 @@ public class JxtaReceiverAO extends AbstractLogicalOperator {
 		this.peerID = other.peerID;
 		this.assignedSchema = other.assignedSchema.clone();
 		this.importedSrcAdvertisement = other.importedSrcAdvertisement;
+		this.basetimeUnit = other.basetimeUnit;
 		
 		setParameterInfos(other.getParameterInfos());
 	}
@@ -106,6 +112,8 @@ public class JxtaReceiverAO extends AbstractLogicalOperator {
 		} else {
 			assignedSchema = SDFSchemaFactory.createNewTupleSchema("", outputSchema);
 		}
+		
+		appendToAssignedSchema(basetimeUnit);
 		addParameterInfo("SCHEMA", schemaToString(outputSchema));
 	}
 	
@@ -113,6 +121,28 @@ public class JxtaReceiverAO extends AbstractLogicalOperator {
 		return assignedSchema.getAttributes();
 	}
 	
+	@Parameter(name="BASETIMEUNIT", type = StringParameter.class, optional=true)
+	public void setBaseTimeunit( String baseTimeUnit ) {
+		this.basetimeUnit = baseTimeUnit;
+		
+		appendToAssignedSchema(baseTimeUnit);
+	}
+
+	private void appendToAssignedSchema(String baseTimeUnit) {
+		if( assignedSchema != null && !Strings.isNullOrEmpty(baseTimeUnit)) {
+			TimeUnit baseTimeunit = TimeUnit.valueOf(baseTimeUnit);
+			
+			Map<String, SDFConstraint> constraints = Maps.newHashMap();
+			constraints.put(SDFConstraint.BASE_TIME_UNIT, new SDFConstraint(SDFConstraint.BASE_TIME_UNIT, baseTimeunit));
+			assignedSchema = SDFSchemaFactory.createNewWithContraints(constraints, assignedSchema);
+			
+			addParameterInfo("SCHEMA", schemaToString(assignedSchema.getAttributes()));
+		}
+	}
+	
+	public String getBaseTimeunit() {
+		return basetimeUnit;
+	}
 	
 	@Parameter(name = "SCHEMANAME",type = StringParameter.class, optional=false)
 	public void setSchemaName( String schemaName ) {
@@ -121,6 +151,7 @@ public class JxtaReceiverAO extends AbstractLogicalOperator {
 		// TODO: This must be done inside initialize
 		if( assignedSchema != null ) {
 			assignedSchema = SDFSchemaFactory.createNewTupleSchema(schemaName, assignedSchema.getAttributes());
+			appendToAssignedSchema(basetimeUnit);
 		}
 	}
 	

@@ -53,6 +53,7 @@ public class SourceAdvertisement extends Advertisement implements Serializable {
 	// internal view
 	private static final String PIPEID_TAG = "pipeid";
 	private static final String OUTPUTSCHEMA_TAG = "outputSchema";
+	private static final String BASETIMEUNIT_TAG = "baseTimeunit";
 
 	private static final String[] INDEX_FIELDS = new String[] { ID_TAG, NAME_TAG, PEER_ID_TAG };
 
@@ -61,6 +62,7 @@ public class SourceAdvertisement extends Advertisement implements Serializable {
 	private PipeID pipeID;
 	private PeerID peerID;
 	private SDFSchema outputSchema;
+	private String baseTimeunit;
 	private String pqlText;
 
 	public SourceAdvertisement(Element<?> root) {
@@ -86,6 +88,7 @@ public class SourceAdvertisement extends Advertisement implements Serializable {
 		peerID = srcAdvertisement.peerID;
 		outputSchema = srcAdvertisement.outputSchema;
 		pqlText = srcAdvertisement.pqlText;
+		baseTimeunit = srcAdvertisement.baseTimeunit;
 	}
 
 	public SourceAdvertisement() {
@@ -121,10 +124,13 @@ public class SourceAdvertisement extends Advertisement implements Serializable {
 			appendElement(doc, PIPEID_TAG, pipeID.toString());
 		}
 		
-		final Element<?> outSchemaElement = appendElement(doc, OUTPUTSCHEMA_TAG, outputSchema.getURI());
+		Element<?> outSchemaElement = appendElement(doc, OUTPUTSCHEMA_TAG, outputSchema.getURI());
 		for (final SDFAttribute attr : outputSchema) {
 			appendElement(outSchemaElement, attr.getAttributeName(), attr.getDatatype().getURI());
 		}	
+		if( !Strings.isNullOrEmpty(baseTimeunit)) {
+			appendElement(doc, BASETIMEUNIT_TAG, baseTimeunit);
+		}
 	}
 
 	@Override
@@ -187,6 +193,14 @@ public class SourceAdvertisement extends Advertisement implements Serializable {
 	public void setPQLText(String text) {
 		this.pqlText = text;
 	}
+	
+	public String getBaseTimeunit() {
+		return baseTimeunit;
+	}
+	
+	public void setBaseTimeunit( String baseTimeunit ) {
+		this.baseTimeunit = baseTimeunit;
+	}
 
 	@Override
 	public String[] getIndexFields() {
@@ -236,7 +250,10 @@ public class SourceAdvertisement extends Advertisement implements Serializable {
 		} else if (elem.getName().equals(OUTPUTSCHEMA_TAG)) {
 			setOutputSchema(handleOutputSchemaTag(elem, getName()));
 
-		} 
+		} else if (elem.getName().equals(BASETIMEUNIT_TAG)) {
+			setBaseTimeunit(elem.getTextValue());
+
+		}
 	}
 	
 	private static ID toID(TextElement<?> elem) {

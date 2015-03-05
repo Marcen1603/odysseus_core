@@ -6,6 +6,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import net.jxta.document.Advertisement;
 import net.jxta.document.AdvertisementFactory;
@@ -30,6 +31,8 @@ import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.FileHandler;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFConstraint;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.DataDictionaryProvider;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionaryListener;
@@ -369,15 +372,20 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 					query = createCmd.getQuery();
 				}
 
-				Collection<File> files = determineNeededFiles(query);
-				LOG.info("Query is dependent from {} files.", files.size() );
-				for( File file : files ) {
-					if( !file.exists() ) {
-						throw new PeerException("Could not import '" + realSrcNameToUse + "' since the specified file '" + file.getName() + "' does not exist.");
+				if( query != null ) {
+					Collection<File> files = determineNeededFiles(query);
+					LOG.info("Query is dependent from {} files.", files.size() );
+					for( File file : files ) {
+						if( !file.exists() ) {
+							throw new PeerException("Could not import '" + realSrcNameToUse + "' since the specified file '" + file.getName() + "' does not exist.");
+						}
 					}
+					
+					getDataDictionary().setStream(realSrcNameToUse, query.getLogicalPlan(), SessionManagementService.getActiveSession());
+				} else {
+					throw new PeerException("Could not import '" + realSrcNameToUse + "' since the parser did not return a runnable query");
 				}
 
-				getDataDictionary().setStream(realSrcNameToUse, query.getLogicalPlan(), SessionManagementService.getActiveSession());
 			} catch (QueryParseException e) {
 				throw new PeerException("Could not import source " + realSrcNameToUse, e);
 			}
@@ -388,6 +396,7 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 			final JxtaReceiverAO receiverOperator = new JxtaReceiverAO();
 			receiverOperator.setPipeID(advertisement.getPipeID().toString());
 			receiverOperator.setOutputSchema(advertisement.getOutputSchema());
+			receiverOperator.setBaseTimeunit(advertisement.getBaseTimeunit());
 			receiverOperator.setSchema(advertisement.getOutputSchema().getAttributes());
 			receiverOperator.setSchemaName(advertisement.getOutputSchema().getURI());
 			receiverOperator.setName(realSrcNameToUse + "_Receive");
@@ -821,6 +830,11 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 		srcAdvertisement.setPeerID(P2PNetworkManager.getInstance().getLocalPeerID());
 		srcAdvertisement.setPQLText(pqlGenerator.generatePQLStatement(stream));
 		srcAdvertisement.setOutputSchema(stream.getOutputSchema());
+		Optional<String> optBaseTimeunitString = getBaseTimeunitString(stream.getOutputSchema());
+		if( optBaseTimeunitString.isPresent() ) {
+			srcAdvertisement.setBaseTimeunit(optBaseTimeunitString.get());
+		}
+		
 		LOG.debug("Generated PQL-Text: " + srcAdvertisement.getPQLText());
 
 		exportedSourcesQueryMap.put(srcAdvertisement, -1);
@@ -841,6 +855,10 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 		viewAdvertisement.setPipeID(pipeID);
 		viewAdvertisement.setName(removeUserFromName(viewName));
 		viewAdvertisement.setPeerID(P2PNetworkManager.getInstance().getLocalPeerID());
+		Optional<String> optBaseTimeunitString = getBaseTimeunitString(view.getOutputSchema());
+		if( optBaseTimeunitString.isPresent() ) {
+			viewAdvertisement.setBaseTimeunit(optBaseTimeunitString.get());
+		}
 
 		JxtaSenderAO jxtaSender = new JxtaSenderAO();
 		jxtaSender.setName(viewName + "_Send");
@@ -880,7 +898,21 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 
 		return viewAdvertisement;
 	}
+	
+	private static Optional<String> getBaseTimeunitString(SDFSchema schema) {
+		Preconditions.checkNotNull(schema, "Schema to get basetimeunit from must not be null!");
 
+		SDFConstraint baseTimeunitConstraint = schema.getConstraint(SDFConstraint.BASE_TIME_UNIT);
+		if (baseTimeunitConstraint != null) {
+			Object value = baseTimeunitConstraint.getValue();
+			if (value != null && value instanceof TimeUnit) {
+				return Optional.of(((TimeUnit) value).toString());
+			}
+		}
+		
+		return Optional.absent();
+	}
+	
 	@Override
 	public Optional<JxtaSenderAO> getExportingSenderAO(SourceAdvertisement advertisement) {
 		return Optional.fromNullable(exportedSenderMap.get(advertisement));
