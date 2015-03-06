@@ -10,6 +10,8 @@ import javax.net.ssl.SSLParameters;
 import javax.net.ssl.TrustManager;
 import javax.xml.ws.Endpoint;
 
+import com.sun.net.httpserver.*;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -57,7 +59,7 @@ public class SensorServiceStarter {
 				ssl = SSLContext.getInstance("TLS");
 			}
 
-/*			KeyManager[] keyManagers = null;
+			KeyManager[] keyManagers = null;
 			TrustManager[] trustManagers = null;
 			HttpsConfigurator configurator = null;
 
@@ -82,7 +84,7 @@ public class SensorServiceStarter {
 				}
 
 				ssl.init(keyManagers, trustManagers, new SecureRandom());
-			}*/
+			}
 
 			int port = Integer.parseInt(OdysseusConfiguration
 					.get("WebService.Port"));
@@ -96,14 +98,14 @@ public class SensorServiceStarter {
 			while (port <= maxPort) {
 				try {
 					if (useSSL) {
-/*						Endpoint endpoint = Endpoint.create(implementor);
+						Endpoint endpoint = Endpoint.create(implementor);
 						HttpsServer httpsServer = HttpsServer.create(
 								new InetSocketAddress(localhost, port), port);
 						httpsServer.setHttpsConfigurator(configurator);
 						HttpContext context = httpsServer
 								.createContext(contextStr);
 						httpsServer.start();
-						endpoint.publish(context);*/
+						endpoint.publish(context);
 					} else {
 						String webServiceEndpoint = "http://" + localhost + ":"
 								+ port + contextStr;

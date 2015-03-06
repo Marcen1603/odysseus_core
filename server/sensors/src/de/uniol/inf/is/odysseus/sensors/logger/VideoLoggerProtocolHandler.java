@@ -6,6 +6,8 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
+import javax.xml.bind.annotation.XmlRootElement;
+
 import org.bytedeco.javacv.FFmpegFrameRecorder;
 import org.bytedeco.javacv.FrameRecorder;
 import org.slf4j.Logger;
@@ -20,7 +22,13 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITranspor
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportExchangePattern;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandler;
 import de.uniol.inf.is.odysseus.imagejcv.common.datatype.ImageJCV;
-import de.uniol.inf.is.odysseus.sensors.utilities.KeyValueFile;
+
+@XmlRootElement(name = "videoLog")
+class VideoLogMetaData extends LogMetaData
+{
+	public String videoFile;
+	public String syncFile;
+}
 
 public class VideoLoggerProtocolHandler extends LoggerProtocolHandler 
 {
@@ -54,14 +62,11 @@ public class VideoLoggerProtocolHandler extends LoggerProtocolHandler
 		return new VideoLoggerProtocolHandler(direction, access, dataHandler, options);
 	}	
 	
-	@Override protected void startLoggingInternal(KeyValueFile logConfigFile, Tuple<?> object) throws IOException 
+	@Override protected LogMetaData startLoggingInternal(Tuple<?> object) throws IOException 
 	{
 		videoFileName = getFileNameBase() + ".mp4";
 		syncFileName = getFileNameBase() + ".sync";		
-		
-		logConfigFile.set("VideoFile", 	new File(videoFileName).getName());
-		logConfigFile.set("SyncFile", 	new File(syncFileName).getName());		
-		
+				
 		ImageJCV image = (ImageJCV) object.getAttribute(0);
 		
 		try
@@ -81,9 +86,15 @@ public class VideoLoggerProtocolHandler extends LoggerProtocolHandler
 	        
 		// Set up sync file
 	    syncFileStream = new DataOutputStream(new FileOutputStream(syncFileName));
+	    
+		VideoLogMetaData logMetaData = new VideoLogMetaData();
+		logMetaData.videoFile = new File(videoFileName).getName();
+		logMetaData.syncFile = new File(syncFileName).getName();
+	    
+	    return logMetaData;
 	}
 
-	@Override protected void stopLoggingInternal(KeyValueFile logConfigFile) 
+	@Override protected void stopLoggingInternal(LogMetaData logMetaData) 
 	{
 		if (recorder != null)
 		{

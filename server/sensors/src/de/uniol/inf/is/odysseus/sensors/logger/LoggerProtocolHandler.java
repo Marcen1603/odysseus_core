@@ -1,8 +1,11 @@
 package de.uniol.inf.is.odysseus.sensors.logger;
 
+import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+
+import javax.xml.bind.annotation.XmlRootElement;
 
 import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
@@ -11,28 +14,31 @@ import de.uniol.inf.is.odysseus.core.metadata.TimeInterval;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.AbstractProtocolHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.IAccessPattern;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportDirection;
-import de.uniol.inf.is.odysseus.sensors.types.SensorModel;
-import de.uniol.inf.is.odysseus.sensors.utilities.KeyValueFile;
+import de.uniol.inf.is.odysseus.sensors.types.SensorModel2;
 import de.uniol.inf.is.odysseus.sensors.utilities.XmlMarshalHelper;
+
+@XmlRootElement(name = "log")
+class LogMetaData
+{
+	public SensorModel2 sensor;
+	public long startTime;
+	public long endTime = 0;
+}
 
 public abstract class LoggerProtocolHandler extends AbstractProtocolHandler<Tuple<?>>
 {
 	private Object			processLock = new Object();
 	
-	private boolean 		logSetUp;
-	private KeyValueFile 	logConfigFile;
 	private long 			lastTimeStamp;
-	
-	private SensorModel		sensorModel;
-	
-	private String 			sensorName;
-	private String 			sensorPosition;
-	private String 			sensorEthernetAddr;
-	private String 			sensorType;
-	private String 			sensorSourceName;
-	private String 			filePath;	
+
+	private String 			loggingDirectory;
 	private String			fileNameBase;
-	private long			logfileSizeLimit;
+	private long			logfileSizeLimit;	
+	private SensorModel2	sensorModel;
+	
+	private boolean 		logSetUp;	
+	private LogMetaData 	logMetaData;
+	private String			logMetaDataFileName;
 	
 	public LoggerProtocolHandler() 
 	{
@@ -43,24 +49,13 @@ public abstract class LoggerProtocolHandler extends AbstractProtocolHandler<Tupl
 	{
 		super(direction, access, dataHandler, options);
 		
-		options.checkRequiredException("sensorname");
-		options.checkRequiredException("sensorposition");
-		options.checkRequiredException("sensorethernetaddr");
-		options.checkRequiredException("sensortype");
-		options.checkRequiredException("sensorsourcename");
+		options.checkRequiredException("sensorxml");
+		options.checkRequiredException("directory");
 		
-		sensorName 			= options.get("sensorname");
-		sensorPosition 		= options.get("sensorposition");
-		sensorEthernetAddr	= options.get("sensorethernetaddr");
-		sensorType			= options.get("sensortype");
-		sensorSourceName	= options.get("sensorsourcename");
+		sensorModel = XmlMarshalHelper.fromXml(options.get("sensorxml"), SensorModel2.class);
 		
-		String sensorXml = options.get("sensorxml");
-		if (sensorXml != null)
-			sensorModel = new XmlMarshalHelper<>(SensorModel.class).fromXml(sensorXml);
-		
-		filePath  			= options.get("filename", "");
-		logfileSizeLimit	= options.getLong("sizelimit", Long.MAX_VALUE);		
+		loggingDirectory = options.get("directory");
+		logfileSizeLimit = options.getLong("sizelimit", Long.MAX_VALUE);		
 	}
 	
 	public String getFileNameBase() 	{ return fileNameBase; }
@@ -95,30 +90,22 @@ public abstract class LoggerProtocolHandler extends AbstractProtocolHandler<Tupl
         TimeInterval timeStamp = (TimeInterval)object.getMetadata();
         long now = timeStamp.getStart().getMainPoint();
         
-        String hostName = sensorEthernetAddr.replace(':', '_');        
-        
         String startTimeString = new SimpleDateFormat("yyyy_MM_dd__HH_mm_ss").format(new Date(now));
-        fileNameBase = filePath + "/" + hostName + "_" + sensorType + "_" + startTimeString;
-        String logFileName = fileNameBase + ".cfg";		
+        fileNameBase = loggingDirectory + "/" + sensorModel.id + "_" + startTimeString;
+        logMetaDataFileName = fileNameBase + ".cfg";		
 		
 		try
 		{
-			logConfigFile = new KeyValueFile(logFileName, false);
-			logConfigFile.set("Name", 		 	sensorName);
-			logConfigFile.set("Position", 	 	sensorPosition);
-			logConfigFile.set("EthernetAddr", 	sensorEthernetAddr);
-			logConfigFile.set("Type", 		 	sensorType);
-			logConfigFile.set("SourceName", 	sensorSourceName);
+			logMetaData = startLoggingInternal(object);
+			logMetaData.startTime = now;
+			logMetaData.endTime = 0;
+			logMetaData.sensor = sensorModel;
 			
-			logConfigFile.set("StartTime", Long.toString(now));
-			logConfigFile.set("EndTime", "0");
-			
-			startLoggingInternal(logConfigFile, object);
-			logConfigFile.save();
+			XmlMarshalHelper.toXmlFile(logMetaData, new File(logMetaDataFileName));
 		}
 		catch (IOException e)
 		{
-			logConfigFile = null;
+			logMetaData = null;
 			stopLoggingInternal(null);
 			throw e;
 		}
@@ -131,12 +118,12 @@ public abstract class LoggerProtocolHandler extends AbstractProtocolHandler<Tupl
 		if (!logSetUp) return;
 		logSetUp = false;
 		
-		stopLoggingInternal(logConfigFile);
+		stopLoggingInternal(logMetaData);
 		
 		try
 		{
-			logConfigFile.set("EndTime" , Long.toString(lastTimeStamp));
-			logConfigFile.save();			
+			logMetaData.endTime = lastTimeStamp;
+			XmlMarshalHelper.toXmlFile(logMetaData, new File(logMetaDataFileName));
 		}
 		catch(IOException e)
 		{
@@ -144,7 +131,7 @@ public abstract class LoggerProtocolHandler extends AbstractProtocolHandler<Tupl
 		}
 		finally
 		{
-			logConfigFile = null;
+			logMetaData = null;
 		}			
 	}
 	
@@ -166,7 +153,7 @@ public abstract class LoggerProtocolHandler extends AbstractProtocolHandler<Tupl
 		}
 	}
 	
-	protected abstract void 	startLoggingInternal(KeyValueFile logConfigFile, Tuple<?> object) throws IOException;
-	protected abstract void 	stopLoggingInternal(KeyValueFile logConfigFile);
-	protected abstract long 	writeInternal(Tuple<?> object, long timeStamp) throws IOException;
+	protected abstract LogMetaData startLoggingInternal(Tuple<?> object) throws IOException;
+	protected abstract void stopLoggingInternal(LogMetaData logMetaData);
+	protected abstract long writeInternal(Tuple<?> object, long timeStamp) throws IOException;
 }

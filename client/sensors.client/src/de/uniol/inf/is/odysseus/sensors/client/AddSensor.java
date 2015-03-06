@@ -7,7 +7,7 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java-Klasse für addSensor complex type.
+ * <p>Java-Klasse fï¿½r addSensor complex type.
  * 
  * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.
  * 
@@ -31,6 +31,7 @@ import javax.xml.bind.annotation.XmlType;
     "securityToken",
     "sensorXml"
 })
+@SuppressWarnings(value = { "all" })
 public class AddSensor {
 
     protected String securityToken;

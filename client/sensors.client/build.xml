@@ -38,7 +38,7 @@ import de.uniol.inf.is.odysseus.core.procedure.StoredProcedure;
 import de.uniol.inf.is.odysseus.core.collection.Pair;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.QueryState;
 				</replacevalue>	
-	    </replace>
+	    </replace> -->
 
 		<replace  dir="${source-dir}">
 			<replacetoken>public class</replacetoken>
@@ -64,7 +64,6 @@ public class</replacevalue>
 @SuppressWarnings(value = { "all" })</replacetoken>
 			<replacevalue>@SuppressWarnings(value = { "all" })</replacevalue>
 		</replace>
--->
 		
 	</target>
 	

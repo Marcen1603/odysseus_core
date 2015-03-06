@@ -7,7 +7,7 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java-Klasse für InvalidUserDataException complex type.
+ * <p>Java-Klasse fï¿½r InvalidUserDataException complex type.
  * 
  * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.
  * 
@@ -29,6 +29,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(name = "InvalidUserDataException", propOrder = {
     "message"
 })
+@SuppressWarnings(value = { "all" })
 public class InvalidUserDataException {
 
     protected String message;

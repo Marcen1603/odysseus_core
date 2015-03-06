@@ -18,6 +18,7 @@ import javax.xml.ws.WebServiceFeature;
  * 
  */
 @WebServiceClient(name = "SensorServiceService", targetNamespace = "http://sensors.odysseus.is.inf.uniol.de/", wsdlLocation = "http://localhost:9669/odysseus/sensors?wsdl")
+@SuppressWarnings(value = { "all" })
 public class SensorServiceService
     extends Service
 {

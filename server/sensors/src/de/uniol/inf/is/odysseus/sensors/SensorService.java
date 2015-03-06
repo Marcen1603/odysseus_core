@@ -30,23 +30,20 @@
 
 package de.uniol.inf.is.odysseus.sensors;
 
-import java.util.HashMap;
+import java.util.List;
 
 import javax.jws.WebParam;
+import javax.jws.WebResult;
 import javax.jws.WebService;
 import javax.jws.soap.SOAPBinding;
 import javax.jws.soap.SOAPBinding.Style;
-import javax.xml.bind.annotation.XmlSeeAlso;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniol.inf.is.odysseus.core.collection.Context;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvider;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
-import de.uniol.inf.is.odysseus.planmanagement.executor.webservice.server.ExecutorServiceBinding;
 import de.uniol.inf.is.odysseus.planmanagement.executor.webservice.server.webservice.exception.InvalidUserDataException;
-import de.uniol.inf.is.odysseus.planmanagement.executor.webservice.server.webservice.response.StringResponse;
 import de.uniol.inf.is.odysseus.sensors.types.SensorModel2;
 import de.uniol.inf.is.odysseus.sensors.utilities.XmlMarshalHelper;
 
@@ -56,10 +53,11 @@ import de.uniol.inf.is.odysseus.sensors.utilities.XmlMarshalHelper;
 //@XmlSeeAlso({ SensorSchema.class, SensorAttribute.class, StringResponse.class })
 public class SensorService 
 {
+	@SuppressWarnings("unused")
 	private static Logger LOG = LoggerFactory.getLogger(SensorService.class); 
 
 	// Duplicated from de.uniol.inf.is.odysseus.planmanagement.executor.webservice.server.webservice.WebServiceServer
-	protected ISession loginWithSecurityToken(String securityToken) throws InvalidUserDataException 
+	private ISession loginWithSecurityToken(String securityToken) throws InvalidUserDataException 
 	{
 		ISession session = UserManagementProvider.getSessionmanagement().login(securityToken);
 		if (session == null) 
@@ -68,21 +66,59 @@ public class SensorService
 		return session;
 	}	
 	
-	public String addSensor(@WebParam(name = "securityToken") String securityToken, @WebParam(name = "sensorXml") String sensorXml) throws InvalidUserDataException
+	public void addSensor(@WebParam(name = "securityToken") String securityToken, @WebParam(name = "sensorXml") String sensorXml) throws InvalidUserDataException
 	{
-		ISession session = loginWithSecurityToken(securityToken);
-		
-		SensorFactory.getInstance().addSensor(session, new XmlMarshalHelper<>(SensorModel2.class).fromXml(sensorXml));
-		
-//		ExecutorServiceBinding.getExecutor().addQuery(name, "PQL", session, Context.empty());
-		
-		return "asd";
+		ISession session = loginWithSecurityToken(securityToken);		
+		SensorFactory.getInstance().addSensor(session, XmlMarshalHelper.fromXml(sensorXml, SensorModel2.class));
 	}
 
-	public void removeSensor(@WebParam(name = "securityToken") String securityToken, @WebParam(name = "name") String name) throws InvalidUserDataException
+	@WebResult(name = "sensorIds")
+	public List<String> getSensorIds(@WebParam(name = "securityToken") String securityToken) throws InvalidUserDataException
 	{
-		ISession session = loginWithSecurityToken(securityToken);
-		
-		ExecutorServiceBinding.getExecutor().removeQuery(name, session);
+		loginWithSecurityToken(securityToken);		
+		return SensorFactory.getInstance().getSensorIds();
 	}	
+
+	@WebResult(name = "sensorXml")
+	public String getSensorById(@WebParam(name = "securityToken") String securityToken, @WebParam(name = "sensorId") String sensorId) throws InvalidUserDataException
+	{
+		loginWithSecurityToken(securityToken);		
+		return XmlMarshalHelper.toXml(SensorFactory.getInstance().getSensorById(sensorId).config);
+	}		
+	
+	public void removeSensor(@WebParam(name = "securityToken") String securityToken, @WebParam(name = "sensorId") String sensorId) throws InvalidUserDataException
+	{
+		ISession session = loginWithSecurityToken(securityToken);		
+		SensorFactory.getInstance().removeSensor(session, sensorId);
+	}
+	
+	public void startLogging(@WebParam(name = "securityToken") String securityToken, @WebParam(name = "sensorId") String sensorId) throws InvalidUserDataException
+	{
+		ISession session = loginWithSecurityToken(securityToken);		
+		SensorFactory.getInstance().startLogging(session, sensorId);
+	}
+
+	public void stopLogging(@WebParam(name = "securityToken") String securityToken, @WebParam(name = "sensorId") String sensorId) throws InvalidUserDataException
+	{
+		ISession session = loginWithSecurityToken(securityToken);		
+		SensorFactory.getInstance().stopLogging(session, sensorId);
+	}	
+
+	@WebResult(name = "streamUrl")
+	public String startLiveView(@WebParam(name = "securityToken") String securityToken, 
+							  @WebParam(name = "sensorId") String sensorId,
+							  @WebParam(name = "targetHost") String targetHost, 
+							  @WebParam(name = "targetPort") int targetPort) throws InvalidUserDataException
+	{
+		ISession session = loginWithSecurityToken(securityToken);		
+		return SensorFactory.getInstance().startLiveView(session, sensorId, targetHost, targetPort);
+	}
+
+	public void stopLiveView(@WebParam(name = "securityToken") String securityToken, @WebParam(name = "sensorId") String sensorId) throws InvalidUserDataException
+	{
+		ISession session = loginWithSecurityToken(securityToken);		
+		SensorFactory.getInstance().stopLiveView(session, sensorId);
+	}	
+	
+	
 }

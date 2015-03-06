@@ -10,50 +10,74 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 
-public class XmlMarshalHelper<T>
+@SuppressWarnings("rawtypes")
+public class XmlMarshalHelper
 {
-	private Class<T> baseType;
-	private JAXBContext context;
-	
-	public XmlMarshalHelper(Class<T> baseType)
+	private static Marshaller getMarshaller(Class[] classes) throws JAXBException
 	{
-		this.baseType = baseType;
-		try 
-		{
-			context = JAXBContext.newInstance(baseType);
-		} 
-		catch (JAXBException e) 
-		{
-			throw new RuntimeException(e);
-		}
-	}
+    	JAXBContext context = JAXBContext.newInstance(classes);
+		Marshaller xmlMarshaller = context.createMarshaller();
+		xmlMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
 
-	@SuppressWarnings("rawtypes")
-	public XmlMarshalHelper(Class<T> baseType, Class[] derivedTypes)
+		return xmlMarshaller;
+	}	
+
+	private static Unmarshaller getUnmarshaller(Class[] classes) throws JAXBException
 	{
-		Class[] types = new Class[derivedTypes.length+1];
-		types[0] = baseType;
-		System.arraycopy(types, 1, derivedTypes, 0, derivedTypes.length);
-		
-		this.baseType = baseType;
-		try 
-		{
-			context = JAXBContext.newInstance(types);
-		} 
-		catch (JAXBException e) 
-		{
-			throw new RuntimeException(e);
-		}
+    	JAXBContext context = JAXBContext.newInstance(classes);
+    	Unmarshaller xmlUnmarshaller = context.createUnmarshaller();
+
+		return xmlUnmarshaller;
 	}	
 	
-	public T fromXmlFile(File file) throws IOException
+	public static String toXml(Object input)
+	{
+		return toXml(input, new Class[]{input.getClass()});
+	}
+
+	public static String toXml(Object input, Class[] classes)
+	{
+	    try 
+	    {
+	    	StringWriter sw = new StringWriter();
+	    	getMarshaller(classes).marshal(input, sw);
+			return sw.toString();
+		} 
+	    catch (JAXBException e) 
+	    {
+			throw new RuntimeException(e);
+		}						
+	}	
+	
+	public static void toXmlFile(Object input, File file) throws IOException
+	{
+		toXmlFile(input, file, new Class[]{input.getClass()});
+	}
+	
+	public static void toXmlFile(Object input, File file, Class[] classes) throws IOException
+	{
+	    try 
+	    {
+			getMarshaller(classes).marshal(input, file);
+		} 
+	    catch (JAXBException e) 
+	    {
+			throw new RuntimeException(e);
+		}						
+	}
+	
+	public static <T> T fromXmlFile(File file, Class<T> clazz) throws IOException
+	{
+		return clazz.cast(fromXmlFile(file, new Class[]{clazz}));
+	}
+	
+	public static Object fromXmlFile(File file, Class[] classes) throws IOException
 	{
 		try 
 		{			
-			Unmarshaller xmlUnmarshaller = context.createUnmarshaller();
-			T result = baseType.cast(xmlUnmarshaller.unmarshal(file));
+			Object result = getUnmarshaller(classes).unmarshal(file);
 			
-			if (XmlMarshalHelperHandler.class.isAssignableFrom(baseType))
+			if (XmlMarshalHelperHandler.class.isAssignableFrom(result.getClass()))
 				((XmlMarshalHelperHandler) result).onUnmarshalling(file);
 			
 			return result;
@@ -64,53 +88,25 @@ public class XmlMarshalHelper<T>
 		}		
 	}
 	
-	public T fromXml(String xmlString)
+	public static <T> T fromXml(String xmlString, Class<T> clazz)
+	{
+		return clazz.cast(fromXml(xmlString, new Class[]{clazz}));
+	}	
+	
+	public static Object fromXml(String xmlString, Class[] classes)
 	{
 		try 
-		{
-			Unmarshaller xmlUnmarshaller = context.createUnmarshaller();
-			T result = baseType.cast(xmlUnmarshaller.unmarshal(new StringReader(xmlString)));
+		{			
+			Object result = getUnmarshaller(classes).unmarshal(new StringReader(xmlString));
 			
-			if (XmlMarshalHelperHandler.class.isAssignableFrom(baseType))
+			if (XmlMarshalHelperHandler.class.isAssignableFrom(result.getClass()))
 				((XmlMarshalHelperHandler) result).onUnmarshalling(xmlString);
 			
 			return result;
-			
 		} 
 		catch (JAXBException e) 
 		{
 			throw new RuntimeException(e);
-		}
-	}
-	
-	public String toXml(T input)
-	{
-		StringWriter sw = new StringWriter();
-	    try 
-	    {
-			Marshaller xmlMarshaller = context.createMarshaller();
-			xmlMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
-			xmlMarshaller.marshal(baseType.cast(input), sw);
-			return sw.toString();
-		} 
-	    catch (JAXBException e) 
-	    {
-			throw new RuntimeException(e);
-		}						
-	}
-	
-	public void toXmlFile(T input, File file) throws IOException
-	{
-	    try 
-	    {
-			Marshaller xmlMarshaller = context.createMarshaller();
-			xmlMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
-			xmlMarshaller.marshal(baseType.cast(input), file);
-		} 
-	    catch (JAXBException e) 
-	    {
-			throw new RuntimeException(e);
-		}						
+		}		
 	}	
-	
 }

@@ -6,6 +6,8 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 
+import javax.xml.bind.annotation.XmlRootElement;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,7 +19,12 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.IAccessPa
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportDirection;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportExchangePattern;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandler;
-import de.uniol.inf.is.odysseus.sensors.utilities.KeyValueFile;
+
+@XmlRootElement(name = "textFileLog")
+class TextLogMetaData extends LogMetaData
+{
+	public String rawFile;
+}
 
 public class TextFileLoggerProtocolHandler extends LoggerProtocolHandler 
 {
@@ -48,14 +55,18 @@ public class TextFileLoggerProtocolHandler extends LoggerProtocolHandler
 		return new TextFileLoggerProtocolHandler(direction, access, dataHandler, options);
 	}	
 	
-	@Override protected void startLoggingInternal(KeyValueFile logConfigFile, Tuple<?> object) throws IOException 
+	@Override protected LogMetaData startLoggingInternal(Tuple<?> object) throws IOException 
 	{
 		logFileName = getFileNameBase() + "." + extension;
 		logFileStream = new BufferedWriter(new FileWriter(logFileName));
-		logConfigFile.set("RawFile", new File(logFileName).getName());
+		
+		TextLogMetaData logMetaData = new TextLogMetaData();		
+		logMetaData.rawFile = new File(logFileName).getName();
+		
+		return logMetaData; 
 	}
 
-	@Override protected void stopLoggingInternal(KeyValueFile logConfigFile) 
+	@Override protected void stopLoggingInternal(LogMetaData logMetaData) 
 	{
 		if (logFileStream != null)
 		{

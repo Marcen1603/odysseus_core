@@ -32,6 +32,7 @@ package de.uniol.inf.is.odysseus.sensors.client.executor;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.List;
 
 import javax.xml.namespace.QName;
 
@@ -40,12 +41,15 @@ import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.sensors.client.InvalidUserDataException_Exception;
 import de.uniol.inf.is.odysseus.sensors.client.SensorService;
 import de.uniol.inf.is.odysseus.sensors.client.SensorServiceService;
+import de.uniol.inf.is.odysseus.sensors.types.SensorModel2;
+import de.uniol.inf.is.odysseus.sensors.utilities.XmlMarshalHelper;
 
 /**
  * 
  * @author Henrik Surm
  * 
  */
+@SuppressWarnings(value = { "all" })
 public class SensorClient// implements IExecutor, IClientExecutor, IOperatorOwner 
 {
 	private SensorService server;
@@ -104,11 +108,11 @@ public class SensorClient// implements IExecutor, IClientExecutor, IOperatorOwne
 		return session;
 	} */
 
-	public String addSensor(ISession caller, String name)
+	public void addSensor(ISession caller, SensorModel2 sensor)
 	{
 		try 
 		{
-			return server.addSensor(caller.getToken(), name);
+			server.addSensor(caller.getToken(), XmlMarshalHelper.toXml(sensor));
 		} 
 		catch (InvalidUserDataException_Exception e) 
 		{
@@ -127,4 +131,77 @@ public class SensorClient// implements IExecutor, IClientExecutor, IOperatorOwne
 			throw new PlanManagementException(e);				
 		}
 	}	
+	
+	public List<String> getSensorIds(ISession caller)
+	{
+		try 
+		{
+			return server.getSensorIds(caller.getToken());
+		} 
+		catch (InvalidUserDataException_Exception e) 
+		{
+			throw new PlanManagementException(e);				
+		}
+	}	
+	
+	public SensorModel2 getSensorById(ISession caller, String sensorId) 
+	{
+		try 
+		{
+			String sensorXml = server.getSensorById(caller.getToken(), sensorId);
+			return XmlMarshalHelper.fromXml(sensorXml, SensorModel2.class);
+		} 
+		catch (InvalidUserDataException_Exception e) 
+		{
+			throw new PlanManagementException(e);				
+		}	
+	}			
+	
+	public void startLogging(ISession caller, String sensorId)
+	{
+		try 
+		{
+			server.startLogging(caller.getToken(), sensorId);
+		} 
+		catch (InvalidUserDataException_Exception e) 
+		{
+			throw new PlanManagementException(e);				
+		}
+	}
+	
+	public void stopLogging(ISession caller, String sensorId)
+	{
+		try 
+		{
+			server.stopLogging(caller.getToken(), sensorId);
+		} 
+		catch (InvalidUserDataException_Exception e) 
+		{
+			throw new PlanManagementException(e);				
+		}
+	}	
+	
+	public String startLiveView(ISession caller, String sensorId, String targetHost, int targetPort)
+	{
+		try 
+		{
+			return server.startLiveView(caller.getToken(), sensorId, targetHost, targetPort);
+		} 
+		catch (InvalidUserDataException_Exception e) 
+		{
+			throw new PlanManagementException(e);				
+		}
+	}
+	
+	public void stopLiveView(ISession caller, String sensorId)
+	{
+		try 
+		{
+			server.stopLogging(caller.getToken(), sensorId);
+		} 
+		catch (InvalidUserDataException_Exception e) 
+		{
+			throw new PlanManagementException(e);				
+		}
+	}
 }

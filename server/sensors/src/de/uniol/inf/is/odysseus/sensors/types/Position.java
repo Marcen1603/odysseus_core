@@ -5,5 +5,4 @@ public class Position
 	public double longitude;
 	public double latitude;
 	public double altitude;
-	public double direction;
 }

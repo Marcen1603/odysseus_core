@@ -7,7 +7,7 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java-Klasse für removeSensorResponse complex type.
+ * <p>Java-Klasse fï¿½r removeSensorResponse complex type.
  * 
  * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.
  * 
@@ -26,6 +26,7 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "removeSensorResponse")
+@SuppressWarnings(value = { "all" })
 public class RemoveSensorResponse {
 
 

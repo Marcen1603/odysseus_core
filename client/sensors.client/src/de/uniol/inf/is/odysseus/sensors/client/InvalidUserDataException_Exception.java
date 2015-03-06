@@ -11,6 +11,7 @@ import javax.xml.ws.WebFault;
  * 
  */
 @WebFault(name = "InvalidUserDataException", targetNamespace = "http://sensors.odysseus.is.inf.uniol.de/")
+@SuppressWarnings(value = { "all" })
 public class InvalidUserDataException_Exception
     extends Exception
 {
