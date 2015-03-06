@@ -1795,6 +1795,12 @@ public class OperatorBuildHelper {
 			
 			List<Option> parameter = new ArrayList<Option>();
 			parameter.add(new Option("csv.writemetadata", "true"));
+			
+			if(evaluationParameter.isFileappend()){
+				parameter.add(new Option("append", "true"));
+			}
+		
+			
 			CSVFileSink fAO = OperatorBuildHelper.createFileSinkAO(queryName, evaluationParameter.getFileName(),evaluationParameter.getSinkName(), parameter, Iterables.getLast(allOperators) );
 			allOperators.add(fAO);
 		}

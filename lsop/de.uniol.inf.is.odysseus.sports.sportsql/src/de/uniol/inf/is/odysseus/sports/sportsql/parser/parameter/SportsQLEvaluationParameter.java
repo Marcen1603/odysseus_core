@@ -9,12 +9,15 @@ public class SportsQLEvaluationParameter  implements ISportsQLParameter{
 	private String filename = null;
 	private String sinkname = null;
 	private boolean calcLatenzOp = false;
+	private boolean fileappend = false;
 	
-	public SportsQLEvaluationParameter(boolean evaluation, String filename, String sinkname, boolean calcLatenzOp){
+	
+	public SportsQLEvaluationParameter(boolean evaluation, String filename, String sinkname, boolean calcLatenzOp, boolean fileappend){
 		this.evaluation = evaluation;
 		this.filename = filename;
 		this.sinkname = sinkname;
 		this.calcLatenzOp = calcLatenzOp;
+		this.fileappend = fileappend;
 	}
 	
 	public SportsQLEvaluationParameter(){
@@ -51,7 +54,14 @@ public class SportsQLEvaluationParameter  implements ISportsQLParameter{
 	public void setCalcLatenzOp(boolean calcLatenzOp) {
 		this.calcLatenzOp = calcLatenzOp;
 	}
-	
+
+	public boolean isFileappend() {
+		return fileappend;
+	}
+
+	public void setFileAppend(boolean fileAppend) {
+		this.fileappend = fileAppend;
+	}
 	
 
 }
