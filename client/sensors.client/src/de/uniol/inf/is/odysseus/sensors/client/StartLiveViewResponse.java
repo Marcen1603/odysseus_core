@@ -7,18 +7,18 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java-Klasse für stringResponse complex type.
+ * <p>Java-Klasse fï¿½r startLiveViewResponse complex type.
  * 
  * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.
  * 
  * <pre>
- * &lt;complexType name="stringResponse">
+ * &lt;complexType name="startLiveViewResponse">
  *   &lt;complexContent>
- *     &lt;extension base="{http://sensors.odysseus.is.inf.uniol.de/}response">
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="responseValue" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="streamUrl" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *       &lt;/sequence>
- *     &lt;/extension>
+ *     &lt;/restriction>
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
@@ -26,37 +26,36 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "stringResponse", propOrder = {
-    "responseValue"
+@XmlType(name = "startLiveViewResponse", propOrder = {
+    "streamUrl"
 })
-public class StringResponse
-    extends Response
-{
+@SuppressWarnings(value = { "all" })
+public class StartLiveViewResponse {
 
-    protected String responseValue;
+    protected String streamUrl;
 
     /**
-     * Ruft den Wert der responseValue-Eigenschaft ab.
+     * Ruft den Wert der streamUrl-Eigenschaft ab.
      * 
      * @return
      *     possible object is
      *     {@link String }
      *     
      */
-    public String getResponseValue() {
-        return responseValue;
+    public String getStreamUrl() {
+        return streamUrl;
     }
 
     /**
-     * Legt den Wert der responseValue-Eigenschaft fest.
+     * Legt den Wert der streamUrl-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is
      *     {@link String }
      *     
      */
-    public void setResponseValue(String value) {
-        this.responseValue = value;
+    public void setStreamUrl(String value) {
+        this.streamUrl = value;
     }
 
 }
