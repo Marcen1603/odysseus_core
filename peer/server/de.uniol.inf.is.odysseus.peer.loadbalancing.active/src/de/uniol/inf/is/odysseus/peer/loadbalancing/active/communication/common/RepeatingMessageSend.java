@@ -117,7 +117,7 @@ public class RepeatingMessageSend extends RepeatingJobThread {
 	/**
 	 * Notifies all Listeners
 	 */
-	public void notifyListeners() {
+	public synchronized void notifyListeners() {
 		LOG.error("Notifying listeners");
 		for (IMessageDeliveryFailedListener listener : listeners) {
 			listener.update(message, peerID);

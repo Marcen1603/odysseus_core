@@ -267,7 +267,13 @@ public class ParallelTrackHelper {
 						LoadBalancingHelper.toPeerID(physicalOriginal.getPeerIDString()), oldPipeId);
 				synchronizer.addListener(listener);
 				synchronizer.addOwner(physicalOriginal.getOwner());
-				physicalOriginal.block();
+				physicalOriginal.startBuffering();
+				//TODO find better solution.
+				try {
+					Thread.sleep(50);
+				} catch (InterruptedException e) {
+					LOG.warn("Could not wait for Receiver");
+				}
 
 				List<AbstractPhysicalSubscription<ISink<? super IStreamObject>>> subscriptionList = physicalOriginal
 						.getSubscriptions();
@@ -298,7 +304,7 @@ public class ParallelTrackHelper {
 
 				physicalOriginal.unblock();
 				synchronizer.startSynchronizing();
-				
+				physicalOriginal.stopBuffering();
 			}
 			
 		}

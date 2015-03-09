@@ -40,6 +40,7 @@ public class LoadBalancingSynchronizerPO<T extends IStreamObject<? extends ITime
 	 * The index of the input port reading the "old" data stream.
 	 */
 	private static final int old_port = 0;
+	
 
 	/**
 	 * The index of the input port reading the "new" data stream.
@@ -87,7 +88,7 @@ public class LoadBalancingSynchronizerPO<T extends IStreamObject<? extends ITime
 	 * The starttimestamp of the last seen element on input port {@link #old_port}.
 	 */
 	private PointInTime tsOflastSeenElementOnOldPort;
-
+	
 	/**
 	 * The last calculated time shift [ms] between elements on the different
 	 * input ports {@link #old_port} ans {@link #new_port}.
@@ -273,15 +274,14 @@ public class LoadBalancingSynchronizerPO<T extends IStreamObject<? extends ITime
 	}
 
 	@Override
-	protected void process_next(T object, int port) {
+	protected synchronized void process_next(T object, int port) {
 		
 		//LoadBalancingSynchronizerPO.log.debug(
 		// 	"Input: {} from input port {}", object, port);
-		
 			
-			LoadBalancingSynchronizerPO.log.debug("Port "+port+": ("+this.state+","+this.tsOflastSeenElementOnOldPort+")" +object.toString());
+			//LoadBalancingSynchronizerPO.log.debug("Port "+port+": ("+this.state+","+this.tsOflastSeenElementOnOldPort+")" +object.toString());
 			final PointInTime newTS = object.getMetadata().getStart();
-	
+			
 			if (port == this.transferPort && (!this.state.equals(SyncState.timeordering) || this.checkTimeOrder(newTS))) {
 	
 				this.transfer(object);
@@ -309,19 +309,22 @@ public class LoadBalancingSynchronizerPO<T extends IStreamObject<? extends ITime
 	
 					// Ideal case
 					// synchronized
+					LoadBalancingSynchronizerPO.log.info("Port "+port+": ("+this.state+","+this.tsOflastSeenElementOnOldPort+")" +object.toString());
+					
 					this.finishSynchroization();
 	
 				} else {
 					
 					final PointInTime currentTimeShift = newTS.minus(this.tsOflastSeenElementOnOldPort);
 					
-					if (currentTimeShift.getMainPoint() > 0) {
+					if (currentTimeShift.getMainPoint() >= 0) {
 						
 						// new data stream got ahead
 						LoadBalancingSynchronizerPO.log
 								.warn("Data stream on port {} got ahead of data stream on port {}",
 										port, LoadBalancingSynchronizerPO.old_port);
-						LoadBalancingSynchronizerPO.log.debug(object.toString());
+						LoadBalancingSynchronizerPO.log.info("Port "+port+": ("+this.state+","+this.tsOflastSeenElementOnOldPort+")" +object.toString());
+						
 						this.finishSynchroization();
 	
 					} else { // currentTimeShift.getMainPoint() >= 0
@@ -331,8 +334,6 @@ public class LoadBalancingSynchronizerPO<T extends IStreamObject<? extends ITime
 							
 						} else if (currentTimeShift.getMainPoint() > this.lastSeenTimeShift
 								.getMainPoint()) {
-	
-							log.warn("Time shift between data streams on port {} and {} rises",LoadBalancingSynchronizerPO.old_port,port);
 	
 							// update elapsed time
 							final long timeElapsed = this.threshold.getUnit()
@@ -363,8 +364,8 @@ public class LoadBalancingSynchronizerPO<T extends IStreamObject<? extends ITime
 						port);
 	
 			}
+		}
 
-	}
 
 	@Override
 	public void processPunctuation(IPunctuation punctuation, int port) {

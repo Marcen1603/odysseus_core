@@ -4,6 +4,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Vector;
 
@@ -46,6 +47,9 @@ public class JxtaReceiverPO<T extends IStreamObject> extends AbstractSource<T> i
 	private ITransmissionReceiver transmission;
 	private final String pipeIDString;
 	private String peerIDString;
+	
+
+	final private List<T> suspendBuffer = new LinkedList<>();
 
 	private final String localPeerName;
 
@@ -54,6 +58,8 @@ public class JxtaReceiverPO<T extends IStreamObject> extends AbstractSource<T> i
 	private double downloadRateBytesPerSecond;
 	private long downloadRateTimestamp;
 	private long downloadRateCurrentByteCount;
+	
+	private boolean buffering = false;
 
 	// So we know if the query was running when we do recovery
 	private boolean isRunning;
@@ -153,7 +159,19 @@ public class JxtaReceiverPO<T extends IStreamObject> extends AbstractSource<T> i
 			systemLoad.addSystemLoad(localPeerName);
 		}
 
-		transfer(streamObject);
+		
+		if (streamObject != null) {
+			process_incoming(streamObject);
+		}
+	}
+	
+	private void process_incoming(T streamObject) {
+		if (buffering) {
+			suspendBuffer.add(streamObject);
+		} else {
+			clearSuspendBuffer();
+			transfer(streamObject);
+		}
 	}
 
 	@Override
@@ -208,6 +226,14 @@ public class JxtaReceiverPO<T extends IStreamObject> extends AbstractSource<T> i
 			return null;
 		}
 	}
+	
+	public void startBuffering() {
+		buffering= true;
+	}
+	
+	public void stopBuffering() {
+		buffering = false;
+	}
 
 	/**
 	 * Updates the receiver so that is receives the data from a new peer
@@ -240,7 +266,7 @@ public class JxtaReceiverPO<T extends IStreamObject> extends AbstractSource<T> i
 		infoList.add(this.pipeIDString);
 		notifyObservers(infoList);
 	}
-
+	
 	// For the observer-pattern
 	// ------------------------
 
@@ -261,6 +287,20 @@ public class JxtaReceiverPO<T extends IStreamObject> extends AbstractSource<T> i
 		synchronized (mObservers) {
 			mObservers.removeElement(observer);
 		}
+	}
+	
+
+	private void clearSuspendBuffer() {
+		if (suspendBuffer.isEmpty())
+			return;
+
+		for (T o : suspendBuffer) {
+			transfer(o);
+			//TODO: Thread.yield();
+			//(as in ControllablePhysicalSubscription)
+			
+		}
+		suspendBuffer.clear();
 	}
 
 	@Override

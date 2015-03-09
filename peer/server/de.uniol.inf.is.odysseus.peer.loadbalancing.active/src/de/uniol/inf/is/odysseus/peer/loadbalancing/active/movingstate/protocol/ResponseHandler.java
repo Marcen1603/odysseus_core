@@ -173,6 +173,8 @@ public class ResponseHandler {
 				dispatcher.stopRunningJob();
 				status.setPhase(MovingStateMasterStatus.LB_PHASES.RELINKING_SENDERS);
 				LOG.debug("Relinking Senders.");
+				
+				
 				MovingStateHelper.notifyUpstreamPeers(status);
 				//No Upstream Peers? -> Skip Step
 				if(status.getUpstreamPeers().size()==0) {

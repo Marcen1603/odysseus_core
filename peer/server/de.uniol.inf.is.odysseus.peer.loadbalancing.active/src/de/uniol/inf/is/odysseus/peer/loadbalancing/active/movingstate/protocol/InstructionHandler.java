@@ -195,6 +195,10 @@ public class InstructionHandler {
 				try {
 					MovingStateHelper.addChangeInformation(pipe, status, true);
 					MovingStateHelper.startBuffering(pipe);
+					
+					//Wait for remaining Tuples in sender to process...
+					Thread.sleep(100);
+					
 					MovingStateHelper.setNewPipe(status,pipe, newPipe, peer, true);
 					
 					dispatcher.sendDuplicateSenderSuccess(status.getMasterPeer(),

@@ -7,6 +7,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import net.jxta.id.ID;
 import net.jxta.id.IDFactory;
@@ -17,6 +18,7 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Optional;
 
+import de.uniol.inf.is.odysseus.core.ISubscription;
 import de.uniol.inf.is.odysseus.core.collection.Context;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
@@ -27,6 +29,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFConstraint;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.RestructHelper;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TopAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
@@ -158,6 +161,7 @@ public class LoadBalancingHelper {
 				}
 				
 				receiver.unsubscribeFromAllSinks();
+				//receiver.stopReceiving();
 			}
 			
 		}
@@ -242,12 +246,21 @@ public class LoadBalancingHelper {
 
 	public static JxtaReceiverAO createReceiverAO(UpstreamConnection connection, String pipeID) {
 		JxtaReceiverAO receiver = new JxtaReceiverAO();
+		
+		String btu = "MILLISECONDS";
+		
+		SDFConstraint c = connection.schema.getConstraint(
+				SDFConstraint.BASE_TIME_UNIT);
+		if (c != null) {
+			btu = ((TimeUnit) c.getValue()).toString();
+		}
 
 		receiver.setPipeID(pipeID);
 		receiver.setPeerID(connection.remotePeerID);
 		receiver.setSchema(connection.schema.getAttributes());
 		receiver.setSchemaName(connection.schema.getURI());
 		receiver.connectSink(connection.localOperator, connection.port, 0, connection.schema);
+		receiver.setBaseTimeunit(btu);
 		LOG.debug("Created RECEIVER with PeerID " + connection.remotePeerID);
 		return receiver;
 	}
@@ -273,23 +286,47 @@ public class LoadBalancingHelper {
 	public static void removeDuplicateJxtaOperator(String pipeID) {
 		LOG.debug("Removing Operator with pipe ID " + pipeID);
 
-		
+
 		IPhysicalOperator operator = getPhysicalJxtaOperator(true, pipeID);
 
 		if(operator!=null) {
 			if (operator instanceof JxtaSenderPO) {
+				
+				
+				
 				JxtaSenderPO sender = (JxtaSenderPO) operator;
+				
+				List<ISubscription> subscriptions = sender.getSubscribedToSource();
+				for (ISubscription subscr : subscriptions) {
+					ISource source = ((ISource)subscr.getTarget());
+					
+					
+					Collection<ISubscription> reverseSubscriptions = source.getSubscriptions();
+					for(ISubscription revSubscr : reverseSubscriptions) {
+						if(revSubscr.getTarget().equals(sender)) {
+							source.unsubscribeSink(revSubscr);
+						}
+					}
+				}
+				
 				sender.unsubscribeFromAllSources();
+				
 			}
 		}
 
+		
 		operator = getPhysicalJxtaOperator(false, pipeID);
 		
 		if(operator!=null) {
 			if (operator instanceof JxtaReceiverPO) {
+
+				LOG.debug("Removing RECEIVER with pipe ID {}",pipeID);
 				JxtaReceiverPO receiver = (JxtaReceiverPO) operator;
+				//receiver.stopReceiving();
+				
 				AbstractPhysicalSubscription<?> receiverSubscription = (AbstractPhysicalSubscription) receiver
 						.getSubscriptions().get(0);
+				
 	
 				if (receiverSubscription.getTarget() instanceof LoadBalancingSynchronizerPO) {
 					LoadBalancingSynchronizerPO sync = (LoadBalancingSynchronizerPO) receiverSubscription
@@ -299,6 +336,18 @@ public class LoadBalancingHelper {
 	
 					JxtaReceiverPO otherReceiver = (JxtaReceiverPO) sync.getSubscribedToSource(
 							otherPort).getTarget();
+
+					LOG.debug("Start Buffering.");
+					otherReceiver.startBuffering();
+					//Wait 50ms to let remaining Tuples be processed.
+					//TODO find better solution
+					try {
+						Thread.sleep(50);
+					} catch (InterruptedException e) {
+						LOG.warn("Could not wait after Buffering JxtaReceiver.");
+					}
+					
+					
 					otherReceiver.unsubscribeFromAllSinks();
 					receiver.unsubscribeFromAllSinks();
 	
@@ -317,8 +366,12 @@ public class LoadBalancingHelper {
 								subscription.getSinkInPort(), subscription.getSourceOutPort(),
 								subscription.getSchema());
 					}
-	
+					LOG.debug("Stop Buffering.");
+					otherReceiver.stopBuffering();
+					
 				}
+				
+				
 			}
 		}
 

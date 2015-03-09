@@ -226,7 +226,11 @@ public class ResponseHandler {
 				if (status.getNumberOfPipesToSync() == 0) {
 					LOG.debug("All outgoing pipes synced.");
 					status.setPhase(LB_PHASES.DELETING);
+					
+
+					
 					ILogicalQueryPart queryPart = status.getOriginalPart();
+
 					if (!queryPart.getOperators().asList().isEmpty()) {
 
 						// Tell Receivers and Senders to delete duplicate
@@ -246,6 +250,7 @@ public class ResponseHandler {
 							}
 						}
 					}
+
 					int queryId = status.getLogicalQuery();
 					LoadBalancingHelper.cutReceiversFromQuery(queryId);
 					LoadBalancingHelper.deleteQuery(queryId);

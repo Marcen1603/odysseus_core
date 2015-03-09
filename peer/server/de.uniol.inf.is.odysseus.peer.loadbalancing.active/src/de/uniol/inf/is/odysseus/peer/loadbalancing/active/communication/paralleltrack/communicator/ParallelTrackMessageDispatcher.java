@@ -270,7 +270,7 @@ public class ParallelTrackMessageDispatcher {
 	/**
 	 * Stops a running message job.
 	 */
-	public void stopRunningJob() {
+	public synchronized void stopRunningJob() {
 		if(this.currentJob!=null) {
 			currentJob.stopRunning();
 			currentJob.clearListeners();
@@ -283,7 +283,7 @@ public class ParallelTrackMessageDispatcher {
 	 * Stops a running Message job.
 	 * @param job
 	 */
-	public void stopRunningJob(String job) {
+	public synchronized void stopRunningJob(String job) {
 		if(this.currentJobs.containsKey(job)) {
 			currentJobs.get(job).stopRunning();
 			currentJobs.get(job).clearListeners();
