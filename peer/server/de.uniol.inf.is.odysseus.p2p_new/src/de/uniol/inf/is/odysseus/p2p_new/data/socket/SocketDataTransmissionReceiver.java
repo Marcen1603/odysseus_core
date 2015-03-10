@@ -29,13 +29,13 @@ public class SocketDataTransmissionReceiver extends EndpointDataTransmissionRece
 
 	private static final Logger LOG = LoggerFactory.getLogger(SocketDataTransmissionReceiver.class);
 
-	private final byte[] buffer = new byte[P2PNewPlugIn.TRANSPORT_BUFFER_SIZE];
 
 	private final MessageByteBuffer mb = new MessageByteBuffer();
 
 	private Socket socket;
 	private InetAddress address;
 	private Boolean receiving = false;
+	private byte[] buffer;
 //	private int receivedBytes = 0;
 //	private int packageCount = 0;
 	
@@ -49,12 +49,14 @@ public class SocketDataTransmissionReceiver extends EndpointDataTransmissionRece
 	public void open() {
 		super.open();
 		
+		buffer = new byte[P2PNewPlugIn.TRANSPORT_BUFFER_SIZE];
 		getPeerCommunicator().addListener(this, PortMessage.class);
 	}
 
 	@Override
 	public void close() {
 		getPeerCommunicator().removeListener(this, PortMessage.class);
+		buffer = null;
 		
 		super.close();
 	}
@@ -127,6 +129,11 @@ public class SocketDataTransmissionReceiver extends EndpointDataTransmissionRece
 //										System.err.println("Packages : " + (packageCount++));
 										
 										byte[] msg = new byte[bytesRead];
+										if( buffer == null ) {
+											// closed
+											break;
+										}
+										
 										System.arraycopy(buffer, 0, msg, 0, bytesRead);
 
 										mb.put(msg);
