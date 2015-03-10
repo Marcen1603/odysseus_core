@@ -10,6 +10,7 @@ import net.jxta.peer.PeerID;
 
 
 import de.uniol.inf.is.odysseus.p2p_new.IAdvertisementDiscovererListener;
+import de.uniol.inf.is.odysseus.rest.service.RestService;
 
 
 /**
@@ -37,6 +38,11 @@ public class WebserviceAdvertisementListener implements IAdvertisementDiscoverer
 	}
 	
 	public Integer getRestPort(PeerID peerID) {
-		return this.restPorts.get(peerID.toString());
+		Integer port = this.restPorts.get(peerID.toString());
+		if (port == null) {
+			return RestService.getPort();
+		} else {
+			return this.restPorts.get(peerID.toString());
+		}
 	}
 }
