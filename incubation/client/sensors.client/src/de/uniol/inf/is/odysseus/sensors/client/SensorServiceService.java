@@ -17,7 +17,7 @@ import javax.xml.ws.WebServiceFeature;
  * Generated source version: 2.2
  * 
  */
-@WebServiceClient(name = "SensorServiceService", targetNamespace = "http://sensors.odysseus.is.inf.uniol.de/", wsdlLocation = "http://localhost:9669/odysseus/sensors?wsdl")
+@WebServiceClient(name = "SensorServiceService", targetNamespace = "http://server.sensors.odysseus.is.inf.uniol.de/", wsdlLocation = "http://localhost:9669/odysseus/sensors?wsdl")
 @SuppressWarnings(value = { "all" })
 public class SensorServiceService
     extends Service
@@ -25,7 +25,7 @@ public class SensorServiceService
 
     private final static URL SENSORSERVICESERVICE_WSDL_LOCATION;
     private final static WebServiceException SENSORSERVICESERVICE_EXCEPTION;
-    private final static QName SENSORSERVICESERVICE_QNAME = new QName("http://sensors.odysseus.is.inf.uniol.de/", "SensorServiceService");
+    private final static QName SENSORSERVICESERVICE_QNAME = new QName("http://server.sensors.odysseus.is.inf.uniol.de/", "SensorServiceService");
 
     static {
         URL url = null;
@@ -70,7 +70,7 @@ public class SensorServiceService
      */
     @WebEndpoint(name = "SensorServicePort")
     public SensorService getSensorServicePort() {
-        return super.getPort(new QName("http://sensors.odysseus.is.inf.uniol.de/", "SensorServicePort"), SensorService.class);
+        return super.getPort(new QName("http://server.sensors.odysseus.is.inf.uniol.de/", "SensorServicePort"), SensorService.class);
     }
 
     /**
@@ -82,7 +82,7 @@ public class SensorServiceService
      */
     @WebEndpoint(name = "SensorServicePort")
     public SensorService getSensorServicePort(WebServiceFeature... features) {
-        return super.getPort(new QName("http://sensors.odysseus.is.inf.uniol.de/", "SensorServicePort"), SensorService.class, features);
+        return super.getPort(new QName("http://server.sensors.odysseus.is.inf.uniol.de/", "SensorServicePort"), SensorService.class, features);
     }
 
     private static URL __getWsdlLocation() {

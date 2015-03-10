@@ -41,8 +41,8 @@ import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.sensors.client.InvalidUserDataException_Exception;
 import de.uniol.inf.is.odysseus.sensors.client.SensorService;
 import de.uniol.inf.is.odysseus.sensors.client.SensorServiceService;
-import de.uniol.inf.is.odysseus.sensors.types.SensorModel2;
-import de.uniol.inf.is.odysseus.sensors.utilities.XmlMarshalHelper;
+import de.uniol.inf.is.odysseus.sensors.common.types.SensorModel2;
+import de.uniol.inf.is.odysseus.sensors.common.utilities.XmlMarshalHelper;
 
 /**
  * 
@@ -120,17 +120,29 @@ public class SensorClient// implements IExecutor, IClientExecutor, IOperatorOwne
 		}
 	}
 	
-	public void removeSensor(ISession caller, String name)
+	public void removeSensor(ISession caller, String sensorId)
 	{
 		try 
 		{
-			server.removeSensor(caller.getToken(), name);
+			server.removeSensor(caller.getToken(), sensorId);
 		} 
 		catch (InvalidUserDataException_Exception e) 
 		{
 			throw new PlanManagementException(e);				
 		}
 	}	
+
+	public void modifySensor(ISession caller, String sensorId, SensorModel2 sensor)
+	{
+		try 
+		{
+			server.modifySensor(caller.getToken(), sensorId, XmlMarshalHelper.toXml(sensor));
+		} 
+		catch (InvalidUserDataException_Exception e) 
+		{
+			throw new PlanManagementException(e);				
+		}
+	}
 	
 	public List<String> getSensorIds(ISession caller)
 	{
