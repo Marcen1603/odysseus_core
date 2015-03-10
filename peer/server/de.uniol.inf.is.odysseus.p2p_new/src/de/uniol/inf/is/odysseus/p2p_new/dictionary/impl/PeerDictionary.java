@@ -227,7 +227,8 @@ public class PeerDictionary implements IPeerDictionary, IAdvertisementDiscoverer
 
 	@Override
 	public void updateAdvertisements() {
-		Collection<PeerID> newPeers = toValidPeerIDs(JxtaServicesProvider.getInstance().getPeerAdvertisements());
+		Collection<PeerAdvertisement> peerAdvertisements = JxtaServicesProvider.getInstance().getPeerAdvertisements();
+		Collection<PeerID> newPeers = toValidPeerIDs(peerAdvertisements);
 		
 		synchronized (currentPeerIDs) {
 			Collection<PeerID> oldPeers = Lists.newArrayList(currentPeerIDs);
@@ -248,6 +249,27 @@ public class PeerDictionary implements IPeerDictionary, IAdvertisementDiscoverer
 
 			for (PeerID oldPeer : oldPeers) {
 				firePeerRemovedEvent(oldPeer);
+				
+				// to avoid multiple calls for same lost peerID
+				tryFlushPeerAdvertisement(oldPeer, peerAdvertisements);
+			}
+		}
+	}
+
+	private static void tryFlushPeerAdvertisement(PeerID oldPeer, Collection<PeerAdvertisement> peerAdvertisements) {
+		if( oldPeer == null ) {
+			return;
+		}
+		if( peerAdvertisements == null || peerAdvertisements.isEmpty() ) {
+			return;
+		}
+		
+		for( PeerAdvertisement peerAdvertisement : peerAdvertisements ) {
+			if( peerAdvertisement.getPeerID().equals(oldPeer)) {
+				try {
+					JxtaServicesProvider.getInstance().flushAdvertisement(peerAdvertisement);
+				} catch (IOException ignore) {
+				} 
 			}
 		}
 	}
