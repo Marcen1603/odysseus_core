@@ -21,6 +21,7 @@ import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.physicaloperator.AbstractPhysicalSubscription;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
+import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.core.planmanagement.IOperatorOwner;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSource;
@@ -204,26 +205,14 @@ public class ParallelTrackHelper {
 				AbstractPhysicalSubscription subscription = physicalOriginal
 						.getSubscribedToSource(0);
 				
-				if (subscription.getTarget() instanceof AbstractPipe) {
-					((AbstractPipe) subscription.getTarget()).subscribeSink(
-							physicalCopy, 0, subscription.getSourceOutPort(),
-							subscription.getSchema(), true,
-							subscription.getOpenCalls());
-					physicalCopy.subscribeToSource(subscription.getTarget(), subscription.getSinkInPort(), subscription.getSourceOutPort(), subscription.getSchema());
-
-					for (IOperatorOwner owner : (List<IOperatorOwner>)physicalCopy.getOwner()) {
-						physicalCopy.open(owner);
-					}
-					Optional<Integer> queryId = LoadBalancingHelper.getQueryForRoot(physicalOriginal);
-					if(queryId.isPresent()) {
-						OsgiServiceManager.getExecutor().getExecutionPlan().getQueryById(queryId.get()).replaceRoot(physicalOriginal, physicalCopy);
-					}
-				} else if (subscription.getTarget() instanceof AbstractSource) {
+				
+				if (subscription.getTarget() instanceof AbstractSource) {
 					((AbstractSource) subscription.getTarget()).subscribeSink(
 							physicalCopy, 0, subscription.getSourceOutPort(),
 							subscription.getSchema(), true,
 							subscription.getOpenCalls());
-					physicalCopy.subscribeToSource(subscription.getTarget(), subscription.getSinkInPort(), subscription.getSourceOutPort(), subscription.getSchema());
+					ISource source = (ISource) subscription.getTarget();
+					physicalCopy.subscribeToSource(source, subscription.getSinkInPort(), subscription.getSourceOutPort(), subscription.getSchema());
 					
 					
 					
