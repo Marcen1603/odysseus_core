@@ -14,3 +14,4 @@ Import-Package: de.uniol.inf.is.odysseus.core.logicaloperator,
  de.uniol.inf.is.odysseus.webservice.client,
  org.slf4j
 Bundle-Vendor: University of Oldenburg
+Export-Package: de.uniol.inf.is.odysseus.planmanagement.executor.webservice.client
