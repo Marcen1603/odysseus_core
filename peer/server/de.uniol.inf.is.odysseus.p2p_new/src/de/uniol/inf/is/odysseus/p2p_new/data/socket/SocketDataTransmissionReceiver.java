@@ -136,6 +136,11 @@ public class SocketDataTransmissionReceiver extends EndpointDataTransmissionRece
 											processBytes(packet);
 										}
 									}
+									synchronized( receiving ) {
+										if( !receiving ) {
+											break;
+										}
+									}
 								}
 							} catch (SocketException e) {
 								tryCloseSocket(socket);
