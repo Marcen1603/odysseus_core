@@ -1,219 +1,103 @@
-/*******************************************************************************
- * Copyright 2012 The Odysseus Team
- * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- * 
- *   http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- ******************************************************************************/
-/** Copyright 2011 The Odysseus Team
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package de.uniol.inf.is.odysseus.sensors.client.executor;
 
 import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.List;
 
-import javax.xml.namespace.QName;
-
-import de.uniol.inf.is.odysseus.core.planmanagement.executor.exception.PlanManagementException;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
-import de.uniol.inf.is.odysseus.sensors.client.InvalidUserDataException_Exception;
-import de.uniol.inf.is.odysseus.sensors.client.SensorService;
-import de.uniol.inf.is.odysseus.sensors.client.SensorServiceService;
+import de.uniol.inf.is.odysseus.planmanagement.executor.webservice.client.WsClient;
 import de.uniol.inf.is.odysseus.sensors.common.types.SensorModel2;
-import de.uniol.inf.is.odysseus.sensors.common.utilities.XmlMarshalHelper;
 
-/**
- * 
- * @author Henrik Surm
- * 
- */
-@SuppressWarnings(value = { "all" })
-public class SensorClient// implements IExecutor, IClientExecutor, IOperatorOwner 
-{
-	private SensorService server;
-
-	/**
-	 * @param connectString
-	 *            String: expected format is
-	 *            wsdlLocation;serviceNamespace;service
-	 * @throws MalformedURLException 
-	 */
-	public SensorClient(String connectString) throws MalformedURLException 
-	{
-		String[] subConnect = connectString.split(";");
-		if (subConnect.length > 1 && subConnect.length < 4) 
-		{
-			server = new SensorServiceService(new URL(subConnect[0]), new QName(subConnect[1], subConnect[2])).getSensorServicePort();
-		}
-		else
-			throw new MalformedURLException("\"" + connectString + "\" is not a valid WebService URL!");
-	}
-
-
-	public SensorService getServer() 
-	{
-		return server;
-	}
-
-/*	@Override
-	public ISession login(String username, byte[] password, String tenant) {
-		// TODO: use real names
-		String securitytoken = getWebserviceServer(REMOVEME).login(username,
-				new String(password), tenant).getResponseValue();
-		if (securitytoken == null){
-			return null;
-		}
-		IUser user = new WsClientUser(username, password, true);
-		WsClientSession session = new WsClientSession(user, null, REMOVEME);
-		session.setToken(securitytoken);
-		ClientSessionStore.addSession(REMOVEME, session);
-		fireUpdateEvent(IUpdateEventListener.SESSION);
-		return session;
-	}
-
-	@Override
-	public ISession login(String username, byte[] password) {
-		String securitytoken = getWebserviceServer(REMOVEME).login2(username,
-				new String(password)).getResponseValue();
-		if (securitytoken == null){
-			return null;
-		}
-		IUser user = new WsClientUser(username, password, true);
-		WsClientSession session = new WsClientSession(user, null, REMOVEME);
-		session.setToken(securitytoken);
-		ClientSessionStore.addSession(REMOVEME, session);
-		fireUpdateEvent(IUpdateEventListener.SESSION);
-		return session;
-	} */
-
-	public void addSensor(ISession caller, SensorModel2 sensor)
-	{
-		try 
-		{
-			server.addSensor(caller.getToken(), XmlMarshalHelper.toXml(sensor));
-		} 
-		catch (InvalidUserDataException_Exception e) 
-		{
-			throw new PlanManagementException(e);				
-		}
-	}
+public abstract class SensorClient implements ILoggable
+{	
+	private String userName;	
+	protected boolean initialized = false;
 	
-	public void removeSensor(ISession caller, String sensorId)
+	protected WsClient odysseusClient;
+	protected ISession odysseusSession;
+	protected WsSensorClient sensorClient;
+	protected List<RemoteSensor> sensors;
+	
+	public List<RemoteSensor> getSensors() { return sensors; }
+	public boolean isInitialized() { return initialized; }
+	public String getUserName()	{ return userName; }	
+	
+	public SensorClient(WsClient client, ISession session, String wsdlLocation) throws MalformedURLException
 	{
-		try 
-		{
-			server.removeSensor(caller.getToken(), sensorId);
-		} 
-		catch (InvalidUserDataException_Exception e) 
-		{
-			throw new PlanManagementException(e);				
-		}
-	}	
+		this.odysseusClient = client;
+		this.odysseusSession = session;
+				
+		sensorClient = new WsSensorClient(wsdlLocation + ";http://sensors.odysseus.is.inf.uniol.de/;SensorServiceService");
+		
+		List<String> sensorIds = sensorClient.getSensorIds(odysseusSession);
 
-	public void modifySensor(ISession caller, String sensorId, SensorModel2 sensor)
-	{
-		try 
+		for (String sensorId : sensorIds)
+			sensors.add(new RemoteSensor(this, sensorClient.getSensorById(odysseusSession, sensorId)));		
+		
+		initialized = true;
+	}
+
+	public void close()
+	{			
+		initialized = false;
+		for (RemoteSensor sensor : sensors)
+			sensorClient.stopLiveView(odysseusSession, sensor.getId());
+		
+		try
 		{
-			server.modifySensor(caller.getToken(), sensorId, XmlMarshalHelper.toXml(sensor));
-		} 
-		catch (InvalidUserDataException_Exception e) 
+			odysseusClient.logout(odysseusSession);
+		}
+		catch (Exception e)
 		{
-			throw new PlanManagementException(e);				
+			e.printStackTrace();
 		}
 	}
-	
-	public List<String> getSensorIds(ISession caller)
+
+	public void addSensor(RemoteSensor sensor)
 	{
-		try 
-		{
-			return server.getSensorIds(caller.getToken());
-		} 
-		catch (InvalidUserDataException_Exception e) 
-		{
-			throw new PlanManagementException(e);				
-		}
+		sensorClient.addSensor(odysseusSession, sensor.getSensorModel2());
+		sensors.add(sensor);	
+		
+		if (isInitialized())
+			onSensorAdded(sensor);
 	}	
 	
-	public SensorModel2 getSensorById(ISession caller, String sensorId) 
+	public void updateSensor(RemoteSensor sensor, SensorModel2 newSensorInfo)
 	{
-		try 
-		{
-			String sensorXml = server.getSensorById(caller.getToken(), sensorId);
-			return XmlMarshalHelper.fromXml(sensorXml, SensorModel2.class);
-		} 
-		catch (InvalidUserDataException_Exception e) 
-		{
-			throw new PlanManagementException(e);				
-		}	
-	}			
+		sensorClient.modifySensor(odysseusSession, sensor.getId(), newSensorInfo);
+		
+		if (isInitialized())
+			onSensorChanged(sensor);
+	}		
 	
-	public void startLogging(ISession caller, String sensorId)
+	public void removeSensor(RemoteSensor sensor)
 	{
-		try 
-		{
-			server.startLogging(caller.getToken(), sensorId);
-		} 
-		catch (InvalidUserDataException_Exception e) 
-		{
-			throw new PlanManagementException(e);				
-		}
+		sensorClient.removeSensor(odysseusSession, sensor.getId());
+		sensors.remove(sensor);		
+		
+		if (isInitialized())
+			onSensorRemoved(sensor);
 	}
 	
-	public void stopLogging(ISession caller, String sensorId)
+	@Override public void startLogging() 
 	{
-		try 
-		{
-			server.stopLogging(caller.getToken(), sensorId);
-		} 
-		catch (InvalidUserDataException_Exception e) 
-		{
-			throw new PlanManagementException(e);				
-		}
+		for (RemoteSensor sensor : sensors) 
+			sensorClient.startLogging(odysseusSession, sensor.getId());
+		
+		if (isInitialized())
+			onClientChanged();
+	}
+
+	@Override public void stopLogging() 
+	{
+		for (RemoteSensor sensor : sensors) 
+			sensorClient.stopLogging(odysseusSession, sensor.getId());
+		
+		if (isInitialized())
+			onClientChanged();
 	}	
-	
-	public String startLiveView(ISession caller, String sensorId, String targetHost, int targetPort)
-	{
-		try 
-		{
-			return server.startLiveView(caller.getToken(), sensorId, targetHost, targetPort);
-		} 
-		catch (InvalidUserDataException_Exception e) 
-		{
-			throw new PlanManagementException(e);				
-		}
-	}
-	
-	public void stopLiveView(ISession caller, String sensorId)
-	{
-		try 
-		{
-			server.stopLogging(caller.getToken(), sensorId);
-		} 
-		catch (InvalidUserDataException_Exception e) 
-		{
-			throw new PlanManagementException(e);				
-		}
-	}
+
+	protected abstract void onSensorAdded(RemoteSensor sensor);
+	protected abstract void onSensorChanged(RemoteSensor sensor);
+	protected abstract void onSensorRemoved(RemoteSensor sensor);
+	protected abstract void onClientChanged();
 }

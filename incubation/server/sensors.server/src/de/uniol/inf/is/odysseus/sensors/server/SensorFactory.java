@@ -5,14 +5,8 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
-import de.uniol.inf.is.odysseus.core.physicaloperator.ControllablePhysicalSubscription;
-import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSink;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSource;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
-import de.uniol.inf.is.odysseus.planmanagement.executor.webservice.server.ExecutorServiceBinding;
 import de.uniol.inf.is.odysseus.sensors.common.types.SensorModel2;
 
 public class SensorFactory 

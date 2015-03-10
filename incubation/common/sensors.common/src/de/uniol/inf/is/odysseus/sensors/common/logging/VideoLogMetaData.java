@@ -7,4 +7,6 @@ public class VideoLogMetaData extends LogMetaData
 {
 	public String videoFile;
 	public String syncFile;
+	public boolean doRotate180;
+	public String fps;
 }

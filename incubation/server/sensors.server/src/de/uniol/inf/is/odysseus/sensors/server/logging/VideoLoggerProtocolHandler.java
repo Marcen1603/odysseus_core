@@ -83,6 +83,7 @@ public class VideoLoggerProtocolHandler extends LoggerProtocolHandler
 		VideoLogMetaData logMetaData = new VideoLogMetaData();
 		logMetaData.videoFile = new File(videoFileName).getName();
 		logMetaData.syncFile = new File(syncFileName).getName();
+		logMetaData.doRotate180 = false;
 	    
 	    return logMetaData;
 	}

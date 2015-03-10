@@ -63,7 +63,8 @@ public class Sensor
 	
 	public Sensor(SensorModel2 sensor, ISession session) 
 	{
-		this.config = sensor;
+		config = new SensorModel2(sensor);
+		if (config.id == null) config.generateId();
 		
 		type = SensorFactory.getInstance().getSensorType(sensor.type);
 

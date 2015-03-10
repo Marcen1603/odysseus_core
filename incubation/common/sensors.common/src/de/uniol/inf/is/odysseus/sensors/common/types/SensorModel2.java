@@ -32,4 +32,9 @@ public class SensorModel2
 		options = new HashMap<>(other.options);
 		position = new Position(other.position);
 	}
+	
+	public void generateId()
+	{
+		id = type + "_" + Integer.toString((int) (Math.random() * Integer.MAX_VALUE));
+	}
 }
