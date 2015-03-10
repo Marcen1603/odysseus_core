@@ -20,8 +20,6 @@ import java.io.IOException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniol.inf.is.odysseus.core.command.Command;
-import de.uniol.inf.is.odysseus.core.command.ICommandProvider;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ITransferHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
@@ -29,7 +27,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolH
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSource;
 
 public class ReceiverPO<R, W> extends AbstractSource<W> implements
-		ITransferHandler<W>, ICommandProvider {
+		ITransferHandler<W> {
 
 	volatile protected static Logger _logger = null;
 
@@ -122,12 +120,6 @@ public class ReceiverPO<R, W> extends AbstractSource<W> implements
 	@Override
 	public AbstractSource<W> clone() {
 		return new ReceiverPO<R, W>(this);
-	}
-
-	@Override
-	public Command getCommandByName(String commandName) {
-		// TODO Auto-generated method stub
-		return null;
 	}
 
 }

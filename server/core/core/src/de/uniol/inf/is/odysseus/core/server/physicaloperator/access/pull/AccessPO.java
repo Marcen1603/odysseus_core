@@ -18,8 +18,6 @@ package de.uniol.inf.is.odysseus.core.server.physicaloperator.access.pull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniol.inf.is.odysseus.core.command.Command;
-import de.uniol.inf.is.odysseus.core.command.ICommandProvider;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
@@ -37,7 +35,7 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSource;
  * @param <W>
  *            The Output that is written by this operator.
  */
-public class AccessPO<R, W> extends AbstractIterableSource<W> implements ICommandProvider {
+public class AccessPO<R, W> extends AbstractIterableSource<W> {
 
 	private static final Logger LOG = LoggerFactory.getLogger(AccessPO.class);
 	
@@ -164,11 +162,6 @@ public class AccessPO<R, W> extends AbstractIterableSource<W> implements IComman
 		}
 		// TODO: Check for Equality
 		return false;
-	}
-
-	@Override
-	public Command getCommandByName(String commandName) {
-		return null;
 	}
 
 }
