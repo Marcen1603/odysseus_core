@@ -517,7 +517,7 @@ public class RecoveryHelper {
 		ArrayList<IPhysicalOperator> emptyCallPath = new ArrayList<IPhysicalOperator>();
 
 		sink.unsubscribeFromSource(subscription);
-		operatorToInsert.subscribeToSource(subscription.getTarget(),
+		operatorToInsert.subscribeToSource((ISource) subscription.getTarget(),
 				subscription.getSinkInPort(), subscription.getSourceOutPort(),
 				subscription.getSchema());
 		operatorToInsert.subscribeSink(sink, subscription.getSinkInPort(),
