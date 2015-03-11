@@ -23,7 +23,6 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.core.planmanagement.IOperatorOwner;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSource;
 import de.uniol.inf.is.odysseus.p2p_new.IP2PNetworkManager;
 import de.uniol.inf.is.odysseus.p2p_new.data.DataTransmissionException;
@@ -44,11 +43,9 @@ import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.parallel
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.physicaloperator.LoadBalancingSynchronizerPO;
 
 public class ParallelTrackHelper {
-	
 
-	private static final Logger LOG = LoggerFactory
-			.getLogger(ParallelTrackHelper.class);
-	
+	private static final Logger LOG = LoggerFactory.getLogger(ParallelTrackHelper.class);
+
 	/**
 	 * Sends abort Message to all Peers involved in LoadBalancing Process
 	 * 
@@ -56,23 +53,19 @@ public class ParallelTrackHelper {
 	 */
 	public static void notifyInvolvedPeers(ParallelTrackMasterStatus status) {
 
-		IMessageDeliveryFailedListener deliveryFailedListener = ParallelTrackCommunicatorImpl
-				.getInstance();
+		IMessageDeliveryFailedListener deliveryFailedListener = ParallelTrackCommunicatorImpl.getInstance();
 
 		status.setPhase(ParallelTrackMasterStatus.LB_PHASES.FAILURE);
 		// Get Distinct List of involved Peers:
-		ArrayList<PeerID> involvedPeers = new ArrayList<PeerID>(
-				new HashSet<PeerID>(status.getPeersForPipe().values()));
+		ArrayList<PeerID> involvedPeers = new ArrayList<PeerID>(new HashSet<PeerID>(status.getPeersForPipe().values()));
 		involvedPeers.add(status.getVolunteeringPeer());
 		for (PeerID peer : involvedPeers) {
-			status.getMessageDispatcher().sendAbortInstruction(peer,
-					deliveryFailedListener);
+			status.getMessageDispatcher().sendAbortInstruction(peer, deliveryFailedListener);
 		}
 	}
-	
+
 	/**
-	 * Send Message to all incoming Peers to add a duplicate
-	 * connection
+	 * Send Message to all incoming Peers to add a duplicate connection
 	 * 
 	 * @param status
 	 *            Status
@@ -80,36 +73,32 @@ public class ParallelTrackHelper {
 	public static void notifyDownstreamPeers(ParallelTrackMasterStatus status) {
 
 		IMessageDeliveryFailedListener deliveryFailedListener = ParallelTrackCommunicatorImpl.getInstance();
-		
+
 		String volunteeringPeer = status.getVolunteeringPeer().toString();
 		ILogicalQueryPart modifiedQueryPart = status.getModifiedPart();
 		HashMap<String, String> replacedPipes = status.getReplacedPipes();
-		ParallelTrackMessageDispatcher dispatcher = status
-				.getMessageDispatcher();
+		ParallelTrackMessageDispatcher dispatcher = status.getMessageDispatcher();
 
-		HashMap<String,PeerID> peersForPipe = new HashMap<String,PeerID>();
+		HashMap<String, PeerID> peersForPipe = new HashMap<String, PeerID>();
 
 		for (ILogicalOperator operator : modifiedQueryPart.getOperators()) {
 			if (operator instanceof JxtaSenderAO) {
 				JxtaSenderAO sender = (JxtaSenderAO) operator;
-				
+
 				String newPipe = sender.getPipeID();
 				String oldPipe = replacedPipes.get(sender.getPipeID());
 				PeerID destinationPeer = LoadBalancingHelper.toPeerID(sender.getPeerID());
-				peersForPipe.put(newPipe,destinationPeer);
-				
-				dispatcher.sendCopyOperator(false,
-						destinationPeer,
-						oldPipe,newPipe, volunteeringPeer,deliveryFailedListener);
+				peersForPipe.put(newPipe, destinationPeer);
+
+				dispatcher.sendCopyOperator(false, destinationPeer, oldPipe, newPipe, volunteeringPeer, deliveryFailedListener);
 			}
 		}
 		status.setPeersForPipe(peersForPipe);
 
 	}
-	
+
 	/**
-	 * Send Message to all outing Peers to add a duplicate
-	 * connection
+	 * Send Message to all outing Peers to add a duplicate connection
 	 * 
 	 * @param status
 	 *            Status
@@ -117,33 +106,30 @@ public class ParallelTrackHelper {
 	public static void notifyUpstreamPeers(ParallelTrackMasterStatus status) {
 
 		IMessageDeliveryFailedListener deliveryFailedListener = ParallelTrackCommunicatorImpl.getInstance();
-		
+
 		String volunteeringPeer = status.getVolunteeringPeer().toString();
 		ILogicalQueryPart modifiedQueryPart = status.getModifiedPart();
 		HashMap<String, String> replacedPipes = status.getReplacedPipes();
-		ParallelTrackMessageDispatcher dispatcher = status
-				.getMessageDispatcher();
+		ParallelTrackMessageDispatcher dispatcher = status.getMessageDispatcher();
 
-		HashMap<String,PeerID> peersForPipe = status.getPeersForPipe();
+		HashMap<String, PeerID> peersForPipe = status.getPeersForPipe();
 
 		for (ILogicalOperator operator : modifiedQueryPart.getOperators()) {
 			if (operator instanceof JxtaReceiverAO) {
 				JxtaReceiverAO receiver = (JxtaReceiverAO) operator;
-				
+
 				String newPipe = receiver.getPipeID();
 				String oldPipe = replacedPipes.get(receiver.getPipeID());
 				PeerID destinationPeer = LoadBalancingHelper.toPeerID(receiver.getPeerID());
-				peersForPipe.put(newPipe,destinationPeer);
-				
-				dispatcher.sendCopyOperator(true,destinationPeer,
-						oldPipe,
-						newPipe, volunteeringPeer,deliveryFailedListener);
+				peersForPipe.put(newPipe, destinationPeer);
+
+				dispatcher.sendCopyOperator(true, destinationPeer, oldPipe, newPipe, volunteeringPeer, deliveryFailedListener);
 			}
 		}
 		status.setPeersForPipe(peersForPipe);
 
 	}
-	
+
 	/**
 	 * Finds a JxtaOperator by pipeId, creates a physical Copy and connects both
 	 * Operators to the stream.
@@ -160,74 +146,55 @@ public class ParallelTrackHelper {
 	 * @Param lbProcessId LoadBalancingProcessId.
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public static void findAndCopyLocalJxtaOperator(ParallelTrackSlaveStatus status,
-			boolean isSender, String newPeerId, String oldPipeId,
-			String newPipeId) throws DataTransmissionException, LoadBalancingException{
-		
+	public static void findAndCopyLocalJxtaOperator(ParallelTrackSlaveStatus status, boolean isSender, String newPeerId, String oldPipeId, String newPipeId) throws DataTransmissionException, LoadBalancingException {
+
 		ParallelTrackMessageDispatcher dispatcher = status.getMessageDispatcher();
-		
+
 		ILogicalOperator operator = LoadBalancingHelper.getLogicalJxtaOperator(isSender, oldPipeId);
-		
-		
-		if(operator==null) {
+
+		if (operator == null) {
 			LOG.error("No operator with pipe ID " + oldPipeId + " found.");
 			throw new LoadBalancingException("No operator with pipe ID " + oldPipeId + " found.");
 		}
-		
+
 		if (operator != null) {
-			
-			
+
 			if (isSender) {
 				JxtaSenderAO logicalSender = (JxtaSenderAO) operator;
 				JxtaSenderAO copy = (JxtaSenderAO) logicalSender.clone();
-				
-				
+
 				copy.setPipeID(newPipeId);
 				copy.setPeerID(newPeerId);
 
-				
-
 				JxtaSenderPO physicalCopy = new JxtaSenderPO(copy);
-				JxtaSenderPO physicalOriginal = (JxtaSenderPO) LoadBalancingHelper
-						.getPhysicalJxtaOperator(isSender, oldPipeId);
-						
-				
-				if(physicalOriginal==null) {
-					throw new LoadBalancingException("No physical Op with isSender="+isSender+" and Pipe ID " + oldPipeId + " found.");
+				JxtaSenderPO physicalOriginal = (JxtaSenderPO) LoadBalancingHelper.getPhysicalJxtaOperator(isSender, oldPipeId);
+
+				if (physicalOriginal == null) {
+					throw new LoadBalancingException("No physical Op with isSender=" + isSender + " and Pipe ID " + oldPipeId + " found.");
 				}
-				
-				physicalCopy
-						.setOutputSchema(physicalOriginal.getOutputSchema());
+
+				physicalCopy.setOutputSchema(physicalOriginal.getOutputSchema());
 				physicalCopy.setName(physicalOriginal.getName());
 				physicalCopy.addOwner(physicalOriginal.getOwner());
-				
 
-				AbstractPhysicalSubscription subscription = physicalOriginal
-						.getSubscribedToSource(0);
-				
-				
+				AbstractPhysicalSubscription subscription = physicalOriginal.getSubscribedToSource(0);
+
 				if (subscription.getTarget() instanceof AbstractSource) {
-					((AbstractSource) subscription.getTarget()).subscribeSink(
-							physicalCopy, 0, subscription.getSourceOutPort(),
-							subscription.getSchema(), true,
-							subscription.getOpenCalls());
+					((AbstractSource) subscription.getTarget()).subscribeSink(physicalCopy, 0, subscription.getSourceOutPort(), subscription.getSchema(), true, subscription.getOpenCalls());
 					ISource source = (ISource) subscription.getTarget();
 					physicalCopy.subscribeToSource(source, subscription.getSinkInPort(), subscription.getSourceOutPort(), subscription.getSchema());
-					
-					
-					
-					for (IOperatorOwner owner : (List<IOperatorOwner>)physicalCopy.getOwner()) {
+
+					for (IOperatorOwner owner : (List<IOperatorOwner>) physicalCopy.getOwner()) {
 						physicalCopy.open(owner);
 					}
-					
+
 					Optional<Integer> queryId = LoadBalancingHelper.getQueryForRoot(physicalOriginal);
-					if(queryId.isPresent()) {
+					if (queryId.isPresent()) {
 						OsgiServiceManager.getExecutor().getExecutionPlan().getQueryById(queryId.get()).replaceRoot(physicalOriginal, physicalCopy);
 					}
 				}
-				
+
 				LOG.debug("Installed additional Sender with PeerID " + physicalCopy.getPeerIDString() + " and PipeID " + physicalCopy.getPipeIDString());
-				
 
 			} else {
 				JxtaReceiverAO logicalReceiver = (JxtaReceiverAO) operator;
@@ -235,159 +202,131 @@ public class ParallelTrackHelper {
 				copy.setPipeID(newPipeId);
 				copy.setPeerID(newPeerId);
 				copy.setSchema(logicalReceiver.getSchema());
-				
-				
-				JxtaReceiverPO physicalOriginal = (JxtaReceiverPO) LoadBalancingHelper
-						.getPhysicalJxtaOperator(isSender, oldPipeId);
-				
+
+				JxtaReceiverPO physicalOriginal = (JxtaReceiverPO) LoadBalancingHelper.getPhysicalJxtaOperator(isSender, oldPipeId);
+
 				copy.setSchemaName(physicalOriginal.getOutputSchema().getURI());
-				
+
 				JxtaReceiverPO physicalCopy = new JxtaReceiverPO(copy);
-				
-				physicalCopy
-						.setOutputSchema(physicalOriginal.getOutputSchema());
+
+				physicalCopy.setOutputSchema(physicalOriginal.getOutputSchema());
 				physicalCopy.setName(physicalOriginal.getName());
 				physicalCopy.addOwner(physicalOriginal.getOwner());
-				
+
 				LoadBalancingSynchronizerPO<IStreamObject<ITimeInterval>> synchronizer = new LoadBalancingSynchronizerPO<IStreamObject<ITimeInterval>>();
 
-				LoadBalancingFinishedListener listener = new LoadBalancingFinishedListener(
-						dispatcher,
-						LoadBalancingHelper.toPeerID(physicalOriginal.getPeerIDString()), oldPipeId);
+				LoadBalancingFinishedListener listener = new LoadBalancingFinishedListener(dispatcher, LoadBalancingHelper.toPeerID(physicalOriginal.getPeerIDString()), oldPipeId);
 				synchronizer.addListener(listener);
 				synchronizer.addOwner(physicalOriginal.getOwner());
 				physicalOriginal.startBuffering();
-				//TODO find better solution.
+				// TODO find better solution.
 				try {
 					Thread.sleep(50);
 				} catch (InterruptedException e) {
 					LOG.warn("Could not wait for Receiver");
 				}
 
-				List<AbstractPhysicalSubscription<ISink<? super IStreamObject>>> subscriptionList = physicalOriginal
-						.getSubscriptions();
+				List<AbstractPhysicalSubscription<ISink<? super IStreamObject>>> subscriptionList = physicalOriginal.getSubscriptions();
 
 				for (AbstractPhysicalSubscription<ISink<? super IStreamObject>> subscription : subscriptionList) {
 
 					physicalOriginal.unsubscribeSink(subscription);
-					synchronizer.subscribeSink(subscription.getTarget(),
-							subscription.getSinkInPort(),
-							subscription.getSourceOutPort(),
-							subscription.getSchema(), true,
-							subscription.getOpenCalls());
+					synchronizer.subscribeSink(subscription.getTarget(), subscription.getSinkInPort(), subscription.getSourceOutPort(), subscription.getSchema(), true, subscription.getOpenCalls());
 				}
 
 				ArrayList<IPhysicalOperator> emptyCallPath = new ArrayList<IPhysicalOperator>();
 
-				physicalOriginal.subscribeSink(synchronizer, 0, 0,
-						physicalOriginal.getOutputSchema());
+				physicalOriginal.subscribeSink(synchronizer, 0, 0, physicalOriginal.getOutputSchema());
 
-				physicalOriginal.open(synchronizer, 0, 0, emptyCallPath,
-						physicalOriginal.getOwner());
-				
-				physicalCopy.subscribeSink(synchronizer, 1, 0,
-						physicalCopy.getOutputSchema());
-				physicalCopy.open(synchronizer, 0, 1, emptyCallPath,
-						physicalCopy.getOwner());
-				
+				physicalOriginal.open(synchronizer, 0, 0, emptyCallPath, physicalOriginal.getOwner());
+
+				physicalCopy.subscribeSink(synchronizer, 1, 0, physicalCopy.getOutputSchema());
+				physicalCopy.open(synchronizer, 0, 1, emptyCallPath, physicalCopy.getOwner());
 
 				physicalOriginal.unblock();
 				synchronizer.startSynchronizing();
 				physicalOriginal.stopBuffering();
 			}
-			
+
 		}
-		
-		
-		
 
 	}
-	
+
 	/***
 	 * Updates all operatos with given oldPipeID with new Pipe and PeerID.
+	 * 
 	 * @param oldPipeID
 	 * @param newPipeID
 	 * @param newPeerID
 	 */
 	public static void updatePipeID(String oldPipeID, String newPipeID, String newPeerID) {
-		
-		
-		
+
 		ILogicalOperator operator = LoadBalancingHelper.getLogicalJxtaOperator(true, oldPipeID);
-		while(operator!=null) {
-			JxtaSenderAO sender = (JxtaSenderAO)operator;
+		while (operator != null) {
+			JxtaSenderAO sender = (JxtaSenderAO) operator;
 			LOG.debug("Updating Sender with old Pipe " + oldPipeID, " to new Pipe " + newPipeID);
 			sender.setPeerID(newPeerID);
 			sender.setPipeID(newPipeID);
 			operator = LoadBalancingHelper.getLogicalJxtaOperator(true, oldPipeID);
-			}
-		
+		}
+
 		operator = LoadBalancingHelper.getLogicalJxtaOperator(false, oldPipeID);
-		while(operator!=null) {
+		while (operator != null) {
 			LOG.debug("Updating Receiver with old Pipe " + oldPipeID, " to new Pipe " + newPipeID);
-			JxtaReceiverAO receiver = (JxtaReceiverAO)operator;
+			JxtaReceiverAO receiver = (JxtaReceiverAO) operator;
 			receiver.setPeerID(newPeerID);
 			receiver.setPipeID(newPipeID);
 			operator = LoadBalancingHelper.getLogicalJxtaOperator(false, oldPipeID);
-			}
-		
-		
+		}
+
 	}
-	
+
 	/**
 	 * Relinks a logical Query Part to a new peer.
+	 * 
 	 * @param modifiedPart
 	 * @param status
 	 * @return
 	 */
-	public static HashMap<String, String> relinkQueryPart(ILogicalQueryPart modifiedPart,ParallelTrackMasterStatus status) {
-		
+	public static HashMap<String, String> relinkQueryPart(ILogicalQueryPart modifiedPart, ParallelTrackMasterStatus status) {
+
 		IP2PNetworkManager p2pNetworkManager = OsgiServiceManager.getP2pNetworkManager();
-		
+
 		LoadBalancingHelper.removeTopAOs(modifiedPart);
-		
-		Map<ILogicalOperator, Collection<UpstreamConnection>> incomingConnections = LoadBalancingHelper
-				.stripJxtaReceivers(modifiedPart);
-		Map<ILogicalOperator, Collection<DownstreamConnection>> outgoingConnections = LoadBalancingHelper
-				.stripJxtaSenders(modifiedPart);
-		
-		Collection<ILogicalOperator> relativeSinks = LogicalQueryHelper
-				.getRelativeSinksOfLogicalQueryPart(modifiedPart);
-		Collection<ILogicalOperator> relativeSources = LogicalQueryHelper
-				.getRelativeSourcesOfLogicalQueryPart(modifiedPart);
+
+		Map<ILogicalOperator, Collection<UpstreamConnection>> incomingConnections = LoadBalancingHelper.stripJxtaReceivers(modifiedPart);
+		Map<ILogicalOperator, Collection<DownstreamConnection>> outgoingConnections = LoadBalancingHelper.stripJxtaSenders(modifiedPart);
+
+		Collection<ILogicalOperator> relativeSinks = LogicalQueryHelper.getRelativeSinksOfLogicalQueryPart(modifiedPart);
+		Collection<ILogicalOperator> relativeSources = LogicalQueryHelper.getRelativeSourcesOfLogicalQueryPart(modifiedPart);
 
 		HashMap<String, String> replacedPipes = new HashMap<String, String>();
 		ArrayList<String> senderPipes = new ArrayList<String>();
 
 		for (ILogicalOperator relativeSource : relativeSources) {
 			if (incomingConnections.containsKey(relativeSource)) {
-				Collection<UpstreamConnection> connections = incomingConnections
-						.get(relativeSource);
+				Collection<UpstreamConnection> connections = incomingConnections.get(relativeSource);
 				for (UpstreamConnection connection : connections) {
 
-					String newPipeID = IDFactory.newPipeID(
-							p2pNetworkManager.getLocalPeerGroupID()).toString();
-					
-					JxtaReceiverAO receiver = LoadBalancingHelper.createReceiverAO(connection,
-							newPipeID);
+					String newPipeID = IDFactory.newPipeID(p2pNetworkManager.getLocalPeerGroupID()).toString();
+
+					JxtaReceiverAO receiver = LoadBalancingHelper.createReceiverAO(connection, newPipeID);
 
 					replacedPipes.put(newPipeID, connection.oldPipeID);
 					modifiedPart.addOperator(receiver);
-					
+
 				}
 			}
 		}
-		
+
 		for (ILogicalOperator relativeSink : relativeSinks) {
 			if (outgoingConnections.containsKey(relativeSink)) {
-				Collection<DownstreamConnection> connections = outgoingConnections
-						.get(relativeSink);
+				Collection<DownstreamConnection> connections = outgoingConnections.get(relativeSink);
 				for (DownstreamConnection connection : connections) {
-					String newPipeID = IDFactory.newPipeID(
-							p2pNetworkManager.getLocalPeerGroupID()).toString();
+					String newPipeID = IDFactory.newPipeID(p2pNetworkManager.getLocalPeerGroupID()).toString();
 
 					replacedPipes.put(newPipeID, connection.oldPipeID);
-					
+
 					JxtaSenderAO sender = LoadBalancingHelper.createSenderAO(connection, newPipeID);
 					modifiedPart.addOperator(sender);
 					senderPipes.add(connection.oldPipeID);
@@ -395,8 +334,8 @@ public class ParallelTrackHelper {
 			}
 		}
 		status.setPipesToSync(senderPipes);
-		LOG.debug("Pipes to Sync (later):" );
-		for(String pipe : senderPipes) {
+		LOG.debug("Pipes to Sync (later):");
+		for (String pipe : senderPipes) {
 			LOG.debug(pipe);
 		}
 		status.setModifiedPart(modifiedPart);

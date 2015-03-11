@@ -23,7 +23,6 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSource;
-import de.uniol.inf.is.odysseus.costmodel.NoSampling;
 import de.uniol.inf.is.odysseus.p2p_new.data.DataTransmissionException;
 import de.uniol.inf.is.odysseus.p2p_new.data.DataTransmissionManager;
 import de.uniol.inf.is.odysseus.p2p_new.data.ITransmissionReceiver;
@@ -37,7 +36,6 @@ import de.uniol.inf.is.odysseus.p2p_new.util.IOperatorObserver;
 import de.uniol.inf.is.odysseus.systemload.ISystemLoad;
 
 @SuppressWarnings("rawtypes")
-@NoSampling
 public class JxtaReceiverPO<T extends IStreamObject> extends AbstractSource<T> implements
 		ITransmissionReceiverListener, IObservableOperator {
 
@@ -160,9 +158,7 @@ public class JxtaReceiverPO<T extends IStreamObject> extends AbstractSource<T> i
 		}
 
 		
-		if (streamObject != null) {
-			process_incoming(streamObject);
-		}
+		process_incoming(streamObject);
 	}
 	
 	private void process_incoming(T streamObject) {
