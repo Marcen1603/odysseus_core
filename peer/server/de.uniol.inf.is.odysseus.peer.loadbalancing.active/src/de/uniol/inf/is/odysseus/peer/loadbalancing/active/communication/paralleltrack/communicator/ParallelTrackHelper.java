@@ -15,6 +15,7 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Optional;
 
+import de.uniol.inf.is.odysseus.core.ISubscription;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
@@ -173,25 +174,27 @@ public class ParallelTrackHelper {
 					throw new LoadBalancingException("No physical Op with isSender=" + isSender + " and Pipe ID " + oldPipeId + " found.");
 				}
 
-				physicalCopy.setOutputSchema(physicalOriginal.getOutputSchema());
-				physicalCopy.setName(physicalOriginal.getName());
+				physicalCopy.setOutputSchema(physicalOriginal.getOutputSchema().clone());
 				physicalCopy.addOwner(physicalOriginal.getOwner());
 
 				AbstractPhysicalSubscription subscription = physicalOriginal.getSubscribedToSource(0);
 
 				if (subscription.getTarget() instanceof AbstractSource) {
-					((AbstractSource) subscription.getTarget()).subscribeSink(physicalCopy, 0, subscription.getSourceOutPort(), subscription.getSchema(), true, subscription.getOpenCalls());
 					ISource source = (ISource) subscription.getTarget();
-					physicalCopy.subscribeToSource(source, subscription.getSinkInPort(), subscription.getSourceOutPort(), subscription.getSchema());
-
+					source.subscribeSink(physicalCopy, 0, subscription.getSourceOutPort(), subscription.getSchema().clone(), true, subscription.getOpenCalls());
+					physicalCopy.subscribeToSource(source, subscription.getSinkInPort(), subscription.getSourceOutPort(), subscription.getSchema().clone());
+					
 					for (IOperatorOwner owner : (List<IOperatorOwner>) physicalCopy.getOwner()) {
 						physicalCopy.open(owner);
 					}
 
 					Optional<Integer> queryId = LoadBalancingHelper.getQueryForRoot(physicalOriginal);
 					if (queryId.isPresent()) {
+						OsgiServiceManager.getExecutor().getExecutionPlan().getQueryById(queryId.get()).replaceOperator(physicalOriginal, physicalCopy);
 						OsgiServiceManager.getExecutor().getExecutionPlan().getQueryById(queryId.get()).replaceRoot(physicalOriginal, physicalCopy);
 					}
+					
+					status.pushSenderToRemoveList(physicalOriginal);
 				}
 
 				LOG.debug("Installed additional Sender with PeerID " + physicalCopy.getPeerIDString() + " and PipeID " + physicalCopy.getPipeIDString());
@@ -201,16 +204,11 @@ public class ParallelTrackHelper {
 				JxtaReceiverAO copy = (JxtaReceiverAO) logicalReceiver.clone();
 				copy.setPipeID(newPipeId);
 				copy.setPeerID(newPeerId);
-				copy.setSchema(logicalReceiver.getSchema());
 
 				JxtaReceiverPO physicalOriginal = (JxtaReceiverPO) LoadBalancingHelper.getPhysicalJxtaOperator(isSender, oldPipeId);
 
-				copy.setSchemaName(physicalOriginal.getOutputSchema().getURI());
-
 				JxtaReceiverPO physicalCopy = new JxtaReceiverPO(copy);
 
-				physicalCopy.setOutputSchema(physicalOriginal.getOutputSchema());
-				physicalCopy.setName(physicalOriginal.getName());
 				physicalCopy.addOwner(physicalOriginal.getOwner());
 
 				LoadBalancingSynchronizerPO<IStreamObject<ITimeInterval>> synchronizer = new LoadBalancingSynchronizerPO<IStreamObject<ITimeInterval>>();
@@ -219,36 +217,141 @@ public class ParallelTrackHelper {
 				synchronizer.addListener(listener);
 				synchronizer.addOwner(physicalOriginal.getOwner());
 				physicalOriginal.startBuffering();
-				// TODO find better solution.
-				try {
-					Thread.sleep(50);
-				} catch (InterruptedException e) {
-					LOG.warn("Could not wait for Receiver");
-				}
-
+				
 				List<AbstractPhysicalSubscription<ISink<? super IStreamObject>>> subscriptionList = physicalOriginal.getSubscriptions();
 
 				for (AbstractPhysicalSubscription<ISink<? super IStreamObject>> subscription : subscriptionList) {
 
 					physicalOriginal.unsubscribeSink(subscription);
-					synchronizer.subscribeSink(subscription.getTarget(), subscription.getSinkInPort(), subscription.getSourceOutPort(), subscription.getSchema(), true, subscription.getOpenCalls());
+					synchronizer.subscribeSink(subscription.getTarget(), subscription.getSinkInPort(), subscription.getSourceOutPort(), subscription.getSchema().clone(), true, subscription.getOpenCalls());
+					
+					ISink sink = (ISink)subscription.getTarget();
+					Collection<AbstractPhysicalSubscription> revSubscriptions = sink.getSubscribedToSource();
+					for (AbstractPhysicalSubscription subscr : revSubscriptions) {
+						sink.unsubscribeFromSource(subscr);
+						sink.subscribeToSource(synchronizer, subscr.getSinkInPort(), subscr.getSourceOutPort(), subscr.getSchema().clone());
+					}
+					
 				}
 
 				ArrayList<IPhysicalOperator> emptyCallPath = new ArrayList<IPhysicalOperator>();
 
-				physicalOriginal.subscribeSink(synchronizer, 0, 0, physicalOriginal.getOutputSchema());
-
+				physicalOriginal.subscribeSink(synchronizer, 0, 0, physicalOriginal.getOutputSchema().clone());
+				synchronizer.subscribeToSource(physicalOriginal, 0, 0, physicalOriginal.getOutputSchema().clone());
 				physicalOriginal.open(synchronizer, 0, 0, emptyCallPath, physicalOriginal.getOwner());
 
-				physicalCopy.subscribeSink(synchronizer, 1, 0, physicalCopy.getOutputSchema());
+				physicalCopy.subscribeSink(synchronizer, 1, 0, physicalCopy.getOutputSchema().clone());
+				synchronizer.subscribeToSource(physicalCopy, 1, 0, physicalOriginal.getOutputSchema().clone());
 				physicalCopy.open(synchronizer, 0, 1, emptyCallPath, physicalCopy.getOwner());
 
-				physicalOriginal.unblock();
 				synchronizer.startSynchronizing();
 				physicalOriginal.stopBuffering();
 			}
 
 		}
+
+	}
+	
+	
+
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	public static boolean removeDuplicateJxtaReceiver(String pipeID) {
+		IPhysicalOperator operator = LoadBalancingHelper.getPhysicalJxtaOperator(false, pipeID);
+
+		if (operator == null) {
+			LOG.error("No Receiver with pipe ID {} found", pipeID);
+			return false;
+		}
+		if (operator instanceof JxtaReceiverPO) {
+
+			LOG.debug("Removing RECEIVER with pipe ID {}", pipeID);
+			JxtaReceiverPO receiver = (JxtaReceiverPO) operator;
+
+			AbstractPhysicalSubscription<?> receiverSubscription = (AbstractPhysicalSubscription) receiver
+					.getSubscriptions().get(0);
+
+			if (receiverSubscription.getTarget() instanceof LoadBalancingSynchronizerPO) {
+				LoadBalancingSynchronizerPO sync = (LoadBalancingSynchronizerPO) receiverSubscription
+						.getTarget();
+				int port = receiverSubscription.getSinkInPort();
+				int otherPort = (port + 1) % 2;
+
+				JxtaReceiverPO otherReceiver = (JxtaReceiverPO) sync
+						.getSubscribedToSource(otherPort).getTarget();
+
+				LOG.debug("Start Buffering.");
+				otherReceiver.startBuffering();
+				try {
+					Thread.sleep(100);
+				} catch (InterruptedException e) {
+					LOG.warn("Could not wait for Receiver.");
+				}
+
+				otherReceiver.unsubscribeFromAllSinks();
+				
+				receiver.unsubscribeFromAllSinks();
+				
+				sync.unsubscribeFromAllSources();
+
+				List<AbstractPhysicalSubscription<ISink<? super IStreamObject>>> subscriptionList = sync
+						.getSubscriptions();
+
+				for (AbstractPhysicalSubscription<ISink<? super IStreamObject>> subscription : subscriptionList) {
+
+					sync.unsubscribeSink(subscription);
+
+					otherReceiver.subscribeSink(subscription.getTarget(),
+							subscription.getSinkInPort(), subscription
+									.getSourceOutPort(), subscription
+									.getSchema().clone(), true, subscription
+									.getOpenCalls());
+
+					subscription.getTarget().subscribeToSource(otherReceiver,
+							subscription.getSinkInPort(),
+							subscription.getSourceOutPort(),
+							subscription.getSchema().clone());
+				}
+				LOG.debug("Stop Buffering.");
+				otherReceiver.stopBuffering();
+				receiver.getTransmission().close();
+
+			}
+		}
+		return true;
+	}
+
+	/**
+	 * Removes a duplicate Jxta Receiver or sender used in LoadBalancing. Called
+	 * during abort and after sync.
+	 * 
+	 * @param pipeID
+	 */
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	public static void removeDuplicateJxtaSender(String pipeID,
+			ParallelTrackSlaveStatus status) {
+
+		JxtaSenderPO sender = status.popSenderfromRemoveList(pipeID);
+
+		if (sender == null) {
+			LOG.error("No Sender with Pipe ID {} found.", pipeID);
+			return;
+		}
+		LOG.debug("Removing SENDER with pipe ID {}", pipeID);
+
+		List<ISubscription> subscriptions = sender.getSubscribedToSource();
+		for (ISubscription subscr : subscriptions) {
+			ISource source = ((ISource) subscr.getTarget());
+
+			Collection<ISubscription> reverseSubscriptions = source
+					.getSubscriptions();
+			for (ISubscription revSubscr : reverseSubscriptions) {
+				if (revSubscr.getTarget().equals(sender)) {
+					source.unsubscribeSink(revSubscr);
+				}
+			}
+		}
+
+		sender.unsubscribeFromAllSources();
 
 	}
 

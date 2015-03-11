@@ -36,6 +36,7 @@ public class MovingStateSlaveStatus implements ILoadBalancingSlaveStatus,
 
 	private List<IStatefulPO> statefulOperatorList;
 	
+	
 	/**
 	 * Holds involvement Type of peer
 	 */

@@ -274,7 +274,7 @@ public class LoadBalancingSynchronizerPO<T extends IStreamObject<? extends ITime
 	}
 
 	@Override
-	protected synchronized void process_next(T object, int port) {
+	protected void process_next(T object, int port) {
 		
 		//LoadBalancingSynchronizerPO.log.debug(
 		// 	"Input: {} from input port {}", object, port);

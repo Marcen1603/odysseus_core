@@ -1,8 +1,12 @@
 package de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.paralleltrack.status;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
+import de.uniol.inf.is.odysseus.p2p_new.physicaloperator.JxtaSenderPO;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.common.ILoadBalancingSlaveStatus;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.paralleltrack.communicator.ParallelTrackMessageDispatcher;
 import net.jxta.id.ID;
@@ -30,7 +34,12 @@ public class ParallelTrackSlaveStatus implements ILoadBalancingSlaveStatus{
 	
 	private Collection<Integer> installedQueries;
 	
-	private ConcurrentHashMap<String,String> replacedPipes;
+
+	@SuppressWarnings("rawtypes")
+	private List<JxtaSenderPO> obsoleteReceiverList = new ArrayList<JxtaSenderPO>();
+	
+	private ConcurrentHashMap<String,String> replacedSenderPipes;
+	private ConcurrentHashMap<String,String> replacedReceiverPipes;
 	
 
 	private final ParallelTrackMessageDispatcher messageDispatcher;
@@ -78,20 +87,37 @@ public class ParallelTrackSlaveStatus implements ILoadBalancingSlaveStatus{
 		this.installedQueries = installedQueries;
 	}
 	
-	public boolean isPipeKnown(String pipeId) {
-		return replacedPipes.values().contains(pipeId);
+	public boolean isSenderPipeKnown(String pipeId) {
+		return replacedSenderPipes.values().contains(pipeId);
 	}
 	
-	public void addReplacedPipe(String newPipeId, String oldPipeId) {
-		if(!replacedPipes.containsKey(oldPipeId)) {
-			replacedPipes.put(oldPipeId,newPipeId);
+	public boolean isReceiverPipeKnown(String pipeId) {
+		return replacedReceiverPipes.values().contains(pipeId);
+	}
+	
+	public void addReplacedReceiverPipe(String newPipeId, String oldPipeId) {
+		if(!replacedReceiverPipes.containsKey(oldPipeId)) {
+			replacedReceiverPipes.put(oldPipeId, newPipeId);
 		}
 	}
+	
 
-
-	public ConcurrentHashMap<String, String> getReplacedPipes() {
-		return replacedPipes;
+	public void addReplacedSenderPipe(String newPipeId, String oldPipeId) {
+		if(!replacedSenderPipes.containsKey(oldPipeId)) {
+			replacedSenderPipes.put(oldPipeId, newPipeId);
+		}
 	}
+	
+	public ConcurrentHashMap<String,String> getReplacedSenderPipes() {
+		return replacedSenderPipes;
+	}
+	
+	public ConcurrentHashMap<String,String> getReplacedReceiverPipes() {
+		return replacedReceiverPipes;
+	}
+
+	
+	
 
 	public ParallelTrackSlaveStatus(INVOLVEMENT_TYPES involvementType, LB_PHASES phase, PeerID initiatingPeer, int lbProcessId, ParallelTrackMessageDispatcher messageDispatcher) {
 		this.phase = phase;
@@ -99,7 +125,8 @@ public class ParallelTrackSlaveStatus implements ILoadBalancingSlaveStatus{
 		this.initiatingPeer = initiatingPeer;
 		this.lbProcessId = lbProcessId;
 		this.messageDispatcher = messageDispatcher;
-		this.replacedPipes = new ConcurrentHashMap<String,String>();
+		this.replacedSenderPipes = new ConcurrentHashMap<String,String>();
+		this.replacedReceiverPipes = new ConcurrentHashMap<String,String>();
 	}
 
 
@@ -118,6 +145,26 @@ public class ParallelTrackSlaveStatus implements ILoadBalancingSlaveStatus{
 
 	public int getLbProcessId() {
 		return lbProcessId;
+	}
+	
+
+	@SuppressWarnings("rawtypes")
+	public synchronized void pushSenderToRemoveList(JxtaSenderPO sender) {
+		if(!obsoleteReceiverList.contains(sender)) {
+			this.obsoleteReceiverList.add(sender);
+		}
+	}
+	
+	@SuppressWarnings("rawtypes")
+	public synchronized JxtaSenderPO popSenderfromRemoveList(String pipeId) {
+		Iterator<JxtaSenderPO> iterator = obsoleteReceiverList.iterator();
+		while(iterator.hasNext()) {
+			JxtaSenderPO nextSender = iterator.next();
+			if(nextSender.getPipeIDString().equals(pipeId)) {
+				return nextSender;
+			}
+		}
+		return null;
 	}
 	
 

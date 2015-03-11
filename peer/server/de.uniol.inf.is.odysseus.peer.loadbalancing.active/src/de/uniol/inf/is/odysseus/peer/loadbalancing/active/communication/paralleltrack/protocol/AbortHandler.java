@@ -13,6 +13,7 @@ import de.uniol.inf.is.odysseus.peer.loadbalancing.active.OsgiServiceManager;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.common.LoadBalancingHelper;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.common.LoadBalancingStatusCache;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.paralleltrack.communicator.ParallelTrackCommunicatorImpl;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.paralleltrack.communicator.ParallelTrackHelper;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.paralleltrack.communicator.ParallelTrackMessageDispatcher;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.paralleltrack.messages.ParallelTrackAbortMessage;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.paralleltrack.status.ParallelTrackMasterStatus;
@@ -90,11 +91,19 @@ public class AbortHandler {
 
 			case PEER_WITH_SENDER_OR_RECEIVER:
 
-				if (status.getReplacedPipes() != null) {
-					Collection<String> installedPipes = status.getReplacedPipes().values();
+				if (status.getReplacedReceiverPipes() != null) {
+					Collection<String> installedPipes = status.getReplacedReceiverPipes().values();
 					for (String pipe : installedPipes) {
-						LOG.error("Removing Operator with Pipe ID " + pipe);
-						LoadBalancingHelper.removeDuplicateJxtaOperator(pipe);
+						LOG.error("Removing Receiver with Pipe ID " + pipe);
+						ParallelTrackHelper.removeDuplicateJxtaReceiver(pipe);
+					}
+				}
+				
+				if (status.getReplacedSenderPipes() != null) {
+					Collection<String> installedPipes = status.getReplacedSenderPipes().values();
+					for (String pipe : installedPipes) {
+						LOG.error("Removing Sender with Pipe ID " + pipe);
+						ParallelTrackHelper.removeDuplicateJxtaSender(pipe,status);
 					}
 				}
 				// NO break, since Peer could in theory also be the volunteering

@@ -162,9 +162,7 @@ public class InstructionHandler {
 		case ParallelTrackInstructionMessage.COPY_RECEIVER:
 			
 			isSender=false;
-			//NO BREAK!
-		case ParallelTrackInstructionMessage.COPY_SENDER:
-			LOG.debug("Got COPY_RECEIVER or COPY_SENDER isSender=",isSender);
+			LOG.debug("Got COPY_RECEIVER");
 			
 			LOG.debug(instruction.getOldPipeId()+ " ----> " + instruction.getNewPipeId());
 			
@@ -178,15 +176,65 @@ public class InstructionHandler {
 				LoadBalancingStatusCache.getInstance().storeSlaveStatus(
 						senderPeer, lbProcessId, status);
 			}
+			
 			// Process Pipe only if not already processed:
+			
 			if (status.getPhase().equals(
 					ParallelTrackSlaveStatus.LB_PHASES.WAITING_FOR_SYNC)
-					&& !status.isPipeKnown(instruction.getNewPipeId())) {
+					&& !status.isReceiverPipeKnown(instruction.getNewPipeId())) {
 				
 				
 				LOG.debug("Installing pipe " + instruction.getNewPipeId());
 				
-				status.addReplacedPipe(instruction.getNewPipeId(),
+				status.addReplacedReceiverPipe(instruction.getNewPipeId(),
+						instruction.getOldPipeId());
+				if(status.getVolunteeringPeer()==null) {
+					status.setVolunteeringPeer(LoadBalancingHelper.toPeerID((instruction.getNewPeerId())));
+				}
+				
+				
+				dispatcher = status.getMessageDispatcher();
+				try {
+					ParallelTrackHelper.findAndCopyLocalJxtaOperator(status,isSender,
+							instruction.getNewPeerId(),
+							instruction.getOldPipeId(),
+							instruction.getNewPipeId());
+					dispatcher.sendDuplicateSuccess(senderPeer,
+							instruction.getNewPipeId());
+				} catch (Exception e) {
+					LOG.error("Error while copying JxtaOperator:",e);
+					dispatcher.sendDuplicateFailure(senderPeer);
+				}
+			}
+			break;
+			//NO BREAK!
+		case ParallelTrackInstructionMessage.COPY_SENDER:
+			isSender=true;
+			LOG.debug("Got COPY_SENDER");
+			
+			LOG.debug(instruction.getOldPipeId()+ " ----> " + instruction.getNewPipeId());
+			
+			// Create Status if none exist
+			if (status == null) {
+				status = new ParallelTrackSlaveStatus(
+						ParallelTrackSlaveStatus.INVOLVEMENT_TYPES.PEER_WITH_SENDER_OR_RECEIVER,
+						ParallelTrackSlaveStatus.LB_PHASES.WAITING_FOR_SYNC,
+						senderPeer, lbProcessId,
+						new ParallelTrackMessageDispatcher(peerCommunicator,lbProcessId));
+				LoadBalancingStatusCache.getInstance().storeSlaveStatus(
+						senderPeer, lbProcessId, status);
+			}
+			
+			// Process Pipe only if not already processed:
+			
+			if (status.getPhase().equals(
+					ParallelTrackSlaveStatus.LB_PHASES.WAITING_FOR_SYNC)
+					&& !status.isSenderPipeKnown(instruction.getNewPipeId())) {
+				
+				
+				LOG.debug("Installing pipe " + instruction.getNewPipeId());
+				
+				status.addReplacedSenderPipe(instruction.getNewPipeId(),
 						instruction.getOldPipeId());
 				if(status.getVolunteeringPeer()==null) {
 					status.setVolunteeringPeer(LoadBalancingHelper.toPeerID((instruction.getNewPeerId())));
@@ -218,8 +266,30 @@ public class InstructionHandler {
 			break;
 			
 		case ParallelTrackInstructionMessage.DELETE_RECEIVER:
+			LOG.debug("Got DELETE_RECEIVER");
+			if(status==null) {
+				LOG.debug("Stauts already null. Sending improvised Stop message.");
+				ParallelTrackMessageDispatcher tmpMessageDispatcher = new ParallelTrackMessageDispatcher(ParallelTrackCommunicatorImpl.getPeerCommunicator(),instruction.getLoadBalancingProcessId());
+				tmpMessageDispatcher.sendDeleteFinished(senderPeer, instruction.getOldPipeId());
+				return;
+			}
+			//Sync is finished (or we would not be here). So we can stop spamming SYNC_FINISHED Messages now.
+			status.getMessageDispatcher().stopAllMessages();
+			
+			status.getMessageDispatcher().sendDeleteFinished(senderPeer,instruction.getOldPipeId());
+			
+			if(status.getReplacedReceiverPipes().containsKey(instruction.getOldPipeId())) {
+				
+				ParallelTrackHelper.removeDuplicateJxtaReceiver(instruction.getOldPipeId());
+				ParallelTrackHelper.updatePipeID(instruction.getOldPipeId(), status.getReplacedReceiverPipes().get(instruction.getOldPipeId()), status.getVolunteeringPeer().toString());
+				status.getReplacedReceiverPipes().remove(instruction.getOldPipeId());
+			}
+			
+			break;
+			
+			
 		case ParallelTrackInstructionMessage.DELETE_SENDER:
-			LOG.debug("Got DELETE_SENDER or DELETE_RECEIVER");
+			LOG.debug("Got DELETE_SENDER");
 			if(status==null) {
 				LOG.debug("Stauts already null. Sending improvised Stop message.");
 				ParallelTrackMessageDispatcher tmpMessageDispatcher = new ParallelTrackMessageDispatcher(ParallelTrackCommunicatorImpl.getPeerCommunicator(),instruction.getLoadBalancingProcessId());
@@ -229,11 +299,11 @@ public class InstructionHandler {
 			//Sync is finished (or we would not be here). So we can stop spamming SYNC_FINISHED Messages now.
 			status.getMessageDispatcher().stopAllMessages();
 			status.getMessageDispatcher().sendDeleteFinished(senderPeer,instruction.getOldPipeId());
-			if(status.getReplacedPipes().containsKey(instruction.getOldPipeId())) {
+			if(status.getReplacedSenderPipes().containsKey(instruction.getOldPipeId())) {
 				
-				LoadBalancingHelper.removeDuplicateJxtaOperator(instruction.getOldPipeId());
-				ParallelTrackHelper.updatePipeID(instruction.getOldPipeId(), status.getReplacedPipes().get(instruction.getOldPipeId()), status.getVolunteeringPeer().toString());
-				status.getReplacedPipes().remove(instruction.getOldPipeId());
+				ParallelTrackHelper.removeDuplicateJxtaSender(instruction.getOldPipeId(),status);
+				ParallelTrackHelper.updatePipeID(instruction.getOldPipeId(), status.getReplacedSenderPipes().get(instruction.getOldPipeId()), status.getVolunteeringPeer().toString());
+				status.getReplacedSenderPipes().remove(instruction.getOldPipeId());
 			}
 			
 			break;

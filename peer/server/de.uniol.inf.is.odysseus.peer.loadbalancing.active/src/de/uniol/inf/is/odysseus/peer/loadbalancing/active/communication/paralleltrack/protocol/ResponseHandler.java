@@ -239,7 +239,7 @@ public class ResponseHandler {
 								.getOperators()) {
 							if (operator instanceof JxtaReceiverAO) {
 								JxtaReceiverAO receiver = (JxtaReceiverAO) operator;
-								dispatcher.sendDeleteOperator(false,
+								dispatcher.sendDeleteOperator(true,
 										receiver.getPeerID(),
 										receiver.getPipeID(),communicationListener);
 							}
