@@ -1,8 +1,6 @@
 package de.uniol.inf.is.odysseus.p2p_new.data.socket;
 
-import java.io.IOException;
 import java.net.InetAddress;
-import java.net.Socket;
 import java.net.UnknownHostException;
 
 import net.jxta.peer.PeerID;
