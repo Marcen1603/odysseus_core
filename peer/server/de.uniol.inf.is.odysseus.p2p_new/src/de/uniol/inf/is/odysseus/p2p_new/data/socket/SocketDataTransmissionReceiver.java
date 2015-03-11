@@ -29,7 +29,6 @@ public class SocketDataTransmissionReceiver extends EndpointDataTransmissionRece
 
 	private static final Logger LOG = LoggerFactory.getLogger(SocketDataTransmissionReceiver.class);
 
-
 	private final MessageByteBuffer mb = new MessageByteBuffer();
 
 	private Socket socket;
