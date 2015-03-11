@@ -63,6 +63,10 @@ public class LoadBalancingStatusCache {
 	 * @return LoadBalancingProcessId.
 	 */
 	public int storeLocalProcess(ILoadBalancingMasterStatus status) {
+		//When we are here, the old status is not needed anymore, as it must be done at this point.
+		
+		deleteLocalStatus((counter-1));
+		
 		status.setProcessId(counter);
 		masterStati.put(counter, status);
 		int loadBalancingProcessId = counter;
@@ -93,6 +97,8 @@ public class LoadBalancingStatusCache {
 		if (masterStati.containsKey(loadBalancingProcessId))
 			masterStati.remove(loadBalancingProcessId);
 	}
+	
+	
 
 	/**
 	 * Returns status on slave peer
@@ -127,6 +133,11 @@ public class LoadBalancingStatusCache {
 	 */
 	public boolean storeSlaveStatus(PeerID peer, int lbProcessId,
 			ILoadBalancingSlaveStatus status) {
+		
+		//At this point, we can remove the old status is it is no longer needed (at least for this Peer)
+		
+		deleteSlaveStatus(peer,(lbProcessId-1));
+		
 		if (!slaveStati.contains(peer)) {
 			slaveStati
 					.put(peer,
