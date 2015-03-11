@@ -213,7 +213,11 @@ public class SocketDataTransmissionSender extends EndpointDataTransmissionSender
 					toRemoveList.add(pid);
 				}
 			} else {
-				waitingBuffer.get(pid).add(rawData);
+				if( waitingBuffer.containsKey(pid)) {
+					waitingBuffer.get(pid).add(rawData);
+				} else {
+					LOG.warn("Wanted to send a message to non-opened peer");
+				}
 			}
 		}
 
