@@ -381,6 +381,7 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 						}
 					}
 					
+					importedSources.put(advertisement, realSrcNameToUse);
 					getDataDictionary().setStream(realSrcNameToUse, query.getLogicalPlan(), SessionManagementService.getActiveSession());
 				} else {
 					throw new PeerException("Could not import '" + realSrcNameToUse + "' since the parser did not return a runnable query");
@@ -403,10 +404,9 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 			receiverOperator.setImportedSourceAdvertisement(advertisement);
 			receiverOperator.setPeerID(advertisement.getPeerID().toString());
 
+			importedSources.put(advertisement, realSrcNameToUse);
 			getDataDictionary().setView(realSrcNameToUse, receiverOperator, SessionManagementService.getActiveSession());
 		}
-
-		importedSources.put(advertisement, realSrcNameToUse);
 
 		fireSourceImportEvent(advertisement, realSrcNameToUse);
 		LOG.debug("Import finished");
