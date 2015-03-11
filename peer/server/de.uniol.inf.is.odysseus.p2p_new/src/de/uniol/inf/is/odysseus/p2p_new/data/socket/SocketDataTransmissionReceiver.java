@@ -24,7 +24,6 @@ public class SocketDataTransmissionReceiver extends EndpointDataTransmissionRece
 
 	private static final Logger LOG = LoggerFactory.getLogger(SocketDataTransmissionReceiver.class);
 
-	private Socket socket;
 	private InetAddress address;
 	
 	private ReceivingDataThread receivingThread;
@@ -165,12 +164,7 @@ public class SocketDataTransmissionReceiver extends EndpointDataTransmissionRece
 
 	@Override
 	public void sendClose() throws DataTransmissionException {
-		if (socket != null) {
-			try {
-				socket.close();
-			} catch (IOException e) {
-			}
-		}
+		stopReceiving();
 		super.sendClose();
 	}
 }
