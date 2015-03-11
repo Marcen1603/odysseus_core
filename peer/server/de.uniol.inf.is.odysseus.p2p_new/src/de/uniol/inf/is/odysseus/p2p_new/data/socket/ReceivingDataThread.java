@@ -73,6 +73,8 @@ public class ReceivingDataThread extends Thread {
 
 			tryCloseSocket(socket);
 		} finally {
+			tryCloseSocket(socket);
+			
 			socket = null;
 			buffer = null;
 			mb = null;
@@ -103,6 +105,7 @@ public class ReceivingDataThread extends Thread {
 
 	public void stopRunning() {
 		isRunning = false;
+		tryCloseSocket(socket);
 	}
 
 	private static void tryCloseSocket(Socket socket) {
