@@ -38,8 +38,15 @@ public class OptionParameter extends AbstractParameter<Option> {
 	@SuppressWarnings("unchecked")
 	@Override
 	protected String getPQLStringInternal() {
-		List<String> list = (List<String>) inputValue;
-		return "['" + list.get(0) + "','" + list.get(1) + "']";
+		if( inputValue instanceof List ) {
+			List<String> list = (List<String>) inputValue;
+			return "['" + list.get(0) + "','" + list.get(1) + "']";
+		} else if ( inputValue instanceof Option ) {
+			Option opt = (Option)inputValue;
+			return "['" + opt.name + "','" + opt.value + "']";
+		}
+		
+		return "";
 	}
 
 }

@@ -38,6 +38,7 @@ public class CSVFileSink extends AbstractSenderAO {
 	
 	public CSVFileSink(CSVFileSink other){
 		super(other);
+		this.optionList.addAll(other.optionList);
 	}
 	
 	@Override
