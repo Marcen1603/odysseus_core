@@ -631,7 +631,7 @@ public class MovingStateHelper {
 				//Just set new Target on Subscription to keep buffer.
 				((ControllablePhysicalSubscription)subscr).setTarget(replacement);
 				
-				replacement.subscribeToSource(subscription.getTarget(), subscription.getSinkInPort(), subscription.getSourceOutPort(), subscription.getSchema());
+				replacement.subscribeToSource((ISource) subscription.getTarget(), subscription.getSinkInPort(), subscription.getSourceOutPort(), subscription.getSchema());
 				original.unsubscribeFromAllSources();
 				
 
