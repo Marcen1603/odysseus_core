@@ -1,12 +1,9 @@
 package de.uniol.inf.is.odysseus.p2p_new.data.socket;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.InetAddress;
 import java.net.Socket;
-import java.net.SocketException;
 import java.net.UnknownHostException;
-import java.util.List;
 
 import net.jxta.peer.PeerID;
 
@@ -19,25 +16,20 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.p2p_new.IMessage;
 import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicator;
 import de.uniol.inf.is.odysseus.p2p_new.PeerCommunicationException;
-import de.uniol.inf.is.odysseus.p2p_new.activator.P2PNewPlugIn;
 import de.uniol.inf.is.odysseus.p2p_new.data.DataTransmissionException;
 import de.uniol.inf.is.odysseus.p2p_new.data.endpoint.EndpointDataTransmissionReceiver;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.impl.PeerDictionary;
-import de.uniol.inf.is.odysseus.p2p_new.util.ObjectByteConverter;
 
 public class SocketDataTransmissionReceiver extends EndpointDataTransmissionReceiver {
 
 	private static final Logger LOG = LoggerFactory.getLogger(SocketDataTransmissionReceiver.class);
 
-	private final MessageByteBuffer mb = new MessageByteBuffer();
-
 	private Socket socket;
 	private InetAddress address;
-	private Boolean receiving = false;
-	private final byte[] buffer = new byte[P2PNewPlugIn.TRANSPORT_BUFFER_SIZE];
-//	private int receivedBytes = 0;
-//	private int packageCount = 0;
 	
+	private ReceivingDataThread receivingThread;
+	private Boolean receiving = false;
+		
 	public SocketDataTransmissionReceiver(IPeerCommunicator communicator, String peerID, String id) throws DataTransmissionException {
 		super(communicator, peerID, id);
 
@@ -54,6 +46,8 @@ public class SocketDataTransmissionReceiver extends EndpointDataTransmissionRece
 	@Override
 	public void close() {
 		getPeerCommunicator().removeListener(this, PortMessage.class);
+		
+		stopReceiving();
 		
 		super.close();
 	}
@@ -104,71 +98,34 @@ public class SocketDataTransmissionReceiver extends EndpointDataTransmissionRece
 						LOG.debug("{}: Already receiving ... aborting", this);
 						return;
 					}
-					receiving = true;
 					LOG.debug("{}: Beginning receiving async", this);
+					receiving = true;
 
-					Thread t = new Thread(new Runnable() {
+					receivingThread = new ReceivingDataThread(address, port, new IReceivingDataThreadListener() {
+						
 						@Override
-						public void run() {
-							try {
-								socket = new Socket(address, port);
-								LOG.debug("Opened socket on port {} for address {}", port, address);
-								InputStream inputStream = socket.getInputStream();
-								while (true) {
-									int bytesRead = inputStream.read(buffer);
-									if (bytesRead == -1) {
-										LOG.debug("Reached end of data stream. Socket closed...");
-										break;
-									} else if (bytesRead > 0) {
-//										receivedBytes +=  bytesRead;
-										
-//										System.err.println("Received package : " + bytesRead + " --> " + receivedBytes);
-//										System.err.println("Packages : " + (packageCount++));
-										
-										byte[] msg = new byte[bytesRead];
-										if( buffer == null ) {
-											// closed
-											break;
-										}
-										
-										System.arraycopy(buffer, 0, msg, 0, bytesRead);
-
-										mb.put(msg);
-
-										List<byte[]> packets = mb.getPackets();
-										for (byte[] packet : packets ) {
-											processBytes(packet);
-										}
-									}
-									synchronized( receiving ) {
-										if( !receiving ) {
-											break;
-										}
-									}
-								}
-							} catch (SocketException e) {
-								tryCloseSocket(socket);
-								if (!e.getMessage().equals("socket closed")) {
-									LOG.error("Exception while reading socket data", e);
-								}
-
-							} catch (IOException e) {
-								LOG.error("Exception while reading socket data", e);
-
-								tryCloseSocket(socket);
-							} finally {
-								socket = null;
-								synchronized (receiving) {
-									receiving = false;
-									LOG.debug("Receiving ended");
-								}
+						public void onReceivingPunctuation(IPunctuation punc) {
+							firePunctuation(punc);
+						}
+						
+						@Override
+						public void onReceivingDoneEvent() {
+							fireDoneEvent();
+						}
+						
+						@Override
+						public void onReceivingData(byte[] msg) {
+							fireDataEvent(msg);
+						}
+						
+						@Override
+						public void onFinish() {
+							synchronized( receiving ) {
+								receiving = false;
 							}
 						}
-
 					});
-					t.setName("Reading data thread");
-					t.setDaemon(true);
-					t.start();
+					receivingThread.start();
 				}
 			}
 		} else {
@@ -178,8 +135,13 @@ public class SocketDataTransmissionReceiver extends EndpointDataTransmissionRece
 	
 	@Override
 	public void stopReceiving() {
-		synchronized(receiving) {
-			receiving=false;
+		synchronized(receiving ) {
+			receiving = false;
+		}
+		
+		if( receivingThread != null ) {
+			receivingThread.stopRunning();
+			receivingThread = null;
 		}
 	}
 
@@ -200,36 +162,6 @@ public class SocketDataTransmissionReceiver extends EndpointDataTransmissionRece
 		LOG.debug("Set new Peer Id to {}", peerId);
 		determinePeerAddress(peerId.toString());
 	}
-
-	private void processBytes(byte[] msg) {
-		byte[] realMsg = new byte[msg.length - 1];
-		System.arraycopy(msg, 1, realMsg, 0, realMsg.length);
-
-//		System.err.println("Received packages " + (packageCount++));
-
-		byte flag = msg[0];
-		if (flag == 0) {
-			// data
-			fireDataEvent(realMsg);
-		} else if (flag == 1) {
-			IPunctuation punc = (IPunctuation) ObjectByteConverter.bytesToObject(realMsg);
-			firePunctuation(punc);
-		} else if( flag == 2 ) {
-			fireDoneEvent();
-		} else {
-			LOG.error("Unknown flag {}", flag);
-		}
-	}
-
-	private static void tryCloseSocket(Socket socket) {
-		try {
-			if (socket != null) {
-				socket.close();
-			}
-		} catch (IOException e1) {
-		}
-	}
-	
 
 	@Override
 	public void sendClose() throws DataTransmissionException {

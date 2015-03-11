@@ -25,10 +25,6 @@ public class MessageByteBuffer {
 	private final List<byte[]> packets2 = Lists.newLinkedList();
 	private List<byte[]> packetsPointer = packets1;
 	
-	public MessageByteBuffer() {
-
-	}
-
 	public void put(byte[] additionalData) {
 		ByteBuffer message = ByteBuffer.wrap(additionalData);
 		
