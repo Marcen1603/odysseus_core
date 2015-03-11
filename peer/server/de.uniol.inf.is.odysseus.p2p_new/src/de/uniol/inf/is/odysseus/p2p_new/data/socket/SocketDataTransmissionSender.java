@@ -37,7 +37,7 @@ public class SocketDataTransmissionSender extends EndpointDataTransmissionSender
 	private final IPeerCommunicator peerCommunicator;
 
 	private final Map<PeerID, ServerSocket> serverSocketMap = Maps.newConcurrentMap();
-	private final Map<PeerID, Socket> clientSocketMap = Maps.newConcurrentMap();
+	private final Map<PeerID, SocketDataChannel> clientSocketMap = Maps.newConcurrentMap();
 	private final List<PeerID> openCallers = Lists.newArrayList();
 	private final Map<PeerID, List<byte[]>> waitingBuffer = Maps.newConcurrentMap();
 	private final List<byte[]> globalBuffer = Lists.newArrayList();
@@ -74,8 +74,10 @@ public class SocketDataTransmissionSender extends EndpointDataTransmissionSender
 
 					Socket clientSocket = serverSocket.accept();
 					LOG.debug("Server socket on port {} was accepted from peer {}", serverSocket.getLocalPort(), PeerDictionary.getInstance().getRemotePeerName(senderPeer));
-
-					clientSocketMap.put(senderPeer, clientSocket);
+					
+					SocketDataChannel channel = new SocketDataChannel(clientSocket);
+					
+					clientSocketMap.put(senderPeer, channel);
 					for (PeerID peerID : clientSocketMap.keySet()) {
 						LOG.debug("clientSocketMap contains " + peerID.toString());
 					}
@@ -129,11 +131,9 @@ public class SocketDataTransmissionSender extends EndpointDataTransmissionSender
 		serverSocketMap.clear();
 
 		for (PeerID pid : clientSocketMap.keySet()) {
-			try {
-				clientSocketMap.get(pid).close();
-			} catch (IOException e) {
-			}
+			clientSocketMap.get(pid).close();
 		}
+		
 		clientSocketMap.clear();
 		openCallers.remove(senderPeer);
 		waitingBuffer.remove(senderPeer);
@@ -179,35 +179,22 @@ public class SocketDataTransmissionSender extends EndpointDataTransmissionSender
 			if (clientSocketMap.containsKey(pid)) {
 
 				try {
-					Socket cs = clientSocketMap.get(pid);
+					SocketDataChannel cs = clientSocketMap.get(pid);
 					
 					if (!globalBuffer.isEmpty()) {
 						for (byte[] bufferedData : globalBuffer) {
-							cs.getOutputStream().write(bufferedData);
-							cs.getOutputStream().flush();
-							
-//							sendBytes += bufferedData.length;
-//							System.err.println("Send bytes " + bufferedData.length + " --> " + sendBytes);
+							cs.write(bufferedData);
 						}
 						globalBuffer.clear();
 					}
 
 					if (waitingBuffer.containsKey(pid)) {
 						for (byte[] bufferedData : waitingBuffer.remove(pid)) {
-							cs.getOutputStream().write(bufferedData);
-							cs.getOutputStream().flush();
-//							sendBytes += bufferedData.length;
-//							System.err.println("Send bytes " + bufferedData.length + " --> " + sendBytes);
+							cs.write(bufferedData);
 						}
 					}
-
-
-					cs.getOutputStream().write(rawData);
-					cs.getOutputStream().flush();
+					cs.write(rawData);
 					
-//					sendBytes += rawData.length;
-//					System.err.println("Send bytes " + rawData.length + " --> " + sendBytes);
-
 				} catch (IOException e) {
 					LOG.error("Could not send data", e);
 					toRemoveList.add(pid);
@@ -223,12 +210,9 @@ public class SocketDataTransmissionSender extends EndpointDataTransmissionSender
 
 		if (!toRemoveList.isEmpty()) {
 			for (PeerID pid : toRemoveList) {
-				Socket socket = clientSocketMap.remove(pid);
+				SocketDataChannel socket = clientSocketMap.remove(pid);
 				if (socket != null) {
-					try {
-						socket.close();
-					} catch (IOException e) {
-					}
+					socket.close();
 				}
 
 				ServerSocket serverSocket = serverSocketMap.remove(pid);
