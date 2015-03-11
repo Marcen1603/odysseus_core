@@ -46,6 +46,8 @@ public class JxtaReceiverAO extends AbstractLogicalOperator {
 		this.assignedSchema = other.assignedSchema.clone();
 		this.importedSrcAdvertisement = other.importedSrcAdvertisement;
 		this.basetimeUnit = other.basetimeUnit;
+		this.schemaName = other.schemaName;
+		this.importedSrcAdvertisement = other.importedSrcAdvertisement;
 		
 		setParameterInfos(other.getParameterInfos());
 	}
