@@ -52,7 +52,10 @@ public class OdysseusConfiguration {
 
 	static {
 		try {
-			homeDir = System.getenv("ODYSSEUS_HOME");
+			homeDir = System.getProperty("ODYSSEUS_HOME");
+			if (homeDir == null || homeDir.length() == 0) {
+				homeDir = System.getenv("ODYSSEUS_HOME");
+			}			
 			if (homeDir == null || homeDir.length() == 0) {
 				homeDir = odysseusDefaultHome;
 			}
