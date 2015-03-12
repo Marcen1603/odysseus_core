@@ -1019,8 +1019,8 @@ public class PeerConsole implements CommandProvider, IPeerCommunicatorListener {
 	}
 
 	private void processCommandOutputMessage(IPeerCommunicator communicator, PeerID senderPeer, CommandOutputMessage cmd) {
-		LOG.error("Output from '" + peerDictionary.getRemotePeerName(senderPeer) + "':");
-		LOG.error(cmd.getOutput());
+		System.out.println("Output from '" + peerDictionary.getRemotePeerName(senderPeer) + "':");
+		System.out.println(cmd.getOutput());
 	}
 
 	public void _execCommand(CommandInterpreter ci) {
