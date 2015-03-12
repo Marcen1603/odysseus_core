@@ -69,7 +69,7 @@ public class OdysseusNodeView extends DefaultNodeView<IPhysicalOperator> impleme
 		if (getModelNode() != null) {
 			boolean result = getModelNode().getContent().hasOwner();
 			if( !result ) {
-				LOG.warn("Physical operator '{}' has no owner!", getModelNode().getContent());
+				LOG.debug("Physical operator '{}' has no owner!", getModelNode().getContent());
 			}
 			return result;
 		}
