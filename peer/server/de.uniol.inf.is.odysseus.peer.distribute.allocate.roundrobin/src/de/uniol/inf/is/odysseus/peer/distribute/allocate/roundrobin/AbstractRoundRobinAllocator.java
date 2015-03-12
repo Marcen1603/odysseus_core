@@ -1,6 +1,8 @@
 package de.uniol.inf.is.odysseus.peer.distribute.allocate.roundrobin;
 
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -31,6 +33,30 @@ public abstract class AbstractRoundRobinAllocator implements IQueryPartAllocator
 		LOG.debug("Begin round robin allocation");
 		
 		List<PeerID> peerIDs = determineConsideredPeerIDs(knownRemotePeers, localPeerID, determinePeersToIgnore(knownRemotePeers));
+		
+		if( doSortedPeers(allocatorParameters)) {
+			LOG.debug("Do sorted peerIDs");
+			
+			Collections.sort(peerIDs, new Comparator<PeerID>() {
+
+				@Override
+				public int compare(PeerID o1, PeerID o2) {
+					if( o1 == null ) {
+						if( o2 == null ) {
+							return 0;
+						} 
+						return 1;
+					}
+					if( o2 == null ) {
+						return -1;
+					}
+					
+					return o1.toString().compareTo(o2.toString());
+				}
+				
+			});
+		}
+		
 		if( LOG.isDebugEnabled() ) {
 			logPeers(peerIDs);
 		}
@@ -40,6 +66,15 @@ public abstract class AbstractRoundRobinAllocator implements IQueryPartAllocator
 		}
 		
 		return roundRobinImpl(queryParts, peerIDs);
+	}
+
+	private static boolean doSortedPeers(List<String> allocatorParameters) {
+		for( String param : allocatorParameters ) {
+			if( param.equalsIgnoreCase("sort")) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	private Set<PeerID> determinePeersToIgnore(
@@ -67,7 +102,7 @@ public abstract class AbstractRoundRobinAllocator implements IQueryPartAllocator
 			logPeers(peerIDs);
 		}
 		
-		if( peerIDs == null || peerIDs.isEmpty() ) {
+		if( peerIDs.isEmpty() ) {
 			throw new QueryPartAllocationException("There are no peers left to be considered for round robin in reallocation");
 		}
 		
