@@ -91,4 +91,14 @@ public class TimeIntervalSystemLoad extends SystemLoad implements ITimeInterval,
 	public String toString(PointInTime baseTime) {
 		return timeInterval.toString(baseTime);
 	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		return timeInterval.equals(obj);
+	}
+
+	@Override
+	public int hashCode() {
+		return timeInterval.hashCode();
+	}
 }

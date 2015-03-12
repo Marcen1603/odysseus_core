@@ -97,6 +97,4 @@ public class TimeIntervalLatencySystemLoad extends TimeIntervalSystemLoad implem
 	public String getName() {
 		return "TimeIntervalLatencySystemLoad";
 	}
-
-
 }
