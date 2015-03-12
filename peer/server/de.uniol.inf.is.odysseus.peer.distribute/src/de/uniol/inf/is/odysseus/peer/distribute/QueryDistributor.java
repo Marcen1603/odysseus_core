@@ -99,6 +99,11 @@ public class QueryDistributor implements IQueryDistributor {
 			while( true ) {
 				try {
 					ID sharedQueryId = QueryPartSender.getInstance().transmit(allocationMapCopy, serverExecutor, caller, determineQueryName(query), config);
+					
+					if( LOG.isInfoEnabled() ) {
+						logSuccess(allocationMapCopy);
+					}
+					
 					QueryDistributionNotifier.tryNotifyAfterTransmission(query, allocationMapCopy, sharedQueryId);
 					break;
 				} catch( QueryPartTransmissionException ex ) {
@@ -125,6 +130,16 @@ public class QueryDistributor implements IQueryDistributor {
 					QueryDistributionNotifier.tryNotifyAfterPostProcessing(query, allocationMapCopy);
 				}
 			}
+		}
+	}
+
+	private static void logSuccess(Map<ILogicalQueryPart, PeerID> allocationMapCopy) {
+		LOG.info("Query distributed successfully!");
+		for(ILogicalQueryPart part : allocationMapCopy.keySet() ) {
+			PeerID pid = allocationMapCopy.get(part);
+			String peerName = QueryDistributorHelper.toPeerName(pid);
+			
+			LOG.info("{}: {}", peerName, part);
 		}
 	}
 

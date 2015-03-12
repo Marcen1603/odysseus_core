@@ -231,8 +231,12 @@ public final class QueryDistributorHelper {
 	public static String toPeerNames(List<PeerID> faultyPeers) {
 		StringBuilder sb = new StringBuilder();
 		for( PeerID pid : faultyPeers ) {
-			sb.append(peerDictionary.getRemotePeerName(pid)).append(" ");
+			sb.append(toPeerName(pid)).append(" ");
 		}
 		return sb.toString();
+	}
+	
+	public static String toPeerName( PeerID peerID ) {
+		return peerDictionary.getRemotePeerName(peerID);
 	}
 }
