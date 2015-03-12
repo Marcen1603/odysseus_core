@@ -29,14 +29,12 @@ import de.uniol.inf.is.odysseus.peer.distribute.modify.replication.logicaloperat
  * 
  * @author Michael Brand
  */
-public class ReplicationMergePO<T extends IStreamObject<? extends ITimeInterval>>
-		extends AbstractPipe<T, T> {
+public class ReplicationMergePO<T extends IStreamObject<? extends ITimeInterval>> extends AbstractPipe<T, T> {
 
 	/**
 	 * The logger for this class.
 	 */
-	private static final Logger log = LoggerFactory
-			.getLogger(ReplicationMergePO.class);
+	private static final Logger log = LoggerFactory.getLogger(ReplicationMergePO.class);
 
 	/**
 	 * The {@link PriorityQueue} to keep in mind which elements have been seen
@@ -51,7 +49,7 @@ public class ReplicationMergePO<T extends IStreamObject<? extends ITimeInterval>
 
 	// Is needed to sync youngestTS, since youngest TS may be null
 	private Object dummyForYTSSync = new Object();
-	
+
 	// Is needed to sync transfer
 	private Object dummyForTransferSync = new Object();
 
@@ -63,8 +61,7 @@ public class ReplicationMergePO<T extends IStreamObject<? extends ITimeInterval>
 	transient Comparator<IPair<IStreamable, Integer>> comp = new Comparator<IPair<IStreamable, Integer>>() {
 
 		@Override
-		public int compare(IPair<IStreamable, Integer> left,
-				IPair<IStreamable, Integer> right) {
+		public int compare(IPair<IStreamable, Integer> left, IPair<IStreamable, Integer> right) {
 
 			PointInTime ts_l = getTS(left.getE1(), true);
 			PointInTime ts_r = getTS(right.getE1(), true);
@@ -108,8 +105,7 @@ public class ReplicationMergePO<T extends IStreamObject<? extends ITimeInterval>
 	public ReplicationMergePO() {
 
 		super();
-		this.inputQueue = new PriorityQueue<IPair<IStreamable, Integer>>(10,
-				comp);
+		this.inputQueue = new PriorityQueue<IPair<IStreamable, Integer>>(10, comp);
 		this.youngestTS = null;
 
 	}
@@ -123,8 +119,7 @@ public class ReplicationMergePO<T extends IStreamObject<? extends ITimeInterval>
 	public ReplicationMergePO(ReplicationMergePO<T> mergePO) {
 
 		super(mergePO);
-		this.inputQueue = new PriorityQueue<IPair<IStreamable, Integer>>(10,
-				comp);
+		this.inputQueue = new PriorityQueue<IPair<IStreamable, Integer>>(10, comp);
 		this.inputQueue.addAll(mergePO.inputQueue);
 		this.youngestTS = mergePO.youngestTS;
 
@@ -202,16 +197,18 @@ public class ReplicationMergePO<T extends IStreamObject<? extends ITimeInterval>
 
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	protected void process_next(T object, int port) {
 
-		if (!this.precheck(object))
-			return;
-
 		synchronized (this.inputQueue) {
+
+			if (!this.precheck(object))
+				return;
+
 			this.purgeElements(this.getTS(object, true));
 			this.mergeElement(object, port);
-			this.inputQueue.add(new Pair<IStreamable, Integer>(object, port));
+			this.inputQueue.add(new Pair<IStreamable, Integer>((T)object.clone(), port));
 		}
 
 	}
@@ -225,8 +222,7 @@ public class ReplicationMergePO<T extends IStreamObject<? extends ITimeInterval>
 		synchronized (this.inputQueue) {
 			this.purgeElements(this.getTS(punctuation, true));
 			this.mergeElement(punctuation, port);
-			this.inputQueue.add(new Pair<IStreamable, Integer>(punctuation,
-					port));
+			this.inputQueue.add(new Pair<IStreamable, Integer>(punctuation, port));
 		}
 
 	}
@@ -248,8 +244,7 @@ public class ReplicationMergePO<T extends IStreamObject<? extends ITimeInterval>
 			else if (this.youngestTS == null || ts.after(this.youngestTS)) {
 
 				this.youngestTS = ts;
-				ReplicationMergePO.log.debug("Set youngest timestamp to {}.",
-						this.youngestTS);
+				ReplicationMergePO.log.debug("Set youngest timestamp to {}.", this.youngestTS);
 
 			}
 		}
@@ -303,33 +298,24 @@ public class ReplicationMergePO<T extends IStreamObject<? extends ITimeInterval>
 		Map<Integer, Integer> countToPortMap = Maps.newHashMap(); // key = port,
 																	// value =
 																	// count
-		Iterator<IPair<IStreamable, Integer>> queueIter = this.inputQueue
-				.iterator();
+		Iterator<IPair<IStreamable, Integer>> queueIter = this.inputQueue.iterator();
 		while (queueIter.hasNext()) {
 
 			IPair<IStreamable, Integer> pair = queueIter.next();
 			IStreamable elem = pair.getE1();
 			Integer elemPort = pair.getE2();
 
-			if ((elem.isPunctuation() && !object.isPunctuation())
-					|| (!elem.isPunctuation() && object.isPunctuation())) {
+			if ((elem.isPunctuation() && !object.isPunctuation()) || (!elem.isPunctuation() && object.isPunctuation())) {
 
 				// only one element is a punctuation
 				continue;
 
-			} else if (elem.isPunctuation()
-					&& object.isPunctuation()
-					&& !((IPunctuation) elem).getTime().equals(
-							((IPunctuation) object).getTime())) {
+			} else if (elem.isPunctuation() && object.isPunctuation() && !((IPunctuation) elem).getTime().equals(((IPunctuation) object).getTime())) {
 
 				// not the same timestamps of the punctuations
 				continue;
 
-			} else if (!elem.isPunctuation()
-					&& !object.isPunctuation()
-					&& (!((T) elem).equals(object) || !((T) elem)
-							.getMetadata().equals(
-									((T) object).getMetadata()))) {
+			} else if (!elem.isPunctuation() && !object.isPunctuation() && (!((T) elem).equals(object) || !((T) elem).getMetadata().equals(((T) object).getMetadata()))) {
 
 				// either the elements or the timestamps are not equal
 				continue;
@@ -337,8 +323,7 @@ public class ReplicationMergePO<T extends IStreamObject<? extends ITimeInterval>
 			} else if (countToPortMap.containsKey(elemPort)) {
 
 				// port is already in the map
-				countToPortMap.put(elemPort,
-						countToPortMap.get(elemPort) + 1);
+				countToPortMap.put(elemPort, countToPortMap.get(elemPort) + 1);
 
 			} else {
 
@@ -362,8 +347,7 @@ public class ReplicationMergePO<T extends IStreamObject<? extends ITimeInterval>
 			 * the object appeared on a different port earlier -> drop
 			 */
 
-			ReplicationMergePO.log.debug("Transfering object {} from port {}.",
-					object, port);
+			ReplicationMergePO.log.debug("Transfering object {} from port {}.", object, port);
 
 			if (object.isPunctuation()) {
 				synchronized (this.dummyForTransferSync) {
