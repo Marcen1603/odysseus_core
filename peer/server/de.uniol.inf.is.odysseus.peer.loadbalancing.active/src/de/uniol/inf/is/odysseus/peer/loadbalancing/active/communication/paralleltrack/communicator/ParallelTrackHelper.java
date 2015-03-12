@@ -130,6 +130,7 @@ public class ParallelTrackHelper {
 		status.setPeersForPipe(peersForPipe);
 
 	}
+	
 
 	/**
 	 * Finds a JxtaOperator by pipeId, creates a physical Copy and connects both
@@ -157,10 +158,7 @@ public class ParallelTrackHelper {
 			LOG.error("No operator with pipe ID " + oldPipeId + " found.");
 			throw new LoadBalancingException("No operator with pipe ID " + oldPipeId + " found.");
 		}
-
-		if (operator != null) {
-
-			if (isSender) {
+		if (isSender) {
 				JxtaSenderAO logicalSender = (JxtaSenderAO) operator;
 				JxtaSenderAO copy = (JxtaSenderAO) logicalSender.clone();
 
@@ -224,13 +222,15 @@ public class ParallelTrackHelper {
 
 					physicalOriginal.unsubscribeSink(subscription);
 					synchronizer.subscribeSink(subscription.getTarget(), subscription.getSinkInPort(), subscription.getSourceOutPort(), subscription.getSchema().clone(), true, subscription.getOpenCalls());
-					
+					/*
 					ISink sink = (ISink)subscription.getTarget();
+					
 					Collection<AbstractPhysicalSubscription> revSubscriptions = sink.getSubscribedToSource();
 					for (AbstractPhysicalSubscription subscr : revSubscriptions) {
 						sink.unsubscribeFromSource(subscr);
 						sink.subscribeToSource(synchronizer, subscr.getSinkInPort(), subscr.getSourceOutPort(), subscr.getSchema().clone());
 					}
+					*/
 					
 				}
 
@@ -247,8 +247,6 @@ public class ParallelTrackHelper {
 				synchronizer.startSynchronizing();
 				physicalOriginal.stopBuffering();
 			}
-
-		}
 
 	}
 	

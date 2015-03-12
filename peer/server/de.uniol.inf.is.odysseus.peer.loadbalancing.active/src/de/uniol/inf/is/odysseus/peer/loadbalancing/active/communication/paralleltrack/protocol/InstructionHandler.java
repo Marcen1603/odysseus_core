@@ -207,7 +207,7 @@ public class InstructionHandler {
 				}
 			}
 			break;
-			//NO BREAK!
+			
 		case ParallelTrackInstructionMessage.COPY_SENDER:
 			isSender=true;
 			LOG.debug("Got COPY_SENDER");
@@ -262,6 +262,7 @@ public class InstructionHandler {
 				LOG.error("Status on Slave Peer is null.");
 				return;
 			}
+			
 			status.getMessageDispatcher().stopRunningJob(instruction.getOldPipeId());
 			break;
 			

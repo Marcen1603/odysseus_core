@@ -284,10 +284,12 @@ public class ParallelTrackMessageDispatcher {
 	 * @param job
 	 */
 	public synchronized void stopRunningJob(String job) {
-		if(this.currentJobs.containsKey(job)) {
-			currentJobs.get(job).stopRunning();
-			currentJobs.get(job).clearListeners();
-			currentJobs.remove(job);
+		if(currentJobs!=null) {
+			if(this.currentJobs.containsKey(job)) {
+				currentJobs.get(job).stopRunning();
+				currentJobs.get(job).clearListeners();
+				currentJobs.remove(job);
+			}
 		}
 	}
 	

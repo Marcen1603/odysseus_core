@@ -323,9 +323,30 @@ public class LoadBalancingSynchronizerPO<T extends IStreamObject<? extends ITime
 						LoadBalancingSynchronizerPO.log
 								.warn("Data stream on port {} got ahead of data stream on port {}",
 										port, LoadBalancingSynchronizerPO.old_port);
-						LoadBalancingSynchronizerPO.log.info("Port "+port+": ("+this.state+","+this.tsOflastSeenElementOnOldPort+")" +object.toString());
+					
 						
-						this.finishSynchroization();
+						if(lastSeenTimeShift==null) {
+							log.debug("Last seen Timeshift is null.");
+							
+						} else if (currentTimeShift.getMainPoint() > this.lastSeenTimeShift
+								.getMainPoint()) {
+	
+							// update elapsed time
+							final long timeElapsed = this.threshold.getUnit()
+									.convert(
+											System.currentTimeMillis()
+													- this.startTime,
+											TimeUnit.MILLISECONDS);
+							if (timeElapsed >= this.threshold.getTime()) {
+	
+								// threshold time elapsed
+								LoadBalancingSynchronizerPO.log.warn(
+										"Threshold of {} reached", this.threshold);
+								this.finishSynchroization();
+	
+							}
+	
+						}
 	
 					} else { // currentTimeShift.getMainPoint() >= 0
 						
