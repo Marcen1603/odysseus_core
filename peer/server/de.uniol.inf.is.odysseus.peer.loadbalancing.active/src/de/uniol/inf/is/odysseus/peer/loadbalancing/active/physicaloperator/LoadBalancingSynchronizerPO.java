@@ -62,7 +62,7 @@ public class LoadBalancingSynchronizerPO<T extends IStreamObject<? extends ITime
 	 * The default threshold for the synchronization process.
 	 */
 	private static final TimeValueItem default_threshold = new TimeValueItem(
-			10, TimeUnit.MINUTES);
+			1, TimeUnit.MINUTES);
 
 	/**
 	 * The threshold for the synchronization process.
@@ -283,7 +283,6 @@ public class LoadBalancingSynchronizerPO<T extends IStreamObject<? extends ITime
 			final PointInTime newTS = object.getMetadata().getStart();
 			
 			if (port == this.transferPort && (!this.state.equals(SyncState.timeordering) || this.checkTimeOrder(newTS))) {
-	
 				this.transfer(object);
 	
 			} 
@@ -353,6 +352,7 @@ public class LoadBalancingSynchronizerPO<T extends IStreamObject<? extends ITime
 						if(lastSeenTimeShift==null) {
 							log.debug("Last seen Timeshift is null.");
 							
+							
 						} else if (currentTimeShift.getMainPoint() > this.lastSeenTimeShift
 								.getMainPoint()) {
 	
@@ -373,9 +373,8 @@ public class LoadBalancingSynchronizerPO<T extends IStreamObject<? extends ITime
 	
 						}
 	
-						this.lastSeenTimeShift = currentTimeShift;
-	
 					}
+					this.lastSeenTimeShift = currentTimeShift;
 	
 				}
 	
