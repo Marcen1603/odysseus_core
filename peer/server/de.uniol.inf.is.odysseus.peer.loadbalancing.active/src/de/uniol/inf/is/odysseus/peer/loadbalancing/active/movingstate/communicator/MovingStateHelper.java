@@ -26,7 +26,6 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IStatefulPO;
 import de.uniol.inf.is.odysseus.core.planmanagement.IOperatorOwner;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSource;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IPipe;
 import de.uniol.inf.is.odysseus.p2p_new.IP2PNetworkManager;
@@ -385,9 +384,7 @@ public class MovingStateHelper {
 					
 					if(subTo instanceof ControllablePhysicalSubscription) {
 						ControllablePhysicalSubscription cSub = (ControllablePhysicalSubscription)subTo;
-						LOG.debug("Calling suspend on Subscription:"+ cSub);
 						cSub.suspend();
-						LOG.debug("Open calls is now " +cSub.getOpenCalls());
 					}
 					else {
 						LOG.error("At least one subscription to Operator is not suspendable.");
@@ -520,6 +517,9 @@ public class MovingStateHelper {
 
 
 		JxtaReceiverPO physicalOriginal = (JxtaReceiverPO) LoadBalancingHelper.getPhysicalJxtaOperator(false, oldPipeId);
+		if(physicalOriginal==null) {
+			throw new LoadBalancingException("No physical receiver with Pipe "+oldPipeId+" found.");
+		}
 
 		copy.setSchemaName(physicalOriginal.getOutputSchema().getURI());
 
@@ -557,7 +557,7 @@ public class MovingStateHelper {
 		physicalCopy.addOwner(physicalOriginal.getOwner());
 		
 		replaceSender(physicalOriginal,physicalCopy);
-
+		
 		status.addReplacedOperator(physicalCopy,physicalOriginal);
 	}
 		
@@ -574,33 +574,34 @@ public class MovingStateHelper {
 		for (AbstractPhysicalSubscription<ISink<? super IStreamObject>> subscription : subscriptionList) {
 			
 			ISink sink = subscription.getTarget();
-			int sinkInPort = subscription.getSinkInPort();
-			int sourceOutPort = subscription.getSourceOutPort();
-			SDFSchema schema = subscription.getSchema();
-			//int openCalls = subscription.getOpenCalls();
 
 			original.unsubscribeSink(subscription);
 			
 			replacement.subscribeSink(sink,
-					sinkInPort,
-					sourceOutPort,
-					schema, true,
+					subscription.getSinkInPort(),
+					subscription.getSourceOutPort(),
+					subscription.getSchema().clone(), true,
 					0);
 
 
-			sink.unsubscribeFromSource(((AbstractPhysicalSubscription)subscription));
-			sink.subscribeToSource(replacement, sinkInPort, sourceOutPort, schema);
+			Collection<AbstractPhysicalSubscription> revSubscriptions = sink.getSubscribedToSource();
+			for (AbstractPhysicalSubscription subscr : revSubscriptions) {
+				if(subscr.getTarget().equals(original)) {
+					sink.unsubscribeFromSource(subscr);
+					sink.subscribeToSource(replacement, subscr.getSinkInPort(), subscr.getSourceOutPort(), subscr.getSchema().clone());
+				}
+			}
 			
-			replacement.open(sink, sourceOutPort, sinkInPort, emptyCallPath,original.getOwner());
+			replacement.open(sink, subscription.getSourceOutPort(), subscription.getSinkInPort(), emptyCallPath,original.getOwner());
 			
 		}
-		
 		
 		
 		Optional<Integer> queryId = LoadBalancingHelper.getQueryForRoot(original);
 		if(queryId.isPresent()) {
-			OsgiServiceManager.getExecutor().getExecutionPlan().getQueryById(queryId.get()).replaceOperator(original, replacement);
+			//OsgiServiceManager.getExecutor().getExecutionPlan().getQueryById(queryId.get()).replaceOperator(original, replacement);
 		}
+		original.getTransmission().close();
 	
 	}
 
@@ -614,6 +615,7 @@ public class MovingStateHelper {
 			
 			AbstractSource source = (AbstractSource)subscription.getTarget();
 			AbstractPhysicalSubscription subscr=null;
+			
 			
 			for(Object sub : source.getSubscriptions()) {
 				if(sub instanceof AbstractPhysicalSubscription) {
@@ -631,12 +633,13 @@ public class MovingStateHelper {
 				//Just set new Target on Subscription to keep buffer.
 				((ControllablePhysicalSubscription)subscr).setTarget(replacement);
 				
-				replacement.subscribeToSource((ISource) subscription.getTarget(), subscription.getSinkInPort(), subscription.getSourceOutPort(), subscription.getSchema());
+				replacement.subscribeToSource((ISource) subscription.getTarget(), subscription.getSinkInPort(), subscription.getSourceOutPort(), subscription.getSchema().clone());
 				original.unsubscribeFromAllSources();
 				
 
 				Optional<Integer> queryId = LoadBalancingHelper.getQueryForRoot(original);
 				if(queryId.isPresent()) {
+					//OsgiServiceManager.getExecutor().getExecutionPlan().getQueryById(queryId.get()).replaceOperator(original, replacement);
 					OsgiServiceManager.getExecutor().getExecutionPlan().getQueryById(queryId.get()).replaceRoot(original, replacement);
 				}
 			}
@@ -680,12 +683,13 @@ public class MovingStateHelper {
 		LOG.debug("Resuming Sender with pipe " + pipeID);
 		IPhysicalOperator operator = LoadBalancingHelper
 				.getPhysicalJxtaOperator(true, pipeID);
+		
 		if (operator == null) {
 			throw new LoadBalancingException("No Sender with pipeID " + pipeID
 					+ " found.");
 		}
 		stopBuffering(operator);
-
+		
 	}
 
 	/**

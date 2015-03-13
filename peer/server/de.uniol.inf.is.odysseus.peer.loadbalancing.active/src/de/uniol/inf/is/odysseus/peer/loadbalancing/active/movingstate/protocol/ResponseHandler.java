@@ -206,6 +206,7 @@ public class ResponseHandler {
 				if (dispatcher.getNumberOfRunningJobs() == 0) {
 					status.lock();
 					// All success messages received. Yay!
+					LOG.debug("Phase:RELINKING_RECEIVERS");
 					status.setPhase(LB_PHASES.RELINKING_RECEIVERS);
 					MovingStateHelper.notifyDownstreamPeers(status);
 					LOG.debug("Status Relinking Receivers.");

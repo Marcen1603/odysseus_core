@@ -49,7 +49,7 @@ public class MovingStateResponseMessage implements IMessage {
 	 * Array of installed Query IDs
 	 */
 	private Integer[] installedQueries;
-
+	
 	/**
 	 * Default Constructor
 	 */
@@ -374,5 +374,6 @@ public class MovingStateResponseMessage implements IMessage {
 		message.setMsgType(FAIL_INIT_STATE_COPY);
 		return message;
 	}
+
 
 }

@@ -177,37 +177,43 @@ public class InstructionHandler {
 			}
 
 			// Process Pipe only if not already processed:
-			if ((status.getPhase()
-					.equals(MovingStateSlaveStatus.LB_PHASES.WAITING_FOR_FINISH))
-					|| (status.getPhase()
-							.equals(MovingStateSlaveStatus.LB_PHASES.WAITING_FOR_COPY))
-					&& !status.isPipeKnown(instruction.getPipeId())) {
-				String pipe = instruction.getPipeId();
-				String newPipe = instruction.getNewPipe();
-				String peer = instruction.getPeerId();
-
-				status.addKnownPipe(pipe);
-				status.addBufferedPipe(pipe);
-				status.addPipeMapping(pipe, newPipe);
-
-				dispatcher = status.getMessageDispatcher();
-
-				try {
-					MovingStateHelper.addChangeInformation(pipe, status, true);
-					MovingStateHelper.startBuffering(pipe);
-					
-					//Wait for remaining Tuples in sender to process...
-					Thread.sleep(100);
-					
-					MovingStateHelper.setNewPipe(status,pipe, newPipe, peer, true);
-					
-					dispatcher.sendDuplicateSenderSuccess(status.getMasterPeer(),
-							pipe);
-				} catch (Exception e) {
-					LOG.error("Error while copying JxtaSender:");
-					LOG.error(e.getMessage());
-					dispatcher.sendDuplicateFailure(senderPeer);
-				}
+			
+				if (
+				((status.getPhase().equals(MovingStateSlaveStatus.LB_PHASES.WAITING_FOR_FINISH) 
+				|| status.getPhase().equals(MovingStateSlaveStatus.LB_PHASES.WAITING_FOR_COPY)))
+				&& !status.isPipeKnown(instruction.getPipeId())
+				) {
+					LOG.debug("Trying to duplicate Sender with pipe {}",instruction.getPipeId());
+					String pipe = instruction.getPipeId();
+					String newPipe = instruction.getNewPipe();
+					String peer = instruction.getPeerId();
+	
+					status.addKnownPipe(pipe);
+					status.addBufferedPipe(pipe);
+	
+					dispatcher = status.getMessageDispatcher();
+	
+					try {
+						MovingStateHelper.addChangeInformation(pipe, status, true);
+						MovingStateHelper.startBuffering(pipe);
+						
+						//Wait for remaining Tuples in sender to process...
+						Thread.sleep(1000);
+						
+						MovingStateHelper.setNewPipe(status,pipe, newPipe, peer, true);
+	
+						status.addPipeMapping(pipe, newPipe);
+						if(status.isPipeKnown(pipe)) {
+							dispatcher.sendDuplicateSenderSuccess(status.getMasterPeer(),pipe);
+							return;
+						}
+						
+					} catch (Exception e) {
+						LOG.error("Error while copying JxtaSender:");
+						LOG.error(e.getMessage());
+						dispatcher.sendDuplicateFailure(senderPeer);
+						return;
+					}
 			}
 			break;
 
