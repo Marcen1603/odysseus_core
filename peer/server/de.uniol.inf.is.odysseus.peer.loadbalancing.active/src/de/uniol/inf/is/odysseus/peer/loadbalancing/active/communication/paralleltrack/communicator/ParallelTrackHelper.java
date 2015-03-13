@@ -204,6 +204,13 @@ public class ParallelTrackHelper {
 				copy.setPeerID(newPeerId);
 
 				JxtaReceiverPO physicalOriginal = (JxtaReceiverPO) LoadBalancingHelper.getPhysicalJxtaOperator(isSender, oldPipeId);
+				LOG.debug("Start Buffering.");
+				physicalOriginal.startBuffering();
+				try {
+					Thread.sleep(100);
+				} catch (InterruptedException e) {
+					LOG.warn("Could not wait for Receiver.");
+				}
 
 				JxtaReceiverPO physicalCopy = new JxtaReceiverPO(copy);
 

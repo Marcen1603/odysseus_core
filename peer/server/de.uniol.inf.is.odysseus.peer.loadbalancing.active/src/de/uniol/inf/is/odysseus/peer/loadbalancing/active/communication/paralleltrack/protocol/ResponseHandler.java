@@ -181,6 +181,7 @@ public class ResponseHandler {
 
 		case ParallelTrackResponseMessage.SUCCESS_DUPLICATE:
 			
+			//TODO Differentiate between Sende & Receiver.
 			
 			
 			if (status.getPhase().equals(
