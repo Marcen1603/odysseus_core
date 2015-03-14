@@ -185,7 +185,6 @@ public class ParallelTrackHelper {
 					for (IOperatorOwner owner : (List<IOperatorOwner>) physicalCopy.getOwner()) {
 						physicalCopy.open(owner);
 					}
-
 					Optional<Integer> queryId = LoadBalancingHelper.getQueryForRoot(physicalOriginal);
 					if (queryId.isPresent()) {
 						OsgiServiceManager.getExecutor().getExecutionPlan().getQueryById(queryId.get()).replaceOperator(physicalOriginal, physicalCopy);
@@ -206,6 +205,7 @@ public class ParallelTrackHelper {
 				JxtaReceiverPO physicalOriginal = (JxtaReceiverPO) LoadBalancingHelper.getPhysicalJxtaOperator(isSender, oldPipeId);
 				LOG.debug("Start Buffering.");
 				physicalOriginal.startBuffering();
+				
 				try {
 					Thread.sleep(100);
 				} catch (InterruptedException e) {
@@ -214,6 +214,8 @@ public class ParallelTrackHelper {
 
 				JxtaReceiverPO physicalCopy = new JxtaReceiverPO(copy);
 
+				
+				ArrayList<IPhysicalOperator> emptyCallPath = new ArrayList<IPhysicalOperator>();
 				physicalCopy.addOwner(physicalOriginal.getOwner());
 
 				LoadBalancingSynchronizerPO<IStreamObject<ITimeInterval>> synchronizer = new LoadBalancingSynchronizerPO<IStreamObject<ITimeInterval>>();
@@ -228,21 +230,24 @@ public class ParallelTrackHelper {
 				for (AbstractPhysicalSubscription<ISink<? super IStreamObject>> subscription : subscriptionList) {
 
 					physicalOriginal.unsubscribeSink(subscription);
-					synchronizer.subscribeSink(subscription.getTarget(), subscription.getSinkInPort(), subscription.getSourceOutPort(), subscription.getSchema().clone(), true, subscription.getOpenCalls());
-					/*
+					synchronizer.subscribeSink(subscription.getTarget(), subscription.getSinkInPort(), subscription.getSourceOutPort(), subscription.getSchema(), true, subscription.getOpenCalls());
+					
 					ISink sink = (ISink)subscription.getTarget();
 					
 					Collection<AbstractPhysicalSubscription> revSubscriptions = sink.getSubscribedToSource();
 					for (AbstractPhysicalSubscription subscr : revSubscriptions) {
-						sink.unsubscribeFromSource(subscr);
-						sink.subscribeToSource(synchronizer, subscr.getSinkInPort(), subscr.getSourceOutPort(), subscr.getSchema().clone());
+						if(subscr.getTarget().equals(physicalOriginal)) {
+							sink.unsubscribeFromSource(subscr);
+							sink.subscribeToSource(synchronizer, subscr.getSinkInPort(), subscr.getSourceOutPort(), subscr.getSchema().clone());
+						}
 					}
-					*/
+					synchronizer.open(sink, subscription.getSourceOutPort(), subscription.getSinkInPort(), null, synchronizer.getOwner());
 					
 				}
 
-				ArrayList<IPhysicalOperator> emptyCallPath = new ArrayList<IPhysicalOperator>();
-
+				synchronizer.startSynchronizing();
+				
+				
 				physicalOriginal.subscribeSink(synchronizer, 0, 0, physicalOriginal.getOutputSchema().clone());
 				synchronizer.subscribeToSource(physicalOriginal, 0, 0, physicalOriginal.getOutputSchema().clone());
 				physicalOriginal.open(synchronizer, 0, 0, emptyCallPath, physicalOriginal.getOwner());
@@ -251,7 +256,7 @@ public class ParallelTrackHelper {
 				synchronizer.subscribeToSource(physicalCopy, 1, 0, physicalOriginal.getOutputSchema().clone());
 				physicalCopy.open(synchronizer, 0, 1, emptyCallPath, physicalCopy.getOwner());
 
-				synchronizer.startSynchronizing();
+				
 				physicalOriginal.stopBuffering();
 			}
 
@@ -286,11 +291,14 @@ public class ParallelTrackHelper {
 
 				LOG.debug("Start Buffering.");
 				otherReceiver.startBuffering();
+				LOG.debug("Waiting for Sync to process all tuples.");
 				try {
 					Thread.sleep(100);
 				} catch (InterruptedException e) {
-					LOG.warn("Could not wait for Receiver.");
+					LOG.warn("Could not wait for Synchronizer.");
 				}
+				
+				LOG.debug("Done.");
 
 				otherReceiver.unsubscribeFromAllSinks();
 				
@@ -300,6 +308,8 @@ public class ParallelTrackHelper {
 
 				List<AbstractPhysicalSubscription<ISink<? super IStreamObject>>> subscriptionList = sync
 						.getSubscriptions();
+				
+				
 
 				for (AbstractPhysicalSubscription<ISink<? super IStreamObject>> subscription : subscriptionList) {
 

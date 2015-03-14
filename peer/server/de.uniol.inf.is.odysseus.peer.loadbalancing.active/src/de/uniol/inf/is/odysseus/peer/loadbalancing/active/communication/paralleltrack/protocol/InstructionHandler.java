@@ -277,7 +277,6 @@ public class InstructionHandler {
 			//Sync is finished (or we would not be here). So we can stop spamming SYNC_FINISHED Messages now.
 			status.getMessageDispatcher().stopAllMessages();
 			
-			status.getMessageDispatcher().sendDeleteFinished(senderPeer,instruction.getOldPipeId());
 			
 			if(status.getReplacedReceiverPipes().containsKey(instruction.getOldPipeId())) {
 				
@@ -285,7 +284,8 @@ public class InstructionHandler {
 				ParallelTrackHelper.updatePipeID(instruction.getOldPipeId(), status.getReplacedReceiverPipes().get(instruction.getOldPipeId()), status.getVolunteeringPeer().toString());
 				status.getReplacedReceiverPipes().remove(instruction.getOldPipeId());
 			}
-			
+
+			status.getMessageDispatcher().sendDeleteFinished(senderPeer,instruction.getOldPipeId());
 			break;
 			
 			
@@ -299,14 +299,14 @@ public class InstructionHandler {
 			}
 			//Sync is finished (or we would not be here). So we can stop spamming SYNC_FINISHED Messages now.
 			status.getMessageDispatcher().stopAllMessages();
-			status.getMessageDispatcher().sendDeleteFinished(senderPeer,instruction.getOldPipeId());
 			if(status.getReplacedSenderPipes().containsKey(instruction.getOldPipeId())) {
 				
 				ParallelTrackHelper.removeDuplicateJxtaSender(instruction.getOldPipeId(),status);
 				ParallelTrackHelper.updatePipeID(instruction.getOldPipeId(), status.getReplacedSenderPipes().get(instruction.getOldPipeId()), status.getVolunteeringPeer().toString());
 				status.getReplacedSenderPipes().remove(instruction.getOldPipeId());
 			}
-			
+
+			status.getMessageDispatcher().sendDeleteFinished(senderPeer,instruction.getOldPipeId());
 			break;
 
 				
