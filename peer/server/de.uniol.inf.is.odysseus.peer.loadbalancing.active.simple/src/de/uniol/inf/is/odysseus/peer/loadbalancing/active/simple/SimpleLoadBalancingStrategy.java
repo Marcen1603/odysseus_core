@@ -66,6 +66,11 @@ public class SimpleLoadBalancingStrategy implements ILoadBalancingStrategy, ILoa
 	 */
 	public static final String NAME = "simple";
 	
+	private static ArrayList<Long> measurementPointInTime = new ArrayList<Long>();
+	private static ArrayList<Double> memory = new ArrayList<Double>();
+	private static ArrayList<Double> cpu = new ArrayList<Double>();
+	
+	
 	/**
 	 * The default threshold for the CPU load as percentage.
 	 */
@@ -195,6 +200,13 @@ public class SimpleLoadBalancingStrategy implements ILoadBalancingStrategy, ILoa
 			
 			final double cpuUsedPercentage = (cpuMax - cpuFree) / cpuMax;
 			final double memUsedPercentage = (memMax - memFree) / memMax;
+			
+			synchronized(measurementPointInTime) {
+				measurementPointInTime.add(System.currentTimeMillis());
+				cpu.add(cpuUsedPercentage);
+				memory.add(memUsedPercentage);
+			}
+			
 			return cpuUsedPercentage > this.mCPUThreshold || memUsedPercentage > this.mMemThreshold;
 			
 		}
@@ -344,8 +356,31 @@ public class SimpleLoadBalancingStrategy implements ILoadBalancingStrategy, ILoa
 				
 			}
 			
+			this.outputStatistics();
+			
 		}
 		
+		private void outputStatistics() {
+			synchronized(measurementPointInTime) {
+				final char SEPARATOR = ';';
+				StringBuilder measurementsBuilder = new StringBuilder();
+				StringBuilder cpuBuilder = new StringBuilder();
+				StringBuilder memBuilder = new StringBuilder();
+				for(int i=0;i<measurementPointInTime.size();i++) {
+					measurementsBuilder.append(measurementPointInTime.get(i));
+					cpuBuilder.append(cpu.get(i));
+					memBuilder.append(memory.get(i));
+					measurementsBuilder.append(SEPARATOR);
+					cpuBuilder.append(SEPARATOR);
+					memBuilder.append(SEPARATOR);
+				}
+				LOG.info("Measurement Points: {}",measurementsBuilder.toString());
+				LOG.info("CPU Usage: {}",cpuBuilder.toString());
+				LOG.info("Memory Usage: {}",memBuilder.toString());
+			}
+			
+		}
+
 		/**
 		 * Creates a new {@link SimpleLBThread}.
 		 * @param allocator An implementation of {@link ILoadBalancingAllocator}.
@@ -716,6 +751,11 @@ public class SimpleLoadBalancingStrategy implements ILoadBalancingStrategy, ILoa
 		LOG.info("Resetting success/failure counter");
 		successes = 0;
 		failures = 0;
+		synchronized(measurementPointInTime) {
+			memory.clear();
+			cpu.clear();
+			measurementPointInTime.clear();
+		}
 	}
 
 }
