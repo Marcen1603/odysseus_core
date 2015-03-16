@@ -143,7 +143,7 @@ public class LoadBalancingAllocator implements IQueryPartAllocator {
 		Map<PeerID, IResourceUsage> usages = Maps.newHashMap();
 		for (PeerID remotePeer : remotePeers) {
 			try {
-				usages.put(remotePeer, peerResourceUsageManager.getRemoteResourceUsage(remotePeer).get().get());
+				usages.put(remotePeer, peerResourceUsageManager.getRemoteResourceUsage(remotePeer, false).get().get());
 			} catch (InterruptedException | ExecutionException e) {
 				LOG.error("Could not determine resource usage", e);
 			}

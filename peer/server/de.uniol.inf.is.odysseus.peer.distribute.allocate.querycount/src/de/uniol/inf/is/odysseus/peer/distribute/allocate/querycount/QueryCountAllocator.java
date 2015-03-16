@@ -13,6 +13,7 @@ import com.google.common.collect.Maps;
 import net.jxta.peer.PeerID;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.QueryBuildConfiguration;
+import de.uniol.inf.is.odysseus.p2p_new.dictionary.IPeerDictionary;
 import de.uniol.inf.is.odysseus.peer.distribute.ILogicalQueryPart;
 import de.uniol.inf.is.odysseus.peer.distribute.IQueryPartAllocator;
 import de.uniol.inf.is.odysseus.peer.distribute.QueryPartAllocationException;
@@ -23,6 +24,7 @@ public class QueryCountAllocator implements IQueryPartAllocator {
 	private static final Logger LOG = LoggerFactory.getLogger(QueryCountAllocator.class);
 	
 	private static IPeerResourceUsageManager resourceUsageManager;
+	private static IPeerDictionary peerDictionary;
 	
 	public static void bindPeerResourceUsageManager( IPeerResourceUsageManager manager ) {
 		resourceUsageManager = manager;
@@ -35,6 +37,20 @@ public class QueryCountAllocator implements IQueryPartAllocator {
 			resourceUsageManager = null;
 			
 			LOG.debug("ResourceUsageManager unbound");
+		}
+	}
+	
+	public static void bindPeerDictionary( IPeerDictionary dict ) {
+		peerDictionary = dict;
+		
+		LOG.debug("Bound peerDictionary");
+	}
+	
+	public static void unbindPeerDictionary( IPeerDictionary dict ) {
+		if( dict == peerDictionary ) {
+			peerDictionary = null;
+			
+			LOG.debug("Unbound peerDictionary");
 		}
 	}
 	
@@ -54,11 +70,12 @@ public class QueryCountAllocator implements IQueryPartAllocator {
 			throw new QueryPartAllocationException("There is no peer to allocate to");
 		}
 		
-		PeerQueryCountMap queryCountMap = new PeerQueryCountMap(knownRemotePeers, resourceUsageManager);
+		PeerQueryCountMap queryCountMap = new PeerQueryCountMap(consideredPeerIDs, resourceUsageManager, peerDictionary);
 		Map<ILogicalQueryPart, PeerID> allocationMap = Maps.newHashMap();
 		for( ILogicalQueryPart queryPart : queryParts ) {
 			PeerID peerID = queryCountMap.getPeerIDWithLowestQueryCount();
 			allocationMap.put(queryPart, peerID);
+			LOG.info("Allocate peer {} to query part {}", peerDictionary.getRemotePeerName(peerID), queryPart);
 			
 			queryCountMap.incrementQueryCount(peerID);
 		}
