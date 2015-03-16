@@ -156,9 +156,11 @@ public class LoadBalancingHelper {
 							toUnsubscribe.add(reverseSubscription);
 						}
 					}
+					
 					for (AbstractPhysicalSubscription revSubscription : toUnsubscribe) {
 						target.unsubscribeFromSource(revSubscription);
 					}
+					
 				}
 
 				receiver.unsubscribeFromAllSinks();

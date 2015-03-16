@@ -189,8 +189,12 @@ public class MovingStateHelper {
 			LOG.debug(("Found root for Query " + queryId + ": " + root
 					.getName()));
 			List<IStatefulPO> knownOperators = new ArrayList<IStatefulPO>();
-			statefulPOs.addAll(traverseGraphAndFindStatefulOperators(root,
-					knownOperators));
+			List<IStatefulPO> foundOps = traverseGraphAndFindStatefulOperators(root,knownOperators);
+			for(IStatefulPO op : foundOps) {
+				if(!statefulPOs.contains(op)) {
+					statefulPOs.add(op);
+				}
+			}
 		}
 		return statefulPOs;
 
@@ -207,7 +211,12 @@ public class MovingStateHelper {
 			Collection<Integer> installedQueries) {
 		List<IStatefulPO> statefulList = new ArrayList<IStatefulPO>();
 		for (int queryId : installedQueries) {
-			statefulList.addAll(getStatefulOperatorList(queryId));
+			List<IStatefulPO> statefulOps = getStatefulOperatorList(queryId);
+			for(IStatefulPO op : statefulOps) {
+				if(!statefulList.contains(op)) {
+					statefulList.add(op);
+				}
+			}
 		}
 		return statefulList;
 	}
@@ -219,7 +228,8 @@ public class MovingStateHelper {
 	 * @param status
 	 *            MasterStatus
 	 */
-	public static void initiateStateCopy(MovingStateMasterStatus status) {
+	public static synchronized void initiateStateCopy(MovingStateMasterStatus status) {
+		
 		LOG.debug("Inititate State copy called.");
 		MovingStateCommunicatorImpl communicator = MovingStateCommunicatorImpl
 				.getInstance();
@@ -678,11 +688,12 @@ public class MovingStateHelper {
 	 *            PipeID of JxtaSender
 	 * @throws LoadBalancingException
 	 */
-	public static void stopBuffering(String pipeID)
+	public static synchronized void stopBuffering(String pipeID)
 			throws LoadBalancingException {
+	
 		LOG.debug("Resuming Sender with pipe " + pipeID);
-		IPhysicalOperator operator = LoadBalancingHelper
-				.getPhysicalJxtaOperator(true, pipeID);
+		
+		IPhysicalOperator operator = LoadBalancingHelper.getPhysicalJxtaOperator(true, pipeID);
 		
 		if (operator == null) {
 			throw new LoadBalancingException("No Sender with pipeID " + pipeID

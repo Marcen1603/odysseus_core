@@ -163,7 +163,7 @@ public class InstructionHandler {
 			break;
 
 		case MovingStateInstructionMessage.INSTALL_BUFFER_AND_REPLACE_SENDER:
-			LOG.debug("Got INSTALL_BUFFER_AND_REPLACE_SENDER.");
+			
 			// Create Status if none exist
 			if (status == null) {
 				status = new MovingStateSlaveStatus(
@@ -176,19 +176,26 @@ public class InstructionHandler {
 						senderPeer, lbProcessId, status);
 			}
 
-			// Process Pipe only if not already processed:
+			synchronized(status) {
+				if(status.isSenderPipeKnown(instruction.getPipeId())) {
+					return;
+				}
+				status.addKnownSenderPipe(instruction.getPipeId());
+			}
 			
-				if (
-				((status.getPhase().equals(MovingStateSlaveStatus.LB_PHASES.WAITING_FOR_FINISH) 
-				|| status.getPhase().equals(MovingStateSlaveStatus.LB_PHASES.WAITING_FOR_COPY)))
-				&& !status.isPipeKnown(instruction.getPipeId())
-				) {
+			// Process Pipe only if not already processed:
+			synchronized(status) {
+				if (status.getPhase().equals(MovingStateSlaveStatus.LB_PHASES.WAITING_FOR_FINISH) 
+				    || status.getPhase().equals(MovingStateSlaveStatus.LB_PHASES.WAITING_FOR_COPY))
+					
+				 {
+					LOG.debug("Got INSTALL_BUFFER_AND_REPLACE_SENDER.");
 					LOG.debug("Trying to duplicate Sender with pipe {}",instruction.getPipeId());
+					
 					String pipe = instruction.getPipeId();
 					String newPipe = instruction.getNewPipe();
 					String peer = instruction.getPeerId();
 	
-					status.addKnownPipe(pipe);
 					status.addBufferedPipe(pipe);
 	
 					dispatcher = status.getMessageDispatcher();
@@ -198,61 +205,75 @@ public class InstructionHandler {
 						MovingStateHelper.startBuffering(pipe);
 						
 						//Wait for remaining Tuples in sender to process...
-						Thread.sleep(1000);
+						Thread.sleep(3000);
 						
 						MovingStateHelper.setNewPipe(status,pipe, newPipe, peer, true);
-	
 						status.addPipeMapping(pipe, newPipe);
-						if(status.isPipeKnown(pipe)) {
+						if(status.isSenderPipeKnown(pipe)) {
 							dispatcher.sendDuplicateSenderSuccess(status.getMasterPeer(),pipe);
 							return;
 						}
 						
 					} catch (Exception e) {
-						LOG.error("Error while copying JxtaSender:");
-						LOG.error(e.getMessage());
-						dispatcher.sendDuplicateFailure(senderPeer);
-						return;
+						if(!status.isSenderPipeKnown(pipe)) {
+							LOG.error("Error while copying JxtaSender:");
+							LOG.error(e.getMessage());
+							dispatcher.sendDuplicateFailure(senderPeer);
+							return;
+						}
 					}
+			}
 			}
 			break;
 
 		case MovingStateInstructionMessage.REPLACE_RECEIVER:
-			LOG.debug("Got REPLACE_RECEIVER");
+			
 			// Create Status if none exist
-			if (status == null) {
-				status = new MovingStateSlaveStatus(
-						MovingStateSlaveStatus.INVOLVEMENT_TYPES.PEER_WITH_SENDER_OR_RECEIVER,
-						MovingStateSlaveStatus.LB_PHASES.WAITING_FOR_FINISH,
-						senderPeer, lbProcessId,
-						new MovingStateMessageDispatcher(peerCommunicator,
-								lbProcessId));
-				LoadBalancingStatusCache.getInstance().storeSlaveStatus(
-						senderPeer, lbProcessId, status);
-			}
-			// Process Pipe only if not already processed:
-			if ((status.getPhase()
-					.equals(MovingStateSlaveStatus.LB_PHASES.WAITING_FOR_FINISH))
-					|| (status.getPhase()
-							.equals(MovingStateSlaveStatus.LB_PHASES.WAITING_FOR_COPY))
-					&& !status.isPipeKnown(instruction.getPipeId())) {
-				String oldPipe = instruction.getPipeId();
-				String newPipe = instruction.getNewPipe();
-				String peer = instruction.getPeerId();
-				status.addPipeMapping(oldPipe, instruction.getNewPipe());
-
-
-				status.addKnownPipe(oldPipe);
-				dispatcher = status.getMessageDispatcher();
-				try {
-					MovingStateHelper.addChangeInformation(oldPipe, status, false);
-					MovingStateHelper.setNewPipe(status,oldPipe, newPipe, peer, false);
-					dispatcher.sendDuplicateReceiverSuccess(status.getMasterPeer(),
-							oldPipe);
-				} catch (Exception e) {
-					LOG.error("Error while replacing JxtaReceiver:");
-					LOG.error(e.getMessage());
-					dispatcher.sendDuplicateFailure(senderPeer);
+	
+				if (status == null) {
+					status = new MovingStateSlaveStatus(
+							MovingStateSlaveStatus.INVOLVEMENT_TYPES.PEER_WITH_SENDER_OR_RECEIVER,
+							MovingStateSlaveStatus.LB_PHASES.WAITING_FOR_FINISH,
+							senderPeer, lbProcessId,
+							new MovingStateMessageDispatcher(peerCommunicator,
+									lbProcessId));
+					LoadBalancingStatusCache.getInstance().storeSlaveStatus(
+							senderPeer, lbProcessId, status);
+				}
+				
+				synchronized(status) {
+					if(status.isReceiverPipeKnown(instruction.getPipeId())) {
+						return;
+					}
+					status.addKnownReceiverPipe(instruction.getPipeId());
+				}
+					
+				// Process Pipe only if not already processed:
+				if ((status.getPhase().equals(MovingStateSlaveStatus.LB_PHASES.WAITING_FOR_FINISH))
+						|| (status.getPhase().equals(MovingStateSlaveStatus.LB_PHASES.WAITING_FOR_COPY)))
+					{
+					
+					LOG.debug("Got REPLACE_RECEIVER");
+					LOG.debug("Trying to duplicate Receiver with old pipie {}",instruction.getPipeId());
+					
+					String oldPipe = instruction.getPipeId();
+					String newPipe = instruction.getNewPipe();
+					String peer = instruction.getPeerId();
+					
+					status.addPipeMapping(oldPipe, instruction.getNewPipe());
+					dispatcher = status.getMessageDispatcher();
+					try {
+						MovingStateHelper.addChangeInformation(oldPipe, status, false);
+						MovingStateHelper.setNewPipe(status,oldPipe, newPipe, peer, false);
+						dispatcher.sendDuplicateReceiverSuccess(status.getMasterPeer(),
+								oldPipe);
+					} catch (Exception e) {
+						if(!status.isReceiverPipeKnown(oldPipe)) {
+							LOG.error("Error while replacing JxtaReceiver:");
+							LOG.error(e.getMessage());
+							dispatcher.sendDuplicateFailure(senderPeer);
+						}
+					
 				}
 			}
 			break;
@@ -275,8 +296,7 @@ public class InstructionHandler {
 			}
 			MovingStateManager manager = MovingStateManager.getInstance();
 			try {
-			if (status.getPhase().equals(
-					MovingStateSlaveStatus.LB_PHASES.WAITING_FOR_COPY)
+			if (status.getPhase().equals(MovingStateSlaveStatus.LB_PHASES.WAITING_FOR_COPY)
 					&& !manager.isReceiverPipeKnown(instruction.getPipeId())) {
 				List<IStatefulPO> statefulOperatorList = status.getStatefulOperatorList();
 				if(statefulOperatorList==null) {
@@ -306,9 +326,10 @@ public class InstructionHandler {
 			break;
 
 		case MovingStateInstructionMessage.FINISHED_COPYING_STATES:
-			LOG.debug("Got FINISHED_COPYING_STATES");
+			
 			if (status.getPhase().equals(
 					MovingStateSlaveStatus.LB_PHASES.WAITING_FOR_COPY)) {
+				LOG.debug("Got FINISHED_COPYING_STATES");
 				status.setPhase(MovingStateSlaveStatus.LB_PHASES.WAITING_FOR_FINISH);
 				status.getMessageDispatcher()
 						.sendAckCopyingFinished(senderPeer);
@@ -316,17 +337,24 @@ public class InstructionHandler {
 			break;
 
 		case MovingStateInstructionMessage.STOP_BUFFERING:
-			LOG.debug("Got STOP_BUFFERING");
+			
 			if (status == null) {
 				return;
 			}
 			boolean successful = true;
 			if (status.getPhase().equals(
 					MovingStateSlaveStatus.LB_PHASES.WAITING_FOR_FINISH)) {
+				status.setPhase(MovingStateSlaveStatus.LB_PHASES.WAITING_FOR_MSG_RECEIVED);
+				LOG.debug("Got STOP_BUFFERING");
 				for (String pipe : status.getBufferedPipes()) {
 					try {
 						String newPipe = status.getNewPipeForOldPipe(pipe);
-						MovingStateHelper.stopBuffering(newPipe);
+						if(newPipe!=null) {
+							MovingStateHelper.stopBuffering(newPipe);
+						}
+						else {
+							LOG.warn("New Pipe is null for old Pipe {}",pipe);
+						}
 					} catch (LoadBalancingException e) {
 						LOG.error("Error while stopping buffering.");
 						e.printStackTrace();
@@ -334,7 +362,6 @@ public class InstructionHandler {
 					}
 				}
 				if (successful) {
-					status.setPhase(MovingStateSlaveStatus.LB_PHASES.WAITING_FOR_MSG_RECEIVED);
 					status.getMessageDispatcher().sendStopBufferingFinished(
 							status.getMasterPeer());
 				} else {

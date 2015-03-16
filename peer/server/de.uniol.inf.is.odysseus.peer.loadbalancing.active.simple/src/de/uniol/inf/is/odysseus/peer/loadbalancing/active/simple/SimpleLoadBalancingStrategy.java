@@ -74,7 +74,7 @@ public class SimpleLoadBalancingStrategy implements ILoadBalancingStrategy, ILoa
 	/**
 	 * The default threshold for the CPU load as percentage.
 	 */
-	public static final double DEFAULT_CPU_THRESHOLD = 0.01;
+	public static final double DEFAULT_CPU_THRESHOLD = 0.1;
 	
 	/**
 	 * Used to count successes.
@@ -312,8 +312,8 @@ public class SimpleLoadBalancingStrategy implements ILoadBalancingStrategy, ILoa
 					
 			this.mUsage = usage;
 			
-			if(this.loadBalancingNeeded(usage)) {
-				
+
+			if(this.loadBalancingNeeded(usage)) {	
 				LOG.debug("LoadBalancing is needed. Trying to acquire Local Lock.");
 				startTime = System.nanoTime();
 				//Try to lock peer first.

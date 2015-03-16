@@ -128,7 +128,7 @@ public class MovingStateSender {
 									announcement.getArrayLenght());
 						}
 						transmission.sendData(tempArray);
-						LOG.debug(String.format(
+						LOG.info(String.format(
 								"State Transmission: Message %d if %d sent",
 								i + 1, announcement.getNumberOfMessages()));
 					}

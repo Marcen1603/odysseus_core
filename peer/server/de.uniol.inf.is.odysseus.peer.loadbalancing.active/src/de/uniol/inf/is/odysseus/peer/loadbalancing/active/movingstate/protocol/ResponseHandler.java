@@ -252,7 +252,7 @@ public class ResponseHandler {
 					try {
 						MovingStateHelper.sendState(pipe, operator);
 					} catch (LoadBalancingException e) {
-						LOG.error("Sending state failed.");
+						LOG.error("Sending state failed.",e);
 						handleError(status,communicationListener);
 					}
 				}

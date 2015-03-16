@@ -62,7 +62,9 @@ public class MovingStateSlaveStatus implements ILoadBalancingSlaveStatus,
 	/**
 	 * List of Pipes already processed
 	 */
-	private ArrayList<String> knownPipes;
+	private ArrayList<String> knownSenderPipes;
+	
+	private ArrayList<String> knownReceiverPipes;
 
 	/**
 	 * List of Pipes which are buffering
@@ -139,7 +141,7 @@ public class MovingStateSlaveStatus implements ILoadBalancingSlaveStatus,
 	public void addReplacedOperator(IPhysicalOperator original, IPhysicalOperator replacement) {
 		this.replacedToOriginalOperatorMapping.put(replacement,original);
 	}
-
+	
 	public IPhysicalOperator getOriginalOperator(IPhysicalOperator replacement) {
 		return replacedToOriginalOperatorMapping.get(replacement);
 	}
@@ -221,7 +223,8 @@ public class MovingStateSlaveStatus implements ILoadBalancingSlaveStatus,
 		this.initiatingPeer = initiatingPeer;
 		this.lbProcessId = lbProcessId;
 		this.messageDispatcher = messageDispatcher;
-		this.knownPipes = new ArrayList<String>();
+		this.knownSenderPipes = new ArrayList<String>();
+		this.knownReceiverPipes = new ArrayList<String>();
 		this.receiverOperatorMapping = new ConcurrentHashMap<String, IStatefulPO>();
 		this.pipeOldPeerMapping = new ConcurrentHashMap<String,String>();
 	}
@@ -260,9 +263,15 @@ public class MovingStateSlaveStatus implements ILoadBalancingSlaveStatus,
 	 * @param pipe
 	 *            pipe-to-add
 	 */
-	public void addKnownPipe(String pipe) {
-		if (!isPipeKnown(pipe)) {
-			knownPipes.add(pipe);
+	public void addKnownReceiverPipe(String pipe) {
+		if (!isReceiverPipeKnown(pipe)) {
+			knownReceiverPipes.add(pipe);
+		}
+	}
+	
+	public void addKnownSenderPipe(String pipe) {
+		if(!isSenderPipeKnown(pipe)) {
+			knownSenderPipes.add(pipe);
 		}
 	}
 
@@ -273,8 +282,12 @@ public class MovingStateSlaveStatus implements ILoadBalancingSlaveStatus,
 	 *            pipe to look for
 	 * @return true if pipe is in list, false if not
 	 */
-	public boolean isPipeKnown(String pipe) {
-		return knownPipes.contains(pipe);
+	public boolean isReceiverPipeKnown(String pipe) {
+		return knownReceiverPipes.contains(pipe);
+	}
+	
+	public boolean isSenderPipeKnown(String pipe) {
+		return knownSenderPipes.contains(pipe);
 	}
 
 	/**
@@ -387,8 +400,6 @@ public class MovingStateSlaveStatus implements ILoadBalancingSlaveStatus,
 	
 
 	public void addPipeMapping(String oldPipe, String newPipe) {
-		if(this.pipeMapping.containsKey(oldPipe))
-			return;
 		this.pipeMapping.put(oldPipe, newPipe);
 	}
 	
