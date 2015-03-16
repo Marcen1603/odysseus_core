@@ -137,7 +137,7 @@ public final class PeerResourceUsageManager implements IPeerResourceUsageManager
 	}
 
 	@Override
-	public Future<Optional<IResourceUsage>> getRemoteResourceUsage(final PeerID peerID) {
+	public Future<Optional<IResourceUsage>> getRemoteResourceUsage(final PeerID peerID, boolean forceNetwork) {
 		Preconditions.checkNotNull(peerID, "PeerID to get current resource usage must not be null!");
 
 		LOG.debug("Getting remote usage of peer {}", PeerDictionary.getInstance().getRemotePeerName(peerID));
@@ -179,7 +179,7 @@ public final class PeerResourceUsageManager implements IPeerResourceUsageManager
 					usage = usageMap.get(peerID);
 				}
 
-				if (usage == null || ts == null || System.currentTimeMillis() - ts > RESOURCE_USAGE_UPDATE_INTERVAL_MILLIS) {
+				if (forceNetwork || usage == null || ts == null || System.currentTimeMillis() - ts > RESOURCE_USAGE_UPDATE_INTERVAL_MILLIS) {
 					LOG.debug("Remote resource usage is too old");
 
 					synchronized (askingPeerMap) {
@@ -188,7 +188,7 @@ public final class PeerResourceUsageManager implements IPeerResourceUsageManager
 					
 					LOG.debug("ASKING PEER {}", PeerDictionary.getInstance().getRemotePeerName(peerID));
 					
-					peerCommunicator.send(peerID, new AskUsageMessage());
+					peerCommunicator.send(peerID, new AskUsageMessage(forceNetwork));
 				} else {
 					LOG.debug("Use cached resource usage");
 
@@ -210,27 +210,28 @@ public final class PeerResourceUsageManager implements IPeerResourceUsageManager
 		return FUTURE_SERVICE.submit(new Callable<Optional<IResourceUsage>>() {
 			@Override
 			public Optional<IResourceUsage> call() throws Exception {
-				IResourceUsage remoteUsage = null;
-				synchronized (usageMap) {
-					remoteUsage = usageMap.get(peerID);
+				Long timestamp;
+				synchronized (timestampMap) {
+					timestamp = timestampMap.get(peerID);
 				}
 
 				long waited = 0;
-				while (remoteUsage == null) {
+				while (timestamp == null || System.currentTimeMillis() - timestamp > RESOURCE_USAGE_UPDATE_INTERVAL_MILLIS) {
 					if (waited > MAX_WAIT) {
 						// takes too long
-						return Optional.absent();
+						// use cached one
+						return Optional.fromNullable(usageMap.get(peerID));
 					}
 
 					Thread.sleep(MAX_WAIT_STEP);
 					waited += MAX_WAIT_STEP;
 
-					synchronized (usageMap) {
-						remoteUsage = usageMap.get(peerID);
+					synchronized (timestampMap) {
+						timestamp = timestampMap.get(peerID);
 					}
 				}
 
-				return Optional.of(remoteUsage);
+				return Optional.of(usageMap.get(peerID));
 			}
 		});
 	}
@@ -240,7 +241,8 @@ public final class PeerResourceUsageManager implements IPeerResourceUsageManager
 		if (message instanceof AskUsageMessage) {
 			LOG.debug("Getting local resource usage for remote peer");
 			
-			IResourceUsage localUsage = getLocalResourceUsage();
+			AskUsageMessage msg = (AskUsageMessage)message;
+			IResourceUsage localUsage = getLocalResourceUsage(msg.isForce());
 			AnswerUsageMessage answer = new AnswerUsageMessage(localUsage);
 
 			try {
@@ -265,9 +267,13 @@ public final class PeerResourceUsageManager implements IPeerResourceUsageManager
 
 	@Override
 	public IResourceUsage getLocalResourceUsage() {
+		return getLocalResourceUsage(false);
+	}
+	
+	private IResourceUsage getLocalResourceUsage(boolean force ) {
 		synchronized (usageCollector) {
 
-			if( System.currentTimeMillis() - lastUsageUpdateTimestamp > RESOURCE_USAGE_UPDATE_INTERVAL_MILLIS ) {
+			if( force || System.currentTimeMillis() - lastUsageUpdateTimestamp > RESOURCE_USAGE_UPDATE_INTERVAL_MILLIS ) {
 				lastUsageUpdateTimestamp = System.currentTimeMillis();
 				updateLocalUsage();
 			}

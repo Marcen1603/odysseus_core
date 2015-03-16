@@ -7,6 +7,6 @@ import net.jxta.peer.PeerID;
 import com.google.common.base.Optional;
 
 public interface IPeerResourceUsageManager {
-	public Future<Optional<IResourceUsage>> getRemoteResourceUsage( PeerID peerID );
+	public Future<Optional<IResourceUsage>> getRemoteResourceUsage( PeerID peerID, boolean forceNetwork );
 	public IResourceUsage getLocalResourceUsage();
 }
