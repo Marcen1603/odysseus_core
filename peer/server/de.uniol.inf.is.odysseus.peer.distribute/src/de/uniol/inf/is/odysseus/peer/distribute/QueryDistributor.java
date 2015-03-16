@@ -35,6 +35,7 @@ public class QueryDistributor implements IQueryDistributor {
 	private static final Logger LOG = LoggerFactory.getLogger(QueryDistributor.class);
 	private static final int MAX_TRANSMISSION_TRIES = 5;
 	
+	
 	@Override
 	public void distribute(final IServerExecutor serverExecutor, final ISession caller, final Collection<ILogicalQuery> queriesToDistribute, final QueryBuildConfiguration config) {
 		QueryDistributorThread thread = new QueryDistributorThread(serverExecutor, caller, queriesToDistribute, config);

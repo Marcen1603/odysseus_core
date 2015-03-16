@@ -16,6 +16,7 @@ import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 class QueryDistributorThread extends Thread {
 	
 	private static final Logger LOG = LoggerFactory.getLogger(QueryDistributorThread.class);
+	private static final Object distributeMonitor = new Object();
 	
 	private final IServerExecutor serverExecutor;
 	private final ISession caller;
@@ -40,7 +41,9 @@ class QueryDistributorThread extends Thread {
 	@Override
 	public void run() {
 		try {
-			QueryDistributor.distributeImpl(serverExecutor, caller, queriesToDistribute, config);
+			synchronized( distributeMonitor ) {
+				QueryDistributor.distributeImpl(serverExecutor, caller, queriesToDistribute, config);
+			}
 		} catch (QueryDistributionException ex) {
 			LOG.error("Could not distribute queries", ex);
 		}
