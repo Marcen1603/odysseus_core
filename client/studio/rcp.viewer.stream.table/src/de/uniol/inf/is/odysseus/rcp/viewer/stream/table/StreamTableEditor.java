@@ -43,6 +43,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Preconditions;
+import com.google.common.base.Strings;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
@@ -50,6 +51,8 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.securitypunctuation.ISecurityPunctuation;
+import de.uniol.inf.is.odysseus.mep.ParseException;
+import de.uniol.inf.is.odysseus.rcp.exception.ExceptionWindow;
 import de.uniol.inf.is.odysseus.rcp.viewer.editors.StreamEditor;
 import de.uniol.inf.is.odysseus.rcp.viewer.extension.IStreamEditorInput;
 import de.uniol.inf.is.odysseus.rcp.viewer.extension.IStreamEditorType;
@@ -67,9 +70,14 @@ public class StreamTableEditor implements IStreamEditorType {
 
 	protected List<Tuple<?>> tuples = new ArrayList<Tuple<?>>();
 	private List<Integer> shownAttributes = new ArrayList<Integer>();
+
+	private Object filterMonitor = new Object();
+	private String filterExpressionString;
+	private TupleFilter filter;
+
 	private int maxTuplesCount;
 	private Boolean isRefreshing = false;
-	
+
 	private boolean isDesync;
 	private RefreshTableThread desyncThread;
 	private boolean isShowingMetadata = true;
@@ -111,28 +119,28 @@ public class StreamTableEditor implements IStreamEditorType {
 			return;
 		}
 
-		updateTuples((Tuple<?>)element);
+		updateTuples((Tuple<?>) element);
 
-		synchronized( isRefreshing ) {
+		synchronized (isRefreshing) {
 			if (!isDesync && !isRefreshing && hasTableViewer() && !getTableViewer().getTable().isDisposed()) {
-				
+
 				isRefreshing = true;
-				
+
 				PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
-						@Override
-						public void run() {
-							synchronized (isRefreshing) {
-								try {
-									if (!getTableViewer().getTable().isDisposed()) {
-										getTableViewer().refresh();
-									}
-								}catch(Exception e){
-									// ignore
-								} finally {
-									isRefreshing = false;
+					@Override
+					public void run() {
+						synchronized (isRefreshing) {
+							try {
+								if (!getTableViewer().getTable().isDisposed()) {
+									getTableViewer().refresh();
 								}
+							} catch (Exception e) {
+								// ignore
+							} finally {
+								isRefreshing = false;
 							}
 						}
+					}
 				});
 				editor.activateIfNeeded();
 			}
@@ -140,6 +148,13 @@ public class StreamTableEditor implements IStreamEditorType {
 	}
 
 	public void updateTuples(Tuple<?> element) {
+
+		synchronized (filterMonitor) {
+			if( filter != null && filter.isFiltered(element)) {
+				return; // discared filtered elements
+			}
+		}
+
 		tuples.add(0, element);
 		if (maxTuplesCount > 0 && tuples.size() > maxTuplesCount) {
 			tuples.remove(tuples.size() - 1);
@@ -174,21 +189,44 @@ public class StreamTableEditor implements IStreamEditorType {
 		filterButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				FilterWindow window = new FilterWindow(PlatformUI.getWorkbench().getDisplay(), schema, shownAttributes);
+				FilterWindow window = new FilterWindow(PlatformUI.getWorkbench().getDisplay(), schema, shownAttributes, filterExpressionString);
 				window.show();
 
-				if (!window.isCanceled() && !window.getSelectedAttributeIndices().isEmpty()) {
-					createColumns(getTableViewer(), window.getSelectedAttributeIndices());
-					if (getSchema().size() != window.getSelectedAttributeIndices().size()) {
-						toolbarLabel.setText(window.getSelectedAttributeIndices().size() + " of " + getSchema().size() + " attributes show.");
-					} else {
-						toolbarLabel.setText("");
+				if (!window.isCanceled()) {
+
+					if (!window.getSelectedAttributeIndices().isEmpty()) {
+						createColumns(getTableViewer(), window.getSelectedAttributeIndices());
+						if (getSchema().size() != window.getSelectedAttributeIndices().size()) {
+							toolbarLabel.setText(window.getSelectedAttributeIndices().size() + " of " + getSchema().size() + " attributes show.");
+						} else {
+							toolbarLabel.setText("");
+						}
 					}
+
+					filterExpressionString = window.getFilterExpression();
+
+					if (!Strings.isNullOrEmpty(filterExpressionString)) {
+						try {
+							synchronized( filterMonitor) {
+								filter = new TupleFilter(filterExpressionString, getSchema());
+							}
+							
+							toolbarLabel.setText(toolbarLabel.getText() + " [ " + filter.getExpressionString() + " ]");
+						} catch (ParseException e1) {
+							new ExceptionWindow("Could not apply filter '" + filterExpressionString + "'", e1);
+						}
+					} else {
+						synchronized( filterMonitor ) {
+							filter = null;
+						}
+					}
+
 					getParent().layout();
 				}
 			}
+
 		});
-		
+
 		final ToolItem desyncButton = new ToolItem(toolbar, SWT.CHECK);
 		desyncButton.setImage(ViewerStreamTablePlugIn.getImageManager().get("desync"));
 		desyncButton.setToolTipText("Desyncronize");
@@ -197,7 +235,7 @@ public class StreamTableEditor implements IStreamEditorType {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				isDesync = desyncButton.getSelection();
-				if( isDesync ) {
+				if (isDesync) {
 					desyncThread = new RefreshTableThread(getTableViewer());
 					desyncThread.start();
 				} else {
@@ -205,7 +243,7 @@ public class StreamTableEditor implements IStreamEditorType {
 				}
 			}
 		});
-		
+
 		final ToolItem metadataButton = new ToolItem(toolbar, SWT.CHECK);
 		metadataButton.setImage(ViewerStreamTablePlugIn.getImageManager().get("metadata"));
 		metadataButton.setToolTipText("Show metadata");
@@ -220,8 +258,7 @@ public class StreamTableEditor implements IStreamEditorType {
 		});
 
 		toolbarLabel = new Label(toolbar.getParent(), SWT.NONE);
-		toolbarLabel
-				.setText("                                                                                                                                                                                     ");
+		toolbarLabel.setText("                                                                                                                                                                                     ");
 	}
 
 	public final SDFSchema getSchema() {
@@ -258,7 +295,6 @@ public class StreamTableEditor implements IStreamEditorType {
 		TableViewerColumn col = new TableViewerColumn(tableViewer, SWT.NONE);
 		final int attributeIndex = getSchema().indexOf(attribute);
 
-		
 		col.getColumn().setText(attribute.getAttributeName());
 		col.getColumn().setToolTipText(attribute.getURI());
 		col.getColumn().setAlignment(SWT.CENTER);
@@ -268,12 +304,11 @@ public class StreamTableEditor implements IStreamEditorType {
 				try {
 					Object attr = ((Tuple<?>) cell.getElement()).getAttribute(attributeIndex);
 					if (attr != null) {
-                        if (attr instanceof Object[]) {
-                            cell.setText(Arrays.deepToString((Object[]) attr));
-                        }
-                        else {
-                            cell.setText(attr.toString());
-                        }
+						if (attr instanceof Object[]) {
+							cell.setText(Arrays.deepToString((Object[]) attr));
+						} else {
+							cell.setText(attr.toString());
+						}
 					} else {
 						cell.setText("<null>");
 					}
@@ -289,17 +324,17 @@ public class StreamTableEditor implements IStreamEditorType {
 			protected int doCompare(Viewer viewer, Tuple<?> e1, Tuple<?> e2) {
 				Object attr1 = e1.getAttribute(attributeIndex);
 				Object attr2 = e2.getAttribute(attributeIndex);
-				if (attr1 != null && attr2 != null){
+				if (attr1 != null && attr2 != null) {
 					return Objects.compare(attr1, attr2, new ObjectComparator());
 				}
 				return 0;
 			}
 		};
 		sorter.setSorter(sorter, TupleColumnViewerSorter.NONE);
-		
+
 		return col;
 	}
-	
+
 	protected final TableViewer getTableViewer() {
 		return viewer;
 	}
@@ -357,27 +392,27 @@ public class StreamTableEditor implements IStreamEditorType {
 			disposeAllColumns(tableViewer);
 			setSelectedAttributeIndexes(attributeIndexes);
 
-			int weight = 1000 / ( attributeIndexes.size() +  (isShowingMetadata ? 1 : 0) );
+			int weight = 1000 / (attributeIndexes.size() + (isShowingMetadata ? 1 : 0));
 			for (Integer attributeIndex : attributeIndexes) {
 				TableViewerColumn col = createColumn(tableViewer, getSchema().get(attributeIndex));
 				layout.setColumnData(col.getColumn(), new ColumnWeightData(weight, 25, true));
 			}
-			
-			if( isShowingMetadata ) {
+
+			if (isShowingMetadata) {
 				metadataColumn = createMetadataColumn(tableViewer);
 				layout.setColumnData(metadataColumn.getColumn(), new ColumnWeightData(weight, 25, true));
-				
+
 				metadataMapColumn = createMetadataMapColumn(tableViewer);
 				layout.setColumnData(metadataMapColumn.getColumn(), new ColumnWeightData(weight, 25, true));
 			}
-			
+
 		} finally {
 			getParent().layout();
 			tableViewer.getTable().setRedraw(true);
 			tableViewer.refresh();
 		}
 	}
-	
+
 	private TableViewerColumn createMetadataColumn(TableViewer tableViewer) {
 		TableViewerColumn col = new TableViewerColumn(tableViewer, SWT.NONE);
 		col.getColumn().setText("Metadata");
@@ -394,7 +429,7 @@ public class StreamTableEditor implements IStreamEditorType {
 						cell.setText("<null>");
 					}
 					cell.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_GRAY));
-					
+
 				} catch (Throwable t) {
 					LOG.error("Could not retrieve metadata", t);
 					cell.setText("<Error>");
@@ -410,10 +445,10 @@ public class StreamTableEditor implements IStreamEditorType {
 			}
 		};
 		sorter.setSorter(sorter, TupleColumnViewerSorter.NONE);
-		
+
 		return col;
 	}
-	
+
 	private TableViewerColumn createMetadataMapColumn(TableViewer tableViewer) {
 		TableViewerColumn col = new TableViewerColumn(tableViewer, SWT.NONE);
 		col.getColumn().setText("MetadataMap");
@@ -430,19 +465,19 @@ public class StreamTableEditor implements IStreamEditorType {
 						cell.setText("<null>");
 					}
 					cell.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_GRAY));
-					
+
 				} catch (Throwable t) {
 					LOG.error("Could not retrieve metadataMap", t);
 					cell.setText("<Error>");
 				}
 			}
 		});
-		
+
 		return col;
 	}
 
 	private void stopRefreshThread() {
-		if( desyncThread != null ) {
+		if (desyncThread != null) {
 			desyncThread.stopRunning();
 			desyncThread = null;
 		}

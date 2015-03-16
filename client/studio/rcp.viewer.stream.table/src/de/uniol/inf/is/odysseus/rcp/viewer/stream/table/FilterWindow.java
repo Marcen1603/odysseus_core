@@ -27,9 +27,12 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Text;
 
 import com.google.common.base.Preconditions;
+import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
@@ -42,12 +45,17 @@ public class FilterWindow {
 	
 	private List<Integer> selectedAttributeIndices;
 	private List<CheckBoxIndexPair> checkBoxes;
+	
+	private Text filterText;
+	private String filterExpression;
+	
 	private Shell window;
 	private boolean canceled;
 
-	public FilterWindow(Display display, SDFSchema schema, List<Integer> selectedAttributeIndices ) {
+	public FilterWindow(Display display, SDFSchema schema, List<Integer> selectedAttributeIndices, String filterExpression) {
 		this.schema = Preconditions.checkNotNull(schema, "Schema must not be null.");
 		this.display = Preconditions.checkNotNull(display, "Display must not be null.");
+		this.filterExpression = Strings.isNullOrEmpty(filterExpression) ? "" : filterExpression;
 		this.selectedAttributeIndices = Preconditions.checkNotNull(selectedAttributeIndices, "List of indices of selected attributes must not be null!");
 	}
 
@@ -61,6 +69,7 @@ public class FilterWindow {
 			public void widgetDisposed(DisposeEvent e) {
 				if( !isCanceled() ) {
 					selectedAttributeIndices = determineSelection(checkBoxes);
+					filterExpression = filterText.getText();
 				}
 			}
 
@@ -82,6 +91,10 @@ public class FilterWindow {
 		return selectedAttributeIndices;
 	}
 	
+	public String getFilterExpression() {
+		return filterExpression;
+	}
+	
 	public boolean isCanceled() {
 		return canceled;
 	}
@@ -100,12 +113,38 @@ public class FilterWindow {
 		wnd.setLayout(new GridLayout());
 
 		checkBoxes = createCheckboxes(wnd, schema, selectedAttributeIndices);
+		filterText = createFilterText(wnd, filterExpression);
+		
 		createButtons(wnd);
 
 		wnd.pack();
 		return wnd;
 	}
 	
+	private static Text createFilterText(Shell wnd, String txt) {
+		Composite filterComposite = new Composite( wnd, SWT.NONE);
+		filterComposite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		filterComposite.setLayout(new GridLayout(3, false));
+		
+		Label filterLabel = new Label(filterComposite, SWT.NONE);
+		filterLabel.setText("Filter expression");
+		
+		final Text filterText = new Text(filterComposite, SWT.BORDER | SWT.SINGLE);
+		filterText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		filterText.setText(txt);
+		
+		Button clearFilterButton = new Button(filterComposite, SWT.PUSH );
+		clearFilterButton.setText("Clear");
+		clearFilterButton.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				filterText.setText("");
+			}
+		});
+		
+		return filterText;
+	}
+
 	private static List<CheckBoxIndexPair> createCheckboxes(Shell shell, SDFSchema schema, List<Integer> selectedIndices ) {
 		Composite attributesComposite = new Composite(shell, SWT.NONE);
 		attributesComposite.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, true, true));
