@@ -123,7 +123,7 @@ public class PeerViewUsageContainer implements IPeerDictionaryListener {
 			@Override
 			public void run() {
 				try {
-					Future<Optional<IResourceUsage>> futureUsage = usageManager.getRemoteResourceUsage(peer);
+					Future<Optional<IResourceUsage>> futureUsage = usageManager.getRemoteResourceUsage(peer, false);
 
 					try {
 
