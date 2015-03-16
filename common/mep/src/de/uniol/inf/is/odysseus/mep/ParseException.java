@@ -27,8 +27,12 @@ public class ParseException extends Exception {
 		super(message);
 	}
 	
-	public ParseException(Exception e){
+	public ParseException(Throwable e){
 		super(e);
+	}
+	
+	public ParseException(String msg, Throwable e ) {
+		super(msg, e);
 	}
 
 }
