@@ -36,6 +36,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Types;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.Timer;
@@ -173,15 +174,31 @@ public class DatabaseSinkPO extends AbstractSink<Tuple<ITimeInterval>>
 	}
 
 	private String createPreparedStatement() {
-		String s = "INSERT INTO " + this.tablename + " VALUES(";
 		int count = super.getOutputSchema().size();
+		SDFSchema outputSchema = super.getOutputSchema();
+
+		StringBuffer s = new StringBuffer("INSERT INTO " + this.tablename);
+		
 		String sep = "";
+		// TODO: Move to config param
+		boolean useAttributeNames = true;
+		if (useAttributeNames){
+			s.append("(");
+			for (int i=0;i<count;i++){
+				s.append(sep).append(outputSchema.getAttribute(i).getAttributeName());
+				sep = ",";
+			}
+			s.append(")");
+		}
+		s.append(" VALUES(");
+		
+		sep = "";
 		for (int i = 0; i < count; i++) {
-			s = s + sep + "?";
+			s.append(sep).append("?");
 			sep = ",";
 		}
-		s = s + ")";
-		return s;
+		s.append(")");
+		return s.toString();
 	}
 
 	@Override
