@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.wrapper.xovis.communication.util;
 
+import java.io.IOException;
 import java.io.OutputStream;
 
 import de.uniol.inf.is.odysseus.wrapper.xovis.communication.gpbObjects.ClientResponseEventStreamObj.ClientResponseEventStream;
@@ -65,7 +66,7 @@ public class TCPStreamEstablisher implements Runnable {
 					// Crybaby
 				}
 			}
-		} catch (Exception e) {
+		} catch (IOException e) {
 			System.out.println("An error occurred:");
 			e.printStackTrace();
 		}

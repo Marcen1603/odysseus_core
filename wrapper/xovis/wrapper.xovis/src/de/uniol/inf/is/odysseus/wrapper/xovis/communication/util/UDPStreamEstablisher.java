@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.wrapper.xovis.communication.util;
 
+import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
@@ -73,7 +74,7 @@ public class UDPStreamEstablisher implements Runnable {
 					// Crybaby
 				}
 			}
-		} catch (Exception e) {
+		} catch (IOException e) {
 			System.out.println("An error occurred:");
 			e.printStackTrace();
 		}
