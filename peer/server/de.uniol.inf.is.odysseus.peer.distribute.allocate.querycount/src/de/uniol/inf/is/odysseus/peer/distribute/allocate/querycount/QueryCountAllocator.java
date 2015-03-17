@@ -3,14 +3,17 @@ package de.uniol.inf.is.odysseus.peer.distribute.allocate.querycount;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+
+import net.jxta.peer.PeerID;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 
-import net.jxta.peer.PeerID;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.QueryBuildConfiguration;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.IPeerDictionary;
@@ -67,7 +70,7 @@ public class QueryCountAllocator implements IQueryPartAllocator {
 		if( doConsiderLocalPeer(allocatorParameters)) {
 			consideredPeerIDs.add(localPeerID);
 		}
-		consideredPeerIDs.remove(MONITOR_APP_NAME);
+		consideredPeerIDs.removeAll(determinePeersToIgnore(consideredPeerIDs));
 		
 		if( consideredPeerIDs.isEmpty() ) {
 			throw new QueryPartAllocationException("There is no peer to allocate to");
@@ -84,6 +87,21 @@ public class QueryCountAllocator implements IQueryPartAllocator {
 		}
 		
 		return allocationMap;
+	}
+	
+	private Set<PeerID> determinePeersToIgnore(
+			Collection<PeerID> knownRemotePeers) throws QueryPartAllocationException {
+		if(peerDictionary == null) {			
+			throw new QueryPartAllocationException("No peer dictionary set");			
+		}
+		
+		Set<PeerID> peersToIgnore = Sets.newHashSet();
+		for(PeerID peer : knownRemotePeers) {
+			if(peerDictionary.getRemotePeerName(peer).equals(MONITOR_APP_NAME)) {
+				peersToIgnore.add(peer);
+			}
+		}
+		return peersToIgnore;
 	}
 	
 	private static boolean doConsiderLocalPeer( List<String> parameters ) {
