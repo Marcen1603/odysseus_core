@@ -20,6 +20,8 @@ import de.uniol.inf.is.odysseus.peer.distribute.QueryPartAllocationException;
 import de.uniol.inf.is.odysseus.peer.resource.IPeerResourceUsageManager;
 
 public class QueryCountAllocator implements IQueryPartAllocator {
+	
+	public static final String MONITOR_APP_NAME = "PeerMonitorServer";
 
 	private static final Logger LOG = LoggerFactory.getLogger(QueryCountAllocator.class);
 	
@@ -65,6 +67,7 @@ public class QueryCountAllocator implements IQueryPartAllocator {
 		if( doConsiderLocalPeer(allocatorParameters)) {
 			consideredPeerIDs.add(localPeerID);
 		}
+		consideredPeerIDs.remove(MONITOR_APP_NAME);
 		
 		if( consideredPeerIDs.isEmpty() ) {
 			throw new QueryPartAllocationException("There is no peer to allocate to");
