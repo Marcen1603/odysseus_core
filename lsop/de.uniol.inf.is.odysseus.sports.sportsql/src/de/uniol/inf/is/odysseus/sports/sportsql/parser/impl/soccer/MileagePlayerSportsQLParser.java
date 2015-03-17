@@ -136,6 +136,9 @@ public class MileagePlayerSportsQLParser implements ISportsQLParser {
 						resultAggregateOutputAttributeNames, null,
 						assureHeartbeatAO, 1);
 		
+		allOperators.add(resultAggregate);
+		
+		
 		return OperatorBuildHelper.finishQuery(resultAggregate, allOperators,	sportsQL.getDisplayName(),sportsQL);
 	}
 }

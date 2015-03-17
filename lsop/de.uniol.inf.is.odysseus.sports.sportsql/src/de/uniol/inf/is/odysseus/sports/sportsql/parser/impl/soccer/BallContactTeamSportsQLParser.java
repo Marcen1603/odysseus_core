@@ -116,6 +116,9 @@ public class BallContactTeamSportsQLParser implements ISportsQLParser{
 						resultAggregateInputAttributeNames,
 						resultAggregateOutputAttributeNames, null,
 						assureHeartbeatAO, dumpAtValueCount);
+		
+		allOperators.add(resultAggregate);
+		
 
 		return OperatorBuildHelper.finishQuery(resultAggregate, allOperators,
 				sportsQL.getDisplayName(),sportsQL);
