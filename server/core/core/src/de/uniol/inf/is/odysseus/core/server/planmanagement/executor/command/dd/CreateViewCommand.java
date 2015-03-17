@@ -54,5 +54,10 @@ public class CreateViewCommand extends AbstractExecutorCommand {
 	public String toString() {
 		return "Create VIEW " + name;
 	}
+	
+	public String getName() {
+		return name;
+	}
+
 
 }

@@ -1,18 +1,18 @@
 /********************************************************************************** 
-  * Copyright 2011 The Odysseus Team
-  *
-  * Licensed under the Apache License, Version 2.0 (the "License");
-  * you may not use this file except in compliance with the License.
-  * You may obtain a copy of the License at
-  *
-  *     http://www.apache.org/licenses/LICENSE-2.0
-  *
-  * Unless required by applicable law or agreed to in writing, software
-  * distributed under the License is distributed on an "AS IS" BASIS,
-  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  * See the License for the specific language governing permissions and
-  * limitations under the License.
-  */
+ * Copyright 2011 The Odysseus Team
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package de.uniol.inf.is.odysseus.parser.pql;
 
 import java.io.Reader;
@@ -32,6 +32,8 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.IQueryParser;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.QueryParseException;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.IExecutorCommand;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.dd.CreateQueryCommand;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.dd.CreateStreamCommand;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.dd.CreateViewCommand;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.parser.pql.impl.PQLParserImpl;
 import de.uniol.inf.is.odysseus.parser.pql.impl.ParseException;
@@ -40,9 +42,9 @@ public class PQLParser implements IQueryParser {
 
 	private PQLParserImpl parser;
 
-//	private User user;
-//
-//	private IDataDictionary dataDictionary;
+	// private User user;
+	//
+	// private IDataDictionary dataDictionary;
 
 	private static Map<String, IParameter<?>> queryParameters = new HashMap<String, IParameter<?>>();
 
@@ -52,25 +54,27 @@ public class PQLParser implements IQueryParser {
 	}
 
 	@Override
-	public synchronized List<IExecutorCommand> parse(String query, ISession user, IDataDictionary dd, Context context)
+	public synchronized List<IExecutorCommand> parse(String query,
+			ISession user, IDataDictionary dd, Context context)
 			throws QueryParseException {
-//		this.user = user;
-//		this.dataDictionary = dd;
+		// this.user = user;
+		// this.dataDictionary = dd;
 		PQLParserImpl.setUser(user);
 		PQLParserImpl.setDataDictionary(dd);
-		return parse(new StringReader(query),user, dd, context);		
+		return parse(new StringReader(query), user, dd, context);
 	}
 
 	@Override
-	public synchronized List<IExecutorCommand> parse(Reader reader, ISession user, IDataDictionary dd, Context context)
+	public synchronized List<IExecutorCommand> parse(Reader reader,
+			ISession user, IDataDictionary dd, Context context)
 			throws QueryParseException {
-//		this.user = user;
-//		this.dataDictionary = dd;
+		// this.user = user;
+		// this.dataDictionary = dd;
 		PQLParserImpl.setUser(user);
 		PQLParserImpl.setDataDictionary(dd);
 		boolean updateQueryId = true;
-		if (context != null && context.containsKey("tempQuery")){
-			updateQueryId = !(Boolean)context.get("tempQuery");
+		if (context != null && context.containsKey("tempQuery")) {
+			updateQueryId = !(Boolean) context.get("tempQuery");
 		}
 		PQLParserImpl.setUpdateQueryID(updateQueryId);
 		try {
@@ -85,24 +89,41 @@ public class PQLParser implements IQueryParser {
 			}
 
 			List<IExecutorCommand> queries = PQLParserImpl.query();
+			String foundViewCommand = "";
+
 			for (IExecutorCommand cmd : queries) {
-				if (cmd instanceof CreateQueryCommand){
-				((CreateQueryCommand) cmd).getQuery().setParserId(getLanguage());
-				((CreateQueryCommand) cmd).getQuery().setUser(user);
+				if (cmd instanceof CreateQueryCommand) {
+					((CreateQueryCommand) cmd).getQuery().setParserId(
+							getLanguage());
+					((CreateQueryCommand) cmd).getQuery().setUser(user);
+				} else if (cmd instanceof CreateViewCommand
+						|| cmd instanceof CreateStreamCommand) {
+					String found = getName(cmd);
+					if (foundViewCommand.length() > 0) {
+						throw new QueryParseException(
+								"In PQL only one view/stream can be defined per query. After "
+										+ foundViewCommand + " found "+ found);
+					}
+					foundViewCommand = getName(cmd);
 				}
 			}
 			return queries;
-		}catch(ParseException e){			
+		} catch (ParseException e) {
 			String message = "PQL could not be correctly parsed!";
-			message = message + System.lineSeparator();				
-			message = message + "This is, because PQL found \""+e.currentToken.next+"\" after \""+e.currentToken+"\" and \""+e.currentToken.next+"\" is not an allowed value here!";
-			message = message + System.lineSeparator();				
-			message = message + "However, PQL exspects one of the following tokens after \""+e.currentToken+"\": ";				
+			message = message + System.lineSeparator();
+			message = message + "This is, because PQL found \""
+					+ e.currentToken.next + "\" after \"" + e.currentToken
+					+ "\" and \"" + e.currentToken.next
+					+ "\" is not an allowed value here!";
+			message = message + System.lineSeparator();
+			message = message
+					+ "However, PQL exspects one of the following tokens after \""
+					+ e.currentToken + "\": ";
 			int line = e.currentToken.next.beginLine;
-			int column = e.currentToken.next.beginColumn;						
+			int column = e.currentToken.next.beginColumn;
 			String sep = "";
-			for(int[] expectedSequence : e.expectedTokenSequences){
-				for(int token : expectedSequence){
+			for (int[] expectedSequence : e.expectedTokenSequences) {
+				for (int token : expectedSequence) {
 					message = message + sep + e.tokenImage[token];
 					sep = ",";
 				}
@@ -111,30 +132,39 @@ public class PQLParser implements IQueryParser {
 			qpe.setColumn(column);
 			qpe.setLine(line);
 			throw qpe;
-		}catch(QueryParseException ex){
+		} catch (QueryParseException ex) {
 			throw ex;
-		}
-		catch (Exception e) {						
+		} catch (Exception e) {
 			throw new QueryParseException(e);
 		}
 	}
 
-//	public static void addOperatorBuilder(String identifier,
-//			IOperatorBuilder builder) {
-//		PQLParserImpl.addOperatorBuilder(identifier, builder);
-//	}
-//
-//	public static Set<String> getOperatorBuilderNames() {
-//		return PQLParserImpl.getOperatorBuilderNames();
-//	}
-//	
-//	public static IOperatorBuilder getOperatorBuilder(String name) {
-//		return PQLParserImpl.getOperatorBuilder(name);
-//	}
-//
-//	public static void removeOperatorBuilder(String identifier) {
-//		PQLParserImpl.removeOperatorBuilder(identifier);
-//	}
+	private String getName(IExecutorCommand cmd) {
+		if (cmd instanceof CreateStreamCommand){
+			return ((CreateStreamCommand)cmd).getName();
+		}
+		if (cmd instanceof CreateViewCommand){
+			return ((CreateViewCommand)cmd).getName();
+		}
+		return "";
+	}
+
+	// public static void addOperatorBuilder(String identifier,
+	// IOperatorBuilder builder) {
+	// PQLParserImpl.addOperatorBuilder(identifier, builder);
+	// }
+	//
+	// public static Set<String> getOperatorBuilderNames() {
+	// return PQLParserImpl.getOperatorBuilderNames();
+	// }
+	//
+	// public static IOperatorBuilder getOperatorBuilder(String name) {
+	// return PQLParserImpl.getOperatorBuilder(name);
+	// }
+	//
+	// public static void removeOperatorBuilder(String identifier) {
+	// PQLParserImpl.removeOperatorBuilder(identifier);
+	// }
 
 	public static void addQueryParameter(IParameter<?> parameter) {
 		String parameterName = parameter.getName();
@@ -151,7 +181,7 @@ public class PQLParser implements IQueryParser {
 	}
 
 	public static void initQueryParameters(Map<String, Object> parameterValues) {
-		initParameters(" unknown ",queryParameters.values(), parameterValues);
+		initParameters(" unknown ", queryParameters.values(), parameterValues);
 	}
 
 	public static IParameter<?> getQueryParameter(String name) {
@@ -170,7 +200,8 @@ public class PQLParser implements IQueryParser {
 			if (!hasParameter) {
 				parameter.setInputValue(null);
 				if (parameter.isMandatory()) {
-					errors.add("missing mandatory parameter: " + parameterName+" for "+operatorName);
+					errors.add("missing mandatory parameter: " + parameterName
+							+ " for " + operatorName);
 				}
 			} else {
 				Object value = parameterValues.get(parameterName);
@@ -179,24 +210,23 @@ public class PQLParser implements IQueryParser {
 			}
 		}
 		if (!tmpParameters.isEmpty()) {
-			errors.add("unsupported parameters: "
-					+ tmpParameters.keySet());
+			errors.add("unsupported parameters: " + tmpParameters.keySet());
 		}
-		if (!errors.isEmpty()){
+		if (!errors.isEmpty()) {
 			StringBuffer eText = new StringBuffer();
-			for (String e:errors){
+			for (String e : errors) {
 				eText.append(e).append("\n");
 			}
-			throw new ParameterException("Parameter error "+eText);
+			throw new ParameterException("Parameter error " + eText);
 		}
 	}
 
 	@Override
 	public Map<String, List<String>> getTokens(ISession user) {
-		Map<String, List<String>> tokens = new HashMap<>();		
+		Map<String, List<String>> tokens = new HashMap<>();
 		return tokens;
 	}
-	
+
 	@Override
 	public List<String> getSuggestions(String hint, ISession user) {
 		return new ArrayList<>();

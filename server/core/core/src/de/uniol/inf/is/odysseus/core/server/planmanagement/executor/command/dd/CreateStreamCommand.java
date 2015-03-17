@@ -30,6 +30,10 @@ public class CreateStreamCommand extends AbstractExecutorCommand {
 		dd.setStream(name, rootAO, getCaller());		
 	}
 	
+	public String getName() {
+		return name;
+	}
+	
 	@Override
 	public String toString() {
 		return "Create STREAM "+name;
