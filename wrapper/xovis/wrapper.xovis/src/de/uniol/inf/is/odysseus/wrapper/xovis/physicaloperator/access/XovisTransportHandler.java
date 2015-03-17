@@ -114,7 +114,13 @@ public class XovisTransportHandler extends AbstractTransportHandler {
 	@Override
 	public void processInOpen() throws UnknownHostException, IOException {
 		if(this.communicator == null){
-			createConnectionHandler();
+			communicator = new XovisCommunicationHandler(this.host, this.port, this.type);
+			// System.err.println("Communicator running on port " + this.port);
+			try {
+				in = communicator.getInputStream();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
 		this.communicator.start();
 		this.communicator.connect();
@@ -168,18 +174,7 @@ public class XovisTransportHandler extends AbstractTransportHandler {
 			this.type = XOVISSTREAMTYPE.OBJECTSTREAM;
 		}
 		
-	}
-
-	private void createConnectionHandler() {
-		communicator = new XovisCommunicationHandler(this.host, this.port, this.type);
-		System.err.println("Communicator running on port " + this.port);
-		try {
-			in = communicator.getInputStream();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
-	
+	}	
 	
 	public DatagramSocket getInputSocket(){
 		return communicator.getuDPClientSocket();
