@@ -135,7 +135,7 @@ public class SharedQueryGraphHelper {
 		return result;
 	}
 
-	public static Map<String, Collection<LocalQueryInfo>> getSharedQueryInfo(ISession session, String sharedQueryId, String tenant, String username, String password) {
+	public static Map<String, Collection<LocalQueryInfo>> getSharedQueryInfo(ISession session, String sharedQueryId, String tenant, String username, String password, boolean searchAllPeers) {
 		ID sharedQueryID = null;
 		try {
 			sharedQueryID = IDFactory.fromURI(new URI(sharedQueryId));
@@ -150,11 +150,22 @@ public class SharedQueryGraphHelper {
 			queryCol.add(createLocalQueryInfo(id, session));
 		}
 		result.put(PeerServiceBinding.getP2PNetworkManager().getLocalPeerID().toString(), queryCol);
-
-		Collection<PeerID> col = PeerServiceBinding.getQueryPartController().getOtherPeers(sharedQueryID);
+		Collection<PeerID> col = null;
+		if (searchAllPeers) {
+			col = PeerServiceBinding.getPeerDictionary().getRemotePeerIDs();
+		} else {
+			col = PeerServiceBinding.getQueryPartController().getOtherPeers(sharedQueryID);
+		}
 		for (PeerID peerID : col) {
+			if (PeerServiceBinding.getPeerDictionary().getRemotePeerName(peerID).equals("PeerMonitorServer")) {
+				continue;
+			}
 			Collection<LocalQueryInfo> queries = null;
-			String address = removePort(PeerServiceBinding.getPeerDictionary().getRemotePeerAddress(peerID).orNull());
+			String address = PeerServiceBinding.getPeerDictionary().getRemotePeerAddress(peerID).orNull();
+			if (address == null) {
+				continue;
+			}
+			address = removePort(address);
 			int port = PeerServiceBinding.getWebserviceAdvListener().getRestPort(peerID);
 			String url = "http://"+address+":"+port+"/peer/"+GetLocalQueriesServerResource.PATH;
 			try {
@@ -168,10 +179,12 @@ public class SharedQueryGraphHelper {
 				request.setPassword(password);
 				GetLocalQueriesResponseDTO resp = res.post(request, GetLocalQueriesResponseDTO.class);
 				queries = resp.getLocalQueries();
+				if (queries != null && queries.size() > 0) {
+					result.put(peerID.toString(), queries);
+				}
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-			result.put(peerID.toString(), queries);
 		}			
 		return result;
 	}

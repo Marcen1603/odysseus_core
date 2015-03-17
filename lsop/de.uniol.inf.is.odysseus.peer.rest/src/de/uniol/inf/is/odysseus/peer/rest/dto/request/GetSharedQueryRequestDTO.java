@@ -7,6 +7,7 @@ public class GetSharedQueryRequestDTO extends AbstractSessionRequestDTO{
 	private String username;
 	private String password;
 	private String tenant;
+	private boolean searchAllPeers;
 
 	public GetSharedQueryRequestDTO() {
 		
@@ -50,6 +51,19 @@ public class GetSharedQueryRequestDTO extends AbstractSessionRequestDTO{
 	public void setTenant(String tenant) {
 		this.tenant = tenant;
 	}
+
+
+	public boolean isSearchAllPeers() {
+		return searchAllPeers;
+	}
+
+
+	public void setSearchAllPeers(boolean searchAllPeers) {
+		this.searchAllPeers = searchAllPeers;
+	}
+
+
+
 	
 	
 	

@@ -26,7 +26,7 @@ public class GetSharedQueryServerResource extends AbstractSessionServerResource 
 	@Post
 	public GetSharedQueryResponseDTO getSharedQueryInfo(GetSharedQueryRequestDTO req) {
 		ISession session = loginWithToken(req.getToken());
-		Map<String, Collection<LocalQueryInfo>> result = SharedQueryGraphHelper.getSharedQueryInfo(session, req.getSharedQueryId(), req.getTenant(), req.getUsername(),req.getPassword());
+		Map<String, Collection<LocalQueryInfo>> result = SharedQueryGraphHelper.getSharedQueryInfo(session, req.getSharedQueryId(), req.getTenant(), req.getUsername(),req.getPassword(), req.isSearchAllPeers());
 		return new GetSharedQueryResponseDTO(result);
 	}	
 	
