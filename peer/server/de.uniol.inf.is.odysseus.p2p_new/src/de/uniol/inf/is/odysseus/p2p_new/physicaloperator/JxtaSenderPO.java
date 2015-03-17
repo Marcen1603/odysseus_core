@@ -141,6 +141,8 @@ public class JxtaSenderPO<T extends IStreamObject<?>> extends AbstractSink<T> im
 			byte[] metadataMapBytes = ObjectByteConverter.objectToBytes(metadataMap);
 			buffer.putInt(metadataMapBytes.length);
 			buffer.put(metadataMapBytes);
+		} else {
+			buffer.putInt(0);
 		}
 
 		buffer.flip();

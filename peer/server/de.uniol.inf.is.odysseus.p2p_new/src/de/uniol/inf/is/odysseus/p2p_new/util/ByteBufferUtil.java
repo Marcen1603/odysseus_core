@@ -41,14 +41,15 @@ public class ByteBufferUtil {
 
 				if (byteBuffer.remaining() > 0) {
 					int metadataMapBytesLength = byteBuffer.getInt();
-					byte[] metadataMapBytes = new byte[metadataMapBytesLength];
-					byteBuffer.get(metadataMapBytes);
-
-					Map<String, Object> metadataMap = (Map<String, Object>) ObjectByteConverter
-							.bytesToObject(metadataMapBytes);
-					System.err.println(metadataMap);
-
-					retval.setMetadataMap(metadataMap);
+					if( metadataMapBytesLength > 0 ) {
+						byte[] metadataMapBytes = new byte[metadataMapBytesLength];
+						byteBuffer.get(metadataMapBytes);
+	
+						Map<String, Object> metadataMap = (Map<String, Object>) ObjectByteConverter
+								.bytesToObject(metadataMapBytes);
+	
+						retval.setMetadataMap(metadataMap);
+					}
 				}
 			}
 		} finally {
@@ -78,6 +79,8 @@ public class ByteBufferUtil {
 						.objectToBytes(metadataMap);
 				buffer.putInt(metadataMapBytes.length);
 				buffer.put(metadataMapBytes);
+			} else {
+				buffer.putInt(0);
 			}
 		}
 	}
