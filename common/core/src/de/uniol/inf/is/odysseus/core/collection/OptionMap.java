@@ -25,37 +25,37 @@ public class OptionMap {
 	public OptionMap(Map<String, String> optionMap) {
 		if (optionMap != null) {
 			for (Entry<String, String> e : optionMap.entrySet()) {
-				overwriteOption(e.getKey(), e.getValue());
+				overwriteOption(e.getKey().toLowerCase(), e.getValue());
 			}
 		}
 	}
 
 	public void setOption(String key, String value) {
-		if (optionMap.containsKey(key)) {
-			throw new IllegalStateException("Option " + key
+		if (optionMap.containsKey(key.toLowerCase())) {
+			throw new IllegalStateException("Option " + key.toLowerCase()
 					+ " already set with value " + optionMap.get(key));
 		}
-		overwriteOption(key, value);
+		overwriteOption(key.toLowerCase(), value);
 	}
 
 	public void overwriteOption(String key, String value) {
-		optionMap.put(key, value);
-		keyRead.put(key, Boolean.FALSE);
+		optionMap.put(key.toLowerCase(), value);
+		keyRead.put(key.toLowerCase(), Boolean.FALSE);
 	}
 
 	public boolean containsKey(String key) {
-		return optionMap.containsKey(key);
+		return optionMap.containsKey(key.toLowerCase());
 	}
 
 	public String get(String key) {
-		if (optionMap.containsKey(key)) {
-			keyRead.put(key, Boolean.TRUE);
+		if (optionMap.containsKey(key.toLowerCase())) {
+			keyRead.put(key.toLowerCase(), Boolean.TRUE);
 		}
-		return optionMap.get(key);
+		return optionMap.get(key.toLowerCase());
 	}
 
 	public String get(String key, String defaultValue) {
-		String v = get(key);
+		String v = get(key.toLowerCase());
 		return v != null ? v : defaultValue;
 	}
 
@@ -107,8 +107,8 @@ public class OptionMap {
 	public List<String> checkRequired(String... keys){
 		List<String> missing = new LinkedList<String>();
 		for (String k:keys){
-			if (!containsKey(k)){
-				missing.add(k);
+			if (!containsKey(k.toLowerCase())){
+				missing.add(k.toLowerCase());
 			}
 		}
 		return missing;
