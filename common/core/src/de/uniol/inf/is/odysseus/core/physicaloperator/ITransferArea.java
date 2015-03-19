@@ -61,35 +61,35 @@ public interface ITransferArea<R extends IStreamObject<?>, W extends IStreamObje
 	 * 
 	 * @param punctuation
 	 */
-	public void sendPunctuation(IPunctuation punctuation);		
+	void sendPunctuation(IPunctuation punctuation);		
 	void sendPunctuation(IPunctuation punctuation, int toPort);
 
-	public void done(int port);
+	void done(int port);
 
-	public void init(ITransfer<W> sendTo,  int inputPortCount);
+	void init(ITransfer<W> sendTo,  int inputPortCount);
 	void setTransfer(ITransfer<W> po);
 
 	
-	public void addNewInput(int port);
-	public void removeInput(int port);
+	void addNewInput(int port);
+	void removeInput(int port);
 
 	
-	public int size();
+	int size();
+	PointInTime getWatermark();
+	
 
 	@Override
-	public ITransferArea<R,W> clone();
+	ITransferArea<R,W> clone();
 
 	/**
 	 * Order
 	 */
-	public void setInOrder(boolean isInOrder);
-	public boolean isInOrder();
+	void setInOrder(boolean isInOrder);
+	boolean isInOrder();
 	
 	/**
 	 * Debug
 	 */
-	public void dump();
-
-	
+	void dump();
 		
 }

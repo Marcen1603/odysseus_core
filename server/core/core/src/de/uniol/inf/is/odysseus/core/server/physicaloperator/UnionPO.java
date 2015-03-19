@@ -21,6 +21,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
+import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
+import de.uniol.inf.is.odysseus.core.physicaloperator.AbstractPhysicalSubscription;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
@@ -28,7 +30,6 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.IStatefulOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IStatefulPO;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ITransferArea;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
-import de.uniol.inf.is.odysseus.core.physicaloperator.AbstractPhysicalSubscription;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.state.UnionPOState;
 
 public class UnionPO<R extends IStreamObject<?>> extends AbstractPipe<R, R>
@@ -127,6 +128,10 @@ public class UnionPO<R extends IStreamObject<?>> extends AbstractPipe<R, R>
 		return transferArea.size();
 	}
 
+	public PointInTime getWatermark(){
+		return transferArea.getWatermark();
+	}
+	
 	@Override
 	public Serializable getState() {
 		UnionPOState<R> state = new UnionPOState<R>();

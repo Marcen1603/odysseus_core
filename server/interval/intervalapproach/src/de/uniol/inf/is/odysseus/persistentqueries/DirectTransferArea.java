@@ -131,6 +131,11 @@ public class DirectTransferArea<R extends IStreamObject<? extends ITimeInterval>
 	public int size() {
 		return outputQueue.size();
 	}
+	
+	@Override
+	public PointInTime getWatermark() {
+		return null;
+	}
 
 	@Override
 	public DirectTransferArea<R, W> clone() {

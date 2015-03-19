@@ -279,6 +279,11 @@ public class TITransferArea<R extends IStreamObject<? extends ITimeInterval>, W 
 	public int size() {
 		return outputQueue.size();
 	}
+	
+	@Override
+	public PointInTime getWatermark() {
+		return watermark;
+	}
 
 	@Override
 	public TITransferArea<R, W> clone() {
