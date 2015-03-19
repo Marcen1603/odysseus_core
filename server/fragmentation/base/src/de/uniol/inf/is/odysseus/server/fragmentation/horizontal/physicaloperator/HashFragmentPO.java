@@ -1,5 +1,8 @@
 package de.uniol.inf.is.odysseus.server.fragmentation.horizontal.physicaloperator;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
@@ -23,6 +26,9 @@ public class HashFragmentPO<T extends IStreamObject<IMetaAttribute>> extends
 	 * whole tuple.
 	 */
 	final private int[] indices;
+	final boolean optimizeDistribution;
+	final Map<Integer,Integer> portMapping = new HashMap<>();
+	int lastPort = 0;
 
 	/**
 	 * Constructs a new {@link HashFragmentPO}.
@@ -34,6 +40,8 @@ public class HashFragmentPO<T extends IStreamObject<IMetaAttribute>> extends
 	public HashFragmentPO(HashFragmentAO fragmentAO) {
 
 		super(fragmentAO);
+		
+		this.optimizeDistribution = fragmentAO.isOptimizeDistribution();
 
 		if (fragmentAO.isPartialKey()) {
 
@@ -81,11 +89,31 @@ public class HashFragmentPO<T extends IStreamObject<IMetaAttribute>> extends
 			hashCode = Math.abs(object.hashCode());
 			
 		}
-		
-		return hashCode % numFragments;
-
+		if (optimizeDistribution){
+			return getPort(hashCode);
+		}else{
+			return hashCode % numFragments;
+		}
 	}
 	
+	
+	
+	private int getPort(int hashCode) {
+		Integer port = portMapping.get(hashCode);
+		if (port == null){
+			if (lastPort < numFragments){
+				lastPort++;
+				port = lastPort;
+			}else{
+				lastPort = 0;
+				port = lastPort;
+			}
+			portMapping.put(hashCode, port);
+		}
+		return port;
+	}
+
+
 	/**
 	 * Checks, if the key is not the whole tuple.
 	 */

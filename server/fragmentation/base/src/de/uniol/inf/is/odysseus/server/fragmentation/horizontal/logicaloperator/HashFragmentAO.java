@@ -11,6 +11,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnaryLogicalOp;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.GetParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.BooleanParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
 
 /**
@@ -34,6 +35,8 @@ public class HashFragmentAO extends AbstractFragmentAO {
 	 * whole tuple.
 	 */
 	private Optional<List<String>> attributeURIs;
+	
+	private boolean optimizeDistribution;
 
 	/**
 	 * Constructs a new {@link HashFragmentAO}.
@@ -64,6 +67,7 @@ public class HashFragmentAO extends AbstractFragmentAO {
 		} else {
 			this.attributeURIs = Optional.absent();
 		}
+		this.optimizeDistribution = fragmentAO.optimizeDistribution;
 	}
 
 	@Override
@@ -101,6 +105,15 @@ public class HashFragmentAO extends AbstractFragmentAO {
 		}
 		this.addParameterInfo("ATTRIBUTES", attributes);
 
+	}
+
+	public boolean isOptimizeDistribution() {
+		return optimizeDistribution;
+	}
+
+	@Parameter(type = BooleanParameter.class, name="optimizeDistribution", optional = true)
+	public void setOptimizeDistribution(boolean optimizeDistribution) {
+		this.optimizeDistribution = optimizeDistribution;
 	}
 
 	/**
