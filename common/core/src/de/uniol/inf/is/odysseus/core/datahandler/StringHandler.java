@@ -15,6 +15,8 @@
  */
 package de.uniol.inf.is.odysseus.core.datahandler;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
 import java.nio.charset.CharacterCodingException;
@@ -47,6 +49,29 @@ public class StringHandler extends AbstractDataHandler<String> {
 	public IDataHandler<String> getInstance(SDFSchema schema) {
 		return new StringHandler();
 	}
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String readData(InputStream inputStream) throws IOException {
+        int size = inputStream.read();
+        if (size >= 0) {
+            byte[] buffer = new byte[size];
+            for (int i = 0; i < size && inputStream.available() > 0; i++) {
+                buffer[i] = (byte) inputStream.read();
+            }
+            try {
+                CharBuffer decoded = decoder.decode(ByteBuffer.wrap(buffer));
+                return decoded.toString();
+            }
+            catch (CharacterCodingException e) {
+                LOG.error("Could not decode data with string handler", e);
+            }
+            return "";
+        }
+        return null;
+    }
 
 	@Override
 	public String readData(ByteBuffer b) {
