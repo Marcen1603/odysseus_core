@@ -18,22 +18,10 @@
          point="org.eclipse.core.runtime.products">
       <product
             application="de.uniol.inf.is.odysseus.server.starter.OdysseusServerApplication"
-            name="Odysseus Studio 2">
+            name="Odysseus Server">
          <property
                name="appName"
-               value="Odysseus Studio 2">
-         </property>
-         <property
-               name="aboutImage"
-               value="platform:/plugin/de.uniol.inf.is.odysseus.client.starter/icons/128_128.gif">
-         </property>
-         <property
-               name="aboutText"
-               value="This is Odysseus Studio&#x0A;&#x0A;Help can be found here:&#x0A;&#x0A;http://odysseus.informatik.uni-oldenburg.de/">
-         </property>
-         <property
-               name="windowImages"
-               value="platform:/plugin/de.uniol.inf.is.odysseus.client.starter/icons/16_16.gif,platform:/plugin/de.uniol.inf.is.odysseus.client.starter/icons/32_32.gif,platform:/plugin/de.uniol.inf.is.odysseus.client.starter/icons/48_48.gif,platform:/plugin/de.uniol.inf.is.odysseus.client.starter/icons/64_64.gif,platform:/plugin/de.uniol.inf.is.odysseus.client.starter/icons/128_128.gif">
+               value="Odysseus Server">
          </property>
       </product>
    </extension>

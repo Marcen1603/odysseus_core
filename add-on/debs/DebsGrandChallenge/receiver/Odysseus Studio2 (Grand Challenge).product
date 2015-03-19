@@ -114,6 +114,8 @@ http://odysseus.informatik.uni-oldenburg.de/
       <feature id="de.uniol.inf.is.odysseus.server.fragmentation.base.feature" version="1.0.0.qualifier"/>
       <feature id="de.uniol.inf.is.odysseus.wrapper.dds.feature" version="1.0.0.qualifier"/>
       <feature id="de.uniol.inf.is.odysseus.debsgc2015.feature" version="1.0.0.qualifier"/>
+      <feature id="de.uniol.inf.is.odysseus.wrapper.xovis.feature" version="1.0.0.qualifier"/>
+      <feature id="de.uniol.inf.is.odysseus.wrapper.snet.feature" version="1.0.0.qualifier"/>
    </features>
 
    <configurations>

@@ -126,7 +126,7 @@ public class LoginContributionLifecycle {
 		}
 	}
 	
-	public boolean onFinishAll(Collection<ILoginContribution> contributions) {
+	public boolean onFinishAll() {
 		LOG.debug("Finishing all login contributions");
 		
 		Collection<ILoginContribution> contributionsCopy = Lists.newArrayList(contributions);

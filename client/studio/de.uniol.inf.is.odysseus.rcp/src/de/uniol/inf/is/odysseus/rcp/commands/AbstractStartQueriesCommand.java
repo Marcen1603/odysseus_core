@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.planmanagement.query.QueryState;
+import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
+import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
 
 public abstract class AbstractStartQueriesCommand extends AbstractQueryCommand {
 
@@ -14,7 +16,13 @@ public abstract class AbstractStartQueriesCommand extends AbstractQueryCommand {
 
 	public Object execute(List<Integer> selectedObj) {
 		// Split to queries that should be started and that should be resumed
-		List<QueryState> states = getQueryStates(selectedObj);
+
+		// TODO: Assign query with sessions and retrieve session per query id
+		List<ISession> sessions = new ArrayList<>(selectedObj.size());
+		for (int i=0;i<selectedObj.size();i++){
+			sessions.add(OdysseusRCPPlugIn.getActiveSession());
+		}
+		List<QueryState> states = getQueryStates(selectedObj, sessions);
 		List<Integer> toStart = new ArrayList<>();
 		List<Integer> toResume = new ArrayList<>();
 		for (int i=0;i<selectedObj.size();i++){

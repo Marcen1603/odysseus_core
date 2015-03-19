@@ -4,6 +4,7 @@ import java.net.InetAddress;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.UnknownHostException;
+import java.util.Collection;
 import java.util.Map;
 import java.util.Random;
 
@@ -369,7 +370,7 @@ public class P2PLoginContribution implements ILoginContribution {
 	}
 
 	@Override
-	public boolean onFinish() {
+	public boolean onFinish(Collection<ILoginContribution> contribs) {
 		waitForP2PNetworkManager();
 
 		IP2PNetworkManager networkManager = RCPP2PNewPlugIn.getP2PNetworkManager();

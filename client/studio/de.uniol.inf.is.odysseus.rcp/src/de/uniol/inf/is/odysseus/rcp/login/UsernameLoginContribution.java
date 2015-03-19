@@ -33,6 +33,7 @@ public class UsernameLoginContribution implements ILoginContribution {
 	private String tenant;
 	private String username;
 	private String password;
+	boolean suppressOnFinish = false;
 
 	@Override
 	public void onInit() {
@@ -87,10 +88,10 @@ public class UsernameLoginContribution implements ILoginContribution {
 			}
 		});
 
-	    Label separator = new Label(rootComposite, SWT.NONE);
-	    separator = new Label(rootComposite, SWT.HORIZONTAL | SWT.SEPARATOR);
-	    separator.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		
+		Label separator = new Label(rootComposite, SWT.NONE);
+		separator = new Label(rootComposite, SWT.HORIZONTAL | SWT.SEPARATOR);
+		separator.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+
 		createLabel(rootComposite, "Tenant");
 		final Text tenantText = createText(rootComposite, tenant);
 		tenantText.addModifyListener(new ModifyListener() {
@@ -153,7 +154,11 @@ public class UsernameLoginContribution implements ILoginContribution {
 
 	@Override
 	public boolean onFinish(Collection<ILoginContribution> otherContributions) {
-		return realLogin(username, password, tenant);
+		if (suppressOnFinish) {
+			return true;
+		} else {
+			return realLogin(username, password, tenant);
+		}
 	}
 
 	private static boolean realLogin(String username, String password,
@@ -164,11 +169,11 @@ public class UsernameLoginContribution implements ILoginContribution {
 			ISession session = Strings.isNullOrEmpty(tenant) ? executor.login(
 					username, password.getBytes()) : executor.login(username,
 					password.getBytes(), tenant);
-					
+
 			if (session == null) {
 				return false;
 			}
-	
+
 			session.setConnectionName("");
 			OdysseusRCPPlugIn.setActiveSession(session);
 			ClientSessionStore.addSession(session.getConnectionName(), session);
@@ -192,5 +197,21 @@ public class UsernameLoginContribution implements ILoginContribution {
 	@Override
 	public int getPriority() {
 		return 0;
+	}
+
+	public String getTenant() {
+		return tenant;
+	}
+
+	public String getUsername() {
+		return username;
+	}
+
+	public String getPassword() {
+		return password;
+	}
+	
+	public void setSuppressOnFinish(boolean suppressOnFinish) {
+		this.suppressOnFinish = suppressOnFinish;
 	}
 }

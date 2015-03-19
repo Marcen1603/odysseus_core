@@ -59,6 +59,8 @@ import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.collection.Resource;
 import de.uniol.inf.is.odysseus.core.datahandler.DataHandlerRegistry;
 import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
+import de.uniol.inf.is.odysseus.core.infoservice.InfoService;
+import de.uniol.inf.is.odysseus.core.infoservice.InfoServiceFactory;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorInformation;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
@@ -118,6 +120,8 @@ import de.uniol.inf.is.odysseus.webservice.client.WebserviceServerService;
  */
 public class WsClient implements IExecutor, IClientExecutor, IOperatorOwner {
 
+	InfoService INFO = InfoServiceFactory.getInfoService(WsClient.class);
+	
 	// TODO: Combine login with connection where to login and store into server
 	private static final String REMOVEME = "";
 	// TODO: When connecting to multiple servers ... query id is not unique
@@ -215,7 +219,7 @@ public class WsClient implements IExecutor, IClientExecutor, IOperatorOwner {
 		if (subConnect.length > 1 && subConnect.length < 4) {
 			try {
 				startClient(new URL(subConnect[0]), new QName(subConnect[1],
-						subConnect[2]));
+						subConnect[2]), connectString);
 				return true;
 			} catch (MalformedURLException e) {
 				e.printStackTrace();
@@ -231,12 +235,17 @@ public class WsClient implements IExecutor, IClientExecutor, IOperatorOwner {
 	 * @param wsdlLocation
 	 * @param service
 	 */
-	private void startClient(URL wsdlLocation, QName serviceName) {
-		WebserviceServerService service = new WebserviceServerService(
-				wsdlLocation, serviceName);
-		// TODO keep realname;
-		this.server.put(REMOVEME, service.getWebserviceServerPort());
-		generateEvents.start();
+	private void startClient(URL wsdlLocation, QName serviceName,
+			String connectString) {
+		try {
+			WebserviceServerService service = new WebserviceServerService(
+					wsdlLocation, serviceName);
+			// TODO keep realname;
+			this.server.put(connectString, service.getWebserviceServerPort());
+			generateEvents.start();
+		} catch (Exception e) {
+			INFO.error("Cannot connect to server", e);
+		}
 	}
 
 	public WebserviceServer getWebserviceServer(String name) {
@@ -244,34 +253,51 @@ public class WsClient implements IExecutor, IClientExecutor, IOperatorOwner {
 	}
 
 	@Override
-	public ISession login(String username, byte[] password, String tenant) {
-		// TODO: use real names
-		String securitytoken = getWebserviceServer(REMOVEME).login(username,
-				new String(password), tenant).getResponseValue();
-		if (securitytoken == null){
+	public ISession login(String username, byte[] password, String tenantname) {
+		/// Simply ignore
+		return null;
+	}
+
+	@Override
+	public ISession login(String username, byte[] password, String tenant,
+			String connectString) {
+		WebserviceServer wsServer = getWebserviceServer(connectString);
+		if (wsServer == null) {
+			if (!connect(connectString)) {
+				throw new RuntimeException("Could not connect to "
+						+ connectString);
+			}
+			wsServer = getWebserviceServer(connectString);
+		}
+
+		String securitytoken = wsServer.login(username, new String(password),
+				tenant).getResponseValue();
+		if (securitytoken == null) {
 			return null;
 		}
 		IUser user = new WsClientUser(username, password, true);
-		WsClientSession session = new WsClientSession(user, null, REMOVEME);
+		WsClientSession session = new WsClientSession(user, null, connectString);
 		session.setToken(securitytoken);
-		ClientSessionStore.addSession(REMOVEME, session);
+		ClientSessionStore.addSession(connectString, session);
 		fireUpdateEvent(IUpdateEventListener.SESSION);
 		return session;
 	}
 
 	@Override
 	public ISession login(String username, byte[] password) {
-		String securitytoken = getWebserviceServer(REMOVEME).login2(username,
-				new String(password)).getResponseValue();
-		if (securitytoken == null){
-			return null;
-		}
-		IUser user = new WsClientUser(username, password, true);
-		WsClientSession session = new WsClientSession(user, null, REMOVEME);
-		session.setToken(securitytoken);
-		ClientSessionStore.addSession(REMOVEME, session);
-		fireUpdateEvent(IUpdateEventListener.SESSION);
-		return session;
+		throw new RuntimeException(
+				"Login with username and password cannot be used in web service");
+		// String securitytoken = getWebserviceServer(REMOVEME).login2(username,
+		// new String(password)).getResponseValue();
+		// if (securitytoken == null){
+		// return null;
+		// }
+		// IUser user = new WsClientUser(username, password, true);
+		// WsClientSession session = new WsClientSession(user, null, REMOVEME);
+		// session.setToken(securitytoken);
+		// ClientSessionStore.addSession(REMOVEME, session);
+		// fireUpdateEvent(IUpdateEventListener.SESSION);
+		// return session;
 	}
 
 	@Override
@@ -399,18 +425,27 @@ public class WsClient implements IExecutor, IClientExecutor, IOperatorOwner {
 	}
 
 	@Override
-	public QueryState getQueryState(int queryID) {
-		return getWebserviceServer(REMOVEME).getQueryState(queryID);
+	public QueryState getQueryState(int queryID, ISession session) {
+		return getWebserviceServer(session.getConnectionName()).getQueryState(
+				queryID);
 	}
 
 	@Override
-	public QueryState getQueryState(String queryName) {
+	public QueryState getQueryState(String queryName, ISession session) {
 		throw new PlanManagementException("Currently not implemented");
 	}
 
 	@Override
-	public List<QueryState> getQueryStates(List<Integer> queryID) {
-		return getWebserviceServer(REMOVEME).getQueryStates(queryID);
+	public List<QueryState> getQueryStates(List<Integer> queryIDs,
+			List<ISession> sessions) {
+		List<QueryState> states = new ArrayList<QueryState>();
+
+		for (ISession s : sessions) {
+			states.addAll(getWebserviceServer(s.getConnectionName())
+					.getQueryStates(queryIDs));
+		}
+
+		return states;
 	}
 
 	@Override
@@ -573,13 +608,11 @@ public class WsClient implements IExecutor, IClientExecutor, IOperatorOwner {
 	}
 
 	public Collection<Integer> addQuery(String query, String parserID,
-			ISession user, Context context)
-			throws PlanManagementException{
+			ISession user, Context context) throws PlanManagementException {
 		try {
 			Collection<Integer> response = getWebserviceServer(
 					user.getConnectionName()).addQuery2(user.getToken(),
-					parserID, query, context)
-					.getResponseValue();
+					parserID, query, context).getResponseValue();
 			fireUpdateEvent(IUpdateEventListener.QUERY);
 			// Query could create schema information ... fire events
 			fireUpdateEvent(IUpdateEventListener.DATADICTIONARY);
@@ -589,7 +622,7 @@ public class WsClient implements IExecutor, IClientExecutor, IOperatorOwner {
 			throw new PlanManagementException(e);
 		}
 	}
-	
+
 	@Override
 	public Collection<Integer> addQuery(String query, String parserID,
 			ISession user, String queryBuildConfigurationName, Context context)
@@ -709,9 +742,9 @@ public class WsClient implements IExecutor, IClientExecutor, IOperatorOwner {
 		OptionMap options = new OptionMap();
 		String hosts = "";
 		String ports = "";
-		for (SocketAddress sa:adr){
-			hosts+=((InetSocketAddress)sa).getHostString()+",";
-			ports+=((InetSocketAddress)sa).getPort()+",";
+		for (SocketAddress sa : adr) {
+			hosts += ((InetSocketAddress) sa).getHostString() + ",";
+			ports += ((InetSocketAddress) sa).getPort() + ",";
 		}
 		options.setOption("ports", ports);
 		options.setOption("hosts", hosts);
@@ -773,8 +806,8 @@ public class WsClient implements IExecutor, IClientExecutor, IOperatorOwner {
 					List<SocketAddress> addresses = new LinkedList<SocketAddress>();
 					List<String> adressStrings = info.getAddress();
 					for (String a : adressStrings) {
-						addresses.add(new InetSocketAddress(
-								InetAddress.getByName(a), info.getPort()));
+						addresses.add(new InetSocketAddress(InetAddress
+								.getByName(a), info.getPort()));
 					}
 					return addresses;
 				}
@@ -1153,10 +1186,11 @@ public class WsClient implements IExecutor, IClientExecutor, IOperatorOwner {
 			attributes.add(new SDFAttribute(sda.getSourcename(), sda
 					.getAttributename(), dt, null, null, null));
 		}
-		@SuppressWarnings({ "rawtypes"})
+		@SuppressWarnings({ "rawtypes" })
 		Class<? extends IStreamObject> type = (Class<? extends IStreamObject>) Class
 				.forName(si.getTypeClass());
-		SDFSchema schema = SDFSchemaFactory.createNewSchema(si.getUri(), (Class<? extends IStreamObject<?>>) type, attributes);
+		SDFSchema schema = SDFSchemaFactory.createNewSchema(si.getUri(),
+				(Class<? extends IStreamObject<?>>) type, attributes);
 		return schema;
 	}
 

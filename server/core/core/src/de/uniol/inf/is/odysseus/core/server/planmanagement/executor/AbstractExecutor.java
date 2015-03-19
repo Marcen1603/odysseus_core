@@ -815,11 +815,23 @@ public abstract class AbstractExecutor implements IServerExecutor,
 	}
 
 	@Override
+	public QueryState getQueryState(int queryID, ISession session) {
+		// For local processing, currently no session is needed
+		return getQueryState(queryID);
+	}
+	
+	@Override
 	public QueryState getQueryState(int queryID) {
 		IPhysicalQuery pq = executionPlan.getQueryById(queryID);
 		return getQueryState(pq);
 	}
 
+	@Override
+	public QueryState getQueryState(String queryName, ISession session) {
+		// For local processing, currently no session is needed
+		return getQueryState(queryName);
+	}
+	
 	@Override
 	public QueryState getQueryState(String queryID) {
 		IPhysicalQuery pq = executionPlan.getQueryByName(queryID);
@@ -834,6 +846,13 @@ public abstract class AbstractExecutor implements IServerExecutor,
 		}
 	}
 
+	@Override
+	public List<QueryState> getQueryStates(List<Integer> id,
+			List<ISession> session) {
+		// For local processing, currently no session is needed
+		return getQueryStates(id);
+	}
+	
 	@Override
 	public List<QueryState> getQueryStates(List<Integer> id) {
 		List<QueryState> ret = new ArrayList<QueryState>();

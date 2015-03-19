@@ -42,6 +42,7 @@ Bundle-ActivationPolicy: lazy
 Export-Package: de.uniol.inf.is.odysseus.rcp,
  de.uniol.inf.is.odysseus.rcp.commands,
  de.uniol.inf.is.odysseus.rcp.exception,
+ de.uniol.inf.is.odysseus.rcp.login,
  de.uniol.inf.is.odysseus.rcp.queries,
  de.uniol.inf.is.odysseus.rcp.util,
  de.uniol.inf.is.odysseus.rcp.views,

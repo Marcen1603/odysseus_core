@@ -193,22 +193,31 @@ public interface IExecutor extends IClientPlanManager {
 	 * @return The IDs of the logical queries
 	 */
 	public Collection<Integer> getLogicalQueryIds(ISession session);
-
+	
 	/**
-	 * Returns the current state of the query with the given queryID
-	 * @param queryID The of the query 
-	 * @return the current state of the query
+	 * Return the current state of the query with the given queryID
+	 * @param queryID The query id for which the state should be retrieved
+	 * @param session
+	 * @return
 	 */
-	public QueryState getQueryState(int queryID);
+	public QueryState getQueryState(int queryID, ISession session);
+	
+	/**
+	 * Return the current state of the query with the given queryname
+	 * @param queryName
+	 * @param session
+	 * @return
+	 */
+	public QueryState getQueryState(String queryName, ISession session);
 
-	public QueryState getQueryState(String queryName);
-
+	
 	/**
 	 * Returns the current state of queries
 	 * @param id a list of query ids for which the state should be delivered
+	 * @param sessions for each query id the corresponding session information
 	 * @return a list of query states where the order is the same as in the input list
 	 */
-	public List<QueryState> getQueryStates(List<Integer> id);
+	public List<QueryState> getQueryStates(List<Integer> id, List<ISession> session);
 	
 	/**
 	 * Returns all root operators of the physical query that has the given

@@ -30,6 +30,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.exception.PlanManagementException;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
+import de.uniol.inf.is.odysseus.core.planmanagement.query.QueryState;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionaryWritable;
 import de.uniol.inf.is.odysseus.core.server.distribution.IDataFragmentation;
 import de.uniol.inf.is.odysseus.core.server.event.error.IErrorEventHandler;
@@ -263,5 +264,27 @@ public interface IServerExecutor extends IExecutor, IPlanScheduling,
 
 	public Collection<String> getPreTransformationHandlerNames();
 	public boolean hasPreTransformationHandler(String name);
+	
+	// Query state methods, only on server
+	
+	/**
+	 * Returns the current state of the query with the given queryID
+	 * @param queryID The of the query 
+	 * @return the current state of the query
+	 */
+	public QueryState getQueryState(int queryID);
 
+	/**
+	 * Return the current state of the query with the given queryname
+	 * @param queryID The query id for which the state should be retrieved
+	 * @return
+	 */
+	public QueryState getQueryState(String queryName);
+
+	/**
+	 * Returns the current state of queries
+	 * @param id a list of query ids for which the state should be delivered
+	 * @return a list of query states where the order is the same as in the input list
+	 */
+	public List<QueryState> getQueryStates(List<Integer> id);
 }

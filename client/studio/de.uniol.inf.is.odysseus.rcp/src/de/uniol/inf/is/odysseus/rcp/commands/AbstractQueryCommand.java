@@ -20,6 +20,7 @@ import org.slf4j.LoggerFactory;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.exception.PlanManagementException;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.QueryState;
+import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.core.usermanagement.PermissionException;
 import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
 import de.uniol.inf.is.odysseus.rcp.StatusBarManager;
@@ -55,8 +56,8 @@ abstract public class AbstractQueryCommand extends AbstractHandler implements IH
 		return elems;
 	}
 	
-	protected List<QueryState> getQueryStates(List<Integer> selectedObj) {
-		return getExecutor().getQueryStates(selectedObj);
+	protected List<QueryState> getQueryStates(List<Integer> selectedObj, List<ISession> sessions) {
+		return getExecutor().getQueryStates(selectedObj, sessions);
 	}
 	
 	

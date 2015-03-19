@@ -20,10 +20,12 @@ import com.google.common.collect.Maps;
 
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IClientExecutor;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
+import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
 import de.uniol.inf.is.odysseus.rcp.StatusBarManager;
 import de.uniol.inf.is.odysseus.rcp.login.ILoginContribution;
 import de.uniol.inf.is.odysseus.rcp.login.ILoginContributionContainer;
+import de.uniol.inf.is.odysseus.rcp.login.UsernameLoginContribution;
 
 public class ClientConnectionContribution implements ILoginContribution {
 	
@@ -147,27 +149,51 @@ public class ClientConnectionContribution implements ILoginContribution {
 
 	@Override
 	public boolean onFinish(Collection<ILoginContribution> otherContributions) {
+		
+		UsernameLoginContribution loginContrib = null;
+		
+		for (ILoginContribution contribs: otherContributions){
+			if (contribs instanceof UsernameLoginContribution){
+				loginContrib = (UsernameLoginContribution) contribs;
+				break;
+			}
+		}
+		
+		if (loginContrib == null){
+			throw new RuntimeException("No User Login found!");
+		}
+		// Only call login from here
+		loginContrib.setSuppressOnFinish(true);
+		
+		String username = loginContrib.getUsername();
+		String password = loginContrib.getPassword();
+		String tenantname = loginContrib.getTenant();
+		
 		IExecutor executor = OdysseusRCPPlugIn.getExecutor();
 		String wsdlLocation = "http://"+host+":"+port+"/"+instance+"?wsdl";
-		boolean connected = false;
+		ISession session = null;
 		if (executor instanceof IClientExecutor) {
 			String serviceNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/";
 			String service = "WebserviceServerService";
-			connected = ((IClientExecutor) executor).connect(wsdlLocation + ";" + serviceNamespace + ";" + service);
+			String connectString = wsdlLocation + ";" + serviceNamespace + ";" + service;
+			//connected = ((IClientExecutor) executor).connect(connectString);
+			session = ((IClientExecutor) executor).login(username, password.getBytes(), tenantname, connectString);
 		}
 
-		if (connected) {
-			// TODO: eventuell im OdysseusRCPPlugin was speichern
+		if (session != null) {
 			StatusBarManager.getInstance().setMessage("Automatically connected to " + wsdlLocation);
+			// TODO Store session for every connection
+			OdysseusRCPPlugIn.setActiveSession(session);
 		}else{
 			LOG.error("Could not connect to server at '" +wsdlLocation+ "'");
+			return false;
 		}
 
-		return connected;		
+		return true;		
 	}
 
 	@Override
 	public int getPriority() {
-		return 10;
+		return 100;
 	}
 }

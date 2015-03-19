@@ -7,6 +7,7 @@ import org.eclipse.core.commands.ExecutionException;
 
 import de.uniol.inf.is.odysseus.core.planmanagement.query.QueryFunction;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.QueryState;
+import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
 import de.uniol.inf.is.odysseus.rcp.util.SelectionProvider;
 
@@ -19,7 +20,9 @@ public class PartialQueryCommand extends AbstractQueryCommand {
 		List<Integer> selectedObjs = SelectionProvider.getSelection(event);
 		
 		for( Integer selectedObj : selectedObjs ) {
-			if( !QueryState.isAllowed(OdysseusRCPPlugIn.getExecutor().getQueryState(selectedObj), QueryFunction.PARTIAL) ) {
+			// TODO: Add session to query
+			ISession session = OdysseusRCPPlugIn.getActiveSession();
+			if( !QueryState.isAllowed(OdysseusRCPPlugIn.getExecutor().getQueryState(selectedObj,session), QueryFunction.PARTIAL) ) {
 				return null;
 			}
 		}

@@ -16,8 +16,11 @@
 
 package de.uniol.inf.is.odysseus.planmanagement.executor.webservice.server.webservice;
 
+import java.io.IOException;
+import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
+import java.net.ServerSocket;
 import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
@@ -824,11 +827,44 @@ public class WebserviceServer {
 
 	private int getNextFreePort(int min, int max) {
 		int port = min;
-		while (socketPortMap.containsKey(port)){
+		while (!available(port) ){
 			//port = min + (int) (Math.random() * ((max - min) + 1));
-			port = port++;
+			port++;
 		} 
 		return port;
+	}
+	
+	/**
+	 * Checks to see if a specific port is available.
+	 *
+	 * @param port the port to check for availability
+	 */
+	public static boolean available(int port) {
+
+	    ServerSocket ss = null;
+	    DatagramSocket ds = null;
+	    try {
+	        ss = new ServerSocket(port);
+	        ss.setReuseAddress(true);
+	        ds = new DatagramSocket(port);
+	        ds.setReuseAddress(true);
+	        return true;
+	    } catch (IOException e) {
+	    } finally {
+	        if (ds != null) {
+	            ds.close();
+	        }
+
+	        if (ss != null) {
+	            try {
+	                ss.close();
+	            } catch (IOException e) {
+	                /* should not be thrown */
+	            }
+	        }
+	    }
+
+	    return false;
 	}
 
 	private SDFSchemaResponse createSDFSchemaInformation(SDFSchema schema) {
