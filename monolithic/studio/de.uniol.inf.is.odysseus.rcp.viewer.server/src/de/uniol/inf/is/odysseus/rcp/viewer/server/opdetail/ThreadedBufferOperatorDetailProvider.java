@@ -20,6 +20,7 @@ public class ThreadedBufferOperatorDetailProvider extends
 		map.put("CurrentSize", operator.getElementsStored1()+"");
 		map.put("InputQueue", operator.getInputBufferSize()+"");
 		map.put("OutputQueue", operator.getOutputBufferSize()+"");
+		map.put("started",operator.isRunning()+"");
 		return map;
 	}
 

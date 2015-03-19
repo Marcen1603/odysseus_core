@@ -28,8 +28,50 @@ public class ThreadedBufferPO<R extends IStreamObject<? extends IMetaAttribute>>
 	final private ReentrantLock lockInput = new ReentrantLock(true);
 	final private ReentrantLock lockOutput = new ReentrantLock(true);
 
-	Thread runner;
-	boolean started = false;
+	Runner runner;
+	
+	class Runner extends Thread{
+		
+		private boolean terminate = false;
+		private boolean started = false;
+		
+		public Runner(String name) {
+			super(name);
+		}
+		
+		public void terminate(){
+			this.terminate = true;
+		}
+
+		public void run() {
+			started = true;
+			while (!terminate) {
+				synchronized (this) {
+					try {
+						if (inputBuffer.isEmpty()) {
+							wait(1000);
+						}
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+				}
+				// inputBuffer to outputBuffer
+				lockInput.lock();
+				List<IStreamable> tmp = outputBuffer;
+				outputBuffer = inputBuffer;
+				inputBuffer = tmp;
+				lockInput.unlock();
+				lockOutput.lock();
+				Iterator<IStreamable> outIter = outputBuffer.iterator();
+				while (outIter.hasNext()) {
+					transferNext(outIter.next());
+					outIter.remove();
+				}
+				lockOutput.unlock();
+			}
+		};
+
+	}
 
 	final private long limit;
 
@@ -55,16 +97,20 @@ public class ThreadedBufferPO<R extends IStreamObject<? extends IMetaAttribute>>
 		return outputBuffer.size();
 	}
 
+	public boolean isRunning(){
+		return runner.started;
+	}
+	
 	@Override
 	protected void process_next(R object, int port) {
 		// Start thread
-		if (!started) {
+		if (!isRunning()) {
 			runner.start();
-			started = true;
 		}
 		addObjectToBuffer(object);
 	}
 
+	
 	@Override
 	public void processPunctuation(IPunctuation punctuation, int port) {
 		addObjectToBuffer(punctuation);
@@ -92,36 +138,9 @@ public class ThreadedBufferPO<R extends IStreamObject<? extends IMetaAttribute>>
 		inputBuffer.clear();
 		outputBuffer.clear();
 		// Create new thread and start
-		runner = new Thread("ThreadedBuffer " + getName()) {
-			public void run() {
-				while (isOpen() & !isDone()) {
-					synchronized (this) {
-						try {
-							if (inputBuffer.isEmpty()) {
-								wait(1000);
-							}
-						} catch (InterruptedException e) {
-							e.printStackTrace();
-						}
-					}
-					// inputBuffer to outputBuffer
-					lockInput.lock();
-					List<IStreamable> tmp = outputBuffer;
-					outputBuffer = inputBuffer;
-					inputBuffer = tmp;
-					lockInput.unlock();
-					lockOutput.lock();
-					Iterator<IStreamable> outIter = outputBuffer.iterator();
-					while (outIter.hasNext()) {
-						transferNext(outIter.next());
-						outIter.remove();
-					}
-					lockOutput.unlock();
-				}
-			};
-
-		};
+		runner = new Runner("ThreadedBuffer " + getName());
 		runner.setDaemon(true);
+		runner.start();
 	}
 
 	@Override
@@ -156,6 +175,7 @@ public class ThreadedBufferPO<R extends IStreamObject<? extends IMetaAttribute>>
 	private void drainBuffers() {
 		// drain buffer at done/close
 		// Copy everything from inputBuffer to outputBuffer
+		runner.terminate();
 		lockInput.lock();
 		outputBuffer.addAll(inputBuffer);
 		inputBuffer.clear();
@@ -167,3 +187,4 @@ public class ThreadedBufferPO<R extends IStreamObject<? extends IMetaAttribute>>
 	}
 
 }
+
