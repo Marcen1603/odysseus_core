@@ -806,12 +806,17 @@ public class WsClient implements IExecutor, IClientExecutor, IOperatorOwner {
 					List<SocketAddress> addresses = new LinkedList<SocketAddress>();
 					List<String> adressStrings = info.getAddress();
 					for (String a : adressStrings) {
-						addresses.add(new InetSocketAddress(InetAddress
+						try{
+							addresses.add(new InetSocketAddress(InetAddress
 								.getByName(a), info.getPort()));
+						}catch(Exception e){
+							// Ignore
+							
+						}
 					}
 					return addresses;
 				}
-			} catch (UnknownHostException | InvalidUserDataException_Exception e) {
+			} catch (InvalidUserDataException_Exception e) {
 				throw new PlanManagementException(e);
 			}
 		}
