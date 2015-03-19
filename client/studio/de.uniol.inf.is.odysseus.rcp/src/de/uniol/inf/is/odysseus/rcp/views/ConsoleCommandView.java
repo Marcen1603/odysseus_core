@@ -87,11 +87,6 @@ public class ConsoleCommandView extends ViewPart {
 		Text text = new Text(parent, SWT.BORDER | SWT.READ_ONLY | SWT.MULTI | SWT.V_SCROLL | SWT.H_SCROLL);
 		setFont(text);
 
-		if (System.getProperty("user.name").equalsIgnoreCase("Michael Brand")) {
-			text.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_MAGENTA));
-		} else {
-			text.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_WHITE));
-		}
 		text.setLayoutData(new GridData(GridData.FILL_BOTH));
 
 		return text;
