@@ -823,10 +823,11 @@ public class WebserviceServer {
 	}
 
 	private int getNextFreePort(int min, int max) {
-		int port = 0;
-		do {
-			port = min + (int) (Math.random() * ((max - min) + 1));
-		} while (socketPortMap.containsKey(port));
+		int port = min;
+		while (socketPortMap.containsKey(port)){
+			//port = min + (int) (Math.random() * ((max - min) + 1));
+			port = port++;
+		} 
 		return port;
 	}
 
