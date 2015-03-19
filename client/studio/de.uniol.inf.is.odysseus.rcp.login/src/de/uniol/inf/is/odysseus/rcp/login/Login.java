@@ -111,7 +111,7 @@ public final class Login {
 				LOG.debug("Do not show the login window. Automatically login now.");
 			}
 			
-			couldFinish = lifecycle.onFinishAll();
+			couldFinish = lifecycle.onFinishAll(contributions);
 			if( !couldFinish ) {
 				forceShow = true;
 			}

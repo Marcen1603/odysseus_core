@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.rcp.login;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -151,7 +152,7 @@ public class UsernameLoginContribution implements ILoginContribution {
 	}
 
 	@Override
-	public boolean onFinish() {
+	public boolean onFinish(Collection<ILoginContribution> otherContributions) {
 		return realLogin(username, password, tenant);
 	}
 

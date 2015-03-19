@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.rcp.webservice;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -145,7 +146,7 @@ public class ClientConnectionContribution implements ILoginContribution {
 	}
 
 	@Override
-	public boolean onFinish() {
+	public boolean onFinish(Collection<ILoginContribution> otherContributions) {
 		IExecutor executor = OdysseusRCPPlugIn.getExecutor();
 		String wsdlLocation = "http://"+host+":"+port+"/"+instance+"?wsdl";
 		boolean connected = false;

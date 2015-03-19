@@ -126,21 +126,22 @@ public class LoginContributionLifecycle {
 		}
 	}
 	
-	public boolean onFinishAll() {
+	public boolean onFinishAll(Collection<ILoginContribution> contributions) {
 		LOG.debug("Finishing all login contributions");
 		
+		Collection<ILoginContribution> contributionsCopy = Lists.newArrayList(contributions);
 		boolean allFinished = true;
 		for( ILoginContribution contribution : contributions ) {
-			allFinished &= tryOnFinish(contribution);
+			allFinished &= tryOnFinish(contribution, contributionsCopy);
 		}
 		
 		LOG.debug("Finish = {}", allFinished);
 		return allFinished;
 	}
 
-	private boolean tryOnFinish(ILoginContribution contribution) {
+	private boolean tryOnFinish(ILoginContribution contribution, Collection<ILoginContribution> otherContributions) {
 		try {
-			return contribution.onFinish();
+			return contribution.onFinish(otherContributions);
 		} catch( Throwable t ) {
 			LOG.error("Exception during finishing contribution", contribution, t);
 			return false;
