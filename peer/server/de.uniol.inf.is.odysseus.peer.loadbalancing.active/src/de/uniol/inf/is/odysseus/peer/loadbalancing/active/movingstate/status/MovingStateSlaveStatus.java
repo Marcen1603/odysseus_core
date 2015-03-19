@@ -69,7 +69,7 @@ public class MovingStateSlaveStatus implements ILoadBalancingSlaveStatus,
 	/**
 	 * List of Pipes which are buffering
 	 */
-	private ArrayList<String> bufferedPipes;
+	private ArrayList<String> bufferedPipes = new ArrayList<String>();
 
 	/***
 	 * Mapping between PipeIDs for receivers and their corresponding Operators
@@ -184,11 +184,9 @@ public class MovingStateSlaveStatus implements ILoadBalancingSlaveStatus,
 	 *            Pipe-to-add
 	 */
 	public synchronized void addBufferedPipe(String pipe) {
-		if (bufferedPipes == null) {
-			bufferedPipes = new ArrayList<String>();
-		}
-		if (!bufferedPipes.contains(pipe))
+		if (!bufferedPipes.contains(pipe)) {
 			bufferedPipes.add(pipe);
+		}
 	}
 
 	/***

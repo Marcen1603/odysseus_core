@@ -76,6 +76,9 @@ public class LBQueryManager implements IPeerCommunicatorListener, ILoadBalancing
 			case QueryManagementMessage.UNREGISTER_SLAVE:
 				try {
 					Collection<PeerID> otherPeers = controller.getOtherPeers(sharedQueryID);
+					if(peerID==null || otherPeers==null) {
+						return;
+					}
 					if(otherPeers.contains(peerID)) {
 						LOG.debug("Removing Peer ID {} from other Peers ",peerID);
 						controller.removeOtherPeer(sharedQueryID, peerID);

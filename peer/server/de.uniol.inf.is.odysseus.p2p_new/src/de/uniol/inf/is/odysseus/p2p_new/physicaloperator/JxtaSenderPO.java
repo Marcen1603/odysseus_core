@@ -110,7 +110,6 @@ public class JxtaSenderPO<T extends IStreamObject<?>> extends AbstractSink<T> im
 	@Override
 	public void processPunctuation(IPunctuation punctuation, int port) {
 		createDataHandlerIfNeeded();
-
 		try {
 			transmission.sendPunctuation(punctuation);
 		} catch (DataTransmissionException e) {

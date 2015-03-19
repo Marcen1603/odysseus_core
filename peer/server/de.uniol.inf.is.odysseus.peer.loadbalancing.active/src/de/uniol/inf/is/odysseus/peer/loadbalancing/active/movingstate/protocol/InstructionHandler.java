@@ -230,12 +230,10 @@ public class InstructionHandler {
 							return;
 							
 						} catch (Exception e) {
-							if(!status.isSenderPipeKnown(pipe)) {
-								LOG.error("Error while copying JxtaSender:");
-								LOG.error(e.getMessage());
-								dispatcher.sendDuplicateFailure(senderPeer);
-								return;
-							}
+							LOG.error("Error while copying JxtaSender:");
+							LOG.error(e.getMessage());
+							dispatcher.sendDuplicateFailure(senderPeer);
+							return;
 						}
 				}
 				break;
@@ -381,12 +379,18 @@ public class InstructionHandler {
 				if (status == null) {
 					return;
 				}
-				boolean successful = true;
-				if (status.getPhase().equals(
-						MovingStateSlaveStatus.LB_PHASES.WAITING_FOR_FINISH)) {
+				
+				synchronized(status) {
+					if(!status.getPhase().equals(MovingStateSlaveStatus.LB_PHASES.WAITING_FOR_FINISH)) {
+						return;
+					}
 					status.setPhase(MovingStateSlaveStatus.LB_PHASES.WAITING_FOR_MSG_RECEIVED);
-					LOG.debug("Got STOP_BUFFERING");
-					for (String pipe : status.getBufferedPipes()) {
+				}
+				
+				boolean successful = true;
+					
+				LOG.debug("Got STOP_BUFFERING");
+				for (String pipe : status.getBufferedPipes()) {
 						try {
 							String newPipe = status.getNewPipeForOldPipe(pipe);
 							if(newPipe!=null) {
@@ -407,7 +411,7 @@ public class InstructionHandler {
 					} else {
 						LOG.error("STOP_BUFFERING failed. Ignoring error.");
 					}
-				}
+				
 	
 				break;
 	

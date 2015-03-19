@@ -562,7 +562,7 @@ public class MovingStateMessageDispatcher {
 	 * @param listener
 	 *            IMessgeDeliveryFailed listener
 	 */
-	public void sendStopBuffering(PeerID peer,
+	public synchronized void sendStopBuffering(PeerID peer,
 			IMessageDeliveryFailedListener listener) {
 		MovingStateInstructionMessage message = MovingStateInstructionMessage
 				.createStopBufferingMsg(lbProcessId);

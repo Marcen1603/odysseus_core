@@ -661,6 +661,9 @@ public class MovingStateHelper {
 					OsgiServiceManager.getExecutor().getExecutionPlan().getQueryById(queryId.get()).replaceOperator(original, replacement);
 					OsgiServiceManager.getExecutor().getExecutionPlan().getQueryById(queryId.get()).replaceRoot(original, replacement);
 				}
+				else {
+					LOG.error("Could not find Query for Root.");
+				}
 			}
 			else {
 				LOG.error("Subscription not controllable.");
