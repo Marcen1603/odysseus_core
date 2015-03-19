@@ -18,6 +18,7 @@ package de.uniol.inf.is.odysseus.generator.valuegenerator.distribution;
 import org.apache.commons.math3.distribution.LevyDistribution;
 import org.apache.commons.math3.distribution.RealDistribution;
 import org.apache.commons.math3.random.RandomGenerator;
+import org.apache.commons.math3.random.Well19937c;
 
 import de.uniol.inf.is.odysseus.generator.error.IErrorModel;
 import de.uniol.inf.is.odysseus.generator.valuegenerator.AbstractSingleValueGenerator;
@@ -36,16 +37,14 @@ public class LevyDistributionGenerator extends AbstractSingleValueGenerator {
      * 
      * @param errorModel
      *            Error model.
-     * @param rngrandom
-     *            generator to be used for sampling
-     * @param mu
+     * @param mean
      *            location
-     * @param c
+     * @param scale
      *            scale parameter
      * 
      */
-    public LevyDistributionGenerator(IErrorModel errorModel, RandomGenerator rng, double mu, double c) {
-        this(errorModel, rng, mu, c, 1l);
+    public LevyDistributionGenerator(IErrorModel errorModel, double mean, double scale) {
+        this(errorModel, new Well19937c(), mean, scale, 1l);
     }
 
     /**
@@ -55,17 +54,34 @@ public class LevyDistributionGenerator extends AbstractSingleValueGenerator {
      *            Error model.
      * @param rng
      *            random generator to be used for sampling
-     * @param mu
+     * @param mean
      *            location
-     * @param c
+     * @param scale
+     *            scale parameter
+     * 
+     */
+    public LevyDistributionGenerator(IErrorModel errorModel, RandomGenerator rng, double mean, double scale) {
+        this(errorModel, rng, mean, scale, 1l);
+    }
+
+    /**
+     * Creates a LevyDistribution.
+     * 
+     * @param errorModel
+     *            Error model.
+     * @param rng
+     *            random generator to be used for sampling
+     * @param mean
+     *            location
+     * @param scale
      *            scale parameter
      * @param seed
      *            Initial seed.
      * 
      */
-    public LevyDistributionGenerator(IErrorModel errorModel, RandomGenerator rng, double mu, double c, long seed) {
+    public LevyDistributionGenerator(IErrorModel errorModel, RandomGenerator rng, double mean, double scale, long seed) {
         super(errorModel);
-        this.distribution = new LevyDistribution(rng, mu, c);
+        this.distribution = new LevyDistribution(rng, mean, scale);
         this.seed = seed;
     }
 
