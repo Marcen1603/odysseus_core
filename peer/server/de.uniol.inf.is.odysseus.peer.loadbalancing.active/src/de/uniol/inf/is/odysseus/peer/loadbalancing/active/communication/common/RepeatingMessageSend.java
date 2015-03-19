@@ -40,17 +40,17 @@ public class RepeatingMessageSend extends RepeatingJobThread {
 	/**
 	 * Time until warning is logged.
 	 */
-	private static final int WARNING_TIME_INTERVAL_MILLIS = 10 * 1000;
+	private static final int WARNING_TIME_INTERVAL_MILLIS = 10 * 3000;
 
 	/**
 	 * Time until Message is aborted.
 	 */
-	private static final int ABORT_MILLIS = 20 * 1000;
+	private static final int ABORT_MILLIS = 20 * 3000;
 
 	/**
 	 * Interval between repeating send attempts.
 	 */
-	private static final int REPEAT_SEND_INTERVAL_MILLIS = 2000;
+	private static final int REPEAT_SEND_INTERVAL_MILLIS = 1000;
 
 	/***
 	 * PeerCommunicator

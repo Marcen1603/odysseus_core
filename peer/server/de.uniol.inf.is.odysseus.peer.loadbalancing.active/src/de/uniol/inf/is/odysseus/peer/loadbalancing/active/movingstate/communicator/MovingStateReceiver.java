@@ -101,9 +101,13 @@ public class MovingStateReceiver implements ITransmissionReceiverListener {
 		transmission.addListener(this);
 		transmission.open();
 		transmission.sendOpen();
+		
+		LOG.debug("New MovingStateReceiver with pipe ID {} created.",pipeID);
 		this.pipe = pipeID;
 	}
 
+	
+	
 	/**
 	 * Notifies all listeners that state is received
 	 */
@@ -121,7 +125,7 @@ public class MovingStateReceiver implements ITransmissionReceiverListener {
 	 * @param listener
 	 *            IStateReceivedListener
 	 */
-	public void addListener(IStateReceivedListener listener) {
+	public synchronized void addListener(IStateReceivedListener listener) {
 		if (!this.listener.contains(listener))
 			this.listener.add(listener);
 	}
@@ -140,6 +144,9 @@ public class MovingStateReceiver implements ITransmissionReceiverListener {
 	 * EventHandler that fires if Transmission receives data.
 	 */
 	public void onReceiveData(ITransmissionReceiver receiver, byte[] data) {
+		
+		LOG.debug("Received something??");
+		
 		if (!announcementReceived) {
 			stateReceived = false;
 
@@ -186,11 +193,11 @@ public class MovingStateReceiver implements ITransmissionReceiverListener {
 								StateAnnouncement.MAX_MESSAGE_SIZE, data.length));
 				resetOnError();
 			}
-
+			LOG.debug("{} of {} received.",messagePartCounter,announcement.getNumberOfMessages());
 			if (messagePartCounter == announcement.getNumberOfMessages()) {
 				// if all message parts are received, we can convert it to
 				// serializable
-
+				LOG.debug("Converting to serializable");
 				Checksum checksum = new CRC32();
 				checksum.update(stateBytes, 0, stateBytes.length);
 				long checksumValue = checksum.getValue();

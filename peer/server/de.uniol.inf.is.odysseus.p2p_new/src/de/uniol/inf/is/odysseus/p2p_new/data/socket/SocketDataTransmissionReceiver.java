@@ -97,6 +97,7 @@ public class SocketDataTransmissionReceiver extends EndpointDataTransmissionRece
 					}
 					LOG.debug("{}: Beginning receiving async", this);
 					receiving = true;
+					
 
 					receivingThread = new ReceivingDataThread(address, port, new IReceivingDataThreadListener() {
 						
@@ -141,6 +142,7 @@ public class SocketDataTransmissionReceiver extends EndpointDataTransmissionRece
 			receivingThread = null;
 		}
 	}
+
 
 	private void sendPortAckMessage(IPeerCommunicator communicator, PeerID receiverPeer, int port, int id) {
 		PortAckMessage portAckMessage = new PortAckMessage(port, id);

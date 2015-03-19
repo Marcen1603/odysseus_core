@@ -41,6 +41,7 @@ public class MovingStateSender {
 	 * Flag that is set when transmission is successful
 	 */
 	private boolean successfullyTransmitted = false;
+	
 
 	/***
 	 * sets transmission successful Flag.
@@ -56,7 +57,7 @@ public class MovingStateSender {
 	public boolean isSuccessfullyTransmitted() {
 		return successfullyTransmitted;
 	}
-
+	
 	/***
 	 * Constructor
 	 * 
@@ -81,19 +82,24 @@ public class MovingStateSender {
 	 * @throws LoadBalancingException
 	 */
 	public void sendData(Serializable toSend) throws LoadBalancingException {
-
+		
+		
+		
 		ByteArrayOutputStream bos = new ByteArrayOutputStream();
 		ObjectOutput out = null;
 		try {
 			out = new ObjectOutputStream(bos);
 			out.writeObject(toSend);
 			byte[] stateBytes = bos.toByteArray();
+			
 
 			// create CRC Checksum
 			Checksum checksum = new CRC32();
 			checksum.update(stateBytes, 0, stateBytes.length);
 			long checksumValue = checksum.getValue();
 
+			LOG.debug("Checksum created..");
+			
 			// create announcement
 			StateAnnouncement announcement = new StateAnnouncement(
 					stateBytes.length, checksumValue);
@@ -101,7 +107,8 @@ public class MovingStateSender {
 			if (stateAnnouncementBytes != null) {
 				// Send announcement (number of messages)
 				transmission.sendData(stateAnnouncementBytes);
-
+				LOG.debug("Annoucement sent.");
+				
 				if (stateBytes.length > StateAnnouncement.MAX_MESSAGE_SIZE) {
 					// if we have more than one message
 					LOG.error(String
@@ -134,8 +141,28 @@ public class MovingStateSender {
 					}
 				} else {
 					transmission.sendData(stateBytes);
+					LOG.debug("State sent (sender side should be ok.)");
 				}
-
+				
+				Thread flushBufferThread = new Thread(new Runnable() {
+					@Override
+					public void run() {
+						for(int i=0;i<5;i++) {
+							try {
+								Thread.sleep(500);
+							} catch (InterruptedException e) {
+							}
+							LOG.debug("Flushing Buffers.");
+							flushBuffersIfStuck();
+						}
+					}
+				});
+				flushBufferThread.setName("Flush buffer Thread");
+				flushBufferThread.setDaemon(true);
+				flushBufferThread.start();
+				
+				
+				
 			}
 
 		} catch (DataTransmissionException e) {
@@ -146,7 +173,12 @@ public class MovingStateSender {
 			LOG.error("State Transmission: Could not serialize Data to Bytes.");
 			e.printStackTrace();
 			throw new LoadBalancingException("Could not serialize Data.");
-		} finally {
+		} catch (Exception e) {
+			LOG.error("Some exception happened with state from {} ",toSend,e);
+			throw new LoadBalancingException("Could not send State.");
+		}
+		
+		finally {
 			try {
 				if (out != null) {
 					out.close();
@@ -198,5 +230,10 @@ public class MovingStateSender {
 			}
 		}
 	}
+	
+	public synchronized void flushBuffersIfStuck() {
+		transmission.flushBuffers();
+	}
+	
 
 }

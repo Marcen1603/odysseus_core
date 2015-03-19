@@ -158,12 +158,13 @@ public class MovingStateMessageDispatcher {
 	public void sendCopyStateFinished(PeerID destination, String pipeID) {
 		MovingStateResponseMessage message = MovingStateResponseMessage
 				.createStateCopyFinishedMessage(lbProcessId, pipeID);
-		try {
-			peerCommunicator.send(destination, message);
-		} catch (PeerCommunicationException e) {
-			LOG.error("Error while sending message:");
-			LOG.error(e.getMessage());
-		}
+			LOG.debug("Sending CopyState finished for pipe {}.",pipeID);
+			RepeatingMessageSend job = new RepeatingMessageSend(peerCommunicator, message, destination);
+			if(currentJobs==null) {
+				currentJobs = new ConcurrentHashMap<String,RepeatingMessageSend>();
+			}
+			this.currentJobs.putIfAbsent(pipeID, job);
+			job.run();
 	}
 
 	/**
@@ -389,7 +390,7 @@ public class MovingStateMessageDispatcher {
 	 * 
 	 * @param job
 	 */
-	public void stopRunningJob(String job) {
+	public synchronized void stopRunningJob(String job) {
 		if (this.currentJobs != null) {
 			if (this.currentJobs.containsKey(job)) {
 				currentJobs.get(job).stopRunning();

@@ -258,7 +258,8 @@ public class MovingStateMasterStatus implements ILoadBalancingMasterStatus {
 		}
 		return counter;
 	}
-
+	
+	
 	/***
 	 * Sets pipesToSyns
 	 * 
@@ -449,9 +450,7 @@ public class MovingStateMasterStatus implements ILoadBalancingMasterStatus {
 	 *            Operator
 	 */
 	public void addSender(String pipe, IStatefulPO operator) {
-		if (!senderOperatorMapping.containsKey(pipe)) {
-			senderOperatorMapping.put(pipe, operator);
-		}
+			senderOperatorMapping.putIfAbsent(pipe, operator);
 	}
 
 	/**

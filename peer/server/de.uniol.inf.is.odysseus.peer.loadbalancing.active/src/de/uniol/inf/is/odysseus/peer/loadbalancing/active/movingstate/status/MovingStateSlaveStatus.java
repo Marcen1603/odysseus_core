@@ -238,9 +238,7 @@ public class MovingStateSlaveStatus implements ILoadBalancingSlaveStatus,
 	 *            Operator that belongs to receiver
 	 */
 	public void addReceiver(String pipeId, IStatefulPO operator) {
-		if (!receiverOperatorMapping.containsKey(pipeId)) {
-			receiverOperatorMapping.put(pipeId, operator);
-		}
+			receiverOperatorMapping.putIfAbsent(pipeId, operator);
 	}
 
 	/***

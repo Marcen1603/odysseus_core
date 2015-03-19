@@ -196,6 +196,7 @@ public class MovingStateHelper {
 				}
 			}
 		}
+		LOG.debug("Found {} different stateful OPs",statefulPOs.size());
 		return statefulPOs;
 
 	}
@@ -228,7 +229,7 @@ public class MovingStateHelper {
 	 * @param status
 	 *            MasterStatus
 	 */
-	public static synchronized void initiateStateCopy(MovingStateMasterStatus status) {
+	public static void initiateStateCopy(MovingStateMasterStatus status) {
 		
 		LOG.debug("Inititate State copy called.");
 		MovingStateCommunicatorImpl communicator = MovingStateCommunicatorImpl
@@ -247,18 +248,25 @@ public class MovingStateHelper {
 					.sendFinishedCopyingStates(
 							status.getVolunteeringPeer());
 		}
-		
-		for (IStatefulPO statefulPO : statefulOperators) {
-
-			// Installing a new State Sender
-			String stateSenderPipe = MovingStateManager.getInstance()
-					.addSender(status.getVolunteeringPeer().toString());
-			status.addSender(stateSenderPipe, statefulPO);
-
-			dispatcher.sendInititateStateCopy(status.getVolunteeringPeer(),
-					communicator, stateSenderPipe, statefulPO.getClass()
-							.toString(), statefulOperators.indexOf(statefulPO));
+		else {
+			MovingStateManager manager = MovingStateManager.getInstance();
+			for (IStatefulPO statefulPO : statefulOperators) {
+	
+				// Installing a new State Sender
+				String stateSenderPipe = manager.addSender(status.getVolunteeringPeer().toString());
+				LOG.debug("Adding stateSenderPipe {} to status.",stateSenderPipe);
+				status.addSender(stateSenderPipe, statefulPO);
+				
+			}
 		}
+		LOG.debug("Created following state Senders:");
+		for(String pipe : status.getAllSenderPipes()) {
+			LOG.debug("{} - {}",status.getOperatorForSender(pipe).toString(),pipe);
+			dispatcher.sendInititateStateCopy(status.getVolunteeringPeer(),
+					communicator, pipe, status.getOperatorForSender(pipe).getClass()
+							.toString(), statefulOperators.indexOf(status.getOperatorForSender(pipe)));
+		}
+		
 	}
 
 	/***
@@ -458,6 +466,7 @@ public class MovingStateHelper {
 	 */
 	public static void setNewPipe(MovingStateSlaveStatus status,String oldPipeID, String newPipeId,String newPeerID,
 			boolean isSender) throws LoadBalancingException, DataTransmissionException {
+		
 		IPhysicalOperator operator = LoadBalancingHelper
 				.getPhysicalJxtaOperator(isSender, oldPipeID);
 		
@@ -535,7 +544,7 @@ public class MovingStateHelper {
 
 		JxtaReceiverPO physicalCopy = new JxtaReceiverPO(copy);
 
-		physicalCopy.setOutputSchema(physicalOriginal.getOutputSchema());
+		physicalCopy.setOutputSchema(physicalOriginal.getOutputSchema().clone());
 		physicalCopy.setName(physicalOriginal.getName());
 		physicalCopy.addOwner(physicalOriginal.getOwner());
 
@@ -609,7 +618,7 @@ public class MovingStateHelper {
 		
 		Optional<Integer> queryId = LoadBalancingHelper.getQueryForRoot(original);
 		if(queryId.isPresent()) {
-			//OsgiServiceManager.getExecutor().getExecutionPlan().getQueryById(queryId.get()).replaceOperator(original, replacement);
+			OsgiServiceManager.getExecutor().getExecutionPlan().getQueryById(queryId.get()).replaceOperator(original, replacement);
 		}
 		original.getTransmission().close();
 	
@@ -649,7 +658,7 @@ public class MovingStateHelper {
 
 				Optional<Integer> queryId = LoadBalancingHelper.getQueryForRoot(original);
 				if(queryId.isPresent()) {
-					//OsgiServiceManager.getExecutor().getExecutionPlan().getQueryById(queryId.get()).replaceOperator(original, replacement);
+					OsgiServiceManager.getExecutor().getExecutionPlan().getQueryById(queryId.get()).replaceOperator(original, replacement);
 					OsgiServiceManager.getExecutor().getExecutionPlan().getQueryById(queryId.get()).replaceRoot(original, replacement);
 				}
 			}
@@ -751,7 +760,9 @@ public class MovingStateHelper {
 	 */
 	public static void sendStopBufferingToUpstreamPeers(
 			MovingStateMasterStatus status) {
+		LOG.debug("Send stop_buffering to upstream peers.");
 		for (PeerID peer : status.getUpstreamPeers()) {
+			LOG.debug("sending to PID {}",peer);
 			status.getMessageDispatcher().sendStopBuffering(peer,
 					MovingStateCommunicatorImpl.getInstance());
 		}
@@ -909,12 +920,21 @@ public class MovingStateHelper {
 	public static void injectState(MovingStateSlaveStatus status, String pipeId) {
 		try {
 			IStatefulPO op = status.getStatefulPOforPipe(pipeId);
+			if(op==null) {
+				LOG.error("Operator is null. This should not happen.");
+			}
+			if(MovingStateManager.getInstance().getReceiver(pipeId)==null) {
+				LOG.error("Receiver for pipe {} is null. This should not happen.",pipeId);
+			}
 			MovingStateManager.getInstance().getReceiver(pipeId)
 					.injectState(op);
+			
+			LOG.debug("Injected state successfully. Sent ACK for {}",pipeId);
 			status.getMessageDispatcher().sendCopyStateFinished(
 					status.getMasterPeer(), pipeId);
 		} catch (Exception e) {
-			// TODO Error Handling
+			LOG.error("Error when sending state complete in injectState Method:",e);
+			
 		}
 
 	}

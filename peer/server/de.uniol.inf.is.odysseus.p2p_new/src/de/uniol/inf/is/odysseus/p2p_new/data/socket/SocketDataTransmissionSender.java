@@ -228,6 +228,36 @@ public class SocketDataTransmissionSender extends EndpointDataTransmissionSender
 			}
 		}
 	}
+	
+	@Override
+	public void flushBuffers() {
+		for (PeerID pid : openCallers) {
+
+			if (clientSocketMap.containsKey(pid)) {
+
+				try {
+					SocketDataChannel cs = clientSocketMap.get(pid);
+					
+					if (!globalBuffer.isEmpty()) {
+						for (byte[] bufferedData : globalBuffer) {
+							cs.write(bufferedData);
+						}
+						globalBuffer.clear();
+					}
+
+					if (waitingBuffer.containsKey(pid)) {
+						for (byte[] bufferedData : waitingBuffer.remove(pid)) {
+							cs.write(bufferedData);
+						}
+					}
+					
+				} catch (IOException e) {
+					LOG.error("Could not send data", e);
+					toRemoveList.add(pid);
+				}
+			} 
+		}
+	}
 
 	private static void insertInt(byte[] destArray, int offset, int value) {
 		destArray[offset] = (byte) (value >>> 24);

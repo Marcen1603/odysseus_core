@@ -1,13 +1,14 @@
 package de.uniol.inf.is.odysseus.peer.loadbalancing.active.movingstate.communicator;
 
-import java.util.HashMap;
+import java.util.concurrent.ConcurrentHashMap;
+
+import net.jxta.id.IDFactory;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.p2p_new.data.DataTransmissionException;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.OsgiServiceManager;
-import net.jxta.id.IDFactory;
 
 /**
  * Manages State-Senders and receivers (Singleton)
@@ -25,12 +26,12 @@ public class MovingStateManager {
 	/**
 	 * Stores senders
 	 */
-	private HashMap<String,MovingStateSender> senderMap;
+	private ConcurrentHashMap<String,MovingStateSender> senderMap;
 	
 	/***
 	 * Stores receivers
 	 */
-	private HashMap<String,MovingStateReceiver> receiverMap;
+	private ConcurrentHashMap<String,MovingStateReceiver> receiverMap;
 	
 	/***
 	 * Instance variable
@@ -41,15 +42,15 @@ public class MovingStateManager {
 	 * Constructor -> use getInstance()
 	 */
 	private MovingStateManager() {
-		senderMap = new HashMap<String,MovingStateSender>();
-		receiverMap = new HashMap<String,MovingStateReceiver>();
+		senderMap = new ConcurrentHashMap<String,MovingStateSender>();
+		receiverMap = new ConcurrentHashMap<String,MovingStateReceiver>();
 	}
 	
 	/***
 	 * Returns instance
 	 * @return instance
 	 */
-	public static MovingStateManager getInstance() {
+	public synchronized static MovingStateManager getInstance() {
 		if(instance==null) {
 			instance = new MovingStateManager();
 		}
@@ -61,14 +62,16 @@ public class MovingStateManager {
 	 * @param peerID Peer ID to which the sender should point
 	 * @return pipeID of Sender.
 	 */
-	public String addSender(String peerID) {
+	public synchronized String addSender(String peerID) {
 		
 		String newPipeID = IDFactory.newPipeID(
 				OsgiServiceManager.getP2pNetworkManager().getLocalPeerGroupID()).toString();
 		
 		try {
+			
 			MovingStateSender sender = new MovingStateSender(peerID,newPipeID);
 			senderMap.put(newPipeID, sender);
+			LOG.debug("New State Sender with pipe ID {} created",newPipeID);
 			return newPipeID;
 			
 		} catch (DataTransmissionException e) {
@@ -102,10 +105,9 @@ public class MovingStateManager {
 	 * @param peerID PeerID with which the receiver should correspond
 	 * @param pipeID pipe ID the receiver should use.
 	 */
-	public void addReceiver(String peerID, String pipeID) {
+	public synchronized void addReceiver(String peerID, String pipeID) {
 		try {
-			MovingStateReceiver receiver = new MovingStateReceiver(peerID,pipeID);
-			receiverMap.put(pipeID, receiver);
+			receiverMap.putIfAbsent(pipeID, new MovingStateReceiver(peerID,pipeID));
 			
 		} catch (DataTransmissionException e) {
 			LOG.error("Could not create MovingStateReceiver");

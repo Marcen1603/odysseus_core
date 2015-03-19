@@ -14,6 +14,8 @@ public interface ITransmissionSender {
 	public void open();
 	public void close();
 	
+	public void flushBuffers();
+	
 	/**
 	 * Resets the list of peers the sender sends to. Necessary for recovery.
 	 */
