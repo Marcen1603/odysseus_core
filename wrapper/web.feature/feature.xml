@@ -31,9 +31,6 @@ Unless required by applicable law or agreed to in writing, software
       <import plugin="de.uniol.inf.is.odysseus.core.server" version="1.0.0" match="greaterOrEqual"/>
       <import plugin="com.google.guava" version="14.0.0" match="greaterOrEqual"/>
       <import plugin="org.eclipse.osgi"/>
-      <import plugin="de.uniol.inf.is.odysseus.slf4j"/>
-      <import plugin="org.mortbay.jetty.server"/>
-      <import plugin="org.mortbay.jetty.util"/>
    </requires>
 
    <plugin
@@ -52,6 +49,13 @@ Unless required by applicable law or agreed to in writing, software
 
    <plugin
          id="org.mortbay.jetty.util"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="javax.servlet"
          download-size="0"
          install-size="0"
          version="0.0.0"
