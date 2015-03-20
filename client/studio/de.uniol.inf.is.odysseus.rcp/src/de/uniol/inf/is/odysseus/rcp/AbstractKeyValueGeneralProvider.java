@@ -115,7 +115,6 @@ public abstract class AbstractKeyValueGeneralProvider implements IOperatorGenera
 		valueText.setEditable(false);
 		valueText.setText(Strings.isNullOrEmpty(value) ? "" : value);
 		valueText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		valueText.setForeground(Display.getCurrent().getSystemColor(SWT.COLOR_RED));
 		
 		textMap.put(key, valueText);
 		labelMap.put(key, keyLabel);
