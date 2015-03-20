@@ -34,6 +34,7 @@ import de.uniol.inf.is.odysseus.core.sdf.unit.SDFTimeUnit;
 import de.uniol.inf.is.odysseus.core.sdf.unit.SDFUnit;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.AccessAOSourceParameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.BooleanParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.CreateSDFAttributeParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IllegalParameterException;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.LongParameter;
@@ -59,6 +60,7 @@ abstract public class AbstractAccessAO extends AbstractLogicalOperator {
 	private Map<Integer,List<SDFAttribute>> outputSchema = new HashMap<Integer, List<SDFAttribute>>();
 	private List<String> inputSchema = null;
 	private long maxTimeToWaitForNewEventMS;
+    private boolean newAccessFramework = false;
 
 	public AbstractAccessAO(AbstractLogicalOperator po) {
 		super(po);
@@ -80,6 +82,7 @@ abstract public class AbstractAccessAO extends AbstractLogicalOperator {
 		this.outputSchema.putAll(po.outputSchema);
 		this.maxTimeToWaitForNewEventMS = po.maxTimeToWaitForNewEventMS;
 		this.dateFormat = po.dateFormat;
+        this.newAccessFramework = po.newAccessFramework;
 	}
 
 	public AbstractAccessAO(Resource name, String wrapper,
@@ -148,6 +151,15 @@ abstract public class AbstractAccessAO extends AbstractLogicalOperator {
 		return maxTimeToWaitForNewEventMS;
 	}
 	
+    @Parameter(type = BooleanParameter.class, name = "naf", optional = true, isList = false, doc = "Enable or disable new access framework")
+    public void setNewAccessFramework(boolean newAccessFramework) {
+        this.newAccessFramework = newAccessFramework;
+    }
+
+    public boolean getNewAccessFramework() {
+        return this.newAccessFramework;
+    }
+
 	@Parameter(type = OptionParameter.class, name = "options", optional = true, isList = true, doc = "Additional options.")
 	public void setOptions(List<Option> value) {
 		for (Option option : value) {
