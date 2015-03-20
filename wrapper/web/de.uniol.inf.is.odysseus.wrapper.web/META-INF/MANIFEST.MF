@@ -21,5 +21,5 @@ Bundle-ClassPath: .,
 Require-Bundle: de.uniol.inf.is.odysseus.core;bundle-version="1.0.0",
  de.uniol.inf.is.odysseus.core.server;bundle-version="1.0.0",
  com.google.guava;bundle-version="14.0.0",
- org.mortbay.jetty.server;bundle-version="6.1.23",
- org.mortbay.jetty.util;bundle-version="6.1.23"
+ org.mortbay.jetty.server,
+ org.mortbay.jetty.util
