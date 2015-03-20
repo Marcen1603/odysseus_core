@@ -138,7 +138,7 @@ public class RelationalMapPO<T extends IMetaAttribute> extends
 					// SDFDatatype retType = expressions[i].getMEPExpression()
 					// .getReturnType();
 
-					outputVal.setAttribute(outAttrPos++, expr);
+					outputVal.setAttribute(outAttrPos, expr);
 					if (expr == null) {
 						nullValueOccured = true;
 					}
@@ -180,6 +180,8 @@ public class RelationalMapPO<T extends IMetaAttribute> extends
 									+ " with expression " + expressions[i], e);
 						}
 					}
+				}finally{
+					outAttrPos++;
 				}
 				if (this.expressions[i].getType().requiresDeepClone()) {
 					outputVal.setRequiresDeepClone(true);
