@@ -61,6 +61,7 @@ public class AggregateAO extends UnaryLogicalOp {
 	private boolean drainAtDone = true;
 	private boolean drainAtClose = false;
 	private boolean fastGrouping = false;
+	private boolean sendPunctuations = false;
 	
 	public static final String AGGREGATIONS = "AGGREGATIONS";
 
@@ -85,6 +86,7 @@ public class AggregateAO extends UnaryLogicalOp {
 		this.fastGrouping  = op.fastGrouping;
 		this.drainAtClose = op.drainAtClose;
 		this.aggregationItems = op.aggregationItems != null ? Lists.newArrayList(op.aggregationItems) : null;
+		this.sendPunctuations = op.sendPunctuations;
 	}
 
 	public void addAggregation(SDFAttribute attribute,
@@ -238,6 +240,15 @@ public class AggregateAO extends UnaryLogicalOp {
 
 	public boolean isOutputPA() {
 		return outputPA;
+	}
+	
+	public boolean isSendPunctuations() {
+		return sendPunctuations;
+	}
+	
+	@Parameter(type = BooleanParameter.class, optional = true)
+	public void setSendPunctuations(boolean sendPunctuations) {
+		this.sendPunctuations = sendPunctuations;
 	}
 
 	@Parameter(name = "drain", type = BooleanParameter.class, optional = true, doc = "If set to true (default), elements are not yet written will be written at done.", deprecated=true)

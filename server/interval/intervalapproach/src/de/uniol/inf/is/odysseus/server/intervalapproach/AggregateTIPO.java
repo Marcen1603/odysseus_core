@@ -64,6 +64,7 @@ public class AggregateTIPO<Q extends ITimeInterval, R extends IStreamObject<Q>, 
 	private boolean outputPA = false;
 	private boolean drainAtDone = true;
 	private boolean drainAtClose = false;
+	private boolean sendPunctuations = false;
 	
 	Logger logger = LoggerFactory.getLogger(AggregateTIPO.class);
 
@@ -195,6 +196,10 @@ public class AggregateTIPO<Q extends ITimeInterval, R extends IStreamObject<Q>, 
 	public void setDrainAtClose(boolean drainAtClose) {
 		this.drainAtClose = drainAtClose;
 	}
+	
+	public void setSendPunctuations(boolean sendPunctuations){
+		this.sendPunctuations = sendPunctuations;
+	}
 
 	@Override
 	public OutputMode getOutputMode() {
@@ -254,8 +259,9 @@ public class AggregateTIPO<Q extends ITimeInterval, R extends IStreamObject<Q>, 
 
 	@Override
 	protected void process_next(R object, int port) {
-
-		//System.err.println("AGGREGATE DEBUG MG: IN " + object);
+//		if (this.getName().equals("empty taxis 115")){
+//			System.err.println("AGGREGATE DEBUG MG: IN ("+getName()+")" + object);
+//		}
 		// Determine if there is any data from previous runs to write
 		// createOutput(object.getMetadata().getStart());
 
@@ -286,6 +292,15 @@ public class AggregateTIPO<Q extends ITimeInterval, R extends IStreamObject<Q>, 
 		createOutput(object.getMetadata().getStart());
 	}
 
+	@Override
+	public synchronized void processPunctuation(IPunctuation punctuation,
+			int port) {
+		if (sendPunctuations){			
+			transferArea.sendPunctuation(punctuation, port);
+			createOutput(punctuation.getTime());
+		}
+	}
+	
 	private void createOutput(PointInTime timestamp) {
 		// Extract all Elements before current Time!
 		cleanUpSweepArea(timestamp);
@@ -294,7 +309,12 @@ public class AggregateTIPO<Q extends ITimeInterval, R extends IStreamObject<Q>, 
 		createAddOutput(timestamp);
 
 		// Find minimal start time stamp from elements intersecting time stamp
-		transferArea.newHeartbeat(findMinTimestamp(timestamp), 0);
+		PointInTime mints = findMinTimestamp(timestamp);
+		transferArea.newHeartbeat(mints, 0);
+		
+//		if (this.getName().equals("empty taxis 115")){
+//			System.err.println("CREATE OUTPUT "+mints);
+//		}
 		
 		if (debug){
 			transferArea.dump();
@@ -337,7 +357,8 @@ public class AggregateTIPO<Q extends ITimeInterval, R extends IStreamObject<Q>, 
 			Iterator<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>> results = entry
 					.getValue().extractElementsBefore(timestamp);
 			if (debug){
-				System.err.println(entry.getValue());
+				System.err.println("AREA FOR GROUP "+entry.getKey());
+				System.err.println(entry.getValue().getSweepAreaAsString());
 			}
 			produceResults(results, entry.getKey());
 		}
@@ -405,12 +426,7 @@ public class AggregateTIPO<Q extends ITimeInterval, R extends IStreamObject<Q>, 
 		return this.groups;
 	}
 
-	@Override
-	public synchronized void processPunctuation(IPunctuation punctuation,
-			int port) {
-		transferArea.sendPunctuation(punctuation, port);
-		createOutput(punctuation.getTime());
-	}
+
 	
 	@Override
 	public IMetadataMergeFunction<Q> getMetadataMerge() {
