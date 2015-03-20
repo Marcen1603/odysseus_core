@@ -156,9 +156,8 @@ public class UsernameLoginContribution implements ILoginContribution {
 	public boolean onFinish(Collection<ILoginContribution> otherContributions) {
 		if (suppressOnFinish) {
 			return true;
-		} else {
-			return realLogin(username, password, tenant);
-		}
+		} 
+		return realLogin(username, password, tenant);
 	}
 
 	private static boolean realLogin(String username, String password,

@@ -24,6 +24,7 @@ import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.IHandler;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.ui.IWorkbenchPage;
@@ -69,7 +70,7 @@ public class ShowQueryTextCommand extends AbstractHandler implements IHandler {
 					
 					IFile file = project.getFile(query.getName() + "." + determineFileExtension(query));
 					if( file.exists() ) {
-						file.setContents(new ByteArrayInputStream(queryText.getBytes()), IFile.FORCE, null);
+						file.setContents(new ByteArrayInputStream(queryText.getBytes()), IResource.FORCE, null);
 					} else {
 						file.create(new ByteArrayInputStream(queryText.getBytes()), false, null);
 					}
@@ -96,8 +97,9 @@ public class ShowQueryTextCommand extends AbstractHandler implements IHandler {
 			return "cql";
 		case "OdysseusScript":
 			return "qry";
+		default:
+			return "tmp";
 		}
-		return "tmp";
 	}
 
 }

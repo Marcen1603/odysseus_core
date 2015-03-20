@@ -20,8 +20,8 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
+import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -248,7 +248,7 @@ public class BugReportEditor extends TitleAreaDialog {
 				String savedPassword = OdysseusRCPConfiguration.get(BugReport.BUGREPORT_PASSWORD, "");
 
 				UsernameAndPasswordDialog dlg = new UsernameAndPasswordDialog(getParentShell(), savedUsername, savedPassword);
-				if (dlg.open() == Dialog.OK) {
+				if (dlg.open() == Window.OK) {
 					OdysseusRCPConfiguration.set(BugReport.BUGREPORT_USER, dlg.getUsername());
 					OdysseusRCPConfiguration.set(BugReport.BUGREPORT_PASSWORD, dlg.getPassword());
 					OdysseusRCPConfiguration.save();
@@ -273,7 +273,7 @@ public class BugReportEditor extends TitleAreaDialog {
 			Map<String, String> reportMap = createReportMap();
 			boolean result = BugReport.send(title, questionsText, reportMap);
 			
-			setReturnCode(result ? Dialog.OK : Dialog.CANCEL);
+			setReturnCode(result ? Window.OK : Window.CANCEL);
 			
 			OdysseusRCPConfiguration.set(BUGREPORT_MAILADDRESS_CFGKEY, questionTexts[MAIL_QUESTION_INDEX].getText());
 			OdysseusRCPConfiguration.save();

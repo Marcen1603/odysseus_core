@@ -133,7 +133,7 @@ public class DatasView extends ViewPart {
         if (index != -1) {
             final Comparable c1 = (Comparable) e1;
             final Comparable c2 = (Comparable) e2;
-            ;
+            
             result = c1.compareTo(c2);
         }
         return table.getSortDirection() == SWT.UP ? result : -result;
