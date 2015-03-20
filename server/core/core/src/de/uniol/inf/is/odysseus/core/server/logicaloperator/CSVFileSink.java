@@ -68,7 +68,7 @@ public class CSVFileSink extends AbstractSenderAO {
 		return getOption(FileHandler.FILENAME);
 	}
 
-	@Parameter(type = StringParameter.class, name = "delimiter", optional = true, doc = "Default delimiter is ';'")
+	@Parameter(type = StringParameter.class, name = "delimiter", optional = true, doc = "Default delimiter is ','")
 	public void setDelimiter(String delimiter) {
 		addOption(AbstractCSVHandler.CSV_DELIMITER, delimiter);
 	}
