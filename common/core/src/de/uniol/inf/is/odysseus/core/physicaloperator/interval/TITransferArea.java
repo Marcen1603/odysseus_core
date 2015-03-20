@@ -211,7 +211,7 @@ public class TITransferArea<R extends IStreamObject<? extends ITimeInterval>, W 
 			} else {
 				logger.warn("Out of order element read " + object
 						+ " before last send element " + watermark
-						+ " ! Ignoring" + " - (" + this.po + ")");
+						+ " ! Ignoring" + " - (" + this.po +"("+po.getName()+"))");
 			}
 		}
 	}
@@ -233,6 +233,10 @@ public class TITransferArea<R extends IStreamObject<? extends ITimeInterval>, W 
 				outputQueue.add(new SerializablePair<IStreamable, Integer>(
 						punctuation, toPort));
 				sendData();
+			}else {
+				logger.warn("Out of order element read " + punctuation
+						+ " before last send element " + watermark
+						+ " ! Ignoring" + " - (" + this.po +"("+po.getName()+"))");
 			}
 		}
 	}

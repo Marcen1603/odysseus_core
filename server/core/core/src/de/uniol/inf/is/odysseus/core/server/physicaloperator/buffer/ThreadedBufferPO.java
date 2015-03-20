@@ -1,13 +1,16 @@
 package de.uniol.inf.is.odysseus.core.server.physicaloperator.buffer;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.locks.ReentrantLock;
 
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamable;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperatorKeyValueProvider;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
@@ -21,7 +24,7 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
  * @param <R>
  */
 public class ThreadedBufferPO<R extends IStreamObject<? extends IMetaAttribute>>
-		extends AbstractPipe<R, R> {
+		extends AbstractPipe<R, R> implements IPhysicalOperatorKeyValueProvider {
 
 	private List<IStreamable> inputBuffer = new ArrayList<>();
 	private List<IStreamable> outputBuffer = new ArrayList<>();
@@ -186,5 +189,18 @@ public class ThreadedBufferPO<R extends IStreamObject<? extends IMetaAttribute>>
 		outputBuffer.clear();
 	}
 
+	@Override
+	public Map<String, String> getKeyValues() {
+		Map<String, String> map = new HashMap<>();
+		map.put("CurrentSize", getElementsStored1()+"");
+		map.put("InputQueue", getInputBufferSize()+"");
+		map.put("OutputQueue", getOutputBufferSize()+"");
+		map.put("started",isRunning()+"");
+		return map;
+	}
+	
+	
+	
+	
 }
 

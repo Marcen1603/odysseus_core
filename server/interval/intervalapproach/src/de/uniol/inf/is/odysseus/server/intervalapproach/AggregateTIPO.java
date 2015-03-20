@@ -33,6 +33,7 @@ import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.metadata.TimeInterval;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperatorKeyValueProvider;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IStatefulOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IStatefulPO;
@@ -52,7 +53,7 @@ import de.uniol.inf.is.odysseus.server.intervalapproach.state.AggregateTIPOState
 
 public class AggregateTIPO<Q extends ITimeInterval, R extends IStreamObject<Q>, W extends IStreamObject<Q>>
 		extends AggregatePO<Q, R, W> implements IHasMetadataMergeFunction<Q>,
-		IStatefulOperator, IStatefulPO {
+		IStatefulOperator, IStatefulPO, IPhysicalOperatorKeyValueProvider {
 
 	private IMetadataMergeFunction<Q> metadataMerge;
 	
@@ -254,7 +255,7 @@ public class AggregateTIPO<Q extends ITimeInterval, R extends IStreamObject<Q>, 
 	@Override
 	protected void process_next(R object, int port) {
 
-		///System.err.println("AGGREGATE DEBUG MG: IN " + object);
+		//System.err.println("AGGREGATE DEBUG MG: IN " + object);
 		// Determine if there is any data from previous runs to write
 		// createOutput(object.getMetadata().getStart());
 
@@ -717,5 +718,13 @@ public class AggregateTIPO<Q extends ITimeInterval, R extends IStreamObject<Q>, 
 			logger.error("The serializable state to set for the AggregateTIPO is not a valid AggregateTIPOState!");
 		}
 		
+	}
+
+	@Override
+	public Map<String, String> getKeyValues() {
+		Map<String, String> map = new HashMap<>();
+		map.put("OutputQueueSize", transferArea.size()+"");
+		map.put("Watermark", transferArea.getWatermark()+"");
+		return map;
 	}
 }

@@ -16,7 +16,9 @@
 package de.uniol.inf.is.odysseus.server.intervalapproach;
 
 import java.io.Serializable;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,6 +29,7 @@ import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperatorKeyValueProvider;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IStatefulOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IStatefulPO;
@@ -58,7 +61,7 @@ import de.uniol.inf.is.odysseus.sweeparea.ITimeIntervalSweepArea;
  */
 public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>>
 		extends AbstractPipe<T, T> implements IHasPredicate,
-		IHasMetadataMergeFunction<K>, IStatefulOperator, IStatefulPO {
+		IHasMetadataMergeFunction<K>, IStatefulOperator, IStatefulPO, IPhysicalOperatorKeyValueProvider {
 	private static Logger _logger = null;
 
 	private static Logger getLogger() {
@@ -512,6 +515,16 @@ public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>>
 		} catch (Exception e) {
 			_logger.error("Error setting state for JoinTIPO. Error: " + e);
 		}
+	}
+
+	@Override
+	public Map<String, String> getKeyValues() {
+		Map<String, String> map = new HashMap<>();
+		map.put("Left Area Size", areas[0].size()+"");
+		map.put("Right Area Size", areas[1].size()+"");
+		map.put("OutputQueue", transferFunction.size()+"");
+		map.put("Watermark",transferFunction.getWatermark()+"");
+		return map;
 	}
 
 }

@@ -16,6 +16,8 @@
 package de.uniol.inf.is.odysseus.core.server.physicaloperator;
 
 import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,6 +26,7 @@ import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.physicaloperator.AbstractPhysicalSubscription;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperatorKeyValueProvider;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IStatefulOperator;
@@ -33,7 +36,8 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.state.UnionPOState;
 
 public class UnionPO<R extends IStreamObject<?>> extends AbstractPipe<R, R>
-		implements IStatefulOperator, IStatefulPO {
+		implements IStatefulOperator, IStatefulPO,
+		IPhysicalOperatorKeyValueProvider {
 
 	Logger logger = LoggerFactory.getLogger(UnionPO.class);
 
@@ -128,16 +132,16 @@ public class UnionPO<R extends IStreamObject<?>> extends AbstractPipe<R, R>
 		return transferArea.size();
 	}
 
-	public PointInTime getWatermark(){
+	public PointInTime getWatermark() {
 		return transferArea.getWatermark();
 	}
-	
+
 	@Override
 	public Serializable getState() {
 		UnionPOState<R> state = new UnionPOState<R>();
 		state.setTransferArea(this.transferArea);
 		return state;
-	} 
+	}
 
 	@SuppressWarnings("unchecked")
 	@Override
@@ -149,5 +153,13 @@ public class UnionPO<R extends IStreamObject<?>> extends AbstractPipe<R, R>
 		} catch (Throwable T) {
 			logger.error("The serializable state to set for the UnionPO is not a valid UnionPOState!");
 		}
+	}
+
+	@Override
+	public Map<String, String> getKeyValues() {
+		Map<String, String> map = new HashMap<>();
+		map.put("OutputQueueSize", transferArea.size() + "");
+		map.put("Watermark", transferArea.getWatermark() + "");
+		return map;
 	}
 }
