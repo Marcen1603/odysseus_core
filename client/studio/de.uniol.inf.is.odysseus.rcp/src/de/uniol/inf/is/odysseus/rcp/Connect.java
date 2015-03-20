@@ -77,6 +77,7 @@ public class Connect {
 		}
 	}
 
+	@SuppressWarnings("deprecation")
 	public static boolean realConnect(String wsdlLocation, String service, String serviceNamespace) {
 		IExecutor executor = OdysseusRCPPlugIn.getExecutor();
 
