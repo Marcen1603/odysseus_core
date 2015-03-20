@@ -1,10 +1,14 @@
 package de.uniol.inf.is.odysseus.keyvalue.datahandler;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
 import java.nio.charset.CharacterCodingException;
 import java.nio.charset.Charset;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonParser;
@@ -18,6 +22,7 @@ import de.uniol.inf.is.odysseus.core.datahandler.AbstractDataHandler;
 
 public abstract class AbstractKeyValueObjectDataHandler<T extends KeyValueObject<?>>
 		extends AbstractDataHandler<T> {
+    private static final Logger LOG = LoggerFactory.getLogger(AbstractKeyValueObjectDataHandler.class);
 
 	static protected ObjectMapper jsonMapper = new ObjectMapper(
 			new JsonFactory());
@@ -50,10 +55,27 @@ public abstract class AbstractKeyValueObjectDataHandler<T extends KeyValueObject
 				return jsonStringToKVO(decoded.toString());
 			}
 		} catch (CharacterCodingException e) {
-			e.printStackTrace();
+            LOG.error("Could not decode data with KeyValueObject handler", e);
 		}
 		return null;
 	}
+
+    @Override
+    public T readData(InputStream inputStream) {
+        try {
+            byte[] buffer = new byte[inputStream.available()];
+            for (int i = 0; inputStream.available() > 0; i++) {
+                buffer[i] = (byte) inputStream.read();
+            }
+
+            CharBuffer decoded = Charset.forName("UTF-8").newDecoder().decode(ByteBuffer.wrap(buffer));
+            return jsonStringToKVO(decoded.toString());
+        }
+        catch (IOException e) {
+            LOG.error("Could not decode data with KeyValueObject handler", e);
+        }
+        return null;
+    }
 
 	@Override
 	public T readData(String message) {
