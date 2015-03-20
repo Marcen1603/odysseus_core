@@ -32,6 +32,8 @@ Unless required by applicable law or agreed to in writing, software
       <import plugin="com.google.guava" version="14.0.0" match="greaterOrEqual"/>
       <import plugin="org.eclipse.osgi"/>
       <import plugin="de.uniol.inf.is.odysseus.slf4j"/>
+      <import plugin="org.mortbay.jetty.server"/>
+      <import plugin="org.mortbay.jetty.util"/>
    </requires>
 
    <plugin
