@@ -34,32 +34,19 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITranspor
 
 /**
  * @author Christian Kuka <christian@kuka.cc>
- * @version $Id$
+ * @version $Id: HTTPServerTransportHandler.java |
+ *          HTTPServerTransportHandler.java | HTTPServerTransportHandler.java $
  *
  */
 public class HTTPServerTransportHandler extends AbstractPushTransportHandler {
     /** Logger */
     private final Logger LOG = LoggerFactory.getLogger(HTTPServerTransportHandler.class);
-    private static final String URI = "uri";
+    private static final String PATH = "path";
     private static final String PORT = "port";
     private static final String NAME = "HTTPServer";
-    private String uri;
-    private Method method;
+    private String path;
     private int port;
     private Server server;
-
-    public static enum Method {
-        GET, POST, PUT, DELETE, HEAD;
-
-        public static Method fromString(final String method) {
-            try {
-                return Method.valueOf(method.toUpperCase());
-            }
-            catch (final Exception e) {
-                return GET;
-            }
-        }
-    }
 
     /**
  * 
@@ -86,9 +73,7 @@ public class HTTPServerTransportHandler extends AbstractPushTransportHandler {
     }
 
     protected void init(OptionMap options) {
-        if (options.get(URI) != null) {
-            setURI(options.get(URI));
-        }
+        setPath(options.get(PATH, "/"));
         setPort(options.getInt(PORT, 8080));
 
     }
@@ -106,10 +91,10 @@ public class HTTPServerTransportHandler extends AbstractPushTransportHandler {
      */
     @Override
     public void processInOpen() throws IOException {
-        server = new Server(getPort());
-        server.setHandler(new DataHandler());
+        this.server = new Server(getPort());
+        this.server.setHandler(new DataHandler());
         try {
-            server.start();
+            this.server.start();
         }
         catch (Exception e) {
             throw new IOException(e);
@@ -132,13 +117,13 @@ public class HTTPServerTransportHandler extends AbstractPushTransportHandler {
     @Override
     public void processInClose() throws IOException {
         try {
-            server.stop();
+            this.server.stop();
         }
         catch (Throwable e) {
             throw new IOException(e);
         }
         finally {
-            server = null;
+            this.server = null;
         }
     }
 
@@ -151,12 +136,12 @@ public class HTTPServerTransportHandler extends AbstractPushTransportHandler {
 
     }
 
-    public void setURI(String uri) {
-        this.uri = uri;
+    public void setPath(String path) {
+        this.path = path;
     }
 
-    public String getURI() {
-        return this.uri;
+    public String getPath() {
+        return this.path;
     }
 
     public void setPort(int port) {
@@ -185,13 +170,9 @@ public class HTTPServerTransportHandler extends AbstractPushTransportHandler {
             return false;
         }
         HTTPServerTransportHandler other = (HTTPServerTransportHandler) o;
-        if (this.getURI() == null && other.getURI() == null) {
+        if (this.getPath() != null && other.getPath() != null && this.getPath().equals(other.getPath()) && this.getPort() == other.getPort()) {
             return true;
         }
-        else if (this.getURI() != null && other.getURI() != null && this.getURI().equals(other.getURI())) {
-            return true;
-        }
-
         return false;
     }
 
@@ -209,11 +190,17 @@ public class HTTPServerTransportHandler extends AbstractPushTransportHandler {
          */
         @Override
         public void handle(String target, HttpServletRequest request, HttpServletResponse response, int dispatch) throws IOException, ServletException {
-            response.setContentType("text/html;charset=utf-8");
-            response.setStatus(HttpServletResponse.SC_OK);
-            response.getWriter().println("<h1>Hello World</h1>");
+            if ((target != null) && (target.equals(getPath()))) {
+                response.setContentType("application/json;charset=utf-8");
+                response.setStatus(HttpServletResponse.SC_OK);
+                response.getWriter().println("{\"status\": \"OK\"}");
+                fireProcess(request.getInputStream());
+            }
+            else {
+                response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+            }
+            response.flushBuffer();
 
-            fireProcess(request.getInputStream());
         }
     }
 }
