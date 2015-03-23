@@ -31,7 +31,7 @@ import de.uniol.inf.is.odysseus.core.server.collection.PairMap;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.AggregateFunction;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.IPartialAggregate;
-import de.uniol.inf.is.odysseus.intervalapproach.sweeparea.DefaultTISweepArea;
+import de.uniol.inf.is.odysseus.intervalapproach.sweeparea.UnsortedTISweepArea;
 import de.uniol.inf.is.odysseus.securitypunctuation.helper.StandardSecurityEvaluator;
 import de.uniol.inf.is.odysseus.server.intervalapproach.AggregateTIPO;
 
@@ -52,7 +52,7 @@ public class SAAggregateTIPO<Q extends ITimeInterval, R extends IStreamObject<Q>
 
 	@Override
 	protected synchronized List<PairMap<SDFSchema, AggregateFunction, W, Q>> updateSA(
-			DefaultTISweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>> sa,
+			UnsortedTISweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>> sa,
 			R elemToAdd, boolean outputPA) {
 		if (evaluator.evaluate(elemToAdd, this.getOwner(),
 				this.getOutputSchema())) {

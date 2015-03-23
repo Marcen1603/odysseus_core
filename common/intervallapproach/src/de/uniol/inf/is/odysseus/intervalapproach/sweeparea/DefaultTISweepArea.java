@@ -422,30 +422,6 @@ public class DefaultTISweepArea<T extends IStreamObject<? extends ITimeInterval>
 	}
 
 	/**
-	 * For cases where sweep areas are not sorted by time, calculate the new
-	 * minTS
-	 * 
-	 * @return
-	 */
-	public PointInTime calcMinTs() {
-		IFastList<T> e = getElements();
-		synchronized (e) {
-			if (e.size() > 0) {
-				Iterator<T> iter = e.iterator();
-				PointInTime minTs = iter.next().getMetadata().getStart();
-				while (iter.hasNext()) {
-					PointInTime next = iter.next().getMetadata().getStart();
-					if (minTs.after(next)) {
-						minTs = next;
-					}
-				}
-				return minTs;
-			}
-		}
-		return null;
-	}
-
-	/**
 	 * 
 	 * @return the max start timestamp of all elements currently in the sweep
 	 *         area. Should be the start timestamp of the last element in the

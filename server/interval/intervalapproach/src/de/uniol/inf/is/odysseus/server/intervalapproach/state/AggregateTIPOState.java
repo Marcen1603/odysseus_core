@@ -17,6 +17,7 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunct
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.IMerger;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.IPartialAggregate;
 import de.uniol.inf.is.odysseus.intervalapproach.sweeparea.DefaultTISweepArea;
+import de.uniol.inf.is.odysseus.intervalapproach.sweeparea.UnsortedTISweepArea;
 import de.uniol.inf.is.odysseus.server.intervalapproach.AggregateTIPO;
 
 /**
@@ -32,7 +33,7 @@ public class AggregateTIPOState<Q extends ITimeInterval, R extends IStreamObject
 
 	private ITransferArea<W,W> transferArea;
 	
-	private Map<Long, DefaultTISweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>>> groups;
+	private Map<Long, UnsortedTISweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>>> groups;
 	private Map<FESortedClonablePair<SDFSchema, AggregateFunction>, IEvaluator<R, W>> eval = new HashMap<FESortedClonablePair<SDFSchema, AggregateFunction>, IEvaluator<R, W>>();
 	private Map<FESortedClonablePair<SDFSchema, AggregateFunction>, IInitializer<R>> init = new HashMap<FESortedClonablePair<SDFSchema, AggregateFunction>, IInitializer<R>>();
 	private Map<FESortedClonablePair<SDFSchema, AggregateFunction>, IMerger<R>> merger = new HashMap<FESortedClonablePair<SDFSchema, AggregateFunction>, IMerger<R>>();
@@ -71,11 +72,11 @@ public class AggregateTIPOState<Q extends ITimeInterval, R extends IStreamObject
 		this.transferArea = transferArea;
 	}
 
-	public Map<Long, DefaultTISweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>>> getGroups() {
+	public Map<Long, UnsortedTISweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>>> getGroups() {
 		return groups;
 	}
 
-	public void setGroups(Map<Long, DefaultTISweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>>> groups) {
+	public void setGroups(Map<Long, UnsortedTISweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>>> groups) {
 		this.groups = groups;
 	}
 	

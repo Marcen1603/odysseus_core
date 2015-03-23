@@ -11,3 +11,4 @@ Service-Component: OSGI-INF/*
 Bundle-ClassPath: .,
  lib/EK.LIB.Gateway.client.jar
 Import-Package: de.uniol.inf.is.odysseus.slf4j
+Export-Package: de.fraunhofer.iis.kom.wsn.messages
