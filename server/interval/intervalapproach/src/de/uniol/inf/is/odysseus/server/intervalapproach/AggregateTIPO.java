@@ -228,7 +228,7 @@ public class AggregateTIPO<Q extends ITimeInterval, R extends IStreamObject<Q>, 
 		for (Entry<Long, AggregateTISweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>>> entry : groups
 				.entrySet()) {
 			Iterator<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>> results = entry
-					.getValue().clearSorted().iterator();
+					.getValue().iterator();
 			produceResults(results, entry.getKey());
 			entry.getValue().clear();
 		}
@@ -375,6 +375,7 @@ public class AggregateTIPO<Q extends ITimeInterval, R extends IStreamObject<Q>, 
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	private void produceResults(
 			Iterator<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>> results,
 			Long groupID) {
@@ -389,7 +390,7 @@ public class AggregateTIPO<Q extends ITimeInterval, R extends IStreamObject<Q>, 
 						e, true);
 				out = getGroupProcessor().createOutputElement(groupID, r);
 			}
-			out.setMetadata(e.getMetadata());
+			out.setMetadata((Q) e.getMetadata().clone());
 			transferArea.transfer(out);
 		}
 
@@ -569,8 +570,9 @@ public class AggregateTIPO<Q extends ITimeInterval, R extends IStreamObject<Q>, 
 					.getMetadata().getEnd()));
 		}
 
-		Q newMeta = metadataMerge.mergeMetadata(
-				lastPartialAggregate.getMetadata(), elemToAdd.getMetadata());
+		@SuppressWarnings("unchecked")
+		Q newMeta = (Q) metadataMerge.mergeMetadata(
+				lastPartialAggregate.getMetadata(), elemToAdd.getMetadata()).clone();
 		newMeta.setStartAndEnd(p1.point, p2.point);
 		saInsert(sa, calcMerge(lastPartialAggregate, elemToAdd, createNew),
 				newMeta);

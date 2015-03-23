@@ -2,17 +2,16 @@ package de.uniol.inf.is.odysseus.intervalapproach.sweeparea;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
-import java.util.PriorityQueue;
 
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.metadata.TimeInterval;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaElementSet;
 
 public class AggregateTISweepArea<T extends IStreamObject<? extends ITimeInterval>> {
 
@@ -30,7 +29,14 @@ public class AggregateTISweepArea<T extends IStreamObject<? extends ITimeInterva
 
 	}
 
-	private final PriorityQueue<T> elements = new PriorityQueue<T>(11,new QueueComparator());
+	// private final PriorityQueue<T> elements;
+	private final List<T> elements;
+	private final QueueComparator comp = new QueueComparator();
+
+	public AggregateTISweepArea() {
+		// elements = new PriorityQueue<T>(11, new QueueComparator());
+		elements = new LinkedList<T>();
+	}
 
 	public Iterator<T> extractElementsBefore(PointInTime validity) {
 		ArrayList<T> retval = new ArrayList<T>();
@@ -62,30 +68,62 @@ public class AggregateTISweepArea<T extends IStreamObject<? extends ITimeInterva
 		return retval.iterator();
 	}
 
-
 	public PointInTime calcMinTs() {
-		if (elements.size() > 0){
-			return elements.peek().getMetadata().getStart();
+		if (elements.size() > 0) {
+			return elements.get(0).getMetadata().getStart();
+		} else {
+			// // DEBUG: REMOVE AGAIN
+			// PointInTime minTs = PointInTime.INFINITY;
+			// synchronized (elements) {
+			// Iterator<T> li = elements.iterator();
+			// while (li.hasNext()) {
+			// PointInTime toCompare = li.next().getMetadata().getStart();
+			// if (toCompare.before(minTs)) {
+			// minTs = toCompare;
+			// }
+			// }
+			//
+			// if (elements.size() > 0) {
+			// PointInTime mintTs2 = elements.get(0).getMetadata().getStart();
+			// if (mintTs2.equals(minTs)) {
+			// return minTs;
+			// } else {
+			// System.err
+			// .println("EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE");
+			// for (T e : clearSorted()) {
+			// System.err.println(e.getMetadata().getStart());
+			// }
+			// System.err
+			// .println("EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE");
+			// }
+			// }
 		}
 		return null;
 	}
 
 	public void insert(T value) {
-		elements.add(value);
+		synchronized (elements) {
+			elements.add(value);
+			// TODO: Maybe, this could be optimized. But mostly the collections are very small ...
+			Collections.sort(elements, comp);
+		}
 	}
 
 	public void clear() {
-		elements.clear();
+		synchronized (elements) {
+			elements.clear();
+		}
 	}
 
-	public List<T> clearSorted() {
-		List<T> sorted = new ArrayList<T>();
-		synchronized (elements) {
-			T elem;
-			while((elem = elements.poll()) != null){
-				sorted.add(elem);
-			}
-		}
-		return sorted;
+	public Iterator<T> iterator() {
+		return elements.iterator();
+		// List<T> sorted = new ArrayList<T>();
+		// synchronized (elements) {
+		// T elem;
+		// while ((elem = elements.get(0)) != null) {
+		// sorted.add(elem);
+		// }
+		// }
+		// return sorted;
 	}
 }
