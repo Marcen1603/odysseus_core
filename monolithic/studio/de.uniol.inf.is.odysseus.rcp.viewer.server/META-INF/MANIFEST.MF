@@ -17,4 +17,3 @@ Import-Package: de.uniol.inf.is.odysseus.rcp.viewer,
  de.uniol.inf.is.odysseus.rcp.viewer.model.graph,
  de.uniol.inf.is.odysseus.rcp.viewer.view,
  org.slf4j
-Service-Component: OSGI-INF/*
