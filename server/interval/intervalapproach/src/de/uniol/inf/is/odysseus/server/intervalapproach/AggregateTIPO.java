@@ -315,9 +315,9 @@ public class AggregateTIPO<Q extends ITimeInterval, R extends IStreamObject<Q>, 
 
 	private PointInTime findMinTimestamp(PointInTime timestamp) {
 		PointInTime border = timestamp;
-		for (Entry<Long, AggregateTISweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>>> entry : groups
-				.entrySet()) {
-			PointInTime sa_min_ts = entry.getValue().calcMinTs();
+		for (AggregateTISweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>> entry : groups
+					.values()) {
+				PointInTime sa_min_ts = entry.calcMinTs();
 			if (sa_min_ts != null) {
 				if (sa_min_ts.before(border)) {
 					border = sa_min_ts;
@@ -717,6 +717,7 @@ public class AggregateTIPO<Q extends ITimeInterval, R extends IStreamObject<Q>, 
 	public Map<String, String> getKeyValues() {
 		Map<String, String> map = new HashMap<>();
 		map.put("OutputQueueSize", transferArea.size() + "");
+		map.put("Groups", groups.size()+"");
 		map.put("Watermark", transferArea.getWatermark() + "");
 		return map;
 	}
