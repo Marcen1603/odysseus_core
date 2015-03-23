@@ -101,7 +101,7 @@ public class ThreadedBufferPO<R extends IStreamObject<? extends IMetaAttribute>>
 	}
 
 	public boolean isRunning(){
-		return runner.started;
+		return runner != null && runner.started;
 	}
 	
 	@Override
