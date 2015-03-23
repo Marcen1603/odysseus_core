@@ -16,7 +16,6 @@ import net.jxta.platform.NetworkManager.ConfigMode;
 import net.jxta.rendezvous.RendezvousEvent;
 import net.jxta.rendezvous.RendezvousListener;
 
-import org.apache.log4j.PropertyConfigurator;
 import org.osgi.framework.Bundle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,7 +34,6 @@ import de.uniol.inf.is.odysseus.peer.config.PeerConfiguration;
 public final class P2PNetworkManager implements IP2PNetworkManager, RendezvousListener {
 
 	private static final Logger LOG = LoggerFactory.getLogger(P2PNetworkManager.class);
-	private static final String LOG_PROPERTIES_FILENAME = "log4j.properties";
 	private static final String[] JXTA_LOGGER_NAMES = new String[] { "net.jxta", "net.jxta.impl" };
 	private static final java.util.logging.Level JXTA_LOG_LEVEL = java.util.logging.Level.OFF;
 
@@ -217,8 +215,6 @@ public final class P2PNetworkManager implements IP2PNetworkManager, RendezvousLi
 			java.util.logging.Logger jxtaLogger = java.util.logging.Logger.getLogger(loggerName);
 			jxtaLogger.setLevel(JXTA_LOG_LEVEL);
 		}
-
-		PropertyConfigurator.configure(bundle.getResource(LOG_PROPERTIES_FILENAME));
 	}
 
 	private ConfigMode determineConfigMode() {
