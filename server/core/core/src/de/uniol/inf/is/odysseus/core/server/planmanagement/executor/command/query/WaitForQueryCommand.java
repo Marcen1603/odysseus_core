@@ -26,11 +26,11 @@ public class WaitForQueryCommand extends AbstractExecutorCommand {
 		try {
 			long start = System.currentTimeMillis();
 			while ((executor.getQueryState(queryName) != QueryState.INACTIVE && executor.getQueryState(queryName) != QueryState.UNDEF)
-					|| (maxWaitingTime > 0 && System.currentTimeMillis()>start+maxWaitingTime)) {
+					&& !(maxWaitingTime > 0 && System.currentTimeMillis()>start+maxWaitingTime)) {
 				this.wait(testPeriod);
 			}
 		} catch (Exception e) {
-
+			
 		}
 	}
 
