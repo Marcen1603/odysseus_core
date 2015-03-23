@@ -258,7 +258,10 @@ public class DefaultTISweepArea<T extends IStreamObject<? extends ITimeInterval>
 					retval.add(s_hat);
 					li.remove();
 				} else {
-					break;
+					// DO NOT break!
+					// This is only true for case, where the end time stamp (!) of the last element is always
+					// lower than the end time stamp of the current element (!)
+					//break;
 				}
 			}
 		}
