@@ -317,7 +317,6 @@ public class AggregateTIPO<Q extends ITimeInterval, R extends IStreamObject<Q>, 
 		PointInTime border = timestamp;
 		for (Entry<Long, AggregateTISweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>>> entry : groups
 				.entrySet()) {
-			// ATTENTION: SWEEP AREAS ARE NOT SORTED IN AGGREGATIONS!!
 			PointInTime sa_min_ts = entry.getValue().calcMinTs();
 			if (sa_min_ts != null) {
 				if (sa_min_ts.before(border)) {
@@ -649,15 +648,16 @@ public class AggregateTIPO<Q extends ITimeInterval, R extends IStreamObject<Q>, 
 		while (qualifies.hasNext()) {
 			PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q> element_agg = qualifies
 					.next();
-			if (element_agg.getMetadata().getStart().before(splitPoint)) {
+			Q meta = element_agg.getMetadata();
+			if (meta.getStart().before(splitPoint)) {
 				PairMap<SDFSchema, AggregateFunction, W, Q> e = calcEval(
 						element_agg, false);
-				e.setMetadata((Q) element_agg.getMetadata().clone());
+				e.setMetadata((Q) meta.clone());
 				e.getMetadata().setEnd(splitPoint);
-				element_agg.getMetadata().setStart(splitPoint);
+				meta.setStart(splitPoint);
 				returnValues.add(e);
 			}
-			sa.insert(element_agg);
+			saInsert(sa, element_agg, meta);
 		}
 
 		// System.err.println("AFTER ");
