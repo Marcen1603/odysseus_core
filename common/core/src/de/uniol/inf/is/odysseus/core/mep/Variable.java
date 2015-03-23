@@ -132,6 +132,9 @@ public class Variable implements IExpression<Object> {
 
 	@Override
 	public boolean equals(Object obj) {
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
 		return ((Variable) obj).identifier.equals(this.identifier);
 	}
 
