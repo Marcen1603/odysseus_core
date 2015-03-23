@@ -45,7 +45,7 @@ public class DefaultTISweepArea<T extends IStreamObject<? extends ITimeInterval>
 		Comparable<DefaultTISweepArea<T>>, ITimeIntervalSweepArea<T> {
 
 	private static final long serialVersionUID = 3380347798012193584L;
-	
+
 	transient Comparator<T> purgeComparator = new Comparator<T>() {
 
 		@Override
@@ -284,30 +284,31 @@ public class DefaultTISweepArea<T extends IStreamObject<? extends ITimeInterval>
 		return retval.iterator();
 	}
 
-    /**
-     * Extracts all elements starting before or equal the given
-     * @link{PointInTime}
-     * 
-     * @param validity
-     * @return A list of elements
-     */
-    public Iterator<T> extractElementsStartingBeforeOrEquals(PointInTime validity) {
-        ArrayList<T> retval = new ArrayList<>();
-        synchronized (getElements()) {
-            Iterator<T> li = getElements().iterator();
-            while (li.hasNext()) {
-                T s_hat = li.next();
-                if (s_hat.getMetadata().getStart().beforeOrEquals(validity)) {
-                    retval.add(s_hat);
-                    li.remove();
-                }
-                else {
-                    break;
-                }
-            }
-        }
-        return retval.iterator();
-    }
+	/**
+	 * Extracts all elements starting before or equal the given
+	 * 
+	 * @link{PointInTime
+	 * 
+	 * @param validity
+	 * @return A list of elements
+	 */
+	public Iterator<T> extractElementsStartingBeforeOrEquals(
+			PointInTime validity) {
+		ArrayList<T> retval = new ArrayList<>();
+		synchronized (getElements()) {
+			Iterator<T> li = getElements().iterator();
+			while (li.hasNext()) {
+				T s_hat = li.next();
+				if (s_hat.getMetadata().getStart().beforeOrEquals(validity)) {
+					retval.add(s_hat);
+					li.remove();
+				} else {
+					break;
+				}
+			}
+		}
+		return retval.iterator();
+	}
 
 	public Iterator<T> extractElementsEndBefore(PointInTime validity) {
 		ArrayList<T> retval = new ArrayList<T>();
@@ -412,6 +413,30 @@ public class DefaultTISweepArea<T extends IStreamObject<? extends ITimeInterval>
 		synchronized (getElements()) {
 			if (!this.getElements().isEmpty()) {
 				return this.getElements().get(0).getMetadata().getStart();
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * For cases where sweep areas are not sorted by time, calculate the new
+	 * minTS
+	 * 
+	 * @return
+	 */
+	public PointInTime calcMinTs() {
+		IFastList<T> e = getElements();
+		synchronized (e) {
+			if (e.size() > 0) {
+				Iterator<T> iter = e.iterator();
+				PointInTime minTs = iter.next().getMetadata().getStart();
+				while (iter.hasNext()) {
+					PointInTime next = iter.next().getMetadata().getStart();
+					if (minTs.after(next)) {
+						minTs = next;
+					}
+				}
+				return minTs;
 			}
 		}
 		return null;

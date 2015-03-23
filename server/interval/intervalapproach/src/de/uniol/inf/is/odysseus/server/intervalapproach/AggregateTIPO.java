@@ -56,7 +56,7 @@ public class AggregateTIPO<Q extends ITimeInterval, R extends IStreamObject<Q>, 
 		IStatefulOperator, IStatefulPO, IPhysicalOperatorKeyValueProvider {
 
 	private IMetadataMergeFunction<Q> metadataMerge;
-	
+
 	private ITransferArea<W, W> transferArea;
 	private Map<Long, DefaultTISweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>>> groups = new HashMap<>();
 	private int dumpAtValueCount = -1;
@@ -65,7 +65,7 @@ public class AggregateTIPO<Q extends ITimeInterval, R extends IStreamObject<Q>, 
 	private boolean drainAtDone = true;
 	private boolean drainAtClose = false;
 	private boolean sendPunctuations = false;
-	
+
 	Logger logger = LoggerFactory.getLogger(AggregateTIPO.class);
 
 	class _Point implements Comparable<_Point> {
@@ -196,8 +196,8 @@ public class AggregateTIPO<Q extends ITimeInterval, R extends IStreamObject<Q>, 
 	public void setDrainAtClose(boolean drainAtClose) {
 		this.drainAtClose = drainAtClose;
 	}
-	
-	public void setSendPunctuations(boolean sendPunctuations){
+
+	public void setSendPunctuations(boolean sendPunctuations) {
 		this.sendPunctuations = sendPunctuations;
 	}
 
@@ -218,7 +218,8 @@ public class AggregateTIPO<Q extends ITimeInterval, R extends IStreamObject<Q>, 
 
 	@Override
 	protected void process_done(int port) {
-		// has only one port, so process_done can be called when first input port calls done
+		// has only one port, so process_done can be called when first input
+		// port calls done
 		IGroupProcessor<R, W> g = getGroupProcessor();
 		synchronized (g) {
 			if (drainAtDone) {
@@ -247,7 +248,7 @@ public class AggregateTIPO<Q extends ITimeInterval, R extends IStreamObject<Q>, 
 			if (drainAtClose) {
 				drainGroups();
 			}
-			logger.debug("closing " +this.getName()+" done");
+			logger.debug("closing " + this.getName() + " done");
 		}
 
 	}
@@ -259,35 +260,33 @@ public class AggregateTIPO<Q extends ITimeInterval, R extends IStreamObject<Q>, 
 
 	@Override
 	protected void process_next(R object, int port) {
-//		if (this.getName().equals("empty taxis 115")){
-//			System.err.println("AGGREGATE DEBUG MG: IN ("+getName()+")" + object);
-//		}
-		// Determine if there is any data from previous runs to write
-		// createOutput(object.getMetadata().getStart());
+
+		if (debug) {
+			System.err.println(object);
+		}
 
 		// Create group ID from input object
 		Long groupID = getGroupProcessor().getGroupID(object);
+
 		// Find or create sweep area for group
 		DefaultTISweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>> sa = groups
 				.get(groupID);
 		if (sa == null) {
 			sa = new DefaultTISweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>>();
 			groups.put(groupID, sa);
-			// System.out.println("Created new Sweep Area for group id " +
-			// groupID+ " --> #"+groups.size());
 		}
 
 		// Update sweep area with new element
 		List<PairMap<SDFSchema, AggregateFunction, W, Q>> results = updateSA(
 				sa, object, outputPA);
-		
+
 		if (debug){
 			System.err.println(sa);
 		}
 		if (results.size() > 0) {
 			produceResults(results, groupID);
 		}
-		
+
 		// Is there any new output to write now?
 		createOutput(object.getMetadata().getStart());
 	}
@@ -295,28 +294,25 @@ public class AggregateTIPO<Q extends ITimeInterval, R extends IStreamObject<Q>, 
 	@Override
 	public synchronized void processPunctuation(IPunctuation punctuation,
 			int port) {
-		if (sendPunctuations){			
+		if (sendPunctuations) {
 			transferArea.sendPunctuation(punctuation, port);
 			createOutput(punctuation.getTime());
 		}
 	}
-	
+
 	private void createOutput(PointInTime timestamp) {
 		// Extract all Elements before current Time!
 		cleanUpSweepArea(timestamp);
-		
+
 		// optional: Build partial aggregates with validity end until timestamp
 		createAddOutput(timestamp);
 
 		// Find minimal start time stamp from elements intersecting time stamp
 		PointInTime mints = findMinTimestamp(timestamp);
 		transferArea.newHeartbeat(mints, 0);
-		
-//		if (this.getName().equals("empty taxis 115")){
-//			System.err.println("CREATE OUTPUT "+mints);
-//		}
-		
-		if (debug){
+
+		if (debug) {
+			System.err.println("CREATE OUTPUT " + mints);
 			transferArea.dump();
 		}
 
@@ -328,24 +324,14 @@ public class AggregateTIPO<Q extends ITimeInterval, R extends IStreamObject<Q>, 
 		PointInTime border = timestamp;
 		for (Entry<Long, DefaultTISweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>>> entry : groups
 				.entrySet()) {
-			PointInTime sa_min_ts = entry.getValue().getMinTs();
+			// ATTENTION: SWEEP AREAS ARE NOT SORTED IN AGGREGATIONS!!
+			PointInTime sa_min_ts = entry.getValue().calcMinTs();
 			if (sa_min_ts != null) {
 				if (sa_min_ts.before(border)) {
 					border = sa_min_ts;
 				}
 			}
-			// WTF ... ??
-			// Iterator<PairMap<SDFSchema, AggregateFunction,
-			// IPartialAggregate<R>, Q>> iter = entry
-			// .getValue().peekElementsContaing(timestamp, false);
-			// while (iter.hasNext()) {
-			// PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q> v
-			// = iter
-			// .next();
-			// if (v.getMetadata().getStart().before(border)) {
-			// border = v.getMetadata().getStart();
-			// }
-			// }
+
 		}
 		return border;
 	}
@@ -356,8 +342,8 @@ public class AggregateTIPO<Q extends ITimeInterval, R extends IStreamObject<Q>, 
 			// /System.err.println(entry.getValue());
 			Iterator<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>> results = entry
 					.getValue().extractElementsBefore(timestamp);
-			if (debug){
-				System.err.println("AREA FOR GROUP "+entry.getKey());
+			if (debug) {
+				System.err.println("AREA FOR GROUP " + entry.getKey());
 				System.err.println(entry.getValue().getSweepAreaAsString());
 			}
 			produceResults(results, entry.getKey());
@@ -426,8 +412,6 @@ public class AggregateTIPO<Q extends ITimeInterval, R extends IStreamObject<Q>, 
 		return this.groups;
 	}
 
-
-	
 	@Override
 	public IMetadataMergeFunction<Q> getMetadataMerge() {
 		return metadataMerge;
@@ -497,8 +481,8 @@ public class AggregateTIPO<Q extends ITimeInterval, R extends IStreamObject<Q>, 
 					// been an end point
 					if (p1.isStart() && p2.isStart()) {
 
-						lastPartialAggregate = updateSAStartStart(sa, elemToAdd,
-								p1, p2, lastPartialAggregate);
+						lastPartialAggregate = updateSAStartStart(sa,
+								elemToAdd, p1, p2, lastPartialAggregate);
 
 						// This next case can only happen if p1 and p2 are from
 						// the one element and the element is a sub part of an
@@ -536,7 +520,7 @@ public class AggregateTIPO<Q extends ITimeInterval, R extends IStreamObject<Q>, 
 		if (logger.isTraceEnabled()) {
 			logger.trace(sa.toString());
 		}
-		//System.err.println(sa.toString());
+		// System.err.println(sa.toString());
 		return returnValues;
 	}
 
@@ -551,8 +535,7 @@ public class AggregateTIPO<Q extends ITimeInterval, R extends IStreamObject<Q>, 
 			updateSAEndStart(sa, elemToAdd, p1, p2);
 		} else { // New End && Old End
 			@SuppressWarnings("unchecked")
-			Q newTI = (Q) lastPartialAggregate.getMetadata()
-					.clone();
+			Q newTI = (Q) lastPartialAggregate.getMetadata().clone();
 			newTI.setStartAndEnd(p1.point, p2.point);
 			saInsert(sa, lastPartialAggregate, newTI);
 		}
@@ -582,25 +565,22 @@ public class AggregateTIPO<Q extends ITimeInterval, R extends IStreamObject<Q>, 
 		final boolean createNew;
 		if (!outputPA && p2.point.before(t_probe.getStart())) {
 			createNew = false;
-			PairMap<SDFSchema, AggregateFunction, W, Q> v = calcEval(lastPartialAggregate, false);
+			PairMap<SDFSchema, AggregateFunction, W, Q> v = calcEval(
+					lastPartialAggregate, false);
 			v.setMetadata(lastPartialAggregate.getMetadata());
 			v.getMetadata().setEnd(p2.point);
 			returnValues.add(v);
 		} else {
-			createNew = !(p1.point.equals(lastPartialAggregate
-					.getMetadata().getStart()) && p2.point
-					.equals(lastPartialAggregate.getMetadata()
-							.getEnd()));
+			createNew = !(p1.point.equals(lastPartialAggregate.getMetadata()
+					.getStart()) && p2.point.equals(lastPartialAggregate
+					.getMetadata().getEnd()));
 		}
 
 		Q newMeta = metadataMerge.mergeMetadata(
-				lastPartialAggregate.getMetadata(),
-				elemToAdd.getMetadata());
+				lastPartialAggregate.getMetadata(), elemToAdd.getMetadata());
 		newMeta.setStartAndEnd(p1.point, p2.point);
-		saInsert(
-				sa,
-				calcMerge(lastPartialAggregate, elemToAdd,
-						createNew), newMeta);
+		saInsert(sa, calcMerge(lastPartialAggregate, elemToAdd, createNew),
+				newMeta);
 	}
 
 	public PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q> updateSAStartStart(
@@ -625,8 +605,7 @@ public class AggregateTIPO<Q extends ITimeInterval, R extends IStreamObject<Q>, 
 				// Insert element again with shorter interval
 				// (start to start)
 			@SuppressWarnings("unchecked")
-			Q newMeta = (Q) p1.element_agg.getMetadata()
-					.clone();
+			Q newMeta = (Q) p1.element_agg.getMetadata().clone();
 			newMeta.setStartAndEnd(p1.point, p2.point);
 			saInsert(sa, p1.element_agg, newMeta);
 		}
@@ -664,11 +643,11 @@ public class AggregateTIPO<Q extends ITimeInterval, R extends IStreamObject<Q>, 
 	protected List<PairMap<SDFSchema, AggregateFunction, W, Q>> updateSA(
 			DefaultTISweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>> sa,
 			PointInTime splitPoint) {
-//		System.err.println("BEFORE "+splitPoint);
-//		System.err.println(sa.toString());
+		// System.err.println("BEFORE "+splitPoint);
+		// System.err.println(sa.toString());
 		ITimeInterval t_probe = new TimeInterval(splitPoint, splitPoint.plus(1));
 		List<PairMap<SDFSchema, AggregateFunction, W, Q>> returnValues = new LinkedList<>();
-		
+
 		// Determine elements in this sweep area containing splitpoint
 		Iterator<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>> qualifies = sa
 				.extractOverlaps(t_probe);
@@ -676,7 +655,8 @@ public class AggregateTIPO<Q extends ITimeInterval, R extends IStreamObject<Q>, 
 			PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q> element_agg = qualifies
 					.next();
 			if (element_agg.getMetadata().getStart().before(splitPoint)) {
-				PairMap<SDFSchema, AggregateFunction, W, Q> e = calcEval(element_agg, false);
+				PairMap<SDFSchema, AggregateFunction, W, Q> e = calcEval(
+						element_agg, false);
 				e.setMetadata((Q) element_agg.getMetadata().clone());
 				e.getMetadata().setEnd(splitPoint);
 				element_agg.getMetadata().setStart(splitPoint);
@@ -684,11 +664,10 @@ public class AggregateTIPO<Q extends ITimeInterval, R extends IStreamObject<Q>, 
 			}
 			sa.insert(element_agg);
 		}
-		
-//		System.err.println("AFTER ");
-//		System.err.println(sa.toString());
 
-		
+		// System.err.println("AFTER ");
+		// System.err.println(sa.toString());
+
 		return returnValues;
 	}
 
@@ -709,7 +688,7 @@ public class AggregateTIPO<Q extends ITimeInterval, R extends IStreamObject<Q>, 
 		state.setEval(super.getAllEvalFunctions());
 		state.setInit(super.getAllInitFunctions());
 		state.setMerger(super.getAllMergerFunctions());
-		return state;	
+		return state;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -720,27 +699,30 @@ public class AggregateTIPO<Q extends ITimeInterval, R extends IStreamObject<Q>, 
 			this.transferArea = state.getTransferArea();
 			this.transferArea.setTransfer(this);
 			this.groups = state.getGroups();
-			for(FESortedClonablePair<SDFSchema,AggregateFunction> key : state.getEval().keySet()) {
+			for (FESortedClonablePair<SDFSchema, AggregateFunction> key : state
+					.getEval().keySet()) {
 				this.setEvalFunction(key, state.getEval().get(key));
 			}
-			for(FESortedClonablePair<SDFSchema,AggregateFunction> key : state.getInit().keySet()) {
+			for (FESortedClonablePair<SDFSchema, AggregateFunction> key : state
+					.getInit().keySet()) {
 				this.setInitFunction(key, state.getInit().get(key));
 			}
-			for(FESortedClonablePair<SDFSchema,AggregateFunction> key : state.getMerger().keySet()) {
+			for (FESortedClonablePair<SDFSchema, AggregateFunction> key : state
+					.getMerger().keySet()) {
 				this.setMergeFunction(key, state.getMerger().get(key));
 			}
-			
-		} catch(Throwable T) {
+
+		} catch (Throwable T) {
 			logger.error("The serializable state to set for the AggregateTIPO is not a valid AggregateTIPOState!");
 		}
-		
+
 	}
 
 	@Override
 	public Map<String, String> getKeyValues() {
 		Map<String, String> map = new HashMap<>();
-		map.put("OutputQueueSize", transferArea.size()+"");
-		map.put("Watermark", transferArea.getWatermark()+"");
+		map.put("OutputQueueSize", transferArea.size() + "");
+		map.put("Watermark", transferArea.getWatermark() + "");
 		return map;
 	}
 }

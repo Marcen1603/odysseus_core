@@ -103,11 +103,11 @@ public abstract class AbstractFragmentPO<T extends IStreamObject<IMetaAttribute>
 
 		for (int p = 0; p < this.numFragments; p++) {
 
-			if (p != exceptionPort){
-				
-				if (heartbeatCounter[p] < heartbeatRate){
+			if (p != exceptionPort) {
+
+				if (heartbeatCounter[p] < heartbeatRate) {
 					heartbeatCounter[p]++;
-				}else{
+				} else {
 					this.sendPunctuation(heartbeat, p);
 					heartbeatCounter[p] = 0;
 				}
@@ -115,8 +115,6 @@ public abstract class AbstractFragmentPO<T extends IStreamObject<IMetaAttribute>
 
 		}
 	}
-	
-	
 
 	/**
 	 * Routes an incoming object to the next output port.

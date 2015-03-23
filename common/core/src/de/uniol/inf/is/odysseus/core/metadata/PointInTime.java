@@ -45,12 +45,17 @@ public class PointInTime implements Comparable<PointInTime>, Cloneable,
 	/**
 	 * Constant for infinityTime
 	 */
-	static final PointInTime INFINITY = new PointInTime();
+	public static final PointInTime INFINITY = new PointInTime();
 
 	/**
 	 * Constant for zero time
 	 */
-	private static final PointInTime ZERO = new PointInTime(0);
+	public static final PointInTime ZERO = new PointInTime(0);
+
+	/**
+	 * Constant for one time
+	 */
+	public static final PointInTime ONE = new PointInTime(1);
 
 	/**
 	 * Create a point in time from a long value

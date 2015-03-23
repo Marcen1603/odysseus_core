@@ -185,6 +185,9 @@ public class TITransferArea<R extends IStreamObject<? extends ITimeInterval>, W 
 			newHeartbeat(start, inPort);
 		} else {
 			logger.warn("Removed out of order element!" + object + " - (" + this.po + ") watermark is " + watermark );
+			
+			System.err.println("REMOVE ME");
+			
 		}
 	}
 
