@@ -72,7 +72,7 @@ public class UnionAO extends BinaryLogicalOp {
 	/**
 	 * @param strictOrder the strictOrder to set
 	 */
-	@Parameter(name="strictOrder", type = BooleanParameter.class, optional = false, doc="Set to true to garantee, that for each element with same start timestamp the order remains the same. Default is false. Leads potentially to higher latency!")
+	@Parameter(name="strictOrder", type = BooleanParameter.class, optional = true, doc="Set to true to garantee, that for each element with same start timestamp the order remains the same. Default is false. Leads potentially to higher latency!")
 	public void setStrictOrder(boolean strictOrder) {
 		this.strictOrder = strictOrder;
 	}
