@@ -37,7 +37,6 @@ public class TStreamGroupingWithAggregationTIPORule extends AbstractIntervalTran
 		po.setOutputPA(aggregateAO.isOutputPA());
 		po.setDrainAtDone(aggregateAO.isDrainAtDone());
 		po.setDrainAtClose(aggregateAO.isDrainAtClose());
-		po.setSendPunctuations(aggregateAO.isSendPunctuations());
 		// ACHTUNG: Die Zeit-Metadaten werden manuell in der Aggregation gesetzt!!
 		//((CombinedMergeFunction) po.getMetadataMerge()).add(new TimeIntervalInlineMetadataMergeFunction());
 		defaultExecute(aggregateAO, po, transformConfig, true, true);

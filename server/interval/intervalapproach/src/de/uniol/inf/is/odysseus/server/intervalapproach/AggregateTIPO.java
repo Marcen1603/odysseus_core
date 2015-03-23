@@ -64,7 +64,6 @@ public class AggregateTIPO<Q extends ITimeInterval, R extends IStreamObject<Q>, 
 	private boolean outputPA = false;
 	private boolean drainAtDone = true;
 	private boolean drainAtClose = false;
-	private boolean sendPunctuations = false;
 
 	Logger logger = LoggerFactory.getLogger(AggregateTIPO.class);
 
@@ -197,10 +196,6 @@ public class AggregateTIPO<Q extends ITimeInterval, R extends IStreamObject<Q>, 
 		this.drainAtClose = drainAtClose;
 	}
 
-	public void setSendPunctuations(boolean sendPunctuations) {
-		this.sendPunctuations = sendPunctuations;
-	}
-
 	@Override
 	public OutputMode getOutputMode() {
 		return OutputMode.NEW_ELEMENT;
@@ -294,10 +289,8 @@ public class AggregateTIPO<Q extends ITimeInterval, R extends IStreamObject<Q>, 
 	@Override
 	public synchronized void processPunctuation(IPunctuation punctuation,
 			int port) {
-		if (sendPunctuations) {
-			transferArea.sendPunctuation(punctuation, port);
-			createOutput(punctuation.getTime());
-		}
+		transferArea.sendPunctuation(punctuation, port);
+		createOutput(punctuation.getTime());
 	}
 
 	private void createOutput(PointInTime timestamp) {
