@@ -89,7 +89,30 @@ public interface IFunction<T> extends IExpression<T> {
 	 * @return
 	 */
 	public String getSymbol();
-	
+
+    /**
+     * Get the time complexity value of this function. The complexity value is a
+     * numeric value between 0-9 describing the average expected time complexity
+     * of this function. 0 means no processing time (e.g., a constant value) and
+     * 9 means a high time complexity (e.g., estimating an integral).
+     * 
+     * @return The time complexity value
+     */
+    public int getTimeComplexity();
+
+    /**
+     * Get the space complexity value of this function. The complexity value is
+     * a
+     * numeric value between 0-9 describing the average expected space
+     * complexity
+     * of this function. 0 means no space requirements (e.g., a constant value)
+     * and
+     * 9 means a high space complexity (e.g., n^n^n).
+     * 
+     * @return The time complexity value
+     */
+    public int getSpaceComplexity();
+
 	/**
 	 * The could be cases where the parser detects a constant (e.g. a string) 
 	 * as a parameter. In most cases this could be optimized by replacing

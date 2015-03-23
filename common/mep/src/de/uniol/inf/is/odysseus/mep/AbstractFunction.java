@@ -48,6 +48,8 @@ public abstract class AbstractFunction<T> implements IFunction<T> {
 	private final SDFDatatype[] acceptedTypes2;
 	private final SDFDatatype returnType;
 	private final boolean optimizeConstantParameter;
+    private final int timeComplexity;
+    private final int spaceComplexity;
 	
 	public AbstractFunction(String symbol, int arity,
 			SDFDatatype[][] acceptedTypes, SDFDatatype returnType) {
@@ -77,16 +79,23 @@ public abstract class AbstractFunction<T> implements IFunction<T> {
 			SDFDatatype[][] acceptedTypes, SDFDatatype returnType,
 			boolean optimizeConstantParameter) {
 		this(symbol, arity, acceptedTypes, null, returnType,
-				optimizeConstantParameter);
+ optimizeConstantParameter, 9, 9);
 	}
+
+    public AbstractFunction(String symbol, int arity, SDFDatatype[][] acceptedTypes, SDFDatatype returnType, boolean optimizeConstantParameter, int timeComplexity, int spaceComplexity) {
+        this(symbol, arity, acceptedTypes, null, returnType, optimizeConstantParameter, timeComplexity, spaceComplexity);
+    }
 
 	private AbstractFunction(String symbol, int arity,
 			SDFDatatype[][] acceptedTypes, SDFDatatype[] acceptedTypes2,
-			SDFDatatype returnType, boolean optimizeConstantParameter) {
+ SDFDatatype returnType, boolean optimizeConstantParameter, int timeComplexity,
+            int spaceComplexity) {
 		this.symbol = symbol;
 		this.arity = arity;
 		this.optimizeConstantParameter = optimizeConstantParameter;
 		this.acceptedTypes2 = acceptedTypes2;
+        this.timeComplexity = timeComplexity;
+        this.spaceComplexity = spaceComplexity;
 
 		if (acceptedTypes != null) {
 			this.acceptedTypes = acceptedTypes;
@@ -146,6 +155,36 @@ public abstract class AbstractFunction<T> implements IFunction<T> {
 	final public int getArity() {
 		return arity;
 	}
+
+    /**
+     * 
+     * {@inheritDoc}
+     */
+    @Override
+    final public int getTimeComplexity() {
+        int complexity = this.timeComplexity;
+        for (int i = 0; i < getArity(); ++i) {
+            if (getArguments()[i].isFunction()) {
+                complexity += getArguments()[i].toFunction().getTimeComplexity();
+            }
+        }
+        return complexity;
+    }
+
+    /**
+     * 
+     * {@inheritDoc}
+     */
+    @Override
+    final public int getSpaceComplexity() {
+        int complexity = this.spaceComplexity;
+        for (int i = 0; i < getArity(); ++i) {
+            if (getArguments()[i].isFunction()) {
+                complexity += getArguments()[i].toFunction().getSpaceComplexity();
+            }
+        }
+        return complexity;
+    }
 
 	@Override
 	final public SDFDatatype getReturnType() {
