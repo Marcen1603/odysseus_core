@@ -11,19 +11,16 @@ import de.uniol.inf.is.odysseus.rcp.exception.ExceptionErrorDialog;
 
 public class RCPInfoServiceListener implements IInfoServiceListener {
 
-	private static final Logger LOG = LoggerFactory
-			.getLogger(RCPInfoServiceListener.class);
+	private static final Logger LOG = LoggerFactory.getLogger(RCPInfoServiceListener.class);
 
 	@Override
-	public void newInfo(InfoType infoType, String message, Throwable throwable,
-			String source) {
+	public void newInfo(InfoType infoType, String message, Throwable throwable, String source) {
 		if (Activator.isStarted()) {
 			IStatus status = createStatus(infoType, message, throwable, source);
 
 			if (infoType == InfoType.ERROR) {
-				ExceptionErrorDialog
-						.open(createStatus(infoType, message, throwable, source), throwable);
-				//new ExceptionWindow(message, throwable);
+				ExceptionErrorDialog.open(createStatus(infoType, message, throwable, source), throwable);
+				// new ExceptionWindow(message, throwable);
 			}
 
 			Activator.getInstance().getLog().log(status);
@@ -38,11 +35,13 @@ public class RCPInfoServiceListener implements IInfoServiceListener {
 		case WARNING:
 			LOG.warn(message, throwable);
 			break;
+		default:
+			// do nothing
+			break;
 		}
 	}
 
-	private static IStatus createStatus(InfoType infoType, String message,
-			Throwable throwable, String source) {
+	private static IStatus createStatus(InfoType infoType, String message, Throwable throwable, String source) {
 		if (throwable == null) {
 			return new Status(toStatus(infoType), source, message);
 		}
