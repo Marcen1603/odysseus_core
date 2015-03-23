@@ -1,10 +1,12 @@
 package de.uniol.inf.is.odysseus.server.fragmentation.horizontal.physicaloperator;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.server.fragmentation.horizontal.logicaloperator.HashFragmentAO;
@@ -43,22 +45,22 @@ public class HashFragmentPO<T extends IStreamObject<IMetaAttribute>> extends
 		
 		this.optimizeDistribution = fragmentAO.isOptimizeDistribution();
 
-		if (fragmentAO.isPartialKey()) {
+		List<SDFAttribute> fragmentAttributes = fragmentAO.getAttributes() ;
+		
+		if (fragmentAttributes != null) {
 
 			indices = new int[fragmentAO.getAttributes().size()];
 			int i = 0;
 			
 			SDFSchema inputSchema = fragmentAO.getInputSchema();
 			
-			for (String restrictAttribute:fragmentAO.getAttributes()){
-				int pos = inputSchema.findAttributeIndex(restrictAttribute);
-				if (pos > 0){
-					indices[i++] = pos;
-				}else{
+			for (SDFAttribute restrictAttribute:fragmentAO.getAttributes()){
+				int pos = inputSchema.indexOf(restrictAttribute);
+				if (pos == -1){
 					throw new IllegalArgumentException("Attribute "+restrictAttribute+" not found in input schema");
 				}
-			}
-			
+				indices[i++] = pos;
+			}		
 		} else{
 			
 			indices = null;

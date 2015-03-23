@@ -107,9 +107,14 @@ public class ThreadedBufferPO<R extends IStreamObject<? extends IMetaAttribute>>
 	@Override
 	protected void process_next(R object, int port) {
 		// Start thread
-		if (!isRunning()) {
-			runner.start();
-		}
+		
+//		try {
+//			if (!isRunning()) {
+//				runner.start();
+//			}
+//		} catch (Exception e) {
+//			// TODO: handle exception
+//		}
 		addObjectToBuffer(object);
 	}
 

@@ -87,7 +87,7 @@ public class HashHorizontalFragmentationQueryPartModificator extends
 		HashFragmentAO fragmentAO = new HashFragmentAO();
 		fragmentAO.setNumberOfFragments(numFragments);
 		if (attributes.isPresent())
-			fragmentAO.setAttributes(attributes.get());
+			fragmentAO.setStringAttributes(attributes.get());
 
 		return fragmentAO;
 
