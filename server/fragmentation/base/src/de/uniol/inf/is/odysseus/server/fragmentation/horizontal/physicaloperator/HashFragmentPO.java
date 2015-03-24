@@ -108,6 +108,7 @@ public class HashFragmentPO<T extends IStreamObject<IMetaAttribute>> extends
 			}else{
 				lastPort = 0;
 			}
+			port = lastPort;
 			portMapping.put(hashCode, lastPort);
 		}
 		return port;
