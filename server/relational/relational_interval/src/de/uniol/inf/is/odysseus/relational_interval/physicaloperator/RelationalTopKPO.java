@@ -14,6 +14,7 @@ import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperatorKeyValueProvider;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
@@ -33,7 +34,7 @@ import de.uniol.inf.is.odysseus.physicaloperator.relational.VarHelper;
  * @param <M>
  */
 public class RelationalTopKPO<T extends Tuple<M>, M extends ITimeInterval>
-		extends AbstractPipe<T, T> {
+		extends AbstractPipe<T, T> implements IPhysicalOperatorKeyValueProvider{
 
 	private class TopKComparatorAsc implements
 			Comparator<SerializablePair<Double, T>> {
@@ -233,6 +234,13 @@ public class RelationalTopKPO<T extends Tuple<M>, M extends ITimeInterval>
 
 	public VarHelper initAttribute(SDFSchema schema, SDFAttribute curAttribute) {
 		return new VarHelper(schema.indexOf(curAttribute), 0);
+	}
+
+	@Override
+	public Map<String, String> getKeyValues() {
+		Map<String, String> kv = new HashMap<String, String>();
+		kv.put("Top-k-Map size", topKMap.size()+"");
+		return null;
 	}
 
 }
