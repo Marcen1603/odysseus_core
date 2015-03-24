@@ -319,10 +319,10 @@ public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>>
 
 	@Override
 	protected synchronized void process_done() {
-		if (isOpen()) {
-			areas[0].clear();
-			areas[1].clear();
-		}
+//		if (isOpen()) {
+//			areas[0].clear();
+//			areas[1].clear();
+//		}
 	}
 
 	@Override

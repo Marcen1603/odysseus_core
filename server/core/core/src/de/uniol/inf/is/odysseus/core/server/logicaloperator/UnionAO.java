@@ -36,9 +36,7 @@ public class UnionAO extends BinaryLogicalOp {
 	private static final long serialVersionUID = 2828756253165671692L;
 
 	protected boolean useInputPortAsOutputPort = false; 
-	
-	private boolean strictOrder = false;
-	
+		
 	/**
 	 * @param unionPO
 	 */
@@ -58,23 +56,6 @@ public class UnionAO extends BinaryLogicalOp {
 	
 	public boolean isUseInputPortAsOutputPort() {
 		return useInputPortAsOutputPort;
-	}
-	
-	
-	
-	/**
-	 * @return the strictOrder
-	 */
-	public boolean isStrictOrder() {
-		return strictOrder;
-	}
-
-	/**
-	 * @param strictOrder the strictOrder to set
-	 */
-	@Parameter(name="strictOrder", type = BooleanParameter.class, optional = true, doc="Set to true to garantee, that for each element with same start timestamp the order remains the same. Default is false. Leads potentially to higher latency!")
-	public void setStrictOrder(boolean strictOrder) {
-		this.strictOrder = strictOrder;
 	}
 
 	public @Override

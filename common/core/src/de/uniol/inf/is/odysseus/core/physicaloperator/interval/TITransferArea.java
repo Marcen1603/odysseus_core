@@ -64,21 +64,6 @@ public class TITransferArea<R extends IStreamObject<? extends ITimeInterval>, W 
 
 	}
 
-	private class StriktOutputQueueComparator extends OutputQueueComparator {
-
-		private static final long serialVersionUID = 5321893137959979782L;
-
-		@Override
-		public int compare(SerializablePair<IStreamable, Integer> left,
-				SerializablePair<IStreamable, Integer> right) {
-			int v = super.compare(left, right);
-			if (v == 0) {
-				return Integer.compare(left.hashCode(), right.hashCode());
-			} 
-			return v;
-		}
-
-	}
 
 	static final transient Logger logger = LoggerFactory
 			.getLogger(TITransferArea.class);
@@ -97,37 +82,17 @@ public class TITransferArea<R extends IStreamObject<? extends ITimeInterval>, W 
 	private int outputPort = 0;
 
 	private boolean inOrder = true;
-	final private boolean strict;
 
 	public TITransferArea() {
 		minTs = new HashMap<>();
 		isDone = new HashMap<>();
-		strict = false;
 		outputQueue = new PriorityQueue<>(11, new OutputQueueComparator());
-	}
-
-	public TITransferArea(boolean strict) {
-		this.strict = strict;
-		minTs = new HashMap<>();
-		isDone = new HashMap<>();
-		if (strict) {
-			outputQueue = new PriorityQueue<>(11,
-					new StriktOutputQueueComparator());
-		} else {
-			outputQueue = new PriorityQueue<>(11, new OutputQueueComparator());
-		}
 	}
 
 	private TITransferArea(TITransferArea<R, W> tiTransferFunction) {
 		minTs = new HashMap<>(tiTransferFunction.minTs);
 		isDone = new HashMap<>(tiTransferFunction.isDone);
-		strict = tiTransferFunction.strict;
-		if (strict) {
-			outputQueue = new PriorityQueue<>(11,
-					new StriktOutputQueueComparator());
-		} else {
-			outputQueue = new PriorityQueue<>(11, new OutputQueueComparator());
-		}
+		outputQueue = new PriorityQueue<>(11, new OutputQueueComparator());
 		outputQueue.addAll(tiTransferFunction.outputQueue);
 	}
 
@@ -199,10 +164,8 @@ public class TITransferArea<R extends IStreamObject<? extends ITimeInterval>, W 
 			// phase
 			// else treat only objects that are at least from time watermark
 			if (watermark == null
-					|| (!strict && object.getMetadata().getStart()
-							.afterOrEquals(watermark))
-					|| (strict && object.getMetadata().getStart()
-							.after(watermark))) {
+					|| object.getMetadata().getStart()
+							.afterOrEquals(watermark)) {
 				if (watermark != null && object.isPunctuation()
 						&& object.getMetadata().getStart().equals(watermark)) {
 					// ignore puncutations that do not change the watermark!
@@ -338,8 +301,7 @@ public class TITransferArea<R extends IStreamObject<? extends ITimeInterval>, W 
 						PointInTime ts = ((IPunctuation) elem.getE1())
 								.getTime();
 
-						if ((!strict && ts.beforeOrEquals(minimum))
-								|| (strict && ts.before(minimum))) {
+						if ((ts.beforeOrEquals(minimum))) {
 							this.outputQueue.poll();
 							po.sendPunctuation((IPunctuation) elem.getE1(),
 									elem.getE2());
@@ -353,10 +315,8 @@ public class TITransferArea<R extends IStreamObject<? extends ITimeInterval>, W 
 						ITimeInterval metadata = ((W) elem.getE1())
 								.getMetadata();
 						if (metadata != null
-								&& (!strict && metadata.getStart()
-										.beforeOrEquals(minimum))
-								|| (strict && metadata.getStart().before(
-										minimum))) {
+								&& (metadata.getStart()
+										.beforeOrEquals(minimum))) {
 							this.outputQueue.poll();
 							lastSendObject = ((W) elem.getE1()).getMetadata()
 									.getStart();

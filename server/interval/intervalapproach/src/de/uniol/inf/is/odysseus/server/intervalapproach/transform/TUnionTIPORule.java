@@ -31,8 +31,7 @@ public class TUnionTIPORule extends AbstractIntervalTransformationRule<UnionAO> 
 	public void execute(UnionAO unionAO,
 			TransformationConfiguration transformConfig) throws RuleException {
 		UnionPO<IStreamObject<ITimeInterval>> unionPO = new UnionPO<IStreamObject<ITimeInterval>>(
-				new TITransferArea<IStreamObject<ITimeInterval>, IStreamObject<ITimeInterval>>(
-						unionAO.isStrictOrder()));
+				new TITransferArea<IStreamObject<ITimeInterval>, IStreamObject<ITimeInterval>>());
 
 		defaultExecute(unionAO, unionPO, transformConfig, true, true);
 

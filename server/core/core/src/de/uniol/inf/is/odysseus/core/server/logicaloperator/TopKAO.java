@@ -28,6 +28,7 @@ public class TopKAO extends AbstractLogicalOperator {
 	private boolean suppressDuplicates = true;
 	private List<SDFAttribute> groupingAttributes;
 	private boolean fastGrouping = false;
+	private boolean tieWithTimestamp = false;
 	
 	public TopKAO() {
 	}
@@ -72,6 +73,16 @@ public class TopKAO extends AbstractLogicalOperator {
 	}
 
 	
+	
+	public boolean isTiWithTimestamp() {
+		return tieWithTimestamp;
+	}
+
+	@Parameter(name="tieWithTimestamp", optional = true, type = BooleanParameter.class, doc ="If two elements have the same score, this value can be used to define an order by time stamps. (Default is false)")
+	public void setTiWithTimestamp(boolean tieWithTimestamp) {
+		this.tieWithTimestamp = tieWithTimestamp;
+	}
+
 	/**
 	 * @return the suppressDuplicates
 	 */

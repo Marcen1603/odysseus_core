@@ -34,7 +34,7 @@ import de.uniol.inf.is.odysseus.physicaloperator.relational.VarHelper;
  * @param <M>
  */
 public class RelationalTopKPO<T extends Tuple<M>, M extends ITimeInterval>
-		extends AbstractPipe<T, T> implements IPhysicalOperatorKeyValueProvider{
+		extends AbstractPipe<T, T> implements IPhysicalOperatorKeyValueProvider {
 
 	private class TopKComparatorAsc implements
 			Comparator<SerializablePair<Double, T>> {
@@ -43,6 +43,22 @@ public class RelationalTopKPO<T extends Tuple<M>, M extends ITimeInterval>
 		public int compare(SerializablePair<Double, T> left,
 				SerializablePair<Double, T> right) {
 			return left.getE1().compareTo(right.getE1());
+		}
+	}
+
+	private class TopKComparatorAscTS extends TopKComparatorAsc {
+
+		@Override
+		public int compare(SerializablePair<Double, T> left,
+				SerializablePair<Double, T> right) {
+			int v = super.compare(left, right);
+			if (v == 0) {
+				PointInTime leftTS = left.getE2().getMetadata().getStart();
+				PointInTime rightTS = right.getE2().getMetadata().getStart();
+				return leftTS.compareTo(rightTS);
+			} else {
+				return v;
+			}
 		}
 	}
 
@@ -56,16 +72,33 @@ public class RelationalTopKPO<T extends Tuple<M>, M extends ITimeInterval>
 		}
 	}
 
+	private class TopKComparatorDescTS extends TopKComparatorDesc {
+
+		@Override
+		public int compare(SerializablePair<Double, T> left,
+				SerializablePair<Double, T> right) {
+			int v = super.compare(left, right);
+			if (v == 0) {
+				PointInTime leftTS = left.getE2().getMetadata().getStart();
+				PointInTime rightTS = right.getE2().getMetadata().getStart();
+				return rightTS.compareTo(leftTS);
+			} else {
+				return v;
+			}
+		}
+	}
+
 	final private SDFExpression scoringFunction;
 	final private int k;
-	final private Map<Long,ArrayList<SerializablePair<Double, T>>> topKMap = new HashMap<Long, ArrayList<SerializablePair<Double,T>>>();
+	final private Map<Long, ArrayList<SerializablePair<Double, T>>> topKMap = new HashMap<Long, ArrayList<SerializablePair<Double, T>>>();
 	final private Comparator<SerializablePair<Double, T>> comparator;
 	final private IGroupProcessor<T, T> groupProcessor;
 
-	private Map<Long,LinkedList<T>> lastResultMap = new HashMap<>();
+	private Map<Long, LinkedList<T>> lastResultMap = new HashMap<>();
 
 	private VarHelper[] variables;
 	private boolean suppressDuplicates;
+	private boolean orderByTimestamp = true;
 
 	public RelationalTopKPO(SDFSchema inputSchema,
 			SDFExpression scoringFunction, int k, boolean descending,
@@ -74,8 +107,13 @@ public class RelationalTopKPO<T extends Tuple<M>, M extends ITimeInterval>
 		this.scoringFunction = scoringFunction;
 		initScoringFunction(inputSchema);
 		this.k = k;
-		comparator = descending ? new TopKComparatorDesc()
-				: new TopKComparatorAsc();
+		if (isOrderByTimestamp()) {
+			comparator = descending ? new TopKComparatorDescTS()
+			: new TopKComparatorAscTS();
+		} else {
+			comparator = descending ? new TopKComparatorDesc()
+					: new TopKComparatorAsc();
+		}
 		this.suppressDuplicates = suppressDuplicates;
 		this.groupProcessor = groupProcessor;
 	}
@@ -94,22 +132,22 @@ public class RelationalTopKPO<T extends Tuple<M>, M extends ITimeInterval>
 
 	@Override
 	protected synchronized void process_next(T object, int port) {
-		
+
 		Long gId = groupProcessor.getGroupID(object);
-		
-		ArrayList<SerializablePair<Double, T>> topK  = topKMap.get(gId);
-		if (topK == null){
+
+		ArrayList<SerializablePair<Double, T>> topK = topKMap.get(gId);
+		if (topK == null) {
 			topK = new ArrayList<SerializablePair<Double, T>>();
 			topKMap.put(gId, topK);
 		}
-		
+
 		cleanUp(object.getMetadata().getStart(), topK);
 
 		addObject(calcScore(object), topK);
 
 		produceResult(object, topK, gId);
 	}
-	
+
 	@Override
 	protected void process_close() {
 		topKMap.clear();
@@ -122,7 +160,8 @@ public class RelationalTopKPO<T extends Tuple<M>, M extends ITimeInterval>
 		// sendPunctuation(punctuation);
 	}
 
-	private void cleanUp(PointInTime start, ArrayList<SerializablePair<Double, T>> topK ) {
+	private void cleanUp(PointInTime start,
+			ArrayList<SerializablePair<Double, T>> topK) {
 		Iterator<SerializablePair<Double, T>> iter = topK.iterator();
 		while (iter.hasNext()) {
 			if (iter.next().getE2().getMetadata().getEnd()
@@ -132,7 +171,8 @@ public class RelationalTopKPO<T extends Tuple<M>, M extends ITimeInterval>
 		}
 	}
 
-	private void addObject(SerializablePair<Double, T> scoredObject, ArrayList<SerializablePair<Double, T>> topK) {
+	private void addObject(SerializablePair<Double, T> scoredObject,
+			ArrayList<SerializablePair<Double, T>> topK) {
 		// add object to list
 		// 1. find position to insert with binary search
 
@@ -145,7 +185,8 @@ public class RelationalTopKPO<T extends Tuple<M>, M extends ITimeInterval>
 	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	private void produceResult(T object, ArrayList<SerializablePair<Double, T>> topK, Long groupID) {
+	private void produceResult(T object,
+			ArrayList<SerializablePair<Double, T>> topK, Long groupID) {
 		// Produce result
 		T result = (T) new Tuple(2, false);
 		Iterator<SerializablePair<Double, T>> iter = topK.iterator();
@@ -155,8 +196,8 @@ public class RelationalTopKPO<T extends Tuple<M>, M extends ITimeInterval>
 			out.setMetadata(null);
 			resultList.add(out);
 		}
-		boolean sameAsLastResult = suppressDuplicates ? compareWithLastResult(resultList, groupID)
-				: false;
+		boolean sameAsLastResult = suppressDuplicates ? compareWithLastResult(
+				resultList, groupID) : false;
 
 		if (!sameAsLastResult) {
 			lastResultMap.put(groupID, new LinkedList<T>(resultList));
@@ -167,6 +208,7 @@ public class RelationalTopKPO<T extends Tuple<M>, M extends ITimeInterval>
 			transfer(result);
 		}
 	}
+
 	private boolean compareWithLastResult(List<T> resultList, Long groupID) {
 		LinkedList<T> lastResult = lastResultMap.get(groupID);
 		if (lastResult == null) {
@@ -239,8 +281,22 @@ public class RelationalTopKPO<T extends Tuple<M>, M extends ITimeInterval>
 	@Override
 	public Map<String, String> getKeyValues() {
 		Map<String, String> kv = new HashMap<String, String>();
-		kv.put("Top-k-Map size", topKMap.size()+"");
-		return null;
+		kv.put("Top-k-Map size", topKMap.size() + "");
+		return kv;
+	}
+
+	/**
+	 * @return the orderByTimestamp
+	 */
+	public boolean isOrderByTimestamp() {
+		return orderByTimestamp;
+	}
+
+	/**
+	 * @param orderByTimestamp the orderByTimestamp to set
+	 */
+	public void setOrderByTimestamp(boolean orderByTimestamp) {
+		this.orderByTimestamp = orderByTimestamp;
 	}
 
 }

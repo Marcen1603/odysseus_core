@@ -1,5 +1,8 @@
 package de.uniol.inf.is.odysseus.server.fragmentation.horizontal.physicaloperator;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -9,6 +12,7 @@ import de.uniol.inf.is.odysseus.core.metadata.IStreamable;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.physicaloperator.Heartbeat;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperatorKeyValueProvider;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.server.fragmentation.horizontal.logicaloperator.AbstractFragmentAO;
@@ -21,7 +25,7 @@ import de.uniol.inf.is.odysseus.server.fragmentation.horizontal.logicaloperator.
  * @author Marco Grawunder
  */
 public abstract class AbstractFragmentPO<T extends IStreamObject<IMetaAttribute>>
-		extends AbstractPipe<T, T> {
+		extends AbstractPipe<T, T> implements IPhysicalOperatorKeyValueProvider{
 
 	private static final Logger log = LoggerFactory
 			.getLogger(AbstractFragmentPO.class);
@@ -40,6 +44,11 @@ public abstract class AbstractFragmentPO<T extends IStreamObject<IMetaAttribute>
 	 * The number of fragments.
 	 */
 	protected final int numFragments;
+	
+	/**
+	 * How many elements are send to which port
+	 */
+	protected final long[] elementsSend;
 
 	/**
 	 * Constructs a new {@link AbstractFragmentPO}.
@@ -54,6 +63,7 @@ public abstract class AbstractFragmentPO<T extends IStreamObject<IMetaAttribute>
 		this.numFragments = (int) fragmentAO.getNumberOfFragments();
 		this.heartbeatCounter = new int[this.numFragments];
 		this.heartbeatRate = fragmentAO.getHeartbeatrate();
+		this.elementsSend = new long[this.numFragments];
 	}
 
 	@Override
@@ -67,6 +77,7 @@ public abstract class AbstractFragmentPO<T extends IStreamObject<IMetaAttribute>
 	@SuppressWarnings("unchecked")
 	protected void process_next(T object, int port) {
 		int outPort = this.route(object);
+		elementsSend[outPort]++;
 		AbstractFragmentPO.log.trace("Routed " + object + " to output port "
 				+ outPort);
 		this.transfer(object, outPort);
@@ -125,4 +136,22 @@ public abstract class AbstractFragmentPO<T extends IStreamObject<IMetaAttribute>
 	 */
 	protected abstract int route(IStreamObject<IMetaAttribute> object);
 
+	@Override
+	public Map<String, String> getKeyValues() {
+		Map<String, String> map = new HashMap<String, String>();
+		map.put("Distribution", dumpArray(elementsSend));
+		return map;
+	}
+	
+	private String dumpArray(long[] a){
+		StringBuffer b = new StringBuffer("[");
+		String SEP="";
+		for (int i=0;i<a.length;i++){
+			b.append(SEP).append(a[i]);
+			SEP=",";
+		}
+		b.append("]");
+		return b.toString();
+	}
+	
 }
