@@ -103,7 +103,7 @@ public class HashFragmentPO<T extends IStreamObject<IMetaAttribute>> extends
 	private int getPort(int hashCode) {
 		Integer port = portMapping.get(hashCode);
 		if (port == null){
-			if (lastPort < numFragments){
+			if (lastPort+1 < numFragments){
 				lastPort++;
 				port = lastPort;
 			}else{
