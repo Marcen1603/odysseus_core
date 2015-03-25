@@ -315,6 +315,9 @@ public abstract class AbstractSink<R extends IStreamObject<?>> extends
 
 	@Override
 	public abstract void processPunctuation(IPunctuation punctuation, int port);
+	
+	@Override
+	public void setSuppressPunctuations(boolean suppressPunctuation) {}
 
 	// ------------------------------------------------------------------------
 	// CLOSE and DONE

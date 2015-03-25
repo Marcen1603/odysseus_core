@@ -179,7 +179,7 @@ public class ReplicationMergePO<T extends IStreamObject<? extends ITimeInterval>
 	}
 
 	@Override
-	protected boolean isDone() {
+	public boolean isDone() {
 
 		synchronized (this.inputQueue) {
 			if (!this.inputQueue.isEmpty())

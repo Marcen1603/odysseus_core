@@ -8,6 +8,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import de.uniol.inf.is.odysseus.core.collection.SerializablePair;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
@@ -95,6 +96,7 @@ public class RelationalTopKPO<T extends Tuple<M>, M extends ITimeInterval>
 	final private IGroupProcessor<T, T> groupProcessor;
 
 	private Map<Long, LinkedList<T>> lastResultMap = new HashMap<>();
+	private long elementsRead;
 
 	private VarHelper[] variables;
 	private boolean suppressDuplicates;
@@ -128,11 +130,12 @@ public class RelationalTopKPO<T extends Tuple<M>, M extends ITimeInterval>
 		topKMap.clear();
 		lastResultMap.clear();
 		groupProcessor.init();
+		elementsRead=0;
 	}
 
 	@Override
 	protected synchronized void process_next(T object, int port) {
-
+		elementsRead++;
 		Long gId = groupProcessor.getGroupID(object);
 
 		ArrayList<SerializablePair<Double, T>> topK = topKMap.get(gId);
@@ -281,7 +284,16 @@ public class RelationalTopKPO<T extends Tuple<M>, M extends ITimeInterval>
 	@Override
 	public Map<String, String> getKeyValues() {
 		Map<String, String> kv = new HashMap<String, String>();
-		kv.put("Top-k-Map size", topKMap.size() + "");
+		kv.put("Elements processed",elementsRead+"");
+		kv.put("No Of Groups", topKMap.size() + "");		
+		// Show at least 10 groups
+		int i = 10;
+		for (Entry<Long, ArrayList<SerializablePair<Double, T>>> e: topKMap.entrySet()){
+			kv.put("Top-k-Map size group "+e.getKey(), e.getValue().size()+ "");
+			if (i-- < 0){
+				break;
+			}
+		}
 		return kv;
 	}
 

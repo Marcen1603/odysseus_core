@@ -22,10 +22,10 @@ import de.uniol.inf.is.odysseus.core.metadata.IStreamable;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.MetadataComparator;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
+import de.uniol.inf.is.odysseus.core.physicaloperator.AbstractTransferArea;
 import de.uniol.inf.is.odysseus.core.physicaloperator.Heartbeat;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ITransfer;
-import de.uniol.inf.is.odysseus.core.physicaloperator.ITransferArea;
 
 /**
  * This area does not tread order. It directly transfers all elements
@@ -33,7 +33,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.ITransferArea;
  * @author Andre Bolles
  */
 public class DirectTransferArea<R extends IStreamObject<? extends ITimeInterval>, W extends IStreamObject<? extends ITimeInterval>>
-		implements ITransferArea<R, W> {
+		extends AbstractTransferArea<R, W> {
 
 	private static final long serialVersionUID = 2207860250465543159L;
 	
@@ -194,9 +194,6 @@ public class DirectTransferArea<R extends IStreamObject<? extends ITimeInterval>
 		this.inOrder = isInOrder;
 	}
 
-	@Override
-	public void dump() {
-		// nothing to do, no state
-	}
+
 
 }

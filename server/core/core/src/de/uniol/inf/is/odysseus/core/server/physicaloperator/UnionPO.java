@@ -47,7 +47,7 @@ public class UnionPO<R extends IStreamObject<?>> extends AbstractPipe<R, R>
 
 	public UnionPO(ITransferArea<R, R> transferFunction) {
 		this.transferArea = transferFunction;
-		transferFunction.init(this, getSubscribedToSource().size());
+		//transferFunction.init(this, getSubscribedToSource().size());
 	}
 
 	public UnionPO(UnionPO<R> unionPO) {
@@ -106,7 +106,7 @@ public class UnionPO<R extends IStreamObject<?>> extends AbstractPipe<R, R>
 	protected void process_done(int port) {
 		transferArea.done(port);
 		logger.debug("Done on " + port);
-	}
+	}	
 
 	@Override
 	public void processPunctuation(IPunctuation punctuation, int port) {
@@ -158,6 +158,10 @@ public class UnionPO<R extends IStreamObject<?>> extends AbstractPipe<R, R>
 	@Override
 	public Map<String, String> getKeyValues() {
 		Map<String, String> map = new HashMap<>();
+		map.put("Elements read", transferArea.getElementsRead()+"");
+		map.put("Punctuations read", transferArea.getPunctuationsRead()+"");
+		map.put("Elements written", transferArea.getElementsWritten()+"");
+		map.put("Punctuations written", transferArea.getPunctuationsWritten()+"");
 		map.put("OutputQueueSize", transferArea.size() + "");
 		map.put("Watermark", transferArea.getWatermark() + "");
 		return map;

@@ -53,7 +53,8 @@ public class RelationalMapPO<T extends IMetaAttribute> extends
 	private Tuple<T> lastTuple;
 
 	public RelationalMapPO(SDFSchema inputSchema, SDFExpression[] expressions,
-			boolean allowNullInOutput, boolean evaluateOnPunctuation, boolean suppressErrors) {
+			boolean allowNullInOutput, boolean evaluateOnPunctuation,
+			boolean suppressErrors) {
 		this.inputSchema = inputSchema;
 		this.allowNull = allowNullInOutput;
 		this.evaluateOnPunctuation = evaluateOnPunctuation;
@@ -180,7 +181,7 @@ public class RelationalMapPO<T extends IMetaAttribute> extends
 									+ " with expression " + expressions[i], e);
 						}
 					}
-				}finally{
+				} finally {
 					outAttrPos++;
 				}
 				if (this.expressions[i].getType().requiresDeepClone()) {

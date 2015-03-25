@@ -264,4 +264,6 @@ public interface ILogicalOperator extends IOwnedOperator, ISubscribable<ILogical
 	public boolean isPipeOperator();
 
 	public boolean isDebug();
+
+	boolean isSuppressPunctuations();
 }

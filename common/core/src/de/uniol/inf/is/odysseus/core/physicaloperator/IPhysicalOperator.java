@@ -78,6 +78,8 @@ public interface IPhysicalOperator extends IOwnedOperator,
 	 */
 	void open(IOperatorOwner id);
 	public boolean isOpen();
+	
+	boolean isDone();
 
 	void addUniqueId(IOperatorOwner owner, Resource id);
 	void removeUniqueId(IOperatorOwner key);
@@ -89,4 +91,6 @@ public interface IPhysicalOperator extends IOwnedOperator,
 	 * debug
 	 */
 	void setDebug(boolean debug);
+	
+	void setSuppressPunctuations(boolean suppressPunctuations);
 }

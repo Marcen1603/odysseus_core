@@ -117,6 +117,7 @@ public abstract class AbstractTransformationRule<T> extends
 			physical.setName(logical.getName());
 		}
 		physical.setDebug(logical.isDebug());
+		physical.setSuppressPunctuations(logical.isSuppressPunctuations());
 		physical.getParameterInfos().putAll(logical.getParameterInfos());
 	}
 

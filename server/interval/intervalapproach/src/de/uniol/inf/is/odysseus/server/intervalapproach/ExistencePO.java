@@ -266,7 +266,7 @@ public class ExistencePO<K extends ITimeInterval, T extends IStreamObject<K>>
 	}
 
 	@Override
-	protected boolean isDone() {
+	public boolean isDone() {
 		try {
 			if (getSubscribedToSource(0).isDone()) {
 				return getSubscribedToSource(1).isDone() || areas[0].isEmpty();

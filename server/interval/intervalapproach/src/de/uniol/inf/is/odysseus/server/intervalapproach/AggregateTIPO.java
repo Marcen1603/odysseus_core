@@ -240,7 +240,7 @@ public class AggregateTIPO<Q extends ITimeInterval, R extends IStreamObject<Q>, 
 	}
 
 	@Override
-	protected boolean isDone() {
+	public boolean isDone() {
 		return super.isDone() && transferArea.size() == 0;
 	}
 

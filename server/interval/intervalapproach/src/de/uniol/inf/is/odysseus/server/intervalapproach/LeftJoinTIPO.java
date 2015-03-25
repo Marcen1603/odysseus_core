@@ -301,7 +301,7 @@ public class LeftJoinTIPO<M extends ITimeInterval, T extends IStreamObject<M>>
 	}
 
 	@Override
-	protected boolean isDone() {
+	public boolean isDone() {
 		if (getSubscribedToSource(0).isDone()) {
 			return getSubscribedToSource(1).isDone() || areas[0].isEmpty();
 		}

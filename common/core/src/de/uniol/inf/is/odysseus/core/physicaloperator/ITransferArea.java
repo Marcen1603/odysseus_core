@@ -91,5 +91,13 @@ public interface ITransferArea<R extends IStreamObject<?>, W extends IStreamObje
 	 * Debug
 	 */
 	void dump();
+	
+	long getElementsRead();
+
+	long getElementsWritten();
+
+	long getPunctuationsWritten();
+
+	long getPunctuationsRead();
 		
 }

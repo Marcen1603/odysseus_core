@@ -70,7 +70,7 @@ public class ClientReceiver<R, W> implements ISource<W>,
 
 	final private AtomicBoolean open = new AtomicBoolean(false);
 	final private AtomicBoolean done = new AtomicBoolean(false);
-	
+
 	private String name = null;
 	private Map<Integer, SDFSchema> outputSchema = new HashMap<Integer, SDFSchema>();
 
@@ -83,11 +83,13 @@ public class ClientReceiver<R, W> implements ISource<W>,
 	final private List<AbstractPhysicalSubscription<ISink<? super W>>> activeSinkSubscriptions = new CopyOnWriteArrayList<AbstractPhysicalSubscription<ISink<? super W>>>();
 
 	private Map<String, String> infos = new TreeMap<String, String>();
-	
+
+	private boolean suppressPunctuations;
+
 	// --------------------------------------------------------------------
 	// Logging
 	// --------------------------------------------------------------------
-	
+
 	volatile protected static Logger _logger = null;
 
 	protected synchronized static Logger getLogger() {
@@ -96,7 +98,7 @@ public class ClientReceiver<R, W> implements ISource<W>,
 		}
 		return _logger;
 	}
-	
+
 	// ------------------------------------------------------------------
 
 	public ClientReceiver(IProtocolHandler<W> protocolHandler) {
@@ -125,7 +127,7 @@ public class ClientReceiver<R, W> implements ISource<W>,
 	public boolean isPipe() {
 		return isSink() && isSource();
 	}
-	
+
 	protected boolean hasSingleConsumer() {
 		return this.sinkSubscriptions.size() == 1;
 	}
@@ -168,17 +170,15 @@ public class ClientReceiver<R, W> implements ISource<W>,
 	final public Map<Integer, SDFSchema> getOutputSchemas() {
 		return Collections.unmodifiableMap(this.outputSchema);
 	}
-	
+
 	// ------------------------------------------------------------------------
 	// Owner Management
 	// ------------------------------------------------------------------------
 
-
-
 	// ------------------------------------------------------------------------
 	// MONITORING
 	// ------------------------------------------------------------------------
-	
+
 	@Override
 	public Collection<String> getProvidedMonitoringData() {
 		return null;
@@ -208,12 +208,11 @@ public class ClientReceiver<R, W> implements ISource<W>,
 	public boolean isOwnedBy(IOperatorOwner owner) {
 		return ownerHandler.isOwnedBy(owner);
 	}
-	
+
 	@Override
 	public boolean isOwnedByAll(List<IOperatorOwner> owners) {
 		return ownerHandler.isOwnedByAll(owners);
 	}
-
 
 	@Override
 	public int hashCode() {
@@ -269,7 +268,7 @@ public class ClientReceiver<R, W> implements ISource<W>,
 	 */
 	@Override
 	public void addMonitoringData(String type, IMonitoringData<?> item) {
-		
+
 	}
 
 	/**
@@ -277,7 +276,7 @@ public class ClientReceiver<R, W> implements ISource<W>,
 	 */
 	@Override
 	public void removeMonitoringData(String type) {
-		
+
 	}
 
 	// ------------------------------------------------------------------
@@ -321,24 +320,24 @@ public class ClientReceiver<R, W> implements ISource<W>,
 		return new SDFMetaAttributeList();
 	}
 
-
 	// ------------------------------------------------------------------------
 	// TRANSFER
 	// ------------------------------------------------------------------------
-	
-//	@Override
-//	public void transfer(Collection<W> object, int sourceOutPort) {
-//		for (PhysicalSubscription<ISink<? super W>> sink : this.activeSinkSubscriptions) {
-//			if (sink.getSourceOutPort() == sourceOutPort) {
-//				sink.getTarget().process(object, sink.getSinkInPort());
-//			}
-//		}
-//	}
-//
-//	@Override
-//	public void transfer(Collection<W> object) {
-//		transfer(object, 0);
-//	}
+
+	// @Override
+	// public void transfer(Collection<W> object, int sourceOutPort) {
+	// for (PhysicalSubscription<ISink<? super W>> sink :
+	// this.activeSinkSubscriptions) {
+	// if (sink.getSourceOutPort() == sourceOutPort) {
+	// sink.getTarget().process(object, sink.getSinkInPort());
+	// }
+	// }
+	// }
+	//
+	// @Override
+	// public void transfer(Collection<W> object) {
+	// transfer(object, 0);
+	// }
 
 	@Override
 	public void transfer(W object, int sourceOutPort) {
@@ -359,17 +358,23 @@ public class ClientReceiver<R, W> implements ISource<W>,
 	public void transfer(W object) {
 		transfer(object, 0);
 	}
-	
 
 	// ------------------------------------------------------------------------
 	// Punctuations
 	// ------------------------------------------------------------------------
 
 	@Override
+	public void setSuppressPunctuations(boolean suppressPunctuations) {
+		this.suppressPunctuations = suppressPunctuations;
+	}
+
+	@Override
 	public void sendPunctuation(IPunctuation punctuation) {
-		for (AbstractPhysicalSubscription<? extends ISink<?>> sub : this.activeSinkSubscriptions) {
-			sub.getTarget()
-					.processPunctuation(punctuation, sub.getSinkInPort());
+		if (!suppressPunctuations) {
+			for (AbstractPhysicalSubscription<? extends ISink<?>> sub : this.activeSinkSubscriptions) {
+				sub.getTarget().processPunctuation(punctuation,
+						sub.getSinkInPort());
+			}
 		}
 	}
 
@@ -409,7 +414,7 @@ public class ClientReceiver<R, W> implements ISource<W>,
 	// ------------------------------------------------------------------------
 	// Subscription management
 	// ------------------------------------------------------------------------
-	
+
 	@Override
 	public void subscribeSink(ISink<? super W> sink, int sinkInPort,
 			int sourceOutPort, SDFSchema schema, boolean asActive, int openCount) {
@@ -422,25 +427,23 @@ public class ClientReceiver<R, W> implements ISource<W>,
 			// + " from " + sourceOutPort);
 			this.sinkSubscriptions.add(sub);
 			sink.subscribeToSource(this, sinkInPort, sourceOutPort, schema);
-			if (asActive){
+			if (asActive) {
 				activeSinkSubscriptions.add(sub);
 			}
 		}
 	}
-	
+
 	@Override
 	public void subscribeSink(ISink<? super W> sink, int sinkInPort,
 			int sourceOutPort, SDFSchema schema) {
 		subscribeSink(sink, sinkInPort, sourceOutPort, schema, false, 0);
 	}
-	
-	
 
 	@Override
 	public void unsubscribeSink(ISink<? super W> sink, int sinkInPort,
 			int sourceOutPort, SDFSchema schema) {
-		unsubscribeSink(new ControllablePhysicalSubscription<ISink<? super W>>(sink,
-				sinkInPort, sourceOutPort, schema));
+		unsubscribeSink(new ControllablePhysicalSubscription<ISink<? super W>>(
+				sink, sinkInPort, sourceOutPort, schema));
 	}
 
 	@Override
@@ -476,7 +479,7 @@ public class ClientReceiver<R, W> implements ISource<W>,
 		AbstractPhysicalSubscription<ISink<? super W>> sub = new ControllablePhysicalSubscription<ISink<? super W>>(
 				sink, sinkInPort, sourceOutPort, schema);
 		this.activeSinkSubscriptions.remove(sub);
-		if (activeSinkSubscriptions.size() == 0){
+		if (activeSinkSubscriptions.size() == 0) {
 			try {
 				this.protocolHandler.close();
 				this.done.set(true);
@@ -486,40 +489,39 @@ public class ClientReceiver<R, W> implements ISource<W>,
 			}
 		}
 	}
-	
-    public boolean isDone(){
+
+	public boolean isDone() {
 		return done.get();
 	}
 
-//	@Override
-//	public void atomicReplaceSink(
-//			List<PhysicalSubscription<ISink<? super W>>> remove,
-//			ISink<? super W> sink, int sinkInPort, int sourceOutPort,
-//			SDFSchema schema) {
-//		for (PhysicalSubscription<ISink<? super W>> sub : remove) {
-//			unsubscribeSink(sub);
-//		}
-//		subscribeSink(sink, sinkInPort, sourceOutPort, schema);
-//	}
-//
-//	@Override
-//	public void atomicReplaceSink(
-//			PhysicalSubscription<ISink<? super W>> remove,
-//			List<ISink<? super W>> sinks, int sinkInPort, int sourceOutPort,
-//			SDFSchema schema) {
-//		// synchronized (this.sinkSubscriptions) {
-//		unsubscribeSink(remove);
-//		for (ISink<? super W> sink : sinks) {
-//			subscribeSink(sink, sinkInPort, sourceOutPort, schema);
-//		}
-//	}
-	
+	// @Override
+	// public void atomicReplaceSink(
+	// List<PhysicalSubscription<ISink<? super W>>> remove,
+	// ISink<? super W> sink, int sinkInPort, int sourceOutPort,
+	// SDFSchema schema) {
+	// for (PhysicalSubscription<ISink<? super W>> sub : remove) {
+	// unsubscribeSink(sub);
+	// }
+	// subscribeSink(sink, sinkInPort, sourceOutPort, schema);
+	// }
+	//
+	// @Override
+	// public void atomicReplaceSink(
+	// PhysicalSubscription<ISink<? super W>> remove,
+	// List<ISink<? super W>> sinks, int sinkInPort, int sourceOutPort,
+	// SDFSchema schema) {
+	// // synchronized (this.sinkSubscriptions) {
+	// unsubscribeSink(remove);
+	// for (ISink<? super W> sink : sinks) {
+	// subscribeSink(sink, sinkInPort, sourceOutPort, schema);
+	// }
+	// }
+
 	@Override
 	public String toString() {
 		return this.getClass().getSimpleName() + "(" + this.hashCode() + ")"
 				+ (blocked.get() ? "b" : "");
 	}
-	
 
 	private AbstractPhysicalSubscription<ISink<? super W>> findSinkInSubscription(
 			IPhysicalOperator o, int sourcePort, int sinkPort) {
@@ -531,12 +533,11 @@ public class ClientReceiver<R, W> implements ISource<W>,
 		}
 		return null;
 	}
-	
 
 	// ------------------------------------------------------------------------
 	// DONE
 	// ------------------------------------------------------------------------
-	
+
 	@Override
 	public void done() {
 		propagateDone();
@@ -554,7 +555,7 @@ public class ClientReceiver<R, W> implements ISource<W>,
 					sub.getTarget().done(sub.getSinkInPort());
 				}
 			}
-			for (IOperatorOwner owner:getOwner()){
+			for (IOperatorOwner owner : getOwner()) {
 				owner.done(this);
 			}
 		}
@@ -567,30 +568,30 @@ public class ClientReceiver<R, W> implements ISource<W>,
 	protected void process_done() {
 	}
 
-
-//	@Override
-//	public boolean isOpened() {
-//		return this.isOpen();
-//	}
+	// @Override
+	// public boolean isOpened() {
+	// return this.isOpen();
+	// }
 
 	// ------------------------------------------------------------------------
 	// OPEN
 	// ------------------------------------------------------------------------
-	
+
 	@Override
 	public boolean isOpen() {
 		return open.get();
 	}
 
 	@Override
-	synchronized public void open(IOperatorOwner owner) throws OpenFailedException {
+	synchronized public void open(IOperatorOwner owner)
+			throws OpenFailedException {
 		// do nothing
 	}
-	
+
 	@Override
 	public void open(ISink<? super W> caller, int sourcePort, int sinkPort,
-			List<AbstractPhysicalSubscription<ISink<?>>> callPath, List<IOperatorOwner> forOwners)
-			throws OpenFailedException {
+			List<AbstractPhysicalSubscription<ISink<?>>> callPath,
+			List<IOperatorOwner> forOwners) throws OpenFailedException {
 		// Hint: ignore callPath on sources because the source does not call any
 		// subscription
 
@@ -617,8 +618,8 @@ public class ClientReceiver<R, W> implements ISource<W>,
 			done.set(false);
 		}
 	}
-	
-	//@Override
+
+	// @Override
 	public void processOpen() throws OpenFailedException {
 		getLogger().debug("Process_open");
 		if (!opened) {
@@ -630,17 +631,18 @@ public class ClientReceiver<R, W> implements ISource<W>,
 			}
 		}
 	}
-		
+
 	// ------------------------------------------------------------------------
 	// CLOSE
 	// ------------------------------------------------------------------------
 
 	@Override
 	public void close(ISink<? super W> caller, int sourcePort, int sinkPort,
-			List<AbstractPhysicalSubscription<ISink<?>>> callPath,  List<IOperatorOwner> forOwners) {
+			List<AbstractPhysicalSubscription<ISink<?>>> callPath,
+			List<IOperatorOwner> forOwners) {
 		AbstractPhysicalSubscription<ISink<? super W>> sub = findSinkInSubscription(
 				caller, sourcePort, sinkPort);
-		getLogger().trace("CLOSE "+getName());
+		getLogger().trace("CLOSE " + getName());
 		if (sub == null) {
 			throw new RuntimeException(
 					"Close called from an unsubscribed sink ");
@@ -653,13 +655,13 @@ public class ClientReceiver<R, W> implements ISource<W>,
 				// fire(this.closeInitEvent);
 				this.processClose();
 				open.set(false);
-				//stopMonitoring();
+				// stopMonitoring();
 				// fire(this.closeDoneEvent);
 			}
 		}
 	}
-	
-	//@Override
+
+	// @Override
 	public void processClose() {
 		getLogger().debug("Process_close");
 		if (opened) {
@@ -684,7 +686,7 @@ public class ClientReceiver<R, W> implements ISource<W>,
 		}
 		return process_isSemanticallyEqual(ipo);
 	}
-	
+
 	public boolean process_isSemanticallyEqual(IPhysicalOperator ipo) {
 		if (!(ipo instanceof ClientReceiver)) {
 			return false;
@@ -693,37 +695,37 @@ public class ClientReceiver<R, W> implements ISource<W>,
 		return false;
 	}
 
-    @Override
-    public void socketDisconnected() {
-        // TODO Auto-generated method stub
-        
-    }
+	@Override
+	public void socketDisconnected() {
+		// TODO Auto-generated method stub
 
-    @Override
-    public void socketException( Exception ex) {
-        // TODO Auto-generated method stub
-        
-    }
+	}
 
-    @Override
+	@Override
+	public void socketException(Exception ex) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
 	public void unsubscribeFromAllSinks() {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void addUniqueId(IOperatorOwner owner, Resource id) {
 		// TODO Auto-generated method stub
-		
-	}
-	
-	@Override
-	public void removeUniqueId(IOperatorOwner key) {
-		// TODO Auto-generated method stub	
+
 	}
 
 	@Override
-	public Map<IOperatorOwner,Resource> getUniqueIds() {
+	public void removeUniqueId(IOperatorOwner key) {
+		// TODO Auto-generated method stub
+	}
+
+	@Override
+	public Map<IOperatorOwner, Resource> getUniqueIds() {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -732,7 +734,7 @@ public class ClientReceiver<R, W> implements ISource<W>,
 	public Map<String, String> getParameterInfos() {
 		return infos;
 	}
-	
+
 	@Override
 	public void addParameterInfo(String key, Object value) {
 		this.infos.put(key, value.toString());
@@ -740,9 +742,9 @@ public class ClientReceiver<R, W> implements ISource<W>,
 
 	@Override
 	public void setParameterInfos(Map<String, String> infos) {
-		this.infos = infos;		
+		this.infos = infos;
 	}
-	
+
 	@Override
 	public boolean hasInput() {
 		return true;
@@ -752,10 +754,10 @@ public class ClientReceiver<R, W> implements ISource<W>,
 	public void process(long callerId, R buffer) throws ClassNotFoundException {
 		// TODO Auto-generated method stub
 	}
-	
+
 	@Override
 	public void setDebug(boolean debug) {
-		
+
 	}
 
 	@Override
@@ -763,7 +765,7 @@ public class ClientReceiver<R, W> implements ISource<W>,
 			List<AbstractPhysicalSubscription<ISink<?>>> callPath,
 			List<IOperatorOwner> forOwners) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
@@ -771,6 +773,6 @@ public class ClientReceiver<R, W> implements ISource<W>,
 			List<AbstractPhysicalSubscription<ISink<?>>> callPath,
 			List<IOperatorOwner> forOwners) {
 		// TODO Auto-generated method stub
-		
+
 	}
 }

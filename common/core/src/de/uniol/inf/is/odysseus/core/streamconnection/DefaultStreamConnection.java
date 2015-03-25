@@ -69,6 +69,7 @@ public class DefaultStreamConnection<In extends IStreamObject<?>> extends
 	private boolean enabled = true;
 
 	private boolean isOpen = true;
+	private boolean isDone = true;
 
 	private Map<String, String> infos;
 
@@ -286,12 +287,22 @@ public class DefaultStreamConnection<In extends IStreamObject<?>> extends
 			sendPunctuation(punctuation, port);
 		}
 	}
+	
+	@Override
+	public void setSuppressPunctuations(boolean suppressPunctuations) {
+		// IGNORE
+	}
 
 	@Override
 	public boolean isOpen() {
 		return isOpen;
 	}
 
+	@Override
+	public boolean isDone() {
+		return isDone;
+	}
+	
 	// @Override
 	public void open() throws OpenFailedException {
 		LOG.debug("Opening");

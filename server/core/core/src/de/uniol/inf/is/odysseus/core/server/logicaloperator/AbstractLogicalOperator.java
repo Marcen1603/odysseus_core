@@ -77,6 +77,7 @@ public abstract class AbstractLogicalOperator implements Serializable, ILogicalO
 	private boolean debug = false;
 	private String destinationName = null;
 	private String uniqueIdentifier = null;
+	private boolean suppressPunctuation = false;
 
 //	private List<IPredicate<?>> predicates = new LinkedList<IPredicate<?>>();
 
@@ -94,6 +95,7 @@ public abstract class AbstractLogicalOperator implements Serializable, ILogicalO
 		this.infos = copyParameterInfos(op.infos);
 		this.destinationName = op.destinationName;
 		this.debug = op.debug;
+		this.suppressPunctuation = op.suppressPunctuation;
 	}
 
 	public AbstractLogicalOperator() {
@@ -284,6 +286,16 @@ public abstract class AbstractLogicalOperator implements Serializable, ILogicalO
 		this.name = name;
 	}
 	
+	@Parameter(name="suppressPunctuations", type= BooleanParameter.class, optional = true, doc ="If set to true, no punctuations will be delivered from this operator. Default is false")
+	public void setSuppressPunctuations(boolean suppressPunctuation) {
+		this.suppressPunctuation = suppressPunctuation;
+	}
+		
+	@Override
+	public boolean isSuppressPunctuations() {
+		return suppressPunctuation;
+	}
+
 	@Override
 	@Parameter(name = "Debug", type = BooleanParameter.class, optional = true, doc = "Flag, that this operator should be debuged.")
 	public void setDebug(boolean debug) {

@@ -23,6 +23,7 @@ public class GeneralOperatorDetailProvider extends AbstractKeyValueGeneralProvid
 		map.put("Hash", String.valueOf(operator.hashCode()));
 		map.put("Owners", determineOwners(operator));
 		map.put("Open", operator.isOpen() ? "true" : "false");
+		map.put("Done", operator.isDone()+"");
 		map.put("Type", determineType(operator));
 		
 		for( String dataName : operator.getProvidedMonitoringData() ) {

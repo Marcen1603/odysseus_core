@@ -308,7 +308,7 @@ public abstract class AbstractPipe<R extends IStreamObject<?>, W extends IStream
 	 * 
 	 * @return true if done can be propagated (Default is true)
 	 */
-	protected boolean isDone() {
+	public boolean isDone() {
 		return this.delegateSink.isDone();
 	}
 

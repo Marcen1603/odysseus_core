@@ -26,6 +26,9 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 public class ThreadedBufferPO<R extends IStreamObject<? extends IMetaAttribute>>
 		extends AbstractPipe<R, R> implements IPhysicalOperatorKeyValueProvider {
 
+	private long elementsRead;
+	private long puncRead;
+	
 	private List<IStreamable> inputBuffer = new ArrayList<>();
 	private List<IStreamable> outputBuffer = new ArrayList<>();
 	final private ReentrantLock lockInput = new ReentrantLock(true);
@@ -72,11 +75,13 @@ public class ThreadedBufferPO<R extends IStreamObject<? extends IMetaAttribute>>
 				}
 				lockOutput.unlock();
 			}
+			started = false;
 		};
 
 	}
 
 	final private long limit;
+	private boolean done;
 
 	public ThreadedBufferPO(long l) {
 		this.limit = l;
@@ -106,6 +111,7 @@ public class ThreadedBufferPO<R extends IStreamObject<? extends IMetaAttribute>>
 	
 	@Override
 	protected void process_next(R object, int port) {
+		elementsRead++;
 		// Start thread
 		
 //		try {
@@ -121,6 +127,7 @@ public class ThreadedBufferPO<R extends IStreamObject<? extends IMetaAttribute>>
 	
 	@Override
 	public void processPunctuation(IPunctuation punctuation, int port) {
+		puncRead++;
 		addObjectToBuffer(punctuation);
 	}
 
@@ -143,6 +150,8 @@ public class ThreadedBufferPO<R extends IStreamObject<? extends IMetaAttribute>>
 
 	@Override
 	protected void process_open() throws OpenFailedException {
+		done = false;
+		elementsRead = 0;
 		inputBuffer.clear();
 		outputBuffer.clear();
 		// Create new thread and start
@@ -162,7 +171,13 @@ public class ThreadedBufferPO<R extends IStreamObject<? extends IMetaAttribute>>
 		lockOutput.lock();
 		drainBuffers();
 		lockOutput.unlock();
-	};
+		done = true;
+	}
+	
+	@Override
+	public boolean isDone() {
+		return done ;
+	}
 
 	@SuppressWarnings("unchecked")
 	private void transferNext(IStreamable element) {
@@ -197,6 +212,8 @@ public class ThreadedBufferPO<R extends IStreamObject<? extends IMetaAttribute>>
 	@Override
 	public Map<String, String> getKeyValues() {
 		Map<String, String> map = new HashMap<>();
+		map.put("Elements processed", elementsRead+"");
+		map.put("Punctuations processed", puncRead+"");
 		map.put("CurrentSize", getElementsStored1()+"");
 		map.put("InputQueue", getInputBufferSize()+"");
 		map.put("OutputQueue", getOutputBufferSize()+"");

@@ -119,7 +119,7 @@ public class AssureOrderPO<K extends ITimeInterval, T extends IStreamObject<K>>
 	}
 
 	@Override
-	protected boolean isDone() {
+	public boolean isDone() {
 		try {
 			return getSubscribedToSource(0).isDone();
 		} catch (ArrayIndexOutOfBoundsException ex) {

@@ -156,10 +156,10 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 			POEventType.PushInit);
 	final private POEvent pushDoneEvent = new POEvent(this,
 			POEventType.PushDone);
-//	final private POEvent pushListInitEvent = new POEvent(this,
-//			POEventType.PushListInit);
-//	final private POEvent pushListDoneEvent = new POEvent(this,
-//			POEventType.PushListDone);
+	// final private POEvent pushListInitEvent = new POEvent(this,
+	// POEventType.PushListInit);
+	// final private POEvent pushListDoneEvent = new POEvent(this,
+	// POEventType.PushListDone);
 	final private POEvent closeInitEvent = new POEvent(this,
 			POEventType.CloseInit);
 	final private POEvent closeDoneEvent = new POEvent(this,
@@ -171,6 +171,9 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 	POEvent unblockedEvent = new POEvent(this, POEventType.Unblocked);
 
 	private Map<String, String> infos = new TreeMap<>();
+
+	// Allow to suppress punctuations
+	private boolean suppressPunctuation;
 
 	// ------------------------------------------------------------------
 
@@ -226,6 +229,11 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 		this.name = name;
 	}
 
+	@Override
+	public void setSuppressPunctuations(boolean suppressPunctuation) {
+		this.suppressPunctuation = suppressPunctuation;
+	}
+	
 	@Override
 	public Map<String, String> getParameterInfos() {
 		return infos;
@@ -383,7 +391,8 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 		}
 	}
 
-	protected void newReceiver(AbstractPhysicalSubscription<ISink<? super T>> sink) {
+	protected void newReceiver(
+			AbstractPhysicalSubscription<ISink<? super T>> sink) {
 		// can be overwritten if needed
 	}
 
@@ -435,10 +444,12 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 
 	@Override
 	public void sendPunctuation(IPunctuation punctuation, int outPort) {
-		for (AbstractPhysicalSubscription<? extends ISink<?>> sub : this.activeSinkSubscriptions) {
-			if (sub.getSourceOutPort() == outPort) {
-				sub.getTarget().processPunctuation(punctuation,
-						sub.getSinkInPort());
+		if (!suppressPunctuation) {
+			for (AbstractPhysicalSubscription<? extends ISink<?>> sub : this.activeSinkSubscriptions) {
+				if (sub.getSourceOutPort() == outPort) {
+					sub.getTarget().processPunctuation(punctuation,
+							sub.getSinkInPort());
+				}
 			}
 		}
 	}
@@ -612,6 +623,11 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 		}
 	}
 
+	@Override
+	public boolean isDone() {
+		return false;
+	}
+
 	// ------------------------------------------------------------------------
 	// BLOCK
 	// ------------------------------------------------------------------------
@@ -745,8 +761,8 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 	@Override
 	final public void unsubscribeSink(ISink<? super T> sink, int sinkInPort,
 			int sourceOutPort, SDFSchema schema) {
-		unsubscribeSink(new ControllablePhysicalSubscription<ISink<? super T>>(sink,
-				sinkInPort, sourceOutPort, schema));
+		unsubscribeSink(new ControllablePhysicalSubscription<ISink<? super T>>(
+				sink, sinkInPort, sourceOutPort, schema));
 	}
 
 	@Override
@@ -770,7 +786,8 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 		activeSinkSubscriptions.clear();
 	}
 
-	public boolean isActive(AbstractPhysicalSubscription<ISink<? super T>> subscription) {
+	public boolean isActive(
+			AbstractPhysicalSubscription<ISink<? super T>> subscription) {
 		return this.activeSinkSubscriptions.contains(subscription);
 	}
 
@@ -954,15 +971,15 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 		return false;
 	}
 
-//	private static Map<Integer, SDFSchema> createCleanClone(
-//			Map<Integer, SDFSchema> old) {
-//		Map<Integer, SDFSchema> copy = new HashMap<Integer, SDFSchema>();
-//		for (Entry<Integer, SDFSchema> e : old.entrySet()) {
-//			copy.put(e.getKey(),
-//					new SDFSchema(e.getValue().getURI(), e.getValue()));
-//		}
-//		return copy;
-//	}
+	// private static Map<Integer, SDFSchema> createCleanClone(
+	// Map<Integer, SDFSchema> old) {
+	// Map<Integer, SDFSchema> copy = new HashMap<Integer, SDFSchema>();
+	// for (Entry<Integer, SDFSchema> e : old.entrySet()) {
+	// copy.put(e.getKey(),
+	// new SDFSchema(e.getValue().getURI(), e.getValue()));
+	// }
+	// return copy;
+	// }
 
 	@Override
 	public SDFMetaAttributeList getMetaAttributeSchema() {

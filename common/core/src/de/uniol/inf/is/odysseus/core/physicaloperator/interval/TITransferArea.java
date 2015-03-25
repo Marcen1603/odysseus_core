@@ -31,17 +31,22 @@ import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamable;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
+import de.uniol.inf.is.odysseus.core.physicaloperator.AbstractTransferArea;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ITransfer;
-import de.uniol.inf.is.odysseus.core.physicaloperator.ITransferArea;
 
 /**
  * @author Jonas Jacobi, Marco Grawunder
  */
 public class TITransferArea<R extends IStreamObject<? extends ITimeInterval>, W extends IStreamObject<? extends ITimeInterval>>
-		implements ITransferArea<R, W> {
+		extends AbstractTransferArea<R, W> {
 
 	private static final long serialVersionUID = -2968616402073295957L;
+	
+	private long elementsRead;
+	private long puncRead;
+	private long elementsWritten;
+	private long puncWritten;
 
 	private class OutputQueueComparator implements
 			Comparator<SerializablePair<IStreamable, Integer>>, Serializable {
@@ -104,6 +109,8 @@ public class TITransferArea<R extends IStreamObject<? extends ITimeInterval>, W 
 	public void init(ITransfer<W> po, int inputPortCount) {
 		this.minTs.clear();
 		this.isDone.clear();
+		elementsRead = 0;
+		elementsWritten = 0;
 		synchronized (outputQueue) {
 			this.watermark = null;
 			this.po = po;
@@ -159,6 +166,7 @@ public class TITransferArea<R extends IStreamObject<? extends ITimeInterval>, W 
 	@Override
 	public void transfer(W object, int toPort) {
 		synchronized (this.outputQueue) {
+			elementsRead++;
 			// watermark is needed if new sources are connected at runtime
 			// if watermark == null no object has ever been transferred --> init
 			// phase
@@ -190,6 +198,7 @@ public class TITransferArea<R extends IStreamObject<? extends ITimeInterval>, W 
 	@Override
 	public void sendPunctuation(IPunctuation punctuation, int toPort) {
 		synchronized (this.outputQueue) {
+			puncRead++;
 			// watermark is needed if new sources are connected at runtime
 			// if watermark == null no object has ever been transferred --> init
 			// phase
@@ -221,6 +230,7 @@ public class TITransferArea<R extends IStreamObject<? extends ITimeInterval>, W 
 					po.sendPunctuation((IPunctuation) elem.getE1(),
 							elem.getE2());
 				} else {
+					elementsWritten++;
 					po.transfer((W) elem.getE1(), elem.getE2());
 				}
 			}
@@ -303,6 +313,7 @@ public class TITransferArea<R extends IStreamObject<? extends ITimeInterval>, W 
 
 						if ((ts.beforeOrEquals(minimum))) {
 							this.outputQueue.poll();
+							puncWritten++;
 							po.sendPunctuation((IPunctuation) elem.getE1(),
 									elem.getE2());
 							lastSendObject = ((IPunctuation) elem.getE1())
@@ -320,6 +331,7 @@ public class TITransferArea<R extends IStreamObject<? extends ITimeInterval>, W 
 							this.outputQueue.poll();
 							lastSendObject = ((W) elem.getE1()).getMetadata()
 									.getStart();
+							elementsWritten++;
 							po.transfer((W) elem.getE1(), elem.getE2());
 							elem = this.outputQueue.peek();
 						} else {
@@ -383,4 +395,23 @@ public class TITransferArea<R extends IStreamObject<? extends ITimeInterval>, W 
 		}
 	}
 
+	@Override
+	public long getElementsWritten() {
+		return elementsWritten;
+	}
+	
+	@Override	
+	public long getPunctuationsWritten() {
+		return puncWritten;
+	}
+	
+	@Override
+	public long getElementsRead() {
+		return elementsRead;
+	}
+	
+	@Override
+	public long getPunctuationsRead() {
+		return puncRead;
+	}
 }

@@ -331,7 +331,7 @@ public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>>
 	}
 
 	@Override
-	protected boolean isDone() {
+	public boolean isDone() {
 		try {
 
 			if (getSubscribedToSource(0).isDone()) {
