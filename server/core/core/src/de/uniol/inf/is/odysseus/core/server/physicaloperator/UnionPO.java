@@ -162,6 +162,7 @@ public class UnionPO<R extends IStreamObject<?>> extends AbstractPipe<R, R>
 		map.put("Punctuations read", transferArea.getPunctuationsRead()+"");
 		map.put("Elements written", transferArea.getElementsWritten()+"");
 		map.put("Punctuations written", transferArea.getPunctuationsWritten()+"");
+		map.put("Punctuations suppressed", transferArea.getPunctuationsSuppressed()+"");
 		map.put("OutputQueueSize", transferArea.size() + "");
 		map.put("Watermark", transferArea.getWatermark() + "");
 		return map;

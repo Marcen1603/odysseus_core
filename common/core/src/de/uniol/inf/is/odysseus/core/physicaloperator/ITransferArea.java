@@ -99,5 +99,7 @@ public interface ITransferArea<R extends IStreamObject<?>, W extends IStreamObje
 	long getPunctuationsWritten();
 
 	long getPunctuationsRead();
+
+	long getPunctuationsSuppressed();
 		
 }

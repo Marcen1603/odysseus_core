@@ -33,4 +33,9 @@ abstract public class AbstractTransferArea<R extends IStreamObject<?>, W extends
 		return -1;
 	}
 	
+	@Override
+	public long getPunctuationsSuppressed() {
+		return -1;
+	}
+	
 }
