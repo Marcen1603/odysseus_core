@@ -156,12 +156,13 @@ public class TITransferArea<R extends IStreamObject<? extends ITimeInterval>, W 
 		if (watermark == null || start.afterOrEquals(watermark)) {
 			newHeartbeat(start, inPort);
 		} else {
-			logger.warn("Removed out of order element!" + object + " - ("
-					+ this.po + "(" + this.po.getName() + ")) watermark is "
-					+ watermark);
+			if (!object.isPunctuation()) {
+				logger.warn("Removed out of order element!" + object + " - ("
+						+ this.po + "(" + this.po.getName()
+						+ ")) watermark is " + watermark);
 
-			System.err.println("REMOVE ME");
-
+				System.err.println("REMOVE ME");
+			}
 		}
 	}
 
@@ -211,10 +212,10 @@ public class TITransferArea<R extends IStreamObject<? extends ITimeInterval>, W 
 						punctuation, toPort));
 				sendData();
 			} else {
-				logger.warn("Out of order element read " + punctuation
-						+ " before last send element " + watermark
-						+ " ! Ignoring" + " - (" + this.po + "(" + po.getName()
-						+ "))");
+				// logger.warn("Out of order element read " + punctuation
+				// + " before last send element " + watermark
+				// + " ! Ignoring" + " - (" + this.po + "(" + po.getName()
+				// + "))");
 			}
 		}
 	}
@@ -317,7 +318,7 @@ public class TITransferArea<R extends IStreamObject<? extends ITimeInterval>, W 
 						if ((ts.beforeOrEquals(minimum))) {
 							this.outputQueue.poll();
 							puncWritten++;
-							// suppress following heartbeats 
+							// suppress following heartbeats
 							if (((IPunctuation) elem.getE1()).isHeartbeat()) {
 								Pair<IStreamable, Integer> elem2;
 								while (((elem2 = outputQueue.peek()) != null)
@@ -426,7 +427,7 @@ public class TITransferArea<R extends IStreamObject<? extends ITimeInterval>, W 
 	public long getPunctuationsSuppressed() {
 		return puncSuppressed;
 	}
-	
+
 	@Override
 	public long getElementsRead() {
 		return elementsRead;
