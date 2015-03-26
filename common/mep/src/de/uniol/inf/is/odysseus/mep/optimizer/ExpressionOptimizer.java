@@ -38,6 +38,7 @@ public final class ExpressionOptimizer {
         RULES.add(new ReduceOrRule());
         RULES.add(new ReduceNotRule());
         RULES.add(new QuineMcCluskeyRule());
+        RULES.add(new SortByComplexityRule());
     }
 
     /**
