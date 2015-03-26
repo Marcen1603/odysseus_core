@@ -21,6 +21,7 @@ import java.util.Map;
 import de.uniol.inf.is.odysseus.script.parser.keyword.ConfigPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.parser.keyword.MetadataPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.parser.keyword.OdysseusDefaultsPreParserKeyword;
+import de.uniol.inf.is.odysseus.script.parser.keyword.OptimizePredicatesPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.parser.keyword.QueryNamePreParserKeyword;
 import de.uniol.inf.is.odysseus.script.parser.keyword.QueryPriorityPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.parser.keyword.ReloadFromLogPreParserKeyword;
@@ -42,6 +43,7 @@ public class KeywordProvider implements IPreParserKeywordProvider {
 		keywords.put(ReloadFromLogPreParserKeyword.RELOADFROMLOG, ReloadFromLogPreParserKeyword.class);		
 		keywords.put(QuerySharingPreParserKeyword.DOQUERYSHARING, QuerySharingPreParserKeyword.class);
 		keywords.put(UseRewritePreParserKeyword.DOREWRITE, UseRewritePreParserKeyword.class);
+        keywords.put(OptimizePredicatesPreParserKeyword.OPTIMIZE_PREDICATES, OptimizePredicatesPreParserKeyword.class);
 		keywords.put(UseDistributePreParserKeyword.DODISTRIBUTE, UseDistributePreParserKeyword.class);
 		keywords.put(UseFragmentationPreParserKeyword.DODATAFRAGMENTATION, UseFragmentationPreParserKeyword.class);
 		keywords.put(UseAdaptionPreParserKeyword.DOADAPT, UseAdaptionPreParserKeyword.class);
