@@ -20,15 +20,20 @@ import java.util.List;
 import java.util.Set;
 import java.util.Stack;
 
+import de.uniol.inf.is.odysseus.core.mep.Constant;
 import de.uniol.inf.is.odysseus.core.mep.IExpression;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.mep.functions.bool.AndOperator;
+import de.uniol.inf.is.odysseus.mep.functions.bool.NotOperator;
 import de.uniol.inf.is.odysseus.mep.functions.bool.OrOperator;
 
 /**
  * Abstract expression optimizer rule.
  * 
  * @author Christian Kuka <christian@kuka.cc>
- * @version $Id$
+ * @version $Id: AbstractExpressionOptimizerRule.java |
+ *          AbstractExpressionOptimizerRule.java |
+ *          AbstractExpressionOptimizerRule.java $
  * @param <E>
  *
  */
@@ -108,6 +113,9 @@ public abstract class AbstractExpressionOptimizerRule<E extends IExpression<?>> 
     }
 
     private IExpression<?> disjunction(List<IExpression<?>> expression, int index) {
+        if (expression.size() == 0) {
+            return new Constant<>(Boolean.FALSE, SDFDatatype.BOOLEAN);
+        }
         if (index + 1 == expression.size()) {
             return expression.get(index);
         }
@@ -128,11 +136,29 @@ public abstract class AbstractExpressionOptimizerRule<E extends IExpression<?>> 
     }
 
     private IExpression<?> conjunction(List<IExpression<?>> expression, int index) {
+        if (expression.size() == 0) {
+            return new Constant<>(Boolean.TRUE, SDFDatatype.BOOLEAN);
+        }
         if (index + 1 == expression.size()) {
             return expression.get(index);
         }
         AndOperator and = new AndOperator();
         and.setArguments(new IExpression[] { expression.get(index), conjunction(expression, index + 1) });
         return and;
+    }
+
+    /**
+     * Checks whether the given expression is a boolean operator.
+     * 
+     * @param expression
+     *            The expression
+     * @return <code>true</code> if the expression is a {@link NotOperator},
+     *         {@link OrOperator}, or {@link AndOperator}.
+     */
+    protected boolean isBooleanOperator(IExpression<?> expression) {
+        if (expression.isFunction()) {
+            return ((expression instanceof NotOperator) || (expression instanceof OrOperator) || (expression instanceof AndOperator));
+        }
+        return false;
     }
 }

@@ -36,9 +36,9 @@ public class ReduceNotRule extends AbstractExpressionOptimizerRule<NotOperator> 
      */
     @Override
     public IExpression<?> execute(NotOperator expression) {
-        IExpression<?> notChild = expression.toFunction().getArgument(0);
-        if (notChild instanceof NotOperator) {
-            return notChild.toFunction().getArgument(0);
+        IExpression<?> child = expression.toFunction().getArgument(0);
+        if (child instanceof NotOperator) {
+            return child.toFunction().getArgument(0);
         }
         return expression;
     }

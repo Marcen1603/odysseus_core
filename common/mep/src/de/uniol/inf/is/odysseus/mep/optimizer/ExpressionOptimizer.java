@@ -19,10 +19,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.mep.IExpression;
+import de.uniol.inf.is.odysseus.mep.functions.bool.AndOperator;
+import de.uniol.inf.is.odysseus.mep.functions.bool.NotOperator;
+import de.uniol.inf.is.odysseus.mep.functions.bool.OrOperator;
 
 /**
  * @author Christian Kuka <christian@kuka.cc>
- * @version $Id$
+ * @version $Id: ExpressionOptimizer.java | ExpressionOptimizer.java |
+ *          ExpressionOptimizer.java $
  *
  */
 public final class ExpressionOptimizer {
@@ -31,43 +35,54 @@ public final class ExpressionOptimizer {
         RULES.add(new ReduceAndRule());
         RULES.add(new ReduceOrRule());
         RULES.add(new ReduceNotRule());
-        RULES.add(new DeMorganRule());
+        RULES.add(new QuineMcCluskeyRule());
+    }
+
+    public static IExpression<?> optimize(IExpression<?> expression) {
+        if ((expression.isConstant()) || (expression.isVariable())) {
+            return expression;
+        }
+        if ((expression instanceof NotOperator) || (expression instanceof AndOperator) || (expression instanceof OrOperator)) {
+            if (expression instanceof NotOperator) {
+                IExpression<?> child = expression.toFunction().getArgument(0);
+                if (child != null) {
+                    child = optimize(child);
+                }
+                expression.toFunction().setArguments(new IExpression<?>[] { child });
+            }
+            else {
+                IExpression<?> left = expression.toFunction().getArgument(0);
+                if (left != null) {
+                    left = optimize(left);
+                }
+                IExpression<?> right = expression.toFunction().getArgument(1);
+                if (right != null) {
+                    right = optimize(right);
+                }
+                expression.toFunction().setArguments(new IExpression<?>[] { left, right });
+            }
+            IExpression<?> expr = expression;
+            String tmpExpr = "";
+            while (!expr.toString().equals(tmpExpr)) {
+                tmpExpr = expr.toString();
+                for (IExpressionOptimizerRule<?> rule : RULES) {
+                    expr = rule.executeRule(expr);
+                }
+            }
+            return expr;
+        }
+        return expression;
     }
 
     public static IExpression<?> toDisjunctiveNormalForm(IExpression<?> expression) {
-        IExpression<?> expr = expression;
         DisjunctiveNormalFormRule disjunctiveNormalFormRule = new DisjunctiveNormalFormRule();
-
-        List<IExpressionOptimizerRule<?>> rules = new ArrayList<>();
-        rules.addAll(RULES);
-        rules.add(disjunctiveNormalFormRule);
-
-        String tmpExpr = "";
-        while (!expr.toString().equals(tmpExpr)) {
-            tmpExpr = expr.toString();
-            for (IExpressionOptimizerRule<?> rule : rules) {
-                expr = rule.executeRule(expr);
-            }
-        }
-        // expr = disjunctiveNormalFormRule.executeRule(expr);
-        return expr;
+        IExpression<?> dnf = disjunctiveNormalFormRule.executeRule(expression);
+        return optimize(dnf);
     }
 
     public static IExpression<?> toConjunctiveNormalForm(IExpression<?> expression) {
-        IExpression<?> expr = expression;
         ConjunctiveNormalFormRule conjunctiveNormalFormRule = new ConjunctiveNormalFormRule();
-
-        List<IExpressionOptimizerRule<?>> rules = new ArrayList<>();
-        rules.addAll(RULES);
-        rules.add(conjunctiveNormalFormRule);
-        String tmpExpr = "";
-        while (!expr.toString().equals(tmpExpr)) {
-            tmpExpr = expr.toString();
-            for (IExpressionOptimizerRule<?> rule : rules) {
-                expr = rule.executeRule(expr);
-            }
-        }
-        // expr = conjunctiveNormalFormRule.executeRule(expr);
-        return expr;
+        IExpression<?> cnf = conjunctiveNormalFormRule.executeRule(expression);
+        return optimize(cnf);
     }
 }

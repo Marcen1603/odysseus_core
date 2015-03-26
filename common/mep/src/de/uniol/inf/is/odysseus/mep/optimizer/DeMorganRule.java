@@ -41,9 +41,10 @@ public class DeMorganRule extends AbstractExpressionOptimizerRule<NotOperator> {
      */
     @Override
     public IExpression<?> execute(NotOperator expression) {
-        IExpression<?> expr = expression.toFunction().getArgument(0);
-        if (expr instanceof AndOperator) {
-            Set<IExpression<?>> split = getConjunctiveSplit(expr);
+        IExpression<?> leaf = expression.toFunction().getArgument(0);
+
+        if (leaf instanceof AndOperator) {
+            Set<IExpression<?>> split = getConjunctiveSplit(leaf);
             List<IExpression<?>> clauses = new ArrayList<>();
             for (IExpression<?> literal : split) {
                 NotOperator operator = new NotOperator();
@@ -52,8 +53,8 @@ public class DeMorganRule extends AbstractExpressionOptimizerRule<NotOperator> {
             }
             return disjunction(clauses);
         }
-        if (expr instanceof OrOperator) {
-            Set<IExpression<?>> split = getDisjunctiveSplit(expr);
+        if (leaf instanceof OrOperator) {
+            Set<IExpression<?>> split = getDisjunctiveSplit(leaf);
             List<IExpression<?>> clauses = new ArrayList<>();
             for (IExpression<?> literal : split) {
                 NotOperator operator = new NotOperator();

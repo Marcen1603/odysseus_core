@@ -15,8 +15,6 @@
  */
 package de.uniol.inf.is.odysseus.mep.optimizer;
 
-import java.util.Set;
-
 import de.uniol.inf.is.odysseus.core.mep.Constant;
 import de.uniol.inf.is.odysseus.core.mep.IExpression;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
@@ -41,16 +39,32 @@ public class ReduceOrRule extends AbstractExpressionOptimizerRule<OrOperator> {
      */
     @Override
     public IExpression<?> execute(OrOperator expression) {
-        Set<IExpression<?>> split = getDisjunctiveSplit(expression);
-        for (IExpression<?> expr : split) {
-            if (expr instanceof NotOperator) {
-                IExpression<?> notChild = expr.toFunction().getArgument(0);
-                for (IExpression<?> child : split) {
-                    if (child.equals(notChild)) {
-                        return new Constant<>(Boolean.TRUE, SDFDatatype.BOOLEAN);
-                    }
-                }
+        IExpression<?> left = expression.getArgument(0);
+        IExpression<?> right = expression.getArgument(1);
+        if (left instanceof NotOperator) {
+            if (left.toFunction().getArgument(0).equals(right)) {
+                return new Constant<>(Boolean.TRUE, SDFDatatype.BOOLEAN);
             }
+        }
+        if (right instanceof NotOperator) {
+            if (right.toFunction().getArgument(0).equals(left)) {
+                return new Constant<>(Boolean.TRUE, SDFDatatype.BOOLEAN);
+            }
+        }
+        if (left.toString().equals(right.toString())) {
+            return left;
+        }
+        if ((left.isConstant()) && (left.toConstant().getValue().equals(Boolean.FALSE))) {
+            return right;
+        }
+        if ((right.isConstant()) && (right.toConstant().getValue().equals(Boolean.FALSE))) {
+            return left;
+        }
+        if ((left.isConstant()) && (left.toConstant().getValue().equals(Boolean.TRUE))) {
+            return new Constant<>(Boolean.TRUE, SDFDatatype.BOOLEAN);
+        }
+        if ((right.isConstant()) && (right.toConstant().getValue().equals(Boolean.TRUE))) {
+            return new Constant<>(Boolean.TRUE, SDFDatatype.BOOLEAN);
         }
         return expression;
     }

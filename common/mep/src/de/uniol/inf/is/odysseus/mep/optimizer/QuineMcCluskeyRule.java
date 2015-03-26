@@ -17,13 +17,17 @@ package de.uniol.inf.is.odysseus.mep.optimizer;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.Stack;
 
 import de.uniol.inf.is.odysseus.core.mep.IExpression;
 import de.uniol.inf.is.odysseus.core.mep.Variable;
+import de.uniol.inf.is.odysseus.mep.functions.bool.AndOperator;
 import de.uniol.inf.is.odysseus.mep.functions.bool.NotOperator;
 import de.uniol.inf.is.odysseus.mep.functions.bool.OrOperator;
 
@@ -45,7 +49,7 @@ public class QuineMcCluskeyRule extends AbstractExpressionOptimizerRule<OrOperat
     public IExpression<?> execute(OrOperator expression) {
         // Create disjunctive split of the expression
         Set<IExpression<?>> split = getDisjunctiveSplit(expression);
-        Truthtable truthtable = new Truthtable(expression.getVariables());
+        Truthtable truthtable = new Truthtable(getVariables(expression));
         // Add terms to truthtable
         for (IExpression<?> s : split) {
             truthtable.add(s);
@@ -65,9 +69,36 @@ public class QuineMcCluskeyRule extends AbstractExpressionOptimizerRule<OrOperat
         return expression instanceof OrOperator;
     }
 
+    /**
+     * Returns a set of all variables, constants, and non boolean functions
+     * 
+     * @param expression
+     *            The expression
+     * @return A set of variables, constants, and non boolean functions
+     */
+    private Collection<IExpression<?>> getVariables(IExpression<?> expression) {
+        Set<IExpression<?>> variables = new HashSet<>();
+        Stack<IExpression<?>> stack = new Stack<>();
+        stack.push(expression);
+        while (!stack.isEmpty()) {
+            IExpression<?> expr = stack.pop();
+            if (expr instanceof NotOperator) {
+                stack.push(expr.toFunction().getArgument(0));
+            }
+            else if ((expr instanceof AndOperator) || (expr instanceof OrOperator)) {
+                stack.push(expr.toFunction().getArgument(0));
+                stack.push(expr.toFunction().getArgument(1));
+            }
+            else {
+                variables.add(expr);
+            }
+        }
+        return variables;
+    }
+
     private class Truthtable {
         /** List of available variables used as index. */
-        List<Variable> variables;
+        List<IExpression<?>> variables;
         /** Disjunctive terms. */
         List<Entry> entries;
         /** Number of original terms in truthtable. */
@@ -80,7 +111,7 @@ public class QuineMcCluskeyRule extends AbstractExpressionOptimizerRule<OrOperat
          * @param variables
          *            List of used {@link Variable}.
          */
-        public Truthtable(Set<Variable> variables) {
+        public Truthtable(Collection<IExpression<?>> variables) {
             this.entries = new ArrayList<>();
             this.variables = new ArrayList<>(variables.size());
             this.variables.addAll(variables);
@@ -130,13 +161,15 @@ public class QuineMcCluskeyRule extends AbstractExpressionOptimizerRule<OrOperat
                             for (IExpression<?> s : split) {
                                 int index = -1;
                                 if (s instanceof NotOperator) {
-                                    index = this.variables.indexOf(s.toFunction().getArgument(0).toVariable());
+                                    index = this.variables.indexOf(s.toFunction().getArgument(0));
                                 }
-                                else {
-                                    index = this.variables.indexOf(s.toVariable());
+                                else if (this.variables.contains(s)) {
+                                    index = this.variables.indexOf(s);
                                 }
-                                if (this.entries.get(i).bitString[index] == this.entries.get(j).bitString[index]) {
-                                    newMinTerm.add(s);
+                                if (index >= 0) {
+                                    if (this.entries.get(i).bitString[index] == this.entries.get(j).bitString[index]) {
+                                        newMinTerm.add(s);
+                                    }
                                 }
                             }
                             int[] base = new int[this.entries.get(i).base.length + this.entries.get(j).base.length];
@@ -228,10 +261,10 @@ public class QuineMcCluskeyRule extends AbstractExpressionOptimizerRule<OrOperat
                 Set<IExpression<?>> split = getConjunctiveSplit(term);
                 for (IExpression<?> s : split) {
                     if (s instanceof NotOperator) {
-                        this.bitString[Truthtable.this.variables.indexOf(s.toFunction().getArgument(0).toVariable())] = '0';
+                        this.bitString[Truthtable.this.variables.indexOf(s.toFunction().getArgument(0))] = '0';
                     }
-                    else {
-                        this.bitString[Truthtable.this.variables.indexOf(s.toVariable())] = '1';
+                    else if (Truthtable.this.variables.contains(s)) {
+                        this.bitString[Truthtable.this.variables.indexOf(s)] = '1';
                     }
                 }
                 for (int i = 0; i < this.bitString.length; i++) {

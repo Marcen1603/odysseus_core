@@ -33,7 +33,8 @@ import de.uniol.inf.is.odysseus.mep.MEP;
  * Test application for the expression optimizer.
  * 
  * @author Christian Kuka <christian@kuka.cc>
- * @version $Id$
+ * @version $Id: TestExpressionOptimizer.java | TestExpressionOptimizer.java |
+ *          TestExpressionOptimizer.java $
  *
  */
 public class TestExpressionOptimizer {
@@ -70,20 +71,19 @@ public class TestExpressionOptimizer {
                     break;
                 }
                 IExpression<?> expression = MEP.getInstance().parse(line);
-                System.out.println(expression);
+                System.out.println("<- " + expression);
+                System.out.println("Optimized: " + ExpressionOptimizer.optimize(expression));
 
-                QuineMcCluskeyRule QuineMcCluskeyRule = new QuineMcCluskeyRule();
-                System.out.println("QuineMcCluskey: " + QuineMcCluskeyRule.executeRule(expression));
+                System.out.println("DNF: " + ExpressionOptimizer.toDisjunctiveNormalForm(expression));
 
-                System.out.println("Disjunctive: " + ExpressionOptimizer.toDisjunctiveNormalForm(expression));
-
-                System.out.println("Conjunctive: " + ExpressionOptimizer.toConjunctiveNormalForm(expression));
+                System.out.println("CNF: " + ExpressionOptimizer.toConjunctiveNormalForm(expression));
             }
             catch (Throwable t) {
                 t.printStackTrace();
             }
         }
     }
+
 
     private static List<Class<?>> getClasses(File packageURL, String packageName) {
         List<Class<?>> classes = new ArrayList<>();
