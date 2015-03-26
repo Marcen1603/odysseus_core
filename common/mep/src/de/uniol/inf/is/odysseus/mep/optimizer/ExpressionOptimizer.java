@@ -24,6 +24,8 @@ import de.uniol.inf.is.odysseus.mep.functions.bool.NotOperator;
 import de.uniol.inf.is.odysseus.mep.functions.bool.OrOperator;
 
 /**
+ * Boolean expression optimizer
+ * 
  * @author Christian Kuka <christian@kuka.cc>
  * @version $Id: ExpressionOptimizer.java | ExpressionOptimizer.java |
  *          ExpressionOptimizer.java $
@@ -38,6 +40,13 @@ public final class ExpressionOptimizer {
         RULES.add(new QuineMcCluskeyRule());
     }
 
+    /**
+     * Optimize the given expression by applying different optimization rules.
+     * 
+     * @param expression
+     *            The expression
+     * @return The optimized expression
+     */
     public static IExpression<?> optimize(IExpression<?> expression) {
         if ((expression.isConstant()) || (expression.isVariable())) {
             return expression;
@@ -74,12 +83,26 @@ public final class ExpressionOptimizer {
         return expression;
     }
 
+    /**
+     * Transforms the given expression into its disjunctive normal form.
+     * 
+     * @param expression
+     *            The expression
+     * @return The disjunctive normal form of the expression
+     */
     public static IExpression<?> toDisjunctiveNormalForm(IExpression<?> expression) {
         DisjunctiveNormalFormRule disjunctiveNormalFormRule = new DisjunctiveNormalFormRule();
         IExpression<?> dnf = disjunctiveNormalFormRule.executeRule(expression);
         return optimize(dnf);
     }
 
+    /**
+     * Transforms the given expression into its conjunctive normal form.
+     * 
+     * @param expression
+     *            The expression
+     * @return The conjunctive normal form of the expression
+     */
     public static IExpression<?> toConjunctiveNormalForm(IExpression<?> expression) {
         ConjunctiveNormalFormRule conjunctiveNormalFormRule = new ConjunctiveNormalFormRule();
         IExpression<?> cnf = conjunctiveNormalFormRule.executeRule(expression);
