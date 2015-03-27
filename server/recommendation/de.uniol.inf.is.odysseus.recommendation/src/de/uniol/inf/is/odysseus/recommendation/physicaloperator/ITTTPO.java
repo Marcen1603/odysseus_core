@@ -18,6 +18,7 @@ package de.uniol.inf.is.odysseus.recommendation.physicaloperator;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 
@@ -57,7 +58,7 @@ public class ITTTPO<M extends ITimeInterval> extends
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see
 	 * de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSource#
 	 * getName()
@@ -79,5 +80,19 @@ public class ITTTPO<M extends ITimeInterval> extends
 			final int port) {
 		// TODO Auto-generated method stub
 
+	}/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe#
+	 * isSemanticallyEqual
+	 * (de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator)
+	 */
+
+	@Override
+	public boolean isSemanticallyEqual(final IPhysicalOperator ipo) {
+		if (ipo instanceof ITTTPO) {
+			return true;
+		}
+		return super.isSemanticallyEqual(ipo);
 	}
 }

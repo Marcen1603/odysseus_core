@@ -30,7 +30,7 @@ import de.uniol.inf.is.odysseus.recommendation.util.TupleSchemaHelper;
  *
  */
 public class PredictRatingPO<M extends ITimeInterval, U, I> extends
-		AbstractPipe<Tuple<M>, Tuple<M>> {
+		AbstractPipe<Tuple<M>, Tuple<M>> implements Cloneable {
 
 	/**
 	 * @author Cornelius Ludmann

@@ -19,6 +19,7 @@ import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.machine_learning.learner.Learner;
 import de.uniol.inf.is.odysseus.recommendation.model.rating_predictor.RatingPredictor;
+import de.uniol.inf.is.odysseus.recommendation.model.recommendation_candidates_model.RecommendationCandidates;
 
 /**
  * A {@code RecommendationLearner} learns a new model for a recommendation task.
@@ -37,11 +38,11 @@ import de.uniol.inf.is.odysseus.recommendation.model.rating_predictor.RatingPred
  *            Type of the ratings/predictions.
  */
 public interface RecommendationLearner<T extends IStreamObject<M>, M extends IMetaAttribute, U, I, P>
-extends Learner<T, M, P> {
+		extends Learner<T, M, P> {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see de.uniol.inf.is.odysseus.machine_learning.learner.Learner#getModel()
 	 */
 	@Override
@@ -49,11 +50,13 @@ extends Learner<T, M, P> {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see
 	 * de.uniol.inf.is.odysseus.machine_learning.learner.Learner#getModel(boolean
 	 * )
 	 */
 	@Override
 	public RatingPredictor<T, M, U, I, P> getModel(boolean train);
+
+	RecommendationCandidates<U, I> getRecommendationCandidatesModel();
 }

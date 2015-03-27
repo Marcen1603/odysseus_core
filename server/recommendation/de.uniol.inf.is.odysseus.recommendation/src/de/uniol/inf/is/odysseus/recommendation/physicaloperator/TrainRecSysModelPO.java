@@ -35,14 +35,13 @@ import de.uniol.inf.is.odysseus.recommendation.model.rating_predictor.ConstantVa
 import de.uniol.inf.is.odysseus.recommendation.model.rating_predictor.RatingPredictor;
 import de.uniol.inf.is.odysseus.recommendation.model.recommendation_candidates_model.ImmutableRecommendationCandidatesSet;
 import de.uniol.inf.is.odysseus.recommendation.model.recommendation_candidates_model.RecommendationCandidates;
-import de.uniol.inf.is.odysseus.recommendation.model.recommendation_candidates_model.builder.TupleBasedRecommendationCandidatesBuilder;
 
 /**
  * @author Cornelius Ludmann
  *
  */
 public class TrainRecSysModelPO<M extends ITimeInterval, U, I, P> extends
-		AbstractPipe<Tuple<M>, Tuple<M>> {
+		AbstractPipe<Tuple<M>, Tuple<M>> implements Cloneable {
 
 	protected static Logger logger = LoggerFactory
 			.getLogger(TrainRecSysModelPO.class);
@@ -89,10 +88,41 @@ public class TrainRecSysModelPO<M extends ITimeInterval, U, I, P> extends
 	 */
 	private final RecommendationLearner<Tuple<M>, M, U, I, P> learner;
 
+	private final boolean outputRecomCandObj;
+
 	/**
 	 *
 	 */
-	private TupleBasedRecommendationCandidatesBuilder<Tuple<M>, M, U, I> recommCandBuilder = null;
+	// private TupleBasedRecommendationCandidatesBuilder<Tuple<M>, M, U, I>
+	// recommCandBuilder = null;
+
+	/**
+	 * Constructor.
+	 *
+	 * @param learner
+	 *            The learner that should be used.
+	 * @param outputRecommendationCandidatesModels
+	 * @param recommCandBuilder
+	 *            The builder for {@linkplain RecommendationCandidates}.
+	 *            <code>null</code> is allowed. If <code>null</code>, no
+	 *            {@linkplain RecommendationCandidates} will be transfered.
+	 */
+	public TrainRecSysModelPO(
+			final RecommendationLearner<Tuple<M>, M, U, I, P> learner/*
+																	 * , final
+																	 * TupleBasedRecommendationCandidatesBuilder
+																	 * <
+																	 * Tuple<M>,
+																	 * M, U, I>
+																	 * recommCandBuilder
+																	 */) {
+		if (learner == null) {
+			throw new NullPointerException("learner needs to be not null");
+		}
+		this.learner = learner;
+		this.outputRecomCandObj = true;
+		// this.recommCandBuilder = recommCandBuilder;
+	}
 
 	/**
 	 * Constructor.
@@ -107,12 +137,12 @@ public class TrainRecSysModelPO<M extends ITimeInterval, U, I, P> extends
 	 */
 	public TrainRecSysModelPO(
 			final RecommendationLearner<Tuple<M>, M, U, I, P> learner,
-			final TupleBasedRecommendationCandidatesBuilder<Tuple<M>, M, U, I> recommCandBuilder) {
+			final boolean outputRecomCandObj) {
 		if (learner == null) {
 			throw new NullPointerException("learner needs to be not null");
 		}
 		this.learner = learner;
-		this.recommCandBuilder = recommCandBuilder;
+		this.outputRecomCandObj = outputRecomCandObj;
 	}
 
 	/**
@@ -123,7 +153,8 @@ public class TrainRecSysModelPO<M extends ITimeInterval, U, I, P> extends
 	public TrainRecSysModelPO(
 			final TrainRecSysModelPO<M, U, I, P> recommendationLearnPO) {
 		this.learner = recommendationLearnPO.learner;
-		this.recommCandBuilder = recommendationLearnPO.recommCandBuilder;
+		this.outputRecomCandObj = recommendationLearnPO.outputRecomCandObj;
+		// this.recommCandBuilder = recommendationLearnPO.recommCandBuilder;
 		// TODO: save copy of fields?
 	}
 
@@ -201,10 +232,9 @@ public class TrainRecSysModelPO<M extends ITimeInterval, U, I, P> extends
 					 * from the start of the new learning tuples to the start of
 					 * the new arrived tuple.
 					 */
-					final RatingPredictor<Tuple<M>, M, U, I, P> model = this.learner
-							.getModel(true);
-					transferNewModel(model, this.recommCandBuilder.build(),
-							this.currentBufferingPointInTime, ts, metadata);
+					createAndTransferNewModel(this.currentBufferingPointInTime,
+							ts, metadata);
+
 				} else {
 
 					/*
@@ -239,12 +269,10 @@ public class TrainRecSysModelPO<M extends ITimeInterval, U, I, P> extends
 								 * time of the arrived tuple, the last model
 								 * interval of [startP, ts) is reached.
 								 */
-								final RatingPredictor<Tuple<M>, M, U, I, P> model = this.learner
-										.getModel(true);
+								createAndTransferNewModel(
+										this.currentBufferingPointInTime, ts,
+										metadata);
 
-								transferNewModel(model,
-										this.recommCandBuilder.build(), startP,
-										ts, metadata);
 								if (endP.equals(ts)) {
 									/*
 									 * If endP is equals the start of time of
@@ -260,11 +288,9 @@ public class TrainRecSysModelPO<M extends ITimeInterval, U, I, P> extends
 								break;
 							} else {
 
-								final RatingPredictor<Tuple<M>, M, U, I, P> model = this.learner
-										.getModel(true);
-								transferNewModel(model,
-										this.recommCandBuilder.build(), startP,
-										endP, metadata);
+								createAndTransferNewModel(
+										this.currentBufferingPointInTime, ts,
+										metadata);
 
 								/*
 								 * Remove the decaying tuples for the next
@@ -300,16 +326,42 @@ public class TrainRecSysModelPO<M extends ITimeInterval, U, I, P> extends
 	}
 
 	/**
+	 * @param currentBufferingPointInTime2
+	 * @param ts
+	 * @param metadata
+	 */
+	private void createAndTransferNewModel(
+			final PointInTime currentBufferingPointInTime,
+			final PointInTime ts, final M metadata) {
+
+		final long startOfModelLearning = System.currentTimeMillis();
+
+		final RatingPredictor<Tuple<M>, M, U, I, P> model = this.learner
+				.getModel(true);
+
+		final long endOfModelLearning = System.currentTimeMillis();
+
+		final RecommendationCandidates<U, I> recommCandModel = this.outputRecomCandObj ? this.learner
+				.getRecommendationCandidatesModel() : null;
+
+		final long endOfRecomModelLearning = System.currentTimeMillis();
+
+		transferNewModel(model, recommCandModel, currentBufferingPointInTime,
+				ts, metadata, endOfModelLearning - startOfModelLearning,
+				endOfRecomModelLearning - endOfModelLearning);
+	}
+
+	/**
 	 *
 	 * @param decayingLearningTuples
 	 */
 	private void removeLearningTuplesFromLearners(
 			final Set<Tuple<M>> decayingLearningTuples) {
 		this.learner.removeLearningData(decayingLearningTuples);
-
-		if (this.recommCandBuilder != null) {
-			this.recommCandBuilder.removeRatedItems(decayingLearningTuples);
-		}
+		//
+		// if (this.recommCandBuilder != null) {
+		// this.recommCandBuilder.removeRatedItems(decayingLearningTuples);
+		// }
 	}
 
 	/**
@@ -319,10 +371,10 @@ public class TrainRecSysModelPO<M extends ITimeInterval, U, I, P> extends
 	private void addLearningTuplesToLearners(
 			final Set<Tuple<M>> newLearningTuples) {
 		this.learner.addLearningData(newLearningTuples);
-
-		if (this.recommCandBuilder != null) {
-			this.recommCandBuilder.addRatedItems(newLearningTuples);
-		}
+		//
+		// if (this.recommCandBuilder != null) {
+		// this.recommCandBuilder.addRatedItems(newLearningTuples);
+		// }
 	}
 
 	/**
@@ -347,12 +399,15 @@ public class TrainRecSysModelPO<M extends ITimeInterval, U, I, P> extends
 	 * @param metadataCopy
 	 *            A metadata object that is used for the model (after adjusting
 	 *            start and end).
+	 * @param recomCandModelLearningDuration
+	 * @param modelLearningDuration
 	 */
 	private void transferNewModel(
 			final RatingPredictor<Tuple<M>, M, U, I, P> model,
 			final RecommendationCandidates<U, I> recommendationCandidatesModel,
 			final PointInTime startP, final PointInTime endP,
-			final M metadataCopy) {
+			final M metadataCopy, final long modelLearningDuration,
+			final long recomCandModelLearningDuration) {
 		if (logger.isDebugEnabled()) {
 			logger.debug("new model for time span: [" + startP + ", " + endP
 					+ "): " + model);
@@ -367,6 +422,8 @@ public class TrainRecSysModelPO<M extends ITimeInterval, U, I, P> extends
 		}
 		modelTuple.setMetadata(metadataCopy);
 		modelTuple.getMetadata().setStartAndEnd(startP, endP);
+		modelTuple
+				.setMetadata("model learning duration", modelLearningDuration);
 		transfer(modelTuple);
 
 		@SuppressWarnings("unchecked")
@@ -380,6 +437,8 @@ public class TrainRecSysModelPO<M extends ITimeInterval, U, I, P> extends
 		}
 		recommCandTuple.setMetadata(metadataCopy2);
 		recommCandTuple.getMetadata().setStartAndEnd(startP, endP);
+		recommCandTuple.setMetadata("recomm cand model learning",
+				recomCandModelLearningDuration);
 		transfer(recommCandTuple, 1);
 	}
 
@@ -416,9 +475,9 @@ public class TrainRecSysModelPO<M extends ITimeInterval, U, I, P> extends
 		this.newLearningTuples = new LinkedHashSet<>();
 		this.decayingLearningTuples = new TreeMap<>();
 		this.learner.clear();
-		if (this.recommCandBuilder != null) {
-			this.recommCandBuilder.clear();
-		}
+		// if (this.recommCandBuilder != null) {
+		// this.recommCandBuilder.clear();
+		// }
 	}
 
 	/*

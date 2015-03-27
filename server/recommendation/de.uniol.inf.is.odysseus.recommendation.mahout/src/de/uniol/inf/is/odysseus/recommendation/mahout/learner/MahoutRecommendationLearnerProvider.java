@@ -23,8 +23,6 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.recommendation.learner.RecommendationLearner;
 import de.uniol.inf.is.odysseus.recommendation.learner.TupleBasedRecommendationLearnerProvider;
-import de.uniol.inf.is.odysseus.recommendation.model.recommendation_candidates_model.builder.AllUnratedItemsByUserBuilder;
-import de.uniol.inf.is.odysseus.recommendation.model.recommendation_candidates_model.builder.TupleBasedRecommendationCandidatesBuilder;
 import de.uniol.inf.is.odysseus.recommendation.physicaloperator.TrainRecSysModelPO;
 
 /**
@@ -97,16 +95,17 @@ public class MahoutRecommendationLearnerProvider
 			SDFSchema inputschema, SDFAttribute userAttribute,
 			SDFAttribute itemAttribute, SDFAttribute ratingAttribute,
 			Map<String, String> options, final boolean outputRecomCandObj) {
-		TupleBasedRecommendationCandidatesBuilder<Tuple<ITimeInterval>, ITimeInterval, Long, Long> recommCandBuilder = null;
-		if (outputRecomCandObj) {
-			recommCandBuilder = new AllUnratedItemsByUserBuilder<>(inputschema,
-					userAttribute, itemAttribute);
-		}
+		// TupleBasedRecommendationCandidatesBuilder<Tuple<ITimeInterval>,
+		// ITimeInterval, Long, Long> recommCandBuilder = null;
+		// if (outputRecomCandObj) {
+		// recommCandBuilder = new AllUnratedItemsByUserBuilder<>(inputschema,
+		// userAttribute, itemAttribute);
+		// }
 		final RecommendationLearner<Tuple<ITimeInterval>, ITimeInterval, Long, Long, Double> learner = newInstanceOfLearner(
 				inputschema, userAttribute, itemAttribute, ratingAttribute,
 				options);
 		final TrainRecSysModelPO<ITimeInterval, Long, Long, Double> po = new TrainRecSysModelPO<>(
-				learner, recommCandBuilder);
+				learner, outputRecomCandObj);
 		return po;
 	}
 

@@ -25,6 +25,7 @@ import de.uniol.inf.is.odysseus.recommendation.model.recommendation_candidates_m
  * @author Cornelius Ludmann
  *
  */
+@Deprecated
 public interface TupleBasedRecommendationCandidatesBuilder<T extends Tuple<M>, M extends IMetaAttribute, U, I> {
 
 	/**

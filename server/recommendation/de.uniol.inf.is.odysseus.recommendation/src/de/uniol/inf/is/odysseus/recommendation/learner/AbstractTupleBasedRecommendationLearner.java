@@ -15,6 +15,17 @@
  */
 package de.uniol.inf.is.odysseus.recommendation.learner;
 
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+
+import com.google.common.collect.ConcurrentHashMultiset;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Multiset;
+
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
@@ -22,6 +33,8 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.machine_learning.learner.AbstractLearner;
 import de.uniol.inf.is.odysseus.machine_learning.learner.Learner;
 import de.uniol.inf.is.odysseus.recommendation.model.rating_predictor.RatingPredictor;
+import de.uniol.inf.is.odysseus.recommendation.model.recommendation_candidates_model.ImmutableRecommendationCandidatesSet;
+import de.uniol.inf.is.odysseus.recommendation.model.recommendation_candidates_model.RecommendationCandidates;
 
 /**
  * @author Cornelius Ludmann
@@ -32,8 +45,12 @@ public abstract class AbstractTupleBasedRecommendationLearner<T extends Tuple<M>
 		extends AbstractLearner<T, M, P> implements
 		RecommendationLearner<T, M, U, I, P> {
 
-	private final int userAttributeIndex, itemAttributeIndex,
+	protected final int userAttributeIndex, itemAttributeIndex,
 			ratingAttributeIndex;
+
+	protected final Multiset<I> ratedItems = ConcurrentHashMultiset.create();
+	protected final Map<U, Set<I>> ratedItemsByUser = Collections
+			.synchronizedMap(new HashMap<U, Set<I>>());
 
 	/**
 	 * @param inputschema
@@ -107,4 +124,150 @@ public abstract class AbstractTupleBasedRecommendationLearner<T extends Tuple<M>
 	public RatingPredictor<T, M, U, I, P> getModel() {
 		return getModel(true);
 	}
+
+	/*
+	 * (non-Javadoc)
+	 *
+	 * @see de.uniol.inf.is.odysseus.machine_learning.learner.AbstractLearner#
+	 * addLearningData
+	 * (de.uniol.inf.is.odysseus.core.metadata.AbstractStreamObject)
+	 */
+	@Override
+	public void addLearningData(final T newLearningObject) {
+		super.addLearningData(newLearningObject);
+		addRatedItem(getUserInTuple(newLearningObject),
+				getItemInTuple(newLearningObject));
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.uniol.inf.is.odysseus.machine_learning.learner.AbstractLearner#
+	 * addLearningData(java.util.Set)
+	 */
+	@Override
+	public void addLearningData(final Set<T> newLearningObjects) {
+		super.addLearningData(newLearningObjects);
+		for (final T t : newLearningObjects) {
+			addRatedItem(getUserInTuple(t), getItemInTuple(t));
+		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.uniol.inf.is.odysseus.machine_learning.learner.AbstractLearner#
+	 * removeLearningData
+	 * (de.uniol.inf.is.odysseus.core.metadata.AbstractStreamObject)
+	 */
+	@Override
+	public void removeLearningData(final T oldLearningObject) {
+		super.removeLearningData(oldLearningObject);
+		removeRatedItem(getUserInTuple(oldLearningObject),
+				getItemInTuple(oldLearningObject));
+	}
+
+	/*
+	 * (non-Javadoc)
+	 *
+	 * @see de.uniol.inf.is.odysseus.machine_learning.learner.AbstractLearner#
+	 * removeLearningData(java.util.Set)
+	 */
+	@Override
+	public void removeLearningData(final Set<T> oldLearningObjects) {
+		super.removeLearningData(oldLearningObjects);
+		for (final T t : oldLearningObjects) {
+			removeRatedItem(getUserInTuple(t), getItemInTuple(t));
+		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 *
+	 * @see
+	 * de.uniol.inf.is.odysseus.machine_learning.learner.AbstractLearner#clear()
+	 */
+	@Override
+	public void clear() {
+		super.clear();
+		this.ratedItems.clear();
+		this.ratedItemsByUser.clear();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 *
+	 * @see
+	 * de.uniol.inf.is.odysseus.recommendation.learner.RecommendationLearner
+	 * #getRecommendationCandidatesModel()
+	 */
+	@Override
+	public RecommendationCandidates<U, I> getRecommendationCandidatesModel() {
+		final Map<U, ImmutableSet<I>> unratedItemsByUser = new HashMap<>();
+		final Set<I> ratedItemsSet = this.ratedItems.elementSet();
+
+		for (final U user : this.ratedItemsByUser.keySet()) {
+			unratedItemsByUser.put(user,
+					ImmutableSet.copyOf(getUnratedItems(user, ratedItemsSet)));
+		}
+
+		return new ImmutableRecommendationCandidatesSet<U, I>(
+				ImmutableSet.copyOf(ratedItemsSet),
+				ImmutableMap.copyOf(unratedItemsByUser));
+	}
+
+	private void addRatedItemOccurrence(final I ratedItem) {
+		this.ratedItems.add(ratedItem);
+	}
+
+	private void removeRatedItemOccurrence(final I ratedItem) {
+		this.ratedItems.remove(ratedItem);
+	}
+
+	@SuppressWarnings("unused")
+	private void removeAllRatedItemOccurrences(final I ratedItem) {
+		this.ratedItems.setCount(ratedItem, 0);
+	}
+
+	/**
+	 * Adds an item rated by the user. This invokes also
+	 * addRatedItem(ratedItem).
+	 *
+	 * @param user
+	 *            The user.
+	 * @param ratedItem
+	 *            . The item
+	 */
+	private void addRatedItem(final U user, final I ratedItem) {
+		if (user != null && ratedItem != null) {
+			addRatedItemOccurrence(ratedItem);
+			Set<I> ratedItemsByUser = this.ratedItemsByUser.get(user);
+			if (ratedItemsByUser == null) {
+				ratedItemsByUser = new HashSet<>();
+				this.ratedItemsByUser.put(user, ratedItemsByUser);
+			}
+			ratedItemsByUser.add(ratedItem);
+			// this.ratedItemsByUser.put(user, ratedItemsByUser);
+		}
+	}
+
+	private void removeRatedItem(final U user, final I ratedItem) {
+		if (user != null && ratedItem != null) {
+			removeRatedItemOccurrence(ratedItem);
+			final Set<I> ratedItemsByUser = this.ratedItemsByUser.get(user);
+			if (ratedItemsByUser != null) {
+				ratedItemsByUser.remove(ratedItem);
+				if (ratedItemsByUser.size() == 0) {
+					this.ratedItemsByUser.remove(user);
+				}
+			}
+		}
+	}
+
+	private Set<I> getUnratedItems(final U user, final Set<I> ratedItemsSet) {
+		final HashSet<I> unratedItems = new HashSet<>(ratedItemsSet);
+		unratedItems.removeAll(this.ratedItemsByUser.get(user));
+		return unratedItems;
+	}
+
 }

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.uniol.inf.is.odysseus.recommendation.moa;
+package de.uniol.inf.is.odysseus.recommendation.matrix_factorization.learner;
 
 import java.util.Map;
 
@@ -29,19 +29,20 @@ import de.uniol.inf.is.odysseus.recommendation.physicaloperator.TrainRecSysModel
  * @author Cornelius Ludmann
  *
  */
-public class BRISMFLearnerProvider
+public class BasicMFLearnerProvider
 		implements
-		TupleBasedRecommendationLearnerProvider<Tuple<ITimeInterval>, ITimeInterval, Integer, Integer, Double> {
+		TupleBasedRecommendationLearnerProvider<Tuple<ITimeInterval>, ITimeInterval, Long, Long, Double> {
 
 	/*
 	 * (non-Javadoc)
 	 * 
 	 * @see de.uniol.inf.is.odysseus.recommendation.learner.
-	 * TupleBasedRecommendationLearnerProvider #getLearnerName()
+	 * TupleBasedRecommendationLearnerProvider#getLearnerName()
 	 */
 	@Override
 	public String getLearnerName() {
-		return BRISMFRecommendationLearner.NAME;
+		// TODO Auto-generated method stub
+		return "BasicMF";
 	}
 
 	/*
@@ -55,19 +56,19 @@ public class BRISMFLearnerProvider
 	 * de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute, java.util.Map)
 	 */
 	@Override
-	public RecommendationLearner<Tuple<ITimeInterval>, ITimeInterval, Integer, Integer, Double> newInstanceOfLearner(
+	public RecommendationLearner<Tuple<ITimeInterval>, ITimeInterval, Long, Long, Double> newInstanceOfLearner(
 			final SDFSchema inputschema, final SDFAttribute userAttribute,
 			final SDFAttribute itemAttribute,
 			final SDFAttribute ratingAttribute,
 			final Map<String, String> options) {
-		if (!userAttribute.getDatatype().isInteger()) {
+		if (!userAttribute.getDatatype().isLong()) {
 			throw new IllegalArgumentException(
-					"The attribute with the user identifier must by of type 'integer' but is "
+					"The attribute with the user identifier must by of type 'long' but is "
 							+ userAttribute.getDatatype() + ".");
 		}
-		if (!itemAttribute.getDatatype().isInteger()) {
+		if (!itemAttribute.getDatatype().isLong()) {
 			throw new IllegalArgumentException(
-					"The attribute with the item identifier must by of type 'integer' but is "
+					"The attribute with the item identifier must by of type 'long' but is "
 							+ userAttribute.getDatatype() + ".");
 		}
 		if (!ratingAttribute.getDatatype().isDouble()) {
@@ -75,8 +76,8 @@ public class BRISMFLearnerProvider
 					"The attribute with the rating must by of type 'double' but is "
 							+ userAttribute.getDatatype() + ".");
 		}
-		return new BRISMFRecommendationLearner(inputschema, userAttribute,
-				itemAttribute, ratingAttribute);
+		return new BasicMFLearner(inputschema, userAttribute, itemAttribute,
+				ratingAttribute, options);
 	}
 
 	/*
@@ -88,24 +89,21 @@ public class BRISMFLearnerProvider
 	 * .uniol.inf.is.odysseus.core.sdf.schema.SDFSchema,
 	 * de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute,
 	 * de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute,
-	 * de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute, java.util.Map)
+	 * de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute, java.util.Map,
+	 * boolean)
 	 */
 	@Override
-	public TrainRecSysModelPO<ITimeInterval, Integer, Integer, Double> newInstanceOfTrainRecSysModelPO(
-			SDFSchema inputschema, SDFAttribute userAttribute,
-			SDFAttribute itemAttribute, SDFAttribute ratingAttribute,
-			Map<String, String> options, final boolean outputRecomCandObj) {
-		// TupleBasedRecommendationCandidatesBuilder<Tuple<ITimeInterval>,
-		// ITimeInterval, Integer, Integer> recommCandBuilder = null;
-		// if (outputRecomCandObj) {
-		// recommCandBuilder = new AllUnratedItemsByUserBuilder<>(inputschema,
-		// userAttribute, itemAttribute);
-		// }
-		final RecommendationLearner<Tuple<ITimeInterval>, ITimeInterval, Integer, Integer, Double> learner = newInstanceOfLearner(
-				inputschema, userAttribute, itemAttribute, ratingAttribute,
-				options);
-		final TrainRecSysModelPO<ITimeInterval, Integer, Integer, Double> po = new TrainRecSysModelPO<ITimeInterval, Integer, Integer, Double>(
+	public TrainRecSysModelPO<ITimeInterval, Long, Long, Double> newInstanceOfTrainRecSysModelPO(
+			final SDFSchema inputschema, final SDFAttribute userAttribute,
+			final SDFAttribute itemAttribute,
+			final SDFAttribute ratingAttribute,
+			final Map<String, String> options, final boolean outputRecomCandObj) {
+		final RecommendationLearner<Tuple<ITimeInterval>, ITimeInterval, Long, Long, Double> learner = this
+				.newInstanceOfLearner(inputschema, userAttribute,
+						itemAttribute, ratingAttribute, options);
+		final TrainRecSysModelPO<ITimeInterval, Long, Long, Double> po = new TrainRecSysModelPO<>(
 				learner, outputRecomCandObj);
 		return po;
 	}
+
 }

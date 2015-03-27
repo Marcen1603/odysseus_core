@@ -23,8 +23,6 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.recommendation.learner.RecommendationLearner;
 import de.uniol.inf.is.odysseus.recommendation.learner.TupleBasedRecommendationLearnerProvider;
-import de.uniol.inf.is.odysseus.recommendation.model.recommendation_candidates_model.builder.AllUnratedItemsByUserBuilder;
-import de.uniol.inf.is.odysseus.recommendation.model.recommendation_candidates_model.builder.TupleBasedRecommendationCandidatesBuilder;
 import de.uniol.inf.is.odysseus.recommendation.physicaloperator.TrainRecSysModelPO;
 
 /**
@@ -32,12 +30,12 @@ import de.uniol.inf.is.odysseus.recommendation.physicaloperator.TrainRecSysModel
  *
  */
 public class DebugPredictionRecommendationLearnerProvider
-implements
+		implements
 		TupleBasedRecommendationLearnerProvider<Tuple<ITimeInterval>, ITimeInterval, Object, Object, Double> {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see de.uniol.inf.is.odysseus.recommendation.learner.
 	 * TupleBasedRecommendationLearnerProvider #getLearnerName()
 	 */
@@ -48,7 +46,7 @@ implements
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see de.uniol.inf.is.odysseus.recommendation.learner.
 	 * TupleBasedRecommendationLearnerProvider
 	 * #newInstanceOfLearner(de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema,
@@ -68,7 +66,7 @@ implements
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see de.uniol.inf.is.odysseus.recommendation.learner.
 	 * TupleBasedRecommendationLearnerProvider
 	 * #newInstanceOfTrainRecSysModelPO(de
@@ -86,16 +84,17 @@ implements
 			final SDFAttribute itemAttribute,
 			final SDFAttribute ratingAttribute,
 			final Map<String, String> options, final boolean outputRecomCandObj) {
-		TupleBasedRecommendationCandidatesBuilder<Tuple<ITimeInterval>, ITimeInterval, Object, Object> recommCandBuilder = null;
-		if (outputRecomCandObj) {
-			recommCandBuilder = new AllUnratedItemsByUserBuilder<>(inputschema,
-					userAttribute, itemAttribute);
-		}
+		// TupleBasedRecommendationCandidatesBuilder<Tuple<ITimeInterval>,
+		// ITimeInterval, Object, Object> recommCandBuilder = null;
+		// if (outputRecomCandObj) {
+		// recommCandBuilder = new AllUnratedItemsByUserBuilder<>(inputschema,
+		// userAttribute, itemAttribute);
+		// }
 		final RecommendationLearner<Tuple<ITimeInterval>, ITimeInterval, Object, Object, Double> learner = newInstanceOfLearner(
 				inputschema, userAttribute, itemAttribute, ratingAttribute,
 				options);
 		final TrainRecSysModelPO<ITimeInterval, Object, Object, Double> po = new TrainRecSysModelPO<ITimeInterval, Object, Object, Double>(
-				learner, recommCandBuilder);
+				learner, outputRecomCandObj);
 		return po;
 	}
 

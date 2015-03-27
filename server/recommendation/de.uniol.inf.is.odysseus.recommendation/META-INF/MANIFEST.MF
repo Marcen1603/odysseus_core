@@ -34,6 +34,7 @@ Export-Package: de.uniol.inf.is.odysseus.machine_learning.learner;uses:="de.unio
    de.uniol.inf.is.odysseus.recommendation.model.rating_predictor",
  de.uniol.inf.is.odysseus.recommendation.logicaloperator;uses:="de.uniol.inf.is.odysseus.core.server.logicaloperator,de.uniol.inf.is.odysseus.core.sdf.schema,de.uniol.inf.is.odysseus.core.server.logicaloperator.builder",
  de.uniol.inf.is.odysseus.recommendation.model.rating_predictor;uses:="de.uniol.inf.is.odysseus.core.sdf.schema,de.uniol.inf.is.odysseus.machine_learning.model",
+ de.uniol.inf.is.odysseus.recommendation.model.recommendation_candidates_model,
  de.uniol.inf.is.odysseus.recommendation.model.recommendation_candidates_model.builder;uses:="de.uniol.inf.is.odysseus.core.collection,de.uniol.inf.is.odysseus.core.sdf.schema,de.uniol.inf.is.odysseus.recommendation.model.recommendation_candidates_model",
  de.uniol.inf.is.odysseus.recommendation.physicaloperator;
   uses:="de.uniol.inf.is.odysseus.recommendation.model.recommendation_candidates_model.builder,
