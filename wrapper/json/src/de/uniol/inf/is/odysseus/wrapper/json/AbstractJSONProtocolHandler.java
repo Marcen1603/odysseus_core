@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory;
 import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonParser.NumberType;
 import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -121,7 +122,12 @@ abstract public class AbstractJSONProtocolHandler<T extends KeyValueObject<?>> e
 				this.parseArray(jp, jg);
 			} else {
 				if(jp.getCurrentToken().isNumeric()) {
-					jg.writeNumber((Integer) jp.getNumberValue());
+					NumberType numberType = jp.getNumberType();
+					if (numberType == NumberType.LONG) {
+						jg.writeNumber((Long) jp.getNumberValue());
+					} else {
+						jg.writeNumber((Integer) jp.getNumberValue());
+					}
 				} else if (jp.getCurrentToken().isBoolean()) {
 					jg.writeBoolean(jp.getBooleanValue());
 				} else if(jp.getCurrentToken() == null) {
