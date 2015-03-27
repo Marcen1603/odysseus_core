@@ -22,7 +22,7 @@ import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 /**
  * @author Jonas Jacobi
  */ 
-
+@Deprecated
 public class OrPredicate<T> extends ComplexPredicate<T> {
 	private static final long serialVersionUID = -5476180354530944122L;
 

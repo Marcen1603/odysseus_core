@@ -21,6 +21,7 @@ import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 /**
  * @author Jonas Jacobi
  */
+@Deprecated
 public class NotPredicate<T> extends AbstractPredicate<T> {
 	private static final long serialVersionUID = -3214605315259491423L;
 	IPredicate<? super T> predicate;

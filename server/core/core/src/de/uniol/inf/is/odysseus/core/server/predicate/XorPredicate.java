@@ -23,6 +23,7 @@ import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
  * @author Christian Kuka <christian@kuka.cc>
  * 
  */
+@Deprecated
 public class XorPredicate<T> extends ComplexPredicate<T> {
 
     /**

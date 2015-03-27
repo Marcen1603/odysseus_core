@@ -18,6 +18,7 @@ package de.uniol.inf.is.odysseus.core.server.predicate;
 import de.uniol.inf.is.odysseus.core.predicate.AbstractPredicate;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 
+@Deprecated
 public class TruePredicate extends AbstractPredicate<Object> {
 	private static final long serialVersionUID = 7701679660439284127L;
 	private static final TruePredicate instance = new TruePredicate();

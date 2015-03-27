@@ -21,6 +21,7 @@ import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 /**
  * @author Jonas Jacobi
  */
+@Deprecated
 public abstract class ComplexPredicate<T> extends AbstractPredicate<T> {
 	private static final long serialVersionUID = 5112319812675937729L;
 

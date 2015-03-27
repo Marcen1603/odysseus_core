@@ -27,10 +27,9 @@ import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
  * @author Marco Grawunder
  *
  */
-@SuppressWarnings({"rawtypes", "unchecked"})
+@SuppressWarnings({"rawtypes", "unchecked","deprecation"})
 public class ComplexPredicateHelper {
 
-	
 	public static IPredicate createAndPredicate(IPredicate leftPredicate, IPredicate rightPredicate){
 		return new AndPredicate(leftPredicate, rightPredicate);
 	}
