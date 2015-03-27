@@ -84,12 +84,13 @@ public class PlainTextLogSaver implements ILogSaver {
 			m--;
 			n--;
 		}
-		int framesInCommon = trace.length - 1 - m;
 
 		sb.append("Caused by: " + ex.getClass().getSimpleName() + " - " + ex.getMessage());
 		sb.append("\n");
 		for (int i = 0; i <= m; i++)
 			sb.append("\tat " + trace[i]).append("\n");
+		
+		int framesInCommon = trace.length - 1 - m;
 		if (framesInCommon != 0)
 			sb.append("\t... " + framesInCommon + " more").append("\n");
 

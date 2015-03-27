@@ -18,11 +18,11 @@ public class LoggingView extends ViewPart {
 
 	private TabFolder tabs;
 	private Map<TabItem, LogPresenter> presenterMap = Maps.newHashMap();
-	
+
 	@Override
 	public void createPartControl(Composite parent) {
 		tabs = new TabFolder(parent, SWT.BORDER);
-		
+
 		// create all-log tab
 		createNewTab("All logs", false);
 
@@ -33,13 +33,13 @@ public class LoggingView extends ViewPart {
 	private void createNewTab(String title, boolean filtered) {
 		TabItem tabItem = new TabItem(tabs, SWT.NONE);
 		tabItem.setText(title);
-		
+
 		Composite tabComposite = new Composite(tabs, SWT.NONE);
 		tabComposite.setLayout(new FillLayout(SWT.HORIZONTAL));
 		LogPresenter presenter = new LogPresenter(tabComposite, tabItem, filtered);
-		
+
 		tabItem.setControl(tabComposite);
-		
+
 		presenterMap.put(tabItem, presenter);
 	}
 
@@ -66,25 +66,25 @@ public class LoggingView extends ViewPart {
 
 	public void addNewFilterTab() {
 		createNewTab("Logs", true);
-		
-		tabs.setSelection(tabs.getItemCount()-1);
-		
+
+		tabs.setSelection(tabs.getItemCount() - 1);
+
 		tabs.layout();
 	}
 
 	public void removeCurrentTab() {
-		if( !tabs.isDisposed() ) {
+		if (!tabs.isDisposed()) {
 			int selectedTabIndex = tabs.getSelectionIndex();
-			if( selectedTabIndex > 0 ) { // do not remove first one!
+			if (selectedTabIndex > 0) { // do not remove first one!
 				LogPresenter presenter = determineSelectedLogPresenter();
 				presenter.dispose();
-				
+
 				TabItem tabItem = determineSelectedTabItem();
 				tabItem.dispose();
 			}
 		}
 	}
-	
+
 	private LogPresenter determineSelectedLogPresenter() {
 		TabItem tabItem = determineSelectedTabItem();
 		return presenterMap.get(tabItem);

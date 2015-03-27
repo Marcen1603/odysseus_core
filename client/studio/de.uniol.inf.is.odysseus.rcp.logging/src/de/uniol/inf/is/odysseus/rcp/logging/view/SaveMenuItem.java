@@ -28,7 +28,7 @@ public abstract class SaveMenuItem {
 		menuItem.setText(title);
 		menuItem.addSelectionListener(new SelectionAdapter() {
 			@Override
-			public void widgetSelected(SelectionEvent e) {
+			public void widgetSelected(SelectionEvent event) {
 				Shell shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
 
 				FileDialog dlg = new FileDialog(shell, SWT.SAVE);
@@ -46,7 +46,7 @@ public abstract class SaveMenuItem {
 					if (f.exists() && !MessageDialog.openConfirm(shell, "Overwrite file?", "The file '" + file + "' already exists!\nAre you sure you want to overwrite this file?")) {
 						return;
 					}
-					
+
 					doSave(file);
 				}
 			}

@@ -8,7 +8,7 @@ import org.eclipse.swt.graphics.Image;
 import de.uniol.inf.is.odysseus.rcp.ImageManager;
 import de.uniol.inf.is.odysseus.rcp.logging.activator.RCPLoggingPlugIn;
 
-public final class LevelImageMap extends HashMap<Level, Image>{
+public final class LevelImageMap extends HashMap<Level, Image> {
 
 	private static final long serialVersionUID = -5907670177779265856L;
 

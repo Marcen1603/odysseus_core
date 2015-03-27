@@ -8,7 +8,7 @@ import org.apache.log4j.spi.ThrowableInformation;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 
-public final class RCPLogEntry implements Comparable<RCPLogEntry>{
+public final class RCPLogEntry implements Comparable<RCPLogEntry> {
 
 	private static final int DEFAULT_LINE_NUMBER = -1;
 	private static final String NULL_MESSAGE = "null";

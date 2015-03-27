@@ -45,7 +45,7 @@ public class LogTable implements IRCPLogContainerListener {
 	private final List<RCPLogEntry> entriesList = Lists.newArrayList();
 
 	private final LevelImageMap imageMap;
-	
+
 	private final List<ILogTableListener> listeners = Lists.newArrayList();
 
 	public LogTable(Composite parent, RCPLogContainer logContainer) {
@@ -134,9 +134,9 @@ public class LogTable implements IRCPLogContainerListener {
 		throwableColumn.setLabelProvider(new CellLabelProviderAndSorter<RCPLogEntry, String>(tableViewer, throwableColumn) {
 			@Override
 			protected String getValue(RCPLogEntry entry) {
-				if( entry.hasThrowable() ) {
+				if (entry.hasThrowable()) {
 					return entry.getThrowable().getClass().getSimpleName();
-				} 
+				}
 				return ""; // no throwable available
 			}
 		});
@@ -235,45 +235,45 @@ public class LogTable implements IRCPLogContainerListener {
 
 	public List<RCPLogEntry> getSelectedLogEntries() {
 		List<RCPLogEntry> entries = Lists.newArrayList();
-		
+
 		ISelection selection = tableViewer.getSelection();
-		if( selection instanceof IStructuredSelection) {
-			IStructuredSelection structSelection = (IStructuredSelection)selection;
-			
-			if( !structSelection.isEmpty() ) {
+		if (selection instanceof IStructuredSelection) {
+			IStructuredSelection structSelection = (IStructuredSelection) selection;
+
+			if (!structSelection.isEmpty()) {
 				Object[] selectedEntriesAsObjects = structSelection.toArray();
-				
-				for( Object selectedEntryAsObject : selectedEntriesAsObjects ){
-					entries.add( (RCPLogEntry) selectedEntryAsObject );
+
+				for (Object selectedEntryAsObject : selectedEntriesAsObjects) {
+					entries.add((RCPLogEntry) selectedEntryAsObject);
 				}
 			}
 		}
-		
+
 		return entries;
 	}
-	
-	public void addListener( ILogTableListener listener ) {
+
+	public void addListener(ILogTableListener listener) {
 		Preconditions.checkNotNull(listener, "Listener must not be null!");
-		
-		synchronized( listeners ) {
+
+		synchronized (listeners) {
 			listeners.add(listener);
 		}
 	}
-	
-	public void removeListener( ILogTableListener listener ) {
-		synchronized( listeners ) {
+
+	public void removeListener(ILogTableListener listener) {
+		synchronized (listeners) {
 			listeners.remove(listener);
 		}
 	}
-	
-	protected final void fireListeners( ) {
+
+	protected final void fireListeners() {
 		List<RCPLogEntry> selectedEntries = getSelectedLogEntries();
-		
-		synchronized( listeners ) {
-			for( ILogTableListener listener : listeners ) {
+
+		synchronized (listeners) {
+			for (ILogTableListener listener : listeners) {
 				try {
 					listener.selectionChanged(this, Lists.newArrayList(selectedEntries));
-				} catch( Throwable t ) {
+				} catch (Throwable t) {
 					System.err.println("Exception in log table listener");
 					t.printStackTrace(System.err);
 				}
