@@ -735,7 +735,7 @@ public class Tuple<T extends IMetaAttribute> extends AbstractStreamObject<T>
 					retBuff.append(options.getDelimiter());
 				}
 				if (curAttribute == null) {
-					retBuff.append("null");
+					retBuff.append(options.getNullValueString());
 				} else {
 					if (curAttribute instanceof Number) {
 						if ((curAttribute instanceof Double || curAttribute instanceof Float)

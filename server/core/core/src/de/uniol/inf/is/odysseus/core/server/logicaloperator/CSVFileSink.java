@@ -77,6 +77,16 @@ public class CSVFileSink extends AbstractSenderAO {
 		return getOption(AbstractCSVHandler.CSV_DELIMITER);
 	}
 
+	@Parameter(type = StringParameter.class, name = AbstractCSVHandler.NULL_VALUE_TEXT, optional = true, doc = "Text to output for 'null'. Default is empty string.")
+	public void setNullValueText(String nullValueText) {
+		addOption(AbstractCSVHandler.NULL_VALUE_TEXT, nullValueText);
+	}
+	
+	public String getNullValueText() {
+		return getOption(AbstractCSVHandler.NULL_VALUE_TEXT);
+	}
+
+	
 	@Parameter(type = StringParameter.class, name = "textdelimiter", optional = true, doc = "Delimiter for Strings. No default.")
 	public void setTextDelimiter(String textDelimiter) {
 		addOption(AbstractCSVHandler.CSV_TEXT_DELIMITER, textDelimiter);

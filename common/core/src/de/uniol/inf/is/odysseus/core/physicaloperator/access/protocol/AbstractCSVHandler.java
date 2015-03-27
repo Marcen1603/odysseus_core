@@ -33,6 +33,7 @@ abstract public class AbstractCSVHandler<T> extends LineProtocolHandler<T> {
 	public static final String CSV_WRITE_METADATA = "csv.writemetadata";
 	public static final String CSV_TRIM = "csv.trim";
 	public static final String ADDLINENUMBERS = "addlinenumber";
+	public static final String NULL_VALUE_TEXT = "nullvaluetext";
 
 	public AbstractCSVHandler() {
 		super();
@@ -76,6 +77,10 @@ abstract public class AbstractCSVHandler<T> extends LineProtocolHandler<T> {
 
 		writeOptions = new WriteOptions(delimiter, textDelimiter,
 		floatingFormatter, numberFormatter, writeMetadata);
+		
+		if (options.containsKey(NULL_VALUE_TEXT)){
+			writeOptions.setNullValueString(options.get(NULL_VALUE_TEXT));
+		}
 	}
 	
 	@Override

@@ -4,13 +4,15 @@ import java.text.NumberFormat;
 
 public class WriteOptions {
 	
+	// Standardfields
 	char delimiter;
 	Character textSeperator;
 	NumberFormat floatingFormatter;
 	NumberFormat numberFormatter;
 	boolean withMetadata;
 	
-	
+	// Add field, not via constructor
+	String nullValueString = "";
 	
 	public WriteOptions(char delimiter, Character textSeperator,
 			NumberFormat floatingFormatter, NumberFormat numberFormatter,
@@ -21,6 +23,14 @@ public class WriteOptions {
 		this.floatingFormatter = floatingFormatter;
 		this.numberFormatter = numberFormatter;
 		this.withMetadata = withMetadata;
+	}
+	
+	public void setNullValueString(String nullValueString) {
+		this.nullValueString = nullValueString;
+	}
+	
+	public String getNullValueString() {
+		return nullValueString;
 	}
 	
 	public char getDelimiter() {
