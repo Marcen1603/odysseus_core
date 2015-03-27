@@ -160,8 +160,6 @@ public class TITransferArea<R extends IStreamObject<? extends ITimeInterval>, W 
 				logger.warn("Removed out of order element!" + object + " - ("
 						+ this.po + "(" + this.po.getName()
 						+ ")) watermark is " + watermark);
-
-				System.err.println("REMOVE ME");
 			}
 		}
 	}
