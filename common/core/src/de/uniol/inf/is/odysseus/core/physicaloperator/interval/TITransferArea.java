@@ -156,10 +156,12 @@ public class TITransferArea<R extends IStreamObject<? extends ITimeInterval>, W 
 		if (watermark == null || start.afterOrEquals(watermark)) {
 			newHeartbeat(start, inPort);
 		} else {
-			if (!object.isPunctuation()) {
-				logger.warn("Removed out of order element!" + object + " - ("
-						+ this.po + "(" + this.po.getName()
-						+ ")) watermark is " + watermark);
+			if (!isAllDone()) {
+				if (!object.isPunctuation()) {
+					logger.warn("Removed out of order element!" + object
+							+ " - (" + this.po + "(" + this.po.getName()
+							+ ")) watermark is " + watermark + " d=" + isDone);
+				}
 			}
 		}
 	}
@@ -183,10 +185,12 @@ public class TITransferArea<R extends IStreamObject<? extends ITimeInterval>, W 
 					sendData();
 				}
 			} else {
-				logger.warn("Out of order element read " + object
-						+ " before last send element " + watermark
-						+ " ! Ignoring" + " - (" + this.po + "(" + po.getName()
-						+ "))");
+				if (!isAllDone()) {
+					logger.warn("Out of order element read " + object
+							+ " before last send element " + watermark
+							+ " ! Ignoring" + " - (" + this.po + "("
+							+ po.getName() + ")) d=" + isDone);
+				}
 			}
 		}
 	}
