@@ -60,12 +60,12 @@ public class ExceptionWindow {
 	protected void createWindow(String msg, final Throwable ex) {
 
 		final Shell shell;
-		if (PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell() != null)
-			shell = new Shell(PlatformUI.getWorkbench()
-					.getActiveWorkbenchWindow().getShell());
-		else
+		if (PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell() != null) {
+			shell = new Shell(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell());
+		} else {
 			shell = new Shell();
-
+		}
+		
 		shell.setText(OdysseusNLS.Exception);
 
 		GridLayout gl = new GridLayout();
@@ -73,8 +73,7 @@ public class ExceptionWindow {
 		shell.setLayout(gl);
 
 		Label label = new Label(shell, SWT.NONE);
-		label.setText(OdysseusNLS.AnErrorHasOccured + ": "
-				+ ex.getClass().getSimpleName());
+		label.setText(OdysseusNLS.AnErrorHasOccured + ": " + ex.getClass().getSimpleName());
 		GridData data = new GridData(GridData.FILL_HORIZONTAL);
 		data.horizontalSpan = 3;
 		label.setLayoutData(data);
@@ -85,8 +84,7 @@ public class ExceptionWindow {
 		}
 		Label message = new Label(shell, SWT.NONE);
 		message.setText(windowMessage);
-		message.setForeground(Display.getDefault()
-				.getSystemColor(SWT.COLOR_RED));
+		message.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_RED));
 		data = new GridData(GridData.FILL_HORIZONTAL);
 		data.horizontalSpan = 3;
 		message.setLayoutData(data);
@@ -153,8 +151,7 @@ public class ExceptionWindow {
 	}
 
 	protected void showStackTrace(Composite comp, Throwable ex) {
-		Text stackTrace = new Text(comp, SWT.MULTI | SWT.V_SCROLL
-				| SWT.H_SCROLL | SWT.READ_ONLY | SWT.BORDER);
+		Text stackTrace = new Text(comp, SWT.MULTI | SWT.V_SCROLL | SWT.H_SCROLL | SWT.READ_ONLY | SWT.BORDER);
 		stackTrace.setText(getStackTraceText(ex));
 
 		this.stackTrace = stackTrace;
@@ -187,8 +184,7 @@ public class ExceptionWindow {
 		return sb.toString();
 	}
 
-	private void printStackTraceAsCause(Throwable ex, StringBuilder sb,
-			StackTraceElement[] causedTrace) {
+	private void printStackTraceAsCause(Throwable ex, StringBuilder sb, StackTraceElement[] causedTrace) {
 		// assert Thread.holdsLock(s);
 
 		// Compute number of frames in common between this and caused
@@ -200,8 +196,7 @@ public class ExceptionWindow {
 		}
 		int framesInCommon = trace.length - 1 - m;
 
-		sb.append(OdysseusNLS.CausedBy + ": " + ex.getClass().getSimpleName()
-				+ " - " + ex.getMessage());
+		sb.append(OdysseusNLS.CausedBy + ": " + ex.getClass().getSimpleName() + " - " + ex.getMessage());
 		sb.append("\n");
 		for (int i = 0; i <= m; i++)
 			sb.append("\tat " + trace[i]).append("\n");
