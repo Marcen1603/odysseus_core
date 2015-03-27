@@ -5,6 +5,7 @@ import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
 import java.text.DecimalFormat;
 
+import de.uniol.inf.is.odysseus.core.WriteOptions;
 import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.conversion.CSVParser;
 import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
@@ -21,6 +22,7 @@ abstract public class AbstractCSVHandler<T> extends LineProtocolHandler<T> {
 	protected boolean trim = false;
 	protected boolean addLineNumber = false;
 	protected String delimiterString;
+	private WriteOptions writeOptions;
 
 	public static final String DELIMITER = "delimiter";
 	public static final String CSV_DELIMITER = "csv.delimiter";
@@ -72,6 +74,8 @@ abstract public class AbstractCSVHandler<T> extends LineProtocolHandler<T> {
 			addLineNumber = Boolean.parseBoolean(options.get(ADDLINENUMBERS));
 		}
 
+		writeOptions = new WriteOptions(delimiter, textDelimiter,
+		floatingFormatter, numberFormatter, writeMetadata);
 	}
 	
 	@Override
@@ -103,8 +107,7 @@ abstract public class AbstractCSVHandler<T> extends LineProtocolHandler<T> {
 	@Override
 	public void write(T object) throws IOException {
 		StringBuilder out = new StringBuilder();
-		getDataHandler().writeCSVData(out, object, delimiter, textDelimiter,
-				floatingFormatter, numberFormatter, writeMetadata);
+		getDataHandler().writeCSVData(out, object, writeOptions);
 		out.append(System.lineSeparator());
 		CharBuffer cb = CharBuffer.wrap(out);
 		ByteBuffer encoded = charset.encode(cb);

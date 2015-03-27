@@ -21,6 +21,7 @@ import org.simpleframework.xml.Element;
 import org.simpleframework.xml.Root;
 import org.simpleframework.xml.core.Persist;
 
+import de.uniol.inf.is.odysseus.core.WriteOptions;
 import de.uniol.inf.is.odysseus.core.metadata.AbstractStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.server.monitoring.DescriptiveStatistics;
@@ -89,13 +90,14 @@ public abstract class AbstractBenchmarkResult<T> extends AbstractStreamObject<IT
 	}
 	
 	@Override
-	public String csvToString(char delimiter, Character textSeperator, NumberFormat floatingFormatter, NumberFormat numberFormatter, boolean withMetadata) {
-		if (numberFormatter != null){
-			return numberFormatter.format(queryId)+delimiter+numberFormatter.format(startTime)+delimiter+numberFormatter.format(endTime)+delimiter+numberFormatter.format(getDuration())+delimiter+size+delimiter+desc.csvToString(delimiter, textSeperator, floatingFormatter, numberFormatter, withMetadata);
+	public String csvToString(WriteOptions options) {
+		if (options.hasNumberFormatter() ){
+			return options.getNumberFormatter().format(queryId)+options.getDelimiter()+options.getNumberFormatter().format(startTime)+options.getDelimiter()+options.getNumberFormatter().format(endTime)+options.getDelimiter()+options.getNumberFormatter().format(getDuration())+options.getDelimiter()+size+options.getDelimiter()+desc.csvToString(options);
 		}else{
-			return queryId+delimiter+startTime+delimiter+endTime+delimiter+getDuration()+delimiter+size+delimiter+desc.csvToString(delimiter, textSeperator, floatingFormatter, numberFormatter, withMetadata);
+			return queryId+options.getDelimiter()+startTime+options.getDelimiter()+endTime+options.getDelimiter()+getDuration()+options.getDelimiter()+size+options.getDelimiter()+desc.csvToString(options);
 		}
 	}
+
 	
 	@Override
 	public String getCSVHeader(char delimiter) {
@@ -115,7 +117,7 @@ public abstract class AbstractBenchmarkResult<T> extends AbstractStreamObject<IT
 	
 	@Override
 	public String toString() {	
-		return csvToString(';','\'',null,null, true);
+		return csvToString(new WriteOptions(';','\'',null,null, true));
 	}
 
 }

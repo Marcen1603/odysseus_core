@@ -15,8 +15,7 @@
  */
 package de.uniol.inf.is.odysseus.priority;
 
-import java.text.NumberFormat;
-
+import de.uniol.inf.is.odysseus.core.WriteOptions;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 
 public class Priority implements IPriority {
@@ -55,13 +54,12 @@ public class Priority implements IPriority {
 	public String toString() {
 		return "" + prio;
 	}
-
+	
 	@Override
-	public String csvToString(char delimiter, Character textSeperator,
-			NumberFormat floatingFormatter, NumberFormat numberFormatter,
-			boolean withMetadata) {
-		if (numberFormatter != null) {
-			return numberFormatter.format(prio);
+	public String csvToString(WriteOptions options) {
+		
+		if (options.hasNumberFormatter()) {
+			return options.getNumberFormatter().format(prio);
 		} else {
 			return prio + "";
 		}

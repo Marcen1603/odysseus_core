@@ -26,6 +26,8 @@ import org.simpleframework.xml.Element;
 import org.simpleframework.xml.ElementMap;
 import org.simpleframework.xml.core.Persist;
 
+import de.uniol.inf.is.odysseus.core.WriteOptions;
+
 /**
  * @author Jonas Jacobi
  */
@@ -190,7 +192,10 @@ public class DescriptiveStatistics implements IDescriptiveStatistics{
 	}
 	
 	@Override
-	public String csvToString(char delimiter, Character textSeperator, NumberFormat floatingFormatter, NumberFormat numberFormatter, boolean withMetadata) {
+	public String csvToString(WriteOptions options) {
+		char delimiter = options.getDelimiter();
+		NumberFormat floatingFormatter = options.getFloatingFormatter();
+		NumberFormat numberFormatter = options.getNumberFormatter();
 		prepareStats();
 		if (floatingFormatter != null && numberFormatter != null){
 		return numberFormatter.format(getMin())+delimiter+numberFormatter.format(getMax())+delimiter+floatingFormatter.format(getMean())+delimiter+numberFormatter.format(getN())+delimiter+

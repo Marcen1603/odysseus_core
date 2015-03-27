@@ -17,6 +17,8 @@ package de.uniol.inf.is.odysseus.core.server.monitoring;
 
 import java.text.NumberFormat;
 
+import de.uniol.inf.is.odysseus.core.WriteOptions;
+
 
 /**
  * @author Dennis Geesen
@@ -28,8 +30,12 @@ public class IncrementalDescriptiveStatistics implements IDescriptiveStatistics 
 	private long sum = 0;
 	private long min = Long.MAX_VALUE;
 	private long max = Long.MIN_VALUE;	
+	
 	@Override
-	public String csvToString(char delimiter, Character textSeperator, NumberFormat floatingFormatter, NumberFormat numberFormatter, boolean withMetadata) {
+	public String csvToString(WriteOptions options) {
+		char delimiter = options.getDelimiter();
+		NumberFormat floatingFormatter  = options.getFloatingFormatter();
+		NumberFormat numberFormatter = options.getNumberFormatter();
 		if (floatingFormatter != null && numberFormatter != null){
 			return numberFormatter.format(min)+delimiter+numberFormatter.format(max)+delimiter+floatingFormatter.format(getMean())+delimiter+numberFormatter.format(count)+delimiter+numberFormatter.format(sum);				
 		}else{

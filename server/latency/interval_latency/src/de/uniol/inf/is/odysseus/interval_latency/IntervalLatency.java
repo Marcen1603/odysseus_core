@@ -15,8 +15,7 @@
   */
 package de.uniol.inf.is.odysseus.interval_latency;
 
-import java.text.NumberFormat;
-
+import de.uniol.inf.is.odysseus.core.WriteOptions;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.TimeInterval;
@@ -99,8 +98,8 @@ public class IntervalLatency extends TimeInterval implements ILatency, ILatencyT
 	}
 
 	@Override
-	public String csvToString(char delimiter, Character textSeperator, NumberFormat floatingFormatter, NumberFormat numberFormatter, boolean withMetadata) {
-		return super.csvToString(delimiter, textSeperator, floatingFormatter, numberFormatter, withMetadata)+delimiter+this.latency.csvToString(delimiter, textSeperator, floatingFormatter, numberFormatter, withMetadata);
+	public String csvToString(WriteOptions options) {
+		return super.csvToString(options)+options.getDelimiter()+this.latency.csvToString(options);
 	}
 	
 	@Override

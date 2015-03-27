@@ -17,6 +17,7 @@ package de.uniol.inf.is.odysseus.latency;
 
 import java.text.NumberFormat;
 
+import de.uniol.inf.is.odysseus.core.WriteOptions;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.server.metadata.ILatency;
 
@@ -98,9 +99,11 @@ public class Latency implements ILatency{
 	public String toString(){
 		return "[(max=" +this.maxlstart+")"+ this.minlstart + ", " + this.lend + "[" + (this.lend > this.minlstart?  (this.lend - this.minlstart):"oo");
 	}
-	
-	@Override
-	public String csvToString(char delimiter, Character textSeperator, NumberFormat floatingFormatter, NumberFormat numberFormatter, boolean withMetadata) {
+		
+	@Override	
+	public String csvToString(WriteOptions options){
+		NumberFormat numberFormatter = options.getNumberFormatter();
+		char delimiter = options.getDelimiter();
 		StringBuffer retBuffer = new StringBuffer();
 		if (numberFormatter != null){
 			retBuffer.append(numberFormatter.format(this.minlstart)).append(delimiter).append(numberFormatter.format(this.lend)).append(delimiter).append(numberFormatter.format(this.lend - this.minlstart));

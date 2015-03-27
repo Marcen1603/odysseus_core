@@ -6,6 +6,7 @@ import java.nio.CharBuffer;
 import java.nio.charset.Charset;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -13,6 +14,7 @@ import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 
+import de.uniol.inf.is.odysseus.core.WriteOptions;
 import de.uniol.inf.is.odysseus.core.collection.KeyValueObject;
 import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
@@ -114,8 +116,8 @@ public class JSONProtocolHandler<T extends KeyValueObject<? extends IMetaAttribu
 
 		if (writemetadata) {
 			string.append(" | META | "
-					+ kvObject.getMetadata().csvToString(';', ' ',
-							new DecimalFormat(), new DecimalFormat(), false));
+					+ kvObject.getMetadata().csvToString(new WriteOptions(';', ' ',
+							new DecimalFormat(), new DecimalFormat(), false)));
 		}
 		string.append(System.getProperty("line.separator"));
 		CharBuffer charBuffer = CharBuffer.wrap(string);

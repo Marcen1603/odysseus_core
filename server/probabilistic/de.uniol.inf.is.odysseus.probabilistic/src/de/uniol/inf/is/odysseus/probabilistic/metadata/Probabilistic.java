@@ -15,10 +15,9 @@
  */
 package de.uniol.inf.is.odysseus.probabilistic.metadata;
 
-import java.text.NumberFormat;
-
 import com.google.common.base.Preconditions;
 
+import de.uniol.inf.is.odysseus.core.WriteOptions;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 
 /**
@@ -89,9 +88,9 @@ public class Probabilistic implements IProbabilistic {
      * {@inheritDoc}
      */
     @Override
-    public final String csvToString(final char delimiter, final Character textSeperator, final NumberFormat floatingFormatter, final NumberFormat numberFormatter, final boolean withMetadata) {
-        if (floatingFormatter != null) {
-            return floatingFormatter.format(this.existence);
+    public final String csvToString(WriteOptions options) {
+        if (options.hasFloatingFormatter()) {
+            return options.getFloatingFormatter().format(this.existence);
         }
         else {
             return "" + this.existence;

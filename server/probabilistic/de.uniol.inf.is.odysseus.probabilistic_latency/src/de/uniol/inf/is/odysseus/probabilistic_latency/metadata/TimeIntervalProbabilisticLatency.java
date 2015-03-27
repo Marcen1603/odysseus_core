@@ -15,8 +15,7 @@
  */
 package de.uniol.inf.is.odysseus.probabilistic_latency.metadata;
 
-import java.text.NumberFormat;
-
+import de.uniol.inf.is.odysseus.core.WriteOptions;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.server.metadata.ILatency;
@@ -109,9 +108,9 @@ public class TimeIntervalProbabilisticLatency extends ProbabilisticTimeInterval 
     }
 
     @Override
-    public final String csvToString(final char delimiter, final Character textSeperator, final NumberFormat floatingFormatter, final NumberFormat numberFormatter, final boolean withMetadata) {
-        return super.csvToString(delimiter, textSeperator, floatingFormatter, numberFormatter, withMetadata) + delimiter
-                + this.latency.csvToString(delimiter, textSeperator, floatingFormatter, numberFormatter, withMetadata);
+    public final String csvToString(WriteOptions options) {
+        return super.csvToString(options) + options.getDelimiter()
+                + this.latency.csvToString(options);
     }
 
     @Override

@@ -1,7 +1,6 @@
 package de.uniol.inf.is.odysseus.datarate;
 
-import java.text.NumberFormat;
-
+import de.uniol.inf.is.odysseus.core.WriteOptions;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.server.metadata.ILatency;
@@ -88,8 +87,8 @@ public class TimeIntervalLatencyDatarate extends TimeIntervalDatarate implements
 	}
 	
 	@Override
-	public String csvToString(char delimiter, Character textSeperator, NumberFormat floatingFormatter, NumberFormat numberFormatter, boolean withMetadata) {
-		return super.csvToString(delimiter, textSeperator, floatingFormatter, numberFormatter, withMetadata)+ delimiter + latency.csvToString(delimiter, textSeperator, floatingFormatter, numberFormatter, withMetadata);
+	public String csvToString(WriteOptions options) {
+		return super.csvToString(options)+ options.getDelimiter() + latency.csvToString(options);
 	}
 	
 	@Override

@@ -16,9 +16,10 @@
 package de.uniol.inf.is.odysseus.core.metadata;
 
 import java.io.Serializable;
-import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
+
+import de.uniol.inf.is.odysseus.core.WriteOptions;
 
 
 // TODO: Noch mal ber die Grenzen nachdenken (Wann <=, wann <)
@@ -437,8 +438,8 @@ public class TimeInterval implements ITimeInterval, Cloneable, Serializable {
 	}
 	
 	@Override
-	public String csvToString(char delimiter, Character textSeperator, NumberFormat floatingFormatter, NumberFormat numberFormatter, boolean withMetadata) {
-		return getStart().toString() + delimiter + getEnd().toString();
+	public String csvToString(WriteOptions options) {
+		return getStart().toString() + options.getDelimiter()+ getEnd().toString();
 	}
 	
 	@Override

@@ -53,6 +53,7 @@ public class MapAO extends UnaryLogicalOp {
 	private boolean evaluateOnPunctuation = false;
 	private boolean allowNullValue = false;
 	private boolean suppressErrors = false;
+	private boolean printNull = false;
 
 	public MapAO() {
 		super();

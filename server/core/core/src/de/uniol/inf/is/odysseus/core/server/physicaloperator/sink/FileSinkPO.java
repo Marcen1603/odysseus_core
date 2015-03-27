@@ -27,6 +27,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.ICSVToString;
+import de.uniol.inf.is.odysseus.core.WriteOptions;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
@@ -123,7 +124,7 @@ public class FileSinkPO extends AbstractSink<IStreamObject<?>> {
 
 					String toWrite = null;
 					if (csvSink) {
-						toWrite = ((ICSVToString) object).csvToString(delimiter,textSeperator,floatingFormatter, numberFormatter, printMetadata) + "\n";
+						toWrite = ((ICSVToString) object).csvToString(new WriteOptions(delimiter,textSeperator,floatingFormatter, numberFormatter, printMetadata)) + "\n";
 						if(linenumbering){
 							toWrite = Long.toString(linenumber)+delimiter+toWrite;
 						}

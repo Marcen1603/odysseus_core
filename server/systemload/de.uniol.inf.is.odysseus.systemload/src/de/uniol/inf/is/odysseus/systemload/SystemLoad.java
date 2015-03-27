@@ -1,7 +1,6 @@
 package de.uniol.inf.is.odysseus.systemload;
 
 import java.io.Serializable;
-import java.text.NumberFormat;
 import java.util.Collection;
 import java.util.Map;
 
@@ -9,6 +8,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
 
+import de.uniol.inf.is.odysseus.core.WriteOptions;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 
 public class SystemLoad implements ISystemLoad, Cloneable, Serializable {
@@ -92,7 +92,8 @@ public class SystemLoad implements ISystemLoad, Cloneable, Serializable {
 	}
 
 	@Override
-	public String csvToString(char delimiter, Character textSeperator, NumberFormat floatingFormatter, NumberFormat numberFormatter, boolean withMetadata) {
+	public String csvToString(WriteOptions options) {
+		char delimiter = options.getDelimiter();
 		StringBuilder sb = new StringBuilder();
 
 		if (!systemLoads.isEmpty()) {

@@ -15,11 +15,11 @@
   */
 package de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.plan;
 
-import java.text.NumberFormat;
 import java.util.Iterator;
 import java.util.LinkedList;
 
 import de.uniol.inf.is.odysseus.core.ICSVToString;
+import de.uniol.inf.is.odysseus.core.WriteOptions;
 import de.uniol.inf.is.odysseus.core.collection.IPair;
 import de.uniol.inf.is.odysseus.core.collection.Pair;
 
@@ -63,7 +63,7 @@ public class ScheduleMeta implements ICSVToString{
 	}
 	
 	@Override
-	public String csvToString(char delimiter, Character textSeperator, NumberFormat floatingFormatter, NumberFormat numberFormatter, boolean withMetadata) {
+	public String csvToString(WriteOptions optoions) {
 		// FIXME: Formatter to csvPrint
 		StringBuffer ret = new StringBuffer();
 		csvPrint(ret);

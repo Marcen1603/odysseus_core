@@ -35,7 +35,6 @@ import java.net.InetSocketAddress;
 import java.net.MalformedURLException;
 import java.net.SocketAddress;
 import java.net.URL;
-import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;

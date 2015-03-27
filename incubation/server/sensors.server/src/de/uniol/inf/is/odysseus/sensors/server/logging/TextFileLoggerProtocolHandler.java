@@ -9,6 +9,7 @@ import java.io.IOException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.core.WriteOptions;
 import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
@@ -80,7 +81,7 @@ public class TextFileLoggerProtocolHandler extends LoggerProtocolHandler
 	{
 		
 		
-		String rawString = object.csvToString(',', '\'', null, null, false); //(String) object.getAttribute(0);
+		String rawString = object.csvToString(new WriteOptions(',', '\'', null, null, false)); //(String) object.getAttribute(0);
 
 /*		if (rawString.length() > 40)
 			System.out.println("write " + rawString.substring(0,  40));*/

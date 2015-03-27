@@ -1,7 +1,6 @@
 package de.uniol.inf.is.odysseus.systemload;
 
-import java.text.NumberFormat;
-
+import de.uniol.inf.is.odysseus.core.WriteOptions;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
@@ -68,8 +67,8 @@ public class TimeIntervalSystemLoad extends SystemLoad implements ITimeInterval,
 	}
 
 	@Override
-	public String csvToString(char delimiter, Character textSeperator, NumberFormat floatingFormatter, NumberFormat numberFormatter, boolean withMetadata) {
-		return timeInterval.csvToString(delimiter, textSeperator, floatingFormatter, numberFormatter, withMetadata) + delimiter + super.csvToString(delimiter, textSeperator, floatingFormatter, numberFormatter, withMetadata);
+	public String csvToString(WriteOptions options) {
+		return timeInterval.csvToString(options) + options.getDelimiter() + super.csvToString(options);
 	}
 	
 	@Override

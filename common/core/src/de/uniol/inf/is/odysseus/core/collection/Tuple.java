@@ -18,7 +18,6 @@ package de.uniol.inf.is.odysseus.core.collection;
 import java.io.Serializable;
 import java.lang.reflect.Array;
 import java.nio.CharBuffer;
-import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -33,6 +32,7 @@ import com.rits.cloning.Cloner;
 import de.uniol.inf.is.odysseus.core.ICSVToString;
 import de.uniol.inf.is.odysseus.core.IClone;
 import de.uniol.inf.is.odysseus.core.Order;
+import de.uniol.inf.is.odysseus.core.WriteOptions;
 import de.uniol.inf.is.odysseus.core.metadata.AbstractStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
@@ -58,7 +58,7 @@ public class Tuple<T extends IMetaAttribute> extends AbstractStreamObject<T>
 	private boolean valueChanged = true;
 
 	private boolean requiresDeepClone;
-    private Cloner cloner;
+   /// private Cloner cloner;
 
     private static List<Class<?>> immutables = new ArrayList<>();
     static {
@@ -80,7 +80,7 @@ public class Tuple<T extends IMetaAttribute> extends AbstractStreamObject<T>
 	 */
 	protected Tuple() {
 		requiresDeepClone = false;
-		cloner = null;
+	///	cloner = null;
 	}
 
 	/**
@@ -724,27 +724,27 @@ public class Tuple<T extends IMetaAttribute> extends AbstractStreamObject<T>
 	}
 
 	@Override
-	public final String csvToString(char delimiter, Character textSeperator,
-			NumberFormat floatingFormatter, NumberFormat numberFormatter,
-			boolean withMetadata) {
+	public String csvToString(WriteOptions options) {
+		// TODO Auto-generated method stub
+		
 		StringBuffer retBuff = new StringBuffer();
 		if (attributes.length > 0) {
 			for (int i = 0; i < this.attributes.length; ++i) {
 				Object curAttribute = this.attributes[i];
 				if (i > 0) {
-					retBuff.append(delimiter);
+					retBuff.append(options.getDelimiter());
 				}
 				if (curAttribute == null) {
-					retBuff.append("");
+					retBuff.append("null");
 				} else {
 					if (curAttribute instanceof Number) {
 						if ((curAttribute instanceof Double || curAttribute instanceof Float)
-								&& floatingFormatter != null) {
-							retBuff.append(floatingFormatter
+								&& options.hasFloatingFormatter()) {
+							retBuff.append(options.getFloatingFormatter()
 									.format(curAttribute));
 						} else if (!((curAttribute instanceof Double || curAttribute instanceof Float))
-								&& numberFormatter != null) {
-							retBuff.append(numberFormatter.format(curAttribute));
+								&& options.hasFloatingFormatter()) {
+							retBuff.append(options.getNumberFormatter().format(curAttribute));
 						} else {
 							retBuff.append(curAttribute);
 						}
@@ -752,10 +752,10 @@ public class Tuple<T extends IMetaAttribute> extends AbstractStreamObject<T>
 						double[] values = (double[]) curAttribute;
 						for (int iValue = 0; iValue < values.length; iValue++) {
 							if (iValue > 0) {
-								retBuff.append(delimiter);
+								retBuff.append(options.getDelimiter());
 							}
-							if (floatingFormatter != null) {
-								retBuff.append(floatingFormatter
+							if (options.hasFloatingFormatter()) {
+								retBuff.append(options.getFloatingFormatter()
 										.format(values[iValue]));
 							} else {
 								retBuff.append(values[iValue]);
@@ -763,19 +763,19 @@ public class Tuple<T extends IMetaAttribute> extends AbstractStreamObject<T>
 						}
 					} else if (curAttribute instanceof BitVector){
 						BitVector v = (BitVector) curAttribute;
-						if (numberFormatter != null)
+						if (options.hasNumberFormatter())
 						{
 							long valAsNum = Long.parseLong(curAttribute.toString());
-							retBuff.append(numberFormatter.format(valAsNum));
+							retBuff.append(options.getNumberFormatter().format(valAsNum));
 						}
 						else
 							retBuff.append(curAttribute);
 					} else {
-						if (textSeperator != null
+						if (options.hasTextSeperator()
 								&& curAttribute instanceof String) {
-							retBuff.append(textSeperator)
+							retBuff.append(options.getTextSeperator())
 									.append(curAttribute.toString())
-									.append(textSeperator);
+									.append(options.getTextSeperator());
 						} else {
 							retBuff.append(curAttribute.toString());
 						}
@@ -786,36 +786,34 @@ public class Tuple<T extends IMetaAttribute> extends AbstractStreamObject<T>
 			retBuff.append("null");
 		}
 
-		if (withMetadata) {
-			retBuff.append(delimiter).append(
-					getMetadata().csvToString(delimiter, textSeperator,
-							floatingFormatter, numberFormatter, withMetadata));
+		if (options.isWithMetadata()) {
+			retBuff.append(options.getDelimiter()).append(
+					getMetadata().csvToString(options));
 			if (getMetadataMap() != null && getMetadataMap().size() > 0) {
 				for (Entry<String, Object> e : getMetadataMap().entrySet()) {
 					if (e.getValue() == null) {
 						// add empty value
-						retBuff.append(delimiter);
+						retBuff.append(options.getDelimiter());
 					} else if (e.getValue() instanceof IMetaAttribute) {
 						IMetaAttribute m = (IMetaAttribute) e.getValue();
-						retBuff.append(delimiter).append(
-								m.csvToString(delimiter, textSeperator,
-										floatingFormatter, numberFormatter,
-										withMetadata));
+						retBuff.append(options.getDelimiter()).append(
+								m.csvToString(options));
 					} else {
 						String value = e.getValue().toString();
-						if (value.indexOf(delimiter) != -1) {
-							retBuff.append(delimiter).append(textSeperator)
-									.append(e.getValue()).append(textSeperator);
+						if (value.indexOf(options.getDelimiter()) != -1) {
+							retBuff.append(options.getDelimiter()).append(options.getTextSeperator())
+									.append(e.getValue()).append(options.getTextSeperator());
 						} else {
-							retBuff.append(delimiter).append(e.getValue());
+							retBuff.append(options.getDelimiter()).append(e.getValue());
 						}
 					}
 				}
 			}
 		}
 		return retBuff.toString();
-	}
 
+	}
+	
 	@Override
 	public String getCSVHeader(char delimiter) {
 		StringBuffer ret = new StringBuffer();

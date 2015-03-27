@@ -15,18 +15,11 @@
  *
 **/package de.uniol.inf.is.odysseus.trajectory.physical.compare;
 
-import java.util.Arrays;
-
 import org.junit.Test;
 
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.GeometryFactory;
 
-import de.uniol.inf.is.odysseus.trajectory.compare.data.RawDataTrajectory;
-import de.uniol.inf.is.odysseus.trajectory.compare.owd.data.OwdData.GridCellList;
-import de.uniol.inf.is.odysseus.trajectory.compare.owd.data.OwdDataTrajectory;
-import de.uniol.inf.is.odysseus.trajectory.compare.owd.rasterization.AdvancedBresenhamRasterizer;
-import de.uniol.inf.is.odysseus.trajectory.compare.owd.rasterization.IRasterizer;
 import de.uniol.inf.is.odysseus.trajectory.compare.util.UtmPointCreator;
 
 public class OWDTrajectoryTest {

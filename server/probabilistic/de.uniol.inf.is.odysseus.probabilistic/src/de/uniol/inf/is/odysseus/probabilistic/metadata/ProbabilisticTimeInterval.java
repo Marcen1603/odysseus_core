@@ -15,10 +15,9 @@
  */
 package de.uniol.inf.is.odysseus.probabilistic.metadata;
 
-import java.text.NumberFormat;
-
 import com.google.common.base.Preconditions;
 
+import de.uniol.inf.is.odysseus.core.WriteOptions;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.TimeInterval;
@@ -101,9 +100,9 @@ public class ProbabilisticTimeInterval extends TimeInterval implements IProbabil
      * {@inheritDoc}
      */
     @Override
-    public String csvToString(final char delimiter, final Character textSeperator, final NumberFormat floatingFormatter, final NumberFormat numberFormatter, final boolean withMetadata) {
-        return super.csvToString(delimiter, textSeperator, floatingFormatter, numberFormatter, withMetadata) + delimiter
-                + this.probabilistic.csvToString(delimiter, textSeperator, floatingFormatter, numberFormatter, withMetadata);
+    public String csvToString(WriteOptions options) {
+        return super.csvToString(options) + options.getDelimiter()
+                + this.probabilistic.csvToString(options);
     }
 
     /**

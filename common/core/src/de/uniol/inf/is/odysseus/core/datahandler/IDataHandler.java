@@ -21,6 +21,7 @@ import java.nio.ByteBuffer;
 import java.text.DecimalFormat;
 import java.util.List;
 
+import de.uniol.inf.is.odysseus.core.WriteOptions;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 
@@ -139,7 +140,11 @@ public interface IDataHandler<T> {
 	 * @param numberFormat How to format integer, long etc.
 	 * @param writeMetadata If the object contains meta data, should it be written
 	 */
+	@Deprecated
 	public void writeCSVData(StringBuilder string, Object data, char delimiter, Character textSeperator,  DecimalFormat floatingFormatter, DecimalFormat numberFormat, boolean writeMetadata);
+
+	
+	public void writeCSVData(StringBuilder string, Object data, WriteOptions options);
 
 	
 	public void writeJSONData(StringBuilder string, Object data);

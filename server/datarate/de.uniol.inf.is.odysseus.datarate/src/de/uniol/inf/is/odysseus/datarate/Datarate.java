@@ -1,8 +1,7 @@
 package de.uniol.inf.is.odysseus.datarate;
 
 import java.io.Serializable;
-import java.text.NumberFormat;
-
+import de.uniol.inf.is.odysseus.core.WriteOptions;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 
 public class Datarate implements IDatarate, Cloneable, Serializable {
@@ -33,15 +32,16 @@ public class Datarate implements IDatarate, Cloneable, Serializable {
 	}
 
 	@Override
-	public String csvToString(char delimiter, Character textSeperator, NumberFormat floatingFormatter, NumberFormat numberFormatter, boolean withMetadata) {
-		if( floatingFormatter != null ) {
-			return floatingFormatter.format(datarate);
-		} else if( numberFormatter != null ) {
-			return numberFormatter.format(datarate);
+	public String csvToString(WriteOptions options) {
+		if( options.hasFloatingFormatter() ) {
+			return options.getFloatingFormatter().format(datarate);
+		} else if( options.hasNumberFormatter()) {
+			return options.getNumberFormatter().format(datarate);
 		}
 		
 		return String.valueOf(datarate);
 	}
+	
 
 	@Override
 	public String getCSVHeader(char delimiter) {
