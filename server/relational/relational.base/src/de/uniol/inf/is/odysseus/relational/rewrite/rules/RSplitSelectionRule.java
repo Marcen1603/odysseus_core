@@ -75,7 +75,7 @@ public class RSplitSelectionRule extends AbstractRewriteRule<SelectAO> {
         else {
             RelationalPredicate relationalPredicate = ((RelationalPredicate) sel);
             ParameterPredicateOptimizer optimizeConfig = config.getQueryBuildConfiguration().get(ParameterPredicateOptimizer.class);
-            if (optimizeConfig.getValue().booleanValue()) {
+            if (optimizeConfig != null && optimizeConfig.getValue().booleanValue()) {
                 IExpression<?> expression = ((RelationalPredicate) sel).getExpression().getMEPExpression();
                 expression = ExpressionOptimizer.optimize(expression);
                 IExpression<?> cnf = ExpressionOptimizer.toConjunctiveNormalForm(expression);
