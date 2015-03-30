@@ -46,8 +46,9 @@ public class TSortAddComparatorRule extends AbstractTransformationRule<SortTIPO<
             @Override
             public int compare(Tuple<? extends ITimeInterval> o1, Tuple<? extends ITimeInterval> o2) {
                 int sum = 0;
-                for (int pos : sortAttributePos) {
-                    sum += ((Comparable) o1.getAttribute(pos)).compareTo(o2.getAttribute(pos)) * (ascending[pos] ? 1 : -1);
+                for (int i = 0; i < sortAttributePos.length; i++) {
+                    int pos = sortAttributePos[i];
+                    sum += ((Comparable) o1.getAttribute(pos)).compareTo(o2.getAttribute(pos)) * (ascending[i] ? 1 : -1);
                 }
                 return sum;
             }
