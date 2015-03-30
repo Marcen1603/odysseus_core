@@ -22,113 +22,145 @@ import java.util.Stack;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 
 /**
- * Diese Klasse dient als Migrationshilfe um eine einfache Umstellung von 
+ * Diese Klasse dient als Migrationshilfe um eine einfache Umstellung von
  * complex predicates auf Mep Predicates zu realisieren
+ * 
  * @author Marco Grawunder
  *
  */
-@SuppressWarnings({"rawtypes", "unchecked","deprecation"})
+@SuppressWarnings({ "rawtypes", "unchecked" })
 public class ComplexPredicateHelper {
 
-	public static IPredicate createAndPredicate(IPredicate leftPredicate, IPredicate rightPredicate){
-		return new AndPredicate(leftPredicate, rightPredicate);
-	}
-	
-	public static IPredicate createOrPredicate(IPredicate leftPredicate, IPredicate rightPredicate){
-		return new OrPredicate(leftPredicate, rightPredicate);
-	}
+    public static IPredicate createAndPredicate(IPredicate leftPredicate, IPredicate rightPredicate) {
+        return leftPredicate.and(rightPredicate);
+    }
 
-	public static IPredicate createNotPredicate(IPredicate predicate){
-		return new NotPredicate(predicate);
-	}
-	
-	public static IPredicate pushDownNegation(
-			IPredicate pred, boolean negatived) {
-		if (pred instanceof NotPredicate) {
-			return pushDownNegation(((NotPredicate) pred)
-					.getChild(), !negatived);
-		}
-		if (pred instanceof ComplexPredicate) {
-			ComplexPredicate compPred = (ComplexPredicate) pred;
-			if (negatived) {
-				if (pred instanceof OrPredicate) {
-					compPred = new AndPredicate();
-				} else {
-					compPred = new OrPredicate();
-				}
-			}
-			compPred.setLeft(pushDownNegation(compPred.getLeft(), negatived));
-			compPred.setRight(pushDownNegation(compPred.getRight(), negatived));
-			return compPred;
-		}
-		if (negatived) {
-			return new NotPredicate(pred);
-		}
-        return pred;
-	}
+    public static IPredicate createOrPredicate(IPredicate leftPredicate, IPredicate rightPredicate) {
+        return leftPredicate.or(rightPredicate);
+    }
 
-	public static List<IPredicate> splitPredicate(
-			IPredicate predicate) {
-		LinkedList<IPredicate> result = new LinkedList<IPredicate>();
-		Stack<IPredicate> predicateStack = new Stack<IPredicate>();
-		predicateStack.push(predicate);
-		while (!predicateStack.isEmpty()) {
-			IPredicate curPredicate = predicateStack.pop();
-			if (curPredicate instanceof AndPredicate) {
-				predicateStack
-						.push(((AndPredicate) curPredicate)
-								.getLeft());
-				predicateStack
-						.push(((AndPredicate) curPredicate)
-								.getRight());
-			} else {
-				result.add(curPredicate);
-			}
-		}
-		return result;
-	}
-	
-	public static void visitPredicates(IPredicate<?> p,
-			IUnaryFunctor<IPredicate<?>> functor) {
-		Stack<IPredicate<?>> predicates = new Stack<IPredicate<?>>();
-		predicates.push(p);
-		while (!predicates.isEmpty()) {
-			IPredicate<?> curPred = predicates.pop();
-			if (curPred instanceof ComplexPredicate<?>) {
-				predicates.push(((ComplexPredicate<?>) curPred).getLeft());
-				predicates.push(((ComplexPredicate<?>) curPred).getRight());
-			} else if(curPred instanceof NotPredicate){
-				predicates.push(((NotPredicate<?>) curPred).getChild());
-			}
-			else {
-				functor.call(curPred);
-			}
-		}
-	}
-	
-	public static boolean isAndPredicate(IPredicate pred){
-		return (pred instanceof AndPredicate);
-	}
-	
-	public static boolean isOrPredicate(IPredicate pred){
-		return pred instanceof OrPredicate;
-	}
-	
-	public static boolean isNotPredicate(IPredicate pred){
-		return pred instanceof NotPredicate;
-	}
-	
-	public static boolean contains(IPredicate oPred, IPredicate pred){
-		if (oPred instanceof OrPredicate){
-			return ((OrPredicate)oPred).contains(pred);
-		}
+    public static IPredicate createNotPredicate(IPredicate predicate) {
+        return predicate.not();
+    }
+
+    @Deprecated
+    public static IPredicate pushDownNegation(IPredicate predicate, boolean negatived) {
+        if (predicate instanceof NotPredicate) {
+            return pushDownNegation(((NotPredicate) predicate).getChild(), !negatived);
+        }
+        if (predicate instanceof ComplexPredicate) {
+            ComplexPredicate compPred = (ComplexPredicate) predicate;
+            if (negatived) {
+                if (predicate instanceof OrPredicate) {
+                    compPred = new AndPredicate();
+                }
+                else {
+                    compPred = new OrPredicate();
+                }
+            }
+            compPred.setLeft(pushDownNegation(compPred.getLeft(), negatived));
+            compPred.setRight(pushDownNegation(compPred.getRight(), negatived));
+            return compPred;
+        }
+        if (negatived) {
+            return new NotPredicate(predicate);
+        }
+        return predicate;
+    }
+
+    @Deprecated
+    public static List<IPredicate> conjunctiveSplit(IPredicate predicate) {
+        List<IPredicate> result = new LinkedList<>();
+        Stack<IPredicate> predicateStack = new Stack<>();
+        predicateStack.push(predicate);
+        while (!predicateStack.isEmpty()) {
+            IPredicate curPredicate = predicateStack.pop();
+            if (curPredicate instanceof AndPredicate) {
+                predicateStack.push(((AndPredicate) curPredicate).getLeft());
+                predicateStack.push(((AndPredicate) curPredicate).getRight());
+            }
+            else {
+                result.add(curPredicate);
+            }
+        }
+        return result;
+    }
+
+    /**
+     * Execute the given function on every predicate
+     * 
+     * @param predicate
+     *            The predicate
+     * @param functor
+     *            The function
+     */
+    public static void visitPredicates(IPredicate<?> predicate, IUnaryFunctor<IPredicate<?>> functor) {
+        Stack<IPredicate<?>> predicates = new Stack<>();
+        predicates.push(predicate);
+        while (!predicates.isEmpty()) {
+            IPredicate<?> curPred = predicates.pop();
+            if (curPred instanceof ComplexPredicate<?>) {
+                predicates.push(((ComplexPredicate<?>) curPred).getLeft());
+                predicates.push(((ComplexPredicate<?>) curPred).getRight());
+            }
+            else if (curPred instanceof NotPredicate) {
+                predicates.push(((NotPredicate<?>) curPred).getChild());
+            }
+            else {
+                functor.call(curPred);
+            }
+        }
+    }
+
+    /**
+     * Checks whether the given predicate is an {@link AndPredicate}.
+     * 
+     * @param predicate
+     *            The predicate to check
+     * @return <code>true</code> if the predicate is a {@link AndPredicate},
+     *         <code>false</code> otherwise
+     */
+    public static boolean isAndPredicate(IPredicate predicate) {
+        return (predicate instanceof AndPredicate);
+    }
+
+    /**
+     * Checks whether the given predicate is an {@link OrPredicate}.
+     * 
+     * @param predicate
+     *            The predicate to check
+     * @return <code>true</code> if the predicate is a {@link OrPredicate},
+     *         <code>false</code> otherwise
+     */
+    public static boolean isOrPredicate(IPredicate predicate) {
+        return predicate instanceof OrPredicate;
+    }
+
+    /**
+     * Checks whether the given predicate is an {@link NotPredicate}.
+     * 
+     * @param predicate
+     *            The predicate to check
+     * @return <code>true</code> if the predicate is a {@link NotPredicate},
+     *         <code>false</code> otherwise
+     */
+    public static boolean isNotPredicate(IPredicate predicate) {
+        return predicate instanceof NotPredicate;
+    }
+
+    @Deprecated
+    public static boolean contains(IPredicate oPred, IPredicate pred) {
+        if (oPred instanceof OrPredicate) {
+            return ((OrPredicate) oPred).contains(pred);
+        }
         return false;
-	}
+    }
 
-	public static IPredicate getChild(IPredicate notPred) {
-		if (notPred instanceof NotPredicate){
-		return ((NotPredicate) notPred).getChild();
-		}
+    @Deprecated
+    public static IPredicate getChild(IPredicate notPred) {
+        if (notPred instanceof NotPredicate) {
+            return ((NotPredicate) notPred).getChild();
+        }
         throw new IllegalArgumentException("Argument is not a NotPredicate");
-	}
+    }
 }

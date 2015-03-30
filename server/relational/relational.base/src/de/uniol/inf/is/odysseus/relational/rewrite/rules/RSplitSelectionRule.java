@@ -70,7 +70,7 @@ public class RSplitSelectionRule extends AbstractRewriteRule<SelectAO> {
     private static List<IPredicate> splitPredicate(IPredicate sel, RewriteConfiguration config) {
         List<IPredicate> preds;
         if (ComplexPredicateHelper.isAndPredicate(sel)) {
-            preds = ComplexPredicateHelper.splitPredicate(sel);
+            preds = ComplexPredicateHelper.conjunctiveSplit(sel);
         }
         else {
             RelationalPredicate relationalPredicate = ((RelationalPredicate) sel);

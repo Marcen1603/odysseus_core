@@ -18,7 +18,7 @@ package de.uniol.inf.is.odysseus.core.server.predicate;
 import de.uniol.inf.is.odysseus.core.predicate.AbstractPredicate;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 
-@Deprecated
+
 public class EqualsPredicate<T> extends AbstractPredicate<T> {
 
 	private static final long serialVersionUID = 405493232110297596L;
@@ -61,4 +61,28 @@ public class EqualsPredicate<T> extends AbstractPredicate<T> {
 		}
 		return true;
 	}
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public IPredicate<T> and(IPredicate<T> predicate) {
+        return new AndPredicate<>(this, predicate);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public IPredicate<T> or(IPredicate<T> predicate) {
+        return new OrPredicate<>(this, predicate);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public IPredicate<T> not() {
+        return new NotPredicate<>(this);
+    }
 }

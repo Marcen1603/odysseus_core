@@ -22,6 +22,9 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.IAttributeResolver;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFExpression;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.server.predicate.AndPredicate;
+import de.uniol.inf.is.odysseus.core.server.predicate.NotPredicate;
+import de.uniol.inf.is.odysseus.core.server.predicate.OrPredicate;
 import de.uniol.inf.is.odysseus.mep.IBinaryOperator;
 import de.uniol.inf.is.odysseus.mep.functions.bool.AndOperator;
 import de.uniol.inf.is.odysseus.mep.functions.bool.NotOperator;
@@ -616,5 +619,30 @@ public abstract class AbstractRelationalPredicate<T extends Tuple<?>> extends Ab
             ret = getReplacement(tmp);
         }
         return ret;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public IPredicate<T> and(IPredicate<T> predicate) {
+        return new AndPredicate<>(this, predicate);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public IPredicate<T> or(IPredicate<T> predicate) {
+        return new OrPredicate<>(this, predicate);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public IPredicate<T> not() {
+        return new NotPredicate<>(this);
+
     }
 }

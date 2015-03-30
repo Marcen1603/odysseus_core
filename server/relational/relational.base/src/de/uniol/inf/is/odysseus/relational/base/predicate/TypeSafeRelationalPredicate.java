@@ -21,8 +21,13 @@ import java.util.HashMap;
 import java.util.Map;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
+import de.uniol.inf.is.odysseus.core.mep.IExpression;
 import de.uniol.inf.is.odysseus.core.mep.Variable;
+import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFExpression;
+import de.uniol.inf.is.odysseus.mep.functions.bool.AndOperator;
+import de.uniol.inf.is.odysseus.mep.functions.bool.NotOperator;
+import de.uniol.inf.is.odysseus.mep.functions.bool.OrOperator;
 
 public class TypeSafeRelationalPredicate extends RelationalPredicate{
 	
@@ -87,4 +92,42 @@ public class TypeSafeRelationalPredicate extends RelationalPredicate{
     public TypeSafeRelationalPredicate clone(){
 		return new TypeSafeRelationalPredicate(this);
 	}
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public IPredicate<Tuple<?>> and(IPredicate<Tuple<?>> predicate) {
+        if (predicate instanceof TypeSafeRelationalPredicate) {
+            SDFExpression expr = ((TypeSafeRelationalPredicate) predicate).expression;
+            AndOperator and = new AndOperator();
+            and.setArguments(new IExpression<?>[] { expression.getMEPExpression(), expr.getMEPExpression() });
+            return new TypeSafeRelationalPredicate(new SDFExpression(and, expression.getAttributeResolver(), expression.getExpressionParser()));
+        }
+        return super.and(predicate);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public IPredicate<Tuple<?>> or(IPredicate<Tuple<?>> predicate) {
+        if (predicate instanceof TypeSafeRelationalPredicate) {
+            SDFExpression expr = ((TypeSafeRelationalPredicate) predicate).expression;
+            OrOperator or = new OrOperator();
+            or.setArguments(new IExpression<?>[] { expression.getMEPExpression(), expr.getMEPExpression() });
+            return new TypeSafeRelationalPredicate(new SDFExpression(or, expression.getAttributeResolver(), expression.getExpressionParser()));
+        }
+        return super.or(predicate);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public IPredicate<Tuple<?>> not() {
+        NotOperator not = new NotOperator();
+        not.setArguments(new IExpression<?>[] { expression.getMEPExpression() });
+        return new TypeSafeRelationalPredicate(new SDFExpression(not, expression.getAttributeResolver(), expression.getExpressionParser()));
+    }
 }

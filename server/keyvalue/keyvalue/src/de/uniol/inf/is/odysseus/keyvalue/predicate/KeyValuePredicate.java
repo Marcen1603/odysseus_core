@@ -6,10 +6,15 @@ import java.util.List;
 import java.util.Map;
 
 import de.uniol.inf.is.odysseus.core.collection.KeyValueObject;
+import de.uniol.inf.is.odysseus.core.mep.IExpression;
 import de.uniol.inf.is.odysseus.core.predicate.AbstractPredicate;
+import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFExpression;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.mep.functions.bool.AndOperator;
+import de.uniol.inf.is.odysseus.mep.functions.bool.NotOperator;
+import de.uniol.inf.is.odysseus.mep.functions.bool.OrOperator;
 
 public class KeyValuePredicate<T extends KeyValueObject<?>> extends AbstractPredicate<T> {
 
@@ -70,4 +75,41 @@ public class KeyValuePredicate<T extends KeyValueObject<?>> extends AbstractPred
 		return new KeyValuePredicate<T>(this);
 	}
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public IPredicate<T> and(IPredicate<T> predicate) {
+        if (predicate instanceof KeyValuePredicate) {
+            SDFExpression expr = ((KeyValuePredicate<T>) predicate).expression;
+            AndOperator and = new AndOperator();
+            and.setArguments(new IExpression<?>[] { expression.getMEPExpression(), expr.getMEPExpression() });
+            return new KeyValuePredicate<>(new SDFExpression(and.toString(), expression.getExpressionParser()));
+        }
+        return super.and(predicate);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public IPredicate<T> or(IPredicate<T> predicate) {
+        if (predicate instanceof KeyValuePredicate) {
+            SDFExpression expr = ((KeyValuePredicate<T>) predicate).expression;
+            OrOperator or = new OrOperator();
+            or.setArguments(new IExpression<?>[] { expression.getMEPExpression(), expr.getMEPExpression() });
+            return new KeyValuePredicate<>(new SDFExpression(or.toString(), expression.getExpressionParser()));
+        }
+        return super.or(predicate);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public IPredicate<T> not() {
+        NotOperator not = new NotOperator();
+        not.setArguments(new IExpression<?>[] { expression.getMEPExpression() });
+        return new KeyValuePredicate<>(new SDFExpression(not, expression.getAttributeResolver(), expression.getExpressionParser()));
+    }
 }

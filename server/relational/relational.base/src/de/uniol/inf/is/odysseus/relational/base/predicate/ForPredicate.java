@@ -19,11 +19,15 @@ import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.predicate.AbstractPredicate;
+import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.sdf.schema.DirectAttributeResolver;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFExpression;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.AggregateFunctionBuilderRegistry;
+import de.uniol.inf.is.odysseus.core.server.predicate.AndPredicate;
+import de.uniol.inf.is.odysseus.core.server.predicate.NotPredicate;
+import de.uniol.inf.is.odysseus.core.server.predicate.OrPredicate;
 import de.uniol.inf.is.odysseus.mep.MEP;
 
 /**
@@ -156,4 +160,27 @@ public class ForPredicate extends AbstractPredicate<Tuple<?>> implements IRelati
 		return new ForPredicate(this);
 	}
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public IPredicate<Tuple<?>> and(IPredicate<Tuple<?>> predicate) {
+        return new AndPredicate<>(this, predicate);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public IPredicate<Tuple<?>> or(IPredicate<Tuple<?>> predicate) {
+        return new OrPredicate<>(this, predicate);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public IPredicate<Tuple<?>> not() {
+        return new NotPredicate<>(this);
+    }
 }

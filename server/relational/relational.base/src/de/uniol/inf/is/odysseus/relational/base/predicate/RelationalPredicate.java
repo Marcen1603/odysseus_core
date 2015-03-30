@@ -36,6 +36,9 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFExpression;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
 import de.uniol.inf.is.odysseus.mep.MEP;
+import de.uniol.inf.is.odysseus.mep.functions.bool.AndOperator;
+import de.uniol.inf.is.odysseus.mep.functions.bool.NotOperator;
+import de.uniol.inf.is.odysseus.mep.functions.bool.OrOperator;
 
 /**
  * @author Jonas Jacobi, Marco Grawunder
@@ -669,6 +672,49 @@ public class RelationalPredicate extends AbstractRelationalPredicate<Tuple<?>> {
 	public boolean isAlwaysTrue() {
 		return expression.isAlwaysTrue();
 	}
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public IPredicate<Tuple<?>> and(IPredicate<Tuple<?>> predicate) {
+        if (predicate instanceof RelationalPredicate) {
+            SDFExpression expr = ((RelationalPredicate) predicate).expression;
+            AndOperator and = new AndOperator();
+            and.setArguments(new IExpression<?>[] { expression.getMEPExpression(), expr.getMEPExpression() });
+            RelationalPredicate andPredicate = new RelationalPredicate(new SDFExpression(and.toString(), MEP.getInstance()));
+            return andPredicate;
+        }
+        return super.and(predicate);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public IPredicate<Tuple<?>> or(IPredicate<Tuple<?>> predicate) {
+        if (predicate instanceof RelationalPredicate) {
+            SDFExpression expr = ((RelationalPredicate) predicate).expression;
+            OrOperator or = new OrOperator();
+            or.setArguments(new IExpression<?>[] { expression.getMEPExpression(), expr.getMEPExpression() });
+            // We need to reparse the expression because of multiple instances
+            // of the same variable may exist
+            RelationalPredicate orPredicate = new RelationalPredicate(new SDFExpression(or.toString(), MEP.getInstance()));
+            return orPredicate;
+        }
+        return super.or(predicate);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public IPredicate<Tuple<?>> not() {
+        NotOperator not = new NotOperator();
+        not.setArguments(new IExpression<?>[] { expression.getMEPExpression() });
+        RelationalPredicate notPredicate = new RelationalPredicate(new SDFExpression(not, expression.getAttributeResolver(), MEP.getInstance()));
+        return notPredicate;
+    }
 
 	public static void main(String[] args) {
 		SDFAttribute a = new SDFAttribute("", "p_out", SDFDatatype.DOUBLE,

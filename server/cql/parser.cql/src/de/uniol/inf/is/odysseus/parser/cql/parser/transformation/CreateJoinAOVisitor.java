@@ -142,7 +142,7 @@ public class CreateJoinAOVisitor extends AbstractDefaultVisitor {
 		IPredicate<Tuple<?>> predicate;
 		predicate = CreatePredicateVisitor.toPredicate(wherePredicate, new DirectAttributeResolver(inputOp.getOutputSchema()));
 		predicate = ComplexPredicateHelper.pushDownNegation(predicate, false);
-		List<IPredicate> conjunctivePredicates = ComplexPredicateHelper.splitPredicate(predicate);
+		List<IPredicate> conjunctivePredicates = ComplexPredicateHelper.conjunctiveSplit(predicate);
 
 		AbstractLogicalOperator curInputAO = inputOp;
 		Iterator<?> it = conjunctivePredicates.iterator();
