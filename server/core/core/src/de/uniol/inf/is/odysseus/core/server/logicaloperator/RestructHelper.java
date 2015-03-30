@@ -30,6 +30,37 @@ import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 
 public class RestructHelper {
+    public static Collection<ILogicalOperator> removeOperator(BinaryLogicalOp remove, boolean reserveOutputSchema) {
+        List<ILogicalOperator> ret = new ArrayList<>();
+        Collection<LogicalSubscription> fathers = remove.getSubscriptions();
+        LogicalSubscription left = remove.getSubscribedToSource(0);
+        LogicalSubscription right = remove.getSubscribedToSource(1);
+
+        // remove Connection between child and op
+        remove.unsubscribeFromSource(left);
+        remove.unsubscribeFromSource(right);
+
+        // Subscribe Child to every father of op
+        for (LogicalSubscription father : fathers) {
+            remove.unsubscribeSink(father);
+            left.getTarget().subscribeSink(father.getTarget(), father.getSinkInPort(), left.getSourceOutPort(), reserveOutputSchema ? remove.getOutputSchema() : left.getTarget().getOutputSchema());
+            ret.add(father.getTarget());
+        }
+        for (LogicalSubscription father : fathers) {
+            remove.unsubscribeSink(father);
+            right.getTarget().subscribeSink(father.getTarget(), father.getSinkInPort(), right.getSourceOutPort(), reserveOutputSchema ? remove.getOutputSchema() : right.getTarget().getOutputSchema());
+            ret.add(father.getTarget());
+        }
+        // prevents duplicate entry if child.getTarget=father.getTarget
+        if (!ret.contains(left.getTarget())) {
+            ret.add(left.getTarget());
+        }
+        if (!ret.contains(right.getTarget())) {
+            ret.add(right.getTarget());
+        }
+        return ret;
+    }
+
 	public static Collection<ILogicalOperator> removeOperator(
 			UnaryLogicalOp remove, boolean reserveOutputSchema) {
 		List<ILogicalOperator> ret = new ArrayList<ILogicalOperator>();
