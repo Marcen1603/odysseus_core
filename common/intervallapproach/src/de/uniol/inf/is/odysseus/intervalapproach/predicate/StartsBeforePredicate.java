@@ -17,10 +17,14 @@ package de.uniol.inf.is.odysseus.intervalapproach.predicate;
 
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
-import de.uniol.inf.is.odysseus.core.predicate.AbstractPredicate;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 
-public class StartsBeforePredicate extends AbstractPredicate<IStreamObject<? extends ITimeInterval>>{
+/**
+ * 
+ * @author Christian Kuka
+ *
+ */
+public class StartsBeforePredicate extends AbstractTimeIntervalPredicate {
 
 	/**
 	 * 
