@@ -37,6 +37,9 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFExpression;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
 import de.uniol.inf.is.odysseus.mep.MEP;
+import de.uniol.inf.is.odysseus.mep.functions.bool.AndOperator;
+import de.uniol.inf.is.odysseus.mep.functions.bool.NotOperator;
+import de.uniol.inf.is.odysseus.mep.functions.bool.OrOperator;
 import de.uniol.inf.is.odysseus.probabilistic.base.common.ProbabilisticBooleanResult;
 import de.uniol.inf.is.odysseus.probabilistic.common.Interval;
 import de.uniol.inf.is.odysseus.probabilistic.common.base.ProbabilisticTuple;
@@ -328,6 +331,45 @@ public class ProbabilisticRelationalPredicate extends AbstractRelationalPredicat
         this.expression.bindAdditionalContent(input.getAdditionalContent());
         this.expression.bindVariables(values);
         return (Boolean) this.expression.getValue();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public IPredicate<ProbabilisticTuple<?>> and(IPredicate<ProbabilisticTuple<?>> predicate) {
+        if (predicate instanceof AbstractRelationalPredicate) {
+            SDFExpression expr = ((AbstractRelationalPredicate<?>) predicate).getExpression();
+            AndOperator and = new AndOperator();
+            and.setArguments(new IExpression<?>[] { expression.getMEPExpression(), expr.getMEPExpression() });
+            return new ProbabilisticRelationalPredicate(new SDFExpression(and.toString(), expression.getExpressionParser()));
+        }
+        return super.and(predicate);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public IPredicate<ProbabilisticTuple<?>> or(IPredicate<ProbabilisticTuple<?>> predicate) {
+        if (predicate instanceof AbstractRelationalPredicate) {
+            SDFExpression expr = ((AbstractRelationalPredicate<?>) predicate).getExpression();
+            OrOperator or = new OrOperator();
+            or.setArguments(new IExpression<?>[] { expression.getMEPExpression(), expr.getMEPExpression() });
+            return new ProbabilisticRelationalPredicate(new SDFExpression(or.toString(), expression.getExpressionParser()));
+        }
+        return super.or(predicate);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public IPredicate<ProbabilisticTuple<?>> not() {
+        NotOperator not = new NotOperator();
+        not.setArguments(new IExpression<?>[] { expression.getMEPExpression() });
+        return new ProbabilisticRelationalPredicate(new SDFExpression(not, expression.getAttributeResolver(), expression.getExpressionParser()));
+
     }
 
     @Override
