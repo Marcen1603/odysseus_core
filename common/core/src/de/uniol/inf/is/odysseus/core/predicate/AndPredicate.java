@@ -13,11 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.uniol.inf.is.odysseus.core.server.predicate;
+package de.uniol.inf.is.odysseus.core.predicate;
 
 import java.util.ArrayList;
-
-import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 
 /**
  * @author Jonas Jacobi, Christian Kuka
@@ -31,7 +29,7 @@ public class AndPredicate<T> extends ComplexPredicate<T> {
      * Class constructor.
      *
      */
-    protected AndPredicate() {
+    public AndPredicate() {
         super();
     }
 

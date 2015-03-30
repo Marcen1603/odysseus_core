@@ -13,10 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.uniol.inf.is.odysseus.core.server.predicate;
+package de.uniol.inf.is.odysseus.core.predicate;
 
-import de.uniol.inf.is.odysseus.core.predicate.AbstractPredicate;
-import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 
 /**
  * @author Jonas Jacobi, Christian Kuka
@@ -77,7 +75,7 @@ public abstract class ComplexPredicate<T> extends AbstractPredicate<T> {
      * @param left
      *            The left predicate to set
      */
-    protected void setLeft(IPredicate<? super T> left) {
+    public void setLeft(IPredicate<? super T> left) {
         this.left = left;
     }
 
@@ -96,7 +94,7 @@ public abstract class ComplexPredicate<T> extends AbstractPredicate<T> {
      * @param right
      *            The right predicate to set
      */
-    protected void setRight(IPredicate<? super T> right) {
+    public void setRight(IPredicate<? super T> right) {
         this.right = right;
     }
 

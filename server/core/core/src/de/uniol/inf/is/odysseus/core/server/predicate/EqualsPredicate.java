@@ -16,7 +16,10 @@
 package de.uniol.inf.is.odysseus.core.server.predicate;
 
 import de.uniol.inf.is.odysseus.core.predicate.AbstractPredicate;
+import de.uniol.inf.is.odysseus.core.predicate.AndPredicate;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
+import de.uniol.inf.is.odysseus.core.predicate.NotPredicate;
+import de.uniol.inf.is.odysseus.core.predicate.OrPredicate;
 
 
 public class EqualsPredicate<T> extends AbstractPredicate<T> {

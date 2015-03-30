@@ -19,7 +19,11 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Stack;
 
+import de.uniol.inf.is.odysseus.core.predicate.AndPredicate;
+import de.uniol.inf.is.odysseus.core.predicate.ComplexPredicate;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
+import de.uniol.inf.is.odysseus.core.predicate.NotPredicate;
+import de.uniol.inf.is.odysseus.core.predicate.OrPredicate;
 
 /**
  * Diese Klasse dient als Migrationshilfe um eine einfache Umstellung von

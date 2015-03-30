@@ -17,13 +17,13 @@
 package de.uniol.inf.is.odysseus.securitypunctuation.rules.join;
 
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
+import de.uniol.inf.is.odysseus.core.predicate.TruePredicate;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.JoinAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.LeftJoinAO;
 import de.uniol.inf.is.odysseus.core.server.metadata.CombinedMergeFunction;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
-import de.uniol.inf.is.odysseus.core.server.predicate.TruePredicate;
 import de.uniol.inf.is.odysseus.core.physicaloperator.interval.TITransferArea;
 import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
@@ -46,9 +46,9 @@ public class TSAJoinAORule extends AbstractTransformationRule<JoinAO> {
 		IPredicate pred = joinAO.getPredicate();
 		joinPO.setJoinPredicate(pred == null ? TruePredicate.getInstance() : pred.clone());
 		
-		// Der Name des Schemas soll nicht beide vorherigen Schemanamen nur aneinanderhängen, sondern sie mit einem Komma trennen!!!
+		// Der Name des Schemas soll nicht beide vorherigen Schemanamen nur aneinanderhï¿½ngen, sondern sie mit einem Komma trennen!!!
 		// Der neue Name wird dabei in joinAO geschrieben, da er bei defaultExecute() nochmal daraus gelesen wird.
-		// So können die Quellen später wieder getrennt werden für die SP
+		// So kï¿½nnen die Quellen spï¿½ter wieder getrennt werden fï¿½r die SP
 		String newOutputSchemaName = joinAO.getSubscribedToSource(0).getTarget().getOutputSchema().getURI() + ",";
 		newOutputSchemaName += joinAO.getSubscribedToSource(1).getTarget().getOutputSchema().getURI();
 		SDFSchema tmpSchema = SDFSchema.changeSourceName(joinAO.getOutputSchema(), newOutputSchemaName, true);

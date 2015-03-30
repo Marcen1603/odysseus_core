@@ -13,52 +13,79 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.uniol.inf.is.odysseus.core.server.predicate;
+package de.uniol.inf.is.odysseus.core.predicate;
 
-import de.uniol.inf.is.odysseus.core.predicate.AbstractPredicate;
-import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 
 /**
- * Predicate that evaluates to FALSE.
+ * Predicate that evaluates to TRUE.
  * 
- * @author Tobias Witt, Christian Kuka
+ * @author Christian Kuka
  * 
  * @param <T>
  */
-public class FalsePredicate<T> extends AbstractPredicate<T> {
-    private static final long serialVersionUID = -134272927237350983L;
-    private static final FalsePredicate instance = new FalsePredicate();
+public class TruePredicate<T> extends AbstractPredicate<T> {
+    private static final long serialVersionUID = 7701679660439284127L;
+    private static final TruePredicate instance = new TruePredicate();
 
-    static public FalsePredicate getInstance() {
+    static public TruePredicate getInstance() {
         return instance;
     }
 
-    private FalsePredicate() {
+    private TruePredicate() {
     }
 
+    /**
+     * 
+     * {@inheritDoc}
+     */
     @Override
-    public boolean evaluate(T input) {
-        return false;
+    public boolean evaluate(Object input) {
+        return true;
     }
 
+    /**
+     * 
+     * {@inheritDoc}
+     */
     @Override
-    public boolean evaluate(T left, T right) {
-        return false;
+    public boolean evaluate(Object left, Object right) {
+        return true;
     }
 
+    /**
+     * 
+     * {@inheritDoc}
+     */
     @Override
     public AbstractPredicate<T> clone() {
         return this;
     }
 
+    /**
+     * 
+     * {@inheritDoc}
+     */
     @Override
     public boolean equals(IPredicate<T> predicate) {
         return predicate.getClass().equals(this.getClass());
     }
 
+    /**
+     * 
+     * {@inheritDoc}
+     */
     @Override
     public boolean isContainedIn(IPredicate<?> predicate) {
         return predicate.getClass().equals(this.getClass());
+    }
+
+    /**
+     * 
+     * {@inheritDoc}
+     */
+    @Override
+    public String toString() {
+        return "true";
     }
 
     /**
@@ -66,14 +93,6 @@ public class FalsePredicate<T> extends AbstractPredicate<T> {
      */
     @Override
     public IPredicate<T> and(IPredicate<T> predicate) {
-        return this;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public IPredicate<T> or(IPredicate<T> predicate) {
         return predicate;
     }
 
@@ -81,7 +100,15 @@ public class FalsePredicate<T> extends AbstractPredicate<T> {
      * {@inheritDoc}
      */
     @Override
+    public IPredicate<T> or(IPredicate<T> predicate) {
+        return this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public IPredicate<T> not() {
-        return TruePredicate.getInstance();
+        return FalsePredicate.getInstance();
     }
 }
