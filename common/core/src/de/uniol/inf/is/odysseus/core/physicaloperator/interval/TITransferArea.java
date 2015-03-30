@@ -290,9 +290,11 @@ public class TITransferArea<R extends IStreamObject<? extends ITimeInterval>, W 
 			}
 			sendData();
 		} else {
-			logger.warn("Out of order element read " + heartbeat
-					+ " from port " + inPort + " before last send element "
-					+ watermark + " ! Ignoring" + " - (" + this.po + ")");
+			if (!isAllDone()) {
+				logger.warn("Out of order element read " + heartbeat
+						+ " from port " + inPort + " before last send element "
+						+ watermark + " ! Ignoring" + " - (" + this.po + ")");
+			}
 		}
 	}
 
