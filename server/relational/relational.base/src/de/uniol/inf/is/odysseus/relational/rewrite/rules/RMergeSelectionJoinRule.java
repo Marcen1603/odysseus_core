@@ -19,10 +19,15 @@ import java.util.Collection;
 import java.util.Set;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
+import de.uniol.inf.is.odysseus.core.mep.IExpression;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFExpression;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.JoinAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.SelectAO;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.ParameterPredicateOptimizer;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.RewriteConfiguration;
 import de.uniol.inf.is.odysseus.core.server.predicate.ComplexPredicateHelper;
+import de.uniol.inf.is.odysseus.mep.optimizer.ExpressionOptimizer;
+import de.uniol.inf.is.odysseus.relational.base.predicate.RelationalPredicate;
 import de.uniol.inf.is.odysseus.relational.rewrite.RelationalRestructHelper;
 import de.uniol.inf.is.odysseus.rewrite.flow.RewriteRuleFlowGroup;
 import de.uniol.inf.is.odysseus.rewrite.rule.AbstractRewriteRule;
@@ -48,6 +53,17 @@ public class RMergeSelectionJoinRule extends AbstractRewriteRule<JoinAO> {
 				} else {
 					join.setPredicate(sel.getPredicate());
 				}
+                ParameterPredicateOptimizer optimizeConfig = config.getQueryBuildConfiguration().get(ParameterPredicateOptimizer.class);
+                if (optimizeConfig != null && optimizeConfig.getValue().booleanValue()) {
+                    if (join.getPredicate() instanceof RelationalPredicate) {
+                        RelationalPredicate relationalPredicate = (RelationalPredicate) join.getPredicate();
+                        IExpression<?> expression = ((RelationalPredicate) join.getPredicate()).getExpression().getMEPExpression();
+                        expression = ExpressionOptimizer.optimize(expression);
+                        IExpression<?> cnf = ExpressionOptimizer.toConjunctiveNormalForm(expression);
+                        SDFExpression sdfExpression = new SDFExpression(cnf, relationalPredicate.getExpression().getAttributeResolver(), relationalPredicate.getExpression().getExpressionParser());
+                        join.setPredicate(new RelationalPredicate(sdfExpression));
+                    }
+                }
 				RestructParameterInfoUtil.updatePredicateParameterInfo(
 						join.getParameterInfos(), join.getPredicate());
 

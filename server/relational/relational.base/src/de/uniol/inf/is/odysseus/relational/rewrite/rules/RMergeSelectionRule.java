@@ -18,9 +18,14 @@ package de.uniol.inf.is.odysseus.relational.rewrite.rules;
 import java.util.Collection;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
+import de.uniol.inf.is.odysseus.core.mep.IExpression;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFExpression;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.SelectAO;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.ParameterPredicateOptimizer;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.RewriteConfiguration;
 import de.uniol.inf.is.odysseus.core.server.predicate.ComplexPredicateHelper;
+import de.uniol.inf.is.odysseus.mep.optimizer.ExpressionOptimizer;
+import de.uniol.inf.is.odysseus.relational.base.predicate.RelationalPredicate;
 import de.uniol.inf.is.odysseus.relational.rewrite.RelationalRestructHelper;
 import de.uniol.inf.is.odysseus.rewrite.flow.RewriteRuleFlowGroup;
 import de.uniol.inf.is.odysseus.rewrite.rule.AbstractRewriteRule;
@@ -43,6 +48,17 @@ public class RMergeSelectionRule extends AbstractRewriteRule<SelectAO> {
 					operator.setPredicate(ComplexPredicateHelper
 							.createAndPredicate(operator.getPredicate(),
 									sel.getPredicate()));
+                    ParameterPredicateOptimizer optimizeConfig = config.getQueryBuildConfiguration().get(ParameterPredicateOptimizer.class);
+                    if (optimizeConfig != null && optimizeConfig.getValue().booleanValue()) {
+                        if (operator.getPredicate() instanceof RelationalPredicate) {
+                            RelationalPredicate relationalPredicate = (RelationalPredicate) operator.getPredicate();
+                            IExpression<?> expression = ((RelationalPredicate) operator.getPredicate()).getExpression().getMEPExpression();
+                            expression = ExpressionOptimizer.optimize(expression);
+                            IExpression<?> cnf = ExpressionOptimizer.toConjunctiveNormalForm(expression);
+                            SDFExpression sdfExpression = new SDFExpression(cnf, relationalPredicate.getExpression().getAttributeResolver(), relationalPredicate.getExpression().getExpressionParser());
+                            operator.setPredicate(new RelationalPredicate(sdfExpression));
+                        }
+                    }
 				} else {
 					operator.setPredicate(sel.getPredicate());
 				}
