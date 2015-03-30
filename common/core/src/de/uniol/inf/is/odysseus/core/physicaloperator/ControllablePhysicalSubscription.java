@@ -2,6 +2,7 @@ package de.uniol.inf.is.odysseus.core.physicaloperator;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.locks.ReentrantLock;
 
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
@@ -15,6 +16,8 @@ public class ControllablePhysicalSubscription<K> extends AbstractPhysicalSubscri
 	private int sheddingFactor = 0;
 	private int currentSheddingValue = 0;
 	private int suspendCalls = 0;
+	
+	private ReentrantLock suspendBufferLock = new ReentrantLock();
 
 
 	public ControllablePhysicalSubscription(K target, int sinkInPort, int sourceOutPort,
@@ -73,9 +76,11 @@ public class ControllablePhysicalSubscription<K> extends AbstractPhysicalSubscri
 	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public void process_internal(IStreamObject o) {
+	public void process_internal(IStreamObject o) { 
 		if (getOpenCalls() > 0 && getOpenCalls() == suspendCalls) {
+			suspendBufferLock.lock();
 			suspendBuffer.add(o);
+			suspendBufferLock.unlock();
 		} else {
 			clearSuspendBuffer();
 			((ISink) getTarget()).process(o, getSinkInPort());
@@ -86,11 +91,12 @@ public class ControllablePhysicalSubscription<K> extends AbstractPhysicalSubscri
 	private void clearSuspendBuffer() {
 		if (suspendBuffer.isEmpty())
 			return;
-
+		suspendBufferLock.lock();
 		for (IStreamObject o : suspendBuffer) {
 			((ISink) getTarget()).process(o, getSinkInPort());
 			//TODO: Thread.yield();
 		}
+		suspendBufferLock.unlock();
 		suspendBuffer.clear();
 	}
 
