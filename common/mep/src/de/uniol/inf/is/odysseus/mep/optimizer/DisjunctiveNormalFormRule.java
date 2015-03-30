@@ -58,7 +58,7 @@ public class DisjunctiveNormalFormRule extends AbstractExpressionOptimizerRule<I
         }
         if (expression instanceof NotOperator) {
             IExpression<?> leaf = expression.toFunction().getArgument(0);
-            if ((leaf.isConstant()) || (leaf.isVariable())) {
+            if (!isBooleanOperator(leaf)) {
                 return expression;
             }
             if (leaf instanceof NotOperator) {
