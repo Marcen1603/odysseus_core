@@ -58,7 +58,8 @@ public class TDatabaseDatabaseSinkAORule extends AbstractTransformationRule<Data
 		if (conn == null){
 			throw new TransformationException("Database connection cannot be initialized");
 		}
-		ISink<?> sinkPO = new DatabaseSinkPO(conn, operator.getTablename(), operator.isDrop(), operator.isTruncate(), operator.getBatchSize(), operator.getBatchTimeout(), operator.getTableSchema());			
+        ISink<?> sinkPO = new DatabaseSinkPO(conn, operator.getTablename(), operator.isDrop(), operator.isTruncate(), operator.getBatchSize(), operator.getBatchTimeout(), operator.getTableSchema(),
+                operator.getPreparedStatement());
 		defaultExecute(operator, sinkPO, config, true, true);		
 	}
 

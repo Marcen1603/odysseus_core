@@ -69,6 +69,7 @@ public class DatabaseSinkPO extends AbstractSink<Tuple<ITimeInterval>>
 			.getInfoService(DatabaseSinkPO.class);
 
 	private Connection jdbcConnection;
+    private String preparedStatementString;
 	private PreparedStatement preparedStatement;
 	private IDataTypeMappingHandler<?>[] dtMappings;
 
@@ -86,7 +87,7 @@ public class DatabaseSinkPO extends AbstractSink<Tuple<ITimeInterval>>
 
 	public DatabaseSinkPO(IDatabaseConnection connection, String tablename,
 			boolean drop, boolean truncate, long batchSize, int batchTimeout,
-			List<String> tableSchema) {
+ List<String> tableSchema, String preparedStatement) {
 		if (connection == null){
 			throw new IllegalArgumentException("Connection must not be null");
 		}
@@ -97,6 +98,7 @@ public class DatabaseSinkPO extends AbstractSink<Tuple<ITimeInterval>>
 		this.batchSize = batchSize;
 		this.batchTimeout = batchTimeout;
 		this.tableSchema = tableSchema;
+        this.preparedStatementString = preparedStatement;
 	}
 
 	public DatabaseSinkPO(DatabaseSinkPO databaseSinkPO) {
@@ -107,6 +109,8 @@ public class DatabaseSinkPO extends AbstractSink<Tuple<ITimeInterval>>
 		this.batchSize = databaseSinkPO.batchSize;
 		this.batchTimeout = databaseSinkPO.batchTimeout;
 		this.tableSchema = databaseSinkPO.tableSchema;
+        this.preparedStatementString = databaseSinkPO.preparedStatementString;
+
 	}
 
 	private void initDTMappings() {
@@ -143,8 +147,12 @@ public class DatabaseSinkPO extends AbstractSink<Tuple<ITimeInterval>>
 				}
 			}
 			this.jdbcConnection = this.connection.getConnection();
-			this.preparedStatement = this.jdbcConnection
-					.prepareStatement(createPreparedStatement());
+            if ((this.preparedStatementString == null) || ("".equals(this.preparedStatementString))) {
+                this.preparedStatement = this.jdbcConnection.prepareStatement(createPreparedStatement());
+            }
+            else {
+                this.preparedStatement = this.jdbcConnection.prepareStatement(this.preparedStatementString);
+            }
 			this.jdbcConnection.setAutoCommit(false);
 			this.counter = 0;
 			opened = true;

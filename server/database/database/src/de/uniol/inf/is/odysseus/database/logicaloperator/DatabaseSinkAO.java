@@ -58,7 +58,7 @@ public class DatabaseSinkAO extends AbstractDatabaseOperator {
 	private boolean drop;
 	private long batchSize = 10;
 	private int batchTimeout = 0;
-
+    private String preparedStatement = "";
 	private List<String> tableSchema;
 
 	public DatabaseSinkAO() {
@@ -75,6 +75,7 @@ public class DatabaseSinkAO extends AbstractDatabaseOperator {
 			this.tableSchema = new ArrayList<>(old.tableSchema);
 		}
 		this.batchTimeout = old.batchTimeout;
+        this.preparedStatement = old.preparedStatement;
 	}
 
 	@Override
@@ -135,6 +136,18 @@ public class DatabaseSinkAO extends AbstractDatabaseOperator {
 	public List<String> getTableSchema() {
 		return tableSchema;
 	}
+
+    @Parameter(name = "PreparedStatement", type = StringParameter.class, optional = true, doc = "Prepared INSERT statement to use.")
+    public void setPreparedStatement(String preparedStatement) {
+        this.preparedStatement = preparedStatement;
+    }
+
+    /**
+     * @return the preparedStatement
+     */
+    public String getPreparedStatement() {
+        return this.preparedStatement;
+    }
 
 	public long getBatchSize() {
 		return batchSize;
