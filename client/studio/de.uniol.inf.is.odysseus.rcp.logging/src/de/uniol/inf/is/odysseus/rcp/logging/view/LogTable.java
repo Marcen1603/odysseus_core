@@ -33,6 +33,8 @@ import de.uniol.inf.is.odysseus.rcp.logging.container.IRCPLogContainerListener;
 import de.uniol.inf.is.odysseus.rcp.logging.container.LogContentProvider;
 import de.uniol.inf.is.odysseus.rcp.logging.container.RCPLogContainer;
 import de.uniol.inf.is.odysseus.rcp.logging.view.filter.IRCPLogFilter;
+import de.uniol.inf.is.odysseus.rcp.logging.view.util.CellLabelProviderAndSorter;
+import de.uniol.inf.is.odysseus.rcp.logging.view.util.LevelImageMap;
 
 public class LogTable implements IRCPLogContainerListener {
 

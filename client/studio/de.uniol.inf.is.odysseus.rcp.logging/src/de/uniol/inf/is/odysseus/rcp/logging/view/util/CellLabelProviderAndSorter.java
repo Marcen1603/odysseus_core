@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.rcp.logging.view;
+package de.uniol.inf.is.odysseus.rcp.logging.view.util;
 
 import org.eclipse.jface.viewers.CellLabelProvider;
 import org.eclipse.jface.viewers.TableViewer;

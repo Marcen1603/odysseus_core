@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.rcp.logging.view;
+package de.uniol.inf.is.odysseus.rcp.logging.view.util;
 
 import java.io.File;
 

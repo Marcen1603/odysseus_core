@@ -32,6 +32,7 @@ import de.uniol.inf.is.odysseus.rcp.logging.activator.RCPLoggingPlugIn;
 import de.uniol.inf.is.odysseus.rcp.logging.save.LogSaverRegistry;
 import de.uniol.inf.is.odysseus.rcp.logging.view.filter.LevelAndTextRCPLogFilter;
 import de.uniol.inf.is.odysseus.rcp.logging.view.filter.LevelRCPLogFilter;
+import de.uniol.inf.is.odysseus.rcp.logging.view.util.SaveMenuItem;
 
 public class LogPresenter {
 
