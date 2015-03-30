@@ -8,7 +8,7 @@ wind0 = ACCESS({
 	protocol='SimpleCSV',
 	dataHandler='Tuple', 
 	options=[
-		['filename', '${BUNDLE-ROOT}\testdaten\join_select\input0.csv'],
+		['filename', '${BUNDLE-ROOT}\testdaten\difference\input0.csv'],
 		['csv.delimiter', ';'],
 		['csv.trim', 'true'],
 		['delay', '200']
@@ -27,7 +27,7 @@ wind1 = ACCESS({
 	protocol='SimpleCSV',
 	dataHandler='Tuple', 
 	options=[
-		['filename', '${BUNDLE-ROOT}\testdaten\join_select\input1.csv'],
+		['filename', '${BUNDLE-ROOT}\testdaten\difference\input1.csv'],
 		['csv.delimiter', ';'],
 		['csv.trim', 'true'],
 		['delay', '200']
@@ -40,6 +40,6 @@ wind1 = ACCESS({
 		['location', 'INTEGER']
 ]})
 window_wind0 = window({size = [5, 'SECONDS'], slide = [5, 'SECONDS'], type = 'time'}, wind0)
-window_wind0 = window({size = [5, 'SECONDS'], slide = [5, 'SECONDS'], type = 'time'}, wind1)
+window_wind1 = window({size = [5, 'SECONDS'], slide = [5, 'SECONDS'], type = 'time'}, wind1)
 
 result = DIFFERENCE(window_wind0, window_wind1)

@@ -8,7 +8,7 @@ wind = ACCESS({
 	protocol='SimpleCSV',
 	dataHandler='Tuple', 
 	options=[
-		['filename', '${BUNDLE-ROOT}\testdaten\join_select\input0.csv'],
+		['filename', '${BUNDLE-ROOT}\testdaten\sort\input0.csv'],
 		['csv.delimiter', ';'],
 		['csv.trim', 'true'],
 		['delay', '200']
