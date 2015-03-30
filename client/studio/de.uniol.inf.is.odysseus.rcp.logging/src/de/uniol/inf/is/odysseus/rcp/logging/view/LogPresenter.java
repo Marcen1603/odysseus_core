@@ -98,10 +98,11 @@ public class LogPresenter {
 		buttonCenterComposite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		
 		Composite buttonRightComposite = new Composite(buttonBarComposite, SWT.NONE);
-		buttonRightComposite.setLayout(new GridLayout());
+		buttonRightComposite.setLayout(new GridLayout(2, true));
 		
 		final Button showExceptionButton = new Button(buttonRightComposite, SWT.PUSH);
 		showExceptionButton.setText("Show Exception");
+		showExceptionButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		showExceptionButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -116,6 +117,22 @@ public class LogPresenter {
 			}
 		});
 		showExceptionButton.setEnabled(hasOneThrowable(logTableViewer.getSelectedLogEntries()));
+		
+		Button showDetailsButton = new Button( buttonRightComposite, SWT.PUSH);
+		showDetailsButton.setText("Details...");
+		showDetailsButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		showDetailsButton.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				List<RCPLogEntry> selectedEntries = logTableViewer.getSelectedLogEntries();
+				
+				for( RCPLogEntry selectedEntry : selectedEntries ) {
+					LogEntryDetailsWindow.show(selectedEntry);
+					// show only the first one
+					return;
+				}
+			}
+		});
 		
 		logTableViewer.addListener(new ILogTableListener() {
 			@Override
