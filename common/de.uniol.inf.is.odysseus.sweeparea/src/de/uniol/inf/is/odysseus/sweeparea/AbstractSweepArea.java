@@ -281,15 +281,15 @@ public abstract class AbstractSweepArea<T extends IStreamObject<?>> implements
 		return this.getElements().remove(element);
 	}
 
-	@Override
-	public T peek() {
-		return this.getElements().get(getElements().size());
-	}
+    @Override
+    public T peek() {
+        return this.getElements().get(getElements().size() - 1);
+    }
 
-	@Override
-	public T poll() {
-		return this.getElements().remove(getElements().size());
-	}
+    @Override
+    public T poll() {
+        return this.getElements().remove(getElements().size() - 1);
+    }
 
 	/**
 	 * This method inserts a multiple elements into the sweep area.
