@@ -35,6 +35,8 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITranspor
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.TransportHandlerRegistry;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractAccessAO;
+import de.uniol.inf.is.odysseus.core.server.metadata.IMetadataInitializer;
+import de.uniol.inf.is.odysseus.core.server.metadata.MetadataRegistry;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IIterableSource;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.pull.AccessPO;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.push.ReceiverPO;
@@ -129,19 +131,19 @@ public class TAccessAORule extends AbstractTransformationRule<AbstractAccessAO> 
 			if (options.containsKey("scheduler.delay")) {
 				if (accessPO instanceof IIterableSource) {
 					((IIterableSource) accessPO).setDelay(options.getLong(
-									"scheduler.delay",-1));
+							"scheduler.delay", -1));
 				}
 			}
 			if (options.containsKey("scheduler.yieldrate")) {
 				if (accessPO instanceof IIterableSource) {
 					((IIterableSource) accessPO).setYieldRate(options.getInt(
-									"scheduler.yieldrate",-1));
+							"scheduler.yieldrate", -1));
 				}
 			}
 			if (options.containsKey("scheduler.yieldnanos")) {
 				if (accessPO instanceof IIterableSource) {
-					((IIterableSource) accessPO).setYieldDurationNanos(options.getInt(
-									"scheduler.yieldnanos",-1));
+					((IIterableSource) accessPO).setYieldDurationNanos(options
+							.getInt("scheduler.yieldnanos", -1));
 				}
 			}
 			if (!config.isVirtualTransformation()) {
@@ -150,19 +152,30 @@ public class TAccessAORule extends AbstractTransformationRule<AbstractAccessAO> 
 			}
 			List<String> unusedOptions = options.getUnreadOptions();
 			if (unusedOptions.size() > 0) {
-				infoService.warning("The following options where not used in translation "
-						+ unusedOptions);
+				infoService
+						.warning("The following options where not used in translation "
+								+ unusedOptions);
 			}
 
 		} else {
-//			if (operator.getWrapper() != null) {
-//				// throw new
-//				// TransformationException("Multiple definiton of source with name "+operator.getAccessAOName());
-//				infoService
-//						.warning("Potential problem? Multiple definition of source with name "
-//								+ operator.getAccessAOName());
-//			}
+			// if (operator.getWrapper() != null) {
+			// // throw new
+			// //
+			// TransformationException("Multiple definiton of source with name "+operator.getAccessAOName());
+			// infoService
+			// .warning("Potential problem? Multiple definition of source with name "
+			// + operator.getAccessAOName());
+			// }
 		}
+		// Set metadata types
+		if (accessPO instanceof IMetadataInitializer) {
+			if (!config.hasOption("NO_METADATA")) {
+				Class type = MetadataRegistry.getMetadataType(config
+						.getMetaTypes());
+				((IMetadataInitializer) accessPO).setMetadataType(type);
+			}
+		}
+
 		defaultExecute(operator, accessPO, config, true, true);
 	}
 
@@ -227,7 +240,7 @@ public class TAccessAORule extends AbstractTransformationRule<AbstractAccessAO> 
 		if (operator.getDataHandler() != null) {
 			if (operator.getInputSchema() != null) {
 				List<SDFDatatype> dtList = new LinkedList<SDFDatatype>();
-				for (String dt: operator.getInputSchema()){
+				for (String dt : operator.getInputSchema()) {
 					dtList.add(getDataDictionary().getDatatype(dt));
 				}
 				dataHandler = DataHandlerRegistry.getDataHandler(

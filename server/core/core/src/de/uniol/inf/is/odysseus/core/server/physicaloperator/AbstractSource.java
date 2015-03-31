@@ -459,7 +459,7 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 	// ------------------------------------------------------------------------
 
 	@Override
-	final public void transfer(T object, int sourceOutPort) {
+	public void transfer(T object, int sourceOutPort) {
 		fire(this.pushInitEvent);
 		// necessary to not lose tuples in a plan migration
 		locker.lock();
@@ -471,7 +471,7 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 	}
 
 	@SuppressWarnings("rawtypes")
-	final protected void transfer(T object, int sourceOutPort,
+	protected void transfer(T object, int sourceOutPort,
 			AbstractPhysicalSubscription<ISink<? super T>> sink) {
 		if (sink.getSourceOutPort() == sourceOutPort) {
 			try {
@@ -486,7 +486,7 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 	}
 
 	@Override
-	final public void transfer(T object) {
+	public void transfer(T object) {
 		transfer(object, 0);
 	}
 

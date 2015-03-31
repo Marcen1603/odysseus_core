@@ -20,10 +20,10 @@ import java.util.Collection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.core.physicaloperator.AbstractPhysicalSubscription;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
-import de.uniol.inf.is.odysseus.core.physicaloperator.AbstractPhysicalSubscription;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.MetadataCreationPO;
+import de.uniol.inf.is.odysseus.core.server.metadata.IMetadataInitializer;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.buffer.BufferPO;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.buffer.IBuffer;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.bufferplacement.AbstractBufferPlacementStrategy;
@@ -60,7 +60,7 @@ public class SourceBufferPlacementStrategy extends AbstractBufferPlacementStrate
 	protected boolean bufferNeeded(
 			Collection<? extends AbstractPhysicalSubscription<? extends ISource<?>>> subscriptions,
 			ISink<?> childSink, ISink<?> sink) {
-		boolean setBuffer = sink instanceof MetadataCreationPO;
+		boolean setBuffer = sink instanceof IMetadataInitializer;
 		if (setBuffer){
 			getLogger().debug(childSink+" "+sink+" true");
 		}

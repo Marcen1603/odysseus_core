@@ -20,14 +20,19 @@ import java.io.IOException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ITransferHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
+import de.uniol.inf.is.odysseus.core.server.metadata.IMetadataInitializer;
+import de.uniol.inf.is.odysseus.core.server.metadata.IMetadataUpdater;
+import de.uniol.inf.is.odysseus.core.server.metadata.MetadataInitializerAdapter;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSource;
 
-public class ReceiverPO<R, W> extends AbstractSource<W> implements
-		ITransferHandler<W> {
+public class ReceiverPO<W extends IStreamObject<M>, M extends IMetaAttribute> extends AbstractSource<W> implements
+		ITransferHandler<W>, IMetadataInitializer<M, W> {
 
 	volatile protected static Logger _logger = null;
 
@@ -42,6 +47,8 @@ public class ReceiverPO<R, W> extends AbstractSource<W> implements
 
 	private IProtocolHandler<W> protocolHandler;
 
+	private IMetadataInitializer<M,W> metadataInitializer = new MetadataInitializerAdapter<>();
+	
 	public ReceiverPO(IProtocolHandler<W> protocolHandler) {
 		this.protocolHandler = protocolHandler;
 		this.protocolHandler.setTransfer(this);
@@ -56,10 +63,6 @@ public class ReceiverPO<R, W> extends AbstractSource<W> implements
 
 	public void setProtocolHandler(IProtocolHandler<W> ph) {
 		this.protocolHandler = ph;
-	}
-
-	public ReceiverPO(ReceiverPO<R, W> other) {
-		throw new IllegalArgumentException("CLONE CURRENTLY NOT SUPPORTED.");
 	}
 
 	// @Override
@@ -99,11 +102,23 @@ public class ReceiverPO<R, W> extends AbstractSource<W> implements
 		propagateDone();
 	}
 
-//	@Override
-//	public synchronized void transfer(W toTransfer) {
-//		super.transfer(toTransfer);
-//	}
 
+	@Override
+	final public void transfer(W object) {
+		try {
+			object.setMetadata(getMetadataInstance());
+		} catch (InstantiationException | IllegalAccessException e) {
+			e.printStackTrace();
+		}
+		updateMetadata(object);
+		super.transfer(object);
+	}
+	
+	@Override
+	public final void transfer(W object, int sourceOutPort) {
+		super.transfer(object, sourceOutPort);
+	}
+	
 	@Override
 	public boolean process_isSemanticallyEqual(IPhysicalOperator ipo) {
 		if (!(ipo instanceof ReceiverPO)) {
@@ -118,8 +133,25 @@ public class ReceiverPO<R, W> extends AbstractSource<W> implements
 	}
 
 	@Override
-	public AbstractSource<W> clone() {
-		return new ReceiverPO<R, W>(this);
+	public void setMetadataType(Class<M> type) {
+		this.metadataInitializer.setMetadataType(type);
 	}
+
+	@Override
+	public M getMetadataInstance() throws InstantiationException,
+			IllegalAccessException {
+		return this.metadataInitializer.getMetadataInstance();
+	}
+
+	@Override
+	public void addMetadataUpdater(IMetadataUpdater<M, W> mFac) {
+		this.metadataInitializer.addMetadataUpdater(mFac);
+	}
+
+	@Override
+	public void updateMetadata(W object) {
+		this.metadataInitializer.updateMetadata(object);
+	}
+
 
 }

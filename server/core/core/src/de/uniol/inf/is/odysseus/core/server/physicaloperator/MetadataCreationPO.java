@@ -29,7 +29,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFMetaAttributeList;
 /**
  * @author Jonas Jacobi
  */
-public class MetadataCreationPO<M extends IMetaAttribute, In extends IStreamObject<M>>
+class MetadataCreationPO<M extends IMetaAttribute, In extends IStreamObject<M>>
 		extends AbstractPipe<In, In> implements Serializable {
 
 	private static final long serialVersionUID = 3783851208646530940L;

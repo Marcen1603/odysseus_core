@@ -18,9 +18,14 @@ package de.uniol.inf.is.odysseus.core.server.physicaloperator.access.pull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
+import de.uniol.inf.is.odysseus.core.server.metadata.IMetadataInitializer;
+import de.uniol.inf.is.odysseus.core.server.metadata.IMetadataUpdater;
+import de.uniol.inf.is.odysseus.core.server.metadata.MetadataInitializerAdapter;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractIterableSource;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSource;
 
@@ -35,22 +40,26 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSource;
  * @param <W>
  *            The Output that is written by this operator.
  */
-public class AccessPO<R, W> extends AbstractIterableSource<W> {
+public class AccessPO<W extends IStreamObject<M>, M extends IMetaAttribute>
+		extends AbstractIterableSource<W> implements IMetadataInitializer<M, W> {
 
 	private static final Logger LOG = LoggerFactory.getLogger(AccessPO.class);
-	
+
 	private boolean isDone = false;
 	private final long maxTimeToWaitForNewEventMS;
 	private long lastTransfer = 0;
 
 	private IProtocolHandler<W> protocolHandler;
 
-//	public AccessPO(IProtocolHandler<W> protocolHandler) {
-//		this.protocolHandler = protocolHandler;
-//		this.maxTimeToWaitForNewEventMS = 0;
-//	}
-	
-	public AccessPO(IProtocolHandler<W> protocolHandler,long maxTimeToWaitForNewEventMS) {
+	private IMetadataInitializer<M, W> metadataInitializer = new MetadataInitializerAdapter<>();
+
+	// public AccessPO(IProtocolHandler<W> protocolHandler) {
+	// this.protocolHandler = protocolHandler;
+	// this.maxTimeToWaitForNewEventMS = 0;
+	// }
+
+	public AccessPO(IProtocolHandler<W> protocolHandler,
+			long maxTimeToWaitForNewEventMS) {
 		this.protocolHandler = protocolHandler;
 		this.maxTimeToWaitForNewEventMS = maxTimeToWaitForNewEventMS;
 	}
@@ -62,7 +71,7 @@ public class AccessPO<R, W> extends AbstractIterableSource<W> {
 		}
 
 		if (maxTimeToWaitForNewEventMS > 0 && lastTransfer > 0) {
-			if (System.currentTimeMillis()-lastTransfer > maxTimeToWaitForNewEventMS){
+			if (System.currentTimeMillis() - lastTransfer > maxTimeToWaitForNewEventMS) {
 				return doDone();
 			}
 		}
@@ -75,7 +84,7 @@ public class AccessPO<R, W> extends AbstractIterableSource<W> {
 			}
 		} catch (Exception e) {
 			LOG.error("Exception during input", e);
-			sendError("Exception reading input",e);
+			sendError("Exception reading input", e);
 		}
 
 		// TODO: We should think about propagate done ... maybe its better
@@ -101,6 +110,15 @@ public class AccessPO<R, W> extends AbstractIterableSource<W> {
 
 	@Override
 	public synchronized void transferNext() {
+
+		M meta = null;
+		try {
+			meta = getMetadataInstance();
+		} catch (InstantiationException | IllegalAccessException e1) {
+			LOG.error("Error creating meta data",e1);
+			sendError("Error creating meta data",e1);
+		}
+
 		if (isOpen() && !isDone()) {
 			W toTransfer = null;
 			try {
@@ -112,6 +130,8 @@ public class AccessPO<R, W> extends AbstractIterableSource<W> {
 					if (maxTimeToWaitForNewEventMS > 0) {
 						lastTransfer = System.currentTimeMillis();
 					}
+					toTransfer.setMetadata(meta);
+					updateMetadata(toTransfer);
 					transfer(toTransfer);
 				}
 			} catch (Exception e) {
@@ -133,7 +153,7 @@ public class AccessPO<R, W> extends AbstractIterableSource<W> {
 				isDone = false;
 				protocolHandler.open();
 			} catch (Exception e) {
-				sendError("Error when opening query "+e.getMessage(), e);
+				sendError("Error when opening query " + e.getMessage(), e);
 				throw new OpenFailedException(e);
 			}
 		}
@@ -162,6 +182,27 @@ public class AccessPO<R, W> extends AbstractIterableSource<W> {
 		}
 		// TODO: Check for Equality
 		return false;
+	}
+
+	@Override
+	public void setMetadataType(Class<M> type) {
+		this.metadataInitializer.setMetadataType(type);
+	}
+
+	@Override
+	public M getMetadataInstance() throws InstantiationException,
+			IllegalAccessException {
+		return this.metadataInitializer.getMetadataInstance();
+	}
+
+	@Override
+	public void addMetadataUpdater(IMetadataUpdater<M, W> mFac) {
+		this.metadataInitializer.addMetadataUpdater(mFac);
+	}
+
+	@Override
+	public void updateMetadata(W object) {
+		this.metadataInitializer.updateMetadata(object);
 	}
 
 }

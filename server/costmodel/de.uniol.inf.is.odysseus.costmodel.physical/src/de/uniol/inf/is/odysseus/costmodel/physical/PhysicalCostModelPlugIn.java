@@ -8,7 +8,6 @@ import de.uniol.inf.is.odysseus.costmodel.physical.estimate.BlockingBufferPOEsti
 import de.uniol.inf.is.odysseus.costmodel.physical.estimate.BufferPOEstimator;
 import de.uniol.inf.is.odysseus.costmodel.physical.estimate.ElementWindowTIPOEstimator;
 import de.uniol.inf.is.odysseus.costmodel.physical.estimate.JoinTIPOEstimator;
-import de.uniol.inf.is.odysseus.costmodel.physical.estimate.MetadataCreationPOEstimator;
 import de.uniol.inf.is.odysseus.costmodel.physical.estimate.MetadataUpdatePOEstimator;
 import de.uniol.inf.is.odysseus.costmodel.physical.estimate.ProjectPOEstimator;
 import de.uniol.inf.is.odysseus.costmodel.physical.estimate.ReceiverPOEstimator;
@@ -24,7 +23,6 @@ public class PhysicalCostModelPlugIn implements BundleActivator {
 	@Override
 	public void start(BundleContext context) throws Exception {
 		OperatorEstimatorRegistry.bindPhysicalOperatorEstimator(new SelectPOEstimator());
-		OperatorEstimatorRegistry.bindPhysicalOperatorEstimator(new MetadataCreationPOEstimator());
 		OperatorEstimatorRegistry.bindPhysicalOperatorEstimator(new MetadataUpdatePOEstimator());
 		OperatorEstimatorRegistry.bindPhysicalOperatorEstimator(new ReceiverPOEstimator());
 		OperatorEstimatorRegistry.bindPhysicalOperatorEstimator(new UnionPOEstimator());
@@ -42,7 +40,6 @@ public class PhysicalCostModelPlugIn implements BundleActivator {
 	@Override
 	public void stop(BundleContext context) throws Exception {
 		OperatorEstimatorRegistry.unbindPhysicalOperatorEstimator(new SelectPOEstimator());
-		OperatorEstimatorRegistry.unbindPhysicalOperatorEstimator(new MetadataCreationPOEstimator());
 		OperatorEstimatorRegistry.unbindPhysicalOperatorEstimator(new MetadataUpdatePOEstimator());
 		OperatorEstimatorRegistry.unbindPhysicalOperatorEstimator(new ReceiverPOEstimator());
 		OperatorEstimatorRegistry.unbindPhysicalOperatorEstimator(new UnionPOEstimator());
