@@ -23,6 +23,8 @@ import java.util.Map;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
+import de.uniol.inf.is.odysseus.core.collection.KeyValueObject;
+import de.uniol.inf.is.odysseus.core.collection.NestedKeyValueObject;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
@@ -97,6 +99,10 @@ public class RenameAO extends UnaryLogicalOp {
 	public List<String> getAliases() {
 		return this.aliases;
 	}
+	
+	public Map<String, String> getAliasesAsMap() {
+		return RenameAO.toMap(aliases);
+	}
 
 	@Override
 	protected SDFSchema getOutputSchemaIntern(int pos) {
@@ -114,59 +120,63 @@ public class RenameAO extends UnaryLogicalOp {
 
 	@Override
 	public void initialize() {
-		if (!aliasesAsPairs) {
-			SDFSchema inputSchema = getInputSchema();
-			if (!aliases.isEmpty()) {
-				if (inputSchema.size() != aliases.size()) {
-					throw new IllegalArgumentException("number of aliases does not match number of input attributes for rename");
-				}
-				Iterator<SDFAttribute> it = inputSchema.iterator();
-				List<SDFAttribute> attrs = new ArrayList<SDFAttribute>();
-				for (String str : aliases) {
-					// use clone, so we have a datatype etc.
-					SDFAttribute attribute = it.next().clone(null, str);
-					attrs.add(attribute);
-				}
-				String uri = typeName != null ? typeName : inputSchema.getURI();
-				setOutputSchema(SDFSchemaFactory.createNewWithAttributes(uri, attrs, inputSchema));
-			} else {
-				//
-				if (typeName != null) {
-					// only set type name!
-					List<SDFAttribute> attrs = Lists.newArrayList();
-					for (SDFAttribute oldAttr : inputSchema) {
-						SDFAttribute newOne = new SDFAttribute(typeName, oldAttr.getAttributeName(), oldAttr);
-						attrs.add(newOne);
+		SDFSchema inputSchema = getInputSchema();
+		if((inputSchema.getType() != KeyValueObject.class && inputSchema.getType() != NestedKeyValueObject.class)) {
+			if (!aliasesAsPairs) {				
+				if (!aliases.isEmpty()) {
+					if (inputSchema.size() != aliases.size()) {
+						throw new IllegalArgumentException("number of aliases does not match number of input attributes for rename");
 					}
-					setOutputSchema(SDFSchemaFactory.createNewWithAttributes(typeName, attrs, inputSchema));
+					Iterator<SDFAttribute> it = inputSchema.iterator();
+					List<SDFAttribute> attrs = new ArrayList<SDFAttribute>();
+					for (String str : aliases) {
+						// use clone, so we have a datatype etc.
+						SDFAttribute attribute = it.next().clone(null, str);
+						attrs.add(attribute);
+					}
+					String uri = typeName != null ? typeName : inputSchema.getURI();
+					setOutputSchema(SDFSchemaFactory.createNewWithAttributes(uri, attrs, inputSchema));
 				} else {
-					setOutputSchema(inputSchema);
+					//
+					if (typeName != null) {
+						// only set type name!
+						List<SDFAttribute> attrs = Lists.newArrayList();
+						for (SDFAttribute oldAttr : inputSchema) {
+							SDFAttribute newOne = new SDFAttribute(typeName, oldAttr.getAttributeName(), oldAttr);
+							attrs.add(newOne);
+						}
+						setOutputSchema(SDFSchemaFactory.createNewWithAttributes(typeName, attrs, inputSchema));
+					} else {
+						setOutputSchema(inputSchema);
+					}
+				}
+			} else {
+				if (aliases.isEmpty()) {
+					throw new IllegalArgumentException("number of aliases interpreted as pairs must be at least two");
+				}
+				if (aliases.size() % 2 != 0) {
+					throw new IllegalArgumentException("number of aliases interpreted as pairs must be even");
+				}
+				
+				Map<String, String> aliasesMap = toMap(aliases);	
+				List<SDFAttribute> attrs = Lists.newArrayList();
+				for (SDFAttribute oldAttr : inputSchema) {
+					String alias = aliasesMap.get(oldAttr.getAttributeName());
+					if (alias != null) {
+						// alias found!
+						SDFAttribute newAttr = oldAttr.clone(null, alias);
+						attrs.add(newAttr);
+					} else {
+						attrs.add(oldAttr.clone());
+					}
+					String uri = typeName != null ? typeName : inputSchema.getURI();
+					setOutputSchema(SDFSchemaFactory.createNewWithAttributes(uri, attrs, inputSchema));
 				}
 			}
 		} else {
-			SDFSchema inputSchema = getInputSchema();
-			if (aliases.isEmpty()) {
-				throw new IllegalArgumentException("number of aliases interpreted as pairs must be at least two");
-			}
-			if (aliases.size() % 2 != 0) {
-				throw new IllegalArgumentException("number of aliases interpreted as pairs must be even");
-			}
-
-			Map<String, String> aliasesMap = toMap(aliases);
-
+			String uri = typeName != null ? typeName : inputSchema.getURI();
 			List<SDFAttribute> attrs = Lists.newArrayList();
-			for (SDFAttribute oldAttr : inputSchema) {
-				String alias = aliasesMap.get(oldAttr.getAttributeName());
-				if (alias != null) {
-					// alias found!
-					SDFAttribute newAttr = oldAttr.clone(null, alias);
-					attrs.add(newAttr);
-				} else {
-					attrs.add(oldAttr.clone());
-				}
-				String uri = typeName != null ? typeName : inputSchema.getURI();
-				setOutputSchema(SDFSchemaFactory.createNewWithAttributes(uri, attrs, inputSchema));
-			}
+			setOutputSchema(SDFSchemaFactory.createNewWithAttributes(uri, attrs, inputSchema));
 		}
 	}
 

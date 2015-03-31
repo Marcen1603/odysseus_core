@@ -68,7 +68,6 @@ public class KeyValueToTuplePO<M extends IMetaAttribute> extends
 		String[] data = new String[getOutputSchema().size()];
 		for(int i = 0; i < getOutputSchema().size(); i++) {
 			data[i] = "";
-//			String attributeName = getOutputSchema().getAttribute(i).getAttributeName();
 			String attributeName = this.renameAttributes.get(i).getAttribute().getAttributeName();
 			if(input.getAttributes().containsKey(attributeName)) {
 				Object attribute = input.getAttribute(attributeName);

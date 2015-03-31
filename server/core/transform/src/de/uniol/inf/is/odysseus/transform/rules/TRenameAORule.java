@@ -15,6 +15,8 @@
  ******************************************************************************/
 package de.uniol.inf.is.odysseus.transform.rules;
 
+import de.uniol.inf.is.odysseus.core.collection.KeyValueObject;
+import de.uniol.inf.is.odysseus.core.collection.NestedKeyValueObject;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.RenameAO;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.TopPO;
@@ -42,7 +44,9 @@ public class TRenameAORule extends AbstractTransformationRule<RenameAO> {
 	@Override
 	public boolean isExecutable(RenameAO operator,
 			TransformationConfiguration config) {
-		return operator.isAllPhysicalInputSet();
+		return operator.getInputSchema().getType() != KeyValueObject.class && 
+				operator.getInputSchema().getType() != NestedKeyValueObject.class && 
+				operator.isAllPhysicalInputSet();
 	}
 
 	@Override
