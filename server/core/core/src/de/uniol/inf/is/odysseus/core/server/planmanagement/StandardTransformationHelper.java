@@ -26,10 +26,8 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.ExistenceAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.RestructHelper;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TopAO;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractWindowAO;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IPipe;
 
 @SuppressWarnings({ "unchecked", "rawtypes" })
@@ -160,20 +158,5 @@ public class StandardTransformationHelper implements ITransformationHelper {
 		return modifiedChildren;
 	}
 
-	@Override
-	public boolean containsWindow(ILogicalOperator inputOp) {
-		if (inputOp instanceof AbstractWindowAO) {
-			return true;
-		}
-		int numberOfInputs = inputOp.getSubscribedToSource().size();
-		if (inputOp instanceof ExistenceAO) {
-			numberOfInputs = 1;// don't check subselects in existenceaos
-		}
-		for (int i = 0; i < numberOfInputs; ++i) {
-			if (containsWindow(inputOp.getSubscribedToSource(i).getTarget())) {
-				return true;
-			}
-		}
-		return false;
-	}
+
 }

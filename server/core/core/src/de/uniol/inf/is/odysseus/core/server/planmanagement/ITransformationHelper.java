@@ -52,6 +52,4 @@ public interface ITransformationHelper {
 	 */
 	public Collection<ISink> insertNewFatherPhysical(ISource oldFather, Collection<ISubscription<ISink>> children, IPipe newFather);
 
-	public boolean containsWindow(ILogicalOperator inputOp);
-
 }

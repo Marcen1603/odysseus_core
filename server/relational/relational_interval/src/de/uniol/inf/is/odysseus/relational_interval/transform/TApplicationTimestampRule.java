@@ -17,8 +17,10 @@ package de.uniol.inf.is.odysseus.relational_interval.transform;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TimestampAO;
+import de.uniol.inf.is.odysseus.core.server.metadata.IMetadataInitializer;
 import de.uniol.inf.is.odysseus.core.server.metadata.IMetadataUpdater;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.MetadataUpdatePO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
@@ -37,13 +39,13 @@ public class TApplicationTimestampRule extends
 	}
 
 	@Override
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public void execute(TimestampAO timestampAO,
 			TransformationConfiguration transformConfig) throws RuleException {
 		SDFSchema schema = timestampAO.getInputSchema();
 		boolean clearEnd = timestampAO.isClearEnd();
 		int pos = schema.indexOf(timestampAO.getStartTimestamp());
 
-		@SuppressWarnings("rawtypes")
 		IMetadataUpdater mUpdater;
 		if (Tuple.class
 				.isAssignableFrom(timestampAO.getInputSchema().getType())) {
@@ -78,10 +80,21 @@ public class TApplicationTimestampRule extends
 					+ timestampAO.getInputSchema().getType());
 		}
 
-		@SuppressWarnings("unchecked")
-		MetadataUpdatePO<?, ?> po = new MetadataUpdatePO<ITimeInterval, Tuple<? extends ITimeInterval>>(
-				mUpdater);
-		defaultExecute(timestampAO, po, transformConfig, true, true);
+		// two case:
+		// 1) the input operator can process meta data updates
+		if (timestampAO.getPhysInputPOs().size() == 1
+				&& timestampAO.getPhysInputOperators().get(0) instanceof IMetadataInitializer) {
+			IPhysicalOperator source = timestampAO.getPhysInputOperators().get(
+					0);
+			((IMetadataInitializer) source).addMetadataUpdater(mUpdater);
+			// Use the existing physical operator as replacement ...
+			defaultExecute(timestampAO, source, transformConfig, true, false,
+					false);
+		} else {
+			MetadataUpdatePO<?, ?> po = new MetadataUpdatePO<ITimeInterval, Tuple<? extends ITimeInterval>>(
+					mUpdater);
+			defaultExecute(timestampAO, po, transformConfig, true, true);
+		}
 	}
 
 	@Override

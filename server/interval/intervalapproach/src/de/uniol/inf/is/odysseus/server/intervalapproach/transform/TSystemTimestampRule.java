@@ -17,7 +17,9 @@ package de.uniol.inf.is.odysseus.server.intervalapproach.transform;
 
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TimestampAO;
+import de.uniol.inf.is.odysseus.core.server.metadata.IMetadataInitializer;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.MetadataUpdatePO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationException;
@@ -33,6 +35,7 @@ public class TSystemTimestampRule extends AbstractIntervalTransformationRule<Tim
 		return 0;
 	}
 
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	public void execute(TimestampAO timestampAO, TransformationConfiguration transformConfig) throws RuleException {
 		if(timestampAO.hasEndTimestamp() || timestampAO.hasStartTimestamp()){
@@ -40,8 +43,17 @@ public class TSystemTimestampRule extends AbstractIntervalTransformationRule<Tim
 		}
 		SystemTimeIntervalFactory<ITimeInterval, IStreamObject<ITimeInterval>> mUpdater = new SystemTimeIntervalFactory<ITimeInterval, IStreamObject<ITimeInterval>>();		
 		mUpdater.clearEnd(timestampAO.isClearEnd());
-		MetadataUpdatePO<ITimeInterval, IStreamObject<ITimeInterval>> po = new MetadataUpdatePO<ITimeInterval, IStreamObject<ITimeInterval>>(mUpdater);
-		defaultExecute(timestampAO, po, transformConfig, true, true);
+		// two case:
+		// 1) the input operator can process meta data updates
+		if (timestampAO.getPhysInputPOs().size() == 1 && timestampAO.getPhysInputOperators().get(0) instanceof IMetadataInitializer){
+			IPhysicalOperator source = timestampAO.getPhysInputOperators().get(0);
+			((IMetadataInitializer) source).addMetadataUpdater(mUpdater);
+			// Use the existing physical operator as replacement ...
+			defaultExecute(timestampAO,source, transformConfig, true, false, false);
+		}else{
+			MetadataUpdatePO<ITimeInterval, IStreamObject<ITimeInterval>> po = new MetadataUpdatePO<ITimeInterval, IStreamObject<ITimeInterval>>(mUpdater);
+			defaultExecute(timestampAO, po, transformConfig, true, true);
+		}
 	}
 
 	@Override
