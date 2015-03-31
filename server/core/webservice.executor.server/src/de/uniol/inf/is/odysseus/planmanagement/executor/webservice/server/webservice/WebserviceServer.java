@@ -788,7 +788,13 @@ public class WebserviceServer {
 		IPhysicalQuery query = plan.getQueryById(queryId);
 		List<IPhysicalOperator> roots = query.getRoots();
 		final IPhysicalOperator root = roots.get(rootPort);
-		final ISource<?> rootAsSource = (ISource<?>) root;
+		final ISource<?> rootAsSource;
+		
+		if (root.isSource()){
+			rootAsSource = (ISource<?>) root;
+		}else{
+			rootAsSource = ((ISink<?>) root).getSubscribedToSource(0).getTarget();
+		}
 
 		IDataHandler<?> handler = null;
 
