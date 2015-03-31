@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.keyvalue.logicaloperator;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
@@ -11,7 +12,8 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnaryLogicalOp;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.BooleanParameter;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.CreateSDFAttributeParameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.CreateAndRenameSDFAttributeParameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.RenameAttribute;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
 
 @LogicalOperator(maxInputPorts=1, minInputPorts=1, name="KeyValueToTuple", doc="Translates a key-value/json object to a tuple", category={LogicalOperatorCategory.TRANSFORM})
@@ -21,7 +23,7 @@ public class KeyValueToTupleAO extends UnaryLogicalOp{
 	
 	private boolean keepInputObject = false;
 	private String type = "";
-	private List<SDFAttribute> attributes;
+	private List<RenameAttribute> attributes;
 
 	public KeyValueToTupleAO() {
 	}
@@ -32,12 +34,12 @@ public class KeyValueToTupleAO extends UnaryLogicalOp{
 		this.attributes = keyValueToTuple.attributes;
 	}
 
-	@Parameter(name="Schema", type=CreateSDFAttributeParameter.class, optional=false, isList=true)
-	public void setAttributes(List<SDFAttribute> attributes){
+	@Parameter(name="Schema", type=CreateAndRenameSDFAttributeParameter.class, optional=false, isList=true)
+	public void setAttributes(List<RenameAttribute> attributes){
 		this.attributes = attributes;
 	}
 	
-	public List<SDFAttribute> getAttributes() {
+	public List<RenameAttribute> getAttributes() {
 		return this.attributes;
 	}
 	
@@ -61,8 +63,19 @@ public class KeyValueToTupleAO extends UnaryLogicalOp{
 
 	@Override
 	protected SDFSchema getOutputSchemaIntern(int pos) {
-		SDFSchema schema = SDFSchemaFactory.createNewTupleSchema(type, attributes);
-		// TODO: get constraints from input schema?
+		List<SDFAttribute> attributeList = new ArrayList<SDFAttribute>();
+		for(RenameAttribute att: attributes) {
+			SDFAttribute sdfAtt = att.getAttribute();
+			String name;
+			if(!att.getNewName().equals("")) {
+				name = att.getNewName();
+			} else {
+				name = att.getAttribute().getQualName();
+			}
+			attributeList.add(new SDFAttribute(sdfAtt.getSourceName(), name, sdfAtt.getDatatype(), sdfAtt.getUnit(), sdfAtt.getDtConstraints()));
+		} 
+		SDFSchema schema = SDFSchemaFactory.createNewTupleSchema(type, attributeList);
+//		 TODO: get constraints from input schema?
 		return schema;
 	}
 	

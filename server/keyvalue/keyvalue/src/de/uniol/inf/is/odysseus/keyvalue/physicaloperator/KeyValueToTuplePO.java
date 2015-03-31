@@ -10,7 +10,9 @@ import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.RenameAttribute;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
+import de.uniol.inf.is.odysseus.keyvalue.logicaloperator.KeyValueToTupleAO;
 
 /**
  * This operator transforms a KeyValueObject to a Tuple
@@ -24,6 +26,7 @@ public class KeyValueToTuplePO<M extends IMetaAttribute> extends
 		AbstractPipe<KeyValueObject<M>, Tuple<M>> {
 
 	private IDataHandler<Tuple<?>> tHandler = new TupleDataHandler();
+	private List<RenameAttribute> renameAttributes;
 	
 	boolean keepInputObject;
 
@@ -31,6 +34,13 @@ public class KeyValueToTuplePO<M extends IMetaAttribute> extends
 		this.keepInputObject = keepInputObject;
 		this.tHandler = tHandler.createInstance(outputSchema);
 		setOutputSchema(outputSchema);
+	}
+
+	public KeyValueToTuplePO(KeyValueToTupleAO operator) {
+		this.keepInputObject = operator.isKeepInputObject();
+		this.tHandler = tHandler.createInstance(operator.getOutputSchema());
+		this.renameAttributes = operator.getAttributes();
+		setOutputSchema(operator.getOutputSchema());
 	}
 
 	public KeyValueToTuplePO(KeyValueToTuplePO<M> keyValueToTuplePO) {
@@ -58,7 +68,8 @@ public class KeyValueToTuplePO<M extends IMetaAttribute> extends
 		String[] data = new String[getOutputSchema().size()];
 		for(int i = 0; i < getOutputSchema().size(); i++) {
 			data[i] = "";
-			String attributeName = getOutputSchema().getAttribute(i).getAttributeName();
+//			String attributeName = getOutputSchema().getAttribute(i).getAttributeName();
+			String attributeName = this.renameAttributes.get(i).getAttribute().getAttributeName();
 			if(input.getAttributes().containsKey(attributeName)) {
 				Object attribute = input.getAttribute(attributeName);
 				if(attribute instanceof List) {
