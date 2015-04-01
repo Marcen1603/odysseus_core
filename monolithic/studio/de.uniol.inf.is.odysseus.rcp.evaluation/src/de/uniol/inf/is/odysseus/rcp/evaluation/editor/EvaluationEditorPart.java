@@ -377,14 +377,8 @@ public class EvaluationEditorPart extends EditorPart implements IResourceChangeL
         latencyComposite.setLayout(new GridLayout(1, false));
         latencyComposite.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 
-        btnActivateLatencyMeasurements.addSelectionListener(new SelectionAdapter() {
-            @Override
-            public void widgetSelected(SelectionEvent e) {
-                setDirty(true);
-                setEnabled(latencyComposite, btnActivateLatencyMeasurements.getSelection());
-            }
-        });
         btnActivateLatencyMeasurements.setSelection(evaluationModel.isWithLatency());
+        setEnabled(latencyComposite, evaluationModel.isWithLatency());
         new Label(grpLatency, SWT.NONE);
 
         btnCreatePlotsForLatency = new Button(latencyComposite, SWT.CHECK);
@@ -395,6 +389,17 @@ public class EvaluationEditorPart extends EditorPart implements IResourceChangeL
             @Override
             public void widgetSelected(SelectionEvent e) {
                 setDirty(true);
+            }
+        });
+
+        btnActivateLatencyMeasurements.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+                setDirty(true);
+                setEnabled(latencyComposite, btnActivateLatencyMeasurements.getSelection());
+                if (!btnActivateLatencyMeasurements.getSelection()) {
+                    btnCreatePlotsForLatency.setSelection(btnActivateLatencyMeasurements.getSelection());
+                }
             }
         });
 
@@ -413,14 +418,8 @@ public class EvaluationEditorPart extends EditorPart implements IResourceChangeL
         throughputComposite.setLayout(new GridLayout(2, true));
         throughputComposite.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 
-        btnActivateThroughputMeasurments.addSelectionListener(new SelectionAdapter() {
-            @Override
-            public void widgetSelected(SelectionEvent e) {
-                setDirty(true);
-                setEnabled(throughputComposite, btnActivateThroughputMeasurments.getSelection());
-            }
-        });
         btnActivateThroughputMeasurments.setSelection(evaluationModel.isWithThroughput());
+        setEnabled(throughputComposite, evaluationModel.isWithThroughput());
         new Label(grpThroughput, SWT.NONE);
 
         Label lblMeasureEachElements = new Label(throughputComposite, SWT.NONE);
@@ -449,8 +448,18 @@ public class EvaluationEditorPart extends EditorPart implements IResourceChangeL
                 setDirty(true);
             }
         });
-
         new Label(throughputComposite, SWT.NONE);
+
+        btnActivateThroughputMeasurments.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+                setDirty(true);
+                setEnabled(throughputComposite, btnActivateThroughputMeasurments.getSelection());
+                if (!btnActivateThroughputMeasurments.getSelection()) {
+                    btnCreatePlotsForThroughputs.setSelection(btnActivateThroughputMeasurments.getSelection());
+                }
+            }
+        });
 
         Group grpResource = new Group(container, SWT.NONE);
         grpResource.setLayout(new GridLayout(3, false));
@@ -467,14 +476,8 @@ public class EvaluationEditorPart extends EditorPart implements IResourceChangeL
         resourceComposite.setLayout(new GridLayout(1, true));
         resourceComposite.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 
-        btnActivateResourceMeasurments.addSelectionListener(new SelectionAdapter() {
-            @Override
-            public void widgetSelected(SelectionEvent e) {
-                setDirty(true);
-                setEnabled(resourceComposite, btnActivateResourceMeasurments.getSelection());
-            }
-        });
         btnActivateResourceMeasurments.setSelection(evaluationModel.isWithResource());
+        setEnabled(resourceComposite, evaluationModel.isWithResource());
         new Label(grpResource, SWT.NONE);
 
         btnCreatePlotsForCPU = new Button(resourceComposite, SWT.CHECK);
@@ -496,6 +499,17 @@ public class EvaluationEditorPart extends EditorPart implements IResourceChangeL
             @Override
             public void widgetSelected(SelectionEvent e) {
                 setDirty(true);
+            }
+        });
+        btnActivateResourceMeasurments.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+                setDirty(true);
+                setEnabled(resourceComposite, btnActivateResourceMeasurments.getSelection());
+                if (!btnActivateResourceMeasurments.getSelection()) {
+                    btnCreatePlotsForCPU.setSelection(btnActivateResourceMeasurments.getSelection());
+                    btnCreatePlotsForMemory.setSelection(btnActivateResourceMeasurments.getSelection());
+                }
             }
         });
 
