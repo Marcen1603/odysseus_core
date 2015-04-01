@@ -20,7 +20,6 @@ package de.uniol.inf.is.odysseus.wrapper.protobuf;
  */
 
 import java.io.IOException;
-
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.InetSocketAddress;
@@ -62,6 +61,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.AbstractT
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportExchangePattern;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandlerListener;
+import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 
 public class ProtobufServerTransportHandler<R extends MessageLite,T> extends
@@ -79,6 +79,8 @@ public class ProtobufServerTransportHandler<R extends MessageLite,T> extends
 	private List<ChannelHandlerContext> channelHandlerContextList = new CopyOnWriteArrayList<ChannelHandlerContext>();
 	final private SocketAddress address;
 	final private R messagePrototype;
+	
+	private IExecutor executor;
 			
 	public ProtobufServerTransportHandler() {
 		delegate = new AbstractTransportHandlerDelegate<>(null, null, this,null);
@@ -102,6 +104,16 @@ public class ProtobufServerTransportHandler<R extends MessageLite,T> extends
 		
 	}
 
+	@Override
+	public IExecutor getExecutor() {
+		return executor;
+	}
+	
+	@Override
+	public void setExecutor(IExecutor executor) {
+		this.executor = executor;
+	}
+	
 	/*
 	 * (non-Javadoc)
 	 * 

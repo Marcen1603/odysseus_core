@@ -23,11 +23,13 @@ import java.nio.ByteBuffer;
 import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
+import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 
 abstract public class AbstractTransportHandler implements ITransportHandler{
 
 	final AbstractTransportHandlerDelegate<?> delegate;
+	IExecutor executor;
 	
 	public AbstractTransportHandler(){
 		delegate = new AbstractTransportHandlerDelegate<>(null, null, this,null);
@@ -48,7 +50,17 @@ abstract public class AbstractTransportHandler implements ITransportHandler{
 	final public SDFSchema getSchema() {
 		return delegate.getSchema();
 	}
+	
+	@Override
+	public void setExecutor(IExecutor executor) {
+		this.executor = executor;
+	}
 
+	@Override
+	public IExecutor getExecutor() {
+		return executor;
+	}
+	
 	@Override
 	public boolean isDone() {
 		return false;

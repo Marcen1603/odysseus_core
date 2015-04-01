@@ -22,6 +22,7 @@ import java.net.UnknownHostException;
 
 import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
+import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 
 /**
@@ -40,7 +41,7 @@ public interface ITransportHandler {
 	 * @param options A set of key-value pairs, can be used to configure the handler
 	 * @return
 	 */
-    public ITransportHandler createInstance(IProtocolHandler<?> protocolHandler, OptionMap options);
+    ITransportHandler createInstance(IProtocolHandler<?> protocolHandler, OptionMap options);
 
     /**
      * This method is used to retrieve the name of the handler, is used for registering
@@ -53,28 +54,28 @@ public interface ITransportHandler {
 	 * @throws UnknownHostException
 	 * @throws IOException
 	 */
-    public void open() throws UnknownHostException, IOException;
+    void open() throws UnknownHostException, IOException;
     
-	public void processInOpen() throws IOException;
+	void processInOpen() throws IOException;
 	
-	public void processOutOpen() throws IOException;
+	void processOutOpen() throws IOException;
 
     /**
      * Is called from the framework, when the handler should close the connection to the source
      * @throws IOException
      */
-    public void close() throws IOException;
+    void close() throws IOException;
 
-    public void processInClose() throws IOException;
+    void processInClose() throws IOException;
 
-	public void processOutClose() throws IOException;
+	void processOutClose() throws IOException;
     
     /**
      * called from the framework to determine, if the transport handler will not deliver any elements (typically for
      * a file based source)
      * @return
      */
-    public boolean isDone();
+    boolean isDone();
 
     
     /**
@@ -82,13 +83,13 @@ public interface ITransportHandler {
      * @param message
      * @throws IOException
      */
-    public void send(byte[] message) throws IOException;
+    void send(byte[] message) throws IOException;
     
     /**
      * If the transport handler needs to know the schema, it will be called here
      * @param schema
      */
-    public void setSchema(SDFSchema schema);
+    void setSchema(SDFSchema schema);
     
     /**
      * This method will be called from the protocol handler to create a pull based
@@ -96,7 +97,7 @@ public interface ITransportHandler {
      * 
      * @return A new input stream delivering the values to the protocol handler
      */
-    public InputStream getInputStream();
+    InputStream getInputStream();
 
     /**
      * This method will be called from the protocol handler to create a pull based
@@ -105,14 +106,14 @@ public interface ITransportHandler {
      * @return A new output stream where the protocol handler writes its output to
      */
     
-    public OutputStream getOutputStream();
+    OutputStream getOutputStream();
     
     /**
      * What kind of exchange pattern does this transport handler provide
      * 
      * @return the Exchange Pattern (InOnly, RobustInOnly, InOut, InOptionalOut, OutOnly, RobustOutOnly, OutIn, OutOptionalIn)
      */
-    public ITransportExchangePattern getExchangePattern();
+    ITransportExchangePattern getExchangePattern();
 
 
     /**
@@ -120,21 +121,25 @@ public interface ITransportHandler {
      * @param other
      * @return
      */
-	public boolean isSemanticallyEqual(ITransportHandler other);
+	boolean isSemanticallyEqual(ITransportHandler other);
 
     @SuppressWarnings("rawtypes")
     /**
      * Add a TransportHandlerListener
      * @param listener
      */
-	public void addListener(ITransportHandlerListener listener);
+	void addListener(ITransportHandlerListener listener);
 
     @SuppressWarnings("rawtypes")
 	/**
 	 * Remove a TransportHandlerListener
 	 * @param listener
 	 */
-    public void removeListener(ITransportHandlerListener listener);
+    void removeListener(ITransportHandlerListener listener);
+    
+    void setExecutor(IExecutor executor);
+    
+    IExecutor getExecutor();
 
 
 }

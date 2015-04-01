@@ -58,6 +58,7 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.configuration.IQueryB
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.AbstractExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.ExecutorPermission;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IPreTransformationHandler;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.IExecutorCommand;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.dd.CreateQueryCommand;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.configuration.ExecutionConfiguration;
@@ -900,6 +901,9 @@ public class StandardExecutor extends AbstractExecutor implements IQueryStarter 
 		QueryBuildConfiguration config = new QueryBuildConfiguration(
 				newSettings.toArray(new IQueryBuildSetting<?>[0]),
 				buildConfigurationName);
+		config.setExecutor(this);
+		config.getTransformationConfiguration().setOption(IServerExecutor.class.getName(), this);
+		
 		config = validateBuildParameters(config);
 
 		return config;

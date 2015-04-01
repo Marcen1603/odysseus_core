@@ -33,6 +33,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.IAccessPa
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportDirection;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.TransportHandlerRegistry;
+import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractAccessAO;
 import de.uniol.inf.is.odysseus.core.server.metadata.IMetadataInitializer;
@@ -42,6 +43,7 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.pull.AccessP
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.push.ReceiverPO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationException;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.util.Constants;
 import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
@@ -101,7 +103,8 @@ public class TAccessAORule extends AbstractTransformationRule<AbstractAccessAO> 
 					throw new TransformationException("No protocol handler "
 							+ operator.getProtocolHandler() + " found.");
 				}
-
+				protocolHandler.setExecutor((IExecutor)config.getOption(IServerExecutor.class.getName()));
+				
 				ITransportHandler transportHandler = getTransportHandler(
 						operator, protocolHandler, options);
 				if (transportHandler == null) {
@@ -111,6 +114,8 @@ public class TAccessAORule extends AbstractTransformationRule<AbstractAccessAO> 
 							+ operator.getTransportHandler() + " found.");
 				}
 
+				transportHandler.setExecutor((IExecutor)config.getOption(IServerExecutor.class.getName()));
+				
 				// In some cases the transport handler needs to know the schema
 				if (dataHandler != null) {
 					transportHandler.setSchema(dataHandler.getSchema());

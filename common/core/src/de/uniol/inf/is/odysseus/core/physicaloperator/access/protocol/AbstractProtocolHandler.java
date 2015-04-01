@@ -29,6 +29,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.IAccessPa
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportDirection;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportExchangePattern;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandler;
+import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 
 
 abstract public class AbstractProtocolHandler<T> implements IProtocolHandler<T> {
@@ -37,6 +38,8 @@ abstract public class AbstractProtocolHandler<T> implements IProtocolHandler<T> 
     private ITransportHandler         transportHandler;
     private final IDataHandler<T>           dataHandler;
     private ITransferHandler<T>       transfer;
+    
+    private IExecutor executor;
     
     protected final OptionMap optionsMap;
 
@@ -53,6 +56,16 @@ abstract public class AbstractProtocolHandler<T> implements IProtocolHandler<T> 
         this.dataHandler = datahandler;
         this.optionsMap = optionsMap;
     }
+    
+    @Override
+    public IExecutor getExecutor() {
+		return executor;
+	}
+    
+    @Override
+    public void setExecutor(IExecutor executor) {
+		this.executor = executor;
+	}
 
     final public ITransportHandler getTransportHandler() {
         return transportHandler;

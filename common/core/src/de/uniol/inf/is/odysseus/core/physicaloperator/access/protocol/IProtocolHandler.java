@@ -27,6 +27,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITranspor
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportExchangePattern;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandlerListener;
+import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 
 public interface IProtocolHandler<T> extends ITransportHandlerListener<T> {
 
@@ -38,7 +39,7 @@ public interface IProtocolHandler<T> extends ITransportHandlerListener<T> {
 	 * @param dataHandler the data handler thats connected to the protocol handler
 	 * @return
 	 */
-    public IProtocolHandler<T> createInstance(ITransportDirection direction, IAccessPattern access,
+    IProtocolHandler<T> createInstance(ITransportDirection direction, IAccessPattern access,
             OptionMap options, IDataHandler<T> dataHandler);
 
     /**
@@ -51,7 +52,7 @@ public interface IProtocolHandler<T> extends ITransportHandlerListener<T> {
      * The exchange pattern of the underlying transport handler 
      * @return
      */
-    public ITransportExchangePattern getExchangePattern();
+    ITransportExchangePattern getExchangePattern();
 
 	
 	/**
@@ -59,33 +60,33 @@ public interface IProtocolHandler<T> extends ITransportHandlerListener<T> {
 	 * @throws UnknownHostException
 	 * @throws IOException
 	 */
-    public void open() throws UnknownHostException, IOException;
+    void open() throws UnknownHostException, IOException;
     
     /**
      * Is called from the framework, when the query is stopped
      * @throws IOException
      */
-    public void close() throws IOException;
+    void close() throws IOException;
 
     /**
      * in case of pull based access,
      * @return true, if another element is available
      * @throws IOException
      */
-    public boolean hasNext() throws IOException;
+    boolean hasNext() throws IOException;
 
     /**
      * in case of pull based access
      * @return the next element
      * @throws IOException
      */
-    public T getNext() throws IOException;
+    T getNext() throws IOException;
 
     /**
      * in case of pull based access
      * @return true if the source has no more elements to deliver (e.g. a file reach end of file)
      */
-	public boolean isDone();
+	boolean isDone();
 
     
     /**
@@ -93,14 +94,14 @@ public interface IProtocolHandler<T> extends ITransportHandlerListener<T> {
      * @param object
      * @throws IOException
      */
-    public void write(T object) throws IOException;
+    void write(T object) throws IOException;
 
     /**
      * in cased of OUT direction, send the punctuation to the transport handler
      * @param punctuation
      * @throws IOException
      */
-    public void writePunctuation(IPunctuation punctuation) throws IOException;
+    void writePunctuation(IPunctuation punctuation) throws IOException;
     
     
     /**
@@ -135,9 +136,12 @@ public interface IProtocolHandler<T> extends ITransportHandlerListener<T> {
      * @param other
      * @return
      */
-	public boolean isSemanticallyEqual(IProtocolHandler<?> other);
-	
+	boolean isSemanticallyEqual(IProtocolHandler<?> other);
 	
 	ProtocolHandlerAction getAction();
+	
+	IExecutor getExecutor();
+	
+	void setExecutor(IExecutor executor);
 
 }

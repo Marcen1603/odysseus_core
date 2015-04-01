@@ -17,6 +17,7 @@ package de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltpara
 
 import java.util.List;
 
+import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.IBufferPlacementStrategy;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.configuration.Configuration;
@@ -42,9 +43,10 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configur
 public class QueryBuildConfiguration extends
 		Configuration<IQueryBuildSetting<?>> {
 
-	
 	private static final long serialVersionUID = -5018054053257854891L;
 
+	private IExecutor executor;
+	
 	/**
 	 * Creates a new set of parameters. If some standard values are not set in
 	 * <code>parameters</code> default values are used.
@@ -95,6 +97,14 @@ public class QueryBuildConfiguration extends
 		if (!contains(PreTransformationHandlerParameter.class)) {
 			set(new PreTransformationHandlerParameter());
 		}
+	}
+	
+	public void setExecutor(IExecutor executor) {
+		this.executor = executor;
+	}
+	
+	public IExecutor getExecutor() {
+		return executor;
 	}
 
 	/**
