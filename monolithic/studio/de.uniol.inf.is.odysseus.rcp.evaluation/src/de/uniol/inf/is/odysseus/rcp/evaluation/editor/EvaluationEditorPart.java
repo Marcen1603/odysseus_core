@@ -19,6 +19,7 @@ import org.eclipse.jface.viewers.CheckboxTableViewer;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
+import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.events.ControlAdapter;
 import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.ModifyEvent;
@@ -102,9 +103,11 @@ public class EvaluationEditorPart extends EditorPart implements IResourceChangeL
 			COLOR_RED = display.getSystemColor(SWT.COLOR_RED);
 			COLOR_BLACK = display.getSystemColor(SWT.COLOR_BLACK);
 		}
+        ScrolledComposite scrolledComposite = new ScrolledComposite(parent, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
+        Composite container = new Composite(scrolledComposite, SWT.NONE);
+        GridLayout gridLayout = new GridLayout(1, false);
+        container.setLayout(gridLayout);
 
-		Composite container = new Composite(parent, SWT.NONE);
-		container.setLayout(new GridLayout(1, false));
 
 		Group grpGeneral = new Group(container, SWT.NONE);
 		grpGeneral.setLayout(new GridLayout(4, false));
@@ -512,6 +515,10 @@ public class EvaluationEditorPart extends EditorPart implements IResourceChangeL
 		});
 		btnStartEvaluation.setText("Start Evaluation");
 
+        scrolledComposite.setContent(container);
+        scrolledComposite.setMinSize(container.computeSize(SWT.DEFAULT, SWT.DEFAULT));
+        scrolledComposite.setExpandHorizontal(true);
+        scrolledComposite.setExpandVertical(true);
 	}
 
 	private void setEnabled(Composite composite, boolean enable) {

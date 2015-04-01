@@ -36,11 +36,13 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -116,7 +118,7 @@ public class BenchmarkEditorPart extends EditorPart implements ISaveablePart, Pr
 
 	@Override
 	public void doSave(IProgressMonitor monitor) {
-		// Überprüft, ob Benchmarker mit diesen Einstellungen gestartet werden
+		// ï¿½berprï¿½ft, ob Benchmarker mit diesen Einstellungen gestartet werden
 		// kann
 		benchmarkParam.setRunnable(checkRunnable());
 		buttonStart.setEnabled(benchmarkParam.isRunnable());
@@ -207,11 +209,14 @@ public class BenchmarkEditorPart extends EditorPart implements ISaveablePart, Pr
 	}
 
 	@Override
-	public void createPartControl(Composite parent) {
+    public void createPartControl(Composite composite) {
+        composite.setLayout(new FillLayout());
 		DataBindingContext bindingContext = new DataBindingContext();
-		GridLayout gridLayout = new GridLayout(3, false);
-		parent.setLayout(gridLayout);
-		GridData gridData = new GridData();
+        ScrolledComposite scrolledComposite = new ScrolledComposite(composite, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
+        Composite parent = new Composite(scrolledComposite, SWT.NONE);
+        GridLayout gridLayout = new GridLayout(3, false);
+        parent.setLayout(gridLayout);
+        GridData gridData = new GridData();
 
 		{ // SeitenLabel
 			Label labelPage = new Label(parent, SWT.NULL);
@@ -318,20 +323,22 @@ public class BenchmarkEditorPart extends EditorPart implements ISaveablePart, Pr
 			gridData = new GridData(GridData.FILL_HORIZONTAL);
 			gridData.grabExcessHorizontalSpace = true;
 
-			Label labelmetadata = new Label(parent, SWT.NULL);
-			labelmetadata.setText("Select Combination: ");
-			new Label(parent, SWT.NULL);
+            // Label labelmetadata = new Label(parent, SWT.NULL);
+            // labelmetadata.setText("Select Combination: ");
+            // new Label(parent, SWT.NULL);
 
+            Composite metadataTypesComposite = new Composite(parent, SWT.NONE);
+            metadataTypesComposite.setLayoutData(gridData);
+            metadataTypesComposite.setLayout(new FillLayout());
 			Map<String, Boolean> allSingleTypes = benchmarkParam.getAllSingleTypes();
 			for (Map.Entry<String, Boolean> typeEntry : allSingleTypes.entrySet()) {
-				new Label(parent, SWT.NULL);
-				Button checkboxMetadataType = new Button(parent, SWT.CHECK);
-				checkboxMetadataType.setText(StringUtils.splitString(typeEntry.getKey()));
+                Button checkboxMetadataType = new Button(metadataTypesComposite, SWT.CHECK);
+				checkboxMetadataType.setText(StringUtils.splitString(typeEntry.getKey()).substring(1));
 				listMetadata.add(checkboxMetadataType);
 				bindingContext.bindValue(SWTObservables.observeSelection(checkboxMetadataType),
 						new ObservativeMapEntryValue<String, Boolean>(typeEntry, this, benchmarkParam));
-				new Label(parent, SWT.NULL);
 			}
+            new Label(parent, SWT.NULL);
 		}
 
 		{ // Query_Language
@@ -560,7 +567,7 @@ public class BenchmarkEditorPart extends EditorPart implements ISaveablePart, Pr
 			}
 		});
 
-		// Abhängigkeit von Extended_Postpriorisation zu Priority
+		// Abhï¿½ngigkeit von Extended_Postpriorisation zu Priority
 		checkButtonPriority.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -573,7 +580,7 @@ public class BenchmarkEditorPart extends EditorPart implements ISaveablePart, Pr
 			}
 		});
 
-		// Abhängigkeit von Result_Per_Query zu Max_Result
+		// Abhï¿½ngigkeit von Result_Per_Query zu Max_Result
 		textMaxResults.addModifyListener(new ModifyListener() {
 
 			@Override
@@ -589,7 +596,7 @@ public class BenchmarkEditorPart extends EditorPart implements ISaveablePart, Pr
 			}
 		});
 
-		// In Max_Result, Wait_Config und Number_Of_Runs dürfen nur Zahlen
+		// In Max_Result, Wait_Config und Number_Of_Runs dï¿½rfen nur Zahlen
 		// stehen
 		final TextboxVerifier textboxVerifyListener = new TextboxVerifier();
 		textMaxResults.addVerifyListener(textboxVerifyListener);
@@ -599,16 +606,21 @@ public class BenchmarkEditorPart extends EditorPart implements ISaveablePart, Pr
 		benchmarkParam.addPropertyChangeListener(this);
 
 		benchmarkParam.setReadOnly(benchmark.hasResults());
-		checkEditorMode();
 
-		// überprüfe ob die Buttons aktiviert/deaktiviert sein muessen.
+        scrolledComposite.setContent(parent);
+        scrolledComposite.setMinSize(parent.computeSize(SWT.DEFAULT, SWT.DEFAULT));
+        scrolledComposite.setExpandHorizontal(true);
+        scrolledComposite.setExpandVertical(true);
+        checkEditorMode();
+
+		// ï¿½berprï¿½fe ob die Buttons aktiviert/deaktiviert sein muessen.
 		propertyChange(new PropertyChangeEvent(benchmarkParam, null, null, null));
 		setDirtyState(false);
 	}
 
 	/**
-	 * Diese Methode überprüft, ob die gespeicherten Parametereinstellungen
-	 * geändert werden dürfen und setzt sie ggf. auf Enabled(false)
+	 * Diese Methode ï¿½berprï¿½ft, ob die gespeicherten Parametereinstellungen
+	 * geï¿½ndert werden dï¿½rfen und setzt sie ggf. auf Enabled(false)
 	 */
 	public void checkEditorMode() {
 		readOnly = benchmarkParam.isReadOnly();
@@ -638,7 +650,7 @@ public class BenchmarkEditorPart extends EditorPart implements ISaveablePart, Pr
 	}
 
 	/**
-	 * Wenn sich die Eingaben verändern
+	 * Wenn sich die Eingaben verï¿½ndern
 	 */
 	@Override
 	public void propertyChange(PropertyChangeEvent evt) {
@@ -693,7 +705,7 @@ public class BenchmarkEditorPart extends EditorPart implements ISaveablePart, Pr
 	}
 
 	/**
-	 * überprüft die angeklickte Metadata-Kombination
+	 * ï¿½berprï¿½ft die angeklickte Metadata-Kombination
 	 * 
 	 * @return
 	 */
@@ -712,7 +724,7 @@ public class BenchmarkEditorPart extends EditorPart implements ISaveablePart, Pr
 	}
 
 	/**
-	 * überprüft, ob BenchmarkProzess mit diesen
+	 * ï¿½berprï¿½ft, ob BenchmarkProzess mit diesen
 	 * Benchmark-Parameter-Einstellungen gestartet werden kann
 	 * 
 	 * @return
@@ -725,8 +737,8 @@ public class BenchmarkEditorPart extends EditorPart implements ISaveablePart, Pr
 	}
 
 	/**
-	 * überprüft, ob die erforderten Felder zum Starten des Benchmarkprozesses
-	 * ausgefüllt sind
+	 * ï¿½berprï¿½ft, ob die erforderten Felder zum Starten des Benchmarkprozesses
+	 * ausgefï¿½llt sind
 	 * 
 	 * @param benchmarkParam
 	 * @return

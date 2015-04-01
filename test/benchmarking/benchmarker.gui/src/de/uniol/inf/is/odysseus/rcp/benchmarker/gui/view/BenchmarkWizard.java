@@ -30,7 +30,7 @@ import de.uniol.inf.is.odysseus.rcp.benchmarker.gui.model.BenchmarkParam;
 import de.uniol.inf.is.odysseus.rcp.benchmarker.utils.StringUtils;
 
 /**
- * Diese Klasse fügt dem Wizard die Seiten hinzu und ruft den BenchmarkEditor
+ * Diese Klasse fï¿½gt dem Wizard die Seiten hinzu und ruft den BenchmarkEditor
  * auf
  * 
  * @author Stefanie Witzke
@@ -94,7 +94,7 @@ public class BenchmarkWizard extends Wizard {
 
 	private static IEditorPart openBenchmark(IWorkbenchPage page, Benchmark benchmark) {
 		try {
-			// Öffnet den Benchmarkparameter-Editor
+			// ï¿½ffnet den Benchmarkparameter-Editor
 			return page.openEditor(new BenchmarkEditorInput(benchmark), BenchmarkEditorPart.ID);
 		} catch (PartInitException e) {
 			e.printStackTrace();
@@ -106,11 +106,12 @@ public class BenchmarkWizard extends Wizard {
 		return PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
 	}
 
-	private static void refreshNavigator() {
-		ProjectView projectView = (ProjectView) PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
-				.findView(ProjectView.ID);
-		projectView.refresh();
-	}
+    private static void refreshNavigator() {
+        ProjectView projectView = (ProjectView) PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().findView(ProjectView.ID);
+        if (projectView != null) {
+            projectView.refresh();
+        }
+    }
 
 	public void setGroups(List<BenchmarkGroup> groups) {
 		this.groups = groups;
