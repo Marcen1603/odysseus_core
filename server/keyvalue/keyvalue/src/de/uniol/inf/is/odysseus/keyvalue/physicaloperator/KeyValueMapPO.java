@@ -15,7 +15,6 @@
  */
 package de.uniol.inf.is.odysseus.keyvalue.physicaloperator;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
 
@@ -24,16 +23,12 @@ import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.collection.KeyValueObject;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
-import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
-import de.uniol.inf.is.odysseus.core.sdf.schema.DirectAttributeResolver;
-import de.uniol.inf.is.odysseus.core.sdf.schema.IAttributeResolver;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFExpression;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.MapAO;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.AggregateFunctionBuilderRegistry;
 import de.uniol.inf.is.odysseus.mep.MEP;
@@ -55,6 +50,12 @@ public class KeyValueMapPO<K extends IMetaAttribute, T extends KeyValueObject<K>
 	private SDFExpression[] expressions;
 	private final SDFSchema inputSchema;
 	final private boolean allowNull;
+	
+	public KeyValueMapPO(MapAO mapAO) {
+		this.inputSchema = mapAO.getInputSchema();
+		this.expressionStrings = mapAO.getKVExpressions();
+		this.allowNull = false;
+	}
 
 	public KeyValueMapPO(SDFSchema inputSchema, List<String[]> expressions,
 			boolean allowNullInOutput, boolean evaluateOnPunctuation) {
@@ -72,14 +73,12 @@ public class KeyValueMapPO<K extends IMetaAttribute, T extends KeyValueObject<K>
 	@SuppressWarnings("unchecked")
 	@Override
 	final protected void process_next(T object, int port) {
-		//Generates schema for every new object
-		generateSDFExpressions(generateSchema(object), expressionStrings);
+		generateExpressions(expressionStrings);
 		
 		T outputVal = (T) new KeyValueObject<>();
 		outputVal.setMetadata((K) object.getMetadata().clone());
 		if (object.getMetadataMap() != null) {
-			for (Entry<String, Object> entry : object.getMetadataMap()
-					.entrySet()) {
+			for (Entry<String, Object> entry : object.getMetadataMap().entrySet()) {
 				outputVal.setMetadata(entry.getKey(), entry.getValue());
 			}
 		}
@@ -98,8 +97,7 @@ public class KeyValueMapPO<K extends IMetaAttribute, T extends KeyValueObject<K>
 
 				try {
 					this.expressions[i].bindMetaAttribute(object.getMetadata());
-					this.expressions[i].bindAdditionalContent(object
-							.getAdditionalContent());
+					this.expressions[i].bindAdditionalContent(object.getAdditionalContent());
 					this.expressions[i].bindVariables(meta, values);
 					Object expr = this.expressions[i].getValue();
 
@@ -124,34 +122,11 @@ public class KeyValueMapPO<K extends IMetaAttribute, T extends KeyValueObject<K>
 			transfer(outputVal);
 		}
 	}
-	
-	@SuppressWarnings("unchecked")
-	private SDFSchema generateSchema(T object) {
-		List<SDFAttribute> schemaAttributes = new ArrayList<SDFAttribute>();
-		for(Entry<String, Object> entry : object.getAttributes().entrySet()) {
-			//Maybe more types could be needed...
-			if(entry.getValue() instanceof Double) {
-				schemaAttributes.add(new SDFAttribute("", entry.getKey(), SDFDatatype.DOUBLE, null));
-			} else if(entry.getValue() instanceof Integer) {
-				schemaAttributes.add(new SDFAttribute("", entry.getKey(), SDFDatatype.INTEGER, null));
-			} else if(entry.getValue() instanceof Boolean) {
-				schemaAttributes.add(new SDFAttribute("", entry.getKey(), SDFDatatype.BOOLEAN, null));
-			} else if(entry.getValue() instanceof Float) {
-				schemaAttributes.add(new SDFAttribute("", entry.getKey(), SDFDatatype.FLOAT, null));
-			} else if(entry.getValue() instanceof Long) {
-				schemaAttributes.add(new SDFAttribute("", entry.getKey(), SDFDatatype.LONG, null));
-			} else {
-				schemaAttributes.add(new SDFAttribute("", entry.getKey(), SDFDatatype.STRING, null));
-			}
-		}
-		return SDFSchemaFactory.createNewSchema("", (Class<? extends IStreamObject<?>>) KeyValueObject.class, schemaAttributes) ;
-	}
 
-	protected void generateSDFExpressions(SDFSchema schema, List<String[]> expressionStrings) {
-		IAttributeResolver attributeResolver = new DirectAttributeResolver(schema);
+	protected void generateExpressions(List<String[]> expressionStrings) {
 		this.expressions = new SDFExpression[expressionStrings.size()];
 		for (int i = 0; i < expressionStrings.size(); ++i) {
-			this.expressions[i] = new SDFExpression("", expressionStrings.get(i)[1], attributeResolver, MEP.getInstance(), AggregateFunctionBuilderRegistry.getAggregatePattern());
+			this.expressions[i] = new SDFExpression("", expressionStrings.get(i)[1], null, MEP.getInstance(), AggregateFunctionBuilderRegistry.getAggregatePattern());
 		}
 		this.variables = new String[expressionStrings.size()][];
 		int i = 0;

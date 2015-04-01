@@ -30,15 +30,13 @@ public class TKeyValueMapRule extends AbstractTransformationRule<MapAO> {
 
 	@Override
 	public int getPriority() {
-		return 10;
+		return 1;
 	}
 
 	@Override
-	public void execute(MapAO operator, TransformationConfiguration config) throws RuleException {
-		IPhysicalOperator mapPO = new KeyValueMapPO<>(operator.getInputSchema(),
-					operator.getKVExpressions(),
-					false, operator.isEvaluateOnPunctuation());
-		defaultExecute(operator, mapPO, config, true, true);
+	public void execute(MapAO mapAO, TransformationConfiguration config) throws RuleException {
+		IPhysicalOperator mapPO = new KeyValueMapPO<>(mapAO);
+		defaultExecute(mapAO, mapPO, config, true, true);
 	}
 
 	@Override
