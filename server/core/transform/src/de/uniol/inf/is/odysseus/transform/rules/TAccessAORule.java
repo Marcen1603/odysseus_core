@@ -105,6 +105,11 @@ public class TAccessAORule extends AbstractTransformationRule<AbstractAccessAO> 
 				}
 				protocolHandler.setExecutor((IExecutor)config.getOption(IServerExecutor.class.getName()));
 				
+				if (dataHandler != null) {
+					protocolHandler.setSchema(dataHandler.getSchema());
+				}
+
+				
 				ITransportHandler transportHandler = getTransportHandler(
 						operator, protocolHandler, options);
 				if (transportHandler == null) {

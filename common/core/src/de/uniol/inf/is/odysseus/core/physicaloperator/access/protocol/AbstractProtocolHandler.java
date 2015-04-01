@@ -30,6 +30,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITranspor
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportExchangePattern;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandler;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 
 
 abstract public class AbstractProtocolHandler<T> implements IProtocolHandler<T> {
@@ -40,6 +41,7 @@ abstract public class AbstractProtocolHandler<T> implements IProtocolHandler<T> 
     private ITransferHandler<T>       transfer;
     
     private IExecutor executor;
+    private SDFSchema schema;
     
     protected final OptionMap optionsMap;
 
@@ -66,6 +68,16 @@ abstract public class AbstractProtocolHandler<T> implements IProtocolHandler<T> 
     public void setExecutor(IExecutor executor) {
 		this.executor = executor;
 	}
+    
+    @Override
+    public SDFSchema getSchema() {
+    	return schema;
+    }
+    
+    @Override
+    public void setSchema(SDFSchema schema) {
+    	this.schema = schema;
+    }
 
     final public ITransportHandler getTransportHandler() {
         return transportHandler;

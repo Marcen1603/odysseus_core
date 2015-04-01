@@ -28,6 +28,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITranspor
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandlerListener;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 
 public interface IProtocolHandler<T> extends ITransportHandlerListener<T> {
 
@@ -143,5 +144,9 @@ public interface IProtocolHandler<T> extends ITransportHandlerListener<T> {
 	IExecutor getExecutor();
 	
 	void setExecutor(IExecutor executor);
+	
+	SDFSchema getSchema();
+	
+	void setSchema(SDFSchema schema);
 
 }
