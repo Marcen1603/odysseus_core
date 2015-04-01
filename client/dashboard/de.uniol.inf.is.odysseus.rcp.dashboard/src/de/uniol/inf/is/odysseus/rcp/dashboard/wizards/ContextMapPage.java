@@ -16,6 +16,7 @@
 package de.uniol.inf.is.odysseus.rcp.dashboard.wizards;
 
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Map;
 
 import org.eclipse.jface.layout.TableColumnLayout;
@@ -308,7 +309,16 @@ public class ContextMapPage extends WizardPage {
 		}
 		
 		for( String undefinedReplacement : undefinedReplacements ) {
-			tableEntries.add(new TableEntry(undefinedReplacement, "", true));
+            ListIterator<TableEntry> iter = tableEntries.listIterator();
+            boolean exist = false;
+            while (iter.hasNext()) {
+                if (iter.next().key.equalsIgnoreCase(undefinedReplacement)) {
+                    exist = true;
+                }
+            }
+            if (!exist) {
+                tableEntries.add(new TableEntry(undefinedReplacement, "", true));
+            }
 		}
 	}
 }
