@@ -56,6 +56,7 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparam
 import de.uniol.inf.is.odysseus.core.server.scheduler.IScheduler;
 import de.uniol.inf.is.odysseus.core.server.scheduler.event.SchedulingEvent.SchedulingEventType;
 import de.uniol.inf.is.odysseus.core.server.scheduler.manager.ISchedulerManager;
+import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvider;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.latency.physicaloperator.LatencyCalculationPipe;
 
@@ -76,7 +77,7 @@ public class Benchmark implements IErrorEventListener, IBenchmark, IEventListene
 	private boolean sourcesCreated = false;
 
 	// TODO: Create Session for Benchmarker
-	private ISession user = null;
+    private ISession session = null;
 
 	@SuppressWarnings("unused")
 	private static Logger logger = LoggerFactory.getLogger(Benchmark.class);
@@ -99,12 +100,21 @@ public class Benchmark implements IErrorEventListener, IBenchmark, IEventListene
 		this.resultFactory.setStatistics(new DescriptiveStatistics());
 		this.usePunctuations = false;
 		this.useLoadShedding = false;
+        final BenchmarkContext context = new BenchmarkContext();
+        context.setPassword("manager");
+        context.setUsername("System");
+        session = UserManagementProvider.getSessionmanagement().login(context.getUsername(), context.getPassword().getBytes(), UserManagementProvider.getDefaultTenant());
 	}
 
 	public void activate(ComponentContext c) {
-		scheduler = executor.getCurrentSchedulerID(user);
-		schedulingStrategy = executor.getCurrentSchedulingStrategyID(user);
-		bufferPlacement = "Standard Buffer Placement";
+        if (executor != null) {
+            scheduler = executor.getCurrentSchedulerID(session);
+            schedulingStrategy = executor.getCurrentSchedulingStrategyID(session);
+            bufferPlacement = "Standard Buffer Placement";
+        }
+        else {
+            logger.error("No executor found");
+        }
 	}
 
 	@Override
@@ -172,7 +182,7 @@ public class Benchmark implements IErrorEventListener, IBenchmark, IEventListene
 			}
 
 			// executor.setDefaultBufferPlacementStrategy(bufferPlacement);
-			executor.setScheduler(scheduler, schedulingStrategy, user);
+            executor.setScheduler(scheduler, schedulingStrategy, session);
 			if (useBenchmarkMemUsage) {
 				this.avgMemListener = new AvgBenchmarkMemUsageListener();
 				executor.addPlanExecutionListener(avgMemListener);
@@ -190,7 +200,7 @@ public class Benchmark implements IErrorEventListener, IBenchmark, IEventListene
 			for (IPair<String, String> query : getQueries()) {
 				String parserId = query.getE1();
 				String queryString = query.getE2();
-				executor.addQuery(queryString, parserId, user, qbc.getName(), (Context)null);
+                executor.addQuery(queryString, parserId, session, (Context) null);
 			}
 			int i = 0;
 			for (IPhysicalOperator curRoot : executor.getExecutionPlan().getRoots()) {
@@ -216,7 +226,7 @@ public class Benchmark implements IErrorEventListener, IBenchmark, IEventListene
 			}
 			List<IBenchmarkResult<ILatency>> results = new ArrayList<IBenchmarkResult<ILatency>>();
 
-			ISchedulerManager schedulermanager = executor.getSchedulerManager(user);
+            ISchedulerManager schedulermanager = executor.getSchedulerManager(session);
 			IScheduler curScheduler = schedulermanager.getActiveScheduler();
 			curScheduler.subscribe(this, SchedulingEventType.SCHEDULING_STOPPED);
 
@@ -244,7 +254,7 @@ public class Benchmark implements IErrorEventListener, IBenchmark, IEventListene
 
 	private void clearExecutor() {
 		this.sinks.clear();
-		this.executor.removeAllQueries(user);
+        this.executor.removeAllQueries(session);
 	}
 
 	private int getQueryId(IPhysicalOperator curRoot) {
@@ -267,7 +277,7 @@ public class Benchmark implements IErrorEventListener, IBenchmark, IEventListene
 		q[3] = "CREATE STREAM nexmark:category2 (id INTEGER, name STRING, description STRING, parentid INTEGER) CHANNEL localhost : 65443";
 		for (String s : q) {
 			try {
-				this.executor.addQuery(s, "CQL", user, "Standard", (Context)null);
+                this.executor.addQuery(s, "CQL", session, (Context) null);
 			} catch (PlanManagementException e) {
 				e.printStackTrace();
 			}
@@ -302,6 +312,10 @@ public class Benchmark implements IErrorEventListener, IBenchmark, IEventListene
 	public void bindExecutor(IExecutor executor) {
 		this.executor = (IServerExecutor) executor;
 	}
+
+    public void unbindExecutor(IExecutor executor) {
+        this.executor = null;
+    }
 
 	@Override
 	public void setScheduler(String schedStrat) {

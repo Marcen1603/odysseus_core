@@ -9,12 +9,12 @@ Import-Package: de.uniol.inf.is.odysseus.benchmark,
  de.uniol.inf.is.odysseus.latency.physicaloperator,
  de.uniol.inf.is.odysseus.server.intervalapproach,
  de.uniol.inf.is.odysseus.sweeparea,
- org.osgi.service.component;version="1.1.0",
+ org.osgi.service.component,
  org.simpleframework.xml,
- org.simpleframework.xml.core
+ org.simpleframework.xml.core,
+ org.slf4j
 Export-Package: de.uniol.inf.is.odysseus.benchmarker
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Require-Bundle: de.uniol.inf.is.odysseus.core;bundle-version="1.0.0",
- de.uniol.inf.is.odysseus.core.server;bundle-version="1.0.0",
- de.uniol.inf.is.odysseus.slf4j;bundle-version="1.0.0"
+ de.uniol.inf.is.odysseus.core.server;bundle-version="1.0.0"
 Service-Component: OSGI-INF/* 

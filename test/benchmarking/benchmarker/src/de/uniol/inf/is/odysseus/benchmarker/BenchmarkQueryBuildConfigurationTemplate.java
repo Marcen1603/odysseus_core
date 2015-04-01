@@ -17,8 +17,8 @@ package de.uniol.inf.is.odysseus.benchmarker;
 
 import java.util.List;
 
-import de.uniol.inf.is.odysseus.core.server.metadata.ILatency;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
+import de.uniol.inf.is.odysseus.core.server.metadata.ILatency;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.configuration.AbstractQueryBuildConfigurationTemplate;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.configuration.IQueryBuildConfigurationTemplate;
@@ -29,7 +29,7 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparam
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.ParameterTransformationConfiguration;
 
 @Deprecated
-class BenchmarkQueryBuildConfigurationTemplate extends
+public class BenchmarkQueryBuildConfigurationTemplate extends
 		AbstractQueryBuildConfigurationTemplate {
 	
 	public BenchmarkQueryBuildConfigurationTemplate() {
