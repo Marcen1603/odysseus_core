@@ -27,12 +27,15 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.file.FileSystems;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.PlatformUI;
 
+import de.uniol.inf.is.odysseus.core.server.OdysseusConfiguration;
 import de.uniol.inf.is.odysseus.rcp.benchmarker.gui.model.Benchmark;
 import de.uniol.inf.is.odysseus.rcp.benchmarker.gui.model.BenchmarkGroup;
 import de.uniol.inf.is.odysseus.rcp.benchmarker.gui.model.BenchmarkHolder;
@@ -71,21 +74,17 @@ public class BenchmarkStoreUtil {
 	}
 
 	private static String createFolderName(Benchmark benchmark) {
-		BenchmarkGroup benchmarkGroup = benchmark.getParentGroup();
-
-		String folderName = StringUtils.nameToFoldername(benchmarkGroup.getName());
-		folderName = RELATIVE_FOLDER + File.separator + folderName + File.separator + benchmark.getId();
-		return folderName;
+        BenchmarkGroup benchmarkGroup = benchmark.getParentGroup();
+        Path folderName = FileSystems.getDefault().getPath(OdysseusConfiguration.getHomeDir(), RELATIVE_FOLDER, StringUtils.nameToFoldername(benchmarkGroup.getName()), "" + benchmark.getId())
+                .toAbsolutePath();
+        return folderName.toString();
 	}
 
 	private static void storeBenchmarkInternal(String folderName, Benchmark benchmark) {
 		BenchmarkMetadata metadata = benchmark.getMetadata();
 		FileOutputStream fos = null;
 		try {
-			String folder = folderName + File.separator;
-			String path = folder + "param.xml";
-
-			File outputFile = new File(path);
+			File outputFile = FileSystems.getDefault().getPath(folderName, "param.xml").toFile();
 			fos = new FileOutputStream(outputFile);
 			XMLEncoder encoder = new XMLEncoder(fos);
 			encoder.writeObject(benchmark);
@@ -93,7 +92,7 @@ public class BenchmarkStoreUtil {
 
 			FileOutputStream fosMeta = null;
 			try {
-				File outputMetadataFile = new File(folder + "metadata.xml");
+				File outputMetadataFile = FileSystems.getDefault().getPath(folderName, "metadata.xml").toFile();
 				fosMeta = new FileOutputStream(outputMetadataFile);
 				XMLEncoder metadataEncoder = new XMLEncoder(fosMeta);
 				metadataEncoder.writeObject(metadata);
@@ -113,7 +112,7 @@ public class BenchmarkStoreUtil {
 	 */
 
 	public static void loadAllBenchmarks() {
-		File directory = new File(RELATIVE_FOLDER);
+		File directory = FileSystems.getDefault().getPath(OdysseusConfiguration.getHomeDir(), RELATIVE_FOLDER).toFile();
 		if (directory.exists()) {
 			if (!directory.isDirectory()) {
 				throw new RuntimeException("Can't load benchmarks. Want subdirectory and no file with name: "
@@ -291,7 +290,7 @@ public class BenchmarkStoreUtil {
 	 */
 	public static void deleteResult(Benchmark benchmark, BenchmarkResult result) {
 		String path = createFolderName(benchmark);
-		path = path + File.separator + RESULT_PREFIX + result.getId() + ".xml";
+        path = FileSystems.getDefault().getPath(path, RESULT_PREFIX + result.getId() + ".xml").toString();
 		try {
 			File file = new File(path);
 			if (file.canWrite()) {
