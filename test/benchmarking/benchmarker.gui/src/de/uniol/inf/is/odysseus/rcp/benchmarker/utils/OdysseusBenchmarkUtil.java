@@ -21,6 +21,8 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
+import java.nio.file.FileSystems;
+import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -31,10 +33,13 @@ import org.osgi.framework.BundleContext;
 import org.osgi.util.tracker.ServiceTracker;
 import org.simpleframework.xml.Serializer;
 import org.simpleframework.xml.core.Persister;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.benchmark.BenchmarkException;
 import de.uniol.inf.is.odysseus.benchmark.result.IBenchmarkResult;
 import de.uniol.inf.is.odysseus.benchmarker.IBenchmark;
+import de.uniol.inf.is.odysseus.core.server.OdysseusConfiguration;
 import de.uniol.inf.is.odysseus.rcp.benchmarker.gui.Activator;
 import de.uniol.inf.is.odysseus.rcp.benchmarker.gui.model.Benchmark;
 import de.uniol.inf.is.odysseus.rcp.benchmarker.gui.model.BenchmarkGroup;
@@ -49,6 +54,7 @@ import de.uniol.inf.is.odysseus.rcp.benchmarker.gui.view.ProjectView;
  * 
  */
 public class OdysseusBenchmarkUtil extends Thread {
+    protected static final Logger LOG = LoggerFactory.getLogger(OdysseusBenchmarkUtil.class);
 
 	private static OdysseusBenchmarkUtil util;
 	private BenchmarkGroup benchmarkGroup;
@@ -79,7 +85,7 @@ public class OdysseusBenchmarkUtil extends Thread {
 		BundleContext ctx = de.uniol.inf.is.odysseus.rcp.benchmarker.gui.Activator.getDefault().getBundle()
 				.getBundleContext();
 		for (Benchmark benchmark : benchmarks) {
-			// überprüfen, ob BenchmarkRun schon results hat
+			// ï¿½berprï¿½fen, ob BenchmarkRun schon results hat
 			if (!benchmark.hasResults()) {
 				this.benchmarkParam = benchmark.getParam();
 				// oder ob BenchmarkRun alle erforderlichen Einstellungen hat
@@ -91,7 +97,7 @@ public class OdysseusBenchmarkUtil extends Thread {
 						int wait = 100;
 						IBenchmark iBenchmark = (IBenchmark) t.waitForService(wait);
 						if (iBenchmark == null) {
-							throw new Exception("cannot find benchmark service");
+                            throw new IllegalArgumentException("Cannot find benchmark service");
 						}
 
 						int waitConfig;
@@ -104,45 +110,50 @@ public class OdysseusBenchmarkUtil extends Thread {
 
 						configureBenchmark(iBenchmark, benchmark);
 						final String RELATIVE_FOLDER = "benchmarks";
-						String folderName = StringUtils.nameToFoldername(benchmarkGroup.getName());
-						folderName = RELATIVE_FOLDER + File.separator + folderName + File.separator + benchmark.getId();
+                        Path folderName = FileSystems.getDefault()
+                                .getPath(OdysseusConfiguration.getHomeDir(), RELATIVE_FOLDER, StringUtils.nameToFoldername(this.benchmarkGroup.getName()), "" + benchmark.getId()).toAbsolutePath();
 						try {
-							System.out.println("after setParameter s, als nächsten forschleife");
 							this.benchmarkParam = benchmark.getParam();
 							for (int i = 0; i < Integer.parseInt(benchmarkParam.getNumberOfRuns()); i++) {
 								if (isAbortProzess()) {
 									return;
 								}
                                 Collection<IBenchmarkResult<Object>> results = iBenchmark.runBenchmark();
-                                String filename = folderName + File.separator + "result" + (i + 1) + ".xml";
+                                Path file = folderName.resolve("result" + (i + 1) + ".xml");
                                 Serializer serializer = new Persister();
-                                File file = new File(filename);
-                                FileOutputStream oStream = new FileOutputStream(file);
+                                if (!folderName.toFile().exists()) {
+                                    folderName.toFile().mkdirs();
+                                }
+                                file.toFile().createNewFile();
+                                FileOutputStream oStream = new FileOutputStream(file.toFile());
                                 for (IBenchmarkResult<?> result : results) {
-                                	serializer.write(result, oStream);
+                                    serializer.write(result, oStream);
                                 }
 
                                 if (benchmarkParam.isMemoryUsage()) {
-                                	String memFile = filename.replaceAll(".xml", "_memory.xml");
+                                    String memFile = file.toString().replaceAll(".xml", "_memory.xml");
                                 	serializer.write(iBenchmark.getMemUsageStatistics(), new File(memFile));
                                 }
-                                System.out.println("Benchmarkrun erfolgreich");
                                 BenchmarkStoreUtil.loadResultsOfGroupAndBenchmark(benchmark);
                                 Display.getDefault().asyncExec(new Runnable() {
                                 	@Override
                                     public void run() {
-                                		ProjectView.getDefault().refresh();
+                                        if (ProjectView.getDefault() != null) {
+                                            ProjectView.getDefault().refresh();
+                                        }
                                 	}
                                 });
 							}
 							fetchMetadataInformations(benchmark);
 							BenchmarkStoreUtil.storeBenchmark(benchmark);
-						} catch (BenchmarkException e) {
-							e.printStackTrace();
-						}
-					} catch (Exception e) {
-						e.printStackTrace();
-					}
+                        }
+                        catch (BenchmarkException e) {
+                            LOG.error(e.getMessage(), e);
+                        }
+                    }
+                    catch (Exception e) {
+                        LOG.error(e.getMessage(), e);
+                    }
 				}
 			}
 		}

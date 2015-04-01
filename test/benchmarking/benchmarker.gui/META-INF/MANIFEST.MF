@@ -18,4 +18,5 @@ Import-Package: de.uniol.inf.is.odysseus.benchmark,
  org.eclipse.ui,
  org.eclipse.ui.ide,
  org.simpleframework.xml,
- org.simpleframework.xml.core
+ org.simpleframework.xml.core,
+ org.slf4j
