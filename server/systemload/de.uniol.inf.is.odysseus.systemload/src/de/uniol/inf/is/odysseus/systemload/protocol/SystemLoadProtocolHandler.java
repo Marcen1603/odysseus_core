@@ -35,8 +35,7 @@ public class SystemLoadProtocolHandler extends
 	}
 
 	private void init_internal() {
-		// TODO
-		// if (optionsMap.containsKey(key))
+		// Infos are read from schema, currently no need for configuration
 	}
 
 	@Override
@@ -117,8 +116,7 @@ public class SystemLoadProtocolHandler extends
 
 	@Override
 	public boolean isSemanticallyEqualImpl(IProtocolHandler<?> other) {
-		// TODO Auto-generated method stub
-		return false;
+		return getSchema().equals(other.getSchema());
 	}
 
 }
