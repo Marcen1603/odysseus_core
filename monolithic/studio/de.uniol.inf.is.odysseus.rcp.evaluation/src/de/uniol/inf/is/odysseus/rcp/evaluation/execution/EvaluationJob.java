@@ -45,6 +45,7 @@ public class EvaluationJob extends Job implements IPlanModificationListener {
 	private Collection<Integer> ids = new ArrayList<>();	
 	private static final String PRE_TRANSFORM_TOKEN = "#PRETRANSFORM EvaluationPreTransformation";
 	private static final CharSequence METADATA_LATENCY = "#METADATA Latency";
+    private static final CharSequence METADATA_RESOURCE = "#METADATA SystemLoad";
 
 	public EvaluationJob(EvaluationModel model) {
 		super("Running Evaluation...");
@@ -95,14 +96,22 @@ public class EvaluationJob extends Job implements IPlanModificationListener {
 				}
 				
 				monitor.beginTask("Creating diagrams...", IProgressMonitor.UNKNOWN);
-				if(model.isCreateLatencyPlots()){
+                if (model.isCreateLatencyPlots()) {
 					monitor.subTask("Creating latency plots...");					
 					PlotBuilder.createLatencyPlots(evaluationRunContainer, model, monitor);					
 				}
-				if(model.isCreateThroughputPlots()){
+                if (model.isCreateThroughputPlots()) {
 					monitor.subTask("Creating throughput plots...");
 					PlotBuilder.createThroughputPlots(evaluationRunContainer, model, monitor);
 				}
+                if (model.isCreateCPUPlots()) {
+                    monitor.subTask("Creating CPU plots...");
+                    PlotBuilder.createCPUPlots(evaluationRunContainer, model, monitor);
+                }
+                if (model.isCreateMemoryPlots()) {
+                    monitor.subTask("Creating memory plots...");
+                    PlotBuilder.createMemoryPlots(evaluationRunContainer, model, monitor);
+                }
 			}
 		} catch (InterruptedException ex) {
 			return Status.CANCEL_STATUS;
@@ -114,9 +123,12 @@ public class EvaluationJob extends Job implements IPlanModificationListener {
 	}
 
 	private String prepareQueryFileForEvaluation(String lines) {
-		if(!lines.contains(METADATA_LATENCY)){
-			lines = METADATA_LATENCY + System.lineSeparator()+lines; 
-		}
+        if ((model.isWithLatency()) && (!lines.contains(METADATA_LATENCY))) {
+            lines = METADATA_LATENCY + System.lineSeparator() + lines;
+        }
+        if ((model.isWithResource()) && (!lines.contains(METADATA_RESOURCE))) {
+            lines = METADATA_RESOURCE + System.lineSeparator() + lines;
+        }
 		if(!lines.contains(PRE_TRANSFORM_TOKEN)){
 			lines = PRE_TRANSFORM_TOKEN+System.lineSeparator()+lines;
 		}
@@ -168,7 +180,6 @@ public class EvaluationJob extends Job implements IPlanModificationListener {
 			EvaluationRun evaluationRun = new EvaluationRun(evaluationRunContainer.getContext(), i, currentValues);
 			evaluationRunContainer.getRuns().add(evaluationRun);
 			context.put(EvaluationRun.class.getName(), evaluationRun);
-			
 			ids  = executor.addQuery(querytext, "OdysseusScript", caller, context);
 			monitor.subTask(prefix + "Running query and waiting for stop...");
 			for (int id : ids) {
@@ -215,13 +226,13 @@ public class EvaluationJob extends Job implements IPlanModificationListener {
 		}
 		IFile file = (IFile) res;
 		String lines = "";
-		BufferedReader br = new BufferedReader(new InputStreamReader(file.getContents()));
-		String line = br.readLine();
-		while (line != null) {
-			lines = lines + line + "\n";
-			line = br.readLine();
-		}
-		br.close();
+        try (BufferedReader br = new BufferedReader(new InputStreamReader(file.getContents()))) {
+            String line = br.readLine();
+            while (line != null) {
+                lines = lines + line + "\n";
+                line = br.readLine();
+            }
+        }
 		return lines;
 	}
 

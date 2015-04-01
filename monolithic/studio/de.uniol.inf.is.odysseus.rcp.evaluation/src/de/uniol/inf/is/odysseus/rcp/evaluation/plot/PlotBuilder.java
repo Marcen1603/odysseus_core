@@ -106,6 +106,14 @@ public class PlotBuilder {
 		createPlots(runs, monitor, model, EvaluationType.THROUGHPUT);
 	}
 
+    public static void createCPUPlots(EvaluationRunContainer runs, EvaluationModel model, IProgressMonitor monitor) {
+        createPlots(runs, monitor, model, EvaluationType.CPU);
+    }
+
+    public static void createMemoryPlots(EvaluationRunContainer runs, EvaluationModel model, IProgressMonitor monitor) {
+        createPlots(runs, monitor, model, EvaluationType.MEMORY);
+    }
+
 	private static void createPlots(EvaluationRunContainer container, IProgressMonitor monitor, EvaluationModel model, EvaluationType type) {
 		monitor.subTask("Grouping files...");
 		// combine them to groups of variables with same values
@@ -124,11 +132,18 @@ public class PlotBuilder {
 		for (Entry<String, List<EvaluationRun>> group : groupedRuns.entrySet()) {
 			for (EvaluationRun run : group.getValue()) {
 				String path = "";
-				if (type == EvaluationType.LATENCY) {
-					path = container.getContext().getLatencyResultsPath() + group.getKey() + File.separator + run.getRun();
-				} else {
-					path = container.getContext().getThroughputResultsPath() + group.getKey() + File.separator + run.getRun();
-				}
+                if (type == EvaluationType.LATENCY) {
+                    path = container.getContext().getLatencyResultsPath() + group.getKey() + File.separator + run.getRun();
+                }
+                else if (type == EvaluationType.THROUGHPUT) {
+                    path = container.getContext().getThroughputResultsPath() + group.getKey() + File.separator + run.getRun();
+                }
+                else if (type == EvaluationType.CPU) {
+                    path = container.getContext().getCPUResultsPath() + group.getKey() + File.separator + run.getRun();
+                }
+                else if (type == EvaluationType.MEMORY) {
+                    path = container.getContext().getMemoryResultsPath() + group.getKey() + File.separator + run.getRun();
+                }
 				List<File> files = getFilesInPath(path);
 				for (File f : files) {
 					String name = StringUtils.substringBefore(f.getName(), ".");
@@ -169,8 +184,14 @@ public class PlotBuilder {
             if (type == EvaluationType.LATENCY) {
                 dir = container.getContext().getLatencyPlotsPath();
             }
-            else {
+            else if (type == EvaluationType.THROUGHPUT) {
                 dir = container.getContext().getThroughputPlotsPath();
+            }
+            else if (type == EvaluationType.CPU) {
+                dir = container.getContext().getCPUPlotsPath();
+            }
+            else if (type == EvaluationType.MEMORY) {
+                dir = container.getContext().getMemoryPlotsPath();
             }
             IPlotDescription plotdescription = PlotDescriptionFactory.createPlotDescription(type);
             if ((out == OutputType.PDF) || (out == OutputType.PNG) || (out == OutputType.JPEG)) {
@@ -203,26 +224,15 @@ public class PlotBuilder {
 	}
 
     private static void buildGnuPlot(String dir, List<Pair<Integer, Double>> values, MeasurementResult mr, IPlotDescription plotdescription, OutputType out, int height, int width) {
-        Writer dataWriter = null;
-        try {
-            dataWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(dir + mr.getVariable() + File.separator + mr.getName() + ".dat"), "utf-8"));
+        try (Writer dataWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(dir + mr.getVariable() + File.separator + mr.getName() + ".dat"), "utf-8"))) {
             for (Pair<Integer, Double> value : values) {
-                dataWriter.write(value.getE1() + ", " + value.getE2()+"\n");
+                dataWriter.write(value.getE1() + ", " + value.getE2() + "\n");
             }
         }
         catch (IOException e) {
             e.printStackTrace();
         }
-        finally {
-            if (dataWriter != null) {
-                try {
-                    dataWriter.close();
-                }
-                catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
+
         
         StringBuilder gnuPlotScript = new StringBuilder();
         SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy");
@@ -235,23 +245,11 @@ public class PlotBuilder {
         gnuPlotScript.append("set xlabel '" + plotdescription.getNameAxisX() + "'\n");
 
         gnuPlotScript.append("plot '" + mr.getName() + ".dat' using 1:2 with lines");
-        Writer plotWriter = null;
-        try {
-            plotWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(dir + mr.getVariable() + File.separator + mr.getName() + ".gnu"), "utf-8"));
+        try (Writer plotWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(dir + mr.getVariable() + File.separator + mr.getName() + ".gnu"), "utf-8"))) {
             plotWriter.write(gnuPlotScript.toString());
         }
         catch (IOException e) {
             e.printStackTrace();
-        }
-        finally {
-            if (plotWriter != null) {
-                try {
-                    plotWriter.close();
-                }
-                catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
         }
     }
     
@@ -361,6 +359,9 @@ public class PlotBuilder {
 				return true;
 			}
 		});
+        if (files == null) {
+            return new ArrayList<>();
+        }
 		return Arrays.asList(files);
 	}
 

@@ -29,12 +29,17 @@ public class EvaluationModel implements Serializable {
 	private static final String PLOT_FILES_PATH = "PLOT_FILES_PATH";
 	private static final String PROCESSING_RESULTS_PATH = "PROCESSINGRESULTSPATH";
 	private static final String WITH_THROUGHPUT = "WITH_THROUGHPUT";
-	private static final String WITH_LATENCY = "WITH_LATENCY";
+    private static final String WITH_LATENCY = "WITH_LATENCY";
+    private static final String WITH_RESOURCE = "WITH_RESOURCE";
+
 	private static final String NUMBER_OF_RUNS = "NUMBER_OF_RUNS";
 	private static final String QUERY_FILE = "QUERY_FILE";
 	private static final String CREATE_LATENCY_PLOTS = "CREATE_LATENCY_PLOTS";
 	private static final String CREATE_THROUGHPUT_PLOTS = "CREATE_THROUGHPUT_PLOTS";
 	private static final String MEASURE_THROUGHPUT_EACH = "MEASURE_THROUGHPUT_EACH";
+    private static final String CREATE_CPU_PLOTS = "CREATE_CPU_PLOTS";
+    private static final String CREATE_MEMORY_PLOTS = "CREATE_MEMORY_PLOTS";
+
 	private static final String OUTPUT_TYPE = "OUTPUT_TYPE";
 	private static final String OUTPUT_HEIGHT = "OUTPUT_HEIGHT";
 	private static final String OUTPUT_WIDTH = "OUTPUT_WIDTH";
@@ -46,11 +51,14 @@ public class EvaluationModel implements Serializable {
 
 	private boolean withLatency = true;
 	private boolean withThroughput = true;
+    private boolean withResource = true;
 
 	private int measureThrougputEach = 100;
 
 	private boolean createThroughputPlots = true;
 	private boolean createLatencyPlots = true;
+    private boolean createMemoryPlots = true;
+    private boolean createCPUPlots = true;
 
 	private int numberOfRuns = 10;
 	private List<EvaluationVariable> variables = new ArrayList<>();
@@ -104,9 +112,13 @@ public class EvaluationModel implements Serializable {
 		memento.putString(PLOT_FILES_PATH, plotFilesPath);
 		memento.putBoolean(WITH_LATENCY, withLatency);
 		memento.putBoolean(WITH_THROUGHPUT, withThroughput);
+        memento.putBoolean(WITH_RESOURCE, withResource);
 		memento.putBoolean(CREATE_LATENCY_PLOTS, createLatencyPlots);
 		memento.putBoolean(CREATE_THROUGHPUT_PLOTS, createThroughputPlots);
 		memento.putInteger(MEASURE_THROUGHPUT_EACH, measureThrougputEach);
+        memento.putBoolean(CREATE_CPU_PLOTS, createCPUPlots);
+        memento.putBoolean(CREATE_MEMORY_PLOTS, createMemoryPlots);
+
 		memento.putInteger(NUMBER_OF_RUNS, numberOfRuns);
 		memento.putString(QUERY_FILE, queryFile.getProjectRelativePath().toPortableString());
 		memento.putInteger(OUTPUT_HEIGHT, outputHeight);
@@ -142,11 +154,15 @@ public class EvaluationModel implements Serializable {
 				this.plotFilesPath = memento.getString(PLOT_FILES_PATH);
 				this.withLatency = memento.getBoolean(WITH_LATENCY);
 				this.withThroughput = memento.getBoolean(WITH_THROUGHPUT);
+                this.withResource = memento.getBoolean(WITH_RESOURCE);
+
 				this.numberOfRuns = memento.getInteger(NUMBER_OF_RUNS);
 
 				this.measureThrougputEach = checkNullAndSet(memento.getInteger(MEASURE_THROUGHPUT_EACH), this.measureThrougputEach);
 				this.createLatencyPlots = checkNullAndSet(memento.getBoolean(CREATE_LATENCY_PLOTS), this.createLatencyPlots);
 				this.createThroughputPlots = checkNullAndSet(memento.getBoolean(CREATE_THROUGHPUT_PLOTS), this.createThroughputPlots);
+                this.createCPUPlots = checkNullAndSet(memento.getBoolean(CREATE_CPU_PLOTS), this.createCPUPlots);
+                this.createMemoryPlots = checkNullAndSet(memento.getBoolean(CREATE_MEMORY_PLOTS), this.createMemoryPlots);
 
 				this.outputHeight = checkNullAndSet(memento.getInteger(OUTPUT_HEIGHT), this.outputHeight);
 				this.outputWidth = checkNullAndSet(memento.getInteger(OUTPUT_WIDTH), this.outputWidth);
@@ -216,6 +232,13 @@ public class EvaluationModel implements Serializable {
 
 	}
 
+    public boolean isWithResource() {
+        return withResource;
+    }
+
+    public void setWithResource(boolean withResource) {
+        this.withResource = withResource;
+    }
 	public int getNumberOfRuns() {
 		return numberOfRuns;
 	}
@@ -276,6 +299,22 @@ public class EvaluationModel implements Serializable {
 	public void setCreateLatencyPlots(boolean createLatencyPlots) {
 		this.createLatencyPlots = createLatencyPlots;
 	}
+
+    public boolean isCreateCPUPlots() {
+        return createCPUPlots;
+    }
+
+    public void setCreateCPUPlots(boolean createCPUPlots) {
+        this.createCPUPlots = createCPUPlots;
+    }
+
+    public boolean isCreateMemoryPlots() {
+        return createMemoryPlots;
+    }
+
+    public void setCreateMemoryPlots(boolean createMemoryPlots) {
+        this.createMemoryPlots = createMemoryPlots;
+    }
 
 	public int getOutputHeight() {
 		return outputHeight;

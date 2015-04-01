@@ -1,7 +1,5 @@
 package de.uniol.inf.is.odysseus.rcp.evaluation.model;
 
 public enum EvaluationType {
-
-	LATENCY,
-	THROUGHPUT
+    LATENCY, THROUGHPUT, CPU, MEMORY
 }
