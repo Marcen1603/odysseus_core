@@ -26,7 +26,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 /**
- * Diese Klasse enthält die Daten für BenchmarkParam
+ * Diese Klasse enthï¿½lt die Daten fï¿½r BenchmarkParam
  * 
  * @author Stefanie Witzke
  * 
@@ -71,8 +71,13 @@ public class BenchmarkParam implements Serializable, Cloneable {
 		// Default-Werte:
 		dataType = "relational";
 		name = "run";
+        maxResult = "10";
 		waitConfig = "3";
 		numberOfRuns = "1";
+        scheduler = "Single Thread Scheduler RR";
+        schedulingstrategy = "Round Robin";
+        bufferplacement = "Standard Buffer Placement";
+        queryLanguage = "PQL";
 		allSingleTypes = new HashMap<String, Boolean>();
 	}
 
@@ -243,7 +248,7 @@ public class BenchmarkParam implements Serializable, Cloneable {
 	}
 
 	/**
-	 * @return true wenn nicht überschrieben werden darf
+	 * @return true wenn nicht ï¿½berschrieben werden darf
 	 */
 	public boolean isReadOnly() {
 		return readOnly;
