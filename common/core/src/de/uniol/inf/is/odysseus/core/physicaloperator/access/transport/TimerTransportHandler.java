@@ -20,17 +20,25 @@ import java.nio.ByteBuffer;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import de.uniol.inf.is.odysseus.core.collection.KeyValueObject;
 import de.uniol.inf.is.odysseus.core.collection.OptionMap;
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
+import de.uniol.inf.is.odysseus.core.command.Command;
+import de.uniol.inf.is.odysseus.core.command.ICommandProvider;
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
 
 /**
  * @author Christian Kuka <christian@kuka.cc>
  * 
  */
-public class TimerTransportHandler extends AbstractPushTransportHandler {
+public class TimerTransportHandler extends AbstractPushTransportHandler implements ICommandProvider {
     private static final String PERIOD = "period";
+    private static final String TIMEFROMSTART = "timefromstart";
     private Timer timer = null;
     private long period = 1000l;
+    private boolean timeFromStart = true;
+    private long start = 0;
 
     /**
  * 
@@ -41,12 +49,11 @@ public class TimerTransportHandler extends AbstractPushTransportHandler {
 
     public TimerTransportHandler(final IProtocolHandler<?> protocolHandler, OptionMap options) {
         super(protocolHandler, options);
-        if (options.containsKey(TimerTransportHandler.PERIOD)) {
-            this.period = Long.parseLong(options.get(TimerTransportHandler.PERIOD));
-        }
-        else {
-            throw new IllegalArgumentException("No period given!");
-        }
+        
+        options.checkRequiredException(PERIOD);
+        
+        period = options.getLong(PERIOD, 0);
+        timeFromStart = options.getBoolean(TIMEFROMSTART, false);
     }
 
     /**
@@ -79,17 +86,13 @@ public class TimerTransportHandler extends AbstractPushTransportHandler {
      */
     @Override
     public void processInOpen() throws IOException {
-        this.timer = new Timer();
-        final TimerTask task = new TimerTask() {
-            @Override
-            public void run() {
-                final ByteBuffer buffer = ByteBuffer.allocate(Long.SIZE / 8);
-                buffer.putLong(System.currentTimeMillis());
-                TimerTransportHandler.this.fireProcess(buffer);
-            }
-        };
-        this.fireOnConnect();
-        this.timer.schedule(task, 0, this.period);
+    	if (timeFromStart)
+    		start = System.currentTimeMillis();
+    	else
+    		start = 0;
+    	
+        fireOnConnect();
+        startTimer();
     }
 
     /**
@@ -105,12 +108,29 @@ public class TimerTransportHandler extends AbstractPushTransportHandler {
      */
     @Override
     public void processInClose() throws IOException {
-        this.timer.cancel();
-        this.timer.purge();
-        this.timer = null;
-        this.fireOnDisconnect();
+    	stopTimer();
+        fireOnDisconnect();
     }
 
+    private void startTimer() {
+        timer = new Timer();
+        final TimerTask task = new TimerTask() {
+            @Override
+            public void run() {
+                final ByteBuffer buffer = ByteBuffer.allocate(Long.SIZE / 8);
+                buffer.putLong(System.currentTimeMillis() - start);
+                TimerTransportHandler.this.fireProcess(buffer);
+            }
+        };        
+        timer.schedule(task, 0, this.period);    	
+    }
+    
+    private void stopTimer() {
+        timer.cancel();
+        timer.purge();
+        timer = null;
+    }
+    
     /**
      * {@inheritDoc}
      */
@@ -134,5 +154,47 @@ public class TimerTransportHandler extends AbstractPushTransportHandler {
 
         return true;
     }
+
+	@Override
+	public Command getCommandByName(String commandName) 
+	{
+		switch (commandName)
+		{
+		case "setPeriod": return new Command()
+								 {
+								 	@Override public void run(IStreamObject<?> input) 
+								 	{
+								 		long period;
+								 		
+								 		if (input instanceof Tuple<?>)
+								 		{
+								 			Tuple<?> tuple = (Tuple<?>) input;								 			
+								 			period = (Long) tuple.getAttribute(0);
+								 		}
+								 		else
+								 		if (input instanceof KeyValueObject)
+								 		{
+								 			KeyValueObject<?> kv = (KeyValueObject<?>)input;
+								 			period = (Long) kv.getAttribute("period");
+								 		}
+								 		else
+								 			throw new IllegalArgumentException("Cannot execute command on input type " + input.getClass().getName());
+								 		
+								 		TimerTransportHandler.this.setPeriod(period);
+									}
+ 								 };
+ 		default: return null;
+		}
+	}
+
+	public void setPeriod(long period) {
+		this.period = period;
+		
+		if (timer != null)
+		{
+			stopTimer();
+			startTimer();
+		}
+	}
 
 }
