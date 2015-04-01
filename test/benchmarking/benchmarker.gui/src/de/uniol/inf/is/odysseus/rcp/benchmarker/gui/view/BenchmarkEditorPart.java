@@ -36,12 +36,17 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.LineStyleEvent;
+import org.eclipse.swt.custom.LineStyleListener;
 import org.eclipse.swt.custom.ScrolledComposite;
+import org.eclipse.swt.custom.StyleRange;
+import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -92,7 +97,7 @@ public class BenchmarkEditorPart extends EditorPart implements ISaveablePart, Pr
 	private Combo comboBufferPlacement;
 	private Text textDataType;
 	private Combo comboQueryLanguage;
-	private Text textQuery;
+    private StyledText textQuery;
 	private Text textMaxResults;
 	private Button checkButtonPriority;
 	private Button checkButtonPunctuations;
@@ -134,7 +139,9 @@ public class BenchmarkEditorPart extends EditorPart implements ISaveablePart, Pr
 		Display.getDefault().asyncExec(new Runnable() {
 			@Override
             public void run() {
-				ProjectView.getDefault().refresh();
+                if (ProjectView.getDefault() != null) {
+                    ProjectView.getDefault().refresh();
+                }
 			}
 		});
 	}
@@ -235,6 +242,7 @@ public class BenchmarkEditorPart extends EditorPart implements ISaveablePart, Pr
 			gridData.grabExcessHorizontalSpace = true;
 			textNameBenchmark = new Text(parent, SWT.SINGLE | SWT.BORDER);
 			textNameBenchmark.setLayoutData(gridData);
+            textNameBenchmark.setText(benchmark.getName() + "_1");
 			new Label(parent, SWT.NULL);
 			bindingContext.bindValue(SWTObservables.observeText(textNameBenchmark, SWT.Modify),
 					BeansObservables.observeValue(benchmarkParam, "name"));
@@ -256,6 +264,7 @@ public class BenchmarkEditorPart extends EditorPart implements ISaveablePart, Pr
 			} else {
 				comboScheduler.add("No one available");
 			}
+            comboScheduler.select(0);
 			new Label(parent, SWT.NULL);
 			bindingContext.bindValue(SWTObservables.observeSelection(comboScheduler),
 					BeansObservables.observeValue(benchmarkParam, "scheduler"));
@@ -277,6 +286,7 @@ public class BenchmarkEditorPart extends EditorPart implements ISaveablePart, Pr
 			} else {
 				comboSchedulingstrategy.add("No one available");
 			}
+            comboSchedulingstrategy.select(0);
 			new Label(parent, SWT.NULL);
 			bindingContext.bindValue(SWTObservables.observeSelection(comboSchedulingstrategy),
 					BeansObservables.observeValue(benchmarkParam, "schedulingstrategy"));
@@ -298,6 +308,7 @@ public class BenchmarkEditorPart extends EditorPart implements ISaveablePart, Pr
 			} else {
 				comboBufferPlacement.add("No one available");
 			}
+            comboBufferPlacement.select(0);
 			new Label(parent, SWT.NULL);
 			bindingContext.bindValue(SWTObservables.observeSelection(comboBufferPlacement),
 					BeansObservables.observeValue(benchmarkParam, "bufferplacement"));
@@ -323,17 +334,14 @@ public class BenchmarkEditorPart extends EditorPart implements ISaveablePart, Pr
 			gridData = new GridData(GridData.FILL_HORIZONTAL);
 			gridData.grabExcessHorizontalSpace = true;
 
-            // Label labelmetadata = new Label(parent, SWT.NULL);
-            // labelmetadata.setText("Select Combination: ");
-            // new Label(parent, SWT.NULL);
-
             Composite metadataTypesComposite = new Composite(parent, SWT.NONE);
             metadataTypesComposite.setLayoutData(gridData);
             metadataTypesComposite.setLayout(new FillLayout());
 			Map<String, Boolean> allSingleTypes = benchmarkParam.getAllSingleTypes();
 			for (Map.Entry<String, Boolean> typeEntry : allSingleTypes.entrySet()) {
                 Button checkboxMetadataType = new Button(metadataTypesComposite, SWT.CHECK);
-				checkboxMetadataType.setText(StringUtils.splitString(typeEntry.getKey()).substring(1));
+                checkboxMetadataType.setText(StringUtils.splitString(typeEntry.getKey()).substring(1));
+
 				listMetadata.add(checkboxMetadataType);
 				bindingContext.bindValue(SWTObservables.observeSelection(checkboxMetadataType),
 						new ObservativeMapEntryValue<String, Boolean>(typeEntry, this, benchmarkParam));
@@ -358,6 +366,7 @@ public class BenchmarkEditorPart extends EditorPart implements ISaveablePart, Pr
 			} else {
 				comboQueryLanguage.add("No one available");
 			}
+            comboQueryLanguage.select(0);
 			new Label(parent, SWT.NULL);
 			bindingContext.bindValue(SWTObservables.observeSelection(comboQueryLanguage),
 					BeansObservables.observeValue(benchmarkParam, "queryLanguage"));
@@ -368,8 +377,25 @@ public class BenchmarkEditorPart extends EditorPart implements ISaveablePart, Pr
 			labelQuery.setText("Query ");
 
 			gridData = new GridData(GridData.FILL_BOTH);
-			textQuery = new Text(parent, SWT.BORDER | SWT.MULTI | SWT.V_SCROLL | SWT.H_SCROLL);
+            gridData.heightHint = 100;
+            textQuery = new StyledText(parent, SWT.BORDER | SWT.MULTI | SWT.V_SCROLL | SWT.H_SCROLL);
 			textQuery.setLayoutData(gridData);
+            final Color red = composite.getDisplay().getSystemColor(SWT.COLOR_RED);
+            final Color green = composite.getDisplay().getSystemColor(SWT.COLOR_DARK_GREEN);
+            textQuery.addLineStyleListener(new LineStyleListener() {
+                @Override
+                public void lineGetStyle(LineStyleEvent event) {
+                    List<StyleRange> styles = new ArrayList<>();
+                    if (event.lineText.startsWith("///")) {
+                        styles.add(new StyleRange(event.lineOffset, event.lineText.length(), green, null));
+                    }
+                    if (event.lineText.startsWith("#")) {
+                        styles.add(new StyleRange(event.lineOffset, event.lineText.length(), red, null));
+                    }
+                    event.styles = styles.toArray(new StyleRange[0]);
+                }
+            });
+
 			new Label(parent, SWT.NULL);
 			bindingContext.bindValue(SWTObservables.observeText(textQuery, SWT.Modify),
 					BeansObservables.observeValue(benchmarkParam, "query"));
