@@ -100,7 +100,7 @@ public class OdysseusRCPPlugIn extends AbstractUIPlugin implements
 		imageManager.register("sink", "icons/sinks.png");
 		imageManager.register("attribute", "icons/status.png");
 		imageManager.register("loggedinuser", "icons/user--plus.png");
-		imageManager.register("user", "icons/user.png");
+//		imageManager.register("user", "icons/user.png");
 		imageManager.register("role", "icons/tick-small-circle.png");
 		imageManager.register("function", "icons/function.png");
 
