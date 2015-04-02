@@ -28,11 +28,14 @@ public class CreateViewCommand extends AbstractExecutorCommand {
 		if (!rootAO.isSourceOperator()){
 			throw new TransformationException("Can only create a view on sources not on sinks");
 		}
+		if (name.contains("-")){
+			throw new TransformationException("'-' is not allowed in view names");
+		}
 	}
 
 	@Override
 	public void execute(IDataDictionaryWritable dd,
-			IUserManagementWritable um, IServerExecutor executor) {
+			IUserManagementWritable um, IServerExecutor executor) {		
 		RenameAO rename = new RenameAO();
 		rename.subscribeTo(rootAO, rootAO.getOutputSchema());
 		List<SDFAttribute> attributes = new ArrayList<SDFAttribute>();

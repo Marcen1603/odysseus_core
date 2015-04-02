@@ -23,6 +23,9 @@ public class CreateStreamCommand extends AbstractExecutorCommand {
 		if (!rootAO.isSourceOperator()){
 			throw new TransformationException("Can only create a stream on sources not on sinks");
 		}
+		if (name.contains("-")){
+			throw new TransformationException("'-' is not allowed in stream names");
+		}
 	}
 	
 	@Override
