@@ -233,7 +233,7 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 	public void setSuppressPunctuations(boolean suppressPunctuation) {
 		this.suppressPunctuation = suppressPunctuation;
 	}
-	
+
 	@Override
 	public Map<String, String> getParameterInfos() {
 		return infos;
@@ -539,6 +539,16 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 	// ------------------------------------------------------------------------
 
 	@Override
+	public void close(IOperatorOwner id) {
+		try {
+			openCloseLock.lock();
+			doLocalClose();
+		} finally {
+			openCloseLock.unlock();
+		}
+	}
+
+	@Override
 	public void close(ISink<? super T> caller, int sourcePort, int sinkPort,
 			List<AbstractPhysicalSubscription<ISink<?>>> callPath,
 			List<IOperatorOwner> forOwners) {
@@ -574,11 +584,7 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 				if ((activeSinkSubscriptions.size() - 1) == connectedSinks
 						.size()) {
 					getLogger().trace("Closing " + toString());
-					fire(this.closeInitEvent);
-					this.process_close();
-					open.set(false);
-					stopMonitoring();
-					fire(this.closeDoneEvent);
+					doLocalClose();
 				}
 				removeActiveSubscription(sub);
 				// Close all sinks that are not connected by open
@@ -591,6 +597,14 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 		} finally {
 			openCloseLock.unlock();
 		}
+	}
+
+	private void doLocalClose() {
+		fire(this.closeInitEvent);
+		this.process_close();
+		open.set(false);
+		stopMonitoring();
+		fire(this.closeDoneEvent);
 	}
 
 	protected void process_close() {

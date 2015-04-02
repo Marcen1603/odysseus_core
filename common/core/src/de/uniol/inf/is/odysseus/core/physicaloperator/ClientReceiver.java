@@ -660,6 +660,11 @@ public class ClientReceiver<R, W> implements ISource<W>,
 			}
 		}
 	}
+	
+	@Override
+	public void close(IOperatorOwner id) {
+		this.processClose();
+	}
 
 	// @Override
 	public void processClose() {

@@ -52,6 +52,7 @@ public interface ISource<T> extends IPhysicalOperator,
 	 */
 	public void close(ISink<? super T> caller, int sourcePort, int sinkPort, List<AbstractPhysicalSubscription<ISink<?>>> callPath,  List<IOperatorOwner> forOwners);
 
+	
 //	/**
 //	 * Removes several subscriptions in remove list to this source and
 //	 * subscribes a sink in one 'atomic' step, so that no transfer() can be

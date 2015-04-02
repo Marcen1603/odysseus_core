@@ -598,6 +598,7 @@ public class PhysicalQuery implements IPhysicalQuery {
 						((ISink<?>) curRoot).close(this);
 					}
 				} else {
+					((ISource<?>) curRoot).close(this);
 					// throw new IllegalArgumentException(
 					// "Close cannot be called on a a source");
 				}

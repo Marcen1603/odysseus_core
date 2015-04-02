@@ -79,6 +79,11 @@ public interface IPhysicalOperator extends IOwnedOperator,
 	void open(IOperatorOwner id);
 	public boolean isOpen();
 	
+	/**
+	 * Call close for a distinct owner 
+	 */
+	void close(IOperatorOwner id);
+	
 	boolean isDone();
 
 	void addUniqueId(IOperatorOwner owner, Resource id);

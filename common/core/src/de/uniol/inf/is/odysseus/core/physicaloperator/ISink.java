@@ -67,12 +67,6 @@ public interface ISink<T extends IStreamObject<?>> extends IPhysicalOperator, IS
 	 */
 	boolean isOpenFor(IOperatorOwner owner);
 
-
-	/**
-	 * Call close for a distinct owner 
-	 */
-	void close(IOperatorOwner id);
-
 	/**
 	 * Call suspend for a specific owner
 	 * @param id
