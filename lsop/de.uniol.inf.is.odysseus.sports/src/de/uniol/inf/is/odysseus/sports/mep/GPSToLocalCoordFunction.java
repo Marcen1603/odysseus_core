@@ -166,9 +166,8 @@ public class GPSToLocalCoordFunction extends AbstractFunction<Double>{
 
 		if (getInputValue(2).toString().equals("x")) {
 			return searchedPoint.getX();
-		} else {
-			return searchedPoint.getY();
-		}
+		} 
+		return searchedPoint.getY();
 	}
 	
 	/**

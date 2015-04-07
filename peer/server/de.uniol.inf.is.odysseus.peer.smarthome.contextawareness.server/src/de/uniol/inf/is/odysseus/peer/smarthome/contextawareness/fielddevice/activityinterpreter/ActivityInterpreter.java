@@ -86,5 +86,10 @@ public abstract class ActivityInterpreter implements Serializable {
 		}
 		return super.equals(obj);
 	}
+
+	@Override
+	public int hashCode() {
+		return getActivityName().hashCode() + 31 * getActivityInterpreterDescription().hashCode();
+	}
 	
 }

@@ -119,15 +119,19 @@ public class ParallelTrackMasterStatus implements ILoadBalancingMasterStatus {
 	public void setPhase(LB_PHASES phase) {
 		this.phase = phase;
 	}
+	@Override
 	public int getProcessId() {
 		return processId;
 	}
+	@Override
 	public void setProcessId(int processId) {
 		this.processId = processId;
 	}
+	@Override
 	public int getLogicalQuery() {
 		return logicalQuery;
 	}
+	@Override
 	public void setLogicalQuery(int logicalQuery) {
 		this.logicalQuery = logicalQuery;
 	}
@@ -143,9 +147,11 @@ public class ParallelTrackMasterStatus implements ILoadBalancingMasterStatus {
 	public void setModifiedPart(ILogicalQueryPart modifiedPart) {
 		this.modifiedPart = modifiedPart;
 	}
+	@Override
 	public PeerID getVolunteeringPeer() {
 		return volunteeringPeer;
 	}
+	@Override
 	public void setVolunteeringPeer(PeerID volunteeringPeer) {
 		this.volunteeringPeer = volunteeringPeer;
 	}

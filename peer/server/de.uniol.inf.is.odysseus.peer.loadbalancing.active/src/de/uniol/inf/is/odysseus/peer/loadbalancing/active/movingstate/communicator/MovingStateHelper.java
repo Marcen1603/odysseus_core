@@ -584,7 +584,7 @@ public class MovingStateHelper {
 		
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public static void replaceReceiver(JxtaReceiverPO original, JxtaReceiverPO replacement) throws LoadBalancingException{
+	public static void replaceReceiver(JxtaReceiverPO original, JxtaReceiverPO replacement) {
 
 		List<AbstractPhysicalSubscription<ISink<? super IStreamObject>>> subscriptionList = original.getSubscriptions();
 

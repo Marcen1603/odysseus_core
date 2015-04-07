@@ -98,8 +98,8 @@ public class SportsHeatMapPO<T extends Tuple<?>> extends AbstractPipe<T, Tuple> 
 		int newX = (int) (xValue - minX);
 		int newY = (int) (yValue - minY);
 
-		int xArray = (int) (newX / pixelsPerSquareHorizontal);
-		int yArray = (int) (newY / pixelsPerSquareVertical);
+		int xArray = newX / pixelsPerSquareHorizontal;
+		int yArray = newY / pixelsPerSquareVertical;
 
 		// If the players leave the field (I guess)
 		if (xArray >= numTilesX)

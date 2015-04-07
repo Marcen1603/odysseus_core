@@ -18,10 +18,9 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.StateMapAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.SDFExpressionParameter;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.peer.ddc.MissingDDCEntryException;
-import de.uniol.inf.is.odysseus.sports.sportsql.parser.SportsQLParseException;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.SportsQLQuery;
-import de.uniol.inf.is.odysseus.sports.sportsql.parser.buildhelper.OperatorBuildHelper;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.buildhelper.IntermediateSchemaAttributes;
+import de.uniol.inf.is.odysseus.sports.sportsql.parser.buildhelper.OperatorBuildHelper;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.buildhelper.SportsQLParameterHelper;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.ddcaccess.AbstractSportsDDCAccess;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.ddcaccess.SoccerDDCAccess;
@@ -91,8 +90,7 @@ public class PassesSportsQLParser {
 	public static String ATTRIBUTE_DOUBLE_PASS = "double_pass";
 
 	public ILogicalOperator getPasses(ISession session, SportsQLQuery sportsQL,
-			List<ILogicalOperator> allOperators) throws SportsQLParseException,
-			NumberFormatException, MissingDDCEntryException {
+			List<ILogicalOperator> allOperators) throws NumberFormatException, MissingDDCEntryException {
 
 		ILogicalOperator soccerGameStreamAO = OperatorBuildHelper.createGameSource(session);
 		
@@ -286,7 +284,7 @@ public class PassesSportsQLParser {
 
 
 	
-	private SelectAO createSpaceSelectAO(ILogicalOperator source, SportsQLQuery query) throws SportsQLParseException, NumberFormatException, MissingDDCEntryException {	
+	private SelectAO createSpaceSelectAO(ILogicalOperator source, SportsQLQuery query) throws NumberFormatException, MissingDDCEntryException {	
 		Map<String, ISportsQLParameter> parameters = query.getParameters();
 		SportsQLSpaceParameter spaceParameter = (SportsQLSpaceParameter) parameters.get("space");
 		

@@ -122,10 +122,10 @@ public class CornerKickGlobalSportsQLParser implements ISportsQLParser {
 		expressions.add(OperatorBuildHelper.createExpressionParameter(IntermediateSchemaAttributes.TS, 
 				ATTR_GOALLINE_TS, activeBall_2));
 		expressions.add(OperatorBuildHelper.createExpressionParameter(
-				"eif(" + IntermediateSchemaAttributes.X + " < " + SoccerDDCAccess.getFieldXMin() + ", 1, 0)",
+				"eif(" + IntermediateSchemaAttributes.X + " < " + AbstractSportsDDCAccess.getFieldXMin() + ", 1, 0)",
 				ATTR_BALL_BEHIND_GOALLINE_LEFT, activeBall_2));
 		expressions.add(OperatorBuildHelper.createExpressionParameter(
-				"eif(" + IntermediateSchemaAttributes.X + " > " + SoccerDDCAccess.getFieldXMax() + ", 1, 0)",
+				"eif(" + IntermediateSchemaAttributes.X + " > " + AbstractSportsDDCAccess.getFieldXMax() + ", 1, 0)",
 				ATTR_BALL_BEHIND_GOALLINE_RIGHT, activeBall_2));
 		MapAO activeBallBehindGoalline = OperatorBuildHelper.createMapAO(expressions, activeBall_2, 0, 0, false);
 		operatorList.add(activeBallBehindGoalline);

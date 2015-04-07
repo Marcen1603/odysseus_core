@@ -319,6 +319,7 @@ public class MovingStateSlaveStatus implements ILoadBalancingSlaveStatus,
 	 * 
 	 * @return LoadBalancing Process Id
 	 */
+	@Override
 	public int getLbProcessId() {
 		return lbProcessId;
 	}
@@ -328,6 +329,7 @@ public class MovingStateSlaveStatus implements ILoadBalancingSlaveStatus,
 	 * 
 	 * @return PeerID of Master Peer
 	 */
+	@Override
 	public PeerID getMasterPeer() {
 		return initiatingPeer;
 	}

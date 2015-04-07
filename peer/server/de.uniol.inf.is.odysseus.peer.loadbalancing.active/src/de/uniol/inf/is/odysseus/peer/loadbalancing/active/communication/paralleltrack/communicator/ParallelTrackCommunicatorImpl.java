@@ -26,8 +26,7 @@ import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.parallel
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.paralleltrack.status.ParallelTrackMasterStatus;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.paralleltrack.status.ParallelTrackMasterStatus.LB_PHASES;
 
-public class ParallelTrackCommunicatorImpl implements
-		IPeerCommunicatorListener, ILoadBalancingCommunicator, IMessageDeliveryFailedListener{
+public class ParallelTrackCommunicatorImpl implements IPeerCommunicatorListener, ILoadBalancingCommunicator, IMessageDeliveryFailedListener {
 
 	/**
 	 * 
@@ -35,35 +34,32 @@ public class ParallelTrackCommunicatorImpl implements
 	 *         on another Peer.
 	 * 
 	 */
-	
+
 	/**
 	 * Name of the Communicator
 	 */
 	private final String COMMUNICATOR_NAME = "ParallelTrack";
-	
+
 	/**
 	 * The logger instance for this class.
 	 */
-	private static final Logger LOG = LoggerFactory
-			.getLogger(ParallelTrackCommunicatorImpl.class);
+	private static final Logger LOG = LoggerFactory.getLogger(ParallelTrackCommunicatorImpl.class);
 
-
-
+	@Override
 	public List<PeerID> getInvolvedPeers(int queryID) {
 		return LoadBalancingHelper.getInvolvedPeers(queryID);
 	}
-	
+
 	/**
 	 * Peer Communicator
 	 */
 	private static IPeerCommunicator peerCommunicator;
-	
+
 	/**
 	 * List of registered Listeners.
 	 */
 	private ArrayList<ILoadBalancingListener> listeners = new ArrayList<ILoadBalancingListener>();
 
-	
 	/**
 	 * Instance of Communication Listener.
 	 */
@@ -77,16 +73,16 @@ public class ParallelTrackCommunicatorImpl implements
 	public static ParallelTrackCommunicatorImpl getInstance() {
 		return instance;
 	}
-	
 
 	/**
 	 * Getter for PeerCommunicator
+	 * 
 	 * @return
 	 */
 	public static IPeerCommunicator getPeerCommunicator() {
 		return peerCommunicator;
 	}
-	
+
 	/**
 	 * called by OSGi-DS to bind Peer Communicator (registers all Messages and
 	 * adds Listeners)
@@ -100,13 +96,10 @@ public class ParallelTrackCommunicatorImpl implements
 		peerCommunicator.registerMessageType(ParallelTrackAbortMessage.class);
 		peerCommunicator.addListener(this, ParallelTrackAbortMessage.class);
 
-		peerCommunicator
-				.registerMessageType(ParallelTrackInstructionMessage.class);
-		peerCommunicator.addListener(this,
-				ParallelTrackInstructionMessage.class);
+		peerCommunicator.registerMessageType(ParallelTrackInstructionMessage.class);
+		peerCommunicator.addListener(this, ParallelTrackInstructionMessage.class);
 
-		peerCommunicator
-				.registerMessageType(ParallelTrackResponseMessage.class);
+		peerCommunicator.registerMessageType(ParallelTrackResponseMessage.class);
 		peerCommunicator.addListener(this, ParallelTrackResponseMessage.class);
 
 	}
@@ -122,25 +115,17 @@ public class ParallelTrackCommunicatorImpl implements
 	public void unbindPeerCommunicator(IPeerCommunicator serv) {
 		LOG.debug("Unbound Peer Communicator.");
 		if (peerCommunicator == serv) {
-			peerCommunicator.removeListener(this,
-					ParallelTrackAbortMessage.class);
-			peerCommunicator.removeListener(this,
-					ParallelTrackInstructionMessage.class);
-			peerCommunicator.removeListener(this,
-					ParallelTrackResponseMessage.class);
+			peerCommunicator.removeListener(this, ParallelTrackAbortMessage.class);
+			peerCommunicator.removeListener(this, ParallelTrackInstructionMessage.class);
+			peerCommunicator.removeListener(this, ParallelTrackResponseMessage.class);
 
-			peerCommunicator
-					.unregisterMessageType(ParallelTrackAbortMessage.class);
-			peerCommunicator
-					.unregisterMessageType(ParallelTrackInstructionMessage.class);
-			peerCommunicator
-					.unregisterMessageType(ParallelTrackResponseMessage.class);
+			peerCommunicator.unregisterMessageType(ParallelTrackAbortMessage.class);
+			peerCommunicator.unregisterMessageType(ParallelTrackInstructionMessage.class);
+			peerCommunicator.unregisterMessageType(ParallelTrackResponseMessage.class);
 
 			peerCommunicator = null;
 		}
 	}
-	
-	
 
 	/**
 	 * Called by OSGi on Bundle activation.
@@ -164,8 +149,7 @@ public class ParallelTrackCommunicatorImpl implements
 	 * @param senderPeer Peer sending the Message
 	 * @param message Received Message.
 	 */
-	public void receivedMessage(IPeerCommunicator communicator,
-			PeerID senderPeer, IMessage message) {
+	public void receivedMessage(IPeerCommunicator communicator, PeerID senderPeer, IMessage message) {
 
 		if (message instanceof ParallelTrackResponseMessage) {
 			ParallelTrackResponseMessage response = (ParallelTrackResponseMessage) message;
@@ -184,7 +168,6 @@ public class ParallelTrackCommunicatorImpl implements
 
 	}
 
-	
 	/**
 	 * Initiates the copy Process between a Peer and another Peer (after
 	 * Allocation)
@@ -196,17 +179,15 @@ public class ParallelTrackCommunicatorImpl implements
 	 */
 	@Override
 	public void initiateLoadBalancing(PeerID otherPeer, int queryId) {
-		ILogicalQueryPart partToCopy = LoadBalancingHelper
-				.getInstalledQueryPart(queryId);
+		ILogicalQueryPart partToCopy = LoadBalancingHelper.getInstalledQueryPart(queryId);
 		ParallelTrackMasterStatus status = new ParallelTrackMasterStatus();
 		status.setOriginalPart(partToCopy);
 		int lbProcessIdentifier = LoadBalancingStatusCache.getInstance().storeLocalProcess(status);
 		LOG.debug("New LoadBalancing Status created. LoadBalancing Process Id " + lbProcessIdentifier);
 		status.setLogicalQuery(queryId);
 		status.setMessageDispatcher(new ParallelTrackMessageDispatcher(peerCommunicator, lbProcessIdentifier));
-		status.getMessageDispatcher().sendInitiate(otherPeer,this);
+		status.getMessageDispatcher().sendInitiate(otherPeer, this);
 	}
-
 
 	/**
 	 * Adds a LoadBalancing Listener
@@ -224,92 +205,93 @@ public class ParallelTrackCommunicatorImpl implements
 		if (listeners.contains(listener))
 			listeners.remove(listener);
 	}
-	
+
 	@Override
 	public String getName() {
 		return COMMUNICATOR_NAME;
 	}
-	
 
 	public void notifyFinished(boolean successful) {
-		for(ILoadBalancingListener listener : listeners) {
+		for (ILoadBalancingListener listener : listeners) {
 			listener.notifyLoadBalancingFinished(successful);
 		}
-		
+
 	}
 
 	/**
-	 * Called when Message delivery on Master Peer failed. Decides whether to abort or not.
+	 * Called when Message delivery on Master Peer failed. Decides whether to
+	 * abort or not.
 	 */
 	@Override
 	public void update(IMessage message, PeerID peerId) {
-		if(message instanceof ParallelTrackInstructionMessage) {
-			ParallelTrackInstructionMessage instruction = (ParallelTrackInstructionMessage)message;
+		if (message instanceof ParallelTrackInstructionMessage) {
+			ParallelTrackInstructionMessage instruction = (ParallelTrackInstructionMessage) message;
 			handleTimeoutOnMasterPeer(instruction);
 		}
-		
-		if(message instanceof ParallelTrackAbortMessage) {
+
+		if (message instanceof ParallelTrackAbortMessage) {
 			ParallelTrackAbortMessage abortMsg = (ParallelTrackAbortMessage) message;
-			//If Abort Instruction could not be delivered... Bad luck. Stop Sending it and try finishing up.
-			if(abortMsg.getMsgType()==ParallelTrackAbortMessage.ABORT_INSTRUCTION) {
+			// If Abort Instruction could not be delivered... Bad luck. Stop
+			// Sending it and try finishing up.
+			if (abortMsg.getMsgType() == ParallelTrackAbortMessage.ABORT_INSTRUCTION) {
 				AbortHandler.stopSendingAbort(abortMsg, peerId);
 			}
 		}
-		
-		//No need to process Messages from slave Peers, as the master Peer will notice that they don't answer and initiate Abort.
-		
-	}
 
+		// No need to process Messages from slave Peers, as the master Peer will
+		// notice that they don't answer and initiate Abort.
+
+	}
 
 	/**
 	 * When Timeout happens and peer is in corresponding Phase -> Handle Error.
+	 * 
 	 * @param instruction
 	 */
-	private void handleTimeoutOnMasterPeer(
-			ParallelTrackInstructionMessage instruction) {
-		;
-		
+	private void handleTimeoutOnMasterPeer(ParallelTrackInstructionMessage instruction) {
+
 		int lbProcessId = instruction.getLoadBalancingProcessId();
-		ParallelTrackMasterStatus status = (ParallelTrackMasterStatus)LoadBalancingStatusCache.getInstance().getStatusForLocalProcess(lbProcessId);
-		
-		if(status==null) {
+		ParallelTrackMasterStatus status = (ParallelTrackMasterStatus) LoadBalancingStatusCache.getInstance().getStatusForLocalProcess(lbProcessId);
+
+		if (status == null) {
 			LOG.debug("Timeout or Failure occured. Current status: null");
 			return;
 		}
-		
+
 		LOG.debug("Timeout or Failure occured. Current status: " + status.getPhase());
-		
-		
-		switch(instruction.getMsgType()){
-			case ParallelTrackInstructionMessage.INITIATE_LOADBALANCING:
-				if(status.getPhase().equals(LB_PHASES.INITIATING)) {
-					ResponseHandler.handleError(status,this);
-				}
-				break;
-			case ParallelTrackInstructionMessage.ADD_QUERY:
-				if(status.getPhase().equals(LB_PHASES.COPYING)) {
-					ResponseHandler.handleError(status,this);
-				}
-				break;
-			case ParallelTrackInstructionMessage.COPY_RECEIVER:
-				if(status.getPhase().equals(LB_PHASES.RELINKING_RECEIVERS)) {
-					ResponseHandler.handleError(status,this);
-				}
-				break;
-			case ParallelTrackInstructionMessage.COPY_SENDER:
-				if(status.getPhase().equals(LB_PHASES.RELINKING_SENDERS)) {
-					ResponseHandler.handleError(status,this);
-				}
-				break;
-			case ParallelTrackInstructionMessage.DELETE_RECEIVER:
-			case ParallelTrackInstructionMessage.DELETE_SENDER:
-				if(status.getPhase().equals(LB_PHASES.INITIATING)) {
-					ResponseHandler.handleError(status,this);
-				}
-				break;
+
+		switch (instruction.getMsgType()) {
+		case ParallelTrackInstructionMessage.INITIATE_LOADBALANCING:
+			if (status.getPhase().equals(LB_PHASES.INITIATING)) {
+				ResponseHandler.handleError(status, this);
+			}
+			break;
+		case ParallelTrackInstructionMessage.ADD_QUERY:
+			if (status.getPhase().equals(LB_PHASES.COPYING)) {
+				ResponseHandler.handleError(status, this);
+			}
+			break;
+		case ParallelTrackInstructionMessage.COPY_RECEIVER:
+			if (status.getPhase().equals(LB_PHASES.RELINKING_RECEIVERS)) {
+				ResponseHandler.handleError(status, this);
+			}
+			break;
+		case ParallelTrackInstructionMessage.COPY_SENDER:
+			if (status.getPhase().equals(LB_PHASES.RELINKING_SENDERS)) {
+				ResponseHandler.handleError(status, this);
+			}
+			break;
+		case ParallelTrackInstructionMessage.DELETE_RECEIVER:
+		case ParallelTrackInstructionMessage.DELETE_SENDER:
+			if (status.getPhase().equals(LB_PHASES.INITIATING)) {
+				ResponseHandler.handleError(status, this);
+			}
+			break;
+
+		default:
+			break;
 		}
-		
+
 	}
-	
-	
+
 }

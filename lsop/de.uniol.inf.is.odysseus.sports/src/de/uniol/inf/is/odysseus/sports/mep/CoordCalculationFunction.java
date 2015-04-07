@@ -143,10 +143,8 @@ public class CoordCalculationFunction extends AbstractFunction<Double> {
 
 		if (getInputValue(3).toString().equals("x")) {
 			return x.getArray()[0][0];
-		} else {
-			return x.getArray()[1][0];
-		}
-
+		} 
+		return x.getArray()[1][0];
 	}
 
 }

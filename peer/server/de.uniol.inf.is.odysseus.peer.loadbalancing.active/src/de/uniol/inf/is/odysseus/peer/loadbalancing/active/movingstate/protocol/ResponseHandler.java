@@ -36,8 +36,7 @@ public class ResponseHandler {
 	 * The logger instance for this class.
 	 */
 
-	private static final Logger LOG = LoggerFactory
-			.getLogger(ResponseHandler.class);
+	private static final Logger LOG = LoggerFactory.getLogger(ResponseHandler.class);
 
 	private static Object semaphore = new Object();
 
@@ -53,18 +52,14 @@ public class ResponseHandler {
 	 * @param response
 	 * @param senderPeer
 	 */
-	public static void handlePeerResonse(MovingStateResponseMessage response,
-			PeerID senderPeer) {
+	public static void handlePeerResonse(MovingStateResponseMessage response, PeerID senderPeer) {
 
-		LOG.debug("Got response for lbProcess Id "
-				+ response.getLoadBalancingProcessId());
+		LOG.debug("Got response for lbProcess Id " + response.getLoadBalancingProcessId());
 
 		int loadBalancingProcessId = response.getLoadBalancingProcessId();
-		MovingStateMasterStatus status = (MovingStateMasterStatus) LoadBalancingStatusCache
-				.getInstance().getStatusForLocalProcess(loadBalancingProcessId);
+		MovingStateMasterStatus status = (MovingStateMasterStatus) LoadBalancingStatusCache.getInstance().getStatusForLocalProcess(loadBalancingProcessId);
 
-		MovingStateCommunicatorImpl communicationListener = MovingStateCommunicatorImpl
-				.getInstance();
+		MovingStateCommunicatorImpl communicationListener = MovingStateCommunicatorImpl.getInstance();
 
 		// LoadBalancing Process is no longer active -> ignore!
 		if (status == null) {
@@ -77,45 +72,34 @@ public class ResponseHandler {
 			switch (response.getMsgType()) {
 			case MovingStateResponseMessage.ACK_LOADBALANCING:
 				LOG.debug("Got ACK_LOADBALANCING");
-				if (status.getPhase().equals(
-						MovingStateMasterStatus.LB_PHASES.INITIATING)) {
+				if (status.getPhase().equals(MovingStateMasterStatus.LB_PHASES.INITIATING)) {
 
 					status.setVolunteeringPeer(senderPeer);
 					status.setPhase(MovingStateMasterStatus.LB_PHASES.COPYING_QUERY);
 					dispatcher.stopRunningJob();
 
-					ILogicalQueryPart modifiedQueryPart = LoadBalancingHelper
-							.getCopyOfQueryPart(status.getOriginalPart());
+					ILogicalQueryPart modifiedQueryPart = LoadBalancingHelper.getCopyOfQueryPart(status.getOriginalPart());
 
-					MovingStateHelper.relinkQueryPartWithNewPipes(
-							modifiedQueryPart, status);
+					MovingStateHelper.relinkQueryPartWithNewPipes(modifiedQueryPart, status);
 
-					String pqlFromQueryPart = LogicalQueryHelper
-							.generatePQLStatementFromQueryPart(modifiedQueryPart);
+					String pqlFromQueryPart = LogicalQueryHelper.generatePQLStatementFromQueryPart(modifiedQueryPart);
 					LOG.debug("Generated PQL Statement:" + pqlFromQueryPart);
 
 					// Update Query part Controller.
-					IQueryPartController queryPartController = OsgiServiceManager
-							.getQueryPartController();
+					IQueryPartController queryPartController = OsgiServiceManager.getQueryPartController();
 
-					ID sharedQueryID = queryPartController
-							.getSharedQueryID(status.getLogicalQuery());
-					boolean isMaster = queryPartController
-							.isMasterForQuery(status.getLogicalQuery());
-					Collection<Integer> localQueries = queryPartController
-							.getLocalIds(sharedQueryID);
+					ID sharedQueryID = queryPartController.getSharedQueryID(status.getLogicalQuery());
+					boolean isMaster = queryPartController.isMasterForQuery(status.getLogicalQuery());
+					Collection<Integer> localQueries = queryPartController.getLocalIds(sharedQueryID);
 
 					Collection<Integer> toRemove = new ArrayList<Integer>();
 					toRemove.add(status.getLogicalQuery());
 
-					queryPartController.unregisterLocalQueriesFromSharedQuery(
-							sharedQueryID, toRemove);
-					Collection<Integer> remainingQueries = queryPartController
-							.getLocalIds(sharedQueryID);
+					queryPartController.unregisterLocalQueriesFromSharedQuery(sharedQueryID, toRemove);
+					Collection<Integer> remainingQueries = queryPartController.getLocalIds(sharedQueryID);
 
 					LOG.debug("IsMaster: {}", isMaster);
-					LOG.debug("Number of remaining Queries: {}",
-							remainingQueries.size());
+					LOG.debug("Number of remaining Queries: {}", remainingQueries.size());
 
 					// 3 different Cases:
 					// 1. Peer is Master and whole query is moved. -> New Master
@@ -129,13 +113,11 @@ public class ResponseHandler {
 						// 1. Peer is Master and whole query is moved. -> New
 						// Master
 
-						LOG.debug("Registering {} as new Master Peer.",
-								status.getVolunteeringPeer());
+						LOG.debug("Registering {} as new Master Peer.", status.getVolunteeringPeer());
 						// Deregister As Master, update other Peers List and
 						// send to new Master.
 
-						Collection<PeerID> otherPeers = queryPartController
-								.getOtherPeers(sharedQueryID);
+						Collection<PeerID> otherPeers = queryPartController.getOtherPeers(sharedQueryID);
 
 						// If new Master is in otherPeers list-> Remove new
 						// Master.
@@ -148,44 +130,29 @@ public class ResponseHandler {
 						for (PeerID peer : otherPeers) {
 							otherPeerIDStrings.add(peer.toString());
 						}
-						status.storeSharedQueryInformation(isMaster,
-								sharedQueryID, localQueries, otherPeers);
+						status.storeSharedQueryInformation(isMaster, sharedQueryID, localQueries, otherPeers);
 						queryPartController.unregisterAsMaster(sharedQueryID);
-						dispatcher.sendAddQueryForMasterQuery(
-								status.getVolunteeringPeer(), pqlFromQueryPart,
-								communicationListener, otherPeerIDStrings,
-								sharedQueryID.toString());
+						dispatcher.sendAddQueryForMasterQuery(status.getVolunteeringPeer(), pqlFromQueryPart, communicationListener, otherPeerIDStrings, sharedQueryID.toString());
 
 					} else {
 						PeerID masterPeerID;
 						// 2. Peer is Master and part of query remains -> Stay
 						// Master
 						if (isMaster) {
-							masterPeerID = OsgiServiceManager
-									.getP2pNetworkManager().getLocalPeerID();
-							status.storeSharedQueryInformation(isMaster,
-									sharedQueryID, localQueries,
-									queryPartController
-											.getOtherPeers(sharedQueryID));
+							masterPeerID = OsgiServiceManager.getP2pNetworkManager().getLocalPeerID();
+							status.storeSharedQueryInformation(isMaster, sharedQueryID, localQueries, queryPartController.getOtherPeers(sharedQueryID));
 						} else {
 							// 3. Peer is Slave
-							masterPeerID = queryPartController
-									.getMasterForQuery(sharedQueryID);
+							masterPeerID = queryPartController.getMasterForQuery(sharedQueryID);
 							if (remainingQueries.size() <= 0) {
 								LOG.debug("No queries remaining for shared Query. Deregistering with master Peer.");
-								status.storeSharedQueryInformation(isMaster,
-										sharedQueryID, localQueries, null);
+								status.storeSharedQueryInformation(isMaster, sharedQueryID, localQueries, null);
 								status.setSharedQueryMasterPeer(masterPeerID);
-								OsgiServiceManager.getQueryManager()
-										.sendUnregisterAsSlave(masterPeerID,
-												sharedQueryID);
+								OsgiServiceManager.getQueryManager().sendUnregisterAsSlave(masterPeerID, sharedQueryID);
 							}
 						}
 
-						dispatcher.sendAddQuery(status.getVolunteeringPeer(),
-								pqlFromQueryPart, communicationListener,
-								sharedQueryID.toString(),
-								masterPeerID.toString());
+						dispatcher.sendAddQuery(status.getVolunteeringPeer(), pqlFromQueryPart, communicationListener, sharedQueryID.toString(), masterPeerID.toString());
 
 					}
 
@@ -197,9 +164,7 @@ public class ResponseHandler {
 				// When in Phase copying, the success Message says that
 				// Installing
 				// the Query Part on the other Peer was successful.
-				if (status.getPhase().equals(
-						MovingStateMasterStatus.LB_PHASES.COPYING_QUERY)
-						&& !status.isLocked()) {
+				if (status.getPhase().equals(MovingStateMasterStatus.LB_PHASES.COPYING_QUERY) && !status.isLocked()) {
 					status.lock();
 					dispatcher.sendMsgReceived(senderPeer);
 					dispatcher.stopRunningJob();
@@ -225,16 +190,12 @@ public class ResponseHandler {
 
 			case MovingStateResponseMessage.SUCCESS_DUPLICATE_SENDER:
 
-				if (status.getPhase().equals(
-						MovingStateMasterStatus.LB_PHASES.RELINKING_SENDERS)
-						&& !status.isLocked()) {
+				if (status.getPhase().equals(MovingStateMasterStatus.LB_PHASES.RELINKING_SENDERS) && !status.isLocked()) {
 					LOG.debug("Got SUCCESS_DUPLICATE for SENDER");
-					dispatcher.sendPipeSuccessReceivedMsg(senderPeer,
-							response.getPipeID());
+					dispatcher.sendPipeSuccessReceivedMsg(senderPeer, response.getPipeID());
 					dispatcher.stopRunningJob(response.getPipeID());
 					LOG.debug("Stopped JOB " + response.getPipeID());
-					LOG.debug("Jobs left:"
-							+ dispatcher.getNumberOfRunningJobs());
+					LOG.debug("Jobs left:" + dispatcher.getNumberOfRunningJobs());
 
 					if (dispatcher.getNumberOfRunningJobs() == 0) {
 						status.lock();
@@ -255,15 +216,12 @@ public class ResponseHandler {
 				break;
 
 			case MovingStateResponseMessage.SUCCESS_DUPLICATE_RECEIVER:
-				if (status.getPhase().equals(LB_PHASES.RELINKING_RECEIVERS)
-						&& !status.isLocked()) {
+				if (status.getPhase().equals(LB_PHASES.RELINKING_RECEIVERS) && !status.isLocked()) {
 					LOG.debug("Got SUCCESS_DUPLICATE for RECEIVER");
-					dispatcher.sendPipeSuccessReceivedMsg(senderPeer,
-							response.getPipeID());
+					dispatcher.sendPipeSuccessReceivedMsg(senderPeer, response.getPipeID());
 					dispatcher.stopRunningJob(response.getPipeID());
 					LOG.debug("Stopped JOB " + response.getPipeID());
-					LOG.debug("Jobs left:"
-							+ dispatcher.getNumberOfRunningJobs());
+					LOG.debug("Jobs left:" + dispatcher.getNumberOfRunningJobs());
 					if (dispatcher.getNumberOfRunningJobs() == 0) {
 						status.lock();
 						LOG.debug("INITIATING COPYING STATES");
@@ -277,15 +235,13 @@ public class ResponseHandler {
 			case MovingStateResponseMessage.ACK_INIT_STATE_COPY:
 				LOG.debug("Got ACK_INIT_STATE_COPY");
 
-				if (status.getPhase().equals(LB_PHASES.COPYING_STATES)
-						&& !status.isLocked()) {
+				if (status.getPhase().equals(LB_PHASES.COPYING_STATES) && !status.isLocked()) {
 					dispatcher.stopRunningJob(response.getPipeID());
 				}
 				if (dispatcher.getNumberOfRunningJobs() == 0) {
 					LOG.debug("Sending states.");
 					for (String pipe : status.getAllSenderPipes()) {
-						IStatefulPO operator = status
-								.getOperatorForSender(pipe);
+						IStatefulPO operator = status.getOperatorForSender(pipe);
 
 						try {
 							MovingStateHelper.sendState(pipe, operator);
@@ -320,37 +276,31 @@ public class ResponseHandler {
 				LOG.debug("Got STATE_COPY_FINISHED");
 				if (status.getPhase().equals(LB_PHASES.COPYING_STATES)) {
 					String pipe = response.getPipeID();
-					MovingStateManager.getInstance().getSender(pipe)
-							.setSuccessfullyTransmitted();
+					MovingStateManager.getInstance().getSender(pipe).setSuccessfullyTransmitted();
 					// TODO What about missing messages?
-					LOG.debug("Unfinished Transmissions:"
-							+ status.getNumberOfUnfinishedTransmissions());
+					LOG.debug("Unfinished Transmissions:" + status.getNumberOfUnfinishedTransmissions());
 					if (status.getNumberOfUnfinishedTransmissions() == 0) {
 						status.setPhase(LB_PHASES.COPYING_FINISHED);
-						status.getMessageDispatcher()
-								.sendFinishedCopyingStates(
-										status.getVolunteeringPeer());
+						status.getMessageDispatcher().sendFinishedCopyingStates(status.getVolunteeringPeer());
 					}
-					
+
 				}
 				break;
 
 			case MovingStateResponseMessage.ACK_ALL_STATE_COPIES_FINISHED:
-				LOG.debug("Phase: {}",status.getPhase());
+				LOG.debug("Phase: {}", status.getPhase());
 				if (status.getPhase().equals(LB_PHASES.COPYING_FINISHED)) {
 					LOG.debug("Got ACK_ALL_STATE_COPIES_FINISHED");
 					status.getMessageDispatcher().stopRunningJob();
 					status.setPhase(LB_PHASES.STOP_BUFFERING);
 					dispatcher.sendMsgReceived(senderPeer);
 
-					LoadBalancingHelper.cutReceiversFromQuery(status
-							.getLogicalQuery());
+					LoadBalancingHelper.cutReceiversFromQuery(status.getLogicalQuery());
 
 					MovingStateHelper.sendStopBufferingToUpstreamPeers(status);
 					if (status.getUpstreamPeers().size() == 0) {
 						LOG.debug("No Upstream Peers... Skipping");
-						LoadBalancingHelper.deleteQuery(status
-								.getLogicalQuery());
+						LoadBalancingHelper.deleteQuery(status.getLogicalQuery());
 						status.setPhase(LB_PHASES.FINISHED);
 						loadBalancingSuccessfullyFinished(status);
 					}
@@ -363,8 +313,7 @@ public class ResponseHandler {
 					dispatcher.stopRunningJob(senderPeer.toString());
 					dispatcher.sendMsgReceived(senderPeer);
 					if (dispatcher.getNumberOfRunningJobs() == 0) {
-						LoadBalancingHelper.deleteQuery(status
-								.getLogicalQuery());
+						LoadBalancingHelper.deleteQuery(status.getLogicalQuery());
 						status.setPhase(LB_PHASES.FINISHED);
 						loadBalancingSuccessfullyFinished(status);
 					}
@@ -373,15 +322,17 @@ public class ResponseHandler {
 
 			case MovingStateResponseMessage.FAILURE_DUPLICATE_RECEIVER:
 				LOG.debug("Got FAILURE_DUPLICATE_RECEIVER");
-				if (status.getPhase().equals(LB_PHASES.RELINKING_RECEIVERS)
-						|| status.getPhase()
-								.equals(LB_PHASES.RELINKING_SENDERS)) {
+				if (status.getPhase().equals(LB_PHASES.RELINKING_RECEIVERS) || status.getPhase().equals(LB_PHASES.RELINKING_SENDERS)) {
 					dispatcher.sendMsgReceived(senderPeer);
 					LOG.error("Duplicating connections failed. Aborting.");
 					handleError(status, communicationListener);
 				}
 				break;
+				
+			default:
+				break;
 			}
+
 		}
 
 	}
@@ -394,8 +345,7 @@ public class ResponseHandler {
 	 * @param communicationListener
 	 *            Communication Listener
 	 */
-	public static void handleError(MovingStateMasterStatus status,
-			MovingStateCommunicatorImpl communicationListener) {
+	public static void handleError(MovingStateMasterStatus status, MovingStateCommunicatorImpl communicationListener) {
 		MovingStateMessageDispatcher dispatcher = status.getMessageDispatcher();
 
 		// Handle error depending on current LoadBalancing phase.
@@ -405,8 +355,7 @@ public class ResponseHandler {
 		case COPYING_QUERY:
 			// Send abort only to volunteering Peer
 			dispatcher.stopAllMessages();
-			dispatcher.sendAbortInstruction(status.getVolunteeringPeer(),
-					communicationListener);
+			dispatcher.sendAbortInstruction(status.getVolunteeringPeer(), communicationListener);
 			resetQueryPartController(status);
 			break;
 		case RELINKING_RECEIVERS:
@@ -441,32 +390,24 @@ public class ResponseHandler {
 	 * @param status
 	 *            LoadBalancing Status
 	 */
-	public static void loadBalancingSuccessfullyFinished(
-			MovingStateMasterStatus status) {
+	public static void loadBalancingSuccessfullyFinished(MovingStateMasterStatus status) {
 		LOG.info("LoadBalancing successfully finished.");
-		LoadBalancingStatusCache.getInstance().deleteLocalStatus(
-				status.getProcessId());
+		LoadBalancingStatusCache.getInstance().deleteLocalStatus(status.getProcessId());
 		MovingStateCommunicatorImpl.getInstance().notifyFinished(true);
 
 	}
 
 	private static void resetQueryPartController(MovingStateMasterStatus status) {
-		IQueryPartController controller = OsgiServiceManager
-				.getQueryPartController();
+		IQueryPartController controller = OsgiServiceManager.getQueryPartController();
 		ID sharedQueryID = status.getSharedQueryID();
 		if (sharedQueryID != null) {
 			if (status.isMaster()) {
-				Collection<Integer> previousLocalQueries = controller
-						.getLocalIds(sharedQueryID);
+				Collection<Integer> previousLocalQueries = controller.getLocalIds(sharedQueryID);
 				// If Query was master->Re-Set Query in QueryPart Controller
 				// with old peer List and old Query parts...
-				ILogicalQuery qry = OsgiServiceManager.getExecutor()
-						.getLogicalQueryById(status.getLogicalQuery(),
-								OsgiServiceManager.getActiveSession());
-				controller.registerAsMaster(qry, status.getLogicalQuery(),
-						sharedQueryID, status.getOtherPeersForSharedQuery());
-				OsgiServiceManager.getQueryManager()
-						.sendChangeMasterToAllSlaves(sharedQueryID);
+				ILogicalQuery qry = OsgiServiceManager.getExecutor().getLogicalQueryById(status.getLogicalQuery(), OsgiServiceManager.getActiveSession());
+				controller.registerAsMaster(qry, status.getLogicalQuery(), sharedQueryID, status.getOtherPeersForSharedQuery());
+				OsgiServiceManager.getQueryManager().sendChangeMasterToAllSlaves(sharedQueryID);
 
 				for (Integer local : previousLocalQueries) {
 					if (controller.getLocalIds(sharedQueryID).contains(local))
@@ -476,10 +417,8 @@ public class ResponseHandler {
 				}
 			} else {
 				// If Query was no master... (Re-)Set as Slave and tell master.
-				Collection<Integer> localQueries = status
-						.getLocalQueriesForSharedQuery();
-				controller.registerAsSlave(localQueries, sharedQueryID,
-						status.getSharedQueryMasterPeer());
+				Collection<Integer> localQueries = status.getLocalQueriesForSharedQuery();
+				controller.registerAsSlave(localQueries, sharedQueryID, status.getSharedQueryMasterPeer());
 			}
 		}
 	}

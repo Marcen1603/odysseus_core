@@ -9,19 +9,20 @@ public class LoadBalancerFactory {
 	}
 
 	public static ILoadBalancer create(String type) throws LoadBalancerFactoryException {
-		
+
 		switch (type.toLowerCase()) {
-		
+
 		case "mincpu":
 			return new MinCPULoadBalancer();
-			
+
 		case "maxcpu":
 			return new MaxCPULoadBalancer();
-		
+
 		case "minquery":
 			return new MinQueryCountLoadBalancer();
+
+		default:
+			throw new LoadBalancerFactoryException("Load balancer type '" + type + "' not known");
 		}
-		
-		throw new LoadBalancerFactoryException("Load balancer type '" + type + "' not known");
 	}
 }

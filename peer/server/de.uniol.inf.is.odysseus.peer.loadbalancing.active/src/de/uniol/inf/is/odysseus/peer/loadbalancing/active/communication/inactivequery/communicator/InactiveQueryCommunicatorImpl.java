@@ -130,8 +130,7 @@ public class InactiveQueryCommunicatorImpl implements IPeerCommunicatorListener,
 		}
 	}
 	
-
-
+	@Override
 	public List<PeerID> getInvolvedPeers(int queryID) {
 		return LoadBalancingHelper.getInvolvedPeers(queryID);
 	}
@@ -303,6 +302,9 @@ public class InactiveQueryCommunicatorImpl implements IPeerCommunicatorListener,
 			if (status.getPhase().equals(LB_PHASES.RELINKING_RECEIVERS)) {
 				ResponseHandler.handleError(status, this);
 			}
+			break;
+		default:
+			LOG.error("Unknwon InactiveQueryInstructionMessage: {}", instruction);
 			break;
 		}
 

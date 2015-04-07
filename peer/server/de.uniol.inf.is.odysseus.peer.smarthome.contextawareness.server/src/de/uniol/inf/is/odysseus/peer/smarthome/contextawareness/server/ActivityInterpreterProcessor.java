@@ -228,7 +228,7 @@ public class ActivityInterpreterProcessor implements ISmartDeviceListener {
 						boolean interpreterExist=false;
 						for(AbstractActivityInterpreter newInterpreter : newSensor.getActivityInterpreters()){
 							if(interpreter.equals(newInterpreter)){
-								interpreterExist=true;;
+								interpreterExist=true;
 								break;
 							}
 						}

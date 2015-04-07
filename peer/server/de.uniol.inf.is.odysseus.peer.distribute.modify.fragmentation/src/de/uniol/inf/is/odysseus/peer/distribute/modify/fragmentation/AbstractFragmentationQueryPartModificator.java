@@ -37,14 +37,12 @@ import de.uniol.inf.is.odysseus.peer.distribute.util.LogicalQueryHelper;
  * 
  * @author Michael Brand
  */
-public abstract class AbstractFragmentationQueryPartModificator implements
-		IQueryPartModificator {
+public abstract class AbstractFragmentationQueryPartModificator implements IQueryPartModificator {
 
 	/**
 	 * The logger for this class.
 	 */
-	private static final Logger LOG = LoggerFactory
-			.getLogger(AbstractFragmentationQueryPartModificator.class);
+	private static final Logger LOG = LoggerFactory.getLogger(AbstractFragmentationQueryPartModificator.class);
 
 	/**
 	 * Makes copies of the origin query parts as follows: <br />
@@ -60,34 +58,25 @@ public abstract class AbstractFragmentationQueryPartModificator implements
 	 */
 	private static void makeCopies(FragmentationInfoBundle bundle) {
 
-		Preconditions.checkNotNull(bundle,
-				"Fragmentation info bundle must be not null!");
-		Preconditions.checkNotNull(bundle.getOriginalRelevantParts(),
-				"Relevant parts must be not null!");
-		Preconditions.checkNotNull(bundle.getOriginalIrrelevantParts(),
-				"Irrelevant parts must be not null!");
+		Preconditions.checkNotNull(bundle, "Fragmentation info bundle must be not null!");
+		Preconditions.checkNotNull(bundle.getOriginalRelevantParts(), "Relevant parts must be not null!");
+		Preconditions.checkNotNull(bundle.getOriginalIrrelevantParts(), "Irrelevant parts must be not null!");
 
 		// Copy the query parts
-		Map<ILogicalQueryPart, Collection<ILogicalQueryPart>> copiedFragmentsToOriginals = LogicalQueryHelper
-				.copyAndCutQueryParts(bundle.getOriginalRelevantParts(),
-						bundle.getDegreeOfFragmentation());
-		Map<ILogicalQueryPart, Collection<ILogicalQueryPart>> copiedNonFragmentsToOriginals = LogicalQueryHelper
-				.copyAndCutQueryParts(bundle.getOriginalIrrelevantParts(), 1);
+		Map<ILogicalQueryPart, Collection<ILogicalQueryPart>> copiedFragmentsToOriginals = LogicalQueryHelper.copyAndCutQueryParts(bundle.getOriginalRelevantParts(), bundle.getDegreeOfFragmentation());
+		Map<ILogicalQueryPart, Collection<ILogicalQueryPart>> copiedNonFragmentsToOriginals = LogicalQueryHelper.copyAndCutQueryParts(bundle.getOriginalIrrelevantParts(), 1);
 
 		// Put the maps together
-		Map<ILogicalQueryPart, Collection<ILogicalQueryPart>> copiesToOriginals = Maps
-				.newHashMap();
+		Map<ILogicalQueryPart, Collection<ILogicalQueryPart>> copiesToOriginals = Maps.newHashMap();
 		copiesToOriginals.putAll(copiedFragmentsToOriginals);
 		copiesToOriginals.putAll(copiedNonFragmentsToOriginals);
 		bundle.setCopyMap(copiesToOriginals);
 
 		// Check, if the degree of fragmentation is suitable for the number of
 		// available peers
-		if (!ModificationHelper.validateDegreeOfModification(ModificationHelper
-				.calcSize(bundle.getCopyMap().values()))) {
+		if (!ModificationHelper.validateDegreeOfModification(ModificationHelper.calcSize(bundle.getCopyMap().values()))) {
 
-			AbstractFragmentationQueryPartModificator.LOG
-					.warn("Got not enough peers for a suitable fragmentation!");
+			AbstractFragmentationQueryPartModificator.LOG.warn("Got not enough peers for a suitable fragmentation!");
 
 		}
 
@@ -110,43 +99,31 @@ public abstract class AbstractFragmentationQueryPartModificator implements
 	 * @return The same collection as <code>parts</code> except the avoided
 	 *         parts being set.
 	 */
-	private static Collection<ILogicalQueryPart> setFragmentsToAvoid(
-			ILogicalQueryPart originalPart,
-			ILogicalOperator fragmentOrReunionOperator,
-			FragmentationInfoBundle bundle, boolean fragmentOperator) {
+	private static Collection<ILogicalQueryPart> setFragmentsToAvoid(ILogicalQueryPart originalPart, ILogicalOperator fragmentOrReunionOperator, FragmentationInfoBundle bundle, boolean fragmentOperator) {
 
 		Preconditions.checkNotNull(originalPart, "Querypart must be not null!");
-		Preconditions.checkNotNull(fragmentOperator,
-				"Fragment/reunion operator must be not null!");
-		Preconditions.checkNotNull(bundle,
-				"Fragmentation info bundle must be not null!");
-		Preconditions.checkNotNull(bundle.getCopyMap(),
-				"Copy map must be not null!");
+		Preconditions.checkNotNull(fragmentOperator, "Fragment/reunion operator must be not null!");
+		Preconditions.checkNotNull(bundle, "Fragmentation info bundle must be not null!");
+		Preconditions.checkNotNull(bundle.getCopyMap(), "Copy map must be not null!");
 
 		Collection<ILogicalQueryPart> avoidedParts = Lists.newArrayList();
 		for (ILogicalQueryPart part : bundle.getCopyMap().keySet()) {
 
-			if (part.equals(originalPart)
-					|| bundle.getCopyMap().get(part).size() == 1) {
+			if (part.equals(originalPart) || bundle.getCopyMap().get(part).size() == 1) {
 
 				continue;
 
 			}
 
-			ILogicalQueryPart copiedPart = bundle.getCopyMap().get(part)
-					.iterator().next();
+			ILogicalQueryPart copiedPart = bundle.getCopyMap().get(part).iterator().next();
 			for (ILogicalOperator operator : copiedPart.getOperators()) {
 
-				if (fragmentOperator
-						&& ModificationHelper.isOperatorAbove(operator,
-								fragmentOrReunionOperator)) {
+				if (fragmentOperator && ModificationHelper.isOperatorAbove(operator, fragmentOrReunionOperator)) {
 
 					avoidedParts.addAll(bundle.getCopyMap().get(part));
 					break;
 
-				} else if (!fragmentOperator
-						&& ModificationHelper.isOperatorAbove(
-								fragmentOrReunionOperator, operator)) {
+				} else if (!fragmentOperator && ModificationHelper.isOperatorAbove(fragmentOrReunionOperator, operator)) {
 
 					avoidedParts.addAll(bundle.getCopyMap().get(part));
 					break;
@@ -175,40 +152,26 @@ public abstract class AbstractFragmentationQueryPartModificator implements
 	 * @return The same collection as <code>parts</code> except the avoided
 	 *         parts being set.
 	 */
-	private static Collection<ILogicalQueryPart> setQueryPartsToAvoid(
-			FragmentationInfoBundle bundle) {
+	private static Collection<ILogicalQueryPart> setQueryPartsToAvoid(FragmentationInfoBundle bundle) {
 
-		Preconditions.checkNotNull(bundle,
-				"Fragmentation info bundle must be not null!");
-		Preconditions.checkNotNull(bundle.getCopyMap(),
-				"Copy map must be not null!");
+		Preconditions.checkNotNull(bundle, "Fragmentation info bundle must be not null!");
+		Preconditions.checkNotNull(bundle.getCopyMap(), "Copy map must be not null!");
 
-		Map<ILogicalQueryPart, Collection<ILogicalQueryPart>> avoidedMap = Maps
-				.newHashMap();
+		Map<ILogicalQueryPart, Collection<ILogicalQueryPart>> avoidedMap = Maps.newHashMap();
 
-		for (ILogicalQueryPart originalPart : bundle
-				.getCopyMap()
-				.keySet()
-				.toArray(
-						new ILogicalQueryPart[bundle.getCopyMap().keySet()
-								.size()])) {
+		for (ILogicalQueryPart originalPart : bundle.getCopyMap().keySet().toArray(new ILogicalQueryPart[bundle.getCopyMap().keySet().size()])) {
 
-			for (ILogicalQueryPart copiedPart : bundle.getCopyMap().get(
-					originalPart)) {
+			for (ILogicalQueryPart copiedPart : bundle.getCopyMap().get(originalPart)) {
 
-				Collection<ILogicalQueryPart> avoidedParts = Lists
-						.newArrayList();
+				Collection<ILogicalQueryPart> avoidedParts = Lists.newArrayList();
 				avoidedParts.addAll(bundle.getCopyMap().get(originalPart));
 				avoidedParts.remove(copiedPart);
 
-				for (ILogicalOperator fragmentOperator : bundle
-						.getFragmentOperators()) {
+				for (ILogicalOperator fragmentOperator : bundle.getFragmentOperators()) {
 
 					if (copiedPart.contains(fragmentOperator)) {
 
-						Collection<ILogicalQueryPart> parts = AbstractFragmentationQueryPartModificator
-								.setFragmentsToAvoid(originalPart,
-										fragmentOperator, bundle, true);
+						Collection<ILogicalQueryPart> parts = AbstractFragmentationQueryPartModificator.setFragmentsToAvoid(originalPart, fragmentOperator, bundle, true);
 
 						for (ILogicalQueryPart part : parts) {
 
@@ -224,14 +187,11 @@ public abstract class AbstractFragmentationQueryPartModificator implements
 
 				}
 
-				for (ILogicalOperator reunionOperator : bundle
-						.getReunionOperators()) {
+				for (ILogicalOperator reunionOperator : bundle.getReunionOperators()) {
 
 					if (copiedPart.contains(reunionOperator)) {
 
-						Collection<ILogicalQueryPart> parts = AbstractFragmentationQueryPartModificator
-								.setFragmentsToAvoid(originalPart,
-										reunionOperator, bundle, false);
+						Collection<ILogicalQueryPart> parts = AbstractFragmentationQueryPartModificator.setFragmentsToAvoid(originalPart, reunionOperator, bundle, false);
 
 						for (ILogicalQueryPart part : parts) {
 
@@ -248,16 +208,13 @@ public abstract class AbstractFragmentationQueryPartModificator implements
 				}
 
 				avoidedMap.put(copiedPart, avoidedParts);
-				AbstractFragmentationQueryPartModificator.LOG.debug(
-						"Set avoided parts for {}: {}", copiedPart,
-						avoidedParts);
+				AbstractFragmentationQueryPartModificator.LOG.debug("Set avoided parts for {}: {}", copiedPart, avoidedParts);
 
 			}
 
 		}
 
-		for (ILogicalQueryPart part : avoidedMap.keySet().toArray(
-				new ILogicalQueryPart[avoidedMap.keySet().size()])) {
+		for (ILogicalQueryPart part : avoidedMap.keySet().toArray(new ILogicalQueryPart[avoidedMap.keySet().size()])) {
 
 			part.addAvoidingQueryParts(avoidedMap.get(part));
 
@@ -277,37 +234,20 @@ public abstract class AbstractFragmentationQueryPartModificator implements
 	 *            The {@link FragmentationInfoBundle} instance.
 	 * @return All operators within <code>operators</code> to build fragments.
 	 */
-	private Collection<ILogicalOperator> determineOperatorsForFragment(
-			Collection<ILogicalOperator> operators,
-			AbstractFragmentationParameterHelper helper,
-			FragmentationInfoBundle bundle) {
+	private Collection<ILogicalOperator> determineOperatorsForFragment(Collection<ILogicalOperator> operators, AbstractFragmentationParameterHelper helper, FragmentationInfoBundle bundle) {
 
 		// Preconditions
-		Preconditions.checkNotNull(operators,
-				"List of operators must be not null!");
-		Preconditions.checkNotNull(helper,
-				"Fragmentation helper must be not null!");
-		Preconditions.checkNotNull(bundle,
-				"Fragmentation info bundle must be not null!");
-		Preconditions
-				.checkNotNull(bundle.getOriginStartOperator(),
-						"The operator marking the start of fragmentation must be not null!");
-		Preconditions
-				.checkNotNull(bundle.getOriginEndOperator(),
-						"The operator marking the end of fragmentation must be not null!");
+		Preconditions.checkNotNull(operators, "List of operators must be not null!");
+		Preconditions.checkNotNull(helper, "Fragmentation helper must be not null!");
+		Preconditions.checkNotNull(bundle, "Fragmentation info bundle must be not null!");
+		Preconditions.checkNotNull(bundle.getOriginStartOperator(), "The operator marking the start of fragmentation must be not null!");
+		Preconditions.checkNotNull(bundle.getOriginEndOperator(), "The operator marking the end of fragmentation must be not null!");
 
-		Collection<ILogicalOperator> operatorsForFragment = Lists
-				.newArrayList();
+		Collection<ILogicalOperator> operatorsForFragment = Lists.newArrayList();
 
 		for (ILogicalOperator operator : operators) {
 
-			if (ModificationHelper.isOperatorAbove(operator,
-					bundle.getOriginStartOperator())
-					&& (!bundle.getOriginEndOperator().isPresent() || ModificationHelper
-							.isOperatorAbove(bundle.getOriginEndOperator()
-									.get(), operator))
-					&& FragmentationRuleHelper.canOperatorBePartOfFragment(
-							this, operator, helper)) {
+			if (ModificationHelper.isOperatorAbove(operator, bundle.getOriginStartOperator()) && (!bundle.getOriginEndOperator().isPresent() || ModificationHelper.isOperatorAbove(bundle.getOriginEndOperator().get(), operator)) && FragmentationRuleHelper.canOperatorBePartOfFragment(this, operator, helper)) {
 
 				operatorsForFragment.add(operator);
 
@@ -330,44 +270,33 @@ public abstract class AbstractFragmentationQueryPartModificator implements
 	 *            The {@link FragmentationInfoBundle} instance.
 	 * @return All operators within <code>operators</code> to build fragments.
 	 */
-	private IPair<Collection<ILogicalQueryPart>, Collection<ILogicalQueryPart>> determineFragments(
-			Collection<ILogicalQueryPart> queryParts,
-			AbstractFragmentationParameterHelper helper,
-			FragmentationInfoBundle bundle) {
+	private IPair<Collection<ILogicalQueryPart>, Collection<ILogicalQueryPart>> determineFragments(Collection<ILogicalQueryPart> queryParts, AbstractFragmentationParameterHelper helper, FragmentationInfoBundle bundle) {
 
 		// Preconditions
-		Preconditions.checkNotNull(queryParts,
-				"List of query parts must be not null!");
-		Preconditions.checkNotNull(!queryParts.isEmpty(),
-				"List of query parts must be not empty!");
+		Preconditions.checkNotNull(queryParts, "List of query parts must be not null!");
+		Preconditions.checkNotNull(!queryParts.isEmpty(), "List of query parts must be not empty!");
 
 		Collection<ILogicalQueryPart> fragments = Lists.newArrayList();
 		Collection<ILogicalQueryPart> nonfragments = Lists.newArrayList();
 
 		for (ILogicalQueryPart queryPart : queryParts) {
 
-			Collection<ILogicalOperator> operatorsForFragment = this
-					.determineOperatorsForFragment(queryPart.getOperators(),
-							helper, bundle);
+			Collection<ILogicalOperator> operatorsForFragment = this.determineOperatorsForFragment(queryPart.getOperators(), helper, bundle);
 			if (!operatorsForFragment.isEmpty()) {
 
-				final ILogicalQueryPart fragment = new LogicalQueryPart(
-						operatorsForFragment, queryPart.getAvoidingQueryParts());
+				final ILogicalQueryPart fragment = new LogicalQueryPart(operatorsForFragment, queryPart.getAvoidingQueryParts());
 				fragments.add(fragment);
 
 			}
 
 			if (operatorsForFragment.size() < queryPart.getOperators().size()) {
 
-				Collection<ILogicalOperator> operatorsForNonfragment = Lists
-						.newArrayList(queryPart.getOperators());
+				Collection<ILogicalOperator> operatorsForNonfragment = Lists.newArrayList(queryPart.getOperators());
 				operatorsForNonfragment.removeAll(operatorsForFragment);
 
 				if (!operatorsForNonfragment.isEmpty()) {
 
-					ILogicalQueryPart nonfragment = new LogicalQueryPart(
-							operatorsForNonfragment,
-							queryPart.getAvoidingQueryParts());
+					ILogicalQueryPart nonfragment = new LogicalQueryPart(operatorsForNonfragment, queryPart.getAvoidingQueryParts());
 					nonfragments.add(nonfragment);
 
 				}
@@ -376,8 +305,7 @@ public abstract class AbstractFragmentationQueryPartModificator implements
 
 		}
 
-		return new Pair<Collection<ILogicalQueryPart>, Collection<ILogicalQueryPart>>(
-				fragments, nonfragments);
+		return new Pair<Collection<ILogicalQueryPart>, Collection<ILogicalQueryPart>>(fragments, nonfragments);
 
 	}
 
@@ -404,41 +332,31 @@ public abstract class AbstractFragmentationQueryPartModificator implements
 	 *             parameter does not match any patterns.<br />
 	 *             If no query parts remain to build fragments.
 	 */
-	private void prepare(Collection<ILogicalQueryPart> queryParts,
-			AbstractFragmentationParameterHelper helper,
-			FragmentationInfoBundle bundle)
-			throws QueryPartModificationException {
+	private void prepare(Collection<ILogicalQueryPart> queryParts, AbstractFragmentationParameterHelper helper, FragmentationInfoBundle bundle) throws QueryPartModificationException {
 
 		// Preconditions
-		Preconditions.checkNotNull(helper,
-				"Fragmentation helper must be not null!");
-		Preconditions.checkNotNull(bundle,
-				"Fragmentation info bundle must be not null!");
+		Preconditions.checkNotNull(helper, "Fragmentation helper must be not null!");
+		Preconditions.checkNotNull(bundle, "Fragmentation info bundle must be not null!");
 
 		// Determine degree of fragmentation
 		bundle.setDegreeOfFragmentation(helper.determineDegreeOfModification());
 
 		// Determine identifiers for start point and end point for fragmentation
-		final IPair<Optional<ILogicalOperator>, Optional<ILogicalOperator>> startAndendPointOfFragmentation = helper
-				.determineStartAndEndPoints(queryParts);
+		final IPair<Optional<ILogicalOperator>, Optional<ILogicalOperator>> startAndendPointOfFragmentation = helper.determineStartAndEndPoints(queryParts);
 		if (!startAndendPointOfFragmentation.getE1().isPresent()) {
 
-			throw new QueryPartModificationException(
-					"No start of fragmentation given!");
+			throw new QueryPartModificationException("No start of fragmentation given!");
 
 		}
-		bundle.setOriginStartOperator(startAndendPointOfFragmentation.getE1()
-				.get());
+		bundle.setOriginStartOperator(startAndendPointOfFragmentation.getE1().get());
 		bundle.setOriginEndOperator(startAndendPointOfFragmentation.getE2());
 
 		// Determine query parts to be fragments and those to be outside of
 		// fragments
-		final IPair<Collection<ILogicalQueryPart>, Collection<ILogicalQueryPart>> fragmentsAndNonfragments = this
-				.determineFragments(queryParts, helper, bundle);
+		final IPair<Collection<ILogicalQueryPart>, Collection<ILogicalQueryPart>> fragmentsAndNonfragments = this.determineFragments(queryParts, helper, bundle);
 		if (fragmentsAndNonfragments.getE1().isEmpty()) {
 
-			throw new QueryPartModificationException(
-					"No query parts given to build fragments!");
+			throw new QueryPartModificationException("No query parts given to build fragments!");
 
 		}
 		bundle.setOriginalRelevantParts(fragmentsAndNonfragments.getE1());
@@ -468,152 +386,92 @@ public abstract class AbstractFragmentationQueryPartModificator implements
 	 *             {@link #createFragmentOperator(int, FragmentationInfoBundle)}
 	 *             .
 	 */
-	private void processSubscriptionFromRelativeSource(
-			LogicalSubscription subscription, ILogicalOperator originalSource,
-			ILogicalQueryPart originalPart,
-			AbstractFragmentationParameterHelper helper,
-			FragmentationInfoBundle bundle)
-			throws QueryPartModificationException {
+	private void processSubscriptionFromRelativeSource(LogicalSubscription subscription, ILogicalOperator originalSource, ILogicalQueryPart originalPart, AbstractFragmentationParameterHelper helper, FragmentationInfoBundle bundle) throws QueryPartModificationException {
 
-		Preconditions.checkNotNull(subscription,
-				"Logical subscription must be not null!");
-		Preconditions.checkNotNull(originalSource,
-				"Logical source must be not null!");
-		Preconditions
-				.checkNotNull(originalPart, "Query part must be not null!");
-		Preconditions.checkNotNull(helper,
-				"Fragmentation helper must be not null!");
-		Preconditions.checkNotNull(bundle,
-				"Fragmentation info bundle must be not null!");
-		Preconditions.checkNotNull(bundle.getCopyMap(),
-				"Copy map must be not null!");
-		Preconditions.checkNotNull(bundle.getOriginStartOperator(),
-				"The origin start operator must be not null!");
+		Preconditions.checkNotNull(subscription, "Logical subscription must be not null!");
+		Preconditions.checkNotNull(originalSource, "Logical source must be not null!");
+		Preconditions.checkNotNull(originalPart, "Query part must be not null!");
+		Preconditions.checkNotNull(helper, "Fragmentation helper must be not null!");
+		Preconditions.checkNotNull(bundle, "Fragmentation info bundle must be not null!");
+		Preconditions.checkNotNull(bundle.getCopyMap(), "Copy map must be not null!");
+		Preconditions.checkNotNull(bundle.getOriginStartOperator(), "The origin start operator must be not null!");
 
 		ILogicalOperator originalTarget = subscription.getTarget();
 		Collection<ILogicalOperator> copiedTargets = Lists.newArrayList();
-		Collection<ILogicalOperator> copiedSources = ModificationHelper
-				.findCopies(originalSource, bundle.getCopyMap());
-		Optional<ILogicalQueryPart> optPartOfOriginalTarget = LogicalQueryHelper
-				.determineQueryPart(bundle.getCopyMap().keySet(),
-						originalTarget);
+		Collection<ILogicalOperator> copiedSources = ModificationHelper.findCopies(originalSource, bundle.getCopyMap());
+		Optional<ILogicalQueryPart> optPartOfOriginalTarget = LogicalQueryHelper.determineQueryPart(bundle.getCopyMap().keySet(), originalTarget);
 		if (!optPartOfOriginalTarget.isPresent()) {
-
-			throw new QueryPartModificationException(
-					"Unknown query part of operator " + originalTarget);
-
-		} else {
-
-			copiedTargets.addAll(ModificationHelper.findCopies(originalTarget,
-					bundle.getCopyMap()));
-
-		}
+			throw new QueryPartModificationException("Unknown query part of operator " + originalTarget);
+		} 
+		copiedTargets.addAll(ModificationHelper.findCopies(originalTarget, bundle.getCopyMap()));
 
 		if (originalPart.getOperators().contains(originalTarget)) {
 
 			// Target and source are within the same query part
 			return;
 
-		} else if (!ModificationHelper.isOperatorAboveOrEqual(originalTarget,
-				bundle.getOriginStartOperator())) {
+		} else if (!ModificationHelper.isOperatorAboveOrEqual(originalTarget, bundle.getOriginStartOperator())) {
 
 			// Target is not connected (via other operators) to source for
 			// fragmentation
 			// Copies will be connected directly
-			ModificationHelper.connectOperators(copiedSources, copiedTargets,
-					subscription);
-			AbstractFragmentationQueryPartModificator.LOG.debug(
-					"Connected {} and {}", originalSource, originalTarget);
+			ModificationHelper.connectOperators(copiedSources, copiedTargets, subscription);
+			AbstractFragmentationQueryPartModificator.LOG.debug("Connected {} and {}", originalSource, originalTarget);
 
 		} else {
 
 			// Target is connected (via other operators) to source for
 			// fragmentation
 
-			Collection<ILogicalQueryPart> partsOfCopiedSource = bundle
-					.getCopyMap().get(originalPart);
-			ILogicalQueryPart partOfOriginalTarget = optPartOfOriginalTarget
-					.get();
-			Collection<ILogicalQueryPart> partsOfCopiedTarget = bundle
-					.getCopyMap().get(partOfOriginalTarget);
+			Collection<ILogicalQueryPart> partsOfCopiedSource = bundle.getCopyMap().get(originalPart);
+			ILogicalQueryPart partOfOriginalTarget = optPartOfOriginalTarget.get();
+			Collection<ILogicalQueryPart> partsOfCopiedTarget = bundle.getCopyMap().get(partOfOriginalTarget);
 
-			if (partsOfCopiedSource.size() == 1
-					&& partsOfCopiedTarget.size() == 1) {
+			if (partsOfCopiedSource.size() == 1 && partsOfCopiedTarget.size() == 1) {
 
 				// 1:1 relationship
 				// No need to fragment
-				ModificationHelper.connectOperators(copiedSources,
-						copiedTargets, subscription);
-				AbstractFragmentationQueryPartModificator.LOG.debug(
-						"Connected {} and {}", originalSource, originalTarget);
+				ModificationHelper.connectOperators(copiedSources, copiedTargets, subscription);
+				AbstractFragmentationQueryPartModificator.LOG.debug("Connected {} and {}", originalSource, originalTarget);
 
-			} else if (partsOfCopiedSource.size() == 1
-					&& partsOfCopiedTarget.size() > 1) {
+			} else if (partsOfCopiedSource.size() == 1 && partsOfCopiedTarget.size() > 1) {
 
 				// N:1 relationship
-				if (FragmentationRuleHelper.needSpecialHandlingForQueryPart(
-						partOfOriginalTarget, this, helper)) {
+				if (FragmentationRuleHelper.needSpecialHandlingForQueryPart(partOfOriginalTarget, this, helper)) {
 
 					// Need special handling
-					this.processSpecialHandling(originalTarget, copiedSources,
-							copiedTargets, Optional.of(subscription),
-							Optional.of(originalPart), partsOfCopiedSource,
-							partOfOriginalTarget, partsOfCopiedTarget, helper,
-							bundle);
+					this.processSpecialHandling(originalTarget, copiedSources, copiedTargets, Optional.of(subscription), Optional.of(originalPart), partsOfCopiedSource, partOfOriginalTarget, partsOfCopiedTarget, helper, bundle);
 
 				} else {
 
 					// Need to reunion
-					ILogicalOperator reunionOperator = this
-							.insertReunionOperator(originalTarget, Optional
-									.of(copiedSources.iterator().next()),
-									copiedTargets, Optional.of(subscription),
-									Optional.of(originalPart), Optional
-											.of(partsOfCopiedSource.iterator()
-													.next()), bundle);
+					ILogicalOperator reunionOperator = this.insertReunionOperator(originalTarget, Optional.of(copiedSources.iterator().next()), copiedTargets, Optional.of(subscription), Optional.of(originalPart), Optional.of(partsOfCopiedSource.iterator().next()), bundle);
 					bundle.addReunionOperator(reunionOperator);
-					AbstractFragmentationQueryPartModificator.LOG.debug(
-							"Inserted a reunion operator after {}",
-							originalTarget);
+					AbstractFragmentationQueryPartModificator.LOG.debug("Inserted a reunion operator after {}", originalTarget);
 
 				}
 
-			} else if (partsOfCopiedSource.size() > 1
-					&& partsOfCopiedTarget.size() == 1) {
+			} else if (partsOfCopiedSource.size() > 1 && partsOfCopiedTarget.size() == 1) {
 
 				// 1:N relationship
 				// Need to fragment
-				ILogicalOperator fragmentOperator = this
-						.insertFragmentOperator(copiedSources, copiedTargets
-								.iterator().next(), partOfOriginalTarget,
-								partsOfCopiedTarget.iterator().next(),
-								subscription, bundle);
+				ILogicalOperator fragmentOperator = this.insertFragmentOperator(copiedSources, copiedTargets.iterator().next(), partOfOriginalTarget, partsOfCopiedTarget.iterator().next(), subscription, bundle);
 				bundle.addFragmentOperator(fragmentOperator);
-				AbstractFragmentationQueryPartModificator.LOG
-						.debug("Inserted a fragment operator below {}",
-								originalSource);
+				AbstractFragmentationQueryPartModificator.LOG.debug("Inserted a fragment operator below {}", originalSource);
 
 			} else {
 
 				// N:N relationship
-				if (FragmentationRuleHelper.needSpecialHandlingForQueryPart(
-						partOfOriginalTarget, this, helper)) {
+				if (FragmentationRuleHelper.needSpecialHandlingForQueryPart(partOfOriginalTarget, this, helper)) {
 
 					// Need special handling
-					this.processSpecialHandling(originalTarget, copiedSources,
-							copiedTargets, Optional.of(subscription),
-							Optional.of(originalPart), partsOfCopiedSource,
-							partOfOriginalTarget, partsOfCopiedTarget, helper,
-							bundle);
+					this.processSpecialHandling(originalTarget, copiedSources, copiedTargets, Optional.of(subscription), Optional.of(originalPart), partsOfCopiedSource, partOfOriginalTarget, partsOfCopiedTarget, helper, bundle);
 
 				} else {
 
 					// No need to fragment
-					ModificationHelper.connectOperators(copiedSources,
-							copiedTargets, subscription);
-					AbstractFragmentationQueryPartModificator.LOG.debug(
-							"Connected {} and {}", originalSource,
-							originalTarget);
+					ModificationHelper.connectOperators(copiedSources, copiedTargets, subscription);
+					AbstractFragmentationQueryPartModificator.LOG.debug("Connected {} and {}", originalSource, originalTarget);
 
 				}
 
@@ -641,28 +499,18 @@ public abstract class AbstractFragmentationQueryPartModificator implements
 	 *             {@link #needSpecialHandlingForQueryPart(ILogicalQueryPart, FragmentationInfoBundle)}
 	 *             .
 	 */
-	private void processRelativeSource(ILogicalOperator originalSource,
-			ILogicalQueryPart originalPart,
-			AbstractFragmentationParameterHelper helper,
-			FragmentationInfoBundle bundle)
-			throws QueryPartModificationException {
+	private void processRelativeSource(ILogicalOperator originalSource, ILogicalQueryPart originalPart, AbstractFragmentationParameterHelper helper, FragmentationInfoBundle bundle) throws QueryPartModificationException {
 
-		Preconditions.checkNotNull(originalSource,
-				"Logical source must be not null!");
-		Preconditions
-				.checkNotNull(originalPart, "Query part must be not null!");
-		Preconditions.checkNotNull(helper,
-				"Fragmentation helper must be not null!");
-		Preconditions.checkNotNull(bundle,
-				"Fragmentation info bundle must be not null!");
+		Preconditions.checkNotNull(originalSource, "Logical source must be not null!");
+		Preconditions.checkNotNull(originalPart, "Query part must be not null!");
+		Preconditions.checkNotNull(helper, "Fragmentation helper must be not null!");
+		Preconditions.checkNotNull(bundle, "Fragmentation info bundle must be not null!");
 
 		if (!originalSource.getSubscribedToSource().isEmpty()) {
 
-			for (LogicalSubscription subToSource : originalSource
-					.getSubscribedToSource()) {
+			for (LogicalSubscription subToSource : originalSource.getSubscribedToSource()) {
 
-				this.processSubscriptionFromRelativeSource(subToSource,
-						originalSource, originalPart, helper, bundle);
+				this.processSubscriptionFromRelativeSource(subToSource, originalSource, originalPart, helper, bundle);
 
 			}
 
@@ -685,32 +533,20 @@ public abstract class AbstractFragmentationQueryPartModificator implements
 	 *             may be thrown by
 	 *             {@link #createReunionOperator(int, FragmentationInfoBundle)}.
 	 */
-	private void processRealSink(ILogicalOperator originalSink,
-			ILogicalQueryPart originalPart,
-			AbstractFragmentationParameterHelper helper,
-			FragmentationInfoBundle bundle)
-			throws QueryPartModificationException {
+	private void processRealSink(ILogicalOperator originalSink, ILogicalQueryPart originalPart, AbstractFragmentationParameterHelper helper, FragmentationInfoBundle bundle) throws QueryPartModificationException {
 
-		Preconditions.checkNotNull(originalSink,
-				"Logical sink must be not null!");
-		Preconditions
-				.checkNotNull(originalPart, "Query part must be not null!");
-		Preconditions.checkNotNull(helper,
-				"Fragmentation helper must be not null!");
-		Preconditions.checkNotNull(bundle,
-				"Fragmentation info bundle must be not null!");
-		Preconditions.checkNotNull(bundle.getCopyMap(),
-				"Copy map must be not null!");
+		Preconditions.checkNotNull(originalSink, "Logical sink must be not null!");
+		Preconditions.checkNotNull(originalPart, "Query part must be not null!");
+		Preconditions.checkNotNull(helper, "Fragmentation helper must be not null!");
+		Preconditions.checkNotNull(bundle, "Fragmentation info bundle must be not null!");
+		Preconditions.checkNotNull(bundle.getCopyMap(), "Copy map must be not null!");
 
 		Optional<ILogicalOperator> source = Optional.absent();
 		Collection<ILogicalOperator> copiedSources = Lists.newArrayList();
-		Collection<ILogicalOperator> copiedSinks = ModificationHelper
-				.findCopies(originalSink, bundle.getCopyMap());
+		Collection<ILogicalOperator> copiedSinks = ModificationHelper.findCopies(originalSink, bundle.getCopyMap());
 		Optional<ILogicalQueryPart> partOfSource = Optional.absent();
-		Collection<ILogicalQueryPart> partsOfCopiedSources = Lists
-				.newArrayList();
-		Collection<ILogicalQueryPart> partsOfCopiedSink = bundle.getCopyMap()
-				.get(originalPart);
+		Collection<ILogicalQueryPart> partsOfCopiedSources = Lists.newArrayList();
+		Collection<ILogicalQueryPart> partsOfCopiedSink = bundle.getCopyMap().get(originalPart);
 		Optional<LogicalSubscription> subscription = Optional.absent();
 
 		if (copiedSinks.size() == 1) {
@@ -720,26 +556,16 @@ public abstract class AbstractFragmentationQueryPartModificator implements
 
 		}
 
-		if (FragmentationRuleHelper.needSpecialHandlingForQueryPart(
-				originalPart, this, helper)) {
+		if (FragmentationRuleHelper.needSpecialHandlingForQueryPart(originalPart, this, helper)) {
 
-			this.processSpecialHandling(originalSink, copiedSources,
-					copiedSinks, subscription, partOfSource,
-					partsOfCopiedSources, originalPart, partsOfCopiedSink,
-					helper, bundle);
+			this.processSpecialHandling(originalSink, copiedSources, copiedSinks, subscription, partOfSource, partsOfCopiedSources, originalPart, partsOfCopiedSink, helper, bundle);
 
 		} else {
 
 			// Need to reunion
-			ILogicalOperator reunionOperator = this.insertReunionOperator(
-					originalSink,
-					source,
-					ModificationHelper.findCopies(originalSink,
-							bundle.getCopyMap()), subscription, partOfSource,
-					Optional.of(originalPart), bundle);
+			ILogicalOperator reunionOperator = this.insertReunionOperator(originalSink, source, ModificationHelper.findCopies(originalSink, bundle.getCopyMap()), subscription, partOfSource, Optional.of(originalPart), bundle);
 			bundle.addReunionOperator(reunionOperator);
-			AbstractFragmentationQueryPartModificator.LOG.debug(
-					"Inserted a reunion operator after {}", originalSink);
+			AbstractFragmentationQueryPartModificator.LOG.debug("Inserted a reunion operator after {}", originalSink);
 
 		}
 
@@ -762,32 +588,25 @@ public abstract class AbstractFragmentationQueryPartModificator implements
 	 *             {@link #needSpecialHandlingForQueryPart(ILogicalQueryPart, FragmentationInfoBundle)}
 	 *             .
 	 */
-	private void modify(ILogicalQueryPart part,
-			AbstractFragmentationParameterHelper helper,
-			FragmentationInfoBundle bundle)
-			throws QueryPartModificationException {
+	private void modify(ILogicalQueryPart part, AbstractFragmentationParameterHelper helper, FragmentationInfoBundle bundle) throws QueryPartModificationException {
 
 		Preconditions.checkNotNull(part, "Query part must be not null!");
-		Preconditions.checkNotNull(helper,
-				"Fragmentation helper must be not null!");
-		Preconditions.checkNotNull(bundle,
-				"Fragmentation info bundle must be not null!");
+		Preconditions.checkNotNull(helper, "Fragmentation helper must be not null!");
+		Preconditions.checkNotNull(bundle, "Fragmentation info bundle must be not null!");
 
 		// 2. Insert fragment and reunion operators
 		// 3. Attach all query parts not to build fragments to the modified
 		// fragments.
 
 		// Process each relative source, which is relevant for fragmentation
-		for (ILogicalOperator originalSource : LogicalQueryHelper
-				.getRelativeSourcesOfLogicalQueryPart(part)) {
+		for (ILogicalOperator originalSource : LogicalQueryHelper.getRelativeSourcesOfLogicalQueryPart(part)) {
 
 			this.processRelativeSource(originalSource, part, helper, bundle);
 
 		}
 
 		// Process each real sink, which is relevant for fragmentation
-		for (ILogicalOperator originalSink : LogicalQueryHelper
-				.getRelativeSinksOfLogicalQueryPart(part)) {
+		for (ILogicalOperator originalSink : LogicalQueryHelper.getRelativeSinksOfLogicalQueryPart(part)) {
 
 			if (originalSink.getSubscriptions().isEmpty()) {
 
@@ -822,58 +641,37 @@ public abstract class AbstractFragmentationQueryPartModificator implements
 	 *             {@link #createFragmentOperator(int, FragmentationInfoBundle)}
 	 *             .
 	 */
-	protected ILogicalOperator insertFragmentOperator(
-			Collection<ILogicalOperator> copiedSources,
-			ILogicalOperator copiedTarget,
-			ILogicalQueryPart partOfOriginalTarget,
-			ILogicalQueryPart partOfCopiedTarget,
-			LogicalSubscription subscription, FragmentationInfoBundle bundle)
-			throws QueryPartModificationException {
+	protected ILogicalOperator insertFragmentOperator(Collection<ILogicalOperator> copiedSources, ILogicalOperator copiedTarget, ILogicalQueryPart partOfOriginalTarget, ILogicalQueryPart partOfCopiedTarget, LogicalSubscription subscription, FragmentationInfoBundle bundle) throws QueryPartModificationException {
 
-		Preconditions.checkNotNull(subscription,
-				"Logical subscription must be not null!");
-		Preconditions.checkNotNull(copiedSources,
-				"Copied logical sources must be not null!");
-		Preconditions.checkNotNull(copiedTarget,
-				"Copied logical target must be not null!");
-		Preconditions.checkNotNull(partOfOriginalTarget,
-				"Part of original logical target must be not null!");
-		Preconditions.checkNotNull(partOfCopiedTarget,
-				"Part of copied logical target must be not null!");
-		Preconditions.checkNotNull(bundle,
-				"Fragmentation info bundle must be not null!");
-		Preconditions.checkNotNull(bundle.getCopyMap(),
-				"Copy map must be not null!");
+		Preconditions.checkNotNull(subscription, "Logical subscription must be not null!");
+		Preconditions.checkNotNull(copiedSources, "Copied logical sources must be not null!");
+		Preconditions.checkNotNull(copiedTarget, "Copied logical target must be not null!");
+		Preconditions.checkNotNull(partOfOriginalTarget, "Part of original logical target must be not null!");
+		Preconditions.checkNotNull(partOfCopiedTarget, "Part of copied logical target must be not null!");
+		Preconditions.checkNotNull(bundle, "Fragmentation info bundle must be not null!");
+		Preconditions.checkNotNull(bundle.getCopyMap(), "Copy map must be not null!");
 
 		// Create fragment operator
-		ILogicalOperator fragmentOperator = this.createFragmentOperator(
-				copiedSources.size(), bundle);
+		ILogicalOperator fragmentOperator = this.createFragmentOperator(copiedSources.size(), bundle);
 
 		// Subscribe the fragment operator for fragmentation to the sources
 		for (int sourceNo = 0; sourceNo < copiedSources.size(); sourceNo++) {
 
-			ILogicalOperator copiedSource = ((List<ILogicalOperator>) copiedSources)
-					.get(sourceNo);
-			fragmentOperator.subscribeSink(copiedSource,
-					subscription.getSinkInPort(), sourceNo,
-					subscription.getSchema());
+			ILogicalOperator copiedSource = ((List<ILogicalOperator>) copiedSources).get(sourceNo);
+			fragmentOperator.subscribeSink(copiedSource, subscription.getSinkInPort(), sourceNo, subscription.getSchema());
 
 		}
 
 		// Subscribe the fragment operator for fragmentation to the target
-		fragmentOperator.subscribeToSource(copiedTarget, 0,
-				subscription.getSourceOutPort(), subscription.getSchema());
+		fragmentOperator.subscribeToSource(copiedTarget, 0, subscription.getSourceOutPort(), subscription.getSchema());
 
 		// Change the query part for the operator for fragmentation
-		Collection<ILogicalOperator> operatorsWithFragment = Lists
-				.newArrayList(partOfCopiedTarget.getOperators());
+		Collection<ILogicalOperator> operatorsWithFragment = Lists.newArrayList(partOfCopiedTarget.getOperators());
 		operatorsWithFragment.add(fragmentOperator);
 		Collection<ILogicalQueryPart> modifiedQueryParts = Lists.newArrayList();
-		ILogicalQueryPart fragmentPart = new LogicalQueryPart(
-				operatorsWithFragment);
+		ILogicalQueryPart fragmentPart = new LogicalQueryPart(operatorsWithFragment);
 		modifiedQueryParts.add(fragmentPart);
-		Map<ILogicalQueryPart, Collection<ILogicalQueryPart>> copyMap = bundle
-				.getCopyMap();
+		Map<ILogicalQueryPart, Collection<ILogicalQueryPart>> copyMap = bundle.getCopyMap();
 		copyMap.put(partOfOriginalTarget, modifiedQueryParts);
 		bundle.setCopyMap(copyMap);
 
@@ -906,28 +704,15 @@ public abstract class AbstractFragmentationQueryPartModificator implements
 	 *             may be thrown by
 	 *             {@link #createReunionOperator(int, FragmentationInfoBundle)}.
 	 */
-	protected ILogicalOperator insertReunionOperator(
-			ILogicalOperator originalTarget,
-			Optional<ILogicalOperator> copiedSource,
-			Collection<ILogicalOperator> copiedTargets,
-			Optional<LogicalSubscription> subscription,
-			Optional<ILogicalQueryPart> partOfOriginalSource,
-			Optional<ILogicalQueryPart> partOfCopiedSource,
-			FragmentationInfoBundle bundle)
-			throws QueryPartModificationException {
+	protected ILogicalOperator insertReunionOperator(ILogicalOperator originalTarget, Optional<ILogicalOperator> copiedSource, Collection<ILogicalOperator> copiedTargets, Optional<LogicalSubscription> subscription, Optional<ILogicalQueryPart> partOfOriginalSource, Optional<ILogicalQueryPart> partOfCopiedSource, FragmentationInfoBundle bundle) throws QueryPartModificationException {
 
-		Preconditions.checkNotNull(originalTarget,
-				"Original logical target must be not null!");
-		Preconditions.checkNotNull(copiedTargets,
-				"Copied logical targets must be not null!");
-		Preconditions.checkNotNull(bundle,
-				"Fragmentation info bundle must be not null!");
-		Preconditions.checkNotNull(bundle.getCopyMap(),
-				"Copy map must be not null!");
+		Preconditions.checkNotNull(originalTarget, "Original logical target must be not null!");
+		Preconditions.checkNotNull(copiedTargets, "Copied logical targets must be not null!");
+		Preconditions.checkNotNull(bundle, "Fragmentation info bundle must be not null!");
+		Preconditions.checkNotNull(bundle.getCopyMap(), "Copy map must be not null!");
 
 		// Create reunion operator
-		ILogicalOperator reunionOperator = this.createReunionOperator(
-				copiedTargets.size(), bundle);
+		ILogicalOperator reunionOperator = this.createReunionOperator(copiedTargets.size(), bundle);
 
 		int sinkInPort = 0;
 		int sourceOutPort = 0;
@@ -943,45 +728,35 @@ public abstract class AbstractFragmentationQueryPartModificator implements
 		// Subscribe the reunion operator to the copied targets
 		for (int sinkNo = 0; sinkNo < copiedTargets.size(); sinkNo++) {
 
-			ILogicalOperator copiedTarget = ((List<ILogicalOperator>) copiedTargets)
-					.get(sinkNo);
-			copiedTarget.subscribeSink(reunionOperator, sinkNo, sourceOutPort,
-					schema);
+			ILogicalOperator copiedTarget = ((List<ILogicalOperator>) copiedTargets).get(sinkNo);
+			copiedTarget.subscribeSink(reunionOperator, sinkNo, sourceOutPort, schema);
 
 		}
 
 		// Subscribe the copied relative source to the operator for reunion
 		if (copiedSource.isPresent()) {
 
-			reunionOperator.subscribeSink(copiedSource.get(), sinkInPort, 0,
-					schema);
+			reunionOperator.subscribeSink(copiedSource.get(), sinkInPort, 0, schema);
 
 		}
 
-		Map<ILogicalQueryPart, Collection<ILogicalQueryPart>> copyMap = bundle
-				.getCopyMap();
+		Map<ILogicalQueryPart, Collection<ILogicalQueryPart>> copyMap = bundle.getCopyMap();
 
-		if (copiedSource.isPresent() && partOfOriginalSource.isPresent()
-				&& partOfCopiedSource.isPresent()) {
+		if (copiedSource.isPresent() && partOfOriginalSource.isPresent() && partOfCopiedSource.isPresent()) {
 
 			// Create modified query part
-			Collection<ILogicalOperator> operatorsWithReunion = Lists
-					.newArrayList(partOfCopiedSource.get().getOperators());
+			Collection<ILogicalOperator> operatorsWithReunion = Lists.newArrayList(partOfCopiedSource.get().getOperators());
 			operatorsWithReunion.add(reunionOperator);
-			Collection<ILogicalQueryPart> modifiedQueryParts = Lists
-					.newArrayList();
-			ILogicalQueryPart reunionPart = new LogicalQueryPart(
-					operatorsWithReunion);
+			Collection<ILogicalQueryPart> modifiedQueryParts = Lists.newArrayList();
+			ILogicalQueryPart reunionPart = new LogicalQueryPart(operatorsWithReunion);
 			modifiedQueryParts.add(reunionPart);
 			copyMap.put(partOfOriginalSource.get(), modifiedQueryParts);
 
 		} else {
 
 			// Create the query part for the operator for reunion
-			ILogicalQueryPart reunionPart = new LogicalQueryPart(
-					reunionOperator);
-			Collection<ILogicalQueryPart> copiesOfReunionPart = Lists
-					.newArrayList(reunionPart);
+			ILogicalQueryPart reunionPart = new LogicalQueryPart(reunionOperator);
+			Collection<ILogicalQueryPart> copiesOfReunionPart = Lists.newArrayList(reunionPart);
 			copyMap.put(reunionPart, copiesOfReunionPart);
 
 		}
@@ -998,8 +773,7 @@ public abstract class AbstractFragmentationQueryPartModificator implements
 	 *            The parameters for fragmentation.
 	 * @return A new instance of {@link AbstractFragmentationParameterHelper}.
 	 */
-	protected abstract AbstractFragmentationParameterHelper createFragmentationHelper(
-			List<String> fragmentationParameters);
+	protected abstract AbstractFragmentationParameterHelper createFragmentationHelper(List<String> fragmentationParameters);
 
 	/**
 	 * Creates the information bundle for the fragmentation.
@@ -1008,8 +782,7 @@ public abstract class AbstractFragmentationQueryPartModificator implements
 	 *            The {@link AbstractFragmentationParameterHelper} instance.
 	 * @return A new instance of {@link FragmentationInfoBundle}.
 	 */
-	protected abstract FragmentationInfoBundle createFragmentationInfoBundle(
-			AbstractFragmentationParameterHelper helper);
+	protected abstract FragmentationInfoBundle createFragmentationInfoBundle(AbstractFragmentationParameterHelper helper);
 
 	/**
 	 * Special handling for a query part (e.g., the usage of partial
@@ -1040,18 +813,8 @@ public abstract class AbstractFragmentationQueryPartModificator implements
 	 *             may be thrown by
 	 *             {@link #createReunionOperator(int, FragmentationInfoBundle)}.
 	 */
-	protected abstract void processSpecialHandling(
-			ILogicalOperator originalTarget,
-			Collection<ILogicalOperator> copiedSources,
-			Collection<ILogicalOperator> copiedTargets,
-			Optional<LogicalSubscription> subscription,
-			Optional<ILogicalQueryPart> partOfOriginalSource,
-			Collection<ILogicalQueryPart> partsOfCopiedSource,
-			ILogicalQueryPart partOfOriginalTarget,
-			Collection<ILogicalQueryPart> partsOfCopiedTargets,
-			AbstractFragmentationParameterHelper helper,
-			FragmentationInfoBundle bundle)
-			throws QueryPartModificationException;
+	protected abstract void processSpecialHandling(ILogicalOperator originalTarget, Collection<ILogicalOperator> copiedSources, Collection<ILogicalOperator> copiedTargets, Optional<LogicalSubscription> subscription, Optional<ILogicalQueryPart> partOfOriginalSource, Collection<ILogicalQueryPart> partsOfCopiedSource, ILogicalQueryPart partOfOriginalTarget,
+			Collection<ILogicalQueryPart> partsOfCopiedTargets, AbstractFragmentationParameterHelper helper, FragmentationInfoBundle bundle) throws QueryPartModificationException;
 
 	/**
 	 * Creates a new fragment operator.
@@ -1064,9 +827,7 @@ public abstract class AbstractFragmentationQueryPartModificator implements
 	 * @throws QueryPartModificationException
 	 *             if any error occurs.
 	 */
-	protected abstract ILogicalOperator createFragmentOperator(
-			int numFragments, FragmentationInfoBundle bundle)
-			throws QueryPartModificationException;
+	protected abstract ILogicalOperator createFragmentOperator(int numFragments, FragmentationInfoBundle bundle) throws QueryPartModificationException;
 
 	/**
 	 * Creates a new reunion operator.
@@ -1079,66 +840,47 @@ public abstract class AbstractFragmentationQueryPartModificator implements
 	 * @throws QueryPartModificationException
 	 *             if any error occurs.
 	 */
-	protected abstract ILogicalOperator createReunionOperator(int numFragments,
-			FragmentationInfoBundle bundle)
-			throws QueryPartModificationException;
+	protected abstract ILogicalOperator createReunionOperator(int numFragments, FragmentationInfoBundle bundle) throws QueryPartModificationException;
 
 	@Override
-	public Collection<ILogicalQueryPart> modify(
-			Collection<ILogicalQueryPart> queryParts, ILogicalQuery query,
-			QueryBuildConfiguration config, List<String> modificatorParameters)
-			throws QueryPartModificationException {
+	public Collection<ILogicalQueryPart> modify(Collection<ILogicalQueryPart> queryParts, ILogicalQuery query, QueryBuildConfiguration config, List<String> modificatorParameters) throws QueryPartModificationException {
 
 		// The helper instance
-		AbstractFragmentationParameterHelper helper = this
-				.createFragmentationHelper(modificatorParameters);
+		AbstractFragmentationParameterHelper helper = this.createFragmentationHelper(modificatorParameters);
 
 		// The bundle of informations for the fragmentation
-		FragmentationInfoBundle bundle = this
-				.createFragmentationInfoBundle(helper);
+		FragmentationInfoBundle bundle = this.createFragmentationInfoBundle(helper);
 
 		// Preconditions
 		if (queryParts == null || queryParts.isEmpty()) {
 
-			AbstractFragmentationQueryPartModificator.LOG
-					.warn("No query parts given for fragmentation");
+			AbstractFragmentationQueryPartModificator.LOG.warn("No query parts given for fragmentation");
 			return queryParts;
 
 		}
 
 		// Preparation based on the query parts and parameters
 		this.prepare(queryParts, helper, bundle);
-		AbstractFragmentationQueryPartModificator.LOG.debug(
-				"State of fragmentation after preparation:\n{}", bundle);
+		AbstractFragmentationQueryPartModificator.LOG.debug("State of fragmentation after preparation:\n{}", bundle);
 
 		// 1. Make loose working copies of the query parts
 		AbstractFragmentationQueryPartModificator.makeCopies(bundle);
-		AbstractFragmentationQueryPartModificator.LOG.debug(
-				"State of fragmentation after making copies:\n{}", bundle);
+		AbstractFragmentationQueryPartModificator.LOG.debug("State of fragmentation after making copies:\n{}", bundle);
 
 		// Process each query part
 		// Need of an array to iterate over due to possible changes of the copy
 		// map
-		for (ILogicalQueryPart part : bundle
-				.getCopyMap()
-				.keySet()
-				.toArray(
-						new ILogicalQueryPart[bundle.getCopyMap().keySet()
-								.size()])) {
+		for (ILogicalQueryPart part : bundle.getCopyMap().keySet().toArray(new ILogicalQueryPart[bundle.getCopyMap().keySet().size()])) {
 
 			this.modify(part, helper, bundle);
-			AbstractFragmentationQueryPartModificator.LOG.debug(
-					"State of fragmentation after processing {}:\n{}", part,
-					bundle);
+			AbstractFragmentationQueryPartModificator.LOG.debug("State of fragmentation after processing {}:\n{}", part, bundle);
 
 		}
 
 		// Create the return value and avoid parts
-		Collection<ILogicalQueryPart> resultingParts = AbstractFragmentationQueryPartModificator
-				.setQueryPartsToAvoid(bundle);
+		Collection<ILogicalQueryPart> resultingParts = AbstractFragmentationQueryPartModificator.setQueryPartsToAvoid(bundle);
 		LogicalQueryHelper.initializeOperators(resultingParts);
-		AbstractFragmentationQueryPartModificator.LOG.debug(
-				"Resulting query parts: {}", resultingParts);
+		AbstractFragmentationQueryPartModificator.LOG.debug("Resulting query parts: {}", resultingParts);
 		return resultingParts;
 
 	}

@@ -33,14 +33,12 @@ public class DDCFileHandler {
 	/**
 	 * The logger for this class.
 	 */
-	private static final Logger LOG = LoggerFactory
-			.getLogger(DDCFileHandler.class);
+	private static final Logger LOG = LoggerFactory.getLogger(DDCFileHandler.class);
 
 	/**
 	 * The name of the DDC file.
 	 */
-	public static final String DDC_FILE_NAME = PeerConfiguration.ODYSSEUS_HOME_DIR
-			+ "datacontainer.ddc";
+	public static final String DDC_FILE_NAME = PeerConfiguration.ODYSSEUS_HOME_DIR + "datacontainer.ddc";
 
 	/**
 	 * The DDC file.
@@ -84,8 +82,7 @@ public class DDCFileHandler {
 
 		Preconditions.checkNotNull(ddc, "The DDC to bind must be not null!");
 		DDCFileHandler.ddc = ddc;
-		DDCFileHandler.LOG.debug("Bound {} as a DDC", ddc.getClass()
-				.getSimpleName());
+		DDCFileHandler.LOG.debug("Bound {} as a DDC", ddc.getClass().getSimpleName());
 
 		try {
 
@@ -123,8 +120,7 @@ public class DDCFileHandler {
 			}
 
 			DDCFileHandler.ddc = null;
-			DDCFileHandler.LOG.debug("Unbound {} as a DDC", ddc.getClass()
-					.getSimpleName());
+			DDCFileHandler.LOG.debug("Unbound {} as a DDC", ddc.getClass().getSimpleName());
 
 		}
 
@@ -133,8 +129,7 @@ public class DDCFileHandler {
 	/**
 	 * List of all bound DDC listeners.
 	 */
-	private static Collection<IDDCFileHandlerListener> cListeners = Lists
-			.newArrayList();
+	private static Collection<IDDCFileHandlerListener> cListeners = Lists.newArrayList();
 
 	/**
 	 * Binds a listener. <br />
@@ -146,10 +141,8 @@ public class DDCFileHandler {
 	 */
 	public static void bindListener(IDDCFileHandlerListener listener) {
 
-		Preconditions.checkNotNull(listener,
-				"The DDC listener to bind must be not null!");
-		DDCFileHandler.LOG.debug("Bound {} as a listener", listener.getClass()
-				.getSimpleName());
+		Preconditions.checkNotNull(listener, "The DDC listener to bind must be not null!");
+		DDCFileHandler.LOG.debug("Bound {} as a listener", listener.getClass().getSimpleName());
 		DDCFileHandler.cListeners.add(listener);
 
 		if (DDCFileHandler.loaded) {
@@ -170,11 +163,9 @@ public class DDCFileHandler {
 	 */
 	public static void unbindListener(IDDCFileHandlerListener listener) {
 
-		Preconditions.checkNotNull(listener,
-				"The DDC listener to unbind must be not null!");
+		Preconditions.checkNotNull(listener, "The DDC listener to unbind must be not null!");
 		DDCFileHandler.cListeners.remove(listener);
-		DDCFileHandler.LOG.debug("Unbound {} as a listener", listener
-				.getClass().getSimpleName());
+		DDCFileHandler.LOG.debug("Unbound {} as a listener", listener.getClass().getSimpleName());
 
 	}
 
@@ -218,8 +209,7 @@ public class DDCFileHandler {
 
 		if (!DDCFileHandler.fileExists() && !DDCFileHandler.createFile()) {
 
-			DDCFileHandler.LOG.error("Could not create file {}",
-					DDCFileHandler.DDC_FILE_NAME);
+			DDCFileHandler.LOG.error("Could not create file {}", DDCFileHandler.DDC_FILE_NAME);
 			return;
 
 		}
@@ -240,18 +230,15 @@ public class DDCFileHandler {
 	 */
 	private static void writeIntoDDC(Properties properties) {
 
-		Preconditions.checkNotNull(properties,
-				"The properties must be not null!");
+		Preconditions.checkNotNull(properties, "The properties must be not null!");
 		Preconditions.checkNotNull(DDCFileHandler.ddc, "A DDC must be bound!");
 
 		for (String key : properties.stringPropertyNames()) {
 
 			String[] partialKeys = key.split(DDCFileHandler.KEY_SEPERATOR);
-			IPair<String, Long> valueAndTS = DDCFileHandler
-					.determineValueAndTS(properties.getProperty(key));
+			IPair<String, Long> valueAndTS = DDCFileHandler.determineValueAndTS(properties.getProperty(key));
 
-			DDCFileHandler.ddc.add(new DDCEntry(new DDCKey(partialKeys),
-					valueAndTS.getE1(), valueAndTS.getE2()));
+			DDCFileHandler.ddc.add(new DDCEntry(new DDCKey(partialKeys), valueAndTS.getE1(), valueAndTS.getE2()));
 
 		}
 
@@ -279,14 +266,10 @@ public class DDCFileHandler {
 
 			if (beginIndex >= 0) {
 
-				String ts_string = property.substring(beginIndex
-						+ DDCFileHandler.TS_PREFIX.length(),
-						property.length() - 1);
+				String ts_string = property.substring(beginIndex + DDCFileHandler.TS_PREFIX.length(), property.length() - 1);
 				if (ts_string.matches("\\d+")) {
 
-					value = property
-							.substring(0, property
-									.lastIndexOf(DDCFileHandler.TS_BRACKETS[0]));
+					value = property.substring(0, property.lastIndexOf(DDCFileHandler.TS_BRACKETS[0]));
 
 					try {
 
@@ -294,8 +277,7 @@ public class DDCFileHandler {
 
 					} catch (NumberFormatException e) {
 
-						DDCFileHandler.LOG.error("Can not convert {} to long!",
-								ts_string);
+						DDCFileHandler.LOG.error("Can not convert {} to long!", ts_string);
 
 					}
 
@@ -318,13 +300,11 @@ public class DDCFileHandler {
 	 */
 	private static Properties loadFromFile() throws IOException {
 
-		try (FileInputStream stream = new FileInputStream(
-				DDCFileHandler.DDC_FILE)) {
+		try (FileInputStream stream = new FileInputStream(DDCFileHandler.DDC_FILE)) {
 
 			Properties properties = new Properties();
 			properties.load(stream);
-			DDCFileHandler.LOG.debug("Loaded DDC entries from {}",
-					DDCFileHandler.DDC_FILE_NAME);
+			DDCFileHandler.LOG.debug("Loaded DDC entries from {}", DDCFileHandler.DDC_FILE_NAME);
 			return properties;
 
 		}
@@ -345,8 +325,7 @@ public class DDCFileHandler {
 
 		if (!DDCFileHandler.fileExists() && DDCFileHandler.createFile()) {
 
-			DDCFileHandler.LOG.error("Could not create file {}",
-					DDCFileHandler.DDC_FILE_NAME);
+			DDCFileHandler.LOG.error("Could not create file {}", DDCFileHandler.DDC_FILE_NAME);
 
 		}
 
@@ -365,16 +344,13 @@ public class DDCFileHandler {
 
 		File directory = DDCFileHandler.DDC_FILE.getParentFile();
 
-		if (directory == null
-				|| (directory != null && !directory.mkdirs() && !DDCFileHandler.DDC_FILE
-						.createNewFile())) {
+		if (directory == null || (!directory.mkdirs() && !DDCFileHandler.DDC_FILE.createNewFile())) {
 
 			return false;
 
 		}
 
-		DDCFileHandler.LOG.debug("Created new File {}",
-				DDCFileHandler.DDC_FILE_NAME);
+		DDCFileHandler.LOG.debug("Created new File {}", DDCFileHandler.DDC_FILE_NAME);
 		return true;
 
 	}

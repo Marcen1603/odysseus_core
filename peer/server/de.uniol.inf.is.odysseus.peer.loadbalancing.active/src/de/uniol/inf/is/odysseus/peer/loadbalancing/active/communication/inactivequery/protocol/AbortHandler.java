@@ -29,8 +29,7 @@ import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.inactive
  */
 public class AbortHandler {
 
-	private static final Logger LOG = LoggerFactory
-			.getLogger(AbortHandler.class);
+	private static final Logger LOG = LoggerFactory.getLogger(AbortHandler.class);
 
 	/**
 	 * Message Handler for Abort Messages. If AbortInstruction -> SlavePeer
@@ -40,8 +39,7 @@ public class AbortHandler {
 	 * @param abortMessage
 	 * @param senderPeer
 	 */
-	public static void handleAbort(InactiveQueryAbortMessage abortMessage,
-			PeerID senderPeer) {
+	public static void handleAbort(InactiveQueryAbortMessage abortMessage, PeerID senderPeer) {
 
 		switch (abortMessage.getMsgType()) {
 		case InactiveQueryAbortMessage.ABORT_INSTRUCTION:
@@ -51,6 +49,9 @@ public class AbortHandler {
 		case InactiveQueryAbortMessage.ABORT_RESPONSE:
 			LOG.debug("Received ABORT_RESPONSE");
 			stopSendingAbort(abortMessage, senderPeer);
+			break;
+
+		default:
 			break;
 		}
 
@@ -63,20 +64,16 @@ public class AbortHandler {
 	 * @param abortMessage
 	 * @param senderPeer
 	 */
-	private static void undoLoadBalancing(InactiveQueryAbortMessage abortMessage,
-			PeerID senderPeer) {
+	private static void undoLoadBalancing(InactiveQueryAbortMessage abortMessage, PeerID senderPeer) {
 
 		int lbProcessId = abortMessage.getLoadBalancingProcessId();
-		InactiveQuerySlaveStatus status = (InactiveQuerySlaveStatus) LoadBalancingStatusCache
-				.getInstance().getSlaveStatus(senderPeer, lbProcessId);
+		InactiveQuerySlaveStatus status = (InactiveQuerySlaveStatus) LoadBalancingStatusCache.getInstance().getSlaveStatus(senderPeer, lbProcessId);
 
 		// Only send Ack. if status no longer active.
 		if (status == null) {
 			LOG.debug("Status already null. Sending ABORT_RESPONSE on improvised Message Dispatcher.");
-			IPeerCommunicator peerCommunicator = InactiveQueryCommunicatorImpl
-					.getPeerCommunicator();
-			InactiveQueryMessageDispatcher improvisedDispatcher = new InactiveQueryMessageDispatcher(
-					peerCommunicator, abortMessage.getLoadBalancingProcessId());
+			IPeerCommunicator peerCommunicator = InactiveQueryCommunicatorImpl.getPeerCommunicator();
+			InactiveQueryMessageDispatcher improvisedDispatcher = new InactiveQueryMessageDispatcher(peerCommunicator, abortMessage.getLoadBalancingProcessId());
 			improvisedDispatcher.sendAbortResponse(senderPeer);
 			return;
 		}
@@ -92,40 +89,40 @@ public class AbortHandler {
 			switch (status.getInvolvementType()) {
 
 			case PEER_WITH_SENDER_OR_RECEIVER:
-					for (String pipeID : status.getPipeInformationMapping().keySet()) {
-						try {
-							
-							InactiveQueryHelper.setNewPeerId(pipeID, status.getPipeInformationMapping().get(pipeID).getOldPeer(), status.getPipeInformationMapping().get(pipeID).isSender());
-						} catch (LoadBalancingException e) {
-							//do nothing as there is nothing we can do
-						}
+				for (String pipeID : status.getPipeInformationMapping().keySet()) {
+					try {
+
+						InactiveQueryHelper.setNewPeerId(pipeID, status.getPipeInformationMapping().get(pipeID).getOldPeer(), status.getPipeInformationMapping().get(pipeID).isSender());
+					} catch (LoadBalancingException e) {
+						// do nothing as there is nothing we can do
 					}
-					//Clear Information
-					status.setPipeInformationMapping(new ConcurrentHashMap<String,JxtaOperatorInformation>());
-				//No break.
+				}
+				// Clear Information
+				status.setPipeInformationMapping(new ConcurrentHashMap<String, JxtaOperatorInformation>());
+				// No break.
 				//$FALL-THROUGH$
 			case VOLUNTEERING_PEER:
-				Collection<Integer> queriesToRemove = status
-				.getInstalledQueries();
+				Collection<Integer> queriesToRemove = status.getInstalledQueries();
 				if (queriesToRemove != null) {
 					IQueryPartController controller = OsgiServiceManager.getQueryPartController();
-					//If new Peer registered itself as new Master->Undo.
-					if(status.isRegisteredAsMaster()) {
+					// If new Peer registered itself as new Master->Undo.
+					if (status.isRegisteredAsMaster()) {
 						controller.unregisterAsMaster(status.sharedQueryID());
 					}
-					
-					//If new Peer registered itself as new Slave->Undo.
-					if(status.isRegisteredAsSlave()) {
+
+					// If new Peer registered itself as new Slave->Undo.
+					if (status.isRegisteredAsSlave()) {
 						OsgiServiceManager.getQueryManager().sendUnregisterAsSlave(status.getSharedQueryMaster(), status.sharedQueryID());
 					}
-					
+
 					for (int query : queriesToRemove) {
 						LOG.error("Removing Query with ID " + query);
 						LoadBalancingHelper.deleteQuery(query);
 					}
 				}
 				break;
-
+			default:
+				break;
 			}
 		}
 	}
@@ -137,12 +134,10 @@ public class AbortHandler {
 	 */
 	private static void finishAbort(int lbProcessId) {
 
-		InactiveQueryMasterStatus status = (InactiveQueryMasterStatus) LoadBalancingStatusCache
-				.getInstance().getStatusForLocalProcess(lbProcessId);
+		InactiveQueryMasterStatus status = (InactiveQueryMasterStatus) LoadBalancingStatusCache.getInstance().getStatusForLocalProcess(lbProcessId);
 		if (status != null) {
 			LOG.info("LoadBalancing failed.");
-			LoadBalancingStatusCache.getInstance().deleteLocalStatus(
-					status.getProcessId());
+			LoadBalancingStatusCache.getInstance().deleteLocalStatus(status.getProcessId());
 			InactiveQueryCommunicatorImpl.getInstance().notifyFinished(false);
 		}
 	}
@@ -155,18 +150,14 @@ public class AbortHandler {
 	 * @param senderPeer
 	 *            Peer that sent Abort message.
 	 */
-	public static void stopSendingAbort(InactiveQueryAbortMessage abortMessage,
-			PeerID senderPeer) {
-		InactiveQueryMasterStatus status = (InactiveQueryMasterStatus) LoadBalancingStatusCache
-				.getInstance().getStatusForLocalProcess(
-						abortMessage.getLoadBalancingProcessId());
+	public static void stopSendingAbort(InactiveQueryAbortMessage abortMessage, PeerID senderPeer) {
+		InactiveQueryMasterStatus status = (InactiveQueryMasterStatus) LoadBalancingStatusCache.getInstance().getStatusForLocalProcess(abortMessage.getLoadBalancingProcessId());
 
 		LOG.debug("Stop Sending Abort called.");
 
 		if (status != null) {
 			LOG.debug("Stop Sending Abort to " + senderPeer);
-			InactiveQueryMessageDispatcher dispatcher = status
-					.getMessageDispatcher();
+			InactiveQueryMessageDispatcher dispatcher = status.getMessageDispatcher();
 			dispatcher.stopRunningJob(senderPeer.toString());
 
 			if (dispatcher.getNumberOfRunningJobs() == 0) {

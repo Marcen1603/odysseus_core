@@ -56,8 +56,7 @@ public class InactiveQueryResponseMessage implements IMessage {
 	 *            LoadBalancing Process Id
 	 * @return Message with msgType ACK_LOADBALANCING
 	 */
-	public static InactiveQueryResponseMessage createAckLoadbalancingMessage(
-			int loadBalancingProcessId) {
+	public static InactiveQueryResponseMessage createAckLoadbalancingMessage(int loadBalancingProcessId) {
 		InactiveQueryResponseMessage message = new InactiveQueryResponseMessage();
 		message.setLoadBalancingProcessId(loadBalancingProcessId);
 		message.setMsgType(ACK_LOADBALANCING);
@@ -71,8 +70,7 @@ public class InactiveQueryResponseMessage implements IMessage {
 	 *            load balancing process id
 	 * @return Message with SUCCESS_INSTALL_QUERY as msgType
 	 */
-	public static InactiveQueryResponseMessage createInstallSuccessMessage(
-			int loadBalancingProcessId) {
+	public static InactiveQueryResponseMessage createInstallSuccessMessage(int loadBalancingProcessId) {
 		InactiveQueryResponseMessage message = new InactiveQueryResponseMessage();
 		message.setLoadBalancingProcessId(loadBalancingProcessId);
 		message.setMsgType(SUCCESS_INSTALL_QUERY);
@@ -88,15 +86,13 @@ public class InactiveQueryResponseMessage implements IMessage {
 	 *            Pipe ID
 	 * @return Message with msgType SUCCESS_DUPLICATE_SENDER
 	 */
-	public static InactiveQueryResponseMessage createDuplicateSenderSuccessMessage(
-			int loadBalancingProcessId, String pipeID) {
+	public static InactiveQueryResponseMessage createDuplicateSenderSuccessMessage(int loadBalancingProcessId, String pipeID) {
 		InactiveQueryResponseMessage message = new InactiveQueryResponseMessage();
 		message.setLoadBalancingProcessId(loadBalancingProcessId);
 		message.setPipeID(pipeID);
 		message.setMsgType(SUCCESS_DUPLICATE_SENDER);
 		return message;
 	}
-	
 
 	/***
 	 * Create Duplicate Success Message for Receivers
@@ -107,15 +103,13 @@ public class InactiveQueryResponseMessage implements IMessage {
 	 *            Pipe ID
 	 * @return Message with msgType SUCCESS_DUPLICATE_RECEIVER
 	 */
-	public static InactiveQueryResponseMessage createDuplicateReceiverSuccessMessage(
-			int loadBalancingProcessId, String pipeID) {
+	public static InactiveQueryResponseMessage createDuplicateReceiverSuccessMessage(int loadBalancingProcessId, String pipeID) {
 		InactiveQueryResponseMessage message = new InactiveQueryResponseMessage();
 		message.setLoadBalancingProcessId(loadBalancingProcessId);
 		message.setPipeID(pipeID);
 		message.setMsgType(SUCCESS_DUPLICATE_RECEIVER);
 		return message;
 	}
-
 
 	/**
 	 * Create DuplicteFailure Message
@@ -124,8 +118,7 @@ public class InactiveQueryResponseMessage implements IMessage {
 	 *            loadBalancing Process Id
 	 * @return Message with msgType FAILURE_DUPLICATE_RECEIVER
 	 */
-	public static InactiveQueryResponseMessage createDuplicateFailureMessage(
-			int loadBalancingProcessId) {
+	public static InactiveQueryResponseMessage createDuplicateFailureMessage(int loadBalancingProcessId) {
 		InactiveQueryResponseMessage message = new InactiveQueryResponseMessage();
 		message.setLoadBalancingProcessId(loadBalancingProcessId);
 		message.setMsgType(FAILURE_DUPLICATE_RECEIVER);
@@ -139,8 +132,7 @@ public class InactiveQueryResponseMessage implements IMessage {
 	 *            LoadBalancing Process iD
 	 * @return Message with msgType FAILURE_INSTALL_QUERY
 	 */
-	public static InactiveQueryResponseMessage createInstallFailureMessage(
-			int loadBalancingProcessId) {
+	public static InactiveQueryResponseMessage createInstallFailureMessage(int loadBalancingProcessId) {
 		InactiveQueryResponseMessage message = new InactiveQueryResponseMessage();
 		message.setLoadBalancingProcessId(loadBalancingProcessId);
 		message.setMsgType(FAILURE_INSTALL_QUERY);
@@ -193,11 +185,17 @@ public class InactiveQueryResponseMessage implements IMessage {
 			bb.put(pipeIdAsBytes);
 
 			break;
-
+			
+		default:
+			break;
 		}
 
-		bb.flip();
-		return bb.array();
+		if (bb != null) {
+			bb.flip();
+			return bb.array();
+		}
+
+		return new byte[0];
 	}
 
 	@Override
@@ -218,7 +216,10 @@ public class InactiveQueryResponseMessage implements IMessage {
 			byte[] pipeIdBytes = new byte[pipeIdSize];
 			bb.get(pipeIdBytes);
 			this.pipeID = new String(pipeIdBytes);
-
+			break;
+			
+		default:
+			break;
 		}
 
 	}

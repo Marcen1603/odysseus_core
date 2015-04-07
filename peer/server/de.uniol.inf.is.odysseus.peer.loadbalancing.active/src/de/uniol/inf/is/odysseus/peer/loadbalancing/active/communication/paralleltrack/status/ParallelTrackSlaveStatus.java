@@ -143,6 +143,7 @@ public class ParallelTrackSlaveStatus implements ILoadBalancingSlaveStatus{
 		return involvementType;
 	}
 
+	@Override
 	public int getLbProcessId() {
 		return lbProcessId;
 	}
@@ -168,6 +169,7 @@ public class ParallelTrackSlaveStatus implements ILoadBalancingSlaveStatus{
 	}
 	
 
+	@Override
 	public PeerID getMasterPeer() {
 		return initiatingPeer;
 	}

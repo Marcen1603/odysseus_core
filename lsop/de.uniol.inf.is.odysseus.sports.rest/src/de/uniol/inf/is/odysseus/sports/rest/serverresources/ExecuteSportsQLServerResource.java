@@ -34,63 +34,55 @@ public class ExecuteSportsQLServerResource extends AbstractSessionServerResource
 
 		String address = getRequest().getClientInfo().getAddress();
 
-		if (DistributedQueryHelper.isDistributionPossible() && executeSportsQLRequestDTO.getDistributor() != null
-				&& !executeSportsQLRequestDTO.getDistributor().toLowerCase().equals("no_distribution")) {
+		if (DistributedQueryHelper.isDistributionPossible() && executeSportsQLRequestDTO.getDistributor() != null && !executeSportsQLRequestDTO.getDistributor().toLowerCase().equals("no_distribution")) {
 			String displayName = SportsQLDistributorRegistry.getDisplayName(executeSportsQLRequestDTO.getSportsQL());
 
 			try {
 				String sportsQL = SportsQLDistributorRegistry.addSportsQLDistributorConfig(executeSportsQLRequestDTO.getSportsQL(), executeSportsQLRequestDTO.getDistributor());
 
-				DistributedQueryInfo info = DistributedQueryHelper.executeQuery(displayName, sportsQL, "OdysseusScript", session,executeSportsQLRequestDTO.getTransformationConfig(),executeSportsQLRequestDTO.isAddQuery(), executeSportsQLRequestDTO.getTimeToWait());
+				DistributedQueryInfo info = DistributedQueryHelper.executeQuery(displayName, sportsQL, "OdysseusScript", session, executeSportsQLRequestDTO.getTransformationConfig(), executeSportsQLRequestDTO.isAddQuery(), executeSportsQLRequestDTO.getTimeToWait());
 				if (info == null) {
-					throw new ResourceException(Status.SERVER_ERROR_INTERNAL, "Error while waiting of DistributedQueryInfo of + "+displayName);
+					throw new ResourceException(Status.SERVER_ERROR_INTERNAL, "Error while waiting of DistributedQueryInfo of + " + displayName);
 				}
-				String url = "http://" + info.getTopOperatorPeerIP() + ":" + info.getTopOperatorPeerRestPort() + "/sports/"+ DistributedSportsQLSocketServerResource.PATH;
-				
+				String url = "http://" + info.getTopOperatorPeerIP() + ":" + info.getTopOperatorPeerRestPort() + "/sports/" + DistributedSportsQLSocketServerResource.PATH;
+
 				Client client = new Client(new org.restlet.Context(), Protocol.HTTP);
 				ClientResource res = new ClientResource(url);
 				res.setNext(client);
-				DistributedSportsQLSocketRequestDTO req = new DistributedSportsQLSocketRequestDTO(
-						info.getSharedQueryId(), executeSportsQLRequestDTO.getUsername(),
-						executeSportsQLRequestDTO.getPassword(), address, executeSportsQLRequestDTO.isStartQuery());
+				DistributedSportsQLSocketRequestDTO req = new DistributedSportsQLSocketRequestDTO(info.getSharedQueryId(), executeSportsQLRequestDTO.getUsername(), executeSportsQLRequestDTO.getPassword(), address, executeSportsQLRequestDTO.isStartQuery());
 				DistributedSportsQLSocketResponseDTO resp = res.post(req, DistributedSportsQLSocketResponseDTO.class);
-				return new ExecuteSportsQLResponseDTO(resp.getToken(), resp.getSocketInfo(), resp.getQueryId(),
-						info.getTopOperatorPeerRestPort());
+				return new ExecuteSportsQLResponseDTO(resp.getToken(), resp.getSocketInfo(), resp.getQueryId(), info.getTopOperatorPeerRestPort());
 			} catch (Exception e) {
 				if (!(e instanceof ResourceException)) {
 					e.printStackTrace();
-					throw new ResourceException(Status.SERVER_ERROR_INTERNAL,"Error while executing distributed query+ "+displayName,e);
-				} else {
-					throw e;
+					throw new ResourceException(Status.SERVER_ERROR_INTERNAL, "Error while executing distributed query+ " + displayName, e);
 				}
-			}
-		} else {
-			String displayName = SportsQLDistributorRegistry.getDisplayName(executeSportsQLRequestDTO.getSportsQL());
-
-			try {
-				StringBuilder sportsQL = new StringBuilder();
-				sportsQL.append("#PARSER SportsQL\n");
-				sportsQL.append("#DOREWRITE false\n");
-				sportsQL.append("#ADDQUERY \n");
-				sportsQL.append(executeSportsQLRequestDTO.getSportsQL());
-
-				Collection<Integer> queryIDs = ExecutorServiceBinding.getExecutor().addQuery(sportsQL.toString(),
-						"OdysseusScript", session, Context.empty());
-				int queryId = queryIDs.iterator().next();
-				ExecutorServiceBinding.getExecutor().startQuery(queryId, session);
-				SocketInfo peerSocket = SocketService.getInstance().getConnectionInformation(session, queryId, 0);
-
-				// Save connection information in backup-information for recovery
-				SocketService.getInstance()
-						.informAboutNewClient(queryId, address, peerSocket.getIp(), peerSocket.getPort());
-
-				return new ExecuteSportsQLResponseDTO(session.getToken(), peerSocket, queryIDs.iterator().next(),
-						RestService.getPort());
-			} catch (Exception e) {
-				e.printStackTrace();
-				throw new ResourceException(Status.SERVER_ERROR_INTERNAL,"Error while executing query+ "+displayName,e);
+				throw e;
 			}
 		}
+		String displayName = SportsQLDistributorRegistry.getDisplayName(executeSportsQLRequestDTO.getSportsQL());
+
+		try {
+			StringBuilder sportsQL = new StringBuilder();
+			sportsQL.append("#PARSER SportsQL\n");
+			sportsQL.append("#DOREWRITE false\n");
+			sportsQL.append("#ADDQUERY \n");
+			sportsQL.append(executeSportsQLRequestDTO.getSportsQL());
+
+			Collection<Integer> queryIDs = ExecutorServiceBinding.getExecutor().addQuery(sportsQL.toString(), "OdysseusScript", session, Context.empty());
+			int queryId = queryIDs.iterator().next();
+			ExecutorServiceBinding.getExecutor().startQuery(queryId, session);
+			SocketInfo peerSocket = SocketService.getInstance().getConnectionInformation(session, queryId, 0);
+
+			// Save connection information in backup-information for recovery
+			SocketService.getInstance().informAboutNewClient(queryId, address, peerSocket.getIp(), peerSocket.getPort());
+
+			return new ExecuteSportsQLResponseDTO(session.getToken(), peerSocket, queryIDs.iterator().next(), RestService.getPort());
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new ResourceException(Status.SERVER_ERROR_INTERNAL, "Error while executing query+ " + displayName, e);
+		}
+
 	}
 
 }

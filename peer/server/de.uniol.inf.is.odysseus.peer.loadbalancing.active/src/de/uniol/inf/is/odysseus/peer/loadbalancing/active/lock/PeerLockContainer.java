@@ -103,6 +103,7 @@ public class PeerLockContainer implements IMessageDeliveryFailedListener, IPeerC
 
 	
 	
+	@Override
 	public void update(IMessage message, PeerID peerID) {
 		//At least one Message failed to deliver.
 		if(message instanceof RequestLockMessage) {

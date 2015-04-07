@@ -20,7 +20,6 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.SDFExpressio
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.peer.ddc.MissingDDCEntryException;
 import de.uniol.inf.is.odysseus.relational.base.predicate.RelationalPredicate;
-import de.uniol.inf.is.odysseus.sports.sportsql.parser.SportsQLParseException;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.SportsQLQuery;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.buildhelper.IntermediateSchemaAttributes;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.buildhelper.OperatorBuildHelper;
@@ -106,7 +105,7 @@ public class ShotOnGoalGlobalOutput {
 		
 	@SuppressWarnings({ "rawtypes" })
 	public ILogicalOperator createGlobalOutput(ISession session,SportsQLQuery sportsQL,
-			List<ILogicalOperator> allOperators) throws SportsQLParseException, NumberFormatException, MissingDDCEntryException {
+			List<ILogicalOperator> allOperators) throws NumberFormatException, MissingDDCEntryException {
 
 		// ---------------------
 		// Access to the Stream

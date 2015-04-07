@@ -59,5 +59,4 @@ public class UpstreamConnection {
 		this.port = port;
 		this.schema = schema;
 	}
-
-};
+}

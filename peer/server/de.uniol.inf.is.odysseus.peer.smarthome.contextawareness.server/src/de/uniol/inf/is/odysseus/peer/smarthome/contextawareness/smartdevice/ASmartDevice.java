@@ -89,5 +89,10 @@ public abstract class ASmartDevice implements Serializable, Cloneable { // ISmar
 
 	public abstract String getMergedImportedActivitiesSourceName(String activityName);
 
+	@Override
+	public int hashCode() {
+		return getPeerID().hashCode();
+	}
+
 	
 }

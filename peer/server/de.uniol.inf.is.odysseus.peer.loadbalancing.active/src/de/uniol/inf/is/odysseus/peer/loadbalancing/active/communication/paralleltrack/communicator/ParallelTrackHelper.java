@@ -232,7 +232,7 @@ public class ParallelTrackHelper {
 					physicalOriginal.unsubscribeSink(subscription);
 					synchronizer.subscribeSink(subscription.getTarget(), subscription.getSinkInPort(), subscription.getSourceOutPort(), subscription.getSchema(), true, subscription.getOpenCalls());
 					
-					ISink sink = (ISink)subscription.getTarget();
+					ISink sink = subscription.getTarget();
 					
 					Collection<AbstractPhysicalSubscription> revSubscriptions = sink.getSubscribedToSource();
 					for (AbstractPhysicalSubscription subscr : revSubscriptions) {

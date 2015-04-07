@@ -397,7 +397,7 @@ public class AbstractSportsDDCAccess {
 	 */
 	public static Space getSpace(SpaceType spaceType) throws NumberFormatException, MissingDDCEntryException{
 		int middleThirdLeftBorderX = (int) ((int)((getFieldXMax() + getFieldXMin()) / 3) + getFieldXMin());
-		int middleThirdRightBorderX = (int) ((int)((getFieldXMax() + getFieldXMin()) / 3) - getFieldXMax());;
+		int middleThirdRightBorderX = (int) ((int)((getFieldXMax() + getFieldXMin()) / 3) - getFieldXMax());
 		
 		double fieldLength = Math.abs( getFieldXMax()-getFieldXMin() );
 		

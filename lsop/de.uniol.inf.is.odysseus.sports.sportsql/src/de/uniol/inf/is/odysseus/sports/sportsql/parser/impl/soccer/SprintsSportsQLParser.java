@@ -15,7 +15,6 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.TimeWindowAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.SDFExpressionParameter;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.peer.ddc.MissingDDCEntryException;
-import de.uniol.inf.is.odysseus.sports.sportsql.parser.SportsQLParseException;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.SportsQLQuery;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.buildhelper.IntermediateSchemaAttributes;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.buildhelper.OperatorBuildHelper;
@@ -59,7 +58,7 @@ public class SprintsSportsQLParser  {
 
 	public ILogicalOperator getSprints(ISession session,
 			SportsQLQuery sportsQL, List<ILogicalOperator> allOperators)
-			throws SportsQLParseException, NumberFormatException,
+			throws NumberFormatException,
 			MissingDDCEntryException {
 
 		ILogicalOperator soccerGameStreamAO = OperatorBuildHelper.createGameSource(session);

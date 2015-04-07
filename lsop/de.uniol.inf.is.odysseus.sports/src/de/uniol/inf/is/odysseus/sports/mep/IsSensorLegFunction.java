@@ -115,15 +115,13 @@ public class IsSensorLegFunction extends AbstractFunction<Boolean> {
 		if (type.equals("sid")) {
 			if (legSensorIDList.contains(id)) {
 				return true;
-			} else {
-				return false;
-			}
+			} 
+			return false;
 		} else if (type.equals("entity_id")) {
 			if (legEntityIDList.contains(id)) {
 				return true;
-			} else {
-				return false;
-			}
+			} 
+			return false;
 		}
 
 		return false;

@@ -26,8 +26,7 @@ import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.parallel
  */
 public class AbortHandler {
 
-	private static final Logger LOG = LoggerFactory
-			.getLogger(AbortHandler.class);
+	private static final Logger LOG = LoggerFactory.getLogger(AbortHandler.class);
 
 	/**
 	 * Message Handler for Abort Messages. If AbortInstruction -> SlavePeer
@@ -37,8 +36,7 @@ public class AbortHandler {
 	 * @param abortMessage
 	 * @param senderPeer
 	 */
-	public static void handleAbort(ParallelTrackAbortMessage abortMessage,
-			PeerID senderPeer) {
+	public static void handleAbort(ParallelTrackAbortMessage abortMessage, PeerID senderPeer) {
 
 		switch (abortMessage.getMsgType()) {
 		case ParallelTrackAbortMessage.ABORT_INSTRUCTION:
@@ -48,6 +46,8 @@ public class AbortHandler {
 		case ParallelTrackAbortMessage.ABORT_RESPONSE:
 			LOG.debug("Received ABORT_RESPONSE");
 			stopSendingAbort(abortMessage, senderPeer);
+			break;
+		default:
 			break;
 		}
 
@@ -60,26 +60,21 @@ public class AbortHandler {
 	 * @param abortMessage
 	 * @param senderPeer
 	 */
-	private static void undoLoadBalancing(
-			ParallelTrackAbortMessage abortMessage, PeerID senderPeer) {
+	private static void undoLoadBalancing(ParallelTrackAbortMessage abortMessage, PeerID senderPeer) {
 
 		int lbProcessId = abortMessage.getLoadBalancingProcessId();
-		ParallelTrackSlaveStatus status = (ParallelTrackSlaveStatus) LoadBalancingStatusCache
-				.getInstance().getSlaveStatus(senderPeer, lbProcessId);
+		ParallelTrackSlaveStatus status = (ParallelTrackSlaveStatus) LoadBalancingStatusCache.getInstance().getSlaveStatus(senderPeer, lbProcessId);
 
 		// Only send Ack. if status no longer active.
 		if (status == null) {
 			LOG.debug("Status already null. Sending ABORT_RESPONSE on improvised Message Dispatcher.");
-			IPeerCommunicator peerCommunicator = ParallelTrackCommunicatorImpl
-					.getPeerCommunicator();
-			ParallelTrackMessageDispatcher improvisedDispatcher = new ParallelTrackMessageDispatcher(
-					peerCommunicator, abortMessage.getLoadBalancingProcessId());
+			IPeerCommunicator peerCommunicator = ParallelTrackCommunicatorImpl.getPeerCommunicator();
+			ParallelTrackMessageDispatcher improvisedDispatcher = new ParallelTrackMessageDispatcher(peerCommunicator, abortMessage.getLoadBalancingProcessId());
 			improvisedDispatcher.sendAbortResponse(senderPeer);
 			return;
 		}
 
-		ParallelTrackMessageDispatcher dispatcher = status
-				.getMessageDispatcher();
+		ParallelTrackMessageDispatcher dispatcher = status.getMessageDispatcher();
 
 		// Ignore Message if already aborting.
 		if (!(status.getPhase() == ParallelTrackSlaveStatus.LB_PHASES.ABORT)) {
@@ -98,23 +93,21 @@ public class AbortHandler {
 						ParallelTrackHelper.removeDuplicateJxtaReceiver(pipe);
 					}
 				}
-				
+
 				if (status.getReplacedSenderPipes() != null) {
 					Collection<String> installedPipes = status.getReplacedSenderPipes().values();
 					for (String pipe : installedPipes) {
 						LOG.error("Removing Sender with Pipe ID " + pipe);
-						ParallelTrackHelper.removeDuplicateJxtaSender(pipe,status);
+						ParallelTrackHelper.removeDuplicateJxtaSender(pipe, status);
 					}
 				}
 				// NO break, since Peer could in theory also be the volunteering
 				// peer
 				//$FALL-THROUGH$
 			case VOLUNTEERING_PEER:
-				Collection<Integer> queriesToRemove = status
-						.getInstalledQueries();
+				Collection<Integer> queriesToRemove = status.getInstalledQueries();
 				if (queriesToRemove != null) {
-					IQueryPartController controller = OsgiServiceManager
-							.getQueryPartController();
+					IQueryPartController controller = OsgiServiceManager.getQueryPartController();
 					// If new Peer registered itself as new Master->Undo.
 					if (status.isRegisteredAsMaster()) {
 						controller.unregisterAsMaster(status.sharedQueryID());
@@ -122,10 +115,7 @@ public class AbortHandler {
 
 					// If new Peer registered itself as new Slave->Undo.
 					if (status.isRegisteredAsSlave()) {
-						OsgiServiceManager.getQueryManager()
-								.sendUnregisterAsSlave(
-										status.getSharedQueryMaster(),
-										status.sharedQueryID());
+						OsgiServiceManager.getQueryManager().sendUnregisterAsSlave(status.getSharedQueryMaster(), status.sharedQueryID());
 					}
 
 					for (int query : queriesToRemove) {
@@ -134,7 +124,8 @@ public class AbortHandler {
 					}
 				}
 				break;
-
+			default:
+				break;
 			}
 		}
 	}
@@ -146,29 +137,23 @@ public class AbortHandler {
 	 */
 	private static void finishAbort(int lbProcessId) {
 
-		ParallelTrackMasterStatus status = (ParallelTrackMasterStatus) LoadBalancingStatusCache
-				.getInstance().getStatusForLocalProcess(lbProcessId);
+		ParallelTrackMasterStatus status = (ParallelTrackMasterStatus) LoadBalancingStatusCache.getInstance().getStatusForLocalProcess(lbProcessId);
 		if (status != null) {
 			LOG.info("LoadBalancing failed.");
 			ParallelTrackCommunicatorImpl.getInstance().notifyFinished(false);
 
-			LoadBalancingStatusCache.getInstance().deleteLocalStatus(
-					status.getProcessId());
+			LoadBalancingStatusCache.getInstance().deleteLocalStatus(status.getProcessId());
 		}
 	}
 
-	public static void stopSendingAbort(ParallelTrackAbortMessage abortMessage,
-			PeerID senderPeer) {
-		ParallelTrackMasterStatus status = (ParallelTrackMasterStatus) LoadBalancingStatusCache
-				.getInstance().getStatusForLocalProcess(
-						abortMessage.getLoadBalancingProcessId());
+	public static void stopSendingAbort(ParallelTrackAbortMessage abortMessage, PeerID senderPeer) {
+		ParallelTrackMasterStatus status = (ParallelTrackMasterStatus) LoadBalancingStatusCache.getInstance().getStatusForLocalProcess(abortMessage.getLoadBalancingProcessId());
 
 		LOG.debug("Stop Sending Abort called.");
 
 		if (status != null) {
 			LOG.debug("Stop Sending Abort to " + senderPeer);
-			ParallelTrackMessageDispatcher dispatcher = status
-					.getMessageDispatcher();
+			ParallelTrackMessageDispatcher dispatcher = status.getMessageDispatcher();
 			dispatcher.stopRunningJob(senderPeer.toString());
 
 			if (dispatcher.getNumberOfRunningJobs() == 0) {

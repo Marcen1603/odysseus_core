@@ -90,6 +90,10 @@ public class LBQueryManager implements IPeerCommunicatorListener, ILoadBalancing
 				}
 				
 				break;
+				
+			default:
+				LOG.error("Unknown QueryManagementMessage-Type: " + msg);
+				break;
 		}
 		
 	}
@@ -107,7 +111,7 @@ public class LBQueryManager implements IPeerCommunicatorListener, ILoadBalancing
 		}
 	}
 	
-	
+	@Override
 	public void sendRegisterAsSlave(PeerID masterPeer, ID sharedQueryID) {
 		PeerID localPeerID = OsgiServiceManager.getP2pNetworkManager().getLocalPeerID();
 		QueryManagementMessage message = QueryManagementMessage.createRegisterSlaveMsg(sharedQueryID.toString(), localPeerID.toString());
@@ -118,6 +122,7 @@ public class LBQueryManager implements IPeerCommunicatorListener, ILoadBalancing
 		}
 	}
 	
+	@Override
 	public void sendUnregisterAsSlave(PeerID masterPeer, ID sharedQueryID) {
 		PeerID localPeerID = OsgiServiceManager.getP2pNetworkManager().getLocalPeerID();
 		QueryManagementMessage message = QueryManagementMessage.createUnregisterSlaveMsg(sharedQueryID.toString(), localPeerID.toString());
@@ -128,6 +133,7 @@ public class LBQueryManager implements IPeerCommunicatorListener, ILoadBalancing
 		}
 	}
 	
+	@Override
 	public void sendChangeMaster(PeerID slavePeer, ID sharedQueryID) {
 		PeerID localPeerID = OsgiServiceManager.getP2pNetworkManager().getLocalPeerID();
 		QueryManagementMessage message = QueryManagementMessage.createUnregisterSlaveMsg(sharedQueryID.toString(), localPeerID.toString());
@@ -138,6 +144,7 @@ public class LBQueryManager implements IPeerCommunicatorListener, ILoadBalancing
 		}
 	}
 	
+	@Override
 	public void sendChangeMasterToAllSlaves(ID sharedQueryID) {
 		IQueryPartController controller = OsgiServiceManager.getQueryPartController();
 		Collection<PeerID> slavePeers = controller.getOtherPeers(sharedQueryID);

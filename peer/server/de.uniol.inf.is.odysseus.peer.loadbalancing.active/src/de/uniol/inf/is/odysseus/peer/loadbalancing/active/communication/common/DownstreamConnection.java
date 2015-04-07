@@ -59,4 +59,4 @@ public class DownstreamConnection {
 		this.port = port;
 		this.schema = schema;
 	}
-};
+}

@@ -355,6 +355,7 @@ public class MovingStateMasterStatus implements ILoadBalancingMasterStatus {
 	/**
 	 * Gets current LB Process Id
 	 */
+	@Override
 	public int getProcessId() {
 		return processId;
 	}
@@ -365,6 +366,7 @@ public class MovingStateMasterStatus implements ILoadBalancingMasterStatus {
 	 * @param processId
 	 *            Loadbalancing Process Id
 	 */
+	@Override
 	public void setProcessId(int processId) {
 		this.processId = processId;
 	}
@@ -372,6 +374,7 @@ public class MovingStateMasterStatus implements ILoadBalancingMasterStatus {
 	/***
 	 * Gets id of Logical Query
 	 */
+	@Override
 	public int getLogicalQuery() {
 		return logicalQuery;
 	}
@@ -382,6 +385,7 @@ public class MovingStateMasterStatus implements ILoadBalancingMasterStatus {
 	 * @param logicalQuery
 	 *            query Id
 	 */
+	@Override
 	public void setLogicalQuery(int logicalQuery) {
 		this.logicalQuery = logicalQuery;
 	}
@@ -427,6 +431,7 @@ public class MovingStateMasterStatus implements ILoadBalancingMasterStatus {
 	/**
 	 * Gets PeerID of volunteering Peer
 	 */
+	@Override
 	public PeerID getVolunteeringPeer() {
 		return volunteeringPeer;
 	}
@@ -437,6 +442,7 @@ public class MovingStateMasterStatus implements ILoadBalancingMasterStatus {
 	 * @param volunteeringPeer
 	 *            Peer ID of volunteering peer
 	 */
+	@Override
 	public void setVolunteeringPeer(PeerID volunteeringPeer) {
 		this.volunteeringPeer = volunteeringPeer;
 	}

@@ -32,8 +32,7 @@ import de.uniol.inf.is.odysseus.peer.loadbalancing.active.movingstate.status.Mov
  * @author Carsten Cordes
  *
  */
-public class MovingStateCommunicatorImpl implements IPeerCommunicatorListener,
-		ILoadBalancingCommunicator, IMessageDeliveryFailedListener {
+public class MovingStateCommunicatorImpl implements IPeerCommunicatorListener, ILoadBalancingCommunicator, IMessageDeliveryFailedListener {
 
 	/**
 	 * Name of the Communicator
@@ -43,8 +42,7 @@ public class MovingStateCommunicatorImpl implements IPeerCommunicatorListener,
 	/**
 	 * The logger instance for this class.
 	 */
-	private static final Logger LOG = LoggerFactory
-			.getLogger(MovingStateCommunicatorImpl.class);
+	private static final Logger LOG = LoggerFactory.getLogger(MovingStateCommunicatorImpl.class);
 
 	/**
 	 * Peer Communicator
@@ -92,8 +90,7 @@ public class MovingStateCommunicatorImpl implements IPeerCommunicatorListener,
 		peerCommunicator.registerMessageType(MovingStateAbortMessage.class);
 		peerCommunicator.addListener(this, MovingStateAbortMessage.class);
 
-		peerCommunicator
-				.registerMessageType(MovingStateInstructionMessage.class);
+		peerCommunicator.registerMessageType(MovingStateInstructionMessage.class);
 		peerCommunicator.addListener(this, MovingStateInstructionMessage.class);
 
 		peerCommunicator.registerMessageType(MovingStateResponseMessage.class);
@@ -112,19 +109,13 @@ public class MovingStateCommunicatorImpl implements IPeerCommunicatorListener,
 	public void unbindPeerCommunicator(IPeerCommunicator serv) {
 		LOG.debug("Unbound Peer Communicator.");
 		if (peerCommunicator == serv) {
-			peerCommunicator
-					.removeListener(this, MovingStateAbortMessage.class);
-			peerCommunicator.removeListener(this,
-					MovingStateInstructionMessage.class);
-			peerCommunicator.removeListener(this,
-					MovingStateResponseMessage.class);
+			peerCommunicator.removeListener(this, MovingStateAbortMessage.class);
+			peerCommunicator.removeListener(this, MovingStateInstructionMessage.class);
+			peerCommunicator.removeListener(this, MovingStateResponseMessage.class);
 
-			peerCommunicator
-					.unregisterMessageType(MovingStateAbortMessage.class);
-			peerCommunicator
-					.unregisterMessageType(MovingStateInstructionMessage.class);
-			peerCommunicator
-					.unregisterMessageType(MovingStateResponseMessage.class);
+			peerCommunicator.unregisterMessageType(MovingStateAbortMessage.class);
+			peerCommunicator.unregisterMessageType(MovingStateInstructionMessage.class);
+			peerCommunicator.unregisterMessageType(MovingStateResponseMessage.class);
 
 			peerCommunicator = null;
 		}
@@ -152,8 +143,7 @@ public class MovingStateCommunicatorImpl implements IPeerCommunicatorListener,
 	 * @param senderPeer Peer sending the Message
 	 * @param message Received Message.
 	 */
-	public void receivedMessage(IPeerCommunicator communicator,
-			PeerID senderPeer, IMessage message) {
+	public void receivedMessage(IPeerCommunicator communicator, PeerID senderPeer, IMessage message) {
 
 		if (message instanceof MovingStateResponseMessage) {
 			MovingStateResponseMessage response = (MovingStateResponseMessage) message;
@@ -183,20 +173,16 @@ public class MovingStateCommunicatorImpl implements IPeerCommunicatorListener,
 	 */
 	@Override
 	public void initiateLoadBalancing(PeerID otherPeer, int queryId) {
-		ILogicalQueryPart partToCopy = LoadBalancingHelper
-				.getInstalledQueryPart(queryId);
+		ILogicalQueryPart partToCopy = LoadBalancingHelper.getInstalledQueryPart(queryId);
 
 		MovingStateMasterStatus status = new MovingStateMasterStatus();
 		status.setOriginalPart(partToCopy);
 
-		int lbProcessIdentifier = LoadBalancingStatusCache.getInstance()
-				.storeLocalProcess(status);
+		int lbProcessIdentifier = LoadBalancingStatusCache.getInstance().storeLocalProcess(status);
 
-		LOG.debug("New LoadBalancing Status created. LoadBalancing Process Id "
-				+ lbProcessIdentifier);
+		LOG.debug("New LoadBalancing Status created. LoadBalancing Process Id " + lbProcessIdentifier);
 		status.setLogicalQuery(queryId);
-		status.setMessageDispatcher(new MovingStateMessageDispatcher(
-				peerCommunicator, lbProcessIdentifier));
+		status.setMessageDispatcher(new MovingStateMessageDispatcher(peerCommunicator, lbProcessIdentifier));
 		status.getMessageDispatcher().sendInitiate(otherPeer, this);
 	}
 
@@ -234,8 +220,8 @@ public class MovingStateCommunicatorImpl implements IPeerCommunicatorListener,
 		}
 
 	}
-	
 
+	@Override
 	public List<PeerID> getInvolvedPeers(int queryID) {
 		return LoadBalancingHelper.getInvolvedPeers(queryID);
 	}
@@ -271,21 +257,17 @@ public class MovingStateCommunicatorImpl implements IPeerCommunicatorListener,
 	 * @param instruction
 	 *            InstructionMessage that caused timeout.
 	 */
-	private void handleTimeoutOnMasterPeer(
-			MovingStateInstructionMessage instruction) {
-		;
+	private void handleTimeoutOnMasterPeer(MovingStateInstructionMessage instruction) {
 
 		int lbProcessId = instruction.getLoadBalancingProcessId();
-		MovingStateMasterStatus status = (MovingStateMasterStatus) LoadBalancingStatusCache
-				.getInstance().getStatusForLocalProcess(lbProcessId);
+		MovingStateMasterStatus status = (MovingStateMasterStatus) LoadBalancingStatusCache.getInstance().getStatusForLocalProcess(lbProcessId);
 
 		if (status == null) {
 			LOG.debug("Timeout or Failure occured. Current status: null");
 			return;
 		}
 
-		LOG.debug("Timeout or Failure occured. Current status: "
-				+ status.getPhase());
+		LOG.debug("Timeout or Failure occured. Current status: " + status.getPhase());
 
 		switch (instruction.getMsgType()) {
 		case MovingStateInstructionMessage.INITIATE_LOADBALANCING:
@@ -303,7 +285,8 @@ public class MovingStateCommunicatorImpl implements IPeerCommunicatorListener,
 				ResponseHandler.handleError(status, this);
 			}
 			break;
-		
+		default:
+			break;
 		}
 
 	}

@@ -24,7 +24,7 @@ public class StateAnnouncement implements Serializable {
 		this.crcChecksum = crcChecksum;
 
 		// calculate number of packets
-		numberOfMessages = ((int) (arrayLenght / MAX_MESSAGE_SIZE));
+		numberOfMessages = (arrayLenght / MAX_MESSAGE_SIZE);
 		if (arrayLenght % MAX_MESSAGE_SIZE != 0) {
 			// If there is a rest, we need an extra packet for this
 			numberOfMessages++;

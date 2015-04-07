@@ -13,6 +13,7 @@ import de.uniol.inf.is.odysseus.sports.rest.dto.ElementInfo;
 import de.uniol.inf.is.odysseus.sports.rest.dto.FieldInfo;
 import de.uniol.inf.is.odysseus.sports.rest.dto.GoalInfo;
 import de.uniol.inf.is.odysseus.sports.rest.dto.MetadataInfo;
+import de.uniol.inf.is.odysseus.sports.sportsql.parser.ddcaccess.AbstractSportsDDCAccess;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.ddcaccess.SoccerDDCAccess;
 
 /**
@@ -48,12 +49,12 @@ public class MetadataServerResource extends AbstractSessionServerResource {
 		
 		try {
 			
-			for (int sensor_id : SoccerDDCAccess.getSensorIds()) {			
+			for (int sensor_id : AbstractSportsDDCAccess.getSensorIds()) {			
 					
-				int entity_id = SoccerDDCAccess.getEntityId(sensor_id);
-				String entity = SoccerDDCAccess.getEntity(sensor_id);
-				String remark = SoccerDDCAccess.getRemark(sensor_id).orNull();
-				Integer team_id = SoccerDDCAccess.getTeamId(sensor_id).orNull();
+				int entity_id = AbstractSportsDDCAccess.getEntityId(sensor_id);
+				String entity = AbstractSportsDDCAccess.getEntity(sensor_id);
+				String remark = AbstractSportsDDCAccess.getRemark(sensor_id).orNull();
+				Integer team_id = AbstractSportsDDCAccess.getTeamId(sensor_id).orNull();
 							
 				elements.add(new ElementInfo(sensor_id, entity_id, entity, remark, team_id));
 									
@@ -108,10 +109,10 @@ public class MetadataServerResource extends AbstractSessionServerResource {
 		FieldInfo field = null;
 		
 		try {
-			double xmin = SoccerDDCAccess.getFieldXMin();
-			double xmax = SoccerDDCAccess.getFieldXMax();
-			double ymin = SoccerDDCAccess.getFieldYMin();
-			double ymax = SoccerDDCAccess.getFieldYMax();
+			double xmin = AbstractSportsDDCAccess.getFieldXMin();
+			double xmax = AbstractSportsDDCAccess.getFieldXMax();
+			double ymin = AbstractSportsDDCAccess.getFieldYMin();
+			double ymax = AbstractSportsDDCAccess.getFieldYMax();
 		
 			field = new FieldInfo(xmin, xmax, ymin, ymax);
 			

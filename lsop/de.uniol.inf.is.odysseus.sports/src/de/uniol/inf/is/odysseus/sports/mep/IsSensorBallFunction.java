@@ -121,17 +121,15 @@ public class IsSensorBallFunction extends AbstractFunction<Boolean> {
 		if (type.equals("sid")) {
 			if (ballSensorIDList.contains(id)) {
 				return true;
-			} else {
-				return false;
-			}
+			} 
+			return false;
 		}
 
 		if (type.equals("entity_id")) {
 			if (ballEntityIDList.contains(id)) {
 				return true;
-			} else {
-				return false;
-			}
+			} 
+			return false;
 		}
 
 		return false;

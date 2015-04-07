@@ -30,8 +30,7 @@ import de.uniol.inf.is.odysseus.peer.loadbalancing.active.movingstate.status.Mov
  */
 public class AbortHandler {
 
-	private static final Logger LOG = LoggerFactory
-			.getLogger(AbortHandler.class);
+	private static final Logger LOG = LoggerFactory.getLogger(AbortHandler.class);
 
 	/**
 	 * Message Handler for Abort Messages. If AbortInstruction -> SlavePeer
@@ -41,8 +40,7 @@ public class AbortHandler {
 	 * @param abortMessage
 	 * @param senderPeer
 	 */
-	public static void handleAbort(MovingStateAbortMessage abortMessage,
-			PeerID senderPeer) {
+	public static void handleAbort(MovingStateAbortMessage abortMessage, PeerID senderPeer) {
 
 		switch (abortMessage.getMsgType()) {
 		case MovingStateAbortMessage.ABORT_INSTRUCTION:
@@ -52,6 +50,8 @@ public class AbortHandler {
 		case MovingStateAbortMessage.ABORT_RESPONSE:
 			LOG.debug("Received ABORT_RESPONSE");
 			stopSendingAbort(abortMessage, senderPeer);
+			break;
+		default:
 			break;
 		}
 
@@ -65,20 +65,16 @@ public class AbortHandler {
 	 * @param senderPeer
 	 */
 	@SuppressWarnings("rawtypes")
-	private static void undoLoadBalancing(MovingStateAbortMessage abortMessage,
-			PeerID senderPeer) {
+	private static void undoLoadBalancing(MovingStateAbortMessage abortMessage, PeerID senderPeer) {
 
 		int lbProcessId = abortMessage.getLoadBalancingProcessId();
-		MovingStateSlaveStatus status = (MovingStateSlaveStatus) LoadBalancingStatusCache
-				.getInstance().getSlaveStatus(senderPeer, lbProcessId);
+		MovingStateSlaveStatus status = (MovingStateSlaveStatus) LoadBalancingStatusCache.getInstance().getSlaveStatus(senderPeer, lbProcessId);
 
 		// Only send Ack. if status no longer active.
 		if (status == null) {
 			LOG.debug("Status already null. Sending ABORT_RESPONSE on improvised Message Dispatcher.");
-			IPeerCommunicator peerCommunicator = MovingStateCommunicatorImpl
-					.getPeerCommunicator();
-			MovingStateMessageDispatcher improvisedDispatcher = new MovingStateMessageDispatcher(
-					peerCommunicator, abortMessage.getLoadBalancingProcessId());
+			IPeerCommunicator peerCommunicator = MovingStateCommunicatorImpl.getPeerCommunicator();
+			MovingStateMessageDispatcher improvisedDispatcher = new MovingStateMessageDispatcher(peerCommunicator, abortMessage.getLoadBalancingProcessId());
 			improvisedDispatcher.sendAbortResponse(senderPeer);
 			return;
 		}
@@ -95,35 +91,24 @@ public class AbortHandler {
 
 			case PEER_WITH_SENDER_OR_RECEIVER:
 				boolean isSender = false;
-				if (status.getBufferedPipes() != null
-						&& status.getBufferedPipes().size() > 0) {
+				if (status.getBufferedPipes() != null && status.getBufferedPipes().size() > 0) {
 					isSender = true;
 				}
 
 				if (status.getPipeOldPeerMapping() != null) {
-					for (IPhysicalOperator replaced : status
-							.getReplacedOperators()) {
+					for (IPhysicalOperator replaced : status.getReplacedOperators()) {
 						if (replaced instanceof JxtaSenderPO) {
 							JxtaSenderPO copy = (JxtaSenderPO) replaced;
-							JxtaSenderPO original = (JxtaSenderPO) status
-									.getOriginalOperator(copy);
+							JxtaSenderPO original = (JxtaSenderPO) status.getOriginalOperator(copy);
 							try {
 								MovingStateHelper.replaceSender(copy, original);
 							} catch (LoadBalancingException e) {
-								LOG.error("An error happened during Rollback:",
-										e);
+								LOG.error("An error happened during Rollback:", e);
 							}
 						} else {
 							JxtaReceiverPO copy = (JxtaReceiverPO) replaced;
-							JxtaReceiverPO original = (JxtaReceiverPO) status
-									.getOriginalOperator(copy);
-							try {
-								MovingStateHelper.replaceReceiver(copy,
-										original);
-							} catch (LoadBalancingException e) {
-								LOG.error("An error happened during Rollback:",
-										e);
-							}
+							JxtaReceiverPO original = (JxtaReceiverPO) status.getOriginalOperator(copy);
+							MovingStateHelper.replaceReceiver(copy, original);
 						}
 					}
 				}
@@ -139,11 +124,9 @@ public class AbortHandler {
 				// No break.
 				//$FALL-THROUGH$
 			case VOLUNTEERING_PEER:
-				Collection<Integer> queriesToRemove = status
-						.getInstalledQueries();
+				Collection<Integer> queriesToRemove = status.getInstalledQueries();
 				if (queriesToRemove != null) {
-					IQueryPartController controller = OsgiServiceManager
-							.getQueryPartController();
+					IQueryPartController controller = OsgiServiceManager.getQueryPartController();
 					// If new Peer registered itself as new Master->Undo.
 					if (status.isRegisteredAsMaster()) {
 						controller.unregisterAsMaster(status.sharedQueryID());
@@ -151,10 +134,7 @@ public class AbortHandler {
 
 					// If new Peer registered itself as new Slave->Undo.
 					if (status.isRegisteredAsSlave()) {
-						OsgiServiceManager.getQueryManager()
-								.sendUnregisterAsSlave(
-										status.getSharedQueryMaster(),
-										status.sharedQueryID());
+						OsgiServiceManager.getQueryManager().sendUnregisterAsSlave(status.getSharedQueryMaster(), status.sharedQueryID());
 					}
 
 					for (int query : queriesToRemove) {
@@ -164,6 +144,8 @@ public class AbortHandler {
 				}
 				break;
 
+			default:
+				break;
 			}
 		}
 	}
@@ -178,12 +160,10 @@ public class AbortHandler {
 	 */
 	private static void finishAbort(int lbProcessId) {
 
-		MovingStateMasterStatus status = (MovingStateMasterStatus) LoadBalancingStatusCache
-				.getInstance().getStatusForLocalProcess(lbProcessId);
+		MovingStateMasterStatus status = (MovingStateMasterStatus) LoadBalancingStatusCache.getInstance().getStatusForLocalProcess(lbProcessId);
 		if (status != null) {
 			LOG.info("LoadBalancing failed.");
-			LoadBalancingStatusCache.getInstance().deleteLocalStatus(
-					status.getProcessId());
+			LoadBalancingStatusCache.getInstance().deleteLocalStatus(status.getProcessId());
 			MovingStateCommunicatorImpl.getInstance().notifyFinished(false);
 		}
 	}
@@ -196,18 +176,14 @@ public class AbortHandler {
 	 * @param senderPeer
 	 *            Peer that sent Abort message.
 	 */
-	public static void stopSendingAbort(MovingStateAbortMessage abortMessage,
-			PeerID senderPeer) {
-		MovingStateMasterStatus status = (MovingStateMasterStatus) LoadBalancingStatusCache
-				.getInstance().getStatusForLocalProcess(
-						abortMessage.getLoadBalancingProcessId());
+	public static void stopSendingAbort(MovingStateAbortMessage abortMessage, PeerID senderPeer) {
+		MovingStateMasterStatus status = (MovingStateMasterStatus) LoadBalancingStatusCache.getInstance().getStatusForLocalProcess(abortMessage.getLoadBalancingProcessId());
 
 		LOG.debug("Stop Sending Abort called.");
 
 		if (status != null) {
 			LOG.debug("Stop Sending Abort to " + senderPeer);
-			MovingStateMessageDispatcher dispatcher = status
-					.getMessageDispatcher();
+			MovingStateMessageDispatcher dispatcher = status.getMessageDispatcher();
 			dispatcher.stopRunningJob(senderPeer.toString());
 
 			if (dispatcher.getNumberOfRunningJobs() == 0) {

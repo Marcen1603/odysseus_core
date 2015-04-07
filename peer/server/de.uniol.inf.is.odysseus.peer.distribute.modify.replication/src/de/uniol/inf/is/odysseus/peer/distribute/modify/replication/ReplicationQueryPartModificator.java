@@ -43,8 +43,7 @@ public class ReplicationQueryPartModificator implements IQueryPartModificator {
 	/**
 	 * The logger for this class.
 	 */
-	private static final Logger LOG = LoggerFactory
-			.getLogger(ReplicationQueryPartModificator.class);
+	private static final Logger LOG = LoggerFactory.getLogger(ReplicationQueryPartModificator.class);
 
 	@Override
 	public String getName() {
@@ -54,14 +53,10 @@ public class ReplicationQueryPartModificator implements IQueryPartModificator {
 	}
 
 	@Override
-	public Collection<ILogicalQueryPart> modify(
-			Collection<ILogicalQueryPart> queryParts, ILogicalQuery query,
-			QueryBuildConfiguration config, List<String> modificatorParameters)
-			throws QueryPartModificationException {
+	public Collection<ILogicalQueryPart> modify(Collection<ILogicalQueryPart> queryParts, ILogicalQuery query, QueryBuildConfiguration config, List<String> modificatorParameters) throws QueryPartModificationException {
 
 		// The helper instance
-		ReplicationParameterHelper helper = new ReplicationParameterHelper(
-				modificatorParameters);
+		ReplicationParameterHelper helper = new ReplicationParameterHelper(modificatorParameters);
 
 		// The bundle of informations for the fragmentation
 		ReplicationInfoBundle bundle = new ReplicationInfoBundle();
@@ -69,45 +64,33 @@ public class ReplicationQueryPartModificator implements IQueryPartModificator {
 		// Preconditions
 		if (queryParts == null || queryParts.isEmpty()) {
 
-			ReplicationQueryPartModificator.LOG
-					.warn("No query parts given for fragmentation");
+			ReplicationQueryPartModificator.LOG.warn("No query parts given for fragmentation");
 			return queryParts;
 
 		}
 
 		// Preparation based on the query parts and parameters
 		this.prepare(queryParts, helper, bundle);
-		ReplicationQueryPartModificator.LOG.debug(
-				"State of replication after preparation:\n{}", bundle);
+		ReplicationQueryPartModificator.LOG.debug("State of replication after preparation:\n{}", bundle);
 
 		// 1. Make loose working copies of the query parts
 		ReplicationQueryPartModificator.makeCopies(bundle);
-		ReplicationQueryPartModificator.LOG.debug(
-				"State of replication after making copies:\n{}", bundle);
+		ReplicationQueryPartModificator.LOG.debug("State of replication after making copies:\n{}", bundle);
 
 		// Process each query part
 		// Need of an array to iterate over due to possible changes of the copy
 		// map
-		for (ILogicalQueryPart part : bundle
-				.getCopyMap()
-				.keySet()
-				.toArray(
-						new ILogicalQueryPart[bundle.getCopyMap().keySet()
-								.size()])) {
+		for (ILogicalQueryPart part : bundle.getCopyMap().keySet().toArray(new ILogicalQueryPart[bundle.getCopyMap().keySet().size()])) {
 
 			ReplicationQueryPartModificator.modify(part, helper, bundle);
-			ReplicationQueryPartModificator.LOG.debug(
-					"State of replication after processing {}:\n{}", part,
-					bundle);
+			ReplicationQueryPartModificator.LOG.debug("State of replication after processing {}:\n{}", part, bundle);
 
 		}
 
 		// Create the return value and avoid parts
-		Collection<ILogicalQueryPart> resultingParts = ReplicationQueryPartModificator
-				.setQueryPartsToAvoid(bundle);
+		Collection<ILogicalQueryPart> resultingParts = ReplicationQueryPartModificator.setQueryPartsToAvoid(bundle);
 		LogicalQueryHelper.initializeOperators(resultingParts);
-		ReplicationQueryPartModificator.LOG.debug("Resulting query parts: {}",
-				resultingParts);
+		ReplicationQueryPartModificator.LOG.debug("Resulting query parts: {}", resultingParts);
 		return resultingParts;
 
 	}
@@ -123,40 +106,26 @@ public class ReplicationQueryPartModificator implements IQueryPartModificator {
 	 * @return The same collection as <code>parts</code> except the avoided
 	 *         parts being set.
 	 */
-	private static Collection<ILogicalQueryPart> setQueryPartsToAvoid(
-			ReplicationInfoBundle bundle) {
+	private static Collection<ILogicalQueryPart> setQueryPartsToAvoid(ReplicationInfoBundle bundle) {
 
-		Preconditions.checkNotNull(bundle,
-				"Replication info bundle must be not null!");
-		Preconditions.checkNotNull(bundle.getCopyMap(),
-				"Copy map must be not null!");
+		Preconditions.checkNotNull(bundle, "Replication info bundle must be not null!");
+		Preconditions.checkNotNull(bundle.getCopyMap(), "Copy map must be not null!");
 
-		Map<ILogicalQueryPart, Collection<ILogicalQueryPart>> avoidedMap = Maps
-				.newHashMap();
+		Map<ILogicalQueryPart, Collection<ILogicalQueryPart>> avoidedMap = Maps.newHashMap();
 
-		for (ILogicalQueryPart originalPart : bundle
-				.getCopyMap()
-				.keySet()
-				.toArray(
-						new ILogicalQueryPart[bundle.getCopyMap().keySet()
-								.size()])) {
+		for (ILogicalQueryPart originalPart : bundle.getCopyMap().keySet().toArray(new ILogicalQueryPart[bundle.getCopyMap().keySet().size()])) {
 
-			for (ILogicalQueryPart copiedPart : bundle.getCopyMap().get(
-					originalPart)) {
+			for (ILogicalQueryPart copiedPart : bundle.getCopyMap().get(originalPart)) {
 
-				Collection<ILogicalQueryPart> avoidedParts = Lists
-						.newArrayList();
+				Collection<ILogicalQueryPart> avoidedParts = Lists.newArrayList();
 				avoidedParts.addAll(bundle.getCopyMap().get(originalPart));
 				avoidedParts.remove(copiedPart);
 
-				for (ILogicalOperator mergeOperator : bundle
-						.getMergeOperators()) {
+				for (ILogicalOperator mergeOperator : bundle.getMergeOperators()) {
 
 					if (copiedPart.contains(mergeOperator)) {
 
-						Collection<ILogicalQueryPart> parts = ReplicationQueryPartModificator
-								.setReplicatesToAvoid(originalPart,
-										mergeOperator, bundle);
+						Collection<ILogicalQueryPart> parts = ReplicationQueryPartModificator.setReplicatesToAvoid(originalPart, mergeOperator, bundle);
 
 						for (ILogicalQueryPart part : parts) {
 
@@ -173,16 +142,13 @@ public class ReplicationQueryPartModificator implements IQueryPartModificator {
 				}
 
 				avoidedMap.put(copiedPart, avoidedParts);
-				ReplicationQueryPartModificator.LOG.debug(
-						"Set avoided parts for {}: {}", copiedPart,
-						avoidedParts);
+				ReplicationQueryPartModificator.LOG.debug("Set avoided parts for {}: {}", copiedPart, avoidedParts);
 
 			}
 
 		}
 
-		for (ILogicalQueryPart part : avoidedMap.keySet().toArray(
-				new ILogicalQueryPart[avoidedMap.keySet().size()])) {
+		for (ILogicalQueryPart part : avoidedMap.keySet().toArray(new ILogicalQueryPart[avoidedMap.keySet().size()])) {
 
 			part.addAvoidingQueryParts(avoidedMap.get(part));
 
@@ -203,30 +169,23 @@ public class ReplicationQueryPartModificator implements IQueryPartModificator {
 	 * @return The same collection as <code>parts</code> except the avoided
 	 *         parts being set.
 	 */
-	private static Collection<ILogicalQueryPart> setReplicatesToAvoid(
-			ILogicalQueryPart originalPart, ILogicalOperator mergeOperator,
-			ReplicationInfoBundle bundle) {
+	private static Collection<ILogicalQueryPart> setReplicatesToAvoid(ILogicalQueryPart originalPart, ILogicalOperator mergeOperator, ReplicationInfoBundle bundle) {
 
 		Preconditions.checkNotNull(originalPart, "Querypart must be not null!");
-		Preconditions.checkNotNull(mergeOperator,
-				"Merge operator must be not null!");
-		Preconditions.checkNotNull(bundle,
-				"Replication info bundle must be not null!");
-		Preconditions.checkNotNull(bundle.getCopyMap(),
-				"Copy map must be not null!");
+		Preconditions.checkNotNull(mergeOperator, "Merge operator must be not null!");
+		Preconditions.checkNotNull(bundle, "Replication info bundle must be not null!");
+		Preconditions.checkNotNull(bundle.getCopyMap(), "Copy map must be not null!");
 
 		Collection<ILogicalQueryPart> avoidedParts = Lists.newArrayList();
 		for (ILogicalQueryPart part : bundle.getCopyMap().keySet()) {
 
-			if (part.equals(originalPart)
-					|| bundle.getCopyMap().get(part).size() == 1) {
+			if (part.equals(originalPart) || bundle.getCopyMap().get(part).size() == 1) {
 
 				continue;
 
 			}
 
-			ILogicalQueryPart copiedPart = bundle.getCopyMap().get(part)
-					.iterator().next();
+			ILogicalQueryPart copiedPart = bundle.getCopyMap().get(part).iterator().next();
 			for (ILogicalOperator operator : copiedPart.getOperators()) {
 
 				if (ModificationHelper.isOperatorAbove(mergeOperator, operator)) {
@@ -258,36 +217,28 @@ public class ReplicationQueryPartModificator implements IQueryPartModificator {
 	 *             if the query part of the target of an incoming subscription
 	 *             to a relative source of <code>part</code> is unknown.
 	 */
-	private static void modify(ILogicalQueryPart part,
-			ReplicationParameterHelper helper, ReplicationInfoBundle bundle)
-			throws QueryPartModificationException {
+	private static void modify(ILogicalQueryPart part, ReplicationParameterHelper helper, ReplicationInfoBundle bundle) throws QueryPartModificationException {
 
 		Preconditions.checkNotNull(part, "Query part must be not null!");
-		Preconditions.checkNotNull(helper,
-				"Replication helper must be not null!");
-		Preconditions.checkNotNull(bundle,
-				"Replication info bundle must be not null!");
+		Preconditions.checkNotNull(helper, "Replication helper must be not null!");
+		Preconditions.checkNotNull(bundle, "Replication info bundle must be not null!");
 
 		// 2. Insert merge operators
 		// 3. Attach all query parts not to replicate to the replicated ones.
 
 		// Process each relative source, which is relevant for replication
-		for (ILogicalOperator originalSource : LogicalQueryHelper
-				.getRelativeSourcesOfLogicalQueryPart(part)) {
+		for (ILogicalOperator originalSource : LogicalQueryHelper.getRelativeSourcesOfLogicalQueryPart(part)) {
 
-			ReplicationQueryPartModificator.processRelativeSource(
-					originalSource, part, helper, bundle);
+			ReplicationQueryPartModificator.processRelativeSource(originalSource, part, helper, bundle);
 
 		}
 
 		// Process each real sink, which is relevant for replication
-		for (ILogicalOperator originalSink : LogicalQueryHelper
-				.getRelativeSinksOfLogicalQueryPart(part)) {
+		for (ILogicalOperator originalSink : LogicalQueryHelper.getRelativeSinksOfLogicalQueryPart(part)) {
 
 			if (originalSink.getSubscriptions().isEmpty()) {
 
-				ReplicationQueryPartModificator.processRealSink(originalSink,
-						part, helper, bundle);
+				ReplicationQueryPartModificator.processRealSink(originalSink, part, helper, bundle);
 
 			}
 
@@ -307,24 +258,16 @@ public class ReplicationQueryPartModificator implements IQueryPartModificator {
 	 * @param bundle
 	 *            The {@link ReplicationInfoBundle} instance.
 	 */
-	private static void processRealSink(ILogicalOperator originalSink,
-			ILogicalQueryPart originalPart, ReplicationParameterHelper helper,
-			ReplicationInfoBundle bundle) {
+	private static void processRealSink(ILogicalOperator originalSink, ILogicalQueryPart originalPart, ReplicationParameterHelper helper, ReplicationInfoBundle bundle) {
 
-		Preconditions.checkNotNull(originalSink,
-				"Logical sink must be not null!");
-		Preconditions
-				.checkNotNull(originalPart, "Query part must be not null!");
-		Preconditions.checkNotNull(helper,
-				"Replication helper must be not null!");
-		Preconditions.checkNotNull(bundle,
-				"Replication info bundle must be not null!");
-		Preconditions.checkNotNull(bundle.getCopyMap(),
-				"Copy map must be not null!");
+		Preconditions.checkNotNull(originalSink, "Logical sink must be not null!");
+		Preconditions.checkNotNull(originalPart, "Query part must be not null!");
+		Preconditions.checkNotNull(helper, "Replication helper must be not null!");
+		Preconditions.checkNotNull(bundle, "Replication info bundle must be not null!");
+		Preconditions.checkNotNull(bundle.getCopyMap(), "Copy map must be not null!");
 
 		Optional<ILogicalOperator> source = Optional.absent();
-		Collection<ILogicalOperator> copiedSinks = ModificationHelper
-				.findCopies(originalSink, bundle.getCopyMap());
+		Collection<ILogicalOperator> copiedSinks = ModificationHelper.findCopies(originalSink, bundle.getCopyMap());
 		Optional<ILogicalQueryPart> partOfSource = Optional.absent();
 		Optional<LogicalSubscription> subscription = Optional.absent();
 
@@ -336,16 +279,9 @@ public class ReplicationQueryPartModificator implements IQueryPartModificator {
 		}
 
 		// Need to merge
-		ILogicalOperator mergeOperator = ReplicationQueryPartModificator
-				.insertMergeOperator(
-						originalSink,
-						source,
-						ModificationHelper.findCopies(originalSink,
-								bundle.getCopyMap()), subscription,
-						partOfSource, Optional.of(originalPart), bundle);
+		ILogicalOperator mergeOperator = ReplicationQueryPartModificator.insertMergeOperator(originalSink, source, ModificationHelper.findCopies(originalSink, bundle.getCopyMap()), subscription, partOfSource, Optional.of(originalPart), bundle);
 		bundle.addMergeOperator(mergeOperator);
-		ReplicationQueryPartModificator.LOG.debug(
-				"Inserted a merge operator after {}", originalSink);
+		ReplicationQueryPartModificator.LOG.debug("Inserted a merge operator after {}", originalSink);
 
 	}
 
@@ -364,27 +300,18 @@ public class ReplicationQueryPartModificator implements IQueryPartModificator {
 	 *             if the query part of the target of an incoming subscription
 	 *             to <code>originalSource</code> is unknown.
 	 */
-	private static void processRelativeSource(ILogicalOperator originalSource,
-			ILogicalQueryPart originalPart, ReplicationParameterHelper helper,
-			ReplicationInfoBundle bundle) throws QueryPartModificationException {
+	private static void processRelativeSource(ILogicalOperator originalSource, ILogicalQueryPart originalPart, ReplicationParameterHelper helper, ReplicationInfoBundle bundle) throws QueryPartModificationException {
 
-		Preconditions.checkNotNull(originalSource,
-				"Logical source must be not null!");
-		Preconditions
-				.checkNotNull(originalPart, "Query part must be not null!");
-		Preconditions.checkNotNull(helper,
-				"Replication helper must be not null!");
-		Preconditions.checkNotNull(bundle,
-				"Replication info bundle must be not null!");
+		Preconditions.checkNotNull(originalSource, "Logical source must be not null!");
+		Preconditions.checkNotNull(originalPart, "Query part must be not null!");
+		Preconditions.checkNotNull(helper, "Replication helper must be not null!");
+		Preconditions.checkNotNull(bundle, "Replication info bundle must be not null!");
 
 		if (!originalSource.getSubscribedToSource().isEmpty()) {
 
-			for (LogicalSubscription subToSource : originalSource
-					.getSubscribedToSource()) {
+			for (LogicalSubscription subToSource : originalSource.getSubscribedToSource()) {
 
-				ReplicationQueryPartModificator
-						.processSubscriptionFromRelativeSource(subToSource,
-								originalSource, originalPart, helper, bundle);
+				ReplicationQueryPartModificator.processSubscriptionFromRelativeSource(subToSource, originalSource, originalPart, helper, bundle);
 
 			}
 
@@ -409,115 +336,71 @@ public class ReplicationQueryPartModificator implements IQueryPartModificator {
 	 *             if the query part of the target of <code>subscription</code>
 	 *             is unknown.
 	 */
-	private static void processSubscriptionFromRelativeSource(
-			LogicalSubscription subscription, ILogicalOperator originalSource,
-			ILogicalQueryPart originalPart, ReplicationParameterHelper helper,
-			ReplicationInfoBundle bundle) throws QueryPartModificationException {
+	private static void processSubscriptionFromRelativeSource(LogicalSubscription subscription, ILogicalOperator originalSource, ILogicalQueryPart originalPart, ReplicationParameterHelper helper, ReplicationInfoBundle bundle) throws QueryPartModificationException {
 
-		Preconditions.checkNotNull(subscription,
-				"Logical subscription must be not null!");
-		Preconditions.checkNotNull(originalSource,
-				"Logical source must be not null!");
-		Preconditions
-				.checkNotNull(originalPart, "Query part must be not null!");
-		Preconditions.checkNotNull(helper,
-				"Replication helper must be not null!");
-		Preconditions.checkNotNull(bundle,
-				"Replication info bundle must be not null!");
-		Preconditions.checkNotNull(bundle.getCopyMap(),
-				"Copy map must be not null!");
-		Preconditions.checkNotNull(bundle.getOriginStartOperator(),
-				"The origin start operator must be not null!");
+		Preconditions.checkNotNull(subscription, "Logical subscription must be not null!");
+		Preconditions.checkNotNull(originalSource, "Logical source must be not null!");
+		Preconditions.checkNotNull(originalPart, "Query part must be not null!");
+		Preconditions.checkNotNull(helper, "Replication helper must be not null!");
+		Preconditions.checkNotNull(bundle, "Replication info bundle must be not null!");
+		Preconditions.checkNotNull(bundle.getCopyMap(), "Copy map must be not null!");
+		Preconditions.checkNotNull(bundle.getOriginStartOperator(), "The origin start operator must be not null!");
 
 		ILogicalOperator originalTarget = subscription.getTarget();
 		Collection<ILogicalOperator> copiedTargets = Lists.newArrayList();
-		ImmutableList<ILogicalOperator> copiedSources = ImmutableList
-				.copyOf(ModificationHelper.findCopies(originalSource,
-						bundle.getCopyMap()));
-		Optional<ILogicalQueryPart> optPartOfOriginalTarget = LogicalQueryHelper
-				.determineQueryPart(bundle.getCopyMap().keySet(),
-						originalTarget);
+		ImmutableList<ILogicalOperator> copiedSources = ImmutableList.copyOf(ModificationHelper.findCopies(originalSource, bundle.getCopyMap()));
+		Optional<ILogicalQueryPart> optPartOfOriginalTarget = LogicalQueryHelper.determineQueryPart(bundle.getCopyMap().keySet(), originalTarget);
 		if (!optPartOfOriginalTarget.isPresent()) {
-
-			throw new QueryPartModificationException(
-					"Unknown query part of operator " + originalTarget);
-
-		} else {
-
-			copiedTargets.addAll(ModificationHelper.findCopies(originalTarget,
-					bundle.getCopyMap()));
-
-		}
+			throw new QueryPartModificationException("Unknown query part of operator " + originalTarget);
+		} 
+		copiedTargets.addAll(ModificationHelper.findCopies(originalTarget, bundle.getCopyMap()));
 
 		if (originalPart.getOperators().contains(originalTarget)) {
 
 			// Target and source are within the same query part
 			return;
 
-		} else if (bundle.getOriginStartOperator().isPresent()
-				&& !ModificationHelper.isOperatorAboveOrEqual(originalTarget,
-						bundle.getOriginStartOperator().get())) {
+		} else if (bundle.getOriginStartOperator().isPresent() && !ModificationHelper.isOperatorAboveOrEqual(originalTarget, bundle.getOriginStartOperator().get())) {
 
 			// Target is not connected (via other operators) to source for
 			// replication
 			// Copies will be connected directly
-			ModificationHelper.connectOperators(copiedSources, copiedTargets,
-					subscription);
-			ReplicationQueryPartModificator.LOG.debug("Connected {} and {}",
-					originalSource, originalTarget);
+			ModificationHelper.connectOperators(copiedSources, copiedTargets, subscription);
+			ReplicationQueryPartModificator.LOG.debug("Connected {} and {}", originalSource, originalTarget);
 
 		} else {
 
 			// Target is connected (via other operators) to source for
 			// replication
 
-			ImmutableList<ILogicalQueryPart> partsOfCopiedSource = ImmutableList
-					.copyOf(bundle.getCopyMap().get(originalPart));
-			ILogicalQueryPart partOfOriginalTarget = optPartOfOriginalTarget
-					.get();
-			Collection<ILogicalQueryPart> partsOfCopiedTarget = bundle
-					.getCopyMap().get(partOfOriginalTarget);
+			ImmutableList<ILogicalQueryPart> partsOfCopiedSource = ImmutableList.copyOf(bundle.getCopyMap().get(originalPart));
+			ILogicalQueryPart partOfOriginalTarget = optPartOfOriginalTarget.get();
+			Collection<ILogicalQueryPart> partsOfCopiedTarget = bundle.getCopyMap().get(partOfOriginalTarget);
 
-			if (partsOfCopiedSource.size() == 1
-					&& partsOfCopiedTarget.size() == 1) {
+			if (partsOfCopiedSource.size() == 1 && partsOfCopiedTarget.size() == 1) {
 
 				// 1:1 relationship
-				ModificationHelper.connectOperators(copiedSources,
-						copiedTargets, subscription);
-				ReplicationQueryPartModificator.LOG.debug(
-						"Connected {} and {}", originalSource, originalTarget);
+				ModificationHelper.connectOperators(copiedSources, copiedTargets, subscription);
+				ReplicationQueryPartModificator.LOG.debug("Connected {} and {}", originalSource, originalTarget);
 
-			} else if (partsOfCopiedSource.size() == 1
-					&& partsOfCopiedTarget.size() > 1) {
+			} else if (partsOfCopiedSource.size() == 1 && partsOfCopiedTarget.size() > 1) {
 
 				// N:1 relationship
 				// Need to merge
-				ILogicalOperator mergeOperator = ReplicationQueryPartModificator
-						.insertMergeOperator(originalTarget, Optional
-								.of(copiedSources.iterator().next()),
-								copiedTargets, Optional.of(subscription),
-								Optional.of(originalPart), Optional
-										.of(partsOfCopiedSource.iterator()
-												.next()), bundle);
+				ILogicalOperator mergeOperator = ReplicationQueryPartModificator.insertMergeOperator(originalTarget, Optional.of(copiedSources.iterator().next()), copiedTargets, Optional.of(subscription), Optional.of(originalPart), Optional.of(partsOfCopiedSource.iterator().next()), bundle);
 				bundle.addMergeOperator(mergeOperator);
-				ReplicationQueryPartModificator.LOG.debug(
-						"Inserted a merge operator after {}", originalTarget);
+				ReplicationQueryPartModificator.LOG.debug("Inserted a merge operator after {}", originalTarget);
 
-			} else if (partsOfCopiedSource.size() > 1
-					&& partsOfCopiedTarget.size() == 1) {
+			} else if (partsOfCopiedSource.size() > 1 && partsOfCopiedTarget.size() == 1) {
 
 				// 1:N relationship
 				// Copies will be connected directly
 				for (ILogicalOperator copiedSource : copiedSources) {
 
-					Collection<ILogicalOperator> sources = Lists
-							.newArrayList(copiedSource);
+					Collection<ILogicalOperator> sources = Lists.newArrayList(copiedSource);
 
-					ModificationHelper.connectOperators(sources, copiedTargets,
-							subscription);
-					ReplicationQueryPartModificator.LOG.debug(
-							"Connected {} and {}", originalSource,
-							originalTarget);
+					ModificationHelper.connectOperators(sources, copiedTargets, subscription);
+					ReplicationQueryPartModificator.LOG.debug("Connected {} and {}", originalSource, originalTarget);
 
 				}
 
@@ -527,21 +410,12 @@ public class ReplicationQueryPartModificator implements IQueryPartModificator {
 				// Need to merge
 				for (int copyNo = 0; copyNo < copiedSources.size(); copyNo++) {
 
-					ILogicalOperator mergeOperator = ReplicationQueryPartModificator
-							.insertMergeOperator(
-									originalTarget,
-									Optional.of(copiedSources.get(copyNo)),
-									copiedTargets,
-									Optional.of(subscription),
-									Optional.of(originalPart),
-									Optional.of(partsOfCopiedSource.get(copyNo)),
-									bundle);
+					ILogicalOperator mergeOperator = ReplicationQueryPartModificator.insertMergeOperator(originalTarget, Optional.of(copiedSources.get(copyNo)), copiedTargets, Optional.of(subscription), Optional.of(originalPart), Optional.of(partsOfCopiedSource.get(copyNo)), bundle);
 					bundle.addMergeOperator(mergeOperator);
 
 				}
 
-				ReplicationQueryPartModificator.LOG.debug(
-						"Inserted a merge operator after {}", originalTarget);
+				ReplicationQueryPartModificator.LOG.debug("Inserted a merge operator after {}", originalTarget);
 
 			}
 
@@ -571,23 +445,12 @@ public class ReplicationQueryPartModificator implements IQueryPartModificator {
 	 *            The {@link ReplicationInfoBundle} instance.
 	 * @return The inserted merge operator.
 	 */
-	private static ILogicalOperator insertMergeOperator(
-			ILogicalOperator originalTarget,
-			Optional<ILogicalOperator> copiedSource,
-			Collection<ILogicalOperator> copiedTargets,
-			Optional<LogicalSubscription> subscription,
-			Optional<ILogicalQueryPart> partOfOriginalSource,
-			Optional<ILogicalQueryPart> partOfCopiedSource,
-			ReplicationInfoBundle bundle) {
+	private static ILogicalOperator insertMergeOperator(ILogicalOperator originalTarget, Optional<ILogicalOperator> copiedSource, Collection<ILogicalOperator> copiedTargets, Optional<LogicalSubscription> subscription, Optional<ILogicalQueryPart> partOfOriginalSource, Optional<ILogicalQueryPart> partOfCopiedSource, ReplicationInfoBundle bundle) {
 
-		Preconditions.checkNotNull(originalTarget,
-				"Original logical target must be not null!");
-		Preconditions.checkNotNull(copiedTargets,
-				"Copied logical targets must be not null!");
-		Preconditions.checkNotNull(bundle,
-				"Replication info bundle must be not null!");
-		Preconditions.checkNotNull(bundle.getCopyMap(),
-				"Copy map must be not null!");
+		Preconditions.checkNotNull(originalTarget, "Original logical target must be not null!");
+		Preconditions.checkNotNull(copiedTargets, "Copied logical targets must be not null!");
+		Preconditions.checkNotNull(bundle, "Replication info bundle must be not null!");
+		Preconditions.checkNotNull(bundle.getCopyMap(), "Copy map must be not null!");
 
 		// Create merge operator
 		ILogicalOperator mergeOperator = new ReplicationMergeAO();
@@ -607,36 +470,28 @@ public class ReplicationQueryPartModificator implements IQueryPartModificator {
 		// Subscribe the merge operator to the copied targets
 		for (int sinkNo = 0; sinkNo < copiedTargets.size(); sinkNo++) {
 
-			ILogicalOperator copiedTarget = ((List<ILogicalOperator>) copiedTargets)
-					.get(sinkNo);
-			copiedTarget.subscribeSink(mergeOperator, sinkNo, sourceOutPort,
-					schema);
+			ILogicalOperator copiedTarget = ((List<ILogicalOperator>) copiedTargets).get(sinkNo);
+			copiedTarget.subscribeSink(mergeOperator, sinkNo, sourceOutPort, schema);
 
 		}
 
 		// Subscribe the copied relative source to the merge operator
 		if (copiedSource.isPresent()) {
 
-			mergeOperator.subscribeSink(copiedSource.get(), sinkInPort, 0,
-					schema);
+			mergeOperator.subscribeSink(copiedSource.get(), sinkInPort, 0, schema);
 
 		}
 
-		Map<ILogicalQueryPart, Collection<ILogicalQueryPart>> copyMap = bundle
-				.getCopyMap();
+		Map<ILogicalQueryPart, Collection<ILogicalQueryPart>> copyMap = bundle.getCopyMap();
 
-		if (copiedSource.isPresent() && partOfOriginalSource.isPresent()
-				&& partOfCopiedSource.isPresent()) {
+		if (copiedSource.isPresent() && partOfOriginalSource.isPresent() && partOfCopiedSource.isPresent()) {
 
 			// Create modified query part
-			Collection<ILogicalOperator> operatorsWithMerge = Lists
-					.newArrayList(partOfCopiedSource.get().getOperators());
+			Collection<ILogicalOperator> operatorsWithMerge = Lists.newArrayList(partOfCopiedSource.get().getOperators());
 			operatorsWithMerge.add(mergeOperator);
-			Collection<ILogicalQueryPart> copiedParts = copyMap
-					.get(partOfOriginalSource.get());
+			Collection<ILogicalQueryPart> copiedParts = copyMap.get(partOfOriginalSource.get());
 			copiedParts.remove(partOfCopiedSource.get());
-			ILogicalQueryPart mergePart = new LogicalQueryPart(
-					operatorsWithMerge);
+			ILogicalQueryPart mergePart = new LogicalQueryPart(operatorsWithMerge);
 			copiedParts.add(mergePart);
 			copyMap.put(partOfOriginalSource.get(), copiedParts);
 
@@ -644,8 +499,7 @@ public class ReplicationQueryPartModificator implements IQueryPartModificator {
 
 			// Create the query part for the merge operator
 			ILogicalQueryPart mergePart = new LogicalQueryPart(mergeOperator);
-			Collection<ILogicalQueryPart> copiesOfMergePart = Lists
-					.newArrayList(mergePart);
+			Collection<ILogicalQueryPart> copiesOfMergePart = Lists.newArrayList(mergePart);
 			copyMap.put(mergePart, copiesOfMergePart);
 
 		}
@@ -669,34 +523,25 @@ public class ReplicationQueryPartModificator implements IQueryPartModificator {
 	 */
 	private static void makeCopies(ReplicationInfoBundle bundle) {
 
-		Preconditions.checkNotNull(bundle,
-				"Replication info bundle must be not null!");
-		Preconditions.checkNotNull(bundle.getOriginalRelevantParts(),
-				"Relevant parts must be not null!");
-		Preconditions.checkNotNull(bundle.getOriginalIrrelevantParts(),
-				"Irrelevant parts must be not null!");
+		Preconditions.checkNotNull(bundle, "Replication info bundle must be not null!");
+		Preconditions.checkNotNull(bundle.getOriginalRelevantParts(), "Relevant parts must be not null!");
+		Preconditions.checkNotNull(bundle.getOriginalIrrelevantParts(), "Irrelevant parts must be not null!");
 
 		// Copy the query parts
-		Map<ILogicalQueryPart, Collection<ILogicalQueryPart>> copiedPartsToReplicateToOriginals = LogicalQueryHelper
-				.copyAndCutQueryParts(bundle.getOriginalRelevantParts(),
-						bundle.getDegreeOfReplication());
-		Map<ILogicalQueryPart, Collection<ILogicalQueryPart>> copiedPartsNotToReplicateToOriginals = LogicalQueryHelper
-				.copyAndCutQueryParts(bundle.getOriginalIrrelevantParts(), 1);
+		Map<ILogicalQueryPart, Collection<ILogicalQueryPart>> copiedPartsToReplicateToOriginals = LogicalQueryHelper.copyAndCutQueryParts(bundle.getOriginalRelevantParts(), bundle.getDegreeOfReplication());
+		Map<ILogicalQueryPart, Collection<ILogicalQueryPart>> copiedPartsNotToReplicateToOriginals = LogicalQueryHelper.copyAndCutQueryParts(bundle.getOriginalIrrelevantParts(), 1);
 
 		// Put the maps together
-		Map<ILogicalQueryPart, Collection<ILogicalQueryPart>> copiesToOriginals = Maps
-				.newHashMap();
+		Map<ILogicalQueryPart, Collection<ILogicalQueryPart>> copiesToOriginals = Maps.newHashMap();
 		copiesToOriginals.putAll(copiedPartsToReplicateToOriginals);
 		copiesToOriginals.putAll(copiedPartsNotToReplicateToOriginals);
 		bundle.setCopyMap(copiesToOriginals);
 
 		// Check, if the degree of fragmentation is suitable for the number of
 		// available peers
-		if (!ModificationHelper.validateDegreeOfModification(ModificationHelper
-				.calcSize(bundle.getCopyMap().values()))) {
+		if (!ModificationHelper.validateDegreeOfModification(ModificationHelper.calcSize(bundle.getCopyMap().values()))) {
 
-			ReplicationQueryPartModificator.LOG
-					.warn("Got not enough peers for a suitable replication!");
+			ReplicationQueryPartModificator.LOG.warn("Got not enough peers for a suitable replication!");
 
 		}
 
@@ -726,32 +571,25 @@ public class ReplicationQueryPartModificator implements IQueryPartModificator {
 	 *             parameter does not match any patterns.<br />
 	 *             If no query parts remain to replicate.
 	 */
-	private void prepare(Collection<ILogicalQueryPart> queryParts,
-			ReplicationParameterHelper helper, ReplicationInfoBundle bundle)
-			throws QueryPartModificationException {
+	private void prepare(Collection<ILogicalQueryPart> queryParts, ReplicationParameterHelper helper, ReplicationInfoBundle bundle) throws QueryPartModificationException {
 
 		// Preconditions
-		Preconditions.checkNotNull(helper,
-				"Replication helper must be not null!");
-		Preconditions.checkNotNull(bundle,
-				"Replication info bundle must be not null!");
+		Preconditions.checkNotNull(helper, "Replication helper must be not null!");
+		Preconditions.checkNotNull(bundle, "Replication info bundle must be not null!");
 
 		// Determine degree of fragmentation
 		bundle.setDegreeOfReplication(helper.determineDegreeOfModification());
 
 		// Determine identifiers for start point and end point for replication
-		final IPair<Optional<ILogicalOperator>, Optional<ILogicalOperator>> startAndendPointForReplication = helper
-				.determineStartAndEndPoints(queryParts);
+		final IPair<Optional<ILogicalOperator>, Optional<ILogicalOperator>> startAndendPointForReplication = helper.determineStartAndEndPoints(queryParts);
 		bundle.setOriginStartOperator(startAndendPointForReplication.getE1());
 		bundle.setOriginEndOperator(startAndendPointForReplication.getE2());
 
 		// Determine query parts to be replicated and those to be not
-		final IPair<Collection<ILogicalQueryPart>, Collection<ILogicalQueryPart>> partsToReplicatesAndPartsNot = ReplicationQueryPartModificator
-				.determinePartsToReplicate(queryParts, helper, bundle);
+		final IPair<Collection<ILogicalQueryPart>, Collection<ILogicalQueryPart>> partsToReplicatesAndPartsNot = ReplicationQueryPartModificator.determinePartsToReplicate(queryParts, helper, bundle);
 		if (partsToReplicatesAndPartsNot.getE1().isEmpty()) {
 
-			throw new QueryPartModificationException(
-					"No query parts given to replicate!");
+			throw new QueryPartModificationException("No query parts given to replicate!");
 
 		}
 		bundle.setOriginalRelevantParts(partsToReplicatesAndPartsNot.getE1());
@@ -770,44 +608,33 @@ public class ReplicationQueryPartModificator implements IQueryPartModificator {
 	 *            The {@link ReplicationInfoBundle} instance.
 	 * @return All operators within <code>operators</code> to replicate.
 	 */
-	private static IPair<Collection<ILogicalQueryPart>, Collection<ILogicalQueryPart>> determinePartsToReplicate(
-			Collection<ILogicalQueryPart> queryParts,
-			ReplicationParameterHelper helper, ReplicationInfoBundle bundle) {
+	private static IPair<Collection<ILogicalQueryPart>, Collection<ILogicalQueryPart>> determinePartsToReplicate(Collection<ILogicalQueryPart> queryParts, ReplicationParameterHelper helper, ReplicationInfoBundle bundle) {
 
 		// Preconditions
-		Preconditions.checkNotNull(queryParts,
-				"List of query parts must be not null!");
-		Preconditions.checkNotNull(!queryParts.isEmpty(),
-				"List of query parts must be not empty!");
+		Preconditions.checkNotNull(queryParts, "List of query parts must be not null!");
+		Preconditions.checkNotNull(!queryParts.isEmpty(), "List of query parts must be not empty!");
 
 		Collection<ILogicalQueryPart> partsToReplicate = Lists.newArrayList();
-		Collection<ILogicalQueryPart> partsNotToReplicate = Lists
-				.newArrayList();
+		Collection<ILogicalQueryPart> partsNotToReplicate = Lists.newArrayList();
 
 		for (ILogicalQueryPart queryPart : queryParts) {
 
-			Collection<ILogicalOperator> operatorsToReplicate = ReplicationQueryPartModificator
-					.determineOperatorsToReplicate(queryPart.getOperators(),
-							helper, bundle);
+			Collection<ILogicalOperator> operatorsToReplicate = ReplicationQueryPartModificator.determineOperatorsToReplicate(queryPart.getOperators(), helper, bundle);
 			if (!operatorsToReplicate.isEmpty()) {
 
-				final ILogicalQueryPart partToReplicate = new LogicalQueryPart(
-						operatorsToReplicate, queryPart.getAvoidingQueryParts());
+				final ILogicalQueryPart partToReplicate = new LogicalQueryPart(operatorsToReplicate, queryPart.getAvoidingQueryParts());
 				partsToReplicate.add(partToReplicate);
 
 			}
 
 			if (operatorsToReplicate.size() < queryPart.getOperators().size()) {
 
-				Collection<ILogicalOperator> operatorsNotToReplicate = Lists
-						.newArrayList(queryPart.getOperators());
+				Collection<ILogicalOperator> operatorsNotToReplicate = Lists.newArrayList(queryPart.getOperators());
 				operatorsNotToReplicate.removeAll(operatorsToReplicate);
 
 				if (!operatorsNotToReplicate.isEmpty()) {
 
-					ILogicalQueryPart partNotToReplicate = new LogicalQueryPart(
-							operatorsNotToReplicate,
-							queryPart.getAvoidingQueryParts());
+					ILogicalQueryPart partNotToReplicate = new LogicalQueryPart(operatorsNotToReplicate, queryPart.getAvoidingQueryParts());
 					partsNotToReplicate.add(partNotToReplicate);
 
 				}
@@ -816,8 +643,7 @@ public class ReplicationQueryPartModificator implements IQueryPartModificator {
 
 		}
 
-		return new Pair<Collection<ILogicalQueryPart>, Collection<ILogicalQueryPart>>(
-				partsToReplicate, partsNotToReplicate);
+		return new Pair<Collection<ILogicalQueryPart>, Collection<ILogicalQueryPart>>(partsToReplicate, partsNotToReplicate);
 
 	}
 
@@ -832,31 +658,20 @@ public class ReplicationQueryPartModificator implements IQueryPartModificator {
 	 *            The {@link ReplicationInfoBundle} instance.
 	 * @return All operators within <code>operators</code> to replicate.
 	 */
-	private static Collection<ILogicalOperator> determineOperatorsToReplicate(
-			Collection<ILogicalOperator> operators,
-			ReplicationParameterHelper helper, ReplicationInfoBundle bundle) {
+	private static Collection<ILogicalOperator> determineOperatorsToReplicate(Collection<ILogicalOperator> operators, ReplicationParameterHelper helper, ReplicationInfoBundle bundle) {
 
 		// Preconditions
-		Preconditions.checkNotNull(operators,
-				"List of operators must be not null!");
-		Preconditions.checkNotNull(helper,
-				"Replication helper must be not null!");
-		Preconditions.checkNotNull(bundle,
-				"Replication info bundle must be not null!");
-		Preconditions
-				.checkNotNull(bundle.getOriginStartOperator(),
-						"The operator marking the start of replication must be not null!");
-		Preconditions
-				.checkNotNull(bundle.getOriginEndOperator(),
-						"The operator marking the end of replication must be not null!");
+		Preconditions.checkNotNull(operators, "List of operators must be not null!");
+		Preconditions.checkNotNull(helper, "Replication helper must be not null!");
+		Preconditions.checkNotNull(bundle, "Replication info bundle must be not null!");
+		Preconditions.checkNotNull(bundle.getOriginStartOperator(), "The operator marking the start of replication must be not null!");
+		Preconditions.checkNotNull(bundle.getOriginEndOperator(), "The operator marking the end of replication must be not null!");
 
-		Collection<ILogicalOperator> operatorsToReplicate = Lists
-				.newArrayList();
+		Collection<ILogicalOperator> operatorsToReplicate = Lists.newArrayList();
 
 		for (ILogicalOperator operator : operators) {
 
-			if (!ReplicationRuleHelper
-					.canOperatorBeReplicated(operator, helper)) {
+			if (!ReplicationRuleHelper.canOperatorBeReplicated(operator, helper)) {
 
 				continue;
 
@@ -864,12 +679,7 @@ public class ReplicationQueryPartModificator implements IQueryPartModificator {
 
 				operatorsToReplicate.add(operator);
 
-			} else if (bundle.getOriginStartOperator().isPresent()
-					&& ModificationHelper.isOperatorAbove(operator, bundle
-							.getOriginStartOperator().get())
-					&& (!bundle.getOriginEndOperator().isPresent() || ModificationHelper
-							.isOperatorAbove(bundle.getOriginEndOperator()
-									.get(), operator))) {
+			} else if (bundle.getOriginStartOperator().isPresent() && ModificationHelper.isOperatorAbove(operator, bundle.getOriginStartOperator().get()) && (!bundle.getOriginEndOperator().isPresent() || ModificationHelper.isOperatorAbove(bundle.getOriginEndOperator().get(), operator))) {
 
 				operatorsToReplicate.add(operator);
 
