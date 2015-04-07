@@ -98,6 +98,9 @@ public class KeyValueObject <T extends IMetaAttribute> extends AbstractStreamObj
 		}
 	}
 
+	public Object removeAttribute(String key) {
+		return this.attributes.remove(key);
+	}
 	
 	public final int size() {
 		return this.attributes.size();

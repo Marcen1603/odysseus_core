@@ -50,24 +50,24 @@ public class KeyValueMapPO<K extends IMetaAttribute, T extends KeyValueObject<K>
 	private SDFExpression[] expressions;
 	private final SDFSchema inputSchema;
 	final private boolean allowNull;
+	final private boolean keepAllAttributes;
+	final private List<String> removeAttributes;
 	
 	public KeyValueMapPO(MapAO mapAO) {
 		this.inputSchema = mapAO.getInputSchema();
 		this.expressionStrings = mapAO.getKVExpressions();
 		this.allowNull = false;
+		this.keepAllAttributes = mapAO.isKeepAllAttributes();
+		this.removeAttributes = mapAO.getRemoveAttributes();
 	}
-
-	public KeyValueMapPO(SDFSchema inputSchema, List<String[]> expressions,
-			boolean allowNullInOutput, boolean evaluateOnPunctuation) {
-		this.inputSchema = inputSchema;
-		this.allowNull = allowNullInOutput;
-		this.expressionStrings = expressions;
-	}
-
-	protected KeyValueMapPO(SDFSchema inputSchema, boolean allowNullInOutput,
-			boolean evaluateOnPunctuation) {
-		this.inputSchema = inputSchema;
-		this.allowNull = allowNullInOutput;
+	
+	public KeyValueMapPO(KeyValueMapPO<?,?> mapPO) {
+		this.inputSchema = mapPO.getInputSchema();
+		this.expressionStrings = mapPO.getExpressionStrings();
+		this.expressions = mapPO.getExpressions();
+		this.allowNull = mapPO.allowNull;
+		this.keepAllAttributes = mapPO.keepAllAttributes;
+		this.removeAttributes = mapPO.removeAttributes;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -75,11 +75,21 @@ public class KeyValueMapPO<K extends IMetaAttribute, T extends KeyValueObject<K>
 	final protected void process_next(T object, int port) {
 		generateExpressions(expressionStrings);
 		
-		T outputVal = (T) new KeyValueObject<>();
-		outputVal.setMetadata((K) object.getMetadata().clone());
-		if (object.getMetadataMap() != null) {
-			for (Entry<String, Object> entry : object.getMetadataMap().entrySet()) {
-				outputVal.setMetadata(entry.getKey(), entry.getValue());
+		T outputVal;
+		if(this.keepAllAttributes) {
+			outputVal = (T) new KeyValueObject<>(object);
+			if(this.removeAttributes != null && this.removeAttributes.size() > 0) {
+				for(String att: this.removeAttributes) {
+					outputVal.removeAttribute(att);
+				}
+			}
+		} else {
+			outputVal = (T) new KeyValueObject<>();
+			outputVal.setMetadata((K) object.getMetadata().clone());
+			if (object.getMetadataMap() != null) {
+				for (Entry<String, Object> entry : object.getMetadataMap().entrySet()) {
+					outputVal.setMetadata(entry.getKey(), entry.getValue());
+				}
 			}
 		}
 
@@ -159,7 +169,7 @@ public class KeyValueMapPO<K extends IMetaAttribute, T extends KeyValueObject<K>
 
 	@Override
 	public KeyValueMapPO<K, T> clone() {
-		throw new IllegalArgumentException("Not implemented!");
+		return new KeyValueMapPO<>(this);
 	}
 
 	@Override
