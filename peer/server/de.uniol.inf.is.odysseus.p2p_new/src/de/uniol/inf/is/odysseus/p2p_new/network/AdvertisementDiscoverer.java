@@ -17,8 +17,8 @@ import com.google.common.collect.Lists;
 
 import de.uniol.inf.is.odysseus.p2p_new.IAdvertisementDiscovererListener;
 import de.uniol.inf.is.odysseus.p2p_new.provider.JxtaServicesProvider;
-import de.uniol.inf.is.odysseus.p2p_new.util.RepeatingJobThread;
 import de.uniol.inf.is.odysseus.peer.config.PeerConfiguration;
+import de.uniol.inf.is.odysseus.peer.util.RepeatingJobThread;
 
 public class AdvertisementDiscoverer extends RepeatingJobThread implements DiscoveryListener {
 

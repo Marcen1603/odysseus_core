@@ -18,8 +18,8 @@ import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicator;
 import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicatorListener;
 import de.uniol.inf.is.odysseus.p2p_new.PeerCommunicationException;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.IPeerDictionary;
-import de.uniol.inf.is.odysseus.p2p_new.util.RepeatingJobThread;
 import de.uniol.inf.is.odysseus.peer.ping.IPingMap;
+import de.uniol.inf.is.odysseus.peer.util.RepeatingJobThread;
 
 public class Pinger extends RepeatingJobThread implements IPeerCommunicatorListener {
 

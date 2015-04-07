@@ -16,7 +16,8 @@ Require-Bundle: de.uniol.inf.is.odysseus.peer.distribute;bundle-version="1.0.0",
  de.uniol.inf.is.odysseus.peer.distribute.modify.replication;bundle-version="1.0.0",
  de.uniol.inf.is.odysseus.transform,
  de.uniol.inf.is.odysseus.ruleengine,
- de.uniol.inf.is.odysseus.p2p_new;bundle-version="1.0.0"
+ de.uniol.inf.is.odysseus.p2p_new;bundle-version="1.0.0",
+ de.uniol.inf.is.odysseus.peer.util;bundle-version="1.0.0"
 Service-Component: OSGI-INF/ActiveStandbyModificator.xml,OSGI-INF/ActiveStandbyStrategy.xml,OSGI-INF/UpdateMergerSender.xml,
  OSGI-INF/UpdateMergerReceiver.xml
 Import-Package: org.osgi.framework

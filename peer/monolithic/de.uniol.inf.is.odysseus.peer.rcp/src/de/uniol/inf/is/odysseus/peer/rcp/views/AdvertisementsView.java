@@ -21,8 +21,8 @@ import com.google.common.base.Optional;
 import com.google.common.collect.Lists;
 
 import de.uniol.inf.is.odysseus.p2p_new.IJxtaServicesProvider;
-import de.uniol.inf.is.odysseus.p2p_new.util.RepeatingJobThread;
 import de.uniol.inf.is.odysseus.peer.rcp.RCPP2PNewPlugIn;
+import de.uniol.inf.is.odysseus.peer.util.RepeatingJobThread;
 
 public class AdvertisementsView extends ViewPart {
 

@@ -2,14 +2,15 @@ package de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.common;
 
 import java.util.ArrayList;
 
+import net.jxta.peer.PeerID;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import net.jxta.peer.PeerID;
 import de.uniol.inf.is.odysseus.p2p_new.IMessage;
 import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicator;
 import de.uniol.inf.is.odysseus.p2p_new.PeerCommunicationException;
-import de.uniol.inf.is.odysseus.p2p_new.util.RepeatingJobThread;
+import de.uniol.inf.is.odysseus.peer.util.RepeatingJobThread;
 
 /**
  * Used to repeatedly send Messages to other peers. Copied from P2P Package and

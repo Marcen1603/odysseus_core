@@ -1,10 +1,11 @@
 package de.uniol.inf.is.odysseus.p2p_new;
 
+import net.jxta.peer.PeerID;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import net.jxta.peer.PeerID;
-import de.uniol.inf.is.odysseus.p2p_new.util.RepeatingJobThread;
+import de.uniol.inf.is.odysseus.peer.util.RepeatingJobThread;
 
 public class RepeatingMessageSend extends RepeatingJobThread {
 

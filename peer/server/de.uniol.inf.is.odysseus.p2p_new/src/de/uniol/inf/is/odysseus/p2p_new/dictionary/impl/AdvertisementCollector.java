@@ -4,15 +4,16 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
 
+import net.jxta.document.Advertisement;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 
-import net.jxta.document.Advertisement;
 import de.uniol.inf.is.odysseus.p2p_new.provider.JxtaServicesProvider;
-import de.uniol.inf.is.odysseus.p2p_new.util.RepeatingJobThread;
+import de.uniol.inf.is.odysseus.peer.util.RepeatingJobThread;
 
 public abstract class AdvertisementCollector<A extends Advertisement, R extends Advertisement> extends RepeatingJobThread {
 

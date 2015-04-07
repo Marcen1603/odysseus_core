@@ -6,9 +6,8 @@ import java.io.IOException;
 import net.jxta.id.IDFactory;
 import net.jxta.peer.PeerID;
 import net.jxta.peergroup.PeerGroupID;
-
 import de.uniol.inf.is.odysseus.p2p_new.IJxtaServicesProvider;
-import de.uniol.inf.is.odysseus.p2p_new.util.RepeatingJobThread;
+import de.uniol.inf.is.odysseus.peer.util.RepeatingJobThread;
 import de.uniol.inf.is.odysseus.rest.service.RestService;
 
 

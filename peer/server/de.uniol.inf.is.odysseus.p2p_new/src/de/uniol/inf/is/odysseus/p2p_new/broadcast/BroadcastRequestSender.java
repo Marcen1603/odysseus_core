@@ -22,7 +22,7 @@ import org.slf4j.LoggerFactory;
 import com.google.common.collect.Lists;
 
 import de.uniol.inf.is.odysseus.p2p_new.PeerReachabilityInfo;
-import de.uniol.inf.is.odysseus.p2p_new.util.RepeatingJobThread;
+import de.uniol.inf.is.odysseus.peer.util.RepeatingJobThread;
 
 public class BroadcastRequestSender extends RepeatingJobThread {
 

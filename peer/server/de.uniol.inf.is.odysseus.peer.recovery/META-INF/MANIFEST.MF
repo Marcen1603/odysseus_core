@@ -13,7 +13,8 @@ Require-Bundle: de.uniol.inf.is.odysseus.core,
  com.google.guava,
  de.uniol.inf.is.odysseus.slf4j,
  org.eclipse.osgi;bundle-version="3.7.2",
- de.uniol.inf.is.odysseus.script.parser
+ de.uniol.inf.is.odysseus.script.parser,
+ de.uniol.inf.is.odysseus.peer.util;bundle-version="1.0.0"
 Service-Component: OSGI-INF/RecoveryConsole.xml,OSGI-INF/RecoveryCommunicator.xml,OSGI-INF/RecoveryDynamicBackup.xml,
  OSGI-INF/RecoveryHelper.xml,OSGI-INF/OperatorChangeListener.xml,OSGI-INF/AddQueryResponseHandler.xml,
  OSGI-INF/RecoveryAllocatorService.xml,OSGI-INF/RecoveryStrategyService.xml,OSGI-INF/RecoveryStrategyManagerService.xml,

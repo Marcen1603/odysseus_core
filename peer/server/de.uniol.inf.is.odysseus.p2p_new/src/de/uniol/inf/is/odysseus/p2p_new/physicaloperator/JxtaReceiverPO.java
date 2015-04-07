@@ -30,9 +30,9 @@ import de.uniol.inf.is.odysseus.p2p_new.data.ITransmissionReceiverListener;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.impl.PeerDictionary;
 import de.uniol.inf.is.odysseus.p2p_new.logicaloperator.JxtaReceiverAO;
 import de.uniol.inf.is.odysseus.p2p_new.network.P2PNetworkManager;
-import de.uniol.inf.is.odysseus.p2p_new.util.ByteBufferUtil;
-import de.uniol.inf.is.odysseus.p2p_new.util.IObservableOperator;
-import de.uniol.inf.is.odysseus.p2p_new.util.IOperatorObserver;
+import de.uniol.inf.is.odysseus.peer.util.ByteBufferUtil;
+import de.uniol.inf.is.odysseus.peer.util.IObservableOperator;
+import de.uniol.inf.is.odysseus.peer.util.IOperatorObserver;
 import de.uniol.inf.is.odysseus.systemload.ISystemLoad;
 
 @SuppressWarnings("rawtypes")

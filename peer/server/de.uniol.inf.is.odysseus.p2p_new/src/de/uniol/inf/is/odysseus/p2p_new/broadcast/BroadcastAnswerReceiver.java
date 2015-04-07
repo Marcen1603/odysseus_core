@@ -24,7 +24,7 @@ import com.google.common.collect.Maps;
 
 import de.uniol.inf.is.odysseus.p2p_new.PeerReachabilityInfo;
 import de.uniol.inf.is.odysseus.p2p_new.network.P2PNetworkManager;
-import de.uniol.inf.is.odysseus.p2p_new.util.RepeatingJobThread;
+import de.uniol.inf.is.odysseus.peer.util.RepeatingJobThread;
 
 public class BroadcastAnswerReceiver extends RepeatingJobThread {
 

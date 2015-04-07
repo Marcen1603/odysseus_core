@@ -24,7 +24,7 @@ import de.uniol.inf.is.odysseus.p2p_new.data.endpoint.CloseMessage;
 import de.uniol.inf.is.odysseus.p2p_new.data.endpoint.EndpointDataTransmissionSender;
 import de.uniol.inf.is.odysseus.p2p_new.data.endpoint.OpenMessage;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.impl.PeerDictionary;
-import de.uniol.inf.is.odysseus.p2p_new.util.ObjectByteConverter;
+import de.uniol.inf.is.odysseus.peer.util.ObjectByteConverter;
 
 public class SocketDataTransmissionSender extends EndpointDataTransmissionSender {
 

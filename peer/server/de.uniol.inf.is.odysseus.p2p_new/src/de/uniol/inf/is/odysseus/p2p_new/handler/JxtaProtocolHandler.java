@@ -18,7 +18,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.IAccessPa
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportDirection;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandler;
 import de.uniol.inf.is.odysseus.p2p_new.activator.P2PNewPlugIn;
-import de.uniol.inf.is.odysseus.p2p_new.util.ObjectByteConverter;
+import de.uniol.inf.is.odysseus.peer.util.ObjectByteConverter;
 
 public class JxtaProtocolHandler<T extends IStreamObject<?>> extends AbstractByteBufferHandler<T> {
 

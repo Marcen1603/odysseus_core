@@ -2,7 +2,7 @@ package de.uniol.inf.is.odysseus.p2p_new.provider;
 
 import com.google.common.base.Preconditions;
 
-import de.uniol.inf.is.odysseus.p2p_new.util.RepeatingJobThread;
+import de.uniol.inf.is.odysseus.peer.util.RepeatingJobThread;
 
 public class JxtaJobExecutionThread extends RepeatingJobThread {
 

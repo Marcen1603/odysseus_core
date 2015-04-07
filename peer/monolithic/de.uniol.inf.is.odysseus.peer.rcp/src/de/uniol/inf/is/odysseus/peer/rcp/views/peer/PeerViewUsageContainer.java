@@ -21,10 +21,10 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.IPeerDictionaryListener;
-import de.uniol.inf.is.odysseus.p2p_new.util.RepeatingJobThread;
 import de.uniol.inf.is.odysseus.peer.rcp.RCPP2PNewPlugIn;
 import de.uniol.inf.is.odysseus.peer.resource.IPeerResourceUsageManager;
 import de.uniol.inf.is.odysseus.peer.resource.IResourceUsage;
+import de.uniol.inf.is.odysseus.peer.util.RepeatingJobThread;
 
 public class PeerViewUsageContainer implements IPeerDictionaryListener {
 
