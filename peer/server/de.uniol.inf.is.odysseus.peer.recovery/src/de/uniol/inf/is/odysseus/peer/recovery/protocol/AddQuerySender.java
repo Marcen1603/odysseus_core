@@ -81,8 +81,7 @@ public class AddQuerySender extends AbstractRepeatingMessageSender {
 	public static void bindRecoveryCommunicator(IRecoveryCommunicator serv) {
 
 		Preconditions.checkNotNull(serv);
-		Preconditions.checkArgument(serv instanceof IRecoveryCommunicator);
-		cRecoveryCommunicator = Optional.of((IRecoveryCommunicator) serv);
+		cRecoveryCommunicator = Optional.of(serv);
 		LOG.debug("Bound {} as a recovery communicator.", serv.getClass().getSimpleName());
 
 	}
@@ -98,9 +97,8 @@ public class AddQuerySender extends AbstractRepeatingMessageSender {
 	public static void unbindRecoveryCommunicator(IRecoveryCommunicator serv) {
 
 		Preconditions.checkNotNull(serv);
-		Preconditions.checkArgument(serv instanceof IRecoveryCommunicator);
 
-		if (cRecoveryCommunicator.isPresent() && cRecoveryCommunicator.get() == (IRecoveryCommunicator) serv) {
+		if (cRecoveryCommunicator.isPresent() && cRecoveryCommunicator.get() == serv) {
 
 			cRecoveryCommunicator = Optional.absent();
 			LOG.debug("Unbound {} as a recovery communicator.", serv.getClass().getSimpleName());

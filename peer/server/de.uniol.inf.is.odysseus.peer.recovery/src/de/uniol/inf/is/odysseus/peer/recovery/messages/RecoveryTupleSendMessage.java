@@ -129,7 +129,7 @@ public class RecoveryTupleSendMessage implements IMessage {
 		buffer.putInt(pipeBytes.length);
 		buffer.put(pipeBytes);
 
-		if (this.mFailedPeer != null) {
+		if (failedPeerBytes != null) {
 			buffer.putInt(failedPeerBytes.length);
 			buffer.put(failedPeerBytes);
 		} else {

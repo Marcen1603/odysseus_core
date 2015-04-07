@@ -171,12 +171,10 @@ public class AddQueryReceiver extends AbstractRepeatingMessageReceiver {
 	 *            Must be not null.
 	 */
 	public static void bindRecoveryCommunicator(IRecoveryCommunicator serv) {
-
 		Preconditions.checkNotNull(serv);
-		Preconditions.checkArgument(serv instanceof IRecoveryCommunicator);
-		cRecoveryCommunicator = Optional.of((IRecoveryCommunicator) serv);
+		
+		cRecoveryCommunicator = Optional.of(serv);
 		LOG.debug("Bound {} as a recovery communicator.", serv.getClass().getSimpleName());
-
 	}
 
 	/**
@@ -190,9 +188,8 @@ public class AddQueryReceiver extends AbstractRepeatingMessageReceiver {
 	public static void unbindRecoveryCommunicator(IRecoveryCommunicator serv) {
 
 		Preconditions.checkNotNull(serv);
-		Preconditions.checkArgument(serv instanceof IRecoveryCommunicator);
 
-		if (cRecoveryCommunicator.isPresent() && cRecoveryCommunicator.get() == (IRecoveryCommunicator) serv) {
+		if (cRecoveryCommunicator.isPresent() && cRecoveryCommunicator.get() == serv) {
 
 			cRecoveryCommunicator = Optional.absent();
 			LOG.debug("Unbound {} as a recovery communicator.", serv.getClass().getSimpleName());
@@ -402,6 +399,7 @@ public class AddQueryReceiver extends AbstractRepeatingMessageReceiver {
 							final int finalLocalQueryId = localQueryId;
 
 							service.submit(new Runnable() {
+								@Override
 								public void run() {
 									// I want to tell the sender on the other
 									// side that he has to update his peerId he
@@ -452,6 +450,7 @@ public class AddQueryReceiver extends AbstractRepeatingMessageReceiver {
 							final PipeID finalPipe = pipe;
 							final int finalLocalQueryId = localQueryId;
 							service.submit(new Runnable() {
+								@Override
 								public void run() {
 									// I want to tell the sender on the other
 									// side that he has to update his peerId he

@@ -227,13 +227,12 @@ public class AgreementHelper {
 			// later
 			saveToOtherRecoveryPeersList(failedPeer, localQuery);
 			return false;
-		} else {
-			// See, if we want to do the recovery for this query
-			List<Integer> queries = cRecoveryPeers.get(failedPeer);
-			if (!queries.contains(localQuery)) {
-				// We don't want to do recovery for this query
-				return false;
-			}
+		} 
+		// See, if we want to do the recovery for this query
+		List<Integer> queries = cRecoveryPeers.get(failedPeer);
+		if (!queries.contains(localQuery)) {
+			// We don't want to do recovery for this query
+			return false;
 		}
 
 		// Calculate, who has the higher "number" from the peerId

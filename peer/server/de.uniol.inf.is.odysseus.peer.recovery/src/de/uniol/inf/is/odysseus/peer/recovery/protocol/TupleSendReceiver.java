@@ -129,10 +129,9 @@ public class TupleSendReceiver extends AbstractRepeatingMessageReceiver {
 				// We already got a holdOn for this pipe for this failed peer -> Don't hold on
 				LOG.debug("Won't hold on, cause I already got a holdOn for this pipe for this failed peer.");
 				return;
-			} else {
-				// Save, that we got a holdOn for this failed peer
-				failedPeersForPipeId.add(failedPeer);
-			}
+			} 
+			// Save, that we got a holdOn for this failed peer
+			failedPeersForPipeId.add(failedPeer);
 		} else {
 			// Save, that we got a holdOn for this failed peer
 			List<PeerID> failedPeersForPipeId = new ArrayList<PeerID>();

@@ -247,7 +247,7 @@ public class RecoveryAddQueryMessage implements IMessage {
 		buffer.putInt(subprocessIdBytes.length);
 		buffer.put(subprocessIdBytes);
 
-		if (this.mSharedQuery != null) {
+		if (sharedQueryBytes != null) {
 			buffer.putInt(sharedQueryBytes.length);
 			buffer.put(sharedQueryBytes);
 		} else {
@@ -261,14 +261,14 @@ public class RecoveryAddQueryMessage implements IMessage {
 			buffer.putInt(0);
 		}
 
-		if (this.mMasterId != null) {
+		if (masterIdBytes != null) {
 			buffer.putInt(masterIdBytes.length);
 			buffer.put(masterIdBytes);
 		} else {
 			buffer.putInt(0);
 		}
 
-		if (this.mFailedPeerId != null) {
+		if (failedPeerIdBytes != null) {
 			buffer.putInt(failedPeerIdBytes.length);
 			buffer.put(failedPeerIdBytes);
 		} else {
