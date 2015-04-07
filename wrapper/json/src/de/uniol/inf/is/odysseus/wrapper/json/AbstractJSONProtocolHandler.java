@@ -125,6 +125,10 @@ abstract public class AbstractJSONProtocolHandler<T extends KeyValueObject<?>> e
 					NumberType numberType = jp.getNumberType();
 					if (numberType == NumberType.LONG) {
 						jg.writeNumber((Long) jp.getNumberValue());
+					} else if(numberType == NumberType.DOUBLE) {
+						jg.writeNumber(jp.getDoubleValue());
+					} else if(numberType == NumberType.FLOAT) {
+						jg.writeNumber(jp.getFloatValue());
 					} else {
 						jg.writeNumber((Integer) jp.getNumberValue());
 					}
