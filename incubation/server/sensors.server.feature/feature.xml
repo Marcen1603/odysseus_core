@@ -32,33 +32,11 @@ Unless required by applicable law or agreed to in writing, software
 
    <requires>
       <import plugin="de.uniol.inf.is.odysseus.imagejcv.common" version="1.0.0" match="greaterOrEqual"/>
-      <import plugin="de.uniol.inf.is.odysseus.core" version="1.0.0" match="greaterOrEqual"/>
-      <import plugin="de.uniol.inf.is.odysseus.core.server" version="1.0.0" match="greaterOrEqual"/>
-      <import plugin="de.uniol.inf.is.odysseus.planmanagement.executor.webservice.server" version="1.0.0" match="greaterOrEqual"/>
-      <import plugin="de.uniol.inf.is.odysseus.security" version="1.0.0" match="greaterOrEqual"/>
-      <import plugin="de.uniol.inf.is.odysseus.slf4j" version="1.0.0" match="greaterOrEqual"/>
-      <import plugin="org.bytedeco.javacv" version="0.8.0" match="greaterOrEqual"/>
-      <import plugin="de.uniol.inf.is.odysseus.sensors.common" version="1.0.0" match="greaterOrEqual"/>
-      <import plugin="com.jogamp.jogl" version="2.0.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.osgi"/>
+      <import plugin="de.uniol.inf.is.odysseus.sensors.common"/>
    </requires>
 
    <plugin
          id="de.uniol.inf.is.odysseus.sensors.server"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="org.bytedeco.javacv"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="com.jogamp.jogl"
          download-size="0"
          install-size="0"
          version="0.0.0"

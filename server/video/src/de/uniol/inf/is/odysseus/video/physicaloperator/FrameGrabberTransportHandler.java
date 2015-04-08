@@ -1,9 +1,6 @@
 package de.uniol.inf.is.odysseus.video.physicaloperator;
 
 import java.io.IOException;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
 
 import org.bytedeco.javacpp.opencv_core.IplImage;
 import org.bytedeco.javacv.FrameGrabber;
@@ -27,7 +24,7 @@ class GrabResult
 
 public abstract class FrameGrabberTransportHandler extends AbstractSimplePullTransportHandler<Tuple<IMetaAttribute>> 
 {
-	private final Lock processLock = new ReentrantLock();
+	private final Object processLock = new Object();
 	
 	protected FrameGrabber 	frameGrabber;
 	protected Tuple<IMetaAttribute> currentTuple; 
@@ -91,59 +88,47 @@ public abstract class FrameGrabberTransportHandler extends AbstractSimplePullTra
 	{
 		super.processInClose();
 		
-		boolean locked = false;
-		try 
+		synchronized (processLock)
 		{
-			if (processLock.tryLock(1, TimeUnit.SECONDS))
-				locked = true;
-		} 
-		catch (InterruptedException e) 
-		{
-			Thread.currentThread().interrupt();
-		}
-			
-		if (startupThread != null)
-		{
-			try 
+			if (startupThread != null)
 			{
-				startupThread.join(1000);
-			} 
-			catch (InterruptedException e) 
-			{
-				Thread.currentThread().interrupt();
-			}
+				try 
+				{
+					startupThread.join(1000);
+				} 
+				catch (InterruptedException e) 
+				{
+					Thread.currentThread().interrupt();
+				}
 
-			startupThread.stop();
-			startupThread = null;
-		}
+				startupThread.stop();
+				startupThread = null;
+			}
 			
-		if (frameGrabber != null)
-		{
-			try 
+			if (frameGrabber != null)
 			{
-				frameGrabber.stop();
-				frameGrabber.release();
-			} 
-			catch (Exception e)
-			{
-				throw new IOException(e);
+				try 
+				{
+					frameGrabber.stop();
+					frameGrabber.release();
+				} 
+				catch (Exception e)
+				{
+					throw new IOException(e.getMessage());
+				}
+				finally 
+				{				
+					frameGrabber = null;
+				}
 			}
-			finally 
-			{				
-				frameGrabber = null;
-			}
+			
+			currentTuple = null;
+			image = null;
 		}
-
-		currentTuple = null;
-		image = null;		
-		
-		if (locked)
-			processLock.unlock();
 		
 		fireOnDisconnect();
 	}	
 	
-	@SuppressWarnings("deprecation")
 	@Override public final boolean hasNext()
 	{
 		synchronized (processLock)
