@@ -6,8 +6,6 @@ import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 
-import de.uniol.inf.is.odysseus.p2p_new.broadcast.BroadcastRequestListener;
-import de.uniol.inf.is.odysseus.p2p_new.broadcast.BroadcastRequestSender;
 import de.uniol.inf.is.odysseus.p2p_new.communication.CommunicationAdvertisement;
 import de.uniol.inf.is.odysseus.p2p_new.communication.CommunicationAdvertisementInstantiator;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.MultipleSourceAdvertisement;
@@ -22,38 +20,21 @@ import de.uniol.inf.is.odysseus.p2p_new.dictionary.sources.SourceAdvertisementIn
 public class P2PNewPlugIn implements BundleActivator {
 
 	public static final int TRANSPORT_BUFFER_SIZE = 640*480*3+(1+4);
-	private static final int BROADCAST_INTERVAL = 20000;
 
 	private static Bundle bundle;
-
-	private BroadcastRequestListener listener;
-	private BroadcastRequestSender broadcastSender;
 
 	@Override
 	public void start(BundleContext bundleContext) throws Exception {
 		registerAdvertisementTypes();
 		
 		bundle = bundleContext.getBundle();
-		
-		listener = new BroadcastRequestListener();
-		Thread t = new Thread(listener);
-		t.setName("Peer Broadcast listener");
-		t.setDaemon(true);
-		t.start();
-		
-		broadcastSender = new BroadcastRequestSender(BROADCAST_INTERVAL);
-		broadcastSender.start();
-		
+				
 		PeerBundlesStatusChecker checker = new PeerBundlesStatusChecker(bundleContext);
 		checker.start(); // fire-and-forget
 	}
 
 	@Override
 	public void stop(BundleContext bundleContext) throws Exception {
-		broadcastSender.stopRunning();
-		
-		listener.stopListener();
-
 		bundle = null;
 	}
 	
