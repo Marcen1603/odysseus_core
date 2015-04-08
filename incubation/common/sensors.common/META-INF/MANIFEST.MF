@@ -4,7 +4,6 @@ Bundle-Name: Sensors
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.sensors.common;singleton:=true
 Bundle-Version: 1.0.0.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
-Service-Component: OSGI-INF/*
 Export-Package: de.uniol.inf.is.odysseus.sensors.common.logging,
  de.uniol.inf.is.odysseus.sensors.common.types,
  de.uniol.inf.is.odysseus.sensors.common.utilities
