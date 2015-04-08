@@ -93,7 +93,7 @@ public class SensorServiceStarter {
 
 			String localhost = OdysseusConfiguration.get("WebService.Server");
 
-			String contextStr = OdysseusConfiguration.get("WebService.ExecutorContext") + "/sensors";
+			String contextStr = OdysseusConfiguration.get("WebService.ExecutorContext") + "/sensormanagement";
 
 			while (port <= maxPort) {
 				try {

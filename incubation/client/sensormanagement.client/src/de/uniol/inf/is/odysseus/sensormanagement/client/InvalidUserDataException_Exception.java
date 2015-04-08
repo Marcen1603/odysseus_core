@@ -10,7 +10,7 @@ import javax.xml.ws.WebFault;
  * Generated source version: 2.2
  * 
  */
-@WebFault(name = "InvalidUserDataException", targetNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/")
+@WebFault(name = "InvalidUserDataException", targetNamespace = "http://server.sensormanagement.odysseus.is.inf.uniol.de/")
 @SuppressWarnings(value = { "all" })
 public class InvalidUserDataException_Exception
     extends Exception
