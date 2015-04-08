@@ -76,6 +76,7 @@ public class TDigitalFilterAORule extends AbstractTransformationRule<DigitalFilt
 												 operator.getCornerFreq2() / operator.getSamplingFreq(), 
 												 operator.getRippleAttenuation(), false);
 		
+		po.setByteBufferSampleDepth(operator.getByteBufferSampleDepth());
 		po.setFilter(filter, operator.getAttributePositions(), operator.getInputSchema());
 		
         defaultExecute(operator, po, config, true, true);

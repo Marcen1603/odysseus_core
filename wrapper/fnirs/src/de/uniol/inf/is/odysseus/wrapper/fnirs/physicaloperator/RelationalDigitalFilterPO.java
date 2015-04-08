@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.wrapper.fnirs.physicaloperator;
 
+import java.nio.ByteBuffer;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -35,6 +36,59 @@ class DoubleAttributeFilter extends TupleAttributeFilter
 	public Object filter(Object obj)
 	{
 		return (Double) loop.filterStep((Double) obj);
+	}
+}
+
+class ByteBufferAttributeFilter extends TupleAttributeFilter
+{
+	private final int bytesPerSample;
+	private FilterLoop loop;
+	
+	public ByteBufferAttributeFilter(DigitalFilter filter, int bytesPerSample)
+	{
+		loop = new FilterLoop(filter);
+		
+		if (bytesPerSample != 2 || bytesPerSample != 4)
+			throw new IllegalArgumentException("Only 2 or 4 bytes per sample allowed!");
+		
+		this.bytesPerSample = bytesPerSample;
+	}
+	
+	public Object filter(Object obj)
+	{
+		ByteBuffer buf = (ByteBuffer) obj;
+		
+		int len = buf.limit(), pos = 0;
+		
+		switch (bytesPerSample)
+		{
+			case 2:
+			{
+				while (pos <= len-2)
+				{
+					buf.putShort(pos, (short) loop.filterStep(buf.getShort(pos)));
+					pos += 2;
+				}
+				break;
+			}
+			
+			case 3:
+			{
+				break;
+			}
+			
+			case 4:
+			{
+				while (pos <= len-4)
+				{
+					buf.putInt(pos, (int) loop.filterStep(buf.getInt(pos)));
+					pos += 4;
+				}
+				break;
+			}			
+		}
+		
+		return buf;
 	}
 }
 
@@ -77,7 +131,7 @@ public class RelationalDigitalFilterPO<T extends IMetaAttribute> extends Abstrac
 	
 	private Map<Integer, TupleAttributeFilter> attributeFilters = new HashMap<>();
 	private int[] attributes;
-	
+	private int byteBufferSampleDepth;	
 	
 	public RelationalDigitalFilterPO() 
 	{
@@ -89,6 +143,12 @@ public class RelationalDigitalFilterPO<T extends IMetaAttribute> extends Abstrac
 		filter = other.filter;
 		attributeFilters = other.attributeFilters;
 		attributes = other.attributes;
+		byteBufferSampleDepth = other.byteBufferSampleDepth;
+	}
+	
+	public void setByteBufferSampleDepth(int byteBufferSampleDepth)
+	{
+		this.byteBufferSampleDepth = byteBufferSampleDepth;
 	}
 
 	public void setFilter(DigitalFilter filter, int[] attributes, SDFSchema inputSchema)
@@ -109,6 +169,9 @@ public class RelationalDigitalFilterPO<T extends IMetaAttribute> extends Abstrac
 			if (inputSchema.get(idx).getDatatype() == SDFDatatype.DOUBLE)
 				attributeFilters.put(idx, new DoubleAttributeFilter(filter));
 			else
+			if (inputSchema.get(idx).getDatatype() == SDFDatatype.BYTEBUFFER)
+				attributeFilters.put(idx, new ByteBufferAttributeFilter(filter, byteBufferSampleDepth / 8));
+			else				
 			if (inputSchema.get(idx).getDatatype() == SDFDatatype.VECTOR_DOUBLE)
 				attributeFilters.put(idx, new VectorAttributeFilter(filter));
 			else

@@ -31,6 +31,7 @@ public class DigitalFilterAO extends UnaryLogicalOp {
 	private double samplingFreq;
 	private double rippleAttenuation;
 	private int order;
+	private int byteBufferSampleDepth;
 	private List<SDFAttribute> attributes = new ArrayList<>();
 
     public DigitalFilterAO() {
@@ -47,6 +48,7 @@ public class DigitalFilterAO extends UnaryLogicalOp {
         cornerFreq2 = other.cornerFreq2;
         rippleAttenuation = other.rippleAttenuation;
         order = other.order;
+        byteBufferSampleDepth = other.byteBufferSampleDepth;
         
         attributes = new ArrayList<>(other.attributes);
     }
@@ -127,6 +129,17 @@ public class DigitalFilterAO extends UnaryLogicalOp {
 		return cornerFreq2;
 	}			
 
+	@Parameter(type = IntegerParameter.class, optional = true, name = "bytebuffersampledepth", doc = "Bits per sample when using a byte buffer as input. Allowed values: 16 or 32")
+	public void setByteBufferSampleDepth(int byteBufferSampleDepth) 
+	{
+		this.byteBufferSampleDepth = byteBufferSampleDepth;
+	}        
+    
+	public int getByteBufferSampleDepth() 
+	{
+		return byteBufferSampleDepth;
+	}				
+	
 	@Parameter(type = DoubleParameter.class, optional = true, name = "rippleAttenuation", doc = "Ripple attenuation of the filter. Must be set to a negative value for chebychev filters")
 	public void setRippleAttenuation(double rippleAttenuation) 
 	{
