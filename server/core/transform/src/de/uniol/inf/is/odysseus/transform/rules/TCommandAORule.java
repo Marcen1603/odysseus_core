@@ -32,10 +32,9 @@ import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
 /**
- * This rule handles all generic access operator implementations
+ * This rule handles the command operator
  * 
- * @author Marco Grawunder
- * @author Christian Kuka <christian.kuka@offis.de>
+ * @author Henrik Surm
  */
 public class TCommandAORule extends AbstractTransformationRule<CommandAO> 
 {
