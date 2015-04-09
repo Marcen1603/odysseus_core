@@ -1,43 +1,56 @@
 package de.uniol.inf.is.odysseus.server.nosql.base.physicaloperator;
 
-import de.uniol.inf.is.odysseus.core.collection.Tuple;
-import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
+import de.uniol.inf.is.odysseus.core.collection.KeyValueObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSink;
 import de.uniol.inf.is.odysseus.server.nosql.base.logicaloperator.AbstractNoSQLSinkAO;
 import de.uniol.inf.is.odysseus.server.nosql.base.util.BatchSizeTimer;
 import de.uniol.inf.is.odysseus.server.nosql.base.util.BatchSizeTimerTask;
+import de.uniol.inf.is.odysseus.server.nosql.base.util.connection.NoSQLConnectionManager;
 
 import java.util.List;
 
 /**
- * Erstellt von RoBeaT
- * Date: 11.12.2014
+ *  The AbstractNoSQLSinkPO ist the superclass for all NoSQL sinks. It helps the concrete implementation with the
+ *  connection-handling and collecting elements to write them all into the NoSQL database instead of accessing the
+ *  database for each element.
  */
-public abstract class AbstractNoSQLSinkPO extends AbstractSink<Tuple<ITimeInterval>> {
+@SuppressWarnings("rawtypes")
+public abstract class AbstractNoSQLSinkPO extends AbstractSink<KeyValueObject<?>> implements IPhysicalNoSQLOperator {
 
-    private final String connectionName;
-    BatchSizeTimer<Tuple<ITimeInterval>> batchSizeTimer;
+    private static NoSQLConnectionManager connectionManager = NoSQLConnectionManager.getInstance();
+
+    private String host;
+    private int port;
+    private String user;
+    private String password;
+
+    BatchSizeTimer<KeyValueObject<?>> batchSizeTimer;
 
     public AbstractNoSQLSinkPO(AbstractNoSQLSinkAO abstractNoSQLSinkAO){
+        super();
 
-        connectionName = abstractNoSQLSinkAO.getConnectionName();
         int batchSize = abstractNoSQLSinkAO.getBatchSize();
         int batchTimeout = abstractNoSQLSinkAO.getBatchTimeout();
+        host = abstractNoSQLSinkAO.getHost();
+        port = abstractNoSQLSinkAO.getPort();
+        user = abstractNoSQLSinkAO.getUser();
+        password = abstractNoSQLSinkAO.getPassword();
 
-        BatchSizeTimerTask<Tuple<ITimeInterval>> batchSizeTimerTask = new BatchSizeTimerTaskImpl();
+        BatchSizeTimerTask<KeyValueObject<?>> batchSizeTimerTask = new BatchSizeTimerTaskImpl();
         batchSizeTimer = new BatchSizeTimer<>(batchSizeTimerTask, batchSize, batchTimeout);
     }
 
     @Override
-    protected void process_open() throws OpenFailedException {
-        // just necessary until connection-handling is implemented
-        process_open_connection();
+    protected final void process_open() throws OpenFailedException {
+
+        Object noSQLConnection = connectionManager.getConnection(host, port, user, password, getNoSQLConnectionWrapperClass());
+        setupConnection(noSQLConnection);
     }
 
     @Override
-    protected final void process_next(Tuple<ITimeInterval> tuple, int port) {
+    protected final void process_next(KeyValueObject<?> tuple, int port) {
         batchSizeTimer.add(tuple);
     }
 
@@ -46,14 +59,25 @@ public abstract class AbstractNoSQLSinkPO extends AbstractSink<Tuple<ITimeInterv
        // nothing
     }
 
-    protected abstract void process_open_connection() throws OpenFailedException;
 
-    protected abstract void process_next_tuple_to_write(List<Tuple<ITimeInterval>> tupleToWrite);
+    @Override
+    protected void process_close() {
+        batchSizeTimer.ring();
+        connectionManager.unregisterConnection(host, port);
+    }
 
-    private class BatchSizeTimerTaskImpl implements BatchSizeTimerTask<Tuple<ITimeInterval>> {
+    /**
+     *  process_next_tuple_to_write will be implemented in the concrete NoSQLSinkPO.
+     *  In this method all elements of tupleToWrite will be written into the NoSQL database.
+     *
+     * @param tupleToWrite list of elements which will be written into the database
+     */
+    protected abstract void process_next_tuple_to_write(List<KeyValueObject<?>> tupleToWrite);
+
+    private class BatchSizeTimerTaskImpl implements BatchSizeTimerTask<KeyValueObject<?>> {
 
         @Override
-        public void onTimerRings(List<Tuple<ITimeInterval>> elements) {
+        public void onTimerRings(List<KeyValueObject<?>> elements) {
             process_next_tuple_to_write(elements);
         }
     }

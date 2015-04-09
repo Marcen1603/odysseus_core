@@ -6,17 +6,10 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Paramete
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
 import de.uniol.inf.is.odysseus.server.nosql.base.logicaloperator.AbstractNoSQLSinkAO;
 
-/**
- * Erstellt von RoBeaT
- * Date: 15.12.2014
- */
 @LogicalOperator(name = "ELASTICSEARCHSINK", minInputPorts = 1, maxInputPorts = 1, doc = "This operator can write data to elasticsearch.", category = {
         LogicalOperatorCategory.SINK, LogicalOperatorCategory.DATABASE })
 public class ElasticSearchSinkAO extends AbstractNoSQLSinkAO {
 
-    /**
-	 * 
-	 */
 	private static final long serialVersionUID = -3438050552621086690L;
 	private String indexName;   //like database
     private String typeName;    //like table

@@ -6,10 +6,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Paramete
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
 import de.uniol.inf.is.odysseus.server.nosql.base.logicaloperator.AbstractNoSQLSinkAO;
 
-/**
- * Erstellt von RoBeaT
- * Date: 14.01.2015
- */
+@SuppressWarnings("UnusedDeclaration")
 @LogicalOperator(name = "HADOOPSINK", minInputPorts = 1, maxInputPorts = 1, doc = "This operator can write data to a Hadoop-Filesystem.", category = {
         LogicalOperatorCategory.SINK, LogicalOperatorCategory.DATABASE })
 public class HadoopSinkAO extends AbstractNoSQLSinkAO {

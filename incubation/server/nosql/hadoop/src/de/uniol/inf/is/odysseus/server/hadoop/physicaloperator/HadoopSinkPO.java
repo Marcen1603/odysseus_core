@@ -1,83 +1,51 @@
 package de.uniol.inf.is.odysseus.server.hadoop.physicaloperator;
 
-import de.uniol.inf.is.odysseus.core.collection.Tuple;
-import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
-import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
+import de.uniol.inf.is.odysseus.server.hadoop.connectionwrapper.HadoopConnectionWrapper;
 import de.uniol.inf.is.odysseus.server.hadoop.logicaloperator.HadoopSinkAO;
 import de.uniol.inf.is.odysseus.server.nosql.base.physicaloperator.AbstractNoSQLJsonSinkPO;
-
-import java.io.IOException;
-import java.io.OutputStream;
-import java.security.PrivilegedAction;
-import java.security.PrivilegedExceptionAction;
-import java.util.List;
-
-import org.apache.hadoop.conf.Configuration;
+import de.uniol.inf.is.odysseus.server.nosql.base.util.connection.NoSQLConnectionWrapper;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.security.UserGroupInformation;
 
-/**
- * Erstellt von RoBeaT
- * Date: 14.01.2015
- */
+import java.io.IOException;
+import java.io.OutputStream;
+import java.security.PrivilegedAction;
+import java.util.List;
+
 public class HadoopSinkPO extends AbstractNoSQLJsonSinkPO {
 
     private Path path;
     private FileSystem fileSystem;
     private UserGroupInformation userGroupInformation;
+    private PrivilegedActionImpl privilegedAction = new PrivilegedActionImpl();
 
     public HadoopSinkPO(HadoopSinkAO hadoopSinkAO) {
         super(hadoopSinkAO);
+
         String pathAsString = hadoopSinkAO.getPath();
         this.path = new Path(pathAsString);
-    }
 
-    @Override
-    protected void process_open_connection() throws OpenFailedException {
+        String user = hadoopSinkAO.getUser();
 
-        userGroupInformation = UserGroupInformation.createRemoteUser("hadoop");
-
-        try {
-
-            userGroupInformation.doAs(new PrivilegedExceptionAction<Void>() {
-
-                @Override
-                public Void run() throws Exception {
-
-                    Configuration configuration = new Configuration();
-                    configuration.set("fs.defaultFS", "hdfs://134.106.56.17:9000");
-                    configuration.set("dfs.replication", "1");
-
-                    fileSystem = FileSystem.get(configuration);
-
-//                    FSDataOutputStream fsDataOutputStream;
-                    if(!fileSystem.exists(path)){
-                        fileSystem.create(path).close();
-                    }
-//                    else {
-//                        fsDataOutputStream = fileSystem.append(path);
-//                    }
-
-
-                    return null;
-                }
-
-            });
-
-        } catch (IOException | InterruptedException e) {
-            throw new OpenFailedException(e);
+        if(user == null){
+            throw new IllegalStateException("User must not be null");
         }
+        
+        userGroupInformation = UserGroupInformation.createRemoteUser(user);
     }
 
     @Override
-    protected void process_next_tuple_to_write(List<Tuple<ITimeInterval>> tupleToWrite) {
+    public void setupConnection(Object connection) {
+        fileSystem = (FileSystem) connection;
+    }
+
+    @Override
+    protected void process_next_json_to_write(List<String> jsonToWrite) {
 
         StringBuilder builder = new StringBuilder();
 
-        for (Tuple<ITimeInterval> tuple : tupleToWrite) {
-
-            String json = toJsonString(tuple);
+        for (String json : jsonToWrite) {
             builder.append(json).append("\r\n");
         }
 
@@ -86,17 +54,19 @@ public class HadoopSinkPO extends AbstractNoSQLJsonSinkPO {
 
     private void appendToFile(String append) {
 
-        // ToDo: find a better way
-        userGroupInformation.doAs(new PrivilegedActionImpl(append));
+    	privilegedAction = new PrivilegedActionImpl();
+        privilegedAction.setAppend(append);
+        userGroupInformation.doAs(privilegedAction);
+    }
+
+    @Override
+    public Class<? extends NoSQLConnectionWrapper> getNoSQLConnectionWrapperClass() {
+        return HadoopConnectionWrapper.class;
     }
 
     private class PrivilegedActionImpl implements PrivilegedAction<Void> {
 
         private String append;
-
-        public PrivilegedActionImpl(String append) {
-            this.append = append;
-        }
 
         @Override
         public Void run() {
@@ -113,6 +83,10 @@ public class HadoopSinkPO extends AbstractNoSQLJsonSinkPO {
                 e.printStackTrace();
             }
             return null;
+        }
+
+        public void setAppend(String append) {
+            this.append = append;
         }
     }
 }

@@ -4,25 +4,22 @@ import com.mongodb.DBCollection;
 import com.mongodb.DBObject;
 import com.mongodb.MongoClient;
 import com.mongodb.util.JSON;
-import de.uniol.inf.is.odysseus.core.collection.Tuple;
-import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
-import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
+import de.uniol.inf.is.odysseus.server.mongodb.connectionwrapper.MongoDBConnectionWrapper;
 import de.uniol.inf.is.odysseus.server.mongodb.logicaloperator.MongoDBSinkAO;
 import de.uniol.inf.is.odysseus.server.nosql.base.physicaloperator.AbstractNoSQLJsonSinkPO;
+import de.uniol.inf.is.odysseus.server.nosql.base.util.connection.NoSQLConnectionWrapper;
 
-import java.net.UnknownHostException;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Erstellt von RoBeaT
- * Date: 01.12.14
+ * Default Port: 27017
  */
 public class MongoDBSinkPO extends AbstractNoSQLJsonSinkPO {
 
     private String mongoDBName;
     private String collectionName;
 
-    private MongoClient mongoClient;
     private DBCollection mongoDBCollection;
 
     public MongoDBSinkPO(MongoDBSinkAO mongoDBSinkAO) {
@@ -32,36 +29,23 @@ public class MongoDBSinkPO extends AbstractNoSQLJsonSinkPO {
     }
 
     @Override
-    protected void process_open_connection() throws OpenFailedException {
+    public Class<? extends NoSQLConnectionWrapper> getNoSQLConnectionWrapperClass() {
+        return MongoDBConnectionWrapper.class;
+    }
 
-        try {
-            mongoClient = new MongoClient( "134.106.56.17" , 27017 );
-        } catch (UnknownHostException e) {
-            throw new OpenFailedException(e);
-        }
-
+    @Override
+    public void setupConnection(Object connection) {
+        MongoClient mongoClient = (MongoClient) connection;
         mongoDBCollection = mongoClient.getDB(mongoDBName).getCollection(collectionName);
     }
 
     @Override
-    protected void process_next_tuple_to_write(List<Tuple<ITimeInterval>> tupleToWrite) {
-
-        for (Tuple<ITimeInterval> tuple : tupleToWrite) {
-
-            String json = toJsonString(tuple);
-            transferToMongoDB(json);
+    protected void process_next_json_to_write(List<String> jsonToWrite) {
+        List<DBObject> dbObjects = new ArrayList<>();
+        for (String json : jsonToWrite) {
+            DBObject dbObject = (DBObject) JSON.parse(json);
+            dbObjects.add(dbObject);
         }
-    }
-
-    @Override
-    protected void process_close() {
-        mongoClient.close();
-    }
-
-    private void transferToMongoDB(String json) {
-
-        DBObject dbObject = (DBObject) JSON.parse(json);
-
-        mongoDBCollection.insert(dbObject);
+        mongoDBCollection.insert(dbObjects);
     }
 }

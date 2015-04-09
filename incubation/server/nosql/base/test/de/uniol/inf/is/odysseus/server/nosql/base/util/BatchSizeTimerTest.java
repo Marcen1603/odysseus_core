@@ -9,10 +9,6 @@ import java.util.List;
 
 import static org.junit.Assert.*;
 
-/**
- * Erstellt von RoBeaT
- * Date: 10.12.2014
- */
 public class BatchSizeTimerTest {
 
     public static final int MAX_TIMEOUT = Integer.MAX_VALUE;

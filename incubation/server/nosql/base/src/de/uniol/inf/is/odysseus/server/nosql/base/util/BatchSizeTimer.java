@@ -7,8 +7,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Erstellt von RoBeaT
- * Date: 15.12.2014
+ *  The BatchSizeTimer helps NoSQL sinks to collect objects which will be saved in a NoSQL database.
+ *  The BatchSizeTimer ist used in AbstractNoSQLSinkPO
  */
 public class BatchSizeTimer<T>{
 
@@ -40,6 +40,12 @@ public class BatchSizeTimer<T>{
         timer.start();
     }
 
+    /**
+     * adds an element to the list of elements.
+     * if the list of elements reached the maxCount ring() will be called
+     *
+     * @param element which will be added to the list of elements
+     */
     public synchronized void add(T element) {
         elements.add(element);
 
@@ -48,14 +54,24 @@ public class BatchSizeTimer<T>{
         }
     }
 
-    private synchronized void ring() {
-        batchSizeTimerTask.onTimerRings(elements);   // give list to physical operator
-        elements = new ArrayList<>();  // new list for next iteration
+    /**
+     *  If max batch size is reached or batch time (period) is expired, this method will be called.
+     *  If batch time (period) is expired and no elements are in the list, the batchSizeTimerTask will not be called
+     */
+    public synchronized void ring() {
+
+        if(!elements.isEmpty()) {
+            batchSizeTimerTask.onTimerRings(elements);
+            elements = new ArrayList<>();
+        }
         timer.restart();
     }
 
     private class Task implements ActionListener {
 
+        /**
+         *  actionPerformed will be called when the time of period is expired
+         */
         @Override
         public void actionPerformed(ActionEvent e) {
             ring();
