@@ -23,6 +23,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
@@ -255,6 +256,14 @@ public class SDFSchema extends SDFSchemaElementSet<SDFAttribute> implements
 		return -1;
 	}
 
+	public int findAttributeIndexException(String attributeName) {
+		SDFAttribute a = findAttribute(attributeName);
+		if (a != null) {
+			return this.indexOf(a);
+		}
+		throw new NoSuchElementException("No such element: " + attributeName);
+	}	
+	
 	public SDFAttribute findAttribute(String attributeNameToFind) {
 		String[] attributeToFindParts = splitIfNeeded(attributeNameToFind);
 
