@@ -29,8 +29,8 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.ITransferHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.AbstractProtocolHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
-import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.AbstractTransportHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandler;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.metadata.IMetadataInitializer;
 import de.uniol.inf.is.odysseus.core.server.metadata.IMetadataUpdater;
 import de.uniol.inf.is.odysseus.core.server.metadata.MetadataInitializerAdapter;
@@ -160,7 +160,7 @@ public class ReceiverPO<W extends IStreamObject<M>, M extends IMetaAttribute> ex
 
 	// TODO: This code is duplicated in AccessPO! Move to common base class?
 	@Override
-	public Command getCommandByName(String commandName) {
+	public Command getCommandByName(String commandName, SDFSchema schema) {
 		int delimiter = commandName.indexOf('.');
 		if (delimiter != -1)
 		{
@@ -172,7 +172,7 @@ public class ReceiverPO<W extends IStreamObject<M>, M extends IMetaAttribute> ex
 			{
 				ITransportHandler transportHandler = ((AbstractProtocolHandler<W>) protocolHandler).getTransportHandler();
 				if (transportHandler instanceof ICommandProvider)
-					return ((ICommandProvider) transportHandler).getCommandByName(newCommandName);
+					return ((ICommandProvider) transportHandler).getCommandByName(newCommandName, schema);
 				else
 					throw new UnsupportedOperationException("transport handler doesn't implement ICommandProvider");
 			}
@@ -180,7 +180,7 @@ public class ReceiverPO<W extends IStreamObject<M>, M extends IMetaAttribute> ex
 			if (target.equalsIgnoreCase("protocol"))
 			{
 				if (protocolHandler instanceof ICommandProvider)
-					return ((ICommandProvider) protocolHandler).getCommandByName(newCommandName);
+					return ((ICommandProvider) protocolHandler).getCommandByName(newCommandName, schema);
 				else
 					throw new UnsupportedOperationException("protocol handler doesn't implement ICommandProvider");
 			}

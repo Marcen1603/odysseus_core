@@ -60,7 +60,7 @@ public class TCommandAORule extends AbstractTransformationRule<CommandAO>
         	
         	if (targetOperator instanceof ICommandProvider)
         	{
-        		po.addCommandListener((ICommandProvider)targetOperator);
+        		po.addCommandListener((ICommandProvider)targetOperator, operator.getInputSchema());
         	}
         	else
         		throw new RuleException("Target operator \"" + target + "\" doesn't implement ICommandProvider!");

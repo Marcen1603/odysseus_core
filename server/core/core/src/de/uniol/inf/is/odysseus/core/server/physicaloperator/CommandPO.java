@@ -15,6 +15,7 @@ import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.sink.SenderPO;
 
 public class CommandPO<T extends IStreamObject<?>> extends AbstractSink<T> 
@@ -23,11 +24,11 @@ public class CommandPO<T extends IStreamObject<?>> extends AbstractSink<T>
 
 	Map<ICommandProvider, Command> listenerMap = new HashMap<>();
 	
-	final String commandName;
+	private final String commandName;
 	
 	public CommandPO(String commandName) 
 	{
-		this.commandName = commandName;
+		this.commandName = commandName.toLowerCase();
 	}
 
 	public CommandPO(CommandPO<T> other) 
@@ -64,7 +65,7 @@ public class CommandPO<T extends IStreamObject<?>> extends AbstractSink<T>
 					if (curCommandName == null)
 						throw new IllegalArgumentException("Could not get \"Command\" attribute");
 					
-					Command cmd = e.getKey().getCommandByName(curCommandName);
+					Command cmd = e.getKey().getCommandByName(curCommandName.toLowerCase(), getOutputSchema(port));
 					if (cmd == null)
 						throw new IllegalArgumentException("Could not find command \"" + commandName + "\"");
 					
@@ -112,7 +113,7 @@ public class CommandPO<T extends IStreamObject<?>> extends AbstractSink<T>
 		return new CommandPO<T>(this);
 	}
 
-	public void addCommandListener(ICommandProvider listener) 
+	public void addCommandListener(ICommandProvider listener, SDFSchema schema) 
 	{
 		if (!listenerMap.containsKey(listener))
 		{
@@ -120,7 +121,8 @@ public class CommandPO<T extends IStreamObject<?>> extends AbstractSink<T>
 				listenerMap.put(listener, null);
 			else
 			{
-				Command command = listener.getCommandByName(commandName);
+				Command command = listener.getCommandByName(commandName, schema);
+				
 				if (command == null)
 					throw new IllegalArgumentException("Could not find command \"" + commandName + "\"");
 					

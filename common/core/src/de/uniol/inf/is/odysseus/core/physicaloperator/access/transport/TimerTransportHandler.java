@@ -27,6 +27,8 @@ import de.uniol.inf.is.odysseus.core.command.Command;
 import de.uniol.inf.is.odysseus.core.command.ICommandProvider;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 
 /**
  * @author Christian Kuka <christian@kuka.cc>
@@ -154,35 +156,41 @@ public class TimerTransportHandler extends AbstractPushTransportHandler implemen
 
         return true;
     }
-
+    
 	@Override
-	public Command getCommandByName(String commandName) 
+	public Command getCommandByName(String commandName, SDFSchema schema) 
 	{
 		switch (commandName)
 		{
-		case "setPeriod": return new Command()
-								 {
-								 	@Override public void run(IStreamObject<?> input) 
-								 	{
-								 		long period;
-								 		
-								 		if (input instanceof Tuple<?>)
-								 		{
-								 			Tuple<?> tuple = (Tuple<?>) input;								 			
-								 			period = (Long) tuple.getAttribute(0);
-								 		}
-								 		else
-								 		if (input instanceof KeyValueObject)
-								 		{
-								 			KeyValueObject<?> kv = (KeyValueObject<?>)input;
-								 			period = (Long) kv.getAttribute("period");
-								 		}
-								 		else
-								 			throw new IllegalArgumentException("Cannot execute command on input type " + input.getClass().getName());
-								 		
-								 		TimerTransportHandler.this.setPeriod(period);
-									}
- 								 };
+			case "setperiod":
+			{
+				final int periodAttribute = schema.findAttributeIndexException("Period");
+				
+				return new Command()
+				{
+					@Override public void run(IStreamObject<?> input) 
+					{
+						long period;
+
+						if (input instanceof Tuple<?>)
+						{
+							Tuple<?> tuple = (Tuple<?>) input;								 			
+							period = (Long) tuple.getAttribute(periodAttribute);
+						}
+						else
+						if (input instanceof KeyValueObject)
+						{
+							KeyValueObject<?> kv = (KeyValueObject<?>)input;
+							period = (Long) kv.getAttribute("period");
+						}
+						else
+							throw new IllegalArgumentException("Cannot execute command on input type " + input.getClass().getName());
+
+						TimerTransportHandler.this.setPeriod(period);
+					}
+				};
+			}
+			
  		default: return null;
 		}
 	}
