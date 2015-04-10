@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Cameras
+Bundle-Name: Optris Camera Wrapper
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.wrapper.optriscamera
 Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: de.uniol.inf.is.odysseus.wrapper.optriscamera.Activator
