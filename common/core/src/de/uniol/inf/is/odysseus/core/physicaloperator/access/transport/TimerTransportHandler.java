@@ -175,13 +175,13 @@ public class TimerTransportHandler extends AbstractPushTransportHandler implemen
 						if (input instanceof Tuple<?>)
 						{
 							Tuple<?> tuple = (Tuple<?>) input;								 			
-							period = (Long) tuple.getAttribute(periodAttribute);
+							period = ((Number) tuple.getAttribute(periodAttribute)).longValue();
 						}
 						else
 						if (input instanceof KeyValueObject)
 						{
 							KeyValueObject<?> kv = (KeyValueObject<?>)input;
-							period = (Long) kv.getAttribute("period");
+							period = ((Number) kv.getAttribute("period")).longValue();
 						}
 						else
 							throw new IllegalArgumentException("Cannot execute command on input type " + input.getClass().getName());
