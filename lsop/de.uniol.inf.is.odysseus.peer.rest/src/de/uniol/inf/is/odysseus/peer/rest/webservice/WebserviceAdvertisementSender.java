@@ -32,9 +32,7 @@ public class WebserviceAdvertisementSender {
 		adv.setRestPort(RestService.getPort());
 		adv.setPeerID(peerId);
 		adv.setID(IDFactory.newPipeID(peerGroupID));
-		if (adv != null) {
-			startRepeatedPublish(provider, adv);
-		}
+		startRepeatedPublish(provider, adv);
 	}
 	
 	private void startRepeatedPublish(final IJxtaServicesProvider provider, final WebserviceAdvertisement adv) {

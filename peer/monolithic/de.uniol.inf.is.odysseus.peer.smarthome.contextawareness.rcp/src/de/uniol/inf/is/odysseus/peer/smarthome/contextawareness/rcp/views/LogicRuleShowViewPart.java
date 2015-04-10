@@ -259,7 +259,7 @@ public class LogicRuleShowViewPart extends ViewPart {
 				for (AbstractActor actor : device.getConnectedActors()) {
 					list[i++] = actor;
 				}
-				;
+				
 				//LOG.error("getElements return Actor[]");
 				return list;
 			} else if (inputElement instanceof AbstractActor) {
@@ -270,7 +270,7 @@ public class LogicRuleShowViewPart extends ViewPart {
 				for (AbstractLogicRule rule : rules) {
 					list[i++] = rule;
 				}
-				;
+				
 				//LOG.error("getElements return LogicRule[]");
 				return list;
 			} else {

@@ -60,7 +60,7 @@ public class RecoveryStrategyManagerSimple implements IRecoveryStrategyManager {
 
 		Preconditions.checkNotNull(serv);
 
-		if (serv != null && serv == recoveryStrategy) {
+		if (serv == recoveryStrategy) {
 			recoveryStrategy = null;
 			LOG.debug("Unbound {} as a recovery strategy.", serv.getClass().getSimpleName());
 

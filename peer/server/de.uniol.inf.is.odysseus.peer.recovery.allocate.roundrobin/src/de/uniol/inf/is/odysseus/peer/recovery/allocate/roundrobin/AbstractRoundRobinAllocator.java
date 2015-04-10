@@ -91,7 +91,7 @@ public abstract class AbstractRoundRobinAllocator implements IRecoveryAllocator 
 			
 		}
 		
-		if(peerIDs == null || peerIDs.isEmpty()) {
+		if(peerIDs.isEmpty()) {
 			
 			throw new QueryPartAllocationException("There are no peers left to be considered for round robin in reallocation");
 	

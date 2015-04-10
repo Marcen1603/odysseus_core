@@ -33,7 +33,7 @@ public class WebserviceAdvertisementPeerListener implements IPeerDictionaryListe
 		}
 		Collection<WebserviceAdvertisement> webAdvs = jxtaServicesProvider.getLocalAdvertisements(WebserviceAdvertisement.class);
 		for (WebserviceAdvertisement adv : webAdvs) {
-			if(((WebserviceAdvertisement) adv).getPeerID().equals(peer)){
+			if(adv.getPeerID().equals(peer)){
 				try {
 					waitForJxtaServicesProvider(jxtaServicesProvider);
 					jxtaServicesProvider.flushAdvertisement(adv);

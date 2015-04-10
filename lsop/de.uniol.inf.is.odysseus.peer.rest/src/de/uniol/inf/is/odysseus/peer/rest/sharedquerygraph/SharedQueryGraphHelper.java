@@ -12,6 +12,8 @@ import java.util.Map;
 import org.restlet.Client;
 import org.restlet.data.Protocol;
 import org.restlet.resource.ClientResource;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import net.jxta.id.ID;
 import net.jxta.id.IDFactory;
@@ -37,6 +39,7 @@ import de.uniol.inf.is.odysseus.peer.rest.serverresources.GetLocalQueriesServerR
 
 public class SharedQueryGraphHelper {
 
+	private static final Logger LOG = LoggerFactory.getLogger(SharedQueryGraphHelper.class);
 	
 	public static Collection<LocalQueryInfo> getLocalQueries(ISession session, String sharedQueryId) {
 		ID sharedQueryID = null;
@@ -136,13 +139,14 @@ public class SharedQueryGraphHelper {
 	}
 
 	public static Map<String, Collection<LocalQueryInfo>> getSharedQueryInfo(ISession session, String sharedQueryId, String tenant, String username, String password, boolean searchAllPeers) {
+		Map<String, Collection<LocalQueryInfo>> result = new HashMap<String, Collection<LocalQueryInfo>>();
 		ID sharedQueryID = null;
 		try {
 			sharedQueryID = IDFactory.fromURI(new URI(sharedQueryId));
 		} catch (URISyntaxException e) {
-			e.printStackTrace();
+			LOG.error("Could not shared query id", e);
+			return result;
 		}
-		Map<String, Collection<LocalQueryInfo>> result = new HashMap<String, Collection<LocalQueryInfo>>();
 				
 		Collection<Integer> localIds = PeerServiceBinding.getQueryPartController().getLocalIds(sharedQueryID);
 		Collection<LocalQueryInfo> queryCol = new HashSet<LocalQueryInfo>();

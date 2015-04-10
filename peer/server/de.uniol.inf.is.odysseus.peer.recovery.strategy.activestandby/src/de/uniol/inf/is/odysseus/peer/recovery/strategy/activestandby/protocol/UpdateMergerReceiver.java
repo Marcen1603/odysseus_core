@@ -24,7 +24,6 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSource;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
-import de.uniol.inf.is.odysseus.p2p_new.data.DataTransmissionException;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.IPeerDictionary;
 import de.uniol.inf.is.odysseus.p2p_new.physicaloperator.JxtaReceiverPO;
 import de.uniol.inf.is.odysseus.peer.communication.IMessage;
@@ -45,8 +44,7 @@ public class UpdateMergerReceiver implements IPeerCommunicatorListener {
 	/**
 	 * The logger instance for this class.
 	 */
-	private static final Logger LOG = LoggerFactory
-			.getLogger(UpdateMergerReceiver.class);
+	private static final Logger LOG = LoggerFactory.getLogger(UpdateMergerReceiver.class);
 
 	/**
 	 * The result code for successes.
@@ -73,8 +71,7 @@ public class UpdateMergerReceiver implements IPeerCommunicatorListener {
 			mPeerCommunicator = Optional.of(serv);
 			serv.registerMessageType(UpdateMergerMessage.class);
 			serv.addListener(this, UpdateMergerMessage.class);
-			LOG.debug("Bound {} as a peer communicator.", serv.getClass()
-					.getSimpleName());
+			LOG.debug("Bound {} as a peer communicator.", serv.getClass().getSimpleName());
 		}
 	}
 
@@ -94,16 +91,14 @@ public class UpdateMergerReceiver implements IPeerCommunicatorListener {
 			mPeerCommunicator = Optional.absent();
 			serv.unregisterMessageType(UpdateMergerMessage.class);
 			serv.removeListener(this, UpdateMergerMessage.class);
-			LOG.debug("Unbound {} as a peer communicator.", serv.getClass()
-					.getSimpleName());
+			LOG.debug("Unbound {} as a peer communicator.", serv.getClass().getSimpleName());
 		}
 	}
 
 	/**
 	 * The Peer dictionary, if there is one bound.
 	 */
-	private static Optional<IPeerDictionary> cPeerDictionary = Optional
-			.absent();
+	private static Optional<IPeerDictionary> cPeerDictionary = Optional.absent();
 
 	/**
 	 * Binds a Peer dictionary. <br />
@@ -117,8 +112,7 @@ public class UpdateMergerReceiver implements IPeerCommunicatorListener {
 
 		Preconditions.checkNotNull(serv);
 		cPeerDictionary = Optional.of(serv);
-		LOG.debug("Bound {} as a Peer dictionary.", serv.getClass()
-				.getSimpleName());
+		LOG.debug("Bound {} as a Peer dictionary.", serv.getClass().getSimpleName());
 
 	}
 
@@ -137,8 +131,7 @@ public class UpdateMergerReceiver implements IPeerCommunicatorListener {
 		if (cPeerDictionary.isPresent() && cPeerDictionary.get() == serv) {
 
 			cPeerDictionary = Optional.absent();
-			LOG.debug("Unbound {} as a Peer dictionary.", serv.getClass()
-					.getSimpleName());
+			LOG.debug("Unbound {} as a Peer dictionary.", serv.getClass().getSimpleName());
 
 		}
 
@@ -182,8 +175,7 @@ public class UpdateMergerReceiver implements IPeerCommunicatorListener {
 		if (cExecutor.isPresent() && cExecutor.get() == (IServerExecutor) serv) {
 
 			cExecutor = Optional.absent();
-			LOG.debug("Unbound {} as an executor.", serv.getClass()
-					.getSimpleName());
+			LOG.debug("Unbound {} as an executor.", serv.getClass().getSimpleName());
 
 		}
 
@@ -195,8 +187,7 @@ public class UpdateMergerReceiver implements IPeerCommunicatorListener {
 	private final Set<UUID> mReceivedUUIDs = Sets.newHashSet();
 
 	@Override
-	public void receivedMessage(IPeerCommunicator communicator,
-			PeerID senderPeer, IMessage message) {
+	public void receivedMessage(IPeerCommunicator communicator, PeerID senderPeer, IMessage message) {
 		Preconditions.checkNotNull(message);
 		Preconditions.checkNotNull(senderPeer);
 		Preconditions.checkNotNull(communicator);
@@ -210,13 +201,8 @@ public class UpdateMergerReceiver implements IPeerCommunicatorListener {
 			}
 
 			UpdateMergerResponseMessage response = null;
-			try {
-				updateMerger(upMessage.getPipeId());
-				response = new UpdateMergerResponseMessage(upMessage.getUUID());
-			} catch (DataTransmissionException e) {
-				response = new UpdateMergerResponseMessage(upMessage.getUUID(),
-						e.getMessage());
-			}
+			updateMerger(upMessage.getPipeId());
+			response = new UpdateMergerResponseMessage(upMessage.getUUID());
 
 			try {
 				communicator.send(senderPeer, response);
@@ -227,7 +213,7 @@ public class UpdateMergerReceiver implements IPeerCommunicatorListener {
 		}
 	}
 
-	private void updateMerger(PipeID pipeId) throws DataTransmissionException {
+	private void updateMerger(PipeID pipeId) {
 
 		if (!cExecutor.isPresent()) {
 			LOG.error("No executor bound!");
@@ -235,27 +221,21 @@ public class UpdateMergerReceiver implements IPeerCommunicatorListener {
 		}
 
 		@SuppressWarnings("rawtypes")
-		Optional<JxtaReceiverPO> optReceiver = findReceiver(pipeId,
-				cExecutor.get());
+		Optional<JxtaReceiverPO> optReceiver = findReceiver(pipeId, cExecutor.get());
 		if (optReceiver.isPresent()) {
-			Collection<IPair<RecoveryMergePO<?>, Integer>> foundMergers = Lists
-					.newArrayList();
+			Collection<IPair<RecoveryMergePO<?>, Integer>> foundMergers = Lists.newArrayList();
 			findMergers(optReceiver.get(), foundMergers);
 			for (IPair<RecoveryMergePO<?>, Integer> mergerAndPort : foundMergers) {
-				mergerAndPort.getE1()
-						.setInputAsRecovered(mergerAndPort.getE2());
+				mergerAndPort.getE1().setInputAsRecovered(mergerAndPort.getE2());
 			}
 		}
 	}
 
 	@SuppressWarnings("rawtypes")
-	private static Optional<JxtaReceiverPO> findReceiver(PipeID pipeId,
-			IServerExecutor executor) {
+	private static Optional<JxtaReceiverPO> findReceiver(PipeID pipeId, IServerExecutor executor) {
 		for (IPhysicalQuery query : executor.getExecutionPlan().getQueries()) {
 			for (IPhysicalOperator op : query.getAllOperators()) {
-				if (JxtaReceiverPO.class.isInstance(op)
-						&& ((JxtaReceiverPO<?>) op).getPipeIDString().equals(
-								pipeId.toString())) {
+				if (JxtaReceiverPO.class.isInstance(op) && ((JxtaReceiverPO<?>) op).getPipeIDString().equals(pipeId.toString())) {
 					return Optional.of((JxtaReceiverPO) op);
 				}
 			}
@@ -263,40 +243,30 @@ public class UpdateMergerReceiver implements IPeerCommunicatorListener {
 		return Optional.absent();
 	}
 
-	private static void findMergers(AbstractSource<?> startPO,
-			Collection<IPair<RecoveryMergePO<?>, Integer>> foundMergers) {
+	private static void findMergers(AbstractSource<?> startPO, Collection<IPair<RecoveryMergePO<?>, Integer>> foundMergers) {
 		for (AbstractPhysicalSubscription<?> sub : startPO.getSubscriptions()) {
 			if (RecoveryMergePO.class.isInstance(sub.getTarget())) {
-				foundMergers.add(new Pair<RecoveryMergePO<?>, Integer>(
-						(RecoveryMergePO<?>) sub.getTarget(), sub
-								.getSinkInPort()));
+				foundMergers.add(new Pair<RecoveryMergePO<?>, Integer>((RecoveryMergePO<?>) sub.getTarget(), sub.getSinkInPort()));
 			} else {
 				if (AbstractSource.class.isInstance(sub.getTarget())) {
-					findMergers((AbstractSource<?>) sub.getTarget(),
-							foundMergers);
+					findMergers((AbstractSource<?>) sub.getTarget(), foundMergers);
 				} else if (AbstractPipe.class.isInstance(sub.getTarget())) {
-					findMergers((AbstractPipe<?, ?>) sub.getTarget(),
-							foundMergers);
+					findMergers((AbstractPipe<?, ?>) sub.getTarget(), foundMergers);
 				}
 
 			}
 		}
 	}
 
-	private static void findMergers(AbstractPipe<?, ?> startPO,
-			Collection<IPair<RecoveryMergePO<?>, Integer>> foundMergers) {
+	private static void findMergers(AbstractPipe<?, ?> startPO, Collection<IPair<RecoveryMergePO<?>, Integer>> foundMergers) {
 		for (AbstractPhysicalSubscription<?> sub : startPO.getSubscriptions()) {
 			if (RecoveryMergePO.class.isInstance(sub.getTarget())) {
-				foundMergers.add(new Pair<RecoveryMergePO<?>, Integer>(
-						(RecoveryMergePO<?>) sub.getTarget(), sub
-								.getSinkInPort()));
+				foundMergers.add(new Pair<RecoveryMergePO<?>, Integer>((RecoveryMergePO<?>) sub.getTarget(), sub.getSinkInPort()));
 			} else {
 				if (AbstractSource.class.isInstance(sub.getTarget())) {
-					findMergers((AbstractSource<?>) sub.getTarget(),
-							foundMergers);
+					findMergers((AbstractSource<?>) sub.getTarget(), foundMergers);
 				} else if (AbstractPipe.class.isInstance(sub.getTarget())) {
-					findMergers((AbstractPipe<?, ?>) sub.getTarget(),
-							foundMergers);
+					findMergers((AbstractPipe<?, ?>) sub.getTarget(), foundMergers);
 				}
 
 			}

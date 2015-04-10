@@ -106,7 +106,7 @@ public class UpdateMergerResponseMessage implements IMessage {
 		buffer.putInt(idBytes.length);
 		buffer.put(idBytes);
 		buffer.putInt((!this.mErrorMessage.isPresent()) ? 1 : 0);
-		if (this.mErrorMessage.isPresent()) {
+		if (messageBytes != null) {
 			buffer.putInt(messageBytes.length);
 			buffer.put(messageBytes);
 		}

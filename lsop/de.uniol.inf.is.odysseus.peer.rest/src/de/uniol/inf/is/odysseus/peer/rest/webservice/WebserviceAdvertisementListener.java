@@ -41,8 +41,8 @@ public class WebserviceAdvertisementListener implements IAdvertisementDiscoverer
 		Integer port = this.restPorts.get(peerID.toString());
 		if (port == null) {
 			return RestService.getPort();
-		} else {
-			return this.restPorts.get(peerID.toString());
 		}
+		
+		return this.restPorts.get(peerID.toString());
 	}
 }
