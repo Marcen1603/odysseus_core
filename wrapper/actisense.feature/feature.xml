@@ -16,6 +16,12 @@
       [Enter License Description here.]
    </license>
 
+   <requires>
+      <import plugin="de.uniol.inf.is.odysseus.core" version="1.0.0" match="greaterOrEqual"/>
+      <import plugin="de.uniol.inf.is.odysseus.core.server" version="1.0.0" match="greaterOrEqual"/>
+      <import plugin="de.uniol.inf.is.odysseus.slf4j" version="1.0.0" match="greaterOrEqual"/>
+   </requires>
+
    <plugin
          id="de.uniol.inf.is.odysseus.wrapper.actisense"
          download-size="0"
