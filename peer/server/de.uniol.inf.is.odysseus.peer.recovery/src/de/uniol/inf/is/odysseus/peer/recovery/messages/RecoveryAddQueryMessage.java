@@ -13,7 +13,7 @@ import net.jxta.peer.PeerID;
 import com.google.common.base.Preconditions;
 
 import de.uniol.inf.is.odysseus.core.planmanagement.query.QueryState;
-import de.uniol.inf.is.odysseus.p2p_new.IMessage;
+import de.uniol.inf.is.odysseus.peer.communication.IMessage;
 
 /**
  * Class of messages to send an add query instruction.

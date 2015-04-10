@@ -16,14 +16,14 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
-import de.uniol.inf.is.odysseus.p2p_new.IMessage;
-import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicator;
-import de.uniol.inf.is.odysseus.p2p_new.RepeatingMessageSend;
 import de.uniol.inf.is.odysseus.p2p_new.data.DataTransmissionException;
 import de.uniol.inf.is.odysseus.p2p_new.data.endpoint.CloseMessage;
 import de.uniol.inf.is.odysseus.p2p_new.data.endpoint.EndpointDataTransmissionSender;
 import de.uniol.inf.is.odysseus.p2p_new.data.endpoint.OpenMessage;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.impl.PeerDictionary;
+import de.uniol.inf.is.odysseus.peer.communication.IMessage;
+import de.uniol.inf.is.odysseus.peer.communication.IPeerCommunicator;
+import de.uniol.inf.is.odysseus.peer.communication.RepeatingMessageSend;
 import de.uniol.inf.is.odysseus.peer.util.ObjectByteConverter;
 
 public class SocketDataTransmissionSender extends EndpointDataTransmissionSender {

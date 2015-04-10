@@ -6,7 +6,7 @@ import java.util.UUID;
 
 import com.google.common.collect.Lists;
 
-import de.uniol.inf.is.odysseus.p2p_new.IMessage;
+import de.uniol.inf.is.odysseus.peer.communication.IMessage;
 import de.uniol.inf.is.odysseus.peer.ddc.DDCEntry;
 import de.uniol.inf.is.odysseus.peer.ddc.DDCKey;
 

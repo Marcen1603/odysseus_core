@@ -2,7 +2,7 @@ package de.uniol.inf.is.odysseus.peer.distribute.service;
 
 import com.google.common.base.Optional;
 
-import de.uniol.inf.is.odysseus.p2p_new.IP2PNetworkManager;
+import de.uniol.inf.is.odysseus.peer.network.IP2PNetworkManager;
 
 /**
  * The service class for a bound {@link IP2PNetworkManager}.

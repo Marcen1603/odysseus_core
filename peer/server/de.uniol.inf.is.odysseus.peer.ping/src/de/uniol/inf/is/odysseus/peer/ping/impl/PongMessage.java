@@ -4,7 +4,7 @@ import java.nio.ByteBuffer;
 
 import org.apache.commons.math.geometry.Vector3D;
 
-import de.uniol.inf.is.odysseus.p2p_new.IMessage;
+import de.uniol.inf.is.odysseus.peer.communication.IMessage;
 
 public class PongMessage implements IMessage {
 

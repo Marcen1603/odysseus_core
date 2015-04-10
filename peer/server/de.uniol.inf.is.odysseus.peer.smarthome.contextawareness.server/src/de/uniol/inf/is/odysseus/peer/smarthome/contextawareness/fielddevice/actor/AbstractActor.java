@@ -2,7 +2,7 @@ package de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.act
 
 import java.util.ArrayList;
 
-import de.uniol.inf.is.odysseus.p2p_new.PeerCommunicationException;
+import de.uniol.inf.is.odysseus.peer.communication.PeerCommunicationException;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.FieldDevice;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.actor.RPiGPIOActor.State;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.fielddevice.logicrule.ILogicRuleListener;

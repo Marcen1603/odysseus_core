@@ -19,15 +19,15 @@ import com.google.common.base.Optional;
 import com.google.common.collect.Lists;
 
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
-import de.uniol.inf.is.odysseus.p2p_new.IAdvertisementDiscovererListener;
-import de.uniol.inf.is.odysseus.p2p_new.IJxtaServicesProvider;
-import de.uniol.inf.is.odysseus.p2p_new.IP2PNetworkManager;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.IP2PDictionary;
 import de.uniol.inf.is.odysseus.peer.distribute.allocate.survey.SurveyBasedAllocationPlugIn;
 import de.uniol.inf.is.odysseus.peer.distribute.allocate.survey.advertisement.AuctionQueryAdvertisement;
 import de.uniol.inf.is.odysseus.peer.distribute.allocate.survey.advertisement.AuctionResponseAdvertisement;
 import de.uniol.inf.is.odysseus.peer.distribute.allocate.survey.bid.Bid;
 import de.uniol.inf.is.odysseus.peer.distribute.allocate.survey.bid.IBidProvider;
+import de.uniol.inf.is.odysseus.peer.jxta.IJxtaServicesProvider;
+import de.uniol.inf.is.odysseus.peer.network.IAdvertisementDiscovererListener;
+import de.uniol.inf.is.odysseus.peer.network.IP2PNetworkManager;
 import de.uniol.inf.is.odysseus.peer.ping.IPingMap;
 
 public class Communicator implements IAdvertisementDiscovererListener {

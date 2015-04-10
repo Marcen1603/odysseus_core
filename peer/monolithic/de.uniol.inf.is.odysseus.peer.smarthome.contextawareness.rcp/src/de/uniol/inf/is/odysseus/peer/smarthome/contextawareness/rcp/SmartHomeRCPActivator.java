@@ -5,11 +5,11 @@ import net.jxta.document.Advertisement;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 
-import de.uniol.inf.is.odysseus.p2p_new.IAdvertisementDiscovererListener;
-import de.uniol.inf.is.odysseus.p2p_new.IP2PNetworkManager;
-import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicator;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.IP2PDictionary;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.IPeerDictionary;
+import de.uniol.inf.is.odysseus.peer.communication.IPeerCommunicator;
+import de.uniol.inf.is.odysseus.peer.network.IAdvertisementDiscovererListener;
+import de.uniol.inf.is.odysseus.peer.network.IP2PNetworkManager;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.server.service.ISmartDeviceService;
 
 public class SmartHomeRCPActivator implements BundleActivator {

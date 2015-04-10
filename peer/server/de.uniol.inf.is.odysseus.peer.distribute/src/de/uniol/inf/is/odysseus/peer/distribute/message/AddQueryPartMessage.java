@@ -13,7 +13,7 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Lists;
 
-import de.uniol.inf.is.odysseus.p2p_new.IMessage;
+import de.uniol.inf.is.odysseus.peer.communication.IMessage;
 
 public class AddQueryPartMessage implements IMessage {
 

@@ -12,7 +12,7 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 
-import de.uniol.inf.is.odysseus.p2p_new.provider.JxtaServicesProvider;
+import de.uniol.inf.is.odysseus.p2p_new.service.JxtaServicesProviderService;
 import de.uniol.inf.is.odysseus.peer.util.RepeatingJobThread;
 
 public abstract class AdvertisementCollector<A extends Advertisement, R extends Advertisement> extends RepeatingJobThread {
@@ -54,8 +54,8 @@ public abstract class AdvertisementCollector<A extends Advertisement, R extends 
 
 	private void tryPublish(Advertisement adv) {
 		try {
-			JxtaServicesProvider.getInstance().publish(adv);
-			JxtaServicesProvider.getInstance().remotePublish(adv);
+			JxtaServicesProviderService.getInstance().publish(adv);
+			JxtaServicesProviderService.getInstance().remotePublish(adv);
 		} catch (IOException e) {
 			LOG.error("Could not publish result advertisement of collector", e);
 		}

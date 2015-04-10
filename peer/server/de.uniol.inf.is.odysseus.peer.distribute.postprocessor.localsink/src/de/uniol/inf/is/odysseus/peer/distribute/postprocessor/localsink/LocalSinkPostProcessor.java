@@ -17,11 +17,11 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.RenameAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.QueryBuildConfiguration;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
-import de.uniol.inf.is.odysseus.p2p_new.IP2PNetworkManager;
 import de.uniol.inf.is.odysseus.peer.distribute.ILogicalQueryPart;
 import de.uniol.inf.is.odysseus.peer.distribute.QueryDistributionPostProcessorException;
 import de.uniol.inf.is.odysseus.peer.distribute.postprocess.AbstractOperatorInsertionPostProcessor;
 import de.uniol.inf.is.odysseus.peer.distribute.util.LogicalQueryHelper;
+import de.uniol.inf.is.odysseus.peer.network.IP2PNetworkManager;
 
 public class LocalSinkPostProcessor extends AbstractOperatorInsertionPostProcessor {
 

@@ -3,7 +3,7 @@ package de.uniol.inf.is.odysseus.p2p_new.data.endpoint;
 import java.nio.ByteBuffer;
 
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
-import de.uniol.inf.is.odysseus.p2p_new.IMessage;
+import de.uniol.inf.is.odysseus.peer.communication.IMessage;
 import de.uniol.inf.is.odysseus.peer.util.ObjectByteConverter;
 
 public class PunctuationMessage implements IMessage {

@@ -7,10 +7,10 @@ import net.jxta.document.Advertisement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniol.inf.is.odysseus.p2p_new.IJxtaServicesProvider;
 import de.uniol.inf.is.odysseus.peer.ddc.distribute.advertisement.DistributedDataContainerAdvertisement;
 import de.uniol.inf.is.odysseus.peer.ddc.distribute.advertisement.DistributedDataContainerChangeAdvertisement;
 import de.uniol.inf.is.odysseus.peer.ddc.distribute.advertisement.DistributedDataContainerRequestAdvertisement;
+import de.uniol.inf.is.odysseus.peer.jxta.IJxtaServicesProvider;
 
 /**
  * DDCAdvertisementSender publishes created DDCAdvertisements to other peers

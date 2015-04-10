@@ -32,7 +32,7 @@ import com.google.common.collect.Lists;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
-import de.uniol.inf.is.odysseus.p2p_new.network.P2PNetworkManager;
+import de.uniol.inf.is.odysseus.p2p_new.service.P2PNetworkManagerService;
 import de.uniol.inf.is.odysseus.p2p_new.service.ServerExecutorService;
 import de.uniol.inf.is.odysseus.p2p_new.service.SessionManagementService;
 
@@ -159,7 +159,7 @@ public class SourceAdvertisement extends Advertisement implements Serializable {
 	}
 	
 	public boolean isLocal() {
-		return this.peerID.equals(P2PNetworkManager.getInstance().getLocalPeerID());
+		return this.peerID.equals(P2PNetworkManagerService.getInstance().getLocalPeerID());
 	}
 	
 	public boolean isStream() {

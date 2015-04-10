@@ -8,12 +8,12 @@ import org.osgi.framework.BundleContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniol.inf.is.odysseus.p2p_new.IJxtaServicesProvider;
-import de.uniol.inf.is.odysseus.p2p_new.IP2PNetworkManager;
-import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicator;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.IP2PDictionary;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.IPeerDictionary;
 import de.uniol.inf.is.odysseus.parser.pql.generator.IPQLGenerator;
+import de.uniol.inf.is.odysseus.peer.communication.IPeerCommunicator;
+import de.uniol.inf.is.odysseus.peer.jxta.IJxtaServicesProvider;
+import de.uniol.inf.is.odysseus.peer.network.IP2PNetworkManager;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.server.LogicRuleProcessor;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.server.QueryExecutor;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.server.SmartDeviceLocalConfigurationServer;

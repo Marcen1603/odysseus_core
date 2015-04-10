@@ -1,7 +1,7 @@
 package de.uniol.inf.is.odysseus.peer.rest.pingmap;
 
-import de.uniol.inf.is.odysseus.p2p_new.IP2PNetworkManager;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.IPeerDictionary;
+import de.uniol.inf.is.odysseus.peer.network.IP2PNetworkManager;
 import de.uniol.inf.is.odysseus.peer.ping.IPingMap;
 
 public class PingMapServiceBinding {

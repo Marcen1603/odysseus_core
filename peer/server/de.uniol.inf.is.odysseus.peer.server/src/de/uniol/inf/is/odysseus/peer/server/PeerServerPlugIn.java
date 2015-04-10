@@ -12,10 +12,10 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Optional;
 import com.google.common.base.Strings;
 
-import de.uniol.inf.is.odysseus.p2p_new.IP2PNetworkManager;
-import de.uniol.inf.is.odysseus.p2p_new.P2PNetworkException;
 import de.uniol.inf.is.odysseus.peer.config.InetAddressUtil;
 import de.uniol.inf.is.odysseus.peer.config.PeerConfiguration;
+import de.uniol.inf.is.odysseus.peer.network.IP2PNetworkManager;
+import de.uniol.inf.is.odysseus.peer.network.P2PNetworkException;
 
 public class PeerServerPlugIn implements BundleActivator {
 	

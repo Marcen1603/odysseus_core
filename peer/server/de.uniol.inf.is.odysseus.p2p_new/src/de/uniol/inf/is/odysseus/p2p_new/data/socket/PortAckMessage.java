@@ -2,7 +2,7 @@ package de.uniol.inf.is.odysseus.p2p_new.data.socket;
 
 import java.nio.ByteBuffer;
 
-import de.uniol.inf.is.odysseus.p2p_new.IMessage;
+import de.uniol.inf.is.odysseus.peer.communication.IMessage;
 
 /**
  * This message indicates that the PortMessage was received

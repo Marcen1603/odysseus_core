@@ -9,7 +9,7 @@ import net.jxta.peer.PeerID;
 
 
 
-import de.uniol.inf.is.odysseus.p2p_new.IAdvertisementDiscovererListener;
+import de.uniol.inf.is.odysseus.peer.network.IAdvertisementDiscovererListener;
 import de.uniol.inf.is.odysseus.rest.service.RestService;
 
 

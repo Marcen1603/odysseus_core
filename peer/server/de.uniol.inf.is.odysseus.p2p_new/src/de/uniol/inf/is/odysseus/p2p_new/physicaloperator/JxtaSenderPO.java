@@ -30,7 +30,7 @@ import de.uniol.inf.is.odysseus.p2p_new.data.ITransmissionSender;
 import de.uniol.inf.is.odysseus.p2p_new.data.ITransmissionSenderListener;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.impl.PeerDictionary;
 import de.uniol.inf.is.odysseus.p2p_new.logicaloperator.JxtaSenderAO;
-import de.uniol.inf.is.odysseus.p2p_new.network.P2PNetworkManager;
+import de.uniol.inf.is.odysseus.p2p_new.service.P2PNetworkManagerService;
 import de.uniol.inf.is.odysseus.p2p_new.service.ServerExecutorService;
 import de.uniol.inf.is.odysseus.p2p_new.service.SessionManagementService;
 import de.uniol.inf.is.odysseus.peer.util.IObservableOperator;
@@ -63,8 +63,8 @@ public class JxtaSenderPO<T extends IStreamObject<?>> extends AbstractSink<T> im
 		peerIDString = ao.getPeerID();
 		writeResourceUsage = ao.isWriteResourceUsage();
 
-		localPeerID = P2PNetworkManager.getInstance().getLocalPeerID();
-		localPeerName = P2PNetworkManager.getInstance().getLocalPeerName();
+		localPeerID = P2PNetworkManagerService.getInstance().getLocalPeerID();
+		localPeerName = P2PNetworkManagerService.getInstance().getLocalPeerName();
 
 		this.transmission = DataTransmissionManager.getInstance()
 				.registerTransmissionSender(peerIDString, pipeIDString);

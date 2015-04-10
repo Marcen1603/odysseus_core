@@ -17,14 +17,12 @@ import com.google.common.collect.Maps;
 
 import de.uniol.inf.is.odysseus.core.collection.IPair;
 import de.uniol.inf.is.odysseus.core.collection.Pair;
-import de.uniol.inf.is.odysseus.p2p_new.IAdvertisementDiscovererListener;
-import de.uniol.inf.is.odysseus.p2p_new.IMessage;
-import de.uniol.inf.is.odysseus.p2p_new.IP2PNetworkManager;
-import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicator;
-import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicatorListener;
-import de.uniol.inf.is.odysseus.p2p_new.PeerCommunicationException;
-import de.uniol.inf.is.odysseus.p2p_new.RepeatingMessageSend;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.IPeerDictionary;
+import de.uniol.inf.is.odysseus.peer.communication.IMessage;
+import de.uniol.inf.is.odysseus.peer.communication.IPeerCommunicator;
+import de.uniol.inf.is.odysseus.peer.communication.IPeerCommunicatorListener;
+import de.uniol.inf.is.odysseus.peer.communication.PeerCommunicationException;
+import de.uniol.inf.is.odysseus.peer.communication.RepeatingMessageSend;
 import de.uniol.inf.is.odysseus.peer.ddc.DDCEntry;
 import de.uniol.inf.is.odysseus.peer.ddc.DDCKey;
 import de.uniol.inf.is.odysseus.peer.ddc.IDistributedDataContainer;
@@ -37,6 +35,8 @@ import de.uniol.inf.is.odysseus.peer.ddc.distribute.advertisement.sender.Distrib
 import de.uniol.inf.is.odysseus.peer.ddc.distribute.message.DDCAckMessage;
 import de.uniol.inf.is.odysseus.peer.ddc.distribute.message.DDCMessage;
 import de.uniol.inf.is.odysseus.peer.ddc.distribute.message.DDCRequest;
+import de.uniol.inf.is.odysseus.peer.network.IAdvertisementDiscovererListener;
+import de.uniol.inf.is.odysseus.peer.network.IP2PNetworkManager;
 
 /**
  * Listener for DDCAdvertisements. The Changes from Advertisements will be

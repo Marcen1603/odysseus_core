@@ -4,10 +4,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import net.jxta.peer.PeerID;
-import de.uniol.inf.is.odysseus.p2p_new.IMessage;
-import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicator;
-import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicatorListener;
-import de.uniol.inf.is.odysseus.p2p_new.PeerCommunicationException;
+import de.uniol.inf.is.odysseus.peer.communication.IMessage;
+import de.uniol.inf.is.odysseus.peer.communication.IPeerCommunicator;
+import de.uniol.inf.is.odysseus.peer.communication.IPeerCommunicatorListener;
+import de.uniol.inf.is.odysseus.peer.communication.PeerCommunicationException;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.SmartHomeServerPlugIn;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.server.config.SmartDeviceConfig;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.server.config.SmartDeviceConfigurationRequestMessage;

@@ -18,7 +18,6 @@ import de.uniol.inf.is.odysseus.core.server.distribution.QueryDistributionExcept
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.QueryBuildConfiguration;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
-import de.uniol.inf.is.odysseus.p2p_new.IP2PNetworkManager;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.IPeerDictionary;
 import de.uniol.inf.is.odysseus.peer.distribute.DistributionCheckException;
 import de.uniol.inf.is.odysseus.peer.distribute.IDistributionChecker;
@@ -32,6 +31,7 @@ import de.uniol.inf.is.odysseus.peer.distribute.QueryPartAllocationException;
 import de.uniol.inf.is.odysseus.peer.distribute.QueryPartModificationException;
 import de.uniol.inf.is.odysseus.peer.distribute.QueryPartitionException;
 import de.uniol.inf.is.odysseus.peer.distribute.registry.DistributionCheckerRegistry;
+import de.uniol.inf.is.odysseus.peer.network.IP2PNetworkManager;
 
 public final class QueryDistributorHelper {
 

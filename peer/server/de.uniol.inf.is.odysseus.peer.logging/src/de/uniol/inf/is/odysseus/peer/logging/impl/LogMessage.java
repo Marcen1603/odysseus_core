@@ -2,7 +2,7 @@ package de.uniol.inf.is.odysseus.peer.logging.impl;
 
 import org.apache.log4j.spi.LoggingEvent;
 
-import de.uniol.inf.is.odysseus.p2p_new.IMessage;
+import de.uniol.inf.is.odysseus.peer.communication.IMessage;
 
 public class LogMessage implements IMessage {
 

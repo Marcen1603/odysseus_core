@@ -8,7 +8,7 @@ import net.jxta.peer.PeerID;
 
 import com.google.common.collect.Maps;
 
-import de.uniol.inf.is.odysseus.p2p_new.IJxtaServicesProvider;
+import de.uniol.inf.is.odysseus.peer.jxta.IJxtaServicesProvider;
 import de.uniol.inf.is.odysseus.peer.logging.adv.LoggingAdvertisement;
 
 public class JxtaLoggingDestinations {

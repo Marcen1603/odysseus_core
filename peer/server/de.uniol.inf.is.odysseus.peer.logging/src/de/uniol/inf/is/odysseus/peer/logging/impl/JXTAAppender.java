@@ -9,8 +9,8 @@ import org.apache.log4j.spi.LoggingEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicator;
-import de.uniol.inf.is.odysseus.p2p_new.PeerCommunicationException;
+import de.uniol.inf.is.odysseus.peer.communication.IPeerCommunicator;
+import de.uniol.inf.is.odysseus.peer.communication.PeerCommunicationException;
 import de.uniol.inf.is.odysseus.peer.logging.JXTALoggingPlugIn;
 import de.uniol.inf.is.odysseus.peer.logging.JxtaLoggingDestinations;
 

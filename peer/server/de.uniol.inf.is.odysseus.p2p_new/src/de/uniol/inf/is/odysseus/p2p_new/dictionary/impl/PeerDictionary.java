@@ -23,11 +23,11 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
-import de.uniol.inf.is.odysseus.p2p_new.IAdvertisementDiscovererListener;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.IPeerDictionary;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.IPeerDictionaryListener;
-import de.uniol.inf.is.odysseus.p2p_new.network.P2PNetworkManager;
-import de.uniol.inf.is.odysseus.p2p_new.provider.JxtaServicesProvider;
+import de.uniol.inf.is.odysseus.p2p_new.service.JxtaServicesProviderService;
+import de.uniol.inf.is.odysseus.p2p_new.service.P2PNetworkManagerService;
+import de.uniol.inf.is.odysseus.peer.network.IAdvertisementDiscovererListener;
 
 public class PeerDictionary implements IPeerDictionary, IAdvertisementDiscovererListener {
 
@@ -54,12 +54,12 @@ public class PeerDictionary implements IPeerDictionary, IAdvertisementDiscoverer
 	private Collection<PeerID> toValidPeerIDs(Collection<PeerAdvertisement> peerAdvs) {
 		// TODO: Die Methode macht mehr als der Name aussagt
 		Collection<PeerID> ids = Lists.newLinkedList();
-		PeerID localPeerID = P2PNetworkManager.getInstance().getLocalPeerID();
+		PeerID localPeerID = P2PNetworkManagerService.getInstance().getLocalPeerID();
 
 		LOG.debug("Determining peers out of {} potencial peers", peerAdvs.size());
 		for (PeerAdvertisement adv : peerAdvs) {
 			if (!localPeerID.equals(adv.getPeerID())) {
-				if (JxtaServicesProvider.getInstance().isReachable(adv.getPeerID())) {
+				if (JxtaServicesProviderService.getInstance().isReachable(adv.getPeerID())) {
 					ids.add(adv.getPeerID());
 					LOG.debug("Peer " + adv.getName() + " is reachable");
 					toFlushMap.remove(adv);
@@ -78,8 +78,8 @@ public class PeerDictionary implements IPeerDictionary, IAdvertisementDiscoverer
 
 	private static void tryFlushAdvertisement(Advertisement advertisement) {
 		try {
-			if (JxtaServicesProvider.isActivated()) {
-				JxtaServicesProvider.getInstance().flushAdvertisement(advertisement);
+			if (JxtaServicesProviderService.isBound()) {
+				JxtaServicesProviderService.getInstance().flushAdvertisement(advertisement);
 				LOG.debug("Flushed advertisement {}", advertisement.getClass().getName());
 			}
 		} catch (IOException e) {
@@ -123,8 +123,8 @@ public class PeerDictionary implements IPeerDictionary, IAdvertisementDiscoverer
 		Thread waitingThread = new Thread(new Runnable() {
 			@Override
 			public void run() {
-				P2PNetworkManager.waitFor();
-				P2PNetworkManager.getInstance().addAdvertisementListener(PeerDictionary.this);
+				P2PNetworkManagerService.waitForStart();
+				P2PNetworkManagerService.getInstance().addAdvertisementListener(PeerDictionary.this);
 
 				instance = PeerDictionary.this;
 			}
@@ -165,14 +165,14 @@ public class PeerDictionary implements IPeerDictionary, IAdvertisementDiscoverer
 	public String getRemotePeerName(PeerID peerID) {
 		Preconditions.checkNotNull(peerID, "PeerID to get the name from must not be null!");
 
-		if (peerID.equals(P2PNetworkManager.getInstance().getLocalPeerID())) {
-			return P2PNetworkManager.getInstance().getLocalPeerName();
+		if (peerID.equals(P2PNetworkManagerService.getInstance().getLocalPeerID())) {
+			return P2PNetworkManagerService.getInstance().getLocalPeerName();
 		}
 		if (remotePeerNameMap.containsKey(peerID)) {
 			return remotePeerNameMap.get(peerID);
 		}
 
-		Collection<PeerAdvertisement> peerAdvs = JxtaServicesProvider.getInstance().getPeerAdvertisements();
+		Collection<PeerAdvertisement> peerAdvs = JxtaServicesProviderService.getInstance().getPeerAdvertisements();
 		for (PeerAdvertisement peerAdv : peerAdvs) {
 			if (peerAdv.getPeerID().equals(peerID)) {
 				remotePeerNameMap.put(peerID, peerAdv.getName());
@@ -202,13 +202,13 @@ public class PeerDictionary implements IPeerDictionary, IAdvertisementDiscoverer
 	@Override
 	public Optional<String> getRemotePeerAddress(PeerID peerID) {
 		Preconditions.checkNotNull(peerID, "PeerID to get the address from must not be null!");
-		if (peerID.equals(P2PNetworkManager.getInstance().getLocalPeerID())) {
+		if (peerID.equals(P2PNetworkManagerService.getInstance().getLocalPeerID())) {
 			return Optional.of("127.0.0.1");
 		}
 
 		String address = remotePeerAddressMap.get(peerID);
 		if (Strings.isNullOrEmpty(address)) {
-			Optional<String> newAddress = JxtaServicesProvider.getInstance().getRemotePeerAddress(peerID);
+			Optional<String> newAddress = JxtaServicesProviderService.getInstance().getRemotePeerAddress(peerID);
 			if (newAddress.isPresent() && !newAddress.get().startsWith("0.0.0.0")) {
 				remotePeerAddressMap.put(peerID, newAddress.get());
 				return newAddress;
@@ -227,7 +227,7 @@ public class PeerDictionary implements IPeerDictionary, IAdvertisementDiscoverer
 
 	@Override
 	public void updateAdvertisements() {
-		Collection<PeerAdvertisement> peerAdvertisements = JxtaServicesProvider.getInstance().getPeerAdvertisements();
+		Collection<PeerAdvertisement> peerAdvertisements = JxtaServicesProviderService.getInstance().getPeerAdvertisements();
 		Collection<PeerID> newPeers = toValidPeerIDs(peerAdvertisements);
 		
 		synchronized (currentPeerIDs) {
@@ -267,7 +267,7 @@ public class PeerDictionary implements IPeerDictionary, IAdvertisementDiscoverer
 		for( PeerAdvertisement peerAdvertisement : peerAdvertisements ) {
 			if( peerAdvertisement.getPeerID().equals(oldPeer)) {
 				try {
-					JxtaServicesProvider.getInstance().flushAdvertisement(peerAdvertisement);
+					JxtaServicesProviderService.getInstance().flushAdvertisement(peerAdvertisement);
 				} catch (IOException ignore) {
 				} 
 			}

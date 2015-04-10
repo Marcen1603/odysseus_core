@@ -9,7 +9,7 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Preconditions;
 
-import de.uniol.inf.is.odysseus.p2p_new.provider.JxtaServicesProvider;
+import de.uniol.inf.is.odysseus.p2p_new.service.JxtaServicesProviderService;
 
 public final class ResolvePeerThread extends Thread {
 
@@ -33,10 +33,10 @@ public final class ResolvePeerThread extends Thread {
 	@Override
 	public void run() {
 		LOG.debug("Trying to connect to peer {}", peerAdvertisement.getName());
-		if( !JxtaServicesProvider.getInstance().isReachable(peerAdvertisement.getPeerID(), true) ) {
+		if( !JxtaServicesProviderService.getInstance().isReachable(peerAdvertisement.getPeerID(), true) ) {
 			try {
 				LOG.debug("Could not connect to peer {}", peerAdvertisement.getName());
-				JxtaServicesProvider.getInstance().flushAdvertisement(peerAdvertisement);
+				JxtaServicesProviderService.getInstance().flushAdvertisement(peerAdvertisement);
 				
 			} catch (IOException e) {
 				LOG.error("Could not flush peer advertisement", e);

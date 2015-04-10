@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="de.uniol.inf.is.odysseus.peer.distribute.postprocessor.forcelocalsources.ForceLocalSourcesPostProcessor">
    <implementation class="de.uniol.inf.is.odysseus.peer.distribute.postprocessor.forcelocalsources.ForceLocalSourcesPostProcessor"/>
-   <reference bind="bindP2PNetworkManager" cardinality="1..1" interface="de.uniol.inf.is.odysseus.p2p_new.IP2PNetworkManager" name="IP2PNetworkManager" policy="static" unbind="unbindP2PNetworkManager"/>
+   <reference bind="bindP2PNetworkManager" cardinality="1..1" interface="de.uniol.inf.is.odysseus.peer.network.IP2PNetworkManager" name="IP2PNetworkManager" policy="static" unbind="unbindP2PNetworkManager"/>
    <service>
       <provide interface="de.uniol.inf.is.odysseus.peer.distribute.IQueryDistributionPostProcessor"/>
    </service>

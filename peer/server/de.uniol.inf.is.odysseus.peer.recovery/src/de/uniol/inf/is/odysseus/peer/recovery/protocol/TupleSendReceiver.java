@@ -14,9 +14,9 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Preconditions;
 
-import de.uniol.inf.is.odysseus.p2p_new.IMessage;
-import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicator;
-import de.uniol.inf.is.odysseus.p2p_new.PeerCommunicationException;
+import de.uniol.inf.is.odysseus.peer.communication.IMessage;
+import de.uniol.inf.is.odysseus.peer.communication.IPeerCommunicator;
+import de.uniol.inf.is.odysseus.peer.communication.PeerCommunicationException;
 import de.uniol.inf.is.odysseus.peer.recovery.messages.RecoveryTupleSendMessage;
 import de.uniol.inf.is.odysseus.peer.recovery.messages.RecoveryTupleSendResponseMessage;
 import de.uniol.inf.is.odysseus.peer.recovery.util.RecoveryHelper;

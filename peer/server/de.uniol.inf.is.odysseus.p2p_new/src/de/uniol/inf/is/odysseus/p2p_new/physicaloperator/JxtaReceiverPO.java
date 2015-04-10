@@ -29,7 +29,7 @@ import de.uniol.inf.is.odysseus.p2p_new.data.ITransmissionReceiver;
 import de.uniol.inf.is.odysseus.p2p_new.data.ITransmissionReceiverListener;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.impl.PeerDictionary;
 import de.uniol.inf.is.odysseus.p2p_new.logicaloperator.JxtaReceiverAO;
-import de.uniol.inf.is.odysseus.p2p_new.network.P2PNetworkManager;
+import de.uniol.inf.is.odysseus.p2p_new.service.P2PNetworkManagerService;
 import de.uniol.inf.is.odysseus.peer.util.ByteBufferUtil;
 import de.uniol.inf.is.odysseus.peer.util.IObservableOperator;
 import de.uniol.inf.is.odysseus.peer.util.IOperatorObserver;
@@ -71,7 +71,7 @@ public class JxtaReceiverPO<T extends IStreamObject> extends AbstractSource<T> i
 		pipeIDString = ao.getPipeID();
 		peerIDString = ao.getPeerID();
 
-		localPeerName = P2PNetworkManager.getInstance().getLocalPeerName();
+		localPeerName = P2PNetworkManagerService.getInstance().getLocalPeerName();
 
 		transmission = DataTransmissionManager.getInstance().registerTransmissionReceiver(peerIDString, pipeIDString);
 		transmission.addListener(this);

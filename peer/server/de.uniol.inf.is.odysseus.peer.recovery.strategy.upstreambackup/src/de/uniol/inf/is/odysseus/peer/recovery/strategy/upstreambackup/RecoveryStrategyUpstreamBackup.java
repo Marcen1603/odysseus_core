@@ -20,10 +20,10 @@ import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 
 import de.uniol.inf.is.odysseus.core.planmanagement.query.QueryState;
-import de.uniol.inf.is.odysseus.p2p_new.IP2PNetworkManager;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.IPeerDictionary;
 import de.uniol.inf.is.odysseus.peer.distribute.ILogicalQueryPart;
 import de.uniol.inf.is.odysseus.peer.distribute.QueryPartAllocationException;
+import de.uniol.inf.is.odysseus.peer.network.IP2PNetworkManager;
 import de.uniol.inf.is.odysseus.peer.recovery.IBackupInformationAccess;
 import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryAllocator;
 import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryDynamicBackup;
@@ -35,7 +35,7 @@ import de.uniol.inf.is.odysseus.peer.recovery.internal.RecoverySubProcessState;
 /**
  * Implementation of the Upstream-Backup {@link IRecoveryStrategy}.
  * 
- * @author Simon Küspert
+ * @author Simon Kï¿½spert
  * 
  */
 public class RecoveryStrategyUpstreamBackup implements IRecoveryStrategy {

@@ -9,8 +9,8 @@ import net.jxta.document.Advertisement;
 
 
 import net.jxta.document.AdvertisementFactory;
-import de.uniol.inf.is.odysseus.p2p_new.IAdvertisementDiscovererListener;
-import de.uniol.inf.is.odysseus.p2p_new.IP2PNetworkManager;
+import de.uniol.inf.is.odysseus.peer.network.IAdvertisementDiscovererListener;
+import de.uniol.inf.is.odysseus.peer.network.IP2PNetworkManager;
 import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryCommunicator;
 import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryStrategyManager;
 import de.uniol.inf.is.odysseus.peer.recovery.registry.RecoveryCommunicatorRegistry;

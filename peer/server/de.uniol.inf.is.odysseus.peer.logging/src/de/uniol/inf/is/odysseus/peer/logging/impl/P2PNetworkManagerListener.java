@@ -8,10 +8,10 @@ import net.jxta.id.IDFactory;
 import org.apache.log4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniol.inf.is.odysseus.p2p_new.IP2PNetworkListener;
-import de.uniol.inf.is.odysseus.p2p_new.IP2PNetworkManager;
 import de.uniol.inf.is.odysseus.peer.logging.JXTALoggingPlugIn;
 import de.uniol.inf.is.odysseus.peer.logging.adv.LoggingAdvertisement;
+import de.uniol.inf.is.odysseus.peer.network.IP2PNetworkListener;
+import de.uniol.inf.is.odysseus.peer.network.IP2PNetworkManager;
 
 public class P2PNetworkManagerListener implements IP2PNetworkListener {
 

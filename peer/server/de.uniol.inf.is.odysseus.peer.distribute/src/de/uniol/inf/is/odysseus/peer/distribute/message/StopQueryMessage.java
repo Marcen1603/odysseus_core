@@ -5,7 +5,7 @@ import java.net.URISyntaxException;
 
 import net.jxta.id.ID;
 import net.jxta.id.IDFactory;
-import de.uniol.inf.is.odysseus.p2p_new.IMessage;
+import de.uniol.inf.is.odysseus.peer.communication.IMessage;
 
 public class StopQueryMessage implements IMessage {
 

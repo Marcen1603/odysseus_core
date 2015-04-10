@@ -2,7 +2,7 @@ package de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.paralle
 
 import java.nio.ByteBuffer;
 
-import de.uniol.inf.is.odysseus.p2p_new.IMessage;
+import de.uniol.inf.is.odysseus.peer.communication.IMessage;
 
 /**
  * Message to abort LaodBalancing (Sent from inititating Peer)

@@ -7,9 +7,9 @@ import org.slf4j.LoggerFactory;
 
 import net.jxta.document.Advertisement;
 import net.jxta.peer.PeerID;
-import de.uniol.inf.is.odysseus.p2p_new.IAdvertisementDiscovererListener;
 import de.uniol.inf.is.odysseus.peer.logging.JXTALoggingPlugIn;
 import de.uniol.inf.is.odysseus.peer.logging.adv.LoggingAdvertisement;
+import de.uniol.inf.is.odysseus.peer.network.IAdvertisementDiscovererListener;
 
 public class LogAdvertisementListener implements IAdvertisementDiscovererListener {
 

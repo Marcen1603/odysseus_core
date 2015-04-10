@@ -30,9 +30,8 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecu
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvider;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
-import de.uniol.inf.is.odysseus.p2p_new.IP2PNetworkManager;
-import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicator;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.IPeerDictionary;
+import de.uniol.inf.is.odysseus.peer.communication.IPeerCommunicator;
 import de.uniol.inf.is.odysseus.peer.distribute.IQueryPartController;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.OsgiServiceManager;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.ILoadBalancingAllocator;
@@ -43,6 +42,7 @@ import de.uniol.inf.is.odysseus.peer.loadbalancing.active.movingstate.communicat
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.movingstate.communicator.MovingStateManager;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.movingstate.communicator.MovingStateReceiver;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.movingstate.communicator.MovingStateSender;
+import de.uniol.inf.is.odysseus.peer.network.IP2PNetworkManager;
 
 /**
  * Console with debug commands for active LoadBalancing.

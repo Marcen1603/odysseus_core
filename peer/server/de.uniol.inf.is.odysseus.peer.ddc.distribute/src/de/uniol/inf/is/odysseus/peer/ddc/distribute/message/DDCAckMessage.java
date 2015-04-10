@@ -3,7 +3,7 @@ package de.uniol.inf.is.odysseus.peer.ddc.distribute.message;
 import java.nio.ByteBuffer;
 import java.util.UUID;
 
-import de.uniol.inf.is.odysseus.p2p_new.IMessage;
+import de.uniol.inf.is.odysseus.peer.communication.IMessage;
 
 public class DDCAckMessage implements IMessage {
 

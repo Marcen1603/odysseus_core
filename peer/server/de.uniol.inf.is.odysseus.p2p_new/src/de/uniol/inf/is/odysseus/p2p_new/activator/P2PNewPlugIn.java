@@ -6,8 +6,6 @@ import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 
-import de.uniol.inf.is.odysseus.p2p_new.communication.CommunicationAdvertisement;
-import de.uniol.inf.is.odysseus.p2p_new.communication.CommunicationAdvertisementInstantiator;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.MultipleSourceAdvertisement;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.RemoveMultipleSourceAdvertisement;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.RemoveSourceAdvertisement;
@@ -44,7 +42,6 @@ public class P2PNewPlugIn implements BundleActivator {
 
 	private static void registerAdvertisementTypes() {
 		AdvertisementFactory.registerAdvertisementInstance(SourceAdvertisement.getAdvertisementType(), new SourceAdvertisementInstantiator());
-		AdvertisementFactory.registerAdvertisementInstance(CommunicationAdvertisement.getAdvertisementType(), new CommunicationAdvertisementInstantiator());
 		AdvertisementFactory.registerAdvertisementInstance(RemoveSourceAdvertisement.getAdvertisementType(), new RemoveSourceAdvertisementInstantiator());
 		AdvertisementFactory.registerAdvertisementInstance(MultipleSourceAdvertisement.getAdvertisementType(), new MultipleSourceAdvertisementInstantiator());
 		AdvertisementFactory.registerAdvertisementInstance(RemoveMultipleSourceAdvertisement.getAdvertisementType(), new RemoveMultipleSourceAdvertisementInstantiator());

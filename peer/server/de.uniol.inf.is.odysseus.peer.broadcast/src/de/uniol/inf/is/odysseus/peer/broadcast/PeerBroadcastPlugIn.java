@@ -3,9 +3,9 @@ package de.uniol.inf.is.odysseus.peer.broadcast;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 
-import de.uniol.inf.is.odysseus.p2p_new.IP2PNetworkManager;
 import de.uniol.inf.is.odysseus.peer.broadcast.impl.BroadcastRequestListener;
 import de.uniol.inf.is.odysseus.peer.broadcast.impl.BroadcastRequestSender;
+import de.uniol.inf.is.odysseus.peer.network.IP2PNetworkManager;
 
 public class PeerBroadcastPlugIn implements BundleActivator {
 	

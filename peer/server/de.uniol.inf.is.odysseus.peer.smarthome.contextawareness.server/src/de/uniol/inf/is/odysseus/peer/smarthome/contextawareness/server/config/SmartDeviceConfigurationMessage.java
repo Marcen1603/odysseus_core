@@ -6,7 +6,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
-import de.uniol.inf.is.odysseus.p2p_new.IMessage;
+import de.uniol.inf.is.odysseus.peer.communication.IMessage;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.smartdevice.message.LookAheadObjectInputStream;
 
 public abstract class SmartDeviceConfigurationMessage implements IMessage {

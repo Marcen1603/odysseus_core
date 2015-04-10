@@ -7,8 +7,8 @@ import net.jxta.id.IDFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniol.inf.is.odysseus.p2p_new.IJxtaServicesProvider;
-import de.uniol.inf.is.odysseus.p2p_new.IP2PNetworkManager;
+import de.uniol.inf.is.odysseus.peer.jxta.IJxtaServicesProvider;
+import de.uniol.inf.is.odysseus.peer.network.IP2PNetworkManager;
 
 public class RecoveryStrategyManagerAdvertisementSender {
 

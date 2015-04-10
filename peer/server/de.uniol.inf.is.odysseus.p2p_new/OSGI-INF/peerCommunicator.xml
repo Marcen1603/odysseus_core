@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" activate="activate" deactivate="deactivate" enabled="true" immediate="true" name="de.uniol.inf.is.odysseus.p2p_new.PeerCommunicator">
-   <implementation class="de.uniol.inf.is.odysseus.p2p_new.communication.EndpointPeerCommunicator"/>
-   <reference bind="bindP2PDictionary" cardinality="1..1" interface="de.uniol.inf.is.odysseus.p2p_new.dictionary.IP2PDictionary" name="IP2PDictionary" policy="static" unbind="unbindP2PDictionary"/>
-   <service>
-      <provide interface="de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicator"/>
-   </service>
-</scr:component>

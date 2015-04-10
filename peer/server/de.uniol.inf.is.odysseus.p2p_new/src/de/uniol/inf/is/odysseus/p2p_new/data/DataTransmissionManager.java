@@ -1,6 +1,5 @@
 package de.uniol.inf.is.odysseus.p2p_new.data;
 
-import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicator;
 import de.uniol.inf.is.odysseus.p2p_new.data.endpoint.CloseAckMessage;
 import de.uniol.inf.is.odysseus.p2p_new.data.endpoint.CloseMessage;
 import de.uniol.inf.is.odysseus.p2p_new.data.endpoint.DataMessage;
@@ -12,6 +11,7 @@ import de.uniol.inf.is.odysseus.p2p_new.data.socket.PortAckMessage;
 import de.uniol.inf.is.odysseus.p2p_new.data.socket.PortMessage;
 import de.uniol.inf.is.odysseus.p2p_new.data.socket.SocketDataTransmissionReceiver;
 import de.uniol.inf.is.odysseus.p2p_new.data.socket.SocketDataTransmissionSender;
+import de.uniol.inf.is.odysseus.peer.communication.IPeerCommunicator;
 
 public class DataTransmissionManager {
 	

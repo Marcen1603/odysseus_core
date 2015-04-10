@@ -16,15 +16,11 @@ public class DistributedDataContainerDistributeThread extends Thread {
 	@Override
 	public void run() {
 		// Generate DDCAdvertisement
-		DistributedDataContainerAdvertisement advertisement = DistributedDataContainerAdvertisementGenerator
-				.getInstance().generate();
+		DistributedDataContainerAdvertisement advertisement = DistributedDataContainerAdvertisementGenerator.getInstance().generate();
 		// Publish Advertisement to other peers in network
-		DistributedDataContainerAdvertisementSender.getInstance()
-				.publishDDCAdvertisement(advertisement);
+		DistributedDataContainerAdvertisementSender.getInstance().publishDDCAdvertisement(advertisement);
 		// Request other DDCs
-		DistributedDataContainerRequestAdvertisement request = DistributedDataContainerAdvertisementGenerator
-				.getInstance().generateRequest();
-		DistributedDataContainerAdvertisementSender.getInstance()
-				.publishDDCRequestAdvertisement(request);
+		DistributedDataContainerRequestAdvertisement request = DistributedDataContainerAdvertisementGenerator.getInstance().generateRequest();
+		DistributedDataContainerAdvertisementSender.getInstance().publishDDCRequestAdvertisement(request);
 	}
 }

@@ -2,7 +2,7 @@ package de.uniol.inf.is.odysseus.peer.resource.impl;
 
 import java.nio.ByteBuffer;
 
-import de.uniol.inf.is.odysseus.p2p_new.IMessage;
+import de.uniol.inf.is.odysseus.peer.communication.IMessage;
 import de.uniol.inf.is.odysseus.peer.resource.IResourceUsage;
 
 public class AnswerUsageMessage implements IMessage {

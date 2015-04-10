@@ -1,6 +1,6 @@
 package de.uniol.inf.is.odysseus.peer.rcp.views;
 
-import de.uniol.inf.is.odysseus.p2p_new.IMessage;
+import de.uniol.inf.is.odysseus.peer.communication.IMessage;
 
 public class ChatMessage implements IMessage {
 

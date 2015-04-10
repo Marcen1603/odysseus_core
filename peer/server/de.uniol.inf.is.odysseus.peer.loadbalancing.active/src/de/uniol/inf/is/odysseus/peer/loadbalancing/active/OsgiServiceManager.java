@@ -7,9 +7,9 @@ import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvider;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
-import de.uniol.inf.is.odysseus.p2p_new.IP2PNetworkManager;
 import de.uniol.inf.is.odysseus.peer.distribute.IQueryPartController;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.common.ILoadBalancingQueryManager;
+import de.uniol.inf.is.odysseus.peer.network.IP2PNetworkManager;
 
 /**
  * Bundle Activator for Active LoadBalancing Bundle.

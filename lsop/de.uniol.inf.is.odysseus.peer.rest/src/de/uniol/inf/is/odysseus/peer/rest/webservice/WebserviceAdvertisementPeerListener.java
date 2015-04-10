@@ -5,11 +5,11 @@ import java.util.Collection;
 
 import net.jxta.document.Advertisement;
 import net.jxta.peer.PeerID;
-import de.uniol.inf.is.odysseus.p2p_new.IAdvertisementDiscovererListener;
-import de.uniol.inf.is.odysseus.p2p_new.IJxtaServicesProvider;
-import de.uniol.inf.is.odysseus.p2p_new.IP2PNetworkManager;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.IPeerDictionary;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.IPeerDictionaryListener;
+import de.uniol.inf.is.odysseus.peer.jxta.IJxtaServicesProvider;
+import de.uniol.inf.is.odysseus.peer.network.IAdvertisementDiscovererListener;
+import de.uniol.inf.is.odysseus.peer.network.IP2PNetworkManager;
 
 public class WebserviceAdvertisementPeerListener implements IPeerDictionaryListener, IAdvertisementDiscovererListener {
 	

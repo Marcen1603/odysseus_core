@@ -7,7 +7,7 @@ import net.jxta.impl.id.UUID.UUID;
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 
-import de.uniol.inf.is.odysseus.p2p_new.IMessage;
+import de.uniol.inf.is.odysseus.peer.communication.IMessage;
 
 /**
  * Abstract class for response messages (acks/fails).

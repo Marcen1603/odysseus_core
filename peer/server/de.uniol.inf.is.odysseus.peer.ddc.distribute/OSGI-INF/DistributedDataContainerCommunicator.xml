@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="de.uniol.inf.is.odysseus.peer.ddc.distribute.communication.DistributedDataContainerCommunicator">
    <implementation class="de.uniol.inf.is.odysseus.peer.ddc.distribute.communication.DistributedDataContainerCommunicator"/>
-   <reference bind="bindP2PNetworkManager" cardinality="1..1" interface="de.uniol.inf.is.odysseus.p2p_new.IP2PNetworkManager" name="IP2PNetworkManager" policy="dynamic" unbind="unbindP2PNetworkManager"/>
+   <reference bind="bindP2PNetworkManager" cardinality="1..1" interface="de.uniol.inf.is.odysseus.peer.network.IP2PNetworkManager" name="IP2PNetworkManager" policy="dynamic" unbind="unbindP2PNetworkManager"/>
    <reference bind="bindDDC" cardinality="1..1" interface="de.uniol.inf.is.odysseus.peer.ddc.IDistributedDataContainer" name="IDistributedDataContainer" policy="dynamic" unbind="unbindDDC"/>
-   <reference bind="bindPeerCommunicator" cardinality="1..1" interface="de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicator" name="IPeerCommunicator" policy="dynamic" unbind="unbindPeerCommunicator"/>
+   <reference bind="bindPeerCommunicator" cardinality="1..1" interface="de.uniol.inf.is.odysseus.peer.communication.IPeerCommunicator" name="IPeerCommunicator" policy="dynamic" unbind="unbindPeerCommunicator"/>
    <reference bind="bindPeerDictionary" cardinality="1..1" interface="de.uniol.inf.is.odysseus.p2p_new.dictionary.IPeerDictionary" name="IPeerDictionary" policy="dynamic" unbind="unbindPeerDictionary"/>
 </scr:component>

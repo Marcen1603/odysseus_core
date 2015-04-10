@@ -20,15 +20,14 @@ Require-Bundle: de.uniol.inf.is.odysseus.slf4j;bundle-version="1.0.0",
  de.uniol.inf.is.odysseus.core;bundle-version="1.0.0",
  de.uniol.inf.is.odysseus.core.server;bundle-version="1.0.0",
  Jxta_2.6_Source;bundle-version="1.0.0",
- de.uniol.inf.is.odysseus.interval_latency;bundle-version="1.0.0",
- de.uniol.inf.is.odysseus.datarate;bundle-version="1.0.0",
- de.uniol.inf.is.odysseus.datarate_systemload;bundle-version="1.0.0",
- de.uniol.inf.is.odysseus.systemload;bundle-version="1.0.0",
- de.uniol.inf.is.odysseus.latency;bundle-version="1.0.0",
  org.json;bundle-version="1.0.0",
- de.uniol.inf.is.odysseus.peer.util;bundle-version="1.0.0"
-Service-Component: OSGI-INF/jxtaProtocolHandler.xml,OSGI-INF/executorService.xml,OSGI-INF/keywordProvider.xml,OSGI-INF/p2pDictionary.xml,
- OSGI-INF/jxtaServicesProvider.xml,OSGI-INF/p2pNetworkManager.xml,OSGI-INF/p2pNetworkListenerService.xml,OSGI-INF/peerCommunicator.xml,OSGI-INF/ReceiverSenderPairPostOptimization.xml,OSGI-INF/DataTransmissionManager.xml,OSGI-INF/PeerDictionary.xml,OSGI-INF/pqlParser.xml
+ de.uniol.inf.is.odysseus.peer.util;bundle-version="1.0.0",
+ de.uniol.inf.is.odysseus.peer.network,
+ de.uniol.inf.is.odysseus.peer.jxta;bundle-version="1.0.0",
+ de.uniol.inf.is.odysseus.peer.communication;bundle-version="1.0.0",
+ de.uniol.inf.is.odysseus.systemload;bundle-version="1.0.0"
+Service-Component: OSGI-INF/executorService.xml,OSGI-INF/keywordProvider.xml,OSGI-INF/p2pDictionary.xml,
+ OSGI-INF/jxtaServicesProvider.xml,OSGI-INF/p2pNetworkManager.xml,OSGI-INF/ReceiverSenderPairPostOptimization.xml,OSGI-INF/DataTransmissionManager.xml,OSGI-INF/PeerDictionary.xml,OSGI-INF/pqlParser.xml
 Export-Package: de.uniol.inf.is.odysseus.p2p_new,
  de.uniol.inf.is.odysseus.p2p_new.data,
  de.uniol.inf.is.odysseus.p2p_new.dictionary,

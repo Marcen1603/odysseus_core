@@ -4,8 +4,8 @@ import net.jxta.peer.PeerID;
 
 import com.google.common.base.Preconditions;
 
-import de.uniol.inf.is.odysseus.p2p_new.IMessage;
-import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicator;
+import de.uniol.inf.is.odysseus.peer.communication.IMessage;
+import de.uniol.inf.is.odysseus.peer.communication.IPeerCommunicator;
 import de.uniol.inf.is.odysseus.peer.recovery.messages.RecoveryAgreementMessage;
 import de.uniol.inf.is.odysseus.peer.recovery.messages.RecoveryAgreementResponseMessage;
 

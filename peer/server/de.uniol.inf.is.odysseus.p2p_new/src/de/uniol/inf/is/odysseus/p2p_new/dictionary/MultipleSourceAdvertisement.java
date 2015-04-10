@@ -29,7 +29,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.impl.AdvertisementCache;
-import de.uniol.inf.is.odysseus.p2p_new.network.P2PNetworkManager;
+import de.uniol.inf.is.odysseus.p2p_new.service.P2PNetworkManagerService;
 
 public class MultipleSourceAdvertisement extends Advertisement implements Serializable {
 
@@ -123,7 +123,7 @@ public class MultipleSourceAdvertisement extends Advertisement implements Serial
 	}
 	
 	public boolean isLocal() {
-		return this.peerID.equals(P2PNetworkManager.getInstance().getLocalPeerID());
+		return this.peerID.equals(P2PNetworkManagerService.getInstance().getLocalPeerID());
 	}
 	
 	public Collection<SourceAdvertisement> getSourceAdvertisements() {

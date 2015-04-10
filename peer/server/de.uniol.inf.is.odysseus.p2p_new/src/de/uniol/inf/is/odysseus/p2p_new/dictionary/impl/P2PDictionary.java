@@ -50,7 +50,6 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.core.server.util.CopyLogicalGraphVisitor;
 import de.uniol.inf.is.odysseus.core.server.util.GenericGraphWalker;
 import de.uniol.inf.is.odysseus.core.usermanagement.ITenant;
-import de.uniol.inf.is.odysseus.p2p_new.IAdvertisementDiscovererListener;
 import de.uniol.inf.is.odysseus.p2p_new.InvalidP2PSource;
 import de.uniol.inf.is.odysseus.p2p_new.PeerException;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.IP2PDictionary;
@@ -62,12 +61,13 @@ import de.uniol.inf.is.odysseus.p2p_new.dictionary.RemoveSourceAdvertisement;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.SourceAdvertisement;
 import de.uniol.inf.is.odysseus.p2p_new.logicaloperator.JxtaReceiverAO;
 import de.uniol.inf.is.odysseus.p2p_new.logicaloperator.JxtaSenderAO;
-import de.uniol.inf.is.odysseus.p2p_new.network.P2PNetworkManager;
-import de.uniol.inf.is.odysseus.p2p_new.provider.JxtaServicesProvider;
+import de.uniol.inf.is.odysseus.p2p_new.service.JxtaServicesProviderService;
+import de.uniol.inf.is.odysseus.p2p_new.service.P2PNetworkManagerService;
 import de.uniol.inf.is.odysseus.p2p_new.service.PQLParserService;
 import de.uniol.inf.is.odysseus.p2p_new.service.ServerExecutorService;
 import de.uniol.inf.is.odysseus.p2p_new.service.SessionManagementService;
 import de.uniol.inf.is.odysseus.parser.pql.generator.IPQLGenerator;
+import de.uniol.inf.is.odysseus.peer.network.IAdvertisementDiscovererListener;
 
 public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, IPlanModificationListener, IDatadictionaryProviderListener, IAdvertisementDiscovererListener {
 
@@ -142,8 +142,8 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 
 			@Override
 			public void run() {
-				P2PNetworkManager.waitFor();
-				P2PNetworkManager.getInstance().addAdvertisementListener(P2PDictionary.this);
+				P2PNetworkManagerService.waitForStart();
+				P2PNetworkManagerService.getInstance().addAdvertisementListener(P2PDictionary.this);
 			}
 
 		});
@@ -157,13 +157,13 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 
 	// called by OSGi-DS
 	public void deactivate() {
-		P2PNetworkManager.getInstance().removeAdvertisementListener(this);
+		P2PNetworkManagerService.getInstance().removeAdvertisementListener(this);
 
 		instance = null;
 		removeSourceAdvCollector.stopRunning();
 		sourceAdvCollector.stopRunning();
 
-		if (JxtaServicesProvider.isActivated()) {
+		if (JxtaServicesProviderService.isBound()) {
 			removeAllExportedViews();
 		}
 		DataDictionaryProvider.unsubscribe(this);
@@ -239,7 +239,7 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 
 	private void applyRemoveSourceAdvertisements(Collection<SourceAdvertisement> srcAdvs) {
 		Collection<SourceAdvertisement> srcAdvsToRemove = Lists.newLinkedList();
-		for (RemoveSourceAdvertisement remAdv : JxtaServicesProvider.getInstance().getLocalAdvertisements(RemoveSourceAdvertisement.class)) {
+		for (RemoveSourceAdvertisement remAdv : JxtaServicesProviderService.getInstance().getLocalAdvertisements(RemoveSourceAdvertisement.class)) {
 			for (SourceAdvertisement srcAdv : srcAdvs) {
 				if (srcAdv.getID().equals(remAdv.getSourceAdvertisementID())) {
 					srcAdvsToRemove.add(srcAdv);
@@ -252,7 +252,7 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 		srcAdvs.removeAll(srcAdvsToRemove);
 
 		srcAdvsToRemove.clear();
-		for (RemoveMultipleSourceAdvertisement remMultiSrcAdvertisement : JxtaServicesProvider.getInstance().getLocalAdvertisements(RemoveMultipleSourceAdvertisement.class)) {
+		for (RemoveMultipleSourceAdvertisement remMultiSrcAdvertisement : JxtaServicesProviderService.getInstance().getLocalAdvertisements(RemoveMultipleSourceAdvertisement.class)) {
 			for (ID id : remMultiSrcAdvertisement.getSourceAdvertisementIDs()) {
 				for (SourceAdvertisement srcAdv : srcAdvs) {
 					if (srcAdv.getID().equals(id)) {
@@ -268,7 +268,7 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 	}
 
 	private Collection<SourceAdvertisement> collectAllReachableSourceAdvertisements() {
-		Collection<SourceAdvertisement> srcAdvs = JxtaServicesProvider.getInstance().getLocalAdvertisements(SourceAdvertisement.class);
+		Collection<SourceAdvertisement> srcAdvs = JxtaServicesProviderService.getInstance().getLocalAdvertisements(SourceAdvertisement.class);
 		Iterator<SourceAdvertisement> it = srcAdvs.iterator();
 		while (it.hasNext()) {
 			SourceAdvertisement srcAdv = it.next();
@@ -279,7 +279,7 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 			}
 		}
 
-		Collection<MultipleSourceAdvertisement> multiSrcAdvs = JxtaServicesProvider.getInstance().getLocalAdvertisements(MultipleSourceAdvertisement.class);
+		Collection<MultipleSourceAdvertisement> multiSrcAdvs = JxtaServicesProviderService.getInstance().getLocalAdvertisements(MultipleSourceAdvertisement.class);
 
 		for (MultipleSourceAdvertisement multiSrcAdv : multiSrcAdvs) {
 
@@ -531,12 +531,12 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 
 		if (!sourceAdvertisements.isEmpty()) {
 			MultipleSourceAdvertisement multipleSrcAdv = (MultipleSourceAdvertisement) AdvertisementFactory.newAdvertisement(MultipleSourceAdvertisement.getAdvertisementType());
-			multipleSrcAdv.setID(IDFactory.newPipeID(P2PNetworkManager.getInstance().getLocalPeerGroupID()));
-			multipleSrcAdv.setPeerID(P2PNetworkManager.getInstance().getLocalPeerID());
+			multipleSrcAdv.setID(IDFactory.newPipeID(P2PNetworkManagerService.getInstance().getLocalPeerGroupID()));
+			multipleSrcAdv.setPeerID(P2PNetworkManagerService.getInstance().getLocalPeerID());
 			multipleSrcAdv.setSourceAdvertisements(sourceAdvertisements);
 
 			try {
-				JxtaServicesProvider.getInstance().publishInfinite(multipleSrcAdv);
+				JxtaServicesProviderService.getInstance().publishInfinite(multipleSrcAdv);
 			} catch (IOException e) {
 				throw new PeerException("Could not publish multiple source", e);
 			}
@@ -634,12 +634,12 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 
 		if (!sourceIDRemoved.isEmpty()) {
 			RemoveMultipleSourceAdvertisement adv = (RemoveMultipleSourceAdvertisement) AdvertisementFactory.newAdvertisement(RemoveMultipleSourceAdvertisement.getAdvertisementType());
-			adv.setID(IDFactory.newPipeID(P2PNetworkManager.getInstance().getLocalPeerGroupID()));
+			adv.setID(IDFactory.newPipeID(P2PNetworkManagerService.getInstance().getLocalPeerGroupID()));
 			adv.setSourceAdvertisementIDs(sourceIDRemoved);
 
 			try {
-				JxtaServicesProvider.getInstance().publish(adv);
-				JxtaServicesProvider.getInstance().remotePublish(adv);
+				JxtaServicesProviderService.getInstance().publish(adv);
+				JxtaServicesProviderService.getInstance().remotePublish(adv);
 			} catch (IOException e) {
 				LOG.error("Could not publish removeSourceAdvertisement", e);
 			}
@@ -650,7 +650,7 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 
 	private void publishRemoveSourceAdvertisement(SourceAdvertisement sourceAdvToRemove) {
 		RemoveSourceAdvertisement removeSourceAdvertisement = (RemoveSourceAdvertisement) AdvertisementFactory.newAdvertisement(RemoveSourceAdvertisement.getAdvertisementType());
-		removeSourceAdvertisement.setID(IDFactory.newPipeID(P2PNetworkManager.getInstance().getLocalPeerGroupID()));
+		removeSourceAdvertisement.setID(IDFactory.newPipeID(P2PNetworkManagerService.getInstance().getLocalPeerGroupID()));
 		removeSourceAdvertisement.setSourceAdvertisementID(sourceAdvToRemove.getID());
 
 		removeSourceAdvCollector.add(removeSourceAdvertisement);
@@ -699,7 +699,7 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 		}
 		removeSourceExport(realSourceName);
 
-		Optional<SourceAdvertisement> optOwnAdvertisement = find(P2PNetworkManager.getInstance().getLocalPeerID(), realSourceName);
+		Optional<SourceAdvertisement> optOwnAdvertisement = find(P2PNetworkManagerService.getInstance().getLocalPeerID(), realSourceName);
 		if (optOwnAdvertisement.isPresent()) {
 			SourceAdvertisement ownAdvertisement = optOwnAdvertisement.get();
 
@@ -825,9 +825,9 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 		LOG.debug("Exporting stream {} with logical operator {}", streamName, stream);
 
 		SourceAdvertisement srcAdvertisement = (SourceAdvertisement) AdvertisementFactory.newAdvertisement(SourceAdvertisement.getAdvertisementType());
-		srcAdvertisement.setID(IDFactory.newPipeID(P2PNetworkManager.getInstance().getLocalPeerGroupID()));
+		srcAdvertisement.setID(IDFactory.newPipeID(P2PNetworkManagerService.getInstance().getLocalPeerGroupID()));
 		srcAdvertisement.setName(removeUserFromName(streamName));
-		srcAdvertisement.setPeerID(P2PNetworkManager.getInstance().getLocalPeerID());
+		srcAdvertisement.setPeerID(P2PNetworkManagerService.getInstance().getLocalPeerID());
 		srcAdvertisement.setPQLText(pqlGenerator.generatePQLStatement(stream));
 		srcAdvertisement.setOutputSchema(stream.getOutputSchema());
 		Optional<String> optBaseTimeunitString = getBaseTimeunitString(stream.getOutputSchema());
@@ -847,14 +847,14 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 	private SourceAdvertisement exportView(String viewName, final ILogicalOperator view) {
 		LOG.debug("Exporting view {} with logical operator {}", viewName, view);
 
-		PipeID pipeID = IDFactory.newPipeID(P2PNetworkManager.getInstance().getLocalPeerGroupID());
+		PipeID pipeID = IDFactory.newPipeID(P2PNetworkManagerService.getInstance().getLocalPeerGroupID());
 
 		SourceAdvertisement viewAdvertisement = (SourceAdvertisement) AdvertisementFactory.newAdvertisement(SourceAdvertisement.getAdvertisementType());
-		viewAdvertisement.setID(IDFactory.newPipeID(P2PNetworkManager.getInstance().getLocalPeerGroupID()));
+		viewAdvertisement.setID(IDFactory.newPipeID(P2PNetworkManagerService.getInstance().getLocalPeerGroupID()));
 		viewAdvertisement.setOutputSchema(view.getOutputSchema());
 		viewAdvertisement.setPipeID(pipeID);
 		viewAdvertisement.setName(removeUserFromName(viewName));
-		viewAdvertisement.setPeerID(P2PNetworkManager.getInstance().getLocalPeerID());
+		viewAdvertisement.setPeerID(P2PNetworkManagerService.getInstance().getLocalPeerID());
 		Optional<String> optBaseTimeunitString = getBaseTimeunitString(view.getOutputSchema());
 		if( optBaseTimeunitString.isPresent() ) {
 			viewAdvertisement.setBaseTimeunit(optBaseTimeunitString.get());
@@ -929,8 +929,8 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 
 	private static void tryFlushAdvertisement(Advertisement srcAdvertisement) {
 		try {
-			if (JxtaServicesProvider.isActivated()) {
-				JxtaServicesProvider.getInstance().flushAdvertisement(srcAdvertisement);
+			if (JxtaServicesProviderService.isBound()) {
+				JxtaServicesProviderService.getInstance().flushAdvertisement(srcAdvertisement);
 			}
 		} catch (IOException e) {
 			LOG.error("Could not flush advertisement {}", srcAdvertisement, e);

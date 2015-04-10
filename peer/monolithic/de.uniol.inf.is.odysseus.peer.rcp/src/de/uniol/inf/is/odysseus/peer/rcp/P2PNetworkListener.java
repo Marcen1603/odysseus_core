@@ -1,7 +1,7 @@
 package de.uniol.inf.is.odysseus.peer.rcp;
 
-import de.uniol.inf.is.odysseus.p2p_new.IP2PNetworkListener;
-import de.uniol.inf.is.odysseus.p2p_new.IP2PNetworkManager;
+import de.uniol.inf.is.odysseus.peer.network.IP2PNetworkListener;
+import de.uniol.inf.is.odysseus.peer.network.IP2PNetworkManager;
 
 public class P2PNetworkListener implements IP2PNetworkListener {
 

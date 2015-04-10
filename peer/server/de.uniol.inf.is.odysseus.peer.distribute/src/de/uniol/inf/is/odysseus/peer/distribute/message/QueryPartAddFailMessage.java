@@ -4,7 +4,7 @@ import java.nio.ByteBuffer;
 
 import com.google.common.base.Strings;
 
-import de.uniol.inf.is.odysseus.p2p_new.IMessage;
+import de.uniol.inf.is.odysseus.peer.communication.IMessage;
 
 public class QueryPartAddFailMessage implements IMessage {
 

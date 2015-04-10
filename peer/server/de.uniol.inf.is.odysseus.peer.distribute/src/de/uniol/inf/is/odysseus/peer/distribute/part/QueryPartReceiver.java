@@ -35,14 +35,13 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configur
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.IQueryBuildSetting;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.ParameterTransformationConfiguration;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
-import de.uniol.inf.is.odysseus.p2p_new.IMessage;
-import de.uniol.inf.is.odysseus.p2p_new.IP2PNetworkManager;
-import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicator;
-import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicatorListener;
-import de.uniol.inf.is.odysseus.p2p_new.PeerCommunicationException;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.IP2PDictionary;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.IPeerDictionary;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.SourceAdvertisement;
+import de.uniol.inf.is.odysseus.peer.communication.IMessage;
+import de.uniol.inf.is.odysseus.peer.communication.IPeerCommunicator;
+import de.uniol.inf.is.odysseus.peer.communication.IPeerCommunicatorListener;
+import de.uniol.inf.is.odysseus.peer.communication.PeerCommunicationException;
 import de.uniol.inf.is.odysseus.peer.distribute.IQueryPartController;
 import de.uniol.inf.is.odysseus.peer.distribute.PeerDistributePlugIn;
 import de.uniol.inf.is.odysseus.peer.distribute.message.AbortQueryPartAddAckMessage;
@@ -50,6 +49,7 @@ import de.uniol.inf.is.odysseus.peer.distribute.message.AbortQueryPartAddMessage
 import de.uniol.inf.is.odysseus.peer.distribute.message.AddQueryPartMessage;
 import de.uniol.inf.is.odysseus.peer.distribute.message.QueryPartAddAckMessage;
 import de.uniol.inf.is.odysseus.peer.distribute.message.QueryPartAddFailMessage;
+import de.uniol.inf.is.odysseus.peer.network.IP2PNetworkManager;
 
 public class QueryPartReceiver implements IPeerCommunicatorListener {
 
