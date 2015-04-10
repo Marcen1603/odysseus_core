@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="de.uniol.inf.is.odysseus.rcp.DashboardPart">
+      <dashboardPart
+            class="de.uniol.inf.is.odysseus.rcp.dashboard.canvas.wheel.BaseWheelDashboardPart"
+            configClass="de.uniol.inf.is.odysseus.rcp.dashboard.canvas.wheel.BaseWheelConfigurer"
+            name="Wheel">
+      </dashboardPart>
+            <dashboardPart
+            class="de.uniol.inf.is.odysseus.rcp.dashboard.canvas.wheel.Base3DWheelDashboardPart"
+            configClass="de.uniol.inf.is.odysseus.rcp.dashboard.canvas.wheel.Base3DWheelConfigurer"
+            name="3D Wheel">
+      </dashboardPart>
+            <dashboardPart
+            class="de.uniol.inf.is.odysseus.rcp.dashboard.canvas.wheel.ColorWheelDashboardPart"
+            configClass="de.uniol.inf.is.odysseus.rcp.dashboard.canvas.wheel.ColorWheelConfigurer"
+            name="Color Wheel">
+      </dashboardPart>
+            <dashboardPart
+            class="de.uniol.inf.is.odysseus.rcp.dashboard.canvas.wheel.GaugeWheelDashboardPart"
+            configClass="de.uniol.inf.is.odysseus.rcp.dashboard.canvas.wheel.GaugeWheelConfigurer"
+            name="Gauge Wheel">
+      </dashboardPart>
+            <dashboardPart
+            class="de.uniol.inf.is.odysseus.rcp.dashboard.canvas.wheel.TextWheelDashboardPart"
+            configClass="de.uniol.inf.is.odysseus.rcp.dashboard.canvas.wheel.TextWheelConfigurer"
+            name="Text Wheel">
+      </dashboardPart>
+                  <dashboardPart
+            class="de.uniol.inf.is.odysseus.rcp.dashboard.canvas.wheel.ArrowWheelDashboardPart"
+            configClass="de.uniol.inf.is.odysseus.rcp.dashboard.canvas.wheel.ArrowWheelConfigurer"
+            name="Arrow Wheel">
+                 </dashboardPart>
+                              <dashboardPart
+            class="de.uniol.inf.is.odysseus.rcp.dashboard.canvas.wheel.LiquidGaugeWheelDashboardPart"
+            configClass="de.uniol.inf.is.odysseus.rcp.dashboard.canvas.wheel.LiquidGaugeWheelConfigurer"
+            name="Liquid Wheel">
+      </dashboardPart>
+                        <dashboardPart
+            class="de.uniol.inf.is.odysseus.rcp.dashboard.canvas.compass.CompassDashboardPart"
+            configClass="de.uniol.inf.is.odysseus.rcp.dashboard.canvas.compass.CompassConfigurer"
+            name="Compass">
+                 </dashboardPart>
+                                    <dashboardPart
+            class="de.uniol.inf.is.odysseus.rcp.dashboard.canvas.gauge.LiquidGaugeDashboardPart"
+            configClass="de.uniol.inf.is.odysseus.rcp.dashboard.canvas.gauge.LiquidGaugeConfigurer"
+            name="Liquid Gauge">
+      </dashboardPart>
+   </extension>
+
+</plugin>
