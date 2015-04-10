@@ -24,7 +24,7 @@ public class InputStatementParser {
 
 	private static enum SourceType {
 		HTTP, FILE
-	};
+	}
 
 	private final String[] textToParse;
 	private final ReplacementContainer replacements;
@@ -140,7 +140,7 @@ public class InputStatementParser {
 	}
 
 	private static String[] readTextLinesFromHttp(String inputName)
-			throws IOException, OdysseusScriptException {
+			throws IOException {
 
 		URL source = new URL(inputName);
 		URLConnection conn = source.openConnection();

@@ -76,7 +76,7 @@ public class CheatSheetGenerator {
                 print.println(builder.toString());
                 final String[] env = new String[] {};
                 if ((new File(cmd)).exists()) {
-                    CheatSheetGenerator.LOG.info("Executing '{} -synctex=1 -interaction nonstopmode -output-directory {} {}'", new String[] { cmd, directory.toString(), path.toString() });
+                    LOG.info("Executing '{} -synctex=1 -interaction nonstopmode -output-directory {} {}'", new Object[] { cmd, directory.toString(), path.toString() });
                     System.out.println(String.format("Executing '%s -synctex=1 -interaction nonstopmode -output-directory %s %s'", cmd, directory.toString(), path.toString()));
                     final Process process = Runtime.getRuntime().exec(cmd + " -synctex=1 -interaction nonstopmode -output-directory " + directory + " " + file, env);
                     try {
