@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
-      id="de.uniol.inf.is.odysseus.wrapper.actisense"
+      id="de.uniol.inf.is.odysseus.wrapper.actisense.feature"
       label="Actisense Feature"
       version="1.0.0.qualifier">
 
