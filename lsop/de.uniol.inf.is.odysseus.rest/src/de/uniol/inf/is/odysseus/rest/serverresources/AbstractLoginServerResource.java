@@ -16,9 +16,8 @@ public class AbstractLoginServerResource extends AbstractServerResource{
 		ISession user = UserManagementProvider.getSessionmanagement().login(username, password.getBytes(), ten);
 		if (user != null) {
 			return user;
-		} else {
-			throw new ResourceException(Status.CLIENT_ERROR_BAD_REQUEST, "User data are not correct");
-		}
+		} 
+		throw new ResourceException(Status.CLIENT_ERROR_BAD_REQUEST, "User data are not correct");
 	}	
 
 }

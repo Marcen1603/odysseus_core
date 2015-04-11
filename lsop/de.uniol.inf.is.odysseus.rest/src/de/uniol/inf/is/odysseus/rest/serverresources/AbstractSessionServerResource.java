@@ -15,9 +15,8 @@ public class AbstractSessionServerResource extends AbstractServerResource{
 		
 		if (session != null) {
 			return session;
-		} else {
-			throw new ResourceException(Status.CLIENT_ERROR_BAD_REQUEST, "Security token unknown!");
-		}
+		} 
+		throw new ResourceException(Status.CLIENT_ERROR_BAD_REQUEST, "Security token unknown!");
 	}
 	
 
