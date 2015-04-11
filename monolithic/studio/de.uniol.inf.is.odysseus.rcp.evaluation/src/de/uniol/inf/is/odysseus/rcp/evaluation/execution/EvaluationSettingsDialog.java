@@ -464,8 +464,9 @@ public class EvaluationSettingsDialog extends TitleAreaDialog implements ICellMo
 			return v.name;
 		case 2:
 			return v.value;
+		default:
+			return null;
 		}
-		return null;
 	}
 
 	private void refreshTable() {

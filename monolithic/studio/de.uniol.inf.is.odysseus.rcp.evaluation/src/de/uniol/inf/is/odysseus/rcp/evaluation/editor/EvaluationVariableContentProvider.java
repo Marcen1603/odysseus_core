@@ -59,13 +59,15 @@ public class EvaluationVariableContentProvider implements IStructuredContentProv
 			if(element instanceof String){
 				return "";
 			}
-			break;
+			return null;
 		case 1:
 			if (element instanceof String) {
 				return element.toString();
 			}
+			return null;
+		default:
+			return null;
 		}
-		return null;
 	}
 
 

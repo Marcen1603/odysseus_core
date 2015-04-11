@@ -126,8 +126,9 @@ public class ConnectionFigure extends PolylineConnection {
 			return sourceTextLabel;
 		case Target:
 			return targetTextLabel;
+		default:
+			return null;
 		}
-		return null;
 	}
 
 }

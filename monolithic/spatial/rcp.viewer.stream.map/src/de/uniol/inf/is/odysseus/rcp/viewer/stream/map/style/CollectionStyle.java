@@ -44,6 +44,7 @@ public class CollectionStyle extends Style{
 		case POLYGON:
 			substyle = polygonStyle;
 			break;
+		default:
 		}
 	}
 	

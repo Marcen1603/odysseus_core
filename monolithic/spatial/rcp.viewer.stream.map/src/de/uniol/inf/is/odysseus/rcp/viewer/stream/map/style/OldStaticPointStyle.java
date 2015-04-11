@@ -101,7 +101,7 @@ public class OldStaticPointStyle extends Style {
 			}
 			gc.drawRectangle(list[0] - halfsize, list[1] - halfsize, size, size);
 			break;
-
+			default:
 		}
 		gc.setForeground(tmp);
 		super.draw(gc, list, tuple);

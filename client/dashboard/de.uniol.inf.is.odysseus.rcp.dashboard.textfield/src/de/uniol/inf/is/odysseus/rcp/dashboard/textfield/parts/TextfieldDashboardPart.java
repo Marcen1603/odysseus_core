@@ -161,15 +161,15 @@ public class TextfieldDashboardPart extends AbstractDashboardPart {
 	}
 
 	@Override
-	public void streamElementRecieved(IPhysicalOperator senderOperator,
-			IStreamObject<?> element, int port) {
+	public void streamElementRecieved(IPhysicalOperator senderOperator, IStreamObject<?> element, int port) {
 		synchronized (pendingElement) {
 			Tuple<?> elementTuple = (Tuple<?>) element;
 			int[] atr = { atributeToShow };
-			pendingElement = (elementTuple != null ? elementTuple.toString(atr)
-					: "null");
-			warning = elementTuple.getAttribute(warningIndex);
-			error = elementTuple.getAttribute(errorIndex);
+			pendingElement = (elementTuple != null ? elementTuple.toString(atr) : "null");
+			if( elementTuple != null ) {
+				warning = elementTuple.getAttribute(warningIndex);
+				error = elementTuple.getAttribute(errorIndex);
+			}
 		}
 	}
 
@@ -239,20 +239,17 @@ public class TextfieldDashboardPart extends AbstractDashboardPart {
 	 */
 	private void refreshText() {
 		synchronized (pendingElement) {
-			text.setBackground(text.getDisplay()
-					.getSystemColor(SWT.COLOR_WHITE));
+			text.setBackground(text.getDisplay().getSystemColor(SWT.COLOR_WHITE));
 			if (pendingElement != null) {
 				text.setText(pendingElement);
 			} else {
 				text.setText("");
 			}
 			if (showWarning && warning) {
-				text.setBackground(text.getDisplay().getSystemColor(
-						SWT.COLOR_YELLOW));
+				text.setBackground(text.getDisplay().getSystemColor(SWT.COLOR_YELLOW));
 			}
 			if (showError && error) {
-				text.setBackground(text.getDisplay().getSystemColor(
-						SWT.COLOR_RED));
+				text.setBackground(text.getDisplay().getSystemColor(SWT.COLOR_RED));
 			}
 		}
 	}
@@ -271,13 +268,11 @@ public class TextfieldDashboardPart extends AbstractDashboardPart {
 	}
 
 	@Override
-	public void punctuationElementRecieved(IPhysicalOperator senderOperator,
-			IPunctuation point, int port) {
+	public void punctuationElementRecieved(IPhysicalOperator senderOperator, IPunctuation point, int port) {
 	}
 
 	@Override
-	public void securityPunctuationElementRecieved(
-			IPhysicalOperator senderOperator, ISecurityPunctuation sp, int port) {
+	public void securityPunctuationElementRecieved(IPhysicalOperator senderOperator, ISecurityPunctuation sp, int port) {
 	}
 
 	/**

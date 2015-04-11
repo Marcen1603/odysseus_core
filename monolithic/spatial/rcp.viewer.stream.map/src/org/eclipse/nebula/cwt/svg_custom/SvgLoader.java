@@ -248,8 +248,8 @@ class SvgLoader {
 			case '[': return ']';
 			case '"': return '"';
 			case '\'': return '\'';
+			default: return 0;
 		}
-		return 0;
 	}
 
 	private static int findAll(char[] ca, int from, int to, char...cs) {

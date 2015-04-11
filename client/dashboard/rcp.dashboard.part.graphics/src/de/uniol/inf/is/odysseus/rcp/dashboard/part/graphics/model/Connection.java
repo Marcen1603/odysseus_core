@@ -160,7 +160,9 @@ public class Connection extends AbstractPart {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.model.AbstractPart#load(java.util.Map)
+	 * @see
+	 * de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.model.AbstractPart
+	 * #load(java.util.Map)
 	 */
 	@Override
 	protected void load(Map<String, String> values) {
@@ -183,7 +185,9 @@ public class Connection extends AbstractPart {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.model.AbstractPart#save(java.util.Map)
+	 * @see
+	 * de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.model.AbstractPart
+	 * #save(java.util.Map)
 	 */
 	@Override
 	protected void save(Map<String, String> values) {
@@ -199,7 +203,9 @@ public class Connection extends AbstractPart {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.model.AbstractPart#getXML(org.w3c.dom.Node, org.w3c.dom.Document)
+	 * @see
+	 * de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.model.AbstractPart
+	 * #getXML(org.w3c.dom.Node, org.w3c.dom.Document)
 	 */
 	@Override
 	public void getXML(Node parent, Document builder) {
@@ -243,7 +249,9 @@ public class Connection extends AbstractPart {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.model.AbstractPart#open(de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator)
+	 * @see
+	 * de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.model.AbstractPart
+	 * #open(de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator)
 	 */
 	@Override
 	protected void open(IPhysicalOperator root) {
@@ -273,7 +281,9 @@ public class Connection extends AbstractPart {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.model.AbstractPart#process(de.uniol.inf.is.odysseus.core.collection.Tuple)
+	 * @see
+	 * de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.model.AbstractPart
+	 * #process(de.uniol.inf.is.odysseus.core.collection.Tuple)
 	 */
 	@Override
 	protected void process(Tuple<?> tuple) {
@@ -301,7 +311,9 @@ public class Connection extends AbstractPart {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.model.AbstractPart#clone()
+	 * @see
+	 * de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.model.AbstractPart
+	 * #clone()
 	 */
 	@Override
 	public Connection clone() {
@@ -311,7 +323,9 @@ public class Connection extends AbstractPart {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.model.AbstractPart#getConfigurationDialog()
+	 * @see
+	 * de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.model.AbstractPart
+	 * #getConfigurationDialog()
 	 */
 	@Override
 	public Class<ConnectionDialog> getConfigurationDialog() {
@@ -418,8 +432,9 @@ public class Connection extends AbstractPart {
 			return getSourceText();
 		case Target:
 			return getTargetText();
+		default:
+			return "";
 		}
-		return "";
 	}
 
 	public void setTextByPosition(TextPosition position, String text) {
@@ -436,6 +451,7 @@ public class Connection extends AbstractPart {
 		case Target:
 			setTargetText(text);
 			break;
+		default:
 		}
 
 	}

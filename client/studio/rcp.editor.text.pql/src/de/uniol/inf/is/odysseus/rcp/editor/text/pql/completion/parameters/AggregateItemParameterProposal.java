@@ -27,8 +27,9 @@ public class AggregateItemParameterProposal extends AbstractParameterProposal im
 			return Arrays.asList("'${aggregatename}'");
 		case 3:
 			return Arrays.asList("'${aggreatedatatype}'");
+		default:
+			return new ArrayList<>();
 		}
-		return new ArrayList<>();
 	}
 
 	@Override
@@ -44,8 +45,9 @@ public class AggregateItemParameterProposal extends AbstractParameterProposal im
 			return Arrays.asList("'${aggregatename}'");
 		case 3:
 			return OdysseusRCPEditorTextPlugIn.getDatatypeNames();
+		default:
+			return new ArrayList<>();
 		}
-		return new ArrayList<>();
 	}
 
 	@Override
