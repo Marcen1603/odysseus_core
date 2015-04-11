@@ -19,6 +19,7 @@ import java.util.Iterator;
 import java.util.Random;
 
 import org.eclipse.swt.graphics.Path;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.graphics.Transform;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
@@ -31,7 +32,8 @@ import de.uniol.inf.is.odysseus.rcp.dashboard.canvas.colorspace.RGB;
 
 /**
  * @author Christian Kuka <christian@kuka.cc>
- * @version $Id$
+ * @version $Id: CompassDashboardPart.java | CompassDashboardPart.java |
+ *          CompassDashboardPart.java $
  *
  */
 public class CompassDashboardPart extends AbstractCanvasDashboardPart {
@@ -91,10 +93,6 @@ public class CompassDashboardPart extends AbstractCanvasDashboardPart {
         if (element != null) {
             final Number value = this.normalize(this.get(element));
             final double angle = value.doubleValue() * 360.0;
-            final Transform transform = new Transform(this.getGC().getDevice());
-            transform.translate((int) this.getCenter().x, (int) this.getCenter().y);
-            transform.rotate((float) (angle - 90.0));
-            this.getGC().setTransform(transform);
             final Path path = new Path(this.getGC().getDevice());
             path.moveTo((int) ((-(2.0 / 3.0) * this.getRadius()) + 4), 1);
             path.lineTo((int) ((1.0 / 6.0) * this.getRadius()), 1);
@@ -104,13 +102,17 @@ public class CompassDashboardPart extends AbstractCanvasDashboardPart {
             path.lineTo((int) ((1.0 / 6.0) * this.getRadius()), -1);
             path.lineTo((int) ((-(2.0 / 3.0) * this.getRadius()) + 4), -1);
             path.close();
+            final Transform transform = new Transform(this.getGC().getDevice());
+            transform.translate((int) this.getCenter().x, (int) this.getCenter().y);
+            transform.rotate((float) (angle - 90.0));
+            this.getGC().setTransform(transform);
             this.fillPath(path, this.arrowColor);
             this.getGC().setTransform(null);
         }
     }
 
     public Coordinate getCenter() {
-        return new Coordinate((int) (2 * this.getRadius()), (int) (2 * this.getRadius()));
+        return new Coordinate((int) (this.getRadius() + 10), (int) (this.getRadius() + 10));
     }
 
     @SuppressWarnings("hiding")
@@ -150,26 +152,20 @@ public class CompassDashboardPart extends AbstractCanvasDashboardPart {
 
     private Number normalize(final Number value) {
         if (value.doubleValue() > this.getMax()) {
-            return new Double(CompassDashboardPart.TWO_PI);
+            return new Double(1.0);
         }
         if (value.doubleValue() < this.getMin()) {
             return new Double(0.0);
         }
-        return new Double(((value.doubleValue() - this.getMin()) / Math.abs(this.getMax() - this.getMin())) * CompassDashboardPart.TWO_PI);
+        return new Double(((value.doubleValue() - this.getMin()) / Math.abs(this.getMax() - this.getMin())));
     }
 
     /**
      * @return the radius
      */
     public double getRadius() {
-        return this.radius;
-    }
-
-    /**
-     * @param radius
-     */
-    public void setRadius(final double radius) {
-        this.radius = radius;
+        Rectangle bounds = getClipping();
+        return Math.min(bounds.width, bounds.height) / 2.0 - 10;
     }
 
     /**
@@ -271,7 +267,9 @@ public class CompassDashboardPart extends AbstractCanvasDashboardPart {
 
         shell.open();
         final CompassDashboardPart compass = new CompassDashboardPart();
-        compass.setRadius(100);
+        compass.setAutoadjust(false);
+        compass.setMin(0.0);
+        compass.setMax(360.0);
         final Thread generator = new Thread() {
             /**
              * {@inheritDoc}
@@ -280,19 +278,23 @@ public class CompassDashboardPart extends AbstractCanvasDashboardPart {
             @Override
             public void run() {
                 final Random rnd = new Random();
+                int i = 0;
                 while (!this.isInterrupted()) {
                     @SuppressWarnings("rawtypes")
                     final Tuple tuple = new Tuple(3, false);
-                    tuple.setAttribute(0, rnd.nextDouble() * 100);
+                    tuple.setAttribute(0, i);
                     tuple.setAttribute(1, rnd.nextDouble() * 100);
                     tuple.setAttribute(2, rnd.nextDouble() * 1000);
                     compass.streamElementRecieved(null, tuple, 0);
                     try {
-                        Thread.sleep(100);
+                        Thread.sleep(200);
                     }
                     catch (final InterruptedException e) {
                         // Empty block
                     }
+                    i++;
+                    if (i > 360)
+                        i = 0;
                 }
             }
         };

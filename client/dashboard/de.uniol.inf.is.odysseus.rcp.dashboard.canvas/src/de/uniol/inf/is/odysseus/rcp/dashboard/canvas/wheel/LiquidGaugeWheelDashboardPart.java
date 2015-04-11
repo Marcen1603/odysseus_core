@@ -28,7 +28,9 @@ import de.uniol.inf.is.odysseus.rcp.dashboard.canvas.colorspace.RGB;
 
 /**
  * @author Christian Kuka <christian@kuka.cc>
- * @version $Id$
+ * @version $Id: LiquidGaugeWheelDashboardPart.java |
+ *          LiquidGaugeWheelDashboardPart.java |
+ *          LiquidGaugeWheelDashboardPart.java $
  *
  */
 public class LiquidGaugeWheelDashboardPart extends AbstractWheelDashboardPart {
@@ -53,18 +55,21 @@ public class LiquidGaugeWheelDashboardPart extends AbstractWheelDashboardPart {
         final int pathX = (int) (Math.sin(Math.toRadians(delta)) * (1.0 / 3.0) * this.getRadius());
 
         // Draw waves if they do not exceed the max value
-        if ((this.getCenter().y - ((value - 1.0) * (1.0 / 3.0) * this.getRadius()) - ((1.0 / 6.0) * (value / 2.0) * (1.0 / 3.0) * this.getRadius())) >= (this.getCenter().y - ((1.0 / 3.0) * this
-                .getRadius()))) {
-            path.cubicTo((float) ((this.getCenter().x - pathX) + ((1.0 / 3.0) * pathX)), (float) (this.getCenter().y - ((value - 1.0) * (1.0 / 3.0) * this.getRadius()) - ((1.0 / 6.0) * (value / 2.0)
-                    * (1.0 / 3.0) * this.getRadius())), (float) ((this.getCenter().x - pathX) + ((2.0 / 3.0) * pathX)),
-                    (float) ((this.getCenter().y - ((value - 1.0) * (1.0 / 3.0) * this.getRadius())) + ((1.0 / 6.0) * (value / 2.0) * (1.0 / 3.0) * this.getRadius())), (float) this.getCenter().x,
-                    (int) (this.getCenter().y - ((value - 1.0) * (1.0 / 3.0) * this.getRadius())));
-
-            path.cubicTo((float) (this.getCenter().x + ((1.0 / 3.0) * pathX)), (float) (this.getCenter().y - ((value - 1.0) * (1.0 / 3.0) * this.getRadius()) - ((1.0 / 6.0) * (value / 2.0)
-                    * (1.0 / 3.0) * this.getRadius())), (float) (this.getCenter().x + ((2.0 / 3.0) * pathX)),
-                    (float) ((this.getCenter().y - ((value - 1.0) * (1.0 / 3.0) * this.getRadius())) + ((1.0 / 6.0) * (value / 2.0) * (1.0 / 3.0) * this.getRadius())),
-                    (float) (this.getCenter().x + pathX), (int) (this.getCenter().y - ((value - 1.0) * (1.0 / 3.0) * this.getRadius())));
+        double waveHight = 0.0;
+        if ((this.getCenter().y - ((value - 1.0) * (1.0 / 3.0) * this.getRadius()) - ((1.0 / 6.0) * (value / 2.0) * (1.0 / 3.0) * this.getRadius())) >= (this.getCenter().y - (1.0 / 3.0)
+                * this.getRadius())) {
+            waveHight = (this.getCenter().y - ((value - 1.0) * (1.0 / 3.0) * this.getRadius()) - ((1.0 / 6.0) * (value / 2.0) * (1.0 / 3.0) * this.getRadius()));
         }
+        else {
+            waveHight = (this.getCenter().y - (1.0 / 3.0) * this.getRadius());
+        }
+        path.cubicTo((float) ((this.getCenter().x - pathX) + ((1.0 / 3.0) * pathX)), (float) (waveHight), (float) ((this.getCenter().x - pathX) + ((2.0 / 3.0) * pathX)),
+                (float) ((this.getCenter().y - ((value - 1.0) * (1.0 / 3.0) * this.getRadius())) + ((1.0 / 6.0) * (value / 2.0) * (1.0 / 3.0) * this.getRadius())), (float) this.getCenter().x,
+                (int) (this.getCenter().y - ((value - 1.0) * (1.0 / 3.0) * this.getRadius())));
+
+        path.cubicTo((float) (this.getCenter().x + ((1.0 / 3.0) * pathX)), (float) (waveHight), (float) (this.getCenter().x + ((2.0 / 3.0) * pathX)), (float) ((this.getCenter().y - ((value - 1.0)
+                * (1.0 / 3.0) * this.getRadius())) + ((1.0 / 6.0) * (value / 2.0) * (1.0 / 3.0) * this.getRadius())), (float) (this.getCenter().x + pathX), (int) (this.getCenter().y - ((value - 1.0)
+                * (1.0 / 3.0) * this.getRadius())));
         path.close();
         this.fillPath(path, this.getGaugeColor());
         final String text = NumberFormat.getIntegerInstance().format(z);

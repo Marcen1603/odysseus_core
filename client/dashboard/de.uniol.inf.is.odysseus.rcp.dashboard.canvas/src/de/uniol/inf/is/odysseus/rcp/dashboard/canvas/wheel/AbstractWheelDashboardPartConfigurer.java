@@ -276,20 +276,6 @@ public abstract class AbstractWheelDashboardPartConfigurer<T extends AbstractWhe
             final GridData gridData = new GridData(SWT.FILL, SWT.FILL, true, false);
             group.setLayoutData(gridData);
             group.setLayout(new GridLayout(3, false));
-            {// Radius
-                toolkit.createLabel(group, "Radius");
-                final Text radiusText = toolkit.createText(group, "10");
-                radiusText.addSelectionListener(new SelectionAdapter() {
-                    @Override
-                    public void widgetSelected(final SelectionEvent e) {
-                        final String text = radiusText.getText();
-                        if (!"".equals(text)) {
-                            AbstractWheelDashboardPartConfigurer.this.dashboardPart.setRadius(Integer.parseInt(text));
-                        }
-                    }
-                });
-                DashboardPartUtil.createLabel(group, "");
-            }
             {// Backgroundcolor
                 toolkit.createLabel(group, "Background");
                 final RGB backgroundColor = this.getDashboardPart().getBackgroundColor();

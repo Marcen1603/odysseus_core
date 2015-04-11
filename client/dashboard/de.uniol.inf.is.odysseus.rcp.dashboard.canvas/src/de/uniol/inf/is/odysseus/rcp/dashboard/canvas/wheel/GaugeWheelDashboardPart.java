@@ -48,7 +48,7 @@ public class GaugeWheelDashboardPart extends AbstractWheelDashboardPart {
         final String text = NumberFormat.getIntegerInstance().format(z);
         final Coordinate extent = this.textExtent(text);
         this.setBackground(gaugeBackgroundColor);
-        this.drawText(text, new Coordinate(this.getCenter().x - (extent.x / 2), this.getCenter().y - extent.y));
+        this.drawText(text, new Coordinate(this.getCenter().x - (extent.x / 2), this.getCenter().y - extent.y), true);
     }
 
     /**

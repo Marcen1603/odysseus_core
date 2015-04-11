@@ -22,6 +22,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
+import de.uniol.inf.is.odysseus.rcp.dashboard.canvas.colorspace.RGB;
 
 /**
  * @author Christian Kuka <christian@kuka.cc>
@@ -36,6 +37,7 @@ public class Base3DWheelDashboardPart extends Abstract3DWheelDashboardPart {
     @Override
     public void doPaintZ(final Number z) {
         // Keep it empty
+        drawTree(1f, 1.5f, 2, 100, 100, RGB.BLACK);
     }
 
     public static void main(final String[] args) {

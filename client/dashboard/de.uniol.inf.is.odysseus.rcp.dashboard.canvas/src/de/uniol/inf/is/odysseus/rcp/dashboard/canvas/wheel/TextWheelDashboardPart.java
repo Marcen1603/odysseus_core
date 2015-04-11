@@ -39,7 +39,7 @@ public class TextWheelDashboardPart extends AbstractWheelDashboardPart {
         final String text = NumberFormat.getIntegerInstance().format(z);
         final Coordinate extent = this.textExtent(text);
         this.setBackground(this.getForegroundColor().getComplement());
-        this.drawText(text, new Coordinate(this.getCenter().x - (extent.x / 2), this.getCenter().y - (extent.y / 2)));
+        this.drawText(text, new Coordinate(this.getCenter().x - (extent.x / 2), this.getCenter().y - (extent.y / 2)), true);
     }
 
     public static void main(final String[] args) {

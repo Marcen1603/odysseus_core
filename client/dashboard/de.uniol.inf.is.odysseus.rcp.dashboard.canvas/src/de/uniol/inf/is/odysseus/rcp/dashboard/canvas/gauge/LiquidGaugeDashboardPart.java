@@ -20,6 +20,7 @@ import java.util.Iterator;
 import java.util.Random;
 
 import org.eclipse.swt.graphics.Path;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
@@ -31,14 +32,13 @@ import de.uniol.inf.is.odysseus.rcp.dashboard.canvas.colorspace.RGB;
 
 /**
  * @author Christian Kuka <christian@kuka.cc>
- * @version $Id$
+ * @version $Id: LiquidGaugeDashboardPart.java | LiquidGaugeDashboardPart.java |
+ *          LiquidGaugeDashboardPart.java $
  *
  */
 public class LiquidGaugeDashboardPart extends AbstractCanvasDashboardPart {
     private RGB backgroundColor = new RGB(255, 255, 255);
     private RGB liquidColor = new RGB(0, 255, 0);
-
-    private double radius = 100.0;
 
     /** Min value. */
     private double min = 0.0;
@@ -78,18 +78,20 @@ public class LiquidGaugeDashboardPart extends AbstractCanvasDashboardPart {
             final int pathX = (int) (Math.sin(Math.toRadians(delta)) * this.getRadius());
 
             // Draw waves if they do not exceed the max value
+            double waveHight = 0.0;
             if ((this.getCenter().y - ((value - 1.0) * this.getRadius()) - ((1.0 / 6.0) * (value / 2.0) * this.getRadius())) >= (this.getCenter().y - this.getRadius())) {
-                path.cubicTo((float) ((this.getCenter().x - pathX) + ((1.0 / 3.0) * pathX)),
-                        (float) (this.getCenter().y - ((value - 1.0) * this.getRadius()) - ((1.0 / 6.0) * (value / 2.0) * this.getRadius())),
-                        (float) ((this.getCenter().x - pathX) + ((2.0 / 3.0) * pathX)),
-                        (float) ((this.getCenter().y - ((value - 1.0) * this.getRadius())) + ((1.0 / 6.0) * (value / 2.0) * this.getRadius())), (float) this.getCenter().x,
-                        (int) (this.getCenter().y - ((value - 1.0) * this.getRadius())));
-
-                path.cubicTo((float) (this.getCenter().x + ((1.0 / 3.0) * pathX)),
-                        (float) (this.getCenter().y - ((value - 1.0) * this.getRadius()) - ((1.0 / 6.0) * (value / 2.0) * this.getRadius())), (float) (this.getCenter().x + ((2.0 / 3.0) * pathX)),
-                        (float) ((this.getCenter().y - ((value - 1.0) * this.getRadius())) + ((1.0 / 6.0) * (value / 2.0) * this.getRadius())), (float) (this.getCenter().x + pathX),
-                        (int) (this.getCenter().y - ((value - 1.0) * this.getRadius())));
+                waveHight = (this.getCenter().y - ((value - 1.0) * this.getRadius()) - ((1.0 / 6.0) * (value / 2.0) * this.getRadius()));
             }
+            else {
+                waveHight = (this.getCenter().y - this.getRadius());
+            }
+            path.cubicTo((float) ((this.getCenter().x - pathX) + ((1.0 / 3.0) * pathX)), (float) (waveHight), (float) ((this.getCenter().x - pathX) + ((2.0 / 3.0) * pathX)),
+                    (float) ((this.getCenter().y - ((value - 1.0) * this.getRadius())) + ((1.0 / 6.0) * (value / 2.0) * this.getRadius())), (float) this.getCenter().x,
+                    (int) (this.getCenter().y - ((value - 1.0) * this.getRadius())));
+
+            path.cubicTo((float) (this.getCenter().x + ((1.0 / 3.0) * pathX)), (float) (waveHight), (float) (this.getCenter().x + ((2.0 / 3.0) * pathX)),
+                    (float) ((this.getCenter().y - ((value - 1.0) * this.getRadius())) + ((1.0 / 6.0) * (value / 2.0) * this.getRadius())), (float) (this.getCenter().x + pathX),
+                    (int) (this.getCenter().y - ((value - 1.0) * this.getRadius())));
             path.close();
             this.fillPath(path, this.liquidColor);
             final String text = NumberFormat.getIntegerInstance().format(this.get(element));
@@ -108,7 +110,7 @@ public class LiquidGaugeDashboardPart extends AbstractCanvasDashboardPart {
     }
 
     public Coordinate getCenter() {
-        return new Coordinate((int) (2 * this.getRadius()), (int) (2 * this.getRadius()));
+        return new Coordinate((int) (this.getRadius()), (int) (this.getRadius()));
     }
 
     @SuppressWarnings("hiding")
@@ -160,14 +162,8 @@ public class LiquidGaugeDashboardPart extends AbstractCanvasDashboardPart {
      * @return the radius
      */
     public double getRadius() {
-        return this.radius;
-    }
-
-    /**
-     * @param radius
-     */
-    public void setRadius(final double radius) {
-        this.radius = radius;
+        Rectangle bounds = getClipping();
+        return Math.min(bounds.width, bounds.height) / 2.0;
     }
 
     /**
@@ -269,7 +265,6 @@ public class LiquidGaugeDashboardPart extends AbstractCanvasDashboardPart {
 
         shell.open();
         final LiquidGaugeDashboardPart compass = new LiquidGaugeDashboardPart();
-        compass.setRadius(100);
         final Thread generator = new Thread() {
             /**
              * {@inheritDoc}

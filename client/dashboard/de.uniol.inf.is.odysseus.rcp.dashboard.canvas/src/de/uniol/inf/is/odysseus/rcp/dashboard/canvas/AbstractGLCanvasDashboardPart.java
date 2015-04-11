@@ -38,7 +38,11 @@ import org.eclipse.swt.widgets.ToolBar;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GLContext;
+import org.lwjgl.util.glu.Cylinder;
+import org.lwjgl.util.glu.Disk;
 import org.lwjgl.util.glu.GLU;
+import org.lwjgl.util.glu.PartialDisk;
+import org.lwjgl.util.glu.Sphere;
 
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
@@ -47,20 +51,26 @@ import de.uniol.inf.is.odysseus.core.securitypunctuation.ISecurityPunctuation;
 import de.uniol.inf.is.odysseus.rcp.dashboard.AbstractDashboardPart;
 import de.uniol.inf.is.odysseus.rcp.dashboard.canvas.colorspace.IColorSpace;
 import de.uniol.inf.is.odysseus.rcp.dashboard.canvas.colorspace.RGB;
+import de.uniol.inf.is.odysseus.rcp.dashboard.canvas.objects.Car;
+import de.uniol.inf.is.odysseus.rcp.dashboard.canvas.objects.House;
+import de.uniol.inf.is.odysseus.rcp.dashboard.canvas.objects.Tree;
 
 /**
  * @author Christian Kuka <christian@kuka.cc>
- * @version $Id$
+ * @version $Id: AbstractGLCanvasDashboardPart.java | Fri Apr 10 16:46:52 2015
+ *          +0800 | Christian Kuka $
  *
  */
 public abstract class AbstractGLCanvasDashboardPart extends AbstractDashboardPart implements PaintListener, KeyListener {
     GLCanvas canvas;
     private final Queue<IStreamObject<?>> queue = new ConcurrentLinkedQueue<>();
     private GLCanvasUpdater updater;
+    private Camera camera;
     private float xrot;
     private float xoff;
     private float yrot;
     private float yoff;
+    private float zrot;
     private float zoff;
     private GC gc;
     private int maxElements = 100;
@@ -73,9 +83,9 @@ public abstract class AbstractGLCanvasDashboardPart extends AbstractDashboardPar
         parent.setLayout(new FillLayout());
         final Composite composite = new Composite(parent, SWT.BORDER);
         composite.setLayout(new FillLayout());
-        this.xrot = this.yrot = 0.0f;
+        this.xrot = this.yrot = this.zrot = 0.0f;
         this.xoff = this.yoff = 0.0f;
-        this.zoff = -8.0f;
+        this.zoff = -5.0f;
 
         final GLData data = new GLData();
         data.doubleBuffer = true;
@@ -119,6 +129,7 @@ public abstract class AbstractGLCanvasDashboardPart extends AbstractDashboardPar
         this.canvas.addPaintListener(this);
         this.canvas.addKeyListener(this);
         parent.layout();
+        this.camera = new Camera();
         this.updater = new GLCanvasUpdater(this, this.canvas);
         this.updater.start();
     }
@@ -189,7 +200,7 @@ public abstract class AbstractGLCanvasDashboardPart extends AbstractDashboardPar
     @Override
     public void streamElementRecieved(final IPhysicalOperator operator, final IStreamObject<?> element, final int port) {
         this.queue.offer(element);
-        while (this.queue.size() > 100) {
+        while (this.queue.size() > getMaxElements()) {
             this.queue.poll();
         }
     }
@@ -229,6 +240,7 @@ public abstract class AbstractGLCanvasDashboardPart extends AbstractDashboardPar
         GL11.glTranslatef(this.xoff, this.yoff, this.zoff);
         GL11.glRotatef(this.xrot, 1.0f, 0.0f, 0.0f);
         GL11.glRotatef(this.yrot, 0.0f, 1.0f, 0.0f);
+        GL11.glRotatef(this.zrot, 0.0f, 0.0f, 1.0f);
         this.doPaint();
 
         this.canvas.swapBuffers();
@@ -272,6 +284,7 @@ public abstract class AbstractGLCanvasDashboardPart extends AbstractDashboardPar
     public void setMaxElements(int maxElements) {
         this.maxElements = maxElements;
     }
+
     /**
      * {@inheritDoc}
      */
@@ -280,6 +293,7 @@ public abstract class AbstractGLCanvasDashboardPart extends AbstractDashboardPar
         if (this.updater != null) {
             this.updater.interrupt();
         }
+
         if ((this.canvas != null) && (!this.canvas.isDisposed())) {
             this.canvas.removePaintListener(this);
             this.canvas.dispose();
@@ -314,6 +328,105 @@ public abstract class AbstractGLCanvasDashboardPart extends AbstractDashboardPar
         }
     }
 
+    /**
+     * Draws a tree.
+     * 
+     * @param trunkRadius
+     * @param foliageRadius
+     * @param height
+     * @param slices
+     * @param stacks
+     * @param color
+     */
+    public void drawTree(float trunkRadius, float foliageRadius, float height, int slices, int stacks, IColorSpace color) {
+        final Color rgb = this.toColor(color);
+        Tree tree = new Tree();
+        tree.draw(trunkRadius, foliageRadius, height, slices, stacks);
+    }
+
+    /**
+     * Draws a cylinder.
+     * 
+     * @param baseRadius
+     * @param topRadius
+     * @param height
+     * @param slices
+     * @param stacks
+     * @param color
+     */
+    public void drawCylinder(float baseRadius, float topRadius, float height, int slices, int stacks, IColorSpace color) {
+        final Color rgb = this.toColor(color);
+        Cylinder cylinder = new Cylinder();
+        cylinder.draw(baseRadius, topRadius, height, slices, stacks);
+    }
+
+    /**
+     * Draws a sphere of the given radius.
+     * 
+     * @param radius
+     * @param slices
+     * @param stacks
+     * @param color
+     */
+    public void drawSphere(float radius, int slices, int stacks, IColorSpace color) {
+        final Color rgb = this.toColor(color);
+        Sphere sphere = new Sphere();
+        sphere.draw(radius, slices, stacks);
+    }
+
+    /**
+     * Draws a disk
+     * 
+     * @param innerRadius
+     * @param outerRadius
+     * @param slices
+     * @param loops
+     * @param color
+     */
+    public void drawDisk(float innerRadius, float outerRadius, int slices, int loops, IColorSpace color) {
+        final Color rgb = this.toColor(color);
+        Disk disk = new Disk();
+        disk.draw(innerRadius, outerRadius, slices, loops);
+    }
+
+    /**
+     * 
+     * @param innerRadius
+     * @param outerRadius
+     * @param slices
+     * @param loops
+     * @param startAngle
+     * @param sweepAngle
+     * @param color
+     */
+    public void drawPartialDisk(float innerRadius, float outerRadius, int slices, int loops, float startAngle, float sweepAngle, IColorSpace color) {
+        final Color rgb = this.toColor(color);
+        PartialDisk partialDisk = new PartialDisk();
+        partialDisk.draw(innerRadius, outerRadius, slices, loops, startAngle, sweepAngle);
+    }
+
+
+
+    /**
+     * 
+     * @param color
+     */
+    public void drawHouse(IColorSpace color) {
+        final Color rgb = this.toColor(color);
+        House house = new House();
+        house.draw();
+    }
+
+    /**
+     * 
+     * @param color
+     */
+    public void drawCar(IColorSpace color) {
+        final Color rgb = this.toColor(color);
+        Car car = new Car();
+        car.draw();
+    }
+
     public void drawTorus(final double r, final double R, final int nsides, final int rings, IColorSpace color) {
         final Color rgb = this.toColor(color);
 
@@ -343,6 +456,7 @@ public abstract class AbstractGLCanvasDashboardPart extends AbstractDashboardPar
             sinTheta = sinTheta1;
         }
     }
+
     @SuppressWarnings("static-method")
     public void drawBox(final Coordinate point, final double height, final double width, final double depth) {
         final double lx = (width * 0.5f);

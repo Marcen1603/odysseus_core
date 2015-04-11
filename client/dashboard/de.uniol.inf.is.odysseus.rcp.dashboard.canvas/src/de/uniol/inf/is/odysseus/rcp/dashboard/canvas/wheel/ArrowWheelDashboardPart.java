@@ -39,10 +39,6 @@ public class ArrowWheelDashboardPart extends AbstractWheelDashboardPart {
     @Override
     public void doPaintZ(final Number z) {
         final double angle = this.normalizeZ(z).doubleValue() * 360.0;
-        final Transform transform = new Transform(this.getGC().getDevice());
-        transform.translate((float) this.getCenter().x, (float) this.getCenter().y);
-        transform.rotate((float) (angle - 90.0));
-        this.getGC().setTransform(transform);
         final Path path = new Path(this.getGC().getDevice());
         path.moveTo((int) ((-(1.0 / 3.0) * this.getRadius()) + 4), 1);
         path.lineTo((int) ((1.0 / 6.0) * this.getRadius()), 1);
@@ -52,6 +48,10 @@ public class ArrowWheelDashboardPart extends AbstractWheelDashboardPart {
         path.lineTo((int) ((1.0 / 6.0) * this.getRadius()), -1);
         path.lineTo((int) ((-(1.0 / 3.0) * this.getRadius()) + 4), -1);
         path.close();
+        final Transform transform = new Transform(this.getGC().getDevice());
+        transform.translate((float) this.getCenter().x, (float) this.getCenter().y);
+        transform.rotate((float) (angle - 90.0));
+        this.getGC().setTransform(transform);
         this.fillPath(path, this.arrowColor);
         this.getGC().setTransform(null);
     }

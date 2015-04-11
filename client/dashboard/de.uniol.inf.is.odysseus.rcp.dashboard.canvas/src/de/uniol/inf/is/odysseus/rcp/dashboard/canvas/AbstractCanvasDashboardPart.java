@@ -44,7 +44,9 @@ import de.uniol.inf.is.odysseus.rcp.dashboard.canvas.colorspace.RGB;
 
 /**
  * @author Christian Kuka <christian@kuka.cc>
- * @version $Id$
+ * @version $Id: AbstractCanvasDashboardPart.java |
+ *          AbstractCanvasDashboardPart.java | AbstractCanvasDashboardPart.java
+ *          $
  *
  */
 public abstract class AbstractCanvasDashboardPart extends AbstractDashboardPart implements PaintListener {
@@ -222,6 +224,13 @@ public abstract class AbstractCanvasDashboardPart extends AbstractDashboardPart 
         this.gc.setForeground(tmpColor);
     }
 
+    public void fillRectangle(final Coordinate corner, final int width, final int height, final IColorSpace color) {
+        final Color tmpColor = this.gc.getBackground();
+        this.gc.setBackground(this.toColor(color));
+        this.gc.fillRectangle((int) corner.x, (int) corner.y, width, height);
+        this.gc.setBackground(tmpColor);
+    }
+
     public void drawCircle(final Coordinate center, final int radius, final int start, final int end, final IColorSpace color) {
         final Color tmpColor = this.gc.getForeground();
         this.gc.setForeground(this.toColor(color));
@@ -249,6 +258,10 @@ public abstract class AbstractCanvasDashboardPart extends AbstractDashboardPart 
         final Rectangle bounds = this.gc.getDevice().getBounds();
         this.gc.fillRectangle(bounds);
         this.gc.setBackground(tmpColor);
+    }
+
+    public Rectangle getClipping() {
+        return this.gc.getClipping();
     }
 
     public void setAlpha(final int alpha) {

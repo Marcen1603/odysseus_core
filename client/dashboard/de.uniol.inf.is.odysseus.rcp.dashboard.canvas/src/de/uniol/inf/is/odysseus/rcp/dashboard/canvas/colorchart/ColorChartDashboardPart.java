@@ -1,61 +1,43 @@
 /*******************************************************************************
- * Copyright 2015 The Odysseus Team
+ * Copyright (C) 2015  Christian Kuka <christian@kuka.cc>
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 2 of the License, or
+ * (at your option) any later version.
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- ******************************************************************************/
-package de.uniol.inf.is.odysseus.rcp.dashboard.canvas.wheel;
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *******************************************************************************/
+package de.uniol.inf.is.odysseus.rcp.dashboard.canvas.colorchart;
 
-import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.List;
+import java.util.Random;
 
-import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Shell;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.rcp.dashboard.canvas.AbstractCanvasDashboardPart;
 import de.uniol.inf.is.odysseus.rcp.dashboard.canvas.Coordinate;
+import de.uniol.inf.is.odysseus.rcp.dashboard.canvas.colorspace.CIELCH;
 import de.uniol.inf.is.odysseus.rcp.dashboard.canvas.colorspace.RGB;
 
 /**
  * @author Christian Kuka <christian@kuka.cc>
- * @version $Id: AbstractWheelDashboardPart.java |
- *          AbstractWheelDashboardPart.java | AbstractWheelDashboardPart.java $
+ * @version $Id$
  *
  */
-public abstract class AbstractWheelDashboardPart extends AbstractCanvasDashboardPart {
-    private class CircleCoordinate {
-        final int x;
-        final int y;
+public class ColorChartDashboardPart extends AbstractCanvasDashboardPart {
+    private RGB backgroundColor = new RGB(255, 255, 255);
+    private RGB color = new RGB(0, 255, 0);
 
-        /**
-         * Class constructor.
-         *
-         */
-        public CircleCoordinate(final Number x, final Number y, final double radius) {
-            double circleX = Math.sin(x.doubleValue());
-            double circleY = Math.cos(x.doubleValue());
-            final double scale = (radius + ((2.0 / 3.0) * radius * y.doubleValue()));
-            circleX *= scale;
-            circleY *= scale;
-            // Center to 2*radius
-            this.x = (int) ((2 * radius) + circleX);
-            this.y = (int) ((2 * radius) + circleY);
-        }
-    }
-
-    private static final double TWO_PI = 2.0 * Math.PI;
-    private double radius = 100.0;
     /** Min Y value. */
     private double minY = 0.0;
     /** Max Y value. */
@@ -63,7 +45,7 @@ public abstract class AbstractWheelDashboardPart extends AbstractCanvasDashboard
     /** Min X value. */
     private double minX = 0.0;
     /** Max X value. */
-    private double maxX = AbstractWheelDashboardPart.TWO_PI;
+    private double maxX = 1.0;
     /** Min Color value. */
     private double minZ = 0.0;
     /** Max Color value. */
@@ -73,8 +55,6 @@ public abstract class AbstractWheelDashboardPart extends AbstractCanvasDashboard
     private int xPos = 0;
     private int yPos = 1;
     private int zPos = 2;
-    private RGB backgroundColor = new RGB(255, 255, 255);
-    private RGB foregroundColor = new RGB(255, 0, 0);
 
     /**
      * {@inheritDoc}
@@ -84,44 +64,27 @@ public abstract class AbstractWheelDashboardPart extends AbstractCanvasDashboard
         if (this.isAutoadjust()) {
             this.adjust();
         }
-        final RGB foreground = this.getForegroundColor();
-
         final RGB background = this.getBackgroundColor();
         this.setAlpha(0);
         this.fill(background);
-        final RGB[] circleColor = foreground.getTriadic();
-        this.setAlpha(128);
-        this.fillCircle(this.getCenter(), (int) (2 * this.getRadius()), 0, 360, circleColor[0]);
         this.setAlpha(255);
-        this.fillCircle(this.getCenter(), (int) (this.getRadius()), 0, 360, circleColor[1]);
-        final RGB innerBackground = this.getForegroundColor().getComplement();
-        this.fillCircle(this.getCenter(), (int) ((1.0 / 3.0) * this.getRadius()), 0, 360, innerBackground);
-
+        this.fill(getColor(0));
         final Iterator<IStreamObject<?>> iter = this.getObjects().iterator();
-        List<Coordinate> coordinates = new ArrayList<>(this.getObjects().size());
         IStreamObject<?> element = null;
         while (iter.hasNext()) {
             element = iter.next();
-            final CircleCoordinate coordinate = this.getCoordinate(element);
-            coordinates.add(new Coordinate(coordinate.x, coordinate.y));
-        }
-        this.drawLine(coordinates.toArray(new Coordinate[coordinates.size()]), foreground);
-        if (element != null) {
-            this.doPaintZ(this.getZ(element));
+            final Number value = this.normalizeZ(this.getZ(element));
+            int width = (int) (getClipping().width / getMaxX() + 0.5);
+            int height = (int) (getClipping().height / getMaxY() + 0.5);
+            fillRectangle(getCoordinate(element), width, height, getColor(value));
         }
     }
-
-    /**
-     * @param z
-     *            The z value
-     */
-    public abstract void doPaintZ(Number z);
 
     @SuppressWarnings("hiding")
     private void adjust() {
         double minY = Double.POSITIVE_INFINITY;
-        double minX = Double.POSITIVE_INFINITY;
         double maxY = Double.NEGATIVE_INFINITY;
+        double minX = Double.POSITIVE_INFINITY;
         double maxX = Double.NEGATIVE_INFINITY;
         double minZ = Double.POSITIVE_INFINITY;
         double maxZ = Double.NEGATIVE_INFINITY;
@@ -158,12 +121,15 @@ public abstract class AbstractWheelDashboardPart extends AbstractCanvasDashboard
         this.setMaxX((this.getMaxX() + maxX) / 2.0);
         this.setMinZ((this.getMinZ() + minZ) / 2.0);
         this.setMaxZ((this.getMaxZ() + maxZ) / 2.0);
-
     }
 
     @SuppressWarnings("static-method")
     private Tuple<?> getTuple(final IStreamObject<?> element) {
         return (Tuple<?>) element;
+    }
+
+    private Coordinate getCoordinate(final IStreamObject<?> element) {
+        return new Coordinate(this.normalizeX(this.getX(element)).doubleValue(), this.normalizeY(this.getY(element)).doubleValue());
     }
 
     private Number getX(final IStreamObject<?> element) {
@@ -192,22 +158,22 @@ public abstract class AbstractWheelDashboardPart extends AbstractCanvasDashboard
 
     private Number normalizeX(final Number value) {
         if (value.doubleValue() > this.getMaxX()) {
-            return new Double(AbstractWheelDashboardPart.TWO_PI);
+            return new Double(1.0);
         }
         if (value.doubleValue() < this.getMinX()) {
             return new Double(0.0);
         }
-        return new Double(((value.doubleValue() - this.getMinX()) / Math.abs(this.getMaxX() - this.getMinX())) * AbstractWheelDashboardPart.TWO_PI);
+        return new Double(((value.doubleValue() - this.getMinX()) / Math.abs(this.getMaxX() - this.getMinX())) * getClipping().width);
     }
 
     private Number normalizeY(final Number value) {
         if (value.doubleValue() > this.getMaxY()) {
-            return new Double(1);
+            return new Double(1.0);
         }
         if (value.doubleValue() < this.getMinY()) {
-            return new Double(-1);
+            return new Double(0.0);
         }
-        return new Double((((value.doubleValue() - this.getMinY()) / Math.abs(this.getMaxY() - this.getMinY())) - 0.5) * 2.0);
+        return new Double(((value.doubleValue() - this.getMinY()) / Math.abs(this.getMaxY() - this.getMinY())) * getClipping().height);
     }
 
     protected Number normalizeZ(final Number value) {
@@ -217,31 +183,13 @@ public abstract class AbstractWheelDashboardPart extends AbstractCanvasDashboard
         if (value.doubleValue() < this.getMinZ()) {
             return new Double(0.0);
         }
-        return new Double((value.doubleValue() - this.getMinZ()) / Math.abs(this.getMaxZ() - this.getMinZ()));
+        return new Double(((value.doubleValue() - this.getMinZ()) / Math.abs(this.getMaxZ() - this.getMinZ())) * 180.0);
     }
 
-    private CircleCoordinate getCoordinate(final IStreamObject<?> element) {
-        return new CircleCoordinate(this.normalizeX(this.getX(element)), this.normalizeY(this.getY(element)), this.getRadius());
-
-    }
-
-    public Coordinate getCenter() {
-        return new Coordinate((int) (2 * this.getRadius()), (int) (2 * this.getRadius()));
-    }
-
-    /**
-     * @return the radius
-     */
-    public double getRadius() {
-        Rectangle bounds = getClipping();
-        return Math.min(bounds.width, bounds.height) / 4.0;
-    }
-
-    /**
-     * @param radius
-     */
-    public void setRadius(final double radius) {
-        this.radius = radius;
+    private RGB getColor(final Number value) {
+        final RGB rgb = this.getColor();
+        final CIELCH colorspace = rgb.toCIELCH();
+        return new CIELCH(colorspace.L, colorspace.C, colorspace.H + value.doubleValue()).toCIELab().toXYZ().toRGB();
     }
 
     /**
@@ -395,6 +343,21 @@ public abstract class AbstractWheelDashboardPart extends AbstractCanvasDashboard
     }
 
     /**
+     * @param color
+     *            the color to set
+     */
+    public void setColor(final RGB color) {
+        this.color = color;
+    }
+
+    /**
+     * @return the arrowColor
+     */
+    public RGB getColor() {
+        return this.color;
+    }
+
+    /**
      * @return the backgroundColor
      */
     public RGB getBackgroundColor() {
@@ -409,19 +372,49 @@ public abstract class AbstractWheelDashboardPart extends AbstractCanvasDashboard
         this.backgroundColor = backgroundColor;
     }
 
-    /**
-     * @return the foregroundColor
-     */
-    public RGB getForegroundColor() {
-        return this.foregroundColor;
-    }
+    public static void main(final String[] args) {
 
-    /**
-     * @param foregroundColor
-     *            the foregroundColor to set
-     */
-    public void setForegroundColor(final RGB foregroundColor) {
-        this.foregroundColor = foregroundColor;
+        final Display display = new Display();
+        final Shell shell = new Shell(display);
+
+        shell.setSize(500, 500);
+
+        shell.open();
+        final ColorChartDashboardPart chart = new ColorChartDashboardPart();
+        chart.setMaxElements(1000);
+        final Thread generator = new Thread() {
+            /**
+             * {@inheritDoc}
+             */
+            @SuppressWarnings("boxing")
+            @Override
+            public void run() {
+                final Random rnd = new Random();
+                while (!this.isInterrupted()) {
+                    @SuppressWarnings("rawtypes")
+                    final Tuple tuple = new Tuple(3, false);
+                    tuple.setAttribute(0, rnd.nextDouble() * 100);
+                    tuple.setAttribute(1, rnd.nextDouble() * 100);
+                    tuple.setAttribute(2, rnd.nextDouble() * 10);
+                    chart.streamElementRecieved(null, tuple, 0);
+                    try {
+                        Thread.sleep(100);
+                    }
+                    catch (final InterruptedException e) {
+                        // Empty block
+                    }
+                }
+            }
+        };
+        chart.createPartControl(shell, null);
+        generator.start();
+        while (!shell.isDisposed()) {
+            if (!display.readAndDispatch()) {
+                display.sleep();
+            }
+        }
+        generator.interrupt();
+        display.dispose();
     }
 
 }
