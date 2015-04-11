@@ -117,7 +117,7 @@ public class CpuTimeContainer {
 		String typeName = determineOperatorTypeName(operatorType);
 		Double cpuTimeValue = cpuTimeMap.get(typeName);
 
-		if (cpuTimeValue == null || (cpuTimeValue != null && cpuTimeValue < cpuTime)) {
+		if (cpuTimeValue == null || cpuTimeValue < cpuTime) {
 			cpuTimeMap.put(typeName, cpuTime);
 		}
 	}
