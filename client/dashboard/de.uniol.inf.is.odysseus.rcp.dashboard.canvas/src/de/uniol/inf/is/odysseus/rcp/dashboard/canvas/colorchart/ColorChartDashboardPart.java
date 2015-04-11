@@ -68,7 +68,6 @@ public class ColorChartDashboardPart extends AbstractCanvasDashboardPart {
         this.setAlpha(0);
         this.fill(background);
         this.setAlpha(255);
-        this.fill(getColor(0));
         final Iterator<IStreamObject<?>> iter = this.getObjects().iterator();
         IStreamObject<?> element = null;
         while (iter.hasNext()) {
