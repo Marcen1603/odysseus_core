@@ -304,11 +304,15 @@ public class StreamTableEditor implements IStreamEditorType {
 				try {
 					Object attr = ((Tuple<?>) cell.getElement()).getAttribute(attributeIndex);
 					if (attr != null) {
-						if (attr instanceof Object[]) {
-							cell.setText(Arrays.deepToString((Object[]) attr));
-						} else {
-							cell.setText(attr.toString());
-						}
+                        if (attr instanceof Object[]) {
+                            cell.setText(Arrays.deepToString((Object[]) attr));
+                        }
+                        else if (attr.getClass().isArray()) {
+                            cell.setText(Arrays.toString((double[]) attr));
+                        }
+                        else {
+                            cell.setText(attr.toString());
+                        }
 					} else {
 						cell.setText("<null>");
 					}
