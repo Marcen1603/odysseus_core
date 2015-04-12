@@ -41,7 +41,7 @@ public class KeyValueObject <T extends IMetaAttribute> extends AbstractStreamObj
 	
 	public KeyValueObject(KeyValueObject<T> other){
 		super(other);
-		this.attributes.putAll(other.attributes);	
+		this.attributes.putAll(new HashMap<String, Object>(other.attributes));
 	}
 	
 	public KeyValueObject(Map<String,Object> map) {
@@ -63,8 +63,15 @@ public class KeyValueObject <T extends IMetaAttribute> extends AbstractStreamObj
 		return this.attributes;
 	}
 
+	/**
+	 * Adds the given value to a existing collection identified by the key.
+	 * If there is no collection an exception is raised.
+	 * 
+	 * @param key
+	 * @param value
+	 */
 	@SuppressWarnings("unchecked")
-	public final void addAttributeValue(String key, Object value) {
+	public void addAttributeValue(String key, Object value) {
 		if (this.attributes.get(key) != null
 				&& !(this.attributes.get(key) instanceof Collection)) {
 			throw new RuntimeException(
@@ -76,11 +83,17 @@ public class KeyValueObject <T extends IMetaAttribute> extends AbstractStreamObj
 		((Collection<Object>) this.attributes.get(key)).add(value);
 	}
 
-	public final void setAttribute(String key, Object value) {
+	/**
+	 * Set the value to given key. If there had been a value already, it will be overridden.
+	 * 
+	 * @param key
+	 * @param value
+	 */
+	public void setAttribute(String key, Object value) {
 		this.attributes.put(key, value);
 	}
 	
-	public final void setAttributes(List<String> keys, List<Object> values){
+	public void setAttributes(List<String> keys, List<Object> values){
 		if (keys.size() != values.size()){
 			throw new IllegalArgumentException("Lists need to have the same length!");
 		}
@@ -89,7 +102,7 @@ public class KeyValueObject <T extends IMetaAttribute> extends AbstractStreamObj
 		}
 	}
 
-	public final void setAttributes(String[] keys, Object[] values){
+	public void setAttributes(String[] keys, Object[] values){
 		if (keys.length != values.length){
 			throw new IllegalArgumentException("Lists need to have the same length!");
 		}
@@ -102,7 +115,7 @@ public class KeyValueObject <T extends IMetaAttribute> extends AbstractStreamObj
 		return this.attributes.remove(key);
 	}
 	
-	public final int size() {
+	public int size() {
 		return this.attributes.size();
 	}
 	
