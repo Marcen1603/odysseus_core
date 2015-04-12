@@ -22,6 +22,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.collection.KeyValueObject;
+import de.uniol.inf.is.odysseus.core.collection.NestedKeyValueObject;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
@@ -77,14 +78,17 @@ public class KeyValueMapPO<K extends IMetaAttribute, T extends KeyValueObject<K>
 		
 		T outputVal;
 		if(this.keepAllAttributes) {
-			outputVal = (T) new KeyValueObject<>(object);
-			if(this.removeAttributes != null && this.removeAttributes.size() > 0) {
-				for(String att: this.removeAttributes) {
-					outputVal.removeAttribute(att);
-				}
+			if(this.getOutputSchema().getType() == NestedKeyValueObject.class) {
+				outputVal = (T) new NestedKeyValueObject<>((NestedKeyValueObject<?>) object);
+			} else {
+				outputVal = (T) new KeyValueObject<>(object);
 			}
 		} else {
-			outputVal = (T) new KeyValueObject<>();
+			if(this.getOutputSchema().getType() == NestedKeyValueObject.class) {
+				outputVal = (T) new NestedKeyValueObject<>();
+			} else {
+				outputVal = (T) new KeyValueObject<>();
+			}
 			outputVal.setMetadata((K) object.getMetadata().clone());
 			if (object.getMetadataMap() != null) {
 				for (Entry<String, Object> entry : object.getMetadataMap().entrySet()) {
@@ -112,6 +116,7 @@ public class KeyValueMapPO<K extends IMetaAttribute, T extends KeyValueObject<K>
 					Object expr = this.expressions[i].getValue();
 
 					outputVal.setAttribute(this.expressionStrings.get(i)[0], expr);
+					
 					if (expr == null) {
 						nullValueOccured = true;
 					}
@@ -125,6 +130,13 @@ public class KeyValueMapPO<K extends IMetaAttribute, T extends KeyValueObject<K>
 						sendWarning("Cannot calc result for " + object
 								+ " with expression " + expressions[i], e);
 					}
+				}
+			}
+		}
+		if(this.keepAllAttributes) {
+			if(this.removeAttributes != null && this.removeAttributes.size() > 0) {
+				for(String att: this.removeAttributes) {
+					outputVal.removeAttribute(att);
 				}
 			}
 		}
