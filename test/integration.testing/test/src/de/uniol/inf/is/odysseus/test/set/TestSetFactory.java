@@ -78,7 +78,7 @@ public class TestSetFactory {
 		try {
 			URL queryFile = qf.toURI().toURL();
 			File outputFile;
-			if(dataHandler.equalsIgnoreCase("KEYVALUEOBJECT")) {
+			if(dataHandler.equalsIgnoreCase("KEYVALUEOBJECT") || dataHandler.equalsIgnoreCase("NESTEDKEYVALUEOBJECT")) {
 				outputFile = getOutputFile(qf, "json");
 			} else {
 				outputFile = getOutputFile(qf, "csv");

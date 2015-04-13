@@ -15,6 +15,8 @@
  ******************************************************************************/
 package de.uniol.inf.is.odysseus.test.component.keyvalue;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.test.component.AbstractQueryExpectedOutputTestComponent;
@@ -35,12 +37,24 @@ public class KeyValueTestComponent extends AbstractQueryExpectedOutputTestCompon
 	
 	@Override
 	public List<ExpectedOutputTestSet> createTestSets(BasicTestContext context) {
-		return TestSetFactory.createExpectedOutputTestSetsFromBundleRoot(context.getDataRootPath(), "KEYVALUEOBJECT");	
+//		try {
+//			URL kvURL = new URL(context.getDataRootPath() + "kv/");
+//			List<ExpectedOutputTestSet> testSets = TestSetFactory.createExpectedOutputTestSetsFromBundleRoot(new URL(context.getDataRootPath() + "kv/"), "KEYVALUEOBJECT");	
+//			URL nestedKVURL = new URL(context.getDataRootPath() + "nestedkv/");
+//			testSets.addAll(TestSetFactory.createExpectedOutputTestSetsFromBundleRoot(nestedKVURL, "NESTEDKEYVALUEOBJECT"));
+//			return testSets;
+//		} catch (MalformedURLException e) {
+//		}
+		try {
+			return TestSetFactory.createExpectedOutputTestSetsFromBundleRoot(new URL(context.getDataRootPath() + "kv/"), "KEYVALUEOBJECT");
+		} catch (MalformedURLException e) {
+		}
+		return null;
 	}
 	
 	@Override
 	public String getName() {
-		return "KeValue Test Component";
+		return "KeyValue Test Component";
 	}
 	
 	@Override

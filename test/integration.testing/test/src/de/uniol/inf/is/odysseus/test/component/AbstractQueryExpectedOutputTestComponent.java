@@ -40,7 +40,7 @@ public abstract class AbstractQueryExpectedOutputTestComponent<T extends ITestCo
 					List<Pair<String, String>> expected = set.getExpectedOutput();	
 					String dataHandler = set.getDataHandler();
 					AbstractCompareSink sink;
-					if(dataHandler.equalsIgnoreCase("KEYVALUEOBJECT")) {
+					if(dataHandler.equalsIgnoreCase("KEYVALUEOBJECT") || dataHandler.equalsIgnoreCase("NESTEDKEYVALUEOBJECT")) {
 						sink = new KeyValueTICompareSink<KeyValueObject<? extends ITimeInterval>>(expected, dataHandler);
 					} else {
 						sink = new TICompareSink<Tuple<? extends ITimeInterval>>(expected, dataHandler);
