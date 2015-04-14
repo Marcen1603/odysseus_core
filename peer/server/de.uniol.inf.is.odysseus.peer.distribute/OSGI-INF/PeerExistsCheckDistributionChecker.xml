@@ -4,5 +4,5 @@
    <service>
       <provide interface="de.uniol.inf.is.odysseus.peer.distribute.IDistributionChecker"/>
    </service>
-   <reference bind="bindPeerDictionary" cardinality="1..1" interface="de.uniol.inf.is.odysseus.p2p_new.dictionary.IPeerDictionary" name="IPeerDictionary" policy="static" unbind="unbindPeerDictionary"/>
+   <reference bind="bindPeerDictionary" cardinality="1..1" interface="de.uniol.inf.is.odysseus.peer.dictionary.IPeerDictionary" name="IPeerDictionary" policy="static" unbind="unbindPeerDictionary"/>
 </scr:component>

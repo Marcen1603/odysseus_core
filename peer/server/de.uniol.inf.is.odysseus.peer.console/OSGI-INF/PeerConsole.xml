@@ -11,7 +11,7 @@
    <reference bind="bindPeerCommunicator" cardinality="1..1" interface="de.uniol.inf.is.odysseus.peer.communication.IPeerCommunicator" name="IPeerCommunicator" policy="static" unbind="unbindPeerCommunicator"/>
    <reference bind="bindJxtaServicesProvider" cardinality="1..1" interface="de.uniol.inf.is.odysseus.peer.jxta.IJxtaServicesProvider" name="IJxtaServicesProvider" policy="static" unbind="unbindJxtaServicesProvider"/>
    <reference bind="bindExecutor" cardinality="1..1" interface="de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor" name="IExecutor" policy="static" unbind="unbindExecutor"/>
-   <reference bind="bindPeerDictionary" cardinality="1..1" interface="de.uniol.inf.is.odysseus.p2p_new.dictionary.IPeerDictionary" name="IPeerDictionary" policy="static" unbind="unbindPeerDictionary"/>
+   <reference bind="bindPeerDictionary" cardinality="1..1" interface="de.uniol.inf.is.odysseus.peer.dictionary.IPeerDictionary" name="IPeerDictionary" policy="static" unbind="unbindPeerDictionary"/>
    <reference bind="bindPeerReachabilityService" cardinality="1..1" interface="de.uniol.inf.is.odysseus.peer.broadcast.IPeerReachabilityService" name="IPeerReachabilityService" policy="static" unbind="unbindPeerReachabilityService"/>
    <reference bind="bindConsoleCommandExecutor" cardinality="1..1" interface="de.uniol.inf.is.odysseus.console.executor.IConsoleCommandExecutor" name="IConsoleCommandExecutor" policy="static" unbind="unbindConsoleCommandExecutor"/>
 </scr:component>

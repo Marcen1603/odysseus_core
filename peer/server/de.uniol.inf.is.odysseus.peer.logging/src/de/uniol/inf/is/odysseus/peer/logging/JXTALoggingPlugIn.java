@@ -10,9 +10,9 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Optional;
 import com.google.common.base.Strings;
 
-import de.uniol.inf.is.odysseus.p2p_new.dictionary.IPeerDictionary;
 import de.uniol.inf.is.odysseus.peer.communication.IPeerCommunicator;
 import de.uniol.inf.is.odysseus.peer.config.PeerConfiguration;
+import de.uniol.inf.is.odysseus.peer.dictionary.IPeerDictionary;
 import de.uniol.inf.is.odysseus.peer.jxta.IJxtaServicesProvider;
 import de.uniol.inf.is.odysseus.peer.logging.adv.LoggingAdvertisement;
 import de.uniol.inf.is.odysseus.peer.logging.adv.LoggingAdvertisementInstatiator;

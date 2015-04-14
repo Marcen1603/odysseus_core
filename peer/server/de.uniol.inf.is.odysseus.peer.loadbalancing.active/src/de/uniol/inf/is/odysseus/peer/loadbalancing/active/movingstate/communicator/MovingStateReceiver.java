@@ -17,12 +17,12 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IStatefulPO;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IPipe;
-import de.uniol.inf.is.odysseus.p2p_new.data.DataTransmissionException;
-import de.uniol.inf.is.odysseus.p2p_new.data.DataTransmissionManager;
-import de.uniol.inf.is.odysseus.p2p_new.data.ITransmissionReceiver;
-import de.uniol.inf.is.odysseus.p2p_new.data.ITransmissionReceiverListener;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.common.LoadBalancingException;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.movingstate.protocol.IStateReceivedListener;
+import de.uniol.inf.is.odysseus.peer.transmission.DataTransmissionException;
+import de.uniol.inf.is.odysseus.peer.transmission.DataTransmissionManager;
+import de.uniol.inf.is.odysseus.peer.transmission.ITransmissionReceiver;
+import de.uniol.inf.is.odysseus.peer.transmission.ITransmissionReceiverListener;
 
 /***
  * Receiver for serialized states of StatefulPOs
@@ -35,8 +35,7 @@ public class MovingStateReceiver implements ITransmissionReceiverListener {
 	/***
 	 * Logger
 	 */
-	private static final Logger LOG = LoggerFactory
-			.getLogger(MovingStateReceiver.class);
+	private static final Logger LOG = LoggerFactory.getLogger(MovingStateReceiver.class);
 
 	/**
 	 * Transmission Receiver
@@ -93,21 +92,17 @@ public class MovingStateReceiver implements ITransmissionReceiverListener {
 	 *            Pipe ID to use for transmission
 	 * @throws DataTransmissionException
 	 */
-	public MovingStateReceiver(String peerID, String pipeID)
-			throws DataTransmissionException {
+	public MovingStateReceiver(String peerID, String pipeID) throws DataTransmissionException {
 
-		transmission = DataTransmissionManager.getInstance()
-				.registerTransmissionReceiver(peerID, pipeID);
+		transmission = DataTransmissionManager.registerTransmissionReceiver(peerID, pipeID);
 		transmission.addListener(this);
 		transmission.open();
 		transmission.sendOpen();
-		
-		LOG.debug("New MovingStateReceiver with pipe ID {} created.",pipeID);
+
+		LOG.debug("New MovingStateReceiver with pipe ID {} created.", pipeID);
 		this.pipe = pipeID;
 	}
 
-	
-	
 	/**
 	 * Notifies all listeners that state is received
 	 */
@@ -144,9 +139,9 @@ public class MovingStateReceiver implements ITransmissionReceiverListener {
 	 * EventHandler that fires if Transmission receives data.
 	 */
 	public void onReceiveData(ITransmissionReceiver receiver, byte[] data) {
-		
+
 		LOG.debug("Received something??");
-		
+
 		if (!announcementReceived) {
 			stateReceived = false;
 
@@ -158,9 +153,7 @@ public class MovingStateReceiver implements ITransmissionReceiverListener {
 				// set message counter to zero and initialize array
 				messagePartCounter = 0;
 				stateBytes = new byte[announcement.getArrayLenght()];
-				LOG.error(String
-						.format("State Transmission: StateAnnouncement received. %d messages need to be processed.",
-								announcement.getNumberOfMessages()));
+				LOG.error(String.format("State Transmission: StateAnnouncement received. %d messages need to be processed.", announcement.getNumberOfMessages()));
 			}
 			return;
 		}
@@ -171,29 +164,21 @@ public class MovingStateReceiver implements ITransmissionReceiverListener {
 					int index = 0;
 					try {
 						for (int i = 0; i < data.length; i++) {
-							index = messagePartCounter
-									* StateAnnouncement.MAX_MESSAGE_SIZE + i;
+							index = messagePartCounter * StateAnnouncement.MAX_MESSAGE_SIZE + i;
 							stateBytes[index] = data[i];
 						}
 						messagePartCounter++;
-						LOG.debug(String.format("State Transmission: Message %d of %d received.",
-								messagePartCounter,
-								announcement.getNumberOfMessages()));
+						LOG.debug(String.format("State Transmission: Message %d of %d received.", messagePartCounter, announcement.getNumberOfMessages()));
 					} catch (IndexOutOfBoundsException e) {
-						LOG.error(String
-								.format("State Transmission: Maximum index of array is %d but requested index is %d. Transmission aborted.",
-										stateBytes.length - 1, index));
+						LOG.error(String.format("State Transmission: Maximum index of array is %d but requested index is %d. Transmission aborted.", stateBytes.length - 1, index));
 						resetOnError();
 					}
 				}
 			} else {
-				LOG.error(String
-						.format("State Transmission: Message %d is too long. Maximum size is: %d byte. Aktual size is %d byte. Transmission aborted.",
-								messagePartCounter,
-								StateAnnouncement.MAX_MESSAGE_SIZE, data.length));
+				LOG.error(String.format("State Transmission: Message %d is too long. Maximum size is: %d byte. Aktual size is %d byte. Transmission aborted.", messagePartCounter, StateAnnouncement.MAX_MESSAGE_SIZE, data.length));
 				resetOnError();
 			}
-			LOG.debug("{} of {} received.",messagePartCounter,announcement.getNumberOfMessages());
+			LOG.debug("{} of {} received.", messagePartCounter, announcement.getNumberOfMessages());
 			if (messagePartCounter == announcement.getNumberOfMessages()) {
 				// if all message parts are received, we can convert it to
 				// serializable
@@ -226,7 +211,8 @@ public class MovingStateReceiver implements ITransmissionReceiverListener {
 	}
 
 	/**
-	 * Resets the internal state of transmission. Needed if receiver receives new state
+	 * Resets the internal state of transmission. Needed if receiver receives
+	 * new state
 	 */
 	private void resetOnError() {
 		announcementReceived = false;
@@ -238,7 +224,8 @@ public class MovingStateReceiver implements ITransmissionReceiverListener {
 	/**
 	 * converts the given byte array into serializable object
 	 * 
-	 * @param data byte array of an serializable object
+	 * @param data
+	 *            byte array of an serializable object
 	 * @return serializable object
 	 */
 	private Serializable convertBytesToSerializable(byte[] data) {
@@ -276,8 +263,7 @@ public class MovingStateReceiver implements ITransmissionReceiverListener {
 	 * not implemented
 	 */
 	@Override
-	public void onReceivePunctuation(ITransmissionReceiver receiver,
-			IPunctuation punc) {
+	public void onReceivePunctuation(ITransmissionReceiver receiver, IPunctuation punc) {
 		// ignore as we are not an operator
 
 	}
@@ -292,8 +278,7 @@ public class MovingStateReceiver implements ITransmissionReceiverListener {
 	@SuppressWarnings("rawtypes")
 	public void injectState(IStatefulPO operator) throws LoadBalancingException {
 		if (receivedState == null) {
-			throw new LoadBalancingException(
-					"Tried injecting State without having state received.");
+			throw new LoadBalancingException("Tried injecting State without having state received.");
 		}
 		if (operator instanceof IPipe) {
 			IPipe physicalOp = (IPipe) operator;

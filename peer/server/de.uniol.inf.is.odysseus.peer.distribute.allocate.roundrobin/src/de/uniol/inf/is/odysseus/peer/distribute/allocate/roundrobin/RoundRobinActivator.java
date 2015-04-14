@@ -3,7 +3,7 @@ package de.uniol.inf.is.odysseus.peer.distribute.allocate.roundrobin;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 
-import de.uniol.inf.is.odysseus.p2p_new.dictionary.IPeerDictionary;
+import de.uniol.inf.is.odysseus.peer.dictionary.IPeerDictionary;
 
 public class RoundRobinActivator implements BundleActivator {
 

@@ -12,7 +12,6 @@ import org.slf4j.LoggerFactory;
 import de.uniol.inf.is.odysseus.core.collection.Context;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IStatefulPO;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
-import de.uniol.inf.is.odysseus.p2p_new.dictionary.impl.PeerDictionary;
 import de.uniol.inf.is.odysseus.peer.communication.IPeerCommunicator;
 import de.uniol.inf.is.odysseus.peer.distribute.IQueryPartController;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.OsgiServiceManager;
@@ -61,7 +60,7 @@ public class InstructionHandler {
 			// more often.
 
 			LOG.debug("Got INITIATE_LOADBALANCING");
-			LOG.info("Load Balancing requested from Peer ", PeerDictionary.getInstance().getRemotePeerName(senderPeer));
+			LOG.info("Load Balancing requested from Peer {}", senderPeer);
 
 			synchronized (semaphore) {
 				status = (MovingStateSlaveStatus) LoadBalancingStatusCache.getInstance().getSlaveStatus(senderPeer, lbProcessId);

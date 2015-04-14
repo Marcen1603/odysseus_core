@@ -13,10 +13,10 @@ import java.util.zip.Checksum;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniol.inf.is.odysseus.p2p_new.data.DataTransmissionException;
-import de.uniol.inf.is.odysseus.p2p_new.data.DataTransmissionManager;
-import de.uniol.inf.is.odysseus.p2p_new.data.ITransmissionSender;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.common.LoadBalancingException;
+import de.uniol.inf.is.odysseus.peer.transmission.DataTransmissionException;
+import de.uniol.inf.is.odysseus.peer.transmission.DataTransmissionManager;
+import de.uniol.inf.is.odysseus.peer.transmission.ITransmissionSender;
 
 /****
  * Implements a sender for serialized statefulPO states.
@@ -29,8 +29,7 @@ public class MovingStateSender {
 	/**
 	 * Logger
 	 */
-	private static final Logger LOG = LoggerFactory
-			.getLogger(MovingStateSender.class);
+	private static final Logger LOG = LoggerFactory.getLogger(MovingStateSender.class);
 
 	/***
 	 * Transmission Sender
@@ -41,7 +40,6 @@ public class MovingStateSender {
 	 * Flag that is set when transmission is successful
 	 */
 	private boolean successfullyTransmitted = false;
-	
 
 	/***
 	 * sets transmission successful Flag.
@@ -57,7 +55,7 @@ public class MovingStateSender {
 	public boolean isSuccessfullyTransmitted() {
 		return successfullyTransmitted;
 	}
-	
+
 	/***
 	 * Constructor
 	 * 
@@ -67,10 +65,8 @@ public class MovingStateSender {
 	 *            PipeID which should be used for transmission
 	 * @throws DataTransmissionException
 	 */
-	public MovingStateSender(String peerID, String pipeID)
-			throws DataTransmissionException {
-		this.transmission = DataTransmissionManager.getInstance()
-				.registerTransmissionSender(peerID, pipeID);
+	public MovingStateSender(String peerID, String pipeID) throws DataTransmissionException {
+		this.transmission = DataTransmissionManager.registerTransmissionSender(peerID, pipeID);
 		this.transmission.open();
 	}
 
@@ -82,16 +78,13 @@ public class MovingStateSender {
 	 * @throws LoadBalancingException
 	 */
 	public void sendData(Serializable toSend) throws LoadBalancingException {
-		
-		
-		
+
 		ByteArrayOutputStream bos = new ByteArrayOutputStream();
 		ObjectOutput out = null;
 		try {
 			out = new ObjectOutputStream(bos);
 			out.writeObject(toSend);
 			byte[] stateBytes = bos.toByteArray();
-			
 
 			// create CRC Checksum
 			Checksum checksum = new CRC32();
@@ -99,55 +92,40 @@ public class MovingStateSender {
 			long checksumValue = checksum.getValue();
 
 			LOG.debug("Checksum created..");
-			
+
 			// create announcement
-			StateAnnouncement announcement = new StateAnnouncement(
-					stateBytes.length, checksumValue);
+			StateAnnouncement announcement = new StateAnnouncement(stateBytes.length, checksumValue);
 			byte[] stateAnnouncementBytes = convertAnnouncementToBytes(announcement);
 			if (stateAnnouncementBytes != null) {
 				// Send announcement (number of messages)
 				transmission.sendData(stateAnnouncementBytes);
 				LOG.debug("Annoucement sent.");
-				
+
 				if (stateBytes.length > StateAnnouncement.MAX_MESSAGE_SIZE) {
 					// if we have more than one message
-					LOG.error(String
-							.format("State Transmission: Message with an size of %s splitted into %d parts with a size of %s. Start sending.",
-									readableFileSize(announcement
-											.getArrayLenght()),
-									announcement.getNumberOfMessages(),
-									readableFileSize(StateAnnouncement.MAX_MESSAGE_SIZE)));
+					LOG.error(String.format("State Transmission: Message with an size of %s splitted into %d parts with a size of %s. Start sending.", readableFileSize(announcement.getArrayLenght()), announcement.getNumberOfMessages(), readableFileSize(StateAnnouncement.MAX_MESSAGE_SIZE)));
 					for (int i = 0; i < announcement.getNumberOfMessages(); i++) {
 						// copy part of the array needed for message
 						byte[] tempArray = null;
 
 						if (i < announcement.getNumberOfMessages() - 1) {
-							tempArray = Arrays
-									.copyOfRange(
-											stateBytes,
-											i
-													* StateAnnouncement.MAX_MESSAGE_SIZE,
-											((i + 1) * StateAnnouncement.MAX_MESSAGE_SIZE));
+							tempArray = Arrays.copyOfRange(stateBytes, i * StateAnnouncement.MAX_MESSAGE_SIZE, ((i + 1) * StateAnnouncement.MAX_MESSAGE_SIZE));
 						} else {
 							// last message
-							tempArray = Arrays.copyOfRange(stateBytes, i
-									* StateAnnouncement.MAX_MESSAGE_SIZE,
-									announcement.getArrayLenght());
+							tempArray = Arrays.copyOfRange(stateBytes, i * StateAnnouncement.MAX_MESSAGE_SIZE, announcement.getArrayLenght());
 						}
 						transmission.sendData(tempArray);
-						LOG.info(String.format(
-								"State Transmission: Message %d if %d sent",
-								i + 1, announcement.getNumberOfMessages()));
+						LOG.info(String.format("State Transmission: Message %d if %d sent", i + 1, announcement.getNumberOfMessages()));
 					}
 				} else {
 					transmission.sendData(stateBytes);
 					LOG.debug("State sent (sender side should be ok.)");
 				}
-				
+
 				Thread flushBufferThread = new Thread(new Runnable() {
 					@Override
 					public void run() {
-						for(int i=0;i<5;i++) {
+						for (int i = 0; i < 5; i++) {
 							try {
 								Thread.sleep(500);
 							} catch (InterruptedException e) {
@@ -160,9 +138,7 @@ public class MovingStateSender {
 				flushBufferThread.setName("Flush buffer Thread");
 				flushBufferThread.setDaemon(true);
 				flushBufferThread.start();
-				
-				
-				
+
 			}
 
 		} catch (DataTransmissionException e) {
@@ -174,10 +150,10 @@ public class MovingStateSender {
 			e.printStackTrace();
 			throw new LoadBalancingException("Could not serialize Data.");
 		} catch (Exception e) {
-			LOG.error("Some exception happened with state from {} ",toSend,e);
+			LOG.error("Some exception happened with state from {} ", toSend, e);
 			throw new LoadBalancingException("Could not send State.");
 		}
-		
+
 		finally {
 			try {
 				if (out != null) {
@@ -202,9 +178,7 @@ public class MovingStateSender {
 			return "0";
 		final String[] units = new String[] { "B", "kB", "MB", "GB", "TB" };
 		int digitGroups = (int) (Math.log10(size) / Math.log10(1024));
-		return new DecimalFormat("#,##0.#").format(size
-				/ Math.pow(1024, digitGroups))
-				+ " " + units[digitGroups];
+		return new DecimalFormat("#,##0.#").format(size / Math.pow(1024, digitGroups)) + " " + units[digitGroups];
 	}
 
 	private byte[] convertAnnouncementToBytes(StateAnnouncement announcement) {
@@ -230,10 +204,9 @@ public class MovingStateSender {
 			}
 		}
 	}
-	
+
 	public synchronized void flushBuffersIfStuck() {
 		transmission.flushBuffers();
 	}
-	
 
 }

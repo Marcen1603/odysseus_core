@@ -6,7 +6,7 @@ import net.jxta.id.ID;
 import net.jxta.peer.PeerID;
 import net.jxta.pipe.PipeID;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.QueryState;
-import de.uniol.inf.is.odysseus.p2p_new.dictionary.IPeerDictionaryListener;
+import de.uniol.inf.is.odysseus.peer.dictionary.IPeerDictionaryListener;
 import de.uniol.inf.is.odysseus.peer.recovery.internal.RecoveryProcessState;
 import de.uniol.inf.is.odysseus.rest.socket.SocketInfo;
 

@@ -18,12 +18,11 @@ import com.google.common.collect.Maps;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
-import de.uniol.inf.is.odysseus.p2p_new.dictionary.IPeerDictionary;
-import de.uniol.inf.is.odysseus.p2p_new.dictionary.impl.PeerDictionary;
 import de.uniol.inf.is.odysseus.peer.communication.IMessage;
 import de.uniol.inf.is.odysseus.peer.communication.IPeerCommunicator;
 import de.uniol.inf.is.odysseus.peer.communication.IPeerCommunicatorListener;
 import de.uniol.inf.is.odysseus.peer.communication.PeerCommunicationException;
+import de.uniol.inf.is.odysseus.peer.dictionary.IPeerDictionary;
 import de.uniol.inf.is.odysseus.peer.network.IP2PNetworkManager;
 import de.uniol.inf.is.odysseus.peer.resource.IPeerResourceUsageManager;
 import de.uniol.inf.is.odysseus.peer.resource.IResourceUsage;
@@ -140,7 +139,7 @@ public final class PeerResourceUsageManager implements IPeerResourceUsageManager
 	public Future<Optional<IResourceUsage>> getRemoteResourceUsage(final PeerID peerID, boolean forceNetwork) {
 		Preconditions.checkNotNull(peerID, "PeerID to get current resource usage must not be null!");
 
-		LOG.debug("Getting remote usage of peer {}", PeerDictionary.getInstance().getRemotePeerName(peerID));
+		LOG.debug("Getting remote usage of peer {}", peerID);
 
 		if (peerCommunicator == null) {
 			return FUTURE_SERVICE.submit(EMPTY_RESOURCE_USAGE);
@@ -186,7 +185,7 @@ public final class PeerResourceUsageManager implements IPeerResourceUsageManager
 						askingPeerMap.put(peerID, System.currentTimeMillis());
 					}
 					
-					LOG.debug("ASKING PEER {}", PeerDictionary.getInstance().getRemotePeerName(peerID));
+					LOG.debug("ASKING PEER {}", peerID);
 					
 					peerCommunicator.send(peerID, new AskUsageMessage(forceNetwork));
 				} else {

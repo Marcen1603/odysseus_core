@@ -13,5 +13,6 @@ Require-Bundle: de.uniol.inf.is.odysseus.p2p_new;bundle-version="1.0.0",
  Jxta_2.6_Source;bundle-version="1.0.0",
  com.google.guava;bundle-version="14.0.0",
  de.uniol.inf.is.odysseus.datarate,
- de.uniol.inf.is.odysseus.peer.util;bundle-version="1.0.0"
+ de.uniol.inf.is.odysseus.peer.util;bundle-version="1.0.0",
+ de.uniol.inf.is.odysseus.peer.transmission;bundle-version="1.0.0"
 Service-Component: OSGI-INF/CalcDataratePostProcessor.xml

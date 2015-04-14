@@ -5,8 +5,8 @@ import java.util.Collection;
 
 import net.jxta.document.Advertisement;
 import net.jxta.peer.PeerID;
-import de.uniol.inf.is.odysseus.p2p_new.dictionary.IPeerDictionary;
-import de.uniol.inf.is.odysseus.p2p_new.dictionary.IPeerDictionaryListener;
+import de.uniol.inf.is.odysseus.peer.dictionary.IPeerDictionary;
+import de.uniol.inf.is.odysseus.peer.dictionary.IPeerDictionaryListener;
 import de.uniol.inf.is.odysseus.peer.jxta.IJxtaServicesProvider;
 import de.uniol.inf.is.odysseus.peer.network.IAdvertisementDiscovererListener;
 import de.uniol.inf.is.odysseus.peer.network.IP2PNetworkManager;

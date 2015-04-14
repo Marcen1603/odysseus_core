@@ -26,10 +26,9 @@ import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.RestructHelper;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TopAO;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
-import de.uniol.inf.is.odysseus.p2p_new.dictionary.IPeerDictionary;
-import de.uniol.inf.is.odysseus.p2p_new.dictionary.impl.PeerDictionary;
 import de.uniol.inf.is.odysseus.p2p_new.logicaloperator.JxtaSenderAO;
 import de.uniol.inf.is.odysseus.peer.communication.IPeerCommunicator;
+import de.uniol.inf.is.odysseus.peer.dictionary.IPeerDictionary;
 import de.uniol.inf.is.odysseus.peer.distribute.ILogicalQueryPart;
 import de.uniol.inf.is.odysseus.peer.distribute.LogicalQueryPart;
 import de.uniol.inf.is.odysseus.peer.distribute.QueryPartAllocationException;
@@ -463,7 +462,7 @@ public class SimpleLoadBalancingStrategy implements ILoadBalancingStrategy, ILoa
 		public void notifyLockingSuccessfull() {
 			LOG.debug("Locking of other peers successfull.");
 			if (this.mRunning) {
-				LOG.info("Balancing Query {} to Peer {}", queryID, PeerDictionary.getInstance().getRemotePeerName(volunteer));
+				LOG.info("Balancing Query {} to Peer {}", queryID, volunteer);
 				mCommunicator.initiateLoadBalancing(volunteer, queryID);
 			} else {
 				// Release if Thread is stopped.

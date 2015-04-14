@@ -13,7 +13,8 @@ Require-Bundle: org.eclipse.core.runtime,
  de.uniol.inf.is.odysseus.core;bundle-version="1.0.0",
  de.uniol.inf.is.odysseus.core.server;bundle-version="1.0.0",
  Jxta_2.6_Source;bundle-version="1.0.0",
- de.uniol.inf.is.odysseus.peer.distribute;bundle-version="1.0.0"
+ de.uniol.inf.is.odysseus.peer.distribute;bundle-version="1.0.0",
+ de.uniol.inf.is.odysseus.peer.dictionary;bundle-version="1.0.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Service-Component: OSGI-INF/Activator.xml,OSGI-INF/RoundRobinAllocator.xml,
  OSGI-INF/RoundRobinWithLocalAllocator.xml

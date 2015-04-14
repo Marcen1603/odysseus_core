@@ -7,8 +7,8 @@ import net.jxta.id.IDFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniol.inf.is.odysseus.p2p_new.data.DataTransmissionException;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.OsgiServiceManager;
+import de.uniol.inf.is.odysseus.peer.transmission.DataTransmissionException;
 
 /**
  * Manages State-Senders and receivers (Singleton)

@@ -24,22 +24,21 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.planmanagement.IOperatorOwner;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSink;
 import de.uniol.inf.is.odysseus.p2p_new.activator.P2PNewPlugIn;
-import de.uniol.inf.is.odysseus.p2p_new.data.DataTransmissionException;
-import de.uniol.inf.is.odysseus.p2p_new.data.DataTransmissionManager;
-import de.uniol.inf.is.odysseus.p2p_new.data.ITransmissionSender;
-import de.uniol.inf.is.odysseus.p2p_new.data.ITransmissionSenderListener;
-import de.uniol.inf.is.odysseus.p2p_new.dictionary.impl.PeerDictionary;
 import de.uniol.inf.is.odysseus.p2p_new.logicaloperator.JxtaSenderAO;
 import de.uniol.inf.is.odysseus.p2p_new.service.P2PNetworkManagerService;
+import de.uniol.inf.is.odysseus.p2p_new.service.PeerDictionaryService;
 import de.uniol.inf.is.odysseus.p2p_new.service.ServerExecutorService;
 import de.uniol.inf.is.odysseus.p2p_new.service.SessionManagementService;
+import de.uniol.inf.is.odysseus.peer.transmission.DataTransmissionException;
+import de.uniol.inf.is.odysseus.peer.transmission.DataTransmissionManager;
+import de.uniol.inf.is.odysseus.peer.transmission.ITransmissionSender;
+import de.uniol.inf.is.odysseus.peer.transmission.ITransmissionSenderListener;
 import de.uniol.inf.is.odysseus.peer.util.IObservableOperator;
 import de.uniol.inf.is.odysseus.peer.util.IOperatorObserver;
 import de.uniol.inf.is.odysseus.peer.util.ObjectByteConverter;
 import de.uniol.inf.is.odysseus.systemload.ISystemLoad;
 
-public class JxtaSenderPO<T extends IStreamObject<?>> extends AbstractSink<T> implements ITransmissionSenderListener,
-		IObservableOperator {
+public class JxtaSenderPO<T extends IStreamObject<?>> extends AbstractSink<T> implements ITransmissionSenderListener, IObservableOperator {
 
 	private static final Logger LOG = LoggerFactory.getLogger(JxtaSenderPO.class);
 
@@ -66,8 +65,7 @@ public class JxtaSenderPO<T extends IStreamObject<?>> extends AbstractSink<T> im
 		localPeerID = P2PNetworkManagerService.getInstance().getLocalPeerID();
 		localPeerName = P2PNetworkManagerService.getInstance().getLocalPeerName();
 
-		this.transmission = DataTransmissionManager.getInstance()
-				.registerTransmissionSender(peerIDString, pipeIDString);
+		this.transmission = DataTransmissionManager.registerTransmissionSender(peerIDString, pipeIDString);
 		this.transmission.addListener(this);
 		this.transmission.open();
 
@@ -224,8 +222,8 @@ public class JxtaSenderPO<T extends IStreamObject<?>> extends AbstractSink<T> im
 	}
 
 	/**
-	 * Updates the peerId from this sender, if there is a new peer which has the receiver to this sender. E.g. when
-	 * there is a new peer due to recovery
+	 * Updates the peerId from this sender, if there is a new peer which has the
+	 * receiver to this sender. E.g. when there is a new peer due to recovery
 	 * 
 	 * @param peerId
 	 *            The new peerId
@@ -233,7 +231,8 @@ public class JxtaSenderPO<T extends IStreamObject<?>> extends AbstractSink<T> im
 	public void setPeerIDString(String peerId) {
 		this.peerIDString = peerId;
 
-		// Notify the observers with the new peerId so that they can update the backup-information
+		// Notify the observers with the new peerId so that they can update the
+		// backup-information
 		List<String> infoList = new ArrayList<String>();
 		infoList.add(peerId);
 		infoList.add(this.pipeIDString);
@@ -262,7 +261,7 @@ public class JxtaSenderPO<T extends IStreamObject<?>> extends AbstractSink<T> im
 			return "";
 		}
 
-		return " [" + PeerDictionary.getInstance().getRemotePeerName(toPeerID(peerIDString)) + "]";
+		return " [" + PeerDictionaryService.getInstance().getRemotePeerName(toPeerID(peerIDString)) + "]";
 	}
 
 	protected static PeerID toPeerID(String peerIDString) {
@@ -276,7 +275,8 @@ public class JxtaSenderPO<T extends IStreamObject<?>> extends AbstractSink<T> im
 	}
 
 	/**
-	 * To send the data to a new peer (e.g. in case of recovery) use this method.
+	 * To send the data to a new peer (e.g. in case of recovery) use this
+	 * method.
 	 * 
 	 * @param peerId
 	 *            The id of the new receiver peer
@@ -286,16 +286,19 @@ public class JxtaSenderPO<T extends IStreamObject<?>> extends AbstractSink<T> im
 		// Info for the observers
 		List<String> infoList = new ArrayList<String>();
 		infoList.add(this.peerIDString);
-		
+
 		this.peerIDString = peerId;
 
-		// Notify the observers with the new peerId so that they can update the backup-information
+		// Notify the observers with the new peerId so that they can update the
+		// backup-information
 		infoList.add(peerId);
 		infoList.add(this.pipeIDString);
 		notifyObservers(infoList);
 
-		// Don't mess with the transmission, as the receiver does all the negotiation.
-		// Just remove all peers in the list, cause open messages would not be used if we don't do this 
+		// Don't mess with the transmission, as the receiver does all the
+		// negotiation.
+		// Just remove all peers in the list, cause open messages would not be
+		// used if we don't do this
 		transmission.resetPeerList();
 	}
 

@@ -2,6 +2,6 @@
 <scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="de.uniol.inf.is.odysseus.peer.rest.pingmap.PingMapServiceBinding">
    <implementation class="de.uniol.inf.is.odysseus.peer.rest.pingmap.PingMapServiceBinding"/>
    <reference bind="bindPingMap" cardinality="1..1" interface="de.uniol.inf.is.odysseus.peer.ping.IPingMap" name="IPingMap" policy="static" unbind="unbindPingMap"/>
-   <reference bind="bindPeerDictionary" cardinality="1..1" interface="de.uniol.inf.is.odysseus.p2p_new.dictionary.IPeerDictionary" name="IPeerDictionary" policy="static" unbind="unbindPeerDictionary"/>
+   <reference bind="bindPeerDictionary" cardinality="1..1" interface="de.uniol.inf.is.odysseus.peer.dictionary.IPeerDictionary" name="IPeerDictionary" policy="static" unbind="unbindPeerDictionary"/>
    <reference bind="bindP2PNetworkManager" cardinality="1..1" interface="de.uniol.inf.is.odysseus.peer.network.IP2PNetworkManager" name="IP2PNetworkManager" policy="static" unbind="unbindP2PNetworkManager"/>
 </scr:component>

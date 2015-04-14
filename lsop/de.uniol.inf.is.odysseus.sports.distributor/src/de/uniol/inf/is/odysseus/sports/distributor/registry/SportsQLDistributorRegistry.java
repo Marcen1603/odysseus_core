@@ -9,7 +9,7 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Maps;
 
-import de.uniol.inf.is.odysseus.p2p_new.dictionary.IPeerDictionary;
+import de.uniol.inf.is.odysseus.peer.dictionary.IPeerDictionary;
 import de.uniol.inf.is.odysseus.sports.distributor.helper.DistributionConfigBuildHelper;
 import de.uniol.inf.is.odysseus.sports.distributor.helper.enums.Parser;
 import de.uniol.inf.is.odysseus.sports.distributor.impl.ISportsQLDistributor;

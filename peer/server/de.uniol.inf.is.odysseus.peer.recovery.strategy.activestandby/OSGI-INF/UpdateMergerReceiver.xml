@@ -2,6 +2,6 @@
 <scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="de.uniol.inf.is.odysseus.peer.recovery.strategy.activestandby.UpdateMergerReceiver">
    <implementation class="de.uniol.inf.is.odysseus.peer.recovery.strategy.activestandby.protocol.UpdateMergerReceiver"/>
    <reference bind="bindPeerCommunicator" cardinality="1..1" interface="de.uniol.inf.is.odysseus.peer.communication.IPeerCommunicator" name="IPeerCommunicator" policy="dynamic" unbind="unbindPeerCommunicator"/>
-   <reference bind="bindPeerDictionary" cardinality="1..1" interface="de.uniol.inf.is.odysseus.p2p_new.dictionary.IPeerDictionary" name="IPeerDictionary" policy="dynamic" unbind="unbindPeerDictionary"/>
+   <reference bind="bindPeerDictionary" cardinality="1..1" interface="de.uniol.inf.is.odysseus.peer.dictionary.IPeerDictionary" name="IPeerDictionary" policy="dynamic" unbind="unbindPeerDictionary"/>
    <reference bind="bindExecutor" cardinality="1..1" interface="de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor" name="IExecutor" policy="dynamic" unbind="unbindExecutor"/>
 </scr:component>

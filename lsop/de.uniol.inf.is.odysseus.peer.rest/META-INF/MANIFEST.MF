@@ -17,7 +17,8 @@ Require-Bundle: org.eclipse.core.runtime,
  de.uniol.inf.is.odysseus.core.server,
  de.uniol.inf.is.odysseus.peer.util;bundle-version="1.0.0",
  de.uniol.inf.is.odysseus.peer.jxta;bundle-version="1.0.0",
- de.uniol.inf.is.odysseus.peer.network;bundle-version="1.0.0"
+ de.uniol.inf.is.odysseus.peer.network;bundle-version="1.0.0",
+ de.uniol.inf.is.odysseus.peer.dictionary;bundle-version="1.0.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-ActivationPolicy: lazy
 Service-Component: OSGI-INF/PingMapServiceBinding.xml,OSGI-INF/PeerRestProvider.xml,

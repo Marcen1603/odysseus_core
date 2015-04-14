@@ -23,21 +23,20 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSource;
-import de.uniol.inf.is.odysseus.p2p_new.data.DataTransmissionException;
-import de.uniol.inf.is.odysseus.p2p_new.data.DataTransmissionManager;
-import de.uniol.inf.is.odysseus.p2p_new.data.ITransmissionReceiver;
-import de.uniol.inf.is.odysseus.p2p_new.data.ITransmissionReceiverListener;
-import de.uniol.inf.is.odysseus.p2p_new.dictionary.impl.PeerDictionary;
 import de.uniol.inf.is.odysseus.p2p_new.logicaloperator.JxtaReceiverAO;
 import de.uniol.inf.is.odysseus.p2p_new.service.P2PNetworkManagerService;
+import de.uniol.inf.is.odysseus.p2p_new.service.PeerDictionaryService;
+import de.uniol.inf.is.odysseus.peer.transmission.DataTransmissionException;
+import de.uniol.inf.is.odysseus.peer.transmission.DataTransmissionManager;
+import de.uniol.inf.is.odysseus.peer.transmission.ITransmissionReceiver;
+import de.uniol.inf.is.odysseus.peer.transmission.ITransmissionReceiverListener;
 import de.uniol.inf.is.odysseus.peer.util.ByteBufferUtil;
 import de.uniol.inf.is.odysseus.peer.util.IObservableOperator;
 import de.uniol.inf.is.odysseus.peer.util.IOperatorObserver;
 import de.uniol.inf.is.odysseus.systemload.ISystemLoad;
 
 @SuppressWarnings("rawtypes")
-public class JxtaReceiverPO<T extends IStreamObject> extends AbstractSource<T> implements
-		ITransmissionReceiverListener, IObservableOperator {
+public class JxtaReceiverPO<T extends IStreamObject> extends AbstractSource<T> implements ITransmissionReceiverListener, IObservableOperator {
 
 	private static final Logger LOG = LoggerFactory.getLogger(JxtaReceiverPO.class);
 
@@ -45,7 +44,6 @@ public class JxtaReceiverPO<T extends IStreamObject> extends AbstractSource<T> i
 	private ITransmissionReceiver transmission;
 	private final String pipeIDString;
 	private String peerIDString;
-	
 
 	final private List<T> suspendBuffer = new LinkedList<>();
 
@@ -56,7 +54,7 @@ public class JxtaReceiverPO<T extends IStreamObject> extends AbstractSource<T> i
 	private double downloadRateBytesPerSecond;
 	private long downloadRateTimestamp;
 	private long downloadRateCurrentByteCount;
-	
+
 	private boolean buffering = false;
 
 	// So we know if the query was running when we do recovery
@@ -65,7 +63,7 @@ public class JxtaReceiverPO<T extends IStreamObject> extends AbstractSource<T> i
 	public JxtaReceiverPO(JxtaReceiverAO ao) throws DataTransmissionException {
 		SDFSchema schema = ao.getOutputSchema().clone();
 		setOutputSchema(schema);
-		
+
 		dataHandler = (NullAwareTupleDataHandler) new NullAwareTupleDataHandler().createInstance(schema);
 
 		pipeIDString = ao.getPipeID();
@@ -73,7 +71,7 @@ public class JxtaReceiverPO<T extends IStreamObject> extends AbstractSource<T> i
 
 		localPeerName = P2PNetworkManagerService.getInstance().getLocalPeerName();
 
-		transmission = DataTransmissionManager.getInstance().registerTransmissionReceiver(peerIDString, pipeIDString);
+		transmission = DataTransmissionManager.registerTransmissionReceiver(peerIDString, pipeIDString);
 		transmission.addListener(this);
 		transmission.open();
 
@@ -157,10 +155,9 @@ public class JxtaReceiverPO<T extends IStreamObject> extends AbstractSource<T> i
 			systemLoad.addSystemLoad(localPeerName);
 		}
 
-		
 		process_incoming(streamObject);
 	}
-	
+
 	private void process_incoming(T streamObject) {
 		if (buffering) {
 			suspendBuffer.add(streamObject);
@@ -210,7 +207,7 @@ public class JxtaReceiverPO<T extends IStreamObject> extends AbstractSource<T> i
 			return "";
 		}
 
-		return " [" + PeerDictionary.getInstance().getRemotePeerName(toPeerID(peerIDString)) + "]";
+		return " [" + PeerDictionaryService.getInstance().getRemotePeerName(toPeerID(peerIDString)) + "]";
 	}
 
 	protected static PeerID toPeerID(String peerIDString) {
@@ -222,11 +219,11 @@ public class JxtaReceiverPO<T extends IStreamObject> extends AbstractSource<T> i
 			return null;
 		}
 	}
-	
+
 	public void startBuffering() {
-		buffering= true;
+		buffering = true;
 	}
-	
+
 	public void stopBuffering() {
 		buffering = false;
 	}
@@ -235,7 +232,8 @@ public class JxtaReceiverPO<T extends IStreamObject> extends AbstractSource<T> i
 	 * Updates the receiver so that is receives the data from a new peer
 	 * 
 	 * @param peerId
-	 *            From the new peer from which this receiver should receive the data
+	 *            From the new peer from which this receiver should receive the
+	 *            data
 	 * @throws DataTransmissionException
 	 */
 	public void receiveFromNewPeer(String peerId) throws DataTransmissionException {
@@ -243,7 +241,7 @@ public class JxtaReceiverPO<T extends IStreamObject> extends AbstractSource<T> i
 		List<String> infoList = new ArrayList<String>();
 		// The old peer id
 		infoList.add(this.peerIDString);
-		
+
 		this.peerIDString = peerId;
 
 		// Update transmission
@@ -257,12 +255,13 @@ public class JxtaReceiverPO<T extends IStreamObject> extends AbstractSource<T> i
 		if (isRunning)
 			process_open();
 
-		// Notify the observers with the new peerId so that they can update the backup-information
+		// Notify the observers with the new peerId so that they can update the
+		// backup-information
 		infoList.add(peerId);
 		infoList.add(this.pipeIDString);
 		notifyObservers(infoList);
 	}
-	
+
 	// For the observer-pattern
 	// ------------------------
 
@@ -284,7 +283,6 @@ public class JxtaReceiverPO<T extends IStreamObject> extends AbstractSource<T> i
 			mObservers.removeElement(observer);
 		}
 	}
-	
 
 	private void clearSuspendBuffer() {
 		if (suspendBuffer.isEmpty())
@@ -292,9 +290,9 @@ public class JxtaReceiverPO<T extends IStreamObject> extends AbstractSource<T> i
 
 		for (T o : suspendBuffer) {
 			transfer(o);
-			//TODO: Thread.yield();
-			//(as in ControllablePhysicalSubscription)
-			
+			// TODO: Thread.yield();
+			// (as in ControllablePhysicalSubscription)
+
 		}
 		suspendBuffer.clear();
 	}
