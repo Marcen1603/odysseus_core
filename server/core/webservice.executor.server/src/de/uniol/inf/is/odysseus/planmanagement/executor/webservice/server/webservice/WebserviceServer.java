@@ -314,7 +314,7 @@ public class WebserviceServer {
 				"Security token unknown! You have to login first to obtain a security token!");
 	}
 
-	public Response removeQuery(
+	public synchronized Response removeQuery(
 			@WebParam(name = "securitytoken") String securityToken,
 			@WebParam(name = "queryID") int queryID)
 			throws InvalidUserDataException, QueryNotExistsException {
@@ -720,7 +720,7 @@ public class WebserviceServer {
 				rootPort, minPort, maxPort, nullValues, false, false, true);
 	}
 
-	private ConnectionInformationResponse getConnectionInformationWithPorts(
+	private synchronized ConnectionInformationResponse getConnectionInformationWithPorts(
 			String securityToken, int queryId, int rootPort, int minPort,
 			int maxPort, boolean nullValues, boolean ssl,
 			boolean sslClientAuthentication, boolean withMetadata) throws InvalidUserDataException {
