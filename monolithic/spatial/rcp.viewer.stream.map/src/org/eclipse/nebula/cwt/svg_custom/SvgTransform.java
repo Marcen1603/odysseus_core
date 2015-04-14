@@ -93,6 +93,7 @@ class SvgTransform {
 			data[1] = Float.parseFloat(sa[0]);
 			break;
 		}
+		default:
 		}
 	}
 

@@ -50,8 +50,7 @@ class SvgLoader {
 	private static final char[] ATTR_FILL_RULE = new char[] { 'f', 'i', 'l', 'l', '-', 'r', 'u', 'l', 'e' };
 	private static final char[] ATTR_FX = new char[] { 'f', 'x' };
 	private static final char[] ATTR_FY = new char[] { 'f', 'y' };
-	private static final char[] ATTR_GRADIENT_TRANSFORM = new char[] { 'g', 'r', 'a', 'd', 'i', 'e', 'n', 't', 'T', 'r', 'a', 'n', 's',
-			'f', 'o', 'r', 'm' };
+	private static final char[] ATTR_GRADIENT_TRANSFORM = new char[] { 'g', 'r', 'a', 'd', 'i', 'e', 'n', 't', 'T', 'r', 'a', 'n', 's', 'f', 'o', 'r', 'm' };
 	private static final char[] ATTR_GRADIENT_UNITS = new char[] { 'g', 'r', 'a', 'd', 'i', 'e', 'n', 't', 'U', 'n', 'i', 't', 's' };
 	private static final char[] ATTR_HEIGHT = new char[] { 'h', 'e', 'i', 'g', 'h', 't' };
 	private static final char[] ATTR_ID = new char[] { 'i', 'd' };
@@ -108,7 +107,6 @@ class SvgLoader {
 	private static final String paramRegex = "[ ,]+"; //$NON-NLS-1$
 	private static final Matcher urlMatcher = Pattern.compile(" *url\\( *#(\\w+) *\\) *").matcher(""); //$NON-NLS-1$  //$NON-NLS-2$
 
-	
 	private static void addArc(String[] sa, int ix, List<Byte> types, List<Float> points, boolean relative) {
 		float x1 = points.get(points.size() - 2);
 		float y1 = points.get(points.size() - 1);
@@ -119,15 +117,15 @@ class SvgLoader {
 		boolean sweep = (!sa[ix++].equals("0")); //$NON-NLS-1$
 		float x2 = Float.parseFloat(sa[ix++]);
 		float y2 = Float.parseFloat(sa[ix++]);
-		if(relative) {
+		if (relative) {
 			x2 += x1;
 			y2 += y1;
 		}
 
-		if(x1 == x2 && y1 == y2) {
+		if (x1 == x2 && y1 == y2) {
 			return;
 		}
-		if(rx == 0 || ry == 0) {
+		if (rx == 0 || ry == 0) {
 			types.add((byte) SWT.PATH_LINE_TO);
 			points.add(x2);
 			points.add(y2);
@@ -140,14 +138,14 @@ class SvgLoader {
 		double y0 = (-sin(radPhi) * ((x1 - x2) / 2)) + (cos(radPhi) * ((y1 - y2) / 2));
 		double lambda = ((x0 * x0) / (rx * rx)) + ((y0 * y0) / (ry * ry));
 		double radicand;
-		if(lambda > 1) {
+		if (lambda > 1) {
 			rx *= sqrt(lambda);
 			ry *= sqrt(lambda);
 			radicand = 0;
 		} else {
 			radicand = ((rx * rx * ry * ry) - (rx * rx * y0 * y0) - (ry * ry * x0 * x0)) / ((rx * rx * y0 * y0) + (ry * ry * x0 * x0));
 		}
-		if(radicand < 0) {
+		if (radicand < 0) {
 			rx *= sqrt(lambda);
 			ry *= sqrt(lambda);
 			radicand = 0;
@@ -165,14 +163,14 @@ class SvgLoader {
 		dTheta = clampAngle(dTheta);
 		theta2 = clampAngle(theta2);
 
-		if(!sweep) {
+		if (!sweep) {
 			dTheta = 360 - dTheta;
 		}
 
 		int increment = 5;
 		int lines = round((float) dTheta) / increment;
 		double theta = theta1;
-		for(int i = 0; i < lines; i++) {
+		for (int i = 0; i < lines; i++) {
 			sign = (sweep) ? 1 : -1;
 			theta = clampAngle(theta + (sign * increment));
 
@@ -181,7 +179,7 @@ class SvgLoader {
 			double y = sin(radPhi) * rx * cos(radTheta) + cos(radPhi) * ry * sin(radTheta) + cy;
 
 			types.add((byte) SWT.PATH_LINE_TO);
-			if(i == lines - 1) {
+			if (i == lines - 1) {
 				points.add(x2);
 				points.add(y2);
 			} else {
@@ -190,50 +188,52 @@ class SvgLoader {
 			}
 		}
 	}
-	
+
 	private static void addPoint(List<Float> points, String s, boolean relative) {
-		if(relative) {
+		if (relative) {
 			points.add(points.get(points.size() - 2) + Float.parseFloat(s));
 		} else {
 			points.add(new Float(s));
 		}
 	}
-	
+
 	private static double clampAngle(double deg) {
-		if(deg < 0) {
+		if (deg < 0) {
 			deg += 360;
-		} else if(deg > 360) {
+		} else if (deg > 360) {
 			deg -= 360;
 		}
 		return deg;
 	}
-	
+
 	private static float clampAngle(float deg) {
-		if(deg < 0) {
+		if (deg < 0) {
 			deg += 360;
-		} else if(deg > 360) {
+		} else if (deg > 360) {
 			deg -= 360;
 		}
 		return deg;
 	}
-	
+
 	private static int closer(char[] ca, int start, int end) {
-		if(start >= 0) {
+		if (start >= 0) {
 			char opener = ca[start];
 			char closer = closerChar(opener);
 			int count = 1;
-			for(int i = start+1; i < ca.length && i <= end; i++) {
-				if(ca[i] == opener && ca[i] != closer) {
+			for (int i = start + 1; i < ca.length && i <= end; i++) {
+				if (ca[i] == opener && ca[i] != closer) {
 					count++;
-				} else if(ca[i] == closer) {
-					if(closer != '"' || ca[i-1] != '\\') { // check for escape char
+				} else if (ca[i] == closer) {
+					if (closer != '"' || ca[i - 1] != '\\') { // check for
+																// escape char
 						count--;
-						if(count == 0) {
+						if (count == 0) {
 							return i;
 						}
 					}
-				} else if(ca[i] == '"') {
-					i = closer(ca, i, end); // just entered a string - get out of it
+				} else if (ca[i] == '"') {
+					i = closer(ca, i, end); // just entered a string - get out
+											// of it
 				}
 			}
 		}
@@ -241,31 +241,38 @@ class SvgLoader {
 	}
 
 	private static char closerChar(char c) {
-		switch(c) {
-			case '<': return '>';
-			case '(': return ')';
-			case '{': return '}';
-			case '[': return ']';
-			case '"': return '"';
-			case '\'': return '\'';
-			default: return 0;
+		switch (c) {
+		case '<':
+			return '>';
+		case '(':
+			return ')';
+		case '{':
+			return '}';
+		case '[':
+			return ']';
+		case '"':
+			return '"';
+		case '\'':
+			return '\'';
+		default:
+			return 0;
 		}
 	}
 
-	private static int findAll(char[] ca, int from, int to, char...cs) {
-		for(int i = from; i >= 0 && i < ca.length && i <= to; i++) {
-			if(ca[i] == cs[0]) {
-				if(cs.length == 1) {
+	private static int findAll(char[] ca, int from, int to, char... cs) {
+		for (int i = from; i >= 0 && i < ca.length && i <= to; i++) {
+			if (ca[i] == cs[0]) {
+				if (cs.length == 1) {
 					return i;
 				}
-				for(int j = 1; j < cs.length && (i+j) <= to; j++) {
-					if((i+j) == ca.length) {
+				for (int j = 1; j < cs.length && (i + j) <= to; j++) {
+					if ((i + j) == ca.length) {
 						return -1;
 					}
-					if(ca[i+j] != cs[j]) {
+					if (ca[i + j] != cs[j]) {
 						break;
 					}
-					if(j == cs.length-1) {
+					if (j == cs.length - 1) {
 						return i;
 					}
 				}
@@ -274,10 +281,10 @@ class SvgLoader {
 		return -1;
 	}
 
-	private static int findAny(char[] ca, int from, int to, char...cs) {
-		for(int i = from; i >= 0 && i < ca.length && i <= to; i++) {
-			for(char c : cs) {
-				if(ca[i] == c) {
+	private static int findAny(char[] ca, int from, int to, char... cs) {
+		for (int i = from; i >= 0 && i < ca.length && i <= to; i++) {
+			for (char c : cs) {
+				if (ca[i] == c) {
 					return i;
 				}
 			}
@@ -285,7 +292,7 @@ class SvgLoader {
 		return -1;
 	}
 
-	/**
+/**
 	 * find the closer for the XML tag which begins with the given start position
 	 * ('<' should be the first char)
 	 * @param ca
@@ -293,84 +300,85 @@ class SvgLoader {
 	 * @return
 	 */
 	private static int findClosingTag(char[] ca, int start, int end) {
-		if(start >= 0 && start < ca.length && start < end) {
+		if (start >= 0 && start < ca.length && start < end) {
 			int s1 = findAny(ca, start, end, ' ', '>');
-			if(s1 != -1) {
-				char[] opener = new char[s1-start];
+			if (s1 != -1) {
+				char[] opener = new char[s1 - start];
 				opener[0] = '<';
-				char[] closer = new char[s1-start+2];
+				char[] closer = new char[s1 - start + 2];
 				closer[0] = '<';
 				closer[1] = '/';
-				closer[closer.length-1] = '>';
-				int i = start+1;
-				for( ; i < s1; i++) {
-					opener[i-start] = ca[i];
-					closer[i-start+1] = ca[i];
+				closer[closer.length - 1] = '>';
+				int i = start + 1;
+				for (; i < s1; i++) {
+					opener[i - start] = ca[i];
+					closer[i - start + 1] = ca[i];
 				}
-				
+
 				int count1 = 1;
 				int count2 = 1;
-				for( ; i < ca.length; i++) {
-					if(ca[i] == '<') {
+				for (; i < ca.length; i++) {
+					if (ca[i] == '<') {
 						count1++;
-						if(isNext(ca, i, opener)) {
+						if (isNext(ca, i, opener)) {
 							count2++;
-						} else if(isNext(ca, i, closer)) {
+						} else if (isNext(ca, i, closer)) {
 							count2--;
-							if(count2 == 0) {
+							if (count2 == 0) {
 								return i;
 							}
-						} else if(isNext(ca, i, ELEMENT_CDATA)) {
-							i = findAll(ca, i+ELEMENT_CDATA.length, end, ELEMENT_CDATA_END);
+						} else if (isNext(ca, i, ELEMENT_CDATA)) {
+							i = findAll(ca, i + ELEMENT_CDATA.length, end, ELEMENT_CDATA_END);
 						}
-					} else if(ca[i] == '>') {
-						if(ca[i-1] == '/') {
+					} else if (ca[i] == '>') {
+						if (ca[i - 1] == '/') {
 							count1--;
 						}
-						if(count1 == 0) {
+						if (count1 == 0) {
 							return i;
 						}
-					} else if(ca[i] == '"') {
-						i = closer(ca, i, end); // just entered a string - get out of it
+					} else if (ca[i] == '"') {
+						i = closer(ca, i, end); // just entered a string - get
+												// out of it
 					}
 				}
 			}
 		}
 		return -1;
 	}
-	
+
 	private static int findNextTag(char[] ca, int start, int end) {
 		int s1 = findAll(ca, start, end, '<');
-		if(s1 != -1 && s1 < ca.length-1) {
-			if(ca[s1+1] != '/') {
+		if (s1 != -1 && s1 < ca.length - 1) {
+			if (ca[s1 + 1] != '/') {
 				return s1;
-			} 
-			return findNextTag(ca, s1+1, end);
+			}
+			return findNextTag(ca, s1 + 1, end);
 		}
 		return -1;
 	}
-	
+
 	private static int forward(char[] ca, int from) {
-		for(int i = from; i >= 0 && i < ca.length; i++) {
-			if(!Character.isWhitespace(ca[i])) {
+		for (int i = from; i >= 0 && i < ca.length; i++) {
+			if (!Character.isWhitespace(ca[i])) {
 				return i;
 			}
 		}
 		return -1;
 	}
-	
+
 	private static double getAngle(double ux, double uy, double vx, double vy) {
 		double dot = ux * vx + uy * vy;
 		double au = hypot(ux, uy);
 		double av = hypot(vx, vy);
 		double alpha = dot / (au * av);
-		if(alpha > 1) {
+		if (alpha > 1) {
 			alpha = 1;
-		} else if(alpha < -1) {
+		} else if (alpha < -1) {
 			alpha = -1;
 		}
 		double theta = 180 * acos(alpha) / PI;
-		if((ux * vy - uy * vx) < 0) {
+		if ((ux * vy - uy * vx) < 0) {
 			theta *= -1;
 		}
 		return theta;
@@ -382,11 +390,11 @@ class SvgLoader {
 		search[0] = ' ';
 		search[search.length - 1] = '=';
 		int s1 = findAll(ca, start, end, search);
-		if(s1 != -1) {
+		if (s1 != -1) {
 			s1 = findAll(ca, s1, end, '"');
-			if(s1 != -1) {
+			if (s1 != -1) {
 				int s2 = closer(ca, s1, end);
-				if(s1 != -1) {
+				if (s1 != -1) {
 					return new String(ca, s1 + 1, s2 - s1 - 1);
 				}
 			}
@@ -400,11 +408,11 @@ class SvgLoader {
 		search[0] = ' ';
 		search[search.length - 1] = '=';
 		int s1 = findAll(ca, start, end, search);
-		if(s1 != -1) {
+		if (s1 != -1) {
 			s1 = findAll(ca, s1, end, '"');
-			if(s1 != -1) {
+			if (s1 != -1) {
 				int s2 = closer(ca, s1, end);
-				if(s1 != -1) {
+				if (s1 != -1) {
 					return new int[] { s1 + 1, s2 - 1 };
 				}
 			}
@@ -414,12 +422,12 @@ class SvgLoader {
 
 	private static Map<String, String> getClassStyles(SvgElement element, char[] ca, int start, int end) {
 		String s = getAttrValue(ca, start, end, ATTR_CLASS);
-		if(s != null) {
+		if (s != null) {
 			Map<String, String> styles = new HashMap<String, String>();
 			String[] classes = s.trim().split(" +"); //$NON-NLS-1$
-			for(String c : classes) {
+			for (String c : classes) {
 				Map<String, String> pairs = element.getFragment().getStyles("." + c); //$NON-NLS-1$
-				if(pairs != null) {
+				if (pairs != null) {
 					styles.putAll(pairs);
 				}
 			}
@@ -429,11 +437,11 @@ class SvgLoader {
 	}
 
 	private static Integer getColorAsInt(String color) {
-		if(color != null) {
-			if(SvgColors.contains(color)) {
+		if (color != null) {
+			if (SvgColors.contains(color)) {
 				return SvgColors.get(color);
-			} else if('#' == color.charAt(0)) {
-				if(color.length() == 4) {
+			} else if ('#' == color.charAt(0)) {
+				if (color.length() == 4) {
 					char[] ca = new char[6];
 					ca[0] = color.charAt(1);
 					ca[1] = color.charAt(1);
@@ -442,7 +450,7 @@ class SvgLoader {
 					ca[4] = color.charAt(3);
 					ca[5] = color.charAt(3);
 					return Integer.parseInt(new String(ca), 16);
-				} else if(color.length() == 7) {
+				} else if (color.length() == 7) {
 					return Integer.parseInt(color.substring(1), 16);
 				}
 			}
@@ -452,10 +460,10 @@ class SvgLoader {
 
 	private static Map<String, String> getIdStyles(SvgElement element) {
 		String s = element.getId();
-		if(s != null) {
+		if (s != null) {
 			Map<String, String> styles = new HashMap<String, String>();
 			Map<String, String> pairs = element.getFragment().getStyles("#" + s); //$NON-NLS-1$
-			if(pairs != null) {
+			if (pairs != null) {
 				styles.putAll(pairs);
 			}
 			return styles;
@@ -465,7 +473,7 @@ class SvgLoader {
 
 	private static String getLink(String link) {
 		urlMatcher.reset(link);
-		if(urlMatcher.matches()) {
+		if (urlMatcher.matches()) {
 			return urlMatcher.group(1);
 		}
 		return null;
@@ -490,76 +498,76 @@ class SvgLoader {
 
 		SvgTransform first = null;
 		SvgTransform transform = null;
-		while(s1 != -1 && s1 < range[1]) {
+		while (s1 != -1 && s1 < range[1]) {
 			int s2 = findAll(ca, s1, range[1], '(');
 			int s3 = findAll(ca, s2, range[1], ')');
-			if(s1 != -1 && s2 != -1 && s3 != -1) {
-				if(transform == null) {
+			if (s1 != -1 && s2 != -1 && s3 != -1) {
+				if (transform == null) {
 					first = transform = new SvgTransform();
 				} else {
 					transform.next = new SvgTransform();
 					transform = transform.next;
 				}
-				if(isEqual(ca, s1, s2 - 1, "matrix".toCharArray())) { //$NON-NLS-1$
-					transform.setData(Type.Matrix, new String(ca, s2 + 1, s3 - s2 - 1).split(paramRegex));
-				} else if(isEqual(ca, s1, s2 - 1, "translate".toCharArray())) { //$NON-NLS-1$
-					transform.setData(Type.Translate, new String(ca, s2 + 1, s3 - s2 - 1).split(paramRegex));
-				} else if(isEqual(ca, s1, s2 - 1, "scale".toCharArray())) { //$NON-NLS-1$
-					transform.setData(Type.Scale, new String(ca, s2 + 1, s3 - s2 - 1).split(paramRegex));
-				} else if(isEqual(ca, s1, s2 - 1, "rotate".toCharArray())) { //$NON-NLS-1$
-					transform.setData(Type.Rotate, new String(ca, s2 + 1, s3 - s2 - 1).split(paramRegex));
-				} else if(isEqual(ca, s1, s2 - 1, "skewx".toCharArray())) { //$NON-NLS-1$
-					transform.setData(Type.SkewX, new String(ca, s2 + 1, s3 - s2 - 1).split(paramRegex));
-				} else if(isEqual(ca, s1, s2 - 1, "skewy".toCharArray())) { //$NON-NLS-1$
-					transform.setData(Type.SkewY, new String(ca, s2 + 1, s3 - s2 - 1).split(paramRegex));
+				if (transform != null) {
+					if (isEqual(ca, s1, s2 - 1, "matrix".toCharArray())) { //$NON-NLS-1$
+						transform.setData(Type.Matrix, new String(ca, s2 + 1, s3 - s2 - 1).split(paramRegex));
+					} else if (isEqual(ca, s1, s2 - 1, "translate".toCharArray())) { //$NON-NLS-1$
+						transform.setData(Type.Translate, new String(ca, s2 + 1, s3 - s2 - 1).split(paramRegex));
+					} else if (isEqual(ca, s1, s2 - 1, "scale".toCharArray())) { //$NON-NLS-1$
+						transform.setData(Type.Scale, new String(ca, s2 + 1, s3 - s2 - 1).split(paramRegex));
+					} else if (isEqual(ca, s1, s2 - 1, "rotate".toCharArray())) { //$NON-NLS-1$
+						transform.setData(Type.Rotate, new String(ca, s2 + 1, s3 - s2 - 1).split(paramRegex));
+					} else if (isEqual(ca, s1, s2 - 1, "skewx".toCharArray())) { //$NON-NLS-1$
+						transform.setData(Type.SkewX, new String(ca, s2 + 1, s3 - s2 - 1).split(paramRegex));
+					} else if (isEqual(ca, s1, s2 - 1, "skewy".toCharArray())) { //$NON-NLS-1$
+						transform.setData(Type.SkewY, new String(ca, s2 + 1, s3 - s2 - 1).split(paramRegex));
+					}
 				}
 			}
 			s1 = forward(ca, s3 + 1);
 		}
 
-		if(first != null) {
+		if (first != null) {
 			return first;
-		} 
+		}
 		return new SvgTransform();
 	}
 
-	private static String getValue(String name, Map<String, String> idStyles, Map<String, String> classStyles,
-			Map<String, String> attrStyles, String attrValue) {
+	private static String getValue(String name, Map<String, String> idStyles, Map<String, String> classStyles, Map<String, String> attrStyles, String attrValue) {
 		return getValue(name, idStyles, classStyles, attrStyles, attrValue, null);
 	}
 
-	private static String getValue(String name, Map<String, String> idStyles, Map<String, String> classStyles,
-			Map<String, String> attrStyles, String attrValue, String defaultValue) {
-		if(attrValue != null) {
+	private static String getValue(String name, Map<String, String> idStyles, Map<String, String> classStyles, Map<String, String> attrStyles, String attrValue, String defaultValue) {
+		if (attrValue != null) {
 			return attrValue;
 		}
-		if(attrStyles.containsKey(name)) {
+		if (attrStyles.containsKey(name)) {
 			return attrStyles.get(name);
 		}
-		if(classStyles.containsKey(name)) {
+		if (classStyles.containsKey(name)) {
 			return classStyles.get(name);
 		}
-		if(idStyles.containsKey(name)) {
+		if (idStyles.containsKey(name)) {
 			return idStyles.get(name);
 		}
 		return defaultValue;
 	}
 
-	private static boolean isEqual(char[] ca, int start, int end, char...test) {
-		if(test.length != (end-start+1)) {
+	private static boolean isEqual(char[] ca, int start, int end, char... test) {
+		if (test.length != (end - start + 1)) {
 			return false;
 		}
-		for(int i = start, j = 0; i < end && j < test.length; i++, j++) {
-			if(ca[i] != test[j]) {
+		for (int i = start, j = 0; i < end && j < test.length; i++, j++) {
+			if (ca[i] != test[j]) {
 				return false;
 			}
 		}
 		return true;
 	}
 
-	private static boolean isNext(char[] ca, int start, char...test) {
-		for(int i = start, j = 0; j < test.length; i++, j++) {
-			if(ca[i] != test[j]) {
+	private static boolean isNext(char[] ca, int start, char... test) {
+		for (int i = start, j = 0; j < test.length; i++, j++) {
+			if (ca[i] != test[j]) {
 				return false;
 			}
 		}
@@ -567,14 +575,14 @@ class SvgLoader {
 	}
 
 	private static boolean isTag(char[] ca, int start, char[] tagName) {
-		if(start >= 0 && start < ca.length && ca[start] == '<' ) {
+		if (start >= 0 && start < ca.length && ca[start] == '<') {
 			int i = start + 1;
-			for(int j = 0; i < ca.length && j < tagName.length; i++, j++) {
-				if(ca[i] != tagName[j]) {
+			for (int j = 0; i < ca.length && j < tagName.length; i++, j++) {
+				if (ca[i] != tagName[j]) {
 					return false;
 				}
 			}
-			if(i < ca.length) {
+			if (i < ca.length) {
 				return (ca[i] == ' ') || (ca[i] == '>');
 			}
 		}
@@ -586,17 +594,21 @@ class SvgLoader {
 		BufferedInputStream bis = new BufferedInputStream(in);
 		int i;
 		try {
-			while((i = bis.read()) != -1) {
+			while ((i = bis.read()) != -1) {
 				char c = (char) i;
-				if(Character.isWhitespace(c)) { // replace all whitespace chars with a space char
-					if(' ' != sb.charAt(sb.length() - 1)) { // no point in having multiple spaces
+				if (Character.isWhitespace(c)) { // replace all whitespace chars
+													// with a space char
+					if (' ' != sb.charAt(sb.length() - 1)) { // no point in
+																// having
+																// multiple
+																// spaces
 						sb.append(' ');
 					}
 				} else {
 					sb.append(c);
 				}
 			}
-		} catch(IOException e) {
+		} catch (IOException e) {
 			e.printStackTrace();
 		}
 		char[] ca = new char[sb.length()];
@@ -614,48 +626,48 @@ class SvgLoader {
 
 	private static void parse(SvgContainer container, char[] ca, int start, int end) {
 		int s1 = start;
-		while(s1 != -1 && s1 < end) {
+		while (s1 != -1 && s1 < end) {
 			s1 = findNextTag(ca, s1, end);
-			if(isTag(ca, s1, ELEMENT_GROUP)) {
+			if (isTag(ca, s1, ELEMENT_GROUP)) {
 				s1 = parseGroup(container, ca, s1, end);
-			} else if(isTag(ca, s1, ELEMENT_TITLE)) {
+			} else if (isTag(ca, s1, ELEMENT_TITLE)) {
 				s1 = parseTitle(container, ca, s1, end);
-			} else if(isTag(ca, s1, ELEMENT_DESCRIPTION)) {
+			} else if (isTag(ca, s1, ELEMENT_DESCRIPTION)) {
 				s1 = parseDescription(container, ca, s1, end);
-			} else if(isTag(ca, s1, ELEMENT_SVG)) {
+			} else if (isTag(ca, s1, ELEMENT_SVG)) {
 				s1 = parseSvg(container, ca, s1, end);
-			} else if(isTag(ca, s1, ELEMENT_STYLE)) {
+			} else if (isTag(ca, s1, ELEMENT_STYLE)) {
 				s1 = parseStyle(container, ca, s1, end);
-			} else if(isTag(ca, s1, ELEMENT_USE)) {
+			} else if (isTag(ca, s1, ELEMENT_USE)) {
 				s1 = parseUse(container, ca, s1, end);
-			} else if(isTag(ca, s1, ELEMENT_PATH)) {
+			} else if (isTag(ca, s1, ELEMENT_PATH)) {
 				s1 = parsePath(container, ca, s1, end);
-			} else if(isTag(ca, s1, ELEMENT_CIRCLE)) {
+			} else if (isTag(ca, s1, ELEMENT_CIRCLE)) {
 				s1 = parseCircle(container, ca, s1, end);
-			} else if(isTag(ca, s1, ELEMENT_ELLIPSE)) {
+			} else if (isTag(ca, s1, ELEMENT_ELLIPSE)) {
 				s1 = parseEllipse(container, ca, s1, end);
-			} else if(isTag(ca, s1, ELEMENT_IMAGE)) {
+			} else if (isTag(ca, s1, ELEMENT_IMAGE)) {
 				s1 = parseImage(container, ca, s1, end);
-			} else if(isTag(ca, s1, ELEMENT_LINE)) {
+			} else if (isTag(ca, s1, ELEMENT_LINE)) {
 				s1 = parseLine(container, ca, s1, end);
-			} else if(isTag(ca, s1, ELEMENT_POLYGON)) {
+			} else if (isTag(ca, s1, ELEMENT_POLYGON)) {
 				s1 = parsePolygon(container, ca, s1, end);
-			} else if(isTag(ca, s1, ELEMENT_POLYLINE)) {
+			} else if (isTag(ca, s1, ELEMENT_POLYLINE)) {
 				s1 = parsePolyline(container, ca, s1, end);
-			} else if(isTag(ca, s1, ELEMENT_RECT)) {
+			} else if (isTag(ca, s1, ELEMENT_RECT)) {
 				s1 = parseRectangle(container, ca, s1, end);
-			} else if(isTag(ca, s1, ELEMENT_LINEAR_GRADIENT)) {
+			} else if (isTag(ca, s1, ELEMENT_LINEAR_GRADIENT)) {
 				s1 = parseLinearGradient(container, ca, s1, end);
-			} else if(isTag(ca, s1, ELEMENT_RADIAL_GRADIENT)) {
+			} else if (isTag(ca, s1, ELEMENT_RADIAL_GRADIENT)) {
 				s1 = parseRadialGradient(container, ca, s1, end);
-			} else if(isTag(ca, s1, ELEMENT_DEFS)) {
+			} else if (isTag(ca, s1, ELEMENT_DEFS)) {
 				s1 = parseDefs(container, ca, s1, end);
-			} else if(isTag(ca, s1, ELEMENT_XML) || isTag(ca, s1, ELEMENT_DOCTYPE)) {
+			} else if (isTag(ca, s1, ELEMENT_XML) || isTag(ca, s1, ELEMENT_DOCTYPE)) {
 				s1 = findAll(ca, s1, end, '>');
-			} else if(isTag(ca, s1, ELEMENT_COMMENT)) {
+			} else if (isTag(ca, s1, ELEMENT_COMMENT)) {
 				s1 = findAll(ca, s1, end, ELEMENT_COMMENT_END);
 			} else {
-				if(s1 != -1) {
+				if (s1 != -1) {
 					int s2 = findAny(ca, s1, end, ' ', '>');
 					System.out.println("dunno: " + new String(ca, s1 + 1, s2 - s1 - 1)); //$NON-NLS-1$
 				}
@@ -666,7 +678,7 @@ class SvgLoader {
 
 	private static int parseCircle(SvgContainer container, char[] ca, int start, int end) {
 		end = findClosingTag(ca, start, end);
-		if(end != -1) {
+		if (end != -1) {
 			int endAttrs = closer(ca, start, end);
 			SvgShape element = new SvgShape(container, getAttrValue(ca, start, endAttrs, ATTR_ID));
 			element.pathData = new PathData();
@@ -690,14 +702,14 @@ class SvgLoader {
 		int s2 = reverse(ca, s - 1);
 		String names;
 
-		while(s1 != -1 && s2 != -1) {
+		while (s1 != -1 && s2 != -1) {
 			names = new String(ca, s1, s2 - s1 + 1);
 			s2 = closer(ca, s, end);
-			if(s2 != -1) {
+			if (s2 != -1) {
 				Map<String, String> pairs = parseStyles(ca, s + 1, s2 - 1);
-				for(String name : names.split(" *, *")) { //$NON-NLS-1$
+				for (String name : names.split(" *, *")) { //$NON-NLS-1$
 					Map<String, String> existing = styles.get(name);
-					if(existing != null) {
+					if (existing != null) {
 						Map<String, String> m = new HashMap<String, String>();
 						m.putAll(existing);
 						m.putAll(pairs);
@@ -717,7 +729,7 @@ class SvgLoader {
 
 	private static int parseDefs(SvgContainer container, char[] ca, int start, int end) {
 		end = findClosingTag(ca, start, end);
-		if(end != -1) {
+		if (end != -1) {
 			int endAttrs = closer(ca, start, end);
 			SvgContainer element = new SvgContainer(container, "defs"); //$NON-NLS-1$
 			element.transform = getTransform(ca, getAttrValueRange(ca, start, endAttrs, ATTR_TRANSFORM));
@@ -728,9 +740,9 @@ class SvgLoader {
 
 	private static int parseDescription(SvgContainer container, char[] ca, int start, int end) {
 		end = findClosingTag(ca, start, end);
-		if(end != -1) {
+		if (end != -1) {
 			start = closer(ca, start, end);
-			if(start != -1) {
+			if (start != -1) {
 				container.description = new String(ca, start + 1, end - start - 1);
 			}
 		}
@@ -739,7 +751,7 @@ class SvgLoader {
 
 	private static int parseEllipse(SvgContainer container, char[] ca, int start, int end) {
 		end = findClosingTag(ca, start, end);
-		if(end != -1) {
+		if (end != -1) {
 			int endAttrs = closer(ca, start, end);
 			SvgShape element = new SvgShape(container, getAttrValue(ca, start, endAttrs, ATTR_ID));
 			element.pathData = new PathData();
@@ -775,14 +787,14 @@ class SvgLoader {
 	}
 
 	private static float parseFloat(String s, float defaultValue) {
-		if(s == null) {
+		if (s == null) {
 			return defaultValue;
-		} 
+		}
 		return Float.parseFloat(s);
 	}
 
 	private static Float parseFloat(String s, Float defaultValue) {
-		if(s == null) {
+		if (s == null) {
 			return defaultValue;
 		}
 		return new Float(s);
@@ -790,7 +802,7 @@ class SvgLoader {
 
 	private static int parseGradientStop(SvgGradient gradient, char[] ca, int start, int end) {
 		end = findClosingTag(ca, start, end);
-		if(end != -1) {
+		if (end != -1) {
 			int endAttrs = closer(ca, start, end);
 			SvgGradientStop stop = new SvgGradientStop(gradient, getAttrValue(ca, start, endAttrs, ATTR_ID));
 
@@ -814,7 +826,7 @@ class SvgLoader {
 
 	private static int parseGroup(SvgContainer container, char[] ca, int start, int end) {
 		end = findClosingTag(ca, start, end);
-		if(end != -1) {
+		if (end != -1) {
 			int endAttrs = closer(ca, start, end);
 			SvgContainer element = new SvgContainer(container, getAttrValue(ca, start, endAttrs, ATTR_ID));
 			parseFill(element, ca, start, endAttrs);
@@ -825,14 +837,14 @@ class SvgLoader {
 		return end;
 	}
 
-	// cm, em, ex, in, mm, pc, pt, px 
+	// cm, em, ex, in, mm, pc, pt, px
 	private static float parseLength(String s, String defaultString) {
-		if(s == null) {
+		if (s == null) {
 			s = defaultString;
 		}
-		if(s.endsWith("%")) { //$NON-NLS-1$
+		if (s.endsWith("%")) { //$NON-NLS-1$
 			throw new UnsupportedOperationException("TODO parseLength: %"); //$NON-NLS-1$
-		} else if(s.endsWith("cm")) { //$NON-NLS-1$
+		} else if (s.endsWith("cm")) { //$NON-NLS-1$
 			final Point dpi = new Point(0, 0);
 			Display.getDefault().syncExec(new Runnable() {
 				@Override
@@ -841,11 +853,11 @@ class SvgLoader {
 				}
 			});
 			return Float.parseFloat(s.substring(0, s.length() - 2)) * dpi.x * 0.393700787f;
-		} else if(s.endsWith("em")) { //$NON-NLS-1$
+		} else if (s.endsWith("em")) { //$NON-NLS-1$
 			throw new UnsupportedOperationException("TODO parseLength: em"); //$NON-NLS-1$
-		} else if(s.endsWith("ex")) { //$NON-NLS-1$
+		} else if (s.endsWith("ex")) { //$NON-NLS-1$
 			throw new UnsupportedOperationException("TODO parseLength: ex"); //$NON-NLS-1$
-		} else if(s.endsWith("in")) { //$NON-NLS-1$
+		} else if (s.endsWith("in")) { //$NON-NLS-1$
 			final Point dpi = new Point(0, 0);
 			Display.getDefault().syncExec(new Runnable() {
 				@Override
@@ -854,7 +866,7 @@ class SvgLoader {
 				}
 			});
 			return Float.parseFloat(s.substring(0, s.length() - 2)) * dpi.x;
-		} else if(s.endsWith("mm")) { //$NON-NLS-1$
+		} else if (s.endsWith("mm")) { //$NON-NLS-1$
 			final Point dpi = new Point(0, 0);
 			Display.getDefault().syncExec(new Runnable() {
 				@Override
@@ -863,11 +875,11 @@ class SvgLoader {
 				}
 			});
 			return Float.parseFloat(s.substring(0, s.length() - 2)) * dpi.x * 0.0393700787f;
-		} else if(s.endsWith("pc")) { //$NON-NLS-1$
+		} else if (s.endsWith("pc")) { //$NON-NLS-1$
 			throw new UnsupportedOperationException("TODO parseLength: pc"); //$NON-NLS-1$
-		} else if(s.endsWith("pt")) { //$NON-NLS-1$
+		} else if (s.endsWith("pt")) { //$NON-NLS-1$
 			throw new UnsupportedOperationException("TODO parseLength: pt"); //$NON-NLS-1$
-		} else if(s.endsWith("px")) { //$NON-NLS-1$
+		} else if (s.endsWith("px")) { //$NON-NLS-1$
 			return Float.parseFloat(s.substring(0, s.length() - 2));
 		} else {
 			return Float.parseFloat(s);
@@ -876,16 +888,16 @@ class SvgLoader {
 
 	private static int parseLine(SvgContainer container, char[] ca, int start, int end) {
 		end = findClosingTag(ca, start, end);
-		if(end != -1) {
+		if (end != -1) {
 			int endAttrs = closer(ca, start, end);
 			SvgShape element = new SvgShape(container, getAttrValue(ca, start, endAttrs, ATTR_ID));
 			element.pathData = new PathData();
 			element.pathData.types = new byte[2];
 			element.pathData.points = new float[4];
-			element.pathData.types[0] = (byte)SWT.PATH_MOVE_TO;
+			element.pathData.types[0] = (byte) SWT.PATH_MOVE_TO;
 			element.pathData.points[0] = parseFloat(getAttrValue(ca, start, endAttrs, ATTR_X1), 0);
 			element.pathData.points[1] = parseFloat(getAttrValue(ca, start, endAttrs, ATTR_Y1), 0);
-			element.pathData.types[1] = (byte)SWT.PATH_LINE_TO;
+			element.pathData.types[1] = (byte) SWT.PATH_LINE_TO;
 			element.pathData.points[2] = parseFloat(getAttrValue(ca, start, endAttrs, ATTR_X2), 0);
 			element.pathData.points[3] = parseFloat(getAttrValue(ca, start, endAttrs, ATTR_Y2), 0);
 			parseFill(element, ca, start, endAttrs);
@@ -896,7 +908,7 @@ class SvgLoader {
 
 	private static int parseLinearGradient(SvgContainer container, char[] ca, int start, int end) {
 		end = findClosingTag(ca, start, end);
-		if(end != -1) {
+		if (end != -1) {
 			int endAttrs = closer(ca, start, end);
 			SvgGradient gradient = new SvgGradient(container, getAttrValue(ca, start, endAttrs, ATTR_ID));
 			gradient.data = new float[4];
@@ -909,9 +921,9 @@ class SvgLoader {
 			gradient.setUnits(getAttrValue(ca, start, endAttrs, ATTR_GRADIENT_UNITS));
 			gradient.transform = getTransform(ca, getAttrValueRange(ca, start, endAttrs, ATTR_GRADIENT_TRANSFORM));
 			int s1 = endAttrs;
-			while(s1 != -1 && s1 < end) {
+			while (s1 != -1 && s1 < end) {
 				s1 = findNextTag(ca, s1 + 1, end);
-				if(isNext(ca, s1 + 1, ATTR_STOP)) {
+				if (isNext(ca, s1 + 1, ATTR_STOP)) {
 					s1 = parseGradientStop(gradient, ca, s1, end);
 				}
 			}
@@ -920,26 +932,26 @@ class SvgLoader {
 	}
 
 	private static String parseLinkId(String id) {
-		if(id != null && id.length() > 2 && '#' == id.charAt(0)) {
+		if (id != null && id.length() > 2 && '#' == id.charAt(0)) {
 			return id.substring(1);
 		}
 		return null;
 	}
 
 	private static void parsePaint(SvgPaint paint, String s) {
-		if(s != null) {
-			if(SvgDocument.VARIABLE_IDENTIFIER.equals(s)){
+		if (s != null) {
+			if (SvgDocument.VARIABLE_IDENTIFIER.equals(s)) {
 				paint.isVariable = true;
-			} else if("none".equals(s)) { //$NON-NLS-1$
+			} else if ("none".equals(s)) { //$NON-NLS-1$
 				paint.type = PaintType.None;
-			} else if("currentColor".equals(s)) { //$NON-NLS-1$
+			} else if ("currentColor".equals(s)) { //$NON-NLS-1$
 				paint.type = PaintType.Current;
-			} else if(s.startsWith("url")) { //$NON-NLS-1$
+			} else if (s.startsWith("url")) { //$NON-NLS-1$
 				paint.type = PaintType.Link;
 				paint.linkId = getLink(s);
 			} else {
 				Integer i = getColorAsInt(s);
-				if(i != null) {
+				if (i != null) {
 					paint.type = PaintType.Color;
 					paint.color = i;
 				} else {
@@ -952,7 +964,7 @@ class SvgLoader {
 
 	private static int parsePath(SvgContainer container, char[] ca, int start, int end) {
 		end = findClosingTag(ca, start, end);
-		if(end != -1) {
+		if (end != -1) {
 			int endAttrs = closer(ca, start, end);
 			SvgShape element = new SvgShape(container, getAttrValue(ca, start, endAttrs, ATTR_ID));
 			parseFill(element, ca, start, endAttrs);
@@ -969,9 +981,9 @@ class SvgLoader {
 		List<Byte> types = new ArrayList<Byte>();
 		List<Float> points = new ArrayList<Float>();
 		int i = -1;
-		while(i < sa.length - 1) {
+		while (i < sa.length - 1) {
 			i++;
-			switch(sa[i].charAt(0)) {
+			switch (sa[i].charAt(0)) {
 			case 'M':
 			case 'm':
 				types.add((byte) SWT.PATH_MOVE_TO);
@@ -1015,7 +1027,7 @@ class SvgLoader {
 			case 's':
 				types.add((byte) SWT.PATH_CUBIC_TO);
 				relative = ('s' == sa[i].charAt(0));
-				if(SWT.PATH_CUBIC_TO == types.get(types.size() - 2)) {
+				if (SWT.PATH_CUBIC_TO == types.get(types.size() - 2)) {
 					float x2 = points.get(points.size() - 4);
 					float y2 = points.get(points.size() - 3);
 					float x = points.get(points.size() - 2);
@@ -1046,7 +1058,7 @@ class SvgLoader {
 			case 't':
 				types.add((byte) SWT.PATH_QUAD_TO);
 				relative = ('q' == sa[i].charAt(0));
-				if(SWT.PATH_QUAD_TO == types.get(types.size() - 2)) {
+				if (SWT.PATH_QUAD_TO == types.get(types.size() - 2)) {
 					float x2 = points.get(points.size() - 4);
 					float y2 = points.get(points.size() - 3);
 					float x = points.get(points.size() - 2);
@@ -1072,16 +1084,17 @@ class SvgLoader {
 				addArc(sa, ++i, types, points, relative);
 				i += 6;
 				break;
+			default:
 			}
 		}
 
 		path.pathData = new PathData();
 		path.pathData.types = new byte[types.size()];
-		for(i = 0; i < types.size(); i++) {
+		for (i = 0; i < types.size(); i++) {
 			path.pathData.types[i] = types.get(i).byteValue();
 		}
 		path.pathData.points = new float[points.size()];
-		for(i = 0; i < points.size(); i++) {
+		for (i = 0; i < points.size(); i++) {
 			path.pathData.points[i] = points.get(i).floatValue();
 		}
 	}
@@ -1090,50 +1103,50 @@ class SvgLoader {
 		List<String> strs = new ArrayList<String>();
 		StringBuilder sb = new StringBuilder();
 		char[] ca = data.toCharArray();
-		for(int i = 0; i < ca.length; i++) {
+		for (int i = 0; i < ca.length; i++) {
 			char c = ca[i];
-			if('e' == c) {
+			if ('e' == c) {
 				sb.append(c);
-				if(i < ca.length - 1 && ca[i + 1] == '-') {
+				if (i < ca.length - 1 && ca[i + 1] == '-') {
 					i++;
 					sb.append(ca[i]);
 				}
-			} else if(Character.isLetter(c)) {
-				if(sb.length() > 0) {
+			} else if (Character.isLetter(c)) {
+				if (sb.length() > 0) {
 					strs.add(sb.toString());
 				}
 				strs.add(Character.toString(c));
 				sb = new StringBuilder();
-			} else if('.' == c || Character.isDigit(c)) {
+			} else if ('.' == c || Character.isDigit(c)) {
 				sb.append(c);
 			} else {
-				if(sb.length() > 0) {
+				if (sb.length() > 0) {
 					strs.add(sb.toString());
 				}
 				sb = new StringBuilder();
-				if('-' == c) {
+				if ('-' == c) {
 					sb.append(c);
 				}
 			}
 		}
-		if(sb.length() > 0) {
+		if (sb.length() > 0) {
 			strs.add(sb.toString());
 		}
 		return strs.toArray(new String[strs.size()]);
 	}
 
 	private static Float parsePercentage(String s, Float defaultValue, boolean clamp) {
-		if(s != null) {
+		if (s != null) {
 			Float offset;
-			if('%' == s.charAt(s.length() - 1)) {
+			if ('%' == s.charAt(s.length() - 1)) {
 				offset = Float.parseFloat(s.substring(0, s.length() - 1)) / 100;
 			} else {
 				offset = Float.parseFloat(s);
 			}
-			if(clamp) {
-				if(offset > 1) {
+			if (clamp) {
+				if (offset > 1) {
 					offset = new Float(1);
-				} else if(offset < 0) {
+				} else if (offset < 0) {
 					offset = new Float(0);
 				}
 			}
@@ -1143,10 +1156,10 @@ class SvgLoader {
 	}
 
 	private static float[] parsePoints(String s) {
-		if(s != null) {
+		if (s != null) {
 			String[] sa = s.trim().split("[ ,]"); //$NON-NLS-1$
 			float[] points = new float[sa.length];
-			for(int i = 0; i < sa.length; i++) {
+			for (int i = 0; i < sa.length; i++) {
 				points[i] = parseFloat(sa[i]);
 			}
 			return points;
@@ -1156,23 +1169,23 @@ class SvgLoader {
 
 	private static int parsePolygon(SvgContainer container, char[] ca, int start, int end) {
 		end = findClosingTag(ca, start, end);
-		if(end != -1) {
+		if (end != -1) {
 			int endAttrs = closer(ca, start, end);
 			SvgShape element = new SvgShape(container, getAttrValue(ca, start, endAttrs, ATTR_ID));
 			float[] linePoints = parsePoints(getAttrValue(ca, start, endAttrs, ATTR_POINTS));
 			element.pathData = new PathData();
-			element.pathData.types = new byte[1+(linePoints.length/2)];
+			element.pathData.types = new byte[1 + (linePoints.length / 2)];
 			element.pathData.points = new float[linePoints.length];
-			element.pathData.types[0] = (byte)SWT.PATH_MOVE_TO;
+			element.pathData.types[0] = (byte) SWT.PATH_MOVE_TO;
 			element.pathData.points[0] = linePoints[0];
 			element.pathData.points[1] = linePoints[1];
 			int i = 2, j = 1;
-			while(i < linePoints.length-1) {
-				element.pathData.types[j++] = (byte)SWT.PATH_LINE_TO;
+			while (i < linePoints.length - 1) {
+				element.pathData.types[j++] = (byte) SWT.PATH_LINE_TO;
 				element.pathData.points[i] = linePoints[i++];
 				element.pathData.points[i] = linePoints[i++];
 			}
-			element.pathData.types[element.pathData.types.length-1] = (byte)SWT.PATH_CLOSE;
+			element.pathData.types[element.pathData.types.length - 1] = (byte) SWT.PATH_CLOSE;
 			parseFill(element, ca, start, endAttrs);
 			parseStroke(element, ca, start, endAttrs);
 			element.transform = getTransform(ca, getAttrValueRange(ca, start, endAttrs, ATTR_TRANSFORM));
@@ -1182,19 +1195,19 @@ class SvgLoader {
 
 	private static int parsePolyline(SvgContainer container, char[] ca, int start, int end) {
 		end = findClosingTag(ca, start, end);
-		if(end != -1) {
+		if (end != -1) {
 			int endAttrs = closer(ca, start, end);
 			SvgShape element = new SvgShape(container, getAttrValue(ca, start, endAttrs, ATTR_ID));
 			float[] linePoints = parsePoints(getAttrValue(ca, start, endAttrs, ATTR_POINTS));
 			element.pathData = new PathData();
-			element.pathData.types = new byte[linePoints.length/2];
+			element.pathData.types = new byte[linePoints.length / 2];
 			element.pathData.points = new float[linePoints.length];
-			element.pathData.types[0] = (byte)SWT.PATH_MOVE_TO;
+			element.pathData.types[0] = (byte) SWT.PATH_MOVE_TO;
 			element.pathData.points[0] = linePoints[0];
 			element.pathData.points[1] = linePoints[1];
 			int i = 2, j = 1;
-			while(i < linePoints.length-1) {
-				element.pathData.types[j++] = (byte)SWT.PATH_LINE_TO;
+			while (i < linePoints.length - 1) {
+				element.pathData.types[j++] = (byte) SWT.PATH_LINE_TO;
 				element.pathData.points[i] = linePoints[i++];
 				element.pathData.points[i] = linePoints[i++];
 			}
@@ -1207,7 +1220,7 @@ class SvgLoader {
 
 	private static int parseRadialGradient(SvgContainer container, char[] ca, int start, int end) {
 		end = findClosingTag(ca, start, end);
-		if(end != -1) {
+		if (end != -1) {
 			int endAttrs = closer(ca, start, end);
 			SvgGradient gradient = new SvgGradient(container, getAttrValue(ca, start, endAttrs, ATTR_ID));
 			gradient.data = new float[5];
@@ -1221,9 +1234,9 @@ class SvgLoader {
 			gradient.setUnits(getAttrValue(ca, start, endAttrs, ATTR_GRADIENT_UNITS));
 			gradient.transform = getTransform(ca, getAttrValueRange(ca, start, endAttrs, ATTR_GRADIENT_TRANSFORM));
 			int s1 = endAttrs;
-			while(s1 != -1 && s1 < end) {
+			while (s1 != -1 && s1 < end) {
 				s1 = findNextTag(ca, s1 + 1, end);
-				if(isNext(ca, s1 + 1, ATTR_STOP)) {
+				if (isNext(ca, s1 + 1, ATTR_STOP)) {
 					s1 = parseGradientStop(gradient, ca, s1, end);
 				}
 			}
@@ -1233,7 +1246,7 @@ class SvgLoader {
 
 	private static int parseImage(SvgContainer container, char[] ca, int start, int end) {
 		end = findClosingTag(ca, start, end);
-		if(end != -1) {
+		if (end != -1) {
 			int endAttrs = closer(ca, start, end);
 			SvgImage element = new SvgImage(container, getAttrValue(ca, start, endAttrs, ATTR_ID));
 			element.pathData = new PathData();
@@ -1258,10 +1271,10 @@ class SvgLoader {
 		}
 		return url;
 	}
-	
+
 	private static int parseRectangle(SvgContainer container, char[] ca, int start, int end) {
 		end = findClosingTag(ca, start, end);
-		if(end != -1) {
+		if (end != -1) {
 			int endAttrs = closer(ca, start, end);
 			SvgShape element = new SvgShape(container, getAttrValue(ca, start, endAttrs, ATTR_ID));
 			element.pathData = new PathData();
@@ -1280,10 +1293,10 @@ class SvgLoader {
 	}
 
 	private static Integer parseRule(String s) {
-		if(s != null) {
-			if("evenodd".equals(s)) { //$NON-NLS-1$
+		if (s != null) {
+			if ("evenodd".equals(s)) { //$NON-NLS-1$
 				return SWT.FILL_EVEN_ODD;
-			} else if("winding".equals(s)) { //$NON-NLS-1$
+			} else if ("winding".equals(s)) { //$NON-NLS-1$
 				return SWT.FILL_WINDING;
 			}
 		}
@@ -1304,7 +1317,7 @@ class SvgLoader {
 		s = getValue("stroke-width", idStyles, classStyles, attrStyles, getAttrValue(ca, start, end, ATTR_STROKE_WIDTH)); //$NON-NLS-1$
 		if (SvgDocument.VARIABLE_IDENTIFIER.equals(s))
 			element.stroke.isVariable = true;
-		else 
+		else
 			element.stroke.width = parseStrokeWidth(s);
 
 		s = getValue("stroke-linecap", idStyles, classStyles, attrStyles, getAttrValue(ca, start, end, ATTR_STROKE_CAP)); //$NON-NLS-1$
@@ -1315,12 +1328,12 @@ class SvgLoader {
 	}
 
 	private static Integer parseStrokeLineCap(String s) {
-		if(s != null) {
-			if("butt".equals(s)) { //$NON-NLS-1$
+		if (s != null) {
+			if ("butt".equals(s)) { //$NON-NLS-1$
 				return SWT.CAP_FLAT;
-			} else if("round".equals(s)) { //$NON-NLS-1$
+			} else if ("round".equals(s)) { //$NON-NLS-1$
 				return SWT.CAP_ROUND;
-			} else if("square".equals(s)) { //$NON-NLS-1$
+			} else if ("square".equals(s)) { //$NON-NLS-1$
 				return SWT.CAP_SQUARE;
 			}
 		}
@@ -1328,12 +1341,12 @@ class SvgLoader {
 	}
 
 	private static Integer parseStrokeLineJoin(String s) {
-		if(s != null) {
-			if("bevel".equals(s)) { //$NON-NLS-1$
+		if (s != null) {
+			if ("bevel".equals(s)) { //$NON-NLS-1$
 				return SWT.JOIN_BEVEL;
-			} else if("miter".equals(s)) { //$NON-NLS-1$
+			} else if ("miter".equals(s)) { //$NON-NLS-1$
 				return SWT.JOIN_MITER;
-			} else if("round".equals(s)) { //$NON-NLS-1$
+			} else if ("round".equals(s)) { //$NON-NLS-1$
 				return SWT.JOIN_ROUND;
 			}
 		}
@@ -1341,23 +1354,23 @@ class SvgLoader {
 	}
 
 	private static Float parseStrokeWidth(String s) {
-		if(s != null) {
-			if(s.endsWith("px")) { //$NON-NLS-1$
+		if (s != null) {
+			if (s.endsWith("px")) { //$NON-NLS-1$
 				return new Float(s.substring(0, s.length() - 2));
-			} 
+			}
 			return new Float(s);
 		}
-		
+
 		return null;
 	}
 
 	private static int parseStyle(SvgContainer container, char[] ca, int start, int end) {
 		end = findClosingTag(ca, start, end);
-		if(end != -1) {
+		if (end != -1) {
 			int endData = closer(ca, start, end);
 			SvgStyle element = new SvgStyle(container);
 			int cd1 = findAll(ca, start, end, ELEMENT_CDATA);
-			if(cd1 != -1) {
+			if (cd1 != -1) {
 				start = cd1 + ELEMENT_CDATA.length;
 				endData = findAll(ca, start, end, ELEMENT_CDATA_END);
 			} else {
@@ -1372,11 +1385,11 @@ class SvgLoader {
 	private static Map<String, String> parseStyles(char[] ca, int start, int end) {
 		Map<String, String> styles = new HashMap<String, String>();
 		int len = end - start + 1;
-		if(len > 0 && start + len <= ca.length) {
+		if (len > 0 && start + len <= ca.length) {
 			String[] sa = new String(ca, start, end - start + 1).trim().split(" *; *"); //$NON-NLS-1$
-			for(String s : sa) {
+			for (String s : sa) {
 				String[] sa2 = s.split(" *: *"); //$NON-NLS-1$
-				if(sa2.length == 2) {
+				if (sa2.length == 2) {
 					styles.put(sa2[0], sa2[1]);
 				}
 			}
@@ -1385,7 +1398,7 @@ class SvgLoader {
 	}
 
 	private static Map<String, String> parseStyles(String styles) {
-		if(styles != null) {
+		if (styles != null) {
 			return parseStyles(styles.toCharArray(), 0, styles.length() - 1);
 		}
 		return new HashMap<String, String>(0);
@@ -1393,10 +1406,10 @@ class SvgLoader {
 
 	private static int parseSvg(SvgContainer container, char[] ca, int start, int end) {
 		end = findClosingTag(ca, start, end);
-		if(end != -1) {
+		if (end != -1) {
 			int endAttrs = closer(ca, start, end);
 			SvgFragment element = new SvgFragment(container, getAttrValue(ca, start, endAttrs, ATTR_ID));
-			if(container != null) {
+			if (container != null) {
 				// x and y have no effect on outermost svg fragments
 				element.x = parseFloat(getAttrValue(ca, start, endAttrs, ATTR_X));
 				element.y = parseFloat(getAttrValue(ca, start, endAttrs, ATTR_Y));
@@ -1404,7 +1417,7 @@ class SvgLoader {
 			element.width = parseLength(getAttrValue(ca, start, endAttrs, ATTR_WIDTH), "100%"); //$NON-NLS-1$
 			element.height = parseLength(getAttrValue(ca, start, endAttrs, ATTR_HEIGHT), "100%"); //$NON-NLS-1$
 			element.viewBox = parseViewBox(getAttrValue(ca, start, endAttrs, ATTR_VIEWBOX));
-			//			TODO element.preserveAspectRatio = 
+			// TODO element.preserveAspectRatio =
 			parse(element, ca, endAttrs, end);
 		}
 		return end;
@@ -1412,9 +1425,9 @@ class SvgLoader {
 
 	private static int parseTitle(SvgContainer container, char[] ca, int start, int end) {
 		end = findClosingTag(ca, start, end);
-		if(end != -1) {
+		if (end != -1) {
 			start = closer(ca, start, end);
-			if(start != -1) {
+			if (start != -1) {
 				container.title = new String(ca, start + 1, end - start - 1);
 			}
 		}
@@ -1423,7 +1436,7 @@ class SvgLoader {
 
 	private static int parseUse(SvgContainer container, char[] ca, int start, int end) {
 		end = findClosingTag(ca, start, end);
-		if(end != -1) {
+		if (end != -1) {
 			int endAttrs = closer(ca, start, end);
 			SvgUse element = new SvgUse(container, getAttrValue(ca, start, endAttrs, ATTR_ID));
 			element.x = parseFloat(getAttrValue(ca, start, endAttrs, ATTR_X), 0);
@@ -1437,10 +1450,10 @@ class SvgLoader {
 	}
 
 	private static float[] parseViewBox(String s) {
-		if(s != null) {
+		if (s != null) {
 			float[] vb = new float[4];
 			String[] sa = s.split(paramRegex);
-			if(sa.length == 4) {
+			if (sa.length == 4) {
 				vb[0] = Float.parseFloat(sa[0]);
 				vb[1] = Float.parseFloat(sa[1]);
 				vb[2] = Float.parseFloat(sa[2]);
@@ -1452,8 +1465,8 @@ class SvgLoader {
 	}
 
 	private static int reverse(char[] ca, int from) {
-		for(int i = from; i >= 0 && i < ca.length; i--) {
-			if(!Character.isWhitespace(ca[i])) {
+		for (int i = from; i >= 0 && i < ca.length; i--) {
+			if (!Character.isWhitespace(ca[i])) {
 				return i;
 			}
 		}
