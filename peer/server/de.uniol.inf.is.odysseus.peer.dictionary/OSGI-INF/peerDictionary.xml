@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="de.uniol.inf.is.odysseus.peer.dictionary.PeerDictionary">
+   <implementation class="de.uniol.inf.is.odysseus.peer.dictionary.impl.PeerDictionary"/>
+   <service>
+      <provide interface="de.uniol.inf.is.odysseus.peer.dictionary.IPeerDictionary"/>
+   </service>
+   <reference bind="bindP2PNetworkManager" cardinality="1..1" interface="de.uniol.inf.is.odysseus.peer.network.IP2PNetworkManager" name="IP2PNetworkManager" policy="static" unbind="unbindP2PNetworkManager"/>
+   <reference bind="bindJxtaServicesProvider" cardinality="1..1" interface="de.uniol.inf.is.odysseus.peer.jxta.IJxtaServicesProvider" name="IJxtaServicesProvider" policy="static" unbind="unbindJxtaServicesProvider"/>
+</scr:component>
