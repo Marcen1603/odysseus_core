@@ -21,9 +21,9 @@ public class SystemLoadToPayloadPO<M extends ISystemLoad, T extends Tuple<M>>
 	public OutputMode getOutputMode() {
 		if (append){
 			return OutputMode.MODIFIED_INPUT;
-		}else{
-			return OutputMode.NEW_ELEMENT;
 		}
+		
+		return OutputMode.NEW_ELEMENT;
 	}
 
 	@SuppressWarnings("unchecked")
