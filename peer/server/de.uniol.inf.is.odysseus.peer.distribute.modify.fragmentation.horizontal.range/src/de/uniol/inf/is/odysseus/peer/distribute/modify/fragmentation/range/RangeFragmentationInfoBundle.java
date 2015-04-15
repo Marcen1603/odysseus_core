@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.horizontal.range;
+package de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.range;
 
 import java.util.List;
 
@@ -10,7 +10,7 @@ import de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.Fragmentati
  * 
  * @author Michael Brand
  */
-public class RangeHorizontalFragmentationInfoBundle extends
+public class RangeFragmentationInfoBundle extends
 		FragmentationInfoBundle {
 
 	/**

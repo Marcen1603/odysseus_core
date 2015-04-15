@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.horizontal.range;
+package de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.range;
 
 import java.util.List;
 
@@ -27,7 +27,7 @@ import de.uniol.inf.is.odysseus.server.fragmentation.horizontal.logicaloperator.
  * 
  * @author Michael Brand
  */
-public class RangeHorizontalFragmentationQueryPartModificator extends
+public class RangeFragmentationQueryPartModificator extends
 		HorizontalFragmentationQueryPartModificator {
 
 	@Override
@@ -41,7 +41,7 @@ public class RangeHorizontalFragmentationQueryPartModificator extends
 	protected AbstractFragmentationParameterHelper createFragmentationHelper(
 			List<String> fragmentationParameters) {
 
-		return new RangeHorizontalFragmentationParameterHelper(fragmentationParameters);
+		return new RangeFragmentationParameterHelper(fragmentationParameters);
 
 	}
 
@@ -52,13 +52,13 @@ public class RangeHorizontalFragmentationQueryPartModificator extends
 		Preconditions.checkNotNull(helper,
 				"Fragmentation helper must be not null!");
 		Preconditions.checkArgument(
-				helper instanceof RangeHorizontalFragmentationParameterHelper,
+				helper instanceof RangeFragmentationParameterHelper,
 				"The fragmentation helper must be a RangeFragmentationHelper!");
 
-		RangeHorizontalFragmentationInfoBundle bundle = new RangeHorizontalFragmentationInfoBundle();
-		bundle.setAttributeForRanges(((RangeHorizontalFragmentationParameterHelper) helper)
+		RangeFragmentationInfoBundle bundle = new RangeFragmentationInfoBundle();
+		bundle.setAttributeForRanges(((RangeFragmentationParameterHelper) helper)
 				.determineFullQualifiedAttribute());
-		bundle.setRanges(((RangeHorizontalFragmentationParameterHelper) helper)
+		bundle.setRanges(((RangeFragmentationParameterHelper) helper)
 				.determineRanges());
 		return bundle;
 
@@ -73,7 +73,7 @@ public class RangeHorizontalFragmentationQueryPartModificator extends
 				"Fragmentation info bundle must be not null!");
 		Preconditions
 				.checkArgument(
-						bundle instanceof RangeHorizontalFragmentationInfoBundle,
+						bundle instanceof RangeFragmentationInfoBundle,
 						"The fragmentation info bundle must be a RangeFragmentationInfoBundle!");
 
 		if (numFragments < 1)
@@ -82,9 +82,9 @@ public class RangeHorizontalFragmentationQueryPartModificator extends
 
 		RangeFragmentAO fragmentAO = new RangeFragmentAO();
 		fragmentAO
-				.setAttribute(((RangeHorizontalFragmentationInfoBundle) bundle)
+				.setAttribute(((RangeFragmentationInfoBundle) bundle)
 						.getAttributeForRanges());
-		fragmentAO.setRanges(((RangeHorizontalFragmentationInfoBundle) bundle)
+		fragmentAO.setRanges(((RangeFragmentationInfoBundle) bundle)
 				.getRanges());
 		return fragmentAO;
 

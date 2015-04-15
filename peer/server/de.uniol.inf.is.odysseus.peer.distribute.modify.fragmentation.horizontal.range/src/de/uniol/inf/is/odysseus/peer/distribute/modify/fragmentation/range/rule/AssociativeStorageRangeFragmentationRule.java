@@ -1,11 +1,11 @@
-package de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.horizontal.range.rule;
+package de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.range.rule;
 
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AssociativeStorageAO;
 import de.uniol.inf.is.odysseus.peer.distribute.ILogicalQueryPart;
 import de.uniol.inf.is.odysseus.peer.distribute.QueryPartModificationException;
 import de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.AbstractFragmentationParameterHelper;
 import de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.FragmentationInfoBundle;
-import de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.horizontal.range.RangeHorizontalFragmentationQueryPartModificator;
+import de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.range.RangeFragmentationQueryPartModificator;
 import de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.rule.IFragmentationRule;
 
 /**
@@ -15,13 +15,13 @@ import de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.rule.IFragm
  * @author Michael Brand
  *
  */
-public class AssociativeStorageRangeHorizontalFragmentationRule
+public class AssociativeStorageRangeFragmentationRule
 		implements
-		IFragmentationRule<RangeHorizontalFragmentationQueryPartModificator, AssociativeStorageAO> {
+		IFragmentationRule<RangeFragmentationQueryPartModificator, AssociativeStorageAO> {
 
 	@Override
 	public boolean canOperatorBePartOfFragments(
-			RangeHorizontalFragmentationQueryPartModificator strategy,
+			RangeFragmentationQueryPartModificator strategy,
 			AssociativeStorageAO operator,
 			AbstractFragmentationParameterHelper helper) {
 
@@ -50,9 +50,9 @@ public class AssociativeStorageRangeHorizontalFragmentationRule
 	}
 
 	@Override
-	public Class<RangeHorizontalFragmentationQueryPartModificator> getStrategyClass() {
+	public Class<RangeFragmentationQueryPartModificator> getStrategyClass() {
 
-		return RangeHorizontalFragmentationQueryPartModificator.class;
+		return RangeFragmentationQueryPartModificator.class;
 
 	}
 

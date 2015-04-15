@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.horizontal.range;
+package de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.range;
 
 import java.util.List;
 
@@ -12,7 +12,7 @@ import de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.horizontal.
  * 
  * @author Michael Brand
  */
-public class RangeHorizontalFragmentationParameterHelper extends
+public class RangeFragmentationParameterHelper extends
 		HorizontalFragmentationParameterHelper {
 
 	/**
@@ -33,7 +33,7 @@ public class RangeHorizontalFragmentationParameterHelper extends
 	 * @param strategy
 	 *            The fragmentation strategy.
 	 */
-	public RangeHorizontalFragmentationParameterHelper(
+	public RangeFragmentationParameterHelper(
 			List<String> fragmentationParameters) {
 
 		super(fragmentationParameters);
@@ -49,11 +49,11 @@ public class RangeHorizontalFragmentationParameterHelper extends
 
 		Preconditions
 				.checkArgument(
-						this.mFragmentationParameters.size() >= RangeHorizontalFragmentationParameterHelper.PARAMETER_INDEX_ATTRIBUTE,
+						this.mFragmentationParameters.size() >= RangeFragmentationParameterHelper.PARAMETER_INDEX_ATTRIBUTE,
 						"Attribute to build ranges must be given!");
 
 		return this.mFragmentationParameters
-				.get(RangeHorizontalFragmentationParameterHelper.PARAMETER_INDEX_ATTRIBUTE);
+				.get(RangeFragmentationParameterHelper.PARAMETER_INDEX_ATTRIBUTE);
 
 	}
 
@@ -66,12 +66,12 @@ public class RangeHorizontalFragmentationParameterHelper extends
 
 		Preconditions
 				.checkArgument(
-						this.mFragmentationParameters.size() >= RangeHorizontalFragmentationParameterHelper.PARAMETER_INDEX_FIRST_RANGE,
+						this.mFragmentationParameters.size() >= RangeFragmentationParameterHelper.PARAMETER_INDEX_FIRST_RANGE,
 						"Lower limits for the ranges must be given!");
 
 		List<String> ranges = this.mFragmentationParameters
 				.subList(
-						RangeHorizontalFragmentationParameterHelper.PARAMETER_INDEX_FIRST_RANGE,
+						RangeFragmentationParameterHelper.PARAMETER_INDEX_FIRST_RANGE,
 						this.mFragmentationParameters.size());
 		return ranges;
 
