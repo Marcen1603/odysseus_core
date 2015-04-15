@@ -73,7 +73,6 @@ Unless required by applicable law or agreed to in writing, software
       <import plugin="de.uniol.inf.is.odysseus.ruleengine" version="1.0.0" match="greaterOrEqual"/>
       <import plugin="de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation" version="1.0.0" match="greaterOrEqual"/>
       <import plugin="de.uniol.inf.is.odysseus.relational_interval"/>
-      <import plugin="de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.horizontal" version="1.0.0" match="greaterOrEqual"/>
       <import plugin="org.eclipse.ui"/>
       <import plugin="de.uniol.inf.is.odysseus.rcp.login" version="1.0.0" match="greaterOrEqual"/>
       <import plugin="org.eclipse.swt"/>
@@ -176,13 +175,6 @@ Unless required by applicable law or agreed to in writing, software
 
    <plugin
          id="de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.horizontal"
          download-size="0"
          install-size="0"
          version="0.0.0"
