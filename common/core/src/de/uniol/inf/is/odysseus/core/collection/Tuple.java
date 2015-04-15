@@ -607,6 +607,9 @@ public class Tuple<T extends IMetaAttribute> extends AbstractStreamObject<T>
 		for (int i : comparePositions) {
 			Object a = left.getAttribute(i);
 			Object b = right.getAttribute(i);
+			if (a == null && b == null){
+				continue;
+			}
 			if (!a.equals(b)) {
 				return false;
 			}
