@@ -5,7 +5,7 @@ import com.google.common.base.Preconditions;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.peer.distribute.QueryPartModificationException;
 import de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.FragmentationInfoBundle;
-import de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.horizontal.AbstractHorizontalFragmentationQueryPartModificator;
+import de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.horizontal.HorizontalFragmentationQueryPartModificator;
 import de.uniol.inf.is.odysseus.server.fragmentation.horizontal.logicaloperator.RoundRobinFragmentAO;
 
 /**
@@ -24,7 +24,7 @@ import de.uniol.inf.is.odysseus.server.fragmentation.horizontal.logicaloperator.
  * @author Michael Brand
  */
 public class RoundRobinHorizontalFragmentationQueryPartModificator extends
-		AbstractHorizontalFragmentationQueryPartModificator {
+		HorizontalFragmentationQueryPartModificator {
 
 	@Override
 	public String getName() {

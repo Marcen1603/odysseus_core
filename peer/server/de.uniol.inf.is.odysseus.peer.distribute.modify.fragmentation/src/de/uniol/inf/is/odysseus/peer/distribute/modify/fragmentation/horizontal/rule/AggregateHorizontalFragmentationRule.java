@@ -16,7 +16,7 @@ import de.uniol.inf.is.odysseus.peer.distribute.ILogicalQueryPart;
 import de.uniol.inf.is.odysseus.peer.distribute.QueryPartModificationException;
 import de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.AbstractFragmentationParameterHelper;
 import de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.FragmentationInfoBundle;
-import de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.horizontal.AbstractHorizontalFragmentationQueryPartModificator;
+import de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.horizontal.HorizontalFragmentationQueryPartModificator;
 import de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.horizontal.HorizontalFragmentationParameterHelper;
 import de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.rule.IFragmentationRule;
 
@@ -27,14 +27,14 @@ import de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.rule.IFragm
  * @author Michael Brand
  *
  */
-public abstract class AbstractAggregateHorizontalFragmentationRule<Strategy extends AbstractHorizontalFragmentationQueryPartModificator>
+public abstract class AggregateHorizontalFragmentationRule<Strategy extends HorizontalFragmentationQueryPartModificator>
 		implements IFragmentationRule<Strategy, AggregateAO> {
 
 	/**
 	 * The logger for this class.
 	 */
 	private static final Logger LOG = LoggerFactory
-			.getLogger(AbstractAggregateHorizontalFragmentationRule.class);
+			.getLogger(AggregateHorizontalFragmentationRule.class);
 
 	/**
 	 * All possible aggregation functions for the usage without partial
@@ -106,7 +106,7 @@ public abstract class AbstractAggregateHorizontalFragmentationRule<Strategy exte
 					aggregation = HorizontalFragmentationParameterHelper
 							.changeAggregation(part, (AggregateAO) operator,
 									bundle);
-					AbstractAggregateHorizontalFragmentationRule.LOG
+					AggregateHorizontalFragmentationRule.LOG
 							.debug("Found {} as an aggregation, which needs to be changed in {}",
 									operator, part);
 

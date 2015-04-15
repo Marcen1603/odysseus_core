@@ -1,7 +1,7 @@
 package de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.horizontal.roundrobin.rule;
 
 import de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.horizontal.roundrobin.RoundRobinHorizontalFragmentationQueryPartModificator;
-import de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.horizontal.rule.AbstractTupleAggregateHorizontalFragmentationRule;
+import de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.horizontal.rule.TupleAggregateHorizontalFragmentationRule;
 
 /**
  * A tuple aggregation can not be part of a fragment for range horizontal
@@ -12,7 +12,7 @@ import de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.horizontal.
  */
 public class TupleAggregateRoundRobinHorizontalFragmentationRule
 		extends
-		AbstractTupleAggregateHorizontalFragmentationRule<RoundRobinHorizontalFragmentationQueryPartModificator> {
+		TupleAggregateHorizontalFragmentationRule<RoundRobinHorizontalFragmentationQueryPartModificator> {
 
 	@Override
 	public Class<RoundRobinHorizontalFragmentationQueryPartModificator> getStrategyClass() {

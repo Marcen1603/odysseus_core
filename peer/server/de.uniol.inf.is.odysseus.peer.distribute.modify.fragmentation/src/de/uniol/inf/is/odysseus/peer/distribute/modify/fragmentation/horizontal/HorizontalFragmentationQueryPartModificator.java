@@ -31,7 +31,7 @@ import de.uniol.inf.is.odysseus.peer.distribute.util.LogicalQueryHelper;
  * 
  * @author Michael Brand
  */
-public abstract class AbstractHorizontalFragmentationQueryPartModificator
+public abstract class HorizontalFragmentationQueryPartModificator
 		extends AbstractFragmentationQueryPartModificator {
 
 	@Override

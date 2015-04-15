@@ -11,7 +11,7 @@ import de.uniol.inf.is.odysseus.peer.distribute.ILogicalQueryPart;
 import de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.AbstractFragmentationParameterHelper;
 import de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.horizontal.hash.HashHorizontalFragmentationParameterHelper;
 import de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.horizontal.hash.HashHorizontalFragmentationQueryPartModificator;
-import de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.horizontal.rule.AbstractRelationalFastMedianHorizontalFragmentationRule;
+import de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.horizontal.rule.RelationalFastMedianHorizontalFragmentationRule;
 import de.uniol.inf.is.odysseus.relational_interval.logicaloperator.RelationalFastMedianAO;
 
 /**
@@ -23,7 +23,7 @@ import de.uniol.inf.is.odysseus.relational_interval.logicaloperator.RelationalFa
  */
 public class RelationalFastMedianHashHorizontalFragmentationRule
 		extends
-		AbstractRelationalFastMedianHorizontalFragmentationRule<HashHorizontalFragmentationQueryPartModificator> {
+		RelationalFastMedianHorizontalFragmentationRule<HashHorizontalFragmentationQueryPartModificator> {
 
 	@Override
 	public boolean canOperatorBePartOfFragments(

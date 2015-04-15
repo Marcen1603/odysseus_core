@@ -12,7 +12,7 @@ import de.uniol.inf.is.odysseus.peer.distribute.ILogicalQueryPart;
 import de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.AbstractFragmentationParameterHelper;
 import de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.horizontal.hash.HashHorizontalFragmentationParameterHelper;
 import de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.horizontal.hash.HashHorizontalFragmentationQueryPartModificator;
-import de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.horizontal.rule.AbstractStateMapHorizontalFragmentationRule;
+import de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.horizontal.rule.StateMapHorizontalFragmentationRule;
 
 /**
  * A state map can only be part of a fragment for hash horizontal fragmentation
@@ -23,7 +23,7 @@ import de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.horizontal.
  */
 public class StateMapHashHorizontalFragmentationRule
 		extends
-		AbstractStateMapHorizontalFragmentationRule<HashHorizontalFragmentationQueryPartModificator> {
+		StateMapHorizontalFragmentationRule<HashHorizontalFragmentationQueryPartModificator> {
 
 	@Override
 	public boolean canOperatorBePartOfFragments(

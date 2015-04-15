@@ -1,7 +1,7 @@
 package de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.horizontal.range.rule;
 
 import de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.horizontal.range.RangeHorizontalFragmentationQueryPartModificator;
-import de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.horizontal.rule.AbstractRelationalFastMedianHorizontalFragmentationRule;
+import de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.horizontal.rule.RelationalFastMedianHorizontalFragmentationRule;
 
 /**
  * A relational fast median can not be part of a fragment for range horizontal
@@ -12,7 +12,7 @@ import de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.horizontal.
  */
 public class RelationalFastMedianRangeHorizontalFragmentationRule
 		extends
-		AbstractRelationalFastMedianHorizontalFragmentationRule<RangeHorizontalFragmentationQueryPartModificator> {
+		RelationalFastMedianHorizontalFragmentationRule<RangeHorizontalFragmentationQueryPartModificator> {
 
 	@Override
 	public Class<RangeHorizontalFragmentationQueryPartModificator> getStrategyClass() {

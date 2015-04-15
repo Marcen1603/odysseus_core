@@ -1,7 +1,7 @@
 package de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.horizontal.roundrobin.rule;
 
 import de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.horizontal.roundrobin.RoundRobinHorizontalFragmentationQueryPartModificator;
-import de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.horizontal.rule.AbstractStateMapHorizontalFragmentationRule;
+import de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.horizontal.rule.StateMapHorizontalFragmentationRule;
 
 /**
  * A state map can not be part of a fragment for round robin horizontal
@@ -12,7 +12,7 @@ import de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.horizontal.
  */
 public class StateMapRoundRobinHorizontalFragmentationRule
 		extends
-		AbstractStateMapHorizontalFragmentationRule<RoundRobinHorizontalFragmentationQueryPartModificator> {
+		StateMapHorizontalFragmentationRule<RoundRobinHorizontalFragmentationQueryPartModificator> {
 
 	@Override
 	public Class<RoundRobinHorizontalFragmentationQueryPartModificator> getStrategyClass() {

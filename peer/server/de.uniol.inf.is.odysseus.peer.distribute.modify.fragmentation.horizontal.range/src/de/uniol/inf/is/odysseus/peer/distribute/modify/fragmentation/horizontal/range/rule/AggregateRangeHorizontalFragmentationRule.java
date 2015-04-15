@@ -1,7 +1,7 @@
 package de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.horizontal.range.rule;
 
 import de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.horizontal.range.RangeHorizontalFragmentationQueryPartModificator;
-import de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.horizontal.rule.AbstractAggregateHorizontalFragmentationRule;
+import de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.horizontal.rule.AggregateHorizontalFragmentationRule;
 
 /**
  * An aggregation can be part of a fragment for range horizontal fragmentation
@@ -12,7 +12,7 @@ import de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.horizontal.
  */
 public class AggregateRangeHorizontalFragmentationRule
 		extends
-		AbstractAggregateHorizontalFragmentationRule<RangeHorizontalFragmentationQueryPartModificator> {
+		AggregateHorizontalFragmentationRule<RangeHorizontalFragmentationQueryPartModificator> {
 
 	@Override
 	public Class<RangeHorizontalFragmentationQueryPartModificator> getStrategyClass() {

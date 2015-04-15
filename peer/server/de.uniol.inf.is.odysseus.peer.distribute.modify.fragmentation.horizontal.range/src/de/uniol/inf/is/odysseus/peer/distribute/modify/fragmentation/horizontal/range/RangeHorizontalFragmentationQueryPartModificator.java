@@ -8,7 +8,7 @@ import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.peer.distribute.QueryPartModificationException;
 import de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.AbstractFragmentationParameterHelper;
 import de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.FragmentationInfoBundle;
-import de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.horizontal.AbstractHorizontalFragmentationQueryPartModificator;
+import de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.horizontal.HorizontalFragmentationQueryPartModificator;
 import de.uniol.inf.is.odysseus.server.fragmentation.horizontal.logicaloperator.RangeFragmentAO;
 
 /**
@@ -28,7 +28,7 @@ import de.uniol.inf.is.odysseus.server.fragmentation.horizontal.logicaloperator.
  * @author Michael Brand
  */
 public class RangeHorizontalFragmentationQueryPartModificator extends
-		AbstractHorizontalFragmentationQueryPartModificator {
+		HorizontalFragmentationQueryPartModificator {
 
 	@Override
 	public String getName() {

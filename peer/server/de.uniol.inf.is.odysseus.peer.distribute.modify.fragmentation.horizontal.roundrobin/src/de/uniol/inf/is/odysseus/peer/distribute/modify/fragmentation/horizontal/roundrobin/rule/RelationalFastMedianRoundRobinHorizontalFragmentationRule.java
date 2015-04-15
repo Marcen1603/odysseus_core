@@ -1,7 +1,7 @@
 package de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.horizontal.roundrobin.rule;
 
 import de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.horizontal.roundrobin.RoundRobinHorizontalFragmentationQueryPartModificator;
-import de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.horizontal.rule.AbstractRelationalFastMedianHorizontalFragmentationRule;
+import de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.horizontal.rule.RelationalFastMedianHorizontalFragmentationRule;
 
 /**
  * A relational fast median can not be part of a fragment for round robin
@@ -12,7 +12,7 @@ import de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.horizontal.
  */
 public class RelationalFastMedianRoundRobinHorizontalFragmentationRule
 		extends
-		AbstractRelationalFastMedianHorizontalFragmentationRule<RoundRobinHorizontalFragmentationQueryPartModificator> {
+		RelationalFastMedianHorizontalFragmentationRule<RoundRobinHorizontalFragmentationQueryPartModificator> {
 
 	@Override
 	public Class<RoundRobinHorizontalFragmentationQueryPartModificator> getStrategyClass() {

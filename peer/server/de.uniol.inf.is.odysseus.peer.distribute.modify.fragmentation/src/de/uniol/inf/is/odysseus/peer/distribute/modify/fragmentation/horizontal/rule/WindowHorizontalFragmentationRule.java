@@ -6,7 +6,7 @@ import de.uniol.inf.is.odysseus.peer.distribute.ILogicalQueryPart;
 import de.uniol.inf.is.odysseus.peer.distribute.QueryPartModificationException;
 import de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.AbstractFragmentationParameterHelper;
 import de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.FragmentationInfoBundle;
-import de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.horizontal.AbstractHorizontalFragmentationQueryPartModificator;
+import de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.horizontal.HorizontalFragmentationQueryPartModificator;
 import de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.rule.IFragmentationRule;
 
 /**
@@ -18,11 +18,11 @@ import de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.rule.IFragm
  */
 public class WindowHorizontalFragmentationRule
 		implements
-		IFragmentationRule<AbstractHorizontalFragmentationQueryPartModificator, AbstractWindowAO> {
+		IFragmentationRule<HorizontalFragmentationQueryPartModificator, AbstractWindowAO> {
 
 	@Override
 	public boolean canOperatorBePartOfFragments(
-			AbstractHorizontalFragmentationQueryPartModificator strategy,
+			HorizontalFragmentationQueryPartModificator strategy,
 			AbstractWindowAO operator, AbstractFragmentationParameterHelper helper) {
 
 		return operator.getWindowType().equals(WindowType.TIME);
@@ -48,9 +48,9 @@ public class WindowHorizontalFragmentationRule
 	}
 
 	@Override
-	public Class<AbstractHorizontalFragmentationQueryPartModificator> getStrategyClass() {
+	public Class<HorizontalFragmentationQueryPartModificator> getStrategyClass() {
 
-		return AbstractHorizontalFragmentationQueryPartModificator.class;
+		return HorizontalFragmentationQueryPartModificator.class;
 
 	}
 
