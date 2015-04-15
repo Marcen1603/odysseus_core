@@ -17,7 +17,8 @@ package de.uniol.inf.is.odysseus.rcp.dashboard.canvas.colorspace;
 
 /**
  * @author Christian Kuka <christian@kuka.cc>
- * @version $Id$
+ * @version $Id: AbstractColorSpace.java | Fri Apr 10 23:28:57 2015 +0000 |
+ *          ckuka $
  *
  */
 public abstract class AbstractColorSpace implements IColorSpace {

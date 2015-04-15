@@ -28,9 +28,9 @@ public class Camera {
     /** The position vector (the location of the camera). */
     private Vector3f position;
     /** The direction vector (the point to look at). */
-    private Vector3f direction;
+    private final Vector3f direction;
     /** The up vector (the rotation of the camera around its origin). */
-    private Vector3f up;
+    private final Vector3f up;
 
     private float horizontalAngle;
     private float verticalAngle;
@@ -48,10 +48,10 @@ public class Camera {
     }
 
     public void onKeyEvent() {
-        boolean keyUp = Keyboard.isKeyDown(Keyboard.KEY_UP) || Keyboard.isKeyDown(Keyboard.KEY_W);
-        boolean keyDown = Keyboard.isKeyDown(Keyboard.KEY_DOWN) || Keyboard.isKeyDown(Keyboard.KEY_S);
-        boolean keyLeft = Keyboard.isKeyDown(Keyboard.KEY_LEFT) || Keyboard.isKeyDown(Keyboard.KEY_A);
-        boolean keyRight = Keyboard.isKeyDown(Keyboard.KEY_RIGHT) || Keyboard.isKeyDown(Keyboard.KEY_D);
+        final boolean keyUp = Keyboard.isKeyDown(Keyboard.KEY_UP) || Keyboard.isKeyDown(Keyboard.KEY_W);
+        final boolean keyDown = Keyboard.isKeyDown(Keyboard.KEY_DOWN) || Keyboard.isKeyDown(Keyboard.KEY_S);
+        final boolean keyLeft = Keyboard.isKeyDown(Keyboard.KEY_LEFT) || Keyboard.isKeyDown(Keyboard.KEY_A);
+        final boolean keyRight = Keyboard.isKeyDown(Keyboard.KEY_RIGHT) || Keyboard.isKeyDown(Keyboard.KEY_D);
 
     }
 
@@ -66,7 +66,7 @@ public class Camera {
      * @param position
      *            the position to set
      */
-    public void setPosition(Vector3f position) {
+    public void setPosition(final Vector3f position) {
         this.position = position;
     }
 
@@ -74,7 +74,7 @@ public class Camera {
      * @param verticalAngle
      *            the verticalAngle to set
      */
-    public void setVerticalAngle(float verticalAngle) {
+    public void setVerticalAngle(final float verticalAngle) {
         this.verticalAngle = verticalAngle;
     }
 
@@ -89,7 +89,7 @@ public class Camera {
      * @param horizontalAngle
      *            the horizontalAngle to set
      */
-    public void setHorizontalAngle(float horizontalAngle) {
+    public void setHorizontalAngle(final float horizontalAngle) {
         this.horizontalAngle = horizontalAngle;
     }
 

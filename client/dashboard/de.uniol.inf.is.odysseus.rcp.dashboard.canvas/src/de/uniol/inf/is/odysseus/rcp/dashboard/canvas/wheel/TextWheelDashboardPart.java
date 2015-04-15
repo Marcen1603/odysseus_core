@@ -18,6 +18,8 @@ package de.uniol.inf.is.odysseus.rcp.dashboard.canvas.wheel;
 import java.text.NumberFormat;
 import java.util.Random;
 
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
@@ -26,7 +28,8 @@ import de.uniol.inf.is.odysseus.rcp.dashboard.canvas.Coordinate;
 
 /**
  * @author Christian Kuka <christian@kuka.cc>
- * @version $Id$
+ * @version $Id: TextWheelDashboardPart.java | Sat Apr 11 02:17:02 2015 +0000 |
+ *          ckuka $
  *
  */
 public class TextWheelDashboardPart extends AbstractWheelDashboardPart {
@@ -37,6 +40,8 @@ public class TextWheelDashboardPart extends AbstractWheelDashboardPart {
     @Override
     public void doPaintZ(final Number z) {
         final String text = NumberFormat.getIntegerInstance().format(z);
+        final int fontSize = this.getFontSize(text, this.getFont(), (int) ((1.0 / 3.0) * this.getRadius()), (int) ((1.0 / 3.0) * this.getRadius()));
+        this.getGC().setFont(new Font(this.getGC().getDevice(), this.getFont(), fontSize, SWT.NORMAL));
         final Coordinate extent = this.textExtent(text);
         this.setBackground(this.getForegroundColor().getComplement());
         this.drawText(text, new Coordinate(this.getCenter().x - (extent.x / 2), this.getCenter().y - (extent.y / 2)), true);
@@ -51,7 +56,6 @@ public class TextWheelDashboardPart extends AbstractWheelDashboardPart {
 
         shell.open();
         final TextWheelDashboardPart wheel = new TextWheelDashboardPart();
-        wheel.setRadius(100);
         final Thread generator = new Thread() {
             /**
              * {@inheritDoc}

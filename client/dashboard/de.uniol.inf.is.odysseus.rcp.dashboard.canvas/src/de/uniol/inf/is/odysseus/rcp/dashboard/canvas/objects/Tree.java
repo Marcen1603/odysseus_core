@@ -29,12 +29,12 @@ public class Tree extends Quadric {
         super();
     }
 
-    public void draw(float trunkRadius, float foliageRadius, float height, int slices, int stacks) {
-        Cylinder trunk = new Cylinder();
-        trunk.setDrawStyle(getDrawStyle());
+    public void draw(final float trunkRadius, final float foliageRadius, final float height, final int slices, final int stacks) {
+        final Cylinder trunk = new Cylinder();
+        trunk.setDrawStyle(this.getDrawStyle());
         trunk.draw(trunkRadius, trunkRadius, height / 3, slices, stacks / 3);
-        Cylinder foliage = new Cylinder();
-        foliage.setDrawStyle(getDrawStyle());
-        foliage.draw(foliageRadius, 0, 2 * height / 3, slices, 2 * stacks / 3);
+        final Cylinder foliage = new Cylinder();
+        foliage.setDrawStyle(this.getDrawStyle());
+        foliage.draw(foliageRadius, 0, (2 * height) / 3, slices, (2 * stacks) / 3);
     }
 }

@@ -19,6 +19,8 @@ import java.text.NumberFormat;
 import java.util.Iterator;
 import java.util.Random;
 
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Path;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Display;
@@ -40,6 +42,8 @@ public class LiquidGaugeDashboardPart extends AbstractCanvasDashboardPart {
     private RGB backgroundColor = new RGB(255, 255, 255);
     private RGB liquidColor = new RGB(0, 255, 0);
 
+    /** The font name. */
+    private String font = "Verdana";
     /** Min value. */
     private double min = 0.0;
     /** Max value. */
@@ -94,9 +98,12 @@ public class LiquidGaugeDashboardPart extends AbstractCanvasDashboardPart {
                     (int) (this.getCenter().y - ((value - 1.0) * this.getRadius())));
             path.close();
             this.fillPath(path, this.liquidColor);
+
             final String text = NumberFormat.getIntegerInstance().format(this.get(element));
+            final int fontSize = this.getFontSize(text, this.getFont(), (int) (this.getRadius()), (int) (this.getRadius()));
+            this.getGC().setFont(new Font(this.getGC().getDevice(), this.getFont(), fontSize, SWT.NORMAL));
             final Coordinate extent = this.textExtent(text);
-            if ((this.getCenter().y - ((value - 1.0) * this.getRadius()) - ((1.0 / 6.0) * (value / 2.0) * this.getRadius())) <= (this.getCenter().y - (extent.y / 2))) {
+            if ((this.getCenter().y - ((value - 1.0) * this.getRadius()) - ((1.0 / 6.0) * (value / 2.0) * this.getRadius())) <= (this.getCenter().y)) {
                 this.setForeground(this.getLiquidColor().getComplement());
                 this.setBackground(this.getLiquidColor());
             }
@@ -104,6 +111,7 @@ public class LiquidGaugeDashboardPart extends AbstractCanvasDashboardPart {
                 this.setForeground(this.getLiquidColor());
                 this.setBackground(this.getBackgroundColor());
             }
+
             this.drawText(text, new Coordinate(this.getCenter().x - (extent.x / 2), this.getCenter().y - (extent.y / 2)), true);
             this.getGC().setTransform(null);
         }
@@ -162,7 +170,7 @@ public class LiquidGaugeDashboardPart extends AbstractCanvasDashboardPart {
      * @return the radius
      */
     public double getRadius() {
-        Rectangle bounds = getClipping();
+        final Rectangle bounds = this.getClipping();
         return Math.min(bounds.width, bounds.height) / 2.0;
     }
 
@@ -256,6 +264,21 @@ public class LiquidGaugeDashboardPart extends AbstractCanvasDashboardPart {
         this.backgroundColor = backgroundColor;
     }
 
+    /**
+     * @param font
+     *            the font to set
+     */
+    public void setFont(final String font) {
+        this.font = font;
+    }
+
+    /**
+     * @return the font
+     */
+    public String getFont() {
+        return this.font;
+    }
+
     public static void main(final String[] args) {
 
         final Display display = new Display();
@@ -304,4 +327,5 @@ public class LiquidGaugeDashboardPart extends AbstractCanvasDashboardPart {
         generator.interrupt();
         display.dispose();
     }
+
 }

@@ -55,7 +55,6 @@ public abstract class AbstractWheelDashboardPart extends AbstractCanvasDashboard
     }
 
     private static final double TWO_PI = 2.0 * Math.PI;
-    private double radius = 100.0;
     /** Min Y value. */
     private double minY = 0.0;
     /** Max Y value. */
@@ -70,6 +69,8 @@ public abstract class AbstractWheelDashboardPart extends AbstractCanvasDashboard
     private double maxZ = 1.0;
     /** Auto adjust min and max value. */
     private boolean autoadjust = true;
+    /** The font name. */
+    private String font = "Verdana";
     private int xPos = 0;
     private int yPos = 1;
     private int zPos = 2;
@@ -98,7 +99,7 @@ public abstract class AbstractWheelDashboardPart extends AbstractCanvasDashboard
         this.fillCircle(this.getCenter(), (int) ((1.0 / 3.0) * this.getRadius()), 0, 360, innerBackground);
 
         final Iterator<IStreamObject<?>> iter = this.getObjects().iterator();
-        List<Coordinate> coordinates = new ArrayList<>(this.getObjects().size());
+        final List<Coordinate> coordinates = new ArrayList<>(this.getObjects().size());
         IStreamObject<?> element = null;
         while (iter.hasNext()) {
             element = iter.next();
@@ -233,15 +234,8 @@ public abstract class AbstractWheelDashboardPart extends AbstractCanvasDashboard
      * @return the radius
      */
     public double getRadius() {
-        Rectangle bounds = getClipping();
+        final Rectangle bounds = this.getClipping();
         return Math.min(bounds.width, bounds.height) / 4.0;
-    }
-
-    /**
-     * @param radius
-     */
-    public void setRadius(final double radius) {
-        this.radius = radius;
     }
 
     /**
@@ -424,4 +418,18 @@ public abstract class AbstractWheelDashboardPart extends AbstractCanvasDashboard
         this.foregroundColor = foregroundColor;
     }
 
+    /**
+     * @param font
+     *            the font to set
+     */
+    public void setFont(final String font) {
+        this.font = font;
+    }
+
+    /**
+     * @return the font
+     */
+    public String getFont() {
+        return this.font;
+    }
 }

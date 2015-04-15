@@ -40,9 +40,8 @@ public class CompassDashboardPart extends AbstractCanvasDashboardPart {
     private static final double TWO_PI = 2.0 * Math.PI;
     private RGB backgroundColor = new RGB(255, 255, 255);
     private RGB arrowColor = new RGB(0, 255, 0);
-
-    private double radius = 100.0;
-
+    /** The font name. */
+    private String font = "Verdana";
     /** Min value. */
     private double min = 0.0;
     /** Max value. */
@@ -164,8 +163,8 @@ public class CompassDashboardPart extends AbstractCanvasDashboardPart {
      * @return the radius
      */
     public double getRadius() {
-        Rectangle bounds = getClipping();
-        return Math.min(bounds.width, bounds.height) / 2.0 - 10;
+        final Rectangle bounds = this.getClipping();
+        return (Math.min(bounds.width, bounds.height) / 2.0) - 10;
     }
 
     /**
@@ -258,6 +257,21 @@ public class CompassDashboardPart extends AbstractCanvasDashboardPart {
         this.backgroundColor = backgroundColor;
     }
 
+    /**
+     * @param font
+     *            the font to set
+     */
+    public void setFont(final String font) {
+        this.font = font;
+    }
+
+    /**
+     * @return the font
+     */
+    public String getFont() {
+        return this.font;
+    }
+
     public static void main(final String[] args) {
 
         final Display display = new Display();
@@ -293,8 +307,9 @@ public class CompassDashboardPart extends AbstractCanvasDashboardPart {
                         // Empty block
                     }
                     i++;
-                    if (i > 360)
+                    if (i > 360) {
                         i = 0;
+                    }
                 }
             }
         };

@@ -24,7 +24,8 @@ import de.uniol.inf.is.odysseus.core.collection.Tuple;
 
 /**
  * @author Christian Kuka <christian@kuka.cc>
- * @version $Id$
+ * @version $Id: BaseWheelDashboardPart.java | Fri Apr 10 23:28:57 2015 +0000 |
+ *          ckuka $
  *
  */
 public class BaseWheelDashboardPart extends AbstractWheelDashboardPart {
@@ -46,7 +47,6 @@ public class BaseWheelDashboardPart extends AbstractWheelDashboardPart {
 
         shell.open();
         final BaseWheelDashboardPart wheel = new BaseWheelDashboardPart();
-        wheel.setRadius(100);
         final Thread generator = new Thread() {
             /**
              * {@inheritDoc}

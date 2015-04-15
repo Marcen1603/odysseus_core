@@ -27,7 +27,8 @@ import de.uniol.inf.is.odysseus.rcp.dashboard.canvas.colorspace.RGB;
 
 /**
  * @author Christian Kuka <christian@kuka.cc>
- * @version $Id$
+ * @version $Id: ArrowWheelDashboardPart.java | Sat Apr 11 02:17:02 2015 +0000 |
+ *          ckuka $
  *
  */
 public class ArrowWheelDashboardPart extends AbstractWheelDashboardPart {
@@ -80,7 +81,6 @@ public class ArrowWheelDashboardPart extends AbstractWheelDashboardPart {
 
         shell.open();
         final ArrowWheelDashboardPart wheel = new ArrowWheelDashboardPart();
-        wheel.setRadius(100);
         final Thread generator = new Thread() {
             /**
              * {@inheritDoc}

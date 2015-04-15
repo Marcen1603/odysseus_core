@@ -27,7 +27,8 @@ import de.uniol.inf.is.odysseus.rcp.dashboard.canvas.colorspace.RGB;
 
 /**
  * @author Christian Kuka <christian@kuka.cc>
- * @version $Id$
+ * @version $Id: Abstract3DWheelDashboardPart.java | Fri Apr 10 23:28:57 2015
+ *          +0000 | ckuka $
  *
  */
 public abstract class Abstract3DWheelDashboardPart extends AbstractGLCanvasDashboardPart {
@@ -85,9 +86,9 @@ public abstract class Abstract3DWheelDashboardPart extends AbstractGLCanvasDashb
         final RGB foreground = this.getForegroundColor();
 
         final RGB[] circleColor = foreground.getTriadic();
-        drawTorus(1, getRadius(), 15, 15, circleColor[1]);
+        this.drawTorus(1, this.getRadius(), 15, 15, circleColor[1]);
         final Iterator<IStreamObject<?>> iter = this.getObjects().iterator();
-        List<Coordinate> coordinates = new ArrayList<>(this.getObjects().size());
+        final List<Coordinate> coordinates = new ArrayList<>(this.getObjects().size());
         IStreamObject<?> element = null;
         while (iter.hasNext()) {
             element = iter.next();

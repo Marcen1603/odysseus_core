@@ -200,7 +200,7 @@ public abstract class AbstractGLCanvasDashboardPart extends AbstractDashboardPar
     @Override
     public void streamElementRecieved(final IPhysicalOperator operator, final IStreamObject<?> element, final int port) {
         this.queue.offer(element);
-        while (this.queue.size() > getMaxElements()) {
+        while (this.queue.size() > this.getMaxElements()) {
             this.queue.poll();
         }
     }
@@ -281,7 +281,7 @@ public abstract class AbstractGLCanvasDashboardPart extends AbstractDashboardPar
      * @param maxElements
      *            the maxElements to set
      */
-    public void setMaxElements(int maxElements) {
+    public void setMaxElements(final int maxElements) {
         this.maxElements = maxElements;
     }
 
@@ -330,7 +330,7 @@ public abstract class AbstractGLCanvasDashboardPart extends AbstractDashboardPar
 
     /**
      * Draws a tree.
-     * 
+     *
      * @param trunkRadius
      * @param foliageRadius
      * @param height
@@ -338,15 +338,15 @@ public abstract class AbstractGLCanvasDashboardPart extends AbstractDashboardPar
      * @param stacks
      * @param color
      */
-    public void drawTree(float trunkRadius, float foliageRadius, float height, int slices, int stacks, IColorSpace color) {
+    public void drawTree(final float trunkRadius, final float foliageRadius, final float height, final int slices, final int stacks, final IColorSpace color) {
         final Color rgb = this.toColor(color);
-        Tree tree = new Tree();
+        final Tree tree = new Tree();
         tree.draw(trunkRadius, foliageRadius, height, slices, stacks);
     }
 
     /**
      * Draws a cylinder.
-     * 
+     *
      * @param baseRadius
      * @param topRadius
      * @param height
@@ -354,43 +354,43 @@ public abstract class AbstractGLCanvasDashboardPart extends AbstractDashboardPar
      * @param stacks
      * @param color
      */
-    public void drawCylinder(float baseRadius, float topRadius, float height, int slices, int stacks, IColorSpace color) {
+    public void drawCylinder(final float baseRadius, final float topRadius, final float height, final int slices, final int stacks, final IColorSpace color) {
         final Color rgb = this.toColor(color);
-        Cylinder cylinder = new Cylinder();
+        final Cylinder cylinder = new Cylinder();
         cylinder.draw(baseRadius, topRadius, height, slices, stacks);
     }
 
     /**
      * Draws a sphere of the given radius.
-     * 
+     *
      * @param radius
      * @param slices
      * @param stacks
      * @param color
      */
-    public void drawSphere(float radius, int slices, int stacks, IColorSpace color) {
+    public void drawSphere(final float radius, final int slices, final int stacks, final IColorSpace color) {
         final Color rgb = this.toColor(color);
-        Sphere sphere = new Sphere();
+        final Sphere sphere = new Sphere();
         sphere.draw(radius, slices, stacks);
     }
 
     /**
      * Draws a disk
-     * 
+     *
      * @param innerRadius
      * @param outerRadius
      * @param slices
      * @param loops
      * @param color
      */
-    public void drawDisk(float innerRadius, float outerRadius, int slices, int loops, IColorSpace color) {
+    public void drawDisk(final float innerRadius, final float outerRadius, final int slices, final int loops, final IColorSpace color) {
         final Color rgb = this.toColor(color);
-        Disk disk = new Disk();
+        final Disk disk = new Disk();
         disk.draw(innerRadius, outerRadius, slices, loops);
     }
 
     /**
-     * 
+     *
      * @param innerRadius
      * @param outerRadius
      * @param slices
@@ -399,35 +399,33 @@ public abstract class AbstractGLCanvasDashboardPart extends AbstractDashboardPar
      * @param sweepAngle
      * @param color
      */
-    public void drawPartialDisk(float innerRadius, float outerRadius, int slices, int loops, float startAngle, float sweepAngle, IColorSpace color) {
+    public void drawPartialDisk(final float innerRadius, final float outerRadius, final int slices, final int loops, final float startAngle, final float sweepAngle, final IColorSpace color) {
         final Color rgb = this.toColor(color);
-        PartialDisk partialDisk = new PartialDisk();
+        final PartialDisk partialDisk = new PartialDisk();
         partialDisk.draw(innerRadius, outerRadius, slices, loops, startAngle, sweepAngle);
     }
 
-
-
     /**
-     * 
+     *
      * @param color
      */
-    public void drawHouse(IColorSpace color) {
+    public void drawHouse(final IColorSpace color) {
         final Color rgb = this.toColor(color);
-        House house = new House();
+        final House house = new House();
         house.draw();
     }
 
     /**
-     * 
+     *
      * @param color
      */
-    public void drawCar(IColorSpace color) {
+    public void drawCar(final IColorSpace color) {
         final Color rgb = this.toColor(color);
-        Car car = new Car();
+        final Car car = new Car();
         car.draw();
     }
 
-    public void drawTorus(final double r, final double R, final int nsides, final int rings, IColorSpace color) {
+    public void drawTorus(final double r, final double R, final int nsides, final int rings, final IColorSpace color) {
         final Color rgb = this.toColor(color);
 
         final double ringDelta = (2.0 * (float) Math.PI) / rings;

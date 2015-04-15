@@ -18,6 +18,8 @@ package de.uniol.inf.is.odysseus.rcp.dashboard.canvas.wheel;
 import java.text.NumberFormat;
 import java.util.Random;
 
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Path;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
@@ -56,12 +58,12 @@ public class LiquidGaugeWheelDashboardPart extends AbstractWheelDashboardPart {
 
         // Draw waves if they do not exceed the max value
         double waveHight = 0.0;
-        if ((this.getCenter().y - ((value - 1.0) * (1.0 / 3.0) * this.getRadius()) - ((1.0 / 6.0) * (value / 2.0) * (1.0 / 3.0) * this.getRadius())) >= (this.getCenter().y - (1.0 / 3.0)
-                * this.getRadius())) {
+        if ((this.getCenter().y - ((value - 1.0) * (1.0 / 3.0) * this.getRadius()) - ((1.0 / 6.0) * (value / 2.0) * (1.0 / 3.0) * this.getRadius())) >= (this.getCenter().y - ((1.0 / 3.0) * this
+                .getRadius()))) {
             waveHight = (this.getCenter().y - ((value - 1.0) * (1.0 / 3.0) * this.getRadius()) - ((1.0 / 6.0) * (value / 2.0) * (1.0 / 3.0) * this.getRadius()));
         }
         else {
-            waveHight = (this.getCenter().y - (1.0 / 3.0) * this.getRadius());
+            waveHight = (this.getCenter().y - ((1.0 / 3.0) * this.getRadius()));
         }
         path.cubicTo((float) ((this.getCenter().x - pathX) + ((1.0 / 3.0) * pathX)), (float) (waveHight), (float) ((this.getCenter().x - pathX) + ((2.0 / 3.0) * pathX)),
                 (float) ((this.getCenter().y - ((value - 1.0) * (1.0 / 3.0) * this.getRadius())) + ((1.0 / 6.0) * (value / 2.0) * (1.0 / 3.0) * this.getRadius())), (float) this.getCenter().x,
@@ -69,12 +71,14 @@ public class LiquidGaugeWheelDashboardPart extends AbstractWheelDashboardPart {
 
         path.cubicTo((float) (this.getCenter().x + ((1.0 / 3.0) * pathX)), (float) (waveHight), (float) (this.getCenter().x + ((2.0 / 3.0) * pathX)), (float) ((this.getCenter().y - ((value - 1.0)
                 * (1.0 / 3.0) * this.getRadius())) + ((1.0 / 6.0) * (value / 2.0) * (1.0 / 3.0) * this.getRadius())), (float) (this.getCenter().x + pathX), (int) (this.getCenter().y - ((value - 1.0)
-                * (1.0 / 3.0) * this.getRadius())));
+                        * (1.0 / 3.0) * this.getRadius())));
         path.close();
         this.fillPath(path, this.getGaugeColor());
         final String text = NumberFormat.getIntegerInstance().format(z);
+        final int fontSize = this.getFontSize(text, this.getFont(), (int) ((1.0 / 3.0) * this.getRadius()), (int) ((1.0 / 3.0) * this.getRadius()));
+        this.getGC().setFont(new Font(this.getGC().getDevice(), this.getFont(), fontSize, SWT.NORMAL));
         final Coordinate extent = this.textExtent(text);
-        if ((this.getCenter().y - ((value - 1.0) * (1.0 / 3.0) * this.getRadius()) - ((1.0 / 6.0) * (value / 2.0) * (1.0 / 3.0) * this.getRadius())) <= (this.getCenter().y - (extent.y / 2))) {
+        if ((this.getCenter().y - ((value - 1.0) * (1.0 / 3.0) * this.getRadius()) - ((1.0 / 6.0) * (value / 2.0) * (1.0 / 3.0) * this.getRadius())) <= (this.getCenter().y)) {
             this.setForeground(this.getGaugeColor().getComplement());
             this.setBackground(this.getGaugeColor());
         }
@@ -110,7 +114,6 @@ public class LiquidGaugeWheelDashboardPart extends AbstractWheelDashboardPart {
 
         shell.open();
         final LiquidGaugeWheelDashboardPart wheel = new LiquidGaugeWheelDashboardPart();
-        wheel.setRadius(100);
         final Thread generator = new Thread() {
             /**
              * {@inheritDoc}

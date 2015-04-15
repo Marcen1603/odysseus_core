@@ -24,6 +24,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Path;
 import org.eclipse.swt.graphics.Point;
@@ -81,7 +82,7 @@ public abstract class AbstractCanvasDashboardPart extends AbstractDashboardPart 
     @Override
     public void streamElementRecieved(final IPhysicalOperator operator, final IStreamObject<?> element, final int port) {
         this.queue.offer(element);
-        while (this.queue.size() > getMaxElements()) {
+        while (this.queue.size() > this.getMaxElements()) {
             this.queue.poll();
         }
     }
@@ -157,7 +158,7 @@ public abstract class AbstractCanvasDashboardPart extends AbstractDashboardPart 
      * @param maxElements
      *            the maxElements to set
      */
-    public void setMaxElements(int maxElements) {
+    public void setMaxElements(final int maxElements) {
         this.maxElements = maxElements;
     }
 
@@ -280,5 +281,24 @@ public abstract class AbstractCanvasDashboardPart extends AbstractDashboardPart 
 
     public GC getGC() {
         return this.gc;
+    }
+
+    public int getFontSize(final String text, final String fontName, final int width, final int height) {
+        int fontSize = 8;
+        Font font = new Font(this.getGC().getDevice(), fontName, fontSize, SWT.NORMAL);
+        this.getGC().setFont(font);
+        Coordinate pt = this.textExtent(text);
+        double h = pt.y;
+        double w = pt.x;
+        while ((h < height) && (w < width)) {
+            font.dispose();
+            font = new Font(this.getGC().getDevice(), fontName, fontSize, SWT.NORMAL);
+            this.getGC().setFont(font);
+            pt = this.textExtent(text);
+            h = pt.y;
+            w = pt.x;
+            fontSize++;
+        }
+        return fontSize;
     }
 }

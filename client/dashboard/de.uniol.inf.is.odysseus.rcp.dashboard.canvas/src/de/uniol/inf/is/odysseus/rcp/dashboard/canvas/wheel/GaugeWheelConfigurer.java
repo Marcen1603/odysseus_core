@@ -36,7 +36,8 @@ import de.uniol.inf.is.odysseus.rcp.dashboard.canvas.colorspace.RGB;
 
 /**
  * @author Christian Kuka <christian@kuka.cc>
- * @version $Id$
+ * @version $Id: GaugeWheelConfigurer.java | Fri Apr 10 23:28:57 2015 +0000 |
+ *          ckuka $
  *
  */
 public class GaugeWheelConfigurer extends AbstractWheelDashboardPartConfigurer<GaugeWheelDashboardPart> {

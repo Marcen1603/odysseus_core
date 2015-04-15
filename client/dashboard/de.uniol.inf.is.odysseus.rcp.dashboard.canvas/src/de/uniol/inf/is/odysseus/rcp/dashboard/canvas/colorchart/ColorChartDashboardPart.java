@@ -30,7 +30,8 @@ import de.uniol.inf.is.odysseus.rcp.dashboard.canvas.colorspace.RGB;
 
 /**
  * @author Christian Kuka <christian@kuka.cc>
- * @version $Id$
+ * @version $Id: ColorChartDashboardPart.java | Sat Apr 11 02:35:49 2015 +0000 |
+ *          ckuka $
  *
  */
 public class ColorChartDashboardPart extends AbstractCanvasDashboardPart {
@@ -72,9 +73,9 @@ public class ColorChartDashboardPart extends AbstractCanvasDashboardPart {
         while (iter.hasNext()) {
             element = iter.next();
             final Number value = this.normalizeZ(this.getZ(element));
-            int width = (int) (getClipping().width / getMaxX() + 0.5);
-            int height = (int) (getClipping().height / getMaxY() + 0.5);
-            fillRectangle(getCoordinate(element), width, height, getColor(value));
+            final int width = (int) ((this.getClipping().width / this.getMaxX()) + 0.5);
+            final int height = (int) ((this.getClipping().height / this.getMaxY()) + 0.5);
+            this.fillRectangle(this.getCoordinate(element), width, height, this.getColor(value));
         }
     }
 
@@ -161,7 +162,7 @@ public class ColorChartDashboardPart extends AbstractCanvasDashboardPart {
         if (value.doubleValue() < this.getMinX()) {
             return new Double(0.0);
         }
-        return new Double(((value.doubleValue() - this.getMinX()) / Math.abs(this.getMaxX() - this.getMinX())) * getClipping().width);
+        return new Double(((value.doubleValue() - this.getMinX()) / Math.abs(this.getMaxX() - this.getMinX())) * this.getClipping().width);
     }
 
     private Number normalizeY(final Number value) {
@@ -171,7 +172,7 @@ public class ColorChartDashboardPart extends AbstractCanvasDashboardPart {
         if (value.doubleValue() < this.getMinY()) {
             return new Double(0.0);
         }
-        return new Double(((value.doubleValue() - this.getMinY()) / Math.abs(this.getMaxY() - this.getMinY())) * getClipping().height);
+        return new Double(((value.doubleValue() - this.getMinY()) / Math.abs(this.getMaxY() - this.getMinY())) * this.getClipping().height);
     }
 
     protected Number normalizeZ(final Number value) {

@@ -22,12 +22,14 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.ColorDialog;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.FontDialog;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.forms.events.ExpansionAdapter;
 import org.eclipse.ui.forms.events.ExpansionEvent;
@@ -45,7 +47,8 @@ import de.uniol.inf.is.odysseus.rcp.dashboard.canvas.colorspace.RGB;
 
 /**
  * @author Christian Kuka <christian@kuka.cc>
- * @version $Id$
+ * @version $Id: LiquidGaugeConfigurer.java | Sat Apr 11 02:17:02 2015 +0000 |
+ *          ckuka $
  *
  */
 public class LiquidGaugeConfigurer extends AbstractDashboardPartConfigurer<LiquidGaugeDashboardPart> {
@@ -187,7 +190,7 @@ public class LiquidGaugeConfigurer extends AbstractDashboardPartConfigurer<Liqui
         }
         {// Colors
             final Section section = toolkit.createSection(composite, Section.DESCRIPTION | ExpandableComposite.TITLE_BAR | ExpandableComposite.TWISTIE | ExpandableComposite.EXPANDED);
-            section.setText("Size and Color");
+            section.setText("Appearance");
             section.addExpansionListener(new ExpansionAdapter() {
                 @Override
                 public void expansionStateChanged(final ExpansionEvent e) {
@@ -205,7 +208,7 @@ public class LiquidGaugeConfigurer extends AbstractDashboardPartConfigurer<Liqui
                 @SuppressWarnings("boxing")
                 final Text backgroundColorText = toolkit.createText(group, String.format("%s,%s,%s", (int) backgroundColor.R, (int) backgroundColor.G, (int) backgroundColor.B));
                 backgroundColorText
-                .setBackground(new Color(group.getShell().getDisplay(), new org.eclipse.swt.graphics.RGB((int) backgroundColor.R, (int) backgroundColor.G, (int) backgroundColor.B)));
+                        .setBackground(new Color(group.getShell().getDisplay(), new org.eclipse.swt.graphics.RGB((int) backgroundColor.R, (int) backgroundColor.G, (int) backgroundColor.B)));
                 backgroundColorText.setEditable(false);
                 final Button backgroundColorButton = toolkit.createButton(group, "..", SWT.PUSH | SWT.BORDER);
                 backgroundColorButton.addSelectionListener(new SelectionAdapter() {
@@ -246,6 +249,25 @@ public class LiquidGaugeConfigurer extends AbstractDashboardPartConfigurer<Liqui
                         liquidColorText.setText(selectedColor.red + "," + selectedColor.green + "," + selectedColor.blue);
                         liquidColorText.setBackground(new Color(group.getShell().getDisplay(), selectedColor));
                         LiquidGaugeConfigurer.this.getDashboardPart().setLiquidColor(new RGB(selectedColor.red, selectedColor.green, selectedColor.blue));
+                    }
+                });
+            }
+            {// Font
+                toolkit.createLabel(group, "Font");
+                final Text fontNameText = toolkit.createText(group, this.getDashboardPart().getFont());
+                fontNameText.setEditable(false);
+                final Button fontNameButton = toolkit.createButton(group, "..", SWT.PUSH | SWT.BORDER);
+                fontNameButton.addSelectionListener(new SelectionAdapter() {
+                    @Override
+                    public void widgetSelected(final SelectionEvent e) {
+                        final FontDialog dialog = new FontDialog(group.getShell());
+                        dialog.setText("Select Font");
+                        final FontData selectedFont = dialog.open();
+                        if (selectedFont == null) {
+                            return;
+                        }
+                        fontNameText.setText(selectedFont.name);
+                        LiquidGaugeConfigurer.this.getDashboardPart().setFont(selectedFont.name);
                     }
                 });
             }

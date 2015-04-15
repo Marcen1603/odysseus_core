@@ -26,7 +26,8 @@ import de.uniol.inf.is.odysseus.rcp.dashboard.canvas.colorspace.RGB;
 
 /**
  * @author Christian Kuka <christian@kuka.cc>
- * @version $Id$
+ * @version $Id: Base3DWheelDashboardPart.java | Sat Apr 11 02:17:02 2015 +0000
+ *          | ckuka $
  *
  */
 public class Base3DWheelDashboardPart extends Abstract3DWheelDashboardPart {
@@ -37,7 +38,7 @@ public class Base3DWheelDashboardPart extends Abstract3DWheelDashboardPart {
     @Override
     public void doPaintZ(final Number z) {
         // Keep it empty
-        drawTree(1f, 1.5f, 2, 100, 100, RGB.BLACK);
+        this.drawTree(1f, 1.5f, 2, 100, 100, RGB.BLACK);
     }
 
     public static void main(final String[] args) {

@@ -20,7 +20,8 @@ import org.eclipse.ui.forms.widgets.ScrolledForm;
 
 /**
  * @author Christian Kuka <christian@kuka.cc>
- * @version $Id$
+ * @version $Id: BaseWheelConfigurer.java | Fri Apr 10 23:28:57 2015 +0000 |
+ *          ckuka $
  *
  */
 public class BaseWheelConfigurer extends AbstractWheelDashboardPartConfigurer<BaseWheelDashboardPart> {
