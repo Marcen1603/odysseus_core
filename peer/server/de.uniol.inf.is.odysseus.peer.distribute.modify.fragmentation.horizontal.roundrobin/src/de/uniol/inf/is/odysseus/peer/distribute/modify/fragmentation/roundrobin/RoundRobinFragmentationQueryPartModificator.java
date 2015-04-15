@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.horizontal.roundrobin;
+package de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.roundrobin;
 
 import com.google.common.base.Preconditions;
 
@@ -23,7 +23,7 @@ import de.uniol.inf.is.odysseus.server.fragmentation.horizontal.logicaloperator.
  * 
  * @author Michael Brand
  */
-public class RoundRobinHorizontalFragmentationQueryPartModificator extends
+public class RoundRobinFragmentationQueryPartModificator extends
 		HorizontalFragmentationQueryPartModificator {
 
 	@Override

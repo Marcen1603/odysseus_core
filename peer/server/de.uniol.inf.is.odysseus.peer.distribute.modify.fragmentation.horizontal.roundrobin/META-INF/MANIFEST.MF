@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Roundrobin
-Bundle-SymbolicName: de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.horizontal.roundrobin
+Bundle-SymbolicName: de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.roundrobin
 Bundle-Version: 1.0.0.qualifier
 Bundle-Vendor: Michael Brand
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
@@ -14,7 +14,7 @@ Require-Bundle: de.uniol.inf.is.odysseus.core;bundle-version="1.0.0",
  de.uniol.inf.is.odysseus.ruleengine;bundle-version="1.0.0",
  de.uniol.inf.is.odysseus.transform;bundle-version="1.0.0",
  Jxta_2.6_Source;bundle-version="1.0.0"
-Service-Component: OSGI-INF/RoundRobinHorizontalFragmentationQueryPartModificator.xml,OSGI-INF/AggregateRoundRobinHorizontalFragmentationRule.xml,OSGI-INF/RelationalFastMedianRoundRobinHorizontalFragmentationRule.xml,OSGI-INF/StateMapRoundRobinHorizontalFragmentationRule.xml,OSGI-INF/TupleAggregateRoundRobinHorizontalFragmentationRule.xml,
- OSGI-INF/AssociativeStorageRoundRobinHorizontalFragmentationRule.xml
+Service-Component: OSGI-INF/RoundRobinFragmentationQueryPartModificator.xml,OSGI-INF/AggregateRoundRobinFragmentationRule.xml,OSGI-INF/RelationalFastMedianRoundRobinFragmentationRule.xml,OSGI-INF/StateMapRoundRobinFragmentationRule.xml,OSGI-INF/TupleAggregateRoundRobinFragmentationRule.xml,
+ OSGI-INF/AssociativeStorageRoundRobinFragmentationRule.xml
 Import-Package: de.uniol.inf.is.odysseus.relational_interval.logicaloperator,
  de.uniol.inf.is.odysseus.server.fragmentation.horizontal.logicaloperator

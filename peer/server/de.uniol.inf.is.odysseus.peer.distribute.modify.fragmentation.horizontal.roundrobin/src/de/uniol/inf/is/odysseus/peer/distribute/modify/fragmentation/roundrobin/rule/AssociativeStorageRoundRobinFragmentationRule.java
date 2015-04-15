@@ -1,11 +1,11 @@
-package de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.horizontal.roundrobin.rule;
+package de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.roundrobin.rule;
 
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AssociativeStorageAO;
 import de.uniol.inf.is.odysseus.peer.distribute.ILogicalQueryPart;
 import de.uniol.inf.is.odysseus.peer.distribute.QueryPartModificationException;
 import de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.AbstractFragmentationParameterHelper;
 import de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.FragmentationInfoBundle;
-import de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.horizontal.roundrobin.RoundRobinHorizontalFragmentationQueryPartModificator;
+import de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.roundrobin.RoundRobinFragmentationQueryPartModificator;
 import de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.rule.IFragmentationRule;
 
 /**
@@ -15,13 +15,13 @@ import de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.rule.IFragm
  * @author Michael Brand
  *
  */
-public class AssociativeStorageRoundRobinHorizontalFragmentationRule
+public class AssociativeStorageRoundRobinFragmentationRule
 		implements
-		IFragmentationRule<RoundRobinHorizontalFragmentationQueryPartModificator, AssociativeStorageAO> {
+		IFragmentationRule<RoundRobinFragmentationQueryPartModificator, AssociativeStorageAO> {
 
 	@Override
 	public boolean canOperatorBePartOfFragments(
-			RoundRobinHorizontalFragmentationQueryPartModificator strategy,
+			RoundRobinFragmentationQueryPartModificator strategy,
 			AssociativeStorageAO operator,
 			AbstractFragmentationParameterHelper helper) {
 
@@ -50,9 +50,9 @@ public class AssociativeStorageRoundRobinHorizontalFragmentationRule
 	}
 
 	@Override
-	public Class<RoundRobinHorizontalFragmentationQueryPartModificator> getStrategyClass() {
+	public Class<RoundRobinFragmentationQueryPartModificator> getStrategyClass() {
 
-		return RoundRobinHorizontalFragmentationQueryPartModificator.class;
+		return RoundRobinFragmentationQueryPartModificator.class;
 
 	}
 
