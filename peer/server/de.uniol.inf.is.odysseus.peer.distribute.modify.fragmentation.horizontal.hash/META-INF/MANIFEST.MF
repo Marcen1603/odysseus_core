@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Hash Fragmentation
-Bundle-SymbolicName: de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.horizontal.hash
+Bundle-SymbolicName: de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.hash
 Bundle-Version: 1.0.0.qualifier
 Bundle-Vendor: Michael Brand
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
@@ -14,7 +14,7 @@ Require-Bundle: de.uniol.inf.is.odysseus.core;bundle-version="1.0.0",
  de.uniol.inf.is.odysseus.ruleengine;bundle-version="1.0.0",
  de.uniol.inf.is.odysseus.transform;bundle-version="1.0.0",
  Jxta_2.6_Source;bundle-version="1.0.0"
-Service-Component: OSGI-INF/HashHorizontalFragmentationQueryPartModificator.xml,OSGI-INF/AggregateHashHorizontalFragmentationRule.xml,OSGI-INF/RelationalFastMedianHashHorizontalFragmentationRule.xml,OSGI-INF/StateMapHashHorizontalFragmentationRule.xml,OSGI-INF/TupleAggregateHashHorizontalFragmentationRule.xml,
- OSGI-INF/AssociativeStorageHashHorizontalFragmentationRule.xml
+Service-Component: OSGI-INF/HashFragmentationQueryPartModificator.xml,OSGI-INF/AggregateHashFragmentationRule.xml,OSGI-INF/RelationalFastMedianHashFragmentationRule.xml,OSGI-INF/StateMapHashFragmentationRule.xml,OSGI-INF/TupleAggregateHashFragmentationRule.xml,
+ OSGI-INF/AssociativeStorageHashFragmentationRule.xml
 Import-Package: de.uniol.inf.is.odysseus.relational_interval.logicaloperator,
  de.uniol.inf.is.odysseus.server.fragmentation.horizontal.logicaloperator

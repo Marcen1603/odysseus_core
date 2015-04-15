@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.horizontal.hash.rule;
+package de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.hash.rule;
 
 import java.util.Collection;
 import java.util.List;
@@ -12,8 +12,8 @@ import de.uniol.inf.is.odysseus.peer.distribute.ILogicalQueryPart;
 import de.uniol.inf.is.odysseus.peer.distribute.QueryPartModificationException;
 import de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.AbstractFragmentationParameterHelper;
 import de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.FragmentationInfoBundle;
-import de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.horizontal.hash.HashHorizontalFragmentationParameterHelper;
-import de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.horizontal.hash.HashHorizontalFragmentationQueryPartModificator;
+import de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.hash.HashFragmentationParameterHelper;
+import de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.hash.HashFragmentationQueryPartModificator;
 import de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.rule.IFragmentationRule;
 
 /**
@@ -23,13 +23,13 @@ import de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.rule.IFragm
  * @author Michael Brand
  *
  */
-public class AssociativeStorageHashHorizontalFragmentationRule
+public class AssociativeStorageHashFragmentationRule
 		implements
-		IFragmentationRule<HashHorizontalFragmentationQueryPartModificator, AssociativeStorageAO> {
+		IFragmentationRule<HashFragmentationQueryPartModificator, AssociativeStorageAO> {
 
 	@Override
 	public boolean canOperatorBePartOfFragments(
-			HashHorizontalFragmentationQueryPartModificator strategy,
+			HashFragmentationQueryPartModificator strategy,
 			AssociativeStorageAO operator,
 			AbstractFragmentationParameterHelper helper) {
 
@@ -43,10 +43,10 @@ public class AssociativeStorageHashHorizontalFragmentationRule
 			AbstractFragmentationParameterHelper helper) {
 
 		Preconditions.checkArgument(
-				helper instanceof HashHorizontalFragmentationParameterHelper,
+				helper instanceof HashFragmentationParameterHelper,
 				"Fragmentation helper must be a HashFragmentationHelper");
 
-		Optional<List<String>> attributes = ((HashHorizontalFragmentationParameterHelper) helper)
+		Optional<List<String>> attributes = ((HashFragmentationParameterHelper) helper)
 				.determineKeyAttributes();
 		if (!attributes.isPresent()) {
 
@@ -82,9 +82,9 @@ public class AssociativeStorageHashHorizontalFragmentationRule
 	}
 
 	@Override
-	public Class<HashHorizontalFragmentationQueryPartModificator> getStrategyClass() {
+	public Class<HashFragmentationQueryPartModificator> getStrategyClass() {
 
-		return HashHorizontalFragmentationQueryPartModificator.class;
+		return HashFragmentationQueryPartModificator.class;
 
 	}
 

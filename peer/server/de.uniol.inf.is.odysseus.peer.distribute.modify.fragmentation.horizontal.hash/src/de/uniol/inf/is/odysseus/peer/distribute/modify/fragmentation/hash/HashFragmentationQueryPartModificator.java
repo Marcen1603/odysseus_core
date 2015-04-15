@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.horizontal.hash;
+package de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.hash;
 
 import java.util.List;
 
@@ -28,7 +28,7 @@ import de.uniol.inf.is.odysseus.server.fragmentation.horizontal.logicaloperator.
  * 
  * @author Michael Brand
  */
-public class HashHorizontalFragmentationQueryPartModificator extends
+public class HashFragmentationQueryPartModificator extends
 		HorizontalFragmentationQueryPartModificator {
 
 	@Override
@@ -42,7 +42,7 @@ public class HashHorizontalFragmentationQueryPartModificator extends
 	protected AbstractFragmentationParameterHelper createFragmentationHelper(
 			List<String> fragmentationParameters) {
 
-		return new HashHorizontalFragmentationParameterHelper(fragmentationParameters);
+		return new HashFragmentationParameterHelper(fragmentationParameters);
 
 	}
 
@@ -53,11 +53,11 @@ public class HashHorizontalFragmentationQueryPartModificator extends
 		Preconditions.checkNotNull(helper,
 				"Fragmentation helper must be not null!");
 		Preconditions.checkArgument(
-				helper instanceof HashHorizontalFragmentationParameterHelper,
+				helper instanceof HashFragmentationParameterHelper,
 				"The fragmentation helper must be a HashFragmentationHelper!");
 
-		HashHorizontalFragmentationInfoBundle bundle = new HashHorizontalFragmentationInfoBundle();
-		bundle.setKeyAttributes(((HashHorizontalFragmentationParameterHelper) helper)
+		HashFrragmentationInfoBundle bundle = new HashFrragmentationInfoBundle();
+		bundle.setKeyAttributes(((HashFragmentationParameterHelper) helper)
 				.determineKeyAttributes());
 		return bundle;
 
@@ -72,7 +72,7 @@ public class HashHorizontalFragmentationQueryPartModificator extends
 				"Fragmentation info bundle must be not null!");
 		Preconditions
 				.checkArgument(
-						bundle instanceof HashHorizontalFragmentationInfoBundle,
+						bundle instanceof HashFrragmentationInfoBundle,
 						"The fragmentation info bundle must be a HashFragmentationInfoBundle!");
 		if (numFragments < 1) {
 
@@ -81,7 +81,7 @@ public class HashHorizontalFragmentationQueryPartModificator extends
 
 		}
 
-		Optional<List<String>> attributes = ((HashHorizontalFragmentationInfoBundle) bundle)
+		Optional<List<String>> attributes = ((HashFrragmentationInfoBundle) bundle)
 				.getKeyAttributes();
 
 		HashFragmentAO fragmentAO = new HashFragmentAO();

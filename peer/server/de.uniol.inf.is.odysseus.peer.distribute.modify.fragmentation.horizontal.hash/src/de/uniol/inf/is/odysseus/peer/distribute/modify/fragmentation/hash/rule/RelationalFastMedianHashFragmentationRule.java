@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.horizontal.hash.rule;
+package de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.hash.rule;
 
 import java.util.Collection;
 import java.util.List;
@@ -9,8 +9,8 @@ import com.google.common.base.Preconditions;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.peer.distribute.ILogicalQueryPart;
 import de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.AbstractFragmentationParameterHelper;
-import de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.horizontal.hash.HashHorizontalFragmentationParameterHelper;
-import de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.horizontal.hash.HashHorizontalFragmentationQueryPartModificator;
+import de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.hash.HashFragmentationParameterHelper;
+import de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.hash.HashFragmentationQueryPartModificator;
 import de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.horizontal.rule.RelationalFastMedianHorizontalFragmentationRule;
 import de.uniol.inf.is.odysseus.relational_interval.logicaloperator.RelationalFastMedianAO;
 
@@ -21,13 +21,13 @@ import de.uniol.inf.is.odysseus.relational_interval.logicaloperator.RelationalFa
  * @author Michael Brand
  * 
  */
-public class RelationalFastMedianHashHorizontalFragmentationRule
+public class RelationalFastMedianHashFragmentationRule
 		extends
-		RelationalFastMedianHorizontalFragmentationRule<HashHorizontalFragmentationQueryPartModificator> {
+		RelationalFastMedianHorizontalFragmentationRule<HashFragmentationQueryPartModificator> {
 
 	@Override
 	public boolean canOperatorBePartOfFragments(
-			HashHorizontalFragmentationQueryPartModificator strategy,
+			HashFragmentationQueryPartModificator strategy,
 			RelationalFastMedianAO operator, AbstractFragmentationParameterHelper helper) {
 
 		return !this.needSpecialHandlingForQueryPart(null, operator, helper);
@@ -39,10 +39,10 @@ public class RelationalFastMedianHashHorizontalFragmentationRule
 			RelationalFastMedianAO operator, AbstractFragmentationParameterHelper helper) {
 
 		Preconditions.checkArgument(
-				helper instanceof HashHorizontalFragmentationParameterHelper,
+				helper instanceof HashFragmentationParameterHelper,
 				"Fragmentation helper must be a HashFragmentationHelper");
 
-		Optional<List<String>> attributes = ((HashHorizontalFragmentationParameterHelper) helper)
+		Optional<List<String>> attributes = ((HashFragmentationParameterHelper) helper)
 				.determineKeyAttributes();
 		if (!attributes.isPresent()) {
 
@@ -69,9 +69,9 @@ public class RelationalFastMedianHashHorizontalFragmentationRule
 	}
 
 	@Override
-	public Class<HashHorizontalFragmentationQueryPartModificator> getStrategyClass() {
+	public Class<HashFragmentationQueryPartModificator> getStrategyClass() {
 
-		return HashHorizontalFragmentationQueryPartModificator.class;
+		return HashFragmentationQueryPartModificator.class;
 
 	}
 

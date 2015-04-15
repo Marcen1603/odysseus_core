@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.horizontal.hash;
+package de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.hash;
 
 import java.util.List;
 
@@ -12,7 +12,7 @@ import de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.Fragmentati
  * 
  * @author Michael Brand
  */
-public class HashHorizontalFragmentationInfoBundle extends
+public class HashFrragmentationInfoBundle extends
 		FragmentationInfoBundle {
 	
 	/**

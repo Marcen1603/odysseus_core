@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.horizontal.hash;
+package de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.hash;
 
 import java.util.List;
 
@@ -15,14 +15,14 @@ import de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.horizontal.
  * 
  * @author Michael Brand
  */
-public class HashHorizontalFragmentationParameterHelper extends
+public class HashFragmentationParameterHelper extends
 		HorizontalFragmentationParameterHelper {
 
 	/**
 	 * The logger for this class.
 	 */
 	private static final Logger LOG = LoggerFactory
-			.getLogger(HashHorizontalFragmentationParameterHelper.class);
+			.getLogger(HashFragmentationParameterHelper.class);
 
 	/**
 	 * The index of the parameter identifying the first attribute to build a
@@ -38,7 +38,7 @@ public class HashHorizontalFragmentationParameterHelper extends
 	 * @param strategy
 	 *            The fragmentation strategy.
 	 */
-	public HashHorizontalFragmentationParameterHelper(
+	public HashFragmentationParameterHelper(
 			List<String> fragmentationParameters) {
 
 		super(fragmentationParameters);
@@ -53,9 +53,9 @@ public class HashHorizontalFragmentationParameterHelper extends
 	 */
 	public Optional<List<String>> determineKeyAttributes() {
 
-		if (this.mFragmentationParameters.size() <= HashHorizontalFragmentationParameterHelper.PARAMETER_INDEX_FIRST_HASHKEY_ATTRIBUTE) {
+		if (this.mFragmentationParameters.size() <= HashFragmentationParameterHelper.PARAMETER_INDEX_FIRST_HASHKEY_ATTRIBUTE) {
 
-			HashHorizontalFragmentationParameterHelper.LOG
+			HashFragmentationParameterHelper.LOG
 					.debug("Found no attributes to form a key.");
 			return Optional.absent();
 
@@ -64,9 +64,9 @@ public class HashHorizontalFragmentationParameterHelper extends
 		List<String> attributes = Lists
 				.newArrayList(this.mFragmentationParameters
 						.subList(
-								HashHorizontalFragmentationParameterHelper.PARAMETER_INDEX_FIRST_HASHKEY_ATTRIBUTE,
+								HashFragmentationParameterHelper.PARAMETER_INDEX_FIRST_HASHKEY_ATTRIBUTE,
 								this.mFragmentationParameters.size()));
-		HashHorizontalFragmentationParameterHelper.LOG.debug("Found '" + attributes
+		HashFragmentationParameterHelper.LOG.debug("Found '" + attributes
 				+ "' as attributes to form a key.");
 		return Optional.of(attributes);
 

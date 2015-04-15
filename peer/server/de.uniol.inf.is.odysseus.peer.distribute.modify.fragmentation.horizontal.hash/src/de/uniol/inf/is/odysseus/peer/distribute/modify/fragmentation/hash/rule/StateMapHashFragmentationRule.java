@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.horizontal.hash.rule;
+package de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.hash.rule;
 
 import java.util.Collection;
 import java.util.List;
@@ -10,8 +10,8 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.StateMapAO;
 import de.uniol.inf.is.odysseus.peer.distribute.ILogicalQueryPart;
 import de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.AbstractFragmentationParameterHelper;
-import de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.horizontal.hash.HashHorizontalFragmentationParameterHelper;
-import de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.horizontal.hash.HashHorizontalFragmentationQueryPartModificator;
+import de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.hash.HashFragmentationParameterHelper;
+import de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.hash.HashFragmentationQueryPartModificator;
 import de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.horizontal.rule.StateMapHorizontalFragmentationRule;
 
 /**
@@ -21,13 +21,13 @@ import de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.horizontal.
  * @author Michael Brand
  * 
  */
-public class StateMapHashHorizontalFragmentationRule
+public class StateMapHashFragmentationRule
 		extends
-		StateMapHorizontalFragmentationRule<HashHorizontalFragmentationQueryPartModificator> {
+		StateMapHorizontalFragmentationRule<HashFragmentationQueryPartModificator> {
 
 	@Override
 	public boolean canOperatorBePartOfFragments(
-			HashHorizontalFragmentationQueryPartModificator strategy,
+			HashFragmentationQueryPartModificator strategy,
 			StateMapAO operator, AbstractFragmentationParameterHelper helper) {
 
 		return !this.needSpecialHandlingForQueryPart(null, operator, helper);
@@ -39,10 +39,10 @@ public class StateMapHashHorizontalFragmentationRule
 			StateMapAO operator, AbstractFragmentationParameterHelper helper) {
 
 		Preconditions.checkArgument(
-				helper instanceof HashHorizontalFragmentationParameterHelper,
+				helper instanceof HashFragmentationParameterHelper,
 				"Fragmentation helper must be a HashFragmentationHelper");
 
-		Optional<List<String>> attributes = ((HashHorizontalFragmentationParameterHelper) helper)
+		Optional<List<String>> attributes = ((HashFragmentationParameterHelper) helper)
 				.determineKeyAttributes();
 		if (!attributes.isPresent()) {
 
@@ -69,9 +69,9 @@ public class StateMapHashHorizontalFragmentationRule
 	}
 
 	@Override
-	public Class<HashHorizontalFragmentationQueryPartModificator> getStrategyClass() {
+	public Class<HashFragmentationQueryPartModificator> getStrategyClass() {
 
-		return HashHorizontalFragmentationQueryPartModificator.class;
+		return HashFragmentationQueryPartModificator.class;
 
 	}
 

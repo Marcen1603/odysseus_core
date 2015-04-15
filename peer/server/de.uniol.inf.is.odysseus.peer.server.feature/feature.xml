@@ -72,7 +72,7 @@ Unless required by applicable law or agreed to in writing, software
          unpack="false"/>
 
    <plugin
-         id="de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.horizontal.hash"
+         id="de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.hash"
          download-size="0"
          install-size="0"
          version="0.0.0"

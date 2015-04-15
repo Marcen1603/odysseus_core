@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.horizontal.hash.rule;
+package de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.hash.rule;
 
 import java.util.List;
 
@@ -9,8 +9,8 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TupleAggregateAO;
 import de.uniol.inf.is.odysseus.peer.distribute.ILogicalQueryPart;
 import de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.AbstractFragmentationParameterHelper;
-import de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.horizontal.hash.HashHorizontalFragmentationParameterHelper;
-import de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.horizontal.hash.HashHorizontalFragmentationQueryPartModificator;
+import de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.hash.HashFragmentationParameterHelper;
+import de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.hash.HashFragmentationQueryPartModificator;
 import de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.horizontal.rule.TupleAggregateHorizontalFragmentationRule;
 
 /**
@@ -20,13 +20,13 @@ import de.uniol.inf.is.odysseus.peer.distribute.modify.fragmentation.horizontal.
  * @author Michael Brand
  *
  */
-public class TupleAggregateHashHorizontalFragmentationRule
+public class TupleAggregateHashFragmentationRule
 		extends
-		TupleAggregateHorizontalFragmentationRule<HashHorizontalFragmentationQueryPartModificator> {
+		TupleAggregateHorizontalFragmentationRule<HashFragmentationQueryPartModificator> {
 
 	@Override
 	public boolean canOperatorBePartOfFragments(
-			HashHorizontalFragmentationQueryPartModificator strategy,
+			HashFragmentationQueryPartModificator strategy,
 			TupleAggregateAO operator, AbstractFragmentationParameterHelper helper) {
 
 		return !this.needSpecialHandlingForQueryPart(null, operator, helper);
@@ -38,10 +38,10 @@ public class TupleAggregateHashHorizontalFragmentationRule
 			TupleAggregateAO operator, AbstractFragmentationParameterHelper helper) {
 
 		Preconditions.checkArgument(
-				helper instanceof HashHorizontalFragmentationParameterHelper,
+				helper instanceof HashFragmentationParameterHelper,
 				"Fragmentation helper must be a HashFragmentationHelper");
 
-		Optional<List<String>> attributes = ((HashHorizontalFragmentationParameterHelper) helper)
+		Optional<List<String>> attributes = ((HashFragmentationParameterHelper) helper)
 				.determineKeyAttributes();
 		if (!attributes.isPresent()) {
 
@@ -57,9 +57,9 @@ public class TupleAggregateHashHorizontalFragmentationRule
 	}
 
 	@Override
-	public Class<HashHorizontalFragmentationQueryPartModificator> getStrategyClass() {
+	public Class<HashFragmentationQueryPartModificator> getStrategyClass() {
 
-		return HashHorizontalFragmentationQueryPartModificator.class;
+		return HashFragmentationQueryPartModificator.class;
 
 	}
 
