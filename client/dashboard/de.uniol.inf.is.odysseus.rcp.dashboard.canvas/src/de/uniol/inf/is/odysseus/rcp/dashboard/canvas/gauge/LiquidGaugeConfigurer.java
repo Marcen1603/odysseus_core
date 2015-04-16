@@ -266,7 +266,7 @@ public class LiquidGaugeConfigurer extends AbstractDashboardPartConfigurer<Liqui
                         if (selectedFont == null) {
                             return;
                         }
-                        fontNameText.setText(selectedFont.name);
+                        fontNameText.setText(selectedFont.getName());
                         LiquidGaugeConfigurer.this.getDashboardPart().setFont(selectedFont.name);
                     }
                 });

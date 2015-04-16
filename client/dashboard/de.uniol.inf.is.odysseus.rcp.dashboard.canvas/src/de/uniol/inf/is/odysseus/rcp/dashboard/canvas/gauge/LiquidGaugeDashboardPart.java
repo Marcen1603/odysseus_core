@@ -287,7 +287,7 @@ public class LiquidGaugeDashboardPart extends AbstractCanvasDashboardPart {
         shell.setSize(500, 500);
 
         shell.open();
-        final LiquidGaugeDashboardPart compass = new LiquidGaugeDashboardPart();
+        final LiquidGaugeDashboardPart liquidGauge = new LiquidGaugeDashboardPart();
         final Thread generator = new Thread() {
             /**
              * {@inheritDoc}
@@ -303,7 +303,7 @@ public class LiquidGaugeDashboardPart extends AbstractCanvasDashboardPart {
                     tuple.setAttribute(0, i);
                     tuple.setAttribute(1, rnd.nextDouble() * 100);
                     tuple.setAttribute(2, rnd.nextDouble() * 1000);
-                    compass.streamElementRecieved(null, tuple, 0);
+                    liquidGauge.streamElementRecieved(null, tuple, 0);
                     i++;
                     if (i > 100) {
                         i = 0;
@@ -317,7 +317,7 @@ public class LiquidGaugeDashboardPart extends AbstractCanvasDashboardPart {
                 }
             }
         };
-        compass.createPartControl(shell, null);
+        liquidGauge.createPartControl(shell, null);
         generator.start();
         while (!shell.isDisposed()) {
             if (!display.readAndDispatch()) {
