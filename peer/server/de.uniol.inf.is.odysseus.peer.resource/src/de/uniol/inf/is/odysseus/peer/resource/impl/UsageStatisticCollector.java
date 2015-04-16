@@ -115,7 +115,7 @@ public class UsageStatisticCollector {
 		
 		String[] versionStringParts = versionString.split("\\.");
 		if( versionStringParts.length != 4 ) {
-			LOG.error("Could not determine version digits from version string '{}'", versionString);
+			LOG.warn("Could not determine version digits from version string '{}'", versionString);
 			return new int[] { 0, 0, 0, 0};			
 		}
 			

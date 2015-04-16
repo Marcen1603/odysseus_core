@@ -232,6 +232,10 @@ public class JxtaServicesProvider implements IJxtaServicesProvider {
 	@Override
 	public Collection<PeerAdvertisement> getPeerAdvertisements() {
 		try {
+			if( discoveryService == null ) {
+				return Lists.newArrayList();
+			}
+			
 			return toPeerAdvCollection(discoveryService.getLocalAdvertisements(DiscoveryService.PEER, null, null));
 		} catch (IOException e) {
 			LOG.error("Could not get peer advertisements", e);
