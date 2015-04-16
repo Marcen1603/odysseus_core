@@ -666,10 +666,10 @@ public class VoronoiDashboardPart extends AbstractCanvasDashboardPart {
             }
 
         }
-        this.setMinY((this.getMinY() + minY) / 2.0);
-        this.setMaxY((this.getMaxY() + maxY) / 2.0);
-        this.setMinX((this.getMinX() + minX) / 2.0);
-        this.setMaxX((this.getMaxX() + maxX) / 2.0);
+        this.setMinY(minY);
+        this.setMaxY(maxY);
+        this.setMinX(minX);
+        this.setMaxX(maxX);
     }
 
     @SuppressWarnings("static-method")

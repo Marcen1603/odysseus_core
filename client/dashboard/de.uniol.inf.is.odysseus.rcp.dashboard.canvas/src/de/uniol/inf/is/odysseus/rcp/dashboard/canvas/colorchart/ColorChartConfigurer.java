@@ -321,7 +321,7 @@ public class ColorChartConfigurer extends AbstractDashboardPartConfigurer<ColorC
         }
         {// Colors
             final Section section = toolkit.createSection(composite, Section.DESCRIPTION | ExpandableComposite.TITLE_BAR | ExpandableComposite.TWISTIE | ExpandableComposite.EXPANDED);
-            section.setText("Size and Color");
+            section.setText("Appearance");
             section.addExpansionListener(new ExpansionAdapter() {
                 @Override
                 public void expansionStateChanged(final ExpansionEvent e) {

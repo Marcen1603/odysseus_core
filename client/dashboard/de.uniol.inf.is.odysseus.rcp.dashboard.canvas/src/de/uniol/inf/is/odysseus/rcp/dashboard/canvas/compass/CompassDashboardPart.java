@@ -131,9 +131,8 @@ public class CompassDashboardPart extends AbstractCanvasDashboardPart {
             }
 
         }
-        this.setMin((this.getMin() + min) / 2.0);
-        this.setMax((this.getMax() + max) / 2.0);
-
+        this.setMin(min);
+        this.setMax(max);
     }
 
     @SuppressWarnings("static-method")

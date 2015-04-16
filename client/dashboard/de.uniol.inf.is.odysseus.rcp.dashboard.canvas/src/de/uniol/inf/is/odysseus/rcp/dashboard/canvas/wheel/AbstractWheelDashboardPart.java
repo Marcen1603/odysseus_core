@@ -153,13 +153,12 @@ public abstract class AbstractWheelDashboardPart extends AbstractCanvasDashboard
                 minZ = z;
             }
         }
-        this.setMinY((this.getMinY() + minY) / 2.0);
-        this.setMaxY((this.getMaxY() + maxY) / 2.0);
-        this.setMinX((this.getMinX() + minX) / 2.0);
-        this.setMaxX((this.getMaxX() + maxX) / 2.0);
-        this.setMinZ((this.getMinZ() + minZ) / 2.0);
-        this.setMaxZ((this.getMaxZ() + maxZ) / 2.0);
-
+        this.setMinY(minY);
+        this.setMaxY(maxY);
+        this.setMinX(minX);
+        this.setMaxX(maxX);
+        this.setMinZ(minZ);
+        this.setMaxZ(maxZ);
     }
 
     @SuppressWarnings("static-method")
