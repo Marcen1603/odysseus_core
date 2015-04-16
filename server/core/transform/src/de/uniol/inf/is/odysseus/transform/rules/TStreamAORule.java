@@ -28,6 +28,8 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.StreamAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.ITransformation;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationException;
+import de.uniol.inf.is.odysseus.core.server.util.ClearPhysicalSubscriptionsLogicalGraphVisitor;
+import de.uniol.inf.is.odysseus.core.server.util.GenericGraphWalker;
 import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.engine.TransformationExecutor;
@@ -65,13 +67,15 @@ public class TStreamAORule extends AbstractTransformationRule<StreamAO> {
 			if (logicalPlan == null){
 				throw new TransformationException("Could not find a logical plan for "+name);
 			}
+			
 			// start a new sub-transformation
 			ITransformation transformation = new TransformationExecutor();
 			LOG.trace("Translation of "+name);
 			ArrayList<IPhysicalOperator> roots = transformation.transform(logicalPlan, transformConfig, getCaller(), getDataDictionary());
 			// we don't need the subscriptions anymore
 			LOG.trace("Clear physical subscriptions");
-			logicalPlan.clearPhysicalSubscriptions();
+			removePhysicalSubscriptions(logicalPlan);
+			
 			// get the first root, since this is the physical operator for the
 			// passed plan
 			// and this will be the connection to the current plan.
@@ -100,6 +104,15 @@ public class TStreamAORule extends AbstractTransformationRule<StreamAO> {
 		defaultExecute(operator, po, transformConfig, true, true, false);
 		// po.setName(operator.getStreamname());
 
+	}
+
+	@SuppressWarnings("unchecked")
+	private ILogicalOperator removePhysicalSubscriptions(ILogicalOperator stream) {
+		ClearPhysicalSubscriptionsLogicalGraphVisitor<ILogicalOperator> copyVisitor = new ClearPhysicalSubscriptionsLogicalGraphVisitor<ILogicalOperator>();
+		@SuppressWarnings("rawtypes")
+		GenericGraphWalker walker = new GenericGraphWalker();
+		walker.prefixWalk(stream, copyVisitor);
+		return stream;
 	}
 
 	@Override
