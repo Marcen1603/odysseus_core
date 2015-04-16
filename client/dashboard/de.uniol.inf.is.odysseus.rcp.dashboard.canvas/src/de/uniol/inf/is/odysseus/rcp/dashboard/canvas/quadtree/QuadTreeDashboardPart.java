@@ -82,31 +82,26 @@ public class QuadTreeDashboardPart extends AbstractCanvasDashboardPart {
         }
 
         Queue<QuadTree<Double, Double>.Node> queue = new LinkedList<>();
-        Queue<CIELCH> colors = new LinkedList<>();
 
         queue.offer(tree.root);
-        colors.offer(getColor().toCIELCH());
+        CIELCH c = getColor().toCIELCH();
         while (!queue.isEmpty()) {
             QuadTree<Double, Double>.Node node = queue.poll();
             if (node != null) {
-                CIELCH c = colors.poll();
+
                 Coordinate corner = new Coordinate(node.ex1.doubleValue(), node.ey1.doubleValue());
-                this.fillRectangle(corner, (node.ex2.intValue() - node.ex1.intValue()), (node.ey2.intValue() - node.ey1.intValue()), c);
+                this.fillRectangle(corner, (node.ex2.intValue() - node.ex1.intValue()), (node.ey2.intValue() - node.ey1.intValue()), new CIELCH(c.L, c.C, c.H + node.value.doubleValue()));
                 if (node.NE != null) {
                     queue.offer(node.NE);
-                    colors.offer(new CIELCH(c.L, c.C, c.H + 120.0));
                 }
                 if (node.NW != null) {
                     queue.offer(node.NW);
-                    colors.offer(new CIELCH(c.L, c.C, c.H + 150.0));
                 }
                 if (node.SE != null) {
                     queue.offer(node.SE);
-                    colors.offer(new CIELCH(c.L, c.C, c.H + 210.0));
                 }
                 if (node.SW != null) {
                     queue.offer(node.SW);
-                    colors.offer(new CIELCH(c.L, c.C, c.H + 240.0));
                 }
             }
         }
