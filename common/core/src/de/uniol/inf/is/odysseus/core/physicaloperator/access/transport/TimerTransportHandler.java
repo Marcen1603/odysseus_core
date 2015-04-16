@@ -27,7 +27,6 @@ import de.uniol.inf.is.odysseus.core.command.Command;
 import de.uniol.inf.is.odysseus.core.command.ICommandProvider;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 
 /**
@@ -35,8 +34,9 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
  * 
  */
 public class TimerTransportHandler extends AbstractPushTransportHandler implements ICommandProvider {
-    private static final String PERIOD = "period";
-    private static final String TIMEFROMSTART = "timefromstart";
+    public static final String NAME = "Timer";
+	public static final String PERIOD = "period";
+    public static final String TIMEFROMSTART = "timefromstart";
     private Timer timer = null;
     private long period = 1000l;
     private boolean timeFromStart = true;
@@ -80,7 +80,7 @@ public class TimerTransportHandler extends AbstractPushTransportHandler implemen
      */
     @Override
     public String getName() {
-        return "Timer";
+        return NAME;
     }
 
     /**
