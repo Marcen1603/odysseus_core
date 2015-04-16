@@ -21,6 +21,8 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.collect.Maps;
+
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
@@ -51,10 +53,17 @@ public class ChangeDetectPO<R extends IStreamObject<?>> extends
 	public ChangeDetectPO() {
 	}
 
-	public ChangeDetectPO(AbstractPipe<R, R> pipe) {
-		super(pipe);
+	public ChangeDetectPO(ChangeDetectPO<R> other) {
+		super(other);
+		
+		this.lastElement = other.lastElement;
+		this.lastElements = Maps.newHashMap(other.lastElements);
+		this.heartbeatGenerationStrategy = other.heartbeatGenerationStrategy.clone();
+		this.deliverFirstElement = other.deliverFirstElement;
+		this.groupProcessor = other.groupProcessor;
+		this.suppressedElements = other.suppressedElements;
 	}
-
+	
 	@Override
 	public de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe.OutputMode getOutputMode() {
 		return OutputMode.INPUT;
@@ -122,6 +131,8 @@ public class ChangeDetectPO<R extends IStreamObject<?>> extends
 
 	@Override
 	protected void process_open() throws OpenFailedException {
+		this.lastElement = null;
+		this.suppressedElements = 0;
 		this.lastElements.clear();
 		if (groupProcessor != null) {
 			groupProcessor.init();
@@ -129,7 +140,7 @@ public class ChangeDetectPO<R extends IStreamObject<?>> extends
 	}
 
 	@Override
-	public AbstractPipe<R, R> clone() {
+	public ChangeDetectPO<R> clone() {
 		return new ChangeDetectPO<R>(this);
 	}
 
