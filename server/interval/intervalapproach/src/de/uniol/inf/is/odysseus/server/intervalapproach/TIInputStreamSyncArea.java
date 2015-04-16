@@ -144,7 +144,7 @@ public class TIInputStreamSyncArea<T extends IStreamObject<? extends ITimeInterv
 			} else {
 				getLogger().warn(
 						"Removed out of time element " + object + " from port "
-								+ inPort + " minTS = " + minTs);
+								+ inPort + " minTS = " + minTs + " "+po.getName());
 			}
 		} else {
 			getLogger().warn(
@@ -353,6 +353,11 @@ class TestClass<R extends IStreamObject<? extends ITimeInterval>> implements
 						+ event);
 			}
 		}
+	}
+	
+	@Override
+	public String getName() {
+		return "null";
 	}
 
 }

@@ -19,7 +19,8 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.Heartbeat;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 
 public interface IProcessInternal<R> {
-	public void process_internal(R event, int port);
-	public void process_punctuation_intern(IPunctuation punctuation, int port);
-	public void process_newHeartbeat(Heartbeat pointInTime);
+	void process_internal(R event, int port);
+	void process_punctuation_intern(IPunctuation punctuation, int port);
+	void process_newHeartbeat(Heartbeat pointInTime);
+	String getName();
 }
