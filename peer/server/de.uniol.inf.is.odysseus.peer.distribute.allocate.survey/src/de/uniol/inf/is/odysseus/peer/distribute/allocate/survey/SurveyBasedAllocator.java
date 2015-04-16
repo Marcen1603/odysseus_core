@@ -91,28 +91,27 @@ public class SurveyBasedAllocator implements IQueryPartAllocator {
 	}
 
 	@Override
-	public Map<ILogicalQueryPart, PeerID> allocate(Collection<ILogicalQueryPart> queryParts, ILogicalQuery query, Collection<PeerID> knownRemotePeers, PeerID localPeerID, QueryBuildConfiguration config, List<String> allocatorParameters)
-			throws QueryPartAllocationException {
+	public Map<ILogicalQueryPart, PeerID> allocate(Collection<ILogicalQueryPart> queryParts, ILogicalQuery query, Collection<PeerID> knownRemotePeers, PeerID localPeerID, QueryBuildConfiguration config, List<String> allocatorParameters) throws QueryPartAllocationException {
 		Map<ILogicalQueryPart, ILogicalQueryPart> queryPartsCopyMap = LogicalQueryHelper.copyQueryPartsDeep(queryParts);
 		List<ILogicalQueryPart> queryPartsToSurvey = Lists.newArrayList(queryPartsCopyMap.keySet());
 
 		int latencyWeight = determineLatencyWeight(allocatorParameters);
 		int bidWeight = determineBidWeight(allocatorParameters);
 		boolean isOwnBidUsed = isOwnBidUsed(allocatorParameters);
-		
+
 		Map<ILogicalQueryPart, List<PeerID>> allocationMap = allocate(queryPartsToSurvey, config, isOwnBidUsed, latencyWeight, bidWeight);
 		allocationMapResult = transformToOriginalLogicalQueryParts(allocationMap, queryPartsCopyMap);
 
 		return determineAllocationResult(allocationMapResult);
 	}
-	
+
 	@Override
 	public Map<ILogicalQueryPart, PeerID> reallocate(Map<ILogicalQueryPart, PeerID> previousAllocationMap, Collection<PeerID> faultyPeers, Collection<PeerID> knownRemotePeers, PeerID localPeerID, QueryBuildConfiguration config, List<String> allocatorParameters) throws QueryPartAllocationException {
-		for( ILogicalQueryPart queryPart : previousAllocationMap.keySet().toArray(new ILogicalQueryPart[0])) {
+		for (ILogicalQueryPart queryPart : previousAllocationMap.keySet().toArray(new ILogicalQueryPart[0])) {
 			PeerID allocatedPeer = previousAllocationMap.get(queryPart);
-			if( faultyPeers.contains(allocatedPeer)) {
-				Optional<PeerID> nextBestPeerID = determineNextBestPeerID( allocationMapResult.get(queryPart), faultyPeers);
-				if( nextBestPeerID.isPresent() ) {
+			if (faultyPeers.contains(allocatedPeer)) {
+				Optional<PeerID> nextBestPeerID = determineNextBestPeerID(allocationMapResult.get(queryPart), faultyPeers);
+				if (nextBestPeerID.isPresent()) {
 					previousAllocationMap.put(queryPart, nextBestPeerID.get());
 				} else {
 					throw new QueryPartAllocationException("Could not reallocate query part " + queryPart + " since there are no bids left");
@@ -121,10 +120,10 @@ public class SurveyBasedAllocator implements IQueryPartAllocator {
 		}
 		return previousAllocationMap;
 	}
-	
+
 	private static Optional<PeerID> determineNextBestPeerID(List<PeerID> list, Collection<PeerID> faultyPeers) {
-		for( PeerID pid : list ) {
-			if( !faultyPeers.contains(pid)) {
+		for (PeerID pid : list) {
+			if (!faultyPeers.contains(pid)) {
 				return Optional.of(pid);
 			}
 		}
@@ -133,27 +132,27 @@ public class SurveyBasedAllocator implements IQueryPartAllocator {
 
 	private static Map<ILogicalQueryPart, PeerID> determineAllocationResult(Map<ILogicalQueryPart, List<PeerID>> allocationMapParts) {
 		Map<ILogicalQueryPart, PeerID> result = Maps.newHashMap();
-		for( ILogicalQueryPart queryPart : allocationMapParts.keySet() ) {
+		for (ILogicalQueryPart queryPart : allocationMapParts.keySet()) {
 			result.put(queryPart, allocationMapParts.get(queryPart).get(0));
 		}
 		return result;
 	}
 
 	private static int determineLatencyWeight(List<String> allocatorParameters) {
-		if( allocatorParameters.size() >= 1 ) {
+		if (allocatorParameters.size() >= 1) {
 			try {
 				return Integer.valueOf(allocatorParameters.get(0));
-			} catch( Throwable t ) {
+			} catch (Throwable t) {
 			}
 		}
 		return 1;
 	}
 
 	private static int determineBidWeight(List<String> allocatorParameters) {
-		if( allocatorParameters.size() >= 2 ) {
+		if (allocatorParameters.size() >= 2) {
 			try {
 				return Integer.valueOf(allocatorParameters.get(1));
-			} catch( Throwable t ) {
+			} catch (Throwable t) {
 			}
 		}
 		return 1;
@@ -162,7 +161,7 @@ public class SurveyBasedAllocator implements IQueryPartAllocator {
 	private static boolean isOwnBidUsed(List<String> allocatorParameters) {
 		return allocatorParameters.size() < 3 || !allocatorParameters.get(2).equalsIgnoreCase("notlocal");
 	}
-	
+
 	private static Map<ILogicalQueryPart, List<PeerID>> transformToOriginalLogicalQueryParts(Map<ILogicalQueryPart, List<PeerID>> allocationMapPeerID, Map<ILogicalQueryPart, ILogicalQueryPart> queryPartsCopyMap) {
 		Map<ILogicalQueryPart, List<PeerID>> partMap = Maps.newHashMap();
 
@@ -176,14 +175,14 @@ public class SurveyBasedAllocator implements IQueryPartAllocator {
 
 	private static Map<ILogicalQueryPart, List<PeerID>> allocate(Collection<ILogicalQueryPart> queryParts, QueryBuildConfiguration transCfg, boolean ownBid, int latencyWeight, int bidWeight) throws QueryPartAllocationException {
 		QueryPartGraph partGraph = new QueryPartGraph(queryParts);
-		
+
 		Collection<ILogicalOperator> operators = Lists.newArrayList();
-		for( ILogicalQueryPart queryPart : queryParts ) {
+		for (ILogicalQueryPart queryPart : queryParts) {
 			operators.addAll(queryPart.getOperators());
 		}
-		
+
 		Map<ILogicalOperator, DetailCost> logicalOperatorEstimationMap = Helper.determineOperatorCostEstimations(operators);
-		
+
 		List<AuctionSummary> auctions = publishAuctionsForRemoteSubPlans(queryParts, logicalOperatorEstimationMap, transCfg);
 		Map<ILogicalQueryPart, List<PeerID>> destinationMap = determinePeerAssignment(auctions, partGraph, ownBid, latencyWeight, bidWeight, logicalOperatorEstimationMap);
 		return destinationMap;
@@ -223,7 +222,7 @@ public class SurveyBasedAllocator implements IQueryPartAllocator {
 			Map<ILogicalOperator, Double> dataRateMap = createDataRateMap(logicalOperatorEstimationMap);
 			ForceModel model = new ForceModel(bidPlanMap, partGraph, dataRateMap, bidWeight, latencyWeight);
 			model.run();
-			
+
 			return model.getResult();
 		} catch (QueryPartAllocationException e) {
 			throw e;
@@ -250,28 +249,30 @@ public class SurveyBasedAllocator implements IQueryPartAllocator {
 		for (AuctionSummary auction : auctions) {
 			Collection<Bid> bids = auction.getBidsFuture().get();
 
-			if( ownBid || bids.isEmpty()) {
+			if (ownBid || bids.isEmpty()) {
 				Optional<Double> bidValue;
-				if( ownBid ) {
+				if (ownBid) {
 					LOG.debug("Generating own bid because we can: {}", auction.getLogicalQueryPart());
 					bidValue = bidProvider.calculateBid(Helper.getLogicalQuery(auction.getAuctionAdvertisement().getPqlStatement()).get(0), auction.getAuctionAdvertisement().getTransCfgName());
 				} else {
 					LOG.debug("Generating own bid since there was no bids for: {}", auction.getLogicalQueryPart());
-					bidValue = Optional.of(1.0); // do not need to check cost model... we are the only one here
+					bidValue = Optional.of(1.0); // do not need to check cost
+													// model... we are the only
+													// one here
 				}
 				if (bidValue.isPresent()) {
 					bids.add(new Bid(localPeerID, bidValue.get()));
 				}
 			}
 
-			if (bids.isEmpty() ) {
+			if (bids.isEmpty()) {
 				throw new QueryPartAllocationException("Could not allocate a subplan since there are no bids for");
 			}
 
 			bidPlanMap.put(auction.getLogicalQueryPart(), bids);
 		}
-		
-		if( LOG.isDebugEnabled() ) {
+
+		if (LOG.isDebugEnabled()) {
 			printBidPlan(bidPlanMap);
 		}
 
@@ -280,9 +281,9 @@ public class SurveyBasedAllocator implements IQueryPartAllocator {
 
 	private static void printBidPlan(Map<ILogicalQueryPart, Collection<Bid>> bidPlanMap) {
 		LOG.debug("Following bids received");
-		for( ILogicalQueryPart queryPart : bidPlanMap.keySet() ) {
+		for (ILogicalQueryPart queryPart : bidPlanMap.keySet()) {
 			LOG.debug("\t{}:", queryPart);
-			for( Bid bid : bidPlanMap.get(queryPart)) {
+			for (Bid bid : bidPlanMap.get(queryPart)) {
 				LOG.debug("\t\t{}:\t{}", peerDictionary.getRemotePeerName(bid.getBidderPeerID()), bid.getValue());
 			}
 		}
