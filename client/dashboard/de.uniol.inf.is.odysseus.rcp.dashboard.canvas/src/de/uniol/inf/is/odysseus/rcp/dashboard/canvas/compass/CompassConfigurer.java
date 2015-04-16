@@ -267,7 +267,7 @@ public class CompassConfigurer extends AbstractDashboardPartConfigurer<CompassDa
                             return;
                         }
                         fontNameText.setText(selectedFont.getName());
-                        CompassConfigurer.this.getDashboardPart().setFont(selectedFont.name);
+                        CompassConfigurer.this.getDashboardPart().setFont(selectedFont.getName());
                     }
                 });
             }

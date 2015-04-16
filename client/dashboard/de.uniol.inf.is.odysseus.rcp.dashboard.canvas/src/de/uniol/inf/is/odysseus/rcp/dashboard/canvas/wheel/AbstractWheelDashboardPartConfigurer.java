@@ -345,7 +345,7 @@ public abstract class AbstractWheelDashboardPartConfigurer<T extends AbstractWhe
                             return;
                         }
                         fontNameText.setText(selectedFont.getName());
-                        AbstractWheelDashboardPartConfigurer.this.getDashboardPart().setFont(selectedFont.name);
+                        AbstractWheelDashboardPartConfigurer.this.getDashboardPart().setFont(selectedFont.getName());
                     }
                 });
             }
