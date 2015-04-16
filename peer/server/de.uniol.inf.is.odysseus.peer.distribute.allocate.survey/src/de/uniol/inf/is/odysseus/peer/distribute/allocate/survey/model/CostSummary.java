@@ -33,6 +33,7 @@ public final class CostSummary {
 		return plan;
 	}
 
+	@SuppressWarnings("deprecation")
 	@Override
 	public String toString() {
 		return Objects.toStringHelper(this)
