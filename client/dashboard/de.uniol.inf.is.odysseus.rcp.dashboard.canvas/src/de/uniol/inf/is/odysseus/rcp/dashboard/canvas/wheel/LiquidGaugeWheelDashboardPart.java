@@ -71,7 +71,7 @@ public class LiquidGaugeWheelDashboardPart extends AbstractWheelDashboardPart {
 
         path.cubicTo((float) (this.getCenter().x + ((1.0 / 3.0) * pathX)), (float) (waveHight), (float) (this.getCenter().x + ((2.0 / 3.0) * pathX)), (float) ((this.getCenter().y - ((value - 1.0)
                 * (1.0 / 3.0) * this.getRadius())) + ((1.0 / 6.0) * (value / 2.0) * (1.0 / 3.0) * this.getRadius())), (float) (this.getCenter().x + pathX), (int) (this.getCenter().y - ((value - 1.0)
-                        * (1.0 / 3.0) * this.getRadius())));
+                * (1.0 / 3.0) * this.getRadius())));
         path.close();
         this.fillPath(path, this.getGaugeColor());
         final String text = NumberFormat.getIntegerInstance().format(z);

@@ -19,6 +19,8 @@ import java.util.Collection;
 import java.util.Iterator;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Color;
@@ -112,12 +114,20 @@ public class CompassConfigurer extends AbstractDashboardPartConfigurer<CompassDa
             {// Max Elements
                 toolkit.createLabel(group, "Elements");
                 final Text maxElementsText = toolkit.createText(group, "" + this.getDashboardPart().getMaxElements());
-                maxElementsText.addSelectionListener(new SelectionAdapter() {
+                maxElementsText.addModifyListener(new ModifyListener() {
+                    /**
+                     * {@inheritDoc}
+                     */
                     @Override
-                    public void widgetSelected(final SelectionEvent e) {
+                    public void modifyText(final ModifyEvent e) {
                         final String text = maxElementsText.getText();
                         if (!"".equals(text)) {
-                            CompassConfigurer.this.dashboardPart.setMaxElements(Integer.parseInt(text));
+                            try {
+                                CompassConfigurer.this.dashboardPart.setMaxElements(Integer.parseInt(text));
+                            }
+                            catch (final NumberFormatException ex) {
+                                // Empty block
+                            }
                         }
                     }
                 });
@@ -162,12 +172,20 @@ public class CompassConfigurer extends AbstractDashboardPartConfigurer<CompassDa
             {// Min
                 toolkit.createLabel(group, "Min");
                 final Text minXText = toolkit.createText(group, "" + this.getDashboardPart().getMin());
-                minXText.addSelectionListener(new SelectionAdapter() {
+                minXText.addModifyListener(new ModifyListener() {
+                    /**
+                     * {@inheritDoc}
+                     */
                     @Override
-                    public void widgetSelected(final SelectionEvent e) {
+                    public void modifyText(final ModifyEvent e) {
                         final String text = minXText.getText();
                         if (!"".equals(text)) {
-                            CompassConfigurer.this.dashboardPart.setMin(Double.parseDouble(text));
+                            try {
+                                CompassConfigurer.this.dashboardPart.setMin(Double.parseDouble(text));
+                            }
+                            catch (final NumberFormatException ex) {
+                                // Empty block
+                            }
                         }
                     }
                 });
@@ -175,12 +193,20 @@ public class CompassConfigurer extends AbstractDashboardPartConfigurer<CompassDa
             {// Max
                 toolkit.createLabel(group, "Max");
                 final Text maxXText = toolkit.createText(group, "" + this.getDashboardPart().getMax());
-                maxXText.addSelectionListener(new SelectionAdapter() {
+                maxXText.addModifyListener(new ModifyListener() {
+                    /**
+                     * {@inheritDoc}
+                     */
                     @Override
-                    public void widgetSelected(final SelectionEvent e) {
+                    public void modifyText(final ModifyEvent e) {
                         final String text = maxXText.getText();
                         if (!"".equals(text)) {
-                            CompassConfigurer.this.dashboardPart.setMax(Double.parseDouble(text));
+                            try {
+                                CompassConfigurer.this.dashboardPart.setMax(Double.parseDouble(text));
+                            }
+                            catch (final NumberFormatException ex) {
+                                // Empty block
+                            }
                         }
                     }
                 });

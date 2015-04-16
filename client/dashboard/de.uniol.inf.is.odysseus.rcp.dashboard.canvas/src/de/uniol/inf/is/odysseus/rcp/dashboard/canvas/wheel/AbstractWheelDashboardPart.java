@@ -223,7 +223,6 @@ public abstract class AbstractWheelDashboardPart extends AbstractCanvasDashboard
 
     private CircleCoordinate getCoordinate(final IStreamObject<?> element) {
         return new CircleCoordinate(this.normalizeX(this.getX(element)), this.normalizeY(this.getY(element)), this.getRadius());
-
     }
 
     public Coordinate getCenter() {

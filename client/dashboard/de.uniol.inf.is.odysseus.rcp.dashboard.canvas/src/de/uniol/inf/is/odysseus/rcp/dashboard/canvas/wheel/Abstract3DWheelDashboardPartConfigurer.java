@@ -297,7 +297,7 @@ public abstract class Abstract3DWheelDashboardPartConfigurer<T extends Abstract3
                 @SuppressWarnings("boxing")
                 final Text backgroundColorText = toolkit.createText(group, String.format("%s,%s,%s", (int) backgroundColor.R, (int) backgroundColor.G, (int) backgroundColor.B));
                 backgroundColorText
-                .setBackground(new Color(group.getShell().getDisplay(), new org.eclipse.swt.graphics.RGB((int) backgroundColor.R, (int) backgroundColor.G, (int) backgroundColor.B)));
+                        .setBackground(new Color(group.getShell().getDisplay(), new org.eclipse.swt.graphics.RGB((int) backgroundColor.R, (int) backgroundColor.G, (int) backgroundColor.B)));
                 backgroundColorText.setEditable(false);
                 final Button backgroundColorButton = toolkit.createButton(group, "..", SWT.PUSH | SWT.BORDER);
                 backgroundColorButton.addSelectionListener(new SelectionAdapter() {
@@ -323,7 +323,7 @@ public abstract class Abstract3DWheelDashboardPartConfigurer<T extends Abstract3
                 @SuppressWarnings("boxing")
                 final Text foregroundColorText = toolkit.createText(group, String.format("%s,%s,%s", (int) foregroundColor.R, (int) foregroundColor.G, (int) foregroundColor.B));
                 foregroundColorText
-                .setBackground(new Color(group.getShell().getDisplay(), new org.eclipse.swt.graphics.RGB((int) foregroundColor.R, (int) foregroundColor.G, (int) foregroundColor.B)));
+                        .setBackground(new Color(group.getShell().getDisplay(), new org.eclipse.swt.graphics.RGB((int) foregroundColor.R, (int) foregroundColor.G, (int) foregroundColor.B)));
                 foregroundColorText.setEditable(false);
                 final Button foregroundColorButton = toolkit.createButton(group, "..", SWT.PUSH | SWT.BORDER);
                 foregroundColorButton.addSelectionListener(new SelectionAdapter() {

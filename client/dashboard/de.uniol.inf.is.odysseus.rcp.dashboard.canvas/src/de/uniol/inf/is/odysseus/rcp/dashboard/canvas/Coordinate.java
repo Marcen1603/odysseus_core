@@ -64,4 +64,75 @@ public class Coordinate {
         this.y = y;
         this.z = z;
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Coordinate clone() {
+        return new Coordinate(this.x, this.y, this.z);
+    }
+
+    public double distance(final Coordinate o) {
+        if (o == null) {
+            return Double.NaN;
+        }
+        final double dx = this.x - o.x;
+        final double dy = this.y - o.y;
+        final double dz = this.z - o.z;
+        return Math.sqrt((dx * dx) + (dy * dy) + (dz * dz));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        long temp;
+        temp = Double.doubleToLongBits(this.x);
+        result = (prime * result) + (int) (temp ^ (temp >>> 32));
+        temp = Double.doubleToLongBits(this.y);
+        result = (prime * result) + (int) (temp ^ (temp >>> 32));
+        temp = Double.doubleToLongBits(this.z);
+        result = (prime * result) + (int) (temp ^ (temp >>> 32));
+        return result;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean equals(final Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (this.getClass() != obj.getClass()) {
+            return false;
+        }
+        final Coordinate other = (Coordinate) obj;
+        if (Double.doubleToLongBits(this.x) != Double.doubleToLongBits(other.x)) {
+            return false;
+        }
+        if (Double.doubleToLongBits(this.y) != Double.doubleToLongBits(other.y)) {
+            return false;
+        }
+        if (Double.doubleToLongBits(this.z) != Double.doubleToLongBits(other.z)) {
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String toString() {
+        return "(" + this.x + "|" + this.y + "|" + this.z + ")";
+    }
+
 }

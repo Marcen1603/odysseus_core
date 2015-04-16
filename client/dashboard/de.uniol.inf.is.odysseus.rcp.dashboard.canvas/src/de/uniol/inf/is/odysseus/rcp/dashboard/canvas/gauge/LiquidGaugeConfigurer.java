@@ -19,6 +19,8 @@ import java.util.Collection;
 import java.util.Iterator;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Color;
@@ -117,7 +119,12 @@ public class LiquidGaugeConfigurer extends AbstractDashboardPartConfigurer<Liqui
                     public void widgetSelected(final SelectionEvent e) {
                         final String text = maxElementsText.getText();
                         if (!"".equals(text)) {
-                            LiquidGaugeConfigurer.this.dashboardPart.setMaxElements(Integer.parseInt(text));
+                            try {
+                                LiquidGaugeConfigurer.this.dashboardPart.setMaxElements(Integer.parseInt(text));
+                            }
+                            catch (final NumberFormatException ex) {
+                                // Empty block
+                            }
                         }
                     }
                 });
@@ -162,12 +169,20 @@ public class LiquidGaugeConfigurer extends AbstractDashboardPartConfigurer<Liqui
             {// Min
                 toolkit.createLabel(group, "Min");
                 final Text minXText = toolkit.createText(group, "" + this.getDashboardPart().getMin());
-                minXText.addSelectionListener(new SelectionAdapter() {
+                minXText.addModifyListener(new ModifyListener() {
+                    /**
+                     * {@inheritDoc}
+                     */
                     @Override
-                    public void widgetSelected(final SelectionEvent e) {
+                    public void modifyText(final ModifyEvent e) {
                         final String text = minXText.getText();
                         if (!"".equals(text)) {
-                            LiquidGaugeConfigurer.this.dashboardPart.setMin(Double.parseDouble(text));
+                            try {
+                                LiquidGaugeConfigurer.this.dashboardPart.setMin(Double.parseDouble(text));
+                            }
+                            catch (final NumberFormatException ex) {
+                                // Empty block
+                            }
                         }
                     }
                 });
@@ -175,12 +190,20 @@ public class LiquidGaugeConfigurer extends AbstractDashboardPartConfigurer<Liqui
             {// Max
                 toolkit.createLabel(group, "Max");
                 final Text maxXText = toolkit.createText(group, "" + this.getDashboardPart().getMax());
-                maxXText.addSelectionListener(new SelectionAdapter() {
+                maxXText.addModifyListener(new ModifyListener() {
+                    /**
+                     * {@inheritDoc}
+                     */
                     @Override
-                    public void widgetSelected(final SelectionEvent e) {
+                    public void modifyText(final ModifyEvent e) {
                         final String text = maxXText.getText();
                         if (!"".equals(text)) {
-                            LiquidGaugeConfigurer.this.dashboardPart.setMax(Double.parseDouble(text));
+                            try {
+                                LiquidGaugeConfigurer.this.dashboardPart.setMax(Double.parseDouble(text));
+                            }
+                            catch (final NumberFormatException ex) {
+                                // Empty block
+                            }
                         }
                     }
                 });
@@ -208,7 +231,7 @@ public class LiquidGaugeConfigurer extends AbstractDashboardPartConfigurer<Liqui
                 @SuppressWarnings("boxing")
                 final Text backgroundColorText = toolkit.createText(group, String.format("%s,%s,%s", (int) backgroundColor.R, (int) backgroundColor.G, (int) backgroundColor.B));
                 backgroundColorText
-                        .setBackground(new Color(group.getShell().getDisplay(), new org.eclipse.swt.graphics.RGB((int) backgroundColor.R, (int) backgroundColor.G, (int) backgroundColor.B)));
+                .setBackground(new Color(group.getShell().getDisplay(), new org.eclipse.swt.graphics.RGB((int) backgroundColor.R, (int) backgroundColor.G, (int) backgroundColor.B)));
                 backgroundColorText.setEditable(false);
                 final Button backgroundColorButton = toolkit.createButton(group, "..", SWT.PUSH | SWT.BORDER);
                 backgroundColorButton.addSelectionListener(new SelectionAdapter() {

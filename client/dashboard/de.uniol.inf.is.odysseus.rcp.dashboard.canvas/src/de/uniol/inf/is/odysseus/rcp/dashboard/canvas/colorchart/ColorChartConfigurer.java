@@ -19,6 +19,8 @@ import java.util.Collection;
 import java.util.Iterator;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Color;
@@ -134,12 +136,20 @@ public class ColorChartConfigurer extends AbstractDashboardPartConfigurer<ColorC
             {// Max Elements
                 toolkit.createLabel(group, "Elements");
                 final Text maxElementsText = toolkit.createText(group, "" + this.getDashboardPart().getMaxElements());
-                maxElementsText.addSelectionListener(new SelectionAdapter() {
+                maxElementsText.addModifyListener(new ModifyListener() {
+                    /**
+                     * {@inheritDoc}
+                     */
                     @Override
-                    public void widgetSelected(final SelectionEvent e) {
+                    public void modifyText(final ModifyEvent e) {
                         final String text = maxElementsText.getText();
                         if (!"".equals(text)) {
-                            ColorChartConfigurer.this.dashboardPart.setMaxElements(Integer.parseInt(text));
+                            try {
+                                ColorChartConfigurer.this.dashboardPart.setMaxElements(Integer.parseInt(text));
+                            }
+                            catch (final NumberFormatException ex) {
+                                // Empty block
+                            }
                         }
                     }
                 });
@@ -184,12 +194,20 @@ public class ColorChartConfigurer extends AbstractDashboardPartConfigurer<ColorC
             {// Min X
                 toolkit.createLabel(group, "Min X");
                 final Text minXText = toolkit.createText(group, "" + this.getDashboardPart().getMinX());
-                minXText.addSelectionListener(new SelectionAdapter() {
+                minXText.addModifyListener(new ModifyListener() {
+                    /**
+                     * {@inheritDoc}
+                     */
                     @Override
-                    public void widgetSelected(final SelectionEvent e) {
+                    public void modifyText(final ModifyEvent e) {
                         final String text = minXText.getText();
                         if (!"".equals(text)) {
-                            ColorChartConfigurer.this.dashboardPart.setMinX(Double.parseDouble(text));
+                            try {
+                                ColorChartConfigurer.this.dashboardPart.setMinX(Double.parseDouble(text));
+                            }
+                            catch (final NumberFormatException ex) {
+                                // Empty block
+                            }
                         }
                     }
                 });
@@ -197,12 +215,20 @@ public class ColorChartConfigurer extends AbstractDashboardPartConfigurer<ColorC
             {// Max X
                 toolkit.createLabel(group, "Max X");
                 final Text maxXText = toolkit.createText(group, "" + this.getDashboardPart().getMaxX());
-                maxXText.addSelectionListener(new SelectionAdapter() {
+                maxXText.addModifyListener(new ModifyListener() {
+                    /**
+                     * {@inheritDoc}
+                     */
                     @Override
-                    public void widgetSelected(final SelectionEvent e) {
+                    public void modifyText(final ModifyEvent e) {
                         final String text = maxXText.getText();
                         if (!"".equals(text)) {
-                            ColorChartConfigurer.this.dashboardPart.setMaxX(Double.parseDouble(text));
+                            try {
+                                ColorChartConfigurer.this.dashboardPart.setMaxX(Double.parseDouble(text));
+                            }
+                            catch (final NumberFormatException ex) {
+                                // Empty block
+                            }
                         }
                     }
                 });
@@ -210,12 +236,20 @@ public class ColorChartConfigurer extends AbstractDashboardPartConfigurer<ColorC
             {// Min Y
                 toolkit.createLabel(group, "Min Y");
                 final Text minYText = toolkit.createText(group, "" + this.getDashboardPart().getMinY());
-                minYText.addSelectionListener(new SelectionAdapter() {
+                minYText.addModifyListener(new ModifyListener() {
+                    /**
+                     * {@inheritDoc}
+                     */
                     @Override
-                    public void widgetSelected(final SelectionEvent e) {
+                    public void modifyText(final ModifyEvent e) {
                         final String text = minYText.getText();
                         if (!"".equals(text)) {
-                            ColorChartConfigurer.this.dashboardPart.setMinY(Double.parseDouble(text));
+                            try {
+                                ColorChartConfigurer.this.dashboardPart.setMinY(Double.parseDouble(text));
+                            }
+                            catch (final NumberFormatException ex) {
+                                // Empty block
+                            }
                         }
                     }
                 });
@@ -223,12 +257,20 @@ public class ColorChartConfigurer extends AbstractDashboardPartConfigurer<ColorC
             {// Max Y
                 toolkit.createLabel(group, "Max Y");
                 final Text maxYText = toolkit.createText(group, "" + this.getDashboardPart().getMaxY());
-                maxYText.addSelectionListener(new SelectionAdapter() {
+                maxYText.addModifyListener(new ModifyListener() {
+                    /**
+                     * {@inheritDoc}
+                     */
                     @Override
-                    public void widgetSelected(final SelectionEvent e) {
+                    public void modifyText(final ModifyEvent e) {
                         final String text = maxYText.getText();
                         if (!"".equals(text)) {
-                            ColorChartConfigurer.this.dashboardPart.setMaxY(Double.parseDouble(text));
+                            try {
+                                ColorChartConfigurer.this.dashboardPart.setMaxY(Double.parseDouble(text));
+                            }
+                            catch (final NumberFormatException ex) {
+                                // Empty block
+                            }
                         }
                     }
                 });
@@ -236,12 +278,20 @@ public class ColorChartConfigurer extends AbstractDashboardPartConfigurer<ColorC
             {// Min Z
                 toolkit.createLabel(group, "Min Z");
                 final Text minZText = toolkit.createText(group, "" + this.getDashboardPart().getMinZ());
-                minZText.addSelectionListener(new SelectionAdapter() {
+                minZText.addModifyListener(new ModifyListener() {
+                    /**
+                     * {@inheritDoc}
+                     */
                     @Override
-                    public void widgetSelected(final SelectionEvent e) {
+                    public void modifyText(final ModifyEvent e) {
                         final String text = minZText.getText();
                         if (!"".equals(text)) {
-                            ColorChartConfigurer.this.dashboardPart.setMinZ(Double.parseDouble(text));
+                            try {
+                                ColorChartConfigurer.this.dashboardPart.setMinZ(Double.parseDouble(text));
+                            }
+                            catch (final NumberFormatException ex) {
+                                // Empty block
+                            }
                         }
                     }
                 });
@@ -249,12 +299,20 @@ public class ColorChartConfigurer extends AbstractDashboardPartConfigurer<ColorC
             {// Max Z
                 toolkit.createLabel(group, "Max Z");
                 final Text maxZText = toolkit.createText(group, "" + this.getDashboardPart().getMaxZ());
-                maxZText.addSelectionListener(new SelectionAdapter() {
+                maxZText.addModifyListener(new ModifyListener() {
+                    /**
+                     * {@inheritDoc}
+                     */
                     @Override
-                    public void widgetSelected(final SelectionEvent e) {
+                    public void modifyText(final ModifyEvent e) {
                         final String text = maxZText.getText();
                         if (!"".equals(text)) {
-                            ColorChartConfigurer.this.dashboardPart.setMaxZ(Double.parseDouble(text));
+                            try {
+                                ColorChartConfigurer.this.dashboardPart.setMaxZ(Double.parseDouble(text));
+                            }
+                            catch (final NumberFormatException ex) {
+                                // Empty block
+                            }
                         }
                     }
                 });
@@ -281,7 +339,7 @@ public class ColorChartConfigurer extends AbstractDashboardPartConfigurer<ColorC
                 @SuppressWarnings("boxing")
                 final Text backgroundColorText = toolkit.createText(group, String.format("%s,%s,%s", (int) backgroundColor.R, (int) backgroundColor.G, (int) backgroundColor.B));
                 backgroundColorText
-                .setBackground(new Color(group.getShell().getDisplay(), new org.eclipse.swt.graphics.RGB((int) backgroundColor.R, (int) backgroundColor.G, (int) backgroundColor.B)));
+                        .setBackground(new Color(group.getShell().getDisplay(), new org.eclipse.swt.graphics.RGB((int) backgroundColor.R, (int) backgroundColor.G, (int) backgroundColor.B)));
                 backgroundColorText.setEditable(false);
                 final Button backgroundColorButton = toolkit.createButton(group, "..", SWT.PUSH | SWT.BORDER);
                 backgroundColorButton.addSelectionListener(new SelectionAdapter() {

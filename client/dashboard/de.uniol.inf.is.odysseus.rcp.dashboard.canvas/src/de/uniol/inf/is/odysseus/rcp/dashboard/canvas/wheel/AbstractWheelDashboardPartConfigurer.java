@@ -19,6 +19,8 @@ import java.util.Collection;
 import java.util.Iterator;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Color;
@@ -138,12 +140,20 @@ public abstract class AbstractWheelDashboardPartConfigurer<T extends AbstractWhe
             {// Max Elements
                 toolkit.createLabel(group, "Elements");
                 final Text maxElementsText = toolkit.createText(group, "" + this.getDashboardPart().getMaxElements());
-                maxElementsText.addSelectionListener(new SelectionAdapter() {
+                maxElementsText.addModifyListener(new ModifyListener() {
+                    /**
+                     * {@inheritDoc}
+                     */
                     @Override
-                    public void widgetSelected(final SelectionEvent e) {
+                    public void modifyText(final ModifyEvent e) {
                         final String text = maxElementsText.getText();
                         if (!"".equals(text)) {
-                            AbstractWheelDashboardPartConfigurer.this.dashboardPart.setMaxElements(Integer.parseInt(text));
+                            try {
+                                AbstractWheelDashboardPartConfigurer.this.dashboardPart.setMaxElements(Integer.parseInt(text));
+                            }
+                            catch (final NumberFormatException ex) {
+                                // Empty block
+                            }
                         }
                     }
                 });
@@ -188,12 +198,20 @@ public abstract class AbstractWheelDashboardPartConfigurer<T extends AbstractWhe
             {// Min X
                 toolkit.createLabel(group, "Min X");
                 final Text minXText = toolkit.createText(group, "" + this.getDashboardPart().getMinX());
-                minXText.addSelectionListener(new SelectionAdapter() {
+                minXText.addModifyListener(new ModifyListener() {
+                    /**
+                     * {@inheritDoc}
+                     */
                     @Override
-                    public void widgetSelected(final SelectionEvent e) {
+                    public void modifyText(final ModifyEvent e) {
                         final String text = minXText.getText();
                         if (!"".equals(text)) {
-                            AbstractWheelDashboardPartConfigurer.this.dashboardPart.setMinX(Double.parseDouble(text));
+                            try {
+                                AbstractWheelDashboardPartConfigurer.this.dashboardPart.setMinX(Double.parseDouble(text));
+                            }
+                            catch (final NumberFormatException ex) {
+                                // Empty block
+                            }
                         }
                     }
                 });
@@ -201,12 +219,20 @@ public abstract class AbstractWheelDashboardPartConfigurer<T extends AbstractWhe
             {// Max X
                 toolkit.createLabel(group, "Max X");
                 final Text maxXText = toolkit.createText(group, "" + this.getDashboardPart().getMaxX());
-                maxXText.addSelectionListener(new SelectionAdapter() {
+                maxXText.addModifyListener(new ModifyListener() {
+                    /**
+                     * {@inheritDoc}
+                     */
                     @Override
-                    public void widgetSelected(final SelectionEvent e) {
+                    public void modifyText(final ModifyEvent e) {
                         final String text = maxXText.getText();
                         if (!"".equals(text)) {
-                            AbstractWheelDashboardPartConfigurer.this.dashboardPart.setMaxX(Double.parseDouble(text));
+                            try {
+                                AbstractWheelDashboardPartConfigurer.this.dashboardPart.setMaxX(Double.parseDouble(text));
+                            }
+                            catch (final NumberFormatException ex) {
+                                // Empty block
+                            }
                         }
                     }
                 });
@@ -214,12 +240,20 @@ public abstract class AbstractWheelDashboardPartConfigurer<T extends AbstractWhe
             {// Min Y
                 toolkit.createLabel(group, "Min Y");
                 final Text minYText = toolkit.createText(group, "" + this.getDashboardPart().getMinY());
-                minYText.addSelectionListener(new SelectionAdapter() {
+                minYText.addModifyListener(new ModifyListener() {
+                    /**
+                     * {@inheritDoc}
+                     */
                     @Override
-                    public void widgetSelected(final SelectionEvent e) {
+                    public void modifyText(final ModifyEvent e) {
                         final String text = minYText.getText();
                         if (!"".equals(text)) {
-                            AbstractWheelDashboardPartConfigurer.this.dashboardPart.setMinY(Double.parseDouble(text));
+                            try {
+                                AbstractWheelDashboardPartConfigurer.this.dashboardPart.setMinY(Double.parseDouble(text));
+                            }
+                            catch (final NumberFormatException ex) {
+                                // Empty block
+                            }
                         }
                     }
                 });
@@ -227,12 +261,20 @@ public abstract class AbstractWheelDashboardPartConfigurer<T extends AbstractWhe
             {// Max Y
                 toolkit.createLabel(group, "Max Y");
                 final Text maxYText = toolkit.createText(group, "" + this.getDashboardPart().getMaxY());
-                maxYText.addSelectionListener(new SelectionAdapter() {
+                maxYText.addModifyListener(new ModifyListener() {
+                    /**
+                     * {@inheritDoc}
+                     */
                     @Override
-                    public void widgetSelected(final SelectionEvent e) {
+                    public void modifyText(final ModifyEvent e) {
                         final String text = maxYText.getText();
                         if (!"".equals(text)) {
-                            AbstractWheelDashboardPartConfigurer.this.dashboardPart.setMaxY(Double.parseDouble(text));
+                            try {
+                                AbstractWheelDashboardPartConfigurer.this.dashboardPart.setMaxY(Double.parseDouble(text));
+                            }
+                            catch (final NumberFormatException ex) {
+                                // Empty block
+                            }
                         }
                     }
                 });
@@ -240,12 +282,20 @@ public abstract class AbstractWheelDashboardPartConfigurer<T extends AbstractWhe
             {// Min Z
                 toolkit.createLabel(group, "Min Z");
                 final Text minZText = toolkit.createText(group, "" + this.getDashboardPart().getMinZ());
-                minZText.addSelectionListener(new SelectionAdapter() {
+                minZText.addModifyListener(new ModifyListener() {
+                    /**
+                     * {@inheritDoc}
+                     */
                     @Override
-                    public void widgetSelected(final SelectionEvent e) {
+                    public void modifyText(final ModifyEvent e) {
                         final String text = minZText.getText();
                         if (!"".equals(text)) {
-                            AbstractWheelDashboardPartConfigurer.this.dashboardPart.setMinZ(Double.parseDouble(text));
+                            try {
+                                AbstractWheelDashboardPartConfigurer.this.dashboardPart.setMinZ(Double.parseDouble(text));
+                            }
+                            catch (final NumberFormatException ex) {
+                                // Empty block
+                            }
                         }
                     }
                 });
@@ -253,12 +303,20 @@ public abstract class AbstractWheelDashboardPartConfigurer<T extends AbstractWhe
             {// Max Z
                 toolkit.createLabel(group, "Max Z");
                 final Text maxZText = toolkit.createText(group, "" + this.getDashboardPart().getMaxZ());
-                maxZText.addSelectionListener(new SelectionAdapter() {
+                maxZText.addModifyListener(new ModifyListener() {
+                    /**
+                     * {@inheritDoc}
+                     */
                     @Override
-                    public void widgetSelected(final SelectionEvent e) {
+                    public void modifyText(final ModifyEvent e) {
                         final String text = maxZText.getText();
                         if (!"".equals(text)) {
-                            AbstractWheelDashboardPartConfigurer.this.dashboardPart.setMaxZ(Double.parseDouble(text));
+                            try {
+                                AbstractWheelDashboardPartConfigurer.this.dashboardPart.setMaxZ(Double.parseDouble(text));
+                            }
+                            catch (final NumberFormatException ex) {
+                                // Empty block
+                            }
                         }
                     }
                 });
