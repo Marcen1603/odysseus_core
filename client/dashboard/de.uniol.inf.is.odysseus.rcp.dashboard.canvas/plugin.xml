@@ -58,6 +58,11 @@
             configClass="de.uniol.inf.is.odysseus.rcp.dashboard.canvas.colorchart.ColorChartConfigurer"
             name="Color Chart">
       </dashboardPart>     
-   </extension>
+      <dashboardPart
+            class="de.uniol.inf.is.odysseus.rcp.dashboard.canvas.quadtree.QuadTreeDashboardPart"
+            configClass="de.uniol.inf.is.odysseus.rcp.dashboard.canvas.quadtree.QuadTreeConfigurer"
+            name="Quad Tree">
+      </dashboardPart> 
+    </extension>
 
 </plugin>
