@@ -38,10 +38,8 @@ public:
 
 	bool	trigger();
 	bool	grabRGB8(void *buffer, long size, int lineLength, unsigned int timeOutMs) throw(std::exception);
-	int		getBufferSize() const { return bufferSize; }
 	int		getImageWidth() const { return imageWidth; }
 	int		getImageHeight() const { return imageHeight; }
-	int		getImageChannels() const { return 3; }
 
 	virtual void onGrabbed(void *buffer, long size);
 

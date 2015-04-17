@@ -71,20 +71,12 @@ public class BaslerCamera {
     return BaslerJavaJNI.BaslerCamera_grabRGB8(swigCPtr, this, buffer, lineLength, timeOutMs);
   }
 
-  public int getBufferSize() {
-    return BaslerJavaJNI.BaslerCamera_getBufferSize(swigCPtr, this);
-  }
-
   public int getImageWidth() {
     return BaslerJavaJNI.BaslerCamera_getImageWidth(swigCPtr, this);
   }
 
   public int getImageHeight() {
     return BaslerJavaJNI.BaslerCamera_getImageHeight(swigCPtr, this);
-  }
-
-  public int getImageChannels() {
-    return BaslerJavaJNI.BaslerCamera_getImageChannels(swigCPtr, this);
   }
 
   public void onGrabbed(java.nio.ByteBuffer buffer) {

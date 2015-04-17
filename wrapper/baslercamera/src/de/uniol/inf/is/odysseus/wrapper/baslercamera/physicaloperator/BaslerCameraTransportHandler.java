@@ -1,6 +1,5 @@
 package de.uniol.inf.is.odysseus.wrapper.baslercamera.physicaloperator;
 
-import static org.bytedeco.javacpp.opencv_core.IPL_DEPTH_16S;
 import static org.bytedeco.javacpp.opencv_core.IPL_DEPTH_8U;
 
 import java.io.IOException;
@@ -93,7 +92,7 @@ public class BaslerCameraTransportHandler extends AbstractSimplePullTransportHan
 		 			};
 				cameraCapture.start(operationMode);
 				
-				imageJCV = new ImageJCV(cameraCapture.getImageWidth(), cameraCapture.getImageHeight(), IPL_DEPTH_8U, cameraCapture.getImageChannels());
+				imageJCV = new ImageJCV(cameraCapture.getImageWidth(), cameraCapture.getImageHeight(), IPL_DEPTH_8U, 3);
 				
 				currentTuple = null;
 			}

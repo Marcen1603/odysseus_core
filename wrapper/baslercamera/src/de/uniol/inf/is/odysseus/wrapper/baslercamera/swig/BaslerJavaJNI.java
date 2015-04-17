@@ -16,10 +16,8 @@ public class BaslerJavaJNI {
   public final static native void BaslerCamera_stop(long jarg1, BaslerCamera jarg1_);
   public final static native boolean BaslerCamera_trigger(long jarg1, BaslerCamera jarg1_);
   public final static native boolean BaslerCamera_grabRGB8(long jarg1, BaslerCamera jarg1_, java.nio.ByteBuffer jarg2, int jarg4, long jarg5) throws java.lang.RuntimeException;
-  public final static native int BaslerCamera_getBufferSize(long jarg1, BaslerCamera jarg1_);
   public final static native int BaslerCamera_getImageWidth(long jarg1, BaslerCamera jarg1_);
   public final static native int BaslerCamera_getImageHeight(long jarg1, BaslerCamera jarg1_);
-  public final static native int BaslerCamera_getImageChannels(long jarg1, BaslerCamera jarg1_);
   public final static native void BaslerCamera_onGrabbed(long jarg1, BaslerCamera jarg1_, java.nio.ByteBuffer jarg2);
   public final static native void BaslerCamera_onGrabbedSwigExplicitBaslerCamera(long jarg1, BaslerCamera jarg1_, java.nio.ByteBuffer jarg2);
   public final static native void BaslerCamera_initializeSystem() throws java.lang.RuntimeException;

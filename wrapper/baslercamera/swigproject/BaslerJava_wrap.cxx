@@ -871,21 +871,6 @@ SWIGEXPORT jboolean JNICALL Java_de_uniol_inf_is_odysseus_wrapper_baslercamera_s
 }
 
 
-SWIGEXPORT jint JNICALL Java_de_uniol_inf_is_odysseus_wrapper_baslercamera_swig_BaslerJavaJNI_BaslerCamera_1getBufferSize(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
-  jint jresult = 0 ;
-  BaslerCamera *arg1 = (BaslerCamera *) 0 ;
-  int result;
-  
-  (void)jenv;
-  (void)jcls;
-  (void)jarg1_;
-  arg1 = *(BaslerCamera **)&jarg1; 
-  result = (int)((BaslerCamera const *)arg1)->getBufferSize();
-  jresult = (jint)result; 
-  return jresult;
-}
-
-
 SWIGEXPORT jint JNICALL Java_de_uniol_inf_is_odysseus_wrapper_baslercamera_swig_BaslerJavaJNI_BaslerCamera_1getImageWidth(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
   jint jresult = 0 ;
   BaslerCamera *arg1 = (BaslerCamera *) 0 ;
@@ -911,21 +896,6 @@ SWIGEXPORT jint JNICALL Java_de_uniol_inf_is_odysseus_wrapper_baslercamera_swig_
   (void)jarg1_;
   arg1 = *(BaslerCamera **)&jarg1; 
   result = (int)((BaslerCamera const *)arg1)->getImageHeight();
-  jresult = (jint)result; 
-  return jresult;
-}
-
-
-SWIGEXPORT jint JNICALL Java_de_uniol_inf_is_odysseus_wrapper_baslercamera_swig_BaslerJavaJNI_BaslerCamera_1getImageChannels(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
-  jint jresult = 0 ;
-  BaslerCamera *arg1 = (BaslerCamera *) 0 ;
-  int result;
-  
-  (void)jenv;
-  (void)jcls;
-  (void)jarg1_;
-  arg1 = *(BaslerCamera **)&jarg1; 
-  result = (int)((BaslerCamera const *)arg1)->getImageChannels();
   jresult = (jint)result; 
   return jresult;
 }

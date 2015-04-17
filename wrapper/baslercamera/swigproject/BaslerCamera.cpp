@@ -88,6 +88,11 @@ void BaslerCamera::start(OperationMode operationMode)
 /*	supportsBGRConversion = CImageFormatConverter::IsSupportedOutputFormat(PixelType_BGR8packed);
 	std::cout << "supportsBGRConversion = " << supportsBGRConversion << std::endl;*/
 
+	GenApi::INodeMap& nodemap = camera->GetNodeMap();
+
+	imageWidth  = GenApi::CIntegerPtr(nodemap.GetNode("Width"))->GetValue();
+	imageHeight = GenApi::CIntegerPtr(nodemap.GetNode("Height"))->GetValue();
+
 	camera->Open();
 	if (operationMode == PUSH)
 	{
@@ -97,8 +102,6 @@ void BaslerCamera::start(OperationMode operationMode)
 	}
 	else
 		camera->StartGrabbing();
-
-	grabRGB8(NULL, 0, 0, 1000);
 }
 
 void BaslerCamera::stop()
@@ -149,7 +152,7 @@ bool BaslerCamera::grabRGB8(void *buffer, long size, int lineLength, unsigned in
 	
 	imageWidth = result->GetWidth();
 	imageHeight = result->GetHeight();
-	bufferSize = imageWidth*imageHeight*getImageChannels();
+//	bufferSize = imageWidth*imageHeight*getImageChannels();
 
 	if (size < bufferSize) return false;
 	if (buffer == NULL) return false;
@@ -159,7 +162,7 @@ bool BaslerCamera::grabRGB8(void *buffer, long size, int lineLength, unsigned in
 	{
 		converter.OutputPixelFormat = PixelType_BGR8packed;
 		converter.OutputBitAlignment = OutputBitAlignment_LsbAligned; // OutputBitAlignment_MsbAligned;
-		converter.OutputPaddingX = lineLength - imageWidth * getImageChannels();
+		converter.OutputPaddingX = lineLength - imageWidth * 3; // NumChannels = 3
 		converter.Convert(buffer, size, result);
 	}
 /*	else
