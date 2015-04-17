@@ -1,23 +1,31 @@
 package de.uniol.inf.is.odysseus.wrapper.baslercamera.physicaloperator;
 
+import static org.bytedeco.javacpp.opencv_core.IPL_DEPTH_16S;
 import static org.bytedeco.javacpp.opencv_core.IPL_DEPTH_8U;
 
 import java.io.IOException;
+import java.nio.ByteBuffer;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
+import de.uniol.inf.is.odysseus.core.command.Command;
+import de.uniol.inf.is.odysseus.core.command.ICommandProvider;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.AbstractSimplePullTransportHandler;
+import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.IAccessPattern;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandler;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.imagejcv.common.datatype.ImageJCV;
 import de.uniol.inf.is.odysseus.imagejcv.common.sdf.schema.SDFImageJCVDatatype;
 import de.uniol.inf.is.odysseus.wrapper.baslercamera.swig.BaslerCamera;
+import de.uniol.inf.is.odysseus.wrapper.baslercamera.swig.BaslerCamera.OperationMode;
 
-public class BaslerCameraTransportHandler extends AbstractSimplePullTransportHandler<Tuple<IMetaAttribute>> 
+public class BaslerCameraTransportHandler extends AbstractSimplePullTransportHandler<Tuple<IMetaAttribute>> implements ICommandProvider  
 {
 	@SuppressWarnings("unused")
 	private final Logger logger = LoggerFactory.getLogger(BaslerCameraTransportHandler.class);
@@ -25,6 +33,7 @@ public class BaslerCameraTransportHandler extends AbstractSimplePullTransportHan
 
 	private String serialNumber;
 	private BaslerCamera cameraCapture;
+	private BaslerCamera.OperationMode operationMode;
 	
 	private Tuple<IMetaAttribute> currentTuple;
 	private ImageJCV imageJCV;
@@ -42,6 +51,12 @@ public class BaslerCameraTransportHandler extends AbstractSimplePullTransportHan
 		super(protocolHandler, options);
 		
 		serialNumber = options.get("serialnumber", "");
+		
+		if ((protocolHandler.getAccessPattern() == IAccessPattern.ROBUST_PULL) || 
+			(protocolHandler.getAccessPattern() == IAccessPattern.PULL))
+			operationMode = OperationMode.PULL;
+		else
+			operationMode = OperationMode.PUSH;
 	}
 	
 
@@ -60,8 +75,23 @@ public class BaslerCameraTransportHandler extends AbstractSimplePullTransportHan
 		{
 			try
 			{
-		 		cameraCapture = new BaslerCamera(serialNumber);
-				cameraCapture.start();
+		 		cameraCapture = new BaslerCamera(serialNumber)
+		 			{
+		 				@Override public void onGrabbed(ByteBuffer buffer)
+		 				{
+							Tuple<IMetaAttribute> tuple = new Tuple<>(getSchema().size(), true);
+							int[] attrs = getSchema().getSDFDatatypeAttributePositions(SDFImageJCVDatatype.IMAGEJCV);
+							if (attrs.length > 0)
+							{
+								imageJCV.getImageData().rewind();
+								imageJCV.getImageData().put(buffer);				 								
+								tuple.setAttribute(attrs[0], imageJCV);
+							}
+								
+							fireProcess(tuple);		 					
+		 				}
+		 			};
+				cameraCapture.start(operationMode);
 				
 				imageJCV = new ImageJCV(cameraCapture.getImageWidth(), cameraCapture.getImageHeight(), IPL_DEPTH_8U, cameraCapture.getImageChannels());
 				
@@ -132,19 +162,18 @@ public class BaslerCameraTransportHandler extends AbstractSimplePullTransportHan
 			if (!cameraCapture.grabRGB8(imageJCV.getImageData(), imageJCV.getImage().widthStep(), 1000))
 				return false;
 
-//			System.out.println("Frame grabbed from " + serialNumber);
-				
+			// System.out.println("Frame grabbed from " + serialNumber);
+
 			currentTuple = new Tuple<IMetaAttribute>(getSchema().size(), false);
 			int[] attrs = getSchema().getSDFDatatypeAttributePositions(SDFImageJCVDatatype.IMAGEJCV);
 			if (attrs.length > 0)
 			{
-				currentTuple.setAttribute(attrs[0], imageJCV);				
+				currentTuple.setAttribute(attrs[0], imageJCV); 
 			}
-				
-			return true;				
+
+			return true;
 		}
-	}
-		
+	}	
     @Override
     public boolean isSemanticallyEqualImpl(ITransportHandler o) {
     	if(!(o instanceof BaslerCameraTransportHandler)) {
@@ -156,4 +185,24 @@ public class BaslerCameraTransportHandler extends AbstractSimplePullTransportHan
     	
     	return true;
     }
+    
+    @Override
+    public Command getCommandByName(String commandName, SDFSchema schema) 
+    {
+    	switch (commandName)
+    	{
+    	case "trigger":
+    	{
+    		return new Command()
+    		{
+    			@Override public boolean run(IStreamObject<?> input) 
+    			{
+    				return cameraCapture.trigger();
+    			}
+    		};
+    	}
+
+    	default: return null;
+    	}
+    } 
 }

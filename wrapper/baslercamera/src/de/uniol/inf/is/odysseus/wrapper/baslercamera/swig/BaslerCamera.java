@@ -35,16 +35,36 @@ public class BaslerCamera {
     }
   }
 
-  public BaslerCamera(String serialNumber) {
-    this(BaslerJavaJNI.new_BaslerCamera(serialNumber), true);
+  protected void swigDirectorDisconnect() {
+    swigCMemOwn = false;
+    delete();
   }
 
-  public void start() throws java.lang.RuntimeException {
-    BaslerJavaJNI.BaslerCamera_start(swigCPtr, this);
+  public void swigReleaseOwnership() {
+    swigCMemOwn = false;
+    BaslerJavaJNI.BaslerCamera_change_ownership(this, swigCPtr, false);
+  }
+
+  public void swigTakeOwnership() {
+    swigCMemOwn = true;
+    BaslerJavaJNI.BaslerCamera_change_ownership(this, swigCPtr, true);
+  }
+
+  public BaslerCamera(String serialNumber) {
+    this(BaslerJavaJNI.new_BaslerCamera(serialNumber), true);
+    BaslerJavaJNI.BaslerCamera_director_connect(this, swigCPtr, swigCMemOwn, true);
+  }
+
+  public void start(BaslerCamera.OperationMode operationMode) throws java.lang.RuntimeException {
+    BaslerJavaJNI.BaslerCamera_start(swigCPtr, this, operationMode.swigValue());
   }
 
   public void stop() {
     BaslerJavaJNI.BaslerCamera_stop(swigCPtr, this);
+  }
+
+  public boolean trigger() {
+    return BaslerJavaJNI.BaslerCamera_trigger(swigCPtr, this);
   }
 
   public boolean grabRGB8(java.nio.ByteBuffer buffer, int lineLength, long timeOutMs) throws java.lang.RuntimeException {
@@ -67,6 +87,10 @@ public class BaslerCamera {
     return BaslerJavaJNI.BaslerCamera_getImageChannels(swigCPtr, this);
   }
 
+  public void onGrabbed(java.nio.ByteBuffer buffer) {
+    if (getClass() == BaslerCamera.class) BaslerJavaJNI.BaslerCamera_onGrabbed(swigCPtr, this, buffer); else BaslerJavaJNI.BaslerCamera_onGrabbedSwigExplicitBaslerCamera(swigCPtr, this, buffer);
+  }
+
   public static void initializeSystem() throws java.lang.RuntimeException {
     BaslerJavaJNI.BaslerCamera_initializeSystem();
   }
@@ -77,6 +101,50 @@ public class BaslerCamera {
 
   public static boolean isSystemInitialized() {
     return BaslerJavaJNI.BaslerCamera_isSystemInitialized();
+  }
+
+  public final static class OperationMode {
+    public final static BaslerCamera.OperationMode PUSH = new BaslerCamera.OperationMode("PUSH", BaslerJavaJNI.BaslerCamera_PUSH_get());
+    public final static BaslerCamera.OperationMode PULL = new BaslerCamera.OperationMode("PULL");
+
+    public final int swigValue() {
+      return swigValue;
+    }
+
+    public String toString() {
+      return swigName;
+    }
+
+    public static OperationMode swigToEnum(int swigValue) {
+      if (swigValue < swigValues.length && swigValue >= 0 && swigValues[swigValue].swigValue == swigValue)
+        return swigValues[swigValue];
+      for (int i = 0; i < swigValues.length; i++)
+        if (swigValues[i].swigValue == swigValue)
+          return swigValues[i];
+      throw new IllegalArgumentException("No enum " + OperationMode.class + " with value " + swigValue);
+    }
+
+    private OperationMode(String swigName) {
+      this.swigName = swigName;
+      this.swigValue = swigNext++;
+    }
+
+    private OperationMode(String swigName, int swigValue) {
+      this.swigName = swigName;
+      this.swigValue = swigValue;
+      swigNext = swigValue+1;
+    }
+
+    private OperationMode(String swigName, OperationMode swigEnum) {
+      this.swigName = swigName;
+      this.swigValue = swigEnum.swigValue;
+      swigNext = this.swigValue+1;
+    }
+
+    private static OperationMode[] swigValues = { PUSH, PULL };
+    private static int swigNext = 0;
+    private final int swigValue;
+    private final String swigName;
   }
 
 }

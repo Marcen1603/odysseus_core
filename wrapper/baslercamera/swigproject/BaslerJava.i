@@ -1,5 +1,5 @@
 /* File : BaslerJava.i */
-%module BaslerJava
+%module(directors="1") BaslerJava
 
 %include "std_string.i"
 %include "various.i"
@@ -30,8 +30,16 @@
     return $jnicall; 
 } 
 
+%typemap(directorin, descriptor="Ljava/nio/ByteBuffer;") (void *buffer, long size) {
+$input = (jenv)->NewDirectByteBuffer($1, $2); } 
+
+%typemap(javadirectorin) (void *buffer, long size) "$jniinput"
+%typemap(javadirectorout) (void *buffer, long size) "$javacall"
+
 %{
 #include "BaslerCamera.h"
 %}
+
+%feature("director") BaslerCamera;
 
 %include "BaslerCamera.h"

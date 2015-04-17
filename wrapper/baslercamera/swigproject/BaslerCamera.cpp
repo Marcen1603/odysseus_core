@@ -34,9 +34,24 @@ bool BaslerCamera::isSystemInitialized()
 
 // ******************************************************************
 
-void BaslerCamera::start()
+class CMyImageEventHandler : public CImageEventHandler
+{
+	BaslerCamera* camera;
+
+public:
+	CMyImageEventHandler(BaslerCamera* camera) : camera(camera) {}
+
+    virtual void OnImageGrabbed(CInstantCamera& camera, const CGrabResultPtr& grabResult)
+    {
+		this->camera->onGrabbedInternal(grabResult);
+    }
+};
+
+void BaslerCamera::start(OperationMode operationMode)
 {
 	if (camera != NULL) stop();
+
+	this->operationMode = operationMode;
 
 	CTlFactory& tlFactory = CTlFactory::GetInstance();
 
@@ -74,7 +89,14 @@ void BaslerCamera::start()
 	std::cout << "supportsBGRConversion = " << supportsBGRConversion << std::endl;*/
 
 	camera->Open();
-	camera->StartGrabbing();
+	if (operationMode == PUSH)
+	{
+        camera->RegisterConfiguration(new CSoftwareTriggerConfiguration, RegistrationMode_ReplaceAll, Cleanup_Delete);
+		camera->RegisterImageEventHandler(new CMyImageEventHandler(this), RegistrationMode_Append, Cleanup_Delete);
+		camera->StartGrabbing(GrabStrategy_OneByOne, GrabLoop_ProvidedByInstantCamera);
+	}
+	else
+		camera->StartGrabbing();
 
 	grabRGB8(NULL, 0, 0, 1000);
 }
@@ -89,6 +111,32 @@ void BaslerCamera::stop()
 		delete camera;
 		camera = NULL;
 	}
+}
+
+void BaslerCamera::onGrabbedInternal(const CGrabResultPtr& grabResult)
+{
+	CPylonImage image;
+	CImageFormatConverter converter;
+	converter.OutputPixelFormat = PixelType_BGR8packed;
+	converter.OutputBitAlignment = OutputBitAlignment_LsbAligned; // OutputBitAlignment_MsbAligned;
+	converter.OutputPaddingX = 0;//lineLength - imageWidth * getImageChannels();
+	converter.Convert(image, grabResult);
+
+	onGrabbed(image.GetBuffer(), image.GetImageSize());
+}
+
+void BaslerCamera::onGrabbed(void* buffer, long size)
+{
+}
+
+bool BaslerCamera::trigger()
+{
+	if (camera->WaitForFrameTriggerReady( 100, TimeoutHandling_Return))
+	{
+		camera->ExecuteSoftwareTrigger();
+		return true;
+	}
+	else return false;
 }
 
 bool BaslerCamera::grabRGB8(void *buffer, long size, int lineLength, unsigned int timeOutMs)
