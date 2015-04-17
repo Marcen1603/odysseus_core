@@ -89,10 +89,10 @@ public class ShowImageJCVUDF extends CanvasFrame implements IUserDefinedFunction
 	 * {@inheritDoc}
 	 */
 	@Override public Tuple<? extends IMetaAttribute> process(Tuple<? extends IMetaAttribute> in, int port) 
-	{
-		ImageJCV image = (ImageJCV) in.getAttribute(this.pos);
+	{		
 		synchronized (syncObj) 
 		{
+			ImageJCV image = (ImageJCV) in.getAttribute(this.pos);
 			showImage(image.getImage());
 			repaint();
 		}

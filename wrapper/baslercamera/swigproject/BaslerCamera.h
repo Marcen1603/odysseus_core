@@ -22,6 +22,8 @@ private:
 
 	std::string serialNumber;
 	OperationMode operationMode;
+	int lineLength;
+
 //	bool supportsBGRConversion;
 	int imageWidth;
 	int imageHeight;
@@ -35,9 +37,10 @@ public:
 
 	void	start(OperationMode operationMode) throw(std::exception);
 	void	stop();
+	void	setLineLength(int lineLength) { this->lineLength = lineLength; }
 
-	bool	trigger();
-	bool	grabRGB8(void *buffer, long size, int lineLength, unsigned int timeOutMs) throw(std::exception);
+	bool	trigger() throw(std::exception);
+	bool	grabRGB8(void *buffer, long size, unsigned int timeOutMs) throw(std::exception);
 	int		getImageWidth() const { return imageWidth; }
 	int		getImageHeight() const { return imageHeight; }
 

@@ -41,7 +41,7 @@ class CMyImageEventHandler : public CImageEventHandler
 public:
 	CMyImageEventHandler(BaslerCamera* camera) : camera(camera) {}
 
-    virtual void OnImageGrabbed(CInstantCamera& camera, const CGrabResultPtr& grabResult)
+    virtual void OnImageGrabbed(CInstantCamera& camera, const CGrabResultPtr& grabResult) override
     {
 		this->camera->onGrabbedInternal(grabResult);
     }
@@ -90,15 +90,19 @@ void BaslerCamera::start(OperationMode operationMode)
 
 	GenApi::INodeMap& nodemap = camera->GetNodeMap();
 
+	camera->Open();
+
 	imageWidth  = GenApi::CIntegerPtr(nodemap.GetNode("Width"))->GetValue();
 	imageHeight = GenApi::CIntegerPtr(nodemap.GetNode("Height"))->GetValue();
-
-	camera->Open();
+	
 	if (operationMode == PUSH)
 	{
+		camera->Close();
+
         camera->RegisterConfiguration(new CSoftwareTriggerConfiguration, RegistrationMode_ReplaceAll, Cleanup_Delete);
 		camera->RegisterImageEventHandler(new CMyImageEventHandler(this), RegistrationMode_Append, Cleanup_Delete);
 		camera->StartGrabbing(GrabStrategy_OneByOne, GrabLoop_ProvidedByInstantCamera);
+		trigger();
 	}
 	else
 		camera->StartGrabbing();
@@ -109,7 +113,8 @@ void BaslerCamera::stop()
 	if (camera != NULL)
 	{
 		camera->StopGrabbing();
-		camera->Close();
+		if (operationMode == PULL)
+			camera->Close();
 
 		delete camera;
 		camera = NULL;
@@ -122,7 +127,7 @@ void BaslerCamera::onGrabbedInternal(const CGrabResultPtr& grabResult)
 	CImageFormatConverter converter;
 	converter.OutputPixelFormat = PixelType_BGR8packed;
 	converter.OutputBitAlignment = OutputBitAlignment_LsbAligned; // OutputBitAlignment_MsbAligned;
-	converter.OutputPaddingX = 0;//lineLength - imageWidth * getImageChannels();
+	converter.OutputPaddingX = lineLength - imageWidth * 3; // NumChannels = 3
 	converter.Convert(image, grabResult);
 
 	onGrabbed(image.GetBuffer(), image.GetImageSize());
@@ -134,7 +139,7 @@ void BaslerCamera::onGrabbed(void* buffer, long size)
 
 bool BaslerCamera::trigger()
 {
-	if (camera->WaitForFrameTriggerReady( 100, TimeoutHandling_Return))
+	if (camera->WaitForFrameTriggerReady( 100, TimeoutHandling_ThrowException))
 	{
 		camera->ExecuteSoftwareTrigger();
 		return true;
@@ -142,7 +147,7 @@ bool BaslerCamera::trigger()
 	else return false;
 }
 
-bool BaslerCamera::grabRGB8(void *buffer, long size, int lineLength, unsigned int timeOutMs)
+bool BaslerCamera::grabRGB8(void *buffer, long size, unsigned int timeOutMs)
 {
 	if (!camera->IsGrabbing()) return false;
 

@@ -63,12 +63,16 @@ public class BaslerCamera {
     BaslerJavaJNI.BaslerCamera_stop(swigCPtr, this);
   }
 
-  public boolean trigger() {
+  public void setLineLength(int lineLength) {
+    BaslerJavaJNI.BaslerCamera_setLineLength(swigCPtr, this, lineLength);
+  }
+
+  public boolean trigger() throws java.lang.RuntimeException {
     return BaslerJavaJNI.BaslerCamera_trigger(swigCPtr, this);
   }
 
-  public boolean grabRGB8(java.nio.ByteBuffer buffer, int lineLength, long timeOutMs) throws java.lang.RuntimeException {
-    return BaslerJavaJNI.BaslerCamera_grabRGB8(swigCPtr, this, buffer, lineLength, timeOutMs);
+  public boolean grabRGB8(java.nio.ByteBuffer buffer, long timeOutMs) throws java.lang.RuntimeException {
+    return BaslerJavaJNI.BaslerCamera_grabRGB8(swigCPtr, this, buffer, timeOutMs);
   }
 
   public int getImageWidth() {

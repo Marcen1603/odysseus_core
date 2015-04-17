@@ -90,9 +90,9 @@ public class BaslerCameraTransportHandler extends AbstractSimplePullTransportHan
 							fireProcess(tuple);		 					
 		 				}
 		 			};
-				cameraCapture.start(operationMode);
-				
+				cameraCapture.start(operationMode);				
 				imageJCV = new ImageJCV(cameraCapture.getImageWidth(), cameraCapture.getImageHeight(), IPL_DEPTH_8U, 3);
+				cameraCapture.setLineLength(imageJCV.getWidthStep());
 				
 				currentTuple = null;
 			}
@@ -158,7 +158,7 @@ public class BaslerCameraTransportHandler extends AbstractSimplePullTransportHan
 		{
 			if (cameraCapture == null) return false;
 
-			if (!cameraCapture.grabRGB8(imageJCV.getImageData(), imageJCV.getImage().widthStep(), 1000))
+			if (!cameraCapture.grabRGB8(imageJCV.getImageData(), 1000))
 				return false;
 
 			// System.out.println("Frame grabbed from " + serialNumber);
