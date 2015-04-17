@@ -45,9 +45,10 @@ public class CommandPO<T extends IStreamObject<?>> extends AbstractSink<T>
 		{
 			for (Entry<ICommandProvider, Command> e : listenerMap.entrySet())
 			{
+				Command cmd = null;
+				String curCommandName = null;
 				if (commandName == null)
 				{
-					String curCommandName = null;
 					if (object instanceof Tuple<?>)
 					{
 						for (SDFAttribute attr : getOutputSchema(port).getAttributes())
@@ -65,17 +66,22 @@ public class CommandPO<T extends IStreamObject<?>> extends AbstractSink<T>
 					if (curCommandName == null)
 						throw new IllegalArgumentException("Could not get \"Command\" attribute");
 					
-					Command cmd = e.getKey().getCommandByName(curCommandName.toLowerCase(), getOutputSchema(port));
+					cmd = e.getKey().getCommandByName(curCommandName.toLowerCase(), getOutputSchema(port));
 					if (cmd == null)
-						throw new IllegalArgumentException("Could not find command \"" + commandName + "\"");
-					
-					cmd.run(object);
+						throw new IllegalArgumentException("Could not find command \"" + commandName + "\"");					
 				}
 				else
 				{
-					System.out.println("Run command \"" + commandName + "\" with " + object);
-					e.getValue().run(object);	
+					cmd = e.getValue();
+					curCommandName = commandName;
 				}
+
+				System.out.print("Run command \"" + curCommandName + "\" with " + object);
+				
+				if (cmd.run(object))
+					System.out.println(" succeeded!");
+				else
+					System.out.println(" failed!");
 			}
 		}
 		catch (Exception e)
