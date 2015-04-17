@@ -168,7 +168,7 @@ public class TimerTransportHandler extends AbstractPushTransportHandler implemen
 				
 				return new Command()
 				{
-					@Override public void run(IStreamObject<?> input) 
+					@Override public boolean run(IStreamObject<?> input) 
 					{
 						long period;
 
@@ -187,6 +187,7 @@ public class TimerTransportHandler extends AbstractPushTransportHandler implemen
 							throw new IllegalArgumentException("Cannot execute command on input type " + input.getClass().getName());
 
 						TimerTransportHandler.this.setPeriod(period);
+						return true;
 					}
 				};
 			}

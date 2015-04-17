@@ -4,5 +4,5 @@ import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 
 public abstract class Command 
 {
-	public abstract void run(IStreamObject<?> input);
+	public abstract boolean run(IStreamObject<?> input);
 }

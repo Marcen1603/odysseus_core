@@ -3,7 +3,6 @@ package de.uniol.inf.is.odysseus.wrapper.navicoradar.physicaloperator;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
-import java.util.ArrayList;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,7 +17,6 @@ import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.AbstractPushTransportHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandler;
-import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.TimerTransportHandler;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.wrapper.navicoradar.SWIG.NavicoRadarWrapper;
 
@@ -208,7 +206,7 @@ protected void onTargetUpdate(ByteBuffer target) {
 			final int headingAttribute = schema.findAttributeIndexException("speedType");
 			return new Command()
 								 {
-								 	@Override public void run(IStreamObject<?> input) 
+								 	@Override public boolean run(IStreamObject<?> input) 
 								 	{
 								 		int speedType,headingType;
 								 		double speed,heading;
@@ -234,7 +232,7 @@ protected void onTargetUpdate(ByteBuffer target) {
 								 		else
 								 			throw new IllegalArgumentException("Cannot execute command on input type " + input.getClass().getName());
 								 		
-								 		NavicoRadarTransportHandler.this.navico.SetBoatSpeed(speedType, speed, headingType, heading);
+								 		return NavicoRadarTransportHandler.this.navico.SetBoatSpeed(speedType, speed, headingType, heading);
 									}
  								 };
 		}
@@ -245,7 +243,7 @@ protected void onTargetUpdate(ByteBuffer target) {
 			final int bearingtypeAttribute = schema.findAttributeIndexException("bearingtype"); 
 			return new Command()
 		 {
-		 	@Override public void run(IStreamObject<?> input) 
+		 	@Override public boolean run(IStreamObject<?> input) 
 		 	{
 		 		int TargetId, range, bearing, bearingtype;
 		 		
@@ -269,7 +267,7 @@ protected void onTargetUpdate(ByteBuffer target) {
 		 		else
 		 			throw new IllegalArgumentException("Cannot execute command on input type " + input.getClass().getName());
 		 		
-		 		NavicoRadarTransportHandler.this.navico.AcquireTargets(TargetId, range, bearing, bearingtype);
+		 		return NavicoRadarTransportHandler.this.navico.AcquireTargets(TargetId, range, bearing, bearingtype);
 			}
 		 };					 
 		}						 
