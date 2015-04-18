@@ -1,10 +1,12 @@
 package de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol;
 
 import java.io.IOException;
+
 import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.IAccessPattern;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportDirection;
+import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportExchangePattern;
 
 public class NoProtocolHandler<T> extends AbstractProtocolHandler<T> {
 
@@ -53,4 +55,12 @@ public class NoProtocolHandler<T> extends AbstractProtocolHandler<T> {
 			return null;
 		}
 	}
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public ITransportExchangePattern getExchangePattern() {
+        return ITransportExchangePattern.InOut;
+    }
 }
