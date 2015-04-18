@@ -182,7 +182,14 @@ abstract public class AbstractProtocolHandler<T> implements IProtocolHandler<T> 
 
     @Override
     public void write(T object) throws IOException {
-        throw new RuntimeException("Sorry. Currently not implemented");
+        try {
+            ByteBuffer buffer = ByteBuffer.allocate(getDataHandler().memSize(object));
+            getDataHandler().writeData(buffer, object);
+            getTransportHandler().send(buffer.array());
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
