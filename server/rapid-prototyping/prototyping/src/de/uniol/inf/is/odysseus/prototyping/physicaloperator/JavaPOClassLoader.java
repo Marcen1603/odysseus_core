@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.prototyping.udf;
+package de.uniol.inf.is.odysseus.prototyping.physicaloperator;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -17,19 +17,19 @@ import javax.tools.ToolProvider;
  * @author Christian Kuka <christian@kuka.cc>
  *
  */
-public class UDFClassLoader extends ClassLoader {
+public class JavaPOClassLoader extends ClassLoader {
     private final JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
     private final MemoryFileManager manager = new MemoryFileManager(this.compiler);
 
-    public UDFClassLoader(final String classname, final String filecontent) {
+    public JavaPOClassLoader(final String classname, final String filecontent) {
         this(Collections.singletonMap(classname, filecontent));
     }
 
-    public UDFClassLoader(final Map<String, String> map) {
+    public JavaPOClassLoader(final Map<String, String> map) {
         Objects.requireNonNull(map);
-        final List<UDFSource> list = new ArrayList<>();
+        final List<JavaPOSource> list = new ArrayList<>();
         for (final Map.Entry<String, String> entry : map.entrySet()) {
-            list.add(new UDFSource(entry.getKey(), Kind.SOURCE, entry.getValue()));
+            list.add(new JavaPOSource(entry.getKey(), Kind.SOURCE, entry.getValue()));
         }
         this.compiler.getTask(null, this.manager, null, null, null, list).call();
     }
@@ -42,7 +42,7 @@ public class UDFClassLoader extends ClassLoader {
     protected Class<?> findClass(final String name) throws ClassNotFoundException {
         Objects.requireNonNull(name);
         synchronized (this.manager) {
-            final UDFOutput output = this.manager.remove(name);
+            final JavaPOOutput output = this.manager.remove(name);
             if (output != null) {
                 final byte[] array = output.toByteArray();
                 return this.defineClass(name, array, 0, array.length);

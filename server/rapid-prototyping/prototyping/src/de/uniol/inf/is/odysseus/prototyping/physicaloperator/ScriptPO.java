@@ -1,19 +1,19 @@
-/**********************************************************************************
- * Copyright 2011 The Odysseus Team
+/*******************************************************************************
+ * Copyright 2015 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */
-package de.uniol.inf.is.odysseus.prototyping.udf;
+ ******************************************************************************/
+package de.uniol.inf.is.odysseus.prototyping.physicaloperator;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -34,21 +34,21 @@ import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.UserDefinedFunction;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe.OutputMode;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.IUserDefinedFunction;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
+import de.uniol.inf.is.odysseus.prototyping.logicaloperator.AbstractScriptAO;
 
 /**
- * User Defined Function for rapid prototyping using scripts
+ * @author Christian Kuka <christian@kuka.cc>
+ * @version $Id$
  *
- * @author Christian Kuka <christian.kuka@offis.de>
  */
-@UserDefinedFunction(name = "Script")
-public class JSR223UDFunction implements IUserDefinedFunction<Tuple<? extends IMetaAttribute>, Tuple<? extends IMetaAttribute>> {
+public class ScriptPO<M extends IMetaAttribute, T extends Tuple<M>> extends AbstractPipe<T, T> {
+    private static final Logger LOG = LoggerFactory.getLogger(ScriptPO.class);
+
     private static final String KEY_ATTRIBUTE = "attr";
     private static final String KEY_ATTRIBUTES = "attrs";
     private static final String KEY_META = "meta";
-    private static final Logger LOG = LoggerFactory.getLogger(JSR223UDFunction.class);
 
     /** The script engine */
     private ScriptEngine engine;
@@ -57,46 +57,45 @@ public class JSR223UDFunction implements IUserDefinedFunction<Tuple<? extends IM
     /** The script reader **/
     private InputStreamReader script;
     /** The path to the script file */
-    private String fileName;
+    private String path;
 
     /**
+     * Class constructor.
      *
-     * {@inheritDoc}
      */
-    @Override
-    public void init(final String initString) {
-        this.fileName = initString;
-        final String extension = this.fileName.substring(this.fileName.lastIndexOf(".") + 1);
+    public ScriptPO(final AbstractScriptAO operator) {
+        this.path = operator.getPath();
+        final String extension = this.path.substring(this.path.lastIndexOf(".") + 1);
         final ScriptEngineManager manager = new ScriptEngineManager();
         this.engine = manager.getEngineByExtension(extension);
         if (this.engine == null) {
-            JSR223UDFunction.LOG.error("No scripting engine was found");
+            ScriptPO.LOG.error("No scripting engine was found");
         }
-        if (JSR223UDFunction.LOG.isDebugEnabled()) {
+        if (ScriptPO.LOG.isDebugEnabled()) {
             final List<ScriptEngineFactory> engines = manager.getEngineFactories();
-            JSR223UDFunction.LOG.debug("The following " + engines.size() + " scripting engines were found");
+            ScriptPO.LOG.debug("The following " + engines.size() + " scripting engines were found");
             for (final ScriptEngineFactory engineFactory : engines) {
-                JSR223UDFunction.LOG.debug("Engine name: {}", engineFactory.getEngineName());
-                JSR223UDFunction.LOG.debug("\tVersion: {}", engineFactory.getEngineVersion());
-                JSR223UDFunction.LOG.debug("\tLanguage: {}", engineFactory.getLanguageName());
+                ScriptPO.LOG.debug("Engine name: {}", engineFactory.getEngineName());
+                ScriptPO.LOG.debug("\tVersion: {}", engineFactory.getEngineVersion());
+                ScriptPO.LOG.debug("\tLanguage: {}", engineFactory.getLanguageName());
                 final List<String> extensions = engineFactory.getExtensions();
                 if (extensions.size() > 0) {
-                    JSR223UDFunction.LOG.debug("\tEngine supports the following extensions:");
+                    ScriptPO.LOG.debug("\tEngine supports the following extensions:");
                     for (final String e : extensions) {
-                        JSR223UDFunction.LOG.debug("\t\t{}", e);
+                        ScriptPO.LOG.debug("\t\t{}", e);
                     }
                 }
                 final List<String> shortNames = engineFactory.getNames();
                 if (shortNames.size() > 0) {
-                    JSR223UDFunction.LOG.debug("\tEngine has the following short names:");
+                    ScriptPO.LOG.debug("\tEngine has the following short names:");
                     for (final String n : engineFactory.getNames()) {
-                        JSR223UDFunction.LOG.debug("\t\t{}", n);
+                        ScriptPO.LOG.debug("\t\t{}", n);
                     }
                 }
-                JSR223UDFunction.LOG.debug("=========================");
+                ScriptPO.LOG.debug("=========================");
             }
         }
-        final File scriptFile = new File(this.fileName);
+        final File scriptFile = new File(this.path);
         try {
             this.script = new InputStreamReader(new FileInputStream(scriptFile));
             if ((this.compiledScript == null) && (this.engine instanceof Compilable)) {
@@ -104,26 +103,46 @@ public class JSR223UDFunction implements IUserDefinedFunction<Tuple<? extends IM
             }
         }
         catch (FileNotFoundException | ScriptException e) {
-            JSR223UDFunction.LOG.error(e.getMessage(), e);
+            ScriptPO.LOG.error(e.getMessage(), e);
             throw new RuntimeException(e);
         }
     }
 
+    public ScriptPO(final ScriptPO<M, T> operator) {
+        super(operator);
+    }
+
     /**
-     *
      * {@inheritDoc}
      */
     @Override
-    public Tuple<? extends IMetaAttribute> process(final Tuple<? extends IMetaAttribute> in, final int port) {
-        Tuple<IMetaAttribute> ret = null;
+    public void processPunctuation(final IPunctuation punctuation, final int port) {
+        this.sendPunctuation(punctuation);
+
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe.OutputMode getOutputMode() {
+        return OutputMode.NEW_ELEMENT;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @SuppressWarnings("unchecked")
+    @Override
+    protected void process_next(final T object, final int port) {
         final Bindings bindings = this.engine.createBindings();
 
-        final Object[] attributes = in.getAttributes();
-        bindings.put(JSR223UDFunction.KEY_ATTRIBUTES, new Integer(attributes.length));
+        final Object[] attributes = object.getAttributes();
+        bindings.put(ScriptPO.KEY_ATTRIBUTES, new Integer(attributes.length));
         for (int i = 0; i < attributes.length; ++i) {
-            bindings.put(JSR223UDFunction.KEY_ATTRIBUTE + i, attributes[i]);
+            bindings.put(ScriptPO.KEY_ATTRIBUTE + i, attributes[i].toString());
         }
-        bindings.put(JSR223UDFunction.KEY_META, in.getMetadata());
+        bindings.put(ScriptPO.KEY_META, object.getMetadata());
         try {
             if (this.compiledScript != null) {
                 this.compiledScript.eval(bindings);
@@ -135,30 +154,28 @@ public class JSR223UDFunction implements IUserDefinedFunction<Tuple<? extends IM
             }
         }
         catch (final ScriptException e) {
-            JSR223UDFunction.LOG.error(e.getMessage(), e);
+            ScriptPO.LOG.error(e.getMessage(), e);
             throw new RuntimeException(e);
         }
         final Object[] retObj = new Object[attributes.length];
         for (int i = 0; i < attributes.length; ++i) {
-            retObj[i] = bindings.get(JSR223UDFunction.KEY_ATTRIBUTE + i);
+            retObj[i] = bindings.get(ScriptPO.KEY_ATTRIBUTE + i);
         }
-        ret = new Tuple<>(retObj, false);
-        if (bindings.get(JSR223UDFunction.KEY_META) != null) {
-            ret.setMetadata((IMetaAttribute) bindings.get(JSR223UDFunction.KEY_META));
+        final T ret = (T) new Tuple<>(retObj, false);
+        if (bindings.get(ScriptPO.KEY_META) != null) {
+            ret.setMetadata((M) bindings.get(ScriptPO.KEY_META));
         }
         else {
-            ret.setMetadata(in.getMetadata().clone());
+            ret.setMetadata((M) object.getMetadata().clone());
         }
-        return ret;
+        this.transfer(ret);
     }
 
     /**
-     *
      * {@inheritDoc}
      */
     @Override
-    public OutputMode getOutputMode() {
-        return OutputMode.MODIFIED_INPUT;
+    public ScriptPO<M, T> clone() {
+        return new ScriptPO<>(this);
     }
-
 }

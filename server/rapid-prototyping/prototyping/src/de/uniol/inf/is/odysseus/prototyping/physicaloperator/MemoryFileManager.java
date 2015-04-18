@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.prototyping.udf;
+package de.uniol.inf.is.odysseus.prototyping.physicaloperator;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -20,7 +20,7 @@ import javax.tools.JavaFileObject.Kind;
  */
 @SuppressWarnings("rawtypes")
 public class MemoryFileManager extends ForwardingJavaFileManager {
-    private final Map<String, UDFOutput> map = new HashMap<>();
+    private final Map<String, JavaPOOutput> map = new HashMap<>();
 
     @SuppressWarnings("unchecked")
     MemoryFileManager(final JavaCompiler compiler) {
@@ -34,12 +34,12 @@ public class MemoryFileManager extends ForwardingJavaFileManager {
     @Override
     public JavaFileObject getJavaFileForOutput(final Location location, final String className, final Kind kind, final FileObject sibling) throws IOException {
         Objects.requireNonNull(className);
-        final UDFOutput output = new UDFOutput(className, kind);
+        final JavaPOOutput output = new JavaPOOutput(className, kind);
         this.map.put(className, output);
         return output;
     }
 
-    public UDFOutput remove(final String className) {
+    public JavaPOOutput remove(final String className) {
         Objects.requireNonNull(className);
         return this.map.remove(className);
     }

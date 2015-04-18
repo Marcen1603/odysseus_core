@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.prototyping.udf;
+package de.uniol.inf.is.odysseus.prototyping.physicaloperator;
 
 import java.net.URI;
 
@@ -11,10 +11,10 @@ import javax.tools.SimpleJavaFileObject;
  * @author Christian Kuka <christian@kuka.cc>
  *
  */
-public class UDFSource extends SimpleJavaFileObject {
+public class JavaPOSource extends SimpleJavaFileObject {
     private final String content;
 
-    UDFSource(final String className, final Kind kind, final String content) {
+    JavaPOSource(final String className, final Kind kind, final String content) {
         super(URI.create("memo:///" + className.replace('.', '/') + kind.extension), kind);
         this.content = content;
     }

@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.prototyping.udf;
+package de.uniol.inf.is.odysseus.prototyping.physicaloperator;
 
 import java.io.ByteArrayOutputStream;
 import java.net.URI;
@@ -12,11 +12,11 @@ import javax.tools.SimpleJavaFileObject;
  * @author Christian Kuka <christian@kuka.cc>
  *
  */
-public class UDFOutput extends SimpleJavaFileObject {
+public class JavaPOOutput extends SimpleJavaFileObject {
 
     private final ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
-    UDFOutput(final String className, final Kind kind) {
+    JavaPOOutput(final String className, final Kind kind) {
         super(URI.create("memo:///" + className.replace('.', '/') + kind.extension), kind);
     }
 
