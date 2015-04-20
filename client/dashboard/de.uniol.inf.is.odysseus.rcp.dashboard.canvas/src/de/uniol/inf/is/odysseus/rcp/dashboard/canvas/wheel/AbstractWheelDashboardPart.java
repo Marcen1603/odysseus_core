@@ -92,11 +92,11 @@ public abstract class AbstractWheelDashboardPart extends AbstractCanvasDashboard
         this.fill(background);
         final RGB[] circleColor = foreground.getTriadic();
         this.setAlpha(128);
-        this.fillCircle(this.getCenter(), (int) (2 * this.getRadius()), 0, 360, circleColor[0]);
+        this.fillArc(this.getCenter(), (int) (2 * this.getRadius()), 0, 360, circleColor[0]);
         this.setAlpha(255);
-        this.fillCircle(this.getCenter(), (int) (this.getRadius()), 0, 360, circleColor[1]);
+        this.fillArc(this.getCenter(), (int) (this.getRadius()), 0, 360, circleColor[1]);
         final RGB innerBackground = this.getForegroundColor().getComplement();
-        this.fillCircle(this.getCenter(), (int) ((1.0 / 3.0) * this.getRadius()), 0, 360, innerBackground);
+        this.fillArc(this.getCenter(), (int) ((1.0 / 3.0) * this.getRadius()), 0, 360, innerBackground);
 
         final Iterator<IStreamObject<?>> iter = this.getObjects().iterator();
         final List<Coordinate> coordinates = new ArrayList<>(this.getObjects().size());

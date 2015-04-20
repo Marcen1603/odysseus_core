@@ -42,10 +42,10 @@ public class GaugeWheelDashboardPart extends AbstractWheelDashboardPart {
         final double value = (this.normalizeZ(z).doubleValue() - 0.5) * 360.0;
         final RGB gaugeBackgroundColor = this.getForegroundColor().getComplement();
         final RGB complement = this.getGaugeColor().getComplement();
-        this.fillCircle(this.getCenter(), (int) ((1.0 / 3.0) * this.getRadius()), 0, 360, gaugeBackgroundColor);
-        this.fillCircle(this.getCenter(), (int) (((1.0 / 3.0) * this.getRadius()) - 4), 180, -180, complement);
-        this.fillCircle(this.getCenter(), (int) (((1.0 / 3.0) * this.getRadius()) - 4), 180, (int) (-(value + 180) / 2), this.getGaugeColor());
-        this.fillCircle(this.getCenter(), (int) (((1.0 / 3.0) * this.getRadius()) - 14), 0, 360, gaugeBackgroundColor);
+        this.fillArc(this.getCenter(), (int) ((1.0 / 3.0) * this.getRadius()), 0, 360, gaugeBackgroundColor);
+        this.fillArc(this.getCenter(), (int) (((1.0 / 3.0) * this.getRadius()) - 4), 180, -180, complement);
+        this.fillArc(this.getCenter(), (int) (((1.0 / 3.0) * this.getRadius()) - 4), 180, (int) (-(value + 180) / 2), this.getGaugeColor());
+        this.fillArc(this.getCenter(), (int) (((1.0 / 3.0) * this.getRadius()) - 14), 0, 360, gaugeBackgroundColor);
         final String text = NumberFormat.getIntegerInstance().format(z);
         final Coordinate extent = this.textExtent(text);
         this.setBackground(gaugeBackgroundColor);

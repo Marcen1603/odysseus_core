@@ -50,7 +50,7 @@ public class LiquidGaugeWheelDashboardPart extends AbstractWheelDashboardPart {
         final double delta = Math.toDegrees(Math.acos(1.0 - value));
         final int start = (int) (angle + delta);
         final int end = (int) (angle - delta - start);
-        this.fillCircle(this.getCenter(), (int) ((1.0 / 3.0) * this.getRadius()), 0, 360, this.getGaugeColor().getComplement());
+        this.fillArc(this.getCenter(), (int) ((1.0 / 3.0) * this.getRadius()), 0, 360, this.getGaugeColor().getComplement());
 
         path.addArc((int) (this.getCenter().x - ((1.0 / 3.0) * this.getRadius())), (int) (this.getCenter().y - ((1.0 / 3.0) * this.getRadius())), (int) (2 * (1.0 / 3.0) * this.getRadius()),
                 (int) (2 * (1.0 / 3.0) * this.getRadius()), start, end);

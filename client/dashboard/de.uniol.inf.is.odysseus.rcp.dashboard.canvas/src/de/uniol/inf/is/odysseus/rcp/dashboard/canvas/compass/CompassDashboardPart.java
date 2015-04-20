@@ -63,8 +63,8 @@ public class CompassDashboardPart extends AbstractCanvasDashboardPart {
         this.fill(background);
         this.setAlpha(255);
 
-        this.drawCircle(this.getCenter(), (int) (this.getRadius()), 0, 360, RGB.BLACK);
-        this.drawCircle(this.getCenter(), (int) ((5.0 / 6.0) * this.getRadius()), 0, 360, RGB.BLACK);
+        this.drawArc(this.getCenter(), (int) (this.getRadius()), 0, 360, RGB.BLACK);
+        this.drawArc(this.getCenter(), (int) ((5.0 / 6.0) * this.getRadius()), 0, 360, RGB.BLACK);
 
         this.drawLine(new Coordinate((int) (this.getCenter().x - ((5.0 / 6.0) * this.getRadius())), this.getCenter().y), new Coordinate(this.getCenter().x - 8, this.getCenter().y), RGB.BLACK);
         this.drawLine(new Coordinate(this.getCenter().x + 8, this.getCenter().y), new Coordinate((int) (this.getCenter().x + ((5.0 / 6.0) * this.getRadius())), this.getCenter().y), RGB.BLACK);

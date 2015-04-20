@@ -42,10 +42,10 @@ public class ColorWheelDashboardPart extends AbstractWheelDashboardPart {
         final CIELCH base = this.getBaseColor().toCIELCH();
         for (double r = 0.0; r < 360; r += 0.5) {
             final RGB color = new CIELCH(base.L, base.C, base.H + r).toCIELab().toXYZ().toRGB();
-            this.fillCircle(this.getCenter(), (int) ((1.0 / 3.0) * this.getRadius()), (int) (r - 90.0), 1, color);
+            this.fillArc(this.getCenter(), (int) ((1.0 / 3.0) * this.getRadius()), (int) (r - 90.0), 1, color);
 
         }
-        this.fillCircle(this.getCenter(), (int) (((1.0 / 3.0) * this.getRadius()) - 8), 0, 360, this.getColor(new Double(value)));
+        this.fillArc(this.getCenter(), (int) (((1.0 / 3.0) * this.getRadius()) - 8), 0, 360, this.getColor(new Double(value)));
     }
 
     /**
