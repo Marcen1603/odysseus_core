@@ -40,7 +40,7 @@ public class TimerTransportHandler extends AbstractPushTransportHandler implemen
     private Timer timer = null;
     private long period = 1000l;
     private boolean timeFromStart = true;
-    private long start = 0;
+    private long timeOffset = 0;
 
     /**
  * 
@@ -89,9 +89,9 @@ public class TimerTransportHandler extends AbstractPushTransportHandler implemen
     @Override
     public void processInOpen() throws IOException {
     	if (timeFromStart)
-    		start = System.currentTimeMillis();
+    		timeOffset = System.currentTimeMillis();
     	else
-    		start = 0;
+    		timeOffset = 0;
     	
         fireOnConnect();
         startTimer();
@@ -120,7 +120,7 @@ public class TimerTransportHandler extends AbstractPushTransportHandler implemen
             @Override
             public void run() {
                 final ByteBuffer buffer = ByteBuffer.allocate(Long.SIZE / 8);
-                buffer.putLong(System.currentTimeMillis() - start);
+                buffer.putLong(System.currentTimeMillis() - timeOffset);
                 TimerTransportHandler.this.fireProcess(buffer);
             }
         };        
