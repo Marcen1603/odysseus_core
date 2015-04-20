@@ -23,7 +23,7 @@ public class TimerSource extends AbstractAccessAO {
 		setTransportHandler(TimerTransportHandler.NAME);
 		setDataHandler(new TupleDataHandler().getSupportedDataTypes().get(0));
 		setWrapper(Constants.GENERIC_PUSH);
-		SDFAttribute a = new SDFAttribute(getName(), "time", SDFDatatype.TIMESTAMP, null);
+		SDFAttribute a = new SDFAttribute(getName(), "time", SDFDatatype.START_TIMESTAMP, null);
 		List<SDFAttribute> attributes = new ArrayList<>();
 		attributes.add(a);
 		setAttributes(attributes);
@@ -51,7 +51,7 @@ public class TimerSource extends AbstractAccessAO {
 			return -1;
 	}
 
-	@Parameter(name = TimerTransportHandler.TIMEFROMSTART, type = BooleanParameter.class, optional = true, doc = "Start from Jan 1th 1970. If set to false, start from 0")
+	@Parameter(name = TimerTransportHandler.TIMEFROMSTART, type = BooleanParameter.class, optional = true, doc = "Start from Jan 1th 1970. If set to false, start from 0.")
 	public void setTimeFromStart2(boolean time){
 		addOption(TimerTransportHandler.TIMEFROMSTART,time+"");
 	}
