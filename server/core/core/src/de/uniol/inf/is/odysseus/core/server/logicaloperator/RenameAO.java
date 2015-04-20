@@ -78,11 +78,16 @@ public class RenameAO extends UnaryLogicalOp {
 		this.aliasesAsPairs = aliasesAsPairs;
 	}
 	
-	@Parameter(name = "isNoOp", type = BooleanParameter.class, optional = true, doc = "A flag to avoid removing this operator even if nothing in the schema is changed.")
+	@Parameter(name = "isNoOp", type = BooleanParameter.class, optional = true, doc = "A flag to avoid removing this operator even if nothing in the schema is changed.", deprecated=true)
+	public void setNoOpOld( boolean isNoOp ) {
+		this.isNoOp = isNoOp;
+	}
+
+	@Parameter(name = "NoOp", type = BooleanParameter.class, optional = true, doc = "A flag to avoid removing this operator even if nothing in the schema is changed.", deprecated=false)
 	public void setNoOp( boolean isNoOp ) {
 		this.isNoOp = isNoOp;
 	}
-	
+
 	public boolean isNoOp() {
 		return isNoOp;
 	}
