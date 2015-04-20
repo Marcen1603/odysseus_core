@@ -30,10 +30,15 @@ import java.nio.file.StandardWatchEventKinds;
 import java.nio.file.WatchEvent;
 import java.nio.file.WatchKey;
 import java.nio.file.WatchService;
+import java.util.concurrent.ExecutionException;
 import java.util.regex.Pattern;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
 
 import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
@@ -47,9 +52,14 @@ public class DirectoryWatcherTransportHandler extends AbstractPushTransportHandl
     static final Logger LOG = LoggerFactory.getLogger(DirectoryWatcherTransportHandler.class);
     protected static final String DIRECTORY = "directory";
     protected static final String FILTER = "filter";
+    protected static final String CACHEFILES = "cachefiles";
+    protected static final String CACHESIZE = "cachesize";
+    protected static final int defaultCacheSize = 10;
+    
     Path directory;
     Pattern filter;
     WatchService watcher;
+    LoadingCache<File, FileInputStream> fileCache;
 
     /**
      * 
@@ -77,6 +87,16 @@ public class DirectoryWatcherTransportHandler extends AbstractPushTransportHandl
         }
         if (options.containsKey(DirectoryWatcherTransportHandler.FILTER)) {
             this.filter = Pattern.compile(options.get(DirectoryWatcherTransportHandler.FILTER));
+        }
+        if (options.get(CACHEFILES, "false").equalsIgnoreCase("true")) {
+        	fileCache = CacheBuilder.newBuilder().maximumSize(options.getInt(CACHESIZE, defaultCacheSize)).build(
+        					new CacheLoader<File, FileInputStream>()
+        					{
+        						@Override public FileInputStream load(File file) throws Exception 
+        						{
+        	                    	return new FileInputStream(file);
+        						}        
+        					});
         }
     }
 
@@ -107,7 +127,19 @@ public class DirectoryWatcherTransportHandler extends AbstractPushTransportHandl
 
     protected void onChangeDetected(File file) throws IOException
     {
-    	fireProcess(new FileInputStream(file));
+    	if (fileCache != null)
+    	{
+    		try 
+    		{
+				fireProcess(fileCache.get(file));
+			} 
+    		catch (ExecutionException e) 
+    		{
+    			throw new IOException("Error while loading \"" + file + "\" into cache", e);
+			}
+    	}
+    	else
+    		fireProcess(new FileInputStream(file));
     }
     
     /**
