@@ -10,6 +10,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.BooleanParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.LongParameter;
 import de.uniol.inf.is.odysseus.core.server.util.Constants;
 
@@ -49,4 +50,19 @@ public class TimerSource extends AbstractAccessAO {
 		}else
 			return -1;
 	}
+
+	@Parameter(name = TimerTransportHandler.TIMEFROMSTART, type = BooleanParameter.class, optional = true, doc = "Start from Jan 1th 1970. If set to false, start from 0")
+	public void setTimeFromStart2(boolean time){
+		addOption(TimerTransportHandler.TIMEFROMSTART,time+"");
+	}
+	
+	public boolean isTimeFromStart(){
+		String p = getOption(TimerTransportHandler.TIMEFROMSTART);
+		if (p != null){
+			return Boolean.parseBoolean(p);
+		}else
+			return false;
+	}
+
+	
 }
