@@ -81,10 +81,13 @@ public class StreamTableEditor implements IStreamEditorType {
 	private boolean isDesync;
 	private RefreshTableThread desyncThread;
 	private boolean isShowingMetadata = true;
+	private boolean isShowingHashCode = false;
 
 	private TableViewerColumn metadataColumn;
 	private TableViewerColumn metadataMapColumn;
+	private TableViewerColumn hashCodeColumn;
 
+	
 	public StreamTableEditor(int maxTuples) {
 		setMaxTuplesCount(maxTuples);
 	}
@@ -257,6 +260,20 @@ public class StreamTableEditor implements IStreamEditorType {
 
 		});
 
+		final ToolItem hashCodeButton = new ToolItem(toolbar, SWT.CHECK);
+		hashCodeButton.setImage(ViewerStreamTablePlugIn.getImageManager().get("metadata"));
+		hashCodeButton.setToolTipText("Show hashCode");
+		hashCodeButton.setSelection(isShowingHashCode);
+		hashCodeButton.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				isShowingHashCode = hashCodeButton.getSelection();
+				createAllColumns(getTableViewer());
+			}
+
+		});
+
+		
 		toolbarLabel = new Label(toolbar.getParent(), SWT.NONE);
 		toolbarLabel.setText("                                                                                                                                                                                     ");
 	}
@@ -357,6 +374,7 @@ public class StreamTableEditor implements IStreamEditorType {
 		}
 		metadataColumn = null;
 		metadataMapColumn = null;
+		hashCodeColumn = null;
 	}
 
 	private void setMaxTuplesCount(int maxTuples) {
@@ -408,6 +426,11 @@ public class StreamTableEditor implements IStreamEditorType {
 
 				metadataMapColumn = createMetadataMapColumn(tableViewer);
 				layout.setColumnData(metadataMapColumn.getColumn(), new ColumnWeightData(weight, 25, true));
+			}
+			
+			if (isShowingHashCode){
+				hashCodeColumn = createHashCodeColumn(tableViewer);
+				layout.setColumnData(hashCodeColumn.getColumn(), new ColumnWeightData(weight,10,true));
 			}
 
 		} finally {
@@ -480,6 +503,26 @@ public class StreamTableEditor implements IStreamEditorType {
 		return col;
 	}
 
+	private TableViewerColumn createHashCodeColumn(TableViewer tableViewer) {
+		TableViewerColumn col = new TableViewerColumn(tableViewer, SWT.NONE);
+		col.getColumn().setText("hashCode / Object.hashCode");
+		col.getColumn().setAlignment(SWT.CENTER);
+
+		col.setLabelProvider(new CellLabelProvider() {
+			@Override
+			public void update(ViewerCell cell) {
+				int hashCode = ((Tuple<?>) cell.getElement()).hashCode();
+				int hashCode2 = ((Tuple<?>) cell.getElement()).objectHashCode();
+				
+				cell.setText(hashCode+" / "+hashCode2);
+				cell.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_GRAY));
+			}
+		});
+
+		return col;
+	}
+
+	
 	private void stopRefreshThread() {
 		if (desyncThread != null) {
 			desyncThread.stopRunning();

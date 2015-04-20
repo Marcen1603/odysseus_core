@@ -104,6 +104,13 @@ public interface IStreamObject<M extends IMetaAttribute> extends
     public int hashCode();
 
     /**
+     * Allow to read the original object hashCode
+     * @return
+     */
+    int objectHashCode();
+
+    
+    /**
      * Creates a new instance of the current streaming object.
      * 
      * @return A new instance of the streaming object class.
@@ -119,6 +126,7 @@ public interface IStreamObject<M extends IMetaAttribute> extends
 	 * @return
 	 */
 	boolean equalsTolerance(Object o, double tolerance);
+
 
 
 }
