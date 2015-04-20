@@ -1,6 +1,6 @@
 package de.uniol.inf.is.odysseus.server.nosql.base.physicaloperator;
 
-import de.uniol.inf.is.odysseus.core.collection.KeyValueObject;
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSink;
@@ -17,7 +17,7 @@ import java.util.List;
  *  database for each element.
  */
 @SuppressWarnings("rawtypes")
-public abstract class AbstractNoSQLSinkPO extends AbstractSink<KeyValueObject<?>> implements IPhysicalNoSQLOperator {
+public abstract class AbstractNoSQLSinkPO<E extends IStreamObject<?>> extends AbstractSink<E> implements IPhysicalNoSQLOperator {
 
     private static NoSQLConnectionManager connectionManager = NoSQLConnectionManager.getInstance();
 
@@ -26,7 +26,7 @@ public abstract class AbstractNoSQLSinkPO extends AbstractSink<KeyValueObject<?>
     private String user;
     private String password;
 
-    BatchSizeTimer<KeyValueObject<?>> batchSizeTimer;
+    BatchSizeTimer<E> batchSizeTimer;
 
     public AbstractNoSQLSinkPO(AbstractNoSQLSinkAO abstractNoSQLSinkAO){
         super();
@@ -38,7 +38,7 @@ public abstract class AbstractNoSQLSinkPO extends AbstractSink<KeyValueObject<?>
         user = abstractNoSQLSinkAO.getUser();
         password = abstractNoSQLSinkAO.getPassword();
 
-        BatchSizeTimerTask<KeyValueObject<?>> batchSizeTimerTask = new BatchSizeTimerTaskImpl();
+        BatchSizeTimerTask<E> batchSizeTimerTask = new BatchSizeTimerTaskImpl();
         batchSizeTimer = new BatchSizeTimer<>(batchSizeTimerTask, batchSize, batchTimeout);
     }
 
@@ -50,8 +50,8 @@ public abstract class AbstractNoSQLSinkPO extends AbstractSink<KeyValueObject<?>
     }
 
     @Override
-    protected final void process_next(KeyValueObject<?> tuple, int port) {
-        batchSizeTimer.add(tuple);
+    protected final void process_next(E element, int port) {
+        batchSizeTimer.add(element);
     }
 
     @Override
@@ -68,16 +68,16 @@ public abstract class AbstractNoSQLSinkPO extends AbstractSink<KeyValueObject<?>
 
     /**
      *  process_next_tuple_to_write will be implemented in the concrete NoSQLSinkPO.
-     *  In this method all elements of tupleToWrite will be written into the NoSQL database.
+     *  In this method all elements of elementsToWrite will be written into the NoSQL database.
      *
-     * @param tupleToWrite list of elements which will be written into the database
+     * @param elementsToWrite list of elements which will be written into the database
      */
-    protected abstract void process_next_tuple_to_write(List<KeyValueObject<?>> tupleToWrite);
+    protected abstract void process_next_tuple_to_write(List<E> elementsToWrite);
 
-    private class BatchSizeTimerTaskImpl implements BatchSizeTimerTask<KeyValueObject<?>> {
+    private class BatchSizeTimerTaskImpl implements BatchSizeTimerTask<E> {
 
         @Override
-        public void onTimerRings(List<KeyValueObject<?>> elements) {
+        public void onTimerRings(List<E> elements) {
             process_next_tuple_to_write(elements);
         }
     }

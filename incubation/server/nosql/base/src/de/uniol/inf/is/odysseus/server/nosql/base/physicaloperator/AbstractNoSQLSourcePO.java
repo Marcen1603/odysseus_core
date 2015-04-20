@@ -1,18 +1,18 @@
 package de.uniol.inf.is.odysseus.server.nosql.base.physicaloperator;
 
-import de.uniol.inf.is.odysseus.core.collection.KeyValueObject;
+import java.util.List;
+
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSource;
 import de.uniol.inf.is.odysseus.server.nosql.base.logicaloperator.AbstractNoSQLSourceAO;
 import de.uniol.inf.is.odysseus.server.nosql.base.util.connection.NoSQLConnectionManager;
 
-import java.util.List;
-
 /**
  *  The AbstractNoSQLSourcePO ist the superclass for all NoSQL sources. It helps the concrete implementation with the
  *  connection-handling and transfer of elements of the database as data stream with the transferThread.
  */
-public abstract class AbstractNoSQLSourcePO extends AbstractSource<KeyValueObject<?>> implements IPhysicalNoSQLOperator {
+public abstract class AbstractNoSQLSourcePO<E extends IStreamObject<?>> extends AbstractSource<E> implements IPhysicalNoSQLOperator {
 
     private static NoSQLConnectionManager connectionManager = NoSQLConnectionManager.getInstance();
 
@@ -55,10 +55,10 @@ public abstract class AbstractNoSQLSourcePO extends AbstractSource<KeyValueObjec
      *  process_transfer_tuples will be implemented in the concrete NoSQLSourcePO.
      *  In this method will the concrete NoSQLSourcePO read data from the NoSQL database.
      *
-     * @param maxTupleCount the max count of elements. The concrete class should respect the max count
-     * @return a list of KeyValueObjects
+     * @param maxElementCount the max count of elements. The concrete class should respect the max count
+     * @return a list of Es
      */
-    protected abstract List<KeyValueObject> process_transfer_tuples(int maxTupleCount);
+    protected abstract List<E> process_transfer_tuples(int maxElementCount);
 
     @Override
     protected void process_close() {
@@ -75,9 +75,9 @@ public abstract class AbstractNoSQLSourcePO extends AbstractSource<KeyValueObjec
 
             do {
 
-                List<KeyValueObject> tuples = process_transfer_tuples(maxTupleCount);
+                List<E> tuples = process_transfer_tuples(maxTupleCount);
 
-                for (KeyValueObject tuple : tuples) {
+                for (E tuple : tuples) {
                     transfer(tuple);
                     waitForDelayBetweenTuple();
                 }

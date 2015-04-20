@@ -12,7 +12,7 @@ import java.util.*;
  *  For NoSQL databases which save their data in JSON Format it is recommended to use the
  *  AbstractNoSQLJsonSourcePO instead of AbstractNoSQLSourcePO.
  */
-public abstract class AbstractNoSQLJsonSourcePO extends AbstractNoSQLSourcePO {
+public abstract class AbstractNoSQLJsonSourcePO extends AbstractNoSQLSourcePO<KeyValueObject> {
 
     protected static Gson gson = new Gson();
 
@@ -21,9 +21,9 @@ public abstract class AbstractNoSQLJsonSourcePO extends AbstractNoSQLSourcePO {
     }
 
     @Override
-    protected final List<KeyValueObject> process_transfer_tuples(int maxTupleCount) {
+    protected final List<KeyValueObject> process_transfer_tuples(int maxElementCount) {
 
-        List<String> strings = process_transfer_jsons(maxTupleCount);
+        List<String> strings = process_transfer_jsons(maxElementCount);
 
         List<KeyValueObject> keyValueObjects = new ArrayList<>();
 

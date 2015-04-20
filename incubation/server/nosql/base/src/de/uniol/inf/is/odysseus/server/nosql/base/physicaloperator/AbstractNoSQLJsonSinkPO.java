@@ -14,7 +14,7 @@ import java.util.Map;
  *  For NoSQL databases which save their data in JSON Format it is recommended to use the
  *  AbstractNoSQLJsonSinkPO instead of AbstractNoSQLSinkPO.
  */
-public abstract class AbstractNoSQLJsonSinkPO extends AbstractNoSQLSinkPO {
+public abstract class AbstractNoSQLJsonSinkPO extends AbstractNoSQLSinkPO<KeyValueObject<?>> {
 
     protected static Gson gson = new Gson();
 
@@ -23,11 +23,11 @@ public abstract class AbstractNoSQLJsonSinkPO extends AbstractNoSQLSinkPO {
     }
 
     @Override
-    protected final synchronized void process_next_tuple_to_write(List<KeyValueObject<?>> tupleToWrite) {
+    protected final synchronized void process_next_tuple_to_write(List<KeyValueObject<?>> elementsToWrite) {
 
         ArrayList<String> jsons = new ArrayList<>();
 
-        for (KeyValueObject tuple : tupleToWrite) {
+        for (KeyValueObject tuple : elementsToWrite) {
 
             String json = toJsonString(tuple);
             jsons.add(json);
