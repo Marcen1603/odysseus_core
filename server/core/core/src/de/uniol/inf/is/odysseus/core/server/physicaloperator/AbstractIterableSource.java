@@ -17,11 +17,13 @@ package de.uniol.inf.is.odysseus.core.server.physicaloperator;
 
 import java.util.concurrent.locks.ReentrantLock;
 
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
+
 
 /**
  * @author Jonas Jacobi, Marco Grawunder
  */
-public abstract class AbstractIterableSource<T> extends AbstractSource<T>
+public abstract class AbstractIterableSource<T extends IStreamObject<?>> extends AbstractSource<T>
 		implements IIterableSource<T> {
 
 	private ReentrantLock lock = new ReentrantLock();

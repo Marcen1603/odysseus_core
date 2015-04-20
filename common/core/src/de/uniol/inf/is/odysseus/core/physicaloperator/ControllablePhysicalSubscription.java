@@ -54,7 +54,7 @@ public class ControllablePhysicalSubscription<K> extends
 	}
 
 	@SuppressWarnings({ "rawtypes" })
-	public void process(IStreamObject o) {
+	protected void do_process(IStreamObject o) {
 		// is load shedding active?
 
 		if (sheddingFactor > 0) {
@@ -73,7 +73,7 @@ public class ControllablePhysicalSubscription<K> extends
 		}
 	}
 
-	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@SuppressWarnings({"rawtypes" })
 	public void process_internal(IStreamObject o) {
 		if (getOpenCalls() > 0 && getOpenCalls() == suspendCalls) {
 			synchronized (suspendBuffer) {
@@ -81,11 +81,11 @@ public class ControllablePhysicalSubscription<K> extends
 			}
 		} else {
 			clearSuspendBuffer();
-			((ISink) getTarget()).process(o, getSinkInPort());
+			sendObject(o);
 		}
 	}
 
-	@SuppressWarnings({ "rawtypes", "unchecked" })
+	@SuppressWarnings({ "rawtypes" })
 	private void clearSuspendBuffer() {
 		// Fast check, if no suspension at all
 		if (suspendBuffer.isEmpty())
@@ -97,7 +97,7 @@ public class ControllablePhysicalSubscription<K> extends
 				return;
 
 			for (IStreamObject o : suspendBuffer) {
-				((ISink) getTarget()).process(o, getSinkInPort());
+				sendObject(o);
 				// TODO: Thread.yield();
 			}
 			suspendBuffer.clear();

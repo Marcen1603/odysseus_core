@@ -12,6 +12,14 @@ abstract public class AbstractStreamObject<T extends IMetaAttribute> implements
 		IStreamObject<T> {
 
 	private static final long serialVersionUID = 1480009485404803793L;
+		
+	// activate for testing, if a new object is created
+	//    static long UNIQUE_ID = 0;
+//    long uid = ++UNIQUE_ID;
+//
+//    public long getId() {
+//        return uid;
+//    }
 
 	final private Map<String, Object> metadataMap = new HashMap<String, Object>();
 	private T metadata = null;

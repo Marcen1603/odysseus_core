@@ -26,6 +26,8 @@ abstract public class AbstractPhysicalSubscription<K> extends Subscription<K> {
 
 	private static final long serialVersionUID = -6266008340674321020L;
 	private boolean done;
+	private boolean needsClone;
+
 	private int openCalls = 0;
 
 	public AbstractPhysicalSubscription(K target, int sinkInPort, int sourceOutPort,
@@ -41,6 +43,15 @@ abstract public class AbstractPhysicalSubscription<K> extends Subscription<K> {
 	public boolean isDone() {
 		return done;
 	}
+	
+	public void setNeedsClone(boolean needsClone) {
+		this.needsClone = needsClone;
+	}
+	
+	public boolean isNeedsClone() {
+		return needsClone;
+	}
+	
 
 	public synchronized void incOpenCalls() {
 		openCalls++;
@@ -62,10 +73,22 @@ abstract public class AbstractPhysicalSubscription<K> extends Subscription<K> {
 	public void setOpenCalls(int openCalls) {
 		this.openCalls = openCalls;
 	}
-
-	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public void process(IStreamObject o) {
-		((ISink) getTarget()).process(o, getSinkInPort());
+	
+	@SuppressWarnings({ "rawtypes"})
+	final public void process(IStreamObject o) {
+		IStreamObject toProcess = needsClone?(IStreamObject)o.clone():o;
+		do_process(toProcess);
 	}
 
+	@SuppressWarnings("rawtypes") 
+	protected void do_process(IStreamObject o) {
+		sendObject(o);
+	}
+
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	final protected void sendObject(IStreamObject o){
+		((ISink) getTarget()).process(o, getSinkInPort());
+	}
+	
+	
 }

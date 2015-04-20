@@ -54,11 +54,12 @@ import de.uniol.inf.is.odysseus.core.server.event.EventHandler;
 import de.uniol.inf.is.odysseus.core.server.monitoring.AbstractMonitoringDataProvider;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.lock.IMyLock;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.lock.NonLockingLock;
+import de.uniol.inf.is.odysseus.core.streamconnection.DefaultStreamConnection;
 
 /**
  * @author Jonas Jacobi, Tobias Witt, Marco Grawunder
  */
-public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
+public abstract class AbstractSource<T extends IStreamObject<?>> extends AbstractMonitoringDataProvider
 		implements ISource<T> {
 
 	final public int ERRORPORT = Integer.MAX_VALUE;
@@ -475,8 +476,16 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 			AbstractPhysicalSubscription<ISink<? super T>> sink) {
 		if (sink.getSourceOutPort() == sourceOutPort) {
 			try {
-				sink.process((IStreamObject) cloneIfNessessary(object,
-						sourceOutPort));
+				// TODO: remove this and implement a handler that set cloning information 
+				final boolean nc = needsClone(sourceOutPort);
+				if (sink.getTarget() instanceof DefaultStreamConnection){
+					sink.setNeedsClone(false);
+				}else{
+					sink.setNeedsClone(nc);
+				}
+				
+				sink.process((IStreamObject)object);
+				
 			} catch (Throwable e) {
 				// Send object that could not be processed to the error port
 				e.printStackTrace();
@@ -526,13 +535,13 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 	// Classes for Objects not implementing IClone (e.g. ByteBuffer, String,
 	// etc.)
 	// MUST override this method (else there will be a ClassCastException)
-	@SuppressWarnings("unchecked")
-	protected T cloneIfNessessary(T object, int port) {
-		if (needsClone(port)) {
-			object = (T) ((IClone) object).clone();
-		}
-		return object;
-	}
+//	@SuppressWarnings("unchecked")
+//	protected T cloneIfNessessary(T object, int port) {
+//		if (needsClone(port)) {
+//			object = (T) ((IClone) object).clone();
+//		}
+//		return object;
+//	}
 
 	// ------------------------------------------------------------------------
 	// CLOSE
