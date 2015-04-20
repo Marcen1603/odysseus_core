@@ -512,7 +512,7 @@ public class StreamTableEditor implements IStreamEditorType {
 			@Override
 			public void update(ViewerCell cell) {
 				int hashCode = ((Tuple<?>) cell.getElement()).hashCode();
-				int hashCode2 = ((Tuple<?>) cell.getElement()).objectHashCode();
+				int hashCode2 = System.identityHashCode(cell.getElement());
 				
 				cell.setText(hashCode+" / "+hashCode2);
 				cell.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_GRAY));

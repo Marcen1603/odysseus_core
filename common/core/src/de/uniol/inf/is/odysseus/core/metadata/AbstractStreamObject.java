@@ -154,9 +154,4 @@ abstract public class AbstractStreamObject<T extends IMetaAttribute> implements
 		return equals(o);
 	}
 	
-	@Override
-	final public int objectHashCode(){
-		return super.hashCode();
-	}
-	
 }
