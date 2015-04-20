@@ -141,6 +141,8 @@ public abstract class AbstractTransformationRule<T> extends
 									OPERATOR_IDS_SET);
 					if (newDefinedRessources == null) {
 						newDefinedRessources = new LinkedList<Resource>();
+						this.getCurrentWorkingMemory().addToKeyValueMap(
+								OPERATOR_IDS_SET, newDefinedRessources);
 					}
 					newDefinedRessources.add(id);
 
