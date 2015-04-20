@@ -138,7 +138,7 @@ public class TimerTransportHandler extends AbstractPushTransportHandler implemen
      */
     @Override
     public void processOutClose() throws IOException {
-        throw new UnsupportedOperationException();
+        //throw new UnsupportedOperationException();
     }
 
     /**
@@ -153,7 +153,9 @@ public class TimerTransportHandler extends AbstractPushTransportHandler implemen
         if (this.period != other.period) {
             return false;
         }
-
+        if (this.timeFromStart != other.timeFromStart){
+        	return false;
+        }
         return true;
     }
     
