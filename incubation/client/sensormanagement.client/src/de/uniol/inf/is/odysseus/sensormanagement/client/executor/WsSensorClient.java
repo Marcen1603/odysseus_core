@@ -49,7 +49,6 @@ import de.uniol.inf.is.odysseus.sensormanagement.common.utilities.XmlMarshalHelp
  * @author Henrik Surm
  * 
  */
-@SuppressWarnings(value = { "all" })
 public class WsSensorClient
 {
 	private SensorService server;

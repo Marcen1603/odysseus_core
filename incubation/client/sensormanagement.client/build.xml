@@ -40,26 +40,26 @@ import de.uniol.inf.is.odysseus.core.planmanagement.query.QueryState;
 				</replacevalue>	
 	    </replace> -->
 
-		<replace  dir="${source-dir}">
+		<replace  dir="${source-dir}/${package-dir}">
 			<replacetoken>public class</replacetoken>
 			<replacevalue>@SuppressWarnings(value = { "all" })
 public class</replacevalue>			
 		</replace>
 
-		<replace  dir="${source-dir}">
+		<replace  dir="${source-dir}/${package-dir}">
 				<replacetoken>public enum</replacetoken>
 				<replacevalue>@SuppressWarnings(value = { "all" })
 	public enum</replacevalue>			
 			</replace>
 
-		<replace  dir="${source-dir}">
+		<replace  dir="${source-dir}/${package-dir}">
 				<replacetoken>public interface</replacetoken>
 				<replacevalue>@SuppressWarnings(value = { "all" })
 	public interface</replacevalue>			
 			</replace>
 
 		
-		<replace dir="${source-dir}" >
+		<replace  dir="${source-dir}/${package-dir}">
 			<replacetoken>@SuppressWarnings(value = { "all" })
 @SuppressWarnings(value = { "all" })</replacetoken>
 			<replacevalue>@SuppressWarnings(value = { "all" })</replacevalue>
