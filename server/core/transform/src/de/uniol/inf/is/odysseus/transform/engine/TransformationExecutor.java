@@ -92,6 +92,9 @@ public class TransformationExecutor implements ITransformation {
 		} catch (RuleException e) {
 			cleanup(env);
 			throw new TransformationException("Error in Transformation: ", e);
+		} catch (Exception e){
+			cleanup(env);
+			throw e;
 		}
 		LOGGER.trace("Processing rules done.");
 
