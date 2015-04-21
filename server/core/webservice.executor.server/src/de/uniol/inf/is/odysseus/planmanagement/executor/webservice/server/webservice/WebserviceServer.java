@@ -1110,7 +1110,12 @@ public class WebserviceServer {
 			@WebParam(name = "securitytoken") String securityToken)
 			throws InvalidUserDataException {
 		ISession user = loginWithSecurityToken(securityToken);
-		ILogicalOperator logicalOperator = getExecutor().removeSink(name, user);
+		ILogicalOperator logicalOperator = null;
+		try{
+			logicalOperator = getExecutor().removeSink(name, user);
+		}catch(Exception e){
+			e.printStackTrace();
+		}
 		return new LogicalOperatorResponse(logicalOperator, true);
 	}
 
@@ -1119,8 +1124,13 @@ public class WebserviceServer {
 			@WebParam(name = "securitytoken") String securityToken)
 			throws InvalidUserDataException {
 		ISession user = loginWithSecurityToken(securityToken);
-		ILogicalOperator logicalOperator = getExecutor().removeSink(
+		ILogicalOperator logicalOperator = null;
+		try{
+			logicalOperator = getExecutor().removeSink(
 				new Resource(ri.getUser(), ri.getResourceName()), user);
+		}catch(Exception e){
+			e.printStackTrace();
+		}
 		return new LogicalOperatorResponse(logicalOperator, true);
 	}
 
