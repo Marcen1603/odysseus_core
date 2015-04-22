@@ -16,6 +16,7 @@
 package de.uniol.inf.is.odysseus.core.server.metadata;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.SortedSet;
@@ -158,5 +159,23 @@ public class MetadataRegistry {
 			typeSet.add(c.getName());
 		}
 		return typeSet;
+	}
+	
+	// Helper methods
+	
+	public static IMetaAttribute tryCreateMetadataInstance(String parameter) throws IllegalArgumentException {
+		try {
+			return MetadataRegistry.getMetadataTypeByName(parameter).getClass().newInstance();
+		} catch (InstantiationException | IllegalAccessException e) {
+			throw new IllegalArgumentException("Could not create metadata of type '" + parameter + "'", e);
+		}
+	}
+	
+	public static Set<String> toClassNames(List<Class<? extends IMetaAttribute>> classes) {
+		Set<String> classNames = new TreeSet<String>();
+		for (Class<?> c : classes) {
+			classNames.add(c.getName());
+		}
+		return classNames;
 	}
 }

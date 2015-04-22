@@ -184,23 +184,26 @@ public class TAccessAORule extends AbstractTransformationRule<AbstractAccessAO> 
 		// Set metadata types
 		if (accessPO instanceof IMetadataInitializer) {
 			if (!config.hasOption("NO_METADATA")) {
-				IMetaAttribute type = MetadataRegistry.getMetadataType(config
-						.getMetaTypes());
+				IMetaAttribute type = operator.getLocalMetaAttribute();
+				if (type == null) {
+					type = MetadataRegistry.getMetadataType(config
+							.getMetaTypes());
+				}
 				((IMetadataInitializer) accessPO).setMetadataType(type);
 
-// Is done in AccessAO directly
-				//				try {
-//					SDFSchema metaSchema = MetadataRegistry
-//							.getMetadataSchema(config.getMetaTypes());
-//
-//					SDFSchema accessOutputSchema = SDFSchemaFactory
-//							.createNewWithMetaSchema(
-//									operator.getOutputSchema(), metaSchema);
-//					operator.setOutputSchema(accessOutputSchema);
-//					tsAO.setOutputSchema(accessOutputSchema);
-//				} catch (Exception e) {
-//					infoService.warning("Cannot create metadata schema for "+type,e);
-//				}
+				// Is done in AccessAO directly
+				// try {
+				// SDFSchema metaSchema = MetadataRegistry
+				// .getMetadataSchema(config.getMetaTypes());
+				//
+				// SDFSchema accessOutputSchema = SDFSchemaFactory
+				// .createNewWithMetaSchema(
+				// operator.getOutputSchema(), metaSchema);
+				// operator.setOutputSchema(accessOutputSchema);
+				// tsAO.setOutputSchema(accessOutputSchema);
+				// } catch (Exception e) {
+				// infoService.warning("Cannot create metadata schema for "+type,e);
+				// }
 			}
 		}
 

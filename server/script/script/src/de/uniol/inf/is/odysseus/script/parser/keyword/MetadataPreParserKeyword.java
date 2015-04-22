@@ -5,8 +5,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
 
 import com.google.common.base.Optional;
 
@@ -36,14 +34,14 @@ public class MetadataPreParserKeyword extends AbstractPreParserKeyword {
 	@Override
 	public List<IExecutorCommand> execute(Map<String, Object> variables, String parameter, ISession caller, Context context) throws OdysseusScriptException {
 
-		IMetaAttribute m = tryCreateMetadataInstance(parameter);
+		IMetaAttribute m = MetadataRegistry.tryCreateMetadataInstance(parameter);
 		
 		List<Class<? extends IMetaAttribute>> classes = new ArrayList(Arrays.asList(m.getClasses()));
 
 		List<IQueryBuildSetting<?>> settings = getAdditionalTransformationSettings(variables);
 		Optional<ParameterTransformationConfiguration> optParam = getParameterTransformationConfiguration(settings);
 		if (optParam.isPresent()) {
-			optParam.get().getValue().addTypes(toClassNames(classes));
+			optParam.get().getValue().addTypes(MetadataRegistry.toClassNames(classes));
 		} else {
 			ParameterTransformationConfiguration param = new ParameterTransformationConfiguration(new TransformationConfiguration(classes.toArray(new Class[0])));
 			settings.add(param);
@@ -52,21 +50,6 @@ public class MetadataPreParserKeyword extends AbstractPreParserKeyword {
 		return null;
 	}
 
-	private static Set<String> toClassNames(List<Class<? extends IMetaAttribute>> classes) {
-		Set<String> classNames = new TreeSet<String>();
-		for (Class<?> c : classes) {
-			classNames.add(c.getName());
-		}
-		return classNames;
-	}
-
-	private static IMetaAttribute tryCreateMetadataInstance(String parameter) throws OdysseusScriptException {
-		try {
-			return MetadataRegistry.getMetadataTypeByName(parameter).getClass().newInstance();
-		} catch (InstantiationException | IllegalAccessException e) {
-			throw new OdysseusScriptException("Could not create metadata of type '" + parameter + "'", e);
-		}
-	}
 
 	private static Optional<ParameterTransformationConfiguration> getParameterTransformationConfiguration(List<IQueryBuildSetting<?>> settings) {
 		for (IQueryBuildSetting<?> s : settings) {

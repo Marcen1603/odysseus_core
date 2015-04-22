@@ -24,6 +24,7 @@ import java.util.concurrent.TimeUnit;
 import de.uniol.inf.is.odysseus.core.collection.Resource;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.datahandler.DataHandlerRegistry;
+import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFConstraint;
@@ -38,9 +39,11 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.BooleanParam
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.CreateSDFAttributeParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IllegalParameterException;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.LongParameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.MetaAttributeParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.Option;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.OptionParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
+import de.uniol.inf.is.odysseus.core.server.metadata.MetadataRegistry;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.WrapperRegistry;
 
 abstract public class AbstractAccessAO extends AbstractLogicalOperator {
@@ -61,6 +64,8 @@ abstract public class AbstractAccessAO extends AbstractLogicalOperator {
 	private List<String> inputSchema = null;
 	private long maxTimeToWaitForNewEventMS;
 	private boolean newAccessFramework = false;
+
+	private IMetaAttribute localMetaAttribute;
 
 	public AbstractAccessAO(AbstractLogicalOperator po) {
 		super(po);
@@ -83,6 +88,7 @@ abstract public class AbstractAccessAO extends AbstractLogicalOperator {
 		this.maxTimeToWaitForNewEventMS = po.maxTimeToWaitForNewEventMS;
 		this.dateFormat = po.dateFormat;
 		this.newAccessFramework = po.newAccessFramework;
+		this.localMetaAttribute = po.localMetaAttribute;
 	}
 
 	public AbstractAccessAO(Resource name, String wrapper,
@@ -240,9 +246,23 @@ abstract public class AbstractAccessAO extends AbstractLogicalOperator {
 	}
 
 	public List<SDFAttribute> getAttributes3() {
-		return outputSchema.get(1);
+		return outputSchema.get(3);
 	}
 
+	@Parameter(type = MetaAttributeParameter.class, name = "metaAttribute", isList = false, optional = true,possibleValues="getMetadataTypes", doc = "If set, this value overwrites the meta data created from this source.")
+	public void setLocalMetaAttribute(IMetaAttribute metaAttribute){
+		this.localMetaAttribute = metaAttribute;
+	}
+	
+	public List<String> getMetadataTypes(){
+		return new ArrayList<String>(MetadataRegistry.getNames());
+	}
+	
+	public IMetaAttribute getLocalMetaAttribute() {
+		return localMetaAttribute;
+	}
+
+	
 	@SuppressWarnings("unchecked")
 	@Override
 	protected SDFSchema getOutputSchemaIntern(int pos) {
@@ -297,9 +317,12 @@ abstract public class AbstractAccessAO extends AbstractLogicalOperator {
 		schema = SDFSchemaFactory.createNewWithContraints(constraints, schema);
 		schema = SDFSchemaFactory.createNewWithStrictOrder(strictOrder, schema);
 		
-		if (getMetaAttribute() != null){
-			SDFSchema metaSchema = getMetaAttribute().getSchema();
-			schema = SDFSchemaFactory.createNewWithMetaSchema(schema, metaSchema);
+		// Add meta attributes. If is set in operator, this overwrites other options
+		IMetaAttribute metaAttribute = localMetaAttribute!=null?localMetaAttribute:getMetaAttribute();
+		
+		if (metaAttribute != null){
+			SDFSchema metaSchema = metaAttribute.getSchema();
+			schema = SDFSchemaFactory.createNewWithMetaSchema(schema, metaSchema);			
 		}
 		
 		return schema;
