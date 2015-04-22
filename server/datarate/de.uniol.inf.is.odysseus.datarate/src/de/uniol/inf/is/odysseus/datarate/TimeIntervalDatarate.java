@@ -5,6 +5,8 @@ import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.metadata.TimeInterval;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
 
 public class TimeIntervalDatarate extends TimeInterval implements ITimeInterval, ITimeIntervalDatarate {
 
@@ -12,6 +14,17 @@ public class TimeIntervalDatarate extends TimeInterval implements ITimeInterval,
 	@SuppressWarnings("unchecked")
 	public transient static final Class<? extends IMetaAttribute>[] CLASSES = new Class[] { IDatarate.class, ITimeInterval.class };
 
+	static final SDFSchema schema;
+	static{
+		schema = SDFSchemaFactory.createNewSchema(TimeInterval.schema, Datarate.schema);
+	}
+
+	@Override
+	public SDFSchema getSchema() {
+		return schema;
+	}
+
+	
 	private Datarate datarate;
 	
 	public TimeIntervalDatarate() {

@@ -15,8 +15,16 @@
  */
 package de.uniol.inf.is.odysseus.priority;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import de.uniol.inf.is.odysseus.core.WriteOptions;
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
 
 public class Priority implements IPriority {
 
@@ -25,6 +33,18 @@ public class Priority implements IPriority {
 	@SuppressWarnings("unchecked")
 	public final static Class<? extends IMetaAttribute>[] classes = new Class[] { IPriority.class };
 
+	public static final SDFSchema schema;
+	static{
+		List<SDFAttribute> attributes = new ArrayList<SDFAttribute>();
+		attributes.add(new SDFAttribute("Priority", "priority", SDFDatatype.BYTE, null));
+		schema = SDFSchemaFactory.createNewSchema("Priority", Tuple.class, attributes);
+	}
+	
+	@Override
+	public SDFSchema getSchema() {
+		return schema;
+	}
+	
 	byte prio;
 
 	public Priority() {

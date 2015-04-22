@@ -19,6 +19,8 @@ import de.uniol.inf.is.odysseus.core.WriteOptions;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.TimeInterval;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
 import de.uniol.inf.is.odysseus.core.server.metadata.ILatency;
 import de.uniol.inf.is.odysseus.core.server.metadata.ILatencyTimeInterval;
 import de.uniol.inf.is.odysseus.latency.Latency;
@@ -32,6 +34,16 @@ public class IntervalLatency extends TimeInterval implements ILatency, ILatencyT
 	public final static Class<? extends IMetaAttribute>[] classes = new Class[]{ 
 		ITimeInterval.class, ILatency.class
 	};
+	
+	static final SDFSchema schema;
+	static{
+		schema = SDFSchemaFactory.createNewSchema(TimeInterval.schema, Latency.schema);
+	}
+	
+	@Override
+	public SDFSchema getSchema() {
+		return schema;
+	}
 	
 	private static final long serialVersionUID = -3129934770814427153L;
 	private final ILatency latency;

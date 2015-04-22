@@ -40,6 +40,7 @@ import de.uniol.inf.is.odysseus.core.logicaloperator.serialize.ISerializePropert
 import de.uniol.inf.is.odysseus.core.logicaloperator.serialize.SerializeNode;
 import de.uniol.inf.is.odysseus.core.logicaloperator.serialize.SerializePropertyItem;
 import de.uniol.inf.is.odysseus.core.logicaloperator.serialize.SerializePropertyList;
+import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.IOperatorOwner;
 import de.uniol.inf.is.odysseus.core.planmanagement.OwnerHandler;
@@ -82,7 +83,9 @@ public abstract class AbstractLogicalOperator implements Serializable, ILogicalO
 //	private List<IPredicate<?>> predicates = new LinkedList<IPredicate<?>>();
 
 	private Map<Integer, SDFSchema> outputSchema = new HashMap<Integer, SDFSchema>();
-
+	private IMetaAttribute metaattribute = null;
+	
+	
 	public AbstractLogicalOperator(AbstractLogicalOperator op) {
 //		for (IPredicate<?> pred : op.predicates) {
 //			this.predicates.add(pred.clone());
@@ -125,58 +128,7 @@ public abstract class AbstractLogicalOperator implements Serializable, ILogicalO
 		return physInputOperators;
 	}
 
-//	/*
-//	 * (non-Javadoc)
-//	 * 
-//	 * @see
-//	 * de.uniol.inf.is.odysseus.core.server.logicaloperator.ILogicalOperator
-//	 * #getPredicate ()
-//	 */
-//	@Override
-//	public IPredicate<?> getPredicate() {
-//		if (predicates.size() > 0) {
-//			return predicates.get(0);
-//		} else {
-//			return null;
-//		}
-//	}
-//
-//	/*
-//	 * (non-Javadoc)
-//	 * 
-//	 * @see
-//	 * de.uniol.inf.is.odysseus.core.server.logicaloperator.ILogicalOperator
-//	 * #setPredicate (de.uniol.inf.is.odysseus.core.server.predicate.IPredicate)
-//	 */
-//	@Override
-//	public void setPredicate(IPredicate<?> predicate) {
-//		if (predicates.size() > 0) {
-//			predicates.set(0, predicate);
-//		} else {
-//			predicates.add(predicate);
-//		}
-//	}
-//
-//	@Override
-//	public void setPredicates(List<IPredicate<?>> predi) {
-//		predicates.clear();
-//		predicates.addAll(predi);
-//	}
-//
-//	@Override
-//	public void addPredicate(IPredicate<?> predicate) {
-//		predicates.add(predicate);
-//	}
-//
-//	@Override
-//	public List<IPredicate<?>> getPredicates() {
-//		return predicates;
-//	}
-//
-//	@Override
-//	public boolean providesPredicates() {
-//		return !predicates.isEmpty();
-//	}
+
 
 	/*
 	 * (non-Javadoc)
@@ -203,22 +155,31 @@ public abstract class AbstractLogicalOperator implements Serializable, ILogicalO
 
 	@Override
 	final public SDFSchema getOutputSchema() {
-		if (this.outputSchema.get(0) != null) {
-			return outputSchema.get(0);
-		} else {
-			return getOutputSchemaIntern(0);
-		}
+		return getOutputSchema(0);
 	}
 
 	@Override
 	final public SDFSchema getOutputSchema(int pos) {
+//		if (physInputOperators.get(pos) != null){
+//			return physInputOperators.get(pos).getOutputSchema();
+//		}
 		if (this.outputSchema.get(pos) != null) {
 			return outputSchema.get(pos);
 		} else {
-			return getOutputSchemaIntern(pos);
+			SDFSchema schema = getOutputSchemaIntern(pos);
+			return schema;
 		}
 	}
 
+	@Override
+	public void setMetadata(IMetaAttribute metaattribute) {
+		this.metaattribute = metaattribute;
+	}
+	
+	protected IMetaAttribute getMetaAttribute() {
+		return metaattribute;
+	}
+	
 	@Override
 	public Map<Integer, SDFSchema> getOutputSchemaMap() {
 		return Collections.unmodifiableMap(outputSchema);

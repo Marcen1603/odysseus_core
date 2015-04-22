@@ -19,6 +19,7 @@ import java.io.Serializable;
 
 import de.uniol.inf.is.odysseus.core.ICSVToString;
 import de.uniol.inf.is.odysseus.core.IClone;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 
 public interface IMetaAttribute extends IClone, ICSVToString, Serializable {
 	
@@ -26,4 +27,5 @@ public interface IMetaAttribute extends IClone, ICSVToString, Serializable {
 	@Override
 	IMetaAttribute clone();
 	String getName();
+	SDFSchema getSchema();
 }

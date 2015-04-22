@@ -16,9 +16,16 @@
 package de.uniol.inf.is.odysseus.latency;
 
 import java.text.NumberFormat;
+import java.util.ArrayList;
+import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.WriteOptions;
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
 import de.uniol.inf.is.odysseus.core.server.metadata.ILatency;
 
 public class Latency implements ILatency{
@@ -28,6 +35,20 @@ public class Latency implements ILatency{
 	public final static Class<? extends IMetaAttribute>[] classes = new Class[]{ 
 		ILatency.class
 	};
+	
+	public static final SDFSchema schema;
+	static{
+		List<SDFAttribute> attributes = new ArrayList<SDFAttribute>();
+		attributes.add(new SDFAttribute("Latency", "minlstart", SDFDatatype.LONG, null));
+		attributes.add(new SDFAttribute("Latency", "maxlstart", SDFDatatype.LONG, null));
+		attributes.add(new SDFAttribute("Latency", "lend", SDFDatatype.LONG, null));
+		schema = SDFSchemaFactory.createNewSchema("Latency", Tuple.class, attributes);
+	}
+	
+	@Override
+	public SDFSchema getSchema() {
+		return schema;
+	}
 	
 	private static final long serialVersionUID = -3355802503979937479L;
 	private long minlstart;

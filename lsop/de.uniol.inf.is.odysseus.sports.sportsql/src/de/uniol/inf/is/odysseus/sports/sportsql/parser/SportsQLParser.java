@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import de.uniol.inf.is.odysseus.core.collection.Context;
+import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.IQueryParser;
@@ -32,7 +33,7 @@ public class SportsQLParser implements IQueryParser {
 
 	@Override
 	public List<IExecutorCommand> parse(String query, ISession user,
-			IDataDictionary dd, Context context) throws QueryParseException {
+			IDataDictionary dd, Context context, IMetaAttribute metaAttribute) throws QueryParseException {
 		SportsQLQuery sportQLQuery = SportsQLParserRegistry
 				.createSportsQLQuery(query);
 		ISportsQLParser parser = SportsQLParserRegistry
@@ -54,7 +55,7 @@ public class SportsQLParser implements IQueryParser {
 
 	@Override
 	public List<IExecutorCommand> parse(Reader reader, ISession user,
-			IDataDictionary dd, Context context) throws QueryParseException {
+			IDataDictionary dd, Context context, IMetaAttribute metaAttribute) throws QueryParseException {
 		// TODO Auto-generated method stub
 		return null;
 	}

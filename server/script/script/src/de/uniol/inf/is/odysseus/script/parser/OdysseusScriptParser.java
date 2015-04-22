@@ -38,6 +38,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
 import de.uniol.inf.is.odysseus.core.collection.Context;
+import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.procedure.StoredProcedure;
@@ -782,7 +783,7 @@ public class OdysseusScriptParser implements IOdysseusScriptParser,
 
 	@Override
 	public List<IExecutorCommand> parse(String query, ISession user,
-			IDataDictionary dd, Context context) throws QueryParseException {
+			IDataDictionary dd, Context context, IMetaAttribute metaAttribute) throws QueryParseException {
 		List<IExecutorCommand> executorCommands = new ArrayList<>();
 		try {
 			List<?> results = parseAndExecute(query, user, null, context);
@@ -828,7 +829,7 @@ public class OdysseusScriptParser implements IOdysseusScriptParser,
 
 	@Override
 	public List<IExecutorCommand> parse(Reader reader, ISession user,
-			IDataDictionary dd, Context context) throws QueryParseException {
+			IDataDictionary dd, Context context, IMetaAttribute metaAttribute) throws QueryParseException {
 		throw new QueryParseException("This method is not implemented yet");
 	}
 

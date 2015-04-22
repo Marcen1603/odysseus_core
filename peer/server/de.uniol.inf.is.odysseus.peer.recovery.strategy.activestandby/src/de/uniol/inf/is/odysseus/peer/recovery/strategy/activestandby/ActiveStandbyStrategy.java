@@ -265,8 +265,9 @@ public class ActiveStandbyStrategy implements IRecoveryStrategy {
 				.getBackupInformation(failedPeer.toString());
 		for (int queryId : infoMap.keySet()) {
 			String pql = infoMap.get(queryId).pql;
+			// FIXME: add metadata!
 			List<IExecutorCommand> cmds = cPQLParser.get().parse(pql, session,
-					datadict, Context.empty());
+					datadict, Context.empty(),null);
 			for (IExecutorCommand cmd : cmds) {
 				if (CreateQueryCommand.class.isInstance(cmd)) {
 					Collection<JxtaSenderAO> senders = findSender(((CreateQueryCommand) cmd)

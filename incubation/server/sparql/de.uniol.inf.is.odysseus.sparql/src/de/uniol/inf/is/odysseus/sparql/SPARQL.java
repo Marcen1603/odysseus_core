@@ -25,6 +25,7 @@ import java.util.Map;
 
 import de.uniol.inf.is.odysseus.core.collection.Context;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
+import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.IQueryParser;
@@ -68,12 +69,12 @@ public class SPARQL implements IQueryParser{
 	}
 
 	@Override
-	public synchronized List<IExecutorCommand> parse(String query, ISession user, IDataDictionary dd, Context context)
+	public synchronized List<IExecutorCommand> parse(String query, ISession user, IDataDictionary dd, Context context, IMetaAttribute metaAttribute)
 			throws QueryParseException {
 //		this.user= user;
 //		this.dd = dd;
 		try{
-			return parse(new StringReader(query), user, dd, context);
+			return parse(new StringReader(query), user, dd, context, metaAttribute);
 		}catch(QueryParseException e){
 			System.out.println("Query: " + query);
 			throw e;
@@ -82,7 +83,7 @@ public class SPARQL implements IQueryParser{
 
 	@SuppressWarnings("rawtypes")
 	@Override
-	public synchronized List<IExecutorCommand> parse(Reader reader, ISession user, IDataDictionary dd, Context context)
+	public synchronized List<IExecutorCommand> parse(Reader reader, ISession user, IDataDictionary dd, Context context, IMetaAttribute metaAttribute)
 			throws QueryParseException {
 		
 //		this.user = user;

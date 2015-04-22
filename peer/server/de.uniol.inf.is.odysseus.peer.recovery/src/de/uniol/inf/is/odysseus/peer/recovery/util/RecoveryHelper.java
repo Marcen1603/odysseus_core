@@ -631,8 +631,8 @@ public class RecoveryHelper {
 		List<ILogicalQuery> queries = Lists.newArrayList();
 
 		try {
-
-			cmds = cPQLParser.get().parse(pql, RecoveryCommunicator.getActiveSession(), DataDictionaryProvider.getDataDictionary(RecoveryCommunicator.getActiveSession().getTenant()), Context.empty());
+			// FIXME: add metadata!
+			cmds = cPQLParser.get().parse(pql, RecoveryCommunicator.getActiveSession(), DataDictionaryProvider.getDataDictionary(RecoveryCommunicator.getActiveSession().getTenant()), Context.empty(),null);
 
 		} catch (QueryParseException e) {
 

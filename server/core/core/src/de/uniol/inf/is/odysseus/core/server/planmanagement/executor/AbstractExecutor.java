@@ -47,6 +47,7 @@ import de.uniol.inf.is.odysseus.core.connection.NioConnection;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorInformation;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalParameterInformation;
+import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
@@ -1231,9 +1232,9 @@ public abstract class AbstractExecutor implements IServerExecutor,
 	// Compiler Facade
 	@Override
 	public List<IExecutorCommand> translateQuery(String queries, String parser,
-			ISession currentUser, Context context) {
+			ISession currentUser, Context context, IMetaAttribute metaAttribute) {
 		return getCompiler().translateQuery(queries, parser, currentUser,
-				getDataDictionary(currentUser), context);
+				getDataDictionary(currentUser), context, metaAttribute);
 	}
 
 	@Override

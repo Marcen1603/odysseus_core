@@ -22,6 +22,8 @@ import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.metadata.TimeInterval;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
 import de.uniol.inf.is.odysseus.core.server.metadata.ILatency;
 import de.uniol.inf.is.odysseus.latency.Latency;
 import de.uniol.inf.is.odysseus.priority.IPriority;
@@ -35,6 +37,16 @@ public class IntervalLatencyPriority extends TimeInterval implements ILatency,
 			ITimeInterval.class, ILatency.class, IPriority.class };
 
 	private static final long serialVersionUID = -4924797905689073685L;
+	
+	static final SDFSchema schema;
+	static{
+		schema = SDFSchemaFactory.createNewSchema(TimeInterval.schema, Latency.schema, Priority.schema);
+	}
+
+	@Override
+	public SDFSchema getSchema() {
+		return schema;
+	}
 
 	private ILatency latency;
 	private IPriority prio;

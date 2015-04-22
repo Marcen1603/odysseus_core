@@ -1,7 +1,9 @@
 package de.uniol.inf.is.odysseus.systemload;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 
 import com.google.common.base.Preconditions;
@@ -9,7 +11,12 @@ import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
 
 import de.uniol.inf.is.odysseus.core.WriteOptions;
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
 
 public class SystemLoad implements ISystemLoad, Cloneable, Serializable {
 
@@ -21,6 +28,11 @@ public class SystemLoad implements ISystemLoad, Cloneable, Serializable {
 
 	private final Map<String, SystemLoadEntry> systemLoads = Maps.newHashMap();
 
+	@Override
+	public SDFSchema getSchema() {
+		throw new RuntimeException("get Schema not implemented for SystemLoad");
+	}
+	
 	public SystemLoad() {
 		addSystemLoad(LOCAL_NAME);
 	}

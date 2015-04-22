@@ -32,7 +32,7 @@ public class TConverterAORule extends AbstractTransformationRule<ConverterAO> {
 	@Override
 	public void execute(ConverterAO operator, TransformationConfiguration config) throws RuleException {
 
-		if (!hasTimestampAOAsFather(operator)) {
+		if (getTimestampAOAsFather(operator)==null) {
 			insertTimestampAO(operator, operator.getDateFormat());
 		}
 		

@@ -28,6 +28,7 @@ import com.google.common.base.Strings;
 
 import de.uniol.inf.is.odysseus.core.collection.Context;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
+import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.DirectAttributeResolver;
 import de.uniol.inf.is.odysseus.core.sdf.schema.IAttributeResolver;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
@@ -61,6 +62,7 @@ public abstract class AbstractOperatorBuilder implements IOperatorBuilder {
 
 	private IDataDictionary dataDictionary;
 	private Context context;
+	private IMetaAttribute metaAttribute;
 
 	private String name;
 	private String doc;
@@ -172,6 +174,15 @@ public abstract class AbstractOperatorBuilder implements IOperatorBuilder {
 	public IDataDictionary getDataDictionary() {
 		return dataDictionary;
 	}
+	
+	@Override
+	public void setMetaAttribute(IMetaAttribute metaAttribute) {
+		this.metaAttribute = metaAttribute;
+	}
+	
+	public IMetaAttribute getMetaAttribute() {
+		return metaAttribute;
+	}
 
 	@Override
 	public void setContext(Context context) {
@@ -257,6 +268,7 @@ public abstract class AbstractOperatorBuilder implements IOperatorBuilder {
 		}
 
 		ILogicalOperator op = createOperatorInternal();
+		op.setMetadata(metaAttribute);
 		for (Map.Entry<Integer, InputOperatorItem> curEntry : this.inputOperators
 				.entrySet()) {
 			InputOperatorItem curInputOperatorItem = curEntry.getValue();
@@ -277,8 +289,7 @@ public abstract class AbstractOperatorBuilder implements IOperatorBuilder {
 		return op;
 	}
 
-	// overwritten in AccessAOBuilder
-	protected void insertParameterInfos(ILogicalOperator op) {
+	final void insertParameterInfos(ILogicalOperator op) {
 		// set all parameters as infos
 		// Caution: Used in PQL-Generator to get parameter values
 		for (IParameter<?> p : this.parameters) {
@@ -289,25 +300,6 @@ public abstract class AbstractOperatorBuilder implements IOperatorBuilder {
 	}
 
 	abstract protected ILogicalOperator createOperatorInternal();
-
-	// protected void initOperatorCreation(Map<String, Object> parameters2,
-	// List<ILogicalOperator> inputOps) {
-	// IAttributeResolver attributeResolver = buildAttributeResolver(inputOps);
-	// for (IParameter<?> parameter : parameters) {
-	// parameter.setAttributeResolver(attributeResolver);
-	// parameter.setDataDictionary(dataDictionary);
-	// }
-	// }
-
-	// private static IAttributeResolver buildAttributeResolver(
-	// List<ILogicalOperator> inputOps) {
-	// List<SDFAttribute> attributes = new ArrayList<SDFAttribute>();
-	// for (ILogicalOperator op : inputOps) {
-	// attributes.addAll(op.getOutputSchema().getAttributes());
-	// }
-	// SDFSchema schema = new SDFSchema("", attributes);
-	// return new DirectAttributeResolver(schema);
-	// }
 
 	@Override
 	public void setInputOperator(int inputPort, ILogicalOperator operator,

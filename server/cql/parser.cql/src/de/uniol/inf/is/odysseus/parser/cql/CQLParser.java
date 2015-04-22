@@ -31,10 +31,12 @@ import de.uniol.inf.is.odysseus.core.collection.Resource;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.datahandler.DataHandlerRegistry;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
+import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.LogicalQuery;
 import de.uniol.inf.is.odysseus.core.predicate.ComplexPredicate;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
+import de.uniol.inf.is.odysseus.core.sdf.schema.DirectAttributeResolver;
 import de.uniol.inf.is.odysseus.core.sdf.schema.IAttributeResolver;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
@@ -82,7 +84,6 @@ import de.uniol.inf.is.odysseus.core.server.sla.factories.ScopeFactory;
 import de.uniol.inf.is.odysseus.core.server.sla.factories.UnitFactory;
 import de.uniol.inf.is.odysseus.core.server.sla.unit.TimeUnit;
 import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.AttributeResolver;
-import de.uniol.inf.is.odysseus.core.sdf.schema.DirectAttributeResolver;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.PermissionFactory;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvider;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.UsernameNotExistException;
@@ -137,16 +138,14 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 
 	@Override
 	public synchronized List<IExecutorCommand> parse(String query,
-			ISession user, IDataDictionary dd, Context context)
+			ISession user, IDataDictionary dd, Context context, IMetaAttribute metaAttribute)
 			throws QueryParseException {
-		this.caller = user;
-		this.dataDictionary = dd;
-		return parse(new StringReader(query), user, dd, context);
+		return parse(new StringReader(query), user, dd, context, metaAttribute);
 	}
 
 	@Override
 	public synchronized List<IExecutorCommand> parse(Reader reader,
-			ISession user, IDataDictionary dd, Context context)
+			ISession user, IDataDictionary dd, Context context, IMetaAttribute metaAttribute)
 			throws QueryParseException {
 		this.caller = user;
 		this.dataDictionary = dd;

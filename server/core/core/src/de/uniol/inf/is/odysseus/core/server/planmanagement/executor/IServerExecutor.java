@@ -26,6 +26,7 @@ import com.google.common.collect.ImmutableCollection;
 
 import de.uniol.inf.is.odysseus.core.collection.Context;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
+import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.exception.PlanManagementException;
@@ -216,7 +217,7 @@ public interface IServerExecutor extends IExecutor, IPlanScheduling,
 
 	// Facade for Compiler
 	public List<IExecutorCommand> translateQuery(String query, String parserID,
-			ISession user, Context context) throws QueryParseException;
+			ISession user, Context context, IMetaAttribute metaAttribute) throws QueryParseException;
 
 	public IPhysicalQuery transform(ILogicalQuery query,
 			TransformationConfiguration transformationConfiguration,

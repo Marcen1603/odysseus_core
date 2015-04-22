@@ -52,15 +52,15 @@ abstract public class AbstractAccessAO extends AbstractLogicalOperator {
 	private String dataHandler;
 	private String protocolHandler = "none";
 	private String transportHandler;
-	
+
 	private final Map<String, String> optionsMap = new HashMap<>();
 	private List<Option> optionsList;
 
 	private String dateFormat;
-	private Map<Integer,List<SDFAttribute>> outputSchema = new HashMap<Integer, List<SDFAttribute>>();
+	private Map<Integer, List<SDFAttribute>> outputSchema = new HashMap<Integer, List<SDFAttribute>>();
 	private List<String> inputSchema = null;
 	private long maxTimeToWaitForNewEventMS;
-    private boolean newAccessFramework = false;
+	private boolean newAccessFramework = false;
 
 	public AbstractAccessAO(AbstractLogicalOperator po) {
 		super(po);
@@ -78,11 +78,11 @@ abstract public class AbstractAccessAO extends AbstractLogicalOperator {
 		dataHandler = po.dataHandler;
 		protocolHandler = po.protocolHandler;
 		transportHandler = po.transportHandler;
-		accessAOResource = po.accessAOResource;	
+		accessAOResource = po.accessAOResource;
 		this.outputSchema.putAll(po.outputSchema);
 		this.maxTimeToWaitForNewEventMS = po.maxTimeToWaitForNewEventMS;
 		this.dateFormat = po.dateFormat;
-        this.newAccessFramework = po.newAccessFramework;
+		this.newAccessFramework = po.newAccessFramework;
 	}
 
 	public AbstractAccessAO(Resource name, String wrapper,
@@ -146,19 +146,19 @@ abstract public class AbstractAccessAO extends AbstractLogicalOperator {
 	public void setMaxTimeToWaitForNewEventMS(long maxTimeToWaitForNewEventMS) {
 		this.maxTimeToWaitForNewEventMS = maxTimeToWaitForNewEventMS;
 	}
-	
+
 	public long getMaxTimeToWaitForNewEventMS() {
 		return maxTimeToWaitForNewEventMS;
 	}
-	
-    @Parameter(type = BooleanParameter.class, name = "naf", optional = true, isList = false, doc = "Enable or disable new access framework")
-    public void setNewAccessFramework(boolean newAccessFramework) {
-        this.newAccessFramework = newAccessFramework;
-    }
 
-    public boolean getNewAccessFramework() {
-        return this.newAccessFramework;
-    }
+	@Parameter(type = BooleanParameter.class, name = "naf", optional = true, isList = false, doc = "Enable or disable new access framework")
+	public void setNewAccessFramework(boolean newAccessFramework) {
+		this.newAccessFramework = newAccessFramework;
+	}
+
+	public boolean getNewAccessFramework() {
+		return this.newAccessFramework;
+	}
 
 	@Parameter(type = OptionParameter.class, name = "options", optional = true, isList = true, doc = "Additional options.")
 	public void setOptions(List<Option> value) {
@@ -167,7 +167,7 @@ abstract public class AbstractAccessAO extends AbstractLogicalOperator {
 		}
 		optionsList = value;
 	}
-	
+
 	public List<Option> getOptions() {
 		return optionsList;
 	}
@@ -175,8 +175,8 @@ abstract public class AbstractAccessAO extends AbstractLogicalOperator {
 	protected void addOption(String key, String value) {
 		optionsMap.put(key, value);
 	}
-	
-	protected String getOption( String key ) {
+
+	protected String getOption(String key) {
 		return optionsMap.get(key);
 	}
 
@@ -209,7 +209,7 @@ abstract public class AbstractAccessAO extends AbstractLogicalOperator {
 
 	@Parameter(type = CreateSDFAttributeParameter.class, name = "Schema", isList = true, optional = true, doc = "The output schema.")
 	public void setAttributes(List<SDFAttribute> attributes) {
-		this.outputSchema.put(0,attributes);
+		this.outputSchema.put(0, attributes);
 	}
 
 	public List<SDFAttribute> getAttributes() {
@@ -218,7 +218,7 @@ abstract public class AbstractAccessAO extends AbstractLogicalOperator {
 
 	@Parameter(type = CreateSDFAttributeParameter.class, name = "Schema1", isList = true, optional = true, doc = "The output schema for port 1.")
 	public void setAttributes1(List<SDFAttribute> attributes) {
-		this.outputSchema.put(1,attributes);
+		this.outputSchema.put(1, attributes);
 	}
 
 	public List<SDFAttribute> getAttributes1() {
@@ -227,7 +227,7 @@ abstract public class AbstractAccessAO extends AbstractLogicalOperator {
 
 	@Parameter(type = CreateSDFAttributeParameter.class, name = "Schema2", isList = true, optional = true, doc = "The output schema for port 2.")
 	public void setAttributes2(List<SDFAttribute> attributes) {
-		this.outputSchema.put(2,attributes);
+		this.outputSchema.put(2, attributes);
 	}
 
 	public List<SDFAttribute> getAttributes2() {
@@ -236,17 +236,17 @@ abstract public class AbstractAccessAO extends AbstractLogicalOperator {
 
 	@Parameter(type = CreateSDFAttributeParameter.class, name = "Schema3", isList = true, optional = true, doc = "The output schema for port 3.")
 	public void setAttributes3(List<SDFAttribute> attributes) {
-		this.outputSchema.put(3,attributes);
+		this.outputSchema.put(3, attributes);
 	}
 
 	public List<SDFAttribute> getAttributes3() {
 		return outputSchema.get(1);
 	}
 
-	
 	@SuppressWarnings("unchecked")
 	@Override
 	protected SDFSchema getOutputSchemaIntern(int pos) {
+		
 		SDFSchema schema = null;
 		Map<String, SDFConstraint> constraints = new HashMap<>();
 		
@@ -297,6 +297,11 @@ abstract public class AbstractAccessAO extends AbstractLogicalOperator {
 		schema = SDFSchemaFactory.createNewWithContraints(constraints, schema);
 		schema = SDFSchemaFactory.createNewWithStrictOrder(strictOrder, schema);
 		
+		if (getMetaAttribute() != null){
+			SDFSchema metaSchema = getMetaAttribute().getSchema();
+			schema = SDFSchemaFactory.createNewWithMetaSchema(schema, metaSchema);
+		}
+		
 		return schema;
 	}
 
@@ -313,22 +318,20 @@ abstract public class AbstractAccessAO extends AbstractLogicalOperator {
 	@Override
 	public boolean isValid() {
 
-		if (accessAOResource.isMarked() && this.outputSchema.size() > 0){
-			addError("Source "+accessAOResource+" already defined!");
+		if (accessAOResource.isMarked() && this.outputSchema.size() > 0) {
+			addError("Source " + accessAOResource + " already defined!");
 			return false;
 		}
-		
+
 		if (this.inputSchema != null) {
 			if (this.outputSchema.get(0).size() != this.inputSchema.size()) {
-				addError(
-						"For each attribute there must be at least one reader in the input schema");
+				addError("For each attribute there must be at least one reader in the input schema");
 				return false;
 			}
 		}
 
 		if (!WrapperRegistry.containsWrapper(this.wrapper)) {
-			addError("Wrapper " + this.wrapper
-					+ " is unknown");
+			addError("Wrapper " + this.wrapper + " is unknown");
 			return false;
 		}
 

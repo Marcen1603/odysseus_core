@@ -35,6 +35,7 @@ import com.google.common.collect.Lists;
 import de.uniol.inf.is.odysseus.core.collection.Context;
 import de.uniol.inf.is.odysseus.core.collection.Resource;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
+import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
@@ -49,6 +50,7 @@ import de.uniol.inf.is.odysseus.core.planmanagement.query.QueryState;
 import de.uniol.inf.is.odysseus.core.procedure.StoredProcedure;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TopAO;
+import de.uniol.inf.is.odysseus.core.server.metadata.MetadataRegistry;
 import de.uniol.inf.is.odysseus.core.server.monitoring.ISystemMonitor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.IBufferPlacementStrategy;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.ICompiler;
@@ -244,9 +246,12 @@ public class StandardExecutor extends AbstractExecutor implements IQueryStarter 
 			OpenFailedException {
 		LOG.debug("Translating query into logical plans");
 		// translate query and build logical plans
+		IMetaAttribute metaAttribute = MetadataRegistry
+				.getMetadataType(parameters.getTransformationConfiguration()
+						.getMetaTypes());
 		List<IExecutorCommand> commands = getCompiler().translateQuery(
 				queryStr, parameters.getParserID(), user,
-				getDataDictionary(user), context);
+				getDataDictionary(user), context, metaAttribute);
 		LOG.trace("Number of commands: " + commands.size());
 		LOG.debug("Translation done.");
 		annotateQueries(commands, queryStr, user, parameters);
@@ -347,11 +352,11 @@ public class StandardExecutor extends AbstractExecutor implements IQueryStarter 
 
 				query.setUser(user);
 				query.setParameter(SLA.class.getName(), sla);
-				
-				if (parameters.getPriority()>0){
+
+				if (parameters.getPriority() > 0) {
 					query.setPriority(parameters.getPriority());
 				}
-					
+
 				// // this executor processes reoptimize requests
 				// if (query instanceof IPhysicalQuery) {
 				// ((IPhysicalQuery) query).addReoptimizeListener(this);
@@ -598,10 +603,8 @@ public class StandardExecutor extends AbstractExecutor implements IQueryStarter 
 
 	@Override
 	public Collection<Integer> addQuery(String query, String parserID,
-			ISession user, Context context)
-			throws PlanManagementException {
-		return addQuery(query, parserID, user, "Standard", context,
-				null);
+			ISession user, Context context) throws PlanManagementException {
+		return addQuery(query, parserID, user, "Standard", context, null);
 	}
 
 	@Override
@@ -782,8 +785,9 @@ public class StandardExecutor extends AbstractExecutor implements IQueryStarter 
 			context = Context.empty();
 		}
 		context.put("tempQuery", true);
+		// FIXME: Add metaAttribute
 		List<IExecutorCommand> commands = getCompiler().translateQuery(query,
-				parserID, user, getDataDictionary(user), context);
+				parserID, user, getDataDictionary(user), context, null);
 		context.remove("tempQuery");
 		if (commands.size() != 1) {
 			throw new IllegalArgumentException(
@@ -902,8 +906,9 @@ public class StandardExecutor extends AbstractExecutor implements IQueryStarter 
 				newSettings.toArray(new IQueryBuildSetting<?>[0]),
 				buildConfigurationName);
 		config.setExecutor(this);
-		config.getTransformationConfiguration().setOption(IServerExecutor.class.getName(), this);
-		
+		config.getTransformationConfiguration().setOption(
+				IServerExecutor.class.getName(), this);
+
 		config = validateBuildParameters(config);
 
 		return config;
@@ -1200,7 +1205,11 @@ public class StandardExecutor extends AbstractExecutor implements IQueryStarter 
 					if (queryToStop.getState() != QueryState.INACTIVE) {
 						queryToStop.stop();
 					}
-					LOG.info("Query " + queryToStop.getID() + " stopped. Execution time "+(System.currentTimeMillis()-queryToStop.getQueryStartTS()) + " ms");
+					LOG.info("Query "
+							+ queryToStop.getID()
+							+ " stopped. Execution time "
+							+ (System.currentTimeMillis() - queryToStop
+									.getQueryStartTS()) + " ms");
 					firePlanModificationEvent(new QueryPlanModificationEvent(
 							this, PlanModificationEventType.QUERY_STOP,
 							queryToStop));

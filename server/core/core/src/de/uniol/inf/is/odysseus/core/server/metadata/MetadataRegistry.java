@@ -25,6 +25,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
 import de.uniol.inf.is.odysseus.core.server.util.LoggerHelper;
 
 public class MetadataRegistry {
@@ -33,21 +35,21 @@ public class MetadataRegistry {
 	
 	private static final String LOGGER_NAME = MetadataRegistry.class.getName();
 
-	private static Map<SortedSet<String>, Class<? extends IMetaAttribute>> combinedMetadataTypes = new HashMap<>();
+	private static Map<SortedSet<String>,IMetaAttribute> combinedMetadataTypes = new HashMap<>();
 	
-	private static Map<String, Class<? extends IMetaAttribute>> byName = new HashMap<>();
+	private static Map<String, IMetaAttribute> byName = new HashMap<>();
 
 	public static void addMetadataType(IMetaAttribute type){
 		
 		logger.trace("New Metadatatype registered "+type.getClass());
 		
-		byName.put(type.getName(), type.getClass());
+		byName.put(type.getName(), type);
 		
 		Class<? extends IMetaAttribute> implementationType = type.getClass();		
 		SortedSet<String> typeSet = toStringSet(type.getClasses());
 		synchronized (combinedMetadataTypes) {
 			if (combinedMetadataTypes.containsKey(typeSet)
-					&& combinedMetadataTypes.get(typeSet) != implementationType) {
+					&& combinedMetadataTypes.get(typeSet).getClass() != implementationType) {
 				throw new IllegalArgumentException(
 						"combined metadatatype already exists");
 			}
@@ -62,11 +64,11 @@ public class MetadataRegistry {
 						+ implementationType.getName() + "' supports clone() method, reason:\n\t"
 						+ e.getMessage());
 			}
-			combinedMetadataTypes.put(typeSet, implementationType);
+			combinedMetadataTypes.put(typeSet, type);
 		}
 	}
 
-	public static Class<? extends IMetaAttribute> getMetadataType(
+	public static IMetaAttribute getMetadataType(
 			String... types) {
 		SortedSet<String> typeSet = new TreeSet<String>();
 		for (String typeString : types) {
@@ -75,26 +77,45 @@ public class MetadataRegistry {
 		return getMetadataType(typeSet);
 	}
 
-	public static Class<? extends IMetaAttribute> getMetadataType(
+	public static IMetaAttribute getMetadataType(
 			SortedSet<String> types) {
 		synchronized (combinedMetadataTypes) {
-			Class<? extends IMetaAttribute> type = combinedMetadataTypes
-					.get(types);
-			if (type == null){
-				
-			}
-			
+			IMetaAttribute type = combinedMetadataTypes
+					.get(types);			
 			if (type == null) {
 				throw new IllegalArgumentException("No metadata type for: "
 						+ types.toString());
 			}
-
 			return type;
 		}
 	}
 
-	public static Class<? extends IMetaAttribute> getMetadataTypeByName(String name){
-		Class<? extends IMetaAttribute> type = byName.get(name);
+	public static SDFSchema getMetadataSchema(
+			SortedSet<String> types) {
+		synchronized (combinedMetadataTypes) {
+			SDFSchema schema =  null;
+			for(String t:types){
+				IMetaAttribute type = combinedMetadataTypes
+						.get(types);
+				if (type == null) {
+						throw new IllegalArgumentException("No metadata type for: "
+								+ types.toString());
+				}
+
+				SDFSchema metaschema = type.getSchema();
+				if (schema == null){
+					schema = metaschema;
+				}else{
+					SDFSchemaFactory.createNewSchema(schema, metaschema);
+				}
+			}
+			return schema;
+		}
+	}
+
+	
+	public static IMetaAttribute getMetadataTypeByName(String name){
+		IMetaAttribute type = byName.get(name);
 		if (type == null){
 			throw new IllegalArgumentException("No metadata type for: "
 					+ name);

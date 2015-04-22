@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Map;
 
 import de.uniol.inf.is.odysseus.core.collection.Context;
+import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.core.server.event.error.ParameterException;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.IParameter;
@@ -55,23 +56,21 @@ public class PQLParser implements IQueryParser {
 
 	@Override
 	public synchronized List<IExecutorCommand> parse(String query,
-			ISession user, IDataDictionary dd, Context context)
+			ISession user, IDataDictionary dd, Context context, IMetaAttribute metaAttribute)
 			throws QueryParseException {
-		// this.user = user;
-		// this.dataDictionary = dd;
-		PQLParserImpl.setUser(user);
-		PQLParserImpl.setDataDictionary(dd);
-		return parse(new StringReader(query), user, dd, context);
+		return parse(new StringReader(query), user, dd, context, metaAttribute);
 	}
 
 	@Override
 	public synchronized List<IExecutorCommand> parse(Reader reader,
-			ISession user, IDataDictionary dd, Context context)
+			ISession user, IDataDictionary dd, Context context, IMetaAttribute metaAttribute)
 			throws QueryParseException {
 		// this.user = user;
 		// this.dataDictionary = dd;
 		PQLParserImpl.setUser(user);
 		PQLParserImpl.setDataDictionary(dd);
+		PQLParserImpl.setContext(context);
+		PQLParserImpl.setMetaAttribute(metaAttribute);
 		boolean updateQueryId = true;
 		if (context != null && context.containsKey("tempQuery")) {
 			updateQueryId = !(Boolean) context.get("tempQuery");

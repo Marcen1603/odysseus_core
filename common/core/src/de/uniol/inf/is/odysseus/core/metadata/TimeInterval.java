@@ -20,6 +20,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.WriteOptions;
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
 
 
 // TODO: Noch mal ber die Grenzen nachdenken (Wann <=, wann <)
@@ -39,6 +44,19 @@ public class TimeInterval implements ITimeInterval, Cloneable, Serializable {
 	public final static Class<? extends IMetaAttribute>[] classes = new Class[]{ 
 		ITimeInterval.class
 	};
+	
+	public static final SDFSchema schema;
+	static{
+		List<SDFAttribute> attributes = new ArrayList<SDFAttribute>();
+		attributes.add(new SDFAttribute("TimeInterval", "start", SDFDatatype.TIMESTAMP, null));
+		attributes.add(new SDFAttribute("TimeInterval", "end", SDFDatatype.TIMESTAMP, null));
+		schema = SDFSchemaFactory.createNewSchema("TimeInterval", Tuple.class, attributes);
+	}
+	
+	@Override
+	public SDFSchema getSchema() {
+		return schema;
+	}
 		
 	private static final long serialVersionUID = 2210545271466064814L;
 

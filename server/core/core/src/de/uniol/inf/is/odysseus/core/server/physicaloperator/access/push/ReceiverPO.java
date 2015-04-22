@@ -138,7 +138,7 @@ public class ReceiverPO<W extends IStreamObject<M>, M extends IMetaAttribute> ex
 	}
 
 	@Override
-	public void setMetadataType(Class<M> type) {
+	public void setMetadataType(IMetaAttribute type) {
 		this.metadataInitializer.setMetadataType(type);
 	}
 
@@ -193,4 +193,6 @@ public class ReceiverPO<W extends IStreamObject<M>, M extends IMetaAttribute> ex
 			return null;
 		}	
 	}
+	
+	
 }

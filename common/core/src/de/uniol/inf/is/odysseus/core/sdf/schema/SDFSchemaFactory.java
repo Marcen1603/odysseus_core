@@ -15,9 +15,9 @@ import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
  * @author Marco Grawunder
  *
  */
-@SuppressWarnings("deprecation")
 public class SDFSchemaFactory {
 
+	
 	/**
 	 * This method can be used to create a new SDFSchema object. <b>This method
 	 * should only be used, if there is no input schema (e.g. from an input
@@ -33,10 +33,11 @@ public class SDFSchemaFactory {
 	 *            What attributes are part of the schema
 	 * @return
 	 */
+	@SuppressWarnings("unchecked")
 	static public SDFSchema createNewSchema(String uri,
-			Class<? extends IStreamObject<?>> type,
+			Class<?> type,
 			Collection<SDFAttribute> attributes) {
-		return new SDFSchema(uri, type, attributes);
+		return new SDFSchema(uri, (Class<? extends IStreamObject<?>>) type, attributes);
 	}
 
 	/**
@@ -200,8 +201,7 @@ public class SDFSchemaFactory {
 	 */
 	static public SDFSchema createNewWithStrictOrder(boolean strictOrder,
 			SDFSchema inputSchema) {
-		SDFSchema output = inputSchema.clone();
-		output.setStrictOrder(strictOrder);
+		SDFSchema output = new SDFSchema(inputSchema,strictOrder);
 		return output;
 	}
 
@@ -220,4 +220,38 @@ public class SDFSchemaFactory {
 		output.setContraints(constraints);
 		return output;
 	}
+
+	/**
+	 * Create a new schema by adding all attributes of schema2 into schema
+	 * @param schema1
+	 * @param schema2
+	 * @return
+	 */
+	public static SDFSchema createNewSchema(SDFSchema schema1, SDFSchema schema2) {
+		return SDFSchema.union(schema1, schema2);
+	}
+	
+	/**
+	 * Create a new schema by adding all attributes of schema2 into schema
+	 * @param schema1
+	 * @param schema2
+	 * @param schema3
+	 * @return
+	 */
+	public static SDFSchema createNewSchema(SDFSchema schema1, SDFSchema schema2, SDFSchema schema3) {
+		SDFSchema tmp = SDFSchema.union(schema1, schema2);
+		return SDFSchema.union(tmp,schema3);
+	}
+
+	/**
+	 * Creates a new schema by adding the metaSchema to the current schema 
+	 * @param currentSchema
+	 * @param metaSchema
+	 * @return
+	 */
+	public static SDFSchema createNewWithMetaSchema(SDFSchema currentSchema,
+			SDFSchema metaSchema) {
+		return new SDFSchema(currentSchema, metaSchema);
+	}
+	
 }

@@ -21,6 +21,8 @@ import de.uniol.inf.is.odysseus.core.WriteOptions;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.TimeInterval;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
 
 /**
  * 
@@ -39,7 +41,19 @@ public class ProbabilisticTimeInterval extends TimeInterval implements IProbabil
     /** The tuple probability. */
     private final IProbabilistic probabilistic;
 
+	static final SDFSchema schema;
+	static{
+		schema = SDFSchemaFactory.createNewSchema(TimeInterval.schema, Probabilistic.schema);
+	}
+
+	@Override
+	public SDFSchema getSchema() {
+		return schema;
+	}
+
+    
     /**
+     * 
      * Default constructor.
      */
     public ProbabilisticTimeInterval() {

@@ -26,6 +26,7 @@ import de.uniol.inf.is.odysseus.core.datahandler.DataHandlerRegistry;
 import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
 import de.uniol.inf.is.odysseus.core.infoservice.InfoService;
 import de.uniol.inf.is.odysseus.core.infoservice.InfoServiceFactory;
+import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.ProtocolHandlerRegistry;
@@ -36,6 +37,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.Transport
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractAccessAO;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.TimestampAO;
 import de.uniol.inf.is.odysseus.core.server.metadata.IMetadataInitializer;
 import de.uniol.inf.is.odysseus.core.server.metadata.MetadataRegistry;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IIterableSource;
@@ -71,8 +73,9 @@ public class TAccessAORule extends AbstractTransformationRule<AbstractAccessAO> 
 	public void execute(AbstractAccessAO operator,
 			TransformationConfiguration config) throws RuleException {
 
-		if (!hasTimestampAOAsFather(operator)) {
-			insertTimestampAO(operator, operator.getDateFormat());
+		TimestampAO tsAO = getTimestampAOAsFather(operator);
+		if (tsAO == null) {
+			tsAO = insertTimestampAO(operator, operator.getDateFormat());
 		}
 
 		ISource accessPO = null;
@@ -103,13 +106,13 @@ public class TAccessAORule extends AbstractTransformationRule<AbstractAccessAO> 
 					throw new TransformationException("No protocol handler "
 							+ operator.getProtocolHandler() + " found.");
 				}
-				protocolHandler.setExecutor((IExecutor)config.getOption(IServerExecutor.class.getName()));
-				
+				protocolHandler.setExecutor((IExecutor) config
+						.getOption(IServerExecutor.class.getName()));
+
 				if (dataHandler != null) {
 					protocolHandler.setSchema(dataHandler.getSchema());
 				}
 
-				
 				ITransportHandler transportHandler = getTransportHandler(
 						operator, protocolHandler, options);
 				if (transportHandler == null) {
@@ -119,8 +122,9 @@ public class TAccessAORule extends AbstractTransformationRule<AbstractAccessAO> 
 							+ operator.getTransportHandler() + " found.");
 				}
 
-				transportHandler.setExecutor((IExecutor)config.getOption(IServerExecutor.class.getName()));
-				
+				transportHandler.setExecutor((IExecutor) config
+						.getOption(IServerExecutor.class.getName()));
+
 				// In some cases the transport handler needs to know the schema
 				if (dataHandler != null) {
 					transportHandler.setSchema(dataHandler.getSchema());
@@ -180,9 +184,23 @@ public class TAccessAORule extends AbstractTransformationRule<AbstractAccessAO> 
 		// Set metadata types
 		if (accessPO instanceof IMetadataInitializer) {
 			if (!config.hasOption("NO_METADATA")) {
-				Class type = MetadataRegistry.getMetadataType(config
+				IMetaAttribute type = MetadataRegistry.getMetadataType(config
 						.getMetaTypes());
 				((IMetadataInitializer) accessPO).setMetadataType(type);
+
+// Is done in AccessAO directly
+				//				try {
+//					SDFSchema metaSchema = MetadataRegistry
+//							.getMetadataSchema(config.getMetaTypes());
+//
+//					SDFSchema accessOutputSchema = SDFSchemaFactory
+//							.createNewWithMetaSchema(
+//									operator.getOutputSchema(), metaSchema);
+//					operator.setOutputSchema(accessOutputSchema);
+//					tsAO.setOutputSchema(accessOutputSchema);
+//				} catch (Exception e) {
+//					infoService.warning("Cannot create metadata schema for "+type,e);
+//				}
 			}
 		}
 

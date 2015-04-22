@@ -190,7 +190,7 @@ public class AccessPO<W extends IStreamObject<M>, M extends IMetaAttribute>
 	}
 
 	@Override
-	public void setMetadataType(Class<M> type) {
+	public void setMetadataType(IMetaAttribute type) {
 		this.metadataInitializer.setMetadataType(type);
 	}
 

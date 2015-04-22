@@ -20,6 +20,7 @@ import java.util.Map;
 import java.util.Set;
 
 import de.uniol.inf.is.odysseus.core.collection.Context;
+import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.core.server.plangeneration.IPlanGenerator;
@@ -49,7 +50,7 @@ public interface ICompiler extends IInfoProvider, IRewrite, IPlanGenerator {
 	 * @throws QueryParseException
 	 *             An {@link Exception} which occurs during parsing the query.
 	 */
-	public List<IExecutorCommand> translateQuery(String query, String parserID, ISession user, IDataDictionary dd, Context context)
+	public List<IExecutorCommand> translateQuery(String query, String parserID, ISession user, IDataDictionary dd, Context context, IMetaAttribute metaAttribute)
 			throws QueryParseException;
 
 	public List<IPhysicalQuery> translateAndTransformQuery(String query, String parserID, ISession user, IDataDictionary dd,

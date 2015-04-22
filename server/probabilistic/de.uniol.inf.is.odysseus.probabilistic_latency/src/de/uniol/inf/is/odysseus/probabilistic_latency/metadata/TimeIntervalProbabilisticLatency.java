@@ -18,9 +18,13 @@ package de.uniol.inf.is.odysseus.probabilistic_latency.metadata;
 import de.uniol.inf.is.odysseus.core.WriteOptions;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
+import de.uniol.inf.is.odysseus.core.metadata.TimeInterval;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
 import de.uniol.inf.is.odysseus.core.server.metadata.ILatency;
 import de.uniol.inf.is.odysseus.latency.Latency;
 import de.uniol.inf.is.odysseus.probabilistic.metadata.IProbabilistic;
+import de.uniol.inf.is.odysseus.probabilistic.metadata.Probabilistic;
 import de.uniol.inf.is.odysseus.probabilistic.metadata.ProbabilisticTimeInterval;
 
 /**
@@ -38,6 +42,17 @@ public class TimeIntervalProbabilisticLatency extends ProbabilisticTimeInterval 
     /** The {@link ILatency} instance. */
     private final ILatency latency;
 
+	static final SDFSchema schema;
+	static{
+		schema = SDFSchemaFactory.createNewSchema(TimeInterval.schema, Latency.schema, Probabilistic.schema);
+	}
+
+	@Override
+	public SDFSchema getSchema() {
+		return schema;
+	}
+
+    
     /**
      * Creates a new {@link TimeIntervalProbabilisticLatency} instance.
      */

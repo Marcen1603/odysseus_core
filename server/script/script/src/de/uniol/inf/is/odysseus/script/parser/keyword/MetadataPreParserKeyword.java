@@ -62,7 +62,7 @@ public class MetadataPreParserKeyword extends AbstractPreParserKeyword {
 
 	private static IMetaAttribute tryCreateMetadataInstance(String parameter) throws OdysseusScriptException {
 		try {
-			return MetadataRegistry.getMetadataTypeByName(parameter).newInstance();
+			return MetadataRegistry.getMetadataTypeByName(parameter).getClass().newInstance();
 		} catch (InstantiationException | IllegalAccessException e) {
 			throw new OdysseusScriptException("Could not create metadata of type '" + parameter + "'", e);
 		}

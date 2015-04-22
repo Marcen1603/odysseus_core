@@ -27,10 +27,12 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 import de.uniol.inf.is.odysseus.core.collection.Context;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
+import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.IOperatorOwner;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
+import de.uniol.inf.is.odysseus.core.server.metadata.MetadataRegistry;
 import de.uniol.inf.is.odysseus.core.server.plangeneration.IPlanGenerator;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.ICompiler;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.ICompilerListener;
@@ -60,8 +62,8 @@ import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
  * @author Wolf Bauer, Tobias Witt
  * 
  */
-public class StandardCompiler implements ICompiler {	
-	
+public class StandardCompiler implements ICompiler {
+
 	/**
 	 * {@link ITransformation} service
 	 */
@@ -247,66 +249,28 @@ public class StandardCompiler implements ICompiler {
 	 */
 	@Override
 	public List<IExecutorCommand> translateQuery(String query, String parserID,
-			ISession user, IDataDictionary dd, Context context) throws QueryParseException {
+			ISession user, IDataDictionary dd, Context context,
+			IMetaAttribute metaAttribute) throws QueryParseException {
 		if (this.parserList.containsKey(parserID)) {
-			return this.parserList.get(parserID).parse(query, user, dd, context);
+			return this.parserList.get(parserID).parse(query, user, dd,
+					context, metaAttribute);
 		}
 
 		throw new QueryParseException("Parser with ID " + parserID
 				+ " not registered.");
 	}
 
-	// /* (non-Javadoc)
-	// * @see
-	// de.uniol.inf.is.odysseus.core.server.planmanagement.ICompiler#transform(de.uniol.inf.is.odysseus.core.server.ILogicalOperator,
-	// de.uniol.inf.is.odysseus.transformationConfiguration)
-	// */
-	// @SuppressWarnings("unchecked")
-	// @Override
-	// public ArrayList<IPhysicalOperator> transform(ILogicalOperator
-	// logicalPlan,
-	// TransformationConfiguration transformationConfiguration, User caller)
-	// throws TransformationException {
-	// // create working copy of plan
-	// CopyLogicalGraphVisitor<ILogicalOperator> copyVisitor = new
-	// CopyLogicalGraphVisitor<ILogicalOperator>();
-	// AbstractGraphWalker walker = new AbstractGraphWalker();
-	// walker.prefixWalk(logicalPlan, copyVisitor);
-	// ILogicalOperator copyPlan = copyVisitor.getResult();
-	// return this.transformation.transform(copyPlan,
-	// transformationConfiguration, caller);
-	// }
-
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	public IPhysicalQuery transform(ILogicalQuery query,
 			TransformationConfiguration transformationConfiguration,
 			ISession caller, IDataDictionary dd) throws TransformationException {
-		// System.err.println("TRANSFORMING QUERY");
-		//
-		// System.err.println("OLD PLAN: TREE WALKER");
-		// AbstractTreeWalker walker2 = new AbstractTreeWalker();
-		// String result = walker2.prefixWalk(query.getLogicalPlan(), new
-		// AlgebraPlanToStringVisitor());
-		// System.err.println(result);
-		//
-		// AbstractGraphWalker walker = new AbstractGraphWalker();
-		// System.err.println("OLD PLAN");
-		// PrintGraphVisitor visitor = new PrintGraphVisitor();
-		// walker.prefixWalk(query.getLogicalPlan(), visitor);
-		// System.err.println(visitor.getResult());
 
 		CopyLogicalGraphVisitor<ILogicalOperator> copyVisitor = new CopyLogicalGraphVisitor<ILogicalOperator>(
 				query);
 		GenericGraphWalker walker = new GenericGraphWalker();
 		walker.prefixWalk(query.getLogicalPlan(), copyVisitor);
 		ILogicalOperator copyPlan = copyVisitor.getResult();
-
-		// walker = new AbstractGraphWalker();
-		// System.err.println("COPIED PLAN");
-		// visitor = new PrintGraphVisitor();
-		// walker.prefixWalk(copyPlan, visitor);
-		// System.err.println(visitor.getResult());
 
 		ArrayList<IPhysicalOperator> physicalPlan = this.transformation
 				.transform(copyPlan, transformationConfiguration, caller, dd);
@@ -378,7 +342,7 @@ public class StandardCompiler implements ICompiler {
 			RewriteConfiguration conf, ISession caller, IDataDictionary dd) {
 		return rewrite.rewritePlan(plan, conf, caller, dd);
 	}
-	
+
 	@Override
 	public Collection<String> getRewriteRules() {
 		return rewrite.getRewriteRules();
@@ -387,10 +351,13 @@ public class StandardCompiler implements ICompiler {
 	@Override
 	public List<IPhysicalQuery> translateAndTransformQuery(String query,
 			String parserID, ISession user, IDataDictionary dd,
-			TransformationConfiguration transformationConfiguration, Context context)
-			throws QueryParseException, TransformationException {
+			TransformationConfiguration transformationConfiguration,
+			Context context) throws QueryParseException,
+			TransformationException {
+		IMetaAttribute metaAttribute = MetadataRegistry
+				.getMetadataType(transformationConfiguration.getMetaTypes());
 		List<IExecutorCommand> translate = translateQuery(query, parserID,
-				user, dd, context);
+				user, dd, context, metaAttribute);
 		List<IPhysicalQuery> translated = new ArrayList<IPhysicalQuery>();
 		for (IExecutorCommand q : translate) {
 			if (q instanceof CreateQueryCommand) {
@@ -408,19 +375,21 @@ public class StandardCompiler implements ICompiler {
 	}
 
 	@Override
-	public Map<String, List<String>> getQueryParserTokens(String parserID, ISession user) {
+	public Map<String, List<String>> getQueryParserTokens(String parserID,
+			ISession user) {
 		if (this.parserList.containsKey(parserID)) {
 			return this.parserList.get(parserID).getTokens(user);
 		}
 		return new HashMap<>();
-				
+
 	}
 
 	@Override
-	public List<String> getQueryParserSuggestions(String parserID, String hint, ISession user) {
+	public List<String> getQueryParserSuggestions(String parserID, String hint,
+			ISession user) {
 		if (this.parserList.containsKey(parserID)) {
 			return this.parserList.get(parserID).getSuggestions(hint, user);
-		}		
+		}
 		return new ArrayList<>();
 	}
 

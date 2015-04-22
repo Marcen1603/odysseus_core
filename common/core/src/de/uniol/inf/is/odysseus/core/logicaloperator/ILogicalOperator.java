@@ -28,6 +28,7 @@ import de.uniol.inf.is.odysseus.core.ISubscribable;
 import de.uniol.inf.is.odysseus.core.ISubscriber;
 import de.uniol.inf.is.odysseus.core.Subscription;
 import de.uniol.inf.is.odysseus.core.logicaloperator.serialize.ISerializable;
+import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.IOwnedOperator;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
@@ -141,6 +142,8 @@ public interface ILogicalOperator extends IOwnedOperator, ISubscribable<ILogical
 
 	void setOutputSchema(int pos, SDFSchema outputSchema);
 
+	void setMetadata(IMetaAttribute metaattribute);
+	
 	void setOutputSchema(SDFSchema outputSchema);
 
 	/**
@@ -238,12 +241,6 @@ public interface ILogicalOperator extends IOwnedOperator, ISubscribable<ILogical
 	 */
 	@Override
 	public ILogicalOperator clone();
-
-//	/**
-//	 * This method can be used to reinit the schema infos all currently not set
-//	 * schemata are calced new
-//	 */
-//	void updateSchemaInfos();
 
 	/**
 	 * Each operator can have a unique id

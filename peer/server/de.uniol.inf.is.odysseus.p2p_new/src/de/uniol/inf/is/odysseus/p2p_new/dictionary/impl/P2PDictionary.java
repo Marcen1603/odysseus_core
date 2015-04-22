@@ -29,6 +29,7 @@ import de.uniol.inf.is.odysseus.core.collection.Context;
 import de.uniol.inf.is.odysseus.core.collection.Resource;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
+import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.FileHandler;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFConstraint;
@@ -355,7 +356,9 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 
 			try {
 				LOG.debug("Parsing with pql-Parser");
-				List<IExecutorCommand> commands = PQLParserService.getParser().parse(pqlText, SessionManagementService.getActiveSession(), getDataDictionary(), Context.empty());
+				// FIX-ME: Add metaAttribute
+				IMetaAttribute metaAttribute = null;
+				List<IExecutorCommand> commands = PQLParserService.getParser().parse(pqlText, SessionManagementService.getActiveSession(), getDataDictionary(), Context.empty(),metaAttribute);
 				ILogicalQuery query = null;
 
 				for (IExecutorCommand cmd : commands) {

@@ -19,6 +19,7 @@ import com.google.common.collect.Sets;
 import de.uniol.inf.is.odysseus.core.collection.Context;
 import de.uniol.inf.is.odysseus.core.collection.Resource;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
+import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.DataDictionaryProvider;
@@ -254,7 +255,9 @@ public class QueryPartReceiver implements IPeerCommunicatorListener {
 	private void checkNeededSources(AddQueryPartMessage message) throws QueryDistributionException {
 		ISession session = PeerDistributePlugIn.getActiveSession();
 		System.err.println(message.getPqlStatement());
-		List<IExecutorCommand> queries = compiler.translateQuery(message.getPqlStatement(), "PQL", session, getDataDictionary(), Context.empty());
+		// FIX-ME: Add metaAttribute
+		IMetaAttribute metaAttribute = null;
+		List<IExecutorCommand> queries = compiler.translateQuery(message.getPqlStatement(), "PQL", session, getDataDictionary(), Context.empty(), metaAttribute);
 		
 		for (IExecutorCommand q : queries) {
 

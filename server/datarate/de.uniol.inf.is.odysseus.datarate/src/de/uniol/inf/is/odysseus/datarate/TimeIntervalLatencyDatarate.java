@@ -3,6 +3,9 @@ package de.uniol.inf.is.odysseus.datarate;
 import de.uniol.inf.is.odysseus.core.WriteOptions;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
+import de.uniol.inf.is.odysseus.core.metadata.TimeInterval;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
 import de.uniol.inf.is.odysseus.core.server.metadata.ILatency;
 import de.uniol.inf.is.odysseus.latency.Latency;
 
@@ -13,6 +16,17 @@ public class TimeIntervalLatencyDatarate extends TimeIntervalDatarate implements
 	public final static Class<? extends IMetaAttribute>[] CLASSES = new Class[]{ 
 		ITimeInterval.class, ILatency.class, IDatarate.class
 	};
+	
+	static final SDFSchema schema;
+	static{
+		schema = SDFSchemaFactory.createNewSchema(TimeInterval.schema, Latency.schema, Datarate.schema);
+	}
+
+	@Override
+	public SDFSchema getSchema() {
+		return schema;
+	}
+
 	
 	private ILatency latency;
 

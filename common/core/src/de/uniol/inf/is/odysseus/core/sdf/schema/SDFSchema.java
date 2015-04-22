@@ -47,25 +47,28 @@ public class SDFSchema extends SDFSchemaElementSet<SDFAttribute> implements
 
 	private Map<String, SDFConstraint> constraints;
 
-	private boolean strictOrder;
-	private Boolean outOfOrder;
+	final private Boolean outOfOrder;
+
+	//final 
+	private SDFSchema metaschema;
 
 	private SDFSchema(String URI, Class<? extends IStreamObject> type,
-			Map<String, SDFConstraint> constraints) {
+			Map<String, SDFConstraint> constraints, SDFSchema metaschema, boolean outOfOrder) {
 		super(URI);
 		this.type = type;
 		if (!URI.equals("")) {
 			baseSourceNames.add(URI);
 		}
 		this.constraints = constraints;
+		this.metaschema = metaschema;
+		this.outOfOrder = outOfOrder;
 	}
 
 	/**
 	 * @param schema
-	 * @deprecated use SDFSchemaFactory instead
 	 */
-	@Deprecated
-	public SDFSchema(String uri, SDFSchema schema) {
+	
+	SDFSchema(String uri, SDFSchema schema) {
 		this(uri, schema, (Map<String, SDFConstraint>) null);
 	}
 
@@ -74,10 +77,8 @@ public class SDFSchema extends SDFSchemaElementSet<SDFAttribute> implements
 	 * @param uri
 	 * @param schema
 	 * @param constraints
-	 * @deprecated use SDFSchemaFactory instead
 	 */
-	@Deprecated
-	public SDFSchema(String uri, SDFSchema schema,
+	private SDFSchema(String uri, SDFSchema schema,
 			Map<String, SDFConstraint> constraints) {
 		super(uri, schema);
 		if (constraints != null) {
@@ -102,43 +103,31 @@ public class SDFSchema extends SDFSchemaElementSet<SDFAttribute> implements
 			type = null;
 			this.outOfOrder = null;
 		}
-
-		this.strictOrder = schema.strictOrder;
+		this.metaschema = schema.metaschema;
 
 	}
 
-	private SDFSchema(String uri, Class<? extends IStreamObject> type,
-			Map<String, SDFConstraint> constraints, SDFAttribute attribute,
-			SDFAttribute... attributes1) {
-		super(uri);
-		this.type = type;
-		if (attribute != null) {
-			elements.add(attribute);
-		}
-		if (attributes1 != null) {
-			for (SDFAttribute a : attributes1) {
-				elements.add(a);
-			}
-		}
-		if (!uri.equals("")) {
-			baseSourceNames.add(uri);
-		}
-		this.constraints = constraints;
-	}
+//	private SDFSchema(String uri, Class<? extends IStreamObject> type,
+//			Map<String, SDFConstraint> constraints, SDFSchema metaschema, boolean outOfOrder, SDFAttribute attribute,
+//			SDFAttribute... attributes1) {
+//		super(uri);
+//		this.type = type;
+//		if (attribute != null) {
+//			elements.add(attribute);
+//		}
+//		if (attributes1 != null) {
+//			for (SDFAttribute a : attributes1) {
+//				elements.add(a);
+//			}
+//		}
+//		if (!uri.equals("")) {
+//			baseSourceNames.add(uri);
+//		}
+//		this.constraints = constraints;
+//		this.outOfOrder = outOfOrder;
+//		this.metaschema = metaschema;
+//	}
 
-	/**
-	 * 
-	 * @param uri
-	 * @param type
-	 * @param attribute
-	 * @param attributes1
-	 * @deprecated use SDFSchemaFactory instead
-	 */
-	@Deprecated
-	public SDFSchema(String uri, Class<? extends IStreamObject> type,
-			SDFAttribute attribute, SDFAttribute... attributes1) {
-		this(uri, type, null, attribute, attributes1);
-	}
 
 	/**
 	 * 
@@ -146,43 +135,48 @@ public class SDFSchema extends SDFSchemaElementSet<SDFAttribute> implements
 	 * @param type
 	 * @param constraints
 	 * @param attributes1
-	 * @deprecated use SDFSchemaFactory instead
 	 */
-	@Deprecated
-	public SDFSchema(String uri, Class<? extends IStreamObject> type,
+     SDFSchema(String uri, Class<? extends IStreamObject> type,
 			Map<String, SDFConstraint> constraints,
-			Collection<SDFAttribute> attributes1) {
+			Collection<SDFAttribute> attributes1, SDFSchema metaschema, boolean outOfOrder) {
 		super(uri, attributes1);
 		this.type = type;
 		if (!uri.equals("")) {
 			baseSourceNames.add(uri);
 		}
 		this.constraints = constraints;
+		this.outOfOrder = outOfOrder;
+		this.metaschema = metaschema;
 	}
+	
 
 	/**
 	 * 
 	 * @param uri
 	 * @param type
 	 * @param attributes1
- 	 * @deprecated use SDFSchemaFactory instead
- 	 */
-	@Deprecated
-	public SDFSchema(String uri, Class<? extends IStreamObject> type,
+ 	 */	
+	SDFSchema(String uri, Class<? extends IStreamObject> type,
 			Collection<SDFAttribute> attributes1) {
-		this(uri, type, null, attributes1);
+		this(uri, type, null, attributes1,null, false);
 	}
 
-	@Deprecated
-	public SDFSchema(String uri, SDFSchema schema, Collection<SDFAttribute> attributes1) {
-		this(uri, schema.type, schema.constraints, attributes1);
+	SDFSchema(String uri, SDFSchema schema, Collection<SDFAttribute> attributes1) {
+		this(uri, schema.type, schema.constraints, attributes1,schema.metaschema, schema.outOfOrder);
 	}
 
-	@Deprecated
-	public SDFSchema(SDFSchema schema, Collection<SDFAttribute> attributes1) {
-		this(schema.getURI(), schema.type, schema.constraints, attributes1);
+	SDFSchema(SDFSchema schema, Collection<SDFAttribute> attributes1) {
+		this(schema.getURI(), schema.type, schema.constraints, attributes1,schema.metaschema, schema.outOfOrder);
 	}
 
+	SDFSchema(SDFSchema currentSchema, SDFSchema metaSchema) {
+		this(currentSchema.getURI(), currentSchema.type, currentSchema.constraints, currentSchema.getAttributes(), metaSchema, currentSchema.outOfOrder);
+	}
+
+	SDFSchema(SDFSchema schema, boolean outOfOrder) {
+		this(schema.getURI(), schema.type, schema.constraints, schema.getAttributes(), schema.metaschema, outOfOrder);
+	}
+	
 	public Class<? extends IStreamObject> getType() {
 		return type;
 	}
@@ -209,20 +203,9 @@ public class SDFSchema extends SDFSchemaElementSet<SDFAttribute> implements
 	public boolean isInOrder() {
 		return (outOfOrder == null) || (outOfOrder == false);
 	}
-
-	/**
-	 * @return the strictOrder
-	 */
-	public boolean isStrictOrder() {
-		return strictOrder;
-	}
-
-	/**
-	 * @param strictOrder
-	 *            the strictOrder to set Use factory to set
-	 */
-	void setStrictOrder(boolean strictOrder) {
-		this.strictOrder = strictOrder;
+	
+	public SDFSchema getMetaschema() {
+		return metaschema;
 	}
 
 	@Override
@@ -348,6 +331,9 @@ public class SDFSchema extends SDFSchemaElementSet<SDFAttribute> implements
 				newSet.elements.add(attributes2.getAttribute(i));
 			}
 		}
+		
+		// TODO: Merge other information??
+		
 		return newSet;
 	}
 
@@ -420,7 +406,7 @@ public class SDFSchema extends SDFSchemaElementSet<SDFAttribute> implements
 	public static SDFSchema intersection(SDFSchema attributes1,
 			SDFSchema attributes2) {
 		SDFSchema newSet = new SDFSchema(getNewName(attributes1, attributes2),
-				attributes1.type, attributes1.constraints);
+				attributes1.type, attributes1.constraints, attributes1.metaschema, attributes1.outOfOrder||attributes2.outOfOrder);
 		for (int j = 0; j < attributes1.size(); j++) {
 			SDFAttribute nextAttr = attributes1.getAttribute(j);
 
@@ -640,7 +626,7 @@ public class SDFSchema extends SDFSchemaElementSet<SDFAttribute> implements
 	public static SDFSchema changeType(SDFSchema toAdapt,
 			Class<? extends IStreamObject> newType) {
 		return new SDFSchema(toAdapt.getURI(), newType, toAdapt.constraints,
-				toAdapt.getAttributes());
+				toAdapt.getAttributes(), toAdapt.metaschema, toAdapt.outOfOrder);
 	}
 
 }

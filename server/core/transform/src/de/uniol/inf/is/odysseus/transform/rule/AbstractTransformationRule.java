@@ -211,7 +211,7 @@ public abstract class AbstractTransformationRule<T> extends
 		}
 	}
 
-	protected void insertTimestampAO(ILogicalOperator operator,
+	protected TimestampAO insertTimestampAO(ILogicalOperator operator,
 			String dateFormat) {
 		TimestampAO timestampAO = new TimestampAO();
 		timestampAO.setDateFormat(dateFormat);
@@ -238,17 +238,16 @@ public abstract class AbstractTransformationRule<T> extends
 		timestampAO.setName(timestampAO.getStandardName());
 		RestructHelper.insertOperatorBefore(timestampAO, operator);
 		insert(timestampAO);
+		return timestampAO;
 	}
 
-	protected boolean hasTimestampAOAsFather(ILogicalOperator operator) {
-		boolean hasTimestampAOAsFather = false;
+	protected TimestampAO getTimestampAOAsFather(ILogicalOperator operator) {
 		for (LogicalSubscription sub : operator.getSubscriptions()) {
 			if (sub.getTarget() instanceof TimestampAO) {
-				hasTimestampAOAsFather = true;
-				break;
+				return (TimestampAO)sub.getTarget();
 			}
 		}
-		return hasTimestampAOAsFather;
+		return null;
 	}
 
 	@Override

@@ -162,6 +162,7 @@ public class GenericOperatorBuilder extends AbstractOperatorBuilder {
 	}
 
 	private void initOp(ILogicalOperator op) throws IllegalArgumentException, IllegalAccessException, InvocationTargetException {
+		op.setMetadata(getMetaAttribute());
 		for (int i = 0; i < getInputOperatorCount(); ++i) {
 			ILogicalOperator inputOperator = getInputOperator(i);
 			op.subscribeToSource(inputOperator, i, getInputOperatorItem(i).outputPort, inputOperator.getOutputSchema(getInputOperatorItem(i).outputPort));

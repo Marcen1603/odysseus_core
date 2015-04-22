@@ -15,10 +15,18 @@
  */
 package de.uniol.inf.is.odysseus.probabilistic.metadata;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.google.common.base.Preconditions;
 
 import de.uniol.inf.is.odysseus.core.WriteOptions;
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
 
 /**
  * 
@@ -36,6 +44,18 @@ public class Probabilistic implements IProbabilistic {
     /** Tuple existence probability. */
     private double existence;
 
+	public static final SDFSchema schema;
+	static{
+		List<SDFAttribute> attributes = new ArrayList<SDFAttribute>();
+		attributes.add(new SDFAttribute("Probabilistic", "existence", SDFDatatype.DOUBLE, null));
+		schema = SDFSchemaFactory.createNewSchema("Probabilistic", Tuple.class, attributes);
+	}
+	
+	@Override
+	public SDFSchema getSchema() {
+		return schema;
+	}
+    
     /**
      * Default constructor.
      */

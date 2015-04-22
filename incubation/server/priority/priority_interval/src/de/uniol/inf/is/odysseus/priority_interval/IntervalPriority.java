@@ -19,7 +19,10 @@ import de.uniol.inf.is.odysseus.core.WriteOptions;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.TimeInterval;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
 import de.uniol.inf.is.odysseus.priority.IPriority;
+import de.uniol.inf.is.odysseus.priority.Priority;
 
 public class IntervalPriority extends TimeInterval implements IPriority {
 
@@ -30,6 +33,17 @@ public class IntervalPriority extends TimeInterval implements IPriority {
 	public final static Class<? extends IMetaAttribute>[] classes = new Class[]{ 
 		ITimeInterval.class, IPriority.class
 	};
+	
+	static final SDFSchema schema;
+	static{
+		schema = SDFSchemaFactory.createNewSchema(TimeInterval.schema, Priority.schema);
+	}
+
+	@Override
+	public SDFSchema getSchema() {
+		return schema;
+	}
+
 	
 	public IntervalPriority() {
 	}

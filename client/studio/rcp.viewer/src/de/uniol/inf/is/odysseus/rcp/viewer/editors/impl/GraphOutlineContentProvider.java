@@ -169,6 +169,13 @@ public class GraphOutlineContentProvider implements ITreeContentProvider {
 			for (SDFAttribute a : attributes) {
 				children.add(a);
 			}
+			// add metaschema
+			if (attributes.getMetaschema()!=null){
+				children.add(attributes.getMetaschema());
+			}
+			if (attributes.isInOrder() == false){
+				children.add("OutOfOrder");
+			}
 			return children.toArray();
 		}
 

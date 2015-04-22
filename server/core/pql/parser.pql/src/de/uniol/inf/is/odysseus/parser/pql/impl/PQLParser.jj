@@ -4,6 +4,7 @@
  */options{  JDK_VERSION = "1.5";  IGNORE_CASE = true;
 
   }PARSER_BEGIN(PQLParserImpl)package de.uniol.inf.is.odysseus.parser.pql.impl;import java.beans.BeanInfo;import java.beans.IntrospectionException;import java.beans.Introspector;import java.beans.PropertyDescriptor;import java.lang.reflect.Method;import java.util.ArrayList;import java.util.Collection;import java.util.Collections;import java.util.HashMap;import java.util.HashSet;import java.util.LinkedList;import java.util.List; import java.util.Map;import java.util.Set;
+import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;import de.uniol.inf.is.odysseus.core.server.datadictionary.DataDictionaryException;import de.uniol.inf.is.odysseus.core.server.planmanagement.QueryParseException;import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.core.infoservice.InfoService;
@@ -16,7 +17,8 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.dd.C
 import de.uniol.inf.is.odysseus.core.collection.Context;
 
 @SuppressWarnings("all")public class PQLParserImpl{
-	static final private InfoService infoService = InfoServiceFactory.getInfoService("PQLParser");  static private ILogicalOperator createOperator(String identifier, Map < String, Object > parameters, List < InputOperatorItem > inputOps)  {    IOperatorBuilder builder = OperatorBuilderFactory.createOperatorBuilder(identifier.toUpperCase(), getUser(), getDataDictionary(), getContext());    List < ILogicalOperator > inputOperators = new ArrayList < ILogicalOperator > ();    for (int i = 0; i < inputOps.size(); ++i)    {      builder.setInputOperator(i, inputOps.get(i).operator, inputOps.get(i).outputPort);    }    PQLParser.initParameters(identifier.toUpperCase(), builder.getParameters(), parameters);    if (!builder.validate())    {      throw new ValidationException(identifier, builder.getErrors());    }    for (String e : builder.getWarnings())    {      infoService.warning(e);    }    ILogicalOperator operator = builder.createOperator();    return operator;  }  static private Set < ILogicalOperator > findRoots(ILogicalOperator op)  {    return findRoots(op, new ArrayList < ILogicalOperator > ());  }  static private Set < ILogicalOperator > findRoots(ILogicalOperator op, List < ILogicalOperator > visited)  {    Set < ILogicalOperator > result = new HashSet < ILogicalOperator > ();    if (!visited.contains(op))    {      visited.add(op);      Collection < LogicalSubscription > subscriptions = op.getSubscriptions();      if (subscriptions.isEmpty())      {        return Collections.singleton(op);      }      for (LogicalSubscription sub : subscriptions)      {        result.addAll(findRoots(sub.getTarget(), visited));      }    }    return result;  }  static ISession user;  static public ISession getUser()  {    return user;  }  static public void setUser(ISession newUser)  {    user = newUser;  }  static IDataDictionary dd;  static public void setDataDictionary(IDataDictionary dataDictionary)  {    dd = dataDictionary;  }  static public IDataDictionary getDataDictionary()  {    return dd;  }
+	static final private InfoService infoService = InfoServiceFactory.getInfoService("PQLParser");  static private ILogicalOperator createOperator(String identifier, Map < String, Object > parameters, List < InputOperatorItem > inputOps)  {    IOperatorBuilder builder = OperatorBuilderFactory.createOperatorBuilder(identifier.toUpperCase(), getUser(), getDataDictionary(), getContext());    builder.setMetaAttribute(getMetaAttribute());
+    List < ILogicalOperator > inputOperators = new ArrayList < ILogicalOperator > ();    for (int i = 0; i < inputOps.size(); ++i)    {      builder.setInputOperator(i, inputOps.get(i).operator, inputOps.get(i).outputPort);    }    PQLParser.initParameters(identifier.toUpperCase(), builder.getParameters(), parameters);    if (!builder.validate())    {      throw new ValidationException(identifier, builder.getErrors());    }    for (String e : builder.getWarnings())    {      infoService.warning(e);    }    ILogicalOperator operator = builder.createOperator();    return operator;  }  static private Set < ILogicalOperator > findRoots(ILogicalOperator op)  {    return findRoots(op, new ArrayList < ILogicalOperator > ());  }  static private Set < ILogicalOperator > findRoots(ILogicalOperator op, List < ILogicalOperator > visited)  {    Set < ILogicalOperator > result = new HashSet < ILogicalOperator > ();    if (!visited.contains(op))    {      visited.add(op);      Collection < LogicalSubscription > subscriptions = op.getSubscriptions();      if (subscriptions.isEmpty())      {        return Collections.singleton(op);      }      for (LogicalSubscription sub : subscriptions)      {        result.addAll(findRoots(sub.getTarget(), visited));      }    }    return result;  }  static ISession user;  static public ISession getUser()  {    return user;  }  static public void setUser(ISession newUser)  {    user = newUser;  }  static IDataDictionary dd;  static public void setDataDictionary(IDataDictionary dataDictionary)  {    dd = dataDictionary;  }  static public IDataDictionary getDataDictionary()  {    return dd;  }
   
   static Context ctx;
   static public void setContext(Context context){
@@ -26,6 +28,17 @@ import de.uniol.inf.is.odysseus.core.collection.Context;
   static public Context getContext(){
   	return ctx;
   }
+  
+  static public IMetaAttribute metaAttribute;
+  
+  static public void setMetaAttribute(IMetaAttribute metaAttr){
+  	metaAttribute = metaAttr;
+  }
+  
+  static public IMetaAttribute getMetaAttribute(){
+  	return metaAttribute;
+  }
+  
   static public boolean _updateQueryId = true;
   static public void setUpdateQueryID(boolean updateQueryId){
     _updateQueryId = updateQueryId;
