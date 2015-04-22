@@ -125,6 +125,13 @@ public class MatrixFunctionProvider implements IFunctionProvider {
         functions.add(new ZerosMatrixFunction());
         functions.add(new OnesMatrixFunction());
 
+        // Eigenvalues
+        functions.add(new EigenvaluesFunction());
+        functions.add(new ImaginaryEigenvaluesFunction());
+
+        // Singular Value Decomposition
+        functions.add(new SingularValueDecompositionFunction());
+
         return functions;
     }
 
