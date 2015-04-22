@@ -103,6 +103,12 @@ public class MatrixFunctionProvider implements IFunctionProvider {
         functions.add(new MedianMatrixFunction());
         functions.add(new MedianVectorFunction());
 
+        functions.add(new StandardDeviationMatrixFunction());
+        functions.add(new StandardDeviationVectorFunction());
+
+        functions.add(new VarianceMatrixFunction());
+        functions.add(new VarianceVectorFunction());
+
         // Transformation functions
         functions.add(new MatrixToVectorFunction());
         functions.add(new VectorToMatrixFunction());
