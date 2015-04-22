@@ -54,7 +54,6 @@ public class CreateAccessAOVisitor extends AbstractDefaultVisitor {
 
 	private ISession caller;
 	private IDataDictionary dd;
-
 	public CreateAccessAOVisitor(ISession user, IDataDictionary dd) {
 		super();
 		init();
@@ -187,22 +186,6 @@ public class CreateAccessAOVisitor extends AbstractDefaultVisitor {
 		}
 		return window;
 	}
-
-	// private boolean containsWindow(ILogicalOperator inputOp) {
-	// if (inputOp instanceof WindowAO) {
-	// return true;
-	// }
-	// int numberOfInputs = inputOp.getSubscribedToSource().size();
-	// if (inputOp instanceof ExistenceAO) {
-	// numberOfInputs = 1;// don't check subselects in existenceaos
-	// }
-	// for (int i = 0; i < numberOfInputs; ++i) {
-	// if (containsWindow(inputOp.getSubscribedToSource(i).getTarget())) {
-	// return true;
-	// }
-	// }
-	// return false;
-	// }
 
 	@Override
 	public Object visit(ASTSubselect node, Object data)

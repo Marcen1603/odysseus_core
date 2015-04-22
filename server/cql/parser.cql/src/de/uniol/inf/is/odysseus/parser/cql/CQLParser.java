@@ -113,6 +113,7 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 	final private List<IExecutorCommand> commands = new ArrayList<IExecutorCommand>();
 	private ISession caller;
 	private IDataDictionary dataDictionary;
+	private IMetaAttribute metaAttribute;
 	private static CQLParser instance = null;
 	private static NewSQLParser parser;
 
@@ -149,6 +150,7 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 			throws QueryParseException {
 		this.caller = user;
 		this.dataDictionary = dd;
+		this.metaAttribute = metaAttribute;
 		try {
 			if (parser == null) {
 				parser = new NewSQLParser(reader);
@@ -159,6 +161,7 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 			CQLParser cqlParser = new CQLParser();
 			cqlParser.setUser(user);
 			cqlParser.setDataDictionary(dataDictionary);
+			cqlParser.setMetaAttribute(metaAttribute);
 			cqlParser.visit(statement, null);
 			return cqlParser.commands;
 		} catch (ParseException e) {
@@ -172,6 +175,10 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 
 	public void setDataDictionary(IDataDictionary dataDictionary) {
 		this.dataDictionary = dataDictionary;
+	}
+	
+	public void setMetaAttribute(IMetaAttribute metaAttribute) {
+		this.metaAttribute = metaAttribute;
 	}
 
 	@Override
@@ -373,7 +380,7 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 			this.visit(accessNode, node);
 		}
 		CreateStreamVisitor v = new CreateStreamVisitor(caller, dataDictionary,
-				commands);
+				commands, metaAttribute);
 		return v.visit(node, data);
 	}
 
@@ -444,7 +451,7 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 	public List<SDFAttribute> visit(ASTAttributeDefinitions node, Object data)
 			throws QueryParseException {
 		CreateStreamVisitor csv = new CreateStreamVisitor(getCaller(),
-				getDataDictionary(), commands);
+				getDataDictionary(), commands, metaAttribute);
 		csv.visit(node, data);
 		return csv.getAttributes();
 	}
@@ -1407,6 +1414,7 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 		visitor.setDataDictionary(dataDictionary);
 		visitor.setUser(caller);
 		visitor.setCommands(commands);
+		visitor.setMetaAttribute(metaAttribute);
 		visitor.visit(node, data, this);
 		return null;
 	}
@@ -1425,6 +1433,7 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 		visitor.setDataDictionary(dataDictionary);
 		visitor.setUser(caller);
 		visitor.setCommands(commands);
+		visitor.setMetaAttribute(metaAttribute);
 		visitor.visit(node, data, this);
 		return null;
 	}

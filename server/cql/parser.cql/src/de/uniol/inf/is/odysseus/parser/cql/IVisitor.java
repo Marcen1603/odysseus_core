@@ -17,6 +17,7 @@ package de.uniol.inf.is.odysseus.parser.cql;
 
 import java.util.List;
 
+import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.IExecutorCommand;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
@@ -28,4 +29,5 @@ public interface IVisitor {
 	public void setUser(ISession user);
 	public void setDataDictionary(IDataDictionary dd);
 	public void setCommands(List<IExecutorCommand> commands);
+	public void setMetaAttribute(IMetaAttribute metaAttribute);
 }

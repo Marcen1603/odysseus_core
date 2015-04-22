@@ -28,6 +28,7 @@ import java.util.Map;
 import de.uniol.inf.is.odysseus.core.collection.Resource;
 import de.uniol.inf.is.odysseus.core.datahandler.TupleDataHandler;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
+import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
@@ -75,11 +76,14 @@ public class CreateStreamVisitor extends AbstractDefaultVisitor {
 	List<SDFAttribute> attributes = new ArrayList<SDFAttribute>();
 	ILogicalOperator operator;
 	private List<IExecutorCommand> commands;
+	private IMetaAttribute metaAttribute;
 
-	public CreateStreamVisitor(ISession user, IDataDictionary dd, List<IExecutorCommand> commands) {
+	public CreateStreamVisitor(ISession user, IDataDictionary dd,
+			List<IExecutorCommand> commands, IMetaAttribute metaAttribute) {
 		this.caller = user;
 		this.dd = dd;
 		this.commands = commands;
+		this.metaAttribute = metaAttribute;
 	}
 
 	public String getName() {
@@ -100,11 +104,13 @@ public class CreateStreamVisitor extends AbstractDefaultVisitor {
 
 	public void setOperator(ILogicalOperator operator) {
 		this.operator = operator;
-		((AbstractAccessAO) operator).setDataHandler(new TupleDataHandler().getSupportedDataTypes().get(0));
+		((AbstractAccessAO) operator).setDataHandler(new TupleDataHandler()
+				.getSupportedDataTypes().get(0));
 	}
 
 	@Override
-	public Object visit(ASTCreateStatement node, Object data) throws QueryParseException {
+	public Object visit(ASTCreateStatement node, Object data)
+			throws QueryParseException {
 		int startOtherValues = 2;
 		name = ((ASTIdentifier) node.jjtGetChild(0)).getName();
 		if (node.jjtGetNumChildren() > 2) {
@@ -116,64 +122,75 @@ public class CreateStreamVisitor extends AbstractDefaultVisitor {
 			}
 		}
 
-		node.jjtGetChild(1).jjtAccept(this, data);	
+		node.jjtGetChild(1).jjtAccept(this, data);
 		for (int i = startOtherValues; i < node.jjtGetNumChildren(); ++i) {
 			node.jjtGetChild(i).jjtAccept(this, data);
 		}
 
 		return data;
 	}
-	
+
 	@Override
-	public Object visit(ASTPriorizedStatement node, Object data) throws QueryParseException {
+	public Object visit(ASTPriorizedStatement node, Object data)
+			throws QueryParseException {
 		CQLParser parser = new CQLParser();
 		parser.setUser(caller);
 		parser.setDataDictionary(dd);
-		operator = ((List<ILogicalQuery>) parser.visit(node, null)).get(0).getLogicalPlan();
+		operator = ((List<ILogicalQuery>) parser.visit(node, null)).get(0)
+				.getLogicalPlan();
 		SDFSchema otherAttributes = operator.getOutputSchema();
-		
+
 		if (otherAttributes.size() != this.attributes.size()) {
-			throw new QueryParseException("Query output does not match specified schema for: " + name);
+			throw new QueryParseException(
+					"Query output does not match specified schema for: " + name);
 		}
 		ListIterator<SDFAttribute> li = otherAttributes.listIterator();
 		for (SDFAttribute attr : this.attributes) {
 			if (!li.next().getAttributeName().equals(attr.getAttributeName())) {
-				throw new QueryParseException("Query output does not match specified schema for: " + name);
+				throw new QueryParseException(
+						"Query output does not match specified schema for: "
+								+ name);
 			}
 		}
 
-		CreateStreamCommand cmd = new CreateStreamCommand(name, operator, caller);
+		CreateStreamCommand cmd = new CreateStreamCommand(name, operator,
+				caller);
 		commands.add(cmd);
 		return cmd;
 	}
 
 	@Override
-	public Object visit(ASTAttributeDefinitions node, Object data) throws QueryParseException {
+	public Object visit(ASTAttributeDefinitions node, Object data)
+			throws QueryParseException {
 		node.childrenAccept(this, data);
 		// check attributes for consistency
 		boolean hasEndTimestamp = false, hasStartTimestamp = false;
 		for (SDFAttribute attr : this.attributes) {
 			if (attr.getDatatype().equals(SDFDatatype.START_TIMESTAMP)) {
 				if (hasStartTimestamp) {
-					throw new QueryParseException("multiple definitions of StartTimestamp attribute not allowed");
+					throw new QueryParseException(
+							"multiple definitions of StartTimestamp attribute not allowed");
 				}
 				hasStartTimestamp = true;
 			}
 			if (attr.getDatatype().equals(SDFDatatype.END_TIMESTAMP)) {
 				if (hasEndTimestamp) {
-					throw new QueryParseException("multiple definitions of EndTimestamp attribute not allowed");
+					throw new QueryParseException(
+							"multiple definitions of EndTimestamp attribute not allowed");
 				}
 				hasEndTimestamp = true;
 			}
 			if (Collections.frequency(this.attributes, attr) > 1) {
-				throw new QueryParseException("ambiguous attribute definition: " + attr.toString());
+				throw new QueryParseException(
+						"ambiguous attribute definition: " + attr.toString());
 			}
 		}
 		return null;
 	}
 
 	@Override
-	public Object visit(ASTAttributeDefinition node, Object data) throws QueryParseException {
+	public Object visit(ASTAttributeDefinition node, Object data)
+			throws QueryParseException {
 		String attrName = ((ASTIdentifier) node.jjtGetChild(0)).getName();
 		SDFAttribute attribute = null;
 		ASTAttributeType astAttrType = (ASTAttributeType) node.jjtGetChild(1);
@@ -190,14 +207,19 @@ public class CreateStreamVisitor extends AbstractDefaultVisitor {
 		}
 
 		if (attribType.isDate()) {
-			dtConstrains.add(new SDFConstraint("format", astAttrType.getDateFormat()));
+			dtConstrains.add(new SDFConstraint("format", astAttrType
+					.getDateFormat()));
 		}
 		Resource resource = new Resource(this.caller.getUser(), this.name);
-		if (attribType.isMeasurementValue() && astAttrType.jjtGetNumChildren() > 0) {
-			attribute = new SDFAttribute(resource.toString(), attrName, attribType, null, dtConstrains, (List<?>) astAttrType.jjtGetChild(0).jjtAccept(this, data));
+		if (attribType.isMeasurementValue()
+				&& astAttrType.jjtGetNumChildren() > 0) {
+			attribute = new SDFAttribute(resource.toString(), attrName,
+					attribType, null, dtConstrains, (List<?>) astAttrType
+							.jjtGetChild(0).jjtAccept(this, data));
 		}
 		if (attribute == null) {
-			attribute = new SDFAttribute(resource.toString(), attrName, attribType, null, dtConstrains);
+			attribute = new SDFAttribute(resource.toString(), attrName,
+					attribType, null, dtConstrains);
 		}
 		this.attributes.add(attribute);
 		return data;
@@ -205,52 +227,14 @@ public class CreateStreamVisitor extends AbstractDefaultVisitor {
 
 	@Override
 	public Object visit(ASTSocket node, Object data) throws QueryParseException {
-		throw new QueryParseException("SOCKET is no longer supported by CQL. Use PQL instead to create such sources!");
-		// String host = ((ASTHost) node.jjtGetChild(0)).getValue();
-		// int port = -1;
-		// if (node.jjtGetNumChildren() >= 2) {
-		// // sollte ASTInteger sein
-		// port = ((ASTInteger) node.jjtGetChild(1)).getValue().intValue();
-		//
-		// } else {
-		// if (host.contains(":")) {
-		// String[] parts = host.split(":");
-		// host = parts[0];
-		// port = Integer.parseInt(parts[1]);
-		// }
-		// }
-		// AccessAO source = null;
-		// if (node.useTupleMode()) {
-		// source = new AccessAO(name,
-		// "RelationalInputStreamAccessPO",null);
-		// } else if (node.useMVMode()) {
-		// source = new AccessAO(name,
-		// "RelationalAtomicDataInputStreamAccessMVPO",null);
-		// } else {
-		// source = new AccessAO(
-		// name,
-		// RelationalAccessSourceTypes.RELATIONAL_ATOMIC_DATA_INPUT_STREAM_ACCESS,null);
-		// }
-		// initSource(source, host, port);
-		// source.setDataHandler(new
-		// TupleDataHandler().getSupportedDataTypes().get(0));
-		// ILogicalOperator op = addTimestampAO(source);
-		// try {
-		// dd.setStream(name, op, caller);
-		// } catch (DataDictionaryException e) {
-		// throw new QueryParseException(e.getMessage());
-		// }
-		// return data;
+		throw new QueryParseException(
+				"SOCKET is no longer supported by CQL. Use PQL instead to create such sources!");
+
 	}
 
-	// private void initSource(AccessAO source, String host, int port) {
-	// source.setPort(port);
-	// source.setHost(host);
-	// source.setOutputSchema(new SDFSchema(name, this.attributes));
-	// }
-
 	@Override
-	public Object visit(ASTChannel node, Object data) throws QueryParseException {
+	public Object visit(ASTChannel node, Object data)
+			throws QueryParseException {
 		String host = ((ASTHost) node.jjtGetChild(0)).getValue();
 		boolean autoReconnect = hasAutoReconnect(node);
 		int port = -1;
@@ -267,20 +251,24 @@ public class CreateStreamVisitor extends AbstractDefaultVisitor {
 			}
 		}
 		String wrapperName = Constants.GENERIC_PUSH;
-		Map<String, String> options = new HashMap<String, String>();		
+		Map<String, String> options = new HashMap<String, String>();
 		options.put("host", host);
 		options.put("port", port + "");
 		options.put("autoconnect", autoReconnect + "");
 		Resource resource = new Resource(caller.getUser(), name);
-		AccessAO source = new AccessAO(resource, wrapperName, "NonBlockingTcp","SizeByteBuffer", new TupleDataHandler().getSupportedDataTypes().get(0), options);
-		source.setOutputSchema(SDFSchemaFactory.createNewTupleSchema(resource.toString(), this.attributes));
+		AccessAO source = new AccessAO(resource, wrapperName, "NonBlockingTcp",
+				"SizeByteBuffer", new TupleDataHandler()
+						.getSupportedDataTypes().get(0), options);
+		SDFSchema outputSchema = createOutputSchema(resource);
+		source.setOutputSchema(outputSchema);
 		CreateStreamCommand cmd = new CreateStreamCommand(name, source, caller);
 		commands.add(cmd);
 		return cmd;
 	}
 
 	@Override
-	public Object visit(ASTFileSource node, Object data) throws QueryParseException {
+	public Object visit(ASTFileSource node, Object data)
+			throws QueryParseException {
 		String filename = node.getFilename();
 		String type = "csv";
 		if (node.jjtGetNumChildren() > 0) {
@@ -292,14 +280,25 @@ public class CreateStreamVisitor extends AbstractDefaultVisitor {
 
 		// TODO: read delimiter
 		options.put("delimiter", ";");
-
-		AccessAO source = new AccessAO(new Resource(caller.getUser(), name), wrapperName, "File", type, new TupleDataHandler().getSupportedDataTypes().get(0), options);
-
-		source.setOutputSchema(SDFSchemaFactory.createNewTupleSchema(name, this.attributes));
+		Resource resource = new Resource(caller.getUser(), name);
+		AccessAO source = new AccessAO(resource, wrapperName, "File", type,
+				new TupleDataHandler().getSupportedDataTypes().get(0), options);
+		SDFSchema outputSchema = createOutputSchema(resource);
+		source.setOutputSchema(outputSchema);
 		CreateStreamCommand cmd = new CreateStreamCommand(name, source, caller);
 		commands.add(cmd);
 		return cmd;
 
+	}
+
+	private SDFSchema createOutputSchema(Resource resource) {
+		SDFSchema outputSchema = SDFSchemaFactory.createNewTupleSchema(
+				resource.toString(), this.attributes);
+		if (metaAttribute != null) {
+			outputSchema = SDFSchemaFactory.createNewWithMetaSchema(
+					outputSchema, metaAttribute.getSchema());
+		}
+		return outputSchema;
 	}
 
 	private static boolean hasAutoReconnect(ASTChannel node) {
@@ -312,17 +311,18 @@ public class CreateStreamVisitor extends AbstractDefaultVisitor {
 	}
 
 	@Override
-	public Object visit(ASTLoginPassword node, Object data) throws QueryParseException {
-		//TODO: reacivate
-//		String user = ((ASTIdentifier) node.jjtGetChild(0)).getName();
-//		String password = ((ASTIdentifier) node.jjtGetChild(1)).getName();
-//
-//		try {
-//			// TODO: 
-//			//dd.getStream(name, caller).setLoginInfo(user, password);
-//		} catch (DataDictionaryException e) {
-//			throw new QueryParseException(e.getMessage());
-//		}
+	public Object visit(ASTLoginPassword node, Object data)
+			throws QueryParseException {
+		// TODO: reacivate
+		// String user = ((ASTIdentifier) node.jjtGetChild(0)).getName();
+		// String password = ((ASTIdentifier) node.jjtGetChild(1)).getName();
+		//
+		// try {
+		// // TODO:
+		// //dd.getStream(name, caller).setLoginInfo(user, password);
+		// } catch (DataDictionaryException e) {
+		// throw new QueryParseException(e.getMessage());
+		// }
 
 		return null;
 	}
@@ -341,40 +341,56 @@ public class CreateStreamVisitor extends AbstractDefaultVisitor {
 	}
 
 	@Override
-	public Object visit(ASTCreateFromDatabase node, Object data) throws QueryParseException {
-		CreateStreamCommand cmd = (CreateStreamCommand) invokeDatabaseVisitor(ASTCreateFromDatabase.class, node, name);
-		cmd.setOutputSchema(SDFSchemaFactory.createNewTupleSchema(name, attributes));
+	public Object visit(ASTCreateFromDatabase node, Object data)
+			throws QueryParseException {
+		CreateStreamCommand cmd = (CreateStreamCommand) invokeDatabaseVisitor(
+				ASTCreateFromDatabase.class, node, name);
+		cmd.setOutputSchema(SDFSchemaFactory.createNewTupleSchema(name,
+				attributes));
 
 		commands.add(cmd);
-		//return addTimestampAO((ILogicalOperator) ao);
-//		return ao;
+		// return addTimestampAO((ILogicalOperator) ao);
+		// return ao;
 		return null;
 	}
 
-	private Object invokeDatabaseVisitor(Class<?> nodeclass, Object node, Object data) throws QueryParseException {
+	private Object invokeDatabaseVisitor(Class<?> nodeclass, Object node,
+			Object data) throws QueryParseException {
 		try {
-			Class<?> visitor = Class.forName("de.uniol.inf.is.odysseus.database.cql.DatabaseVisitor");
+			Class<?> visitor = Class
+					.forName("de.uniol.inf.is.odysseus.database.cql.DatabaseVisitor");
 			Object v = visitor.newInstance();
 			Method m = visitor.getDeclaredMethod("setUser", ISession.class);
 			m.invoke(v, caller);
-			m = visitor.getDeclaredMethod("setDataDictionary", IDataDictionary.class);
+			m = visitor.getDeclaredMethod("setDataDictionary",
+					IDataDictionary.class);
 			m.invoke(v, dd);
+			m = visitor.getDeclaredMethod("setMetaAttribute",
+					IMetaAttribute.class);
+			m.invoke(v, metaAttribute);
 			m = visitor.getDeclaredMethod("visit", nodeclass, Object.class);
 			return m.invoke(v, node, data);
 		} catch (ClassNotFoundException e) {
-			throw new QueryParseException("Database plugin is missing in CQL parser.", e.getCause());
+			throw new QueryParseException(
+					"Database plugin is missing in CQL parser.", e.getCause());
 		} catch (NoSuchMethodException e) {
-			throw new QueryParseException("Method in database plugin is missing.", e.getCause());
+			throw new QueryParseException(
+					"Method in database plugin is missing.", e.getCause());
 		} catch (SecurityException e) {
-			throw new QueryParseException("Database plugin is missing in CQL parser.", e.getCause());
+			throw new QueryParseException(
+					"Database plugin is missing in CQL parser.", e.getCause());
 		} catch (IllegalAccessException e) {
-			throw new QueryParseException("Database plugin is missing in CQL parser.", e.getCause());
+			throw new QueryParseException(
+					"Database plugin is missing in CQL parser.", e.getCause());
 		} catch (IllegalArgumentException e) {
-			throw new QueryParseException("Database plugin is missing in CQL parser.", e.getCause());
+			throw new QueryParseException(
+					"Database plugin is missing in CQL parser.", e.getCause());
 		} catch (InvocationTargetException e) {
-			throw new QueryParseException(e.getTargetException().getLocalizedMessage());
+			throw new QueryParseException(e.getTargetException()
+					.getLocalizedMessage());
 		} catch (InstantiationException e) {
-			throw new QueryParseException("Cannot create instance of database plugin.", e.getCause());
+			throw new QueryParseException(
+					"Cannot create instance of database plugin.", e.getCause());
 		}
 	}
 

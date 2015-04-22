@@ -38,6 +38,7 @@ import de.uniol.inf.is.odysseus.context.store.IContextStore;
 import de.uniol.inf.is.odysseus.context.store.types.MultiElementStore;
 import de.uniol.inf.is.odysseus.context.store.types.SingleElementStore;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
+import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
@@ -64,6 +65,7 @@ public class ContextVisitor implements IVisitor {
 
 	private ISession session;
 	private IDataDictionary datadictionary;
+	private IMetaAttribute metaAttribute;
 	private List<IExecutorCommand> commands;
 
 	public Object visit(ASTCreateContextStore node, Object data) {
@@ -71,7 +73,7 @@ public class ContextVisitor implements IVisitor {
 		ASTAttributeDefinitions definitions = (ASTAttributeDefinitions) node.jjtGetChild(1);
 		ASTContextStoreType typeNode = (ASTContextStoreType) node.jjtGetChild(2);
 
-		CreateStreamVisitor csv = new CreateStreamVisitor(session, datadictionary, commands);
+		CreateStreamVisitor csv = new CreateStreamVisitor(session, datadictionary, commands, metaAttribute);
 		csv.visit(definitions, null);
 		SDFSchema schema = SDFSchemaFactory.createNewTupleSchema("ContextStore:" + name, csv.getAttributes());
 		
@@ -100,6 +102,11 @@ public class ContextVisitor implements IVisitor {
 	@Override
 	public void setDataDictionary(IDataDictionary dd) {
 		this.datadictionary = dd;
+	}
+	
+	@Override
+	public void setMetaAttribute(IMetaAttribute metaAttribute) {
+		this.metaAttribute = metaAttribute;
 	}
 	
 	@Override

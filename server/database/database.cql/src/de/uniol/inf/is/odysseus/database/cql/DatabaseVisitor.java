@@ -33,6 +33,7 @@ package de.uniol.inf.is.odysseus.database.cql;
 import java.sql.SQLException;
 import java.util.Properties;
 
+import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.QueryParseException;
@@ -73,6 +74,10 @@ public class DatabaseVisitor extends CQLParser {
 	@Override
 	public void setDataDictionary(IDataDictionary dataDictionary) {
 		super.setDataDictionary(dataDictionary);
+	}
+	
+	public void setMetaAttribute(IMetaAttribute metaAttribute){
+		super.setMetaAttribute(metaAttribute);
 	}
 	
 	@Override
