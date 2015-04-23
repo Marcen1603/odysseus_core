@@ -25,9 +25,9 @@ public class SensorModel2
 
 	public SensorModel2(SensorModel2 other) 
 	{
-		id = new String(other.id);
-		type = new String(other.type);
-		displayName = new String(other.displayName);
+		id = other.id;
+		type = other.type;
+		displayName = other.displayName;
 		
 		options = new HashMap<>(other.options);
 		position = new Position(other.position);

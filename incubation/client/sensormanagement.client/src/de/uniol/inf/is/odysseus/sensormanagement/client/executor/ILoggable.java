@@ -1,6 +1,7 @@
 package de.uniol.inf.is.odysseus.sensormanagement.client.executor;
 
-public interface ILoggable 
+@SuppressWarnings(value = { "all" })
+	public interface ILoggable 
 {
 	public void startLogging();
 	public void stopLogging();

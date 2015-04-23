@@ -49,6 +49,7 @@ import de.uniol.inf.is.odysseus.sensormanagement.common.utilities.XmlMarshalHelp
  * @author Henrik Surm
  * 
  */
+@SuppressWarnings(value = { "all" })
 public class WsSensorClient
 {
 	private SensorService server;
@@ -107,11 +108,11 @@ public class WsSensorClient
 		return session;
 	} */
 
-	public void addSensor(ISession caller, SensorModel2 sensor)
+	public String addSensor(ISession caller, SensorModel2 sensor)
 	{
 		try 
 		{
-			server.addSensor(caller.getToken(), XmlMarshalHelper.toXml(sensor));
+			return server.addSensor(caller.getToken(), XmlMarshalHelper.toXml(sensor));
 		} 
 		catch (InvalidUserDataException_Exception e) 
 		{

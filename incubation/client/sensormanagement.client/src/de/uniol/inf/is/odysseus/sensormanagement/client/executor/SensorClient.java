@@ -1,6 +1,7 @@
 package de.uniol.inf.is.odysseus.sensormanagement.client.executor;
 
 import java.net.MalformedURLException;
+import java.util.ArrayList;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
@@ -26,9 +27,10 @@ public abstract class SensorClient implements ILoggable
 		this.odysseusClient = client;
 		this.odysseusSession = session;
 				
-		sensorClient = new WsSensorClient(wsdlLocation + ";http://sensors.odysseus.is.inf.uniol.de/;SensorServiceService");
+		sensorClient = new WsSensorClient(wsdlLocation + ";http://server.sensormanagement.odysseus.is.inf.uniol.de/;SensorServiceService");
 		
 		List<String> sensorIds = sensorClient.getSensorIds(odysseusSession);
+		sensors = new ArrayList<RemoteSensor>(sensorIds.size());
 
 		for (String sensorId : sensorIds)
 			sensors.add(new RemoteSensor(this, sensorClient.getSensorById(odysseusSession, sensorId)));		
@@ -54,7 +56,7 @@ public abstract class SensorClient implements ILoggable
 
 	public void addSensor(RemoteSensor sensor)
 	{
-		sensorClient.addSensor(odysseusSession, sensor.getSensorModel2());
+		sensor.getSensorModel2().id = sensorClient.addSensor(odysseusSession, sensor.getSensorModel2());
 		sensors.add(sensor);	
 		
 		if (isInitialized())

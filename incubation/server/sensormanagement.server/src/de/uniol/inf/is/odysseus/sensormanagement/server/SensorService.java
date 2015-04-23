@@ -66,11 +66,11 @@ public class SensorService
 		return session;
 	}	
 	
-	public void addSensor(@WebParam(name = "securityToken") String securityToken, 
+	public String addSensor(@WebParam(name = "securityToken") String securityToken, 
 						@WebParam(name = "sensorXml") String sensorXml) throws InvalidUserDataException
 	{
 		ISession session = loginWithSecurityToken(securityToken);		
-		SensorFactory.getInstance().addSensor(session, XmlMarshalHelper.fromXml(sensorXml, SensorModel2.class));
+		return SensorFactory.getInstance().addSensor(session, XmlMarshalHelper.fromXml(sensorXml, SensorModel2.class)).config.id;
 	}
 
 	public void modifySensor(@WebParam(name = "securityToken") String securityToken, 

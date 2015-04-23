@@ -6,6 +6,7 @@ import java.net.UnknownHostException;
 import de.uniol.inf.is.odysseus.sensormanagement.common.types.SensorModel2;
 import de.uniol.inf.is.odysseus.sensormanagement.common.utilities.NetUtilities;
 
+@SuppressWarnings(value = { "all" })
 public class RemoteSensor implements ILoggable 
 {
 	private SensorModel2 sensor;

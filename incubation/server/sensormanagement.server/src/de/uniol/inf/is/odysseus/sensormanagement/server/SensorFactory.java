@@ -85,7 +85,7 @@ public class SensorFactory
 				+ "                      transport='None',\n"
 				+ "			             protocol='VideoStream',\n"
 				+ "                      dataHandler='Tuple',\n"
-				+ "                      options=[['streamurl', 'udp://%(host):(%port)']]},\n"
+				+ "                      options=[['streamurl', 'udp://%(host):%(port)']]},\n"
 				+ "                     resizedVideo)\n";		
 		
 		String liveViewUrl = "udp://%(host):%(port)";
@@ -126,7 +126,7 @@ public class SensorFactory
 				+ "                      transport='None',\n"
 				+ "			             protocol='VideoStream',\n"
 				+ "                      dataHandler='Tuple',\n"
-				+ "                      options=[['streamurl', 'udp://%(host):(%port)']]},\n"
+				+ "                      options=[['streamurl', 'udp://%(host):%(port)']]},\n"
 				+ "                     resizedVideo)\n";		
 		
 		String liveViewUrl = "udp://%(host):%(port)";
@@ -167,7 +167,7 @@ public class SensorFactory
 				+ "                      transport='None',\n"
 				+ "			             protocol='VideoStream',\n"
 				+ "                      dataHandler='Tuple',\n"
-				+ "                      options=[['streamurl', 'udp://%(host):(%port)']]},\n"
+				+ "                      options=[['streamurl', 'udp://%(host):%(port)']]},\n"
 				+ "                     resizedVideo)\n";		
 		
 		String liveViewUrl = "udp://%(host):%(port)";
