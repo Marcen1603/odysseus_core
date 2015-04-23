@@ -9,6 +9,7 @@ import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.Map;
 
+import de.uniol.inf.is.odysseus.core.WriteOptions;
 import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
@@ -22,22 +23,26 @@ public class GroupSplitFileWriter<R extends IStreamObject<?>> extends
 	final String path;
 	final IGroupProcessor<R, R> groupProcessor;
 	final IDataHandler<R> dataHandler;
+	final WriteOptions writeOptions;
 
 	public GroupSplitFileWriter(String path,
 			IGroupProcessor<R, R> groupProcessor, IDataHandler<R> dataHandler) {
 		this.path = path;
 		this.groupProcessor = groupProcessor;
 		this.dataHandler = dataHandler;
+		writeOptions = new WriteOptions(';', '\'', (DecimalFormat) null,
+				(DecimalFormat) null, false);
 	}
 
 	@Override
 	protected void process_open() throws OpenFailedException {
 		groupProcessor.init();
+
 	}
-	
+
 	@Override
 	protected void process_close() {
-		for (OutputStream os: filemap.values()){
+		for (OutputStream os : filemap.values()) {
 			try {
 				os.close();
 			} catch (IOException e) {
@@ -46,7 +51,7 @@ public class GroupSplitFileWriter<R extends IStreamObject<?>> extends
 			}
 		}
 	}
-	
+
 	@Override
 	protected void process_next(R object, int port) {
 		long id = groupProcessor.getGroupID(object);
@@ -54,24 +59,24 @@ public class GroupSplitFileWriter<R extends IStreamObject<?>> extends
 		if (outputStream == null) {
 			try {
 				outputStream = new FileOutputStream(new File(path
-						+ groupProcessor.toGroupString(object)+".csv"));
+						+ groupProcessor.toGroupString(object) + ".csv"));
 				filemap.put(id, outputStream);
 			} catch (FileNotFoundException e) {
 				e.printStackTrace();
 			}
 		}
 		StringBuilder handler = new StringBuilder();
-		dataHandler.writeCSVData(handler, object, ';', '\'',
-				(DecimalFormat) null, (DecimalFormat) null, false);
-        if (outputStream != null) {
-            try {
-                outputStream.write(handler.toString().getBytes());
-                outputStream.write("\n".getBytes());
-            }
-            catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
+
+		dataHandler.writeCSVData(handler, object, writeOptions);
+
+		if (outputStream != null) {
+			try {
+				outputStream.write(handler.toString().getBytes());
+				outputStream.write("\n".getBytes());
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
 
 	}
 
