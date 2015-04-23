@@ -6,8 +6,6 @@ import de.uniol.inf.is.odysseus.server.nosql.base.logicaloperator.AbstractNoSQLS
 import de.uniol.inf.is.odysseus.server.nosql.base.physicaloperator.AbstractNoSQLSinkPO;
 import de.uniol.inf.is.odysseus.server.nosql.base.transform.AbstractTNoSQLSinkAORule;
 
-
-@SuppressWarnings("UnusedDeclaration")
 public class TMongoDBSinkAORule extends AbstractTNoSQLSinkAORule<MongoDBSinkAO> {
 
     @Override
@@ -16,7 +14,7 @@ public class TMongoDBSinkAORule extends AbstractTNoSQLSinkAORule<MongoDBSinkAO> 
     }
 
     @Override
-    protected Class<? extends AbstractNoSQLSinkPO> getPhysicalOperatorClass() {
+    protected Class<? extends AbstractNoSQLSinkPO<?>> getPhysicalOperatorClass() {
         return MongoDBSinkPO.class;
     }
 }

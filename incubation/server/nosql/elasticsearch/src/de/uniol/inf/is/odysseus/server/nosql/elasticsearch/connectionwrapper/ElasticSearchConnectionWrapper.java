@@ -8,6 +8,7 @@ import org.elasticsearch.common.transport.InetSocketTransportAddress;
 /**
  * Created by RoBeaT on 23.02.2015.
  */
+@SuppressWarnings("all")
 public class ElasticSearchConnectionWrapper extends NoSQLConnectionWrapper<TransportClient> {
 
     public ElasticSearchConnectionWrapper(String host, int port, String user, String password) throws OpenFailedException {

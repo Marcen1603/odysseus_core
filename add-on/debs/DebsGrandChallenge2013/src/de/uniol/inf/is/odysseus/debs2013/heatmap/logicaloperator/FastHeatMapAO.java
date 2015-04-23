@@ -134,7 +134,7 @@ public class FastHeatMapAO extends UnaryLogicalOp {
 	
 	@SuppressWarnings("unchecked")
 	public void initOutputSchema() {
-		String schemaURI = "fastheatmap";
+		
 		@SuppressWarnings("rawtypes")
 		ArrayList attributes = new ArrayList<SDFAttribute>();
 		attributes.add(new SDFAttribute("", "ts", new SDFDatatype("Long"), null, null, null));

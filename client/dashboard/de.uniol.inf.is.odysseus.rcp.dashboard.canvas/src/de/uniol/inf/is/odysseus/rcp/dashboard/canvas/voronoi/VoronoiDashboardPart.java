@@ -640,7 +640,6 @@ public class VoronoiDashboardPart extends AbstractCanvasDashboardPart {
 
     }
 
-    @SuppressWarnings("hiding")
     private void adjust() {
         double minY = Double.POSITIVE_INFINITY;
         double minX = Double.POSITIVE_INFINITY;

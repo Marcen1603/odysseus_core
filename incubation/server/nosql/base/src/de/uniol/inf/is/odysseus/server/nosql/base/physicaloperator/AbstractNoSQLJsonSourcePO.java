@@ -1,6 +1,7 @@
 package de.uniol.inf.is.odysseus.server.nosql.base.physicaloperator;
 
 import com.google.gson.Gson;
+
 import de.uniol.inf.is.odysseus.core.collection.KeyValueObject;
 import de.uniol.inf.is.odysseus.server.nosql.base.logicaloperator.AbstractNoSQLSourceAO;
 
@@ -12,7 +13,7 @@ import java.util.*;
  *  For NoSQL databases which save their data in JSON Format it is recommended to use the
  *  AbstractNoSQLJsonSourcePO instead of AbstractNoSQLSourcePO.
  */
-public abstract class AbstractNoSQLJsonSourcePO extends AbstractNoSQLSourcePO<KeyValueObject> {
+public abstract class AbstractNoSQLJsonSourcePO extends AbstractNoSQLSourcePO<KeyValueObject<?>> {
 
     protected static Gson gson = new Gson();
 
@@ -20,12 +21,13 @@ public abstract class AbstractNoSQLJsonSourcePO extends AbstractNoSQLSourcePO<Ke
         super(abstractNoSQLSourceAO);
     }
 
-    @Override
-    protected final List<KeyValueObject> process_transfer_tuples(int maxElementCount) {
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+	@Override
+    protected final List<KeyValueObject<?>> process_transfer_tuples(int maxElementCount) {
 
         List<String> strings = process_transfer_jsons(maxElementCount);
 
-        List<KeyValueObject> keyValueObjects = new ArrayList<>();
+        List<KeyValueObject<?>> keyValueObjects = new ArrayList<>();
 
         //noinspection MismatchedQueryAndUpdateOfCollection
         Map<String, Object> map = new HashMap<>();
@@ -33,7 +35,7 @@ public abstract class AbstractNoSQLJsonSourcePO extends AbstractNoSQLSourcePO<Ke
         for (String string : strings) {
 
             //noinspection unchecked    Map<String, Object> will be returned
-            Map<String, Object> jsonMap = gson.fromJson(string, map.getClass());
+			Map<String, Object> jsonMap = gson.fromJson(string, map.getClass());
 
             KeyValueObject keyValueObject = new KeyValueObject(jsonMap);
             keyValueObjects.add(keyValueObject);

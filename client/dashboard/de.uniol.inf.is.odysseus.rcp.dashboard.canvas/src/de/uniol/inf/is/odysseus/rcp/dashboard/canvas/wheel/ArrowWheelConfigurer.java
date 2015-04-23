@@ -46,7 +46,7 @@ public class ArrowWheelConfigurer extends AbstractWheelDashboardPartConfigurer<A
      * {@inheritDoc}
      */
     @Override
-    protected void createPartControl(@SuppressWarnings("hiding") final ArrowWheelDashboardPart dashboardPart, final FormToolkit toolkit, final ScrolledForm form) {
+    protected void createPartControl(final ArrowWheelDashboardPart dashboardPart, final FormToolkit toolkit, final ScrolledForm form) {
         final Composite composite = form.getBody();
 
         {// Arrow Settings

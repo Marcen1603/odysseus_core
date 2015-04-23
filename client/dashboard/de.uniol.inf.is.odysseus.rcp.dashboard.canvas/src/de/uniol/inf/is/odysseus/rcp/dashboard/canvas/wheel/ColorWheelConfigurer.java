@@ -46,7 +46,7 @@ public class ColorWheelConfigurer extends AbstractWheelDashboardPartConfigurer<C
      * {@inheritDoc}
      */
     @Override
-    protected void createPartControl(@SuppressWarnings("hiding") final ColorWheelDashboardPart dashboardPart, final FormToolkit toolkit, final ScrolledForm form) {
+    protected void createPartControl(final ColorWheelDashboardPart dashboardPart, final FormToolkit toolkit, final ScrolledForm form) {
         final Composite composite = form.getBody();
 
         {// Dot Settings

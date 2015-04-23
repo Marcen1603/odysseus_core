@@ -27,7 +27,7 @@ public abstract class AbstractNoSQLJsonSinkPO extends AbstractNoSQLSinkPO<KeyVal
 
         ArrayList<String> jsons = new ArrayList<>();
 
-        for (KeyValueObject tuple : elementsToWrite) {
+        for (KeyValueObject<?> tuple : elementsToWrite) {
 
             String json = toJsonString(tuple);
             jsons.add(json);
@@ -44,9 +44,9 @@ public abstract class AbstractNoSQLJsonSinkPO extends AbstractNoSQLSinkPO<KeyVal
      */
     protected abstract void process_next_json_to_write(List<String> jsonToWrite);
 
-    private String toJsonString(KeyValueObject tuple){
+    private String toJsonString(KeyValueObject<?> tuple){
 
-        Map attributes = tuple.getAttributes();
+        Map<String,Object> attributes = tuple.getAttributes();
         return gson.toJson(attributes);
     }
 }

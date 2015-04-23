@@ -16,7 +16,6 @@ import java.util.List;
  *  connection-handling and collecting elements to write them all into the NoSQL database instead of accessing the
  *  database for each element.
  */
-@SuppressWarnings("rawtypes")
 public abstract class AbstractNoSQLSinkPO<E extends IStreamObject<?>> extends AbstractSink<E> implements IPhysicalNoSQLOperator {
 
     private static NoSQLConnectionManager connectionManager = NoSQLConnectionManager.getInstance();

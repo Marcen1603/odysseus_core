@@ -39,6 +39,7 @@ import de.uniol.inf.is.odysseus.trajectory.compare.data.IHasTextualAttributes;
 public class VectorTextualDistance implements ITextualDistance {
 	
 	/** Logger for debugging purposes */
+	@SuppressWarnings("unused")
 	private final static Logger LOGGER = LoggerFactory.getLogger(VectorTextualDistance.class);
 	
 	/** the singleton instance */

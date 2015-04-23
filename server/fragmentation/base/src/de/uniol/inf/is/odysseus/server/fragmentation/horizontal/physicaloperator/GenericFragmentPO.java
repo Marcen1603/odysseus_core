@@ -71,7 +71,6 @@ public class GenericFragmentPO extends AbstractFragmentPO<Tuple<IMetaAttribute>>
      * @param expression
      *            The partition expression.
      */
-    @SuppressWarnings("hiding")
     private void init(SDFSchema schema, SDFExpression expression) {
         this.expression = expression.clone();
         List<SDFAttribute> neededAttributes = this.expression.getAllAttributes();

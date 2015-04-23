@@ -4,7 +4,7 @@ import de.uniol.inf.is.odysseus.server.nosql.base.util.connection.NoSQLConnectio
 
 public interface IPhysicalNoSQLOperator {
 
-    Class<? extends NoSQLConnectionWrapper> getNoSQLConnectionWrapperClass();
+    Class<? extends NoSQLConnectionWrapper<?>> getNoSQLConnectionWrapperClass();
 
     void setupConnection(Object connection);
 }

@@ -23,6 +23,7 @@ package de.uniol.inf.is.odysseus.core.predicate;
  * 
  * @param <T>
  */
+@SuppressWarnings("rawtypes")
 public class TruePredicate<T> extends AbstractPredicate<T> {
     private static final long serialVersionUID = 7701679660439284127L;
     private static final TruePredicate instance = new TruePredicate();
@@ -107,7 +108,8 @@ public class TruePredicate<T> extends AbstractPredicate<T> {
     /**
      * {@inheritDoc}
      */
-    @Override
+    @SuppressWarnings("unchecked")
+	@Override
     public IPredicate<T> not() {
         return FalsePredicate.getInstance();
     }

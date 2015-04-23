@@ -24,6 +24,7 @@ import org.lwjgl.util.vector.Vector3f;
  * @version $Id$
  *
  */
+@SuppressWarnings("unused")
 public class Camera {
     /** The position vector (the location of the camera). */
     private Vector3f position;

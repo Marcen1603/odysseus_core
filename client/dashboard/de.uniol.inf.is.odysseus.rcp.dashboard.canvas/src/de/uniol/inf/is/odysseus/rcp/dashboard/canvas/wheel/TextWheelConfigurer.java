@@ -30,7 +30,7 @@ public class TextWheelConfigurer extends AbstractWheelDashboardPartConfigurer<Te
      * {@inheritDoc}
      */
     @Override
-    protected void createPartControl(@SuppressWarnings("hiding") final TextWheelDashboardPart dashboardPart, final FormToolkit toolkit, final ScrolledForm form) {
+    protected void createPartControl(final TextWheelDashboardPart dashboardPart, final FormToolkit toolkit, final ScrolledForm form) {
         // Empty block
     }
 

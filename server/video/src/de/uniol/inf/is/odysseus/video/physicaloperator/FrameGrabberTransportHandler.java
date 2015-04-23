@@ -143,7 +143,7 @@ public abstract class FrameGrabberTransportHandler extends AbstractSimplePullTra
 		fireOnDisconnect();
 	}	
 	
-	@SuppressWarnings("deprecation")
+
 	@Override public final boolean hasNext()
 	{
 		synchronized (processLock)

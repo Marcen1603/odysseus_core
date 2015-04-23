@@ -118,7 +118,6 @@ public abstract class AbstractWheelDashboardPart extends AbstractCanvasDashboard
      */
     public abstract void doPaintZ(Number z);
 
-    @SuppressWarnings("hiding")
     private void adjust() {
         double minY = Double.POSITIVE_INFINITY;
         double minX = Double.POSITIVE_INFINITY;

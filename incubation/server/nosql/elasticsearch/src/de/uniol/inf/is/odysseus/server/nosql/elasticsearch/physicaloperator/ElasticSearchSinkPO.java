@@ -41,7 +41,7 @@ public class ElasticSearchSinkPO extends AbstractNoSQLJsonSinkPO {
     }
 
     @Override
-    public Class<? extends NoSQLConnectionWrapper> getNoSQLConnectionWrapperClass() {
+    public Class<? extends NoSQLConnectionWrapper<?>> getNoSQLConnectionWrapperClass() {
         return ElasticSearchConnectionWrapper.class;
     }
 }

@@ -8,7 +8,6 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParame
 import de.uniol.inf.is.odysseus.server.nosql.base.logicaloperator.AbstractNoSQLSinkAO;
 
 
-@SuppressWarnings("UnusedDeclaration")
 @LogicalOperator(name = "MONGODBSINK", minInputPorts = 1, maxInputPorts = 1, doc = "This operator can write data to a MongoDB.", category = {
         LogicalOperatorCategory.SINK, LogicalOperatorCategory.DATABASE })
 public class MongoDBSinkAO extends AbstractNoSQLSinkAO {
@@ -17,7 +16,6 @@ public class MongoDBSinkAO extends AbstractNoSQLSinkAO {
 	private String mongoDBName;
     private String collectionName;
 
-    @SuppressWarnings("UnusedDeclaration")
     public MongoDBSinkAO(){
         super();
     }
@@ -28,7 +26,6 @@ public class MongoDBSinkAO extends AbstractNoSQLSinkAO {
         collectionName = old.collectionName;
     }
 
-    @SuppressWarnings("CloneDoesntCallSuperClone")
     @Override
     public AbstractLogicalOperator clone() {
         return new MongoDBSinkAO(this);

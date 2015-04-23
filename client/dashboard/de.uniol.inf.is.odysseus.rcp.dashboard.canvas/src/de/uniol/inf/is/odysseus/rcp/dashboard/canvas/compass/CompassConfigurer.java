@@ -58,7 +58,7 @@ public class CompassConfigurer extends AbstractDashboardPartConfigurer<CompassDa
     private SDFSchema[] schemas;
 
     @Override
-    public void init(@SuppressWarnings("hiding") final CompassDashboardPart dashboardPart, final Collection<IPhysicalOperator> roots) {
+    public void init(final CompassDashboardPart dashboardPart, final Collection<IPhysicalOperator> roots) {
         this.dashboardPart = dashboardPart;
         this.schemas = new SDFSchema[roots.size()];
         final Iterator<IPhysicalOperator> iter = roots.iterator();

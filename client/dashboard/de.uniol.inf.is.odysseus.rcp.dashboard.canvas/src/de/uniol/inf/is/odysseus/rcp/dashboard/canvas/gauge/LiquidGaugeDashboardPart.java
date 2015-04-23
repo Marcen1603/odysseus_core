@@ -121,7 +121,6 @@ public class LiquidGaugeDashboardPart extends AbstractCanvasDashboardPart {
         return new Coordinate((int) (this.getRadius()), (int) (this.getRadius()));
     }
 
-    @SuppressWarnings("hiding")
     private void adjust() {
         double min = Double.POSITIVE_INFINITY;
         double max = Double.NEGATIVE_INFINITY;

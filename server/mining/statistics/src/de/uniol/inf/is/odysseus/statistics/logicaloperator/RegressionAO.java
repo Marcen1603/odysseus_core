@@ -54,7 +54,6 @@ public class RegressionAO extends UnaryLogicalOp {
 	private SDFAttribute attributeX;
 	private SDFAttribute attributeY;
 
-	private static final String URI_NAME = "Regression";
 	private static final String SOURCE_NAME = null;
 
 	public RegressionAO() {

@@ -6,7 +6,6 @@ import de.uniol.inf.is.odysseus.server.nosql.base.logicaloperator.AbstractNoSQLS
 import de.uniol.inf.is.odysseus.server.nosql.base.physicaloperator.AbstractNoSQLSourcePO;
 import de.uniol.inf.is.odysseus.server.nosql.base.transform.AbstractTNoSQLSourceAORule;
 
-@SuppressWarnings("UnusedDeclaration")
 public class TMongoDBSourceAORule extends AbstractTNoSQLSourceAORule<MongoDBSourceAO> {
 
     @Override
@@ -15,7 +14,7 @@ public class TMongoDBSourceAORule extends AbstractTNoSQLSourceAORule<MongoDBSour
     }
 
     @Override
-    protected Class<? extends AbstractNoSQLSourcePO> getPhysicalOperatorClass() {
+    protected Class<? extends AbstractNoSQLSourcePO<?>> getPhysicalOperatorClass() {
         return MongoDBSourcePO.class;
     }
 }

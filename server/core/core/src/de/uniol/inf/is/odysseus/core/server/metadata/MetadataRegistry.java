@@ -1,18 +1,18 @@
 /********************************************************************************** 
-  * Copyright 2011 The Odysseus Team
-  *
-  * Licensed under the Apache License, Version 2.0 (the "License");
-  * you may not use this file except in compliance with the License.
-  * You may obtain a copy of the License at
-  *
-  *     http://www.apache.org/licenses/LICENSE-2.0
-  *
-  * Unless required by applicable law or agreed to in writing, software
-  * distributed under the License is distributed on an "AS IS" BASIS,
-  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  * See the License for the specific language governing permissions and
-  * limitations under the License.
-  */
+ * Copyright 2011 The Odysseus Team
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package de.uniol.inf.is.odysseus.core.server.metadata;
 
 import java.util.HashMap;
@@ -27,26 +27,26 @@ import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
 import de.uniol.inf.is.odysseus.core.server.util.LoggerHelper;
 
 public class MetadataRegistry {
 
-	private static Logger logger = LoggerFactory.getLogger(MetadataRegistry.class); 
-	
+	private static Logger logger = LoggerFactory
+			.getLogger(MetadataRegistry.class);
+
 	private static final String LOGGER_NAME = MetadataRegistry.class.getName();
 
-	private static Map<SortedSet<String>,IMetaAttribute> combinedMetadataTypes = new HashMap<>();
-	
+	private static Map<SortedSet<String>, IMetaAttribute> combinedMetadataTypes = new HashMap<>();
+
 	private static Map<String, IMetaAttribute> byName = new HashMap<>();
 
-	public static void addMetadataType(IMetaAttribute type){
-		
-		logger.trace("New Metadatatype registered "+type.getClass());
-		
+	public static void addMetadataType(IMetaAttribute type) {
+
+		logger.trace("New Metadatatype registered " + type.getClass());
+
 		byName.put(type.getName(), type);
-		
-		Class<? extends IMetaAttribute> implementationType = type.getClass();		
+
+		Class<? extends IMetaAttribute> implementationType = type.getClass();
 		SortedSet<String> typeSet = toStringSet(type.getClasses());
 		synchronized (combinedMetadataTypes) {
 			if (combinedMetadataTypes.containsKey(typeSet)
@@ -61,16 +61,17 @@ public class MetadataRegistry {
 					throw new IllegalArgumentException(msg);
 				}
 			} catch (Exception e) {
-				LoggerHelper.getInstance(LOGGER_NAME).warn("could not check wether '"
-						+ implementationType.getName() + "' supports clone() method, reason:\n\t"
-						+ e.getMessage());
+				LoggerHelper.getInstance(LOGGER_NAME).warn(
+						"could not check wether '"
+								+ implementationType.getName()
+								+ "' supports clone() method, reason:\n\t"
+								+ e.getMessage());
 			}
 			combinedMetadataTypes.put(typeSet, type);
 		}
 	}
 
-	public static IMetaAttribute getMetadataType(
-			String... types) {
+	public static IMetaAttribute getMetadataType(String... types) {
 		SortedSet<String> typeSet = new TreeSet<String>();
 		for (String typeString : types) {
 			typeSet.add(typeString);
@@ -78,11 +79,9 @@ public class MetadataRegistry {
 		return getMetadataType(typeSet);
 	}
 
-	public static IMetaAttribute getMetadataType(
-			SortedSet<String> types) {
+	public static IMetaAttribute getMetadataType(SortedSet<String> types) {
 		synchronized (combinedMetadataTypes) {
-			IMetaAttribute type = combinedMetadataTypes
-					.get(types);			
+			IMetaAttribute type = combinedMetadataTypes.get(types);
 			if (type == null) {
 				throw new IllegalArgumentException("No metadata type for: "
 						+ types.toString());
@@ -91,39 +90,25 @@ public class MetadataRegistry {
 		}
 	}
 
-	public static SDFSchema getMetadataSchema(
-			SortedSet<String> types) {
+	public static SDFSchema getMetadataSchema(SortedSet<String> types) {
 		synchronized (combinedMetadataTypes) {
-			SDFSchema schema =  null;
-			for(String t:types){
-				IMetaAttribute type = combinedMetadataTypes
-						.get(types);
-				if (type == null) {
-						throw new IllegalArgumentException("No metadata type for: "
-								+ types.toString());
-				}
-
-				SDFSchema metaschema = type.getSchema();
-				if (schema == null){
-					schema = metaschema;
-				}else{
-					SDFSchemaFactory.createNewSchema(schema, metaschema);
-				}
+			IMetaAttribute type = combinedMetadataTypes.get(types);
+			if (type == null) {
+				throw new IllegalArgumentException("No metadata type for: "
+						+ types.toString());
 			}
-			return schema;
+			return type.getSchema();
 		}
 	}
 
-	
-	public static IMetaAttribute getMetadataTypeByName(String name){
+	public static IMetaAttribute getMetadataTypeByName(String name) {
 		IMetaAttribute type = byName.get(name);
-		if (type == null){
-			throw new IllegalArgumentException("No metadata type for: "
-					+ name);
+		if (type == null) {
+			throw new IllegalArgumentException("No metadata type for: " + name);
 		}
 		return type;
 	}
-	
+
 	public static Set<SortedSet<String>> getAvailableMetadataCombinations() {
 		synchronized (combinedMetadataTypes) {
 			return combinedMetadataTypes.keySet();
@@ -146,8 +131,8 @@ public class MetadataRegistry {
 			combinedMetadataTypes.remove(typeSet);
 		}
 	}
-	
-	public static Set<String> getNames(){
+
+	public static Set<String> getNames() {
 		return byName.keySet();
 	}
 
@@ -160,18 +145,22 @@ public class MetadataRegistry {
 		}
 		return typeSet;
 	}
-	
+
 	// Helper methods
-	
-	public static IMetaAttribute tryCreateMetadataInstance(String parameter) throws IllegalArgumentException {
+
+	public static IMetaAttribute tryCreateMetadataInstance(String parameter)
+			throws IllegalArgumentException {
 		try {
-			return MetadataRegistry.getMetadataTypeByName(parameter).getClass().newInstance();
+			return MetadataRegistry.getMetadataTypeByName(parameter).getClass()
+					.newInstance();
 		} catch (InstantiationException | IllegalAccessException e) {
-			throw new IllegalArgumentException("Could not create metadata of type '" + parameter + "'", e);
+			throw new IllegalArgumentException(
+					"Could not create metadata of type '" + parameter + "'", e);
 		}
 	}
-	
-	public static Set<String> toClassNames(List<Class<? extends IMetaAttribute>> classes) {
+
+	public static Set<String> toClassNames(
+			List<Class<? extends IMetaAttribute>> classes) {
 		Set<String> classNames = new TreeSet<String>();
 		for (Class<?> c : classes) {
 			classNames.add(c.getName());

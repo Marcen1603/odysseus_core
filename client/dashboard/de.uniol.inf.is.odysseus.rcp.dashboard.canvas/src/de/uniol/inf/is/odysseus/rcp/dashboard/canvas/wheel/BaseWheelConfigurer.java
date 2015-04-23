@@ -30,7 +30,7 @@ public class BaseWheelConfigurer extends AbstractWheelDashboardPartConfigurer<Ba
      * {@inheritDoc}
      */
     @Override
-    protected void createPartControl(@SuppressWarnings("hiding") final BaseWheelDashboardPart dashboardPart, final FormToolkit toolkit, final ScrolledForm form) {
+    protected void createPartControl(final BaseWheelDashboardPart dashboardPart, final FormToolkit toolkit, final ScrolledForm form) {
         // Empty block
     }
 

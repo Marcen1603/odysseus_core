@@ -19,6 +19,7 @@ package de.uniol.inf.is.odysseus.wrapper.web.physicaloperator.access;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 
+
 import javax.servlet.ServletException;
 import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServletRequest;
@@ -34,6 +35,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolH
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.AbstractPushTransportHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandler;
 
+
 /**
  * @author Christian Kuka <christian@kuka.cc>
  * @version $Id: HTTPServerTransportHandler.java |
@@ -42,6 +44,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITranspor
  */
 public class HTTPServerTransportHandler extends AbstractPushTransportHandler {
     /** Logger */
+	@SuppressWarnings("unused")
     private final Logger LOG = LoggerFactory.getLogger(HTTPServerTransportHandler.class);
     private static final String PATH = "path";
     private static final String PORT = "port";

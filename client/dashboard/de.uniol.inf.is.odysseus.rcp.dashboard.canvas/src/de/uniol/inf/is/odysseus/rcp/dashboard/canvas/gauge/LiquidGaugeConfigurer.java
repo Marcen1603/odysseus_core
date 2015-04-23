@@ -58,7 +58,7 @@ public class LiquidGaugeConfigurer extends AbstractDashboardPartConfigurer<Liqui
     private SDFSchema[] schemas;
 
     @Override
-    public void init(@SuppressWarnings("hiding") final LiquidGaugeDashboardPart dashboardPart, final Collection<IPhysicalOperator> roots) {
+    public void init(final LiquidGaugeDashboardPart dashboardPart, final Collection<IPhysicalOperator> roots) {
         this.dashboardPart = dashboardPart;
         this.schemas = new SDFSchema[roots.size()];
         final Iterator<IPhysicalOperator> iter = roots.iterator();

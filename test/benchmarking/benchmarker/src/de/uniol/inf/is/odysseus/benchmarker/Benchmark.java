@@ -79,7 +79,7 @@ public class Benchmark implements IErrorEventListener, IBenchmark, IEventListene
 	// TODO: Create Session for Benchmarker
     private ISession session = null;
 
-	@SuppressWarnings("unused")
+	//@SuppressWarnings("unused")
 	private static Logger logger = LoggerFactory.getLogger(Benchmark.class);
 
 	private AtomicReference<ErrorEvent> error = new AtomicReference<ErrorEvent>();

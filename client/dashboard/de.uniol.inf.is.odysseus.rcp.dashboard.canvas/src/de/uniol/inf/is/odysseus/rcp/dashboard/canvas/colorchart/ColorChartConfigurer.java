@@ -56,7 +56,7 @@ public class ColorChartConfigurer extends AbstractDashboardPartConfigurer<ColorC
     private SDFSchema[] schemas;
 
     @Override
-    public void init(@SuppressWarnings("hiding") final ColorChartDashboardPart dashboardPart, final Collection<IPhysicalOperator> roots) {
+    public void init(final ColorChartDashboardPart dashboardPart, final Collection<IPhysicalOperator> roots) {
         this.dashboardPart = dashboardPart;
         this.schemas = new SDFSchema[roots.size()];
         final Iterator<IPhysicalOperator> iter = roots.iterator();

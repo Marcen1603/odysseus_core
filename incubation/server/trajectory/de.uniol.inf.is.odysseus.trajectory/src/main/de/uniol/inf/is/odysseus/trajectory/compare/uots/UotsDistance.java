@@ -44,6 +44,7 @@ import edu.uci.ics.jung.algorithms.shortestpath.DijkstraDistance;
 public class UotsDistance implements ISpatialDistance<UotsData> {
 
 	/** for debugging */
+	@SuppressWarnings("unused")
 	private final static Logger LOGGER = LoggerFactory.getLogger(UotsDistance.class);
 	
 	/** the multiton instances */

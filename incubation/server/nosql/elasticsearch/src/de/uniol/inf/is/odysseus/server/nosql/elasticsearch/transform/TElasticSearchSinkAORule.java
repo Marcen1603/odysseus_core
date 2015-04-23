@@ -7,7 +7,6 @@ import de.uniol.inf.is.odysseus.server.nosql.elasticsearch.logicaloperator.Elast
 import de.uniol.inf.is.odysseus.server.nosql.elasticsearch.physicaloperator.ElasticSearchSinkPO;
 
 
-@SuppressWarnings("UnusedDeclaration")
 public class TElasticSearchSinkAORule extends AbstractTNoSQLSinkAORule<ElasticSearchSinkAO> {
 
     @Override
@@ -16,7 +15,7 @@ public class TElasticSearchSinkAORule extends AbstractTNoSQLSinkAORule<ElasticSe
     }
 
     @Override
-    protected Class<? extends AbstractNoSQLSinkPO> getPhysicalOperatorClass() {
+    protected Class<? extends AbstractNoSQLSinkPO<?>> getPhysicalOperatorClass() {
         return ElasticSearchSinkPO.class;
     }
 }

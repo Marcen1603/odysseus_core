@@ -107,7 +107,6 @@ public class QuadTreeDashboardPart extends AbstractCanvasDashboardPart {
         }
     }
 
-    @SuppressWarnings("hiding")
     private void adjust() {
         double minY = Double.POSITIVE_INFINITY;
         double maxY = Double.NEGATIVE_INFINITY;

@@ -17,6 +17,7 @@ package de.uniol.inf.is.odysseus.tc.message;
 
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.io.WKBWriter;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,6 +30,7 @@ import java.util.List;
  */
 public class SizeByteBufferMessageCreator implements IMessageCreator {
 
+	  @SuppressWarnings("unused")
     private final static Logger LOGGER = LoggerFactory.getLogger(SizeByteBufferMessageCreator.class);
 
     private final static int MESSAGE_ALLOC_SIZE = 4;

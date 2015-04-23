@@ -60,7 +60,7 @@ public class HadoopSinkPO extends AbstractNoSQLJsonSinkPO {
     }
 
     @Override
-    public Class<? extends NoSQLConnectionWrapper> getNoSQLConnectionWrapperClass() {
+    public Class<? extends NoSQLConnectionWrapper<?>> getNoSQLConnectionWrapperClass() {
         return HadoopConnectionWrapper.class;
     }
 

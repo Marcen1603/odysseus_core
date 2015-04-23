@@ -293,6 +293,7 @@ public final class CodedInputStream {
   /**
    * Collects the bytes skipped and returns the data in a ByteBuffer.
    */
+  @SuppressWarnings("unused")
   private class SkippedDataSink implements RefillCallback {
     private int lastPos = bufferPos;
     private ByteArrayOutputStream byteArrayStream;

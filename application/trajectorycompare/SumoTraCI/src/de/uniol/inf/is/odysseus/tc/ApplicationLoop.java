@@ -34,6 +34,7 @@ import de.uniol.inf.is.odysseus.tc.shuffle.IVehicleShuffler;
  */
 public class ApplicationLoop {
 	
+	@SuppressWarnings("unused")
 	private final static Logger LOGGER = LoggerFactory.getLogger(ApplicationLoop.class);
 
     private final ISumoInteraction sumoInteraction;

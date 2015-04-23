@@ -30,7 +30,7 @@ public class MongoDBSourcePO extends AbstractNoSQLJsonSourcePO {
     }
 
     @Override
-    public Class<? extends NoSQLConnectionWrapper> getNoSQLConnectionWrapperClass() {
+    public Class<? extends NoSQLConnectionWrapper<?>> getNoSQLConnectionWrapperClass() {
         return MongoDBConnectionWrapper.class;
     }
 

@@ -24,6 +24,7 @@ import org.w3c.dom.Node;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathFactory;
+
 import java.io.FileInputStream;
 import java.io.InputStream;
 
@@ -31,7 +32,7 @@ import java.io.InputStream;
  * Created by marcus on 03.12.14.
  */
 public class XPathXMLService implements IXMLService {
-
+	@SuppressWarnings("unused")
     private final static Logger LOGGER = LoggerFactory.getLogger(XPathXMLService.class);
 
     @Override

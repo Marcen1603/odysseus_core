@@ -21,7 +21,8 @@ abstract class AbstractTNoSQLAORule<L extends AbstractNoSQLAO, P extends IPhysic
 
     @SuppressWarnings("rawtypes")
 	private Class logicalOperatorClass;
-    private Class physicalOperatorClass;
+    @SuppressWarnings("rawtypes")
+   private Class physicalOperatorClass;
 
     public AbstractTNoSQLAORule() {
         logicalOperatorClass = getLogicalOperatorClass();

@@ -114,7 +114,6 @@ public class CompassDashboardPart extends AbstractCanvasDashboardPart {
         return new Coordinate((int) (this.getRadius() + 10), (int) (this.getRadius() + 10));
     }
 
-    @SuppressWarnings("hiding")
     private void adjust() {
         double min = Double.POSITIVE_INFINITY;
         double max = Double.NEGATIVE_INFINITY;

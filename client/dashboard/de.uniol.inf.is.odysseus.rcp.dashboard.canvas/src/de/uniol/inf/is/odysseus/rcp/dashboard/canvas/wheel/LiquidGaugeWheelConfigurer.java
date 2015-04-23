@@ -46,7 +46,7 @@ public class LiquidGaugeWheelConfigurer extends AbstractWheelDashboardPartConfig
      * {@inheritDoc}
      */
     @Override
-    protected void createPartControl(@SuppressWarnings("hiding") final LiquidGaugeWheelDashboardPart dashboardPart, final FormToolkit toolkit, final ScrolledForm form) {
+    protected void createPartControl(final LiquidGaugeWheelDashboardPart dashboardPart, final FormToolkit toolkit, final ScrolledForm form) {
         final Composite composite = form.getBody();
 
         {// Gauge Settings

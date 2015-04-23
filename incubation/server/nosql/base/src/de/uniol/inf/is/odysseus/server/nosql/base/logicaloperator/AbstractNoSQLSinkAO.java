@@ -6,7 +6,6 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IntegerParam
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@SuppressWarnings("UnusedDeclaration")
 public abstract class AbstractNoSQLSinkAO extends AbstractNoSQLAO {
 
 	private static final long serialVersionUID = 42770418904359282L;

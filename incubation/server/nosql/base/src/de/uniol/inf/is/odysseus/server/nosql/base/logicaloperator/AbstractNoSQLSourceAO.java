@@ -16,7 +16,6 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IntegerParam
  *  The parameters maxTupleCount, delayBetweenTuple, reloadData and reloadDataInterval will be set here and
  *  are needed in all logical operators in the NoSQL context for sources.
  */
-@SuppressWarnings("UnusedDeclaration")
 public abstract class AbstractNoSQLSourceAO extends AbstractNoSQLAO {
 
 	private static final long serialVersionUID = 1361416706500398607L;

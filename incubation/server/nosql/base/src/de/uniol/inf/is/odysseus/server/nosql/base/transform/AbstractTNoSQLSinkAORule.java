@@ -9,11 +9,11 @@ import de.uniol.inf.is.odysseus.server.nosql.base.physicaloperator.AbstractNoSQL
  *
  * @param <A> the concrete logical operator class
  */
-public abstract class AbstractTNoSQLSinkAORule<A extends AbstractNoSQLAO> extends AbstractTNoSQLAORule<A, AbstractNoSQLSinkPO> {
+public abstract class AbstractTNoSQLSinkAORule<A extends AbstractNoSQLAO> extends AbstractTNoSQLAORule<A, AbstractNoSQLSinkPO<?>> {
 
     @Override
     protected abstract Class<? extends AbstractNoSQLSinkAO> getLogicalOperatorClass();
 
     @Override
-    protected abstract Class<? extends AbstractNoSQLSinkPO> getPhysicalOperatorClass();
+    protected abstract Class<? extends AbstractNoSQLSinkPO<?>> getPhysicalOperatorClass();
 }

@@ -31,6 +31,7 @@ public class XovisTransportHandler extends AbstractTransportHandler {
 		EVENTSTREAM, OBJECTSTREAM
 	}
 	
+	@SuppressWarnings("unused")
 	private static final Logger LOG = LoggerFactory
 			.getLogger(XovisTransportHandler.class);
 

@@ -6,7 +6,6 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Paramete
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
 import de.uniol.inf.is.odysseus.server.nosql.base.logicaloperator.AbstractNoSQLSinkAO;
 
-@SuppressWarnings("UnusedDeclaration")
 @LogicalOperator(name = "HADOOPSINK", minInputPorts = 1, maxInputPorts = 1, doc = "This operator can write data to a Hadoop-Filesystem.", category = {
         LogicalOperatorCategory.SINK, LogicalOperatorCategory.DATABASE })
 public class HadoopSinkAO extends AbstractNoSQLSinkAO {
@@ -14,7 +13,6 @@ public class HadoopSinkAO extends AbstractNoSQLSinkAO {
 	private static final long serialVersionUID = -533758138172292374L;
 	private String path;
 
-    @SuppressWarnings("UnusedDeclaration")
     public HadoopSinkAO() {
         super();
     }
@@ -33,7 +31,6 @@ public class HadoopSinkAO extends AbstractNoSQLSinkAO {
         return path;
     }
 
-    @SuppressWarnings("CloneDoesntCallSuperClone")
     @Override
     public HadoopSinkAO clone() {
         return new HadoopSinkAO(this);

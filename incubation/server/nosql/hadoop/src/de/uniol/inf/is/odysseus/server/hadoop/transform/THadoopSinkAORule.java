@@ -7,7 +7,6 @@ import de.uniol.inf.is.odysseus.server.nosql.base.logicaloperator.AbstractNoSQLS
 import de.uniol.inf.is.odysseus.server.nosql.base.physicaloperator.AbstractNoSQLSinkPO;
 import de.uniol.inf.is.odysseus.server.nosql.base.transform.AbstractTNoSQLSinkAORule;
 
-@SuppressWarnings("UnusedDeclaration")
 public class THadoopSinkAORule extends AbstractTNoSQLSinkAORule<HadoopSinkAO> {
 
     @Override
@@ -16,7 +15,7 @@ public class THadoopSinkAORule extends AbstractTNoSQLSinkAORule<HadoopSinkAO> {
     }
 
     @Override
-    protected Class<? extends AbstractNoSQLSinkPO> getPhysicalOperatorClass() {
+    protected Class<? extends AbstractNoSQLSinkPO<?>> getPhysicalOperatorClass() {
         return HadoopSinkPO.class;
     }
 

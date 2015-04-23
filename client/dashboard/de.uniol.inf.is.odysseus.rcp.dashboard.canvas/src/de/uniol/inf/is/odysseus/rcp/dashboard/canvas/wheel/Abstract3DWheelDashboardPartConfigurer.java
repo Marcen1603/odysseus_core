@@ -54,7 +54,7 @@ public abstract class Abstract3DWheelDashboardPartConfigurer<T extends Abstract3
     private SDFSchema[] schemas;
 
     @Override
-    public void init(@SuppressWarnings("hiding") final T dashboardPart, final Collection<IPhysicalOperator> roots) {
+    public void init(final T dashboardPart, final Collection<IPhysicalOperator> roots) {
         this.dashboardPart = dashboardPart;
         this.schemas = new SDFSchema[roots.size()];
         final Iterator<IPhysicalOperator> iter = roots.iterator();
@@ -353,7 +353,7 @@ public abstract class Abstract3DWheelDashboardPartConfigurer<T extends Abstract3
      * @param dashboardPart
      * @param composite
      */
-    protected abstract void createPartControl(@SuppressWarnings("hiding") final T dashboardPart, final FormToolkit toolkit, final ScrolledForm form);
+    protected abstract void createPartControl(final T dashboardPart, final FormToolkit toolkit, final ScrolledForm form);
 
     @Override
     public void dispose() {

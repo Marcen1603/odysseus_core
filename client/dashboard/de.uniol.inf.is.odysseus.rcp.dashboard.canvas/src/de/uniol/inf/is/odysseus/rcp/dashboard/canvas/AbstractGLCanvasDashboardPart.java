@@ -61,6 +61,7 @@ import de.uniol.inf.is.odysseus.rcp.dashboard.canvas.objects.Tree;
  *          +0800 | Christian Kuka $
  *
  */
+@SuppressWarnings("unused")
 public abstract class AbstractGLCanvasDashboardPart extends AbstractDashboardPart implements PaintListener, KeyListener {
     GLCanvas canvas;
     private final Queue<IStreamObject<?>> queue = new ConcurrentLinkedQueue<>();
