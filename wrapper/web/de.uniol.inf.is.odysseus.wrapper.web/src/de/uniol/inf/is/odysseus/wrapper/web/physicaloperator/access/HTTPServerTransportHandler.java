@@ -17,8 +17,10 @@
 package de.uniol.inf.is.odysseus.wrapper.web.physicaloperator.access;
 
 import java.io.IOException;
+import java.nio.ByteBuffer;
 
 import javax.servlet.ServletException;
+import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -194,7 +196,13 @@ public class HTTPServerTransportHandler extends AbstractPushTransportHandler {
                 response.setContentType("application/json;charset=utf-8");
                 response.setStatus(HttpServletResponse.SC_OK);
                 response.getWriter().println("{\"status\": \"OK\"}");
-                fireProcess(request.getInputStream());
+                ServletInputStream inputStream = request.getInputStream();
+                ByteBuffer buffer = ByteBuffer.allocate(inputStream.available() + Integer.SIZE / 8);
+                buffer.putInt(inputStream.available());
+                while (inputStream.available() > 0) {
+                    buffer.put((byte) inputStream.read());
+                }
+                fireProcess(buffer);
             }
             else {
                 response.setStatus(HttpServletResponse.SC_NOT_FOUND);
