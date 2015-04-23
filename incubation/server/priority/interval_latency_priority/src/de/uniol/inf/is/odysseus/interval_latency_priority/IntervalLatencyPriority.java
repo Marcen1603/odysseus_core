@@ -16,8 +16,10 @@
 package de.uniol.inf.is.odysseus.interval_latency_priority;
 
 import java.io.Serializable;
+import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.WriteOptions;
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
@@ -69,6 +71,13 @@ public class IntervalLatencyPriority extends TimeInterval implements ILatency,
 
 		this.latency = original.latency.clone();
 		this.prio = (IPriority) original.prio.clone();
+	}
+	
+	@Override
+	public void fillValueList(List<Tuple<?>> values) {
+		super.fillValueList(values);
+		latency.fillValueList(values);
+		prio.fillValueList(values);
 	}
 
 	@Override

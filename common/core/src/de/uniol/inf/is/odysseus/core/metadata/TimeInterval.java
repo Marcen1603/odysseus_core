@@ -1,18 +1,18 @@
 /********************************************************************************** 
-  * Copyright 2011 The Odysseus Team
-  *
-  * Licensed under the Apache License, Version 2.0 (the "License");
-  * you may not use this file except in compliance with the License.
-  * You may obtain a copy of the License at
-  *
-  *     http://www.apache.org/licenses/LICENSE-2.0
-  *
-  * Unless required by applicable law or agreed to in writing, software
-  * distributed under the License is distributed on an "AS IS" BASIS,
-  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  * See the License for the specific language governing permissions and
-  * limitations under the License.
-  */
+ * Copyright 2011 The Odysseus Team
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package de.uniol.inf.is.odysseus.core.metadata;
 
 import java.io.Serializable;
@@ -25,7 +25,6 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
-
 
 // TODO: Noch mal ber die Grenzen nachdenken (Wann <=, wann <)
 // TODO: Gibt es evtl. effizientere Algorithmen?
@@ -41,23 +40,24 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
 public class TimeInterval implements ITimeInterval, Cloneable, Serializable {
 
 	@SuppressWarnings("unchecked")
-	public final static Class<? extends IMetaAttribute>[] classes = new Class[]{ 
-		ITimeInterval.class
-	};
-	
+	public final static Class<? extends IMetaAttribute>[] classes = new Class[] { ITimeInterval.class };
+
 	public static final SDFSchema schema;
-	static{
+	static {
 		List<SDFAttribute> attributes = new ArrayList<SDFAttribute>();
-		attributes.add(new SDFAttribute("TimeInterval", "start", SDFDatatype.TIMESTAMP, null));
-		attributes.add(new SDFAttribute("TimeInterval", "end", SDFDatatype.TIMESTAMP, null));
-		schema = SDFSchemaFactory.createNewSchema("TimeInterval", Tuple.class, attributes);
+		attributes.add(new SDFAttribute("TimeInterval", "start",
+				SDFDatatype.TIMESTAMP, null));
+		attributes.add(new SDFAttribute("TimeInterval", "end",
+				SDFDatatype.TIMESTAMP, null));
+		schema = SDFSchemaFactory.createNewSchema("TimeInterval", Tuple.class,
+				attributes);
 	}
-	
+
 	@Override
 	public SDFSchema getSchema() {
 		return schema;
 	}
-		
+
 	private static final long serialVersionUID = 2210545271466064814L;
 
 	private static final TimeInterval forever = new TimeInterval(
@@ -75,16 +75,25 @@ public class TimeInterval implements ITimeInterval, Cloneable, Serializable {
 		init(start, PointInTime.getInfinityTime());
 	}
 
-	public TimeInterval(){
+	public TimeInterval() {
 		init(PointInTime.getInfinityTime(), PointInTime.getInfinityTime());
 	}
-	
+
 	public TimeInterval(TimeInterval original) {
 		PointInTime start = original.getStart().clone();
 		PointInTime end = original.getEnd().clone();
 		init(start, end);
 	}
-
+	
+	@Override
+	public void fillValueList(List<Tuple<?>> values) {
+		@SuppressWarnings("rawtypes")
+		Tuple t = new Tuple(2,false);
+		t.setAttribute(0, start.getMainPoint());
+		t.setAttribute(1, end.getMainPoint());
+		values.add(t);
+	}
+	
 	protected void init(PointInTime start, PointInTime end) {
 		if (!start.before(end) && !(start.isInfinite() && end.isInfinite())) {
 			throw new IllegalArgumentException(
@@ -108,7 +117,7 @@ public class TimeInterval implements ITimeInterval, Cloneable, Serializable {
 		}
 		this.end = end;
 	}
-	
+
 	@Override
 	public void setStartAndEnd(PointInTime start, PointInTime end) {
 		init(start, end);
@@ -143,28 +152,29 @@ public class TimeInterval implements ITimeInterval, Cloneable, Serializable {
 	 *         ist ( NEIN! oder gleich dem Endzeitpunkt von right ist)
 	 */
 	public static boolean totallyBefore(ITimeInterval left, ITimeInterval right) {
-		return totallyBefore(left,right.getStart());
+		return totallyBefore(left, right.getStart());
 	}
-	
+
 	public static boolean totallyBefore(ITimeInterval interval,
 			PointInTime point) {
-		// ACHTUNG: Rechtsoffenes Intervall, d.h. der letzte Punkte geh�rt nicht
+		// ACHTUNG: Rechtsoffenes Intervall, d.h. der letzte Punkte geh�rt
+		// nicht
 		// mehr dazu
 		return interval.getEnd().beforeOrEquals(point);
 	}
 
-//	/**
-//	 * Berhren sich die beiden Intervall an einer der beiden Grenzen
-//	 * 
-//	 * @param left
-//	 *            Linkes Intervall
-//	 * @param right
-//	 *            Rechtes Intervall
-//	 * @return true, wenn das Ende von left und das Start von right oder wenn
-//	 *         der Start von left und das Ende von right zusammenfallen
-//	 * 
-//	 *         ACHTUNG! Rechtsoffenes Intervall --> evtl. Klassennamen anpassen?
-//	 */
+	// /**
+	// * Berhren sich die beiden Intervall an einer der beiden Grenzen
+	// *
+	// * @param left
+	// * Linkes Intervall
+	// * @param right
+	// * Rechtes Intervall
+	// * @return true, wenn das Ende von left und das Start von right oder wenn
+	// * der Start von left und das Ende von right zusammenfallen
+	// *
+	// * ACHTUNG! Rechtsoffenes Intervall --> evtl. Klassennamen anpassen?
+	// */
 	// public static boolean meets(TimeInterval left, TimeInterval right) {
 	// return left.getEnd().equals(right.getStart()) ||
 	// left.getStart().equals(right.getEnd());
@@ -194,25 +204,27 @@ public class TimeInterval implements ITimeInterval, Cloneable, Serializable {
 		return right.getStart().beforeOrEquals(left.getStart())
 				&& left.getEnd().beforeOrEquals(right.getEnd());
 	}
-	
+
 	/**
 	 * Liegt der Punkt innerhalb des Intervals
+	 * 
 	 * @param interval
 	 * @param timestamp
 	 * @return
 	 */
 	public static boolean inside(ITimeInterval interval, PointInTime timestamp) {
-		return interval.getStart().beforeOrEquals(timestamp) && interval.getEnd().after(timestamp);
+		return interval.getStart().beforeOrEquals(timestamp)
+				&& interval.getEnd().after(timestamp);
 	}
 
 	public static TimeInterval intersection(ITimeInterval left,
 			ITimeInterval right) {
 		if (overlaps(left, right)) {
 			// TODO fehler bei infinity (auch in anderen operationen vorhanden)
-			PointInTime newLeft = PointInTime.max(left.getStart(), right
-					.getStart());
-			PointInTime newRight = PointInTime.min(left.getEnd(), right
-					.getEnd());
+			PointInTime newLeft = PointInTime.max(left.getStart(),
+					right.getStart());
+			PointInTime newRight = PointInTime.min(left.getEnd(),
+					right.getEnd());
 			if (newLeft.before(newRight)) {
 				return new TimeInterval(newLeft, newRight);
 			}
@@ -222,9 +234,9 @@ public class TimeInterval implements ITimeInterval, Cloneable, Serializable {
 
 	public static TimeInterval union(ITimeInterval left, ITimeInterval right) {
 		if (overlaps(left, right)) {
-			return new TimeInterval(PointInTime.min(left.getStart(), right
-					.getStart()), PointInTime
-					.max(left.getEnd(), right.getEnd()));
+			return new TimeInterval(PointInTime.min(left.getStart(),
+					right.getStart()), PointInTime.max(left.getEnd(),
+					right.getEnd()));
 		}
 		return null;
 	}
@@ -263,15 +275,14 @@ public class TimeInterval implements ITimeInterval, Cloneable, Serializable {
 		// return true;
 	}
 
-	/* 
-	 * @TODO Difference method is returning a distance between time 
-	 * intervals and not the difference, example for an time interval A and 
-	 * an inside time interval B: A - B = two time intervals 
-	 * left and right to A.
+	/*
+	 * @TODO Difference method is returning a distance between time intervals
+	 * and not the difference, example for an time interval A and an inside time
+	 * interval B: A - B = two time intervals left and right to A.
 	 * 
 	 * minus method implements the difference
 	 */
-	
+
 	public static ITimeInterval[] difference(ITimeInterval left,
 			ITimeInterval right) {
 		if (inside(left, right)) {
@@ -287,7 +298,7 @@ public class TimeInterval implements ITimeInterval, Cloneable, Serializable {
 			}
 			return ret;
 		}
-        return new ITimeInterval[] { left, null };
+		return new ITimeInterval[] { left, null };
 	}
 
 	/**
@@ -295,112 +306,92 @@ public class TimeInterval implements ITimeInterval, Cloneable, Serializable {
 	 * method for setting both, start and end, would be appropiate.
 	 * 
 	 * @author Jendrik Poloczek
-	 * @return 
+	 * @return
 	 */
-//	public void setTimeInterval(PointInTime start, PointInTime end) {
-//	    this.start = start.clone();
-//	    this.setEnd(end.clone());
-//	}
-//	
-//    public void setTimeInterval(ITimeInterval ti) {
-//        this.start = ti.getStart().clone();
-//        this.setEnd(ti.getEnd().clone());
-//    }
-    	
-	
+	// public void setTimeInterval(PointInTime start, PointInTime end) {
+	// this.start = start.clone();
+	// this.setEnd(end.clone());
+	// }
+	//
+	// public void setTimeInterval(ITimeInterval ti) {
+	// this.start = ti.getStart().clone();
+	// this.setEnd(ti.getEnd().clone());
+	// }
+
 	/**
-	 * Difference method is returning a distance between time intervals and
-	 * not the difference, example for an time interval A and an inside 
-	 * time interval B: A - B = two time intervals left and right to A.
+	 * Difference method is returning a distance between time intervals and not
+	 * the difference, example for an time interval A and an inside time
+	 * interval B: A - B = two time intervals left and right to A.
 	 * 
 	 * The method implements the behaviour difference method should have.
 	 * 
-	 * @TODO wrap equal if-clause bodies later; and create temporary points 
-	 * for starts and ends. 
+	 * @TODO wrap equal if-clause bodies later; and create temporary points for
+	 *       starts and ends.
 	 * 
 	 * @param minuend
 	 * @param subtrahend
 	 * @author Jendrik Poloczek
 	 * @return
-	 */	
-	public static List<TimeInterval> minus(
-		ITimeInterval minuend, 
-		ITimeInterval subtrahend
-	) {		
+	 */
+	public static List<TimeInterval> minus(ITimeInterval minuend,
+			ITimeInterval subtrahend) {
 		List<TimeInterval> difference = new ArrayList<TimeInterval>();
-		
-		if(
-			minuend.equals(subtrahend) || 
-			!overlaps(minuend, subtrahend) ||
-			TimeInterval.inside(minuend, subtrahend)
-		) {
+
+		if (minuend.equals(subtrahend) || !overlaps(minuend, subtrahend)
+				|| TimeInterval.inside(minuend, subtrahend)) {
 			return difference;
 		}
-		
-		if(minuend.getStart().equals(subtrahend.getStart())) {
-			if(subtrahend.getEnd().before(minuend.getEnd())) {
-				difference.add(new TimeInterval(subtrahend.getEnd(),
-						minuend.getEnd())						
-				);					
+
+		if (minuend.getStart().equals(subtrahend.getStart())) {
+			if (subtrahend.getEnd().before(minuend.getEnd())) {
+				difference.add(new TimeInterval(subtrahend.getEnd(), minuend
+						.getEnd()));
 				return difference;
 			}
-            difference.add(new TimeInterval(minuend.getEnd(),
-            		subtrahend.getEnd())
-            );		
-            return difference;
+			difference.add(new TimeInterval(minuend.getEnd(), subtrahend
+					.getEnd()));
+			return difference;
 		}
-		
-		if(minuend.getStart().before(subtrahend.getStart())) {
-			if(subtrahend.getEnd().before(minuend.getEnd())) {
-				difference.add(new TimeInterval(minuend.getStart(),
-						subtrahend.getStart())
-				);	
-				difference.add(new TimeInterval(
-						subtrahend.getEnd(),
-						minuend.getEnd())
-				);	
-				return difference;
-			} if(minuend.getEnd().before(subtrahend.getEnd())) {
-				difference.add(new TimeInterval(minuend.getStart(),
-						subtrahend.getStart()
-				));			
+
+		if (minuend.getStart().before(subtrahend.getStart())) {
+			if (subtrahend.getEnd().before(minuend.getEnd())) {
+				difference.add(new TimeInterval(minuend.getStart(), subtrahend
+						.getStart()));
+				difference.add(new TimeInterval(subtrahend.getEnd(), minuend
+						.getEnd()));
 				return difference;
 			}
-            difference.add(new TimeInterval(
-            		minuend.getStart(),
-            		subtrahend.getStart()
-            ));		
-            return difference;
-		}
-		
-		if(subtrahend.getStart().before(minuend.getStart())) {
-			if(minuend.getEnd().before(subtrahend.getEnd())) {
-				difference.add(new TimeInterval(
-						subtrahend.getStart(),
-						minuend.getStart()
-				));		
-				difference.add(new TimeInterval(
-						minuend.getEnd(),
-						subtrahend.getEnd()
-				));		
-				return difference;
-			} if(subtrahend.getEnd().before(minuend.getEnd())) {
-				difference.add(new TimeInterval(
-						subtrahend.getStart(),
-						minuend.getStart()
-				));					
+			if (minuend.getEnd().before(subtrahend.getEnd())) {
+				difference.add(new TimeInterval(minuend.getStart(), subtrahend
+						.getStart()));
 				return difference;
 			}
-            difference.add(new TimeInterval(
-            		subtrahend.getStart(),
-            		minuend.getStart()
-            ));			
-            return difference;			
+			difference.add(new TimeInterval(minuend.getStart(), subtrahend
+					.getStart()));
+			return difference;
 		}
-		
+
+		if (subtrahend.getStart().before(minuend.getStart())) {
+			if (minuend.getEnd().before(subtrahend.getEnd())) {
+				difference.add(new TimeInterval(subtrahend.getStart(), minuend
+						.getStart()));
+				difference.add(new TimeInterval(minuend.getEnd(), subtrahend
+						.getEnd()));
+				return difference;
+			}
+			if (subtrahend.getEnd().before(minuend.getEnd())) {
+				difference.add(new TimeInterval(subtrahend.getStart(), minuend
+						.getStart()));
+				return difference;
+			}
+			difference.add(new TimeInterval(subtrahend.getStart(), minuend
+					.getStart()));
+			return difference;
+		}
+
 		return null;
 	}
-	
+
 	/**
 	 * Beim Vergleich werden zunchst die Startzeitpunkte und dann die
 	 * Endzeitpunkte der Intervalle betrachtet
@@ -438,11 +429,11 @@ public class TimeInterval implements ITimeInterval, Cloneable, Serializable {
 
 	@Override
 	public String toString() {
-		//return "[" + getStart().toString() + "," + getEnd().toString() + ")";
+		// return "[" + getStart().toString() + "," + getEnd().toString() + ")";
 		return getStart().toString() + "|" + getEnd().toString();
 	}
-	
-	public static TimeInterval parseTimeInterval(String str){
+
+	public static TimeInterval parseTimeInterval(String str) {
 		String[] parts = str.split("\\|");
 		PointInTime start = PointInTime.parsePointInTime(parts[0].trim());
 		PointInTime end = PointInTime.parsePointInTime(parts[1].trim());
@@ -454,15 +445,16 @@ public class TimeInterval implements ITimeInterval, Cloneable, Serializable {
 		return "[" + getStart().minus(baseTime).toString() + ","
 				+ getEnd().minus(baseTime).toString() + ")";
 	}
-	
+
 	@Override
 	public String csvToString(WriteOptions options) {
-		return getStart().toString() + options.getDelimiter()+ getEnd().toString();
+		return getStart().toString() + options.getDelimiter()
+				+ getEnd().toString();
 	}
-	
+
 	@Override
 	public String getCSVHeader(char delimiter) {
-		return "start"+delimiter+"end";
+		return "start" + delimiter + "end";
 	}
 
 	public static TimeInterval forever() {

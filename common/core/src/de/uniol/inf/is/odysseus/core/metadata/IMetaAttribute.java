@@ -16,9 +16,11 @@
 package de.uniol.inf.is.odysseus.core.metadata;
 
 import java.io.Serializable;
+import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.ICSVToString;
 import de.uniol.inf.is.odysseus.core.IClone;
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 
 public interface IMetaAttribute extends IClone, ICSVToString, Serializable {
@@ -28,4 +30,5 @@ public interface IMetaAttribute extends IClone, ICSVToString, Serializable {
 	IMetaAttribute clone();
 	String getName();
 	SDFSchema getSchema();
+	void fillValueList(List<Tuple<?>> values);
 }

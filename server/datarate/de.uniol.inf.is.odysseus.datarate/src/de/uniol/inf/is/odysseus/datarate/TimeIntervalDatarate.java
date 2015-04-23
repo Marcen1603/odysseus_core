@@ -1,6 +1,9 @@
 package de.uniol.inf.is.odysseus.datarate;
 
+import java.util.List;
+
 import de.uniol.inf.is.odysseus.core.WriteOptions;
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
@@ -34,6 +37,12 @@ public class TimeIntervalDatarate extends TimeInterval implements ITimeInterval,
 	public TimeIntervalDatarate(TimeIntervalDatarate other) {
 		super(other);
 		datarate = new Datarate(other.datarate);
+	}
+
+	@Override
+	public void fillValueList(List<Tuple<?>> values) {
+		super.fillValueList(values);
+		datarate.fillValueList(values);
 	}
 
 	@Override

@@ -84,7 +84,15 @@ public class Probabilistic implements IProbabilistic {
         this.existence = copy.existence;
 
     }
-
+	
+	@Override
+	public void fillValueList(List<Tuple<?>> values) {
+		@SuppressWarnings("rawtypes")
+		Tuple t = new Tuple(1,false);
+		t.setAttribute(0, existence);
+		values.add(t);
+	}
+    
     /**
      * 
      * {@inheritDoc}

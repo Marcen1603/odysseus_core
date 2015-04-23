@@ -42,6 +42,14 @@ public class Datarate implements IDatarate, Cloneable, Serializable {
 	}
 	
 	@Override
+	public void fillValueList(List<Tuple<?>> values) {
+		@SuppressWarnings("rawtypes")
+		Tuple t = new Tuple(1,false);
+		t.setAttribute(0, datarate);
+		values.add(t);
+	}
+	
+	@Override
 	public Class<? extends IMetaAttribute>[] getClasses() {
 		return CLASSES;
 	}

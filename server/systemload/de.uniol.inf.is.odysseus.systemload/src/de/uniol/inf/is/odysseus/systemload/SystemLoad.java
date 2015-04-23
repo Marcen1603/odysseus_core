@@ -1,7 +1,6 @@
 package de.uniol.inf.is.odysseus.systemload;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -13,10 +12,7 @@ import com.google.common.collect.Maps;
 import de.uniol.inf.is.odysseus.core.WriteOptions;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
 
 public class SystemLoad implements ISystemLoad, Cloneable, Serializable {
 
@@ -30,7 +26,7 @@ public class SystemLoad implements ISystemLoad, Cloneable, Serializable {
 
 	@Override
 	public SDFSchema getSchema() {
-		throw new RuntimeException("get Schema not implemented for SystemLoad");
+		throw new RuntimeException("currently not implemented for SystemLoad");
 	}
 	
 	public SystemLoad() {
@@ -42,7 +38,13 @@ public class SystemLoad implements ISystemLoad, Cloneable, Serializable {
 			systemLoads.put(name, copy.systemLoads.get(name).clone());
 		}
 	}
-
+	
+	@Override
+	public void fillValueList(List<Tuple<?>> values) {
+		// TODO Auto-generated method stub
+		throw new RuntimeException("currently not implemented for SystemLoad");
+	}
+	
 	@Override
 	public ISystemLoad clone() {
 		return new SystemLoad(this);

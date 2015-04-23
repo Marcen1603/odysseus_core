@@ -765,7 +765,7 @@ public class Tuple<T extends IMetaAttribute> extends AbstractStreamObject<T>
 							}
 						}
 					} else if (curAttribute instanceof BitVector){
-						BitVector v = (BitVector) curAttribute;
+						//BitVector v = (BitVector) curAttribute;
 						if (options.hasNumberFormatter())
 						{
 							long valAsNum = Long.parseLong(curAttribute.toString());

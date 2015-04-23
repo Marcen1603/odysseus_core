@@ -139,6 +139,8 @@ public interface IDataHandler<T> {
 	 * @param floatingFormatter How to format double, float etc.
 	 * @param numberFormat How to format integer, long etc.
 	 * @param writeMetadata If the object contains meta data, should it be written
+	 * 
+	 * @deprecated use writeCSVData(StringBuilder string, Object data, WriteOptions options) instead
 	 */
 	@Deprecated
 	public void writeCSVData(StringBuilder string, Object data, char delimiter, Character textSeperator,  DecimalFormat floatingFormatter, DecimalFormat numberFormat, boolean writeMetadata);

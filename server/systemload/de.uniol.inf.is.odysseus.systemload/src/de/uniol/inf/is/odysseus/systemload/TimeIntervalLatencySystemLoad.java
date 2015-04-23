@@ -1,6 +1,9 @@
 package de.uniol.inf.is.odysseus.systemload;
 
+import java.util.List;
+
 import de.uniol.inf.is.odysseus.core.WriteOptions;
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.server.metadata.ILatency;
@@ -32,6 +35,12 @@ public class TimeIntervalLatencySystemLoad extends TimeIntervalSystemLoad implem
 		return new TimeIntervalLatencySystemLoad(this);
 	}
 
+	@Override
+	public void fillValueList(List<Tuple<?>> values) {
+		super.fillValueList(values);
+		latency.fillValueList(values);
+	}
+	
 	@Override
 	public void setMinLatencyStart(long timestamp) {
 		latency.setMinLatencyStart(timestamp);

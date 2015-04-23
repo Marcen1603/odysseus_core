@@ -1,6 +1,9 @@
 package de.uniol.inf.is.odysseus.datarate_systemload;
 
+import java.util.List;
+
 import de.uniol.inf.is.odysseus.core.WriteOptions;
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.datarate.Datarate;
@@ -23,6 +26,12 @@ public class TimeIntervalDatarateSystemLoad extends TimeIntervalSystemLoad imple
 	public TimeIntervalDatarateSystemLoad( TimeIntervalDatarateSystemLoad other ) {
 		super(other);
 		datarate = new Datarate(other.datarate);
+	}
+	
+	@Override
+	public void fillValueList(List<Tuple<?>> values) {
+		super.fillValueList(values);
+		datarate.fillValueList(values);
 	}
 	
 	@Override

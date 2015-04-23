@@ -15,7 +15,10 @@
   */
 package de.uniol.inf.is.odysseus.priority_interval;
 
+import java.util.List;
+
 import de.uniol.inf.is.odysseus.core.WriteOptions;
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.TimeInterval;
@@ -27,7 +30,7 @@ import de.uniol.inf.is.odysseus.priority.Priority;
 public class IntervalPriority extends TimeInterval implements IPriority {
 
 	private static final long serialVersionUID = -313473603482217362L;
-	private byte priority = 0;
+	private IPriority priority = new Priority();
 
 	@SuppressWarnings("unchecked")
 	public final static Class<? extends IMetaAttribute>[] classes = new Class[]{ 
@@ -54,13 +57,20 @@ public class IntervalPriority extends TimeInterval implements IPriority {
 	}
 	
 	@Override
+	public void fillValueList(List<Tuple<?>> values) {
+		super.fillValueList(values);
+		priority.fillValueList(values);
+	}
+
+	
+	@Override
 	public byte getPriority() {
-		return this.priority;
+		return priority.getPriority();
 	}
 
 	@Override
 	public void setPriority(byte priority) {
-		this.priority = priority;
+		this.priority.setPriority(priority);
 	}
 	
 	@Override

@@ -19,7 +19,8 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IntegerParam
 @SuppressWarnings("UnusedDeclaration")
 public abstract class AbstractNoSQLSourceAO extends AbstractNoSQLAO {
 
-    private int maxTupleCount;
+	private static final long serialVersionUID = 1361416706500398607L;
+	private int maxTupleCount;
     private int delayBetweenTuple;
     private boolean reloadData;
     private int reloadDataInterval;

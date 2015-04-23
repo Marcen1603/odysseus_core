@@ -1,6 +1,9 @@
 package de.uniol.inf.is.odysseus.datarate;
 
+import java.util.List;
+
 import de.uniol.inf.is.odysseus.core.WriteOptions;
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.TimeInterval;
@@ -35,9 +38,14 @@ public class TimeIntervalLatencyDatarate extends TimeIntervalDatarate implements
 	}
 	
 	public TimeIntervalLatencyDatarate( TimeIntervalLatencyDatarate other ) {
-		super(other);
-		
+		super(other);	
 		latency = other.latency.clone();
+	}
+	
+	@Override
+	public void fillValueList(List<Tuple<?>> values) {
+		super.fillValueList(values);
+		latency.fillValueList(values);
 	}
 	
 	@Override

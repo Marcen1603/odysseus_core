@@ -1,6 +1,9 @@
 package de.uniol.inf.is.odysseus.systemload;
 
+import java.util.List;
+
 import de.uniol.inf.is.odysseus.core.WriteOptions;
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
@@ -25,6 +28,13 @@ public class TimeIntervalSystemLoad extends SystemLoad implements ITimeInterval,
 		
 		timeInterval = copy.timeInterval.clone();
 	}
+	
+	@Override
+	public void fillValueList(List<Tuple<?>> values) {
+		timeInterval.fillValueList(values);
+		super.fillValueList(values);
+	}
+
 	
 	@Override
 	public int compareTo(ITimeInterval o) {

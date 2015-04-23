@@ -10,7 +10,8 @@ import de.uniol.inf.is.odysseus.server.nosql.base.logicaloperator.AbstractNoSQLS
         LogicalOperatorCategory.SOURCE, LogicalOperatorCategory.DATABASE })
 public class MongoDBSourceAO extends AbstractNoSQLSourceAO {
 
-    private String collectionName;
+	private static final long serialVersionUID = 7290475028394007187L;
+	private String collectionName;
     private String mongoDBName;
     private String referenceObject;
 

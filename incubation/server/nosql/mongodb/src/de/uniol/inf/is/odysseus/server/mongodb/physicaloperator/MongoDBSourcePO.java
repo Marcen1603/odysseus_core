@@ -5,7 +5,6 @@ import com.mongodb.DBCursor;
 import com.mongodb.DBObject;
 import com.mongodb.MongoClient;
 import com.mongodb.util.JSON;
-import de.uniol.inf.is.odysseus.core.collection.KeyValueObject;
 import de.uniol.inf.is.odysseus.server.mongodb.connectionwrapper.MongoDBConnectionWrapper;
 import de.uniol.inf.is.odysseus.server.mongodb.logicaloperator.MongoDBSourceAO;
 import de.uniol.inf.is.odysseus.server.nosql.base.physicaloperator.AbstractNoSQLJsonSourcePO;

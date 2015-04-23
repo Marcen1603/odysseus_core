@@ -56,6 +56,14 @@ public class Priority implements IPriority {
 	}
 
 	@Override
+	public void fillValueList(List<Tuple<?>> values) {
+		@SuppressWarnings("rawtypes")
+		Tuple t = new Tuple(1,false);
+		t.setAttribute(0, prio);
+		values.add(t);
+	}
+	
+	@Override
 	public byte getPriority() {
 		return this.prio;
 	}

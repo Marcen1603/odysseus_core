@@ -15,9 +15,12 @@
  */
 package de.uniol.inf.is.odysseus.probabilistic.metadata;
 
+import java.util.List;
+
 import com.google.common.base.Preconditions;
 
 import de.uniol.inf.is.odysseus.core.WriteOptions;
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.TimeInterval;
@@ -72,6 +75,12 @@ public class ProbabilisticTimeInterval extends TimeInterval implements IProbabil
         this.probabilistic = copy.probabilistic.clone();
     }
 
+	@Override
+	public void fillValueList(List<Tuple<?>> values) {
+		super.fillValueList(values);
+		probabilistic.fillValueList(values);
+	}
+    
     /**
      * 
      * {@inheritDoc}
