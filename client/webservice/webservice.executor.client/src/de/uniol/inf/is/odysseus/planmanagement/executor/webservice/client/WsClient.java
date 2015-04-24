@@ -212,18 +212,19 @@ public class WsClient implements IExecutor, IClientExecutor, IOperatorOwner {
 	 */
 	@Override
 	public boolean connect(String connectString) {
-		// connectString should look like this:
-		// wsdlLocation;serviceNamespace;service
-		String[] subConnect = connectString.split(";");
-		if (subConnect.length > 1 && subConnect.length < 4) {
-			try {
-				startClient(new URL(subConnect[0]), new QName(subConnect[1],
-						subConnect[2]), connectString);
-				return true;
-			} catch (MalformedURLException e) {
-				e.printStackTrace();
-				return false;
+		try {
+			String[] subConnect = connectString.split(";");
+			if (subConnect.length > 1 && subConnect.length < 4) {
+				try {
+					startClient(new URL(subConnect[0]), new QName(subConnect[1],
+							subConnect[2]), connectString);
+					return true;
+				} catch (MalformedURLException e) {
+					e.printStackTrace();
+				}
 			}
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 		return false;
 	}
@@ -244,6 +245,7 @@ public class WsClient implements IExecutor, IClientExecutor, IOperatorOwner {
 			generateEvents.start();
 		} catch (Exception e) {
 			INFO.error("Cannot connect to server", e);
+			throw e;
 		}
 	}
 

@@ -1,15 +1,14 @@
 package de.uniol.inf.is.odysseus.client.console;
 
 import java.io.BufferedReader;
-
-import org.eclipse.equinox.app.IApplication;
-import org.eclipse.equinox.app.IApplicationContext;
-
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+
+import org.eclipse.equinox.app.IApplication;
+import org.eclipse.equinox.app.IApplicationContext;
 
 import de.uniol.inf.is.odysseus.core.collection.Context;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IClientExecutor;
@@ -207,7 +206,7 @@ public class Console implements IApplication {
 			connected = ((IClientExecutor) executor).connect(wsdlLocation
 					+ ";" + serviceNamespace + ";" + service);
 		} catch (Exception e) {
-
+			
 		}
 		if (!connected) {
 			System.err.println("Could not connect to " + wsdlLocation);
