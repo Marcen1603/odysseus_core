@@ -42,6 +42,7 @@ import de.uniol.inf.is.odysseus.sensormanagement.client.InvalidUserDataException
 import de.uniol.inf.is.odysseus.sensormanagement.client.SensorService;
 import de.uniol.inf.is.odysseus.sensormanagement.client.SensorServiceService;
 import de.uniol.inf.is.odysseus.sensormanagement.common.types.SensorModel2;
+import de.uniol.inf.is.odysseus.sensormanagement.common.types.SensorType;
 import de.uniol.inf.is.odysseus.sensormanagement.common.utilities.XmlMarshalHelper;
 
 /**
@@ -77,142 +78,103 @@ public class WsSensorClient
 		return server;
 	}
 
-/*	@Override
-	public ISession login(String username, byte[] password, String tenant) {
-		// TODO: use real names
-		String securitytoken = getWebserviceServer(REMOVEME).login(username,
-				new String(password), tenant).getResponseValue();
-		if (securitytoken == null){
-			return null;
-		}
-		IUser user = new WsClientUser(username, password, true);
-		WsClientSession session = new WsClientSession(user, null, REMOVEME);
-		session.setToken(securitytoken);
-		ClientSessionStore.addSession(REMOVEME, session);
-		fireUpdateEvent(IUpdateEventListener.SESSION);
-		return session;
-	}
-
-	@Override
-	public ISession login(String username, byte[] password) {
-		String securitytoken = getWebserviceServer(REMOVEME).login2(username,
-				new String(password)).getResponseValue();
-		if (securitytoken == null){
-			return null;
-		}
-		IUser user = new WsClientUser(username, password, true);
-		WsClientSession session = new WsClientSession(user, null, REMOVEME);
-		session.setToken(securitytoken);
-		ClientSessionStore.addSession(REMOVEME, session);
-		fireUpdateEvent(IUpdateEventListener.SESSION);
-		return session;
-	} */
-
 	public String addSensor(ISession caller, SensorModel2 sensor)
 	{
-		try 
-		{
+		try	{
 			return server.addSensor(caller.getToken(), XmlMarshalHelper.toXml(sensor));
-		} 
-		catch (InvalidUserDataException_Exception e) 
-		{
+		} catch (InvalidUserDataException_Exception e) {
 			throw new PlanManagementException(e);				
 		}
 	}
 	
 	public void removeSensor(ISession caller, String sensorId)
 	{
-		try 
-		{
+		try {
 			server.removeSensor(caller.getToken(), sensorId);
-		} 
-		catch (InvalidUserDataException_Exception e) 
-		{
+		} catch (InvalidUserDataException_Exception e) {
 			throw new PlanManagementException(e);				
 		}
 	}	
 
 	public void modifySensor(ISession caller, String sensorId, SensorModel2 sensor)
 	{
-		try 
-		{
+		try {
 			server.modifySensor(caller.getToken(), sensorId, XmlMarshalHelper.toXml(sensor));
-		} 
-		catch (InvalidUserDataException_Exception e) 
-		{
+		} catch (InvalidUserDataException_Exception e) 	{
 			throw new PlanManagementException(e);				
 		}
 	}
 	
 	public List<String> getSensorIds(ISession caller)
 	{
-		try 
-		{
+		try	{
 			return server.getSensorIds(caller.getToken());
-		} 
-		catch (InvalidUserDataException_Exception e) 
-		{
+		} catch (InvalidUserDataException_Exception e) {
 			throw new PlanManagementException(e);				
 		}
 	}	
 	
 	public SensorModel2 getSensorById(ISession caller, String sensorId) 
 	{
-		try 
-		{
+		try {
 			String sensorXml = server.getSensorById(caller.getToken(), sensorId);
 			return XmlMarshalHelper.fromXml(sensorXml, SensorModel2.class);
-		} 
-		catch (InvalidUserDataException_Exception e) 
-		{
+		} catch (InvalidUserDataException_Exception e) {
 			throw new PlanManagementException(e);				
 		}	
 	}			
+
+	public List<String> getSensorTypes(ISession caller)
+	{
+		try	{
+			return server.getSensorTypes(caller.getToken());
+		} catch (InvalidUserDataException_Exception e) {
+			throw new PlanManagementException(e);				
+		}
+	}	
+	
+	public SensorType getSensorType(ISession caller, String sensorType) 
+	{
+		try {
+			String sensorXml = server.getSensorType(caller.getToken(), sensorType);
+			return XmlMarshalHelper.fromXml(sensorXml, SensorType.class);
+		} catch (InvalidUserDataException_Exception e) {
+			throw new PlanManagementException(e);				
+		}	
+	}				
 	
 	public void startLogging(ISession caller, String sensorId)
 	{
-		try 
-		{
+		try {
 			server.startLogging(caller.getToken(), sensorId);
-		} 
-		catch (InvalidUserDataException_Exception e) 
-		{
+		} catch (InvalidUserDataException_Exception e) 	{
 			throw new PlanManagementException(e);				
 		}
 	}
 	
 	public void stopLogging(ISession caller, String sensorId)
 	{
-		try 
-		{
+		try {
 			server.stopLogging(caller.getToken(), sensorId);
-		} 
-		catch (InvalidUserDataException_Exception e) 
-		{
+		} catch (InvalidUserDataException_Exception e) {
 			throw new PlanManagementException(e);				
 		}
 	}	
 	
 	public String startLiveView(ISession caller, String sensorId, String targetHost, int targetPort)
 	{
-		try 
-		{
+		try {
 			return server.startLiveView(caller.getToken(), sensorId, targetHost, targetPort);
-		} 
-		catch (InvalidUserDataException_Exception e) 
-		{
+		} catch (InvalidUserDataException_Exception e) {
 			throw new PlanManagementException(e);				
 		}
 	}
 	
 	public void stopLiveView(ISession caller, String sensorId)
 	{
-		try 
-		{
-			server.stopLogging(caller.getToken(), sensorId);
-		} 
-		catch (InvalidUserDataException_Exception e) 
-		{
+		try {
+			server.stopLiveView(caller.getToken(), sensorId);
+		} catch (InvalidUserDataException_Exception e) {
 			throw new PlanManagementException(e);				
 		}
 	}

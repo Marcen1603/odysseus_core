@@ -99,7 +99,7 @@ public class SimpleByteBufferHandler<T> extends AbstractByteBufferHandler<T> {
 	public T getNext() throws IOException 
 	{
 		InputStream input = getTransportHandler().getInputStream();
-		int size = input.available();
+		int size = Math.min(input.available(), objectHandler.getByteBuffer().limit());
 		input.read(objectHandler.getByteBuffer().array(), 0, size);			
 		
 		objectHandler.getByteBuffer().position(size);

@@ -8,6 +8,7 @@ import java.util.Map;
 
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.sensormanagement.common.types.SensorModel2;
+import de.uniol.inf.is.odysseus.sensormanagement.common.types.SensorType;
 
 public class SensorFactory 
 {
@@ -49,9 +50,55 @@ public class SensorFactory
 		
 		String liveViewUrl = "udp://%(host):%(port)";
 		
-		return new SensorType(dataQuery, logQuery, liveViewQuery, liveViewUrl);
+		Map<String, String> optionsInformation = new HashMap<>();
+		optionsInformation.put("host", "The ethernet address for the scanner");
+		optionsInformation.put("port", "The port number for the scanner");
+		
+		return new SensorType("LMS1xx", dataQuery, logQuery, liveViewQuery, liveViewUrl, optionsInformation);
 	}
 
+	static private SensorType getDummy()
+	{
+		String dataQuery =
+				  "#PARSER PQL\n"		
+				+ "#RUNQUERY\n"				
+				+ "%(sourceName) := ACCESS({source='%(sourceName)',\n"
+		    	+ "               wrapper='GenericPush',\n"
+				+ "               transport='Timer',\n"
+				+ "               protocol='None',\n"
+				+ "               dataHandler='Tuple',\n"
+				+ "				  schema=[['Timestamp', 'Long']],"
+				+ "               options=[%(optionsEx) ['period','100']]})\n";
+
+		String logQuery = 
+				  "#PARSER PQL\n"		
+				+ "#RUNQUERY\n"			
+				+ "%(sinkName) = SENDER({sink='%(sinkName)',\n"
+				+ "			             wrapper='GenericPush',\n"
+				+ "                      transport='none',\n"
+				+ "			             protocol='TextFileLogger',\n"
+				+ "                      dataHandler='Tuple',\n"
+				+ "                      options=[%(options)]},\n"
+				+ "                     %(sourceName))\n";
+		
+		String liveViewQuery = 
+				  "#PARSER PQL\n"		
+				+ "#RUNQUERY\n"
+				+ "%(sinkName) = SENDER({sink='%(sinkName)',\n"
+				+ "			             wrapper='GenericPush',\n"
+				+ "                      transport='UDPClient',\n"
+				+ "			             protocol='SimpleCSV',\n"
+				+ "                      dataHandler='Tuple',\n"
+				+ "                      options=[['host', '%(host)'], ['port', '%(port)'], ['write', '20480']]},\n"
+				+ "                     %(sourceName))\n";
+		
+		String liveViewUrl = "udp://%(host):%(port)";
+		
+		Map<String, String> optionsInformation = new HashMap<>();
+		
+		return new SensorType("Dummy", dataQuery, logQuery, liveViewQuery, liveViewUrl, optionsInformation);
+	}	
+	
 	static private SensorType getIntegratedCamera()
 	{
 		String dataQuery = 
@@ -90,7 +137,10 @@ public class SensorFactory
 		
 		String liveViewUrl = "udp://%(host):%(port)";
 		
-		return new SensorType(dataQuery, logQuery, liveViewQuery, liveViewUrl);
+		Map<String, String> optionsInformation = new HashMap<>();
+		optionsInformation.put("cameraId", "The Id of the integrated camera");
+		
+		return new SensorType("IntegratedCamera", dataQuery, logQuery, liveViewQuery, liveViewUrl, optionsInformation);
 	}	
 
 	static private SensorType getBaslerCamera()
@@ -131,7 +181,10 @@ public class SensorFactory
 		
 		String liveViewUrl = "udp://%(host):%(port)";
 		
-		return new SensorType(dataQuery, logQuery, liveViewQuery, liveViewUrl);
+		Map<String, String> optionsInformation = new HashMap<>();
+		optionsInformation.put("serialNumber", "The serial number of the camera");		
+		
+		return new SensorType("BaslerCamera", dataQuery, logQuery, liveViewQuery, liveViewUrl, optionsInformation);
 	}		
 
 	static private SensorType getOptrisCamera()
@@ -172,7 +225,10 @@ public class SensorFactory
 		
 		String liveViewUrl = "udp://%(host):%(port)";
 		
-		return new SensorType(dataQuery, logQuery, liveViewQuery, liveViewUrl);
+		Map<String, String> optionsInformation = new HashMap<>();
+		optionsInformation.put("ethernetAddress", "The ethernet address for the camera");
+		
+		return new SensorType("OptrisCamera", dataQuery, logQuery, liveViewQuery, liveViewUrl, optionsInformation);
 	}	
 
 	static private SensorType getGPS()
@@ -225,7 +281,10 @@ public class SensorFactory
 		
 		String liveViewUrl = "udp://%(host):%(port)";
 		
-		return new SensorType(dataQuery, logQuery, liveViewQuery, liveViewUrl);
+		Map<String, String> optionsInformation = new HashMap<>();
+		optionsInformation.put("port", "The port number for the GPS receiver (F. ex. COM3)");
+		
+		return new SensorType("GPS", dataQuery, logQuery, liveViewQuery, liveViewUrl, optionsInformation);
 	}	
 	
 	static private SensorFactory instance = null;
@@ -234,11 +293,12 @@ public class SensorFactory
 		if (instance == null)
 		{
 			instance = new SensorFactory();
-			instance.addSensorType("LMS1xx", getLMS1xx());
-			instance.addSensorType("IntegratedCamera", getIntegratedCamera());
-			instance.addSensorType("BaslerCamera", getBaslerCamera());			
-			instance.addSensorType("OptrisCamera", getOptrisCamera());
-			instance.addSensorType("GPS", getGPS());
+			instance.addSensorType(getLMS1xx());
+			instance.addSensorType(getIntegratedCamera());
+			instance.addSensorType(getBaslerCamera());			
+			instance.addSensorType(getOptrisCamera());
+			instance.addSensorType(getGPS());
+			instance.addSensorType(getDummy());
 		}				
 		
 		return instance;
@@ -251,30 +311,14 @@ public class SensorFactory
 		loggingDirectory = "C:/test/records/";
 	}
 	
-	// *************************************************************************************
-
-	public static class SensorType
-	{
-		public String dataQueryText;
-		public String loggingQueryText;
-		public String liveViewQueryText;
-		public String liveViewUrl;
-		
-		public SensorType(String dataQueryText, String loggingQueryText, String liveViewQueryText, String liveViewUrl) 
-		{
-			this.dataQueryText = dataQueryText;
-			this.loggingQueryText = loggingQueryText;
-			this.liveViewQueryText = liveViewQueryText;
-			this.liveViewUrl = liveViewUrl;
-		}		
-	}	
+	// *************************************************************************************	
 	
 	private Map<String, SensorType> sensorTypes = new HashMap<>();
 	private List<Sensor> sensors = new LinkedList<>();
 	
-	public void addSensorType(String name, SensorType e)
+	public void addSensorType(SensorType e)
 	{
-		sensorTypes.put(name.toLowerCase(), e);
+		sensorTypes.put(e.name.toLowerCase(), e);
 	}
 	
 	public SensorType getSensorType(String name)

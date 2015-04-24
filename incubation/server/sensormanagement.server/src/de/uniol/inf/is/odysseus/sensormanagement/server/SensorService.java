@@ -96,6 +96,21 @@ public class SensorService
 		return XmlMarshalHelper.toXml(SensorFactory.getInstance().getSensorById(sensorId).config);
 	}		
 	
+	@WebResult(name = "sensorTypes")
+	public List<String> getSensorTypes(@WebParam(name = "securityToken") String securityToken) throws InvalidUserDataException
+	{
+		loginWithSecurityToken(securityToken);		
+		return SensorFactory.getInstance().getSensorTypes();
+	}	
+	
+	@WebResult(name = "sensorTypeXml")
+	public String getSensorType(@WebParam(name = "securityToken") String securityToken, 
+								@WebParam(name = "sensorType") String sensorType) throws InvalidUserDataException
+	{
+		loginWithSecurityToken(securityToken);		
+		return XmlMarshalHelper.toXml(SensorFactory.getInstance().getSensorType(sensorType));
+	}			
+	
 	public void removeSensor(@WebParam(name = "securityToken") String securityToken, 
 							@WebParam(name = "sensorId") String sensorId) throws InvalidUserDataException
 	{

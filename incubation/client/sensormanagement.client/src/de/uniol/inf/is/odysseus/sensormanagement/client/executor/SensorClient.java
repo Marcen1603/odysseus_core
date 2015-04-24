@@ -7,6 +7,7 @@ import java.util.List;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.planmanagement.executor.webservice.client.WsClient;
 import de.uniol.inf.is.odysseus.sensormanagement.common.types.SensorModel2;
+import de.uniol.inf.is.odysseus.sensormanagement.common.types.SensorType;
 
 public abstract class SensorClient implements ILoggable
 {	
@@ -17,8 +18,11 @@ public abstract class SensorClient implements ILoggable
 	protected ISession odysseusSession;
 	protected WsSensorClient sensorClient;
 	protected List<RemoteSensor> sensors;
+	protected List<SensorType> sensorTypes;
 	
 	public List<RemoteSensor> getSensors() { return sensors; }
+	public List<SensorType> getSensorTypes() { return sensorTypes; }
+	
 	public boolean isInitialized() { return initialized; }
 	public String getUserName()	{ return userName; }	
 	
@@ -35,21 +39,31 @@ public abstract class SensorClient implements ILoggable
 		for (String sensorId : sensorIds)
 			sensors.add(new RemoteSensor(this, sensorClient.getSensorById(odysseusSession, sensorId)));		
 		
+		List<String> sensorTypes = sensorClient.getSensorTypes(odysseusSession);
+		this.sensorTypes = new ArrayList<SensorType>(sensorTypes.size());
+
+		for (String sensorType : sensorTypes)
+			this.sensorTypes.add(sensorClient.getSensorType(odysseusSession, sensorType));				
+		
 		initialized = true;
 	}
 
 	public void close()
 	{			
 		initialized = false;
+
 		for (RemoteSensor sensor : sensors)
-			sensorClient.stopLiveView(odysseusSession, sensor.getId());
-		
-		try
 		{
-			odysseusClient.logout(odysseusSession);
+			try {
+				sensorClient.stopLiveView(odysseusSession, sensor.getId());
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		}
-		catch (Exception e)
-		{
+				
+		try {
+			odysseusClient.logout(odysseusSession);
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
@@ -65,6 +79,7 @@ public abstract class SensorClient implements ILoggable
 	
 	public void updateSensor(RemoteSensor sensor, SensorModel2 newSensorInfo)
 	{
+		sensor.setSensorModel2(newSensorInfo);
 		sensorClient.modifySensor(odysseusSession, sensor.getId(), newSensorInfo);
 		
 		if (isInitialized())

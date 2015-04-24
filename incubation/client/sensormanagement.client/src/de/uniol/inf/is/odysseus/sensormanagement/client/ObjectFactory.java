@@ -25,6 +25,7 @@ import javax.xml.namespace.QName;
 @SuppressWarnings(value = { "all" })
 public class ObjectFactory {
 
+    private final static QName _GetSensorTypes_QNAME = new QName("http://server.sensormanagement.odysseus.is.inf.uniol.de/", "getSensorTypes");
     private final static QName _AddSensorResponse_QNAME = new QName("http://server.sensormanagement.odysseus.is.inf.uniol.de/", "addSensorResponse");
     private final static QName _ModifySensorResponse_QNAME = new QName("http://server.sensormanagement.odysseus.is.inf.uniol.de/", "modifySensorResponse");
     private final static QName _StartLiveView_QNAME = new QName("http://server.sensormanagement.odysseus.is.inf.uniol.de/", "startLiveView");
@@ -32,10 +33,13 @@ public class ObjectFactory {
     private final static QName _AddSensor_QNAME = new QName("http://server.sensormanagement.odysseus.is.inf.uniol.de/", "addSensor");
     private final static QName _StartLiveViewResponse_QNAME = new QName("http://server.sensormanagement.odysseus.is.inf.uniol.de/", "startLiveViewResponse");
     private final static QName _GetSensorByIdResponse_QNAME = new QName("http://server.sensormanagement.odysseus.is.inf.uniol.de/", "getSensorByIdResponse");
+    private final static QName _GetSensorType_QNAME = new QName("http://server.sensormanagement.odysseus.is.inf.uniol.de/", "getSensorType");
     private final static QName _StopLogging_QNAME = new QName("http://server.sensormanagement.odysseus.is.inf.uniol.de/", "stopLogging");
     private final static QName _StopLoggingResponse_QNAME = new QName("http://server.sensormanagement.odysseus.is.inf.uniol.de/", "stopLoggingResponse");
     private final static QName _ModifySensor_QNAME = new QName("http://server.sensormanagement.odysseus.is.inf.uniol.de/", "modifySensor");
+    private final static QName _GetSensorTypeResponse_QNAME = new QName("http://server.sensormanagement.odysseus.is.inf.uniol.de/", "getSensorTypeResponse");
     private final static QName _GetSensorIds_QNAME = new QName("http://server.sensormanagement.odysseus.is.inf.uniol.de/", "getSensorIds");
+    private final static QName _GetSensorTypesResponse_QNAME = new QName("http://server.sensormanagement.odysseus.is.inf.uniol.de/", "getSensorTypesResponse");
     private final static QName _InvalidUserDataException_QNAME = new QName("http://server.sensormanagement.odysseus.is.inf.uniol.de/", "InvalidUserDataException");
     private final static QName _RemoveSensorResponse_QNAME = new QName("http://server.sensormanagement.odysseus.is.inf.uniol.de/", "removeSensorResponse");
     private final static QName _RemoveSensor_QNAME = new QName("http://server.sensormanagement.odysseus.is.inf.uniol.de/", "removeSensor");
@@ -58,6 +62,14 @@ public class ObjectFactory {
      */
     public StopLiveView createStopLiveView() {
         return new StopLiveView();
+    }
+
+    /**
+     * Create an instance of {@link GetSensorTypes }
+     * 
+     */
+    public GetSensorTypes createGetSensorTypes() {
+        return new GetSensorTypes();
     }
 
     /**
@@ -93,6 +105,14 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link GetSensorTypeResponse }
+     * 
+     */
+    public GetSensorTypeResponse createGetSensorTypeResponse() {
+        return new GetSensorTypeResponse();
+    }
+
+    /**
      * Create an instance of {@link AddSensor }
      * 
      */
@@ -114,6 +134,14 @@ public class ObjectFactory {
      */
     public GetSensorByIdResponse createGetSensorByIdResponse() {
         return new GetSensorByIdResponse();
+    }
+
+    /**
+     * Create an instance of {@link GetSensorType }
+     * 
+     */
+    public GetSensorType createGetSensorType() {
+        return new GetSensorType();
     }
 
     /**
@@ -154,6 +182,14 @@ public class ObjectFactory {
      */
     public GetSensorIds createGetSensorIds() {
         return new GetSensorIds();
+    }
+
+    /**
+     * Create an instance of {@link GetSensorTypesResponse }
+     * 
+     */
+    public GetSensorTypesResponse createGetSensorTypesResponse() {
+        return new GetSensorTypesResponse();
     }
 
     /**
@@ -202,6 +238,15 @@ public class ObjectFactory {
      */
     public StartLoggingResponse createStartLoggingResponse() {
         return new StartLoggingResponse();
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link GetSensorTypes }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "http://server.sensormanagement.odysseus.is.inf.uniol.de/", name = "getSensorTypes")
+    public JAXBElement<GetSensorTypes> createGetSensorTypes(GetSensorTypes value) {
+        return new JAXBElement<GetSensorTypes>(_GetSensorTypes_QNAME, GetSensorTypes.class, null, value);
     }
 
     /**
@@ -268,6 +313,15 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link GetSensorType }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "http://server.sensormanagement.odysseus.is.inf.uniol.de/", name = "getSensorType")
+    public JAXBElement<GetSensorType> createGetSensorType(GetSensorType value) {
+        return new JAXBElement<GetSensorType>(_GetSensorType_QNAME, GetSensorType.class, null, value);
+    }
+
+    /**
      * Create an instance of {@link JAXBElement }{@code <}{@link StopLogging }{@code >}}
      * 
      */
@@ -295,12 +349,30 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link GetSensorTypeResponse }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "http://server.sensormanagement.odysseus.is.inf.uniol.de/", name = "getSensorTypeResponse")
+    public JAXBElement<GetSensorTypeResponse> createGetSensorTypeResponse(GetSensorTypeResponse value) {
+        return new JAXBElement<GetSensorTypeResponse>(_GetSensorTypeResponse_QNAME, GetSensorTypeResponse.class, null, value);
+    }
+
+    /**
      * Create an instance of {@link JAXBElement }{@code <}{@link GetSensorIds }{@code >}}
      * 
      */
     @XmlElementDecl(namespace = "http://server.sensormanagement.odysseus.is.inf.uniol.de/", name = "getSensorIds")
     public JAXBElement<GetSensorIds> createGetSensorIds(GetSensorIds value) {
         return new JAXBElement<GetSensorIds>(_GetSensorIds_QNAME, GetSensorIds.class, null, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link GetSensorTypesResponse }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "http://server.sensormanagement.odysseus.is.inf.uniol.de/", name = "getSensorTypesResponse")
+    public JAXBElement<GetSensorTypesResponse> createGetSensorTypesResponse(GetSensorTypesResponse value) {
+        return new JAXBElement<GetSensorTypesResponse>(_GetSensorTypesResponse_QNAME, GetSensorTypesResponse.class, null, value);
     }
 
     /**

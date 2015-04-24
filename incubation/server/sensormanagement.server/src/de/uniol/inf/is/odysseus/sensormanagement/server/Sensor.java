@@ -1,25 +1,26 @@
 package de.uniol.inf.is.odysseus.sensormanagement.server;
 
+import java.util.Collection;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.Map;
 
 import de.uniol.inf.is.odysseus.core.collection.Context;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.planmanagement.executor.webservice.server.ExecutorServiceBinding;
 import de.uniol.inf.is.odysseus.sensormanagement.common.types.SensorModel2;
+import de.uniol.inf.is.odysseus.sensormanagement.common.types.SensorType;
 import de.uniol.inf.is.odysseus.sensormanagement.common.utilities.StringUtils;
 import de.uniol.inf.is.odysseus.sensormanagement.common.utilities.XmlMarshalHelper;
-import de.uniol.inf.is.odysseus.sensormanagement.server.SensorFactory.SensorType;
 
 public class Sensor 
 {
+	private final static IServerExecutor executor = ExecutorServiceBinding.getExecutor();
+	
 	SensorModel2 config;
 	SensorType type;
 	
 	boolean isLogging;
-	
-	LinkedList<String> liveViewQueries = new LinkedList<String>();
 	
 	public String getDataQueryName()
 	{
@@ -31,29 +32,32 @@ public class Sensor
 		return config.id + "_log";
 	}	
 	
-	public String getLiveViewQueryName(ISession session) 
+	private String getLiveViewQueryNameBase()
 	{
-		return config.id + "_live_" + session.getUser().getName();
+		return config.id + "_live_";
 	}
 	
+	public String getLiveViewQueryName(ISession session) 
+	{
+		return getLiveViewQueryNameBase() + session.getUser().getName();
+	}
+
+	public static void safeRemoveQuery(String queryName, ISession session)
+	{
+		if (executor.getLogicalQueryByName(queryName, session) != null)
+			executor.removeQuery(queryName, session);		
+	}
 	
 	public static void safeAddQuery(String queryName, String queryText, ISession session)
 	{
-		if (ExecutorServiceBinding.getExecutor().getLogicalQueryByName(queryName, session) != null)
-			ExecutorServiceBinding.getExecutor().removeQuery(queryName, session);		
+		safeRemoveQuery(queryName, session);
 		
-		try
-		{
-			ExecutorServiceBinding.getExecutor().addQuery(queryText, "OdysseusScript", session, Context.empty());
-		}
-		catch (Exception e)
-		{
-			try
-			{
-				ExecutorServiceBinding.getExecutor().removeQuery(queryName, session);
-			}
-			catch (Exception e2)
-			{
+		try	{
+			executor.addQuery(queryText, "OdysseusScript", session, Context.empty());
+		} catch (Exception e) {
+			try {
+				executor.removeQuery(queryName, session);
+			} catch (Exception e2) {
 				e2.printStackTrace();
 			}
 			
@@ -83,24 +87,21 @@ public class Sensor
 	{
 		stopLogging(session);
 		
-		while (!liveViewQueries.isEmpty())
+		Collection<Integer> querys = executor.getLogicalQueryIds(session);		
+		for (int id : querys)
 		{
-			try
-			{
-				ExecutorServiceBinding.getExecutor().removeQuery(liveViewQueries.pop(), session);
-			}
-			catch (Exception e)
-			{
-				e.printStackTrace();
+			if (executor.getLogicalQueryById(id, session).getName().startsWith(getLiveViewQueryNameBase())) {
+				try {
+					executor.removeQuery(id, session);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
 			}
 		}
-		
-		try
-		{
-			ExecutorServiceBinding.getExecutor().removeViewOrStream(getDataQueryName(), session);
-		}
-		catch (Exception e)
-		{
+				
+		try {
+			executor.removeViewOrStream(getDataQueryName(), session);
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
@@ -125,7 +126,8 @@ public class Sensor
 	
 	public void startLogging(ISession session, String directory)
 	{
-		if (isLogging) return;
+		String queryName = getLoggingQueryName();		
+		if (executor.getLogicalQueryByName(queryName, session) != null) return;
 		
 		Map<String, String> loggingOptionsMap = new HashMap<>();
 		loggingOptionsMap.put("sensorXml", XmlMarshalHelper.toXml(config));
@@ -138,30 +140,18 @@ public class Sensor
 		formatMap.put("options", StringUtils.mapToString(loggingOptionsMap));		
 		
 		String queryText = StringUtils.namedFormatStr(type.loggingQueryText, formatMap);
-		safeAddQuery(getLoggingQueryName(), queryText, session);
+		safeAddQuery(queryName, queryText, session);
 		isLogging = true;
 	}
 	
 	public void stopLogging(ISession session)
 	{
-		if (!isLogging) return;
-		
-		try
-		{
-			ExecutorServiceBinding.getExecutor().removeQuery(getLoggingQueryName(), session);
-		}
-		catch (Exception e)
-		{
-			e.printStackTrace();
-		}
-		
-		isLogging = false;
+		safeRemoveQuery(getLoggingQueryName(), session);
 	}
 	
 	public String startLiveView(ISession session, String targetHost, int targetPort)
 	{
 		String queryName = getLiveViewQueryName(session);	
-		if (liveViewQueries.contains(queryName)) return null;
 		
 		Map<String, Object> formatMap = new HashMap<>();
 		formatMap.put("sourceName", getDataQueryName());
@@ -172,23 +162,11 @@ public class Sensor
 		String queryText = StringUtils.namedFormatStr(type.liveViewQueryText, formatMap);
 		safeAddQuery(queryName, queryText, session);
 		
-		liveViewQueries.add(queryName);
 		return StringUtils.namedFormatStr(type.liveViewUrl, formatMap);
 	}
 	
 	public void stopLiveView(ISession session)
 	{
-		String queryName = getLiveViewQueryName(session);
-		if (!liveViewQueries.contains(queryName)) return;		
-		liveViewQueries.remove(queryName);
-		
-		try
-		{
-			ExecutorServiceBinding.getExecutor().removeQuery(queryName, session);
-		}
-		catch (Exception e)
-		{
-			e.printStackTrace();
-		}
+		safeRemoveQuery(getLiveViewQueryName(session), session);
 	}	
 }
