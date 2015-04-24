@@ -212,19 +212,15 @@ public class WsClient implements IExecutor, IClientExecutor, IOperatorOwner {
 	 */
 	@Override
 	public boolean connect(String connectString) {
-		try {
-			String[] subConnect = connectString.split(";");
-			if (subConnect.length > 1 && subConnect.length < 4) {
-				try {
-					startClient(new URL(subConnect[0]), new QName(subConnect[1],
-							subConnect[2]), connectString);
-					return true;
-				} catch (MalformedURLException e) {
-					e.printStackTrace();
-				}
+		String[] subConnect = connectString.split(";");
+		if (subConnect.length > 1 && subConnect.length < 4) {
+			try {
+				startClient(new URL(subConnect[0]), new QName(subConnect[1],
+						subConnect[2]), connectString);
+			} catch (MalformedURLException e) {
+				throw new RuntimeException("Could not connect to " + connectString, e);
 			}
-		} catch (Exception e) {
-			e.printStackTrace();
+			return true;
 		}
 		return false;
 	}
