@@ -85,9 +85,9 @@ final public class IntervalLatency extends AbstractMetaAttribute implements ILat
 	// ------------------------------------------------------------------------------
 
 	@Override
-	public void fillValueList(List<Tuple<?>> values) {
-		timeInterval.fillValueList(values);
-		latency.fillValueList(values);
+	public void retrieveValues(List<Tuple<?>> values) {
+		timeInterval.retrieveValues(values);
+		latency.retrieveValues(values);
 	}
 	
 	@Override

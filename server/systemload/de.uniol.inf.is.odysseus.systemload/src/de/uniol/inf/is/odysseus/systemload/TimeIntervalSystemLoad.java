@@ -65,9 +65,9 @@ final public class TimeIntervalSystemLoad extends AbstractMetaAttribute implemen
 	// ------------------------------------------------------------------------------
 
 	@Override
-	public void fillValueList(List<Tuple<?>> values) {
-		timeInterval.fillValueList(values);
-		systemload.fillValueList(values);
+	public void retrieveValues(List<Tuple<?>> values) {
+		timeInterval.retrieveValues(values);
+		systemload.retrieveValues(values);
 	}
 	
 	@Override

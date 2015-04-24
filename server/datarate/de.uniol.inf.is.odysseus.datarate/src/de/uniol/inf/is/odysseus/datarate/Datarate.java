@@ -52,7 +52,7 @@ final public class Datarate extends AbstractMetaAttribute implements IDatarate,
 	}
 
 	@Override
-	public void fillValueList(List<Tuple<?>> values) {
+	public void retrieveValues(List<Tuple<?>> values) {
 		@SuppressWarnings("rawtypes")
 		Tuple t = new Tuple(1, false);
 		t.setAttribute(0, datarate);

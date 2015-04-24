@@ -106,10 +106,10 @@ final public class TimeIntervalProbabilisticLatency extends AbstractMetaAttribut
 	// ------------------------------------------------------------------------------
 
 	@Override
-	public void fillValueList(List<Tuple<?>> values) {
-		timeInterval.fillValueList(values);
-		latency.fillValueList(values);
-		probabilistic.fillValueList(values);
+	public void retrieveValues(List<Tuple<?>> values) {
+		timeInterval.retrieveValues(values);
+		latency.retrieveValues(values);
+		probabilistic.retrieveValues(values);
 	}
 	
 	@Override

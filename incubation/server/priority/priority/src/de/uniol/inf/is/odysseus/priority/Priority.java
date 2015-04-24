@@ -57,7 +57,7 @@ final public class Priority extends AbstractMetaAttribute implements IPriority {
 	}
 
 	@Override
-	public void fillValueList(List<Tuple<?>> values) {
+	public void retrieveValues(List<Tuple<?>> values) {
 		@SuppressWarnings("rawtypes")
 		Tuple t = new Tuple(1,false);
 		t.setAttribute(0, prio);

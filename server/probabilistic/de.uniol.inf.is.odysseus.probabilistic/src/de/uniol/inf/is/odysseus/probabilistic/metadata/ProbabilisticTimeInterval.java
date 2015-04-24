@@ -105,9 +105,9 @@ final public class ProbabilisticTimeInterval extends AbstractMetaAttribute
 	// ------------------------------------------------------------------------------
 
 	@Override
-	public void fillValueList(List<Tuple<?>> values) {
-		timeInterval.fillValueList(values);
-		probabilistic.fillValueList(values);
+	public void retrieveValues(List<Tuple<?>> values) {
+		timeInterval.retrieveValues(values);
+		probabilistic.retrieveValues(values);
 	}
 
 	@Override

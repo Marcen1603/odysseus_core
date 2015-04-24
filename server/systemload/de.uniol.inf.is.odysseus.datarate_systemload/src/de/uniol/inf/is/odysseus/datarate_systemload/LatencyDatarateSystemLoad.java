@@ -62,10 +62,10 @@ public class LatencyDatarateSystemLoad extends AbstractMetaAttribute implements
 	// ------------------------------------------------------------------------------
 
 	@Override
-	public void fillValueList(List<Tuple<?>> values) {
-		datarate.fillValueList(values);
-		latency.fillValueList(values);
-		systemload.fillValueList(values);
+	public void retrieveValues(List<Tuple<?>> values) {
+		datarate.retrieveValues(values);
+		latency.retrieveValues(values);
+		systemload.retrieveValues(values);
 	}
 	
 	@Override

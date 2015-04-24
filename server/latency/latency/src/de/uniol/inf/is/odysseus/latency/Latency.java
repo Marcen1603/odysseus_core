@@ -71,7 +71,7 @@ final public class Latency extends AbstractMetaAttribute implements ILatency {
 	}
 	
 	@Override
-	public void fillValueList(List<Tuple<?>> values) {
+	public void retrieveValues(List<Tuple<?>> values) {
 		@SuppressWarnings("rawtypes")
 		Tuple t = new Tuple(3, false);
 		t.setAttribute(0, minlstart);

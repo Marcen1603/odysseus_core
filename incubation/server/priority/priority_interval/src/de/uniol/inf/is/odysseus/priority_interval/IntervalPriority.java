@@ -85,9 +85,9 @@ final public class IntervalPriority extends AbstractMetaAttribute implements ITi
 
 	
 	@Override
-	public void fillValueList(List<Tuple<?>> values) {
-		timeInterval.fillValueList(values);
-		priority.fillValueList(values);
+	public void retrieveValues(List<Tuple<?>> values) {
+		timeInterval.retrieveValues(values);
+		priority.retrieveValues(values);
 	}
 
 	@Override

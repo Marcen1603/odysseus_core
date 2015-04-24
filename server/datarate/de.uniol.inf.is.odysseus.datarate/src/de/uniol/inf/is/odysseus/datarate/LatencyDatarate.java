@@ -60,9 +60,9 @@ final public class LatencyDatarate extends AbstractMetaAttribute implements IDat
 	// ------------------------------------------------------------------------------
 
 	@Override
-	public void fillValueList(List<Tuple<?>> values) {
-		latency.fillValueList(values);
-		datarate.fillValueList(values);
+	public void retrieveValues(List<Tuple<?>> values) {
+		latency.retrieveValues(values);
+		datarate.retrieveValues(values);
 	}
 	
 	@Override

@@ -62,9 +62,9 @@ final public class TimeIntervalDatarate extends AbstractMetaAttribute implements
 	// ------------------------------------------------------------------------------
 	
 	@Override
-	public void fillValueList(List<Tuple<?>> values) {
-		timeInterval.fillValueList(values);
-		datarate.fillValueList(values);
+	public void retrieveValues(List<Tuple<?>> values) {
+		timeInterval.retrieveValues(values);
+		datarate.retrieveValues(values);
 	}
 	
 	@Override

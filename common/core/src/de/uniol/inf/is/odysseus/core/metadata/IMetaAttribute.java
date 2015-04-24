@@ -46,7 +46,7 @@ public interface IMetaAttribute extends IClone, ICSVToString, Serializable {
 	 * the given values list
 	 * @param values
 	 */
-	void fillValueList(List<Tuple<?>> values);
+	void retrieveValues(List<Tuple<?>> values);
 	
 	/**
 	 * Returns the value of the current meta data for the subtype and the position

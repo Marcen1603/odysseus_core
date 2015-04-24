@@ -102,7 +102,7 @@ final public class TimeInterval extends AbstractMetaAttribute implements
 	}
 	
 	@Override
-	public void fillValueList(List<Tuple<?>> values) {
+	public void retrieveValues(List<Tuple<?>> values) {
 		@SuppressWarnings("rawtypes")
 		Tuple t = new Tuple(2, false);
 		t.setAttribute(0, start.getMainPoint());

@@ -72,10 +72,10 @@ final public class TimeIntervalLatencyDatarate extends AbstractMetaAttribute
 	// ------------------------------------------------------------------------------
 
 	@Override
-	public void fillValueList(List<Tuple<?>> values) {
-		timeInterval.fillValueList(values);
-		latency.fillValueList(values);
-		datarate.fillValueList(values);
+	public void retrieveValues(List<Tuple<?>> values) {
+		timeInterval.retrieveValues(values);
+		latency.retrieveValues(values);
+		datarate.retrieveValues(values);
 	}
 
 	@Override

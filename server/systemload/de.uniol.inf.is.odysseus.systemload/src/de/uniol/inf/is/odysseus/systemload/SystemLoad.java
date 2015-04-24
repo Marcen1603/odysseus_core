@@ -57,7 +57,7 @@ final public class SystemLoad extends AbstractMetaAttribute implements
 	}
 
 	@Override
-	public void fillValueList(List<Tuple<?>> values) {
+	public void retrieveValues(List<Tuple<?>> values) {
 
 	}
 

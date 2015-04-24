@@ -66,9 +66,9 @@ final public class DatarateSystemLoad extends AbstractMetaAttribute implements I
 	// ------------------------------------------------------------------------------
 	
 	@Override
-	public void fillValueList(List<Tuple<?>> values) {
-		systemload.fillValueList(values);
-		datarate.fillValueList(values);
+	public void retrieveValues(List<Tuple<?>> values) {
+		systemload.retrieveValues(values);
+		datarate.retrieveValues(values);
 	}
 	
 	@Override

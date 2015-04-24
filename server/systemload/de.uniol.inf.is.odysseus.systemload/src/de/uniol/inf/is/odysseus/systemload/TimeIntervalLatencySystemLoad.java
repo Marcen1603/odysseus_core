@@ -72,10 +72,10 @@ final public class TimeIntervalLatencySystemLoad extends AbstractMetaAttribute
 	// ------------------------------------------------------------------------------
 
 	@Override
-	public void fillValueList(List<Tuple<?>> values) {
-		timeInterval.fillValueList(values);
-		latency.fillValueList(values);
-		systemload.fillValueList(values);
+	public void retrieveValues(List<Tuple<?>> values) {
+		timeInterval.retrieveValues(values);
+		latency.retrieveValues(values);
+		systemload.retrieveValues(values);
 	}
 	
 	@Override

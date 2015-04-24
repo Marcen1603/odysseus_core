@@ -89,7 +89,7 @@ final public class Probabilistic extends AbstractMetaAttribute implements IProba
     }
 	
 	@Override
-	public void fillValueList(List<Tuple<?>> values) {
+	public void retrieveValues(List<Tuple<?>> values) {
 		@SuppressWarnings("rawtypes")
 		Tuple t = new Tuple(1,false);
 		t.setAttribute(0, existence);

@@ -89,10 +89,10 @@ final public class IntervalLatencyPriority extends AbstractMetaAttribute
 	// ------------------------------------------------------------------------------
 
 	@Override
-	public void fillValueList(List<Tuple<?>> values) {
-		timeInterval.fillValueList(values);
-		latency.fillValueList(values);
-		prio.fillValueList(values);
+	public void retrieveValues(List<Tuple<?>> values) {
+		timeInterval.retrieveValues(values);
+		latency.retrieveValues(values);
+		prio.retrieveValues(values);
 	}
 
 	@Override

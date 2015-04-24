@@ -54,9 +54,9 @@ public class LatencySystemLoad extends AbstractMetaAttribute implements
 	// ------------------------------------------------------------------------------
 
 	@Override
-	public void fillValueList(List<Tuple<?>> values) {
-		latency.fillValueList(values);
-		systemload.fillValueList(values);
+	public void retrieveValues(List<Tuple<?>> values) {
+		latency.retrieveValues(values);
+		systemload.retrieveValues(values);
 	}
 	
 	@Override
